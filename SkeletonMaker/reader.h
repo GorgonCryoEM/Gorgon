@@ -1,0 +1,1010 @@
+/**
+ * Reading routines for volumetric data
+ *
+ * Author: Tao Ju
+ * Date: 02/16/2005
+ */
+
+
+#ifndef READER_H
+#define READER_H
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include "volume.h"
+
+class VolumeReader
+{
+public:
+	VolumeReader ( ){} ;
+
+	/* Read volume from input */
+	virtual Volume* getVolume( ) = 0 ;
+
+	/* Get resolution */
+	virtual void getSpacing( float& ax, float& ay, float& az ) = 0 ;
+
+
+	void flipBits32 ( void *x )
+	{
+		unsigned char *temp = (unsigned char *)x;
+		unsigned char swap;
+		
+		swap = temp [ 0 ];
+		temp [ 0 ] = temp [ 3 ];
+		temp [ 3 ] = swap;
+
+		swap = temp [ 1 ];
+		temp [ 1 ] = temp [ 2 ];
+		temp [ 2 ] = swap;
+	}
+
+
+};
+
+class SOFReader : public VolumeReader
+{
+private:
+
+	char soffile[1024] ;
+
+	/* Recursive reader */
+	void readSOF( FILE* fin, Volume* vol, int off[3], int len )
+	{
+		// printf("%d %d %d: %d\n", off[0], off[1], off[2], len) ;
+		char type ;
+		int noff[3] ;
+		int nlen = len / 2 ;
+		
+		// Get type
+		fread( &type, sizeof( char ), 1, fin ) ;
+
+		if ( type == 0 )
+		{
+			// Internal node
+			for ( int i = 0 ; i < 2 ; i ++ )
+				for ( int j = 0 ; j < 2 ; j ++ )
+					for ( int k = 0 ; k < 2 ; k ++ )
+					{
+						noff[0] = off[0] + i * nlen ;
+						noff[1] = off[1] + j * nlen ;
+						noff[2] = off[2] + k * nlen ;
+						readSOF( fin, vol, noff, nlen ) ;
+					}
+		}
+		else if ( type == 1 )
+		{
+			// Empty node
+			char sg ;
+			fread( &sg, sizeof( char ), 1, fin ) ;
+
+			for ( int i = 0 ; i <= len ; i ++ )
+				for ( int j = 0 ; j <= len ; j ++ )
+					for ( int k = 0 ; k <= len ; k ++ )
+					{
+						noff[0] = off[0] + i ;
+						noff[1] = off[1] + j ;
+						noff[2] = off[2] + k ;
+						vol->setDataAt( noff[0], noff[1], noff[2], - sg ) ;
+					}
+		}
+		else if ( type == 2 )
+		{
+			// Leaf node
+			char sg ;
+			fread( &sg, sizeof( char ), 1, fin ) ;
+
+			int t = 0 ;
+			for ( int i = 0 ; i < 2 ; i ++ )
+				for ( int j = 0 ; j < 2 ; j ++ )
+					for ( int k = 0 ; k < 2 ; k ++ )
+					{
+						noff[0] = off[0] + i ;
+						noff[1] = off[1] + j ;
+						noff[2] = off[2] + k ;
+						vol->setDataAt( noff[0], noff[1], noff[2], - (( sg >> t ) & 1) ) ;
+						t ++ ;
+					}
+		}
+		else
+		{
+			printf("Wrong!\n");
+		}
+
+
+	}
+
+public:
+	/* Initializer */
+	SOFReader( char* fname )
+	{
+		sprintf_s( soffile, "%s", fname ) ;
+		FILE* fin = fopen( fname, "rb" ) ;
+
+
+		if ( fin == NULL )
+		{
+			printf("Can not open file %s.\n", fname) ;
+		}
+
+		fclose( fin ) ;
+	}
+
+	/* Read volume */
+	Volume* getVolume( )
+	{
+		int sx, sy, sz ;
+
+		FILE* fin = fopen( soffile, "rb" ) ;
+
+		// Process header
+		fread( &sx, sizeof( int ), 1, fin ) ;
+		sy = sx ;
+		sz = sx ;
+		printf("Dimensions: %d %d %d\n", sx, sy, sz ) ;
+
+		Volume* rvalue = new Volume( sx + 1, sy + 1, sz + 1 ) ;
+
+		// Recursive reader
+		int off[3] = { 0, 0, 0 } ;
+		readSOF( fin, rvalue, off, sx ) ;
+
+		printf("Done reading.\n") ;
+		fclose( fin ) ;
+		return rvalue ;
+	}
+
+	/* Get resolution */
+	void getSpacing( float& ax, float& ay, float& az )
+	{
+		ax = 1 ;
+		ay = 1 ;
+		az = 1 ;
+	}
+
+};
+
+class PQRReader : public VolumeReader
+{
+private:
+
+	char pqrfile[1024] ;
+	int padding;
+	float spc ;
+	float minx, miny, minz ;
+
+public:
+	/* Initializer */
+	PQRReader( char* fname, float arrspc, int pad )
+	{
+		sprintf_s( pqrfile, "%s", fname ) ;
+		FILE* fin = fopen( fname, "r" ) ;
+
+
+		if ( fin == NULL )
+		{
+			printf("Can not open file %s.\n", fname) ;
+		}
+
+		fclose( fin ) ;
+		padding = pad ;
+		spc = arrspc ;
+	}
+
+	float getSpacing( )
+	{
+		return spc ;
+	}
+	float getMinx( )
+	{
+		return minx ;
+	}
+	float getMiny( )
+	{
+		return miny ;
+	}
+	float getMinz( )
+	{
+		return minz ;
+	}
+
+	/* Read volume */
+	Volume* getVolume( )
+	{
+		int sx = 1, sy = 1, sz = 1 ;
+
+		FILE* fin = fopen( pqrfile, "r" ) ;
+
+		// First, run through and determine grid size
+		char str[10][1024] ;
+		float t1, t2 ;
+		minx = 1000000;
+		miny = 1000000; 
+		minz = 1000000;
+		while ( !feof( fin ) )
+		{
+			float x, y, z ;
+			fscanf( fin, "%s %s %s %s %s %f %f %f %f %f", str[0], str[1], str[2], str[3], str[4],  
+				&x, &y, &z, &t1, &t2 );
+			
+			if ( x < minx )
+			{
+				minx = x ;
+			}
+			if ( y < miny )
+			{
+				miny = y ;
+			}
+			if ( z < minz )
+			{
+				minz = z ;
+			}
+			
+			// printf("Value at %f %f %f is %f %f %f\n", ix, iy, iz, val[0], val[1], val[2] ) ;
+		}
+		minx -= spc ;
+		miny -= spc ;
+		minz -= spc ;
+		printf("Spacing: %f, Lower corner: %f %f %f.\n", spc, minx, miny, minz) ;
+		fseek( fin, 0, SEEK_SET ) ;
+
+		int ctt = 0 ;
+		while ( !feof( fin ) )
+		{
+			float x, y, z ;
+			fscanf( fin, "%s %s %s %s %s %f %f %f %f %f", str[0], str[1], str[2], str[3], str[4],  
+				&x, &y, &z, &t1, &t2 );
+			
+			int ix = (int)(( x - minx ) / spc) ;
+			int iy = (int)(( y - miny ) / spc) ;
+			int iz = (int)(( z - minz ) / spc) ;
+
+			if ( ix >= sx )
+			{
+				sx = ix + 1 ;
+			}
+			if ( iy >= sy )
+			{
+				sy = iy + 1 ;
+			}
+			if ( iz >= sz )
+			{
+				sz = iz + 1 ;
+			}
+			// printf("Value at %f %f %f is %f %f %f\n", ix, iy, iz, val[0], val[1], val[2] ) ;
+			ctt ++ ;
+		}
+		printf("%d points, raw dimension (%d %d %d), padding of %d is added.\n", ctt, sx, sy, sz, padding) ;
+		sx += padding * 2 ;
+		sy += padding * 2 ;
+		sz += padding * 2 ;
+		fseek( fin, 0, SEEK_SET ) ;
+
+		// Next, parse data
+		Volume* rvalue = new Volume( sx, sy, sz ) ;
+		while ( !feof( fin ) )
+		{
+			float x, y, z ;
+			fscanf( fin, "%s %s %s %s %s %f %f %f %f %f", str[0], str[1], str[2], str[3], str[4],  
+				&x, &y, &z, &t1, &t2 );
+			int ix = (int)(( x - minx ) / spc) ;
+			int iy = (int)(( y - miny ) / spc) ;
+			int iz = (int)(( z - minz ) / spc) ;
+
+			rvalue->setDataAt( ix + padding, iy + padding, iz + padding, 1 ) ;
+			
+			// printf("Value at %f %f %f is %f %f %f\n", ix, iy, iz, val[0], val[1], val[2] ) ;
+		}
+
+		printf("Done reading.\n") ;
+		fclose( fin ) ;
+		return rvalue ;
+	}
+
+	/* Get resolution */
+	void getSpacing( float& ax, float& ay, float& az )
+	{
+		ax = 1 ;
+		ay = 1 ;
+		az = 1 ;
+	}
+
+};
+
+class DXReader : public VolumeReader
+{
+private:
+
+	char dxfile[1024] ;
+	float spcx, spcy, spcz ;
+	float minx, miny, minz ;
+	int step, padd ;
+
+public:
+	/* Initializer */
+	DXReader( char* fname, int s, int padding )
+	{
+		sprintf_s( dxfile, "%s", fname ) ;
+		FILE* fin = fopen( fname, "r" ) ;
+
+
+		if ( fin == NULL )
+		{
+			printf("Can not open file %s.\n", fname) ;
+			exit(0) ;
+		}
+
+		fclose( fin ) ;
+		step = s ;
+		padd = padding ;
+	}
+
+	float getSpacingx( )
+	{
+		return spcx ;
+	}
+	float getSpacingy( )
+	{
+		return spcy ;
+	}
+	float getSpacingz( )
+	{
+		return spcz ;
+	}
+	float getMinx( )
+	{
+		return minx ;
+	}
+	float getMiny( )
+	{
+		return miny ;
+	}
+	float getMinz( )
+	{
+		return minz ;
+	}
+
+	/* Read volume */
+	Volume* getVolume( )
+	{
+		int sx, sy, sz ;
+		char str[10][1024] ;
+		char line[1024];
+		float temp[5] ;
+		FILE* fin = fopen( dxfile, "r" ) ;
+
+		// Get header
+		int pos = 0 ;
+		while (1)
+		{
+			pos = ftell( fin ) ;
+			fgets( line, 1024, fin ) ;
+			if ( line[0] != '#' )
+			{
+				fseek( fin, pos, SEEK_SET ) ;
+				break ;
+			}
+		}
+
+		fgets( line, 1024, fin ) ;
+		sscanf( line, "%s %s %s %s %s %d %d %d", str[0], str[1], str[2], str[3], str[4],  
+				&sx, &sy, &sz );
+		fgets( line, 1024, fin ) ;
+		sscanf( line, "%s %f %f %f", str[0], &minx, &miny, &minz );
+		fgets( line, 1024, fin ) ;
+		sscanf( line, "%s %f %f %f", str[0], &spcx, &temp[0], &temp[1] );
+		fgets( line, 1024, fin ) ;
+		sscanf( line, "%s %f %f %f", str[0], &temp[0], &spcy, &temp[1] );
+		fgets( line, 1024, fin ) ;
+		sscanf( line, "%s %f %f %f", str[0], &temp[0], &temp[1], &spcz );
+		
+		fgets( line, 1024, fin ) ;
+		fgets( line, 1024, fin ) ;
+
+		printf("Dimension (%d, %d, %d), corner at (%f, %f, %f), increments (%f, %f, %f)\n", sx, sy, sz, minx, miny, minz, spcx, spcy, spcz ) ;
+		// exit(0) ;
+
+		// Next, parse data
+		Volume* rvalue = new Volume( (sx-1)/step+1 + padd * 2, (sy-1)/step+1 + padd * 2, (sz-1)/step+1 + padd * 2, -1) ;
+		int items = 0 ;
+		char *token = NULL ;
+		char seps[]   = " ,\t\n";
+		float v;
+		int ix, iy, iz ;
+
+		// let's pad
+		for ( ix = padd / 2 ; ix <= (sx-1)/step + padd + padd / 2 ; ix ++ )
+			for ( iy = padd / 2 ; iy <= (sy-1)/step + padd + padd / 2 ; iy ++ )
+				for ( iz = padd / 2 ; iz <= (sz-1)/step + padd + padd / 2 ; iz ++ )
+				{
+					rvalue->setDataAt( ix, iy, iz, 1 ) ;
+				}
+
+		for ( ix = 0 ; ix < sx ; ix ++ )
+		{
+			if ( ix % 10 == 0 )
+			{
+				printf("%d rows read (%% %f).\n", ix, (float)ix/(float)sx*100 ) ;
+			}
+			for ( iy = 0 ; iy < sy ; iy ++ )
+				for ( iz = 0 ; iz < sz ; iz ++ )
+				{
+					if ( token == NULL )
+					{
+						fgets( line, 1024, fin ) ;
+						token = strtok( line, seps ) ;
+					}
+
+					sscanf( token, "%f", &v ) ;
+					rvalue->setDataAt( ix/step + padd, iy/step + padd, iz/step + padd, v ) ;
+					items ++ ;
+					//printf("%f\n", v);
+
+					token = strtok( NULL, seps );
+				}
+		}
+
+		sx = (sx-1)/step+1 + padd * 2 ;
+		sy = (sy-1)/step+1 + padd * 2 ;
+		sz = (sz-1)/step+1 + padd * 2 ;
+
+		printf("Done reading. %d items\n", items) ;
+		fclose( fin ) ;
+		return rvalue ;
+	}
+
+	/* Get resolution */
+	void getSpacing( float& ax, float& ay, float& az )
+	{
+		ax = 1 ;
+		ay = 1 ;
+		az = 1 ;
+	}
+
+};
+
+
+class MRCReader : public VolumeReader
+{
+public:
+	/* Initializer */
+	MRCReader( char* fname )
+	{
+		sprintf_s( mrcfile, "%s", fname ) ;
+
+		FILE* fin = fopen( fname, "rb" ) ;
+
+		// Parse header
+		fread( &totx, sizeof( int ), 1, fin ) ;
+		fread( &toty, sizeof( int ), 1, fin ) ;
+		fread( &totz, sizeof( int ), 1, fin ) ;
+
+		fread( &mode, sizeof( int ), 1, fin ) ;
+
+		fread( &offx, sizeof( int ), 1, fin ) ;
+		fread( &offy, sizeof( int ), 1, fin ) ;
+		fread( &offz, sizeof( int ), 1, fin ) ;
+		
+		fread( &dimx, sizeof( int ), 1, fin ) ;
+		fread( &dimy, sizeof( int ), 1, fin ) ;
+		fread( &dimz, sizeof( int ), 1, fin ) ;
+		dimx ++ ;
+		dimy ++ ;
+		dimz ++ ;
+
+		fread( &angsx, sizeof( float ), 1, fin ) ;
+		fread( &angsy, sizeof( float ), 1, fin ) ;
+		fread( &angsz, sizeof( float ), 1, fin ) ;
+
+		fread( &anglex, sizeof( float ), 1, fin ) ;
+		fread( &angley, sizeof( float ), 1, fin ) ;
+		fread( &anglez, sizeof( float ), 1, fin ) ;
+
+		fseek( fin, 12, SEEK_CUR ) ;
+
+		fread( &dmin, sizeof( float ), 1, fin ) ;
+		fread( &dmax, sizeof( float ), 1, fin ) ;
+		fread( &dmean, sizeof( float ), 1, fin ) ;
+
+		fseek( fin, 4 * 32, SEEK_CUR ) ;
+
+		fread( &drms, sizeof( float ), 1, fin ) ;
+		fclose( fin ) ;
+
+		dimx = totx ;
+		dimy = toty ;
+		dimz = totz ;
+
+		printf("Dimension: %d %d %d\n", dimx, dimy, dimz ) ;
+		printf("Mode: %d\n", mode) ;
+		printf("Density: from %f to %f, mean at %f, rms at %f\n", dmin, dmax, dmean, drms ) ;
+		printf("Cell size: %f %f %f\n", angsx / (dimx-1), angsy / (dimy-1), angsz / (dimz-1) ) ;
+		printf("Cell angles: %f %f %f\n", anglex, angley, anglez ) ;
+
+		if ( mode > 2 )
+		{
+			printf("Complex mode not supported.\n") ;
+			exit(0) ;
+		}
+
+		/* Hacking code 
+		fseek( fin, 0, SEEK_END ) ;
+		long len = ftell( fin ) ;
+		len -= 1024 ;
+
+		dimen = 1 ;
+		while ( dimen * dimen * dimen < len / 4 )
+		{
+			dimen ++ ;
+		}
+		printf("Size: %d\n", dimen) ;
+		*/
+	}
+
+	/* Read volume */
+	Volume* getVolume( )
+	{
+		FILE* fin = fopen( mrcfile, "rb" ) ;
+		fseek( fin, 1024, SEEK_SET ) ;
+
+		char chard ;
+		short shortd ;
+		float floatd ;
+		double d ;
+
+		
+		Volume* vol = new Volume( dimx, dimy, dimz ) ;
+		for ( int i = 0 ; i < dimz ; i ++ )
+			for ( int j = 0 ; j < dimy ; j ++ )
+				for ( int k = 0 ; k < dimx ; k ++ )
+				{
+					switch ( mode )
+					{
+					case 0: 
+						fread( &chard, sizeof( char ), 1, fin ) ;
+						d = (double) chard ;
+						break ;
+					case 1:
+						fread( &shortd, sizeof( short ), 1, fin ) ;
+						d = (double) shortd ;
+						break ;
+					case 2:
+						fread( &floatd, sizeof( float ), 1, fin ) ;
+						d = (double) floatd ;
+						break ;
+					}
+					
+					vol->setDataAt( k, j, i, d ) ;
+				}
+		fclose( fin ) ;
+
+		return vol ;
+	}
+
+	/* Get resolution */
+	void getSpacing( float& ax, float& ay, float& az )
+	{
+		ax = angsx / (dimx - 1);
+		ay = angsy / (dimy - 1) ;
+		az = angsz / (dimz - 1) ;
+	}
+
+
+private:
+
+	int totx, toty, totz ;
+	int offx, offy, offz ;
+	int dimx, dimy, dimz ;
+
+	float angsx, angsy, angsz ;
+	float anglex, angley, anglez ;
+	float dmin, dmax, dmean, drms ;
+	
+	int mode ;
+
+	char mrcfile[1024] ;
+};
+
+class InvMRCReader : public VolumeReader
+{
+public:
+	/* Initializer */
+	InvMRCReader( char* fname )
+	{
+		sprintf_s( mrcfile, "%s", fname ) ;
+
+		FILE* fin = fopen( fname, "rb" ) ;
+
+		// Parse header
+		ifread( &totx, sizeof( int ), 1, fin ) ;
+		ifread( &toty, sizeof( int ), 1, fin ) ;
+		ifread( &totz, sizeof( int ), 1, fin ) ;
+
+
+		ifread( &mode, sizeof( int ), 1, fin ) ;
+
+		ifread( &offx, sizeof( int ), 1, fin ) ;
+		ifread( &offy, sizeof( int ), 1, fin ) ;
+		ifread( &offz, sizeof( int ), 1, fin ) ;
+		printf("%d %d %d\n", offx, offy, offz) ;
+		
+		ifread( &dimx, sizeof( int ), 1, fin ) ;
+		ifread( &dimy, sizeof( int ), 1, fin ) ;
+		ifread( &dimz, sizeof( int ), 1, fin ) ;
+
+		ifread( &angsx, sizeof( float ), 1, fin ) ;
+		ifread( &angsy, sizeof( float ), 1, fin ) ;
+		ifread( &angsz, sizeof( float ), 1, fin ) ;
+
+		ifread( &anglex, sizeof( float ), 1, fin ) ;
+		ifread( &angley, sizeof( float ), 1, fin ) ;
+		ifread( &anglez, sizeof( float ), 1, fin ) ;
+
+		fseek( fin, 12, SEEK_CUR ) ;
+
+		ifread( &dmin, sizeof( float ), 1, fin ) ;
+		ifread( &dmax, sizeof( float ), 1, fin ) ;
+		ifread( &dmean, sizeof( float ), 1, fin ) ;
+
+		fseek( fin, 4 * 32, SEEK_CUR ) ;
+
+		ifread( &drms, sizeof( float ), 1, fin ) ;
+		fclose( fin ) ;
+
+		dimx = totx ;
+		dimy = toty ;
+		dimz = totz ;
+		printf("Dimension: %d %d %d\n", dimx, dimy, dimz ) ;
+		printf("Mode: %d\n", mode) ;
+		printf("Density: from %f to %f, mean at %f, rms at %f\n", dmin, dmax, dmean, drms ) ;
+		printf("Cell size: %f %f %f\n", angsx / (dimx-1), angsy / (dimy-1), angsz / (dimz-1) ) ;
+		printf("Cell angles: %f %f %f\n", anglex, angley, anglez ) ;
+
+		if ( mode > 2 )
+		{
+			printf("Complex mode not supported.\n") ;
+			// exit(0) ;
+		}
+
+		/* Hacking code 
+		fseek( fin, 0, SEEK_END ) ;
+		long len = ftell( fin ) ;
+		len -= 1024 ;
+
+		dimen = 1 ;
+		while ( dimen * dimen * dimen < len / 4 )
+		{
+			dimen ++ ;
+		}
+		printf("Size: %d\n", dimen) ;
+		*/
+	}
+
+	/* Read volume */
+	Volume* getVolume( )
+	{
+		FILE* fin = fopen( mrcfile, "rb" ) ;
+		fseek( fin, 1024, SEEK_SET ) ;
+
+		char chard ;
+		short shortd ;
+		float floatd ;
+		double d ;
+
+		
+		Volume* vol = new Volume( dimx, dimy, dimz ) ;
+		for ( int i = 0 ; i < dimz ; i ++ )
+			for ( int j = 0 ; j < dimy ; j ++ )
+				for ( int k = 0 ; k < dimx ; k ++ )
+				{
+					switch ( mode )
+					{
+					case 0: 
+						fread( &chard, sizeof( char ), 1, fin ) ;
+						d = (double) chard ;
+						break ;
+					case 1:
+						fread( &shortd, sizeof( short ), 1, fin ) ;
+						d = (double) shortd ;
+						break ;
+					default:
+						ifread( &floatd, sizeof( float ), 1, fin ) ;
+						d = (double) floatd ;
+						break ;
+					}
+
+//					printf("%g\n", d) ;exit(0) ;
+				
+					vol->setDataAt( k, j, i, d ) ;
+				}
+		fclose( fin ) ;
+
+		return vol ;
+	}
+
+	void ifread( void * d, size_t s1, size_t s2, FILE* f )
+	{
+		fread( d, s1, s2, f ) ;
+		flipBits32( d ) ;
+	}
+
+	/* Get resolution */
+	void getSpacing( float& ax, float& ay, float& az )
+	{
+		ax = angsx / (dimx - 1);
+		ay = angsy / (dimy - 1) ;
+		az = angsz / (dimz - 1) ;
+	}
+
+
+private:
+
+	int totx, toty, totz ;
+	int offx, offy, offz ;
+	int dimx, dimy, dimz ;
+
+	float angsx, angsy, angsz ;
+	float anglex, angley, anglez ;
+	float dmin, dmax, dmean, drms ;
+	
+	int mode ;
+
+	char mrcfile[1024] ;
+};
+
+class MRCReaderPicker
+{
+public:
+	MRCReaderPicker(){} ;
+
+	static VolumeReader* pick( char* fname )
+	{
+		FILE* fin = fopen( fname, "rb" ) ;
+		if ( fin == NULL )
+		{
+			printf("Error reading MRC file %s.\n", fname) ;
+			exit(0) ;
+		}
+		int totx, toty, totz ;
+
+		// Parse header
+		fread( &totx, sizeof( int ), 1, fin ) ;
+		fread( &toty, sizeof( int ), 1, fin ) ;
+		fread( &totz, sizeof( int ), 1, fin ) ;
+
+		fclose( fin ) ;
+
+		if ( totx <= 0 || totx > 1024 )
+		{
+			printf("Calling inverse MRCreader.\n") ;
+			return new InvMRCReader( fname ) ;
+		}
+		else
+		{
+			printf("Calling MRCreader.\n") ;
+			return new MRCReader( fname ) ;
+		}
+	}
+};
+
+class HackMRCReader : public VolumeReader
+{
+public:
+	/* Initializer */
+	HackMRCReader( char* fname )
+	{
+		sprintf_s( mrcfile, "%s", fname ) ;
+
+		FILE* fin = fopen( fname, "rb" ) ;
+
+
+		fseek( fin, 0, SEEK_END ) ;
+		long len = ftell( fin ) ;
+		len -= 1024 ;
+
+		dimen = 1 ;
+		while ( dimen * dimen * dimen < len / 4 )
+		{
+			dimen ++ ;
+		}
+		printf("Volume Size: %d\n", dimen) ;
+
+		fclose( fin ) ;
+	}
+
+	/* Read volume */
+	Volume* getVolume( )
+	{
+		FILE* fin = fopen( mrcfile, "rb" ) ;
+		fseek( fin, 1024, SEEK_SET ) ;
+		
+		Volume* vol = new Volume( dimen, dimen, dimen ) ;
+		float d ;
+		for ( int i = 0 ; i < dimen ; i ++ )
+			for ( int j = 0 ; j < dimen ; j ++ )
+				for ( int k = 0 ; k < dimen ; k ++ )
+				{
+					fread( &d, sizeof( float ), 1, fin ) ;
+					flipBits32( &d ) ;
+					// printf("%g\n", d) ;exit(0) ;
+					vol->setDataAt( k, j, i, d ) ;
+				}
+		fclose( fin ) ;
+
+		return vol ;
+	}
+
+	/* Get resolution */
+	void getSpacing( float& ax, float& ay, float& az )
+	{
+		ax = 1 ;
+		ay = 1 ;
+		az = 1 ;
+	}
+
+
+private:
+
+	int dimen ;
+	char mrcfile[1024] ;
+};
+
+
+class CylinderVolumeGenerator : public VolumeReader
+{
+public:
+	/* Initializer */
+	CylinderVolumeGenerator( int dim, double rad )
+	{
+		size = dim ;
+		radius = rad ;
+	};
+
+	Volume* getVolume()
+	{
+		Volume* vol = new Volume( size, size, size ) ;
+		int thick = size / 6 ;
+
+		double cent = (size - 1) / 2.0 ;
+		double r2 = radius * radius ;
+		for ( int x = 0 ; x < size ; x ++ )
+			for ( int y = 0 ; y < size ; y ++ )
+				for ( int z = 0 ; z < size ; z ++ )
+				{
+					double dis = sqrt( ( z - cent ) * ( z - cent ) + ( x - cent ) * ( x - cent ) );
+					
+					if ( fabs( y - cent ) > thick )
+					{
+						vol->setDataAt( x, y, z, - ( fabs( y - cent ) - thick ) ) ;
+					}
+					else
+					{
+						vol->setDataAt( x, y, z, radius - dis ) ;
+					}
+
+					// double dis = ( z - cent ) * ( z - cent ) + ( x - cent ) * ( x - cent );
+					// vol->setDataAt( x, y, z, 10 - 10 * dis / r2 ) ;
+				};
+
+		return vol ;
+	};
+
+	/* Get resolution */
+	void getSpacing( float& ax, float& ay, float& az )
+	{
+		ax = 1 ;
+		ay = 1 ;
+		az = 1 ;
+	}
+
+
+private:
+
+	int size ;
+	double radius ;
+};
+
+
+class SheetVolumeGenerator : public VolumeReader
+{
+public:
+	/* Initializer */
+	SheetVolumeGenerator( int dim, double hit )
+	{
+		size = dim ;
+		height = hit ;
+	};
+
+	Volume* getVolume()
+	{
+		Volume* vol = new Volume( size, size, size ) ;
+
+		double cent = (size - 1) / 2.0 ;
+		for ( int x = 0 ; x < size ; x ++ )
+			for ( int y = 0 ; y < size ; y ++ )
+				for ( int z = 0 ; z < size ; z ++ )
+				{
+					double dis = abs( z - cent );
+					vol->setDataAt( x, y, z, 10 - 10 * dis / height ) ;
+
+					// double dis = ( z - cent ) * ( z - cent ) + ( x - cent ) * ( x - cent );
+					// vol->setDataAt( x, y, z, 10 - 10 * dis / r2 ) ;
+				};
+
+		return vol ;
+	};
+
+	/* Get resolution */
+	void getSpacing( float& ax, float& ay, float& az )
+	{
+		ax = 1 ;
+		ay = 1 ;
+		az = 1 ;
+	}
+
+
+private:
+
+	int size ;
+	double height ;
+};
+
+
+
+
+class SphereVolumeGenerator : public VolumeReader
+{
+public:
+	/* Initializer */
+	SphereVolumeGenerator( int dim, double ratiox, double ratioy, double ratioz )
+	{
+		size = dim ;
+		rx = (int)ratiox ;
+		ry = (int)ratioy ;
+		rz = (int)ratioz ;
+	};
+
+	Volume* getVolume()
+	{
+		Volume* vol = new Volume( size, size, size ) ;
+
+		double dis = ( size - 1 ) * ( size - 1 ) / 100 ;
+
+		for ( int x = 0 ; x < size ; x ++ )
+			for ( int y = 0 ; y < size ; y ++ )
+				for ( int z = 0 ; z < size ; z ++ )
+				{
+					double d = rx * ( x - ( size - 1 ) / 2) * ( x - ( size - 1 ) / 2) + 
+						ry * ( y - ( size - 1 ) / 2) * ( y - ( size - 1 ) / 2) + 
+						rz * ( z - ( size - 1 ) / 2) * ( z - ( size - 1 ) / 2) ;
+					vol->setDataAt( x, y, z, 10 - 10 * sqrt(d) / sqrt(dis) ) ;
+					// vol->setDataAt( x, y, z, 10 - 10 * (x + y) / size ) ;
+				};
+
+		return vol ;
+	};
+
+	/* Get resolution */
+	void getSpacing( float& ax, float& ay, float& az )
+	{
+		ax = 1 ;
+		ay = 1 ;
+		az = 1 ;
+	}
+
+
+private:
+
+	int size, rx, ry, rz ;
+};
+
+
+
+
+
+
+
+
+#endif
