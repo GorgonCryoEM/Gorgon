@@ -148,7 +148,7 @@ void StandardGraph::PrintGraph() {
 
 	printf("\t");
 	for(int i = 0; i < nodeCount; i++) {
-		printf("   %d\t|", i+1);
+		printf("      %d    \t|", i+1);
 	}
 	printf("\n");
 	double used = 0.0;
@@ -176,9 +176,10 @@ void StandardGraph::PrintGraph() {
 			}
 
 			if(adjacencyMatrix[i][j][1] == MAXINT) {
-				printf(" %c  \t|", temp);
+				printf(" %c         \t|", temp);
 			} else {
-				printf(" %c %d\t|", temp, (int)(adjacencyMatrix[i][j][1] + 0.5));
+				//printf(" %c %d\t|", temp, (int)(adjacencyMatrix[i][j][1] + 0.5));
+				printf(" %c %f\t|", temp, adjacencyMatrix[i][j][1]);
 			}
 		}
 		printf("\n");

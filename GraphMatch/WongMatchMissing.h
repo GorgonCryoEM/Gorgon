@@ -244,13 +244,13 @@ double WongMatchMissing::GetC(int j, int p, int qj, int qp) {
 }
 
 double WongMatchMissing::GetCost(int d, int m, int qj, int qp) {
-	double jpCost = 0;
-	double qjqpCost;
-	double typeCost = 0;
+	double patternLength = 0;
+	double baseLength;
+	double additionalCosts = 0;
 
 	// Adding the length of the skipped helixes
 	for(int i = 1; i < m; i++) {
-		jpCost += patternGraph->adjacencyMatrix[d+i-1][d+i-1][1];
+		patternLength += patternGraph->adjacencyMatrix[d+i-1][d+i-1][1];
 	}
 
 	// Adding the length of the edges
@@ -261,26 +261,53 @@ double WongMatchMissing::GetCost(int d, int m, int qj, int qp) {
 		if(i==0) {
 			firstIsLoop = lastIsLoop;
 		}
-		jpCost += patternGraph->adjacencyMatrix[d+i-1][d+i][1];		
+		patternLength += patternGraph->adjacencyMatrix[d+i-1][d+i][1];		
 	}
 
-	if(!baseGraph->EdgeExists(qj-1,qp-1)) {
-		qjqpCost = 1000;
-	} else {
-		qjqpCost = baseGraph->adjacencyMatrix[qj-1][qp-1][1];
-	}
+	assert(baseGraph->EdgeExists(qj-1,qp-1));		
+	baseLength = baseGraph->adjacencyMatrix[qj-1][qp-1][1];
 
-	if(m == 1) {
-		if(patternGraph->adjacencyMatrix[d-1][d][0] != baseGraph->adjacencyMatrix[qj-1][qp-1][0]) {
-			typeCost = 1000;
+	bool euclideanEstimate = (baseGraph->adjacencyMatrix[qj-1][qp-1][0] == GRAPHEDGE_LOOP_EUCLIDEAN);
+	double weight = 1.0;
+	switch((int)(baseGraph->adjacencyMatrix[qj-1][qp-1][0] + 0.01)) {
+		case(GRAPHEDGE_HELIX) : 
+			weight = HELIX_WEIGHT_COEFFICIENT;
+			break;
+		case(GRAPHEDGE_LOOP):
+			weight = LOOP_WEIGHT_COEFFICIENT;
+			break;
+		case(GRAPHEDGE_SHEET):
+			weight = SHEET_WEIGHT_COEFFICIENT;
+			break;
+	}
+	weight = euclideanEstimate? weight * EUCLIDEAN_LOOP_PENALTY: weight;
+
+
+	if(m == 1) {		
+		if((patternGraph->adjacencyMatrix[d-1][d][0] != baseGraph->adjacencyMatrix[qj-1][qp-1][0]) &&
+			!((patternGraph->adjacencyMatrix[d-1][d][0] == GRAPHEDGE_LOOP) && (baseGraph->adjacencyMatrix[qj-1][qp-1][0] == GRAPHEDGE_LOOP_EUCLIDEAN))) 	{
+			additionalCosts += 1000;
 		}
 	} else {
 		if(!firstIsLoop || !lastIsLoop) {
-			typeCost = 1000;
+			additionalCosts += 1000;
 		}
 	}
 
-	return fabs(jpCost - qjqpCost) + typeCost;
+
+	switch(COST_FUNCTION)
+	{
+	case(1):
+		return weight * fabs(patternLength - baseLength) + additionalCosts;
+		break;
+	case(2):
+		return weight * fabs(patternLength - baseLength) / (patternLength + baseLength) + additionalCosts;
+		break;
+	case(3):
+		return weight * pow((patternLength - baseLength),2) + additionalCosts;
+		break;
+	}
+	return 0;
 }
 
 double WongMatchMissing::GetCPrime(int a, int b, int c, int d) {
@@ -382,24 +409,32 @@ void WongMatchMissing::ExpandNode() {
 	{
 		if((currentNode->n2Top == 0) || (baseGraph->EdgeExists(currentNode->n2[currentNode->n2Top-1]-1, currentNode->m2[i]-1)))
 		{
-			for(int j = 0; j < missingHelixCount * 2 - currentNode->missingNodesUsed + 1; j++) {
+			for(int j = 0; j < missingHelixCount * 2 - currentNode->missingNodesUsed + 1; j += 2) {
 				temp = currentNode;
 				currentNode = new StandardNode(currentNode, i, j);
+				currentNode->costGStar = 0;
+
+				if(((temp->n1Top == 0) && (currentNode->n2[0] == -1)) || 
+					((currentNode->m1Top == 0) && (currentNode->n2[currentNode->n2Top-1] == -1))) {
+					currentNode->costGStar += START_END_MISSING_HELIX_PENALTY;
+				}
+
+
 				if(temp->n1Top == 0) {
-					currentNode->costGStar = temp->costGStar + MISSING_HELIX_PENALTY * j + GetC(currentNode->n1[currentNode->n1Top-1], currentNode->n2[currentNode->n2Top-1]);
+					currentNode->costGStar += temp->costGStar + MISSING_HELIX_PENALTY * (j/2.0) + GetC(currentNode->n1[currentNode->n1Top-1], currentNode->n2[currentNode->n2Top-1]);
 				} else {
-					currentNode->costGStar = temp->costGStar + 
+					currentNode->costGStar += temp->costGStar + 
 						GetCost(currentNode->n1[currentNode->n1Top-j-2], j+1, currentNode->n2[currentNode->n2Top-j-2], currentNode->n2[currentNode->n2Top-1]) +
-						MISSING_HELIX_PENALTY * j +
+						MISSING_HELIX_PENALTY * (j/2.0) +
 						GetC(currentNode->n1[currentNode->n1Top-1], currentNode->n2[currentNode->n2Top-1]);
 				}
 				currentNode->cost = GetF();			
 
-				printf("\t");
+	/*			printf("\t");
 				for(int i = 0; i < currentNode->n1Top; i++) {
 					printf("%d ", currentNode->n2[i]);
 				}
-				printf(" - %f\t%f\t%f\n", currentNode->costGStar, currentNode->cost - currentNode->costGStar, currentNode->cost);
+				printf(" - %f\t%f\t%f\n", currentNode->costGStar, currentNode->cost - currentNode->costGStar, currentNode->cost);*/
 
 				activeNodes.Insert(currentNode);
 				currentNode = temp;		
