@@ -202,6 +202,7 @@ int Matcher7::GetHistoryIndex(unsigned int pathBitmap) {
 }
 
 double Matcher7::GetMissingHelixCost(int patternHelix) {
+	return 0;
 	return GetCost(patternHelix*2, patternHelix*2+1, -1, -1);
 }
 
@@ -318,10 +319,10 @@ void Matcher7::FindPossiblePaths() {
 							if((op <= missingHelixCount)&&(oldHistoryTableNum == op)) {
 								rankingCount = 1;
 								additionalCost += GetCost(op*2, op*2+1, ob, ob2);
-								for(pp = 1; pp <= p-1; pp++) {
-									additionalCost += (MISSING_HELIX_PENALTY + GetMissingHelixCost(pp));								
+								for(pp = 1; pp <= oldHistoryTableNum; pp++) {
+									additionalCost += (MISSING_HELIX_PENALTY + GetMissingHelixCost(pp-1));								
 								}				
-								if(p-1 > 0) {
+								if(oldHistoryTableNum > 0) {
 									additionalCost += START_END_MISSING_HELIX_PENALTY;
 								}
 							} else {
@@ -329,8 +330,8 @@ void Matcher7::FindPossiblePaths() {
 							}
 
 							// If the current helix is dummy add penalty
-							for(pp = op+1; pp <= p-1; pp++) {
-								additionalCost += (MISSING_HELIX_PENALTY + GetMissingHelixCost(pp));
+							for(pp = oldHistoryTableNum; pp < m; pp++) {
+								additionalCost += (MISSING_HELIX_PENALTY + GetMissingHelixCost(p-pp-1));
 							}
 
 							
@@ -409,17 +410,18 @@ StandardNode * Matcher7::FindPath(int patternHelix, int baseNode, int historyTab
 		path->n1[path->n1Top] = patternHelix*2 + 1;			path->n1Top++;
 		path->n1[path->n1Top] = patternHelix*2;				path->n1Top++;
 		path->n2[path->n2Top] = GetOtherBaseNode(baseNode);	path->n2Top++;
-		path->n2[path->n2Top] = baseNode;						path->n2Top++;
+		path->n2[path->n2Top] = baseNode;					path->n2Top++;
 
 		junction = (Matcher7Junction*)junctions[GetIndex(patternHelix, baseNode)];
 		histTable = (Matcher7PathHistory*)junction->history[historyTable];
 		assert(rank >= 0);
 		if(histTable[historyRow].lastPatternHelix[rank] != -1) {
 			for(int i = patternHelix-2; i >= histTable[historyRow].lastPatternHelix[rank]; i--) {
-				path->n1[path->n1Top] = i*2 + 1;						path->n1Top++;
-				path->n1[path->n1Top] = i*2;							path->n1Top++;
-				path->n2[path->n2Top] = baseGraph->GetNodeCount();		path->n2Top++;
-				path->n2[path->n2Top] = baseGraph->GetNodeCount();		path->n2Top++;
+				patternHelix--;
+				path->n1[path->n1Top] = patternHelix*2 + 1;	path->n1Top++;
+				path->n1[path->n1Top] = patternHelix*2;		path->n1Top++;
+				path->n2[path->n2Top] = -2;				path->n2Top++;
+				path->n2[path->n2Top] = -2;				path->n2Top++;
 			}
 		}
 		if(path->cost == -1) {
@@ -428,10 +430,11 @@ StandardNode * Matcher7::FindPath(int patternHelix, int baseNode, int historyTab
 
 		if(histTable[historyRow].lastPatternHelix[rank] == -1) {
 			for(int i = patternHelix-1; i >= 0; i--) {
-				path->n1[path->n1Top] = i*2 + 1;						path->n1Top++;
-				path->n1[path->n1Top] = i*2;							path->n1Top++;
-				path->n2[path->n2Top] = baseGraph->GetNodeCount();		path->n2Top++;
-				path->n2[path->n2Top] = baseGraph->GetNodeCount();		path->n2Top++;
+				patternHelix--;
+				path->n1[path->n1Top] = patternHelix*2 + 1;	path->n1Top++;
+				path->n1[path->n1Top] = patternHelix*2;		path->n1Top++;
+				path->n2[path->n2Top] = -2;				path->n2Top++;
+				path->n2[path->n2Top] = -2;				path->n2Top++;
 			}
 		}
 
@@ -471,7 +474,7 @@ void Matcher7::SaveResults() {
 							for(int pp = p+1; pp <= (int)patternGraph->pdbStructures.size() - 1; pp++) {
 								node->cost += (MISSING_HELIX_PENALTY + GetMissingHelixCost(pp));
 							}
-							if((int)patternGraph->pdbStructures.size() - 1 > p) {
+							if(p < (int)patternGraph->pdbStructures.size() - 1) {
 								node->cost += START_END_MISSING_HELIX_PENALTY;
 							}
 							inserted = false;
@@ -505,7 +508,7 @@ void Matcher7::SaveResults() {
 		node = (StandardNode*)results[i];
 		for(int j = node->n1Top; j < patternGraph->nodeCount; j++) {
 			node->n1[node->n1Top] = j;							node->n1Top++;
-			node->n2[node->n1Top] = baseGraph->nodeCount;		node->n2Top++;
+			node->n2[node->n2Top] = -2;							node->n2Top++;
 		}
 		node->PrintNodeConcise(i+1);
 	}

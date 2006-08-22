@@ -182,8 +182,8 @@ void StandardNode::SortOnPattern() {
 	int temp;
 	int minIndex;
 	for(int i = 0; i < n1Top -1; i++) {
-		minIndex = i+1;
-		for(int j = i; j < n1Top; j++) {
+		minIndex = i;
+		for(int j = i+1; j < n1Top; j++) {
 			if(n1[j] < n1[minIndex]) {
 				minIndex = j;
 			}
