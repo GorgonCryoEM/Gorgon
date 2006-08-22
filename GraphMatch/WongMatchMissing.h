@@ -37,6 +37,7 @@ private:
 	bool newBaseGraph;
 	int expandCount;
 	int foundCount;
+	int longestMatch;
 private:
 	void Init(StandardGraph * patternGraph, StandardGraph * baseGraph);
 	double GetC(int p, int qp);
@@ -63,6 +64,7 @@ WongMatchMissing::WongMatchMissing(StandardGraph * patternGraph, StandardGraph *
 		//HandleMissingHelixes();
 	}
 	foundCount = 0;
+	longestMatch = 0;
 }
 
 WongMatchMissing::WongMatchMissing(StandardGraph * patternGraph, StandardGraph * baseGraph, int missingHelixCount, int missingSheetCount) {
@@ -74,6 +76,7 @@ WongMatchMissing::WongMatchMissing(StandardGraph * patternGraph, StandardGraph *
 		HandleMissingHelixes();
 	}
 	foundCount = 0;
+	longestMatch = 0;
 
 }
 
@@ -211,7 +214,7 @@ void WongMatchMissing::SaveResults(){
 	}
 	printf(" - %f : (%d expanded)\n", currentNode->cost, expandCount);
 	//printf("%d\t\t", expandCount);
-	delete currentNode;
+	delete currentNode;	
 }
 
 double WongMatchMissing::GetC(int p, int qp) {
@@ -405,6 +408,10 @@ void WongMatchMissing::PopBestNode(){
 void WongMatchMissing::ExpandNode() {
 	expandCount++;
 	StandardNode * temp;
+	if(longestMatch < currentNode->n1Top) {
+		longestMatch = currentNode->n1Top;
+		printf(" %d elements matched!\n", longestMatch);
+	}
 	for(int i = 0; i < (int)currentNode->m2Top; i++)
 	{
 		if((currentNode->n2Top == 0) || (baseGraph->EdgeExists(currentNode->n2[currentNode->n2Top-1]-1, currentNode->m2[i]-1)))
@@ -430,11 +437,11 @@ void WongMatchMissing::ExpandNode() {
 				}
 				currentNode->cost = GetF();			
 
-	/*			printf("\t");
-				for(int i = 0; i < currentNode->n1Top; i++) {
-					printf("%d ", currentNode->n2[i]);
-				}
-				printf(" - %f\t%f\t%f\n", currentNode->costGStar, currentNode->cost - currentNode->costGStar, currentNode->cost);*/
+				//printf("\t");
+				//for(int i = 0; i < currentNode->n1Top; i++) {
+				//	printf("%d ", currentNode->n2[i]);
+				//}
+				//printf(" - %f\t%f\t%f\n", currentNode->costGStar, currentNode->cost - currentNode->costGStar, currentNode->cost);
 
 				activeNodes.Insert(currentNode);
 				currentNode = temp;		
