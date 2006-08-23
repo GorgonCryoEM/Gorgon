@@ -73,7 +73,7 @@ WongMatchMissing::WongMatchMissing(StandardGraph * patternGraph, StandardGraph *
 	this->missingSheetCount = missingSheetCount;
 	if(!PERFORMANCE_COMPARISON_MODE) {
 		NormalizeGraphs();
-		HandleMissingHelixes();
+		//HandleMissingHelixes();
 	}
 	foundCount = 0;
 	longestMatch = 0;
@@ -267,27 +267,45 @@ double WongMatchMissing::GetCost(int d, int m, int qj, int qp) {
 		patternLength += patternGraph->adjacencyMatrix[d+i-1][d+i][1];		
 	}
 
-	assert(baseGraph->EdgeExists(qj-1,qp-1));		
-	baseLength = baseGraph->adjacencyMatrix[qj-1][qp-1][1];
 
-	bool euclideanEstimate = (baseGraph->adjacencyMatrix[qj-1][qp-1][0] == GRAPHEDGE_LOOP_EUCLIDEAN);
+	bool euclideanEstimate = false;
 	double weight = 1.0;
-	switch((int)(baseGraph->adjacencyMatrix[qj-1][qp-1][0] + 0.01)) {
-		case(GRAPHEDGE_HELIX) : 
-			weight = HELIX_WEIGHT_COEFFICIENT;
-			break;
-		case(GRAPHEDGE_LOOP):
-			weight = LOOP_WEIGHT_COEFFICIENT;
-			break;
-		case(GRAPHEDGE_SHEET):
-			weight = SHEET_WEIGHT_COEFFICIENT;
-			break;
+
+	if(qj == -1) { // special handling for missing helixes at the ends
+		baseLength = 0;
+		switch((int)(patternGraph->adjacencyMatrix[d-1][d][0] + 0.01)) {
+			case(GRAPHEDGE_HELIX) : 
+				weight = HELIX_WEIGHT_COEFFICIENT;
+				break;
+			case(GRAPHEDGE_LOOP):
+				weight = LOOP_WEIGHT_COEFFICIENT;
+				break;
+			case(GRAPHEDGE_SHEET):
+				weight = SHEET_WEIGHT_COEFFICIENT;
+				break;
+		}
 	}
-	weight = euclideanEstimate? weight * EUCLIDEAN_LOOP_PENALTY: weight;
+	else {
+		assert(baseGraph->EdgeExists(qj-1,qp-1));		
+		baseLength = baseGraph->adjacencyMatrix[qj-1][qp-1][1];
+		euclideanEstimate = (baseGraph->adjacencyMatrix[qj-1][qp-1][0] == GRAPHEDGE_LOOP_EUCLIDEAN);
+		switch((int)(baseGraph->adjacencyMatrix[qj-1][qp-1][0] + 0.01)) {
+			case(GRAPHEDGE_HELIX) : 
+				weight = HELIX_WEIGHT_COEFFICIENT;
+				break;
+			case(GRAPHEDGE_LOOP):
+				weight = LOOP_WEIGHT_COEFFICIENT;
+				break;
+			case(GRAPHEDGE_SHEET):
+				weight = SHEET_WEIGHT_COEFFICIENT;
+				break;
+		}
+		weight = euclideanEstimate? weight * EUCLIDEAN_LOOP_PENALTY: weight;
+	}
 
 
 	if(m == 1) {		
-		if((patternGraph->adjacencyMatrix[d-1][d][0] != baseGraph->adjacencyMatrix[qj-1][qp-1][0]) &&
+		if((qj!= -1) && (patternGraph->adjacencyMatrix[d-1][d][0] != baseGraph->adjacencyMatrix[qj-1][qp-1][0]) &&
 			!((patternGraph->adjacencyMatrix[d-1][d][0] == GRAPHEDGE_LOOP) && (baseGraph->adjacencyMatrix[qj-1][qp-1][0] == GRAPHEDGE_LOOP_EUCLIDEAN))) 	{
 			additionalCosts += 1000;
 		}
@@ -362,7 +380,7 @@ double WongMatchMissing::GetB() {
 	for(int k = 0; k < currentNode->m1Top; k++) {
 		kNode = currentNode->m1[k];
 		if(kNode != patternGraph->nodeCount) {
-			minCost = MAXDOUBLE;
+			minCost = MISSING_HELIX_PENALTY;
 
 			for(int m = 1; m <= missingHelixCount * 2 + 1; m++) {
 				for(int l = 0; l <= m - 1; l++) {				
@@ -412,11 +430,13 @@ void WongMatchMissing::ExpandNode() {
 		longestMatch = currentNode->n1Top;
 		printf(" %d elements matched!\n", longestMatch);
 	}
+	
+	// Expanding nodes with a real terminal node
 	for(int i = 0; i < (int)currentNode->m2Top; i++)
-	{
+	{		
 		if((currentNode->n2Top == 0) || (baseGraph->EdgeExists(currentNode->n2[currentNode->n2Top-1]-1, currentNode->m2[i]-1)))
 		{
-			for(int j = 0; j < missingHelixCount * 2 - currentNode->missingNodesUsed + 1; j += 2) {
+			for(int j = 0; j < missingHelixCount * 2 - currentNode->missingNodesUsed + 1; j += 2) {  // Stepping by two since we jump every 2 loops
 				temp = currentNode;
 				currentNode = new StandardNode(currentNode, i, j);
 				currentNode->costGStar = 0;
@@ -447,6 +467,25 @@ void WongMatchMissing::ExpandNode() {
 				currentNode = temp;		
 			}
 		}
+	}
+
+
+	// Expanding nodes with a dummy terminal node
+	if((currentNode->m2Top == 0) && (missingHelixCount - currentNode->missingNodesUsed >= currentNode->m1Top)) {
+		temp = currentNode;
+		currentNode = new StandardNode(currentNode);
+		currentNode->costGStar = temp->costGStar + START_END_MISSING_HELIX_PENALTY;
+		while(currentNode->m1Top > 0) {
+			//currentNode->costGStar += (MISSING_HELIX_PENALTY / 2.0) ;//+ GetCost(currentNode->n1[currentNode->n1Top-1], 1, -1, -1);
+			currentNode->n1[currentNode->n1Top] = currentNode->m1[currentNode->m1Top - 1];
+			currentNode->n1Top++;
+			currentNode->m1Top--;
+			currentNode->n2[currentNode->n2Top] = -1;
+			currentNode->n2Top++;			
+		}
+		currentNode->cost = currentNode->costGStar;
+		activeNodes.Insert(currentNode);
+		currentNode = temp;
 	}
 }
 void WongMatchMissing::PrintCurrentNode()
