@@ -15,7 +15,7 @@ const int NOPATHPENALTY = 1;
 const int TYPEMISMATCHPENALTY = 1;
 
 const int RESULT_COUNT = 20;
-const int MAX_NODES = 32;
+const int MAX_NODES = 40;
 const int MAXINT = 2147483647;
 const unsigned int MAXUNSIGNEDINT = 4294967295;
 const double MAXDOUBLE = 1.7E308;

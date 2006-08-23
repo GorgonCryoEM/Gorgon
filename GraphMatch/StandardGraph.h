@@ -73,6 +73,7 @@ StandardGraph::StandardGraph(int nodeCount){
 			adjacencyMatrix[i][j][1] = MAXINT;
 		}
 	}
+	this->pdbStructures.clear();
 }
 
 StandardGraph::StandardGraph(char* fname) {
@@ -92,6 +93,7 @@ StandardGraph::StandardGraph(char* fname) {
 		fscanf(fin, "\n");
 	}
 	fclose( fin ) ;
+	this->pdbStructures.clear();
 }		
 
 bool StandardGraph::EdgeExists(int n, int m) {
