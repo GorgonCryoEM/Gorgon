@@ -13,6 +13,7 @@ Date  : 01/23/2006
 #include "WongMatch2.h"
 #include "WongMatch15.h"
 #include "WongMatchMissing.h"
+#include "WongMatchMissing15.h"
 #include "VFMatch.h"
 #include "VFInexact.h"
 #include "PDBReader.h"
@@ -82,7 +83,7 @@ void DoPerformanceComparison(StandardGraph * patternGraph, StandardGraph * baseG
 	WongMatchMissing * wongMatchMissing;
 	wongMatchMissing = new WongMatchMissing(patternGraph, baseGraph);
 	start = clock();
-	wongMatchMissing->RunMatching();
+	wongMatchMissing->RunMatching(start);
 	finish = clock();
 	wongMatchMissing->SaveResults();
 	inexactTime += ((double) (finish - start) / (double) CLOCKS_PER_SEC);
@@ -122,22 +123,7 @@ void DoPerformanceComparison(StandardGraph * patternGraph, StandardGraph * baseG
 void DoGraphMatching(StandardGraph * patternGraph, StandardGraph * baseGraph) 
 {
 	clock_t start, finish;
-	// Match Graphs
-	WongMatchMissing * matcher;
-	if(MISSING_HELIX_COUNT == -1) {
-		matcher = new WongMatchMissing(patternGraph, baseGraph);
-	} else {
-		matcher = new WongMatchMissing(patternGraph, baseGraph, MISSING_HELIX_COUNT, MISSING_SHEET_COUNT);
-	}
-	start = clock();
-	matcher->RunMatching();
-	finish = clock();
-	printf("\n\tWONG Matching process Took %f seconds.\n", (double) (finish - start) / (double) CLOCKS_PER_SEC ) ;
 
-	matcher->SaveResults();
-	
-	// Clean
-	delete(matcher);
 
 	// Match Graphs
 	Matcher7 * matcher7;
@@ -149,15 +135,40 @@ void DoGraphMatching(StandardGraph * patternGraph, StandardGraph * baseGraph)
 	start = clock();
 	matcher7->RunMatching();
 	finish = clock();
-	printf("\n\tDP Matching process Took %f seconds.\n", (double) (finish - start) / (double) CLOCKS_PER_SEC ) ;
-
-
 	matcher7->SaveResults();
+	printf("\n\tDP Matching process Took %f seconds.\n", (double) (finish - start) / (double) CLOCKS_PER_SEC ) ;
 	
 	// Clean
 	delete(matcher7);
 
 
+	// Match Graphs
+	WongMatchMissing * matcher;
+	if(MISSING_HELIX_COUNT == -1) {
+		matcher = new WongMatchMissing(patternGraph, baseGraph);
+	} else {
+		matcher = new WongMatchMissing(patternGraph, baseGraph, MISSING_HELIX_COUNT, MISSING_SHEET_COUNT);
+	}
+	start = clock();
+	matcher->RunMatching(start);
+	matcher->SaveResults();
+	
+	// Clean
+	delete(matcher);
+
+	// Match Graphs
+	WongMatchMissing15 * matcher15;
+	if(MISSING_HELIX_COUNT == -1) {
+		matcher15 = new WongMatchMissing15(patternGraph, baseGraph);
+	} else {
+		matcher15 = new WongMatchMissing15(patternGraph, baseGraph, MISSING_HELIX_COUNT, MISSING_SHEET_COUNT);
+	}
+	start = clock();
+	matcher15->RunMatching(start);
+	matcher15->SaveResults();
+	
+	// Clean
+	delete(matcher15);
 }
 
 

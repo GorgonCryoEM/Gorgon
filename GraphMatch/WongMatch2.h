@@ -20,6 +20,7 @@ Date  : 07/18/2006
 struct EdgeMinCostEntry {
 	unsigned long long bitmap;
 	double cost;
+	int noOfEdges;
 };
 
 struct HashEntry {
@@ -550,11 +551,7 @@ void WongMatch2::NormalizeGraphs() {
 
 
 unsigned long long WongMatch2::EncodeNode(unsigned long long bitmap, int node) {
-	unsigned long long bitValue = 1;
-	for(int i = 1; i < node; i++) {
-		bitValue *= 2;
-	}
-	return bitmap | bitValue;
+	return bitmap | (unsigned long long)(pow(2.0, node-1) + 0.1);
 }
 
 void WongMatch2::StoreInHash(unsigned long long bitmap, int lastNode, double gStar, double h) {

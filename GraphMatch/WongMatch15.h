@@ -488,11 +488,7 @@ void WongMatch15::NormalizeGraphs() {
 }
 
 unsigned long long WongMatch15::EncodeNode(unsigned long long bitmap, int node) {
-	unsigned long long bitValue = 1;
-	for(int i = 1; i < node; i++) {
-		bitValue *= 2;
-	}
-	return bitmap | bitValue;
+	return bitmap | (unsigned long long)(pow(2.0, node-1) + 0.1);
 }
 
 
