@@ -17,6 +17,7 @@ Date  : 08/14/2006
 #include "NodeList.h"
 #include "GlobalConstants.h"
 #include <time.h>
+#include "../SkeletonMaker/PriorityQueue.h"
 
 class WongMatchMissing{
 public:
@@ -32,7 +33,7 @@ public:
 
 private:
 	StandardNode * currentNode;
-	NodeList activeNodes;
+	PriorityQueue<StandardNode, double> * queue;
 	int missingHelixCount;
 	int missingSheetCount;
 	bool newBaseGraph;
@@ -62,36 +63,16 @@ private:
 
 WongMatchMissing::WongMatchMissing(StandardGraph * patternGraph, StandardGraph * baseGraph) {
 	Init(patternGraph, baseGraph);
-	if(!PERFORMANCE_COMPARISON_MODE) {
-		NormalizeGraphs();
-		//HandleMissingHelixes();
-	}
-	foundCount = 0;
-	longestMatch = 0;
-	timeInGetB = 0;
-	timeInQueue = 0;
 }
 
 WongMatchMissing::WongMatchMissing(StandardGraph * patternGraph, StandardGraph * baseGraph, int missingHelixCount, int missingSheetCount) {
 	Init(patternGraph, baseGraph);
 	this->missingHelixCount = missingHelixCount;
 	this->missingSheetCount = missingSheetCount;
-	if(!PERFORMANCE_COMPARISON_MODE) {
-		NormalizeGraphs();
-		//HandleMissingHelixes();
-	}
-	foundCount = 0;
-	longestMatch = 0;
-	timeInGetB = 0;
-	timeInQueue = 0;
-
 }
 
 WongMatchMissing::~WongMatchMissing() {
-	for(int i = 0; i < (int)activeNodes.nodes.size(); i++) {
-		delete(activeNodes.nodes[i]);
-	}
-	activeNodes.nodes.clear();
+	delete queue;
 
 	if(newBaseGraph) {
 		baseGraph->skeletonHelixes.clear();
@@ -99,6 +80,7 @@ WongMatchMissing::~WongMatchMissing() {
 	}
 }
 void WongMatchMissing::Init(StandardGraph * patternGraph, StandardGraph * baseGraph) {
+	queue = new PriorityQueue<StandardNode, double> (PRIORITYQUEUESIZE);
 	this->patternGraph = patternGraph;
 	this->baseGraph = baseGraph;
 	expandCount = 0;
@@ -115,11 +97,20 @@ void WongMatchMissing::Init(StandardGraph * patternGraph, StandardGraph * baseGr
 		currentNode->m2[baseGraph->nodeCount-i-1] = i+1;
 	}
 	currentNode->m2Top = baseGraph->nodeCount;	
-	activeNodes.Insert(currentNode);
+	queue->add(currentNode, currentNode->cost);
 
 	// TODO: Make this more accurate
 	missingHelixCount = (patternGraph->GetNodeCount() - baseGraph->GetNodeCount()) / 2;
 	missingSheetCount = 0;
+
+	if(!PERFORMANCE_COMPARISON_MODE) {
+		NormalizeGraphs();
+	}
+	foundCount = 0;
+	longestMatch = 0;
+	timeInGetB = 0;
+	timeInQueue = 0;
+
 }
 
 
@@ -424,16 +415,8 @@ double WongMatchMissing::GetF() {
 
 void WongMatchMissing::PopBestNode(){
 	clock_t start = clock();
-	int index;
-	double minCost = MAXINT;
-	for(int i = 0; i < activeNodes.nodes.size(); i++) { 
-		if(activeNodes.nodes[i]->cost < minCost) {
-			minCost = activeNodes.nodes[i]->cost;
-			index = i;
-		}		
-	}
-	currentNode = activeNodes.nodes[index];
-	activeNodes.nodes.erase(activeNodes.nodes.begin() + index);
+	double cost;
+	queue->remove(currentNode, cost);
 	timeInQueue += clock() - start;
 }
 
@@ -477,7 +460,7 @@ void WongMatchMissing::ExpandNode() {
 				//}
 				//printf(" - %f\t%f\t%f\n", currentNode->costGStar, currentNode->cost - currentNode->costGStar, currentNode->cost);
 
-				activeNodes.Insert(currentNode);
+				queue->add(currentNode, currentNode->cost);
 				currentNode = temp;		
 			}
 		}
@@ -485,7 +468,7 @@ void WongMatchMissing::ExpandNode() {
 
 
 	// Expanding nodes with a dummy terminal node
-	if((currentNode->m2Top == 0) && (missingHelixCount - currentNode->missingNodesUsed >= currentNode->m1Top)) {
+	if((currentNode->m2Top == 0) && (2*missingHelixCount - currentNode->missingNodesUsed >= currentNode->m1Top)) {
 		temp = currentNode;
 		currentNode = new StandardNode(currentNode);
 		currentNode->costGStar = temp->costGStar + START_END_MISSING_HELIX_PENALTY;
@@ -505,7 +488,7 @@ void WongMatchMissing::ExpandNode() {
 		//}
 		//printf(" - %f\t%f\t%f\n", currentNode->costGStar, currentNode->cost - currentNode->costGStar, currentNode->cost);
 
-		activeNodes.Insert(currentNode);
+		queue->add(currentNode, currentNode->cost);
 		currentNode = temp;
 	}
 }

@@ -81,6 +81,7 @@ public:
 	{
 		if ( this->isFull() )
 		{
+			printf("PRIORITY QUEUE FILLED UP !!! \n");
 			return ;
 		}
 
