@@ -40,6 +40,8 @@ private:
 	int foundCount;
 	int longestMatch;
 private:
+	clock_t timeInGetB;
+	clock_t timeInQueue;
 	void Init(StandardGraph * patternGraph, StandardGraph * baseGraph);
 	double GetC(int p, int qp);
 	double GetC(int j, int p, int qj, int qp);
@@ -66,6 +68,8 @@ WongMatchMissing::WongMatchMissing(StandardGraph * patternGraph, StandardGraph *
 	}
 	foundCount = 0;
 	longestMatch = 0;
+	timeInGetB = 0;
+	timeInQueue = 0;
 }
 
 WongMatchMissing::WongMatchMissing(StandardGraph * patternGraph, StandardGraph * baseGraph, int missingHelixCount, int missingSheetCount) {
@@ -78,6 +82,8 @@ WongMatchMissing::WongMatchMissing(StandardGraph * patternGraph, StandardGraph *
 	}
 	foundCount = 0;
 	longestMatch = 0;
+	timeInGetB = 0;
+	timeInQueue = 0;
 
 }
 
@@ -219,6 +225,9 @@ void WongMatchMissing::SaveResults(){
 	//printf(" - %f : (%d expanded)\n", currentNode->cost, expandCount);
 	//printf("%d\t\t", expandCount);
 	delete currentNode;	
+	printf("Time taken in GetB %f\n", timeInGetB / (double)CLOCKS_PER_SEC);
+	printf("Time taken in Queue %f\n", timeInQueue / (double)CLOCKS_PER_SEC);
+
 }
 
 double WongMatchMissing::GetC(int p, int qp) {
@@ -376,6 +385,7 @@ double WongMatchMissing::GetA() {
 	return cost;
 }
 double WongMatchMissing::GetB() {
+	clock_t startTime = clock();
 	
 	int kNode, iNode, jNode;
 	double minCost;
@@ -404,7 +414,7 @@ double WongMatchMissing::GetB() {
 			cost += minCost;
 		}
 	}
-	
+	timeInGetB += clock() - startTime;
 	return cost;
 }
 
@@ -413,6 +423,7 @@ double WongMatchMissing::GetF() {
 }
 
 void WongMatchMissing::PopBestNode(){
+	clock_t start = clock();
 	int index;
 	double minCost = MAXINT;
 	for(int i = 0; i < activeNodes.nodes.size(); i++) { 
@@ -423,6 +434,7 @@ void WongMatchMissing::PopBestNode(){
 	}
 	currentNode = activeNodes.nodes[index];
 	activeNodes.nodes.erase(activeNodes.nodes.begin() + index);
+	timeInQueue += clock() - start;
 }
 
 void WongMatchMissing::ExpandNode() {
