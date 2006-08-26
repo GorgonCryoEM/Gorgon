@@ -31,6 +31,8 @@ public:
 
 
 private:
+	clock_t timeInGetB;
+	clock_t timeInQueue;
 	StandardNode * currentNode;
 	NodeList activeNodes;
 	int missingHelixCount;
@@ -71,6 +73,8 @@ WongMatchMissing15::WongMatchMissing15(StandardGraph * patternGraph, StandardGra
 	foundCount = 0;
 	longestMatch = 0;
 	InitializeEdgeMinCosts();
+	timeInGetB = 0;
+	timeInQueue = 0;
 }
 
 WongMatchMissing15::WongMatchMissing15(StandardGraph * patternGraph, StandardGraph * baseGraph, int missingHelixCount, int missingSheetCount) {
@@ -83,6 +87,8 @@ WongMatchMissing15::WongMatchMissing15(StandardGraph * patternGraph, StandardGra
 	foundCount = 0;
 	longestMatch = 0;
 	InitializeEdgeMinCosts();
+	timeInGetB = 0;
+	timeInQueue = 0;
 }
 
 WongMatchMissing15::~WongMatchMissing15() {
@@ -212,6 +218,8 @@ void WongMatchMissing15::SaveResults(){
 	//printf(" - %f : (%d expanded)\n", currentNode->cost, expandCount);
 	//printf("%d\t\t", expandCount);
 	delete currentNode;	
+	printf("Time taken in GetB %f\n", timeInGetB / (double)CLOCKS_PER_SEC);
+	printf("Time taken in Queue %f\n", timeInQueue / (double)CLOCKS_PER_SEC);
 }
 
 double WongMatchMissing15::GetC(int p, int qp) {
@@ -369,6 +377,7 @@ double WongMatchMissing15::GetA() {
 	return cost;
 }
 double WongMatchMissing15::GetB() {
+	clock_t startTime = clock();
 	
 	int kNode, iNode, jNode, i;
 	double minCost, cost = 0;
@@ -385,18 +394,20 @@ double WongMatchMissing15::GetB() {
 		if(iNode != patternGraph->nodeCount) {
 
 			breakoff = false;
-			for(int j = 0; j < edgeMinCostCount[iNode-1] && !breakoff; j++) {					
+			for(int j = 0; j < edgeMinCostCount[iNode-1]; j++) {					
 				if(((edgeMinCosts[iNode-1][j].bitmap & bitmap) == 0)  && 
 					(edgeMinCosts[iNode-1][j].noOfEdges <= usableEdges)) {
 					minCost = edgeMinCosts[iNode-1][j].cost;
 					breakoff = true;
+					break;
 				}
 			}
-			assert(breakoff = true);
+			assert(breakoff == true);
 
 			cost += minCost;
 		}
 	}	
+	timeInGetB += clock() - startTime;
 	return cost;
 }
 
@@ -405,6 +416,7 @@ double WongMatchMissing15::GetF() {
 }
 
 void WongMatchMissing15::PopBestNode(){
+	clock_t start = clock();
 	int index;
 	double minCost = MAXINT;
 	for(int i = 0; i < activeNodes.nodes.size(); i++) { 
@@ -415,6 +427,7 @@ void WongMatchMissing15::PopBestNode(){
 	}
 	currentNode = activeNodes.nodes[index];
 	activeNodes.nodes.erase(activeNodes.nodes.begin() + index);
+	timeInQueue += clock() - start;
 }
 
 void WongMatchMissing15::ExpandNode() {
