@@ -248,26 +248,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\VFInexact.h"
-				>
-			</File>
-			<File
-				RelativePath=".\VFMatch.h"
-				>
-			</File>
-			<File
-				RelativePath=".\WongMatch.h"
-				>
-			</File>
-			<File
-				RelativePath=".\WongMatch15.h"
-				>
-			</File>
-			<File
-				RelativePath=".\WongMatch2.h"
-				>
-			</File>
-			<File
 				RelativePath=".\WongMatchMissing.h"
 				>
 			</File>

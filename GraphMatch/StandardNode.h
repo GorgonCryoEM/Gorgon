@@ -19,6 +19,8 @@ class StandardNode {
 public:
 	MatchingList n1; // Contains the currently matched vertices of the pattern graph
 	MatchingList n2; // Contains the currently matched vertices of the base graph
+	unsigned long m1Bitmap;
+	unsigned long m2Bitmap;
 	MatchingList m1; // Contains the currently unmatched vertices of the pattern graph
 	MatchingList m2; // Contains the currently unmatched vertices of the base graph
 	int n1Top, n2Top, m1Top, m2Top;
