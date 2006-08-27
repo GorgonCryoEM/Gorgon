@@ -19,6 +19,12 @@ Date  : 08/14/2006
 #include <time.h>
 #include "../SkeletonMaker/PriorityQueue.h"
 
+struct EdgeMinCostEntry {
+	unsigned long long bitmap;
+	double cost;
+	int noOfEdges;
+};
+
 class WongMatchMissing15{
 public:
 	StandardGraph * patternGraph;

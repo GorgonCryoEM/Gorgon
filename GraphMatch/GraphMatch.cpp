@@ -9,13 +9,8 @@ Date  : 01/23/2006
 #include <stdio.h>
 #include "StandardGraph.h"
 #include "Matcher7.h"
-#include "WongMatch.h"
-#include "WongMatch2.h"
-#include "WongMatch15.h"
 #include "WongMatchMissing.h"
 #include "WongMatchMissing15.h"
-#include "VFMatch.h"
-#include "VFInexact.h"
 #include "PDBReader.h"
 #include "SkeletonReader.h"
 #include "GlobalConstants.h"
@@ -50,34 +45,34 @@ void DoPerformanceComparison(StandardGraph * patternGraph, StandardGraph * baseG
 	//delete(matcher);
 
 	// Wong Matching Algorithm 
-	WongMatch * wongMatch;
-	wongMatch = new WongMatch(patternGraph, baseGraph);
-	start = clock();
-	wongMatch->RunMatching();
-	finish = clock();
-	wongMatch->SaveResults();
-	wongTime += ((double) (finish - start) / (double) CLOCKS_PER_SEC);
-	delete wongMatch;
+	//WongMatch * wongMatch;
+	//wongMatch = new WongMatch(patternGraph, baseGraph);
+	//start = clock();
+	//wongMatch->RunMatching();
+	//finish = clock();
+	//wongMatch->SaveResults();
+	//wongTime += ((double) (finish - start) / (double) CLOCKS_PER_SEC);
+	//delete wongMatch;
 
-	// Wong Matching Algorithm 1/2 
-	WongMatch15 * wongMatch15;
-	wongMatch15 = new WongMatch15(patternGraph, baseGraph);
-	start = clock();
-	wongMatch15->RunMatching();
-	finish = clock();
-	//wongMatch15->SaveResults();
-	wongTime15 += ((double) (finish - start) / (double) CLOCKS_PER_SEC);
-	delete wongMatch15;
+	//// Wong Matching Algorithm 1/2 
+	//WongMatch15 * wongMatch15;
+	//wongMatch15 = new WongMatch15(patternGraph, baseGraph);
+	//start = clock();
+	//wongMatch15->RunMatching();
+	//finish = clock();
+	////wongMatch15->SaveResults();
+	//wongTime15 += ((double) (finish - start) / (double) CLOCKS_PER_SEC);
+	//delete wongMatch15;
 
-	// Wong Matching Algorithm 2
-	WongMatch2 * wongMatch2;
-	wongMatch2 = new WongMatch2(patternGraph, baseGraph);
-	start = clock();
-	wongMatch2->RunMatching();
-	finish = clock();
-	//wongMatch2->SaveResults();
-	wongTime2 += ((double) (finish - start) / (double) CLOCKS_PER_SEC);
-	delete wongMatch2;
+	//// Wong Matching Algorithm 2
+	//WongMatch2 * wongMatch2;
+	//wongMatch2 = new WongMatch2(patternGraph, baseGraph);
+	//start = clock();
+	//wongMatch2->RunMatching();
+	//finish = clock();
+	////wongMatch2->SaveResults();
+	//wongTime2 += ((double) (finish - start) / (double) CLOCKS_PER_SEC);
+	//delete wongMatch2;
 
 	// Wong Matching Inexact
 	WongMatchMissing * wongMatchMissing;
