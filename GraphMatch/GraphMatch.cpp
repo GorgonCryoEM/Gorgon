@@ -30,49 +30,7 @@ void DoPerformanceComparison(StandardGraph * patternGraph, StandardGraph * baseG
 	clock_t start, finish;
 
 
-	// Our Matching Algorithm
-	//Matcher7 * matcher;
-	//if(MISSING_HELIX_COUNT == -1) {
-	//	matcher = new Matcher7(patternGraph, baseGraph);
-	//} else {
-	//	matcher = new Matcher7(patternGraph, baseGraph, MISSING_HELIX_COUNT, MISSING_SHEET_COUNT);
-	//}
-	//start = clock();
-	//matcher->RunMatching();
-	//finish = clock();
-	//ourTime += ((double) (finish - start) / (double) CLOCKS_PER_SEC);
-	////matcher->SaveResults();
-	//delete(matcher);
 
-	// Wong Matching Algorithm 
-	//WongMatch * wongMatch;
-	//wongMatch = new WongMatch(patternGraph, baseGraph);
-	//start = clock();
-	//wongMatch->RunMatching();
-	//finish = clock();
-	//wongMatch->SaveResults();
-	//wongTime += ((double) (finish - start) / (double) CLOCKS_PER_SEC);
-	//delete wongMatch;
-
-	//// Wong Matching Algorithm 1/2 
-	//WongMatch15 * wongMatch15;
-	//wongMatch15 = new WongMatch15(patternGraph, baseGraph);
-	//start = clock();
-	//wongMatch15->RunMatching();
-	//finish = clock();
-	////wongMatch15->SaveResults();
-	//wongTime15 += ((double) (finish - start) / (double) CLOCKS_PER_SEC);
-	//delete wongMatch15;
-
-	//// Wong Matching Algorithm 2
-	//WongMatch2 * wongMatch2;
-	//wongMatch2 = new WongMatch2(patternGraph, baseGraph);
-	//start = clock();
-	//wongMatch2->RunMatching();
-	//finish = clock();
-	////wongMatch2->SaveResults();
-	//wongTime2 += ((double) (finish - start) / (double) CLOCKS_PER_SEC);
-	//delete wongMatch2;
 
 	// Wong Matching Inexact
 	WongMatchMissing * wongMatchMissing;
@@ -120,36 +78,36 @@ void DoGraphMatching(StandardGraph * patternGraph, StandardGraph * baseGraph)
 	clock_t start, finish;
 
 
-	// Match Graphs
-	Matcher7 * matcher7;
-	if(MISSING_HELIX_COUNT == -1) {
-		matcher7 = new Matcher7(patternGraph, baseGraph);
-	} else {
-		matcher7 = new Matcher7(patternGraph, baseGraph, MISSING_HELIX_COUNT, MISSING_SHEET_COUNT);
-	}
-	start = clock();
-	matcher7->RunMatching();
-	finish = clock();
-	matcher7->SaveResults();
-	printf("\n\tDP Matching process Took %f seconds.\n", (double) (finish - start) / (double) CLOCKS_PER_SEC ) ;
-	
-	// Clean
-	delete(matcher7);
+	//// Match Graphs
+	//Matcher7 * matcher7;
+	//if(MISSING_HELIX_COUNT == -1) {
+	//	matcher7 = new Matcher7(patternGraph, baseGraph);
+	//} else {
+	//	matcher7 = new Matcher7(patternGraph, baseGraph, MISSING_HELIX_COUNT, MISSING_SHEET_COUNT);
+	//}
+	//start = clock();
+	//matcher7->RunMatching();
+	//finish = clock();
+	//matcher7->SaveResults();
+	//printf("\n\tDP Matching process Took %f seconds.\n", (double) (finish - start) / (double) CLOCKS_PER_SEC ) ;
+	//
+	//// Clean
+	//delete(matcher7);
 
 
-	// Match Graphs
-	WongMatchMissing * matcher;
-	if(MISSING_HELIX_COUNT == -1) {
-		matcher = new WongMatchMissing(patternGraph, baseGraph);
-	} else {
-		matcher = new WongMatchMissing(patternGraph, baseGraph, MISSING_HELIX_COUNT, MISSING_SHEET_COUNT);
-	}
-	start = clock();
-	matcher->RunMatching(start);
-	matcher->SaveResults();
+	//// Match Graphs
+	//WongMatchMissing * matcher;
+	//if(MISSING_HELIX_COUNT == -1) {
+	//	matcher = new WongMatchMissing(patternGraph, baseGraph);
+	//} else {
+	//	matcher = new WongMatchMissing(patternGraph, baseGraph, MISSING_HELIX_COUNT, MISSING_SHEET_COUNT);
+	//}
+	//start = clock();
+	//matcher->RunMatching(start);
+	//matcher->SaveResults();
 	
-	// Clean
-	delete(matcher);
+	//// Clean
+	//delete(matcher);
 
 	// Match Graphs
 	WongMatchMissing15 * matcher15;

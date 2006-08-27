@@ -19,19 +19,16 @@ class StandardNode {
 public:
 	MatchingList n1; // Contains the currently matched vertices of the pattern graph
 	MatchingList n2; // Contains the currently matched vertices of the base graph
-	unsigned long m1Bitmap;
-	unsigned long m2Bitmap;
-	MatchingList m1; // Contains the currently unmatched vertices of the pattern graph
-	MatchingList m2; // Contains the currently unmatched vertices of the base graph
-	int n1Top, n2Top, m1Top, m2Top;
+	unsigned long long m1Bitmap;
+	unsigned long long m2Bitmap;
+	int n1Top, n2Top;
 	int missingNodesUsed;
 
 	double cost;
 	double costGStar;
 public:
 	StandardNode(StandardNode * olderNode);
-	StandardNode(StandardNode * olderNode, int insertIndex);
-	StandardNode(StandardNode * olderNode, int insertIndex, int dummyHelixCount);
+	StandardNode(StandardNode * olderNode, int insertingNode, int dummyHelixCount);
 	StandardNode();
 	~StandardNode();
 	void PrintNode();
@@ -39,6 +36,10 @@ public:
 	void PrintNodeConcise(int rank);
 	void SortOnPattern();
 	bool operator==(StandardNode &other);
+	static void AddNodeToBitmap(unsigned long long & bitmap, int node);
+	static void RemoveNodeFromBitmap(unsigned long long & bitmap, int node);
+	static bool IsNodeInBitmap(unsigned long long bitmap, int node);
+	static int RemoveSmallestNode(unsigned long long & bitmap);
 };
 
 StandardNode::~StandardNode() {
@@ -48,10 +49,10 @@ StandardNode::StandardNode() {
 	cost = 0;
 	n1Top = 0;
 	n2Top = 0;
-	m1Top = 0;
-	m2Top = 0;
 	costGStar = 0;
 	missingNodesUsed = 0;
+	m1Bitmap = 0;
+	m2Bitmap = 0;
 }
 
 StandardNode::StandardNode(StandardNode * olderNode) {
@@ -59,63 +60,30 @@ StandardNode::StandardNode(StandardNode * olderNode) {
 		n1[i] = olderNode->n1[i];
 		n2[i] = olderNode->n2[i];
 	}
-	for(int i = 0; i < olderNode->m1Top; i++) {
-		m1[i] = olderNode->m1[i];
-	}
-	for(int i = 0; i < olderNode->m2Top; i++) {
-		m2[i] = olderNode->m2[i];
-	}
+	m1Bitmap = olderNode->m1Bitmap;
+	m2Bitmap = olderNode->m2Bitmap;
 	cost = olderNode->cost;
 	n1Top = olderNode->n1Top;
 	n2Top = olderNode->n2Top;
-	m1Top = olderNode->m1Top;
-	m2Top = olderNode->m2Top;
 	costGStar = olderNode->costGStar;
 	missingNodesUsed = olderNode->missingNodesUsed;
 }
 
+StandardNode::StandardNode(StandardNode * olderNode, int insertingNode, int dummyHelixCount) {
 
-StandardNode::StandardNode(StandardNode * olderNode, int insertIndex) {
-	for(int i = 0; i < olderNode->n1Top; i++) {
-		n1[i] = olderNode->n1[i];
-	}
+	m1Bitmap = olderNode->m1Bitmap;
+	m2Bitmap = olderNode->m2Bitmap;
 
-	n1[olderNode->n1Top] = olderNode->m1[olderNode->m1Top-1];			
-	n1Top = olderNode->n1Top+1;
-
-	for(int i = 0; i < olderNode->m1Top-1; i++) {
-		m1[i] = olderNode->m1[i];
-	}
-	m1Top = olderNode->m1Top-1;
-
-	for(int i = 0; i < olderNode->n1Top; i++) {
-		n2[i] = olderNode->n2[i];
-	}
-	n2[olderNode->n2Top] = olderNode->m2[insertIndex];
-	n2Top = olderNode->n2Top+1;
-
-	m2Top = 0;
-	for(int i = 0; i < olderNode->m2Top; i++) {
-		if(i != insertIndex) {
-			m2[m2Top] = olderNode->m2[i];
-			m2Top++;
-		}
-	}
-	costGStar = olderNode->costGStar; // Not Accurate
-	cost = olderNode->cost;	// Not Accurate
-	missingNodesUsed = olderNode->missingNodesUsed;
-}
-
-StandardNode::StandardNode(StandardNode * olderNode, int insertIndex, int dummyHelixCount) {
 	// Copy the N1
 	for(int i = 0; i < olderNode->n1Top; i++) {
 		n1[i] = olderNode->n1[i];
 	}
 	n1Top = olderNode->n1Top;
 
+
 	// Add dummy N1 nodes + one extra for the node being inserted
 	for(int i = 0; i < dummyHelixCount + 1; i++) {
-		n1[n1Top] = olderNode->m1[olderNode->m1Top - i - 1];
+		n1[n1Top] = RemoveSmallestNode(m1Bitmap);
 		n1Top++;
 	}
 
@@ -131,24 +99,10 @@ StandardNode::StandardNode(StandardNode * olderNode, int insertIndex, int dummyH
 		n2Top++;
 	}
 	// Add the inserted node to N2
-	n2[n2Top] = olderNode->m2[insertIndex];
+	n2[n2Top] = insertingNode;
 	n2Top++;
 
-	// Copy the M1 Nodes
-	m1Top = 0;
-	for(int i = 0; i < olderNode->m1Top - dummyHelixCount - 1; i++) {
-		m1[m1Top] = olderNode->m1[i];
-		m1Top++;
-	}
-
-	// Copy the M2 Nodes
-	m2Top = 0;
-	for(int i = 0; i < olderNode->m2Top; i++) {
-		if(i != insertIndex) {
-			m2[m2Top] = olderNode->m2[i];
-			m2Top++;
-		}
-	}
+	RemoveNodeFromBitmap(m2Bitmap, insertingNode);
 
 	//Costs
 	costGStar = olderNode->costGStar; // Not Accurate
@@ -208,4 +162,28 @@ bool StandardNode::operator==(StandardNode &other) {
 	return returnValue;
 }
 
+void StandardNode::AddNodeToBitmap(unsigned long long & bitmap, int node) {
+	bitmap = bitmap | (unsigned long long)(pow(2.0, node) + 0.1);
+}
+
+void StandardNode::RemoveNodeFromBitmap(unsigned long long & bitmap, int node) {
+	bitmap = bitmap - (unsigned long long)(pow(2.0, node) + 0.1);
+}
+
+bool StandardNode::IsNodeInBitmap(unsigned long long bitmap, int node) {
+	unsigned long long bitvalue = (unsigned long long)(pow(2.0, node) + 0.1);
+	return ((bitmap & bitvalue) == bitvalue);
+}
+
+
+int StandardNode::RemoveSmallestNode(unsigned long long & bitmap) {
+	for(int i = 1; i <= MAX_NODES; i++) {
+		if (IsNodeInBitmap(bitmap, i)) {
+			RemoveNodeFromBitmap(bitmap, i);
+			return i;
+		}
+	}
+	assert(false);
+	return 0;
+}
 #endif
