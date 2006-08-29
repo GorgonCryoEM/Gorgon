@@ -569,7 +569,7 @@ unsigned long long WongMatchMissing15::EncodeNode(unsigned long long bitmap, int
 	if(node == -1)
 		return bitmap;
 
-	return bitmap | (unsigned long long)(pow(2.0, node-1) + 0.1);
+	return bitmap | (1 << (node-1));
 }
 
 #endif
