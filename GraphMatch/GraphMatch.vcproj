@@ -212,6 +212,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\LinkedNode.h"
+				>
+			</File>
+			<File
+				RelativePath=".\LinkedNodeStub.h"
+				>
+			</File>
+			<File
 				RelativePath=".\Matcher7.h"
 				>
 			</File>
@@ -253,6 +261,10 @@
 			</File>
 			<File
 				RelativePath=".\WongMatchMissing15.h"
+				>
+			</File>
+			<File
+				RelativePath=".\WongMatchMissing15Linked.h"
 				>
 			</File>
 		</Filter>
