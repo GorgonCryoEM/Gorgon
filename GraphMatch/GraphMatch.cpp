@@ -95,19 +95,19 @@ void DoGraphMatching(StandardGraph * patternGraph, StandardGraph * baseGraph)
 	//delete(matcher7);
 
 
-	//// Match Graphs
-	//WongMatchMissing * matcher;
-	//if(MISSING_HELIX_COUNT == -1) {
-	//	matcher = new WongMatchMissing(patternGraph, baseGraph);
-	//} else {
-	//	matcher = new WongMatchMissing(patternGraph, baseGraph, MISSING_HELIX_COUNT, MISSING_SHEET_COUNT);
-	//}
-	//start = clock();
-	//matcher->RunMatching(start);
-	//matcher->SaveResults();
+	// Match Graphs
+	WongMatchMissing * matcher;
+	if(MISSING_HELIX_COUNT == -1) {
+		matcher = new WongMatchMissing(patternGraph, baseGraph);
+	} else {
+		matcher = new WongMatchMissing(patternGraph, baseGraph, MISSING_HELIX_COUNT, MISSING_SHEET_COUNT);
+	}
+	start = clock();
+	matcher->RunMatching(start);
+	matcher->SaveResults();
 	
-	//// Clean
-	//delete(matcher);
+	// Clean
+	delete(matcher);
 
 	// Match Graphs
 	WongMatchMissing15 * matcher15;

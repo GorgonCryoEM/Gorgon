@@ -41,6 +41,7 @@ private:
 	int foundCount;
 	int longestMatch;
 private:
+	clock_t timeInGetA;
 	clock_t timeInGetB;
 	clock_t timeInQueue;
 	void Init(StandardGraph * patternGraph, StandardGraph * baseGraph);
@@ -105,6 +106,7 @@ void WongMatchMissing::Init(StandardGraph * patternGraph, StandardGraph * baseGr
 	}
 	foundCount = 0;
 	longestMatch = 0;
+	timeInGetA = 0;
 	timeInGetB = 0;
 	timeInQueue = 0;
 }
@@ -212,6 +214,7 @@ void WongMatchMissing::SaveResults(){
 	//printf(" - %f : (%d expanded)\n", currentNode->cost, expandCount);
 	//printf("%d\t\t", expandCount);
 	delete currentNode;	
+	printf("Time taken in GetA %f\n", timeInGetA / (double)CLOCKS_PER_SEC);
 	printf("Time taken in GetB %f\n", timeInGetB / (double)CLOCKS_PER_SEC);
 	printf("Time taken in Queue %f\n", timeInQueue / (double)CLOCKS_PER_SEC);
 
@@ -355,6 +358,7 @@ double WongMatchMissing::GetKPrime(int i, int q) {
 }
 
 double WongMatchMissing::GetA() {
+	clock_t startTime = clock();
 	double cost = 0;
 	double minCost;
 	// Cost for node matching
@@ -371,6 +375,22 @@ double WongMatchMissing::GetA() {
 		}
 	}
 
+	// Cost for the first edge matched
+	if(currentNode->n1Top != patternGraph->nodeCount) {
+		int lastPatternNode = currentNode->n1[currentNode->n1Top-1];
+		int lastBaseNode = currentNode->n2[currentNode->n2Top-1];
+		int usableEdgeCount = missingHelixCount * 2 - currentNode->missingNodesUsed + 1;
+		minCost = (usableEdgeCount > 1) ? MISSING_HELIX_PENALTY : MAXINT;
+		for(int i = 1; i <= baseGraph->nodeCount; i++) {
+			if((StandardNode::IsNodeInBitmap(currentNode->m2Bitmap, i)) && (baseGraph->EdgeExists(lastBaseNode - 1, i - 1))) {
+				for(int j = 1; j <= min(patternGraph->nodeCount - currentNode->n1Top, usableEdgeCount); j++) {
+					minCost = min(minCost, GetCost(lastPatternNode, j, lastBaseNode, i) / (double)j);
+				}
+			}
+		}
+		cost += minCost;
+	}
+	timeInGetA += clock() - startTime;
 	return cost;
 }
 double WongMatchMissing::GetB() {
@@ -459,7 +479,7 @@ void WongMatchMissing::ExpandNode() {
 				//for(int i = 0; i < currentNode->n1Top; i++) {
 				//	printf("%d ", currentNode->n2[i]);
 				//}
-				//printf(" - %f\t%f\t%f\n", currentNode->costGStar, currentNode->cost - currentNode->costGStar, currentNode->cost);
+				//printf(" - %f\t%f\t%f\t%f\n", currentNode->costGStar, GetA(), GetB(), currentNode->cost);
 
 				queue->add(currentNode, currentNode->cost);
 				currentNode = temp;		
