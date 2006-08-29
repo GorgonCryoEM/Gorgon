@@ -11,6 +11,7 @@ Date  : 01/23/2006
 #include "Matcher7.h"
 #include "WongMatchMissing.h"
 #include "WongMatchMissing15.h"
+#include "WongMatchMissing15Linked.h"
 #include "PDBReader.h"
 #include "SkeletonReader.h"
 #include "GlobalConstants.h"
@@ -95,33 +96,47 @@ void DoGraphMatching(StandardGraph * patternGraph, StandardGraph * baseGraph)
 	//delete(matcher7);
 
 
-	// Match Graphs
-	WongMatchMissing * matcher;
-	if(MISSING_HELIX_COUNT == -1) {
-		matcher = new WongMatchMissing(patternGraph, baseGraph);
-	} else {
-		matcher = new WongMatchMissing(patternGraph, baseGraph, MISSING_HELIX_COUNT, MISSING_SHEET_COUNT);
-	}
-	start = clock();
-	matcher->RunMatching(start);
-	matcher->SaveResults();
-	
-	// Clean
-	delete(matcher);
+	//// Match Graphs
+	//WongMatchMissing * matcher;
+	//if(MISSING_HELIX_COUNT == -1) {
+	//	matcher = new WongMatchMissing(patternGraph, baseGraph);
+	//} else {
+	//	matcher = new WongMatchMissing(patternGraph, baseGraph, MISSING_HELIX_COUNT, MISSING_SHEET_COUNT);
+	//}
+	//start = clock();
+	//matcher->RunMatching(start);
+	//matcher->SaveResults();
+	//
+	//// Clean
+	//delete(matcher);
+
+	//// Match Graphs
+	//WongMatchMissing15 * matcher15;
+	//if(MISSING_HELIX_COUNT == -1) {
+	//	matcher15 = new WongMatchMissing15(patternGraph, baseGraph);
+	//} else {
+	//	matcher15 = new WongMatchMissing15(patternGraph, baseGraph, MISSING_HELIX_COUNT, MISSING_SHEET_COUNT);
+	//}
+	//start = clock();
+	//matcher15->RunMatching(start);
+	//matcher15->SaveResults();
+	//
+	//// Clean
+	//delete(matcher15);
 
 	// Match Graphs
-	WongMatchMissing15 * matcher15;
+	WongMatchMissing15Linked * matcher15linked;
 	if(MISSING_HELIX_COUNT == -1) {
-		matcher15 = new WongMatchMissing15(patternGraph, baseGraph);
+		matcher15linked = new WongMatchMissing15Linked(patternGraph, baseGraph);
 	} else {
-		matcher15 = new WongMatchMissing15(patternGraph, baseGraph, MISSING_HELIX_COUNT, MISSING_SHEET_COUNT);
+		matcher15linked = new WongMatchMissing15Linked(patternGraph, baseGraph, MISSING_HELIX_COUNT, MISSING_SHEET_COUNT);
 	}
 	start = clock();
-	matcher15->RunMatching(start);
-	matcher15->SaveResults();
+	matcher15linked->RunMatching(start);
+	matcher15linked->SaveResults();
 	
 	// Clean
-	delete(matcher15);
+	delete(matcher15linked);
 }
 
 

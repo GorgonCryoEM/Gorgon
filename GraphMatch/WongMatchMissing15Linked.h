@@ -9,30 +9,24 @@ Author: Sasakthi S. Abeysinghe
 Date  : 08/14/2006
 */
 
-#ifndef WONGMATCHMISSING15_H
-#define WONGMATCHMISSING15_H
+#ifndef WONGMATCHMISSING15LINKED_H
+#define WONGMATCHMISSING15LINKED_H
 
 #include "StandardGraph.h"
-#include "StandardNode.h"
+#include "LinkedNode.h"
 #include "NodeList.h"
 #include "GlobalConstants.h"
 #include <time.h>
 #include "../SkeletonMaker/PriorityQueue.h"
 
-struct EdgeMinCostEntry {
-	unsigned long long bitmap;
-	double cost;
-	int noOfEdges;
-};
-
-class WongMatchMissing15{
+class WongMatchMissing15Linked{
 public:
 	StandardGraph * patternGraph;
 	StandardGraph * baseGraph;
 public:
-	WongMatchMissing15(StandardGraph * patternGraph, StandardGraph * baseGraph);
-	WongMatchMissing15(StandardGraph * patternGraph, StandardGraph * baseGraph, int missingHelixCount, int missingSheetCount);
-	~WongMatchMissing15();
+	WongMatchMissing15Linked(StandardGraph * patternGraph, StandardGraph * baseGraph);
+	WongMatchMissing15Linked(StandardGraph * patternGraph, StandardGraph * baseGraph, int missingHelixCount, int missingSheetCount);
+	~WongMatchMissing15Linked();
 	void RunMatching(clock_t startTime);
 	void SaveResults();
 
@@ -41,8 +35,9 @@ private:
 	clock_t timeInGetA;
 	clock_t timeInGetB;
 	clock_t timeInQueue;
-	StandardNode * currentNode;
-	PriorityQueue<StandardNode, double> * queue;
+	LinkedNode * currentNode;
+	PriorityQueue<LinkedNode, double> * queue;
+	vector<LinkedNode*> usedNodes;
 	int missingHelixCount;
 	int missingSheetCount;
 	bool newBaseGraph;
@@ -63,7 +58,6 @@ private:
 	double GetA();
 	double GetB();
 	double GetF();
-	void PrintCurrentNode();
 	void PopBestNode(); // Gets the best (first) node from the active nodes list.
 	void ExpandNode();  // Expands all the children of the current node.
 	void NormalizeGraphs();
@@ -72,17 +66,21 @@ private:
 
 };
 
-WongMatchMissing15::WongMatchMissing15(StandardGraph * patternGraph, StandardGraph * baseGraph) {
+WongMatchMissing15Linked::WongMatchMissing15Linked(StandardGraph * patternGraph, StandardGraph * baseGraph) {
 	Init(patternGraph, baseGraph);
 }
 
-WongMatchMissing15::WongMatchMissing15(StandardGraph * patternGraph, StandardGraph * baseGraph, int missingHelixCount, int missingSheetCount) {
+WongMatchMissing15Linked::WongMatchMissing15Linked(StandardGraph * patternGraph, StandardGraph * baseGraph, int missingHelixCount, int missingSheetCount) {
 	Init(patternGraph, baseGraph);
 	this->missingHelixCount = missingHelixCount;
 	this->missingSheetCount = missingSheetCount;
 }
 
-WongMatchMissing15::~WongMatchMissing15() {
+WongMatchMissing15Linked::~WongMatchMissing15Linked() {
+	for(int i = 0; i < usedNodes.size(); i++) {
+		delete usedNodes[i];
+	}
+	usedNodes.clear();
 
 	delete queue;
 
@@ -91,22 +89,13 @@ WongMatchMissing15::~WongMatchMissing15() {
 		delete baseGraph;
 	}
 }
-void WongMatchMissing15::Init(StandardGraph * patternGraph, StandardGraph * baseGraph) {
-	queue = new PriorityQueue<StandardNode, double> (PRIORITYQUEUESIZE);
+void WongMatchMissing15Linked::Init(StandardGraph * patternGraph, StandardGraph * baseGraph) {	
+	usedNodes.clear();
+	queue = new PriorityQueue<LinkedNode, double> (PRIORITYQUEUESIZE);
 	this->patternGraph = patternGraph;
 	this->baseGraph = baseGraph;
 	expandCount = 0;
 	newBaseGraph = false;
-	
-	currentNode = new StandardNode();
-	currentNode->cost = 0;
-	for(int i = 0; i < patternGraph->nodeCount; i++) {
-		StandardNode::AddNodeToBitmap(currentNode->m1Bitmap, i+1);
-	}
-	for(int i = 0; i < baseGraph->nodeCount; i++) {
-		StandardNode::AddNodeToBitmap(currentNode->m2Bitmap, i+1);
-	}
-	queue->add(currentNode, currentNode->cost);
 
 	// TODO: Make this more accurate
 	missingHelixCount = (patternGraph->GetNodeCount() - baseGraph->GetNodeCount()) / 2;
@@ -121,12 +110,43 @@ void WongMatchMissing15::Init(StandardGraph * patternGraph, StandardGraph * base
 	timeInGetB = 0;
 	timeInQueue = 0;
 	InitializeEdgeMinCosts();
+
+	currentNode = new LinkedNode();
+	for(int j = 1; j <= patternGraph->nodeCount; j++) {
+		LinkedNode::AddNodeToBitmap(currentNode->m1Bitmap, j);
+	}
+	for(int j = 1; j <= baseGraph->nodeCount; j++) {
+		LinkedNode::AddNodeToBitmap(currentNode->m2Bitmap, j);
+	}
+	queue->add(currentNode, currentNode->cost);
+	//currentNode->PrintNodeConcise(-1, true);
+
+
+	//for(int i = 1; i <= baseGraph->nodeCount; i++) {
+	//	currentNode = new LinkedNode();
+	//	currentNode->n1Node = 1;
+	//	currentNode->n2Node = i;
+	//	for(int j = 2; j <= patternGraph->nodeCount; j++) {
+	//		LinkedNode::AddNodeToBitmap(currentNode->m1Bitmap, j);
+	//	}
+	//	for(int j = 1; j <= baseGraph->nodeCount; j++) {
+	//		if(j != i) {
+	//			LinkedNode::AddNodeToBitmap(currentNode->m2Bitmap, j);
+	//		}
+	//	}
+	//	currentNode->depth = 1;
+	//	currentNode->parentNode = NULL;
+	//	currentNode->costGStar = GetC(1, i);
+	//	currentNode->cost = GetF();
+	//	queue->add(currentNode, currentNode->cost);
+	//	currentNode->PrintNodeConcise(-1, true);
+	//}
 }
 
 
 
 
-void WongMatchMissing15::InitializeEdgeMinCosts() {	
+void WongMatchMissing15Linked::InitializeEdgeMinCosts() {	
 	for(int i = 0; i < patternGraph->nodeCount; i++) {	
 		edgeMinCosts[i][0].bitmap = 0;
 		edgeMinCosts[i][0].cost = MISSING_HELIX_PENALTY;
@@ -184,53 +204,46 @@ void WongMatchMissing15::InitializeEdgeMinCosts() {
 	//}
 }
 
-void WongMatchMissing15::RunMatching(clock_t startTime) {
-	printf("%d BYTES \n", sizeof(StandardNode));
+void WongMatchMissing15Linked::RunMatching(clock_t startTime) {
+	printf("%d BYTES \n", sizeof(LinkedNode));
 	bool continueLoop = true;
 	clock_t finishTime;
 	while(continueLoop)
 	{
-		PopBestNode();
+		PopBestNode();		
 		//PrintCurrentNode();
-		if(currentNode->n1Top == patternGraph->nodeCount) {						
+		if(currentNode->depth == patternGraph->nodeCount) {						
 			finishTime = clock();
-
-			printf("\t");
-			for(int i = 0; i < currentNode->n1Top; i++) {
-				printf("%d ", currentNode->n2[i]);
-			}
-			printf(" - %f : (%d expanded) (%f seconds) (%fkB Memory) (%d queue size)\n", currentNode->cost, expandCount, (double) (finishTime - startTime) / (double) CLOCKS_PER_SEC, queue->getLength() * sizeof(StandardNode) / 1024.0, queue->getLength());
 			foundCount++;
+			currentNode->PrintNodeConcise(foundCount, false);
+			printf(": (%d expanded) (%f seconds) (%fkB Memory) (%d queue size) (%d parent size)\n", expandCount, (double) (finishTime - startTime) / (double) CLOCKS_PER_SEC, (queue->getLength() + usedNodes.size()) * sizeof(LinkedNode) / 1024.0, queue->getLength(), usedNodes.size());
+			delete currentNode;
 		} else {
 			ExpandNode();
+			usedNodes.push_back(currentNode);
 		}
-
 		continueLoop = (foundCount < RESULT_COUNT);
-		if(continueLoop) {
-			delete currentNode;
-		}
 	}
 }
 
-void WongMatchMissing15::SaveResults(){
+void WongMatchMissing15Linked::SaveResults(){
 	//printf("\t");
 	//for(int i = 0; i < currentNode->n1Top; i++) {
 	//	printf("%d ", currentNode->n2[i]);
 	//}
 	//printf(" - %f : (%d expanded)\n", currentNode->cost, expandCount);
-	//printf("%d\t\t", expandCount);
-	delete currentNode;	
+	//printf("%d\t\t", expandCount);	
 	printf("Time taken in GetA %f\n", timeInGetA / (double)CLOCKS_PER_SEC);
 	printf("Time taken in GetB %f\n", timeInGetB / (double)CLOCKS_PER_SEC);
 	printf("Time taken in Queue %f\n", timeInQueue / (double)CLOCKS_PER_SEC);
 
 }
 
-double WongMatchMissing15::GetC(int p, int qp) {
+double WongMatchMissing15Linked::GetC(int p, int qp) {
 	return GetC(p, p, qp, qp);
 }
 
-double WongMatchMissing15::GetC(int j, int p, int qj, int qp) {
+double WongMatchMissing15Linked::GetC(int j, int p, int qj, int qp) {
 
 	double jpCost;
 	double qjqpCost;
@@ -255,7 +268,7 @@ double WongMatchMissing15::GetC(int j, int p, int qj, int qp) {
 	return fabs(jpCost - qjqpCost) + typeCost;
 }
 
-double WongMatchMissing15::GetCost(int d, int m, int qj, int qp) {
+double WongMatchMissing15Linked::GetCost(int d, int m, int qj, int qp) {
 	double patternLength = 0;
 	double baseLength;
 
@@ -339,40 +352,17 @@ double WongMatchMissing15::GetCost(int d, int m, int qj, int qp) {
 	return 0;
 }
 
-double WongMatchMissing15::GetCPrime(int a, int b, int c, int d) {
-	// Performance optimization on the symmetry of the graph 
-	// return GetC(a, b, c, d) + GetC(b, a, d, c); 
-	return 2*GetC(a, b, c, d);
-}
-
-
-
-double WongMatchMissing15::GetK(int p, int qp){
-	double cost = GetC(p, qp);
-	if(currentNode->n1Top - 2 >= 0) {
-		cost += GetCPrime(currentNode->n1[currentNode->n1Top - 2], p, currentNode->n2[currentNode->n2Top - 2], qp);
-	}
-	return cost;
-}
-double WongMatchMissing15::GetKPrime(int i, int q) {
-	double cost = GetC(i, q);
-	if(currentNode->n1Top - 1 >= 0) {
-		cost += GetCPrime(currentNode->n1[currentNode->n1Top - 1], i, currentNode->n2[currentNode->n2Top - 1], q);
-	}
-	return cost;
-}
-
-double WongMatchMissing15::GetA() {
+double WongMatchMissing15Linked::GetA() {
 	clock_t startTime = clock();
 	double cost = 0;
 	double minCost;
 	// Cost for node matching
 	for(int i = 1; i <= patternGraph->nodeCount; i++)
 	{
-		if(StandardNode::IsNodeInBitmap(currentNode->m1Bitmap, i)) {			
+		if(LinkedNode::IsNodeInBitmap(currentNode->m1Bitmap, i)) {			
 			minCost = MISSING_HELIX_PENALTY;
 			for(int j = 1; j <= baseGraph->nodeCount; j++) {
-				if(StandardNode::IsNodeInBitmap(currentNode->m2Bitmap, j)) {
+				if(LinkedNode::IsNodeInBitmap(currentNode->m2Bitmap, j)) {
 					minCost = min(minCost, GetC(i, j));
 				}
 			}
@@ -381,16 +371,14 @@ double WongMatchMissing15::GetA() {
 	}
 	
 	// Cost for the first edge matched
-	if(currentNode->n1Top != patternGraph->nodeCount) {
-		int lastPatternNode = currentNode->n1[currentNode->n1Top-1];
-		int lastBaseNode = currentNode->n2[currentNode->n2Top-1];
-		int usableEdgeCount = min(patternGraph->nodeCount - currentNode->n1Top, missingHelixCount * 2 - currentNode->missingNodesUsed + 1);
+	if(currentNode->depth != patternGraph->nodeCount) {
+		int lastPatternNode = currentNode->n1Node;
+		int lastBaseNode = currentNode->n2Node;
+		int usableEdgeCount = min(patternGraph->nodeCount - currentNode->depth, missingHelixCount * 2 - currentNode->missingNodesUsed + 1);
 
-		unsigned long long bitmap = 0;
+		unsigned long long bitmap = currentNode->GetN2Bitmap();
+		LinkedNode::RemoveNodeFromBitmap(bitmap, currentNode->n2Node);
 		unsigned long long edgeBitmap = EncodeNode(0, lastBaseNode);
-		for(int i = 0; i < currentNode->n2Top - 1; i++) {
-			bitmap = EncodeNode(bitmap, currentNode->n2[i]);
-		}
 
 		minCost = (usableEdgeCount > 1) ? MISSING_HELIX_PENALTY : MAXINT;
 		
@@ -408,20 +396,16 @@ double WongMatchMissing15::GetA() {
 	return cost;
 }
 
-double WongMatchMissing15::GetB() {
+double WongMatchMissing15Linked::GetB() {
 	clock_t startTime = clock();
 	
 	int kNode, iNode, jNode, i;
 	double minCost, cost = 0;
-	unsigned long long bitmap = 0;
-	int usableEdges = min(patternGraph->nodeCount - currentNode->n1Top, missingHelixCount * 2 - currentNode->missingNodesUsed + 1);;
-
-	for(i = 0; i < currentNode->n2Top; i++) {
-		bitmap = EncodeNode(bitmap, currentNode->n2[i]);
-	}
+	unsigned long long bitmap = currentNode->GetN2Bitmap();
+	int usableEdges = min(patternGraph->nodeCount - currentNode->depth, missingHelixCount * 2 - currentNode->missingNodesUsed + 1);;
 
 	for(i = 1; i < patternGraph->nodeCount; i++) {
-		if(StandardNode::IsNodeInBitmap(currentNode->m1Bitmap, i)) {
+		if(LinkedNode::IsNodeInBitmap(currentNode->m1Bitmap, i)) {
 			for(int j = 0; j < edgeMinCostCount[i-1]; j++) {					
 				if(((edgeMinCosts[i-1][j].bitmap & bitmap) == 0)  && 
 					(edgeMinCosts[i-1][j].noOfEdges <= usableEdges)) {
@@ -437,64 +421,56 @@ double WongMatchMissing15::GetB() {
 	return cost;
 }
 
-double WongMatchMissing15::GetF() {
+double WongMatchMissing15Linked::GetF() {
 	return currentNode->costGStar + GetA() + GetB();	
 }
 
-void WongMatchMissing15::PopBestNode(){
+void WongMatchMissing15Linked::PopBestNode(){
 	clock_t start = clock();
 	double cost;
 	queue->remove(currentNode, cost);
 	timeInQueue += clock() - start;
 }
 
-void WongMatchMissing15::ExpandNode() {
+void WongMatchMissing15Linked::ExpandNode() {
 	expandCount++;
-	StandardNode * temp;
+	LinkedNode * temp;
 	double edgeCost;
-	if(longestMatch < currentNode->n1Top) {
-		longestMatch = currentNode->n1Top;
-		printf(" %d elements matched! (%f kB memory used) \n", longestMatch, queue->getLength() * sizeof(StandardNode) / 1024.0);
+	if(longestMatch < currentNode->depth) {
+		longestMatch = currentNode->depth;
+		printf(" %d elements matched! (%f kB Memory Used)\n", longestMatch, (queue->getLength() + usedNodes.size()) * sizeof(LinkedNode) / 1024.0);
 	}
 	
-	int currentM1Top = patternGraph->nodeCount - currentNode->n1Top;
-	int currentM2Top = baseGraph->nodeCount - currentNode->n2Top + currentNode->missingNodesUsed;
+	int currentM1Top = patternGraph->nodeCount - currentNode->depth;
+	int currentM2Top = baseGraph->nodeCount - currentNode->depth + currentNode->missingNodesUsed;
 
 	// Expanding nodes with a real terminal node
 	for(int i = 1; i <= baseGraph->nodeCount; i++) {		
-		if(StandardNode::IsNodeInBitmap(currentNode->m2Bitmap, i) &&
-			((currentNode->n2Top == 0) || (baseGraph->EdgeExists(currentNode->n2[currentNode->n2Top-1]-1, i-1)))) {
-				for(int j = 0; j < min(missingHelixCount * 2 - currentNode->missingNodesUsed + 1, currentM2Top); j += 2) {  // Stepping by two since we jump every 2 loops
+		if((currentNode->depth == 0) || 
+			(LinkedNode::IsNodeInBitmap(currentNode->m2Bitmap, i) && (baseGraph->EdgeExists(currentNode->n2Node-1, i-1)))) {
+			for(int j = 0; j < min(missingHelixCount * 2 - currentNode->missingNodesUsed + 1, currentM2Top); j += 2) {  // Stepping by two since we jump every 2 loops
 				temp = currentNode;
-				currentNode = new StandardNode(currentNode, i, j);
+				currentNode = new LinkedNode(currentNode, i, j);
 				currentNode->costGStar = 0;
 
-				if(((temp->n1Top == 0) && (currentNode->n2[0] == -1)) || 
-					((patternGraph->nodeCount - currentNode->n1Top == 0) && (currentNode->n2[currentNode->n2Top-1] == -1))) {
+				if(((temp->depth == 0) && (j > 0)) || 
+					((patternGraph->nodeCount - currentNode->depth == 0) && (currentNode->n2Node == -1))) {
 					currentNode->costGStar += START_END_MISSING_HELIX_PENALTY;
 				}
 
 
-				
-				if(temp->n1Top == 0) {
-					edgeCost = 0;					
+				if(temp->depth == 0) {
+					edgeCost = 0;
 				} else {
-					edgeCost = GetCost(currentNode->n1[currentNode->n1Top-j-2], j+1, currentNode->n2[currentNode->n2Top-j-2], currentNode->n2[currentNode->n2Top-1]);
+					edgeCost = GetCost(temp->n1Node, j+1, temp->n2Node, currentNode->n2Node);
 				}
 
 				if(edgeCost >= 0) {
-					currentNode->costGStar += temp->costGStar + edgeCost +  MISSING_HELIX_PENALTY * (j/2.0) +
-						GetC(currentNode->n1[currentNode->n1Top-1], currentNode->n2[currentNode->n2Top-1]);
+					currentNode->costGStar += temp->costGStar + edgeCost +	MISSING_HELIX_PENALTY * (j/2.0) + GetC(currentNode->n1Node, currentNode->n2Node);
 					currentNode->cost = GetF();			
-
-					//printf("\t");
-					//for(int i = 0; i < currentNode->n1Top; i++) {
-					//	printf("%d ", currentNode->n2[i]);
-					//}
-					//printf(" - %f\t%f\t%f\t%f\n", currentNode->costGStar, GetA(), GetB(), currentNode->cost);
-
+					//currentNode->PrintNodeConcise(-1, true, true);
 					queue->add(currentNode, currentNode->cost);
-				} else { 
+				} else {
 					delete currentNode;
 				}
 				currentNode = temp;		
@@ -506,53 +482,16 @@ void WongMatchMissing15::ExpandNode() {
 	// Expanding nodes with a dummy terminal node
 	if((currentM2Top == 0) && (2*missingHelixCount - currentNode->missingNodesUsed >= currentM1Top)) {
 		temp = currentNode;
-		currentNode = new StandardNode(currentNode);
-		currentNode->costGStar = temp->costGStar + START_END_MISSING_HELIX_PENALTY;
-		while(currentNode->m1Bitmap != 0) {
-			currentNode->costGStar += (MISSING_HELIX_PENALTY / 2.0) ;//+ GetCost(currentNode->n1[currentNode->n1Top-1], 1, -1, -1);
-			currentNode->n1[currentNode->n1Top] = StandardNode::RemoveSmallestNode(currentNode->m1Bitmap);
-			currentNode->n1Top++;
-			currentNode->n2[currentNode->n2Top] = -1;
-			currentNode->n2Top++;			
-		}
+		currentNode = new LinkedNode(temp);
+		currentNode->depth = patternGraph->nodeCount;
+		currentNode->costGStar = temp->costGStar + MISSING_HELIX_PENALTY * (patternGraph->nodeCount - temp->depth) / 2.0 + START_END_MISSING_HELIX_PENALTY;
 		currentNode->cost = currentNode->costGStar;
-
-		//printf("\t");
-		//for(int i = 0; i < currentNode->n1Top; i++) {
-		//	printf("%d ", currentNode->n2[i]);
-		//}
-		//printf(" - %f\t%f\t%f\n", currentNode->costGStar, currentNode->cost - currentNode->costGStar, currentNode->cost);
-
 		queue->add(currentNode, currentNode->cost);
 		currentNode = temp;
 	}
 }
-void WongMatchMissing15::PrintCurrentNode()
-{
-	printf(" N1 : ");
-	for(int i = 0; i < (int)currentNode->n1Top; i++) {
-		printf(" %ld ", currentNode->n1[i]);
-	}
-	printf("\n N2 : ");
-	for(int i = 0; i < (int)currentNode->n2Top; i++) {
-		printf(" %ld ", currentNode->n2[i]);
-	}	
-	printf("\n M1 : ");
-	for(int i = 1; i <= patternGraph->nodeCount; i++) {
-		if(StandardNode::IsNodeInBitmap(currentNode->m1Bitmap, i)) {
-			printf(" %ld ", i);
-		}
-	}	
-	printf("\n M2 : ");
-	for(int i = 1; i <= baseGraph->nodeCount; i++) {
-		if(StandardNode::IsNodeInBitmap(currentNode->m2Bitmap, i)) {
-			printf(" %ld ", i);
-		}
-	}	
-	printf("\n Cost : %ld\n", currentNode->cost);
-}
 
-void WongMatchMissing15::NormalizeGraphs() {
+void WongMatchMissing15Linked::NormalizeGraphs() {
 
 	printf("Normalizing the base graph based on helix length ratio\nNormalized Graph:\n");
 	double ratio = 0;
@@ -573,7 +512,7 @@ void WongMatchMissing15::NormalizeGraphs() {
 	baseGraph->PrintGraph();
 }
 
-unsigned long long WongMatchMissing15::EncodeNode(unsigned long long bitmap, int node) {
+unsigned long long WongMatchMissing15Linked::EncodeNode(unsigned long long bitmap, int node) {
 	if(node == -1)
 		return bitmap;
 
