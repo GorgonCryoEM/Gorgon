@@ -38,6 +38,7 @@ public:
 
 
 private:
+	clock_t timeInGetA;
 	clock_t timeInGetB;
 	clock_t timeInQueue;
 	StandardNode * currentNode;
@@ -116,6 +117,7 @@ void WongMatchMissing15::Init(StandardGraph * patternGraph, StandardGraph * base
 	}
 	foundCount = 0;
 	longestMatch = 0;
+	timeInGetA = 0;
 	timeInGetB = 0;
 	timeInQueue = 0;
 	InitializeEdgeMinCosts();
@@ -137,9 +139,9 @@ void WongMatchMissing15::InitializeEdgeMinCosts() {
 
 	for(int i = 0; i < patternGraph->nodeCount; i++) {	
 		for(int edgeCount = 1; edgeCount <= missingHelixCount * 2 + 1; edgeCount++) {
-			for(int q = 0; q < baseGraph->nodeCount; q++) {
-				for(int r = 0; r < baseGraph->nodeCount; r++) {
-					if((q != r) && baseGraph->EdgeExists(q, r)) {
+			for(int q = 0; q < baseGraph->nodeCount-1; q++) {
+				for(int r = q+1; r < baseGraph->nodeCount; r++) {
+					if(baseGraph->EdgeExists(q, r)) {
 						bitmap = EncodeNode(0, q+1);
 						bitmap = EncodeNode(bitmap, r+1);
 						cost = GetCost(i+1, edgeCount, q+1, r+1) / (double)edgeCount;
@@ -215,6 +217,7 @@ void WongMatchMissing15::SaveResults(){
 	//printf(" - %f : (%d expanded)\n", currentNode->cost, expandCount);
 	//printf("%d\t\t", expandCount);
 	delete currentNode;	
+	printf("Time taken in GetA %f\n", timeInGetA / (double)CLOCKS_PER_SEC);
 	printf("Time taken in GetB %f\n", timeInGetB / (double)CLOCKS_PER_SEC);
 	printf("Time taken in Queue %f\n", timeInQueue / (double)CLOCKS_PER_SEC);
 
@@ -358,6 +361,7 @@ double WongMatchMissing15::GetKPrime(int i, int q) {
 }
 
 double WongMatchMissing15::GetA() {
+	clock_t startTime = clock();
 	double cost = 0;
 	double minCost;
 	// Cost for node matching
@@ -373,17 +377,42 @@ double WongMatchMissing15::GetA() {
 			cost += minCost;
 		}
 	}
+	
+	// Cost for the first edge matched
+	if(currentNode->n1Top != patternGraph->nodeCount) {
+		int lastPatternNode = currentNode->n1[currentNode->n1Top-1];
+		int lastBaseNode = currentNode->n2[currentNode->n2Top-1];
+		int usableEdgeCount = min(patternGraph->nodeCount - currentNode->n1Top, missingHelixCount * 2 - currentNode->missingNodesUsed + 1);
 
+		unsigned long long bitmap = 0;
+		unsigned long long edgeBitmap = EncodeNode(0, lastBaseNode);
+		for(int i = 0; i < currentNode->n2Top - 1; i++) {
+			bitmap = EncodeNode(bitmap, currentNode->n2[i]);
+		}
+
+		minCost = (usableEdgeCount > 1) ? MISSING_HELIX_PENALTY : MAXINT;
+		
+		for(int i = 0; i < edgeMinCostCount[lastPatternNode-1]; i++) {
+			if(((edgeMinCosts[lastPatternNode-1][i].bitmap & bitmap) == 0) &&
+					((edgeMinCosts[lastPatternNode-1][i].bitmap & edgeBitmap) == edgeBitmap) &&
+					(edgeMinCosts[lastPatternNode-1][i].noOfEdges <= usableEdgeCount)) {
+				minCost = min(minCost, edgeMinCosts[lastPatternNode-1][i].cost);
+				break;
+			}
+		}
+		cost += minCost;
+	}
+	timeInGetA += clock() - startTime;
 	return cost;
 }
+
 double WongMatchMissing15::GetB() {
 	clock_t startTime = clock();
 	
 	int kNode, iNode, jNode, i;
 	double minCost, cost = 0;
 	unsigned long long bitmap = 0;
-	bool breakoff;
-	int usableEdges = missingHelixCount * 2 - currentNode->missingNodesUsed + 1;
+	int usableEdges = min(patternGraph->nodeCount - currentNode->n1Top, missingHelixCount * 2 - currentNode->missingNodesUsed + 1);;
 
 	for(i = 0; i < currentNode->n2Top; i++) {
 		bitmap = EncodeNode(bitmap, currentNode->n2[i]);
@@ -391,16 +420,13 @@ double WongMatchMissing15::GetB() {
 
 	for(i = 1; i < patternGraph->nodeCount; i++) {
 		if(StandardNode::IsNodeInBitmap(currentNode->m1Bitmap, i)) {
-			breakoff = false;
 			for(int j = 0; j < edgeMinCostCount[i-1]; j++) {					
 				if(((edgeMinCosts[i-1][j].bitmap & bitmap) == 0)  && 
 					(edgeMinCosts[i-1][j].noOfEdges <= usableEdges)) {
 					minCost = edgeMinCosts[i-1][j].cost;
-					breakoff = true;
 					break;
 				}
 			}
-			assert(breakoff == true);
 
 			cost += minCost;
 		}
@@ -460,7 +486,7 @@ void WongMatchMissing15::ExpandNode() {
 				//for(int i = 0; i < currentNode->n1Top; i++) {
 				//	printf("%d ", currentNode->n2[i]);
 				//}
-				//printf(" - %f\t%f\t%f\n", currentNode->costGStar, currentNode->cost - currentNode->costGStar, currentNode->cost);
+				//printf(" - %f\t%f\t%f\t%f\n", currentNode->costGStar, GetA(), GetB(), currentNode->cost);
 
 				queue->add(currentNode, currentNode->cost);
 				currentNode = temp;		
