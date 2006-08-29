@@ -163,15 +163,15 @@ bool StandardNode::operator==(StandardNode &other) {
 }
 
 void StandardNode::AddNodeToBitmap(unsigned long long & bitmap, int node) {
-	bitmap = bitmap | (unsigned long long)(pow(2.0, node) + 0.1);
+	bitmap = bitmap | (1 << node);
 }
 
 void StandardNode::RemoveNodeFromBitmap(unsigned long long & bitmap, int node) {
-	bitmap = bitmap - (unsigned long long)(pow(2.0, node) + 0.1);
+	bitmap = bitmap - (1 << node);
 }
 
 bool StandardNode::IsNodeInBitmap(unsigned long long bitmap, int node) {
-	unsigned long long bitvalue = (unsigned long long)(pow(2.0, node) + 0.1);
+	unsigned long long bitvalue = (1 << node);
 	return ((bitmap & bitvalue) == bitvalue);
 }
 
