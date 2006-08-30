@@ -82,7 +82,7 @@ StandardGraph * PDBReader::ReadFile(char* fname) {
 			}
 #endif
 		}
-		delete token;
+		delete [] token;
 	}
 	fclose( fin ) ;
 
@@ -168,7 +168,7 @@ char * PDBReader::GetString(char * string, int start, int length) {
 	temp = TrimString(out);
 	
 	// clean
-	delete out;
+	delete [] out;
 	return temp;
 }
 

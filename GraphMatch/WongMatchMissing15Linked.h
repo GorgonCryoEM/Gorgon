@@ -82,7 +82,16 @@ WongMatchMissing15Linked::~WongMatchMissing15Linked() {
 	}
 	usedNodes.clear();
 
+	int queueSize = queue->getLength();
+	double tempKey;
+	LinkedNode * tempNode;
+	for(int i = 0; i < queueSize; i++) {		
+		queue->remove(tempNode, tempKey);
+		delete tempNode;
+	}
+
 	delete queue;
+	
 
 	if(newBaseGraph) {
 		baseGraph->skeletonHelixes.clear();
