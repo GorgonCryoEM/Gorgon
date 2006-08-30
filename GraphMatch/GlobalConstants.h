@@ -14,7 +14,7 @@ Date  : 02/06/2006
 const int NOPATHPENALTY = 1;
 const int TYPEMISMATCHPENALTY = 1;
 
-const int PRIORITYQUEUESIZE = 15000000;
+const int PRIORITYQUEUESIZE = 50000000;
 const int RESULT_COUNT = 20;
 const int MAX_NODES = 40;
 const int MAXINT = 2147483647;
