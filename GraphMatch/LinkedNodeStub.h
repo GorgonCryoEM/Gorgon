@@ -20,7 +20,7 @@ public:
 	LinkedNodeStub * parentNode;
 public:
 	LinkedNodeStub();
-	LinkedNodeStub(LinkedNode * oldNode);
+	LinkedNodeStub(LinkedNodeStub * oldNode);
 	~LinkedNodeStub();
 };
 
@@ -30,7 +30,7 @@ LinkedNodeStub::LinkedNodeStub() {
 	parentNode = NULL;
 }
 
-LinkedNodeStub::LinkedNodeStub(LinkedNode * oldNode) {
+LinkedNodeStub::LinkedNodeStub(LinkedNodeStub * oldNode) {
 	n1Node = oldNode->n1Node;
 	n2Node = oldNode->n2Node;
 	parentNode = oldNode->parentNode;

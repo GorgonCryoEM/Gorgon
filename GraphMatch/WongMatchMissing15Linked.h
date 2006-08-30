@@ -37,7 +37,7 @@ private:
 	clock_t timeInQueue;
 	LinkedNode * currentNode;
 	PriorityQueue<LinkedNode, double> * queue;
-	vector<LinkedNode*> usedNodes;
+	vector<LinkedNodeStub*> usedNodes;
 	int missingHelixCount;
 	int missingSheetCount;
 	bool newBaseGraph;
@@ -59,7 +59,7 @@ private:
 	double GetB();
 	double GetF();
 	void PopBestNode(); // Gets the best (first) node from the active nodes list.
-	void ExpandNode();  // Expands all the children of the current node.
+	bool ExpandNode(LinkedNodeStub * currentStub);  // Expands all the children of the current node.
 	void NormalizeGraphs();
 	void InitializeEdgeMinCosts();
 	unsigned long long EncodeNode(unsigned long long bitmap, int node);
@@ -119,28 +119,6 @@ void WongMatchMissing15Linked::Init(StandardGraph * patternGraph, StandardGraph 
 		LinkedNode::AddNodeToBitmap(currentNode->m2Bitmap, j);
 	}
 	queue->add(currentNode, currentNode->cost);
-	//currentNode->PrintNodeConcise(-1, true);
-
-
-	//for(int i = 1; i <= baseGraph->nodeCount; i++) {
-	//	currentNode = new LinkedNode();
-	//	currentNode->n1Node = 1;
-	//	currentNode->n2Node = i;
-	//	for(int j = 2; j <= patternGraph->nodeCount; j++) {
-	//		LinkedNode::AddNodeToBitmap(currentNode->m1Bitmap, j);
-	//	}
-	//	for(int j = 1; j <= baseGraph->nodeCount; j++) {
-	//		if(j != i) {
-	//			LinkedNode::AddNodeToBitmap(currentNode->m2Bitmap, j);
-	//		}
-	//	}
-	//	currentNode->depth = 1;
-	//	currentNode->parentNode = NULL;
-	//	currentNode->costGStar = GetC(1, i);
-	//	currentNode->cost = GetF();
-	//	queue->add(currentNode, currentNode->cost);
-	//	currentNode->PrintNodeConcise(-1, true);
-	//}
 }
 
 
@@ -216,12 +194,16 @@ void WongMatchMissing15Linked::RunMatching(clock_t startTime) {
 			finishTime = clock();
 			foundCount++;
 			currentNode->PrintNodeConcise(foundCount, false);
-			printf(": (%d expanded) (%f seconds) (%fkB Memory) (%d queue size) (%d parent size)\n", expandCount, (double) (finishTime - startTime) / (double) CLOCKS_PER_SEC, (queue->getLength() + usedNodes.size()) * sizeof(LinkedNode) / 1024.0, queue->getLength(), usedNodes.size());
-			delete currentNode;
+			printf(": (%d expanded) (%f seconds) (%fkB Memory) (%d queue size) (%d parent size)\n", expandCount, (double) (finishTime - startTime) / (double) CLOCKS_PER_SEC, (queue->getLength() * sizeof(LinkedNode) + usedNodes.size() * sizeof(LinkedNodeStub)) / 1024.0, queue->getLength(), usedNodes.size());
 		} else {
-			ExpandNode();
-			usedNodes.push_back(currentNode);
+			LinkedNodeStub * currentStub = new LinkedNodeStub(currentNode);
+			if(ExpandNode(currentStub)) {
+				usedNodes.push_back(currentStub);
+			} else {
+				delete currentStub;
+			}
 		}
+		delete currentNode;
 		continueLoop = (foundCount < RESULT_COUNT);
 	}
 }
@@ -432,13 +414,14 @@ void WongMatchMissing15Linked::PopBestNode(){
 	timeInQueue += clock() - start;
 }
 
-void WongMatchMissing15Linked::ExpandNode() {
+bool WongMatchMissing15Linked::ExpandNode(LinkedNodeStub * currentStub) {
+	bool expanded = false;
 	expandCount++;
 	LinkedNode * temp;
 	double edgeCost;
 	if(longestMatch < currentNode->depth) {
 		longestMatch = currentNode->depth;
-		printf(" %d elements matched! (%f kB Memory Used)\n", longestMatch, (queue->getLength() + usedNodes.size()) * sizeof(LinkedNode) / 1024.0);
+		printf(" %d elements matched! (%f kB Memory Used)\n", longestMatch, (queue->getLength() * sizeof(LinkedNode) + usedNodes.size() * sizeof(LinkedNodeStub)) / 1024.0);
 	}
 	
 	int currentM1Top = patternGraph->nodeCount - currentNode->depth;
@@ -450,7 +433,7 @@ void WongMatchMissing15Linked::ExpandNode() {
 			(LinkedNode::IsNodeInBitmap(currentNode->m2Bitmap, i) && (baseGraph->EdgeExists(currentNode->n2Node-1, i-1)))) {
 			for(int j = 0; j < min(missingHelixCount * 2 - currentNode->missingNodesUsed + 1, currentM2Top); j += 2) {  // Stepping by two since we jump every 2 loops
 				temp = currentNode;
-				currentNode = new LinkedNode(currentNode, i, j);
+				currentNode = new LinkedNode(currentNode, currentStub, i, j);
 				currentNode->costGStar = 0;
 
 				if(((temp->depth == 0) && (j > 0)) || 
@@ -470,6 +453,7 @@ void WongMatchMissing15Linked::ExpandNode() {
 					currentNode->cost = GetF();			
 					//currentNode->PrintNodeConcise(-1, true, true);
 					queue->add(currentNode, currentNode->cost);
+					expanded = true;
 				} else {
 					delete currentNode;
 				}
@@ -489,6 +473,7 @@ void WongMatchMissing15Linked::ExpandNode() {
 		queue->add(currentNode, currentNode->cost);
 		currentNode = temp;
 	}
+	return expanded;
 }
 
 void WongMatchMissing15Linked::NormalizeGraphs() {

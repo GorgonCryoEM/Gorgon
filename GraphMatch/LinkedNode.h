@@ -10,15 +10,13 @@ Date  : 01/23/2006
 
 #include <vector>
 #include "GlobalConstants.h"
+#include "LinkedNodeStub.h"
 
 using namespace std;
 
 
-class LinkedNode {
+class LinkedNode : public LinkedNodeStub {
 public:
-	char n1Node;
-	char n2Node;
-	LinkedNode * parentNode;
 	unsigned long long m1Bitmap;
 	unsigned long long m2Bitmap;
 	char missingNodesUsed;
@@ -28,7 +26,7 @@ public:
 public:
 	LinkedNode(LinkedNode * olderNode);
 	LinkedNode();
-	LinkedNode::LinkedNode(LinkedNode * olderNode, int n2Node, int dummyHelixCount);
+	LinkedNode(LinkedNode * olderNode, LinkedNodeStub * olderStub, int n2Node, int dummyHelixCount);
 	~LinkedNode();
 	void PrintNodeConcise(int rank, bool endOfLine = true, bool printCostBreakdown = false);
 	unsigned long long GetN1Bitmap();
@@ -68,11 +66,11 @@ LinkedNode::LinkedNode(LinkedNode * olderNode) {
 }
 
 
-LinkedNode::LinkedNode(LinkedNode * olderNode, int n2Node, int dummyHelixCount) {
+LinkedNode::LinkedNode(LinkedNode * olderNode, LinkedNodeStub * olderStub, int n2Node, int dummyHelixCount) {
 	this->n1Node = olderNode->n1Node + dummyHelixCount + 1;
 	this->n2Node = n2Node;
 	this->depth = olderNode->depth + dummyHelixCount + 1;
-	this->parentNode = olderNode;
+	this->parentNode = olderStub;
 	this->m1Bitmap = olderNode->m1Bitmap;
 	this->m2Bitmap = olderNode->m2Bitmap;
 	for(int i = olderNode->n1Node + 1; i <= this->n1Node; i++) {
@@ -92,15 +90,17 @@ void LinkedNode::PrintNodeConcise(int rank, bool endOfLine, bool printCostBreakd
 		used[i] = false;
 	}
 
-	LinkedNode * currentNode = this;
+	LinkedNodeStub * currentNode = this;
 	bool continueLoop = true;
 	while(continueLoop) {
+		if(currentNode->parentNode == NULL) {
+			 break;
+		}
 		n1[top] = currentNode->n1Node;
 		n2[top] = currentNode->n2Node;
 		used[currentNode->n1Node] = true;
 		top++;
-		currentNode = currentNode->parentNode;
-		continueLoop = (currentNode->depth > 0);
+		currentNode = currentNode->parentNode;		
 	}
 
 	for(int i = 1; i <= this->depth; i++) {
@@ -156,12 +156,14 @@ unsigned long long LinkedNode::GetN1Bitmap() {
 
 unsigned long long LinkedNode::GetN2Bitmap() {
 	unsigned long long n2Bitmap = 0;
-	LinkedNode * currentNode = this;
+	LinkedNodeStub * currentNode = this;
 	bool continueLoop = true;
 	while(continueLoop) {
+		if(currentNode->parentNode == NULL) {
+			 break;
+		}
 		LinkedNode::AddNodeToBitmap(n2Bitmap, currentNode->n2Node);
 		currentNode = currentNode->parentNode;
-		continueLoop = (currentNode->depth > 0);
 	}
 	return n2Bitmap;
 }
