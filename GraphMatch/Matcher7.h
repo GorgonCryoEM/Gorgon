@@ -51,7 +51,7 @@ public:
 
 	~Matcher7Junction() {
 		elementCount.clear();
-		for(int i = 0; i < (int)history.size(); i++) {
+		for(unsigned int i = 0; i < history.size(); i++) {
 			delete history[i];
 		}
 		history.clear();
@@ -101,7 +101,7 @@ Matcher7::Matcher7 (StandardGraph * patternGraph, StandardGraph * baseGraph) {
 	this->patternGraph = patternGraph;
 	this->baseGraph = baseGraph;
 	dummyHelixNo = baseGraph->GetNodeCount();
-	for(int i = 0; i < (int)patternGraph->pdbStructures.size() * baseGraph->GetNodeCount() * 2; i++) {
+	for(unsigned int i = 0; i < patternGraph->pdbStructures.size() * baseGraph->GetNodeCount() * 2; i++) {
 		junctions.push_back(NULL);
 	}
 
@@ -117,7 +117,7 @@ Matcher7::Matcher7(StandardGraph * patternGraph, StandardGraph * baseGraph, int 
 	this->patternGraph = patternGraph;
 	this->baseGraph = baseGraph;
 	dummyHelixNo = baseGraph->GetNodeCount();
-	for(int i = 0; i < (int)patternGraph->pdbStructures.size() * (baseGraph->GetNodeCount() + 1) * 2; i++) {
+	for(unsigned int i = 0; i < patternGraph->pdbStructures.size() * (baseGraph->GetNodeCount() + 1) * 2; i++) {
 		junctions.push_back(NULL);
 	}
 	this->missingHelixCount = missingHelixCount;
@@ -128,12 +128,12 @@ Matcher7::Matcher7(StandardGraph * patternGraph, StandardGraph * baseGraph, int 
 }
 
 Matcher7::~Matcher7() {
-	for(int i = 0; i < (int)patternGraph->pdbStructures.size() * (baseGraph->GetNodeCount()) * 2; i++) {
+	for(unsigned int i = 0; i < patternGraph->pdbStructures.size() * (baseGraph->GetNodeCount()) * 2; i++) {
 		if(junctions[i] != NULL) {
 			delete junctions[i];
 		}
 	}
-	for(int i = 0; i < (int)results.size(); i++) {
+	for(unsigned int i = 0; i < results.size(); i++) {
 		delete results[i];
 	}
 	results.clear();
@@ -183,7 +183,7 @@ int Matcher7::GetHistoryIndex(unsigned int pathBitmap) {
 	char * X = new char[baseGraph->skeletonHelixes.size() + 1];
 	X[0] = 0;
 	int count = 0;
-	for(int i = 0; i < (int)baseGraph->skeletonHelixes.size(); i++) {
+	for(unsigned int i = 0; i < baseGraph->skeletonHelixes.size(); i++) {
 		if(IsVisited(pathBitmap, i)) {
 			count++;
 			X[count] = i+1;
@@ -504,7 +504,7 @@ void Matcher7::SaveResults() {
 		}
 	}
 	
-	for(int i = 0; i < (int)results.size(); i++) {
+	for(unsigned int i = 0; i < results.size(); i++) {
 		node = (StandardNode*)results[i];
 		for(int j = node->n1Top; j < patternGraph->nodeCount; j++) {
 			node->n1[node->n1Top] = j;							node->n1Top++;
@@ -520,10 +520,10 @@ void Matcher7::PrintJunction(int patternHelix, int baseNode) {
 		printf("\nJunction History (%d, %d)\n", patternHelix+1, baseNode+1);
 		Matcher7PathHistory * historyTable;
 		Matcher7PathHistory historyElement;
-		for(int i = 0; i < (int)junc->history.size(); i++) {
+		for(unsigned int i = 0; i < junc->history.size(); i++) {
 			printf("\t%d missing helixes\n", i);
 			historyTable = (Matcher7PathHistory*)junc->history[i];
-			for(int j = 0; j < (int)junc->elementCount[i]; j++) {
+			for(unsigned int j = 0; j < junc->elementCount[i]; j++) {
 				historyElement = historyTable[j];
 				for(int k = 0; k < RESULT_COUNT; k++) {
 					if(historyElement.lastBaseNode[k] != -1) {
@@ -542,9 +542,9 @@ void Matcher7::GetJunctionStats(int patternHelix, int baseNode, int & totalCount
 	if(junc != NULL) {
 		Matcher7PathHistory * historyTable;
 		Matcher7PathHistory historyElement;
-		for(int i = 0; i < (int)junc->history.size(); i++) {
+		for(unsigned int i = 0; i < junc->history.size(); i++) {
 			historyTable = (Matcher7PathHistory*)junc->history[i];
-			for(int j = 0; j < (int)junc->elementCount[i]; j++) {
+			for(unsigned int j = 0; j < junc->elementCount[i]; j++) {
 				totalRowCount++;
 				historyElement = historyTable[j];
 				for(int k = 0; k < RESULT_COUNT; k++) {
@@ -610,7 +610,7 @@ void Matcher7::GetJunctionStats() {
 	Matcher7PathHistory * pathTable;
 	int count;
 	int tot;
-	for(int p = 0; p < (int)patternGraph->pdbStructures.size(); p++) {
+	for(unsigned int p = 0; p < patternGraph->pdbStructures.size(); p++) {
 		printf("\n[%d] : ", p + 1);
 		for(int b = 0; b < baseGraph->GetNodeCount(); b++) {
 			currentJunction = junctions[GetIndex(p, b)];

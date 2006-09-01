@@ -77,7 +77,7 @@ WongMatchMissing15Linked::WongMatchMissing15Linked(StandardGraph * patternGraph,
 }
 
 WongMatchMissing15Linked::~WongMatchMissing15Linked() {
-	for(int i = 0; i < usedNodes.size(); i++) {
+	for(unsigned int i = 0; i < usedNodes.size(); i++) {
 		delete usedNodes[i];
 	}
 	usedNodes.clear();
@@ -390,7 +390,7 @@ double WongMatchMissing15Linked::GetA() {
 double WongMatchMissing15Linked::GetB() {
 	clock_t startTime = clock();
 	
-	int kNode, iNode, jNode, i;
+	int i;
 	double minCost, cost = 0;
 	unsigned long long bitmap = currentNode->GetN2Bitmap();
 	int usableEdges = min(patternGraph->nodeCount - currentNode->depth, missingHelixCount * 2 - currentNode->missingNodesUsed + 1);;
@@ -510,7 +510,7 @@ unsigned long long WongMatchMissing15Linked::EncodeNode(unsigned long long bitma
 	if(node == -1)
 		return bitmap;
 
-	return (bitmap | (1 << node));
+	return (bitmap | ((unsigned long long)1 << node));
 }
 
 #endif

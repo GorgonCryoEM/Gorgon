@@ -411,7 +411,7 @@ double WongMatchMissing15::GetA() {
 double WongMatchMissing15::GetB() {
 	clock_t startTime = clock();
 	
-	int kNode, iNode, jNode, i;
+	int i;
 	double minCost, cost = 0;
 	unsigned long long bitmap = 0;
 	int usableEdges = min(patternGraph->nodeCount - currentNode->n1Top, missingHelixCount * 2 - currentNode->missingNodesUsed + 1);;
@@ -577,7 +577,7 @@ unsigned long long WongMatchMissing15::EncodeNode(unsigned long long bitmap, int
 	if(node == -1)
 		return bitmap;
 
-	return (bitmap | (1 << node));
+	return (bitmap | ((unsigned long long)1 << node));
 }
 
 #endif

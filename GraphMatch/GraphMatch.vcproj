@@ -43,7 +43,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="..\ExternalLibraries\vflib2\include;..\ExternalLibraries\vflib2\src"
-				PreprocessorDefinitions=";LEDA_DLL"
+				PreprocessorDefinitions="_DEBUG;_CRT_SECURE_NO_DEPRECATE"
 				MinimalRebuild="false"
 				BasicRuntimeChecks="0"
 				SmallerTypeCheck="false"
@@ -121,7 +121,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				AdditionalIncludeDirectories="..\ExternalLibraries\vflib2\include;..\ExternalLibraries\vflib2\src"
-				PreprocessorDefinitions=";LEDA_DLL"
+				PreprocessorDefinitions="_RELEASE;_CRT_SECURE_NO_DEPRECATE"
 				MinimalRebuild="false"
 				RuntimeLibrary="2"
 				WarningLevel="3"
@@ -205,10 +205,6 @@
 			</File>
 			<File
 				RelativePath=".\GraphGenerator.h"
-				>
-			</File>
-			<File
-				RelativePath=".\LedaMatch.h"
 				>
 			</File>
 			<File

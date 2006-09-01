@@ -155,7 +155,7 @@ bool StandardNode::operator==(StandardNode &other) {
 		return false; 
 	}
 
-	int returnValue = true;
+	bool returnValue = true;
 	for(int i = 0; i < n1Top; i++) {
 		returnValue = returnValue && (n1[i] == other.n1[i]) && (n2[i] == other.n2[i]);
 	}
@@ -163,15 +163,15 @@ bool StandardNode::operator==(StandardNode &other) {
 }
 
 void StandardNode::AddNodeToBitmap(unsigned long long & bitmap, int node) {
-	bitmap = bitmap | (1 << node);
+	bitmap = bitmap | ((unsigned long long)1 << node);
 }
 
 void StandardNode::RemoveNodeFromBitmap(unsigned long long & bitmap, int node) {
-	bitmap = bitmap - (1 << node);
+	bitmap = bitmap - ((unsigned long long)1 << node);
 }
 
 bool StandardNode::IsNodeInBitmap(unsigned long long bitmap, int node) {
-	unsigned long long bitvalue = (1 << node);
+	unsigned long long bitvalue = ((unsigned long long)1 << node);
 	return ((bitmap & bitvalue) == bitvalue);
 }
 

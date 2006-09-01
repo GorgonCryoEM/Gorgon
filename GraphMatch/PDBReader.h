@@ -53,7 +53,7 @@ StandardGraph * PDBReader::ReadFile(char* fname) {
 			currentStructure->endPosition = GetInt(line, 33, 4);
 			currentStructure->secondaryStructureType = GRAPHEDGE_HELIX;
 			add = true;
-			for(int i = 0; i < (int)structures.size(); i++)	{
+			for(unsigned int i = 0; i < structures.size(); i++)	{
 				add = add && !((currentStructure->startPosition == structures[i]->startPosition) && 
 					(currentStructure->endPosition == structures[i]->endPosition));
 			}
@@ -71,7 +71,7 @@ StandardGraph * PDBReader::ReadFile(char* fname) {
 			currentStructure->endPosition = GetInt(line, 33, 4);
 			currentStructure->secondaryStructureType = GRAPHEDGE_SHEET;
 			add = true;
-			for(int i = 0; i < (int)structures.size(); i++)	{
+			for(unsigned int i = 0; i < structures.size(); i++)	{
 				add = add && !((currentStructure->startPosition == structures[i]->startPosition) && 
 					(currentStructure->endPosition == structures[i]->endPosition));
 			}
@@ -82,7 +82,8 @@ StandardGraph * PDBReader::ReadFile(char* fname) {
 			}
 #endif
 		}
-		delete [] token;
+		delete token;
+		token = NULL;
 	}
 	fclose( fin ) ;
 
@@ -100,7 +101,7 @@ StandardGraph * PDBReader::ReadFile(char* fname) {
 
 	if(structures.size() == 0){
 		printf("No helixes or sheets found... Unable to perform matching");
-		exit(0);
+		return NULL;
 	}
 
 	StandardGraph * graph = new StandardGraph(2 * structures.size());
@@ -168,7 +169,8 @@ char * PDBReader::GetString(char * string, int start, int length) {
 	temp = TrimString(out);
 	
 	// clean
-	delete [] out;
+	delete out;
+	out = NULL;
 	return temp;
 }
 
@@ -192,6 +194,7 @@ int PDBReader::GetInt(char * string, int start, int length) {
 	
 	// clean
 	delete substring;
+	substring = NULL;
 	return value;
 }
 #endif

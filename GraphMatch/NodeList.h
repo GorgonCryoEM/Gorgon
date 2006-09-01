@@ -25,14 +25,14 @@ NodeList::NodeList() {
 }
 
 NodeList::~NodeList() {
-	for(int i = 0; i < nodes.size(); i++) {
+	for(unsigned int i = 0; i < nodes.size(); i++) {
 		delete nodes[i];
 	}
 	nodes.clear();
 }
 void NodeList::InsertSorted(StandardNode * node) {
 	bool inserted = false;
-	for(int i = 0; i < (int)nodes.size(); i++) {
+	for(unsigned int i = 0; i < nodes.size(); i++) {
 		if(node->cost < nodes[i]->cost) {
 			nodes.insert(nodes.begin() + i, node);
 			inserted = true;

@@ -93,7 +93,7 @@ StandardGraph * SkeletonReader::ReadFile(char * volumeFile, char * helixFile, ch
 	}
 
 	StandardGraph * graph = new StandardGraph(2*helixes.size());
-	for(int i = 0; i < (int)helixes.size(); i++) {
+	for(unsigned int i = 0; i < helixes.size(); i++) {
 		if(helixes[i]->geometricShapeType == GRAPHEDGE_HELIX) {
 			helixes[i]->FindCornerCellsInHelix();
 		} else if (helixes[i]->geometricShapeType == GRAPHEDGE_SHEET) {

@@ -54,7 +54,7 @@ StandardGraph * GraphGenerator::GeneratePDBGraph(int nodeCount) {
 			pdbStruct = new SecondaryStructure();
 			pdbStruct->serialNumber = i/2;
 			pdbStruct->startPosition = 1;
-			pdbStruct->endPosition = 1 + pg->adjacencyMatrix[i][i+1][1];
+			pdbStruct->endPosition = 1 + (int)pg->adjacencyMatrix[i][i+1][1];
 			pdbStruct->secondaryStructureType = GRAPHEDGE_HELIX;
 			pg->pdbStructures.push_back(pdbStruct);
 
@@ -75,12 +75,12 @@ StandardGraph * GraphGenerator::GeneratePDBGraphWithNodeAttributes(int nodeCount
 	for(int i = 0; i < nodeCount; i++) { 
 		// Helix
 		pg->adjacencyMatrix[i][i][1] = GetRandom((double)MAX_RANDOM_HELIX_SIZE);	
-		pg->adjacencyMatrix[i][i][0] == GRAPHEDGE_HELIX;
+		pg->adjacencyMatrix[i][i][0] = GRAPHEDGE_HELIX;
 
 		pdbStruct = new SecondaryStructure();
 		pdbStruct->serialNumber = i;
 		pdbStruct->startPosition = 1;
-		pdbStruct->endPosition = 1 + pg->adjacencyMatrix[i][i][1];
+		pdbStruct->endPosition = 1 + (int)pg->adjacencyMatrix[i][i][1];
 		pdbStruct->secondaryStructureType = GRAPHEDGE_HELIX;
 		pg->pdbStructures.push_back(pdbStruct);
 
@@ -165,7 +165,7 @@ StandardGraph * GraphGenerator::ShufflePatternGraph(StandardGraph * patternGraph
 	for(i = 0; i < helixCount; i++) {
 		helixAllocation[i] = false;
 		shape = new GeometricShape();
-		shape->length = patternGraph->adjacencyMatrix[i*2][i*2+1][1];
+		shape->length = (int)patternGraph->adjacencyMatrix[i*2][i*2+1][1];
 		skeletonShape.push_back(shape);
 	}
 
@@ -216,7 +216,7 @@ StandardGraph * GraphGenerator::ShufflePatternGraphWithNodeAttributes(StandardGr
 	for(i = 0; i < helixCount; i++) {
 		helixAllocation[i] = false;
 		shape = new GeometricShape();
-		shape->length = patternGraph->adjacencyMatrix[i][i][1];
+		shape->length = (int)patternGraph->adjacencyMatrix[i][i][1];
 		skeletonShape.push_back(shape);
 	}
 

@@ -18,6 +18,8 @@ Date  : 01/23/2006
 #include "GraphGenerator.h"
 #include <time.h>
 
+
+
 void DisplayInputFormat()
 {
 	printf("Usage: GraphMatch <settings file>\n\n") ;
@@ -125,18 +127,23 @@ void DoGraphMatching(StandardGraph * patternGraph, StandardGraph * baseGraph)
 	//delete(matcher15);
 
 	// Match Graphs
+	//char ch = getchar();
 	WongMatchMissing15Linked * matcher15linked;
 	if(MISSING_HELIX_COUNT == -1) {
 		matcher15linked = new WongMatchMissing15Linked(patternGraph, baseGraph);
 	} else {
 		matcher15linked = new WongMatchMissing15Linked(patternGraph, baseGraph, MISSING_HELIX_COUNT, MISSING_SHEET_COUNT);
 	}
+	//ch = getchar();
 	start = clock();
 	matcher15linked->RunMatching(start);
+	//ch = getchar();
 	matcher15linked->SaveResults();
+	//ch = getchar();
 	
 	// Clean
-	delete(matcher15linked);
+	delete matcher15linked;
+	//ch = getchar();
 }
 
 
@@ -219,7 +226,6 @@ int main( int args, char * argv[] ) {
 		DisplayInputFormat();
 		exit(0);
 	}
-
 }
 
 
