@@ -173,15 +173,15 @@ bool LinkedNode::operator==(LinkedNode &other) {
 }
 
 void LinkedNode::AddNodeToBitmap(unsigned long long & bitmap, int node) {
-	bitmap = bitmap | (1 << node);
+	bitmap = bitmap | ((unsigned long long)1 << node);
 }
 
 void LinkedNode::RemoveNodeFromBitmap(unsigned long long & bitmap, int node) {
-	bitmap = bitmap - (1 << node);
+	bitmap = bitmap - ((unsigned long long)1 << node);
 }
 
 bool LinkedNode::IsNodeInBitmap(unsigned long long bitmap, int node) {
-	unsigned long long bitvalue = (1 << node);
+	unsigned long long bitvalue = ((unsigned long long)1 << node);
 	return ((bitmap & bitvalue) == bitvalue);
 }
 

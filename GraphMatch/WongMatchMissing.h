@@ -167,7 +167,7 @@ void WongMatchMissing::HandleMissingHelixes() {
 		}
 	}
 
-	for(int i = 0; i < baseGraph->skeletonHelixes.size(); i++) {
+	for(unsigned int i = 0; i < baseGraph->skeletonHelixes.size(); i++) {
 		newBase->skeletonHelixes.push_back(baseGraph->skeletonHelixes[i]);
 	}
 
@@ -396,7 +396,6 @@ double WongMatchMissing::GetA() {
 double WongMatchMissing::GetB() {
 	clock_t startTime = clock();
 	
-	int kNode, iNode, jNode;
 	double minCost;
 	double cost = 0;
 

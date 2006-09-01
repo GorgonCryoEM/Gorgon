@@ -75,7 +75,7 @@ bool PathGenerator::MarkPath(int startHelix, int startCorner, int endHelix, int 
 
 	Point3Int tempCell = Point3Int(1,1,1,0);
 
-	for(int i = 0; i < (int)graph->skeletonHelixes[startHelix]->cornerCells.size(); i++) {
+	for(unsigned int i = 0; i < graph->skeletonHelixes[startHelix]->cornerCells.size(); i++) {
 		tempCell = graph->skeletonHelixes[startHelix]->cornerCells[i];
 		if(tempCell.node == startCorner) {			
 			oldStack.push_back(new Point3Int(tempCell.x, tempCell.y, tempCell.z, 1));
@@ -93,17 +93,17 @@ bool PathGenerator::MarkPath(int startHelix, int startCorner, int endHelix, int 
 	d[5][0] = 1;		d[5][1] = 0;		d[5][2] = 0;
 	Volume * visited = new Volume(skeletonVol->getSizeX(), skeletonVol->getSizeY(), skeletonVol->getSizeZ());
 
-	for(int i = 0; i < (int)graph->skeletonHelixes.size(); i++) {
+	for(unsigned int i = 0; i < graph->skeletonHelixes.size(); i++) {
 		//if(!((i == endHelix) && (i==startHelix))) {
 		if(i != endHelix) {
-			for(int j = 0; j < (int)graph->skeletonHelixes[i]->internalCells.size(); j++) {
+			for(unsigned int j = 0; j < graph->skeletonHelixes[i]->internalCells.size(); j++) {
 				Point3Int cell = graph->skeletonHelixes[i]->internalCells[j];
 				visited->setDataAt(cell.x, cell.y, cell.z, 100000);
 			}
 		}
 
 
-		for(int j = 0; j < (int)graph->skeletonHelixes[i]->cornerCells.size(); j++) {
+		for(unsigned int j = 0; j < graph->skeletonHelixes[i]->cornerCells.size(); j++) {
 			Point3Int cell = graph->skeletonHelixes[i]->cornerCells[j];
 			if(((i==startHelix) && (cell.node == startCorner))  || ((i==endHelix) && (cell.node == endCorner))) {
 				visited->setDataAt(cell.x, cell.y, cell.z, 0);
@@ -118,13 +118,13 @@ bool PathGenerator::MarkPath(int startHelix, int startCorner, int endHelix, int 
 
 	while((!found) && (oldStack.size() > 0)) {
 		newStack.clear();
-		for(int i = 0; (i < (int)oldStack.size() && !found); i++) {
+		for(unsigned int i = 0; (i < oldStack.size() && !found); i++) {
 			currentPoint = oldStack[i];
 			xx = currentPoint->x;	
 			yy = currentPoint->y;	
 			zz = currentPoint->z;
 
-			for(int i = 0; i < (int)graph->skeletonHelixes[endHelix]->cornerCells.size(); i++) {
+			for(unsigned int i = 0; i < graph->skeletonHelixes[endHelix]->cornerCells.size(); i++) {
 				tempCell = graph->skeletonHelixes[endHelix]->cornerCells[i];
 				if(tempCell.node == endCorner) {					
 					found = found || ((xx == tempCell.x) && (yy == tempCell.y) && (zz == tempCell.z));

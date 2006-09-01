@@ -92,7 +92,7 @@ bool GeometricShape::IsInsidePolygon(Point3 p) {
 	double d;
 	bool isInside = false;
 	double A,B,C,D,E,F,G,H,I;
-	for(int i = 0; i < (int)polygons.size(); i++) {
+	for(unsigned int i = 0; i < polygons.size(); i++) {
 		poly = (Polygon)polygons[i];
 		a = (Point3)polygonPoints[poly.pointIndex1];
 		b = (Point3)polygonPoints[poly.pointIndex2];
@@ -141,7 +141,7 @@ void GeometricShape::FindCornerCellsInHelix() {
 	d[4][0] = -1;		d[4][1] = 0;		d[4][2] = 0;
 	d[5][0] = 1;		d[5][1] = 0;		d[5][2] = 0;
 	int insideCounter;
-	for(int i = 0; i < (int)internalCells.size(); i++) {
+	for(unsigned int i = 0; i < internalCells.size(); i++) {
 		insideCounter = 0;
 		for(int j = 0; j < 6; j++) {
 			if(GetLocationInVector(internalCells, Point3Int(internalCells[i].x + d[j][0], internalCells[i].y + d[j][1], internalCells[i].z + d[j][2], 0)) >= 0) {
@@ -160,7 +160,7 @@ void GeometricShape::FindCornerCellsInHelix() {
 	int corner2 = cornerCells.size() - 1;
 
 	for(int i = 0; i < (int)cornerCells.size() - 1; i++){
-		for(int j = i+1; j < (int)cornerCells.size(); j++) {
+		for(unsigned int j = i+1; j < cornerCells.size(); j++) {
 			dist1 = Point3Int::EuclideanDistance(cornerCells[i], cornerCells[j]);
 			if(maxDistance < dist1) {
 				corner1 = i;
@@ -173,7 +173,7 @@ void GeometricShape::FindCornerCellsInHelix() {
 	cornerCells[corner1].node = 1;
 	cornerCells[corner2].node = 2;
 
-	for(int i = 0; i < (int)cornerCells.size(); i++) {
+	for(unsigned int i = 0; i < cornerCells.size(); i++) {
 		dist1 = Point3Int::EuclideanDistance(cornerCells[corner1], cornerCells[i]);
 		dist2 = Point3Int::EuclideanDistance(cornerCells[corner2], cornerCells[i]);
 		if((dist1 > BORDER_MARGIN_THRESHOLD) && (dist2 > BORDER_MARGIN_THRESHOLD)) {
@@ -195,7 +195,7 @@ void GeometricShape::FindCornerCellsInHelix() {
 
 int GeometricShape::GetLocationInVector(vector<Point3Int> v, Point3Int point) {
 	int loc = -1;
-	for(int i = 0; (i < (int)v.size() && loc < 0); i++) {
+	for(unsigned int i = 0; (i < v.size() && loc < 0); i++) {
 		if(v[i] == point) {
 			loc = i;
 		}
@@ -204,7 +204,7 @@ int GeometricShape::GetLocationInVector(vector<Point3Int> v, Point3Int point) {
 }
 
 Point3Int GeometricShape::GetCornerCell(int node) {
-	for(int i = 0; i < (int)cornerCells.size(); i++) {
+	for(unsigned int i = 0; i < cornerCells.size(); i++) {
 		if(cornerCells[i].node == node) {
 			return cornerCells[i];
 		}
