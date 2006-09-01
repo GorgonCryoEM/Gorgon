@@ -30,7 +30,7 @@ public:
 	Matcher7Junction(int patternHelixNo, int baseHelixCount, int missingHelixCount) {
 		Matcher7PathHistory * hist;
 		for(int i = 0; i <= missingHelixCount; i++) {
-			long long count = Combinatorics::Combinations(baseHelixCount, patternHelixNo-i);
+			unsigned long long count = Combinatorics::Combinations(baseHelixCount, patternHelixNo-i);
 			assert(count >= 0);
  			elementCount.push_back(count);
 			hist = new Matcher7PathHistory[count];
