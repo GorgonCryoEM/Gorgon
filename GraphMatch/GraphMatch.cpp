@@ -78,7 +78,7 @@ void DoPerformanceComparison(StandardGraph * patternGraph, StandardGraph * baseG
 
 void DoGraphMatching(StandardGraph * patternGraph, StandardGraph * baseGraph) 
 {
-	clock_t start, finish;
+	clock_t start;//, finish;
 
 
 	//// Match Graphs
