@@ -12,6 +12,7 @@ Date  : 01/23/2006
 #include "WongMatchMissing.h"
 #include "WongMatchMissing15.h"
 #include "WongMatchMissing15Linked.h"
+#include "WongMatch15Constrained.h"
 #include "PDBReader.h"
 #include "SkeletonReader.h"
 #include "GlobalConstants.h"
@@ -78,7 +79,7 @@ void DoPerformanceComparison(StandardGraph * patternGraph, StandardGraph * baseG
 
 void DoGraphMatching(StandardGraph * patternGraph, StandardGraph * baseGraph) 
 {
-	clock_t start;//, finish;
+	clock_t start, finish;
 
 
 	//// Match Graphs
@@ -126,24 +127,32 @@ void DoGraphMatching(StandardGraph * patternGraph, StandardGraph * baseGraph)
 	//// Clean
 	//delete(matcher15);
 
+	//// Match Graphs
+	//WongMatchMissing15Linked * matcher15linked;
+	//if(MISSING_HELIX_COUNT == -1) {
+	//	matcher15linked = new WongMatchMissing15Linked(patternGraph, baseGraph);
+	//} else {
+	//	matcher15linked = new WongMatchMissing15Linked(patternGraph, baseGraph, MISSING_HELIX_COUNT, MISSING_SHEET_COUNT);
+	//}
+	//start = clock();
+	//matcher15linked->RunMatching(start);
+	//matcher15linked->SaveResults();
+	//delete matcher15linked;
+
+
 	// Match Graphs
-	//char ch = getchar();
-	WongMatchMissing15Linked * matcher15linked;
+	WongMatch15Constrained * matcherConstrained;
 	if(MISSING_HELIX_COUNT == -1) {
-		matcher15linked = new WongMatchMissing15Linked(patternGraph, baseGraph);
+		matcherConstrained = new WongMatch15Constrained(patternGraph, baseGraph);
 	} else {
-		matcher15linked = new WongMatchMissing15Linked(patternGraph, baseGraph, MISSING_HELIX_COUNT, MISSING_SHEET_COUNT);
+		matcherConstrained = new WongMatch15Constrained(patternGraph, baseGraph, MISSING_HELIX_COUNT, MISSING_SHEET_COUNT);
 	}
-	//ch = getchar();
 	start = clock();
-	matcher15linked->RunMatching(start);
-	//ch = getchar();
-	matcher15linked->SaveResults();
-	//ch = getchar();
-	
-	// Clean
-	delete matcher15linked;
-	//ch = getchar();
+	matcherConstrained->RunMatching(start);
+	matcherConstrained->SaveResults();
+	delete matcherConstrained;
+
+
 }
 
 

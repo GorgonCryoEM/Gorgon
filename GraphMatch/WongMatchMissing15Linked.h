@@ -440,7 +440,7 @@ bool WongMatchMissing15Linked::ExpandNode(LinkedNodeStub * currentStub) {
 	for(int i = 1; i <= baseGraph->nodeCount; i++) {		
 		if((currentNode->depth == 0) || 
 			(LinkedNode::IsNodeInBitmap(currentNode->m2Bitmap, i) && (baseGraph->EdgeExists(currentNode->n2Node-1, i-1)))) {
-			for(int j = 0; j < min(missingHelixCount * 2 - currentNode->missingNodesUsed + 1, currentM2Top); j += 2) {  // Stepping by two since we jump every 2 loops
+			for(int j = 0; j <= min(missingHelixCount * 2 - currentNode->missingNodesUsed + 1, currentM1Top); j += 2) {  // Stepping by two since we jump every 2 loops
 				temp = currentNode;
 				currentNode = new LinkedNode(currentNode, currentStub, i, j);
 				currentNode->costGStar = 0;
