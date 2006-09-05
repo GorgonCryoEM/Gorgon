@@ -5,6 +5,8 @@ Author: Sasakthi S. Abeysinghe
 Date  : 02/06/2006
 */
 
+
+
 #ifndef GLOBALCONSTANTS_H
 #define GLOBALCONSTANTS_H
 
@@ -15,8 +17,8 @@ const int NOPATHPENALTY = 1;
 const int TYPEMISMATCHPENALTY = 1;
 
 const int PRIORITYQUEUESIZE = 50000000;
-const int RESULT_COUNT = 20;
-const int MAX_NODES = 40;
+const int RESULT_COUNT = 25;
+const int MAX_NODES = 50;
 const int MAXINT = 2147483647;
 const unsigned int MAXUNSIGNEDINT = 4294967295;
 const double MAXDOUBLE = 1.7E308;
@@ -56,6 +58,8 @@ const char * TOKEN_VOXEL_SIZE = "VOXEL_SIZE";
 const char * TOKEN_TRANSLATE_VOLUMETRIC_COORDINATES = "TRANSLATE_VOLUMETRIC_COORDINATES";
 const char * TOKEN_MISSING_HELIX_COUNT = "MISSING_HELIX_COUNT";
 const char * TOKEN_MISSING_SHEET_COUNT = "MISSING_SHEET_COUNT";
+const char * TOKEN_NODE_CONSTRAINT = "NODE_CONSTRAINT";
+const char * TOKEN_HELIX_CONSTRAINT = "HELIX_CONSTRAINT";
 const int MAX_RANDOM_HELIX_SIZE = 30;
 const int MAX_RANDOM_LOOP_SIZE = 30;
 const int WONG_HASH_TABLE_SIZE = 1024;
@@ -82,7 +86,41 @@ int MISSING_HELIX_COUNT = -1;
 int MISSING_SHEET_COUNT = -1;
 bool PERFORMANCE_COMPARISON_MODE = false;
 
+// Private fields.. not to be used!!!
+int constraintCollection[MAX_NODES][MAX_NODES];
+unsigned int constraintCount[MAX_NODES];
+
+void AddNodeConstraint(int patternNode, int baseNode) {
+	constraintCollection[patternNode-1][constraintCount[patternNode-1]] = baseNode;
+	constraintCount[patternNode-1]++;
+}
+
+void AddHelixConstraint(int patternHelix, int baseHelix) {
+	int patternNode1 = patternHelix*2 - 1;
+	int patternNode2 = patternHelix*2;
+
+	if(baseHelix == -1) {
+		constraintCollection[patternNode1-1][constraintCount[patternNode1-1]] = -1;		constraintCount[patternNode1-1]++;
+		constraintCollection[patternNode2-1][constraintCount[patternNode2-1]] = -1;		constraintCount[patternNode2-1]++;
+	} else {
+		int baseNode1 = baseHelix*2 - 1;
+		int baseNode2 = baseHelix*2;
+		constraintCollection[patternNode1-1][constraintCount[patternNode1-1]] = baseNode1;		constraintCount[patternNode1-1]++;
+		constraintCollection[patternNode1-1][constraintCount[patternNode1-1]] = baseNode2;		constraintCount[patternNode1-1]++;
+		constraintCollection[patternNode2-1][constraintCount[patternNode2-1]] = baseNode1;		constraintCount[patternNode2-1]++;
+		constraintCollection[patternNode2-1][constraintCount[patternNode2-1]] = baseNode2;		constraintCount[patternNode2-1]++;	
+
+	}
+
+}
+
 void LoadConstantsFromFile(char * settingsFile) {
+	for(unsigned int i = 0; i < MAX_NODES; i++) {
+		constraintCount[i] = 0;
+	}
+
+	int pdbNode, skeletonNode;	
+
 	FILE* fin = fopen(settingsFile, "rt");
 	if (fin == NULL) {
 		printf("Error reading input file %s.\n", settingsFile) ;
@@ -132,7 +170,13 @@ void LoadConstantsFromFile(char * settingsFile) {
 			fscanf(fin, "%d", &MISSING_HELIX_COUNT);
 		} else if(strcmp(token, TOKEN_MISSING_SHEET_COUNT) == 0) {
 			fscanf(fin, "%d", &MISSING_SHEET_COUNT);
-		}
+		} else if(strcmp(token, TOKEN_NODE_CONSTRAINT) == 0) {
+			fscanf(fin, "%d %d\n", &pdbNode, &skeletonNode);			
+			AddNodeConstraint(pdbNode, skeletonNode);
+		} else if(strcmp(token, TOKEN_HELIX_CONSTRAINT) == 0) {
+			fscanf(fin, "%d %d\n", &pdbNode, &skeletonNode);			
+			AddHelixConstraint(pdbNode, skeletonNode);
+		}		
 	}
 	fclose(fin);
 }
@@ -155,15 +199,32 @@ void DisplayConstants()
 	printf("\tCOST_FUNCTION                    = %d -- 1 : |a-b|       2 : |a-b|/(a+b)      3:|a-b|^2\n", COST_FUNCTION);
 	printf("\tVOXEL_SIZE                       = %f\n", VOXEL_SIZE);
 	printf("\tMISSING_HELIX_COUNT              = %d\n", MISSING_HELIX_COUNT);
-	printf("\tMISSING_SHEET_COUNT              = %d\n\n", MISSING_SHEET_COUNT);
+	printf("\tMISSING_SHEET_COUNT              = %d\n", MISSING_SHEET_COUNT);
+	printf("\tSOLUTION_CONSTRAINT              = ");
+	for(int i = 0 ; i < MAX_NODES; i++) {
+		if(constraintCount[i] > 0) {
+			printf("(%d -", i+1);
+			for(int j = 0; j < constraintCount[i]; j++) {
+				printf(" %d", constraintCollection[i][j]);
+			}
+			printf(") ");				
+		}
+	}
+	printf("\n\n");
 }
 
+bool IsNodeAssignmentAllowed(int patternNode, int baseNode) {
+	// Returning true if no constraints are specified.
+	if(constraintCount[patternNode-1] == 0) {
+		return true;
+	}
 
-
-
-
-
-
+	bool isAllowed = false;
+	for(unsigned int i = 0; i < constraintCount[patternNode-1]; i++) {
+		isAllowed = isAllowed || (baseNode == constraintCollection[patternNode-1][i]);
+	}
+	return isAllowed;
+}
 #endif
 
 
