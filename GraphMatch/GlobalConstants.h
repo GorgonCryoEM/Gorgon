@@ -60,6 +60,8 @@ const char * TOKEN_MISSING_HELIX_COUNT = "MISSING_HELIX_COUNT";
 const char * TOKEN_MISSING_SHEET_COUNT = "MISSING_SHEET_COUNT";
 const char * TOKEN_NODE_CONSTRAINT = "NODE_CONSTRAINT";
 const char * TOKEN_HELIX_CONSTRAINT = "HELIX_CONSTRAINT";
+const char * TOKEN_NODE_MISMATCH = "NODE_MISMATCH";
+const char * TOKEN_HELIX_MISMATCH = "HELIX_MISMATCH";
 const int MAX_RANDOM_HELIX_SIZE = 30;
 const int MAX_RANDOM_LOOP_SIZE = 30;
 const int WONG_HASH_TABLE_SIZE = 1024;
@@ -87,12 +89,19 @@ int MISSING_SHEET_COUNT = -1;
 bool PERFORMANCE_COMPARISON_MODE = false;
 
 // Private fields.. not to be used!!!
-int constraintCollection[MAX_NODES][MAX_NODES];
-unsigned int constraintCount[MAX_NODES];
+int allowedConstraintCollection[MAX_NODES][MAX_NODES];
+unsigned int allowedConstraintCount[MAX_NODES];
+int notAllowedConstraintCollection[MAX_NODES][MAX_NODES];
+unsigned int notAllowedConstraintCount[MAX_NODES];
 
 void AddNodeConstraint(int patternNode, int baseNode) {
-	constraintCollection[patternNode-1][constraintCount[patternNode-1]] = baseNode;
-	constraintCount[patternNode-1]++;
+	allowedConstraintCollection[patternNode-1][allowedConstraintCount[patternNode-1]] = baseNode;
+	allowedConstraintCount[patternNode-1]++;
+}
+
+void AddNodeMismatch(int patternNode, int baseNode) {
+	notAllowedConstraintCollection[patternNode-1][notAllowedConstraintCount[patternNode-1]] = baseNode;
+	notAllowedConstraintCount[patternNode-1]++;
 }
 
 void AddHelixConstraint(int patternHelix, int baseHelix) {
@@ -100,23 +109,39 @@ void AddHelixConstraint(int patternHelix, int baseHelix) {
 	int patternNode2 = patternHelix*2;
 
 	if(baseHelix == -1) {
-		constraintCollection[patternNode1-1][constraintCount[patternNode1-1]] = -1;		constraintCount[patternNode1-1]++;
-		constraintCollection[patternNode2-1][constraintCount[patternNode2-1]] = -1;		constraintCount[patternNode2-1]++;
+		allowedConstraintCollection[patternNode1-1][allowedConstraintCount[patternNode1-1]] = -1;		allowedConstraintCount[patternNode1-1]++;
+		allowedConstraintCollection[patternNode2-1][allowedConstraintCount[patternNode2-1]] = -1;		allowedConstraintCount[patternNode2-1]++;
 	} else {
 		int baseNode1 = baseHelix*2 - 1;
 		int baseNode2 = baseHelix*2;
-		constraintCollection[patternNode1-1][constraintCount[patternNode1-1]] = baseNode1;		constraintCount[patternNode1-1]++;
-		constraintCollection[patternNode1-1][constraintCount[patternNode1-1]] = baseNode2;		constraintCount[patternNode1-1]++;
-		constraintCollection[patternNode2-1][constraintCount[patternNode2-1]] = baseNode1;		constraintCount[patternNode2-1]++;
-		constraintCollection[patternNode2-1][constraintCount[patternNode2-1]] = baseNode2;		constraintCount[patternNode2-1]++;	
-
+		allowedConstraintCollection[patternNode1-1][allowedConstraintCount[patternNode1-1]] = baseNode1;		allowedConstraintCount[patternNode1-1]++;
+		allowedConstraintCollection[patternNode1-1][allowedConstraintCount[patternNode1-1]] = baseNode2;		allowedConstraintCount[patternNode1-1]++;
+		allowedConstraintCollection[patternNode2-1][allowedConstraintCount[patternNode2-1]] = baseNode1;		allowedConstraintCount[patternNode2-1]++;
+		allowedConstraintCollection[patternNode2-1][allowedConstraintCount[patternNode2-1]] = baseNode2;		allowedConstraintCount[patternNode2-1]++;	
 	}
+}
 
+void AddHelixMismatch(int patternHelix, int baseHelix) {
+	int patternNode1 = patternHelix*2 - 1;
+	int patternNode2 = patternHelix*2;
+
+	if(baseHelix == -1) {
+		notAllowedConstraintCollection[patternNode1-1][notAllowedConstraintCount[patternNode1-1]] = -1;		notAllowedConstraintCount[patternNode1-1]++;
+		notAllowedConstraintCollection[patternNode2-1][notAllowedConstraintCount[patternNode2-1]] = -1;		notAllowedConstraintCount[patternNode2-1]++;
+	} else {
+		int baseNode1 = baseHelix*2 - 1;
+		int baseNode2 = baseHelix*2;
+		notAllowedConstraintCollection[patternNode1-1][notAllowedConstraintCount[patternNode1-1]] = baseNode1;		notAllowedConstraintCount[patternNode1-1]++;
+		notAllowedConstraintCollection[patternNode1-1][notAllowedConstraintCount[patternNode1-1]] = baseNode2;		notAllowedConstraintCount[patternNode1-1]++;
+		notAllowedConstraintCollection[patternNode2-1][notAllowedConstraintCount[patternNode2-1]] = baseNode1;		notAllowedConstraintCount[patternNode2-1]++;
+		notAllowedConstraintCollection[patternNode2-1][notAllowedConstraintCount[patternNode2-1]] = baseNode2;		notAllowedConstraintCount[patternNode2-1]++;	
+	}
 }
 
 void LoadConstantsFromFile(char * settingsFile) {
 	for(unsigned int i = 0; i < MAX_NODES; i++) {
-		constraintCount[i] = 0;
+		allowedConstraintCount[i] = 0;
+		notAllowedConstraintCount[i] = 0;
 	}
 
 	int pdbNode, skeletonNode;	
@@ -176,6 +201,12 @@ void LoadConstantsFromFile(char * settingsFile) {
 		} else if(strcmp(token, TOKEN_HELIX_CONSTRAINT) == 0) {
 			fscanf(fin, "%d %d\n", &pdbNode, &skeletonNode);			
 			AddHelixConstraint(pdbNode, skeletonNode);
+		} else if(strcmp(token, TOKEN_NODE_MISMATCH) == 0) {
+			fscanf(fin, "%d %d\n", &pdbNode, &skeletonNode);			
+			AddNodeMismatch(pdbNode, skeletonNode);
+		} else if(strcmp(token, TOKEN_HELIX_MISMATCH) == 0) {
+			fscanf(fin, "%d %d\n", &pdbNode, &skeletonNode);			
+			AddHelixMismatch(pdbNode, skeletonNode);
 		}		
 	}
 	fclose(fin);
@@ -200,12 +231,23 @@ void DisplayConstants()
 	printf("\tVOXEL_SIZE                       = %f\n", VOXEL_SIZE);
 	printf("\tMISSING_HELIX_COUNT              = %d\n", MISSING_HELIX_COUNT);
 	printf("\tMISSING_SHEET_COUNT              = %d\n", MISSING_SHEET_COUNT);
-	printf("\tSOLUTION_CONSTRAINT              = ");
+	printf("\tNODE_CONSTRAINTS                 = ");
 	for(int i = 0 ; i < MAX_NODES; i++) {
-		if(constraintCount[i] > 0) {
+		if(allowedConstraintCount[i] > 0) {
 			printf("(%d -", i+1);
-			for(int j = 0; j < constraintCount[i]; j++) {
-				printf(" %d", constraintCollection[i][j]);
+			for(int j = 0; j < allowedConstraintCount[i]; j++) {
+				printf(" %d", allowedConstraintCollection[i][j]);
+			}
+			printf(") ");				
+		}
+	}
+	printf("\n");
+	printf("\tNODE_MISMATCHES                  = ");
+	for(int i = 0 ; i < MAX_NODES; i++) {
+		if(notAllowedConstraintCount[i] > 0) {
+			printf("(%d -", i+1);
+			for(int j = 0; j < notAllowedConstraintCount[i]; j++) {
+				printf(" %d", notAllowedConstraintCollection[i][j]);
 			}
 			printf(") ");				
 		}
@@ -214,14 +256,20 @@ void DisplayConstants()
 }
 
 bool IsNodeAssignmentAllowed(int patternNode, int baseNode) {
+	bool isAllowed;
+
 	// Returning true if no constraints are specified.
-	if(constraintCount[patternNode-1] == 0) {
-		return true;
+	if(allowedConstraintCount[patternNode-1] == 0) {
+		isAllowed = true;
+	} else {
+		isAllowed = false;
+		for(unsigned int i = 0; i < allowedConstraintCount[patternNode-1]; i++) {
+			isAllowed = isAllowed || (baseNode == allowedConstraintCollection[patternNode-1][i]);
+		}
 	}
 
-	bool isAllowed = false;
-	for(unsigned int i = 0; i < constraintCount[patternNode-1]; i++) {
-		isAllowed = isAllowed || (baseNode == constraintCollection[patternNode-1][i]);
+	for(unsigned int i = 0; i < notAllowedConstraintCount[patternNode-1]; i++) {
+		isAllowed = isAllowed && (baseNode != notAllowedConstraintCollection[patternNode-1][i]);
 	}
 	return isAllowed;
 }
