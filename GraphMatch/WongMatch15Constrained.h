@@ -326,6 +326,9 @@ double WongMatch15Constrained::GetCost(int d, int m, int qj, int qp) {
 		if((qj!= -1) && (patternGraph->adjacencyMatrix[d-1][d][0] != baseGraph->adjacencyMatrix[qj-1][qp-1][0]) &&
 			!((patternGraph->adjacencyMatrix[d-1][d][0] == GRAPHEDGE_LOOP) && (baseGraph->adjacencyMatrix[qj-1][qp-1][0] == GRAPHEDGE_LOOP_EUCLIDEAN))) 	{
 			return -1;
+		}		
+		if((qj != -1) && (baseGraph->euclideanMatrix[qj-1][qp-1] > (patternGraph->adjacencyMatrix[d-1][d][1] * EUCLIDEAN_VOXEL_TO_PDB_RATIO ))){
+			return -1;
 		}
 	} else {
 		if(!firstIsLoop || !lastIsLoop) {
@@ -524,6 +527,7 @@ void WongMatch15Constrained::NormalizeGraphs() {
 			if(baseGraph->adjacencyMatrix[i][j][1] != MAXINT) {
 				baseGraph->SetCost(i+1,j+1, baseGraph->adjacencyMatrix[i][j][1] * ratio);
 			}
+			//baseGraph->euclideanMatrix[i][j] = baseGraph->euclideanMatrix[i][j] * ratio;
 
 		}
 	}	

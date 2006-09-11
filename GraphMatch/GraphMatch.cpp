@@ -151,8 +151,6 @@ void DoGraphMatching(StandardGraph * patternGraph, StandardGraph * baseGraph)
 	matcherConstrained->RunMatching(start);
 	matcherConstrained->SaveResults();
 	delete matcherConstrained;
-
-
 }
 
 
