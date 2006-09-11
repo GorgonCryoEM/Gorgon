@@ -9,6 +9,8 @@ Date  : 02/20/2006
 #define PATHGENERATOR_H
 
 #include "StandardGraph.h"
+#include "LinkedNode.h"
+#include "LinkedNodeStub.h"
 #include "..\SkeletonMaker\volume.h"
 #include "VectorMath.h"
 #include <vector>
@@ -19,6 +21,7 @@ class PathGenerator {
 public:
 	PathGenerator(StandardGraph * graph);
 	void GenerateGraph(StandardNode * node, char * outFileName);
+	void GenerateGraph(LinkedNodeStub * node, char * outFileName);
 	bool MarkPath(int startHelix, int startCorner, int endHelix, int endCorner, Volume * skeletonVol, Volume * newVol);
 
 private:
@@ -64,14 +67,45 @@ void PathGenerator::GenerateGraph(StandardNode * node, char * outFileName)  {
 	delete newVol;
 }
 
+void PathGenerator::GenerateGraph(LinkedNodeStub * node, char * outFileName)  {
+	Volume * skeletonVol = graph->skeletonVolume;
+	Volume * newVol = new Volume(skeletonVol->getSizeX(), skeletonVol->getSizeY(), skeletonVol->getSizeZ());
+
+	int startHelix = -1, startCorner = -1, endHelix = -1, endCorner = -1;
+	bool marked;
+	bool continueLoop = true;
+	LinkedNodeStub * currentNode = node;
+
+	while(continueLoop) {
+		if(currentNode->parentNode == NULL) {
+			 break;
+		}
+		endHelix = (currentNode->n2Node-1)/2;
+		endCorner = ((currentNode->n2Node-1)%2) + 1;
+
+		if((startHelix != -1) && (endHelix != -1)) {
+			marked = MarkPath(startHelix, startCorner, endHelix, endCorner, skeletonVol, newVol);
+
+#ifdef VERBOSE
+			if(!marked) {
+				printf("\t Path between %d and %d was not marked \n", startHelix + 1, endHelix + 1);
+			}
+#endif
+		}
+		startHelix = endHelix;
+		startCorner = endCorner;
+
+		currentNode = currentNode->parentNode;		
+	}
+
+	newVol->toMRCFile(outFileName);
+	delete newVol;
+}
+
+
 bool PathGenerator::MarkPath(int startHelix, int startCorner, int endHelix, int endCorner, Volume * skeletonVol, Volume * newVol) {
 	vector<Point3Int *> oldStack;
 	vector<Point3Int *> newStack;
-
-	// TODO: Remove this Hack!!!
-	if((startHelix == 7) && (endHelix == 3)) {
-		startCorner = abs(startCorner - 1);
-	}
 
 	Point3Int tempCell = Point3Int(1,1,1,0);
 
@@ -94,8 +128,8 @@ bool PathGenerator::MarkPath(int startHelix, int startCorner, int endHelix, int 
 	Volume * visited = new Volume(skeletonVol->getSizeX(), skeletonVol->getSizeY(), skeletonVol->getSizeZ());
 
 	for(unsigned int i = 0; i < graph->skeletonHelixes.size(); i++) {
-		//if(!((i == endHelix) && (i==startHelix))) {
-		if(i != endHelix) {
+		if(((i != endHelix) && (i != startHelix))) {
+		//if(i != endHelix) {
 			for(unsigned int j = 0; j < graph->skeletonHelixes[i]->internalCells.size(); j++) {
 				Point3Int cell = graph->skeletonHelixes[i]->internalCells[j];
 				visited->setDataAt(cell.x, cell.y, cell.z, 100000);

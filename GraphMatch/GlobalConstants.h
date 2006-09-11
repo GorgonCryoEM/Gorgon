@@ -12,12 +12,14 @@ Date  : 02/06/2006
 
 //#define INCLUDE_SHEETS
 //#define GET_STATS
+#define VERBOSE
+#define MAKE_FINAL_MRC
 
 const int NOPATHPENALTY = 1;
 const int TYPEMISMATCHPENALTY = 1;
 
 const int PRIORITYQUEUESIZE = 50000000;
-const int RESULT_COUNT = 25;
+const int RESULT_COUNT = 26;
 const int MAX_NODES = 50;
 const int MAXINT = 2147483647;
 const unsigned int MAXUNSIGNEDINT = 4294967295;
@@ -62,6 +64,7 @@ const char * TOKEN_NODE_CONSTRAINT = "NODE_CONSTRAINT";
 const char * TOKEN_HELIX_CONSTRAINT = "HELIX_CONSTRAINT";
 const char * TOKEN_NODE_MISMATCH = "NODE_MISMATCH";
 const char * TOKEN_HELIX_MISMATCH = "HELIX_MISMATCH";
+const char * TOKEN_SOLUTION = "SOLUTION";
 const int MAX_RANDOM_HELIX_SIZE = 30;
 const int MAX_RANDOM_LOOP_SIZE = 30;
 const int WONG_HASH_TABLE_SIZE = 1024;
@@ -87,6 +90,7 @@ bool TRANSLATE_VOLUMETRIC_COORDINATES = false;
 int MISSING_HELIX_COUNT = -1;
 int MISSING_SHEET_COUNT = -1;
 bool PERFORMANCE_COMPARISON_MODE = false;
+int SOLUTION[MAX_NODES];
 
 // Private fields.. not to be used!!!
 int allowedConstraintCollection[MAX_NODES][MAX_NODES];
@@ -140,11 +144,12 @@ void AddHelixMismatch(int patternHelix, int baseHelix) {
 
 void LoadConstantsFromFile(char * settingsFile) {
 	for(unsigned int i = 0; i < MAX_NODES; i++) {
+		SOLUTION[i] = -2;
 		allowedConstraintCount[i] = 0;
 		notAllowedConstraintCount[i] = 0;
 	}
 
-	int pdbNode, skeletonNode;	
+	int tempInt1, tempInt2;	
 
 	FILE* fin = fopen(settingsFile, "rt");
 	if (fin == NULL) {
@@ -196,17 +201,20 @@ void LoadConstantsFromFile(char * settingsFile) {
 		} else if(strcmp(token, TOKEN_MISSING_SHEET_COUNT) == 0) {
 			fscanf(fin, "%d", &MISSING_SHEET_COUNT);
 		} else if(strcmp(token, TOKEN_NODE_CONSTRAINT) == 0) {
-			fscanf(fin, "%d %d\n", &pdbNode, &skeletonNode);			
-			AddNodeConstraint(pdbNode, skeletonNode);
+			fscanf(fin, "%d %d\n", &tempInt1, &tempInt2);			
+			AddNodeConstraint(tempInt1, tempInt2);
 		} else if(strcmp(token, TOKEN_HELIX_CONSTRAINT) == 0) {
-			fscanf(fin, "%d %d\n", &pdbNode, &skeletonNode);			
-			AddHelixConstraint(pdbNode, skeletonNode);
+			fscanf(fin, "%d %d\n", &tempInt1, &tempInt2);			
+			AddHelixConstraint(tempInt1, tempInt2);
 		} else if(strcmp(token, TOKEN_NODE_MISMATCH) == 0) {
-			fscanf(fin, "%d %d\n", &pdbNode, &skeletonNode);			
-			AddNodeMismatch(pdbNode, skeletonNode);
+			fscanf(fin, "%d %d\n", &tempInt1, &tempInt2);			
+			AddNodeMismatch(tempInt1, tempInt2);
 		} else if(strcmp(token, TOKEN_HELIX_MISMATCH) == 0) {
-			fscanf(fin, "%d %d\n", &pdbNode, &skeletonNode);			
-			AddHelixMismatch(pdbNode, skeletonNode);
+			fscanf(fin, "%d %d\n", &tempInt1, &tempInt2);			
+			AddHelixMismatch(tempInt1, tempInt2);
+		} else if(strcmp(token,TOKEN_SOLUTION) == 0) {
+			fscanf(fin, "%d %d\n", &tempInt1, &tempInt2);			
+			SOLUTION[tempInt1-1] = tempInt2;
 		}		
 	}
 	fclose(fin);
@@ -241,8 +249,7 @@ void DisplayConstants()
 			printf(") ");				
 		}
 	}
-	printf("\n");
-	printf("\tNODE_MISMATCHES                  = ");
+	printf("\n\tNODE_MISMATCHES                  = ");
 	for(int i = 0 ; i < MAX_NODES; i++) {
 		if(notAllowedConstraintCount[i] > 0) {
 			printf("(%d -", i+1);
@@ -252,6 +259,15 @@ void DisplayConstants()
 			printf(") ");				
 		}
 	}
+	printf("\n\tSOLUTION                         = ");
+	for(int i = 0 ; i < MAX_NODES; i++) {
+		if(SOLUTION[i] != -2) {
+			printf("%d ", SOLUTION[i]);
+		} else {
+			printf(".. ");
+		}
+	}
+
 	printf("\n\n");
 }
 
