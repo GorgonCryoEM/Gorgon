@@ -40,6 +40,7 @@ public:
 	bool EdgeExists(int n, int m);
 public:
 	double adjacencyMatrix[MAX_NODES][MAX_NODES][2]; // 0th dimension edge type... 1st dimension distance
+	double euclideanMatrix[MAX_NODES][MAX_NODES];
 	vector<SecondaryStructure*> pdbStructures;
 	vector<GeometricShape*> skeletonHelixes;
 	Volume * skeletonVolume;
@@ -205,8 +206,6 @@ vector<Matcher2Helix> StandardGraph::GetHelixLengths() {
 void StandardGraph::GenerateEuclidianMatrix() {
 	GeometricShape * helix1;
 	GeometricShape * helix2; 
-	double distance;
-	//printf("\n");
 	for(int i = 0; i < nodeCount; i++) {
 		helix1 = skeletonHelixes[i/2];
 		Point3Int loc1 = helix1->GetCornerCell(1);
@@ -216,11 +215,11 @@ void StandardGraph::GenerateEuclidianMatrix() {
 
 		for(int j = 0; j < nodeCount; j++) {
 			helix2 = skeletonHelixes[j/2];
-			Point3Int loc2 = helix2->GetCornerCell(j%2 + 1);	
-			distance = sqrt(pow((double)(loc1.x - loc2.x), 2) + pow((double)(loc1.y - loc2.y), 2) + pow((double)(loc1.z - loc2.z), 2));
-			if((adjacencyMatrix[i][j][1] == MAXINT) && (distance <= EUCLIDEAN_DISTANCE_THRESHOLD))
+			Point3Int loc2 = helix2->GetCornerCell(j%2 + 1);				
+			euclideanMatrix[i][j] = sqrt(pow((double)(loc1.x - loc2.x), 2) + pow((double)(loc1.y - loc2.y), 2) + pow((double)(loc1.z - loc2.z), 2));
+			if((adjacencyMatrix[i][j][1] == MAXINT) && (euclideanMatrix[i][j] <= EUCLIDEAN_DISTANCE_THRESHOLD))
 			{
-				adjacencyMatrix[i][j][1] = distance;
+				adjacencyMatrix[i][j][1] = euclideanMatrix[i][j];
 				adjacencyMatrix[i][j][0] = GRAPHEDGE_LOOP_EUCLIDEAN;
 			}
 			//printf("%f \t", euclidianMatrix[i][j]);

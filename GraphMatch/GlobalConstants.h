@@ -13,13 +13,13 @@ Date  : 02/06/2006
 //#define INCLUDE_SHEETS
 //#define GET_STATS
 #define VERBOSE
-#define MAKE_FINAL_MRC
+// #define MAKE_FINAL_MRC
 
 const int NOPATHPENALTY = 1;
 const int TYPEMISMATCHPENALTY = 1;
 
 const int PRIORITYQUEUESIZE = 50000000;
-const int RESULT_COUNT = 26;
+const int RESULT_COUNT = 100;
 const int MAX_NODES = 50;
 const int MAXINT = 2147483647;
 const unsigned int MAXUNSIGNEDINT = 4294967295;
@@ -64,6 +64,7 @@ const char * TOKEN_NODE_CONSTRAINT = "NODE_CONSTRAINT";
 const char * TOKEN_HELIX_CONSTRAINT = "HELIX_CONSTRAINT";
 const char * TOKEN_NODE_MISMATCH = "NODE_MISMATCH";
 const char * TOKEN_HELIX_MISMATCH = "HELIX_MISMATCH";
+const char * TOKEN_EUCLIDEAN_VOXEL_TO_PDB_RATIO = "EUCLIDEAN_VOXEL_TO_PDB_RATIO";
 const char * TOKEN_SOLUTION = "SOLUTION";
 const int MAX_RANDOM_HELIX_SIZE = 30;
 const int MAX_RANDOM_LOOP_SIZE = 30;
@@ -77,6 +78,7 @@ char MRC_FILE_NAME[100];
 double EUCLIDEAN_DISTANCE_THRESHOLD = 15;
 int BORDER_MARGIN_THRESHOLD = 3;
 bool NORMALIZE_GRAPHS = true;
+double EUCLIDEAN_VOXEL_TO_PDB_RATIO = 2.0;
 double MISSING_HELIX_PENALTY = 2;
 double EUCLIDEAN_LOOP_PENALTY = 5;
 double START_END_MISSING_HELIX_PENALTY = 5;
@@ -200,6 +202,8 @@ void LoadConstantsFromFile(char * settingsFile) {
 			fscanf(fin, "%d", &MISSING_HELIX_COUNT);
 		} else if(strcmp(token, TOKEN_MISSING_SHEET_COUNT) == 0) {
 			fscanf(fin, "%d", &MISSING_SHEET_COUNT);
+		} else if(strcmp(token, TOKEN_EUCLIDEAN_VOXEL_TO_PDB_RATIO) == 0) {
+			fscanf(fin, "%lf", &EUCLIDEAN_VOXEL_TO_PDB_RATIO);
 		} else if(strcmp(token, TOKEN_NODE_CONSTRAINT) == 0) {
 			fscanf(fin, "%d %d\n", &tempInt1, &tempInt2);			
 			AddNodeConstraint(tempInt1, tempInt2);
@@ -239,6 +243,7 @@ void DisplayConstants()
 	printf("\tVOXEL_SIZE                       = %f\n", VOXEL_SIZE);
 	printf("\tMISSING_HELIX_COUNT              = %d\n", MISSING_HELIX_COUNT);
 	printf("\tMISSING_SHEET_COUNT              = %d\n", MISSING_SHEET_COUNT);
+	printf("\tEUCLIDEAN_VOXEL_TO_PDB_RATIO     = %f\n", EUCLIDEAN_VOXEL_TO_PDB_RATIO);
 	printf("\tNODE_CONSTRAINTS                 = ");
 	for(int i = 0 ; i < MAX_NODES; i++) {
 		if(allowedConstraintCount[i] > 0) {
