@@ -9,8 +9,8 @@ Author: Sasakthi S. Abeysinghe
 Date  : 08/14/2006
 */
 
-#ifndef WONGMATCH15CONSTRAINED_H
-#define WONGMATCH15CONSTRAINED_H
+#ifndef WONGMATCH15ORDERED_H
+#define WONGMATCH15ORDERED_H
 
 #include "StandardGraph.h"
 #include "LinkedNode.h"
@@ -20,14 +20,14 @@ Date  : 08/14/2006
 #include <time.h>
 #include "../SkeletonMaker/PriorityQueue.h"
 
-class WongMatch15Constrained{
+class WongMatch15Ordered{
 public:
 	StandardGraph * patternGraph;
 	StandardGraph * baseGraph;
 public:
-	WongMatch15Constrained(StandardGraph * patternGraph, StandardGraph * baseGraph);
-	WongMatch15Constrained(StandardGraph * patternGraph, StandardGraph * baseGraph, int missingHelixCount, int missingSheetCount);
-	~WongMatch15Constrained();
+	WongMatch15Ordered(StandardGraph * patternGraph, StandardGraph * baseGraph);
+	WongMatch15Ordered(StandardGraph * patternGraph, StandardGraph * baseGraph, int missingHelixCount, int missingSheetCount);
+	~WongMatch15Ordered();
 	void RunMatching(clock_t startTime);
 	void SaveResults();
 
@@ -47,8 +47,10 @@ private:
 	EdgeMinCostEntry edgeMinCosts[MAX_NODES][MAX_NODES*MAX_NODES*MAX_NODES];  // pattern graph, base graph
 	int edgeMinCostCount[MAX_NODES];
 	PathGenerator * pathGenerator;
+	int expansionOrdering[MAX_NODES];
 
 private:
+	void FindExpansionOrdering();
 	void Init(StandardGraph * patternGraph, StandardGraph * baseGraph);
 	double GetC(int p, int qp);
 	double GetC(int j, int p, int qj, int qp);
@@ -67,17 +69,17 @@ private:
 
 };
 
-WongMatch15Constrained::WongMatch15Constrained(StandardGraph * patternGraph, StandardGraph * baseGraph) {
+WongMatch15Ordered::WongMatch15Ordered(StandardGraph * patternGraph, StandardGraph * baseGraph) {
 	Init(patternGraph, baseGraph);
 }
 
-WongMatch15Constrained::WongMatch15Constrained(StandardGraph * patternGraph, StandardGraph * baseGraph, int missingHelixCount, int missingSheetCount) {
+WongMatch15Ordered::WongMatch15Ordered(StandardGraph * patternGraph, StandardGraph * baseGraph, int missingHelixCount, int missingSheetCount) {
 	Init(patternGraph, baseGraph);
 	this->missingHelixCount = missingHelixCount;
 	this->missingSheetCount = missingSheetCount;
 }
 
-WongMatch15Constrained::~WongMatch15Constrained() {
+WongMatch15Ordered::~WongMatch15Ordered() {
 	for(unsigned int i = 0; i < usedNodes.size(); i++) {
 		delete usedNodes[i];
 	}
@@ -95,7 +97,7 @@ WongMatch15Constrained::~WongMatch15Constrained() {
 	
 	delete pathGenerator;
 }
-void WongMatch15Constrained::Init(StandardGraph * patternGraph, StandardGraph * baseGraph) {	
+void WongMatch15Ordered::Init(StandardGraph * patternGraph, StandardGraph * baseGraph) {	
 	usedNodes.clear();
 	queue = new PriorityQueue<LinkedNode, double> (PRIORITYQUEUESIZE);
 	this->patternGraph = patternGraph;
@@ -125,12 +127,13 @@ void WongMatch15Constrained::Init(StandardGraph * patternGraph, StandardGraph * 
 	}
 	queue->add(currentNode, currentNode->cost);
 	pathGenerator = new PathGenerator(baseGraph);
+	FindExpansionOrdering();
 }
 
 
 
 
-void WongMatch15Constrained::InitializeEdgeMinCosts() {	
+void WongMatch15Ordered::InitializeEdgeMinCosts() {	
 	for(int i = 0; i < patternGraph->nodeCount; i++) {	
 		edgeMinCosts[i][0].bitmap = 0;
 		edgeMinCosts[i][0].cost = MISSING_HELIX_PENALTY;
@@ -188,7 +191,7 @@ void WongMatch15Constrained::InitializeEdgeMinCosts() {
 	//}
 }
 
-void WongMatch15Constrained::RunMatching(clock_t startTime) {
+void WongMatch15Ordered::RunMatching(clock_t startTime) {
 	printf("%d BYTES \n", sizeof(LinkedNode));
 	bool continueLoop = true;
 	clock_t finishTime;
@@ -223,7 +226,7 @@ void WongMatch15Constrained::RunMatching(clock_t startTime) {
 	}
 }
 
-void WongMatch15Constrained::SaveResults(){
+void WongMatch15Ordered::SaveResults(){
 	//printf("\t");
 	//for(int i = 0; i < currentNode->n1Top; i++) {
 	//	printf("%d ", currentNode->n2[i]);
@@ -236,11 +239,11 @@ void WongMatch15Constrained::SaveResults(){
 
 }
 
-double WongMatch15Constrained::GetC(int p, int qp) {
+double WongMatch15Ordered::GetC(int p, int qp) {
 	return GetC(p, p, qp, qp);
 }
 
-double WongMatch15Constrained::GetC(int j, int p, int qj, int qp) {
+double WongMatch15Ordered::GetC(int j, int p, int qj, int qp) {
 
 	double jpCost;
 	double qjqpCost;
@@ -265,7 +268,7 @@ double WongMatch15Constrained::GetC(int j, int p, int qj, int qp) {
 	return fabs(jpCost - qjqpCost) + typeCost;
 }
 
-double WongMatch15Constrained::GetCost(int d, int m, int qj, int qp) {
+double WongMatch15Ordered::GetCost(int d, int m, int qj, int qp) {
 	double patternLength = 0;
 	double baseLength;
 
@@ -352,7 +355,7 @@ double WongMatch15Constrained::GetCost(int d, int m, int qj, int qp) {
 	return 0;
 }
 
-double WongMatch15Constrained::GetA() {
+double WongMatch15Ordered::GetA() {
 	clock_t startTime = clock();
 	double cost = 0;
 	double minCost;
@@ -396,7 +399,7 @@ double WongMatch15Constrained::GetA() {
 	return cost;
 }
 
-double WongMatch15Constrained::GetB() {
+double WongMatch15Ordered::GetB() {
 	clock_t startTime = clock();
 	
 	int i;
@@ -421,18 +424,18 @@ double WongMatch15Constrained::GetB() {
 	return cost;
 }
 
-double WongMatch15Constrained::GetF() {
+double WongMatch15Ordered::GetF() {
 	return currentNode->costGStar + GetA() + GetB();	
 }
 
-void WongMatch15Constrained::PopBestNode(){
+void WongMatch15Ordered::PopBestNode(){
 	clock_t start = clock();
 	double cost;
 	queue->remove(currentNode, cost);
 	timeInQueue += clock() - start;
 }
 
-bool WongMatch15Constrained::ExpandNode(LinkedNodeStub * currentStub) {
+bool WongMatch15Ordered::ExpandNode(LinkedNodeStub * currentStub) {
 	bool expanded = false;
 	expandCount++;
 	LinkedNode * temp;
@@ -444,24 +447,37 @@ bool WongMatch15Constrained::ExpandNode(LinkedNodeStub * currentStub) {
 	
 	int currentM1Top = patternGraph->nodeCount - currentNode->depth;
 	int currentM2Top = baseGraph->nodeCount - currentNode->depth + currentNode->missingNodesUsed;
+	
+	int n1Node = -1;
+	for(int i = 0; i < patternGraph->nodeCount; i++) {
+		if(LinkedNode::IsNodeInBitmap(currentNode->m1Bitmap, expansionOrdering[i])) {
+			n1Node = expansionOrdering[i];
+			break;
+		}
+	}
+	if(n1Node == -1) {
+		return false;
+	}
+
 	bool notConstrained;
-	//currentNode->PrintNodeConcise(0, true, true);
+	currentNode->PrintNodeConcise(0, true, true);
 
 	// Expanding nodes with a real terminal node
 	for(int i = 1; i <= baseGraph->nodeCount; i++) {		
+	
 		if((currentNode->depth == 0) || 
 			(LinkedNode::IsNodeInBitmap(currentNode->m2Bitmap, i) && (baseGraph->EdgeExists(currentNode->n2Node-1, i-1)))) {
 			for(int j = 0; j <= min(missingHelixCount * 2 - currentNode->missingNodesUsed + 1, currentM1Top); j += 2) {  // Stepping by two since we jump every 2 loops
 				notConstrained = true;
 
-				for(int k = currentNode->n1Node + 1; k <= currentNode->n1Node + j; k++) {
+				for(int k = n1Node + 1; k <= n1Node + j; k++) {
 					notConstrained = notConstrained && IsNodeAssignmentAllowed(k, -1);
 				}
-				notConstrained = notConstrained && IsNodeAssignmentAllowed(currentNode->n1Node + j + 1, i);
+				notConstrained = notConstrained && IsNodeAssignmentAllowed(n1Node + j + 1, i);
 
 				if(notConstrained) {
 					temp = currentNode;
-					currentNode = new LinkedNode(currentNode, currentStub, i, j);
+					currentNode = new LinkedNode(currentNode, currentStub, n1Node, i, j);
 					currentNode->costGStar = 0;
 
 					if(((temp->depth == 0) && (j > 0)) || 
@@ -473,7 +489,7 @@ bool WongMatch15Constrained::ExpandNode(LinkedNodeStub * currentStub) {
 					if(temp->depth == 0) {
 						edgeCost = 0;
 					} else {
-						edgeCost = GetCost(temp->n1Node, j+1, temp->n2Node, currentNode->n2Node);
+						edgeCost = GetCost(n1Node, j+1, temp->n2Node, currentNode->n2Node);
 					}
 
 					if(edgeCost >= 0) {
@@ -493,7 +509,7 @@ bool WongMatch15Constrained::ExpandNode(LinkedNodeStub * currentStub) {
 
 
 	// Expanding nodes with a dummy terminal node
-	if(2*missingHelixCount - currentNode->missingNodesUsed >= currentM1Top) {
+	if((currentM2Top == 0) && (2*missingHelixCount - currentNode->missingNodesUsed >= currentM1Top)) {
 		notConstrained = true;
 		for(int k = currentNode->n1Node + 1; k <= patternGraph->nodeCount; k++) {
 			notConstrained = notConstrained && IsNodeAssignmentAllowed(k, -1);
@@ -512,7 +528,7 @@ bool WongMatch15Constrained::ExpandNode(LinkedNodeStub * currentStub) {
 	return expanded;
 }
 
-void WongMatch15Constrained::NormalizeGraphs() {
+void WongMatch15Ordered::NormalizeGraphs() {
 
 	printf("Normalizing the base graph based on helix length ratio\nNormalized Graph:\n");
 	double ratio = 0;
@@ -534,11 +550,68 @@ void WongMatch15Constrained::NormalizeGraphs() {
 	baseGraph->PrintGraph();
 }
 
-unsigned long long WongMatch15Constrained::EncodeNode(unsigned long long bitmap, int node) {
+unsigned long long WongMatch15Ordered::EncodeNode(unsigned long long bitmap, int node) {
 	if(node == -1)
 		return bitmap;
 
 	return (bitmap | ((unsigned long long)1 << node));
 }
 
+void WongMatch15Ordered::FindExpansionOrdering() {	
+	bool visited[MAX_NODES];
+	int currentLevel[MAX_NODES];
+	int nextLevel[MAX_NODES];
+	int currentLevelTop = 0;
+	int nextLevelTop = 0;
+	bool marked = false;
+	for(int i = 1; i <= patternGraph->nodeCount; i++) {		
+		if(IsNodeConstrained(i)) {
+			currentLevel[currentLevelTop] = i;
+			currentLevelTop++;
+			visited[i-1] = true;
+			marked = true;
+		} else {
+			visited[i-1] = false;
+		}
+	}
+
+	if(!marked) {
+		currentLevel[0] = (int)(patternGraph->nodeCount / 2);
+		currentLevelTop = 1;
+		visited[currentLevel[0]-1] = true;
+		
+	}
+
+	int markedCount = 0;
+	int currentNode;
+	while(currentLevelTop > 0) {
+		for(int i = 0; i < currentLevelTop; i++) {
+			currentNode = currentLevel[i];			
+			expansionOrdering[markedCount] = currentNode;
+			markedCount++;
+			if((currentNode > 1) && (!visited[currentNode-2])) {
+				visited[currentNode-2] = true;
+				nextLevel[nextLevelTop] = currentNode-1;
+				nextLevelTop++;
+			}
+			if((currentNode < patternGraph->nodeCount) && (!visited[currentNode])) {
+				visited[currentNode] = true;
+				nextLevel[nextLevelTop] = currentNode+1;
+				nextLevelTop++;
+			}
+		}
+
+		for(int i = 0; i < nextLevelTop; i++) {
+			currentLevel[i] = nextLevel[i];
+		}
+		currentLevelTop = nextLevelTop;
+		nextLevelTop = 0;
+	}
+
+	printf("\tSearch ordering: ");
+	for(int i = 0; i < patternGraph->nodeCount; i++) {
+		printf("%d, ", expansionOrdering[i]);
+	}
+	printf("\n");
+}
 #endif

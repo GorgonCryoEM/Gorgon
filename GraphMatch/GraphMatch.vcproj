@@ -256,6 +256,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\WongMatch15Ordered.h"
+				>
+			</File>
+			<File
 				RelativePath=".\WongMatchMissing.h"
 				>
 			</File>

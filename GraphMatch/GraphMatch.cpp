@@ -13,6 +13,7 @@ Date  : 01/23/2006
 #include "WongMatchMissing15.h"
 #include "WongMatchMissing15Linked.h"
 #include "WongMatch15Constrained.h"
+#include "WongMatch15Ordered.h"
 #include "PDBReader.h"
 #include "SkeletonReader.h"
 #include "GlobalConstants.h"
@@ -151,6 +152,17 @@ void DoGraphMatching(StandardGraph * patternGraph, StandardGraph * baseGraph)
 	matcherConstrained->RunMatching(start);
 	matcherConstrained->SaveResults();
 	delete matcherConstrained;
+
+	//WongMatch15Ordered * matcherOrdered;
+	//if(MISSING_HELIX_COUNT == -1) {
+	//	matcherOrdered = new WongMatch15Ordered(patternGraph, baseGraph);
+	//} else {
+	//	matcherOrdered = new WongMatch15Ordered(patternGraph, baseGraph, MISSING_HELIX_COUNT, MISSING_SHEET_COUNT);
+	//}
+	//start = clock();
+	//matcherOrdered->RunMatching(start);
+	//matcherOrdered->SaveResults();
+	//delete matcherOrdered;
 }
 
 
