@@ -27,6 +27,7 @@ public:
 	LinkedNode(LinkedNode * olderNode);
 	LinkedNode();
 	LinkedNode(LinkedNode * olderNode, LinkedNodeStub * olderStub, int n2Node, int dummyHelixCount);
+	LinkedNode(LinkedNode * olderNode, LinkedNodeStub * olderStub, int n1Node, int n2Node, int dummyHelixCount);
 	~LinkedNode();
 	void PrintNodeConcise(int rank, bool endOfLine = true, bool printCostBreakdown = false);
 	unsigned long long GetN1Bitmap();
@@ -69,6 +70,20 @@ LinkedNode::LinkedNode(LinkedNode * olderNode) {
 
 LinkedNode::LinkedNode(LinkedNode * olderNode, LinkedNodeStub * olderStub, int n2Node, int dummyHelixCount) {
 	this->n1Node = olderNode->n1Node + dummyHelixCount + 1;
+	this->n2Node = n2Node;
+	this->depth = olderNode->depth + dummyHelixCount + 1;
+	this->parentNode = olderStub;
+	this->m1Bitmap = olderNode->m1Bitmap;
+	this->m2Bitmap = olderNode->m2Bitmap;
+	for(int i = olderNode->n1Node + 1; i <= this->n1Node; i++) {
+		LinkedNode::RemoveNodeFromBitmap(this->m1Bitmap, i);
+	}
+	LinkedNode::RemoveNodeFromBitmap(this->m2Bitmap, this->n2Node);
+	this->missingNodesUsed = olderNode->missingNodesUsed + dummyHelixCount;
+}
+
+LinkedNode::LinkedNode(LinkedNode * olderNode, LinkedNodeStub * olderStub, int n1Node, int n2Node, int dummyHelixCount) {
+	this->n1Node = n1Node + dummyHelixCount + 1;
 	this->n2Node = n2Node;
 	this->depth = olderNode->depth + dummyHelixCount + 1;
 	this->parentNode = olderStub;

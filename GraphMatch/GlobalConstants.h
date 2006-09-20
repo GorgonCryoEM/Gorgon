@@ -248,7 +248,7 @@ void DisplayConstants()
 	for(int i = 0 ; i < MAX_NODES; i++) {
 		if(allowedConstraintCount[i] > 0) {
 			printf("(%d -", i+1);
-			for(int j = 0; j < allowedConstraintCount[i]; j++) {
+			for(unsigned int j = 0; j < allowedConstraintCount[i]; j++) {
 				printf(" %d", allowedConstraintCollection[i][j]);
 			}
 			printf(") ");				
@@ -258,7 +258,7 @@ void DisplayConstants()
 	for(int i = 0 ; i < MAX_NODES; i++) {
 		if(notAllowedConstraintCount[i] > 0) {
 			printf("(%d -", i+1);
-			for(int j = 0; j < notAllowedConstraintCount[i]; j++) {
+			for(unsigned int j = 0; j < notAllowedConstraintCount[i]; j++) {
 				printf(" %d", notAllowedConstraintCollection[i][j]);
 			}
 			printf(") ");				
@@ -293,6 +293,10 @@ bool IsNodeAssignmentAllowed(int patternNode, int baseNode) {
 		isAllowed = isAllowed && (baseNode != notAllowedConstraintCollection[patternNode-1][i]);
 	}
 	return isAllowed;
+}
+
+bool IsNodeConstrained(int patternNode) {
+	return (allowedConstraintCount[patternNode-1] != 0) || (notAllowedConstraintCount[patternNode-1] != 0);
 }
 #endif
 
