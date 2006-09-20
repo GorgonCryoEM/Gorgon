@@ -143,7 +143,7 @@ public:
 		fread( &sx, sizeof( int ), 1, fin ) ;
 		sy = sx ;
 		sz = sx ;
-		printf("Dimensions: %d %d %d\n", sx, sy, sz ) ;
+		printf("\tDimensions: %d %d %d\n", sx, sy, sz ) ;
 
 		Volume* rvalue = new Volume( sx + 1, sy + 1, sz + 1 ) ;
 
@@ -151,7 +151,7 @@ public:
 		int off[3] = { 0, 0, 0 } ;
 		readSOF( fin, rvalue, off, sx ) ;
 
-		printf("Done reading.\n") ;
+		printf("\tDone reading.\n") ;
 		fclose( fin ) ;
 		return rvalue ;
 	}
@@ -247,7 +247,7 @@ public:
 		minx -= spc ;
 		miny -= spc ;
 		minz -= spc ;
-		printf("Spacing: %f, Lower corner: %f %f %f.\n", spc, minx, miny, minz) ;
+		printf("\tSpacing: %f, Lower corner: %f %f %f.\n", spc, minx, miny, minz) ;
 		fseek( fin, 0, SEEK_SET ) ;
 
 		int ctt = 0 ;
@@ -276,7 +276,7 @@ public:
 			// printf("Value at %f %f %f is %f %f %f\n", ix, iy, iz, val[0], val[1], val[2] ) ;
 			ctt ++ ;
 		}
-		printf("%d points, raw dimension (%d %d %d), padding of %d is added.\n", ctt, sx, sy, sz, padding) ;
+		printf("\t%d points, raw dimension (%d %d %d), padding of %d is added.\n", ctt, sx, sy, sz, padding) ;
 		sx += padding * 2 ;
 		sy += padding * 2 ;
 		sz += padding * 2 ;
@@ -298,7 +298,7 @@ public:
 			// printf("Value at %f %f %f is %f %f %f\n", ix, iy, iz, val[0], val[1], val[2] ) ;
 		}
 
-		printf("Done reading.\n") ;
+		printf("\tDone reading.\n") ;
 		fclose( fin ) ;
 		return rvalue ;
 	}
@@ -403,7 +403,7 @@ public:
 		fgets( line, 1024, fin ) ;
 		fgets( line, 1024, fin ) ;
 
-		printf("Dimension (%d, %d, %d), corner at (%f, %f, %f), increments (%f, %f, %f)\n", sx, sy, sz, minx, miny, minz, spcx, spcy, spcz ) ;
+		printf("\tDimension (%d, %d, %d), corner at (%f, %f, %f), increments (%f, %f, %f)\n", sx, sy, sz, minx, miny, minz, spcx, spcy, spcz ) ;
 		// exit(0) ;
 
 		// Next, parse data
@@ -426,7 +426,7 @@ public:
 		{
 			if ( ix % 10 == 0 )
 			{
-				printf("%d rows read (%% %f).\n", ix, (float)ix/(float)sx*100 ) ;
+				printf("\t%d rows read (%% %f).\n", ix, (float)ix/(float)sx*100 ) ;
 			}
 			for ( iy = 0 ; iy < sy ; iy ++ )
 				for ( iz = 0 ; iz < sz ; iz ++ )
@@ -450,7 +450,7 @@ public:
 		sy = (sy-1)/step+1 + padd * 2 ;
 		sz = (sz-1)/step+1 + padd * 2 ;
 
-		printf("Done reading. %d items\n", items) ;
+		printf("\tDone reading. %d items\n", items) ;
 		fclose( fin ) ;
 		return rvalue ;
 	}
@@ -517,15 +517,17 @@ public:
 		dimy = toty ;
 		dimz = totz ;
 
-		printf("Dimension: %d %d %d\n", dimx, dimy, dimz ) ;
-		printf("Mode: %d\n", mode) ;
-		printf("Density: from %f to %f, mean at %f, rms at %f\n", dmin, dmax, dmean, drms ) ;
-		printf("Cell size: %f %f %f\n", angsx / (dimx-1), angsy / (dimy-1), angsz / (dimz-1) ) ;
-		printf("Cell angles: %f %f %f\n", anglex, angley, anglez ) ;
+#ifdef VERBOSE
+		printf("\tDimension: %d %d %d\n", dimx, dimy, dimz ) ;
+		printf("\tMode: %d\n", mode) ;
+		printf("\tDensity: from %f to %f, mean at %f, rms at %f\n", dmin, dmax, dmean, drms ) ;
+		printf("\tCell size: %f %f %f\n", angsx / (dimx-1), angsy / (dimy-1), angsz / (dimz-1) ) ;
+		printf("\tCell angles: %f %f %f\n", anglex, angley, anglez ) ;
+#endif // VERBOSE
 
 		if ( mode > 2 )
 		{
-			printf("Complex mode not supported.\n") ;
+			printf("\tComplex mode not supported.\n") ;
 			exit(0) ;
 		}
 
@@ -656,15 +658,17 @@ public:
 		dimx = totx ;
 		dimy = toty ;
 		dimz = totz ;
-		printf("Dimension: %d %d %d\n", dimx, dimy, dimz ) ;
-		printf("Mode: %d\n", mode) ;
-		printf("Density: from %f to %f, mean at %f, rms at %f\n", dmin, dmax, dmean, drms ) ;
-		printf("Cell size: %f %f %f\n", angsx / (dimx-1), angsy / (dimy-1), angsz / (dimz-1) ) ;
-		printf("Cell angles: %f %f %f\n", anglex, angley, anglez ) ;
+#ifdef VERBOSE
+		printf("\tDimension: %d %d %d\n", dimx, dimy, dimz ) ;
+		printf("\tMode: %d\n", mode) ;
+		printf("\tDensity: from %f to %f, mean at %f, rms at %f\n", dmin, dmax, dmean, drms ) ;
+		printf("\tCell size: %f %f %f\n", angsx / (dimx-1), angsy / (dimy-1), angsz / (dimz-1) ) ;
+		printf("\tCell angles: %f %f %f\n", anglex, angley, anglez ) ;
+#endif // VERBOSE
 
 		if ( mode > 2 )
 		{
-			printf("Complex mode not supported.\n") ;
+			printf("\tComplex mode not supported.\n") ;
 			// exit(0) ;
 		}
 
@@ -778,12 +782,16 @@ public:
 
 		if ( totx <= 0 || totx > 1024 )
 		{
-			printf("Calling inverse MRCreader.\n") ;
+#ifdef VERBOSE
+			printf("\tCalling inverse MRCreader.\n") ;
+#endif
 			return new InvMRCReader( fname ) ;
 		}
 		else
 		{
-			printf("Calling MRCreader.\n") ;
+#ifdef VERBOSE
+			printf("\tCalling MRCreader.\n") ;
+#endif
 			return new MRCReader( fname ) ;
 		}
 	}
@@ -809,7 +817,7 @@ public:
 		{
 			dimen ++ ;
 		}
-		printf("Volume Size: %d\n", dimen) ;
+		printf("\tVolume Size: %d\n", dimen) ;
 
 		fclose( fin ) ;
 	}

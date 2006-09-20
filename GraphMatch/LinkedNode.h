@@ -145,15 +145,11 @@ void LinkedNode::PrintNodeConcise(int rank, bool endOfLine, bool printCostBreakd
 		n2[i] = temp;
 	}
 
-#ifdef VERBOSE
 	if(IsUserSpecifiedSolution()) {
 		printf("*");
 	} else {
 		printf(" ");
 	}
-#else
-	printf(" ");
-#endif
 
 	if(rank != -1) {
 		printf("%d)", rank);

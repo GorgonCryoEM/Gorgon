@@ -211,19 +211,25 @@ int main( int args, char * argv[] ) {
 		PERFORMANCE_COMPARISON_MODE = false;
 		LoadConstantsFromFile(argv[1]);
 		DisplayConstants();
+#ifdef VERBOSE
 		printf("Pattern Graph \n");
+#endif
 		start = clock();
 		patternGraph = PDBReader::ReadFile(PDB_FILE_NAME);
 		finish = clock();
+#ifdef VERBOSE
 		printf("\tReading Pattern file Took %f seconds.\n", (double) (finish - start) / (double) CLOCKS_PER_SEC ) ;
 		patternGraph->PrintGraph();
 
 		printf("\n\nBase Graph \n");		
+#endif
 		start = clock();
 		baseGraph = SkeletonReader::ReadFile(MRC_FILE_NAME, VRML_HELIX_FILE_NAME, SSE_FILE_NAME, VRML_SHEET_FILE_NAME);
 		finish = clock();
+#ifdef VERBOSE
 		printf("\tReading Base file Took %f seconds.\n", (double) (finish - start) / (double) CLOCKS_PER_SEC ) ;
 		baseGraph->PrintGraph();
+#endif
 		DoGraphMatching(patternGraph, baseGraph);
 		delete(baseGraph);
 		delete(patternGraph);

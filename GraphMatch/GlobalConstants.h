@@ -12,8 +12,8 @@ Date  : 02/06/2006
 
 //#define INCLUDE_SHEETS
 //#define GET_STATS
-#define VERBOSE
-// #define MAKE_FINAL_MRC
+//#define VERBOSE
+//#define MAKE_FINAL_MRC
 
 const int NOPATHPENALTY = 1;
 const int TYPEMISMATCHPENALTY = 1;
@@ -227,6 +227,7 @@ void LoadConstantsFromFile(char * settingsFile) {
 
 void DisplayConstants()
 {
+#ifdef VERBOSE
 	printf("Constants...\n");
 	printf("\tEUCLIDEAN_DISTANCE_THRESHOLD     = %f\n", EUCLIDEAN_DISTANCE_THRESHOLD);
 	printf("\tBORDER_MARGIN_THRESHOLD          = %d\n", BORDER_MARGIN_THRESHOLD);
@@ -274,6 +275,7 @@ void DisplayConstants()
 	}
 
 	printf("\n\n");
+#endif //VERBOSE
 }
 
 bool IsNodeAssignmentAllowed(int patternNode, int baseNode) {

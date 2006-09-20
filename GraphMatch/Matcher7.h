@@ -383,7 +383,6 @@ void Matcher7::FindPossiblePaths() {
 					}
 				}
 			}
-			//printf(".");
 			#ifdef GET_STATS
 			GetJunctionStats(p, b, totalCellCount, usedCellCount, totalRowCount, usedRowCount);
 			#endif
