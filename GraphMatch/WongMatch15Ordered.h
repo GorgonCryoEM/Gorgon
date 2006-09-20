@@ -195,7 +195,6 @@ void WongMatch15Ordered::RunMatching(clock_t startTime) {
 	printf("%d BYTES \n", sizeof(LinkedNode));
 	bool continueLoop = true;
 	clock_t finishTime;
-	char fileName[80];
 	while(continueLoop)
 	{
 		PopBestNode();		
@@ -210,6 +209,7 @@ void WongMatch15Ordered::RunMatching(clock_t startTime) {
 			printf(": (%d expanded) (%f seconds) (%fkB Memory) (%d queue size) (%d parent size)\n", expandCount, (double) (finishTime - startTime) / (double) CLOCKS_PER_SEC, (queue->getLength() * sizeof(LinkedNode) + usedNodes.size() * sizeof(LinkedNodeStub)) / 1024.0, queue->getLength(), usedNodes.size());
 
 #ifdef MAKE_FINAL_MRC
+			char fileName[80];
 			sprintf(fileName, "Solution%d.mrc", foundCount);
 			pathGenerator->GenerateGraph(currentNode, fileName);
 #endif

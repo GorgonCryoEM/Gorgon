@@ -33,9 +33,11 @@ public:
 
 
 private:
+#ifdef VERBOSE
 	clock_t timeInGetA;
 	clock_t timeInGetB;
 	clock_t timeInQueue;
+#endif
 	LinkedNode * currentNode;
 	PriorityQueue<LinkedNode, double> * queue;
 	vector<LinkedNodeStub*> usedNodes;
@@ -111,9 +113,11 @@ void WongMatch15Constrained::Init(StandardGraph * patternGraph, StandardGraph * 
 	}
 	foundCount = 0;
 	longestMatch = 0;
+#ifdef VERBOSE
 	timeInGetA = 0;
 	timeInGetB = 0;
 	timeInQueue = 0;
+#endif
 	InitializeEdgeMinCosts();
 
 	currentNode = new LinkedNode();
@@ -189,24 +193,26 @@ void WongMatch15Constrained::InitializeEdgeMinCosts() {
 }
 
 void WongMatch15Constrained::RunMatching(clock_t startTime) {
-	printf("%d BYTES \n", sizeof(LinkedNode));
 	bool continueLoop = true;
 	clock_t finishTime;
-	char fileName[80];
 	while(continueLoop)
 	{
 		PopBestNode();		
 		if(currentNode == NULL) {
 			break;
 		}
-		//PrintCurrentNode();
 		if(currentNode->depth == patternGraph->nodeCount) {						
 			finishTime = clock();
 			foundCount++;
+#ifdef VERBOSE
 			currentNode->PrintNodeConcise(foundCount, false);
 			printf(": (%d expanded) (%f seconds) (%fkB Memory) (%d queue size) (%d parent size)\n", expandCount, (double) (finishTime - startTime) / (double) CLOCKS_PER_SEC, (queue->getLength() * sizeof(LinkedNode) + usedNodes.size() * sizeof(LinkedNodeStub)) / 1024.0, queue->getLength(), usedNodes.size());
+#else			
+			printf("%fs\n",(double) (finishTime - startTime) / (double) CLOCKS_PER_SEC);
+#endif
 
 #ifdef MAKE_FINAL_MRC
+			char fileName[80];
 			sprintf(fileName, "Solution%d.mrc", foundCount);
 			pathGenerator->GenerateGraph(currentNode, fileName);
 #endif
@@ -230,9 +236,11 @@ void WongMatch15Constrained::SaveResults(){
 	//}
 	//printf(" - %f : (%d expanded)\n", currentNode->cost, expandCount);
 	//printf("%d\t\t", expandCount);	
+#ifdef VERBOSE
 	printf("Time taken in GetA %f\n", timeInGetA / (double)CLOCKS_PER_SEC);
 	printf("Time taken in GetB %f\n", timeInGetB / (double)CLOCKS_PER_SEC);
 	printf("Time taken in Queue %f\n", timeInQueue / (double)CLOCKS_PER_SEC);
+#endif
 
 }
 
@@ -353,7 +361,9 @@ double WongMatch15Constrained::GetCost(int d, int m, int qj, int qp) {
 }
 
 double WongMatch15Constrained::GetA() {
+#ifdef VERBOSE
 	clock_t startTime = clock();
+#endif
 	double cost = 0;
 	double minCost;
 	// Cost for node matching
@@ -392,12 +402,16 @@ double WongMatch15Constrained::GetA() {
 		}
 		cost += minCost;
 	}
+#ifdef VERBSOE
 	timeInGetA += clock() - startTime;
+#endif
 	return cost;
 }
 
 double WongMatch15Constrained::GetB() {
+#ifdef VERBOSE
 	clock_t startTime = clock();
+#endif
 	
 	int i;
 	double minCost, cost = 0;
@@ -416,8 +430,10 @@ double WongMatch15Constrained::GetB() {
 
 			cost += minCost;
 		}
-	}	
+	}
+#ifdef VERBOSE
 	timeInGetB += clock() - startTime;
+#endif
 	return cost;
 }
 
@@ -426,10 +442,14 @@ double WongMatch15Constrained::GetF() {
 }
 
 void WongMatch15Constrained::PopBestNode(){
+#ifdef VERBOSE
 	clock_t start = clock();
+#endif
 	double cost;
 	queue->remove(currentNode, cost);
+#ifdef VERBOSE
 	timeInQueue += clock() - start;
+#endif
 }
 
 bool WongMatch15Constrained::ExpandNode(LinkedNodeStub * currentStub) {
@@ -437,10 +457,12 @@ bool WongMatch15Constrained::ExpandNode(LinkedNodeStub * currentStub) {
 	expandCount++;
 	LinkedNode * temp;
 	double edgeCost;
+#ifdef VERBOSE
 	if(longestMatch < currentNode->depth) {
 		longestMatch = currentNode->depth;
 		printf(" %d elements matched! (%f kB Memory Used)\n", longestMatch, (queue->getLength() * sizeof(LinkedNode) + usedNodes.size() * sizeof(LinkedNodeStub)) / 1024.0);
 	}
+#endif //VERBOSE
 	
 	int currentM1Top = patternGraph->nodeCount - currentNode->depth;
 	int currentM2Top = baseGraph->nodeCount - currentNode->depth + currentNode->missingNodesUsed;
@@ -514,7 +536,9 @@ bool WongMatch15Constrained::ExpandNode(LinkedNodeStub * currentStub) {
 
 void WongMatch15Constrained::NormalizeGraphs() {
 
-	printf("Normalizing the base graph based on helix length ratio\nNormalized Graph:\n");
+#ifdef VERBOSE
+	printf("\tNormalizing the base graph based on helix length ratio\nNormalized Graph:\n");
+#endif
 	double ratio = 0;
 
 	for(int i = 0; i < (int)baseGraph->skeletonHelixes.size(); i++) {
@@ -527,11 +551,11 @@ void WongMatch15Constrained::NormalizeGraphs() {
 			if(baseGraph->adjacencyMatrix[i][j][1] != MAXINT) {
 				baseGraph->SetCost(i+1,j+1, baseGraph->adjacencyMatrix[i][j][1] * ratio);
 			}
-			//baseGraph->euclideanMatrix[i][j] = baseGraph->euclideanMatrix[i][j] * ratio;
-
 		}
 	}	
+#ifdef VERBOSE
 	baseGraph->PrintGraph();
+#endif
 }
 
 unsigned long long WongMatch15Constrained::EncodeNode(unsigned long long bitmap, int node) {
