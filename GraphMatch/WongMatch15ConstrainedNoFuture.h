@@ -9,8 +9,8 @@ Author: Sasakthi S. Abeysinghe
 Date  : 08/14/2006
 */
 
-#ifndef WONGMATCH15CONSTRAINED_H
-#define WONGMATCH15CONSTRAINED_H
+#ifndef WONGMATCH15CONSTRAINEDNOFUTURE_H
+#define WONGMATCH15CONSTRAINEDNOFUTURE_H
 
 #include "StandardGraph.h"
 #include "LinkedNode.h"
@@ -21,14 +21,14 @@ Date  : 08/14/2006
 #include <time.h>
 #include "../SkeletonMaker/PriorityQueue.h"
 
-class WongMatch15Constrained{
+class WongMatch15ConstrainedNoFuture{
 public:
 	StandardGraph * patternGraph;
 	StandardGraph * baseGraph;
 public:
-	WongMatch15Constrained(StandardGraph * patternGraph, StandardGraph * baseGraph);
-	WongMatch15Constrained(StandardGraph * patternGraph, StandardGraph * baseGraph, int missingHelixCount, int missingSheetCount);
-	~WongMatch15Constrained();
+	WongMatch15ConstrainedNoFuture(StandardGraph * patternGraph, StandardGraph * baseGraph);
+	WongMatch15ConstrainedNoFuture(StandardGraph * patternGraph, StandardGraph * baseGraph, int missingHelixCount, int missingSheetCount);
+	~WongMatch15ConstrainedNoFuture();
 	void RunMatching(clock_t startTime);
 	void SaveResults();
 
@@ -47,8 +47,6 @@ private:
 	int expandCount;
 	int foundCount;
 	int longestMatch;
-	EdgeMinCostEntry edgeMinCosts[MAX_NODES][MAX_NODES*MAX_NODES*MAX_NODES];  // pattern graph, base graph
-	int edgeMinCostCount[MAX_NODES];
 	PathGenerator * pathGenerator;
 
 private:
@@ -59,28 +57,25 @@ private:
 	double GetCPrime(int a, int b, int c, int d);
 	double GetK(int p, int qp);
 	double GetKPrime(int i, int q);
-	double GetA();
-	double GetB();
 	double GetF();
 	void PopBestNode(); // Gets the best (first) node from the active nodes list.
 	bool ExpandNode(LinkedNodeStub * currentStub);  // Expands all the children of the current node.
 	void NormalizeGraphs();
-	void InitializeEdgeMinCosts();
 	unsigned long long EncodeNode(unsigned long long bitmap, int node);
 
 };
 
-WongMatch15Constrained::WongMatch15Constrained(StandardGraph * patternGraph, StandardGraph * baseGraph) {
+WongMatch15ConstrainedNoFuture::WongMatch15ConstrainedNoFuture(StandardGraph * patternGraph, StandardGraph * baseGraph) {
 	Init(patternGraph, baseGraph);
 }
 
-WongMatch15Constrained::WongMatch15Constrained(StandardGraph * patternGraph, StandardGraph * baseGraph, int missingHelixCount, int missingSheetCount) {
+WongMatch15ConstrainedNoFuture::WongMatch15ConstrainedNoFuture(StandardGraph * patternGraph, StandardGraph * baseGraph, int missingHelixCount, int missingSheetCount) {
 	Init(patternGraph, baseGraph);
 	this->missingHelixCount = missingHelixCount;
 	this->missingSheetCount = missingSheetCount;
 }
 
-WongMatch15Constrained::~WongMatch15Constrained() {
+WongMatch15ConstrainedNoFuture::~WongMatch15ConstrainedNoFuture() {
 	for(unsigned int i = 0; i < usedNodes.size(); i++) {
 		delete usedNodes[i];
 	}
@@ -98,7 +93,7 @@ WongMatch15Constrained::~WongMatch15Constrained() {
 	
 	delete pathGenerator;
 }
-void WongMatch15Constrained::Init(StandardGraph * patternGraph, StandardGraph * baseGraph) {	
+void WongMatch15ConstrainedNoFuture::Init(StandardGraph * patternGraph, StandardGraph * baseGraph) {	
 	usedNodes.clear();
 	queue = new PriorityQueue<LinkedNode, double> (PRIORITYQUEUESIZE);
 	this->patternGraph = patternGraph;
@@ -119,7 +114,6 @@ void WongMatch15Constrained::Init(StandardGraph * patternGraph, StandardGraph * 
 	timeInGetB = 0;
 	timeInQueue = 0;
 #endif
-	InitializeEdgeMinCosts();
 
 	currentNode = new LinkedNode();
 	for(int j = 1; j <= patternGraph->nodeCount; j++) {
@@ -135,65 +129,7 @@ void WongMatch15Constrained::Init(StandardGraph * patternGraph, StandardGraph * 
 
 
 
-void WongMatch15Constrained::InitializeEdgeMinCosts() {	
-	for(int i = 0; i < patternGraph->nodeCount; i++) {	
-		edgeMinCosts[i][0].bitmap = 0;
-		edgeMinCosts[i][0].cost = MISSING_HELIX_PENALTY;
-		edgeMinCosts[i][0].noOfEdges = 1;
-		edgeMinCostCount[i] = 1;
-	}
-
-	unsigned long long bitmap;
-	double cost;
-
-	for(int i = 0; i < patternGraph->nodeCount; i++) {	
-		for(int edgeCount = 1; edgeCount <= missingHelixCount * 2 + 1; edgeCount++) {
-			for(int q = 0; q < baseGraph->nodeCount-1; q++) {
-				for(int r = q+1; r < baseGraph->nodeCount; r++) {
-					if(baseGraph->EdgeExists(q, r)) {
-						bitmap = EncodeNode(0, q+1);
-						bitmap = EncodeNode(bitmap, r+1);
-						cost = GetCost(i+1, edgeCount, q+1, r+1) / (double)edgeCount;
-						if(cost >= 0) {
-							for(int kk = 0; kk < min(edgeCount, patternGraph->nodeCount - i); kk++) {
-								edgeMinCosts[i+kk][edgeMinCostCount[i+kk]].noOfEdges = edgeCount;
-								edgeMinCosts[i+kk][edgeMinCostCount[i+kk]].bitmap = bitmap;
-								edgeMinCosts[i+kk][edgeMinCostCount[i+kk]].cost = cost;
-								edgeMinCostCount[i+kk]++;
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-
-
-	int minIndex;
-	EdgeMinCostEntry temp;
-	for(int i = 0; i < patternGraph->nodeCount; i++) {
-		for(int k = 0; k < edgeMinCostCount[i] - 1; k++) {
-			minIndex = k;
-			for(int l = k+1; l < edgeMinCostCount[i]; l++) {
-				if(edgeMinCosts[i][l].cost < edgeMinCosts[i][minIndex].cost) {
-					minIndex = l;
-				}
-			}
-			temp = edgeMinCosts[i][k];
-			edgeMinCosts[i][k] = edgeMinCosts[i][minIndex];
-			temp = edgeMinCosts[i][minIndex] = temp;
-		}
-	}
-
-	//for(int i = 0; i < patternGraph->nodeCount; i++) {
-	//	for(int k = 0; k < edgeMinCostCount[i] - 1; k++) {
-	//		printf("\t%f", edgeMinCosts[i][k].cost);
-	//	}
-	//	printf("\n");
-	//}
-}
-
-void WongMatch15Constrained::RunMatching(clock_t startTime) {
+void WongMatch15ConstrainedNoFuture::RunMatching(clock_t startTime) {
 	bool continueLoop = true;
 	clock_t finishTime;
 	while(continueLoop)
@@ -230,7 +166,7 @@ void WongMatch15Constrained::RunMatching(clock_t startTime) {
 	}
 }
 
-void WongMatch15Constrained::SaveResults(){
+void WongMatch15ConstrainedNoFuture::SaveResults(){
 	//printf("\t");
 	//for(int i = 0; i < currentNode->n1Top; i++) {
 	//	printf("%d ", currentNode->n2[i]);
@@ -245,11 +181,11 @@ void WongMatch15Constrained::SaveResults(){
 
 }
 
-double WongMatch15Constrained::GetC(int p, int qp) {
+double WongMatch15ConstrainedNoFuture::GetC(int p, int qp) {
 	return GetC(p, p, qp, qp);
 }
 
-double WongMatch15Constrained::GetC(int j, int p, int qj, int qp) {
+double WongMatch15ConstrainedNoFuture::GetC(int j, int p, int qj, int qp) {
 
 	double jpCost;
 	double qjqpCost;
@@ -274,7 +210,7 @@ double WongMatch15Constrained::GetC(int j, int p, int qj, int qp) {
 	return fabs(jpCost - qjqpCost) + typeCost;
 }
 
-double WongMatch15Constrained::GetCost(int d, int m, int qj, int qp) {
+double WongMatch15ConstrainedNoFuture::GetCost(int d, int m, int qj, int qp) {
 	double patternLength = 0;
 	double baseLength;
 
@@ -361,88 +297,11 @@ double WongMatch15Constrained::GetCost(int d, int m, int qj, int qp) {
 	return 0;
 }
 
-double WongMatch15Constrained::GetA() {
-#ifdef VERBOSE
-	clock_t startTime = clock();
-#endif
-	double cost = 0;
-	double minCost;
-	// Cost for node matching = 0 since nodes dont have values
-	//for(int i = 1; i <= patternGraph->nodeCount; i++)
-	//{
-	//	if(LinkedNode::IsNodeInBitmap(currentNode->m1Bitmap, i)) {			
-	//		minCost = MISSING_HELIX_PENALTY;
-	//		for(int j = 1; j <= baseGraph->nodeCount; j++) {
-	//			if(LinkedNode::IsNodeInBitmap(currentNode->m2Bitmap, j)) {
-	//				minCost = min(minCost, GetC(i, j));
-	//			}
-	//		}
-	//		cost += minCost;
-	//	}
-	//}
-	
-	// Cost for the first edge matched
-	if(currentNode->depth != patternGraph->nodeCount) {
-		int lastPatternNode = currentNode->n1Node;
-		int lastBaseNode = currentNode->n2Node;
-		int usableEdgeCount = min(patternGraph->nodeCount - currentNode->depth, missingHelixCount * 2 - currentNode->missingNodesUsed + 1);
-
-		unsigned long long bitmap = currentNode->GetN2Bitmap();
-		LinkedNode::RemoveNodeFromBitmap(bitmap, currentNode->n2Node);
-		unsigned long long edgeBitmap = EncodeNode(0, lastBaseNode);
-
-		minCost = (usableEdgeCount > 1) ? MISSING_HELIX_PENALTY : MAXINT;
-		
-		for(int i = 0; i < edgeMinCostCount[lastPatternNode-1]; i++) {
-			if(((edgeMinCosts[lastPatternNode-1][i].bitmap & bitmap) == 0) &&
-					((edgeMinCosts[lastPatternNode-1][i].bitmap & edgeBitmap) == edgeBitmap) &&
-					(edgeMinCosts[lastPatternNode-1][i].noOfEdges <= usableEdgeCount)) {
-				minCost = min(minCost, edgeMinCosts[lastPatternNode-1][i].cost);
-				break;
-			}
-		}
-		cost += minCost;
-	}
-#ifdef VERBOSE
-	timeInGetA += clock() - startTime;
-#endif
-	return cost;
+double WongMatch15ConstrainedNoFuture::GetF() {
+	return currentNode->costGStar;	
 }
 
-double WongMatch15Constrained::GetB() {
-#ifdef VERBOSE
-	clock_t startTime = clock();
-#endif
-	
-	int i;
-	double minCost, cost = 0;
-	unsigned long long bitmap = currentNode->GetN2Bitmap();
-	int usableEdges = min(patternGraph->nodeCount - currentNode->depth, missingHelixCount * 2 - currentNode->missingNodesUsed + 1);;
-
-	for(i = 1; i < patternGraph->nodeCount; i++) {
-		if(LinkedNode::IsNodeInBitmap(currentNode->m1Bitmap, i)) {
-			for(int j = 0; j < edgeMinCostCount[i-1]; j++) {					
-				if(((edgeMinCosts[i-1][j].bitmap & bitmap) == 0)  && 
-					(edgeMinCosts[i-1][j].noOfEdges <= usableEdges)) {
-					minCost = edgeMinCosts[i-1][j].cost;
-					break;
-				}
-			}
-
-			cost += minCost;
-		}
-	}
-#ifdef VERBOSE
-	timeInGetB += clock() - startTime;
-#endif
-	return cost;
-}
-
-double WongMatch15Constrained::GetF() {
-	return currentNode->costGStar + GetA() + GetB();	
-}
-
-void WongMatch15Constrained::PopBestNode(){
+void WongMatch15ConstrainedNoFuture::PopBestNode(){
 #ifdef VERBOSE
 	clock_t start = clock();
 #endif
@@ -453,7 +312,7 @@ void WongMatch15Constrained::PopBestNode(){
 #endif
 }
 
-bool WongMatch15Constrained::ExpandNode(LinkedNodeStub * currentStub) {
+bool WongMatch15ConstrainedNoFuture::ExpandNode(LinkedNodeStub * currentStub) {
 	bool expanded = false;
 	expandCount++;
 	LinkedNode * temp;
@@ -535,7 +394,7 @@ bool WongMatch15Constrained::ExpandNode(LinkedNodeStub * currentStub) {
 	return expanded;
 }
 
-void WongMatch15Constrained::NormalizeGraphs() {
+void WongMatch15ConstrainedNoFuture::NormalizeGraphs() {
 
 #ifdef VERBOSE
 	printf("\tNormalizing the base graph based on helix length ratio\nNormalized Graph:\n");
@@ -559,7 +418,7 @@ void WongMatch15Constrained::NormalizeGraphs() {
 #endif
 }
 
-unsigned long long WongMatch15Constrained::EncodeNode(unsigned long long bitmap, int node) {
+unsigned long long WongMatch15ConstrainedNoFuture::EncodeNode(unsigned long long bitmap, int node) {
 	if(node == -1)
 		return bitmap;
 

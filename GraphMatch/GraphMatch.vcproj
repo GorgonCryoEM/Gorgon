@@ -216,10 +216,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Matcher7.h"
-				>
-			</File>
-			<File
 				RelativePath=".\NodeList.h"
 				>
 			</File>
@@ -244,7 +240,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\StandardNode.h"
+				RelativePath=".\Structures.h"
 				>
 			</File>
 			<File
@@ -256,19 +252,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\WongMatch15Ordered.h"
+				RelativePath=".\WongMatch15ConstrainedNoFuture.h"
 				>
 			</File>
 			<File
-				RelativePath=".\WongMatchMissing.h"
-				>
-			</File>
-			<File
-				RelativePath=".\WongMatchMissing15.h"
-				>
-			</File>
-			<File
-				RelativePath=".\WongMatchMissing15Linked.h"
+				RelativePath=".\WongMatch15ConstrainedOnlyA.h"
 				>
 			</File>
 		</Filter>
@@ -277,166 +265,6 @@
 			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx"
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
 			>
-		</Filter>
-		<Filter
-			Name="VFLib"
-			>
-			<File
-				RelativePath="..\ExternalLibraries\vflib2\include\allocpool.h"
-				>
-			</File>
-			<File
-				RelativePath="..\ExternalLibraries\vflib2\src\argedit.cc"
-				>
-			</File>
-			<File
-				RelativePath="..\ExternalLibraries\vflib2\include\argedit.h"
-				>
-			</File>
-			<File
-				RelativePath="..\ExternalLibraries\vflib2\src\argloader.cc"
-				>
-			</File>
-			<File
-				RelativePath="..\ExternalLibraries\vflib2\include\argloader.h"
-				>
-			</File>
-			<File
-				RelativePath="..\ExternalLibraries\vflib2\src\argraph.cc"
-				>
-			</File>
-			<File
-				RelativePath="..\ExternalLibraries\vflib2\include\argraph.h"
-				>
-			</File>
-			<File
-				RelativePath="..\ExternalLibraries\vflib2\include\dict.h"
-				>
-			</File>
-			<File
-				RelativePath="..\ExternalLibraries\vflib2\src\error.cc"
-				>
-			</File>
-			<File
-				RelativePath="..\ExternalLibraries\vflib2\include\error.h"
-				>
-			</File>
-			<File
-				RelativePath="..\ExternalLibraries\vflib2\src\gene.cc"
-				>
-			</File>
-			<File
-				RelativePath="..\ExternalLibraries\vflib2\include\gene.h"
-				>
-			</File>
-			<File
-				RelativePath="..\ExternalLibraries\vflib2\src\gene_mesh.cc"
-				>
-			</File>
-			<File
-				RelativePath="..\ExternalLibraries\vflib2\include\gene_mesh.h"
-				>
-			</File>
-			<File
-				RelativePath="..\ExternalLibraries\vflib2\src\match.cc"
-				>
-			</File>
-			<File
-				RelativePath="..\ExternalLibraries\vflib2\include\match.h"
-				>
-			</File>
-			<File
-				RelativePath="..\ExternalLibraries\vflib2\src\sd_state.cc"
-				>
-			</File>
-			<File
-				RelativePath="..\ExternalLibraries\vflib2\include\sd_state.h"
-				>
-			</File>
-			<File
-				RelativePath="..\ExternalLibraries\vflib2\src\sortnodes.cc"
-				>
-			</File>
-			<File
-				RelativePath="..\ExternalLibraries\vflib2\src\sortnodes.h"
-				>
-			</File>
-			<File
-				RelativePath="..\ExternalLibraries\vflib2\include\state.h"
-				>
-			</File>
-			<File
-				RelativePath="..\ExternalLibraries\vflib2\src\ull_state.cc"
-				>
-			</File>
-			<File
-				RelativePath="..\ExternalLibraries\vflib2\include\ull_state.h"
-				>
-			</File>
-			<File
-				RelativePath="..\ExternalLibraries\vflib2\src\ull_sub_state.cc"
-				>
-			</File>
-			<File
-				RelativePath="..\ExternalLibraries\vflib2\include\ull_sub_state.h"
-				>
-			</File>
-			<File
-				RelativePath="..\ExternalLibraries\vflib2\src\vf2_mono_state.cc"
-				>
-			</File>
-			<File
-				RelativePath="..\ExternalLibraries\vflib2\include\vf2_mono_state.h"
-				>
-			</File>
-			<File
-				RelativePath="..\ExternalLibraries\vflib2\src\vf2_state.cc"
-				>
-			</File>
-			<File
-				RelativePath="..\ExternalLibraries\vflib2\include\vf2_state.h"
-				>
-			</File>
-			<File
-				RelativePath="..\ExternalLibraries\vflib2\src\vf2_sub_state.cc"
-				>
-			</File>
-			<File
-				RelativePath="..\ExternalLibraries\vflib2\include\vf2_sub_state.h"
-				>
-			</File>
-			<File
-				RelativePath="..\ExternalLibraries\vflib2\src\vf_mono_state.cc"
-				>
-			</File>
-			<File
-				RelativePath="..\ExternalLibraries\vflib2\include\vf_mono_state.h"
-				>
-			</File>
-			<File
-				RelativePath="..\ExternalLibraries\vflib2\src\vf_state.cc"
-				>
-			</File>
-			<File
-				RelativePath="..\ExternalLibraries\vflib2\include\vf_state.h"
-				>
-			</File>
-			<File
-				RelativePath="..\ExternalLibraries\vflib2\src\vf_sub_state.cc"
-				>
-			</File>
-			<File
-				RelativePath="..\ExternalLibraries\vflib2\include\vf_sub_state.h"
-				>
-			</File>
-			<File
-				RelativePath="..\ExternalLibraries\vflib2\src\xsubgraph.cc"
-				>
-			</File>
-			<File
-				RelativePath="..\ExternalLibraries\vflib2\include\xsubgraph.h"
-				>
-			</File>
 		</Filter>
 	</Files>
 	<Globals>
