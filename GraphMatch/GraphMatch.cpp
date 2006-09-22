@@ -8,12 +8,9 @@ Date  : 01/23/2006
 #include <stdlib.h>
 #include <stdio.h>
 #include "StandardGraph.h"
-#include "Matcher7.h"
-#include "WongMatchMissing.h"
-#include "WongMatchMissing15.h"
-#include "WongMatchMissing15Linked.h"
 #include "WongMatch15Constrained.h"
-#include "WongMatch15Ordered.h"
+#include "WongMatch15ConstrainedNoFuture.h"
+#include "WongMatch15ConstrainedOnlyA.h"
 #include "PDBReader.h"
 #include "SkeletonReader.h"
 #include "GlobalConstants.h"
@@ -37,15 +34,15 @@ void DoPerformanceComparison(StandardGraph * patternGraph, StandardGraph * baseG
 
 
 
-	// Wong Matching Inexact
-	WongMatchMissing * wongMatchMissing;
-	wongMatchMissing = new WongMatchMissing(patternGraph, baseGraph);
-	start = clock();
-	wongMatchMissing->RunMatching(start);
-	finish = clock();
-	wongMatchMissing->SaveResults();
-	inexactTime += ((double) (finish - start) / (double) CLOCKS_PER_SEC);
-	delete wongMatchMissing;
+	//// Wong Matching Inexact
+	//WongMatchMissing * wongMatchMissing;
+	//wongMatchMissing = new WongMatchMissing(patternGraph, baseGraph);
+	//start = clock();
+	//wongMatchMissing->RunMatching(start);
+	//finish = clock();
+	//wongMatchMissing->SaveResults();
+	//inexactTime += ((double) (finish - start) / (double) CLOCKS_PER_SEC);
+	//delete wongMatchMissing;
 
 	//// VF Matching Algorithm
 	//VFMatch * matcher2;
@@ -142,6 +139,36 @@ void DoGraphMatching(StandardGraph * patternGraph, StandardGraph * baseGraph)
 
 
 	// Match Graphs
+
+	// Constrained no future
+	printf("\n\n WongMatch15ConstrainedNoFuture\n");
+	WongMatch15ConstrainedNoFuture * matcherConstrainedNoFuture;
+	if(MISSING_HELIX_COUNT == -1) {
+		matcherConstrainedNoFuture = new WongMatch15ConstrainedNoFuture(patternGraph, baseGraph);
+	} else {
+		matcherConstrainedNoFuture = new WongMatch15ConstrainedNoFuture(patternGraph, baseGraph, MISSING_HELIX_COUNT, MISSING_SHEET_COUNT);
+	}
+	start = clock();
+	matcherConstrainedNoFuture->RunMatching(start);
+	matcherConstrainedNoFuture->SaveResults();
+	delete matcherConstrainedNoFuture;
+
+
+	// Constrained OnlyA
+	printf("\n\n WongMatch15ConstrainedOnlyA\n");
+	WongMatch15ConstrainedOnlyA * matcherConstrainedOnlyA;
+	if(MISSING_HELIX_COUNT == -1) {
+		matcherConstrainedOnlyA = new WongMatch15ConstrainedOnlyA(patternGraph, baseGraph);
+	} else {
+		matcherConstrainedOnlyA = new WongMatch15ConstrainedOnlyA(patternGraph, baseGraph, MISSING_HELIX_COUNT, MISSING_SHEET_COUNT);
+	}
+	start = clock();
+	matcherConstrainedOnlyA->RunMatching(start);
+	matcherConstrainedOnlyA->SaveResults();
+	delete matcherConstrainedOnlyA;
+
+
+	printf("\n\n WongMatch15Constrained\n");
 	WongMatch15Constrained * matcherConstrained;
 	if(MISSING_HELIX_COUNT == -1) {
 		matcherConstrained = new WongMatch15Constrained(patternGraph, baseGraph);
@@ -153,16 +180,6 @@ void DoGraphMatching(StandardGraph * patternGraph, StandardGraph * baseGraph)
 	matcherConstrained->SaveResults();
 	delete matcherConstrained;
 
-	//WongMatch15Ordered * matcherOrdered;
-	//if(MISSING_HELIX_COUNT == -1) {
-	//	matcherOrdered = new WongMatch15Ordered(patternGraph, baseGraph);
-	//} else {
-	//	matcherOrdered = new WongMatch15Ordered(patternGraph, baseGraph, MISSING_HELIX_COUNT, MISSING_SHEET_COUNT);
-	//}
-	//start = clock();
-	//matcherOrdered->RunMatching(start);
-	//matcherOrdered->SaveResults();
-	//delete matcherOrdered;
 }
 
 
