@@ -5,6 +5,8 @@ Author: Sasakthi S. Abeysinghe
 Date  : 01/23/2006
 */
 
+#define DllExport   __declspec( dllexport )
+
 #include <stdlib.h>
 #include <stdio.h>
 #include "StandardGraph.h"
@@ -141,7 +143,7 @@ void DoGraphMatching(StandardGraph * patternGraph, StandardGraph * baseGraph)
 	// Match Graphs
 
 	// Constrained no future
-	printf("\n\n WongMatch15ConstrainedNoFuture\n");
+	//printf("\n\n WongMatch15ConstrainedNoFuture\n");
 	WongMatch15ConstrainedNoFuture * matcherConstrainedNoFuture;
 	if(MISSING_HELIX_COUNT == -1) {
 		matcherConstrainedNoFuture = new WongMatch15ConstrainedNoFuture(patternGraph, baseGraph);
@@ -154,35 +156,33 @@ void DoGraphMatching(StandardGraph * patternGraph, StandardGraph * baseGraph)
 	delete matcherConstrainedNoFuture;
 
 
-	// Constrained OnlyA
-	printf("\n\n WongMatch15ConstrainedOnlyA\n");
-	WongMatch15ConstrainedOnlyA * matcherConstrainedOnlyA;
-	if(MISSING_HELIX_COUNT == -1) {
-		matcherConstrainedOnlyA = new WongMatch15ConstrainedOnlyA(patternGraph, baseGraph);
-	} else {
-		matcherConstrainedOnlyA = new WongMatch15ConstrainedOnlyA(patternGraph, baseGraph, MISSING_HELIX_COUNT, MISSING_SHEET_COUNT);
-	}
-	start = clock();
-	matcherConstrainedOnlyA->RunMatching(start);
-	matcherConstrainedOnlyA->SaveResults();
-	delete matcherConstrainedOnlyA;
+	//// Constrained OnlyA
+	//printf("\n\n WongMatch15ConstrainedOnlyA\n");
+	//WongMatch15ConstrainedOnlyA * matcherConstrainedOnlyA;
+	//if(MISSING_HELIX_COUNT == -1) {
+	//	matcherConstrainedOnlyA = new WongMatch15ConstrainedOnlyA(patternGraph, baseGraph);
+	//} else {
+	//	matcherConstrainedOnlyA = new WongMatch15ConstrainedOnlyA(patternGraph, baseGraph, MISSING_HELIX_COUNT, MISSING_SHEET_COUNT);
+	//}
+	//start = clock();
+	//matcherConstrainedOnlyA->RunMatching(start);
+	//matcherConstrainedOnlyA->SaveResults();
+	//delete matcherConstrainedOnlyA;
 
 
-	printf("\n\n WongMatch15Constrained\n");
-	WongMatch15Constrained * matcherConstrained;
-	if(MISSING_HELIX_COUNT == -1) {
-		matcherConstrained = new WongMatch15Constrained(patternGraph, baseGraph);
-	} else {
-		matcherConstrained = new WongMatch15Constrained(patternGraph, baseGraph, MISSING_HELIX_COUNT, MISSING_SHEET_COUNT);
-	}
-	start = clock();
-	matcherConstrained->RunMatching(start);
-	matcherConstrained->SaveResults();
-	delete matcherConstrained;
+	//printf("\n\n WongMatch15Constrained\n");
+	//WongMatch15Constrained * matcherConstrained;
+	//if(MISSING_HELIX_COUNT == -1) {
+	//	matcherConstrained = new WongMatch15Constrained(patternGraph, baseGraph);
+	//} else {
+	//	matcherConstrained = new WongMatch15Constrained(patternGraph, baseGraph, MISSING_HELIX_COUNT, MISSING_SHEET_COUNT);
+	//}
+	//start = clock();
+	//matcherConstrained->RunMatching(start);
+	//matcherConstrained->SaveResults();
+	//delete matcherConstrained;
 
 }
-
-
 
 int main( int args, char * argv[] ) {
 
@@ -269,6 +269,7 @@ int main( int args, char * argv[] ) {
 		exit(0);
 	}
 }
+
 
 
 

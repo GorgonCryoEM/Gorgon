@@ -26,6 +26,57 @@ private:
 	static int GetInt(char * string, int start, int length);
 };
 
+#ifdef GET_AMINO_SEQUENCE
+char GetSingleLetterFromThree(char * aminoAcid) {
+	char result;
+	if(strcmp(aminoAcid, "ALA") == 0) {
+		result = 'A';
+	} else if(strcmp(aminoAcid, "ARG") == 0) {
+		result = 'R';
+	} else if(strcmp(aminoAcid, "ASN") == 0) {
+		result = 'N';
+	} else if(strcmp(aminoAcid, "ASP") == 0) {
+		result = 'D';
+	} else if(strcmp(aminoAcid, "CYS") == 0) {
+		result = 'C';
+	} else if(strcmp(aminoAcid, "GLN") == 0) {
+		result = 'Q';
+	} else if(strcmp(aminoAcid, "GLU") == 0) {
+		result = 'E';
+	} else if(strcmp(aminoAcid, "GLY") == 0) {
+		result = 'G';
+	} else if(strcmp(aminoAcid, "HIS") == 0) {
+		result = 'H';
+	} else if(strcmp(aminoAcid, "ILE") == 0) {
+		result = 'I';
+	} else if(strcmp(aminoAcid, "LEU") == 0) {
+		result = 'L';
+	} else if(strcmp(aminoAcid, "LYS") == 0) {
+		result = 'K';
+	} else if(strcmp(aminoAcid, "MET") == 0) {
+		result = 'M';
+	} else if(strcmp(aminoAcid, "PHE") == 0) {
+		result = 'F';
+	} else if(strcmp(aminoAcid, "PRO") == 0) {
+		result = 'P';
+	} else if(strcmp(aminoAcid, "SER") == 0) {
+		result = 'S';
+	} else if(strcmp(aminoAcid, "THR") == 0) {
+		result = 'T';
+	} else if(strcmp(aminoAcid, "TRP") == 0) {
+		result = 'W';
+	} else if(strcmp(aminoAcid, "TYR") == 0) {
+		result = 'Y';
+	} else if(strcmp(aminoAcid, "VAL") == 0) {
+		result = 'V';
+	} else {
+		printf("/noops!!!/n");
+		result = 'Z';
+	}
+	return result;
+}
+#endif
+
 StandardGraph * PDBReader::ReadFile(char* fname) {
 	FILE* fin = fopen(fname, "rt");
 	if (fin == NULL)
@@ -39,6 +90,12 @@ StandardGraph * PDBReader::ReadFile(char* fname) {
 	vector<SecondaryStructure*> structures;
 	SecondaryStructure * currentStructure;
 	bool add;
+	int oldIndex = 0;
+	int index;
+#ifdef GET_AMINO_SEQUENCE
+	char * acidString;
+	char acidChar;
+#endif
 
 	while(!feof(fin))
 	{
@@ -62,6 +119,17 @@ StandardGraph * PDBReader::ReadFile(char* fname) {
 			} else {
 				delete currentStructure;
 			}
+#ifdef GET_AMINO_SEQUENCE
+		} else if(strcmp(token, "ATOM") == 0) {
+			index = GetInt(line, 23, 3);
+			if(index != oldIndex){
+				acidString = GetString(line, 17,3);				
+				acidChar = GetSingleLetterFromThree(acidString);
+				printf("%c", acidChar);
+				delete acidString;
+			}
+			oldIndex = index;
+#endif
 #ifdef INCLUDE_SHEETS
 		} else if (strcmp(token, TOKEN_PDB_SHEET)== 0) {
 			currentStructure = new SecondaryStructure();
@@ -85,6 +153,9 @@ StandardGraph * PDBReader::ReadFile(char* fname) {
 		delete [] token;
 		token = NULL;
 	}
+#ifdef GET_AMINO_SEQUENCE
+	printf("\n");
+#endif
 	fclose( fin ) ;
 
 	// Sorting the structures by the start position

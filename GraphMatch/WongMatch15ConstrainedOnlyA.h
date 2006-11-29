@@ -135,12 +135,12 @@ void WongMatch15ConstrainedOnlyA::Init(StandardGraph * patternGraph, StandardGra
 
 
 void WongMatch15ConstrainedOnlyA::InitializeEdgeMinCosts() {	
-	for(int i = 0; i < patternGraph->nodeCount; i++) {	
-		edgeMinCosts[i][0].bitmap = 0;
-		edgeMinCosts[i][0].cost = MISSING_HELIX_PENALTY;
-		edgeMinCosts[i][0].noOfEdges = 1;
-		edgeMinCostCount[i] = 1;
-	}
+	//for(int i = 0; i < patternGraph->nodeCount; i++) {	
+	//	edgeMinCosts[i][0].bitmap = 0;
+	//	edgeMinCosts[i][0].cost = MISSING_HELIX_PENALTY;
+	//	edgeMinCosts[i][0].noOfEdges = 1;
+	//	edgeMinCostCount[i] = 1;
+	//}
 
 	unsigned long long bitmap;
 	double cost;
@@ -204,12 +204,9 @@ void WongMatch15ConstrainedOnlyA::RunMatching(clock_t startTime) {
 		if(currentNode->depth == patternGraph->nodeCount) {						
 			finishTime = clock();
 			foundCount++;
-#ifdef VERBOSE
 			currentNode->PrintNodeConcise(foundCount, false);
 			printf(": (%d expanded) (%f seconds) (%fkB Memory) (%d queue size) (%d parent size)\n", expandCount, (double) (finishTime - startTime) / (double) CLOCKS_PER_SEC, (queue->getLength() * sizeof(LinkedNode) + usedNodes.size() * sizeof(LinkedNodeStub)) / 1024.0, queue->getLength(), usedNodes.size());
-#else			
-			printf("%fs (%d expanded)\n",(double) (finishTime - startTime) / (double) CLOCKS_PER_SEC, expandCount);
-#endif
+
 
 #ifdef MAKE_FINAL_MRC
 			char fileName[80];
@@ -276,6 +273,7 @@ double WongMatch15ConstrainedOnlyA::GetC(int j, int p, int qj, int qp) {
 double WongMatch15ConstrainedOnlyA::GetCost(int d, int m, int qj, int qp) {
 	double patternLength = 0;
 	double baseLength;
+	double additionalCost = (m - 1) * MISSING_HELIX_PENALTY / 2.0;
 
 	// Adding the length of the skipped helixes
 	for(int i = 1; i < m; i++) {
@@ -348,13 +346,13 @@ double WongMatch15ConstrainedOnlyA::GetCost(int d, int m, int qj, int qp) {
 	switch(COST_FUNCTION)
 	{
 	case(1):
-		return weight * fabs(patternLength - baseLength);
+		return weight * fabs(patternLength - baseLength) + additionalCost; 
 		break;
 	case(2):
-		return weight * fabs(patternLength - baseLength) / (patternLength + baseLength);
+		return weight * fabs(patternLength - baseLength) / (patternLength + baseLength) + additionalCost;
 		break;
 	case(3):
-		return weight * pow((patternLength - baseLength),2);
+		return weight * pow((patternLength - baseLength),2) + additionalCost;
 		break;
 	}
 	return 0;
@@ -390,7 +388,7 @@ double WongMatch15ConstrainedOnlyA::GetA() {
 		LinkedNode::RemoveNodeFromBitmap(bitmap, currentNode->n2Node);
 		unsigned long long edgeBitmap = EncodeNode(0, lastBaseNode);
 
-		minCost = (usableEdgeCount > 1) ? MISSING_HELIX_PENALTY : MAXINT;
+		minCost = MAXINT;
 		
 		for(int i = 0; i < edgeMinCostCount[lastPatternNode-1]; i++) {
 			if(((edgeMinCosts[lastPatternNode-1][i].bitmap & bitmap) == 0) &&
@@ -470,7 +468,7 @@ bool WongMatch15ConstrainedOnlyA::ExpandNode(LinkedNodeStub * currentStub) {
 					}
 
 					if(edgeCost >= 0) {
-						currentNode->costGStar += temp->costGStar + edgeCost +	MISSING_HELIX_PENALTY * (j/2.0) + GetC(currentNode->n1Node, currentNode->n2Node);
+						currentNode->costGStar += temp->costGStar + edgeCost + GetC(currentNode->n1Node, currentNode->n2Node);
 						currentNode->cost = GetF();			
 						//currentNode->PrintNodeConcise(-1, true, true);
 						queue->add(currentNode, currentNode->cost);
