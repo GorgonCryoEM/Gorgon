@@ -12,14 +12,15 @@ Date  : 02/06/2006
 
 //#define INCLUDE_SHEETS
 //#define GET_STATS
-#define VERBOSE
-//#define MAKE_FINAL_MRC
+//#define VERBOSE
+#define MAKE_FINAL_MRC
+#define GET_AMINO_SEQUENCE
 
 const int NOPATHPENALTY = 1;
 const int TYPEMISMATCHPENALTY = 1;
 
 const int PRIORITYQUEUESIZE = 50000000;
-const int RESULT_COUNT = 10;
+const int RESULT_COUNT = 35;
 const int MAX_NODES = 50;
 const int MAXINT = 2147483647;
 const unsigned int MAXUNSIGNEDINT = 4294967295;

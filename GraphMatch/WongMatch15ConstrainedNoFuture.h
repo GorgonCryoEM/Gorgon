@@ -141,12 +141,8 @@ void WongMatch15ConstrainedNoFuture::RunMatching(clock_t startTime) {
 		if(currentNode->depth == patternGraph->nodeCount) {						
 			finishTime = clock();
 			foundCount++;
-#ifdef VERBOSE
 			currentNode->PrintNodeConcise(foundCount, false);
 			printf(": (%d expanded) (%f seconds) (%fkB Memory) (%d queue size) (%d parent size)\n", expandCount, (double) (finishTime - startTime) / (double) CLOCKS_PER_SEC, (queue->getLength() * sizeof(LinkedNode) + usedNodes.size() * sizeof(LinkedNodeStub)) / 1024.0, queue->getLength(), usedNodes.size());
-#else			
-			printf("%fs (%d expanded)\n",(double) (finishTime - startTime) / (double) CLOCKS_PER_SEC, expandCount);
-#endif
 
 #ifdef MAKE_FINAL_MRC
 			char fileName[80];
