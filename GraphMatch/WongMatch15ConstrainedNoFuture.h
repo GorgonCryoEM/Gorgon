@@ -29,7 +29,8 @@ public:
 	WongMatch15ConstrainedNoFuture(StandardGraph * patternGraph, StandardGraph * baseGraph);
 	WongMatch15ConstrainedNoFuture(StandardGraph * patternGraph, StandardGraph * baseGraph, int missingHelixCount, int missingSheetCount);
 	~WongMatch15ConstrainedNoFuture();
-	void RunMatching(clock_t startTime);
+	int RunMatching(clock_t startTime);
+	LinkedNode * GetResult(int rank);
 	void SaveResults();
 
 
@@ -42,6 +43,7 @@ private:
 	LinkedNode * currentNode;
 	PriorityQueue<LinkedNode, double> * queue;
 	vector<LinkedNodeStub*> usedNodes;
+	vector<LinkedNode*> solutions;
 	int missingHelixCount;
 	int missingSheetCount;
 	int expandCount;
@@ -80,6 +82,11 @@ WongMatch15ConstrainedNoFuture::~WongMatch15ConstrainedNoFuture() {
 		delete usedNodes[i];
 	}
 	usedNodes.clear();
+
+	for(unsigned int i = 0; i < solutions.size(); i++) {
+		delete solutions[i];
+	}
+	solutions.clear();
 
 	int queueSize = queue->getLength();
 	double tempKey;
@@ -129,7 +136,7 @@ void WongMatch15ConstrainedNoFuture::Init(StandardGraph * patternGraph, Standard
 
 
 
-void WongMatch15ConstrainedNoFuture::RunMatching(clock_t startTime) {
+int WongMatch15ConstrainedNoFuture::RunMatching(clock_t startTime) {
 	bool continueLoop = true;
 	clock_t finishTime;
 	while(continueLoop)
@@ -138,17 +145,18 @@ void WongMatch15ConstrainedNoFuture::RunMatching(clock_t startTime) {
 		if(currentNode == NULL) {
 			break;
 		}
-		if(currentNode->depth == patternGraph->nodeCount) {						
+		if(currentNode->depth == patternGraph->nodeCount) {
 			finishTime = clock();
 			foundCount++;
 			currentNode->PrintNodeConcise(foundCount, false);
 			printf(": (%d expanded) (%f seconds) (%fkB Memory) (%d queue size) (%d parent size)\n", expandCount, (double) (finishTime - startTime) / (double) CLOCKS_PER_SEC, (queue->getLength() * sizeof(LinkedNode) + usedNodes.size() * sizeof(LinkedNodeStub)) / 1024.0, queue->getLength(), usedNodes.size());
+			solutions.push_back(currentNode);
 
-#ifdef MAKE_FINAL_MRC
-			char fileName[80];
-			sprintf(fileName, "Solution%d.mrc", foundCount);
-			pathGenerator->GenerateGraph(currentNode, fileName);
-#endif
+			#ifdef MAKE_FINAL_MRC
+				char fileName[80];
+				sprintf(fileName, "Solution%d.mrc", foundCount);
+				pathGenerator->GenerateGraph(currentNode, fileName);
+			#endif
 		} else {
 			LinkedNodeStub * currentStub = new LinkedNodeStub(currentNode);
 			if(ExpandNode(currentStub)) {
@@ -156,12 +164,20 @@ void WongMatch15ConstrainedNoFuture::RunMatching(clock_t startTime) {
 			} else {
 				delete currentStub;
 			}
-		}
-		delete currentNode;
+			delete currentNode;
+		}		
 		continueLoop = (foundCount < RESULT_COUNT);
 	}
+	return foundCount;
 }
 
+LinkedNode * WongMatch15ConstrainedNoFuture::GetResult(int rank) {
+	if(rank <= solutions.size() && (rank >= 1)) {
+		return solutions[rank-1];
+	} else {
+		return NULL;
+	}
+}
 void WongMatch15ConstrainedNoFuture::SaveResults(){
 	//printf("\t");
 	//for(int i = 0; i < currentNode->n1Top; i++) {
@@ -169,11 +185,11 @@ void WongMatch15ConstrainedNoFuture::SaveResults(){
 	//}
 	//printf(" - %f : (%d expanded)\n", currentNode->cost, expandCount);
 	//printf("%d\t\t", expandCount);	
-#ifdef VERBOSE
-	printf("Time taken in GetA %f\n", timeInGetA / (double)CLOCKS_PER_SEC);
-	printf("Time taken in GetB %f\n", timeInGetB / (double)CLOCKS_PER_SEC);
-	printf("Time taken in Queue %f\n", timeInQueue / (double)CLOCKS_PER_SEC);
-#endif
+	#ifdef VERBOSE
+		printf("Time taken in GetA %f\n", timeInGetA / (double)CLOCKS_PER_SEC);
+		printf("Time taken in GetB %f\n", timeInGetB / (double)CLOCKS_PER_SEC);
+		printf("Time taken in Queue %f\n", timeInQueue / (double)CLOCKS_PER_SEC);
+	#endif
 
 }
 

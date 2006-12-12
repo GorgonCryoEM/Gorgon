@@ -145,6 +145,57 @@ void AddHelixMismatch(int patternHelix, int baseHelix) {
 	}
 }
 
+
+bool SetConstantFromToken(char * token, char * stringValue, double doubleValue, int intValue, bool boolValue) {
+	if(strcmp(token, TOKEN_SSE_FILE_NAME) == 0) {
+		strcpy(SSE_FILE_NAME, stringValue);
+	} else if(strcmp(token, TOKEN_VRML_HELIX_FILE_NAME) == 0) {
+		strcpy(VRML_HELIX_FILE_NAME, stringValue);
+	} else if(strcmp(token, TOKEN_VRML_SHEET_FILE_NAME) == 0) {
+		strcpy(VRML_SHEET_FILE_NAME, stringValue);
+	} else if(strcmp(token, TOKEN_PDB_FILE_NAME) == 0) {
+		strcpy(PDB_FILE_NAME, stringValue);
+	} else if(strcmp(token, TOKEN_MRC_FILE_NAME) == 0) {
+		strcpy(MRC_FILE_NAME, stringValue);
+	} else if(strcmp(token, TOKEN_EUCLIDEAN_DISTANCE_THRESHOLD) == 0) {
+		EUCLIDEAN_DISTANCE_THRESHOLD = doubleValue;
+	} else if(strcmp(token, TOKEN_BORDER_MARGIN_THRESHOLD) == 0) {
+		BORDER_MARGIN_THRESHOLD = intValue;
+	} else if(strcmp(token, TOKEN_NORMALIZE_GRAPHS) == 0) {
+		NORMALIZE_GRAPHS = boolValue;
+	} else if(strcmp(token, TOKEN_MISSING_HELIX_PENALTY) == 0) {
+		MISSING_HELIX_PENALTY = doubleValue;
+	} else if(strcmp(token, TOKEN_EUCLIDEAN_LOOP_PENALTY) == 0) {
+		EUCLIDEAN_LOOP_PENALTY = doubleValue;
+	} else if(strcmp(token, TOKEN_START_END_MISSING_HELIX_PENALTY) == 0) {
+		START_END_MISSING_HELIX_PENALTY = doubleValue;
+	} else if(strcmp(token, TOKEN_HELIX_WEIGHT_COEFFICIENT) == 0) {
+		HELIX_WEIGHT_COEFFICIENT = doubleValue;
+	} else if(strcmp(token, TOKEN_LOOP_WEIGHT_COEFFICIENT) == 0) {
+		LOOP_WEIGHT_COEFFICIENT = doubleValue;
+	} else if(strcmp(token, TOKEN_MISSING_HELIX_LENGTH) == 0) {
+		MISSING_HELIX_LENGTH = doubleValue;
+	} else if(strcmp(token, TOKEN_SHEET_WEIGHT_COEFFICIENT) == 0) {
+		SHEET_WEIGHT_COEFFICIENT = doubleValue;
+	} else if(strcmp(token, TOKEN_COST_FUNCTION) == 0) {
+		COST_FUNCTION = intValue;
+	} else if(strcmp(token, TOKEN_VOXEL_SIZE) == 0) {
+		VOXEL_SIZE = doubleValue;
+	} else if(strcmp(token, TOKEN_TRANSLATE_VOLUMETRIC_COORDINATES) == 0) {
+		TRANSLATE_VOLUMETRIC_COORDINATES = boolValue;
+	} else if(strcmp(token, TOKEN_MISSING_HELIX_COUNT) == 0) {
+		MISSING_HELIX_COUNT = intValue;
+	} else if(strcmp(token, TOKEN_MISSING_SHEET_COUNT) == 0) {
+		MISSING_SHEET_COUNT = intValue;
+	} else if(strcmp(token, TOKEN_EUCLIDEAN_VOXEL_TO_PDB_RATIO) == 0) {
+		EUCLIDEAN_VOXEL_TO_PDB_RATIO = doubleValue;
+	} else {
+		return false;
+	}
+	return true;
+}
+
+
 void LoadConstantsFromFile(char * settingsFile) {
 	for(unsigned int i = 0; i < MAX_NODES; i++) {
 		SOLUTION[i] = -2;
