@@ -7477,13 +7477,17 @@ public:
 				fprintf( fout, "}" ) ;
 				if ( j < sizey - 1 )
 				{
-					fprintf( fout, "," ) ;
+					fprintf( fout, ",\n" ) ;
+				} else {
+					fprintf( fout, "\n" ) ;
 				}
 			}
 			fprintf( fout, "}" ) ;
 			if ( i < sizex - 1 )
 			{
-				fprintf( fout, "," ) ;
+				fprintf( fout, ",\n\n\n" ) ;
+			} else {
+				fprintf( fout, "\n\n\n" ) ;
 			}
 		}
 		fprintf(fout,"}") ;
@@ -8659,6 +8663,37 @@ public:
 		fclose( fout ) ;
 	}
 
+/*	void toMathematicaFile(char * fname) {
+		FILE* fout = fopen( fname, "wb" ) ;
+
+		fprintf(fout, "(");
+		for ( int z = 0 ; z < sizez ; z ++ ) {
+			fprintf(fout, "(");
+			for ( int y = 0 ; y < sizey ; y ++ ) {
+				fprintf(fout, "( ");
+				for ( int x = 0 ; x < sizex ; x ++ ) {
+					float d = (float)getDataAt(x,y,z) ;
+					fprintf(fout, "%d", d);
+					if(x != sizex-1) {
+						fprintf(fout, ", ");
+					}
+				}
+				if(y != sizey-1) {
+					fprintf(fout, "}, \n");
+				} else {
+					fprintf(fout, "}\n");
+				}
+			}
+			if(z != sizez-1) {
+				fprintf(fout, "}, \n\n\n");
+			} else {
+				fprintf(fout, "}\n\n\n");
+			}
+		}
+		fprintf(fout, "}\n");
+
+		fclose(fout);
+	}
 private:
 
 	/* Sizes */

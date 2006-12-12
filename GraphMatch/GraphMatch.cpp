@@ -17,6 +17,7 @@ Date  : 01/23/2006
 #include "SkeletonReader.h"
 #include "GlobalConstants.h"
 #include "GraphGenerator.h"
+#include "BackEndInterface.h"
 #include <time.h>
 
 
@@ -77,112 +78,7 @@ void DoPerformanceComparison(StandardGraph * patternGraph, StandardGraph * baseG
 
 }
 
-void DoGraphMatching(StandardGraph * patternGraph, StandardGraph * baseGraph) 
-{
-	clock_t start, finish;
 
-
-	//// Match Graphs
-	//Matcher7 * matcher7;
-	//if(MISSING_HELIX_COUNT == -1) {
-	//	matcher7 = new Matcher7(patternGraph, baseGraph);
-	//} else {
-	//	matcher7 = new Matcher7(patternGraph, baseGraph, MISSING_HELIX_COUNT, MISSING_SHEET_COUNT);
-	//}
-	//start = clock();
-	//matcher7->RunMatching();
-	//finish = clock();
-	//matcher7->SaveResults();
-	//printf("\n\tDP Matching process Took %f seconds.\n", (double) (finish - start) / (double) CLOCKS_PER_SEC ) ;
-	//
-	//// Clean
-	//delete(matcher7);
-
-
-	//// Match Graphs
-	//WongMatchMissing * matcher;
-	//if(MISSING_HELIX_COUNT == -1) {
-	//	matcher = new WongMatchMissing(patternGraph, baseGraph);
-	//} else {
-	//	matcher = new WongMatchMissing(patternGraph, baseGraph, MISSING_HELIX_COUNT, MISSING_SHEET_COUNT);
-	//}
-	//start = clock();
-	//matcher->RunMatching(start);
-	//matcher->SaveResults();
-	//
-	//// Clean
-	//delete(matcher);
-
-	//// Match Graphs
-	//WongMatchMissing15 * matcher15;
-	//if(MISSING_HELIX_COUNT == -1) {
-	//	matcher15 = new WongMatchMissing15(patternGraph, baseGraph);
-	//} else {
-	//	matcher15 = new WongMatchMissing15(patternGraph, baseGraph, MISSING_HELIX_COUNT, MISSING_SHEET_COUNT);
-	//}
-	//start = clock();
-	//matcher15->RunMatching(start);
-	//matcher15->SaveResults();
-	//
-	//// Clean
-	//delete(matcher15);
-
-	//// Match Graphs
-	//WongMatchMissing15Linked * matcher15linked;
-	//if(MISSING_HELIX_COUNT == -1) {
-	//	matcher15linked = new WongMatchMissing15Linked(patternGraph, baseGraph);
-	//} else {
-	//	matcher15linked = new WongMatchMissing15Linked(patternGraph, baseGraph, MISSING_HELIX_COUNT, MISSING_SHEET_COUNT);
-	//}
-	//start = clock();
-	//matcher15linked->RunMatching(start);
-	//matcher15linked->SaveResults();
-	//delete matcher15linked;
-
-
-	// Match Graphs
-
-	// Constrained no future
-	//printf("\n\n WongMatch15ConstrainedNoFuture\n");
-	WongMatch15ConstrainedNoFuture * matcherConstrainedNoFuture;
-	if(MISSING_HELIX_COUNT == -1) {
-		matcherConstrainedNoFuture = new WongMatch15ConstrainedNoFuture(patternGraph, baseGraph);
-	} else {
-		matcherConstrainedNoFuture = new WongMatch15ConstrainedNoFuture(patternGraph, baseGraph, MISSING_HELIX_COUNT, MISSING_SHEET_COUNT);
-	}
-	start = clock();
-	matcherConstrainedNoFuture->RunMatching(start);
-	matcherConstrainedNoFuture->SaveResults();
-	delete matcherConstrainedNoFuture;
-
-
-	//// Constrained OnlyA
-	//printf("\n\n WongMatch15ConstrainedOnlyA\n");
-	//WongMatch15ConstrainedOnlyA * matcherConstrainedOnlyA;
-	//if(MISSING_HELIX_COUNT == -1) {
-	//	matcherConstrainedOnlyA = new WongMatch15ConstrainedOnlyA(patternGraph, baseGraph);
-	//} else {
-	//	matcherConstrainedOnlyA = new WongMatch15ConstrainedOnlyA(patternGraph, baseGraph, MISSING_HELIX_COUNT, MISSING_SHEET_COUNT);
-	//}
-	//start = clock();
-	//matcherConstrainedOnlyA->RunMatching(start);
-	//matcherConstrainedOnlyA->SaveResults();
-	//delete matcherConstrainedOnlyA;
-
-
-	//printf("\n\n WongMatch15Constrained\n");
-	//WongMatch15Constrained * matcherConstrained;
-	//if(MISSING_HELIX_COUNT == -1) {
-	//	matcherConstrained = new WongMatch15Constrained(patternGraph, baseGraph);
-	//} else {
-	//	matcherConstrained = new WongMatch15Constrained(patternGraph, baseGraph, MISSING_HELIX_COUNT, MISSING_SHEET_COUNT);
-	//}
-	//start = clock();
-	//matcherConstrained->RunMatching(start);
-	//matcherConstrained->SaveResults();
-	//delete matcherConstrained;
-
-}
 
 int main( int args, char * argv[] ) {
 
@@ -225,31 +121,15 @@ int main( int args, char * argv[] ) {
 		}
 		fclose(outFile);
 	} else if(args == 2) {
-		PERFORMANCE_COMPARISON_MODE = false;
-		LoadConstantsFromFile(argv[1]);
+		BackEndInterface i;
+		i.SetConstantsFromFile(argv[1]);
 		DisplayConstants();
-#ifdef VERBOSE
-		printf("Pattern Graph \n");
-#endif
-		start = clock();
-		patternGraph = PDBReader::ReadFile(PDB_FILE_NAME);
-		finish = clock();
-#ifdef VERBOSE
-		printf("\tReading Pattern file Took %f seconds.\n", (double) (finish - start) / (double) CLOCKS_PER_SEC ) ;
-		patternGraph->PrintGraph();
-
-		printf("\n\nBase Graph \n");		
-#endif
-		start = clock();
-		baseGraph = SkeletonReader::ReadFile(MRC_FILE_NAME, VRML_HELIX_FILE_NAME, SSE_FILE_NAME, VRML_SHEET_FILE_NAME);
-		finish = clock();
-#ifdef VERBOSE
-		printf("\tReading Base file Took %f seconds.\n", (double) (finish - start) / (double) CLOCKS_PER_SEC ) ;
-		baseGraph->PrintGraph();
-#endif
-		DoGraphMatching(patternGraph, baseGraph);
-		delete(baseGraph);
-		delete(patternGraph);
+		i.ExecuteQuery();
+		i.CleanupMemory();
+	} else if((args == 3) && (strcmp(argv[1], "Mathematica") == 0)) {
+		Volume * vol = (MRCReaderPicker::pick(argv[2]))->getVolume();
+		vol->toMathematicaFile("myVolume.nb");
+		delete(vol);
 	}
 	//else if((args == 5) && (strcmp(argv[1], "1") == 0)) {
 	//	DisplayConstants();
