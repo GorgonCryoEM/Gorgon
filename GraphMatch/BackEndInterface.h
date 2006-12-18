@@ -4,6 +4,7 @@
 #include "GlobalConstants.h"
 #include "QueryEngine.h"
 #include "LinkedNode.h"
+#include <GL/glut.h>
 
 using namespace std;
 
@@ -21,6 +22,8 @@ public:
 	int ExecuteQuery();
 	// Result Retrieval
 	LinkedNode * GetResult(int rank);
+	// OpenGL drawing/selecting
+	void DrawResult(int rank);
 	// Cleanup
 	void CleanupMemory();
 private:
@@ -67,4 +70,7 @@ void BackEndInterface::CleanupMemory() {
 	queryEngine->FinishGraphMatching();
 }
 
+void BackEndInterface::DrawResult(int rank) {
+
+}
 #endif
