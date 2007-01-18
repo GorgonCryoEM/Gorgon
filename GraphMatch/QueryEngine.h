@@ -17,54 +17,64 @@ using namespace std;
 
 public class QueryEngine {
 public:
-	int DoGraphMatching();
+	int DoGraphMatching(StandardGraph * sequenceGraph, StandardGraph * skeletonGraph);
 	LinkedNode * GetSolution(int rank);
 	void FinishGraphMatching();
+	StandardGraph * LoadSequenceGraph();
+	StandardGraph * LoadSkeletonGraph();
 private:
 	WongMatch15ConstrainedNoFuture * matcherConstrainedNoFuture;
 };
 
-int QueryEngine::DoGraphMatching() {
+
+StandardGraph * QueryEngine::LoadSequenceGraph() {
 	clock_t start, finish;
-	StandardGraph * patternGraph;
-	StandardGraph * baseGraph;
-
-	PERFORMANCE_COMPARISON_MODE = false;
-
+	StandardGraph * graph;
 	#ifdef VERBOSE
 		printf("Pattern Graph \n");
 	#endif
 	start = clock();
-	patternGraph = PDBReader::ReadFile(PDB_FILE_NAME);
+	graph = PDBReader::ReadFile(PDB_FILE_NAME);
 	finish = clock();
 	#ifdef VERBOSE
 		printf("\tReading Pattern file Took %f seconds.\n", (double) (finish - start) / (double) CLOCKS_PER_SEC ) ;
-		patternGraph->PrintGraph();
+		graph->PrintGraph();	
+	#endif
+	return graph;
+}
 
-		printf("\n\nBase Graph \n");		
+StandardGraph * QueryEngine::LoadSkeletonGraph() {
+	clock_t start, finish;
+	StandardGraph * graph;
+	#ifdef VERBOSE
+		printf("Base Graph \n");
 	#endif
 	start = clock();
-	baseGraph = SkeletonReader::ReadFile(MRC_FILE_NAME, VRML_HELIX_FILE_NAME, SSE_FILE_NAME, VRML_SHEET_FILE_NAME);
+	graph = SkeletonReader::ReadFile(MRC_FILE_NAME, VRML_HELIX_FILE_NAME, SSE_FILE_NAME, VRML_SHEET_FILE_NAME);
 	finish = clock();
 	#ifdef VERBOSE
 		printf("\tReading Base file Took %f seconds.\n", (double) (finish - start) / (double) CLOCKS_PER_SEC ) ;
 		baseGraph->PrintGraph();
 	#endif
+	return graph;
+}
 
+
+int QueryEngine::DoGraphMatching(StandardGraph * sequenceGraph, StandardGraph * skeletonGraph) {
+	clock_t start, finish;
+
+	PERFORMANCE_COMPARISON_MODE = false;
 
 	// Match Graphs
 	// Constrained no future
 	if(MISSING_HELIX_COUNT == -1) {
-		matcherConstrainedNoFuture = new WongMatch15ConstrainedNoFuture(patternGraph, baseGraph);
+		matcherConstrainedNoFuture = new WongMatch15ConstrainedNoFuture(sequenceGraph, skeletonGraph);
 	} else {
-		matcherConstrainedNoFuture = new WongMatch15ConstrainedNoFuture(patternGraph, baseGraph, MISSING_HELIX_COUNT, MISSING_SHEET_COUNT);
+		matcherConstrainedNoFuture = new WongMatch15ConstrainedNoFuture(sequenceGraph, skeletonGraph, MISSING_HELIX_COUNT, MISSING_SHEET_COUNT);
 	}
 	start = clock();
 	int matchCount = matcherConstrainedNoFuture->RunMatching(start);
 	matcherConstrainedNoFuture->SaveResults();
-
-	delete(baseGraph);
-	delete(patternGraph);
 
 	return matchCount;
 }

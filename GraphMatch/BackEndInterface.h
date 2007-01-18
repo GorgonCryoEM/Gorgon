@@ -4,7 +4,7 @@
 #include "GlobalConstants.h"
 #include "QueryEngine.h"
 #include "LinkedNode.h"
-#include <GL/glut.h>
+//#include <GL/glut.h>
 
 using namespace std;
 
@@ -18,8 +18,11 @@ public:
 	bool SetConstant(char * token, double value);
 	bool SetConstant(char * token, int value);
 	bool SetConstant(char * token, bool value);
+	// Graph Loading
+	StandardGraph * LoadSequenceGraph();
+	StandardGraph * LoadSkeletonGraph();
 	// Process Execution
-	int ExecuteQuery();
+	int ExecuteQuery(StandardGraph * sequenceGraph, StandardGraph * skeletonGraph);
 	// Result Retrieval
 	LinkedNode * GetResult(int rank);
 	// OpenGL drawing/selecting
@@ -58,8 +61,16 @@ bool BackEndInterface::SetConstant(char *token, bool value) {
 	return SetConstantFromToken(token, NULL, 0.0, 0, value);
 }
 
-int BackEndInterface::ExecuteQuery() {
-	return queryEngine->DoGraphMatching();
+StandardGraph * BackEndInterface::LoadSequenceGraph() {
+	return queryEngine->LoadSequenceGraph();
+}
+
+StandardGraph * BackEndInterface::LoadSkeletonGraph() {
+	return queryEngine->LoadSkeletonGraph();
+}
+
+int BackEndInterface::ExecuteQuery(StandardGraph * sequenceGraph, StandardGraph * skeletonGraph) {
+	return queryEngine->DoGraphMatching(sequenceGraph, skeletonGraph);
 }
 
 LinkedNode * BackEndInterface::GetResult(int rank) {

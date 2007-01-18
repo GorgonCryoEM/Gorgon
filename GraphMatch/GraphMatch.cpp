@@ -122,9 +122,13 @@ int main( int args, char * argv[] ) {
 		fclose(outFile);
 	} else if(args == 2) {
 		BackEndInterface i;
-		i.SetConstantsFromFile(argv[1]);
+		i.SetConstantsFromFile(argv[1]);		
 		DisplayConstants();
-		i.ExecuteQuery();
+		patternGraph = i.LoadSequenceGraph();
+		baseGraph = i.LoadSkeletonGraph();
+		i.ExecuteQuery(patternGraph, baseGraph);
+		delete(patternGraph);
+		delete(baseGraph);
 		i.CleanupMemory();
 	} else if((args == 3) && (strcmp(argv[1], "Mathematica") == 0)) {
 		Volume * vol = (MRCReaderPicker::pick(argv[2]))->getVolume();
