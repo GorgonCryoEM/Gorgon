@@ -40,7 +40,6 @@ public:
 	vector<Point3Int> cornerCells;
 	vector<Point3> polygonPoints;
 	vector<Polygon> polygons;
-private:
 	Matrix4 worldToObject;
 	Matrix4 objectToWorld;
 private:

@@ -124,11 +124,19 @@ int main( int args, char * argv[] ) {
 		BackEndInterface i;
 		i.SetConstantsFromFile(argv[1]);		
 		DisplayConstants();
+		/* -------------
 		patternGraph = i.LoadSequenceGraph();
 		baseGraph = i.LoadSkeletonGraph();
 		i.ExecuteQuery(patternGraph, baseGraph);
 		delete(patternGraph);
 		delete(baseGraph);
+		* Had to change BackEndInterface for python interface
+		*/
+		i.LoadSequenceGraph();
+		i.LoadSkeletonGraph();
+		i.ExecuteQuery();
+		// -------------
+
 		i.CleanupMemory();
 	} else if((args == 3) && (strcmp(argv[1], "Mathematica") == 0)) {
 		Volume * vol = (MRCReaderPicker::pick(argv[2]))->getVolume();
