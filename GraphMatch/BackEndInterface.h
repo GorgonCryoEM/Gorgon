@@ -4,7 +4,7 @@
 #include "GlobalConstants.h"
 #include "QueryEngine.h"
 #include "LinkedNode.h"
-//#include <GL/glut.h>
+#include "GLVisualizer.h"
 
 using namespace std;
 
@@ -19,26 +19,36 @@ public:
 	bool SetConstant(char * token, int value);
 	bool SetConstant(char * token, bool value);
 	// Graph Loading
-	StandardGraph * LoadSequenceGraph();
-	StandardGraph * LoadSkeletonGraph();
+	void LoadSequenceGraph();
+	void LoadSkeletonGraph();
 	// Process Execution
 	int ExecuteQuery(StandardGraph * sequenceGraph, StandardGraph * skeletonGraph);
+	int ExecuteQuery();
 	// Result Retrieval
 	LinkedNode * GetResult(int rank);
 	// OpenGL drawing/selecting
 	void DrawResult(int rank);
+	void DrawSkeleton();
+	void DrawSequence();
 	// Cleanup
 	void CleanupMemory();
 private:
 	QueryEngine * queryEngine;
+	GLVisualizer * visualizer;
+	StandardGraph * skeleton;
+	StandardGraph * sequence;
 };
 
-BackEndInterface::BackEndInterface() {
+BackEndInterface::BackEndInterface(): skeleton(NULL), sequence(NULL) {
 	queryEngine = new QueryEngine();
+	visualizer = new GLVisualizer();
 }
 
 BackEndInterface::~BackEndInterface() {
 	delete queryEngine;
+	delete visualizer;
+	delete skeleton;
+	delete sequence;
 }
 
 void BackEndInterface::SetConstantsFromFile(char * fileName) {
@@ -61,16 +71,23 @@ bool BackEndInterface::SetConstant(char *token, bool value) {
 	return SetConstantFromToken(token, NULL, 0.0, 0, value);
 }
 
-StandardGraph * BackEndInterface::LoadSequenceGraph() {
-	return queryEngine->LoadSequenceGraph();
+void BackEndInterface::LoadSequenceGraph() {
+	sequence = queryEngine->LoadSequenceGraph();
 }
 
-StandardGraph * BackEndInterface::LoadSkeletonGraph() {
-	return queryEngine->LoadSkeletonGraph();
+void BackEndInterface::LoadSkeletonGraph() {
+	skeleton = queryEngine->LoadSkeletonGraph();
 }
 
 int BackEndInterface::ExecuteQuery(StandardGraph * sequenceGraph, StandardGraph * skeletonGraph) {
 	return queryEngine->DoGraphMatching(sequenceGraph, skeletonGraph);
+}
+
+int BackEndInterface::ExecuteQuery() {
+	if(skeleton != NULL && sequence != NULL)
+		return queryEngine->DoGraphMatching(sequence, skeleton);
+	else
+		return 0;
 }
 
 LinkedNode * BackEndInterface::GetResult(int rank) {
@@ -84,4 +101,15 @@ void BackEndInterface::CleanupMemory() {
 void BackEndInterface::DrawResult(int rank) {
 
 }
+
+void BackEndInterface::DrawSkeleton() {
+	if(skeleton != NULL)
+		visualizer->DrawSkeleton(skeleton);
+}
+
+void BackEndInterface::DrawSequence() {
+	if(sequence != NULL)
+		visualizer->DrawSequence(sequence);
+}
+
 #endif
