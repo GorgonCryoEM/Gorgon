@@ -6,15 +6,18 @@ Date  : 02/06/2006
 */
 
 
-
 #ifndef GLOBALCONSTANTS_H
 #define GLOBALCONSTANTS_H
 
 //#define INCLUDE_SHEETS
 //#define GET_STATS
 //#define VERBOSE
-#define MAKE_FINAL_MRC
+//#define MAKE_FINAL_MRC
 #define GET_AMINO_SEQUENCE
+
+#include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 const int NOPATHPENALTY = 1;
 const int TYPEMISMATCHPENALTY = 1;

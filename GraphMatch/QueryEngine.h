@@ -15,7 +15,7 @@
 
 using namespace std;
 
-public class QueryEngine {
+class QueryEngine {
 public:
 	int DoGraphMatching(StandardGraph * sequenceGraph, StandardGraph * skeletonGraph);
 	LinkedNode * GetSolution(int rank);
@@ -54,7 +54,7 @@ StandardGraph * QueryEngine::LoadSkeletonGraph() {
 	finish = clock();
 	#ifdef VERBOSE
 		printf("\tReading Base file Took %f seconds.\n", (double) (finish - start) / (double) CLOCKS_PER_SEC ) ;
-		baseGraph->PrintGraph();
+		graph->PrintGraph();
 	#endif
 	return graph;
 }

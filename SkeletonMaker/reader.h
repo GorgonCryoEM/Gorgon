@@ -120,7 +120,7 @@ public:
 	/* Initializer */
 	SOFReader( char* fname )
 	{
-		sprintf_s( soffile, "%s", fname ) ;
+		sprintf( soffile, "%s", fname ) ;
 		FILE* fin = fopen( fname, "rb" ) ;
 
 
@@ -179,7 +179,7 @@ public:
 	/* Initializer */
 	PQRReader( char* fname, float arrspc, int pad )
 	{
-		sprintf_s( pqrfile, "%s", fname ) ;
+		sprintf( pqrfile, "%s", fname ) ;
 		FILE* fin = fopen( fname, "r" ) ;
 
 
@@ -326,7 +326,7 @@ public:
 	/* Initializer */
 	DXReader( char* fname, int s, int padding )
 	{
-		sprintf_s( dxfile, "%s", fname ) ;
+		sprintf( dxfile, "%s", fname ) ;
 		FILE* fin = fopen( fname, "r" ) ;
 
 
@@ -472,7 +472,7 @@ public:
 	/* Initializer */
 	MRCReader( char* fname )
 	{
-		sprintf_s( mrcfile, "%s", fname ) ;
+		sprintf( mrcfile, "%s", fname ) ;
 
 		FILE* fin = fopen( fname, "rb" ) ;
 
@@ -615,7 +615,7 @@ public:
 	/* Initializer */
 	InvMRCReader( char* fname )
 	{
-		sprintf_s( mrcfile, "%s", fname ) ;
+		sprintf( mrcfile, "%s", fname ) ;
 
 		FILE* fin = fopen( fname, "rb" ) ;
 
@@ -803,7 +803,7 @@ public:
 	/* Initializer */
 	HackMRCReader( char* fname )
 	{
-		sprintf_s( mrcfile, "%s", fname ) ;
+		sprintf( mrcfile, "%s", fname ) ;
 
 		FILE* fin = fopen( fname, "rb" ) ;
 
