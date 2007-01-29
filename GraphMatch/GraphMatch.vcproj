@@ -138,8 +138,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				ShowProgress="2"
 				OutputFile="$(OutDir)\$(ProjectName).exe"
-				LinkIncremental="1"
+				LinkIncremental="2"
 				AdditionalLibraryDirectories=""
 				GenerateDebugInformation="true"
 			/>
@@ -257,6 +258,10 @@
 			</File>
 			<File
 				RelativePath=".\VectorMath.h"
+				>
+			</File>
+			<File
+				RelativePath=".\VisualizationTest.h"
 				>
 			</File>
 			<File

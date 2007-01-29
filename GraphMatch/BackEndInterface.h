@@ -8,7 +8,7 @@
 
 using namespace std;
 
-public class BackEndInterface {
+class BackEndInterface {
 public:
 	BackEndInterface();
 	~BackEndInterface();
@@ -22,14 +22,14 @@ public:
 	void LoadSequenceGraph();
 	void LoadSkeletonGraph();
 	// Process Execution
-	int ExecuteQuery(StandardGraph * sequenceGraph, StandardGraph * skeletonGraph);
+	//int ExecuteQuery(StandardGraph * sequenceGraph, StandardGraph * skeletonGraph);
 	int ExecuteQuery();
 	// Result Retrieval
 	LinkedNode * GetResult(int rank);
 	// OpenGL drawing/selecting
-	void DrawResult(int rank);
-	void DrawSkeleton();
-	void DrawSequence();
+	bool DrawResult(int rank);
+	bool DrawSkeleton();
+	bool DrawSequence();
 	// Cleanup
 	void CleanupMemory();
 private:
@@ -78,11 +78,11 @@ void BackEndInterface::LoadSequenceGraph() {
 void BackEndInterface::LoadSkeletonGraph() {
 	skeleton = queryEngine->LoadSkeletonGraph();
 }
-
+/*
 int BackEndInterface::ExecuteQuery(StandardGraph * sequenceGraph, StandardGraph * skeletonGraph) {
 	return queryEngine->DoGraphMatching(sequenceGraph, skeletonGraph);
 }
-
+*/
 int BackEndInterface::ExecuteQuery() {
 	if(skeleton != NULL && sequence != NULL)
 		return queryEngine->DoGraphMatching(sequence, skeleton);
@@ -98,18 +98,24 @@ void BackEndInterface::CleanupMemory() {
 	queryEngine->FinishGraphMatching();
 }
 
-void BackEndInterface::DrawResult(int rank) {
-
+bool BackEndInterface::DrawResult(int rank) {
+	return false;
 }
 
-void BackEndInterface::DrawSkeleton() {
-	if(skeleton != NULL)
+bool BackEndInterface::DrawSkeleton() {
+	if(skeleton != NULL) 
 		visualizer->DrawSkeleton(skeleton);
+	else 
+		return false;
+	return true;	
 }
 
-void BackEndInterface::DrawSequence() {
+bool BackEndInterface::DrawSequence() {
 	if(sequence != NULL)
 		visualizer->DrawSequence(sequence);
+	else
+		return false;
+	return true;
 }
 
 #endif

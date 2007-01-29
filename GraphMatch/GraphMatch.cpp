@@ -5,6 +5,20 @@ Author: Sasakthi S. Abeysinghe
 Date  : 01/23/2006
 */
 
+#include <stdlib.h>
+#include <stdio.h>
+#include "StandardGraph.h"
+#include "WongMatch15Constrained.h"
+#include "WongMatch15ConstrainedNoFuture.h"
+#include "WongMatch15ConstrainedOnlyA.h"
+#include "PDBReader.h"
+#include "SkeletonReader.h"
+#include "GlobalConstants.h"
+#include "GraphGenerator.h"
+#include "BackEndInterface.h"
+#include "VisualizationTest.h"
+#include <time.h>
+
 #define DllExport   __declspec( dllexport )
 
 #include <stdlib.h>
@@ -18,8 +32,8 @@ Date  : 01/23/2006
 #include "GlobalConstants.h"
 #include "GraphGenerator.h"
 #include "BackEndInterface.h"
+#include "VisualizationTest.h"
 #include <time.h>
-
 
 
 void DisplayInputFormat()
@@ -124,14 +138,14 @@ int main( int args, char * argv[] ) {
 		BackEndInterface i;
 		i.SetConstantsFromFile(argv[1]);		
 		DisplayConstants();
-		/* -------------
-		patternGraph = i.LoadSequenceGraph();
-		baseGraph = i.LoadSkeletonGraph();
-		i.ExecuteQuery(patternGraph, baseGraph);
-		delete(patternGraph);
-		delete(baseGraph);
-		* Had to change BackEndInterface for python interface
-		*/
+		// -------------
+		//patternGraph = i.LoadSequenceGraph();
+		//baseGraph = i.LoadSkeletonGraph();
+		//i.ExecuteQuery(patternGraph, baseGraph);
+		//delete(patternGraph);
+		//delete(baseGraph);
+		// Had to change BackEndInterface for python interface
+		//
 		i.LoadSequenceGraph();
 		i.LoadSkeletonGraph();
 		i.ExecuteQuery();
@@ -142,6 +156,11 @@ int main( int args, char * argv[] ) {
 		Volume * vol = (MRCReaderPicker::pick(argv[2]))->getVolume();
 		vol->toMathematicaFile("myVolume.nb");
 		delete(vol);
+	} else if((args == 3) && (strcmp(argv[2], "-gl") == 0)) {
+		// Test Visualization Code
+		printf("Running OpenGL Test...\n");
+
+		executeTest(args, argv);
 	}
 	//else if((args == 5) && (strcmp(argv[1], "1") == 0)) {
 	//	DisplayConstants();
@@ -162,7 +181,24 @@ int main( int args, char * argv[] ) {
 	}
 }
 
+/*
+// FOR BUILDING INTO PYTHON LIB
+// UNCOMMENT FOR JAM PURPOSES
 
+#include <boost/python.hpp>
+using namespace boost::python;
 
-
-
+BOOST_PYTHON_MODULE(TopologyHunter)
+{
+    class_<BackEndInterface>("BackEndInterface", init<>())
+        .def("SetConstantsFromFile", &BackEndInterface::SetConstantsFromFile)
+		.def("LoadSkeletonGraph", &BackEndInterface::LoadSkeletonGraph)
+		.def("LoadSequenceGraph", &BackEndInterface::LoadSequenceGraph)
+		.def("ExecuteQuery", &BackEndInterface::ExecuteQuery)
+		.def("DrawSkeleton", &BackEndInterface::DrawSkeleton)
+		.def("DrawSequence", &BackEndInterface::DrawSequence)
+		.def("CleanupMemory", &BackEndInterface::CleanupMemory)
+		.def("DrawResult", &BackEndInterface::DrawResult)
+    ;
+}
+*/

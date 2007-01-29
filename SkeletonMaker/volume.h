@@ -7996,9 +7996,9 @@ public:
 			}
 		}
 		char nname[1024] ;
-		sprintf_s( nname, "%s_sheet.mrc", mrcfile ) ;
+		sprintf( nname, "%s_sheet.mrc", mrcfile ) ;
 		tvol1->toMRCFile( nname ) ;
-		sprintf_s( nname, "%s_helix.mrc", mrcfile ) ;
+		sprintf( nname, "%s_helix.mrc", mrcfile ) ;
 		tvol2->toMRCFile( nname ) ;
 		printf("Done.\n") ;
 		return ;

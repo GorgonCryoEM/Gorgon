@@ -57,7 +57,14 @@ StandardGraph * SkeletonReader::ReadFile(char * volumeFile, char * helixFile, ch
 	// Read the volume file and load volume data structure
 	Volume * vol = (MRCReaderPicker::pick(volumeFile))->getVolume();
 	//vol->toMathematicaFile("myVolume.nb");
+#ifdef VERBOSE
+	printf("Constructing 'paintedVol'...\n");
+#endif
 	Volume * paintedVol = new Volume(vol->getSizeX(), vol->getSizeY(), vol->getSizeZ());
+
+#ifdef VERBOSE
+	printf("Finished reading volume file, now moving on to helixes...\n");
+#endif
 
 	// Read the helix file
 	vector<GeometricShape*> helixes;
