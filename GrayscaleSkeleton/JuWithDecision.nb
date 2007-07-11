@@ -40,9 +40,9 @@ Wolfram Research.
 
 (*NotebookFileLineBreakTest
 NotebookFileLineBreakTest*)
-(*NotebookOptionsPosition[    294753,       8351]*)
-(*NotebookOutlinePosition[    295500,       8377]*)
-(*  CellTagsIndexPosition[    295456,       8373]*)
+(*NotebookOptionsPosition[    290343,       8193]*)
+(*NotebookOutlinePosition[    291090,       8219]*)
+(*  CellTagsIndexPosition[    291046,       8215]*)
 (*WindowFrame->Normal*)
 
 
@@ -52,9 +52,9 @@ Cell[BoxData[
     \(<< Graphics`\)], "Input"],
 
 Cell[BoxData[{
-    \(\(\(Clear[rootPath];\)\(\[IndentingNewLine]\)
-    \) (*\(rootPath\  = \ "\<C:\\_WUSTL\\GrayscaleSkeleton\\\>";\)*) \), "\
-\[IndentingNewLine]", 
+    \(\(Clear[
+        rootPath];\)\[IndentingNewLine] (*\(rootPath\  = \ \
+"\<C:\\_WUSTL\\GrayscaleSkeleton\\\>";\)*) \), "\[IndentingNewLine]", 
     \(\(rootPath\  = \ "\<C:\\_WashU\\ssa1\\source\\GrayscaleSkeleton\\\>";\)\
 \)}], "Input"],
 
@@ -75,8 +75,8 @@ Cell[BoxData[{
             Min[Flatten[
                 vol\[LeftDoubleBracket]
                   i\[RightDoubleBracket]]]; \[IndentingNewLine]Return[
-            Map[\ Round[\(#\ *255.0\)\/\(maxVal - minVal\)] &, \ 
-              vol\[LeftDoubleBracket]i\[RightDoubleBracket], \ 
+            Map[\ Round[\(\((# - minVal)\)\ *255.0\)\/\(maxVal - minVal\)] &, \
+\ vol\[LeftDoubleBracket]i\[RightDoubleBracket], \ 
               1]];\[IndentingNewLine]];\)\)}], "Input"]
 }, Open  ]],
 
@@ -111,13 +111,23 @@ image... The rest of the pixels make up a blank boundary which simplifies the \
 calculations.\
 \>", "Subsubtitle"],
 
+Cell["\<\
+pic = Import[rootPath <> \"\\\\data\\\\\" <> \"Random.gif\", \"GIF\"];
+pic\[LeftDoubleBracket]1,1\[RightDoubleBracket] = getInput[2]\
+\[LeftDoubleBracket]1\[RightDoubleBracket];
+Export[\"C:\\\\_WashU\\\\ssa1\\\\data\\\\_2DSkeletons\\\\test2.gif\", pic, \
+\"GIF\"];\
+\>", "SmallText"],
+
 Cell[BoxData[{
     \(\(Clear[getInput];\)\), "\[IndentingNewLine]", 
     \(\(getInput[
           i_]\  := \ \[IndentingNewLine]Module[\ {inputImage, \ 
             sliceSize}, \[IndentingNewLine]Switch[i, \[IndentingNewLine]1, 
-            inputImage\  = \ getProteinSlice[32], \[IndentingNewLine]2, \ 
-            inputImage\  = \ getProteinSlice[40], \[IndentingNewLine]3, \ 
+            inputImage\  = \ 
+              getImage["\<Protein32.gif\>"], \[IndentingNewLine]2, \ 
+            inputImage\  = \ 
+              getImage["\<Protein40.gif\>"], \[IndentingNewLine]3, \ 
             inputImage\  = \ 
               getImage["\<Random.gif\>"], \[IndentingNewLine]4, \ 
             inputImage\  = \ 
@@ -6756,11 +6766,6 @@ Cell[BoxData[{
 
 Cell[BoxData[
     \(General::"spell1" \(\(:\)\(\ \)\) 
-      "Possible spelling error: new symbol name \"\!\(dMap\)\" is similar to \
-existing symbol \"\!\(Map\)\"."\)], "Message"],
-
-Cell[BoxData[
-    \(General::"spell1" \(\(:\)\(\ \)\) 
       "Possible spelling error: new symbol name \"\!\(thickness\)\" is \
 similar to existing symbol \"\!\(Thickness\)\"."\)], "Message"]
 }, Open  ]],
@@ -6790,7 +6795,7 @@ ListDensityPlot[Table[getSkeletalPixelType[{x,y},thinnedImages\
 {y,sliceSize[2,1],sliceSize[2,2]}],Mesh\[Rule]True,ColorFunctionScaling\[Rule]\
 True,ImageSize\[Rule]{300,300}];\
 \>", "SmallText"]
-}, Open  ]],
+}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -6819,7 +6824,7 @@ Cell[BoxData[{
               ImageSize \[Rule] {600, \ 
                   600}];\)\ *) \[IndentingNewLine]Return[
           outImage];\[IndentingNewLine]]\)}], "Input"]
-}, Open  ]],
+}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -6837,7 +6842,7 @@ Cell[BoxData[{
             V]; \[IndentingNewLine]Return[\((\((Length[currentN4]\  == \ 
                   2)\)\  && \ 
               MemberQ[currentN4, \ q])\)];\[IndentingNewLine]]\)}], "Input"]
-}, Open  ]],
+}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -6852,7 +6857,7 @@ Cell[BoxData[{
             p\[LeftDoubleBracket]1\[RightDoubleBracket], \ 
             p\[LeftDoubleBracket]2\[RightDoubleBracket]\[RightDoubleBracket]\ \
  = 1; \[IndentingNewLine]Return[outImage];\[IndentingNewLine]]\)}], "Input"]
-}, Open  ]],
+}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -6867,7 +6872,7 @@ Cell[BoxData[{
             isCurveNeighbor[#, \ p, \ 
                 V] &\ ]];\[IndentingNewLine]]\), "\[IndentingNewLine]", 
     \(\)}], "Input"]
-}, Open  ]],
+}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -6901,7 +6906,7 @@ Cell[BoxData[{
               ImageSize \[Rule] {600, \ 
                   600}];\)\ *) \[IndentingNewLine]Return[
           outImage];\[IndentingNewLine]]\)}], "Input"]
-}, Open  ]],
+}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -6927,7 +6932,7 @@ Cell[BoxData[{
                     600}];\)\ *) \[IndentingNewLine]Return[
             dilatedImage];\[IndentingNewLine]]\[IndentingNewLine]]\)}], \
 "Input"]
-}, Open  ]],
+}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -7027,7 +7032,7 @@ Cell[BoxData[
       "Possible spelling error: new symbol name \"\!\(doHash\)\" is similar \
 to existing symbol \"\!\(toHash\)\"."\)], "Message"]
 }, Open  ]]
-}, Open  ]],
+}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -7227,7 +7232,7 @@ this calculation."\)], "Message"],
 Cell[BoxData[
     \(0\)], "Output"]
 }, Open  ]]
-}, Open  ]],
+}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -7349,7 +7354,7 @@ filterThreshold)\), \[IndentingNewLine]5, \
                     True\[IndentingNewLine]];\[IndentingNewLine]]\
 \[IndentingNewLine]]; \[IndentingNewLine]Return[
             canRemove];\[IndentingNewLine]];\)\)}], "Input"]
-}, Open  ]],
+}, Closed]],
 
 Cell[CellGroupData[{
 
@@ -7376,7 +7381,7 @@ Cell[BoxData[{
 \[LeftDoubleBracket]3\[RightDoubleBracket];\) &, \ 
             dMap]; \[IndentingNewLine]annotatedImage\[IndentingNewLine]];\)\)}\
 ], "Input"]
-}, Closed]],
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -7494,70 +7499,72 @@ annotateImageWithPixelType[
                   i;\) &, \ 
             dMap]; \[IndentingNewLine]\[IndentingNewLine]olderSkeleton\  = \ 
             topologySkeleton; \[IndentingNewLine]lastThicknessMap\  = \ 
-            thicknessMap;\[IndentingNewLine]\[IndentingNewLine] (*s1\  = \ 
-              ListDensityPlot[binaryImage, \ Mesh \[Rule] False, \ 
-                DisplayFunction \[Rule] Identity, \ 
-                PlotLabel -> "\<Binary Image\>"]; \[IndentingNewLine]s2 = \ 
-              ListDensityPlot[curveSkeleton, \ Mesh \[Rule] False, \ 
-                DisplayFunction \[Rule] Identity, \ 
-                PlotLabel -> "\<Curve Skeleton\>"]; \[IndentingNewLine]s3\  = \
-\ ListDensityPlot[prunedCurveSkeleton, \ Mesh \[Rule] False, \ 
-                DisplayFunction \[Rule] Identity, \ 
-                PlotLabel -> "\<Pruned Curve Skeleton\>"]; \
-\[IndentingNewLine]s4\  = \ 
-              ListDensityPlot[prunedCurveSkeletonWithOlder, \ 
-                Mesh \[Rule] False, \ DisplayFunction \[Rule] Identity, \ 
-                PlotLabel -> "\<Pruned Curve Skeleton with Older\>"]; \
-\[IndentingNewLine]s5\  = \ 
-              ListDensityPlot[topologySkeleton, \ Mesh \[Rule] False, \ 
-                DisplayFunction \[Rule] Identity, \ 
-                PlotLabel -> "\<Topology Skeleton\>"]; \[IndentingNewLine]s6\ \
- = \ ListDensityPlot[graySkeleton, \ Mesh \[Rule] False, \ 
-                DisplayFunction \[Rule] Identity, \ 
-                PlotLabel -> "\<Grayscale Skeleton\>"]; \[IndentingNewLine]s7\
-\  = \ ListDensityPlot[topologyBranches, \ Mesh \[Rule] False, \ 
-                DisplayFunction \[Rule] Identity, \ 
-                PlotLabel -> "\<Topology Branches\>"]; \[IndentingNewLine]s8\ \
- = \ ListDensityPlot[removedPixels, \ Mesh \[Rule] False, \ 
-                DisplayFunction \[Rule] Identity, \ 
-                PlotLabel -> "\<Removed Pixels\>"]; \[IndentingNewLine]s9\  = \
-\ ListDensityPlot[allRemovedPixels, \ Mesh \[Rule] False, \ 
-                DisplayFunction \[Rule] Identity, \ 
-                PlotLabel -> "\<All Removed Pixels\>"]; \
-\[IndentingNewLine]s10\  = \ 
-              ListDensityPlot[actualGraySkeleton, \ Mesh \[Rule] False, \ 
-                DisplayFunction \[Rule] Identity, \ 
-                PlotLabel -> "\<Actual Grayskeleton\>"]; \
-\[IndentingNewLine]s11\  = \ 
-              ListDensityPlot[curveEndHistory, \ Mesh \[Rule] False, \ 
-                DisplayFunction \[Rule] Identity, \ 
-                PlotLabel -> "\<Curve End History\>"]; \[IndentingNewLine]s12\
-\  = \ ListDensityPlot[allBranches, \ Mesh \[Rule] False, \ 
-                DisplayFunction \[Rule] Identity, \ 
-                PlotLabel -> "\<All Branches\>"]; \[IndentingNewLine]Show[
-              GraphicsArray[{s5, \ \ s12, \ s11, \ s9, \ s10}], \ 
-              PlotLabel \[Rule] "\<Grayscale value: \>"\  <> \ ToString[i], \ 
-              DisplayFunction \[Rule] $DisplayFunction, \ 
-              ImageSize \[Rule] {1200, \ 
-                  1200/5}];*) \[IndentingNewLine]\[IndentingNewLine], {i, \ 
-            endLevel, \ 
-            startLevel, \ \(-step\)}]; \
+            thicknessMap; \
 \[IndentingNewLine]\[IndentingNewLine]actualGraySkeleton\  = \ 
-          graySkeleton; \[IndentingNewLine]dMap\  = \ 
-          Flatten[Table[
-              If[allRemovedPixels\[LeftDoubleBracket]x, 
-                    y\[RightDoubleBracket]\  \[Equal] \ 1, \ {x, \ 
-                  y}, \ {}], \ {x, sliceSize[1, 1], \ sliceSize[1, 2]}, \ {y, 
-                sliceSize[2, 1], \ sliceSize[2, 2]}], \ 
-            1]; \[IndentingNewLine]dMap\  = \ 
-          Select[dMap, \ 
-            Length[#] > 
-                0 &]; \[IndentingNewLine]Scan[\(actualGraySkeleton\
+            graySkeleton; \[IndentingNewLine]dMap\  = \ 
+            Flatten[Table[
+                If[allRemovedPixels\[LeftDoubleBracket]x, 
+                      y\[RightDoubleBracket]\  \[Equal] \ 1, \ {x, \ 
+                    y}, \ {}], \ {x, sliceSize[1, 1], \ 
+                  sliceSize[1, 2]}, \ {y, sliceSize[2, 1], \ 
+                  sliceSize[2, 2]}], \ 1]; \[IndentingNewLine]dMap\  = \ 
+            Select[dMap, \ 
+              Length[#] > 
+                  0 &]; \[IndentingNewLine]Scan[\(actualGraySkeleton\
 \[LeftDoubleBracket]#\[LeftDoubleBracket]1\[RightDoubleBracket], \ #\
 \[LeftDoubleBracket]2\[RightDoubleBracket]\[RightDoubleBracket]\  = \ 
-                0;\) &, \ 
-          dMap]; \[IndentingNewLine]\[IndentingNewLine]Return[{graySkeleton, \
-\ actualGraySkeleton}];\[IndentingNewLine]]\)}], "Input"]
+                  0;\) &, \ 
+            dMap]; \[IndentingNewLine]\[IndentingNewLine]\[IndentingNewLine]\
+s1\  = \ ListDensityPlot[binaryImage, \ Mesh \[Rule] False, \ 
+              DisplayFunction \[Rule] Identity, \ 
+              PlotLabel -> "\<Binary Image\>"]; \[IndentingNewLine]s2 = \ 
+            ListDensityPlot[curveSkeleton, \ Mesh \[Rule] False, \ 
+              DisplayFunction \[Rule] Identity, \ 
+              PlotLabel -> "\<Curve Skeleton\>"]; \[IndentingNewLine]s3\  = \ 
+            ListDensityPlot[prunedCurveSkeleton, \ Mesh \[Rule] False, \ 
+              DisplayFunction \[Rule] Identity, \ 
+              PlotLabel -> "\<Pruned Curve Skeleton\>"]; \
+\[IndentingNewLine]s4\  = \ 
+            ListDensityPlot[prunedCurveSkeletonWithOlder, \ 
+              Mesh \[Rule] False, \ DisplayFunction \[Rule] Identity, \ 
+              PlotLabel -> "\<Pruned Curve Skeleton with Older\>"]; \
+\[IndentingNewLine]s5\  = \ 
+            ListDensityPlot[topologySkeleton, \ Mesh \[Rule] False, \ 
+              DisplayFunction \[Rule] Identity, \ 
+              PlotLabel -> "\<Topology Skeleton\>"]; \[IndentingNewLine]s6\  \
+= \ ListDensityPlot[graySkeleton, \ Mesh \[Rule] False, \ 
+              DisplayFunction \[Rule] Identity, \ 
+              PlotLabel -> "\<Grayscale Skeleton\>"]; \[IndentingNewLine]s7\  \
+= \ ListDensityPlot[topologyBranches, \ Mesh \[Rule] False, \ 
+              DisplayFunction \[Rule] Identity, \ 
+              PlotLabel -> "\<Topology Branches\>"]; \[IndentingNewLine]s8\  \
+= \ ListDensityPlot[removedPixels, \ Mesh \[Rule] False, \ 
+              DisplayFunction \[Rule] Identity, \ 
+              PlotLabel -> "\<Removed Pixels\>"]; \[IndentingNewLine]s9\  = \ 
+            ListDensityPlot[allRemovedPixels, \ Mesh \[Rule] False, \ 
+              DisplayFunction \[Rule] Identity, \ 
+              PlotLabel -> "\<All Removed Pixels\>"]; \[IndentingNewLine]s10\ \
+ = \ ListDensityPlot[actualGraySkeleton, \ Mesh \[Rule] False, \ 
+              DisplayFunction \[Rule] Identity, \ 
+              PlotLabel -> "\<Actual Grayskeleton\>"]; \[IndentingNewLine]s11\
+\  = \ ListDensityPlot[curveEndHistory, \ Mesh \[Rule] False, \ 
+              DisplayFunction \[Rule] Identity, \ 
+              PlotLabel -> "\<Curve End History\>"]; \[IndentingNewLine]s12\  \
+= \ ListDensityPlot[allBranches, \ Mesh \[Rule] False, \ 
+              DisplayFunction \[Rule] Identity, \ 
+              PlotLabel -> "\<All Branches\>"]; \[IndentingNewLine]s13\  = \ 
+            ListDensityPlot[annotatedSkeleton, \ Mesh \[Rule] False, \ 
+              DisplayFunction \[Rule] Identity, \ 
+              PlotLabel -> "\<Annotated Skeleton\>"]; \[IndentingNewLine]Show[
+            GraphicsArray[{s1, \ \ s3, \ s5, \ s6, s13, \ \ s9, s10}], \ 
+            PlotLabel \[Rule] "\<Grayscale value: \>"\  <> \ ToString[i], \ 
+            DisplayFunction \[Rule] $DisplayFunction, \ 
+            ImageSize \[Rule] {1200, \ 
+                1200/5}];\[IndentingNewLine]\[IndentingNewLine], {i, \ 
+            endLevel, \ 
+            startLevel, \ \(-step\)}]; \[IndentingNewLine]\[IndentingNewLine]\
+\[IndentingNewLine]Return[{graySkeleton, \ 
+            actualGraySkeleton}];\[IndentingNewLine]]\)}], "Input"]
 }, Open  ]],
 
 Cell[CellGroupData[{
@@ -8115,8 +8122,6 @@ Cell[CellGroupData[{
 
 Cell["Test Area", "Subtitle"],
 
-Cell[CellGroupData[{
-
 Cell[BoxData[{
     \(\(thresholds[1] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 25};\)\), "\n", 
     \(\(thresholds[2] = {0.01, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 
@@ -8166,11 +8171,10 @@ Cell[BoxData[{
  <> \ \ "\< Step Size = \>"\  <> \ 
                       ToString[step], \ \[IndentingNewLine]Frame \[Rule] 
                     False]; \[IndentingNewLine]line = 
-                Append[line, image];\[IndentingNewLine], {i, 1, 
-                12}]; \[IndentingNewLine]\[IndentingNewLine]table = 
+                Append[line, image];\[IndentingNewLine], {i, 7, 
+                7}]; \[IndentingNewLine]\[IndentingNewLine]table = 
               Append[table, line];\[IndentingNewLine], {st, \ 1, \ 
-              Length[stepList]}]; \
-\[IndentingNewLine]\[IndentingNewLine]outFileName\  = \ 
+              1}]; \[IndentingNewLine]\[IndentingNewLine]outFileName\  = \ 
             rootPath <> \ "\<results\\Decision\\Input\>"\  <> \ 
               ToString[inp]\  <> \ "\<-CostFunction-\>"\  <> \ 
               ToString[
@@ -8181,172 +8185,10 @@ Cell[BoxData[{
                         table]\)\[LeftDoubleBracket]2\[RightDoubleBracket]\ *\
 \ 350, \(Dimensions[table]\)\[LeftDoubleBracket]1\[RightDoubleBracket]\ *\ 
                     350}]]; \[IndentingNewLine]Print["\<Wrote to file: \>"\  \
-<> \ outFileName];\[IndentingNewLine], {cf, \ 4, \ 
-            4, \ \(-1\)}];\[IndentingNewLine]\[IndentingNewLine], {inpnum, 1, 
-          9}];\)\), "\n", 
-    \(\)}], "Input"],
-
-Cell[BoxData[
-    \(General::"spell1" \(\(:\)\(\ \)\) 
-      "Possible spelling error: new symbol name \"\!\(table\)\" is similar to \
-existing symbol \"\!\(Table\)\"."\)], "Message"],
-
-Cell[BoxData[
-    \(General::"spell1" \(\(:\)\(\ \)\) 
-      "Possible spelling error: new symbol name \"\!\(line\)\" is similar to \
-existing symbol \"\!\(Line\)\"."\)], "Message"],
-
-Cell[BoxData[
-    \("Timing(Input 5, cost function 4, step size 4, Threshold 1) = 1042.28 \
-Second"\)], "Print"],
-
-Cell[BoxData[
-    \("Timing(Input 5, cost function 4, step size 4, Threshold 2) = 1055.34 \
-Second"\)], "Print"],
-
-Cell[BoxData[
-    \("Timing(Input 5, cost function 4, step size 4, Threshold 3) = 1047.49 \
-Second"\)], "Print"],
-
-Cell[BoxData[
-    \("Timing(Input 5, cost function 4, step size 4, Threshold 4) = 1051.55 \
-Second"\)], "Print"],
-
-Cell[BoxData[
-    \("Timing(Input 5, cost function 4, step size 4, Threshold 5) = 1030.69 \
-Second"\)], "Print"],
-
-Cell[BoxData[
-    \("Timing(Input 5, cost function 4, step size 4, Threshold 10) = 1028.11 \
-Second"\)], "Print"],
-
-Cell[BoxData[
-    \("Timing(Input 5, cost function 4, step size 4, Threshold 15) = 1025.95 \
-Second"\)], "Print"],
-
-Cell[BoxData[
-    \("Timing(Input 5, cost function 4, step size 4, Threshold 20) = 1020.05 \
-Second"\)], "Print"],
-
-Cell[BoxData[
-    \("Timing(Input 5, cost function 4, step size 4, Threshold 25) = 1039.7 \
-Second"\)], "Print"],
-
-Cell[BoxData[
-    \("Timing(Input 5, cost function 4, step size 4, Threshold 30) = 1022.64 \
-Second"\)], "Print"],
-
-Cell[BoxData[
-    \("Timing(Input 5, cost function 4, step size 4, Threshold 35) = 1018.55 \
-Second"\)], "Print"],
-
-Cell[BoxData[
-    \("Timing(Input 5, cost function 4, step size 4, Threshold 40) = 1019.16 \
-Second"\)], "Print"],
-
-Cell[BoxData[
-    \("Timing(Input 5, cost function 4, step size 2, Threshold 1) = 1874.31 \
-Second"\)], "Print"],
-
-Cell[BoxData[
-    \("Timing(Input 5, cost function 4, step size 2, Threshold 2) = 1871.55 \
-Second"\)], "Print"],
-
-Cell[BoxData[
-    \("Timing(Input 5, cost function 4, step size 2, Threshold 3) = 1870.66 \
-Second"\)], "Print"],
-
-Cell[BoxData[
-    \("Timing(Input 5, cost function 4, step size 2, Threshold 4) = 1870.5 \
-Second"\)], "Print"],
-
-Cell[BoxData[
-    \("Timing(Input 5, cost function 4, step size 2, Threshold 5) = 1857.61 \
-Second"\)], "Print"],
-
-Cell[BoxData[
-    \("Timing(Input 5, cost function 4, step size 2, Threshold 10) = 1856.3 \
-Second"\)], "Print"],
-
-Cell[BoxData[
-    \("Timing(Input 5, cost function 4, step size 2, Threshold 15) = 1855.58 \
-Second"\)], "Print"],
-
-Cell[BoxData[
-    \("Timing(Input 5, cost function 4, step size 2, Threshold 20) = 1857.06 \
-Second"\)], "Print"],
-
-Cell[BoxData[
-    \("Timing(Input 5, cost function 4, step size 2, Threshold 25) = 1855.52 \
-Second"\)], "Print"],
-
-Cell[BoxData[
-    \("Timing(Input 5, cost function 4, step size 2, Threshold 30) = 1872.44 \
-Second"\)], "Print"],
-
-Cell[BoxData[
-    \("Timing(Input 5, cost function 4, step size 2, Threshold 35) = 1856.58 \
-Second"\)], "Print"],
-
-Cell[BoxData[
-    \("Timing(Input 5, cost function 4, step size 2, Threshold 40) = 1857.47 \
-Second"\)], "Print"],
-
-Cell[BoxData[
-    \("Timing(Input 5, cost function 4, step size 1, Threshold 1) = 3352.03 \
-Second"\)], "Print"],
-
-Cell[BoxData[
-    \("Timing(Input 5, cost function 4, step size 1, Threshold 2) = 3353.91 \
-Second"\)], "Print"],
-
-Cell[BoxData[
-    \("Timing(Input 5, cost function 4, step size 1, Threshold 3) = 3351.78 \
-Second"\)], "Print"],
-
-Cell["\<\
-Internal counter overflow.
-Some expression evaluations may not run to their
-final fixed points.  Try redoing your computation
-on a 64-bit enhanced version of Mathematica.\
-\>", "Print"],
-
-Cell[BoxData[
-    \("Timing(Input 5, cost function 4, step size 1, Threshold 4) = 3354.81 \
-Second"\)], "Print"],
-
-Cell[BoxData[
-    \("Timing(Input 5, cost function 4, step size 1, Threshold 5) = 3353.53 \
-Second"\)], "Print"],
-
-Cell[BoxData[
-    \("Timing(Input 5, cost function 4, step size 1, Threshold 10) = 3400.56 \
-Second"\)], "Print"],
-
-Cell[BoxData[
-    \("Timing(Input 5, cost function 4, step size 1, Threshold 15) = 3438.27 \
-Second"\)], "Print"],
-
-Cell[BoxData[
-    \("Timing(Input 5, cost function 4, step size 1, Threshold 20) = 3392.8 \
-Second"\)], "Print"],
-
-Cell[BoxData[
-    \("Timing(Input 5, cost function 4, step size 1, Threshold 25) = 3347.3 \
-Second"\)], "Print"],
-
-Cell[BoxData[
-    \("Timing(Input 5, cost function 4, step size 1, Threshold 30) = 3347.33 \
-Second"\)], "Print"],
-
-Cell[BoxData[
-    \("Timing(Input 5, cost function 4, step size 1, Threshold 35) = 3351.13 \
-Second"\)], "Print"],
-
-Cell[BoxData[
-    \("Timing(Input 5, cost function 4, step size 1, Threshold 40) = 3365.84 \
-Second"\)], "Print"]
-}, Open  ]]
+<> \ outFileName];\[IndentingNewLine], {cf, \ 1, \ 
+            1, \ \(-1\)}];\[IndentingNewLine]\[IndentingNewLine], {inpnum, 8, 
+          8}];\)\), "\n", 
+    \(\)}], "Input"]
 }, Open  ]]
 },
 FrontEndVersion->"4.1 for Microsoft Windows",
@@ -8377,364 +8219,322 @@ CellTagsIndex->{}
 (*NotebookFileOutline
 Notebook[{
 Cell[1705, 50, 45, 1, 30, "Input"],
-Cell[1753, 53, 259, 5, 70, "Input"],
+Cell[1753, 53, 255, 5, 70, "Input"],
 
 Cell[CellGroupData[{
-Cell[2037, 62, 61, 0, 53, "Subsubtitle"],
-Cell[2101, 64, 778, 15, 186, "Input"]
+Cell[2033, 62, 61, 0, 53, "Subsubtitle"],
+Cell[2097, 64, 780, 15, 186, "Input"]
 }, Open  ]],
 
 Cell[CellGroupData[{
-Cell[2916, 84, 58, 0, 53, "Subsubtitle"],
-Cell[2977, 86, 402, 7, 110, "Input"]
+Cell[2914, 84, 58, 0, 53, "Subsubtitle"],
+Cell[2975, 86, 402, 7, 110, "Input"]
 }, Open  ]],
 
 Cell[CellGroupData[{
-Cell[3416, 98, 368, 13, 215, "Subsubtitle"],
-Cell[3787, 113, 2693, 50, 670, "Input"],
+Cell[3414, 98, 368, 13, 215, "Subsubtitle"],
+Cell[3785, 113, 293, 6, 60, "SmallText"],
+Cell[4081, 121, 2743, 52, 670, "Input"],
 
 Cell[CellGroupData[{
-Cell[6505, 167, 786, 17, 150, "Input"],
-Cell[7294, 186, 195387, 6069, 258, 72691, 4550, "GraphicsData", "PostScript", \
+Cell[6849, 177, 786, 17, 150, "Input"],
+Cell[7638, 196, 195387, 6069, 258, 72691, 4550, "GraphicsData", "PostScript", \
 "Graphics"]
 }, Open  ]]
 }, Open  ]],
 
 Cell[CellGroupData[{
-Cell[202730, 6261, 137, 3, 53, "Subsubtitle"],
-Cell[202870, 6266, 183, 3, 50, "Input"]
+Cell[203074, 6271, 137, 3, 53, "Subsubtitle"],
+Cell[203214, 6276, 183, 3, 50, "Input"]
 }, Open  ]],
 
 Cell[CellGroupData[{
-Cell[203090, 6274, 40, 0, 53, "Subsubtitle"],
-Cell[203133, 6276, 172, 3, 50, "Input"]
+Cell[203434, 6284, 40, 0, 53, "Subsubtitle"],
+Cell[203477, 6286, 172, 3, 50, "Input"]
 }, Open  ]],
 
 Cell[CellGroupData[{
-Cell[203342, 6284, 99, 2, 53, "Subsubtitle"],
-Cell[203444, 6288, 981, 19, 110, "Input"]
+Cell[203686, 6294, 99, 2, 53, "Subsubtitle"],
+Cell[203788, 6298, 981, 19, 110, "Input"]
 }, Open  ]],
 
 Cell[CellGroupData[{
-Cell[204462, 6312, 118, 3, 53, "Subsubtitle"],
-Cell[204583, 6317, 636, 13, 110, "Input"]
+Cell[204806, 6322, 118, 3, 53, "Subsubtitle"],
+Cell[204927, 6327, 636, 13, 110, "Input"]
 }, Open  ]],
 
 Cell[CellGroupData[{
-Cell[205256, 6335, 103, 2, 53, "Subsubtitle"],
+Cell[205600, 6345, 103, 2, 53, "Subsubtitle"],
 
 Cell[CellGroupData[{
-Cell[205384, 6341, 1796, 32, 390, "Input"],
-Cell[207183, 6375, 183, 3, 24, "Message"]
+Cell[205728, 6351, 1796, 32, 390, "Input"],
+Cell[207527, 6385, 183, 3, 24, "Message"]
 }, Open  ]]
 }, Open  ]],
 
 Cell[CellGroupData[{
-Cell[207415, 6384, 103, 2, 53, "Subsubtitle"],
+Cell[207759, 6394, 103, 2, 53, "Subsubtitle"],
 
 Cell[CellGroupData[{
-Cell[207543, 6390, 2031, 35, 390, "Input"],
-Cell[209577, 6427, 183, 3, 24, "Message"]
+Cell[207887, 6400, 2031, 35, 390, "Input"],
+Cell[209921, 6437, 183, 3, 24, "Message"]
 }, Open  ]]
 }, Open  ]],
 
 Cell[CellGroupData[{
-Cell[209809, 6436, 182, 4, 71, "Subsubtitle"],
-Cell[209994, 6442, 109, 3, 44, "SmallText"],
-Cell[210106, 6447, 132, 6, 92, "SmallText"]
+Cell[210153, 6446, 182, 4, 71, "Subsubtitle"],
+Cell[210338, 6452, 109, 3, 44, "SmallText"],
+Cell[210450, 6457, 132, 6, 92, "SmallText"]
 }, Open  ]],
 
 Cell[CellGroupData[{
-Cell[210275, 6458, 95, 2, 53, "Subsubtitle"],
-Cell[210373, 6462, 601, 11, 190, "Input"]
+Cell[210619, 6468, 95, 2, 53, "Subsubtitle"],
+Cell[210717, 6472, 601, 11, 190, "Input"]
 }, Open  ]],
 
 Cell[CellGroupData[{
-Cell[211011, 6478, 110, 3, 53, "Subsubtitle"],
-Cell[211124, 6483, 279, 5, 50, "Input"]
+Cell[211355, 6488, 110, 3, 53, "Subsubtitle"],
+Cell[211468, 6493, 279, 5, 50, "Input"]
 }, Open  ]],
 
 Cell[CellGroupData[{
-Cell[211440, 6493, 125, 3, 53, "Subsubtitle"],
-Cell[211568, 6498, 401, 7, 50, "Input"]
+Cell[211784, 6503, 125, 3, 53, "Subsubtitle"],
+Cell[211912, 6508, 401, 7, 50, "Input"]
 }, Open  ]],
 
 Cell[CellGroupData[{
-Cell[212006, 6510, 92, 2, 53, "Subsubtitle"],
-Cell[212101, 6514, 413, 7, 50, "Input"]
+Cell[212350, 6520, 92, 2, 53, "Subsubtitle"],
+Cell[212445, 6524, 413, 7, 50, "Input"]
 }, Open  ]],
 
 Cell[CellGroupData[{
-Cell[212551, 6526, 299, 6, 107, "Subsubtitle"],
-Cell[212853, 6534, 937, 17, 110, "Input"]
+Cell[212895, 6536, 299, 6, 107, "Subsubtitle"],
+Cell[213197, 6544, 937, 17, 110, "Input"]
 }, Open  ]],
 
 Cell[CellGroupData[{
-Cell[213827, 6556, 127, 3, 71, "Subsubtitle"],
-Cell[213957, 6561, 2754, 49, 250, "Input"]
+Cell[214171, 6566, 127, 3, 71, "Subsubtitle"],
+Cell[214301, 6571, 2754, 49, 250, "Input"]
 }, Open  ]],
 
 Cell[CellGroupData[{
-Cell[216748, 6615, 95, 2, 53, "Subsubtitle"],
-Cell[216846, 6619, 262, 5, 70, "Input"]
+Cell[217092, 6625, 95, 2, 53, "Subsubtitle"],
+Cell[217190, 6629, 262, 5, 70, "Input"]
 }, Open  ]],
 
 Cell[CellGroupData[{
-Cell[217145, 6629, 245, 8, 161, "Subsubtitle"],
-Cell[217393, 6639, 1026, 17, 330, "Input"]
+Cell[217489, 6639, 245, 8, 161, "Subsubtitle"],
+Cell[217737, 6649, 1026, 17, 330, "Input"]
 }, Open  ]],
 
 Cell[CellGroupData[{
-Cell[218456, 6661, 84, 1, 53, "Subsubtitle"],
-Cell[218543, 6664, 260, 4, 50, "Input"]
+Cell[218800, 6671, 84, 1, 53, "Subsubtitle"],
+Cell[218887, 6674, 260, 4, 50, "Input"]
 }, Open  ]],
 
 Cell[CellGroupData[{
-Cell[218840, 6673, 218, 4, 53, "Subsubtitle"],
+Cell[219184, 6683, 218, 4, 53, "Subsubtitle"],
 
 Cell[CellGroupData[{
-Cell[219083, 6681, 4288, 73, 650, "Input"],
-Cell[223374, 6756, 180, 3, 24, "Message"],
-Cell[223557, 6761, 191, 3, 24, "Message"]
+Cell[219427, 6691, 4288, 73, 650, "Input"],
+Cell[223718, 6766, 191, 3, 24, "Message"]
 }, Open  ]],
-Cell[223763, 6767, 26, 0, 30, "Input"],
-Cell[223792, 6769, 792, 15, 124, "SmallText"],
-Cell[224587, 6786, 285, 5, 28, "SmallText"]
-}, Open  ]],
+Cell[223924, 6772, 26, 0, 30, "Input"],
+Cell[223953, 6774, 792, 15, 124, "SmallText"],
+Cell[224748, 6791, 285, 5, 28, "SmallText"]
+}, Closed]],
 
 Cell[CellGroupData[{
-Cell[224909, 6796, 72, 0, 53, "Subsubtitle"],
-Cell[224984, 6798, 1262, 22, 250, "Input"]
-}, Open  ]],
+Cell[225070, 6801, 72, 0, 42, "Subsubtitle"],
+Cell[225145, 6803, 1262, 22, 250, "Input"]
+}, Closed]],
 
 Cell[CellGroupData[{
-Cell[226283, 6825, 112, 3, 53, "Subsubtitle"],
-Cell[226398, 6830, 429, 8, 150, "Input"]
-}, Open  ]],
+Cell[226444, 6830, 112, 3, 42, "Subsubtitle"],
+Cell[226559, 6835, 429, 8, 150, "Input"]
+}, Closed]],
 
 Cell[CellGroupData[{
-Cell[226864, 6843, 53, 0, 53, "Subsubtitle"],
-Cell[226920, 6845, 495, 8, 170, "Input"]
-}, Open  ]],
+Cell[227025, 6848, 53, 0, 42, "Subsubtitle"],
+Cell[227081, 6850, 495, 8, 170, "Input"]
+}, Closed]],
 
 Cell[CellGroupData[{
-Cell[227452, 6858, 66, 0, 53, "Subsubtitle"],
-Cell[227521, 6860, 428, 8, 170, "Input"]
-}, Open  ]],
+Cell[227613, 6863, 66, 0, 42, "Subsubtitle"],
+Cell[227682, 6865, 428, 8, 170, "Input"]
+}, Closed]],
 
 Cell[CellGroupData[{
-Cell[227986, 6873, 67, 0, 53, "Subsubtitle"],
-Cell[228056, 6875, 1475, 27, 290, "Input"]
-}, Open  ]],
+Cell[228147, 6878, 67, 0, 42, "Subsubtitle"],
+Cell[228217, 6880, 1475, 27, 290, "Input"]
+}, Closed]],
 
 Cell[CellGroupData[{
-Cell[229568, 6907, 48, 0, 53, "Subsubtitle"],
-Cell[229619, 6909, 1075, 19, 270, "Input"]
-}, Open  ]],
+Cell[229729, 6912, 48, 0, 42, "Subsubtitle"],
+Cell[229780, 6914, 1075, 19, 270, "Input"]
+}, Closed]],
 
 Cell[CellGroupData[{
-Cell[230731, 6933, 121, 3, 53, "Subsubtitle"],
+Cell[230892, 6938, 121, 3, 42, "Subsubtitle"],
 
 Cell[CellGroupData[{
-Cell[230877, 6940, 4696, 82, 970, "Input"],
-Cell[235576, 7024, 185, 3, 24, "Message"]
+Cell[231038, 6945, 4696, 82, 970, "Input"],
+Cell[235737, 7029, 185, 3, 24, "Message"]
 }, Open  ]]
-}, Open  ]],
+}, Closed]],
 
 Cell[CellGroupData[{
-Cell[235810, 7033, 75, 0, 53, "Subsubtitle"],
-Cell[235888, 7035, 2296, 43, 290, "Input"],
+Cell[235971, 7038, 75, 0, 42, "Subsubtitle"],
+Cell[236049, 7040, 2296, 43, 290, "Input"],
 
 Cell[CellGroupData[{
-Cell[238209, 7082, 585, 11, 70, "Input"],
-Cell[238797, 7095, 189, 3, 24, "Message"],
-Cell[238989, 7100, 189, 3, 24, "Message"],
-Cell[239181, 7105, 194, 3, 24, "Message"],
-Cell[239378, 7110, 289, 4, 24, "Message"],
-Cell[239670, 7116, 3846, 83, 186, 630, 39, "GraphicsData", "PostScript", \
+Cell[238370, 7087, 585, 11, 70, "Input"],
+Cell[238958, 7100, 189, 3, 24, "Message"],
+Cell[239150, 7105, 189, 3, 24, "Message"],
+Cell[239342, 7110, 194, 3, 24, "Message"],
+Cell[239539, 7115, 289, 4, 24, "Message"],
+Cell[239831, 7121, 3846, 83, 186, 630, 39, "GraphicsData", "PostScript", \
 "Graphics"],
-Cell[243519, 7201, 189, 3, 24, "Message"],
-Cell[243711, 7206, 171, 3, 24, "Message"],
-Cell[243885, 7211, 171, 3, 24, "Message"],
-Cell[244059, 7216, 171, 3, 24, "Message"],
-Cell[244233, 7221, 163, 3, 24, "Message"],
-Cell[244399, 7226, 35, 1, 29, "Output"]
-}, Open  ]]
-}, Open  ]],
-
-Cell[CellGroupData[{
-Cell[244483, 7233, 423, 9, 125, "Subsubtitle"],
-Cell[244909, 7244, 6504, 106, 1030, "Input"]
-}, Open  ]],
-
-Cell[CellGroupData[{
-Cell[251450, 7355, 61, 0, 53, "Subsubtitle"],
-Cell[251514, 7357, 1087, 20, 190, "Input"]
-}, Closed]],
-
-Cell[CellGroupData[{
-Cell[252638, 7382, 217, 4, 42, "Subsubtitle"],
-Cell[252858, 7388, 10137, 171, 1570, "Input"]
-}, Open  ]],
-
-Cell[CellGroupData[{
-Cell[263032, 7564, 40, 0, 64, "Subtitle"],
-Cell[263075, 7566, 68, 0, 53, "Subsubtitle"],
-
-Cell[CellGroupData[{
-Cell[263168, 7570, 729, 13, 270, "Input"],
-Cell[263900, 7585, 181, 3, 70, "Message"]
-}, Open  ]],
-
-Cell[CellGroupData[{
-Cell[264118, 7593, 65, 0, 53, "Subsubtitle"],
-
-Cell[CellGroupData[{
-Cell[264208, 7597, 839, 15, 270, "Input"],
-Cell[265050, 7614, 185, 3, 70, "Message"]
-}, Open  ]]
-}, Open  ]],
-
-Cell[CellGroupData[{
-Cell[265284, 7623, 69, 0, 53, "Subsubtitle"],
-Cell[265356, 7625, 1062, 21, 250, "Input"]
-}, Closed]],
-
-Cell[CellGroupData[{
-Cell[266455, 7651, 49, 0, 42, "Subsubtitle"],
-Cell[266507, 7653, 913, 18, 290, "Input"]
-}, Closed]],
-
-Cell[CellGroupData[{
-Cell[267457, 7676, 101, 2, 42, "Subsubtitle"],
-Cell[267561, 7680, 876, 15, 210, "Input"]
-}, Closed]],
-
-Cell[CellGroupData[{
-Cell[268474, 7700, 101, 2, 42, "Subsubtitle"],
-Cell[268578, 7704, 929, 15, 210, "Input"]
-}, Closed]],
-
-Cell[CellGroupData[{
-Cell[269544, 7724, 73, 0, 42, "Subsubtitle"],
-
-Cell[CellGroupData[{
-Cell[269642, 7728, 1209, 22, 210, "Input"],
-Cell[270854, 7752, 182, 3, 70, "Message"],
-Cell[271039, 7757, 181, 3, 70, "Message"]
+Cell[243680, 7206, 189, 3, 24, "Message"],
+Cell[243872, 7211, 171, 3, 24, "Message"],
+Cell[244046, 7216, 171, 3, 24, "Message"],
+Cell[244220, 7221, 171, 3, 24, "Message"],
+Cell[244394, 7226, 163, 3, 24, "Message"],
+Cell[244560, 7231, 35, 1, 29, "Output"]
 }, Open  ]]
 }, Closed]],
 
 Cell[CellGroupData[{
-Cell[271269, 7766, 99, 2, 42, "Subsubtitle"],
-Cell[271371, 7770, 1348, 24, 350, "Input"]
+Cell[244644, 7238, 423, 9, 114, "Subsubtitle"],
+Cell[245070, 7249, 6504, 106, 1030, "Input"]
 }, Closed]],
 
 Cell[CellGroupData[{
-Cell[272756, 7799, 140, 3, 42, "Subsubtitle"],
-Cell[272899, 7804, 1370, 23, 230, "Input"]
-}, Closed]],
-
-Cell[CellGroupData[{
-Cell[274306, 7832, 72, 0, 42, "Subsubtitle"],
-Cell[274381, 7834, 3625, 63, 450, "Input"]
+Cell[251611, 7360, 61, 0, 42, "Subsubtitle"],
+Cell[251675, 7362, 1087, 20, 190, "Input"]
 }, Open  ]],
 
 Cell[CellGroupData[{
-Cell[278043, 7902, 84, 1, 53, "Subsubtitle"],
-Cell[278130, 7905, 362, 7, 70, "Input"]
-}, Closed]],
-
-Cell[CellGroupData[{
-Cell[278529, 7917, 75, 0, 42, "Subsubtitle"],
-
-Cell[CellGroupData[{
-Cell[278629, 7921, 1834, 32, 450, "Input"],
-Cell[280466, 7955, 182, 3, 70, "Message"]
-}, Open  ]]
-}, Closed]],
-
-Cell[CellGroupData[{
-Cell[280697, 7964, 61, 0, 42, "Subsubtitle"],
-Cell[280761, 7966, 926, 16, 210, "Input"]
-}, Closed]],
-
-Cell[CellGroupData[{
-Cell[281724, 7987, 94, 2, 42, "Subsubtitle"],
-Cell[281821, 7991, 586, 15, 236, "SmallText"]
+Cell[252799, 7387, 217, 4, 53, "Subsubtitle"],
+Cell[253019, 7393, 10342, 173, 1630, "Input"]
 }, Open  ]],
 
 Cell[CellGroupData[{
-Cell[282444, 8011, 55, 0, 53, "Subsubtitle"],
-Cell[282502, 8013, 306, 6, 76, "SmallText"],
-Cell[282811, 8021, 331, 6, 76, "SmallText"]
+Cell[263398, 7571, 40, 0, 64, "Subtitle"],
+Cell[263441, 7573, 68, 0, 53, "Subsubtitle"],
+
+Cell[CellGroupData[{
+Cell[263534, 7577, 729, 13, 270, "Input"],
+Cell[264266, 7592, 181, 3, 70, "Message"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+Cell[264484, 7600, 65, 0, 53, "Subsubtitle"],
+
+Cell[CellGroupData[{
+Cell[264574, 7604, 839, 15, 270, "Input"],
+Cell[265416, 7621, 185, 3, 70, "Message"]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+Cell[265650, 7630, 69, 0, 53, "Subsubtitle"],
+Cell[265722, 7632, 1062, 21, 250, "Input"]
 }, Closed]],
 
 Cell[CellGroupData[{
-Cell[283179, 8032, 33, 0, 42, "Subsubtitle"],
-Cell[283215, 8034, 140, 3, 28, "SmallText"],
-Cell[283358, 8039, 98, 2, 28, "SmallText"],
-Cell[283459, 8043, 155, 3, 28, "SmallText"],
-Cell[283617, 8048, 148, 3, 28, "SmallText"],
-Cell[283768, 8053, 136, 3, 28, "SmallText"],
-Cell[283907, 8058, 160, 3, 28, "SmallText"],
-Cell[284070, 8063, 159, 3, 28, "SmallText"],
-Cell[284232, 8068, 100, 2, 28, "SmallText"],
-Cell[284335, 8072, 111, 3, 28, "SmallText"],
-Cell[284449, 8077, 73, 0, 28, "SmallText"],
-Cell[284525, 8079, 93, 2, 28, "SmallText"],
-Cell[284621, 8083, 77, 0, 28, "SmallText"],
-Cell[284701, 8085, 127, 3, 28, "SmallText"],
-Cell[284831, 8090, 1001, 17, 108, "SmallText"],
-Cell[285835, 8109, 75, 0, 28, "SmallText"]
+Cell[266821, 7658, 49, 0, 42, "Subsubtitle"],
+Cell[266873, 7660, 913, 18, 290, "Input"]
+}, Closed]],
+
+Cell[CellGroupData[{
+Cell[267823, 7683, 101, 2, 42, "Subsubtitle"],
+Cell[267927, 7687, 876, 15, 210, "Input"]
+}, Closed]],
+
+Cell[CellGroupData[{
+Cell[268840, 7707, 101, 2, 42, "Subsubtitle"],
+Cell[268944, 7711, 929, 15, 210, "Input"]
+}, Closed]],
+
+Cell[CellGroupData[{
+Cell[269910, 7731, 73, 0, 42, "Subsubtitle"],
+
+Cell[CellGroupData[{
+Cell[270008, 7735, 1209, 22, 210, "Input"],
+Cell[271220, 7759, 182, 3, 70, "Message"],
+Cell[271405, 7764, 181, 3, 70, "Message"]
 }, Open  ]]
 }, Closed]],
 
 Cell[CellGroupData[{
-Cell[285959, 8115, 29, 0, 53, "Subtitle"],
+Cell[271635, 7773, 99, 2, 42, "Subsubtitle"],
+Cell[271737, 7777, 1348, 24, 350, "Input"]
+}, Closed]],
 
 Cell[CellGroupData[{
-Cell[286013, 8119, 3988, 67, 930, "Input"],
-Cell[290004, 8188, 183, 3, 24, "Message"],
-Cell[290190, 8193, 181, 3, 24, "Message"],
-Cell[290374, 8198, 112, 2, 25, "Print"],
-Cell[290489, 8202, 112, 2, 25, "Print"],
-Cell[290604, 8206, 112, 2, 25, "Print"],
-Cell[290719, 8210, 112, 2, 25, "Print"],
-Cell[290834, 8214, 112, 2, 25, "Print"],
-Cell[290949, 8218, 113, 2, 25, "Print"],
-Cell[291065, 8222, 113, 2, 25, "Print"],
-Cell[291181, 8226, 113, 2, 25, "Print"],
-Cell[291297, 8230, 112, 2, 25, "Print"],
-Cell[291412, 8234, 113, 2, 25, "Print"],
-Cell[291528, 8238, 113, 2, 25, "Print"],
-Cell[291644, 8242, 113, 2, 25, "Print"],
-Cell[291760, 8246, 112, 2, 25, "Print"],
-Cell[291875, 8250, 112, 2, 25, "Print"],
-Cell[291990, 8254, 112, 2, 25, "Print"],
-Cell[292105, 8258, 111, 2, 25, "Print"],
-Cell[292219, 8262, 112, 2, 25, "Print"],
-Cell[292334, 8266, 112, 2, 25, "Print"],
-Cell[292449, 8270, 113, 2, 25, "Print"],
-Cell[292565, 8274, 113, 2, 25, "Print"],
-Cell[292681, 8278, 113, 2, 25, "Print"],
-Cell[292797, 8282, 113, 2, 25, "Print"],
-Cell[292913, 8286, 113, 2, 25, "Print"],
-Cell[293029, 8290, 113, 2, 25, "Print"],
-Cell[293145, 8294, 112, 2, 25, "Print"],
-Cell[293260, 8298, 112, 2, 25, "Print"],
-Cell[293375, 8302, 112, 2, 25, "Print"],
-Cell[293490, 8306, 195, 5, 76, "Print"],
-Cell[293688, 8313, 112, 2, 25, "Print"],
-Cell[293803, 8317, 112, 2, 25, "Print"],
-Cell[293918, 8321, 113, 2, 25, "Print"],
-Cell[294034, 8325, 113, 2, 25, "Print"],
-Cell[294150, 8329, 112, 2, 25, "Print"],
-Cell[294265, 8333, 112, 2, 25, "Print"],
-Cell[294380, 8337, 113, 2, 25, "Print"],
-Cell[294496, 8341, 113, 2, 25, "Print"],
-Cell[294612, 8345, 113, 2, 25, "Print"]
+Cell[273122, 7806, 140, 3, 42, "Subsubtitle"],
+Cell[273265, 7811, 1370, 23, 230, "Input"]
+}, Closed]],
+
+Cell[CellGroupData[{
+Cell[274672, 7839, 72, 0, 42, "Subsubtitle"],
+Cell[274747, 7841, 3625, 63, 450, "Input"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+Cell[278409, 7909, 84, 1, 53, "Subsubtitle"],
+Cell[278496, 7912, 362, 7, 70, "Input"]
+}, Closed]],
+
+Cell[CellGroupData[{
+Cell[278895, 7924, 75, 0, 42, "Subsubtitle"],
+
+Cell[CellGroupData[{
+Cell[278995, 7928, 1834, 32, 450, "Input"],
+Cell[280832, 7962, 182, 3, 70, "Message"]
 }, Open  ]]
+}, Closed]],
+
+Cell[CellGroupData[{
+Cell[281063, 7971, 61, 0, 42, "Subsubtitle"],
+Cell[281127, 7973, 926, 16, 210, "Input"]
+}, Closed]],
+
+Cell[CellGroupData[{
+Cell[282090, 7994, 94, 2, 42, "Subsubtitle"],
+Cell[282187, 7998, 586, 15, 236, "SmallText"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+Cell[282810, 8018, 55, 0, 53, "Subsubtitle"],
+Cell[282868, 8020, 306, 6, 76, "SmallText"],
+Cell[283177, 8028, 331, 6, 76, "SmallText"]
+}, Closed]],
+
+Cell[CellGroupData[{
+Cell[283545, 8039, 33, 0, 42, "Subsubtitle"],
+Cell[283581, 8041, 140, 3, 28, "SmallText"],
+Cell[283724, 8046, 98, 2, 28, "SmallText"],
+Cell[283825, 8050, 155, 3, 28, "SmallText"],
+Cell[283983, 8055, 148, 3, 28, "SmallText"],
+Cell[284134, 8060, 136, 3, 28, "SmallText"],
+Cell[284273, 8065, 160, 3, 28, "SmallText"],
+Cell[284436, 8070, 159, 3, 28, "SmallText"],
+Cell[284598, 8075, 100, 2, 28, "SmallText"],
+Cell[284701, 8079, 111, 3, 28, "SmallText"],
+Cell[284815, 8084, 73, 0, 28, "SmallText"],
+Cell[284891, 8086, 93, 2, 28, "SmallText"],
+Cell[284987, 8090, 77, 0, 28, "SmallText"],
+Cell[285067, 8092, 127, 3, 28, "SmallText"],
+Cell[285197, 8097, 1001, 17, 108, "SmallText"],
+Cell[286201, 8116, 75, 0, 28, "SmallText"]
+}, Open  ]]
+}, Closed]],
+
+Cell[CellGroupData[{
+Cell[286325, 8122, 29, 0, 53, "Subtitle"],
+Cell[286357, 8124, 3970, 66, 930, "Input"]
 }, Open  ]]
 }
 ]

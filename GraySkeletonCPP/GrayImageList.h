@@ -12,7 +12,7 @@ namespace WUSTL_MM {
 		GrayImageList();
 		void AddImage(GrayImage * image);
 		void Clear(bool deleteChildObjects);
-		GrayImage * GetCompositeImage(int xCount, int yCount);
+		GrayImage * GetCompositeImage(int xCount);
 	private:
 		vector <GrayImage *> imageList;
 	};
@@ -34,9 +34,10 @@ namespace WUSTL_MM {
 		imageList.clear();
 	}
 
-	GrayImage * GrayImageList::GetCompositeImage(int xCount, int yCount) {
+	GrayImage * GrayImageList::GetCompositeImage(int xCount) {
 		int imageSizeX = imageList[0]->GetSizeX();
 		int imageSizeY = imageList[0]->GetSizeY();
+		int yCount = (int)ceil((double)imageList.size() / (double)xCount);		
 		int xImage, yImage;
 		GrayImage * compositeImage = new GrayImage(imageSizeX * xCount, imageSizeY * yCount);
 		GrayImage * currentImage;

@@ -1,0 +1,77 @@
+<html>
+<body>
+<pre>
+<h1>Build Log</h1>
+<h3>
+--------------------Configuration: ByteOrder - Win32 Debug--------------------
+</h3>
+<h3>Command Lines</h3>
+Creating temporary file "C:\DOCUME~1\jgsun\LOCALS~1\Temp\RSP21DA.tmp" with contents
+[
+/nologo /MLd /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /D "QT_DLL" /D "QT_THREAD_SUPPORT" /Fp"Debug/ByteOrder.pch" /YX /Fo"Debug/" /Fd"Debug/" /FD /GZ /c 
+"C:\ccvdev\MRCRawIVConverter\ByteOrder\ByteSwapping.cpp"
+]
+Creating command line "cl.exe @C:\DOCUME~1\jgsun\LOCALS~1\Temp\RSP21DA.tmp" 
+Creating command line "link.exe -lib /nologo /out:"Debug\ByteOrder.lib"  .\Debug\ByteSwapping.obj "
+<h3>Output Window</h3>
+Compiling...
+ByteSwapping.cpp
+Creating library...
+<h3>
+--------------------Configuration: VolumeFileTypes - Win32 Debug--------------------
+</h3>
+<h3>Command Lines</h3>
+Creating temporary file "C:\DOCUME~1\jgsun\LOCALS~1\Temp\RSP21DB.tmp" with contents
+[
+/nologo /MLd /W3 /Gm /GX /ZI /Od /I "../" /I "../ByteOrder" /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /Fp"Debug/VolumeFileTypes.pch" /YX /Fo"Debug/" /Fd"Debug/" /FD /GZ /c 
+"C:\ccvdev\MRCRawIVConverter\VolumeFileTypes\DXFile.cpp"
+"C:\ccvdev\MRCRawIVConverter\VolumeFileTypes\MRCFile.cpp"
+"C:\ccvdev\MRCRawIVConverter\VolumeFileTypes\RawIVFile.cpp"
+"C:\ccvdev\MRCRawIVConverter\VolumeFileTypes\RawVFile.cpp"
+"C:\ccvdev\MRCRawIVConverter\VolumeFileTypes\VolumeFileType.cpp"
+"C:\ccvdev\MRCRawIVConverter\VolumeFileTypes\VolumeLoader.cpp"
+]
+Creating command line "cl.exe @C:\DOCUME~1\jgsun\LOCALS~1\Temp\RSP21DB.tmp" 
+Creating command line "link.exe -lib /nologo /out:"Debug\VolumeFileTypes.lib"  .\Debug\DXFile.obj .\Debug\MRCFile.obj .\Debug\RawIVFile.obj .\Debug\RawVFile.obj .\Debug\VolumeFileType.obj .\Debug\VolumeLoader.obj "
+<h3>Output Window</h3>
+Compiling...
+DXFile.cpp
+MRCFile.cpp
+RawIVFile.cpp
+RawVFile.cpp
+VolumeFileType.cpp
+VolumeLoader.cpp
+Creating library...
+<h3>
+--------------------Configuration: MRCRawIVConverter - Win32 Debug--------------------
+</h3>
+<h3>Command Lines</h3>
+Creating temporary file "C:\DOCUME~1\jgsun\LOCALS~1\Temp\RSP21DC.tmp" with contents
+[
+/nologo /MLd /W3 /Gm /GX /ZI /Od /I "ByteOrder" /I "VolumeFileTypes" /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /Fp"Debug/MRCRawIVConverter.pch" /YX /Fo"Debug/" /Fd"Debug/" /FD /GZ /c 
+"C:\ccvdev\MRCRawIVConverter\main.cpp"
+"C:\ccvdev\MRCRawIVConverter\SimpleVolumeData.cpp"
+]
+Creating command line "cl.exe @C:\DOCUME~1\jgsun\LOCALS~1\Temp\RSP21DC.tmp" 
+Creating temporary file "C:\DOCUME~1\jgsun\LOCALS~1\Temp\RSP21DD.tmp" with contents
+[
+VolumeFileTypes/Debug/VolumeFileTypes.lib ByteOrder/Debug/ByteOrder.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /incremental:yes /pdb:"Debug/MRCRawIVConverter.pdb" /debug /machine:I386 /out:"Debug/MRCRawIVConverter.exe" /pdbtype:sept 
+.\Debug\main.obj
+.\Debug\SimpleVolumeData.obj
+.\ByteOrder\Debug\ByteOrder.lib
+.\VolumeFileTypes\Debug\VolumeFileTypes.lib
+]
+Creating command line "link.exe @C:\DOCUME~1\jgsun\LOCALS~1\Temp\RSP21DD.tmp"
+<h3>Output Window</h3>
+Compiling...
+main.cpp
+SimpleVolumeData.cpp
+Linking...
+
+
+
+<h3>Results</h3>
+MRCRawIVConverter.exe - 0 error(s), 0 warning(s)
+</pre>
+</body>
+</html>

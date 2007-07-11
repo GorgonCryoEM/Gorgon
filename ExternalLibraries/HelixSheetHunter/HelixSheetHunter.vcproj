@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="8.00"
-	Name="GraySkeletonCPP"
-	ProjectGUID="{E3B1B536-8C7A-45E8-9BAA-5FE4F7B9FE13}"
-	RootNamespace="GraySkeletonCPP"
+	Name="HelixSheetHunter"
+	ProjectGUID="{3CFC0D46-5AA0-41A9-8035-0069516166A4}"
+	Keyword="MakeFileProj"
 	>
 	<Platforms>
 		<Platform
@@ -37,8 +37,6 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				WarningLevel="3"
-				DebugInformationFormat="3"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -51,9 +49,6 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				LinkIncremental="2"
-				GenerateDebugInformation="true"
-				AssemblyDebug="1"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -151,7 +146,31 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath=".\GraySkeletonCPP.cpp"
+				RelativePath=".\diffuse.c"
+				>
+			</File>
+			<File
+				RelativePath=".\gvf.c"
+				>
+			</File>
+			<File
+				RelativePath=".\helixhunter.c"
+				>
+			</File>
+			<File
+				RelativePath=".\inout.c"
+				>
+			</File>
+			<File
+				RelativePath=".\main.c"
+				>
+			</File>
+			<File
+				RelativePath=".\sheethunter.c"
+				>
+			</File>
+			<File
+				RelativePath=".\tensor.c"
 				>
 			</File>
 		</Filter>
@@ -161,47 +180,7 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath=".\GlobalDefinitions.h"
-				>
-			</File>
-			<File
-				RelativePath=".\GrayImage.h"
-				>
-			</File>
-			<File
-				RelativePath=".\GrayImageList.h"
-				>
-			</File>
-			<File
-				RelativePath=".\GrayImageSkeletonizer.h"
-				>
-			</File>
-			<File
-				RelativePath=".\ImageReader.h"
-				>
-			</File>
-			<File
-				RelativePath=".\ImageReaderBMP.h"
-				>
-			</File>
-			<File
-				RelativePath=".\ImageReaderMRC.h"
-				>
-			</File>
-			<File
-				RelativePath=".\VolumeFormatConverter.h"
-				>
-			</File>
-			<File
-				RelativePath=".\VolumeReader.h"
-				>
-			</File>
-			<File
-				RelativePath=".\VolumeReaderRAW.h"
-				>
-			</File>
-			<File
-				RelativePath=".\VolumeSkeletonizer.h"
+				RelativePath=".\march.h"
 				>
 			</File>
 		</Filter>
@@ -211,6 +190,10 @@
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
 			>
 		</Filter>
+		<File
+			RelativePath=".\readme.txt"
+			>
+		</File>
 	</Files>
 	<Globals>
 	</Globals>
