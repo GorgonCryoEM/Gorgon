@@ -3,6 +3,7 @@
 
 #include "..\SkeletonMaker\reader.h"
 #include "..\SkeletonMaker\volume.h"
+#include "GlobalDefinitions.h"
 
 namespace WUSTL_MM {
 	const int GRAYIMAGE_IN_VOLUME_Z = 2;
@@ -21,7 +22,10 @@ namespace WUSTL_MM {
 		void SetDataAt(int x, int y, unsigned char value);
 		Volume * ToVolume();
 		static GrayImage * GrayImageVolumeToImage(Volume * volume);
+		void PrintValues();
 		void Threshold(unsigned char threshold, bool preserveHighValues);
+		void ApplyMask(GrayImage * maskImage, unsigned char maskValue, bool keepMaskValue);
+		void Blur();
 	private:
 		int sizeX;
 		int sizeY;
@@ -59,7 +63,7 @@ namespace WUSTL_MM {
 
 	GrayImage::~GrayImage() {
 		if(data != NULL) {
-			delete data;
+			delete [] data;
 		}
 	}
 
@@ -127,17 +131,57 @@ namespace WUSTL_MM {
 		}
 		return image;
 	}
+	void GrayImage::PrintValues() {
+		for(int y = 0; y < sizeY; y++) {
+			for(int x = 0; x < sizeX; x++) {
+				printf("%i, ", GetDataAt(x, y));
+			}
+			printf("\n");
+		}
+	}
 	void GrayImage::Threshold(unsigned char threshold, bool preserveHighValues) {
 		for(int x = 0; x < sizeX; x++) {
 			for(int y = 0; y < sizeY; y++) {
 				if(GetDataAt(x, y) < threshold) {
-					SetDataAt(x, y, 0);
+					SetDataAt(x, y, PIXEL_BINARY_FALSE);
 				} else if (!preserveHighValues) {
-					SetDataAt(x, y, 255);
+					SetDataAt(x, y, PIXEL_BINARY_TRUE);
 				}
 				
 			}
 		}
+	}
+	void GrayImage::ApplyMask(GrayImage * maskImage, unsigned char maskValue, bool keepMaskValue) {
+		for(int x = 0; x < maskImage->GetSizeX(); x++) {
+			for(int y = 0; y < maskImage->GetSizeY(); y++) {
+				if(((maskImage->GetDataAt(x, y) == maskValue) && !keepMaskValue) ||
+					((maskImage->GetDataAt(x, y) != maskValue) && keepMaskValue)) {
+					SetDataAt(x, y, 0);
+				}
+			}
+		}
+	}
+	void GrayImage::Blur() {
+		GrayImage * tempImage = new GrayImage(this);
+		int total;
+		for(int x = 1; x < sizeX-1; x++) {
+			for(int y = 1; y < sizeY-1; y++) {
+				total = 0;
+				for(int xx = -1; xx <= 1; xx++) {
+					for(int yy = -1; yy <= 1; yy++) {
+						total += (int)GetDataAt(x+xx, y+yy);
+					}
+				}
+				tempImage->SetDataAt(x, y, (unsigned char)((double)total/9.0));
+			}
+		}
+
+		for(int x = 1; x < sizeX-1; x++) {
+			for(int y = 1; y < sizeY-1; y++) {
+				SetDataAt(x, y, tempImage->GetDataAt(x, y));
+			}
+		}
+		delete tempImage;
 	}
 };
 

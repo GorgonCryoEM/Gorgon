@@ -3,6 +3,7 @@
 
 #include "GrayImage.h"
 #include "ImageReader.h"
+#include "GlobalDefinitions.h"
 
 namespace WUSTL_MM {
 
@@ -40,15 +41,16 @@ namespace WUSTL_MM {
 
 	class ImageReaderBMP : ImageReader {
 	public:
-		static GrayImage * LoadGrayscaleImage(char * fileName);
+		static GrayImage * LoadGrayscaleImage(char * fileName, bool addBoundary);
 		static void SaveGrayscaleImage(GrayImage * image, char * fileName);
 	private:
 		static ImageReaderBMPFileHeader GetBMPFileHeader(GrayImage * image);
 		static ImageReaderBMPInfoHeader GetBMPInfoHeader(GrayImage * image);
 	};
 
-	GrayImage * ImageReaderBMP::LoadGrayscaleImage(char * fileName) {
+	GrayImage * ImageReaderBMP::LoadGrayscaleImage(char * fileName, bool addBoundary) {
 		FILE * inFile = fopen(fileName, "rb");
+		int offset = addBoundary ? 1 : 0;
 		ImageReaderBMPFileHeader fileHeader;
 		ImageReaderBMPInfoHeader infoHeader;
 		ImageReaderBMPRgbQuad palette[256];
@@ -63,14 +65,14 @@ namespace WUSTL_MM {
 		}
 		unsigned char value;
 
-		GrayImage * image = new GrayImage(infoHeader.biWidth, infoHeader.biHeight);
+		GrayImage * image = new GrayImage(infoHeader.biWidth + 2 * offset, infoHeader.biHeight + 2 * offset);
 
 		for(int y = 0; y < infoHeader.biHeight; y++) {		
 			for(int x = 0; x < width; x++) {
 				fread(&value, sizeof(unsigned char), 1, inFile);
 				if(x < infoHeader.biWidth) {
-					value = (unsigned char)(((int)palette[value].rgbBlue + (int)palette[value].rgbGreen +  (int)palette[value].rgbRed) / 3);
-					image->SetDataAt(x, y, value);
+					value = (unsigned char)round(((double)palette[value].rgbBlue + (double)palette[value].rgbGreen +  (double)palette[value].rgbRed) / 3.0);
+					image->SetDataAt(x + offset, y + offset, value);
 				}
 			}
 		}

@@ -161,6 +161,10 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
+				RelativePath=".\GlobalDefinitions.h"
+				>
+			</File>
+			<File
 				RelativePath=".\GrayImage.h"
 				>
 			</File>
@@ -182,6 +186,22 @@
 			</File>
 			<File
 				RelativePath=".\ImageReaderMRC.h"
+				>
+			</File>
+			<File
+				RelativePath=".\VolumeFormatConverter.h"
+				>
+			</File>
+			<File
+				RelativePath=".\VolumeReader.h"
+				>
+			</File>
+			<File
+				RelativePath=".\VolumeReaderRAW.h"
+				>
+			</File>
+			<File
+				RelativePath=".\VolumeSkeletonizer.h"
 				>
 			</File>
 		</Filter>
