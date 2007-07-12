@@ -9,7 +9,7 @@ using System.IO;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 
-namespace SkeletonVisualizer
+namespace wustl_mm.SkeletonVisualizer
 {
     public partial class FormTopologyHunter : Form
     {
