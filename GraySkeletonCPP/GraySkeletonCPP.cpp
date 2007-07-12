@@ -8,7 +8,7 @@
 #include <string>  
 
 
-using namespace WUSTL_MM;
+using namespace wustl_mm::GraySkeletonCPP;
 using namespace std;
 
 int StringToInt(const string &s)
