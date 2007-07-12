@@ -1,10 +1,14 @@
 #ifndef STRUCTURES_H
 #define STRUCTURES_H
 
-struct EdgeMinCostEntry {
-	unsigned long long bitmap;
-	double cost;
-	int noOfEdges;
-};
+namespace wustl_mm {
+	namespace GraphMatch {
 
+		struct EdgeMinCostEntry {
+			unsigned long long bitmap;
+			double cost;
+			int noOfEdges;
+		};
+	}
+}
 #endif
