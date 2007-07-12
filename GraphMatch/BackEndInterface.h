@@ -8,114 +8,119 @@
 
 using namespace std;
 
-class BackEndInterface {
-public:
-	BackEndInterface();
-	~BackEndInterface();
-	// Initialization Methods
-	void SetConstantsFromFile(char * fileName);
-	bool SetConstant(char * token, char * value);
-	bool SetConstant(char * token, double value);
-	bool SetConstant(char * token, int value);
-	bool SetConstant(char * token, bool value);
-	// Graph Loading
-	void LoadSequenceGraph();
-	void LoadSkeletonGraph();
-	// Process Execution
-	//int ExecuteQuery(StandardGraph * sequenceGraph, StandardGraph * skeletonGraph);
-	int ExecuteQuery();
-	// Result Retrieval
-	LinkedNode * GetResult(int rank);
-	// OpenGL drawing/selecting
-	bool DrawResult(int rank);
-	bool DrawSkeleton();
-	bool DrawSequence();
-	// Cleanup
-	void CleanupMemory();
-private:
-	QueryEngine * queryEngine;
-	GLVisualizer * visualizer;
-	StandardGraph * skeleton;
-	StandardGraph * sequence;
-};
+namespace wustl_mm {
+	namespace GraphMatch {
 
-BackEndInterface::BackEndInterface(): skeleton(NULL), sequence(NULL) {
-	queryEngine = new QueryEngine();
-	visualizer = new GLVisualizer();
-}
+		class BackEndInterface {
+		public:
+			BackEndInterface();
+			~BackEndInterface();
+			// Initialization Methods
+			void SetConstantsFromFile(char * fileName);
+			bool SetConstant(char * token, char * value);
+			bool SetConstant(char * token, double value);
+			bool SetConstant(char * token, int value);
+			bool SetConstant(char * token, bool value);
+			// Graph Loading
+			void LoadSequenceGraph();
+			void LoadSkeletonGraph();
+			// Process Execution
+			//int ExecuteQuery(StandardGraph * sequenceGraph, StandardGraph * skeletonGraph);
+			int ExecuteQuery();
+			// Result Retrieval
+			LinkedNode * GetResult(int rank);
+			// OpenGL drawing/selecting
+			bool DrawResult(int rank);
+			bool DrawSkeleton();
+			bool DrawSequence();
+			// Cleanup
+			void CleanupMemory();
+		private:
+			QueryEngine * queryEngine;
+			GLVisualizer * visualizer;
+			StandardGraph * skeleton;
+			StandardGraph * sequence;
+		};
 
-BackEndInterface::~BackEndInterface() {
-	delete queryEngine;
-	delete visualizer;
-	delete skeleton;
-	delete sequence;
-}
+		BackEndInterface::BackEndInterface(): skeleton(NULL), sequence(NULL) {
+			queryEngine = new QueryEngine();
+			visualizer = new GLVisualizer();
+		}
 
-void BackEndInterface::SetConstantsFromFile(char * fileName) {
-	LoadConstantsFromFile(fileName);	
-}
+		BackEndInterface::~BackEndInterface() {
+			delete queryEngine;
+			delete visualizer;
+			delete skeleton;
+			delete sequence;
+		}
 
-bool BackEndInterface::SetConstant(char * token, char * value) {
-	return SetConstantFromToken(token, value, 0.0, 0, false);
-}
+		void BackEndInterface::SetConstantsFromFile(char * fileName) {
+			LoadConstantsFromFile(fileName);	
+		}
 
-bool BackEndInterface::SetConstant(char *token, double value) {
-	return SetConstantFromToken(token, NULL, value, 0, false);
-}
+		bool BackEndInterface::SetConstant(char * token, char * value) {
+			return SetConstantFromToken(token, value, 0.0, 0, false);
+		}
 
-bool BackEndInterface::SetConstant(char *token, int value) {
-	return SetConstantFromToken(token, NULL, 0.0, value, false);
-}
+		bool BackEndInterface::SetConstant(char *token, double value) {
+			return SetConstantFromToken(token, NULL, value, 0, false);
+		}
 
-bool BackEndInterface::SetConstant(char *token, bool value) {
-	return SetConstantFromToken(token, NULL, 0.0, 0, value);
-}
+		bool BackEndInterface::SetConstant(char *token, int value) {
+			return SetConstantFromToken(token, NULL, 0.0, value, false);
+		}
 
-void BackEndInterface::LoadSequenceGraph() {
-	sequence = queryEngine->LoadSequenceGraph();
-}
+		bool BackEndInterface::SetConstant(char *token, bool value) {
+			return SetConstantFromToken(token, NULL, 0.0, 0, value);
+		}
 
-void BackEndInterface::LoadSkeletonGraph() {
-	skeleton = queryEngine->LoadSkeletonGraph();
-}
-/*
-int BackEndInterface::ExecuteQuery(StandardGraph * sequenceGraph, StandardGraph * skeletonGraph) {
-	return queryEngine->DoGraphMatching(sequenceGraph, skeletonGraph);
-}
-*/
-int BackEndInterface::ExecuteQuery() {
-	if(skeleton != NULL && sequence != NULL)
-		return queryEngine->DoGraphMatching(sequence, skeleton);
-	else
-		return 0;
-}
+		void BackEndInterface::LoadSequenceGraph() {
+			sequence = queryEngine->LoadSequenceGraph();
+		}
 
-LinkedNode * BackEndInterface::GetResult(int rank) {
-	return queryEngine->GetSolution(rank);
-}
+		void BackEndInterface::LoadSkeletonGraph() {
+			skeleton = queryEngine->LoadSkeletonGraph();
+		}
+		/*
+		int BackEndInterface::ExecuteQuery(StandardGraph * sequenceGraph, StandardGraph * skeletonGraph) {
+			return queryEngine->DoGraphMatching(sequenceGraph, skeletonGraph);
+		}
+		*/
+		int BackEndInterface::ExecuteQuery() {
+			if(skeleton != NULL && sequence != NULL)
+				return queryEngine->DoGraphMatching(sequence, skeleton);
+			else
+				return 0;
+		}
 
-void BackEndInterface::CleanupMemory() {
-	queryEngine->FinishGraphMatching();
-}
+		LinkedNode * BackEndInterface::GetResult(int rank) {
+			return queryEngine->GetSolution(rank);
+		}
 
-bool BackEndInterface::DrawResult(int rank) {
-	return false;
-}
+		void BackEndInterface::CleanupMemory() {
+			queryEngine->FinishGraphMatching();
+		}
 
-bool BackEndInterface::DrawSkeleton() {
-	if(skeleton != NULL) 
-		visualizer->DrawSkeleton(skeleton);
-	else 
-		return false;
-	return true;	
-}
+		bool BackEndInterface::DrawResult(int rank) {
+			return false;
+		}
 
-bool BackEndInterface::DrawSequence() {
-	if(sequence != NULL)
-		visualizer->DrawSequence(sequence);
-	else
-		return false;
-	return true;
+		bool BackEndInterface::DrawSkeleton() {
+			if(skeleton != NULL) 
+				visualizer->DrawSkeleton(skeleton);
+			else 
+				return false;
+			return true;	
+		}
+
+		bool BackEndInterface::DrawSequence() {
+			if(sequence != NULL)
+				visualizer->DrawSequence(sequence);
+			else
+				return false;
+			return true;
+		}
+	}
 }
 
 #endif

@@ -35,6 +35,7 @@ Date  : 01/23/2006
 #include "VisualizationTest.h"
 #include <time.h>
 
+using namespace wustl_mm::GraphMatch;
 
 void DisplayInputFormat()
 {
