@@ -860,6 +860,1678 @@ private:
 };
 
 
+class MatlabReader : public VolumeReader // Reading what's writen using Matlab's fwrite command
+
+{
+
+private:
+
+
+
+	char imgfile[1024] ;
+
+	int dimx, dimy, dimz ;
+
+	float spx, spy, spz ;
+
+
+
+public:
+
+	/* Initializer */
+
+	MatlabReader( char* fname, int sx, int sy, int sz )
+
+	{
+
+		dimx = sz ;
+
+		dimy = sy ;
+
+		dimz = sx ;
+
+		spx = 1 ;
+
+		spy = 1 ;
+
+		spz = 1 ;
+
+
+
+		FILE *fp;
+
+		if((fp=fopen(fname,"r"))==NULL)
+
+		{
+
+			fprintf(stderr,"Can't open:<%s>\n", fname);
+
+			exit(0);
+
+		}
+
+		fclose( fp ) ;
+
+		strcpy(imgfile, fname) ;
+
+
+
+		printf("Dimensions: %d %d %d, ImgFile: %s \n",dimx, dimy, dimz, imgfile) ;
+
+	}
+
+
+
+	/* Read volume */
+
+	Volume* getVolume( )
+
+	{
+
+		FILE* fin = fopen( imgfile, "rb" ) ;
+
+		
+
+		Volume* vol = new Volume( dimx, dimy, dimz ) ;
+
+		int dim[3] = {dimx, dimy, dimz};
+
+		int d1 = dim[ 0 ] ;
+
+		int d2 = dim[ 1 ] * dim[ 0 ] ;
+
+		
+
+		
+
+		// Read in data
+
+		int size = dim[ 0 ] * dim[ 1 ] * dim[ 2 ] ;
+
+		unsigned short * tempdata = new unsigned short [ size ] ;
+
+		fread( tempdata, sizeof( unsigned short ), size, fin ) ;
+
+		int vmin = 100000, vmax = - 100000 ;
+
+		int ct = 0 ;
+
+		for ( int i = 0 ; i < dim[0] ; i ++ )
+
+			for ( int j = 0 ; j < dim[1] ; j ++ )
+
+				for ( int k = 0 ; k < dim[2] ; k ++ )
+
+				{
+
+					if ( tempdata[ ct ] < vmin )
+
+					{
+
+						vmin = tempdata[ ct ] ;
+
+					}
+
+					if ( tempdata[ ct ] > vmax )
+
+					{
+
+						vmax = tempdata[ ct ] ;
+
+					}
+
+					
+
+					vol->setDataAt( i,j,k, (double) ( tempdata[ ct ] ) );
+
+					ct ++ ;
+
+				}
+
+				printf("Min: %d Max: %d...", vmin, vmax) ;
+
+				
+
+				fclose( fin ) ;
+
+
+
+		delete tempdata ;
+
+		vol->setSpacing( spx, spy, spz ) ;
+
+
+
+		return vol ;
+
+	}
+
+
+
+	/* Get resolution */
+
+	void getSpacing( float& ax, float& ay, float& az )
+
+	{
+
+		ax = spx ;
+
+		ay = spy ;
+
+		az = spz ;
+
+	}
+
+
+
+
+
+private:
+
+
+
+	int dimen ;
+
+	char mrcfile[1024] ;
+
+};
+
+
+
+class RawReader : public VolumeReader
+
+{
+
+private:
+
+
+
+	char imgfile[1024] ;
+
+	int dimx, dimy, dimz ;
+
+	float spx, spy, spz ;
+
+
+
+public:
+
+	/* Initializer */
+
+	RawReader( char* fname, int sx, int sy, int sz )
+
+	{
+
+		dimx = sz ;
+
+		dimy = sy ;
+
+		dimz = sx ;
+
+		spx = 1.4 ;
+
+		spy = 1 ;
+
+		spz = 1 ;
+
+
+
+		FILE *fp;
+
+		if((fp=fopen(fname,"r"))==NULL)
+
+		{
+
+			fprintf(stderr,"Can't open:<%s>\n", fname);
+
+			exit(0);
+
+		}
+
+		fclose( fp ) ;
+
+		strcpy(imgfile, fname) ;
+
+
+
+		printf("Dimensions: %d %d %d, ImgFile: %s \n",dimx, dimy, dimz, imgfile) ;
+
+	}
+
+
+
+	/* Read volume */
+
+	Volume* getVolume( )
+
+	{
+
+		FILE* fin = fopen( imgfile, "rb" ) ;
+
+		
+
+		Volume* vol = new Volume( dimx, dimy, dimz ) ;
+
+		int dim[3] = {dimx, dimy, dimz};
+
+		int d1 = dim[ 0 ] ;
+
+		int d2 = dim[ 1 ] * dim[ 0 ] ;
+
+		
+
+		
+
+		// Read in data
+
+		int size = dim[ 0 ] * dim[ 1 ] * dim[ 2 ] ;
+
+		unsigned short * tempdata = new unsigned short [ size ] ;
+
+		fread( tempdata, sizeof( unsigned short ), size, fin ) ;
+
+		int vmin = 100000, vmax = - 100000 ;
+
+		int ct = 0 ;
+
+		for ( int i = 0 ; i < dim[0] ; i ++ )
+
+			for ( int j = 0 ; j < dim[1] ; j ++ )
+
+				for ( int k = 0 ; k < dim[2] ; k ++ )
+
+				{
+
+					if ( tempdata[ ct ] < vmin )
+
+					{
+
+						vmin = tempdata[ ct ] ;
+
+					}
+
+					if ( tempdata[ ct ] > vmax )
+
+					{
+
+						vmax = tempdata[ ct ] ;
+
+					}
+
+					
+
+					vol->setDataAt( i,j,k, (double) ( tempdata[ ct ] ) );
+
+					ct ++ ;
+
+				}
+
+				printf("Min: %d Max: %d...", vmin, vmax) ;
+
+				
+
+				fclose( fin ) ;
+
+
+
+		delete tempdata ;
+
+		vol->setSpacing( spx, spy, spz ) ;
+
+
+
+		return vol ;
+
+	}
+
+
+
+	/* Get resolution */
+
+	void getSpacing( float& ax, float& ay, float& az )
+
+	{
+
+		ax = spx ;
+
+		ay = spy ;
+
+		az = spz ;
+
+	}
+
+
+
+
+
+private:
+
+
+
+	int dimen ;
+
+	char mrcfile[1024] ;
+
+};
+
+
+
+
+
+class FlatListReader : public VolumeReader
+
+{
+
+private:
+
+
+
+	char imgfile[1024] ;
+
+	int dimx, dimy, dimz ;
+
+	int datatype ;
+
+	float spx, spy, spz ;
+
+
+
+public:
+
+	/* Initializer */
+
+	FlatListReader( char* fname )
+
+	{
+
+		FILE *fp;
+
+		if((fp=fopen(fname,"r"))==NULL)
+
+		{
+
+			fprintf(stderr,"Can't open:<%s>\n", fname);
+
+			exit(0);
+
+		}
+
+		
+
+		fscanf( fp, "%d\n", &dimx ) ;
+
+		fscanf( fp, "%d\n", &dimy ) ;
+
+		fscanf( fp, "%d\n", &dimz ) ;
+
+		strcpy(imgfile, fname) ;
+
+
+
+		printf("Dimensions: %d %d %d\n",dimx, dimy, dimz) ;
+
+	}
+
+
+
+	/* Read volume */
+
+	Volume* getVolume( )
+
+	{
+
+		FILE* fin = fopen( imgfile, "r" ) ;
+
+		char line[1024];
+
+		fgets( line, 1024, fin ) ;
+
+		fgets( line, 1024, fin ) ;
+
+		fgets( line, 1024, fin ) ;
+
+		
+
+		Volume* vol = new Volume( dimx, dimy, dimz ) ;
+
+		float d ;
+
+		for ( int i = 0 ; i < dimx ; i ++ )
+
+			for ( int j = 0 ; j < dimy ; j ++ )
+
+				for ( int k = 0 ; k < dimz ; k ++ )
+
+				{
+
+					fscanf( fin, "%f\n", &d ) ;
+
+					// printf("%g\n", d) ;exit(0) ;
+
+					vol->setDataAt( i,j,k, d ) ;
+
+				}
+
+		fclose( fin ) ;
+
+
+
+		vol->setSpacing( 1,1,1 ) ;
+
+
+
+		return vol ;
+
+	}
+
+
+
+	/* Get resolution */
+
+	void getSpacing( float& ax, float& ay, float& az )
+
+	{
+
+		ax = 1 ;
+
+		ay = 1 ;
+
+		az = 1 ;
+
+	}
+
+
+
+
+
+private:
+
+
+
+	int dimen ;
+
+	char mrcfile[1024] ;
+
+};
+
+
+
+
+
+class TimDoseReader : public VolumeReader
+
+{
+
+private:
+
+
+
+	char imgfile[1024] ;
+
+	int dimx, dimy, dimz ;
+
+	float spx, spy, spz ;
+
+
+
+public:
+
+	/* Initializer */
+
+	TimDoseReader( char* fname )
+
+	{
+
+		strcpy(imgfile, fname) ;
+
+
+
+		/*
+
+		FILE *fid;
+
+		if((fid=fopen(fname,"r"))==NULL)
+
+		{
+
+			fprintf(stderr,"Can't open:<%s>\n", fname);
+
+			exit(0);
+
+		}
+
+		char line[1024];
+
+		
+
+		// Read dose Header
+
+		fscanf( fid, "%d %d %d", &dimx, &dimy, &dimz ) ;
+
+
+
+		// Read dose coords
+
+		spx = 0 ;
+
+		spy = 0 ;
+
+		spz = 0 ;
+
+		float lx=0,hx=0,ly=0,hy=0,lz=0,hz=0;
+
+		for ( int i = 0 ; i < dimx ; i ++ )
+
+		{
+
+			lx = hx ;
+
+			fscanf( fid, "%f ", &hx);
+
+			if ( i )
+
+			{
+
+				spx = hx - lx ;
+
+			}
+
+		}
+
+		for ( i = 0 ; i < dimy ; i ++ )
+
+		{
+
+			ly = hy ;
+
+			fscanf( fid, "%f ", &hy);
+
+			if ( i )
+
+			{
+
+				spy = hy - ly ;
+
+			}
+
+		}
+
+		for ( i = 0 ; i < dimz ; i ++ )
+
+		{
+
+			lz = hz ;
+
+			fscanf( fid, "%f ", &hz);
+
+			if ( i )
+
+			{
+
+				spz = hz - lz ;
+
+			}
+
+		}
+
+
+
+		fclose( fid ) ;
+
+		*/
+
+
+
+		FILE *fin;
+
+		if((fin=fopen(fname,"r"))==NULL)
+
+		{
+
+			fprintf(stderr,"Can't open:<%s>\n", fname);
+
+			exit(0);
+
+		}
+
+
+
+		// Scan
+
+#ifdef CT_STRUCTURE
+
+		{
+
+			// Scan Header
+
+			fscanf(fin, "%d %d %d \n", &dimx, &dimy, &dimz);
+
+
+
+			readSpacing( fin ) ;
+
+		}
+
+#else
+
+		{
+
+			// Scan Header
+
+			int xSize, ySize, zSize;
+
+			fscanf(fin, "%d %d %d \n", &xSize, &ySize, &zSize);
+
+
+
+			printf("skipping...");
+
+			skipFloats( fin, xSize ) ;
+
+			skipFloats( fin, ySize ) ;
+
+			skipFloats( fin, zSize ) ;
+
+			skipFloats(fin, (xSize * ySize * zSize));
+
+			printf("skipped.");
+
+		}
+
+#endif
+
+		// Structures
+
+		{
+
+			// Structures Header
+
+			int xSize, ySize, zSize, numStructures;
+
+			fscanf(fin, "%d %d %d %d \n", &xSize, &ySize, &zSize, &numStructures);
+
+
+
+			skipFloats( fin, xSize ) ;
+
+			skipFloats( fin, ySize ) ;
+
+			skipFloats( fin, zSize ) ;
+
+			skipFloats(fin, (xSize * ySize * zSize));
+
+		}
+
+	
+
+#ifndef CT_STRUCTURE
+
+		// Dose
+
+		{
+
+			// Dose Header
+
+			fscanf(fin, "%d %d %d \n", &dimx, &dimy, &dimz);
+
+			readSpacing( fin ) ;
+
+		}
+
+#endif
+
+		fclose(fin);
+
+
+
+		printf("Dimensions: %d %d %d, ImgFile: %s Spacing: %f %f %f\n",dimx, dimy, dimz, imgfile, spx, spy, spz) ;
+
+	}
+
+
+
+	void readSpacing( FILE* fid )
+
+	{
+
+			// Read dose coords
+
+			spx = 0 ;
+
+			spy = 0 ;
+
+			spz = 0 ;
+
+			float lx=0,hx=0,ly=0,hy=0,lz=0,hz=0;
+
+			for ( int i = 0 ; i < dimx ; i ++ )
+
+			{
+
+				lx = hx ;
+
+				fscanf( fid, "%f ", &hx);
+
+				if ( i )
+
+				{
+
+					spx = hx - lx ;
+
+				}
+
+			}
+
+			for (int i = 0 ; i < dimy ; i ++ )
+
+			{
+
+				ly = hy ;
+
+				fscanf( fid, "%f ", &hy);
+
+				if ( i )
+
+				{
+
+					spy = hy - ly ;
+
+				}
+
+			}
+
+			for (int i = 0 ; i < dimz ; i ++ )
+
+			{
+
+				lz = hz ;
+
+				fscanf( fid, "%f ", &hz);
+
+				if ( i )
+
+				{
+
+					spz = hz - lz ;
+
+				}
+
+			}
+
+
+
+	}
+
+
+
+	void skipInts(FILE* fin, int n)
+
+	{
+
+		skipFloats( fin, n ) ;
+
+		/*
+
+		int temp;
+
+		for(int i = 0; i < n; i++)
+
+		{
+
+			fscanf(fin, "%d ", &temp);
+
+		}
+
+		*/
+
+	}
+
+
+
+	void skipFloats(FILE* fin, int n)
+
+	{
+
+		char* line = new char[ n * 10 ] ;
+
+		fgets( line, n * 10, fin ) ;
+
+		delete line ;
+
+		/*
+
+		float temp;
+
+		for(int i = 0; i < n; i++)
+
+		{
+
+			fscanf(fin, "%f ", &temp);
+
+		}
+
+		*/
+
+	}
+
+
+
+	void readVolume( Volume* vol, FILE* fid )
+
+	{
+
+		float maxd = -100000, mind = 100000;
+
+		for ( int x = 0 ; x < dimx ; x ++ )
+
+			for ( int y = 0 ; y < dimy ; y ++ )
+
+				for ( int z = 0 ; z < dimz ; z ++ )
+
+				{
+
+					float data ;
+
+					fscanf( fid, "%f ", &data ) ;
+
+					vol->setDataAt( x, y, z, data ) ;
+
+
+
+					if ( data < mind )
+
+					{
+
+						mind = data ;
+
+					}
+
+					if ( data > maxd )
+
+					{
+
+						maxd = data ;
+
+					}
+
+				}
+
+
+
+		fclose( fid ) ;
+
+	}
+
+
+
+
+
+	/* Read volume */
+
+	Volume* getVolume( )
+
+	{
+
+		Volume* vol = new Volume( dimx, dimy, dimz ) ;
+
+		vol->setSpacing( spx, spy, spz ) ;
+
+/*
+
+		FILE *fid;
+
+		if((fid=fopen(imgfile,"r"))==NULL)
+
+		{
+
+			fprintf(stderr,"Can't open:<%s>\n", imgfile);
+
+			exit(0);
+
+		}
+
+
+
+		
+
+		
+
+		// By pass Header
+
+		fgets( line, 10000, fid ) ;
+
+		fgets( line, 10000, fid ) ;
+
+		fgets( line, 10000, fid ) ;
+
+		fgets( line, 10000, fid ) ;
+
+		fgets( line, 10000, fid ) ;
+
+
+
+#ifdef CT_STRUCTURE 
+
+		for ( int skip = 0 ; skip < CT_STRUCTURE + 4; skip ++ )
+
+		{
+
+			fgets( line, 10000, fid ) ;
+
+		}
+
+#endif
+
+
+
+		// Read dose values
+
+		float maxd = -100000, mind = 100000;
+
+		for ( int x = 0 ; x < dimx ; x ++ )
+
+			for ( int y = 0 ; y < dimy ; y ++ )
+
+				for ( int z = 0 ; z < dimz ; z ++ )
+
+				{
+
+					float data ;
+
+					fscanf( fid, "%f ", &data ) ;
+
+					vol->setDataAt( x, y, z, data ) ;
+
+
+
+					if ( data < mind )
+
+					{
+
+						mind = data ;
+
+					}
+
+					if ( data > maxd )
+
+					{
+
+						maxd = data ;
+
+					}
+
+				}
+
+
+
+		fclose( fid ) ;
+
+
+
+		printf("Max: %f Min: %f\n", maxd, mind) ;
+
+		*/
+
+
+
+		FILE *fin;
+
+		if((fin=fopen(imgfile,"r"))==NULL)
+
+		{
+
+			fprintf(stderr,"Can't open:<%s>\n", imgfile);
+
+			exit(0);
+
+		}
+
+
+
+			// Scan Header
+
+			int xSize, ySize, zSize;
+
+			fscanf(fin, "%d %d %d \n", &xSize, &ySize, &zSize);
+
+
+
+			skipFloats( fin, xSize ) ;
+
+			skipFloats( fin, ySize ) ;
+
+			skipFloats( fin, zSize ) ;
+
+			skipFloats(fin, (xSize * ySize * zSize));
+
+
+
+		// Structures
+
+		{
+
+			// Structures Header
+
+			int xSize, ySize, zSize, numStructures;
+
+			fscanf(fin, "%d %d %d %d \n", &xSize, &ySize, &zSize, &numStructures);
+
+
+
+			skipFloats( fin, xSize ) ;
+
+			skipFloats( fin, ySize ) ;
+
+			skipFloats( fin, zSize ) ;
+
+#ifdef CT_STRUCTURE
+
+			readVolume( vol, fin );
+
+#else
+
+			skipFloats(fin, (xSize * ySize * zSize));
+
+#endif
+
+		}
+
+	
+
+#ifndef CT_STRUCTURE
+
+		// Dose
+
+		{
+
+			// Dose Header
+
+			int xSize, ySize, zSize;
+
+			fscanf(fin, "%d %d %d \n", &xSize, &ySize, &zSize);
+
+			skipFloats( fin, xSize ) ;
+
+			skipFloats( fin, ySize ) ;
+
+			skipFloats( fin, zSize ) ;
+
+			readVolume( vol, fin ) ;
+
+		}
+
+#endif
+
+		fclose(fin);
+
+
+
+
+
+		return vol ;
+
+	}
+
+
+
+	/* Get resolution */
+
+	void getSpacing( float& ax, float& ay, float& az )
+
+	{
+
+		ax = spx ;
+
+		ay = spy ;
+
+		az = spz ;
+
+	}
+
+
+
+
+
+private:
+
+
+
+	int dimen ;
+
+	char mrcfile[1024] ;
+
+};
+
+
+
+class StructureReader : public VolumeReader
+
+{
+
+private:
+
+
+
+	char imgfile[1024] ;
+
+	int dimx, dimy, dimz ;
+
+	float spx, spy, spz ;
+
+	int numstructs ;
+
+
+
+public:
+
+	/* Initializer */
+
+	StructureReader( char* fname )
+
+	{
+
+		strcpy(imgfile, fname) ;
+
+	
+
+		FILE *fid;
+
+		if((fid=fopen(fname,"rb"))==NULL)
+
+		{
+
+			fprintf(stderr,"Can't open:<%s>\n", fname);
+
+			exit(0);
+
+		}
+
+		
+
+		// Read structure Header
+
+		fread(&dimx, sizeof(int), 1, fid ) ;
+
+		fread(&dimy, sizeof(int), 1, fid ) ;
+
+		fread(&dimz, sizeof(int), 1, fid ) ;
+
+		fread(&numstructs, sizeof(int), 1, fid ) ;
+
+		// Read structure coords
+
+		float* data = new float[ dimx ] ;
+
+		fread( data, sizeof(float), dimx, fid ) ;
+
+		spx= (data[dimx-1]- data[0]) / (float)(dimx-1) ;
+
+		delete data ;
+
+		data = new float[ dimy ] ;
+
+		fread( data, sizeof(float), dimy, fid ) ;
+
+		spy= (data[dimy-1]- data[0]) / (float)(dimy-1) ;
+
+		delete data ;
+
+		data = new float[ dimz ] ;
+
+		fread( data, sizeof(float), dimz, fid ) ;
+
+		spz= (data[dimz-1]- data[0]) / (float)(dimz-1) ;
+
+		delete data ;
+
+
+
+		fclose( fid ) ;
+
+
+
+		printf("Dimensions: %d %d %d, Spacing: %f %f %f, structures: %d\n",dimx, dimy, dimz, spx, spy, spz, numstructs) ;
+
+	}
+
+
+
+	void skipInts(FILE* fin, int n)
+
+	{
+
+		int* data = new int[ n ] ;
+
+		fread( data, sizeof( int ), n, fin ) ;
+
+		delete data ;
+
+	}
+
+
+
+	void skipFloats(FILE* fin, int n)
+
+	{
+
+		float* data = new float[ n ] ;
+
+		fread( data, sizeof( float ), n, fin ) ;
+
+		delete data ;
+
+	}
+
+
+
+	void readVolume( Volume* vol, FILE* fid, int ind )
+
+	{
+
+		int mind = 100000, maxd = -100000 ;
+
+		int* data = new int[ dimx * dimy * dimz ] ;
+
+		fread( data, sizeof( int ), dimx * dimy * dimz, fid ) ;
+
+		int ct = 0 ;
+
+		for ( int x = 0 ; x < dimx ; x ++ )
+
+			for ( int y = 0 ; y < dimy ; y ++ )
+
+				for ( int z = 0 ; z < dimz ; z ++ )
+
+				{
+
+					int d = (( data[ct] >> ind ) & 1 ) ;
+
+					vol->setDataAt( x, y, z, (double) d ) ;
+
+					ct ++ ;
+
+
+
+					if ( d < mind )
+
+					{
+
+						mind = d ;
+
+					}
+
+					if ( d > maxd )
+
+					{
+
+						maxd = d ;
+
+					}
+
+				}
+
+		printf( "Min: %d, max: %d\n", mind, maxd ) ;
+
+		delete data ;
+
+	}
+
+
+
+	int getNumStructures( )
+
+	{
+
+		return this->numstructs ;
+
+	}
+
+
+
+	/* Read volume */
+
+	Volume* getVolume( )
+
+	{
+
+		return NULL ;
+
+	}
+
+
+
+	Volume* getVolume( int ind )
+
+	{
+
+		Volume* vol = new Volume( dimx, dimy, dimz ) ;
+
+		vol->setSpacing( spx, spy, spz ) ;
+
+
+
+		FILE *fid;
+
+		if((fid=fopen(imgfile,"rb"))==NULL)
+
+		{
+
+			fprintf(stderr,"Can't open:<%s>\n", imgfile);
+
+			exit(0);
+
+		}
+
+
+
+		// By pass Header
+
+		skipFloats( fid, 4 + dimx + dimy + dimz ) ;
+
+		
+
+		readVolume( vol, fid, ind + 1 ) ;
+
+
+
+		fclose(fid);
+
+
+
+
+
+		return vol ;
+
+	}
+
+
+
+	/* Get resolution */
+
+	void getSpacing( float& ax, float& ay, float& az )
+
+	{
+
+		ax = spx ;
+
+		ay = spy ;
+
+		az = spz ;
+
+	}
+
+
+
+
+
+private:
+
+
+
+	int dimen ;
+
+	char mrcfile[1024] ;
+
+};
+
+
+
+class DoseReader : public VolumeReader
+
+{
+
+private:
+
+
+
+	char imgfile[1024] ;
+
+	int dimx, dimy, dimz ;
+
+	float spx, spy, spz ;
+
+
+
+public:
+
+	/* Initializer */
+
+	DoseReader( char* fname )
+
+	{
+
+		strcpy(imgfile, fname) ;
+
+	
+
+		FILE *fid;
+
+		if((fid=fopen(fname,"rb"))==NULL)
+
+		{
+
+			fprintf(stderr,"Can't open:<%s>\n", fname);
+
+			exit(0);
+
+		}
+
+		
+
+		// Read dose Header
+
+		fread(&dimx, sizeof(int), 1, fid ) ;
+
+		fread(&dimy, sizeof(int), 1, fid ) ;
+
+		fread(&dimz, sizeof(int), 1, fid ) ;
+
+
+
+		// Read dose coords
+
+		float* data = new float[ dimx ] ;
+
+		fread( data, sizeof(float), dimx, fid ) ;
+
+		printf("%f %f\n", data[dimx-2], data[dimx-1]) ;
+
+		spx= data[dimx-1]- data[dimx-2] ;
+
+		delete data ;
+
+		data = new float[ dimy ] ;
+
+		fread( data, sizeof(float), dimy, fid ) ;
+
+		spy= data[dimy-1]- data[dimy-2] ;
+
+		delete data ;
+
+		data = new float[ dimz ] ;
+
+		fread( data, sizeof(float), dimz, fid ) ;
+
+		spz= data[dimz-1]- data[dimz-2] ;
+
+		delete data ;
+
+
+
+		fclose( fid ) ;
+
+
+
+		printf("Dimensions: %d %d %d, ImgFile: %s Spacing: %f %f %f\n",dimx, dimy, dimz, imgfile, spx, spy, spz) ;
+
+	}
+
+
+
+	void skipInts(FILE* fin, int n)
+
+	{
+
+		int* data = new int[ n ] ;
+
+		fread( data, sizeof( int ), n, fin ) ;
+
+		delete data ;
+
+	}
+
+
+
+	void skipFloats(FILE* fin, int n)
+
+	{
+
+		float* data = new float[ n ] ;
+
+		fread( data, sizeof( float ), n, fin ) ;
+
+		delete data ;
+
+	}
+
+
+
+	void readVolume( Volume* vol, FILE* fid )
+
+	{
+
+		float maxd = -100000, mind = 100000;
+
+		float* data = new float[ dimx * dimy * dimz ] ;
+
+		fread( data, sizeof( float ), dimx * dimy * dimz, fid ) ;
+
+		int ct = 0 ;
+
+		for ( int x = 0 ; x < dimx ; x ++ )
+
+			for ( int y = 0 ; y < dimy ; y ++ )
+
+				for ( int z = 0 ; z < dimz ; z ++ )
+
+				{
+
+					float d = data[ct] ;
+
+					vol->setDataAt( x, y, z, d ) ;
+
+					ct ++ ;
+
+
+
+					if ( d < mind )
+
+					{
+
+						mind = d ;
+
+					}
+
+					if ( d > maxd )
+
+					{
+
+						maxd = d ;
+
+					}
+
+				}
+
+		delete data ;
+
+	}
+
+
+
+
+
+	/* Read volume */
+
+	Volume* getVolume( )
+
+	{
+
+		Volume* vol = new Volume( dimx, dimy, dimz ) ;
+
+		vol->setSpacing( spx, spy, spz ) ;
+
+
+
+		FILE *fid;
+
+		if((fid=fopen(imgfile,"rb"))==NULL)
+
+		{
+
+			fprintf(stderr,"Can't open:<%s>\n", imgfile);
+
+			exit(0);
+
+		}
+
+
+
+		// By pass Header
+
+		skipFloats( fid, 3 + dimx + dimy + dimz ) ;
+
+		
+
+		readVolume( vol, fid ) ;
+
+
+
+		fclose(fid);
+
+
+
+
+
+		return vol ;
+
+	}
+
+
+
+	/* Get resolution */
+
+	void getSpacing( float& ax, float& ay, float& az )
+
+	{
+
+		ax = spx ;
+
+		ay = spy ;
+
+		az = spz ;
+
+	}
+
+
+
+
+
+private:
+
+
+
+	int dimen ;
+
+	char mrcfile[1024] ;
+
+};
+
+
+
+
+
+
+
 class CylinderVolumeGenerator : public VolumeReader
 {
 public:

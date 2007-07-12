@@ -26,15 +26,16 @@
 
 /* Output parameters */
 #define WRITE_CELLS
-#define WRITE_DISTANCE_MAP
-#define WRITE_SEGMENTATION
+//#define WRITE_DISTANCE_MAP
+//#define WRITE_SEGMENTATION
 //#define WRITE_ORIGINALS
 #define WRITE_PQR
+//#define WRITE_DX
 
 /* Input specific */
 #define PQR_PADDING 4
-#define DX_MAG 2
-//#define PQR_COMPONENT 20
+#define DX_MAG 4
+#define PQR_COMPONENT 20
 
 //#define HAS_SKELETON
 
@@ -67,7 +68,7 @@ int main( int args, char* argv[] )
 	printf("Initialize volume...") ;
 	int modelType ; // 0 for MRC, 1 for SOF
 	VolumeReader* reader ;
-	Volume * vol;
+	Volume * vol, * rawvol ;
 	
 	if ( strstr( argv[2], ".mrc" ) != NULL || strstr( argv[2], ".MRC" ) != NULL )
 	{
@@ -111,7 +112,7 @@ int main( int args, char* argv[] )
 		vol = reader->getVolume( ) ;
 //		vol->floodFillPQR ( 1 ) ;
 		char tname[1024];
-		sprintf_s( tname, "test_%d.mrc", DX_MAG ) ;
+		sprintf( tname, "test_%d.mrc", DX_MAG ) ;
 		vol->toMRCFile( tname ) ;
 	}
 	else
@@ -214,7 +215,7 @@ int main( int args, char* argv[] )
 		if ( flag == 7 || flag == 9 )
 		{
 			char nname[1024] ;
-			sprintf_s( nname, "%s_skeleton.mrc", name) ;
+			sprintf( nname, "%s_skeleton.mrc", name) ;
 			vol->toMRCFile(nname) ;
 		}
 
@@ -225,8 +226,8 @@ int main( int args, char* argv[] )
 		if ( flag == 7 || flag == 9 )
 		{
 			char nname1[1024], nname2[1024] ;
-			sprintf_s( nname1, "%s_helix.mrc", name) ;
-			sprintf_s( nname2, "%s_sheet.mrc", name) ;
+			sprintf( nname1, "%s_helix.mrc", name) ;
+			sprintf( nname2, "%s_sheet.mrc", name) ;
 			hvol->toMRCFile(nname1) ;
 			svol->toMRCFile(nname2) ;
 		}		
@@ -338,9 +339,9 @@ int main( int args, char* argv[] )
 
 #ifdef WRITE_CELLS_ORIGINAL
 		char newname[1024];
-		sprintf_s( newname, "%s.off", name ) ;
+		sprintf( newname, "%s.off", name ) ;
 		vol->toOFFCells( newname, threshold ) ;
-		sprintf_s( newname, "%s2.off", name ) ;
+		sprintf( newname, "%s2.off", name ) ;
 		vol->toOFFCells2( newname, threshold ) ;
 #endif
 		// First, read PDB atoms location
@@ -397,7 +398,7 @@ int main( int args, char* argv[] )
 			//vol->dumbsurfaceSkeleton( threshold ) ;
 #ifndef HAS_SKELETON
 			ovol = new Volume( vol->getSizeX(), vol->getSizeY(), vol->getSizeZ(), 0, 0, 0, vol ) ;
-#ifdef WRITE_PQR
+#ifdef WRITE_DX
 			vol->skeleton( threshold, PQR_PADDING ) ;
 #else
 			vol->surfaceSkeleton( threshold ) ;
@@ -418,31 +419,31 @@ int main( int args, char* argv[] )
 		if ( ( flag == 4 && TOPOLOGY_CHECK != 4 ) || flag == 6 )
 		{
 			char nname[1024] ;
-			sprintf_s( nname, "%s_skeleton.mrc", name) ;
+			sprintf( nname, "%s_skeleton.mrc", name) ;
 			vol->toMRCFile(nname) ;  
 
 #ifdef WRITE_CELLS
 			if ( TOPOLOGY_CHECK == 6 || TOPOLOGY_CHECK == 7 )
 			{
 				char newname[1024] ;
-				sprintf_s( newname, "%s2.off", nname) ;
+				sprintf( newname, "%s2.off", nname) ;
 				vol->toOFFCells2(newname) ;
 			}
-			sprintf_s( nname, "%s.off", nname) ;
+			sprintf( nname, "%s.off", nname) ;
 			vol->toOFFCells(nname) ;
 #endif
 		}
 		else if ( flag == 4 )
 		{
 			char nname[1024] ;
-			sprintf_s( nname, "%s_skeleton_test.mrc", name) ;
+			sprintf( nname, "%s_skeleton_test.mrc", name) ;
 			vol->toMRCFile(nname) ;  
 
 #ifdef WRITE_CELLS
 			char nname2[1024] ;
-			sprintf_s( nname2, "%s.off", nname) ;
+			sprintf( nname2, "%s.off", nname) ;
 //			vol->toOFFCells(nname2) ;
-			sprintf_s( nname2, "%s2.off", nname) ;
+			sprintf( nname2, "%s2.off", nname) ;
 			vol->toOFFCells2(nname2) ;
 #endif
 		}
@@ -462,14 +463,14 @@ int main( int args, char* argv[] )
 			svol = new Volume( vol->getSizeX(), vol->getSizeY(), vol->getSizeZ(), 0, 0, 0, vol ) ;
 			int maxDis = svol->erodeSheet( minSheet ) ;
 
-#ifdef WRITE_PQR
+#ifdef WRITE_DX
 			char nname4[1024] ;
 			printf("Pruning medial curves...\n");
 			vol->subtract( svol ) ;
 			
-			sprintf_s( nname4, "%s_path_s.off", name) ;
+			sprintf( nname4, "%s_path_s.off", name) ;
 			svol->toOFFCells2(nname4) ;
-			sprintf_s( nname4, "%s_path_h.off", name) ;
+			sprintf( nname4, "%s_path_h.off", name) ;
 			vol->toOFFCells2(nname4) ;
 
 
@@ -477,7 +478,7 @@ int main( int args, char* argv[] )
 			vol->reduceComponent2( 1 ) ;
 
 			printf("Write out path...\n");
-			sprintf_s( nname4, "%s_path.pqr", name) ;
+			sprintf( nname4, "%s_path.pqr", name) ;
 			/*
 			hvol->toPQRFile(nname4, ((PQRReader *)reader)->getSpacing(), 
 				((PQRReader *)reader)->getMinx(),
@@ -488,9 +489,9 @@ int main( int args, char* argv[] )
 			vol->toPQRFile(nname4, 0.25f * DX_MAG, 
 				-4.014000f, 2.071000f, -2.898000f,
 				PQR_PADDING * 2) ;
-			sprintf_s( nname4, "%s_path.mrc", name) ;
+			sprintf( nname4, "%s_path.mrc", name) ;
 			vol->toMRCFile(nname4) ;
-			sprintf_s( nname4, "%s_path.off", name) ;
+			sprintf( nname4, "%s_path.off", name) ;
 			vol->toOFFCells2(nname4) ;
 			exit(0) ;
 #endif
@@ -506,28 +507,28 @@ int main( int args, char* argv[] )
 			finvol->skeleton( threshold, svol, hvol ) ;
 
 			char nname[1024] ;
-			sprintf_s( nname, "%s_skeleton.mrc", name) ;
+			sprintf( nname, "%s_skeleton.mrc", name) ;
 			finvol->toMRCFile( nname ) ;
 
 
 #ifdef WRITE_CELLS
 			char nname2[1024] ;
-			sprintf_s( nname2, "%s.off", nname) ;
+			sprintf( nname2, "%s.off", nname) ;
 			finvol->toOFFCells(nname2) ;
-			sprintf_s( nname2, "%s2.off", nname) ;
+			sprintf( nname2, "%s2.off", nname) ;
 			finvol->toOFFCells2(nname2) ;
 #endif
 
 #ifdef WRITE_SEGMENTATION
 			char nname5[1024] ;
-			sprintf_s( nname5, "%s_colors.mrc", name) ;
+			sprintf( nname5, "%s_colors.mrc", name) ;
 			finvol->subtract( svol ) ;
 			ovol->segment( threshold, finvol, svol, nname5 ) ;
 #endif
 
 #ifdef WRITE_DISTANCE_MAP
 			char nname6[1024] ;
-			sprintf_s( nname6, "%s_colors.mrc", name) ;
+			sprintf( nname6, "%s_colors.mrc", name) ;
 			ovol->segment( threshold, vol, maxDis, nname6 ) ;
 #endif
 
@@ -536,29 +537,30 @@ int main( int args, char* argv[] )
 		if ( flag == 4 || flag == 6 )
 		{
 			char nname1[1024], nname2[1024] ;
-			sprintf_s( nname1, "%s_helix.mrc", name) ;
-			sprintf_s( nname2, "%s_sheet.mrc", name) ;
+			sprintf( nname1, "%s_helix.mrc", name) ;
+			sprintf( nname2, "%s_sheet.mrc", name) ;
 
 #ifdef WRITE_PQR
 
 			hvol->reduceComponent( minHelix ) ;
 
 			char nname4[1024] ;
-			sprintf_s( nname4, "%s_path.pqr", name) ;
+			sprintf( nname4, "%s_path.pqr", name) ;
 			hvol->toPQRFile(nname4, ((PQRReader *)reader)->getSpacing(), 
 				((PQRReader *)reader)->getMinx(),
 				((PQRReader *)reader)->getMiny(),
 				((PQRReader *)reader)->getMinz(),
 				PQR_PADDING) ;
-#endif
+#else
 			hvol->toMRCFile(nname1) ;
 			svol->toMRCFile(nname2) ;
+#endif
 			
 #ifdef WRITE_CELLS
 			char nname3[1024] ;
-			sprintf_s( nname3, "%s2.off", nname1) ;
+			sprintf( nname3, "%s2.off", nname1) ;
 			hvol->toOFFCells2(nname3) ;
-			sprintf_s( nname3, "%s2.off", nname2) ;
+			sprintf( nname3, "%s2.off", nname2) ;
 			svol->toOFFCells2(nname3) ;
 #endif
 
