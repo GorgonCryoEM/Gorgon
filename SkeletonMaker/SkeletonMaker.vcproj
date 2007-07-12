@@ -2,7 +2,7 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="8.00"
-	Name="Morph"
+	Name="SkeletonMaker"
 	ProjectGUID="{817660CF-4E6C-48F6-BF18-FB75FC2B6B5E}"
 	RootNamespace="SkeletonMaker"
 	Keyword="ManagedCProj"

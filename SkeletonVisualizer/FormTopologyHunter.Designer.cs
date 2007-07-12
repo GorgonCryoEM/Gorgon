@@ -1,4 +1,4 @@
-namespace SkeletonVisualizer
+namespace wustl_mm.SkeletonVisualizer
 {
     partial class FormTopologyHunter
     {

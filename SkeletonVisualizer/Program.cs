@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 
-namespace SkeletonVisualizer
+namespace wustl_mm.SkeletonVisualizer
 {
     static class Program
     {
