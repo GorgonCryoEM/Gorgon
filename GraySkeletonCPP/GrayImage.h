@@ -16,7 +16,7 @@ namespace wustl_mm {
 			GrayImage(int sizeX, int sizeY);
 			GrayImage(GrayImage * sourceImage);
 			~GrayImage();
-
+			
 			unsigned char GetDataAt(int x, int y);
 			int GetSizeX();
 			int GetSizeY();
@@ -25,6 +25,7 @@ namespace wustl_mm {
 			static GrayImage * GrayImageVolumeToImage(Volume * volume);
 			void PrintValues();
 			void Threshold(unsigned char threshold, bool preserveHighValues);
+			void Pad(int padBy, unsigned char padValue);
 			void ApplyMask(GrayImage * maskImage, unsigned char maskValue, bool keepMaskValue);
 			void Blur();
 		private:
@@ -152,6 +153,31 @@ namespace wustl_mm {
 				}
 			}
 		}
+		void GrayImage::Pad (int padBy, unsigned char padValue) {
+			int newSizeX = sizeX + 2*padBy;
+			int newSizeY = sizeY + 2*padBy;
+			unsigned char * newData = new unsigned char [newSizeX * newSizeY];
+			unsigned char value;
+
+
+			for(int x = 0; x < newSizeX; x++) {
+				for(int y = 0; y < newSizeY; y++) {					
+					if ((x < padBy) || (y < padBy) || (x >= padBy + sizeX) || (y >= padBy + sizeY)) {
+						value = padValue;
+					} else {
+						value = GetDataAt(x-padBy, y-padBy);
+					}
+
+					newData[x + newSizeX * y] = value;
+				
+				}
+			}
+			delete [] data;
+			data = newData;
+			sizeX = newSizeX;
+			sizeY = newSizeY;
+
+	}
 		void GrayImage::ApplyMask(GrayImage * maskImage, unsigned char maskValue, bool keepMaskValue) {
 			for(int x = 0; x < maskImage->GetSizeX(); x++) {
 				for(int y = 0; y < maskImage->GetSizeY(); y++) {

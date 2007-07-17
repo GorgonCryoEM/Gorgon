@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 9.00
 # Visual Studio 2005
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Morph", "SkeletonMaker\SkeletonMaker.vcproj", "{817660CF-4E6C-48F6-BF18-FB75FC2B6B5E}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SkeletonMaker", "SkeletonMaker\SkeletonMaker.vcproj", "{817660CF-4E6C-48F6-BF18-FB75FC2B6B5E}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GraphMatch", "GraphMatch\GraphMatch.vcproj", "{E98C9677-C8CA-4CC3-8AE7-A06140EA49BB}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -16,6 +16,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GraySkeletonCPP", "GraySkel
 	ProjectSection(ProjectDependencies) = postProject
 		{817660CF-4E6C-48F6-BF18-FB75FC2B6B5E} = {817660CF-4E6C-48F6-BF18-FB75FC2B6B5E}
 	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MatlabInterface", "MatlabInterface\MatlabInterface.vcproj", "{EC8F7758-80CF-436B-978B-717297945FAB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -69,6 +71,16 @@ Global
 		{E3B1B536-8C7A-45E8-9BAA-5FE4F7B9FE13}.Release|Mixed Platforms.Build.0 = Release|Win32
 		{E3B1B536-8C7A-45E8-9BAA-5FE4F7B9FE13}.Release|Win32.ActiveCfg = Release|Win32
 		{E3B1B536-8C7A-45E8-9BAA-5FE4F7B9FE13}.Release|Win32.Build.0 = Release|Win32
+		{EC8F7758-80CF-436B-978B-717297945FAB}.Debug|Any CPU.ActiveCfg = Debug|Win32
+		{EC8F7758-80CF-436B-978B-717297945FAB}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
+		{EC8F7758-80CF-436B-978B-717297945FAB}.Debug|Mixed Platforms.Build.0 = Debug|Win32
+		{EC8F7758-80CF-436B-978B-717297945FAB}.Debug|Win32.ActiveCfg = Debug|Win32
+		{EC8F7758-80CF-436B-978B-717297945FAB}.Debug|Win32.Build.0 = Debug|Win32
+		{EC8F7758-80CF-436B-978B-717297945FAB}.Release|Any CPU.ActiveCfg = Release|Win32
+		{EC8F7758-80CF-436B-978B-717297945FAB}.Release|Mixed Platforms.ActiveCfg = Release|Win32
+		{EC8F7758-80CF-436B-978B-717297945FAB}.Release|Mixed Platforms.Build.0 = Release|Win32
+		{EC8F7758-80CF-436B-978B-717297945FAB}.Release|Win32.ActiveCfg = Release|Win32
+		{EC8F7758-80CF-436B-978B-717297945FAB}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

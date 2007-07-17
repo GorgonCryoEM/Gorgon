@@ -44,6 +44,7 @@ namespace wustl_mm {
 				}
 			}		
 			fclose( fin ) ;
+			vol->setSpacing(xSpacing, ySpacing, zSpacing);
 
 			delete [] tempdata ;	
 			return vol;

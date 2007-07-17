@@ -16,7 +16,7 @@
 #include <vector>
 
 #define MAX_SHEETS 100000
-#define MAX_QUEUELEN 100000
+#define MAX_QUEUELEN 500000
 
 #define MAX_ERODE 1000
 
@@ -717,6 +717,34 @@ public:
 
 	}
 
+	void pad (int padBy, double padValue) {
+		int newSizeX = sizex + 2*padBy;
+		int newSizeY = sizey + 2*padBy;
+		int newSizeZ = sizez + 2*padBy;
+		float * newData = new float[newSizeX * newSizeY * newSizeZ];
+		double value;
+
+
+		for(int x = 0; x < newSizeX; x++) {
+			for(int y = 0; y < newSizeY; y++) {
+				for(int z = 0; z < newSizeZ; z++) {
+					if ((x < padBy) || (y < padBy) || (z < padBy) || (x >= padBy + sizex) || (y >= padBy + sizey) || (z >= padBy + sizez)) {
+						value = padValue;
+					} else {
+						value = getDataAt(x-padBy, y-padBy, z-padBy);
+					}
+
+					newData[x * newSizeY * newSizeZ + y * newSizeY + z] = (float)value;
+				}
+			}
+		}
+		delete [] data;
+		data = newData;
+		sizex = newSizeX;
+		sizey = newSizeY;
+		sizez = newSizeZ;
+
+	}
 	/* Statistics function */
 	int getSizeX( )
 	{
@@ -9520,7 +9548,7 @@ public:
 		fprintf(fout, "}\n");
 
 		fclose(fout);
-	}
+	} */
 private:
 
 	/* Sizes */

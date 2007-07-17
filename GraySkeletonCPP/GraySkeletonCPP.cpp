@@ -40,9 +40,13 @@ int main( int args, char * argv[] ) {
 	switch(args){
 		case 4: 
 			if(strcmp(argv[1], "2") == 0) {
-				GrayImageSkeletonizer::PerformJuSkeletonization(argv[2], argv[3]);
+				GrayImageSkeletonizer * skeletonizer2D = new GrayImageSkeletonizer();
+				skeletonizer2D->PerformJuSkeletonization(argv[2], argv[3]);
+				delete skeletonizer2D;
 			} else if(strcmp(argv[1], "3") == 0) {
-				VolumeSkeletonizer::PerformJuSkeletonization(argv[2], argv[3]);
+				VolumeSkeletonizer * skeletonizer3D = new VolumeSkeletonizer();
+				skeletonizer3D->PerformJuSkeletonization(argv[2], argv[3]);
+				delete skeletonizer3D;
 			} else {
 				DisplayInputParams();
 			}		

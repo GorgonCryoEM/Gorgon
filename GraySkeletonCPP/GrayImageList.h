@@ -39,9 +39,11 @@ namespace wustl_mm {
 			int imageSizeX = imageList[0]->GetSizeX();
 			int imageSizeY = imageList[0]->GetSizeY();
 			int yCount = (int)ceil((double)imageList.size() / (double)xCount);		
-			int xImage, yImage;
+			int xImage, yImage;			
 			GrayImage * compositeImage = new GrayImage(imageSizeX * xCount, imageSizeY * yCount);
 			GrayImage * currentImage;
+
+		
 
 			
 			for(int i = 0; i < imageList.size(); i++) {
