@@ -7,8 +7,8 @@
 
 namespace wustl_mm {
 	namespace GraySkeletonCPP {
-		const int GRAYIMAGE_IN_VOLUME_Z = 2;
-		const int GRAYIMAGE_VOLUME_Z_SIZE = 5;
+		const int GRAYIMAGE_IN_VOLUME_Z = GAUSSIAN_FILTER_RADIUS;
+		const int GRAYIMAGE_VOLUME_Z_SIZE = GAUSSIAN_FILTER_RADIUS * 2 + 1;
 
 		class GrayImage {
 		public:
@@ -20,6 +20,7 @@ namespace wustl_mm {
 			unsigned char GetDataAt(int x, int y);
 			int GetSizeX();
 			int GetSizeY();
+			int GetIndex(int x, int y);
 			void SetDataAt(int x, int y, unsigned char value);
 			Volume * ToVolume();
 			static GrayImage * GrayImageVolumeToImage(Volume * volume);
@@ -27,7 +28,7 @@ namespace wustl_mm {
 			void Threshold(unsigned char threshold, bool preserveHighValues);
 			void Pad(int padBy, unsigned char padValue);
 			void ApplyMask(GrayImage * maskImage, unsigned char maskValue, bool keepMaskValue);
-			void Blur();
+			void Blur();	
 		private:
 			int sizeX;
 			int sizeY;
@@ -70,7 +71,7 @@ namespace wustl_mm {
 		}
 
 		unsigned char GrayImage::GetDataAt(int x, int y) {
-			return data[x + sizeX * y]; 
+			return data[GetIndex(x, y)]; 
 		}
 
 		int GrayImage::GetSizeX() {
@@ -81,12 +82,16 @@ namespace wustl_mm {
 			return sizeY;
 		}
 
+		int GrayImage::GetIndex(int x, int y) {
+			return x + sizeX * y;
+		}
+
 		void GrayImage::SetDataAt(int x, int y, unsigned char value) {
-			data[x + sizeX * y] = value;
+			data[GetIndex(x, y)] = value;
 		}
 
 		Volume * GrayImage::ToVolume() {
-			Volume * vol = new Volume(sizeX, sizeY, 5);
+			Volume * vol = new Volume(sizeX, sizeY, GRAYIMAGE_VOLUME_Z_SIZE);
 			for(int z = 0; z < GRAYIMAGE_VOLUME_Z_SIZE; z++) {
 				for(int x = 0; x < sizeX; x++) {
 					for(int y = 0; y < sizeY; y++) {		
@@ -103,7 +108,7 @@ namespace wustl_mm {
 		}
 		GrayImage * GrayImage::GrayImageVolumeToImage(Volume * volume) {
 			GrayImage * image = new GrayImage(volume->getSizeX(), volume->getSizeY());
-			double minValue = volume->getDataAt(0,0,5);
+			double minValue = volume->getDataAt(0,0,0);
 			double maxValue = volume->getDataAt(0,0,0);
 			double currValue;
 

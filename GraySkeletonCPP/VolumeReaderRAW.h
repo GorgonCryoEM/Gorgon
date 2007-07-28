@@ -8,16 +8,16 @@ namespace wustl_mm {
 	namespace GraySkeletonCPP {
 		class VolumeReaderRAW : VolumeReader {
 		public:
-			static Volume * LoadVolume(char * fileName);
-			static Volume * LoadVolume(char * fileName, int xSize, int ySize, int zSize, int xSpacing, int ySpacing, int zSpacing);
-			static Volume * SaveVolume(Volume * volume, char * fileName);
+			static Volume * LoadVolume(string fileName);
+			static Volume * LoadVolume(string fileName, int xSize, int ySize, int zSize, int xSpacing, int ySpacing, int zSpacing);
+			static Volume * SaveVolume(Volume * volume, string fileName);
 		};
 
-		Volume * VolumeReaderRAW::LoadVolume(char * fileName) {
+		Volume * VolumeReaderRAW::LoadVolume(string fileName) {
 			struct stat results;
 			int sideSize = 128;
 		    
-			if (stat(fileName, &results) == 0) {
+			if (stat(fileName.c_str(), &results) == 0) {
 				int dimension = (int)round(pow(results.st_size, 0.333333333333));
 				if (dimension * dimension * dimension == results.st_size) {
 					sideSize = dimension;
@@ -26,8 +26,8 @@ namespace wustl_mm {
 			return LoadVolume(fileName, sideSize, sideSize, sideSize, 1, 1, 1);
 		}
 
-		Volume * VolumeReaderRAW::LoadVolume(char * fileName, int xSize, int ySize, int zSize, int xSpacing, int ySpacing, int zSpacing) {
-			FILE* fin = fopen( fileName, "rb" );		
+		Volume * VolumeReaderRAW::LoadVolume(string fileName, int xSize, int ySize, int zSize, int xSpacing, int ySpacing, int zSpacing) {
+			FILE* fin = fopen( fileName.c_str(), "rb" );		
 
 			Volume* vol = new Volume( xSize, ySize, zSize) ;	
 			

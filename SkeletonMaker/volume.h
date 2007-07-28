@@ -5136,6 +5136,11 @@ public:
 		// Finally, clean up
 		printf("Thresholding the volume to 0/1...\n") ;
 		threshold( 0, 0, 1 ) ;		
+		delete scrvol;
+		delete queue;
+		delete queue2;
+		delete queue3;
+		delete queue4;
 	}
 
 	// Compute minimal skeleton
@@ -8168,9 +8173,14 @@ public:
 	}
 
 	/* Set data at a pixel */
+
+	int getIndex(int x, int y, int z) {
+		return (x * sizey * sizez + y * sizez + z);
+	}
+
 	void setDataAt( int x, int y, int z, double d )
 	{
-		data[ x * sizey * sizez + y * sizez + z ] = (float)d ;
+		setDataAt(getIndex(x,y,z), d);
 	}
 	void setDataAt( int index, double d )
 	{
@@ -8180,8 +8190,9 @@ public:
 	/* Get data at a single voxel */
 	double getDataAt( int x, int y, int z ) 
 	{
-		return data[ x * sizey * sizez + y * sizez + z ] ;
+		return getDataAt(getIndex(x, y, z));
 	}
+
 	double getDataAt( int index ) 
 	{
 		return data[ index ] ;

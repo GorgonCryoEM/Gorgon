@@ -165,7 +165,23 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
+				RelativePath=".\Combinatorics.h"
+				>
+			</File>
+			<File
+				RelativePath=".\DataStructures.h"
+				>
+			</File>
+			<File
+				RelativePath=".\MathLib.h"
+				>
+			</File>
+			<File
 				RelativePath=".\MatlabWrapper.h"
+				>
+			</File>
+			<File
+				RelativePath=".\VectorLib.h"
 				>
 			</File>
 		</Filter>

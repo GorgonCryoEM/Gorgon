@@ -176,6 +176,10 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
+				RelativePath=".\DiscreteMesh.h"
+				>
+			</File>
+			<File
 				RelativePath=".\GlobalDefinitions.h"
 				>
 			</File>
@@ -201,6 +205,14 @@
 			</File>
 			<File
 				RelativePath=".\ImageReaderMRC.h"
+				>
+			</File>
+			<File
+				RelativePath=".\SkeletalCurve.h"
+				>
+			</File>
+			<File
+				RelativePath=".\VolumeDeltaAnalyzer.h"
 				>
 			</File>
 			<File

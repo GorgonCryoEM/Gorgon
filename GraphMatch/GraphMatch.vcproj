@@ -197,10 +197,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Combinatorics.h"
-				>
-			</File>
-			<File
 				RelativePath=".\GeometricShape.h"
 				>
 			</File>
