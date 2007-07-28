@@ -5,27 +5,27 @@ namespace wustl_mm {
 	namespace GraySkeletonCPP {
 		class ImageReader {
 		public:
-			static GrayImage * LoadRGBImage(char * fileName);
-			static GrayImage * LoadGrayscaleImage(char * fileName);
-			static void SaveRGBImage(GrayImage * image, char * fileName);
-			static void SaveGrayscaleImage(GrayImage * image, char * fileName);
+			static GrayImage * LoadRGBImage(string fileName);
+			static GrayImage * LoadGrayscaleImage(string fileName);
+			static void SaveRGBImage(GrayImage * image, string fileName);
+			static void SaveGrayscaleImage(GrayImage * image, string fileName);
 		};
 
-		GrayImage * ImageReader::LoadRGBImage(char * fileName) {
+		GrayImage * ImageReader::LoadRGBImage(string fileName) {
 			printf("ImageReader::LoadRGBImage not implemented");
 			return NULL;
 		}
 
-		GrayImage *  ImageReader::LoadGrayscaleImage(char * fileName) {
+		GrayImage *  ImageReader::LoadGrayscaleImage(string fileName) {
 			printf("ImageReader::LoadGrayscaleImage not implemented");
 			return NULL;
 		}
 
-		void ImageReader::SaveRGBImage(GrayImage * image, char * fileName) {
+		void ImageReader::SaveRGBImage(GrayImage * image, string fileName) {
 			printf("ImageReader::SaveRGBImage not implemented");
 		}
 
-		void ImageReader::SaveGrayscaleImage(GrayImage * image, char * fileName) {
+		void ImageReader::SaveGrayscaleImage(GrayImage * image, string fileName) {
 			printf("ImageReader::SaveGrayscaleImage not implemented");
 		}
 	}

@@ -5,8 +5,10 @@
 
 namespace wustl_mm {
 	namespace GraySkeletonCPP {
+
+		const bool WRITE_DEBUG_FILES = false;
 		const int PRUNE_AMOUNT = 4;
-		const int PARTIAL_DERIVATIVE_MASK_SIZE = 5;
+		const int GAUSSIAN_FILTER_RADIUS = 4;
 		const unsigned char PIXEL_CLASS_BACKGROUND = 0;
 		const unsigned char PIXEL_CLASS_POINT = 254;
 		const unsigned char PIXEL_CLASS_CURVE_END = 223;
@@ -17,7 +19,7 @@ namespace wustl_mm {
 		const unsigned char PIXEL_BINARY_TRUE = 255;
 
 		const unsigned char VOXEL_CLASS_CURVE_BACKGROUND = 0;
-		const unsigned char VOXEL_CLASS_CURVE_POINT = 1;
+		const unsigned char VOXEL_CLASS_POINT = 1;
 		const unsigned char VOXEL_CLASS_CURVE_END = 2;
 		const unsigned char VOXEL_CLASS_CURVE_BODY = 3;
 		const unsigned char VOXEL_CLASS_SURFACE_BORDER = 4;
@@ -32,6 +34,11 @@ namespace wustl_mm {
 		const int IMAGE_NEIGHBORS_4[4][2]      ={{0,1},{1,0},{0,-1},{-1,0}};
 		const int IMAGE_NEIGHBORS_8[8][2]      ={{0,1},{1,1},{1,0},{1,-1},{0,-1},{-1,-1},{-1,0},{-1,1}};
 		const int VOLUME_NEIGHBORS_6[6][3]     ={{0,0,1},{0,0,-1},{0,1,0},{0,-1,0},{1,0,0},{-1,0,0}};
+		const int VOLUME_NEIGHBORS_18[18][3]   ={
+			{-1,-1,0}, {-1,0,-1}, {-1,0,0}, {-1,0,1}, {-1,1,0}, {0,-1,-1},  
+			{0,-1,0}, {0,-1,1}, {0,0,-1}, {0,0,1}, {0,1,-1}, {0,1,0},
+			{0,1,1}, {1,-1,0}, {1,0,-1}, {1,0,0}, {1,0,1}, {1,1,0}};
+
 		const int VOLUME_NEIGHBORS_26[26][3]   ={
 			{-1,-1,-1}, {-1,-1,0}, {-1,-1,1}, {-1,0,-1}, {-1,0,0}, {-1,0,1}, {-1,1,-1},	{-1,1,0}, {-1,1,1}, 
 			{0,-1,-1},  {0,-1,0},  {0,-1,1},  {0,0,-1},            {0,0,1},  {0,1,-1},  {0,1,0},  {0,1,1}, 
@@ -45,6 +52,20 @@ namespace wustl_mm {
 			{{1,0,0},  {1,1,0},   {0,1,0},  {0,0,1},  {1,0,1},   {1,1,1},    {0,1,1}},		// Top right front
 			{{-1,0,0}, {-1,1,0},  {0,1,0},  {0,0,-1}, {-1,0,-1}, {-1,1,-1},  {0,1,-1}},		// Top left back
 			{{-1,0,0}, {-1,1,0},  {0,1,0},  {0,0,1},  {-1,0,1},  {-1,1,1},   {0,1,1}}};		// Top left front					
+
+		const int VOLUME_NEIGHBOR_FACES[12][3][3] = {
+			{{1,0,0},  {1,1,0},   {0,1,0}},		// Top Left Z
+			{{-1,0,0}, {-1,1,0},  {0,1,0}},		// Top Right Z
+			{{1,0,0},  {1,-1,0},  {0,-1,0}},	// Bottom Left Z
+			{{-1,0,0}, {-1,-1,0}, {0,-1,0}},	// Bottom Right Z
+			{{1,0,0},  {1,0,1},   {0,0,1}},		// Top Left Y
+			{{-1,0,0}, {-1,0,1},  {0,0,1}},		// Top Right Y
+			{{1,0,0},  {1,0,-1},  {0,0,-1}},	// Bottom Left Y
+			{{-1,0,0}, {-1,0,-1}, {0,0,-1}},	// Bottom Right Y
+			{{0,0,1},  {0,1,1},   {0,1,0}},		// Top Left X
+			{{0,0,-1}, {0,1,-1},  {0,1,0}},		// Top Right X
+			{{0,0,1},  {0,-1,1},  {0,-1,0}},	// Bottom Left X
+			{{0,0,-1}, {0,-1,-1}, {0,-1,0}}};	// Bottom Right X
 	}
 }
 

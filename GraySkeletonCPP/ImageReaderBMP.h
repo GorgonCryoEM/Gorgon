@@ -4,11 +4,17 @@
 #include "GrayImage.h"
 #include "ImageReader.h"
 #include "GlobalDefinitions.h"
+#include <string.h>
+
+
+using namespace std;
 
 namespace wustl_mm {
 	namespace GraySkeletonCPP {
-
+	
+		#pragma pack(push)
 		#pragma pack(1)
+
 		struct ImageReaderBMPFileHeader {
 			short	bfType;
 			int		bfSize;
@@ -17,7 +23,6 @@ namespace wustl_mm {
 			int		bfOffBits;
 		};
 
-		#pragma pack(1)
 		struct ImageReaderBMPInfoHeader {
 			int		biSize;
 			int		biWidth;
@@ -32,26 +37,25 @@ namespace wustl_mm {
 			int		biClrImportant;
 		};
 
-		#pragma pack(1)
 		struct ImageReaderBMPRgbQuad {
 			char rgbBlue;
 			char rgbGreen;
 			char rgbRed;
 			char rgbReserved;
 		};
+		#pragma pack(pop)
 
 		class ImageReaderBMP : ImageReader {
 		public:
-			static GrayImage * LoadGrayscaleImage(char * fileName, bool addBoundary);
-			static void SaveGrayscaleImage(GrayImage * image, char * fileName);
+			static GrayImage * LoadGrayscaleImage(string fileName);
+			static void SaveGrayscaleImage(GrayImage * image, string fileName);
 		private:
 			static ImageReaderBMPFileHeader GetBMPFileHeader(GrayImage * image);
 			static ImageReaderBMPInfoHeader GetBMPInfoHeader(GrayImage * image);
 		};
 
-		GrayImage * ImageReaderBMP::LoadGrayscaleImage(char * fileName, bool addBoundary) {
-			FILE * inFile = fopen(fileName, "rb");
-			int offset = addBoundary ? 1 : 0;
+		GrayImage * ImageReaderBMP::LoadGrayscaleImage(string fileName) {
+			FILE * inFile = fopen(fileName.c_str(), "rb");
 			ImageReaderBMPFileHeader fileHeader;
 			ImageReaderBMPInfoHeader infoHeader;
 			ImageReaderBMPRgbQuad palette[256];
@@ -66,14 +70,14 @@ namespace wustl_mm {
 			}
 			unsigned char value;
 
-			GrayImage * image = new GrayImage(infoHeader.biWidth + 2 * offset, infoHeader.biHeight + 2 * offset);
+			GrayImage * image = new GrayImage(infoHeader.biWidth, infoHeader.biHeight);
 
 			for(int y = 0; y < infoHeader.biHeight; y++) {		
 				for(int x = 0; x < width; x++) {
 					fread(&value, sizeof(unsigned char), 1, inFile);
 					if(x < infoHeader.biWidth) {
 						value = (unsigned char)round(((double)palette[value].rgbBlue + (double)palette[value].rgbGreen +  (double)palette[value].rgbRed) / 3.0);
-						image->SetDataAt(x + offset, y + offset, value);
+						image->SetDataAt(x, y, value);
 					}
 				}
 			}
@@ -82,8 +86,8 @@ namespace wustl_mm {
 			return image;
 		}
 
-		void ImageReaderBMP::SaveGrayscaleImage(GrayImage * image, char * fileName) {
-			FILE * outFile = fopen(fileName, "wb");
+		void ImageReaderBMP::SaveGrayscaleImage(GrayImage * image, string fileName) {
+			FILE * outFile = fopen(fileName.c_str(), "wb");
 			ImageReaderBMPFileHeader fileHeader = GetBMPFileHeader(image);
 			ImageReaderBMPInfoHeader infoHeader = GetBMPInfoHeader(image);
 

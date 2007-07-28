@@ -7,7 +7,11 @@
 #include "ImageReaderMRC.h"
 #include "GlobalDefinitions.h"
 #include "VolumeSkeletonizer.h"
-#include "../MatlabInterface/MatlabWrapper.h"
+#include "VolumeDeltaAnalyzer.h"
+#include "DiscreteMesh.h"
+#include "../MatlabInterface/MathLib.h"
+#include "../MatlabInterface/DataStructures.h"
+#include <string>
 
 using namespace wustl_mm::MatlabInterface;
 
@@ -17,8 +21,21 @@ namespace wustl_mm {
 		public:
 			GrayImageSkeletonizer();
 			~GrayImageSkeletonizer();
-			void PerformJuSkeletonization(char * inputFile, char * outputFile);
+			GrayImage * PerformSkeletonization(string inputFile, string outputFile, double threshold);
+			GrayImage * PerformJuSkeletonization(GrayImage * image, string outputFile);
+			GrayImage * PerformSkeletonPruning(GrayImage * sourceImage, GrayImage * sourceSkeleton, double threshold, string outputFile);
+
 		private:		
+
+			void GetEigenResult(EigenResults3D & returnVal, Vector3D * imageGradient, ProbabilityDistribution2D & gaussianFilter, int x, int y, int sizeX, int sizeY, int gaussianFilterRadius, bool clear);
+			EigenResults3D * GetEigenResults(GrayImage * sourceImage, Vector3D * imageGradient, ProbabilityDistribution2D & gaussianFilter, int gaussianFilterRadius, bool useMask);
+			Vector3D * GetSkeletonDirection(GrayImage * skeleton, Vector3D * imageGradient);
+			void NormalizeVector2D(Vector3D & vector);
+			double GetPixelCost(EigenResults3D imageEigen, Vector3D skeletonDirection, int type);
+			GrayImage * GetPixelCosts(GrayImage * skeleton, EigenResults3D * imageEigens, Vector3D * skeletonDirections);
+			void WriteEigenResultsToFile(GrayImage * sourceImage, EigenResults3D * eigenResults, string outputFile);
+			void WriteDirectionsToFile(GrayImage * sourceImage, Vector3D * skeletonDirections, string outputFile);
+
 			void AddIterationToImage(GrayImage * compositeImage, Volume * iterationVolume, int threshold);
 			void MarkDeletablePixels(GrayImage * deletedPixels, GrayImage * pixelClassification, GrayImage * originalImage);
 			GrayImage * ClassifyImagePixels(GrayImage * sourceImage, GrayImage * maskImage);
@@ -29,27 +46,44 @@ namespace wustl_mm {
 			bool IsSurfaceBody(GrayImage * sourceImage, int xPos, int yPos);
 			bool IsSurface(GrayImage * sourceImage, int xPos, int yPos);
 			bool IsCurveEnd(GrayImage * sourceImage, int xPos, int yPos);
-			bool FollowsCurveStructureTensor(GrayImage * sourceImage, int xPos, int yPos);
 			unsigned char GetSkeletalPixelClassification(GrayImage * sourceImage, int xPos, int yPos);
-			double GetPartialDerivativeX(GrayImage * sourceImage, int x, int y);
-			double GetPartialDerivativeY(GrayImage * sourceImage, int x, int y);
+			int GetIndex(int x, int y, int xSize, int ySize);
 		private:
 			VolumeSkeletonizer * volumeSkeletonizer;
-			MatlabWrapper * math;
+			MathLib * math;
+			ProbabilityDistribution2D gaussianFilterMaxRadius;
+			ProbabilityDistribution2D gaussianFilterOneRadius;
 		};	
 
 		GrayImageSkeletonizer::GrayImageSkeletonizer() {
 			volumeSkeletonizer = new VolumeSkeletonizer();
 			math = volumeSkeletonizer->math;
+
+			gaussianFilterMaxRadius.radius = GAUSSIAN_FILTER_RADIUS;
+			math->GetBinomialDistribution(gaussianFilterMaxRadius);
+
+			gaussianFilterOneRadius.radius = 1;
+			math->GetBinomialDistribution(gaussianFilterOneRadius);
 		}
+
 
 		GrayImageSkeletonizer::~GrayImageSkeletonizer() {
 			delete volumeSkeletonizer;
 		}
 
-		void GrayImageSkeletonizer::PerformJuSkeletonization(char * inputFile, char * outputFile) {
-			GrayImage * image = ImageReaderBMP::LoadGrayscaleImage(inputFile, true);
-			image->Pad(PARTIAL_DERIVATIVE_MASK_SIZE, 0);
+		GrayImage * GrayImageSkeletonizer::PerformSkeletonization(string inputFile, string outputFile, double threshold) {
+			
+			string outPath = outputFile.substr(0, outputFile.rfind("."));
+			GrayImage * sourceImage = ImageReaderBMP::LoadGrayscaleImage(inputFile);
+			GrayImage * sourceSkeleton = PerformJuSkeletonization(sourceImage, outPath);
+			GrayImage * finalSkeleton = PerformSkeletonPruning(sourceImage, sourceSkeleton, threshold, outPath);
+			delete sourceSkeleton;
+			delete sourceImage;
+			return finalSkeleton;
+		}
+
+		GrayImage * GrayImageSkeletonizer::PerformJuSkeletonization(GrayImage * image, string outputFile) {
+			image->Pad(GAUSSIAN_FILTER_RADIUS, 0);
 
 			GrayImage * compositeImage = new GrayImage(image->GetSizeX(), image->GetSizeY());
 			GrayImage * deletedPixels = new GrayImage(image->GetSizeX(), image->GetSizeY());
@@ -66,10 +100,9 @@ namespace wustl_mm {
 			Volume * newVoxelVolume;
 			
 			GrayImageList * outputImages = new GrayImageList();
-			char compositeFile[1000];		
-
-			for(int threshold = 255; threshold > 0; threshold-=2) {		
-				printf("%i\n", threshold);
+			
+			for(int threshold = 255; threshold > 0; threshold--) {		
+				printf("\t\tTHRESHOLD : %i\n", threshold);
 				// Thresholding the image Only for display purposes.
 				thresholdedImage = new GrayImage(image); 
 				thresholdedImage->Threshold(threshold, false);
@@ -117,15 +150,19 @@ namespace wustl_mm {
 				delete newVoxelImage;
 			}	
 			
-			outputImages->AddImage(new GrayImage(image));	// Source Image
-			compositeImage->Pad(PARTIAL_DERIVATIVE_MASK_SIZE, 0);
 
-			ImageReaderBMP::SaveGrayscaleImage(compositeImage, outputFile);
-			sprintf(compositeFile, "%s-comp.bmp", outputFile);
+			image->Pad(-GAUSSIAN_FILTER_RADIUS, 0);
+			outputImages->AddImage(new GrayImage(image));
+			compositeImage->Pad(-GAUSSIAN_FILTER_RADIUS, 0);
 			
+			deletedPixels->Pad(-GAUSSIAN_FILTER_RADIUS, 0);
+			compositeImage->ApplyMask(deletedPixels, PIXEL_BINARY_TRUE, false);
 			GrayImage * outputImage = outputImages->GetCompositeImage(8);
 
-			ImageReaderBMP::SaveGrayscaleImage(outputImage, compositeFile);
+			if(WRITE_DEBUG_FILES) {
+				ImageReaderBMP::SaveGrayscaleImage(compositeImage, outputFile + "-surfacesRemoved.bmp");
+				ImageReaderBMP::SaveGrayscaleImage(outputImage, outputFile + "-progressLog.bmp");
+			}
 
 			outputImages->Clear(true);
 
@@ -133,10 +170,382 @@ namespace wustl_mm {
 			delete outputImage;
 			delete preservedVolume;
 			delete imageVol;
-			delete compositeImage;
-			delete image;
+
+			return compositeImage;
 		}
 
+
+		GrayImage * GrayImageSkeletonizer::PerformSkeletonPruning(GrayImage * sourceImage, GrayImage * sourceSkeleton, double threshold, string outputFile) {
+			printf("Cost Threshold %f \n", threshold);
+			printf("Performing Skeleton Pruning\n");
+			sourceImage->Pad(GAUSSIAN_FILTER_RADIUS, 0);
+			sourceSkeleton->Pad(GAUSSIAN_FILTER_RADIUS, 0);
+
+			printf("Getting image Eigens\n");
+			Volume * imageVol = sourceImage->ToVolume();
+			Vector3D * imageGradient = volumeSkeletonizer->GetVolumeGradient(imageVol);
+			EigenResults3D * imageEigens = GetEigenResults(sourceImage, imageGradient, gaussianFilterMaxRadius, GAUSSIAN_FILTER_RADIUS, false);
+
+			GrayImage * binarySkeleton;
+
+			Volume * binarySkeletonVol;
+			Volume * preservedSkeletonVol = new Volume(imageVol->getSizeX(), imageVol->getSizeY(), imageVol->getSizeZ());
+			VolumeDeltaAnalyzer * analyzer;
+			int count, index, curvePointCount;
+			double cost, cost2;
+			Vector3DInt * pointList;
+			SkeletalCurve * curveList;
+			Vector3D * skeletonGradient;
+			Vector3D * skeletonDirections;
+			SkeletalCurve curve;
+
+			GrayImageList * images = new GrayImageList();
+
+
+			for(int grayValue = 255; grayValue > 0; grayValue--) {
+				printf("Threshold :%i\n", grayValue);
+				binarySkeleton = new GrayImage(sourceSkeleton);
+				binarySkeleton->Threshold(grayValue, false);			
+				images->AddImage(new GrayImage(binarySkeleton));
+				binarySkeletonVol = binarySkeleton->ToVolume();
+				skeletonGradient = volumeSkeletonizer->GetVolumeGradient(binarySkeletonVol);
+				skeletonDirections = GetSkeletonDirection(binarySkeleton, skeletonGradient);
+
+				analyzer = new VolumeDeltaAnalyzer(preservedSkeletonVol, binarySkeletonVol);
+				analyzer->GetNewPoints(count, pointList);
+
+				GrayImage * newPointImage = new GrayImage(binarySkeleton->GetSizeX(), binarySkeleton->GetSizeY()); 
+				GrayImage * newCostImage = new GrayImage(binarySkeleton->GetSizeX(), binarySkeleton->GetSizeY()); 
+				GrayImage * newCurveCostImage = new GrayImage(binarySkeleton->GetSizeX(), binarySkeleton->GetSizeY()); 
+				for(int i = 0; i < count; i++) {
+					index = binarySkeleton->GetIndex(pointList[i].values[0], pointList[i].values[1]);				
+					cost = GetPixelCost(imageEigens[index], skeletonDirections[index], PIXEL_CLASS_POINT);
+					newPointImage->SetDataAt(pointList[i].values[0], pointList[i].values[1], 255);
+					newCostImage->SetDataAt(pointList[i].values[0], pointList[i].values[1], unsigned int(cost * 255.0));
+					if(cost >= threshold) {
+						preservedSkeletonVol->setDataAt(pointList[i].values[0], pointList[i].values[1], pointList[i].values[2], 1);
+					}
+				}
+				images->AddImage(newPointImage);
+
+				GrayImage * newCurveImage = new GrayImage(binarySkeleton->GetSizeX(), binarySkeleton->GetSizeY()); 
+				analyzer->GetNewCurves(count, curveList);
+				int ccc = 0;
+				for(int i = 0; i < count; i++) {
+					curve = curveList[i];
+					cost = 0;
+					curvePointCount = 0;
+					for(int j = 0; j < curve.points.size(); j++) {
+						ccc++;
+						index = binarySkeleton->GetIndex(curve.points[j].values[0], curve.points[j].values[1]);
+						newCurveImage->SetDataAt(curve.points[j].values[0], curve.points[j].values[1], 255);
+						if(!(preservedSkeletonVol->getDataAt(curve.points[j].values[0], curve.points[j].values[1], curve.points[j].values[2]) > 0)) {
+							cost2 = GetPixelCost(imageEigens[index], skeletonDirections[index], PIXEL_CLASS_CURVE_BODY);
+							cost += cost2;
+
+							newCostImage->SetDataAt(curve.points[j].values[0], curve.points[j].values[1], unsigned int(cost2 * 255.0));
+
+							curvePointCount++;	
+						}
+					}
+					if(curvePointCount != 0) {
+						cost = cost / (double)curvePointCount;
+					} else {
+						cost >= 0;
+						printf("                 zero cost!!!\n");
+					}
+
+					for(int j = 0; j < curve.points.size(); j++) {
+						newCurveCostImage->SetDataAt(curve.points[j].values[0], curve.points[j].values[1], unsigned int(cost * 255.0));
+					}
+					
+					if(cost > threshold) {
+						for(int j = 0; j < curve.points.size(); j++) {
+							index = binarySkeletonVol->getIndex(curve.points[j].values[0], curve.points[j].values[1], curve.points[j].values[2]);
+							preservedSkeletonVol->setDataAt(index, 1);							
+						}
+					}
+				}
+
+				printf("%i curves, %i points\n", count,ccc);
+
+				images->AddImage(newCurveImage);
+				images->AddImage(newCostImage);
+				images->AddImage(newCurveCostImage);
+				images->AddImage(GrayImage::GrayImageVolumeToImage(preservedSkeletonVol));
+
+				delete binarySkeleton;				
+				delete binarySkeletonVol;
+				delete [] skeletonGradient;
+				delete [] skeletonDirections;
+				delete analyzer;
+				delete [] pointList;
+				delete [] curveList;
+			}
+			
+			GrayImage * finalSkeleton = new GrayImage(sourceSkeleton);
+			GrayImage * preservedSkeleton = GrayImage::GrayImageVolumeToImage(preservedSkeletonVol);
+			finalSkeleton->ApplyMask(preservedSkeleton, 255, true);
+			GrayImage * comp = images->GetCompositeImage(6);
+
+			
+			binarySkeleton = new GrayImage(sourceSkeleton);
+			binarySkeleton->Threshold(1, false);			
+			binarySkeletonVol = binarySkeleton->ToVolume();
+			skeletonGradient = volumeSkeletonizer->GetVolumeGradient(binarySkeletonVol);
+			skeletonDirections = GetSkeletonDirection(binarySkeleton, skeletonGradient);
+			GrayImage * costs = GetPixelCosts(sourceSkeleton, imageEigens, skeletonDirections);
+
+			ImageReaderBMP::SaveGrayscaleImage(preservedSkeleton, outputFile + "-binarySkeleton.bmp");
+
+			if(WRITE_DEBUG_FILES) {
+				ImageReaderBMP::SaveGrayscaleImage(finalSkeleton, outputFile + "-finalSkeleton.bmp");
+				ImageReaderBMP::SaveGrayscaleImage(comp, outputFile + "-debugCOMP.bmp");
+				ImageReaderBMP::SaveGrayscaleImage(costs, outputFile + "-finalCosts.bmp");
+				WriteEigenResultsToFile(sourceImage, imageEigens, outputFile + "-eigenResults.nb");
+				WriteDirectionsToFile(sourceImage, skeletonDirections, outputFile + "-skeletonDirections.nb");
+			}
+			delete comp;
+			images->Clear(true);
+			delete images;
+			delete preservedSkeleton;
+			delete binarySkeleton;
+			delete binarySkeletonVol;
+			delete [] skeletonGradient;
+			delete [] skeletonDirections;
+			delete costs;
+
+
+			delete imageVol;
+			delete [] imageGradient;
+			delete [] imageEigens;
+			delete preservedSkeletonVol;
+
+			return finalSkeleton;
+
+		}
+
+		
+		void GrayImageSkeletonizer::GetEigenResult(EigenResults3D & returnVal, Vector3D * imageGradient, ProbabilityDistribution2D & gaussianFilter, int x, int y, int sizeX, int sizeY, int gaussianFilterRadius, bool clear) {
+			if(clear) {
+				for(int r = 0; r < 2; r++) {
+					returnVal.values[r] = 0;
+					for(int c = 0; c < 2; c++) {
+						returnVal.vectors[r].values[c] = 0;
+					}
+				}
+			} else {
+				EigenVectorsAndValues2D eigenData;
+				double probability;
+				int index2;
+
+				for(int r = 0; r < 2; r++) {
+					for(int c = 0; c < 2; c++) {
+						eigenData.structureTensor[r][c] = 0;
+					}
+				}
+			
+				for(int xx = -gaussianFilterRadius; xx <= gaussianFilterRadius; xx++) {
+					for(int yy = -gaussianFilterRadius; yy <= gaussianFilterRadius; yy++) {
+						index2 = (x+xx) * sizeY * GRAYIMAGE_VOLUME_Z_SIZE + (y+yy) * GRAYIMAGE_VOLUME_Z_SIZE + GRAYIMAGE_IN_VOLUME_Z;
+						probability = gaussianFilter.values[xx+gaussianFilterRadius][yy+gaussianFilterRadius];
+						for(int r = 0; r < 2; r++) {
+							for(int c = 0; c < 2; c++) {
+								eigenData.structureTensor[r][c] += imageGradient[index2].values[r] * imageGradient[index2].values[c] * probability;
+							}
+						}
+					}
+				}
+										
+				math->EigenAnalysis(eigenData);		
+				for(int r = 0; r < 2; r++) {
+					returnVal.values[r] = eigenData.eigenValues[r];
+					for(int c = 0; c < 2; c++) {
+						returnVal.vectors[r].values[c] = eigenData.eigenVectors[r][c];
+					}
+				}
+			}
+		}
+
+		EigenResults3D * GrayImageSkeletonizer::GetEigenResults(GrayImage * maskImage, Vector3D * imageGradient, ProbabilityDistribution2D & gaussianFilter, int gaussianFilterRadius, bool useMask) {
+			EigenResults3D * resultTable = new EigenResults3D[maskImage->GetSizeX() * maskImage->GetSizeY()];
+
+			for(int x = GAUSSIAN_FILTER_RADIUS; x < maskImage->GetSizeX() - GAUSSIAN_FILTER_RADIUS; x++) {
+				for(int y = GAUSSIAN_FILTER_RADIUS; y < maskImage->GetSizeY() - GAUSSIAN_FILTER_RADIUS; y++) {
+					GetEigenResult(resultTable[maskImage->GetIndex(x, y)], imageGradient, gaussianFilter, x, y, 
+								   maskImage->GetSizeX(), maskImage->GetSizeY(), gaussianFilterRadius, (useMask && (maskImage->GetDataAt(x, y) == 0))); 
+				}
+			}
+			return resultTable;
+		}
+
+
+		Vector3D * GrayImageSkeletonizer::GetSkeletonDirection(GrayImage * skeleton, Vector3D * imageGradient) {
+			Vector3D * directions = new Vector3D[skeleton->GetSizeX() * skeleton->GetSizeY()];
+			int n4Count;
+			int n4Neighbors[4][2];
+			int index;
+			EigenResults3D eigenDirection;
+
+			for(int x = 1; x < skeleton->GetSizeX()-1; x++) {
+				for(int y = 1; y < skeleton->GetSizeY()-1; y++) {
+					index = skeleton->GetIndex(x, y);
+					if(skeleton->GetDataAt(x, y) > 0) {						
+
+						n4Count = 0;
+						for(int i = 0; i < 4; i++) {
+							if(skeleton->GetDataAt(x + IMAGE_NEIGHBORS_4[i][0], y + IMAGE_NEIGHBORS_4[i][1]) > 0) {
+								n4Neighbors[n4Count][0] = x + IMAGE_NEIGHBORS_4[i][0];
+								n4Neighbors[n4Count][1] = y + IMAGE_NEIGHBORS_4[i][1];
+								n4Count++;								
+							}
+						}
+
+						switch(n4Count) {
+							case 1: 
+								directions[index].values[0] = n4Neighbors[0][0] - x; 
+								directions[index].values[1] = n4Neighbors[0][1] - y;
+								break;
+							case 2:
+								directions[index].values[0] = n4Neighbors[1][0] - n4Neighbors[0][0]; 
+								directions[index].values[1] = n4Neighbors[1][1] - n4Neighbors[0][1];
+								break;
+							default:
+								GetEigenResult(eigenDirection, imageGradient, gaussianFilterOneRadius, x, y, skeleton->GetSizeX(), skeleton->GetSizeY(), 1, false);							
+								directions[index].values[0] = eigenDirection.vectors[1].values[0];
+								directions[index].values[1] = eigenDirection.vectors[1].values[1];																
+								break;
+						}
+					} else {
+						directions[index].values[0] = 0;
+						directions[index].values[1] = 0;
+					}
+					NormalizeVector2D(directions[index]);
+				}
+			}
+
+
+			return directions;
+		}
+
+		void GrayImageSkeletonizer::NormalizeVector2D(Vector3D & vector) {
+			double base = sqrt(vector.values[0] * vector.values[0] + vector.values[1] * vector.values[1]);
+			if(base == 0) {
+				vector.values[0] = 0;
+				vector.values[1] = 0;
+			} else {
+				vector.values[0] = vector.values[0] / base;
+				vector.values[1] = vector.values[1] / base;
+			}
+		}
+
+
+		double GrayImageSkeletonizer::GetPixelCost(EigenResults3D imageEigen, Vector3D skeletonDirection, int type) {
+			double cost = 1;
+			if(imageEigen.values[0] != 0) {
+				double dotValue = skeletonDirection.values[0] * imageEigen.vectors[0].values[0] + skeletonDirection.values[1] * imageEigen.vectors[0].values[1];
+				//double dotValue = skeletonDirection.values[0] * imageEigen.vectors[1].values[0] + skeletonDirection.values[1] * imageEigen.vectors[1].values[1];
+				double ratio = imageEigen.values[1] / imageEigen.values[0];
+				switch(type) {
+					case PIXEL_CLASS_POINT:
+						cost = abs(ratio);
+						break;
+					case PIXEL_CLASS_CURVE_BODY:
+					case PIXEL_CLASS_CURVE_END:
+						cost = 1.0 - abs(dotValue) * (1-abs(ratio));
+						//cost = abs(dotValue) * (1-abs(ratio));
+						break;
+				}
+				if((cost > 1) || (cost < 0)) {
+					printf("Cost %f %f %f \n", cost, dotValue, ratio);
+				}
+			} else {
+				cost = 0.0;
+				printf("Zero\n");
+			}
+			return cost;
+
+		}
+
+		GrayImage * GrayImageSkeletonizer::GetPixelCosts(GrayImage * skeleton, EigenResults3D * imageEigens, Vector3D * skeletonDirections) {
+			GrayImage * costs = new GrayImage(skeleton->GetSizeX(),skeleton->GetSizeY());			
+			int index;
+			for(int x = 0; x < skeleton->GetSizeX(); x++) {
+				for(int y = 0; y < skeleton->GetSizeY(); y++) {
+					index = skeleton->GetIndex(x, y);
+					if(skeleton->GetDataAt(x, y) > 0) {
+						costs->SetDataAt(x, y, (unsigned char)round(255.0 * GetPixelCost(imageEigens[index], skeletonDirections[index], PIXEL_CLASS_CURVE_BODY)));
+					} else {
+						costs->SetDataAt(x, y, 0);
+					}
+				}
+			}
+
+			return costs;
+
+		}
+
+
+		void GrayImageSkeletonizer::WriteEigenResultsToFile(GrayImage * sourceImage, EigenResults3D * eigenResults, string outputFile) {
+			int index;
+			FILE * outFile = fopen(outputFile.c_str(), "wt");
+			fprintf(outFile, "{");
+			for(int y = 0; y < sourceImage->GetSizeY(); y++) {
+				fprintf(outFile, "{");
+				for(int x = 0; x < sourceImage->GetSizeX(); x++) {
+					index = sourceImage->GetIndex(x, y);
+
+					fprintf(outFile, "{{%f, %f}, {{%f, %f}, {%f, %f}}}", eigenResults[index].values[0], eigenResults[index].values[1],
+						eigenResults[index].vectors[0].values[0], eigenResults[index].vectors[0].values[1], eigenResults[index].vectors[1].values[0], eigenResults[index].vectors[1].values[1]);
+					if (x < sourceImage->GetSizeX()-1) {
+						fprintf(outFile, ",\n");
+					} else {
+						fprintf(outFile, "\n");
+					}
+					
+				}
+				fprintf(outFile, "}");
+				if (y < sourceImage->GetSizeY()-1) {
+					fprintf(outFile, ",\n");
+				} else {
+					fprintf(outFile, "\n");
+				}
+			}
+			fprintf(outFile, "}");
+
+			fclose(outFile);
+			delete outFile;
+		}
+
+		void GrayImageSkeletonizer::WriteDirectionsToFile(GrayImage * sourceImage, Vector3D * skeletonDirections, string outputFile) {
+			int index;
+			FILE * outFile = fopen(outputFile.c_str(), "wt");
+			fprintf(outFile, "{");
+			for(int y = 0; y < sourceImage->GetSizeY(); y++) {
+				fprintf(outFile, "{");
+				for(int x = 0; x < sourceImage->GetSizeX(); x++) {
+					index = sourceImage->GetIndex(x, y);
+
+					fprintf(outFile, "{%f, %f}", skeletonDirections[index].values[0], skeletonDirections[index].values[1]);
+					if (x < sourceImage->GetSizeX()-1) {
+						fprintf(outFile, ",\n");
+					} else {
+						fprintf(outFile, "\n");
+					}
+					
+				}
+				fprintf(outFile, "}");
+				if (y < sourceImage->GetSizeY()-1) {
+					fprintf(outFile, ",\n");
+				} else {
+					fprintf(outFile, "\n");
+				}
+			}
+			fprintf(outFile, "}");
+
+			fclose(outFile);
+			delete outFile;
+		}
 
 		void GrayImageSkeletonizer::AddIterationToImage(GrayImage * compositeImage, Volume * iterationVolume, int threshold) {
 			for(int x = 0; x < iterationVolume->getSizeX(); x++) {
@@ -178,7 +587,7 @@ namespace wustl_mm {
 		int GrayImageSkeletonizer::GetN4Count(GrayImage * sourceImage, int xPos, int yPos) {
 			int n4Count = 0;
 			for(int i = 0; i < 4; i++) {
-				if(sourceImage->GetDataAt(xPos + IMAGE_NEIGHBORS_4[i][0], yPos + IMAGE_NEIGHBORS_4[i][1])) {
+				if(sourceImage->GetDataAt(xPos + IMAGE_NEIGHBORS_4[i][0], yPos + IMAGE_NEIGHBORS_4[i][1]) > 0) {
 					n4Count++;
 				}
 			}
@@ -199,13 +608,15 @@ namespace wustl_mm {
 			bool deletable = false;
 			switch(pixelClassification->GetDataAt(x, y)) {
 				case PIXEL_CLASS_POINT: 
+					deletable = false;
+					break;
 				case PIXEL_CLASS_SURFACE_BODY: 
-					//deletable = true;
-					//break;
+					deletable = true;
+					break;
 				case PIXEL_CLASS_SURFACE_BORDER:
 				case PIXEL_CLASS_CURVE_BODY:
 				case PIXEL_CLASS_CURVE_END:
-					deletable = FollowsCurveStructureTensor(originalImage, x, y);
+					deletable = false;
 					break;
 					
 			}
@@ -235,42 +646,6 @@ namespace wustl_mm {
 			return (GetN4Count(sourceImage, xPos, yPos) == 1);
 		}
 
-		bool GrayImageSkeletonizer::FollowsCurveStructureTensor(GrayImage * sourceImage, int xPos, int yPos) {
-			double iX = GetPartialDerivativeX(sourceImage, xPos, yPos);
-			double iY = GetPartialDerivativeY(sourceImage, xPos, yPos);
-			
-			EigenVectorsAndValues2D eigenResult;
-			eigenResult.structureTensor[0][0] = iX * iX;
-			eigenResult.structureTensor[0][1] = iX * iY;
-			eigenResult.structureTensor[1][0] = iX * iY;
-			eigenResult.structureTensor[1][1] = iY * iY;
-
-			math->EigenAnalysis(eigenResult);
-
-			if(eigenResult.eigenValues[1] > 0.00001) {
-				printf("\nstructure tensor\n");
-				for(int i = 0; i < 2; i++) {
-					for(int j = 0; j < 2; j++) {									
-						printf("%f \t", eigenResult.structureTensor[i][j]);
-					}
-					printf("\n");
-				}
-
-
-				printf("Eigen Vectors:\n");
-				for(int i = 0; i < 2; i++) {
-					for(int j = 0; j < 2; j++) {									
-						printf("%f \t", eigenResult.eigenVectors[i][j]);
-					}
-					printf("\n");
-				}
-				printf("Eigen Values: %f, %f\n", eigenResult.eigenValues[0], eigenResult.eigenValues[1]);
-				getchar();
-			}
-
-			return true;
-		}
-
 		unsigned char GrayImageSkeletonizer::GetSkeletalPixelClassification(GrayImage * sourceImage, int xPos, int yPos) {
 			unsigned char pixelClass = PIXEL_CLASS_BACKGROUND;
 			if(sourceImage->GetDataAt(xPos, yPos) != 0) {
@@ -288,35 +663,6 @@ namespace wustl_mm {
 			}
 			return pixelClass;		
 		}	
-		double GrayImageSkeletonizer::GetPartialDerivativeX(GrayImage * sourceImage, int x, int y) {
-			double total = 0;
-			double numPoints = PARTIAL_DERIVATIVE_MASK_SIZE * (PARTIAL_DERIVATIVE_MASK_SIZE-1);
-			int maskStart = 0 - PARTIAL_DERIVATIVE_MASK_SIZE / 2;
-			int maskEnd = maskStart + PARTIAL_DERIVATIVE_MASK_SIZE;
-			
-			for(int xDiff = maskStart; xDiff < maskEnd; xDiff++) {
-				for(int yDiff = maskStart; yDiff <= maskEnd; yDiff++) {
-					total += abs(sourceImage->GetDataAt(x+xDiff, y+yDiff) - sourceImage->GetDataAt(x+xDiff+1, y+yDiff));						
-				}
-			}
-			return total / numPoints;
-		}
-
-		double GrayImageSkeletonizer::GetPartialDerivativeY(GrayImage * sourceImage, int x, int y) {
-			double total = 0;
-			double numPoints = PARTIAL_DERIVATIVE_MASK_SIZE * (PARTIAL_DERIVATIVE_MASK_SIZE-1);
-			int maskStart = 0 - PARTIAL_DERIVATIVE_MASK_SIZE / 2;
-			int maskEnd = maskStart + PARTIAL_DERIVATIVE_MASK_SIZE;
-			
-			for(int xDiff = maskStart; xDiff <= maskEnd; xDiff++) {
-				for(int yDiff = maskStart; yDiff < maskEnd; yDiff++) {
-					total += abs(sourceImage->GetDataAt(x+xDiff, y+yDiff) - sourceImage->GetDataAt(x+xDiff, y+yDiff+1));						
-				}
-			}
-			return total / numPoints;
-		}
-
-
 	}
 }
 

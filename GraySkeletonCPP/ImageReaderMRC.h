@@ -5,22 +5,25 @@
 #include "ImageReader.h"
 #include "..\SkeletonMaker\reader.h"
 #include "..\SkeletonMaker\volume.h"
+#include <string.h>
+
+using namespace std;
 
 namespace wustl_mm {
 	namespace GraySkeletonCPP {
 		class ImageReaderMRC : ImageReader {
 		public:
-			static GrayImage * LoadGrayscaleImage(char * fileName, int slice, char dimension);
-			static void SaveGrayscaleImage(GrayImage * image, char * fileName);
-			static void SaveGrayscaleImage(Volume * volume, char * fileName);
+			static GrayImage * LoadGrayscaleImage(string fileName, int slice, char dimension);
+			static void SaveGrayscaleImage(GrayImage * image, string fileName);
+			static void SaveGrayscaleImage(Volume * volume, string fileName);
 		};
 
-		GrayImage * ImageReaderMRC::LoadGrayscaleImage(char * fileName, int slice, char dimension) {
+		GrayImage * ImageReaderMRC::LoadGrayscaleImage(string fileName, int slice, char dimension) {
 			double minVal, maxVal, currVal;
 			int sizeX, sizeY;
 			GrayImage * outImage;
 
-			Volume * vol = (MRCReaderPicker::pick(fileName))->getVolume();
+			Volume * vol = (MRCReaderPicker::pick((char *)fileName.c_str()))->getVolume();
 
 			switch(dimension) {
 				case 'x' :
@@ -97,9 +100,9 @@ namespace wustl_mm {
 			return outImage;
 		}
 
-		void ImageReaderMRC::SaveGrayscaleImage(GrayImage * image, char * fileName) {
+		void ImageReaderMRC::SaveGrayscaleImage(GrayImage * image, string fileName) {
 			Volume * volume = image->ToVolume();
-			volume->toMRCFile(fileName);
+			volume->toMRCFile((char *)fileName.c_str());
 			delete volume;
 		}
 	}
