@@ -29,7 +29,7 @@ namespace wustl_mm {
 			glMultMatrixd((double*)&resize);
 
 
-			for(int i=0; i<skeleton->skeletonHelixes.size(); i++) {
+			for(unsigned int i=0; i<skeleton->skeletonHelixes.size(); i++) {
 				Matrix4 matrix = skeleton->skeletonHelixes[i]->worldToObject;
 				glPushMatrix();
 					glMultMatrixd((double*)&matrix);
@@ -41,7 +41,7 @@ namespace wustl_mm {
 			
 			float total = 1.0f * sequence->pdbStructures[sequence->pdbStructures.size()-1]->endPosition;
 
-			for(int i=0; i<sequence->pdbStructures.size(); i++) {
+			for(unsigned int i=0; i<sequence->pdbStructures.size(); i++) {
 				float start = (float)sequence->pdbStructures[i]->startPosition;
 				float end = (float)sequence->pdbStructures[i]->endPosition;
 				glRectd(start/total * 100, 0.0, end/total * 100 , 10.0);

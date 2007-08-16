@@ -7,8 +7,9 @@
     <ProjectGuid>{E6AC7995-0C10-4D59-9F75-45E3795D51C9}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SkeletonVisualizer</RootNamespace>
+    <RootNamespace>wustl_mm.SkeletonVisualizer</RootNamespace>
     <AssemblyName>SkeletonVisualizer</AssemblyName>
+    <StartupObject>wustl_mm.SkeletonVisualizer.Program</StartupObject>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -27,6 +28,14 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'MemLeak|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\MemLeak\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -36,6 +45,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FormSkeletonOverlay.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormSkeletonOverlay.Designer.cs">
+      <DependentUpon>FormSkeletonOverlay.cs</DependentUpon>
+    </Compile>
     <Compile Include="FormTopologyHunter.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -44,6 +59,10 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="FormSkeletonOverlay.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>FormSkeletonOverlay.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="FormTopologyHunter.resx">
       <SubType>Designer</SubType>
       <DependentUpon>FormTopologyHunter.cs</DependentUpon>
@@ -56,6 +75,7 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

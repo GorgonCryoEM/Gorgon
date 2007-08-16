@@ -7,7 +7,10 @@
 #include <sstream> 
 #include <string>  
 #include <time.h>
+#include <math.h>
 #include "DiscreteMesh.h"
+#include "..\MatlabInterface\DataStructures.h"
+#include "..\MatlabInterface\MathLib.h"
 
 
 using namespace wustl_mm::GraySkeletonCPP;
@@ -20,7 +23,7 @@ const int DO_PRUNING = 2;
 const int DO_CONVERSION = 3;
 
 string DoubleToString(double number) {
-	char x[20];
+	char * x = new char[20];
 	sprintf(x, "%f", number);
 	string retVal = x;
 	delete [] x;
@@ -60,7 +63,7 @@ void DisplayInputParams() {
 	printf("\t[outfile]       : the filename to be used when generating the skeleton\n");
 	printf("\n");
 	printf("To prune the grayscale skeleton of an image\n");
-	printf("\tGraySkeletonCPP.exe [function] [dimensions] [inputfile] [inputSkeleton] [outfile] [threshold]\n\n");
+	printf("\tGraySkeletonCPP.exe [function] [dimensions] [inputfile] [inputSkeleton] [outfile] [threshold] [minGrayValue] [maxGrayValue]\n\n");
 	printf("\t[function]      : %i, Perform pruning\n", DO_PRUNING);
 	printf("\t[dimensions]    : The number of dimensions\n");
 	printf("\t[inputfile]     : an input image file (BMP if 2D, MRC if 3D)\n");
@@ -82,30 +85,65 @@ void DisplayInputParams() {
 
 int main( int args, char * argv[] ) {
 
-	VolumeSkeletonizer * vs = new VolumeSkeletonizer();
-	Volume * v = new Volume(15,15,15);
+	//Volume * oldVolume = new Volume(15,15,15);
+	//Volume * newVolume = new Volume(15,15,15);
 
-	for(int x = 3; x<= 9; x++) {
-		for(int y = 3; y <= 9; y++) {
-			v->setDataAt(x, y, 5, 1);
-		}
-	}
+	//for(int x = 3; x <= 5; x++) {
+	//	for(int y = 3; y <= 5; y++) {
+	//		newVolume->setDataAt(x, y, 5, 1);
+	//		//newVolume->setDataAt(x, y, 7, 1);
+	//	}
+	//}
 
-	//Vector3D * dir = vs->GetSkeletonDirection(v);
-	//int index = v->getIndex(5,5,5);
-	//printf("{%f, %f, %f}", dir[index].values[0], dir[index].values[1], dir[index].values[2]);
+	//for(int x = 3; x <= 5; x++) {
+	//	for(int z = 3; z <= 7; z++) {
+	//		newVolume->setDataAt(x, 4, z, 1);
+	//		//newVolume->setDataAt(x, y, 7, 1);
+	//	}
+	//}
 
 
-	return 0;
+	//VolumeDeltaAnalyzer * delta = new VolumeDeltaAnalyzer(oldVolume, newVolume);
+	//int count;
+	//SkeletalCurve * list;
+	//delta->GetNewSurfaces(count, list);
+	//for(int i = 0; i < count; i++) {
+	//	for(int j=0; j < list[i].points.size(); j++) {
+	//		printf("{%i %i %i} ", list[i].points[j].values[0], list[i].points[j].values[1], list[i].points[j].values[2]); 
+	//	}
+	//	printf("\n");
+	//}
+
+	//return 0;
+
+
+	//VolumeSkeletonizer * s = new VolumeSkeletonizer();
+	//string outputFile = "binarySkeleton-";
+	//Volume * imageVol = (MRCReaderPicker::pick("C:\\_WashU\\ssa1\\data\\hand5\\hand5-volume.mrc"))->getVolume();
+	//s->PerformPureJuSkeletonization(imageVol, outputFile+"0.0232-", 0.0232);
+	//////s->PerformPureJuSkeletonization(imageVol, outputFile+"0.018-", 0.018);
+	//////s->PerformPureJuSkeletonization(imageVol, outputFile+"0.0288-", 0.0288);
+	//////s->PerformPureJuSkeletonization(imageVol, outputFile+"0.0303-", 0.0303);
+	//////s->PerformPureJuSkeletonization(imageVol, outputFile+"0.0653-", 0.0653);
+
+	//delete s;
+	//return 0;
+
+
 
 	clock_t start, finish;
 	start = clock();
-	int format, dimension;
+	int format, dimension, minGray, maxGray;
 	string inFile, skeletonFile, outFile, outPath;
 	GrayImage * sourceImage, * sourceSkeleton, * outputImage;
 	GrayImageSkeletonizer * skeletonizer2D;
 	GrayImageList * imageList;
-	double threshold;
+	MRCReader * reader;
+	double curveThreshold, surfaceThreshold, threshold;
+
+	Volume * sourceVol, * sourceSkeletonVol, * outputVol;
+	VolumeSkeletonizer * skeletonizer3D;
+
 
 	switch(args){
 		// Perform skeletonization
@@ -127,6 +165,15 @@ int main( int args, char * argv[] ) {
 						delete outputImage;
 						break;
 					case 3:
+						reader = (MRCReader*)MRCReaderPicker::pick((char *)inFile.c_str());
+						sourceVol = reader->getVolume();
+						delete reader;
+						skeletonizer3D = new VolumeSkeletonizer();
+						outputVol = skeletonizer3D->PerformJuSkeletonization(sourceVol, outPath);
+						outputVol->toMRCFile((char *)outFile.c_str());
+						delete sourceVol;
+						delete skeletonizer3D;
+						delete outputVol;
 						break;
 				}			
 			} else {
@@ -153,13 +200,13 @@ int main( int args, char * argv[] ) {
 							imageList->AddImage(sourceImage);
 							imageList->AddImage(sourceSkeleton);					
 							for(double t = 0.0; t <= 1.0; t+= 0.1) {
-								imageList->AddImage(skeletonizer2D->PerformSkeletonPruning(sourceImage, sourceSkeleton, t, outPath));
+								imageList->AddImage(skeletonizer2D->PerformSkeletonPruning(sourceImage, sourceSkeleton, t, t, 1, 255, outPath));
 							}
 							outputImage = imageList->GetCompositeImage(4);
 							imageList->Clear(true);
 							delete imageList;
 						} else {
-							outputImage = skeletonizer2D->PerformSkeletonPruning(sourceImage, sourceSkeleton, threshold, outPath);
+							outputImage = skeletonizer2D->PerformSkeletonPruning(sourceImage, sourceSkeleton, threshold, threshold, 1, 255, outPath);
 						}
 						ImageReaderBMP::SaveGrayscaleImage(outputImage, outFile);
 						delete skeletonizer2D;
@@ -171,22 +218,32 @@ int main( int args, char * argv[] ) {
 				}
 			}
 			break;
-		// Perform pruning
-		case 7: 
+		case 9:
 			format = StringToInt(argv[1]);
-			dimension = StringToInt(argv[2]);
-			inFile = argv[3];
-			skeletonFile = argv[4];
-			outFile = argv[5];
-			threshold = StringToDouble(argv[6]);
-			outPath = outFile.substr(0, outFile.rfind("."));			
+			if(format == DO_CONVERSION) {  
+				VolumeFormatConverter::ConvertVolume(argv[2], argv[3], argv[4], argv[5], StringToInt(argv[6]), StringToInt(argv[7]), StringToInt(argv[8]));
+			} else {
+				DisplayInputParams();
+			}
+			break;
+		case 10:
+			format = StringToInt(argv[1]);
 			if(format == DO_PRUNING) {
+				dimension = StringToInt(argv[2]);
+				inFile = argv[3];
+				skeletonFile = argv[4];
+				outFile = argv[5];
+				curveThreshold = StringToDouble(argv[6]);
+				surfaceThreshold = StringToDouble(argv[7]);
+				minGray = StringToInt(argv[8]);
+				maxGray = StringToInt(argv[9]);
+				outPath = outFile.substr(0, outFile.rfind("."));			
 				switch(dimension){
 					case 2:
 						sourceImage = ImageReaderBMP::LoadGrayscaleImage(inFile);
 						sourceSkeleton = ImageReaderBMP::LoadGrayscaleImage(skeletonFile);
 						skeletonizer2D = new GrayImageSkeletonizer();
-						outputImage = skeletonizer2D->PerformSkeletonPruning(sourceImage, sourceSkeleton, threshold, outPath);
+						outputImage = skeletonizer2D->PerformSkeletonPruning(sourceImage, sourceSkeleton, curveThreshold, surfaceThreshold, minGray, maxGray, outPath);
 						ImageReaderBMP::SaveGrayscaleImage(outputImage, outFile);
 						delete skeletonizer2D;
 						delete sourceSkeleton;
@@ -194,19 +251,21 @@ int main( int args, char * argv[] ) {
 						delete outputImage;
 						break;
 					case 3:
+						reader = (MRCReader*)MRCReaderPicker::pick((char *)inFile.c_str());
+						sourceVol = reader->getVolume();
+						delete reader;
+						reader = (MRCReader*)MRCReaderPicker::pick((char *)skeletonFile.c_str());
+						sourceSkeletonVol = reader->getVolume();
+						delete reader;
+						skeletonizer3D = new VolumeSkeletonizer();
+						outputVol = skeletonizer3D->PerformSkeletonPruning(sourceVol, sourceSkeletonVol, curveThreshold, surfaceThreshold, minGray, maxGray, outPath);
+						//outputVol->toMRCFile((char *)outFile.c_str());
+						delete sourceVol;
+						delete sourceSkeletonVol;
+						delete skeletonizer3D;
+						delete outputVol;
 						break;
 				}
-
-			} else {
-				DisplayInputParams();
-			}	
-			break;
-		case 9:
-			format = StringToInt(argv[1]);
-			if(format == DO_CONVERSION) {
-				VolumeFormatConverter::ConvertVolume(argv[2], argv[3], argv[4], argv[5], StringToInt(argv[6]), StringToInt(argv[7]), StringToInt(argv[8]));
-			} else {
-				DisplayInputParams();
 			}
 			break;
 		default:

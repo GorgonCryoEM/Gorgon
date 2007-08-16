@@ -175,7 +175,7 @@ namespace wustl_mm {
 		}
 
 		LinkedNode * WongMatch15ConstrainedNoFuture::GetResult(int rank) {
-			if(rank <= solutions.size() && (rank >= 1)) {
+			if(rank <= (int)solutions.size() && (rank >= 1)) {
 				return solutions[rank-1];
 			} else {
 				return NULL;

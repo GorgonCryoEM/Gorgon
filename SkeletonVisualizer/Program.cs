@@ -14,7 +14,7 @@ namespace wustl_mm.SkeletonVisualizer
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new FormTopologyHunter());
+            Application.Run(new FormSkeletonOverlay());
         }
     }
 }

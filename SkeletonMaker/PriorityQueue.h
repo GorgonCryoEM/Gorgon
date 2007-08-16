@@ -42,12 +42,12 @@ public:
 	 */
 	~PriorityQueue ()
 	{
-		delete this->keyQueue ;
+		delete [] keyQueue ;
 		for ( int i = 0 ; i < queueLength ; i ++ )
 		{
 			delete valueQueue [ i ] ;
 		}
-		delete valueQueue ;
+		delete [] valueQueue ;
 	};
 
 	/**

@@ -47,7 +47,7 @@ void DoPerformanceComparison(StandardGraph * patternGraph, StandardGraph * baseG
 {
 	// Things to undo: Normalize Matcher7, WongMatch, Printfs in Matcher7
 
-	clock_t start, finish;
+	//clock_t start, finish;
 
 
 
@@ -99,7 +99,7 @@ int main( int args, char * argv[] ) {
 
 	StandardGraph * patternGraph;
 	StandardGraph * baseGraph;
-	clock_t start, finish;
+	//clock_t start, finish;
 
 	// Input Validation and graph loading.
 	if(args == 1) {		

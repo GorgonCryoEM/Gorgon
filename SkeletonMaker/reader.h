@@ -1068,7 +1068,7 @@ public:
 
 		dimz = sx ;
 
-		spx = 1.4 ;
+		spx = 1.4f ;
 
 		spy = 1 ;
 

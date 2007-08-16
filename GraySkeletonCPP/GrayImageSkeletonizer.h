@@ -23,13 +23,13 @@ namespace wustl_mm {
 			~GrayImageSkeletonizer();
 			GrayImage * PerformSkeletonization(string inputFile, string outputFile, double threshold);
 			GrayImage * PerformJuSkeletonization(GrayImage * image, string outputFile);
-			GrayImage * PerformSkeletonPruning(GrayImage * sourceImage, GrayImage * sourceSkeleton, double threshold, string outputFile);
+			GrayImage * PerformSkeletonPruning(GrayImage * sourceImage, GrayImage * sourceSkeleton, double pointThreshold, double curveThreshold, int minGray, int maxGray, string outputFile);
 
 		private:		
 
 			void GetEigenResult(EigenResults3D & returnVal, Vector3D * imageGradient, ProbabilityDistribution2D & gaussianFilter, int x, int y, int sizeX, int sizeY, int gaussianFilterRadius, bool clear);
 			EigenResults3D * GetEigenResults(GrayImage * sourceImage, Vector3D * imageGradient, ProbabilityDistribution2D & gaussianFilter, int gaussianFilterRadius, bool useMask);
-			Vector3D * GetSkeletonDirection(GrayImage * skeleton, Vector3D * imageGradient);
+			Vector3D * GetSkeletonDirection(GrayImage * skeleton);
 			void NormalizeVector2D(Vector3D & vector);
 			double GetPixelCost(EigenResults3D imageEigen, Vector3D skeletonDirection, int type);
 			GrayImage * GetPixelCosts(GrayImage * skeleton, EigenResults3D * imageEigens, Vector3D * skeletonDirections);
@@ -76,7 +76,7 @@ namespace wustl_mm {
 			string outPath = outputFile.substr(0, outputFile.rfind("."));
 			GrayImage * sourceImage = ImageReaderBMP::LoadGrayscaleImage(inputFile);
 			GrayImage * sourceSkeleton = PerformJuSkeletonization(sourceImage, outPath);
-			GrayImage * finalSkeleton = PerformSkeletonPruning(sourceImage, sourceSkeleton, threshold, outPath);
+			GrayImage * finalSkeleton = PerformSkeletonPruning(sourceImage, sourceSkeleton, threshold, threshold, 1, 255, outPath);
 			delete sourceSkeleton;
 			delete sourceImage;
 			return finalSkeleton;
@@ -98,7 +98,8 @@ namespace wustl_mm {
 			Volume * curveVolume;
 			Volume * topologyVolume;
 			Volume * newVoxelVolume;
-			
+
+
 			GrayImageList * outputImages = new GrayImageList();
 			
 			for(int threshold = 255; threshold > 0; threshold--) {		
@@ -124,11 +125,11 @@ namespace wustl_mm {
 				// Removing deleted pixels from the image
 				finalSkeleton = new GrayImage(compositeImage);
 				finalSkeleton->ApplyMask(deletedPixels, PIXEL_BINARY_TRUE, false);
-
-				
+			
 				// Deleting pixels which satisfy the deletability criteria
 				pixelClassification = ClassifyImagePixels(finalSkeleton, newVoxelImage);
 				MarkDeletablePixels(deletedPixels, pixelClassification, image);
+
 
 
 				// Display List
@@ -148,6 +149,19 @@ namespace wustl_mm {
 				delete thresholdedImage;
 				delete finalSkeleton;
 				delete newVoxelImage;
+
+				//SIGGRAPH OUTPUTS
+				/* GrayImage * presImage = GrayImage::GrayImageVolumeToImage(preservedVolume);
+				presImage->ApplyMask(deletedPixels, PIXEL_BINARY_TRUE, 0);
+				presImage->Pad(-GAUSSIAN_FILTER_RADIUS, 0);
+
+				char * fileName = new char[100];
+				sprintf(fileName, "-topoPreserved-%f.bmp", threshold/255.0);
+				ImageReaderBMP::SaveGrayscaleImage(presImage, outputFile + fileName);
+				delete [] fileName;  */
+
+
+
 			}	
 			
 
@@ -157,17 +171,18 @@ namespace wustl_mm {
 			
 			deletedPixels->Pad(-GAUSSIAN_FILTER_RADIUS, 0);
 			compositeImage->ApplyMask(deletedPixels, PIXEL_BINARY_TRUE, false);
-			GrayImage * outputImage = outputImages->GetCompositeImage(8);
+			//GrayImage * outputImage = outputImages->GetCompositeImage(8);
 
 			if(WRITE_DEBUG_FILES) {
 				ImageReaderBMP::SaveGrayscaleImage(compositeImage, outputFile + "-surfacesRemoved.bmp");
-				ImageReaderBMP::SaveGrayscaleImage(outputImage, outputFile + "-progressLog.bmp");
+				//ImageReaderBMP::SaveGrayscaleImage(outputImage, outputFile + "-progressLog.bmp");
 			}
 
 			outputImages->Clear(true);
 
+			delete deletedPixels;
 			delete outputImages;
-			delete outputImage;
+			//delete outputImage;
 			delete preservedVolume;
 			delete imageVol;
 
@@ -175,8 +190,8 @@ namespace wustl_mm {
 		}
 
 
-		GrayImage * GrayImageSkeletonizer::PerformSkeletonPruning(GrayImage * sourceImage, GrayImage * sourceSkeleton, double threshold, string outputFile) {
-			printf("Cost Threshold %f \n", threshold);
+		GrayImage * GrayImageSkeletonizer::PerformSkeletonPruning(GrayImage * sourceImage, GrayImage * sourceSkeleton, double pointThreshold, double curveThreshold, int minGray, int maxGray, string outputFile) {
+			printf("Cost Threshold point %f  curve %f\n", pointThreshold, curveThreshold);
 			printf("Performing Skeleton Pruning\n");
 			sourceImage->Pad(GAUSSIAN_FILTER_RADIUS, 0);
 			sourceSkeleton->Pad(GAUSSIAN_FILTER_RADIUS, 0);
@@ -202,14 +217,13 @@ namespace wustl_mm {
 			GrayImageList * images = new GrayImageList();
 
 
-			for(int grayValue = 255; grayValue > 0; grayValue--) {
+			for(int grayValue = maxGray; grayValue >= minGray; grayValue--) {
 				printf("Threshold :%i\n", grayValue);
 				binarySkeleton = new GrayImage(sourceSkeleton);
 				binarySkeleton->Threshold(grayValue, false);			
 				images->AddImage(new GrayImage(binarySkeleton));
 				binarySkeletonVol = binarySkeleton->ToVolume();
-				skeletonGradient = volumeSkeletonizer->GetVolumeGradient(binarySkeletonVol);
-				skeletonDirections = GetSkeletonDirection(binarySkeleton, skeletonGradient);
+				skeletonDirections = GetSkeletonDirection(binarySkeleton);
 
 				analyzer = new VolumeDeltaAnalyzer(preservedSkeletonVol, binarySkeletonVol);
 				analyzer->GetNewPoints(count, pointList);
@@ -222,7 +236,7 @@ namespace wustl_mm {
 					cost = GetPixelCost(imageEigens[index], skeletonDirections[index], PIXEL_CLASS_POINT);
 					newPointImage->SetDataAt(pointList[i].values[0], pointList[i].values[1], 255);
 					newCostImage->SetDataAt(pointList[i].values[0], pointList[i].values[1], unsigned int(cost * 255.0));
-					if(cost >= threshold) {
+					if(cost >= pointThreshold) {
 						preservedSkeletonVol->setDataAt(pointList[i].values[0], pointList[i].values[1], pointList[i].values[2], 1);
 					}
 				}
@@ -251,7 +265,7 @@ namespace wustl_mm {
 					if(curvePointCount != 0) {
 						cost = cost / (double)curvePointCount;
 					} else {
-						cost >= 0;
+						cost = 0;
 						printf("                 zero cost!!!\n");
 					}
 
@@ -259,13 +273,15 @@ namespace wustl_mm {
 						newCurveCostImage->SetDataAt(curve.points[j].values[0], curve.points[j].values[1], unsigned int(cost * 255.0));
 					}
 					
-					if(cost > threshold) {
+					if(cost > curveThreshold) {
 						for(int j = 0; j < curve.points.size(); j++) {
 							index = binarySkeletonVol->getIndex(curve.points[j].values[0], curve.points[j].values[1], curve.points[j].values[2]);
 							preservedSkeletonVol->setDataAt(index, 1);							
 						}
 					}
+
 				}
+
 
 				printf("%i curves, %i points\n", count,ccc);
 
@@ -273,27 +289,40 @@ namespace wustl_mm {
 				images->AddImage(newCostImage);
 				images->AddImage(newCurveCostImage);
 				images->AddImage(GrayImage::GrayImageVolumeToImage(preservedSkeletonVol));
-
 				delete binarySkeleton;				
 				delete binarySkeletonVol;
-				delete [] skeletonGradient;
 				delete [] skeletonDirections;
 				delete analyzer;
 				delete [] pointList;
 				delete [] curveList;
-			}
+
+				//SIGGRAPH OUTPUTS
+				/*GrayImage * presImage = GrayImage::GrayImageVolumeToImage(preservedSkeletonVol);
+				presImage->Pad(-GAUSSIAN_FILTER_RADIUS, 0);
+
+				char * fileName = new char[100];
+				sprintf(fileName, "-pruned-%f.bmp", (double)grayValue/255.0);
+				printf("%s \n", fileName);
+				ImageReaderBMP::SaveGrayscaleImage(presImage, outputFile + fileName);
+				delete [] fileName;  */
+
+			}			
 			
 			GrayImage * finalSkeleton = new GrayImage(sourceSkeleton);
 			GrayImage * preservedSkeleton = GrayImage::GrayImageVolumeToImage(preservedSkeletonVol);
 			finalSkeleton->ApplyMask(preservedSkeleton, 255, true);
 			GrayImage * comp = images->GetCompositeImage(6);
 
-			
+			sourceImage->Pad(-GAUSSIAN_FILTER_RADIUS, 0);
+			sourceSkeleton->Pad(-GAUSSIAN_FILTER_RADIUS, 0);
+			finalSkeleton->Pad(-GAUSSIAN_FILTER_RADIUS, 0);
+			preservedSkeleton->Pad(-GAUSSIAN_FILTER_RADIUS, 0);
+
+
 			binarySkeleton = new GrayImage(sourceSkeleton);
 			binarySkeleton->Threshold(1, false);			
 			binarySkeletonVol = binarySkeleton->ToVolume();
-			skeletonGradient = volumeSkeletonizer->GetVolumeGradient(binarySkeletonVol);
-			skeletonDirections = GetSkeletonDirection(binarySkeleton, skeletonGradient);
+			skeletonDirections = GetSkeletonDirection(binarySkeleton);
 			GrayImage * costs = GetPixelCosts(sourceSkeleton, imageEigens, skeletonDirections);
 
 			ImageReaderBMP::SaveGrayscaleImage(preservedSkeleton, outputFile + "-binarySkeleton.bmp");
@@ -302,8 +331,8 @@ namespace wustl_mm {
 				ImageReaderBMP::SaveGrayscaleImage(finalSkeleton, outputFile + "-finalSkeleton.bmp");
 				ImageReaderBMP::SaveGrayscaleImage(comp, outputFile + "-debugCOMP.bmp");
 				ImageReaderBMP::SaveGrayscaleImage(costs, outputFile + "-finalCosts.bmp");
-				WriteEigenResultsToFile(sourceImage, imageEigens, outputFile + "-eigenResults.nb");
-				WriteDirectionsToFile(sourceImage, skeletonDirections, outputFile + "-skeletonDirections.nb");
+				WriteEigenResultsToFile(sourceImage, imageEigens, outputFile + "-eigenResults.txt");
+				WriteDirectionsToFile(sourceImage, skeletonDirections, outputFile + "-skeletonDirections.txt");
 			}
 			delete comp;
 			images->Clear(true);
@@ -311,7 +340,6 @@ namespace wustl_mm {
 			delete preservedSkeleton;
 			delete binarySkeleton;
 			delete binarySkeletonVol;
-			delete [] skeletonGradient;
 			delete [] skeletonDirections;
 			delete costs;
 
@@ -380,51 +408,47 @@ namespace wustl_mm {
 		}
 
 
-		Vector3D * GrayImageSkeletonizer::GetSkeletonDirection(GrayImage * skeleton, Vector3D * imageGradient) {
+		Vector3D * GrayImageSkeletonizer::GetSkeletonDirection(GrayImage * skeleton) {
 			Vector3D * directions = new Vector3D[skeleton->GetSizeX() * skeleton->GetSizeY()];
-			int n4Count;
-			int n4Neighbors[4][2];
 			int index;
-			EigenResults3D eigenDirection;
+			Vector3D v0, v1, v2, currentPos;
+			bool allFound;
+			Vector3D * n4 = new Vector3D[4];
+			int n4Count;
+
 
 			for(int x = 1; x < skeleton->GetSizeX()-1; x++) {
 				for(int y = 1; y < skeleton->GetSizeY()-1; y++) {
 					index = skeleton->GetIndex(x, y);
-					if(skeleton->GetDataAt(x, y) > 0) {						
 
+					VectorLib::Initialize(directions[index], 0,0,0);
+					VectorLib::Initialize(currentPos, x, y, 0);
+			
+					if(IsPoint(skeleton, x, y) || (skeleton->GetDataAt(x, y) == 0)) {
+						// Set direction to {0,0,0} already done by default.
+					} else {
 						n4Count = 0;
-						for(int i = 0; i < 4; i++) {
+						for(int i = 0; i < 4; i++) {							
 							if(skeleton->GetDataAt(x + IMAGE_NEIGHBORS_4[i][0], y + IMAGE_NEIGHBORS_4[i][1]) > 0) {
-								n4Neighbors[n4Count][0] = x + IMAGE_NEIGHBORS_4[i][0];
-								n4Neighbors[n4Count][1] = y + IMAGE_NEIGHBORS_4[i][1];
-								n4Count++;								
+								VectorLib::Initialize(n4[n4Count], x + IMAGE_NEIGHBORS_4[i][0], y + IMAGE_NEIGHBORS_4[i][1], 0);
+								if(n4Count > 0) {
+									VectorLib::Difference(v1, n4[n4Count-1], n4[n4Count]);
+									VectorLib::Addition(directions[index], directions[index], v1);
+								}
+								n4Count++;
 							}
 						}
-
-						switch(n4Count) {
-							case 1: 
-								directions[index].values[0] = n4Neighbors[0][0] - x; 
-								directions[index].values[1] = n4Neighbors[0][1] - y;
-								break;
-							case 2:
-								directions[index].values[0] = n4Neighbors[1][0] - n4Neighbors[0][0]; 
-								directions[index].values[1] = n4Neighbors[1][1] - n4Neighbors[0][1];
-								break;
-							default:
-								GetEigenResult(eigenDirection, imageGradient, gaussianFilterOneRadius, x, y, skeleton->GetSizeX(), skeleton->GetSizeY(), 1, false);							
-								directions[index].values[0] = eigenDirection.vectors[1].values[0];
-								directions[index].values[1] = eigenDirection.vectors[1].values[1];																
-								break;
+						if(n4Count == 1) {
+							VectorLib::Initialize(v1, x, y, 0);
+							VectorLib::Difference(v1, v1, n4[0]);
+							VectorLib::Addition(directions[index], directions[index], v1);
 						}
-					} else {
-						directions[index].values[0] = 0;
-						directions[index].values[1] = 0;
 					}
-					NormalizeVector2D(directions[index]);
+					VectorLib::Normalize(directions[index]);
 				}
 			}
 
-
+			delete [] n4;
 			return directions;
 		}
 
@@ -443,8 +467,8 @@ namespace wustl_mm {
 		double GrayImageSkeletonizer::GetPixelCost(EigenResults3D imageEigen, Vector3D skeletonDirection, int type) {
 			double cost = 1;
 			if(imageEigen.values[0] != 0) {
-				double dotValue = skeletonDirection.values[0] * imageEigen.vectors[0].values[0] + skeletonDirection.values[1] * imageEigen.vectors[0].values[1];
-				//double dotValue = skeletonDirection.values[0] * imageEigen.vectors[1].values[0] + skeletonDirection.values[1] * imageEigen.vectors[1].values[1];
+				//double dotValue = skeletonDirection.values[0] * imageEigen.vectors[0].values[0] + skeletonDirection.values[1] * imageEigen.vectors[0].values[1];
+				double dotValue = skeletonDirection.values[0] * imageEigen.vectors[1].values[0] + skeletonDirection.values[1] * imageEigen.vectors[1].values[1];
 				double ratio = imageEigen.values[1] / imageEigen.values[0];
 				switch(type) {
 					case PIXEL_CLASS_POINT:
@@ -452,8 +476,8 @@ namespace wustl_mm {
 						break;
 					case PIXEL_CLASS_CURVE_BODY:
 					case PIXEL_CLASS_CURVE_END:
-						cost = 1.0 - abs(dotValue) * (1-abs(ratio));
-						//cost = abs(dotValue) * (1-abs(ratio));
+						//cost = 1.0 - abs(dotValue) * (1-abs(ratio));
+						cost = abs(dotValue) * (1-abs(ratio));
 						break;
 				}
 				if((cost > 1) || (cost < 0)) {
@@ -487,31 +511,47 @@ namespace wustl_mm {
 
 
 		void GrayImageSkeletonizer::WriteEigenResultsToFile(GrayImage * sourceImage, EigenResults3D * eigenResults, string outputFile) {
+
 			int index;
 			FILE * outFile = fopen(outputFile.c_str(), "wt");
-			fprintf(outFile, "{");
-			for(int y = 0; y < sourceImage->GetSizeY(); y++) {
-				fprintf(outFile, "{");
-				for(int x = 0; x < sourceImage->GetSizeX(); x++) {
-					index = sourceImage->GetIndex(x, y);
+			fprintf(outFile, "%i\n", sourceImage->GetSizeX());
+			fprintf(outFile, "%i\n", sourceImage->GetSizeY());
 
-					fprintf(outFile, "{{%f, %f}, {{%f, %f}, {%f, %f}}}", eigenResults[index].values[0], eigenResults[index].values[1],
-						eigenResults[index].vectors[0].values[0], eigenResults[index].vectors[0].values[1], eigenResults[index].vectors[1].values[0], eigenResults[index].vectors[1].values[1]);
-					if (x < sourceImage->GetSizeX()-1) {
-						fprintf(outFile, ",\n");
-					} else {
-						fprintf(outFile, "\n");
-					}
-					
-				}
-				fprintf(outFile, "}");
-				if (y < sourceImage->GetSizeY()-1) {
-					fprintf(outFile, ",\n");
-				} else {
-					fprintf(outFile, "\n");
+			for(int x = 0; x < sourceImage->GetSizeX(); x++) {
+				for(int y = 0; y < sourceImage->GetSizeY(); y++) {
+					index = sourceImage->GetIndex(x, y);
+					fprintf(outFile, "%f\n%f\n%f\n%f\n%f\n%f\n", 
+						eigenResults[index].values[0], eigenResults[index].values[1],
+						eigenResults[index].vectors[0].values[0], eigenResults[index].vectors[0].values[1], 
+						eigenResults[index].vectors[1].values[0], eigenResults[index].vectors[1].values[1]);
 				}
 			}
-			fprintf(outFile, "}");
+
+			//int index;
+			//FILE * outFile = fopen(outputFile.c_str(), "wt");
+			////fprintf(outFile, "{");
+			//for(int y = 0; y < sourceImage->GetSizeY(); y++) {
+			//	//fprintf(outFile, "{");
+			//	for(int x = 0; x < sourceImage->GetSizeX(); x++) {
+			//		index = sourceImage->GetIndex(x, y);
+
+			//		fprintf(outFile, "{{%f, %f}, {{%f, %f}, {%f, %f}}}", eigenResults[index].values[0], eigenResults[index].values[1],
+			//			eigenResults[index].vectors[0].values[0], eigenResults[index].vectors[0].values[1], eigenResults[index].vectors[1].values[0], eigenResults[index].vectors[1].values[1]);
+			//		if (x < sourceImage->GetSizeX()-1) {
+			//			fprintf(outFile, ",\n");
+			//		} else {
+			//			fprintf(outFile, "\n");
+			//		}
+			//		
+			//	}
+			//	fprintf(outFile, "}");
+			//	if (y < sourceImage->GetSizeY()-1) {
+			//		fprintf(outFile, ",\n");
+			//	} else {
+			//		fprintf(outFile, "\n");
+			//	}
+			//}
+			//fprintf(outFile, "}");
 
 			fclose(outFile);
 			delete outFile;
@@ -520,28 +560,38 @@ namespace wustl_mm {
 		void GrayImageSkeletonizer::WriteDirectionsToFile(GrayImage * sourceImage, Vector3D * skeletonDirections, string outputFile) {
 			int index;
 			FILE * outFile = fopen(outputFile.c_str(), "wt");
-			fprintf(outFile, "{");
-			for(int y = 0; y < sourceImage->GetSizeY(); y++) {
-				fprintf(outFile, "{");
-				for(int x = 0; x < sourceImage->GetSizeX(); x++) {
-					index = sourceImage->GetIndex(x, y);
+			fprintf(outFile, "%i\n", sourceImage->GetSizeX());
+			fprintf(outFile, "%i\n", sourceImage->GetSizeY());
 
-					fprintf(outFile, "{%f, %f}", skeletonDirections[index].values[0], skeletonDirections[index].values[1]);
-					if (x < sourceImage->GetSizeX()-1) {
-						fprintf(outFile, ",\n");
-					} else {
-						fprintf(outFile, "\n");
-					}
-					
-				}
-				fprintf(outFile, "}");
-				if (y < sourceImage->GetSizeY()-1) {
-					fprintf(outFile, ",\n");
-				} else {
-					fprintf(outFile, "\n");
+			for(int x = 0; x < sourceImage->GetSizeX(); x++) {
+				for(int y = 0; y < sourceImage->GetSizeY(); y++) {
+					index = sourceImage->GetIndex(x, y);
+					fprintf(outFile, "%f\n%f\n", skeletonDirections[index].values[0], skeletonDirections[index].values[1]);
 				}
 			}
-			fprintf(outFile, "}");
+
+			////fprintf(outFile, "{");
+			//for(int y = 0; y < sourceImage->GetSizeY(); y++) {
+			//	//fprintf(outFile, "{");
+			//	for(int x = 0; x < sourceImage->GetSizeX(); x++) {
+			//		index = sourceImage->GetIndex(x, y);
+
+			//		fprintf(outFile, "{%f, %f}", skeletonDirections[index].values[0], skeletonDirections[index].values[1]);
+			//		if (x < sourceImage->GetSizeX()-1) {
+			//			fprintf(outFile, ",\n");
+			//		} else {
+			//			fprintf(outFile, "\n");
+			//		}
+			//		
+			//	}
+			//	fprintf(outFile, "}");
+			//	if (y < sourceImage->GetSizeY()-1) {
+			//		fprintf(outFile, ",\n");
+			//	} else {
+			//		fprintf(outFile, "\n");
+			//	}
+			//}
+			//fprintf(outFile, "}");
 
 			fclose(outFile);
 			delete outFile;
