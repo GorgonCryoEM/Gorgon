@@ -24,6 +24,12 @@ namespace wustl_mm {
 		const unsigned char SURFACE_TYPE_XZ = 2;
 		const unsigned char SURFACE_TYPE_YZ = 4;
 		const unsigned char SURFACE_TYPES[2][2][2] = {{{0,0},{0,SURFACE_TYPE_YZ}},{{0,SURFACE_TYPE_XZ},{SURFACE_TYPE_XY,0}}};
+		const unsigned char SURFACE_TYPES_3[3] = {SURFACE_TYPE_YZ, SURFACE_TYPE_XZ, SURFACE_TYPE_XY};
+
+		const int VOLUME_NEIGHBOR_SURFACES_12[12][4] = {{0,0,0,SURFACE_TYPE_XY},  {-1,0,0,SURFACE_TYPE_XY}, {-1,-1,0,SURFACE_TYPE_XY}, {0,-1,0,SURFACE_TYPE_XY},
+														{0,0,0,SURFACE_TYPE_YZ},  {0,0,0,SURFACE_TYPE_XZ},  {0,-1,0,SURFACE_TYPE_YZ},  {-1,0,0,SURFACE_TYPE_XZ},
+														{0,0,-1,SURFACE_TYPE_YZ}, {0,0,-1,SURFACE_TYPE_XZ}, {0,-1,-1,SURFACE_TYPE_YZ}, {-1,0,-1,SURFACE_TYPE_XZ}};
+														
 
 		class DiscreteMesh {
 		public:
@@ -37,9 +43,14 @@ namespace wustl_mm {
 			bool IsPointPresent(int x, int y, int z);
 			bool IsCurvePresent(int x, int y, int z, unsigned char direction);
 			bool IsCurvePresent(Vector3DInt point1, Vector3DInt point2);
+			bool IsSurfacePresent(int x, int y, int z, unsigned char direction);
 			bool FollowCurve(int & x, int & y, int & z);
 			int GetCurveNeighbors(int x, int y, int z, Vector3DInt * & neighbors);
 			int GetCurveNeighborsCount(int x, int y, int z);
+			int GetSurfaceNeighbors(int x, int y, int z, int * & neighbors);
+			int GetSurfaceNeighbors(int x1, int y1, int z1, int x2, int y2, int z2, int * & neighbors);
+			int GetSurfaceNeighborCount(int x1, int y1, int z1, int x2, int y2, int z2);
+			void GetSurfacePoints(int x, int y, int z, unsigned char direction, Vector3DInt * & points);
 
 			static int GetC6(Vector3DInt * neighbors, int neighborCount, Vector3DInt currPoint); 
 			static int GetN6(Vector3DInt * & n6, Volume * sourceVolume, int x, int y, int z);
@@ -49,6 +60,7 @@ namespace wustl_mm {
 			static int GetN6_2Count(Volume * sourceVolume, int x, int y, int z);
 			static int GetN18Count(Volume * sourceVolume, int x, int y, int z);
 			static int GetN26Count(Volume * sourceVolume, int x, int y, int z);
+			static int GetMCount(Volume * sourceVolume, int x1, int y1, int z1, int x2, int y2, int z2);
 			static bool IsPoint(Volume * sourceVolume, int x, int y, int z);
 			static bool IsCurveEnd(Volume * sourceVolume, int x, int y, int z);
 			static bool IsCurveBody(Volume * sourceVolume, int x, int y, int z);
@@ -67,6 +79,8 @@ namespace wustl_mm {
 			void AddSurface(Vector3DInt p1, Vector3DInt p2, Vector3DInt p3, Vector3DInt p4);
 			void RemovePoint(Vector3DInt point);
 			void RemoveCurve(Vector3DInt p1, Vector3DInt p2); 
+			void RemoveSurface(Vector3DInt p1, Vector3DInt p2, Vector3DInt p3, Vector3DInt p4);
+			void RemoveSurface(int x, int y, int z, unsigned char surfaceType);
 
 		private:
 			Volume * volume;
@@ -135,6 +149,7 @@ namespace wustl_mm {
 			delete [] points;
 			delete [] curves;
 			delete [] surfaces;
+			delete volume;
 		}
 
 		void DiscreteMesh::AddVoxel(int x, int y, int z) {
@@ -209,6 +224,10 @@ namespace wustl_mm {
 		}
 
 
+		bool DiscreteMesh::IsSurfacePresent(int x, int y, int z, unsigned char direction) {
+			return ((surfaces[GetIndex(x, y, z)] & direction) == direction);
+		}
+
 		bool DiscreteMesh::FollowCurve(int & x, int & y, int & z) {
 			Vector3DInt * neighbors;
 			int count = GetCurveNeighbors(x, y, z, neighbors);
@@ -246,6 +265,105 @@ namespace wustl_mm {
 			return count;
 		}
 
+		int DiscreteMesh::GetSurfaceNeighbors(int x, int y, int z, int * & neighbors) {
+			int count = 0;
+			neighbors = new int[12*4];
+
+			for(int i = 0; i < 12; i++) {
+				if(IsSurfacePresent(x+VOLUME_NEIGHBOR_SURFACES_12[i][0], y+VOLUME_NEIGHBOR_SURFACES_12[i][1], z+VOLUME_NEIGHBOR_SURFACES_12[i][2], VOLUME_NEIGHBOR_SURFACES_12[i][3])) {
+					neighbors[count*4 + 0] = x + VOLUME_NEIGHBOR_SURFACES_12[i][0];	
+					neighbors[count*4 + 1] = y + VOLUME_NEIGHBOR_SURFACES_12[i][1];	
+					neighbors[count*4 + 2] = z + VOLUME_NEIGHBOR_SURFACES_12[i][2];
+					neighbors[count*4 + 3] = VOLUME_NEIGHBOR_SURFACES_12[i][3];
+					count++;
+				}
+			}
+			return count;
+		}
+
+		int DiscreteMesh::GetSurfaceNeighbors(int x1, int y1, int z1, int x2, int y2, int z2, int * & neighbors) {
+			int * p1Neighbors, * p2Neighbors;
+			int p1Count, p2Count;
+			p1Count = GetSurfaceNeighbors(x1, y1, z1, p1Neighbors);
+			p2Count = GetSurfaceNeighbors(x2, y2, z2, p2Neighbors);
+
+			int nCount = 0;
+			neighbors = new int[4*4];
+			bool allFound;
+
+			for(int i = 0; i < p1Count; i++) {
+				for(int j = 0; j < p2Count; j++) {
+					allFound = true;
+					for(int k = 0; k < 4; k++) {
+						allFound = allFound && (p1Neighbors[i*4 +k] == p2Neighbors[j*4 +k]);
+					}
+					if(allFound) {
+						for(int k = 0; k < 4; k++) {
+							neighbors[nCount*4 +k] = p1Neighbors[i*4 +k];
+						}
+						nCount++;
+					}
+				}
+			}
+
+			delete [] p1Neighbors;
+			delete [] p2Neighbors;
+			return nCount;
+
+
+		}
+
+		int DiscreteMesh::GetSurfaceNeighborCount(int x1, int y1, int z1, int x2, int y2, int z2) {
+			int * p1Neighbors, * p2Neighbors;
+			int p1Count, p2Count;
+			p1Count = GetSurfaceNeighbors(x1, y1, z1, p1Neighbors);
+			p2Count = GetSurfaceNeighbors(x2, y2, z2, p2Neighbors);
+
+			int nCount = 0;
+			bool allFound;
+
+			for(int i = 0; i < p1Count; i++) {
+				for(int j = 0; j < p2Count; j++) {
+					allFound = true;
+					for(int k = 0; k < 4; k++) {
+						allFound = allFound && (p1Neighbors[i*4 +k] == p2Neighbors[j*4 +k]);
+					}
+					if(allFound) {
+						nCount++;
+					}
+				}
+			}
+
+			delete [] p1Neighbors;
+			delete [] p2Neighbors;
+			return nCount;
+		}
+
+		void DiscreteMesh::GetSurfacePoints(int x, int y, int z, unsigned char direction, Vector3DInt * & points) {
+			points = new Vector3DInt[4];
+			switch(direction) {
+				case SURFACE_TYPE_XY:
+					VectorLib::Initialize(points[0], x, y, z);
+					VectorLib::Initialize(points[1], x+1, y, z);
+					VectorLib::Initialize(points[2], x+1, y+1, z);
+					VectorLib::Initialize(points[3], x, y+1, z);
+					break;
+				case SURFACE_TYPE_XZ:
+					VectorLib::Initialize(points[0], x, y, z);
+					VectorLib::Initialize(points[1], x+1, y, z);
+					VectorLib::Initialize(points[2], x+1, y, z+1);
+					VectorLib::Initialize(points[3], x, y, z+1);
+					break;
+				case SURFACE_TYPE_YZ:
+					VectorLib::Initialize(points[0], x, y, z);
+					VectorLib::Initialize(points[1], x, y+1, z);
+					VectorLib::Initialize(points[2], x, y+1, z+1);
+					VectorLib::Initialize(points[3], x, y, z+1);
+					break;
+			}
+
+		}
+
 		void DiscreteMesh::AddPoint(Vector3DInt point){
 			//printf("Adding Point: {%i %i %i}\n", point.values[0], point.values[1], point.values[2]);
 			points[volume->getIndex(point.values[0], point.values[1], point.values[2])] = true;
@@ -279,7 +397,10 @@ namespace wustl_mm {
 			RemoveCurve(p22, p33);
 			RemoveCurve(p44, p33);
 			RemoveCurve(p11, p44);
-			int surfaceType = SURFACE_TYPES[p33.values[0] - p11.values[0]][p33.values[1] - p11.values[1]][p33.values[2] - p11.values[2]];
+			unsigned char surfaceType = SURFACE_TYPES[p33.values[0] - p11.values[0]][p33.values[1] - p11.values[1]][p33.values[2] - p11.values[2]];
+			int index = volume->getIndex(p11.values[0], p11.values[1], p11.values[2]);
+
+			surfaces[index] = surfaces[index] | surfaceType;
 			//printf("Adding Surface: {%i %i %i} - {%i %i %i} - {%i %i %i} - {%i %i %i} - %i\n", 
 			//	p11.values[0], p11.values[1], p11.values[2], 
 			//	p22.values[0], p22.values[1], p22.values[2],
@@ -306,6 +427,29 @@ namespace wustl_mm {
 
 			curves[index] = curves[index] & ~curveType;
 		}
+
+		void DiscreteMesh::RemoveSurface(Vector3DInt p1, Vector3DInt p2, Vector3DInt p3, Vector3DInt p4){
+			Vector3DInt p11 = p1, p22 = p2, p33 = p3, p44 = p4;
+			FindSurfaceBase(p11, p22, p33, p44);
+
+			unsigned char surfaceType = SURFACE_TYPES[p33.values[0] - p11.values[0]][p33.values[1] - p11.values[1]][p33.values[2] - p11.values[2]];
+			RemoveSurface(p11.values[0], p11.values[1], p11.values[2], surfaceType);
+
+			//printf("Removing Surface: {%i %i %i} - {%i %i %i} - {%i %i %i} - {%i %i %i} - %i\n", 
+			//	p11.values[0], p11.values[1], p11.values[2], 
+			//	p22.values[0], p22.values[1], p22.values[2],
+			//	p33.values[0], p33.values[1], p33.values[2], 
+			//	p44.values[0], p44.values[1], p44.values[2],
+			//	surfaceType);
+
+		}
+
+
+		void DiscreteMesh::RemoveSurface(int x, int y, int z, unsigned char surfaceType){
+			int index = volume->getIndex(x, y, z);			
+			surfaces[index] = surfaces[index] & ~surfaceType;
+		}
+
 
 		void DiscreteMesh::FindCurveBase(Vector3D &p1, Vector3D &p2) {
 			Vector3D temp;
@@ -355,7 +499,6 @@ namespace wustl_mm {
 			p2 = points[1];
 			p3 = points[3];
 			p4 = points[2];
-			delete [] points;
 		}
 
 		void DiscreteMesh::FindSurfaceBase(Vector3DInt &p1, Vector3DInt &p2, Vector3DInt &p3, Vector3DInt &p4) {
@@ -384,19 +527,18 @@ namespace wustl_mm {
 			p2 = points[1];
 			p3 = points[3];
 			p4 = points[2];
-			delete [] points;
 		}
 
 		int DiscreteMesh::GetC6(Vector3DInt * neighbors, int neighborCount, Vector3DInt currPoint) {
 			Volume * vol = new Volume(5, 5, 5);
 			for(int i = 0; i < neighborCount; i++) {
-				vol->setDataAt(neighbors[i].values[0] - currPoint.values[0], neighbors[i].values[1] - currPoint.values[1], neighbors[i].values[2] - currPoint.values[2], 1);
+				vol->setDataAt(neighbors[i].values[0] - currPoint.values[0]+2, neighbors[i].values[1] - currPoint.values[1]+2, neighbors[i].values[2] - currPoint.values[2]+2, 1);
 			}
 
 			int c6Count = 0;
 			Vector3DInt * n6;
 			int n6Count;
-			Vector3DInt queue[26];
+			Vector3DInt * queue = new Vector3DInt[26];
 			Vector3DInt temp;
 			int queueSize = 0;
 
@@ -423,7 +565,7 @@ namespace wustl_mm {
 				}
 			}
 
-
+			delete [] queue;
 			delete vol;
 			return c6Count;
 		}
@@ -446,7 +588,7 @@ namespace wustl_mm {
 			n6_2 = new Vector3DInt[18];
 			Vector3DInt * n18;
 			Vector3DInt * n6X, * n6Y;
-			Vector3DInt n62List[36];
+			Vector3DInt * n62List = new Vector3DInt[36];
 			int n62Count = 0;
 
 			int n18Count = GetN18(n18, sourceVolume, x, y, z);
@@ -532,6 +674,24 @@ namespace wustl_mm {
 			return n26Count;
 		}
 
+		int DiscreteMesh::GetMCount(Volume * sourceVolume, int x1, int y1, int z1, int x2, int y2, int z2) {
+			Vector3DInt * n18X;
+			int n18XCount = GetN18(n18X, sourceVolume, x1, y1, z1);
+			Vector3DInt * n6Y;
+			int n6YCount = GetN6(n6Y, sourceVolume, x2, y2, z2);
+			int mCount = 0;
+			for(int i = 0; i < n18XCount; i++) {
+				for(int j = 0; j < n6YCount; j++) {
+					if((n18X[i].values[0] == n6Y[j].values[0]) && (n18X[i].values[1] == n6Y[j].values[1]) && (n18X[i].values[2] == n6Y[j].values[2])) {
+						mCount++;
+					}
+				}
+			}
+			delete [] n18X;
+			delete [] n6Y;
+			return mCount;
+		}
+
 		bool DiscreteMesh::IsPoint(Volume * sourceVolume, int x, int y, int z) {
 			return (GetN6Count(sourceVolume, x, y, z) == 0);
 		}
@@ -556,8 +716,21 @@ namespace wustl_mm {
 		}
 
 		bool DiscreteMesh::IsSurfaceBorder(Volume * sourceVolume, int x, int y, int z) {
-			return sourceVolume->isSheetEnd(x, y, z);
+			Vector3DInt * n6_2, * n6;
+			Vector3DInt currPoint;
+			VectorLib::Initialize(currPoint, x, y, z);
+			int n6_2Count = GetN6_2(n6_2, sourceVolume, x, y, z);
+			int cn6_2Count = GetC6(n6_2, n6_2Count, currPoint);
+			int n6Count = GetN6(n6, sourceVolume, x, y, z);
+			int mZigma = 0;
+			for(int i = 0; i < n6Count; i++) {
+				mZigma += GetMCount(sourceVolume, x, y, z, n6[i].values[0], n6[i].values[1], n6[i].values[2]);
+			}
 
+			delete [] n6_2;
+			delete [] n6;
+
+			return (mZigma - n6_2Count - n6Count) == 0;
 			/*if(doDependantChecks && 
 				(IsVolumeBody(sourceVolume, x, y, z) || IsVolumeBorder(sourceVolume, x, y, z, false) || IsSurfaceBody(sourceVolume, x, y, z, false) )) {
 				return false;

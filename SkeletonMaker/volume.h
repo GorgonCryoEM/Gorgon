@@ -718,9 +718,11 @@ public:
 	}
 
 	void pad (int padBy, double padValue) {
+
 		int newSizeX = sizex + 2*padBy;
 		int newSizeY = sizey + 2*padBy;
 		int newSizeZ = sizez + 2*padBy;
+
 		float * newData = new float[newSizeX * newSizeY * newSizeZ];
 		double value;
 
@@ -734,7 +736,7 @@ public:
 						value = getDataAt(x-padBy, y-padBy, z-padBy);
 					}
 
-					newData[x * newSizeY * newSizeZ + y * newSizeY + z] = (float)value;
+					newData[x * newSizeY * newSizeZ + y * newSizeZ + z] = (float)value;
 				}
 			}
 		}
@@ -745,6 +747,20 @@ public:
 		sizez = newSizeZ;
 
 	}
+
+	void applyMask(Volume * maskVol, double maskValue, bool keepMaskValue) {
+		for(int x = 0; x < maskVol->getSizeX(); x++) {
+			for(int y = 0; y < maskVol->getSizeY(); y++) {
+				for(int z = 0; z < maskVol->getSizeZ(); z++) {
+					if(((maskVol->getDataAt(x, y, z) == maskValue) && !keepMaskValue) ||
+						((maskVol->getDataAt(x, y, z) != maskValue) && keepMaskValue)) {
+						setDataAt(x, y, z, 0);
+					}
+				}
+			}
+		}
+	}
+
 	/* Statistics function */
 	int getSizeX( )
 	{
@@ -1068,7 +1084,9 @@ public:
 				}
 
 		// Finally, clean up
+		#ifdef VERBOSE
 		printf("Thresholding the volume to 0/1...\n") ;
+		#endif
 		svol->threshold( 0.1, 0, 1 ) ;
 
 		return svol ;
@@ -1178,7 +1196,9 @@ public:
 				}
 
 		// Finally, clean up
+		#ifdef VERBOSE
 		printf("Thresholding the volume to 0/1...\n") ;
+		#endif
 		svol->threshold( 0.1, 0, 1 ) ;
 
 		return svol ;
@@ -3543,11 +3563,15 @@ public:
 	{
 		int i, j, k ;
 		// First, threshold the volume
+		#ifdef VERBOSE
 		printf("Thresholding the volume to -MAX_ERODE/0...\n") ;
+		#endif
 		threshold( thr, -MAX_ERODE, 0 ) ;
 
 		// Next, initialize the queue
+		#ifdef VERBOSE
 		printf("Initializing queue...\n") ;
+		#endif
 		GridQueue* queue = new GridQueue( ) ;
 
 		for ( i = 0 ; i < sizex ; i ++ )
@@ -3567,10 +3591,12 @@ public:
 						}
 					}
 				}
+		#ifdef VERBOSE
 		printf("Total %d nodes\n", queue->getNumElements() ) ;
 
 		// Perform erosion 
 		printf("Start erosion to %d...\n", wid) ;
+		#endif
 		double val = 0;
 		int ox, oy, oz ;
 		int curwid = 0 ;
@@ -3579,7 +3605,9 @@ public:
 		{
 			if ( ct == total )
 			{
+				#ifdef VERBOSE
 				printf("Layer %d has %d nodes.\n", (int) curwid, total ) ;
+				#endif
 				curwid ++ ;
 				ct = 0 ;
 				total = queue->getNumElements() ;
@@ -3614,7 +3642,9 @@ public:
 		}
 
 		// Finally, clean up
+		#ifdef VERBOSE
 		printf("Thresholding the volume to 0/1...\n") ;
+		#endif
 		threshold( 0, 0, 1 ) ;
 
 	}
@@ -3624,11 +3654,15 @@ public:
 	{
 		int i, j, k ;
 		// First, threshold the volume
+		#ifdef VERBOSE
 		printf("Thresholding the volume to -MAX_ERODE/0...\n") ;
+		#endif
 		threshold( thr, -MAX_ERODE, 0 ) ;
 
 		// Next, initialize the queue
+		#ifdef VERBOSE
 		printf("Initializing queue...\n") ;
+		#endif
 		GridQueue* queue = new GridQueue( ) ;
 
 		for ( i = 0 ; i < sizex ; i ++ )
@@ -3648,10 +3682,13 @@ public:
 						}
 					}
 				}
+		#ifdef VERBOSE
 		printf("Total %d nodes\n", queue->getNumElements() ) ;
 
 		// Perform erosion 
 		printf("Start erosion to %d...\n", wid) ;
+		#endif
+
 		double val = 0;
 		int ox, oy, oz ;
 		int curwid = 0 ;
@@ -3660,7 +3697,9 @@ public:
 		{
 			if ( ct == total )
 			{
+				#ifdef VERBOSE
 				printf("Layer %d has %d nodes.\n", (int) curwid, total ) ;
+				#endif
 				curwid ++ ;
 				ct = 0 ;
 				total = queue->getNumElements() ;
@@ -3705,7 +3744,9 @@ public:
 		}
 
 		// Finally, clean up
+		#ifdef VERBOSE
 		printf("Thresholding the volume to 0/1...\n") ;
+		#endif
 		threshold( 0, 0, 1 ) ;
 
 	}
@@ -3714,11 +3755,15 @@ public:
 	{
 		int i, j, k ;
 		// First, threshold the volume
+		#ifdef VERBOSE
 		printf("Thresholding the volume to -MAX_ERODE/0...\n") ;
+		#endif
 		threshold( thr, -MAX_ERODE, 0 ) ;
 
 		// Next, initialize the queue
+		#ifdef VERBOSE
 		printf("Initializing queue...\n") ;
+		#endif
 		GridQueue2* queue = new GridQueue2( ) ;
 		GridQueue2* queue2 = new GridQueue2( ) ;
 
@@ -3739,11 +3784,13 @@ public:
 						}
 					}
 				}
+		#ifdef VERBOSE
 		printf("Total %d nodes\n", queue->getNumElements() ) ;
 
 		// Perform erosion 
 		// wid = MAX_ERODE ;
 		printf("Start erosion to %d...\n", wid) ;
+		#endif
 		gridQueueEle* ele ;
 		double val = 0;
 		int ox, oy, oz ;
@@ -3751,7 +3798,9 @@ public:
 		for ( int curwid = 1 ; curwid <= wid ; curwid ++ )
 		{
 			int numComplex = 0, numSimple = 0 ;
+			#ifdef VERBOSE
 			printf("Processing %d nodes in layer %d\n", queue->getNumElements(), curwid) ;
+			#endif
 			
 			/* set nodes for next layer 
 			while ( ( ele = queue->getNext() ) != NULL )
@@ -3885,7 +3934,9 @@ public:
 			delete queue ;
 			queue = queue2 ;
 			queue2 = new GridQueue2() ;
+			#ifdef VERBOSE
 			printf("%d complex, %d simple\n", numComplex, numSimple) ;
+			#endif
 
 			if ( numSimple == 0 )
 			{
@@ -3894,7 +3945,9 @@ public:
 		}
 
 		// Finally, clean up
+		#ifdef VERBOSE
 		printf("Thresholding the volume to 0/1...\n") ;
+		#endif
 		threshold( 0, 0, 1 ) ;
 
 	}
@@ -3904,11 +3957,15 @@ public:
 	{
 		int i, j, k ;
 		// First, threshold the volume
+		#ifdef VERBOSE
 		printf("Thresholding the volume to -MAX_ERODE/0...\n") ;
+		#endif
 		threshold( thr, -MAX_ERODE, 0 ) ;
 
 		// Next, initialize the linked queue
+		#ifdef VERBOSE
 		printf("Initializing queue...\n") ;
+		#endif
 		GridQueue2* queue2 = new GridQueue2( ) ;
 		GridQueue2* queue3 = new GridQueue2( ) ;
 		PriorityQueue <gridPoint,int> * queue = new PriorityQueue <gridPoint,int> ( MAX_QUEUELEN );
@@ -3930,12 +3987,14 @@ public:
 						}
 					}
 				}
+		#ifdef VERBOSE
 		printf("Total %d nodes\n", queue2->getNumElements() ) ;
 
 
 		// Perform erosion 
 		// wid = MAX_ERODE ;
 		printf("Start erosion to %d...\n", wid) ;
+		#endif
 		gridQueueEle* ele ;
 		gridPoint* gp ;
 		double val = 0;
@@ -3954,7 +4013,9 @@ public:
 			// queue3 and queue are empty
 
 			int numComplex = 0, numSimple = 0 ;
+			#ifdef VERBOSE
 			printf("Processing %d nodes in layer %d\n", queue2->getNumElements(), curwid) ;
+			#endif
 			
 			// First, 
 			// check for complex nodes in queue2 
@@ -4104,7 +4165,9 @@ public:
 
 			}
 
+			#ifdef VERBOSE
 			printf("%d complex, %d simple\n", numComplex, numSimple) ;
+			#endif
 			if ( numSimple == 0 )
 			{
 				break ;
@@ -4112,8 +4175,11 @@ public:
 		}
 
 		// Finally, clean up
+		#ifdef VERBOSE
 		printf("Thresholding the volume to 0/1...\n") ;
+		#endif
 		threshold( 0, 0, 1 ) ;
+		delete queue;
 
 	}
 
@@ -4123,11 +4189,15 @@ public:
 	{
 		int i, j, k ;
 		// First, threshold the volume
+		#ifdef VERBOSE
 		printf("Thresholding the volume to -MAX_ERODE/0...\n") ;
+		#endif
 		threshold( thr, -MAX_ERODE, 0 ) ;
 
 		// Next, initialize the linked queue
+		#ifdef VERBOSE
 		printf("Initializing queue...\n") ;
+		#endif
 		GridQueue2* queue2 = new GridQueue2( ) ;
 		GridQueue2* queue3 = new GridQueue2( ) ;
 		PriorityQueue <gridPoint,int> * queue = new PriorityQueue <gridPoint,int> ( MAX_QUEUELEN );
@@ -4156,12 +4226,15 @@ public:
 						}
 					}
 				}
+		#ifdef VERBOSE
 		printf("Total %d nodes\n", queue2->getNumElements() ) ;
 
 
 		// Perform erosion 
 		// wid = MAX_ERODE ;
 		printf("Start erosion to %d...\n", wid) ;
+		#endif
+
 		gridQueueEle* ele ;
 		gridPoint* gp ;
 		double val = 0;
@@ -4180,7 +4253,9 @@ public:
 			// queue3 and queue are empty
 
 			int numComplex = 0, numSimple = 0 ;
+			#ifdef VERBOSE
 			printf("Processing %d nodes in layer %d\n", queue2->getNumElements(), curwid) ;
+			#endif
 			
 			// First, 
 			// check for complex nodes in queue2 
@@ -4330,9 +4405,10 @@ public:
 						*/
 
 			}
-
+			#ifdef VERBOSE
 			printf("%d complex, %d simple\n", numComplex, numSimple) ;
-			
+			#endif			
+
 			if ( numSimple == 0 )
 			{
 					break ;
@@ -4340,8 +4416,11 @@ public:
 		}
 
 		// Finally, clean up
+		#ifdef VERBOSE
 		printf("Thresholding the volume to 0/1...\n") ;
+		#endif
 		threshold( 0, 0, 1 ) ;
+		delete queue;
 
 	}
 
@@ -4350,14 +4429,18 @@ public:
 	{
 		int i, j, k ;
 		// First, threshold the volume
+		#ifdef VERBOSE
 		printf("Thresholding the volume to -1/0...\n") ;
+		#endif
 		threshold( thr, -1, 0 ) ;
 
 		// Next, apply convergent erosion 
 		// by preserving: complex nodes, curve end-points, and sheet points
 
 		// Next, initialize the linked queue
+		#ifdef VERBOSE
 		printf("Initializing queue...\n") ;
+		#endif
 		GridQueue2* queue2 = new GridQueue2( ) ;
 		GridQueue2* queue3 = new GridQueue2( ) ;
 		GridQueue2* queue4 = new GridQueue2( ) ;
@@ -4387,12 +4470,15 @@ public:
 						}
 					}
 				}
+		
+		#ifdef VERBOSE
 		printf("Total %d nodes\n", queue2->getNumElements() ) ;
+		printf("Start erosion to %d...\n", wid) ;
+		#endif
 
 
 		// Perform erosion 
 		int wid = MAX_ERODE ;
-		printf("Start erosion to %d...\n", wid) ;
 		gridQueueEle* ele ;
 		gridPoint* gp ;
 		double val = 0;
@@ -4415,7 +4501,9 @@ public:
 			// queue3 and queue are empty
 
 			int numComplex = 0, numSimple = 0 ;
+			#ifdef VERBOSE
 			printf("Processing %d nodes in layer %d\n", queue2->getNumElements(), curwid) ;
+			#endif
 			
 			/*
 			We first need to assign curwid + 1 to every node in this layer
@@ -4725,7 +4813,9 @@ public:
 
 			}
 
+			#ifdef VERBOSE
 			printf("%d complex, %d simple\n", numComplex, numSimple) ;
+			#endif
 			
 			if ( numSimple == 0 )
 			{
@@ -4739,7 +4829,9 @@ public:
 		delete queue2;
 		delete queue3;
 		delete queue4;
+		#ifdef VERBOSE
 		printf("Thresholding the volume to 0/1...\n") ;
+		#endif
 		threshold( 0, 0, 1 ) ;		
 	}
 
@@ -4748,14 +4840,18 @@ public:
 	{
 		int i, j, k ;
 		// First, threshold the volume
+		#ifdef VERBOSE
 		printf("Thresholding the volume to -1/0...\n") ;
+		#endif
 		threshold( thr, -1, 0 ) ;
 
 		// Next, apply convergent erosion 
 		// by preserving: complex nodes, curve end-points, and sheet points
 
 		// Next, initialize the linked queue
+		#ifdef VERBOSE
 		printf("Initializing queue...\n") ;
+		#endif
 		GridQueue2* queue2 = new GridQueue2( ) ;
 		GridQueue2* queue3 = new GridQueue2( ) ;
 		GridQueue2* queue4 = new GridQueue2( ) ;
@@ -4785,12 +4881,14 @@ public:
 						}
 					}
 				}
+		#ifdef VERBOSE
 		printf("Total %d nodes\n", queue2->getNumElements() ) ;
+		printf("Start erosion to %d...\n", wid) ;
+		#endif
 
 
 		// Perform erosion 
 		int wid = MAX_ERODE ;
-		printf("Start erosion to %d...\n", wid) ;
 		gridQueueEle* ele ;
 		gridPoint* gp ;
 		double val = 0;
@@ -4813,7 +4911,9 @@ public:
 			// queue3 and queue are empty
 
 			int numComplex = 0, numSimple = 0 ;
+			#ifdef VERBOSE
 			printf("Processing %d nodes in layer %d\n", queue2->getNumElements(), curwid) ;
+			#endif
 			
 			/*
 			We first need to assign curwid + 1 to every node in this layer
@@ -5125,7 +5225,9 @@ public:
 
 			}
 
+			#ifdef VERBOSE
 			printf("%d complex, %d simple\n", numComplex, numSimple) ;
+			#endif
 			
 			if ( numSimple == 0 )
 			{
@@ -5134,7 +5236,9 @@ public:
 		}
 
 		// Finally, clean up
+		#ifdef VERBOSE
 		printf("Thresholding the volume to 0/1...\n") ;
+		#endif
 		threshold( 0, 0, 1 ) ;		
 		delete scrvol;
 		delete queue;
@@ -5148,14 +5252,18 @@ public:
 	{
 		int i, j, k ;
 		// First, threshold the volume
+		#ifdef VERBOSE
 		printf("Thresholding the volume to -1/0...\n") ;
+		#endif
 		threshold( thr, -1, 0 ) ;
 
 		// Next, apply convergent erosion 
 		// by preserving: complex nodes, curve end-points, and sheet points
 
 		// Next, initialize the linked queue
+		#ifdef VERBOSE
 		printf("Initializing queue...\n") ;
+		#endif
 		GridQueue2* queue2 = new GridQueue2( ) ;
 		GridQueue2* queue = new GridQueue2( ) ;
 
@@ -5178,12 +5286,13 @@ public:
 						}
 					}
 				}
+		#ifdef VERBOSE
 		printf("Total %d nodes\n", queue2->getNumElements() ) ;
-
+		printf("Start erosion to %d...\n", wid) ;
+		#endif
 
 		// Perform erosion 
 		int wid = 0 ;
-		printf("Start erosion to %d...\n", wid) ;
 		gridQueueEle* ele ;
 		double val = 0;
 		int ox, oy, oz ;
@@ -5197,8 +5306,10 @@ public:
 			// queue is empty
 
 			int numComplex = 0, numSimple = 0 ;
+			#ifdef VERBOSE
 			printf("Processing %d nodes in layer %d\n", queue2->getNumElements(), wid) ;
-			
+			#endif			
+
 			// Rename queue2 to be queue, 
 			// Clear queue2
 			// From now on, queue2 holds nodes of next level
@@ -5253,9 +5364,10 @@ public:
 
 				ele = queue->remove() ;
 			}
-
+			#ifdef VERBOSE
 			printf("Level %d: %d complex, %d simple\n", wid, numComplex, numSimple) ;
-			
+			#endif
+
 			if ( numSimple == 0 )
 			{
 				break ;
@@ -5265,7 +5377,9 @@ public:
 		// Finally, clean up
 		delete queue;
 		delete queue2;
+		#ifdef VERBOSE
 		printf("Thresholding the volume to 0/1...\n") ;
+		#endif
 		threshold( 0, 0, 1 ) ;		
 	}
 
@@ -5274,14 +5388,18 @@ public:
 	{
 		int i, j, k ;
 		// First, threshold the volume
+		#ifdef VERBOSE
 		printf("Thresholding the volume to -1/0...\n") ;
+		#endif
 		threshold( thr, -1, 0 ) ;
 
 		// Next, apply convergent erosion 
 		// by preserving: complex nodes, curve end-points, and sheet points
 
 		// Next, initialize the linked queue
+		#ifdef VERBOSE
 		printf("Initializing queue...\n") ;
+		#endif
 		GridQueue2* queue2 = new GridQueue2( ) ;
 		GridQueue2* queue3 = new GridQueue2( ) ;
 		PriorityQueue <gridPoint,int> * queue = new PriorityQueue <gridPoint,int> ( MAX_QUEUELEN );
@@ -5311,12 +5429,15 @@ public:
 						}
 					}
 				}
+		#ifdef VERBOSE
 		printf("Total %d nodes\n", queue2->getNumElements() ) ;
 
 
 		// Perform erosion 
-		int wid = MAX_ERODE ;
 		printf("Start erosion to %d...\n", wid) ;
+		#endif
+
+		int wid = MAX_ERODE ;
 		gridQueueEle* ele ;
 		gridPoint* gp ;
 		double val = 0;
@@ -5337,8 +5458,9 @@ public:
 			// queue3 and queue are empty
 
 			int numComplex = 0, numSimple = 0 ;
+			#ifdef VERBOSE
 			printf("Processing %d nodes in layer %d\n", queue2->getNumElements(), curwid) ;
-			
+			#endif
 
 			// Next,
 			// Compute score for each node left in queue2
@@ -5454,9 +5576,10 @@ public:
 						
 					*/
 			}
-
+			#ifdef VERBOSE
 			printf("%d complex, %d simple\n", numComplex, numSimple) ;
-			
+			#endif
+
 			if ( numSimple == 0 )
 			{
 					break ;
@@ -5465,7 +5588,10 @@ public:
 
 		// Finally, clean up
 		delete scrvol ;
+		delete queue;
+		#ifdef VERBOSE
 		printf("Thresholding the volume to 0/1...\n") ;
+		#endif
 		threshold( 0, 0, 1 ) ;		
 	}
 
@@ -5474,14 +5600,18 @@ public:
 	{
 		int i, j, k ;
 		// First, threshold the volume
+		#ifdef VERBOSE
 		printf("Thresholding the volume to -1/0...\n") ;
+		#endif
 		threshold( thr, -1, 0 ) ;
 
 		// Next, apply convergent erosion 
 		// by preserving: complex nodes, curve end-points, and sheet points
 
 		// Next, initialize the linked queue
+		#ifdef VERBOSE
 		printf("Initializing queue...\n") ;
+		#endif
 		GridQueue2* queue2 = new GridQueue2( ) ;
 		GridQueue2* queue3 = new GridQueue2( ) ;
 		PriorityQueue <gridPoint,int> * queue = new PriorityQueue <gridPoint,int> ( MAX_QUEUELEN );
@@ -5510,12 +5640,14 @@ public:
 						}
 					}
 				}
+		#ifdef VERBOSE
 		printf("Total %d nodes\n", queue2->getNumElements() ) ;
 
 
 		// Perform erosion 
-		int wid = MAX_ERODE ;
 		printf("Start erosion to %d...\n", wid) ;
+		#endif
+		int wid = MAX_ERODE ;
 		gridQueueEle* ele ;
 		gridPoint* gp ;
 		double val = 0;
@@ -5535,7 +5667,9 @@ public:
 			// queue3 and queue are empty
 
 			int numComplex = 0, numSimple = 0 ;
+			#ifdef VERBOSE
 			printf("Processing %d nodes in layer %d\n", queue2->getNumElements(), curwid) ;
+			#endif
 			
 
 			// Next,
@@ -5653,7 +5787,9 @@ public:
 
 			}
 
+			#ifdef VERBOSE
 			printf("%d complex, %d simple\n", numComplex, numSimple) ;
+			#endif
 			
 			if ( numSimple == 0 )
 			{
@@ -5663,9 +5799,13 @@ public:
 		}
 
 		// Finally, clean up
+		#ifdef VERBOSE
 		printf("Thresholding the volume to 0/1...\n") ;
+		#endif
 		threshold( 0, 0, 1 ) ;	
 		delete scrvol;
+		delete queue;
+		delete queue3;
 	}
 
 
@@ -5762,7 +5902,9 @@ public:
 		// Deal with closed rings
 		dis -- ;
 		queues[ - dis ] = new GridQueue2( ) ;
+		#ifdef VERBOSE
 		printf("Detecting closed rings %d...", dis) ;
+		#endif
 		int ftot = 0 ;
 		for ( i = 0 ; i < sizex ; i ++ )
 			for ( j = 0 ; j < sizey ; j ++ )
@@ -5787,7 +5929,9 @@ public:
 						ftot ++ ;
 					}
 				}
+		#ifdef VERBOSE
 		printf("%d nodes\n", ftot) ;
+		#endif
 
 
 		// return ;
@@ -5952,7 +6096,9 @@ public:
 					
 				}
 
+				#ifdef VERBOSE
 				printf("Non-minimal: %d\n", num) ;
+				#endif
 
 				if ( num == 0 )
 				{
@@ -5975,12 +6121,17 @@ public:
 		}
 
 		// Finally, threshold the volume
+		#ifdef VERBOSE
 		//printf("Thresholding the volume to 0/1...\n") ;
+		#endif
 		//threshold( -1, 1, 0, 0 ) ;
 		threshold( 0, 0, 1 ) ;
 		delete fvol ;
 		delete queue2;
 		delete queue3;
+		for ( d = -dis ; d >= 2 ; d -- ) {
+			delete queues[d];
+		}
 		delete [] queues;
 
 	}
@@ -6026,7 +6177,9 @@ public:
 						}
 					}
 				}
+		#ifdef VERBOSE
 		printf("Total %d nodes\n", queue2->getNumElements() ) ;
+		#endif
 
 		// Start erosion
 		gridQueueEle* ele ;
@@ -6092,7 +6245,9 @@ public:
 		
 		dis -- ;
 		queues[ - dis ] = new GridQueue2( ) ;
+		#ifdef VERBOSE
 		printf("Detecting closed rings %d...", dis) ;
+		#endif
 		int ftot = 0 ;
 		for ( i = 0 ; i < sizex ; i ++ )
 			for ( j = 0 ; j < sizey ; j ++ )
@@ -6119,8 +6274,9 @@ public:
 						ftot ++ ;
 					}
 				}
+		#ifdef VERBOSE
 		printf("%d nodes\n", ftot) ;
-		
+		#endif
 		
 
 		/* Find local minimum: to help determine erosion level 
@@ -6317,8 +6473,9 @@ public:
 					}
 					
 				}
-
+				#ifdef VERBOSE
 				printf("Non-minimal: %d\n", num) ;
+				#endif
 
 				if ( num == 0 )
 				{
@@ -6342,7 +6499,9 @@ public:
 		
 
 		// Finally, threshold the volume
+		#ifdef VERBOSE
 		//printf("Thresholding the volume to 0/1...\n") ;
+		#endif
 		//threshold( -1, 1, 0, 0 ) ;
 		threshold( 0, 0, 1 ) ;
 
@@ -6350,6 +6509,9 @@ public:
 		delete fvol ;
 		delete queue2;
 		delete queue3;
+		for (int d = -dis ; d >= 2 ; d -- ) {
+			delete queues[d];
+		}
 		delete [] queues;
 	
 		return - dis - 1 ;
@@ -6359,11 +6521,15 @@ public:
 	{
 		int i, j, k ;
 		// First, threshold the volume
+		#ifdef VERBOSE
 		printf("Thresholding the volume to -1/0...\n") ;
+		#endif
 		threshold( 0.1f, -1, 0 ) ;
 		
 		// Next, initialize the linked queue
+		#ifdef VERBOSE
 		printf("Initializing queue...\n") ;
+		#endif
 		GridQueue2* queue2 = new GridQueue2( ) ;
 		GridQueue2* queue3 = new GridQueue2( ) ;
 		GridQueue2** queues = new GridQueue2* [ 64 ] ;
@@ -6561,7 +6727,9 @@ public:
 		}
 
 		// Finally, threshold the volume
+		#ifdef VERBOSE
 		printf("Thresholding the volume to 0/1...\n") ;
+		#endif
 		threshold( -1, 1, 0, 0 ) ;
 	}
 
@@ -6570,7 +6738,9 @@ public:
 	void addNoise( float thr, float pos )
 	{
 		int i, j, k ;
+		#ifdef VERBOSE
 		printf("Thresholding the volume to -MAX_ERODE/0...\n") ;
+		#endif
 		threshold( thr, -MAX_ERODE, 0 ) ;
 		Volume* tvol = new Volume( sizex, sizey, sizez, 0, 0, 0, this ) ;
 
@@ -6607,7 +6777,9 @@ public:
 	{
 		int i, j, k, m ;
 		// First, threshold the volume
+		#ifdef VERBOSE
 		printf("Thresholding the volume to -1/0...\n") ;
+		#endif
 		threshold( thr, -1, 0 ) ;
 
 		// Values in the volume:
@@ -6618,7 +6790,9 @@ public:
 		// 3:	complex nodes
 
 		// Next, initialize the linked queue
+		#ifdef VERBOSE
 		printf("Initializing queue...\n") ;
+		#endif
 		GridQueue2* queue2 = new GridQueue2( ) ;
 		GridQueue2* queue3 = new GridQueue2( ) ;
 		GridQueue2* queue4 = new GridQueue2( ) ;
@@ -6770,7 +6944,9 @@ public:
 
 
 		// Finally, clean up
+		#ifdef VERBOSE
 		printf("Thresholding the volume to 0/1...\n") ;
+		#endif
 		threshold( 0, 0, 1 ) ;
 
 	}
@@ -6779,11 +6955,15 @@ public:
 	{
 		int i, j, k ;
 		// First, threshold the volume
+		#ifdef VERBOSE
 		printf("Thresholding the volume to -MAX_ERODE/0...\n") ;
+		#endif
 		threshold( thr, -MAX_ERODE, 0 ) ;
 
 		// Next, initialize the linked queue
+		#ifdef VERBOSE
 		printf("Initializing queue...\n") ;
+		#endif
 		GridQueue2* queue2 = new GridQueue2( ) ;
 		gridQueueEle* ele ;
 
@@ -6838,7 +7018,9 @@ public:
 
 
 		// Finally, clean up
+		#ifdef VERBOSE
 		printf("Thresholding the volume to 0/1...\n") ;
+		#endif
 		threshold( 0, 0, 1 ) ;
 	}
 
@@ -6846,11 +7028,15 @@ public:
 	{
 		int i, j, k ;
 		// First, threshold the volume
+		#ifdef VERBOSE
 		printf("Thresholding the volume to -MAX_ERODE/0...\n") ;
+		#endif
 		threshold( thr, -MAX_ERODE, 0 ) ;
 
 		// Next, initialize the linked queue
+		#ifdef VERBOSE
 		printf("Initializing queue...\n") ;
+		#endif
 		GridQueue2* queue2 = new GridQueue2( ) ;
 		GridQueue2* queue3 = new GridQueue2( ) ;
 		GridQueue2* queue4 = new GridQueue2( ) ;
@@ -6876,12 +7062,15 @@ public:
 						}
 					}
 				}
+		#ifdef VERBOSE
 		printf("Total %d nodes\n", queue2->getNumElements() ) ;
-
+		#endif
 
 		// Perform erosion 
 		int wid = MAX_ERODE ;
+		#ifdef VERBOSE
 		printf("Start erosion to %d...\n", wid) ;
+		#endif
 		gridQueueEle* ele ;
 		gridPoint* gp ;
 		double val = 0;
@@ -6904,8 +7093,10 @@ public:
 			// queue3 and queue are empty
 
 			int numComplex = 0, numSimple = 0 ;
+			#ifdef VERBOSE
 			printf("Processing %d nodes in layer %d\n", queue2->getNumElements(), curwid) ;
-			
+			#endif			
+
 			/*
 			We first need to assign curwid + 1 to every node in this layer
 			*/
@@ -7086,8 +7277,6 @@ public:
 			queue2 = queue3 ;
 			queue3 = new GridQueue2( ) ;
 
-			int nowComplex = 0 ;
-
 			// Next, start priority queue iteration
 			while ( ! queue->isEmpty() )
 			{
@@ -7133,18 +7322,12 @@ public:
 					queue4->prepend( ox, oy, oz ) ;
 					numComplex ++ ;
 
-					nowComplex == 1 ;
 				}
 				else
 				{
 					setDataAt( ox, oy, oz, -1 ) ;
 					numSimple ++ ;
 
-					if ( nowComplex )
-					{
-
-						// printf("Error: %d\n", score);
-					}
 				}
 				/* Adding ends */
 
@@ -7224,9 +7407,10 @@ public:
 						
 
 			}
-
+			#ifdef VERBOSE
 			printf("%d complex, %d simple\n", numComplex, numSimple) ;
-			
+			#endif			
+
 			if ( numSimple == 0 )
 			{
 					break ;
@@ -7234,8 +7418,11 @@ public:
 		}
 
 		// Finally, clean up
+		#ifdef VERBOSE
 		printf("Thresholding the volume to 0/1...\n") ;
+		#endif
 		threshold( 0, 0, 1 ) ;
+		delete queue;
 
 	}
 
@@ -7243,11 +7430,15 @@ public:
 	{
 		int i, j, k ;
 		// First, threshold the volume
+		#ifdef VERBOSE
 		printf("Thresholding the volume to -MAX_ERODE/0...\n") ;
+		#endif
 		threshold( thr, -MAX_ERODE, 0 ) ;
 
 		// Next, initialize the linked queue
+		#ifdef VERBOSE
 		printf("Initializing queue...\n") ;
+		#endif
 		GridQueue2* queue2 = new GridQueue2( ) ;
 		GridQueue2* queue3 = new GridQueue2( ) ;
 		GridQueue2* queue4 = new GridQueue2( ) ;
@@ -7274,12 +7465,14 @@ public:
 						}
 					}
 				}
+		#ifdef VERBOSE
 		printf("Total %d nodes\n", queue2->getNumElements() ) ;
+		printf("Start erosion to %d...\n", wid) ;
+		#endif
 
 
 		// Perform erosion 
 		int wid = MAX_ERODE ;
-		printf("Start erosion to %d...\n", wid) ;
 		gridQueueEle* ele ;
 		gridPoint* gp ;
 		double val = 0;
@@ -7302,8 +7495,10 @@ public:
 			// queue3 and queue are empty
 
 			int numComplex = 0, numSimple = 0 ;
+			#ifdef VERBOSE
 			printf("Processing %d nodes in layer %d\n", queue2->getNumElements(), curwid) ;
-			
+			#endif			
+
 			/*
 			We first need to assign curwid + 1 to every node in this layer
 			*/
@@ -7484,7 +7679,6 @@ public:
 			queue2 = queue3 ;
 			queue3 = new GridQueue2( ) ;
 
-			int nowComplex = 0 ;
 
 			// Next, start priority queue iteration
 			while ( ! queue->isEmpty() )
@@ -7531,18 +7725,12 @@ public:
 					queue4->prepend( ox, oy, oz ) ;
 					numComplex ++ ;
 
-					nowComplex == 1 ;
 				}
 				else
 				{
 					setDataAt( ox, oy, oz, -1 ) ;
 					numSimple ++ ;
 
-					if ( nowComplex )
-					{
-
-						// printf("Error: %d\n", score);
-					}
 				}
 				/* Adding ends */
 
@@ -7623,8 +7811,10 @@ public:
 
 			}
 
+			#ifdef VERBOSE
 			printf("%d complex, %d simple\n", numComplex, numSimple) ;
-			
+			#endif			
+
 			if ( numSimple == 0 )
 			{
 					break ;
@@ -7632,7 +7822,9 @@ public:
 		}
 
 		// Finally, clean up
+		#ifdef VERBOSE
 		printf("Thresholding the volume to 0/1...\n") ;
+		#endif
 		threshold( 0, 0, 1 ) ;
 
 		delete scrvol;
@@ -7649,7 +7841,9 @@ public:
 		int i, j, k ;
 
 		// First, threshold the volume
+		#ifdef VERBOSE
 		printf("Thresholding the volume to -MAX_ERODE/0...\n") ;
+		#endif
 		threshold( thr, -MAX_ERODE, 0 ) ;
 
 
@@ -7784,7 +7978,9 @@ public:
 		}
 
 		// Finally, clean up
+		#ifdef VERBOSE
 		printf("Thresholding the volume to 0/1...\n") ;
+		#endif
 		threshold( 0, 0, 1 ) ;
 
 	}
@@ -7796,7 +7992,9 @@ public:
 		int i, j, k ;
 
 		// First, threshold the volume
-		printf("Thresholding the volume to -MAX_ERODE/1...\n") ;
+		#ifdef VERBOSE
+		printf("Thresholding the volume to -MAX_ERODE/0...\n") ;
+		#endif
 		threshold( thr, -MAX_ERODE, 0 ) ;
 
 		// Start iteration
@@ -7845,7 +8043,9 @@ public:
 		}
 
 		// Finally, clean up
+		#ifdef VERBOSE
 		printf("Thresholding the volume to 0/1...\n") ;
+		#endif
 		threshold( 0, 0, 1 ) ;
 	}
 
@@ -7856,7 +8056,9 @@ public:
 		int i, j, k ;
 
 		// First, threshold the volume
+		#ifdef VERBOSE
 		printf("Thresholding the volume to 0/1...\n") ;
+		#endif
 		threshold( thr, 0, 1 ) ;
 
 		// Next, initialize the templates
@@ -8514,7 +8716,7 @@ public:
 				}
 
 		fclose( fin ) ;
-		//delete indvol ;
+		delete indvol ;
 	}
 
 	void toOFFCells( char* fname, float thr )
@@ -8909,7 +9111,9 @@ public:
 	{
 		int i;
 		// First, threshold the volume
+		#ifdef VERBOSE
 		printf("Thresholding the volume to 0/1...\n") ;
+		#endif
 		threshold( thr, 0, 1 ) ;
 
 		// Next, initialize queue
@@ -9526,7 +9730,7 @@ public:
 		fclose( fout ) ;
 	}
 
-	void setSpacing(int spx, int spy, int spz ) {
+	void setSpacing(float spx, float spy, float spz ) {
 		printf("volume::setSpacing not implemented yet! \n");
 	}
 /*	void toMathematicaFile(char * fname) {

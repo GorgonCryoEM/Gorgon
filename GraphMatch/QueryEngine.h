@@ -63,7 +63,7 @@ namespace wustl_mm {
 
 
 		int QueryEngine::DoGraphMatching(StandardGraph * sequenceGraph, StandardGraph * skeletonGraph) {
-			clock_t start, finish;
+			clock_t start;
 
 			PERFORMANCE_COMPARISON_MODE = false;
 

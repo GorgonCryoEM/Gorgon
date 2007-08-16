@@ -4,6 +4,7 @@
 	Version="8.00"
 	Name="MatlabInterface"
 	ProjectGUID="{EC8F7758-80CF-436B-978B-717297945FAB}"
+	RootNamespace="MatlabInterface"
 	>
 	<Platforms>
 		<Platform
@@ -37,7 +38,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="C:\MATLAB701\extern\include"
+				AdditionalIncludeDirectories=""
 				DebugInformationFormat="4"
 			/>
 			<Tool
@@ -51,8 +52,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="libeng.lib libfixedpoint.lib libmat.lib libmex.lib libmwservices.lib libmx.lib libut.lib mclcom.lib mclcommain.lib mclmcr.lib mclmcrrt.lib mclxlmain.lib"
-				AdditionalLibraryDirectories="C:\MATLAB701\extern\lib\win32\microsoft\msvc71"
+				AdditionalLibraryDirectories=""
 				GenerateDebugInformation="true"
 				GenerateMapFile="false"
 			/>
@@ -104,7 +104,8 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="C:\MATLAB701\extern\include"
+				AdditionalIncludeDirectories=""
+				PreprocessorDefinitions="WIN32;_CRT_SECURE_NO_DEPRECATE"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -117,8 +118,74 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="libeng.lib libfixedpoint.lib libmat.lib libmex.lib libmwservices.lib libmx.lib libut.lib mclcom.lib mclcommain.lib mclmcr.lib mclmcrrt.lib mclxlmain.lib"
-				AdditionalLibraryDirectories="C:\MATLAB701\extern\lib\win32\microsoft\msvc71"
+				AdditionalLibraryDirectories=""
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCWebDeploymentTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
+		</Configuration>
+		<Configuration
+			Name="MemLeak|Win32"
+			OutputDirectory="$(SolutionDir)\..\$(ConfigurationName)"
+			IntermediateDirectory="$(SolutionDir)\..\temp\$(ConfigurationName)"
+			ConfigurationType="1"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="0"
+				AdditionalIncludeDirectories=""
+				DebugInformationFormat="4"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+				AdditionalLibraryDirectories=""
+				GenerateDebugInformation="true"
+				GenerateMapFile="false"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -169,7 +236,19 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ComplexNumber.h"
+				>
+			</File>
+			<File
 				RelativePath=".\DataStructures.h"
+				>
+			</File>
+			<File
+				RelativePath=".\eigen.h"
+				>
+			</File>
+			<File
+				RelativePath=".\GeoCommon.h"
 				>
 			</File>
 			<File

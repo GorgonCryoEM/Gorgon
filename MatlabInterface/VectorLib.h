@@ -88,16 +88,16 @@ namespace wustl_mm {
 
 		void VectorLib::Normalize(Vector3D & vRet) {
 			double base = 0;
-			for(int i = 0; i < 2; i++) {
+			for(int i = 0; i < 3; i++) {
 				base += vRet.values[i] * vRet.values[i];
 			}
 			if(base == 0) {
-				for(int i = 0; i < 2; i++) {
+				for(int i = 0; i < 3; i++) {
 					vRet.values[i] = 0;
 				}
 			} else {
 				base = sqrt(base);
-				for(int i = 0; i < 2; i++) {
+				for(int i = 0; i < 3; i++) {
 					vRet.values[i] = vRet.values[i] / base;
 				}
 			}

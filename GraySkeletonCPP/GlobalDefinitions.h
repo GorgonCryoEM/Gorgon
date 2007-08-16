@@ -6,7 +6,7 @@
 namespace wustl_mm {
 	namespace GraySkeletonCPP {
 
-		const bool WRITE_DEBUG_FILES = false;
+		const bool WRITE_DEBUG_FILES = true;
 		const int PRUNE_AMOUNT = 4;
 		const int GAUSSIAN_FILTER_RADIUS = 4;
 		const unsigned char PIXEL_CLASS_BACKGROUND = 0;

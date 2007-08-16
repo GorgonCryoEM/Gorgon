@@ -4,6 +4,7 @@
 #include "MatlabWrapper.h"
 #include "Combinatorics.h"
 #include "VectorLib.h"
+#include "ComplexNumber.h"
 
 namespace wustl_mm {
 	namespace MatlabInterface {

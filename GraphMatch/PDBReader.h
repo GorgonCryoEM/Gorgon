@@ -12,6 +12,7 @@ Date  : 01/28/2006
 #include "SecondaryStructure.h"
 #include "SheetStrand.h"
 #include "GlobalConstants.h"
+#include <string.h>
 
 
 using namespace std;
@@ -88,16 +89,18 @@ namespace wustl_mm {
 			}
 
 			char line[100];
+			string sequence = "";
 			char * token;
 			vector<SecondaryStructure*> structures;
 			SecondaryStructure * currentStructure;
 			bool add;
 			int oldIndex = 0;
 			int index;
-		#ifdef GET_AMINO_SEQUENCE
+			#ifdef GET_AMINO_SEQUENCE
 			char * acidString;
 			char acidChar;
-		#endif
+			int start = 10000;
+			#endif
 
 			while(!feof(fin))
 			{
@@ -121,18 +124,20 @@ namespace wustl_mm {
 					} else {
 						delete currentStructure;
 					}
-		#ifdef GET_AMINO_SEQUENCE
+				#ifdef GET_AMINO_SEQUENCE
 				} else if(strcmp(token, "ATOM") == 0) {
-					index = GetInt(line, 23, 3);
+					index = GetInt(line, 22, 4);
+					start = min(index, start);
 					if(index != oldIndex){
 						acidString = GetString(line, 17,3);				
 						acidChar = GetSingleLetterFromThree(acidString);
+						sequence += acidChar;
 						printf("%c", acidChar);
 						delete acidString;
 					}
 					oldIndex = index;
-		#endif
-		#ifdef INCLUDE_SHEETS
+				#endif
+				#ifdef INCLUDE_SHEETS
 				} else if (strcmp(token, TOKEN_PDB_SHEET)== 0) {
 					currentStructure = new SecondaryStructure();
 					currentStructure->serialNumber = GetInt(line, 7, 3);
@@ -150,14 +155,16 @@ namespace wustl_mm {
 					} else {
 						delete currentStructure;
 					}
-		#endif
+				#endif
 				}
 				delete [] token;
 				token = NULL;
 			}
-		#ifdef GET_AMINO_SEQUENCE
+
+			#ifdef GET_AMINO_SEQUENCE
 			printf("\n");
-		#endif
+			#endif
+
 			fclose( fin ) ;
 
 			// Sorting the structures by the start position
@@ -202,6 +209,20 @@ namespace wustl_mm {
 			for(i = 0; i < (int)structures.size(); i++) {
 				graph->pdbStructures.push_back(structures[i]);
 			}
+
+
+			#ifdef GET_AMINO_SEQUENCE			
+			int oldNum = start;
+			for(unsigned int i = 0; i < structures.size(); i++) {
+				printf("%s [%s] ", 
+					sequence.substr(oldNum - start, structures[i]->startPosition - oldNum).c_str(),
+					sequence.substr(structures[i]->startPosition - start, structures[i]->endPosition - structures[i]->startPosition + 1).c_str());
+				oldNum = structures[i]->endPosition + 1;
+			}
+			printf("\n%s \n", sequence.c_str());
+			#endif
+
+
 			structures.clear();
 
 			return graph;

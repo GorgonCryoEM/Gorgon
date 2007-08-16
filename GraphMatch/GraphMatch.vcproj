@@ -42,7 +42,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\ExternalLibraries\vflib2\include;..\ExternalLibraries\vflib2\src"
+				AdditionalIncludeDirectories=""
 				PreprocessorDefinitions="_DEBUG;_CRT_SECURE_NO_DEPRECATE"
 				MinimalRebuild="false"
 				BasicRuntimeChecks="0"
@@ -120,8 +120,8 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="2"
-				AdditionalIncludeDirectories="..\ExternalLibraries\vflib2\include;..\ExternalLibraries\vflib2\src"
-				PreprocessorDefinitions="_RELEASE;_CRT_SECURE_NO_DEPRECATE"
+				AdditionalIncludeDirectories=""
+				PreprocessorDefinitions="_RELEASE;_CRT_SECURE_NO_DEPRECATE;WIN32"
 				MinimalRebuild="false"
 				RuntimeLibrary="2"
 				WarningLevel="3"
@@ -143,6 +143,84 @@
 				LinkIncremental="2"
 				AdditionalLibraryDirectories=""
 				GenerateDebugInformation="true"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCWebDeploymentTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
+		</Configuration>
+		<Configuration
+			Name="MemLeak|Win32"
+			OutputDirectory="$(SolutionDir)\..\$(ConfigurationName)"
+			IntermediateDirectory="$(SolutionDir)\..\temp\$(ConfigurationName)"
+			ConfigurationType="1"
+			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
+			CharacterSet="2"
+			ManagedExtensions="4"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="0"
+				AdditionalIncludeDirectories=""
+				PreprocessorDefinitions="_DEBUG;_CRT_SECURE_NO_DEPRECATE"
+				MinimalRebuild="false"
+				BasicRuntimeChecks="0"
+				SmallerTypeCheck="false"
+				RuntimeLibrary="3"
+				WarningLevel="3"
+				DebugInformationFormat="3"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+				OutputFile="$(OutDir)\$(ProjectName).exe"
+				LinkIncremental="2"
+				AdditionalLibraryDirectories=""
+				GenerateDebugInformation="true"
+				AssemblyDebug="1"
 			/>
 			<Tool
 				Name="VCALinkTool"

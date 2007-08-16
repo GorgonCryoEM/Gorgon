@@ -2,7 +2,7 @@
 #define VOLUME_DELTA_ANALYZER_H
 
 #include <vector>
-#include "../MatlabInterface/DataStructures.h";
+#include "../MatlabInterface/DataStructures.h"
 #include "../SkeletonMaker/volume.h"
 #include "DiscreteMesh.h"
 #include "GlobalDefinitions.h"
@@ -14,6 +14,14 @@ using namespace wustl_mm::MatlabInterface;
 
 namespace wustl_mm {
 	namespace GraySkeletonCPP {
+		
+		struct SurfaceQueueElement {
+			int x;
+			int y;
+			int z;
+			unsigned char d;
+		};
+
 		class VolumeDeltaAnalyzer {
 		public:
 			VolumeDeltaAnalyzer(Volume * oldVolume, Volume * newVolume);
@@ -21,9 +29,11 @@ namespace wustl_mm {
 
 			void GetNewPoints(int & pointCount, Vector3DInt * &pointList);
 			void GetNewCurves(int & curveCount, SkeletalCurve * &curveList);
+			void GetNewSurfaces(int & surfaceCount, SkeletalCurve * &surfaceList);
 		private:
 			
 			SkeletalCurve GetCurveAt(int x, int y, int z, unsigned char curveType, DiscreteMesh * availableMesh, DiscreteMesh * newMesh, DiscreteMesh * oldMesh);
+			SkeletalCurve GetSurfaceAt(int x, int y, int z, unsigned char surfaceType, DiscreteMesh * availableMesh, DiscreteMesh * newMesh, DiscreteMesh * oldMesh);
 			
 		private:
 			DiscreteMesh * oldMesh;
@@ -108,6 +118,34 @@ namespace wustl_mm {
 			curves.clear();
 		}
 
+		void VolumeDeltaAnalyzer::GetNewSurfaces(int & surfaceCount, SkeletalCurve * &surfaceList) {
+			vector<SkeletalCurve> surfaces;
+			surfaces.clear();
+			surfaceCount = 0;
+			SkeletalCurve * currentSurface;
+			DiscreteMesh * tempMesh = new DiscreteMesh(newMesh);
+
+			for(int x = 0; x < sizeX; x++) {
+				for(int y = 0; y < sizeY; y++) {
+					for(int z = 0; z < sizeZ; z++) {
+						for(int ct = 0; ct < 3; ct++) {
+							if(tempMesh->IsSurfacePresent(x, y, z, SURFACE_TYPES_3[ct]) && !oldMesh->IsSurfacePresent(x, y, z, CURVE_TYPES_3[ct])) {
+								surfaces.push_back(GetSurfaceAt(x, y, z, SURFACE_TYPES_3[ct], tempMesh, newMesh, oldMesh));
+							}
+						}
+					}
+				}
+			}
+			delete tempMesh;
+
+			surfaceCount = surfaces.size();
+			surfaceList = new SkeletalCurve[surfaceCount];
+			for(int i = 0; i < surfaceCount; i++) {
+				surfaceList[i] = surfaces[i];
+			}
+			surfaces.clear();
+		}
+
 		SkeletalCurve VolumeDeltaAnalyzer::GetCurveAt(int x, int y, int z, unsigned char curveType, DiscreteMesh * availableMesh, DiscreteMesh * newMesh, DiscreteMesh * oldMesh) {
 			SkeletalCurve curve;
 
@@ -174,6 +212,114 @@ namespace wustl_mm {
 
 
 			return curve;
+		}
+
+		SkeletalCurve VolumeDeltaAnalyzer::GetSurfaceAt(int x, int y, int z, unsigned char surfaceType, DiscreteMesh * availableMesh, DiscreteMesh * newMesh, DiscreteMesh * oldMesh){
+			
+			vector<SurfaceQueueElement> queue;
+			SurfaceQueueElement curr, temp;
+			Volume * points = new Volume(sizeX, sizeY, sizeZ);
+
+			queue.clear();
+			curr.x = x;		curr.y = y;		curr.z = z;		curr.d = surfaceType;
+			queue.push_back(curr);
+			Vector3DInt * sPoints;
+			int * sNeighbors;
+			int sNeighborCount;
+			int rCount;
+
+			while(queue.size() > 0) {
+				curr = queue[0];
+				queue.erase(queue.begin());
+				if(availableMesh->IsSurfacePresent(curr.x, curr.y, curr.z, curr.d)) {
+
+					availableMesh->GetSurfacePoints(curr.x, curr.y, curr.z, curr.d, sPoints);
+					for(int i = 0; i < 4; i++) {
+						points->setDataAt(sPoints[i].values[0], sPoints[i].values[1], sPoints[i].values[2], 1);
+					}
+
+					availableMesh->RemoveSurface(curr.x, curr.y, curr.z, curr.d); 
+
+					sNeighborCount = availableMesh->GetSurfaceNeighbors(
+						sPoints[0].values[0], sPoints[0].values[1], sPoints[0].values[2], 
+						sPoints[1].values[0], sPoints[1].values[1], sPoints[1].values[2], sNeighbors);
+					rCount = newMesh->GetSurfaceNeighborCount(
+						sPoints[0].values[0], sPoints[0].values[1], sPoints[0].values[2], 
+						sPoints[1].values[0], sPoints[1].values[1], sPoints[1].values[2]);
+					if((sNeighborCount == 1) && (rCount <= 2)){					
+						temp.x = sNeighbors[0];		temp.y = sNeighbors[1];		
+						temp.z = sNeighbors[2];		temp.d = sNeighbors[3];
+						if(!oldMesh->IsSurfacePresent(temp.x, temp.y, temp.z, temp.d)) {
+							queue.push_back(temp);
+						}
+					}
+					delete [] sNeighbors;
+
+					sNeighborCount = availableMesh->GetSurfaceNeighbors(
+						sPoints[1].values[0], sPoints[1].values[1], sPoints[1].values[2], 
+						sPoints[2].values[0], sPoints[2].values[1], sPoints[2].values[2], sNeighbors);
+					rCount = newMesh->GetSurfaceNeighborCount(
+						sPoints[1].values[0], sPoints[1].values[1], sPoints[1].values[2], 
+						sPoints[2].values[0], sPoints[2].values[1], sPoints[2].values[2]);
+					if((sNeighborCount == 1) && (rCount <= 2)){
+						temp.x = sNeighbors[0];		temp.y = sNeighbors[1];		
+						temp.z = sNeighbors[2];		temp.d = sNeighbors[3];
+						if(!oldMesh->IsSurfacePresent(temp.x, temp.y, temp.z, temp.d)) {
+							queue.push_back(temp);
+						}
+					}
+					delete [] sNeighbors;
+
+					sNeighborCount = availableMesh->GetSurfaceNeighbors(
+						sPoints[3].values[0], sPoints[3].values[1], sPoints[3].values[2], 
+						sPoints[2].values[0], sPoints[2].values[1], sPoints[2].values[2], sNeighbors);
+					rCount = newMesh->GetSurfaceNeighborCount(
+						sPoints[3].values[0], sPoints[3].values[1], sPoints[3].values[2], 
+						sPoints[3].values[0], sPoints[2].values[1], sPoints[2].values[2]);
+					if((sNeighborCount == 1) && (rCount <= 2)){		
+						temp.x = sNeighbors[0];		temp.y = sNeighbors[1];		
+						temp.z = sNeighbors[2];		temp.d = sNeighbors[3];
+						if(!oldMesh->IsSurfacePresent(temp.x, temp.y, temp.z, temp.d)) {
+							queue.push_back(temp);
+						}
+					}
+					delete [] sNeighbors;
+
+					sNeighborCount = availableMesh->GetSurfaceNeighbors(
+						sPoints[0].values[0], sPoints[0].values[1], sPoints[0].values[2], 
+						sPoints[3].values[0], sPoints[3].values[1], sPoints[3].values[2], sNeighbors);
+					rCount = newMesh->GetSurfaceNeighborCount(
+						sPoints[0].values[0], sPoints[0].values[1], sPoints[0].values[2], 
+						sPoints[3].values[0], sPoints[3].values[1], sPoints[3].values[2]);
+					if((sNeighborCount == 1) && (rCount <= 2)){		
+						temp.x = sNeighbors[0];		temp.y = sNeighbors[1];		
+						temp.z = sNeighbors[2];		temp.d = sNeighbors[3];
+						if(!oldMesh->IsSurfacePresent(temp.x, temp.y, temp.z, temp.d)) {
+							queue.push_back(temp);
+						}
+					}
+					delete [] sNeighbors;
+
+					delete [] sPoints;
+				}
+			}
+
+			SkeletalCurve surfacePoints;
+
+			for(int x = 0; x < sizeX; x++) {
+				for(int y = 0; y < sizeY; y++) {
+					for(int z = 0; z < sizeZ; z++) {
+						if(points->getDataAt(x, y, z) > 0) {
+							surfacePoints.points.push_back(VectorLib::Initialize(x, y, z));
+						}
+					}
+				}
+			}
+
+			delete points;
+
+			return surfacePoints;
+
 		}
 	}
 }
