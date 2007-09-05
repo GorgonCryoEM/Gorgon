@@ -41,6 +41,10 @@ namespace wustl_mm {
 			int values[3];
 		};
 
+		struct Quarternion {
+			double values[4];
+		};
+
 		struct EigenResults3D{
 			double values[3];
 			Vector3D vectors[3];
