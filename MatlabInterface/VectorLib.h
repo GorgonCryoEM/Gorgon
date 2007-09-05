@@ -10,15 +10,20 @@ namespace wustl_mm {
 			static double DotProduct(Vector3D & v1, Vector3D & v2);
 			static Vector3D CrossProduct(Vector3D & v1, Vector3D & v2);
 			static Vector3D Difference(Vector3D & v1, Vector3D & v2);
+			static Vector3DInt Difference(Vector3DInt & v1, Vector3DInt & v2);
 			static Vector3D Addition(Vector3D & v1, Vector3D & v2);
+			static Vector3DInt Addition(Vector3DInt & v1, Vector3DInt & v2);
 			static Vector3D Initialize(double x, double y, double z);
 			static Vector3DInt Initialize(int x, int y, int z);
 			static void CrossProduct(Vector3D & vRet, Vector3D & v1, Vector3D & v2);
 			static void Difference(Vector3D & vRet, Vector3D & v1, Vector3D & v2);
+			static void Difference(Vector3DInt & vRet, Vector3DInt & v1, Vector3DInt & v2);
 			static void Addition(Vector3D & vRet, Vector3D & v1, Vector3D & v2);
+			static void Addition(Vector3DInt & vRet, Vector3DInt & v1, Vector3DInt & v2);
 			static void Initialize(Vector3D & vRet, double x, double y, double z);
 			static void Initialize(Vector3DInt & vRet, int x, int y, int z);
 			static void Normalize(Vector3D & vRet);
+			static Quarternion VectorsToQuarternion(Vector3D v1, Vector3D v2, Vector3D v3);
 		};
 
 		double VectorLib::DotProduct(Vector3D & v1, Vector3D & v2) {
@@ -37,8 +42,20 @@ namespace wustl_mm {
 			return vRet;
 		}	
 
+		Vector3DInt VectorLib::Difference(Vector3DInt & v1, Vector3DInt & v2) {
+			Vector3DInt vRet;
+			Difference(vRet, v1, v2);
+			return vRet;
+		}	
+
 		Vector3D VectorLib::Addition(Vector3D & v1, Vector3D & v2) {
 			Vector3D vRet;
+			Addition(vRet, v1, v2);
+			return vRet;
+		}
+
+		Vector3DInt VectorLib::Addition(Vector3DInt & v1, Vector3DInt & v2) {
+			Vector3DInt vRet;
 			Addition(vRet, v1, v2);
 			return vRet;
 		}
@@ -68,7 +85,20 @@ namespace wustl_mm {
 			}
 		}
 
+		void VectorLib::Difference(Vector3DInt & vRet, Vector3DInt & v1, Vector3DInt & v2) {
+			for(int i = 0; i < 3; i++) {
+				vRet.values[i] = v1.values[i] - v2.values[i];
+			}
+		}
+
+
 		void VectorLib::Addition(Vector3D & vRet, Vector3D & v1, Vector3D & v2) {
+			for(int i = 0; i < 3; i++) {
+				vRet.values[i] = v1.values[i] + v2.values[i];
+			}
+		}
+
+		void VectorLib::Addition(Vector3DInt & vRet, Vector3DInt & v1, Vector3DInt & v2) {
 			for(int i = 0; i < 3; i++) {
 				vRet.values[i] = v1.values[i] + v2.values[i];
 			}
@@ -105,6 +135,56 @@ namespace wustl_mm {
 
 
 
+		Quarternion VectorLib::VectorsToQuarternion(Vector3D v1, Vector3D v2, Vector3D v3) {
+			Quarternion quat;	
+			double m[3][3] = {{v1.values[0], v1.values[1], v1.values[2]},	// Correct I think
+							  {v2.values[0], v2.values[1], v2.values[2]},
+							  {v3.values[0], v3.values[1], v3.values[2]}};
+
+			//double m[3][3] = {{v1.values[0], v2.values[0], v3.values[0]}, 
+			//				  {v1.values[1], v2.values[1], v3.values[1]},
+			//				  {v1.values[2], v2.values[2], v3.values[2]}};
+
+			double tr, s, q[4];
+			int i, j, k;
+			int nxt[3] = {1, 2, 0};
+			tr = m[0][0] + m[1][1] + m[2][2];
+			// check the diagonal
+			if (tr > 0.0) {
+				s = sqrt (tr + 1.0);
+				quat.values[3] = s / 2.0;
+				s = 0.5 / s;
+				quat.values[0] = (m[1][2] - m[2][1]) * s;
+				quat.values[1] = (m[2][0] - m[0][2]) * s;
+				quat.values[2] = (m[0][1] - m[1][0]) * s;
+			} else {		
+				i = 0;
+				if (m[1][1] > m[0][0]) {
+					i = 1;
+				}
+				if (m[2][2] > m[i][i]) {
+					i = 2;
+				}
+				j = nxt[i];
+				k = nxt[j];
+				s = sqrt ((m[i][i] - (m[j][j] + m[k][k])) + 1.0);
+				q[i] = s * 0.5;
+
+				if (s != 0.0) {
+					s = 0.5 / s;
+				}
+
+				q[3] = (m[j][k] - m[k][j]) * s;
+				q[j] = (m[i][j] + m[j][i]) * s;
+				q[k] = (m[i][k] + m[k][i]) * s;
+	
+				quat.values[0] = q[0];
+				quat.values[1] = q[1];
+				quat.values[2] = q[2];
+				quat.values[3] = q[3];
+			}
+			return quat;			
+		}
 	}
 }
 

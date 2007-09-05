@@ -58,9 +58,15 @@ namespace wustl_mm {
 		}
 
 		void MatlabWrapper::EigenAnalysis(EigenVectorsAndValues3D & eigenInformation) {
+			// Correct
 			float st[3][3] = {{eigenInformation.structureTensor[0][0], eigenInformation.structureTensor[0][1], eigenInformation.structureTensor[0][2]},
 							  {eigenInformation.structureTensor[1][0], eigenInformation.structureTensor[1][1], eigenInformation.structureTensor[1][2]},
 							  {eigenInformation.structureTensor[2][0], eigenInformation.structureTensor[2][1], eigenInformation.structureTensor[2][2]}};
+			// Wrong
+			//float st[3][3] = {{eigenInformation.structureTensor[0][0], eigenInformation.structureTensor[1][0], eigenInformation.structureTensor[2][0]},
+			//				  {eigenInformation.structureTensor[0][1], eigenInformation.structureTensor[1][1], eigenInformation.structureTensor[2][1]},
+			//				  {eigenInformation.structureTensor[0][2], eigenInformation.structureTensor[1][2], eigenInformation.structureTensor[2][2]}};
+
 			float values[3];
 			float vectors[3][3];
 			jacobi(st, values, vectors);
