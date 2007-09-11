@@ -699,6 +699,20 @@ public:
 				}
 	}
 
+	void print() {
+		for(int x = 0; x < getSizeX(); x++) {
+			printf("{ ");
+			for(int y = 0; y < getSizeY(); y++) {
+				printf("{ ");
+				for(int z = 0; z < getSizeZ(); z++) {
+					printf("%f, ", getDataAt(x, y, z));
+				}
+				printf("} ");
+			}
+			printf("} ");
+		}
+		printf("\n");
+	}
 	void subtract( Volume* vol )
 	{
 		int i, j, k ;
@@ -8272,15 +8286,20 @@ public:
 	 */
 	void threshold( double thr )
 	{
-		threshold( thr, 0, 1 ) ;
+		threshold( thr, 0, 1, 0, true) ;
 	}
 
 	void threshold( double thr, int out, int in )
 	{
-		threshold( thr, out, in, out ) ;
+		threshold( thr, out, in, out, true) ;
 	}
 
-	void threshold( double thr, int out, int in, int boundary )
+	void threshold( double thr, int out, int in, int boundary)
+	{
+		threshold(thr, out, in, boundary, true);
+	}
+
+	void threshold( double thr, int out, int in, int boundary, bool markBoundary)
 	{
 		//int size = sizex * sizey * sizez ;
 		//for ( int i = 0 ; i < size ; i ++ )
@@ -8293,13 +8312,17 @@ public:
 			for ( int j = 0 ; j < sizey ; j ++ )
 				for ( int k = 0 ; k < sizez ; k ++ )
 				{
-					if ( i > 1 && i < sizex - 2 && j > 1 && j < sizey - 2 && k > 1 && k < sizez - 2 )
-					{
+					if(markBoundary) {
+						if ( i > 1 && i < sizex - 2 && j > 1 && j < sizey - 2 && k > 1 && k < sizez - 2 )
+						{
+							data[ ct ] = data[ ct ] < thr ? (float)out : (float)in ;
+						}
+						else
+						{
+							data[ ct ] = (float)boundary ;
+						}
+					} else {
 						data[ ct ] = data[ ct ] < thr ? (float)out : (float)in ;
-					}
-					else
-					{
-						data[ ct ] = (float)boundary ;
 					}
 					ct ++ ;
 				}
@@ -8398,6 +8421,17 @@ public:
 	double getDataAt( int index ) 
 	{
 		return data[ index ] ;
+	}
+	Volume * getDataRange(int x, int y, int z, int radius) {
+		Volume * range = new Volume(radius*2+1, radius*2+1, radius*2+1);
+		for(int xx = x-radius; xx <= x+radius; xx++) {
+			for(int yy = y-radius; yy <= y+radius; yy++) {
+				for(int zz = z-radius; zz <= z+radius; zz++) {
+					range->setDataAt(xx-x+radius, yy-y+radius, zz-z+radius, getDataAt(xx, yy, zz));
+				}
+			}
+		}
+		return range;
 	}
 	
 	/* Get data at an interpolated voxel */

@@ -5,6 +5,7 @@
 #include "../MatlabInterface/DataStructures.h"
 #include "../MatlabInterface/VectorLib.h"
 #include <string.h>
+#include <list>
 
 using namespace std;
 using namespace wustl_mm::MatlabInterface;
@@ -53,14 +54,19 @@ namespace wustl_mm {
 			void GetSurfacePoints(int x, int y, int z, unsigned char direction, Vector3DInt * & points);
 
 			static int GetC6(Vector3DInt * neighbors, int neighborCount, Vector3DInt currPoint); 
+			static int GetC26(Vector3DInt * neighbors, int neighborCount, Vector3DInt currPoint); 
 			static int GetN6(Vector3DInt * & n6, Volume * sourceVolume, int x, int y, int z);
 			static int GetN6_2(Vector3DInt * & n6_2, Volume * sourceVolume, int x, int y, int z);
 			static int GetN18(Vector3DInt * & n18, Volume * sourceVolume, int x, int y, int z);
+			static int GetN26(Vector3DInt * & n26, Volume * sourceVolume, int x, int y, int z);
 			static int GetN6Count(Volume * sourceVolume, int x, int y, int z);
 			static int GetN6_2Count(Volume * sourceVolume, int x, int y, int z);
 			static int GetN18Count(Volume * sourceVolume, int x, int y, int z);
 			static int GetN26Count(Volume * sourceVolume, int x, int y, int z);
 			static int GetMCount(Volume * sourceVolume, int x1, int y1, int z1, int x2, int y2, int z2);
+			static int GetImmersionN6Count(Volume * skeleton, Vector3DInt point);
+			static int GetImmersionSkeletalValue(Volume * skeleton, Vector3DInt point);
+			static bool IsImmersionBoundary(Volume * skeleton, Vector3DInt point);
 			static bool IsPoint(Volume * sourceVolume, int x, int y, int z);
 			static bool IsCurveEnd(Volume * sourceVolume, int x, int y, int z);
 			static bool IsCurveBody(Volume * sourceVolume, int x, int y, int z);
@@ -68,6 +74,9 @@ namespace wustl_mm {
 			static bool IsSurfaceBody(Volume * sourceVolume, int x, int y, int z, bool doDependantChecks);
 			static bool IsVolumeBorder(Volume * sourceVolume, int x, int y, int z, bool doDependantChecks);
 			static bool IsVolumeBody(Volume * sourceVolume, int x, int y, int z);
+			static bool IsSimple(Volume * sourceVolume, int x, int y, int z);
+			static bool IsValidSurface(Volume * sourceVolume, Vector3D p0, Vector3D p1, Vector3D p2, Vector3D p3);
+
 			static void FindCurveBase(Vector3D &p1, Vector3D &p2);
 			static void FindCurveBase(Vector3DInt &p1, Vector3DInt &p2);
 			static void FindSurfaceBase(Vector3D &p1, Vector3D &p2, Vector3D &p3, Vector3D &p4);
@@ -570,6 +579,48 @@ namespace wustl_mm {
 			return c6Count;
 		}
 
+		int DiscreteMesh::GetC26(Vector3DInt * neighbors, int neighborCount, Vector3DInt currPoint) {
+			Volume * vol = new Volume(5, 5, 5);
+			for(int i = 0; i < neighborCount; i++) {
+				vol->setDataAt(neighbors[i].values[0] - currPoint.values[0]+2, neighbors[i].values[1] - currPoint.values[1]+2, neighbors[i].values[2] - currPoint.values[2]+2, 1);
+			}
+
+			int c26Count = 0;
+			Vector3DInt * n26;
+			int n26Count;
+			Vector3DInt * queue = new Vector3DInt[26];
+			Vector3DInt temp;
+			int queueSize = 0;
+
+			for(int x = 2; x < 4; x++) {
+				for(int y = 2; y < 4; y++) {
+					for(int z = 2; z < 4; z++) {
+						if(vol->getDataAt(x, y, z) > 0) {
+							c26Count++;
+							VectorLib::Initialize(queue[0], x, y, z);
+							queueSize = 1; 
+							while (queueSize > 0) {
+								temp = queue[queueSize-1];
+								queueSize--;
+								vol->setDataAt(temp.values[0], temp.values[1], temp.values[2], 0);
+								n26Count = GetN26(n26, vol, temp.values[0], temp.values[1], temp.values[2]);
+								for(int i = 0; i < n26Count; i++) {
+									VectorLib::Initialize(queue[queueSize], n26[i].values[0], n26[i].values[1], n26[i].values[2]);
+									queueSize++;
+								}
+								delete [] n26;
+							}
+						}
+					}
+				}
+			}
+
+			delete [] queue;
+			delete vol;
+			return c26Count;
+		}
+
+
 		int DiscreteMesh::GetN6(Vector3DInt * & n6, Volume * sourceVolume, int x, int y, int z){
 			int n6Count = 0;
 			n6 = new Vector3DInt[6];
@@ -637,6 +688,20 @@ namespace wustl_mm {
 			return n18Count;
 		}
 
+		int DiscreteMesh::GetN26(Vector3DInt * & n26, Volume * sourceVolume, int x, int y, int z){
+			int n26Count = 0;
+			n26 = new Vector3DInt[26];
+			for(int i = 0; i < 26; i++) {	
+				n26[n26Count].values[0] = x + VOLUME_NEIGHBORS_26[i][0];
+				n26[n26Count].values[1] = y + VOLUME_NEIGHBORS_26[i][1];
+				n26[n26Count].values[2] = z + VOLUME_NEIGHBORS_26[i][2];
+				if(sourceVolume->getDataAt(n26[n26Count].values[0], n26[n26Count].values[1], n26[n26Count].values[2]) > 0) {
+					n26Count++;
+				}
+			}
+			return n26Count;
+		}
+
 		int DiscreteMesh::GetN6Count(Volume * sourceVolume, int x, int y, int z) {
 			int n6Count = 0;
 			for(int i = 0; i < 6; i++) {
@@ -692,6 +757,49 @@ namespace wustl_mm {
 			return mCount;
 		}
 
+		int DiscreteMesh::GetImmersionN6Count(Volume * skeleton, Vector3DInt point) {
+			Volume * range = skeleton->getDataRange(point.values[0], point.values[1], point.values[2], 1);
+			range->threshold(range->getDataAt(1,1,1), 0, 1, 0, false);
+			int n6Count = GetN6Count(range,1,1,1);
+			delete range;
+			return n6Count;
+		}
+		int DiscreteMesh::GetImmersionSkeletalValue(Volume * skeleton, Vector3DInt point) {
+			Volume * range = skeleton->getDataRange(point.values[0], point.values[1], point.values[2], 2);
+			Volume * thresholdedRange = new Volume(range->getSizeX(), range->getSizeY(), range->getSizeZ(), 0, 0, 0, range);
+			double value;
+			thresholdedRange->threshold(range->getDataAt(2, 2, 2), -1, 1, -1, false);
+			/*if(IsSurfaceBorder(thresholdedRange, 2, 2, 2) || IsCurveEnd(thresholdedRange, 2, 2, 2) || IsPoint(thresholdedRange, 2, 2, 2)) {
+				delete thresholdedRange;
+				value = range->getDataAt(2, 2, 2);
+			} else {*/
+				delete thresholdedRange;
+				list<double> thresholds;
+				thresholds.push_back(range->getDataAt(2, 2, 2));
+ 
+				for(int i = 0; i < 26; i++) {			
+					value = range->getDataAt(2 + VOLUME_NEIGHBORS_26[i][0] ,2 + VOLUME_NEIGHBORS_26[i][1],2 + VOLUME_NEIGHBORS_26[i][2]);
+					if(value <= range->getDataAt(2, 2, 2)) {
+						thresholds.push_back(value);				
+					}
+				}
+				thresholds.sort(greater<double>());
+				for(int i = 0; i < thresholds.size(); i++) {
+					value = thresholds.front();
+					thresholds.pop_front();
+					thresholdedRange = new Volume(range->getSizeX(), range->getSizeY(), range->getSizeZ(), 0, 0, 0, range);
+					thresholdedRange->threshold(value, -1, 1, -1, false);
+					if(!IsSimple(thresholdedRange, 2, 2, 2)) {
+						break;
+					}
+					delete thresholdedRange;
+				}
+
+				delete range;
+			//}
+			return (int)round(value);
+		}
+ 
 		bool DiscreteMesh::IsPoint(Volume * sourceVolume, int x, int y, int z) {
 			return (GetN6Count(sourceVolume, x, y, z) == 0);
 		}
@@ -731,50 +839,10 @@ namespace wustl_mm {
 			delete [] n6;
 
 			return (mZigma - n6_2Count - n6Count) == 0;
-			/*if(doDependantChecks && 
-				(IsVolumeBody(sourceVolume, x, y, z) || IsVolumeBorder(sourceVolume, x, y, z, false) || IsSurfaceBody(sourceVolume, x, y, z, false) )) {
-				return false;
-			}
-
-			bool visited[3][3][3];
-			for(int i = 0; i < 3; i++) {
-				for(int j = 0; j < 3; j++) {
-					for(int k = 0; k < 3; k++) {
-						visited[i][j][k] = false;
-					}
-				}
-			}
-
-
-			bool isSurface = false;
-			bool allInFace;
-			for(int face = 0; face < 12; face++) {
-				allInFace = true;
-				for(int p = 0; p < 3; p++) {
-					allInFace = allInFace && (sourceVolume->getDataAt(x + VOLUME_NEIGHBOR_FACES[face][p][0], y + VOLUME_NEIGHBOR_FACES[face][p][1], z + VOLUME_NEIGHBOR_FACES[face][p][2]) > 0);
-				}
-				if(allInFace) {
-					for(int p = 0; p < 3; p++) {
-						visited[VOLUME_NEIGHBOR_FACES[face][p][0]+1][VOLUME_NEIGHBOR_FACES[face][p][1] +1][VOLUME_NEIGHBOR_FACES[face][p][2]+1] = true;
-					}
-				}
-				isSurface = isSurface || allInFace;
-			}
-
-			int visitCount = 0;
-			for(int i = 0; i < 3; i++) {
-				for(int j = 0; j < 3; j++) {
-					for(int k = 0; k < 3; k++) {
-						if(visited[i][j][k]) {
-							visitCount++;
-						}
-					}
-				}
-			}
-			return isSurface && (visitCount < 8);*/
 		}
 
 		bool DiscreteMesh::IsSurfaceBody(Volume * sourceVolume, int x, int y, int z, bool doDependantChecks) {
+
 			if(doDependantChecks && 
 				(IsPoint(sourceVolume, x, y, z) || IsCurveEnd(sourceVolume, x, y, z) ||
 				IsCurveBody(sourceVolume, x, y, z) || IsSurfaceBorder(sourceVolume, x, y, z) ||				
@@ -782,43 +850,6 @@ namespace wustl_mm {
 				return false;
 			}
 			return true;
-
-			//bool visited[3][3][3];
-			//for(int i = 0; i < 3; i++) {
-			//	for(int j = 0; j < 3; j++) {
-			//		for(int k = 0; k < 3; k++) {
-			//			visited[i][j][k] = false;
-			//		}
-			//	}
-			//}
-
-
-			//bool isSurfaceBody = false;
-			//bool allInFace;
-			//for(int face = 0; face < 12; face++) {
-			//	allInFace = true;
-			//	for(int p = 0; p < 3; p++) {
-			//		allInFace = allInFace && (sourceVolume->getDataAt(x + VOLUME_NEIGHBOR_FACES[face][p][0], y + VOLUME_NEIGHBOR_FACES[face][p][1], z + VOLUME_NEIGHBOR_FACES[face][p][2]) > 0);
-			//	}
-			//	if(allInFace) {
-			//		for(int p = 0; p < 3; p++) {
-			//			visited[VOLUME_NEIGHBOR_FACES[face][p][0]+1][VOLUME_NEIGHBOR_FACES[face][p][1] +1][VOLUME_NEIGHBOR_FACES[face][p][2]+1] = true;
-			//		}
-			//	}
-			//	isSurfaceBody = isSurfaceBody || allInFace;
-			//}
-
-			//int visitCount = 0;
-			//for(int i = 0; i < 3; i++) {
-			//	for(int j = 0; j < 3; j++) {
-			//		for(int k = 0; k < 3; k++) {
-			//			if(visited[i][j][k]) {
-			//				visitCount++;
-			//			}
-			//		}
-			//	}
-			//}
-			//return isSurfaceBody && (visitCount >= 8);
 		}
 
 
@@ -844,6 +875,34 @@ namespace wustl_mm {
 
 
 
+		bool DiscreteMesh::IsSimple(Volume * sourceVolume, int x, int y, int z) {
+			return sourceVolume->isSimple(x, y, z); 
+		}
+		bool DiscreteMesh::IsValidSurface(Volume * sourceVolume, Vector3D p0, Vector3D p1, Vector3D p2, Vector3D p3) {
+			Vector3D surface[4] = {p0, p1, p2, p3};
+			Vector3D pDelta = VectorLib::Difference(p2, p0);
+			Vector3D upperVector, lowerVector;
+			if((int)round(pDelta.values[0]) == 0) {
+				VectorLib::Initialize(upperVector, 1, 0, 0);
+				VectorLib::Initialize(lowerVector, -1, 0, 0);
+			} else if ((int)round(pDelta.values[1]) == 0) {
+				VectorLib::Initialize(upperVector, 0, 1, 0);
+				VectorLib::Initialize(lowerVector, 0, -1, 0);
+			} else {
+				VectorLib::Initialize(upperVector, 0, 0, 1);
+				VectorLib::Initialize(lowerVector, 0, 0, -1);
+			}
+
+			bool allFound = true;
+			Vector3D currentPos;
+			for(int i = 0; i < 4; i++) {
+				VectorLib::Addition(currentPos, surface[i], upperVector);
+				allFound = allFound && (sourceVolume->getDataAt((int)round(currentPos.values[0]), (int)round(currentPos.values[1]), (int)round(currentPos.values[2])) > 0);
+				VectorLib::Addition(currentPos, surface[i], lowerVector);
+				allFound = allFound && (sourceVolume->getDataAt((int)round(currentPos.values[0]), (int)round(currentPos.values[1]), (int)round(currentPos.values[2])) > 0);
+			}
+			return !allFound;
+		}
 	}
 }
 

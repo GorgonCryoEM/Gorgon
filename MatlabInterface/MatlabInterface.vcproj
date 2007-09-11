@@ -38,7 +38,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories=""
+				AdditionalIncludeDirectories="C:\MATLAB701\extern\include"
 				DebugInformationFormat="4"
 			/>
 			<Tool
@@ -52,7 +52,8 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalLibraryDirectories=""
+				AdditionalDependencies="libeng.lib libfixedpoint.lib libmat.lib libmex.lib libmwservices.lib libmx.lib libut.lib mclcom.lib mclcommain.lib mclmcr.lib mclmcrrt.lib mclxlmain.lib"
+				AdditionalLibraryDirectories="C:\MATLAB701\extern\lib\win32\microsoft\msvc71"
 				GenerateDebugInformation="true"
 				GenerateMapFile="false"
 			/>
@@ -169,7 +170,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories=""
+				AdditionalIncludeDirectories="C:\MATLAB701\extern\include"
 				DebugInformationFormat="4"
 			/>
 			<Tool
@@ -183,7 +184,8 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalLibraryDirectories=""
+				AdditionalDependencies="libeng.lib libfixedpoint.lib libmat.lib libmex.lib libmwservices.lib libmx.lib libut.lib mclcom.lib mclcommain.lib mclmcr.lib mclmcrrt.lib mclxlmain.lib"
+				AdditionalLibraryDirectories="C:\MATLAB701\extern\lib\win32\microsoft\msvc71"
 				GenerateDebugInformation="true"
 				GenerateMapFile="false"
 			/>

@@ -12,18 +12,27 @@
 #include "..\MatlabInterface\DataStructures.h"
 #include "..\MatlabInterface\VectorLib.h"
 #include <string>
+#include <time.h>
 
 using namespace wustl_mm::MatlabInterface;
 using namespace std;
 
 namespace wustl_mm {
 	namespace GraySkeletonCPP {
+		struct ImmersionBeachElement {
+			Vector3DInt p;
+			int binIndex;
+		};
+
+
 		class VolumeSkeletonizer{
 		public:
 			VolumeSkeletonizer();
 			~VolumeSkeletonizer();
 			void PerformPureJuSkeletonization(Volume * imageVol, string outputFile, double threshold);
-			Volume * VolumeSkeletonizer::PerformJuSkeletonization(Volume * imageVol, string outputFile);
+			Volume * PerformImmersionSkeletonization(Volume * imageVol, string outputFile);
+			Volume * CleanImmersionSkeleton(Volume * skeleton, string outputFile);
+			Volume * PerformJuSkeletonization(Volume * imageVol, string outputFile, int minGray, int maxGray);
 			Volume * PerformSkeletonPruning(Volume * sourceVolume, Volume * sourceSkeleton, double curveThreshold, double surfaceThreshold, int minGray, int maxGray, string outputFile);
 			Volume * GetJuSurfaceSkeleton(Volume * sourceVolume, Volume * preserve, double threshold);
 			Volume * GetJuCurveSkeleton(Volume * sourceVolume, Volume * preserve, double threshold, bool is3D);
@@ -32,19 +41,26 @@ namespace wustl_mm {
 
 			void PruneCurves(Volume * sourceVolume, int pruneLength);
 			void PruneSurfaces(Volume * sourceVolume, int pruneLength);
+			void Hue(double value, double &r, double &g, double &b);
 			Vector3D * GetVolumeGradient(Volume * sourceVolume);
 			Vector3D * GetSkeletonDirection(Volume * skeleton);
+
+			void CleanupVolume(Volume * sourceVolume, double low, double high);
+			void NormalizeVolume(Volume * sourceVolume);
+			void WriteEigenResultsToVRMLFile(Volume * sourceVolume, Volume * cost, Volume * skeleton, EigenResults3D * eigenResults, string outputFile);
+
 		private:
 			
 			double GetVoxelCost(EigenResults3D imageEigen, Vector3D skeletonDirection, int type);
 			void GetEigenResult(EigenResults3D & returnVal, Vector3D * imageGradient, ProbabilityDistribution3D & gaussianFilter, int x, int y, int z, int sizeX, int sizeY, int sizeZ, int gaussianFilterRadius, bool clear);
 			EigenResults3D * GetEigenResults(Volume * maskVol, Vector3D * imageGradient, ProbabilityDistribution3D & gaussianFilter, int gaussianFilterRadius, bool useMask);
 			void WriteEigenResultsToFile(Volume * sourceVolume, EigenResults3D * eigenResults, string outputFile);
-			void WriteEigenResultsToVRMLFile(Volume * sourceVolume, EigenResults3D * eigenResults, string outputFile);
+			void WriteEigenResultsToOFFFile(Volume * sourceVolume, Volume * cost, Volume * skeleton, EigenResults3D * eigenResults, string outputFile);
+			void WriteEigenResultsToOFFFileWireframe(Volume * sourceVolume, Volume * cost, Volume * skeleton, EigenResults3D * eigenResults, string outputFile);
+			void WriteSkeletonDirectionToVRMLFile(Volume * skeleton, Vector3D * skeletonDirections, string outputFile);
 			Volume * GetJuThinning(Volume * sourceVolume, Volume * preserve, double threshold, char thinningClass);
 			void AddIterationToVolume(Volume * compositeVolume, Volume * iterationVolume, unsigned char threshold);
 			void MarkDeletableVoxels(Volume * deletedVol, Volume * currentVolume, Volume * preservedVolume);
-			void NormalizeVolume(Volume * sourceVolume);
 			void ApplyMask(Volume * sourceVolume, Volume * maskVolume, unsigned char maskValue, bool keepMaskValue);
 
 			static const char THINNING_CLASS_SURFACE_PRESERVATION = 3;
@@ -58,6 +74,20 @@ namespace wustl_mm {
 		};
 
 		// Public Functions
+		void VolumeSkeletonizer::CleanupVolume(Volume * sourceVolume, double low, double high) {
+			for(int x = 0; x < sourceVolume->getSizeX(); x++) {
+				for(int y = 0; y < sourceVolume->getSizeY(); y++) {
+					for(int z = 0; z < sourceVolume->getSizeZ(); z++) {
+						if(sourceVolume->getDataAt(x, y, z) < low) {
+							sourceVolume->setDataAt(x, y, z, low);
+						}
+						if(sourceVolume->getDataAt(x, y, z) > high) {
+							sourceVolume->setDataAt(x, y, z, high);
+						}
+					}
+				}
+			}
+		}
 		VolumeSkeletonizer::VolumeSkeletonizer() {
 			math = new MathLib();
 
@@ -112,10 +142,121 @@ namespace wustl_mm {
 		}
 
 
-		Volume * VolumeSkeletonizer::PerformJuSkeletonization(Volume * imageVol, string outputFile) {
+		Volume * VolumeSkeletonizer::PerformImmersionSkeletonization(Volume * imageVol, string outputFile) {
+			Volume * skeleton = new Volume(imageVol->getSizeX(), imageVol->getSizeY(), imageVol->getSizeZ(), 0, 0, 0, imageVol);
+			typedef vector<Vector3DInt> BinType;
+			vector<BinType> bins;
+			for(int g = 0; g < 256; g++) {
+				bins.push_back(BinType());
+			}
 
-			NormalizeVolume(imageVol);
 
+			for(int x = 0; x < skeleton->getSizeX(); x++) {
+				for(int y = 0; y < skeleton->getSizeY(); y++) {
+					for(int z = 0; z < skeleton->getSizeZ(); z++) {				
+						bins[(int)round(skeleton->getDataAt(x, y, z))].push_back(VectorLib::Initialize(x, y, z));
+					}
+				}
+			}
+
+			int n6Count;
+			int key;
+			bool modified;
+			double value;
+			list<int> cleanupIndices;
+			PriorityQueue<ImmersionBeachElement, int> beach(MAX_QUEUELEN);
+			ImmersionBeachElement * element;
+			int index;
+
+			GrayImageList imageList;
+			Volume * thresholdedImage = new Volume(imageVol->getSizeX(), imageVol->getSizeY(), imageVol->getSizeZ(), 0, 0, 0, imageVol);
+			for(int g = 1; g < 256; g++) {
+				thresholdedImage = new Volume(imageVol->getSizeX(), imageVol->getSizeY(), imageVol->getSizeZ(), 0, 0, 0, imageVol);
+				thresholdedImage->threshold(g);
+
+				imageList.AddImage(GrayImage::GrayImageVolumeToImage(thresholdedImage));
+				imageList.AddImage(GrayImage::GrayImageVolumeToImage(skeleton));
+				delete thresholdedImage;
+				printf("Threshold = %i - %i points\n", g, bins[g].size());
+				int iteration = 1;
+				do { 
+					printf("\tIteration : %i\n", iteration++);
+
+					for(int i = 0; i < bins[g].size(); i++) {
+						n6Count = DiscreteMesh::GetImmersionN6Count(skeleton, bins[g][i]);
+						if(n6Count < 6) {
+							element = new ImmersionBeachElement();
+							element->p = bins[g][i];
+							element->binIndex = i;
+							beach.add(element, n6Count);
+						}
+					}
+
+					modified = false;
+					cleanupIndices.clear();
+					while(!beach.isEmpty()) {
+						beach.remove(element, key);
+						value = DiscreteMesh::GetImmersionSkeletalValue(skeleton, element->p);
+						skeleton->setDataAt(element->p.values[0], element->p.values[1], element->p.values[2], value);
+						if(value != g) {
+							cleanupIndices.push_back(element->binIndex);
+							modified = true;
+						}
+						delete element;
+					}
+
+					cleanupIndices.sort(greater<int>());
+					for(int i = 0; i < cleanupIndices.size(); i++) {
+						index = cleanupIndices.front();
+						cleanupIndices.pop_front();
+						bins[g].erase(bins[g].begin() + index);
+					}
+
+				} while (modified);
+				imageList.AddImage(GrayImage::GrayImageVolumeToImage(skeleton));
+			}
+
+			GrayImage * progressImage = imageList.GetCompositeImage(3);
+			ImageReaderBMP::SaveGrayscaleImage(progressImage, outputFile + "-progress.bmp");
+			delete progressImage;
+
+			return skeleton;
+		}
+
+		Volume * VolumeSkeletonizer::CleanImmersionSkeleton(Volume * skeleton, string outputFile) {
+			Volume * cleanedSkel = new Volume(skeleton->getSizeX(), skeleton->getSizeY(), skeleton->getSizeZ(), 0, 0, 0, skeleton);
+			typedef vector<Vector3DInt> BinType;
+			vector<BinType> bins;
+			for(int g = 0; g < 256; g++) {
+				bins.push_back(BinType());
+			}
+
+			for(int x = 0; x < skeleton->getSizeX(); x++) {
+				for(int y = 0; y < skeleton->getSizeY(); y++) {
+					for(int z = 0; z < skeleton->getSizeZ(); z++) {				
+						bins[(int)round(skeleton->getDataAt(x, y, z))].push_back(VectorLib::Initialize(x, y, z));
+					}
+				}
+			}
+
+			Volume * temp;
+			for(int g = 255; g >= 1; g--) {
+				temp = new Volume(skeleton->getSizeX(), skeleton->getSizeY(), skeleton->getSizeZ());
+				for(int i = 0; i < bins[g].size(); i++) {
+					temp->setDataAt(bins[g][i].values[0], bins[g][i].values[1], bins[g][i].values[2], 1);
+				}
+				for(int i = 0; i < bins[g].size(); i++) {
+					if(DiscreteMesh::IsVolumeBody(temp, bins[g][i].values[0], bins[g][i].values[1], bins[g][i].values[2])) {
+						cleanedSkel->setDataAt(bins[g][i].values[0], bins[g][i].values[1], bins[g][i].values[2], 0);
+					}
+				}
+				delete temp;
+			}
+
+			return cleanedSkel;
+		}
+
+		Volume * VolumeSkeletonizer::PerformJuSkeletonization(Volume * imageVol, string outputFile, int minGray, int maxGray) {
 			imageVol->pad(GAUSSIAN_FILTER_RADIUS, 0);
 			
 			Volume * preservedVol = new Volume(imageVol->getSizeX(), imageVol->getSizeY(), imageVol->getSizeZ());
@@ -125,7 +266,7 @@ namespace wustl_mm {
 			Volume * curveVol;
 			Volume * topologyVol;		
 
-			for(int threshold = 255; threshold > 0; threshold-= 50) {		
+			for(int threshold = maxGray; threshold >= minGray; threshold-= 1) {		
 				printf("\t\t\tUSING THRESHOLD : %i\n", threshold);
 				// Skeletonizing while preserving surface features curve features and topology
 				surfaceVol = GetJuSurfaceSkeleton(imageVol, preservedVol, threshold);
@@ -166,12 +307,11 @@ namespace wustl_mm {
 			compositeVol->pad(-GAUSSIAN_FILTER_RADIUS, 0);
 			deletedVol->pad(-GAUSSIAN_FILTER_RADIUS, 0);
 
-			string tempFile;
-			tempFile = outputFile + "-WithoutRemoving.mrc";
-			compositeVol->toMRCFile((char *)tempFile.c_str());
-
-
 			if(WRITE_DEBUG_FILES) {
+				string tempFile;
+				tempFile = outputFile + "-WithoutRemoving.mrc";
+				compositeVol->toMRCFile((char *)tempFile.c_str());
+
 				tempFile = outputFile + "-deletedVoxels.mrc";
 				deletedVol->toMRCFile((char *)tempFile.c_str());
 			}
@@ -181,7 +321,10 @@ namespace wustl_mm {
 			delete deletedVol;
 			delete preservedVol;
 
-			compositeVol->toOFFCells2((char *)(outputFile + ".off").c_str());
+			if(WRITE_DEBUG_FILES) {
+				// This method seems to have trouble with the vessel2 dataset.
+				// compositeVol->toOFFCells2((char *)(outputFile + ".off").c_str());
+			}
 
 			return compositeVol;
 
@@ -197,9 +340,10 @@ namespace wustl_mm {
 
 			printf("Getting volume Eigens\n");
 			Vector3D * volumeGradient = GetVolumeGradient(sourceVolume);
-			EigenResults3D * volumeEigens = GetEigenResults(sourceVolume, volumeGradient, gaussianFilterMaxRadius, GAUSSIAN_FILTER_RADIUS, false);
-			//WriteEigenResultsToFile(sourceVolume, volumeEigens, outputFile + "Eigens.dat");
-			WriteEigenResultsToVRMLFile(sourceVolume, volumeEigens, outputFile + "Eigens.wrl");
+			EigenResults3D * volumeEigens = GetEigenResults(sourceSkeleton, volumeGradient, gaussianFilterMaxRadius, GAUSSIAN_FILTER_RADIUS, true);
+
+			WriteEigenResultsToOFFFile(sourceVolume, new Volume(sourceVolume->getSizeX(), sourceVolume->getSizeY(), sourceVolume->getSizeZ()), sourceSkeleton, volumeEigens, outputFile + "NoColorEigens.off");
+			WriteEigenResultsToVRMLFile(sourceVolume, new Volume(sourceVolume->getSizeX(), sourceVolume->getSizeY(), sourceVolume->getSizeZ()), sourceSkeleton, volumeEigens, outputFile + "NoColorEigens.wrl");
 
 			Volume * curveScore = new Volume(sourceVolume->getSizeX(), sourceVolume->getSizeY(), sourceVolume->getSizeZ());
 			Volume * pointScore = new Volume(sourceVolume->getSizeX(), sourceVolume->getSizeY(), sourceVolume->getSizeZ());
@@ -214,16 +358,24 @@ namespace wustl_mm {
 			double cost, cost2;
 			Vector3DInt * pointList;
 			SkeletalCurve * featureList;
-			Vector3D * skeletonGradient;
 			Vector3D * skeletonDirections;
-			SkeletalCurve feature;			
+			SkeletalCurve feature;
+
+			{ //Remove after debugging.. not needed at all only for visualization
+				binarySkeleton = new Volume(sourceSkeleton->getSizeX(), sourceSkeleton->getSizeY(), sourceSkeleton->getSizeZ(), 0, 0, 0, sourceSkeleton);
+				binarySkeleton->threshold(139);			
+				skeletonDirections = GetSkeletonDirection(binarySkeleton);
+				WriteSkeletonDirectionToVRMLFile(binarySkeleton, skeletonDirections, outputFile + "-G-SkelDirections.wrl");
+
+				delete binarySkeleton;
+				delete [] skeletonDirections;
+			}
 
 
 			for(int grayValue = maxGray; grayValue >= minGray; grayValue-=5) {
 				printf("Threshold :%i\n", grayValue);
 				binarySkeleton = new Volume(sourceSkeleton->getSizeX(), sourceSkeleton->getSizeY(), sourceSkeleton->getSizeZ(), 0, 0, 0, sourceSkeleton);
 				binarySkeleton->threshold(grayValue);			
-				skeletonGradient = GetVolumeGradient(binarySkeleton);
 				skeletonDirections = GetSkeletonDirection(binarySkeleton);
 
 				analyzer = new VolumeDeltaAnalyzer(preservedSkeleton, binarySkeleton);
@@ -302,18 +454,7 @@ namespace wustl_mm {
 
 				printf("%i surfaces, %i curves, %i points\n", surfaceCount, curveCount, pointCount);
 
-				//// SIGGRAPH
-				//Volume * tempVolume = new Volume(preservedSkeleton->getSizeX(), preservedSkeleton->getSizeY(), preservedSkeleton->getSizeZ(), 0, 0, 0, preservedSkeleton);
-				//tempVolume->pad(-GAUSSIAN_FILTER_RADIUS, 0);
-
-				//char * fileName = new char[100];
-				//sprintf(fileName, "%s-pruned-%f.off", outputFile.c_str(), grayValue/255.0);
-				//tempVolume->toOFFCells2(fileName);				
-				//delete [] fileName; 
-				//delete tempVolume;
-
 				delete binarySkeleton;				
-				delete [] skeletonGradient;
 				delete [] skeletonDirections;
 				delete analyzer;
 				delete [] pointList;
@@ -321,25 +462,23 @@ namespace wustl_mm {
 			
 			Volume * finalSkeleton = new Volume(sourceSkeleton->getSizeX(), sourceSkeleton->getSizeY(), sourceSkeleton->getSizeZ(), 0, 0, 0, sourceSkeleton);
 			finalSkeleton->applyMask(preservedSkeleton, 1.0, true);
-			
-			//pointScore->toMRCFile((char *)(outputFile + "-pointScore.mrc").c_str());
-			curveScore->toMRCFile((char *)(outputFile + "-curveScore.mrc").c_str());
-			//surfaceScore->toMRCFile((char *)(outputFile + "-surfaceScore.mrc").c_str());
-			preservedSkeleton->toMRCFile((char *)(outputFile + "-binarySkeleton.mrc").c_str());
-			finalSkeleton->toMRCFile((char *)(outputFile + "-graySkeleton.mrc").c_str());
-			preservedSkeleton->toOFFCells2((char *)(outputFile + "-binarySkeleton.off").c_str());
-			//finalSkeleton->toOFFCells2((char *)(outputFile + "-graySkeleton.off").c_str());
+						
+			WriteEigenResultsToVRMLFile(sourceVolume, curveScore, sourceSkeleton, volumeEigens, outputFile + "-C-Eigens.wrl");
+			WriteEigenResultsToVRMLFile(sourceVolume, surfaceScore, sourceSkeleton, volumeEigens, outputFile + "-S-Eigens.wrl");
+
+			//pointScore->toMRCFile((char *)(outputFile + "-P-Score.mrc").c_str());
+			curveScore->toMRCFile((char *)(outputFile + "-C-Score.mrc").c_str());
+			surfaceScore->toMRCFile((char *)(outputFile + "-S-Score.mrc").c_str());
+			//preservedSkeleton->toMRCFile((char *)(outputFile + "-G-BinarySkeleton.mrc").c_str());
+			//preservedSkeleton->toOFFCells2((char *)(outputFile + "-G-BinarySkeleton.off").c_str());
+			//finalSkeleton->toOFFCells2((char *)(outputFile + "-G-GraySkeleton.off").c_str());
 
 			delete pointScore;
 			delete curveScore;
 			delete surfaceScore;
 			delete preservedSkeleton;
-			delete binarySkeleton;
-			delete [] skeletonGradient;
-			delete [] skeletonDirections;
-			delete [] volumeGradient;
 			delete [] volumeEigens;
-
+			delete [] volumeGradient;
 
 			return finalSkeleton;
 
@@ -455,15 +594,17 @@ namespace wustl_mm {
 								}
 								if(allFound) {
 									DiscreteMesh::FindSurfaceBase(faces[0], faces[1], faces[2], faces[3]);
-									VectorLib::Difference(v0, faces[1], faces[0]);
-									VectorLib::Difference(v1, faces[3], faces[0]);
-									VectorLib::CrossProduct(v2, v0, v1);
-									VectorLib::Normalize(v2);
-									VectorLib::Initialize(v0, 0, 0, 0);
-									VectorLib::Addition(v1, v0, v2);
-									DiscreteMesh::FindCurveBase(v0, v1);
-									VectorLib::Difference(v2, v1, v0);
-									VectorLib::Addition(directions[index], directions[index], v2);									
+									//if(DiscreteMesh::IsValidSurface(skeleton, faces[0], faces[1], faces[2], faces[3])) {
+										VectorLib::Difference(v0, faces[1], faces[0]);
+										VectorLib::Difference(v1, faces[3], faces[0]);
+										VectorLib::CrossProduct(v2, v0, v1);
+										VectorLib::Normalize(v2);
+										VectorLib::Initialize(v0, 0, 0, 0);
+										VectorLib::Addition(v1, v0, v2);
+										DiscreteMesh::FindCurveBase(v0, v1);
+										VectorLib::Difference(v2, v1, v0);
+										VectorLib::Addition(directions[index], directions[index], v2);		
+									//}
 								}								
 							}
 						}
@@ -496,12 +637,15 @@ namespace wustl_mm {
 						dotValue = VectorLib::DotProduct(skeletonDirection, imageEigen.vectors[2]);
 						ratio = (2.0 * imageEigen.values[2])/ (imageEigen.values[0] + imageEigen.values[1]);
 						cost = abs(dotValue) * (1-ratio);
+						//cost = abs(dotValue);
 						break;
 					case VOXEL_CLASS_SURFACE_BODY:
 					case VOXEL_CLASS_SURFACE_BORDER:
 						dotValue = VectorLib::DotProduct(skeletonDirection, imageEigen.vectors[0]);
 						ratio = (imageEigen.values[1] + imageEigen.values[2])/ (2.0*imageEigen.values[0]);
-						cost = abs(dotValue) * (1 - ratio);
+						//ratio = (imageEigen.values[1] - imageEigen.values[2]) / ((imageEigen.values[0] - imageEigen.values[1]) + (imageEigen.values[0] - imageEigen.values[2]));
+						cost = abs(dotValue)*(1 - ratio);						
+						//cost = abs(dotValue);
 						break;
 				}
 				
@@ -556,11 +700,13 @@ namespace wustl_mm {
 						returnVal.vectors[r].values[c] = eigenData.eigenVectors[r][c];
 					}
 				}
-				
-				if((returnVal.values[0] < returnVal.values[1]) || (returnVal.values[1] < returnVal.values[2])) {
-					printf("EIGEN VALUES OUT OF ORDER!!!\n");
-				}
 
+				for(int r = 0; r < 3; r++) {
+					//VectorLib::Normalize(returnVal.vectors[r]);
+				}
+				
+				assert((returnVal.values[0] >= returnVal.values[1]) && (returnVal.values[1] >= returnVal.values[2]));
+					
 
 			}
 		}
@@ -606,25 +752,78 @@ namespace wustl_mm {
 			delete outFile;
 		}
 
-		void VolumeSkeletonizer::WriteEigenResultsToVRMLFile(Volume * sourceVolume, EigenResults3D * eigenResults, string outputFile) {
+		void VolumeSkeletonizer::WriteEigenResultsToVRMLFile(Volume * sourceVolume, Volume * cost, Volume * skeleton, EigenResults3D * eigenResults, string outputFile) {
+
+
 			int index;
 			FILE * outFile = fopen(outputFile.c_str(), "wt");
 			fprintf(outFile, "#VRML V2.0 utf8\n");
+			srand( (unsigned)time( NULL ) );
+			double r, g, b, colorCost;
+			double theta, theta1, theta2, theta3, s;
+			Vector3D axis, axis1, axis2, axis3;
+			Vector3D newY, newX;
+			Vector3D xAxis = VectorLib::Initialize(1.0, 0.0, 0.0);
+			Vector3D yAxis = VectorLib::Initialize(0.0, 1.0, 0.0);
 
 			for(int z = 0; z < sourceVolume->getSizeZ(); z++) {
 				for(int y = 0; y < sourceVolume->getSizeY(); y++) {
 					for(int x = 0; x < sourceVolume->getSizeX(); x++) {
-						index = sourceVolume->getIndex(x, y, z);
-						if(eigenResults[index].values[0] != 0) {
-						fprintf(outFile, "Group{\n children[\n Transform{\n translation %i %i %i \n  rotation 0 0 0 0 \n  children [\n Shape {\n appearance Appearance {\n material Material {emissiveColor 0 0.25 0 }} \n geometry Box {size %f %f %f}}]}]}\n",
-								x, y, z,
-								eigenResults[index].values[0]/eigenResults[index].values[0], eigenResults[index].values[1]/eigenResults[index].values[0], eigenResults[index].values[2]/eigenResults[index].values[0]);
+						if(skeleton->getDataAt(x, y, z) > 0) {
+							index = sourceVolume->getIndex(x, y, z);
+							colorCost = cost->getDataAt(x, y, z);
+							Hue(colorCost, r, g, b);
+
+							axis1 = VectorLib::CrossProduct(eigenResults[index].vectors[0], xAxis);
+							VectorLib::Normalize(axis1);
+							theta1 = acos(VectorLib::DotProduct(eigenResults[index].vectors[0], xAxis));
+
+							newX = VectorLib::Rotate(xAxis, axis1, theta1);
+							newY = VectorLib::Rotate(yAxis, axis1, theta1);
+							axis2 = VectorLib::CrossProduct(eigenResults[index].vectors[1], newY);
+							VectorLib::Normalize(axis2);
+							theta2 = acos(VectorLib::DotProduct(eigenResults[index].vectors[1], newY));
+
+
+							fprintf(outFile, "Group{\n children [\n Transform{\n translation %i %i %i \n  rotation %lf %lf %lf %lf \n  children [Transform{\n rotation %lf %lf %lf %lf \n  children [\n Shape {\n appearance Appearance {\n material Material {emissiveColor %lf %lf %lf }} \n geometry Box {size %lf %lf %lf}}]}]}]}\n",
+								x - GAUSSIAN_FILTER_RADIUS, y - GAUSSIAN_FILTER_RADIUS, z - GAUSSIAN_FILTER_RADIUS,
+								axis2.values[0], axis2.values[1], axis2.values[2], -theta2,
+								axis1.values[0], axis1.values[1], axis1.values[2], -theta1,
+								r, g, b,									
+								0.7 * eigenResults[index].values[2]/eigenResults[index].values[0], 0.7 * eigenResults[index].values[2]/eigenResults[index].values[1], 0.7 * eigenResults[index].values[2]/eigenResults[index].values[2]);
+
+
+							//axis1 = VectorLib::CrossProduct(eigenResults[index].vectors[0], VectorLib::Initialize(1.0, 0.0, 0.0));
+							//VectorLib::Normalize(axis1);
+							//theta1 = -acos(VectorLib::DotProduct(eigenResults[index].vectors[0], VectorLib::Initialize(1.0, 0.0, 0.0)));
+
+							//axis2 = VectorLib::CrossProduct(eigenResults[index].vectors[1], VectorLib::Initialize(0.0, 1.0, 0.0));
+							//VectorLib::Normalize(axis2);
+							//theta2 = -acos(VectorLib::DotProduct(eigenResults[index].vectors[1], VectorLib::Initialize(0.0, 1.0, 0.0)));
+
+							//axis3 = VectorLib::CrossProduct(eigenResults[index].vectors[2], VectorLib::Initialize(0.0, 0.0, 1.0));
+							//VectorLib::Normalize(axis3);
+							//theta3 = -acos(VectorLib::DotProduct(eigenResults[index].vectors[2], VectorLib::Initialize(0.0, 0.0, 1.0)));
+
+
+							//fprintf(outFile, "Group{\n children[\n Transform{\n translation %i %i %i \n  rotation %lf %lf %lf %lf \n  children [\n Shape {\n appearance Appearance {\n material Material {emissiveColor %lf %lf %lf }} \n geometry Box {size %lf %lf %lf}}]}]}\n",
+							//	x - GAUSSIAN_FILTER_RADIUS, y - GAUSSIAN_FILTER_RADIUS, z - GAUSSIAN_FILTER_RADIUS,
+							//	axis1.values[0], axis1.values[1], axis1.values[2], theta1,
+							//	0.0, 0.5, 0.0,									
+							//	0.7 * eigenResults[index].values[2]/eigenResults[index].values[0], 0.01, 0.01);
+
+							//fprintf(outFile, "Group{\n children[\n Transform{\n translation %i %i %i \n  rotation %lf %lf %lf %lf \n  children [\n Shape {\n appearance Appearance {\n material Material {emissiveColor %lf %lf %lf }} \n geometry Box {size %lf %lf %lf}}]}]}\n",
+							//	x - GAUSSIAN_FILTER_RADIUS, y - GAUSSIAN_FILTER_RADIUS, z - GAUSSIAN_FILTER_RADIUS,
+							//	axis2.values[0], axis2.values[1], axis2.values[2], theta2,
+							//	0.0, 0.0, 0.5,									
+							//	0.01, 0.7 * eigenResults[index].values[2]/eigenResults[index].values[1], 0.01);
+
+							//fprintf(outFile, "Group{\n children[\n Transform{\n translation %i %i %i \n  rotation %lf %lf %lf %lf \n  children [\n Shape {\n appearance Appearance {\n material Material {emissiveColor %lf %lf %lf }} \n geometry Box {size %lf %lf %lf}}]}]}\n",
+							//	x - GAUSSIAN_FILTER_RADIUS, y - GAUSSIAN_FILTER_RADIUS, z - GAUSSIAN_FILTER_RADIUS,
+							//	axis3.values[0], axis3.values[1], axis3.values[2], theta3,
+							//	0.5, 0.0, 0.0,									
+							//	0.01, 0.01, 0.7 * eigenResults[index].values[2]/eigenResults[index].values[2]);
 						}
-							 
-							//eigenResults[index].values[0], eigenResults[index].values[1], eigenResults[index].values[2],
-							//eigenResults[index].vectors[0].values[0], eigenResults[index].vectors[0].values[1], eigenResults[index].vectors[0].values[2], 
-							//eigenResults[index].vectors[1].values[0], eigenResults[index].vectors[1].values[1], eigenResults[index].vectors[1].values[2], 
-							//eigenResults[index].vectors[2].values[0], eigenResults[index].vectors[2].values[1], eigenResults[index].vectors[2].values[2]);
 					}
 				}
 			}
@@ -633,6 +832,304 @@ namespace wustl_mm {
 			delete outFile;
 		}
 
+		//void VolumeSkeletonizer::WriteEigenResultsToVRMLFile(Volume * sourceVolume, Volume * cost, Volume * skeleton, EigenResults3D * eigenResults, string outputFile) {
+		//	int index;
+		//	int pointCount = 0;
+
+		//	for(int z = 0; z < sourceVolume->getSizeZ(); z++) {
+		//		for(int y = 0; y < sourceVolume->getSizeY(); y++) {
+		//			for(int x = 0; x < sourceVolume->getSizeX(); x++) {
+		//				if(skeleton->getDataAt(x, y, z) > 0) {
+		//					pointCount++;
+		//				}
+		//			}
+		//		}
+		//	}
+
+
+		//	FILE * outFile = fopen(outputFile.c_str(), "wt");
+		//	fprintf(outFile, "#VRML V2.0 utf8 \n DEF object0 Transform { \n children [ \n Shape { \n geometry IndexedFaceSet { \n coord Coordinate { point [\n");
+		//	double ratio[3], xd, yd, zd;
+
+		//	int cnt = 0;
+
+		//	for(int z = 0; z < sourceVolume->getSizeZ(); z++) {
+		//		for(int y = 0; y < sourceVolume->getSizeY(); y++) {
+		//			for(int x = 0; x < sourceVolume->getSizeX(); x++) {
+		//				if(skeleton->getDataAt(x, y, z) > 0) {
+		//					index = sourceVolume->getIndex(x, y, z);
+		//					for(int v = 0; v < 3; v++) {							
+		//						ratio[v] = 0.7 * eigenResults[index].values[2]/eigenResults[index].values[v];
+		//					}
+
+		//					xd = 0.5 * (ratio[0] * eigenResults[index].vectors[0].values[0] + ratio[1] * eigenResults[index].vectors[1].values[0] + ratio[2] * eigenResults[index].vectors[2].values[0]) + GAUSSIAN_FILTER_RADIUS; 
+		//					yd = 0.5 * (ratio[0] * eigenResults[index].vectors[0].values[1] + ratio[1] * eigenResults[index].vectors[1].values[1] + ratio[2] * eigenResults[index].vectors[2].values[1]) + GAUSSIAN_FILTER_RADIUS;
+		//					zd = 0.5 * (ratio[0] * eigenResults[index].vectors[0].values[2] + ratio[1] * eigenResults[index].vectors[1].values[2] + ratio[2] * eigenResults[index].vectors[2].values[2]) + GAUSSIAN_FILTER_RADIUS;
+
+		//					fprintf(outFile, "%lf %lf %lf, \n", 
+		//						x - xd, 
+		//						y - yd, 
+		//						z - zd);
+		//					fprintf(outFile, "%lf %lf %lf, \n", 
+		//						x - xd + ratio[0] * eigenResults[index].vectors[0].values[0], 
+		//						y - yd + ratio[0] * eigenResults[index].vectors[0].values[1], 
+		//						z - zd + ratio[0] * eigenResults[index].vectors[0].values[2]);
+		//					fprintf(outFile, "%lf %lf %lf, \n", 
+		//						x - xd + ratio[0] * eigenResults[index].vectors[0].values[0] + ratio[1] * eigenResults[index].vectors[1].values[0], 
+		//						y - yd + ratio[0] * eigenResults[index].vectors[0].values[1] + ratio[1] * eigenResults[index].vectors[1].values[1], 
+		//						z - zd + ratio[0] * eigenResults[index].vectors[0].values[2] + ratio[1] * eigenResults[index].vectors[1].values[2]);
+		//					fprintf(outFile, "%lf %lf %lf, \n", 
+		//						x - xd + ratio[1] * eigenResults[index].vectors[1].values[0], 
+		//						y - yd + ratio[1] * eigenResults[index].vectors[1].values[1], 
+		//						z - zd + ratio[1] * eigenResults[index].vectors[1].values[2]);
+		//					fprintf(outFile, "%lf %lf %lf, \n", 
+		//						x - xd + ratio[2] * eigenResults[index].vectors[2].values[0], 
+		//						y - yd + ratio[2] * eigenResults[index].vectors[2].values[1], 
+		//						z - zd + ratio[2] * eigenResults[index].vectors[2].values[2]);
+		//					fprintf(outFile, "%lf %lf %lf, \n", 
+		//						x - xd + ratio[0] * eigenResults[index].vectors[0].values[0] + ratio[2] * eigenResults[index].vectors[2].values[0], 
+		//						y - yd + ratio[0] * eigenResults[index].vectors[0].values[1] + ratio[2] * eigenResults[index].vectors[2].values[1], 
+		//						z - zd + ratio[0] * eigenResults[index].vectors[0].values[2] + ratio[2] * eigenResults[index].vectors[2].values[2]);
+		//					fprintf(outFile, "%lf %lf %lf, \n", 
+		//						x - xd + ratio[0] * eigenResults[index].vectors[0].values[0] + ratio[1] * eigenResults[index].vectors[1].values[0] + ratio[2] * eigenResults[index].vectors[2].values[0], 
+		//						y - yd + ratio[0] * eigenResults[index].vectors[0].values[1] + ratio[1] * eigenResults[index].vectors[1].values[1] + ratio[2] * eigenResults[index].vectors[2].values[1], 
+		//						z - zd + ratio[0] * eigenResults[index].vectors[0].values[2] + ratio[1] * eigenResults[index].vectors[1].values[2] + ratio[2] * eigenResults[index].vectors[2].values[2]);
+		//					fprintf(outFile, "%lf %lf %lf", 
+		//						x - xd + ratio[1] * eigenResults[index].vectors[1].values[0] + ratio[2] * eigenResults[index].vectors[2].values[0], 
+		//						y - yd + ratio[1] * eigenResults[index].vectors[1].values[1] + ratio[2] * eigenResults[index].vectors[2].values[1], 
+		//						z - zd + ratio[1] * eigenResults[index].vectors[1].values[2] + ratio[2] * eigenResults[index].vectors[2].values[2]);
+		//					if(cnt != pointCount) {
+		//						fprintf(outFile, ",");
+		//					}
+		//				}
+		//			}
+		//		}
+		//	}
+
+		//	fprintf(outFile, "] \n } \n creaseAngle 0.610865 \n coordIndex [");
+
+		//	cnt = 0;
+
+		//	for(int z = 0; z < sourceVolume->getSizeZ(); z++) {
+		//		for(int y = 0; y < sourceVolume->getSizeY(); y++) {
+		//			for(int x = 0; x < sourceVolume->getSizeX(); x++) {
+		//				if(skeleton->getDataAt(x, y, z) > 0) {
+		//					index = sourceVolume->getIndex(x, y, z);
+		//					fprintf(outFile, "%i, %i, %i, %i, -1,", cnt, cnt+1, cnt+2, cnt+3);
+		//					fprintf(outFile, "%i, %i, %i, %i, -1,", cnt+1, cnt+5, cnt+6, cnt+2);
+		//					fprintf(outFile, "%i, %i, %i, %i, -1,", cnt+3, cnt+2, cnt+6, cnt+7);
+		//					fprintf(outFile, "%i, %i, %i, %i, -1,", cnt, cnt+3, cnt+7, cnt+4);
+		//					fprintf(outFile, "%i, %i, %i, %i, -1,", cnt, cnt+4, cnt+5, cnt+1);
+		//					fprintf(outFile, "%i, %i, %i, %i, -1", cnt+4, cnt+7, cnt+6, cnt+5);
+
+		//					cnt+=8;
+		//					if(cnt < pointCount) {
+		//						fprintf(outFile, ",");
+		//									
+		//					}
+		//				}
+		//			}
+		//		}
+		//	}
+		//	fprintf(outFile, "]}}]}");
+
+		//	fclose(outFile);
+		//	delete outFile;
+		//}
+
+
+
+		void VolumeSkeletonizer::WriteEigenResultsToOFFFileWireframe(Volume * sourceVolume, Volume * cost, Volume * skeleton, EigenResults3D * eigenResults, string outputFile) {
+			int index;
+			int pointCount = 0;
+
+			for(int z = 0; z < sourceVolume->getSizeZ(); z++) {
+				for(int y = 0; y < sourceVolume->getSizeY(); y++) {
+					for(int x = 0; x < sourceVolume->getSizeX(); x++) {
+						if(skeleton->getDataAt(x, y, z) > 0) {
+							pointCount++;
+						}
+					}
+				}
+			}
+
+
+			FILE * outFile = fopen(outputFile.c_str(), "wt");
+			fprintf(outFile, "OFF\n%i %i %i\n", pointCount * 4, pointCount * 3, 0);
+			double ratio;
+
+			for(int z = 0; z < sourceVolume->getSizeZ(); z++) {
+				for(int y = 0; y < sourceVolume->getSizeY(); y++) {
+					for(int x = 0; x < sourceVolume->getSizeX(); x++) {
+						if(skeleton->getDataAt(x, y, z) > 0) {
+							index = sourceVolume->getIndex(x, y, z);
+
+							fprintf(outFile, "%i %i %i \n", x - GAUSSIAN_FILTER_RADIUS, y - GAUSSIAN_FILTER_RADIUS, z - GAUSSIAN_FILTER_RADIUS);
+							for(int v = 0; v < 3; v++) {							
+								ratio = 0.7 * eigenResults[index].values[2]/eigenResults[index].values[v];
+								fprintf(outFile, "%f %f %f \n", 
+									x - GAUSSIAN_FILTER_RADIUS + ratio * eigenResults[index].vectors[v].values[0], 
+									y - GAUSSIAN_FILTER_RADIUS + ratio * eigenResults[index].vectors[v].values[1], 
+									z - GAUSSIAN_FILTER_RADIUS + ratio * eigenResults[index].vectors[v].values[2]);
+							}
+						}
+					}
+				}
+			}
+
+			int cnt = 0;
+
+			for(int z = 0; z < sourceVolume->getSizeZ(); z++) {
+				for(int y = 0; y < sourceVolume->getSizeY(); y++) {
+					for(int x = 0; x < sourceVolume->getSizeX(); x++) {
+						if(skeleton->getDataAt(x, y, z) > 0) {
+							index = sourceVolume->getIndex(x, y, z);
+							fprintf(outFile, "4 %i %i %i %i 0.0 0.0 1.0 0.75\n", cnt*4, cnt*4, cnt*4 +1, cnt*4+1);
+							fprintf(outFile, "4 %i %i %i %i 0.0 1.0 0.0 0.75\n", cnt*4, cnt*4, cnt*4 +2, cnt*4+2);
+							fprintf(outFile, "4 %i %i %i %i 1.0 0.0 0.0 0.75\n", cnt*4, cnt*4, cnt*4 +3, cnt*4+3);						
+							cnt++;
+						}
+					}
+				}
+			}
+
+			fclose(outFile);
+			delete outFile;
+		}
+
+
+		void VolumeSkeletonizer::WriteEigenResultsToOFFFile(Volume * sourceVolume, Volume * cost, Volume * skeleton, EigenResults3D * eigenResults, string outputFile) {
+			int index;
+			int pointCount = 0;
+
+			for(int z = 0; z < sourceVolume->getSizeZ(); z++) {
+				for(int y = 0; y < sourceVolume->getSizeY(); y++) {
+					for(int x = 0; x < sourceVolume->getSizeX(); x++) {
+						if(skeleton->getDataAt(x, y, z) > 0) {
+							pointCount++;
+						}
+					}
+				}
+			}
+
+
+			FILE * outFile = fopen(outputFile.c_str(), "wt");
+			fprintf(outFile, "OFF\n%i %i %i\n", pointCount * 8, pointCount * 6, 0);
+			double ratio[3], xd, yd, zd;
+
+			for(int z = 0; z < sourceVolume->getSizeZ(); z++) {
+				for(int y = 0; y < sourceVolume->getSizeY(); y++) {
+					for(int x = 0; x < sourceVolume->getSizeX(); x++) {
+						if(skeleton->getDataAt(x, y, z) > 0) {
+							index = sourceVolume->getIndex(x, y, z);
+							for(int v = 0; v < 3; v++) {							
+								ratio[v] = 0.7 * eigenResults[index].values[2]/eigenResults[index].values[v];
+							}
+
+							xd = 0.5 * (ratio[0] * eigenResults[index].vectors[0].values[0] + ratio[1] * eigenResults[index].vectors[1].values[0] + ratio[2] * eigenResults[index].vectors[2].values[0]) + GAUSSIAN_FILTER_RADIUS; 
+							yd = 0.5 * (ratio[0] * eigenResults[index].vectors[0].values[1] + ratio[1] * eigenResults[index].vectors[1].values[1] + ratio[2] * eigenResults[index].vectors[2].values[1]) + GAUSSIAN_FILTER_RADIUS;
+							zd = 0.5 * (ratio[0] * eigenResults[index].vectors[0].values[2] + ratio[1] * eigenResults[index].vectors[1].values[2] + ratio[2] * eigenResults[index].vectors[2].values[2]) + GAUSSIAN_FILTER_RADIUS;
+
+							fprintf(outFile, "%lf %lf %lf \n", 
+								x - xd, 
+								y - yd, 
+								z - zd);
+							fprintf(outFile, "%lf %lf %lf \n", 
+								x - xd + ratio[0] * eigenResults[index].vectors[0].values[0], 
+								y - yd + ratio[0] * eigenResults[index].vectors[0].values[1], 
+								z - zd + ratio[0] * eigenResults[index].vectors[0].values[2]);
+							fprintf(outFile, "%lf %lf %lf \n", 
+								x - xd + ratio[0] * eigenResults[index].vectors[0].values[0] + ratio[1] * eigenResults[index].vectors[1].values[0], 
+								y - yd + ratio[0] * eigenResults[index].vectors[0].values[1] + ratio[1] * eigenResults[index].vectors[1].values[1], 
+								z - zd + ratio[0] * eigenResults[index].vectors[0].values[2] + ratio[1] * eigenResults[index].vectors[1].values[2]);
+							fprintf(outFile, "%lf %lf %lf \n", 
+								x - xd + ratio[1] * eigenResults[index].vectors[1].values[0], 
+								y - yd + ratio[1] * eigenResults[index].vectors[1].values[1], 
+								z - zd + ratio[1] * eigenResults[index].vectors[1].values[2]);
+							fprintf(outFile, "%lf %lf %lf \n", 
+								x - xd + ratio[2] * eigenResults[index].vectors[2].values[0], 
+								y - yd + ratio[2] * eigenResults[index].vectors[2].values[1], 
+								z - zd + ratio[2] * eigenResults[index].vectors[2].values[2]);
+							fprintf(outFile, "%lf %lf %lf \n", 
+								x - xd + ratio[0] * eigenResults[index].vectors[0].values[0] + ratio[2] * eigenResults[index].vectors[2].values[0], 
+								y - yd + ratio[0] * eigenResults[index].vectors[0].values[1] + ratio[2] * eigenResults[index].vectors[2].values[1], 
+								z - zd + ratio[0] * eigenResults[index].vectors[0].values[2] + ratio[2] * eigenResults[index].vectors[2].values[2]);
+							fprintf(outFile, "%lf %lf %lf \n", 
+								x - xd + ratio[0] * eigenResults[index].vectors[0].values[0] + ratio[1] * eigenResults[index].vectors[1].values[0] + ratio[2] * eigenResults[index].vectors[2].values[0], 
+								y - yd + ratio[0] * eigenResults[index].vectors[0].values[1] + ratio[1] * eigenResults[index].vectors[1].values[1] + ratio[2] * eigenResults[index].vectors[2].values[1], 
+								z - zd + ratio[0] * eigenResults[index].vectors[0].values[2] + ratio[1] * eigenResults[index].vectors[1].values[2] + ratio[2] * eigenResults[index].vectors[2].values[2]);
+							fprintf(outFile, "%lf %lf %lf \n", 
+								x - xd + ratio[1] * eigenResults[index].vectors[1].values[0] + ratio[2] * eigenResults[index].vectors[2].values[0], 
+								y - yd + ratio[1] * eigenResults[index].vectors[1].values[1] + ratio[2] * eigenResults[index].vectors[2].values[1], 
+								z - zd + ratio[1] * eigenResults[index].vectors[1].values[2] + ratio[2] * eigenResults[index].vectors[2].values[2]);
+						}
+					}
+				}
+			}
+
+			int cnt = 0;
+
+			for(int z = 0; z < sourceVolume->getSizeZ(); z++) {
+				for(int y = 0; y < sourceVolume->getSizeY(); y++) {
+					for(int x = 0; x < sourceVolume->getSizeX(); x++) {
+						if(skeleton->getDataAt(x, y, z) > 0) {
+							index = sourceVolume->getIndex(x, y, z);
+							fprintf(outFile, "4 %i %i %i %i\n", cnt, cnt+3, cnt+2, cnt+1);
+							fprintf(outFile, "4 %i %i %i %i\n", cnt+1, cnt+2, cnt+6, cnt+5);
+							fprintf(outFile, "4 %i %i %i %i\n", cnt+3, cnt+7, cnt+6, cnt+2);
+							fprintf(outFile, "4 %i %i %i %i\n", cnt, cnt+4, cnt+7, cnt+3);
+							fprintf(outFile, "4 %i %i %i %i\n", cnt, cnt+1, cnt+5, cnt+4);
+							fprintf(outFile, "4 %i %i %i %i\n", cnt+4, cnt+5, cnt+6, cnt+7);
+
+							cnt+=8;
+						}
+					}
+				}
+			}
+
+			fclose(outFile);
+			delete outFile;
+		}
+
+
+		void VolumeSkeletonizer::WriteSkeletonDirectionToVRMLFile(Volume * skeleton, Vector3D * skeletonDirections, string outputFile) {
+			int index;
+			FILE * outFile = fopen(outputFile.c_str(), "wt");
+			fprintf(outFile, "#VRML V2.0 utf8\n");
+			srand( (unsigned)time( NULL ) );
+			double r = 0;// ((double)rand() / (RAND_MAX + 1));
+			double g = 0;//((double)rand() / (RAND_MAX + 1));
+			double b = 0.5;//((double)rand() / (RAND_MAX + 1));
+
+			for(int z = 0; z < skeleton->getSizeZ(); z++) {
+				for(int y = 0; y < skeleton->getSizeY(); y++) {
+					for(int x = 0; x < skeleton->getSizeX(); x++) {
+						if(skeleton->getDataAt(x, y, z) > 0) {
+							index = skeleton->getIndex(x, y, z);
+							Vector3D axis = VectorLib::CrossProduct(skeletonDirections[index], VectorLib::Initialize(1.0, 0.0, 0.0));
+							VectorLib::Normalize(axis);
+							double angle = -VectorLib::DotProduct(skeletonDirections[index], VectorLib::Initialize(1.0, 0.0, 0.0));
+							angle = acos(angle);
+
+							if((axis.values[0] == 0) && (axis.values[1] == 0) && (axis.values[2] == 0)) {
+								fprintf(outFile, "Group{\n children[\n Transform{\n translation %i %i %i \n  children [\n Shape {\n appearance Appearance {\n material Material {emissiveColor %f %f %f }} \n geometry Box {size 0.9 0.1 0.1}}]}]}\n",
+									x - GAUSSIAN_FILTER_RADIUS, y - GAUSSIAN_FILTER_RADIUS, z - GAUSSIAN_FILTER_RADIUS,
+									r, g, b);
+							} else {
+								fprintf(outFile, "Group{\n children[\n Transform{\n translation %i %i %i \n  rotation %f %f %f %f \n  children [\n Shape {\n appearance Appearance {\n material Material {emissiveColor %f %f %f }} \n geometry Box {size 0.9 0.1 0.1}}]}]}\n",
+									x - GAUSSIAN_FILTER_RADIUS, y - GAUSSIAN_FILTER_RADIUS, z - GAUSSIAN_FILTER_RADIUS,
+									axis.values[0], axis.values[1], axis.values[2], angle,
+									r, g, b);
+							}
+						
+						}
+					}
+				}
+			}
+
+			fclose(outFile);
+			delete outFile;
+		}
 		Volume * VolumeSkeletonizer::GetJuThinning(Volume * sourceVolume, Volume * preserve, double threshold, char thinningClass) {
 			Volume * thinnedVolume = new Volume(sourceVolume->getSizeX(), sourceVolume->getSizeY(), sourceVolume->getSizeZ(), 0, 0, 0, sourceVolume);
 			switch(thinningClass) {
@@ -737,6 +1234,22 @@ namespace wustl_mm {
 		}
 
 
+		void VolumeSkeletonizer::Hue(double value, double &r, double &g, double &b) {
+			r = pow(value, 4.0);
+			g = 0;
+			b = 0;
+			//if(value <= 0.5) {
+			//	v2 = value / 0.5;
+			//	r = 0;
+			//	g = 1 * v2;
+			//	b = 1 * (1 - v2);				
+			//} else {
+			//	v2 = (value - 0.5)/0.5;
+			//	r = 1 * v2;
+			//	g = 1 * (1- v2);
+			//	b = 0;
+			//}
+		}
 
 	}
 }
