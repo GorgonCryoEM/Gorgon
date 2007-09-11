@@ -21,9 +21,10 @@ namespace wustl_mm {
 		public:
 			GrayImageSkeletonizer();
 			~GrayImageSkeletonizer();
-			GrayImage * PerformSkeletonization(string inputFile, string outputFile, double threshold);
-			GrayImage * PerformJuSkeletonization(GrayImage * image, string outputFile);
+			GrayImage * PerformJuSkeletonization(GrayImage * image, string outputFile, int minGray, int maxGray);
 			GrayImage * PerformSkeletonPruning(GrayImage * sourceImage, GrayImage * sourceSkeleton, double pointThreshold, double curveThreshold, int minGray, int maxGray, string outputFile);
+			GrayImage * PerformImmersionSkeletonization(GrayImage * image, string outputFile);
+			GrayImage * CleanImmersionSkeleton(GrayImage * skeleton, string outputFile);
 
 		private:		
 
@@ -71,18 +72,7 @@ namespace wustl_mm {
 			delete volumeSkeletonizer;
 		}
 
-		GrayImage * GrayImageSkeletonizer::PerformSkeletonization(string inputFile, string outputFile, double threshold) {
-			
-			string outPath = outputFile.substr(0, outputFile.rfind("."));
-			GrayImage * sourceImage = ImageReaderBMP::LoadGrayscaleImage(inputFile);
-			GrayImage * sourceSkeleton = PerformJuSkeletonization(sourceImage, outPath);
-			GrayImage * finalSkeleton = PerformSkeletonPruning(sourceImage, sourceSkeleton, threshold, threshold, 1, 255, outPath);
-			delete sourceSkeleton;
-			delete sourceImage;
-			return finalSkeleton;
-		}
-
-		GrayImage * GrayImageSkeletonizer::PerformJuSkeletonization(GrayImage * image, string outputFile) {
+		GrayImage * GrayImageSkeletonizer::PerformJuSkeletonization(GrayImage * image, string outputFile, int minGray, int maxGray) {
 			image->Pad(GAUSSIAN_FILTER_RADIUS, 0);
 
 			GrayImage * compositeImage = new GrayImage(image->GetSizeX(), image->GetSizeY());
@@ -102,7 +92,7 @@ namespace wustl_mm {
 
 			GrayImageList * outputImages = new GrayImageList();
 			
-			for(int threshold = 255; threshold > 0; threshold--) {		
+			for(int threshold = maxGray; threshold >= minGray; threshold--) {		
 				printf("\t\tTHRESHOLD : %i\n", threshold);
 				// Thresholding the image Only for display purposes.
 				thresholdedImage = new GrayImage(image); 
@@ -352,6 +342,91 @@ namespace wustl_mm {
 			return finalSkeleton;
 
 		}
+
+		GrayImage * GrayImageSkeletonizer::PerformImmersionSkeletonization(GrayImage * image, string outputFile) {
+			image->Pad(GAUSSIAN_FILTER_RADIUS, 0);
+			Volume * imageVol = image->ToVolume();
+			Volume * skeletonVol = volumeSkeletonizer->PerformImmersionSkeletonization(imageVol, outputFile);
+			GrayImage * skeleton = GrayImage::GrayImageVolumeToImage(skeletonVol);
+			GrayImage * cleanedSkel = CleanImmersionSkeleton(skeleton, outputFile);
+			image->Pad(-GAUSSIAN_FILTER_RADIUS, 0);
+			cleanedSkel->Pad(-GAUSSIAN_FILTER_RADIUS, 0);
+			cleanedSkel->Threshold(1, false);
+			delete imageVol;
+			delete skeletonVol;
+			delete skeleton;
+			return cleanedSkel;
+
+
+			//Volume * test = new Volume(5,5,5);
+			//test->setDataAt(0,0,2,125);
+			//test->setDataAt(1,0,2,104);
+			//test->setDataAt(2,0,2,87);
+			//test->setDataAt(3,0,2,77);
+			//test->setDataAt(4,0,2,77);
+			//test->setDataAt(0,1,2,97);
+			//test->setDataAt(1,1,2,88);
+			//test->setDataAt(2,1,2,77);
+			//test->setDataAt(3,1,2,70);
+			//test->setDataAt(4,1,2,70);
+			//test->setDataAt(0,2,2,88);
+			//test->setDataAt(1,2,2,77);
+			//test->setDataAt(2,2,2,73);
+			//test->setDataAt(3,2,2,77);
+			//test->setDataAt(4,2,2,77);
+			//test->setDataAt(0,3,2,88);
+			//test->setDataAt(1,3,2,84);
+			//test->setDataAt(2,3,2,77);
+			//test->setDataAt(3,3,2,77);
+			//test->setDataAt(4,3,2,88);
+			//test->setDataAt(0,4,2,96);
+			//test->setDataAt(1,4,2,88);
+			//test->setDataAt(2,4,2,87);
+			//test->setDataAt(3,4,2,96);
+			//test->setDataAt(4,4,2,111);
+			//test->threshold(60, 0, 1, 0, false);
+			////printf("Test val %i\n", DiscreteMesh::GetImmersionSkeletalValue(test, VectorLib::Initialize(2,2,2)));
+
+			//if(DiscreteMesh::IsSurfaceBody(test, 2, 2, 2, true)) {
+			//	printf("true");
+			//} else {
+			//	printf("false");
+			//}
+
+			//return 0;
+		}
+		GrayImage * GrayImageSkeletonizer::CleanImmersionSkeleton(GrayImage * skeleton, string outputFile) {
+			GrayImage * cleanedSkel = new GrayImage(skeleton);
+			typedef vector<Vector3DInt> BinType;
+			vector<BinType> bins;
+			for(int g = 0; g < 256; g++) {
+				bins.push_back(BinType());
+			}
+
+			for(int x = 0; x < skeleton->GetSizeX(); x++) {
+				for(int y = 0; y < skeleton->GetSizeY(); y++) {
+					bins[skeleton->GetDataAt(x, y)].push_back(VectorLib::Initialize(x, y, 0));
+				}
+			}
+
+			GrayImage * temp = new GrayImage(skeleton->GetSizeX(), skeleton->GetSizeY());
+			for(int g = 255; g >= 1; g--) {
+				//temp = new GrayImage(skeleton->GetSizeX(), skeleton->GetSizeY());
+				for(int i = 0; i < bins[g].size(); i++) {
+					temp->SetDataAt(bins[g][i].values[0], bins[g][i].values[1], 1);
+				}
+				for(int i = 0; i < bins[g].size(); i++) {
+					if(IsSurfaceBody(temp, bins[g][i].values[0], bins[g][i].values[1])) {
+						cleanedSkel->SetDataAt(bins[g][i].values[0], bins[g][i].values[1], 0);
+						//temp->SetDataAt(bins[g][i].values[0], bins[g][i].values[1], 0);
+					}
+				}
+			}
+			delete temp;
+
+			return cleanedSkel;
+		}
+
 
 		
 		void GrayImageSkeletonizer::GetEigenResult(EigenResults3D & returnVal, Vector3D * imageGradient, ProbabilityDistribution2D & gaussianFilter, int x, int y, int sizeX, int sizeY, int gaussianFilterRadius, bool clear) {

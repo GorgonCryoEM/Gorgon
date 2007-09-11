@@ -9,6 +9,7 @@
 #include "VectorLib.h"
 #include "ComplexNumber.h"
 #include "eigen.h"
+//#include "engine.h"
 
 namespace wustl_mm {
 	namespace MatlabInterface {
@@ -18,13 +19,19 @@ namespace wustl_mm {
 			~MatlabWrapper();
 			void EigenAnalysis(EigenVectorsAndValues2D & eigenInformation);
 			void EigenAnalysis(EigenVectorsAndValues3D & eigenInformation);
+			void EigenAnalysisMatlab(EigenVectorsAndValues3D & eigenInformation);
 		private:
+			//Engine * mathEngine;
 		};
 
 		MatlabWrapper::MatlabWrapper() {
+			//mathEngine = engOpen(NULL);
+			//engSetVisible(mathEngine, false);
 		}
 
 		MatlabWrapper::~MatlabWrapper() {
+			//engClose(mathEngine);
+			//delete mathEngine;
 		}
 
 		void MatlabWrapper::EigenAnalysis(EigenVectorsAndValues2D & eigenInformation) {
@@ -77,6 +84,36 @@ namespace wustl_mm {
 					eigenInformation.eigenVectors[i][j] = vectors[i][j];
 				}
 			}	
+		}
+
+		void MatlabWrapper::EigenAnalysisMatlab(EigenVectorsAndValues3D & eigenInformation) {
+			/*mxArray * mxMathData = mxCreateDoubleMatrix(3, 3, mxREAL);
+
+			memcpy(mxGetPr(mxMathData), eigenInformation.structureTensor, 9*sizeof(double));
+		
+			engPutVariable(mathEngine, "X", mxMathData);
+			engEvalString(mathEngine, "[V D] = eigs(X); D = abs(D); D1 = D(1,1); D2 = D(2,2); D3 = D(3,3)");
+			mxArray * mxEigenValue1 = engGetVariable(mathEngine, "D1");
+			mxArray * mxEigenValue2 = engGetVariable(mathEngine, "D2");
+			mxArray * mxEigenValue3 = engGetVariable(mathEngine, "D3");
+			mxArray * mxEigenVectors = engGetVariable(mathEngine, "V");
+			engEvalString(mathEngine, " clear 'D';clear 'X'; clear 'D1'; clear 'D2'; clear 'D3'; clear 'V';");
+
+			memcpy(eigenInformation.eigenVectors, mxGetPr(mxEigenVectors), 9*sizeof(double));
+			memcpy(&eigenInformation.eigenValues[0], mxGetPr(mxEigenValue1), sizeof(double));
+			memcpy(&eigenInformation.eigenValues[1], mxGetPr(mxEigenValue2), sizeof(double));
+			memcpy(&eigenInformation.eigenValues[2], mxGetPr(mxEigenValue3), sizeof(double));
+			
+			mxDestroyArray(mxMathData);
+			mxDestroyArray(mxEigenValue1);
+			mxDestroyArray(mxEigenValue2);
+			mxDestroyArray(mxEigenValue3);
+			mxDestroyArray(mxEigenVectors);			
+			delete mxMathData;
+			delete mxEigenValue1;
+			delete mxEigenValue2;
+			delete mxEigenValue3;
+			delete mxEigenVectors;*/
 		}
 	}
 }

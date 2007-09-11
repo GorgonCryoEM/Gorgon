@@ -38,7 +38,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories=""
+				AdditionalIncludeDirectories="C:\MATLAB701\extern\include"
 				WarningLevel="3"
 				DebugInformationFormat="4"
 			/>
@@ -53,8 +53,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="libeng.lib libfixedpoint.lib libmat.lib libmex.lib libmwservices.lib libmx.lib libut.lib mclcom.lib mclcommain.lib mclmcr.lib mclmcrrt.lib mclxlmain.lib"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories=""
+				AdditionalLibraryDirectories="C:\MATLAB701\extern\lib\win32\microsoft\msvc71"
 				GenerateDebugInformation="true"
 				AssemblyDebug="1"
 			/>
@@ -171,7 +172,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="C:\_WashU\ssa1\source\ExternalLibraries\mpatrol\include"
+				AdditionalIncludeDirectories="C:\MATLAB701\extern\include"
 				WarningLevel="3"
 				DebugInformationFormat="4"
 			/>
@@ -187,9 +188,9 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/FORCE:MULTIPLE"
-				AdditionalDependencies="mpatrol.lib"
+				AdditionalDependencies="libeng.lib libfixedpoint.lib libmat.lib libmex.lib libmwservices.lib libmx.lib libut.lib mclcom.lib mclcommain.lib mclmcr.lib mclmcrrt.lib mclxlmain.lib"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="C:\_WashU\ssa1\source\ExternalLibraries\mpatrol\bin"
+				AdditionalLibraryDirectories="C:\MATLAB701\extern\lib\win32\microsoft\msvc71"
 				GenerateDebugInformation="true"
 				AssemblyDebug="1"
 			/>
@@ -301,12 +302,6 @@
 				RelativePath=".\VolumeSkeletonizer.h"
 				>
 			</File>
-		</Filter>
-		<Filter
-			Name="Resource Files"
-			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav"
-			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
-			>
 		</Filter>
 	</Files>
 	<Globals>
