@@ -36,8 +36,10 @@
 #define PQR_PADDING 4
 #define DX_MAG 4
 #define PQR_COMPONENT 20
+//#define VERBOSE
 
 //#define HAS_SKELETON
+//#define WRITE_DENSITY
 
 /* End of global definitions */
 
@@ -50,7 +52,163 @@ float totWeights ;
 void prepareWeights() ;
 void computeScore( Volume* hvol, Volume* svol, int x, int y, int z, float score[3] ) ;
 
-int main( int args, char* argv[] )
+void main( int args, char* argv[] )
+{
+	if ( args != 6 )
+	{
+		printf("Usage: morph <input mrc> <low threshold> <steps> <min helix size> <min sheet size> \n") ;
+		exit(0) ;
+	}
+
+	clock_t start, finish ;
+	int i ;
+	float threshold;
+	int steps ;
+	int minHelix, minSheet ;
+	sscanf( argv[2], "%f", &threshold ) ;
+	sscanf( argv[3], "%d", &steps ) ;
+	sscanf( argv[4], "%d", &minHelix ) ;
+	sscanf( argv[5], "%d", &minSheet ) ;
+	char name[1024] ;
+	strncpy( name, argv[1], strlen(argv[1]) - 4 ) ;
+	name[ strlen(argv[1]) - 4 ] = '\0' ;
+	printf("from density map %s\n", name) ;
+	
+	/****** Read volume ******/
+	printf("Initialize volume...") ;
+	int modelType ; // 0 for MRC, 1 for SOF
+	VolumeReader* reader ;
+	Volume * vol, * rawvol ;
+	
+	if ( strstr( argv[1], ".mrc" ) != NULL || strstr( argv[1], ".MRC" ) != NULL )
+	{
+		printf("Reading MRC file format.\n") ;
+		modelType = 0 ;
+
+		reader = MRCReaderPicker::pick( argv[1] ) ;
+		vol = reader->getVolume() ;
+	} 
+	else if ( strstr( argv[1], ".sof" ) != NULL || strstr( argv[1], ".SOF" ) != NULL)
+	{
+		printf("Reading SOF file format.\n") ;
+		modelType = 1 ;
+
+		reader = new SOFReader( argv[1] ) ;
+		vol = reader->getVolume() ;
+		vol->floodFill( 0 ) ;
+		//vol->addNoise( 0, 0.8f ) ;
+		//vol->addNoise( 0, 0.8f ) ;
+		//vol->toMRCFile( "test.mrc" ) ;
+		//vol->toOFFCells( "test.off" ) ;
+	}
+	else
+	{
+		printf("Unrecognized file format! Only MRC and SOF files are accepted.\n") ;
+		exit(0) ;
+	}
+
+#ifdef WRITE_ORIGINALS
+	vol->toMRCFile( "test.mrc" ) ;
+	vol->toOFFCells( "test.off" ) ;
+	exit( 0 ) ; 
+#endif	
+	
+#ifdef WRITE_CELLS_ORIGINAL
+	char newname[1024];
+	sprintf( newname, "%s.off", name ) ;
+	vol->toOFFCells( newname, threshold ) ;
+	sprintf( newname, "%s2.off", name ) ;
+	vol->toOFFCells2( newname, threshold ) ;
+#endif
+
+	/****** Compute skeleton ******/
+
+	/*** Step 1: Get plates ***/
+
+	// First, threshold the input to 0/1
+	Volume* bvol = new Volume( vol->getSizeX(), vol->getSizeY(), vol->getSizeZ(), 0, 0, 0, vol ) ;
+	bvol->threshold2( threshold, 0, 1 ) ;
+
+	// Next, iteratively thin
+	printf("Generating surfaces...\n");
+	float stepsize = (vol->getMax() - threshold) / steps ;
+	float g = threshold ;
+	for ( i = 0 ; i < steps ; i ++  )
+	{
+		printf("Step %d of %d...\n", i, steps) ;
+		bvol->surfaceSkeleton( vol, g, g + stepsize ) ;
+		g+= stepsize ;
+	}
+	
+	// Finally, prune
+	printf("Pruning surfaces...\n");
+	Volume* svol = new Volume( bvol->getSizeX(), bvol->getSizeY(), bvol->getSizeZ(), 0, 0, 0, bvol ) ;
+	int maxDis = svol->erodeSheet( minSheet ) ;
+
+
+	/*** Step 2: Get tubes ***/
+
+	// First, threshold the input to 0/1
+	delete bvol ;
+	bvol = new Volume( vol->getSizeX(), vol->getSizeY(), vol->getSizeZ(), 0, 0, 0, vol ) ;
+	bvol->threshold2( threshold, 0, 1 ) ;
+
+	// Next, iteratively thin
+	printf("Generating curves...\n");
+	g = threshold ;
+	for ( i = 0 ; i < steps ; i ++  )
+	{
+		printf("Step %d of %d...\n", i, steps) ;
+		bvol->curveSkeleton( vol, g, g + stepsize, svol ) ;
+		g+= stepsize ;
+	}
+	
+	// Finally, prune
+	printf("Pruning curves...\n");
+	Volume* hvol = new Volume( bvol->getSizeX(), bvol->getSizeY(), bvol->getSizeZ(), 0, 0, 0, bvol ) ;
+	hvol->erodeHelix( minHelix ) ;
+	hvol->subtract( svol ) ;
+
+	/*** Step 3: Get points ***/
+
+	// First, threshold the input to 0/1
+	delete bvol ;
+	bvol = new Volume( vol->getSizeX(), vol->getSizeY(), vol->getSizeZ(), 0, 0, 0, vol ) ;
+	bvol->threshold2( threshold, 0, 1 ) ;
+
+	// Next, iteratively thin
+	printf("Generating points...\n");
+	g = threshold ;
+	for ( i = 0 ; i < steps ; i ++  )
+	{
+		printf("Step %d of %d...\n", i, steps) ;
+		bvol->pointSkeleton( vol, g, g + stepsize, svol, hvol ) ;
+		g+= stepsize ;
+	}
+
+
+	/****** Write out ******/
+	char nname[1024] ;
+	sprintf( nname, "%s_skeleton.mrc", name) ;
+	bvol->toMRCFile( nname ) ;
+	sprintf( nname, "%s2.off", nname) ;
+	bvol->toOFFCells2( nname ) ;
+	
+	char nname1[1024], nname2[1024] ;
+	sprintf( nname1, "%s_helix.mrc", name) ;
+	sprintf( nname2, "%s_sheet.mrc", name) ;
+	hvol->toMRCFile(nname1) ;
+	svol->toMRCFile(nname2) ;
+	
+	sprintf( nname1, "%s2.off", nname1) ;
+	sprintf( nname2, "%s2.off", nname2) ;
+	hvol->toOFFCells2(nname1) ;
+	svol->toOFFCells2(nname2) ;
+		
+
+}
+
+int oldmain( int args, char* argv[] )
 {
 	if ( args != 9 && args != 6 && args != 5 )
 	{
@@ -68,8 +226,7 @@ int main( int args, char* argv[] )
 	printf("Initialize volume...") ;
 	int modelType ; // 0 for MRC, 1 for SOF
 	VolumeReader* reader ;
-	Volume * vol;
-	//Volume * rawvol;
+	Volume * vol, * rawvol ;
 	
 	if ( strstr( argv[2], ".mrc" ) != NULL || strstr( argv[2], ".MRC" ) != NULL )
 	{
@@ -266,9 +423,9 @@ int main( int args, char* argv[] )
 					&x, &y, &z, str[6], str[7], str[8], str[9] );
 				
 				
-				ix = (int)(x / apix);
-				iy = (int)(y / apix);
-				iz = (int)(z / apix);
+				ix = x / apix ;
+				iy = y / apix ;
+				iz = z / apix ;
 				
 				
 				//float x = ( ix - ofx ) * ax;
@@ -357,7 +514,7 @@ int main( int args, char* argv[] )
 			if ( fin == NULL )
 			{
 				printf("Fail to open atoms PDB file %s.\n", argv[3]) ;
-				modelType = 1 ;
+				modelType == 1 ;
 			}
 			else
 			{
@@ -367,9 +524,9 @@ int main( int args, char* argv[] )
 					int ix, iy, iz ;
 					fscanf( fin, "%s %s %s %s %s %s %f %f %f %s %s %s %s", str[0], str[1], str[2], str[3], str[4], str[5], 
 						&x, &y, &z, str[6], str[7], str[8], str[9] );
-					ix = (int)(x / apix);
-					iy = (int)(y / apix);
-					iz = (int)(z / apix);
+					ix = x / apix ;
+					iy = y / apix ;
+					iz = z / apix ;
 
 					/* Disabled for test */
 					atomvol->setDataAt( ix, iy, iz, 1 ) ;
@@ -511,6 +668,13 @@ int main( int args, char* argv[] )
 			sprintf( nname, "%s_skeleton.mrc", name) ;
 			finvol->toMRCFile( nname ) ;
 
+#ifdef WRITE_DENSITY
+			char denname[1024] ;
+			sprintf( denname, "%s_skeleton_den.mrc", name) ;
+			Volume* denvol = finvol->getPseudoDensity();
+			denvol->toMRCFile( denname ) ;
+#endif
+
 
 #ifdef WRITE_CELLS
 			char nname2[1024] ;
@@ -597,9 +761,9 @@ int main( int args, char* argv[] )
 					&x, &y, &z, str[6], str[7], str[8], str[9] );
 				
 				
-				ix = (int)(x / apix);
-				iy = (int)(y / apix);
-				iz = (int)(z / apix);
+				ix = x / apix ;
+				iy = y / apix ;
+				iz = z / apix ;
 				
 				
 				//float x = ( ix - ofx ) * ax;
@@ -684,7 +848,7 @@ void prepareWeights()
 					totWeights += ( weights[ i + SCORE_RANGE ][ j + SCORE_RANGE ][ k + SCORE_RANGE ] = sqrt(1 / (float) ( i*i + j*j + k*k )) );
 				}
 				*/
-				w = (float)(i*i + j*j + k*k);
+				w = i*i + j*j + k*k ;
 				totWeights += ( weights[ i + SCORE_RANGE ][ j + SCORE_RANGE ][ k + SCORE_RANGE ] = 1 - w / maxw  );
 			}
 	printf("Total weights: %f\n", totWeights) ;
