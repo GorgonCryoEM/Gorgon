@@ -699,6 +699,110 @@ public:
 				}
 	}
 
+	Volume* getPseudoDensity( )
+	{
+		// This function assumes the volume is binary (1/0), and builds a pseudo density volume from the 1 voxels
+
+		// First: assign a density value at each point
+		int i, j, k ;
+		Volume* res = new Volume( sizex, sizey, sizez, 0, 0, 0, this ) ;
+		int size = sizex * sizey * sizez ;
+		srand( 123 ) ;
+
+		/*
+		for ( i = 0 ; i < size ; i ++ )
+		{
+			if ( res->getDataAt( i ) > 0 )
+			{
+				res->setDataAt( i, rand() / (double) RAND_MAX ) ;
+			}
+			
+		}
+*/
+		
+		
+		for ( i = 0 ; i < sizex ; i ++ )
+			for ( j = 0 ; j < sizey ; j ++ )
+				for ( k = 0 ; k < sizez ; k ++ )
+				{
+					if ( res->getDataAt( i, j, k ) > 0 )
+					{
+						int ct = 0 ;
+						for ( int m = 0 ; m < 6 ; m ++ )
+						{
+							if ( res->getDataAt( i + neighbor6[m][0], j + neighbor6[m][1], k + neighbor6[m][2] ) > 0 )
+							{
+								ct ++ ;
+							}
+						}
+						res->setDataAt( i,j,k, (k/(float)sizez)*(k/(float)sizez) ) ;
+						if ( ct > 2 )
+						{
+							//res->setDataAt( i,j,k, rand() / (double) RAND_MAX / 2.0f ) ;
+						}
+						else
+						{
+							//res->setDataAt( i,j,k, rand() / (double) RAND_MAX ) ;
+						}
+					}
+				}
+
+		/* Next, smooth
+		for ( i = 0 ; i < 20 ; i ++ )
+		{
+			printf("Smoothing round %d\n", i) ;
+			res->smooth( 0.5f ) ;
+		}
+		*/
+		
+		Volume* tvol = new Volume( sizex, sizey, sizez, 0, 0, 0, res ) ;
+		float d, ad, ct, temp;
+		for ( int it = 0 ; it < 3 ; it ++ )
+		for ( i = 0 ; i < sizex ; i ++ )
+			for ( j = 0 ; j < sizey ; j ++ )
+				for ( k = 0 ; k < sizez ; k ++ )
+				{
+					if ( (d = tvol->getDataAt( i, j, k )) > 0 )
+					{
+						ad = 0 ; ct = 0 ;
+						for ( int m = 0 ; m < 6 ; m ++ )
+						{
+							if ( (temp = tvol->getDataAt( i + neighbor6[m][0], j + neighbor6[m][1], k + neighbor6[m][2] )) > 0 )
+							{
+								ad += temp;
+								ct ++ ;
+							}
+						}
+						if ( ct > 0 )
+						{
+							res->setDataAt( i, j, k, ( d + ad/ct ) / 2 ) ;
+						}
+					}
+				}
+		
+		delete tvol;
+		tvol = new Volume( sizex, sizey, sizez, 0, 0, 0, res ) ;
+		for ( i = 0 ; i < 40 ; i ++ )
+		{
+			printf("Smoothing round %d\n", i) ;
+			res->smooth( 0.5f ) ;
+			continue ;
+
+			for ( j = 0 ; j < size ; j ++ )
+			{
+				if ( tvol->getDataAt( j ) > 0 )
+				{
+					res->setDataAt( j, tvol->getDataAt( j ) ) ;
+				}
+				
+			}
+
+		}
+
+
+		return res ;
+	}
+
 	void print() {
 		for(int x = 0; x < getSizeX(); x++) {
 			printf("{ ");
@@ -4438,6 +4542,427 @@ public:
 
 	}
 
+	/* Thin the current volume while preserving voxels with values > highthr or <= lowthr in grayvol
+	*  Assuming the current volume has already been thresholded to 0/1
+	*/
+	void curveSkeleton( Volume* grayvol, float lowthr, float highthr, Volume* svol )
+	{
+		int i, j, k ;
+		// First, threshold the volume
+		printf("Thresholding the volume to -1/0...\n") ;
+		threshold( 0.5f, -1, 0 ) ;
+
+		// Next, apply convergent erosion 
+		// by preserving: complex nodes, curve end-points, and sheet points
+
+		// Next, initialize the linked queue
+		printf("Initializing queue...\n") ;
+		GridQueue2* queue2 = new GridQueue2( ) ;
+		GridQueue2* queue3 = new GridQueue2( ) ;
+		GridQueue2* queue4 = new GridQueue2( ) ;
+		PriorityQueue <gridPoint,int> * queue = new PriorityQueue <gridPoint,int> ( MAX_QUEUELEN );
+
+		for ( i = 0 ; i < sizex ; i ++ )
+			for ( j = 0 ; j < sizey ; j ++ )
+				for ( k = 0 ; k < sizez ; k ++ )
+				{
+					if ( getDataAt( i, j, k ) >= 0 )
+					{
+						float v = grayvol->getDataAt(i,j,k) ;
+						if ( v <= lowthr || v > highthr || svol->getDataAt(i,j,k) > 0 )
+						{
+							setDataAt( i, j, k, MAX_ERODE ) ;
+						}
+						else
+						{
+							for ( int m = 0 ; m < 6 ; m ++ )
+							{
+								if ( getDataAt( i + neighbor6[m][0], j + neighbor6[m][1], k + neighbor6[m][2] ) < 0 )
+								{
+									// setDataAt( i, j, k, 1 ) ;
+									queue2->prepend( i, j, k ) ;
+									break ;
+								}
+							}
+						}
+					}
+				}
+		printf("Total %d nodes\n", queue2->getNumElements() ) ;
+
+
+		// Perform erosion 
+		int wid = MAX_ERODE ;
+		printf("Start erosion to %d...\n", wid) ;
+		gridQueueEle* ele ;
+		gridPoint* gp ;
+		double val = 0;
+		int tx, ty, tz ;
+		int ox, oy, oz ;
+		int score ;
+		Volume* scrvol = new Volume( this->sizex , this->sizey, this->sizez ) ;
+		for ( i = 0 ; i < sizex * sizey * sizez ; i ++ )
+		{
+			scrvol->setDataAt( i, -1 ) ;
+		}
+
+#ifdef  NOISE_DIS_HELIX
+		Volume* noisevol = new Volume( sizex, sizey, sizez ) ;
+#endif
+
+		for ( int curwid = 1 ; curwid <= wid ; curwid ++ )
+		{
+			// At the start of each iteration, 
+			// queue2 holds all the nodes for this layer
+			// queue3 and queue are empty
+
+			int numComplex = 0, numSimple = 0 ;
+			printf("Processing %d nodes in layer %d\n", queue2->getNumElements(), curwid) ;
+			
+			/*
+			We first need to assign curwid + 1 to every node in this layer
+			*/
+			queue2->reset() ;
+			ele = queue2->getNext() ;
+			while ( ele != NULL )
+			{
+				ox = ele->x ;
+				oy = ele->y ;
+				oz = ele->z ;
+				
+				if ( getDataAt(ox,oy,oz) == curwid )
+				{
+					ele = queue2->remove() ;
+				}
+				else
+				{
+					setDataAt(ox,oy,oz, curwid) ;
+					ele = queue2->getNext() ;
+				}
+			}
+			queue4->reset() ;
+			ele = queue4->getNext() ;
+			while ( ele != NULL )
+			{
+				ox = ele->x ;
+				oy = ele->y ;
+				oz = ele->z ;
+
+				queue2->prepend(ox,oy,oz) ;
+				ele = queue4->remove() ;
+			}
+
+			// Now queue2 holds all the nodes for this layer
+
+#ifdef NOISE_DIS_HELIX
+			/* Extra step: classify nodes in queue2 into noise and non-noise nodes */
+			queue2->reset() ;
+			
+			// First run
+			int flag = 0 ;
+			while ( ( ele = queue2->getNext() ) != NULL )
+			{
+				ox = ele->x ;
+				oy = ele->y ;
+				oz = ele->z ;
+				if ( NOISE_DIS_HELIX <= 1 )
+				{
+					noisevol->setDataAt( ox, oy, oz, 0 ) ;
+				}
+				else
+				{
+					flag = 0 ;
+					for ( int m = 0 ; m < 6 ; m ++ )
+					{
+						int nx = ox + neighbor6[m][0] ;
+						int ny = oy + neighbor6[m][1] ;
+						int nz = oz + neighbor6[m][2] ;
+						if ( getDataAt( nx, ny, nz ) == 0 )
+						{
+							noisevol->setDataAt( ox, oy, oz, 1 ) ;
+							flag = 1 ;
+							break ;
+						}
+					}
+					if ( ! flag )
+					{
+						noisevol->setDataAt( ox, oy, oz, 0 ) ;
+					}
+				}
+			}
+
+			int cur, visited ;
+			for ( cur = 1 ; cur < NOISE_DIS_HELIX ; cur ++ )
+			{
+				queue2->reset() ;
+				int count = 0 ;
+				visited = 0 ;
+
+				while ( ( ele = queue2->getNext() ) != NULL )
+				{
+					ox = ele->x ;
+					oy = ele->y ;
+					oz = ele->z ;
+					
+					if ( noisevol->getDataAt( ox, oy, oz ) == 1 )
+					{
+						visited ++ ;
+						continue ;
+					}
+
+					flag = 0 ;
+					for ( int m = 0 ; m < 6 ; m ++ )
+					{
+						int nx = ox + neighbor6[m][0] ;
+						int ny = oy + neighbor6[m][1] ;
+						int nz = oz + neighbor6[m][2] ;
+						if ( getDataAt( nx, ny, nz ) > 0 && noisevol->getDataAt( nx, ny, nz ) == 1 )
+						{
+							noisevol->setDataAt( ox, oy, oz, 1 ) ;
+							visited ++ ;
+							count ++ ;
+							break ;
+						}
+					}
+				}
+
+				if ( count == 0 )
+				{
+					break ;
+				}
+			}
+			printf("Maximum feature distance: %d Un-touched: %d\n", cur, queue2->getNumElements() - visited ) ;
+
+
+#endif
+			/* Commented out for debugging
+			
+			// First, 
+			// check for complex nodes in queue2 
+			// move them from queue2 to queue3
+			queue2->reset() ;
+			ele = queue2->getNext() ;
+			while ( ele != NULL )
+			{
+				ox = ele->x ;
+				oy = ele->y ;
+				oz = ele->z ;
+				
+				// Check simple 
+#ifndef NOISE_DIS_HELIX
+				if ( isHelixEnd( ox, oy, oz ) || ! isSimple( ox, oy, oz ) ) 
+#else
+				if ( isHelixEnd( ox, oy, oz, noisevol ) || ! isSimple( ox, oy, oz ) ) 
+#endif
+				{
+					// Complex, set to next layer
+					setDataAt( ox, oy, oz, curwid + 1 ) ;
+					queue3->prepend( ox, oy, oz ) ;
+					ele = queue2->remove() ;
+					
+					numComplex ++ ;
+				}
+				else
+				{
+					ele = queue2->getNext() ;
+				}
+			}
+			*/
+
+			// Next,
+			// Compute score for each node left in queue2
+			// move them into priority queue
+			queue2->reset() ;
+			ele = queue2->getNext() ;
+			while ( ele != NULL )
+			{
+				ox = ele->x ;
+				oy = ele->y ;
+				oz = ele->z ;
+				
+				// Compute score
+				score = getNumPotComplex2( ox, oy, oz ) ;
+				scrvol->setDataAt( ox, oy, oz, score ) ;
+
+				// Push to queue
+				gp = new gridPoint ;
+				gp->x = ox ;
+				gp->y = oy ;
+				gp->z = oz ;
+				// queue->add( gp, -score ) ;
+				queue->add( gp, score ) ;
+				
+				ele = queue2->remove() ;
+			}
+
+			// Rename queue3 to be queue2, 
+			// Clear queue3
+			// From now on, queue2 holds nodes of next level
+			delete queue2 ;
+			queue2 = queue3 ;
+			queue3 = new GridQueue2( ) ;
+
+			// Next, start priority queue iteration
+			while ( ! queue->isEmpty() )
+			{
+				// Retrieve the node with the highest score
+				queue->remove( gp, score ) ;
+				ox = gp->x ;
+				oy = gp->y ;
+				oz = gp->z ;
+				delete gp ;
+//				score = -score ;
+
+				// Ignore the node 
+				// if it has been processed before
+				// or it has an updated score
+				if ( getDataAt( ox, oy, oz ) != curwid || (int) scrvol->getDataAt( ox, oy, oz ) != score )
+				{
+					continue ;
+				}
+
+				/* Commented out for debugging
+
+				// Remove this simple node
+				setDataAt( ox, oy, oz, -1 ) ;
+				numSimple ++ ;
+				// printf("Highest score: %d\n", score) ;
+				*/
+
+				/* Added for debugging */
+				// Check simple 
+#ifndef NOISE_DIS_HELIX
+				// if ( hasIsolatedEdge( ox, oy, oz ) && ! isNoiseHelixEnd( ox, oy, oz ) ) 
+				if ( isHelixEnd( ox, oy, oz ) || ! isSimple( ox, oy, oz ) ) 
+#else
+				if ( isHelixEnd( ox, oy, oz ) || ! isSimple( ox, oy, oz ) ) 
+#endif
+				{
+					// Complex, set to next layer
+					setDataAt( ox, oy, oz, curwid + 1 ) ;
+					queue4->prepend( ox, oy, oz ) ;
+					numComplex ++ ;
+				}
+				else
+				{
+					setDataAt( ox, oy, oz, -1 ) ;
+					numSimple ++ ;
+
+
+				}
+				/* Adding ends */
+					// Move its neighboring unvisited node to queue2
+					for ( int m = 0 ; m < 6 ; m ++ )
+					{
+						int nx = ox + neighbor6[m][0] ;
+						int ny = oy + neighbor6[m][1] ;
+						int nz = oz + neighbor6[m][2] ;
+						if ( getDataAt( nx, ny, nz ) == 0 )
+						{
+							// setDataAt( nx, ny, nz, curwid + 1 ) ;
+							queue2->prepend( nx, ny, nz ) ;
+						}
+					}
+				
+
+				/* Commented out for debugging
+			
+				// Find complex nodes in its 3x3 neighborhood
+				// move them to queue2
+				for ( i = -1 ; i < 2 ; i ++ )
+					for ( j = -1 ; j < 2 ; j ++ )
+						for ( k = -1 ; k < 2 ; k ++ )
+						{
+							int nx = ox + i ;
+							int ny = oy + j ;
+							int nz = oz + k ;
+
+							// Check simple 
+							if ( getDataAt( nx, ny, nz ) == curwid && 
+								// ( isSheetEnd( ox, oy, oz ) || ! isSimple( nx, ny, nz )) )
+#ifndef NOISE_DIS_HELIX
+								( isHelixEnd( nx, ny, nz ) || ! isSimple( nx, ny, nz ) ) )
+#else
+								( isHelixEnd( nx, ny, nz, noisevol ) || ! isSimple( nx, ny, nz ) ) )
+#endif
+
+							{
+								// Complex, set to next layer
+								setDataAt( nx, ny, nz, curwid + 1 ) ;
+								queue2->prepend( nx, ny, nz ) ;
+								numComplex ++ ;
+							}
+						}
+				*/
+
+				// Update scores for nodes in its 5x5 neighborhood
+				// insert them back into priority queue
+						
+				for ( i = -2 ; i < 3 ;i ++ )
+					for ( j = -2 ; j < 3 ; j ++ )
+						for ( k = -2 ; k < 3 ; k ++ )
+						{
+							int nx = ox + i ;
+							int ny = oy + j ;
+							int nz = oz + k ;
+
+							if ( getDataAt( nx, ny, nz ) == curwid )
+							{
+								// Compute score
+								score = getNumPotComplex2( nx, ny, nz ) ;
+								
+								if ( score != (int) scrvol->getDataAt( nx, ny, nz ) )
+								{
+									// printf("Update\n") ;
+									scrvol->setDataAt( nx, ny, nz, score ) ;
+									// Push to queue
+									gp = new gridPoint ;
+									gp->x = nx ;
+									gp->y = ny ;
+									gp->z = nz ;
+									// queue->add( gp, -score ) ;
+									queue->add( gp, score ) ;
+								}
+							}
+						}
+						
+
+			}
+
+			printf("%d complex, %d simple\n", numComplex, numSimple) ;
+			
+			if ( numSimple == 0 )
+			{
+				if ( queue2->getNumElements() > 0 )
+				{
+					printf("*************************wierd here*************************\n");
+				}
+					break ;
+			}
+		}
+
+		// Remove all internal voxels (contained in manifold surfaces)
+		queue4->reset() ;
+		ele = queue4->getNext() ;
+		while ( ele != NULL )
+		{
+			ox = ele->x ;
+			oy = ele->y ;
+			oz = ele->z ;
+
+			if ( hasCompleteSheet( ox, oy, oz ) )
+			{
+				setDataAt( ox, oy, oz, -1 ) ;
+			}
+			ele = queue4->remove() ;
+		}
+		
+
+
+		// Finally, clean up
+		printf("Thresholding the volume to 0/1...\n") ;
+		threshold( 0, 0, 1 ) ;		
+	}
+
 	// Compute curve skeleton
 	void curveSkeleton( float thr, Volume* svol )
 	{
@@ -5608,6 +6133,225 @@ public:
 		#endif
 		threshold( 0, 0, 1 ) ;		
 	}
+
+	/* Thin the current volume while preserving voxels with values > highthr or <= lowthr in grayvol
+	*  Assuming the current volume has already been thresholded to 0/1
+	*/
+	void pointSkeleton( Volume* grayvol, float lowthr, float highthr, Volume* svol, Volume* hvol )
+	{
+		int i, j, k ;
+		// First, threshold the volume
+		printf("Thresholding the volume to -1/0...\n") ;
+		threshold( 0.5f, -1, 0 ) ;
+
+		// Next, apply convergent erosion 
+		// by preserving: complex nodes, curve end-points, and sheet points
+
+		// Next, initialize the linked queue
+		printf("Initializing queue...\n") ;
+		GridQueue2* queue2 = new GridQueue2( ) ;
+		GridQueue2* queue3 = new GridQueue2( ) ;
+		PriorityQueue <gridPoint,int> * queue = new PriorityQueue <gridPoint,int> ( MAX_QUEUELEN );
+
+		for ( i = 0 ; i < sizex ; i ++ )
+			for ( j = 0 ; j < sizey ; j ++ )
+				for ( k = 0 ; k < sizez ; k ++ )
+				{
+					if ( getDataAt( i, j, k ) >= 0 )
+					{
+						float v = grayvol->getDataAt( i, j, k ) ;
+						if ( v <= lowthr || v > highthr || svol->getDataAt(i,j,k) > 0 || hvol->getDataAt(i,j,k) > 0 )
+						{
+							setDataAt( i, j, k, MAX_ERODE ) ;
+						}
+						else
+						{
+							for ( int m = 0 ; m < 6 ; m ++ )
+							{
+								if ( getDataAt( i + neighbor6[m][0], j + neighbor6[m][1], k + neighbor6[m][2] ) < 0 )
+								{
+									setDataAt( i, j, k, 1 ) ;
+									queue2->prepend( i, j, k ) ;
+									break ;
+								}
+							}
+						}
+					}
+				}
+		printf("Total %d nodes\n", queue2->getNumElements() ) ;
+
+
+		// Perform erosion 
+		int wid = MAX_ERODE ;
+		printf("Start erosion to %d...\n", wid) ;
+		gridQueueEle* ele ;
+		gridPoint* gp ;
+		double val = 0;
+		int tx, ty, tz ;
+		int ox, oy, oz ;
+		int score ;
+		Volume* scrvol = new Volume( this->sizex , this->sizey, this->sizez ) ;
+		for ( i = 0 ; i < sizex * sizey * sizez ; i ++ )
+		{
+			scrvol->setDataAt( i, -1 ) ;
+		}
+
+
+		for ( int curwid = 1 ; curwid <= wid ; curwid ++ )
+		{
+			// At the start of each iteration, 
+			// queue2 holds all the nodes for this layer
+			// queue3 and queue are empty
+
+			int numComplex = 0, numSimple = 0 ;
+			printf("Processing %d nodes in layer %d\n", queue2->getNumElements(), curwid) ;
+			
+
+			// Next,
+			// Compute score for each node left in queue2
+			// move them into priority queue
+			queue2->reset() ;
+			ele = queue2->getNext() ;
+			while ( ele != NULL )
+			{
+				ox = ele->x ;
+				oy = ele->y ;
+				oz = ele->z ;
+				
+				// Compute score
+				score = getNumPotComplex2( ox, oy, oz ) ;
+				scrvol->setDataAt( ox, oy, oz, score ) ;
+
+				// Push to queue
+				gp = new gridPoint ;
+				gp->x = ox ;
+				gp->y = oy ;
+				gp->z = oz ;
+				// queue->add( gp, -score ) ;
+				queue->add( gp, score ) ;
+				
+				ele = queue2->remove() ;
+			}
+
+			// Rename queue3 to be queue2, 
+			// Clear queue3
+			// From now on, queue2 holds nodes of next level
+			delete queue2 ;
+			queue2 = queue3 ;
+			queue3 = new GridQueue2( ) ;
+
+			// Next, start priority queue iteration
+			while ( ! queue->isEmpty() )
+			{
+				// Retrieve the node with the highest score
+				queue->remove( gp, score ) ;
+				ox = gp->x ;
+				oy = gp->y ;
+				oz = gp->z ;
+				delete gp ;
+//				score = -score ;
+
+				// Ignore the node 
+				// if it has been processed before
+				// or it has an updated score
+				if ( getDataAt( ox, oy, oz ) != curwid || (int) scrvol->getDataAt( ox, oy, oz ) != score )
+				{
+					continue ;
+				}
+
+				/* Added for debugging */
+				// Check simple 
+				if ( ! isSimple( ox, oy, oz ) ) 
+				{
+					// Complex, set to next layer
+					setDataAt( ox, oy, oz, curwid + 1 ) ;
+					queue2->prepend( ox, oy, oz ) ;
+					numComplex ++ ;
+				}
+				else
+				{
+					setDataAt( ox, oy, oz, -1 ) ;
+					numSimple ++ ;
+				}
+				/* Adding ends */
+					
+					// Move its neighboring unvisited node to queue2
+					for ( int m = 0 ; m < 6 ; m ++ )
+					{
+						int nx = ox + neighbor6[m][0] ;
+						int ny = oy + neighbor6[m][1] ;
+						int nz = oz + neighbor6[m][2] ;
+						if ( getDataAt( nx, ny, nz ) == 0 )
+						{
+							setDataAt( nx, ny, nz, curwid + 1 ) ;
+							queue2->prepend( nx, ny, nz ) ;
+						}
+					}
+					
+
+				// Update scores for nodes in its 5x5 neighborhood
+				// insert them back into priority queue
+						
+				for ( i = -2 ; i < 3 ;i ++ )
+					for ( j = -2 ; j < 3 ; j ++ )
+						for ( k = -2 ; k < 3 ; k ++ )
+						{
+							int nx = ox + i ;
+							int ny = oy + j ;
+							int nz = oz + k ;
+
+							if ( getDataAt( nx, ny, nz ) == curwid )
+							{
+								// Compute score
+								score = getNumPotComplex2( nx, ny, nz ) ;
+								
+								if ( score != (int) scrvol->getDataAt( nx, ny, nz ) )
+								{
+									// printf("Update\n") ;
+									scrvol->setDataAt( nx, ny, nz, score ) ;
+									// Push to queue
+									gp = new gridPoint ;
+									gp->x = nx ;
+									gp->y = ny ;
+									gp->z = nz ;
+									// queue->add( gp, -score ) ;
+									queue->add( gp, score ) ;
+								}
+							}
+						}
+						
+
+			}
+
+			printf("%d complex, %d simple\n", numComplex, numSimple) ;
+			
+			if ( numSimple == 0 )
+			{
+					break ;
+			}
+		}
+
+		// Remove all internal voxels (contained in manifold curves)
+		queue2->reset() ;
+		ele = queue2->getNext() ;
+		while ( ele != NULL )
+		{
+			ox = ele->x ;
+			oy = ele->y ;
+			oz = ele->z ;
+
+			if ( hasCompleteHelix( ox, oy, oz ) )
+			{
+				setDataAt( ox, oy, oz, -1 ) ;
+			}
+			ele = queue2->remove() ;
+		}
+
+		// Finally, clean up
+		printf("Thresholding the volume to 0/1...\n") ;
+		threshold( 0, 0, 1 ) ;		
+	}
+
 
 	// Compute minimal skeleton
 	void skeleton( float thr, Volume* svol, Volume* hvol )
@@ -7038,7 +7782,833 @@ public:
 		threshold( 0, 0, 1 ) ;
 	}
 
+	/* Thin the current volume while preserving voxels with values > highthr or <= lowthr in grayvol
+	*  Assuming the current volume has already been thresholded to 0/1
+	*/
+	void surfaceSkeleton( Volume* grayvol, float lowthr, float highthr )
+	{
+		int i, j, k ;
+		// First, threshold the volume
+		printf("Thresholding the volume to -MAX_ERODE/0...\n") ;
+		threshold( 0.5f, -MAX_ERODE, 0 ) ;
+
+		// Next, initialize the linked queue
+		printf("Initializing queue...\n") ;
+		GridQueue2* queue2 = new GridQueue2( ) ;
+		GridQueue2* queue3 = new GridQueue2( ) ;
+		GridQueue2* queue4 = new GridQueue2( ) ;
+
+		PriorityQueue <gridPoint,int> * queue = new PriorityQueue <gridPoint,int> ( MAX_QUEUELEN );
+
+		for ( i = 0 ; i < sizex ; i ++ )
+			for ( j = 0 ; j < sizey ; j ++ )
+				for ( k = 0 ; k < sizez ; k ++ )
+				{
+					if ( getDataAt( i, j, k ) >= 0 )
+					{
+						float v = grayvol->getDataAt(i,j,k) ;
+						if ( v > highthr || v <= lowthr )
+						{
+							setDataAt( i, j, k, MAX_ERODE ) ;
+						}
+						else
+						{
+							for ( int m = 0 ; m < 6 ; m ++ )
+							{
+								if ( getDataAt( i + neighbor6[m][0], j + neighbor6[m][1], k + neighbor6[m][2] ) < 0 )
+								{
+									// setDataAt( i, j, k, 1 ) ;
+									queue2->prepend( i, j, k ) ;
+									break ;
+								}
+							}
+						}
+					}
+				}
+		printf("Total %d nodes\n", queue2->getNumElements() ) ;
+
+
+		// Perform erosion 
+		int wid = MAX_ERODE ;
+		printf("Start erosion to %d...\n", wid) ;
+		gridQueueEle* ele ;
+		gridPoint* gp ;
+		double val = 0;
+		int tx, ty, tz ;
+		int ox, oy, oz ;
+		int score ;
+		Volume* scrvol = new Volume( this->sizex , this->sizey, this->sizez ) ;
+		for ( i = 0 ; i < sizex * sizey * sizez ; i ++ )
+		{
+			scrvol->setDataAt( i, -1 ) ;
+		}
+
+#ifdef  NOISE_DIS_SHEET
+		Volume* noisevol = new Volume( sizex, sizey, sizez ) ;
+#endif
+
+		for ( int curwid = 1 ; curwid <= wid ; curwid ++ )
+		{
+			// At the start of each iteration, 
+			// queue2 and queue4 holds all the nodes for this layer
+			// queue3 and queue are empty
+
+			int numComplex = 0, numSimple = 0 ;
+			printf("Processing %d nodes in layer %d\n", queue2->getNumElements(), curwid) ;
+			
+			/*
+			We first need to assign curwid + 1 to every node in this layer
+			*/
+			queue2->reset() ;
+			ele = queue2->getNext() ;
+			while ( ele != NULL )
+			{
+				ox = ele->x ;
+				oy = ele->y ;
+				oz = ele->z ;
+				
+				if ( getDataAt(ox,oy,oz) == curwid )
+				{
+					ele = queue2->remove() ;
+				}
+				else
+				{
+					setDataAt(ox,oy,oz, curwid) ;
+					ele = queue2->getNext() ;
+				}
+			}
+			queue4->reset() ;
+			ele = queue4->getNext() ;
+			while ( ele != NULL )
+			{
+				ox = ele->x ;
+				oy = ele->y ;
+				oz = ele->z ;
+
+				queue2->prepend(ox,oy,oz) ;
+				ele = queue4->remove() ;
+			}
+
+			// Now queue2 holds all the nodes for this layer
+
+#ifdef NOISE_DIS_SHEET
+			/* Extra step: classify nodes in queue2 into noise and non-noise nodes */
+			queue2->reset() ;
+			
+			// First run
+			int flag = 0 ;
+			while ( ( ele = queue2->getNext() ) != NULL )
+			{
+				ox = ele->x ;
+				oy = ele->y ;
+				oz = ele->z ;
+				if ( NOISE_DIS_SHEET <= 1 )
+				{
+					noisevol->setDataAt( ox, oy, oz, 0 ) ;
+				}
+				else
+				{
+					flag = 0 ;
+					for ( int m = 0 ; m < 6 ; m ++ )
+					{
+						int nx = ox + neighbor6[m][0] ;
+						int ny = oy + neighbor6[m][1] ;
+						int nz = oz + neighbor6[m][2] ;
+						if ( getDataAt( nx, ny, nz ) == 0 )
+						{
+							noisevol->setDataAt( ox, oy, oz, 1 ) ;
+							flag = 1 ;
+							break ;
+						}
+					}
+					if ( ! flag )
+					{
+						noisevol->setDataAt( ox, oy, oz, 0 ) ;
+					}
+				}
+			}
+
+			for ( int cur = 1 ; cur < NOISE_DIS_SHEET ; cur ++ )
+			{
+				queue2->reset() ;
+				int count = 0 ;
+
+				while ( ( ele = queue2->getNext() ) != NULL )
+				{
+					ox = ele->x ;
+					oy = ele->y ;
+					oz = ele->z ;
+					
+					if ( noisevol->getDataAt( ox, oy, oz ) == 1 )
+					{
+						continue ;
+					}
+
+					flag = 0 ;
+					for ( int m = 0 ; m < 6 ; m ++ )
+					{
+						int nx = ox + neighbor6[m][0] ;
+						int ny = oy + neighbor6[m][1] ;
+						int nz = oz + neighbor6[m][2] ;
+						if ( getDataAt( nx, ny, nz ) > 0 && noisevol->getDataAt( nx, ny, nz ) == 1 )
+						{
+							noisevol->setDataAt( ox, oy, oz, 1 ) ;
+							count ++ ;
+							break ;
+						}
+					}
+				}
+
+				if ( count == 0 )
+				{
+					break ;
+				}
+			}
+
+
+#endif
+
+			/* Commented for debugging
+
+			// First, 
+			// check for complex nodes in queue2 
+			// move them from queue2 to queue3
+			queue2->reset() ;
+			ele = queue2->getNext() ;
+			while ( ele != NULL )
+			{
+				ox = ele->x ;
+				oy = ele->y ;
+				oz = ele->z ;
+				
+				// Check simple 
+#ifndef NOISE_DIS_SHEET
+				if ( isSheetEnd( ox, oy, oz ) || ! isSimple( ox, oy, oz ) ) 
+#else
+				if ( isSheetEnd( ox, oy, oz, noisevol ) || ! isSimple( ox, oy, oz ) ) 
+#endif
+				{
+					// Complex, set to next layer
+					setDataAt( ox, oy, oz, curwid + 1 ) ;
+					queue3->prepend( ox, oy, oz ) ;
+					ele = queue2->remove() ;
+					
+					numComplex ++ ;
+				}
+				else
+				{
+					ele = queue2->getNext() ;
+				}
+			}
+			*/
+
+
+			// Next,
+			// Compute score for each node left in queue2
+			// move them into priority queue
+			queue2->reset() ;
+			ele = queue2->getNext() ;
+			while ( ele != NULL )
+			{
+				ox = ele->x ;
+				oy = ele->y ;
+				oz = ele->z ;
+				
+				// Compute score
+				score = getNumPotComplex( ox, oy, oz ) ;
+				scrvol->setDataAt( ox, oy, oz, score ) ;
+
+				// Push to queue
+				gp = new gridPoint ;
+				gp->x = ox ;
+				gp->y = oy ;
+				gp->z = oz ;
+				// queue->add( gp, -score ) ;
+				queue->add( gp, score ) ;
+				
+				ele = queue2->remove() ;
+			}
+
+			// Rename queue3 to be queue2, 
+			// Clear queue3
+			// From now on, queue2 holds nodes of next level
+			delete queue2 ;
+			queue2 = queue3 ;
+			queue3 = new GridQueue2( ) ;
+
+			int nowComplex = 0 ;
+
+			// Next, start priority queue iteration
+			while ( ! queue->isEmpty() )
+			{
+				// Retrieve the node with the highest score
+				queue->remove( gp, score ) ;
+				ox = gp->x ;
+				oy = gp->y ;
+				oz = gp->z ;
+				delete gp ;
+				// printf("%d\n", score);
+//				score = -score ;
+
+				// Ignore the node 
+				// if it has been processed before
+				// or it has an updated score
+				if ( getDataAt( ox, oy, oz ) != curwid || (int) scrvol->getDataAt( ox, oy, oz ) != score )
+				{
+					continue ;
+				}
+
+				/* Commented for debugging
+
+				// Remove this simple node
+				setDataAt( ox, oy, oz, -1 ) ;
+				numSimple ++ ;
+				// printf("Highest score: %d\n", score) ;
+				*/
+
+				/* Added for debugging */
+				// Check simple 
+#ifndef NOISE_DIS_SHEET
+				// if ( hasFeatureFace( ox, oy, oz ) )
+				if ( (! isSimple( ox, oy, oz )) || isSheetEnd( ox, oy, oz ) )
+				// if ( hasIsolatedFace(ox,oy,oz)  && (! isNoiseSheetEnd(ox,oy,oz))) 
+#else
+				// if ( ! isSimple( ox, oy, oz ) || isSheetEnd( ox, oy, oz, noisevol ) ) 
+				if ( ! isSimple( ox, oy, oz ) || isSheetEnd( ox, oy, oz, noisevol ) || isHelixEnd( ox, oy, oz, noisevol )) 
+				// if ( isBertrandEndPoint( ox, oy, oz ) ) 
+#endif
+				{
+					// Complex, set to next layer
+					setDataAt( ox, oy, oz, curwid + 1 ) ;
+					queue4->prepend( ox, oy, oz ) ;
+					numComplex ++ ;
+
+					nowComplex == 1 ;
+				}
+				else
+				{
+					setDataAt( ox, oy, oz, -1 ) ;
+					numSimple ++ ;
+
+					if ( nowComplex )
+					{
+
+						// printf("Error: %d\n", score);
+					}
+
+				}
+				/* Adding ends */
+					// Move its neighboring unvisited node to queue2
+					for ( int m = 0 ; m < 6 ; m ++ )
+					{
+						int nx = ox + neighbor6[m][0] ;
+						int ny = oy + neighbor6[m][1] ;
+						int nz = oz + neighbor6[m][2] ;
+						if ( getDataAt( nx, ny, nz ) == 0 )
+						{
+							// setDataAt( nx, ny, nz, curwid + 1 ) ;
+							queue2->prepend( nx, ny, nz ) ;
+						}
+					}
+				
+				/* Commented for debugging
+				
+				// Find complex nodes in its 3x3 neighborhood
+				// move them to queue2
+				for ( i = -1 ; i < 2 ; i ++ )
+					for ( j = -1 ; j < 2 ; j ++ )
+						for ( k = -1 ; k < 2 ; k ++ )
+						{
+							int nx = ox + i ;
+							int ny = oy + j ;
+							int nz = oz + k ;
+
+							// Check simple 
+							if ( getDataAt( nx, ny, nz ) == curwid && 
+								// ( isSheetEnd( ox, oy, oz ) || ! isSimple( nx, ny, nz )) )
+#ifndef NOISE_DIS_SHEET
+								( isSheetEnd( nx, ny, nz ) || ! isSimple( nx, ny, nz ) ) )
+#else
+								( isSheetEnd( nx, ny, nz, noisevol ) || ! isSimple( nx, ny, nz ) ) )
+#endif
+
+							{
+								// Complex, set to next layer
+								setDataAt( nx, ny, nz, curwid + 1 ) ;
+								queue2->prepend( nx, ny, nz ) ;
+								numComplex ++ ;
+							}
+						}
+				*/
+
+				// Update scores for nodes in its 5x5 neighborhood
+				// insert them back into priority queue
+					
+				for ( i = -2 ; i < 3 ;i ++ )
+					for ( j = -2 ; j < 3 ; j ++ )
+						for ( k = -2 ; k < 3 ; k ++ )
+						{
+							int nx = ox + i ;
+							int ny = oy + j ;
+							int nz = oz + k ;
+
+							if ( getDataAt( nx, ny, nz ) == curwid )
+							{
+								// Compute score
+								score = getNumPotComplex( nx, ny, nz ) ;
+								
+								if ( score != (int) scrvol->getDataAt( nx, ny, nz ) )
+								{
+									// printf("Update\n") ;
+									scrvol->setDataAt( nx, ny, nz, score ) ;
+									// Push to queue
+									gp = new gridPoint ;
+									gp->x = nx ;
+									gp->y = ny ;
+									gp->z = nz ;
+									// queue->add( gp, -score ) ;
+									queue->add( gp, score ) ;
+								}
+							}
+						}
+						
+
+			}
+
+			printf("%d complex, %d simple\n", numComplex, numSimple) ;
+			
+			if ( numSimple == 0 )
+			{
+				if ( queue2->getNumElements() > 0 )
+				{
+					printf("*************************wierd**********************\n");
+				}
+					break ;
+			}
+		}
+
+		// Remove all internal voxels (contained in cells)
+		queue4->reset() ;
+		ele = queue4->getNext() ;
+		while ( ele != NULL )
+		{
+			ox = ele->x ;
+			oy = ele->y ;
+			oz = ele->z ;
+
+			if ( hasCell( ox, oy, oz ) )
+			{
+				setDataAt( ox, oy, oz, -1 ) ;
+			}
+			ele = queue4->remove() ;
+		}
+		
+
+		// Finally, clean up
+		printf("Thresholding the volume to 0/1...\n") ;
+		threshold( 0, 0, 1 ) ;
+
+	}
+
 	void surfaceSkeleton( float thr )
+	{
+		int i, j, k ;
+		// First, threshold the volume
+		printf("Thresholding the volume to -MAX_ERODE/0...\n") ;
+		threshold( thr, -MAX_ERODE, 0 ) ;
+
+		// Next, initialize the linked queue
+		printf("Initializing queue...\n") ;
+		GridQueue2* queue2 = new GridQueue2( ) ;
+		GridQueue2* queue3 = new GridQueue2( ) ;
+		GridQueue2* queue4 = new GridQueue2( ) ;
+
+		PriorityQueue <gridPoint,int> * queue = new PriorityQueue <gridPoint,int> ( MAX_QUEUELEN );
+
+		for ( i = 0 ; i < sizex ; i ++ )
+			for ( j = 0 ; j < sizey ; j ++ )
+				for ( k = 0 ; k < sizez ; k ++ )
+				{
+					if ( getDataAt( i, j, k ) >= 0 )
+					{
+						{
+							for ( int m = 0 ; m < 6 ; m ++ )
+							{
+								if ( getDataAt( i + neighbor6[m][0], j + neighbor6[m][1], k + neighbor6[m][2] ) < 0 )
+								{
+									// setDataAt( i, j, k, 1 ) ;
+									queue2->prepend( i, j, k ) ;
+									break ;
+								}
+							}
+						}
+					}
+				}
+		printf("Total %d nodes\n", queue2->getNumElements() ) ;
+
+
+		// Perform erosion 
+		int wid = MAX_ERODE ;
+		printf("Start erosion to %d...\n", wid) ;
+		gridQueueEle* ele ;
+		gridPoint* gp ;
+		double val = 0;
+		int tx, ty, tz ;
+		int ox, oy, oz ;
+		int score ;
+		Volume* scrvol = new Volume( this->sizex , this->sizey, this->sizez ) ;
+		for ( i = 0 ; i < sizex * sizey * sizez ; i ++ )
+		{
+			scrvol->setDataAt( i, -1 ) ;
+		}
+
+#ifdef  NOISE_DIS_SHEET
+		Volume* noisevol = new Volume( sizex, sizey, sizez ) ;
+#endif
+
+		for ( int curwid = 1 ; curwid <= wid ; curwid ++ )
+		{
+			// At the start of each iteration, 
+			// queue2 and queue4 holds all the nodes for this layer
+			// queue3 and queue are empty
+
+			int numComplex = 0, numSimple = 0 ;
+			printf("Processing %d nodes in layer %d\n", queue2->getNumElements(), curwid) ;
+			
+			/*
+			We first need to assign curwid + 1 to every node in this layer
+			*/
+			queue2->reset() ;
+			ele = queue2->getNext() ;
+			while ( ele != NULL )
+			{
+				ox = ele->x ;
+				oy = ele->y ;
+				oz = ele->z ;
+				
+				if ( getDataAt(ox,oy,oz) == curwid )
+				{
+					ele = queue2->remove() ;
+				}
+				else
+				{
+					setDataAt(ox,oy,oz, curwid) ;
+					ele = queue2->getNext() ;
+				}
+			}
+			queue4->reset() ;
+			ele = queue4->getNext() ;
+			while ( ele != NULL )
+			{
+				ox = ele->x ;
+				oy = ele->y ;
+				oz = ele->z ;
+
+				queue2->prepend(ox,oy,oz) ;
+				ele = queue4->remove() ;
+			}
+
+			// Now queue2 holds all the nodes for this layer
+
+#ifdef NOISE_DIS_SHEET
+			/* Extra step: classify nodes in queue2 into noise and non-noise nodes */
+			queue2->reset() ;
+			
+			// First run
+			int flag = 0 ;
+			while ( ( ele = queue2->getNext() ) != NULL )
+			{
+				ox = ele->x ;
+				oy = ele->y ;
+				oz = ele->z ;
+				if ( NOISE_DIS_SHEET <= 1 )
+				{
+					noisevol->setDataAt( ox, oy, oz, 0 ) ;
+				}
+				else
+				{
+					flag = 0 ;
+					for ( int m = 0 ; m < 6 ; m ++ )
+					{
+						int nx = ox + neighbor6[m][0] ;
+						int ny = oy + neighbor6[m][1] ;
+						int nz = oz + neighbor6[m][2] ;
+						if ( getDataAt( nx, ny, nz ) == 0 )
+						{
+							noisevol->setDataAt( ox, oy, oz, 1 ) ;
+							flag = 1 ;
+							break ;
+						}
+					}
+					if ( ! flag )
+					{
+						noisevol->setDataAt( ox, oy, oz, 0 ) ;
+					}
+				}
+			}
+
+			for ( int cur = 1 ; cur < NOISE_DIS_SHEET ; cur ++ )
+			{
+				queue2->reset() ;
+				int count = 0 ;
+
+				while ( ( ele = queue2->getNext() ) != NULL )
+				{
+					ox = ele->x ;
+					oy = ele->y ;
+					oz = ele->z ;
+					
+					if ( noisevol->getDataAt( ox, oy, oz ) == 1 )
+					{
+						continue ;
+					}
+
+					flag = 0 ;
+					for ( int m = 0 ; m < 6 ; m ++ )
+					{
+						int nx = ox + neighbor6[m][0] ;
+						int ny = oy + neighbor6[m][1] ;
+						int nz = oz + neighbor6[m][2] ;
+						if ( getDataAt( nx, ny, nz ) > 0 && noisevol->getDataAt( nx, ny, nz ) == 1 )
+						{
+							noisevol->setDataAt( ox, oy, oz, 1 ) ;
+							count ++ ;
+							break ;
+						}
+					}
+				}
+
+				if ( count == 0 )
+				{
+					break ;
+				}
+			}
+
+
+#endif
+
+			/* Commented for debugging
+
+			// First, 
+			// check for complex nodes in queue2 
+			// move them from queue2 to queue3
+			queue2->reset() ;
+			ele = queue2->getNext() ;
+			while ( ele != NULL )
+			{
+				ox = ele->x ;
+				oy = ele->y ;
+				oz = ele->z ;
+				
+				// Check simple 
+#ifndef NOISE_DIS_SHEET
+				if ( isSheetEnd( ox, oy, oz ) || ! isSimple( ox, oy, oz ) ) 
+#else
+				if ( isSheetEnd( ox, oy, oz, noisevol ) || ! isSimple( ox, oy, oz ) ) 
+#endif
+				{
+					// Complex, set to next layer
+					setDataAt( ox, oy, oz, curwid + 1 ) ;
+					queue3->prepend( ox, oy, oz ) ;
+					ele = queue2->remove() ;
+					
+					numComplex ++ ;
+				}
+				else
+				{
+					ele = queue2->getNext() ;
+				}
+			}
+			*/
+
+
+			// Next,
+			// Compute score for each node left in queue2
+			// move them into priority queue
+			queue2->reset() ;
+			ele = queue2->getNext() ;
+			while ( ele != NULL )
+			{
+				ox = ele->x ;
+				oy = ele->y ;
+				oz = ele->z ;
+				
+				// Compute score
+				score = getNumPotComplex( ox, oy, oz ) ;
+				scrvol->setDataAt( ox, oy, oz, score ) ;
+
+				// Push to queue
+				gp = new gridPoint ;
+				gp->x = ox ;
+				gp->y = oy ;
+				gp->z = oz ;
+				// queue->add( gp, -score ) ;
+				queue->add( gp, score ) ;
+				
+				ele = queue2->remove() ;
+			}
+
+			// Rename queue3 to be queue2, 
+			// Clear queue3
+			// From now on, queue2 holds nodes of next level
+			delete queue2 ;
+			queue2 = queue3 ;
+			queue3 = new GridQueue2( ) ;
+
+			int nowComplex = 0 ;
+
+			// Next, start priority queue iteration
+			while ( ! queue->isEmpty() )
+			{
+				// Retrieve the node with the highest score
+				queue->remove( gp, score ) ;
+				ox = gp->x ;
+				oy = gp->y ;
+				oz = gp->z ;
+				delete gp ;
+				// printf("%d\n", score);
+//				score = -score ;
+
+				// Ignore the node 
+				// if it has been processed before
+				// or it has an updated score
+				if ( getDataAt( ox, oy, oz ) != curwid || (int) scrvol->getDataAt( ox, oy, oz ) != score )
+				{
+					continue ;
+				}
+
+				/* Commented for debugging
+
+				// Remove this simple node
+				setDataAt( ox, oy, oz, -1 ) ;
+				numSimple ++ ;
+				// printf("Highest score: %d\n", score) ;
+				*/
+
+				/* Added for debugging */
+				// Check simple 
+#ifndef NOISE_DIS_SHEET
+				// if ( hasFeatureFace( ox, oy, oz ) )
+				if ( (! isSimple( ox, oy, oz )) || isSheetEnd( ox, oy, oz ) )
+				// if ( hasIsolatedFace(ox,oy,oz)  && (! isNoiseSheetEnd(ox,oy,oz))) 
+#else
+				// if ( ! isSimple( ox, oy, oz ) || isSheetEnd( ox, oy, oz, noisevol ) ) 
+				if ( ! isSimple( ox, oy, oz ) || isSheetEnd( ox, oy, oz, noisevol ) || isHelixEnd( ox, oy, oz, noisevol )) 
+				// if ( isBertrandEndPoint( ox, oy, oz ) ) 
+#endif
+				{
+					// Complex, set to next layer
+					setDataAt( ox, oy, oz, curwid + 1 ) ;
+					queue4->prepend( ox, oy, oz ) ;
+					numComplex ++ ;
+
+					nowComplex == 1 ;
+				}
+				else
+				{
+					setDataAt( ox, oy, oz, -1 ) ;
+					numSimple ++ ;
+
+					if ( nowComplex )
+					{
+
+						// printf("Error: %d\n", score);
+					}
+				}
+				/* Adding ends */
+
+				// Move its neighboring unvisited node to queue2
+				for ( int m = 0 ; m < 6 ; m ++ )
+				{
+					int nx = ox + neighbor6[m][0] ;
+					int ny = oy + neighbor6[m][1] ;
+					int nz = oz + neighbor6[m][2] ;
+					if ( getDataAt( nx, ny, nz ) == 0 )
+					{
+						// setDataAt( nx, ny, nz, curwid + 1 ) ;
+						queue2->prepend( nx, ny, nz ) ;
+					}
+				}
+				
+				/* Commented for debugging
+				
+				// Find complex nodes in its 3x3 neighborhood
+				// move them to queue2
+				for ( i = -1 ; i < 2 ; i ++ )
+					for ( j = -1 ; j < 2 ; j ++ )
+						for ( k = -1 ; k < 2 ; k ++ )
+						{
+							int nx = ox + i ;
+							int ny = oy + j ;
+							int nz = oz + k ;
+
+							// Check simple 
+							if ( getDataAt( nx, ny, nz ) == curwid && 
+								// ( isSheetEnd( ox, oy, oz ) || ! isSimple( nx, ny, nz )) )
+#ifndef NOISE_DIS_SHEET
+								( isSheetEnd( nx, ny, nz ) || ! isSimple( nx, ny, nz ) ) )
+#else
+								( isSheetEnd( nx, ny, nz, noisevol ) || ! isSimple( nx, ny, nz ) ) )
+#endif
+
+							{
+								// Complex, set to next layer
+								setDataAt( nx, ny, nz, curwid + 1 ) ;
+								queue2->prepend( nx, ny, nz ) ;
+								numComplex ++ ;
+							}
+						}
+				*/
+
+				// Update scores for nodes in its 5x5 neighborhood
+				// insert them back into priority queue
+					
+				for ( i = -2 ; i < 3 ;i ++ )
+					for ( j = -2 ; j < 3 ; j ++ )
+						for ( k = -2 ; k < 3 ; k ++ )
+						{
+							int nx = ox + i ;
+							int ny = oy + j ;
+							int nz = oz + k ;
+
+							if ( getDataAt( nx, ny, nz ) == curwid )
+							{
+								// Compute score
+								score = getNumPotComplex( nx, ny, nz ) ;
+								
+								if ( score != (int) scrvol->getDataAt( nx, ny, nz ) )
+								{
+									// printf("Update\n") ;
+									scrvol->setDataAt( nx, ny, nz, score ) ;
+									// Push to queue
+									gp = new gridPoint ;
+									gp->x = nx ;
+									gp->y = ny ;
+									gp->z = nz ;
+									// queue->add( gp, -score ) ;
+									queue->add( gp, score ) ;
+								}
+							}
+						}
+						
+
+			}
+
+			printf("%d complex, %d simple\n", numComplex, numSimple) ;
+			
+			if ( numSimple == 0 )
+			{
+					break ;
+			}
+		}
+
+		// Finally, clean up
+		printf("Thresholding the volume to 0/1...\n") ;
+		threshold( 0, 0, 1 ) ;
+
+	}
+
+	void surfaceSkeletonOld( float thr )
 	{
 		int i, j, k ;
 		// First, threshold the volume
@@ -8324,6 +9894,24 @@ public:
 					} else {
 						data[ ct ] = data[ ct ] < thr ? (float)out : (float)in ;
 					}
+					ct ++ ;
+				}
+	}
+
+	void threshold2( double thr, int out, int in )
+	{
+		//int size = sizex * sizey * sizez ;
+		//for ( int i = 0 ; i < size ; i ++ )
+		//{
+		//	data[ i ] = data[ i ] < thr ? out : in ;
+		//}
+
+		int ct = 0 ;
+		for ( int i = 0 ; i < sizex ; i ++ )
+			for ( int j = 0 ; j < sizey ; j ++ )
+				for ( int k = 0 ; k < sizez ; k ++ )
+				{
+					data[ ct ] = ( data[ ct ] <= thr ? out : in ) ;
 					ct ++ ;
 				}
 	}
