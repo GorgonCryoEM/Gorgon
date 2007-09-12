@@ -60,7 +60,6 @@ void main( int args, char* argv[] )
 		exit(0) ;
 	}
 
-	clock_t start, finish ;
 	int i ;
 	float threshold;
 	int steps ;
@@ -78,7 +77,7 @@ void main( int args, char* argv[] )
 	printf("Initialize volume...") ;
 	int modelType ; // 0 for MRC, 1 for SOF
 	VolumeReader* reader ;
-	Volume * vol, * rawvol ;
+	Volume * vol;
 	
 	if ( strstr( argv[1], ".mrc" ) != NULL || strstr( argv[1], ".MRC" ) != NULL )
 	{
@@ -131,7 +130,7 @@ void main( int args, char* argv[] )
 
 	// Next, iteratively thin
 	printf("Generating surfaces...\n");
-	float stepsize = (vol->getMax() - threshold) / steps ;
+	float stepsize = (float)((vol->getMax() - threshold) / steps) ;
 	float g = threshold ;
 	for ( i = 0 ; i < steps ; i ++  )
 	{
@@ -226,7 +225,7 @@ int oldmain( int args, char* argv[] )
 	printf("Initialize volume...") ;
 	int modelType ; // 0 for MRC, 1 for SOF
 	VolumeReader* reader ;
-	Volume * vol, * rawvol ;
+	Volume * vol;
 	
 	if ( strstr( argv[2], ".mrc" ) != NULL || strstr( argv[2], ".MRC" ) != NULL )
 	{
@@ -423,9 +422,9 @@ int oldmain( int args, char* argv[] )
 					&x, &y, &z, str[6], str[7], str[8], str[9] );
 				
 				
-				ix = x / apix ;
-				iy = y / apix ;
-				iz = z / apix ;
+				ix = (int)(x / apix) ;
+				iy = (int)(y / apix) ;
+				iz = (int)(z / apix) ;
 				
 				
 				//float x = ( ix - ofx ) * ax;
@@ -514,7 +513,7 @@ int oldmain( int args, char* argv[] )
 			if ( fin == NULL )
 			{
 				printf("Fail to open atoms PDB file %s.\n", argv[3]) ;
-				modelType == 1 ;
+				modelType = 1 ;
 			}
 			else
 			{
@@ -524,9 +523,9 @@ int oldmain( int args, char* argv[] )
 					int ix, iy, iz ;
 					fscanf( fin, "%s %s %s %s %s %s %f %f %f %s %s %s %s", str[0], str[1], str[2], str[3], str[4], str[5], 
 						&x, &y, &z, str[6], str[7], str[8], str[9] );
-					ix = x / apix ;
-					iy = y / apix ;
-					iz = z / apix ;
+					ix = (int)(x / apix);
+					iy = (int)(y / apix);
+					iz = (int)(z / apix);
 
 					/* Disabled for test */
 					atomvol->setDataAt( ix, iy, iz, 1 ) ;
@@ -761,9 +760,9 @@ int oldmain( int args, char* argv[] )
 					&x, &y, &z, str[6], str[7], str[8], str[9] );
 				
 				
-				ix = x / apix ;
-				iy = y / apix ;
-				iz = z / apix ;
+				ix = (int)(x / apix);
+				iy = (int)(y / apix);
+				iz = (int)(z / apix);
 				
 				
 				//float x = ( ix - ofx ) * ax;
@@ -848,7 +847,7 @@ void prepareWeights()
 					totWeights += ( weights[ i + SCORE_RANGE ][ j + SCORE_RANGE ][ k + SCORE_RANGE ] = sqrt(1 / (float) ( i*i + j*j + k*k )) );
 				}
 				*/
-				w = i*i + j*j + k*k ;
+				w = (float)(i*i + j*j + k*k) ;
 				totWeights += ( weights[ i + SCORE_RANGE ][ j + SCORE_RANGE ][ k + SCORE_RANGE ] = 1 - w / maxw  );
 			}
 	printf("Total weights: %f\n", totWeights) ;

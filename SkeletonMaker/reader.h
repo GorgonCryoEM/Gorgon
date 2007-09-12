@@ -1593,6 +1593,7 @@ public:
 	void readSpacing( FILE* fid )
 
 	{
+			int i ;
 
 			// Read dose coords
 
@@ -1604,7 +1605,7 @@ public:
 
 			float lx=0,hx=0,ly=0,hy=0,lz=0,hz=0;
 
-			for ( int i = 0 ; i < dimx ; i ++ )
+			for ( i = 0 ; i < dimx ; i ++ )
 
 			{
 
@@ -1622,7 +1623,7 @@ public:
 
 			}
 
-			for (int i = 0 ; i < dimy ; i ++ )
+			for ( i = 0 ; i < dimy ; i ++ )
 
 			{
 
@@ -1640,7 +1641,7 @@ public:
 
 			}
 
-			for (int i = 0 ; i < dimz ; i ++ )
+			for ( i = 0 ; i < dimz ; i ++ )
 
 			{
 
