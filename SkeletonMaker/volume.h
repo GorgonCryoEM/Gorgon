@@ -4549,14 +4549,18 @@ public:
 	{
 		int i, j, k ;
 		// First, threshold the volume
+		#ifdef VERBOSE
 		printf("Thresholding the volume to -1/0...\n") ;
+		#endif
 		threshold( 0.5f, -1, 0 ) ;
 
 		// Next, apply convergent erosion 
 		// by preserving: complex nodes, curve end-points, and sheet points
 
 		// Next, initialize the linked queue
+		#ifdef VERBOSE
 		printf("Initializing queue...\n") ;
+		#endif
 		GridQueue2* queue2 = new GridQueue2( ) ;
 		GridQueue2* queue3 = new GridQueue2( ) ;
 		GridQueue2* queue4 = new GridQueue2( ) ;
@@ -4587,7 +4591,9 @@ public:
 						}
 					}
 				}
+		#ifdef VERBOSE
 		printf("Total %d nodes\n", queue2->getNumElements() ) ;
+		#endif
 
 
 		// Perform erosion 
@@ -4616,7 +4622,9 @@ public:
 			// queue3 and queue are empty
 
 			int numComplex = 0, numSimple = 0 ;
+			#ifdef VERBOSE
 			printf("Processing %d nodes in layer %d\n", queue2->getNumElements(), curwid) ;
+			#endif
 			
 			/*
 			We first need to assign curwid + 1 to every node in this layer
@@ -4928,7 +4936,9 @@ public:
 
 			}
 
+			#ifdef VERBOSE
 			printf("%d complex, %d simple\n", numComplex, numSimple) ;
+			#endif
 			
 			if ( numSimple == 0 )
 			{
@@ -4959,8 +4969,15 @@ public:
 
 
 		// Finally, clean up
+		delete scrvol;
+		delete queue;
+		delete queue2;
+		delete queue3;
+		delete queue4;
+		#ifdef VERBOSE
 		printf("Thresholding the volume to 0/1...\n") ;
-		threshold( 0, 0, 1 ) ;		
+		#endif
+		threshold( 0, 0, 1 ) ;	
 	}
 
 	// Compute curve skeleton
@@ -6141,14 +6158,18 @@ public:
 	{
 		int i, j, k ;
 		// First, threshold the volume
+		#ifdef VERBOSE
 		printf("Thresholding the volume to -1/0...\n") ;
+		#endif
 		threshold( 0.5f, -1, 0 ) ;
 
 		// Next, apply convergent erosion 
 		// by preserving: complex nodes, curve end-points, and sheet points
 
 		// Next, initialize the linked queue
+		#ifdef VERBOSE
 		printf("Initializing queue...\n") ;
+		#endif
 		GridQueue2* queue2 = new GridQueue2( ) ;
 		GridQueue2* queue3 = new GridQueue2( ) ;
 		PriorityQueue <gridPoint,int> * queue = new PriorityQueue <gridPoint,int> ( MAX_QUEUELEN );
@@ -6178,12 +6199,16 @@ public:
 						}
 					}
 				}
+		#ifdef VERBOSE
 		printf("Total %d nodes\n", queue2->getNumElements() ) ;
+		#endif
 
 
 		// Perform erosion 
 		int wid = MAX_ERODE ;
+		#ifdef VERBOSE
 		printf("Start erosion to %d...\n", wid) ;
+		#endif
 		gridQueueEle* ele ;
 		gridPoint* gp ;
 		double val = 0;
@@ -6204,7 +6229,9 @@ public:
 			// queue3 and queue are empty
 
 			int numComplex = 0, numSimple = 0 ;
+			#ifdef VERBOSE
 			printf("Processing %d nodes in layer %d\n", queue2->getNumElements(), curwid) ;
+			#endif
 			
 
 			// Next,
@@ -6322,8 +6349,9 @@ public:
 						
 
 			}
-
+			#ifdef VERBOSE
 			printf("%d complex, %d simple\n", numComplex, numSimple) ;
+			#endif
 			
 			if ( numSimple == 0 )
 			{
@@ -6348,7 +6376,13 @@ public:
 		}
 
 		// Finally, clean up
+		delete scrvol;
+		delete queue;
+		delete queue2;
+		delete queue3;
+		#ifdef VERBOSE
 		printf("Thresholding the volume to 0/1...\n") ;
+		#endif
 		threshold( 0, 0, 1 ) ;		
 	}
 
@@ -7789,11 +7823,15 @@ public:
 	{
 		int i, j, k ;
 		// First, threshold the volume
+		#ifdef VERBOSE
 		printf("Thresholding the volume to -MAX_ERODE/0...\n") ;
+		#endif
 		threshold( 0.5f, -MAX_ERODE, 0 ) ;
 
 		// Next, initialize the linked queue
+		#ifdef VERBOSE
 		printf("Initializing queue...\n") ;
+		#endif
 		GridQueue2* queue2 = new GridQueue2( ) ;
 		GridQueue2* queue3 = new GridQueue2( ) ;
 		GridQueue2* queue4 = new GridQueue2( ) ;
@@ -7825,12 +7863,16 @@ public:
 						}
 					}
 				}
+		#ifdef VERBOSE
 		printf("Total %d nodes\n", queue2->getNumElements() ) ;
+		#endif
 
 
 		// Perform erosion 
 		int wid = MAX_ERODE ;
+		#ifdef VERBOSE
 		printf("Start erosion to %d...\n", wid) ;
+		#endif
 		gridQueueEle* ele ;
 		gridPoint* gp ;
 		double val = 0;
@@ -7854,7 +7896,9 @@ public:
 			// queue3 and queue are empty
 
 			int numComplex = 0, numSimple = 0 ;
+			#ifdef VERBOSE
 			printf("Processing %d nodes in layer %d\n", queue2->getNumElements(), curwid) ;
+			#endif
 			
 			/*
 			We first need to assign curwid + 1 to every node in this layer
@@ -8175,7 +8219,9 @@ public:
 
 			}
 
+			#ifdef VERBOSE
 			printf("%d complex, %d simple\n", numComplex, numSimple) ;
+			#endif
 			
 			if ( numSimple == 0 )
 			{
@@ -8205,7 +8251,14 @@ public:
 		
 
 		// Finally, clean up
+		delete scrvol;
+		delete queue;
+		delete queue2;
+		delete queue3;
+		delete queue4;
+		#ifdef VERBOSE
 		printf("Thresholding the volume to 0/1...\n") ;
+		#endif
 		threshold( 0, 0, 1 ) ;
 
 	}

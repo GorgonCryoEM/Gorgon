@@ -189,6 +189,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
+				AdditionalIncludeDirectories="C:\_WashU\ssa1\source\ExternalLibraries\mpatrol\include"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CRT_SECURE_NO_DEPRECATE"
 				MinimalRebuild="false"
 				BasicRuntimeChecks="0"
@@ -207,8 +208,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="mpatrol.lib"
 				OutputFile="$(OutDir)\$(ProjectName).exe"
 				LinkIncremental="2"
+				AdditionalLibraryDirectories="C:\_WashU\ssa1\source\ExternalLibraries\mpatrol\bin"
 				GenerateDebugInformation="true"
 				AssemblyDebug="1"
 			/>
