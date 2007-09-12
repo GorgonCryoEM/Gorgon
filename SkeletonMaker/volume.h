@@ -762,12 +762,12 @@ public:
 			for ( j = 0 ; j < sizey ; j ++ )
 				for ( k = 0 ; k < sizez ; k ++ )
 				{
-					if ( (d = tvol->getDataAt( i, j, k )) > 0 )
+					if ( (d = (float)tvol->getDataAt( i, j, k )) > 0 )
 					{
 						ad = 0 ; ct = 0 ;
 						for ( int m = 0 ; m < 6 ; m ++ )
 						{
-							if ( (temp = tvol->getDataAt( i + neighbor6[m][0], j + neighbor6[m][1], k + neighbor6[m][2] )) > 0 )
+							if ( (temp = (float)tvol->getDataAt( i + neighbor6[m][0], j + neighbor6[m][1], k + neighbor6[m][2] )) > 0 )
 							{
 								ad += temp;
 								ct ++ ;
@@ -1753,10 +1753,10 @@ public:
 
 		}
 
-		if ( hasCompleteSheet(ox,oy,oz) )
-		{
-			return 1 ;
-		}
+//		if ( hasCompleteSheet(ox,oy,oz) )
+//		{
+//			return 1 ;
+//		}
 
 		return 0 ;
 	}
@@ -2593,7 +2593,7 @@ public:
 			if ( val >= 0 ) 
 			{
 				c1 ++ ;
-				if ( val > 0 && val < MAX_ERODE ) 
+				if ( getNumNeighbor6(nx,ny,nz) < 6 ) // if ( val > 0 && val < MAX_ERODE ) 
 				{
 					c2 ++ ;
 				}
@@ -2948,10 +2948,16 @@ public:
 					ct = -1 ;
 					break ;
 				}
-				if ( getDataAt( nx, ny, nz ) == 0 )
+				else if ( getNumNeighbor6( nx, ny, nz ) == 6 )
 				{
-					ct ++ ;
+					ct = -1 ;
+					break ;
 				}
+//				else if ( getDataAt( nx, ny, nz ) == 0 )
+//				{
+//					ct ++ ;
+//				}
+				
 
 			}
 			if ( ct == -1 || ct >= 1 )
@@ -4572,7 +4578,7 @@ public:
 				{
 					if ( getDataAt( i, j, k ) >= 0 )
 					{
-						float v = grayvol->getDataAt(i,j,k) ;
+						float v = (float)grayvol->getDataAt(i,j,k) ;
 						if ( v <= lowthr || v > highthr || svol->getDataAt(i,j,k) > 0 )
 						{
 							setDataAt( i, j, k, MAX_ERODE ) ;
@@ -4591,18 +4597,17 @@ public:
 						}
 					}
 				}
+		int wid = MAX_ERODE ;
 		#ifdef VERBOSE
 		printf("Total %d nodes\n", queue2->getNumElements() ) ;
+		printf("Start erosion to %d...\n", wid) ;
 		#endif
 
 
 		// Perform erosion 
-		int wid = MAX_ERODE ;
-		printf("Start erosion to %d...\n", wid) ;
 		gridQueueEle* ele ;
 		gridPoint* gp ;
 		double val = 0;
-		int tx, ty, tz ;
 		int ox, oy, oz ;
 		int score ;
 		Volume* scrvol = new Volume( this->sizex , this->sizey, this->sizez ) ;
@@ -4856,7 +4861,6 @@ public:
 					numSimple ++ ;
 
 
-				}
 				/* Adding ends */
 					// Move its neighboring unvisited node to queue2
 					for ( int m = 0 ; m < 6 ; m ++ )
@@ -4870,6 +4874,8 @@ public:
 							queue2->prepend( nx, ny, nz ) ;
 						}
 					}
+
+				}
 				
 
 				/* Commented out for debugging
@@ -4959,7 +4965,7 @@ public:
 			oy = ele->y ;
 			oz = ele->z ;
 
-			if ( hasCompleteSheet( ox, oy, oz ) )
+			if ( hasIsolatedEdge( ox, oy, oz ) == 0 )
 			{
 				setDataAt( ox, oy, oz, -1 ) ;
 			}
@@ -4977,7 +4983,7 @@ public:
 		#ifdef VERBOSE
 		printf("Thresholding the volume to 0/1...\n") ;
 		#endif
-		threshold( 0, 0, 1 ) ;	
+		threshold( 0, 0, 1 ) ;		
 	}
 
 	// Compute curve skeleton
@@ -5027,6 +5033,7 @@ public:
 					}
 				}
 		
+		int wid = MAX_ERODE ;
 		#ifdef VERBOSE
 		printf("Total %d nodes\n", queue2->getNumElements() ) ;
 		printf("Start erosion to %d...\n", wid) ;
@@ -5034,7 +5041,6 @@ public:
 
 
 		// Perform erosion 
-		int wid = MAX_ERODE ;
 		gridQueueEle* ele ;
 		gridPoint* gp ;
 		double val = 0;
@@ -5437,6 +5443,7 @@ public:
 						}
 					}
 				}
+		int wid = MAX_ERODE ;
 		#ifdef VERBOSE
 		printf("Total %d nodes\n", queue2->getNumElements() ) ;
 		printf("Start erosion to %d...\n", wid) ;
@@ -5444,7 +5451,6 @@ public:
 
 
 		// Perform erosion 
-		int wid = MAX_ERODE ;
 		gridQueueEle* ele ;
 		gridPoint* gp ;
 		double val = 0;
@@ -5842,13 +5848,13 @@ public:
 						}
 					}
 				}
+		int wid = 0 ;
 		#ifdef VERBOSE
 		printf("Total %d nodes\n", queue2->getNumElements() ) ;
 		printf("Start erosion to %d...\n", wid) ;
 		#endif
 
 		// Perform erosion 
-		int wid = 0 ;
 		gridQueueEle* ele ;
 		double val = 0;
 		int ox, oy, oz ;
@@ -5985,6 +5991,7 @@ public:
 						}
 					}
 				}
+		int wid = MAX_ERODE ;
 		#ifdef VERBOSE
 		printf("Total %d nodes\n", queue2->getNumElements() ) ;
 
@@ -5993,7 +6000,6 @@ public:
 		printf("Start erosion to %d...\n", wid) ;
 		#endif
 
-		int wid = MAX_ERODE ;
 		gridQueueEle* ele ;
 		gridPoint* gp ;
 		double val = 0;
@@ -6180,7 +6186,7 @@ public:
 				{
 					if ( getDataAt( i, j, k ) >= 0 )
 					{
-						float v = grayvol->getDataAt( i, j, k ) ;
+						float v = (float)grayvol->getDataAt( i, j, k ) ;
 						if ( v <= lowthr || v > highthr || svol->getDataAt(i,j,k) > 0 || hvol->getDataAt(i,j,k) > 0 )
 						{
 							setDataAt( i, j, k, MAX_ERODE ) ;
@@ -6212,7 +6218,6 @@ public:
 		gridQueueEle* ele ;
 		gridPoint* gp ;
 		double val = 0;
-		int tx, ty, tz ;
 		int ox, oy, oz ;
 		int score ;
 		Volume* scrvol = new Volume( this->sizex , this->sizey, this->sizez ) ;
@@ -6299,7 +6304,6 @@ public:
 				{
 					setDataAt( ox, oy, oz, -1 ) ;
 					numSimple ++ ;
-				}
 				/* Adding ends */
 					
 					// Move its neighboring unvisited node to queue2
@@ -6315,6 +6319,7 @@ public:
 						}
 					}
 					
+				}
 
 				// Update scores for nodes in its 5x5 neighborhood
 				// insert them back into priority queue
@@ -6432,6 +6437,7 @@ public:
 						}
 					}
 				}
+		int wid = MAX_ERODE ;
 		#ifdef VERBOSE
 		printf("Total %d nodes\n", queue2->getNumElements() ) ;
 
@@ -6439,7 +6445,6 @@ public:
 		// Perform erosion 
 		printf("Start erosion to %d...\n", wid) ;
 		#endif
-		int wid = MAX_ERODE ;
 		gridQueueEle* ele ;
 		gridPoint* gp ;
 		double val = 0;
@@ -7114,13 +7119,13 @@ public:
 
 		// Dilate back
 		// Starting from nodes with distance - 2 - disthr
-
+		int d ;
 		if ( disthr + 2 > - dis )
 		{
 			disthr = - dis - 2 ;
 
 		}
-		for ( int d = - dis ; d > disthr + 1 ; d -- )
+		for ( d = - dis ; d > disthr + 1 ; d -- )
 		{
 			queues[ d ]->reset() ;
 			while ( (ele = queues[ d ]->getNext() ) != NULL )
@@ -7129,7 +7134,7 @@ public:
 			}
 		}
 
-		for (int d = disthr + 1 ; d >= 2 ; d -- )
+		for (d = disthr + 1 ; d >= 2 ; d -- )
 		{
 			
 			//delete queue3 ;
@@ -7301,7 +7306,7 @@ public:
 		delete fvol ;
 		delete queue2;
 		delete queue3;
-		for (int d = -dis ; d >= 2 ; d -- ) {
+		for (d = -dis ; d >= 2 ; d -- ) {
 			delete queues[d];
 		}
 		delete [] queues;
@@ -7844,7 +7849,7 @@ public:
 				{
 					if ( getDataAt( i, j, k ) >= 0 )
 					{
-						float v = grayvol->getDataAt(i,j,k) ;
+						float v = (float)grayvol->getDataAt(i,j,k) ;
 						if ( v > highthr || v <= lowthr )
 						{
 							setDataAt( i, j, k, MAX_ERODE ) ;
@@ -7876,7 +7881,6 @@ public:
 		gridQueueEle* ele ;
 		gridPoint* gp ;
 		double val = 0;
-		int tx, ty, tz ;
 		int ox, oy, oz ;
 		int score ;
 		Volume* scrvol = new Volume( this->sizex , this->sizey, this->sizez ) ;
@@ -8127,7 +8131,7 @@ public:
 					queue4->prepend( ox, oy, oz ) ;
 					numComplex ++ ;
 
-					nowComplex == 1 ;
+					nowComplex = 1 ;
 				}
 				else
 				{
@@ -8139,8 +8143,6 @@ public:
 
 						// printf("Error: %d\n", score);
 					}
-
-				}
 				/* Adding ends */
 					// Move its neighboring unvisited node to queue2
 					for ( int m = 0 ; m < 6 ; m ++ )
@@ -8154,6 +8156,8 @@ public:
 							queue2->prepend( nx, ny, nz ) ;
 						}
 					}
+				}
+
 				
 				/* Commented for debugging
 				
@@ -8242,7 +8246,7 @@ public:
 			oy = ele->y ;
 			oz = ele->z ;
 
-			if ( hasCell( ox, oy, oz ) )
+			if ( hasIsolatedFace( ox, oy, oz ) == 0 )
 			{
 				setDataAt( ox, oy, oz, -1 ) ;
 			}
@@ -8297,16 +8301,17 @@ public:
 						}
 					}
 				}
+		int wid = MAX_ERODE ;
+		#ifdef VERBOSE
 		printf("Total %d nodes\n", queue2->getNumElements() ) ;
 
 
 		// Perform erosion 
-		int wid = MAX_ERODE ;
 		printf("Start erosion to %d...\n", wid) ;
+		#endif
 		gridQueueEle* ele ;
 		gridPoint* gp ;
 		double val = 0;
-		int tx, ty, tz ;
 		int ox, oy, oz ;
 		int score ;
 		Volume* scrvol = new Volume( this->sizex , this->sizey, this->sizez ) ;
@@ -8555,7 +8560,7 @@ public:
 					queue4->prepend( ox, oy, oz ) ;
 					numComplex ++ ;
 
-					nowComplex == 1 ;
+					nowComplex = 1 ;
 				}
 				else
 				{
@@ -9102,6 +9107,7 @@ public:
 						}
 					}
 				}
+		int wid = MAX_ERODE ;
 		#ifdef VERBOSE
 		printf("Total %d nodes\n", queue2->getNumElements() ) ;
 		printf("Start erosion to %d...\n", wid) ;
@@ -9109,7 +9115,6 @@ public:
 
 
 		// Perform erosion 
-		int wid = MAX_ERODE ;
 		gridQueueEle* ele ;
 		gridPoint* gp ;
 		double val = 0;
@@ -9964,21 +9969,22 @@ public:
 			for ( int j = 0 ; j < sizey ; j ++ )
 				for ( int k = 0 ; k < sizez ; k ++ )
 				{
-					data[ ct ] = ( data[ ct ] <= thr ? out : in ) ;
+					data[ ct ] = (float)( data[ ct ] <= thr ? out : in ) ;
 					ct ++ ;
 				}
 	}
 
 	void smooth( float alpha )
 	{
+		int i ;
 		int size = sizex * sizey * sizez ;
 		float* ndata = new float[ size ] ;
-		for ( int i = 0 ; i < size ; i ++ )
+		for ( i = 0 ; i < size ; i ++ )
 		{
 			ndata[ i ] = data[ i ] ;
 		}
 
-		for (int i = 1 ; i < sizex - 1 ; i ++ )
+		for ( i = 1 ; i < sizex - 1 ; i ++ )
 			for ( int j = 1 ; j < sizey - 1 ; j ++ )
 				for ( int k = 1 ; k < sizez - 1 ; k ++ )
 				{
@@ -9993,7 +9999,7 @@ public:
 					ndata[ ct ] = ndata[ ct ] * alpha + ( 1 - alpha ) * v / 6 ;
 				}
 
-		for (int i = 0 ; i < size ; i ++ )
+		for ( i = 0 ; i < size ; i ++ )
 		{
 			data[ i ] = ndata[ i ] ;
 		}
@@ -10127,6 +10133,7 @@ public:
 	/* Rotation routine */
 	void rotateX ( double a )
 	{
+		int i ;
 		double * ndata = new double[ sizex * sizey * sizez ] ;
 		if ( sizex != sizey || sizex != sizez )
 		{
@@ -10135,7 +10142,7 @@ public:
 
 		int ct = 0 ;
 		double cent = ( sizex - 1 ) / 2.0 ;
-		for ( int i = 0 ; i < sizex ; i ++ )
+		for ( i = 0 ; i < sizex ; i ++ )
 			for ( int j = 0 ; j < sizey ; j ++ )
 				for ( int k = 0 ; k < sizez ; k ++ )
 				{
@@ -10179,7 +10186,7 @@ public:
 					ct ++ ;
 				}
 
-			for (int i = 0 ; i < sizex * sizey * sizez ; i ++ )
+			for (i = 0 ; i < sizex * sizey * sizez ; i ++ )
 			{
 				data[ct] = (float)ndata[ct] ;
 			}
@@ -11373,7 +11380,8 @@ public:
 		fwrite( cols, sizeof( int ), 3, fout ) ;
 
 		double dmin = 100000, dmax = -100000 ;
-		for ( int i = 0 ; i < sizex * sizey * sizez ; i ++ )
+		int i ;
+		for ( i = 0 ; i < sizex * sizey * sizez ; i ++ )
 		{
 			if ( data[ i ] < dmin )
 			{
@@ -11388,7 +11396,7 @@ public:
 		fwrite( ds, sizeof( float ), 3, fout ) ;
 
 		int zero = 0 ;
-		for (int i = 22 ; i < 256 ; i ++ )
+		for (i = 22 ; i < 256 ; i ++ )
 		{
 			fwrite( &zero, sizeof( int ), 1, fout ) ;
 		}
