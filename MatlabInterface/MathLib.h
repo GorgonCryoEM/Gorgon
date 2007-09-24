@@ -5,6 +5,7 @@
 #include "Combinatorics.h"
 #include "VectorLib.h"
 #include "ComplexNumber.h"
+#include "Vector3D.h"
 
 namespace wustl_mm {
 	namespace MatlabInterface {
@@ -39,7 +40,7 @@ namespace wustl_mm {
 		}
 
 		void MathLib::EigenAnalysis(EigenVectorsAndValues3D & eigenInformation) {
-			return mathWrapper->EigenAnalysis(eigenInformation);
+			return mathWrapper->EigenAnalysisMatlab(eigenInformation);
 		}
 
 		void MathLib::GetBinomialDistribution(ProbabilityDistribution1D & distributionInfo) {

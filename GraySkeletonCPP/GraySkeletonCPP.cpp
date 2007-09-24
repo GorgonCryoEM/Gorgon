@@ -87,6 +87,15 @@ void DisplayInputParams() {
 }
 
 int main( int args, char * argv[] ) {
+
+	//VolumeSkeletonizer * vs = new VolumeSkeletonizer();
+	//MRCReader * r = (MRCReader*)MRCReaderPicker::pick(argv[1]);
+	//Volume * imgVol = r->getVolume();
+	//vs->PerformPureJuSkeletonization(imgVol, argv[2], StringToDouble(argv[3]));
+	//imgVol->toOFFCells2(argv[2]);
+	////imgVol->toMRCFile(argv[2]);
+	//return 0;
+
 	clock_t start, finish;
 	start = clock();
 	int format, dimension, minGray, maxGray, minCurveSize, minSurfaceSize, stepSize;
@@ -142,7 +151,8 @@ int main( int args, char * argv[] ) {
 						delete reader;
 						skeletonizer3D = new VolumeSkeletonizer();
 						skeletonizer3D->NormalizeVolume(sourceVol);
-						outputVol = skeletonizer3D->PerformImmersionSkeletonizationAndPruning(sourceVol, minGray, maxGray, stepSize, minCurveSize, minSurfaceSize, outPath, false);
+						outputVol = skeletonizer3D->PerformImmersionSkeletonizationAndPruning(sourceVol, minGray, maxGray, stepSize, minCurveSize, minSurfaceSize, outPath, false, 1.0, 1.0, 1.0);
+						outputVol->toOFFCells2((char *)(outFile + ".off").c_str());
 						outputVol->toMRCFile((char *)outFile.c_str());
 						delete sourceVol;
 						delete skeletonizer3D;
@@ -193,8 +203,9 @@ int main( int args, char * argv[] ) {
 						skeletonizer3D = new VolumeSkeletonizer();
 						skeletonizer3D->NormalizeVolume(sourceVol);
 						skeletonizer3D->CleanupVolume(sourceVol, minGray, maxGray);
-						outputVol = skeletonizer3D->PerformImmersionSkeletonizationAndPruning(sourceVol, minGray, maxGray, stepSize, minCurveSize, minSurfaceSize, outPath, true);
+						outputVol = skeletonizer3D->PerformImmersionSkeletonizationAndPruning(sourceVol, minGray, maxGray, stepSize, minCurveSize, minSurfaceSize, outPath, true, pointThreshold, curveThreshold, surfaceThreshold);
 						outputVol->toMRCFile((char *)outFile.c_str());
+						outputVol->toOFFCells2((char *)(outFile + ".off").c_str());
 						delete sourceVol;
 						delete skeletonizer3D;
 						delete outputVol;

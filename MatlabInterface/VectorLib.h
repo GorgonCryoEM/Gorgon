@@ -12,6 +12,7 @@ namespace wustl_mm {
 			static Vector3D Difference(Vector3D & v1, Vector3D & v2);
 			static Vector3DInt Difference(Vector3DInt & v1, Vector3DInt & v2);
 			static Vector3D Addition(Vector3D & v1, Vector3D & v2);
+			static Vector3D ScalarMultiply(double s, Vector3D & v);
 			static Vector3DInt Addition(Vector3DInt & v1, Vector3DInt & v2);
 			static Vector3D Initialize(double x, double y, double z);
 			static Vector3DInt Initialize(int x, int y, int z);
@@ -53,6 +54,10 @@ namespace wustl_mm {
 			Vector3D vRet;
 			Addition(vRet, v1, v2);
 			return vRet;
+		}
+
+		Vector3D VectorLib::ScalarMultiply(double s, Vector3D & v) {
+			return Initialize(s*v.values[0], s*v.values[1], s*v.values[2]);
 		}
 
 		Vector3DInt VectorLib::Addition(Vector3DInt & v1, Vector3DInt & v2) {

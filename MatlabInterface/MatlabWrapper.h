@@ -9,7 +9,7 @@
 #include "VectorLib.h"
 #include "ComplexNumber.h"
 #include "eigen.h"
-//#include "engine.h"
+#include "engine.h"
 
 namespace wustl_mm {
 	namespace MatlabInterface {
@@ -21,17 +21,17 @@ namespace wustl_mm {
 			void EigenAnalysis(EigenVectorsAndValues3D & eigenInformation);
 			void EigenAnalysisMatlab(EigenVectorsAndValues3D & eigenInformation);
 		private:
-			//Engine * mathEngine;
+			Engine * mathEngine;
 		};
 
 		MatlabWrapper::MatlabWrapper() {
-			//mathEngine = engOpen(NULL);
-			//engSetVisible(mathEngine, false);
+			mathEngine = engOpen(NULL);
+			engSetVisible(mathEngine, false);
 		}
 
 		MatlabWrapper::~MatlabWrapper() {
-			//engClose(mathEngine);
-			//delete mathEngine;
+			engClose(mathEngine);
+			delete mathEngine;
 		}
 
 		void MatlabWrapper::EigenAnalysis(EigenVectorsAndValues2D & eigenInformation) {
@@ -65,14 +65,9 @@ namespace wustl_mm {
 		}
 
 		void MatlabWrapper::EigenAnalysis(EigenVectorsAndValues3D & eigenInformation) {
-			// Correct
 			float st[3][3] = {{eigenInformation.structureTensor[0][0], eigenInformation.structureTensor[0][1], eigenInformation.structureTensor[0][2]},
 							  {eigenInformation.structureTensor[1][0], eigenInformation.structureTensor[1][1], eigenInformation.structureTensor[1][2]},
 							  {eigenInformation.structureTensor[2][0], eigenInformation.structureTensor[2][1], eigenInformation.structureTensor[2][2]}};
-			// Wrong
-			//float st[3][3] = {{eigenInformation.structureTensor[0][0], eigenInformation.structureTensor[1][0], eigenInformation.structureTensor[2][0]},
-			//				  {eigenInformation.structureTensor[0][1], eigenInformation.structureTensor[1][1], eigenInformation.structureTensor[2][1]},
-			//				  {eigenInformation.structureTensor[0][2], eigenInformation.structureTensor[1][2], eigenInformation.structureTensor[2][2]}};
 
 			float values[3];
 			float vectors[3][3];
@@ -87,7 +82,7 @@ namespace wustl_mm {
 		}
 
 		void MatlabWrapper::EigenAnalysisMatlab(EigenVectorsAndValues3D & eigenInformation) {
-			/*mxArray * mxMathData = mxCreateDoubleMatrix(3, 3, mxREAL);
+			mxArray * mxMathData = mxCreateDoubleMatrix(3, 3, mxREAL);
 
 			memcpy(mxGetPr(mxMathData), eigenInformation.structureTensor, 9*sizeof(double));
 		
@@ -113,7 +108,7 @@ namespace wustl_mm {
 			delete mxEigenValue1;
 			delete mxEigenValue2;
 			delete mxEigenValue3;
-			delete mxEigenVectors;*/
+			delete mxEigenVectors;
 		}
 	}
 }

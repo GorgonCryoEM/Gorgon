@@ -52,7 +52,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="libeng.lib libfixedpoint.lib libmat.lib libmex.lib libmwservices.lib libmx.lib libut.lib mclcom.lib mclcommain.lib mclmcr.lib mclmcrrt.lib mclxlmain.lib"
+				AdditionalDependencies="libeng.lib libfixedpoint.lib libmat.lib libmex.lib libmwservices.lib libmx.lib libut.lib"
 				AdditionalLibraryDirectories="C:\MATLAB701\extern\lib\win32\microsoft\msvc71"
 				GenerateDebugInformation="true"
 				GenerateMapFile="false"
@@ -105,7 +105,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories=""
+				AdditionalIncludeDirectories="C:\MATLAB701\extern\include"
 				PreprocessorDefinitions="WIN32;_CRT_SECURE_NO_DEPRECATE"
 			/>
 			<Tool
@@ -119,7 +119,8 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalLibraryDirectories=""
+				AdditionalDependencies="libeng.lib libfixedpoint.lib libmat.lib libmex.lib libmwservices.lib libmx.lib libut.lib"
+				AdditionalLibraryDirectories="C:\MATLAB701\extern\lib\win32\microsoft\msvc71"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -170,7 +171,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="C:\MATLAB701\extern\include"
+				AdditionalIncludeDirectories="C:\_WashU\ssa1\source\ExternalLibraries\mpatrol\include;C:\MATLAB701\extern\include"
 				DebugInformationFormat="4"
 			/>
 			<Tool
@@ -184,8 +185,8 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="libeng.lib libfixedpoint.lib libmat.lib libmex.lib libmwservices.lib libmx.lib libut.lib mclcom.lib mclcommain.lib mclmcr.lib mclmcrrt.lib mclxlmain.lib"
-				AdditionalLibraryDirectories="C:\MATLAB701\extern\lib\win32\microsoft\msvc71"
+				AdditionalDependencies="mpatrol.lib libeng.lib libfixedpoint.lib libmat.lib libmex.lib libmwservices.lib libmx.lib libut.lib"
+				AdditionalLibraryDirectories="C:\_WashU\ssa1\source\ExternalLibraries\mpatrol\bin;C:\MATLAB701\extern\lib\win32\microsoft\msvc71"
 				GenerateDebugInformation="true"
 				GenerateMapFile="false"
 			/>
@@ -259,6 +260,10 @@
 			</File>
 			<File
 				RelativePath=".\MatlabWrapper.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Vector3D.h"
 				>
 			</File>
 			<File
