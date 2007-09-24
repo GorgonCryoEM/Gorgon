@@ -267,7 +267,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\VectorLib.h"
+				RelativePath=".\Vector3DInt.h"
 				>
 			</File>
 			<Filter

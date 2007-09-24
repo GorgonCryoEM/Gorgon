@@ -310,7 +310,7 @@ namespace wustl_mm {
 				for(int y = 0; y < sizeY; y++) {
 					for(int z = 0; z < sizeZ; z++) {
 						if(points->getDataAt(x, y, z) > 0) {
-							surfacePoints.points.push_back(VectorLib::Initialize(x, y, z));
+							surfacePoints.points.push_back(Vector3DInt(x, y, z));
 						}
 					}
 				}

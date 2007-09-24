@@ -10,7 +10,7 @@
 #include "..\SkeletonMaker\PriorityQueue.h"
 #include "..\MatlabInterface\MathLib.h"
 #include "..\MatlabInterface\DataStructures.h"
-#include "..\MatlabInterface\VectorLib.h"
+#include "..\MatlabInterface\Vector3D.h"
 #include <string>
 #include <time.h>
 
@@ -112,38 +112,39 @@ namespace wustl_mm {
 						cost = imageEigen.values[2] * imageEigen.values[2] / (imageEigen.values[0] * imageEigen.values[1]);
 						break;
 					case PRUNING_CLASS_PRUNE_CURVES:
-			/*			Vector3D n1 = skeletonDirection
-						Vector3D m1 = VectorLib::Initialize();
-						Vector3D m2 = VectorLib::Initialize();*/
-						/*dotValue = VectorLib::DotProduct(skeletonDirection, imageEigen.vectors[2]);
-						ratio = (2.0 * imageEigen.values[2])/ (imageEigen.values[0] + imageEigen.values[1]);
-						cost = abs(dotValue) * (1-ratio);*/
+						{
+				/*			Vector3D n1 = skeletonDirection
+							Vector3D m1 = Vector3D();
+							Vector3D m2 = Vector3D();*/
+							/*dotValue = skeletonDirection * imageEigen.vectors[2];
+							ratio = (2.0 * imageEigen.values[2])/ (imageEigen.values[0] + imageEigen.values[1]);
+							cost = abs(dotValue) * (1-ratio);*/
 
-						Vector3D n1, n2, m1, m2;
-						skelDirectionST = XYZtoUVW(skeletonDirection, imageEigen.vectors[0],imageEigen.vectors[1], imageEigen.vectors[2]);
-						FindOrthogonalAxes(skelDirectionST, n1, n2);
+							Vector3D n1, n2, m1, m2;
+							skelDirectionST = XYZtoUVW(skeletonDirection, imageEigen.vectors[0],imageEigen.vectors[1], imageEigen.vectors[2]);
+							FindOrthogonalAxes(skelDirectionST, n1, n2);
 
-						VectorLib::Initialize(m1, n1.values[0]/imageEigen.values[0], n1.values[1]/imageEigen.values[1], n1.values[2]/imageEigen.values[2]);
-						VectorLib::Initialize(m2, n2.values[0]/imageEigen.values[0], n2.values[1]/imageEigen.values[1], n2.values[2]/imageEigen.values[2]);
-						theta = atan( 2.0 * VectorLib::DotProduct(m1, m2) / (VectorLib::DotProduct(m1, m1) - VectorLib::DotProduct(m2, m2))) / 2.0;
-						temp = VectorLib::Addition(VectorLib::ScalarMultiply(cos(theta), m1), VectorLib::ScalarMultiply(sin(theta), m2));
-						a = 1.0 / sqrt(VectorLib::DotProduct(temp, temp));
-						temp = VectorLib::Addition(VectorLib::ScalarMultiply(sin(theta), m1), VectorLib::ScalarMultiply(cos(theta), m2));
-						b = 1.0 / sqrt(VectorLib::DotProduct(temp, temp));
+							m1 = Vector3D(n1.values[0]/imageEigen.values[0], n1.values[1]/imageEigen.values[1], n1.values[2]/imageEigen.values[2]);
+							m2 = Vector3D(n2.values[0]/imageEigen.values[0], n2.values[1]/imageEigen.values[1], n2.values[2]/imageEigen.values[2]);
+							theta = atan( 2.0 * (m1 * m2) / ((m1 * m1) - (m2 * m2))) / 2.0;
+							temp = (m1 * cos(theta)) + (m2 * sin(theta));
+							a = 1.0 / (temp * temp);
+							temp = (m1 * sin(theta)) + (m2 * cos(theta));
+							b = 1.0 / sqrt(temp * temp);
 
-						cost = a*b / (imageEigen.values[0] * imageEigen.values[1]);
-						//cost = sqrt(VectorLib::DotProduct(m1, m1)) * sqrt(VectorLib::DotProduct(m2, m2)) / (imageEigen.values[0] * imageEigen.values[1]);
-
+							cost = a*b / (imageEigen.values[0] * imageEigen.values[1]);
+							//cost = (sqrt(m1 * m1) * sqrt(m2 * m2)) / (imageEigen.values[0] * imageEigen.values[1]);
+						}
 						break;
 					case PRUNING_CLASS_PRUNE_SURFACES:
-						/*dotValue = VectorLib::DotProduct(skeletonDirection, imageEigen.vectors[0]);
+						/*dotValue = skeletonDirection * imageEigen.vectors[0];
 						ratio = (imageEigen.values[1] + imageEigen.values[2])/ (2.0*imageEigen.values[0]);
 						cost = abs(dotValue)*(1 - ratio);	*/
 						
 						double uContri, vContri, wContri;
 						skelDirectionST = XYZtoUVW(skeletonDirection, imageEigen.vectors[0], imageEigen.vectors[1], imageEigen.vectors[2]);
-						temp = VectorLib::Initialize(imageEigen.values[0] * skelDirectionST.values[0], imageEigen.values[1] * skelDirectionST.values[1], imageEigen.values[2] * skelDirectionST.values[2]);
-						cost = sqrt(VectorLib::DotProduct(temp, temp)) / imageEigen.values[0];
+						temp = Vector3D(imageEigen.values[0] * skelDirectionST.values[0], imageEigen.values[1] * skelDirectionST.values[1], imageEigen.values[2] * skelDirectionST.values[2]);
+						cost = sqrt(temp * temp) / imageEigen.values[0];
 
 						break;
 				}
@@ -189,11 +190,11 @@ namespace wustl_mm {
 		}
 
 		Vector3D VolumeSkeletonizer::XYZtoUVW(Vector3D vec, Vector3D u, Vector3D v, Vector3D w) {
-			double uContri = VectorLib::DotProduct(vec, u); 
-			double vContri = VectorLib::DotProduct(vec, v);
-			double wContri = VectorLib::DotProduct(vec, w);
-			Vector3D inUVW = VectorLib::Initialize(uContri, vContri, wContri);
-			VectorLib::Normalize(inUVW);
+			double uContri = vec * u; 
+			double vContri = vec * v;
+			double wContri = vec * w;
+			Vector3D inUVW = Vector3D(uContri, vContri, wContri);
+			inUVW.Normalize();
 			return inUVW;
 		}
 
@@ -210,7 +211,7 @@ namespace wustl_mm {
 				for(int y = 0; y < sourceVolume->getSizeY(); y = y + sourceVolume->getSizeY()-1) {
 					for(int z = 0; z < sourceVolume->getSizeZ(); z = z + sourceVolume->getSizeZ()-1) {
 						index = sourceVolume->getIndex(x, y, z);
-						VectorLib::Initialize(gradient[index], 0, 0, 0);
+						gradient[index] = Vector3D(0, 0, 0);
 					}
 				}
 			}
@@ -219,9 +220,9 @@ namespace wustl_mm {
 				for(int y = 1; y < sourceVolume->getSizeY()-1; y++) {
 					for(int z = 1; z < sourceVolume->getSizeZ()-1; z++) {
 						index = sourceVolume->getIndex(x, y, z);
-						gradient[index].values[0] = sourceVolume->getDataAt(x+1, y, z) - sourceVolume->getDataAt(x-1, y, z);
-						gradient[index].values[1] = sourceVolume->getDataAt(x, y+1, z) - sourceVolume->getDataAt(x, y-1, z);
-						gradient[index].values[2] = sourceVolume->getDataAt(x, y, z+1) - sourceVolume->getDataAt(x, y, z-1);
+						gradient[index] = Vector3D(sourceVolume->getDataAt(x+1, y, z) - sourceVolume->getDataAt(x-1, y, z),
+												   sourceVolume->getDataAt(x, y+1, z) - sourceVolume->getDataAt(x, y-1, z),
+												   sourceVolume->getDataAt(x, y, z+1) - sourceVolume->getDataAt(x, y, z-1));
 					}
 				}
 			}
@@ -239,7 +240,7 @@ namespace wustl_mm {
 						index = sourceVolume->getIndex(x, y, z);
 						for(int a = 0; a < 8; a++) {
 							index2 = a * size + index;
-							VectorLib::Initialize(gradient[index2], 0, 0, 0);
+							gradient[index2] = Vector3D(0, 0, 0);
 						}
 					}
 				}
@@ -307,8 +308,8 @@ namespace wustl_mm {
 						
 						index = skeleton->getIndex(x, y, z);
 
-						VectorLib::Initialize(directions[index], 0,0,0);
-						VectorLib::Initialize(currentPos, x, y, z);
+						directions[index] = Vector3D(0,0,0);
+						currentPos = Vector3D(x, y, z);
 
 						if(DiscreteMesh::IsPoint(skeleton, x, y, z) || (skeleton->getDataAt(x, y, z) <= 0)) {
 							// Set direction to {0,0,0} already done by default.
@@ -316,18 +317,18 @@ namespace wustl_mm {
 							n6Count = 0;
 							for(int i = 0; i < 6; i++) {							
 								if(skeleton->getDataAt(x + VOLUME_NEIGHBORS_6[i][0], y + VOLUME_NEIGHBORS_6[i][1], z + VOLUME_NEIGHBORS_6[i][2]) > 0) {
-									VectorLib::Initialize(n6[n6Count], x + VOLUME_NEIGHBORS_6[i][0], y + VOLUME_NEIGHBORS_6[i][1], z + VOLUME_NEIGHBORS_6[i][2]);
+									n6[n6Count] = Vector3D(x + VOLUME_NEIGHBORS_6[i][0], y + VOLUME_NEIGHBORS_6[i][1], z + VOLUME_NEIGHBORS_6[i][2]);
 									if(n6Count > 0) {
-										VectorLib::Difference(v1, n6[n6Count-1], n6[n6Count]);
-										VectorLib::Addition(directions[index], directions[index], v1);
+										v1 = n6[n6Count-1] - n6[n6Count];
+										directions[index] = directions[index] + v1;
 									}
 									n6Count++;
 								}
 							}
 							if(n6Count == 1) {
-								VectorLib::Initialize(v1, x, y, z);
-								VectorLib::Difference(v1, v1, n6[0]);
-								VectorLib::Addition(directions[index], directions[index], v1);
+								v1 = Vector3D(x, y, z);
+								v1 = v1 - n6[0];
+								directions[index] = directions[index] + v1;
 							}
 
 						} else if (DiscreteMesh::IsSurfaceBody(skeleton, x, y, z, true) || DiscreteMesh::IsSurfaceBorder(skeleton, x, y, z)) {
@@ -340,29 +341,29 @@ namespace wustl_mm {
 								}
 							}
 							Vector3D faces[4];
-							VectorLib::Initialize(faces[0], 0, 0, 0);
+							faces[0] = Vector3D(0, 0, 0);
 							for(int i = 0; i < 12; i++) {
 								if(facesFound[i]) {
 									for(int j = 0; j < 3; j++) {									
-										VectorLib::Initialize(faces[j+1], VOLUME_NEIGHBOR_FACES[i][j][0], VOLUME_NEIGHBOR_FACES[i][j][1], VOLUME_NEIGHBOR_FACES[i][j][2]);
+										faces[j+1] = Vector3D(VOLUME_NEIGHBOR_FACES[i][j][0], VOLUME_NEIGHBOR_FACES[i][j][1], VOLUME_NEIGHBOR_FACES[i][j][2]);
 									}
 
 									if (facesFound[VOLUME_NEIGHBOR_NUMBERS[i][0]] || facesFound[VOLUME_NEIGHBOR_NUMBERS[i][1]]) {										
-										VectorLib::Difference(v0, faces[3], faces[0]);
-										VectorLib::Difference(v1, faces[1], faces[0]);
+										v0 = faces[3] - faces[0];
+										v1 = faces[1] - faces[0];
 									} else {
-										VectorLib::Difference(v0, faces[1], faces[0]);
-										VectorLib::Difference(v1, faces[3], faces[0]);
+										v0 = faces[1] - faces[0];
+										v1 = faces[3] - faces[0];
 									}
-									VectorLib::CrossProduct(v2, v0, v1);
-									VectorLib::Normalize(v2);
-									VectorLib::Addition(directions[index], directions[index], v2);		
+									v2 = v0 ^ v1;
+									v2.Normalize();
+									directions[index] = directions[index] + v2;		
 								}						
 							}
 
 						}
 
-						VectorLib::Normalize(directions[index]);
+						directions[index].Normalize();
 					}
 				}
 			}
@@ -415,14 +416,14 @@ namespace wustl_mm {
 			}
 		}
 		void VolumeSkeletonizer::FindOrthogonalAxes(Vector3D axis, Vector3D & res1, Vector3D & res2) {
-			res1 = VectorLib::Initialize(1.0, 0.0, 0.0);
-			if(abs(VectorLib::DotProduct(axis, res1)) > 0.95) {
-				res1 = VectorLib::Initialize(0.0, 1.0, 0.0);
+			res1 = Vector3D(1.0, 0.0, 0.0);
+			if(abs(axis * res1) > 0.95) {
+				res1 = Vector3D(0.0, 1.0, 0.0);
 			}
-			res1 = VectorLib::CrossProduct(axis, res1);
-			res2 = VectorLib::CrossProduct(axis, res1);
-			VectorLib::Normalize(res1);
-			VectorLib::Normalize(res2);
+			res1 = axis ^ res1;
+			res2 = axis ^ res1;
+			res1.Normalize();
+			res2.Normalize();
 		}
 
 		void VolumeSkeletonizer::GetEigenResult(EigenResults3D & returnVal, Vector3D * imageGradient, ProbabilityDistribution3D & gaussianFilter, int x, int y, int z, int sizeX, int sizeY, int sizeZ, int gaussianFilterRadius, bool clear) {
@@ -467,7 +468,7 @@ namespace wustl_mm {
 				}
 
 				for(int r = 0; r < 3; r++) {
-					//VectorLib::Normalize(returnVal.vectors[r]);
+					//returnVal.vectors[r].Normalize();
 				}
 				
 				assert((returnVal.values[0] >= returnVal.values[1]) && (returnVal.values[1] >= returnVal.values[2]));
@@ -524,7 +525,7 @@ namespace wustl_mm {
 				}
 
 				for(int r = 0; r < 3; r++) {
-					//VectorLib::Normalize(returnVal.vectors[r]);
+					//returnVal.vectors[r].Normalize();
 				}
 				
 				assert((returnVal.values[0] >= returnVal.values[1]) && (returnVal.values[1] >= returnVal.values[2]));
@@ -888,8 +889,8 @@ namespace wustl_mm {
 			double theta, theta1, theta2, theta3, s;
 			Vector3D axis, axis1, axis2, axis3;
 			Vector3D newY, newX;
-			Vector3D xAxis = VectorLib::Initialize(1.0, 0.0, 0.0);
-			Vector3D yAxis = VectorLib::Initialize(0.0, 1.0, 0.0);
+			Vector3D xAxis = Vector3D(1.0, 0.0, 0.0);
+			Vector3D yAxis = Vector3D(0.0, 1.0, 0.0);
 
 			double sizeX, sizeY, sizeZ;
 
@@ -901,15 +902,15 @@ namespace wustl_mm {
 							colorCost = cost->getDataAt(x, y, z);
 							HueR(colorCost, r, g, b);
 
-							axis1 = VectorLib::CrossProduct(eigenResults[index].vectors[0], xAxis);
-							VectorLib::Normalize(axis1);
-							theta1 = acos(VectorLib::DotProduct(eigenResults[index].vectors[0], xAxis));
-
-							newX = VectorLib::Rotate(xAxis, axis1, theta1);
-							newY = VectorLib::Rotate(yAxis, axis1, theta1);
-							axis2 = VectorLib::CrossProduct(eigenResults[index].vectors[1], newY);
-							VectorLib::Normalize(axis2);
-							theta2 = acos(VectorLib::DotProduct(eigenResults[index].vectors[1], newY));
+							axis1 = eigenResults[index].vectors[0] ^ xAxis;
+							axis1.Normalize();
+							theta1 = acos(eigenResults[index].vectors[0] * xAxis);
+							
+							newX = xAxis.Rotate(axis1, theta1);
+							newY = yAxis.Rotate(axis1, theta1);
+							axis2 = (eigenResults[index].vectors[1] ^ newY);
+							axis2.Normalize();
+							theta2 = acos(eigenResults[index].vectors[1] * newY);
 
 							if(doInverse) {
 								sizeX = isZero(eigenResults[index].values[0])? 0.00001 :eigenResults[index].values[2]/eigenResults[index].values[0];
@@ -988,9 +989,9 @@ namespace wustl_mm {
 					for(int x = 0; x < skeleton->getSizeX(); x++) {
 						if(skeleton->getDataAt(x, y, z) > 0) {
 							index = skeleton->getIndex(x, y, z);
-							Vector3D axis = VectorLib::CrossProduct(skeletonDirections[index], VectorLib::Initialize(1.0, 0.0, 0.0));
-							VectorLib::Normalize(axis);
-							double angle = -VectorLib::DotProduct(skeletonDirections[index], VectorLib::Initialize(1.0, 0.0, 0.0));
+							Vector3D axis = skeletonDirections[index] ^ Vector3D(1.0, 0.0, 0.0);
+							axis.Normalize();
+							double angle = -(skeletonDirections[index] * Vector3D(1.0, 0.0, 0.0));
 							angle = acos(angle);
 
 							if((axis.values[0] == 0) && (axis.values[1] == 0) && (axis.values[2] == 0)) {
@@ -1023,7 +1024,7 @@ namespace wustl_mm {
 			for(int x = 0; x < skeleton->getSizeX(); x++) {
 				for(int y = 0; y < skeleton->getSizeY(); y++) {
 					for(int z = 0; z < skeleton->getSizeZ(); z++) {				
-						bins[(int)round(skeleton->getDataAt(x, y, z))].push_back(VectorLib::Initialize(x, y, z));
+						bins[(int)round(skeleton->getDataAt(x, y, z))].push_back(Vector3DInt(x, y, z));
 					}
 				}
 			}
@@ -1175,7 +1176,7 @@ namespace wustl_mm {
 			for(int x = 0; x < skeleton->getSizeX(); x++) {
 				for(int y = 0; y < skeleton->getSizeY(); y++) {
 					for(int z = 0; z < skeleton->getSizeZ(); z++) {				
-						bins[(int)round(skeleton->getDataAt(x, y, z))].push_back(VectorLib::Initialize(x, y, z));
+						bins[(int)round(skeleton->getDataAt(x, y, z))].push_back(Vector3DInt(x, y, z));
 					}
 				}
 			}

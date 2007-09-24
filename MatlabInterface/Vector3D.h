@@ -1,116 +1,156 @@
 #ifndef VECTOR3D_H
 #define VECTOR3D_H
 
+#define round(f) ((f >= 0)?(int)(f + .5):(int)(f - .5))
+
+#include <stdio.h>
+#include <math.h>
+
 namespace wustl_mm {
 	namespace MatlabInterface {
-		class MyVector3D {
+		class Vector3D {
 		public:
-			MyVector3D();
-			MyVector3D(double x, double y, double z);
-			~MyVector3D();
+			Vector3D();
+			Vector3D(double x, double y, double z);
+			~Vector3D();
 
 			double X();
 			double Y();
 			double Z();
+			int XInt();
+			int YInt();
+			int ZInt();
 
-			double MyVector3D::operator*(MyVector3D &d ); // Dot Product
+			double Vector3D::operator*(Vector3D &d ); // Dot Product
+						
+			Vector3D operator+(Vector3D &d );
+			Vector3D operator-();
+			Vector3D operator-(Vector3D &d );
+			Vector3D operator^(Vector3D &d );		 // Cross Product
+			Vector3D operator*(double s);			
+			Vector3D& operator=(const Vector3D& d);
+			Vector3D& operator+=(const Vector3D& d);
+			Vector3D& operator-=(const Vector3D& d);
+			Vector3D Rotate(Vector3D axis, double angle);
+			void Normalize();
 
-			MyVector3D operator+(MyVector3D &d );
-			MyVector3D operator-();
-			MyVector3D operator-(MyVector3D &d );
-			MyVector3D operator^(MyVector3D &d );		 // Cross Product
-			MyVector3D operator*(double s);			
-			MyVector3D& operator+=(const MyVector3D& d);
-			MyVector3D& operator-=(const MyVector3D& d);
-			MyVector3D Rotate(MyVector3D axis, double angle);
-
-			static void Normalize(MyVector3D d);
+			static Vector3D Normalize(Vector3D d);
 
 			double values[3];
 		};
 
-		MyVector3D::MyVector3D() {
+		Vector3D::Vector3D() {
 			values[0] = 0.0;
 			values[1] = 0.0;
 			values[2] = 0.0;
 		}
 
-		MyVector3D::MyVector3D(double x, double y, double z) {
+		Vector3D::Vector3D(double x, double y, double z) {
 			values[0] = x;
 			values[1] = y;
 			values[2] = z;
 		}
 
-		MyVector3D::~MyVector3D() {
+		Vector3D::~Vector3D() {
 		}
 
-		double MyVector3D::X() {
+		double Vector3D::X() {
 			return values[0];
 		}
 
-		double MyVector3D::Y() {
+		double Vector3D::Y() {
 			return values[1];
 		}
 
-		double MyVector3D::Z() {
+		double Vector3D::Z() {
 			return values[2];
 		}
 
 
-		double MyVector3D::operator*(MyVector3D &d ) {		// Dot Product
+		int Vector3D::XInt() {
+			return (int)round(values[0]);
+		}
+
+		int Vector3D::YInt() {
+			return (int)round(values[1]);
+		}
+
+		int Vector3D::ZInt() {
+			return (int)round(values[2]);
+		}
+
+
+		double Vector3D::operator*(Vector3D &d ) {		// Dot Product
 			return X() * d.X() + Y() * d.Y() + Z() * d.Z();
 		}
 
-		MyVector3D MyVector3D::operator+(MyVector3D &d ) {
-			return MyVector3D(X() + d.X(), Y() + d.Y(), Z() + d.Z());	
+		Vector3D Vector3D::operator+(Vector3D &d ) {
+			return Vector3D(X() + d.X(), Y() + d.Y(), Z() + d.Z());	
 		}
 
-		MyVector3D MyVector3D::operator-() {
-			return MyVector3D(-X(), -Y(), -Z());	
+		Vector3D Vector3D::operator-() {
+			return Vector3D(-X(), -Y(), -Z());	
 		}
 
-		MyVector3D MyVector3D::operator-(MyVector3D &d ) {
-			return MyVector3D(X() - d.X(), Y() - d.Y(), Z() - d.Z());	
+		Vector3D Vector3D::operator-(Vector3D &d ) {
+			return Vector3D(X() - d.X(), Y() - d.Y(), Z() - d.Z());	
 		}
 
-		MyVector3D MyVector3D::operator^(MyVector3D &d ) { // Cross Product
-			return MyVector3D(
+		Vector3D Vector3D::operator^(Vector3D &d ) { // Cross Product
+			return Vector3D(
 				values[1] * d.values[2] - values[2] * d.values[1], 
 				values[2] * d.values[0] - values[0] * d.values[2], 
 				values[0] * d.values[1] - values[1] * d.values[0]);	
 		}
 
-		MyVector3D MyVector3D::operator*(double s) {
-			return MyVector3D(X()*s, Y()*s, Z()*s);
+		Vector3D Vector3D::operator*(double s) {
+			return Vector3D(X()*s, Y()*s, Z()*s);
 		}
 
-		MyVector3D& MyVector3D::operator+=(const MyVector3D& d) {
+		Vector3D& Vector3D::operator+=(const Vector3D& d) {
 			for(int i = 0; i < 3; i++) {
 				values[i] += d.values[i];
 			}
 			return *this;
 		}
 
-		MyVector3D& MyVector3D::operator-=(const MyVector3D& d) {
+		Vector3D& Vector3D::operator-=(const Vector3D& d) {
 			for(int i = 0; i < 3; i++) {
 				values[i] -= d.values[i];
 			}
 			return *this;
 		}
-		MyVector3D Normalize(MyVector3D d) {
+		Vector3D& Vector3D::operator=(const Vector3D& d) {
+			for(int i = 0; i < 3; i++) {
+				values[i] = d.values[i];
+			}
+			return *this;
+		}
+
+		void Vector3D::Normalize() {
 			double base = 0;
 			for(int i = 0; i < 3; i++) {
-				base += d.values[i] * d.values[i];
+				base += (values[i] * values[i]);
 			}
 			if(base == 0) {
-				return MyVector3D();
+				values[0] = 0;
+				values[1] = 0;
+				values[2] = 0;
 			} else {				
 				base = sqrt(base);
-				return MyVector3D(d.X() / base, d.Y() / base, d.Z() / base); 
+				values[0] = values[0]/base;
+				values[1] = values[1]/base;
+				values[2] = values[2]/base;
 			}
 		}
 
-		MyVector3D MyVector3D::Rotate(MyVector3D axis, double angle) {
+		Vector3D Vector3D::Normalize(Vector3D d) {
+			Vector3D ret = d;
+			d.Normalize();
+			return ret;
+		}
+
+		Vector3D Vector3D::Rotate(Vector3D axis, double angle) {
 			double r = angle;
 			double a = axis.values[0];
 			double b = axis.values[1];
@@ -127,7 +167,7 @@ namespace wustl_mm {
 							  {2*(q3*q1 - q0*q2),					2*(q3*q2 + q0*q1),					q0*q0 - q1*q1 - q2*q2 + q3*q3}};
 
 
-			MyVector3D v = MyVector3D(0.0, 0.0, 0.0);
+			Vector3D v = Vector3D(0.0, 0.0, 0.0);
 			for(int x = 0; x < 3; x++) {
 				for(int y = 0; y < 3; y++) {
 					v.values[x] = v.values[x] + R[y][x] * values[y];

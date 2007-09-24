@@ -385,7 +385,7 @@ namespace wustl_mm {
 			//test->setDataAt(3,4,2,96);
 			//test->setDataAt(4,4,2,111);
 			//test->threshold(60, 0, 1, 0, false);
-			////printf("Test val %i\n", DiscreteMesh::GetImmersionSkeletalValue(test, VectorLib::Initialize(2,2,2)));
+			////printf("Test val %i\n", DiscreteMesh::GetImmersionSkeletalValue(test, Vector3D(2,2,2)));
 
 			//if(DiscreteMesh::IsSurfaceBody(test, 2, 2, 2, true)) {
 			//	printf("true");
@@ -405,7 +405,7 @@ namespace wustl_mm {
 
 			for(int x = 0; x < skeleton->GetSizeX(); x++) {
 				for(int y = 0; y < skeleton->GetSizeY(); y++) {
-					bins[skeleton->GetDataAt(x, y)].push_back(VectorLib::Initialize(x, y, 0));
+					bins[skeleton->GetDataAt(x, y)].push_back(Vector3DInt(x, y, 0));
 				}
 			}
 
@@ -496,8 +496,8 @@ namespace wustl_mm {
 				for(int y = 1; y < skeleton->GetSizeY()-1; y++) {
 					index = skeleton->GetIndex(x, y);
 
-					VectorLib::Initialize(directions[index], 0,0,0);
-					VectorLib::Initialize(currentPos, x, y, 0);
+					directions[index] = Vector3D(0,0,0);
+					currentPos = Vector3D(x, y, 0);
 			
 					if(IsPoint(skeleton, x, y) || (skeleton->GetDataAt(x, y) == 0)) {
 						// Set direction to {0,0,0} already done by default.
@@ -505,21 +505,21 @@ namespace wustl_mm {
 						n4Count = 0;
 						for(int i = 0; i < 4; i++) {							
 							if(skeleton->GetDataAt(x + IMAGE_NEIGHBORS_4[i][0], y + IMAGE_NEIGHBORS_4[i][1]) > 0) {
-								VectorLib::Initialize(n4[n4Count], x + IMAGE_NEIGHBORS_4[i][0], y + IMAGE_NEIGHBORS_4[i][1], 0);
+								n4[n4Count] = Vector3D(x + IMAGE_NEIGHBORS_4[i][0], y + IMAGE_NEIGHBORS_4[i][1], 0);
 								if(n4Count > 0) {
-									VectorLib::Difference(v1, n4[n4Count-1], n4[n4Count]);
-									VectorLib::Addition(directions[index], directions[index], v1);
+									v1  = n4[n4Count-1] - n4[n4Count];
+									directions[index] = directions[index] + v1;
 								}
 								n4Count++;
 							}
 						}
 						if(n4Count == 1) {
-							VectorLib::Initialize(v1, x, y, 0);
-							VectorLib::Difference(v1, v1, n4[0]);
-							VectorLib::Addition(directions[index], directions[index], v1);
+							v1 = Vector3D(x, y, 0);
+							v1 = v1 - n4[0];
+							directions[index] = directions[index] + v1;
 						}
 					}
-					VectorLib::Normalize(directions[index]);
+					directions[index] = Vector3D::Normalize(directions[index]);
 				}
 			}
 
