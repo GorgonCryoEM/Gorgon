@@ -7,8 +7,8 @@ namespace wustl_mm {
 	namespace GraySkeletonCPP {
 
 		const bool WRITE_DEBUG_FILES = false;
-		const int PRUNE_AMOUNT = 4;
-		const int GAUSSIAN_FILTER_RADIUS = 4;
+		const int PRUNE_AMOUNT = 0;
+		const int GAUSSIAN_FILTER_RADIUS = 0;
 		const unsigned char PIXEL_CLASS_BACKGROUND = 0;
 		const unsigned char PIXEL_CLASS_POINT = 254;
 		const unsigned char PIXEL_CLASS_CURVE_END = 223;
@@ -54,18 +54,32 @@ namespace wustl_mm {
 			{{-1,0,0}, {-1,1,0},  {0,1,0},  {0,0,1},  {-1,0,1},  {-1,1,1},   {0,1,1}}};		// Top left front					
 
 		const int VOLUME_NEIGHBOR_FACES[12][3][3] = {
-			{{1,0,0},  {1,1,0},   {0,1,0}},		// Top Left Z
-			{{-1,0,0}, {-1,1,0},  {0,1,0}},		// Top Right Z
-			{{1,0,0},  {1,-1,0},  {0,-1,0}},	// Bottom Left Z
-			{{-1,0,0}, {-1,-1,0}, {0,-1,0}},	// Bottom Right Z
-			{{1,0,0},  {1,0,1},   {0,0,1}},		// Top Left Y
-			{{-1,0,0}, {-1,0,1},  {0,0,1}},		// Top Right Y
-			{{1,0,0},  {1,0,-1},  {0,0,-1}},	// Bottom Left Y
-			{{-1,0,0}, {-1,0,-1}, {0,0,-1}},	// Bottom Right Y
-			{{0,0,1},  {0,1,1},   {0,1,0}},		// Top Left X
-			{{0,0,-1}, {0,1,-1},  {0,1,0}},		// Top Right X
-			{{0,0,1},  {0,-1,1},  {0,-1,0}},	// Bottom Left X
-			{{0,0,-1}, {0,-1,-1}, {0,-1,0}}};	// Bottom Right X
+			{{1,0,0},  {1,1,0},   {0,1,0}},		// Top Left Z (1)
+			{{0,1,0},  {-1,1,0},  {-1,0,0}},	// Top Right Z (2)
+			{{-1,0,0}, {-1,-1,0}, {0,-1,0}},	// Bottom Right Z (3)
+			{{0,-1,0}, {1,-1,0},  {1,0,0}},		// Bottom Left Z (4)
+			{{0,0,1},  {1,0,1},   {1,0,0}},		// Top Left Y (5)
+			{{-1,0,0}, {-1,0,1},  {0,0,1}},		// Top Right Y (6)
+			{{0,0,-1}, {-1,0,-1}, {-1,0,0}},	// Bottom Right Y (7)
+			{{1,0,0},  {1,0,-1},  {0,0,-1}},	// Bottom Left Y (8)
+			{{0,0,1},  {0,1,1},   {0,1,0}},		// Top Left X (9)
+			{{0,-1,0}, {0,-1,1},  {0,0,1}},		// Bottom Left X (10)
+			{{0,0,-1}, {0,-1,-1}, {0,-1,0}},	// Bottom Right X (11)
+			{{0,1,0},  {0,1,-1},  {0,0,-1}}};	// Top Right X (12)
+	
+		const int VOLUME_NEIGHBOR_NUMBERS[12][2] = {
+			{4, 8},
+			{8, 5},
+			{9, 5},
+			{4, 9},
+			{8, 0},
+			{8, 1},
+			{11, 1},
+			{11, 0},
+			{1, 5},
+			{5, 2},
+			{6, 2},
+			{6, 1}};			
 	}
 }
 
