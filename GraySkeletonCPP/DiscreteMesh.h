@@ -3,7 +3,7 @@
 
 #include "../SkeletonMaker/volume.h"
 #include "../MatlabInterface/DataStructures.h"
-#include "../MatlabInterface/VectorLib.h"
+#include "../MatlabInterface/Vector3DInt.h"
 #include <string.h>
 #include <list>
 
@@ -163,12 +163,8 @@ namespace wustl_mm {
 
 		void DiscreteMesh::AddVoxel(int x, int y, int z) {
 			volume->setDataAt(x, y, z, 1);
-			Vector3DInt p;			
+			Vector3DInt p = Vector3DInt(x, y, z);			
 			int neighborCount = 0;
-
-			p.values[0] = x;
-			p.values[1] = y;
-			p.values[2] = z;
 
 			if(IsPoint(volume, x, y, z)) {
 				AddPoint(p);			
@@ -352,25 +348,24 @@ namespace wustl_mm {
 			points = new Vector3DInt[4];
 			switch(direction) {
 				case SURFACE_TYPE_XY:
-					VectorLib::Initialize(points[0], x, y, z);
-					VectorLib::Initialize(points[1], x+1, y, z);
-					VectorLib::Initialize(points[2], x+1, y+1, z);
-					VectorLib::Initialize(points[3], x, y+1, z);
+					points[0] = Vector3DInt(x, y, z);
+					points[1] = Vector3DInt(x+1, y, z);
+					points[2] = Vector3DInt(x+1, y+1, z);
+					points[3] = Vector3DInt(x, y+1, z);
 					break;
 				case SURFACE_TYPE_XZ:
-					VectorLib::Initialize(points[0], x, y, z);
-					VectorLib::Initialize(points[1], x+1, y, z);
-					VectorLib::Initialize(points[2], x+1, y, z+1);
-					VectorLib::Initialize(points[3], x, y, z+1);
+					points[0] = Vector3DInt(x, y, z);
+					points[1] = Vector3DInt(x+1, y, z);
+					points[2] = Vector3DInt(x+1, y, z+1);
+					points[3] = Vector3DInt(x, y, z+1);
 					break;
 				case SURFACE_TYPE_YZ:
-					VectorLib::Initialize(points[0], x, y, z);
-					VectorLib::Initialize(points[1], x, y+1, z);
-					VectorLib::Initialize(points[2], x, y+1, z+1);
-					VectorLib::Initialize(points[3], x, y, z+1);
+					points[0] = Vector3DInt(x, y, z);
+					points[1] = Vector3DInt(x, y+1, z);
+					points[2] = Vector3DInt(x, y+1, z+1);
+					points[3] = Vector3DInt(x, y, z+1);
 					break;
 			}
-
 		}
 
 		void DiscreteMesh::AddPoint(Vector3DInt point){
@@ -556,7 +551,7 @@ namespace wustl_mm {
 					for(int z = 2; z < 4; z++) {
 						if(vol->getDataAt(x, y, z) > 0) {
 							c6Count++;
-							VectorLib::Initialize(queue[0], x, y, z);
+							queue[0] = Vector3DInt(x, y, z);
 							queueSize = 1; 
 							while (queueSize > 0) {
 								temp = queue[queueSize-1];
@@ -564,7 +559,7 @@ namespace wustl_mm {
 								vol->setDataAt(temp.values[0], temp.values[1], temp.values[2], 0);
 								n6Count = GetN6(n6, vol, temp.values[0], temp.values[1], temp.values[2]);
 								for(int i = 0; i < n6Count; i++) {
-									VectorLib::Initialize(queue[queueSize], n6[i].values[0], n6[i].values[1], n6[i].values[2]);
+									queue[queueSize] = n6[i];
 									queueSize++;
 								}
 								delete [] n6;
@@ -597,7 +592,7 @@ namespace wustl_mm {
 					for(int z = 2; z < 4; z++) {
 						if(vol->getDataAt(x, y, z) > 0) {
 							c26Count++;
-							VectorLib::Initialize(queue[0], x, y, z);
+							queue[0] = Vector3DInt(x, y, z);
 							queueSize = 1; 
 							while (queueSize > 0) {
 								temp = queue[queueSize-1];
@@ -605,7 +600,7 @@ namespace wustl_mm {
 								vol->setDataAt(temp.values[0], temp.values[1], temp.values[2], 0);
 								n26Count = GetN26(n26, vol, temp.values[0], temp.values[1], temp.values[2]);
 								for(int i = 0; i < n26Count; i++) {
-									VectorLib::Initialize(queue[queueSize], n26[i].values[0], n26[i].values[1], n26[i].values[2]);
+									queue[queueSize] = n26[i];
 									queueSize++;
 								}
 								delete [] n26;
@@ -649,7 +644,7 @@ namespace wustl_mm {
 			for(int i = 0; i < n6CountX; i++) {
 				n6CountY = GetN6(n6Y, sourceVolume, n6X[i].values[0], n6X[i].values[1], n6X[i].values[2]);
 				for(int j = 0; j < n6CountY; j++) {
-					VectorLib::Initialize(n62List[n62Count], n6Y[j].values[0], n6Y[j].values[1], n6Y[j].values[2]);
+					n62List[n62Count] = n6Y[j];
 					n62Count++;
 				}
 				delete [] n6Y;
@@ -663,7 +658,7 @@ namespace wustl_mm {
 					found = found || ((n18[i].values[0] == n62List[j].values[0]) && (n18[i].values[1] == n62List[j].values[1]) && (n18[i].values[2] == n62List[j].values[2]));
 				}				
 				if(found) {
-					VectorLib::Initialize(n6_2[retVal], n18[i].values[0], n18[i].values[1], n18[i].values[2]);
+					n6_2[retVal] = n18[i];
 					retVal++;
 				}
 			}
@@ -825,8 +820,7 @@ namespace wustl_mm {
 
 		bool DiscreteMesh::IsSurfaceBorder(Volume * sourceVolume, int x, int y, int z) {
 			Vector3DInt * n6_2, * n6;
-			Vector3DInt currPoint;
-			VectorLib::Initialize(currPoint, x, y, z);
+			Vector3DInt currPoint = Vector3DInt(x, y, z);			
 			int n6_2Count = GetN6_2(n6_2, sourceVolume, x, y, z);
 			int cn6_2Count = GetC6(n6_2, n6_2Count, currPoint);
 			int n6Count = GetN6(n6, sourceVolume, x, y, z);
@@ -880,26 +874,26 @@ namespace wustl_mm {
 		}
 		bool DiscreteMesh::IsValidSurface(Volume * sourceVolume, Vector3D p0, Vector3D p1, Vector3D p2, Vector3D p3) {
 			Vector3D surface[4] = {p0, p1, p2, p3};
-			Vector3D pDelta = VectorLib::Difference(p2, p0);
+			Vector3D pDelta = p2 - p0;
 			Vector3D upperVector, lowerVector;
 			if((int)round(pDelta.values[0]) == 0) {
-				VectorLib::Initialize(upperVector, 1, 0, 0);
-				VectorLib::Initialize(lowerVector, -1, 0, 0);
+				upperVector = Vector3D(1, 0, 0);
+				lowerVector = Vector3D(-1, 0, 0);
 			} else if ((int)round(pDelta.values[1]) == 0) {
-				VectorLib::Initialize(upperVector, 0, 1, 0);
-				VectorLib::Initialize(lowerVector, 0, -1, 0);
+				upperVector = Vector3D(0, 1, 0);
+				lowerVector = Vector3D(0, -1, 0);
 			} else {
-				VectorLib::Initialize(upperVector, 0, 0, 1);
-				VectorLib::Initialize(lowerVector, 0, 0, -1);
+				upperVector = Vector3D(0, 0, 1);
+				lowerVector = Vector3D(0, 0, -1);
 			}
 
 			bool allFound = true;
 			Vector3D currentPos;
 			for(int i = 0; i < 4; i++) {
-				VectorLib::Addition(currentPos, surface[i], upperVector);
-				allFound = allFound && (sourceVolume->getDataAt((int)round(currentPos.values[0]), (int)round(currentPos.values[1]), (int)round(currentPos.values[2])) > 0);
-				VectorLib::Addition(currentPos, surface[i], lowerVector);
-				allFound = allFound && (sourceVolume->getDataAt((int)round(currentPos.values[0]), (int)round(currentPos.values[1]), (int)round(currentPos.values[2])) > 0);
+				currentPos = surface[i] + upperVector;
+				allFound = allFound && (sourceVolume->getDataAt(currentPos.XInt(), currentPos.YInt(), currentPos.ZInt()) > 0);
+				currentPos = surface[i] + lowerVector;
+				allFound = allFound && (sourceVolume->getDataAt(currentPos.XInt(), currentPos.YInt(), currentPos.ZInt()) > 0);
 			}
 			return !allFound;
 		}

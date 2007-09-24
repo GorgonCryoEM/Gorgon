@@ -1,6 +1,8 @@
 #ifndef DATA_STRUCTURES_H
 #define DATA_STRUCTURES_H
 
+#include "Vector3D.h"
+
 namespace wustl_mm {
 	namespace MatlabInterface {
 		const int MAX_PROBABILITY_DISTRIBUTION_RADIUS = 10;
@@ -31,14 +33,6 @@ namespace wustl_mm {
 		struct ProbabilityDistribution3D{
 			int radius;
 			double values[MAX_PROBABILITY_DISTRIBUTION_WIDTH][MAX_PROBABILITY_DISTRIBUTION_WIDTH][MAX_PROBABILITY_DISTRIBUTION_WIDTH];
-		};
-
-		struct Vector3D{
-			double values[3];
-		};
-
-		struct Vector3DInt{
-			int values[3];
 		};
 
 		struct Quarternion {

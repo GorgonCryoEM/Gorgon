@@ -6,7 +6,7 @@
 #include <string.h>
 #include "DataStructures.h"
 #include <math.h>
-#include "VectorLib.h"
+#include "Vector3D.h"
 #include "ComplexNumber.h"
 #include "eigen.h"
 #include "engine.h"
@@ -46,15 +46,15 @@ namespace wustl_mm {
 
 			Vector3D v1, v2, mv1, mv2;
 			if(b == 0) {
-				VectorLib::Initialize(v1, 1.0, 0.0, 0.0);
-				VectorLib::Initialize(v2, 0.0, 1.0, 0.0);
+				v1 = Vector3D(1.0, 0.0, 0.0);
+				v2 = Vector3D(0.0, 1.0, 0.0);
 			} else {
-				VectorLib::Initialize(v1, 1.0, (x1-a)/b, 0.0);
-				VectorLib::Initialize(v2, 1.0, (x2-a)/b, 0.0);
+				v1 = Vector3D(1.0, (x1-a)/b, 0.0);
+				v2 = Vector3D(1.0, (x2-a)/b, 0.0);
 			}
 
-			VectorLib::Normalize(v1);
-			VectorLib::Normalize(v2);
+			v1.Normalize();
+			v2.Normalize();
 
 			eigenInformation.eigenValues[0] = x1;
 			eigenInformation.eigenValues[1] = x2;
