@@ -27,7 +27,7 @@ namespace wustl_mm {
 
 		class VolumeSkeletonizer{
 		public:
-			VolumeSkeletonizer();
+			VolumeSkeletonizer(int pointRadius, int curveRadius, int surfaceRadius);
 			~VolumeSkeletonizer();
 			Volume * CleanImmersionSkeleton(Volume * skeleton, string outputPath);
 			Volume * PerformImmersionSkeletonizationAndPruning(Volume * sourceVol, double startGray, double endGray, double stepSize, int minCurveSize, int minSurfaceSize, string outputPath, bool doPruning, double pointThreshold, double curveThreshold, double surfaceThreshold);
@@ -80,18 +80,32 @@ namespace wustl_mm {
 			static const char PRUNING_CLASS_PRUNE_POINTS = 7;
 		public:
 			MathLib * math;
+			ProbabilityDistribution3D gaussianFilterPointRadius;
+			ProbabilityDistribution3D gaussianFilterCurveRadius;
+			ProbabilityDistribution3D gaussianFilterSurfaceRadius;
 			ProbabilityDistribution3D gaussianFilterMaxRadius;
-			ProbabilityDistribution3D gaussianFilterOneRadius;
+			int pointRadius;
+			int curveRadius;
+			int surfaceRadius;
 		};
 
-		VolumeSkeletonizer::VolumeSkeletonizer() {
+		VolumeSkeletonizer::VolumeSkeletonizer(int pointRadius, int curveRadius, int surfaceRadius) {
 			math = new MathLib();
+			this->pointRadius = pointRadius;
+			this->curveRadius = curveRadius;
+			this->surfaceRadius = surfaceRadius;
 
-			gaussianFilterMaxRadius.radius = GAUSSIAN_FILTER_RADIUS;
+			gaussianFilterPointRadius.radius = pointRadius;
+			math->GetBinomialDistribution(gaussianFilterPointRadius);
+
+			gaussianFilterCurveRadius.radius = curveRadius;
+			math->GetBinomialDistribution(gaussianFilterCurveRadius);
+
+			gaussianFilterSurfaceRadius.radius = surfaceRadius;
+			math->GetBinomialDistribution(gaussianFilterSurfaceRadius);
+
+			gaussianFilterMaxRadius.radius = MAX_GAUSSIAN_FILTER_RADIUS;
 			math->GetBinomialDistribution(gaussianFilterMaxRadius);
-
-			gaussianFilterOneRadius.radius = 1;
-			math->GetBinomialDistribution(gaussianFilterOneRadius);
 		}
 
 		VolumeSkeletonizer::~VolumeSkeletonizer() {
@@ -101,9 +115,16 @@ namespace wustl_mm {
 
 		double VolumeSkeletonizer::GetVoxelCost(EigenResults3D imageEigen, Vector3D skeletonDirection, int type) {
 			double cost = 1;
-			if(imageEigen.values[0] != 0) {
+
+			if(!isZero(imageEigen.values[0])) {
 				double theta, a, b;
-				Vector3D temp, skelDirectionST;
+				Vector3D temp, skelDirectionST, n;
+				double u1 = 1.0;
+				double u2 = imageEigen.values[1]/imageEigen.values[0];
+				double u3 = imageEigen.values[2]/imageEigen.values[0];
+				Vector3D v1 = imageEigen.vectors[0];
+				Vector3D v2 = imageEigen.vectors[1];
+				Vector3D v3 = imageEigen.vectors[2];				
 				switch(type) {
 					case PRUNING_CLASS_PRUNE_POINTS:
 						//dotValue = 1;
@@ -113,7 +134,7 @@ namespace wustl_mm {
 						break;
 					case PRUNING_CLASS_PRUNE_CURVES:
 						{
-				/*			Vector3D n1 = skeletonDirection
+							/*			Vector3D n1 = skeletonDirection
 							Vector3D m1 = Vector3D();
 							Vector3D m2 = Vector3D();*/
 							/*dotValue = skeletonDirection * imageEigen.vectors[2];
@@ -126,26 +147,54 @@ namespace wustl_mm {
 
 							m1 = Vector3D(n1.values[0]/imageEigen.values[0], n1.values[1]/imageEigen.values[1], n1.values[2]/imageEigen.values[2]);
 							m2 = Vector3D(n2.values[0]/imageEigen.values[0], n2.values[1]/imageEigen.values[1], n2.values[2]/imageEigen.values[2]);
-							theta = atan( 2.0 * (m1 * m2) / ((m1 * m1) - (m2 * m2))) / 2.0;
-							temp = (m1 * cos(theta)) + (m2 * sin(theta));
-							a = 1.0 / (temp * temp);
-							temp = (m1 * sin(theta)) + (m2 * cos(theta));
-							b = 1.0 / sqrt(temp * temp);
+							theta = atan((2.0 * (m1 * m2)) / ((m1 * m1) - (m2 * m2))) / 2.0;							
+							a = 1.0 / ((m1 * cos(theta)) + (m2 * sin(theta))).Length();
+							b = 1.0 / ((m1 * sin(theta)) + (m2 * cos(theta))).Length();
 
-							cost = a*b / (imageEigen.values[0] * imageEigen.values[1]);
-							//cost = (sqrt(m1 * m1) * sqrt(m2 * m2)) / (imageEigen.values[0] * imageEigen.values[1]);
+							cost = sqrt(a*b / (imageEigen.values[0] * imageEigen.values[1]));							
 						}
 						break;
 					case PRUNING_CLASS_PRUNE_SURFACES:
 						/*dotValue = skeletonDirection * imageEigen.vectors[0];
 						ratio = (imageEigen.values[1] + imageEigen.values[2])/ (2.0*imageEigen.values[0]);
 						cost = abs(dotValue)*(1 - ratio);	*/
-						
-						double uContri, vContri, wContri;
-						skelDirectionST = XYZtoUVW(skeletonDirection, imageEigen.vectors[0], imageEigen.vectors[1], imageEigen.vectors[2]);
-						temp = Vector3D(imageEigen.values[0] * skelDirectionST.values[0], imageEigen.values[1] * skelDirectionST.values[1], imageEigen.values[2] * skelDirectionST.values[2]);
-						cost = sqrt(temp * temp) / imageEigen.values[0];
 
+						//// Line inside ellipsoid vs. max line length
+						//n = XYZtoUVW(skeletonDirection, v1, v2, v3);
+						////temp = Vector3D(imageEigen.values[0] * n.values[0], imageEigen.values[1] * n.values[1], imageEigen.values[2] * n.values[2]);
+						//a = u1 * u2 * u3;
+						//b = sqrt(u2*u2*u3*u3*n.X()*n.X() + u1*u1*u3*u3*n.Y()*n.Y() + u1*u1*u2*u2*n.Z()*n.Z());
+						//if(isZero(b)) {
+						//	cost = 1.0;
+						//} else {
+						//	temp = Vector3D(a*n.X()/b, a*n.Y()/b, a*n.Z()/b);
+						//	cost = temp.Length() / u1;
+						//}
+
+						//Projection onto v1 vs. max line length						
+						n = XYZtoUVW(skeletonDirection, v1, v2, v3);						
+
+						cost = abs(n.X())/(u1+u2+u3);			//(n.X/u1)  * (u1 / (u1+u2+u3)) ; simplified
+						//cost = abs(n.X());					//(n.X/u1)						; but u1 = 1
+						
+
+						////Linear Interpolation					
+						//{
+						//	double t12, t13, t123, n12, n13;
+						//	n = XYZtoUVW(skeletonDirection, v1, v2, v3);
+
+						//	t12 = 2*acos(Vector3D[n.X(), n.Y(), 0)
+						//	
+
+						//
+						//	cost = abs(n.X())/(u1+u2+u3);			//(n.X/u1)  * (u1 / (u1+u2+u3)) ; simplified
+						//}
+						////cost = abs(n.X());					//(n.X/u1)						; but u1 = 1
+	
+
+
+
+						
 						break;
 				}
 				
@@ -153,19 +202,20 @@ namespace wustl_mm {
 				cost = 0.0;
 				printf("Zero\n");
 			}
+
+			if((cost > 1.0)  || (cost < 0)){
+				printf("Cost : %f\n", cost);
+			}
 			return cost;
 
 		}
 
 		EigenResults3D * VolumeSkeletonizer::GetEigenResults(Volume * maskVol, Vector3D * imageGradient, ProbabilityDistribution3D & gaussianFilter, int gaussianFilterRadius, bool useMask) {
-			//if(GAUSSIAN_FILTER_RADIUS == 0) 
-				return GetEigenResults2(maskVol, imageGradient, gaussianFilter, gaussianFilterRadius, useMask);
-
 			EigenResults3D * resultTable = new EigenResults3D[maskVol->getSizeX() * maskVol->getSizeY() * maskVol->getSizeZ()];
 
-			for(int x = GAUSSIAN_FILTER_RADIUS; x < maskVol->getSizeX() - GAUSSIAN_FILTER_RADIUS; x++) {
-				for(int y = GAUSSIAN_FILTER_RADIUS; y < maskVol->getSizeY() - GAUSSIAN_FILTER_RADIUS; y++) {
-					for(int z = GAUSSIAN_FILTER_RADIUS; z < maskVol->getSizeZ() - GAUSSIAN_FILTER_RADIUS; z++) {
+			for(int x = MAX_GAUSSIAN_FILTER_RADIUS; x < maskVol->getSizeX() - MAX_GAUSSIAN_FILTER_RADIUS; x++) {
+				for(int y = MAX_GAUSSIAN_FILTER_RADIUS; y < maskVol->getSizeY() - MAX_GAUSSIAN_FILTER_RADIUS; y++) {
+					for(int z = MAX_GAUSSIAN_FILTER_RADIUS; z < maskVol->getSizeZ() - MAX_GAUSSIAN_FILTER_RADIUS; z++) {
 						GetEigenResult(resultTable[maskVol->getIndex(x, y, z)], imageGradient, gaussianFilter, x, y, z,
 									   maskVol->getSizeX(), maskVol->getSizeY(), maskVol->getSizeZ(), gaussianFilterRadius, (useMask && (maskVol->getDataAt(x, y, z) == 0))); 
 					}
@@ -178,9 +228,9 @@ namespace wustl_mm {
 		EigenResults3D * VolumeSkeletonizer::GetEigenResults2(Volume * maskVol, Vector3D * imageGradient, ProbabilityDistribution3D & gaussianFilter, int gaussianFilterRadius, bool useMask) {
 			EigenResults3D * resultTable = new EigenResults3D[maskVol->getSizeX() * maskVol->getSizeY() * maskVol->getSizeZ()];
 
-			for(int x = GAUSSIAN_FILTER_RADIUS; x < maskVol->getSizeX() - GAUSSIAN_FILTER_RADIUS; x++) {
-				for(int y = GAUSSIAN_FILTER_RADIUS; y < maskVol->getSizeY() - GAUSSIAN_FILTER_RADIUS; y++) {
-					for(int z = GAUSSIAN_FILTER_RADIUS; z < maskVol->getSizeZ() - GAUSSIAN_FILTER_RADIUS; z++) {
+			for(int x = MAX_GAUSSIAN_FILTER_RADIUS; x < maskVol->getSizeX() - MAX_GAUSSIAN_FILTER_RADIUS; x++) {
+				for(int y = MAX_GAUSSIAN_FILTER_RADIUS; y < maskVol->getSizeY() - MAX_GAUSSIAN_FILTER_RADIUS; y++) {
+					for(int z = MAX_GAUSSIAN_FILTER_RADIUS; z < maskVol->getSizeZ() - MAX_GAUSSIAN_FILTER_RADIUS; z++) {
 						GetEigenResult2(resultTable[maskVol->getIndex(x, y, z)], imageGradient, gaussianFilter, x, y, z,
 									   maskVol->getSizeX(), maskVol->getSizeY(), maskVol->getSizeZ(), gaussianFilterRadius, (useMask && (maskVol->getDataAt(x, y, z) == 0))); 
 					}
@@ -200,10 +250,6 @@ namespace wustl_mm {
 
 		// Gradient = (x+1,y,z) - (x-1,y,z) ....
 		Vector3D * VolumeSkeletonizer::GetVolumeGradient(Volume * sourceVolume) {
-			//if(GAUSSIAN_FILTER_RADIUS == 0) 
-				return GetVolumeGradient2(sourceVolume);
-
-
 			Vector3D * gradient = new Vector3D[sourceVolume->getSizeX() * sourceVolume->getSizeY() * sourceVolume->getSizeZ()];
 			int index;
 
@@ -466,10 +512,6 @@ namespace wustl_mm {
 						returnVal.vectors[r].values[c] = eigenData.eigenVectors[r][c];
 					}
 				}
-
-				for(int r = 0; r < 3; r++) {
-					//returnVal.vectors[r].Normalize();
-				}
 				
 				assert((returnVal.values[0] >= returnVal.values[1]) && (returnVal.values[1] >= returnVal.values[2]));
 					
@@ -536,7 +578,7 @@ namespace wustl_mm {
 
 
 		void VolumeSkeletonizer::HueR(double value, double &r, double &g, double &b) {
-			r = pow(value, 4.0);
+			r = value*value*value*value;
 			g = 0;
 			b = 0;
 		}
@@ -615,7 +657,7 @@ namespace wustl_mm {
 		}
 
 		void VolumeSkeletonizer::PerformPureJuSkeletonization(Volume * imageVol, string outputPath, double threshold) {
-			imageVol->pad(GAUSSIAN_FILTER_RADIUS, 0);
+			imageVol->pad(MAX_GAUSSIAN_FILTER_RADIUS, 0);
 			
 			Volume * preservedVol = new Volume(imageVol->getSizeX(), imageVol->getSizeY(), imageVol->getSizeZ());
 			Volume * surfaceVol;
@@ -640,12 +682,12 @@ namespace wustl_mm {
 			delete curveVol;
 
 			imageVol->threshold(threshold);
-			imageVol->pad(-GAUSSIAN_FILTER_RADIUS, 0);
+			imageVol->pad(-MAX_GAUSSIAN_FILTER_RADIUS, 0);
 			imageVol->toMRCFile((char *)(outputPath + "volume.mrc").c_str());
 			imageVol->toOFFCells2((char *)(outputPath + "volume.off").c_str());
 			
 			
-			topologyVol->pad(-GAUSSIAN_FILTER_RADIUS, 0);
+			topologyVol->pad(-MAX_GAUSSIAN_FILTER_RADIUS, 0);
 
 			topologyVol->toMRCFile((char *)(outputPath+ ".mrc").c_str());
 			topologyVol->toOFFCells2((char *)(outputPath + ".off").c_str());
@@ -755,9 +797,9 @@ namespace wustl_mm {
 								ratio[v] = 0.7 * eigenResults[index].values[2]/eigenResults[index].values[v];
 							}
 
-							xd = 0.5 * (ratio[0] * eigenResults[index].vectors[0].values[0] + ratio[1] * eigenResults[index].vectors[1].values[0] + ratio[2] * eigenResults[index].vectors[2].values[0]) + GAUSSIAN_FILTER_RADIUS; 
-							yd = 0.5 * (ratio[0] * eigenResults[index].vectors[0].values[1] + ratio[1] * eigenResults[index].vectors[1].values[1] + ratio[2] * eigenResults[index].vectors[2].values[1]) + GAUSSIAN_FILTER_RADIUS;
-							zd = 0.5 * (ratio[0] * eigenResults[index].vectors[0].values[2] + ratio[1] * eigenResults[index].vectors[1].values[2] + ratio[2] * eigenResults[index].vectors[2].values[2]) + GAUSSIAN_FILTER_RADIUS;
+							xd = 0.5 * (ratio[0] * eigenResults[index].vectors[0].values[0] + ratio[1] * eigenResults[index].vectors[1].values[0] + ratio[2] * eigenResults[index].vectors[2].values[0]) + MAX_GAUSSIAN_FILTER_RADIUS; 
+							yd = 0.5 * (ratio[0] * eigenResults[index].vectors[0].values[1] + ratio[1] * eigenResults[index].vectors[1].values[1] + ratio[2] * eigenResults[index].vectors[2].values[1]) + MAX_GAUSSIAN_FILTER_RADIUS;
+							zd = 0.5 * (ratio[0] * eigenResults[index].vectors[0].values[2] + ratio[1] * eigenResults[index].vectors[1].values[2] + ratio[2] * eigenResults[index].vectors[2].values[2]) + MAX_GAUSSIAN_FILTER_RADIUS;
 
 							fprintf(outFile, "%lf %lf %lf \n", 
 								x - xd, 
@@ -846,13 +888,13 @@ namespace wustl_mm {
 						if(skeleton->getDataAt(x, y, z) > 0) {
 							index = sourceVolume->getIndex(x, y, z);
 
-							fprintf(outFile, "%i %i %i \n", x - GAUSSIAN_FILTER_RADIUS, y - GAUSSIAN_FILTER_RADIUS, z - GAUSSIAN_FILTER_RADIUS);
+							fprintf(outFile, "%i %i %i \n", x - MAX_GAUSSIAN_FILTER_RADIUS, y - MAX_GAUSSIAN_FILTER_RADIUS, z - MAX_GAUSSIAN_FILTER_RADIUS);
 							for(int v = 0; v < 3; v++) {							
 								ratio = 0.7 * eigenResults[index].values[2]/eigenResults[index].values[v];
 								fprintf(outFile, "%f %f %f \n", 
-									x - GAUSSIAN_FILTER_RADIUS + ratio * eigenResults[index].vectors[v].values[0], 
-									y - GAUSSIAN_FILTER_RADIUS + ratio * eigenResults[index].vectors[v].values[1], 
-									z - GAUSSIAN_FILTER_RADIUS + ratio * eigenResults[index].vectors[v].values[2]);
+									x - MAX_GAUSSIAN_FILTER_RADIUS + ratio * eigenResults[index].vectors[v].values[0], 
+									y - MAX_GAUSSIAN_FILTER_RADIUS + ratio * eigenResults[index].vectors[v].values[1], 
+									z - MAX_GAUSSIAN_FILTER_RADIUS + ratio * eigenResults[index].vectors[v].values[2]);
 							}
 						}
 					}
@@ -899,6 +941,7 @@ namespace wustl_mm {
 					for(int x = 0; x < sourceVolume->getSizeX(); x++) {
 						if(skeleton->getDataAt(x, y, z) > 0) {
 							index = sourceVolume->getIndex(x, y, z);
+							
 							colorCost = cost->getDataAt(x, y, z);
 							HueR(colorCost, r, g, b);
 
@@ -923,13 +966,13 @@ namespace wustl_mm {
 							}
 
 							//fprintf(outFile, "Group{\n children [\n Transform{\n translation %i %i %i \n  rotation %lf %lf %lf %lf \n  children [Transform{\n rotation %lf %lf %lf %lf \n  children [\n Shape {\n appearance Appearance {\n material Material {emissiveColor %lf %lf %lf }} \n geometry Box {size %lf %lf %lf}}]}]}]}\n",
-							//	x - GAUSSIAN_FILTER_RADIUS, y - GAUSSIAN_FILTER_RADIUS, z - GAUSSIAN_FILTER_RADIUS,
+							//	x - MAX_GAUSSIAN_FILTER_RADIUS, y - MAX_GAUSSIAN_FILTER_RADIUS, z - MAX_GAUSSIAN_FILTER_RADIUS,
 							//	axis2.values[0], axis2.values[1], axis2.values[2], -theta2,
 							//	axis1.values[0], axis1.values[1], axis1.values[2], -theta1,
 							//	r, g, b,									
 							//	0.7 * sizeX, 0.7 * sizeY, 0.7 * sizeZ);
 							fprintf(outFile, "Group{\n children [\n Transform{\n translation %i %i %i \n  rotation %lf %lf %lf %lf \n  children [Transform{\n rotation %lf %lf %lf %lf \n scale %lf %lf %lf \n children [\n Shape {\n appearance Appearance {\n material Material {emissiveColor %lf %lf %lf \n transparency 0.5 }} \n geometry Sphere {radius 0.5}}]}]}]}\n",
-								x - GAUSSIAN_FILTER_RADIUS, y - GAUSSIAN_FILTER_RADIUS, z - GAUSSIAN_FILTER_RADIUS,
+								x - MAX_GAUSSIAN_FILTER_RADIUS, y - MAX_GAUSSIAN_FILTER_RADIUS, z - MAX_GAUSSIAN_FILTER_RADIUS,
 								axis2.values[0], axis2.values[1], axis2.values[2], -theta2,
 								axis1.values[0], axis1.values[1], axis1.values[2], -theta1,
 								sizeX, sizeY, sizeZ,
@@ -950,19 +993,19 @@ namespace wustl_mm {
 
 
 							//fprintf(outFile, "Group{\n children[\n Transform{\n translation %i %i %i \n  rotation %lf %lf %lf %lf \n  children [\n Shape {\n appearance Appearance {\n material Material {emissiveColor %lf %lf %lf }} \n geometry Box {size %lf %lf %lf}}]}]}\n",
-							//	x - GAUSSIAN_FILTER_RADIUS, y - GAUSSIAN_FILTER_RADIUS, z - GAUSSIAN_FILTER_RADIUS,
+							//	x - MAX_GAUSSIAN_FILTER_RADIUS, y - MAX_GAUSSIAN_FILTER_RADIUS, z - MAX_GAUSSIAN_FILTER_RADIUS,
 							//	axis1.values[0], axis1.values[1], axis1.values[2], theta1,
 							//	0.0, 0.5, 0.0,									
 							//	0.7 * eigenResults[index].values[2]/eigenResults[index].values[0], 0.01, 0.01);
 
 							//fprintf(outFile, "Group{\n children[\n Transform{\n translation %i %i %i \n  rotation %lf %lf %lf %lf \n  children [\n Shape {\n appearance Appearance {\n material Material {emissiveColor %lf %lf %lf }} \n geometry Box {size %lf %lf %lf}}]}]}\n",
-							//	x - GAUSSIAN_FILTER_RADIUS, y - GAUSSIAN_FILTER_RADIUS, z - GAUSSIAN_FILTER_RADIUS,
+							//	x - MAX_GAUSSIAN_FILTER_RADIUS, y - MAX_GAUSSIAN_FILTER_RADIUS, z - MAX_GAUSSIAN_FILTER_RADIUS,
 							//	axis2.values[0], axis2.values[1], axis2.values[2], theta2,
 							//	0.0, 0.0, 0.5,									
 							//	0.01, 0.7 * eigenResults[index].values[2]/eigenResults[index].values[1], 0.01);
 
 							//fprintf(outFile, "Group{\n children[\n Transform{\n translation %i %i %i \n  rotation %lf %lf %lf %lf \n  children [\n Shape {\n appearance Appearance {\n material Material {emissiveColor %lf %lf %lf }} \n geometry Box {size %lf %lf %lf}}]}]}\n",
-							//	x - GAUSSIAN_FILTER_RADIUS, y - GAUSSIAN_FILTER_RADIUS, z - GAUSSIAN_FILTER_RADIUS,
+							//	x - MAX_GAUSSIAN_FILTER_RADIUS, y - MAX_GAUSSIAN_FILTER_RADIUS, z - MAX_GAUSSIAN_FILTER_RADIUS,
 							//	axis3.values[0], axis3.values[1], axis3.values[2], theta3,
 							//	0.5, 0.0, 0.0,									
 							//	0.01, 0.01, 0.7 * eigenResults[index].values[2]/eigenResults[index].values[2]);
@@ -996,11 +1039,11 @@ namespace wustl_mm {
 
 							if((axis.values[0] == 0) && (axis.values[1] == 0) && (axis.values[2] == 0)) {
 								fprintf(outFile, "Group{\n children[\n Transform{\n translation %i %i %i \n  children [\n Shape {\n appearance Appearance {\n material Material {emissiveColor %f %f %f }} \n geometry Box {size 0.7 0.05 0.05}}]}]}\n",
-									x - GAUSSIAN_FILTER_RADIUS, y - GAUSSIAN_FILTER_RADIUS, z - GAUSSIAN_FILTER_RADIUS,
+									x - MAX_GAUSSIAN_FILTER_RADIUS, y - MAX_GAUSSIAN_FILTER_RADIUS, z - MAX_GAUSSIAN_FILTER_RADIUS,
 									r, g, b);
 							} else {
 								fprintf(outFile, "Group{\n children[\n Transform{\n translation %i %i %i \n  rotation %f %f %f %f \n  children [\n Shape {\n appearance Appearance {\n material Material {emissiveColor %f %f %f }} \n geometry Box {size 0.7 0.05 0.05}}]}]}\n",
-									x - GAUSSIAN_FILTER_RADIUS, y - GAUSSIAN_FILTER_RADIUS, z - GAUSSIAN_FILTER_RADIUS,
+									x - MAX_GAUSSIAN_FILTER_RADIUS, y - MAX_GAUSSIAN_FILTER_RADIUS, z - MAX_GAUSSIAN_FILTER_RADIUS,
 									axis.values[0], axis.values[1], axis.values[2], angle,
 									r, g, b);
 							}
@@ -1116,16 +1159,16 @@ namespace wustl_mm {
 		Volume * VolumeSkeletonizer::PerformImmersionSkeletonizationAndPruning(Volume * sourceVol, double startGray, double endGray, double stepSize, int minCurveSize, int minSurfaceSize, string outputPath, bool doPruning, double pointThreshold, double curveThreshold, double surfaceThreshold) {
 			Vector3D * volumeGradient;
 			EigenResults3D * volumeEigens;
-			sourceVol->pad(GAUSSIAN_FILTER_RADIUS, 0);
+			sourceVol->pad(MAX_GAUSSIAN_FILTER_RADIUS, 0);
 
 			if(doPruning) {
-				volumeGradient = GetVolumeGradient(sourceVol);			
+				volumeGradient = GetVolumeGradient2(sourceVol);			
 			}
 
 			Volume * surfaceVol = GetImmersionThinning(sourceVol, NULL, startGray, endGray, stepSize, THINNING_CLASS_SURFACE_PRESERVATION);
 			if(doPruning) {
 				surfaceVol->toMRCFile((char *)(outputPath + "-S-Pre-Prune.mrc").c_str());
-				volumeEigens = GetEigenResults(surfaceVol, volumeGradient, gaussianFilterMaxRadius, GAUSSIAN_FILTER_RADIUS, true);
+				volumeEigens = GetEigenResults2(surfaceVol, volumeGradient, gaussianFilterSurfaceRadius, surfaceRadius, true);
 				PruneUsingStructureTensor(surfaceVol, sourceVol, volumeEigens, surfaceThreshold, PRUNING_CLASS_PRUNE_SURFACES, outputPath + "-S");
 				delete [] volumeEigens;
 				surfaceVol->toMRCFile((char *)(outputPath + "-S-Post-Prune.mrc").c_str());
@@ -1137,7 +1180,7 @@ namespace wustl_mm {
 			Volume * curveVol = GetImmersionThinning(sourceVol, surfaceVol, startGray, endGray, stepSize, THINNING_CLASS_CURVE_PRESERVATION);
 			if(doPruning) {
 				curveVol->toMRCFile((char *)(outputPath + "-C-Pre-Prune.mrc").c_str());
-				volumeEigens = GetEigenResults(curveVol, volumeGradient, gaussianFilterMaxRadius, GAUSSIAN_FILTER_RADIUS, true);
+				volumeEigens = GetEigenResults2(curveVol, volumeGradient, gaussianFilterCurveRadius, curveRadius, true);
 				PruneUsingStructureTensor(curveVol, sourceVol, volumeEigens, curveThreshold, PRUNING_CLASS_PRUNE_CURVES, outputPath + "-C");
 				delete [] volumeEigens;
 				curveVol->toMRCFile((char *)(outputPath + "-C-Post-Prune.mrc").c_str());
@@ -1149,7 +1192,7 @@ namespace wustl_mm {
 			Volume * pointVol = GetImmersionThinning(sourceVol, curveVol, startGray, endGray, stepSize, THINNING_CLASS_POINT_PRESERVATION);
 			if(doPruning) {
 				pointVol->toMRCFile((char *)(outputPath + "-P-Pre-Prune.mrc").c_str());
-				volumeEigens = GetEigenResults(pointVol, volumeGradient, gaussianFilterMaxRadius, GAUSSIAN_FILTER_RADIUS, true);
+				volumeEigens = GetEigenResults2(pointVol, volumeGradient, gaussianFilterPointRadius, pointRadius, true);
 				PruneUsingStructureTensor(pointVol, sourceVol, volumeEigens, pointThreshold, PRUNING_CLASS_PRUNE_POINTS, outputPath + "-P");
 				delete [] volumeEigens;
 				pointVol->toMRCFile((char *)(outputPath + "-P-Post-Prune.mrc").c_str());
@@ -1159,8 +1202,8 @@ namespace wustl_mm {
 			delete curveVol;
 			delete [] volumeGradient;
 
-			sourceVol->pad(-GAUSSIAN_FILTER_RADIUS, 0);
-			pointVol->pad(-GAUSSIAN_FILTER_RADIUS, 0);
+			sourceVol->pad(-MAX_GAUSSIAN_FILTER_RADIUS, 0);
+			pointVol->pad(-MAX_GAUSSIAN_FILTER_RADIUS, 0);
 			return pointVol;			
 		}
 
@@ -1246,7 +1289,7 @@ namespace wustl_mm {
 		}
 
 		Volume * VolumeSkeletonizer::PerformJuSkeletonization(Volume * imageVol, string outputPath, int minGray, int maxGray) {
-			imageVol->pad(GAUSSIAN_FILTER_RADIUS, 0);
+			imageVol->pad(MAX_GAUSSIAN_FILTER_RADIUS, 0);
 			
 			Volume * preservedVol = new Volume(imageVol->getSizeX(), imageVol->getSizeY(), imageVol->getSizeZ());
 			Volume * compositeVol = new Volume(imageVol->getSizeX(), imageVol->getSizeY(), imageVol->getSizeZ());
@@ -1273,7 +1316,7 @@ namespace wustl_mm {
 				//// SIGGRAPH
 				//Volume * tempVolume = new Volume(topologyVol->getSizeX(), topologyVol->getSizeY(), topologyVol->getSizeZ(), 0, 0, 0, topologyVol);
 				//ApplyMask(tempVolume, deletedVol, VOXEL_BINARY_TRUE, false);
-				//tempVolume->pad(-GAUSSIAN_FILTER_RADIUS, 0);
+				//tempVolume->pad(-MAX_GAUSSIAN_FILTER_RADIUS, 0);
 
 				//char * fileName = new char[100];
 				//sprintf(fileName, "%s-shapePreserved-%f.off", outputPath.c_str(), threshold/255.0);
@@ -1293,8 +1336,8 @@ namespace wustl_mm {
 				
 			}
 
-			compositeVol->pad(-GAUSSIAN_FILTER_RADIUS, 0);
-			deletedVol->pad(-GAUSSIAN_FILTER_RADIUS, 0);
+			compositeVol->pad(-MAX_GAUSSIAN_FILTER_RADIUS, 0);
+			deletedVol->pad(-MAX_GAUSSIAN_FILTER_RADIUS, 0);
 
 			if(WRITE_DEBUG_FILES) {
 				string tempFile;
@@ -1324,12 +1367,12 @@ namespace wustl_mm {
 		Volume * VolumeSkeletonizer::PerformSkeletonPruning(Volume * sourceVolume, Volume * sourceSkeleton, double curveThreshold, double surfaceThreshold, int minGray, int maxGray, string outputPath) {
 			double pointThreshold = curveThreshold;
 			printf("Performing Skeleton Pruning\n");
-			sourceVolume->pad(GAUSSIAN_FILTER_RADIUS, 0);
-			sourceSkeleton->pad(GAUSSIAN_FILTER_RADIUS, 0);
+			sourceVolume->pad(MAX_GAUSSIAN_FILTER_RADIUS, 0);
+			sourceSkeleton->pad(MAX_GAUSSIAN_FILTER_RADIUS, 0);
 
 			printf("Getting volume Eigens\n");
 			Vector3D * volumeGradient = GetVolumeGradient(sourceVolume);
-			EigenResults3D * volumeEigens = GetEigenResults(sourceSkeleton, volumeGradient, gaussianFilterMaxRadius, GAUSSIAN_FILTER_RADIUS, true);
+			EigenResults3D * volumeEigens = GetEigenResults(sourceSkeleton, volumeGradient, gaussianFilterMaxRadius, MAX_GAUSSIAN_FILTER_RADIUS, true);
 
 			WriteEigenResultsToOFFFile(sourceVolume, new Volume(sourceVolume->getSizeX(), sourceVolume->getSizeY(), sourceVolume->getSizeZ()), sourceSkeleton, volumeEigens, outputPath + "NoColorEigens.off");
 			WriteEigenResultsToVRMLFile(sourceVolume, new Volume(sourceVolume->getSizeX(), sourceVolume->getSizeY(), sourceVolume->getSizeZ()), sourceSkeleton, volumeEigens, outputPath + "NoColorEigens.wrl", false);

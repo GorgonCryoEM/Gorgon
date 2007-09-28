@@ -19,7 +19,7 @@ namespace wustl_mm {
 	namespace GraySkeletonCPP {
 		class GrayImageSkeletonizer {
 		public:
-			GrayImageSkeletonizer();
+			GrayImageSkeletonizer(int pointRadius, int curveRadius);
 			~GrayImageSkeletonizer();
 			GrayImage * PerformJuSkeletonization(GrayImage * image, string outputFile, int minGray, int maxGray);
 			GrayImage * PerformSkeletonPruning(GrayImage * sourceImage, GrayImage * sourceSkeleton, double pointThreshold, double curveThreshold, int minGray, int maxGray, string outputFile);
@@ -54,13 +54,17 @@ namespace wustl_mm {
 			MathLib * math;
 			ProbabilityDistribution2D gaussianFilterMaxRadius;
 			ProbabilityDistribution2D gaussianFilterOneRadius;
+			int pointRadius;
+			int curveRadius;
 		};	
 
-		GrayImageSkeletonizer::GrayImageSkeletonizer() {
-			volumeSkeletonizer = new VolumeSkeletonizer();
+		GrayImageSkeletonizer::GrayImageSkeletonizer(int pointRadius, int curveRadius) {
+			volumeSkeletonizer = new VolumeSkeletonizer(pointRadius, curveRadius, 0);
 			math = volumeSkeletonizer->math;
+			this->pointRadius = pointRadius;
+			this->curveRadius = curveRadius;
 
-			gaussianFilterMaxRadius.radius = GAUSSIAN_FILTER_RADIUS;
+			gaussianFilterMaxRadius.radius = MAX_GAUSSIAN_FILTER_RADIUS;
 			math->GetBinomialDistribution(gaussianFilterMaxRadius);
 
 			gaussianFilterOneRadius.radius = 1;
@@ -73,7 +77,7 @@ namespace wustl_mm {
 		}
 
 		GrayImage * GrayImageSkeletonizer::PerformJuSkeletonization(GrayImage * image, string outputFile, int minGray, int maxGray) {
-			image->Pad(GAUSSIAN_FILTER_RADIUS, 0);
+			image->Pad(MAX_GAUSSIAN_FILTER_RADIUS, 0);
 
 			GrayImage * compositeImage = new GrayImage(image->GetSizeX(), image->GetSizeY());
 			GrayImage * deletedPixels = new GrayImage(image->GetSizeX(), image->GetSizeY());
@@ -143,7 +147,7 @@ namespace wustl_mm {
 				//SIGGRAPH OUTPUTS
 				/* GrayImage * presImage = GrayImage::GrayImageVolumeToImage(preservedVolume);
 				presImage->ApplyMask(deletedPixels, PIXEL_BINARY_TRUE, 0);
-				presImage->Pad(-GAUSSIAN_FILTER_RADIUS, 0);
+				presImage->Pad(-MAX_GAUSSIAN_FILTER_RADIUS, 0);
 
 				char * fileName = new char[100];
 				sprintf(fileName, "-topoPreserved-%f.bmp", threshold/255.0);
@@ -155,11 +159,11 @@ namespace wustl_mm {
 			}	
 			
 
-			image->Pad(-GAUSSIAN_FILTER_RADIUS, 0);
+			image->Pad(-MAX_GAUSSIAN_FILTER_RADIUS, 0);
 			outputImages->AddImage(new GrayImage(image));
-			compositeImage->Pad(-GAUSSIAN_FILTER_RADIUS, 0);
+			compositeImage->Pad(-MAX_GAUSSIAN_FILTER_RADIUS, 0);
 			
-			deletedPixels->Pad(-GAUSSIAN_FILTER_RADIUS, 0);
+			deletedPixels->Pad(-MAX_GAUSSIAN_FILTER_RADIUS, 0);
 			compositeImage->ApplyMask(deletedPixels, PIXEL_BINARY_TRUE, false);
 			//GrayImage * outputImage = outputImages->GetCompositeImage(8);
 
@@ -183,13 +187,13 @@ namespace wustl_mm {
 		GrayImage * GrayImageSkeletonizer::PerformSkeletonPruning(GrayImage * sourceImage, GrayImage * sourceSkeleton, double pointThreshold, double curveThreshold, int minGray, int maxGray, string outputFile) {
 			printf("Cost Threshold point %f  curve %f\n", pointThreshold, curveThreshold);
 			printf("Performing Skeleton Pruning\n");
-			sourceImage->Pad(GAUSSIAN_FILTER_RADIUS, 0);
-			sourceSkeleton->Pad(GAUSSIAN_FILTER_RADIUS, 0);
+			sourceImage->Pad(MAX_GAUSSIAN_FILTER_RADIUS, 0);
+			sourceSkeleton->Pad(MAX_GAUSSIAN_FILTER_RADIUS, 0);
 
 			printf("Getting image Eigens\n");
 			Volume * imageVol = sourceImage->ToVolume();
 			Vector3D * imageGradient = volumeSkeletonizer->GetVolumeGradient(imageVol);
-			EigenResults3D * imageEigens = GetEigenResults(sourceImage, imageGradient, gaussianFilterMaxRadius, GAUSSIAN_FILTER_RADIUS, false);
+			EigenResults3D * imageEigens = GetEigenResults(sourceImage, imageGradient, gaussianFilterMaxRadius, MAX_GAUSSIAN_FILTER_RADIUS, false);
 
 			GrayImage * binarySkeleton;
 
@@ -288,7 +292,7 @@ namespace wustl_mm {
 
 				//SIGGRAPH OUTPUTS
 				/*GrayImage * presImage = GrayImage::GrayImageVolumeToImage(preservedSkeletonVol);
-				presImage->Pad(-GAUSSIAN_FILTER_RADIUS, 0);
+				presImage->Pad(-MAX_GAUSSIAN_FILTER_RADIUS, 0);
 
 				char * fileName = new char[100];
 				sprintf(fileName, "-pruned-%f.bmp", (double)grayValue/255.0);
@@ -303,10 +307,10 @@ namespace wustl_mm {
 			finalSkeleton->ApplyMask(preservedSkeleton, 255, true);
 			GrayImage * comp = images->GetCompositeImage(6);
 
-			sourceImage->Pad(-GAUSSIAN_FILTER_RADIUS, 0);
-			sourceSkeleton->Pad(-GAUSSIAN_FILTER_RADIUS, 0);
-			finalSkeleton->Pad(-GAUSSIAN_FILTER_RADIUS, 0);
-			preservedSkeleton->Pad(-GAUSSIAN_FILTER_RADIUS, 0);
+			sourceImage->Pad(-MAX_GAUSSIAN_FILTER_RADIUS, 0);
+			sourceSkeleton->Pad(-MAX_GAUSSIAN_FILTER_RADIUS, 0);
+			finalSkeleton->Pad(-MAX_GAUSSIAN_FILTER_RADIUS, 0);
+			preservedSkeleton->Pad(-MAX_GAUSSIAN_FILTER_RADIUS, 0);
 
 
 			binarySkeleton = new GrayImage(sourceSkeleton);
@@ -344,57 +348,21 @@ namespace wustl_mm {
 		}
 
 		GrayImage * GrayImageSkeletonizer::PerformImmersionSkeletonization(GrayImage * image, string outputFile) {
-			image->Pad(GAUSSIAN_FILTER_RADIUS, 0);
+			image->Pad(MAX_GAUSSIAN_FILTER_RADIUS, 0);
 			Volume * imageVol = image->ToVolume();
 			Volume * skeletonVol = volumeSkeletonizer->PerformImmersionSkeletonization(imageVol, outputFile);
 			GrayImage * skeleton = GrayImage::GrayImageVolumeToImage(skeletonVol);
 			GrayImage * cleanedSkel = CleanImmersionSkeleton(skeleton, outputFile);
-			image->Pad(-GAUSSIAN_FILTER_RADIUS, 0);
-			cleanedSkel->Pad(-GAUSSIAN_FILTER_RADIUS, 0);
+			image->Pad(-MAX_GAUSSIAN_FILTER_RADIUS, 0);
+			cleanedSkel->Pad(-MAX_GAUSSIAN_FILTER_RADIUS, 0);
 			cleanedSkel->Threshold(1, false);
 			delete imageVol;
 			delete skeletonVol;
 			delete skeleton;
 			return cleanedSkel;
-
-
-			//Volume * test = new Volume(5,5,5);
-			//test->setDataAt(0,0,2,125);
-			//test->setDataAt(1,0,2,104);
-			//test->setDataAt(2,0,2,87);
-			//test->setDataAt(3,0,2,77);
-			//test->setDataAt(4,0,2,77);
-			//test->setDataAt(0,1,2,97);
-			//test->setDataAt(1,1,2,88);
-			//test->setDataAt(2,1,2,77);
-			//test->setDataAt(3,1,2,70);
-			//test->setDataAt(4,1,2,70);
-			//test->setDataAt(0,2,2,88);
-			//test->setDataAt(1,2,2,77);
-			//test->setDataAt(2,2,2,73);
-			//test->setDataAt(3,2,2,77);
-			//test->setDataAt(4,2,2,77);
-			//test->setDataAt(0,3,2,88);
-			//test->setDataAt(1,3,2,84);
-			//test->setDataAt(2,3,2,77);
-			//test->setDataAt(3,3,2,77);
-			//test->setDataAt(4,3,2,88);
-			//test->setDataAt(0,4,2,96);
-			//test->setDataAt(1,4,2,88);
-			//test->setDataAt(2,4,2,87);
-			//test->setDataAt(3,4,2,96);
-			//test->setDataAt(4,4,2,111);
-			//test->threshold(60, 0, 1, 0, false);
-			////printf("Test val %i\n", DiscreteMesh::GetImmersionSkeletalValue(test, Vector3D(2,2,2)));
-
-			//if(DiscreteMesh::IsSurfaceBody(test, 2, 2, 2, true)) {
-			//	printf("true");
-			//} else {
-			//	printf("false");
-			//}
-
-			//return 0;
 		}
+
+
 		GrayImage * GrayImageSkeletonizer::CleanImmersionSkeleton(GrayImage * skeleton, string outputFile) {
 			GrayImage * cleanedSkel = new GrayImage(skeleton);
 			typedef vector<Vector3DInt> BinType;
@@ -473,8 +441,8 @@ namespace wustl_mm {
 		EigenResults3D * GrayImageSkeletonizer::GetEigenResults(GrayImage * maskImage, Vector3D * imageGradient, ProbabilityDistribution2D & gaussianFilter, int gaussianFilterRadius, bool useMask) {
 			EigenResults3D * resultTable = new EigenResults3D[maskImage->GetSizeX() * maskImage->GetSizeY()];
 
-			for(int x = GAUSSIAN_FILTER_RADIUS; x < maskImage->GetSizeX() - GAUSSIAN_FILTER_RADIUS; x++) {
-				for(int y = GAUSSIAN_FILTER_RADIUS; y < maskImage->GetSizeY() - GAUSSIAN_FILTER_RADIUS; y++) {
+			for(int x = MAX_GAUSSIAN_FILTER_RADIUS; x < maskImage->GetSizeX() - MAX_GAUSSIAN_FILTER_RADIUS; x++) {
+				for(int y = MAX_GAUSSIAN_FILTER_RADIUS; y < maskImage->GetSizeY() - MAX_GAUSSIAN_FILTER_RADIUS; y++) {
 					GetEigenResult(resultTable[maskImage->GetIndex(x, y)], imageGradient, gaussianFilter, x, y, 
 								   maskImage->GetSizeX(), maskImage->GetSizeY(), gaussianFilterRadius, (useMask && (maskImage->GetDataAt(x, y) == 0))); 
 				}

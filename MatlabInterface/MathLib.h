@@ -6,6 +6,8 @@
 #include "Vector3D.h"
 #include "ComplexNumber.h"
 
+#define PI = 3.1415926535897932385;
+
 namespace wustl_mm {
 	namespace MatlabInterface {
 

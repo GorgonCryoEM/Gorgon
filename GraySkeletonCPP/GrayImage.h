@@ -7,8 +7,8 @@
 
 namespace wustl_mm {
 	namespace GraySkeletonCPP {
-		const int GRAYIMAGE_IN_VOLUME_Z = GAUSSIAN_FILTER_RADIUS;
-		const int GRAYIMAGE_VOLUME_Z_SIZE = GAUSSIAN_FILTER_RADIUS * 2 + 1;
+		const int GRAYIMAGE_IN_VOLUME_Z = MAX_GAUSSIAN_FILTER_RADIUS;
+		const int GRAYIMAGE_VOLUME_Z_SIZE = MAX_GAUSSIAN_FILTER_RADIUS * 2 + 1;
 
 		class GrayImage {
 		public:
