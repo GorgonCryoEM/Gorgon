@@ -60,7 +60,7 @@ void DisplayInputParams() {
 	printf("\t[stepSize]      : The grayscale stepsize.\n");
 	printf("\n");
 	printf("To prune the grayscale skeleton of an image\n");
-	printf("\tGraySkeletonCPP.exe [function] [dimensions] [inputfile] [outfile] [minCurveSize] [minSurfaceSize]\n\t\t[pointThreshold] [curveThreshold] [surfaceThreshold] [minGrayValue] [maxGrayValue] [stepSize]\n\n");
+	printf("\tGraySkeletonCPP.exe [function] [dimensions] [inputfile] [outfile] [minCurveSize] [minSurfaceSize]\n\t\t[pointThreshold] [curveThreshold] [surfaceThreshold] [pointRadius] [curveRadius] [surfaceRadius]\n\t\t[minGrayValue] [maxGrayValue] [stepSize]\n\n");
 	printf("\t[function]      : %i, Perform pruning\n", DO_PRUNING);
 	printf("\t[dimensions]    : The number of dimensions\n");
 	printf("\t[inputfile]     : an input image file (BMP if 2D, MRC if 3D)\n");
@@ -70,6 +70,9 @@ void DisplayInputParams() {
 	printf("\t[pointThreshold]: The cost threshold (between 0 (all) and 1(none))\n");
 	printf("\t[curveThreshold]: The cost threshold (between 0 (all) and 1(none))\n");
 	printf("\t[surfaceThreshold]: The cost threshold (between 0 (all) and 1(none)) (only used for 3D objects)\n");
+	printf("\t[pointRadius]   : The gaussian filter radius to use when pruning points\n");
+	printf("\t[curveRadius]   : The gaussian filter radius to use when pruning curves\n");
+	printf("\t[surfaceRadius] : The gaussian filter radius to use when pruning surfaces (only used for 3D objects)\n");
 	printf("\t[minGrayValue]  : The minimum grayscale value to consider.\n");
 	printf("\t[maxGrayValue]  : The maximum grayscale value to consider.\n");
 	printf("\t[stepSize]	  : The grayscale stepsize.\n");
@@ -98,7 +101,7 @@ int main( int args, char * argv[] ) {
 
 	clock_t start, finish;
 	start = clock();
-	int format, dimension, minGray, maxGray, minCurveSize, minSurfaceSize, stepSize;
+	int format, dimension, minGray, maxGray, minCurveSize, minSurfaceSize, stepSize, pointRadius, curveRadius, surfaceRadius;
 	string inFile, skeletonFile, outFile, outPath;
 	GrayImage * sourceImage, * sourceSkeleton, * outputImage;
 	GrayImageSkeletonizer * skeletonizer2D;
@@ -138,7 +141,7 @@ int main( int args, char * argv[] ) {
 				switch(dimension){
 					case 2:
 						sourceImage = ImageReaderBMP::LoadGrayscaleImage(inFile);
-						skeletonizer2D = new GrayImageSkeletonizer();
+						skeletonizer2D = new GrayImageSkeletonizer(0,0);
 						outputImage = skeletonizer2D->PerformJuSkeletonization(sourceImage, outPath, minGray, maxGray);
 						ImageReaderBMP::SaveGrayscaleImage(outputImage, outFile);
 						delete skeletonizer2D;
@@ -149,7 +152,7 @@ int main( int args, char * argv[] ) {
 						reader = (MRCReader*)MRCReaderPicker::pick((char *)inFile.c_str());
 						sourceVol = reader->getVolume();
 						delete reader;
-						skeletonizer3D = new VolumeSkeletonizer();
+						skeletonizer3D = new VolumeSkeletonizer(0,0,0);
 						skeletonizer3D->NormalizeVolume(sourceVol);
 						outputVol = skeletonizer3D->PerformImmersionSkeletonizationAndPruning(sourceVol, minGray, maxGray, stepSize, minCurveSize, minSurfaceSize, outPath, false, 1.0, 1.0, 1.0);
 						outputVol->toOFFCells2((char *)(outFile + ".off").c_str());
@@ -167,9 +170,10 @@ int main( int args, char * argv[] ) {
 			}
 			break;
 		// Do Pruning
-		case 13:
+		case 16:
 			//GraySkeletonCPP.exe [function] [dimensions] [inputfile] [outfile] [minCurveSize] [minSurfaceSize] 
-			//                    [pointThreshold] [curveThreshold] [surfaceThreshold] [minGrayValue] [maxGrayValue] [stepSize]
+			//                    [pointThreshold] [curveThreshold] [surfaceThreshold] [pointRadius] [curveRadius] [surfaceRadius]
+			//                    [minGrayValue] [maxGrayValue] [stepSize]
 			format = StringToInt(argv[1]);
 			if(format == DO_PRUNING) {
 				dimension = StringToInt(argv[2]);
@@ -180,15 +184,18 @@ int main( int args, char * argv[] ) {
 				pointThreshold = StringToDouble(argv[7]);				
 				curveThreshold = StringToDouble(argv[8]);
 				surfaceThreshold = StringToDouble(argv[9]);
-				minGray = StringToInt(argv[10]);
-				maxGray = StringToInt(argv[11]);
-				stepSize = StringToInt(argv[12]);
+				pointRadius = StringToInt(argv[10]);
+				curveRadius = StringToInt(argv[11]);
+				surfaceRadius = StringToInt(argv[12]);
+				minGray = StringToInt(argv[13]);
+				maxGray = StringToInt(argv[14]);
+				stepSize = StringToInt(argv[15]);
 				outPath = outFile.substr(0, outFile.rfind("."));			
 				switch(dimension){
 					case 2:
 						sourceImage = ImageReaderBMP::LoadGrayscaleImage(inFile);
 						sourceSkeleton = ImageReaderBMP::LoadGrayscaleImage(skeletonFile);
-						skeletonizer2D = new GrayImageSkeletonizer();
+						skeletonizer2D = new GrayImageSkeletonizer(pointRadius, curveRadius);
 						outputImage = skeletonizer2D->PerformSkeletonPruning(sourceImage, sourceSkeleton, pointThreshold, curveThreshold, minGray, maxGray, outPath);
 						ImageReaderBMP::SaveGrayscaleImage(outputImage, outFile);
 						delete skeletonizer2D;
@@ -200,7 +207,7 @@ int main( int args, char * argv[] ) {
 						reader = (MRCReader*)MRCReaderPicker::pick((char *)inFile.c_str());
 						sourceVol = reader->getVolume();
 						delete reader;
-						skeletonizer3D = new VolumeSkeletonizer();
+						skeletonizer3D = new VolumeSkeletonizer(pointRadius, curveRadius, surfaceRadius);
 						skeletonizer3D->NormalizeVolume(sourceVol);
 						skeletonizer3D->CleanupVolume(sourceVol, minGray, maxGray);
 						outputVol = skeletonizer3D->PerformImmersionSkeletonizationAndPruning(sourceVol, minGray, maxGray, stepSize, minCurveSize, minSurfaceSize, outPath, true, pointThreshold, curveThreshold, surfaceThreshold);

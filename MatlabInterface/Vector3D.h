@@ -17,12 +17,11 @@ namespace wustl_mm {
 			double X();
 			double Y();
 			double Z();
+			double Length();
+			double operator*(Vector3D &d ); // Dot Product							
 			int XInt();
 			int YInt();
 			int ZInt();
-
-			double Vector3D::operator*(Vector3D &d ); // Dot Product
-						
 			Vector3D operator+(Vector3D &d );
 			Vector3D operator-();
 			Vector3D operator-(Vector3D &d );
@@ -67,6 +66,9 @@ namespace wustl_mm {
 		}
 
 
+		double Vector3D::Length() {
+			return sqrt(values[0] * values[0] + values[1] * values[1] + values[2] * values[2]);
+		}
 		int Vector3D::XInt() {
 			return (int)round(values[0]);
 		}

@@ -8,7 +8,7 @@ namespace wustl_mm {
 
 		const bool WRITE_DEBUG_FILES = false;
 		const int PRUNE_AMOUNT = 0;
-		const int GAUSSIAN_FILTER_RADIUS = 0;
+		const int MAX_GAUSSIAN_FILTER_RADIUS = 5;
 		const unsigned char PIXEL_CLASS_BACKGROUND = 0;
 		const unsigned char PIXEL_CLASS_POINT = 254;
 		const unsigned char PIXEL_CLASS_CURVE_END = 223;
