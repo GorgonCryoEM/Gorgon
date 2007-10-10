@@ -6,10 +6,11 @@
 #include "Vector3D.h"
 #include "ComplexNumber.h"
 
-#define PI = 3.1415926535897932385;
 
 namespace wustl_mm {
 	namespace MatlabInterface {
+
+		const double PI = 3.1415926535897932385;
 
 		class MathLib {
 		public:
@@ -41,7 +42,11 @@ namespace wustl_mm {
 		}
 
 		void MathLib::EigenAnalysis(EigenVectorsAndValues3D & eigenInformation) {
+			#ifdef USE_MATLAB
 			return mathWrapper->EigenAnalysisMatlab(eigenInformation);
+			#else
+			return mathWrapper->EigenAnalysis(eigenInformation);
+			#endif
 		}
 
 		void MathLib::GetBinomialDistribution(ProbabilityDistribution1D & distributionInfo) {

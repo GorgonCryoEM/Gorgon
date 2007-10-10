@@ -30,17 +30,17 @@ namespace wustl_mm {
 			VolumeSkeletonizer(int pointRadius, int curveRadius, int surfaceRadius);
 			~VolumeSkeletonizer();
 			Volume * CleanImmersionSkeleton(Volume * skeleton, string outputPath);
-			Volume * PerformImmersionSkeletonizationAndPruning(Volume * sourceVol, double startGray, double endGray, double stepSize, int minCurveSize, int minSurfaceSize, string outputPath, bool doPruning, double pointThreshold, double curveThreshold, double surfaceThreshold);
+			Volume * PerformImmersionSkeletonizationAndPruning(Volume * sourceVol, double startGray, double endGray, double stepSize, int minCurveSize, int minSurfaceSize, int maxCurveHole, int maxSurfaceHole, string outputPath, bool doPruning, double pointThreshold, double curveThreshold, double surfaceThreshold);
 			Volume * PerformSkeletonizationAndPruning(Volume * imageVol, string outputPath);
 			Volume * PerformImmersionSkeletonization(Volume * imageVol, string outputPath);
-			Volume * PerformJuSkeletonization(Volume * imageVol, string outputPath, int minGray, int maxGray);
+			Volume * PerformJuSkeletonization(Volume * imageVol, string outputPath, int minGray, int maxGray, int stepSize);
+			Volume * PerformPureJuSkeletonization(Volume * imageVol, string outputPath, double threshold, int minCurveWidth, int minSurfaceWidth);
 			Volume * PerformSkeletonPruning(Volume * sourceVolume, Volume * sourceSkeleton, double curveThreshold, double surfaceThreshold, int minGray, int maxGray, string outputPath);
 			Volume * GetJuSurfaceSkeleton(Volume * sourceVolume, Volume * preserve, double threshold);
 			Volume * GetJuCurveSkeleton(Volume * sourceVolume, Volume * preserve, double threshold, bool is3D);
 			Volume * GetJuTopologySkeleton(Volume * sourceVolume, Volume * preserve, double threshold);
 			void CleanupVolume(Volume * sourceVolume, double low, double high);
-			void NormalizeVolume(Volume * sourceVolume);
-			void PerformPureJuSkeletonization(Volume * imageVol, string outputPath, double threshold);
+			void NormalizeVolume(Volume * sourceVolume);			
 			void PruneCurves(Volume * sourceVolume, int pruneLength);
 			void PruneSurfaces(Volume * sourceVolume, int pruneLength);
 			void PruneUsingStructureTensor(Volume * skeleton, Volume * sourceVolume, EigenResults3D * volumeEigens, double threshold, char pruningClass, string outputPath);
@@ -50,6 +50,7 @@ namespace wustl_mm {
 			Vector3D * GetSkeletonDirection(Volume * skeleton);
 		private:
 			
+			double AngleToParameter(double angle);
 			double GetVoxelCost(EigenResults3D imageEigen, Vector3D skeletonDirection, int type);
 			EigenResults3D * GetEigenResults(Volume * maskVol, Vector3D * imageGradient, ProbabilityDistribution3D & gaussianFilter, int gaussianFilterRadius, bool useMask);
 			EigenResults3D * GetEigenResults2(Volume * maskVol, Vector3D * imageGradient, ProbabilityDistribution3D & gaussianFilter, int gaussianFilterRadius, bool useMask);
@@ -113,6 +114,11 @@ namespace wustl_mm {
 		}
 
 
+		double VolumeSkeletonizer::AngleToParameter(double angle) {
+			angle = fmod(angle, PI);
+			return (1-abs(2*angle/PI -1));
+		}
+
 		double VolumeSkeletonizer::GetVoxelCost(EigenResults3D imageEigen, Vector3D skeletonDirection, int type) {
 			double cost = 1;
 
@@ -120,8 +126,8 @@ namespace wustl_mm {
 				double theta, a, b;
 				Vector3D temp, skelDirectionST, n;
 				double u1 = 1.0;
-				double u2 = imageEigen.values[1]/imageEigen.values[0];
-				double u3 = imageEigen.values[2]/imageEigen.values[0];
+				double u2 = abs(imageEigen.values[1]/imageEigen.values[0]);
+				double u3 = abs(imageEigen.values[2]/imageEigen.values[0]);
 				Vector3D v1 = imageEigen.vectors[0];
 				Vector3D v2 = imageEigen.vectors[1];
 				Vector3D v3 = imageEigen.vectors[2];				
@@ -130,10 +136,12 @@ namespace wustl_mm {
 						//dotValue = 1;
 						//ratio = imageEigen.values[2] / imageEigen.values[0];
 						//cost = abs(ratio);
-						cost = imageEigen.values[2] * imageEigen.values[2] / (imageEigen.values[0] * imageEigen.values[1]);
+						//cost = imageEigen.values[2] * imageEigen.values[2] / (imageEigen.values[0] * imageEigen.values[1]);
+
+						cost = u3*u3 / (u1*u2);
 						break;
 					case PRUNING_CLASS_PRUNE_CURVES:
-						{
+						//{
 							/*			Vector3D n1 = skeletonDirection
 							Vector3D m1 = Vector3D();
 							Vector3D m2 = Vector3D();*/
@@ -141,7 +149,7 @@ namespace wustl_mm {
 							ratio = (2.0 * imageEigen.values[2])/ (imageEigen.values[0] + imageEigen.values[1]);
 							cost = abs(dotValue) * (1-ratio);*/
 
-							Vector3D n1, n2, m1, m2;
+/*							Vector3D n1, n2, m1, m2;
 							skelDirectionST = XYZtoUVW(skeletonDirection, imageEigen.vectors[0],imageEigen.vectors[1], imageEigen.vectors[2]);
 							FindOrthogonalAxes(skelDirectionST, n1, n2);
 
@@ -151,8 +159,17 @@ namespace wustl_mm {
 							a = 1.0 / ((m1 * cos(theta)) + (m2 * sin(theta))).Length();
 							b = 1.0 / ((m1 * sin(theta)) + (m2 * cos(theta))).Length();
 
-							cost = sqrt(a*b / (imageEigen.values[0] * imageEigen.values[1]));							
-						}
+							cost = sqrt(a*b / (imageEigen.values[0] * imageEigen.values[1]));		*/		
+						//}
+
+						// Line inside ellipsoid vs. min Length
+						n = XYZtoUVW(skeletonDirection, v1, v2, v3);
+						a = u1 * u2 * u3;
+						b = sqrt(u2*u2*u3*u3*n.X()*n.X() + u1*u1*u3*u3*n.Y()*n.Y() + u1*u1*u2*u2*n.Z()*n.Z());
+						temp = n*(a/b);
+						cost = u3/ temp.Length();
+
+
 						break;
 					case PRUNING_CLASS_PRUNE_SURFACES:
 						/*dotValue = skeletonDirection * imageEigen.vectors[0];
@@ -171,30 +188,24 @@ namespace wustl_mm {
 						//	cost = temp.Length() / u1;
 						//}
 
-						//Projection onto v1 vs. max line length						
-						n = XYZtoUVW(skeletonDirection, v1, v2, v3);						
+						////Projection onto v1 vs. max line length						
+						//n = XYZtoUVW(skeletonDirection, v1, v2, v3);						
 
-						cost = abs(n.X())/(u1+u2+u3);			//(n.X/u1)  * (u1 / (u1+u2+u3)) ; simplified
-						//cost = abs(n.X());					//(n.X/u1)						; but u1 = 1
-						
+						//cost = abs(n.X())/(u1+u2+u3);			//(n.X/u1)  * (u1 / (u1+u2+u3)) ; simplified
+						////cost = abs(n.X());					//(n.X/u1)						; but u1 = 						
+					
+						{
+							Vector3D n1, n2, m1, m2;
+							skelDirectionST = XYZtoUVW(skeletonDirection, imageEigen.vectors[0],imageEigen.vectors[1], imageEigen.vectors[2]);
+							FindOrthogonalAxes(skelDirectionST, n1, n2);
 
-						////Linear Interpolation					
-						//{
-						//	double t12, t13, t123, n12, n13;
-						//	n = XYZtoUVW(skeletonDirection, v1, v2, v3);
-
-						//	t12 = 2*acos(Vector3D[n.X(), n.Y(), 0)
-						//	
-
-						//
-						//	cost = abs(n.X())/(u1+u2+u3);			//(n.X/u1)  * (u1 / (u1+u2+u3)) ; simplified
-						//}
-						////cost = abs(n.X());					//(n.X/u1)						; but u1 = 1
-	
-
-
-
-						
+							m1 = Vector3D(n1.values[0]/u1, n1.values[1]/u2, n1.values[2]/u3);
+							m2 = Vector3D(n2.values[0]/u1, n2.values[1]/u2, n2.values[2]/u3);
+							theta = atan((2.0 * (m1 * m2)) / ((m1 * m1) - (m2 * m2))) / 2.0;							
+							a = 1.0 / ((m1 * cos(theta)) + (m2 * sin(theta))).Length();
+							b = 1.0 / ((m1 * sin(theta)) - (m2 * cos(theta))).Length();
+							cost = (u2 * u3) / (a*b);
+						}
 						break;
 				}
 				
@@ -203,8 +214,12 @@ namespace wustl_mm {
 				printf("Zero\n");
 			}
 
+			if(cost != cost) {
+				cost = 1.0;
+			}
+
 			if((cost > 1.0)  || (cost < 0)){
-				printf("Cost : %f\n", cost);
+				printf("Cost : %f\t, Type %i\n", cost, type);
 			}
 			return cost;
 
@@ -656,7 +671,7 @@ namespace wustl_mm {
 			}
 		}
 
-		void VolumeSkeletonizer::PerformPureJuSkeletonization(Volume * imageVol, string outputPath, double threshold) {
+		Volume * VolumeSkeletonizer::PerformPureJuSkeletonization(Volume * imageVol, string outputPath, double threshold, int minCurveWidth, int minSurfaceWidth) {
 			imageVol->pad(MAX_GAUSSIAN_FILTER_RADIUS, 0);
 			
 			Volume * preservedVol = new Volume(imageVol->getSizeX(), imageVol->getSizeY(), imageVol->getSizeZ());
@@ -667,31 +682,24 @@ namespace wustl_mm {
 			printf("\t\t\tUSING THRESHOLD : %f\n", threshold);
 			// Skeletonizing while preserving surface features curve features and topology
 			surfaceVol = GetJuSurfaceSkeleton(imageVol, preservedVol, threshold);
-			PruneSurfaces(surfaceVol, PRUNE_AMOUNT);
+			PruneSurfaces(surfaceVol, minSurfaceWidth);
 			VoxelOr(preservedVol, surfaceVol);
 
 			curveVol = VolumeSkeletonizer::GetJuCurveSkeleton(imageVol, preservedVol, threshold, true);
-			VolumeSkeletonizer::PruneCurves(curveVol, PRUNE_AMOUNT);
+			VolumeSkeletonizer::PruneCurves(curveVol, minCurveWidth);
 			VoxelOr(preservedVol, curveVol);
 
 			topologyVol = VolumeSkeletonizer::GetJuTopologySkeleton(imageVol, preservedVol, threshold);
 
+			imageVol->threshold(threshold);
+			imageVol->pad(-MAX_GAUSSIAN_FILTER_RADIUS, 0);			
+			topologyVol->pad(-MAX_GAUSSIAN_FILTER_RADIUS, 0);
 
 			delete preservedVol;
 			delete surfaceVol;
 			delete curveVol;
 
-			imageVol->threshold(threshold);
-			imageVol->pad(-MAX_GAUSSIAN_FILTER_RADIUS, 0);
-			imageVol->toMRCFile((char *)(outputPath + "volume.mrc").c_str());
-			imageVol->toOFFCells2((char *)(outputPath + "volume.off").c_str());
-			
-			
-			topologyVol->pad(-MAX_GAUSSIAN_FILTER_RADIUS, 0);
-
-			topologyVol->toMRCFile((char *)(outputPath+ ".mrc").c_str());
-			topologyVol->toOFFCells2((char *)(outputPath + ".off").c_str());
-			delete topologyVol;
+			return topologyVol;
 		}
 
 
@@ -971,13 +979,16 @@ namespace wustl_mm {
 							//	axis1.values[0], axis1.values[1], axis1.values[2], -theta1,
 							//	r, g, b,									
 							//	0.7 * sizeX, 0.7 * sizeY, 0.7 * sizeZ);
-							fprintf(outFile, "Group{\n children [\n Transform{\n translation %i %i %i \n  rotation %lf %lf %lf %lf \n  children [Transform{\n rotation %lf %lf %lf %lf \n scale %lf %lf %lf \n children [\n Shape {\n appearance Appearance {\n material Material {emissiveColor %lf %lf %lf \n transparency 0.5 }} \n geometry Sphere {radius 0.5}}]}]}]}\n",
-								x - MAX_GAUSSIAN_FILTER_RADIUS, y - MAX_GAUSSIAN_FILTER_RADIUS, z - MAX_GAUSSIAN_FILTER_RADIUS,
-								axis2.values[0], axis2.values[1], axis2.values[2], -theta2,
-								axis1.values[0], axis1.values[1], axis1.values[2], -theta1,
-								sizeX, sizeY, sizeZ,
-								r, g, b);								
-							
+							if(!((axis1.values[0] != axis1.values[0]) || (axis1.values[1] != axis1.values[1]) || (axis1.values[2] != axis1.values[2]) ||
+								(axis2.values[0] != axis2.values[0]) || (axis2.values[1] != axis2.values[1]) || (axis2.values[2] != axis2.values[2]) ||
+								(sizeX != sizeX) || (sizeY != sizeY) || (sizeZ != sizeZ) || (r != r) || (g != g) || (b != b) || (theta1 != theta1) || (theta2 != theta2))) {  // Checking to see if there are no NAN values
+								fprintf(outFile, "Group{\n children [\n Transform{\n translation %i %i %i \n  rotation %lf %lf %lf %lf \n  children [Transform{\n rotation %lf %lf %lf %lf \n scale %lf %lf %lf \n children [\n Shape {\n appearance Appearance {\n material Material {emissiveColor %lf %lf %lf \n transparency 0.5 }} \n geometry Sphere {radius 0.5}}]}]}]}\n",
+									x - MAX_GAUSSIAN_FILTER_RADIUS, y - MAX_GAUSSIAN_FILTER_RADIUS, z - MAX_GAUSSIAN_FILTER_RADIUS,
+									axis2.values[0], axis2.values[1], axis2.values[2], -theta2,
+									axis1.values[0], axis1.values[1], axis1.values[2], -theta1,
+									sizeX, sizeY, sizeZ,
+									r, g, b);						
+							}
 
 							//axis1 = VectorLib::CrossProduct(eigenResults[index].vectors[0], VectorLib::Initialize(1.0, 0.0, 0.0));
 							//VectorLib::Normalize(axis1);
@@ -1156,7 +1167,7 @@ namespace wustl_mm {
 
 
 
-		Volume * VolumeSkeletonizer::PerformImmersionSkeletonizationAndPruning(Volume * sourceVol, double startGray, double endGray, double stepSize, int minCurveSize, int minSurfaceSize, string outputPath, bool doPruning, double pointThreshold, double curveThreshold, double surfaceThreshold) {
+		Volume * VolumeSkeletonizer::PerformImmersionSkeletonizationAndPruning(Volume * sourceVol, double startGray, double endGray, double stepSize, int minCurveSize, int minSurfaceSize, int maxCurveHole, int maxSurfaceHole, string outputPath, bool doPruning, double pointThreshold, double curveThreshold, double surfaceThreshold) {
 			Vector3D * volumeGradient;
 			EigenResults3D * volumeEigens;
 			sourceVol->pad(MAX_GAUSSIAN_FILTER_RADIUS, 0);
@@ -1172,7 +1183,7 @@ namespace wustl_mm {
 				PruneUsingStructureTensor(surfaceVol, sourceVol, volumeEigens, surfaceThreshold, PRUNING_CLASS_PRUNE_SURFACES, outputPath + "-S");
 				delete [] volumeEigens;
 				surfaceVol->toMRCFile((char *)(outputPath + "-S-Post-Prune.mrc").c_str());
-			}			
+			}		
 			PruneSurfaces(surfaceVol, minSurfaceSize);			
 			surfaceVol->toMRCFile((char *)(outputPath + "-S-Post-Erosion.mrc").c_str());
 
@@ -1288,7 +1299,7 @@ namespace wustl_mm {
 			return skeleton;
 		}
 
-		Volume * VolumeSkeletonizer::PerformJuSkeletonization(Volume * imageVol, string outputPath, int minGray, int maxGray) {
+		Volume * VolumeSkeletonizer::PerformJuSkeletonization(Volume * imageVol, string outputPath, int minGray, int maxGray, int stepSize) {
 			imageVol->pad(MAX_GAUSSIAN_FILTER_RADIUS, 0);
 			
 			Volume * preservedVol = new Volume(imageVol->getSizeX(), imageVol->getSizeY(), imageVol->getSizeZ());
@@ -1298,7 +1309,7 @@ namespace wustl_mm {
 			Volume * curveVol;
 			Volume * topologyVol;		
 
-			for(int threshold = maxGray; threshold >= minGray; threshold-= 1) {		
+			for(int threshold = maxGray; threshold >= minGray; threshold-= stepSize) {		
 				printf("\t\t\tUSING THRESHOLD : %i\n", threshold);
 				// Skeletonizing while preserving surface features curve features and topology
 				surfaceVol = GetJuSurfaceSkeleton(imageVol, preservedVol, threshold);

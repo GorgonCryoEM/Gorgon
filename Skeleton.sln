@@ -30,6 +30,9 @@ Global
 		Release|Any CPU = Release|Any CPU
 		Release|Mixed Platforms = Release|Mixed Platforms
 		Release|Win32 = Release|Win32
+		SansMatlab|Any CPU = SansMatlab|Any CPU
+		SansMatlab|Mixed Platforms = SansMatlab|Mixed Platforms
+		SansMatlab|Win32 = SansMatlab|Win32
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{817660CF-4E6C-48F6-BF18-FB75FC2B6B5E}.Debug|Any CPU.ActiveCfg = Debug|Win32
@@ -47,6 +50,11 @@ Global
 		{817660CF-4E6C-48F6-BF18-FB75FC2B6B5E}.Release|Mixed Platforms.Build.0 = Release|Win32
 		{817660CF-4E6C-48F6-BF18-FB75FC2B6B5E}.Release|Win32.ActiveCfg = Release|Win32
 		{817660CF-4E6C-48F6-BF18-FB75FC2B6B5E}.Release|Win32.Build.0 = Release|Win32
+		{817660CF-4E6C-48F6-BF18-FB75FC2B6B5E}.SansMatlab|Any CPU.ActiveCfg = SansMatlab|Win32
+		{817660CF-4E6C-48F6-BF18-FB75FC2B6B5E}.SansMatlab|Mixed Platforms.ActiveCfg = SansMatlab|Win32
+		{817660CF-4E6C-48F6-BF18-FB75FC2B6B5E}.SansMatlab|Mixed Platforms.Build.0 = SansMatlab|Win32
+		{817660CF-4E6C-48F6-BF18-FB75FC2B6B5E}.SansMatlab|Win32.ActiveCfg = SansMatlab|Win32
+		{817660CF-4E6C-48F6-BF18-FB75FC2B6B5E}.SansMatlab|Win32.Build.0 = SansMatlab|Win32
 		{E98C9677-C8CA-4CC3-8AE7-A06140EA49BB}.Debug|Any CPU.ActiveCfg = Debug|Win32
 		{E98C9677-C8CA-4CC3-8AE7-A06140EA49BB}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
 		{E98C9677-C8CA-4CC3-8AE7-A06140EA49BB}.Debug|Mixed Platforms.Build.0 = Debug|Win32
@@ -62,6 +70,11 @@ Global
 		{E98C9677-C8CA-4CC3-8AE7-A06140EA49BB}.Release|Mixed Platforms.Build.0 = Release|Win32
 		{E98C9677-C8CA-4CC3-8AE7-A06140EA49BB}.Release|Win32.ActiveCfg = Release|Win32
 		{E98C9677-C8CA-4CC3-8AE7-A06140EA49BB}.Release|Win32.Build.0 = Release|Win32
+		{E98C9677-C8CA-4CC3-8AE7-A06140EA49BB}.SansMatlab|Any CPU.ActiveCfg = SansMatlab|Win32
+		{E98C9677-C8CA-4CC3-8AE7-A06140EA49BB}.SansMatlab|Mixed Platforms.ActiveCfg = SansMatlab|Win32
+		{E98C9677-C8CA-4CC3-8AE7-A06140EA49BB}.SansMatlab|Mixed Platforms.Build.0 = SansMatlab|Win32
+		{E98C9677-C8CA-4CC3-8AE7-A06140EA49BB}.SansMatlab|Win32.ActiveCfg = SansMatlab|Win32
+		{E98C9677-C8CA-4CC3-8AE7-A06140EA49BB}.SansMatlab|Win32.Build.0 = SansMatlab|Win32
 		{E6AC7995-0C10-4D59-9F75-45E3795D51C9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E6AC7995-0C10-4D59-9F75-45E3795D51C9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E6AC7995-0C10-4D59-9F75-45E3795D51C9}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
@@ -79,6 +92,11 @@ Global
 		{E6AC7995-0C10-4D59-9F75-45E3795D51C9}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{E6AC7995-0C10-4D59-9F75-45E3795D51C9}.Release|Win32.ActiveCfg = Release|Any CPU
 		{E6AC7995-0C10-4D59-9F75-45E3795D51C9}.Release|Win32.Build.0 = Release|Any CPU
+		{E6AC7995-0C10-4D59-9F75-45E3795D51C9}.SansMatlab|Any CPU.ActiveCfg = SansMatlab|Any CPU
+		{E6AC7995-0C10-4D59-9F75-45E3795D51C9}.SansMatlab|Any CPU.Build.0 = SansMatlab|Any CPU
+		{E6AC7995-0C10-4D59-9F75-45E3795D51C9}.SansMatlab|Mixed Platforms.ActiveCfg = SansMatlab|Any CPU
+		{E6AC7995-0C10-4D59-9F75-45E3795D51C9}.SansMatlab|Mixed Platforms.Build.0 = SansMatlab|Any CPU
+		{E6AC7995-0C10-4D59-9F75-45E3795D51C9}.SansMatlab|Win32.ActiveCfg = SansMatlab|Any CPU
 		{E3B1B536-8C7A-45E8-9BAA-5FE4F7B9FE13}.Debug|Any CPU.ActiveCfg = Debug|Win32
 		{E3B1B536-8C7A-45E8-9BAA-5FE4F7B9FE13}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
 		{E3B1B536-8C7A-45E8-9BAA-5FE4F7B9FE13}.Debug|Mixed Platforms.Build.0 = Debug|Win32
@@ -94,6 +112,11 @@ Global
 		{E3B1B536-8C7A-45E8-9BAA-5FE4F7B9FE13}.Release|Mixed Platforms.Build.0 = Release|Win32
 		{E3B1B536-8C7A-45E8-9BAA-5FE4F7B9FE13}.Release|Win32.ActiveCfg = Release|Win32
 		{E3B1B536-8C7A-45E8-9BAA-5FE4F7B9FE13}.Release|Win32.Build.0 = Release|Win32
+		{E3B1B536-8C7A-45E8-9BAA-5FE4F7B9FE13}.SansMatlab|Any CPU.ActiveCfg = SansMatlab|Win32
+		{E3B1B536-8C7A-45E8-9BAA-5FE4F7B9FE13}.SansMatlab|Mixed Platforms.ActiveCfg = SansMatlab|Win32
+		{E3B1B536-8C7A-45E8-9BAA-5FE4F7B9FE13}.SansMatlab|Mixed Platforms.Build.0 = SansMatlab|Win32
+		{E3B1B536-8C7A-45E8-9BAA-5FE4F7B9FE13}.SansMatlab|Win32.ActiveCfg = SansMatlab|Win32
+		{E3B1B536-8C7A-45E8-9BAA-5FE4F7B9FE13}.SansMatlab|Win32.Build.0 = SansMatlab|Win32
 		{EC8F7758-80CF-436B-978B-717297945FAB}.Debug|Any CPU.ActiveCfg = Debug|Win32
 		{EC8F7758-80CF-436B-978B-717297945FAB}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
 		{EC8F7758-80CF-436B-978B-717297945FAB}.Debug|Mixed Platforms.Build.0 = Debug|Win32
@@ -109,6 +132,11 @@ Global
 		{EC8F7758-80CF-436B-978B-717297945FAB}.Release|Mixed Platforms.Build.0 = Release|Win32
 		{EC8F7758-80CF-436B-978B-717297945FAB}.Release|Win32.ActiveCfg = Release|Win32
 		{EC8F7758-80CF-436B-978B-717297945FAB}.Release|Win32.Build.0 = Release|Win32
+		{EC8F7758-80CF-436B-978B-717297945FAB}.SansMatlab|Any CPU.ActiveCfg = SansMatlab|Win32
+		{EC8F7758-80CF-436B-978B-717297945FAB}.SansMatlab|Mixed Platforms.ActiveCfg = SansMatlab|Win32
+		{EC8F7758-80CF-436B-978B-717297945FAB}.SansMatlab|Mixed Platforms.Build.0 = SansMatlab|Win32
+		{EC8F7758-80CF-436B-978B-717297945FAB}.SansMatlab|Win32.ActiveCfg = SansMatlab|Win32
+		{EC8F7758-80CF-436B-978B-717297945FAB}.SansMatlab|Win32.Build.0 = SansMatlab|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
