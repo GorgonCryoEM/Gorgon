@@ -21,7 +21,7 @@ namespace wustl_mm {
 		public:
 			GrayImageSkeletonizer(int pointRadius, int curveRadius);
 			~GrayImageSkeletonizer();
-			GrayImage * PerformJuSkeletonization(GrayImage * image, string outputFile, int minGray, int maxGray);
+			GrayImage * PerformJuSkeletonization(GrayImage * image, string outputFile, int minGray, int maxGray, int stepSize);
 			GrayImage * PerformSkeletonPruning(GrayImage * sourceImage, GrayImage * sourceSkeleton, double pointThreshold, double curveThreshold, int minGray, int maxGray, string outputFile);
 			GrayImage * PerformImmersionSkeletonization(GrayImage * image, string outputFile);
 			GrayImage * CleanImmersionSkeleton(GrayImage * skeleton, string outputFile);
@@ -76,7 +76,7 @@ namespace wustl_mm {
 			delete volumeSkeletonizer;
 		}
 
-		GrayImage * GrayImageSkeletonizer::PerformJuSkeletonization(GrayImage * image, string outputFile, int minGray, int maxGray) {
+		GrayImage * GrayImageSkeletonizer::PerformJuSkeletonization(GrayImage * image, string outputFile, int minGray, int maxGray, int stepSize) {
 			image->Pad(MAX_GAUSSIAN_FILTER_RADIUS, 0);
 
 			GrayImage * compositeImage = new GrayImage(image->GetSizeX(), image->GetSizeY());
@@ -96,7 +96,7 @@ namespace wustl_mm {
 
 			GrayImageList * outputImages = new GrayImageList();
 			
-			for(int threshold = maxGray; threshold >= minGray; threshold--) {		
+			for(int threshold = maxGray; threshold >= minGray; threshold-= stepSize) {		
 				printf("\t\tTHRESHOLD : %i\n", threshold);
 				// Thresholding the image Only for display purposes.
 				thresholdedImage = new GrayImage(image); 

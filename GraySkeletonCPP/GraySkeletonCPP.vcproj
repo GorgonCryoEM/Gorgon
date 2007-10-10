@@ -16,7 +16,7 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="$(SolutionDir)\..\$(ConfigurationName)"
+			OutputDirectory="$(SolutionDir)\..\bin\$(ConfigurationName)"
 			IntermediateDirectory="$(SolutionDir)\..\temp\$(ConfigurationName)"
 			ConfigurationType="1"
 			>
@@ -86,7 +86,7 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="$(SolutionDir)\..\$(ConfigurationName)"
+			OutputDirectory="$(SolutionDir)\..\bin\$(ConfigurationName)"
 			IntermediateDirectory="$(SolutionDir)\..\temp\$(ConfigurationName)"
 			ConfigurationType="1"
 			>
@@ -151,7 +151,7 @@
 		</Configuration>
 		<Configuration
 			Name="MemLeak|Win32"
-			OutputDirectory="$(SolutionDir)\..\$(ConfigurationName)"
+			OutputDirectory="$(SolutionDir)\..\bin\$(ConfigurationName)"
 			IntermediateDirectory="$(SolutionDir)\..\temp\$(ConfigurationName)"
 			ConfigurationType="1"
 			>
@@ -194,6 +194,70 @@
 				AdditionalLibraryDirectories="C:\_WashU\ssa1\source\ExternalLibraries\mpatrol\bin;C:\MATLAB701\extern\lib\win32\microsoft\msvc71"
 				GenerateDebugInformation="true"
 				AssemblyDebug="1"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCWebDeploymentTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
+		</Configuration>
+		<Configuration
+			Name="SansMatlab|Win32"
+			OutputDirectory="$(SolutionDir)\..\bin\$(ConfigurationName)"
+			IntermediateDirectory="$(SolutionDir)\..\temp\$(ConfigurationName)"
+			ConfigurationType="1"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				AdditionalIncludeDirectories=""
+				PreprocessorDefinitions="WIN32;_CRT_SECURE_NO_DEPRECATE"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+				AdditionalLibraryDirectories=""
 			/>
 			<Tool
 				Name="VCALinkTool"

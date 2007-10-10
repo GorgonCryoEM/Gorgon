@@ -17,7 +17,7 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="$(SolutionDir)\..\$(ConfigurationName)"
+			OutputDirectory="$(SolutionDir)\..\bin\$(ConfigurationName)"
 			IntermediateDirectory="$(SolutionDir)\..\temp\$(ConfigurationName)"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
@@ -96,7 +96,7 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="$(SolutionDir)\..\$(ConfigurationName)"
+			OutputDirectory="$(SolutionDir)\..\bin\$(ConfigurationName)"
 			IntermediateDirectory="$(SolutionDir)\..\temp\$(ConfigurationName)"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
@@ -172,7 +172,7 @@
 		</Configuration>
 		<Configuration
 			Name="MemLeak|Win32"
-			OutputDirectory="$(SolutionDir)\..\$(ConfigurationName)"
+			OutputDirectory="$(SolutionDir)\..\bin\$(ConfigurationName)"
 			IntermediateDirectory="$(SolutionDir)\..\temp\$(ConfigurationName)"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
@@ -223,6 +223,82 @@
 				AdditionalLibraryDirectories="C:\MATLAB701\extern\lib\win32\microsoft\msvc71"
 				GenerateDebugInformation="true"
 				AssemblyDebug="1"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCWebDeploymentTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
+		</Configuration>
+		<Configuration
+			Name="SansMatlab|Win32"
+			OutputDirectory="$(SolutionDir)\..\bin\$(ConfigurationName)"
+			IntermediateDirectory="$(SolutionDir)\..\temp\$(ConfigurationName)"
+			ConfigurationType="1"
+			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
+			CharacterSet="2"
+			ManagedExtensions="4"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="2"
+				AdditionalIncludeDirectories=""
+				PreprocessorDefinitions="_RELEASE;_CRT_SECURE_NO_DEPRECATE;WIN32"
+				MinimalRebuild="false"
+				RuntimeLibrary="2"
+				WarningLevel="3"
+				DebugInformationFormat="3"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+				ShowProgress="2"
+				OutputFile="$(OutDir)\$(ProjectName).exe"
+				LinkIncremental="2"
+				AdditionalLibraryDirectories=""
+				GenerateDebugInformation="true"
 			/>
 			<Tool
 				Name="VCALinkTool"

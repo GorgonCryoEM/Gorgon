@@ -9,7 +9,9 @@
 #include "Vector3D.h"
 #include "ComplexNumber.h"
 #include "eigen.h"
+#ifdef USE_MATLAB
 #include "engine.h"
+#endif
 
 namespace wustl_mm {
 	namespace MatlabInterface {
@@ -19,19 +21,27 @@ namespace wustl_mm {
 			~MatlabWrapper();
 			void EigenAnalysis(EigenVectorsAndValues2D & eigenInformation);
 			void EigenAnalysis(EigenVectorsAndValues3D & eigenInformation);
+			#ifdef USE_MATLAB
 			void EigenAnalysisMatlab(EigenVectorsAndValues3D & eigenInformation);
+			#endif
 		private:
+			#ifdef USE_MATLAB
 			Engine * mathEngine;
+			#endif
 		};
 
 		MatlabWrapper::MatlabWrapper() {
+			#ifdef USE_MATLAB
 			mathEngine = engOpen(NULL);
 			engSetVisible(mathEngine, false);
+			#endif
 		}
 
 		MatlabWrapper::~MatlabWrapper() {
+			#ifdef USE_MATLAB
 			engClose(mathEngine);
 			delete mathEngine;
+			#endif
 		}
 
 		void MatlabWrapper::EigenAnalysis(EigenVectorsAndValues2D & eigenInformation) {
@@ -81,6 +91,7 @@ namespace wustl_mm {
 			}	
 		}
 
+		#ifdef USE_MATLAB
 		void MatlabWrapper::EigenAnalysisMatlab(EigenVectorsAndValues3D & eigenInformation) {
 			mxArray * mxMathData = mxCreateDoubleMatrix(3, 3, mxREAL);
 
@@ -110,6 +121,7 @@ namespace wustl_mm {
 			delete mxEigenValue3;
 			delete mxEigenVectors;
 		}
+		#endif
 	}
 }
 
