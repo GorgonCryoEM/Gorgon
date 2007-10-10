@@ -164,6 +164,8 @@ void DoTopologicalWatershedJu2007(int dimensions, string inFile, string outFile,
 			delete reader;
 
 			VolumeSkeletonizer * skeletonizer3D = new VolumeSkeletonizer(0,0,0);
+			skeletonizer3D->NormalizeVolume(sourceVol);
+			skeletonizer3D->CleanupVolume(sourceVol, minGray, maxGray);
 			Volume * outputVol = skeletonizer3D->PerformJuSkeletonization(sourceVol, outPath, minGray, maxGray, stepSize);				
 			outputVol->toOFFCells2((char *)(outPath + ".off").c_str());
 			outputVol->toMRCFile((char *)(outPath + ".mrc").c_str());
@@ -192,6 +194,8 @@ void DoSkeletonizationAbeysinghe2007(int dimensions, string inFile, string outFi
 			delete reader;
 
 			VolumeSkeletonizer * skeletonizer3D = new VolumeSkeletonizer(0,0,0);
+			skeletonizer3D->NormalizeVolume(sourceVol);
+			skeletonizer3D->CleanupVolume(sourceVol, minGray, maxGray);
 			Volume * outputVol = skeletonizer3D->PerformImmersionSkeletonizationAndPruning(sourceVol, minGray, maxGray, stepSize, minCurveSize, minSurfaceSize, 0.0, 0.0, outPath, false, 1.0, 1.0, 1.0);
 			outputVol->toOFFCells2((char *)(outPath + ".off").c_str());
 			outputVol->toMRCFile((char *)(outPath + ".mrc").c_str());
