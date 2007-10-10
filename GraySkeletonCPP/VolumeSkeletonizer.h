@@ -44,6 +44,7 @@ namespace wustl_mm {
 			void PruneCurves(Volume * sourceVolume, int pruneLength);
 			void PruneSurfaces(Volume * sourceVolume, int pruneLength);
 			void PruneUsingStructureTensor(Volume * skeleton, Volume * sourceVolume, EigenResults3D * volumeEigens, double threshold, char pruningClass, string outputPath);
+			void VoxelSubtract(Volume * sourceAndDestVolume1, Volume * sourceVolume2);
 			void VoxelOr(Volume * sourceAndDestVolume1, Volume * sourceVolume2);
 			Vector3D * GetVolumeGradient(Volume * sourceVolume);
 			Vector3D * GetVolumeGradient2(Volume * sourceVolume);
@@ -68,6 +69,8 @@ namespace wustl_mm {
 			void WriteEigenResultsToVRMLFile(Volume * sourceVolume, Volume * cost, Volume * skeleton, EigenResults3D * eigenResults, string outputPath, bool doInverse);
 			void WriteSkeletonDirectionToVRMLFile(Volume * skeleton, Vector3D * skeletonDirections, string outputPath);
 			Vector3D XYZtoUVW(Vector3D vec, Vector3D u, Vector3D v, Vector3D w);
+			Volume * FillCurveHoles(Volume * thresholdedSkeleton, Volume * originalSkeleton, int maxHoleSize);
+			Volume * FillSurfaceHoles(Volume * thresholdedSkeleton, Volume * originalSkeleton, int maxHoleSize);
 			Volume * GetJuThinning(Volume * sourceVolume, Volume * preserve, double threshold, char thinningClass);
 			Volume * GetImmersionThinning(Volume * sourceVolume, Volume * preserve, double lowGrayscale, double highGrayscale, double stepSize, char thinningClass);
 
@@ -671,38 +674,6 @@ namespace wustl_mm {
 			}
 		}
 
-		Volume * VolumeSkeletonizer::PerformPureJuSkeletonization(Volume * imageVol, string outputPath, double threshold, int minCurveWidth, int minSurfaceWidth) {
-			imageVol->pad(MAX_GAUSSIAN_FILTER_RADIUS, 0);
-			
-			Volume * preservedVol = new Volume(imageVol->getSizeX(), imageVol->getSizeY(), imageVol->getSizeZ());
-			Volume * surfaceVol;
-			Volume * curveVol;
-			Volume * topologyVol;		
-
-			printf("\t\t\tUSING THRESHOLD : %f\n", threshold);
-			// Skeletonizing while preserving surface features curve features and topology
-			surfaceVol = GetJuSurfaceSkeleton(imageVol, preservedVol, threshold);
-			PruneSurfaces(surfaceVol, minSurfaceWidth);
-			VoxelOr(preservedVol, surfaceVol);
-
-			curveVol = VolumeSkeletonizer::GetJuCurveSkeleton(imageVol, preservedVol, threshold, true);
-			VolumeSkeletonizer::PruneCurves(curveVol, minCurveWidth);
-			VoxelOr(preservedVol, curveVol);
-
-			topologyVol = VolumeSkeletonizer::GetJuTopologySkeleton(imageVol, preservedVol, threshold);
-
-			imageVol->threshold(threshold);
-			imageVol->pad(-MAX_GAUSSIAN_FILTER_RADIUS, 0);			
-			topologyVol->pad(-MAX_GAUSSIAN_FILTER_RADIUS, 0);
-
-			delete preservedVol;
-			delete surfaceVol;
-			delete curveVol;
-
-			return topologyVol;
-		}
-
-
 		void VolumeSkeletonizer::PruneCurves(Volume * sourceVolume, int pruneLength) {
 			sourceVolume->erodeHelix(pruneLength);
 		}
@@ -744,6 +715,15 @@ namespace wustl_mm {
 			delete [] skeletonDirections;
 		}
 
+		void VolumeSkeletonizer::VoxelSubtract(Volume * sourceAndDestVolume1, Volume * sourceVolume2){
+			for(int x = 0; x < sourceAndDestVolume1->getSizeX(); x++) {
+				for(int y = 0; y < sourceAndDestVolume1->getSizeY(); y++) {
+					for(int z = 0; z < sourceAndDestVolume1->getSizeZ(); z++) {
+						sourceAndDestVolume1->setDataAt(x, y, z, sourceAndDestVolume1->getDataAt(x, y, z) - sourceVolume2->getDataAt(x, y, z));
+					}
+				}
+			}
+		}
 		void VolumeSkeletonizer::VoxelOr(Volume * sourceAndDestVolume1, Volume * sourceVolume2){
 			for(int x = 0; x < sourceAndDestVolume1->getSizeX(); x++) {
 				for(int y = 0; y < sourceAndDestVolume1->getSizeY(); y++) {
@@ -1100,6 +1080,28 @@ namespace wustl_mm {
 			return cleanedSkel;
 		}
 
+		Volume * VolumeSkeletonizer::FillCurveHoles(Volume * thresholdedSkeleton, Volume * originalSkeleton, int maxHoleSize) {
+			Volume * holes = new Volume(originalSkeleton->getSizeX(),  originalSkeleton->getSizeY(), originalSkeleton->getSizeZ(), 0, 0, 0, originalSkeleton);
+			VoxelSubtract(holes, thresholdedSkeleton);
+			PruneCurves(holes, maxHoleSize);
+
+			Volume * filledSkeleton = new Volume(originalSkeleton->getSizeX(),  originalSkeleton->getSizeY(), originalSkeleton->getSizeZ(), 0, 0, 0, originalSkeleton);
+			VoxelSubtract(filledSkeleton, holes);
+			delete holes;			
+			return filledSkeleton;
+		}
+
+		Volume * VolumeSkeletonizer::FillSurfaceHoles(Volume * thresholdedSkeleton, Volume * originalSkeleton, int maxHoleSize) {
+			Volume * holes = new Volume(originalSkeleton->getSizeX(),  originalSkeleton->getSizeY(), originalSkeleton->getSizeZ(), 0, 0, 0, originalSkeleton);
+			VoxelSubtract(holes, thresholdedSkeleton);
+			PruneSurfaces(holes, maxHoleSize);
+
+			Volume * filledSkeleton = new Volume(originalSkeleton->getSizeX(),  originalSkeleton->getSizeY(), originalSkeleton->getSizeZ(), 0, 0, 0, originalSkeleton);
+			VoxelSubtract(filledSkeleton, holes);
+			delete holes;			
+			return filledSkeleton;
+		}
+
 		Volume * VolumeSkeletonizer::GetImmersionThinning(Volume * sourceVolume, Volume * preserve, double lowGrayscale, double highGrayscale, double stepSize, char thinningClass) {
 			Volume * thinnedVolume = new Volume(sourceVolume->getSizeX(), sourceVolume->getSizeY(), sourceVolume->getSizeZ(), 0, 0, 0, sourceVolume);
 			thinnedVolume->threshold2(lowGrayscale, 0, 1) ;
@@ -1176,38 +1178,56 @@ namespace wustl_mm {
 				volumeGradient = GetVolumeGradient2(sourceVol);			
 			}
 
-			Volume * surfaceVol = GetImmersionThinning(sourceVol, NULL, startGray, endGray, stepSize, THINNING_CLASS_SURFACE_PRESERVATION);
+			Volume * surfaceVol = GetImmersionThinning(sourceVol, NULL, startGray, endGray, stepSize, THINNING_CLASS_SURFACE_PRESERVATION);			
 			if(doPruning) {
 				surfaceVol->toMRCFile((char *)(outputPath + "-S-Pre-Prune.mrc").c_str());
 				volumeEigens = GetEigenResults2(surfaceVol, volumeGradient, gaussianFilterSurfaceRadius, surfaceRadius, true);
-				PruneUsingStructureTensor(surfaceVol, sourceVol, volumeEigens, surfaceThreshold, PRUNING_CLASS_PRUNE_SURFACES, outputPath + "-S");
+
+				Volume * prunedSurfaceVol = new Volume(surfaceVol->getSizeX(), surfaceVol->getSizeY(), surfaceVol->getSizeZ(), 0, 0, 0, surfaceVol);
+				PruneUsingStructureTensor(prunedSurfaceVol, sourceVol, volumeEigens, surfaceThreshold, PRUNING_CLASS_PRUNE_SURFACES, outputPath + "-S");
 				delete [] volumeEigens;
-				surfaceVol->toMRCFile((char *)(outputPath + "-S-Post-Prune.mrc").c_str());
+				prunedSurfaceVol->toMRCFile((char *)(outputPath + "-S-Post-Prune.mrc").c_str());
+
+				Volume * filledSurfaceVol = FillSurfaceHoles(prunedSurfaceVol, surfaceVol, maxSurfaceHole);
+				filledSurfaceVol->toMRCFile((char *)(outputPath + "-S-Post-Fill.mrc").c_str());
+				delete surfaceVol;
+				delete prunedSurfaceVol;
+				surfaceVol = filledSurfaceVol;
 			}		
+
 			PruneSurfaces(surfaceVol, minSurfaceSize);			
 			surfaceVol->toMRCFile((char *)(outputPath + "-S-Post-Erosion.mrc").c_str());
-
 
 			Volume * curveVol = GetImmersionThinning(sourceVol, surfaceVol, startGray, endGray, stepSize, THINNING_CLASS_CURVE_PRESERVATION);
 			if(doPruning) {
 				curveVol->toMRCFile((char *)(outputPath + "-C-Pre-Prune.mrc").c_str());
 				volumeEigens = GetEigenResults2(curveVol, volumeGradient, gaussianFilterCurveRadius, curveRadius, true);
-				PruneUsingStructureTensor(curveVol, sourceVol, volumeEigens, curveThreshold, PRUNING_CLASS_PRUNE_CURVES, outputPath + "-C");
+
+				Volume * prunedCurveVol = new Volume(curveVol->getSizeX(), curveVol->getSizeY(), curveVol->getSizeZ(), 0, 0, 0, curveVol);
+				PruneUsingStructureTensor(prunedCurveVol, sourceVol, volumeEigens, curveThreshold, PRUNING_CLASS_PRUNE_CURVES, outputPath + "-C");
 				delete [] volumeEigens;
-				curveVol->toMRCFile((char *)(outputPath + "-C-Post-Prune.mrc").c_str());
+				prunedCurveVol->toMRCFile((char *)(outputPath + "-C-Post-Prune.mrc").c_str());
+
+				Volume * filledCurveVol = FillCurveHoles(prunedCurveVol, curveVol, maxCurveHole);
+				filledCurveVol->toMRCFile((char *)(outputPath + "-C-Post-Fill.mrc").c_str());
+				delete curveVol;
+				delete prunedCurveVol;
+				curveVol = filledCurveVol;
+
 			}
 			PruneCurves(curveVol, minCurveSize);			
 			curveVol->toMRCFile((char *)(outputPath + "-C-Post-Erosion.mrc").c_str());
 			
 
 			Volume * pointVol = GetImmersionThinning(sourceVol, curveVol, startGray, endGray, stepSize, THINNING_CLASS_POINT_PRESERVATION);
-			if(doPruning) {
-				pointVol->toMRCFile((char *)(outputPath + "-P-Pre-Prune.mrc").c_str());
-				volumeEigens = GetEigenResults2(pointVol, volumeGradient, gaussianFilterPointRadius, pointRadius, true);
-				PruneUsingStructureTensor(pointVol, sourceVol, volumeEigens, pointThreshold, PRUNING_CLASS_PRUNE_POINTS, outputPath + "-P");
-				delete [] volumeEigens;
-				pointVol->toMRCFile((char *)(outputPath + "-P-Post-Prune.mrc").c_str());
-			}
+			// Removed as points will always be preserved to ensure that the shape is preserved.
+			//if(doPruning) {
+			//	pointVol->toMRCFile((char *)(outputPath + "-P-Pre-Prune.mrc").c_str());
+			//	volumeEigens = GetEigenResults2(pointVol, volumeGradient, gaussianFilterPointRadius, pointRadius, true);
+			//	PruneUsingStructureTensor(pointVol, sourceVol, volumeEigens, pointThreshold, PRUNING_CLASS_PRUNE_POINTS, outputPath + "-P");
+			//	delete [] volumeEigens;
+			//	pointVol->toMRCFile((char *)(outputPath + "-P-Post-Prune.mrc").c_str());
+			//}
 
 			delete surfaceVol;
 			delete curveVol;
@@ -1373,6 +1393,38 @@ namespace wustl_mm {
 
 		}
 
+
+
+		Volume * VolumeSkeletonizer::PerformPureJuSkeletonization(Volume * imageVol, string outputPath, double threshold, int minCurveWidth, int minSurfaceWidth) {
+			imageVol->pad(MAX_GAUSSIAN_FILTER_RADIUS, 0);
+			
+			Volume * preservedVol = new Volume(imageVol->getSizeX(), imageVol->getSizeY(), imageVol->getSizeZ());
+			Volume * surfaceVol;
+			Volume * curveVol;
+			Volume * topologyVol;		
+
+			printf("\t\t\tUSING THRESHOLD : %f\n", threshold);
+			// Skeletonizing while preserving surface features curve features and topology
+			surfaceVol = GetJuSurfaceSkeleton(imageVol, preservedVol, threshold);
+			PruneSurfaces(surfaceVol, minSurfaceWidth);
+			VoxelOr(preservedVol, surfaceVol);
+
+			curveVol = VolumeSkeletonizer::GetJuCurveSkeleton(imageVol, preservedVol, threshold, true);
+			VolumeSkeletonizer::PruneCurves(curveVol, minCurveWidth);
+			VoxelOr(preservedVol, curveVol);
+
+			topologyVol = VolumeSkeletonizer::GetJuTopologySkeleton(imageVol, preservedVol, threshold);
+
+			imageVol->threshold(threshold);
+			imageVol->pad(-MAX_GAUSSIAN_FILTER_RADIUS, 0);			
+			topologyVol->pad(-MAX_GAUSSIAN_FILTER_RADIUS, 0);
+
+			delete preservedVol;
+			delete surfaceVol;
+			delete curveVol;
+
+			return topologyVol;
+		}
 
 
 		Volume * VolumeSkeletonizer::PerformSkeletonPruning(Volume * sourceVolume, Volume * sourceSkeleton, double curveThreshold, double surfaceThreshold, int minGray, int maxGray, string outputPath) {
