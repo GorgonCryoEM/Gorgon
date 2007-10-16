@@ -14,6 +14,7 @@
 #include <math.h>
 #include "PriorityQueue.h"
 #include <vector>
+//#include "..\GraySkeletonCPP\DiscreteMesh.h"
 
 #define MAX_SHEETS 100000
 #define MAX_QUEUELEN 500000
@@ -1633,6 +1634,47 @@ public:
 		
 		return 1 ;
 	}
+
+	int hasIsolatedFace2( int ox, int oy, int oz )
+	{
+		int i, j, k ;
+		int nx, ny, nz ;
+
+		double vox[3][3][3] ;
+		for ( i = -1 ; i < 2 ; i ++ )
+			for ( j = -1 ; j < 2 ; j ++ )
+				for ( k = -1 ; k < 2 ; k ++ )
+				{
+					vox[ i + 1 ][ j + 1 ][ k + 1 ] = getDataAt( ox + i, oy + j, oz + k ) ;
+				}
+
+		for ( i = 0 ; i < 8 ; i ++ )
+		{	
+			int flag = 1 ;
+			int x = ( ( i >> 2 ) & 1 ) ;
+			int y = ( ( i >> 1 ) & 1 ) ;
+			int z = ( i & 1 ) ;
+			for ( j = 0 ; j < 8 ; j ++ )
+			{
+				nx = x + ( ( j >> 2 ) & 1 ) ;
+				ny = y + ( ( j >> 1 ) & 1 ) ;
+				nz = z + ( j & 1 ) ;
+				
+				if ( vox[nx][ny][nz] < 0 )
+				{
+					flag = 0 ;
+					break;
+				}
+			}
+			if ( flag == 0 )
+			{
+				return 1 ;
+			}
+		}
+
+		return 0 ;
+	}
+
 
 	int hasIsolatedFace( int ox, int oy, int oz )
 	{
@@ -8246,7 +8288,8 @@ public:
 			oy = ele->y ;
 			oz = ele->z ;
 
-			if ( hasIsolatedFace( ox, oy, oz ) == 0 )
+//			if(wustl_mm::MatlabInterface::DiscreteMesh::IsVolumeBody(this, ox, oy, oz))
+			if ( hasIsolatedFace2( ox, oy, oz ) == 0 )
 			{
 				setDataAt( ox, oy, oz, -1 ) ;
 			}

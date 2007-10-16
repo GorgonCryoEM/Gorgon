@@ -68,6 +68,7 @@ namespace wustl_mm {
 			void WriteEigenResultsToOFFFileWireframe(Volume * sourceVolume, Volume * cost, Volume * skeleton, EigenResults3D * eigenResults, string outputPath);
 			void WriteEigenResultsToVRMLFile(Volume * sourceVolume, Volume * cost, Volume * skeleton, EigenResults3D * eigenResults, string outputPath, bool doInverse);
 			void WriteSkeletonDirectionToVRMLFile(Volume * skeleton, Vector3D * skeletonDirections, string outputPath);
+			void WriteVolumeToVRMLFile(Volume * vol, string outputPath);
 			Vector3D XYZtoUVW(Vector3D vec, Vector3D u, Vector3D v, Vector3D w);
 			Volume * FillCurveHoles(Volume * thresholdedSkeleton, Volume * originalSkeleton, int maxHoleSize);
 			Volume * FillSurfaceHoles(Volume * thresholdedSkeleton, Volume * originalSkeleton, int maxHoleSize);
@@ -1030,11 +1031,13 @@ namespace wustl_mm {
 
 							if((axis.values[0] == 0) && (axis.values[1] == 0) && (axis.values[2] == 0)) {
 								fprintf(outFile, "Group{\n children[\n Transform{\n translation %i %i %i \n  children [\n Shape {\n appearance Appearance {\n material Material {emissiveColor %f %f %f }} \n geometry Box {size 0.7 0.05 0.05}}]}]}\n",
-									x - MAX_GAUSSIAN_FILTER_RADIUS, y - MAX_GAUSSIAN_FILTER_RADIUS, z - MAX_GAUSSIAN_FILTER_RADIUS,
+									//x - MAX_GAUSSIAN_FILTER_RADIUS, y - MAX_GAUSSIAN_FILTER_RADIUS, z - MAX_GAUSSIAN_FILTER_RADIUS,
+									x, y, z,
 									r, g, b);
 							} else {
 								fprintf(outFile, "Group{\n children[\n Transform{\n translation %i %i %i \n  rotation %f %f %f %f \n  children [\n Shape {\n appearance Appearance {\n material Material {emissiveColor %f %f %f }} \n geometry Box {size 0.7 0.05 0.05}}]}]}\n",
-									x - MAX_GAUSSIAN_FILTER_RADIUS, y - MAX_GAUSSIAN_FILTER_RADIUS, z - MAX_GAUSSIAN_FILTER_RADIUS,
+									//x - MAX_GAUSSIAN_FILTER_RADIUS, y - MAX_GAUSSIAN_FILTER_RADIUS, z - MAX_GAUSSIAN_FILTER_RADIUS,
+									x, y, z,
 									axis.values[0], axis.values[1], axis.values[2], angle,
 									r, g, b);
 							}
@@ -1047,6 +1050,58 @@ namespace wustl_mm {
 			fclose(outFile);
 			delete outFile;
 		}
+		void VolumeSkeletonizer::WriteVolumeToVRMLFile(Volume * vol, string outputPath) {
+			int index;
+			FILE * outFile = fopen(outputPath.c_str(), "wt");
+			fprintf(outFile, "#VRML V2.0 utf8\n");
+			fprintf(outFile, "DEF object0 Transform {\n children [\n Shape {\n geometry IndexedFaceSet {\n coord Coordinate { point [");
+
+			for(int x = 0; x < vol->getSizeX(); x++) {
+				for(int y = 0; y < vol->getSizeY(); y++) {
+					for(int z = 0; z < vol->getSizeZ(); z++) {
+						fprintf(outFile, "%i %i %i", x, y, z);
+						if((x < vol->getSizeX()-1) || (y < vol->getSizeY()-1) || (z < vol->getSizeZ()-1)) {
+							fprintf(outFile, ", ");
+						}
+					}
+				}
+			}
+
+			fprintf(outFile, "]\n } \n creaseAngle 0.610865 \n coordIndex [");
+			bool printComma = false;
+
+			for(int x = 1; x < vol->getSizeX()-1; x++) {
+				for(int y = 1; y < vol->getSizeY()-1; y++) {
+					for(int z = 1; z < vol->getSizeZ()-1; z++) {
+						for(int i = 0; i < 12; i++) {
+							if( (vol->getDataAt(x, y, z) > 0) && 
+								(vol->getDataAt(x + VOLUME_NEIGHBOR_FACES[i][0][0], y + VOLUME_NEIGHBOR_FACES[i][0][1], z + VOLUME_NEIGHBOR_FACES[i][0][2]) > 0) &&
+								(vol->getDataAt(x + VOLUME_NEIGHBOR_FACES[i][1][0], y + VOLUME_NEIGHBOR_FACES[i][1][1], z + VOLUME_NEIGHBOR_FACES[i][1][2]) > 0) &&
+								(vol->getDataAt(x + VOLUME_NEIGHBOR_FACES[i][2][0], y + VOLUME_NEIGHBOR_FACES[i][2][1], z + VOLUME_NEIGHBOR_FACES[i][2][2]) > 0)) {
+
+								if(printComma) {
+									fprintf(outFile, ",");
+								}
+								printComma = true;
+								fprintf(outFile, "%i, %i, %i, %i, -1, %i, %i, %i, %i, -1",
+									vol->getIndex(x, y, z),
+									vol->getIndex(x + VOLUME_NEIGHBOR_FACES[i][0][0], y + VOLUME_NEIGHBOR_FACES[i][0][1], z + VOLUME_NEIGHBOR_FACES[i][0][2]),
+									vol->getIndex(x + VOLUME_NEIGHBOR_FACES[i][1][0], y + VOLUME_NEIGHBOR_FACES[i][1][1], z + VOLUME_NEIGHBOR_FACES[i][1][2]),
+									vol->getIndex(x + VOLUME_NEIGHBOR_FACES[i][2][0], y + VOLUME_NEIGHBOR_FACES[i][2][1], z + VOLUME_NEIGHBOR_FACES[i][2][2]),
+									vol->getIndex(x, y, z),
+									vol->getIndex(x + VOLUME_NEIGHBOR_FACES[i][2][0], y + VOLUME_NEIGHBOR_FACES[i][2][1], z + VOLUME_NEIGHBOR_FACES[i][2][2]),
+									vol->getIndex(x + VOLUME_NEIGHBOR_FACES[i][1][0], y + VOLUME_NEIGHBOR_FACES[i][1][1], z + VOLUME_NEIGHBOR_FACES[i][1][2]),
+									vol->getIndex(x + VOLUME_NEIGHBOR_FACES[i][0][0], y + VOLUME_NEIGHBOR_FACES[i][0][1], z + VOLUME_NEIGHBOR_FACES[i][0][2]));
+								
+							}
+						}						
+					}
+				}
+			}
+			fprintf(outFile, "]\n}\n}\n]\n}");
+			fclose(outFile);
+		}
+
 		Volume * VolumeSkeletonizer::CleanImmersionSkeleton(Volume * skeleton, string outputPath) {
 			Volume * cleanedSkel = new Volume(skeleton->getSizeX(), skeleton->getSizeY(), skeleton->getSizeZ(), 0, 0, 0, skeleton);
 			typedef vector<Vector3DInt> BinType;
@@ -1181,6 +1236,8 @@ namespace wustl_mm {
 			Volume * surfaceVol = GetImmersionThinning(sourceVol, NULL, startGray, endGray, stepSize, THINNING_CLASS_SURFACE_PRESERVATION);			
 			if(doPruning) {
 				surfaceVol->toMRCFile((char *)(outputPath + "-S-Pre-Prune.mrc").c_str());
+				surfaceVol->toOFFCells2((char *)(outputPath + "-S-Pre-Prune.off").c_str());
+				WriteVolumeToVRMLFile(surfaceVol, outputPath + "-S-Pre-Prune.wrl");
 				volumeEigens = GetEigenResults2(surfaceVol, volumeGradient, gaussianFilterSurfaceRadius, surfaceRadius, true);
 
 				Volume * prunedSurfaceVol = new Volume(surfaceVol->getSizeX(), surfaceVol->getSizeY(), surfaceVol->getSizeZ(), 0, 0, 0, surfaceVol);
