@@ -14,7 +14,6 @@
 #include <math.h>
 #include "PriorityQueue.h"
 #include <vector>
-//#include "..\GraySkeletonCPP\DiscreteMesh.h"
 
 #define MAX_SHEETS 100000
 #define MAX_QUEUELEN 500000
@@ -23,7 +22,7 @@
 
 //#define NOISE_DIS_SHEET 1
 //#define NOISE_DIS_HELIX 5
-
+//#define VERBOSE
 using namespace std;
 
 const int neighbor6[6][3]={{0,0,1},{0,0,-1},{0,1,0},{0,-1,0},{1,0,0},{-1,0,0}} ;
@@ -1635,8 +1634,9 @@ public:
 		return 1 ;
 	}
 
-	int hasIsolatedFace2( int ox, int oy, int oz )
+	int isInternal( int ox, int oy, int oz )
 	{
+		// assuming it's 0/1 volume
 		int i, j, k ;
 		int nx, ny, nz ;
 
@@ -1648,9 +1648,10 @@ public:
 					vox[ i + 1 ][ j + 1 ][ k + 1 ] = getDataAt( ox + i, oy + j, oz + k ) ;
 				}
 
+		
 		for ( i = 0 ; i < 8 ; i ++ )
 		{	
-			int flag = 1 ;
+			int flag = 0 ;
 			int x = ( ( i >> 2 ) & 1 ) ;
 			int y = ( ( i >> 1 ) & 1 ) ;
 			int z = ( i & 1 ) ;
@@ -1660,21 +1661,38 @@ public:
 				ny = y + ( ( j >> 1 ) & 1 ) ;
 				nz = z + ( j & 1 ) ;
 				
-				if ( vox[nx][ny][nz] < 0 )
+				if ( vox[nx][ny][nz] <= 0 )
 				{
-					flag = 0 ;
+					flag = 1 ;
 					break;
 				}
 			}
-			if ( flag == 0 )
+			if ( flag == 1 )
 			{
-				return 1 ;
+				return 0 ;
 			}
 		}
 
-		return 0 ;
+		return 1 ;
 	}
 
+	int isInternal2( int ox, int oy, int oz )
+	{
+		// assuming it's -1/0 volume
+		int i, j, k ;
+
+		for ( i = -1 ; i < 2 ; i ++ )
+			for ( j = -1 ; j < 2 ; j ++ )
+				for ( k = -1 ; k < 2 ; k ++ )
+				{
+					if ( getDataAt( ox + i, oy + j, oz + k ) < 0 )
+					{
+						return 0 ;
+					}
+				}
+
+		return 1 ;
+	}
 
 	int hasIsolatedFace( int ox, int oy, int oz )
 	{
@@ -4999,6 +5017,7 @@ public:
 		}
 
 		// Remove all internal voxels (contained in manifold surfaces)
+		queue2->reset() ;
 		queue4->reset() ;
 		ele = queue4->getNext() ;
 		while ( ele != NULL )
@@ -5007,13 +5026,33 @@ public:
 			oy = ele->y ;
 			oz = ele->z ;
 
-			if ( hasIsolatedEdge( ox, oy, oz ) == 0 )
+			if ( hasCompleteSheet( ox, oy, oz ) == 1 )
 			{
-				setDataAt( ox, oy, oz, -1 ) ;
+				queue2->prepend(ox,oy,oz) ;
+			//	setDataAt( ox, oy, oz, -1 ) ;
 			}
 			ele = queue4->remove() ;
 		}
 		
+		for ( i = 0 ; i < sizex ; i ++ )
+			for ( j = 0 ; j < sizey ; j ++ )
+				for ( k = 0 ; k < sizez ; k ++ )
+				{
+					if ( getDataAt( i, j, k ) == 0 && hasCompleteSheet(i,j,k) == 1)
+					{
+						queue2->prepend( i, j, k ) ;
+					}
+				}
+		queue2->reset() ;
+		ele = queue2->getNext() ;
+		while ( ele != NULL )
+		{
+			ox = ele->x ;
+			oy = ele->y ;
+			oz = ele->z ;
+			setDataAt( ox, oy, oz, -1 ) ;
+			ele = queue2->remove() ;
+		}
 
 
 		// Finally, clean up
@@ -6415,10 +6454,33 @@ public:
 			oy = ele->y ;
 			oz = ele->z ;
 
-			if ( hasCompleteHelix( ox, oy, oz ) )
+			if ( hasCompleteHelix( ox, oy, oz ) == 1 )
 			{
-				setDataAt( ox, oy, oz, -1 ) ;
+				ele = queue2->getNext() ;
 			}
+			else
+			{
+				ele = queue2->remove() ;
+			}
+		}
+		
+		for ( i = 0 ; i < sizex ; i ++ )
+			for ( j = 0 ; j < sizey ; j ++ )
+				for ( k = 0 ; k < sizez ; k ++ )
+				{
+					if ( getDataAt( i, j, k ) == 0 && hasCompleteHelix(i,j,k) == 1)
+					{
+						queue2->prepend( i, j, k ) ;
+					}
+				}
+		queue2->reset() ;
+		ele = queue2->getNext() ;
+		while ( ele != NULL )
+		{
+			ox = ele->x ;
+			oy = ele->y ;
+			oz = ele->z ;
+			setDataAt( ox, oy, oz, -1 ) ;
 			ele = queue2->remove() ;
 		}
 
@@ -7871,6 +7933,7 @@ public:
 		int i, j, k ;
 		// First, threshold the volume
 		#ifdef VERBOSE
+		printf("Between %f and %f...\n", lowthr, highthr) ;
 		printf("Thresholding the volume to -MAX_ERODE/0...\n") ;
 		#endif
 		threshold( 0.5f, -MAX_ERODE, 0 ) ;
@@ -7884,6 +7947,7 @@ public:
 		GridQueue2* queue4 = new GridQueue2( ) ;
 
 		PriorityQueue <gridPoint,int> * queue = new PriorityQueue <gridPoint,int> ( MAX_QUEUELEN );
+		int ct = 0 ;
 
 		for ( i = 0 ; i < sizex ; i ++ )
 			for ( j = 0 ; j < sizey ; j ++ )
@@ -7898,6 +7962,21 @@ public:
 						}
 						else
 						{
+							ct ++ ;
+/*
+							for ( int mi = -1 ; mi < 2 ; mi ++ )
+								for ( int mj = -1 ; mj < 2 ; mj ++ )
+									for ( int mk = -1 ; mk < 2 ; mk ++ )
+									{
+										if ( getDataAt( i + mi, j + mj, k + mk ) < 0 )
+										{
+											// setDataAt( i, j, k, 1 ) ;
+											queue2->prepend( i, j, k ) ;
+											break ;
+										}
+
+									}
+						*/
 							for ( int m = 0 ; m < 6 ; m ++ )
 							{
 								if ( getDataAt( i + neighbor6[m][0], j + neighbor6[m][1], k + neighbor6[m][2] ) < 0 )
@@ -7911,7 +7990,7 @@ public:
 					}
 				}
 		#ifdef VERBOSE
-		printf("Total %d nodes\n", queue2->getNumElements() ) ;
+		printf("Total %d nodes, %d border nodes\n", ct, queue2->getNumElements() ) ;
 		#endif
 
 
@@ -8180,11 +8259,6 @@ public:
 					setDataAt( ox, oy, oz, -1 ) ;
 					numSimple ++ ;
 
-					if ( nowComplex )
-					{
-
-						// printf("Error: %d\n", score);
-					}
 				/* Adding ends */
 					// Move its neighboring unvisited node to queue2
 					for ( int m = 0 ; m < 6 ; m ++ )
@@ -8198,9 +8272,14 @@ public:
 							queue2->prepend( nx, ny, nz ) ;
 						}
 					}
+				
+					if ( nowComplex )
+					{
+
+						// printf("Error: %d\n", score);
+					}
 				}
 
-				
 				/* Commented for debugging
 				
 				// Find complex nodes in its 3x3 neighborhood
@@ -8280,21 +8359,35 @@ public:
 		}
 
 		// Remove all internal voxels (contained in cells)
+		
 		queue4->reset() ;
 		ele = queue4->getNext() ;
+		while ( ele != NULL )
+		{
+			ele = queue4->remove() ;
+		}
+
+		queue2->reset() ;
+		for ( i = 0 ; i < sizex ; i ++ )
+			for ( j = 0 ; j < sizey ; j ++ )
+				for ( k = 0 ; k < sizez ; k ++ )
+				{
+					if ( getDataAt( i, j, k ) == 0 && isInternal2( i,j,k ) == 1 )
+					{
+						queue2->prepend( i, j, k ) ;
+					}
+				}
+		queue2->reset() ;
+		ele = queue2->getNext() ;
 		while ( ele != NULL )
 		{
 			ox = ele->x ;
 			oy = ele->y ;
 			oz = ele->z ;
-
-//			if(wustl_mm::MatlabInterface::DiscreteMesh::IsVolumeBody(this, ox, oy, oz))
-			if ( hasIsolatedFace2( ox, oy, oz ) == 0 )
-			{
-				setDataAt( ox, oy, oz, -1 ) ;
-			}
-			ele = queue4->remove() ;
+			setDataAt( ox, oy, oz, -1 ) ;
+			ele = queue2->remove() ;
 		}
+		
 		
 
 		// Finally, clean up
