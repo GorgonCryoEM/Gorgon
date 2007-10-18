@@ -46,6 +46,7 @@ namespace wustl_mm {
 			void PruneUsingStructureTensor(Volume * skeleton, Volume * sourceVolume, EigenResults3D * volumeEigens, double threshold, char pruningClass, string outputPath);
 			void VoxelSubtract(Volume * sourceAndDestVolume1, Volume * sourceVolume2);
 			void VoxelOr(Volume * sourceAndDestVolume1, Volume * sourceVolume2);
+			Vector3D GetSurfaceNormal(Volume * skeleton, int x, int y, int z);
 			Vector3D * GetVolumeGradient(Volume * sourceVolume);
 			Vector3D * GetVolumeGradient2(Volume * sourceVolume);
 			Vector3D * GetSkeletonDirection(Volume * skeleton);
@@ -267,6 +268,74 @@ namespace wustl_mm {
 			return inUVW;
 		}
 
+		Vector3D VolumeSkeletonizer::GetSurfaceNormal(Volume * skeleton, int x, int y, int z) {
+			bool facesFound[12];
+			Vector3D v0, v1, v2;
+			Vector3D normal = Vector3D(0.0, 0.0, 0.0);
+			for(int i = 0; i < 12; i++) {
+				facesFound[i] = true;
+				for(int j = 0; j < 3; j++) {
+					if(skeleton->getDataAt(x + VOLUME_NEIGHBOR_FACES[i][j][0], y + VOLUME_NEIGHBOR_FACES[i][j][1], z + VOLUME_NEIGHBOR_FACES[i][j][2]) <= 0) {
+						facesFound[i] = false;
+					}
+				}
+			}
+			Vector3D faces[4];
+			faces[0] = Vector3D(0, 0, 0);
+			for(int i = 0; i < 12; i++) {
+				if(facesFound[i]) {
+					for(int j = 0; j < 3; j++) {									
+						faces[j+1] = Vector3D(VOLUME_NEIGHBOR_FACES[i][j][0], VOLUME_NEIGHBOR_FACES[i][j][1], VOLUME_NEIGHBOR_FACES[i][j][2]);
+					}
+
+					if (facesFound[VOLUME_NEIGHBOR_NUMBERS[i][0]] || facesFound[VOLUME_NEIGHBOR_NUMBERS[i][1]]) {										
+						v0 = faces[3] - faces[0];
+						v1 = faces[1] - faces[0];
+					} else {
+						v0 = faces[1] - faces[0];
+						v1 = faces[3] - faces[0];
+					}
+					v2 = v0 ^ v1;
+					v2.Normalize();
+					normal = normal + v2;		
+				}						
+			}
+			normal.Normalize();
+			return normal;
+		}
+
+		//Vector3D VolumeSkeletonizer::GetSurfaceNormal(Volume * skeleton, int x, int y, int z) {
+		//	Vector3D normal = Vector3D(0.0, 0.0, 0.0);
+
+		//	if(skeleton->getDataAt(x, y, z) <= 0) {
+		//		return normal;
+		//	}
+
+		//	
+		//	Volume * local = new Volume(3, 3, 3);
+		//	for(int xx = -1; xx <= 1; xx++) {
+		//		for(int yy = -1; yy <= 1; yy++) {
+		//			for(int zz = -1; zz <= 1; zz++) {
+		//				if(skeleton->getDataAt(x+xx, y+yy, z+zz) > 0) {
+		//					local->setDataAt(xx+1, yy+1, zz+1, 1);
+		//				}
+		//			}
+		//		}
+		//	}
+
+		//	for(int i = 0; i < 6; i++) {
+		//		switch(VOLUME_NEIGHBOR_CURVES_6[i][3]) {
+		//			case CURVE_TYPE_XPOS: 
+
+		//				break;
+
+		//		}
+		//	}
+
+		//	normal.Normalize();
+		//	return normal;
+		//}
+
 		// Gradient = (x+1,y,z) - (x-1,y,z) ....
 		Vector3D * VolumeSkeletonizer::GetVolumeGradient(Volume * sourceVolume) {
 			Vector3D * gradient = new Vector3D[sourceVolume->getSizeX() * sourceVolume->getSizeY() * sourceVolume->getSizeZ()];
@@ -359,13 +428,13 @@ namespace wustl_mm {
 			}
 			return gradient;
 		}
+
 		Vector3D * VolumeSkeletonizer::GetSkeletonDirection(Volume * skeleton) {
 			Vector3D * directions = new Vector3D[skeleton->getSizeX() * skeleton->getSizeY() * skeleton->getSizeZ()];
 			int index;
 			Vector3D v0, v1, v2, currentPos;
 			Vector3D * n6 = new Vector3D[6];
-			int n6Count;
-			bool facesFound[12];
+			int n6Count;			
 
 			for(int x = 1; x < skeleton->getSizeX()-1; x++) {
 				for(int y = 1; y < skeleton->getSizeY()-1; y++) {
@@ -395,40 +464,11 @@ namespace wustl_mm {
 								v1 = v1 - n6[0];
 								directions[index] = directions[index] + v1;
 							}
+							directions[index].Normalize();
 
 						} else if (DiscreteMesh::IsSurfaceBody(skeleton, x, y, z, true) || DiscreteMesh::IsSurfaceBorder(skeleton, x, y, z)) {
-							for(int i = 0; i < 12; i++) {
-								facesFound[i] = true;
-								for(int j = 0; j < 3; j++) {
-									if(skeleton->getDataAt(x + VOLUME_NEIGHBOR_FACES[i][j][0], y + VOLUME_NEIGHBOR_FACES[i][j][1], z + VOLUME_NEIGHBOR_FACES[i][j][2]) <= 0) {
-										facesFound[i] = false;
-									}
-								}
-							}
-							Vector3D faces[4];
-							faces[0] = Vector3D(0, 0, 0);
-							for(int i = 0; i < 12; i++) {
-								if(facesFound[i]) {
-									for(int j = 0; j < 3; j++) {									
-										faces[j+1] = Vector3D(VOLUME_NEIGHBOR_FACES[i][j][0], VOLUME_NEIGHBOR_FACES[i][j][1], VOLUME_NEIGHBOR_FACES[i][j][2]);
-									}
-
-									if (facesFound[VOLUME_NEIGHBOR_NUMBERS[i][0]] || facesFound[VOLUME_NEIGHBOR_NUMBERS[i][1]]) {										
-										v0 = faces[3] - faces[0];
-										v1 = faces[1] - faces[0];
-									} else {
-										v0 = faces[1] - faces[0];
-										v1 = faces[3] - faces[0];
-									}
-									v2 = v0 ^ v1;
-									v2.Normalize();
-									directions[index] = directions[index] + v2;		
-								}						
-							}
-
+							directions[index] = GetSurfaceNormal(skeleton, x, y, z);						
 						}
-
-						directions[index].Normalize();
 					}
 				}
 			}
@@ -438,7 +478,6 @@ namespace wustl_mm {
 
 			return directions;
 		}
-
 
 		void VolumeSkeletonizer::AddIterationToVolume(Volume * compositeVolume, Volume * iterationVolume, unsigned char threshold) {
 			for(int x = 0; x < iterationVolume->getSizeX(); x++) {
@@ -964,7 +1003,8 @@ namespace wustl_mm {
 								(axis2.values[0] != axis2.values[0]) || (axis2.values[1] != axis2.values[1]) || (axis2.values[2] != axis2.values[2]) ||
 								(sizeX != sizeX) || (sizeY != sizeY) || (sizeZ != sizeZ) || (r != r) || (g != g) || (b != b) || (theta1 != theta1) || (theta2 != theta2))) {  // Checking to see if there are no NAN values
 								fprintf(outFile, "Group{\n children [\n Transform{\n translation %i %i %i \n  rotation %lf %lf %lf %lf \n  children [Transform{\n rotation %lf %lf %lf %lf \n scale %lf %lf %lf \n children [\n Shape {\n appearance Appearance {\n material Material {emissiveColor %lf %lf %lf \n transparency 0.5 }} \n geometry Sphere {radius 0.5}}]}]}]}\n",
-									x - MAX_GAUSSIAN_FILTER_RADIUS, y - MAX_GAUSSIAN_FILTER_RADIUS, z - MAX_GAUSSIAN_FILTER_RADIUS,
+									//x - MAX_GAUSSIAN_FILTER_RADIUS, y - MAX_GAUSSIAN_FILTER_RADIUS, z - MAX_GAUSSIAN_FILTER_RADIUS,
+									x, y, z,
 									axis2.values[0], axis2.values[1], axis2.values[2], -theta2,
 									axis1.values[0], axis1.values[1], axis1.values[2], -theta1,
 									sizeX, sizeY, sizeZ,
@@ -1233,10 +1273,10 @@ namespace wustl_mm {
 				volumeGradient = GetVolumeGradient2(sourceVol);			
 			}
 
-			Volume * surfaceVol = GetImmersionThinning(sourceVol, NULL, startGray, endGray, stepSize, THINNING_CLASS_SURFACE_PRESERVATION);			
+			//Volume * surfaceVol = GetImmersionThinning(sourceVol, NULL, startGray, endGray, stepSize, THINNING_CLASS_SURFACE_PRESERVATION);			
+			Volume * surfaceVol = PerformPureJuSkeletonization(sourceVol, outputPath, 169, minCurveSize, minSurfaceSize);
 			if(doPruning) {
-				surfaceVol->toMRCFile((char *)(outputPath + "-S-Pre-Prune.mrc").c_str());
-				surfaceVol->toOFFCells2((char *)(outputPath + "-S-Pre-Prune.off").c_str());
+				surfaceVol->toMRCFile((char *)(outputPath + "-S-Pre-Prune.mrc").c_str());				
 				WriteVolumeToVRMLFile(surfaceVol, outputPath + "-S-Pre-Prune.wrl");
 				volumeEigens = GetEigenResults2(surfaceVol, volumeGradient, gaussianFilterSurfaceRadius, surfaceRadius, true);
 
