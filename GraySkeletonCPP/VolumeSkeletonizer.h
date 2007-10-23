@@ -172,11 +172,16 @@ namespace wustl_mm {
 						//}
 
 						// Line inside ellipsoid vs. min Length
-						n = XYZtoUVW(skeletonDirection, v1, v2, v3);
-						a = u1 * u2 * u3;
-						b = sqrt(u2*u2*u3*u3*n.X()*n.X() + u1*u1*u3*u3*n.Y()*n.Y() + u1*u1*u2*u2*n.Z()*n.Z());
-						temp = n*(a/b);
-						cost = u3/ temp.Length();
+
+						if(skeletonDirection.IsBadNormal()) {
+							cost = 1.0;
+						} else {
+							n = XYZtoUVW(skeletonDirection, v1, v2, v3);
+							a = u1 * u2 * u3;
+							b = sqrt(u2*u2*u3*u3*n.X()*n.X() + u1*u1*u3*u3*n.Y()*n.Y() + u1*u1*u2*u2*n.Z()*n.Z());
+							temp = n*(a/b);
+							cost = u3/ temp.Length();
+						}
 
 
 						break;
@@ -204,16 +209,20 @@ namespace wustl_mm {
 						////cost = abs(n.X());					//(n.X/u1)						; but u1 = 						
 					
 						{
-							Vector3D n1, n2, m1, m2;
-							skelDirectionST = XYZtoUVW(skeletonDirection, imageEigen.vectors[0],imageEigen.vectors[1], imageEigen.vectors[2]);
-							FindOrthogonalAxes(skelDirectionST, n1, n2);
+							if(skeletonDirection.IsBadNormal()) {
+								cost = 1.0;
+							} else {
+								Vector3D n1, n2, m1, m2;
+								skelDirectionST = XYZtoUVW(skeletonDirection, imageEigen.vectors[0],imageEigen.vectors[1], imageEigen.vectors[2]);
+								FindOrthogonalAxes(skelDirectionST, n1, n2);
 
-							m1 = Vector3D(n1.values[0]/u1, n1.values[1]/u2, n1.values[2]/u3);
-							m2 = Vector3D(n2.values[0]/u1, n2.values[1]/u2, n2.values[2]/u3);
-							theta = atan((2.0 * (m1 * m2)) / ((m1 * m1) - (m2 * m2))) / 2.0;							
-							a = 1.0 / ((m1 * cos(theta)) + (m2 * sin(theta))).Length();
-							b = 1.0 / ((m1 * sin(theta)) - (m2 * cos(theta))).Length();
-							cost = (u2 * u3) / (a*b);
+								m1 = Vector3D(n1.values[0]/u1, n1.values[1]/u2, n1.values[2]/u3);
+								m2 = Vector3D(n2.values[0]/u1, n2.values[1]/u2, n2.values[2]/u3);
+								theta = atan((2.0 * (m1 * m2)) / ((m1 * m1) - (m2 * m2))) / 2.0;							
+								a = 1.0 / ((m1 * cos(theta)) + (m2 * sin(theta))).Length();
+								b = 1.0 / ((m1 * sin(theta)) - (m2 * cos(theta))).Length();
+								cost = (u2 * u3) / (a*b);
+							}
 						}
 						break;
 				}
@@ -442,6 +451,9 @@ namespace wustl_mm {
 								directions[index] = directions[index] + v1;
 							}
 							directions[index].Normalize();
+							if(n6Count > 2) {
+								directions[index] = Vector3D(BAD_NORMAL, BAD_NORMAL, BAD_NORMAL);
+							}
 
 						} else if (DiscreteMesh::IsSurfaceBody(skeleton, x, y, z, true) || DiscreteMesh::IsSurfaceBorder(skeleton, x, y, z)) {
 							directions[index] = GetSurfaceNormal(skeleton, x, y, z);						
@@ -1040,7 +1052,8 @@ namespace wustl_mm {
 				for(int y = 0; y < skeleton->getSizeY(); y++) {
 					for(int x = 0; x < skeleton->getSizeX(); x++) {
 						index = skeleton->getIndex(x, y, z);
-						if((skeleton->getDataAt(index) > 0) && (!isZero(skeletonDirections[index].Length()))) {							
+						if((skeleton->getDataAt(index) > 0) && 
+							!((skeletonDirections[index].X() == BAD_NORMAL) && (skeletonDirections[index].Y() == BAD_NORMAL) && (skeletonDirections[index].Z() == BAD_NORMAL))) {
 							Vector3D axis = skeletonDirections[index] ^ Vector3D(1.0, 0.0, 0.0);
 							axis.Normalize();
 							double angle = -(skeletonDirections[index] * Vector3D(1.0, 0.0, 0.0));

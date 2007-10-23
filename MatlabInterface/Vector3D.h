@@ -1,10 +1,9 @@
 #ifndef VECTOR3D_H
 #define VECTOR3D_H
 
-#define round(f) ((f >= 0)?(int)(f + .5):(int)(f - .5))
-
 #include <stdio.h>
 #include <math.h>
+#include "BasicDefines.h"
 
 namespace wustl_mm {
 	namespace MatlabInterface {
@@ -32,6 +31,7 @@ namespace wustl_mm {
 			Vector3D& operator-=(const Vector3D& d);
 			Vector3D Rotate(Vector3D axis, double angle);
 			void Normalize();
+			bool IsBadNormal();
 
 			static Vector3D Normalize(Vector3D d);
 
@@ -176,6 +176,10 @@ namespace wustl_mm {
 				}
 			}
 			return v;
+		}
+
+		bool Vector3D::IsBadNormal() {
+			return !isZero(Length() - 1.0, 0.00001);
 		}
 	}
 }

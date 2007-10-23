@@ -1,9 +1,10 @@
 #ifndef COMPLEX_NUMBER_H
 #define COMPLEX_NUMBER_H
 
+#include "BasicDefines.h"
+
 namespace wustl_mm {
 	namespace MatlabInterface {
-
 		class ComplexNumber {
 		public:
 			ComplexNumber();
@@ -37,12 +38,6 @@ namespace wustl_mm {
 			double value;
 			double iValue;
 		};
-
-		inline bool isZero(double value, double varience = 1e-16) 
-		{ 
-			return (value < varience && value > -varience)? true : false; 
-		}
-
 
 		ComplexNumber::ComplexNumber() {
 			iValue = 0;
