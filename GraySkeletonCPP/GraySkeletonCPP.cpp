@@ -243,22 +243,33 @@ void DoSkeletonizationAndPruningAbeysinghe2007(int dimensions, string inFile, st
 
 int main( int args, char * argv[] ) {
 
-	/*Volume * vol = new Volume(10,10,10);
-	vol->setDataAt(5,5,5,1);
-	vol->setDataAt(4,5,5,1);
-	vol->setDataAt(5,4,5,1);
-	vol->setDataAt(4,4,5,1);
-	vol->setDataAt(6,5,5,1);
-	vol->setDataAt(6,4,5,1);
+	//Volume * vol = new Volume(10,10,10);
+	//vol->setDataAt(5,5,5,1);
+	//vol->setDataAt(4,5,5,1);
+	//vol->setDataAt(5,5,4,1);
+	//vol->setDataAt(4,5,4,1);
+	//vol->setDataAt(6,5,5,1);
+	//vol->setDataAt(6,5,4,1);
+	//vol->setDataAt(5,4,5,1);
+	//vol->setDataAt(6,4,5,1);
+	//vol->setDataAt(4,4,5,1);
+	////vol->setDataAt(5,5,6,1);
+	////vol->setDataAt(5,4,6,1);
+	////vol->setDataAt(5,5,6,1);
+	////vol->setDataAt(6,5,6,1);
 
-	NormalFinder * nf = new NormalFinder();
-	nf->InitializeGraph(vol, 5, 5, 5);
-	Vector3D v = nf->GetSurfaceNormal();
-	printf("%f %f %f", v.X(), v.Y(), v.Z());
+	////vol->setDataAt(5,5,6,1);
+	////vol->setDataAt(5,4,6,1);
 
+	//NormalFinder * nf = new NormalFinder();
+	//nf->InitializeGraph(vol, 5, 5, 5);
+	//Vector3D v = nf->GetSurfaceNormal();	
+	//printf("%f %f %f", v.X(), v.Y(), v.Z());
+	//if(v.IsBadNormal()) {
+	//	printf("bad normal");
+	//}
 
-
-	return 0;*/
+	////return 0;
 
 	clock_t start, finish;
 	start = clock();

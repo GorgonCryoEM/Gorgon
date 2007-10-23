@@ -28,6 +28,7 @@ namespace wustl_mm {
 		const unsigned char VOXEL_CLASS_VOLUME_BODY = 7;
 		const unsigned char VOXEL_BINARY_FALSE = 0;
 		const unsigned char VOXEL_BINARY_TRUE = 255;
+		const double BAD_NORMAL = 9999.0;
 
 
 
