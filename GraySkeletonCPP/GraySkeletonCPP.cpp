@@ -8,6 +8,7 @@
 #include <string>  
 #include <time.h>
 #include <math.h>
+#include "NormalFinder.h"
 #include "DiscreteMesh.h"
 #include "..\MatlabInterface\DataStructures.h"
 #include "..\MatlabInterface\MathLib.h"
@@ -241,6 +242,23 @@ void DoSkeletonizationAndPruningAbeysinghe2007(int dimensions, string inFile, st
 
 
 int main( int args, char * argv[] ) {
+
+	/*Volume * vol = new Volume(10,10,10);
+	vol->setDataAt(5,5,5,1);
+	vol->setDataAt(4,5,5,1);
+	vol->setDataAt(5,4,5,1);
+	vol->setDataAt(4,4,5,1);
+	vol->setDataAt(6,5,5,1);
+	vol->setDataAt(6,4,5,1);
+
+	NormalFinder * nf = new NormalFinder();
+	nf->InitializeGraph(vol, 5, 5, 5);
+	Vector3D v = nf->GetSurfaceNormal();
+	printf("%f %f %f", v.X(), v.Y(), v.Z());
+
+
+
+	return 0;*/
 
 	clock_t start, finish;
 	start = clock();

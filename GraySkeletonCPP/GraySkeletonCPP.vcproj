@@ -344,6 +344,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\NormalFinder.h"
+				>
+			</File>
+			<File
 				RelativePath=".\SkeletalCurve.h"
 				>
 			</File>

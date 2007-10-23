@@ -11,6 +11,7 @@
 #include "..\MatlabInterface\MathLib.h"
 #include "..\MatlabInterface\DataStructures.h"
 #include "..\MatlabInterface\Vector3D.h"
+#include "NormalFinder.h"
 #include <string>
 #include <time.h>
 
@@ -86,6 +87,7 @@ namespace wustl_mm {
 			static const char PRUNING_CLASS_PRUNE_POINTS = 7;
 		public:
 			MathLib * math;
+			NormalFinder * surfaceNormalFinder;
 			ProbabilityDistribution3D gaussianFilterPointRadius;
 			ProbabilityDistribution3D gaussianFilterCurveRadius;
 			ProbabilityDistribution3D gaussianFilterSurfaceRadius;
@@ -97,6 +99,7 @@ namespace wustl_mm {
 
 		VolumeSkeletonizer::VolumeSkeletonizer(int pointRadius, int curveRadius, int surfaceRadius) {
 			math = new MathLib();
+			surfaceNormalFinder = new NormalFinder();
 			this->pointRadius = pointRadius;
 			this->curveRadius = curveRadius;
 			this->surfaceRadius = surfaceRadius;
@@ -116,6 +119,7 @@ namespace wustl_mm {
 
 		VolumeSkeletonizer::~VolumeSkeletonizer() {
 			delete math;
+			delete surfaceNormalFinder;
 		}
 
 
@@ -268,73 +272,46 @@ namespace wustl_mm {
 			return inUVW;
 		}
 
-		Vector3D VolumeSkeletonizer::GetSurfaceNormal(Volume * skeleton, int x, int y, int z) {
-			bool facesFound[12];
-			Vector3D v0, v1, v2;
-			Vector3D normal = Vector3D(0.0, 0.0, 0.0);
-			for(int i = 0; i < 12; i++) {
-				facesFound[i] = true;
-				for(int j = 0; j < 3; j++) {
-					if(skeleton->getDataAt(x + VOLUME_NEIGHBOR_FACES[i][j][0], y + VOLUME_NEIGHBOR_FACES[i][j][1], z + VOLUME_NEIGHBOR_FACES[i][j][2]) <= 0) {
-						facesFound[i] = false;
-					}
-				}
-			}
-			Vector3D faces[4];
-			faces[0] = Vector3D(0, 0, 0);
-			for(int i = 0; i < 12; i++) {
-				if(facesFound[i]) {
-					for(int j = 0; j < 3; j++) {									
-						faces[j+1] = Vector3D(VOLUME_NEIGHBOR_FACES[i][j][0], VOLUME_NEIGHBOR_FACES[i][j][1], VOLUME_NEIGHBOR_FACES[i][j][2]);
-					}
-
-					if (facesFound[VOLUME_NEIGHBOR_NUMBERS[i][0]] || facesFound[VOLUME_NEIGHBOR_NUMBERS[i][1]]) {										
-						v0 = faces[3] - faces[0];
-						v1 = faces[1] - faces[0];
-					} else {
-						v0 = faces[1] - faces[0];
-						v1 = faces[3] - faces[0];
-					}
-					v2 = v0 ^ v1;
-					v2.Normalize();
-					normal = normal + v2;		
-				}						
-			}
-			normal.Normalize();
-			return normal;
-		}
-
 		//Vector3D VolumeSkeletonizer::GetSurfaceNormal(Volume * skeleton, int x, int y, int z) {
+		//	bool facesFound[12];
+		//	Vector3D v0, v1, v2;
 		//	Vector3D normal = Vector3D(0.0, 0.0, 0.0);
-
-		//	if(skeleton->getDataAt(x, y, z) <= 0) {
-		//		return normal;
-		//	}
-
-		//	
-		//	Volume * local = new Volume(3, 3, 3);
-		//	for(int xx = -1; xx <= 1; xx++) {
-		//		for(int yy = -1; yy <= 1; yy++) {
-		//			for(int zz = -1; zz <= 1; zz++) {
-		//				if(skeleton->getDataAt(x+xx, y+yy, z+zz) > 0) {
-		//					local->setDataAt(xx+1, yy+1, zz+1, 1);
-		//				}
+		//	for(int i = 0; i < 12; i++) {
+		//		facesFound[i] = true;
+		//		for(int j = 0; j < 3; j++) {
+		//			if(skeleton->getDataAt(x + VOLUME_NEIGHBOR_FACES[i][j][0], y + VOLUME_NEIGHBOR_FACES[i][j][1], z + VOLUME_NEIGHBOR_FACES[i][j][2]) <= 0) {
+		//				facesFound[i] = false;
 		//			}
 		//		}
 		//	}
+		//	Vector3D faces[4];
+		//	faces[0] = Vector3D(0, 0, 0);
+		//	for(int i = 0; i < 12; i++) {
+		//		if(facesFound[i]) {
+		//			for(int j = 0; j < 3; j++) {									
+		//				faces[j+1] = Vector3D(VOLUME_NEIGHBOR_FACES[i][j][0], VOLUME_NEIGHBOR_FACES[i][j][1], VOLUME_NEIGHBOR_FACES[i][j][2]);
+		//			}
 
-		//	for(int i = 0; i < 6; i++) {
-		//		switch(VOLUME_NEIGHBOR_CURVES_6[i][3]) {
-		//			case CURVE_TYPE_XPOS: 
-
-		//				break;
-
-		//		}
+		//			if (facesFound[VOLUME_NEIGHBOR_NUMBERS[i][0]] || facesFound[VOLUME_NEIGHBOR_NUMBERS[i][1]]) {										
+		//				v0 = faces[3] - faces[0];
+		//				v1 = faces[1] - faces[0];
+		//			} else {
+		//				v0 = faces[1] - faces[0];
+		//				v1 = faces[3] - faces[0];
+		//			}
+		//			v2 = v0 ^ v1;
+		//			v2.Normalize();
+		//			normal = normal + v2;		
+		//		}						
 		//	}
-
 		//	normal.Normalize();
 		//	return normal;
 		//}
+
+		Vector3D VolumeSkeletonizer::GetSurfaceNormal(Volume * skeleton, int x, int y, int z) {
+			surfaceNormalFinder->InitializeGraph(skeleton, x, y, z);
+			return surfaceNormalFinder->GetSurfaceNormal();
+		}
 
 		// Gradient = (x+1,y,z) - (x-1,y,z) ....
 		Vector3D * VolumeSkeletonizer::GetVolumeGradient(Volume * sourceVolume) {
@@ -1062,8 +1039,8 @@ namespace wustl_mm {
 			for(int z = 0; z < skeleton->getSizeZ(); z++) {
 				for(int y = 0; y < skeleton->getSizeY(); y++) {
 					for(int x = 0; x < skeleton->getSizeX(); x++) {
-						if(skeleton->getDataAt(x, y, z) > 0) {
-							index = skeleton->getIndex(x, y, z);
+						index = skeleton->getIndex(x, y, z);
+						if((skeleton->getDataAt(index) > 0) && (!isZero(skeletonDirections[index].Length()))) {							
 							Vector3D axis = skeletonDirections[index] ^ Vector3D(1.0, 0.0, 0.0);
 							axis.Normalize();
 							double angle = -(skeletonDirections[index] * Vector3D(1.0, 0.0, 0.0));
@@ -1273,8 +1250,8 @@ namespace wustl_mm {
 				volumeGradient = GetVolumeGradient2(sourceVol);			
 			}
 
-			//Volume * surfaceVol = GetImmersionThinning(sourceVol, NULL, startGray, endGray, stepSize, THINNING_CLASS_SURFACE_PRESERVATION);			
-			Volume * surfaceVol = PerformPureJuSkeletonization(sourceVol, outputPath, 169, minCurveSize, minSurfaceSize);
+			Volume * surfaceVol = GetImmersionThinning(sourceVol, NULL, startGray, endGray, stepSize, THINNING_CLASS_SURFACE_PRESERVATION);			
+			//Volume * surfaceVol = PerformPureJuSkeletonization(sourceVol, outputPath, 169, minCurveSize, minSurfaceSize);
 			if(doPruning) {
 				surfaceVol->toMRCFile((char *)(outputPath + "-S-Pre-Prune.mrc").c_str());				
 				WriteVolumeToVRMLFile(surfaceVol, outputPath + "-S-Pre-Prune.wrl");
