@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <math.h>
 #include "BasicDefines.h"
+#include "Vector3DInt.h"
 
 namespace wustl_mm {
 	namespace MatlabInterface {
@@ -27,6 +28,7 @@ namespace wustl_mm {
 			Vector3D operator^(Vector3D &d );		 // Cross Product
 			Vector3D operator*(double s);			
 			Vector3D& operator=(const Vector3D& d);
+			Vector3D& operator=(const Vector3DInt& d);
 			Vector3D& operator+=(const Vector3D& d);
 			Vector3D& operator-=(const Vector3D& d);
 			Vector3D Rotate(Vector3D axis, double angle);
@@ -123,6 +125,13 @@ namespace wustl_mm {
 			return *this;
 		}
 		Vector3D& Vector3D::operator=(const Vector3D& d) {
+			for(int i = 0; i < 3; i++) {
+				values[i] = d.values[i];
+			}
+			return *this;
+		}
+
+		Vector3D& Vector3D::operator=(const Vector3DInt& d) {
 			for(int i = 0; i < 3; i++) {
 				values[i] = d.values[i];
 			}

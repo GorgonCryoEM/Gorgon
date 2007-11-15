@@ -1,7 +1,7 @@
 #ifndef VOLUME_READER_H
 #define VOLUME_READER_H
 
-#include "..\SkeletonMaker\volume.h"
+#include <SkeletonMaker\volume.h>
 
 namespace wustl_mm {
 	namespace GraySkeletonCPP {

@@ -1,13 +1,13 @@
 #ifndef __glut_h__
 #define __glut_h__
 
-/* Copyright (c) Mark J. Kilgard, 1994, 1995, 1996, 1998, 2000. */
+/* Copyright (c) Mark J. Kilgard, 1994, 1995, 1996, 1998. */
 
 /* This program is freely distributable without licensing fees  and is
    provided without guarantee or warrantee expressed or  implied. This
    program is -not- in the public domain. */
 
-#ifdef _WIN32
+#if defined(_WIN32)
 
 /* GLUT 3.7 now tries to avoid including <windows.h>
    to avoid name space pollution, but Win32's <GL/gl.h> 
@@ -20,55 +20,35 @@
    /* XXX This is from Win32's <windef.h> */
 #  ifndef APIENTRY
 #   define GLUT_APIENTRY_DEFINED
-    /* Cygwin and MingW32 are two free GNU-based Open Source compilation
-       environments for Win32.  Note that __CYGWIN32__ is deprecated
-       in favor of simply __CYGWIN__. */
-#   if defined(__MINGW32__) || defined(__CYGWIN32__) || defined(__CYGWIN__)
-#    ifdef i386
-#     define APIENTRY __attribute__ ((stdcall)) 
-#    else
-#     define APIENTRY
-#    endif
+#   if (_MSC_VER >= 800) || defined(_STDCALL_SUPPORTED) || defined(__BORLANDC__) || defined(__LCC__)
+#    define APIENTRY    __stdcall
 #   else
-#    if (_MSC_VER >= 800) || defined(_STDCALL_SUPPORTED)
-#     define APIENTRY    __stdcall
-#    else
-#     define APIENTRY
-#    endif
+#    define APIENTRY
 #   endif
 #  endif
    /* XXX This is from Win32's <winnt.h> */
 #  ifndef CALLBACK
-#   if defined(__MINGW32__) || defined(__CYGWIN32__) || defined(__CYGWIN__)
-#    define CALLBACK __attribute__ ((stdcall)) 
+#   if (defined(_M_MRX000) || defined(_M_IX86) || defined(_M_ALPHA) || defined(_M_PPC)) && !defined(MIDL_PASS) || defined(__LCC__)
+#    define CALLBACK __stdcall
 #   else
-#    if (defined(_M_MRX000) || defined(_M_IX86) || defined(_M_ALPHA) || defined(_M_PPC)) && !defined(MIDL_PASS)
-#     define CALLBACK __stdcall
-#    else
-#     define CALLBACK
-#    endif
+#    define CALLBACK
 #   endif
 #  endif
+   /* XXX Hack for lcc compiler.  It doesn't support __declspec(dllimport), just __stdcall. */
+#  if defined( __LCC__ )
+#   undef WINGDIAPI
+#   define WINGDIAPI __stdcall
+#  else
    /* XXX This is from Win32's <wingdi.h> and <winnt.h> */
-#  ifndef WINGDIAPI
-#   define GLUT_WINGDIAPI_DEFINED
-#   if defined(__MINGW32__) || defined(__CYGWIN32__) || defined(__CYGWIN__)
-#    define WINGDIAPI
-#   else
+#   ifndef WINGDIAPI
+#    define GLUT_WINGDIAPI_DEFINED
 #    define WINGDIAPI __declspec(dllimport)
 #   endif
 #  endif
-#  if defined(__MINGW32__) || defined(__CYGWIN32__) || defined(__CYGWIN__)
-    /* Rely on Cygwin32/MingW32 <stddef.h> to set wchar_t. */
-    /* XXX Warning.  The Cygwin32/MingW32 definition for wchar_t
-       is an "int" instead of the "short" used by Windows. */
-#   include <stddef.h>
-#  else
-    /* XXX This is from Win32's <ctype.h> */
-#   ifndef _WCHAR_T_DEFINED
+   /* XXX This is from Win32's <ctype.h> */
+#  ifndef _WCHAR_T_DEFINED
 typedef unsigned short wchar_t;
-#    define _WCHAR_T_DEFINED
-#   endif
+#   define _WCHAR_T_DEFINED
 #  endif
 # endif
 
@@ -79,20 +59,20 @@ typedef unsigned short wchar_t;
 /* To enable automatic SGI OpenGL for Windows library usage for GLUT,
    define GLUT_USE_SGI_OPENGL in your compile preprocessor options.  */
 #  ifdef GLUT_USE_SGI_OPENGL
-#   pragma comment (lib, "opengl.lib") /* link with SGI OpenGL for Windows lib */
-#   pragma comment (lib, "glu.lib")    /* link with SGI OpenGL Utility lib */
-#   pragma comment (lib, "glut.lib")   /* link with Win32 GLUT for SGI OpenGL lib */
+#   pragma comment (lib, "opengl.lib")    /* link with SGI OpenGL for Windows lib */
+#   pragma comment (lib, "glu.lib")       /* link with SGI OpenGL Utility lib */
+#   pragma comment (lib, "glut.lib")      /* link with Win32 GLUT for SGI OpenGL lib */
 #  else
-#   pragma comment (lib, "opengl32.lib") /* link with Microsoft OpenGL lib */
-#   pragma comment (lib, "glu32.lib")    /* link with Microsoft OpenGL Utility lib */
-#   pragma comment (lib, "glut32.lib")   /* link with Win32 GLUT lib */
+#   pragma comment (lib, "opengl32.lib")  /* link with Microsoft OpenGL lib */
+#   pragma comment (lib, "glu32.lib")     /* link with Microsoft OpenGL Utility lib */
+#   pragma comment (lib, "glut32.lib")    /* link with Win32 GLUT lib */
 #  endif
 # endif
 
 /* To disable supression of annoying warnings about floats being promoted
    to doubles, define GLUT_NO_WARNING_DISABLE in your compile preprocessor
    options. */
-# if defined(_MSC_VER) && !defined(GLUT_NO_WARNING_DISABLE)
+# ifndef GLUT_NO_WARNING_DISABLE
 #  pragma warning (disable:4244)  /* Disable bogus VC++ 4.2 conversion warnings. */
 #  pragma warning (disable:4305)  /* VC++ 5.0 version of above warning. */
 # endif
@@ -161,7 +141,7 @@ typedef unsigned short wchar_t;
 extern "C" {
 #endif
 
-#ifdef _WIN32
+#if defined(_WIN32)
 # ifndef GLUT_BUILDING_LIB
 extern _CRTIMP void __cdecl exit(int);
 # endif
@@ -238,11 +218,9 @@ extern void exit(int);
  GLUT_XLIB_IMPLEMENTATION=14 mjk's GLUT 3.7 beta with f90gl friend interface.
 
  GLUT_XLIB_IMPLEMENTATION=15 mjk's GLUT 3.7 beta sync'ed with Mesa <GL/glut.h>
-
- GLUT_XLIB_IMPLEMENTATION=16 mjk's GLUT 3.8 
 **/
 #ifndef GLUT_XLIB_IMPLEMENTATION  /* Allow this to be overriden. */
-#define GLUT_XLIB_IMPLEMENTATION	16
+#define GLUT_XLIB_IMPLEMENTATION	15
 #endif
 
 /* Display mode bit masks. */
@@ -321,7 +299,7 @@ extern void exit(int);
 #define GLUT_GREEN			1
 #define GLUT_BLUE			2
 
-#ifdef _WIN32
+#if defined(_WIN32)
 /* Stroke font constants (use these in GLUT program). */
 #define GLUT_STROKE_ROMAN		((void*)0)
 #define GLUT_STROKE_MONO_ROMAN		((void*)1)

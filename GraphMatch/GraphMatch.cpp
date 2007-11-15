@@ -97,45 +97,46 @@ void DoPerformanceComparison(StandardGraph * patternGraph, StandardGraph * baseG
 
 int main( int args, char * argv[] ) {
 
-	StandardGraph * patternGraph;
-	StandardGraph * baseGraph;
+	//StandardGraph * patternGraph;
+	//StandardGraph * baseGraph;
 	//clock_t start, finish;
 
 	// Input Validation and graph loading.
-	if(args == 1) {		
-		PERFORMANCE_COMPARISON_MODE = true;
-		srand(800);
-		FILE * outFile = fopen("PerformanceResults.txt", "w");
-		fprintf(outFile, "NodeCount, Density, OurAlgo, Wong, Wong2, VF, VF2, Inexact Matching\n");
-		printf("NodeCount\tDensity\t\tGraph Num\tWong\t\tWong1.5\t\tWong2\t\tInexact\n");
-		double ourTime, wongTime, wongTime15, wongTime2, vfTime, vf2Time, inexactTime;
+	//if(args == 1) {		
+	//	PERFORMANCE_COMPARISON_MODE = true;
+	//	srand(800);
+	//	FILE * outFile = fopen("PerformanceResults.txt", "w");
+	//	fprintf(outFile, "NodeCount, Density, OurAlgo, Wong, Wong2, VF, VF2, Inexact Matching\n");
+	//	printf("NodeCount\tDensity\t\tGraph Num\tWong\t\tWong1.5\t\tWong2\t\tInexact\n");
+	//	double ourTime, wongTime, wongTime15, wongTime2, vfTime, vf2Time, inexactTime;
 
-		for(int density = 0; density <= 100; density+= 5) {
-			for(int i = 2; i <= MAX_NODES-10; i+=2) {
-				//printf("%d: ", i);
-				ourTime = 0;
-				wongTime = 0;
-				wongTime15 = 0;
-				wongTime2 = 0;
-				vfTime = 0;
-				vf2Time = 0;
-				inexactTime = 0;
-				for(int j = 0; j < 5; j++) {
-					patternGraph = GraphGenerator::GeneratePDBGraph(i);
-					baseGraph = GraphGenerator::GenerateSkeletonGraph(patternGraph, density);
-					//printf("%d\t\t%d\t\t%d\t\t", density, i, j+1);
-					DoPerformanceComparison(patternGraph, baseGraph, ourTime, wongTime, wongTime15, wongTime2, vfTime, vf2Time, inexactTime);
-					//printf("\n");
-					delete(baseGraph);
-					delete(patternGraph);
-				}
-				fprintf(outFile, "%d, %d, %f, %f, %f, %f, %f\n", i, density, ourTime, wongTime, wongTime15, wongTime2, inexactTime);
-				fflush(outFile);
-				printf("%d\t\t%d\t\t%f\t%f\t%f\t%f\t%f\n", i, density, ourTime, wongTime, wongTime15, wongTime2, inexactTime);
-			}
-		}
-		fclose(outFile);
-	} else if(args == 2) {
+	//	for(int density = 0; density <= 100; density+= 5) {
+	//		for(int i = 2; i <= MAX_NODES-10; i+=2) {
+	//			//printf("%d: ", i);
+	//			ourTime = 0;
+	//			wongTime = 0;
+	//			wongTime15 = 0;
+	//			wongTime2 = 0;
+	//			vfTime = 0;
+	//			vf2Time = 0;
+	//			inexactTime = 0;
+	//			for(int j = 0; j < 5; j++) {
+	//				patternGraph = GraphGenerator::GeneratePDBGraph(i);
+	//				baseGraph = GraphGenerator::GenerateSkeletonGraph(patternGraph, density);
+	//				//printf("%d\t\t%d\t\t%d\t\t", density, i, j+1);
+	//				DoPerformanceComparison(patternGraph, baseGraph, ourTime, wongTime, wongTime15, wongTime2, vfTime, vf2Time, inexactTime);
+	//				//printf("\n");
+	//				delete(baseGraph);
+	//				delete(patternGraph);
+	//			}
+	//			fprintf(outFile, "%d, %d, %f, %f, %f, %f, %f\n", i, density, ourTime, wongTime, wongTime15, wongTime2, inexactTime);
+	//			fflush(outFile);
+	//			printf("%d\t\t%d\t\t%f\t%f\t%f\t%f\t%f\n", i, density, ourTime, wongTime, wongTime15, wongTime2, inexactTime);
+	//		}
+	//	}
+	//	fclose(outFile);
+	//} else 
+	if(args == 2) {
 		BackEndInterface i;
 		i.SetConstantsFromFile(argv[1]);		
 		DisplayConstants();

@@ -9,8 +9,8 @@
 #include "VolumeSkeletonizer.h"
 #include "VolumeDeltaAnalyzer.h"
 #include "DiscreteMesh.h"
-#include "../MatlabInterface/MathLib.h"
-#include "../MatlabInterface/DataStructures.h"
+#include <MatlabInterface/MathLib.h>
+#include <MatlabInterface/DataStructures.h>
 #include <string>
 
 using namespace wustl_mm::MatlabInterface;

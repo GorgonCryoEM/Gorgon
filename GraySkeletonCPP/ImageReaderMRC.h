@@ -3,8 +3,8 @@
 
 #include "GrayImage.h"
 #include "ImageReader.h"
-#include "..\SkeletonMaker\reader.h"
-#include "..\SkeletonMaker\volume.h"
+#include <SkeletonMaker\reader.h>
+#include <SkeletonMaker\volume.h>
 #include <string.h>
 
 using namespace std;

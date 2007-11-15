@@ -2,8 +2,8 @@
 #define VOLUME_DELTA_ANALYZER_H
 
 #include <vector>
-#include "../MatlabInterface/DataStructures.h"
-#include "../SkeletonMaker/volume.h"
+#include <MatlabInterface/DataStructures.h>
+#include <SkeletonMaker/volume.h>
 #include "DiscreteMesh.h"
 #include "GlobalDefinitions.h"
 #include "SkeletalCurve.h"

@@ -38,7 +38,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="C:\MATLAB701\extern\include"
+				AdditionalIncludeDirectories="$(SolutionDir);C:\MATLAB701\extern\include"
 				WarningLevel="3"
 				DebugInformationFormat="4"
 			/>
@@ -107,7 +107,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="C:\MATLAB701\extern\include"
+				AdditionalIncludeDirectories="$(SolutionDir);C:\MATLAB701\extern\include"
 				PreprocessorDefinitions="WIN32;_CRT_SECURE_NO_DEPRECATE"
 			/>
 			<Tool
@@ -173,7 +173,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="C:\_WashU\ssa1\source\ExternalLibraries\mpatrol\include;C:\MATLAB701\extern\include"
+				AdditionalIncludeDirectories="$(SolutionDir);C:\_WashU\ssa1\source\ExternalLibraries\mpatrol\include;C:\MATLAB701\extern\include"
 				WarningLevel="3"
 				DebugInformationFormat="4"
 			/>
@@ -243,7 +243,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories=""
+				AdditionalIncludeDirectories="$(SolutionDir)"
 				PreprocessorDefinitions="WIN32;_CRT_SECURE_NO_DEPRECATE"
 			/>
 			<Tool

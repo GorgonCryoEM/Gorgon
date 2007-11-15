@@ -1,9 +1,9 @@
 #ifndef DISCRETE_MESH_H
 #define DISCRETE_MESH_H
 
-#include "../SkeletonMaker/volume.h"
-#include "../MatlabInterface/DataStructures.h"
-#include "../MatlabInterface/Vector3DInt.h"
+#include <SkeletonMaker/volume.h>
+#include <MatlabInterface/DataStructures.h>
+#include <MatlabInterface/Vector3DInt.h>
 #include <string.h>
 #include <list>
 
@@ -836,14 +836,53 @@ namespace wustl_mm {
 		}
 
 		bool DiscreteMesh::IsSurfaceBody(Volume * sourceVolume, int x, int y, int z, bool doDependantChecks) {
-
-			if(doDependantChecks && 
-				(IsPoint(sourceVolume, x, y, z) || IsCurveEnd(sourceVolume, x, y, z) ||
-				IsCurveBody(sourceVolume, x, y, z) || IsSurfaceBorder(sourceVolume, x, y, z) ||				
-				IsVolumeBody(sourceVolume, x, y, z) || IsVolumeBorder(sourceVolume, x, y, z, false))) {
+			if(sourceVolume->getDataAt(x, y, z) <= 0) {
 				return false;
 			}
-			return true;
+
+			double points[3][3][3];
+			for(int xx = 0; xx < 3; xx++){
+				for(int yy = 0; yy < 3; yy++){
+					for(int zz = 0; zz < 3; zz++) {
+						points[xx][yy][zz] = sourceVolume->getDataAt(x+xx-1, y+yy-1, z+zz-1);
+					}
+				}
+			}
+
+			bool cubeFound;
+			for(int i = 0; i < 8; i++) {
+				cubeFound = true;
+				for(int e = 0; e < 7; e++) {
+					cubeFound = cubeFound && (points[VOLUME_NEIGHBOR_CUBES[i][e][0]+1][VOLUME_NEIGHBOR_CUBES[i][e][1]+1][VOLUME_NEIGHBOR_CUBES[i][e][2]+1] > 0);
+				}
+				if(cubeFound) {
+					for(int e = 0; e < 7; e++) {
+						points[VOLUME_NEIGHBOR_CUBES[i][e][0]+1][VOLUME_NEIGHBOR_CUBES[i][e][1]+1][VOLUME_NEIGHBOR_CUBES[i][e][2]+1] = 0;
+					}
+				}
+			}			
+
+			bool surfaceFound;
+			for(int i = 0; i < 12; i++) {
+				surfaceFound = true;
+				for(int e = 0; e < 3; e++) {
+					surfaceFound = surfaceFound && (points[VOLUME_NEIGHBOR_FACES[i][e][0]+1][VOLUME_NEIGHBOR_FACES[i][e][1]+1][VOLUME_NEIGHBOR_FACES[i][e][2]+1] > 0);
+				}
+				if(surfaceFound) {
+					break;
+				}
+			}
+
+			return surfaceFound && ((doDependantChecks && !IsSurfaceBorder(sourceVolume, x, y, z)) || (!doDependantChecks));
+				
+
+			//if(doDependantChecks && 
+			//	(IsPoint(sourceVolume, x, y, z) || IsCurveEnd(sourceVolume, x, y, z) ||
+			//	IsCurveBody(sourceVolume, x, y, z) || IsSurfaceBorder(sourceVolume, x, y, z) ||				
+			//	IsVolumeBody(sourceVolume, x, y, z) || IsVolumeBorder(sourceVolume, x, y, z, false))) {
+			//	return false;
+			//}
+			//return true;
 		}
 
 
