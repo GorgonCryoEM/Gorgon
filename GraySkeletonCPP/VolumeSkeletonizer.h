@@ -7,10 +7,10 @@
 #include "ImageReaderMRC.h"
 #include "GlobalDefinitions.h"
 #include "VolumeDeltaAnalyzer.h"
-#include "..\SkeletonMaker\PriorityQueue.h"
-#include "..\MatlabInterface\MathLib.h"
-#include "..\MatlabInterface\DataStructures.h"
-#include "..\MatlabInterface\Vector3D.h"
+#include <SkeletonMaker\PriorityQueue.h>
+#include <MatlabInterface\MathLib.h>
+#include <MatlabInterface\DataStructures.h>
+#include <MatlabInterface\Vector3D.h>
 #include "NormalFinder.h"
 #include <string>
 #include <time.h>
@@ -45,12 +45,15 @@ namespace wustl_mm {
 			void PruneCurves(Volume * sourceVolume, int pruneLength);
 			void PruneSurfaces(Volume * sourceVolume, int pruneLength);
 			void PruneUsingStructureTensor(Volume * skeleton, Volume * sourceVolume, EigenResults3D * volumeEigens, double threshold, char pruningClass, string outputPath);
+			void VoxelBinarySubtract(Volume * sourceAndDestVolume1, Volume * sourceVolume2);
 			void VoxelSubtract(Volume * sourceAndDestVolume1, Volume * sourceVolume2);
 			void VoxelOr(Volume * sourceAndDestVolume1, Volume * sourceVolume2);
+			Vector3D GetCurveDirection(Volume * skeleton, int x, int y, int z);
+			Vector3D GetCurveDirection(Volume * skeleton, int x, int y, int z, int depth);
 			Vector3D GetSurfaceNormal(Volume * skeleton, int x, int y, int z);
 			Vector3D * GetVolumeGradient(Volume * sourceVolume);
 			Vector3D * GetVolumeGradient2(Volume * sourceVolume);
-			Vector3D * GetSkeletonDirection(Volume * skeleton);
+			Vector3D * GetSkeletonDirection(Volume * skeleton, int type);
 		private:
 			
 			double AngleToParameter(double angle);
@@ -59,12 +62,15 @@ namespace wustl_mm {
 			EigenResults3D * GetEigenResults2(Volume * maskVol, Vector3D * imageGradient, ProbabilityDistribution3D & gaussianFilter, int gaussianFilterRadius, bool useMask);
 			void AddIterationToVolume(Volume * compositeVolume, Volume * iterationVolume, unsigned char threshold);
 			void ApplyMask(Volume * sourceVolume, Volume * maskVolume, unsigned char maskValue, bool keepMaskValue);
-			void FindOrthogonalAxes(Vector3D axis, Vector3D & res1, Vector3D & res2);
+			void FindOrthogonalAxes(Vector3D axis, Vector3D & res1, Vector3D & res2);			
 			void GetEigenResult(EigenResults3D & returnVal, Vector3D * imageGradient, ProbabilityDistribution3D & gaussianFilter, int x, int y, int z, int sizeX, int sizeY, int sizeZ, int gaussianFilterRadius, bool clear);
 			void GetEigenResult2(EigenResults3D & returnVal, Vector3D * imageGradient, ProbabilityDistribution3D & gaussianFilter, int x, int y, int z, int sizeX, int sizeY, int sizeZ, int gaussianFilterRadius, bool clear);
+			void GetLeftAndRightCurves(Vector3DInt & left, Vector3DInt & right, Volume * vol, int x, int y, int z, int depth, bool branch2);
 			void HueR(double value, double &r, double &g, double &b);
 			void HueRGB(double value, double &r, double &g, double &b);
 			void MarkDeletableVoxels(Volume * deletedVol, Volume * currentVolume, Volume * preservedVolume);
+			void RemoveCubesFromSurfaceSkeleton(Volume * sourceSkeleton);
+			void RemoveIsolatedNonCurves(Volume * skeleton);
 			void WriteEigenResultsToFile(Volume * sourceVolume, EigenResults3D * eigenResults, string outputPath);
 			void WriteEigenResultsToOFFFile(Volume * sourceVolume, Volume * cost, Volume * skeleton, EigenResults3D * eigenResults, string outputPath);
 			void WriteEigenResultsToOFFFileWireframe(Volume * sourceVolume, Volume * cost, Volume * skeleton, EigenResults3D * eigenResults, string outputPath);
@@ -75,7 +81,7 @@ namespace wustl_mm {
 			Volume * FillCurveHoles(Volume * thresholdedSkeleton, Volume * originalSkeleton, int maxHoleSize);
 			Volume * FillSurfaceHoles(Volume * thresholdedSkeleton, Volume * originalSkeleton, int maxHoleSize);
 			Volume * GetJuThinning(Volume * sourceVolume, Volume * preserve, double threshold, char thinningClass);
-			Volume * GetImmersionThinning(Volume * sourceVolume, Volume * preserve, double lowGrayscale, double highGrayscale, double stepSize, char thinningClass);
+			Volume * GetImmersionThinning(Volume * sourceVolume, Volume * preserve, double lowGrayscale, double highGrayscale, double stepSize, char thinningClass);			
 
 			static const char THINNING_CLASS_SURFACE_PRESERVATION = 4;
 			static const char THINNING_CLASS_CURVE_PRESERVATION_2D = 3;
@@ -235,10 +241,6 @@ namespace wustl_mm {
 			if(cost != cost) {
 				cost = 1.0;
 			}
-
-			if((cost > 1.0)  || (cost < 0)){
-				printf("Cost : %f\t, Type %i\n", cost, type);
-			}
 			return cost;
 
 		}
@@ -281,42 +283,79 @@ namespace wustl_mm {
 			return inUVW;
 		}
 
-		//Vector3D VolumeSkeletonizer::GetSurfaceNormal(Volume * skeleton, int x, int y, int z) {
-		//	bool facesFound[12];
-		//	Vector3D v0, v1, v2;
-		//	Vector3D normal = Vector3D(0.0, 0.0, 0.0);
-		//	for(int i = 0; i < 12; i++) {
-		//		facesFound[i] = true;
-		//		for(int j = 0; j < 3; j++) {
-		//			if(skeleton->getDataAt(x + VOLUME_NEIGHBOR_FACES[i][j][0], y + VOLUME_NEIGHBOR_FACES[i][j][1], z + VOLUME_NEIGHBOR_FACES[i][j][2]) <= 0) {
-		//				facesFound[i] = false;
-		//			}
-		//		}
-		//	}
-		//	Vector3D faces[4];
-		//	faces[0] = Vector3D(0, 0, 0);
-		//	for(int i = 0; i < 12; i++) {
-		//		if(facesFound[i]) {
-		//			for(int j = 0; j < 3; j++) {									
-		//				faces[j+1] = Vector3D(VOLUME_NEIGHBOR_FACES[i][j][0], VOLUME_NEIGHBOR_FACES[i][j][1], VOLUME_NEIGHBOR_FACES[i][j][2]);
-		//			}
+		Vector3D VolumeSkeletonizer::GetCurveDirection(Volume * skeleton, int x, int y, int z) {
+			Vector3D v1, currentPos;
+			Vector3D * n6 = new Vector3D[6];
+			int n6Count;
+			Vector3D direction = Vector3D(0,0,0);
+			if(skeleton->getDataAt(x,y,z) <= 0) {
+				return direction;
+			}
+			
+			currentPos = Vector3D(x, y, z);						
+			n6Count = 0;
+			for(int i = 0; i < 6; i++) {							
+				if(skeleton->getDataAt(x + VOLUME_NEIGHBORS_6[i][0], y + VOLUME_NEIGHBORS_6[i][1], z + VOLUME_NEIGHBORS_6[i][2]) > 0) {
+					n6[n6Count] = Vector3D(x + VOLUME_NEIGHBORS_6[i][0], y + VOLUME_NEIGHBORS_6[i][1], z + VOLUME_NEIGHBORS_6[i][2]);
+					if(n6Count > 0) {
+						v1 = n6[n6Count-1] - n6[n6Count];
+						direction = direction + v1;
+					}
+					n6Count++;
+				}
+			}
+			if(n6Count == 1) {
+				v1 = Vector3D(x, y, z);
+				v1 = v1 - n6[0];
+				direction = direction + v1;
+			}
+			direction.Normalize();
+			if(n6Count > 2) {
+				direction = Vector3D(BAD_NORMAL, BAD_NORMAL, BAD_NORMAL);
+			}
 
-		//			if (facesFound[VOLUME_NEIGHBOR_NUMBERS[i][0]] || facesFound[VOLUME_NEIGHBOR_NUMBERS[i][1]]) {										
-		//				v0 = faces[3] - faces[0];
-		//				v1 = faces[1] - faces[0];
-		//			} else {
-		//				v0 = faces[1] - faces[0];
-		//				v1 = faces[3] - faces[0];
-		//			}
-		//			v2 = v0 ^ v1;
-		//			v2.Normalize();
-		//			normal = normal + v2;		
-		//		}						
-		//	}
-		//	normal.Normalize();
-		//	return normal;
-		//}
+			delete [] n6;
+			return direction;
+		}
 
+
+		void VolumeSkeletonizer::GetLeftAndRightCurves(Vector3DInt & left, Vector3DInt & right, Volume * vol, int x, int y, int z, int depth, bool branch2) {
+			Vector3DInt * n6;
+			int n6Count;
+			int maxCurves = branch2? 2: 1;
+			Vector3DInt l1, l2, r1, r2;
+
+			if(depth == 0) {
+				n6Count = DiscreteMesh::GetN6(n6, vol, x, y, z);
+				if(n6Count > maxCurves) {
+					left = Vector3DInt(x, y, z);
+					right = Vector3DInt(x, y, z);
+				} else {					
+					left = (n6Count >= 1)? Vector3DInt(n6[0].X(), n6[0].Y(), n6[0].Z()) : Vector3DInt(x, y, z);
+					right = (n6Count >= 2)? Vector3DInt(n6[1].X(), n6[1].Y(), n6[1].Z()) : Vector3DInt(x, y, z);
+				}				
+			} else {
+				vol->setDataAt(x, y, z, 0);
+
+
+			}
+		}
+
+		Vector3D VolumeSkeletonizer::GetCurveDirection(Volume * skeleton, int x, int y, int z, int depth) {
+			Vector3D direction = Vector3D(0,0,0);
+			Vector3DInt left, right;
+			Volume * block = new Volume((depth+1)*2 +1, (depth+1)*2 +1, (depth+1)*2 +1, x-depth-1, y-depth-1, z-depth-1, skeleton);
+
+
+			if(DiscreteMesh::GetN6Count(skeleton, x, y, z) > 2) {
+				direction = Vector3D(BAD_NORMAL, BAD_NORMAL, BAD_NORMAL);
+			} else {
+				GetLeftAndRightCurves(left, right, block, depth+1, depth+1, depth+1, depth, depth==0);
+				direction = left - right;
+			}
+			delete block;
+			return direction;
+		}
 		Vector3D VolumeSkeletonizer::GetSurfaceNormal(Volume * skeleton, int x, int y, int z) {
 			surfaceNormalFinder->InitializeGraph(skeleton, x, y, z);
 			return surfaceNormalFinder->GetSurfaceNormal();
@@ -415,56 +454,28 @@ namespace wustl_mm {
 			return gradient;
 		}
 
-		Vector3D * VolumeSkeletonizer::GetSkeletonDirection(Volume * skeleton) {
+		Vector3D * VolumeSkeletonizer::GetSkeletonDirection(Volume * skeleton, int type) {
 			Vector3D * directions = new Vector3D[skeleton->getSizeX() * skeleton->getSizeY() * skeleton->getSizeZ()];
 			int index;
-			Vector3D v0, v1, v2, currentPos;
-			Vector3D * n6 = new Vector3D[6];
-			int n6Count;			
 
 			for(int x = 1; x < skeleton->getSizeX()-1; x++) {
 				for(int y = 1; y < skeleton->getSizeY()-1; y++) {
-					for(int z = 1; z < skeleton->getSizeZ()-1; z++) {
-						
+					for(int z = 1; z < skeleton->getSizeZ()-1; z++) {						
 						index = skeleton->getIndex(x, y, z);
-
 						directions[index] = Vector3D(0,0,0);
-						currentPos = Vector3D(x, y, z);
-
-						if(DiscreteMesh::IsPoint(skeleton, x, y, z) || (skeleton->getDataAt(x, y, z) <= 0)) {
-							// Set direction to {0,0,0} already done by default.
-						} else if (DiscreteMesh::IsCurveBody(skeleton, x, y, z) || DiscreteMesh::IsCurveEnd(skeleton, x, y, z)) {
-							n6Count = 0;
-							for(int i = 0; i < 6; i++) {							
-								if(skeleton->getDataAt(x + VOLUME_NEIGHBORS_6[i][0], y + VOLUME_NEIGHBORS_6[i][1], z + VOLUME_NEIGHBORS_6[i][2]) > 0) {
-									n6[n6Count] = Vector3D(x + VOLUME_NEIGHBORS_6[i][0], y + VOLUME_NEIGHBORS_6[i][1], z + VOLUME_NEIGHBORS_6[i][2]);
-									if(n6Count > 0) {
-										v1 = n6[n6Count-1] - n6[n6Count];
-										directions[index] = directions[index] + v1;
-									}
-									n6Count++;
-								}
+						if(skeleton->getDataAt(x,y,z) > 0) {
+							switch(type){
+								case PRUNING_CLASS_PRUNE_CURVES:
+									directions[index] = GetCurveDirection(skeleton, x, y, z);
+									break;
+								case PRUNING_CLASS_PRUNE_SURFACES:
+									directions[index] = GetSurfaceNormal(skeleton, x, y, z);
+									break;
 							}
-							if(n6Count == 1) {
-								v1 = Vector3D(x, y, z);
-								v1 = v1 - n6[0];
-								directions[index] = directions[index] + v1;
-							}
-							directions[index].Normalize();
-							if(n6Count > 2) {
-								directions[index] = Vector3D(BAD_NORMAL, BAD_NORMAL, BAD_NORMAL);
-							}
-
-						} else if (DiscreteMesh::IsSurfaceBody(skeleton, x, y, z, true) || DiscreteMesh::IsSurfaceBorder(skeleton, x, y, z)) {
-							directions[index] = GetSurfaceNormal(skeleton, x, y, z);						
 						}
 					}
 				}
 			}
-
-			delete [] n6;
-
-
 			return directions;
 		}
 
@@ -499,7 +510,7 @@ namespace wustl_mm {
 				for(int y = 0; y < sourceVolume->getSizeY(); y++) {
 					for(int z = 0; z < sourceVolume->getSizeZ(); z++) {
 						if(sourceVolume->getDataAt(x, y, z) < low) {
-							sourceVolume->setDataAt(x, y, z, low);
+							sourceVolume->setDataAt(x, y, z, 0);
 						}
 						if(sourceVolume->getDataAt(x, y, z) > high) {
 							sourceVolume->setDataAt(x, y, z, high);
@@ -712,7 +723,7 @@ namespace wustl_mm {
 		void VolumeSkeletonizer::PruneUsingStructureTensor(Volume * skeleton, Volume * sourceVolume, EigenResults3D * volumeEigens, double threshold, char pruningClass, string outputPath) {									
 			Volume * tempSkel = new Volume(skeleton->getSizeX(), skeleton->getSizeY(), skeleton->getSizeZ(), 0, 0, 0, skeleton);
 			Volume * costVol = new Volume(skeleton->getSizeX(), skeleton->getSizeY(), skeleton->getSizeZ()); 			
-			Vector3D * skeletonDirections = GetSkeletonDirection(skeleton);
+			Vector3D * skeletonDirections = GetSkeletonDirection(skeleton, pruningClass);
 			int index;
 			double cost;
 
@@ -720,15 +731,12 @@ namespace wustl_mm {
 				for(int y = 0; y < skeleton->getSizeY(); y++) {
 					for(int z = 0; z < skeleton->getSizeZ(); z++) {						
 						index = skeleton->getIndex(x, y, z);						
-						if((tempSkel->getDataAt(index) > 0) && (
-								((pruningClass == PRUNING_CLASS_PRUNE_SURFACES) && (DiscreteMesh::IsSurfaceBorder(tempSkel, x, y, z) || DiscreteMesh::IsSurfaceBody(tempSkel, x, y, z, true))) ||
-								((pruningClass == PRUNING_CLASS_PRUNE_CURVES) && (DiscreteMesh::IsCurveEnd(tempSkel, x, y, z) || DiscreteMesh::IsCurveBody(tempSkel, x, y, z))) || 
-								((pruningClass == PRUNING_CLASS_PRUNE_POINTS) && DiscreteMesh::IsPoint(tempSkel, x, y, z)))) {
+						if(tempSkel->getDataAt(index) > 0) {
 							cost = GetVoxelCost(volumeEigens[index], skeletonDirections[index], pruningClass);
 							if(cost < threshold) {
 								skeleton->setDataAt(index, 0.0);
 							}
-							costVol->setDataAt(index, cost);
+							costVol->setDataAt(index, cost);							
 						}
 					}
 				}
@@ -744,6 +752,83 @@ namespace wustl_mm {
 			delete [] skeletonDirections;
 		}
 
+		void VolumeSkeletonizer::RemoveCubesFromSurfaceSkeleton(Volume * sourceSkeleton) {
+			Volume * dummySkeleton = new Volume(sourceSkeleton->getSizeX(), sourceSkeleton->getSizeY(), sourceSkeleton->getSizeZ(), 0, 0, 0, sourceSkeleton);
+			for(int x = 1; x < sourceSkeleton->getSizeX()-1; x++) {
+				for(int y = 1; y < sourceSkeleton->getSizeY()-1; y++) {
+					for(int z = 1; z < sourceSkeleton->getSizeZ()-1; z++) {
+						if(!DiscreteMesh::IsSurfaceBody(dummySkeleton, x, y, z, false)) {
+							sourceSkeleton->setDataAt(x, y, z, 0);
+						}
+					}
+				}
+			}			
+		}
+
+		void VolumeSkeletonizer::RemoveIsolatedNonCurves(Volume * skeleton) {
+			Volume * visited = new Volume(skeleton->getSizeX(), skeleton->getSizeY(), skeleton->getSizeZ(), 0,0,0, skeleton);
+
+			vector<Vector3DInt> queue;
+			vector<bool> colors;
+			int currentColor;
+			Vector3DInt currPos, futurePos;
+
+			for(int x = 1; x < skeleton->getSizeX()-1; x++) {
+				for(int y = 1; y < skeleton->getSizeY()-1; y++) {
+					for(int z = 1; z < skeleton->getSizeZ(); z++) {
+						if(visited->getDataAt(x, y, z) > 0) {							
+							colors.push_back(false);
+							currentColor = colors.size();							
+							queue.push_back(Vector3DInt(x, y, z));
+
+							while(queue.size() > 0) {
+								currPos = queue[queue.size()-1];
+								queue.pop_back();
+								if(visited->getDataAt(currPos.X(), currPos.Y(), currPos.Z()) > 0) {
+									visited->setDataAt(currPos.X(), currPos.Y(), currPos.Z(), -currentColor);								
+									colors[currentColor-1] = colors[currentColor-1] || DiscreteMesh::IsCurveBody(skeleton, currPos.X(), currPos.Y(), currPos.Z()) || DiscreteMesh::IsCurveEnd(skeleton, currPos.X(), currPos.Y(), currPos.Z());
+
+									for(int i = 0; i < 6; i++) {
+										futurePos = Vector3DInt(currPos.X() + VOLUME_NEIGHBORS_6[i][0], currPos.Y() + VOLUME_NEIGHBORS_6[i][1], currPos.Z() + VOLUME_NEIGHBORS_6[i][2]);
+										if(visited->getDataAt(futurePos.X(), futurePos.Y(), futurePos.Z()) > 0) {
+											queue.push_back(futurePos);
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+
+			for(int i = 0; i < colors.size(); i++) {
+				if(!colors[i]) {
+					currentColor = -(i+1);
+					for(int x = 1; x < skeleton->getSizeX()-1; x++) {
+						for(int y = 1; y < skeleton->getSizeY()-1; y++) {
+							for(int z = 1; z < skeleton->getSizeZ(); z++) {
+								if(isZero(visited->getDataAt(x, y, z) - currentColor)) {
+									skeleton->setDataAt(x, y, z, 0);
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+
+		void VolumeSkeletonizer::VoxelBinarySubtract(Volume * sourceAndDestVolume1, Volume * sourceVolume2){
+			for(int x = 0; x < sourceAndDestVolume1->getSizeX(); x++) {
+				for(int y = 0; y < sourceAndDestVolume1->getSizeY(); y++) {
+					for(int z = 0; z < sourceAndDestVolume1->getSizeZ(); z++) {
+						if(sourceVolume2->getDataAt(x, y, z) > 0) {
+							sourceAndDestVolume1->setDataAt(x, y, z, 0);
+						}
+					}
+				}
+			}
+		}
+
 		void VolumeSkeletonizer::VoxelSubtract(Volume * sourceAndDestVolume1, Volume * sourceVolume2){
 			for(int x = 0; x < sourceAndDestVolume1->getSizeX(); x++) {
 				for(int y = 0; y < sourceAndDestVolume1->getSizeY(); y++) {
@@ -753,6 +838,7 @@ namespace wustl_mm {
 				}
 			}
 		}
+
 		void VolumeSkeletonizer::VoxelOr(Volume * sourceAndDestVolume1, Volume * sourceVolume2){
 			for(int x = 0; x < sourceAndDestVolume1->getSizeX(); x++) {
 				for(int y = 0; y < sourceAndDestVolume1->getSizeY(); y++) {
@@ -1052,8 +1138,7 @@ namespace wustl_mm {
 				for(int y = 0; y < skeleton->getSizeY(); y++) {
 					for(int x = 0; x < skeleton->getSizeX(); x++) {
 						index = skeleton->getIndex(x, y, z);
-						if((skeleton->getDataAt(index) > 0) && 
-							!((skeletonDirections[index].X() == BAD_NORMAL) && (skeletonDirections[index].Y() == BAD_NORMAL) && (skeletonDirections[index].Z() == BAD_NORMAL))) {
+						if((skeleton->getDataAt(index) > 0) &&  !skeletonDirections[index].IsBadNormal()) {							
 							Vector3D axis = skeletonDirections[index] ^ Vector3D(1.0, 0.0, 0.0);
 							axis.Normalize();
 							double angle = -(skeletonDirections[index] * Vector3D(1.0, 0.0, 0.0));
@@ -1263,8 +1348,8 @@ namespace wustl_mm {
 				volumeGradient = GetVolumeGradient2(sourceVol);			
 			}
 
+			Volume * nullVol = new Volume(sourceVol->getSizeX(), sourceVol->getSizeY(), sourceVol->getSizeZ());
 			Volume * surfaceVol = GetImmersionThinning(sourceVol, NULL, startGray, endGray, stepSize, THINNING_CLASS_SURFACE_PRESERVATION);			
-			//Volume * surfaceVol = PerformPureJuSkeletonization(sourceVol, outputPath, 169, minCurveSize, minSurfaceSize);
 			if(doPruning) {
 				surfaceVol->toMRCFile((char *)(outputPath + "-S-Pre-Prune.mrc").c_str());				
 				WriteVolumeToVRMLFile(surfaceVol, outputPath + "-S-Pre-Prune.wrl");
@@ -1277,6 +1362,7 @@ namespace wustl_mm {
 
 				Volume * filledSurfaceVol = FillSurfaceHoles(prunedSurfaceVol, surfaceVol, maxSurfaceHole);
 				filledSurfaceVol->toMRCFile((char *)(outputPath + "-S-Post-Fill.mrc").c_str());
+
 				delete surfaceVol;
 				delete prunedSurfaceVol;
 				surfaceVol = filledSurfaceVol;
@@ -1285,9 +1371,24 @@ namespace wustl_mm {
 			PruneSurfaces(surfaceVol, minSurfaceSize);			
 			surfaceVol->toMRCFile((char *)(outputPath + "-S-Post-Erosion.mrc").c_str());
 
+			//RemoveCubesFromSurfaceSkeleton(surfaceVol);
+			//surfaceVol->toMRCFile((char *)(outputPath + "-S-Cleaned.mrc").c_str());
+
+			Volume * cleanedSurfaceVol = GetJuSurfaceSkeleton(surfaceVol, nullVol, 0.5);		
+			PruneSurfaces(cleanedSurfaceVol, minSurfaceSize);		
+			cleanedSurfaceVol->toMRCFile((char *)(outputPath + "-S-Cleaned.mrc").c_str());
+
+			delete surfaceVol;
+			surfaceVol = cleanedSurfaceVol;
+
 			Volume * curveVol = GetImmersionThinning(sourceVol, surfaceVol, startGray, endGray, stepSize, THINNING_CLASS_CURVE_PRESERVATION);
+			VoxelBinarySubtract(curveVol, surfaceVol);
+
 			if(doPruning) {
 				curveVol->toMRCFile((char *)(outputPath + "-C-Pre-Prune.mrc").c_str());
+				curveVol->toOFFCells2((char *)(outputPath + "-C-Pre-Prune.off").c_str());
+				WriteVolumeToVRMLFile(curveVol, outputPath + "-C-Pre-Prune.wrl");
+				
 				volumeEigens = GetEigenResults2(curveVol, volumeGradient, gaussianFilterCurveRadius, curveRadius, true);
 
 				Volume * prunedCurveVol = new Volume(curveVol->getSizeX(), curveVol->getSizeY(), curveVol->getSizeZ(), 0, 0, 0, curveVol);
@@ -1304,8 +1405,18 @@ namespace wustl_mm {
 			}
 			PruneCurves(curveVol, minCurveSize);			
 			curveVol->toMRCFile((char *)(outputPath + "-C-Post-Erosion.mrc").c_str());
-			
 
+			Volume * cleanedCurveVol = GetJuCurveSkeleton(curveVol, nullVol, 0.5, true);		
+			PruneCurves(cleanedCurveVol, minCurveSize);		
+			//RemoveIsolatedNonCurves(cleanedCurveVol);
+			cleanedCurveVol->toMRCFile((char *)(outputPath + "-C-Cleaned.mrc").c_str());
+
+			delete curveVol;
+			curveVol = cleanedCurveVol;
+
+			VoxelOr(curveVol, surfaceVol);
+			curveVol->toMRCFile((char *)(outputPath + "-SC.mrc").c_str());
+			
 			Volume * pointVol = GetImmersionThinning(sourceVol, curveVol, startGray, endGray, stepSize, THINNING_CLASS_POINT_PRESERVATION);
 			// Removed as points will always be preserved to ensure that the shape is preserved.
 			//if(doPruning) {
@@ -1316,13 +1427,17 @@ namespace wustl_mm {
 			//	pointVol->toMRCFile((char *)(outputPath + "-P-Post-Prune.mrc").c_str());
 			//}
 
+			VoxelOr(pointVol, curveVol);
+
 			delete surfaceVol;
 			delete curveVol;
+			delete nullVol;
 			delete [] volumeGradient;
 
 			sourceVol->pad(-MAX_GAUSSIAN_FILTER_RADIUS, 0);
 			pointVol->pad(-MAX_GAUSSIAN_FILTER_RADIUS, 0);
-			return pointVol;			
+			pointVol->toOFFCells2((char *)(outputPath + "-SCP.off").c_str());
+			return pointVol;					
 		}
 
 		Volume * VolumeSkeletonizer::PerformImmersionSkeletonization(Volume * imageVol, string outputPath) {
@@ -1515,154 +1630,155 @@ namespace wustl_mm {
 
 
 		Volume * VolumeSkeletonizer::PerformSkeletonPruning(Volume * sourceVolume, Volume * sourceSkeleton, double curveThreshold, double surfaceThreshold, int minGray, int maxGray, string outputPath) {
-			double pointThreshold = curveThreshold;
-			printf("Performing Skeleton Pruning\n");
-			sourceVolume->pad(MAX_GAUSSIAN_FILTER_RADIUS, 0);
-			sourceSkeleton->pad(MAX_GAUSSIAN_FILTER_RADIUS, 0);
+			//double pointThreshold = curveThreshold;
+			//printf("Performing Skeleton Pruning\n");
+			//sourceVolume->pad(MAX_GAUSSIAN_FILTER_RADIUS, 0);
+			//sourceSkeleton->pad(MAX_GAUSSIAN_FILTER_RADIUS, 0);
 
-			printf("Getting volume Eigens\n");
-			Vector3D * volumeGradient = GetVolumeGradient(sourceVolume);
-			EigenResults3D * volumeEigens = GetEigenResults(sourceSkeleton, volumeGradient, gaussianFilterMaxRadius, MAX_GAUSSIAN_FILTER_RADIUS, true);
+			//printf("Getting volume Eigens\n");
+			//Vector3D * volumeGradient = GetVolumeGradient(sourceVolume);
+			//EigenResults3D * volumeEigens = GetEigenResults(sourceSkeleton, volumeGradient, gaussianFilterMaxRadius, MAX_GAUSSIAN_FILTER_RADIUS, true);
 
-			WriteEigenResultsToOFFFile(sourceVolume, new Volume(sourceVolume->getSizeX(), sourceVolume->getSizeY(), sourceVolume->getSizeZ()), sourceSkeleton, volumeEigens, outputPath + "NoColorEigens.off");
-			WriteEigenResultsToVRMLFile(sourceVolume, new Volume(sourceVolume->getSizeX(), sourceVolume->getSizeY(), sourceVolume->getSizeZ()), sourceSkeleton, volumeEigens, outputPath + "NoColorEigens.wrl", false);
+			//WriteEigenResultsToOFFFile(sourceVolume, new Volume(sourceVolume->getSizeX(), sourceVolume->getSizeY(), sourceVolume->getSizeZ()), sourceSkeleton, volumeEigens, outputPath + "NoColorEigens.off");
+			//WriteEigenResultsToVRMLFile(sourceVolume, new Volume(sourceVolume->getSizeX(), sourceVolume->getSizeY(), sourceVolume->getSizeZ()), sourceSkeleton, volumeEigens, outputPath + "NoColorEigens.wrl", false);
 
-			Volume * curveScore = new Volume(sourceVolume->getSizeX(), sourceVolume->getSizeY(), sourceVolume->getSizeZ());
-			Volume * pointScore = new Volume(sourceVolume->getSizeX(), sourceVolume->getSizeY(), sourceVolume->getSizeZ());
-			Volume * surfaceScore = new Volume(sourceVolume->getSizeX(), sourceVolume->getSizeY(), sourceVolume->getSizeZ());
-			
+			//Volume * curveScore = new Volume(sourceVolume->getSizeX(), sourceVolume->getSizeY(), sourceVolume->getSizeZ());
+			//Volume * pointScore = new Volume(sourceVolume->getSizeX(), sourceVolume->getSizeY(), sourceVolume->getSizeZ());
+			//Volume * surfaceScore = new Volume(sourceVolume->getSizeX(), sourceVolume->getSizeY(), sourceVolume->getSizeZ());
+			//
 
-			Volume * binarySkeleton;
+			//Volume * binarySkeleton;
 
-			Volume * preservedSkeleton = new Volume(sourceVolume->getSizeX(), sourceVolume->getSizeY(), sourceVolume->getSizeZ());
-			VolumeDeltaAnalyzer * analyzer;
-			int pointCount, curveCount, surfaceCount, index, featurePointCount;
-			double cost, cost2;
-			Vector3DInt * pointList;
-			SkeletalCurve * featureList;
-			Vector3D * skeletonDirections;
-			SkeletalCurve feature;
+			//Volume * preservedSkeleton = new Volume(sourceVolume->getSizeX(), sourceVolume->getSizeY(), sourceVolume->getSizeZ());
+			//VolumeDeltaAnalyzer * analyzer;
+			//int pointCount, curveCount, surfaceCount, index, featurePointCount;
+			//double cost, cost2;
+			//Vector3DInt * pointList;
+			//SkeletalCurve * featureList;
+			//Vector3D * skeletonDirections;
+			//SkeletalCurve feature;
 
-			{ //Remove after debugging.. not needed at all only for visualization
-				binarySkeleton = new Volume(sourceSkeleton->getSizeX(), sourceSkeleton->getSizeY(), sourceSkeleton->getSizeZ(), 0, 0, 0, sourceSkeleton);
-				binarySkeleton->threshold(139);			
-				skeletonDirections = GetSkeletonDirection(binarySkeleton);
-				WriteSkeletonDirectionToVRMLFile(binarySkeleton, skeletonDirections, outputPath + "-G-SkelDirections.wrl");
+			//{ //Remove after debugging.. not needed at all only for visualization
+			//	binarySkeleton = new Volume(sourceSkeleton->getSizeX(), sourceSkeleton->getSizeY(), sourceSkeleton->getSizeZ(), 0, 0, 0, sourceSkeleton);
+			//	binarySkeleton->threshold(139);			
+			//	skeletonDirections = GetSkeletonDirection(binarySkeleton);
+			//	WriteSkeletonDirectionToVRMLFile(binarySkeleton, skeletonDirections, outputPath + "-G-SkelDirections.wrl");
 
-				delete binarySkeleton;
-				delete [] skeletonDirections;
-			}
-
-
-			for(int grayValue = maxGray; grayValue >= minGray; grayValue-=5) {
-				printf("Threshold :%i\n", grayValue);
-				binarySkeleton = new Volume(sourceSkeleton->getSizeX(), sourceSkeleton->getSizeY(), sourceSkeleton->getSizeZ(), 0, 0, 0, sourceSkeleton);
-				binarySkeleton->threshold(grayValue);			
-				skeletonDirections = GetSkeletonDirection(binarySkeleton);
-
-				analyzer = new VolumeDeltaAnalyzer(preservedSkeleton, binarySkeleton);
-				analyzer->GetNewPoints(pointCount, pointList);
-
-				for(int i = 0; i < pointCount; i++) {
-					index = binarySkeleton->getIndex(pointList[i].values[0], pointList[i].values[1], pointList[i].values[2]);				
-					cost = GetVoxelCost(volumeEigens[index], skeletonDirections[index], VOXEL_CLASS_POINT);
-					pointScore->setDataAt(index, max(cost, pointScore->getDataAt(index)));
-					if(cost >= pointThreshold) {
-						preservedSkeleton->setDataAt(pointList[i].values[0], pointList[i].values[1], pointList[i].values[2], 1);
-					}
-				}
-
-				analyzer->GetNewCurves(curveCount, featureList);
-				for(int i = 0; i < curveCount; i++) {
-					feature = featureList[i];
-					cost = 0;
-					featurePointCount = 0;
-					for(int j = 0; j < feature.points.size(); j++) {
-						index = binarySkeleton->getIndex(feature.points[j].values[0], feature.points[j].values[1], feature.points[j].values[2]);
-						if(!(preservedSkeleton->getDataAt(index) > 0)) {
-							cost2 = GetVoxelCost(volumeEigens[index], skeletonDirections[index], VOXEL_CLASS_CURVE_BODY);
-							curveScore->setDataAt(index, max(cost2, curveScore->getDataAt(index)));
-							cost += cost2;
-							featurePointCount++;	
-						}
-					}
-					if(featurePointCount != 0) {
-						cost = cost / (double)featurePointCount;
-					} else {
-						cost = 0;
-						printf("                 zero cost!!!\n");
-					}
-				
-					if(cost > curveThreshold) {
-						for(int j = 0; j < feature.points.size(); j++) {
-							index = binarySkeleton->getIndex(feature.points[j].values[0], feature.points[j].values[1], feature.points[j].values[2]);
-							preservedSkeleton->setDataAt(index, 1);							
-						}
-					}
-				}
-				delete [] featureList;
+			//	delete binarySkeleton;
+			//	delete [] skeletonDirections;
+			//}
 
 
-				analyzer->GetNewSurfaces(surfaceCount, featureList);
-				for(int i = 0; i < surfaceCount; i++) {
-					feature = featureList[i];
-					cost = 0;
-					featurePointCount = 0;
-					for(int j = 0; j < feature.points.size(); j++) {
-						index = binarySkeleton->getIndex(feature.points[j].values[0], feature.points[j].values[1], feature.points[j].values[2]);
-						if(!(preservedSkeleton->getDataAt(index) > 0)) {
-							cost2 = GetVoxelCost(volumeEigens[index], skeletonDirections[index], VOXEL_CLASS_SURFACE_BODY);
-							surfaceScore->setDataAt(index, max(cost2, surfaceScore->getDataAt(index)));
-							cost += cost2;
-							featurePointCount++;	
-						}
-					}
-					if(featurePointCount != 0) {
-						cost = cost / (double)featurePointCount;
-					} else {
-						cost = 0;
-						//printf("                 zero cost!!!\n");
-					}
-				
-					if(cost > surfaceThreshold) {
-						for(int j = 0; j < feature.points.size(); j++) {
-							index = binarySkeleton->getIndex(feature.points[j].values[0], feature.points[j].values[1], feature.points[j].values[2]);
-							preservedSkeleton->setDataAt(index, 1);							
-						}
-					}
-				}
-				delete [] featureList;
+			//for(int grayValue = maxGray; grayValue >= minGray; grayValue-=5) {
+			//	printf("Threshold :%i\n", grayValue);
+			//	binarySkeleton = new Volume(sourceSkeleton->getSizeX(), sourceSkeleton->getSizeY(), sourceSkeleton->getSizeZ(), 0, 0, 0, sourceSkeleton);
+			//	binarySkeleton->threshold(grayValue);			
+			//	skeletonDirections = GetSkeletonDirection(binarySkeleton);
+
+			//	analyzer = new VolumeDeltaAnalyzer(preservedSkeleton, binarySkeleton);
+			//	analyzer->GetNewPoints(pointCount, pointList);
+
+			//	for(int i = 0; i < pointCount; i++) {
+			//		index = binarySkeleton->getIndex(pointList[i].values[0], pointList[i].values[1], pointList[i].values[2]);				
+			//		cost = GetVoxelCost(volumeEigens[index], skeletonDirections[index], VOXEL_CLASS_POINT);
+			//		pointScore->setDataAt(index, max(cost, pointScore->getDataAt(index)));
+			//		if(cost >= pointThreshold) {
+			//			preservedSkeleton->setDataAt(pointList[i].values[0], pointList[i].values[1], pointList[i].values[2], 1);
+			//		}
+			//	}
+
+			//	analyzer->GetNewCurves(curveCount, featureList);
+			//	for(int i = 0; i < curveCount; i++) {
+			//		feature = featureList[i];
+			//		cost = 0;
+			//		featurePointCount = 0;
+			//		for(int j = 0; j < feature.points.size(); j++) {
+			//			index = binarySkeleton->getIndex(feature.points[j].values[0], feature.points[j].values[1], feature.points[j].values[2]);
+			//			if(!(preservedSkeleton->getDataAt(index) > 0)) {
+			//				cost2 = GetVoxelCost(volumeEigens[index], skeletonDirections[index], VOXEL_CLASS_CURVE_BODY);
+			//				curveScore->setDataAt(index, max(cost2, curveScore->getDataAt(index)));
+			//				cost += cost2;
+			//				featurePointCount++;	
+			//			}
+			//		}
+			//		if(featurePointCount != 0) {
+			//			cost = cost / (double)featurePointCount;
+			//		} else {
+			//			cost = 0;
+			//			printf("                 zero cost!!!\n");
+			//		}
+			//	
+			//		if(cost > curveThreshold) {
+			//			for(int j = 0; j < feature.points.size(); j++) {
+			//				index = binarySkeleton->getIndex(feature.points[j].values[0], feature.points[j].values[1], feature.points[j].values[2]);
+			//				preservedSkeleton->setDataAt(index, 1);							
+			//			}
+			//		}
+			//	}
+			//	delete [] featureList;
 
 
-				printf("%i surfaces, %i curves, %i points\n", surfaceCount, curveCount, pointCount);
+			//	analyzer->GetNewSurfaces(surfaceCount, featureList);
+			//	for(int i = 0; i < surfaceCount; i++) {
+			//		feature = featureList[i];
+			//		cost = 0;
+			//		featurePointCount = 0;
+			//		for(int j = 0; j < feature.points.size(); j++) {
+			//			index = binarySkeleton->getIndex(feature.points[j].values[0], feature.points[j].values[1], feature.points[j].values[2]);
+			//			if(!(preservedSkeleton->getDataAt(index) > 0)) {
+			//				cost2 = GetVoxelCost(volumeEigens[index], skeletonDirections[index], VOXEL_CLASS_SURFACE_BODY);
+			//				surfaceScore->setDataAt(index, max(cost2, surfaceScore->getDataAt(index)));
+			//				cost += cost2;
+			//				featurePointCount++;	
+			//			}
+			//		}
+			//		if(featurePointCount != 0) {
+			//			cost = cost / (double)featurePointCount;
+			//		} else {
+			//			cost = 0;
+			//			//printf("                 zero cost!!!\n");
+			//		}
+			//	
+			//		if(cost > surfaceThreshold) {
+			//			for(int j = 0; j < feature.points.size(); j++) {
+			//				index = binarySkeleton->getIndex(feature.points[j].values[0], feature.points[j].values[1], feature.points[j].values[2]);
+			//				preservedSkeleton->setDataAt(index, 1);							
+			//			}
+			//		}
+			//	}
+			//	delete [] featureList;
 
-				delete binarySkeleton;				
-				delete [] skeletonDirections;
-				delete analyzer;
-				delete [] pointList;
-			}
-			
-			Volume * finalSkeleton = new Volume(sourceSkeleton->getSizeX(), sourceSkeleton->getSizeY(), sourceSkeleton->getSizeZ(), 0, 0, 0, sourceSkeleton);
-			finalSkeleton->applyMask(preservedSkeleton, 1.0, true);
-						
-			WriteEigenResultsToVRMLFile(sourceVolume, curveScore, sourceSkeleton, volumeEigens, outputPath + "-C-Eigens.wrl", false);
-			WriteEigenResultsToVRMLFile(sourceVolume, surfaceScore, sourceSkeleton, volumeEigens, outputPath + "-S-Eigens.wrl", false);
 
-			//pointScore->toMRCFile((char *)(outputPath + "-P-Score.mrc").c_str());
-			curveScore->toMRCFile((char *)(outputPath + "-C-Score.mrc").c_str());
-			surfaceScore->toMRCFile((char *)(outputPath + "-S-Score.mrc").c_str());
-			//preservedSkeleton->toMRCFile((char *)(outputPath + "-G-BinarySkeleton.mrc").c_str());
-			//preservedSkeleton->toOFFCells2((char *)(outputPath + "-G-BinarySkeleton.off").c_str());
-			//finalSkeleton->toOFFCells2((char *)(outputPath + "-G-GraySkeleton.off").c_str());
+			//	printf("%i surfaces, %i curves, %i points\n", surfaceCount, curveCount, pointCount);
 
-			delete pointScore;
-			delete curveScore;
-			delete surfaceScore;
-			delete preservedSkeleton;
-			delete [] volumeEigens;
-			delete [] volumeGradient;
+			//	delete binarySkeleton;				
+			//	delete [] skeletonDirections;
+			//	delete analyzer;
+			//	delete [] pointList;
+			//}
+			//
+			//Volume * finalSkeleton = new Volume(sourceSkeleton->getSizeX(), sourceSkeleton->getSizeY(), sourceSkeleton->getSizeZ(), 0, 0, 0, sourceSkeleton);
+			//finalSkeleton->applyMask(preservedSkeleton, 1.0, true);
+			//			
+			//WriteEigenResultsToVRMLFile(sourceVolume, curveScore, sourceSkeleton, volumeEigens, outputPath + "-C-Eigens.wrl", false);
+			//WriteEigenResultsToVRMLFile(sourceVolume, surfaceScore, sourceSkeleton, volumeEigens, outputPath + "-S-Eigens.wrl", false);
 
-			return finalSkeleton;
+			////pointScore->toMRCFile((char *)(outputPath + "-P-Score.mrc").c_str());
+			//curveScore->toMRCFile((char *)(outputPath + "-C-Score.mrc").c_str());
+			//surfaceScore->toMRCFile((char *)(outputPath + "-S-Score.mrc").c_str());
+			////preservedSkeleton->toMRCFile((char *)(outputPath + "-G-BinarySkeleton.mrc").c_str());
+			////preservedSkeleton->toOFFCells2((char *)(outputPath + "-G-BinarySkeleton.off").c_str());
+			////finalSkeleton->toOFFCells2((char *)(outputPath + "-G-GraySkeleton.off").c_str());
+
+			//delete pointScore;
+			//delete curveScore;
+			//delete surfaceScore;
+			//delete preservedSkeleton;
+			//delete [] volumeEigens;
+			//delete [] volumeGradient;
+
+			//return finalSkeleton;
+			return NULL;
 
 		}
 

@@ -19,7 +19,7 @@ Date  : 08/14/2006
 #include "PathGenerator.h"
 #include "Structures.h"
 #include <time.h>
-#include "../SkeletonMaker/PriorityQueue.h"
+#include <SkeletonMaker/PriorityQueue.h>
 
 namespace wustl_mm {
 	namespace GraphMatch {

@@ -10,8 +10,8 @@
 #include <math.h>
 #include "NormalFinder.h"
 #include "DiscreteMesh.h"
-#include "..\MatlabInterface\DataStructures.h"
-#include "..\MatlabInterface\MathLib.h"
+#include <MatlabInterface\DataStructures.h>
+#include <MatlabInterface\MathLib.h>
 
 
 using namespace wustl_mm::GraySkeletonCPP;
@@ -24,6 +24,8 @@ const int DO_SKELETONIZATION_AND_PRUNING = 2;
 const int DO_BINARY_THINNING_JU2007 = 50;
 const int DO_TOPOLOGICAL_WATERSHED_JU2007  = 60;
 
+const int DO_CROPPING = 997;
+const int DO_DOWNSAMPLING = 998;
 const int DO_CONVERSION = 999;
 
 string DoubleToString(double number) {
@@ -104,6 +106,20 @@ void DisplayInputParams() {
 	printf("\t[minGrayValue]  : The minimum grayscale value to consider.\n");
 	printf("\t[maxGrayValue]  : The maximum grayscale value to consider.\n");
 	printf("\t[stepSize]	  : The grayscale stepsize.\n\n");
+
+	printf("To Crop a volume\n");
+	printf("\tGraySkeletonCPP.exe [function] [inputfile] [outfile] [startx] [endx] [starty] [endy] [startz] [endz]\n\n");
+	printf("\t[function]      : %i, Crop a volume\n", DO_CROPPING);
+	printf("\t[inputfile]     : The source file\n");
+	printf("\t[outfile]       : The destination file\n");
+	printf("\t[startd]        : The starting coordinate in the d dimension\n");
+	printf("\t[endd]          : The ending coordinate in the d dimension\n\n");
+
+	printf("To Downsample a volume\n");
+	printf("\tGraySkeletonCPP.exe [function] [inputfile] [outfile]\n\n");
+	printf("\t[function]      : %i, Downsample a volume\n", DO_DOWNSAMPLING);
+	printf("\t[inputfile]     : The source file\n");
+	printf("\t[outfile]       : The destination file\n\n");
 
 	printf("To convert file formats\n");
 	printf("\tGraySkeletonCPP.exe [function] [inputfile] [inputformat] [outfile] [outformat] [x-size] [y-size] [z-size]\n\n");
@@ -227,8 +243,7 @@ void DoSkeletonizationAndPruningAbeysinghe2007(int dimensions, string inFile, st
 			skeletonizer3D->NormalizeVolume(sourceVol);
 			skeletonizer3D->CleanupVolume(sourceVol, minGray, maxGray);
 			Volume * outputVol = skeletonizer3D->PerformImmersionSkeletonizationAndPruning(sourceVol, minGray, maxGray, stepSize, minCurveSize, minSurfaceSize, maxCurveHole, maxSurfaceHole, outPath, true, pointThreshold, curveThreshold, surfaceThreshold);
-			outputVol->toMRCFile((char *)outFile.c_str());
-			outputVol->toOFFCells2((char *)(outPath + ".off").c_str());
+			outputVol->toMRCFile((char *)outFile.c_str());			
 			delete sourceVol;
 			delete skeletonizer3D;
 			delete outputVol;
@@ -240,6 +255,44 @@ void DoSkeletonizationAndPruningAbeysinghe2007(int dimensions, string inFile, st
 	}
 }
 
+
+
+void DoCropping(string inFile, string outFile, int startX, int endX, int startY, int endY, int startZ, int endZ) {
+	MRCReader * reader = (MRCReader*)MRCReaderPicker::pick((char *)inFile.c_str());
+	Volume * sourceVol = reader->getVolume();
+	Volume * destVol = new Volume(endX-startX+1, endY-startY+1, endZ-startZ+1, startX, startY, startZ, sourceVol);
+	destVol->toMRCFile((char *)outFile.c_str());
+	delete reader;
+	delete sourceVol;
+	delete destVol;	
+}
+
+void DoDownsampling(string inFile, string outFile) {
+	MRCReader * reader = (MRCReader*)MRCReaderPicker::pick((char *)inFile.c_str());
+	Volume * sourceVol = reader->getVolume();
+	Volume * destVol = new Volume(sourceVol->getSizeX()/2, sourceVol->getSizeY()/2, sourceVol->getSizeZ()/2);
+	double val;
+
+	for(int x = 0; x < destVol->getSizeX(); x++) {
+		for(int y = 0; y < destVol->getSizeY(); y++) {
+			for(int z = 0; z < destVol->getSizeZ(); z++) {
+				val = 0;
+				for(int xx = 0; xx < 2; xx++) {
+					for(int yy = 0; yy < 2; yy++) {
+						for(int zz = 0; zz < 2; zz++) {
+							val += sourceVol->getDataAt(2*x+xx, 2*y+yy, 2*z+zz);
+						}
+					}
+				}
+				destVol->setDataAt(x, y, z, val/8.0);					
+			}
+		}
+	}
+	destVol->toMRCFile((char *)outFile.c_str());
+	delete reader;
+	delete sourceVol;
+	delete destVol;
+}
 
 int main( int args, char * argv[] ) {
 
@@ -274,65 +327,74 @@ int main( int args, char * argv[] ) {
 	clock_t start, finish;
 	start = clock();
 	int function;
+	bool error = true;
 
-
-	switch(args){		
-		case 8: 
-			function = StringToInt(argv[1]);
-			if(function == DO_BINARY_THINNING_JU2007) {
-				// GraySkeletonCPP.exe [function] [dimensions] [inputfile] [outfile] [minCurveSize] [minSurfaceSize] [threshold]
-				DoBinaryThinningJu2007(StringToInt(argv[2]), argv[3], argv[4], StringToInt(argv[5]), StringToInt(argv[6]), StringToDouble(argv[7]));
-			} else {
-				DisplayInputParams();
-			}
-			break;		
-		case 9:			
-			function = StringToInt(argv[1]);
-			if(function == DO_CONVERSION) {  
-				// GraySkeletonCPP.exe [function] [inputfile] [inputformat] [outfile] [outformat] [x-size] [y-size] [z-size]
-				VolumeFormatConverter::ConvertVolume(argv[2], argv[3], argv[4], argv[5], StringToInt(argv[6]), StringToInt(argv[7]), StringToInt(argv[8]));
-			} else {
-				DisplayInputParams();
-			}
-			break;		
-		case 10:			
-			function = StringToInt(argv[1]);
-			switch(function) {
-				case DO_TOPOLOGICAL_WATERSHED_JU2007 :
-					//GraySkeletonCPP.exe [function] [dimensions] [inputfile] [outfile] [minCurveSize] [minSurfaceSize] [minGrayValue] [maxGrayValue] [stepSize]
+	if(args > 2) {
+		function = StringToInt(argv[1]);
+		switch(function) {		
+			case DO_BINARY_THINNING_JU2007:
+				// GraySkeletonCPP.exe DO_BINARY_THINNING_JU2007 [dimensions] [inputfile] [outfile] [minCurveSize] [minSurfaceSize] [threshold]
+				if(args == 8) {					
+					DoBinaryThinningJu2007(StringToInt(argv[2]), argv[3], argv[4], StringToInt(argv[5]), StringToInt(argv[6]), StringToDouble(argv[7]));
+					error = false;
+				} 
+				break;
+			case DO_TOPOLOGICAL_WATERSHED_JU2007:
+				//GraySkeletonCPP.exe DO_TOPOLOGICAL_WATERSHED_JU2007 [dimensions] [inputfile] [outfile] [minCurveSize] [minSurfaceSize] [minGrayValue] [maxGrayValue] [stepSize]
+				if(args == 10) {					
 					DoTopologicalWatershedJu2007(StringToInt(argv[2]), argv[3], argv[4], StringToInt(argv[5]), StringToInt(argv[6]), 
 						StringToInt(argv[7]), StringToInt(argv[8]), StringToInt(argv[9]));
-					break;
-				case DO_SKELETONIZATION :
-					//GraySkeletonCPP.exe [function] [dimensions] [inputfile] [outfile] [minCurveSize] [minSurfaceSize] [minGrayValue] [maxGrayValue] [stepSize]
+					error = false;
+				} 
+				break;
+			case DO_SKELETONIZATION:
+				//GraySkeletonCPP.exe [function] [dimensions] [inputfile] [outfile] [minCurveSize] [minSurfaceSize] [minGrayValue] [maxGrayValue] [stepSize]
+				if(args == 10) {					
 					DoSkeletonizationAbeysinghe2007(StringToInt(argv[2]), argv[3], argv[4], StringToInt(argv[5]), StringToInt(argv[6]), 
 						StringToInt(argv[7]), StringToInt(argv[8]), StringToInt(argv[9]));
-					break;
-				default:
-					DisplayInputParams();
-					break;
-			}
-			break;
-		case 18:
-			function = StringToInt(argv[1]);
-			switch(function) {
-				//GraySkeletonCPP.exe [function] [dimensions] [inputfile] [outfile] [minCurveSize] [minSurfaceSize] [maxCurveHole] [maxSurfaceHole]
+					error = false;
+				} 
+				break;
+			case DO_SKELETONIZATION_AND_PRUNING:
+				//GraySkeletonCPP.exe DO_SKELETONIZATION_AND_PRUNING [dimensions] [inputfile] [outfile] [minCurveSize] [minSurfaceSize] [maxCurveHole] [maxSurfaceHole]
 				//                    [pointThreshold] [curveThreshold] [surfaceThreshold] [pointRadius] [curveRadius] [surfaceRadius]
 				//                    [minGrayValue] [maxGrayValue] [stepSize]
-				case DO_SKELETONIZATION_AND_PRUNING :
+				if(args == 18) {					
 					DoSkeletonizationAndPruningAbeysinghe2007(StringToInt(argv[2]), argv[3], argv[4], StringToInt(argv[5]), StringToInt(argv[6]), StringToInt(argv[7]), StringToInt(argv[8]),
 						StringToDouble(argv[9]), StringToDouble(argv[10]), StringToDouble(argv[11]), StringToInt(argv[12]), StringToInt(argv[13]),
 						StringToInt(argv[14]), StringToInt(argv[15]), StringToInt(argv[16]), StringToInt(argv[17]));
-					break;				
-				default:
-					DisplayInputParams();
-					break;
-			}
-			break;
-		default:
-			DisplayInputParams();
-			break;
+					error = false;
+				} 
+				break;
+			case DO_CROPPING:
+				// GraySkeletonCPP.exe DO_CROPPING [inputfile] [outfile] [startx] [endx] [starty] [endy] [startz] [endz]
+				if(args == 10) {					
+					DoCropping(argv[2], argv[3], StringToInt(argv[4]), StringToInt(argv[5]), StringToInt(argv[6]), StringToInt(argv[7]), StringToInt(argv[8]), StringToInt(argv[9]));
+					error = false;
+				} 
+				break;
+			case DO_DOWNSAMPLING:
+				// GraySkeletonCPP.exe DO_DOWNSAMPLING [inputfile] [outfile]
+				if(args == 4) {					
+					DoDownsampling(argv[2], argv[3]);
+					error = false;
+				} 
+				break;
+			case DO_CONVERSION:
+				// GraySkeletonCPP.exe DO_CONVERSION [inputfile] [inputformat] [outfile] [outformat] [x-size] [y-size] [z-size]
+				if(args == 9) {					
+					VolumeFormatConverter::ConvertVolume(argv[2], argv[3], argv[4], argv[5], StringToInt(argv[6]), StringToInt(argv[7]), StringToInt(argv[8]));
+					error = false;
+				} 
+				break;
+					
+		}		
+	} 
+
+	if(error) {
+		DisplayInputParams();
 	}
+
 	finish = clock();
 	double timeTaken = ((double) (finish - start) / (double) CLOCKS_PER_SEC);
 	printf("\n%f seconds taken!\n", timeTaken);

@@ -8,7 +8,7 @@ namespace wustl_mm {
 
 		const bool WRITE_DEBUG_FILES = false;
 		const int PRUNE_AMOUNT = 3;
-		const int MAX_GAUSSIAN_FILTER_RADIUS = 5;
+		const int MAX_GAUSSIAN_FILTER_RADIUS = 10;
 		const unsigned char PIXEL_CLASS_BACKGROUND = 0;
 		const unsigned char PIXEL_CLASS_POINT = 254;
 		const unsigned char PIXEL_CLASS_CURVE_END = 223;
@@ -30,6 +30,7 @@ namespace wustl_mm {
 		const unsigned char VOXEL_BINARY_TRUE = 255;
 		const double BAD_NORMAL = 9999.0;
 
+		const int CURVE_DIRECTION_DEPTH = 2;
 
 
 		const int IMAGE_NEIGHBORS_4[4][2]      ={{0,1},{1,0},{0,-1},{-1,0}};

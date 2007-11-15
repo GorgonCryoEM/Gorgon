@@ -2,7 +2,7 @@
 #define SKELETAL_CURVE_H
 
 #include <vector>
-#include "..\MatlabInterface\DataStructures.h"
+#include <MatlabInterface\DataStructures.h>
 
 using namespace std;
 using namespace wustl_mm::MatlabInterface;
