@@ -49,8 +49,9 @@ namespace wustl_mm {
 			void VoxelSubtract(Volume * sourceAndDestVolume1, Volume * sourceVolume2);
 			void VoxelOr(Volume * sourceAndDestVolume1, Volume * sourceVolume2);
 			Vector3D GetCurveDirection(Volume * skeleton, int x, int y, int z);
-			Vector3D GetCurveDirection(Volume * skeleton, int x, int y, int z, int depth);
+			Vector3D GetCurveDirection(Volume * skeleton, int x, int y, int z, int radius);
 			Vector3D GetSurfaceNormal(Volume * skeleton, int x, int y, int z);
+			Vector3D GetSurfaceNormal(Volume * skeleton, int x, int y, int z, int radius);
 			Vector3D * GetVolumeGradient(Volume * sourceVolume);
 			Vector3D * GetVolumeGradient2(Volume * sourceVolume);
 			Vector3D * GetSkeletonDirection(Volume * skeleton, int type);
@@ -65,7 +66,6 @@ namespace wustl_mm {
 			void FindOrthogonalAxes(Vector3D axis, Vector3D & res1, Vector3D & res2);			
 			void GetEigenResult(EigenResults3D & returnVal, Vector3D * imageGradient, ProbabilityDistribution3D & gaussianFilter, int x, int y, int z, int sizeX, int sizeY, int sizeZ, int gaussianFilterRadius, bool clear);
 			void GetEigenResult2(EigenResults3D & returnVal, Vector3D * imageGradient, ProbabilityDistribution3D & gaussianFilter, int x, int y, int z, int sizeX, int sizeY, int sizeZ, int gaussianFilterRadius, bool clear);
-			void GetLeftAndRightCurves(Vector3DInt & left, Vector3DInt & right, Volume * vol, int x, int y, int z, int depth, bool branch2);
 			void HueR(double value, double &r, double &g, double &b);
 			void HueRGB(double value, double &r, double &g, double &b);
 			void MarkDeletableVoxels(Volume * deletedVol, Volume * currentVolume, Volume * preservedVolume);
@@ -98,6 +98,7 @@ namespace wustl_mm {
 			ProbabilityDistribution3D gaussianFilterCurveRadius;
 			ProbabilityDistribution3D gaussianFilterSurfaceRadius;
 			ProbabilityDistribution3D gaussianFilterMaxRadius;
+			ProbabilityDistribution3D gaussianFilterSkeletonDirectionRadius;
 			int pointRadius;
 			int curveRadius;
 			int surfaceRadius;
@@ -121,6 +122,9 @@ namespace wustl_mm {
 
 			gaussianFilterMaxRadius.radius = MAX_GAUSSIAN_FILTER_RADIUS;
 			math->GetBinomialDistribution(gaussianFilterMaxRadius);
+
+			gaussianFilterSkeletonDirectionRadius.radius = SKELETON_DIRECTION_RADIUS;
+			math->GetBinomialDistribution(gaussianFilterSkeletonDirectionRadius);
 		}
 
 		VolumeSkeletonizer::~VolumeSkeletonizer() {
@@ -319,41 +323,61 @@ namespace wustl_mm {
 		}
 
 
-		void VolumeSkeletonizer::GetLeftAndRightCurves(Vector3DInt & left, Vector3DInt & right, Volume * vol, int x, int y, int z, int depth, bool branch2) {
-			Vector3DInt * n6;
-			int n6Count;
-			int maxCurves = branch2? 2: 1;
-			Vector3DInt l1, l2, r1, r2;
-
-			if(depth == 0) {
-				n6Count = DiscreteMesh::GetN6(n6, vol, x, y, z);
-				if(n6Count > maxCurves) {
-					left = Vector3DInt(x, y, z);
-					right = Vector3DInt(x, y, z);
-				} else {					
-					left = (n6Count >= 1)? Vector3DInt(n6[0].X(), n6[0].Y(), n6[0].Z()) : Vector3DInt(x, y, z);
-					right = (n6Count >= 2)? Vector3DInt(n6[1].X(), n6[1].Y(), n6[1].Z()) : Vector3DInt(x, y, z);
-				}				
-			} else {
-				vol->setDataAt(x, y, z, 0);
-
-
-			}
-		}
-
-		Vector3D VolumeSkeletonizer::GetCurveDirection(Volume * skeleton, int x, int y, int z, int depth) {
+		Vector3D VolumeSkeletonizer::GetCurveDirection(Volume * skeleton, int x, int y, int z, int radius) {
 			Vector3D direction = Vector3D(0,0,0);
-			Vector3DInt left, right;
-			Volume * block = new Volume((depth+1)*2 +1, (depth+1)*2 +1, (depth+1)*2 +1, x-depth-1, y-depth-1, z-depth-1, skeleton);
-
-
 			if(DiscreteMesh::GetN6Count(skeleton, x, y, z) > 2) {
 				direction = Vector3D(BAD_NORMAL, BAD_NORMAL, BAD_NORMAL);
 			} else {
-				GetLeftAndRightCurves(left, right, block, depth+1, depth+1, depth+1, depth, depth==0);
-				direction = left - right;
+
+				int margin = 2;
+				int size = (radius+margin)*2 + 1;
+				Volume * block = new Volume(size, size, size);
+				for(int xx = margin; xx <= size-margin; xx++) {
+					for(int yy = margin; yy <= size-margin; yy++) {
+						for(int zz = margin; zz <= size-margin; zz++) {
+							block->setDataAt(xx, yy, zz, skeleton->getDataAt(x-radius-margin+xx, y-radius-margin+yy, z-radius-margin+zz));
+						}
+					}
+				}
+
+				Volume * visited = new Volume(size, size, size);
+
+				vector<Vector3DInt> list;
+				list.push_back(Vector3DInt(margin+radius, margin+radius, margin+radius));
+				Vector3DInt currentPos;
+				Vector3DInt * n6;
+				int n6Count;
+
+				while(list.size() > 0) {
+					currentPos = list[list.size()-1];
+					list.pop_back();
+					visited->setDataAt(currentPos.X(), currentPos.Y(), currentPos.Z(), 1);
+					n6Count = DiscreteMesh::GetN6(n6, block, currentPos.X(), currentPos.Y(), currentPos.Z());
+
+					if(DiscreteMesh::GetN6Count(skeleton, x+currentPos.X()-margin-radius, y+currentPos.Y()-margin-radius, z+currentPos.Z()-margin-radius) <= 2) {
+						for(int i = 0; i < n6Count; i++) {
+							if(visited->getDataAt(n6[i].X(), n6[i].Y(), n6[i].Z()) < 1) {
+								list.push_back(n6[i]);
+							}
+						}
+					}
+					delete [] n6;
+				}
+
+				delete block;
+
+				Vector3D * gradient = GetVolumeGradient2(visited);
+				EigenResults3D eigen;
+				GetEigenResult2(eigen, gradient, gaussianFilterSkeletonDirectionRadius,  
+					margin+radius, margin+radius, margin+radius,
+					size, size, size, radius, false);
+
+				delete [] gradient;
+				delete visited;
+
+				direction = eigen.vectors[2];
 			}
-			delete block;
+
 			return direction;
 		}
 		Vector3D VolumeSkeletonizer::GetSurfaceNormal(Volume * skeleton, int x, int y, int z) {
@@ -361,6 +385,67 @@ namespace wustl_mm {
 			return surfaceNormalFinder->GetSurfaceNormal();
 		}
 
+
+
+		Vector3D VolumeSkeletonizer::GetSurfaceNormal(Volume * skeleton, int x, int y, int z, int radius) {
+			Vector3D direction = GetSurfaceNormal(skeleton, x, y, z);
+			if(!direction.IsBadNormal()) {
+				int margin = 2;
+				int size = (radius+margin)*2 + 1;
+				Volume * block = new Volume(size, size, size);
+				for(int xx = margin; xx <= size-margin; xx++) {
+					for(int yy = margin; yy <= size-margin; yy++) {
+						for(int zz = margin; zz <= size-margin; zz++) {
+							block->setDataAt(xx, yy, zz, skeleton->getDataAt(x-radius-margin+xx, y-radius-margin+yy, z-radius-margin+zz));
+						}
+					}
+				}
+
+				Volume * visited = new Volume(size, size, size);
+
+				vector<Vector3DInt> list;
+				list.push_back(Vector3DInt(margin+radius, margin+radius, margin+radius));
+				Vector3DInt currentPos, newPos;
+				Vector3D tempDir;
+
+				while(list.size() > 0) {
+					currentPos = list[list.size()-1];
+					list.pop_back();
+					visited->setDataAt(currentPos.X(), currentPos.Y(), currentPos.Z(), 1);
+					tempDir = GetSurfaceNormal(skeleton, x+currentPos.X()-margin-radius, y+currentPos.Y()-margin-radius, z+currentPos.Z()-margin-radius);
+
+					if(!tempDir.IsBadNormal()) {
+						for(int i = 0; i < 12; i++) {
+							if((block->getDataAt(currentPos.X() + VOLUME_NEIGHBOR_FACES[i][0][0], currentPos.Y() + VOLUME_NEIGHBOR_FACES[i][0][1], currentPos.Z() + VOLUME_NEIGHBOR_FACES[i][0][2]) > 0) &&
+							   (block->getDataAt(currentPos.X() + VOLUME_NEIGHBOR_FACES[i][1][0], currentPos.Y() + VOLUME_NEIGHBOR_FACES[i][1][1], currentPos.Z() + VOLUME_NEIGHBOR_FACES[i][1][2]) > 0) &&
+							   (block->getDataAt(currentPos.X() + VOLUME_NEIGHBOR_FACES[i][2][0], currentPos.Y() + VOLUME_NEIGHBOR_FACES[i][2][1], currentPos.Z() + VOLUME_NEIGHBOR_FACES[i][2][2]) > 0)) {
+								for(int j = 0; j < 3; j++) {
+									newPos = currentPos + Vector3DInt(VOLUME_NEIGHBOR_FACES[i][j][0], VOLUME_NEIGHBOR_FACES[i][j][1], VOLUME_NEIGHBOR_FACES[i][j][2]);
+									if(visited->getDataAt(newPos.X(), newPos.Y(), newPos.Z()) < 1) {
+										list.push_back(newPos);
+									}
+								}
+							}
+						}					
+					}
+				}
+
+				delete block;
+
+				Vector3D * gradient = GetVolumeGradient2(visited);
+				EigenResults3D eigen;
+				GetEigenResult2(eigen, gradient, gaussianFilterSkeletonDirectionRadius,  
+					margin+radius, margin+radius, margin+radius,
+					size, size, size, radius, false);
+
+				delete [] gradient;
+				delete visited;
+
+				direction = eigen.vectors[0];
+			}
+
+			return direction;
+		}
 		// Gradient = (x+1,y,z) - (x-1,y,z) ....
 		Vector3D * VolumeSkeletonizer::GetVolumeGradient(Volume * sourceVolume) {
 			Vector3D * gradient = new Vector3D[sourceVolume->getSizeX() * sourceVolume->getSizeY() * sourceVolume->getSizeZ()];
@@ -466,10 +551,10 @@ namespace wustl_mm {
 						if(skeleton->getDataAt(x,y,z) > 0) {
 							switch(type){
 								case PRUNING_CLASS_PRUNE_CURVES:
-									directions[index] = GetCurveDirection(skeleton, x, y, z);
+									directions[index] = GetCurveDirection(skeleton, x, y, z, SKELETON_DIRECTION_RADIUS);
 									break;
 								case PRUNING_CLASS_PRUNE_SURFACES:
-									directions[index] = GetSurfaceNormal(skeleton, x, y, z);
+									directions[index] = GetSurfaceNormal(skeleton, x, y, z, SKELETON_DIRECTION_RADIUS);
 									break;
 							}
 						}
