@@ -30,8 +30,7 @@ namespace wustl_mm {
 		const unsigned char VOXEL_BINARY_TRUE = 255;
 		const double BAD_NORMAL = 9999.0;
 
-		const int SKELETON_DIRECTION_RADIUS = 3;
-
+		const int DEFAULT_SKELETON_DIRECTION_RADIUS = 3;
 
 		const int IMAGE_NEIGHBORS_4[4][2]      ={{0,1},{1,0},{0,-1},{-1,0}};
 		const int IMAGE_NEIGHBORS_8[8][2]      ={{0,1},{1,1},{1,0},{1,-1},{0,-1},{-1,-1},{-1,0},{-1,1}};

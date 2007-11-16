@@ -59,7 +59,7 @@ namespace wustl_mm {
 		};	
 
 		GrayImageSkeletonizer::GrayImageSkeletonizer(int pointRadius, int curveRadius) {
-			volumeSkeletonizer = new VolumeSkeletonizer(pointRadius, curveRadius, 0);
+			volumeSkeletonizer = new VolumeSkeletonizer(pointRadius, curveRadius, 0, DEFAULT_SKELETON_DIRECTION_RADIUS);
 			math = volumeSkeletonizer->math;
 			this->pointRadius = pointRadius;
 			this->curveRadius = curveRadius;

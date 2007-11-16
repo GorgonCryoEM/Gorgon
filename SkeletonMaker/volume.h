@@ -5026,7 +5026,7 @@ public:
 			oy = ele->y ;
 			oz = ele->z ;
 
-			if ( hasCompleteSheet( ox, oy, oz ) == 1 )
+			if ( hasCompleteSheet( ox, oy, oz ) == 1 && hasIsolatedEdge(ox,oy,oz) == 0 )
 			{
 				queue2->prepend(ox,oy,oz) ;
 			//	setDataAt( ox, oy, oz, -1 ) ;
@@ -5038,7 +5038,7 @@ public:
 			for ( j = 0 ; j < sizey ; j ++ )
 				for ( k = 0 ; k < sizez ; k ++ )
 				{
-					if ( getDataAt( i, j, k ) == 0 && hasCompleteSheet(i,j,k) == 1)
+					if ( getDataAt( i, j, k ) == 0 && hasCompleteSheet(i,j,k) == 1 && hasIsolatedEdge(ox,oy,oz) == 0 )
 					{
 						queue2->prepend( i, j, k ) ;
 					}

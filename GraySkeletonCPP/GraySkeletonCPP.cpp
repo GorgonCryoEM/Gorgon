@@ -64,7 +64,7 @@ void DisplayInputParams() {
 	printf("\t[stepSize]      : The grayscale stepsize.\n\n");
 
 	printf("To skeletonize and prune the grayscale skeleton of an image\n");
-	printf("\tGraySkeletonCPP.exe [function] [dimensions] [inputfile] [outfile] [minCurveSize] [minSurfaceSize] [maxCurveHole] [maxSurfaceHole]\n\t\t[pointThreshold] [curveThreshold] [surfaceThreshold] [pointRadius] [curveRadius] [surfaceRadius]\n\t\t[minGrayValue] [maxGrayValue] [stepSize]\n\n");
+	printf("\tGraySkeletonCPP.exe [function] [dimensions] [inputfile] [outfile] [minCurveSize] [minSurfaceSize] [maxCurveHole] [maxSurfaceHole]\n\t\t[pointThreshold] [curveThreshold] [surfaceThreshold] [pointRadius] [curveRadius] [surfaceRadius] [skeletonDirectionRadius]\n\t\t[minGrayValue] [maxGrayValue] [stepSize]\n\n");
 	printf("\t[function]      : %i, Perform pruning\n", DO_SKELETONIZATION_AND_PRUNING);
 	printf("\t[dimensions]    : The number of dimensions\n");
 	printf("\t[inputfile]     : an input image file (BMP if 2D, MRC if 3D)\n");
@@ -79,6 +79,7 @@ void DisplayInputParams() {
 	printf("\t[pointRadius]   : The gaussian filter radius to use when pruning points\n");
 	printf("\t[curveRadius]   : The gaussian filter radius to use when pruning curves\n");
 	printf("\t[surfaceRadius] : The gaussian filter radius to use when pruning surfaces (only used for 3D objects)\n");
+	printf("\t[skeletonDirectionRadius] : The radius used when calculating the direction of the skeleton\n");
 	printf("\t[minGrayValue]  : The minimum grayscale value to consider.\n");
 	printf("\t[maxGrayValue]  : The maximum grayscale value to consider.\n");
 	printf("\t[stepSize]	  : The grayscale stepsize.\n\n");
@@ -145,7 +146,7 @@ void DoBinaryThinningJu2007(int dimensions, string inFile, string outFile, int m
 			Volume * sourceVol = reader->getVolume();
 			delete reader;
 
-			VolumeSkeletonizer * skeletonizer3D = new VolumeSkeletonizer(0,0,0);
+			VolumeSkeletonizer * skeletonizer3D = new VolumeSkeletonizer(0,0,0,DEFAULT_SKELETON_DIRECTION_RADIUS);
 			Volume * outputVol = skeletonizer3D->PerformPureJuSkeletonization(sourceVol, outFile, generalThreshold, minCurveSize, minSurfaceSize);
 			outputVol->toOFFCells2((char *)(outPath + ".off").c_str());
 			outputVol->toMRCFile((char *)(outPath + ".mrc").c_str());
@@ -180,7 +181,7 @@ void DoTopologicalWatershedJu2007(int dimensions, string inFile, string outFile,
 			Volume * sourceVol = reader->getVolume();
 			delete reader;
 
-			VolumeSkeletonizer * skeletonizer3D = new VolumeSkeletonizer(0,0,0);
+			VolumeSkeletonizer * skeletonizer3D = new VolumeSkeletonizer(0,0,0,DEFAULT_SKELETON_DIRECTION_RADIUS);
 			skeletonizer3D->NormalizeVolume(sourceVol);
 			skeletonizer3D->CleanupVolume(sourceVol, minGray, maxGray);
 			Volume * outputVol = skeletonizer3D->PerformJuSkeletonization(sourceVol, outPath, minGray, maxGray, stepSize);				
@@ -210,7 +211,7 @@ void DoSkeletonizationAbeysinghe2007(int dimensions, string inFile, string outFi
 			Volume * sourceVol = reader->getVolume();
 			delete reader;
 
-			VolumeSkeletonizer * skeletonizer3D = new VolumeSkeletonizer(0,0,0);
+			VolumeSkeletonizer * skeletonizer3D = new VolumeSkeletonizer(0,0,0,DEFAULT_SKELETON_DIRECTION_RADIUS);
 			skeletonizer3D->NormalizeVolume(sourceVol);
 			skeletonizer3D->CleanupVolume(sourceVol, minGray, maxGray);
 			Volume * outputVol = skeletonizer3D->PerformImmersionSkeletonizationAndPruning(sourceVol, minGray, maxGray, stepSize, minCurveSize, minSurfaceSize, 0.0, 0.0, outPath, false, 1.0, 1.0, 1.0);
@@ -228,7 +229,7 @@ void DoSkeletonizationAbeysinghe2007(int dimensions, string inFile, string outFi
 }
 
 // Performs skeletonization of a grayscale volume directly using an adaptation of thinning which does not use binarization, and then uses a pruning step to remove wrong branches
-void DoSkeletonizationAndPruningAbeysinghe2007(int dimensions, string inFile, string outFile, int minCurveSize, int minSurfaceSize, int maxCurveHole, int maxSurfaceHole, double pointThreshold, double curveThreshold, double surfaceThreshold, int pointRadius, int curveRadius, int surfaceRadius, int minGray, int maxGray, int stepSize) {
+void DoSkeletonizationAndPruningAbeysinghe2007(int dimensions, string inFile, string outFile, int minCurveSize, int minSurfaceSize, int maxCurveHole, int maxSurfaceHole, double pointThreshold, double curveThreshold, double surfaceThreshold, int pointRadius, int curveRadius, int surfaceRadius, int skeletonDirectionRadius, int minGray, int maxGray, int stepSize) {
 	string outPath = outFile.substr(0, outFile.rfind("."));	
 	switch(dimensions){
 		case 2: {
@@ -239,7 +240,7 @@ void DoSkeletonizationAndPruningAbeysinghe2007(int dimensions, string inFile, st
 			MRCReader * reader = (MRCReader*)MRCReaderPicker::pick((char *)inFile.c_str());
 			Volume * sourceVol = reader->getVolume();
 			delete reader;
-			VolumeSkeletonizer * skeletonizer3D = new VolumeSkeletonizer(pointRadius, curveRadius, surfaceRadius);
+			VolumeSkeletonizer * skeletonizer3D = new VolumeSkeletonizer(pointRadius, curveRadius, surfaceRadius, skeletonDirectionRadius);
 			skeletonizer3D->NormalizeVolume(sourceVol);
 			skeletonizer3D->CleanupVolume(sourceVol, minGray, maxGray);
 			Volume * outputVol = skeletonizer3D->PerformImmersionSkeletonizationAndPruning(sourceVol, minGray, maxGray, stepSize, minCurveSize, minSurfaceSize, maxCurveHole, maxSurfaceHole, outPath, true, pointThreshold, curveThreshold, surfaceThreshold);
@@ -357,12 +358,12 @@ int main( int args, char * argv[] ) {
 				break;
 			case DO_SKELETONIZATION_AND_PRUNING:
 				//GraySkeletonCPP.exe DO_SKELETONIZATION_AND_PRUNING [dimensions] [inputfile] [outfile] [minCurveSize] [minSurfaceSize] [maxCurveHole] [maxSurfaceHole]
-				//                    [pointThreshold] [curveThreshold] [surfaceThreshold] [pointRadius] [curveRadius] [surfaceRadius]
+				//                    [pointThreshold] [curveThreshold] [surfaceThreshold] [pointRadius] [curveRadius] [surfaceRadius] [skeletonDirectionRadius]
 				//                    [minGrayValue] [maxGrayValue] [stepSize]
-				if(args == 18) {					
+				if(args == 19) {					
 					DoSkeletonizationAndPruningAbeysinghe2007(StringToInt(argv[2]), argv[3], argv[4], StringToInt(argv[5]), StringToInt(argv[6]), StringToInt(argv[7]), StringToInt(argv[8]),
 						StringToDouble(argv[9]), StringToDouble(argv[10]), StringToDouble(argv[11]), StringToInt(argv[12]), StringToInt(argv[13]),
-						StringToInt(argv[14]), StringToInt(argv[15]), StringToInt(argv[16]), StringToInt(argv[17]));
+						StringToInt(argv[14]), StringToInt(argv[15]), StringToInt(argv[16]), StringToInt(argv[17]), StringToInt(argv[18]));
 					error = false;
 				} 
 				break;
