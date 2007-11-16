@@ -22,6 +22,7 @@ namespace wustl_mm {
 			void GetBinomialDistribution(ProbabilityDistribution1D & distributionInfo);
 			void GetBinomialDistribution(ProbabilityDistribution2D & distributionInfo);
 			void GetBinomialDistribution(ProbabilityDistribution3D & distributionInfo);
+			void GetUniformDistribution(ProbabilityDistribution3D & distributionInfo);
 			unsigned long long Combinations(int n, int r);
 			unsigned long long Permutations(int n, int r);
 
@@ -59,6 +60,10 @@ namespace wustl_mm {
 
 		void MathLib::GetBinomialDistribution(ProbabilityDistribution3D & distributionInfo) {
 			return Combinatorics::GetBinomialDistribution(distributionInfo);
+		}
+
+		void MathLib::GetUniformDistribution(ProbabilityDistribution3D & distributionInfo) {
+			return Combinatorics::GetUniformDistribution(distributionInfo);
 		}
 
 		unsigned long long MathLib::Combinations(int n, int r) {

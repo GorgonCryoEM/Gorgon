@@ -28,7 +28,7 @@ namespace wustl_mm {
 
 		class VolumeSkeletonizer{
 		public:
-			VolumeSkeletonizer(int pointRadius, int curveRadius, int surfaceRadius);
+			VolumeSkeletonizer(int pointRadius, int curveRadius, int surfaceRadius, int skeletonDirectionRadius);
 			~VolumeSkeletonizer();
 			Volume * CleanImmersionSkeleton(Volume * skeleton, string outputPath);
 			Volume * PerformImmersionSkeletonizationAndPruning(Volume * sourceVol, double startGray, double endGray, double stepSize, int minCurveSize, int minSurfaceSize, int maxCurveHole, int maxSurfaceHole, string outputPath, bool doPruning, double pointThreshold, double curveThreshold, double surfaceThreshold);
@@ -98,18 +98,20 @@ namespace wustl_mm {
 			ProbabilityDistribution3D gaussianFilterCurveRadius;
 			ProbabilityDistribution3D gaussianFilterSurfaceRadius;
 			ProbabilityDistribution3D gaussianFilterMaxRadius;
-			ProbabilityDistribution3D gaussianFilterSkeletonDirectionRadius;
+			ProbabilityDistribution3D uniformFilterSkeletonDirectionRadius;
 			int pointRadius;
 			int curveRadius;
 			int surfaceRadius;
+			int skeletonDirectionRadius;
 		};
 
-		VolumeSkeletonizer::VolumeSkeletonizer(int pointRadius, int curveRadius, int surfaceRadius) {
+		VolumeSkeletonizer::VolumeSkeletonizer(int pointRadius, int curveRadius, int surfaceRadius, int skeletonDirectionRadius) {
 			math = new MathLib();
 			surfaceNormalFinder = new NormalFinder();
 			this->pointRadius = pointRadius;
 			this->curveRadius = curveRadius;
 			this->surfaceRadius = surfaceRadius;
+			this->skeletonDirectionRadius = skeletonDirectionRadius;
 
 			gaussianFilterPointRadius.radius = pointRadius;
 			math->GetBinomialDistribution(gaussianFilterPointRadius);
@@ -123,8 +125,8 @@ namespace wustl_mm {
 			gaussianFilterMaxRadius.radius = MAX_GAUSSIAN_FILTER_RADIUS;
 			math->GetBinomialDistribution(gaussianFilterMaxRadius);
 
-			gaussianFilterSkeletonDirectionRadius.radius = SKELETON_DIRECTION_RADIUS;
-			math->GetBinomialDistribution(gaussianFilterSkeletonDirectionRadius);
+			uniformFilterSkeletonDirectionRadius.radius = skeletonDirectionRadius;
+			math->GetUniformDistribution(uniformFilterSkeletonDirectionRadius);
 		}
 
 		VolumeSkeletonizer::~VolumeSkeletonizer() {
@@ -368,7 +370,7 @@ namespace wustl_mm {
 
 				Vector3D * gradient = GetVolumeGradient2(visited);
 				EigenResults3D eigen;
-				GetEigenResult2(eigen, gradient, gaussianFilterSkeletonDirectionRadius,  
+				GetEigenResult2(eigen, gradient, uniformFilterSkeletonDirectionRadius,  
 					margin+radius, margin+radius, margin+radius,
 					size, size, size, radius, false);
 
@@ -434,7 +436,7 @@ namespace wustl_mm {
 
 				Vector3D * gradient = GetVolumeGradient2(visited);
 				EigenResults3D eigen;
-				GetEigenResult2(eigen, gradient, gaussianFilterSkeletonDirectionRadius,  
+				GetEigenResult2(eigen, gradient, uniformFilterSkeletonDirectionRadius,  
 					margin+radius, margin+radius, margin+radius,
 					size, size, size, radius, false);
 
@@ -551,10 +553,10 @@ namespace wustl_mm {
 						if(skeleton->getDataAt(x,y,z) > 0) {
 							switch(type){
 								case PRUNING_CLASS_PRUNE_CURVES:
-									directions[index] = GetCurveDirection(skeleton, x, y, z, SKELETON_DIRECTION_RADIUS);
+									directions[index] = GetCurveDirection(skeleton, x, y, z, skeletonDirectionRadius);
 									break;
 								case PRUNING_CLASS_PRUNE_SURFACES:
-									directions[index] = GetSurfaceNormal(skeleton, x, y, z, SKELETON_DIRECTION_RADIUS);
+									directions[index] = GetSurfaceNormal(skeleton, x, y, z, skeletonDirectionRadius);
 									break;
 							}
 						}
@@ -1435,6 +1437,8 @@ namespace wustl_mm {
 
 			Volume * nullVol = new Volume(sourceVol->getSizeX(), sourceVol->getSizeY(), sourceVol->getSizeZ());
 			Volume * surfaceVol = GetImmersionThinning(sourceVol, NULL, startGray, endGray, stepSize, THINNING_CLASS_SURFACE_PRESERVATION);			
+			PruneSurfaces(surfaceVol, minSurfaceSize);
+
 			if(doPruning) {
 				surfaceVol->toMRCFile((char *)(outputPath + "-S-Pre-Prune.mrc").c_str());				
 				WriteVolumeToVRMLFile(surfaceVol, outputPath + "-S-Pre-Prune.wrl");
@@ -1467,12 +1471,14 @@ namespace wustl_mm {
 			surfaceVol = cleanedSurfaceVol;
 
 			Volume * curveVol = GetImmersionThinning(sourceVol, surfaceVol, startGray, endGray, stepSize, THINNING_CLASS_CURVE_PRESERVATION);
+			curveVol->toMRCFile((char *)(outputPath + "-C-Pre-Prune_Pre-Erode.mrc").c_str());
+			PruneCurves(curveVol, minCurveSize);
 			VoxelBinarySubtract(curveVol, surfaceVol);
 
-			if(doPruning) {
+			if(doPruning) {				
 				curveVol->toMRCFile((char *)(outputPath + "-C-Pre-Prune.mrc").c_str());
-				curveVol->toOFFCells2((char *)(outputPath + "-C-Pre-Prune.off").c_str());
-				WriteVolumeToVRMLFile(curveVol, outputPath + "-C-Pre-Prune.wrl");
+				//curveVol->toOFFCells2((char *)(outputPath + "-C-Pre-Prune.off").c_str());
+				//WriteVolumeToVRMLFile(curveVol, outputPath + "-C-Pre-Prune.wrl");
 				
 				volumeEigens = GetEigenResults2(curveVol, volumeGradient, gaussianFilterCurveRadius, curveRadius, true);
 
@@ -1488,10 +1494,12 @@ namespace wustl_mm {
 				curveVol = filledCurveVol;
 
 			}
+
+			VoxelOr(curveVol, surfaceVol);
 			PruneCurves(curveVol, minCurveSize);			
 			curveVol->toMRCFile((char *)(outputPath + "-C-Post-Erosion.mrc").c_str());
 
-			Volume * cleanedCurveVol = GetJuCurveSkeleton(curveVol, nullVol, 0.5, true);		
+			Volume * cleanedCurveVol = GetJuCurveSkeleton(curveVol, surfaceVol, 0.5, true);		
 			PruneCurves(cleanedCurveVol, minCurveSize);		
 			//RemoveIsolatedNonCurves(cleanedCurveVol);
 			cleanedCurveVol->toMRCFile((char *)(outputPath + "-C-Cleaned.mrc").c_str());
@@ -1521,7 +1529,7 @@ namespace wustl_mm {
 
 			sourceVol->pad(-MAX_GAUSSIAN_FILTER_RADIUS, 0);
 			pointVol->pad(-MAX_GAUSSIAN_FILTER_RADIUS, 0);
-			pointVol->toOFFCells2((char *)(outputPath + "-SCP.off").c_str());
+			//pointVol->toOFFCells2((char *)(outputPath + "-SCP.off").c_str());
 			return pointVol;					
 		}
 
