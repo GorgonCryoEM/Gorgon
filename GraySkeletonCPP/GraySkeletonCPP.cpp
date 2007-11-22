@@ -297,33 +297,27 @@ void DoDownsampling(string inFile, string outFile) {
 
 int main( int args, char * argv[] ) {
 
-	//Volume * vol = new Volume(10,10,10);
-	//vol->setDataAt(5,5,5,1);
-	//vol->setDataAt(4,5,5,1);
-	//vol->setDataAt(5,5,4,1);
-	//vol->setDataAt(4,5,4,1);
-	//vol->setDataAt(6,5,5,1);
-	//vol->setDataAt(6,5,4,1);
-	//vol->setDataAt(5,4,5,1);
-	//vol->setDataAt(6,4,5,1);
-	//vol->setDataAt(4,4,5,1);
-	////vol->setDataAt(5,5,6,1);
-	////vol->setDataAt(5,4,6,1);
-	////vol->setDataAt(5,5,6,1);
-	////vol->setDataAt(6,5,6,1);
 
-	////vol->setDataAt(5,5,6,1);
-	////vol->setDataAt(5,4,6,1);
+	//Volume * test = new Volume(34,34,13);
 
-	//NormalFinder * nf = new NormalFinder();
-	//nf->InitializeGraph(vol, 5, 5, 5);
-	//Vector3D v = nf->GetSurfaceNormal();	
-	//printf("%f %f %f", v.X(), v.Y(), v.Z());
-	//if(v.IsBadNormal()) {
-	//	printf("bad normal");
+	//for(int x = 0; x < 29; x++) {
+	//	for(int y = 0; y < 29; y++) {
+	//		if((x==6 || x==8 || x==12 || x==14 || x==20 || x==22 || x==26 || x==28) && 
+	//			(y==6 || y==8 || y==12 || y==14 || y==20 || y==22 || y==26 || y==28)) {
+	//				test->setDataAt(x, y, 6, 1.0);
+	//		} else {
+	//			test->setDataAt(x, y, 6, 0.0);
+	//		}
+	//	}
 	//}
 
-	////return 0;
+	//test->toMRCFile("RadiusExample.mrc");
+
+	//test = test->getDistanceField(6, 0);
+	//test->toMRCFile("RadiusExample-Volume.mrc");
+
+
+	//return 0;
 
 	clock_t start, finish;
 	start = clock();

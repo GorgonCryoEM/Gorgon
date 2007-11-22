@@ -803,6 +803,57 @@ public:
 		return res ;
 	}
 
+	Volume* getDistanceField( int rad, float randf )
+	{
+		// This function assumes the volume is binary (1/0), and builds a pseudo density volume from the 1 voxels
+		// rad is the radius of each distance function (e.g., center pixel gets 1, pixels at rad from the center gets 0)
+		// randf is how much noise you want to add. this means the center pixel will maximally have value 1+randf.
+
+		// First: assign a density value at each point
+		int i, j, k ;
+		Volume* res = new Volume( sizex, sizey, sizez, 0, 0, 0, this ) ;
+		int size = sizex * sizey * sizez ;
+		srand( 123 ) ;
+
+		for ( i = 0 ; i < sizex ; i ++ )
+			for ( j = 0 ; j < sizey ; j ++ )
+				for ( k = 0 ; k < sizez ; k ++ )
+				{
+					if ( getDataAt( i, j, k ) > 0 )
+					{
+						float mag = 1 + randf * (float) rand() / (float) RAND_MAX ;
+						int lx = max(0,i-rad) ;
+						int ly = max(0,j-rad) ;
+						int lz = max(0,k-rad) ;
+						int hx = min(sizex-1,i+rad) ;
+						int hy = min(sizey-1,j+rad) ;
+						int hz = min(sizez-1,k+rad) ;
+						int x,y,z;
+						for ( x = lx ; x <= hx ; x ++ )
+							for ( y = ly ; y <= hy ; y ++ )
+								for ( z = lz ; z <= hz ; z ++ )
+								{
+									float val = 1 - (float) sqrt((double)((x-i)*(x-i) + (y-j)*(y-j) + (z-k)*(z-k))) / (float) rad ;
+									val *= mag ;
+									if ( res->getDataAt( x, y, z ) < val )
+									{
+										res->setDataAt( x, y, z, val ) ;
+									}
+								}
+					}
+				}
+
+		/* Next, smooth */
+		for ( i = 0 ; i < 2 ; i ++ )
+		{
+			printf("Smoothing round %d\n", i) ;
+			res->smooth( 0.5f ) ;
+		}
+		
+
+		return res ;
+	}
+
 	void print() {
 		for(int x = 0; x < getSizeX(); x++) {
 			printf("{ ");

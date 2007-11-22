@@ -97,6 +97,7 @@ void DoPerformanceComparison(StandardGraph * patternGraph, StandardGraph * baseG
 
 int main( int args, char * argv[] ) {
 
+
 	//StandardGraph * patternGraph;
 	//StandardGraph * baseGraph;
 	//clock_t start, finish;

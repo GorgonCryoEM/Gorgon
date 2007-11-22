@@ -67,6 +67,7 @@ namespace wustl_mm {
 			void GetEigenResult(EigenResults3D & returnVal, Vector3D * imageGradient, ProbabilityDistribution3D & gaussianFilter, int x, int y, int z, int sizeX, int sizeY, int sizeZ, int gaussianFilterRadius, bool clear);
 			void GetEigenResult2(EigenResults3D & returnVal, Vector3D * imageGradient, ProbabilityDistribution3D & gaussianFilter, int x, int y, int z, int sizeX, int sizeY, int sizeZ, int gaussianFilterRadius, bool clear);
 			void HueR(double value, double &r, double &g, double &b);
+			void HueRB(double value, double &r, double &g, double &b);
 			void HueRGB(double value, double &r, double &g, double &b);
 			void MarkDeletableVoxels(Volume * deletedVol, Volume * currentVolume, Volume * preservedVolume);
 			void RemoveCubesFromSurfaceSkeleton(Volume * sourceSkeleton);
@@ -75,7 +76,7 @@ namespace wustl_mm {
 			void WriteEigenResultsToOFFFile(Volume * sourceVolume, Volume * cost, Volume * skeleton, EigenResults3D * eigenResults, string outputPath);
 			void WriteEigenResultsToOFFFileWireframe(Volume * sourceVolume, Volume * cost, Volume * skeleton, EigenResults3D * eigenResults, string outputPath);
 			void WriteEigenResultsToVRMLFile(Volume * sourceVolume, Volume * cost, Volume * skeleton, EigenResults3D * eigenResults, string outputPath, bool doInverse);
-			void WriteSkeletonDirectionToVRMLFile(Volume * skeleton, Vector3D * skeletonDirections, string outputPath);
+			void WriteSkeletonDirectionToVRMLFile(Volume * skeleton, Volume * cost, Vector3D * skeletonDirections, string outputPath);
 			void WriteVolumeToVRMLFile(Volume * vol, string outputPath);
 			Vector3D XYZtoUVW(Vector3D vec, Vector3D u, Vector3D v, Vector3D w);
 			Volume * FillCurveHoles(Volume * thresholdedSkeleton, Volume * originalSkeleton, int maxHoleSize);
@@ -728,6 +729,13 @@ namespace wustl_mm {
 			b = 0;
 		}
 
+		void VolumeSkeletonizer::HueRB(double value, double &r, double &g, double &b) {
+				double v2 = pow(value, 1.5);					
+				r = (1 - v2);	
+				g = 0;
+				b = v2;				
+		}
+
 		void VolumeSkeletonizer::HueRGB(double value, double &r, double &g, double &b) {
 			double v2;
 			if(value <= 0.5) {
@@ -833,7 +841,7 @@ namespace wustl_mm {
 			//WriteEigenResultsToVRMLFile(sourceVolume, costVol, tempSkel, volumeEigens, outputPath + "-Eigens.wrl", (pruningClass != PRUNING_CLASS_PRUNE_SURFACES));
 			WriteEigenResultsToVRMLFile(sourceVolume, costVol, tempSkel, volumeEigens, outputPath + "-Eigens-inverted.wrl", true);
 			WriteEigenResultsToVRMLFile(sourceVolume, costVol, tempSkel, volumeEigens, outputPath + "-Eigens.wrl", false);
-			WriteSkeletonDirectionToVRMLFile(tempSkel, skeletonDirections, outputPath + "-SkeletonDirections.wrl");
+			WriteSkeletonDirectionToVRMLFile(tempSkel, costVol, skeletonDirections, outputPath + "-SkeletonDirections.wrl");
 			delete costVol;
 			delete tempSkel;
 			delete [] skeletonDirections;
@@ -1133,7 +1141,10 @@ namespace wustl_mm {
 							index = sourceVolume->getIndex(x, y, z);
 							
 							colorCost = cost->getDataAt(x, y, z);
-							HueR(colorCost, r, g, b);
+							//HueR(colorCost, r, g, b);
+							r = 0.3;
+							g = 0.3;
+							b = 0.3;
 
 							axis1 = eigenResults[index].vectors[0] ^ xAxis;
 							axis1.Normalize();
@@ -1212,32 +1223,32 @@ namespace wustl_mm {
 			delete outFile;
 		}
 
-		void VolumeSkeletonizer::WriteSkeletonDirectionToVRMLFile(Volume * skeleton, Vector3D * skeletonDirections, string outputPath) {
+		void VolumeSkeletonizer::WriteSkeletonDirectionToVRMLFile(Volume * skeleton, Volume * cost, Vector3D * skeletonDirections, string outputPath) {
 			int index;
 			FILE * outFile = fopen(outputPath.c_str(), "wt");
 			fprintf(outFile, "#VRML V2.0 utf8\n");
 			srand( (unsigned)time( NULL ) );
-			double r = 0;// ((double)rand() / (RAND_MAX + 1));
-			double g = 0;//((double)rand() / (RAND_MAX + 1));
-			double b = 0.5;//((double)rand() / (RAND_MAX + 1));
+			double r,g,b,colorCost;
 
 			for(int z = 0; z < skeleton->getSizeZ(); z++) {
 				for(int y = 0; y < skeleton->getSizeY(); y++) {
 					for(int x = 0; x < skeleton->getSizeX(); x++) {
 						index = skeleton->getIndex(x, y, z);
-						if((skeleton->getDataAt(index) > 0) &&  !skeletonDirections[index].IsBadNormal()) {							
+						if((skeleton->getDataAt(index) > 0) &&  !skeletonDirections[index].IsBadNormal()) {
+							colorCost = cost->getDataAt(x, y, z);
+							HueRB(colorCost, r, g, b);
 							Vector3D axis = skeletonDirections[index] ^ Vector3D(1.0, 0.0, 0.0);
 							axis.Normalize();
 							double angle = -(skeletonDirections[index] * Vector3D(1.0, 0.0, 0.0));
 							angle = acos(angle);
 
 							if((axis.values[0] == 0) && (axis.values[1] == 0) && (axis.values[2] == 0)) {
-								fprintf(outFile, "Group{\n children[\n Transform{\n translation %i %i %i \n  children [\n Shape {\n appearance Appearance {\n material Material {emissiveColor %f %f %f }} \n geometry Box {size 0.7 0.05 0.05}}]}]}\n",
+								fprintf(outFile, "Group{\n children[\n Transform{\n translation %i %i %i \n  children [\n Shape {\n appearance Appearance {\n material Material {emissiveColor %f %f %f \n transparency 0.5}} \n geometry Box {size 0.9 0.1 0.1}}]}]}\n",
 									//x - MAX_GAUSSIAN_FILTER_RADIUS, y - MAX_GAUSSIAN_FILTER_RADIUS, z - MAX_GAUSSIAN_FILTER_RADIUS,
 									x, y, z,
 									r, g, b);
 							} else {
-								fprintf(outFile, "Group{\n children[\n Transform{\n translation %i %i %i \n  rotation %f %f %f %f \n  children [\n Shape {\n appearance Appearance {\n material Material {emissiveColor %f %f %f }} \n geometry Box {size 0.7 0.05 0.05}}]}]}\n",
+								fprintf(outFile, "Group{\n children[\n Transform{\n translation %i %i %i \n  rotation %f %f %f %f \n  children [\n Shape {\n appearance Appearance {\n material Material {emissiveColor %f %f %f \n transparency 0.5}} \n geometry Box {size 0.9 0.1 0.1}}]}]}\n",
 									//x - MAX_GAUSSIAN_FILTER_RADIUS, y - MAX_GAUSSIAN_FILTER_RADIUS, z - MAX_GAUSSIAN_FILTER_RADIUS,
 									x, y, z,
 									axis.values[0], axis.values[1], axis.values[2], angle,
