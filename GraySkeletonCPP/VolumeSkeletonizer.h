@@ -76,7 +76,7 @@ namespace wustl_mm {
 			void WriteEigenResultsToOFFFile(Volume * sourceVolume, Volume * cost, Volume * skeleton, EigenResults3D * eigenResults, string outputPath);
 			void WriteEigenResultsToOFFFileWireframe(Volume * sourceVolume, Volume * cost, Volume * skeleton, EigenResults3D * eigenResults, string outputPath);
 			void WriteEigenResultsToVRMLFile(Volume * sourceVolume, Volume * cost, Volume * skeleton, EigenResults3D * eigenResults, string outputPath, bool doInverse);
-			void WriteSkeletonDirectionToVRMLFile(Volume * skeleton, Volume * cost, Vector3D * skeletonDirections, string outputPath);
+			void WriteSkeletonDirectionToVRMLFile(Volume * skeleton, Volume * cost, Vector3D * skeletonDirections, string outputPath, bool surfaces);
 			void WriteVolumeToVRMLFile(Volume * vol, string outputPath);
 			Vector3D XYZtoUVW(Vector3D vec, Vector3D u, Vector3D v, Vector3D w);
 			Volume * FillCurveHoles(Volume * thresholdedSkeleton, Volume * originalSkeleton, int maxHoleSize);
@@ -841,7 +841,7 @@ namespace wustl_mm {
 			//WriteEigenResultsToVRMLFile(sourceVolume, costVol, tempSkel, volumeEigens, outputPath + "-Eigens.wrl", (pruningClass != PRUNING_CLASS_PRUNE_SURFACES));
 			WriteEigenResultsToVRMLFile(sourceVolume, costVol, tempSkel, volumeEigens, outputPath + "-Eigens-inverted.wrl", true);
 			WriteEigenResultsToVRMLFile(sourceVolume, costVol, tempSkel, volumeEigens, outputPath + "-Eigens.wrl", false);
-			WriteSkeletonDirectionToVRMLFile(tempSkel, costVol, skeletonDirections, outputPath + "-SkeletonDirections.wrl");
+			WriteSkeletonDirectionToVRMLFile(tempSkel, costVol, skeletonDirections, outputPath + "-SkeletonDirections.wrl", pruningClass == PRUNING_CLASS_PRUNE_SURFACES);
 			delete costVol;
 			delete tempSkel;
 			delete [] skeletonDirections;
@@ -1223,7 +1223,7 @@ namespace wustl_mm {
 			delete outFile;
 		}
 
-		void VolumeSkeletonizer::WriteSkeletonDirectionToVRMLFile(Volume * skeleton, Volume * cost, Vector3D * skeletonDirections, string outputPath) {
+		void VolumeSkeletonizer::WriteSkeletonDirectionToVRMLFile(Volume * skeleton, Volume * cost, Vector3D * skeletonDirections, string outputPath, bool surfaces) {
 			int index;
 			FILE * outFile = fopen(outputPath.c_str(), "wt");
 			fprintf(outFile, "#VRML V2.0 utf8\n");
@@ -1242,17 +1242,32 @@ namespace wustl_mm {
 							double angle = -(skeletonDirections[index] * Vector3D(1.0, 0.0, 0.0));
 							angle = acos(angle);
 
-							if((axis.values[0] == 0) && (axis.values[1] == 0) && (axis.values[2] == 0)) {
-								fprintf(outFile, "Group{\n children[\n Transform{\n translation %i %i %i \n  children [\n Shape {\n appearance Appearance {\n material Material {emissiveColor %f %f %f \n transparency 0.5}} \n geometry Box {size 0.9 0.1 0.1}}]}]}\n",
-									//x - MAX_GAUSSIAN_FILTER_RADIUS, y - MAX_GAUSSIAN_FILTER_RADIUS, z - MAX_GAUSSIAN_FILTER_RADIUS,
-									x, y, z,
-									r, g, b);
+							if(surfaces) {
+								if((axis.values[0] == 0) && (axis.values[1] == 0) && (axis.values[2] == 0)) {
+									fprintf(outFile, "Group{\n children[\n Transform{\n translation %i %i %i \n  children [\n Shape {\n appearance Appearance {\n material Material {emissiveColor %f %f %f}} \n geometry Box {size 0.01 0.5 0.5}}]}]}\n",
+										//x - MAX_GAUSSIAN_FILTER_RADIUS, y - MAX_GAUSSIAN_FILTER_RADIUS, z - MAX_GAUSSIAN_FILTER_RADIUS,
+										x, y, z,
+										r, g, b);
+								} else {
+									fprintf(outFile, "Group{\n children[\n Transform{\n translation %i %i %i \n  rotation %f %f %f %f \n  children [\n Shape {\n appearance Appearance {\n material Material {emissiveColor %f %f %f}} \n geometry Box {size 0.01 0.5 0.5}}]}]}\n",
+										//x - MAX_GAUSSIAN_FILTER_RADIUS, y - MAX_GAUSSIAN_FILTER_RADIUS, z - MAX_GAUSSIAN_FILTER_RADIUS,
+										x, y, z,
+										axis.values[0], axis.values[1], axis.values[2], angle,
+										r, g, b);
+								}
 							} else {
-								fprintf(outFile, "Group{\n children[\n Transform{\n translation %i %i %i \n  rotation %f %f %f %f \n  children [\n Shape {\n appearance Appearance {\n material Material {emissiveColor %f %f %f \n transparency 0.5}} \n geometry Box {size 0.9 0.1 0.1}}]}]}\n",
-									//x - MAX_GAUSSIAN_FILTER_RADIUS, y - MAX_GAUSSIAN_FILTER_RADIUS, z - MAX_GAUSSIAN_FILTER_RADIUS,
-									x, y, z,
-									axis.values[0], axis.values[1], axis.values[2], angle,
-									r, g, b);
+								if((axis.values[0] == 0) && (axis.values[1] == 0) && (axis.values[2] == 0)) {
+									fprintf(outFile, "Group{\n children[\n Transform{\n translation %i %i %i \n  children [\n Shape {\n appearance Appearance {\n material Material {emissiveColor %f %f %f }} \n geometry Box {size 0.9 0.1 0.1}}]}]}\n",
+										//x - MAX_GAUSSIAN_FILTER_RADIUS, y - MAX_GAUSSIAN_FILTER_RADIUS, z - MAX_GAUSSIAN_FILTER_RADIUS,
+										x, y, z,
+										r, g, b);
+								} else {
+									fprintf(outFile, "Group{\n children[\n Transform{\n translation %i %i %i \n  rotation %f %f %f %f \n  children [\n Shape {\n appearance Appearance {\n material Material {emissiveColor %f %f %f}} \n geometry Box {size 0.9 0.1 0.1}}]}]}\n",
+										//x - MAX_GAUSSIAN_FILTER_RADIUS, y - MAX_GAUSSIAN_FILTER_RADIUS, z - MAX_GAUSSIAN_FILTER_RADIUS,
+										x, y, z,
+										axis.values[0], axis.values[1], axis.values[2], angle,
+										r, g, b);
+								}
 							}
 						
 						}
@@ -1521,8 +1536,8 @@ namespace wustl_mm {
 			VoxelOr(curveVol, surfaceVol);
 			curveVol->toMRCFile((char *)(outputPath + "-SC.mrc").c_str());
 			
-			Volume * pointVol = GetImmersionThinning(sourceVol, curveVol, startGray, endGray, stepSize, THINNING_CLASS_POINT_PRESERVATION);
-			// Removed as points will always be preserved to ensure that the shape is preserved.
+			// Removed as points will never be preserved.
+			// Volume * pointVol = GetImmersionThinning(sourceVol, curveVol, startGray, endGray, stepSize, THINNING_CLASS_POINT_PRESERVATION);
 			//if(doPruning) {
 			//	pointVol->toMRCFile((char *)(outputPath + "-P-Pre-Prune.mrc").c_str());
 			//	volumeEigens = GetEigenResults2(pointVol, volumeGradient, gaussianFilterPointRadius, pointRadius, true);
@@ -1531,17 +1546,17 @@ namespace wustl_mm {
 			//	pointVol->toMRCFile((char *)(outputPath + "-P-Post-Prune.mrc").c_str());
 			//}
 
-			VoxelOr(pointVol, curveVol);
+			//VoxelOr(pointVol, curveVol);
 
 			delete surfaceVol;
-			delete curveVol;
+			//delete curveVol;
 			delete nullVol;
 			delete [] volumeGradient;
 
 			sourceVol->pad(-MAX_GAUSSIAN_FILTER_RADIUS, 0);
-			pointVol->pad(-MAX_GAUSSIAN_FILTER_RADIUS, 0);
+			curveVol->pad(-MAX_GAUSSIAN_FILTER_RADIUS, 0);
 			//pointVol->toOFFCells2((char *)(outputPath + "-SCP.off").c_str());
-			return pointVol;					
+			return curveVol;					
 		}
 
 		Volume * VolumeSkeletonizer::PerformImmersionSkeletonization(Volume * imageVol, string outputPath) {

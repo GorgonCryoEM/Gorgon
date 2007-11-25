@@ -244,7 +244,8 @@ void DoSkeletonizationAndPruningAbeysinghe2007(int dimensions, string inFile, st
 			skeletonizer3D->NormalizeVolume(sourceVol);
 			skeletonizer3D->CleanupVolume(sourceVol, minGray, maxGray);
 			Volume * outputVol = skeletonizer3D->PerformImmersionSkeletonizationAndPruning(sourceVol, minGray, maxGray, stepSize, minCurveSize, minSurfaceSize, maxCurveHole, maxSurfaceHole, outPath, true, pointThreshold, curveThreshold, surfaceThreshold);
-			outputVol->toMRCFile((char *)outFile.c_str());			
+			outputVol->toMRCFile((char *)outFile.c_str());		
+			outputVol->toOFFCells2((char *)((outFile + ".off").c_str()));	
 			delete sourceVol;
 			delete skeletonizer3D;
 			delete outputVol;
@@ -298,26 +299,23 @@ void DoDownsampling(string inFile, string outFile) {
 int main( int args, char * argv[] ) {
 
 
-	//Volume * test = new Volume(34,34,13);
+	/*const int l[16] = {6,8,12,14,20,22,26,28,36,38,42,44,50,52,56,58};
 
-	//for(int x = 0; x < 29; x++) {
-	//	for(int y = 0; y < 29; y++) {
-	//		if((x==6 || x==8 || x==12 || x==14 || x==20 || x==22 || x==26 || x==28) && 
-	//			(y==6 || y==8 || y==12 || y==14 || y==20 || y==22 || y==26 || y==28)) {
-	//				test->setDataAt(x, y, 6, 1.0);
-	//		} else {
-	//			test->setDataAt(x, y, 6, 0.0);
-	//		}
-	//	}
-	//}
+	Volume * test = new Volume(64,64,13);
 
-	//test->toMRCFile("RadiusExample.mrc");
+	for(int x = 0; x < 16; x++) {
+		for(int y = 0; y < 16; y++) {
+				test->setDataAt(l[x], l[y], 6, 1.0);
+		}
+	}
 
-	//test = test->getDistanceField(6, 0);
-	//test->toMRCFile("RadiusExample-Volume.mrc");
+	test->toMRCFile("RadiusExample.mrc");
+
+	test = test->getDistanceField(8, 0);
+	test->toMRCFile("RadiusExample-Volume.mrc");
 
 
-	//return 0;
+	return 0;*/
 
 	clock_t start, finish;
 	start = clock();
