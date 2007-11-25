@@ -1689,7 +1689,6 @@ public:
 	{
 		// assuming it's 0/1 volume
 		int i, j, k ;
-		int nx, ny, nz ;
 
 		for ( i = -1 ; i < 2 ; i ++ )
 			for ( j = -1 ; j < 2 ; j ++ )
@@ -1708,7 +1707,6 @@ public:
 	{
 		// assuming it's -1/0 volume
 		int i, j, k ;
-		int nx, ny, nz ;
 
 		for ( i = -1 ; i < 2 ; i ++ )
 			for ( j = -1 ; j < 2 ; j ++ )

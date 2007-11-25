@@ -28,7 +28,7 @@ namespace wustl_mm {
 			} else if (stricmp(outputFormat.c_str(), "NB") == 0) {
 				vol->toMathematicaFile((char *)outputFile.c_str());
 			} else if (stricmp(outputFormat.c_str(), "OFF") == 0) {
-				vol->toOFFCells((char *)outputFile.c_str());
+				vol->toOFFCells2((char *)outputFile.c_str());
 			} else {
 				printf("Output format %s not supported!\n", outputFormat);
 			}
