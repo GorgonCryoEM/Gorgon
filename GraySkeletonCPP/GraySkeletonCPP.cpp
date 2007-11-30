@@ -24,6 +24,7 @@ const int DO_SKELETONIZATION_AND_PRUNING = 2;
 const int DO_BINARY_THINNING_JU2007 = 50;
 const int DO_TOPOLOGICAL_WATERSHED_JU2007  = 60;
 
+const int DO_TEXT_TO_VOLUME = 996;
 const int DO_CROPPING = 997;
 const int DO_DOWNSAMPLING = 998;
 const int DO_CONVERSION = 999;
@@ -107,6 +108,12 @@ void DisplayInputParams() {
 	printf("\t[minGrayValue]  : The minimum grayscale value to consider.\n");
 	printf("\t[maxGrayValue]  : The maximum grayscale value to consider.\n");
 	printf("\t[stepSize]	  : The grayscale stepsize.\n\n");
+
+	printf("To convert a text file into a volume\n");
+	printf("\tGraySkeletonCPP.exe [function] [inputfile] [outfile]\n\n");
+	printf("\t[function]      : %i, create a volume\n", DO_TEXT_TO_VOLUME);
+	printf("\t[inputfile]     : The source file\n");
+	printf("\t[outfile]       : The destination file\n\n");
 
 	printf("To Crop a volume\n");
 	printf("\tGraySkeletonCPP.exe [function] [inputfile] [outfile] [startx] [endx] [starty] [endy] [startz] [endz]\n\n");
@@ -244,10 +251,10 @@ void DoSkeletonizationAndPruningAbeysinghe2007(int dimensions, string inFile, st
 			skeletonizer3D->NormalizeVolume(sourceVol);
 			skeletonizer3D->CleanupVolume(sourceVol, minGray, maxGray);
 			Volume * outputVol = skeletonizer3D->PerformImmersionSkeletonizationAndPruning(sourceVol, minGray, maxGray, stepSize, minCurveSize, minSurfaceSize, maxCurveHole, maxSurfaceHole, outPath, true, pointThreshold, curveThreshold, surfaceThreshold);
-			outputVol->toMRCFile((char *)outFile.c_str());		
-			outputVol->toOFFCells2((char *)((outFile + ".off").c_str()));	
 			delete sourceVol;
 			delete skeletonizer3D;
+			outputVol->toMRCFile((char *)outFile.c_str());		
+			outputVol->toOFFCells2((char *)((outFile + ".off").c_str()));	
 			delete outputVol;
 			break;
 		}
@@ -275,47 +282,150 @@ void DoDownsampling(string inFile, string outFile) {
 	Volume * destVol = new Volume(sourceVol->getSizeX()/2, sourceVol->getSizeY()/2, sourceVol->getSizeZ()/2);
 	double val;
 
-	for(int x = 0; x < destVol->getSizeX(); x++) {
-		for(int y = 0; y < destVol->getSizeY(); y++) {
-			for(int z = 0; z < destVol->getSizeZ(); z++) {
+	int radius = 1;
+	MathLib * math = new MathLib();
+
+	ProbabilityDistribution3D gaussianFilter;
+	gaussianFilter.radius = radius;
+	math->GetBinomialDistribution(gaussianFilter);
+
+	for(int x = radius; x < destVol->getSizeX()-radius; x++) {
+		for(int y = radius; y < destVol->getSizeY()-radius; y++) {
+			for(int z = radius; z < destVol->getSizeZ()-radius; z++) {
 				val = 0;
-				for(int xx = 0; xx < 2; xx++) {
-					for(int yy = 0; yy < 2; yy++) {
-						for(int zz = 0; zz < 2; zz++) {
-							val += sourceVol->getDataAt(2*x+xx, 2*y+yy, 2*z+zz);
+				for(int xx = -radius; xx <= radius; xx++) {
+					for(int yy = -radius; yy <= radius; yy++) {
+						for(int zz = -radius; zz <= radius; zz++) {
+							val += sourceVol->getDataAt(2*x+xx, 2*y+yy, 2*z+zz) * gaussianFilter.values[xx+radius][yy+radius][zz+radius] ;
 						}
 					}
 				}
-				destVol->setDataAt(x, y, z, val/8.0);					
+				destVol->setDataAt(x, y, z, val);					
 			}
 		}
 	}
 	destVol->toMRCFile((char *)outFile.c_str());
+	delete math;
 	delete reader;
 	delete sourceVol;
 	delete destVol;
 }
 
-int main( int args, char * argv[] ) {
+void DoTextToVolume(string inFile, string outFile) {
+	FILE* fin = fopen((char *)inFile.c_str(), "rt");
+	if (fin == NULL)
+	{
+		printf("Error reading input file %s\n", inFile) ;
+		exit(0) ;
+	}
+	int layers, rows, cols, radius;
+	const int margin = 5;
+	fscanf(fin, "%d %d %d %d\n", &layers, &rows, &cols, &radius);
+	Volume * test = new Volume(cols+ margin*2, rows + margin*2, layers + margin*2);
+	for(int z = 0; z < layers; z++) {
+		for(int y = 0; y < rows; y++) {
+			for(int x = 0; x < cols; x++) {
+				char inp = fgetc(fin);
+				if(inp == 'X') {
+					test->setDataAt(x+margin , y + margin, z+margin, 1.0);		
+					printf("X");
+				} else {
+					printf(" ");
+				}
+			}
+			fscanf(fin, "\n");
+			printf("\n");			
+		}
+		fscanf(fin, "\n");
+		printf("\n");
+	}
+	fclose(fin);
+	Volume * distanceField = test->getDistanceField(radius, 0);
+	distanceField->toMRCFile((char *)outFile.c_str());
+	delete test;
+	delete distanceField;
+}
 
+double GetGaussianContribution(int x, int y, int z, double px, double py, double pz, int radius) {
+	return max(0.0, 1.0 - sqrt(pow(x-px, 2) + pow(y-py, 2) + pow(z-pz, 2))/((double)radius));
+}
 
-	/*const int l[16] = {6,8,12,14,20,22,26,28,36,38,42,44,50,52,56,58};
+Volume * GetDistanceField(Vector3D * points, int pointCount, int xSize, int ySize, int zSize, int gaussianBlur) {
+	Volume * field = new Volume(xSize, ySize, zSize);
+	int x1,x2,y1,y2,z1,z2;
 
-	Volume * test = new Volume(64,64,13);
+	for(int i = 0; i < pointCount; i++) {
+		x1 = max((int)floor(points[i].X()-gaussianBlur), 0);
+		x2 = min((int)floor(points[i].X()+gaussianBlur), xSize-1);
+		y1 = max((int)floor(points[i].Y()-gaussianBlur), 0);
+		y2 = min((int)floor(points[i].Y()+gaussianBlur), ySize-1);
+		z1 = max((int)floor(points[i].Z()-gaussianBlur), 0);
+		z2 = min((int)floor(points[i].Z()+gaussianBlur), zSize-1);
 
-	for(int x = 0; x < 16; x++) {
-		for(int y = 0; y < 16; y++) {
-				test->setDataAt(l[x], l[y], 6, 1.0);
+		for(int x = x1; x <= x2; x++) {
+			for(int y = y1; y <= y2; y++) {
+				for(int z = z1; z <= z2; z++) {
+					field->setDataAt(x, y, z, max(field->getDataAt(x,y,z), GetGaussianContribution(x, y, z, points[i].X(), points[i].Y(), points[i].Z(), gaussianBlur)));
+				}
+			}
+		}
+	}
+	return field;
+}
+
+void CreateHemisphere(string outFile, int radius, int gaussianBlur, double samplingRateI, double samplingRateJ) {
+	int margin = 5;
+	int maxPointCount = 2*PI*PI/(samplingRateI*samplingRateJ) + 10;
+	int pointCount = 0;
+	int offset = margin+radius + gaussianBlur;
+	Vector3D * points = new Vector3D[maxPointCount];
+	
+	double step = 1;
+	for(double i = 0; i < 2.0 * PI; i+= samplingRateI) {
+		step = 1.0;
+		for(double j = 0; j < PI/2.0; j+= (samplingRateJ*step) ) {
+			points[pointCount] = Vector3D(offset + radius* cos(i) * sin(j), offset + radius* sin(i)*sin(j), offset + radius*cos(j));
+			pointCount++;
+			step += 0.3;
 		}
 	}
 
-	test->toMRCFile("RadiusExample.mrc");
+	
 
-	test = test->getDistanceField(8, 0);
-	test->toMRCFile("RadiusExample-Volume.mrc");
+	Volume * hemisphere = GetDistanceField(points, pointCount, 2*offset, 2*offset, 2*offset, gaussianBlur);
+
+	hemisphere->toMRCFile((char *)outFile.c_str());
+	delete [] points;
+	delete hemisphere;
+}
 
 
-	return 0;*/
+void CreateSheet(string outFile, double startX, double startY, double xIncrement, double yIncrement, double xDiff, double yDiff, int xCount, int yCount) {	
+	double xDiffCumu = 0;
+	double yDiffCumu = 0;
+	int margin = 5;
+	Vector3D * points = new Vector3D[10000];
+	int pointCount = 0;
+	for (int x = 0; x < xCount; x++) {		
+		for(int y = 0; y < yCount; y++) {
+			points[pointCount] = Vector3D(startX + xIncrement*x + xDiffCumu, startY + yIncrement*y + yDiffCumu, margin);
+			pointCount++;
+			yDiffCumu += yDiff * y;
+		}
+		yDiffCumu = 0;
+		xDiffCumu += xDiff * x ;
+	}
+
+	delete [] points;
+	Volume * sheet = GetDistanceField(points, pointCount, 100, 100, 20, 10);
+	sheet->toMRCFile((char *)outFile.c_str());
+	delete sheet;
+}
+
+int main( int args, char * argv[] ) {
+	//CreateHemisphere("C:\\_WashU\\ssa1\\data\\radius-example2\\radius-example2-volume.mrc", 20, 10, PI/6, PI/20);
+	//CreateSheet("C:\\_WashU\\ssa1\\data\\radius-example2\\radius-example2-volume.mrc", 10, 10, 4, 1, 1, 1, 10, 8); 
+	//return 0;
 
 	clock_t start, finish;
 	start = clock();
@@ -356,6 +466,13 @@ int main( int args, char * argv[] ) {
 					DoSkeletonizationAndPruningAbeysinghe2007(StringToInt(argv[2]), argv[3], argv[4], StringToInt(argv[5]), StringToInt(argv[6]), StringToInt(argv[7]), StringToInt(argv[8]),
 						StringToDouble(argv[9]), StringToDouble(argv[10]), StringToDouble(argv[11]), StringToInt(argv[12]), StringToInt(argv[13]),
 						StringToInt(argv[14]), StringToInt(argv[15]), StringToInt(argv[16]), StringToInt(argv[17]), StringToInt(argv[18]));
+					error = false;
+				} 
+				break;
+			case DO_TEXT_TO_VOLUME:
+				// GraySkeletonCPP.exe DO_TEXT_TO_VOLUME [inputfile] [outfile]
+				if(args == 4) {					
+					DoTextToVolume(argv[2], argv[3]);
 					error = false;
 				} 
 				break;

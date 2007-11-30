@@ -65,7 +65,7 @@
 				AdditionalDependencies="libeng.lib libfixedpoint.lib libmat.lib libmex.lib libmwservices.lib libmx.lib libut.lib mclcom.lib mclcommain.lib mclmcr.lib mclmcrrt.lib mclxlmain.lib"
 				OutputFile="$(OutDir)\$(ProjectName).exe"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="&quot;$(SolutionDir)\ExternalLibraries\GL&quot;"
+				AdditionalLibraryDirectories="C:\MATLAB701\extern\lib\win32\microsoft\msvc71;&quot;$(SolutionDir)\ExternalLibraries\GL&quot;"
 				GenerateDebugInformation="true"
 				AssemblyDebug="1"
 			/>

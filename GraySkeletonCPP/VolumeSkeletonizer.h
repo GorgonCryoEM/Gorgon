@@ -76,7 +76,7 @@ namespace wustl_mm {
 			void WriteEigenResultsToOFFFile(Volume * sourceVolume, Volume * cost, Volume * skeleton, EigenResults3D * eigenResults, string outputPath);
 			void WriteEigenResultsToOFFFileWireframe(Volume * sourceVolume, Volume * cost, Volume * skeleton, EigenResults3D * eigenResults, string outputPath);
 			void WriteEigenResultsToVRMLFile(Volume * sourceVolume, Volume * cost, Volume * skeleton, EigenResults3D * eigenResults, string outputPath, bool doInverse);
-			void WriteSkeletonDirectionToVRMLFile(Volume * skeleton, Volume * cost, Vector3D * skeletonDirections, string outputPath, bool surfaces);
+			void WriteSkeletonDirectionToVRMLFile(Volume * skeleton, Volume * cost, Vector3D * skeletonDirections, string outputPath, bool surfaces, double curveSize);
 			void WriteVolumeToVRMLFile(Volume * vol, string outputPath);
 			Vector3D XYZtoUVW(Vector3D vec, Vector3D u, Vector3D v, Vector3D w);
 			Volume * FillCurveHoles(Volume * thresholdedSkeleton, Volume * originalSkeleton, int maxHoleSize);
@@ -841,7 +841,10 @@ namespace wustl_mm {
 			//WriteEigenResultsToVRMLFile(sourceVolume, costVol, tempSkel, volumeEigens, outputPath + "-Eigens.wrl", (pruningClass != PRUNING_CLASS_PRUNE_SURFACES));
 			WriteEigenResultsToVRMLFile(sourceVolume, costVol, tempSkel, volumeEigens, outputPath + "-Eigens-inverted.wrl", true);
 			WriteEigenResultsToVRMLFile(sourceVolume, costVol, tempSkel, volumeEigens, outputPath + "-Eigens.wrl", false);
-			WriteSkeletonDirectionToVRMLFile(tempSkel, costVol, skeletonDirections, outputPath + "-SkeletonDirections.wrl", pruningClass == PRUNING_CLASS_PRUNE_SURFACES);
+			WriteSkeletonDirectionToVRMLFile(tempSkel, costVol, skeletonDirections, outputPath + "-SkeletonDirections.wrl", pruningClass == PRUNING_CLASS_PRUNE_SURFACES, 0.1);
+			if(pruningClass == PRUNING_CLASS_PRUNE_CURVES) {
+				WriteSkeletonDirectionToVRMLFile(tempSkel, costVol, skeletonDirections, outputPath + "-SkeletonDirections-small.wrl", false, 0.06);
+			}
 			delete costVol;
 			delete tempSkel;
 			delete [] skeletonDirections;
@@ -1175,7 +1178,7 @@ namespace wustl_mm {
 							if(!((axis1.values[0] != axis1.values[0]) || (axis1.values[1] != axis1.values[1]) || (axis1.values[2] != axis1.values[2]) ||
 								(axis2.values[0] != axis2.values[0]) || (axis2.values[1] != axis2.values[1]) || (axis2.values[2] != axis2.values[2]) ||
 								(sizeX != sizeX) || (sizeY != sizeY) || (sizeZ != sizeZ) || (r != r) || (g != g) || (b != b) || (theta1 != theta1) || (theta2 != theta2))) {  // Checking to see if there are no NAN values
-								fprintf(outFile, "Group{\n children [\n Transform{\n translation %i %i %i \n  rotation %lf %lf %lf %lf \n  children [Transform{\n rotation %lf %lf %lf %lf \n scale %lf %lf %lf \n children [\n Shape {\n appearance Appearance {\n material Material {emissiveColor %lf %lf %lf \n transparency 0.5 }} \n geometry Sphere {radius 0.5}}]}]}]}\n",
+								fprintf(outFile, "Group{\n children [\n Transform{\n translation %i %i %i \n  rotation %lf %lf %lf %lf \n  children [Transform{\n rotation %lf %lf %lf %lf \n scale %lf %lf %lf \n children [\n Shape {\n appearance Appearance {\n material Material {emissiveColor %lf %lf %lf \n transparency 0.1 }} \n geometry Sphere {radius 0.5}}]}]}]}\n",
 									//x - MAX_GAUSSIAN_FILTER_RADIUS, y - MAX_GAUSSIAN_FILTER_RADIUS, z - MAX_GAUSSIAN_FILTER_RADIUS,
 									x, y, z,
 									axis2.values[0], axis2.values[1], axis2.values[2], -theta2,
@@ -1223,7 +1226,7 @@ namespace wustl_mm {
 			delete outFile;
 		}
 
-		void VolumeSkeletonizer::WriteSkeletonDirectionToVRMLFile(Volume * skeleton, Volume * cost, Vector3D * skeletonDirections, string outputPath, bool surfaces) {
+		void VolumeSkeletonizer::WriteSkeletonDirectionToVRMLFile(Volume * skeleton, Volume * cost, Vector3D * skeletonDirections, string outputPath, bool surfaces, double curveSize) {
 			int index;
 			FILE * outFile = fopen(outputPath.c_str(), "wt");
 			fprintf(outFile, "#VRML V2.0 utf8\n");
@@ -1257,16 +1260,18 @@ namespace wustl_mm {
 								}
 							} else {
 								if((axis.values[0] == 0) && (axis.values[1] == 0) && (axis.values[2] == 0)) {
-									fprintf(outFile, "Group{\n children[\n Transform{\n translation %i %i %i \n  children [\n Shape {\n appearance Appearance {\n material Material {emissiveColor %f %f %f }} \n geometry Box {size 0.9 0.1 0.1}}]}]}\n",
+									fprintf(outFile, "Group{\n children[\n Transform{\n translation %i %i %i \n  children [\n Shape {\n appearance Appearance {\n material Material {emissiveColor %f %f %f }} \n geometry Box {size 0.9 %f %f}}]}]}\n",
 										//x - MAX_GAUSSIAN_FILTER_RADIUS, y - MAX_GAUSSIAN_FILTER_RADIUS, z - MAX_GAUSSIAN_FILTER_RADIUS,
 										x, y, z,
-										r, g, b);
+										r, g, b,
+										curveSize, curveSize);
 								} else {
-									fprintf(outFile, "Group{\n children[\n Transform{\n translation %i %i %i \n  rotation %f %f %f %f \n  children [\n Shape {\n appearance Appearance {\n material Material {emissiveColor %f %f %f}} \n geometry Box {size 0.9 0.1 0.1}}]}]}\n",
+									fprintf(outFile, "Group{\n children[\n Transform{\n translation %i %i %i \n  rotation %f %f %f %f \n  children [\n Shape {\n appearance Appearance {\n material Material {emissiveColor %f %f %f}} \n geometry Box {size 0.9 %f %f}}]}]}\n",
 										//x - MAX_GAUSSIAN_FILTER_RADIUS, y - MAX_GAUSSIAN_FILTER_RADIUS, z - MAX_GAUSSIAN_FILTER_RADIUS,
 										x, y, z,
 										axis.values[0], axis.values[1], axis.values[2], angle,
-										r, g, b);
+										r, g, b,
+										curveSize, curveSize);
 								}
 							}
 						
@@ -1463,6 +1468,7 @@ namespace wustl_mm {
 
 			Volume * nullVol = new Volume(sourceVol->getSizeX(), sourceVol->getSizeY(), sourceVol->getSizeZ());
 			Volume * surfaceVol = GetImmersionThinning(sourceVol, NULL, startGray, endGray, stepSize, THINNING_CLASS_SURFACE_PRESERVATION);			
+			surfaceVol->toMRCFile((char *)(outputPath + "-S-Pre-Prune-Pre-Erode.mrc").c_str());				
 			PruneSurfaces(surfaceVol, minSurfaceSize);
 
 			if(doPruning) {
