@@ -1559,9 +1559,10 @@ namespace wustl_mm {
 			delete nullVol;
 			delete [] volumeGradient;
 
+			curveVol->toOFFCells2((char *)(outputPath + "-SC.off").c_str());
+
 			sourceVol->pad(-MAX_GAUSSIAN_FILTER_RADIUS, 0);
-			curveVol->pad(-MAX_GAUSSIAN_FILTER_RADIUS, 0);
-			//pointVol->toOFFCells2((char *)(outputPath + "-SCP.off").c_str());
+			curveVol->pad(-MAX_GAUSSIAN_FILTER_RADIUS, 0);			
 			return curveVol;					
 		}
 
