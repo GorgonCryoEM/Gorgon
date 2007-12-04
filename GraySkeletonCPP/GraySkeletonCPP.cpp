@@ -254,7 +254,6 @@ void DoSkeletonizationAndPruningAbeysinghe2007(int dimensions, string inFile, st
 			delete sourceVol;
 			delete skeletonizer3D;
 			outputVol->toMRCFile((char *)outFile.c_str());		
-			outputVol->toOFFCells2((char *)((outFile + ".off").c_str()));	
 			delete outputVol;
 			break;
 		}
