@@ -12,6 +12,8 @@
 #include "DiscreteMesh.h"
 #include <MatlabInterface\DataStructures.h>
 #include <MatlabInterface\MathLib.h>
+#include "GlobalDefinitions.h"
+#include "TimeManager.h"
 
 
 using namespace wustl_mm::GraySkeletonCPP;
@@ -422,12 +424,7 @@ void CreateSheet(string outFile, double startX, double startY, double xIncrement
 }
 
 int main( int args, char * argv[] ) {
-	//CreateHemisphere("C:\\_WashU\\ssa1\\data\\radius-example2\\radius-example2-volume.mrc", 20, 10, PI/6, PI/20);
-	//CreateSheet("C:\\_WashU\\ssa1\\data\\radius-example2\\radius-example2-volume.mrc", 10, 10, 4, 1, 1, 1, 10, 8); 
-	//return 0;
-
-	clock_t start, finish;
-	start = clock();
+	appTimeManager.PushCurrentTime();
 	int function;
 	bool error = true;
 
@@ -504,9 +501,7 @@ int main( int args, char * argv[] ) {
 		DisplayInputParams();
 	}
 
-	finish = clock();
-	double timeTaken = ((double) (finish - start) / (double) CLOCKS_PER_SEC);
-	printf("\n%f seconds taken!\n", timeTaken);
+	appTimeManager.PopAndDisplayTime("\nTotal : %f seconds!\n");
 }
 
 #endif 

@@ -352,6 +352,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\TimeManager.h"
+				>
+			</File>
+			<File
 				RelativePath=".\VolumeDeltaAnalyzer.h"
 				>
 			</File>

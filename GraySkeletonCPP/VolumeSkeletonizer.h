@@ -13,7 +13,7 @@
 #include <MatlabInterface\Vector3D.h>
 #include "NormalFinder.h"
 #include <string>
-#include <time.h>
+#include "TimeManager.h"
 
 using namespace wustl_mm::MatlabInterface;
 using namespace std;
@@ -837,14 +837,17 @@ namespace wustl_mm {
 				}
 			}
 
-			costVol->toMRCFile((char *)((outputPath + "-Score.mrc").c_str()));
-			//WriteEigenResultsToVRMLFile(sourceVolume, costVol, tempSkel, volumeEigens, outputPath + "-Eigens.wrl", (pruningClass != PRUNING_CLASS_PRUNE_SURFACES));
-			WriteEigenResultsToVRMLFile(sourceVolume, costVol, tempSkel, volumeEigens, outputPath + "-Eigens-inverted.wrl", true);
-			WriteEigenResultsToVRMLFile(sourceVolume, costVol, tempSkel, volumeEigens, outputPath + "-Eigens.wrl", false);
-			WriteSkeletonDirectionToVRMLFile(tempSkel, costVol, skeletonDirections, outputPath + "-SkeletonDirections.wrl", pruningClass == PRUNING_CLASS_PRUNE_SURFACES, 0.1);
-			if(pruningClass == PRUNING_CLASS_PRUNE_CURVES) {
-				WriteSkeletonDirectionToVRMLFile(tempSkel, costVol, skeletonDirections, outputPath + "-SkeletonDirections-small.wrl", false, 0.06);
-			}
+			
+			#ifdef SAVE_INTERMEDIATE_RESULTS
+				costVol->toMRCFile((char *)((outputPath + "-Score.mrc").c_str()));
+				//WriteEigenResultsToVRMLFile(sourceVolume, costVol, tempSkel, volumeEigens, outputPath + "-Eigens.wrl", (pruningClass != PRUNING_CLASS_PRUNE_SURFACES));
+				WriteEigenResultsToVRMLFile(sourceVolume, costVol, tempSkel, volumeEigens, outputPath + "-Eigens-inverted.wrl", true);
+				WriteEigenResultsToVRMLFile(sourceVolume, costVol, tempSkel, volumeEigens, outputPath + "-Eigens.wrl", false);
+				WriteSkeletonDirectionToVRMLFile(tempSkel, costVol, skeletonDirections, outputPath + "-SkeletonDirections.wrl", pruningClass == PRUNING_CLASS_PRUNE_SURFACES, 0.1);
+				if(pruningClass == PRUNING_CLASS_PRUNE_CURVES) {
+					WriteSkeletonDirectionToVRMLFile(tempSkel, costVol, skeletonDirections, outputPath + "-SkeletonDirections-small.wrl", false, 0.06);
+				}
+			#endif
 			delete costVol;
 			delete tempSkel;
 			delete [] skeletonDirections;
@@ -1467,80 +1470,99 @@ namespace wustl_mm {
 			}
 
 			Volume * nullVol = new Volume(sourceVol->getSizeX(), sourceVol->getSizeY(), sourceVol->getSizeZ());
+			appTimeManager.PushCurrentTime();
 			Volume * surfaceVol = GetImmersionThinning(sourceVol, NULL, startGray, endGray, stepSize, THINNING_CLASS_SURFACE_PRESERVATION);			
-			surfaceVol->toMRCFile((char *)(outputPath + "-S-Pre-Prune-Pre-Erode.mrc").c_str());				
+			appTimeManager.PopAndDisplayTime("Surface Thinning : %f seconds!\n");
+			
+			#ifdef SAVE_INTERMEDIATE_RESULTS
+				surfaceVol->toMRCFile((char *)(outputPath + "-S-Pre-Prune-Pre-Erode.mrc").c_str());				
+			#endif
+
 			PruneSurfaces(surfaceVol, minSurfaceSize);
 
+			appTimeManager.PushCurrentTime();
 			if(doPruning) {
-				surfaceVol->toMRCFile((char *)(outputPath + "-S-Pre-Prune.mrc").c_str());				
-				WriteVolumeToVRMLFile(surfaceVol, outputPath + "-S-Pre-Prune.wrl");
+				#ifdef SAVE_INTERMEDIATE_RESULTS
+					surfaceVol->toMRCFile((char *)(outputPath + "-S-Pre-Prune.mrc").c_str());				
+					WriteVolumeToVRMLFile(surfaceVol, outputPath + "-S-Pre-Prune.wrl");
+				#endif
 				volumeEigens = GetEigenResults2(surfaceVol, volumeGradient, gaussianFilterSurfaceRadius, surfaceRadius, true);
-
-				Volume * prunedSurfaceVol = new Volume(surfaceVol->getSizeX(), surfaceVol->getSizeY(), surfaceVol->getSizeZ(), 0, 0, 0, surfaceVol);
+				Volume * prunedSurfaceVol = new Volume(surfaceVol->getSizeX(), surfaceVol->getSizeY(), surfaceVol->getSizeZ(), 0, 0, 0, surfaceVol);				
 				PruneUsingStructureTensor(prunedSurfaceVol, sourceVol, volumeEigens, surfaceThreshold, PRUNING_CLASS_PRUNE_SURFACES, outputPath + "-S");
 				delete [] volumeEigens;
-				prunedSurfaceVol->toMRCFile((char *)(outputPath + "-S-Post-Prune.mrc").c_str());
-
-				Volume * filledSurfaceVol = FillSurfaceHoles(prunedSurfaceVol, surfaceVol, maxSurfaceHole);
-				filledSurfaceVol->toMRCFile((char *)(outputPath + "-S-Post-Fill.mrc").c_str());
+				#ifdef SAVE_INTERMEDIATE_RESULTS
+					prunedSurfaceVol->toMRCFile((char *)(outputPath + "-S-Post-Prune.mrc").c_str());
+				#endif
 
 				delete surfaceVol;
-				delete prunedSurfaceVol;
-				surfaceVol = filledSurfaceVol;
+				surfaceVol = prunedSurfaceVol;
 			}		
 
-			PruneSurfaces(surfaceVol, minSurfaceSize);			
-			surfaceVol->toMRCFile((char *)(outputPath + "-S-Post-Erosion.mrc").c_str());
+			PruneSurfaces(surfaceVol, minSurfaceSize);		
+			appTimeManager.PopAndDisplayTime("Surface Pruning  : %f seconds!\n");
 
-			//RemoveCubesFromSurfaceSkeleton(surfaceVol);
-			//surfaceVol->toMRCFile((char *)(outputPath + "-S-Cleaned.mrc").c_str());
+			#ifdef SAVE_INTERMEDIATE_RESULTS
+				surfaceVol->toMRCFile((char *)(outputPath + "-S-Post-Erosion.mrc").c_str());
+			#endif
 
 			Volume * cleanedSurfaceVol = GetJuSurfaceSkeleton(surfaceVol, nullVol, 0.5);		
-			PruneSurfaces(cleanedSurfaceVol, minSurfaceSize);		
-			cleanedSurfaceVol->toMRCFile((char *)(outputPath + "-S-Cleaned.mrc").c_str());
+			PruneSurfaces(cleanedSurfaceVol, minSurfaceSize);
+			#ifdef SAVE_INTERMEDIATE_RESULTS
+				cleanedSurfaceVol->toMRCFile((char *)(outputPath + "-S-Cleaned.mrc").c_str());
+			#endif
 
 			delete surfaceVol;
 			surfaceVol = cleanedSurfaceVol;
 
+			appTimeManager.PushCurrentTime();
 			Volume * curveVol = GetImmersionThinning(sourceVol, surfaceVol, startGray, endGray, stepSize, THINNING_CLASS_CURVE_PRESERVATION);
-			curveVol->toMRCFile((char *)(outputPath + "-C-Pre-Prune_Pre-Erode.mrc").c_str());
+			appTimeManager.PopAndDisplayTime("Curve Thinning   : %f seconds!\n");
+
+			#ifdef SAVE_INTERMEDIATE_RESULTS
+				curveVol->toMRCFile((char *)(outputPath + "-C-Pre-Prune_Pre-Erode.mrc").c_str());
+			#endif
+
 			PruneCurves(curveVol, minCurveSize);
 			VoxelBinarySubtract(curveVol, surfaceVol);
 
+			appTimeManager.PushCurrentTime();
 			if(doPruning) {				
-				curveVol->toMRCFile((char *)(outputPath + "-C-Pre-Prune.mrc").c_str());
-				//curveVol->toOFFCells2((char *)(outputPath + "-C-Pre-Prune.off").c_str());
-				//WriteVolumeToVRMLFile(curveVol, outputPath + "-C-Pre-Prune.wrl");
-				
-				volumeEigens = GetEigenResults2(curveVol, volumeGradient, gaussianFilterCurveRadius, curveRadius, true);
+				#ifdef SAVE_INTERMEDIATE_RESULTS
+					curveVol->toMRCFile((char *)(outputPath + "-C-Pre-Prune.mrc").c_str());
+				#endif
 
+				volumeEigens = GetEigenResults2(curveVol, volumeGradient, gaussianFilterCurveRadius, curveRadius, true);
 				Volume * prunedCurveVol = new Volume(curveVol->getSizeX(), curveVol->getSizeY(), curveVol->getSizeZ(), 0, 0, 0, curveVol);
 				PruneUsingStructureTensor(prunedCurveVol, sourceVol, volumeEigens, curveThreshold, PRUNING_CLASS_PRUNE_CURVES, outputPath + "-C");
 				delete [] volumeEigens;
-				prunedCurveVol->toMRCFile((char *)(outputPath + "-C-Post-Prune.mrc").c_str());
+				#ifdef SAVE_INTERMEDIATE_RESULTS
+					prunedCurveVol->toMRCFile((char *)(outputPath + "-C-Post-Prune.mrc").c_str());
+				#endif
 
-				Volume * filledCurveVol = FillCurveHoles(prunedCurveVol, curveVol, maxCurveHole);
-				filledCurveVol->toMRCFile((char *)(outputPath + "-C-Post-Fill.mrc").c_str());
 				delete curveVol;
-				delete prunedCurveVol;
-				curveVol = filledCurveVol;
-
+				curveVol = prunedCurveVol;
 			}
 
 			VoxelOr(curveVol, surfaceVol);
-			PruneCurves(curveVol, minCurveSize);			
-			curveVol->toMRCFile((char *)(outputPath + "-C-Post-Erosion.mrc").c_str());
+			PruneCurves(curveVol, minCurveSize);		
+			appTimeManager.PopAndDisplayTime("Curve Pruning    : %f seconds!\n");
+			#ifdef SAVE_INTERMEDIATE_RESULTS
+				curveVol->toMRCFile((char *)(outputPath + "-C-Post-Erosion.mrc").c_str());
+			#endif
 
 			Volume * cleanedCurveVol = GetJuCurveSkeleton(curveVol, surfaceVol, 0.5, true);		
 			PruneCurves(cleanedCurveVol, minCurveSize);		
-			//RemoveIsolatedNonCurves(cleanedCurveVol);
-			cleanedCurveVol->toMRCFile((char *)(outputPath + "-C-Cleaned.mrc").c_str());
+			#ifdef SAVE_INTERMEDIATE_RESULTS
+				cleanedCurveVol->toMRCFile((char *)(outputPath + "-C-Cleaned.mrc").c_str());
+			#endif
 
 			delete curveVol;
 			curveVol = cleanedCurveVol;
 
 			VoxelOr(curveVol, surfaceVol);
-			curveVol->toMRCFile((char *)(outputPath + "-SC.mrc").c_str());
+			#ifdef SAVE_INTERMEDIATE_RESULTS
+				curveVol->toMRCFile((char *)(outputPath + "-SC.mrc").c_str());
+			#endif
 			
 			// Removed as points will never be preserved.
 			// Volume * pointVol = GetImmersionThinning(sourceVol, curveVol, startGray, endGray, stepSize, THINNING_CLASS_POINT_PRESERVATION);
@@ -1559,7 +1581,9 @@ namespace wustl_mm {
 			delete nullVol;
 			delete [] volumeGradient;
 
-			curveVol->toOFFCells2((char *)(outputPath + "-SC.off").c_str());
+			#ifdef SAVE_INTERMEDIATE_RESULTS
+				curveVol->toOFFCells2((char *)(outputPath + "-SC.off").c_str());
+			#endif
 
 			sourceVol->pad(-MAX_GAUSSIAN_FILTER_RADIUS, 0);
 			curveVol->pad(-MAX_GAUSSIAN_FILTER_RADIUS, 0);			
