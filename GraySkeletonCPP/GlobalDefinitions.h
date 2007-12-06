@@ -1,10 +1,16 @@
 #ifndef GLOBAL_DEFINITIONS_H
 #define GLOBAL_DEFINITIONS_H
 
+#include "TimeManager.h"
+
+//#define SAVE_INTERMEDIATE_RESULTS
+
 #define round(f) ((f >= 0)?(int)(f + .5):(int)(f - .5))
 
 namespace wustl_mm {
 	namespace GraySkeletonCPP {
+		
+		TimeManager appTimeManager = TimeManager();
 
 		const bool WRITE_DEBUG_FILES = false;
 		const int PRUNE_AMOUNT = 3;
@@ -80,7 +86,7 @@ namespace wustl_mm {
 			{1, 5},
 			{5, 2},
 			{6, 2},
-			{6, 1}};			
+			{6, 1}};
 	}
 }
 
