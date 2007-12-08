@@ -27,6 +27,8 @@ namespace wustl_mm {
 				vol->toMRCFile((char *)outputFile.c_str());
 			} else if (stricmp(outputFormat.c_str(), "NB") == 0) {
 				vol->toMathematicaFile((char *)outputFile.c_str());
+			} else if (stricmp(outputFormat.c_str(), "OFF0") == 0) {
+				vol->toOFFCells((char *)outputFile.c_str());
 			} else if (stricmp(outputFormat.c_str(), "OFF") == 0) {
 				vol->toOFFCells2((char *)outputFile.c_str());
 			} else {
