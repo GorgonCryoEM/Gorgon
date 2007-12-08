@@ -854,6 +854,19 @@ public:
 		return res ;
 	}
 
+	int getNonZeroVoxelCount() {
+		int count = 0;
+		for(int x = 0; x < sizex; x++){
+			for(int y = 0; y < sizey; y++){
+				for(int z = 0; z < sizez; z++){
+					if(this->getDataAt(x, y, z) > 0.0) {
+						count++;
+					}
+				}
+			}
+		}
+		return count;
+	}
 	void print() {
 		for(int x = 0; x < getSizeX(); x++) {
 			printf("{ ");

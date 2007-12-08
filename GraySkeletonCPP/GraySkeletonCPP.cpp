@@ -26,6 +26,7 @@ const int DO_SKELETONIZATION_AND_PRUNING = 2;
 const int DO_BINARY_THINNING_JU2007 = 50;
 const int DO_TOPOLOGICAL_WATERSHED_JU2007  = 60;
 
+const int DO_DISPLAY_VOXEL_COUNT = 995;
 const int DO_TEXT_TO_VOLUME = 996;
 const int DO_CROPPING = 997;
 const int DO_DOWNSAMPLING = 998;
@@ -110,6 +111,11 @@ void DisplayInputParams() {
 	printf("\t[minGrayValue]  : The minimum grayscale value to consider.\n");
 	printf("\t[maxGrayValue]  : The maximum grayscale value to consider.\n");
 	printf("\t[stepSize]	  : The grayscale stepsize.\n\n");
+
+	printf("To display the non-zero voxel count of a volume \n");
+	printf("\tGraySkeletonCPP.exe [function] [inputfile]\n\n");
+	printf("\t[function]      : %i, display non-zero voxel count\n", DO_DISPLAY_VOXEL_COUNT);
+	printf("\t[inputfile]     : The source file\n\n");
 
 	printf("To convert a text file into a volume\n");
 	printf("\tGraySkeletonCPP.exe [function] [inputfile] [outfile]\n\n");
@@ -423,6 +429,17 @@ void CreateSheet(string outFile, double startX, double startY, double xIncrement
 	delete sheet;
 }
 
+void DoDisplayVoxelCount(string inFile) {
+	MRCReader * reader = (MRCReader*)MRCReaderPicker::pick((char *)inFile.c_str());
+	Volume * sourceVol = reader->getVolume();
+
+	printf("%i voxels\n" , sourceVol->getNonZeroVoxelCount());
+
+	delete reader;
+	delete sourceVol;
+
+}
+
 int main( int args, char * argv[] ) {
 	appTimeManager.PushCurrentTime();
 	int function;
@@ -464,6 +481,13 @@ int main( int args, char * argv[] ) {
 						StringToInt(argv[14]), StringToInt(argv[15]), StringToInt(argv[16]), StringToInt(argv[17]), StringToInt(argv[18]));
 					error = false;
 				} 
+				break;
+			case DO_DISPLAY_VOXEL_COUNT:
+				// GraySkeletonCPP.exe DO_DISPLAY_VOXEL_COUNT [inputfile]
+				if(args == 3) {
+					DoDisplayVoxelCount(argv[2]);
+					error = false;
+				}
 				break;
 			case DO_TEXT_TO_VOLUME:
 				// GraySkeletonCPP.exe DO_TEXT_TO_VOLUME [inputfile] [outfile]
