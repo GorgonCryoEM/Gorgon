@@ -279,7 +279,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="2"
-				AdditionalIncludeDirectories="$(SolutionDir)"
+				AdditionalIncludeDirectories="$(SolutionDir);$(SolutionDir)\ExternalLibraries"
 				PreprocessorDefinitions="_RELEASE;_CRT_SECURE_NO_DEPRECATE;WIN32"
 				MinimalRebuild="false"
 				RuntimeLibrary="2"
