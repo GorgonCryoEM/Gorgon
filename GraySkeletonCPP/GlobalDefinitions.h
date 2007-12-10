@@ -3,7 +3,7 @@
 
 #include "TimeManager.h"
 
-//#define SAVE_INTERMEDIATE_RESULTS
+#define SAVE_INTERMEDIATE_RESULTS
 
 #define round(f) ((f >= 0)?(int)(f + .5):(int)(f - .5))
 

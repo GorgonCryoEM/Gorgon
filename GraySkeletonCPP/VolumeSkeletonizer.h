@@ -51,7 +51,7 @@ namespace wustl_mm {
 			Vector3D GetCurveDirection(Volume * skeleton, int x, int y, int z);
 			Vector3D GetCurveDirection(Volume * skeleton, int x, int y, int z, int radius);
 			Vector3D GetSurfaceNormal(Volume * skeleton, int x, int y, int z);
-			Vector3D GetSurfaceNormal(Volume * skeleton, int x, int y, int z, int radius);
+			Vector3D GetSurfaceNormal(Volume * skeleton, int x, int y, int z, int radius, Vector3D * localDirections);
 			Vector3D * GetVolumeGradient(Volume * sourceVolume);
 			Vector3D * GetVolumeGradient2(Volume * sourceVolume);
 			Vector3D * GetSkeletonDirection(Volume * skeleton, int type);
@@ -104,6 +104,7 @@ namespace wustl_mm {
 			int curveRadius;
 			int surfaceRadius;
 			int skeletonDirectionRadius;
+
 		};
 
 		VolumeSkeletonizer::VolumeSkeletonizer(int pointRadius, int curveRadius, int surfaceRadius, int skeletonDirectionRadius) {
@@ -269,7 +270,6 @@ namespace wustl_mm {
 		// Use 8 local gradients instead of 1 gradient
 		EigenResults3D * VolumeSkeletonizer::GetEigenResults2(Volume * maskVol, Vector3D * imageGradient, ProbabilityDistribution3D & gaussianFilter, int gaussianFilterRadius, bool useMask) {
 			EigenResults3D * resultTable = new EigenResults3D[maskVol->getSizeX() * maskVol->getSizeY() * maskVol->getSizeZ()];
-
 			for(int x = MAX_GAUSSIAN_FILTER_RADIUS; x < maskVol->getSizeX() - MAX_GAUSSIAN_FILTER_RADIUS; x++) {
 				for(int y = MAX_GAUSSIAN_FILTER_RADIUS; y < maskVol->getSizeY() - MAX_GAUSSIAN_FILTER_RADIUS; y++) {
 					for(int z = MAX_GAUSSIAN_FILTER_RADIUS; z < maskVol->getSizeZ() - MAX_GAUSSIAN_FILTER_RADIUS; z++) {
@@ -390,12 +390,15 @@ namespace wustl_mm {
 
 
 
-		Vector3D VolumeSkeletonizer::GetSurfaceNormal(Volume * skeleton, int x, int y, int z, int radius) {
-			Vector3D direction = GetSurfaceNormal(skeleton, x, y, z);
+		Vector3D VolumeSkeletonizer::GetSurfaceNormal(Volume * skeleton, int x, int y, int z, int radius, Vector3D * localDirections) {
+			Vector3D direction = localDirections[skeleton->getIndex(x, y, z)];
+
+
 			if(!direction.IsBadNormal()) {
 				int margin = 2;
 				int size = (radius+margin)*2 + 1;
 				Volume * block = new Volume(size, size, size);
+
 				for(int xx = margin; xx <= size-margin; xx++) {
 					for(int yy = margin; yy <= size-margin; yy++) {
 						for(int zz = margin; zz <= size-margin; zz++) {
@@ -415,7 +418,7 @@ namespace wustl_mm {
 					currentPos = list[list.size()-1];
 					list.pop_back();
 					visited->setDataAt(currentPos.X(), currentPos.Y(), currentPos.Z(), 1);
-					tempDir = GetSurfaceNormal(skeleton, x+currentPos.X()-margin-radius, y+currentPos.Y()-margin-radius, z+currentPos.Z()-margin-radius);
+					tempDir = localDirections[skeleton->getIndex(x+currentPos.X()-margin-radius, y+currentPos.Y()-margin-radius, z+currentPos.Z()-margin-radius)];
 
 					if(!tempDir.IsBadNormal()) {
 						for(int i = 0; i < 12; i++) {
@@ -433,18 +436,23 @@ namespace wustl_mm {
 					}
 				}
 
+
 				delete block;
 
 				Vector3D * gradient = GetVolumeGradient2(visited);
+
 				EigenResults3D eigen;
+
 				GetEigenResult2(eigen, gradient, uniformFilterSkeletonDirectionRadius,  
 					margin+radius, margin+radius, margin+radius,
 					size, size, size, radius, false);
+
 
 				delete [] gradient;
 				delete visited;
 
 				direction = eigen.vectors[0];
+				
 			}
 
 			return direction;
@@ -543,8 +551,27 @@ namespace wustl_mm {
 		}
 
 		Vector3D * VolumeSkeletonizer::GetSkeletonDirection(Volume * skeleton, int type) {
-			Vector3D * directions = new Vector3D[skeleton->getSizeX() * skeleton->getSizeY() * skeleton->getSizeZ()];
 			int index;
+
+			Vector3D * localDirections = new Vector3D[skeleton->getSizeX() * skeleton->getSizeY() * skeleton->getSizeZ()];
+
+			for(int x = 1; x < skeleton->getSizeX()-1; x++) {
+				for(int y = 1; y < skeleton->getSizeY()-1; y++) {
+					for(int z = 1; z < skeleton->getSizeZ()-1; z++) {						
+						index = skeleton->getIndex(x, y, z);
+						localDirections[index] = Vector3D(0,0,0);
+						if(skeleton->getDataAt(x,y,z) > 0) {
+							switch(type){
+								case PRUNING_CLASS_PRUNE_SURFACES:
+									localDirections[index] = GetSurfaceNormal(skeleton, x, y, z);
+									break;
+							}
+						}
+					}
+				}
+			}
+
+			Vector3D * directions = new Vector3D[skeleton->getSizeX() * skeleton->getSizeY() * skeleton->getSizeZ()];
 
 			for(int x = 1; x < skeleton->getSizeX()-1; x++) {
 				for(int y = 1; y < skeleton->getSizeY()-1; y++) {
@@ -557,7 +584,7 @@ namespace wustl_mm {
 									directions[index] = GetCurveDirection(skeleton, x, y, z, skeletonDirectionRadius);
 									break;
 								case PRUNING_CLASS_PRUNE_SURFACES:
-									directions[index] = GetSurfaceNormal(skeleton, x, y, z, skeletonDirectionRadius);
+									directions[index] = GetSurfaceNormal(skeleton, x, y, z, skeletonDirectionRadius, localDirections);
 									break;
 							}
 						}
@@ -817,7 +844,7 @@ namespace wustl_mm {
 		}		
 		void VolumeSkeletonizer::PruneUsingStructureTensor(Volume * skeleton, Volume * sourceVolume, EigenResults3D * volumeEigens, double threshold, char pruningClass, string outputPath) {									
 			Volume * tempSkel = new Volume(skeleton->getSizeX(), skeleton->getSizeY(), skeleton->getSizeZ(), 0, 0, 0, skeleton);
-			Volume * costVol = new Volume(skeleton->getSizeX(), skeleton->getSizeY(), skeleton->getSizeZ()); 			
+			Volume * costVol = new Volume(skeleton->getSizeX(), skeleton->getSizeY(), skeleton->getSizeZ()); 
 			Vector3D * skeletonDirections = GetSkeletonDirection(skeleton, pruningClass);
 			int index;
 			double cost;
@@ -1486,9 +1513,20 @@ namespace wustl_mm {
 					surfaceVol->toMRCFile((char *)(outputPath + "-S-Pre-Prune.mrc").c_str());				
 					WriteVolumeToVRMLFile(surfaceVol, outputPath + "-S-Pre-Prune.wrl");
 				#endif
+				appTimeManager.PushCurrentTime();
 				volumeEigens = GetEigenResults2(surfaceVol, volumeGradient, gaussianFilterSurfaceRadius, surfaceRadius, true);
+				appTimeManager.PopAndDisplayTime("  Getting Eigens : %f seconds!\n");
+
+				appTimeManager.PushCurrentTime();
 				Volume * prunedSurfaceVol = new Volume(surfaceVol->getSizeX(), surfaceVol->getSizeY(), surfaceVol->getSizeZ(), 0, 0, 0, surfaceVol);				
+				appTimeManager.PopAndDisplayTime("  Getting Copy of surface : %f seconds!\n");
+
+
+				appTimeManager.PushCurrentTime();
 				PruneUsingStructureTensor(prunedSurfaceVol, sourceVol, volumeEigens, surfaceThreshold, PRUNING_CLASS_PRUNE_SURFACES, outputPath + "-S");
+				appTimeManager.PopAndDisplayTime("  Pruning: %f seconds!\n");
+
+				appTimeManager.PushCurrentTime();
 				delete [] volumeEigens;
 				#ifdef SAVE_INTERMEDIATE_RESULTS
 					prunedSurfaceVol->toMRCFile((char *)(outputPath + "-S-Post-Prune.mrc").c_str());
@@ -1496,6 +1534,8 @@ namespace wustl_mm {
 
 				delete surfaceVol;
 				surfaceVol = prunedSurfaceVol;
+				appTimeManager.PopAndDisplayTime("  Memory Cleanup: %f seconds!\n");
+
 			}		
 
 			PruneSurfaces(surfaceVol, minSurfaceSize);		
