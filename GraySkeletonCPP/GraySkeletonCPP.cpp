@@ -20,17 +20,20 @@ using namespace wustl_mm::GraySkeletonCPP;
 using namespace std;
 
 
+const int DO_NOTHING = -1;
 const int DO_SKELETONIZATION = 1;
 const int DO_SKELETONIZATION_AND_PRUNING = 2;
 
 const int DO_BINARY_THINNING_JU2007 = 50;
 const int DO_TOPOLOGICAL_WATERSHED_JU2007  = 60;
 
-const int DO_DISPLAY_VOXEL_COUNT = 995;
-const int DO_TEXT_TO_VOLUME = 996;
-const int DO_CROPPING = 997;
-const int DO_DOWNSAMPLING = 998;
-const int DO_CONVERSION = 999;
+const int DO_DISPLAY_VOXEL_COUNT = 800;
+
+const int DO_TEXT_TO_VOLUME = 900;
+const int DO_RESIZE = 901;
+const int DO_CROPPING = 902;
+const int DO_DOWNSAMPLING = 903;
+const int DO_CONVERSION = 950;
 
 string DoubleToString(double number) {
 	char * x = new char[20];
@@ -54,99 +57,125 @@ int StringToInt(const string &s)
   return i;
 }
 
-void DisplayInputParams() {
-	printf("To get the grayscale skeleton of an image\n");
-	printf("\tGraySkeletonCPP.exe [function] [dimensions] [inputfile] [outfile] [minCurveSize] [minSurfaceSize]\n\t\t[minGrayValue] [maxGrayValue] [stepSize]\n\n");
-	printf("\t[function]      : %i, Perform skeletonization\n", DO_SKELETONIZATION);
-	printf("\t[dimensions]    : The number of dimensions\n");
-	printf("\t[inputfile]     : an input image file (BMP if 2D, MRC if 3D)\n");
-	printf("\t[outfile]       : the filename to be used when generating the skeleton\n");
-	printf("\t[minCurveSize]  : The minimum length of curve segments.\n");
-	printf("\t[minSurfaceSize]: The minimum radius of surface segments (only used for 3D objects).\n");
-	printf("\t[minGrayValue]  : The minimum grayscale value to consider.\n");
-	printf("\t[maxGrayValue]  : The maximum grayscale value to consider.\n");
-	printf("\t[stepSize]      : The grayscale stepsize.\n\n");
-
-	printf("To skeletonize and prune the grayscale skeleton of an image\n");
-	printf("\tGraySkeletonCPP.exe [function] [dimensions] [inputfile] [outfile] [minCurveSize] [minSurfaceSize] [maxCurveHole] [maxSurfaceHole]\n\t\t[pointThreshold] [curveThreshold] [surfaceThreshold] [pointRadius] [curveRadius] [surfaceRadius] [skeletonDirectionRadius]\n\t\t[minGrayValue] [maxGrayValue] [stepSize]\n\n");
-	printf("\t[function]      : %i, Perform pruning\n", DO_SKELETONIZATION_AND_PRUNING);
-	printf("\t[dimensions]    : The number of dimensions\n");
-	printf("\t[inputfile]     : an input image file (BMP if 2D, MRC if 3D)\n");
-	printf("\t[outfile]       : the filename to be used when generating the skeleton\n");
-	printf("\t[minCurveSize]  : The minimum length of curve segments.\n");
-	printf("\t[minSurfaceSize]: The minimum radius of surface segments (only used for 3D objects).\n");
-	printf("\t[maxCurveHole]  : The length of the largest curve hole segment to be repaired.\n");
-	printf("\t[maxSurfaceHole]: The radius of the largest surface hole segment to be repaired (only used for 3D objects).\n");
-	printf("\t[pointThreshold]: The cost threshold (between 0 (all) and 1(none))\n");
-	printf("\t[curveThreshold]: The cost threshold (between 0 (all) and 1(none))\n");
-	printf("\t[surfaceThreshold]: The cost threshold (between 0 (all) and 1(none)) (only used for 3D objects)\n");
-	printf("\t[pointRadius]   : The gaussian filter radius to use when pruning points\n");
-	printf("\t[curveRadius]   : The gaussian filter radius to use when pruning curves\n");
-	printf("\t[surfaceRadius] : The gaussian filter radius to use when pruning surfaces (only used for 3D objects)\n");
-	printf("\t[skeletonDirectionRadius] : The radius used when calculating the direction of the skeleton\n");
-	printf("\t[minGrayValue]  : The minimum grayscale value to consider.\n");
-	printf("\t[maxGrayValue]  : The maximum grayscale value to consider.\n");
-	printf("\t[stepSize]	  : The grayscale stepsize.\n\n");
-
-	printf("Other tasks:\n\n");
-
-	printf("To perform Binary Thinning (Ju2007)\n");
-	printf("\tGraySkeletonCPP.exe [function] [dimensions] [inputfile] [outfile] [minCurveSize] [minSurfaceSize] [threshold]\n\n");
-	printf("\t[function]      : %i, Perform Binary Thinning (Ju 2007)\n", DO_BINARY_THINNING_JU2007);
-	printf("\t[dimensions]    : The number of dimensions\n");
-	printf("\t[inputfile]     : an input image file (BMP if 2D, MRC if 3D)\n");
-	printf("\t[outfile]       : the filename to be used when generating the skeleton\n");
-	printf("\t[minCurveSize]  : The minimum length of curve segments.\n");
-	printf("\t[minSurfaceSize]: The minimum radius of surface segments (only used for 3D objects).\n");
-	printf("\t[pointThreshold]: The cost threshold of the input file\n\n");
-
-	printf("To perform Topological Watershed (Ju2007 iteratively)\n");
-	printf("\tGraySkeletonCPP.exe [function] [dimensions] [inputfile] [outfile] [minCurveSize] [minSurfaceSize] [minGrayValue] [maxGrayValue] [stepSize]\n\n");
-	printf("\t[function]      : %i, Perform Topological Watershed (Ju2007 iteratively\n", DO_TOPOLOGICAL_WATERSHED_JU2007);
-	printf("\t[dimensions]    : The number of dimensions\n");
-	printf("\t[inputfile]     : an input image file (BMP if 2D, MRC if 3D)\n");
-	printf("\t[outfile]       : the filename to be used when generating the skeleton\n");
-	printf("\t[minCurveSize]  : The minimum length of curve segments.\n");
-	printf("\t[minSurfaceSize]: The minimum radius of surface segments (only used for 3D objects).\n");
-	printf("\t[minGrayValue]  : The minimum grayscale value to consider.\n");
-	printf("\t[maxGrayValue]  : The maximum grayscale value to consider.\n");
-	printf("\t[stepSize]	  : The grayscale stepsize.\n\n");
-
-	printf("To display the non-zero voxel count of a volume \n");
-	printf("\tGraySkeletonCPP.exe [function] [inputfile]\n\n");
-	printf("\t[function]      : %i, display non-zero voxel count\n", DO_DISPLAY_VOXEL_COUNT);
-	printf("\t[inputfile]     : The source file\n\n");
-
-	printf("To convert a text file into a volume\n");
-	printf("\tGraySkeletonCPP.exe [function] [inputfile] [outfile]\n\n");
-	printf("\t[function]      : %i, create a volume\n", DO_TEXT_TO_VOLUME);
-	printf("\t[inputfile]     : The source file\n");
-	printf("\t[outfile]       : The destination file\n\n");
-
-	printf("To Crop a volume\n");
-	printf("\tGraySkeletonCPP.exe [function] [inputfile] [outfile] [startx] [endx] [starty] [endy] [startz] [endz]\n\n");
-	printf("\t[function]      : %i, Crop a volume\n", DO_CROPPING);
-	printf("\t[inputfile]     : The source file\n");
-	printf("\t[outfile]       : The destination file\n");
-	printf("\t[startd]        : The starting coordinate in the d dimension\n");
-	printf("\t[endd]          : The ending coordinate in the d dimension\n\n");
-
-	printf("To Downsample a volume\n");
-	printf("\tGraySkeletonCPP.exe [function] [inputfile] [outfile]\n\n");
-	printf("\t[function]      : %i, Downsample a volume\n", DO_DOWNSAMPLING);
-	printf("\t[inputfile]     : The source file\n");
-	printf("\t[outfile]       : The destination file\n\n");
-
-	printf("To convert file formats\n");
-	printf("\tGraySkeletonCPP.exe [function] [inputfile] [inputformat] [outfile] [outformat] [x-size] [y-size] [z-size]\n\n");
-	printf("\t[function]      : %i, Perform conversion\n", DO_CONVERSION);
-	printf("\t[inputfile]     : The source file\n");
-	printf("\t[inputformat]   : The source file format\n");
-	printf("\t[outfile]       : The destination file\n");
-	printf("\t[outformat]     : The destination file format\n");
-	printf("\t[x-size]        : The size of the data set in the x-Dimension\n");
-	printf("\t[y-size]        : The size of the data set in the y-Dimension\n");
-	printf("\t[z-size]        : The size of the data set in the z-Dimension\n\n");
+void DisplayInputParams(int process) {
+	switch(process) {
+		case DO_NOTHING:
+			printf("Performs various functions on grayscale volumes... \n");
+			printf("Usage: \n");
+			printf("\tGraySkeletonCPP.exe [function] [{args}*]\n\n");
+			printf(" %i  \t- Perform skeletonization (Step 1/3 of SMI 08 paper) \n", DO_SKELETONIZATION);
+			printf(" %i  \t- Perform and pruning (Step 1-4 of SMI 08 paper) \n", DO_SKELETONIZATION_AND_PRUNING);
+			printf(" %i  \t- Perform binary thinning (Ju 07) \n", DO_BINARY_THINNING_JU2007);
+			printf(" %i  \t- Perform topology watershed by iterating binary thinning (Ju 07) \n", DO_TOPOLOGICAL_WATERSHED_JU2007);
+			printf("\n");
+			printf(" %i  \t- Display the non-zero voxel count \n", DO_DISPLAY_VOXEL_COUNT);
+			printf(" %i  \t- Create a binary volume from a text file \n", DO_TEXT_TO_VOLUME);
+			printf(" %i  \t- Resize a volume \n", DO_RESIZE);
+			printf(" %i  \t- Crop a volume \n", DO_CROPPING);
+			printf(" %i  \t- Downsample a volume by a scale of 2 in all dimensions\n", DO_DOWNSAMPLING);
+			printf(" %i  \t- Convert the data type \n", DO_CONVERSION);			
+			break;
+		case DO_SKELETONIZATION:
+			printf("To get the grayscale skeleton of an image\n");
+			printf("\tGraySkeletonCPP.exe %i [dimensions] [inputfile] [outfile] [minCurveSize] [minSurfaceSize]\n\t\t[minGrayValue] [maxGrayValue] [stepSize]\n\n", DO_SKELETONIZATION);
+			printf("\t[dimensions]    : The number of dimensions\n");
+			printf("\t[inputfile]     : an input image file (BMP if 2D, MRC if 3D)\n");
+			printf("\t[outfile]       : the filename to be used when generating the skeleton\n");
+			printf("\t[minCurveSize]  : The minimum length of curve segments.\n");
+			printf("\t[minSurfaceSize]: The minimum radius of surface segments (only used for 3D objects).\n");
+			printf("\t[minGrayValue]  : The minimum grayscale value to consider.\n");
+			printf("\t[maxGrayValue]  : The maximum grayscale value to consider.\n");
+			printf("\t[stepSize]      : The grayscale stepsize.\n\n");
+			break;
+		case DO_SKELETONIZATION_AND_PRUNING:
+			printf("To skeletonize and prune the grayscale skeleton of an image\n");
+			printf("\tGraySkeletonCPP.exe %i [dimensions] [inputfile] [outfile] [minCurveSize] [minSurfaceSize] [maxCurveHole] [maxSurfaceHole]\n\t\t[pointThreshold] [curveThreshold] [surfaceThreshold] [pointRadius] [curveRadius] [surfaceRadius] [skeletonDirectionRadius]\n\t\t[minGrayValue] [maxGrayValue] [stepSize]\n\n", DO_SKELETONIZATION_AND_PRUNING);
+			printf("\t[dimensions]    : The number of dimensions\n");
+			printf("\t[inputfile]     : an input image file (BMP if 2D, MRC if 3D)\n");
+			printf("\t[outfile]       : the filename to be used when generating the skeleton\n");
+			printf("\t[minCurveSize]  : The minimum length of curve segments.\n");
+			printf("\t[minSurfaceSize]: The minimum radius of surface segments (only used for 3D objects).\n");
+			printf("\t[maxCurveHole]  : The length of the largest curve hole segment to be repaired.\n");
+			printf("\t[maxSurfaceHole]: The radius of the largest surface hole segment to be repaired (only used for 3D objects).\n");
+			printf("\t[pointThreshold]: The cost threshold (between 0 (all) and 1(none))\n");
+			printf("\t[curveThreshold]: The cost threshold (between 0 (all) and 1(none))\n");
+			printf("\t[surfaceThreshold]: The cost threshold (between 0 (all) and 1(none)) (only used for 3D objects)\n");
+			printf("\t[pointRadius]   : The gaussian filter radius to use when pruning points\n");
+			printf("\t[curveRadius]   : The gaussian filter radius to use when pruning curves\n");
+			printf("\t[surfaceRadius] : The gaussian filter radius to use when pruning surfaces (only used for 3D objects)\n");
+			printf("\t[skeletonDirectionRadius] : The radius used when calculating the direction of the skeleton\n");
+			printf("\t[minGrayValue]  : The minimum grayscale value to consider.\n");
+			printf("\t[maxGrayValue]  : The maximum grayscale value to consider.\n");
+			printf("\t[stepSize]	  : The grayscale stepsize.\n\n");
+			break;
+		case DO_BINARY_THINNING_JU2007:
+			printf("To perform Binary Thinning (Ju2007)\n");
+			printf("\tGraySkeletonCPP.exe %i [dimensions] [inputfile] [outfile] [minCurveSize] [minSurfaceSize] [threshold]\n\n", DO_BINARY_THINNING_JU2007);
+			printf("\t[dimensions]    : The number of dimensions\n");
+			printf("\t[inputfile]     : an input image file (BMP if 2D, MRC if 3D)\n");
+			printf("\t[outfile]       : the filename to be used when generating the skeleton\n");
+			printf("\t[minCurveSize]  : The minimum length of curve segments.\n");
+			printf("\t[minSurfaceSize]: The minimum radius of surface segments (only used for 3D objects).\n");
+			printf("\t[pointThreshold]: The cost threshold of the input file\n\n");
+			break;
+		case DO_TOPOLOGICAL_WATERSHED_JU2007:
+			printf("To perform Topological Watershed (Ju2007 iteratively)\n");
+			printf("\tGraySkeletonCPP.exe %i [dimensions] [inputfile] [outfile] [minCurveSize] [minSurfaceSize] [minGrayValue] [maxGrayValue] [stepSize]\n\n", DO_TOPOLOGICAL_WATERSHED_JU2007);
+			printf("\t[dimensions]    : The number of dimensions\n");
+			printf("\t[inputfile]     : an input image file (BMP if 2D, MRC if 3D)\n");
+			printf("\t[outfile]       : the filename to be used when generating the skeleton\n");
+			printf("\t[minCurveSize]  : The minimum length of curve segments.\n");
+			printf("\t[minSurfaceSize]: The minimum radius of surface segments (only used for 3D objects).\n");
+			printf("\t[minGrayValue]  : The minimum grayscale value to consider.\n");
+			printf("\t[maxGrayValue]  : The maximum grayscale value to consider.\n");
+			printf("\t[stepSize]	  : The grayscale stepsize.\n\n");
+			break;
+		case DO_RESIZE:
+			printf("To resize a volume\n");
+			printf("\tGraySkeletonCPP.exe %i [inputfile] [outfile] [newsizeX] [newsizeY] [newsizeZ]\n\n", DO_RESIZE);
+			printf("\t[inputfile]     : The source file (MRC)\n");
+			printf("\t[outfile]       : The destination file (MRC)\n");
+			printf("\t[newsizeX]      : The new size of the data set in the x-Dimension\n");
+			printf("\t[newsizeY]      : The new size of the data set in the y-Dimension\n");
+			printf("\t[newsizeZ]      : The new size of the data set in the z-Dimension\n\n");
+			break;
+		case DO_DISPLAY_VOXEL_COUNT:
+			printf("To display the non-zero voxel count of a volume \n");
+			printf("\tGraySkeletonCPP.exe %i [inputfile]\n\n", DO_DISPLAY_VOXEL_COUNT);
+			printf("\t[inputfile]     : The source file\n\n");
+			break;
+		case DO_TEXT_TO_VOLUME:
+			printf("To convert a text file into a volume\n");
+			printf("\tGraySkeletonCPP.exe %i [inputfile] [outfile]\n\n", DO_TEXT_TO_VOLUME);
+			printf("\t[inputfile]     : The source file\n");
+			printf("\t[outfile]       : The destination file\n\n");
+			break;
+		case DO_CROPPING:
+			printf("To Crop a volume\n");
+			printf("\tGraySkeletonCPP.exe %i [inputfile] [outfile] [startx] [endx] [starty] [endy] [startz] [endz]\n\n", DO_CROPPING);
+			printf("\t[inputfile]     : The source file\n");
+			printf("\t[outfile]       : The destination file\n");
+			printf("\t[startd]        : The starting coordinate in the d dimension\n");
+			printf("\t[endd]          : The ending coordinate in the d dimension\n\n");
+			break;
+		case DO_DOWNSAMPLING:
+			printf("To Downsample a volume\n");
+			printf("\tGraySkeletonCPP.exe %i [inputfile] [outfile]\n\n", DO_DOWNSAMPLING);
+			printf("\t[inputfile]     : The source file\n");
+			printf("\t[outfile]       : The destination file\n\n");
+			break;
+		case DO_CONVERSION:
+			printf("To convert file formats\n");
+			printf("\tGraySkeletonCPP.exe %i [inputfile] [inputformat] [outfile] [outformat] [x-size] [y-size] [z-size]\n\n", DO_CONVERSION);
+			printf("\t[inputfile]     : The source file\n");
+			printf("\t[inputformat]   : The source file format\n");
+			printf("\t[outfile]       : The destination file\n");
+			printf("\t[outformat]     : The destination file format\n");
+			printf("\t[x-size]        : The size of the data set in the x-Dimension\n");
+			printf("\t[y-size]        : The size of the data set in the y-Dimension\n");
+			printf("\t[z-size]        : The size of the data set in the z-Dimension\n\n");
+			break;
+	}
 }
 
 // Performs binary thinning using the method described by Ju et. al. 2007 ("Computing a family of skeletons of volumetric models for shape description")
@@ -171,7 +200,7 @@ void DoBinaryThinningJu2007(int dimensions, string inFile, string outFile, int m
 			break;
 		}
 		default:
-			DisplayInputParams();
+			DisplayInputParams(DO_BINARY_THINNING_JU2007);
 			break;
 	}
 }
@@ -208,7 +237,7 @@ void DoTopologicalWatershedJu2007(int dimensions, string inFile, string outFile,
 			break;
 		}
 		default:
-			DisplayInputParams();
+			DisplayInputParams(DO_TOPOLOGICAL_WATERSHED_JU2007);
 			break;
 	}
 }
@@ -238,7 +267,7 @@ void DoSkeletonizationAbeysinghe2007(int dimensions, string inFile, string outFi
 			break;
 		}
 		default:
-			DisplayInputParams();
+			DisplayInputParams(DO_SKELETONIZATION);
 			break;
 	}
 }
@@ -266,12 +295,71 @@ void DoSkeletonizationAndPruningAbeysinghe2007(int dimensions, string inFile, st
 			break;
 		}
 		default:
-			DisplayInputParams();
+			DisplayInputParams(DO_SKELETONIZATION_AND_PRUNING);
 			break;
 	}
 }
 
 
+
+
+void Do_Resize(string inFile, string outFile, int newX, int newY, int newZ) {
+	MRCReader * reader = (MRCReader*)MRCReaderPicker::pick((char *)inFile.c_str());
+	Volume * sourceVol = reader->getVolume();
+	Volume * destVol = new Volume(newX, newY, newZ);
+	double ox, oy, oz;	// The actual position of the old grid
+    double dx, dy, dz;  // the delta from the integral position
+	double fx, fy, fz;  // the floor
+	double cx, cy, cz;  // the ceiling
+	double i1, i2, j1, j2, w1, w2, iv;
+
+	for(int x = 0; x < newX; x++) {
+		ox = (double)(x * sourceVol->getSizeX()) / ((double)newX);
+		fx = floor(ox);
+		cx = ceil(ox);
+		dx = ox - fx;
+		for(int y = 0; y < newY; y++) {
+			oy = (double)(y * sourceVol->getSizeY()) / ((double)newY);
+			fy = floor(oy);
+			cy = ceil(oy);
+			dy = oy - fy;
+			for(int z = 0; z < newZ; z++) {
+				oz = (double)(z * sourceVol->getSizeZ()) / ((double)newZ);
+				fz = floor(oz);
+				cz = ceil(oz);
+				dz = oz - fz;
+
+				i1 = sourceVol->getDataAt(fx, fy, fz) * (1 - dz) + sourceVol->getDataAt(fx, fy, cz) * dz;
+				i2 = sourceVol->getDataAt(fx, cy, fz) * (1 - dz) + sourceVol->getDataAt(fx, cy, cz) * dz;
+				j1 = sourceVol->getDataAt(cx, fy, fz) * (1 - dz) + sourceVol->getDataAt(cx, fy, cz) * dz;
+				j2 = sourceVol->getDataAt(cx, cy, fz) * (1 - dz) + sourceVol->getDataAt(cx, cy, cz) * dz;
+				w1 = i1 * (1 - dy) + i2 * dy;
+				w2 = j1 * (1 - dy) + j2 * dy;
+
+				iv = w1 * (1- dx) + w2 * dx;
+
+				destVol->setDataAt(x, y, z, iv);
+			}
+		}
+	}
+
+
+	destVol->toMRCFile((char *)outFile.c_str());
+	delete destVol;
+	delete reader;
+	delete sourceVol;
+
+}
+void DoDisplayVoxelCount(string inFile) {
+	MRCReader * reader = (MRCReader*)MRCReaderPicker::pick((char *)inFile.c_str());
+	Volume * sourceVol = reader->getVolume();
+
+	printf("%i voxels\n" , sourceVol->getNonZeroVoxelCount());
+
+	delete reader;
+	delete sourceVol;
+
+}
 
 void DoCropping(string inFile, string outFile, int startX, int endX, int startY, int endY, int startZ, int endZ) {
 	MRCReader * reader = (MRCReader*)MRCReaderPicker::pick((char *)inFile.c_str());
@@ -429,23 +517,12 @@ void CreateSheet(string outFile, double startX, double startY, double xIncrement
 	delete sheet;
 }
 
-void DoDisplayVoxelCount(string inFile) {
-	MRCReader * reader = (MRCReader*)MRCReaderPicker::pick((char *)inFile.c_str());
-	Volume * sourceVol = reader->getVolume();
-
-	printf("%i voxels\n" , sourceVol->getNonZeroVoxelCount());
-
-	delete reader;
-	delete sourceVol;
-
-}
-
 int main( int args, char * argv[] ) {
 	appTimeManager.PushCurrentTime();
 	int function;
 	bool error = true;
 
-	if(args > 2) {
+	if(args >= 2) {
 		function = StringToInt(argv[1]);
 		switch(function) {		
 			case DO_BINARY_THINNING_JU2007:
@@ -496,6 +573,12 @@ int main( int args, char * argv[] ) {
 					error = false;
 				} 
 				break;
+			case DO_RESIZE:
+				// GraySkeletonCPP.exe DO_RESIZE [inputfile] [outfile] [newsizeX] [newsizeY] [newsizeZ]"
+				if(args == 7) {
+					Do_Resize(argv[2], argv[3], StringToInt(argv[4]), StringToInt(argv[5]), StringToInt(argv[6]));
+					error = false;
+				}
 			case DO_CROPPING:
 				// GraySkeletonCPP.exe DO_CROPPING [inputfile] [outfile] [startx] [endx] [starty] [endy] [startz] [endz]
 				if(args == 10) {					
@@ -516,14 +599,16 @@ int main( int args, char * argv[] ) {
 					VolumeFormatConverter::ConvertVolume(argv[2], argv[3], argv[4], argv[5], StringToInt(argv[6]), StringToInt(argv[7]), StringToInt(argv[8]));
 					error = false;
 				} 
-				break;
-					
+				break;					
 		}		
-	} 
-
-	if(error) {
-		DisplayInputParams();
+		if(error) {
+			DisplayInputParams(function);
+		}
+	} else {
+		DisplayInputParams(DO_NOTHING);
 	}
+
+
 
 	appTimeManager.PopAndDisplayTime("\nTotal : %f seconds!\n");
 }
