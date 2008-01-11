@@ -1,5 +1,5 @@
-#ifndef TIME_MANAGER_H
-#define TIME_MANAGER_H
+#ifndef FOUNDATION_TIME_MANAGER_H
+#define FOUNDATION_TIME_MANAGER_H
 
 #include <time.h>
 #include <string.h>
@@ -8,7 +8,7 @@
 using namespace std;
 
 namespace wustl_mm {
-	namespace GraySkeletonCPP {
+	namespace Foundation {
 		struct stopwatch_rec {
 			clock_t startTime;
 			double cumulatedTime;

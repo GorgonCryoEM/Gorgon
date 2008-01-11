@@ -4,7 +4,7 @@
 #define round(f) ((f >= 0)?(int)(f + .5):(int)(f - .5))
 
 namespace wustl_mm {
-	namespace MatlabInterface {
+	namespace MathTools {
 
 		inline bool isZero(double value, double varience = 1e-16) 
 		{ 

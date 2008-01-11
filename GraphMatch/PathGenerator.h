@@ -11,7 +11,7 @@ Date  : 02/20/2006
 #include "StandardGraph.h"
 #include "LinkedNode.h"
 #include "LinkedNodeStub.h"
-#include <SkeletonMaker\volume.h>
+#include <SkeletonMaker/volume.h>
 #include "VectorMath.h"
 #include <vector>
 

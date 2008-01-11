@@ -1,13 +1,15 @@
 #ifndef COMBINATORICS_H
 #define COMBINATORICS_H
 
+#include "DataStructures.h"
+
 namespace wustl_mm {
-	namespace MatlabInterface {
+	namespace MathTools {
 		class Combinatorics {
 		public:
 			static unsigned long long Combinations(int n, int r);
 			static unsigned long long Permutations(int n, int r);
-
+			
 			static void GetBinomialDistribution(ProbabilityDistribution1D & distributionInfo);
 			static void GetBinomialDistribution(ProbabilityDistribution2D & distributionInfo);
 			static void GetBinomialDistribution(ProbabilityDistribution3D & distributionInfo);

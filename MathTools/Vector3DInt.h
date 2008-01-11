@@ -2,7 +2,7 @@
 #define VECTOR3D_INT_H
 
 namespace wustl_mm {
-	namespace MatlabInterface {
+	namespace MathTools {
 		class Vector3DInt {
 		public:
 			Vector3DInt();

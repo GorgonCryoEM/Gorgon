@@ -8,8 +8,8 @@ Date  : 01/30/2006
 #ifndef SKELETONREADER_H
 #define SKELETONREADER_H
 
-#include <SkeletonMaker\reader.h>
-#include <SkeletonMaker\volume.h>
+#include <SkeletonMaker/reader.h>
+#include <SkeletonMaker/volume.h>
 #include "GeometricShape.h"
 #include <vector>
 #include "GlobalConstants.h"

@@ -4,7 +4,7 @@
 #include "BasicDefines.h"
 
 namespace wustl_mm {
-	namespace MatlabInterface {
+	namespace MathTools {
 		class ComplexNumber {
 		public:
 			ComplexNumber();

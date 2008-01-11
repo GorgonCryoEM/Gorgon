@@ -2,13 +2,13 @@
 #define DISCRETE_MESH_H
 
 #include <SkeletonMaker/volume.h>
-#include <MatlabInterface/DataStructures.h>
-#include <MatlabInterface/Vector3DInt.h>
+#include <MathTools/DataStructures.h>
+#include <MathTools/Vector3DInt.h>
 #include <string.h>
 #include <list>
 
 using namespace std;
-using namespace wustl_mm::MatlabInterface;
+using namespace wustl_mm::MathTools;
 
 namespace wustl_mm {
 	namespace GraySkeletonCPP {		
