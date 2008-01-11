@@ -14,6 +14,7 @@
 #include <time.h>
 
 using namespace std;
+
 namespace wustl_mm {
 	namespace GraphMatch {
 

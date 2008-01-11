@@ -1,9 +1,9 @@
 #ifndef NORMAL_FINDER_H
 #define NORMAL_FINDER_H
 
-#include <MatlabInterface\Vector3D.h>
+#include <MathTools/Vector3D.h>
 
-using namespace wustl_mm::MatlabInterface;
+using namespace wustl_mm::MathTools;
 using namespace std;
 
 namespace wustl_mm {

@@ -2,7 +2,7 @@
 #define VOLUME_DELTA_ANALYZER_H
 
 #include <vector>
-#include <MatlabInterface/DataStructures.h>
+#include <MathTools/DataStructures.h>
 #include <SkeletonMaker/volume.h>
 #include "DiscreteMesh.h"
 #include "GlobalDefinitions.h"
@@ -10,7 +10,7 @@
 #include "DiscreteMesh.h"
 
 using namespace std;
-using namespace wustl_mm::MatlabInterface;
+using namespace wustl_mm::MathTools;
 
 namespace wustl_mm {
 	namespace GraySkeletonCPP {

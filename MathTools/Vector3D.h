@@ -7,7 +7,7 @@
 #include "Vector3DInt.h"
 
 namespace wustl_mm {
-	namespace MatlabInterface {
+	namespace MathTools {
 		class Vector3D {
 		public:
 			Vector3D();

@@ -9,11 +9,11 @@
 #include "VolumeSkeletonizer.h"
 #include "VolumeDeltaAnalyzer.h"
 #include "DiscreteMesh.h"
-#include <MatlabInterface/MathLib.h>
-#include <MatlabInterface/DataStructures.h>
+#include <MathTools/MathLib.h>
+#include <MathTools/DataStructures.h>
 #include <string>
 
-using namespace wustl_mm::MatlabInterface;
+using namespace wustl_mm::MathTools;
 
 namespace wustl_mm {
 	namespace GraySkeletonCPP {
@@ -143,22 +143,8 @@ namespace wustl_mm {
 				delete thresholdedImage;
 				delete finalSkeleton;
 				delete newVoxelImage;
-
-				//SIGGRAPH OUTPUTS
-				/* GrayImage * presImage = GrayImage::GrayImageVolumeToImage(preservedVolume);
-				presImage->ApplyMask(deletedPixels, PIXEL_BINARY_TRUE, 0);
-				presImage->Pad(-MAX_GAUSSIAN_FILTER_RADIUS, 0);
-
-				char * fileName = new char[100];
-				sprintf(fileName, "-topoPreserved-%f.bmp", threshold/255.0);
-				ImageReaderBMP::SaveGrayscaleImage(presImage, outputFile + fileName);
-				delete [] fileName;  */
-
-
-
 			}	
 			
-
 			image->Pad(-MAX_GAUSSIAN_FILTER_RADIUS, 0);
 			outputImages->AddImage(new GrayImage(image));
 			compositeImage->Pad(-MAX_GAUSSIAN_FILTER_RADIUS, 0);

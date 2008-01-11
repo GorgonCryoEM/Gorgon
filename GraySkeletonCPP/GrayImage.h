@@ -1,8 +1,8 @@
 #ifndef GRAY_IMAGE_H
 #define GRAY_IMAGE_H
 
-#include <SkeletonMaker\reader.h>
-#include <SkeletonMaker\volume.h>
+#include <SkeletonMaker/reader.h>
+#include <SkeletonMaker/volume.h>
 #include "GlobalDefinitions.h"
 
 namespace wustl_mm {

@@ -2,7 +2,7 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="8.00"
-	Name="MatlabInterface"
+	Name="MathTools"
 	ProjectGUID="{EC8F7758-80CF-436B-978B-717297945FAB}"
 	RootNamespace="MatlabInterface"
 	>
@@ -282,6 +282,10 @@
 		</Configuration>
 	</Configurations>
 	<References>
+		<ProjectReference
+			ReferencedProjectIdentifier="{817660CF-4E6C-48F6-BF18-FB75FC2B6B5E}"
+			RelativePathToProject=".\SkeletonMaker\SkeletonMaker.vcproj"
+		/>
 	</References>
 	<Files>
 		<Filter
@@ -290,7 +294,7 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath=".\MatlabInterface.cpp"
+				RelativePath=".\MathTools.cpp"
 				>
 			</File>
 		</Filter>
@@ -316,7 +320,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\eigen.h"
+				RelativePath=".\Eigen.h"
 				>
 			</File>
 			<File
@@ -339,10 +343,6 @@
 				RelativePath=".\Vector3DInt.h"
 				>
 			</File>
-			<Filter
-				Name="Resource Files"
-				>
-			</Filter>
 		</Filter>
 		<Filter
 			Name="Resource Files"

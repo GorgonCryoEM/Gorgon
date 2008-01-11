@@ -14,7 +14,7 @@
 #endif
 
 namespace wustl_mm {
-	namespace MatlabInterface {
+	namespace MathTools {
 		class MatlabWrapper {
 		public:
 			MatlabWrapper();

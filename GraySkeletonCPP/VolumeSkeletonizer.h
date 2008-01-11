@@ -7,15 +7,16 @@
 #include "ImageReaderMRC.h"
 #include "GlobalDefinitions.h"
 #include "VolumeDeltaAnalyzer.h"
-#include <SkeletonMaker\PriorityQueue.h>
-#include <MatlabInterface\MathLib.h>
-#include <MatlabInterface\DataStructures.h>
-#include <MatlabInterface\Vector3D.h>
+#include <SkeletonMaker/PriorityQueue.h>
+#include <MathTools/MathLib.h>
+#include <MathTools/DataStructures.h>
+#include <MathTools/Vector3D.h>
 #include "NormalFinder.h"
 #include <string>
-#include "TimeManager.h"
+#include <Foundation/TimeManager.h>
 
-using namespace wustl_mm::MatlabInterface;
+using namespace wustl_mm::MathTools;
+using namespace wustl_mm::Foundation;
 using namespace std;
 
 namespace wustl_mm {
@@ -31,7 +32,7 @@ namespace wustl_mm {
 			VolumeSkeletonizer(int pointRadius, int curveRadius, int surfaceRadius, int skeletonDirectionRadius);
 			~VolumeSkeletonizer();
 			Volume * CleanImmersionSkeleton(Volume * skeleton, string outputPath);
-			Volume * PerformImmersionSkeletonizationAndPruning(Volume * sourceVol, double startGray, double endGray, double stepSize, int minCurveSize, int minSurfaceSize, int maxCurveHole, int maxSurfaceHole, string outputPath, bool doPruning, double pointThreshold, double curveThreshold, double surfaceThreshold);
+			Volume * PerformImmersionSkeletonizationAndPruning(Volume * sourceVol, double startGray, double endGray, double stepSize, int smoothingIterations, int smoothingRadius, int minCurveSize, int minSurfaceSize, int maxCurveHole, int maxSurfaceHole, string outputPath, bool doPruning, double pointThreshold, double curveThreshold, double surfaceThreshold);
 			Volume * PerformSkeletonizationAndPruning(Volume * imageVol, string outputPath);
 			Volume * PerformImmersionSkeletonization(Volume * imageVol, string outputPath);
 			Volume * PerformJuSkeletonization(Volume * imageVol, string outputPath, int minGray, int maxGray, int stepSize);
@@ -45,6 +46,8 @@ namespace wustl_mm {
 			void PruneCurves(Volume * sourceVolume, int pruneLength);
 			void PruneSurfaces(Volume * sourceVolume, int pruneLength);
 			void PruneUsingStructureTensor(Volume * skeleton, Volume * sourceVolume, EigenResults3D * volumeEigens, double threshold, char pruningClass, string outputPath);
+			void SmoothenVolume(Volume * &sourceVolume, double minGrayscale, double maxGrayscale, int stRadius);
+			void ThresholdGrayValueRange(Volume * sourceVolume, double minGrayValue, double maxGrayValue);
 			void VoxelBinarySubtract(Volume * sourceAndDestVolume1, Volume * sourceVolume2);
 			void VoxelSubtract(Volume * sourceAndDestVolume1, Volume * sourceVolume2);
 			void VoxelOr(Volume * sourceAndDestVolume1, Volume * sourceVolume2);
@@ -66,6 +69,7 @@ namespace wustl_mm {
 			void FindOrthogonalAxes(Vector3D axis, Vector3D & res1, Vector3D & res2);			
 			void GetEigenResult(EigenResults3D & returnVal, Vector3D * imageGradient, ProbabilityDistribution3D & gaussianFilter, int x, int y, int z, int sizeX, int sizeY, int sizeZ, int gaussianFilterRadius, bool clear);
 			void GetEigenResult2(EigenResults3D & returnVal, Vector3D * imageGradient, ProbabilityDistribution3D & gaussianFilter, int x, int y, int z, int sizeX, int sizeY, int sizeZ, int gaussianFilterRadius, bool clear);
+			void GetSTBasedDistribution(ProbabilityDistribution3D & distributionInfo, EigenResults3D eigen);
 			void HueR(double value, double &r, double &g, double &b);
 			void HueRB(double value, double &r, double &g, double &b);
 			void HueRGB(double value, double &r, double &g, double &b);
@@ -77,12 +81,12 @@ namespace wustl_mm {
 			void WriteEigenResultsToOFFFileWireframe(Volume * sourceVolume, Volume * cost, Volume * skeleton, EigenResults3D * eigenResults, string outputPath);
 			void WriteEigenResultsToVRMLFile(Volume * sourceVolume, Volume * cost, Volume * skeleton, EigenResults3D * eigenResults, string outputPath, bool doInverse);
 			void WriteSkeletonDirectionToVRMLFile(Volume * skeleton, Volume * cost, Vector3D * skeletonDirections, string outputPath, bool surfaces, double curveSize);
-			void WriteVolumeToVRMLFile(Volume * vol, string outputPath);
+			void WriteVolumeToVRMLFile(Volume * vol, string outputPath);			
 			Vector3D XYZtoUVW(Vector3D vec, Vector3D u, Vector3D v, Vector3D w);
 			Volume * FillCurveHoles(Volume * thresholdedSkeleton, Volume * originalSkeleton, int maxHoleSize);
 			Volume * FillSurfaceHoles(Volume * thresholdedSkeleton, Volume * originalSkeleton, int maxHoleSize);
 			Volume * GetJuThinning(Volume * sourceVolume, Volume * preserve, double threshold, char thinningClass);
-			Volume * GetImmersionThinning(Volume * sourceVolume, Volume * preserve, double lowGrayscale, double highGrayscale, double stepSize, char thinningClass);			
+			Volume * GetImmersionThinning(Volume * sourceVolume, Volume * preserve, double lowGrayscale, double highGrayscale, double stepSize, char thinningClass);									
 
 			static const char THINNING_CLASS_SURFACE_PRESERVATION = 4;
 			static const char THINNING_CLASS_CURVE_PRESERVATION_2D = 3;
@@ -156,36 +160,10 @@ namespace wustl_mm {
 				Vector3D v3 = imageEigen.vectors[2];				
 				switch(type) {
 					case PRUNING_CLASS_PRUNE_POINTS:
-						//dotValue = 1;
-						//ratio = imageEigen.values[2] / imageEigen.values[0];
-						//cost = abs(ratio);
-						//cost = imageEigen.values[2] * imageEigen.values[2] / (imageEigen.values[0] * imageEigen.values[1]);
 
 						cost = u3*u3 / (u1*u2);
 						break;
 					case PRUNING_CLASS_PRUNE_CURVES:
-						//{
-							/*			Vector3D n1 = skeletonDirection
-							Vector3D m1 = Vector3D();
-							Vector3D m2 = Vector3D();*/
-							/*dotValue = skeletonDirection * imageEigen.vectors[2];
-							ratio = (2.0 * imageEigen.values[2])/ (imageEigen.values[0] + imageEigen.values[1]);
-							cost = abs(dotValue) * (1-ratio);*/
-
-/*							Vector3D n1, n2, m1, m2;
-							skelDirectionST = XYZtoUVW(skeletonDirection, imageEigen.vectors[0],imageEigen.vectors[1], imageEigen.vectors[2]);
-							FindOrthogonalAxes(skelDirectionST, n1, n2);
-
-							m1 = Vector3D(n1.values[0]/imageEigen.values[0], n1.values[1]/imageEigen.values[1], n1.values[2]/imageEigen.values[2]);
-							m2 = Vector3D(n2.values[0]/imageEigen.values[0], n2.values[1]/imageEigen.values[1], n2.values[2]/imageEigen.values[2]);
-							theta = atan((2.0 * (m1 * m2)) / ((m1 * m1) - (m2 * m2))) / 2.0;							
-							a = 1.0 / ((m1 * cos(theta)) + (m2 * sin(theta))).Length();
-							b = 1.0 / ((m1 * sin(theta)) + (m2 * cos(theta))).Length();
-
-							cost = sqrt(a*b / (imageEigen.values[0] * imageEigen.values[1]));		*/		
-						//}
-
-						// Line inside ellipsoid vs. min Length
 
 						if(skeletonDirection.IsBadNormal()) {
 							cost = 1.0;
@@ -200,28 +178,7 @@ namespace wustl_mm {
 
 						break;
 					case PRUNING_CLASS_PRUNE_SURFACES:
-						/*dotValue = skeletonDirection * imageEigen.vectors[0];
-						ratio = (imageEigen.values[1] + imageEigen.values[2])/ (2.0*imageEigen.values[0]);
-						cost = abs(dotValue)*(1 - ratio);	*/
-
-						//// Line inside ellipsoid vs. max line length
-						//n = XYZtoUVW(skeletonDirection, v1, v2, v3);
-						////temp = Vector3D(imageEigen.values[0] * n.values[0], imageEigen.values[1] * n.values[1], imageEigen.values[2] * n.values[2]);
-						//a = u1 * u2 * u3;
-						//b = sqrt(u2*u2*u3*u3*n.X()*n.X() + u1*u1*u3*u3*n.Y()*n.Y() + u1*u1*u2*u2*n.Z()*n.Z());
-						//if(isZero(b)) {
-						//	cost = 1.0;
-						//} else {
-						//	temp = Vector3D(a*n.X()/b, a*n.Y()/b, a*n.Z()/b);
-						//	cost = temp.Length() / u1;
-						//}
-
-						////Projection onto v1 vs. max line length						
-						//n = XYZtoUVW(skeletonDirection, v1, v2, v3);						
-
-						//cost = abs(n.X())/(u1+u2+u3);			//(n.X/u1)  * (u1 / (u1+u2+u3)) ; simplified
-						////cost = abs(n.X());					//(n.X/u1)						; but u1 = 						
-					
+				
 						{
 							if(skeletonDirection.IsBadNormal()) {
 								cost = 1.0;
@@ -750,6 +707,34 @@ namespace wustl_mm {
 		}
 
 
+		void VolumeSkeletonizer::GetSTBasedDistribution(ProbabilityDistribution3D & distributionInfo, EigenResults3D eigen) {
+			Vector3D skeletonDirection;
+			double total = 0;
+			double cell;
+			for(int x = -distributionInfo.radius; x <= distributionInfo.radius; x++) {
+				for(int y = -distributionInfo.radius; y <= distributionInfo.radius; y++) {
+					for(int z = -distributionInfo.radius; z <= distributionInfo.radius; z++) {
+						if((x!=0) && (y!=0) && (z!=0)) {
+							skeletonDirection = Vector3D(0,0,0) - Vector3D(x, y, z);
+							skeletonDirection.Normalize();
+							cell = GetVoxelCost(eigen, skeletonDirection, PRUNING_CLASS_PRUNE_CURVES);
+							distributionInfo.values[x+distributionInfo.radius][y+distributionInfo.radius][z+distributionInfo.radius] = cell;
+							total += cell;
+						}
+					}
+				}
+			}
+
+			for(int x = -distributionInfo.radius; x <= distributionInfo.radius; x++) {
+				for(int y = -distributionInfo.radius; y <= distributionInfo.radius; y++) {
+					for(int z = -distributionInfo.radius; z <= distributionInfo.radius; z++) {
+						distributionInfo.values[x+distributionInfo.radius][y+distributionInfo.radius][z+distributionInfo.radius] = 
+							distributionInfo.values[x+distributionInfo.radius][y+distributionInfo.radius][z+distributionInfo.radius] / total;
+					}
+				}
+			}
+
+		}
 		void VolumeSkeletonizer::HueR(double value, double &r, double &g, double &b) {
 			r = value*value*value*value;
 			g = 0;
@@ -945,6 +930,80 @@ namespace wustl_mm {
 			}
 		}
 
+		void VolumeSkeletonizer::SmoothenVolume(Volume * & sourceVolume, double minGrayscale, double maxGrayscale, int stRadius) {
+			ProbabilityDistribution3D mask;
+			mask.radius = 1;
+
+			ProbabilityDistribution3D smoothenMask;
+			smoothenMask.radius = stRadius;
+			math->GetBinomialDistribution(smoothenMask);
+
+			sourceVolume->pad(MAX_GAUSSIAN_FILTER_RADIUS, 0);
+
+			Volume * maskVolume = new Volume(sourceVolume->getSizeX(), sourceVolume->getSizeY(), sourceVolume->getSizeZ());
+			double data;
+			for(int x = 0; x < sourceVolume->getSizeX(); x++) {
+				for(int y = 0; y < sourceVolume->getSizeY(); y++) {
+					for(int z = 0; z < sourceVolume->getSizeZ(); z++) {
+						data = sourceVolume->getDataAt(x, y, z);
+						if((data >= minGrayscale) && (data <= maxGrayscale)) {
+							maskVolume->setDataAt(x, y, z, 1.0);
+						} else {
+							maskVolume->setDataAt(x, y, z, 0.0);
+						}						
+					}
+				}
+			}
+
+			Vector3D * volumeGradient = GetVolumeGradient2(sourceVolume);
+			EigenResults3D * eigens = GetEigenResults2(maskVolume, volumeGradient, smoothenMask, stRadius, true);	
+			Volume * destVolume = new Volume(sourceVolume->getSizeX(), sourceVolume->getSizeY(), sourceVolume->getSizeZ());
+			double sourceData;
+
+			for(int x = mask.radius; x < sourceVolume->getSizeX()-mask.radius; x++) {
+				for(int y = mask.radius; y < sourceVolume->getSizeY()-mask.radius; y++) {
+					for(int z = mask.radius; z < sourceVolume->getSizeZ()-mask.radius; z++) {
+						sourceData = sourceVolume->getDataAt(x, y, z);
+						if((sourceData >= minGrayscale) && (sourceData <= maxGrayscale)) {
+							GetSTBasedDistribution(mask, eigens[sourceVolume->getIndex(x, y, z)]);
+
+							for(int xx = -mask.radius; xx <= mask.radius; xx++) {
+								for(int yy = -mask.radius; yy <= mask.radius; yy++) {
+									for(int zz = -mask.radius; zz <= mask.radius; zz++) {									
+										destVolume->setDataAt(x, y, z, 
+											destVolume->getDataAt(x, y, z) + sourceVolume->getDataAt(x+xx, y+yy, z+zz) *  mask.values[xx+mask.radius][yy+mask.radius][zz+mask.radius]);
+									}						
+								}
+							}
+							destVolume->setDataAt(x, y, z, sourceVolume->getDataAt(x, y, z) * 0.5 + destVolume->getDataAt(x, y, z) * 0.5);
+						} else {
+							destVolume->setDataAt(x, y, z, sourceVolume->getDataAt(x, y, z));
+						}
+					}
+				}
+			}	
+
+			destVolume->pad(-MAX_GAUSSIAN_FILTER_RADIUS, 0);
+			delete sourceVolume;			
+			sourceVolume = destVolume;
+
+			delete maskVolume;
+			delete [] volumeGradient;
+			delete [] eigens;
+		}
+		void VolumeSkeletonizer::ThresholdGrayValueRange(Volume * sourceVolume, double minGrayValue, double maxGrayValue) {
+			double data;
+			for(int x = 0; x < sourceVolume->getSizeX(); x++) {
+				for(int y = 0; y < sourceVolume->getSizeY(); y++) {
+					for(int z = 0; z < sourceVolume->getSizeZ(); z++) {
+						data = sourceVolume->getDataAt(x, y, z);
+						if((data < minGrayValue) || (data > maxGrayValue)) {
+							sourceVolume->setDataAt(x, y, z, 0.0);
+						}
+					}
+				}
+			}
+		}
 		void VolumeSkeletonizer::VoxelBinarySubtract(Volume * sourceAndDestVolume1, Volume * sourceVolume2){
 			for(int x = 0; x < sourceAndDestVolume1->getSizeX(); x++) {
 				for(int y = 0; y < sourceAndDestVolume1->getSizeY(); y++) {
@@ -1487,7 +1546,12 @@ namespace wustl_mm {
 
 
 
-		Volume * VolumeSkeletonizer::PerformImmersionSkeletonizationAndPruning(Volume * sourceVol, double startGray, double endGray, double stepSize, int minCurveSize, int minSurfaceSize, int maxCurveHole, int maxSurfaceHole, string outputPath, bool doPruning, double pointThreshold, double curveThreshold, double surfaceThreshold) {
+		Volume * VolumeSkeletonizer::PerformImmersionSkeletonizationAndPruning(Volume * sourceVol, double startGray, double endGray, double stepSize, int smoothingIterations, int smoothingRadius, int minCurveSize, int minSurfaceSize, int maxCurveHole, int maxSurfaceHole, string outputPath, bool doPruning, double pointThreshold, double curveThreshold, double surfaceThreshold) {
+			appTimeManager.PushCurrentTime();
+			for(int i = 0; i < smoothingIterations; i++) {
+				SmoothenVolume(sourceVol, startGray, endGray, smoothingRadius);
+			}
+			appTimeManager.PopAndDisplayTime("Smoothing : %f seconds!\n");
 			Vector3D * volumeGradient;
 			EigenResults3D * volumeEigens;
 			sourceVol->pad(MAX_GAUSSIAN_FILTER_RADIUS, 0);

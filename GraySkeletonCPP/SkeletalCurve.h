@@ -2,10 +2,10 @@
 #define SKELETAL_CURVE_H
 
 #include <vector>
-#include <MatlabInterface\DataStructures.h>
+#include <MathTools/DataStructures.h>
 
 using namespace std;
-using namespace wustl_mm::MatlabInterface;
+using namespace wustl_mm::MathTools;
 
 namespace wustl_mm {
 	namespace GraySkeletonCPP {

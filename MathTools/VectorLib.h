@@ -4,7 +4,7 @@
 #include "DataStructures.h"
 
 namespace wustl_mm {
-	namespace MatlabInterface {
+	namespace MathTools {
 		class VectorLib {
 		public:
 			static double DotProduct(Vector3D & v1, Vector3D & v2);

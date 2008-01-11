@@ -1,6 +1,8 @@
 #ifndef IMAGE_READER_H
 #define IMAGE_READER_H
 
+#include "GrayImage.h"
+
 namespace wustl_mm {
 	namespace GraySkeletonCPP {
 		class ImageReader {

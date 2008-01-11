@@ -14,7 +14,7 @@ Date  : 01/23/2006
 #include "Matcher2Helix.h"
 #include "SecondaryStructure.h"
 #include "GeometricShape.h"
-#include <SkeletonMaker\volume.h>
+#include <SkeletonMaker/volume.h>
 using namespace std;
 
 namespace wustl_mm {

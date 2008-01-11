@@ -1,11 +1,13 @@
 #ifndef GLOBAL_DEFINITIONS_H
 #define GLOBAL_DEFINITIONS_H
 
-#include "TimeManager.h"
+#include <Foundation/TimeManager.h>
 
 #define SAVE_INTERMEDIATE_RESULTS
 
 #define round(f) ((f >= 0)?(int)(f + .5):(int)(f - .5))
+
+using namespace wustl_mm::Foundation;
 
 namespace wustl_mm {
 	namespace GraySkeletonCPP {

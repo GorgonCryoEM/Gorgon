@@ -4,6 +4,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SkeletonMaker", "SkeletonMa
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GraphMatch", "GraphMatch\GraphMatch.vcproj", "{E98C9677-C8CA-4CC3-8AE7-A06140EA49BB}"
 	ProjectSection(ProjectDependencies) = postProject
+		{EC8F7758-80CF-436B-978B-717297945FAB} = {EC8F7758-80CF-436B-978B-717297945FAB}
 		{817660CF-4E6C-48F6-BF18-FB75FC2B6B5E} = {817660CF-4E6C-48F6-BF18-FB75FC2B6B5E}
 	EndProjectSection
 EndProject
@@ -17,7 +18,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GraySkeletonCPP", "GraySkel
 		{817660CF-4E6C-48F6-BF18-FB75FC2B6B5E} = {817660CF-4E6C-48F6-BF18-FB75FC2B6B5E}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MatlabInterface", "MatlabInterface\MatlabInterface.vcproj", "{EC8F7758-80CF-436B-978B-717297945FAB}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ProteinMorph", "ProteinMorph\ProteinMorph.vcproj", "{9868724F-D44A-4315-A809-C3F5ECA9110E}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Foundation", "Foundation\Foundation.vcproj", "{5B1E0736-9D9C-43BF-A60D-210292DCB7FC}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MathTools", "MathTools\MathTools.vcproj", "{EC8F7758-80CF-436B-978B-717297945FAB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -117,6 +122,46 @@ Global
 		{E3B1B536-8C7A-45E8-9BAA-5FE4F7B9FE13}.SansMatlab|Mixed Platforms.Build.0 = SansMatlab|Win32
 		{E3B1B536-8C7A-45E8-9BAA-5FE4F7B9FE13}.SansMatlab|Win32.ActiveCfg = SansMatlab|Win32
 		{E3B1B536-8C7A-45E8-9BAA-5FE4F7B9FE13}.SansMatlab|Win32.Build.0 = SansMatlab|Win32
+		{9868724F-D44A-4315-A809-C3F5ECA9110E}.Debug|Any CPU.ActiveCfg = Debug|Win32
+		{9868724F-D44A-4315-A809-C3F5ECA9110E}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
+		{9868724F-D44A-4315-A809-C3F5ECA9110E}.Debug|Mixed Platforms.Build.0 = Debug|Win32
+		{9868724F-D44A-4315-A809-C3F5ECA9110E}.Debug|Win32.ActiveCfg = Debug|Win32
+		{9868724F-D44A-4315-A809-C3F5ECA9110E}.Debug|Win32.Build.0 = Debug|Win32
+		{9868724F-D44A-4315-A809-C3F5ECA9110E}.MemLeak|Any CPU.ActiveCfg = Release|Win32
+		{9868724F-D44A-4315-A809-C3F5ECA9110E}.MemLeak|Mixed Platforms.ActiveCfg = Release|Win32
+		{9868724F-D44A-4315-A809-C3F5ECA9110E}.MemLeak|Mixed Platforms.Build.0 = Release|Win32
+		{9868724F-D44A-4315-A809-C3F5ECA9110E}.MemLeak|Win32.ActiveCfg = Release|Win32
+		{9868724F-D44A-4315-A809-C3F5ECA9110E}.MemLeak|Win32.Build.0 = Release|Win32
+		{9868724F-D44A-4315-A809-C3F5ECA9110E}.Release|Any CPU.ActiveCfg = Release|Win32
+		{9868724F-D44A-4315-A809-C3F5ECA9110E}.Release|Mixed Platforms.ActiveCfg = Release|Win32
+		{9868724F-D44A-4315-A809-C3F5ECA9110E}.Release|Mixed Platforms.Build.0 = Release|Win32
+		{9868724F-D44A-4315-A809-C3F5ECA9110E}.Release|Win32.ActiveCfg = Release|Win32
+		{9868724F-D44A-4315-A809-C3F5ECA9110E}.Release|Win32.Build.0 = Release|Win32
+		{9868724F-D44A-4315-A809-C3F5ECA9110E}.SansMatlab|Any CPU.ActiveCfg = Release|Win32
+		{9868724F-D44A-4315-A809-C3F5ECA9110E}.SansMatlab|Mixed Platforms.ActiveCfg = Release|Win32
+		{9868724F-D44A-4315-A809-C3F5ECA9110E}.SansMatlab|Mixed Platforms.Build.0 = Release|Win32
+		{9868724F-D44A-4315-A809-C3F5ECA9110E}.SansMatlab|Win32.ActiveCfg = Release|Win32
+		{9868724F-D44A-4315-A809-C3F5ECA9110E}.SansMatlab|Win32.Build.0 = Release|Win32
+		{5B1E0736-9D9C-43BF-A60D-210292DCB7FC}.Debug|Any CPU.ActiveCfg = Debug|Win32
+		{5B1E0736-9D9C-43BF-A60D-210292DCB7FC}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
+		{5B1E0736-9D9C-43BF-A60D-210292DCB7FC}.Debug|Mixed Platforms.Build.0 = Debug|Win32
+		{5B1E0736-9D9C-43BF-A60D-210292DCB7FC}.Debug|Win32.ActiveCfg = Debug|Win32
+		{5B1E0736-9D9C-43BF-A60D-210292DCB7FC}.Debug|Win32.Build.0 = Debug|Win32
+		{5B1E0736-9D9C-43BF-A60D-210292DCB7FC}.MemLeak|Any CPU.ActiveCfg = Release|Win32
+		{5B1E0736-9D9C-43BF-A60D-210292DCB7FC}.MemLeak|Mixed Platforms.ActiveCfg = Release|Win32
+		{5B1E0736-9D9C-43BF-A60D-210292DCB7FC}.MemLeak|Mixed Platforms.Build.0 = Release|Win32
+		{5B1E0736-9D9C-43BF-A60D-210292DCB7FC}.MemLeak|Win32.ActiveCfg = Release|Win32
+		{5B1E0736-9D9C-43BF-A60D-210292DCB7FC}.MemLeak|Win32.Build.0 = Release|Win32
+		{5B1E0736-9D9C-43BF-A60D-210292DCB7FC}.Release|Any CPU.ActiveCfg = Release|Win32
+		{5B1E0736-9D9C-43BF-A60D-210292DCB7FC}.Release|Mixed Platforms.ActiveCfg = Release|Win32
+		{5B1E0736-9D9C-43BF-A60D-210292DCB7FC}.Release|Mixed Platforms.Build.0 = Release|Win32
+		{5B1E0736-9D9C-43BF-A60D-210292DCB7FC}.Release|Win32.ActiveCfg = Release|Win32
+		{5B1E0736-9D9C-43BF-A60D-210292DCB7FC}.Release|Win32.Build.0 = Release|Win32
+		{5B1E0736-9D9C-43BF-A60D-210292DCB7FC}.SansMatlab|Any CPU.ActiveCfg = Release|Win32
+		{5B1E0736-9D9C-43BF-A60D-210292DCB7FC}.SansMatlab|Mixed Platforms.ActiveCfg = Release|Win32
+		{5B1E0736-9D9C-43BF-A60D-210292DCB7FC}.SansMatlab|Mixed Platforms.Build.0 = Release|Win32
+		{5B1E0736-9D9C-43BF-A60D-210292DCB7FC}.SansMatlab|Win32.ActiveCfg = Release|Win32
+		{5B1E0736-9D9C-43BF-A60D-210292DCB7FC}.SansMatlab|Win32.Build.0 = Release|Win32
 		{EC8F7758-80CF-436B-978B-717297945FAB}.Debug|Any CPU.ActiveCfg = Debug|Win32
 		{EC8F7758-80CF-436B-978B-717297945FAB}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
 		{EC8F7758-80CF-436B-978B-717297945FAB}.Debug|Mixed Platforms.Build.0 = Debug|Win32

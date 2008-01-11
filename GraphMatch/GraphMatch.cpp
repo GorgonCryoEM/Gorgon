@@ -21,20 +21,6 @@ Date  : 01/23/2006
 
 #define DllExport   __declspec( dllexport )
 
-#include <stdlib.h>
-#include <stdio.h>
-#include "StandardGraph.h"
-#include "WongMatch15Constrained.h"
-#include "WongMatch15ConstrainedNoFuture.h"
-#include "WongMatch15ConstrainedOnlyA.h"
-#include "PDBReader.h"
-#include "SkeletonReader.h"
-#include "GlobalConstants.h"
-#include "GraphGenerator.h"
-#include "BackEndInterface.h"
-#include "VisualizationTest.h"
-#include <time.h>
-
 using namespace wustl_mm::GraphMatch;
 
 void DisplayInputFormat()

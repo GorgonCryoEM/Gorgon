@@ -332,6 +332,14 @@
 	</Configurations>
 	<References>
 		<ProjectReference
+			ReferencedProjectIdentifier="{5B1E0736-9D9C-43BF-A60D-210292DCB7FC}"
+			RelativePathToProject=".\Foundation\Foundation.vcproj"
+		/>
+		<ProjectReference
+			ReferencedProjectIdentifier="{EC8F7758-80CF-436B-978B-717297945FAB}"
+			RelativePathToProject=".\MathTools\MathTools.vcproj"
+		/>
+		<ProjectReference
 			ReferencedProjectIdentifier="{817660CF-4E6C-48F6-BF18-FB75FC2B6B5E}"
 			RelativePathToProject=".\SkeletonMaker\SkeletonMaker.vcproj"
 		/>
