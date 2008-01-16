@@ -38,10 +38,11 @@ namespace wustl_mm {
 
 		void DoSimplify(string skeleton, string helix, string sheet, string fix, string outFile) {
 			string outPath = outFile.substr(0, outFile.rfind("."));	
-			Volume * skeletonVol = VolumeReaderATOM::LoadVolume(skeleton, fix);
-			Volume * helixVol = VolumeReaderATOM::LoadVolume(helix, "", skeletonVol->getSizeX(), skeletonVol->getSizeY(), skeletonVol->getSizeZ());
-			Volume * sheetVol = VolumeReaderATOM::LoadVolume(sheet, "", skeletonVol->getSizeX(), skeletonVol->getSizeY(), skeletonVol->getSizeZ());
-			NonManifoldMesh * mesh = new ProteinMesh(skeletonVol, helixVol, sheetVol);
+			Volume * skeletonVol = VolumeReaderATOM::LoadVolume(skeleton, fix, helix);
+			//Volume * helixVol = VolumeReaderATOM::LoadVolume(helix, "", skeletonVol->getSizeX(), skeletonVol->getSizeY(), skeletonVol->getSizeZ());
+			Volume * sheetVol = VolumeReaderATOM::LoadVolume(sheet, "", "", skeletonVol->getSizeX(), skeletonVol->getSizeY(), skeletonVol->getSizeZ());
+			//NonManifoldMesh * mesh = new ProteinMesh(skeletonVol, helixVol, sheetVol);
+			NonManifoldMesh * mesh = new ProteinMesh(skeletonVol, NULL, sheetVol);
 			NonManifoldMesh * smoothedMesh = mesh->SmoothLaplacian(0.5);
 			NonManifoldMesh * smoothedMesh2 = smoothedMesh->SmoothLaplacian(0.5);
 			NonManifoldMesh * smoothedMesh3 = smoothedMesh2->SmoothLaplacian(0.5);
@@ -55,7 +56,7 @@ namespace wustl_mm {
 			delete smoothedMesh2;
 			delete smoothedMesh3;
 			delete skeletonVol;
-			delete helixVol;
+			//delete helixVol;
 			delete sheetVol;
 		}
 	}
