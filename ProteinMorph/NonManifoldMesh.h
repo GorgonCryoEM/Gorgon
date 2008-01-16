@@ -32,6 +32,8 @@ namespace wustl_mm {
 			vector<unsigned int> edgeIds;
 			bool valid;
 			bool stationary;
+			bool articulationPoint;
+			int helixId;
 		};
 
 		class NonManifoldMesh{
@@ -103,6 +105,7 @@ namespace wustl_mm {
 
 			int x, y, z, i, j, index, index2;
 			int * vertexLocations = new int[sourceVol->getSizeX() * sourceVol->getSizeY() * sourceVol->getSizeZ()];
+			int value;
 
 			// Adding vertices
 			NonManifoldMeshVertex tempVertex;
@@ -112,9 +115,16 @@ namespace wustl_mm {
 					for(z = 0; z < sourceVol->getSizeZ(); z++) {
 						index = sourceVol->getIndex(x, y, z);
 						vertexLocations[index] = -1;
-						if(sourceVol->getDataAt(index) > 0) {							
-							tempVertex.position = Vector3D(x,y,z);		
-							tempVertex.stationary = (sourceVol->getDataAt(index) > 1.9);
+						value = (int)round(sourceVol->getDataAt(index));
+						if(value > 0) {							
+							tempVertex.position = Vector3D(x,y,z);	
+							tempVertex.articulationPoint = (value == 2);
+							tempVertex.stationary = (value >= 2);
+							if(value >= 3) {
+								tempVertex.helixId = value-3;
+							} else {
+								tempVertex.helixId = -1;
+							}
 							vertexLocations[index] = AddVertex(tempVertex);
 						}
 					}
@@ -464,6 +474,7 @@ namespace wustl_mm {
 		void NonManifoldMesh::ToMathematicaFile(string fileName) {
 			RemoveNullEntries();
 			FILE * outF = fopen(fileName.c_str(), "wt");
+			// Vertices
 			fprintf(outF, "{\n");
 			fprintf(outF, "{");
 			for(int i = 0; i < vertices.size(); i++) {
@@ -474,6 +485,7 @@ namespace wustl_mm {
 			}
 			fprintf(outF, "},\n");
 
+			// Edges
 			fprintf(outF, "{");
 			for(int i = 0; i < edges.size(); i++) {
 				fprintf(outF, "{%li, %li}", edges[i].vertexIds[0]+1, edges[i].vertexIds[1]+1);
@@ -483,6 +495,7 @@ namespace wustl_mm {
 			}
 			fprintf(outF, "},\n");
 
+			// Faces
 			fprintf(outF, "{");
 			int lastVertex;
 			for(int i = 0; i < faces.size(); i++) {
@@ -508,14 +521,43 @@ namespace wustl_mm {
 			}
 			fprintf(outF, "},\n");
 
+			// Articulation Points
 			fprintf(outF, "{");
 			bool first = true;
+			for(int i = 0; i < vertices.size(); i++) {
+				if(vertices[i].articulationPoint) {
+					if(!first) {
+						fprintf(outF, ", ");
+					} 
+					fprintf(outF, "%li", i+1);
+					first = false;
+				}
+			}
+			fprintf(outF, "},\n");
+
+			// Fixed Points
+			fprintf(outF, "{");
+			first = true;
 			for(int i = 0; i < vertices.size(); i++) {
 				if(vertices[i].stationary) {
 					if(!first) {
 						fprintf(outF, ", ");
 					} 
 					fprintf(outF, "%li", i+1);
+					first = false;
+				}
+			}
+			fprintf(outF, "},\n");
+
+			// Helix Ends
+			fprintf(outF, "{");
+			first = true;
+			for(int i = 0; i < vertices.size(); i++) {
+				if(vertices[i].helixId >= 0) {
+					if(!first) {
+						fprintf(outF, ", ");
+					} 
+					fprintf(outF, "{%li, %li}", i+1, vertices[i].helixId+1);
 					first = false;
 				}
 			}
