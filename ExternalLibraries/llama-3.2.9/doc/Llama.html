@@ -1,0 +1,805 @@
+<HTML>
+<HEAD>
+<TITLE>namespace Llama</TITLE>
+
+<META NAME="Generator" CONTENT="KDOC ">
+</HEAD>
+<BODY bgcolor="#ffffff" text="#000000" link="#0000ff" vlink="#000099" alink= "#ffffff">
+<TABLE WIDTH="100%" BORDER="0">
+<TR>
+<TD>
+	<TABLE BORDER="0">
+		<TR><TD valign="top" align="left" cellspacing="10">
+		<h1>namespace Llama</h1>
+		</TD>
+		<TD valign="top" align="right" colspan="1"></TD></TR>
+	</TABLE>
+	<HR>
+	<TABLE BORDER="0">
+		<TR><TH><A HREF="full-list-Llama.html">List of all Methods</A></TH></TR>
+	</TABLE>
+	</TD>
+<TD align="right"><TABLE BORDER="0"><TD rowspan="6"><IMG SRC="./llama2.gif"></TD><TR><TD><small><A HREF="index-long.html">Annotated List</A></small></TD></TR>
+<TR><TD><small><A HREF="header-list.html">Files</A></small></TD></TR>
+<TR><TD><small><A HREF="all-globals.html">Globals</A></small></TD></TR>
+<TR><TD><small><A HREF="hier.html">Hierarchy</A></small></TD></TR>
+<TR><TD><small><A HREF="index.html">Index</A></small></TD></TR>
+</TABLE></TD></TR></TABLE>
+<h4>Public Types</h4><ul><LI>typedef bool  <A HREF="#ref1">Boolean</A>
+</LI>
+<LI>typedef size_t  <A HREF="#ref2">Index</A>
+</LI>
+<LI>typedef long  <A HREF="#ref3">Integer</A>
+</LI>
+<LI>typedef double  <A HREF="#ref4">Real</A>
+</LI>
+<LI>typedef std::complex<Real>  <A HREF="#ref5">Complex</A>
+</LI>
+<LI>class <A HREF="Llama__TinyVector.html">TinyVector</A>
+</LI>
+<LI>class <i><A HREF="Llama__CAbstMatrix.html">CAbstMatrix</A></i>
+</LI>
+<LI>class <i><A HREF="Llama__AbstMatrix.html">AbstMatrix</A></i>
+</LI>
+<LI>class <A HREF="Llama__Matrix.html">Matrix</A>
+</LI>
+<LI>class <i><A HREF="Llama__Random.html">Random</A></i>
+</LI>
+<LI>class <A HREF="Llama__UniformRandom.html">UniformRandom</A>
+</LI>
+<LI>class <A HREF="Llama__NormalRandom.html">NormalRandom</A>
+</LI>
+<LI>class <A HREF="Llama__SMClosure.html">SMClosure</A>
+</LI>
+<LI>class <A HREF="Llama__MMClosure.html">MMClosure</A>
+</LI>
+<LI>class <A HREF="Llama__Transpose.html">Transpose</A>
+</LI>
+<LI>class <A HREF="Llama__Range.html">Range</A>
+</LI>
+<LI>class <A HREF="Llama__Submatrix.html">Submatrix</A>
+</LI>
+<LI>class <A HREF="Llama__FAMClosure.html">FAMClosure</A>
+</LI>
+<LI>class <A HREF="Llama__Diagonal.html">Diagonal</A>
+</LI>
+<LI>class <A HREF="Llama__DiagonalMatrix.html">DiagonalMatrix</A>
+</LI>
+<LI>class <A HREF="Llama__EigenDecomposition.html">EigenDecomposition</A>
+</LI>
+<LI>class <A HREF="Llama__LUDecomposition.html">LUDecomposition</A>
+</LI>
+<LI>class <A HREF="Llama__SVDecomposition.html">SVDecomposition</A>
+</LI>
+<LI>class <A HREF="Llama__QRDecomposition.html">QRDecomposition</A>
+</LI>
+<LI>class <A HREF="Llama__CholeskyDecomposition.html">CholeskyDecomposition</A>
+</LI>
+<LI>class <i><A HREF="Llama__AbstDiffeomorphism.html">AbstDiffeomorphism</A></i>
+</LI>
+<LI>class <A HREF="Llama__Diffeomorphism.html">Diffeomorphism</A>
+</LI>
+<LI>class <i><A HREF="Llama__AbstMapping.html">AbstMapping</A></i>
+</LI>
+<LI>class <A HREF="Llama__Mapping.html">Mapping</A>
+</LI>
+<LI>class <i><A HREF="Llama__AbstVectorfield.html">AbstVectorfield</A></i>
+</LI>
+<LI>class <A HREF="Llama__Vectorfield.html">Vectorfield</A>
+</LI>
+<LI>class <A HREF="Llama__FourierTransform.html">FourierTransform</A>
+</LI>
+<LI>class <A HREF="Llama__Exception.html">Exception</A>
+</LI>
+<LI>class <A HREF="Llama__DivideError.html">DivideError</A>
+</LI>
+<LI>class <A HREF="Llama__SingularMatrix.html">SingularMatrix</A>
+</LI>
+<LI>class <A HREF="Llama__LogicError.html">LogicError</A>
+</LI>
+<LI>class <A HREF="Llama__DimError.html">DimError</A>
+</LI>
+<LI>class <A HREF="Llama__IndexError.html">IndexError</A>
+</LI>
+<LI>class <A HREF="Llama__OutOfMemory.html">OutOfMemory</A>
+</LI>
+<LI>class <A HREF="Llama__IOError.html">IOError</A>
+</LI>
+<LI>class <A HREF="Llama__Hilbert.html">Hilbert</A>
+</LI>
+<LI>class <A HREF="Llama__linspace.html">linspace</A>
+</LI>
+<LI>class <A HREF="Llama__complexify.html">complexify</A>
+</LI>
+<LI>class <A HREF="Llama__SchurPClosure.html">SchurPClosure</A>
+</LI>
+<LI>class <A HREF="Llama__SchurQClosure.html">SchurQClosure</A>
+</LI>
+<LI>typedef struct <A HREF="#ref110">--</A>
+</LI>
+<LI>typedef enum <A HREF="#ref131">--</A>
+</LI>
+</ul><h4>Public Methods</h4><ul><LI>inline Integer 
+  &nbsp;<b><A HREF="#ref42">min</A></b> (Integer t1, Integer t2) 
+</LI>
+<LI>inline Integer 
+  &nbsp;<b><A HREF="#ref43">max</A></b> (Integer t1, Integer t2) 
+</LI>
+<LI>inline Integer 
+  &nbsp;<b><A HREF="#ref44">signum</A></b> (Integer x) 
+</LI>
+<LI>inline Integer
+  &nbsp;<b><A HREF="#ref45">conj</A></b> (Integer x) 
+</LI>
+<LI>inline Index 
+  &nbsp;<b><A HREF="#ref46">min</A></b> (Index t1, Index t2) 
+</LI>
+<LI>inline Index 
+  &nbsp;<b><A HREF="#ref47">max</A></b> (Index t1, Index t2) 
+</LI>
+<LI>inline Index
+  &nbsp;<b><A HREF="#ref48">conj</A></b> (Index x) 
+</LI>
+<LI>inline Real 
+  &nbsp;<b><A HREF="#ref49">min</A></b> (Real t1, Real t2) 
+</LI>
+<LI>inline Real 
+  &nbsp;<b><A HREF="#ref50">max</A></b> (Real t1, Real t2) 
+</LI>
+<LI>inline Real 
+  &nbsp;<b><A HREF="#ref51">abs</A></b> (Real x) 
+</LI>
+<LI>inline Integer
+  &nbsp;<b><A HREF="#ref52">abs</A></b> (Integer x) 
+</LI>
+<LI>inline Index
+  &nbsp;<b><A HREF="#ref53">abs</A></b> (Index x) 
+</LI>
+<LI>inline Real
+  &nbsp;<b><A HREF="#ref54">conj</A></b> (Real x) 
+</LI>
+<LI>inline Real 
+  &nbsp;<b><A HREF="#ref55">signum</A></b> (Real x) 
+</LI>
+<LI>template <class Scalar>
+  inline void
+  &nbsp;<b><A HREF="#ref56">swap</A></b> (Scalar a, Scalar b) 
+</LI>
+<LI>inline Real 
+  &nbsp;<b><A HREF="#ref57">pythag</A></b> (Real a, Real b) 
+</LI>
+<LI>inline Index
+  &nbsp;<b><A HREF="#ref58">GCD</A></b> (Index p, Index q) 
+</LI>
+<LI>inline std::ostream&
+  &nbsp;<b><A HREF="#ref60">operator << </A></b> (std::ostream& o, Exception& e) 
+</LI>
+<LI>template <class Scalar>
+  inline std::ostream&
+  &nbsp;<b><A HREF="#ref68">operator << </A></b> (std::ostream& o, const CAbstMatrix<Scalar>& x) 
+</LI>
+<LI>Matrix<Complex> *&nbsp;<b><A HREF="#ref69">eigenvals</A></b> (const Matrix<Real>&) 
+</LI>
+<LI>Matrix<Real> *&nbsp;<b><A HREF="#ref70">singvals</A></b> (const Matrix<Real>&) 
+</LI>
+<LI>template <class Scalar>
+  inline std::ostream&
+  &nbsp;<b><A HREF="#ref71">operator << </A></b> (std::ostream& o, const Matrix<Scalar>& x) 
+</LI>
+<LI>template <class Scalar>
+  inline SMClosure<Scalar>
+  &nbsp;<b><A HREF="#ref72">operator * </A></b> (const Matrix<Scalar>& x, const Scalar a) 
+</LI>
+<LI>template <class Scalar>
+  inline SMClosure<Scalar>
+  &nbsp;<b><A HREF="#ref73">operator * </A></b> (const Scalar a, const Matrix<Scalar>& x) 
+</LI>
+<LI>template <class Scalar>
+  inline SMClosure<Scalar>
+  &nbsp;<b><A HREF="#ref74">operator * </A></b> (const Scalar a, const SMClosure<Scalar>& x) 
+</LI>
+<LI>template <class Scalar>
+  inline SMClosure<Scalar>
+  &nbsp;<b><A HREF="#ref75">operator * </A></b> (const SMClosure<Scalar>& x, const Scalar a) 
+</LI>
+<LI>inline SMClosure<Complex>
+  &nbsp;<b><A HREF="#ref76">operator * </A></b> (const Real a, const Matrix<Complex>& x) 
+</LI>
+<LI>inline SMClosure<Complex>
+  &nbsp;<b><A HREF="#ref77">operator * </A></b> (const Matrix<Complex>& x, const Real a) 
+</LI>
+<LI>template <class Scalar>
+  inline MMClosure<Scalar>
+  &nbsp;<b><A HREF="#ref78">operator * </A></b> (const Matrix<Scalar>& l, const Matrix<Scalar>& r) 
+</LI>
+<LI>template <class Scalar>
+  inline MMClosure<Scalar>
+  &nbsp;<b><A HREF="#ref79">operator * </A></b> (const Scalar a, const MMClosure<Scalar>& c) 
+</LI>
+<LI>template <class Scalar>
+  inline MMClosure<Scalar>
+  &nbsp;<b><A HREF="#ref80">operator * </A></b> (const MMClosure<Scalar>& c, const Scalar a) 
+</LI>
+<LI>template <class Scalar>
+  inline MMClosure<Scalar>
+  &nbsp;<b><A HREF="#ref81">operator * </A></b> (const SMClosure<Scalar>& c, const Matrix<Scalar>& r) 
+</LI>
+<LI>template <class Scalar>
+  inline MMClosure<Scalar>
+  &nbsp;<b><A HREF="#ref82">operator * </A></b> (const Matrix<Scalar>& l, const SMClosure<Scalar>& c) 
+</LI>
+<LI>template <class Scalar>
+  inline MMClosure<Scalar>
+  &nbsp;<b><A HREF="#ref83">operator * </A></b> (const Transpose<Scalar>& l, const Matrix<Scalar>& r) 
+</LI>
+<LI>template <class Scalar>
+  inline MMClosure<Scalar>
+  &nbsp;<b><A HREF="#ref84">operator * </A></b> (const Matrix<Scalar>& l, const Transpose<Scalar>& r) 
+</LI>
+<LI>template <class Scalar>
+  inline MMClosure<Scalar>
+  &nbsp;<b><A HREF="#ref85">operator * </A></b> (const Transpose<Scalar>& l, const Transpose<Scalar>& r) 
+</LI>
+<LI>template <class Scalar>
+  inline MMClosure<Scalar>
+  &nbsp;<b><A HREF="#ref86">operator * </A></b> (const SMClosure<Scalar>& c, const Transpose<Scalar>& r) 
+</LI>
+<LI>template <class Scalar>
+  inline MMClosure<Scalar>
+  &nbsp;<b><A HREF="#ref87">operator * </A></b> (const Transpose<Scalar>& l, const SMClosure<Scalar>& c) 
+</LI>
+<LI>template <class Scalar>
+  inline Scalar
+  &nbsp;<b><A HREF="#ref88">trace</A></b> (const CAbstMatrix<Scalar>& x) 
+</LI>
+<LI>template <class Scalar>
+  inline Matrix<Scalar> *
+  &nbsp;<b><A HREF="#ref89">sum</A></b> (const CAbstMatrix<Scalar>& x) 
+</LI>
+<LI>template <class Scalar>
+  inline Matrix<Scalar> *
+  &nbsp;<b><A HREF="#ref90">product</A></b> (const CAbstMatrix<Scalar>& x) 
+</LI>
+<LI>template <class Scalar>
+  inline Matrix<Scalar> *
+  &nbsp;<b><A HREF="#ref91">mean</A></b> (const CAbstMatrix<Scalar>& x) 
+</LI>
+<LI>template <class Scalar>
+  inline Matrix<Scalar> *
+  &nbsp;<b><A HREF="#ref92">diff</A></b> (const CAbstMatrix<Scalar>& x) 
+</LI>
+<LI>template <class Scalar>
+  inline Matrix<Scalar> *
+  &nbsp;<b><A HREF="#ref93">cumsum</A></b> (const CAbstMatrix<Scalar>& x) 
+</LI>
+<LI>template <class Scalar>
+  inline SchurPClosure<Scalar>
+  &nbsp;<b><A HREF="#ref99">schur_product</A></b> (const CAbstMatrix<Scalar>& a, const CAbstMatrix<Scalar>& b) 
+</LI>
+<LI>template <class Scalar>
+  inline SchurQClosure<Scalar>
+  &nbsp;<b><A HREF="#ref100">schur_quotient</A></b> (const CAbstMatrix<Scalar>& dividend, const CAbstMatrix<Scalar>& divisor) 
+</LI>
+<LI>inline Matrix<Real> *
+  &nbsp;<b><A HREF="#ref101">companion</A></b> (const Matrix<Real>& a) 
+</LI>
+<LI>inline Matrix<Real> *
+  &nbsp;<b><A HREF="#ref102">real</A></b> (const CAbstMatrix<Complex>& x) 
+</LI>
+<LI>inline Matrix<Real> *
+  &nbsp;<b><A HREF="#ref103">imag</A></b> (const CAbstMatrix<Complex>& x) 
+</LI>
+<LI>inline Matrix<Complex> *
+  &nbsp;<b><A HREF="#ref104">conj</A></b> (const CAbstMatrix<Complex>& x) 
+</LI>
+<LI>inline Matrix<Real> *
+  &nbsp;<b><A HREF="#ref105">abs</A></b> (const CAbstMatrix<Complex>& x) 
+</LI>
+<LI>inline Matrix<Real> *
+  &nbsp;<b><A HREF="#ref106">arg</A></b> (const CAbstMatrix<Complex>& x) 
+</LI>
+<LI>inline Matrix<Complex> *
+  &nbsp;<b><A HREF="#ref107">roots</A></b> (const Matrix<Real>& a) 
+</LI>
+<LI>template <class Scalar>
+  inline DiagonalMatrix<Scalar>
+  &nbsp;<b><A HREF="#ref111">diag</A></b> (const CAbstMatrix<Scalar>& x) 
+</LI>
+<LI>inline FAMClosure<Real, Real>
+  &nbsp;<b><A HREF="#ref113">exp</A></b> (Matrix<Real>& x) 
+</LI>
+<LI>inline FAMClosure<Real, Real>
+  &nbsp;<b><A HREF="#ref115">sqrt</A></b> (Matrix<Real>& x) 
+</LI>
+<LI>inline FAMClosure<Real, Real>
+  &nbsp;<b><A HREF="#ref117">abs</A></b> (Matrix<Real>& x) 
+</LI>
+<LI>inline FAMClosure<Real, Real>
+  &nbsp;<b><A HREF="#ref119">log</A></b> (Matrix<Real>& x) 
+</LI>
+<LI>inline FAMClosure<Real, Real>
+  &nbsp;<b><A HREF="#ref121">sin</A></b> (Matrix<Real>& x) 
+</LI>
+<LI>inline FAMClosure<Real, Real>
+  &nbsp;<b><A HREF="#ref123">cos</A></b> (Matrix<Real>& x) 
+</LI>
+<LI>inline FAMClosure<Real, Complex>
+  &nbsp;<b><A HREF="#ref125">abs</A></b> (Matrix<Complex>& x) 
+</LI>
+<LI>template <class Scalar>
+  Matrix<Complex> * &nbsp;<b><A HREF="#ref126">eigenvals</A></b> (const Matrix<Scalar>&) 
+</LI>
+<LI>Matrix<Real> * &nbsp;<b><A HREF="#ref127">singvals</A></b> (const Matrix<Real>&) 
+</LI>
+<LI>inline Matrix<Real> *
+  &nbsp;<b><A HREF="#ref128">histogram</A></b> (const CAbstMatrix<Real>& x, const Index n) 
+</LI>
+<LI>inline Matrix<Real> *
+  &nbsp;<b><A HREF="#ref129">histogram</A></b> (const CAbstMatrix<Real>& x, const Index n, Real xmin, Real xmax) 
+</LI>
+<LI>inline Matrix<Real> *
+  &nbsp;<b><A HREF="#ref130">barchart</A></b> (const CAbstMatrix<Real>& x) 
+</LI>
+<LI>Index &nbsp;<b><A HREF="#ref132">neldermead</A></b> (Matrix<Real> *x, Matrix<Real> *y, Real (*f)(const CAbstMatrix<Real>&), Real tol, Index nmax) 
+</LI>
+<LI>Index &nbsp;<b><A HREF="#ref133">minimize</A></b> (const Matrix<Real>& x, Real (*f)(const CAbstMatrix<Real>&), Real tol, Index nmax, Matrix<Real> *min) 
+</LI>
+</ul><h4>Public Static Methods</h4><ul><LI>static  Real
+  &nbsp;<b><A HREF="#ref112">__llama_d_exp</A></b> (Real x) 
+</LI>
+<LI>static  Real
+  &nbsp;<b><A HREF="#ref114">__llama_d_sqrt</A></b> (Real x) 
+</LI>
+<LI>static  Real
+  &nbsp;<b><A HREF="#ref116">__llama_d_abs</A></b> (Real x) 
+</LI>
+<LI>static  Real
+  &nbsp;<b><A HREF="#ref118">__llama_d_log</A></b> (Real x) 
+</LI>
+<LI>static  Real
+  &nbsp;<b><A HREF="#ref120">__llama_d_sin</A></b> (Real x) 
+</LI>
+<LI>static  Real
+  &nbsp;<b><A HREF="#ref122">__llama_d_cos</A></b> (Real x) 
+</LI>
+<LI>static  Real
+  &nbsp;<b><A HREF="#ref124">__llama_dc_abs</A></b> (Complex x) 
+</LI>
+</ul><h4>Public Members</h4><ul><LI>typedef int &nbsp;(*<b><A HREF="#ref33">Order</A></b>) (const void *, const void *) 
+</LI>
+<LI>const Real <b><A HREF="#ref34">Pi </A></b></LI>
+<LI>const Real <b><A HREF="#ref35">TwoPi </A></b></LI>
+<LI>const Real <b><A HREF="#ref36">PiHalf </A></b></LI>
+<LI>const Boolean <b><A HREF="#ref37">True  </A></b></LI>
+<LI>const Boolean <b><A HREF="#ref38">False </A></b></LI>
+<LI>const char <b><A HREF="#ref39">Blank </A></b></LI>
+<LI>const char <b><A HREF="#ref40">NewLine </A></b></LI>
+<LI>const char <b><A HREF="#ref41">Tab </A></b></LI>
+<LI>inline Matrix<Complex>&
+  <b><A HREF="#ref108">Matrix<Complex>::operator </A></b></LI>
+<LI>inline Submatrix<Complex>&
+  <b><A HREF="#ref109">Submatrix<Complex>::operator </A></b></LI>
+</ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><A NAME="Boolean"></A><A NAME="ref1"></A><table width="100%"><tr bgcolor="#eeeeee"><td>typedef bool  <strong>Boolean</strong></td><td align="right"><h3><strong>Boolean</strong></h3></td></tr></table><p></p><A NAME="Index"></A><A NAME="ref2"></A><table width="100%"><tr bgcolor="#eeeeee"><td>typedef size_t  <strong>Index</strong></td><td align="right"><h3><strong>Index</strong></h3></td></tr></table><p></p><A NAME="Integer"></A><A NAME="ref3"></A><table width="100%"><tr bgcolor="#eeeeee"><td>typedef long  <strong>Integer</strong></td><td align="right"><h3><strong>Integer</strong></h3></td></tr></table><p></p><A NAME="Real"></A><A NAME="ref4"></A><table width="100%"><tr bgcolor="#eeeeee"><td>typedef double  <strong>Real</strong></td><td align="right"><h3><strong>Real</strong></h3></td></tr></table><p></p><A NAME="Complex"></A><A NAME="ref5"></A><table width="100%"><tr bgcolor="#eeeeee"><td>typedef std::complex<Real>  <strong>Complex</strong></td><td align="right"><h3><strong>Complex</strong></h3></td></tr></table><p></p><A NAME="Llama__TinyVector.html"></A><A NAME="ref6"></A><table width="100%"><tr bgcolor="#eeeeee"><td><strong>TinyVector</strong> <small>(class)</small></td><td align="right"><h3><strong>TinyVector</strong></h3></td></tr></table><p></p><A NAME="Llama__CAbstMatrix.html"></A><A NAME="ref7"></A><table width="100%"><tr bgcolor="#eeeeee"><td><strong>CAbstMatrix</strong> <small>(class)</small></td><td align="right"><h3><strong>CAbstMatrix</strong></h3></td></tr></table><p></p><p>
+     This is a constant abstract matrix class.
+  </p>
+<A NAME="Llama__AbstMatrix.html"></A><A NAME="ref8"></A><table width="100%"><tr bgcolor="#eeeeee"><td><strong>AbstMatrix</strong> <small>(class)</small></td><td align="right"><h3><strong>AbstMatrix</strong></h3></td></tr></table><p></p><p>
+     This is an abstract matrix class.
+  </p>
+<A NAME="Llama__Matrix.html"></A><A NAME="ref9"></A><table width="100%"><tr bgcolor="#eeeeee"><td><strong>Matrix</strong> <small>(class)</small></td><td align="right"><h3><strong>Matrix</strong></h3></td></tr></table><p></p><p>
+     This is the concrete basic matrix class.  Memory allocated is contiguous 
+     and entries are stored in column-major order for ease of interface with BLAS
+     and LAPACK routines.  Matrix arithmetic utilizes inlined BLAS routines
+     for speed and efficiency, at the cost of compilation speed.
+  </p>
+<A NAME="Llama__Random.html"></A><A NAME="ref10"></A><table width="100%"><tr bgcolor="#eeeeee"><td><strong>Random</strong> <small>(class)</small></td><td align="right"><h3><strong>Random</strong></h3></td></tr></table><p></p><p>
+     Base random number generator class.
+  </p>
+<A NAME="Llama__UniformRandom.html"></A><A NAME="ref11"></A><table width="100%"><tr bgcolor="#eeeeee"><td><strong>UniformRandom</strong> <small>(class)</small></td><td align="right"><h3><strong>UniformRandom</strong></h3></td></tr></table><p></p><p> 
+      Uniform random number generator.
+  </p>
+<A NAME="Llama__NormalRandom.html"></A><A NAME="ref12"></A><table width="100%"><tr bgcolor="#eeeeee"><td><strong>NormalRandom</strong> <small>(class)</small></td><td align="right"><h3><strong>NormalRandom</strong></h3></td></tr></table><p></p><p>
+     Normal (Gaussian) random number generator
+  </p>
+<A NAME="Llama__SMClosure.html"></A><A NAME="ref13"></A><table width="100%"><tr bgcolor="#eeeeee"><td><strong>SMClosure</strong> <small>(class)</small></td><td align="right"><h3><strong>SMClosure</strong></h3></td></tr></table><p></p><p>
+     Scalar-matrix multiplication closure.
+  </p>
+<A NAME="Llama__MMClosure.html"></A><A NAME="ref14"></A><table width="100%"><tr bgcolor="#eeeeee"><td><strong>MMClosure</strong> <small>(class)</small></td><td align="right"><h3><strong>MMClosure</strong></h3></td></tr></table><p></p><p>
+     Matrix multiplication closure.
+  </p>
+<A NAME="Llama__Transpose.html"></A><A NAME="ref15"></A><table width="100%"><tr bgcolor="#eeeeee"><td><strong>Transpose</strong> <small>(class)</small></td><td align="right"><h3><strong>Transpose</strong></h3></td></tr></table><p></p><p>
+     Matrix transposition closure.  Transposing a matrix creates a Transpose object
+     to hold the matrix and the type of transposition.  Transpose objects can be 
+     assigned to matrix objects (which involves only a single copy operation), or 
+     multiplied by other matrices.
+  </p>
+<A NAME="Llama__Range.html"></A><A NAME="ref16"></A><table width="100%"><tr bgcolor="#eeeeee"><td><strong>Range</strong> <small>(class)</small></td><td align="right"><h3><strong>Range</strong></h3></td></tr></table><p></p><p>
+     Range of integers closure.
+  </p>
+<A NAME="Llama__Submatrix.html"></A><A NAME="ref17"></A><table width="100%"><tr bgcolor="#eeeeee"><td><strong>Submatrix</strong> <small>(class)</small></td><td align="right"><h3><strong>Submatrix</strong></h3></td></tr></table><p></p><p>
+     Submatrix extraction / manipulation closure.
+  </p>
+<A NAME="Llama__FAMClosure.html"></A><A NAME="ref18"></A><table width="100%"><tr bgcolor="#eeeeee"><td><strong>FAMClosure</strong> <small>(class)</small></td><td align="right"><h3><strong>FAMClosure</strong></h3></td></tr></table><p></p><p>
+     Function applied elementwise closure.  Applying a function to a
+     matrix creates an FAMClosure object to hold pointers to the matrix
+     and the function.  The function application is evaluated only when
+     the object is assigned to a matrix.  </p>
+<A NAME="Llama__Diagonal.html"></A><A NAME="ref19"></A><table width="100%"><tr bgcolor="#eeeeee"><td><strong>Diagonal</strong> <small>(class)</small></td><td align="right"><h3><strong>Diagonal</strong></h3></td></tr></table><p></p><A NAME="Llama__DiagonalMatrix.html"></A><A NAME="ref20"></A><table width="100%"><tr bgcolor="#eeeeee"><td><strong>DiagonalMatrix</strong> <small>(class)</small></td><td align="right"><h3><strong>DiagonalMatrix</strong></h3></td></tr></table><p></p><A NAME="Llama__EigenDecomposition.html"></A><A NAME="ref21"></A><table width="100%"><tr bgcolor="#eeeeee"><td><strong>EigenDecomposition</strong> <small>(class)</small></td><td align="right"><h3><strong>EigenDecomposition</strong></h3></td></tr></table><p></p><p>
+     Compute the full eigenvalue-eigenvector decomposition of 
+     a real matrix.  The constructor is basically a wrapper 
+     around the LAPACK routine DGEEVX.
+  </p>
+<A NAME="Llama__LUDecomposition.html"></A><A NAME="ref22"></A><table width="100%"><tr bgcolor="#eeeeee"><td><strong>LUDecomposition</strong> <small>(class)</small></td><td align="right"><h3><strong>LUDecomposition</strong></h3></td></tr></table><p></p><p>
+     LU decomposition (Gaussian elimination) on a matrix.
+  </p>
+<A NAME="Llama__SVDecomposition.html"></A><A NAME="ref23"></A><table width="100%"><tr bgcolor="#eeeeee"><td><strong>SVDecomposition</strong> <small>(class)</small></td><td align="right"><h3><strong>SVDecomposition</strong></h3></td></tr></table><p></p><p>
+     Perform singular-value decomposition.  The constructor is a wrapper around the LAPACK
+     routine DGEEVX.  The singular values are computed as a vector, the left eigenvectors
+     are computed as a matrix, and the right eigenvectors as the Transpose of a matrix.
+  </p>
+<A NAME="Llama__QRDecomposition.html"></A><A NAME="ref24"></A><table width="100%"><tr bgcolor="#eeeeee"><td><strong>QRDecomposition</strong> <small>(class)</small></td><td align="right"><h3><strong>QRDecomposition</strong></h3></td></tr></table><p></p><p>
+     QR (orthogonal) decomposition of a matrix.
+  </p>
+<A NAME="Llama__CholeskyDecomposition.html"></A><A NAME="ref25"></A><table width="100%"><tr bgcolor="#eeeeee"><td><strong>CholeskyDecomposition</strong> <small>(class)</small></td><td align="right"><h3><strong>CholeskyDecomposition</strong></h3></td></tr></table><p></p><p>
+     Cholesky decomposition of a real symmetric or complex Hermitian
+     matrix, A.  A is assumed symmetric if real and Hermitian if
+     complex.  The lower triangular part of A is the only part accessed.  
+  </p>
+<A NAME="Llama__AbstDiffeomorphism.html"></A><A NAME="ref26"></A><table width="100%"><tr bgcolor="#eeeeee"><td><strong>AbstDiffeomorphism</strong> <small>(class)</small></td><td align="right"><h3><strong>AbstDiffeomorphism</strong></h3></td></tr></table><p></p><p>
+     Abstract diffeomorphism class.  Represents a C^1 mapping from R^M
+     to R^N.  </p>
+<A NAME="Llama__Diffeomorphism.html"></A><A NAME="ref27"></A><table width="100%"><tr bgcolor="#eeeeee"><td><strong>Diffeomorphism</strong> <small>(class)</small></td><td align="right"><h3><strong>Diffeomorphism</strong></h3></td></tr></table><p></p><p>
+     Diffeomorphism class.  Implements a C^1 mapping from R^M to R^N.
+  </p>
+<A NAME="Llama__AbstMapping.html"></A><A NAME="ref28"></A><table width="100%"><tr bgcolor="#eeeeee"><td><strong>AbstMapping</strong> <small>(class)</small></td><td align="right"><h3><strong>AbstMapping</strong></h3></td></tr></table><p></p><p>
+     Abstract mapping class.  Represents a mapping from R^N x R^P -> R^N </p>
+<A NAME="Llama__Mapping.html"></A><A NAME="ref29"></A><table width="100%"><tr bgcolor="#eeeeee"><td><strong>Mapping</strong> <small>(class)</small></td><td align="right"><h3><strong>Mapping</strong></h3></td></tr></table><p></p><p>
+     Mapping class.  Implements a mapping from R^N x R^P -> R^N </p>
+<A NAME="Llama__AbstVectorfield.html"></A><A NAME="ref30"></A><table width="100%"><tr bgcolor="#eeeeee"><td><strong>AbstVectorfield</strong> <small>(class)</small></td><td align="right"><h3><strong>AbstVectorfield</strong></h3></td></tr></table><p></p><p>
+     Abstract vectorfield class.  Represents a C^1 vectorfield on R^N
+     with parameters in R^P </p>
+<A NAME="Llama__Vectorfield.html"></A><A NAME="ref31"></A><table width="100%"><tr bgcolor="#eeeeee"><td><strong>Vectorfield</strong> <small>(class)</small></td><td align="right"><h3><strong>Vectorfield</strong></h3></td></tr></table><p></p><p>
+     Vectorfield class.  Implements a vectorfield on R^N with parameters
+     in R^P </p>
+<A NAME="Llama__FourierTransform.html"></A><A NAME="ref32"></A><table width="100%"><tr bgcolor="#eeeeee"><td><strong>FourierTransform</strong> <small>(class)</small></td><td align="right"><h3><strong>FourierTransform</strong></h3></td></tr></table><p></p><p>
+     Fourier transform class.  Construction causes the computation of
+     the discrete Fourier transform.  Currently, the implementation uses
+     the "Fastest Fourier Transform in the West" algorithms.  </p>
+<A NAME="Order"></A><A NAME="ref33"></A><table width="100%"><tr bgcolor="#eeeeee"><td>typedef int &nbsp;(*<strong>Order</strong>) (const void *, const void *)
+</td><td align="right"><h3>(*<strong>Order</strong>)</h3></td></tr></table><p></p><A NAME="Pi%20"></A><A NAME="ref34"></A><table width="100%"><tr bgcolor="#eeeeee"><td>const Real  <strong>Pi </strong>
+</td><td align="right"><h3><strong>Pi </strong></h3></td></tr></table><p></p><A NAME="TwoPi%20"></A><A NAME="ref35"></A><table width="100%"><tr bgcolor="#eeeeee"><td>const Real  <strong>TwoPi </strong>
+</td><td align="right"><h3><strong>TwoPi </strong></h3></td></tr></table><p></p><A NAME="PiHalf%20"></A><A NAME="ref36"></A><table width="100%"><tr bgcolor="#eeeeee"><td>const Real  <strong>PiHalf </strong>
+</td><td align="right"><h3><strong>PiHalf </strong></h3></td></tr></table><p></p><A NAME="True%20%20"></A><A NAME="ref37"></A><table width="100%"><tr bgcolor="#eeeeee"><td>const Boolean  <strong>True  </strong>
+</td><td align="right"><h3><strong>True  </strong></h3></td></tr></table><p></p><A NAME="False%20"></A><A NAME="ref38"></A><table width="100%"><tr bgcolor="#eeeeee"><td>const Boolean  <strong>False </strong>
+</td><td align="right"><h3><strong>False </strong></h3></td></tr></table><p></p><A NAME="Blank%20"></A><A NAME="ref39"></A><table width="100%"><tr bgcolor="#eeeeee"><td>const char  <strong>Blank </strong>
+</td><td align="right"><h3><strong>Blank </strong></h3></td></tr></table><p></p><A NAME="NewLine%20"></A><A NAME="ref40"></A><table width="100%"><tr bgcolor="#eeeeee"><td>const char  <strong>NewLine </strong>
+</td><td align="right"><h3><strong>NewLine </strong></h3></td></tr></table><p></p><A NAME="Tab%20"></A><A NAME="ref41"></A><table width="100%"><tr bgcolor="#eeeeee"><td>const char  <strong>Tab </strong>
+</td><td align="right"><h3><strong>Tab </strong></h3></td></tr></table><p></p><A NAME="min"></A><A NAME="ref42"></A><table width="100%"><tr bgcolor="#eeeeee"><td>inline Integer 
+  &nbsp;<strong>min</strong> (Integer t1, Integer t2)
+<br></td><td align="right"><h3><strong>min</strong></h3></td></tr></table><p></p><A NAME="max"></A><A NAME="ref43"></A><table width="100%"><tr bgcolor="#eeeeee"><td>inline Integer 
+  &nbsp;<strong>max</strong> (Integer t1, Integer t2)
+<br></td><td align="right"><h3><strong>max</strong></h3></td></tr></table><p></p><A NAME="signum"></A><A NAME="ref44"></A><table width="100%"><tr bgcolor="#eeeeee"><td>inline Integer 
+  &nbsp;<strong>signum</strong> (Integer x)
+<br></td><td align="right"><h3><strong>signum</strong></h3></td></tr></table><p></p><A NAME="conj"></A><A NAME="ref45"></A><table width="100%"><tr bgcolor="#eeeeee"><td>inline Integer
+  &nbsp;<strong>conj</strong> (Integer x)
+<br></td><td align="right"><h3><strong>conj</strong></h3></td></tr></table><p></p><A NAME="min"></A><A NAME="ref46"></A><table width="100%"><tr bgcolor="#eeeeee"><td>inline Index 
+  &nbsp;<strong>min</strong> (Index t1, Index t2)
+<br></td><td align="right"><h3><strong>min</strong></h3></td></tr></table><p></p><A NAME="max"></A><A NAME="ref47"></A><table width="100%"><tr bgcolor="#eeeeee"><td>inline Index 
+  &nbsp;<strong>max</strong> (Index t1, Index t2)
+<br></td><td align="right"><h3><strong>max</strong></h3></td></tr></table><p></p><A NAME="conj"></A><A NAME="ref48"></A><table width="100%"><tr bgcolor="#eeeeee"><td>inline Index
+  &nbsp;<strong>conj</strong> (Index x)
+<br></td><td align="right"><h3><strong>conj</strong></h3></td></tr></table><p></p><A NAME="min"></A><A NAME="ref49"></A><table width="100%"><tr bgcolor="#eeeeee"><td>inline Real 
+  &nbsp;<strong>min</strong> (Real t1, Real t2)
+<br></td><td align="right"><h3><strong>min</strong></h3></td></tr></table><p></p><A NAME="max"></A><A NAME="ref50"></A><table width="100%"><tr bgcolor="#eeeeee"><td>inline Real 
+  &nbsp;<strong>max</strong> (Real t1, Real t2)
+<br></td><td align="right"><h3><strong>max</strong></h3></td></tr></table><p></p><A NAME="abs"></A><A NAME="ref51"></A><table width="100%"><tr bgcolor="#eeeeee"><td>inline Real 
+  &nbsp;<strong>abs</strong> (Real x)
+<br></td><td align="right"><h3><strong>abs</strong></h3></td></tr></table><p></p><A NAME="abs"></A><A NAME="ref52"></A><table width="100%"><tr bgcolor="#eeeeee"><td>inline Integer
+  &nbsp;<strong>abs</strong> (Integer x)
+<br></td><td align="right"><h3><strong>abs</strong></h3></td></tr></table><p></p><A NAME="abs"></A><A NAME="ref53"></A><table width="100%"><tr bgcolor="#eeeeee"><td>inline Index
+  &nbsp;<strong>abs</strong> (Index x)
+<br></td><td align="right"><h3><strong>abs</strong></h3></td></tr></table><p></p><A NAME="conj"></A><A NAME="ref54"></A><table width="100%"><tr bgcolor="#eeeeee"><td>inline Real
+  &nbsp;<strong>conj</strong> (Real x)
+<br></td><td align="right"><h3><strong>conj</strong></h3></td></tr></table><p></p><A NAME="signum"></A><A NAME="ref55"></A><table width="100%"><tr bgcolor="#eeeeee"><td>inline Real 
+  &nbsp;<strong>signum</strong> (Real x)
+<br></td><td align="right"><h3><strong>signum</strong></h3></td></tr></table><p></p><A NAME="swap"></A><A NAME="ref56"></A><table width="100%"><tr bgcolor="#eeeeee"><td>template <class Scalar>
+  inline void
+  &nbsp;<strong>swap</strong> (Scalar a, Scalar b)
+<br></td><td align="right"><h3><strong>swap</strong></h3></td></tr></table><p></p><A NAME="pythag"></A><A NAME="ref57"></A><table width="100%"><tr bgcolor="#eeeeee"><td>inline Real 
+  &nbsp;<strong>pythag</strong> (Real a, Real b)
+<br></td><td align="right"><h3><strong>pythag</strong></h3></td></tr></table><p></p><p>
+     Safe hypotheneuse.
+  </p>
+<A NAME="GCD"></A><A NAME="ref58"></A><table width="100%"><tr bgcolor="#eeeeee"><td>inline Index
+  &nbsp;<strong>GCD</strong> (Index p, Index q)
+<br></td><td align="right"><h3><strong>GCD</strong></h3></td></tr></table><p></p><p>
+     Euclid's algorithm for integers 
+  </p>
+<A NAME="Llama__Exception.html"></A><A NAME="ref59"></A><table width="100%"><tr bgcolor="#eeeeee"><td><strong>Exception</strong> <small>(class)</small></td><td align="right"><h3><strong>Exception</strong></h3></td></tr></table><p></p><p>
+     Llama exception-handling class.
+  </p>
+<A NAME="operator%20%3C%3C%20"></A><A NAME="ref60"></A><table width="100%"><tr bgcolor="#eeeeee"><td>inline std::ostream&
+  &nbsp;<strong>operator << </strong> (std::ostream& o, Exception& e)
+<br></td><td align="right"><h3><strong>operator << </strong></h3></td></tr></table><p></p><p>
+     Print out the exception message.
+  </p>
+<A NAME="Llama__DivideError.html"></A><A NAME="ref61"></A><table width="100%"><tr bgcolor="#eeeeee"><td><strong>DivideError</strong> <small>(class)</small></td><td align="right"><h3><strong>DivideError</strong></h3></td></tr></table><p></p><A NAME="Llama__SingularMatrix.html"></A><A NAME="ref62"></A><table width="100%"><tr bgcolor="#eeeeee"><td><strong>SingularMatrix</strong> <small>(class)</small></td><td align="right"><h3><strong>SingularMatrix</strong></h3></td></tr></table><p></p><A NAME="Llama__LogicError.html"></A><A NAME="ref63"></A><table width="100%"><tr bgcolor="#eeeeee"><td><strong>LogicError</strong> <small>(class)</small></td><td align="right"><h3><strong>LogicError</strong></h3></td></tr></table><p></p><A NAME="Llama__DimError.html"></A><A NAME="ref64"></A><table width="100%"><tr bgcolor="#eeeeee"><td><strong>DimError</strong> <small>(class)</small></td><td align="right"><h3><strong>DimError</strong></h3></td></tr></table><p></p><A NAME="Llama__IndexError.html"></A><A NAME="ref65"></A><table width="100%"><tr bgcolor="#eeeeee"><td><strong>IndexError</strong> <small>(class)</small></td><td align="right"><h3><strong>IndexError</strong></h3></td></tr></table><p></p><A NAME="Llama__OutOfMemory.html"></A><A NAME="ref66"></A><table width="100%"><tr bgcolor="#eeeeee"><td><strong>OutOfMemory</strong> <small>(class)</small></td><td align="right"><h3><strong>OutOfMemory</strong></h3></td></tr></table><p></p><A NAME="Llama__IOError.html"></A><A NAME="ref67"></A><table width="100%"><tr bgcolor="#eeeeee"><td><strong>IOError</strong> <small>(class)</small></td><td align="right"><h3><strong>IOError</strong></h3></td></tr></table><p></p><A NAME="operator%20%3C%3C%20"></A><A NAME="ref68"></A><table width="100%"><tr bgcolor="#eeeeee"><td>template <class Scalar>
+  inline std::ostream&
+  &nbsp;<strong>operator << </strong> (std::ostream& o, const CAbstMatrix<Scalar>& x)
+<br></td><td align="right"><h3><strong>operator << </strong></h3></td></tr></table><p></p><p>
+     Formatted output
+  </p>
+<A NAME="eigenvals"></A><A NAME="ref69"></A><table width="100%"><tr bgcolor="#eeeeee"><td>Matrix<Complex> *&nbsp;<strong>eigenvals</strong> (const Matrix<Real>&)
+<br></td><td align="right"><h3><strong>eigenvals</strong></h3></td></tr></table><p></p><A NAME="singvals"></A><A NAME="ref70"></A><table width="100%"><tr bgcolor="#eeeeee"><td>Matrix<Real> *&nbsp;<strong>singvals</strong> (const Matrix<Real>&)
+<br></td><td align="right"><h3><strong>singvals</strong></h3></td></tr></table><p></p><A NAME="operator%20%3C%3C%20"></A><A NAME="ref71"></A><table width="100%"><tr bgcolor="#eeeeee"><td>template <class Scalar>
+  inline std::ostream&
+  &nbsp;<strong>operator << </strong> (std::ostream& o, const Matrix<Scalar>& x)
+<br></td><td align="right"><h3><strong>operator << </strong></h3></td></tr></table><p></p><p>
+     Formatted output
+  </p>
+<A NAME="operator%20*%20"></A><A NAME="ref72"></A><table width="100%"><tr bgcolor="#eeeeee"><td>template <class Scalar>
+  inline SMClosure<Scalar>
+  &nbsp;<strong>operator * </strong> (const Matrix<Scalar>& x, const Scalar a)
+<br></td><td align="right"><h3><strong>operator * </strong></h3></td></tr></table><p></p><A NAME="operator%20*%20"></A><A NAME="ref73"></A><table width="100%"><tr bgcolor="#eeeeee"><td>template <class Scalar>
+  inline SMClosure<Scalar>
+  &nbsp;<strong>operator * </strong> (const Scalar a, const Matrix<Scalar>& x)
+<br></td><td align="right"><h3><strong>operator * </strong></h3></td></tr></table><p></p><A NAME="operator%20*%20"></A><A NAME="ref74"></A><table width="100%"><tr bgcolor="#eeeeee"><td>template <class Scalar>
+  inline SMClosure<Scalar>
+  &nbsp;<strong>operator * </strong> (const Scalar a, const SMClosure<Scalar>& x)
+<br></td><td align="right"><h3><strong>operator * </strong></h3></td></tr></table><p></p><A NAME="operator%20*%20"></A><A NAME="ref75"></A><table width="100%"><tr bgcolor="#eeeeee"><td>template <class Scalar>
+  inline SMClosure<Scalar>
+  &nbsp;<strong>operator * </strong> (const SMClosure<Scalar>& x, const Scalar a)
+<br></td><td align="right"><h3><strong>operator * </strong></h3></td></tr></table><p></p><A NAME="operator%20*%20"></A><A NAME="ref76"></A><table width="100%"><tr bgcolor="#eeeeee"><td>inline SMClosure<Complex>
+  &nbsp;<strong>operator * </strong> (const Real a, const Matrix<Complex>& x)
+<br></td><td align="right"><h3><strong>operator * </strong></h3></td></tr></table><p></p><A NAME="operator%20*%20"></A><A NAME="ref77"></A><table width="100%"><tr bgcolor="#eeeeee"><td>inline SMClosure<Complex>
+  &nbsp;<strong>operator * </strong> (const Matrix<Complex>& x, const Real a)
+<br></td><td align="right"><h3><strong>operator * </strong></h3></td></tr></table><p></p><A NAME="operator%20*%20"></A><A NAME="ref78"></A><table width="100%"><tr bgcolor="#eeeeee"><td>template <class Scalar>
+  inline MMClosure<Scalar>
+  &nbsp;<strong>operator * </strong> (const Matrix<Scalar>& l, const Matrix<Scalar>& r)
+<br></td><td align="right"><h3><strong>operator * </strong></h3></td></tr></table><p></p><A NAME="operator%20*%20"></A><A NAME="ref79"></A><table width="100%"><tr bgcolor="#eeeeee"><td>template <class Scalar>
+  inline MMClosure<Scalar>
+  &nbsp;<strong>operator * </strong> (const Scalar a, const MMClosure<Scalar>& c)
+<br></td><td align="right"><h3><strong>operator * </strong></h3></td></tr></table><p></p><A NAME="operator%20*%20"></A><A NAME="ref80"></A><table width="100%"><tr bgcolor="#eeeeee"><td>template <class Scalar>
+  inline MMClosure<Scalar>
+  &nbsp;<strong>operator * </strong> (const MMClosure<Scalar>& c, const Scalar a)
+<br></td><td align="right"><h3><strong>operator * </strong></h3></td></tr></table><p></p><A NAME="operator%20*%20"></A><A NAME="ref81"></A><table width="100%"><tr bgcolor="#eeeeee"><td>template <class Scalar>
+  inline MMClosure<Scalar>
+  &nbsp;<strong>operator * </strong> (const SMClosure<Scalar>& c, const Matrix<Scalar>& r)
+<br></td><td align="right"><h3><strong>operator * </strong></h3></td></tr></table><p></p><A NAME="operator%20*%20"></A><A NAME="ref82"></A><table width="100%"><tr bgcolor="#eeeeee"><td>template <class Scalar>
+  inline MMClosure<Scalar>
+  &nbsp;<strong>operator * </strong> (const Matrix<Scalar>& l, const SMClosure<Scalar>& c)
+<br></td><td align="right"><h3><strong>operator * </strong></h3></td></tr></table><p></p><A NAME="operator%20*%20"></A><A NAME="ref83"></A><table width="100%"><tr bgcolor="#eeeeee"><td>template <class Scalar>
+  inline MMClosure<Scalar>
+  &nbsp;<strong>operator * </strong> (const Transpose<Scalar>& l, const Matrix<Scalar>& r)
+<br></td><td align="right"><h3><strong>operator * </strong></h3></td></tr></table><p></p><A NAME="operator%20*%20"></A><A NAME="ref84"></A><table width="100%"><tr bgcolor="#eeeeee"><td>template <class Scalar>
+  inline MMClosure<Scalar>
+  &nbsp;<strong>operator * </strong> (const Matrix<Scalar>& l, const Transpose<Scalar>& r)
+<br></td><td align="right"><h3><strong>operator * </strong></h3></td></tr></table><p></p><A NAME="operator%20*%20"></A><A NAME="ref85"></A><table width="100%"><tr bgcolor="#eeeeee"><td>template <class Scalar>
+  inline MMClosure<Scalar>
+  &nbsp;<strong>operator * </strong> (const Transpose<Scalar>& l, const Transpose<Scalar>& r)
+<br></td><td align="right"><h3><strong>operator * </strong></h3></td></tr></table><p></p><A NAME="operator%20*%20"></A><A NAME="ref86"></A><table width="100%"><tr bgcolor="#eeeeee"><td>template <class Scalar>
+  inline MMClosure<Scalar>
+  &nbsp;<strong>operator * </strong> (const SMClosure<Scalar>& c, const Transpose<Scalar>& r)
+<br></td><td align="right"><h3><strong>operator * </strong></h3></td></tr></table><p></p><A NAME="operator%20*%20"></A><A NAME="ref87"></A><table width="100%"><tr bgcolor="#eeeeee"><td>template <class Scalar>
+  inline MMClosure<Scalar>
+  &nbsp;<strong>operator * </strong> (const Transpose<Scalar>& l, const SMClosure<Scalar>& c)
+<br></td><td align="right"><h3><strong>operator * </strong></h3></td></tr></table><p></p><A NAME="trace"></A><A NAME="ref88"></A><table width="100%"><tr bgcolor="#eeeeee"><td>template <class Scalar>
+  inline Scalar
+  &nbsp;<strong>trace</strong> (const CAbstMatrix<Scalar>& x)
+<br></td><td align="right"><h3><strong>trace</strong></h3></td></tr></table><p></p><p>
+     Trace
+  </p>
+<A NAME="sum"></A><A NAME="ref89"></A><table width="100%"><tr bgcolor="#eeeeee"><td>template <class Scalar>
+  inline Matrix<Scalar> *
+  &nbsp;<strong>sum</strong> (const CAbstMatrix<Scalar>& x)
+<br></td><td align="right"><h3><strong>sum</strong></h3></td></tr></table><p></p><p>
+     Column-wise sum of matrix entries
+  </p>
+<A NAME="product"></A><A NAME="ref90"></A><table width="100%"><tr bgcolor="#eeeeee"><td>template <class Scalar>
+  inline Matrix<Scalar> *
+  &nbsp;<strong>product</strong> (const CAbstMatrix<Scalar>& x)
+<br></td><td align="right"><h3><strong>product</strong></h3></td></tr></table><p></p><p>
+     Column-wise product of matrix entries
+  </p>
+<A NAME="mean"></A><A NAME="ref91"></A><table width="100%"><tr bgcolor="#eeeeee"><td>template <class Scalar>
+  inline Matrix<Scalar> *
+  &nbsp;<strong>mean</strong> (const CAbstMatrix<Scalar>& x)
+<br></td><td align="right"><h3><strong>mean</strong></h3></td></tr></table><p></p><p>
+     Column-wise arithmetic mean (average) of matrix entries
+  </p>
+<A NAME="diff"></A><A NAME="ref92"></A><table width="100%"><tr bgcolor="#eeeeee"><td>template <class Scalar>
+  inline Matrix<Scalar> *
+  &nbsp;<strong>diff</strong> (const CAbstMatrix<Scalar>& x)
+<br></td><td align="right"><h3><strong>diff</strong></h3></td></tr></table><p></p><p>
+     Column-wise consecutive differences of matrix entries.
+     The matrix to which the return value points is of the same
+     dimensions as the argument.  The first row is unchanged.
+     This differs from the convention used by MATLAB and OCTAVE
+     and ensures that
+</p>
+<p>     cumsum o diff == diff o cumsum == identity.
+  </p>
+<A NAME="cumsum"></A><A NAME="ref93"></A><table width="100%"><tr bgcolor="#eeeeee"><td>template <class Scalar>
+  inline Matrix<Scalar> *
+  &nbsp;<strong>cumsum</strong> (const CAbstMatrix<Scalar>& x)
+<br></td><td align="right"><h3><strong>cumsum</strong></h3></td></tr></table><p></p><p>
+     Column-wise cumulative sum of matrix entries.  The matrix to which
+     the return value points is of the same dimensions as the argument.
+     The first row is unchanged.  This differs from the convention
+     used by MATLAB and OCTAVE and ensures that
+</p>
+<p>     cumsum o diff == diff o cumsum == identity.  
+  </p>
+<A NAME="Llama__Hilbert.html"></A><A NAME="ref94"></A><table width="100%"><tr bgcolor="#eeeeee"><td><strong>Hilbert</strong> <small>(class)</small></td><td align="right"><h3><strong>Hilbert</strong></h3></td></tr></table><p></p><p>
+     Hilbert matrix.  </p>
+<A NAME="Llama__linspace.html"></A><A NAME="ref95"></A><table width="100%"><tr bgcolor="#eeeeee"><td><strong>linspace</strong> <small>(class)</small></td><td align="right"><h3><strong>linspace</strong></h3></td></tr></table><p></p><p>
+     Vector of linearly spaced elements
+  </p>
+<A NAME="Llama__complexify.html"></A><A NAME="ref96"></A><table width="100%"><tr bgcolor="#eeeeee"><td><strong>complexify</strong> <small>(class)</small></td><td align="right"><h3><strong>complexify</strong></h3></td></tr></table><p></p><A NAME="Llama__SchurPClosure.html"></A><A NAME="ref97"></A><table width="100%"><tr bgcolor="#eeeeee"><td><strong>SchurPClosure</strong> <small>(class)</small></td><td align="right"><h3><strong>SchurPClosure</strong></h3></td></tr></table><p></p><p>
+     The Schur (elementwise) product.
+  </p>
+<A NAME="Llama__SchurQClosure.html"></A><A NAME="ref98"></A><table width="100%"><tr bgcolor="#eeeeee"><td><strong>SchurQClosure</strong> <small>(class)</small></td><td align="right"><h3><strong>SchurQClosure</strong></h3></td></tr></table><p></p><p>
+     The Schur (elementwise) quotient.
+  </p>
+<A NAME="schur_product"></A><A NAME="ref99"></A><table width="100%"><tr bgcolor="#eeeeee"><td>template <class Scalar>
+  inline SchurPClosure<Scalar>
+  &nbsp;<strong>schur_product</strong> (const CAbstMatrix<Scalar>& a, const CAbstMatrix<Scalar>& b)
+<br></td><td align="right"><h3><strong>schur_product</strong></h3></td></tr></table><p></p><p>
+     Multiply two matrices or vectors element-by-element.
+  </p>
+<A NAME="schur_quotient"></A><A NAME="ref100"></A><table width="100%"><tr bgcolor="#eeeeee"><td>template <class Scalar>
+  inline SchurQClosure<Scalar>
+  &nbsp;<strong>schur_quotient</strong> (const CAbstMatrix<Scalar>& dividend, const CAbstMatrix<Scalar>& divisor)
+<br></td><td align="right"><h3><strong>schur_quotient</strong></h3></td></tr></table><p></p><p>
+     Divide two matrices or vectors element-by-element.
+  </p>
+<A NAME="companion"></A><A NAME="ref101"></A><table width="100%"><tr bgcolor="#eeeeee"><td>inline Matrix<Real> *
+  &nbsp;<strong>companion</strong> (const Matrix<Real>& a)
+<br></td><td align="right"><h3><strong>companion</strong></h3></td></tr></table><p></p><p>
+     Construct the companion matrix of a univariate polynomial of degree
+     n, the coefficients of which are stored in the matrix a, which is
+     in column-vector format and has length n+1.  The polynomial corresponding
+     to a is a(0) x^n + a(1) x^(n-1) + ... + a(n-2) x + a(n).
+  </p>
+<A NAME="real"></A><A NAME="ref102"></A><table width="100%"><tr bgcolor="#eeeeee"><td>inline Matrix<Real> *
+  &nbsp;<strong>real</strong> (const CAbstMatrix<Complex>& x)
+<br></td><td align="right"><h3><strong>real</strong></h3></td></tr></table><p></p><A NAME="imag"></A><A NAME="ref103"></A><table width="100%"><tr bgcolor="#eeeeee"><td>inline Matrix<Real> *
+  &nbsp;<strong>imag</strong> (const CAbstMatrix<Complex>& x)
+<br></td><td align="right"><h3><strong>imag</strong></h3></td></tr></table><p></p><A NAME="conj"></A><A NAME="ref104"></A><table width="100%"><tr bgcolor="#eeeeee"><td>inline Matrix<Complex> *
+  &nbsp;<strong>conj</strong> (const CAbstMatrix<Complex>& x)
+<br></td><td align="right"><h3><strong>conj</strong></h3></td></tr></table><p></p><A NAME="abs"></A><A NAME="ref105"></A><table width="100%"><tr bgcolor="#eeeeee"><td>inline Matrix<Real> *
+  &nbsp;<strong>abs</strong> (const CAbstMatrix<Complex>& x)
+<br></td><td align="right"><h3><strong>abs</strong></h3></td></tr></table><p></p><A NAME="arg"></A><A NAME="ref106"></A><table width="100%"><tr bgcolor="#eeeeee"><td>inline Matrix<Real> *
+  &nbsp;<strong>arg</strong> (const CAbstMatrix<Complex>& x)
+<br></td><td align="right"><h3><strong>arg</strong></h3></td></tr></table><p></p><A NAME="roots"></A><A NAME="ref107"></A><table width="100%"><tr bgcolor="#eeeeee"><td>inline Matrix<Complex> *
+  &nbsp;<strong>roots</strong> (const Matrix<Real>& a)
+<br></td><td align="right"><h3><strong>roots</strong></h3></td></tr></table><p></p><p>
+     Find the roots of a single-variable polynomial of degree n,
+     the coefficients of which are stored in the matrix x, which
+     is in column-vector format and has length n+1. 
+     The polynomial corresponding to a is 
+     a(0) x^n + a(1) x^(n-1) + ... + a(n-2) x + a(n).
+  </p>
+<A NAME="Matrix%3CComplex%3E%3A%3Aoperator%20"></A><A NAME="ref108"></A><table width="100%"><tr bgcolor="#eeeeee"><td>inline Matrix<Complex>&
+   <strong>Matrix<Complex>::operator </strong>
+</td><td align="right"><h3><strong>Matrix<Complex>::operator </strong></h3></td></tr></table><p></p><A NAME="Submatrix%3CComplex%3E%3A%3Aoperator%20"></A><A NAME="ref109"></A><table width="100%"><tr bgcolor="#eeeeee"><td>inline Submatrix<Complex>&
+   <strong>Submatrix<Complex>::operator </strong>
+</td><td align="right"><h3><strong>Submatrix<Complex>::operator </strong></h3></td></tr></table><p></p><A NAME="--"></A><A NAME="ref110"></A><table width="100%"><tr bgcolor="#eeeeee"><td>typedef struct <strong>--</strong></td><td align="right"><h3><strong>--</strong></h3></td></tr></table><p></p><p>
+     Llama slice object
+  </p>
+<A NAME="diag"></A><A NAME="ref111"></A><table width="100%"><tr bgcolor="#eeeeee"><td>template <class Scalar>
+  inline DiagonalMatrix<Scalar>
+  &nbsp;<strong>diag</strong> (const CAbstMatrix<Scalar>& x)
+<br></td><td align="right"><h3><strong>diag</strong></h3></td></tr></table><p></p><p>
+     If x is a vector, then diag(x) is a pointer to a new square matrix
+     with x on the diagonal and zeros elsewhere.  
+  </p>
+<A NAME="__llama_d_exp"></A><A NAME="ref112"></A><table width="100%"><tr bgcolor="#eeeeee"><td> Real
+  &nbsp;<strong>__llama_d_exp</strong> (Real x)
+<br></td><td align="right"><h3><strong>__llama_d_exp</strong></h3></td></tr></table><p> <small>[static]</small></p><A NAME="exp"></A><A NAME="ref113"></A><table width="100%"><tr bgcolor="#eeeeee"><td>inline FAMClosure<Real, Real>
+  &nbsp;<strong>exp</strong> (Matrix<Real>& x)
+<br></td><td align="right"><h3><strong>exp</strong></h3></td></tr></table><p></p><p>
+     Exponential function applied elementwise to a real matrix
+  </p>
+<A NAME="__llama_d_sqrt"></A><A NAME="ref114"></A><table width="100%"><tr bgcolor="#eeeeee"><td> Real
+  &nbsp;<strong>__llama_d_sqrt</strong> (Real x)
+<br></td><td align="right"><h3><strong>__llama_d_sqrt</strong></h3></td></tr></table><p> <small>[static]</small></p><A NAME="sqrt"></A><A NAME="ref115"></A><table width="100%"><tr bgcolor="#eeeeee"><td>inline FAMClosure<Real, Real>
+  &nbsp;<strong>sqrt</strong> (Matrix<Real>& x)
+<br></td><td align="right"><h3><strong>sqrt</strong></h3></td></tr></table><p></p><p>
+     Square-root function applied elementwise to a real matrix
+  </p>
+<A NAME="__llama_d_abs"></A><A NAME="ref116"></A><table width="100%"><tr bgcolor="#eeeeee"><td> Real
+  &nbsp;<strong>__llama_d_abs</strong> (Real x)
+<br></td><td align="right"><h3><strong>__llama_d_abs</strong></h3></td></tr></table><p> <small>[static]</small></p><A NAME="abs"></A><A NAME="ref117"></A><table width="100%"><tr bgcolor="#eeeeee"><td>inline FAMClosure<Real, Real>
+  &nbsp;<strong>abs</strong> (Matrix<Real>& x)
+<br></td><td align="right"><h3><strong>abs</strong></h3></td></tr></table><p></p><p>
+     Absolute-value function applied elementwise to a real matrix
+  </p>
+<A NAME="__llama_d_log"></A><A NAME="ref118"></A><table width="100%"><tr bgcolor="#eeeeee"><td> Real
+  &nbsp;<strong>__llama_d_log</strong> (Real x)
+<br></td><td align="right"><h3><strong>__llama_d_log</strong></h3></td></tr></table><p> <small>[static]</small></p><A NAME="log"></A><A NAME="ref119"></A><table width="100%"><tr bgcolor="#eeeeee"><td>inline FAMClosure<Real, Real>
+  &nbsp;<strong>log</strong> (Matrix<Real>& x)
+<br></td><td align="right"><h3><strong>log</strong></h3></td></tr></table><p></p><p>
+     Logarithm function applied elementwise to a real matrix
+  </p>
+<A NAME="__llama_d_sin"></A><A NAME="ref120"></A><table width="100%"><tr bgcolor="#eeeeee"><td> Real
+  &nbsp;<strong>__llama_d_sin</strong> (Real x)
+<br></td><td align="right"><h3><strong>__llama_d_sin</strong></h3></td></tr></table><p> <small>[static]</small></p><A NAME="sin"></A><A NAME="ref121"></A><table width="100%"><tr bgcolor="#eeeeee"><td>inline FAMClosure<Real, Real>
+  &nbsp;<strong>sin</strong> (Matrix<Real>& x)
+<br></td><td align="right"><h3><strong>sin</strong></h3></td></tr></table><p></p><p>
+     Sine function applied elementwise to a real matrix
+  </p>
+<A NAME="__llama_d_cos"></A><A NAME="ref122"></A><table width="100%"><tr bgcolor="#eeeeee"><td> Real
+  &nbsp;<strong>__llama_d_cos</strong> (Real x)
+<br></td><td align="right"><h3><strong>__llama_d_cos</strong></h3></td></tr></table><p> <small>[static]</small></p><A NAME="cos"></A><A NAME="ref123"></A><table width="100%"><tr bgcolor="#eeeeee"><td>inline FAMClosure<Real, Real>
+  &nbsp;<strong>cos</strong> (Matrix<Real>& x)
+<br></td><td align="right"><h3><strong>cos</strong></h3></td></tr></table><p></p><p>
+     Cosine function applied elementwise to a real matrix
+  </p>
+<A NAME="__llama_dc_abs"></A><A NAME="ref124"></A><table width="100%"><tr bgcolor="#eeeeee"><td> Real
+  &nbsp;<strong>__llama_dc_abs</strong> (Complex x)
+<br></td><td align="right"><h3><strong>__llama_dc_abs</strong></h3></td></tr></table><p> <small>[static]</small></p><A NAME="abs"></A><A NAME="ref125"></A><table width="100%"><tr bgcolor="#eeeeee"><td>inline FAMClosure<Real, Complex>
+  &nbsp;<strong>abs</strong> (Matrix<Complex>& x)
+<br></td><td align="right"><h3><strong>abs</strong></h3></td></tr></table><p></p><p>
+     Absolute-value function applied elementwise to a complex matrix
+  </p>
+<A NAME="eigenvals"></A><A NAME="ref126"></A><table width="100%"><tr bgcolor="#eeeeee"><td>template <class Scalar>
+  Matrix<Complex> * &nbsp;<strong>eigenvals</strong> (const Matrix<Scalar>&)
+<br></td><td align="right"><h3><strong>eigenvals</strong></h3></td></tr></table><p></p><p>
+     Compute the eigenvalues of a real matrix without the
+     eigenvectors.
+  </p>
+<A NAME="singvals"></A><A NAME="ref127"></A><table width="100%"><tr bgcolor="#eeeeee"><td>Matrix<Real> * &nbsp;<strong>singvals</strong> (const Matrix<Real>&)
+<br></td><td align="right"><h3><strong>singvals</strong></h3></td></tr></table><p></p><p>
+     Compute the singular values without computing the singular vectors.
+  </p>
+<A NAME="histogram"></A><A NAME="ref128"></A><table width="100%"><tr bgcolor="#eeeeee"><td>inline Matrix<Real> *
+  &nbsp;<strong>histogram</strong> (const CAbstMatrix<Real>& x, const Index n)
+<br></td><td align="right"><h3><strong>histogram</strong></h3></td></tr></table><p></p><p>
+     Bin the data in x into n equal bins.  Return a pointer to an n x 2
+     matrix: bin centers are in column 0, corresponding counts in column
+     1.  
+  </p>
+<A NAME="histogram"></A><A NAME="ref129"></A><table width="100%"><tr bgcolor="#eeeeee"><td>inline Matrix<Real> *
+  &nbsp;<strong>histogram</strong> (const CAbstMatrix<Real>& x, const Index n, Real xmin, Real xmax)
+<br></td><td align="right"><h3><strong>histogram</strong></h3></td></tr></table><p></p><p>
+     Bin the data in x into n equal bins.  Return a pointer to an n x 2
+     matrix: bin centers are in column 0, corresponding counts in column
+     1.  
+  </p>
+<A NAME="barchart"></A><A NAME="ref130"></A><table width="100%"><tr bgcolor="#eeeeee"><td>inline Matrix<Real> *
+  &nbsp;<strong>barchart</strong> (const CAbstMatrix<Real>& x)
+<br></td><td align="right"><h3><strong>barchart</strong></h3></td></tr></table><p></p><p>
+     Make a bar chart corresponding to the histogram x.
+  </p>
+<A NAME="--"></A><A NAME="ref131"></A><table width="100%"><tr bgcolor="#eeeeee"><td>typedef enum <strong>--</strong></td><td align="right"><h3><strong>--</strong></h3></td></tr></table><p></p><A NAME="neldermead"></A><A NAME="ref132"></A><table width="100%"><tr bgcolor="#eeeeee"><td>Index &nbsp;<strong>neldermead</strong> (Matrix<Real> *x, Matrix<Real> *y, Real (*f)(const CAbstMatrix<Real>&), Real tol, Index nmax)
+<br></td><td align="right"><h3><strong>neldermead</strong></h3></td></tr></table><p></p><p>
+     Minimize a scalar-valued function of several variables using the
+     Nelder-Mead algorithm.  The function to be minimized is f, a
+     function of n variables.  On input, x should point to a matrix of
+     dimension n x (n+1), the columns of which are co-ordinates of a
+     simplex, and y should point to an (n+1) x 1 matrix containing the
+     values of f at these points.  On exit, the first column of the
+     matrix to which x points contains an approximation of the minimum,
+     with (*y)(0) the value of f at that point.  The minimum is computed
+     to a fractional tolerance of tol, and no more than nmax function
+     evaluations are performed.  The number of function evaluations
+     performed is returned.  
+  </p>
+<A NAME="minimize"></A><A NAME="ref133"></A><table width="100%"><tr bgcolor="#eeeeee"><td>Index &nbsp;<strong>minimize</strong> (const Matrix<Real>& x, Real (*f)(const CAbstMatrix<Real>&), Real tol, Index nmax, Matrix<Real> *min)
+<br></td><td align="right"><h3><strong>minimize</strong></h3></td></tr></table><p></p><p>
+     Minimize a scalar-valued function of several variables using the
+     Nelder-Mead algorithm.  The function to be minimized is f, a
+     function of n variables.  x should point to a matrix of dimension n
+     x (n+1), the columns of which are co-ordinates of a simplex.  The
+     minimum is computed to a fractional tolerance of tol, no more than
+     nmax function evaluations are performed, and the approximate
+     minimum is returned in the matrix to which min points.  NOTE: min
+     must be the address of a valid matrix.  The number of function
+     evaluations performed is returned.
+  </p>
+<HR>
+	<table>
+	<tr><td><small>Generated by: king on larix.tiem.utk.edu on Tue Jun 29 10:55:51 2004, using kdoc 2.0a54.</small></td></tr>
+	</table>
+</BODY>
+</HTML>

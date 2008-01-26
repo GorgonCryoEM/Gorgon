@@ -1,0 +1,929 @@
+include Make.inc
+
+ptobj = ATL_ptflushcache.o
+obj = ATL_flushcache.o ATL_cputime.o ATL_walltime.o ATL_xerbla.o ATL_lcm.o \
+      ATL_buildinfo.o ATL_sgemove.o ATL_sgecopy.o ATL_sgezero.o ATL_sgeadd.o \
+      ATL_sgescal.o ATL_strscal.o ATL_saxpby.o ATL_dgemove.o ATL_dgecopy.o \
+      ATL_dgezero.o ATL_dgeadd.o ATL_dgescal.o ATL_dtrscal.o ATL_daxpby.o \
+      ATL_cgemove.o ATL_cgecopy.o ATL_cgezero.o ATL_cgeadd.o ATL_cgescal.o \
+      ATL_ctrscal.o ATL_caxpby.o ATL_zgemove.o ATL_zgecopy.o ATL_zgezero.o \
+      ATL_zgeadd.o ATL_zgescal.o ATL_ztrscal.o ATL_zaxpby.o ATL_caxpbyConj.o \
+      ATL_caxpyConj.o ATL_cmoveConj.o ATL_ccopyConj.o ATL_cscalConj.o \
+      ATL_ccplxinvert.o ATL_caxpyConj_x1_y1.o ATL_chescal.o \
+      ATL_cgemove_aXi0.o ATL_cgemove_aX.o ATL_cgemove_a1.o ATL_cgemove_a0.o \
+      ATL_caxpbyConj_aXi0_bXi0.o ATL_caxpby_aXi0_bXi0.o \
+      ATL_cgeadd_aXi0_bXi0.o ATL_caxpbyConj_aX_bXi0.o ATL_caxpby_aX_bXi0.o \
+      ATL_cgeadd_aX_bXi0.o ATL_caxpbyConj_a1_bXi0.o ATL_caxpby_a1_bXi0.o \
+      ATL_cgeadd_a1_bXi0.o ATL_caxpbyConj_a0_bXi0.o ATL_caxpby_a0_bXi0.o \
+      ATL_cgeadd_a0_bXi0.o ATL_cgescal_bXi0.o ATL_caxpbyConj_aXi0_bX.o \
+      ATL_caxpby_aXi0_bX.o ATL_cgeadd_aXi0_bX.o ATL_caxpbyConj_aX_bX.o \
+      ATL_caxpby_aX_bX.o ATL_cgeadd_aX_bX.o ATL_caxpbyConj_a1_bX.o \
+      ATL_caxpby_a1_bX.o ATL_cgeadd_a1_bX.o ATL_caxpbyConj_a0_bX.o \
+      ATL_caxpby_a0_bX.o ATL_cgeadd_a0_bX.o ATL_cgescal_bX.o \
+      ATL_caxpbyConj_aXi0_b1.o ATL_caxpby_aXi0_b1.o ATL_cgeadd_aXi0_b1.o \
+      ATL_caxpbyConj_aX_b1.o ATL_caxpby_aX_b1.o ATL_cgeadd_aX_b1.o \
+      ATL_caxpbyConj_a1_b1.o ATL_caxpby_a1_b1.o ATL_cgeadd_a1_b1.o \
+      ATL_caxpbyConj_a0_b1.o ATL_caxpby_a0_b1.o ATL_cgeadd_a0_b1.o \
+      ATL_cgescal_b1.o ATL_caxpbyConj_aXi0_b0.o ATL_caxpby_aXi0_b0.o \
+      ATL_cgeadd_aXi0_b0.o ATL_caxpbyConj_aX_b0.o ATL_caxpby_aX_b0.o \
+      ATL_cgeadd_aX_b0.o ATL_caxpbyConj_a1_b0.o ATL_caxpby_a1_b0.o \
+      ATL_cgeadd_a1_b0.o ATL_caxpbyConj_a0_b0.o ATL_caxpby_a0_b0.o \
+      ATL_cgeadd_a0_b0.o ATL_cgescal_b0.o ATL_zaxpbyConj.o ATL_zaxpyConj.o \
+      ATL_zmoveConj.o ATL_zcopyConj.o ATL_zscalConj.o ATL_zcplxinvert.o \
+      ATL_zaxpyConj_x1_y1.o ATL_zhescal.o ATL_zgemove_aXi0.o ATL_zgemove_aX.o \
+      ATL_zgemove_a1.o ATL_zgemove_a0.o ATL_zaxpbyConj_aXi0_bXi0.o \
+      ATL_zaxpby_aXi0_bXi0.o ATL_zgeadd_aXi0_bXi0.o ATL_zaxpbyConj_aX_bXi0.o \
+      ATL_zaxpby_aX_bXi0.o ATL_zgeadd_aX_bXi0.o ATL_zaxpbyConj_a1_bXi0.o \
+      ATL_zaxpby_a1_bXi0.o ATL_zgeadd_a1_bXi0.o ATL_zaxpbyConj_a0_bXi0.o \
+      ATL_zaxpby_a0_bXi0.o ATL_zgeadd_a0_bXi0.o ATL_zgescal_bXi0.o \
+      ATL_zaxpbyConj_aXi0_bX.o ATL_zaxpby_aXi0_bX.o ATL_zgeadd_aXi0_bX.o \
+      ATL_zaxpbyConj_aX_bX.o ATL_zaxpby_aX_bX.o ATL_zgeadd_aX_bX.o \
+      ATL_zaxpbyConj_a1_bX.o ATL_zaxpby_a1_bX.o ATL_zgeadd_a1_bX.o \
+      ATL_zaxpbyConj_a0_bX.o ATL_zaxpby_a0_bX.o ATL_zgeadd_a0_bX.o \
+      ATL_zgescal_bX.o ATL_zaxpbyConj_aXi0_b1.o ATL_zaxpby_aXi0_b1.o \
+      ATL_zgeadd_aXi0_b1.o ATL_zaxpbyConj_aX_b1.o ATL_zaxpby_aX_b1.o \
+      ATL_zgeadd_aX_b1.o ATL_zaxpbyConj_a1_b1.o ATL_zaxpby_a1_b1.o \
+      ATL_zgeadd_a1_b1.o ATL_zaxpbyConj_a0_b1.o ATL_zaxpby_a0_b1.o \
+      ATL_zgeadd_a0_b1.o ATL_zgescal_b1.o ATL_zaxpbyConj_aXi0_b0.o \
+      ATL_zaxpby_aXi0_b0.o ATL_zgeadd_aXi0_b0.o ATL_zaxpbyConj_aX_b0.o \
+      ATL_zaxpby_aX_b0.o ATL_zgeadd_aX_b0.o ATL_zaxpbyConj_a1_b0.o \
+      ATL_zaxpby_a1_b0.o ATL_zgeadd_a1_b0.o ATL_zaxpbyConj_a0_b0.o \
+      ATL_zaxpby_a0_b0.o ATL_zgeadd_a0_b0.o ATL_zgescal_b0.o ATL_sgemove_aX.o \
+      ATL_sgemove_a1.o ATL_sgemove_a0.o ATL_saxpby_aX_bX.o ATL_sgeadd_aX_bX.o \
+      ATL_saxpby_a1_bX.o ATL_sgeadd_a1_bX.o ATL_saxpby_a0_bX.o \
+      ATL_sgeadd_a0_bX.o ATL_sgescal_bX.o ATL_saxpby_aX_b1.o \
+      ATL_sgeadd_aX_b1.o ATL_saxpby_a1_b1.o ATL_sgeadd_a1_b1.o \
+      ATL_saxpby_a0_b1.o ATL_sgeadd_a0_b1.o ATL_sgescal_b1.o \
+      ATL_saxpby_aX_b0.o ATL_sgeadd_aX_b0.o ATL_saxpby_a1_b0.o \
+      ATL_sgeadd_a1_b0.o ATL_saxpby_a0_b0.o ATL_sgeadd_a0_b0.o \
+      ATL_sgescal_b0.o ATL_dgemove_aX.o ATL_dgemove_a1.o ATL_dgemove_a0.o \
+      ATL_daxpby_aX_bX.o ATL_dgeadd_aX_bX.o ATL_daxpby_a1_bX.o \
+      ATL_dgeadd_a1_bX.o ATL_daxpby_a0_bX.o ATL_dgeadd_a0_bX.o \
+      ATL_dgescal_bX.o ATL_daxpby_aX_b1.o ATL_dgeadd_aX_b1.o \
+      ATL_daxpby_a1_b1.o ATL_dgeadd_a1_b1.o ATL_daxpby_a0_b1.o \
+      ATL_dgeadd_a0_b1.o ATL_dgescal_b1.o ATL_daxpby_aX_b0.o \
+      ATL_dgeadd_aX_b0.o ATL_daxpby_a1_b0.o ATL_dgeadd_a1_b0.o \
+      ATL_daxpby_a0_b0.o ATL_dgeadd_a0_b0.o ATL_dgescal_b0.o
+
+dlib : lib
+slib : lib
+zlib : lib
+clib : lib
+
+ptlib : ptlib.grd
+
+lib : lib.grd
+
+lib.grd : $(obj)
+	$(ARCHIVER) $(ARFLAGS) $(ATLASlib) $(obj)
+	$(RANLIB) $(ATLASlib)
+	cd $(L1Bdir) ; $(MAKE) lib
+	touch lib.grd
+
+ptlib.grd : $(ptobj)
+	$(ARCHIVER) $(ARFLAGS) $(ATLASlib) $(ptobj)
+	$(RANLIB) $(ATLASlib)
+	touch ptlib.grd
+
+clean :
+	rm -f $(obj) lib.grd
+
+$(ATLFWAIT) :
+	cd $(BINdir) ; $(MAKE) xatlas_waitfile
+$(INCdir)/atlas_type.h : $(ATLFWAIT)
+	cd $(SYSdir) ; $(MAKE) $(INCdir)/atlas_type.h
+	$(ATLFWAIT) -f $(INCdir)/atlas_type.h
+sINCdep = $(INCdir)/atlas_ssysinfo.h $(INCdir)/atlas_type.h 
+$(INCdir)/atlas_ssysinfo.h : $(ATLFWAIT)
+	cd $(SYSdir) ; $(MAKE) $(INCdir)/atlas_ssysinfo.h
+	$(ATLFWAIT) -f $(INCdir)/atlas_ssysinfo.h
+dINCdep = $(INCdir)/atlas_dsysinfo.h $(INCdir)/atlas_type.h 
+$(INCdir)/atlas_dsysinfo.h : $(ATLFWAIT)
+	cd $(SYSdir) ; $(MAKE) $(INCdir)/atlas_dsysinfo.h
+	$(ATLFWAIT) -f $(INCdir)/atlas_dsysinfo.h
+cINCdep = $(INCdir)/atlas_csysinfo.h $(INCdir)/atlas_type.h 
+$(INCdir)/atlas_csysinfo.h : $(ATLFWAIT)
+	cd $(SYSdir) ; $(MAKE) $(INCdir)/atlas_csysinfo.h
+	$(ATLFWAIT) -f $(INCdir)/atlas_csysinfo.h
+zINCdep = $(INCdir)/atlas_zsysinfo.h $(INCdir)/atlas_type.h 
+$(INCdir)/atlas_zsysinfo.h : $(ATLFWAIT)
+	cd $(SYSdir) ; $(MAKE) $(INCdir)/atlas_zsysinfo.h
+	$(ATLFWAIT) -f $(INCdir)/atlas_zsysinfo.h
+
+ATL_cputime.o : $(SYSdir)/ATL_cputime.o
+	cp $(SYSdir)/ATL_cputime.o ATL_cputime.o
+$(SYSdir)/ATL_cputime.o: $(SYSdir)/ATL_cputime.c
+	cd $(SYSdir) ; $(MAKE) ATL_cputime.o
+$(SYSdir)/ATL_cputime.c:
+	cd $(SYSdir) ; $(MAKE) ATL_cputime.o
+ATL_walltime.o : $(SYSdir)/ATL_walltime.o
+	cp $(SYSdir)/ATL_walltime.o ATL_walltime.o
+$(SYSdir)/ATL_walltime.o: $(SYSdir)/ATL_walltime.c
+	cd $(SYSdir) ; $(MAKE) ATL_walltime.o
+$(SYSdir)/ATL_walltime.c:
+	cd $(SYSdir) ; $(MAKE) ATL_walltime.o
+
+$(INCdir)/atlas_pthreads.h :
+	cd $(SYSdir) ; $(MAKE) findNT
+	$(ATLFWAIT) -f $(INCdir)/atlas_pthreads.h
+ATL_ptflushcache.o : $(INCdir)/atlas_type.h $(INCdir)/atlas_pthreads.h \
+                ../ATL_ptflushcache.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) ../ATL_ptflushcache.c
+ATL_flushcache.o : $(INCdir)/atlas_type.h ../ATL_flushcache.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) ../ATL_flushcache.c
+ATL_lcm.o : $(INCdir)/atlas_type.h ../ATL_lcm.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) ../ATL_lcm.c
+ATL_xerbla.o : $(INCdir)/atlas_type.h ../ATL_xerbla.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) ../ATL_xerbla.c
+$(INCdir)/atlas_buildinfo.h :
+	cd $(SYSdir) ; $(MAKE) xemit_buildinfo
+	cd $(SYSdir) ; ./xemit_buildinfo $(INCdir)/atlas_buildinfo.h
+ATL_buildinfo.o : $(INCdir)/atlas_buildinfo.h $(INCdir)/atlas_cacheedge.h
+	$(CC) -o $@ -c $(CCFLAGS) ../ATL_buildinfo.c
+#
+# Routines coming in all four types
+#
+ATL_sgemove.o : $(sINCdep) ../ATL_gemove.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSREAL ../ATL_gemove.c
+ATL_sgecopy.o : $(sINCdep) ../ATL_gecopy.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSREAL ../ATL_gecopy.c
+ATL_sgezero.o : $(sINCdep) ../ATL_gezero.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSREAL ../ATL_gezero.c
+ATL_sgeadd.o : $(sINCdep) ../ATL_geadd.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSREAL ../ATL_geadd.c
+ATL_sgescal.o : $(sINCdep) ../ATL_gescal.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSREAL ../ATL_gescal.c
+ATL_strscal.o : $(sINCdep) ../ATL_trscal.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSREAL ../ATL_trscal.c
+ATL_saxpby.o : $(sINCdep) ../ATL_axpby.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSREAL ../ATL_axpby.c
+ATL_saxpy.o : $(sINCdep) ../ATL_axpy.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSREAL ../ATL_axpy.c
+ATL_smove.o : $(sINCdep) ../ATL_move.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSREAL ../ATL_move.c
+ATL_scopy.o : $(sINCdep) ../ATL_copy.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSREAL ../ATL_copy.c
+ATL_sscal.o : $(sINCdep) ../ATL_scal.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSREAL ../ATL_scal.c
+ATL_sset.o : $(sINCdep) ../ATL_set.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSREAL ../ATL_set.c
+ATL_szero.o : $(sINCdep) ../ATL_zero.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSREAL ../ATL_zero.c
+
+#
+#  Routines with both alpha & beta dependencies
+#
+ATL_saxpby_aXi0_bXi0.o : $(sINCdep) ../kernel/ATL_axpby.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSREAL -DALPHAXI0 \
+              -DBETAXI0 ../kernel/ATL_axpby.c
+ATL_sgeadd_aXi0_bXi0.o : $(sINCdep) ../kernel/ATL_geadd.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSREAL -DALPHAXI0 \
+              -DBETAXI0 ../kernel/ATL_geadd.c
+ATL_saxpby_aX_bXi0.o : $(sINCdep) ../kernel/ATL_axpby.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSREAL -DALPHAX \
+              -DBETAXI0 ../kernel/ATL_axpby.c
+ATL_sgeadd_aX_bXi0.o : $(sINCdep) ../kernel/ATL_geadd.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSREAL -DALPHAX \
+              -DBETAXI0 ../kernel/ATL_geadd.c
+ATL_saxpby_a1_bXi0.o : $(sINCdep) ../kernel/ATL_axpby.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSREAL -DALPHA1 \
+              -DBETAXI0 ../kernel/ATL_axpby.c
+ATL_sgeadd_a1_bXi0.o : $(sINCdep) ../kernel/ATL_geadd.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSREAL -DALPHA1 \
+              -DBETAXI0 ../kernel/ATL_geadd.c
+ATL_saxpby_a0_bXi0.o : $(sINCdep) ../kernel/ATL_axpby.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSREAL -DALPHA0 \
+              -DBETAXI0 ../kernel/ATL_axpby.c
+ATL_sgeadd_a0_bXi0.o : $(sINCdep) ../kernel/ATL_geadd.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSREAL -DALPHA0 \
+              -DBETAXI0 ../kernel/ATL_geadd.c
+ATL_saxpby_aXi0_bX.o : $(sINCdep) ../kernel/ATL_axpby.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSREAL -DALPHAXI0 \
+              -DBETAX ../kernel/ATL_axpby.c
+ATL_sgeadd_aXi0_bX.o : $(sINCdep) ../kernel/ATL_geadd.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSREAL -DALPHAXI0 \
+              -DBETAX ../kernel/ATL_geadd.c
+ATL_saxpby_aX_bX.o : $(sINCdep) ../kernel/ATL_axpby.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSREAL -DALPHAX \
+              -DBETAX ../kernel/ATL_axpby.c
+ATL_sgeadd_aX_bX.o : $(sINCdep) ../kernel/ATL_geadd.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSREAL -DALPHAX \
+              -DBETAX ../kernel/ATL_geadd.c
+ATL_saxpby_a1_bX.o : $(sINCdep) ../kernel/ATL_axpby.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSREAL -DALPHA1 \
+              -DBETAX ../kernel/ATL_axpby.c
+ATL_sgeadd_a1_bX.o : $(sINCdep) ../kernel/ATL_geadd.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSREAL -DALPHA1 \
+              -DBETAX ../kernel/ATL_geadd.c
+ATL_saxpby_a0_bX.o : $(sINCdep) ../kernel/ATL_axpby.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSREAL -DALPHA0 \
+              -DBETAX ../kernel/ATL_axpby.c
+ATL_sgeadd_a0_bX.o : $(sINCdep) ../kernel/ATL_geadd.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSREAL -DALPHA0 \
+              -DBETAX ../kernel/ATL_geadd.c
+ATL_saxpby_aXi0_b1.o : $(sINCdep) ../kernel/ATL_axpby.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSREAL -DALPHAXI0 \
+              -DBETA1 ../kernel/ATL_axpby.c
+ATL_sgeadd_aXi0_b1.o : $(sINCdep) ../kernel/ATL_geadd.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSREAL -DALPHAXI0 \
+              -DBETA1 ../kernel/ATL_geadd.c
+ATL_saxpby_aX_b1.o : $(sINCdep) ../kernel/ATL_axpby.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSREAL -DALPHAX \
+              -DBETA1 ../kernel/ATL_axpby.c
+ATL_sgeadd_aX_b1.o : $(sINCdep) ../kernel/ATL_geadd.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSREAL -DALPHAX \
+              -DBETA1 ../kernel/ATL_geadd.c
+ATL_saxpby_a1_b1.o : $(sINCdep) ../kernel/ATL_axpby.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSREAL -DALPHA1 \
+              -DBETA1 ../kernel/ATL_axpby.c
+ATL_sgeadd_a1_b1.o : $(sINCdep) ../kernel/ATL_geadd.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSREAL -DALPHA1 \
+              -DBETA1 ../kernel/ATL_geadd.c
+ATL_saxpby_a0_b1.o : $(sINCdep) ../kernel/ATL_axpby.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSREAL -DALPHA0 \
+              -DBETA1 ../kernel/ATL_axpby.c
+ATL_sgeadd_a0_b1.o : $(sINCdep) ../kernel/ATL_geadd.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSREAL -DALPHA0 \
+              -DBETA1 ../kernel/ATL_geadd.c
+ATL_saxpby_aXi0_b0.o : $(sINCdep) ../kernel/ATL_axpby.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSREAL -DALPHAXI0 \
+              -DBETA0 ../kernel/ATL_axpby.c
+ATL_sgeadd_aXi0_b0.o : $(sINCdep) ../kernel/ATL_geadd.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSREAL -DALPHAXI0 \
+              -DBETA0 ../kernel/ATL_geadd.c
+ATL_saxpby_aX_b0.o : $(sINCdep) ../kernel/ATL_axpby.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSREAL -DALPHAX \
+              -DBETA0 ../kernel/ATL_axpby.c
+ATL_sgeadd_aX_b0.o : $(sINCdep) ../kernel/ATL_geadd.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSREAL -DALPHAX \
+              -DBETA0 ../kernel/ATL_geadd.c
+ATL_saxpby_a1_b0.o : $(sINCdep) ../kernel/ATL_axpby.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSREAL -DALPHA1 \
+              -DBETA0 ../kernel/ATL_axpby.c
+ATL_sgeadd_a1_b0.o : $(sINCdep) ../kernel/ATL_geadd.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSREAL -DALPHA1 \
+              -DBETA0 ../kernel/ATL_geadd.c
+ATL_saxpby_a0_b0.o : $(sINCdep) ../kernel/ATL_axpby.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSREAL -DALPHA0 \
+              -DBETA0 ../kernel/ATL_axpby.c
+ATL_sgeadd_a0_b0.o : $(sINCdep) ../kernel/ATL_geadd.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSREAL -DALPHA0 \
+              -DBETA0 ../kernel/ATL_geadd.c
+
+#
+#  Routines with beta dependencies only
+#
+ATL_sgescal_bXi0.o : $(sINCdep) ../kernel/ATL_gescal.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSREAL -DBETAXI0 \
+              ../kernel/ATL_gescal.c
+ATL_sgescal_bX.o : $(sINCdep) ../kernel/ATL_gescal.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSREAL -DBETAX \
+              ../kernel/ATL_gescal.c
+ATL_sgescal_b1.o : $(sINCdep) ../kernel/ATL_gescal.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSREAL -DBETA1 \
+              ../kernel/ATL_gescal.c
+ATL_sgescal_b0.o : $(sINCdep) ../kernel/ATL_gescal.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSREAL -DBETA0 \
+              ../kernel/ATL_gescal.c
+
+#
+#  Routines with alpha dependencies only
+#
+ATL_sgemove_aXi0.o : $(sINCdep) ../kernel/ATL_gemove.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSREAL -DALPHAXI0 \
+              ../kernel/ATL_gemove.c
+ATL_sgemove_aX.o : $(sINCdep) ../kernel/ATL_gemove.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSREAL -DALPHAX \
+              ../kernel/ATL_gemove.c
+ATL_sgemove_a1.o : $(sINCdep) ../kernel/ATL_gemove.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSREAL -DALPHA1 \
+              ../kernel/ATL_gemove.c
+ATL_sgemove_a0.o : $(sINCdep) ../kernel/ATL_gemove.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSREAL -DALPHA0 \
+              ../kernel/ATL_gemove.c
+ATL_dgemove.o : $(dINCdep) ../ATL_gemove.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDREAL ../ATL_gemove.c
+ATL_dgecopy.o : $(dINCdep) ../ATL_gecopy.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDREAL ../ATL_gecopy.c
+ATL_dgezero.o : $(dINCdep) ../ATL_gezero.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDREAL ../ATL_gezero.c
+ATL_dgeadd.o : $(dINCdep) ../ATL_geadd.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDREAL ../ATL_geadd.c
+ATL_dgescal.o : $(dINCdep) ../ATL_gescal.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDREAL ../ATL_gescal.c
+ATL_dtrscal.o : $(dINCdep) ../ATL_trscal.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDREAL ../ATL_trscal.c
+ATL_daxpby.o : $(dINCdep) ../ATL_axpby.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDREAL ../ATL_axpby.c
+ATL_daxpy.o : $(dINCdep) ../ATL_axpy.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDREAL ../ATL_axpy.c
+ATL_dmove.o : $(dINCdep) ../ATL_move.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDREAL ../ATL_move.c
+ATL_dcopy.o : $(dINCdep) ../ATL_copy.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDREAL ../ATL_copy.c
+ATL_dscal.o : $(dINCdep) ../ATL_scal.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDREAL ../ATL_scal.c
+ATL_dset.o : $(dINCdep) ../ATL_set.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDREAL ../ATL_set.c
+ATL_dzero.o : $(dINCdep) ../ATL_zero.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDREAL ../ATL_zero.c
+
+#
+#  Routines with both alpha & beta dependencies
+#
+ATL_daxpby_aXi0_bXi0.o : $(dINCdep) ../kernel/ATL_axpby.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDREAL -DALPHAXI0 \
+              -DBETAXI0 ../kernel/ATL_axpby.c
+ATL_dgeadd_aXi0_bXi0.o : $(dINCdep) ../kernel/ATL_geadd.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDREAL -DALPHAXI0 \
+              -DBETAXI0 ../kernel/ATL_geadd.c
+ATL_daxpby_aX_bXi0.o : $(dINCdep) ../kernel/ATL_axpby.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDREAL -DALPHAX \
+              -DBETAXI0 ../kernel/ATL_axpby.c
+ATL_dgeadd_aX_bXi0.o : $(dINCdep) ../kernel/ATL_geadd.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDREAL -DALPHAX \
+              -DBETAXI0 ../kernel/ATL_geadd.c
+ATL_daxpby_a1_bXi0.o : $(dINCdep) ../kernel/ATL_axpby.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDREAL -DALPHA1 \
+              -DBETAXI0 ../kernel/ATL_axpby.c
+ATL_dgeadd_a1_bXi0.o : $(dINCdep) ../kernel/ATL_geadd.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDREAL -DALPHA1 \
+              -DBETAXI0 ../kernel/ATL_geadd.c
+ATL_daxpby_a0_bXi0.o : $(dINCdep) ../kernel/ATL_axpby.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDREAL -DALPHA0 \
+              -DBETAXI0 ../kernel/ATL_axpby.c
+ATL_dgeadd_a0_bXi0.o : $(dINCdep) ../kernel/ATL_geadd.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDREAL -DALPHA0 \
+              -DBETAXI0 ../kernel/ATL_geadd.c
+ATL_daxpby_aXi0_bX.o : $(dINCdep) ../kernel/ATL_axpby.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDREAL -DALPHAXI0 \
+              -DBETAX ../kernel/ATL_axpby.c
+ATL_dgeadd_aXi0_bX.o : $(dINCdep) ../kernel/ATL_geadd.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDREAL -DALPHAXI0 \
+              -DBETAX ../kernel/ATL_geadd.c
+ATL_daxpby_aX_bX.o : $(dINCdep) ../kernel/ATL_axpby.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDREAL -DALPHAX \
+              -DBETAX ../kernel/ATL_axpby.c
+ATL_dgeadd_aX_bX.o : $(dINCdep) ../kernel/ATL_geadd.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDREAL -DALPHAX \
+              -DBETAX ../kernel/ATL_geadd.c
+ATL_daxpby_a1_bX.o : $(dINCdep) ../kernel/ATL_axpby.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDREAL -DALPHA1 \
+              -DBETAX ../kernel/ATL_axpby.c
+ATL_dgeadd_a1_bX.o : $(dINCdep) ../kernel/ATL_geadd.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDREAL -DALPHA1 \
+              -DBETAX ../kernel/ATL_geadd.c
+ATL_daxpby_a0_bX.o : $(dINCdep) ../kernel/ATL_axpby.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDREAL -DALPHA0 \
+              -DBETAX ../kernel/ATL_axpby.c
+ATL_dgeadd_a0_bX.o : $(dINCdep) ../kernel/ATL_geadd.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDREAL -DALPHA0 \
+              -DBETAX ../kernel/ATL_geadd.c
+ATL_daxpby_aXi0_b1.o : $(dINCdep) ../kernel/ATL_axpby.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDREAL -DALPHAXI0 \
+              -DBETA1 ../kernel/ATL_axpby.c
+ATL_dgeadd_aXi0_b1.o : $(dINCdep) ../kernel/ATL_geadd.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDREAL -DALPHAXI0 \
+              -DBETA1 ../kernel/ATL_geadd.c
+ATL_daxpby_aX_b1.o : $(dINCdep) ../kernel/ATL_axpby.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDREAL -DALPHAX \
+              -DBETA1 ../kernel/ATL_axpby.c
+ATL_dgeadd_aX_b1.o : $(dINCdep) ../kernel/ATL_geadd.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDREAL -DALPHAX \
+              -DBETA1 ../kernel/ATL_geadd.c
+ATL_daxpby_a1_b1.o : $(dINCdep) ../kernel/ATL_axpby.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDREAL -DALPHA1 \
+              -DBETA1 ../kernel/ATL_axpby.c
+ATL_dgeadd_a1_b1.o : $(dINCdep) ../kernel/ATL_geadd.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDREAL -DALPHA1 \
+              -DBETA1 ../kernel/ATL_geadd.c
+ATL_daxpby_a0_b1.o : $(dINCdep) ../kernel/ATL_axpby.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDREAL -DALPHA0 \
+              -DBETA1 ../kernel/ATL_axpby.c
+ATL_dgeadd_a0_b1.o : $(dINCdep) ../kernel/ATL_geadd.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDREAL -DALPHA0 \
+              -DBETA1 ../kernel/ATL_geadd.c
+ATL_daxpby_aXi0_b0.o : $(dINCdep) ../kernel/ATL_axpby.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDREAL -DALPHAXI0 \
+              -DBETA0 ../kernel/ATL_axpby.c
+ATL_dgeadd_aXi0_b0.o : $(dINCdep) ../kernel/ATL_geadd.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDREAL -DALPHAXI0 \
+              -DBETA0 ../kernel/ATL_geadd.c
+ATL_daxpby_aX_b0.o : $(dINCdep) ../kernel/ATL_axpby.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDREAL -DALPHAX \
+              -DBETA0 ../kernel/ATL_axpby.c
+ATL_dgeadd_aX_b0.o : $(dINCdep) ../kernel/ATL_geadd.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDREAL -DALPHAX \
+              -DBETA0 ../kernel/ATL_geadd.c
+ATL_daxpby_a1_b0.o : $(dINCdep) ../kernel/ATL_axpby.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDREAL -DALPHA1 \
+              -DBETA0 ../kernel/ATL_axpby.c
+ATL_dgeadd_a1_b0.o : $(dINCdep) ../kernel/ATL_geadd.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDREAL -DALPHA1 \
+              -DBETA0 ../kernel/ATL_geadd.c
+ATL_daxpby_a0_b0.o : $(dINCdep) ../kernel/ATL_axpby.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDREAL -DALPHA0 \
+              -DBETA0 ../kernel/ATL_axpby.c
+ATL_dgeadd_a0_b0.o : $(dINCdep) ../kernel/ATL_geadd.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDREAL -DALPHA0 \
+              -DBETA0 ../kernel/ATL_geadd.c
+
+#
+#  Routines with beta dependencies only
+#
+ATL_dgescal_bXi0.o : $(dINCdep) ../kernel/ATL_gescal.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDREAL -DBETAXI0 \
+              ../kernel/ATL_gescal.c
+ATL_dgescal_bX.o : $(dINCdep) ../kernel/ATL_gescal.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDREAL -DBETAX \
+              ../kernel/ATL_gescal.c
+ATL_dgescal_b1.o : $(dINCdep) ../kernel/ATL_gescal.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDREAL -DBETA1 \
+              ../kernel/ATL_gescal.c
+ATL_dgescal_b0.o : $(dINCdep) ../kernel/ATL_gescal.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDREAL -DBETA0 \
+              ../kernel/ATL_gescal.c
+
+#
+#  Routines with alpha dependencies only
+#
+ATL_dgemove_aXi0.o : $(dINCdep) ../kernel/ATL_gemove.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDREAL -DALPHAXI0 \
+              ../kernel/ATL_gemove.c
+ATL_dgemove_aX.o : $(dINCdep) ../kernel/ATL_gemove.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDREAL -DALPHAX \
+              ../kernel/ATL_gemove.c
+ATL_dgemove_a1.o : $(dINCdep) ../kernel/ATL_gemove.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDREAL -DALPHA1 \
+              ../kernel/ATL_gemove.c
+ATL_dgemove_a0.o : $(dINCdep) ../kernel/ATL_gemove.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDREAL -DALPHA0 \
+              ../kernel/ATL_gemove.c
+ATL_cgemove.o : $(cINCdep) ../ATL_gemove.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSCPLX ../ATL_gemove.c
+ATL_cgecopy.o : $(cINCdep) ../ATL_gecopy.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSCPLX ../ATL_gecopy.c
+ATL_cgezero.o : $(cINCdep) ../ATL_gezero.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSCPLX ../ATL_gezero.c
+ATL_cgeadd.o : $(cINCdep) ../ATL_geadd.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSCPLX ../ATL_geadd.c
+ATL_cgescal.o : $(cINCdep) ../ATL_gescal.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSCPLX ../ATL_gescal.c
+ATL_ctrscal.o : $(cINCdep) ../ATL_trscal.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSCPLX ../ATL_trscal.c
+ATL_caxpby.o : $(cINCdep) ../ATL_axpby.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSCPLX ../ATL_axpby.c
+ATL_caxpy.o : $(cINCdep) ../ATL_axpy.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSCPLX ../ATL_axpy.c
+ATL_cmove.o : $(cINCdep) ../ATL_move.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSCPLX ../ATL_move.c
+ATL_ccopy.o : $(cINCdep) ../ATL_copy.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSCPLX ../ATL_copy.c
+ATL_cscal.o : $(cINCdep) ../ATL_scal.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSCPLX ../ATL_scal.c
+ATL_cset.o : $(cINCdep) ../ATL_set.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSCPLX ../ATL_set.c
+ATL_czero.o : $(cINCdep) ../ATL_zero.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSCPLX ../ATL_zero.c
+
+#
+#  Routines with both alpha & beta dependencies
+#
+ATL_caxpby_aXi0_bXi0.o : $(cINCdep) ../kernel/ATL_axpby.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSCPLX -DALPHAXI0 \
+              -DBETAXI0 ../kernel/ATL_axpby.c
+ATL_cgeadd_aXi0_bXi0.o : $(cINCdep) ../kernel/ATL_geadd.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSCPLX -DALPHAXI0 \
+              -DBETAXI0 ../kernel/ATL_geadd.c
+ATL_caxpby_aX_bXi0.o : $(cINCdep) ../kernel/ATL_axpby.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSCPLX -DALPHAX \
+              -DBETAXI0 ../kernel/ATL_axpby.c
+ATL_cgeadd_aX_bXi0.o : $(cINCdep) ../kernel/ATL_geadd.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSCPLX -DALPHAX \
+              -DBETAXI0 ../kernel/ATL_geadd.c
+ATL_caxpby_a1_bXi0.o : $(cINCdep) ../kernel/ATL_axpby.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSCPLX -DALPHA1 \
+              -DBETAXI0 ../kernel/ATL_axpby.c
+ATL_cgeadd_a1_bXi0.o : $(cINCdep) ../kernel/ATL_geadd.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSCPLX -DALPHA1 \
+              -DBETAXI0 ../kernel/ATL_geadd.c
+ATL_caxpby_a0_bXi0.o : $(cINCdep) ../kernel/ATL_axpby.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSCPLX -DALPHA0 \
+              -DBETAXI0 ../kernel/ATL_axpby.c
+ATL_cgeadd_a0_bXi0.o : $(cINCdep) ../kernel/ATL_geadd.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSCPLX -DALPHA0 \
+              -DBETAXI0 ../kernel/ATL_geadd.c
+ATL_caxpby_aXi0_bX.o : $(cINCdep) ../kernel/ATL_axpby.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSCPLX -DALPHAXI0 \
+              -DBETAX ../kernel/ATL_axpby.c
+ATL_cgeadd_aXi0_bX.o : $(cINCdep) ../kernel/ATL_geadd.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSCPLX -DALPHAXI0 \
+              -DBETAX ../kernel/ATL_geadd.c
+ATL_caxpby_aX_bX.o : $(cINCdep) ../kernel/ATL_axpby.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSCPLX -DALPHAX \
+              -DBETAX ../kernel/ATL_axpby.c
+ATL_cgeadd_aX_bX.o : $(cINCdep) ../kernel/ATL_geadd.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSCPLX -DALPHAX \
+              -DBETAX ../kernel/ATL_geadd.c
+ATL_caxpby_a1_bX.o : $(cINCdep) ../kernel/ATL_axpby.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSCPLX -DALPHA1 \
+              -DBETAX ../kernel/ATL_axpby.c
+ATL_cgeadd_a1_bX.o : $(cINCdep) ../kernel/ATL_geadd.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSCPLX -DALPHA1 \
+              -DBETAX ../kernel/ATL_geadd.c
+ATL_caxpby_a0_bX.o : $(cINCdep) ../kernel/ATL_axpby.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSCPLX -DALPHA0 \
+              -DBETAX ../kernel/ATL_axpby.c
+ATL_cgeadd_a0_bX.o : $(cINCdep) ../kernel/ATL_geadd.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSCPLX -DALPHA0 \
+              -DBETAX ../kernel/ATL_geadd.c
+ATL_caxpby_aXi0_b1.o : $(cINCdep) ../kernel/ATL_axpby.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSCPLX -DALPHAXI0 \
+              -DBETA1 ../kernel/ATL_axpby.c
+ATL_cgeadd_aXi0_b1.o : $(cINCdep) ../kernel/ATL_geadd.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSCPLX -DALPHAXI0 \
+              -DBETA1 ../kernel/ATL_geadd.c
+ATL_caxpby_aX_b1.o : $(cINCdep) ../kernel/ATL_axpby.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSCPLX -DALPHAX \
+              -DBETA1 ../kernel/ATL_axpby.c
+ATL_cgeadd_aX_b1.o : $(cINCdep) ../kernel/ATL_geadd.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSCPLX -DALPHAX \
+              -DBETA1 ../kernel/ATL_geadd.c
+ATL_caxpby_a1_b1.o : $(cINCdep) ../kernel/ATL_axpby.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSCPLX -DALPHA1 \
+              -DBETA1 ../kernel/ATL_axpby.c
+ATL_cgeadd_a1_b1.o : $(cINCdep) ../kernel/ATL_geadd.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSCPLX -DALPHA1 \
+              -DBETA1 ../kernel/ATL_geadd.c
+ATL_caxpby_a0_b1.o : $(cINCdep) ../kernel/ATL_axpby.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSCPLX -DALPHA0 \
+              -DBETA1 ../kernel/ATL_axpby.c
+ATL_cgeadd_a0_b1.o : $(cINCdep) ../kernel/ATL_geadd.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSCPLX -DALPHA0 \
+              -DBETA1 ../kernel/ATL_geadd.c
+ATL_caxpby_aXi0_b0.o : $(cINCdep) ../kernel/ATL_axpby.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSCPLX -DALPHAXI0 \
+              -DBETA0 ../kernel/ATL_axpby.c
+ATL_cgeadd_aXi0_b0.o : $(cINCdep) ../kernel/ATL_geadd.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSCPLX -DALPHAXI0 \
+              -DBETA0 ../kernel/ATL_geadd.c
+ATL_caxpby_aX_b0.o : $(cINCdep) ../kernel/ATL_axpby.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSCPLX -DALPHAX \
+              -DBETA0 ../kernel/ATL_axpby.c
+ATL_cgeadd_aX_b0.o : $(cINCdep) ../kernel/ATL_geadd.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSCPLX -DALPHAX \
+              -DBETA0 ../kernel/ATL_geadd.c
+ATL_caxpby_a1_b0.o : $(cINCdep) ../kernel/ATL_axpby.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSCPLX -DALPHA1 \
+              -DBETA0 ../kernel/ATL_axpby.c
+ATL_cgeadd_a1_b0.o : $(cINCdep) ../kernel/ATL_geadd.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSCPLX -DALPHA1 \
+              -DBETA0 ../kernel/ATL_geadd.c
+ATL_caxpby_a0_b0.o : $(cINCdep) ../kernel/ATL_axpby.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSCPLX -DALPHA0 \
+              -DBETA0 ../kernel/ATL_axpby.c
+ATL_cgeadd_a0_b0.o : $(cINCdep) ../kernel/ATL_geadd.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSCPLX -DALPHA0 \
+              -DBETA0 ../kernel/ATL_geadd.c
+
+#
+#  Routines with beta dependencies only
+#
+ATL_cgescal_bXi0.o : $(cINCdep) ../kernel/ATL_gescal.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSCPLX -DBETAXI0 \
+              ../kernel/ATL_gescal.c
+ATL_cgescal_bX.o : $(cINCdep) ../kernel/ATL_gescal.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSCPLX -DBETAX \
+              ../kernel/ATL_gescal.c
+ATL_cgescal_b1.o : $(cINCdep) ../kernel/ATL_gescal.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSCPLX -DBETA1 \
+              ../kernel/ATL_gescal.c
+ATL_cgescal_b0.o : $(cINCdep) ../kernel/ATL_gescal.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSCPLX -DBETA0 \
+              ../kernel/ATL_gescal.c
+
+#
+#  Routines with alpha dependencies only
+#
+ATL_cgemove_aXi0.o : $(cINCdep) ../kernel/ATL_gemove.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSCPLX -DALPHAXI0 \
+              ../kernel/ATL_gemove.c
+ATL_cgemove_aX.o : $(cINCdep) ../kernel/ATL_gemove.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSCPLX -DALPHAX \
+              ../kernel/ATL_gemove.c
+ATL_cgemove_a1.o : $(cINCdep) ../kernel/ATL_gemove.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSCPLX -DALPHA1 \
+              ../kernel/ATL_gemove.c
+ATL_cgemove_a0.o : $(cINCdep) ../kernel/ATL_gemove.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSCPLX -DALPHA0 \
+              ../kernel/ATL_gemove.c
+ATL_zgemove.o : $(zINCdep) ../ATL_gemove.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDCPLX ../ATL_gemove.c
+ATL_zgecopy.o : $(zINCdep) ../ATL_gecopy.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDCPLX ../ATL_gecopy.c
+ATL_zgezero.o : $(zINCdep) ../ATL_gezero.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDCPLX ../ATL_gezero.c
+ATL_zgeadd.o : $(zINCdep) ../ATL_geadd.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDCPLX ../ATL_geadd.c
+ATL_zgescal.o : $(zINCdep) ../ATL_gescal.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDCPLX ../ATL_gescal.c
+ATL_ztrscal.o : $(zINCdep) ../ATL_trscal.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDCPLX ../ATL_trscal.c
+ATL_zaxpby.o : $(zINCdep) ../ATL_axpby.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDCPLX ../ATL_axpby.c
+ATL_zaxpy.o : $(zINCdep) ../ATL_axpy.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDCPLX ../ATL_axpy.c
+ATL_zmove.o : $(zINCdep) ../ATL_move.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDCPLX ../ATL_move.c
+ATL_zcopy.o : $(zINCdep) ../ATL_copy.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDCPLX ../ATL_copy.c
+ATL_zscal.o : $(zINCdep) ../ATL_scal.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDCPLX ../ATL_scal.c
+ATL_zset.o : $(zINCdep) ../ATL_set.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDCPLX ../ATL_set.c
+ATL_zzero.o : $(zINCdep) ../ATL_zero.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDCPLX ../ATL_zero.c
+
+#
+#  Routines with both alpha & beta dependencies
+#
+ATL_zaxpby_aXi0_bXi0.o : $(zINCdep) ../kernel/ATL_axpby.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDCPLX -DALPHAXI0 \
+              -DBETAXI0 ../kernel/ATL_axpby.c
+ATL_zgeadd_aXi0_bXi0.o : $(zINCdep) ../kernel/ATL_geadd.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDCPLX -DALPHAXI0 \
+              -DBETAXI0 ../kernel/ATL_geadd.c
+ATL_zaxpby_aX_bXi0.o : $(zINCdep) ../kernel/ATL_axpby.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDCPLX -DALPHAX \
+              -DBETAXI0 ../kernel/ATL_axpby.c
+ATL_zgeadd_aX_bXi0.o : $(zINCdep) ../kernel/ATL_geadd.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDCPLX -DALPHAX \
+              -DBETAXI0 ../kernel/ATL_geadd.c
+ATL_zaxpby_a1_bXi0.o : $(zINCdep) ../kernel/ATL_axpby.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDCPLX -DALPHA1 \
+              -DBETAXI0 ../kernel/ATL_axpby.c
+ATL_zgeadd_a1_bXi0.o : $(zINCdep) ../kernel/ATL_geadd.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDCPLX -DALPHA1 \
+              -DBETAXI0 ../kernel/ATL_geadd.c
+ATL_zaxpby_a0_bXi0.o : $(zINCdep) ../kernel/ATL_axpby.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDCPLX -DALPHA0 \
+              -DBETAXI0 ../kernel/ATL_axpby.c
+ATL_zgeadd_a0_bXi0.o : $(zINCdep) ../kernel/ATL_geadd.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDCPLX -DALPHA0 \
+              -DBETAXI0 ../kernel/ATL_geadd.c
+ATL_zaxpby_aXi0_bX.o : $(zINCdep) ../kernel/ATL_axpby.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDCPLX -DALPHAXI0 \
+              -DBETAX ../kernel/ATL_axpby.c
+ATL_zgeadd_aXi0_bX.o : $(zINCdep) ../kernel/ATL_geadd.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDCPLX -DALPHAXI0 \
+              -DBETAX ../kernel/ATL_geadd.c
+ATL_zaxpby_aX_bX.o : $(zINCdep) ../kernel/ATL_axpby.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDCPLX -DALPHAX \
+              -DBETAX ../kernel/ATL_axpby.c
+ATL_zgeadd_aX_bX.o : $(zINCdep) ../kernel/ATL_geadd.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDCPLX -DALPHAX \
+              -DBETAX ../kernel/ATL_geadd.c
+ATL_zaxpby_a1_bX.o : $(zINCdep) ../kernel/ATL_axpby.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDCPLX -DALPHA1 \
+              -DBETAX ../kernel/ATL_axpby.c
+ATL_zgeadd_a1_bX.o : $(zINCdep) ../kernel/ATL_geadd.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDCPLX -DALPHA1 \
+              -DBETAX ../kernel/ATL_geadd.c
+ATL_zaxpby_a0_bX.o : $(zINCdep) ../kernel/ATL_axpby.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDCPLX -DALPHA0 \
+              -DBETAX ../kernel/ATL_axpby.c
+ATL_zgeadd_a0_bX.o : $(zINCdep) ../kernel/ATL_geadd.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDCPLX -DALPHA0 \
+              -DBETAX ../kernel/ATL_geadd.c
+ATL_zaxpby_aXi0_b1.o : $(zINCdep) ../kernel/ATL_axpby.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDCPLX -DALPHAXI0 \
+              -DBETA1 ../kernel/ATL_axpby.c
+ATL_zgeadd_aXi0_b1.o : $(zINCdep) ../kernel/ATL_geadd.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDCPLX -DALPHAXI0 \
+              -DBETA1 ../kernel/ATL_geadd.c
+ATL_zaxpby_aX_b1.o : $(zINCdep) ../kernel/ATL_axpby.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDCPLX -DALPHAX \
+              -DBETA1 ../kernel/ATL_axpby.c
+ATL_zgeadd_aX_b1.o : $(zINCdep) ../kernel/ATL_geadd.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDCPLX -DALPHAX \
+              -DBETA1 ../kernel/ATL_geadd.c
+ATL_zaxpby_a1_b1.o : $(zINCdep) ../kernel/ATL_axpby.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDCPLX -DALPHA1 \
+              -DBETA1 ../kernel/ATL_axpby.c
+ATL_zgeadd_a1_b1.o : $(zINCdep) ../kernel/ATL_geadd.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDCPLX -DALPHA1 \
+              -DBETA1 ../kernel/ATL_geadd.c
+ATL_zaxpby_a0_b1.o : $(zINCdep) ../kernel/ATL_axpby.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDCPLX -DALPHA0 \
+              -DBETA1 ../kernel/ATL_axpby.c
+ATL_zgeadd_a0_b1.o : $(zINCdep) ../kernel/ATL_geadd.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDCPLX -DALPHA0 \
+              -DBETA1 ../kernel/ATL_geadd.c
+ATL_zaxpby_aXi0_b0.o : $(zINCdep) ../kernel/ATL_axpby.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDCPLX -DALPHAXI0 \
+              -DBETA0 ../kernel/ATL_axpby.c
+ATL_zgeadd_aXi0_b0.o : $(zINCdep) ../kernel/ATL_geadd.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDCPLX -DALPHAXI0 \
+              -DBETA0 ../kernel/ATL_geadd.c
+ATL_zaxpby_aX_b0.o : $(zINCdep) ../kernel/ATL_axpby.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDCPLX -DALPHAX \
+              -DBETA0 ../kernel/ATL_axpby.c
+ATL_zgeadd_aX_b0.o : $(zINCdep) ../kernel/ATL_geadd.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDCPLX -DALPHAX \
+              -DBETA0 ../kernel/ATL_geadd.c
+ATL_zaxpby_a1_b0.o : $(zINCdep) ../kernel/ATL_axpby.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDCPLX -DALPHA1 \
+              -DBETA0 ../kernel/ATL_axpby.c
+ATL_zgeadd_a1_b0.o : $(zINCdep) ../kernel/ATL_geadd.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDCPLX -DALPHA1 \
+              -DBETA0 ../kernel/ATL_geadd.c
+ATL_zaxpby_a0_b0.o : $(zINCdep) ../kernel/ATL_axpby.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDCPLX -DALPHA0 \
+              -DBETA0 ../kernel/ATL_axpby.c
+ATL_zgeadd_a0_b0.o : $(zINCdep) ../kernel/ATL_geadd.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDCPLX -DALPHA0 \
+              -DBETA0 ../kernel/ATL_geadd.c
+
+#
+#  Routines with beta dependencies only
+#
+ATL_zgescal_bXi0.o : $(zINCdep) ../kernel/ATL_gescal.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDCPLX -DBETAXI0 \
+              ../kernel/ATL_gescal.c
+ATL_zgescal_bX.o : $(zINCdep) ../kernel/ATL_gescal.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDCPLX -DBETAX \
+              ../kernel/ATL_gescal.c
+ATL_zgescal_b1.o : $(zINCdep) ../kernel/ATL_gescal.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDCPLX -DBETA1 \
+              ../kernel/ATL_gescal.c
+ATL_zgescal_b0.o : $(zINCdep) ../kernel/ATL_gescal.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDCPLX -DBETA0 \
+              ../kernel/ATL_gescal.c
+
+#
+#  Routines with alpha dependencies only
+#
+ATL_zgemove_aXi0.o : $(zINCdep) ../kernel/ATL_gemove.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDCPLX -DALPHAXI0 \
+              ../kernel/ATL_gemove.c
+ATL_zgemove_aX.o : $(zINCdep) ../kernel/ATL_gemove.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDCPLX -DALPHAX \
+              ../kernel/ATL_gemove.c
+ATL_zgemove_a1.o : $(zINCdep) ../kernel/ATL_gemove.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDCPLX -DALPHA1 \
+              ../kernel/ATL_gemove.c
+ATL_zgemove_a0.o : $(zINCdep) ../kernel/ATL_gemove.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDCPLX -DALPHA0 \
+              ../kernel/ATL_gemove.c
+#
+# routines coming in real types only
+#
+ATL_saxpy_x1_y1.o : $(sINCdep) ../kernel/ATL_axpy_x1_y1.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSREAL ../kernel/ATL_axpy_x1_y1.c
+ATL_daxpy_x1_y1.o : $(dINCdep) ../kernel/ATL_axpy_x1_y1.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDREAL ../kernel/ATL_axpy_x1_y1.c
+#
+# routines coming only in complex types
+#
+ATL_chescal.o : $(cINCdep) ../ATL_hescal.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSCPLX ../ATL_hescal.c
+ATL_ccplxinvert.o : $(cINCdep) ../ATL_cplxinvert.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSCPLX ../ATL_cplxinvert.c
+ATL_caxpy_x1_y1.o : $(cINCdep) ../kernel/ATL_caxpy_x1_y1.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSCPLX ../kernel/ATL_caxpy_x1_y1.c
+ATL_caxpyConj_x1_y1.o : $(cINCdep) ../kernel/ATL_caxpy_x1_y1.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DConj_ -DSCPLX \
+              ../kernel/ATL_caxpy_x1_y1.c
+ATL_caxpbyConj.o : $(cINCdep) ../ATL_axpby.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DConj_ -DSCPLX ../ATL_axpby.c
+ATL_caxpyConj.o : $(cINCdep) ../ATL_axpy.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DConj_ -DSCPLX ../ATL_axpy.c
+ATL_cmoveConj.o : $(cINCdep) ../ATL_move.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DConj_ -DSCPLX ../ATL_move.c
+ATL_ccopyConj.o : $(cINCdep) ../ATL_copy.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DConj_ -DSCPLX ../ATL_copy.c
+ATL_cscalConj.o : $(cINCdep) ../ATL_scal.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DConj_ -DSCPLX ../ATL_scal.c
+#
+#  Routines with both alpha & beta dependencies
+#
+ATL_caxpbyConj_aXi0_bXi0.o : $(cINCdep) ../kernel/ATL_axpby.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSCPLX -DALPHAXI0 \
+              -DBETAXI0 -DConj_ ../kernel/ATL_axpby.c
+ATL_caxpbyConj_aX_bXi0.o : $(cINCdep) ../kernel/ATL_axpby.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSCPLX -DALPHAX \
+              -DBETAXI0 -DConj_ ../kernel/ATL_axpby.c
+ATL_caxpbyConj_a1_bXi0.o : $(cINCdep) ../kernel/ATL_axpby.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSCPLX -DALPHA1 \
+              -DBETAXI0 -DConj_ ../kernel/ATL_axpby.c
+ATL_caxpbyConj_a0_bXi0.o : $(cINCdep) ../kernel/ATL_axpby.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSCPLX -DALPHA0 \
+              -DBETAXI0 -DConj_ ../kernel/ATL_axpby.c
+ATL_caxpbyConj_aXi0_bX.o : $(cINCdep) ../kernel/ATL_axpby.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSCPLX -DALPHAXI0 \
+              -DBETAX -DConj_ ../kernel/ATL_axpby.c
+ATL_caxpbyConj_aX_bX.o : $(cINCdep) ../kernel/ATL_axpby.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSCPLX -DALPHAX \
+              -DBETAX -DConj_ ../kernel/ATL_axpby.c
+ATL_caxpbyConj_a1_bX.o : $(cINCdep) ../kernel/ATL_axpby.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSCPLX -DALPHA1 \
+              -DBETAX -DConj_ ../kernel/ATL_axpby.c
+ATL_caxpbyConj_a0_bX.o : $(cINCdep) ../kernel/ATL_axpby.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSCPLX -DALPHA0 \
+              -DBETAX -DConj_ ../kernel/ATL_axpby.c
+ATL_caxpbyConj_aXi0_b1.o : $(cINCdep) ../kernel/ATL_axpby.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSCPLX -DALPHAXI0 \
+              -DBETA1 -DConj_ ../kernel/ATL_axpby.c
+ATL_caxpbyConj_aX_b1.o : $(cINCdep) ../kernel/ATL_axpby.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSCPLX -DALPHAX \
+              -DBETA1 -DConj_ ../kernel/ATL_axpby.c
+ATL_caxpbyConj_a1_b1.o : $(cINCdep) ../kernel/ATL_axpby.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSCPLX -DALPHA1 \
+              -DBETA1 -DConj_ ../kernel/ATL_axpby.c
+ATL_caxpbyConj_a0_b1.o : $(cINCdep) ../kernel/ATL_axpby.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSCPLX -DALPHA0 \
+              -DBETA1 -DConj_ ../kernel/ATL_axpby.c
+ATL_caxpbyConj_aXi0_b0.o : $(cINCdep) ../kernel/ATL_axpby.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSCPLX -DALPHAXI0 \
+              -DBETA0 -DConj_ ../kernel/ATL_axpby.c
+ATL_caxpbyConj_aX_b0.o : $(cINCdep) ../kernel/ATL_axpby.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSCPLX -DALPHAX \
+              -DBETA0 -DConj_ ../kernel/ATL_axpby.c
+ATL_caxpbyConj_a1_b0.o : $(cINCdep) ../kernel/ATL_axpby.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSCPLX -DALPHA1 \
+              -DBETA0 -DConj_ ../kernel/ATL_axpby.c
+ATL_caxpbyConj_a0_b0.o : $(cINCdep) ../kernel/ATL_axpby.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DSCPLX -DALPHA0 \
+              -DBETA0 -DConj_ ../kernel/ATL_axpby.c
+
+ATL_zhescal.o : $(zINCdep) ../ATL_hescal.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDCPLX ../ATL_hescal.c
+ATL_zcplxinvert.o : $(zINCdep) ../ATL_cplxinvert.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDCPLX ../ATL_cplxinvert.c
+ATL_zaxpy_x1_y1.o : $(zINCdep) ../kernel/ATL_caxpy_x1_y1.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDCPLX ../kernel/ATL_caxpy_x1_y1.c
+ATL_zaxpyConj_x1_y1.o : $(zINCdep) ../kernel/ATL_caxpy_x1_y1.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DConj_ -DDCPLX \
+              ../kernel/ATL_caxpy_x1_y1.c
+ATL_zaxpbyConj.o : $(zINCdep) ../ATL_axpby.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DConj_ -DDCPLX ../ATL_axpby.c
+ATL_zaxpyConj.o : $(zINCdep) ../ATL_axpy.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DConj_ -DDCPLX ../ATL_axpy.c
+ATL_zmoveConj.o : $(zINCdep) ../ATL_move.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DConj_ -DDCPLX ../ATL_move.c
+ATL_zcopyConj.o : $(zINCdep) ../ATL_copy.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DConj_ -DDCPLX ../ATL_copy.c
+ATL_zscalConj.o : $(zINCdep) ../ATL_scal.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DConj_ -DDCPLX ../ATL_scal.c
+#
+#  Routines with both alpha & beta dependencies
+#
+ATL_zaxpbyConj_aXi0_bXi0.o : $(zINCdep) ../kernel/ATL_axpby.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDCPLX -DALPHAXI0 \
+              -DBETAXI0 -DConj_ ../kernel/ATL_axpby.c
+ATL_zaxpbyConj_aX_bXi0.o : $(zINCdep) ../kernel/ATL_axpby.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDCPLX -DALPHAX \
+              -DBETAXI0 -DConj_ ../kernel/ATL_axpby.c
+ATL_zaxpbyConj_a1_bXi0.o : $(zINCdep) ../kernel/ATL_axpby.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDCPLX -DALPHA1 \
+              -DBETAXI0 -DConj_ ../kernel/ATL_axpby.c
+ATL_zaxpbyConj_a0_bXi0.o : $(zINCdep) ../kernel/ATL_axpby.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDCPLX -DALPHA0 \
+              -DBETAXI0 -DConj_ ../kernel/ATL_axpby.c
+ATL_zaxpbyConj_aXi0_bX.o : $(zINCdep) ../kernel/ATL_axpby.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDCPLX -DALPHAXI0 \
+              -DBETAX -DConj_ ../kernel/ATL_axpby.c
+ATL_zaxpbyConj_aX_bX.o : $(zINCdep) ../kernel/ATL_axpby.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDCPLX -DALPHAX \
+              -DBETAX -DConj_ ../kernel/ATL_axpby.c
+ATL_zaxpbyConj_a1_bX.o : $(zINCdep) ../kernel/ATL_axpby.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDCPLX -DALPHA1 \
+              -DBETAX -DConj_ ../kernel/ATL_axpby.c
+ATL_zaxpbyConj_a0_bX.o : $(zINCdep) ../kernel/ATL_axpby.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDCPLX -DALPHA0 \
+              -DBETAX -DConj_ ../kernel/ATL_axpby.c
+ATL_zaxpbyConj_aXi0_b1.o : $(zINCdep) ../kernel/ATL_axpby.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDCPLX -DALPHAXI0 \
+              -DBETA1 -DConj_ ../kernel/ATL_axpby.c
+ATL_zaxpbyConj_aX_b1.o : $(zINCdep) ../kernel/ATL_axpby.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDCPLX -DALPHAX \
+              -DBETA1 -DConj_ ../kernel/ATL_axpby.c
+ATL_zaxpbyConj_a1_b1.o : $(zINCdep) ../kernel/ATL_axpby.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDCPLX -DALPHA1 \
+              -DBETA1 -DConj_ ../kernel/ATL_axpby.c
+ATL_zaxpbyConj_a0_b1.o : $(zINCdep) ../kernel/ATL_axpby.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDCPLX -DALPHA0 \
+              -DBETA1 -DConj_ ../kernel/ATL_axpby.c
+ATL_zaxpbyConj_aXi0_b0.o : $(zINCdep) ../kernel/ATL_axpby.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDCPLX -DALPHAXI0 \
+              -DBETA0 -DConj_ ../kernel/ATL_axpby.c
+ATL_zaxpbyConj_aX_b0.o : $(zINCdep) ../kernel/ATL_axpby.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDCPLX -DALPHAX \
+              -DBETA0 -DConj_ ../kernel/ATL_axpby.c
+ATL_zaxpbyConj_a1_b0.o : $(zINCdep) ../kernel/ATL_axpby.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDCPLX -DALPHA1 \
+              -DBETA0 -DConj_ ../kernel/ATL_axpby.c
+ATL_zaxpbyConj_a0_b0.o : $(zINCdep) ../kernel/ATL_axpby.c
+	$(CC) $(NM) $@ $(OJ) $(CCFLAGS) -DDCPLX -DALPHA0 \
+              -DBETA0 -DConj_ ../kernel/ATL_axpby.c
+

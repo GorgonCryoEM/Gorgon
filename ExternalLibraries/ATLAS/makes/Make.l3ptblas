@@ -1,0 +1,224 @@
+########################################################################
+#  
+#  -- Automatically Tuned Linear Algebra Software (ATLAS)
+#     University of Tennessee - Innovative Computing Laboratory
+#     Knoxville TN, 37996-1301 USA.
+#     (C) Copyright 2000 All Rights Reserved
+#
+#  -- Suggestions,  comments,  bugs reports should be sent to the follo-
+#     wing e-mail address: atlas@cs.utk.edu
+#  
+########################################################################
+#
+#  -- Copyright notice and Licensing terms:
+#
+#  Redistribution  and  use in  source and binary forms, with or without
+#  modification, are  permitted provided  that the following  conditions
+#  are met:
+#
+#  1. Redistributions  of  source  code  must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+#  2. Redistributions in binary form must reproduce  the above copyright
+#     notice,  this list of conditions, and the  following disclaimer in
+#     the documentation and/or other materials provided with the distri-
+#     bution.
+#  3. The name of the University,  the ATLAS group,  or the names of its
+#     contributors  may not be used to endorse or promote products deri-
+#     ved from this software without specific written permission.
+#
+#  -- Disclaimer:
+#
+#  THIS  SOFTWARE  IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+#  ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,  INCLUDING,  BUT NOT
+#  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+#  A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE UNIVERSITY
+#  OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,  INDIRECT, INCIDENTAL, SPE-
+#  CIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+#  TO,  PROCUREMENT  OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA,
+#  OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEO-
+#  RY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT  (IN-
+#  CLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+#  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#  
+########################################################################
+#
+include Make.inc
+#
+########################################################################
+#
+INC3dep   = \
+   $(INCdir)/atlas_pthreads.h     $(INCdir)/../atlas_aux.h      \
+   $(INCdir)/../atlas_enum.h      $(INCdir)/../atlas_misc.h     \
+   $(INCdir)/../atlas_kern3.h     $(INCdir)/../atlas_rblas3.h   \
+   $(INCdir)/../atlas_lvl3.h      $(INCdir)/../atlas_level3.h   \
+   $(INCdir)/../atlas_ptmisc.h    $(INCdir)/../atlas_ptlvl3.h   \
+   $(INCdir)/../atlas_ptlevel3.h
+#
+## Object files ########################################################
+#
+ATL_alvl3obj = \
+   ATL_Sgemm_pt.o ATL_Ssymm_pt.o ATL_Ssyr2k_pt.o ATL_Ssyrk_pt.o \
+   ATL_Strmm_pt.o ATL_Strsm_pt.o
+#
+ATL_slvl3obj = \
+   ATL_sptgemm.o ATL_sptl3settype.o ATL_sptsymm.o ATL_sptsyr2k.o \
+   ATL_sptsyrk.o ATL_spttrmm.o ATL_spttrsm.o
+#
+ATL_dlvl3obj = \
+   ATL_dptgemm.o ATL_dptl3settype.o ATL_dptsymm.o ATL_dptsyr2k.o \
+   ATL_dptsyrk.o ATL_dpttrmm.o ATL_dpttrsm.o
+#
+ATL_clvl3obj = \
+   ATL_cptgemm.o ATL_cpthemm.o ATL_cpther2k.o ATL_cptherk.o \
+   ATL_cptl3settype.o ATL_cptsymm.o ATL_cptsyr2k.o ATL_cptsyrk.o \
+   ATL_cpttrmm.o ATL_cpttrsm.o
+#
+ATL_zlvl3obj = \
+   ATL_zptgemm.o ATL_zpthemm.o ATL_zpther2k.o ATL_zptherk.o \
+   ATL_zptl3settype.o ATL_zptsymm.o ATL_zptsyr2k.o ATL_zptsyrk.o \
+   ATL_zpttrmm.o ATL_zpttrsm.o
+#
+## Targets #############################################################
+#
+all   : lib
+#
+lvl3  : lib
+#
+lib   : slib dlib clib zlib
+#
+slvl3 : slib
+dlvl3 : dlib
+clvl3 : clib
+zlvl3 : zlib
+#
+slib  : slib.grd
+dlib  : dlib.grd
+clib  : clib.grd
+zlib  : zlib.grd
+#
+slib.grd  : $(ATL_slvl3obj) $(ATL_alvl3obj)
+	$(ARCHIVER) $(ARFLAGS) $(ATLASlib) $(ATL_slvl3obj) $(ATL_alvl3obj)
+	$(RANLIB) $(ATLASlib)
+	touch slib.grd
+#
+dlib.grd  : $(ATL_dlvl3obj) $(ATL_alvl3obj)
+	$(ARCHIVER) $(ARFLAGS) $(ATLASlib) $(ATL_dlvl3obj) $(ATL_alvl3obj)
+	$(RANLIB) $(ATLASlib)
+	touch dlib.grd
+#
+clib.grd  : $(ATL_clvl3obj) $(ATL_alvl3obj)
+	$(ARCHIVER) $(ARFLAGS) $(ATLASlib) $(ATL_clvl3obj) $(ATL_alvl3obj)
+	$(RANLIB) $(ATLASlib)
+	touch clib.grd
+#
+zlib.grd  : $(ATL_zlvl3obj) $(ATL_alvl3obj)
+	$(ARCHIVER) $(ARFLAGS) $(ATLASlib) $(ATL_zlvl3obj) $(ATL_alvl3obj)
+	$(RANLIB) $(ATLASlib)
+	touch zlib.grd
+#
+########################################################################
+#
+ATL_Strsm_pt.o               : ../ATL_Strsm.c                  $(INC3dep)
+	$(CC) -o $@ -c $(CCFLAGS) -DATL_USEPTHREADS ../ATL_Strsm.c                 
+ATL_Strmm_pt.o               : ../ATL_Strmm.c                  $(INC3dep)
+	$(CC) -o $@ -c $(CCFLAGS) -DATL_USEPTHREADS ../ATL_Strmm.c                 
+ATL_Ssyr2k_pt.o              : ../ATL_Ssyr2k.c                 $(INC3dep)
+	$(CC) -o $@ -c $(CCFLAGS) -DATL_USEPTHREADS ../ATL_Ssyr2k.c                
+ATL_Ssyrk_pt.o               : ../ATL_Ssyrk.c                  $(INC3dep)
+	$(CC) -o $@ -c $(CCFLAGS) -DATL_USEPTHREADS ../ATL_Ssyrk.c                 
+ATL_Ssymm_pt.o               : ../ATL_Ssymm.c                  $(INC3dep)
+	$(CC) -o $@ -c $(CCFLAGS) -DATL_USEPTHREADS ../ATL_Ssymm.c                 
+ATL_Sgemm_pt.o               : ../ATL_Sgemm.c                  $(INC3dep)
+	$(CC) -o $@ -c $(CCFLAGS) -DATL_USEPTHREADS ../ATL_Sgemm.c                 
+#
+ATL_sptl3settype.o           : ../ATL_ptl3settype.c            $(INC3dep)
+	$(CC) -o $@ -c $(CCFLAGS) -DATL_USEPTHREADS -DSREAL ../ATL_ptl3settype.c           
+ATL_sptgemm.o                : ../ATL_ptgemm.c                 $(INC3dep)
+	$(CC) -o $@ -c $(CCFLAGS) -DATL_USEPTHREADS -DSREAL ../ATL_ptgemm.c                
+ATL_sptsymm.o                : ../ATL_ptsymm.c                 $(INC3dep)
+	$(CC) -o $@ -c $(CCFLAGS) -DATL_USEPTHREADS -DSREAL ../ATL_ptsymm.c                
+ATL_sptsyrk.o                : ../ATL_ptsyrk.c                 $(INC3dep)
+	$(CC) -o $@ -c $(CCFLAGS) -DATL_USEPTHREADS -DSREAL ../ATL_ptsyrk.c                
+ATL_sptsyr2k.o               : ../ATL_ptsyr2k.c                $(INC3dep)
+	$(CC) -o $@ -c $(CCFLAGS) -DATL_USEPTHREADS -DSREAL ../ATL_ptsyr2k.c               
+ATL_spttrmm.o                : ../ATL_pttrmm.c                 $(INC3dep)
+	$(CC) -o $@ -c $(CCFLAGS) -DATL_USEPTHREADS -DSREAL ../ATL_pttrmm.c                
+ATL_spttrsm.o                : ../ATL_pttrsm.c                 $(INC3dep)
+	$(CC) -o $@ -c $(CCFLAGS) -DATL_USEPTHREADS -DSREAL ../ATL_pttrsm.c                
+#
+ATL_dptl3settype.o           : ../ATL_ptl3settype.c            $(INC3dep)
+	$(CC) -o $@ -c $(CCFLAGS) -DATL_USEPTHREADS -DDREAL ../ATL_ptl3settype.c           
+ATL_dptgemm.o                : ../ATL_ptgemm.c                 $(INC3dep)
+	$(CC) -o $@ -c $(CCFLAGS) -DATL_USEPTHREADS -DDREAL ../ATL_ptgemm.c                
+ATL_dptsymm.o                : ../ATL_ptsymm.c                 $(INC3dep)
+	$(CC) -o $@ -c $(CCFLAGS) -DATL_USEPTHREADS -DDREAL ../ATL_ptsymm.c                
+ATL_dptsyrk.o                : ../ATL_ptsyrk.c                 $(INC3dep)
+	$(CC) -o $@ -c $(CCFLAGS) -DATL_USEPTHREADS -DDREAL ../ATL_ptsyrk.c                
+ATL_dptsyr2k.o               : ../ATL_ptsyr2k.c                $(INC3dep)
+	$(CC) -o $@ -c $(CCFLAGS) -DATL_USEPTHREADS -DDREAL ../ATL_ptsyr2k.c               
+ATL_dpttrmm.o                : ../ATL_pttrmm.c                 $(INC3dep)
+	$(CC) -o $@ -c $(CCFLAGS) -DATL_USEPTHREADS -DDREAL ../ATL_pttrmm.c                
+ATL_dpttrsm.o                : ../ATL_pttrsm.c                 $(INC3dep)
+	$(CC) -o $@ -c $(CCFLAGS) -DATL_USEPTHREADS -DDREAL ../ATL_pttrsm.c                
+#
+ATL_cptl3settype.o           : ../ATL_ptl3settype.c            $(INC3dep)
+	$(CC) -o $@ -c $(CCFLAGS) -DATL_USEPTHREADS -DSCPLX ../ATL_ptl3settype.c           
+ATL_cptgemm.o                : ../ATL_ptgemm.c                 $(INC3dep)
+	$(CC) -o $@ -c $(CCFLAGS) -DATL_USEPTHREADS -DSCPLX ../ATL_ptgemm.c                
+ATL_cpthemm.o                : ../ATL_pthemm.c                 $(INC3dep)
+	$(CC) -o $@ -c $(CCFLAGS) -DATL_USEPTHREADS -DSCPLX ../ATL_pthemm.c                
+ATL_cptherk.o                : ../ATL_ptherk.c                 $(INC3dep)
+	$(CC) -o $@ -c $(CCFLAGS) -DATL_USEPTHREADS -DSCPLX ../ATL_ptherk.c                
+ATL_cpther2k.o               : ../ATL_pther2k.c                $(INC3dep)
+	$(CC) -o $@ -c $(CCFLAGS) -DATL_USEPTHREADS -DSCPLX ../ATL_pther2k.c               
+ATL_cptsymm.o                : ../ATL_ptsymm.c                 $(INC3dep)
+	$(CC) -o $@ -c $(CCFLAGS) -DATL_USEPTHREADS -DSCPLX ../ATL_ptsymm.c                
+ATL_cptsyrk.o                : ../ATL_ptsyrk.c                 $(INC3dep)
+	$(CC) -o $@ -c $(CCFLAGS) -DATL_USEPTHREADS -DSCPLX ../ATL_ptsyrk.c                
+ATL_cptsyr2k.o               : ../ATL_ptsyr2k.c                $(INC3dep)
+	$(CC) -o $@ -c $(CCFLAGS) -DATL_USEPTHREADS -DSCPLX ../ATL_ptsyr2k.c               
+ATL_cpttrmm.o                : ../ATL_pttrmm.c                 $(INC3dep)
+	$(CC) -o $@ -c $(CCFLAGS) -DATL_USEPTHREADS -DSCPLX ../ATL_pttrmm.c                
+ATL_cpttrsm.o                : ../ATL_pttrsm.c                 $(INC3dep)
+	$(CC) -o $@ -c $(CCFLAGS) -DATL_USEPTHREADS -DSCPLX ../ATL_pttrsm.c                
+#
+ATL_zptl3settype.o           : ../ATL_ptl3settype.c            $(INC3dep)
+	$(CC) -o $@ -c $(CCFLAGS) -DATL_USEPTHREADS -DDCPLX ../ATL_ptl3settype.c           
+ATL_zptgemm.o                : ../ATL_ptgemm.c                 $(INC3dep)
+	$(CC) -o $@ -c $(CCFLAGS) -DATL_USEPTHREADS -DDCPLX ../ATL_ptgemm.c                
+ATL_zpthemm.o                : ../ATL_pthemm.c                 $(INC3dep)
+	$(CC) -o $@ -c $(CCFLAGS) -DATL_USEPTHREADS -DDCPLX ../ATL_pthemm.c                
+ATL_zptherk.o                : ../ATL_ptherk.c                 $(INC3dep)
+	$(CC) -o $@ -c $(CCFLAGS) -DATL_USEPTHREADS -DDCPLX ../ATL_ptherk.c                
+ATL_zpther2k.o               : ../ATL_pther2k.c                $(INC3dep)
+	$(CC) -o $@ -c $(CCFLAGS) -DATL_USEPTHREADS -DDCPLX ../ATL_pther2k.c               
+ATL_zptsymm.o                : ../ATL_ptsymm.c                 $(INC3dep)
+	$(CC) -o $@ -c $(CCFLAGS) -DATL_USEPTHREADS -DDCPLX ../ATL_ptsymm.c                
+ATL_zptsyrk.o                : ../ATL_ptsyrk.c                 $(INC3dep)
+	$(CC) -o $@ -c $(CCFLAGS) -DATL_USEPTHREADS -DDCPLX ../ATL_ptsyrk.c                
+ATL_zptsyr2k.o               : ../ATL_ptsyr2k.c                $(INC3dep)
+	$(CC) -o $@ -c $(CCFLAGS) -DATL_USEPTHREADS -DDCPLX ../ATL_ptsyr2k.c               
+ATL_zpttrmm.o                : ../ATL_pttrmm.c                 $(INC3dep)
+	$(CC) -o $@ -c $(CCFLAGS) -DATL_USEPTHREADS -DDCPLX ../ATL_pttrmm.c                
+ATL_zpttrsm.o                : ../ATL_pttrsm.c                 $(INC3dep)
+	$(CC) -o $@ -c $(CCFLAGS) -DATL_USEPTHREADS -DDCPLX ../ATL_pttrsm.c                
+#
+########################################################################
+#
+sclean           :
+	rm -f $(ATL_slvl3obj) $(ATL_alvl3obj) s*.grd a*.grd
+#
+dclean           :
+	rm -f $(ATL_dlvl3obj) $(ATL_alvl3obj) d*.grd a*.grd
+#
+cclean           :
+	rm -f $(ATL_clvl3obj) $(ATL_alvl3obj) c*.grd a*.grd
+#
+zclean           :
+	rm -f $(ATL_zlvl3obj) $(ATL_alvl3obj) z*.grd a*.grd
+#
+#
+clean            :
+	rm -f *.o *.grd
+#
+########################################################################

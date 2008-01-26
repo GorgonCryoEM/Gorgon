@@ -1,0 +1,6 @@
+
+#  ---------------------------------------------------------------------------
+#  Fortran 77 compiler and the flags to use.  Presently, ATLAS does not itself
+#  use any Fortran 77, but vendor BLAS are typically written for Fortran, so
+#  any links that include non-ATLAS BLAS will use FLINKER instead of CLINKER
+#  ---------------------------------------------------------------------------

@@ -1,0 +1,14 @@
+
+The ATLAS install process is heavily file-based, and this can cause major
+reliability problems when interacting with an overloaded or malfunctioning
+remotely mounted filesystem.  ATLAS therefore has a mechanism in place to
+allow for a delay before a file is declared to not be there, so that
+slow NFS (i.e., waiting for amd timout) problems can be overcome, or for
+handling slightly differing clocks between server/client.  This problem is
+magnified if doing cross-compilation.  In the question below, we ask how
+much of a delay, in seconds, ATLAS should tolerate between file creation
+and appearance.  If you are installing on a local filesystem (eg. /tmp) or
+a smooth-running NFS system, answer 0; for a moderately loaded NFS server, you
+may want a value in the 10 second range, and for cross-compiling systems or
+NFS servers experiencing errors, you may want to go as high as a couple
+of minutes (120).

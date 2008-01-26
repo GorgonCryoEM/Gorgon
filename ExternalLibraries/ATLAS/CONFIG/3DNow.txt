@@ -1,0 +1,11 @@
+
+ATLAS has detected that your machine has 3DNow! capability, and ATLAS
+can use these instructions to dramatically speed up single precision
+operations.  However, 3DNow! does not use IEEE compliant arithmetic;
+in particular, it does not handle NaNs or Infinities at all (operations
+on them are essentially undefined), and it does not handle overflow or
+underflow correctly.  There may be other discrepencies as well.  Therefore,
+only enable 3DNow! if you are very sure that these shortcomings in
+accuracy do not concern you.  In general, getting the answer very fast
+is no substitute for getting the *correct* answer, so just say no if
+you are at all unsure.

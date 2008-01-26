@@ -1,0 +1,174 @@
+<HTML>
+<HEAD>
+<TITLE>class Mapping</TITLE>
+
+<META NAME="Generator" CONTENT="KDOC ">
+</HEAD>
+<BODY bgcolor="#ffffff" text="#000000" link="#0000ff" vlink="#000099" alink= "#ffffff">
+<TABLE WIDTH="100%" BORDER="0">
+<TR>
+<TD>
+	<TABLE BORDER="0">
+		<TR><TD valign="top" align="left" cellspacing="10">
+		<h1>class Mapping</h1>
+		</TD>
+		<TD valign="top" align="right" colspan="1">
+     Mapping class. <small><A HREF="#longdesc">More...</A></small></TD></TR>
+	</TABLE>
+	<HR>
+	<TABLE BORDER="0">
+		<TR><TH>Full name</TH><TD><code><A HREF="Llama.html">Llama</A>::Mapping</code></TD></TR>
+<TR><TH>Definition</TH><TD><code>#include &lt;<A HREF="Mapping_h.html">Mapping.h</A>&gt;</code></TD></TR>
+<TR><TH>Template form</TH><TD>Mapping&lt;class Scalar&gt; </code></TD></TR>
+<TR><TH>Inherits</TH><TD><i><A HREF="Llama__AbstMapping.html">Llama::AbstMapping</A></i> <small>[public ]</small>, <A HREF="Llama__Diffeomorphism.html">Llama::Diffeomorphism</A> <small>[public ]</small></TD></TR>
+<TR><TH><A HREF="full-list-Llama__Mapping.html">List of all Methods</A></TH></TR>
+	</TABLE>
+	</TD>
+<TD align="right"><TABLE BORDER="0"><TD rowspan="6"><IMG SRC="./llama2.gif"></TD><TR><TD><small><A HREF="index-long.html">Annotated List</A></small></TD></TR>
+<TR><TD><small><A HREF="header-list.html">Files</A></small></TD></TR>
+<TR><TD><small><A HREF="all-globals.html">Globals</A></small></TD></TR>
+<TR><TD><small><A HREF="hier.html">Hierarchy</A></small></TD></TR>
+<TR><TD><small><A HREF="index.html">Index</A></small></TD></TR>
+</TABLE></TD></TR></TABLE>
+<h4>Public Methods</h4><ul><LI>&nbsp;<b><A HREF="#ref4">Mapping</A></b> (void) 
+</LI>
+<LI>&nbsp;<b><A HREF="#ref5">Mapping</A></b> (const std::string& what, Index N, Index P, 
+	     typename Diffeomorphism<Scalar>::diffeo_fcn f, 
+	     typename Diffeomorphism<Scalar>::diffeo_jac j = 0, 
+	     Index iter = 1) 
+</LI>
+<LI>&nbsp;<b><A HREF="#ref6">Mapping</A></b> (const Mapping& m) 
+</LI>
+<LI>Mapping& &nbsp;<b><A HREF="#ref7">operator = </A></b> (const Mapping& x) 
+</LI>
+<LI>&nbsp;<b><A HREF="#ref8">~Mapping</A></b> (void) 
+</LI>
+<LI>const Index &nbsp;<b><A HREF="#ref9">neqs</A></b> (void)  const
+</LI>
+<LI>const Index &nbsp;<b><A HREF="#ref10">nvar</A></b> (void)  const
+</LI>
+<LI>const Index &nbsp;<b><A HREF="#ref11">npar</A></b> (void)  const
+</LI>
+<LI>virtual  Index &nbsp;<b><A HREF="#ref12">itmap</A></b> (void)  const
+</LI>
+<LI>virtual  void &nbsp;<b><A HREF="#ref13">itmap</A></b> (Index iters) 
+</LI>
+<LI>void &nbsp;<b><A HREF="#ref14">deriv</A></b> (Matrix<Scalar> *df, const Matrix<Scalar>& x)  const
+</LI>
+<LI>virtual  void &nbsp;<b><A HREF="#ref15">operator ()</A></b> (Matrix<Scalar> *x)  const
+</LI>
+<LI>virtual  void &nbsp;<b><A HREF="#ref16">operator ()</A></b> (Matrix<Scalar> *f, const Matrix<Scalar>& x)  const
+</LI>
+<LI>virtual  Matrix<Scalar> * &nbsp;<b><A HREF="#ref17">operator ()</A></b> (const Matrix<Scalar>& x)  const
+</LI>
+<LI>virtual  void &nbsp;<b><A HREF="#ref18">operator ()</A></b> (Matrix<Scalar> *df, const Matrix<Scalar>& x, 
+			      const Matrix<Index>& i)  const
+</LI>
+<LI>virtual  Matrix<Scalar> * &nbsp;<b><A HREF="#ref19">operator ()</A></b> (const Matrix<Scalar>& x, 
+					  const Matrix<Index>& i)  const
+</LI>
+<LI>virtual  Matrix<Scalar> * &nbsp;<b><A HREF="#ref20">itinerary</A></b> (const Matrix<Scalar>& x0, Index n)  const
+</LI>
+<LI>virtual  void &nbsp;<b><A HREF="#ref22">fixed_point</A></b> (Matrix<Scalar> *x, const Matrix<Index>& iact) 
+</LI>
+</ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><p>
+     Mapping class.  Implements a mapping from R^N x R^P -> R^N </p>
+<A NAME="Mapping"></A><A NAME="ref4"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>Mapping</strong> (void)
+<br></td><td align="right"><h3><strong>Mapping</strong></h3></td></tr></table><p></p><A NAME="Mapping"></A><A NAME="ref5"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>Mapping</strong> (const std::string& what, Index N, Index P, 
+	     typename Diffeomorphism<Scalar>::diffeo_fcn f, 
+	     typename Diffeomorphism<Scalar>::diffeo_jac j = 0, 
+	     Index iter = 1)
+<br></td><td align="right"><h3><strong>Mapping</strong></h3></td></tr></table><p></p><p>
+       Construct a new mapping.  The arguments are:
+       1) a string descriptive of the mapping,
+       2) the dimension of the state space,
+       3) the dimension of the parameter space,
+       4) the routine which implements the mapping,
+       5) (optional) a routine which calculates the Jacobian of the mapping,
+       6) (optional) the number of times the diffeomorphism is to be iterated (default = 1).
+    </p>
+<A NAME="Mapping"></A><A NAME="ref6"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>Mapping</strong> (const Mapping& m)
+<br></td><td align="right"><h3><strong>Mapping</strong></h3></td></tr></table><p></p><p>
+       Copy constructor
+    </p>
+<A NAME="operator%20=%20"></A><A NAME="ref7"></A><table width="100%"><tr bgcolor="#eeeeee"><td>Mapping& &nbsp;<strong>operator = </strong> (const Mapping& x)
+<br></td><td align="right"><h3><strong>operator = </strong></h3></td></tr></table><p></p><p>
+       Copy a Mapping object.
+    </p>
+<p>Reimplemented from <A HREF="Llama__Diffeomorphism.html#operator%20=%20">Diffeomorphism</A>.</p>
+<A NAME="~Mapping"></A><A NAME="ref8"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>~Mapping</strong> (void)
+<br></td><td align="right"><h3><strong>~Mapping</strong></h3></td></tr></table><p></p><A NAME="neqs"></A><A NAME="ref9"></A><table width="100%"><tr bgcolor="#eeeeee"><td>const Index &nbsp;<strong>neqs</strong> (void)
+<br></td><td align="right"><h3><strong>neqs</strong></h3></td></tr></table><p> <small>[const]</small></p><p>
+       How many equations are there?
+    </p>
+<p>Reimplemented from <A HREF="Llama__AbstMapping.html#neqs">AbstMapping</A>.</p>
+<A NAME="nvar"></A><A NAME="ref10"></A><table width="100%"><tr bgcolor="#eeeeee"><td>const Index &nbsp;<strong>nvar</strong> (void)
+<br></td><td align="right"><h3><strong>nvar</strong></h3></td></tr></table><p> <small>[const]</small></p><p>
+       How many variables are there?
+    </p>
+<p>Reimplemented from <A HREF="Llama__AbstMapping.html#nvar">AbstMapping</A>.</p>
+<A NAME="npar"></A><A NAME="ref11"></A><table width="100%"><tr bgcolor="#eeeeee"><td>const Index &nbsp;<strong>npar</strong> (void)
+<br></td><td align="right"><h3><strong>npar</strong></h3></td></tr></table><p> <small>[const]</small></p><p>
+       How many parameters are there?  </p>
+<p>Reimplemented from <A HREF="Llama__AbstMapping.html#npar">AbstMapping</A>.</p>
+<A NAME="itmap"></A><A NAME="ref12"></A><table width="100%"><tr bgcolor="#eeeeee"><td> Index &nbsp;<strong>itmap</strong> (void)
+<br></td><td align="right"><h3><strong>itmap</strong></h3></td></tr></table><p> <small>[const virtual]</small></p><p>
+       How many times is the mapping to be composed with itself?
+    </p>
+<p>Reimplemented from <A HREF="Llama__AbstMapping.html#itmap">AbstMapping</A>.</p>
+<A NAME="itmap"></A><A NAME="ref13"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>itmap</strong> (Index iters)
+<br></td><td align="right"><h3><strong>itmap</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p>
+       Set the number of times is the mapping to be composed with
+       itself.  
+    </p>
+<p>Reimplemented from <A HREF="Llama__AbstMapping.html#itmap">AbstMapping</A>.</p>
+<A NAME="deriv"></A><A NAME="ref14"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>deriv</strong> (Matrix<Scalar> *df, const Matrix<Scalar>& x)
+<br></td><td align="right"><h3><strong>deriv</strong></h3></td></tr></table><p> <small>[const]</small></p><p> 
+	Evaluate the state-variable portion of the Jacobian only (one
+	iteration)
+    </p>
+<p>Reimplemented from <A HREF="Llama__AbstMapping.html#deriv">AbstMapping</A>.</p>
+<A NAME="operator%20()"></A><A NAME="ref15"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>operator ()</strong> (Matrix<Scalar> *x)
+<br></td><td align="right"><h3><strong>operator ()</strong></h3></td></tr></table><p> <small>[const virtual]</small></p><p>
+       Apply the mapping, overwriting the input with the output.
+    </p>
+<p>Reimplemented from <A HREF="Llama__AbstMapping.html#operator%20()">AbstMapping</A>.</p>
+<A NAME="operator%20()"></A><A NAME="ref16"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>operator ()</strong> (Matrix<Scalar> *f, const Matrix<Scalar>& x)
+<br></td><td align="right"><h3><strong>operator ()</strong></h3></td></tr></table><p> <small>[const virtual]</small></p><p>
+       Evaluate the mapping at point x. Store the result in y. It is
+       assumed that x & y are of the appropriate size.  </p>
+<p>Reimplemented from <A HREF="Llama__AbstMapping.html#operator%20()">AbstMapping</A>.</p>
+<A NAME="operator%20()"></A><A NAME="ref17"></A><table width="100%"><tr bgcolor="#eeeeee"><td> Matrix<Scalar> * &nbsp;<strong>operator ()</strong> (const Matrix<Scalar>& x)
+<br></td><td align="right"><h3><strong>operator ()</strong></h3></td></tr></table><p> <small>[const virtual]</small></p><p>
+       Evaluate the mapping at x.  Create a new vector to hold the
+       result.  </p>
+<p>Reimplemented from <A HREF="Llama__AbstMapping.html#operator%20()">AbstMapping</A>.</p>
+<A NAME="operator%20()"></A><A NAME="ref18"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>operator ()</strong> (Matrix<Scalar> *df, const Matrix<Scalar>& x, 
+			      const Matrix<Index>& i)
+<br></td><td align="right"><h3><strong>operator ()</strong></h3></td></tr></table><p> <small>[const virtual]</small></p><p>
+       Evaluate the Jacobian of the mapping at x.  Store the result in matrix df.
+    </p>
+<p>Reimplemented from <A HREF="Llama__AbstMapping.html#operator%20()">AbstMapping</A>.</p>
+<A NAME="operator%20()"></A><A NAME="ref19"></A><table width="100%"><tr bgcolor="#eeeeee"><td> Matrix<Scalar> * &nbsp;<strong>operator ()</strong> (const Matrix<Scalar>& x, 
+					  const Matrix<Index>& i)
+<br></td><td align="right"><h3><strong>operator ()</strong></h3></td></tr></table><p> <small>[const virtual]</small></p><p>
+       Evaluate the Jacobian of the mapping.  Create a new matrix
+       to hold the result.  
+    </p>
+<p>Reimplemented from <A HREF="Llama__AbstMapping.html#operator%20()">AbstMapping</A>.</p>
+<A NAME="itinerary"></A><A NAME="ref20"></A><table width="100%"><tr bgcolor="#eeeeee"><td> Matrix<Scalar> * &nbsp;<strong>itinerary</strong> (const Matrix<Scalar>& x0, Index n)
+<br></td><td align="right"><h3><strong>itinerary</strong></h3></td></tr></table><p> <small>[const virtual]</small></p><p>
+       Compute an itinerary of length n beginning at x.
+    </p>
+<p>Reimplemented from <A HREF="Llama__AbstMapping.html#itinerary">AbstMapping</A>.</p>
+<A NAME="fixed_point"></A><A NAME="ref22"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>fixed_point</strong> (Matrix<Scalar> *x, const Matrix<Index>& iact)
+<br></td><td align="right"><h3><strong>fixed_point</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p>
+       Find a fixed point, using x as an initial guess.  Allow the
+       variables indexed by iact to vary.  </p>
+<p>Reimplemented from <A HREF="Llama__AbstMapping.html#fixed_point">AbstMapping</A>.</p>
+<HR>
+	<table>
+	<tr><td><small>Generated by: king on larix.tiem.utk.edu on Tue Jun 29 10:55:51 2004, using kdoc 2.0a54.</small></td></tr>
+	</table>
+</BODY>
+</HTML>

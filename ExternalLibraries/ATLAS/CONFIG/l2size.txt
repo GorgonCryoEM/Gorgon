@@ -1,0 +1,19 @@
+
+
+This next value is the size, in kilobytes, that ATLAS must read/write in order
+to completely flush your largest cache.  ATLAS will flush this much memory
+between timing calls, in order to ensure timings are not inflated by
+cache preloading.  A safe maximum is usually twice the size of your actual
+largest cache size.  If you do not know the size of your largest cache,
+a maximum value is fine.  The only drawback to making this value large
+is that it requires more memory to do timings, and may slow down
+the install process (if you have only a small amount of memory, it can also
+invalidate the timings by causing the timers to swap).  The default given
+below is ATLAS's idea of either the maximum cache your system could have, or
+the maximum ATLAS believes it is safe to flush.  If you are certain that
+your largest cache is smaller than the default given below, expedite the
+install by changing it.  If you are certain you have enough memory to
+support the necessary memory demands without swapping, and the value
+is not twice the size of your largest cache, increase it.  Otherwise, just
+hit enter to continue.
+

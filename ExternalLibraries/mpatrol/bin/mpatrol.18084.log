@@ -1,0 +1,366 @@
+mpatrol 1.4.8 (08 January 2002)
+Copyright (C) 1997-2002 Graeme S. Roy
+
+This is free software, and you are welcome to redistribute it under certain
+conditions; see the GNU Library General Public License for details.
+
+For the latest mpatrol release and documentation,
+visit http://www.cbmamiga.demon.co.uk/mpatrol.
+
+operating system:       Microsoft Windows 95/98/ME/NT/2000
+system variant:         N/A
+processor architecture: Intel 80x86
+processor word size:    32-bit
+object file format:     PE
+dynamic linker type:    Windows
+
+Log file generated on Tue Sep 11 14:23:39 2007
+
+read 1315 symbols from 
+read 949 symbols from 
+read 105 symbols from 
+read 108 symbols from 
+read 830 symbols from 
+read 31 symbols from 
+read 339 symbols from 
+read 675 symbols from 
+read 514 symbols from 
+read 609 symbols from 
+read 732 symbols from 
+read 551 symbols from 
+read 1550 symbols from 
+read 1 symbol from 
+read 837 symbols from 
+read 41 symbols from 
+read 1486 symbols from 
+read 1417 symbols from 
+read 42 symbols from 
+read 2903 symbols from 
+read 442 symbols from 
+read 98 symbols from 
+read 14 symbols from 
+read 0 symbols from C:\_WashU\ssa1\memleak\GraySkeletonCPP.exe
+
+FREE: free (0x00A425B8) [_setenvp|f:\rtm\vctools\crt_bld\self_x86\crt\src\stdenvp.c|138]
+	0x0044A6E0 libeng_build_date+1144524 at f:\rtm\vctools\crt_bld\self_x86\crt\src\stdenvp.c:138
+
+ERROR: [NOTALL]: free: 0x00A425B8 has not been allocated
+
+FREE: free (0x00A442B8) [_setlocale_get_all|f:\rtm\vctools\crt_bld\self_x86\crt\src\setlocal.c|1168]
+	0x00439E96 libeng_build_date+1076866 at f:\rtm\vctools\crt_bld\self_x86\crt\src\setlocal.c:1168
+
+ERROR: [NOTALL]: free: 0x00A442B8 has not been allocated
+
+FREE: free (0x00A446F8) [_setlocale_get_all|f:\rtm\vctools\crt_bld\self_x86\crt\src\setlocal.c|1168]
+	0x00439E96 libeng_build_date+1076866 at f:\rtm\vctools\crt_bld\self_x86\crt\src\setlocal.c:1168
+
+ERROR: [NOTALL]: free: 0x00A446F8 has not been allocated
+
+FREE: free (0x00A441D8) [__freetlocinfo|f:\rtm\vctools\crt_bld\self_x86\crt\src\setlocal.c|214]
+	0x004397CA libeng_build_date+1075126 at f:\rtm\vctools\crt_bld\self_x86\crt\src\setlocal.c:214
+
+ERROR: [NOTALL]: free: 0x00A441D8 has not been allocated
+
+FREE: free (0x00A44D40) [_setlocale_get_all|f:\rtm\vctools\crt_bld\self_x86\crt\src\setlocal.c|1168]
+	0x00439E96 libeng_build_date+1076866 at f:\rtm\vctools\crt_bld\self_x86\crt\src\setlocal.c:1168
+
+ERROR: [NOTALL]: free: 0x00A44D40 has not been allocated
+
+FREE: free (0x00A44618) [__freetlocinfo|f:\rtm\vctools\crt_bld\self_x86\crt\src\setlocal.c|214]
+	0x004397CA libeng_build_date+1075126 at f:\rtm\vctools\crt_bld\self_x86\crt\src\setlocal.c:214
+
+ERROR: [NOTALL]: free: 0x00A44618 has not been allocated
+
+FREE: free (0x00A45180) [_setlocale_get_all|f:\rtm\vctools\crt_bld\self_x86\crt\src\setlocal.c|1168]
+	0x00439E96 libeng_build_date+1076866 at f:\rtm\vctools\crt_bld\self_x86\crt\src\setlocal.c:1168
+
+ERROR: [NOTALL]: free: 0x00A45180 has not been allocated
+
+FREE: free (0x00A44C60) [__freetlocinfo|f:\rtm\vctools\crt_bld\self_x86\crt\src\setlocal.c|214]
+	0x004397CA libeng_build_date+1075126 at f:\rtm\vctools\crt_bld\self_x86\crt\src\setlocal.c:214
+
+ERROR: [NOTALL]: free: 0x00A44C60 has not been allocated
+
+FREE: free (0x00A455C0) [_setlocale_get_all|f:\rtm\vctools\crt_bld\self_x86\crt\src\setlocal.c|1168]
+	0x00439E96 libeng_build_date+1076866 at f:\rtm\vctools\crt_bld\self_x86\crt\src\setlocal.c:1168
+
+ERROR: [NOTALL]: free: 0x00A455C0 has not been allocated
+
+FREE: free (0x00A450A0) [__freetlocinfo|f:\rtm\vctools\crt_bld\self_x86\crt\src\setlocal.c|214]
+	0x004397CA libeng_build_date+1075126 at f:\rtm\vctools\crt_bld\self_x86\crt\src\setlocal.c:214
+
+ERROR: [NOTALL]: free: 0x00A450A0 has not been allocated
+
+FREE: free (0x00A45A00) [_setlocale_get_all|f:\rtm\vctools\crt_bld\self_x86\crt\src\setlocal.c|1168]
+	0x00439E96 libeng_build_date+1076866 at f:\rtm\vctools\crt_bld\self_x86\crt\src\setlocal.c:1168
+
+ERROR: [NOTALL]: free: 0x00A45A00 has not been allocated
+
+FREE: free (0x00A454E0) [__freetlocinfo|f:\rtm\vctools\crt_bld\self_x86\crt\src\setlocal.c|214]
+	0x004397CA libeng_build_date+1075126 at f:\rtm\vctools\crt_bld\self_x86\crt\src\setlocal.c:214
+
+ERROR: [NOTALL]: free: 0x00A454E0 has not been allocated
+
+FREE: free (0x00A45E40) [_setlocale_get_all|f:\rtm\vctools\crt_bld\self_x86\crt\src\setlocal.c|1168]
+	0x00439E96 libeng_build_date+1076866 at f:\rtm\vctools\crt_bld\self_x86\crt\src\setlocal.c:1168
+
+ERROR: [NOTALL]: free: 0x00A45E40 has not been allocated
+
+FREE: free (0x00A45920) [__freetlocinfo|f:\rtm\vctools\crt_bld\self_x86\crt\src\setlocal.c|214]
+	0x004397CA libeng_build_date+1075126 at f:\rtm\vctools\crt_bld\self_x86\crt\src\setlocal.c:214
+
+ERROR: [NOTALL]: free: 0x00A45920 has not been allocated
+
+FREE: free (0x00A46280) [_setlocale_get_all|f:\rtm\vctools\crt_bld\self_x86\crt\src\setlocal.c|1168]
+	0x00439E96 libeng_build_date+1076866 at f:\rtm\vctools\crt_bld\self_x86\crt\src\setlocal.c:1168
+
+ERROR: [NOTALL]: free: 0x00A46280 has not been allocated
+
+FREE: free (0x00A45D60) [__freetlocinfo|f:\rtm\vctools\crt_bld\self_x86\crt\src\setlocal.c|214]
+	0x004397CA libeng_build_date+1075126 at f:\rtm\vctools\crt_bld\self_x86\crt\src\setlocal.c:214
+
+ERROR: [NOTALL]: free: 0x00A45D60 has not been allocated
+
+FREE: free (0x00A466C0) [_setlocale_get_all|f:\rtm\vctools\crt_bld\self_x86\crt\src\setlocal.c|1168]
+	0x00439E96 libeng_build_date+1076866 at f:\rtm\vctools\crt_bld\self_x86\crt\src\setlocal.c:1168
+
+ERROR: [NOTALL]: free: 0x00A466C0 has not been allocated
+
+FREE: free (0x00A461A0) [__freetlocinfo|f:\rtm\vctools\crt_bld\self_x86\crt\src\setlocal.c|214]
+	0x004397CA libeng_build_date+1075126 at f:\rtm\vctools\crt_bld\self_x86\crt\src\setlocal.c:214
+
+ERROR: [NOTALL]: free: 0x00A461A0 has not been allocated
+
+FREE: free (0x00A46A60) [_freebuf|f:\rtm\vctools\crt_bld\self_x86\crt\src\_freebuf.c|52]
+	0x0043F984 libeng_build_date+1100144 at f:\rtm\vctools\crt_bld\self_x86\crt\src\_freebuf.c:52
+	0x00402DBF libeng_build_date+851371 at c:\_washu\ssa1\source\skeletonmaker\reader.h:781
+	0x00420BC3 libeng_build_date+973743 at c:\_washu\ssa1\source\grayskeletoncpp\grayskeletoncpp.cpp:120
+	0x004393EF libeng_build_date+1074139 at f:\rtm\vctools\crt_bld\self_x86\crt\src\crt0.c:318
+	0x7C816FD7 RegisterWaitForInputIdle+73
+
+ERROR: [NOTALL]: free: 0x00A46A60 has not been allocated
+
+FREE: free (0x00A47A68) [_freebuf|f:\rtm\vctools\crt_bld\self_x86\crt\src\_freebuf.c|52]
+	0x0043F984 libeng_build_date+1100144 at f:\rtm\vctools\crt_bld\self_x86\crt\src\_freebuf.c:52
+	0x004030EE libeng_build_date+852186 at c:\_washu\ssa1\source\skeletonmaker\reader.h:514
+	0x00402E43 libeng_build_date+851503 at c:\_washu\ssa1\source\skeletonmaker\reader.h:795
+	0x00420BC3 libeng_build_date+973743 at c:\_washu\ssa1\source\grayskeletoncpp\grayskeletoncpp.cpp:120
+	0x004393EF libeng_build_date+1074139 at f:\rtm\vctools\crt_bld\self_x86\crt\src\crt0.c:318
+	0x7C816FD7 RegisterWaitForInputIdle+73
+
+ERROR: [NOTALL]: free: 0x00A47A68 has not been allocated
+
+system page size:  4096 bytes
+default alignment: 8 bytes
+overflow size:     0 bytes
+overflow byte:     0xAA
+allocation byte:   0xFF
+free byte:         0x55
+allocation stop:   0
+reallocation stop: 0
+free stop:         0
+unfreed abort:     0
+small boundary:    32 bytes
+medium boundary:   256 bytes
+large boundary:    2048 bytes
+lower check range: 0
+upper check range: 0
+check frequency:   1
+failure frequency: 0
+failure seed:      1189538619
+prologue function: <unset>
+epilogue function: <unset>
+handler function:  <unset>
+log file:          mpatrol.18084.log
+profiling file:    mpatrol.18084.out
+tracing file:      mpatrol.18084.trace
+program filename:  C:\_WashU\ssa1\memleak\GraySkeletonCPP.exe
+symbols read:      15589
+autosave count:    0
+freed queue size:  0
+allocation count:  30
+allocation peak:   15 (1099824 bytes)
+allocation limit:  0 bytes
+allocated blocks:  14 (1099824 bytes)
+marked blocks:     0 (0 bytes)
+freed blocks:      0 (0 bytes)
+free blocks:       8 (79824 bytes)
+internal blocks:   27 (1769472 bytes)
+total heap usage:  2949120 bytes
+total compared:    1 byte
+total located:     16 bytes
+total copied:      600198 bytes
+total set:         769 bytes
+total warnings:    0
+total errors:      20
+
+top 10 unfreed memory entries in leak table:
+
+       bytes   count  location
+    --------  ------  --------
+     1098500       1  c:\_washu\ssa1\source\skeletonmaker\volume.h line 664
+        1108       1  c:\_washu\ssa1\source\skeletonmaker\reader.h line 795
+          52       1  f:\rtm\vctools\crt_bld\self_x86\crt\src\locale0.cpp line 159
+          48       1  c:\program files\microsoft visual studio 8\vc\include\xmemory line 44
+          24       1  c:\program files\microsoft visual studio 8\vc\include\xlocnum line 103
+          24       3  f:\rtm\vctools\crt_bld\self_x86\crt\src\locale0.cpp line 177
+          24       1  c:\program files\microsoft visual studio 8\vc\include\xlocale line 1760
+          16       1  c:\_washu\ssa1\source\skeletonmaker\reader.h line 560
+          16       1  c:\program files\microsoft visual studio 8\vc\include\xlocnum line 222
+          12       3  c:\program files\microsoft visual studio 8\vc\include\xlocale line 606
+     1099824      14  total
+
+unfreed allocations: 14 (1099824 bytes)
+    0x02B20008 (52 bytes) {operator new:2:0} [std::locale::_Init|f:\rtm\vctools\crt_bld\self_x86\crt\src\locale0.cpp|159]
+	0x004339AA libeng_build_date+1051030 at f:\rtm\vctools\crt_bld\self_x86\crt\src\locale0.cpp:159
+	0x004290D1 libeng_build_date+1007805 at c:\program files\microsoft visual studio 8\vc\include\xlocale:308
+	0x00429097 libeng_build_date+1007747 at c:\program files\microsoft visual studio 8\vc\include\xiosbase:512
+	0x00428FB4 libeng_build_date+1007520 at c:\program files\microsoft visual studio 8\vc\include\ios:132
+	0x00426380 libeng_build_date+996204 at c:\program files\microsoft visual studio 8\vc\include\istream:33
+	0x0042350F libeng_build_date+984315 at c:\program files\microsoft visual studio 8\vc\include\sstream:365
+	0x0042059E libeng_build_date+972170 at c:\_washu\ssa1\source\grayskeletoncpp\grayskeletoncpp.cpp:42
+	0x0042088F libeng_build_date+972923 at c:\_washu\ssa1\source\grayskeletoncpp\grayskeletoncpp.cpp:101
+	0x004393EF libeng_build_date+1074139 at f:\rtm\vctools\crt_bld\self_x86\crt\src\crt0.c:318
+	0x7C816FD7 RegisterWaitForInputIdle+73
+
+    0x02B20040 (24 bytes) {operator new:3:0} [std::ctype<char>::_Getcat|c:\program files\microsoft visual studio 8\vc\include\xlocale|1760]
+	0x0042B2FD libeng_build_date+1016553 at c:\program files\microsoft visual studio 8\vc\include\xlocale:1760
+	0x0042B13C libeng_build_date+1016104 at c:\program files\microsoft visual studio 8\vc\include\xlocale:478
+	0x0042A480 libeng_build_date+1012844 at c:\program files\microsoft visual studio 8\vc\include\ios:124
+	0x00428FD1 libeng_build_date+1007549 at c:\program files\microsoft visual studio 8\vc\include\ios:135
+	0x00426380 libeng_build_date+996204 at c:\program files\microsoft visual studio 8\vc\include\istream:33
+	0x0042350F libeng_build_date+984315 at c:\program files\microsoft visual studio 8\vc\include\sstream:365
+	0x0042059E libeng_build_date+972170 at c:\_washu\ssa1\source\grayskeletoncpp\grayskeletoncpp.cpp:42
+	0x0042088F libeng_build_date+972923 at c:\_washu\ssa1\source\grayskeletoncpp\grayskeletoncpp.cpp:101
+	0x004393EF libeng_build_date+1074139 at f:\rtm\vctools\crt_bld\self_x86\crt\src\crt0.c:318
+	0x7C816FD7 RegisterWaitForInputIdle+73
+
+    0x02B20058 (8 bytes) {operator new:4:0} [std::locale::facet::facet_Register|f:\rtm\vctools\crt_bld\self_x86\crt\src\locale0.cpp|177]
+	0x00433892 libeng_build_date+1050750 at f:\rtm\vctools\crt_bld\self_x86\crt\src\locale0.cpp:177
+	0x0042B185 libeng_build_date+1016177 at c:\program files\microsoft visual studio 8\vc\include\xlocale:494
+	0x0042A480 libeng_build_date+1012844 at c:\program files\microsoft visual studio 8\vc\include\ios:124
+	0x00428FD1 libeng_build_date+1007549 at c:\program files\microsoft visual studio 8\vc\include\ios:135
+	0x00426380 libeng_build_date+996204 at c:\program files\microsoft visual studio 8\vc\include\istream:33
+	0x0042350F libeng_build_date+984315 at c:\program files\microsoft visual studio 8\vc\include\sstream:365
+	0x0042059E libeng_build_date+972170 at c:\_washu\ssa1\source\grayskeletoncpp\grayskeletoncpp.cpp:42
+	0x0042088F libeng_build_date+972923 at c:\_washu\ssa1\source\grayskeletoncpp\grayskeletoncpp.cpp:101
+	0x004393EF libeng_build_date+1074139 at f:\rtm\vctools\crt_bld\self_x86\crt\src\crt0.c:318
+	0x7C816FD7 RegisterWaitForInputIdle+73
+
+    0x02B20060 (16 bytes) {operator new:29:0} [MRCReader::getVolume|c:\_washu\ssa1\source\skeletonmaker\reader.h|560]
+	0x004031BC libeng_build_date+852392 at c:\_washu\ssa1\source\skeletonmaker\reader.h:560
+	0x00420BDE libeng_build_date+973770 at c:\_washu\ssa1\source\grayskeletoncpp\grayskeletoncpp.cpp:121
+	0x004393EF libeng_build_date+1074139 at f:\rtm\vctools\crt_bld\self_x86\crt\src\crt0.c:318
+	0x7C816FD7 RegisterWaitForInputIdle+73
+
+    0x02B20088 (16 bytes) {operator new:8:0} [std::num_get<char,std::istreambuf_iterator<char,std::char_traits<char> > >::_Getcat|c:\program files\microsoft visual studio 8\vc\include\xlocnum|222]
+	0x0042D5FD libeng_build_date+1025513 at c:\program files\microsoft visual studio 8\vc\include\xlocnum:222
+	0x0042C02C libeng_build_date+1019928 at c:\program files\microsoft visual studio 8\vc\include\xlocale:478
+	0x004229F1 libeng_build_date+981469 at c:\program files\microsoft visual studio 8\vc\include\istream:255
+	0x004205B7 libeng_build_date+972195 at c:\_washu\ssa1\source\grayskeletoncpp\grayskeletoncpp.cpp:45
+	0x0042088F libeng_build_date+972923 at c:\_washu\ssa1\source\grayskeletoncpp\grayskeletoncpp.cpp:101
+	0x004393EF libeng_build_date+1074139 at f:\rtm\vctools\crt_bld\self_x86\crt\src\crt0.c:318
+	0x7C816FD7 RegisterWaitForInputIdle+73
+
+    0x02B20098 (8 bytes) {operator new:9:0} [std::locale::facet::facet_Register|f:\rtm\vctools\crt_bld\self_x86\crt\src\locale0.cpp|177]
+	0x00433892 libeng_build_date+1050750 at f:\rtm\vctools\crt_bld\self_x86\crt\src\locale0.cpp:177
+	0x0042C075 libeng_build_date+1020001 at c:\program files\microsoft visual studio 8\vc\include\xlocale:494
+	0x004229F1 libeng_build_date+981469 at c:\program files\microsoft visual studio 8\vc\include\istream:255
+	0x004205B7 libeng_build_date+972195 at c:\_washu\ssa1\source\grayskeletoncpp\grayskeletoncpp.cpp:45
+	0x0042088F libeng_build_date+972923 at c:\_washu\ssa1\source\grayskeletoncpp\grayskeletoncpp.cpp:101
+	0x004393EF libeng_build_date+1074139 at f:\rtm\vctools\crt_bld\self_x86\crt\src\crt0.c:318
+	0x7C816FD7 RegisterWaitForInputIdle+73
+
+    0x02B200A0 (24 bytes) {operator new:10:0} [std::numpunct<char>::_Getcat|c:\program files\microsoft visual studio 8\vc\include\xlocnum|103]
+	0x0043016D libeng_build_date+1036633 at c:\program files\microsoft visual studio 8\vc\include\xlocnum:103
+	0x0042FD4C libeng_build_date+1035576 at c:\program files\microsoft visual studio 8\vc\include\xlocale:478
+	0x0042EB97 libeng_build_date+1031043 at c:\program files\microsoft visual studio 8\vc\include\xlocnum:599
+	0x0042E0B9 libeng_build_date+1028261 at c:\program files\microsoft visual studio 8\vc\include\xlocnum:430
+	0x00427505 libeng_build_date+1000689 at c:\program files\microsoft visual studio 8\vc\include\xlocnum:284
+	0x00422AA9 libeng_build_date+981653 at c:\program files\microsoft visual studio 8\vc\include\istream:259
+	0x004205B7 libeng_build_date+972195 at c:\_washu\ssa1\source\grayskeletoncpp\grayskeletoncpp.cpp:45
+	0x0042088F libeng_build_date+972923 at c:\_washu\ssa1\source\grayskeletoncpp\grayskeletoncpp.cpp:101
+	0x004393EF libeng_build_date+1074139 at f:\rtm\vctools\crt_bld\self_x86\crt\src\crt0.c:318
+	0x7C816FD7 RegisterWaitForInputIdle+73
+
+    0x02B200B8 (1 byte) {operator new[]:11:0} [std::_Maklocstr<char>|c:\program files\microsoft visual studio 8\vc\include\xlocale|606]
+	0x00431C04 libeng_build_date+1043440 at c:\program files\microsoft visual studio 8\vc\include\xlocale:606
+	0x00430796 libeng_build_date+1038210 at c:\program files\microsoft visual studio 8\vc\include\xlocnum:131
+	0x00430240 libeng_build_date+1036844 at c:\program files\microsoft visual studio 8\vc\include\xlocnum:87
+	0x0043018A libeng_build_date+1036662 at c:\program files\microsoft visual studio 8\vc\include\xlocnum:103
+	0x0042FD4C libeng_build_date+1035576 at c:\program files\microsoft visual studio 8\vc\include\xlocale:478
+	0x0042EB97 libeng_build_date+1031043 at c:\program files\microsoft visual studio 8\vc\include\xlocnum:599
+	0x0042E0B9 libeng_build_date+1028261 at c:\program files\microsoft visual studio 8\vc\include\xlocnum:430
+	0x00427505 libeng_build_date+1000689 at c:\program files\microsoft visual studio 8\vc\include\xlocnum:284
+	0x00422AA9 libeng_build_date+981653 at c:\program files\microsoft visual studio 8\vc\include\istream:259
+	0x004205B7 libeng_build_date+972195 at c:\_washu\ssa1\source\grayskeletoncpp\grayskeletoncpp.cpp:45
+	0x0042088F libeng_build_date+972923 at c:\_washu\ssa1\source\grayskeletoncpp\grayskeletoncpp.cpp:101
+	0x004393EF libeng_build_date+1074139 at f:\rtm\vctools\crt_bld\self_x86\crt\src\crt0.c:318
+	0x7C816FD7 RegisterWaitForInputIdle+73
+
+    0x02B200C0 (6 bytes) {operator new[]:12:0} [std::_Maklocstr<char>|c:\program files\microsoft visual studio 8\vc\include\xlocale|606]
+	0x00431C04 libeng_build_date+1043440 at c:\program files\microsoft visual studio 8\vc\include\xlocale:606
+	0x004307E0 libeng_build_date+1038284 at c:\program files\microsoft visual studio 8\vc\include\xlocnum:132
+	0x00430240 libeng_build_date+1036844 at c:\program files\microsoft visual studio 8\vc\include\xlocnum:87
+	0x0043018A libeng_build_date+1036662 at c:\program files\microsoft visual studio 8\vc\include\xlocnum:103
+	0x0042FD4C libeng_build_date+1035576 at c:\program files\microsoft visual studio 8\vc\include\xlocale:478
+	0x0042EB97 libeng_build_date+1031043 at c:\program files\microsoft visual studio 8\vc\include\xlocnum:599
+	0x0042E0B9 libeng_build_date+1028261 at c:\program files\microsoft visual studio 8\vc\include\xlocnum:430
+	0x00427505 libeng_build_date+1000689 at c:\program files\microsoft visual studio 8\vc\include\xlocnum:284
+	0x00422AA9 libeng_build_date+981653 at c:\program files\microsoft visual studio 8\vc\include\istream:259
+	0x004205B7 libeng_build_date+972195 at c:\_washu\ssa1\source\grayskeletoncpp\grayskeletoncpp.cpp:45
+	0x0042088F libeng_build_date+972923 at c:\_washu\ssa1\source\grayskeletoncpp\grayskeletoncpp.cpp:101
+	0x004393EF libeng_build_date+1074139 at f:\rtm\vctools\crt_bld\self_x86\crt\src\crt0.c:318
+	0x7C816FD7 RegisterWaitForInputIdle+73
+
+    0x02B200C8 (5 bytes) {operator new[]:13:0} [std::_Maklocstr<char>|c:\program files\microsoft visual studio 8\vc\include\xlocale|606]
+	0x00431C04 libeng_build_date+1043440 at c:\program files\microsoft visual studio 8\vc\include\xlocale:606
+	0x0043082A libeng_build_date+1038358 at c:\program files\microsoft visual studio 8\vc\include\xlocnum:133
+	0x00430240 libeng_build_date+1036844 at c:\program files\microsoft visual studio 8\vc\include\xlocnum:87
+	0x0043018A libeng_build_date+1036662 at c:\program files\microsoft visual studio 8\vc\include\xlocnum:103
+	0x0042FD4C libeng_build_date+1035576 at c:\program files\microsoft visual studio 8\vc\include\xlocale:478
+	0x0042EB97 libeng_build_date+1031043 at c:\program files\microsoft visual studio 8\vc\include\xlocnum:599
+	0x0042E0B9 libeng_build_date+1028261 at c:\program files\microsoft visual studio 8\vc\include\xlocnum:430
+	0x00427505 libeng_build_date+1000689 at c:\program files\microsoft visual studio 8\vc\include\xlocnum:284
+	0x00422AA9 libeng_build_date+981653 at c:\program files\microsoft visual studio 8\vc\include\istream:259
+	0x004205B7 libeng_build_date+972195 at c:\_washu\ssa1\source\grayskeletoncpp\grayskeletoncpp.cpp:45
+	0x0042088F libeng_build_date+972923 at c:\_washu\ssa1\source\grayskeletoncpp\grayskeletoncpp.cpp:101
+	0x004393EF libeng_build_date+1074139 at f:\rtm\vctools\crt_bld\self_x86\crt\src\crt0.c:318
+	0x7C816FD7 RegisterWaitForInputIdle+73
+
+    0x02B200D0 (8 bytes) {operator new:14:0} [std::locale::facet::facet_Register|f:\rtm\vctools\crt_bld\self_x86\crt\src\locale0.cpp|177]
+	0x00433892 libeng_build_date+1050750 at f:\rtm\vctools\crt_bld\self_x86\crt\src\locale0.cpp:177
+	0x0042FD95 libeng_build_date+1035649 at c:\program files\microsoft visual studio 8\vc\include\xlocale:494
+	0x0042EB97 libeng_build_date+1031043 at c:\program files\microsoft visual studio 8\vc\include\xlocnum:599
+	0x0042E0B9 libeng_build_date+1028261 at c:\program files\microsoft visual studio 8\vc\include\xlocnum:430
+	0x00427505 libeng_build_date+1000689 at c:\program files\microsoft visual studio 8\vc\include\xlocnum:284
+	0x00422AA9 libeng_build_date+981653 at c:\program files\microsoft visual studio 8\vc\include\istream:259
+	0x004205B7 libeng_build_date+972195 at c:\_washu\ssa1\source\grayskeletoncpp\grayskeletoncpp.cpp:45
+	0x0042088F libeng_build_date+972923 at c:\_washu\ssa1\source\grayskeletoncpp\grayskeletoncpp.cpp:101
+	0x004393EF libeng_build_date+1074139 at f:\rtm\vctools\crt_bld\self_x86\crt\src\crt0.c:318
+	0x7C816FD7 RegisterWaitForInputIdle+73
+
+    0x02B200D8 (48 bytes) {operator new:19:0} [std::_Allocate<char>|c:\program files\microsoft visual studio 8\vc\include\xmemory|44]
+	0x0042C126 libeng_build_date+1020178 at c:\program files\microsoft visual studio 8\vc\include\xmemory:44
+	0x004249F7 libeng_build_date+989667 at c:\program files\microsoft visual studio 8\vc\include\xmemory:146
+	0x0042A08D libeng_build_date+1011833 at c:\program files\microsoft visual studio 8\vc\include\xstring:1972
+	0x004277EC libeng_build_date+1001432 at c:\program files\microsoft visual studio 8\vc\include\xstring:2002
+	0x0042766D libeng_build_date+1001049 at c:\program files\microsoft visual studio 8\vc\include\xstring:1022
+	0x00424755 libeng_build_date+988993 at c:\program files\microsoft visual studio 8\vc\include\xstring:1032
+	0x00421838 libeng_build_date+976932 at c:\program files\microsoft visual studio 8\vc\include\xstring:882
+	0x004208EA libeng_build_date+973014 at c:\_washu\ssa1\source\grayskeletoncpp\grayskeletoncpp.cpp:103
+	0x004393EF libeng_build_date+1074139 at f:\rtm\vctools\crt_bld\self_x86\crt\src\crt0.c:318
+	0x7C816FD7 RegisterWaitForInputIdle+73
+
+    0x02B20108 (1108 bytes) {operator new:28:0} [MRCReaderPicker::pick|c:\_washu\ssa1\source\skeletonmaker\reader.h|795]
+	0x00402E24 libeng_build_date+851472 at c:\_washu\ssa1\source\skeletonmaker\reader.h:795
+	0x00420BC3 libeng_build_date+973743 at c:\_washu\ssa1\source\grayskeletoncpp\grayskeletoncpp.cpp:120
+	0x004393EF libeng_build_date+1074139 at f:\rtm\vctools\crt_bld\self_x86\crt\src\crt0.c:318
+	0x7C816FD7 RegisterWaitForInputIdle+73
+
+    0x02B80000 (1098500 bytes) {operator new[]:30:0} [Volume::Volume|c:\_washu\ssa1\source\skeletonmaker\volume.h|664]
+	0x00401447 libeng_build_date+844851 at c:\_washu\ssa1\source\skeletonmaker\volume.h:664
+	0x004031EC libeng_build_date+852440 at c:\_washu\ssa1\source\skeletonmaker\reader.h:560
+	0x00420BDE libeng_build_date+973770 at c:\_washu\ssa1\source\grayskeletoncpp\grayskeletoncpp.cpp:121
+	0x004393EF libeng_build_date+1074139 at f:\rtm\vctools\crt_bld\self_x86\crt\src\crt0.c:318
+	0x7C816FD7 RegisterWaitForInputIdle+73

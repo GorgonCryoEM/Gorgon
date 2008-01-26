@@ -1,0 +1,15 @@
+
+#  ---------------------------------------------------------------------------
+#  Various C compilers, and the linker to be used when we are not linking in
+#  non-ATLAS BLAS (which usually necessitate using the Fortran linker).
+#  The C compilers recognized by ATLAS are:
+#     CC :  Compiler to use to compile regular, non-generated code
+#    MCC :  Compiler to use to compile generated, highly-optimized code
+#    XCC :  Compiler to be used on the compile engine of a cross-compiler
+#  These will typically all be the same.  An example of where this is not
+#  the case would be DEC ALPHA 21164, where you want to use gcc for MCC,
+#  because DEC's cc does not allow the programmer access to all 32 floating
+#  point registers.  However, on normal C code, DEC's cc produces much faster
+#  code than gcc, so you CC set to cc.  Of course, any system where you are
+#  cross-compiling, you will need to set XCC differently than CC & MCC.
+#  ---------------------------------------------------------------------------

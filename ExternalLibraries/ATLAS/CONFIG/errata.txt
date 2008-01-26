@@ -1,0 +1,10 @@
+
+===============================================================================
+                                  IMPORTANT
+===============================================================================
+Before going any further, check
+   http://math-atlas.sourceforge.net/errata.html
+This is the ATLAS errata file, which keeps a running count of all known
+ATLAS bugs and system problems, with associated workarounds or fixes.
+IF YOU DO NOT CHECK THIS FILE, YOU MAY BE COMPILING A LIBRARY WITH KNOWN BUGS.
+

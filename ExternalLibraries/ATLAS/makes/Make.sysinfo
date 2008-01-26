@@ -1,0 +1,162 @@
+include Make.inc
+
+maxlat=6
+mflop=200
+
+sTestFlags : force_build
+	$(MAKE) rbob `cat res/sBEST` pre='s' type=float
+
+dTestFlags : force_build
+	$(MAKE) rbob `cat res/dBEST` pre='d' type=double
+
+res/L1CacheSize:
+	$(MAKE) RunL1 MaxL1=$(MaxL1)
+RunL1 : xL1
+	$(ATLRUN) $(SYSdir) xL1 $(MaxL1)
+
+$(INCdir)/atlas_type.h:
+	$(MAKE) RunTyp
+	$(ATLFWAIT) -f $(INCdir)/atlas_type.h
+sRunSysSum : $(INCdir)/atlas_ssysinfo.h
+
+$(INCdir)/atlas_ssysinfo.h : xsyssum $(ATLFWAIT)
+	$(SYSdir)/xsyssum s $(INCdir)/atlas_ssysinfo.h
+	$(ATLFWAIT) -f $(INCdir)/atlas_ssysinfo.h
+res/sMULADD : 
+	$(MAKE) RunMulAdd pre=s maxlat=$(maxlat) mflop=$(mflop)
+
+dRunSysSum : $(INCdir)/atlas_dsysinfo.h
+
+$(INCdir)/atlas_dsysinfo.h : xsyssum $(ATLFWAIT)
+	$(SYSdir)/xsyssum d $(INCdir)/atlas_dsysinfo.h
+	$(ATLFWAIT) -f $(INCdir)/atlas_dsysinfo.h
+res/dMULADD : 
+	$(MAKE) RunMulAdd pre=d maxlat=$(maxlat) mflop=$(mflop)
+
+cRunSysSum : $(INCdir)/atlas_csysinfo.h
+
+$(INCdir)/atlas_csysinfo.h : xsyssum $(ATLFWAIT)
+	$(SYSdir)/xsyssum c $(INCdir)/atlas_csysinfo.h
+	$(ATLFWAIT) -f $(INCdir)/atlas_csysinfo.h
+res/cMULADD : 
+	$(MAKE) RunMulAdd pre=c maxlat=$(maxlat) mflop=$(mflop)
+
+zRunSysSum : $(INCdir)/atlas_zsysinfo.h
+
+$(INCdir)/atlas_zsysinfo.h : xsyssum $(ATLFWAIT)
+	$(SYSdir)/xsyssum z $(INCdir)/atlas_zsysinfo.h
+	$(ATLFWAIT) -f $(INCdir)/atlas_zsysinfo.h
+res/zMULADD : 
+	$(MAKE) RunMulAdd pre=z maxlat=$(maxlat) mflop=$(mflop)
+
+	
+res/snreg :
+	cd $(MMTdir) ; $(MAKE) res/snreg
+	cd res ; ln -s $(MMTdir)/res/snreg snreg
+        
+res/dnreg :
+	cd $(MMTdir) ; $(MAKE) res/dnreg
+	cd res ; ln -s $(MMTdir)/res/dnreg dnreg
+        
+findNT : xfindNT
+	$(ATLRUN) $(SYSdir) xfindNT -o $(INCdir)/atlas_pthreads.h
+
+RunTLB : xtlb
+	$(ATLRUN) $(SYSdir) xtlb
+
+RunMADef : xmasearch
+	./xmasearch $(pre) -2 $(mflop)
+
+RunMulAdd: xmasearch
+	./xmasearch $(pre) $(maxlat) $(mflop)
+
+RunTyp: xemit_typ
+	$(ATLRUN) $(SYSdir) xemit_typ $(INCdir)/atlas_type.h
+
+xemit_buildinfo : emit_buildinfo.o
+	$(XCC) $(XCCFLAGS) -o $@ emit_buildinfo.o
+xsyssum : GetSysSum.o
+	$(XCC) $(XCCFLAGS) -o $@ GetSysSum.o
+xmasearch : time.o masearch.o
+	$(XCC) $(XCCFLAGS) -o $@ masearch.o
+
+xL1 : time.o L1CacheSize.o
+	$(BC) $(BCFLAGS) -o $@ L1CacheSize.o time.o
+xfindNT : ATL_walltime.o findNT.o
+	$(BC) $(BCFLAGS) -o $@ findNT.o ATL_walltime.o $(LIBS)
+
+xtlb : time.o tlb.o
+	$(CLINKER) $(CLINKFLAGS) -o $@ tlb.o time.o
+
+xL2 : time.o L2CacheSize.o
+	$(CLINKER) $(CLINKFLAGS) -o $@ L2CacheSize.o time.o
+
+xemit_typ : emit_typ.o
+	$(BC) $(BCFLAGS) -o $@ emit_typ.o
+
+xmuladd : force_build time.o muladd.c 
+	$(CC) $(CCFLAGS) -c muladd.c
+	$(CLINKER) $(CLINKFLAGS) -o xmuladd muladd.o time.o
+	$(ATLRUN) $(SYSdir) xmuladd
+
+ATL_cputime.c : 
+	cp ../ATL_cputime.c .
+ATL_cputime.o : ATL_cputime.c
+	$(CC) -c $(CCFLAGS) ATL_cputime.c
+
+ATL_walltime.c : 
+	cp ../ATL_walltime.c .
+ATL_walltime.o : ATL_walltime.c
+	$(CC) -c $(CCFLAGS) ATL_walltime.c
+
+ATL_Xwalltime.o : ATL_walltime.o
+	$(XCC) $(XCCFLAGS) -c -o ATL_Xwalltime.o ATL_walltime.c
+
+emit_buildinfo.o : ../emit_buildinfo.c
+	$(XCC) -c $(XCCFLAGS) ../emit_buildinfo.c
+GetSysSum.o : $(INCdir)/atlas_type.h ../GetSysSum.c
+	$(XCC) -c $(XCCFLAGS) ../GetSysSum.c
+time.o : ../time.c
+	$(CC) -c $(CCFLAGS) -I./ ../time.c
+emit_typ.o : ../emit_typ.c
+	$(BC) -c $(BCFLAGS) ../emit_typ.c
+L1CacheSize.o : ../L1CacheSize.c
+	$(BC) -c $(BCFLAGS) ../L1CacheSize.c
+findNT.o : ../findNT.c
+	$(BC) -c $(BCFLAGS) ../findNT.c
+tlb.o : ../tlb.c
+	$(BC) -c $(BCFLAGS) ../tlb.c
+
+masearch.o : ../masearch.c
+	$(XCC) -c $(XCCFLAGS) ../masearch.c
+
+
+force_build :
+
+clean :
+	rm -f xL1 xtlb xmasearch xemit_typ xmuladd xsys_sum xfindNT *.o
+
+print_ARCH :
+	@echo $(ARCH)
+print_INSTFLAGS :
+	@echo $(INSTFLAGS)
+print_MMDEF :
+	@echo $(MMDEF)
+print_ARCHDEF :
+	@echo $(ARCHDEF)
+print_F2CDEFS :
+	@echo $(F2CDEFS)
+print_ARCHDEFS :
+	@echo $(ARCHDEFS)
+print_MMFLAGS :
+	@echo $(MMFLAGS)
+print_MCC :
+	@echo $(MCC)
+print_CC :
+	@echo $(CC)
+print_F77FLAGS :
+	@echo $(F77FLAGS)
+print_F77 :
+	@echo $(F77)
+print_CCFLAGS :
+	@echo $(CCFLAG0)

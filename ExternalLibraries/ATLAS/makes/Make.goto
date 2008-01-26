@@ -1,0 +1,195 @@
+include Make.inc
+
+sobj = ATLU_susergemm.o ATL_sgotogemm_nn.o ATL_sgotogemm_nt.o \
+       ATL_sgotogemm_tn.o ATL_sgotogemm_tt.o
+
+dobj = ATLU_dusergemm.o ATL_dgotogemm_nn.o ATL_dgotogemm_nt.o \
+       ATL_dgotogemm_tn.o ATL_dgotogemm_tt.o
+
+cobj = ATLU_cusergemm.o ATL_cgotogemm_cc.o ATL_cgotogemm_cn.o \
+       ATL_cgotogemm_ct.o ATL_cgotogemm_nc.o ATL_cgotogemm_nn.o \
+       ATL_cgotogemm_nt.o ATL_cgotogemm_tc.o ATL_cgotogemm_tn.o \
+       ATL_cgotogemm_tt.o
+
+zobj = ATLU_zusergemm.o ATL_zgotogemm_cc.o ATL_zgotogemm_cn.o \
+       ATL_zgotogemm_ct.o ATL_zgotogemm_nc.o ATL_zgotogemm_nn.o \
+       ATL_zgotogemm_nt.o ATL_zgotogemm_tc.o ATL_zgotogemm_tn.o \
+       ATL_zgotogemm_tt.o
+
+
+susermm : slib
+slib : slib.grd
+slib.grd : $(sobj)
+	$(ARCHIVER) $(ARFLAGS) $(ATLASlib) $(sobj)
+	$(RANLIB) $(ATLASlib)
+	touch slib.grd
+sclean :
+	rm -f $(sobj) slib.grd
+
+dusermm : dlib
+dlib : dlib.grd
+dlib.grd : $(dobj)
+	$(ARCHIVER) $(ARFLAGS) $(ATLASlib) $(dobj)
+	$(RANLIB) $(ATLASlib)
+	touch dlib.grd
+dclean :
+	rm -f $(dobj) dlib.grd
+
+cusermm : clib
+clib : clib.grd
+clib.grd : $(cobj)
+	$(ARCHIVER) $(ARFLAGS) $(ATLASlib) $(cobj)
+	$(RANLIB) $(ATLASlib)
+	touch clib.grd
+cclean :
+	rm -f $(cobj) clib.grd
+
+zusermm : zlib
+zlib : zlib.grd
+zlib.grd : $(zobj)
+	$(ARCHIVER) $(ARFLAGS) $(ATLASlib) $(zobj)
+	$(RANLIB) $(ATLASlib)
+	touch zlib.grd
+zclean :
+	rm -f $(zobj) zlib.grd
+
+clean : dclean sclean zclean cclean
+
+ATLU_susergemm.o : ../ATLU_usergemm.c
+	$(CC) $(CCFLAGS) $(UMMDEFS) $(OJ) $(NM) $@ -DSREAL ../ATLU_usergemm.c
+ATL_sgotogemm_tt.o : ../gemm_k.S ../gemm_EV5_k.S ../gemm_EV6_k.S
+	$(CC) $(CCFLAGS) $(UMMDEFS) -DTT -DSREAL -I../ \
+              -E ../gemm_k.S > temp.s
+	$(CC) $(CCFLAGS) -c -o $@ temp.s
+	rm -f temp.s
+ATL_sgotogemm_tn.o : ../gemm_k.S ../gemm_EV5_k.S ../gemm_EV6_k.S
+	$(CC) $(CCFLAGS) $(UMMDEFS) -DTN -DSREAL -I../ \
+              -E ../gemm_k.S > temp.s
+	$(CC) $(CCFLAGS) -c -o $@ temp.s
+	rm -f temp.s
+ATL_sgotogemm_nt.o : ../gemm_k.S ../gemm_EV5_k.S ../gemm_EV6_k.S
+	$(CC) $(CCFLAGS) $(UMMDEFS) -DNT -DSREAL -I../ \
+              -E ../gemm_k.S > temp.s
+	$(CC) $(CCFLAGS) -c -o $@ temp.s
+	rm -f temp.s
+ATL_sgotogemm_nn.o : ../gemm_k.S ../gemm_EV5_k.S ../gemm_EV6_k.S
+	$(CC) $(CCFLAGS) $(UMMDEFS) -DNN -DSREAL -I../ \
+              -E ../gemm_k.S > temp.s
+	$(CC) $(CCFLAGS) -c -o $@ temp.s
+	rm -f temp.s
+ATLU_dusergemm.o : ../ATLU_usergemm.c
+	$(CC) $(CCFLAGS) $(UMMDEFS) $(OJ) $(NM) $@ -DDREAL ../ATLU_usergemm.c
+ATL_dgotogemm_tt.o : ../gemm_k.S ../gemm_EV5_k.S ../gemm_EV6_k.S
+	$(CC) $(CCFLAGS) $(UMMDEFS) -DTT -DDREAL -I../ \
+              -E ../gemm_k.S > temp.s
+	$(CC) $(CCFLAGS) -c -o $@ temp.s
+	rm -f temp.s
+ATL_dgotogemm_tn.o : ../gemm_k.S ../gemm_EV5_k.S ../gemm_EV6_k.S
+	$(CC) $(CCFLAGS) $(UMMDEFS) -DTN -DDREAL -I../ \
+              -E ../gemm_k.S > temp.s
+	$(CC) $(CCFLAGS) -c -o $@ temp.s
+	rm -f temp.s
+ATL_dgotogemm_nt.o : ../gemm_k.S ../gemm_EV5_k.S ../gemm_EV6_k.S
+	$(CC) $(CCFLAGS) $(UMMDEFS) -DNT -DDREAL -I../ \
+              -E ../gemm_k.S > temp.s
+	$(CC) $(CCFLAGS) -c -o $@ temp.s
+	rm -f temp.s
+ATL_dgotogemm_nn.o : ../gemm_k.S ../gemm_EV5_k.S ../gemm_EV6_k.S
+	$(CC) $(CCFLAGS) $(UMMDEFS) -DNN -DDREAL -I../ \
+              -E ../gemm_k.S > temp.s
+	$(CC) $(CCFLAGS) -c -o $@ temp.s
+	rm -f temp.s
+ATLU_cusergemm.o : ../ATLU_usergemm.c
+	$(CC) $(CCFLAGS) $(UMMDEFS) $(OJ) $(NM) $@ -DSCPLX ../ATLU_usergemm.c
+ATL_cgotogemm_cc.o : ../zgemm_k.S
+	$(CC) $(CCFLAGS) $(UMMDEFS) -DCC -DSCPLX -I../ \
+              -E ../zgemm_k.S > temp.s
+	$(CC) $(CCFLAGS) -c -o $@ temp.s
+	rm -f temp.s
+ATL_cgotogemm_ct.o : ../zgemm_k.S
+	$(CC) $(CCFLAGS) $(UMMDEFS) -DCT -DSCPLX -I../ \
+              -E ../zgemm_k.S > temp.s
+	$(CC) $(CCFLAGS) -c -o $@ temp.s
+	rm -f temp.s
+ATL_cgotogemm_cn.o : ../zgemm_k.S
+	$(CC) $(CCFLAGS) $(UMMDEFS) -DCN -DSCPLX -I../ \
+              -E ../zgemm_k.S > temp.s
+	$(CC) $(CCFLAGS) -c -o $@ temp.s
+	rm -f temp.s
+ATL_cgotogemm_tc.o : ../zgemm_k.S
+	$(CC) $(CCFLAGS) $(UMMDEFS) -DTC -DSCPLX -I../ \
+              -E ../zgemm_k.S > temp.s
+	$(CC) $(CCFLAGS) -c -o $@ temp.s
+	rm -f temp.s
+ATL_cgotogemm_tt.o : ../zgemm_k.S
+	$(CC) $(CCFLAGS) $(UMMDEFS) -DTT -DSCPLX -I../ \
+              -E ../zgemm_k.S > temp.s
+	$(CC) $(CCFLAGS) -c -o $@ temp.s
+	rm -f temp.s
+ATL_cgotogemm_tn.o : ../zgemm_k.S
+	$(CC) $(CCFLAGS) $(UMMDEFS) -DTN -DSCPLX -I../ \
+              -E ../zgemm_k.S > temp.s
+	$(CC) $(CCFLAGS) -c -o $@ temp.s
+	rm -f temp.s
+ATL_cgotogemm_nc.o : ../zgemm_k.S
+	$(CC) $(CCFLAGS) $(UMMDEFS) -DNC -DSCPLX -I../ \
+              -E ../zgemm_k.S > temp.s
+	$(CC) $(CCFLAGS) -c -o $@ temp.s
+	rm -f temp.s
+ATL_cgotogemm_nt.o : ../zgemm_k.S
+	$(CC) $(CCFLAGS) $(UMMDEFS) -DNT -DSCPLX -I../ \
+              -E ../zgemm_k.S > temp.s
+	$(CC) $(CCFLAGS) -c -o $@ temp.s
+	rm -f temp.s
+ATL_cgotogemm_nn.o : ../zgemm_k.S
+	$(CC) $(CCFLAGS) $(UMMDEFS) -DNN -DSCPLX -I../ \
+              -E ../zgemm_k.S > temp.s
+	$(CC) $(CCFLAGS) -c -o $@ temp.s
+	rm -f temp.s
+ATLU_zusergemm.o : ../ATLU_usergemm.c
+	$(CC) $(CCFLAGS) $(UMMDEFS) $(OJ) $(NM) $@ -DDCPLX ../ATLU_usergemm.c
+ATL_zgotogemm_cc.o : ../zgemm_k.S
+	$(CC) $(CCFLAGS) $(UMMDEFS) -DCC -DDCPLX -I../ \
+              -E ../zgemm_k.S > temp.s
+	$(CC) $(CCFLAGS) -c -o $@ temp.s
+	rm -f temp.s
+ATL_zgotogemm_ct.o : ../zgemm_k.S
+	$(CC) $(CCFLAGS) $(UMMDEFS) -DCT -DDCPLX -I../ \
+              -E ../zgemm_k.S > temp.s
+	$(CC) $(CCFLAGS) -c -o $@ temp.s
+	rm -f temp.s
+ATL_zgotogemm_cn.o : ../zgemm_k.S
+	$(CC) $(CCFLAGS) $(UMMDEFS) -DCN -DDCPLX -I../ \
+              -E ../zgemm_k.S > temp.s
+	$(CC) $(CCFLAGS) -c -o $@ temp.s
+	rm -f temp.s
+ATL_zgotogemm_tc.o : ../zgemm_k.S
+	$(CC) $(CCFLAGS) $(UMMDEFS) -DTC -DDCPLX -I../ \
+              -E ../zgemm_k.S > temp.s
+	$(CC) $(CCFLAGS) -c -o $@ temp.s
+	rm -f temp.s
+ATL_zgotogemm_tt.o : ../zgemm_k.S
+	$(CC) $(CCFLAGS) $(UMMDEFS) -DTT -DDCPLX -I../ \
+              -E ../zgemm_k.S > temp.s
+	$(CC) $(CCFLAGS) -c -o $@ temp.s
+	rm -f temp.s
+ATL_zgotogemm_tn.o : ../zgemm_k.S
+	$(CC) $(CCFLAGS) $(UMMDEFS) -DTN -DDCPLX -I../ \
+              -E ../zgemm_k.S > temp.s
+	$(CC) $(CCFLAGS) -c -o $@ temp.s
+	rm -f temp.s
+ATL_zgotogemm_nc.o : ../zgemm_k.S
+	$(CC) $(CCFLAGS) $(UMMDEFS) -DNC -DDCPLX -I../ \
+              -E ../zgemm_k.S > temp.s
+	$(CC) $(CCFLAGS) -c -o $@ temp.s
+	rm -f temp.s
+ATL_zgotogemm_nt.o : ../zgemm_k.S
+	$(CC) $(CCFLAGS) $(UMMDEFS) -DNT -DDCPLX -I../ \
+              -E ../zgemm_k.S > temp.s
+	$(CC) $(CCFLAGS) -c -o $@ temp.s
+	rm -f temp.s
+ATL_zgotogemm_nn.o : ../zgemm_k.S
+	$(CC) $(CCFLAGS) $(UMMDEFS) -DNN -DDCPLX -I../ \
+              -E ../zgemm_k.S > temp.s
+	$(CC) $(CCFLAGS) -c -o $@ temp.s
+	rm -f temp.s

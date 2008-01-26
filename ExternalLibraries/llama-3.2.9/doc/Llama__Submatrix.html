@@ -1,0 +1,141 @@
+<HTML>
+<HEAD>
+<TITLE>class Submatrix</TITLE>
+
+<META NAME="Generator" CONTENT="KDOC ">
+</HEAD>
+<BODY bgcolor="#ffffff" text="#000000" link="#0000ff" vlink="#000099" alink= "#ffffff">
+<TABLE WIDTH="100%" BORDER="0">
+<TR>
+<TD>
+	<TABLE BORDER="0">
+		<TR><TD valign="top" align="left" cellspacing="10">
+		<h1>class Submatrix</h1>
+		</TD>
+		<TD valign="top" align="right" colspan="1">
+     Submatrix extraction / manipulation closure. <small><A HREF="#longdesc">More...</A></small></TD></TR>
+	</TABLE>
+	<HR>
+	<TABLE BORDER="0">
+		<TR><TH>Full name</TH><TD><code><A HREF="Llama.html">Llama</A>::Submatrix</code></TD></TR>
+<TR><TH>Definition</TH><TD><code>#include &lt;<A HREF="Submatrix_h.html">Submatrix.h</A>&gt;</code></TD></TR>
+<TR><TH>Template form</TH><TD>Submatrix&lt;class Scalar&gt; </code></TD></TR>
+<TR><TH>Inherits</TH><TD><i><A HREF="Llama__AbstMatrix.html">Llama::AbstMatrix</A></i> <small>[public ]</small></TD></TR>
+<TR><TH><A HREF="full-list-Llama__Submatrix.html">List of all Methods</A></TH></TR>
+	</TABLE>
+	</TD>
+<TD align="right"><TABLE BORDER="0"><TD rowspan="6"><IMG SRC="./llama2.gif"></TD><TR><TD><small><A HREF="index-long.html">Annotated List</A></small></TD></TR>
+<TR><TD><small><A HREF="header-list.html">Files</A></small></TD></TR>
+<TR><TD><small><A HREF="all-globals.html">Globals</A></small></TD></TR>
+<TR><TD><small><A HREF="hier.html">Hierarchy</A></small></TD></TR>
+<TR><TD><small><A HREF="index.html">Index</A></small></TD></TR>
+</TABLE></TD></TR></TABLE>
+<h4>Public Methods</h4><ul><LI>&nbsp;<b><A HREF="#ref19">Submatrix</A></b> (const Submatrix& x) 
+</LI>
+<LI>Index &nbsp;<b><A HREF="#ref20">rows</A></b> (void)  const
+</LI>
+<LI>Index &nbsp;<b><A HREF="#ref21">cols</A></b> (void)  const
+</LI>
+<LI>Index &nbsp;<b><A HREF="#ref22">size</A></b> (void)  const
+</LI>
+<LI>Scalar &nbsp;<b><A HREF="#ref23">operator ()</A></b> (const Index j, const Index k)  const
+</LI>
+<LI>Scalar& &nbsp;<b><A HREF="#ref24">operator ()</A></b> (const Index j, const Index k) 
+</LI>
+<LI>Scalar& &nbsp;<b><A HREF="#ref25">operator ()</A></b> (const Index k) 
+</LI>
+<LI>Scalar &nbsp;<b><A HREF="#ref26">operator ()</A></b> (const Index k)  const
+</LI>
+<LI>Submatrix& &nbsp;<b><A HREF="#ref27">operator = </A></b> (const Submatrix& x) 
+</LI>
+<LI>Submatrix& &nbsp;<b><A HREF="#ref28">operator = </A></b> (Random & r) 
+</LI>
+<LI>Submatrix& &nbsp;<b><A HREF="#ref29">operator = </A></b> (const Scalar& a) 
+</LI>
+<LI>Submatrix& &nbsp;<b><A HREF="#ref30">operator += </A></b> (const Scalar& a) 
+</LI>
+<LI>Submatrix& &nbsp;<b><A HREF="#ref31">operator -= </A></b> (const Scalar& a) 
+</LI>
+<LI>Submatrix& &nbsp;<b><A HREF="#ref32">operator *= </A></b> (const Scalar& a) 
+</LI>
+<LI>Submatrix& &nbsp;<b><A HREF="#ref33">operator /= </A></b> (const Scalar& a) 
+</LI>
+<LI>Submatrix& &nbsp;<b><A HREF="#ref34">operator = </A></b> (const CAbstMatrix<Scalar>& x) 
+</LI>
+<LI>Submatrix& &nbsp;<b><A HREF="#ref35">operator += </A></b> (const CAbstMatrix<Scalar>& x) 
+</LI>
+<LI>Submatrix& &nbsp;<b><A HREF="#ref36">operator -= </A></b> (const CAbstMatrix<Scalar>& x) 
+</LI>
+<LI>Submatrix& &nbsp;<b><A HREF="#ref37">operator << </A></b> (std::istream& i) 
+</LI>
+<LI>Submatrix<Scalar> &nbsp;<b><A HREF="#ref38">t</A></b> (void) 
+</LI>
+</ul><h4>Public Members</h4><ul><LI>friend class <b><A HREF="#ref39">Matrix<Scalar></A></b></LI>
+</ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><p>
+     Submatrix extraction / manipulation closure.
+  </p>
+<A NAME="Submatrix"></A><A NAME="ref19"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>Submatrix</strong> (const Submatrix& x)
+<br></td><td align="right"><h3><strong>Submatrix</strong></h3></td></tr></table><p></p><A NAME="rows"></A><A NAME="ref20"></A><table width="100%"><tr bgcolor="#eeeeee"><td>Index &nbsp;<strong>rows</strong> (void)
+<br></td><td align="right"><h3><strong>rows</strong></h3></td></tr></table><p> <small>[const]</small></p><p>Reimplemented from <A HREF="Llama__CAbstMatrix.html#rows">CAbstMatrix</A>.</p>
+<A NAME="cols"></A><A NAME="ref21"></A><table width="100%"><tr bgcolor="#eeeeee"><td>Index &nbsp;<strong>cols</strong> (void)
+<br></td><td align="right"><h3><strong>cols</strong></h3></td></tr></table><p> <small>[const]</small></p><p>Reimplemented from <A HREF="Llama__CAbstMatrix.html#cols">CAbstMatrix</A>.</p>
+<A NAME="size"></A><A NAME="ref22"></A><table width="100%"><tr bgcolor="#eeeeee"><td>Index &nbsp;<strong>size</strong> (void)
+<br></td><td align="right"><h3><strong>size</strong></h3></td></tr></table><p> <small>[const]</small></p><p>Reimplemented from <A HREF="Llama__CAbstMatrix.html#size">CAbstMatrix</A>.</p>
+<A NAME="operator%20()"></A><A NAME="ref23"></A><table width="100%"><tr bgcolor="#eeeeee"><td>Scalar &nbsp;<strong>operator ()</strong> (const Index j, const Index k)
+<br></td><td align="right"><h3><strong>operator ()</strong></h3></td></tr></table><p> <small>[const]</small></p><p>Reimplemented from <A HREF="Llama__AbstMatrix.html#operator%20()">AbstMatrix</A>.</p>
+<A NAME="operator%20()"></A><A NAME="ref24"></A><table width="100%"><tr bgcolor="#eeeeee"><td>Scalar& &nbsp;<strong>operator ()</strong> (const Index j, const Index k)
+<br></td><td align="right"><h3><strong>operator ()</strong></h3></td></tr></table><p></p><p>Reimplemented from <A HREF="Llama__AbstMatrix.html#operator%20()">AbstMatrix</A>.</p>
+<A NAME="operator%20()"></A><A NAME="ref25"></A><table width="100%"><tr bgcolor="#eeeeee"><td>Scalar& &nbsp;<strong>operator ()</strong> (const Index k)
+<br></td><td align="right"><h3><strong>operator ()</strong></h3></td></tr></table><p></p><p>Reimplemented from <A HREF="Llama__AbstMatrix.html#operator%20()">AbstMatrix</A>.</p>
+<A NAME="operator%20()"></A><A NAME="ref26"></A><table width="100%"><tr bgcolor="#eeeeee"><td>Scalar &nbsp;<strong>operator ()</strong> (const Index k)
+<br></td><td align="right"><h3><strong>operator ()</strong></h3></td></tr></table><p> <small>[const]</small></p><p>Reimplemented from <A HREF="Llama__AbstMatrix.html#operator%20()">AbstMatrix</A>.</p>
+<A NAME="operator%20=%20"></A><A NAME="ref27"></A><table width="100%"><tr bgcolor="#eeeeee"><td>Submatrix& &nbsp;<strong>operator = </strong> (const Submatrix& x)
+<br></td><td align="right"><h3><strong>operator = </strong></h3></td></tr></table><p></p><p>
+       Assign values from a submatrix to a submatrix.
+    </p>
+<A NAME="operator%20=%20"></A><A NAME="ref28"></A><table width="100%"><tr bgcolor="#eeeeee"><td>Submatrix& &nbsp;<strong>operator = </strong> (Random & r)
+<br></td><td align="right"><h3><strong>operator = </strong></h3></td></tr></table><p></p><p>
+       Randomize the submatrix.
+    </p>
+<A NAME="operator%20=%20"></A><A NAME="ref29"></A><table width="100%"><tr bgcolor="#eeeeee"><td>Submatrix& &nbsp;<strong>operator = </strong> (const Scalar& a)
+<br></td><td align="right"><h3><strong>operator = </strong></h3></td></tr></table><p></p><p>
+       Set equal to a scalar multiple of the identity matrix.  If the
+       matrix is nonsquare, only the diagonal elements will be nonzero.  
+    </p>
+<A NAME="operator%20+=%20"></A><A NAME="ref30"></A><table width="100%"><tr bgcolor="#eeeeee"><td>Submatrix& &nbsp;<strong>operator += </strong> (const Scalar& a)
+<br></td><td align="right"><h3><strong>operator += </strong></h3></td></tr></table><p></p><p>
+       Add a scalar multiple of the identity matrix
+    </p>
+<A NAME="operator%20-=%20"></A><A NAME="ref31"></A><table width="100%"><tr bgcolor="#eeeeee"><td>Submatrix& &nbsp;<strong>operator -= </strong> (const Scalar& a)
+<br></td><td align="right"><h3><strong>operator -= </strong></h3></td></tr></table><p></p><p>
+       Subtract a scalar multiple of the identity matrix
+    </p>
+<A NAME="operator%20*=%20"></A><A NAME="ref32"></A><table width="100%"><tr bgcolor="#eeeeee"><td>Submatrix& &nbsp;<strong>operator *= </strong> (const Scalar& a)
+<br></td><td align="right"><h3><strong>operator *= </strong></h3></td></tr></table><p></p><p>
+       Multiply by a scalar.
+    </p>
+<A NAME="operator%20/=%20"></A><A NAME="ref33"></A><table width="100%"><tr bgcolor="#eeeeee"><td>Submatrix& &nbsp;<strong>operator /= </strong> (const Scalar& a)
+<br></td><td align="right"><h3><strong>operator /= </strong></h3></td></tr></table><p></p><p>
+       Divide by a scalar.
+    </p>
+<A NAME="operator%20=%20"></A><A NAME="ref34"></A><table width="100%"><tr bgcolor="#eeeeee"><td>Submatrix& &nbsp;<strong>operator = </strong> (const CAbstMatrix<Scalar>& x)
+<br></td><td align="right"><h3><strong>operator = </strong></h3></td></tr></table><p></p><A NAME="operator%20+=%20"></A><A NAME="ref35"></A><table width="100%"><tr bgcolor="#eeeeee"><td>Submatrix& &nbsp;<strong>operator += </strong> (const CAbstMatrix<Scalar>& x)
+<br></td><td align="right"><h3><strong>operator += </strong></h3></td></tr></table><p></p><p>
+       Add values from an abstract matrix to a submatrix.  
+    </p>
+<A NAME="operator%20-=%20"></A><A NAME="ref36"></A><table width="100%"><tr bgcolor="#eeeeee"><td>Submatrix& &nbsp;<strong>operator -= </strong> (const CAbstMatrix<Scalar>& x)
+<br></td><td align="right"><h3><strong>operator -= </strong></h3></td></tr></table><p></p><p>
+       Subtract values from an abstract matrix from a submatrix.  
+    </p>
+<A NAME="operator%20%3C%3C%20"></A><A NAME="ref37"></A><table width="100%"><tr bgcolor="#eeeeee"><td>Submatrix& &nbsp;<strong>operator << </strong> (std::istream& i)
+<br></td><td align="right"><h3><strong>operator << </strong></h3></td></tr></table><p></p><p>
+       Binary input
+    </p>
+<A NAME="t"></A><A NAME="ref38"></A><table width="100%"><tr bgcolor="#eeeeee"><td>Submatrix<Scalar> &nbsp;<strong>t</strong> (void)
+<br></td><td align="right"><h3><strong>t</strong></h3></td></tr></table><p></p><A NAME="Matrix%3CScalar%3E"></A><A NAME="ref39"></A><table width="100%"><tr bgcolor="#eeeeee"><td>friend class  <strong>Matrix<Scalar></strong>
+</td><td align="right"><h3><strong>Matrix<Scalar></strong></h3></td></tr></table><p></p><HR>
+	<table>
+	<tr><td><small>Generated by: king on larix.tiem.utk.edu on Tue Jun 29 10:55:51 2004, using kdoc 2.0a54.</small></td></tr>
+	</table>
+</BODY>
+</HTML>

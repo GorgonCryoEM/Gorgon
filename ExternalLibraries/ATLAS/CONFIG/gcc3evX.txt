@@ -1,0 +1,9 @@
+
+
+ATLAS has detected that you are installing on an ev5x or ev6x based machine,
+but do not have gcc 3.0 where ATLAS can find it.  If you have gcc 3.0
+installed, but ATLAS is not finding it, quit this install, put gcc 3.0 in
+your path, and restart the install.  Installing without gcc 3.0 may result
+in up to 20% performance loss, and an extremely extended install time.
+It is highly recommended that you first install gcc 3.0 before installing ATLAS.
+

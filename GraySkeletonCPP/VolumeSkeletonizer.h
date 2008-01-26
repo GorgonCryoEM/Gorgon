@@ -1859,7 +1859,7 @@ namespace wustl_mm {
 			Volume * curveVol;
 			Volume * topologyVol;		
 
-			printf("\t\t\tUSING THRESHOLD : %f\n", threshold);
+			//printf("\t\t\tUSING THRESHOLD : %f\n", threshold);
 			// Skeletonizing while preserving surface features curve features and topology
 			surfaceVol = GetJuSurfaceSkeleton(imageVol, preservedVol, threshold);
 			PruneSurfaces(surfaceVol, minSurfaceWidth);

@@ -1,0 +1,9 @@
+
+
+I'm going to ask you for information about your Fortran 77 compiler.  ATLAS
+does not need Fortran77 to build, so if you don't have a Fortran compiler,
+the install can still be completed successfully.  However, ATLAS built without
+a Fortran compiler will not be callable from Fortran (i.e., the user should
+use the C interface), and we will not be able to do full testing, since some of
+the tester code is written in Fortran77.
+

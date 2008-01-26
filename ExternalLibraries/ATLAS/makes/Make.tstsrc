@@ -1,0 +1,643 @@
+include Make.inc
+
+INCdep = $(INCdir)/../atlas_misc.h $(INCdir)/../atlas_f77.h \
+         $(INCdir)/../atlas_tst.h
+INCdep1 = $(INCdir)/../atlas_misc.h $(INCdir)/../atlas_tst.h
+
+obj = ATL_rand.o
+
+   sf77wobjs = ATL_sf77wrap.o
+   df77wobjs = ATL_df77wrap.o
+   cf77wobjs = ATL_cf77wrap.o
+   zf77wobjs = ATL_zf77wrap.o
+
+sblas = ATL_dsf77dot.o ATL_sdsf77dot.o ATL_sf77amax.o ATL_sf77asum.o \
+        ATL_sf77axpy.o ATL_sf77copy.o ATL_sf77dot.o ATL_sf77gbmv.o \
+        ATL_sf77gemm.o ATL_sf77gemv.o ATL_sf77ger.o ATL_sf77getrf.o \
+        ATL_sf77getri.o ATL_sf77lauum.o ATL_sf77nrm2.o ATL_sf77potrf.o \
+        ATL_sf77rot.o ATL_sf77rotg.o ATL_sf77rotm.o ATL_sf77rotmg.o \
+        ATL_sf77sbmv.o ATL_sf77scal.o ATL_sf77spmv.o ATL_sf77spr.o \
+        ATL_sf77spr2.o ATL_sf77swap.o ATL_sf77symm.o ATL_sf77symv.o \
+        ATL_sf77syr.o ATL_sf77syr2.o ATL_sf77syr2k.o ATL_sf77syrk.o \
+        ATL_sf77tbmv.o ATL_sf77tbsv.o ATL_sf77tpmv.o ATL_sf77tpsv.o \
+        ATL_sf77trmm.o ATL_sf77trmv.o ATL_sf77trsm.o ATL_sf77trsv.o \
+        ATL_sf77trtri.o
+
+dblas = ATL_df77amax.o ATL_df77asum.o ATL_df77axpy.o ATL_df77copy.o \
+        ATL_df77dot.o ATL_df77gbmv.o ATL_df77gemm.o ATL_df77gemv.o \
+        ATL_df77ger.o ATL_df77getrf.o ATL_df77getri.o ATL_df77lauum.o \
+        ATL_df77nrm2.o ATL_df77potrf.o ATL_df77rot.o ATL_df77rotg.o \
+        ATL_df77rotm.o ATL_df77rotmg.o ATL_df77sbmv.o ATL_df77scal.o \
+        ATL_df77spmv.o ATL_df77spr.o ATL_df77spr2.o ATL_df77swap.o \
+        ATL_df77symm.o ATL_df77symv.o ATL_df77syr.o ATL_df77syr2.o \
+        ATL_df77syr2k.o ATL_df77syrk.o ATL_df77tbmv.o ATL_df77tbsv.o \
+        ATL_df77tpmv.o ATL_df77tpsv.o ATL_df77trmm.o ATL_df77trmv.o \
+        ATL_df77trsm.o ATL_df77trsv.o ATL_df77trtri.o
+
+
+cblas = ATL_cf77amax.o ATL_cf77asum.o ATL_cf77axpy.o ATL_cf77copy.o \
+        ATL_cf77dotc_sub.o ATL_cf77dotu_sub.o ATL_cf77gbmv.o ATL_cf77gemm.o \
+        ATL_cf77gemv.o ATL_cf77gerc.o ATL_cf77geru.o ATL_cf77getrf.o \
+        ATL_cf77getri.o ATL_cf77hbmv.o ATL_cf77hemm.o ATL_cf77hemv.o \
+        ATL_cf77her.o ATL_cf77her2.o ATL_cf77her2k.o ATL_cf77herk.o \
+        ATL_cf77hpmv.o ATL_cf77hpr.o ATL_cf77hpr2.o ATL_cf77lauum.o \
+        ATL_cf77nrm2.o ATL_cf77potrf.o ATL_cf77rot.o ATL_cf77rotg.o \
+        ATL_cf77scal.o ATL_cf77swap.o ATL_cf77symm.o ATL_cf77syr2k.o \
+        ATL_cf77syrk.o ATL_cf77tbmv.o ATL_cf77tbsv.o ATL_cf77tpmv.o \
+        ATL_cf77tpsv.o ATL_cf77trmm.o ATL_cf77trmv.o ATL_cf77trsm.o \
+        ATL_cf77trsv.o ATL_cf77trtri.o ATL_csf77scal.o
+
+zblas = ATL_zdf77scal.o ATL_zf77amax.o ATL_zf77asum.o ATL_zf77axpy.o \
+        ATL_zf77copy.o ATL_zf77dotc_sub.o ATL_zf77dotu_sub.o ATL_zf77gbmv.o \
+        ATL_zf77gemm.o ATL_zf77gemv.o ATL_zf77gerc.o ATL_zf77geru.o \
+        ATL_zf77getrf.o ATL_zf77getri.o ATL_zf77hbmv.o ATL_zf77hemm.o \
+        ATL_zf77hemv.o ATL_zf77her.o ATL_zf77her2.o ATL_zf77her2k.o \
+        ATL_zf77herk.o ATL_zf77hpmv.o ATL_zf77hpr.o ATL_zf77hpr2.o \
+        ATL_zf77lauum.o ATL_zf77nrm2.o ATL_zf77potrf.o ATL_zf77rot.o \
+        ATL_zf77rotg.o ATL_zf77scal.o ATL_zf77swap.o ATL_zf77symm.o \
+        ATL_zf77syr2k.o ATL_zf77syrk.o ATL_zf77tbmv.o ATL_zf77tbsv.o \
+        ATL_zf77tpmv.o ATL_zf77tpsv.o ATL_zf77trmm.o ATL_zf77trmv.o \
+        ATL_zf77trsm.o ATL_zf77trsv.o ATL_zf77trtri.o
+
+
+all : lib
+lib : dlib slib zlib clib
+clean : dclean sclean zclean cclean
+	rm -f $(obj)
+
+sobj = $(sblas) ATL_sgegen.o ATL_sgeprint.o \
+            ATL_sepsilon.o ATL_sgediff.o ATL_sgenrm1.o \
+            ATL_sgediffnrm1.o ATL_sinfnrm.o ATL_svdiff.o \
+            ATL_strgen.o ATL_strnrm1.o ATL_sgbnrm1.o \
+            ATL_ssbnrm.o ATL_sspnrm.o ATL_ssynrm.o \
+            ATL_stbnrm1.o ATL_stpnrm1.o ATL_ststsqtran.o \
+            ATL_shediffnrm.o
+
+slib : 
+	$(PMAKE) slib.grd
+slib.grd : $(sobj) $(obj) $(sf77wobjs)
+	$(ARCHIVER) $(ARFLAGS) $(TESTlib) $(sobj) $(obj)
+	- $(ARCHIVER) $(ARFLAGS) $(TESTlib) $(sf77wobjs)
+	$(RANLIB) $(TESTlib)
+	touch slib.grd
+
+sclean : 
+	rm -f $(sobj) $(sf77wobjs) s*.grd
+dobj = $(dblas) ATL_dgegen.o ATL_dgeprint.o \
+            ATL_depsilon.o ATL_dgediff.o ATL_dgenrm1.o \
+            ATL_dgediffnrm1.o ATL_dinfnrm.o ATL_dvdiff.o \
+            ATL_dtrgen.o ATL_dtrnrm1.o ATL_dgbnrm1.o \
+            ATL_dsbnrm.o ATL_dspnrm.o ATL_dsynrm.o \
+            ATL_dtbnrm1.o ATL_dtpnrm1.o ATL_dtstsqtran.o \
+            ATL_dhediffnrm.o
+
+dlib : 
+	$(PMAKE) dlib.grd
+dlib.grd : $(dobj) $(obj) $(df77wobjs)
+	$(ARCHIVER) $(ARFLAGS) $(TESTlib) $(dobj) $(obj)
+	- $(ARCHIVER) $(ARFLAGS) $(TESTlib) $(df77wobjs)
+	$(RANLIB) $(TESTlib)
+	touch dlib.grd
+
+dclean : 
+	rm -f $(dobj) $(df77wobjs) d*.grd
+cobj = $(cblas) ATL_cgegen.o ATL_cgeprint.o \
+            ATL_cepsilon.o ATL_cgediff.o ATL_cgenrm1.o \
+            ATL_cgediffnrm1.o ATL_cinfnrm.o ATL_cvdiff.o \
+            ATL_ctrgen.o ATL_ctrnrm1.o ATL_cgbnrm1.o \
+            ATL_chbnrm.o ATL_chpnrm.o ATL_chenrm.o \
+            ATL_csbnrm.o ATL_cspnrm.o ATL_csynrm.o \
+            ATL_ctbnrm1.o ATL_ctpnrm1.o ATL_ctstsqtran.o \
+            ATL_chediffnrm.o
+
+clib : 
+	$(PMAKE) clib.grd
+clib.grd : $(cobj) $(obj) $(cf77wobjs)
+	$(ARCHIVER) $(ARFLAGS) $(TESTlib) $(cobj) $(obj)
+	- $(ARCHIVER) $(ARFLAGS) $(TESTlib) $(cf77wobjs)
+	$(RANLIB) $(TESTlib)
+	touch clib.grd
+
+cclean : 
+	rm -f $(cobj) $(cf77wobjs) c*.grd
+zobj = $(zblas) ATL_zgegen.o ATL_zgeprint.o \
+            ATL_zepsilon.o ATL_zgediff.o ATL_zgenrm1.o \
+            ATL_zgediffnrm1.o ATL_zinfnrm.o ATL_zvdiff.o \
+            ATL_ztrgen.o ATL_ztrnrm1.o ATL_zgbnrm1.o \
+            ATL_zhbnrm.o ATL_zhpnrm.o ATL_zhenrm.o \
+            ATL_zsbnrm.o ATL_zspnrm.o ATL_zsynrm.o \
+            ATL_ztbnrm1.o ATL_ztpnrm1.o ATL_ztstsqtran.o \
+            ATL_zhediffnrm.o
+
+zlib : 
+	$(PMAKE) zlib.grd
+zlib.grd : $(zobj) $(obj) $(zf77wobjs)
+	$(ARCHIVER) $(ARFLAGS) $(TESTlib) $(zobj) $(obj)
+	- $(ARCHIVER) $(ARFLAGS) $(TESTlib) $(zf77wobjs)
+	$(RANLIB) $(TESTlib)
+	touch zlib.grd
+
+zclean : 
+	rm -f $(zobj) $(zf77wobjs) z*.grd
+
+ATL_sf77wrap.o : ../ATL_sf77wrap.f
+	- $(F77) -o $@ -c $(F77FLAGS) ../ATL_sf77wrap.f
+ATL_df77wrap.o : ../ATL_df77wrap.f
+	- $(F77) -o $@ -c $(F77FLAGS) ../ATL_df77wrap.f
+ATL_cf77wrap.o : ../ATL_cf77wrap.f
+	- $(F77) -o $@ -c $(F77FLAGS) ../ATL_cf77wrap.f
+ATL_zf77wrap.o : ../ATL_zf77wrap.f
+	- $(F77) -o $@ -c $(F77FLAGS) ../ATL_zf77wrap.f
+
+ATL_sf77gemm.o : ../ATL_f77gemm.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL ../ATL_f77gemm.c
+ATL_sf77trsm.o : ../ATL_f77trsm.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL ../ATL_f77trsm.c
+ATL_sf77trmm.o : ../ATL_f77trmm.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL ../ATL_f77trmm.c
+ATL_sf77syr2k.o : ../ATL_f77syr2k.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL ../ATL_f77syr2k.c
+ATL_sf77syrk.o : ../ATL_f77syrk.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL ../ATL_f77syrk.c
+ATL_sf77symm.o : ../ATL_f77symm.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL ../ATL_f77symm.c
+ATL_sf77ger.o : ../ATL_f77ger.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL ../ATL_f77ger.c
+ATL_sf77gemv.o : ../ATL_f77gemv.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL ../ATL_f77gemv.c
+ATL_sf77trmv.o : ../ATL_f77trmv.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL ../ATL_f77trmv.c
+ATL_sf77trsv.o : ../ATL_f77trsv.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL ../ATL_f77trsv.c
+ATL_sf77tpsv.o : ../ATL_f77tpsv.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL ../ATL_f77tpsv.c
+ATL_sf77tbsv.o : ../ATL_f77tbsv.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL ../ATL_f77tbsv.c
+ATL_sf77tpmv.o : ../ATL_f77tpmv.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL ../ATL_f77tpmv.c
+ATL_sf77tbmv.o : ../ATL_f77tbmv.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL ../ATL_f77tbmv.c
+ATL_sf77syr2.o : ../ATL_f77syr2.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL ../ATL_f77syr2.c
+ATL_sf77syr.o : ../ATL_f77syr.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL ../ATL_f77syr.c
+ATL_sf77symv.o : ../ATL_f77symv.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL ../ATL_f77symv.c
+ATL_sf77spr2.o : ../ATL_f77spr2.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL ../ATL_f77spr2.c
+ATL_sf77spr.o : ../ATL_f77spr.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL ../ATL_f77spr.c
+ATL_sf77spmv.o : ../ATL_f77spmv.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL ../ATL_f77spmv.c
+ATL_sf77sbmv.o : ../ATL_f77sbmv.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL ../ATL_f77sbmv.c
+ATL_sf77gbmv.o : ../ATL_f77gbmv.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL ../ATL_f77gbmv.c
+ATL_sf77dot.o : ../ATL_f77dot.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL ../ATL_f77dot.c
+ATL_sf77rotm.o : ../ATL_f77rotm.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL ../ATL_f77rotm.c
+ATL_sf77rot.o : ../ATL_f77rot.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL ../ATL_f77rot.c
+ATL_sf77swap.o : ../ATL_f77swap.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL ../ATL_f77swap.c
+ATL_sf77copy.o : ../ATL_f77copy.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL ../ATL_f77copy.c
+ATL_sf77axpy.o : ../ATL_f77axpy.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL ../ATL_f77axpy.c
+ATL_sf77scal.o : ../ATL_f77scal.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL ../ATL_f77scal.c
+ATL_sf77amax.o : ../ATL_f77amax.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL ../ATL_f77amax.c
+ATL_sf77asum.o : ../ATL_f77asum.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL ../ATL_f77asum.c
+ATL_sf77nrm2.o : ../ATL_f77nrm2.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL ../ATL_f77nrm2.c
+ATL_sf77rotmg.o : ../ATL_f77rotmg.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL ../ATL_f77rotmg.c
+ATL_sf77rotg.o : ../ATL_f77rotg.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL ../ATL_f77rotg.c
+ATL_sf77lauum.o : ../ATL_f77lauum.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL ../ATL_f77lauum.c
+ATL_sf77trtri.o : ../ATL_f77trtri.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL ../ATL_f77trtri.c
+ATL_sf77potrf.o : ../ATL_f77potrf.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL ../ATL_f77potrf.c
+ATL_sf77getrf.o : ../ATL_f77getrf.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL ../ATL_f77getrf.c
+ATL_sf77getri.o : ../ATL_f77getri.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL ../ATL_f77getri.c
+ATL_shediffnrm.o : ../ATL_hediffnrm.c $(INCdir)/../atlas_misc.h
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL ../ATL_hediffnrm.c
+ATL_svdiff.o : ../ATL_vdiff.c $(INCdir)/../atlas_misc.h
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL ../ATL_vdiff.c
+ATL_sinfnrm.o : ../ATL_infnrm.c $(INCdir)/../atlas_misc.h
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL ../ATL_infnrm.c
+ATL_sgediffnrm1.o : ../ATL_gediffnrm1.c $(INCdir)/../atlas_misc.h
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL ../ATL_gediffnrm1.c
+ATL_sgenrm1.o : ../ATL_genrm1.c $(INCdir)/../atlas_misc.h
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL ../ATL_genrm1.c
+ATL_sepsilon.o : ../ATL_epsilon.c $(INCdir)/../atlas_misc.h
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL ../ATL_epsilon.c
+ATL_sgediff.o : ../ATL_gediff.c $(INCdir)/../atlas_misc.h
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL ../ATL_gediff.c
+ATL_sgeprint.o : ../ATL_geprint.c $(INCdir)/../atlas_misc.h
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL ../ATL_geprint.c
+ATL_sgegen.o : ../ATL_gegen.c $(INCdir)/../atlas_misc.h
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL ../ATL_gegen.c
+ATL_ststsqtran.o : ../ATL_tstsqtran.c $(INCdir)/../atlas_misc.h
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL ../ATL_tstsqtran.c
+ATL_ssynrm.o : ../ATL_synrm.c $(INCdir)/../atlas_misc.h
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL ../ATL_synrm.c
+ATL_sspnrm.o : ../ATL_spnrm.c $(INCdir)/../atlas_misc.h
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL ../ATL_spnrm.c
+ATL_ssbnrm.o : ../ATL_sbnrm.c $(INCdir)/../atlas_misc.h
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL ../ATL_sbnrm.c
+ATL_stpnrm1.o : ../ATL_tpnrm1.c $(INCdir)/../atlas_misc.h
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL ../ATL_tpnrm1.c
+ATL_stbnrm1.o : ../ATL_tbnrm1.c $(INCdir)/../atlas_misc.h
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL ../ATL_tbnrm1.c
+ATL_sgbnrm1.o : ../ATL_gbnrm1.c $(INCdir)/../atlas_misc.h
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL ../ATL_gbnrm1.c
+ATL_strnrm1.o : ../ATL_trnrm1.c $(INCdir)/../atlas_misc.h
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL ../ATL_trnrm1.c
+ATL_strgen.o : ../ATL_trgen.c $(INCdir)/../atlas_misc.h
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL ../ATL_trgen.c
+ATL_df77gemm.o : ../ATL_f77gemm.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL ../ATL_f77gemm.c
+ATL_df77trsm.o : ../ATL_f77trsm.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL ../ATL_f77trsm.c
+ATL_df77trmm.o : ../ATL_f77trmm.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL ../ATL_f77trmm.c
+ATL_df77syr2k.o : ../ATL_f77syr2k.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL ../ATL_f77syr2k.c
+ATL_df77syrk.o : ../ATL_f77syrk.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL ../ATL_f77syrk.c
+ATL_df77symm.o : ../ATL_f77symm.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL ../ATL_f77symm.c
+ATL_df77ger.o : ../ATL_f77ger.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL ../ATL_f77ger.c
+ATL_df77gemv.o : ../ATL_f77gemv.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL ../ATL_f77gemv.c
+ATL_df77trmv.o : ../ATL_f77trmv.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL ../ATL_f77trmv.c
+ATL_df77trsv.o : ../ATL_f77trsv.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL ../ATL_f77trsv.c
+ATL_df77tpsv.o : ../ATL_f77tpsv.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL ../ATL_f77tpsv.c
+ATL_df77tbsv.o : ../ATL_f77tbsv.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL ../ATL_f77tbsv.c
+ATL_df77tpmv.o : ../ATL_f77tpmv.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL ../ATL_f77tpmv.c
+ATL_df77tbmv.o : ../ATL_f77tbmv.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL ../ATL_f77tbmv.c
+ATL_df77syr2.o : ../ATL_f77syr2.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL ../ATL_f77syr2.c
+ATL_df77syr.o : ../ATL_f77syr.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL ../ATL_f77syr.c
+ATL_df77symv.o : ../ATL_f77symv.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL ../ATL_f77symv.c
+ATL_df77spr2.o : ../ATL_f77spr2.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL ../ATL_f77spr2.c
+ATL_df77spr.o : ../ATL_f77spr.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL ../ATL_f77spr.c
+ATL_df77spmv.o : ../ATL_f77spmv.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL ../ATL_f77spmv.c
+ATL_df77sbmv.o : ../ATL_f77sbmv.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL ../ATL_f77sbmv.c
+ATL_df77gbmv.o : ../ATL_f77gbmv.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL ../ATL_f77gbmv.c
+ATL_df77dot.o : ../ATL_f77dot.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL ../ATL_f77dot.c
+ATL_df77rotm.o : ../ATL_f77rotm.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL ../ATL_f77rotm.c
+ATL_df77rot.o : ../ATL_f77rot.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL ../ATL_f77rot.c
+ATL_df77swap.o : ../ATL_f77swap.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL ../ATL_f77swap.c
+ATL_df77copy.o : ../ATL_f77copy.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL ../ATL_f77copy.c
+ATL_df77axpy.o : ../ATL_f77axpy.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL ../ATL_f77axpy.c
+ATL_df77scal.o : ../ATL_f77scal.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL ../ATL_f77scal.c
+ATL_df77amax.o : ../ATL_f77amax.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL ../ATL_f77amax.c
+ATL_df77asum.o : ../ATL_f77asum.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL ../ATL_f77asum.c
+ATL_df77nrm2.o : ../ATL_f77nrm2.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL ../ATL_f77nrm2.c
+ATL_df77rotmg.o : ../ATL_f77rotmg.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL ../ATL_f77rotmg.c
+ATL_df77rotg.o : ../ATL_f77rotg.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL ../ATL_f77rotg.c
+ATL_df77lauum.o : ../ATL_f77lauum.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL ../ATL_f77lauum.c
+ATL_df77trtri.o : ../ATL_f77trtri.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL ../ATL_f77trtri.c
+ATL_df77potrf.o : ../ATL_f77potrf.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL ../ATL_f77potrf.c
+ATL_df77getrf.o : ../ATL_f77getrf.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL ../ATL_f77getrf.c
+ATL_df77getri.o : ../ATL_f77getri.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL ../ATL_f77getri.c
+ATL_dhediffnrm.o : ../ATL_hediffnrm.c $(INCdir)/../atlas_misc.h
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL ../ATL_hediffnrm.c
+ATL_dvdiff.o : ../ATL_vdiff.c $(INCdir)/../atlas_misc.h
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL ../ATL_vdiff.c
+ATL_dinfnrm.o : ../ATL_infnrm.c $(INCdir)/../atlas_misc.h
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL ../ATL_infnrm.c
+ATL_dgediffnrm1.o : ../ATL_gediffnrm1.c $(INCdir)/../atlas_misc.h
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL ../ATL_gediffnrm1.c
+ATL_dgenrm1.o : ../ATL_genrm1.c $(INCdir)/../atlas_misc.h
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL ../ATL_genrm1.c
+ATL_depsilon.o : ../ATL_epsilon.c $(INCdir)/../atlas_misc.h
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL ../ATL_epsilon.c
+ATL_dgediff.o : ../ATL_gediff.c $(INCdir)/../atlas_misc.h
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL ../ATL_gediff.c
+ATL_dgeprint.o : ../ATL_geprint.c $(INCdir)/../atlas_misc.h
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL ../ATL_geprint.c
+ATL_dgegen.o : ../ATL_gegen.c $(INCdir)/../atlas_misc.h
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL ../ATL_gegen.c
+ATL_dtstsqtran.o : ../ATL_tstsqtran.c $(INCdir)/../atlas_misc.h
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL ../ATL_tstsqtran.c
+ATL_dsynrm.o : ../ATL_synrm.c $(INCdir)/../atlas_misc.h
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL ../ATL_synrm.c
+ATL_dspnrm.o : ../ATL_spnrm.c $(INCdir)/../atlas_misc.h
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL ../ATL_spnrm.c
+ATL_dsbnrm.o : ../ATL_sbnrm.c $(INCdir)/../atlas_misc.h
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL ../ATL_sbnrm.c
+ATL_dtpnrm1.o : ../ATL_tpnrm1.c $(INCdir)/../atlas_misc.h
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL ../ATL_tpnrm1.c
+ATL_dtbnrm1.o : ../ATL_tbnrm1.c $(INCdir)/../atlas_misc.h
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL ../ATL_tbnrm1.c
+ATL_dgbnrm1.o : ../ATL_gbnrm1.c $(INCdir)/../atlas_misc.h
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL ../ATL_gbnrm1.c
+ATL_dtrnrm1.o : ../ATL_trnrm1.c $(INCdir)/../atlas_misc.h
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL ../ATL_trnrm1.c
+ATL_dtrgen.o : ../ATL_trgen.c $(INCdir)/../atlas_misc.h
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL ../ATL_trgen.c
+
+ATL_sdsf77dot.o : ../ATL_sdsf77dot.c $(INCdir)/../atlas_misc.h
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL ../ATL_sdsf77dot.c
+ATL_dsf77dot.o : ../ATL_dsf77dot.c $(INCdir)/../atlas_misc.h
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL ../ATL_dsf77dot.c
+ATL_rand.o : ../ATL_rand.c $(INCdir)/../atlas_misc.h
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL ../ATL_rand.c
+
+ATL_cf77gemm.o : ../ATL_f77gemm.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX ../ATL_f77gemm.c
+ATL_cf77trsm.o : ../ATL_f77trsm.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX ../ATL_f77trsm.c
+ATL_cf77trmm.o : ../ATL_f77trmm.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX ../ATL_f77trmm.c
+ATL_cf77syr2k.o : ../ATL_f77syr2k.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX ../ATL_f77syr2k.c
+ATL_cf77syrk.o : ../ATL_f77syrk.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX ../ATL_f77syrk.c
+ATL_cf77symm.o : ../ATL_f77symm.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX ../ATL_f77symm.c
+ATL_cf77her2k.o : ../ATL_f77her2k.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX ../ATL_f77her2k.c
+ATL_cf77herk.o : ../ATL_f77herk.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX ../ATL_f77herk.c
+ATL_cf77hemm.o : ../ATL_f77hemm.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX ../ATL_f77hemm.c
+ATL_cf77geru.o : ../ATL_f77geru.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX ../ATL_f77geru.c
+ATL_cf77gerc.o : ../ATL_f77gerc.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX ../ATL_f77gerc.c
+ATL_cf77gemv.o : ../ATL_f77gemv.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX ../ATL_f77gemv.c
+ATL_cf77trmv.o : ../ATL_f77trmv.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX ../ATL_f77trmv.c
+ATL_cf77trsv.o : ../ATL_f77trsv.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX ../ATL_f77trsv.c
+ATL_cf77tpsv.o : ../ATL_f77tpsv.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX ../ATL_f77tpsv.c
+ATL_cf77tpmv.o : ../ATL_f77tpmv.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX ../ATL_f77tpmv.c
+ATL_cf77tbsv.o : ../ATL_f77tbsv.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX ../ATL_f77tbsv.c
+ATL_cf77tbmv.o : ../ATL_f77tbmv.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX ../ATL_f77tbmv.c
+ATL_cf77hpr2.o : ../ATL_f77hpr2.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX ../ATL_f77hpr2.c
+ATL_cf77hpr.o : ../ATL_f77hpr.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX ../ATL_f77hpr.c
+ATL_cf77hpmv.o : ../ATL_f77hpmv.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX ../ATL_f77hpmv.c
+ATL_cf77her2.o : ../ATL_f77her2.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX ../ATL_f77her2.c
+ATL_cf77her.o : ../ATL_f77her.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX ../ATL_f77her.c
+ATL_cf77hemv.o : ../ATL_f77hemv.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX ../ATL_f77hemv.c
+ATL_cf77hbmv.o : ../ATL_f77hbmv.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX ../ATL_f77hbmv.c
+ATL_cf77gbmv.o : ../ATL_f77gbmv.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX ../ATL_f77gbmv.c
+ATL_cf77dotu_sub.o : ../ATL_f77dotu_sub.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX ../ATL_f77dotu_sub.c
+ATL_cf77dotc_sub.o : ../ATL_f77dotc_sub.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX ../ATL_f77dotc_sub.c
+ATL_cf77rot.o : ../ATL_f77rot.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX ../ATL_f77rot.c
+ATL_cf77swap.o : ../ATL_f77swap.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX ../ATL_f77swap.c
+ATL_cf77copy.o : ../ATL_f77copy.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX ../ATL_f77copy.c
+ATL_cf77axpy.o : ../ATL_f77axpy.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX ../ATL_f77axpy.c
+ATL_cf77scal.o : ../ATL_f77scal.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX ../ATL_f77scal.c
+ATL_cf77amax.o : ../ATL_f77amax.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX ../ATL_f77amax.c
+ATL_cf77asum.o : ../ATL_f77asum.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX ../ATL_f77asum.c
+ATL_cf77nrm2.o : ../ATL_f77nrm2.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX ../ATL_f77nrm2.c
+ATL_cf77rotg.o : ../ATL_f77rotg.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX ../ATL_f77rotg.c
+ATL_cf77lauum.o : ../ATL_f77lauum.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX ../ATL_f77lauum.c
+ATL_cf77trtri.o : ../ATL_f77trtri.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX ../ATL_f77trtri.c
+ATL_cf77potrf.o : ../ATL_f77potrf.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX ../ATL_f77potrf.c
+ATL_cf77getrf.o : ../ATL_f77getrf.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX ../ATL_f77getrf.c
+ATL_cf77getri.o : ../ATL_f77getri.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX ../ATL_f77getri.c
+ATL_cvdiff.o : ../ATL_vdiff.c $(INCdep1)
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX ../ATL_vdiff.c
+ATL_cinfnrm.o : ../ATL_infnrm.c $(INCdep1)
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX ../ATL_infnrm.c
+ATL_cgediffnrm1.o : ../ATL_gediffnrm1.c $(INCdep1)
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX ../ATL_gediffnrm1.c
+ATL_cgenrm1.o : ../ATL_genrm1.c $(INCdep1)
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX ../ATL_genrm1.c
+ATL_cepsilon.o : ../ATL_epsilon.c $(INCdep1)
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX ../ATL_epsilon.c
+ATL_cgediff.o : ../ATL_gediff.c $(INCdep1)
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX ../ATL_gediff.c
+ATL_cgeprint.o : ../ATL_geprint.c $(INCdep1)
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX ../ATL_geprint.c
+ATL_cgegen.o : ../ATL_gegen.c $(INCdep1)
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX ../ATL_gegen.c
+ATL_chediffnrm.o : ../ATL_hediffnrm.c $(INCdep1)
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX ../ATL_hediffnrm.c
+ATL_ctrgen.o : ../ATL_trgen.c $(INCdep1)
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX ../ATL_trgen.c
+ATL_ctpnrm1.o : ../ATL_tpnrm1.c $(INCdep1)
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX ../ATL_tpnrm1.c
+ATL_ctbnrm1.o : ../ATL_tbnrm1.c $(INCdep1)
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX ../ATL_tbnrm1.c
+ATL_cgbnrm1.o : ../ATL_gbnrm1.c $(INCdep1)
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX ../ATL_gbnrm1.c
+ATL_ctrnrm1.o : ../ATL_trnrm1.c $(INCdep1)
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX ../ATL_trnrm1.c
+ATL_ctstsqtran.o : ../ATL_tstsqtran.c $(INCdep1)
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX ../ATL_tstsqtran.c
+ATL_chenrm.o : ../ATL_henrm.c $(INCdep1)
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX ../ATL_henrm.c
+ATL_chpnrm.o : ../ATL_hpnrm.c $(INCdep1)
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX ../ATL_hpnrm.c
+ATL_chbnrm.o : ../ATL_hbnrm.c $(INCdep1)
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX ../ATL_hbnrm.c
+ATL_csynrm.o : ../ATL_synrm.c $(INCdep1)
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX ../ATL_synrm.c
+ATL_cspnrm.o : ../ATL_spnrm.c $(INCdep1)
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX ../ATL_spnrm.c
+ATL_csbnrm.o : ../ATL_sbnrm.c $(INCdep1)
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX ../ATL_sbnrm.c
+ATL_csf77scal.o : ../ATL_f77rscal.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX ../ATL_f77rscal.c
+ATL_zf77gemm.o : ../ATL_f77gemm.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX ../ATL_f77gemm.c
+ATL_zf77trsm.o : ../ATL_f77trsm.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX ../ATL_f77trsm.c
+ATL_zf77trmm.o : ../ATL_f77trmm.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX ../ATL_f77trmm.c
+ATL_zf77syr2k.o : ../ATL_f77syr2k.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX ../ATL_f77syr2k.c
+ATL_zf77syrk.o : ../ATL_f77syrk.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX ../ATL_f77syrk.c
+ATL_zf77symm.o : ../ATL_f77symm.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX ../ATL_f77symm.c
+ATL_zf77her2k.o : ../ATL_f77her2k.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX ../ATL_f77her2k.c
+ATL_zf77herk.o : ../ATL_f77herk.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX ../ATL_f77herk.c
+ATL_zf77hemm.o : ../ATL_f77hemm.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX ../ATL_f77hemm.c
+ATL_zf77geru.o : ../ATL_f77geru.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX ../ATL_f77geru.c
+ATL_zf77gerc.o : ../ATL_f77gerc.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX ../ATL_f77gerc.c
+ATL_zf77gemv.o : ../ATL_f77gemv.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX ../ATL_f77gemv.c
+ATL_zf77trmv.o : ../ATL_f77trmv.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX ../ATL_f77trmv.c
+ATL_zf77trsv.o : ../ATL_f77trsv.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX ../ATL_f77trsv.c
+ATL_zf77tpsv.o : ../ATL_f77tpsv.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX ../ATL_f77tpsv.c
+ATL_zf77tpmv.o : ../ATL_f77tpmv.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX ../ATL_f77tpmv.c
+ATL_zf77tbsv.o : ../ATL_f77tbsv.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX ../ATL_f77tbsv.c
+ATL_zf77tbmv.o : ../ATL_f77tbmv.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX ../ATL_f77tbmv.c
+ATL_zf77hpr2.o : ../ATL_f77hpr2.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX ../ATL_f77hpr2.c
+ATL_zf77hpr.o : ../ATL_f77hpr.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX ../ATL_f77hpr.c
+ATL_zf77hpmv.o : ../ATL_f77hpmv.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX ../ATL_f77hpmv.c
+ATL_zf77her2.o : ../ATL_f77her2.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX ../ATL_f77her2.c
+ATL_zf77her.o : ../ATL_f77her.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX ../ATL_f77her.c
+ATL_zf77hemv.o : ../ATL_f77hemv.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX ../ATL_f77hemv.c
+ATL_zf77hbmv.o : ../ATL_f77hbmv.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX ../ATL_f77hbmv.c
+ATL_zf77gbmv.o : ../ATL_f77gbmv.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX ../ATL_f77gbmv.c
+ATL_zf77dotu_sub.o : ../ATL_f77dotu_sub.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX ../ATL_f77dotu_sub.c
+ATL_zf77dotc_sub.o : ../ATL_f77dotc_sub.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX ../ATL_f77dotc_sub.c
+ATL_zf77rot.o : ../ATL_f77rot.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX ../ATL_f77rot.c
+ATL_zf77swap.o : ../ATL_f77swap.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX ../ATL_f77swap.c
+ATL_zf77copy.o : ../ATL_f77copy.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX ../ATL_f77copy.c
+ATL_zf77axpy.o : ../ATL_f77axpy.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX ../ATL_f77axpy.c
+ATL_zf77scal.o : ../ATL_f77scal.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX ../ATL_f77scal.c
+ATL_zf77amax.o : ../ATL_f77amax.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX ../ATL_f77amax.c
+ATL_zf77asum.o : ../ATL_f77asum.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX ../ATL_f77asum.c
+ATL_zf77nrm2.o : ../ATL_f77nrm2.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX ../ATL_f77nrm2.c
+ATL_zf77rotg.o : ../ATL_f77rotg.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX ../ATL_f77rotg.c
+ATL_zf77lauum.o : ../ATL_f77lauum.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX ../ATL_f77lauum.c
+ATL_zf77trtri.o : ../ATL_f77trtri.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX ../ATL_f77trtri.c
+ATL_zf77potrf.o : ../ATL_f77potrf.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX ../ATL_f77potrf.c
+ATL_zf77getrf.o : ../ATL_f77getrf.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX ../ATL_f77getrf.c
+ATL_zf77getri.o : ../ATL_f77getri.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX ../ATL_f77getri.c
+ATL_zvdiff.o : ../ATL_vdiff.c $(INCdep1)
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX ../ATL_vdiff.c
+ATL_zinfnrm.o : ../ATL_infnrm.c $(INCdep1)
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX ../ATL_infnrm.c
+ATL_zgediffnrm1.o : ../ATL_gediffnrm1.c $(INCdep1)
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX ../ATL_gediffnrm1.c
+ATL_zgenrm1.o : ../ATL_genrm1.c $(INCdep1)
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX ../ATL_genrm1.c
+ATL_zepsilon.o : ../ATL_epsilon.c $(INCdep1)
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX ../ATL_epsilon.c
+ATL_zgediff.o : ../ATL_gediff.c $(INCdep1)
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX ../ATL_gediff.c
+ATL_zgeprint.o : ../ATL_geprint.c $(INCdep1)
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX ../ATL_geprint.c
+ATL_zgegen.o : ../ATL_gegen.c $(INCdep1)
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX ../ATL_gegen.c
+ATL_zhediffnrm.o : ../ATL_hediffnrm.c $(INCdep1)
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX ../ATL_hediffnrm.c
+ATL_ztrgen.o : ../ATL_trgen.c $(INCdep1)
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX ../ATL_trgen.c
+ATL_ztpnrm1.o : ../ATL_tpnrm1.c $(INCdep1)
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX ../ATL_tpnrm1.c
+ATL_ztbnrm1.o : ../ATL_tbnrm1.c $(INCdep1)
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX ../ATL_tbnrm1.c
+ATL_zgbnrm1.o : ../ATL_gbnrm1.c $(INCdep1)
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX ../ATL_gbnrm1.c
+ATL_ztrnrm1.o : ../ATL_trnrm1.c $(INCdep1)
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX ../ATL_trnrm1.c
+ATL_ztstsqtran.o : ../ATL_tstsqtran.c $(INCdep1)
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX ../ATL_tstsqtran.c
+ATL_zhenrm.o : ../ATL_henrm.c $(INCdep1)
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX ../ATL_henrm.c
+ATL_zhpnrm.o : ../ATL_hpnrm.c $(INCdep1)
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX ../ATL_hpnrm.c
+ATL_zhbnrm.o : ../ATL_hbnrm.c $(INCdep1)
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX ../ATL_hbnrm.c
+ATL_zsynrm.o : ../ATL_synrm.c $(INCdep1)
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX ../ATL_synrm.c
+ATL_zspnrm.o : ../ATL_spnrm.c $(INCdep1)
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX ../ATL_spnrm.c
+ATL_zsbnrm.o : ../ATL_sbnrm.c $(INCdep1)
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX ../ATL_sbnrm.c
+ATL_zdf77scal.o : ../ATL_f77rscal.c $(INCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX ../ATL_f77rscal.c

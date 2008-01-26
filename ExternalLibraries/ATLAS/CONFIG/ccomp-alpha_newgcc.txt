@@ -1,0 +1,17 @@
+
+
+You appear to be on a Dec ALPHA with only gcc newer than 2.8 installed.
+Gcc does a better job optimizing generated code than DEC's cc.  It appears
+that DEC's cc reserves several registers (probably for use in software
+pipelining), and that prevents ATLAS from achieving maximal performance.
+
+The second rather surprising result on ALPHAs is that EGCS and new versions
+of gcc produces much less optimal code than gcc 2.8 or earlier.  You will
+lose roughly 10% of performance by using newer gcc.  The errata file
+   www.cs.utk.edu/~rwhaley/ATLAS/errata.html
+contains pointers to instructions on downloading and compiling an old version
+of gcc.
+
+If you continue the ATLAS install without first installing gcc 2.8 or earlier,
+your performance will be about 10% below what you could achieve.
+

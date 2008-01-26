@@ -1,0 +1,12 @@
+
+
+The ATLAS team has provided a default install for your architecture.  If you
+want, these default values can be used, and ATLAS can skip most of the search
+for your machine.  This will greatly decrease the amount of time required for
+the install, allow you to take advantage of any special features found by the
+ATLAS team, and provide protection against install miscues caused by unreliable
+timing results, assuming you really have the machine ATLAS thinks you have.  If
+your machine is non-standard in some way, or you just want to see the ATLAS
+search for yourself, you should answer no to the following question.  Otherwise,
+it is highly recommended to accept the default of yes.
+

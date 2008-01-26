@@ -1,0 +1,106 @@
+  ------------------------------------------------------------------------
+
+LLAMA Installation Guide
+
+  ------------------------------------------------------------------------
+
+The llama package requires the following libraries:
+
+  1. the BLAS (Basic Linear Algebra Subroutines)
+  2. LAPACK (Linerar Algebra subroutines)
+  3. FFTW (Fastest Fourier Transform in the West)
+  4. ODESSA (Ordinary Differential Equations with Simultaneous
+     Sensitivity Analysis).
+
+It is preferable to install the ATLAS (Automatically Tuned Linear
+Algebra Subroutines) package, which implements the BLAS in a highly
+efficient way.  See below for details on installing these packages.
+
+To install this package:
+
+  1. Configure the Makefile by executing
+	./configure
+    If you wish to install the package in anyplace other than
+    /usr/local, use the --prefix option:
+	./configure --prefix=<path-to-package>
+    If you desire to diable the creation of shared-object libraries,
+    use the --disable-shared option:
+	./configure --disable-shared
+
+  2. Make the llama library: make
+
+  3. Install the library, headers, and documentation: make install
+
+  ------------------------------------------------------------------------
+
+Installing ATLAS.
+
+Obtain the source code from http://math-atlas.sourceforge.net/
+
+Compile as follows:
+
+  1. cd /usr/local/src/
+  2. tar zxvf atlas.tgz
+  3. cd ATLAS
+  4. make
+  5. make install arch=<your machine architecture>
+  6. cd lib/<your mach arch>
+  7. install -m0444 libatlas.a /usr/local/lib
+  8. install -m0444 libcblas.a /usr/local/lib
+  9. install -m0444 libf77blas.a /usr/local/lib
+ 10. cd ..
+ 11. install -m0444 include/cblas.h /usr/local/include
+
+Test the installation as follows:
+
+  1. cd /usr/local/src/ATLAS/bin/(your machine arch)
+  2. make x{s,d,c,z}3blastst
+  3. xs3blastst -R all
+  4. xc3blastst -R all
+  5. xd3blastst -R all
+  6. xz3blastst -R all
+
+  ------------------------------------------------------------------------
+
+Installing LAPACK.
+
+Download from http://www.netlib.org/lapack/.  Follow installation
+instructions.
+
+  ------------------------------------------------------------------------
+
+Improving LAPACK routines with ATLAS.
+
+One can incorporate faster, more efficient ATLAS versions of some LAPACK
+routines into the LAPACK library as follows:
+
+  1. cd /usr/local/src/ATLAS/lib/(your mach arch)
+  2. mkdir tmp ar x ../liblapack.a
+  3. cp (LAPACK library) ../liblapack.a
+  4. ar r ../liblapack.a *.o
+  5. cd ..
+  6. ranlib liblapack.a
+  7. rm -rf tmp
+  8. install -m0444 liblapack.a /usr/local/lib/liblapack.a
+
+This procedure is described in more detail in the ATLAS documentation.
+
+  ------------------------------------------------------------------------
+
+ Installing FFTW.
+
+Obtain the source or binaries from http://www.fftw.org.  Follow the
+installation instructions.
+
+  ------------------------------------------------------------------------
+
+Installing ODESSA.
+
+ODESSA is Algorithm 658 of ACM TOMS.  You can obtain a copy from
+http://www.netlib.org/toms/658.  I have archived this program,
+together with the LINPACK routines upon which it depends and a
+handy-dandy Makefile to aid in the compilation and installation
+process here:
+	http://www.tiem.utk.edu/~king/pub/odessa.tar.gz
+
+  ------------------------------------------------------------------------

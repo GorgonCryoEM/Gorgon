@@ -1,0 +1,357 @@
+include Make.inc
+
+all : lib
+lib : dlib slib zlib clib
+clean : sclean dclean cclean zclean
+
+sobj = ATL_sgetrf.o ATL_sgetrfC.o ATL_sgetrfR.o ATL_sgetri.o ATL_sgetriC.o \
+       ATL_sgetriR.o ATL_sgetrs.o ATL_slaswp.o ATL_slauum.o ATL_slauumCL.o \
+       ATL_slauumCU.o ATL_slauumRL.o ATL_slauumRU.o ATL_spotrf.o \
+       ATL_spotrfL.o ATL_spotrfU.o ATL_spotrs.o ATL_strtri.o ATL_strtriCL.o \
+       ATL_strtriCU.o ATL_strtriRL.o ATL_strtriRU.o
+
+incdep = $(INCdir)/../atlas_lapack.h
+slib : 
+	$(PMAKE) slib.grd
+slib.grd : $(sobj)
+	$(ARCHIVER) $(ARFLAGS) $(LAPACKlib) $(sobj)
+	$(RANLIB) $(LAPACKlib)
+	touch slib.grd
+
+   
+ATL_spotrfL.o : ../ATL_potrfL.c $(incdep)
+	$(CC) $(CCFLAGS) -c -o ATL_spotrfL.o -DSREAL \
+              ../ATL_potrfL.c
+ATL_spotrfU.o : ../ATL_potrfU.c $(incdep)
+	$(CC) $(CCFLAGS) -c -o ATL_spotrfU.o -DSREAL \
+              ../ATL_potrfU.c
+ATL_spotrs.o : ../ATL_potrs.c $(incdep)
+	$(CC) $(CCFLAGS) -c -o ATL_spotrs.o -DSREAL \
+              ../ATL_potrs.c
+ATL_spotrf.o : ../ATL_potrf.c $(incdep)
+	$(CC) $(CCFLAGS) -c -o ATL_spotrf.o -DSREAL \
+              ../ATL_potrf.c
+ATL_sgetrfR.o : ../ATL_getrfR.c $(incdep)
+	$(CC) $(CCFLAGS) -c -o ATL_sgetrfR.o -DSREAL \
+              ../ATL_getrfR.c
+ATL_sgetrfC.o : ../ATL_getrfC.c $(incdep)
+	$(CC) $(CCFLAGS) -c -o ATL_sgetrfC.o -DSREAL \
+              ../ATL_getrfC.c
+ATL_sgetrs.o : ../ATL_getrs.c $(incdep)
+	$(CC) $(CCFLAGS) -c -o ATL_sgetrs.o -DSREAL \
+              ../ATL_getrs.c
+ATL_sgetrf.o : ../ATL_getrf.c $(incdep)
+	$(CC) $(CCFLAGS) -c -o ATL_sgetrf.o -DSREAL \
+              ../ATL_getrf.c
+ATL_slaswp.o : ../ATL_laswp.c $(incdep)
+	$(CC) $(CCFLAGS) -c -o ATL_slaswp.o -DSREAL \
+              ../ATL_laswp.c
+ATL_sgetriC.o : ../ATL_getriC.c $(incdep)
+	$(CC) $(CCFLAGS) -c -o ATL_sgetriC.o -DSREAL \
+              ../ATL_getriC.c
+ATL_sgetriR.o : ../ATL_getriR.c $(incdep)
+	$(CC) $(CCFLAGS) -c -o ATL_sgetriR.o -DSREAL \
+              ../ATL_getriR.c
+ATL_sgetri.o : ../ATL_getri.c $(incdep)
+	$(CC) $(CCFLAGS) -c -o ATL_sgetri.o -DSREAL \
+              ../ATL_getri.c
+ATL_slauum.o : ../ATL_lauum.c $(incdep)
+	$(CC) $(CCFLAGS) -c -o ATL_slauum.o -DSREAL \
+              ../ATL_lauum.c
+ATL_strtriRL.o : ../ATL_trtriRL.c $(incdep)
+	$(CC) $(CCFLAGS) -c -o ATL_strtriRL.o -DSREAL \
+              ../ATL_trtriRL.c
+ATL_strtriRU.o : ../ATL_trtriRU.c $(incdep)
+	$(CC) $(CCFLAGS) -c -o ATL_strtriRU.o -DSREAL \
+              ../ATL_trtriRU.c
+ATL_strtriCL.o : ../ATL_trtriCL.c $(incdep)
+	$(CC) $(CCFLAGS) -c -o ATL_strtriCL.o -DSREAL \
+              ../ATL_trtriCL.c
+ATL_strtriCU.o : ../ATL_trtriCU.c $(incdep)
+	$(CC) $(CCFLAGS) -c -o ATL_strtriCU.o -DSREAL \
+              ../ATL_trtriCU.c
+ATL_strtri.o : ../ATL_trtri.c $(incdep)
+	$(CC) $(CCFLAGS) -c -o ATL_strtri.o -DSREAL \
+              ../ATL_trtri.c
+ATL_slauumCL.o : ../ATL_lauumL.c $(incdep)
+	$(CC) $(CCFLAGS) -c -o ATL_slauumCL.o -DSREAL -DColMajor_ \
+              ../ATL_lauumL.c
+ATL_slauumRL.o : ../ATL_lauumL.c $(incdep)
+	$(CC) $(CCFLAGS) -c -o ATL_slauumRL.o -DSREAL -DRowMajor_ \
+              ../ATL_lauumL.c
+ATL_slauumCU.o : ../ATL_lauumU.c $(incdep)
+	$(CC) $(CCFLAGS) -c -o ATL_slauumCU.o -DSREAL -DColMajor_ \
+              ../ATL_lauumU.c
+ATL_slauumRU.o : ../ATL_lauumU.c $(incdep)
+	$(CC) $(CCFLAGS) -c -o ATL_slauumRU.o -DSREAL -DRowMajor_ \
+              ../ATL_lauumU.c
+
+sclean :
+	rm -f $(sobj)
+dobj = ATL_dgetrf.o ATL_dgetrfC.o ATL_dgetrfR.o ATL_dgetri.o ATL_dgetriC.o \
+       ATL_dgetriR.o ATL_dgetrs.o ATL_dlaswp.o ATL_dlauum.o ATL_dlauumCL.o \
+       ATL_dlauumCU.o ATL_dlauumRL.o ATL_dlauumRU.o ATL_dpotrf.o \
+       ATL_dpotrfL.o ATL_dpotrfU.o ATL_dpotrs.o ATL_dtrtri.o ATL_dtrtriCL.o \
+       ATL_dtrtriCU.o ATL_dtrtriRL.o ATL_dtrtriRU.o
+
+incdep = $(INCdir)/../atlas_lapack.h
+dlib : 
+	$(PMAKE) dlib.grd
+dlib.grd : $(dobj)
+	$(ARCHIVER) $(ARFLAGS) $(LAPACKlib) $(dobj)
+	$(RANLIB) $(LAPACKlib)
+	touch dlib.grd
+
+   
+ATL_dpotrfL.o : ../ATL_potrfL.c $(incdep)
+	$(CC) $(CCFLAGS) -c -o ATL_dpotrfL.o -DDREAL \
+              ../ATL_potrfL.c
+ATL_dpotrfU.o : ../ATL_potrfU.c $(incdep)
+	$(CC) $(CCFLAGS) -c -o ATL_dpotrfU.o -DDREAL \
+              ../ATL_potrfU.c
+ATL_dpotrs.o : ../ATL_potrs.c $(incdep)
+	$(CC) $(CCFLAGS) -c -o ATL_dpotrs.o -DDREAL \
+              ../ATL_potrs.c
+ATL_dpotrf.o : ../ATL_potrf.c $(incdep)
+	$(CC) $(CCFLAGS) -c -o ATL_dpotrf.o -DDREAL \
+              ../ATL_potrf.c
+ATL_dgetrfR.o : ../ATL_getrfR.c $(incdep)
+	$(CC) $(CCFLAGS) -c -o ATL_dgetrfR.o -DDREAL \
+              ../ATL_getrfR.c
+ATL_dgetrfC.o : ../ATL_getrfC.c $(incdep)
+	$(CC) $(CCFLAGS) -c -o ATL_dgetrfC.o -DDREAL \
+              ../ATL_getrfC.c
+ATL_dgetrs.o : ../ATL_getrs.c $(incdep)
+	$(CC) $(CCFLAGS) -c -o ATL_dgetrs.o -DDREAL \
+              ../ATL_getrs.c
+ATL_dgetrf.o : ../ATL_getrf.c $(incdep)
+	$(CC) $(CCFLAGS) -c -o ATL_dgetrf.o -DDREAL \
+              ../ATL_getrf.c
+ATL_dlaswp.o : ../ATL_laswp.c $(incdep)
+	$(CC) $(CCFLAGS) -c -o ATL_dlaswp.o -DDREAL \
+              ../ATL_laswp.c
+ATL_dgetriC.o : ../ATL_getriC.c $(incdep)
+	$(CC) $(CCFLAGS) -c -o ATL_dgetriC.o -DDREAL \
+              ../ATL_getriC.c
+ATL_dgetriR.o : ../ATL_getriR.c $(incdep)
+	$(CC) $(CCFLAGS) -c -o ATL_dgetriR.o -DDREAL \
+              ../ATL_getriR.c
+ATL_dgetri.o : ../ATL_getri.c $(incdep)
+	$(CC) $(CCFLAGS) -c -o ATL_dgetri.o -DDREAL \
+              ../ATL_getri.c
+ATL_dlauum.o : ../ATL_lauum.c $(incdep)
+	$(CC) $(CCFLAGS) -c -o ATL_dlauum.o -DDREAL \
+              ../ATL_lauum.c
+ATL_dtrtriRL.o : ../ATL_trtriRL.c $(incdep)
+	$(CC) $(CCFLAGS) -c -o ATL_dtrtriRL.o -DDREAL \
+              ../ATL_trtriRL.c
+ATL_dtrtriRU.o : ../ATL_trtriRU.c $(incdep)
+	$(CC) $(CCFLAGS) -c -o ATL_dtrtriRU.o -DDREAL \
+              ../ATL_trtriRU.c
+ATL_dtrtriCL.o : ../ATL_trtriCL.c $(incdep)
+	$(CC) $(CCFLAGS) -c -o ATL_dtrtriCL.o -DDREAL \
+              ../ATL_trtriCL.c
+ATL_dtrtriCU.o : ../ATL_trtriCU.c $(incdep)
+	$(CC) $(CCFLAGS) -c -o ATL_dtrtriCU.o -DDREAL \
+              ../ATL_trtriCU.c
+ATL_dtrtri.o : ../ATL_trtri.c $(incdep)
+	$(CC) $(CCFLAGS) -c -o ATL_dtrtri.o -DDREAL \
+              ../ATL_trtri.c
+ATL_dlauumCL.o : ../ATL_lauumL.c $(incdep)
+	$(CC) $(CCFLAGS) -c -o ATL_dlauumCL.o -DDREAL -DColMajor_ \
+              ../ATL_lauumL.c
+ATL_dlauumRL.o : ../ATL_lauumL.c $(incdep)
+	$(CC) $(CCFLAGS) -c -o ATL_dlauumRL.o -DDREAL -DRowMajor_ \
+              ../ATL_lauumL.c
+ATL_dlauumCU.o : ../ATL_lauumU.c $(incdep)
+	$(CC) $(CCFLAGS) -c -o ATL_dlauumCU.o -DDREAL -DColMajor_ \
+              ../ATL_lauumU.c
+ATL_dlauumRU.o : ../ATL_lauumU.c $(incdep)
+	$(CC) $(CCFLAGS) -c -o ATL_dlauumRU.o -DDREAL -DRowMajor_ \
+              ../ATL_lauumU.c
+
+dclean :
+	rm -f $(dobj)
+cobj = ATL_cgetrf.o ATL_cgetrfC.o ATL_cgetrfR.o ATL_cgetri.o ATL_cgetriC.o \
+       ATL_cgetriR.o ATL_cgetrs.o ATL_claswp.o ATL_clauum.o ATL_clauumCL.o \
+       ATL_clauumCU.o ATL_clauumRL.o ATL_clauumRU.o ATL_cpotrf.o \
+       ATL_cpotrfL.o ATL_cpotrfRL.o ATL_cpotrfRU.o ATL_cpotrfU.o ATL_cpotrs.o \
+       ATL_ctrtri.o ATL_ctrtriCL.o ATL_ctrtriCU.o ATL_ctrtriRL.o \
+       ATL_ctrtriRU.o
+
+incdep = $(INCdir)/../atlas_lapack.h
+clib : 
+	$(PMAKE) clib.grd
+clib.grd : $(cobj)
+	$(ARCHIVER) $(ARFLAGS) $(LAPACKlib) $(cobj)
+	$(RANLIB) $(LAPACKlib)
+	touch clib.grd
+
+   
+ATL_cpotrfRU.o : ../ATL_potrfRU.c $(incdep)
+	$(CC) $(CCFLAGS) -c -o ATL_cpotrfRU.o -DSCPLX \
+              ../ATL_potrfRU.c
+ATL_cpotrfRL.o : ../ATL_potrfRL.c $(incdep)
+	$(CC) $(CCFLAGS) -c -o ATL_cpotrfRL.o -DSCPLX \
+              ../ATL_potrfRL.c
+ATL_cpotrfL.o : ../ATL_potrfL.c $(incdep)
+	$(CC) $(CCFLAGS) -c -o ATL_cpotrfL.o -DSCPLX \
+              ../ATL_potrfL.c
+ATL_cpotrfU.o : ../ATL_potrfU.c $(incdep)
+	$(CC) $(CCFLAGS) -c -o ATL_cpotrfU.o -DSCPLX \
+              ../ATL_potrfU.c
+ATL_cpotrs.o : ../ATL_potrs.c $(incdep)
+	$(CC) $(CCFLAGS) -c -o ATL_cpotrs.o -DSCPLX \
+              ../ATL_potrs.c
+ATL_cpotrf.o : ../ATL_potrf.c $(incdep)
+	$(CC) $(CCFLAGS) -c -o ATL_cpotrf.o -DSCPLX \
+              ../ATL_potrf.c
+ATL_cgetrfR.o : ../ATL_getrfR.c $(incdep)
+	$(CC) $(CCFLAGS) -c -o ATL_cgetrfR.o -DSCPLX \
+              ../ATL_getrfR.c
+ATL_cgetrfC.o : ../ATL_getrfC.c $(incdep)
+	$(CC) $(CCFLAGS) -c -o ATL_cgetrfC.o -DSCPLX \
+              ../ATL_getrfC.c
+ATL_cgetrs.o : ../ATL_getrs.c $(incdep)
+	$(CC) $(CCFLAGS) -c -o ATL_cgetrs.o -DSCPLX \
+              ../ATL_getrs.c
+ATL_cgetrf.o : ../ATL_getrf.c $(incdep)
+	$(CC) $(CCFLAGS) -c -o ATL_cgetrf.o -DSCPLX \
+              ../ATL_getrf.c
+ATL_claswp.o : ../ATL_laswp.c $(incdep)
+	$(CC) $(CCFLAGS) -c -o ATL_claswp.o -DSCPLX \
+              ../ATL_laswp.c
+ATL_cgetriC.o : ../ATL_getriC.c $(incdep)
+	$(CC) $(CCFLAGS) -c -o ATL_cgetriC.o -DSCPLX \
+              ../ATL_getriC.c
+ATL_cgetriR.o : ../ATL_getriR.c $(incdep)
+	$(CC) $(CCFLAGS) -c -o ATL_cgetriR.o -DSCPLX \
+              ../ATL_getriR.c
+ATL_cgetri.o : ../ATL_getri.c $(incdep)
+	$(CC) $(CCFLAGS) -c -o ATL_cgetri.o -DSCPLX \
+              ../ATL_getri.c
+ATL_clauum.o : ../ATL_lauum.c $(incdep)
+	$(CC) $(CCFLAGS) -c -o ATL_clauum.o -DSCPLX \
+              ../ATL_lauum.c
+ATL_ctrtriRL.o : ../ATL_trtriRL.c $(incdep)
+	$(CC) $(CCFLAGS) -c -o ATL_ctrtriRL.o -DSCPLX \
+              ../ATL_trtriRL.c
+ATL_ctrtriRU.o : ../ATL_trtriRU.c $(incdep)
+	$(CC) $(CCFLAGS) -c -o ATL_ctrtriRU.o -DSCPLX \
+              ../ATL_trtriRU.c
+ATL_ctrtriCL.o : ../ATL_trtriCL.c $(incdep)
+	$(CC) $(CCFLAGS) -c -o ATL_ctrtriCL.o -DSCPLX \
+              ../ATL_trtriCL.c
+ATL_ctrtriCU.o : ../ATL_trtriCU.c $(incdep)
+	$(CC) $(CCFLAGS) -c -o ATL_ctrtriCU.o -DSCPLX \
+              ../ATL_trtriCU.c
+ATL_ctrtri.o : ../ATL_trtri.c $(incdep)
+	$(CC) $(CCFLAGS) -c -o ATL_ctrtri.o -DSCPLX \
+              ../ATL_trtri.c
+ATL_clauumCL.o : ../ATL_lauumL.c $(incdep)
+	$(CC) $(CCFLAGS) -c -o ATL_clauumCL.o -DSCPLX -DColMajor_ \
+              ../ATL_lauumL.c
+ATL_clauumRL.o : ../ATL_lauumL.c $(incdep)
+	$(CC) $(CCFLAGS) -c -o ATL_clauumRL.o -DSCPLX -DRowMajor_ \
+              ../ATL_lauumL.c
+ATL_clauumCU.o : ../ATL_lauumU.c $(incdep)
+	$(CC) $(CCFLAGS) -c -o ATL_clauumCU.o -DSCPLX -DColMajor_ \
+              ../ATL_lauumU.c
+ATL_clauumRU.o : ../ATL_lauumU.c $(incdep)
+	$(CC) $(CCFLAGS) -c -o ATL_clauumRU.o -DSCPLX -DRowMajor_ \
+              ../ATL_lauumU.c
+
+cclean :
+	rm -f $(cobj)
+zobj = ATL_zgetrf.o ATL_zgetrfC.o ATL_zgetrfR.o ATL_zgetri.o ATL_zgetriC.o \
+       ATL_zgetriR.o ATL_zgetrs.o ATL_zlaswp.o ATL_zlauum.o ATL_zlauumCL.o \
+       ATL_zlauumCU.o ATL_zlauumRL.o ATL_zlauumRU.o ATL_zpotrf.o \
+       ATL_zpotrfL.o ATL_zpotrfRL.o ATL_zpotrfRU.o ATL_zpotrfU.o ATL_zpotrs.o \
+       ATL_ztrtri.o ATL_ztrtriCL.o ATL_ztrtriCU.o ATL_ztrtriRL.o \
+       ATL_ztrtriRU.o
+
+incdep = $(INCdir)/../atlas_lapack.h
+zlib : 
+	$(PMAKE) zlib.grd
+zlib.grd : $(zobj)
+	$(ARCHIVER) $(ARFLAGS) $(LAPACKlib) $(zobj)
+	$(RANLIB) $(LAPACKlib)
+	touch zlib.grd
+
+   
+ATL_zpotrfRU.o : ../ATL_potrfRU.c $(incdep)
+	$(CC) $(CCFLAGS) -c -o ATL_zpotrfRU.o -DDCPLX \
+              ../ATL_potrfRU.c
+ATL_zpotrfRL.o : ../ATL_potrfRL.c $(incdep)
+	$(CC) $(CCFLAGS) -c -o ATL_zpotrfRL.o -DDCPLX \
+              ../ATL_potrfRL.c
+ATL_zpotrfL.o : ../ATL_potrfL.c $(incdep)
+	$(CC) $(CCFLAGS) -c -o ATL_zpotrfL.o -DDCPLX \
+              ../ATL_potrfL.c
+ATL_zpotrfU.o : ../ATL_potrfU.c $(incdep)
+	$(CC) $(CCFLAGS) -c -o ATL_zpotrfU.o -DDCPLX \
+              ../ATL_potrfU.c
+ATL_zpotrs.o : ../ATL_potrs.c $(incdep)
+	$(CC) $(CCFLAGS) -c -o ATL_zpotrs.o -DDCPLX \
+              ../ATL_potrs.c
+ATL_zpotrf.o : ../ATL_potrf.c $(incdep)
+	$(CC) $(CCFLAGS) -c -o ATL_zpotrf.o -DDCPLX \
+              ../ATL_potrf.c
+ATL_zgetrfR.o : ../ATL_getrfR.c $(incdep)
+	$(CC) $(CCFLAGS) -c -o ATL_zgetrfR.o -DDCPLX \
+              ../ATL_getrfR.c
+ATL_zgetrfC.o : ../ATL_getrfC.c $(incdep)
+	$(CC) $(CCFLAGS) -c -o ATL_zgetrfC.o -DDCPLX \
+              ../ATL_getrfC.c
+ATL_zgetrs.o : ../ATL_getrs.c $(incdep)
+	$(CC) $(CCFLAGS) -c -o ATL_zgetrs.o -DDCPLX \
+              ../ATL_getrs.c
+ATL_zgetrf.o : ../ATL_getrf.c $(incdep)
+	$(CC) $(CCFLAGS) -c -o ATL_zgetrf.o -DDCPLX \
+              ../ATL_getrf.c
+ATL_zlaswp.o : ../ATL_laswp.c $(incdep)
+	$(CC) $(CCFLAGS) -c -o ATL_zlaswp.o -DDCPLX \
+              ../ATL_laswp.c
+ATL_zgetriC.o : ../ATL_getriC.c $(incdep)
+	$(CC) $(CCFLAGS) -c -o ATL_zgetriC.o -DDCPLX \
+              ../ATL_getriC.c
+ATL_zgetriR.o : ../ATL_getriR.c $(incdep)
+	$(CC) $(CCFLAGS) -c -o ATL_zgetriR.o -DDCPLX \
+              ../ATL_getriR.c
+ATL_zgetri.o : ../ATL_getri.c $(incdep)
+	$(CC) $(CCFLAGS) -c -o ATL_zgetri.o -DDCPLX \
+              ../ATL_getri.c
+ATL_zlauum.o : ../ATL_lauum.c $(incdep)
+	$(CC) $(CCFLAGS) -c -o ATL_zlauum.o -DDCPLX \
+              ../ATL_lauum.c
+ATL_ztrtriRL.o : ../ATL_trtriRL.c $(incdep)
+	$(CC) $(CCFLAGS) -c -o ATL_ztrtriRL.o -DDCPLX \
+              ../ATL_trtriRL.c
+ATL_ztrtriRU.o : ../ATL_trtriRU.c $(incdep)
+	$(CC) $(CCFLAGS) -c -o ATL_ztrtriRU.o -DDCPLX \
+              ../ATL_trtriRU.c
+ATL_ztrtriCL.o : ../ATL_trtriCL.c $(incdep)
+	$(CC) $(CCFLAGS) -c -o ATL_ztrtriCL.o -DDCPLX \
+              ../ATL_trtriCL.c
+ATL_ztrtriCU.o : ../ATL_trtriCU.c $(incdep)
+	$(CC) $(CCFLAGS) -c -o ATL_ztrtriCU.o -DDCPLX \
+              ../ATL_trtriCU.c
+ATL_ztrtri.o : ../ATL_trtri.c $(incdep)
+	$(CC) $(CCFLAGS) -c -o ATL_ztrtri.o -DDCPLX \
+              ../ATL_trtri.c
+ATL_zlauumCL.o : ../ATL_lauumL.c $(incdep)
+	$(CC) $(CCFLAGS) -c -o ATL_zlauumCL.o -DDCPLX -DColMajor_ \
+              ../ATL_lauumL.c
+ATL_zlauumRL.o : ../ATL_lauumL.c $(incdep)
+	$(CC) $(CCFLAGS) -c -o ATL_zlauumRL.o -DDCPLX -DRowMajor_ \
+              ../ATL_lauumL.c
+ATL_zlauumCU.o : ../ATL_lauumU.c $(incdep)
+	$(CC) $(CCFLAGS) -c -o ATL_zlauumCU.o -DDCPLX -DColMajor_ \
+              ../ATL_lauumU.c
+ATL_zlauumRU.o : ../ATL_lauumU.c $(incdep)
+	$(CC) $(CCFLAGS) -c -o ATL_zlauumRU.o -DDCPLX -DRowMajor_ \
+              ../ATL_lauumU.c
+
+zclean :
+	rm -f $(zobj)
+

@@ -1,0 +1,36 @@
+dnl Process this file with autoconf to produce a configure script.
+AC_INIT(src/EigenDecomposition.cc)
+
+dnl Checks for programs.
+AC_PROG_CC
+AC_PROG_CXX
+AC_PROG_F77
+AC_PROG_INSTALL
+AC_PROG_LIBTOOL
+AC_SUBST(LIBTOOL_DEPS)
+
+dnl Checks for libraries.
+AC_CHECK_LIB(m, sin)
+AC_CHECK_LIB(g2c, pow_dd)
+AC_CHECK_LIB(atlas, ATL_dgemm)
+AC_CHECK_LIB(f77blas, atl_f77wrap_dgemm__)
+AC_CHECK_LIB(cblas, cblas_dgemm, , , -latlas)
+AC_CHECK_LIB(fftw, fftw_one)
+AC_CHECK_LIB(rfftw, rfftw_create_plan, , , -lfftw)
+AC_CHECK_LIB(lapack, dgeev_)
+
+dnl Checks for header files.
+AC_HEADER_STDC
+AC_CHECK_HEADER(stdlib.h)
+AC_CHECK_HEADER(stdio.h)
+AC_CHECK_HEADER(stdarg.h)
+AC_CHECK_HEADER(cblas.h)
+
+dnl Checks for typedefs, structures, and compiler characteristics.
+AC_C_CONST
+AC_C_INLINE
+AC_TYPE_SIZE_T
+
+dnl Checks for library functions.
+
+AC_OUTPUT(Makefile)

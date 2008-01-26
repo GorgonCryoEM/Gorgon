@@ -1,0 +1,139 @@
+<HTML>
+<HEAD>
+<TITLE>class AbstMapping</TITLE>
+
+<META NAME="Generator" CONTENT="KDOC ">
+</HEAD>
+<BODY bgcolor="#ffffff" text="#000000" link="#0000ff" vlink="#000099" alink= "#ffffff">
+<TABLE WIDTH="100%" BORDER="0">
+<TR>
+<TD>
+	<TABLE BORDER="0">
+		<TR><TD valign="top" align="left" cellspacing="10">
+		<h1>class AbstMapping</h1>
+		</TD>
+		<TD valign="top" align="right" colspan="1">
+     Abstract mapping class. <small><A HREF="#longdesc">More...</A></small></TD></TR>
+	</TABLE>
+	<HR>
+	<TABLE BORDER="0">
+		<TR><TH colspan="2">Contains pure virtuals</TH></TR><TR><TH>Full name</TH><TD><code><A HREF="Llama.html">Llama</A>::AbstMapping</code></TD></TR>
+<TR><TH>Definition</TH><TD><code>#include &lt;<A HREF="AbstMapping_h.html">AbstMapping.h</A>&gt;</code></TD></TR>
+<TR><TH>Template form</TH><TD>AbstMapping&lt;class Scalar&gt; </code></TD></TR>
+<TR><TH>Inherits</TH><TD><i><A HREF="Llama__AbstDiffeomorphism.html">Llama::AbstDiffeomorphism</A></i> <small>[public ]</small></TD></TR>
+<TR><TH>Inherited by</TH><TD><A HREF="Llama__Mapping.html">Mapping</A></TD></TR>
+<TR><TH><A HREF="full-list-Llama__AbstMapping.html">List of all Methods</A></TH></TR>
+	</TABLE>
+	</TD>
+<TD align="right"><TABLE BORDER="0"><TD rowspan="6"><IMG SRC="./llama2.gif"></TD><TR><TD><small><A HREF="index-long.html">Annotated List</A></small></TD></TR>
+<TR><TD><small><A HREF="header-list.html">Files</A></small></TD></TR>
+<TR><TD><small><A HREF="all-globals.html">Globals</A></small></TD></TR>
+<TR><TD><small><A HREF="hier.html">Hierarchy</A></small></TD></TR>
+<TR><TD><small><A HREF="index.html">Index</A></small></TD></TR>
+</TABLE></TD></TR></TABLE>
+<h4>Public Methods</h4><ul><LI>virtual  &nbsp;<b><A HREF="#ref1">~AbstMapping</A></b> (void) 
+</LI>
+<LI>virtual  const Index &nbsp;<b><i><A HREF="#ref2">neqs</A></i></b> (void)  const
+</LI>
+<LI>virtual  const Index &nbsp;<b><i><A HREF="#ref3">nvar</A></i></b> (void)  const
+</LI>
+<LI>virtual  const Index &nbsp;<b><A HREF="#ref4">npar</A></b> (void)  const
+</LI>
+<LI>virtual  void &nbsp;<b><i><A HREF="#ref5">advance</A></i></b> (Matrix<Scalar> *x)  const
+</LI>
+<LI>virtual  void &nbsp;<b><i><A HREF="#ref6">deriv</A></i></b> (Matrix<Scalar> *df, const Matrix<Scalar>& x)  const
+</LI>
+<LI>virtual  Index &nbsp;<b><i><A HREF="#ref7">itmap</A></i></b> (void)  const
+</LI>
+<LI>virtual  void &nbsp;<b><i><A HREF="#ref8">itmap</A></i></b> (Index i) 
+</LI>
+<LI>virtual  void &nbsp;<b><i><A HREF="#ref9">operator ()</A></i></b> (Matrix<Scalar> *x)  const
+</LI>
+<LI>virtual  void &nbsp;<b><i><A HREF="#ref10">operator ()</A></i></b> (Matrix<Scalar> *f, const Matrix<Scalar>& x)  const
+</LI>
+<LI>virtual  Matrix<Scalar> * &nbsp;<b><i><A HREF="#ref11">operator ()</A></i></b> (const Matrix<Scalar>& x)  const
+</LI>
+<LI>virtual  void &nbsp;<b><i><A HREF="#ref12">operator ()</A></i></b> (Matrix<Scalar> *df, const Matrix<Scalar>& x, 
+			      const Matrix<Index>& i)  const
+</LI>
+<LI>virtual  Matrix<Scalar> * &nbsp;<b><i><A HREF="#ref13">operator ()</A></i></b> (const Matrix<Scalar>& x, 
+					  const Matrix<Index>& i)  const
+</LI>
+<LI>virtual  Matrix<Scalar> * &nbsp;<b><i><A HREF="#ref14">itinerary</A></i></b> (const Matrix<Scalar>& x0, Index n)  const
+</LI>
+<LI>virtual  void &nbsp;<b><i><A HREF="#ref15">fixed_point</A></i></b> (Matrix<Scalar> *x, const Matrix<Index>& iact) 
+</LI>
+</ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><p>
+     Abstract mapping class.  Represents a mapping from R^N x R^P -> R^N </p>
+<A NAME="~AbstMapping"></A><A NAME="ref1"></A><table width="100%"><tr bgcolor="#eeeeee"><td> &nbsp;<strong>~AbstMapping</strong> (void)
+<br></td><td align="right"><h3><strong>~AbstMapping</strong></h3></td></tr></table><p> <small>[virtual]</small></p><A NAME="neqs"></A><A NAME="ref2"></A><table width="100%"><tr bgcolor="#eeeeee"><td> const Index &nbsp;<i><strong>neqs</strong></i> (void)
+<br></td><td align="right"><h3><i><strong>neqs</strong></i></h3></td></tr></table><p> <small>[const pure virtual]</small></p><p>
+       How many equations (functions) are there?
+       This is equal to the number of state variables.
+    </p>
+<p>Reimplemented from <A HREF="Llama__AbstDiffeomorphism.html#neqs">AbstDiffeomorphism</A>.</p>
+<A NAME="nvar"></A><A NAME="ref3"></A><table width="100%"><tr bgcolor="#eeeeee"><td> const Index &nbsp;<i><strong>nvar</strong></i> (void)
+<br></td><td align="right"><h3><i><strong>nvar</strong></i></h3></td></tr></table><p> <small>[const pure virtual]</small></p><p>
+       How many variables are there?
+    </p>
+<p>Reimplemented from <A HREF="Llama__AbstDiffeomorphism.html#nvar">AbstDiffeomorphism</A>.</p>
+<A NAME="npar"></A><A NAME="ref4"></A><table width="100%"><tr bgcolor="#eeeeee"><td> const Index &nbsp;<strong>npar</strong> (void)
+<br></td><td align="right"><h3><strong>npar</strong></h3></td></tr></table><p> <small>[const virtual]</small></p><p>
+       How many parameters are there?  </p>
+<A NAME="advance"></A><A NAME="ref5"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<i><strong>advance</strong></i> (Matrix<Scalar> *x)
+<br></td><td align="right"><h3><i><strong>advance</strong></i></h3></td></tr></table><p> <small>[const pure virtual]</small></p><p>
+       Iterate the map forward once </p>
+<A NAME="deriv"></A><A NAME="ref6"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<i><strong>deriv</strong></i> (Matrix<Scalar> *df, const Matrix<Scalar>& x)
+<br></td><td align="right"><h3><i><strong>deriv</strong></i></h3></td></tr></table><p> <small>[const pure virtual]</small></p><p>
+       Evaluate the state-variable portion of the Jacobian only </p>
+<A NAME="itmap"></A><A NAME="ref7"></A><table width="100%"><tr bgcolor="#eeeeee"><td> Index &nbsp;<i><strong>itmap</strong></i> (void)
+<br></td><td align="right"><h3><i><strong>itmap</strong></i></h3></td></tr></table><p> <small>[const pure virtual]</small></p><p>
+       How many times is the mapping to be composed with itself?
+    </p>
+<A NAME="itmap"></A><A NAME="ref8"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<i><strong>itmap</strong></i> (Index i)
+<br></td><td align="right"><h3><i><strong>itmap</strong></i></h3></td></tr></table><p> <small>[pure virtual]</small></p><p>
+       Set the number of times is the mapping to be composed with
+       itself.  
+    </p>
+<A NAME="operator%20()"></A><A NAME="ref9"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<i><strong>operator ()</strong></i> (Matrix<Scalar> *x)
+<br></td><td align="right"><h3><i><strong>operator ()</strong></i></h3></td></tr></table><p> <small>[const pure virtual]</small></p><p>
+       Apply the mapping, overwriting the input with the output.
+    </p>
+<p>Reimplemented from <A HREF="Llama__AbstDiffeomorphism.html#operator%20()">AbstDiffeomorphism</A>.</p>
+<A NAME="operator%20()"></A><A NAME="ref10"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<i><strong>operator ()</strong></i> (Matrix<Scalar> *f, const Matrix<Scalar>& x)
+<br></td><td align="right"><h3><i><strong>operator ()</strong></i></h3></td></tr></table><p> <small>[const pure virtual]</small></p><p>
+       Evaluate the mapping at point x. Store the result in y. Assume
+       that x & y are of the appropriate size.  </p>
+<p>Reimplemented from <A HREF="Llama__AbstDiffeomorphism.html#operator%20()">AbstDiffeomorphism</A>.</p>
+<A NAME="operator%20()"></A><A NAME="ref11"></A><table width="100%"><tr bgcolor="#eeeeee"><td> Matrix<Scalar> * &nbsp;<i><strong>operator ()</strong></i> (const Matrix<Scalar>& x)
+<br></td><td align="right"><h3><i><strong>operator ()</strong></i></h3></td></tr></table><p> <small>[const pure virtual]</small></p><p>
+       Evaluate the mapping at x.  Create a new vector to hold the
+       result.  </p>
+<p>Reimplemented from <A HREF="Llama__AbstDiffeomorphism.html#operator%20()">AbstDiffeomorphism</A>.</p>
+<A NAME="operator%20()"></A><A NAME="ref12"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<i><strong>operator ()</strong></i> (Matrix<Scalar> *df, const Matrix<Scalar>& x, 
+			      const Matrix<Index>& i)
+<br></td><td align="right"><h3><i><strong>operator ()</strong></i></h3></td></tr></table><p> <small>[const pure virtual]</small></p><p>
+       Evaluate the Jacobian of the mapping at x.  Store the result in matrix df.
+    </p>
+<p>Reimplemented from <A HREF="Llama__AbstDiffeomorphism.html#operator%20()">AbstDiffeomorphism</A>.</p>
+<A NAME="operator%20()"></A><A NAME="ref13"></A><table width="100%"><tr bgcolor="#eeeeee"><td> Matrix<Scalar> * &nbsp;<i><strong>operator ()</strong></i> (const Matrix<Scalar>& x, 
+					  const Matrix<Index>& i)
+<br></td><td align="right"><h3><i><strong>operator ()</strong></i></h3></td></tr></table><p> <small>[const pure virtual]</small></p><p>
+       Evaluate the Jacobian of the mapping.  Create a new matrix
+       to hold the result.  
+    </p>
+<p>Reimplemented from <A HREF="Llama__AbstDiffeomorphism.html#operator%20()">AbstDiffeomorphism</A>.</p>
+<A NAME="itinerary"></A><A NAME="ref14"></A><table width="100%"><tr bgcolor="#eeeeee"><td> Matrix<Scalar> * &nbsp;<i><strong>itinerary</strong></i> (const Matrix<Scalar>& x0, Index n)
+<br></td><td align="right"><h3><i><strong>itinerary</strong></i></h3></td></tr></table><p> <small>[const pure virtual]</small></p><p>
+       Compute an itinerary of length n beginning at x.
+    </p>
+<A NAME="fixed_point"></A><A NAME="ref15"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<i><strong>fixed_point</strong></i> (Matrix<Scalar> *x, const Matrix<Index>& iact)
+<br></td><td align="right"><h3><i><strong>fixed_point</strong></i></h3></td></tr></table><p> <small>[pure virtual]</small></p><p>
+       Find a fixed point, using x as an initial guess.  Allow the
+       variables indexed by iact to vary.  </p>
+<HR>
+	<table>
+	<tr><td><small>Generated by: king on larix.tiem.utk.edu on Tue Jun 29 10:55:51 2004, using kdoc 2.0a54.</small></td></tr>
+	</table>
+</BODY>
+</HTML>

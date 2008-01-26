@@ -1,0 +1,187 @@
+<HTML>
+<HEAD>
+<TITLE>Source: Diffeomorphism.h</TITLE>
+
+<META NAME="Generator" CONTENT="KDOC ">
+</HEAD>
+<BODY bgcolor="#ffffff" text="#000000" link="#0000ff" vlink="#000099" alink= "#ffffff">
+<TABLE WIDTH="100%" BORDER="0">
+<TR>
+<TD>
+	<TABLE BORDER="0">
+		<TR><TD valign="top" align="left" cellspacing="10">
+		<h1>Source: Diffeomorphism.h</h1>
+		</TD>
+		<TD valign="top" align="right" colspan="1"></TD></TR>
+	</TABLE>
+	<HR>
+	<TABLE BORDER="0">
+		
+	</TABLE>
+	</TD>
+<TD align="right"><TABLE BORDER="0"><TD rowspan="6"><IMG SRC="./llama2.gif"></TD><TR><TD><small><A HREF="index-long.html">Annotated List</A></small></TD></TR>
+<TR><TD><small><A HREF="header-list.html">Files</A></small></TD></TR>
+<TR><TD><small><A HREF="all-globals.html">Globals</A></small></TD></TR>
+<TR><TD><small><A HREF="hier.html">Hierarchy</A></small></TD></TR>
+<TR><TD><small><A HREF="index.html">Index</A></small></TD></TR>
+</TABLE></TD></TR></TABLE>
+<pre>
+// -*- C++ -*-
+
+#ifndef   _LLAMA_DIFFEOMORPHISM_H_
+#define   _LLAMA_DIFFEOMORPHISM_H_
+
+#include "Decls.h"
+#include "General.h"
+#include "Exception.h"
+#include "Matrix.h"
+#include "AbstDiffeomorphism.h"
+#include "Range.h"
+#include "Submatrix.h"
+#include "SMClosure.h"
+#include "MMClosure.h"
+
+namespace Llama {
+
+  /**
+     Diffeomorphism class.  Implements a C^1 mapping from R^M to R^N.
+  */
+  template <class Scalar>
+  class Diffeomorphism : public AbstDiffeomorphism<Scalar> {
+
+  public:
+
+    typedef void (*diffeo_fcn)(const Scalar *, Scalar *);
+    typedef void (*diffeo_jac)(const Scalar *, Scalar *, Index);
+
+  private:
+
+    // Implementation
+    std::string _what;
+    Index _m, _n;
+    diffeo_fcn _f;
+    diffeo_jac _jac;
+
+  public:
+
+    /**
+       Construct a new diffeomorphism object.  The arguments are:
+       1) a string descriptive of the diffeomorphism,
+       2) the routine which implements the diffeomorphism,
+       3) (optional) a routine which calculates the jacobian of the diffeomorphism,
+    */
+    Diffeomorphism (const std::string& what, Index M, Index N, diffeo_fcn f, diffeo_jac j = 0) 
+      : _what(what), _m(M), _n(N), _f(f), _jac(j) { };
+
+    /**
+       Copy constructor
+    */
+    Diffeomorphism (const Diffeomorphism& m) 
+      : _what(m.what()), _m(m._m), _n(m._n), _f(m._f), _jac(m._jac) { };
+
+    /**
+       Copy a Diffeomorphism object.
+    */
+
+    Diffeomorphism& operator = (const Diffeomorphism& x) {
+      _what = x.what();
+      _m = x.nvar();
+      _n = x.neqs();
+      _f = x.func();
+      _jac = x.jacobian();
+      return *this;
+    };
+
+    // Destructor
+    virtual ~Diffeomorphism (void) { };
+
+    /**
+       Information about the diffeomorphism.
+    */
+    const std::string& what (void) const {
+      return this->_what;
+    };
+
+    /**
+       Dimension of source space.
+    */
+    virtual const Index nvar (void) const {
+      return this->_m;
+    };
+
+    /**
+       Dimension of target space.
+    */
+    virtual const Index neqs (void) const {
+      return this->_n;
+    };
+
+    /**
+       Return a pointer to the function implementing the diffeomorphism.
+       This function is of type void (*)(Scalar, const Scalar *, Scalar *) */
+    virtual diffeo_fcn func (void) const {
+      return _f;
+    };
+
+    /**
+       Return a pointer to the function implementing the jacobian of the
+       diffeomorphism.  This function is of type 
+       void (*)(Scalar, const Scalar *, Scalar *, Index) */
+    virtual diffeo_jac jacobian (void) const {
+      if (_jac == 0) 
+	throw LogicError("diffeomorphism jacobian", "no jacobian defined");
+      return _jac;
+    };
+
+    /**
+       Evaluate the diffeomorphism at point x.  Store the result in y.
+       It is assumed that x & y are of the appropriate size.  */
+    virtual void operator () (Matrix<Scalar> *y, const Matrix<Scalar>& x) const {
+      (*_f)(x.data(), y->data());
+    }
+
+    /**
+       Evaluate the diffeomorphism at x.  Create a new vector to hold
+       the result.  */
+    virtual Matrix<Scalar> * operator () (const Matrix<Scalar>& x) const {
+      Matrix<Scalar> *y = new Matrix<Scalar>(this->neqs());
+      (*this)(y, x);
+      return y;
+    };
+
+    /**
+       Evaluate the jacobian of the diffeomorphism.  Store the result in
+       matrix df (assumed to be of the appropriate size and shape.  */
+    virtual void operator () (Matrix<Scalar> *df, const Matrix<Scalar>& x, 
+			      const Matrix<Index>& i) const {
+      try {
+	for (Index j = 0; j < i.size(); j++)
+	  (*_jac)(x.data(), &(*df)(0,j), i(j));
+      } catch (Exception e) {
+	std::cerr << e;
+	throw Exception("diffeomorphism jacobian evaluation");
+      }
+    };
+
+    /**
+       Evaluate the jacobian of the diffeomorphism.  Create a new matrix
+       to hold the result.  */
+    virtual Matrix<Scalar> * operator () (const Matrix<Scalar>& x, 
+					  const Matrix<Index>& i) const {
+      Matrix<Scalar> *df = new Matrix<Scalar>(this->neqs(), i.size());
+      (*this)(df, x, i);
+      return df;
+    };
+
+  };
+
+}
+
+#endif
+</pre>
+<HR>
+	<table>
+	<tr><td><small>Generated by: king on larix.tiem.utk.edu on Tue Jun 29 10:55:51 2004, using kdoc 2.0a54.</small></td></tr>
+	</table>
+</BODY>
+</HTML>

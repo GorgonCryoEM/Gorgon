@@ -1,0 +1,295 @@
+2003-05-23  Aaron A. King  <king@quercus.tiem.utk.edu>
+
+	* llama.spec, TODO: *** empty log message ***
+
+	* Makefile.in: namespace support added
+
+2003-05-17  Aaron A. King  <king@quercus.tiem.utk.edu>
+
+	* Makefile: ChangeLog support
+
+	* llama.spec, VERSION, Makefile.in: version 3.2.9
+
+	* Makefile: added URL of llama website
+
+2003-05-17  Aaron A. King  <king@quercus.tiem.utk.edu>
+
+	* Makefile: ChangeLog support
+
+	* llama.spec, VERSION, Makefile.in: version 3.2.9
+
+	* Makefile: added URL of llama website
+
+2003-05-17  Aaron A. King  <king@quercus.tiem.utk.edu>
+
+	* Makefile: ChangeLog support
+
+	* llama.spec, VERSION, Makefile.in: version 3.2.9
+
+	* Makefile: added URL of llama website
+
+2003-05-17  Aaron King  <king@nyssa.localdomain>
+
+	* Makefile: ChangeLog support
+
+	* llama.spec, VERSION, Makefile.in: version 3.2.9
+
+	* Makefile: added URL of llama website
+
+2003-05-04  Aaron King  <king@nyssa.localdomain>
+
+	* TODO, ChangeLog: New file.
+
+	* llama.spec: *** empty log message ***
+
+2003-05-04  Aaron King  <king@nyssa.localdomain>
+
+	* TODO, ChangeLog: New file.
+
+	* llama.spec: *** empty log message ***
+
+2003-04-15  Aaron King  <king@nyssa.localdomain>
+
+	* llama.spec: *** empty log message ***
+
+2003-04-14  Aaron King  <king@nyssa.localdomain>
+
+	* configure.in: *** empty log message ***
+
+	* COPYING, NEWS: New file.
+
+	* Makefile, Makefile.in, configure.in, llama.spec, VERSION:
+	*** empty log message ***
+
+	* AUTHORS: New file.
+
+2003-02-27  Aaron King  <king@nyssa.localdomain>
+
+	* Makefile, VERSION, Makefile.in, INSTALL: *** empty log message ***
+
+	* DISCLAIMER: New file.
+
+	* Makefile.in: *** empty log message ***
+
+2003-02-26  Aaron King  <king@nyssa.localdomain>
+
+	* Makefile, Makefile.in, llama.spec: *** empty log message ***
+
+2003-02-25  Aaron King  <king@nyssa.localdomain>
+
+	* ltmain.sh, aclocal.m4, config.guess, config.sub: New file.
+
+2002-12-24  Aaron King  <king@nyssa.localdomain>
+
+	* llama.spec: 3.2.7
+
+2002-12-18  Aaron King  <king@nyssa.localdomain>
+
+	* Makefile.in: *** empty log message ***
+
+2002-12-17  Aaron King  <king@nyssa.localdomain>
+
+	* VERSION: *** empty log message ***
+
+	* Makefile.in: fixed for g++-3.2
+
+2002-04-03  aking  <aking@nyssa.localdomain>
+
+	* Makefile, llama.spec: *** empty log message ***
+
+2002-04-02  aking  <aking@nyssa.localdomain>
+
+	* Makefile.in, llama.spec: *** empty log message ***
+
+	* Makefile.in: experimental support for libtool
+
+	* VERSION: *** empty log message ***
+
+2001-12-18  aking  <aking@nyssa.localdomain>
+
+	* Makefile: *** empty log message ***
+
+	* llama.spec: New file.
+
+	* Makefile.in, VERSION: *** empty log message ***
+
+2001-03-28  aking  <aking@nyssa.localdomain>
+
+	* VERSION, Makefile: *** empty log message ***
+
+2001-03-15  aking  <aking@nyssa.localdomain>
+
+	* INSTALL: *** empty log message ***
+
+2001-03-14  aking  <aking@nyssa.localdomain>
+
+	* install.html: New file.
+
+2001-02-27  aking  <aking@nyssa.localdomain>
+
+	* VERSION: *** empty log message ***
+
+2001-02-12  aking  <aking@nyssa.localdomain>
+
+	* VERSION: *** empty log message ***
+
+	* llama2.gif: New file.
+
+	* Makefile: added logo
+
+2000-10-19  aking  <aking@nyssa.localdomain>
+
+	* Makefile.in, VERSION, Makefile: *** empty log message ***
+
+2000-09-29  aking  <aking@nyssa.localdomain>
+
+	* VERSION, Makefile.in, Makefile: new simplified class hierarchy
+
+	* VERSION: *** empty log message ***
+
+2000-09-14  aking  <aking@nyssa.localdomain>
+
+	* VERSION: fourier transforms
+
+	* Makefile: *** empty log message ***
+
+2000-09-06  aking  <aking@nyssa.localdomain>
+
+	* Makefile.in, configure.in: *** empty log message ***
+
+	* configure.in: added fftw
+
+2000-08-08  aking  <aking@nyssa.localdomain>
+
+	* VERSION: *** empty log message ***
+
+2000-08-07  aking  <aking@nyssa.localdomain>
+
+	* Makefile.in, VERSION, Makefile: *** empty log message ***
+
+2000-06-09  aking  <aking@nyssa.localdomain>
+
+	* VERSION: *** empty log message ***
+
+2000-06-08  aking  <aking@nyssa.localdomain>
+
+	* Makefile.in: *** empty log message ***
+
+2000-06-07  aking  <aking@nyssa.localdomain>
+
+	* VERSION, Makefile, Makefile.in: *** empty log message ***
+
+2000-06-06  aking  <aking@nyssa.localdomain>
+
+	* VERSION, Makefile.in, Makefile: *** empty log message ***
+
+2000-06-05  aking  <aking@nyssa.localdomain>
+
+	* Makefile, Makefile.in, VERSION: *** empty log message ***
+
+2000-06-04  aking  <aking@nyssa.localdomain>
+
+	* Makefile.in, Makefile: *** empty log message ***
+
+2000-06-03  aking  <aking@nyssa.localdomain>
+
+	* Makefile.in, Makefile: *** empty log message ***
+
+2000-06-02  aking  <aking@nyssa.localdomain>
+
+	* VERSION, Makefile.in, Makefile: *** empty log message ***
+
+2000-05-31  aking  <aking@nyssa.localdomain>
+
+	* VERSION, Makefile, Makefile.in: *** empty log message ***
+
+2000-05-24  aking  <aking@nyssa.localdomain>
+
+	* VERSION, configure.in: *** empty log message ***
+
+2000-05-23  aking  <aking@nyssa.localdomain>
+
+	* Makefile.in, Makefile, VERSION: *** empty log message ***
+
+2000-05-19  aking  <aking@nyssa.localdomain>
+
+	* VERSION: *** empty log message ***
+
+2000-05-18  aking  <aking@nyssa.localdomain>
+
+	* VERSION, Makefile, Makefile.in: *** empty log message ***
+
+2000-05-17  aking  <aking@nyssa.localdomain>
+
+	* VERSION, Makefile: *** empty log message ***
+
+2000-05-16  aking  <aking@nyssa.localdomain>
+
+	* Makefile.in, Makefile, VERSION: *** empty log message ***
+
+2000-05-15  aking  <aking@nyssa.localdomain>
+
+	* Makefile, VERSION: *** empty log message ***
+
+2000-05-13  aking  <aking@nyssa.localdomain>
+
+	* VERSION, Makefile, Makefile.in: *** empty log message ***
+
+2000-05-12  aking  <aking@nyssa.localdomain>
+
+	* VERSION, Makefile: *** empty log message ***
+
+2000-05-11  aking  <aking@nyssa.localdomain>
+
+	* Makefile.in, Makefile, VERSION: *** empty log message ***
+
+2000-05-10  aking  <aking@nyssa.localdomain>
+
+	* Makefile.in, INSTALL, Makefile: *** empty log message ***
+
+	* install-sh, Makefile.in, README, VERSION, configure.in, GPL, INSTALL:
+	New file.
+
+2000-05-09  aking  <aking@nyssa.localdomain>
+
+	* Makefile: *** empty log message ***
+
+2000-05-08  aking  <aking@nyssa.localdomain>
+
+	* Makefile: *** empty log message ***
+
+2000-05-04  aking  <aking@nyssa.localdomain>
+
+	* Makefile: *** empty log message ***
+
+2000-05-03  aking  <aking@nyssa.localdomain>
+
+	* Makefile: *** empty log message ***
+
+2000-05-01  aking  <aking@nyssa.localdomain>
+
+	* Makefile: *** empty log message ***
+
+2000-04-28  aking  <aking@nyssa.localdomain>
+
+	* Makefile: *** empty log message ***
+
+2000-04-27  aking  <aking@nyssa.localdomain>
+
+	* Makefile: *** empty log message ***
+
+2000-03-22  aking  <aking@nyssa.localdomain>
+
+	* Makefile: add f77fun.h
+
+	* Makefile: new naming convention for header files
+
+2000-03-20  aking  <aking@nyssa.localdomain>
+
+	* Makefile: Added LlamaMatrix.h
+
+	* Makefile: tinker tinker
+
+2000-03-18  aking  <aking@nyssa.localdomain>
+
+	* Makefile: New file.

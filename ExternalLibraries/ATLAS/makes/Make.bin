@@ -1,0 +1,2595 @@
+include Make.inc
+
+scalf = $(mflop_l1)
+
+pre=j
+nb = 88
+dmmobj = $(GMMdir)/ATL_dbig_mm.o $(GMMdir)/ATL_dsmall_mm.o
+smmobj = $(GMMdir)/ATL_sbig_mm.o $(GMMdir)/ATL_ssmall_mm.o
+cmmobj = $(GMMdir)/ATL_cbig_mm.o $(GMMdir)/ATL_csmall_mm.o
+zmmobj = $(GMMdir)/ATL_zbig_mm.o $(GMMdir)/ATL_zsmall_mm.o
+
+$(SYSdir)/ATL_Xwalltime.o :
+	cd $(SYSdir) ; $(MAKE) ATL_Xwalltime.o
+xatlas_waitfile : atlas_waitfile.o $(SYSdir)/ATL_Xwalltime.o
+	$(XCC) $(XCCFLAGS) -o $@ atlas_waitfile.o $(SYSdir)/ATL_Xwalltime.o
+atlas_waitfile.o : ../atlas_waitfile.c
+	$(XCC) $(XCCFLAGS) -c ../atlas_waitfile.c
+xatlas_install : xatlas_tee atlas_install.o 
+	$(XCC) $(XCCFLAGS) -o $@ atlas_install.o
+atlas_install.o : ../atlas_install.c
+	$(XCC) $(XCCFLAGS) -c ../atlas_install.c
+
+xatlas_tee     : atlas_tee.o 
+	$(XCC) $(XCCFLAGS) -o $@ atlas_tee.o
+atlas_tee.o : ../atlas_tee.c
+	$(XCC) $(XCCFLAGS) -c ../atlas_tee.c
+xccobj  : ../ccobj.c
+	$(XCC) $(XCCFLAGS) -o $@ ../ccobj.c -DTOPDIR=$(TOPdir)
+xsubstr : ../substr.c
+	$(XCC) $(XCCFLAGS) -o $@ ../substr.c
+
+
+IBuildRef:
+	cd $(TOPdir)/src/blas/reference/level3 ; $(MAKE) $(pre)lib
+	cd $(TOPdir)/src/blas/reference/level2 ; $(MAKE) $(pre)lib
+
+
+IBuildPtlibs:
+	- rm -f $(INCdir)/atlas_pthreads.h
+	cd $(TOPdir)/src/auxil/$(ARCH) ; $(MAKE) ptlib
+	cd $(TOPdir)/src/pthreads/blas/level3/$(ARCH) ; $(MAKE) lib
+	cd $(TOPdir)/src/pthreads/misc/$(ARCH) ; $(MAKE) lib
+	cd $(TOPdir)/interfaces/blas/C/src/$(ARCH) ; $(MAKE) ptlib
+	- cd $(TOPdir)/interfaces/blas/F77/src/$(ARCH) ; $(MAKE) ptlib
+
+IBuildLibs:
+	cd $(TOPdir)/src/auxil/$(ARCH) ; $(MAKE) lib
+	cd $(TOPdir)/src/blas/gemm/$(ARCH) ; $(MAKE) lib
+	cd $(TOPdir)/src/blas/gemv/$(ARCH) ; $(MAKE) lib
+	cd $(TOPdir)/src/blas/ger/$(ARCH) ; $(MAKE) lib
+	cd $(TOPdir)/src/blas/level1/$(ARCH) ; $(MAKE) lib
+	cd $(TOPdir)/src/blas/level2/$(ARCH) ; $(MAKE) lib
+	cd $(TOPdir)/src/blas/level3/$(ARCH) ; $(MAKE) lib
+	cd $(TOPdir)/src/blas/pklevel3/$(ARCH) ; $(MAKE) lib
+	cd $(TOPdir)/src/blas/reference/level3/$(ARCH) ; $(MAKE) lib
+	cd $(TOPdir)/src/lapack/$(ARCH) ; $(MAKE) lib
+	cd $(TOPdir)/interfaces/blas/C/src/$(ARCH) ; $(MAKE) all
+	- cd $(TOPdir)/interfaces/blas/F77/src/$(ARCH) ; $(MAKE) lib
+	cd $(TOPdir)/interfaces/lapack/C/src/$(ARCH) ; $(MAKE) lib
+	- cd $(TOPdir)/interfaces/lapack/F77/src/$(ARCH) ; $(MAKE) lib
+
+error_report :
+	cd ../.. ; $(MAKE) error_report arch=$(ARCH)
+IBozoL1:
+	cd $(TOPdir)/CONFIG/ARCHS ; $(GUNZIP) -c BOZOL1.tgz | tar xvf -
+	$(MAKE) IL1Defaults defdir=$(TOPdir)/CONFIG/ARCHS/BOZOL1
+
+IL1Defaults:
+	- cp -f $(defdir)/?SWAP_SUMM $(L1Tdir)/res/.
+	- cp -f $(defdir)/?SET_SUMM $(L1Tdir)/res/.
+	- cp -f $(defdir)/?SCAL_SUMM $(L1Tdir)/res/.
+	- cp -f $(defdir)/?ROT_SUMM $(L1Tdir)/res/.
+	- cp -f $(defdir)/?NRM2_SUMM $(L1Tdir)/res/.
+	- cp -f $(defdir)/?IAMAX_SUMM $(L1Tdir)/res/.
+	- cp -f $(defdir)/?DOT_SUMM $(L1Tdir)/res/.
+	- cp -f $(defdir)/?CPSC_SUMM $(L1Tdir)/res/.
+	- cp -f $(defdir)/?COPY_SUMM $(L1Tdir)/res/.
+	- cp -f $(defdir)/?AXPY_SUMM $(L1Tdir)/res/.
+	- cp -f $(defdir)/?AXPBY_SUMM $(L1Tdir)/res/.
+	- cp -f $(defdir)/?ASUM_SUMM $(L1Tdir)/res/.
+	- cp -f $(defdir)/?DOTC_SUMM $(L1Tdir)/res/.
+ISetDefaults :
+	- cp -f $(mmdir)/?Xover.h $(INCdir)/.
+	- cp -f $(mmdir)/atlas_cacheedge.h $(INCdir)/.
+	- cp -f $(mmdir)/* $(MMTdir)/res/.
+	- cp -f $(defdir)/?MULADD $(SYSdir)/res/.
+	- cp -f $(defdir)/L1CacheSize $(SYSdir)/res/.
+	- cp -f $(defdir)/?R1RES $(R1Tdir)/res/.
+	- cp -f $(defdir)/?MVRES $(MVTdir)/res/.
+	$(MAKE) IL1Defaults defdir=$(defdir)
+
+IStage1:
+	- cd $(AUXdir) ; $(MAKE) -s ATL_buildinfo.o
+	cd $(AUXdir) ; $(MAKE) lib
+	cd $(TSTdir) ; $(MAKE) lib
+	$(MAKE) INSTALL_LOG/L1CacheSize
+	$(MAKE) INSTALL_LOG/sMULADD pre=s
+	$(MAKE) INSTALL_LOG/dMULADD pre=d
+
+IRunMADef :
+	cd $(SYSdir) ; $(MAKE) RunMADef pre=$(pre)
+
+IRunMMDef :
+	cd $(MMTdir) ; $(MAKE) RunMMDef pre=$(pre)
+	cd $(MMTdir) ; ./xemit_mm  -p $(pre) -R -2
+	cd $(MMTdir) ; $(MAKE) install pre=$(pre)
+IKillL1 : force_build
+	rm -f $(SYSdir)/res/L1CacheSize INSTALL_LOG/L1CacheSize
+
+$(SYSdir)/res/L1CacheSize:
+	cd $(SYSdir) ; $(MAKE) res/L1CacheSize
+
+INSTALL_LOG/L1CacheSize : $(SYSdir)/res/L1CacheSize
+	cp $(SYSdir)/res/L1CacheSize INSTALL_LOG/.
+
+IL1Override : force_build
+	rm -f $(SYSdir)/res/L1CacheSize
+	cp $(tnam) $(SYSdir)/res/L1CacheSize
+	rm -f $(tnam)
+
+IKillMuladd : force_build
+	rm -f $(SYSdir)/res/$(pre)MULADD $(SYSdir)/res/$(pre)muladd* \
+              INSTALL_LOG/$(pre)MULADD
+
+$(SYSdir)/res/$(pre)MULADD :
+	cd $(SYSdir) ; $(MAKE) res/$(pre)MULADD pre=$(pre) maxlat=6 mflop=200
+
+INSTALL_LOG/$(pre)MULADD :  $(SYSdir)/res/$(pre)MULADD
+	cp $(SYSdir)/res/$(pre)MULADD INSTALL_LOG/.
+
+$(INCdir)atlas_$(pre)sysinfo.h :
+	cd $(SYSdir) ; $(MAKE) $(INCdir)/atlas_$(pre)sysinfo.h
+
+INSTALL_LOG/atlas_$(pre)sysinfo.h : $(INCdir)/res/atlas_$(pre)sysinfo.h
+	cp $(INCdir)/atlas_$(pre)sysinfo.h INSTALL_LOG/.
+
+IKillMMres: force_build
+	rm -f $(MMTdir)/res/* INSTALL_LOG/$(pre)MMRES
+
+
+Irbob :
+	rm -f $(tnam)
+	cd $(MMTdir) ; $(MAKE) rbob pre=$(pre) muladd=$(muladd) ldc=$(nb) \
+                                 nb=$(nb) mu=$(mu) nu=$(nu) lat=$(lat) ku=$(ku)
+	cp $(MMTdir)/res/C$(pre)NB$(nb)_$(mu)x$(nu)x$(ku)_$(muladd)-$(lat).mflop $(tnam)
+	echo $(muladd) $(lat) $(nb) $(mu) $(nu) $(ku) >> $(tnam)
+Icbob :
+	rm -f $(tnam)
+	cd $(MMTdir) ; $(MAKE) cbob pre=$(pre) muladd=$(muladd) ldc=$(nb) \
+                                 nb=$(nb) mu=$(mu) nu=$(nu) lat=$(lat) ku=$(ku)
+	cp $(MMTdir)/res/C$(pre)NB$(nb)_$(mu)x$(nu)x$(ku)_$(muladd)-$(lat).mflop $(tnam)
+	echo $(muladd) $(lat) $(nb) $(mu) $(nu) $(ku) >> $(tnam)
+
+Imakefch:
+	rm -f $(INCdir)/atlas_$(pre)sysinfo.h
+	cp $(tnam) $(INCdir)/atlas_$(pre)sysinfo.h
+	rm -f $(tnam)
+
+INSTALL_LOG/smmstandard : 
+	cd $(MMTdir) ; $(MAKE) rready $(sATLres)
+	cd $(MMTdir) ; $(MAKE) install pre=s typ=SREAL
+	$(MAKE) Irbob tnam=INSTALL_LOG/smmstandard $(sATLres)
+INSTALL_LOG/dmmstandard : 
+	cd $(MMTdir) ; $(MAKE) rready $(dATLres)
+	cd $(MMTdir) ; $(MAKE) install pre=d typ=DREAL
+	$(MAKE) Irbob tnam=INSTALL_LOG/dmmstandard $(dATLres)
+INSTALL_LOG/cmmstandard : 
+	cd $(MMTdir) ; $(MAKE) cready $(cATLres)
+	cd $(MMTdir) ; $(MAKE) install pre=c typ=SCPLX
+	$(MAKE) Icbob tnam=INSTALL_LOG/cmmstandard $(cATLres)
+INSTALL_LOG/zmmstandard : 
+	cd $(MMTdir) ; $(MAKE) cready $(zATLres)
+	cd $(MMTdir) ; $(MAKE) install pre=z typ=DCPLX
+	$(MAKE) Icbob tnam=INSTALL_LOG/zmmstandard $(zATLres)
+
+$(L3Tdir)/res/atlas_$(pre)trsmXover.h:
+	cd $(L3Tdir) ; $(MAKE) res/atlas_$(pre)trsmXover.h pre=$(pre)
+
+INSTALL_LOG/atlas_$(pre)trsmXover.h : $(L3Tdir)/res/atlas_$(pre)trsmXover.h
+	cp $(INCdir)/atlas_$(pre)trsmXover.h INSTALL_LOG/.
+
+$(MMTdir)/res/$(pre)bestNN_0x0x0 :
+	cd $(MMTdir) ; $(MAKE) res/$(pre)bestNN_0x0x0 pre=$(pre) bnb=$(nb)
+INSTALL_LOG/$(pre)bestNN_0x0x0 : $(MMTdir)/res/$(pre)bestNN_0x0x0
+	cp $(MMTdir)/res/$(pre)bestNN_0x0x0 INSTALL_LOG/.
+$(MMTdir)/res/$(pre)bestNN_0x0x$(nb) :
+	cd $(MMTdir) ; $(MAKE) res/$(pre)bestNN_0x0x$(nb) pre=$(pre) bnb=$(nb)
+INSTALL_LOG/$(pre)bestNN_0x0x$(nb) : $(MMTdir)/res/$(pre)bestNN_0x0x$(nb)
+	cp $(MMTdir)/res/$(pre)bestNN_0x0x$(nb) INSTALL_LOG/.
+$(MMTdir)/res/$(pre)bestNN_$(nb)x$(nb)x$(nb) :
+	cd $(MMTdir) ; $(MAKE) res/$(pre)bestNN_$(nb)x$(nb)x$(nb) pre=$(pre) bnb=$(nb)
+INSTALL_LOG/$(pre)bestNN_$(nb)x$(nb)x$(nb) : $(MMTdir)/res/$(pre)bestNN_$(nb)x$(nb)x$(nb)
+	cp $(MMTdir)/res/$(pre)bestNN_$(nb)x$(nb)x$(nb) INSTALL_LOG/.
+$(MMTdir)/res/$(pre)bestNT_0x0x0 :
+	cd $(MMTdir) ; $(MAKE) res/$(pre)bestNT_0x0x0 pre=$(pre) bnb=$(nb)
+INSTALL_LOG/$(pre)bestNT_0x0x0 : $(MMTdir)/res/$(pre)bestNT_0x0x0
+	cp $(MMTdir)/res/$(pre)bestNT_0x0x0 INSTALL_LOG/.
+$(MMTdir)/res/$(pre)bestNT_0x0x$(nb) :
+	cd $(MMTdir) ; $(MAKE) res/$(pre)bestNT_0x0x$(nb) pre=$(pre) bnb=$(nb)
+INSTALL_LOG/$(pre)bestNT_0x0x$(nb) : $(MMTdir)/res/$(pre)bestNT_0x0x$(nb)
+	cp $(MMTdir)/res/$(pre)bestNT_0x0x$(nb) INSTALL_LOG/.
+$(MMTdir)/res/$(pre)bestNT_$(nb)x$(nb)x$(nb) :
+	cd $(MMTdir) ; $(MAKE) res/$(pre)bestNT_$(nb)x$(nb)x$(nb) pre=$(pre) bnb=$(nb)
+INSTALL_LOG/$(pre)bestNT_$(nb)x$(nb)x$(nb) : $(MMTdir)/res/$(pre)bestNT_$(nb)x$(nb)x$(nb)
+	cp $(MMTdir)/res/$(pre)bestNT_$(nb)x$(nb)x$(nb) INSTALL_LOG/.
+$(MMTdir)/res/$(pre)bestTN_0x0x0 :
+	cd $(MMTdir) ; $(MAKE) res/$(pre)bestTN_0x0x0 pre=$(pre) bnb=$(nb)
+INSTALL_LOG/$(pre)bestTN_0x0x0 : $(MMTdir)/res/$(pre)bestTN_0x0x0
+	cp $(MMTdir)/res/$(pre)bestTN_0x0x0 INSTALL_LOG/.
+$(MMTdir)/res/$(pre)bestTN_0x0x$(nb) :
+	cd $(MMTdir) ; $(MAKE) res/$(pre)bestTN_0x0x$(nb) pre=$(pre) bnb=$(nb)
+INSTALL_LOG/$(pre)bestTN_0x0x$(nb) : $(MMTdir)/res/$(pre)bestTN_0x0x$(nb)
+	cp $(MMTdir)/res/$(pre)bestTN_0x0x$(nb) INSTALL_LOG/.
+$(MMTdir)/res/$(pre)bestTN_$(nb)x$(nb)x$(nb) :
+	cd $(MMTdir) ; $(MAKE) res/$(pre)bestTN_$(nb)x$(nb)x$(nb) pre=$(pre) bnb=$(nb)
+INSTALL_LOG/$(pre)bestTN_$(nb)x$(nb)x$(nb) : $(MMTdir)/res/$(pre)bestTN_$(nb)x$(nb)x$(nb)
+	cp $(MMTdir)/res/$(pre)bestTN_$(nb)x$(nb)x$(nb) INSTALL_LOG/.
+$(MMTdir)/res/$(pre)bestTT_0x0x0 :
+	cd $(MMTdir) ; $(MAKE) res/$(pre)bestTT_0x0x0 pre=$(pre) bnb=$(nb)
+INSTALL_LOG/$(pre)bestTT_0x0x0 : $(MMTdir)/res/$(pre)bestTT_0x0x0
+	cp $(MMTdir)/res/$(pre)bestTT_0x0x0 INSTALL_LOG/.
+$(MMTdir)/res/$(pre)bestTT_0x0x$(nb) :
+	cd $(MMTdir) ; $(MAKE) res/$(pre)bestTT_0x0x$(nb) pre=$(pre) bnb=$(nb)
+INSTALL_LOG/$(pre)bestTT_0x0x$(nb) : $(MMTdir)/res/$(pre)bestTT_0x0x$(nb)
+	cp $(MMTdir)/res/$(pre)bestTT_0x0x$(nb) INSTALL_LOG/.
+$(MMTdir)/res/$(pre)bestTT_$(nb)x$(nb)x$(nb) :
+	cd $(MMTdir) ; $(MAKE) res/$(pre)bestTT_$(nb)x$(nb)x$(nb) pre=$(pre) bnb=$(nb)
+INSTALL_LOG/$(pre)bestTT_$(nb)x$(nb)x$(nb) : $(MMTdir)/res/$(pre)bestTT_$(nb)x$(nb)x$(nb)
+	cp $(MMTdir)/res/$(pre)bestTT_$(nb)x$(nb)x$(nb) INSTALL_LOG/.
+
+$(R1Tdir)/res/$(pre)R1RES : force_build
+	cd $(R1Tdir) ; $(MAKE) res/$(pre)R1RES pre=$(pre)
+INSTALL_LOG/$(pre)R1RES : $(R1Tdir)/res/$(pre)R1RES
+	cp $(R1Tdir)/res/$(pre)R1RES INSTALL_LOG/.
+
+$(MVTdir)/res/$(pre)MVRES : force_build
+	cd $(MVTdir) ; $(MAKE) res/$(pre)MVRES pre=$(pre)
+INSTALL_LOG/$(pre)MVRES : $(MVTdir)/res/$(pre)MVRES
+	cp $(MVTdir)/res/$(pre)MVRES INSTALL_LOG/.
+
+
+$(MMTdir)/res/$(pre)Xover.h :
+	cd $(MMTdir) ; $(MAKE) res/$(pre)Xover.h pre=$(pre) nb=$(nb)
+INSTALL_LOG/$(pre)Xover.h : $(MMTdir)/res/$(pre)Xover.h
+	cp $(MMTdir)/res/$(pre)Xover.h INSTALL_LOG/.
+$(MMTdir)/res/$(pre)NCNB :
+	cd $(MMTdir) ; $(MAKE) res/$(pre)NCNB pre=$(pre) nb=$(nb)
+INSTALL_LOG/$(pre)NCNB : $(MMTdir)/res/$(pre)NCNB
+	cp $(MMTdir)/res/$(pre)NCNB INSTALL_LOG/.
+$(MMTdir)/res/$(pre)MMRES :
+	cd $(MMTdir) ; $(MAKE) res/$(pre)MMRES pre=$(pre) nb=$(nb)
+INSTALL_LOG/$(pre)MMRES : $(MMTdir)/res/$(pre)MMRES
+	cp $(MMTdir)/res/$(pre)MMRES INSTALL_LOG/.
+
+MMinstall :
+	cd $(MMTdir) ; $(MAKE) $(pre)install
+$(MMTdir)/res/atlas_cachedge.h :
+	cd $(MMTdir) ; $(MAKE) res/atlas_cacheedge.h pre=$(pre)
+INSTALL_LOG/atlas_cacheedge.h : $(MMTdir)/res/atlas_cachedge.h
+	cp $(MMTdir)/res/atlas_cacheedge.h $(INCdir)/.
+	cp $(MMTdir)/res/atlas_cacheedge.h INSTALL_LOG/.
+
+Il3lib : force_build
+	cd $(L3Bdir) ; $(MAKE) $(pre)lib
+
+auxlib : force_build
+	cd $(AUXdir) ; $(MAKE) lib
+auxlib_pt : force_build
+	cd $(AUXdir) ; $(MAKE) ptlib
+
+xprint_buildinfo : ../print_buildinfo.c
+	$(CC) $(CCFLAGS) -o $@ ../print_buildinfo.c $(ATLASlib)
+xdlp1000: ftime00.o dlp1000.o dlapack dl3lib dl2lib dl1lib dcblas dfblas
+	$(FLINKER) $(FLINKFLAGS) -o $@ dlp1000.o ftime00.o \
+	$(LAPACKlib) $(CBLASlib) $(F77BLASlib) $(ATLASlib) $(LIBS)
+ftime00.o : ../ftime00.c
+	$(CC) -o $@ -c $(CCFLAGS) ../ftime00.c
+dlp1000.o : ../dlp1000.f
+	$(F77) -o $@ -c $(FFLAGS) ../dlp1000.f
+
+sanity_test: 
+	rm -f sanity.out
+	$(MAKE) ssanity_test dsanity_test csanity_test zsanity_test
+ptsanity_test:
+	rm -f ptsanity.out
+	$(MAKE) ssanity_test_pt dsanity_test_pt csanity_test_pt zsanity_test_pt
+
+xsl1blastst_pt : sl1blastst_pt.o sl1lib_pt ststlib_pt
+	$(FLINKER) $(FCLINKFLAGS) -o $@ sl1blastst_pt.o \
+                   $(TESTlib) $(BLASlib) $(ATLASlib) $(LIBS)
+xsl2blastst_pt : sl2blastst_pt.o sl2lib_pt ststlib_pt
+	$(FLINKER) $(FCLINKFLAGS) -o $@ sl2blastst_pt.o \
+                   $(TESTlib) $(BLASlib) $(ATLASlib) $(LIBS)
+xsl3blastst_pt : $(INCdir)/atlas_type.h sl3blastst_pt.o \
+                   ststlib_pt sl3lib_pt
+	$(FLINKER) $(FCLINKFLAGS) -o $@ sl3blastst_pt.o \
+                   $(TESTlib) $(BLASlib) $(ATLASlib) $(LIBS)
+ssanity_test_pt: xsinvtst_pt xsslvtst_pt xstrtritst_pt xsuumtst_pt
+	$(ATLRUN) $(BINdir) xsslvtst_pt -n 167 -r 83 -O 2 c r \
+                  >> $(BINdir)/ptsanity.out
+	$(ATLRUN) $(BINdir) xsslvtst_pt -n 167 -r 83 -O 2 c r -U 2 u l \
+                  >> $(BINdir)/ptsanity.out
+	$(ATLRUN) $(BINdir) xstrtritst_pt -n 167 -O 2 c r -U 2 u l \
+                  -D 2 n u >> $(BINdir)/ptsanity.out
+	$(ATLRUN) $(BINdir) xsuumtst_pt -n 167 -O 2 c r -U 2 u l \
+                  >> $(BINdir)/ptsanity.out
+xsinv_all_pt : xsinvtst_pt xsinvtstF_pt \
+                   xsinvtst_sys_pt xsinvtstF_sys_pt
+
+xsinvtst_pt : sinvtst_pt.o slapack ststlib_pt sl3lib_pt \
+                  sl2lib_pt sl1lib_pt scblas_pt
+	rm -f sinvtst_pt.o
+	$(MAKE) sinvtst_pt.o
+	$(FLINKER) $(FCLINKFLAGS) -o $@ sinvtst_pt.o \
+                   $(TESTlib) $(LAPACKlib) $(PTCBLASlib) $(ATLASlib) $(LIBS)
+xsinvtst_sys_pt : sinvtst_pt.o slapack \
+                      ststlib sl3lib_pt sl2lib_pt sl1lib_pt \
+                      scblas_pt
+	rm -f sinvtst_pt.o
+	$(MAKE) sinvtst_pt.o
+	$(FLINKER) $(FCLINKFLAGS) -o $@ sinvtst_pt.o \
+                   $(TESTlib) $(LAPACKlib) $(BLASlib) \
+                   $(PTCBLASlib) $(ATLASlib) $(LIBS)
+xsinvtstF_pt : slapack ststlib_pt sl3lib_pt sl2lib_pt \
+                   sl1lib_pt scblas_pt sfblas_pt
+	rm -f sinvtst_pt.o
+	$(MAKE) sinvtst_pt.o intf=-DTimeF77
+	$(FLINKER) $(FCLINKFLAGS) -o $@ sinvtst_pt.o \
+                   $(TESTlib) $(FLAPACKlib) $(LAPACKlib)  \
+                   $(PTF77BLASlib) $(PTCBLASlib) $(ATLASlib) $(LIBS)
+xsinvtstF_sys_pt : slapack \
+                   ststlib_pt sl3lib_pt sl2lib_pt sl1lib_pt \
+                   scblas_pt sfblas_pt
+	rm -f sinvtst_pt.o
+	$(MAKE) sinvtst_pt.o intf=-DTimeF77
+	$(FLINKER) $(FCLINKFLAGS) -o $@ sinvtst_pt.o \
+                   $(TESTlib) $(FLAPACKlib) $(LAPACKlib)  $(BLASlib) \
+                   $(PTF77BLASlib) $(PTCBLASlib) $(ATLASlib) $(LIBS)
+
+xstrtri_all_pt : xstrtritst_pt xstrtritstF_pt \
+                   xstrtritst_sys_pt xstrtritstF_sys_pt
+
+xstrtritst_pt : strtritst_pt.o slapack ststlib_pt sl3lib_pt \
+                  sl2lib_pt sl1lib_pt scblas_pt
+	rm -f strtritst_pt.o
+	$(MAKE) strtritst_pt.o
+	$(FLINKER) $(FCLINKFLAGS) -o $@ strtritst_pt.o \
+                   $(TESTlib) $(LAPACKlib) $(PTCBLASlib) $(ATLASlib) $(LIBS)
+xstrtritst_sys_pt : strtritst_pt.o slapack \
+                      ststlib sl3lib_pt sl2lib_pt sl1lib_pt \
+                      scblas_pt
+	rm -f strtritst_pt.o
+	$(MAKE) strtritst_pt.o
+	$(FLINKER) $(FCLINKFLAGS) -o $@ strtritst_pt.o \
+                   $(TESTlib) $(LAPACKlib) $(BLASlib) \
+                   $(PTCBLASlib) $(ATLASlib) $(LIBS)
+xstrtritstF_pt : slapack ststlib_pt sl3lib_pt sl2lib_pt \
+                   sl1lib_pt scblas_pt sfblas_pt
+	rm -f strtritst_pt.o
+	$(MAKE) strtritst_pt.o intf=-DTimeF77
+	$(FLINKER) $(FCLINKFLAGS) -o $@ strtritst_pt.o \
+                   $(TESTlib) $(FLAPACKlib) $(LAPACKlib)  \
+                   $(PTF77BLASlib) $(PTCBLASlib) $(ATLASlib) $(LIBS)
+xstrtritstF_sys_pt : slapack \
+                   ststlib_pt sl3lib_pt sl2lib_pt sl1lib_pt \
+                   scblas_pt sfblas_pt
+	rm -f strtritst_pt.o
+	$(MAKE) strtritst_pt.o intf=-DTimeF77
+	$(FLINKER) $(FCLINKFLAGS) -o $@ strtritst_pt.o \
+                   $(TESTlib) $(FLAPACKlib) $(LAPACKlib)  $(BLASlib) \
+                   $(PTF77BLASlib) $(PTCBLASlib) $(ATLASlib) $(LIBS)
+
+xsuum_all_pt : xsuumtst_pt xsuumtstF_pt \
+                   xsuumtst_sys_pt xsuumtstF_sys_pt
+
+xsuumtst_pt : suumtst_pt.o slapack ststlib_pt sl3lib_pt \
+                  sl2lib_pt sl1lib_pt scblas_pt
+	rm -f suumtst_pt.o
+	$(MAKE) suumtst_pt.o
+	$(FLINKER) $(FCLINKFLAGS) -o $@ suumtst_pt.o \
+                   $(TESTlib) $(LAPACKlib) $(PTCBLASlib) $(ATLASlib) $(LIBS)
+xsuumtst_sys_pt : suumtst_pt.o slapack \
+                      ststlib sl3lib_pt sl2lib_pt sl1lib_pt \
+                      scblas_pt
+	rm -f suumtst_pt.o
+	$(MAKE) suumtst_pt.o
+	$(FLINKER) $(FCLINKFLAGS) -o $@ suumtst_pt.o \
+                   $(TESTlib) $(LAPACKlib) $(BLASlib) \
+                   $(PTCBLASlib) $(ATLASlib) $(LIBS)
+xsuumtstF_pt : slapack ststlib_pt sl3lib_pt sl2lib_pt \
+                   sl1lib_pt scblas_pt sfblas_pt
+	rm -f suumtst_pt.o
+	$(MAKE) suumtst_pt.o intf=-DTimeF77
+	$(FLINKER) $(FCLINKFLAGS) -o $@ suumtst_pt.o \
+                   $(TESTlib) $(FLAPACKlib) $(LAPACKlib)  \
+                   $(PTF77BLASlib) $(PTCBLASlib) $(ATLASlib) $(LIBS)
+xsuumtstF_sys_pt : slapack \
+                   ststlib_pt sl3lib_pt sl2lib_pt sl1lib_pt \
+                   scblas_pt sfblas_pt
+	rm -f suumtst_pt.o
+	$(MAKE) suumtst_pt.o intf=-DTimeF77
+	$(FLINKER) $(FCLINKFLAGS) -o $@ suumtst_pt.o \
+                   $(TESTlib) $(FLAPACKlib) $(LAPACKlib)  $(BLASlib) \
+                   $(PTF77BLASlib) $(PTCBLASlib) $(ATLASlib) $(LIBS)
+
+xsslv_all_pt : xsslvtst_pt xsslvtstF_pt \
+                   xsslvtst_sys_pt xsslvtstF_sys_pt
+
+xsslvtst_pt : sslvtst_pt.o slapack ststlib_pt sl3lib_pt \
+                  sl2lib_pt sl1lib_pt scblas_pt
+	rm -f sslvtst_pt.o
+	$(MAKE) sslvtst_pt.o
+	$(FLINKER) $(FCLINKFLAGS) -o $@ sslvtst_pt.o \
+                   $(TESTlib) $(LAPACKlib) $(PTCBLASlib) $(ATLASlib) $(LIBS)
+xsslvtst_sys_pt : sslvtst_pt.o slapack \
+                      ststlib sl3lib_pt sl2lib_pt sl1lib_pt \
+                      scblas_pt
+	rm -f sslvtst_pt.o
+	$(MAKE) sslvtst_pt.o
+	$(FLINKER) $(FCLINKFLAGS) -o $@ sslvtst_pt.o \
+                   $(TESTlib) $(LAPACKlib) $(BLASlib) \
+                   $(PTCBLASlib) $(ATLASlib) $(LIBS)
+xsslvtstF_pt : slapack ststlib_pt sl3lib_pt sl2lib_pt \
+                   sl1lib_pt scblas_pt sfblas_pt
+	rm -f sslvtst_pt.o
+	$(MAKE) sslvtst_pt.o intf=-DTimeF77
+	$(FLINKER) $(FCLINKFLAGS) -o $@ sslvtst_pt.o \
+                   $(TESTlib) $(FLAPACKlib) $(LAPACKlib)  \
+                   $(PTF77BLASlib) $(PTCBLASlib) $(ATLASlib) $(LIBS)
+xsslvtstF_sys_pt : slapack \
+                   ststlib_pt sl3lib_pt sl2lib_pt sl1lib_pt \
+                   scblas_pt sfblas_pt
+	rm -f sslvtst_pt.o
+	$(MAKE) sslvtst_pt.o intf=-DTimeF77
+	$(FLINKER) $(FCLINKFLAGS) -o $@ sslvtst_pt.o \
+                   $(TESTlib) $(FLAPACKlib) $(LAPACKlib)  $(BLASlib) \
+                   $(PTF77BLASlib) $(PTCBLASlib) $(ATLASlib) $(LIBS)
+
+xsllt_all_pt : xsllttst_pt xsllttstF_pt \
+                   xsllttst_sys_pt xsllttstF_sys_pt
+
+xsllttst_pt : sllttst_pt.o slapack ststlib_pt sl3lib_pt \
+                  sl2lib_pt sl1lib_pt scblas_pt
+	rm -f sllttst_pt.o
+	$(MAKE) sllttst_pt.o
+	$(FLINKER) $(FCLINKFLAGS) -o $@ sllttst_pt.o \
+                   $(TESTlib) $(LAPACKlib) $(PTCBLASlib) $(ATLASlib) $(LIBS)
+xsllttst_sys_pt : sllttst_pt.o slapack \
+                      ststlib sl3lib_pt sl2lib_pt sl1lib_pt \
+                      scblas_pt
+	rm -f sllttst_pt.o
+	$(MAKE) sllttst_pt.o
+	$(FLINKER) $(FCLINKFLAGS) -o $@ sllttst_pt.o \
+                   $(TESTlib) $(LAPACKlib) $(BLASlib) \
+                   $(PTCBLASlib) $(ATLASlib) $(LIBS)
+xsllttstF_pt : slapack ststlib_pt sl3lib_pt sl2lib_pt \
+                   sl1lib_pt scblas_pt sfblas_pt
+	rm -f sllttst_pt.o
+	$(MAKE) sllttst_pt.o intf=-DTimeF77
+	$(FLINKER) $(FCLINKFLAGS) -o $@ sllttst_pt.o \
+                   $(TESTlib) $(FLAPACKlib) $(LAPACKlib)  \
+                   $(PTF77BLASlib) $(PTCBLASlib) $(ATLASlib) $(LIBS)
+xsllttstF_sys_pt : slapack \
+                   ststlib_pt sl3lib_pt sl2lib_pt sl1lib_pt \
+                   scblas_pt sfblas_pt
+	rm -f sllttst_pt.o
+	$(MAKE) sllttst_pt.o intf=-DTimeF77
+	$(FLINKER) $(FCLINKFLAGS) -o $@ sllttst_pt.o \
+                   $(TESTlib) $(FLAPACKlib) $(LAPACKlib)  $(BLASlib) \
+                   $(PTF77BLASlib) $(PTCBLASlib) $(ATLASlib) $(LIBS)
+
+xslu_all_pt : xslutst_pt xslutstF_pt \
+                   xslutst_sys_pt xslutstF_sys_pt
+
+xslutst_pt : slutst_pt.o slapack ststlib_pt sl3lib_pt \
+                  sl2lib_pt sl1lib_pt scblas_pt
+	rm -f slutst_pt.o
+	$(MAKE) slutst_pt.o
+	$(FLINKER) $(FCLINKFLAGS) -o $@ slutst_pt.o \
+                   $(TESTlib) $(LAPACKlib) $(PTCBLASlib) $(ATLASlib) $(LIBS)
+xslutst_sys_pt : slutst_pt.o slapack \
+                      ststlib sl3lib_pt sl2lib_pt sl1lib_pt \
+                      scblas_pt
+	rm -f slutst_pt.o
+	$(MAKE) slutst_pt.o
+	$(FLINKER) $(FCLINKFLAGS) -o $@ slutst_pt.o \
+                   $(TESTlib) $(LAPACKlib) $(BLASlib) \
+                   $(PTCBLASlib) $(ATLASlib) $(LIBS)
+xslutstF_pt : slapack ststlib_pt sl3lib_pt sl2lib_pt \
+                   sl1lib_pt scblas_pt sfblas_pt
+	rm -f slutst_pt.o
+	$(MAKE) slutst_pt.o intf=-DTimeF77
+	$(FLINKER) $(FCLINKFLAGS) -o $@ slutst_pt.o \
+                   $(TESTlib) $(FLAPACKlib) $(LAPACKlib)  \
+                   $(PTF77BLASlib) $(PTCBLASlib) $(ATLASlib) $(LIBS)
+xslutstF_sys_pt : slapack \
+                   ststlib_pt sl3lib_pt sl2lib_pt sl1lib_pt \
+                   scblas_pt sfblas_pt
+	rm -f slutst_pt.o
+	$(MAKE) slutst_pt.o intf=-DTimeF77
+	$(FLINKER) $(FCLINKFLAGS) -o $@ slutst_pt.o \
+                   $(TESTlib) $(FLAPACKlib) $(LAPACKlib)  $(BLASlib) \
+                   $(PTF77BLASlib) $(PTCBLASlib) $(ATLASlib) $(LIBS)
+
+xsmmtst_pt : $(INCdir)/atlas_type.h sgemmtst_pt.o smmlib_pt ststlib_pt
+	$(FLINKER) $(FCLINKFLAGS) -o $@ sgemmtst_pt.o \
+              $(TESTlib) $(BLASlib) $(smmobj) $(ATLASlib) $(LIBS)
+
+xsl1blastst : sl1blastst.o sl1lib ststlib
+	$(FLINKER) $(FCLINKFLAGS) -o $@ sl1blastst.o \
+                   $(TESTlib) $(BLASlib) $(ATLASlib) $(LIBS)
+xsl2blastst : sl2blastst.o sl2lib ststlib
+	$(FLINKER) $(FCLINKFLAGS) -o $@ sl2blastst.o \
+                   $(TESTlib) $(BLASlib) $(ATLASlib) $(LIBS)
+xsl3blastst : $(INCdir)/atlas_type.h sl3blastst.o \
+                   ststlib sl3lib
+	$(FLINKER) $(FCLINKFLAGS) -o $@ sl3blastst.o \
+                   $(TESTlib) $(BLASlib) $(ATLASlib) $(LIBS)
+ssanity_test: xsinvtst xsslvtst xstrtritst xsuumtst
+	$(ATLRUN) $(BINdir) xsslvtst -n 167 -r 83 -O 2 c r \
+                  >> $(BINdir)/sanity.out
+	$(ATLRUN) $(BINdir) xsslvtst -n 167 -r 83 -O 2 c r -U 2 u l \
+                  >> $(BINdir)/sanity.out
+	$(ATLRUN) $(BINdir) xstrtritst -n 167 -O 2 c r -U 2 u l \
+                  -D 2 n u >> $(BINdir)/sanity.out
+	$(ATLRUN) $(BINdir) xsuumtst -n 167 -O 2 c r -U 2 u l \
+                  >> $(BINdir)/sanity.out
+xsinv_all : xsinvtst xsinvtstF \
+                   xsinvtst_sys xsinvtstF_sys
+
+xsinvtst : sinvtst.o slapack ststlib sl3lib \
+                  sl2lib sl1lib scblas
+	rm -f sinvtst.o
+	$(MAKE) sinvtst.o
+	$(FLINKER) $(FCLINKFLAGS) -o $@ sinvtst.o \
+                   $(TESTlib) $(LAPACKlib) $(CBLASlib) $(ATLASlib) $(LIBS)
+xsinvtst_sys : sinvtst.o slapack \
+                      ststlib sl3lib sl2lib sl1lib \
+                      scblas
+	rm -f sinvtst.o
+	$(MAKE) sinvtst.o
+	$(FLINKER) $(FCLINKFLAGS) -o $@ sinvtst.o \
+                   $(TESTlib) $(LAPACKlib) $(BLASlib) \
+                   $(CBLASlib) $(ATLASlib) $(LIBS)
+xsinvtstF : slapack ststlib sl3lib sl2lib \
+                   sl1lib scblas sfblas
+	rm -f sinvtst.o
+	$(MAKE) sinvtst.o intf=-DTimeF77
+	$(FLINKER) $(FCLINKFLAGS) -o $@ sinvtst.o \
+                   $(TESTlib) $(FLAPACKlib) $(LAPACKlib)  \
+                   $(F77BLASlib) $(CBLASlib) $(ATLASlib) $(LIBS)
+xsinvtstF_sys : slapack \
+                   ststlib sl3lib sl2lib sl1lib \
+                   scblas sfblas
+	rm -f sinvtst.o
+	$(MAKE) sinvtst.o intf=-DTimeF77
+	$(FLINKER) $(FCLINKFLAGS) -o $@ sinvtst.o \
+                   $(TESTlib) $(FLAPACKlib) $(LAPACKlib)  $(BLASlib) \
+                   $(F77BLASlib) $(CBLASlib) $(ATLASlib) $(LIBS)
+
+xstrtri_all : xstrtritst xstrtritstF \
+                   xstrtritst_sys xstrtritstF_sys
+
+xstrtritst : strtritst.o slapack ststlib sl3lib \
+                  sl2lib sl1lib scblas
+	rm -f strtritst.o
+	$(MAKE) strtritst.o
+	$(FLINKER) $(FCLINKFLAGS) -o $@ strtritst.o \
+                   $(TESTlib) $(LAPACKlib) $(CBLASlib) $(ATLASlib) $(LIBS)
+xstrtritst_sys : strtritst.o slapack \
+                      ststlib sl3lib sl2lib sl1lib \
+                      scblas
+	rm -f strtritst.o
+	$(MAKE) strtritst.o
+	$(FLINKER) $(FCLINKFLAGS) -o $@ strtritst.o \
+                   $(TESTlib) $(LAPACKlib) $(BLASlib) \
+                   $(CBLASlib) $(ATLASlib) $(LIBS)
+xstrtritstF : slapack ststlib sl3lib sl2lib \
+                   sl1lib scblas sfblas
+	rm -f strtritst.o
+	$(MAKE) strtritst.o intf=-DTimeF77
+	$(FLINKER) $(FCLINKFLAGS) -o $@ strtritst.o \
+                   $(TESTlib) $(FLAPACKlib) $(LAPACKlib)  \
+                   $(F77BLASlib) $(CBLASlib) $(ATLASlib) $(LIBS)
+xstrtritstF_sys : slapack \
+                   ststlib sl3lib sl2lib sl1lib \
+                   scblas sfblas
+	rm -f strtritst.o
+	$(MAKE) strtritst.o intf=-DTimeF77
+	$(FLINKER) $(FCLINKFLAGS) -o $@ strtritst.o \
+                   $(TESTlib) $(FLAPACKlib) $(LAPACKlib)  $(BLASlib) \
+                   $(F77BLASlib) $(CBLASlib) $(ATLASlib) $(LIBS)
+
+xsuum_all : xsuumtst xsuumtstF \
+                   xsuumtst_sys xsuumtstF_sys
+
+xsuumtst : suumtst.o slapack ststlib sl3lib \
+                  sl2lib sl1lib scblas
+	rm -f suumtst.o
+	$(MAKE) suumtst.o
+	$(FLINKER) $(FCLINKFLAGS) -o $@ suumtst.o \
+                   $(TESTlib) $(LAPACKlib) $(CBLASlib) $(ATLASlib) $(LIBS)
+xsuumtst_sys : suumtst.o slapack \
+                      ststlib sl3lib sl2lib sl1lib \
+                      scblas
+	rm -f suumtst.o
+	$(MAKE) suumtst.o
+	$(FLINKER) $(FCLINKFLAGS) -o $@ suumtst.o \
+                   $(TESTlib) $(LAPACKlib) $(BLASlib) \
+                   $(CBLASlib) $(ATLASlib) $(LIBS)
+xsuumtstF : slapack ststlib sl3lib sl2lib \
+                   sl1lib scblas sfblas
+	rm -f suumtst.o
+	$(MAKE) suumtst.o intf=-DTimeF77
+	$(FLINKER) $(FCLINKFLAGS) -o $@ suumtst.o \
+                   $(TESTlib) $(FLAPACKlib) $(LAPACKlib)  \
+                   $(F77BLASlib) $(CBLASlib) $(ATLASlib) $(LIBS)
+xsuumtstF_sys : slapack \
+                   ststlib sl3lib sl2lib sl1lib \
+                   scblas sfblas
+	rm -f suumtst.o
+	$(MAKE) suumtst.o intf=-DTimeF77
+	$(FLINKER) $(FCLINKFLAGS) -o $@ suumtst.o \
+                   $(TESTlib) $(FLAPACKlib) $(LAPACKlib)  $(BLASlib) \
+                   $(F77BLASlib) $(CBLASlib) $(ATLASlib) $(LIBS)
+
+xsslv_all : xsslvtst xsslvtstF \
+                   xsslvtst_sys xsslvtstF_sys
+
+xsslvtst : sslvtst.o slapack ststlib sl3lib \
+                  sl2lib sl1lib scblas
+	rm -f sslvtst.o
+	$(MAKE) sslvtst.o
+	$(FLINKER) $(FCLINKFLAGS) -o $@ sslvtst.o \
+                   $(TESTlib) $(LAPACKlib) $(CBLASlib) $(ATLASlib) $(LIBS)
+xsslvtst_sys : sslvtst.o slapack \
+                      ststlib sl3lib sl2lib sl1lib \
+                      scblas
+	rm -f sslvtst.o
+	$(MAKE) sslvtst.o
+	$(FLINKER) $(FCLINKFLAGS) -o $@ sslvtst.o \
+                   $(TESTlib) $(LAPACKlib) $(BLASlib) \
+                   $(CBLASlib) $(ATLASlib) $(LIBS)
+xsslvtstF : slapack ststlib sl3lib sl2lib \
+                   sl1lib scblas sfblas
+	rm -f sslvtst.o
+	$(MAKE) sslvtst.o intf=-DTimeF77
+	$(FLINKER) $(FCLINKFLAGS) -o $@ sslvtst.o \
+                   $(TESTlib) $(FLAPACKlib) $(LAPACKlib)  \
+                   $(F77BLASlib) $(CBLASlib) $(ATLASlib) $(LIBS)
+xsslvtstF_sys : slapack \
+                   ststlib sl3lib sl2lib sl1lib \
+                   scblas sfblas
+	rm -f sslvtst.o
+	$(MAKE) sslvtst.o intf=-DTimeF77
+	$(FLINKER) $(FCLINKFLAGS) -o $@ sslvtst.o \
+                   $(TESTlib) $(FLAPACKlib) $(LAPACKlib)  $(BLASlib) \
+                   $(F77BLASlib) $(CBLASlib) $(ATLASlib) $(LIBS)
+
+xsllt_all : xsllttst xsllttstF \
+                   xsllttst_sys xsllttstF_sys
+
+xsllttst : sllttst.o slapack ststlib sl3lib \
+                  sl2lib sl1lib scblas
+	rm -f sllttst.o
+	$(MAKE) sllttst.o
+	$(FLINKER) $(FCLINKFLAGS) -o $@ sllttst.o \
+                   $(TESTlib) $(LAPACKlib) $(CBLASlib) $(ATLASlib) $(LIBS)
+xsllttst_sys : sllttst.o slapack \
+                      ststlib sl3lib sl2lib sl1lib \
+                      scblas
+	rm -f sllttst.o
+	$(MAKE) sllttst.o
+	$(FLINKER) $(FCLINKFLAGS) -o $@ sllttst.o \
+                   $(TESTlib) $(LAPACKlib) $(BLASlib) \
+                   $(CBLASlib) $(ATLASlib) $(LIBS)
+xsllttstF : slapack ststlib sl3lib sl2lib \
+                   sl1lib scblas sfblas
+	rm -f sllttst.o
+	$(MAKE) sllttst.o intf=-DTimeF77
+	$(FLINKER) $(FCLINKFLAGS) -o $@ sllttst.o \
+                   $(TESTlib) $(FLAPACKlib) $(LAPACKlib)  \
+                   $(F77BLASlib) $(CBLASlib) $(ATLASlib) $(LIBS)
+xsllttstF_sys : slapack \
+                   ststlib sl3lib sl2lib sl1lib \
+                   scblas sfblas
+	rm -f sllttst.o
+	$(MAKE) sllttst.o intf=-DTimeF77
+	$(FLINKER) $(FCLINKFLAGS) -o $@ sllttst.o \
+                   $(TESTlib) $(FLAPACKlib) $(LAPACKlib)  $(BLASlib) \
+                   $(F77BLASlib) $(CBLASlib) $(ATLASlib) $(LIBS)
+
+xslu_all : xslutst xslutstF \
+                   xslutst_sys xslutstF_sys
+
+xslutst : slutst.o slapack ststlib sl3lib \
+                  sl2lib sl1lib scblas
+	rm -f slutst.o
+	$(MAKE) slutst.o
+	$(FLINKER) $(FCLINKFLAGS) -o $@ slutst.o \
+                   $(TESTlib) $(LAPACKlib) $(CBLASlib) $(ATLASlib) $(LIBS)
+xslutst_sys : slutst.o slapack \
+                      ststlib sl3lib sl2lib sl1lib \
+                      scblas
+	rm -f slutst.o
+	$(MAKE) slutst.o
+	$(FLINKER) $(FCLINKFLAGS) -o $@ slutst.o \
+                   $(TESTlib) $(LAPACKlib) $(BLASlib) \
+                   $(CBLASlib) $(ATLASlib) $(LIBS)
+xslutstF : slapack ststlib sl3lib sl2lib \
+                   sl1lib scblas sfblas
+	rm -f slutst.o
+	$(MAKE) slutst.o intf=-DTimeF77
+	$(FLINKER) $(FCLINKFLAGS) -o $@ slutst.o \
+                   $(TESTlib) $(FLAPACKlib) $(LAPACKlib)  \
+                   $(F77BLASlib) $(CBLASlib) $(ATLASlib) $(LIBS)
+xslutstF_sys : slapack \
+                   ststlib sl3lib sl2lib sl1lib \
+                   scblas sfblas
+	rm -f slutst.o
+	$(MAKE) slutst.o intf=-DTimeF77
+	$(FLINKER) $(FCLINKFLAGS) -o $@ slutst.o \
+                   $(TESTlib) $(FLAPACKlib) $(LAPACKlib)  $(BLASlib) \
+                   $(F77BLASlib) $(CBLASlib) $(ATLASlib) $(LIBS)
+
+xsmmtst : $(INCdir)/atlas_type.h sgemmtst.o smmlib ststlib
+	$(FLINKER) $(FCLINKFLAGS) -o $@ sgemmtst.o \
+              $(TESTlib) $(BLASlib) $(smmobj) $(ATLASlib) $(LIBS)
+
+xsgpmmtst : $(INCdir)/atlas_type.h sgpmmtst.o smmlib ststlib
+	$(FLINKER) $(FCLINKFLAGS) -o $@ sgpmmtst.o \
+              $(TESTlib) $(BLASlib) $(smmobj) $(ATLASlib) $(LIBS)
+sgpmmtst.o : ../gpmmtst.c $(INCdir)/../atlas_misc.h $(INCdir)/smm.h \
+                  $(INCdir)/../atlas_lvl3.h $(INCdir)/../atlas_pkblas.h
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL ../gpmmtst.c
+	
+ststlib_pt : ststlib
+ststlib :
+	cd $(TSTdir) ; $(MAKE) slib
+
+sfblas_pt : sfblaslib_pt
+sfblaslib_pt :
+	cd $(FBLdir) ; $(MAKE) sptlib
+sfblas : sfblaslib
+sfblaslib :
+	cd $(FBLdir) ; $(MAKE) slib
+scblas_pt : scblaslib_pt
+scblaslib_pt :
+	cd $(CBLdir) ; $(MAKE) sptlib
+scblas : scblaslib
+scblaslib :
+	cd $(CBLdir) ; $(MAKE) slib
+
+smmlib_pt : auxlib_pt
+	cd $(GMMdir) ; $(MAKE) slib
+smmlib : auxlib
+	cd $(GMMdir) ; $(MAKE) slib
+spklib : auxlib
+	cd $(TOPdir)/src/blas/pklevel3/$(ARCH) ; $(MAKE) slib
+
+sl2lib_pt : sl2lib
+	cd $(PTSdir)/blas/level2/$(ARCH) ; $(MAKE) slib
+sl2lib : sl1lib auxlib
+	cd $(GMVdir) ; $(MAKE) slib
+	cd $(GR1dir) ; $(MAKE) slib
+	cd $(L2Bdir) ; $(MAKE) slib
+
+sl3lib_pt : sl3lib smmlib_pt
+	cd $(PTSdir)/blas/level3/$(ARCH) ; $(MAKE) slib
+sl3lib : smmlib
+	cd $(L3Bdir) ; $(MAKE) slib
+
+sl1lib_pt : auxlib_pt sl1lib
+	cd $(PTSdir)/blas/level1/$(ARCH) ; $(MAKE) slib
+sl1lib : auxlib
+	cd $(L1Bdir) ; $(MAKE) slvl1
+
+slapack :
+	cd $(TOPdir)/src/lapack/$(ARCH) ; $(MAKE) slib
+
+xsprintblk : sprintblk.o
+	$(CLINKER) -o $@ sprintblk.o $(ATLASlib)
+sprintblk.o : $(INCdir)/../atlas_mv.h $(INCdir)/../atlas_r1.h \
+                   $(INCdir)/smm.h ../printblk.c
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL ../printblk.c
+
+sl1blastst_pt.o : ../l1blastst.c $(INCdir)/../atlas_misc.h \
+                   $(INCdir)/../atlas_tst.h $(INCdir)/../atlas_level1.h
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL -DATL_USEPTHREADS ../l1blastst.c
+sl2blastst_pt.o : ../l2blastst.c $(INCdir)/../atlas_misc.h \
+                   $(INCdir)/../atlas_tst.h $(INCdir)/../atlas_level2.h
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL -DATL_USEPTHREADS ../l2blastst.c
+
+sl3blastst_pt.o : ../l3blastst.c $(INCdir)/../atlas_misc.h \
+                   $(INCdir)/smm.h $(INCdir)/../atlas_lvl3.h
+	$(CC) -o $@ -c $(CCFLAGS) -DATLCINT -DATL_USEPTHREADS -DSREAL ../l3blastst.c
+sinvtst_pt.o : ../invtst.c $(INCdir)/../atlas_misc.h \
+                   $(INCdir)/smm.h $(INCdir)/../atlas_lvl3.h 
+	$(CC) -o $@ -c $(CCFLAGS) -DATLCINT $(intf) -DATL_USEPTHREADS -DSREAL ../invtst.c
+strtritst_pt.o : ../trtritst.c $(INCdir)/../atlas_misc.h \
+                   $(INCdir)/smm.h $(INCdir)/../atlas_lvl3.h 
+	$(CC) -o $@ -c $(CCFLAGS) -DATLCINT $(intf) -DATL_USEPTHREADS -DSREAL ../trtritst.c
+sslvtst_pt.o : ../slvtst.c $(INCdir)/../atlas_misc.h \
+                   $(INCdir)/smm.h $(INCdir)/../atlas_lvl3.h 
+	$(CC) -o $@ -c $(CCFLAGS) -DATLCINT $(intf) -DATL_USEPTHREADS -DSREAL ../slvtst.c
+slutst_pt.o : ../lutst.c $(INCdir)/../atlas_misc.h \
+                   $(INCdir)/smm.h $(INCdir)/../atlas_lvl3.h 
+	$(CC) -o $@ -c $(CCFLAGS) -DATLCINT $(intf) -DATL_USEPTHREADS -DSREAL ../lutst.c
+sllttst_pt.o : ../llttst.c $(INCdir)/../atlas_misc.h \
+                   $(INCdir)/smm.h $(INCdir)/../atlas_lvl3.h 
+	$(CC) -o $@ -c $(CCFLAGS) -DATLCINT $(intf) -DATL_USEPTHREADS -DSREAL ../llttst.c
+suumtst_pt.o : ../uumtst.c $(INCdir)/../atlas_misc.h \
+                   $(INCdir)/smm.h $(INCdir)/../atlas_lvl3.h 
+	$(CC) -o $@ -c $(CCFLAGS) -DATLCINT $(intf) -DATL_USEPTHREADS -DSREAL ../uumtst.c
+
+sscaltst_pt.o : ../scaltst.c $(INCdir)/../atlas_misc.h \
+                  $(INCdir)/../atlas_f77.h 
+	$(CC) -o $@ -c $(CCFLAGS) -DATL_USEPTHREADS -DSREAL ../scaltst.c
+
+sgemmtst_pt.o : ../gemmtst.c $(INCdir)/../atlas_misc.h $(INCdir)/smm.h \
+                  $(INCdir)/../atlas_lvl3.h
+	$(CC) -o $@ -c $(CCFLAGS) -DATL_USEPTHREADS -DSREAL ../gemmtst.c
+
+sl1blastst.o : ../l1blastst.c $(INCdir)/../atlas_misc.h \
+                   $(INCdir)/../atlas_tst.h $(INCdir)/../atlas_level1.h
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL  ../l1blastst.c
+sl2blastst.o : ../l2blastst.c $(INCdir)/../atlas_misc.h \
+                   $(INCdir)/../atlas_tst.h $(INCdir)/../atlas_level2.h
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL  ../l2blastst.c
+
+sl3blastst.o : ../l3blastst.c $(INCdir)/../atlas_misc.h \
+                   $(INCdir)/smm.h $(INCdir)/../atlas_lvl3.h
+	$(CC) -o $@ -c $(CCFLAGS) -DATLCINT  -DSREAL ../l3blastst.c
+sinvtst.o : ../invtst.c $(INCdir)/../atlas_misc.h \
+                   $(INCdir)/smm.h $(INCdir)/../atlas_lvl3.h 
+	$(CC) -o $@ -c $(CCFLAGS) -DATLCINT $(intf)  -DSREAL ../invtst.c
+strtritst.o : ../trtritst.c $(INCdir)/../atlas_misc.h \
+                   $(INCdir)/smm.h $(INCdir)/../atlas_lvl3.h 
+	$(CC) -o $@ -c $(CCFLAGS) -DATLCINT $(intf)  -DSREAL ../trtritst.c
+sslvtst.o : ../slvtst.c $(INCdir)/../atlas_misc.h \
+                   $(INCdir)/smm.h $(INCdir)/../atlas_lvl3.h 
+	$(CC) -o $@ -c $(CCFLAGS) -DATLCINT $(intf)  -DSREAL ../slvtst.c
+slutst.o : ../lutst.c $(INCdir)/../atlas_misc.h \
+                   $(INCdir)/smm.h $(INCdir)/../atlas_lvl3.h 
+	$(CC) -o $@ -c $(CCFLAGS) -DATLCINT $(intf)  -DSREAL ../lutst.c
+sllttst.o : ../llttst.c $(INCdir)/../atlas_misc.h \
+                   $(INCdir)/smm.h $(INCdir)/../atlas_lvl3.h 
+	$(CC) -o $@ -c $(CCFLAGS) -DATLCINT $(intf)  -DSREAL ../llttst.c
+suumtst.o : ../uumtst.c $(INCdir)/../atlas_misc.h \
+                   $(INCdir)/smm.h $(INCdir)/../atlas_lvl3.h 
+	$(CC) -o $@ -c $(CCFLAGS) -DATLCINT $(intf)  -DSREAL ../uumtst.c
+
+sscaltst.o : ../scaltst.c $(INCdir)/../atlas_misc.h \
+                  $(INCdir)/../atlas_f77.h 
+	$(CC) -o $@ -c $(CCFLAGS)  -DSREAL ../scaltst.c
+
+sgemmtst.o : ../gemmtst.c $(INCdir)/../atlas_misc.h $(INCdir)/smm.h \
+                  $(INCdir)/../atlas_lvl3.h
+	$(CC) -o $@ -c $(CCFLAGS)  -DSREAL ../gemmtst.c
+
+xdl1blastst_pt : dl1blastst_pt.o dl1lib_pt dtstlib_pt
+	$(FLINKER) $(FCLINKFLAGS) -o $@ dl1blastst_pt.o \
+                   $(TESTlib) $(BLASlib) $(ATLASlib) $(LIBS)
+xdl2blastst_pt : dl2blastst_pt.o dl2lib_pt dtstlib_pt
+	$(FLINKER) $(FCLINKFLAGS) -o $@ dl2blastst_pt.o \
+                   $(TESTlib) $(BLASlib) $(ATLASlib) $(LIBS)
+xdl3blastst_pt : $(INCdir)/atlas_type.h dl3blastst_pt.o \
+                   dtstlib_pt dl3lib_pt
+	$(FLINKER) $(FCLINKFLAGS) -o $@ dl3blastst_pt.o \
+                   $(TESTlib) $(BLASlib) $(ATLASlib) $(LIBS)
+dsanity_test_pt: xdinvtst_pt xdslvtst_pt xdtrtritst_pt xduumtst_pt
+	$(ATLRUN) $(BINdir) xdslvtst_pt -n 167 -r 83 -O 2 c r \
+                  >> $(BINdir)/ptsanity.out
+	$(ATLRUN) $(BINdir) xdslvtst_pt -n 167 -r 83 -O 2 c r -U 2 u l \
+                  >> $(BINdir)/ptsanity.out
+	$(ATLRUN) $(BINdir) xdtrtritst_pt -n 167 -O 2 c r -U 2 u l \
+                  -D 2 n u >> $(BINdir)/ptsanity.out
+	$(ATLRUN) $(BINdir) xduumtst_pt -n 167 -O 2 c r -U 2 u l \
+                  >> $(BINdir)/ptsanity.out
+xdinv_all_pt : xdinvtst_pt xdinvtstF_pt \
+                   xdinvtst_sys_pt xdinvtstF_sys_pt
+
+xdinvtst_pt : dinvtst_pt.o dlapack dtstlib_pt dl3lib_pt \
+                  dl2lib_pt dl1lib_pt dcblas_pt
+	rm -f dinvtst_pt.o
+	$(MAKE) dinvtst_pt.o
+	$(FLINKER) $(FCLINKFLAGS) -o $@ dinvtst_pt.o \
+                   $(TESTlib) $(LAPACKlib) $(PTCBLASlib) $(ATLASlib) $(LIBS)
+xdinvtst_sys_pt : dinvtst_pt.o dlapack \
+                      dtstlib dl3lib_pt dl2lib_pt dl1lib_pt \
+                      dcblas_pt
+	rm -f dinvtst_pt.o
+	$(MAKE) dinvtst_pt.o
+	$(FLINKER) $(FCLINKFLAGS) -o $@ dinvtst_pt.o \
+                   $(TESTlib) $(LAPACKlib) $(BLASlib) \
+                   $(PTCBLASlib) $(ATLASlib) $(LIBS)
+xdinvtstF_pt : dlapack dtstlib_pt dl3lib_pt dl2lib_pt \
+                   dl1lib_pt dcblas_pt dfblas_pt
+	rm -f dinvtst_pt.o
+	$(MAKE) dinvtst_pt.o intf=-DTimeF77
+	$(FLINKER) $(FCLINKFLAGS) -o $@ dinvtst_pt.o \
+                   $(TESTlib) $(FLAPACKlib) $(LAPACKlib)  \
+                   $(PTF77BLASlib) $(PTCBLASlib) $(ATLASlib) $(LIBS)
+xdinvtstF_sys_pt : dlapack \
+                   dtstlib_pt dl3lib_pt dl2lib_pt dl1lib_pt \
+                   dcblas_pt dfblas_pt
+	rm -f dinvtst_pt.o
+	$(MAKE) dinvtst_pt.o intf=-DTimeF77
+	$(FLINKER) $(FCLINKFLAGS) -o $@ dinvtst_pt.o \
+                   $(TESTlib) $(FLAPACKlib) $(LAPACKlib)  $(BLASlib) \
+                   $(PTF77BLASlib) $(PTCBLASlib) $(ATLASlib) $(LIBS)
+
+xdtrtri_all_pt : xdtrtritst_pt xdtrtritstF_pt \
+                   xdtrtritst_sys_pt xdtrtritstF_sys_pt
+
+xdtrtritst_pt : dtrtritst_pt.o dlapack dtstlib_pt dl3lib_pt \
+                  dl2lib_pt dl1lib_pt dcblas_pt
+	rm -f dtrtritst_pt.o
+	$(MAKE) dtrtritst_pt.o
+	$(FLINKER) $(FCLINKFLAGS) -o $@ dtrtritst_pt.o \
+                   $(TESTlib) $(LAPACKlib) $(PTCBLASlib) $(ATLASlib) $(LIBS)
+xdtrtritst_sys_pt : dtrtritst_pt.o dlapack \
+                      dtstlib dl3lib_pt dl2lib_pt dl1lib_pt \
+                      dcblas_pt
+	rm -f dtrtritst_pt.o
+	$(MAKE) dtrtritst_pt.o
+	$(FLINKER) $(FCLINKFLAGS) -o $@ dtrtritst_pt.o \
+                   $(TESTlib) $(LAPACKlib) $(BLASlib) \
+                   $(PTCBLASlib) $(ATLASlib) $(LIBS)
+xdtrtritstF_pt : dlapack dtstlib_pt dl3lib_pt dl2lib_pt \
+                   dl1lib_pt dcblas_pt dfblas_pt
+	rm -f dtrtritst_pt.o
+	$(MAKE) dtrtritst_pt.o intf=-DTimeF77
+	$(FLINKER) $(FCLINKFLAGS) -o $@ dtrtritst_pt.o \
+                   $(TESTlib) $(FLAPACKlib) $(LAPACKlib)  \
+                   $(PTF77BLASlib) $(PTCBLASlib) $(ATLASlib) $(LIBS)
+xdtrtritstF_sys_pt : dlapack \
+                   dtstlib_pt dl3lib_pt dl2lib_pt dl1lib_pt \
+                   dcblas_pt dfblas_pt
+	rm -f dtrtritst_pt.o
+	$(MAKE) dtrtritst_pt.o intf=-DTimeF77
+	$(FLINKER) $(FCLINKFLAGS) -o $@ dtrtritst_pt.o \
+                   $(TESTlib) $(FLAPACKlib) $(LAPACKlib)  $(BLASlib) \
+                   $(PTF77BLASlib) $(PTCBLASlib) $(ATLASlib) $(LIBS)
+
+xduum_all_pt : xduumtst_pt xduumtstF_pt \
+                   xduumtst_sys_pt xduumtstF_sys_pt
+
+xduumtst_pt : duumtst_pt.o dlapack dtstlib_pt dl3lib_pt \
+                  dl2lib_pt dl1lib_pt dcblas_pt
+	rm -f duumtst_pt.o
+	$(MAKE) duumtst_pt.o
+	$(FLINKER) $(FCLINKFLAGS) -o $@ duumtst_pt.o \
+                   $(TESTlib) $(LAPACKlib) $(PTCBLASlib) $(ATLASlib) $(LIBS)
+xduumtst_sys_pt : duumtst_pt.o dlapack \
+                      dtstlib dl3lib_pt dl2lib_pt dl1lib_pt \
+                      dcblas_pt
+	rm -f duumtst_pt.o
+	$(MAKE) duumtst_pt.o
+	$(FLINKER) $(FCLINKFLAGS) -o $@ duumtst_pt.o \
+                   $(TESTlib) $(LAPACKlib) $(BLASlib) \
+                   $(PTCBLASlib) $(ATLASlib) $(LIBS)
+xduumtstF_pt : dlapack dtstlib_pt dl3lib_pt dl2lib_pt \
+                   dl1lib_pt dcblas_pt dfblas_pt
+	rm -f duumtst_pt.o
+	$(MAKE) duumtst_pt.o intf=-DTimeF77
+	$(FLINKER) $(FCLINKFLAGS) -o $@ duumtst_pt.o \
+                   $(TESTlib) $(FLAPACKlib) $(LAPACKlib)  \
+                   $(PTF77BLASlib) $(PTCBLASlib) $(ATLASlib) $(LIBS)
+xduumtstF_sys_pt : dlapack \
+                   dtstlib_pt dl3lib_pt dl2lib_pt dl1lib_pt \
+                   dcblas_pt dfblas_pt
+	rm -f duumtst_pt.o
+	$(MAKE) duumtst_pt.o intf=-DTimeF77
+	$(FLINKER) $(FCLINKFLAGS) -o $@ duumtst_pt.o \
+                   $(TESTlib) $(FLAPACKlib) $(LAPACKlib)  $(BLASlib) \
+                   $(PTF77BLASlib) $(PTCBLASlib) $(ATLASlib) $(LIBS)
+
+xdslv_all_pt : xdslvtst_pt xdslvtstF_pt \
+                   xdslvtst_sys_pt xdslvtstF_sys_pt
+
+xdslvtst_pt : dslvtst_pt.o dlapack dtstlib_pt dl3lib_pt \
+                  dl2lib_pt dl1lib_pt dcblas_pt
+	rm -f dslvtst_pt.o
+	$(MAKE) dslvtst_pt.o
+	$(FLINKER) $(FCLINKFLAGS) -o $@ dslvtst_pt.o \
+                   $(TESTlib) $(LAPACKlib) $(PTCBLASlib) $(ATLASlib) $(LIBS)
+xdslvtst_sys_pt : dslvtst_pt.o dlapack \
+                      dtstlib dl3lib_pt dl2lib_pt dl1lib_pt \
+                      dcblas_pt
+	rm -f dslvtst_pt.o
+	$(MAKE) dslvtst_pt.o
+	$(FLINKER) $(FCLINKFLAGS) -o $@ dslvtst_pt.o \
+                   $(TESTlib) $(LAPACKlib) $(BLASlib) \
+                   $(PTCBLASlib) $(ATLASlib) $(LIBS)
+xdslvtstF_pt : dlapack dtstlib_pt dl3lib_pt dl2lib_pt \
+                   dl1lib_pt dcblas_pt dfblas_pt
+	rm -f dslvtst_pt.o
+	$(MAKE) dslvtst_pt.o intf=-DTimeF77
+	$(FLINKER) $(FCLINKFLAGS) -o $@ dslvtst_pt.o \
+                   $(TESTlib) $(FLAPACKlib) $(LAPACKlib)  \
+                   $(PTF77BLASlib) $(PTCBLASlib) $(ATLASlib) $(LIBS)
+xdslvtstF_sys_pt : dlapack \
+                   dtstlib_pt dl3lib_pt dl2lib_pt dl1lib_pt \
+                   dcblas_pt dfblas_pt
+	rm -f dslvtst_pt.o
+	$(MAKE) dslvtst_pt.o intf=-DTimeF77
+	$(FLINKER) $(FCLINKFLAGS) -o $@ dslvtst_pt.o \
+                   $(TESTlib) $(FLAPACKlib) $(LAPACKlib)  $(BLASlib) \
+                   $(PTF77BLASlib) $(PTCBLASlib) $(ATLASlib) $(LIBS)
+
+xdllt_all_pt : xdllttst_pt xdllttstF_pt \
+                   xdllttst_sys_pt xdllttstF_sys_pt
+
+xdllttst_pt : dllttst_pt.o dlapack dtstlib_pt dl3lib_pt \
+                  dl2lib_pt dl1lib_pt dcblas_pt
+	rm -f dllttst_pt.o
+	$(MAKE) dllttst_pt.o
+	$(FLINKER) $(FCLINKFLAGS) -o $@ dllttst_pt.o \
+                   $(TESTlib) $(LAPACKlib) $(PTCBLASlib) $(ATLASlib) $(LIBS)
+xdllttst_sys_pt : dllttst_pt.o dlapack \
+                      dtstlib dl3lib_pt dl2lib_pt dl1lib_pt \
+                      dcblas_pt
+	rm -f dllttst_pt.o
+	$(MAKE) dllttst_pt.o
+	$(FLINKER) $(FCLINKFLAGS) -o $@ dllttst_pt.o \
+                   $(TESTlib) $(LAPACKlib) $(BLASlib) \
+                   $(PTCBLASlib) $(ATLASlib) $(LIBS)
+xdllttstF_pt : dlapack dtstlib_pt dl3lib_pt dl2lib_pt \
+                   dl1lib_pt dcblas_pt dfblas_pt
+	rm -f dllttst_pt.o
+	$(MAKE) dllttst_pt.o intf=-DTimeF77
+	$(FLINKER) $(FCLINKFLAGS) -o $@ dllttst_pt.o \
+                   $(TESTlib) $(FLAPACKlib) $(LAPACKlib)  \
+                   $(PTF77BLASlib) $(PTCBLASlib) $(ATLASlib) $(LIBS)
+xdllttstF_sys_pt : dlapack \
+                   dtstlib_pt dl3lib_pt dl2lib_pt dl1lib_pt \
+                   dcblas_pt dfblas_pt
+	rm -f dllttst_pt.o
+	$(MAKE) dllttst_pt.o intf=-DTimeF77
+	$(FLINKER) $(FCLINKFLAGS) -o $@ dllttst_pt.o \
+                   $(TESTlib) $(FLAPACKlib) $(LAPACKlib)  $(BLASlib) \
+                   $(PTF77BLASlib) $(PTCBLASlib) $(ATLASlib) $(LIBS)
+
+xdlu_all_pt : xdlutst_pt xdlutstF_pt \
+                   xdlutst_sys_pt xdlutstF_sys_pt
+
+xdlutst_pt : dlutst_pt.o dlapack dtstlib_pt dl3lib_pt \
+                  dl2lib_pt dl1lib_pt dcblas_pt
+	rm -f dlutst_pt.o
+	$(MAKE) dlutst_pt.o
+	$(FLINKER) $(FCLINKFLAGS) -o $@ dlutst_pt.o \
+                   $(TESTlib) $(LAPACKlib) $(PTCBLASlib) $(ATLASlib) $(LIBS)
+xdlutst_sys_pt : dlutst_pt.o dlapack \
+                      dtstlib dl3lib_pt dl2lib_pt dl1lib_pt \
+                      dcblas_pt
+	rm -f dlutst_pt.o
+	$(MAKE) dlutst_pt.o
+	$(FLINKER) $(FCLINKFLAGS) -o $@ dlutst_pt.o \
+                   $(TESTlib) $(LAPACKlib) $(BLASlib) \
+                   $(PTCBLASlib) $(ATLASlib) $(LIBS)
+xdlutstF_pt : dlapack dtstlib_pt dl3lib_pt dl2lib_pt \
+                   dl1lib_pt dcblas_pt dfblas_pt
+	rm -f dlutst_pt.o
+	$(MAKE) dlutst_pt.o intf=-DTimeF77
+	$(FLINKER) $(FCLINKFLAGS) -o $@ dlutst_pt.o \
+                   $(TESTlib) $(FLAPACKlib) $(LAPACKlib)  \
+                   $(PTF77BLASlib) $(PTCBLASlib) $(ATLASlib) $(LIBS)
+xdlutstF_sys_pt : dlapack \
+                   dtstlib_pt dl3lib_pt dl2lib_pt dl1lib_pt \
+                   dcblas_pt dfblas_pt
+	rm -f dlutst_pt.o
+	$(MAKE) dlutst_pt.o intf=-DTimeF77
+	$(FLINKER) $(FCLINKFLAGS) -o $@ dlutst_pt.o \
+                   $(TESTlib) $(FLAPACKlib) $(LAPACKlib)  $(BLASlib) \
+                   $(PTF77BLASlib) $(PTCBLASlib) $(ATLASlib) $(LIBS)
+
+xdmmtst_pt : $(INCdir)/atlas_type.h dgemmtst_pt.o dmmlib_pt dtstlib_pt
+	$(FLINKER) $(FCLINKFLAGS) -o $@ dgemmtst_pt.o \
+              $(TESTlib) $(BLASlib) $(dmmobj) $(ATLASlib) $(LIBS)
+
+xdl1blastst : dl1blastst.o dl1lib dtstlib
+	$(FLINKER) $(FCLINKFLAGS) -o $@ dl1blastst.o \
+                   $(TESTlib) $(BLASlib) $(ATLASlib) $(LIBS)
+xdl2blastst : dl2blastst.o dl2lib dtstlib
+	$(FLINKER) $(FCLINKFLAGS) -o $@ dl2blastst.o \
+                   $(TESTlib) $(BLASlib) $(ATLASlib) $(LIBS)
+xdl3blastst : $(INCdir)/atlas_type.h dl3blastst.o \
+                   dtstlib dl3lib
+	$(FLINKER) $(FCLINKFLAGS) -o $@ dl3blastst.o \
+                   $(TESTlib) $(BLASlib) $(ATLASlib) $(LIBS)
+dsanity_test: xdinvtst xdslvtst xdtrtritst xduumtst
+	$(ATLRUN) $(BINdir) xdslvtst -n 167 -r 83 -O 2 c r \
+                  >> $(BINdir)/sanity.out
+	$(ATLRUN) $(BINdir) xdslvtst -n 167 -r 83 -O 2 c r -U 2 u l \
+                  >> $(BINdir)/sanity.out
+	$(ATLRUN) $(BINdir) xdtrtritst -n 167 -O 2 c r -U 2 u l \
+                  -D 2 n u >> $(BINdir)/sanity.out
+	$(ATLRUN) $(BINdir) xduumtst -n 167 -O 2 c r -U 2 u l \
+                  >> $(BINdir)/sanity.out
+xdinv_all : xdinvtst xdinvtstF \
+                   xdinvtst_sys xdinvtstF_sys
+
+xdinvtst : dinvtst.o dlapack dtstlib dl3lib \
+                  dl2lib dl1lib dcblas
+	rm -f dinvtst.o
+	$(MAKE) dinvtst.o
+	$(FLINKER) $(FCLINKFLAGS) -o $@ dinvtst.o \
+                   $(TESTlib) $(LAPACKlib) $(CBLASlib) $(ATLASlib) $(LIBS)
+xdinvtst_sys : dinvtst.o dlapack \
+                      dtstlib dl3lib dl2lib dl1lib \
+                      dcblas
+	rm -f dinvtst.o
+	$(MAKE) dinvtst.o
+	$(FLINKER) $(FCLINKFLAGS) -o $@ dinvtst.o \
+                   $(TESTlib) $(LAPACKlib) $(BLASlib) \
+                   $(CBLASlib) $(ATLASlib) $(LIBS)
+xdinvtstF : dlapack dtstlib dl3lib dl2lib \
+                   dl1lib dcblas dfblas
+	rm -f dinvtst.o
+	$(MAKE) dinvtst.o intf=-DTimeF77
+	$(FLINKER) $(FCLINKFLAGS) -o $@ dinvtst.o \
+                   $(TESTlib) $(FLAPACKlib) $(LAPACKlib)  \
+                   $(F77BLASlib) $(CBLASlib) $(ATLASlib) $(LIBS)
+xdinvtstF_sys : dlapack \
+                   dtstlib dl3lib dl2lib dl1lib \
+                   dcblas dfblas
+	rm -f dinvtst.o
+	$(MAKE) dinvtst.o intf=-DTimeF77
+	$(FLINKER) $(FCLINKFLAGS) -o $@ dinvtst.o \
+                   $(TESTlib) $(FLAPACKlib) $(LAPACKlib)  $(BLASlib) \
+                   $(F77BLASlib) $(CBLASlib) $(ATLASlib) $(LIBS)
+
+xdtrtri_all : xdtrtritst xdtrtritstF \
+                   xdtrtritst_sys xdtrtritstF_sys
+
+xdtrtritst : dtrtritst.o dlapack dtstlib dl3lib \
+                  dl2lib dl1lib dcblas
+	rm -f dtrtritst.o
+	$(MAKE) dtrtritst.o
+	$(FLINKER) $(FCLINKFLAGS) -o $@ dtrtritst.o \
+                   $(TESTlib) $(LAPACKlib) $(CBLASlib) $(ATLASlib) $(LIBS)
+xdtrtritst_sys : dtrtritst.o dlapack \
+                      dtstlib dl3lib dl2lib dl1lib \
+                      dcblas
+	rm -f dtrtritst.o
+	$(MAKE) dtrtritst.o
+	$(FLINKER) $(FCLINKFLAGS) -o $@ dtrtritst.o \
+                   $(TESTlib) $(LAPACKlib) $(BLASlib) \
+                   $(CBLASlib) $(ATLASlib) $(LIBS)
+xdtrtritstF : dlapack dtstlib dl3lib dl2lib \
+                   dl1lib dcblas dfblas
+	rm -f dtrtritst.o
+	$(MAKE) dtrtritst.o intf=-DTimeF77
+	$(FLINKER) $(FCLINKFLAGS) -o $@ dtrtritst.o \
+                   $(TESTlib) $(FLAPACKlib) $(LAPACKlib)  \
+                   $(F77BLASlib) $(CBLASlib) $(ATLASlib) $(LIBS)
+xdtrtritstF_sys : dlapack \
+                   dtstlib dl3lib dl2lib dl1lib \
+                   dcblas dfblas
+	rm -f dtrtritst.o
+	$(MAKE) dtrtritst.o intf=-DTimeF77
+	$(FLINKER) $(FCLINKFLAGS) -o $@ dtrtritst.o \
+                   $(TESTlib) $(FLAPACKlib) $(LAPACKlib)  $(BLASlib) \
+                   $(F77BLASlib) $(CBLASlib) $(ATLASlib) $(LIBS)
+
+xduum_all : xduumtst xduumtstF \
+                   xduumtst_sys xduumtstF_sys
+
+xduumtst : duumtst.o dlapack dtstlib dl3lib \
+                  dl2lib dl1lib dcblas
+	rm -f duumtst.o
+	$(MAKE) duumtst.o
+	$(FLINKER) $(FCLINKFLAGS) -o $@ duumtst.o \
+                   $(TESTlib) $(LAPACKlib) $(CBLASlib) $(ATLASlib) $(LIBS)
+xduumtst_sys : duumtst.o dlapack \
+                      dtstlib dl3lib dl2lib dl1lib \
+                      dcblas
+	rm -f duumtst.o
+	$(MAKE) duumtst.o
+	$(FLINKER) $(FCLINKFLAGS) -o $@ duumtst.o \
+                   $(TESTlib) $(LAPACKlib) $(BLASlib) \
+                   $(CBLASlib) $(ATLASlib) $(LIBS)
+xduumtstF : dlapack dtstlib dl3lib dl2lib \
+                   dl1lib dcblas dfblas
+	rm -f duumtst.o
+	$(MAKE) duumtst.o intf=-DTimeF77
+	$(FLINKER) $(FCLINKFLAGS) -o $@ duumtst.o \
+                   $(TESTlib) $(FLAPACKlib) $(LAPACKlib)  \
+                   $(F77BLASlib) $(CBLASlib) $(ATLASlib) $(LIBS)
+xduumtstF_sys : dlapack \
+                   dtstlib dl3lib dl2lib dl1lib \
+                   dcblas dfblas
+	rm -f duumtst.o
+	$(MAKE) duumtst.o intf=-DTimeF77
+	$(FLINKER) $(FCLINKFLAGS) -o $@ duumtst.o \
+                   $(TESTlib) $(FLAPACKlib) $(LAPACKlib)  $(BLASlib) \
+                   $(F77BLASlib) $(CBLASlib) $(ATLASlib) $(LIBS)
+
+xdslv_all : xdslvtst xdslvtstF \
+                   xdslvtst_sys xdslvtstF_sys
+
+xdslvtst : dslvtst.o dlapack dtstlib dl3lib \
+                  dl2lib dl1lib dcblas
+	rm -f dslvtst.o
+	$(MAKE) dslvtst.o
+	$(FLINKER) $(FCLINKFLAGS) -o $@ dslvtst.o \
+                   $(TESTlib) $(LAPACKlib) $(CBLASlib) $(ATLASlib) $(LIBS)
+xdslvtst_sys : dslvtst.o dlapack \
+                      dtstlib dl3lib dl2lib dl1lib \
+                      dcblas
+	rm -f dslvtst.o
+	$(MAKE) dslvtst.o
+	$(FLINKER) $(FCLINKFLAGS) -o $@ dslvtst.o \
+                   $(TESTlib) $(LAPACKlib) $(BLASlib) \
+                   $(CBLASlib) $(ATLASlib) $(LIBS)
+xdslvtstF : dlapack dtstlib dl3lib dl2lib \
+                   dl1lib dcblas dfblas
+	rm -f dslvtst.o
+	$(MAKE) dslvtst.o intf=-DTimeF77
+	$(FLINKER) $(FCLINKFLAGS) -o $@ dslvtst.o \
+                   $(TESTlib) $(FLAPACKlib) $(LAPACKlib)  \
+                   $(F77BLASlib) $(CBLASlib) $(ATLASlib) $(LIBS)
+xdslvtstF_sys : dlapack \
+                   dtstlib dl3lib dl2lib dl1lib \
+                   dcblas dfblas
+	rm -f dslvtst.o
+	$(MAKE) dslvtst.o intf=-DTimeF77
+	$(FLINKER) $(FCLINKFLAGS) -o $@ dslvtst.o \
+                   $(TESTlib) $(FLAPACKlib) $(LAPACKlib)  $(BLASlib) \
+                   $(F77BLASlib) $(CBLASlib) $(ATLASlib) $(LIBS)
+
+xdllt_all : xdllttst xdllttstF \
+                   xdllttst_sys xdllttstF_sys
+
+xdllttst : dllttst.o dlapack dtstlib dl3lib \
+                  dl2lib dl1lib dcblas
+	rm -f dllttst.o
+	$(MAKE) dllttst.o
+	$(FLINKER) $(FCLINKFLAGS) -o $@ dllttst.o \
+                   $(TESTlib) $(LAPACKlib) $(CBLASlib) $(ATLASlib) $(LIBS)
+xdllttst_sys : dllttst.o dlapack \
+                      dtstlib dl3lib dl2lib dl1lib \
+                      dcblas
+	rm -f dllttst.o
+	$(MAKE) dllttst.o
+	$(FLINKER) $(FCLINKFLAGS) -o $@ dllttst.o \
+                   $(TESTlib) $(LAPACKlib) $(BLASlib) \
+                   $(CBLASlib) $(ATLASlib) $(LIBS)
+xdllttstF : dlapack dtstlib dl3lib dl2lib \
+                   dl1lib dcblas dfblas
+	rm -f dllttst.o
+	$(MAKE) dllttst.o intf=-DTimeF77
+	$(FLINKER) $(FCLINKFLAGS) -o $@ dllttst.o \
+                   $(TESTlib) $(FLAPACKlib) $(LAPACKlib)  \
+                   $(F77BLASlib) $(CBLASlib) $(ATLASlib) $(LIBS)
+xdllttstF_sys : dlapack \
+                   dtstlib dl3lib dl2lib dl1lib \
+                   dcblas dfblas
+	rm -f dllttst.o
+	$(MAKE) dllttst.o intf=-DTimeF77
+	$(FLINKER) $(FCLINKFLAGS) -o $@ dllttst.o \
+                   $(TESTlib) $(FLAPACKlib) $(LAPACKlib)  $(BLASlib) \
+                   $(F77BLASlib) $(CBLASlib) $(ATLASlib) $(LIBS)
+
+xdlu_all : xdlutst xdlutstF \
+                   xdlutst_sys xdlutstF_sys
+
+xdlutst : dlutst.o dlapack dtstlib dl3lib \
+                  dl2lib dl1lib dcblas
+	rm -f dlutst.o
+	$(MAKE) dlutst.o
+	$(FLINKER) $(FCLINKFLAGS) -o $@ dlutst.o \
+                   $(TESTlib) $(LAPACKlib) $(CBLASlib) $(ATLASlib) $(LIBS)
+xdlutst_sys : dlutst.o dlapack \
+                      dtstlib dl3lib dl2lib dl1lib \
+                      dcblas
+	rm -f dlutst.o
+	$(MAKE) dlutst.o
+	$(FLINKER) $(FCLINKFLAGS) -o $@ dlutst.o \
+                   $(TESTlib) $(LAPACKlib) $(BLASlib) \
+                   $(CBLASlib) $(ATLASlib) $(LIBS)
+xdlutstF : dlapack dtstlib dl3lib dl2lib \
+                   dl1lib dcblas dfblas
+	rm -f dlutst.o
+	$(MAKE) dlutst.o intf=-DTimeF77
+	$(FLINKER) $(FCLINKFLAGS) -o $@ dlutst.o \
+                   $(TESTlib) $(FLAPACKlib) $(LAPACKlib)  \
+                   $(F77BLASlib) $(CBLASlib) $(ATLASlib) $(LIBS)
+xdlutstF_sys : dlapack \
+                   dtstlib dl3lib dl2lib dl1lib \
+                   dcblas dfblas
+	rm -f dlutst.o
+	$(MAKE) dlutst.o intf=-DTimeF77
+	$(FLINKER) $(FCLINKFLAGS) -o $@ dlutst.o \
+                   $(TESTlib) $(FLAPACKlib) $(LAPACKlib)  $(BLASlib) \
+                   $(F77BLASlib) $(CBLASlib) $(ATLASlib) $(LIBS)
+
+xdmmtst : $(INCdir)/atlas_type.h dgemmtst.o dmmlib dtstlib
+	$(FLINKER) $(FCLINKFLAGS) -o $@ dgemmtst.o \
+              $(TESTlib) $(BLASlib) $(dmmobj) $(ATLASlib) $(LIBS)
+
+xdgpmmtst : $(INCdir)/atlas_type.h dgpmmtst.o dmmlib dtstlib
+	$(FLINKER) $(FCLINKFLAGS) -o $@ dgpmmtst.o \
+              $(TESTlib) $(BLASlib) $(dmmobj) $(ATLASlib) $(LIBS)
+dgpmmtst.o : ../gpmmtst.c $(INCdir)/../atlas_misc.h $(INCdir)/dmm.h \
+                  $(INCdir)/../atlas_lvl3.h $(INCdir)/../atlas_pkblas.h
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL ../gpmmtst.c
+	
+dtstlib_pt : dtstlib
+dtstlib :
+	cd $(TSTdir) ; $(MAKE) dlib
+
+dfblas_pt : dfblaslib_pt
+dfblaslib_pt :
+	cd $(FBLdir) ; $(MAKE) dptlib
+dfblas : dfblaslib
+dfblaslib :
+	cd $(FBLdir) ; $(MAKE) dlib
+dcblas_pt : dcblaslib_pt
+dcblaslib_pt :
+	cd $(CBLdir) ; $(MAKE) dptlib
+dcblas : dcblaslib
+dcblaslib :
+	cd $(CBLdir) ; $(MAKE) dlib
+
+dmmlib_pt : auxlib_pt
+	cd $(GMMdir) ; $(MAKE) dlib
+dmmlib : auxlib
+	cd $(GMMdir) ; $(MAKE) dlib
+dpklib : auxlib
+	cd $(TOPdir)/src/blas/pklevel3/$(ARCH) ; $(MAKE) dlib
+
+dl2lib_pt : dl2lib
+	cd $(PTSdir)/blas/level2/$(ARCH) ; $(MAKE) dlib
+dl2lib : dl1lib auxlib
+	cd $(GMVdir) ; $(MAKE) dlib
+	cd $(GR1dir) ; $(MAKE) dlib
+	cd $(L2Bdir) ; $(MAKE) dlib
+
+dl3lib_pt : dl3lib dmmlib_pt
+	cd $(PTSdir)/blas/level3/$(ARCH) ; $(MAKE) dlib
+dl3lib : dmmlib
+	cd $(L3Bdir) ; $(MAKE) dlib
+
+dl1lib_pt : auxlib_pt dl1lib
+	cd $(PTSdir)/blas/level1/$(ARCH) ; $(MAKE) dlib
+dl1lib : auxlib
+	cd $(L1Bdir) ; $(MAKE) dlvl1
+
+dlapack :
+	cd $(TOPdir)/src/lapack/$(ARCH) ; $(MAKE) dlib
+
+xdprintblk : dprintblk.o
+	$(CLINKER) -o $@ dprintblk.o $(ATLASlib)
+dprintblk.o : $(INCdir)/../atlas_mv.h $(INCdir)/../atlas_r1.h \
+                   $(INCdir)/dmm.h ../printblk.c
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL ../printblk.c
+
+dl1blastst_pt.o : ../l1blastst.c $(INCdir)/../atlas_misc.h \
+                   $(INCdir)/../atlas_tst.h $(INCdir)/../atlas_level1.h
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL -DATL_USEPTHREADS ../l1blastst.c
+dl2blastst_pt.o : ../l2blastst.c $(INCdir)/../atlas_misc.h \
+                   $(INCdir)/../atlas_tst.h $(INCdir)/../atlas_level2.h
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL -DATL_USEPTHREADS ../l2blastst.c
+
+dl3blastst_pt.o : ../l3blastst.c $(INCdir)/../atlas_misc.h \
+                   $(INCdir)/dmm.h $(INCdir)/../atlas_lvl3.h
+	$(CC) -o $@ -c $(CCFLAGS) -DATLCINT -DATL_USEPTHREADS -DDREAL ../l3blastst.c
+dinvtst_pt.o : ../invtst.c $(INCdir)/../atlas_misc.h \
+                   $(INCdir)/dmm.h $(INCdir)/../atlas_lvl3.h 
+	$(CC) -o $@ -c $(CCFLAGS) -DATLCINT $(intf) -DATL_USEPTHREADS -DDREAL ../invtst.c
+dtrtritst_pt.o : ../trtritst.c $(INCdir)/../atlas_misc.h \
+                   $(INCdir)/dmm.h $(INCdir)/../atlas_lvl3.h 
+	$(CC) -o $@ -c $(CCFLAGS) -DATLCINT $(intf) -DATL_USEPTHREADS -DDREAL ../trtritst.c
+dslvtst_pt.o : ../slvtst.c $(INCdir)/../atlas_misc.h \
+                   $(INCdir)/dmm.h $(INCdir)/../atlas_lvl3.h 
+	$(CC) -o $@ -c $(CCFLAGS) -DATLCINT $(intf) -DATL_USEPTHREADS -DDREAL ../slvtst.c
+dlutst_pt.o : ../lutst.c $(INCdir)/../atlas_misc.h \
+                   $(INCdir)/dmm.h $(INCdir)/../atlas_lvl3.h 
+	$(CC) -o $@ -c $(CCFLAGS) -DATLCINT $(intf) -DATL_USEPTHREADS -DDREAL ../lutst.c
+dllttst_pt.o : ../llttst.c $(INCdir)/../atlas_misc.h \
+                   $(INCdir)/dmm.h $(INCdir)/../atlas_lvl3.h 
+	$(CC) -o $@ -c $(CCFLAGS) -DATLCINT $(intf) -DATL_USEPTHREADS -DDREAL ../llttst.c
+duumtst_pt.o : ../uumtst.c $(INCdir)/../atlas_misc.h \
+                   $(INCdir)/dmm.h $(INCdir)/../atlas_lvl3.h 
+	$(CC) -o $@ -c $(CCFLAGS) -DATLCINT $(intf) -DATL_USEPTHREADS -DDREAL ../uumtst.c
+
+dscaltst_pt.o : ../scaltst.c $(INCdir)/../atlas_misc.h \
+                  $(INCdir)/../atlas_f77.h 
+	$(CC) -o $@ -c $(CCFLAGS) -DATL_USEPTHREADS -DDREAL ../scaltst.c
+
+dgemmtst_pt.o : ../gemmtst.c $(INCdir)/../atlas_misc.h $(INCdir)/dmm.h \
+                  $(INCdir)/../atlas_lvl3.h
+	$(CC) -o $@ -c $(CCFLAGS) -DATL_USEPTHREADS -DDREAL ../gemmtst.c
+
+dl1blastst.o : ../l1blastst.c $(INCdir)/../atlas_misc.h \
+                   $(INCdir)/../atlas_tst.h $(INCdir)/../atlas_level1.h
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL  ../l1blastst.c
+dl2blastst.o : ../l2blastst.c $(INCdir)/../atlas_misc.h \
+                   $(INCdir)/../atlas_tst.h $(INCdir)/../atlas_level2.h
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL  ../l2blastst.c
+
+dl3blastst.o : ../l3blastst.c $(INCdir)/../atlas_misc.h \
+                   $(INCdir)/dmm.h $(INCdir)/../atlas_lvl3.h
+	$(CC) -o $@ -c $(CCFLAGS) -DATLCINT  -DDREAL ../l3blastst.c
+dinvtst.o : ../invtst.c $(INCdir)/../atlas_misc.h \
+                   $(INCdir)/dmm.h $(INCdir)/../atlas_lvl3.h 
+	$(CC) -o $@ -c $(CCFLAGS) -DATLCINT $(intf)  -DDREAL ../invtst.c
+dtrtritst.o : ../trtritst.c $(INCdir)/../atlas_misc.h \
+                   $(INCdir)/dmm.h $(INCdir)/../atlas_lvl3.h 
+	$(CC) -o $@ -c $(CCFLAGS) -DATLCINT $(intf)  -DDREAL ../trtritst.c
+dslvtst.o : ../slvtst.c $(INCdir)/../atlas_misc.h \
+                   $(INCdir)/dmm.h $(INCdir)/../atlas_lvl3.h 
+	$(CC) -o $@ -c $(CCFLAGS) -DATLCINT $(intf)  -DDREAL ../slvtst.c
+dlutst.o : ../lutst.c $(INCdir)/../atlas_misc.h \
+                   $(INCdir)/dmm.h $(INCdir)/../atlas_lvl3.h 
+	$(CC) -o $@ -c $(CCFLAGS) -DATLCINT $(intf)  -DDREAL ../lutst.c
+dllttst.o : ../llttst.c $(INCdir)/../atlas_misc.h \
+                   $(INCdir)/dmm.h $(INCdir)/../atlas_lvl3.h 
+	$(CC) -o $@ -c $(CCFLAGS) -DATLCINT $(intf)  -DDREAL ../llttst.c
+duumtst.o : ../uumtst.c $(INCdir)/../atlas_misc.h \
+                   $(INCdir)/dmm.h $(INCdir)/../atlas_lvl3.h 
+	$(CC) -o $@ -c $(CCFLAGS) -DATLCINT $(intf)  -DDREAL ../uumtst.c
+
+dscaltst.o : ../scaltst.c $(INCdir)/../atlas_misc.h \
+                  $(INCdir)/../atlas_f77.h 
+	$(CC) -o $@ -c $(CCFLAGS)  -DDREAL ../scaltst.c
+
+dgemmtst.o : ../gemmtst.c $(INCdir)/../atlas_misc.h $(INCdir)/dmm.h \
+                  $(INCdir)/../atlas_lvl3.h
+	$(CC) -o $@ -c $(CCFLAGS)  -DDREAL ../gemmtst.c
+
+xcl1blastst_pt : cl1blastst_pt.o cl1lib_pt ctstlib_pt
+	$(FLINKER) $(FCLINKFLAGS) -o $@ cl1blastst_pt.o \
+                   $(TESTlib) $(BLASlib) $(ATLASlib) $(LIBS)
+xcl2blastst_pt : cl2blastst_pt.o cl2lib_pt ctstlib_pt
+	$(FLINKER) $(FCLINKFLAGS) -o $@ cl2blastst_pt.o \
+                   $(TESTlib) $(BLASlib) $(ATLASlib) $(LIBS)
+xcl3blastst_pt : $(INCdir)/atlas_type.h cl3blastst_pt.o \
+                   ctstlib_pt cl3lib_pt
+	$(FLINKER) $(FCLINKFLAGS) -o $@ cl3blastst_pt.o \
+                   $(TESTlib) $(BLASlib) $(ATLASlib) $(LIBS)
+csanity_test_pt: xcinvtst_pt xcslvtst_pt xctrtritst_pt xcuumtst_pt
+	$(ATLRUN) $(BINdir) xcslvtst_pt -n 167 -r 83 -O 2 c r \
+                  >> $(BINdir)/ptsanity.out
+	$(ATLRUN) $(BINdir) xcslvtst_pt -n 167 -r 83 -O 2 c r -U 2 u l \
+                  >> $(BINdir)/ptsanity.out
+	$(ATLRUN) $(BINdir) xctrtritst_pt -n 167 -O 2 c r -U 2 u l \
+                  -D 2 n u >> $(BINdir)/ptsanity.out
+	$(ATLRUN) $(BINdir) xcuumtst_pt -n 167 -O 2 c r -U 2 u l \
+                  >> $(BINdir)/ptsanity.out
+xcinv_all_pt : xcinvtst_pt xcinvtstF_pt \
+                   xcinvtst_sys_pt xcinvtstF_sys_pt
+
+xcinvtst_pt : cinvtst_pt.o clapack ctstlib_pt cl3lib_pt \
+                  cl2lib_pt cl1lib_pt ccblas_pt
+	rm -f cinvtst_pt.o
+	$(MAKE) cinvtst_pt.o
+	$(FLINKER) $(FCLINKFLAGS) -o $@ cinvtst_pt.o \
+                   $(TESTlib) $(LAPACKlib) $(PTCBLASlib) $(ATLASlib) $(LIBS)
+xcinvtst_sys_pt : cinvtst_pt.o clapack \
+                      ctstlib cl3lib_pt cl2lib_pt cl1lib_pt \
+                      ccblas_pt
+	rm -f cinvtst_pt.o
+	$(MAKE) cinvtst_pt.o
+	$(FLINKER) $(FCLINKFLAGS) -o $@ cinvtst_pt.o \
+                   $(TESTlib) $(LAPACKlib) $(BLASlib) \
+                   $(PTCBLASlib) $(ATLASlib) $(LIBS)
+xcinvtstF_pt : clapack ctstlib_pt cl3lib_pt cl2lib_pt \
+                   cl1lib_pt ccblas_pt cfblas_pt
+	rm -f cinvtst_pt.o
+	$(MAKE) cinvtst_pt.o intf=-DTimeF77
+	$(FLINKER) $(FCLINKFLAGS) -o $@ cinvtst_pt.o \
+                   $(TESTlib) $(FLAPACKlib) $(LAPACKlib)  \
+                   $(PTF77BLASlib) $(PTCBLASlib) $(ATLASlib) $(LIBS)
+xcinvtstF_sys_pt : clapack \
+                   ctstlib_pt cl3lib_pt cl2lib_pt cl1lib_pt \
+                   ccblas_pt cfblas_pt
+	rm -f cinvtst_pt.o
+	$(MAKE) cinvtst_pt.o intf=-DTimeF77
+	$(FLINKER) $(FCLINKFLAGS) -o $@ cinvtst_pt.o \
+                   $(TESTlib) $(FLAPACKlib) $(LAPACKlib)  $(BLASlib) \
+                   $(PTF77BLASlib) $(PTCBLASlib) $(ATLASlib) $(LIBS)
+
+xctrtri_all_pt : xctrtritst_pt xctrtritstF_pt \
+                   xctrtritst_sys_pt xctrtritstF_sys_pt
+
+xctrtritst_pt : ctrtritst_pt.o clapack ctstlib_pt cl3lib_pt \
+                  cl2lib_pt cl1lib_pt ccblas_pt
+	rm -f ctrtritst_pt.o
+	$(MAKE) ctrtritst_pt.o
+	$(FLINKER) $(FCLINKFLAGS) -o $@ ctrtritst_pt.o \
+                   $(TESTlib) $(LAPACKlib) $(PTCBLASlib) $(ATLASlib) $(LIBS)
+xctrtritst_sys_pt : ctrtritst_pt.o clapack \
+                      ctstlib cl3lib_pt cl2lib_pt cl1lib_pt \
+                      ccblas_pt
+	rm -f ctrtritst_pt.o
+	$(MAKE) ctrtritst_pt.o
+	$(FLINKER) $(FCLINKFLAGS) -o $@ ctrtritst_pt.o \
+                   $(TESTlib) $(LAPACKlib) $(BLASlib) \
+                   $(PTCBLASlib) $(ATLASlib) $(LIBS)
+xctrtritstF_pt : clapack ctstlib_pt cl3lib_pt cl2lib_pt \
+                   cl1lib_pt ccblas_pt cfblas_pt
+	rm -f ctrtritst_pt.o
+	$(MAKE) ctrtritst_pt.o intf=-DTimeF77
+	$(FLINKER) $(FCLINKFLAGS) -o $@ ctrtritst_pt.o \
+                   $(TESTlib) $(FLAPACKlib) $(LAPACKlib)  \
+                   $(PTF77BLASlib) $(PTCBLASlib) $(ATLASlib) $(LIBS)
+xctrtritstF_sys_pt : clapack \
+                   ctstlib_pt cl3lib_pt cl2lib_pt cl1lib_pt \
+                   ccblas_pt cfblas_pt
+	rm -f ctrtritst_pt.o
+	$(MAKE) ctrtritst_pt.o intf=-DTimeF77
+	$(FLINKER) $(FCLINKFLAGS) -o $@ ctrtritst_pt.o \
+                   $(TESTlib) $(FLAPACKlib) $(LAPACKlib)  $(BLASlib) \
+                   $(PTF77BLASlib) $(PTCBLASlib) $(ATLASlib) $(LIBS)
+
+xcuum_all_pt : xcuumtst_pt xcuumtstF_pt \
+                   xcuumtst_sys_pt xcuumtstF_sys_pt
+
+xcuumtst_pt : cuumtst_pt.o clapack ctstlib_pt cl3lib_pt \
+                  cl2lib_pt cl1lib_pt ccblas_pt
+	rm -f cuumtst_pt.o
+	$(MAKE) cuumtst_pt.o
+	$(FLINKER) $(FCLINKFLAGS) -o $@ cuumtst_pt.o \
+                   $(TESTlib) $(LAPACKlib) $(PTCBLASlib) $(ATLASlib) $(LIBS)
+xcuumtst_sys_pt : cuumtst_pt.o clapack \
+                      ctstlib cl3lib_pt cl2lib_pt cl1lib_pt \
+                      ccblas_pt
+	rm -f cuumtst_pt.o
+	$(MAKE) cuumtst_pt.o
+	$(FLINKER) $(FCLINKFLAGS) -o $@ cuumtst_pt.o \
+                   $(TESTlib) $(LAPACKlib) $(BLASlib) \
+                   $(PTCBLASlib) $(ATLASlib) $(LIBS)
+xcuumtstF_pt : clapack ctstlib_pt cl3lib_pt cl2lib_pt \
+                   cl1lib_pt ccblas_pt cfblas_pt
+	rm -f cuumtst_pt.o
+	$(MAKE) cuumtst_pt.o intf=-DTimeF77
+	$(FLINKER) $(FCLINKFLAGS) -o $@ cuumtst_pt.o \
+                   $(TESTlib) $(FLAPACKlib) $(LAPACKlib)  \
+                   $(PTF77BLASlib) $(PTCBLASlib) $(ATLASlib) $(LIBS)
+xcuumtstF_sys_pt : clapack \
+                   ctstlib_pt cl3lib_pt cl2lib_pt cl1lib_pt \
+                   ccblas_pt cfblas_pt
+	rm -f cuumtst_pt.o
+	$(MAKE) cuumtst_pt.o intf=-DTimeF77
+	$(FLINKER) $(FCLINKFLAGS) -o $@ cuumtst_pt.o \
+                   $(TESTlib) $(FLAPACKlib) $(LAPACKlib)  $(BLASlib) \
+                   $(PTF77BLASlib) $(PTCBLASlib) $(ATLASlib) $(LIBS)
+
+xcslv_all_pt : xcslvtst_pt xcslvtstF_pt \
+                   xcslvtst_sys_pt xcslvtstF_sys_pt
+
+xcslvtst_pt : cslvtst_pt.o clapack ctstlib_pt cl3lib_pt \
+                  cl2lib_pt cl1lib_pt ccblas_pt
+	rm -f cslvtst_pt.o
+	$(MAKE) cslvtst_pt.o
+	$(FLINKER) $(FCLINKFLAGS) -o $@ cslvtst_pt.o \
+                   $(TESTlib) $(LAPACKlib) $(PTCBLASlib) $(ATLASlib) $(LIBS)
+xcslvtst_sys_pt : cslvtst_pt.o clapack \
+                      ctstlib cl3lib_pt cl2lib_pt cl1lib_pt \
+                      ccblas_pt
+	rm -f cslvtst_pt.o
+	$(MAKE) cslvtst_pt.o
+	$(FLINKER) $(FCLINKFLAGS) -o $@ cslvtst_pt.o \
+                   $(TESTlib) $(LAPACKlib) $(BLASlib) \
+                   $(PTCBLASlib) $(ATLASlib) $(LIBS)
+xcslvtstF_pt : clapack ctstlib_pt cl3lib_pt cl2lib_pt \
+                   cl1lib_pt ccblas_pt cfblas_pt
+	rm -f cslvtst_pt.o
+	$(MAKE) cslvtst_pt.o intf=-DTimeF77
+	$(FLINKER) $(FCLINKFLAGS) -o $@ cslvtst_pt.o \
+                   $(TESTlib) $(FLAPACKlib) $(LAPACKlib)  \
+                   $(PTF77BLASlib) $(PTCBLASlib) $(ATLASlib) $(LIBS)
+xcslvtstF_sys_pt : clapack \
+                   ctstlib_pt cl3lib_pt cl2lib_pt cl1lib_pt \
+                   ccblas_pt cfblas_pt
+	rm -f cslvtst_pt.o
+	$(MAKE) cslvtst_pt.o intf=-DTimeF77
+	$(FLINKER) $(FCLINKFLAGS) -o $@ cslvtst_pt.o \
+                   $(TESTlib) $(FLAPACKlib) $(LAPACKlib)  $(BLASlib) \
+                   $(PTF77BLASlib) $(PTCBLASlib) $(ATLASlib) $(LIBS)
+
+xcllt_all_pt : xcllttst_pt xcllttstF_pt \
+                   xcllttst_sys_pt xcllttstF_sys_pt
+
+xcllttst_pt : cllttst_pt.o clapack ctstlib_pt cl3lib_pt \
+                  cl2lib_pt cl1lib_pt ccblas_pt
+	rm -f cllttst_pt.o
+	$(MAKE) cllttst_pt.o
+	$(FLINKER) $(FCLINKFLAGS) -o $@ cllttst_pt.o \
+                   $(TESTlib) $(LAPACKlib) $(PTCBLASlib) $(ATLASlib) $(LIBS)
+xcllttst_sys_pt : cllttst_pt.o clapack \
+                      ctstlib cl3lib_pt cl2lib_pt cl1lib_pt \
+                      ccblas_pt
+	rm -f cllttst_pt.o
+	$(MAKE) cllttst_pt.o
+	$(FLINKER) $(FCLINKFLAGS) -o $@ cllttst_pt.o \
+                   $(TESTlib) $(LAPACKlib) $(BLASlib) \
+                   $(PTCBLASlib) $(ATLASlib) $(LIBS)
+xcllttstF_pt : clapack ctstlib_pt cl3lib_pt cl2lib_pt \
+                   cl1lib_pt ccblas_pt cfblas_pt
+	rm -f cllttst_pt.o
+	$(MAKE) cllttst_pt.o intf=-DTimeF77
+	$(FLINKER) $(FCLINKFLAGS) -o $@ cllttst_pt.o \
+                   $(TESTlib) $(FLAPACKlib) $(LAPACKlib)  \
+                   $(PTF77BLASlib) $(PTCBLASlib) $(ATLASlib) $(LIBS)
+xcllttstF_sys_pt : clapack \
+                   ctstlib_pt cl3lib_pt cl2lib_pt cl1lib_pt \
+                   ccblas_pt cfblas_pt
+	rm -f cllttst_pt.o
+	$(MAKE) cllttst_pt.o intf=-DTimeF77
+	$(FLINKER) $(FCLINKFLAGS) -o $@ cllttst_pt.o \
+                   $(TESTlib) $(FLAPACKlib) $(LAPACKlib)  $(BLASlib) \
+                   $(PTF77BLASlib) $(PTCBLASlib) $(ATLASlib) $(LIBS)
+
+xclu_all_pt : xclutst_pt xclutstF_pt \
+                   xclutst_sys_pt xclutstF_sys_pt
+
+xclutst_pt : clutst_pt.o clapack ctstlib_pt cl3lib_pt \
+                  cl2lib_pt cl1lib_pt ccblas_pt
+	rm -f clutst_pt.o
+	$(MAKE) clutst_pt.o
+	$(FLINKER) $(FCLINKFLAGS) -o $@ clutst_pt.o \
+                   $(TESTlib) $(LAPACKlib) $(PTCBLASlib) $(ATLASlib) $(LIBS)
+xclutst_sys_pt : clutst_pt.o clapack \
+                      ctstlib cl3lib_pt cl2lib_pt cl1lib_pt \
+                      ccblas_pt
+	rm -f clutst_pt.o
+	$(MAKE) clutst_pt.o
+	$(FLINKER) $(FCLINKFLAGS) -o $@ clutst_pt.o \
+                   $(TESTlib) $(LAPACKlib) $(BLASlib) \
+                   $(PTCBLASlib) $(ATLASlib) $(LIBS)
+xclutstF_pt : clapack ctstlib_pt cl3lib_pt cl2lib_pt \
+                   cl1lib_pt ccblas_pt cfblas_pt
+	rm -f clutst_pt.o
+	$(MAKE) clutst_pt.o intf=-DTimeF77
+	$(FLINKER) $(FCLINKFLAGS) -o $@ clutst_pt.o \
+                   $(TESTlib) $(FLAPACKlib) $(LAPACKlib)  \
+                   $(PTF77BLASlib) $(PTCBLASlib) $(ATLASlib) $(LIBS)
+xclutstF_sys_pt : clapack \
+                   ctstlib_pt cl3lib_pt cl2lib_pt cl1lib_pt \
+                   ccblas_pt cfblas_pt
+	rm -f clutst_pt.o
+	$(MAKE) clutst_pt.o intf=-DTimeF77
+	$(FLINKER) $(FCLINKFLAGS) -o $@ clutst_pt.o \
+                   $(TESTlib) $(FLAPACKlib) $(LAPACKlib)  $(BLASlib) \
+                   $(PTF77BLASlib) $(PTCBLASlib) $(ATLASlib) $(LIBS)
+
+xcmmtst_pt : $(INCdir)/atlas_type.h cgemmtst_pt.o cmmlib_pt ctstlib_pt
+	$(FLINKER) $(FCLINKFLAGS) -o $@ cgemmtst_pt.o \
+              $(TESTlib) $(BLASlib) $(cmmobj) $(ATLASlib) $(LIBS)
+
+xcl1blastst : cl1blastst.o cl1lib ctstlib
+	$(FLINKER) $(FCLINKFLAGS) -o $@ cl1blastst.o \
+                   $(TESTlib) $(BLASlib) $(ATLASlib) $(LIBS)
+xcl2blastst : cl2blastst.o cl2lib ctstlib
+	$(FLINKER) $(FCLINKFLAGS) -o $@ cl2blastst.o \
+                   $(TESTlib) $(BLASlib) $(ATLASlib) $(LIBS)
+xcl3blastst : $(INCdir)/atlas_type.h cl3blastst.o \
+                   ctstlib cl3lib
+	$(FLINKER) $(FCLINKFLAGS) -o $@ cl3blastst.o \
+                   $(TESTlib) $(BLASlib) $(ATLASlib) $(LIBS)
+csanity_test: xcinvtst xcslvtst xctrtritst xcuumtst
+	$(ATLRUN) $(BINdir) xcslvtst -n 167 -r 83 -O 2 c r \
+                  >> $(BINdir)/sanity.out
+	$(ATLRUN) $(BINdir) xcslvtst -n 167 -r 83 -O 2 c r -U 2 u l \
+                  >> $(BINdir)/sanity.out
+	$(ATLRUN) $(BINdir) xctrtritst -n 167 -O 2 c r -U 2 u l \
+                  -D 2 n u >> $(BINdir)/sanity.out
+	$(ATLRUN) $(BINdir) xcuumtst -n 167 -O 2 c r -U 2 u l \
+                  >> $(BINdir)/sanity.out
+xcinv_all : xcinvtst xcinvtstF \
+                   xcinvtst_sys xcinvtstF_sys
+
+xcinvtst : cinvtst.o clapack ctstlib cl3lib \
+                  cl2lib cl1lib ccblas
+	rm -f cinvtst.o
+	$(MAKE) cinvtst.o
+	$(FLINKER) $(FCLINKFLAGS) -o $@ cinvtst.o \
+                   $(TESTlib) $(LAPACKlib) $(CBLASlib) $(ATLASlib) $(LIBS)
+xcinvtst_sys : cinvtst.o clapack \
+                      ctstlib cl3lib cl2lib cl1lib \
+                      ccblas
+	rm -f cinvtst.o
+	$(MAKE) cinvtst.o
+	$(FLINKER) $(FCLINKFLAGS) -o $@ cinvtst.o \
+                   $(TESTlib) $(LAPACKlib) $(BLASlib) \
+                   $(CBLASlib) $(ATLASlib) $(LIBS)
+xcinvtstF : clapack ctstlib cl3lib cl2lib \
+                   cl1lib ccblas cfblas
+	rm -f cinvtst.o
+	$(MAKE) cinvtst.o intf=-DTimeF77
+	$(FLINKER) $(FCLINKFLAGS) -o $@ cinvtst.o \
+                   $(TESTlib) $(FLAPACKlib) $(LAPACKlib)  \
+                   $(F77BLASlib) $(CBLASlib) $(ATLASlib) $(LIBS)
+xcinvtstF_sys : clapack \
+                   ctstlib cl3lib cl2lib cl1lib \
+                   ccblas cfblas
+	rm -f cinvtst.o
+	$(MAKE) cinvtst.o intf=-DTimeF77
+	$(FLINKER) $(FCLINKFLAGS) -o $@ cinvtst.o \
+                   $(TESTlib) $(FLAPACKlib) $(LAPACKlib)  $(BLASlib) \
+                   $(F77BLASlib) $(CBLASlib) $(ATLASlib) $(LIBS)
+
+xctrtri_all : xctrtritst xctrtritstF \
+                   xctrtritst_sys xctrtritstF_sys
+
+xctrtritst : ctrtritst.o clapack ctstlib cl3lib \
+                  cl2lib cl1lib ccblas
+	rm -f ctrtritst.o
+	$(MAKE) ctrtritst.o
+	$(FLINKER) $(FCLINKFLAGS) -o $@ ctrtritst.o \
+                   $(TESTlib) $(LAPACKlib) $(CBLASlib) $(ATLASlib) $(LIBS)
+xctrtritst_sys : ctrtritst.o clapack \
+                      ctstlib cl3lib cl2lib cl1lib \
+                      ccblas
+	rm -f ctrtritst.o
+	$(MAKE) ctrtritst.o
+	$(FLINKER) $(FCLINKFLAGS) -o $@ ctrtritst.o \
+                   $(TESTlib) $(LAPACKlib) $(BLASlib) \
+                   $(CBLASlib) $(ATLASlib) $(LIBS)
+xctrtritstF : clapack ctstlib cl3lib cl2lib \
+                   cl1lib ccblas cfblas
+	rm -f ctrtritst.o
+	$(MAKE) ctrtritst.o intf=-DTimeF77
+	$(FLINKER) $(FCLINKFLAGS) -o $@ ctrtritst.o \
+                   $(TESTlib) $(FLAPACKlib) $(LAPACKlib)  \
+                   $(F77BLASlib) $(CBLASlib) $(ATLASlib) $(LIBS)
+xctrtritstF_sys : clapack \
+                   ctstlib cl3lib cl2lib cl1lib \
+                   ccblas cfblas
+	rm -f ctrtritst.o
+	$(MAKE) ctrtritst.o intf=-DTimeF77
+	$(FLINKER) $(FCLINKFLAGS) -o $@ ctrtritst.o \
+                   $(TESTlib) $(FLAPACKlib) $(LAPACKlib)  $(BLASlib) \
+                   $(F77BLASlib) $(CBLASlib) $(ATLASlib) $(LIBS)
+
+xcuum_all : xcuumtst xcuumtstF \
+                   xcuumtst_sys xcuumtstF_sys
+
+xcuumtst : cuumtst.o clapack ctstlib cl3lib \
+                  cl2lib cl1lib ccblas
+	rm -f cuumtst.o
+	$(MAKE) cuumtst.o
+	$(FLINKER) $(FCLINKFLAGS) -o $@ cuumtst.o \
+                   $(TESTlib) $(LAPACKlib) $(CBLASlib) $(ATLASlib) $(LIBS)
+xcuumtst_sys : cuumtst.o clapack \
+                      ctstlib cl3lib cl2lib cl1lib \
+                      ccblas
+	rm -f cuumtst.o
+	$(MAKE) cuumtst.o
+	$(FLINKER) $(FCLINKFLAGS) -o $@ cuumtst.o \
+                   $(TESTlib) $(LAPACKlib) $(BLASlib) \
+                   $(CBLASlib) $(ATLASlib) $(LIBS)
+xcuumtstF : clapack ctstlib cl3lib cl2lib \
+                   cl1lib ccblas cfblas
+	rm -f cuumtst.o
+	$(MAKE) cuumtst.o intf=-DTimeF77
+	$(FLINKER) $(FCLINKFLAGS) -o $@ cuumtst.o \
+                   $(TESTlib) $(FLAPACKlib) $(LAPACKlib)  \
+                   $(F77BLASlib) $(CBLASlib) $(ATLASlib) $(LIBS)
+xcuumtstF_sys : clapack \
+                   ctstlib cl3lib cl2lib cl1lib \
+                   ccblas cfblas
+	rm -f cuumtst.o
+	$(MAKE) cuumtst.o intf=-DTimeF77
+	$(FLINKER) $(FCLINKFLAGS) -o $@ cuumtst.o \
+                   $(TESTlib) $(FLAPACKlib) $(LAPACKlib)  $(BLASlib) \
+                   $(F77BLASlib) $(CBLASlib) $(ATLASlib) $(LIBS)
+
+xcslv_all : xcslvtst xcslvtstF \
+                   xcslvtst_sys xcslvtstF_sys
+
+xcslvtst : cslvtst.o clapack ctstlib cl3lib \
+                  cl2lib cl1lib ccblas
+	rm -f cslvtst.o
+	$(MAKE) cslvtst.o
+	$(FLINKER) $(FCLINKFLAGS) -o $@ cslvtst.o \
+                   $(TESTlib) $(LAPACKlib) $(CBLASlib) $(ATLASlib) $(LIBS)
+xcslvtst_sys : cslvtst.o clapack \
+                      ctstlib cl3lib cl2lib cl1lib \
+                      ccblas
+	rm -f cslvtst.o
+	$(MAKE) cslvtst.o
+	$(FLINKER) $(FCLINKFLAGS) -o $@ cslvtst.o \
+                   $(TESTlib) $(LAPACKlib) $(BLASlib) \
+                   $(CBLASlib) $(ATLASlib) $(LIBS)
+xcslvtstF : clapack ctstlib cl3lib cl2lib \
+                   cl1lib ccblas cfblas
+	rm -f cslvtst.o
+	$(MAKE) cslvtst.o intf=-DTimeF77
+	$(FLINKER) $(FCLINKFLAGS) -o $@ cslvtst.o \
+                   $(TESTlib) $(FLAPACKlib) $(LAPACKlib)  \
+                   $(F77BLASlib) $(CBLASlib) $(ATLASlib) $(LIBS)
+xcslvtstF_sys : clapack \
+                   ctstlib cl3lib cl2lib cl1lib \
+                   ccblas cfblas
+	rm -f cslvtst.o
+	$(MAKE) cslvtst.o intf=-DTimeF77
+	$(FLINKER) $(FCLINKFLAGS) -o $@ cslvtst.o \
+                   $(TESTlib) $(FLAPACKlib) $(LAPACKlib)  $(BLASlib) \
+                   $(F77BLASlib) $(CBLASlib) $(ATLASlib) $(LIBS)
+
+xcllt_all : xcllttst xcllttstF \
+                   xcllttst_sys xcllttstF_sys
+
+xcllttst : cllttst.o clapack ctstlib cl3lib \
+                  cl2lib cl1lib ccblas
+	rm -f cllttst.o
+	$(MAKE) cllttst.o
+	$(FLINKER) $(FCLINKFLAGS) -o $@ cllttst.o \
+                   $(TESTlib) $(LAPACKlib) $(CBLASlib) $(ATLASlib) $(LIBS)
+xcllttst_sys : cllttst.o clapack \
+                      ctstlib cl3lib cl2lib cl1lib \
+                      ccblas
+	rm -f cllttst.o
+	$(MAKE) cllttst.o
+	$(FLINKER) $(FCLINKFLAGS) -o $@ cllttst.o \
+                   $(TESTlib) $(LAPACKlib) $(BLASlib) \
+                   $(CBLASlib) $(ATLASlib) $(LIBS)
+xcllttstF : clapack ctstlib cl3lib cl2lib \
+                   cl1lib ccblas cfblas
+	rm -f cllttst.o
+	$(MAKE) cllttst.o intf=-DTimeF77
+	$(FLINKER) $(FCLINKFLAGS) -o $@ cllttst.o \
+                   $(TESTlib) $(FLAPACKlib) $(LAPACKlib)  \
+                   $(F77BLASlib) $(CBLASlib) $(ATLASlib) $(LIBS)
+xcllttstF_sys : clapack \
+                   ctstlib cl3lib cl2lib cl1lib \
+                   ccblas cfblas
+	rm -f cllttst.o
+	$(MAKE) cllttst.o intf=-DTimeF77
+	$(FLINKER) $(FCLINKFLAGS) -o $@ cllttst.o \
+                   $(TESTlib) $(FLAPACKlib) $(LAPACKlib)  $(BLASlib) \
+                   $(F77BLASlib) $(CBLASlib) $(ATLASlib) $(LIBS)
+
+xclu_all : xclutst xclutstF \
+                   xclutst_sys xclutstF_sys
+
+xclutst : clutst.o clapack ctstlib cl3lib \
+                  cl2lib cl1lib ccblas
+	rm -f clutst.o
+	$(MAKE) clutst.o
+	$(FLINKER) $(FCLINKFLAGS) -o $@ clutst.o \
+                   $(TESTlib) $(LAPACKlib) $(CBLASlib) $(ATLASlib) $(LIBS)
+xclutst_sys : clutst.o clapack \
+                      ctstlib cl3lib cl2lib cl1lib \
+                      ccblas
+	rm -f clutst.o
+	$(MAKE) clutst.o
+	$(FLINKER) $(FCLINKFLAGS) -o $@ clutst.o \
+                   $(TESTlib) $(LAPACKlib) $(BLASlib) \
+                   $(CBLASlib) $(ATLASlib) $(LIBS)
+xclutstF : clapack ctstlib cl3lib cl2lib \
+                   cl1lib ccblas cfblas
+	rm -f clutst.o
+	$(MAKE) clutst.o intf=-DTimeF77
+	$(FLINKER) $(FCLINKFLAGS) -o $@ clutst.o \
+                   $(TESTlib) $(FLAPACKlib) $(LAPACKlib)  \
+                   $(F77BLASlib) $(CBLASlib) $(ATLASlib) $(LIBS)
+xclutstF_sys : clapack \
+                   ctstlib cl3lib cl2lib cl1lib \
+                   ccblas cfblas
+	rm -f clutst.o
+	$(MAKE) clutst.o intf=-DTimeF77
+	$(FLINKER) $(FCLINKFLAGS) -o $@ clutst.o \
+                   $(TESTlib) $(FLAPACKlib) $(LAPACKlib)  $(BLASlib) \
+                   $(F77BLASlib) $(CBLASlib) $(ATLASlib) $(LIBS)
+
+xcmmtst : $(INCdir)/atlas_type.h cgemmtst.o cmmlib ctstlib
+	$(FLINKER) $(FCLINKFLAGS) -o $@ cgemmtst.o \
+              $(TESTlib) $(BLASlib) $(cmmobj) $(ATLASlib) $(LIBS)
+
+xcgpmmtst : $(INCdir)/atlas_type.h cgpmmtst.o cmmlib ctstlib
+	$(FLINKER) $(FCLINKFLAGS) -o $@ cgpmmtst.o \
+              $(TESTlib) $(BLASlib) $(cmmobj) $(ATLASlib) $(LIBS)
+cgpmmtst.o : ../gpmmtst.c $(INCdir)/../atlas_misc.h $(INCdir)/cmm.h \
+                  $(INCdir)/../atlas_lvl3.h $(INCdir)/../atlas_pkblas.h
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX ../gpmmtst.c
+	
+ctstlib_pt : ctstlib
+ctstlib :
+	cd $(TSTdir) ; $(MAKE) clib
+
+cfblas_pt : cfblaslib_pt
+cfblaslib_pt :
+	cd $(FBLdir) ; $(MAKE) cptlib
+cfblas : cfblaslib
+cfblaslib :
+	cd $(FBLdir) ; $(MAKE) clib
+ccblas_pt : ccblaslib_pt
+ccblaslib_pt :
+	cd $(CBLdir) ; $(MAKE) cptlib
+ccblas : ccblaslib
+ccblaslib :
+	cd $(CBLdir) ; $(MAKE) clib
+
+cmmlib_pt : auxlib_pt
+	cd $(GMMdir) ; $(MAKE) clib
+cmmlib : auxlib
+	cd $(GMMdir) ; $(MAKE) clib
+cpklib : auxlib
+	cd $(TOPdir)/src/blas/pklevel3/$(ARCH) ; $(MAKE) clib
+
+cl2lib_pt : cl2lib
+	cd $(PTSdir)/blas/level2/$(ARCH) ; $(MAKE) clib
+cl2lib : cl1lib auxlib
+	cd $(GMVdir) ; $(MAKE) clib
+	cd $(GR1dir) ; $(MAKE) clib
+	cd $(L2Bdir) ; $(MAKE) clib
+
+cl3lib_pt : cl3lib cmmlib_pt
+	cd $(PTSdir)/blas/level3/$(ARCH) ; $(MAKE) clib
+cl3lib : cmmlib
+	cd $(L3Bdir) ; $(MAKE) clib
+
+cl1lib_pt : auxlib_pt cl1lib
+	cd $(PTSdir)/blas/level1/$(ARCH) ; $(MAKE) clib
+cl1lib : auxlib
+	cd $(L1Bdir) ; $(MAKE) clvl1
+
+clapack :
+	cd $(TOPdir)/src/lapack/$(ARCH) ; $(MAKE) clib
+
+xcprintblk : cprintblk.o
+	$(CLINKER) -o $@ cprintblk.o $(ATLASlib)
+cprintblk.o : $(INCdir)/../atlas_mv.h $(INCdir)/../atlas_r1.h \
+                   $(INCdir)/cmm.h ../printblk.c
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX ../printblk.c
+
+cl1blastst_pt.o : ../l1blastst.c $(INCdir)/../atlas_misc.h \
+                   $(INCdir)/../atlas_tst.h $(INCdir)/../atlas_level1.h
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX -DATL_USEPTHREADS ../l1blastst.c
+cl2blastst_pt.o : ../l2blastst.c $(INCdir)/../atlas_misc.h \
+                   $(INCdir)/../atlas_tst.h $(INCdir)/../atlas_level2.h
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX -DATL_USEPTHREADS ../l2blastst.c
+
+cl3blastst_pt.o : ../l3blastst.c $(INCdir)/../atlas_misc.h \
+                   $(INCdir)/cmm.h $(INCdir)/../atlas_lvl3.h
+	$(CC) -o $@ -c $(CCFLAGS) -DATLCINT -DATL_USEPTHREADS -DSCPLX ../l3blastst.c
+cinvtst_pt.o : ../invtst.c $(INCdir)/../atlas_misc.h \
+                   $(INCdir)/cmm.h $(INCdir)/../atlas_lvl3.h 
+	$(CC) -o $@ -c $(CCFLAGS) -DATLCINT $(intf) -DATL_USEPTHREADS -DSCPLX ../invtst.c
+ctrtritst_pt.o : ../trtritst.c $(INCdir)/../atlas_misc.h \
+                   $(INCdir)/cmm.h $(INCdir)/../atlas_lvl3.h 
+	$(CC) -o $@ -c $(CCFLAGS) -DATLCINT $(intf) -DATL_USEPTHREADS -DSCPLX ../trtritst.c
+cslvtst_pt.o : ../slvtst.c $(INCdir)/../atlas_misc.h \
+                   $(INCdir)/cmm.h $(INCdir)/../atlas_lvl3.h 
+	$(CC) -o $@ -c $(CCFLAGS) -DATLCINT $(intf) -DATL_USEPTHREADS -DSCPLX ../slvtst.c
+clutst_pt.o : ../lutst.c $(INCdir)/../atlas_misc.h \
+                   $(INCdir)/cmm.h $(INCdir)/../atlas_lvl3.h 
+	$(CC) -o $@ -c $(CCFLAGS) -DATLCINT $(intf) -DATL_USEPTHREADS -DSCPLX ../lutst.c
+cllttst_pt.o : ../llttst.c $(INCdir)/../atlas_misc.h \
+                   $(INCdir)/cmm.h $(INCdir)/../atlas_lvl3.h 
+	$(CC) -o $@ -c $(CCFLAGS) -DATLCINT $(intf) -DATL_USEPTHREADS -DSCPLX ../llttst.c
+cuumtst_pt.o : ../uumtst.c $(INCdir)/../atlas_misc.h \
+                   $(INCdir)/cmm.h $(INCdir)/../atlas_lvl3.h 
+	$(CC) -o $@ -c $(CCFLAGS) -DATLCINT $(intf) -DATL_USEPTHREADS -DSCPLX ../uumtst.c
+
+cscaltst_pt.o : ../scaltst.c $(INCdir)/../atlas_misc.h \
+                  $(INCdir)/../atlas_f77.h 
+	$(CC) -o $@ -c $(CCFLAGS) -DATL_USEPTHREADS -DSCPLX ../scaltst.c
+
+cgemmtst_pt.o : ../gemmtst.c $(INCdir)/../atlas_misc.h $(INCdir)/cmm.h \
+                  $(INCdir)/../atlas_lvl3.h
+	$(CC) -o $@ -c $(CCFLAGS) -DATL_USEPTHREADS -DSCPLX ../gemmtst.c
+
+cl1blastst.o : ../l1blastst.c $(INCdir)/../atlas_misc.h \
+                   $(INCdir)/../atlas_tst.h $(INCdir)/../atlas_level1.h
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX  ../l1blastst.c
+cl2blastst.o : ../l2blastst.c $(INCdir)/../atlas_misc.h \
+                   $(INCdir)/../atlas_tst.h $(INCdir)/../atlas_level2.h
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX  ../l2blastst.c
+
+cl3blastst.o : ../l3blastst.c $(INCdir)/../atlas_misc.h \
+                   $(INCdir)/cmm.h $(INCdir)/../atlas_lvl3.h
+	$(CC) -o $@ -c $(CCFLAGS) -DATLCINT  -DSCPLX ../l3blastst.c
+cinvtst.o : ../invtst.c $(INCdir)/../atlas_misc.h \
+                   $(INCdir)/cmm.h $(INCdir)/../atlas_lvl3.h 
+	$(CC) -o $@ -c $(CCFLAGS) -DATLCINT $(intf)  -DSCPLX ../invtst.c
+ctrtritst.o : ../trtritst.c $(INCdir)/../atlas_misc.h \
+                   $(INCdir)/cmm.h $(INCdir)/../atlas_lvl3.h 
+	$(CC) -o $@ -c $(CCFLAGS) -DATLCINT $(intf)  -DSCPLX ../trtritst.c
+cslvtst.o : ../slvtst.c $(INCdir)/../atlas_misc.h \
+                   $(INCdir)/cmm.h $(INCdir)/../atlas_lvl3.h 
+	$(CC) -o $@ -c $(CCFLAGS) -DATLCINT $(intf)  -DSCPLX ../slvtst.c
+clutst.o : ../lutst.c $(INCdir)/../atlas_misc.h \
+                   $(INCdir)/cmm.h $(INCdir)/../atlas_lvl3.h 
+	$(CC) -o $@ -c $(CCFLAGS) -DATLCINT $(intf)  -DSCPLX ../lutst.c
+cllttst.o : ../llttst.c $(INCdir)/../atlas_misc.h \
+                   $(INCdir)/cmm.h $(INCdir)/../atlas_lvl3.h 
+	$(CC) -o $@ -c $(CCFLAGS) -DATLCINT $(intf)  -DSCPLX ../llttst.c
+cuumtst.o : ../uumtst.c $(INCdir)/../atlas_misc.h \
+                   $(INCdir)/cmm.h $(INCdir)/../atlas_lvl3.h 
+	$(CC) -o $@ -c $(CCFLAGS) -DATLCINT $(intf)  -DSCPLX ../uumtst.c
+
+cscaltst.o : ../scaltst.c $(INCdir)/../atlas_misc.h \
+                  $(INCdir)/../atlas_f77.h 
+	$(CC) -o $@ -c $(CCFLAGS)  -DSCPLX ../scaltst.c
+
+cgemmtst.o : ../gemmtst.c $(INCdir)/../atlas_misc.h $(INCdir)/cmm.h \
+                  $(INCdir)/../atlas_lvl3.h
+	$(CC) -o $@ -c $(CCFLAGS)  -DSCPLX ../gemmtst.c
+
+xzl1blastst_pt : zl1blastst_pt.o zl1lib_pt ztstlib_pt
+	$(FLINKER) $(FCLINKFLAGS) -o $@ zl1blastst_pt.o \
+                   $(TESTlib) $(BLASlib) $(ATLASlib) $(LIBS)
+xzl2blastst_pt : zl2blastst_pt.o zl2lib_pt ztstlib_pt
+	$(FLINKER) $(FCLINKFLAGS) -o $@ zl2blastst_pt.o \
+                   $(TESTlib) $(BLASlib) $(ATLASlib) $(LIBS)
+xzl3blastst_pt : $(INCdir)/atlas_type.h zl3blastst_pt.o \
+                   ztstlib_pt zl3lib_pt
+	$(FLINKER) $(FCLINKFLAGS) -o $@ zl3blastst_pt.o \
+                   $(TESTlib) $(BLASlib) $(ATLASlib) $(LIBS)
+zsanity_test_pt: xzinvtst_pt xzslvtst_pt xztrtritst_pt xzuumtst_pt
+	$(ATLRUN) $(BINdir) xzslvtst_pt -n 167 -r 83 -O 2 c r \
+                  >> $(BINdir)/ptsanity.out
+	$(ATLRUN) $(BINdir) xzslvtst_pt -n 167 -r 83 -O 2 c r -U 2 u l \
+                  >> $(BINdir)/ptsanity.out
+	$(ATLRUN) $(BINdir) xztrtritst_pt -n 167 -O 2 c r -U 2 u l \
+                  -D 2 n u >> $(BINdir)/ptsanity.out
+	$(ATLRUN) $(BINdir) xzuumtst_pt -n 167 -O 2 c r -U 2 u l \
+                  >> $(BINdir)/ptsanity.out
+xzinv_all_pt : xzinvtst_pt xzinvtstF_pt \
+                   xzinvtst_sys_pt xzinvtstF_sys_pt
+
+xzinvtst_pt : zinvtst_pt.o zlapack ztstlib_pt zl3lib_pt \
+                  zl2lib_pt zl1lib_pt zcblas_pt
+	rm -f zinvtst_pt.o
+	$(MAKE) zinvtst_pt.o
+	$(FLINKER) $(FCLINKFLAGS) -o $@ zinvtst_pt.o \
+                   $(TESTlib) $(LAPACKlib) $(PTCBLASlib) $(ATLASlib) $(LIBS)
+xzinvtst_sys_pt : zinvtst_pt.o zlapack \
+                      ztstlib zl3lib_pt zl2lib_pt zl1lib_pt \
+                      zcblas_pt
+	rm -f zinvtst_pt.o
+	$(MAKE) zinvtst_pt.o
+	$(FLINKER) $(FCLINKFLAGS) -o $@ zinvtst_pt.o \
+                   $(TESTlib) $(LAPACKlib) $(BLASlib) \
+                   $(PTCBLASlib) $(ATLASlib) $(LIBS)
+xzinvtstF_pt : zlapack ztstlib_pt zl3lib_pt zl2lib_pt \
+                   zl1lib_pt zcblas_pt zfblas_pt
+	rm -f zinvtst_pt.o
+	$(MAKE) zinvtst_pt.o intf=-DTimeF77
+	$(FLINKER) $(FCLINKFLAGS) -o $@ zinvtst_pt.o \
+                   $(TESTlib) $(FLAPACKlib) $(LAPACKlib)  \
+                   $(PTF77BLASlib) $(PTCBLASlib) $(ATLASlib) $(LIBS)
+xzinvtstF_sys_pt : zlapack \
+                   ztstlib_pt zl3lib_pt zl2lib_pt zl1lib_pt \
+                   zcblas_pt zfblas_pt
+	rm -f zinvtst_pt.o
+	$(MAKE) zinvtst_pt.o intf=-DTimeF77
+	$(FLINKER) $(FCLINKFLAGS) -o $@ zinvtst_pt.o \
+                   $(TESTlib) $(FLAPACKlib) $(LAPACKlib)  $(BLASlib) \
+                   $(PTF77BLASlib) $(PTCBLASlib) $(ATLASlib) $(LIBS)
+
+xztrtri_all_pt : xztrtritst_pt xztrtritstF_pt \
+                   xztrtritst_sys_pt xztrtritstF_sys_pt
+
+xztrtritst_pt : ztrtritst_pt.o zlapack ztstlib_pt zl3lib_pt \
+                  zl2lib_pt zl1lib_pt zcblas_pt
+	rm -f ztrtritst_pt.o
+	$(MAKE) ztrtritst_pt.o
+	$(FLINKER) $(FCLINKFLAGS) -o $@ ztrtritst_pt.o \
+                   $(TESTlib) $(LAPACKlib) $(PTCBLASlib) $(ATLASlib) $(LIBS)
+xztrtritst_sys_pt : ztrtritst_pt.o zlapack \
+                      ztstlib zl3lib_pt zl2lib_pt zl1lib_pt \
+                      zcblas_pt
+	rm -f ztrtritst_pt.o
+	$(MAKE) ztrtritst_pt.o
+	$(FLINKER) $(FCLINKFLAGS) -o $@ ztrtritst_pt.o \
+                   $(TESTlib) $(LAPACKlib) $(BLASlib) \
+                   $(PTCBLASlib) $(ATLASlib) $(LIBS)
+xztrtritstF_pt : zlapack ztstlib_pt zl3lib_pt zl2lib_pt \
+                   zl1lib_pt zcblas_pt zfblas_pt
+	rm -f ztrtritst_pt.o
+	$(MAKE) ztrtritst_pt.o intf=-DTimeF77
+	$(FLINKER) $(FCLINKFLAGS) -o $@ ztrtritst_pt.o \
+                   $(TESTlib) $(FLAPACKlib) $(LAPACKlib)  \
+                   $(PTF77BLASlib) $(PTCBLASlib) $(ATLASlib) $(LIBS)
+xztrtritstF_sys_pt : zlapack \
+                   ztstlib_pt zl3lib_pt zl2lib_pt zl1lib_pt \
+                   zcblas_pt zfblas_pt
+	rm -f ztrtritst_pt.o
+	$(MAKE) ztrtritst_pt.o intf=-DTimeF77
+	$(FLINKER) $(FCLINKFLAGS) -o $@ ztrtritst_pt.o \
+                   $(TESTlib) $(FLAPACKlib) $(LAPACKlib)  $(BLASlib) \
+                   $(PTF77BLASlib) $(PTCBLASlib) $(ATLASlib) $(LIBS)
+
+xzuum_all_pt : xzuumtst_pt xzuumtstF_pt \
+                   xzuumtst_sys_pt xzuumtstF_sys_pt
+
+xzuumtst_pt : zuumtst_pt.o zlapack ztstlib_pt zl3lib_pt \
+                  zl2lib_pt zl1lib_pt zcblas_pt
+	rm -f zuumtst_pt.o
+	$(MAKE) zuumtst_pt.o
+	$(FLINKER) $(FCLINKFLAGS) -o $@ zuumtst_pt.o \
+                   $(TESTlib) $(LAPACKlib) $(PTCBLASlib) $(ATLASlib) $(LIBS)
+xzuumtst_sys_pt : zuumtst_pt.o zlapack \
+                      ztstlib zl3lib_pt zl2lib_pt zl1lib_pt \
+                      zcblas_pt
+	rm -f zuumtst_pt.o
+	$(MAKE) zuumtst_pt.o
+	$(FLINKER) $(FCLINKFLAGS) -o $@ zuumtst_pt.o \
+                   $(TESTlib) $(LAPACKlib) $(BLASlib) \
+                   $(PTCBLASlib) $(ATLASlib) $(LIBS)
+xzuumtstF_pt : zlapack ztstlib_pt zl3lib_pt zl2lib_pt \
+                   zl1lib_pt zcblas_pt zfblas_pt
+	rm -f zuumtst_pt.o
+	$(MAKE) zuumtst_pt.o intf=-DTimeF77
+	$(FLINKER) $(FCLINKFLAGS) -o $@ zuumtst_pt.o \
+                   $(TESTlib) $(FLAPACKlib) $(LAPACKlib)  \
+                   $(PTF77BLASlib) $(PTCBLASlib) $(ATLASlib) $(LIBS)
+xzuumtstF_sys_pt : zlapack \
+                   ztstlib_pt zl3lib_pt zl2lib_pt zl1lib_pt \
+                   zcblas_pt zfblas_pt
+	rm -f zuumtst_pt.o
+	$(MAKE) zuumtst_pt.o intf=-DTimeF77
+	$(FLINKER) $(FCLINKFLAGS) -o $@ zuumtst_pt.o \
+                   $(TESTlib) $(FLAPACKlib) $(LAPACKlib)  $(BLASlib) \
+                   $(PTF77BLASlib) $(PTCBLASlib) $(ATLASlib) $(LIBS)
+
+xzslv_all_pt : xzslvtst_pt xzslvtstF_pt \
+                   xzslvtst_sys_pt xzslvtstF_sys_pt
+
+xzslvtst_pt : zslvtst_pt.o zlapack ztstlib_pt zl3lib_pt \
+                  zl2lib_pt zl1lib_pt zcblas_pt
+	rm -f zslvtst_pt.o
+	$(MAKE) zslvtst_pt.o
+	$(FLINKER) $(FCLINKFLAGS) -o $@ zslvtst_pt.o \
+                   $(TESTlib) $(LAPACKlib) $(PTCBLASlib) $(ATLASlib) $(LIBS)
+xzslvtst_sys_pt : zslvtst_pt.o zlapack \
+                      ztstlib zl3lib_pt zl2lib_pt zl1lib_pt \
+                      zcblas_pt
+	rm -f zslvtst_pt.o
+	$(MAKE) zslvtst_pt.o
+	$(FLINKER) $(FCLINKFLAGS) -o $@ zslvtst_pt.o \
+                   $(TESTlib) $(LAPACKlib) $(BLASlib) \
+                   $(PTCBLASlib) $(ATLASlib) $(LIBS)
+xzslvtstF_pt : zlapack ztstlib_pt zl3lib_pt zl2lib_pt \
+                   zl1lib_pt zcblas_pt zfblas_pt
+	rm -f zslvtst_pt.o
+	$(MAKE) zslvtst_pt.o intf=-DTimeF77
+	$(FLINKER) $(FCLINKFLAGS) -o $@ zslvtst_pt.o \
+                   $(TESTlib) $(FLAPACKlib) $(LAPACKlib)  \
+                   $(PTF77BLASlib) $(PTCBLASlib) $(ATLASlib) $(LIBS)
+xzslvtstF_sys_pt : zlapack \
+                   ztstlib_pt zl3lib_pt zl2lib_pt zl1lib_pt \
+                   zcblas_pt zfblas_pt
+	rm -f zslvtst_pt.o
+	$(MAKE) zslvtst_pt.o intf=-DTimeF77
+	$(FLINKER) $(FCLINKFLAGS) -o $@ zslvtst_pt.o \
+                   $(TESTlib) $(FLAPACKlib) $(LAPACKlib)  $(BLASlib) \
+                   $(PTF77BLASlib) $(PTCBLASlib) $(ATLASlib) $(LIBS)
+
+xzllt_all_pt : xzllttst_pt xzllttstF_pt \
+                   xzllttst_sys_pt xzllttstF_sys_pt
+
+xzllttst_pt : zllttst_pt.o zlapack ztstlib_pt zl3lib_pt \
+                  zl2lib_pt zl1lib_pt zcblas_pt
+	rm -f zllttst_pt.o
+	$(MAKE) zllttst_pt.o
+	$(FLINKER) $(FCLINKFLAGS) -o $@ zllttst_pt.o \
+                   $(TESTlib) $(LAPACKlib) $(PTCBLASlib) $(ATLASlib) $(LIBS)
+xzllttst_sys_pt : zllttst_pt.o zlapack \
+                      ztstlib zl3lib_pt zl2lib_pt zl1lib_pt \
+                      zcblas_pt
+	rm -f zllttst_pt.o
+	$(MAKE) zllttst_pt.o
+	$(FLINKER) $(FCLINKFLAGS) -o $@ zllttst_pt.o \
+                   $(TESTlib) $(LAPACKlib) $(BLASlib) \
+                   $(PTCBLASlib) $(ATLASlib) $(LIBS)
+xzllttstF_pt : zlapack ztstlib_pt zl3lib_pt zl2lib_pt \
+                   zl1lib_pt zcblas_pt zfblas_pt
+	rm -f zllttst_pt.o
+	$(MAKE) zllttst_pt.o intf=-DTimeF77
+	$(FLINKER) $(FCLINKFLAGS) -o $@ zllttst_pt.o \
+                   $(TESTlib) $(FLAPACKlib) $(LAPACKlib)  \
+                   $(PTF77BLASlib) $(PTCBLASlib) $(ATLASlib) $(LIBS)
+xzllttstF_sys_pt : zlapack \
+                   ztstlib_pt zl3lib_pt zl2lib_pt zl1lib_pt \
+                   zcblas_pt zfblas_pt
+	rm -f zllttst_pt.o
+	$(MAKE) zllttst_pt.o intf=-DTimeF77
+	$(FLINKER) $(FCLINKFLAGS) -o $@ zllttst_pt.o \
+                   $(TESTlib) $(FLAPACKlib) $(LAPACKlib)  $(BLASlib) \
+                   $(PTF77BLASlib) $(PTCBLASlib) $(ATLASlib) $(LIBS)
+
+xzlu_all_pt : xzlutst_pt xzlutstF_pt \
+                   xzlutst_sys_pt xzlutstF_sys_pt
+
+xzlutst_pt : zlutst_pt.o zlapack ztstlib_pt zl3lib_pt \
+                  zl2lib_pt zl1lib_pt zcblas_pt
+	rm -f zlutst_pt.o
+	$(MAKE) zlutst_pt.o
+	$(FLINKER) $(FCLINKFLAGS) -o $@ zlutst_pt.o \
+                   $(TESTlib) $(LAPACKlib) $(PTCBLASlib) $(ATLASlib) $(LIBS)
+xzlutst_sys_pt : zlutst_pt.o zlapack \
+                      ztstlib zl3lib_pt zl2lib_pt zl1lib_pt \
+                      zcblas_pt
+	rm -f zlutst_pt.o
+	$(MAKE) zlutst_pt.o
+	$(FLINKER) $(FCLINKFLAGS) -o $@ zlutst_pt.o \
+                   $(TESTlib) $(LAPACKlib) $(BLASlib) \
+                   $(PTCBLASlib) $(ATLASlib) $(LIBS)
+xzlutstF_pt : zlapack ztstlib_pt zl3lib_pt zl2lib_pt \
+                   zl1lib_pt zcblas_pt zfblas_pt
+	rm -f zlutst_pt.o
+	$(MAKE) zlutst_pt.o intf=-DTimeF77
+	$(FLINKER) $(FCLINKFLAGS) -o $@ zlutst_pt.o \
+                   $(TESTlib) $(FLAPACKlib) $(LAPACKlib)  \
+                   $(PTF77BLASlib) $(PTCBLASlib) $(ATLASlib) $(LIBS)
+xzlutstF_sys_pt : zlapack \
+                   ztstlib_pt zl3lib_pt zl2lib_pt zl1lib_pt \
+                   zcblas_pt zfblas_pt
+	rm -f zlutst_pt.o
+	$(MAKE) zlutst_pt.o intf=-DTimeF77
+	$(FLINKER) $(FCLINKFLAGS) -o $@ zlutst_pt.o \
+                   $(TESTlib) $(FLAPACKlib) $(LAPACKlib)  $(BLASlib) \
+                   $(PTF77BLASlib) $(PTCBLASlib) $(ATLASlib) $(LIBS)
+
+xzmmtst_pt : $(INCdir)/atlas_type.h zgemmtst_pt.o zmmlib_pt ztstlib_pt
+	$(FLINKER) $(FCLINKFLAGS) -o $@ zgemmtst_pt.o \
+              $(TESTlib) $(BLASlib) $(zmmobj) $(ATLASlib) $(LIBS)
+
+xzl1blastst : zl1blastst.o zl1lib ztstlib
+	$(FLINKER) $(FCLINKFLAGS) -o $@ zl1blastst.o \
+                   $(TESTlib) $(BLASlib) $(ATLASlib) $(LIBS)
+xzl2blastst : zl2blastst.o zl2lib ztstlib
+	$(FLINKER) $(FCLINKFLAGS) -o $@ zl2blastst.o \
+                   $(TESTlib) $(BLASlib) $(ATLASlib) $(LIBS)
+xzl3blastst : $(INCdir)/atlas_type.h zl3blastst.o \
+                   ztstlib zl3lib
+	$(FLINKER) $(FCLINKFLAGS) -o $@ zl3blastst.o \
+                   $(TESTlib) $(BLASlib) $(ATLASlib) $(LIBS)
+zsanity_test: xzinvtst xzslvtst xztrtritst xzuumtst
+	$(ATLRUN) $(BINdir) xzslvtst -n 167 -r 83 -O 2 c r \
+                  >> $(BINdir)/sanity.out
+	$(ATLRUN) $(BINdir) xzslvtst -n 167 -r 83 -O 2 c r -U 2 u l \
+                  >> $(BINdir)/sanity.out
+	$(ATLRUN) $(BINdir) xztrtritst -n 167 -O 2 c r -U 2 u l \
+                  -D 2 n u >> $(BINdir)/sanity.out
+	$(ATLRUN) $(BINdir) xzuumtst -n 167 -O 2 c r -U 2 u l \
+                  >> $(BINdir)/sanity.out
+xzinv_all : xzinvtst xzinvtstF \
+                   xzinvtst_sys xzinvtstF_sys
+
+xzinvtst : zinvtst.o zlapack ztstlib zl3lib \
+                  zl2lib zl1lib zcblas
+	rm -f zinvtst.o
+	$(MAKE) zinvtst.o
+	$(FLINKER) $(FCLINKFLAGS) -o $@ zinvtst.o \
+                   $(TESTlib) $(LAPACKlib) $(CBLASlib) $(ATLASlib) $(LIBS)
+xzinvtst_sys : zinvtst.o zlapack \
+                      ztstlib zl3lib zl2lib zl1lib \
+                      zcblas
+	rm -f zinvtst.o
+	$(MAKE) zinvtst.o
+	$(FLINKER) $(FCLINKFLAGS) -o $@ zinvtst.o \
+                   $(TESTlib) $(LAPACKlib) $(BLASlib) \
+                   $(CBLASlib) $(ATLASlib) $(LIBS)
+xzinvtstF : zlapack ztstlib zl3lib zl2lib \
+                   zl1lib zcblas zfblas
+	rm -f zinvtst.o
+	$(MAKE) zinvtst.o intf=-DTimeF77
+	$(FLINKER) $(FCLINKFLAGS) -o $@ zinvtst.o \
+                   $(TESTlib) $(FLAPACKlib) $(LAPACKlib)  \
+                   $(F77BLASlib) $(CBLASlib) $(ATLASlib) $(LIBS)
+xzinvtstF_sys : zlapack \
+                   ztstlib zl3lib zl2lib zl1lib \
+                   zcblas zfblas
+	rm -f zinvtst.o
+	$(MAKE) zinvtst.o intf=-DTimeF77
+	$(FLINKER) $(FCLINKFLAGS) -o $@ zinvtst.o \
+                   $(TESTlib) $(FLAPACKlib) $(LAPACKlib)  $(BLASlib) \
+                   $(F77BLASlib) $(CBLASlib) $(ATLASlib) $(LIBS)
+
+xztrtri_all : xztrtritst xztrtritstF \
+                   xztrtritst_sys xztrtritstF_sys
+
+xztrtritst : ztrtritst.o zlapack ztstlib zl3lib \
+                  zl2lib zl1lib zcblas
+	rm -f ztrtritst.o
+	$(MAKE) ztrtritst.o
+	$(FLINKER) $(FCLINKFLAGS) -o $@ ztrtritst.o \
+                   $(TESTlib) $(LAPACKlib) $(CBLASlib) $(ATLASlib) $(LIBS)
+xztrtritst_sys : ztrtritst.o zlapack \
+                      ztstlib zl3lib zl2lib zl1lib \
+                      zcblas
+	rm -f ztrtritst.o
+	$(MAKE) ztrtritst.o
+	$(FLINKER) $(FCLINKFLAGS) -o $@ ztrtritst.o \
+                   $(TESTlib) $(LAPACKlib) $(BLASlib) \
+                   $(CBLASlib) $(ATLASlib) $(LIBS)
+xztrtritstF : zlapack ztstlib zl3lib zl2lib \
+                   zl1lib zcblas zfblas
+	rm -f ztrtritst.o
+	$(MAKE) ztrtritst.o intf=-DTimeF77
+	$(FLINKER) $(FCLINKFLAGS) -o $@ ztrtritst.o \
+                   $(TESTlib) $(FLAPACKlib) $(LAPACKlib)  \
+                   $(F77BLASlib) $(CBLASlib) $(ATLASlib) $(LIBS)
+xztrtritstF_sys : zlapack \
+                   ztstlib zl3lib zl2lib zl1lib \
+                   zcblas zfblas
+	rm -f ztrtritst.o
+	$(MAKE) ztrtritst.o intf=-DTimeF77
+	$(FLINKER) $(FCLINKFLAGS) -o $@ ztrtritst.o \
+                   $(TESTlib) $(FLAPACKlib) $(LAPACKlib)  $(BLASlib) \
+                   $(F77BLASlib) $(CBLASlib) $(ATLASlib) $(LIBS)
+
+xzuum_all : xzuumtst xzuumtstF \
+                   xzuumtst_sys xzuumtstF_sys
+
+xzuumtst : zuumtst.o zlapack ztstlib zl3lib \
+                  zl2lib zl1lib zcblas
+	rm -f zuumtst.o
+	$(MAKE) zuumtst.o
+	$(FLINKER) $(FCLINKFLAGS) -o $@ zuumtst.o \
+                   $(TESTlib) $(LAPACKlib) $(CBLASlib) $(ATLASlib) $(LIBS)
+xzuumtst_sys : zuumtst.o zlapack \
+                      ztstlib zl3lib zl2lib zl1lib \
+                      zcblas
+	rm -f zuumtst.o
+	$(MAKE) zuumtst.o
+	$(FLINKER) $(FCLINKFLAGS) -o $@ zuumtst.o \
+                   $(TESTlib) $(LAPACKlib) $(BLASlib) \
+                   $(CBLASlib) $(ATLASlib) $(LIBS)
+xzuumtstF : zlapack ztstlib zl3lib zl2lib \
+                   zl1lib zcblas zfblas
+	rm -f zuumtst.o
+	$(MAKE) zuumtst.o intf=-DTimeF77
+	$(FLINKER) $(FCLINKFLAGS) -o $@ zuumtst.o \
+                   $(TESTlib) $(FLAPACKlib) $(LAPACKlib)  \
+                   $(F77BLASlib) $(CBLASlib) $(ATLASlib) $(LIBS)
+xzuumtstF_sys : zlapack \
+                   ztstlib zl3lib zl2lib zl1lib \
+                   zcblas zfblas
+	rm -f zuumtst.o
+	$(MAKE) zuumtst.o intf=-DTimeF77
+	$(FLINKER) $(FCLINKFLAGS) -o $@ zuumtst.o \
+                   $(TESTlib) $(FLAPACKlib) $(LAPACKlib)  $(BLASlib) \
+                   $(F77BLASlib) $(CBLASlib) $(ATLASlib) $(LIBS)
+
+xzslv_all : xzslvtst xzslvtstF \
+                   xzslvtst_sys xzslvtstF_sys
+
+xzslvtst : zslvtst.o zlapack ztstlib zl3lib \
+                  zl2lib zl1lib zcblas
+	rm -f zslvtst.o
+	$(MAKE) zslvtst.o
+	$(FLINKER) $(FCLINKFLAGS) -o $@ zslvtst.o \
+                   $(TESTlib) $(LAPACKlib) $(CBLASlib) $(ATLASlib) $(LIBS)
+xzslvtst_sys : zslvtst.o zlapack \
+                      ztstlib zl3lib zl2lib zl1lib \
+                      zcblas
+	rm -f zslvtst.o
+	$(MAKE) zslvtst.o
+	$(FLINKER) $(FCLINKFLAGS) -o $@ zslvtst.o \
+                   $(TESTlib) $(LAPACKlib) $(BLASlib) \
+                   $(CBLASlib) $(ATLASlib) $(LIBS)
+xzslvtstF : zlapack ztstlib zl3lib zl2lib \
+                   zl1lib zcblas zfblas
+	rm -f zslvtst.o
+	$(MAKE) zslvtst.o intf=-DTimeF77
+	$(FLINKER) $(FCLINKFLAGS) -o $@ zslvtst.o \
+                   $(TESTlib) $(FLAPACKlib) $(LAPACKlib)  \
+                   $(F77BLASlib) $(CBLASlib) $(ATLASlib) $(LIBS)
+xzslvtstF_sys : zlapack \
+                   ztstlib zl3lib zl2lib zl1lib \
+                   zcblas zfblas
+	rm -f zslvtst.o
+	$(MAKE) zslvtst.o intf=-DTimeF77
+	$(FLINKER) $(FCLINKFLAGS) -o $@ zslvtst.o \
+                   $(TESTlib) $(FLAPACKlib) $(LAPACKlib)  $(BLASlib) \
+                   $(F77BLASlib) $(CBLASlib) $(ATLASlib) $(LIBS)
+
+xzllt_all : xzllttst xzllttstF \
+                   xzllttst_sys xzllttstF_sys
+
+xzllttst : zllttst.o zlapack ztstlib zl3lib \
+                  zl2lib zl1lib zcblas
+	rm -f zllttst.o
+	$(MAKE) zllttst.o
+	$(FLINKER) $(FCLINKFLAGS) -o $@ zllttst.o \
+                   $(TESTlib) $(LAPACKlib) $(CBLASlib) $(ATLASlib) $(LIBS)
+xzllttst_sys : zllttst.o zlapack \
+                      ztstlib zl3lib zl2lib zl1lib \
+                      zcblas
+	rm -f zllttst.o
+	$(MAKE) zllttst.o
+	$(FLINKER) $(FCLINKFLAGS) -o $@ zllttst.o \
+                   $(TESTlib) $(LAPACKlib) $(BLASlib) \
+                   $(CBLASlib) $(ATLASlib) $(LIBS)
+xzllttstF : zlapack ztstlib zl3lib zl2lib \
+                   zl1lib zcblas zfblas
+	rm -f zllttst.o
+	$(MAKE) zllttst.o intf=-DTimeF77
+	$(FLINKER) $(FCLINKFLAGS) -o $@ zllttst.o \
+                   $(TESTlib) $(FLAPACKlib) $(LAPACKlib)  \
+                   $(F77BLASlib) $(CBLASlib) $(ATLASlib) $(LIBS)
+xzllttstF_sys : zlapack \
+                   ztstlib zl3lib zl2lib zl1lib \
+                   zcblas zfblas
+	rm -f zllttst.o
+	$(MAKE) zllttst.o intf=-DTimeF77
+	$(FLINKER) $(FCLINKFLAGS) -o $@ zllttst.o \
+                   $(TESTlib) $(FLAPACKlib) $(LAPACKlib)  $(BLASlib) \
+                   $(F77BLASlib) $(CBLASlib) $(ATLASlib) $(LIBS)
+
+xzlu_all : xzlutst xzlutstF \
+                   xzlutst_sys xzlutstF_sys
+
+xzlutst : zlutst.o zlapack ztstlib zl3lib \
+                  zl2lib zl1lib zcblas
+	rm -f zlutst.o
+	$(MAKE) zlutst.o
+	$(FLINKER) $(FCLINKFLAGS) -o $@ zlutst.o \
+                   $(TESTlib) $(LAPACKlib) $(CBLASlib) $(ATLASlib) $(LIBS)
+xzlutst_sys : zlutst.o zlapack \
+                      ztstlib zl3lib zl2lib zl1lib \
+                      zcblas
+	rm -f zlutst.o
+	$(MAKE) zlutst.o
+	$(FLINKER) $(FCLINKFLAGS) -o $@ zlutst.o \
+                   $(TESTlib) $(LAPACKlib) $(BLASlib) \
+                   $(CBLASlib) $(ATLASlib) $(LIBS)
+xzlutstF : zlapack ztstlib zl3lib zl2lib \
+                   zl1lib zcblas zfblas
+	rm -f zlutst.o
+	$(MAKE) zlutst.o intf=-DTimeF77
+	$(FLINKER) $(FCLINKFLAGS) -o $@ zlutst.o \
+                   $(TESTlib) $(FLAPACKlib) $(LAPACKlib)  \
+                   $(F77BLASlib) $(CBLASlib) $(ATLASlib) $(LIBS)
+xzlutstF_sys : zlapack \
+                   ztstlib zl3lib zl2lib zl1lib \
+                   zcblas zfblas
+	rm -f zlutst.o
+	$(MAKE) zlutst.o intf=-DTimeF77
+	$(FLINKER) $(FCLINKFLAGS) -o $@ zlutst.o \
+                   $(TESTlib) $(FLAPACKlib) $(LAPACKlib)  $(BLASlib) \
+                   $(F77BLASlib) $(CBLASlib) $(ATLASlib) $(LIBS)
+
+xzmmtst : $(INCdir)/atlas_type.h zgemmtst.o zmmlib ztstlib
+	$(FLINKER) $(FCLINKFLAGS) -o $@ zgemmtst.o \
+              $(TESTlib) $(BLASlib) $(zmmobj) $(ATLASlib) $(LIBS)
+
+xzgpmmtst : $(INCdir)/atlas_type.h zgpmmtst.o zmmlib ztstlib
+	$(FLINKER) $(FCLINKFLAGS) -o $@ zgpmmtst.o \
+              $(TESTlib) $(BLASlib) $(zmmobj) $(ATLASlib) $(LIBS)
+zgpmmtst.o : ../gpmmtst.c $(INCdir)/../atlas_misc.h $(INCdir)/zmm.h \
+                  $(INCdir)/../atlas_lvl3.h $(INCdir)/../atlas_pkblas.h
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX ../gpmmtst.c
+	
+ztstlib_pt : ztstlib
+ztstlib :
+	cd $(TSTdir) ; $(MAKE) zlib
+
+zfblas_pt : zfblaslib_pt
+zfblaslib_pt :
+	cd $(FBLdir) ; $(MAKE) zptlib
+zfblas : zfblaslib
+zfblaslib :
+	cd $(FBLdir) ; $(MAKE) zlib
+zcblas_pt : zcblaslib_pt
+zcblaslib_pt :
+	cd $(CBLdir) ; $(MAKE) zptlib
+zcblas : zcblaslib
+zcblaslib :
+	cd $(CBLdir) ; $(MAKE) zlib
+
+zmmlib_pt : auxlib_pt
+	cd $(GMMdir) ; $(MAKE) zlib
+zmmlib : auxlib
+	cd $(GMMdir) ; $(MAKE) zlib
+zpklib : auxlib
+	cd $(TOPdir)/src/blas/pklevel3/$(ARCH) ; $(MAKE) zlib
+
+zl2lib_pt : zl2lib
+	cd $(PTSdir)/blas/level2/$(ARCH) ; $(MAKE) zlib
+zl2lib : zl1lib auxlib
+	cd $(GMVdir) ; $(MAKE) zlib
+	cd $(GR1dir) ; $(MAKE) zlib
+	cd $(L2Bdir) ; $(MAKE) zlib
+
+zl3lib_pt : zl3lib zmmlib_pt
+	cd $(PTSdir)/blas/level3/$(ARCH) ; $(MAKE) zlib
+zl3lib : zmmlib
+	cd $(L3Bdir) ; $(MAKE) zlib
+
+zl1lib_pt : auxlib_pt zl1lib
+	cd $(PTSdir)/blas/level1/$(ARCH) ; $(MAKE) zlib
+zl1lib : auxlib
+	cd $(L1Bdir) ; $(MAKE) zlvl1
+
+zlapack :
+	cd $(TOPdir)/src/lapack/$(ARCH) ; $(MAKE) zlib
+
+xzprintblk : zprintblk.o
+	$(CLINKER) -o $@ zprintblk.o $(ATLASlib)
+zprintblk.o : $(INCdir)/../atlas_mv.h $(INCdir)/../atlas_r1.h \
+                   $(INCdir)/zmm.h ../printblk.c
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX ../printblk.c
+
+zl1blastst_pt.o : ../l1blastst.c $(INCdir)/../atlas_misc.h \
+                   $(INCdir)/../atlas_tst.h $(INCdir)/../atlas_level1.h
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX -DATL_USEPTHREADS ../l1blastst.c
+zl2blastst_pt.o : ../l2blastst.c $(INCdir)/../atlas_misc.h \
+                   $(INCdir)/../atlas_tst.h $(INCdir)/../atlas_level2.h
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX -DATL_USEPTHREADS ../l2blastst.c
+
+zl3blastst_pt.o : ../l3blastst.c $(INCdir)/../atlas_misc.h \
+                   $(INCdir)/zmm.h $(INCdir)/../atlas_lvl3.h
+	$(CC) -o $@ -c $(CCFLAGS) -DATLCINT -DATL_USEPTHREADS -DDCPLX ../l3blastst.c
+zinvtst_pt.o : ../invtst.c $(INCdir)/../atlas_misc.h \
+                   $(INCdir)/zmm.h $(INCdir)/../atlas_lvl3.h 
+	$(CC) -o $@ -c $(CCFLAGS) -DATLCINT $(intf) -DATL_USEPTHREADS -DDCPLX ../invtst.c
+ztrtritst_pt.o : ../trtritst.c $(INCdir)/../atlas_misc.h \
+                   $(INCdir)/zmm.h $(INCdir)/../atlas_lvl3.h 
+	$(CC) -o $@ -c $(CCFLAGS) -DATLCINT $(intf) -DATL_USEPTHREADS -DDCPLX ../trtritst.c
+zslvtst_pt.o : ../slvtst.c $(INCdir)/../atlas_misc.h \
+                   $(INCdir)/zmm.h $(INCdir)/../atlas_lvl3.h 
+	$(CC) -o $@ -c $(CCFLAGS) -DATLCINT $(intf) -DATL_USEPTHREADS -DDCPLX ../slvtst.c
+zlutst_pt.o : ../lutst.c $(INCdir)/../atlas_misc.h \
+                   $(INCdir)/zmm.h $(INCdir)/../atlas_lvl3.h 
+	$(CC) -o $@ -c $(CCFLAGS) -DATLCINT $(intf) -DATL_USEPTHREADS -DDCPLX ../lutst.c
+zllttst_pt.o : ../llttst.c $(INCdir)/../atlas_misc.h \
+                   $(INCdir)/zmm.h $(INCdir)/../atlas_lvl3.h 
+	$(CC) -o $@ -c $(CCFLAGS) -DATLCINT $(intf) -DATL_USEPTHREADS -DDCPLX ../llttst.c
+zuumtst_pt.o : ../uumtst.c $(INCdir)/../atlas_misc.h \
+                   $(INCdir)/zmm.h $(INCdir)/../atlas_lvl3.h 
+	$(CC) -o $@ -c $(CCFLAGS) -DATLCINT $(intf) -DATL_USEPTHREADS -DDCPLX ../uumtst.c
+
+zscaltst_pt.o : ../scaltst.c $(INCdir)/../atlas_misc.h \
+                  $(INCdir)/../atlas_f77.h 
+	$(CC) -o $@ -c $(CCFLAGS) -DATL_USEPTHREADS -DDCPLX ../scaltst.c
+
+zgemmtst_pt.o : ../gemmtst.c $(INCdir)/../atlas_misc.h $(INCdir)/zmm.h \
+                  $(INCdir)/../atlas_lvl3.h
+	$(CC) -o $@ -c $(CCFLAGS) -DATL_USEPTHREADS -DDCPLX ../gemmtst.c
+
+zl1blastst.o : ../l1blastst.c $(INCdir)/../atlas_misc.h \
+                   $(INCdir)/../atlas_tst.h $(INCdir)/../atlas_level1.h
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX  ../l1blastst.c
+zl2blastst.o : ../l2blastst.c $(INCdir)/../atlas_misc.h \
+                   $(INCdir)/../atlas_tst.h $(INCdir)/../atlas_level2.h
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX  ../l2blastst.c
+
+zl3blastst.o : ../l3blastst.c $(INCdir)/../atlas_misc.h \
+                   $(INCdir)/zmm.h $(INCdir)/../atlas_lvl3.h
+	$(CC) -o $@ -c $(CCFLAGS) -DATLCINT  -DDCPLX ../l3blastst.c
+zinvtst.o : ../invtst.c $(INCdir)/../atlas_misc.h \
+                   $(INCdir)/zmm.h $(INCdir)/../atlas_lvl3.h 
+	$(CC) -o $@ -c $(CCFLAGS) -DATLCINT $(intf)  -DDCPLX ../invtst.c
+ztrtritst.o : ../trtritst.c $(INCdir)/../atlas_misc.h \
+                   $(INCdir)/zmm.h $(INCdir)/../atlas_lvl3.h 
+	$(CC) -o $@ -c $(CCFLAGS) -DATLCINT $(intf)  -DDCPLX ../trtritst.c
+zslvtst.o : ../slvtst.c $(INCdir)/../atlas_misc.h \
+                   $(INCdir)/zmm.h $(INCdir)/../atlas_lvl3.h 
+	$(CC) -o $@ -c $(CCFLAGS) -DATLCINT $(intf)  -DDCPLX ../slvtst.c
+zlutst.o : ../lutst.c $(INCdir)/../atlas_misc.h \
+                   $(INCdir)/zmm.h $(INCdir)/../atlas_lvl3.h 
+	$(CC) -o $@ -c $(CCFLAGS) -DATLCINT $(intf)  -DDCPLX ../lutst.c
+zllttst.o : ../llttst.c $(INCdir)/../atlas_misc.h \
+                   $(INCdir)/zmm.h $(INCdir)/../atlas_lvl3.h 
+	$(CC) -o $@ -c $(CCFLAGS) -DATLCINT $(intf)  -DDCPLX ../llttst.c
+zuumtst.o : ../uumtst.c $(INCdir)/../atlas_misc.h \
+                   $(INCdir)/zmm.h $(INCdir)/../atlas_lvl3.h 
+	$(CC) -o $@ -c $(CCFLAGS) -DATLCINT $(intf)  -DDCPLX ../uumtst.c
+
+zscaltst.o : ../scaltst.c $(INCdir)/../atlas_misc.h \
+                  $(INCdir)/../atlas_f77.h 
+	$(CC) -o $@ -c $(CCFLAGS)  -DDCPLX ../scaltst.c
+
+zgemmtst.o : ../gemmtst.c $(INCdir)/../atlas_misc.h $(INCdir)/zmm.h \
+                  $(INCdir)/../atlas_lvl3.h
+	$(CC) -o $@ -c $(CCFLAGS)  -DDCPLX ../gemmtst.c
+
+c_sblas3.o : ../c_rblas3.c $(INCdir)/../cblas.h $(INCdir)/../cblas_test.h
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL -DF77INT_ ../c_rblas3.c
+
+c_dblas3.o : ../c_rblas3.c $(INCdir)/../cblas.h $(INCdir)/../cblas_test.h
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL -DF77INT_ ../c_rblas3.c
+
+cblas_xerbla.o : ../cblas_xerbla.c
+	$(CC) $(CCFLAGS) -o $@ -c ../cblas_xerbla.c
+
+force_build:
+
+
+$(INCdir)/atlas_type.h : 
+	cd $(SYSdir) ; $(MAKE) RunTyp
+clean:
+	rm -f *.o *.grd

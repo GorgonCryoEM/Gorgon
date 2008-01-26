@@ -1,0 +1,8 @@
+
+Config was unable to determine the number of processors your system
+possesses.  This information is needed as part of the architecture
+name, and can be helpful when optimizing the threaded code.  If
+you know how many processors your system possesses, enter it below.
+Otherwise, accept the default of 0, and ATLAS will empirically
+detect the number of processors to use later on in the install
+process.

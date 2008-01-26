@@ -1,0 +1,29 @@
+include Make.inc
+
+all : lib
+lib : dlib slib zlib clib
+clean : sclean dclean cclean zclean
+sclean :
+	cd ../gpmm/$(ARCH) ; $(MAKE) sclean
+	cd ../sprk/$(ARCH) ; $(MAKE) sclean
+slib :
+	cd ../gpmm/$(ARCH) ; $(MAKE) slib
+	cd ../sprk/$(ARCH) ; $(MAKE) slib
+dclean :
+	cd ../gpmm/$(ARCH) ; $(MAKE) dclean
+	cd ../sprk/$(ARCH) ; $(MAKE) dclean
+dlib :
+	cd ../gpmm/$(ARCH) ; $(MAKE) dlib
+	cd ../sprk/$(ARCH) ; $(MAKE) dlib
+zclean :
+	cd ../gpmm/$(ARCH) ; $(MAKE) zclean
+	cd ../sprk/$(ARCH) ; $(MAKE) zclean
+zlib :
+	cd ../gpmm/$(ARCH) ; $(MAKE) zlib
+	cd ../sprk/$(ARCH) ; $(MAKE) zlib
+cclean :
+	cd ../gpmm/$(ARCH) ; $(MAKE) cclean
+	cd ../sprk/$(ARCH) ; $(MAKE) cclean
+clib :
+	cd ../gpmm/$(ARCH) ; $(MAKE) clib
+	cd ../sprk/$(ARCH) ; $(MAKE) clib

@@ -1,0 +1,89 @@
+<HTML>
+<HEAD>
+<TITLE>class FourierTransform</TITLE>
+
+<META NAME="Generator" CONTENT="KDOC ">
+</HEAD>
+<BODY bgcolor="#ffffff" text="#000000" link="#0000ff" vlink="#000099" alink= "#ffffff">
+<TABLE WIDTH="100%" BORDER="0">
+<TR>
+<TD>
+	<TABLE BORDER="0">
+		<TR><TD valign="top" align="left" cellspacing="10">
+		<h1>class FourierTransform</h1>
+		</TD>
+		<TD valign="top" align="right" colspan="1">
+     Fourier transform class. <small><A HREF="#longdesc">More...</A></small></TD></TR>
+	</TABLE>
+	<HR>
+	<TABLE BORDER="0">
+		<TR><TH>Full name</TH><TD><code><A HREF="Llama.html">Llama</A>::FourierTransform</code></TD></TR>
+<TR><TH>Definition</TH><TD><code>#include &lt;<A HREF="Fourier_h.html">Fourier.h</A>&gt;</code></TD></TR>
+<TR><TH>Template form</TH><TD>FourierTransform&lt;class Scalar&gt; </code></TD></TR>
+<TR><TH><A HREF="full-list-Llama__FourierTransform.html">List of all Methods</A></TH></TR>
+	</TABLE>
+	</TD>
+<TD align="right"><TABLE BORDER="0"><TD rowspan="6"><IMG SRC="./llama2.gif"></TD><TR><TD><small><A HREF="index-long.html">Annotated List</A></small></TD></TR>
+<TR><TD><small><A HREF="header-list.html">Files</A></small></TD></TR>
+<TR><TD><small><A HREF="all-globals.html">Globals</A></small></TD></TR>
+<TR><TD><small><A HREF="hier.html">Hierarchy</A></small></TD></TR>
+<TR><TD><small><A HREF="index.html">Index</A></small></TD></TR>
+</TABLE></TD></TR></TABLE>
+<h4>Public Methods</h4><ul><LI>&nbsp;<b><A HREF="#ref6">FourierTransform</A></b> (const Index n) 
+</LI>
+<LI>&nbsp;<b><A HREF="#ref7">FourierTransform</A></b> (const Index n, const std::string& wisdom) 
+</LI>
+<LI>&nbsp;<b><A HREF="#ref8">~FourierTransform</A></b> (void) 
+</LI>
+<LI>Matrix<Complex> * &nbsp;<b><A HREF="#ref9">fft</A></b> (const Matrix<Scalar>& x) 
+</LI>
+<LI>Matrix<Scalar> * &nbsp;<b><A HREF="#ref10">ifft</A></b> (const Matrix<Complex>& x) 
+</LI>
+<LI>Matrix<Scalar> * &nbsp;<b><A HREF="#ref11">convol</A></b> (const Matrix<Scalar>& x, const Matrix<Scalar>& y) 
+</LI>
+<LI>inline
+  &nbsp;<b><A HREF="#ref12">FourierTransform</A></b> (const Index n) 
+</LI>
+<LI>inline
+  &nbsp;<b><A HREF="#ref13">FourierTransform</A></b> (const Index n, const std::string& wisdom) 
+</LI>
+<LI>inline
+  &nbsp;<b><A HREF="#ref14">~FourierTransform</A></b> (void) 
+</LI>
+<LI>inline Matrix<Complex> *
+  &nbsp;<b><A HREF="#ref15">fft</A></b> (const Matrix<Real>& x) 
+</LI>
+<LI>inline Matrix<Real> *
+  &nbsp;<b><A HREF="#ref16">ifft</A></b> (const Matrix<Complex>& x) 
+</LI>
+<LI>inline Matrix<Real> * 
+  &nbsp;<b><A HREF="#ref17">convol</A></b> (const Matrix<Real>& x, const Matrix<Real>& y) 
+</LI>
+</ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><p>
+     Fourier transform class.  Construction causes the computation of
+     the discrete Fourier transform.  Currently, the implementation uses
+     the "Fastest Fourier Transform in the West" algorithms.  </p>
+<A NAME="FourierTransform"></A><A NAME="ref6"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>FourierTransform</strong> (const Index n)
+<br></td><td align="right"><h3><strong>FourierTransform</strong></h3></td></tr></table><p></p><A NAME="FourierTransform"></A><A NAME="ref7"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>FourierTransform</strong> (const Index n, const std::string& wisdom)
+<br></td><td align="right"><h3><strong>FourierTransform</strong></h3></td></tr></table><p></p><A NAME="~FourierTransform"></A><A NAME="ref8"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>~FourierTransform</strong> (void)
+<br></td><td align="right"><h3><strong>~FourierTransform</strong></h3></td></tr></table><p></p><A NAME="fft"></A><A NAME="ref9"></A><table width="100%"><tr bgcolor="#eeeeee"><td>Matrix<Complex> * &nbsp;<strong>fft</strong> (const Matrix<Scalar>& x)
+<br></td><td align="right"><h3><strong>fft</strong></h3></td></tr></table><p></p><A NAME="ifft"></A><A NAME="ref10"></A><table width="100%"><tr bgcolor="#eeeeee"><td>Matrix<Scalar> * &nbsp;<strong>ifft</strong> (const Matrix<Complex>& x)
+<br></td><td align="right"><h3><strong>ifft</strong></h3></td></tr></table><p></p><A NAME="convol"></A><A NAME="ref11"></A><table width="100%"><tr bgcolor="#eeeeee"><td>Matrix<Scalar> * &nbsp;<strong>convol</strong> (const Matrix<Scalar>& x, const Matrix<Scalar>& y)
+<br></td><td align="right"><h3><strong>convol</strong></h3></td></tr></table><p></p><A NAME="FourierTransform"></A><A NAME="ref12"></A><table width="100%"><tr bgcolor="#eeeeee"><td>inline
+  &nbsp;<strong>FourierTransform</strong> (const Index n)
+<br></td><td align="right"><h3><strong>FourierTransform</strong></h3></td></tr></table><p></p><A NAME="FourierTransform"></A><A NAME="ref13"></A><table width="100%"><tr bgcolor="#eeeeee"><td>inline
+  &nbsp;<strong>FourierTransform</strong> (const Index n, const std::string& wisdom)
+<br></td><td align="right"><h3><strong>FourierTransform</strong></h3></td></tr></table><p></p><A NAME="~FourierTransform"></A><A NAME="ref14"></A><table width="100%"><tr bgcolor="#eeeeee"><td>inline
+  &nbsp;<strong>~FourierTransform</strong> (void)
+<br></td><td align="right"><h3><strong>~FourierTransform</strong></h3></td></tr></table><p></p><A NAME="fft"></A><A NAME="ref15"></A><table width="100%"><tr bgcolor="#eeeeee"><td>inline Matrix<Complex> *
+  &nbsp;<strong>fft</strong> (const Matrix<Real>& x)
+<br></td><td align="right"><h3><strong>fft</strong></h3></td></tr></table><p></p><A NAME="ifft"></A><A NAME="ref16"></A><table width="100%"><tr bgcolor="#eeeeee"><td>inline Matrix<Real> *
+  &nbsp;<strong>ifft</strong> (const Matrix<Complex>& x)
+<br></td><td align="right"><h3><strong>ifft</strong></h3></td></tr></table><p></p><A NAME="convol"></A><A NAME="ref17"></A><table width="100%"><tr bgcolor="#eeeeee"><td>inline Matrix<Real> * 
+  &nbsp;<strong>convol</strong> (const Matrix<Real>& x, const Matrix<Real>& y)
+<br></td><td align="right"><h3><strong>convol</strong></h3></td></tr></table><p></p><HR>
+	<table>
+	<tr><td><small>Generated by: king on larix.tiem.utk.edu on Tue Jun 29 10:55:51 2004, using kdoc 2.0a54.</small></td></tr>
+	</table>
+</BODY>
+</HTML>

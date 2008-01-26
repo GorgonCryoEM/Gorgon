@@ -1,0 +1,46 @@
+<ID> <flag> <mb> <nb> <kb> <muladd> <lat> <mu> <nu> <ku> <rout> "<Contributer>"
+16
+306 192 4 3 8 0 4 4 3 8 ATL_mm4x3x8p.c     "R. Clint Whaley" \
+gcc
+-mcpu=ultrasparc -mtune=ultrasparc -fomit-frame-pointer -O -fno-schedule-insns -fno-schedule-insns2
+308 192 4 4 8 0 4 4 4 8 ATL_mm4x4x8p.c     "R. Clint Whaley" \
+gcc
+-O -fno-schedule-insns -fno-schedule-insns2 -fomit-frame-pointer
+309 192 4 4 -56 1 0 4 4 56 ATL_mm4x4x56_av.c  "R. Clint Whaley"
+310 192 4 4 8 1 0 4 4 8   ATL_mm4x4x8_av.c    "R. Clint Whaley"
+311 192 4 4 4 1 0 4 4 4   ATL_mm4x4x4_av.c    "R. Clint Whaley"
+312 496 4 4 2 1 0 4 4 2   ATL_mm4x4x4_av.c    "R. Clint Whaley"
+313   8 6 8 8 1 1 6 8 8 ATL_mm6x8x8_1p.c       "R. Clint Whaley" \
+gcc
+-fomit-frame-pointer -O2 -fno-schedule-insns -fno-schedule-insns2
+314 496 0 0 0 1 1 6 8 8 ATL_mm6x8x8_1p.c       "R. Clint Whaley" \
+gcc
+-fomit-frame-pointer -O2 -fno-schedule-insns -fno-schedule-insns2
+317 192 4 1 -40 0 4 2 1 40 ATL_dmm2x1x40_5pABC.c  "R. Clint Whaley" \
+gcc
+-x assembler-with-cpp
+318 480 4 4 2 1 1 4 4 2    ATL_dmm4x4x2pf_av.c    "R. Clint Whaley" \
+/usr/bin/gcc
+-x assembler-with-cpp -maltivec -mabi=altivec
+319 128 6 0 1 0 1 6 1 30 ATL_dmm6x1x30_x87.c "R. Clint Whaley" \
+gcc
+-x assembler-with-cpp
+320   8 120 120 120 1 1 8 8 2 ATL_mm8x8x2.c  "R. Clint Whaley" \
+gcc
+-fomit-frame-pointer -O2 -fno-schedule-insns -fno-schedule-insns2 -fno-expensive-optimizations -falign-loops=64
+321 480 8 8 2 1 1 8 8 2 ATL_mm8x8x2.c  "R. Clint Whaley" \
+gcc
+-fomit-frame-pointer -O2 -fno-schedule-insns -fno-schedule-insns2 -fno-expensive-optimizations -falign-loops=64
+322 448 4 4 8 1 1 4 4 8 ATL_dmm4x4x8_US.c "R. Clint Whaley" \
+gcc
+-mcpu=ultrasparc -x assembler-with-cpp
+323 8 -120 -120 -120 1 1 4 4 8 ATL_dmm4x4x16r8_US.c "R. Clint Whaley" \
+gcc
+-mcpu=ultrasparc -x assembler-with-cpp
+324 448 4 4 8 1 1 4 4 8 ATL_dmm4x4x2_US.c "R. Clint Whaley" \
+gcc
+-mcpu=ultrasparc -x assembler-with-cpp
+
+
+# NB = 80 and NB = 120 are to force UltraSparc to try NB > L1 Cache,
+# needed for optimal performance on Ultra2 and Ultra4, respectively

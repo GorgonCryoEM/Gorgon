@@ -1,0 +1,232 @@
+########################################################################
+#  
+#  -- Automatically Tuned Linear Algebra Software (ATLAS)
+#     University of Tennessee - Innovative Computing Laboratory
+#     Knoxville TN, 37996-1301 USA.
+#     (C) Copyright 2000 All Rights Reserved
+#
+#  -- Suggestions,  comments,  bugs reports should be sent to the follo-
+#     wing e-mail address: atlas@cs.utk.edu
+#  
+########################################################################
+#
+#  -- Copyright notice and Licensing terms:
+#
+#  Redistribution  and  use in  source and binary forms, with or without
+#  modification, are  permitted provided  that the following  conditions
+#  are met:
+#
+#  1. Redistributions  of  source  code  must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+#  2. Redistributions in binary form must reproduce  the above copyright
+#     notice,  this list of conditions, and the  following disclaimer in
+#     the documentation and/or other materials provided with the distri-
+#     bution.
+#  3. The name of the University,  the ATLAS group,  or the names of its
+#     contributors  may not be used to endorse or promote products deri-
+#     ved from this software without specific written permission.
+#
+#  -- Disclaimer:
+#
+#  THIS  SOFTWARE  IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+#  ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,  INCLUDING,  BUT NOT
+#  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+#  A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE UNIVERSITY
+#  OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,  INDIRECT, INCIDENTAL, SPE-
+#  CIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+#  TO,  PROCUREMENT  OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA,
+#  OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEO-
+#  RY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT  (IN-
+#  CLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+#  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#  
+########################################################################
+#
+include Make.inc
+#
+########################################################################
+#
+AINCLUDES = \
+   $(INCdir)/../atlas_rblas3.h   $(INCdir)/../atlas_kernel3.h \
+   $(INCdir)/../atlas_lvl3.h     $(INCdir)/../atlas_level3.h
+SINCLUDES = \
+   $(AINCLUDES) $(INCdir)/smm.h
+DINCLUDES = \
+   $(AINCLUDES) $(INCdir)/dmm.h
+CINCLUDES = \
+   $(AINCLUDES) $(INCdir)/cmm.h
+ZINCLUDES = \
+   $(AINCLUDES) $(INCdir)/zmm.h
+#
+## Object files ########################################################
+#
+SRBLAS3 = \
+   ATL_ssymm.o ATL_ssyr2k.o ATL_ssyrk.o ATL_strmm.o ATL_strsm.o
+# 
+DRBLAS3 = \
+   ATL_dsymm.o ATL_dsyr2k.o ATL_dsyrk.o ATL_dtrmm.o ATL_dtrsm.o
+# 
+CRBLAS3 = \
+   ATL_chemm.o ATL_cher2k.o ATL_cherk.o ATL_csymm.o ATL_csyr2k.o ATL_csyrk.o \
+   ATL_ctrmm.o ATL_ctrsm.o
+# 
+ZRBLAS3 = \
+   ATL_zhemm.o ATL_zher2k.o ATL_zherk.o ATL_zsymm.o ATL_zsyr2k.o ATL_zsyrk.o \
+   ATL_ztrmm.o ATL_ztrsm.o
+# 
+## Targets #############################################################
+#
+all   : lib
+#
+lvl3  : lib
+#
+lib   : slib dlib clib zlib
+#
+slvl3 : slib
+dlvl3 : dlib
+clvl3 : clib
+zlvl3 : zlib
+#
+slib  : skern srblas sblas3
+dlib  : dkern drblas dblas3
+clib  : ckern crblas cblas3
+zlib  : zkern zrblas zblas3
+#
+skern :
+	( cd ../kernel/$(ARCH); $(MAKE) slib )
+dkern :
+	( cd ../kernel/$(ARCH); $(MAKE) dlib )
+ckern :
+	( cd ../kernel/$(ARCH); $(MAKE) clib )
+zkern :
+	( cd ../kernel/$(ARCH); $(MAKE) zlib )
+#
+srblas:
+	( cd ../rblas/$(ARCH);  $(MAKE) slib )
+drblas:
+	( cd ../rblas/$(ARCH);  $(MAKE) dlib )
+crblas:
+	( cd ../rblas/$(ARCH);  $(MAKE) clib )
+zrblas:
+	( cd ../rblas/$(ARCH);  $(MAKE) zlib )
+#
+sblas3 :
+	cd ../../pklevel3/$(ARCH) ; $(MAKE) slib
+	$(PMAKE) sblas3.grd
+dblas3 :
+	cd ../../pklevel3/$(ARCH) ; $(MAKE) dlib
+	$(PMAKE) dblas3.grd
+cblas3 :
+	cd ../../pklevel3/$(ARCH) ; $(MAKE) clib
+	$(PMAKE) cblas3.grd
+zblas3 :
+	cd ../../pklevel3/$(ARCH) ; $(MAKE) zlib
+	$(PMAKE) zblas3.grd
+#
+sblas3.grd: $(SRBLAS3)
+	$(ARCHIVER) $(ARFLAGS) $(ATLASlib) $(SRBLAS3)
+	$(RANLIB) $(ATLASlib)
+	touch sblas3.grd
+#
+dblas3.grd: $(DRBLAS3)
+	$(ARCHIVER) $(ARFLAGS) $(ATLASlib) $(DRBLAS3)
+	$(RANLIB) $(ATLASlib)
+	touch dblas3.grd
+#
+cblas3.grd: $(CRBLAS3)
+	$(ARCHIVER) $(ARFLAGS) $(ATLASlib) $(CRBLAS3)
+	$(RANLIB) $(ATLASlib)
+	touch cblas3.grd
+#
+zblas3.grd: $(ZRBLAS3)
+	$(ARCHIVER) $(ARFLAGS) $(ATLASlib) $(ZRBLAS3)
+	$(RANLIB) $(ATLASlib)
+	touch zblas3.grd
+#
+########################################################################
+# 
+ATL_ssymm.o              : ../ATL_symm.c                   $(SINCLUDES)
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL ../ATL_symm.c                  
+ATL_ssyrk.o              : ../ATL_syrk.c                   $(SINCLUDES)
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL ../ATL_syrk.c                  
+ATL_ssyr2k.o             : ../ATL_syr2k.c                  $(SINCLUDES)
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL ../ATL_syr2k.c                 
+ATL_strmm.o              : ../ATL_trmm.c                   $(SINCLUDES)
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL ../ATL_trmm.c                  
+ATL_strsm.o              : ../ATL_trsm.c                   $(SINCLUDES)
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL ../ATL_trsm.c                  
+#
+ATL_dsymm.o              : ../ATL_symm.c                   $(DINCLUDES)
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL ../ATL_symm.c                  
+ATL_dsyrk.o              : ../ATL_syrk.c                   $(DINCLUDES)
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL ../ATL_syrk.c                  
+ATL_dsyr2k.o             : ../ATL_syr2k.c                  $(DINCLUDES)
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL ../ATL_syr2k.c                 
+ATL_dtrmm.o              : ../ATL_trmm.c                   $(DINCLUDES)
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL ../ATL_trmm.c                  
+ATL_dtrsm.o              : ../ATL_trsm.c                   $(DINCLUDES)
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL ../ATL_trsm.c                  
+#
+ATL_chemm.o              : ../ATL_hemm.c                   $(CINCLUDES)
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX ../ATL_hemm.c                  
+ATL_cherk.o              : ../ATL_herk.c                   $(CINCLUDES)
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX ../ATL_herk.c                  
+ATL_cher2k.o             : ../ATL_her2k.c                  $(CINCLUDES)
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX ../ATL_her2k.c                 
+ATL_csymm.o              : ../ATL_symm.c                   $(CINCLUDES)
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX ../ATL_symm.c                  
+ATL_csyrk.o              : ../ATL_syrk.c                   $(CINCLUDES)
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX ../ATL_syrk.c                  
+ATL_csyr2k.o             : ../ATL_syr2k.c                  $(CINCLUDES)
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX ../ATL_syr2k.c                 
+ATL_ctrmm.o              : ../ATL_trmm.c                   $(CINCLUDES)
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX ../ATL_trmm.c                  
+ATL_ctrsm.o              : ../ATL_trsm.c                   $(CINCLUDES)
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX ../ATL_trsm.c                  
+#
+ATL_zhemm.o              : ../ATL_hemm.c                   $(ZINCLUDES)
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX ../ATL_hemm.c                  
+ATL_zherk.o              : ../ATL_herk.c                   $(ZINCLUDES)
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX ../ATL_herk.c                  
+ATL_zher2k.o             : ../ATL_her2k.c                  $(ZINCLUDES)
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX ../ATL_her2k.c                 
+ATL_zsymm.o              : ../ATL_symm.c                   $(ZINCLUDES)
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX ../ATL_symm.c                  
+ATL_zsyrk.o              : ../ATL_syrk.c                   $(ZINCLUDES)
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX ../ATL_syrk.c                  
+ATL_zsyr2k.o             : ../ATL_syr2k.c                  $(ZINCLUDES)
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX ../ATL_syr2k.c                 
+ATL_ztrmm.o              : ../ATL_trmm.c                   $(ZINCLUDES)
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX ../ATL_trmm.c                  
+ATL_ztrsm.o              : ../ATL_trsm.c                   $(ZINCLUDES)
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX ../ATL_trsm.c                  
+#
+########################################################################
+#
+sclean           :
+	( cd ../kernel/$(ARCH); $(MAKE) sclean )
+	( cd ../rblas/$(ARCH);  $(MAKE) sclean )
+	rm -f $(SRBLAS3) s*.grd
+#
+dclean           :
+	( cd ../kernel/$(ARCH); $(MAKE) dclean )
+	( cd ../rblas/$(ARCH);  $(MAKE) dclean )
+	rm -f $(DRBLAS3) d*.grd
+#
+cclean           :
+	( cd ../kernel/$(ARCH); $(MAKE) cclean )
+	( cd ../rblas/$(ARCH);  $(MAKE) cclean )
+	rm -f $(CRBLAS3) c*.grd
+#
+zclean           :
+	( cd ../kernel/$(ARCH); $(MAKE) zclean )
+	( cd ../rblas/$(ARCH);  $(MAKE) zclean )
+	rm -f $(ZRBLAS3) z*.grd
+#
+#
+clean            :
+	( cd ../rblas/$(ARCH);  $(MAKE)  clean )
+	( cd ../kernel/$(ARCH); $(MAKE)  clean )
+	rm -f *.o *.grd
+#
+########################################################################

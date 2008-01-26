@@ -1,0 +1,111 @@
+This directory contains the Compaq EV5 and EV6 GEMM developed by
+Kazushige Goto (goto@statabo.rim.or.jp).  All routines in it are
+copyright Kazushige Goto unless noted otherwise at the top of file.
+
+These routines are distributed by Mr. Goto under the terms of the LGPL,
+as explained in COPYING.LIB.  They are used by ATLAS with Mr. Goto's
+permission.  They are included in ATLAS, which uses a BSD-style license,
+without making all of ATLAS use LGPL license, via LGPL's clause 7.
+This clause is:
+
+>  7. You may place library facilities that are a work based on the
+>Library side-by-side in a single library together with other library
+>facilities not covered by this License, and distribute such a combined
+>library, provided that the separate distribution of the work based on
+>the Library and of the other library facilities is otherwise
+>permitted, and provided that you do these two things:
+>
+>    a) Accompany the combined library with a copy of the same work
+>    based on the Library, uncombined with any other library
+>    facilities.  This must be distributed under the terms of the
+>    Sections above.
+>
+>    b) Give prominent notice with the combined library of the fact
+>    that part of it is a work based on the Library, and explaining
+>    where to find the accompanying uncombined form of the same work.
+
+For part (a), please note the compressed tarfile, libgemm-20000228.tar.bz2,
+which is the author's original tarfile downloaded from:
+   ftp://www.netstat.ne.jp/pub/Linux/Linux-Alpha-JP/BLAS
+
+For part (b), ATLAS's config program prints this information during
+installation on those platforms where the goto GEMM is used by ATLAS.
+It is also mentioned in ATLAS/doc/AtlasCredits.txt, and this file.
+User's have the option of building the library without using the Goto GEMM.
+
+R. Clint Whaley wrote an ATLAS-style Makefile, and modified the
+include file common.h (as noted in common.h) in order to adapt
+the Goto GEMM to ATLAS usage.
+
+The author's original README follows (note that the file descriptions
+and build information are no longer accurate due to the ATLAS adaptation;
+for the unmodified version of the author's code described below,
+see libgemm-20000228.tar.bz2.
+
+*******************************************************************************
+*                Original README from libgemm-20000228.tar.bz2                *
+*******************************************************************************
+
+	GEMM compatible routine for EV5(21164) and EV6(21264).
+
+					2000/02/18
+					by Kazushige Goto
+						<goto@statabo.rim.or.jp>
+
+Explanation of containing files.
+
+COPYING.LIB     : GPL2 licence
+Makefile
+README          : This file.
+common.h	: common header file.
+gemm_k.S	: main sgemm/dgemm assembler routine.
+ gemm_EV5_k.S
+ gemm_EV6_k.S
+zgemm_k.S	: main cgemm/zgemm assembler routine.
+gemm.c		: Front-end sgemm/dgemm routine.
+zgemm.c		: Front-end cgemm/zgemm routine.
+gemm_beta.S	: "multiply for beta" routine.
+zgemm_beta.S	: "multiply for beta" routine(complex).
+PERFORMANCE.EV?	: Performance Data
+bmcommon.h	: Common Header File for benchmark program.
+bm.c, bmz.c	: benchmark program.  "make check"
+param.c paramz.c: sanity cheking routine
+gemmf.c,zgemmf.c: Check routine
+
+** Discriptions **
+
+This package includes optimized gemm(sgemm, dgemm, cgemm, zgemm)
+compatible routine for 21164/21264.  If you use my routine, you can
+get 90% performance of 21264's theoretical value.
+
+** Usage **
+
+It's entirely comatible with dgemm.f, sgemm.f, cgemm.f, zgemmf. Please
+type "make". My object file name is "libgemm.a".  So you must remove
+original *gemm.f and link libgemm.a, instead.
+
+
+** Benchmarking **
+
+Please type "make check" to run benchmark program.  This calculates
+matrix multipling speed(single/double and real/complex).  If you want
+to test other condition(i.e. size, leading size, SMP, EV5 CPU), you
+may check "Makefile".
+
+
+** Distributions  **
+
+Based on LGPL(This has been changed before).
+
+If you have any suggestions, comments or questions, please let me know.
+
+
+Special thanks to
+
+Naohiko Shimizu <nshimizu@et.u-tokai.ac.jp>
+               for advising prefetch strategy.
+
+MAENO Toshinori <tmaeno@hpcl.titech.ac.jp>
+               for advising internal block copy method.
+
+                                               goto@statabo.rim.or.jp

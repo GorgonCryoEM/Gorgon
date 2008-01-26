@@ -1,0 +1,25 @@
+
+
+Welcome to the ugly kludge atop the festering pile of makeshift code!
+
+ATLAS is about to create a wrapper routine in your /usr/local/bin directory
+around your windows compiler that makes it behave like a unix compiler.  To
+do this, it needs the full path to your windows compiler.  Notice that the
+default path below uses unix-style / rather than windows style path slashes:
+please use the unix-style slashes if you must change the default path.  If
+you mess up the path, you will get another shot at it until you give up.
+
+You will probably also need to set the LIB environment variable if it's
+not already set appropriately to allow command-line linking using these
+compilers.  You want to build up your LIB variable with the union of
+all the compilers you are using.  For MVC that is something like:
+   export LIB="C:/Program Files/Microsoft Developer Studio/VC98/LIB;"
+Now if CVF would require the MSV lib, plus it's own:
+   export LIB="C:/Program Files/Microsoft Developer Studio/DF98/LIB;"$LIB
+If you are using the Intel compiler, you'd need all of these, plus
+something like:
+   export LIB="C:/Program Files/Intel/CPP/COMPILER80/Ia32/Lib;"$LIB
+If this is causing all wrapper build to fail, you will have to quit config
+and set it (maybe put it in your ~/.profile), and then run config again.
+See the errata for more help if this doesn't do it for you.
+

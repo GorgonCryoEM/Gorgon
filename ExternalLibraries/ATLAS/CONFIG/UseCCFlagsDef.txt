@@ -1,0 +1,14 @@
+
+ATLAS has architectural defaults for this platform.  They were
+built with the compiler flags you see above, instead of the ones you have
+chosen.  At this stage, you have several options.  You can quit this install,
+and run again letting ATLAS choose the default flags.  Another option is
+to proceed with the install, but not use the architectural defaults.  Finally,
+if you are convinced that your flags won't change the arch defaults,
+you can continue the install using your flags and the arch defaults.  Unless
+you really know what you are doing, quit and use the default flags.  If you
+choose another course of action, we recommend you build the default library
+later, and make sure the performance of both installs is roughly the same.
+A quick and dirty comparison may be made by examining each install's:
+   ATLAS/bin/<arch>/INSTALL_LOG/SUMMARY.LOG
+

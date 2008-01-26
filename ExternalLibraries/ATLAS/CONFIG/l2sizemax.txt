@@ -1,0 +1,12 @@
+
+
+ATLAS probed the system and determined that the following amount of memory
+(in kilobytes) would be required to completely flush the cache of your
+system.  However, this amount of memory may cause swapping if you don't
+have enough physical memory available.  Some timers may use 3 times this
+much memory purely for cache flushing (not including operands being timed).
+So, if this value looks too large, decrease it (meaning ATLAS may not tune
+itself perfectly since some operands will be cache resident), otherwise
+hit enter to install with default.  If this causes the ATLAS timers to
+swap, you can always reinstall and supply a smaller value for this entry.
+

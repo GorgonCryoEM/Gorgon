@@ -1,0 +1,70 @@
+include Make.inc
+
+sobj = ATL_sgemv.o
+
+dobj = ATL_dgemv.o
+
+cobj = ATL_cgemv.o
+
+zobj = ATL_zgemv.o
+
+lib : all
+all : slib dlib clib zlib
+lvl2 : all
+dlvl2 : dlib
+slvl2 : slib
+clvl2 : clib
+zlvl2 : zlib
+clean : sclean dclean cclean zclean
+
+dlib : 
+	$(PMAKE) -f Make_dmv dlib
+	$(PMAKE) dlib.grd
+dlib.grd : $(dobj)
+	$(ARCHIVER) $(ARFLAGS) $(ATLASlib) $(dobj)
+	$(RANLIB) $(ATLASlib)
+	touch dlib.grd
+dclean : 
+	rm -f $(dobj) d*.grd
+slib : 
+	$(PMAKE) -f Make_smv slib
+	$(PMAKE) slib.grd
+slib.grd : $(sobj)
+	$(ARCHIVER) $(ARFLAGS) $(ATLASlib) $(sobj)
+	$(RANLIB) $(ATLASlib)
+	touch slib.grd
+sclean : 
+	rm -f $(sobj) s*.grd
+clib : 
+	$(PMAKE) -f Make_cmv clib
+	$(PMAKE) clib.grd
+clib.grd : $(cobj)
+	$(ARCHIVER) $(ARFLAGS) $(ATLASlib) $(cobj)
+	$(RANLIB) $(ATLASlib)
+	touch clib.grd
+cclean : 
+	rm -f $(cobj) c*.grd
+zlib : 
+	$(PMAKE) -f Make_zmv zlib
+	$(PMAKE) zlib.grd
+zlib.grd : $(zobj)
+	$(ARCHIVER) $(ARFLAGS) $(ATLASlib) $(zobj)
+	$(RANLIB) $(ATLASlib)
+	touch zlib.grd
+zclean : 
+	rm -f $(zobj) z*.grd
+
+ATL_sgemv.o : ../ATL_gemv.c $(INCdir)/atlas_smv.h \
+                   $(INCdir)/atlas_smvN.h $(INCdir)/atlas_smvT.h
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL ../ATL_gemv.c
+ATL_dgemv.o : ../ATL_gemv.c $(INCdir)/atlas_dmv.h \
+                   $(INCdir)/atlas_dmvN.h $(INCdir)/atlas_dmvT.h
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL ../ATL_gemv.c
+
+ATL_cgemv.o : ../ATL_gemv.c $(INCdir)/atlas_cmv.h \
+                   $(INCdir)/atlas_cmvN.h $(INCdir)/atlas_cmvT.h
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX ../ATL_gemv.c
+ATL_zgemv.o : ../ATL_gemv.c $(INCdir)/atlas_zmv.h \
+                   $(INCdir)/atlas_zmvN.h $(INCdir)/atlas_zmvT.h
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX ../ATL_gemv.c
+

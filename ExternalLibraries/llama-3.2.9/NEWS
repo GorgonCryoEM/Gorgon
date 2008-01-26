@@ -1,0 +1,6 @@
+4/14/2003
+	Version 3.2.8
+
+	The ODESSA library functionality is now included in the Llama
+	library.  It is now no longer necessary to compile this library
+	separately.

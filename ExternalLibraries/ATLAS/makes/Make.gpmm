@@ -1,0 +1,165 @@
+include Make.inc
+
+all : lib
+lib : dlib slib zlib clib
+clean : sclean dclean cclean zclean
+
+incdep : $(INCdir)/../atlas_pkblas.h $(INCdir)/../atlas_misc.h
+
+sobj = ATL_sgpmm.o ATL_spcol2blk_a1.o ATL_spcol2blk_aX.o ATL_spmmJIK.o \
+       ATL_spputblk.o ATL_sprankK.o ATL_sprow2blkT_a1.o ATL_sprow2blkT_aX.o
+
+slib : 
+	$(PMAKE) slib.grd
+slib.grd : $(sobj)
+	$(ARCHIVER) $(ARFLAGS) $(ATLASlib) $(sobj)
+	$(RANLIB) $(ATLASlib)
+	touch slib.grd
+ATL_sprankK.o : ../ATL_prankK.c $(incdep)
+	$(CC) $(CCFLAGS) -c -o ATL_sprankK.o -DSREAL \
+              ../ATL_prankK.c
+ATL_sgpmm.o : ../ATL_gpmm.c $(incdep)
+	$(CC) $(CCFLAGS) -c -o ATL_sgpmm.o -DSREAL \
+              ../ATL_gpmm.c
+ATL_spputblk.o : ../ATL_pputblk.c $(incdep)
+	$(CC) $(CCFLAGS) -c -o ATL_spputblk.o -DSREAL \
+              ../ATL_pputblk.c
+ATL_spmmJIK.o : ../ATL_pmmJIK.c $(incdep)
+	$(CC) $(CCFLAGS) -c -o ATL_spmmJIK.o -DSREAL \
+              ../ATL_pmmJIK.c
+ATL_sprow2blkT_aX.o : ../ATL_prow2blkT.c $(incdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL -DALPHAX ../ATL_prow2blkT.c
+ATL_spcol2blk_aX.o : ../ATL_pcol2blk.c $(incdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL -DALPHAX ../ATL_pcol2blk.c
+ATL_sprow2blkT_a1.o : ../ATL_prow2blkT.c $(incdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL -DALPHA1 ../ATL_prow2blkT.c
+ATL_spcol2blk_a1.o : ../ATL_pcol2blk.c $(incdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL -DALPHA1 ../ATL_pcol2blk.c
+
+dobj = ATL_dgpmm.o ATL_dpcol2blk_a1.o ATL_dpcol2blk_aX.o ATL_dpmmJIK.o \
+       ATL_dpputblk.o ATL_dprankK.o ATL_dprow2blkT_a1.o ATL_dprow2blkT_aX.o
+
+dlib : 
+	$(PMAKE) dlib.grd
+dlib.grd : $(dobj)
+	$(ARCHIVER) $(ARFLAGS) $(ATLASlib) $(dobj)
+	$(RANLIB) $(ATLASlib)
+	touch dlib.grd
+ATL_dprankK.o : ../ATL_prankK.c $(incdep)
+	$(CC) $(CCFLAGS) -c -o ATL_dprankK.o -DDREAL \
+              ../ATL_prankK.c
+ATL_dgpmm.o : ../ATL_gpmm.c $(incdep)
+	$(CC) $(CCFLAGS) -c -o ATL_dgpmm.o -DDREAL \
+              ../ATL_gpmm.c
+ATL_dpputblk.o : ../ATL_pputblk.c $(incdep)
+	$(CC) $(CCFLAGS) -c -o ATL_dpputblk.o -DDREAL \
+              ../ATL_pputblk.c
+ATL_dpmmJIK.o : ../ATL_pmmJIK.c $(incdep)
+	$(CC) $(CCFLAGS) -c -o ATL_dpmmJIK.o -DDREAL \
+              ../ATL_pmmJIK.c
+ATL_dprow2blkT_aX.o : ../ATL_prow2blkT.c $(incdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL -DALPHAX ../ATL_prow2blkT.c
+ATL_dpcol2blk_aX.o : ../ATL_pcol2blk.c $(incdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL -DALPHAX ../ATL_pcol2blk.c
+ATL_dprow2blkT_a1.o : ../ATL_prow2blkT.c $(incdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL -DALPHA1 ../ATL_prow2blkT.c
+ATL_dpcol2blk_a1.o : ../ATL_pcol2blk.c $(incdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL -DALPHA1 ../ATL_pcol2blk.c
+
+cobj = ATL_cgpmm.o ATL_cpcol2blk_a1.o ATL_cpcol2blk_a1C.o ATL_cpcol2blk_aX.o \
+       ATL_cpcol2blk_aXC.o ATL_cpcol2blk_aXi0.o ATL_cpcol2blk_aXi0C.o \
+       ATL_cpmmJIK.o ATL_cpputblk.o ATL_cprankK.o ATL_cprow2blkT_a1.o \
+       ATL_cprow2blkT_a1C.o ATL_cprow2blkT_aX.o ATL_cprow2blkT_aXC.o \
+       ATL_cprow2blkT_aXi0.o ATL_cprow2blkT_aXi0C.o
+
+clib : 
+	$(PMAKE) clib.grd
+clib.grd : $(cobj)
+	$(ARCHIVER) $(ARFLAGS) $(ATLASlib) $(cobj)
+	$(RANLIB) $(ATLASlib)
+	touch clib.grd
+ATL_cprankK.o : ../ATL_prankK.c $(incdep)
+	$(CC) $(CCFLAGS) -c -o ATL_cprankK.o -DSCPLX \
+              ../ATL_prankK.c
+ATL_cgpmm.o : ../ATL_gpmm.c $(incdep)
+	$(CC) $(CCFLAGS) -c -o ATL_cgpmm.o -DSCPLX \
+              ../ATL_gpmm.c
+ATL_cpputblk.o : ../ATL_cpputblk.c $(incdep)
+	$(CC) $(CCFLAGS) -c -o ATL_cpputblk.o -DSCPLX \
+              ../ATL_cpputblk.c
+ATL_cpmmJIK.o : ../ATL_cpmmJIK.c $(incdep)
+	$(CC) $(CCFLAGS) -c -o ATL_cpmmJIK.o -DSCPLX \
+              ../ATL_cpmmJIK.c
+ATL_cprow2blkT_aX.o : ../ATL_cprow2blkT.c $(incdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX -DALPHAX ../ATL_cprow2blkT.c
+ATL_cpcol2blk_aX.o : ../ATL_cpcol2blk.c $(incdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX -DALPHAX ../ATL_cpcol2blk.c
+ATL_cprow2blkT_a1.o : ../ATL_cprow2blkT.c $(incdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX -DALPHA1 ../ATL_cprow2blkT.c
+ATL_cpcol2blk_a1.o : ../ATL_cpcol2blk.c $(incdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX -DALPHA1 ../ATL_cpcol2blk.c
+ATL_cprow2blkT_aXi0.o : ../ATL_cprow2blkT.c $(incdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX -DALPHAXI0 ../ATL_cprow2blkT.c
+ATL_cpcol2blk_aXi0.o : ../ATL_cpcol2blk.c $(incdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX -DALPHAXI0 ../ATL_cpcol2blk.c
+ATL_cprow2blkT_aXi0C.o : ../ATL_cprow2blkT.c $(incdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DConj_ -DSCPLX -DALPHAXI0 ../ATL_cprow2blkT.c
+ATL_cpcol2blk_aXi0C.o : ../ATL_cpcol2blk.c $(incdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DConj_ -DSCPLX -DALPHAXI0 ../ATL_cpcol2blk.c
+ATL_cprow2blkT_aXC.o : ../ATL_cprow2blkT.c $(incdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DConj_ -DSCPLX -DALPHAX ../ATL_cprow2blkT.c
+ATL_cpcol2blk_aXC.o : ../ATL_cpcol2blk.c $(incdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DConj_ -DSCPLX -DALPHAX ../ATL_cpcol2blk.c
+ATL_cprow2blkT_a1C.o : ../ATL_cprow2blkT.c $(incdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DConj_ -DSCPLX -DALPHA1 ../ATL_cprow2blkT.c
+ATL_cpcol2blk_a1C.o : ../ATL_cpcol2blk.c $(incdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DConj_ -DSCPLX -DALPHA1 ../ATL_cpcol2blk.c
+
+zobj = ATL_zgpmm.o ATL_zpcol2blk_a1.o ATL_zpcol2blk_a1C.o ATL_zpcol2blk_aX.o \
+       ATL_zpcol2blk_aXC.o ATL_zpcol2blk_aXi0.o ATL_zpcol2blk_aXi0C.o \
+       ATL_zpmmJIK.o ATL_zpputblk.o ATL_zprankK.o ATL_zprow2blkT_a1.o \
+       ATL_zprow2blkT_a1C.o ATL_zprow2blkT_aX.o ATL_zprow2blkT_aXC.o \
+       ATL_zprow2blkT_aXi0.o ATL_zprow2blkT_aXi0C.o
+
+zlib : 
+	$(PMAKE) zlib.grd
+zlib.grd : $(zobj)
+	$(ARCHIVER) $(ARFLAGS) $(ATLASlib) $(zobj)
+	$(RANLIB) $(ATLASlib)
+	touch zlib.grd
+ATL_zprankK.o : ../ATL_prankK.c $(incdep)
+	$(CC) $(CCFLAGS) -c -o ATL_zprankK.o -DDCPLX \
+              ../ATL_prankK.c
+ATL_zgpmm.o : ../ATL_gpmm.c $(incdep)
+	$(CC) $(CCFLAGS) -c -o ATL_zgpmm.o -DDCPLX \
+              ../ATL_gpmm.c
+ATL_zpputblk.o : ../ATL_cpputblk.c $(incdep)
+	$(CC) $(CCFLAGS) -c -o ATL_zpputblk.o -DDCPLX \
+              ../ATL_cpputblk.c
+ATL_zpmmJIK.o : ../ATL_cpmmJIK.c $(incdep)
+	$(CC) $(CCFLAGS) -c -o ATL_zpmmJIK.o -DDCPLX \
+              ../ATL_cpmmJIK.c
+ATL_zprow2blkT_aX.o : ../ATL_cprow2blkT.c $(incdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX -DALPHAX ../ATL_cprow2blkT.c
+ATL_zpcol2blk_aX.o : ../ATL_cpcol2blk.c $(incdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX -DALPHAX ../ATL_cpcol2blk.c
+ATL_zprow2blkT_a1.o : ../ATL_cprow2blkT.c $(incdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX -DALPHA1 ../ATL_cprow2blkT.c
+ATL_zpcol2blk_a1.o : ../ATL_cpcol2blk.c $(incdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX -DALPHA1 ../ATL_cpcol2blk.c
+ATL_zprow2blkT_aXi0.o : ../ATL_cprow2blkT.c $(incdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX -DALPHAXI0 ../ATL_cprow2blkT.c
+ATL_zpcol2blk_aXi0.o : ../ATL_cpcol2blk.c $(incdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX -DALPHAXI0 ../ATL_cpcol2blk.c
+ATL_zprow2blkT_aXi0C.o : ../ATL_cprow2blkT.c $(incdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DConj_ -DDCPLX -DALPHAXI0 ../ATL_cprow2blkT.c
+ATL_zpcol2blk_aXi0C.o : ../ATL_cpcol2blk.c $(incdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DConj_ -DDCPLX -DALPHAXI0 ../ATL_cpcol2blk.c
+ATL_zprow2blkT_aXC.o : ../ATL_cprow2blkT.c $(incdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DConj_ -DDCPLX -DALPHAX ../ATL_cprow2blkT.c
+ATL_zpcol2blk_aXC.o : ../ATL_cpcol2blk.c $(incdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DConj_ -DDCPLX -DALPHAX ../ATL_cpcol2blk.c
+ATL_zprow2blkT_a1C.o : ../ATL_cprow2blkT.c $(incdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DConj_ -DDCPLX -DALPHA1 ../ATL_cprow2blkT.c
+ATL_zpcol2blk_a1C.o : ../ATL_cpcol2blk.c $(incdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DConj_ -DDCPLX -DALPHA1 ../ATL_cpcol2blk.c

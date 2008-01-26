@@ -1,0 +1,12 @@
+
+I can't seem to ssh your machine.  Make sure the target system name you gave
+is correct.  Also, you probably need to put the name of your cross-compiling
+machine in the file ~/.rhosts on the target machine.  If your login name
+is different on the two machines, suffix the machine name with your
+cross-compiler login name.  For instance, if I were compiling on the machine
+xcomp.cs.utk.edu, and my login name there was whaley, and I was compiling for
+the machine targ.bob.net, where my login name was rwhaley, I would log into
+targ.bob.net, vi ~/.rhosts, and add the following line:
+   xcomp.cs.utk.edu whaley
+
+

@@ -1,0 +1,24 @@
+
+
+Kazushige Goto (goto@statabo.rim.or.jp) has developed an assembly language
+GEMM which is considerably faster than ATLAS's generated code for the
+Compaq/DEC alpha ev5x and ev6 architectures.  Mr. Goto has contributed his
+implementation to the ATLAS project under the LGPL license (ATLAS in
+general uses a BSD-style license).  This LGPL sublibrary is included via
+the LGPL's clause 7.  In accordance with this clause, this screen
+informs you that if you select yes below, ATLAS will use Mr. Goto's LGPL
+GEMM, and thus the resulting library will also have an LGPL license.  The
+modified library is stored in ATLAS/src/blas/gemm/GOTO, and the unmodified
+tarfile is in ATLAS/src/blas/gemm/GOTO/libgemm-20000228.tar.bz2.
+The homepage for Mr. Goto's excellent work is:
+   http://members.jcom.home.ne.jp/kgoto/
+
+None of this lawyer-weenie junk means anything to real techies, anyway, and
+laywers probably don't have a great deal of use for ATLAS, so say "yes" below,
+unless a 5-10% speedup sounds like a bad idea to you.
+
+If you use this routine on a Linux system, you can get some additional
+speedup by the settings:
+   setenv MALLOC_TRIM_THRESHOLD_ -1
+   setenv MALLOC_MMAP_MAX_ 0
+

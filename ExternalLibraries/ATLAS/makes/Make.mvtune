@@ -1,0 +1,707 @@
+include Make.inc
+
+cas=0
+lat=0
+nY=1
+ngap=1
+agap=1
+gapmul=1
+xregs=1
+aregs=1
+yregs=$(nY)
+Mt=997
+Nt=177
+M=1000
+N=1000
+mvrout=bogus
+ta=N
+nta=T
+iflag=0
+yu=4
+xu=16
+l1mul=80
+outf=
+MVCC = $(CC)
+EXTFLAGS =
+MVFLAGS = $(CCFLAG0)
+SVCC = $(CC)
+SEXTFLAGS = 
+SVFLAGS = $(CCFLAG0)
+opt=
+
+xmvsearch : xemit_head mvsearch.o l1lib tstlib auxlib \
+            dcases.dsc scases.dsc zcases.dsc ccases.dsc
+	$(XCC) $(XCCFLAGS) -o xmvsearch mvsearch.o
+mvsearch.o : ../mvsearch.c
+	$(XCC) -c $(XCCFLAGS) -o mvsearch.o ../mvsearch.c
+xgmvsearchT : gmvsearchT.o
+	$(XCC) $(XCCFLAGS) -o $@ gmvsearchT.o
+gmvsearchT.o : ../gmvsearchT.c
+	$(XCC) -c $(XCCFLAGS) -o gmvsearchT.o ../gmvsearchT.c
+xemit_head : emit_head.o
+	$(XCC) $(XCCFLAGS) -o xemit_head emit_head.o
+emit_head.o : $(INCdir)/atlas_type.h ../emit_head.c
+	$(XCC) -c $(XCCFLAGS) -o emit_head.o ../emit_head.c
+xemit_rmvT : emit_rmvT.o
+	$(XCC) $(XCCFLAGS) -o xemit_rmvT emit_rmvT.o
+emit_rmvT.o : ../emit_rmvT.c
+	$(XCC) -c $(XCCFLAGS) -o emit_rmvT.o ../emit_rmvT.c
+$(INCdir)/atlas_type.h :
+	cd $(SYSdir) ; $(MAKE) RunTyp
+
+auxlib :
+	cd $(AUXdir) ; $(MAKE) lib
+l1lib : sl1lib dl1lib cl1lib zl1lib 
+tstlib : ststlib dtstlib ctstlib ztstlib
+
+force_build :
+
+res/L1CacheSize : $(SYSdir)/res/L1CacheSize
+	cd $(SYSdir) ; $(MAKE) res/L1CacheSize
+	ln -s $(SYSdir)/res/L1CacheSize res/L1CacheSize
+
+ATL_gemv.c :
+	cp ../ATL_gemv.c .
+ststNobj = ATL_sgemvN_b0.o ATL_sgemvN_b1.o ATL_sgemvN_bX.o
+ststTobj = ATL_sgemvT_b0.o ATL_sgemvT_b1.o ATL_sgemvT_bX.o
+sobj = ATL_sgemv.o $(ststNobj) $(ststTobj)
+ststobj = $(ststNobj) $(ststTobj)
+
+syobj = ssymvtune.o ATL_sgemvT.o ATL_sgemvT.o
+ssvcase : ssymvtune.o xemit_head xccobj
+	rm -f res/ssymvN_0_* ATL_sgemvT_b1.o ATL_sgemvN_b1.o \
+             ATL_ssymv.o
+	./xemit_head -p s -l $(l1mul) -N -x $(xu) -y $(yu) -f $(iflag) \
+          -T -x $(xu) -y $(yu) -f $(iflag) -S -x $(xu) -y $(yu) -f $(iflag)
+	cp -f ../CASES/$(mvrout) ATL_sgemvT.c
+	cp -f ../CASES/$(svrout) ATL_sgemvN.c
+	$(MAKE) ATL_ssymv.o
+	$(MAKE) ATL_sgemvT_b1.o \
+                MVCC=$(MVCC) MVFLAGS="$(MVFLAGS)" EXTFLAGS="$(EXTFLAGS)"
+	$(MAKE) ATL_sgemvN_b1.o MVCC=$(SVCC) MVFLAGS="$(SVFLAGS)" \
+                EXTFLAGS="$(SEXTFLAGS) -DATL_NOL1PREFETCH -DATL_NOL2PREFETCH"
+	$(CLINKER) $(CLINKFLAGS) -o xssv ssymvtune.o \
+                   ATL_ssymv.o ATL_sgemvT_b1.o ATL_sgemvN_b1.o \
+                   $(TESTlib) $(ATLASlib)
+	$(ATLRUN) $(MVTdir) xssv -C $(cas) -l $(l1mul) -A N \
+                  -m $(M) -n $(N) -f $(iflag) $(gmvout) $(opt)
+smvcaseN : sgemvtune.o xemit_head xccobj
+	rm -f res/sgemvN_0_*
+	rm -f $(sobj) ATL_sgemv[N,T].c $(INCdir)/atlas_smvN.h
+	./xemit_head -p s -l $(l1mul) -N -x $(xu) -y $(yu) -f $(iflag) \
+                     -T -x $(xu) -y $(yu) -f $(iflag)
+	cp -f ../CASES/$(mvrout) ATL_sgemvN.c
+	cp -f ../CASES/ATL_gemvT_dummy.c ATL_sgemvT.c
+	$(MAKE) ATL_sgemv.o
+	$(MAKE) $(ststNobj) MVCC=$(MVCC) MVFLAGS="$(MVFLAGS)" \
+                EXTFLAGS="$(EXTFLAGS)"
+	$(MAKE) $(ststTobj) MVCC=$(CC) MVFLAGS="$(CCFLAG0)" EXTFLAGS=""
+	$(CLINKER) $(CLINKFLAGS) -o xsmv sgemvtune.o \
+                   $(sobj) $(TESTlib) $(ATLASlib)
+	$(ATLRUN) $(MVTdir) xsmv -C $(cas) -l $(l1mul) -A N \
+                  -m $(M) -n $(N) -f $(iflag) $(gmvout) $(opt)
+smvcaseT :  sgemvtune.o xemit_head xccobj
+	rm -f res/sgemvT_0_*
+	rm -f $(sobj) ATL_sgemv[N,T].c $(INCdir)/atlas_smvT.h
+	./xemit_head -p s -l $(l1mul) -N -x $(xu) -y $(yu) -f $(iflag) \
+                     -T -x $(xu) -y $(yu) -f $(iflag)
+	cp -f ../CASES/$(mvrout) ATL_sgemvT.c
+	cp -f ../CASES/ATL_gemvN_dummy.c ATL_sgemvN.c
+	$(MAKE) ATL_sgemv.o
+	$(MAKE) $(ststNobj) MVCC=$(CC) MVFLAGS="$(CCFLAG0)" EXTFLAGS=""
+	$(MAKE) $(ststTobj) MVCC=$(MVCC) MVFLAGS="$(MVFLAGS)" \
+                EXTFLAGS="$(EXTFLAGS)"
+	$(CLINKER) $(CLINKFLAGS) -o xsmv sgemvtune.o \
+                   $(sobj) $(TESTlib) $(ATLASlib)
+	$(ATLRUN) $(MVTdir) xsmv -C $(cas) -l $(l1mul) -A T \
+                  -m $(M) -n $(N) -f $(iflag) $(gmvout) $(opt)
+sgmvcaseTT : sgmvtstcaseT sgmvcaseT
+sgmvtstcaseT : xemit_rmvT
+	rm -f res/sgemvT_0
+	./xemit_rmvT -l $(lat) -y $(nY) -G $(ngap) -g $(agap) -M $(gapmul) \
+                     -X $(xregs) -A $(aregs) -Y $(yregs) -b -3 \
+                     -f ../CASES/ATL_smv.c
+	$(MAKE) smvtstcaseT mvrout=ATL_smv.c cas=0 \
+                xu=$(xu) yu=$(yu) iflag=$(iflag) l1mul=$(l1mul) M=$(M) N=$(N)
+sgmvcaseT : xemit_rmvT
+	rm -f res/sgemvT_0
+	./xemit_rmvT -l $(lat) -y $(nY) -G $(ngap) -g $(agap) -M $(gapmul) \
+                     -X $(xregs) -A $(aregs) -Y $(yregs) -b -3 \
+                     -f ../CASES/ATL_smv.c
+	$(MAKE) smvcase ta=T nta=N mvrout=ATL_smv.c cas=0 \
+                xu=$(xu) yu=$(yu) iflag=$(iflag) l1mul=$(l1mul) M=$(M) N=$(N) \
+                gmvout="$(gmvout)"
+
+
+smvtstcaseN : smvtest.o xemit_head
+	rm -f $(ststobj) xsmvtst $(INCdir)/atlas_smvN.h
+	./xemit_head -p s -l $(l1mul) -N -x $(xu) -y $(yu) -f $(iflag) \
+                     -T -x $(xu) -y $(yu) -f $(iflag)
+	cp -f ../CASES/$(mvrout) ATL_sgemvN.c
+	cp -f ../CASES/ATL_gemvT_dummy2.c ATL_sgemvT.c
+	$(MAKE) $(ststNobj) MVCC=$(MVCC) MVFLAGS="$(MVFLAGS)" \
+                EXTFLAGS="$(EXTFLAGS)"
+	$(MAKE) $(ststTobj) MVCC=$(CC) MVFLAGS="$(CCFLAG0)" EXTFLAGS=""
+	$(CLINKER) $(CLINKFLAGS) -o xsmvtst smvtest.o \
+                   $(ststobj) $(TESTlib) $(ATLASlib)
+	$(ATLRUN) $(MVTdir) xsmvtst -A N -m $(Mt) -n $(Nt)
+
+smvtstcaseT : smvtest.o xemit_head
+	rm -f $(ststobj) xsmvtst $(INCdir)/atlas_smvT.h
+	./xemit_head -p s -l $(l1mul) -N -x $(xu) -y $(yu) -f $(iflag) \
+                     -T -x $(xu) -y $(yu) -f $(iflag)
+	cp -f ../CASES/$(mvrout) ATL_sgemvT.c
+	cp -f ../CASES/ATL_gemvN_dummy2.c ATL_sgemvN.c
+	$(MAKE) $(ststTobj) MVCC=$(MVCC) MVFLAGS="$(MVFLAGS)" \
+                EXTFLAGS="$(EXTFLAGS)"
+	$(MAKE) $(ststNobj) MVCC=$(CC) MVFLAGS="$(CCFLAG0)" EXTFLAGS=""
+	$(CLINKER) $(CLINKFLAGS) -o xsmvtst smvtest.o \
+                   $(ststobj) $(TESTlib) $(ATLASlib)
+	$(ATLRUN) $(MVTdir) xsmvtst -A T -m $(Mt) -n $(Nt)
+
+smvtest.o : ../mvtest.c
+	$(CC) -c $(CCFLAGS) -o $@ -DSREAL ../mvtest.c
+ssymvtune.o : ../gemvtune.c
+	$(CC) -c $(CCFLAGS) -o $@ -DSYMM_ -DSREAL ../gemvtune.c
+sgemvtune.o : ../gemvtune.c
+	$(CC) -c $(CCFLAGS) -o $@ -DSREAL ../gemvtune.c
+ATL_ssymv.o : ../ATL_symv.c atlas_smvN.h atlas_smvS.h
+	$(CC) -c -I$(MVTdir) $(CCFLAGS) -o $@ -DSREAL ../ATL_symv.c
+ATL_sgemv.o : ATL_gemv.c atlas_smv.h atlas_smvN.h atlas_smvT.h
+	$(CC) -c -I$(MVTdir) $(CCFLAGS) -o $@ -DSREAL ATL_gemv.c
+ATL_sgemvN_b0.o : ATL_sgemvN.c
+	$(MVCC) -c -I$(MVTdir) $(MVFLAGS) $(CDEFS) $(EXTFLAGS) -o $@ \
+              -DSREAL -DBETA0 -DALPHA1 ATL_sgemvN.c
+ATL_sgemvN_b1.o : ATL_sgemvN.c
+	$(MVCC) -c -I$(MVTdir) $(MVFLAGS) $(CDEFS) $(EXTFLAGS) -o $@ \
+              -DSREAL -DBETA1 -DALPHA1 ATL_sgemvN.c
+ATL_sgemvN_bX.o : ATL_sgemvN.c
+	$(MVCC) -c -I$(MVTdir) $(MVFLAGS) $(CDEFS) $(EXTFLAGS) -o $@ \
+              -DSREAL -DBETAX -DALPHA1 ATL_sgemvN.c
+ATL_sgemvT_b0.o : ATL_sgemvT.c
+	$(MVCC) -c -I$(MVTdir) $(MVFLAGS) $(CDEFS) $(EXTFLAGS) -o $@ \
+              -DSREAL -DBETA0 -DALPHA1 ATL_sgemvT.c
+ATL_sgemvT_b1.o : ATL_sgemvT.c
+	$(MVCC) -c -I$(MVTdir) $(MVFLAGS) $(CDEFS) $(EXTFLAGS) -o $@ \
+              -DSREAL -DBETA1 -DALPHA1 ATL_sgemvT.c
+ATL_sgemvT_bX.o : ATL_sgemvT.c
+	$(MVCC) -c -I$(MVTdir) $(MVFLAGS) $(CDEFS) $(EXTFLAGS) -o $@ \
+              -DSREAL -DBETAX -DALPHA1 ATL_sgemvT.c
+
+res/sMVRES : xmvsearch force_build
+	./xmvsearch -p s
+sinstall : xccobj
+	cp -f ../CASES/$(mvNrout) $(GMVdir)/ATL_sgemvN.c
+	cp -f ../CASES/$(mvTrout) $(GMVdir)/ATL_sgemvT.c
+	cp -f ../CASES/$(mvSrout) $(GMVdir)/ATL_sgemvS.c
+	cp -f Make_smv $(GMVdir)/.
+	-@ cp -f xccobj $(GMVdir)/.
+	-@ cp -f xccobj.exe $(GMVdir)/.
+	cp -f atlas_smv.h $(INCdir)/.
+	cp -f atlas_smv[N,T,S].h $(INCdir)/.
+	touch $(INCdir)/../atlas_mv.h
+sl1lib :
+	cd $(BINdir) ; $(MAKE) sl1lib
+ststlib :
+	cd $(BINdir) ; $(MAKE) ststlib
+scases.dsc : $(BINdir)/xsubstr ../CASES/scases.dsc
+	$(BINdir)/xsubstr -i ../CASES/scases.dsc -o $@ \
+           -s '^gcc' $(GOODGCC) -s ' gcc' ' $(GOODGCC)'
+	
+dtstNobj = ATL_dgemvN_b0.o ATL_dgemvN_b1.o ATL_dgemvN_bX.o
+dtstTobj = ATL_dgemvT_b0.o ATL_dgemvT_b1.o ATL_dgemvT_bX.o
+dobj = ATL_dgemv.o $(dtstNobj) $(dtstTobj)
+dtstobj = $(dtstNobj) $(dtstTobj)
+
+syobj = dsymvtune.o ATL_dgemvT.o ATL_dgemvT.o
+dsvcase : dsymvtune.o xemit_head xccobj
+	rm -f res/dsymvN_0_* ATL_dgemvT_b1.o ATL_dgemvN_b1.o \
+             ATL_dsymv.o
+	./xemit_head -p d -l $(l1mul) -N -x $(xu) -y $(yu) -f $(iflag) \
+          -T -x $(xu) -y $(yu) -f $(iflag) -S -x $(xu) -y $(yu) -f $(iflag)
+	cp -f ../CASES/$(mvrout) ATL_dgemvT.c
+	cp -f ../CASES/$(svrout) ATL_dgemvN.c
+	$(MAKE) ATL_dsymv.o
+	$(MAKE) ATL_dgemvT_b1.o \
+                MVCC=$(MVCC) MVFLAGS="$(MVFLAGS)" EXTFLAGS="$(EXTFLAGS)"
+	$(MAKE) ATL_dgemvN_b1.o MVCC=$(SVCC) MVFLAGS="$(SVFLAGS)" \
+                EXTFLAGS="$(SEXTFLAGS) -DATL_NOL1PREFETCH -DATL_NOL2PREFETCH"
+	$(CLINKER) $(CLINKFLAGS) -o xdsv dsymvtune.o \
+                   ATL_dsymv.o ATL_dgemvT_b1.o ATL_dgemvN_b1.o \
+                   $(TESTlib) $(ATLASlib)
+	$(ATLRUN) $(MVTdir) xdsv -C $(cas) -l $(l1mul) -A N \
+                  -m $(M) -n $(N) -f $(iflag) $(gmvout) $(opt)
+dmvcaseN : dgemvtune.o xemit_head xccobj
+	rm -f res/dgemvN_0_*
+	rm -f $(dobj) ATL_dgemv[N,T].c $(INCdir)/atlas_dmvN.h
+	./xemit_head -p d -l $(l1mul) -N -x $(xu) -y $(yu) -f $(iflag) \
+                     -T -x $(xu) -y $(yu) -f $(iflag)
+	cp -f ../CASES/$(mvrout) ATL_dgemvN.c
+	cp -f ../CASES/ATL_gemvT_dummy.c ATL_dgemvT.c
+	$(MAKE) ATL_dgemv.o
+	$(MAKE) $(dtstNobj) MVCC=$(MVCC) MVFLAGS="$(MVFLAGS)" \
+                EXTFLAGS="$(EXTFLAGS)"
+	$(MAKE) $(dtstTobj) MVCC=$(CC) MVFLAGS="$(CCFLAG0)" EXTFLAGS=""
+	$(CLINKER) $(CLINKFLAGS) -o xdmv dgemvtune.o \
+                   $(dobj) $(TESTlib) $(ATLASlib)
+	$(ATLRUN) $(MVTdir) xdmv -C $(cas) -l $(l1mul) -A N \
+                  -m $(M) -n $(N) -f $(iflag) $(gmvout) $(opt)
+dmvcaseT :  dgemvtune.o xemit_head xccobj
+	rm -f res/dgemvT_0_*
+	rm -f $(dobj) ATL_dgemv[N,T].c $(INCdir)/atlas_dmvT.h
+	./xemit_head -p d -l $(l1mul) -N -x $(xu) -y $(yu) -f $(iflag) \
+                     -T -x $(xu) -y $(yu) -f $(iflag)
+	cp -f ../CASES/$(mvrout) ATL_dgemvT.c
+	cp -f ../CASES/ATL_gemvN_dummy.c ATL_dgemvN.c
+	$(MAKE) ATL_dgemv.o
+	$(MAKE) $(dtstNobj) MVCC=$(CC) MVFLAGS="$(CCFLAG0)" EXTFLAGS=""
+	$(MAKE) $(dtstTobj) MVCC=$(MVCC) MVFLAGS="$(MVFLAGS)" \
+                EXTFLAGS="$(EXTFLAGS)"
+	$(CLINKER) $(CLINKFLAGS) -o xdmv dgemvtune.o \
+                   $(dobj) $(TESTlib) $(ATLASlib)
+	$(ATLRUN) $(MVTdir) xdmv -C $(cas) -l $(l1mul) -A T \
+                  -m $(M) -n $(N) -f $(iflag) $(gmvout) $(opt)
+dgmvcaseTT : dgmvtstcaseT dgmvcaseT
+dgmvtstcaseT : xemit_rmvT
+	rm -f res/dgemvT_0
+	./xemit_rmvT -l $(lat) -y $(nY) -G $(ngap) -g $(agap) -M $(gapmul) \
+                     -X $(xregs) -A $(aregs) -Y $(yregs) -b -3 \
+                     -f ../CASES/ATL_dmv.c
+	$(MAKE) dmvtstcaseT mvrout=ATL_dmv.c cas=0 \
+                xu=$(xu) yu=$(yu) iflag=$(iflag) l1mul=$(l1mul) M=$(M) N=$(N)
+dgmvcaseT : xemit_rmvT
+	rm -f res/dgemvT_0
+	./xemit_rmvT -l $(lat) -y $(nY) -G $(ngap) -g $(agap) -M $(gapmul) \
+                     -X $(xregs) -A $(aregs) -Y $(yregs) -b -3 \
+                     -f ../CASES/ATL_dmv.c
+	$(MAKE) dmvcase ta=T nta=N mvrout=ATL_dmv.c cas=0 \
+                xu=$(xu) yu=$(yu) iflag=$(iflag) l1mul=$(l1mul) M=$(M) N=$(N) \
+                gmvout="$(gmvout)"
+
+
+dmvtstcaseN : dmvtest.o xemit_head
+	rm -f $(dtstobj) xdmvtst $(INCdir)/atlas_dmvN.h
+	./xemit_head -p d -l $(l1mul) -N -x $(xu) -y $(yu) -f $(iflag) \
+                     -T -x $(xu) -y $(yu) -f $(iflag)
+	cp -f ../CASES/$(mvrout) ATL_dgemvN.c
+	cp -f ../CASES/ATL_gemvT_dummy2.c ATL_dgemvT.c
+	$(MAKE) $(dtstNobj) MVCC=$(MVCC) MVFLAGS="$(MVFLAGS)" \
+                EXTFLAGS="$(EXTFLAGS)"
+	$(MAKE) $(dtstTobj) MVCC=$(CC) MVFLAGS="$(CCFLAG0)" EXTFLAGS=""
+	$(CLINKER) $(CLINKFLAGS) -o xdmvtst dmvtest.o \
+                   $(dtstobj) $(TESTlib) $(ATLASlib)
+	$(ATLRUN) $(MVTdir) xdmvtst -A N -m $(Mt) -n $(Nt)
+
+dmvtstcaseT : dmvtest.o xemit_head
+	rm -f $(dtstobj) xdmvtst $(INCdir)/atlas_dmvT.h
+	./xemit_head -p d -l $(l1mul) -N -x $(xu) -y $(yu) -f $(iflag) \
+                     -T -x $(xu) -y $(yu) -f $(iflag)
+	cp -f ../CASES/$(mvrout) ATL_dgemvT.c
+	cp -f ../CASES/ATL_gemvN_dummy2.c ATL_dgemvN.c
+	$(MAKE) $(dtstTobj) MVCC=$(MVCC) MVFLAGS="$(MVFLAGS)" \
+                EXTFLAGS="$(EXTFLAGS)"
+	$(MAKE) $(dtstNobj) MVCC=$(CC) MVFLAGS="$(CCFLAG0)" EXTFLAGS=""
+	$(CLINKER) $(CLINKFLAGS) -o xdmvtst dmvtest.o \
+                   $(dtstobj) $(TESTlib) $(ATLASlib)
+	$(ATLRUN) $(MVTdir) xdmvtst -A T -m $(Mt) -n $(Nt)
+
+dmvtest.o : ../mvtest.c
+	$(CC) -c $(CCFLAGS) -o $@ -DDREAL ../mvtest.c
+dsymvtune.o : ../gemvtune.c
+	$(CC) -c $(CCFLAGS) -o $@ -DSYMM_ -DDREAL ../gemvtune.c
+dgemvtune.o : ../gemvtune.c
+	$(CC) -c $(CCFLAGS) -o $@ -DDREAL ../gemvtune.c
+ATL_dsymv.o : ../ATL_symv.c atlas_dmvN.h atlas_dmvS.h
+	$(CC) -c -I$(MVTdir) $(CCFLAGS) -o $@ -DDREAL ../ATL_symv.c
+ATL_dgemv.o : ATL_gemv.c atlas_dmv.h atlas_dmvN.h atlas_dmvT.h
+	$(CC) -c -I$(MVTdir) $(CCFLAGS) -o $@ -DDREAL ATL_gemv.c
+ATL_dgemvN_b0.o : ATL_dgemvN.c
+	$(MVCC) -c -I$(MVTdir) $(MVFLAGS) $(CDEFS) $(EXTFLAGS) -o $@ \
+              -DDREAL -DBETA0 -DALPHA1 ATL_dgemvN.c
+ATL_dgemvN_b1.o : ATL_dgemvN.c
+	$(MVCC) -c -I$(MVTdir) $(MVFLAGS) $(CDEFS) $(EXTFLAGS) -o $@ \
+              -DDREAL -DBETA1 -DALPHA1 ATL_dgemvN.c
+ATL_dgemvN_bX.o : ATL_dgemvN.c
+	$(MVCC) -c -I$(MVTdir) $(MVFLAGS) $(CDEFS) $(EXTFLAGS) -o $@ \
+              -DDREAL -DBETAX -DALPHA1 ATL_dgemvN.c
+ATL_dgemvT_b0.o : ATL_dgemvT.c
+	$(MVCC) -c -I$(MVTdir) $(MVFLAGS) $(CDEFS) $(EXTFLAGS) -o $@ \
+              -DDREAL -DBETA0 -DALPHA1 ATL_dgemvT.c
+ATL_dgemvT_b1.o : ATL_dgemvT.c
+	$(MVCC) -c -I$(MVTdir) $(MVFLAGS) $(CDEFS) $(EXTFLAGS) -o $@ \
+              -DDREAL -DBETA1 -DALPHA1 ATL_dgemvT.c
+ATL_dgemvT_bX.o : ATL_dgemvT.c
+	$(MVCC) -c -I$(MVTdir) $(MVFLAGS) $(CDEFS) $(EXTFLAGS) -o $@ \
+              -DDREAL -DBETAX -DALPHA1 ATL_dgemvT.c
+
+res/dMVRES : xmvsearch force_build
+	./xmvsearch -p d
+dinstall : xccobj
+	cp -f ../CASES/$(mvNrout) $(GMVdir)/ATL_dgemvN.c
+	cp -f ../CASES/$(mvTrout) $(GMVdir)/ATL_dgemvT.c
+	cp -f ../CASES/$(mvSrout) $(GMVdir)/ATL_dgemvS.c
+	cp -f Make_dmv $(GMVdir)/.
+	-@ cp -f xccobj $(GMVdir)/.
+	-@ cp -f xccobj.exe $(GMVdir)/.
+	cp -f atlas_dmv.h $(INCdir)/.
+	cp -f atlas_dmv[N,T,S].h $(INCdir)/.
+	touch $(INCdir)/../atlas_mv.h
+dl1lib :
+	cd $(BINdir) ; $(MAKE) dl1lib
+dtstlib :
+	cd $(BINdir) ; $(MAKE) dtstlib
+dcases.dsc : $(BINdir)/xsubstr ../CASES/dcases.dsc
+	$(BINdir)/xsubstr -i ../CASES/dcases.dsc -o $@ \
+           -s '^gcc' $(GOODGCC) -s ' gcc' ' $(GOODGCC)'
+	
+cobj = ATL_cgemv.o \
+       ATL_cgemvN_b0.o ATL_cgemvT_b0.o \
+       ATL_cgemvN_b1.o ATL_cgemvT_b1.o \
+       ATL_cgemvN_bXi0.o ATL_cgemvT_bXi0.o \
+       ATL_cgemvN_bX.o ATL_cgemvT_bX.o
+
+ctstNobj = ATL_cgemvN_b0.o ATL_cgemvNc_b0.o \
+           ATL_cgemvN_b1.o ATL_cgemvNc_b1.o \
+           ATL_cgemvN_bXi0.o ATL_cgemvNc_bXi0.o \
+           ATL_cgemvN_bX.o ATL_cgemvNc_bX.o
+
+ctstTobj = ATL_cgemvT_b0.o ATL_cgemvC_b0.o \
+           ATL_cgemvT_b1.o ATL_cgemvC_b1.o \
+           ATL_cgemvT_bXi0.o ATL_cgemvC_bXi0.o \
+           ATL_cgemvT_bX.o ATL_cgemvC_bX.o
+ctstobj = $(ctstNobj) $(ctstTobj)
+
+syobj = csymvtune.o ATL_cgemvT.o ATL_cgemvT.o
+csvcase : csymvtune.o xemit_head xccobj
+	rm -f res/csymvN_0_* ATL_cgemvT_b1.o ATL_cgemvN_b1.o \
+             ATL_csymv.o
+	./xemit_head -p c -l $(l1mul) -N -x $(xu) -y $(yu) -f $(iflag) \
+          -T -x $(xu) -y $(yu) -f $(iflag) -S -x $(xu) -y $(yu) -f $(iflag)
+	cp -f ../CASES/$(mvrout) ATL_cgemvT.c
+	cp -f ../CASES/$(svrout) ATL_cgemvN.c
+	$(MAKE) ATL_csymv.o
+	$(MAKE) ATL_cgemvT_b1.o \
+                MVCC=$(MVCC) MVFLAGS="$(MVFLAGS)" EXTFLAGS="$(EXTFLAGS)"
+	$(MAKE) ATL_cgemvN_b1.o MVCC=$(SVCC) MVFLAGS="$(SVFLAGS)" \
+                EXTFLAGS="$(SEXTFLAGS) -DATL_NOL1PREFETCH -DATL_NOL2PREFETCH"
+	$(CLINKER) $(CLINKFLAGS) -o xcsv csymvtune.o \
+                   ATL_csymv.o ATL_cgemvT_b1.o ATL_cgemvN_b1.o \
+                   $(TESTlib) $(ATLASlib)
+	$(ATLRUN) $(MVTdir) xcsv -C $(cas) -l $(l1mul) -A N \
+                  -m $(M) -n $(N) -f $(iflag) $(gmvout) $(opt)
+cmvcaseN : cgemvtune.o xemit_head xccobj
+	rm -f res/cgemvN_0_*
+	rm -f $(cobj) ATL_cgemv[N,T].c $(INCdir)/atlas_cmvN.h
+	./xemit_head -p c -l $(l1mul) -N -x $(xu) -y $(yu) -f $(iflag) \
+                     -T -x $(xu) -y $(yu) -f $(iflag)
+	cp -f ../CASES/$(mvrout) ATL_cgemvN.c
+	cp -f ../CASES/ATL_gemvT_dummy.c ATL_cgemvT.c
+	$(MAKE) ATL_cgemv.o
+	$(MAKE) $(ctstNobj) MVCC=$(MVCC) MVFLAGS="$(MVFLAGS)" \
+                EXTFLAGS="$(EXTFLAGS)"
+	$(MAKE) $(ctstTobj) MVCC=$(CC) MVFLAGS="$(CCFLAG0)" EXTFLAGS=""
+	$(CLINKER) $(CLINKFLAGS) -o xcmv cgemvtune.o \
+                   $(cobj) $(TESTlib) $(ATLASlib)
+	$(ATLRUN) $(MVTdir) xcmv -C $(cas) -l $(l1mul) -A N \
+                  -m $(M) -n $(N) -f $(iflag) $(gmvout) $(opt)
+cmvcaseT :  cgemvtune.o xemit_head xccobj
+	rm -f res/cgemvT_0_*
+	rm -f $(cobj) ATL_cgemv[N,T].c $(INCdir)/atlas_cmvT.h
+	./xemit_head -p c -l $(l1mul) -N -x $(xu) -y $(yu) -f $(iflag) \
+                     -T -x $(xu) -y $(yu) -f $(iflag)
+	cp -f ../CASES/$(mvrout) ATL_cgemvT.c
+	cp -f ../CASES/ATL_gemvN_dummy.c ATL_cgemvN.c
+	$(MAKE) ATL_cgemv.o
+	$(MAKE) $(ctstNobj) MVCC=$(CC) MVFLAGS="$(CCFLAG0)" EXTFLAGS=""
+	$(MAKE) $(ctstTobj) MVCC=$(MVCC) MVFLAGS="$(MVFLAGS)" \
+                EXTFLAGS="$(EXTFLAGS)"
+	$(CLINKER) $(CLINKFLAGS) -o xcmv cgemvtune.o \
+                   $(cobj) $(TESTlib) $(ATLASlib)
+	$(ATLRUN) $(MVTdir) xcmv -C $(cas) -l $(l1mul) -A T \
+                  -m $(M) -n $(N) -f $(iflag) $(gmvout) $(opt)
+
+
+cmvtstcaseN : cmvtest.o xemit_head
+	rm -f $(ctstobj) xcmvtst $(INCdir)/atlas_cmvN.h
+	./xemit_head -p c -l $(l1mul) -N -x $(xu) -y $(yu) -f $(iflag) \
+                     -T -x $(xu) -y $(yu) -f $(iflag)
+	cp -f ../CASES/$(mvrout) ATL_cgemvN.c
+	cp -f ../CASES/ATL_gemvT_dummy2.c ATL_cgemvT.c
+	$(MAKE) $(ctstNobj) MVCC=$(MVCC) MVFLAGS="$(MVFLAGS)" \
+                EXTFLAGS="$(EXTFLAGS)"
+	$(MAKE) $(ctstTobj) MVCC=$(CC) MVFLAGS="$(CCFLAG0)" EXTFLAGS=""
+	$(CLINKER) $(CLINKFLAGS) -o xcmvtst cmvtest.o \
+                   $(ctstobj) $(TESTlib) $(ATLASlib)
+	$(ATLRUN) $(MVTdir) xcmvtst -A N -m $(Mt) -n $(Nt)
+
+cmvtstcaseT : cmvtest.o xemit_head
+	rm -f $(ctstobj) xcmvtst $(INCdir)/atlas_cmvT.h
+	./xemit_head -p c -l $(l1mul) -N -x $(xu) -y $(yu) -f $(iflag) \
+                     -T -x $(xu) -y $(yu) -f $(iflag)
+	cp -f ../CASES/$(mvrout) ATL_cgemvT.c
+	cp -f ../CASES/ATL_gemvN_dummy2.c ATL_cgemvN.c
+	$(MAKE) $(ctstTobj) MVCC=$(MVCC) MVFLAGS="$(MVFLAGS)" \
+                EXTFLAGS="$(EXTFLAGS)"
+	$(MAKE) $(ctstNobj) MVCC=$(CC) MVFLAGS="$(CCFLAG0)" EXTFLAGS=""
+	$(CLINKER) $(CLINKFLAGS) -o xcmvtst cmvtest.o \
+                   $(ctstobj) $(TESTlib) $(ATLASlib)
+	$(ATLRUN) $(MVTdir) xcmvtst -A T -m $(Mt) -n $(Nt)
+
+cmvtest.o : ../mvtest.c
+	$(CC) -c $(CCFLAGS) -o $@ -DSCPLX ../mvtest.c
+csymvtune.o : ../gemvtune.c
+	$(CC) -c $(CCFLAGS) -o $@ -DSYMM_ -DSCPLX ../gemvtune.c
+cgemvtune.o : ../gemvtune.c
+	$(CC) -c $(CCFLAGS) -o $@ -DSCPLX ../gemvtune.c
+ATL_csymv.o : ../ATL_symv.c atlas_cmvN.h atlas_cmvS.h
+	$(CC) -c -I$(MVTdir) $(CCFLAGS) -o $@ -DSCPLX ../ATL_symv.c
+ATL_cgemv.o : ATL_gemv.c atlas_cmv.h atlas_cmvN.h atlas_cmvT.h
+	$(CC) -c -I$(MVTdir) $(CCFLAGS) -o $@ -DSCPLX ATL_gemv.c
+ATL_cgemvN_b0.o : ATL_cgemvN.c
+	$(MVCC) -c -I$(MVTdir) $(MVFLAGS) $(CDEFS) $(EXTFLAGS) -o $@ \
+              -DSCPLX -DBETA0 -DALPHA1 ATL_cgemvN.c
+ATL_cgemvN_b1.o : ATL_cgemvN.c
+	$(MVCC) -c -I$(MVTdir) $(MVFLAGS) $(CDEFS) $(EXTFLAGS) -o $@ \
+              -DSCPLX -DBETA1 -DALPHA1 ATL_cgemvN.c
+ATL_cgemvN_bX.o : ATL_cgemvN.c
+	$(MVCC) -c -I$(MVTdir) $(MVFLAGS) $(CDEFS) $(EXTFLAGS) -o $@ \
+              -DSCPLX -DBETAX -DALPHA1 ATL_cgemvN.c
+ATL_cgemvN_bXi0.o : ATL_cgemvN.c
+	$(MVCC) -c -I$(MVTdir) $(MVFLAGS) $(CDEFS) $(EXTFLAGS) -o $@ \
+              -DSCPLX -DBETAXI0 -DALPHA1 ATL_cgemvN.c
+ATL_cgemvT_b0.o : ATL_cgemvT.c
+	$(MVCC) -c -I$(MVTdir) $(MVFLAGS) $(CDEFS) $(EXTFLAGS) -o $@ \
+              -DSCPLX -DBETA0 -DALPHA1 ATL_cgemvT.c
+ATL_cgemvT_b1.o : ATL_cgemvT.c
+	$(MVCC) -c -I$(MVTdir) $(MVFLAGS) $(CDEFS) $(EXTFLAGS) -o $@ \
+              -DSCPLX -DBETA1 -DALPHA1 ATL_cgemvT.c
+ATL_cgemvT_bX.o : ATL_cgemvT.c
+	$(MVCC) -c -I$(MVTdir) $(MVFLAGS) $(CDEFS) $(EXTFLAGS) -o $@ \
+              -DSCPLX -DBETAX -DALPHA1 ATL_cgemvT.c
+ATL_cgemvT_bXi0.o : ATL_cgemvT.c
+	$(MVCC) -c -I$(MVTdir) $(MVFLAGS) $(CDEFS) $(EXTFLAGS) -o $@ \
+              -DSCPLX -DBETAXI0 -DALPHA1 ATL_cgemvT.c
+ATL_cgemvC_b0.o : ATL_cgemvT.c
+	$(MVCC) -c $(MVFLAGS) $(CDEFS) $(EXTFLAGS) -I$(MVTdir) -o $@ \
+              -DSCPLX -DBETA0 -DALPHA1 -DConj_ ATL_cgemvT.c
+ATL_cgemvC_b1.o : ATL_cgemvT.c
+	$(MVCC) -c $(MVFLAGS) $(CDEFS) $(EXTFLAGS) -I$(MVTdir) -o $@ \
+              -DSCPLX -DBETA1 -DALPHA1 -DConj_ ATL_cgemvT.c
+ATL_cgemvC_bX.o : ATL_cgemvT.c
+	$(MVCC) -c $(MVFLAGS) $(CDEFS) $(EXTFLAGS) -I$(MVTdir) -o $@ \
+              -DSCPLX -DBETAX -DALPHA1 -DConj_ ATL_cgemvT.c
+ATL_cgemvC_bXi0.o : ATL_cgemvT.c
+	$(MVCC) -c $(MVFLAGS) $(CDEFS) $(EXTFLAGS) -I$(MVTdir) -o $@ \
+              -DSCPLX -DBETAXI0 -DALPHA1 -DConj_ ATL_cgemvT.c
+ATL_cgemvNc_b0.o : ATL_cgemvN.c
+	$(MVCC) -c $(MVFLAGS) $(CDEFS) $(EXTFLAGS) -I$(MVTdir) -o $@ \
+              -DSCPLX -DBETA0 -DALPHA1 -DConj_ ATL_cgemvN.c
+ATL_cgemvNc_b1.o : ATL_cgemvN.c
+	$(MVCC) -c $(MVFLAGS) $(CDEFS) $(EXTFLAGS) -I$(MVTdir) -o $@ \
+              -DSCPLX -DBETA1 -DALPHA1 -DConj_ ATL_cgemvN.c
+ATL_cgemvNc_bX.o : ATL_cgemvN.c
+	$(MVCC) -c $(MVFLAGS) $(CDEFS) $(EXTFLAGS) -I$(MVTdir) -o $@ \
+              -DSCPLX -DBETAX -DALPHA1 -DConj_ ATL_cgemvN.c
+ATL_cgemvNc_bXi0.o : ATL_cgemvN.c
+	$(MVCC) -c $(MVFLAGS) $(CDEFS) $(EXTFLAGS) -I$(MVTdir) -o $@ \
+              -DSCPLX -DBETAXI0 -DALPHA1 -DConj_ ATL_cgemvN.c
+
+res/cMVRES : xmvsearch force_build
+	./xmvsearch -p c
+cinstall : xccobj
+	cp -f ../CASES/$(mvNrout) $(GMVdir)/ATL_cgemvN.c
+	cp -f ../CASES/$(mvTrout) $(GMVdir)/ATL_cgemvT.c
+	cp -f ../CASES/$(mvSrout) $(GMVdir)/ATL_cgemvS.c
+	cp -f Make_cmv $(GMVdir)/.
+	-@ cp -f xccobj $(GMVdir)/.
+	-@ cp -f xccobj.exe $(GMVdir)/.
+	cp -f atlas_cmv.h $(INCdir)/.
+	cp -f atlas_cmv[N,T,S].h $(INCdir)/.
+	touch $(INCdir)/../atlas_mv.h
+cl1lib :
+	cd $(BINdir) ; $(MAKE) cl1lib
+ctstlib :
+	cd $(BINdir) ; $(MAKE) ctstlib
+ccases.dsc : $(BINdir)/xsubstr ../CASES/ccases.dsc
+	$(BINdir)/xsubstr -i ../CASES/ccases.dsc -o $@ \
+           -s '^gcc' $(GOODGCC) -s ' gcc' ' $(GOODGCC)'
+	
+zobj = ATL_zgemv.o \
+       ATL_zgemvN_b0.o ATL_zgemvT_b0.o \
+       ATL_zgemvN_b1.o ATL_zgemvT_b1.o \
+       ATL_zgemvN_bXi0.o ATL_zgemvT_bXi0.o \
+       ATL_zgemvN_bX.o ATL_zgemvT_bX.o
+
+ztstNobj = ATL_zgemvN_b0.o ATL_zgemvNc_b0.o \
+           ATL_zgemvN_b1.o ATL_zgemvNc_b1.o \
+           ATL_zgemvN_bXi0.o ATL_zgemvNc_bXi0.o \
+           ATL_zgemvN_bX.o ATL_zgemvNc_bX.o
+
+ztstTobj = ATL_zgemvT_b0.o ATL_zgemvC_b0.o \
+           ATL_zgemvT_b1.o ATL_zgemvC_b1.o \
+           ATL_zgemvT_bXi0.o ATL_zgemvC_bXi0.o \
+           ATL_zgemvT_bX.o ATL_zgemvC_bX.o
+ztstobj = $(ztstNobj) $(ztstTobj)
+
+syobj = zsymvtune.o ATL_zgemvT.o ATL_zgemvT.o
+zsvcase : zsymvtune.o xemit_head xccobj
+	rm -f res/zsymvN_0_* ATL_zgemvT_b1.o ATL_zgemvN_b1.o \
+             ATL_zsymv.o
+	./xemit_head -p z -l $(l1mul) -N -x $(xu) -y $(yu) -f $(iflag) \
+          -T -x $(xu) -y $(yu) -f $(iflag) -S -x $(xu) -y $(yu) -f $(iflag)
+	cp -f ../CASES/$(mvrout) ATL_zgemvT.c
+	cp -f ../CASES/$(svrout) ATL_zgemvN.c
+	$(MAKE) ATL_zsymv.o
+	$(MAKE) ATL_zgemvT_b1.o \
+                MVCC=$(MVCC) MVFLAGS="$(MVFLAGS)" EXTFLAGS="$(EXTFLAGS)"
+	$(MAKE) ATL_zgemvN_b1.o MVCC=$(SVCC) MVFLAGS="$(SVFLAGS)" \
+                EXTFLAGS="$(SEXTFLAGS) -DATL_NOL1PREFETCH -DATL_NOL2PREFETCH"
+	$(CLINKER) $(CLINKFLAGS) -o xzsv zsymvtune.o \
+                   ATL_zsymv.o ATL_zgemvT_b1.o ATL_zgemvN_b1.o \
+                   $(TESTlib) $(ATLASlib)
+	$(ATLRUN) $(MVTdir) xzsv -C $(cas) -l $(l1mul) -A N \
+                  -m $(M) -n $(N) -f $(iflag) $(gmvout) $(opt)
+zmvcaseN : zgemvtune.o xemit_head xccobj
+	rm -f res/zgemvN_0_*
+	rm -f $(zobj) ATL_zgemv[N,T].c $(INCdir)/atlas_zmvN.h
+	./xemit_head -p z -l $(l1mul) -N -x $(xu) -y $(yu) -f $(iflag) \
+                     -T -x $(xu) -y $(yu) -f $(iflag)
+	cp -f ../CASES/$(mvrout) ATL_zgemvN.c
+	cp -f ../CASES/ATL_gemvT_dummy.c ATL_zgemvT.c
+	$(MAKE) ATL_zgemv.o
+	$(MAKE) $(ztstNobj) MVCC=$(MVCC) MVFLAGS="$(MVFLAGS)" \
+                EXTFLAGS="$(EXTFLAGS)"
+	$(MAKE) $(ztstTobj) MVCC=$(CC) MVFLAGS="$(CCFLAG0)" EXTFLAGS=""
+	$(CLINKER) $(CLINKFLAGS) -o xzmv zgemvtune.o \
+                   $(zobj) $(TESTlib) $(ATLASlib)
+	$(ATLRUN) $(MVTdir) xzmv -C $(cas) -l $(l1mul) -A N \
+                  -m $(M) -n $(N) -f $(iflag) $(gmvout) $(opt)
+zmvcaseT :  zgemvtune.o xemit_head xccobj
+	rm -f res/zgemvT_0_*
+	rm -f $(zobj) ATL_zgemv[N,T].c $(INCdir)/atlas_zmvT.h
+	./xemit_head -p z -l $(l1mul) -N -x $(xu) -y $(yu) -f $(iflag) \
+                     -T -x $(xu) -y $(yu) -f $(iflag)
+	cp -f ../CASES/$(mvrout) ATL_zgemvT.c
+	cp -f ../CASES/ATL_gemvN_dummy.c ATL_zgemvN.c
+	$(MAKE) ATL_zgemv.o
+	$(MAKE) $(ztstNobj) MVCC=$(CC) MVFLAGS="$(CCFLAG0)" EXTFLAGS=""
+	$(MAKE) $(ztstTobj) MVCC=$(MVCC) MVFLAGS="$(MVFLAGS)" \
+                EXTFLAGS="$(EXTFLAGS)"
+	$(CLINKER) $(CLINKFLAGS) -o xzmv zgemvtune.o \
+                   $(zobj) $(TESTlib) $(ATLASlib)
+	$(ATLRUN) $(MVTdir) xzmv -C $(cas) -l $(l1mul) -A T \
+                  -m $(M) -n $(N) -f $(iflag) $(gmvout) $(opt)
+
+
+zmvtstcaseN : zmvtest.o xemit_head
+	rm -f $(ztstobj) xzmvtst $(INCdir)/atlas_zmvN.h
+	./xemit_head -p z -l $(l1mul) -N -x $(xu) -y $(yu) -f $(iflag) \
+                     -T -x $(xu) -y $(yu) -f $(iflag)
+	cp -f ../CASES/$(mvrout) ATL_zgemvN.c
+	cp -f ../CASES/ATL_gemvT_dummy2.c ATL_zgemvT.c
+	$(MAKE) $(ztstNobj) MVCC=$(MVCC) MVFLAGS="$(MVFLAGS)" \
+                EXTFLAGS="$(EXTFLAGS)"
+	$(MAKE) $(ztstTobj) MVCC=$(CC) MVFLAGS="$(CCFLAG0)" EXTFLAGS=""
+	$(CLINKER) $(CLINKFLAGS) -o xzmvtst zmvtest.o \
+                   $(ztstobj) $(TESTlib) $(ATLASlib)
+	$(ATLRUN) $(MVTdir) xzmvtst -A N -m $(Mt) -n $(Nt)
+
+zmvtstcaseT : zmvtest.o xemit_head
+	rm -f $(ztstobj) xzmvtst $(INCdir)/atlas_zmvT.h
+	./xemit_head -p z -l $(l1mul) -N -x $(xu) -y $(yu) -f $(iflag) \
+                     -T -x $(xu) -y $(yu) -f $(iflag)
+	cp -f ../CASES/$(mvrout) ATL_zgemvT.c
+	cp -f ../CASES/ATL_gemvN_dummy2.c ATL_zgemvN.c
+	$(MAKE) $(ztstTobj) MVCC=$(MVCC) MVFLAGS="$(MVFLAGS)" \
+                EXTFLAGS="$(EXTFLAGS)"
+	$(MAKE) $(ztstNobj) MVCC=$(CC) MVFLAGS="$(CCFLAG0)" EXTFLAGS=""
+	$(CLINKER) $(CLINKFLAGS) -o xzmvtst zmvtest.o \
+                   $(ztstobj) $(TESTlib) $(ATLASlib)
+	$(ATLRUN) $(MVTdir) xzmvtst -A T -m $(Mt) -n $(Nt)
+
+zmvtest.o : ../mvtest.c
+	$(CC) -c $(CCFLAGS) -o $@ -DDCPLX ../mvtest.c
+zsymvtune.o : ../gemvtune.c
+	$(CC) -c $(CCFLAGS) -o $@ -DSYMM_ -DDCPLX ../gemvtune.c
+zgemvtune.o : ../gemvtune.c
+	$(CC) -c $(CCFLAGS) -o $@ -DDCPLX ../gemvtune.c
+ATL_zsymv.o : ../ATL_symv.c atlas_zmvN.h atlas_zmvS.h
+	$(CC) -c -I$(MVTdir) $(CCFLAGS) -o $@ -DDCPLX ../ATL_symv.c
+ATL_zgemv.o : ATL_gemv.c atlas_zmv.h atlas_zmvN.h atlas_zmvT.h
+	$(CC) -c -I$(MVTdir) $(CCFLAGS) -o $@ -DDCPLX ATL_gemv.c
+ATL_zgemvN_b0.o : ATL_zgemvN.c
+	$(MVCC) -c -I$(MVTdir) $(MVFLAGS) $(CDEFS) $(EXTFLAGS) -o $@ \
+              -DDCPLX -DBETA0 -DALPHA1 ATL_zgemvN.c
+ATL_zgemvN_b1.o : ATL_zgemvN.c
+	$(MVCC) -c -I$(MVTdir) $(MVFLAGS) $(CDEFS) $(EXTFLAGS) -o $@ \
+              -DDCPLX -DBETA1 -DALPHA1 ATL_zgemvN.c
+ATL_zgemvN_bX.o : ATL_zgemvN.c
+	$(MVCC) -c -I$(MVTdir) $(MVFLAGS) $(CDEFS) $(EXTFLAGS) -o $@ \
+              -DDCPLX -DBETAX -DALPHA1 ATL_zgemvN.c
+ATL_zgemvN_bXi0.o : ATL_zgemvN.c
+	$(MVCC) -c -I$(MVTdir) $(MVFLAGS) $(CDEFS) $(EXTFLAGS) -o $@ \
+              -DDCPLX -DBETAXI0 -DALPHA1 ATL_zgemvN.c
+ATL_zgemvT_b0.o : ATL_zgemvT.c
+	$(MVCC) -c -I$(MVTdir) $(MVFLAGS) $(CDEFS) $(EXTFLAGS) -o $@ \
+              -DDCPLX -DBETA0 -DALPHA1 ATL_zgemvT.c
+ATL_zgemvT_b1.o : ATL_zgemvT.c
+	$(MVCC) -c -I$(MVTdir) $(MVFLAGS) $(CDEFS) $(EXTFLAGS) -o $@ \
+              -DDCPLX -DBETA1 -DALPHA1 ATL_zgemvT.c
+ATL_zgemvT_bX.o : ATL_zgemvT.c
+	$(MVCC) -c -I$(MVTdir) $(MVFLAGS) $(CDEFS) $(EXTFLAGS) -o $@ \
+              -DDCPLX -DBETAX -DALPHA1 ATL_zgemvT.c
+ATL_zgemvT_bXi0.o : ATL_zgemvT.c
+	$(MVCC) -c -I$(MVTdir) $(MVFLAGS) $(CDEFS) $(EXTFLAGS) -o $@ \
+              -DDCPLX -DBETAXI0 -DALPHA1 ATL_zgemvT.c
+ATL_zgemvC_b0.o : ATL_zgemvT.c
+	$(MVCC) -c $(MVFLAGS) $(CDEFS) $(EXTFLAGS) -I$(MVTdir) -o $@ \
+              -DDCPLX -DBETA0 -DALPHA1 -DConj_ ATL_zgemvT.c
+ATL_zgemvC_b1.o : ATL_zgemvT.c
+	$(MVCC) -c $(MVFLAGS) $(CDEFS) $(EXTFLAGS) -I$(MVTdir) -o $@ \
+              -DDCPLX -DBETA1 -DALPHA1 -DConj_ ATL_zgemvT.c
+ATL_zgemvC_bX.o : ATL_zgemvT.c
+	$(MVCC) -c $(MVFLAGS) $(CDEFS) $(EXTFLAGS) -I$(MVTdir) -o $@ \
+              -DDCPLX -DBETAX -DALPHA1 -DConj_ ATL_zgemvT.c
+ATL_zgemvC_bXi0.o : ATL_zgemvT.c
+	$(MVCC) -c $(MVFLAGS) $(CDEFS) $(EXTFLAGS) -I$(MVTdir) -o $@ \
+              -DDCPLX -DBETAXI0 -DALPHA1 -DConj_ ATL_zgemvT.c
+ATL_zgemvNc_b0.o : ATL_zgemvN.c
+	$(MVCC) -c $(MVFLAGS) $(CDEFS) $(EXTFLAGS) -I$(MVTdir) -o $@ \
+              -DDCPLX -DBETA0 -DALPHA1 -DConj_ ATL_zgemvN.c
+ATL_zgemvNc_b1.o : ATL_zgemvN.c
+	$(MVCC) -c $(MVFLAGS) $(CDEFS) $(EXTFLAGS) -I$(MVTdir) -o $@ \
+              -DDCPLX -DBETA1 -DALPHA1 -DConj_ ATL_zgemvN.c
+ATL_zgemvNc_bX.o : ATL_zgemvN.c
+	$(MVCC) -c $(MVFLAGS) $(CDEFS) $(EXTFLAGS) -I$(MVTdir) -o $@ \
+              -DDCPLX -DBETAX -DALPHA1 -DConj_ ATL_zgemvN.c
+ATL_zgemvNc_bXi0.o : ATL_zgemvN.c
+	$(MVCC) -c $(MVFLAGS) $(CDEFS) $(EXTFLAGS) -I$(MVTdir) -o $@ \
+              -DDCPLX -DBETAXI0 -DALPHA1 -DConj_ ATL_zgemvN.c
+
+res/zMVRES : xmvsearch force_build
+	./xmvsearch -p z
+zinstall : xccobj
+	cp -f ../CASES/$(mvNrout) $(GMVdir)/ATL_zgemvN.c
+	cp -f ../CASES/$(mvTrout) $(GMVdir)/ATL_zgemvT.c
+	cp -f ../CASES/$(mvSrout) $(GMVdir)/ATL_zgemvS.c
+	cp -f Make_zmv $(GMVdir)/.
+	-@ cp -f xccobj $(GMVdir)/.
+	-@ cp -f xccobj.exe $(GMVdir)/.
+	cp -f atlas_zmv.h $(INCdir)/.
+	cp -f atlas_zmv[N,T,S].h $(INCdir)/.
+	touch $(INCdir)/../atlas_mv.h
+zl1lib :
+	cd $(BINdir) ; $(MAKE) zl1lib
+ztstlib :
+	cd $(BINdir) ; $(MAKE) ztstlib
+zcases.dsc : $(BINdir)/xsubstr ../CASES/zcases.dsc
+	$(BINdir)/xsubstr -i ../CASES/zcases.dsc -o $@ \
+           -s '^gcc' $(GOODGCC) -s ' gcc' ' $(GOODGCC)'
+	
+$(BINdir)/xccobj :
+	cd $(BINdir) ; $(MAKE) xccobj
+xccobj : $(BINdir)/xccobj
+	-@ cp -f $(BINdir)/xccobj .
+	-@ cp -f $(BINdir)/xccobj.exe .
+$(BINdir)/xsubstr:
+	cd $(BINdir) ; make xsubstr

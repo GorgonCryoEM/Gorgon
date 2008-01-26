@@ -1,0 +1,159 @@
+<HTML>
+<HEAD>
+<TITLE>class Vectorfield</TITLE>
+
+<META NAME="Generator" CONTENT="KDOC ">
+</HEAD>
+<BODY bgcolor="#ffffff" text="#000000" link="#0000ff" vlink="#000099" alink= "#ffffff">
+<TABLE WIDTH="100%" BORDER="0">
+<TR>
+<TD>
+	<TABLE BORDER="0">
+		<TR><TD valign="top" align="left" cellspacing="10">
+		<h1>class Vectorfield</h1>
+		</TD>
+		<TD valign="top" align="right" colspan="1">
+     Vectorfield class. <small><A HREF="#longdesc">More...</A></small></TD></TR>
+	</TABLE>
+	<HR>
+	<TABLE BORDER="0">
+		<TR><TH>Full name</TH><TD><code><A HREF="Llama.html">Llama</A>::Vectorfield</code></TD></TR>
+<TR><TH>Definition</TH><TD><code>#include &lt;<A HREF="Vectorfield_h.html">Vectorfield.h</A>&gt;</code></TD></TR>
+<TR><TH>Template form</TH><TD>Vectorfield&lt;class Scalar&gt; </code></TD></TR>
+<TR><TH>Inherits</TH><TD><i><A HREF="Llama__AbstVectorfield.html">Llama::AbstVectorfield</A></i> <small>[public ]</small></TD></TR>
+<TR><TH><A HREF="full-list-Llama__Vectorfield.html">List of all Methods</A></TH></TR>
+	</TABLE>
+	</TD>
+<TD align="right"><TABLE BORDER="0"><TD rowspan="6"><IMG SRC="./llama2.gif"></TD><TR><TD><small><A HREF="index-long.html">Annotated List</A></small></TD></TR>
+<TR><TD><small><A HREF="header-list.html">Files</A></small></TD></TR>
+<TR><TD><small><A HREF="all-globals.html">Globals</A></small></TD></TR>
+<TR><TD><small><A HREF="hier.html">Hierarchy</A></small></TD></TR>
+<TR><TD><small><A HREF="index.html">Index</A></small></TD></TR>
+</TABLE></TD></TR></TABLE>
+<h4>Public Methods</h4><ul><LI>&nbsp;<b><A HREF="#ref9">Vectorfield</A></b> (const std::string& what, Index neq, Index npar, vectorfield_fcn f, vectorfield_jac j = 0) 
+</LI>
+<LI>&nbsp;<b><A HREF="#ref10">Vectorfield</A></b> (const Vectorfield& m) 
+</LI>
+<LI>virtual  &nbsp;<b><A HREF="#ref11">~Vectorfield</A></b> (void) 
+</LI>
+<LI>virtual  const std::string& &nbsp;<b><A HREF="#ref12">what</A></b> (void)  const
+</LI>
+<LI>virtual  Index &nbsp;<b><A HREF="#ref13">neqs</A></b> (void)  const
+</LI>
+<LI>virtual  Index &nbsp;<b><A HREF="#ref14">nvar</A></b> (void)  const
+</LI>
+<LI>virtual  Index &nbsp;<b><A HREF="#ref15">npar</A></b> (void)  const
+</LI>
+<LI>virtual  vectorfield_fcn &nbsp;<b><A HREF="#ref16">func</A></b> (void)  const
+</LI>
+<LI>virtual  vectorfield_jac &nbsp;<b><A HREF="#ref17">jacobian</A></b> (void)  const
+</LI>
+<LI>virtual  void &nbsp;<b><A HREF="#ref18">operator ()</A></b> (Matrix<Scalar> *y, const Matrix<Scalar>& x, Real t = 0)  const
+</LI>
+<LI>virtual  Matrix<Scalar> * &nbsp;<b><A HREF="#ref19">operator ()</A></b> (const Matrix<Scalar>& x, Real t = 0)  const
+</LI>
+<LI>virtual  void &nbsp;<b><A HREF="#ref20">operator ()</A></b> (Matrix<Scalar> *df, const Matrix<Scalar>& x, 
+			      const Matrix<Index>& i, Real t = 0)  const
+</LI>
+<LI>virtual  Matrix<Scalar> * &nbsp;<b><A HREF="#ref21">operator ()</A></b> (const Matrix<Scalar>& x, 
+					  const Matrix<Index>& i, 
+					  Real t = 0)  const
+</LI>
+<LI>void &nbsp;<b><A HREF="#ref22">flow</A></b> (Matrix<Scalar> *y, const Matrix<Scalar>& x, Real t, Real t0 = 0) 
+</LI>
+<LI>virtual  Matrix<Scalar> * &nbsp;<b><A HREF="#ref23">orbit</A></b> (const Matrix<Scalar>& x, const Matrix<Real>& t) 
+</LI>
+<LI>void &nbsp;<b><A HREF="#ref24">floquet</A></b> (Matrix<Scalar> *df, Matrix<Scalar> *y, 
+		  const Matrix<Scalar>& x, Real t, Real t0 = 0) 
+</LI>
+<LI>void &nbsp;<b><A HREF="#ref25">sensitivity</A></b> (Matrix<Scalar> *df, Matrix<Scalar> *y, 
+		      const Matrix<Scalar>& x, Real t, Real t0 = 0) 
+</LI>
+<LI>virtual  void &nbsp;<b><A HREF="#ref27">singular_point</A></b> (Matrix<Scalar> *x, const Matrix<Index>& iact, Real t0 = 0) 
+</LI>
+</ul><h4>Public Members</h4><ul><LI>typedef void &nbsp;(*<b><A HREF="#ref1">vectorfield_fcn</A></b>) (Real, const Scalar *, const Scalar *, Scalar *) 
+</LI>
+<LI>typedef void &nbsp;(*<b><A HREF="#ref2">vectorfield_jac</A></b>) (Real, const Scalar *, const Scalar *, Scalar *, Index) 
+</LI>
+</ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><p>
+     Vectorfield class.  Implements a vectorfield on R^N with parameters
+     in R^P </p>
+<A NAME="vectorfield_fcn"></A><A NAME="ref1"></A><table width="100%"><tr bgcolor="#eeeeee"><td>typedef void &nbsp;(*<strong>vectorfield_fcn</strong>) (Real, const Scalar *, const Scalar *, Scalar *)
+</td><td align="right"><h3>(*<strong>vectorfield_fcn</strong>)</h3></td></tr></table><p></p><A NAME="vectorfield_jac"></A><A NAME="ref2"></A><table width="100%"><tr bgcolor="#eeeeee"><td>typedef void &nbsp;(*<strong>vectorfield_jac</strong>) (Real, const Scalar *, const Scalar *, Scalar *, Index)
+</td><td align="right"><h3>(*<strong>vectorfield_jac</strong>)</h3></td></tr></table><p></p><A NAME="Vectorfield"></A><A NAME="ref9"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>Vectorfield</strong> (const std::string& what, Index neq, Index npar, vectorfield_fcn f, vectorfield_jac j = 0)
+<br></td><td align="right"><h3><strong>Vectorfield</strong></h3></td></tr></table><p></p><p>
+       Construct a new vectorfield.  The arguments are:
+       1) a string descriptive of the vectorfield,
+       2) the dimension of the space (number of dynamical variables),
+       3) the number of parameters,
+       4) the routine which implements the vectorfield,
+       5) (optional) a routine which calculates the Jacobian of the vectorfield.
+    </p>
+<A NAME="Vectorfield"></A><A NAME="ref10"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>Vectorfield</strong> (const Vectorfield& m)
+<br></td><td align="right"><h3><strong>Vectorfield</strong></h3></td></tr></table><p></p><A NAME="~Vectorfield"></A><A NAME="ref11"></A><table width="100%"><tr bgcolor="#eeeeee"><td> &nbsp;<strong>~Vectorfield</strong> (void)
+<br></td><td align="right"><h3><strong>~Vectorfield</strong></h3></td></tr></table><p> <small>[virtual]</small></p><A NAME="what"></A><A NAME="ref12"></A><table width="100%"><tr bgcolor="#eeeeee"><td> const std::string& &nbsp;<strong>what</strong> (void)
+<br></td><td align="right"><h3><strong>what</strong></h3></td></tr></table><p> <small>[const virtual]</small></p><A NAME="neqs"></A><A NAME="ref13"></A><table width="100%"><tr bgcolor="#eeeeee"><td> Index &nbsp;<strong>neqs</strong> (void)
+<br></td><td align="right"><h3><strong>neqs</strong></h3></td></tr></table><p> <small>[const virtual]</small></p><p>Reimplemented from <A HREF="Llama__AbstVectorfield.html#neqs">AbstVectorfield</A>.</p>
+<A NAME="nvar"></A><A NAME="ref14"></A><table width="100%"><tr bgcolor="#eeeeee"><td> Index &nbsp;<strong>nvar</strong> (void)
+<br></td><td align="right"><h3><strong>nvar</strong></h3></td></tr></table><p> <small>[const virtual]</small></p><p>Reimplemented from <A HREF="Llama__AbstVectorfield.html#nvar">AbstVectorfield</A>.</p>
+<A NAME="npar"></A><A NAME="ref15"></A><table width="100%"><tr bgcolor="#eeeeee"><td> Index &nbsp;<strong>npar</strong> (void)
+<br></td><td align="right"><h3><strong>npar</strong></h3></td></tr></table><p> <small>[const virtual]</small></p><p>Reimplemented from <A HREF="Llama__AbstVectorfield.html#npar">AbstVectorfield</A>.</p>
+<A NAME="func"></A><A NAME="ref16"></A><table width="100%"><tr bgcolor="#eeeeee"><td> vectorfield_fcn &nbsp;<strong>func</strong> (void)
+<br></td><td align="right"><h3><strong>func</strong></h3></td></tr></table><p> <small>[const virtual]</small></p><p>
+       Return a pointer to the function implementing the vectorfield itself.
+       This function is of type void (*)(Real, const Scalar *, const Scalar *, Scalar *) </p>
+<A NAME="jacobian"></A><A NAME="ref17"></A><table width="100%"><tr bgcolor="#eeeeee"><td> vectorfield_jac &nbsp;<strong>jacobian</strong> (void)
+<br></td><td align="right"><h3><strong>jacobian</strong></h3></td></tr></table><p> <small>[const virtual]</small></p><p>
+       Return a pointer to the function implementing the jacobian of the
+       vectorfield.  This function is of type 
+       void (*)(Real, const Scalar *, const Scalar *, Scalar *, Index) </p>
+<A NAME="operator%20()"></A><A NAME="ref18"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>operator ()</strong> (Matrix<Scalar> *y, const Matrix<Scalar>& x, Real t = 0)
+<br></td><td align="right"><h3><strong>operator ()</strong></h3></td></tr></table><p> <small>[const virtual]</small></p><p>
+       Evaluate the vectofield at point x.  Store the result in y.
+       Assume that x & y are of the appropriate size.  </p>
+<A NAME="operator%20()"></A><A NAME="ref19"></A><table width="100%"><tr bgcolor="#eeeeee"><td> Matrix<Scalar> * &nbsp;<strong>operator ()</strong> (const Matrix<Scalar>& x, Real t = 0)
+<br></td><td align="right"><h3><strong>operator ()</strong></h3></td></tr></table><p> <small>[const virtual]</small></p><p>
+       Evaluate the vectofield at x.  Create a new vector to hold
+       the result.  </p>
+<A NAME="operator%20()"></A><A NAME="ref20"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>operator ()</strong> (Matrix<Scalar> *df, const Matrix<Scalar>& x, 
+			      const Matrix<Index>& i, Real t = 0)
+<br></td><td align="right"><h3><strong>operator ()</strong></h3></td></tr></table><p> <small>[const virtual]</small></p><p>
+       Evaluate the jacobian of the vectofield.  Store the result in
+       matrix df (assumed to be of the appropriate size and shape.  </p>
+<A NAME="operator%20()"></A><A NAME="ref21"></A><table width="100%"><tr bgcolor="#eeeeee"><td> Matrix<Scalar> * &nbsp;<strong>operator ()</strong> (const Matrix<Scalar>& x, 
+					  const Matrix<Index>& i, 
+					  Real t = 0)
+<br></td><td align="right"><h3><strong>operator ()</strong></h3></td></tr></table><p> <small>[const virtual]</small></p><p>
+       Evaluate the jacobian of the vectofield.  Create a new matrix
+       to hold the result.  </p>
+<A NAME="flow"></A><A NAME="ref22"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>flow</strong> (Matrix<Scalar> *y, const Matrix<Scalar>& x, Real t, Real t0 = 0)
+<br></td><td align="right"><h3><strong>flow</strong></h3></td></tr></table><p></p><p>
+       Integrate the vectorfield from time 0 to time t.  </p>
+<p>Reimplemented from <A HREF="Llama__AbstVectorfield.html#flow">AbstVectorfield</A>.</p>
+<A NAME="orbit"></A><A NAME="ref23"></A><table width="100%"><tr bgcolor="#eeeeee"><td> Matrix<Scalar> * &nbsp;<strong>orbit</strong> (const Matrix<Scalar>& x, const Matrix<Real>& t)
+<br></td><td align="right"><h3><strong>orbit</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p>
+       Compute an orbit at times t beginning at x.
+    </p>
+<p>Reimplemented from <A HREF="Llama__AbstVectorfield.html#orbit">AbstVectorfield</A>.</p>
+<A NAME="floquet"></A><A NAME="ref24"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>floquet</strong> (Matrix<Scalar> *df, Matrix<Scalar> *y, 
+		  const Matrix<Scalar>& x, Real t, Real t0 = 0)
+<br></td><td align="right"><h3><strong>floquet</strong></h3></td></tr></table><p></p><p>
+       Integrate the vectorfield and the equations of first variation.
+       Fill df with the Floquet matrix.  </p>
+<p>Reimplemented from <A HREF="Llama__AbstVectorfield.html#floquet">AbstVectorfield</A>.</p>
+<A NAME="sensitivity"></A><A NAME="ref25"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>sensitivity</strong> (Matrix<Scalar> *df, Matrix<Scalar> *y, 
+		      const Matrix<Scalar>& x, Real t, Real t0 = 0)
+<br></td><td align="right"><h3><strong>sensitivity</strong></h3></td></tr></table><p></p><p>
+       Integrate the vectorfield and the equations of first variation.
+       Fill df with the full sensitivity matrix.  </p>
+<A NAME="singular_point"></A><A NAME="ref27"></A><table width="100%"><tr bgcolor="#eeeeee"><td> void &nbsp;<strong>singular_point</strong> (Matrix<Scalar> *x, const Matrix<Index>& iact, Real t0 = 0)
+<br></td><td align="right"><h3><strong>singular_point</strong></h3></td></tr></table><p> <small>[virtual]</small></p><p>
+       Find a singular point, using x as an initial guess.  Allow the
+       variables indexed by iact to vary.  </p>
+<p>Reimplemented from <A HREF="Llama__AbstVectorfield.html#singular_point">AbstVectorfield</A>.</p>
+<HR>
+	<table>
+	<tr><td><small>Generated by: king on larix.tiem.utk.edu on Tue Jun 29 10:55:51 2004, using kdoc 2.0a54.</small></td></tr>
+	</table>
+</BODY>
+</HTML>

@@ -1,0 +1,8 @@
+
+ATLAS can provide SMP support for the Level 3 BLAS via Posix threads.
+If you choose to build a threaded library, ATLAS will compile all
+aspects of the library (including the serial components) with the
+threaded compiler/link flags.  Most machines can use the serial
+library even when it is compiled with threaded options, but this
+is not guaranteed to work, so if you want a true serial library,
+answer no to threading below.

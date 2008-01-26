@@ -1,0 +1,120 @@
+include Make.inc
+
+$(SYSdir)/time.o:
+	cd $(SYSdir) ; $(MAKE) time.o
+
+$(INCdir)/atlas_type.h : 
+	cd $(SYSdir) ; $(MAKE) RunTyp
+
+RunL1 : force_build
+	rm -f res/L1CacheSize
+	cd $(SYSdir) ; $(MAKE) res/L1CacheSize
+	ln -s $(SYSdir)/res/L1CacheSize res/L1CacheSize
+
+RunTLB : 
+	cd $(SYSdir) ; $(MAKE) RunTLB
+
+RunMulAdd: force_build
+	rm -f res/$(pre)MULADD
+	cd $(SYSdir) ; $(MAKE) res/$(pre)MULADD pre=$(pre) maxlat=$(maxlat) \
+                                         mflop=$(mflop)
+	ln -s $(SYSdir)/res/$(pre)MULADD res/$(pre)MULADD
+
+RunTyp: force_build
+	cd $(SYSdir) ; $(MAKE) RunTyp
+
+
+
+side=Left_
+uplo=Upper_
+trans=NoTranspose_
+diag=NonUnitDiag_
+
+force_build :
+
+strsmXover = $(INCdir)/atlas_strsmXover.h
+
+$(strsmXover) : res/atlas_strsmXover.h
+
+res/atlas_strsmXover.h :
+	$(MAKE) stsmfc
+	cp $(strsmXover) res/.
+
+stsmfc :
+	rm -f $(strsmXover)
+	cd $(L3Bdir) ; $(MAKE) slib
+	$(MAKE) xstsmfc2 pre=s typ=SREAL side=$(side) uplo=Upper_ \
+                tran=NoTranspose_ diag=$(diag)
+	$(MAKE) xstsmfc2 pre=s typ=SREAL side=$(side) uplo=Upper_ \
+                tran=Transpose_ diag=$(diag)
+	$(MAKE) xstsmfc2 pre=s typ=SREAL side=$(side) uplo=Lower_ \
+                tran=NoTranspose_ diag=$(diag)
+	$(MAKE) xstsmfc2 pre=s typ=SREAL side=$(side) uplo=Lower_ \
+                tran=Transpose_ diag=$(diag)
+	cd $(L3Bdir) ; $(MAKE) slib
+dtrsmXover = $(INCdir)/atlas_dtrsmXover.h
+
+$(dtrsmXover) : res/atlas_dtrsmXover.h
+
+res/atlas_dtrsmXover.h :
+	$(MAKE) dtsmfc
+	cp $(dtrsmXover) res/.
+
+dtsmfc :
+	rm -f $(dtrsmXover)
+	cd $(L3Bdir) ; $(MAKE) dlib
+	$(MAKE) xdtsmfc2 pre=d typ=DREAL side=$(side) uplo=Upper_ \
+                tran=NoTranspose_ diag=$(diag)
+	$(MAKE) xdtsmfc2 pre=d typ=DREAL side=$(side) uplo=Upper_ \
+                tran=Transpose_ diag=$(diag)
+	$(MAKE) xdtsmfc2 pre=d typ=DREAL side=$(side) uplo=Lower_ \
+                tran=NoTranspose_ diag=$(diag)
+	$(MAKE) xdtsmfc2 pre=d typ=DREAL side=$(side) uplo=Lower_ \
+                tran=Transpose_ diag=$(diag)
+	cd $(L3Bdir) ; $(MAKE) dlib
+qtrsmXover = $(INCdir)/atlas_qtrsmXover.h
+
+$(qtrsmXover) : res/atlas_qtrsmXover.h
+
+res/atlas_qtrsmXover.h :
+	$(MAKE) qtsmfc
+	cp $(qtrsmXover) res/.
+
+qtsmfc :
+	rm -f $(qtrsmXover)
+	cd $(L3Bdir) ; $(MAKE) qlib
+	$(MAKE) xqtsmfc2 pre=q typ=QREAL side=$(side) uplo=Upper_ \
+                tran=NoTranspose_ diag=$(diag)
+	$(MAKE) xqtsmfc2 pre=q typ=QREAL side=$(side) uplo=Upper_ \
+                tran=Transpose_ diag=$(diag)
+	$(MAKE) xqtsmfc2 pre=q typ=QREAL side=$(side) uplo=Lower_ \
+                tran=NoTranspose_ diag=$(diag)
+	$(MAKE) xqtsmfc2 pre=q typ=QREAL side=$(side) uplo=Lower_ \
+                tran=Transpose_ diag=$(diag)
+	cd $(L3Bdir) ; $(MAKE) qlib
+
+$(pre)tsmfc.o : force_build
+	$(CC) -o $(pre)tsmfc.o -c $(CCFLAGS) -D$(typ) ../tsmfc.c \
+                 -D$(side) -D$(uplo) -D$(tran) -D$(diag)
+
+x$(pre)tsmfc2 : force_build
+	rm -f x$(pre)tsmfc
+	$(MAKE) x$(pre)tsmfc pre=$(pre) typ=$(typ) side=$(side) uplo=$(uplo) \
+                             tran=$(tran) diag=$(diag)
+	$(ATLRUN) $(L3Tdir) x$(pre)tsmfc -f $(INCdir)/atlas_$(pre)trsmXover.h
+
+x$(pre)tsmfc : force_build $(INCdir)/atlas_type.h $(SYSdir)/time.o \
+               $(pre)tsmfc.o $(INCdir)/atlas_$(pre)sysinfo.h
+	$(CC) -o big_trsm.o -c $(CCFLAGS) -D$(typ) \
+                 -D$(side) -D$(uplo) -D$(tran) -D$(diag) -DBIG_TRSM \
+                 $(L3Bdir)/../kernel/ATL_trsmL.c
+	$(CC) -o small_trsm.o -c $(CCFLAGS) -D$(typ) \
+                 -D$(side) -D$(uplo) -D$(tran) -D$(diag) -DSMALL_TRSM \
+                  $(L3Bdir)/../kernel/ATL_trsmL.c
+	$(CLINKER) $(CLINKFLAGS) -o $@ $(pre)tsmfc.o $(SYSdir)/time.o \
+                                      big_trsm.o small_trsm.o $(ATLASlib) \
+                                      $(ATLASlib) $(LIBS)
+
+clean : 
+	rm -f *.o x?tsmfc
+

@@ -1,0 +1,15 @@
+
+
+ATLAS has detected that you are running on an x86 architecture
+(eg., Athlon, P4, PIII, etc), but do not have a pre-2.96 gcc installed.
+Using gcc 3/2.96 will result in a performance loss of 10-20% IN THE BEST CASE
+over a gcc previous to 2.96.  If your install goes slightly wrong, performance
+drops of 50% are more normal with these compilers.  Full details of this
+problem can be found at:
+   http://www.cs.utk.edu/~rwhaley/ATLAS/gcc30.html
+In the meantime, we suggest you abondon this ATLAS install, and install a gcc
+that delivers decent x86 performance, and restart the install then.  You
+do not need to be root to install, and full instructions, along with all
+needed files, are given in the ATLAS errata file at:
+   http://math-atlas.sourceforge.net/errata.html#UnixGccInst
+

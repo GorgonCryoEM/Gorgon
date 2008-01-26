@@ -1,0 +1,123 @@
+DESTDIR = @prefix@
+DOCDIR = $(DESTDIR)/doc/llama
+INCLUDEDIR = $(DESTDIR)/include/llama
+LIBDIR = $(DESTDIR)/lib
+top_builddir = @srcdir@
+
+DLVERSION = 2:1:0
+
+LDLIBS = @LIBS@
+
+LIBTOOL = @LIBTOOL@
+LIBTOOLFLAGS = -rpath $(DESTDIR)/lib $(LDLIBS) -version-info $(DLVERSION)
+LIBTOOL_DEPS = @LIBTOOL_DEPS@
+
+INSTALL = @INSTALL@
+RM = rm -f
+CP = $(LIBTOOL) cp
+AR = ar
+ARFLAGS = rs
+
+CXX = $(LIBTOOL) @CXX@
+CXXFLAGS = -O2 -I@srcdir@/include -Wall -fPIC
+
+CC = $(LIBTOOL) @CC@
+CFLAGS = -O2 -I@srcdir@/include -Wall -fPIC
+
+FC = $(LIBTOOL) --mode=compile @F77@ -fPIC
+FFLAGS = -O2
+
+HEADERS = include/llama.h include/Decls.h include/General.h		\
+include/Exception.h include/AbstMatrix.h include/TinyVector.h		\
+include/Matrix.h include/SMClosure.h include/MMClosure.h		\
+include/GenMatrix.h include/RealMatrix.h include/ComplexMatrix.h	\
+include/Transpose.h include/Range.h include/Submatrix.h			\
+include/Diagonal.h include/FAClosure.h include/Random.h			\
+include/EigenDecomposition.h include/LUDecomposition.h			\
+include/SVDecomposition.h include/QRDecomposition.h			\
+include/CholeskyDecomposition.h include/Statistics.h			\
+include/AbstDiffeomorphism.h include/Diffeomorphism.h			\
+include/AbstMapping.h include/Mapping.h include/AbstVectorfield.h	\
+include/Vectorfield.h include/Odessa.h include/Minimization.h		\
+include/Fourier.h include/f77fun.h include/machinu.h
+
+CSRC = src/rand.c src/d1mach.c src/pow_dd.c src/xerr.c
+
+FSRC = src/addx.f src/cfode.f src/daxpy.f src/ddot.f src/dgbfa.f	\
+src/dgbsl.f src/dgefa.f src/dgesl.f src/dscal.f src/ewset.f		\
+src/idamax.f src/intdy.f src/odessa.f src/prepdf.f src/prepj.f		\
+src/rscom.f src/solsy.f src/sprime.f src/stesa.f src/stode.f		\
+src/svcom.f src/vnorm.f src/xerr.f src/xsetf.f src/xsetun.f
+
+CXXSRC = src/EigenDecomposition.cc src/LUDecomposition.cc	\
+src/SVDecomposition.cc src/QRDecomposition.cc			\
+src/CholeskyDecomposition.cc src/Odessa.cc src/Minimization.cc
+
+SRC = $(CSRC) $(CXXSRC) $(FSRC)
+
+LTLIB = lib/liblama.la
+LIB = lib/liblama.a
+
+default: $(LIB) $(LTLIB)
+
+$(LIB): $(LIB)($(addsuffix .o, $(basename $(SRC))))
+
+$(LTLIB): $(addsuffix .lo, $(basename $(SRC)))
+	$(CC) $^ $(LIBTOOLFLAGS) -o $@ 
+
+install: $(HEADERS) $(LIB)
+	$(INSTALL) -m0755 -d $(INCLUDEDIR) $(DOCDIR) $(LIBDIR)
+	$(LIBTOOL) $(INSTALL) -m0644 doc/* $(DOCDIR)
+	$(LIBTOOL) $(INSTALL) -m0644 include/llama.h $(DESTDIR)/include
+	$(LIBTOOL) $(INSTALL) -m0644 $(HEADERS) $(INCLUDEDIR)
+	$(LIBTOOL) $(INSTALL) -m0644 $(LIB) $(LTLIB) $(LIBDIR)
+
+uninstall:
+	$(RM) $(DESTDIR)/include/llama.h
+	$(RM) -r $(INCLUDEDIR) $(DOCDIR)
+	$(LIBTOOL) $(RM) $(LIBDIR)/liblama.la $(LIBDIR)/liblama.a
+
+include/machinu.h: src/machar.c
+	$(CC) -O0 $< -lm -o machar
+	./machar > $@
+	$(RM) machar
+
+libtool: $(LIBTOOL_DEPS)
+	$(SHELL) ./config.status --recheck
+
+%: %.c $(HEADERS)
+	$(CC) $(CFLAGS) $*.c $(LDLIBS) -o $*
+
+%: %.cc $(HEADERS)
+	$(CXX) $(CFLAGS) $*.cc $(LDLIBS) -o $*
+
+%: %.f $(HEADERS)
+	$(FC) $(FFLAGS) $*.c $(LDLIBS) -o $*
+
+%.o: %.c $(HEADERS)
+	$(CC) -c $(CFLAGS) $*.c -o $*.o
+
+%.o: %.cc $(HEADERS)
+	$(CXX) -c $(CXXFLAGS) $*.cc -o $*.o
+
+%.o: %.f $(HEADERS)
+	$(FC) -c $(FFLAGS) $*.f -o $*.o
+
+(%.o): %.o
+	$(AR) $(ARFLAGS) $@ $*.o
+
+%.lo: %.c $(HEADERS)
+	$(CC) -c $(CFLAGS) $*.c -o $*.lo
+
+%.lo: %.cc $(HEADERS)
+	$(CXX) -c $(CXXFLAGS) $*.cc -o $*.lo
+
+%.lo: %.f $(HEADERS)
+	$(FC) -c $(FFLAGS) $*.f -o $*.lo
+
+clean:
+	$(LIBTOOL) $(RM) $(LIB) $(LTLIB) include/machinu.h src/*.o src/*.lo
+
+distclean: clean
+	$(RM) Makefile
+

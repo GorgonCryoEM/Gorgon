@@ -1,0 +1,7 @@
+
+
+Configure has determined that you are using UltraSparc, but do not have
+gcc 3.0.  If you have gcc 3.0 installed, but ATLAS is not finding it,
+quit here, put gcc 3.0 in your path, and restart the install.  You can
+improve your performance by a significant amount by installing gcc 3.0.
+

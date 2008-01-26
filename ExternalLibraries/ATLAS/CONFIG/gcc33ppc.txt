@@ -1,0 +1,10 @@
+
+
+ATLAS has detected that you are installing on a Linux/PPCG4 platform,
+but do not have gcc 3.3 or newer where ATLAS can find it. If you have gcc 3.3
+installed, but ATLAS is not finding it, quit this install, put gcc 3.3 in
+your path, and restart the install.  Installing without gcc 3.3 may result
+in all of the AltiVec code producing incorrect answers, as well as an
+extremely extended install time.  It is highly recommended that you first
+install gcc 3.3 before installing ATLAS.
+

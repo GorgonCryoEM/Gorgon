@@ -1,0 +1,308 @@
+ATLAS 3.6.0, changes from 3.4.2:
+   * Gemm speedups for most architectures
+     - Hammer (Opteron/Athlon-64)
+     - IA64 family
+     - P4
+     - PIII
+     - UltraSparc II & III
+     - single precision real Athlon3DNow! by Tim Mattox & Hank Dietz
+   * Faster Level 2 for P4/PIII due to improved gemv/ger kernels
+     by Camm Maguire
+   * Faster SYRK/HERK & dependent Cholesky
+   * New arch defaults for most architectures
+   * Many config changes, including command-line selection of compilers & flags
+   * Better complex row-major Cholesky factor & solve
+   * Several new architectures and compilers supported with arch defaults
+     - Explicit support for Intel compilers on P4 & PIII
+     - IBM Power 4 arch defaults included
+ *** See developer ChangeLog below for details
+
+ATLAS 3.6.0, changes from 3.5.22:
+   * Forced all non-x86 archs to have max TRSM_NB of 8, to prevent massive
+     Cholesky performance dropoff (essentially a performance bug)
+ATLAS 3.5.22, changes from 3.5.21:
+   * Added ifort support under Windows
+   * Small fixes for the timers
+   * Made config default to not searching for BLAS
+ATLAS 3.5.21, changes from 3.5.20:
+   * Added MVC support, plus non-gemm arch defaults for P4
+     (thus './xconfig -b 0 -c mvc -f cvf' now gets you very good CVF lib)
+   * Defined symbols required for dynamic library
+   * Fixed bug in GetSysSum
+   * Numerous small config changes, mainly to make things smoother under windows
+ATLAS 3.5.20, changes from 3.5.19:
+   * Config fixes
+   * Bunch of changes necessary to make CVF/icl work under windows
+ATLAS 3.5.19, changes from 3.5.18:
+   * Numerous config bug fixes
+   * Added dummy ATL_cpmmJIKF symbol to lib (.so workaround)
+   * Arch defaults for US5 cc & gcc (missing L1 defaults for cc)
+   * Arch defaults for US2/4 gcc & cc
+   * Possible overflow & unnecessary division removed from ATL_walltime.c
+   * Added back winf77 stuff for Windows
+     - missing __alloca prevents CVS from linking, may be compiler bug:
+       http://gcc.gnu.org/bugzilla/show_bug.cgi?id=8750
+ATLAS 3.5.18, changes from 3.5.17:
+   * Fixed bug killing multithreaded ATHLON
+     - Replaced Peter adaptation of Julian's kernel with my athlon kernel
+       for all cleanup and all precisions other than double real
+   * Rewrote compiler and flag handling in config, again
+     - do ./xconfig --help for new options
+   * Better compiler flags for gcc on IA64 (3.5.16 "improvement" was mistake)
+ATLAS 3.5.17, changes from 3.5.16:
+   * Numerous small config fixes
+   * Removed compiler & flag mentions from GER cases files
+   * Architectural defaults & config flags for intel compilers on IA64 & PIII
+     - IA64/icc *much* faster than IA64/gcc for normal-size problems
+       + same asymptotic GEMM speed due to hand-tuned kernel
+   * Workarounds for icc bugs on IA64Itan2:
+     - Fixes errors in [d,s]TRSM, [c,z]HER, [c,z]HPR, [c,z]HER2K, [c,z]SYR2K
+     - fgrep code for ATL_IntelIccBugs:
+       + ATLAS/src/blas/level2/ATL_[hpr,her].c
+       + ATLAS/src/blas/level3/kernel/ATL_syrk2_put[L,U].c
+       + ATLAS/src/blas/level3/ATL_trsm.c
+     - If you don't use arch defaults, other icc bugs can kill you
+ATLAS 3.5.16, changes from 3.5.15:
+   * Added command-line selection of compilers for config
+   * Added pthread options to compile flags for MP FreeBSD
+   * Better compiler flags boosts Itanium 2 performance
+   * Fixed bug in GEMV makefile generation that prevented ATL_gemvS that
+     required special compiler and flags from working
+   * Added some icc support to config (Linux ONLY)
+   * Add arch defaults for Pentium 4/icc
+   * Added arch defaults for IA64Itan2/icc:
+     - Don't use: presently they fail tester, probably compiler error
+   * New AthlonSSE1 defaults, courtesy of Tim Mattox
+   * Fixed bug causing hangs for installs with large NB and small CacheEdge
+ATLAS 3.5.15, changes from 3.5.14:
+   * Added arch defaults and config support for IBM Power4
+   * New PIIISSE1 arch defaults
+   * Updated L1CacheSize for crude timer resolution fix
+   * Changed cygwin cp fix from @ - cp to -@ cp (AIX Make requirement)
+ATLAS 3.5.14, changes from 3.5.13:
+   * Improved L1 and CacheEdge detection
+   * All of Camm's new stuff in and working:
+     - CGEMV improved for Pentium 4 defaults
+     - All of Level 2 improved for 32 bit Hammer
+     - Improved Level 3 cleanup for 32 bit Hammer
+   * Updated 32 bit Hammer arch defaults
+     - Improved Level 2 from Camm's stuff
+     - Improved Level 3 from Camm and my P4 cleanup
+   * Improved 64 bit Hammer [d,z]GEMM M cleanup using new 1x14 kernel
+ATLAS 3.5.13, changes from 3.5.12:
+   * Row-major, complex Cholesky error fixes
+   * New, and *much* more efficient Athlon 3Dnow! kernel from
+     Tim Mattox & Hank Dietz
+   * New P4 gemm cleanup cases, speeding up small-to-medium size problems
+     for double precision (real & complex)
+   * New P4 Level 2 kernels from Camm Maguire, speeding up Level 2 and
+     fixing massive compiler warnings
+   * More arch defaults, including BOZOL1, to allow skipping L1 tuning
+   * Added version number to Make.ARCH and install log files.
+   * Improved still-crappy cleanup search
+ATLAS 3.5.12, changes from 3.5.11:
+   * New assembly UltraSparc kernels for both Ultra2 & 3.
+   * New arch defaults for UltraSparcs
+ATLAS 3.5.11, changes from 3.5.10:
+   * Windows-specific makefile changes to match new cygwin behavior
+ATLAS 3.5.10, changes from 3.5.9:
+   * Opteron speedups, all precisions Level 3
+   * SPRK bug fixes
+ATLAS 3.5.9, changes from 3.5.8:
+   * Recursive partitioning algorithm for when we can't copy A up front in
+     SYRK/HERK
+   * Itanium 2 gemm kernel, speeding up entire Level 3 BLAS
+   * Arch defaults and config support for Itanium 2
+   * Arch defaults & config support for USIII (presently fails sanity test)
+   * Various bug fixes
+ATLAS 3.5.8, changes from 3.5.7:
+   * Direct gemm-kernel [c,z]SYRK and xHERK implementation significantly
+     boosts SYRK/HERK and Cholesky performance
+   * Numerous bug fixes
+ATLAS 3.5.7, changes from 3.5.6:
+   * Direct gemm-kernel implementation of SYRK significantly boosts SYRK and
+     Cholesky performance (only in real precisions so far).
+   * Fixed some errors that occur when using Solaris make rather than gnu.
+ATLAS 3.5.6, changes from 3.5.5:
+   * Opteron speedups:
+     - Full cleanup for Opteron [d,z]GEMM
+     - Better CacheEdge improves threaded GEMM speed
+   * Bug fixes:
+     - Removed some extraneous characters my windows changes introduced
+       in assembler kernels
+     - Fixed errataed error in clapack.h
+ATLAS 3.5.5, changes from 3.5.4:
+   * More Opteron [d,z]GEMM speedups
+   * Small Pentium 4 [d,z]GEMM speedup
+   * Fixes to support cygwin/windows compilation
+     - Removed reliance on case-sensitive archiver
+     - Workaround for windows assembly name-mangling
+     - Forced config to look for gcc-2
+ATLAS 3.5.4, changes from 3.5.3:
+   * Opteron [d,z]GEMM speedup
+ATLAS 3.5.3, changes from 3.5.2:
+   * Fixed Athlon STRSM so sLU is sped up by new SGEMM from 3.5.2
+   * Fixed aligned access error in iamax_sse
+ATLAS 3.5.2, changes from 3.5.1:
+   * Athlon GEMM speedups for all precisions
+ATLAS 3.5.1, changes from 3.5.0:
+   * Added AltiVec support via gcc 3.3 or newer (older gcc buggy)
+     -  This gives Linux AltiVec speedups for first time
+   * Added support for OSX and Linux PPC assembler dialects to config
+ATLAS 3.5.0, selected changes from 3.4.0:
+   * Added support for finding assembly dialect to config
+   * Redirected ISA extension output in config
+   * Added x86-64 support to config
+   * Added machinery so Level 1 kernels may be in assembly
+   * Miscellaneous x86 Level 1 speedups
+   * Assembly GEMM kernels improving performance for:
+     - x86-64 SSE2, all precisions (85% of peak for real, 83-84 for complex)
+     - SSE2 for Pentium 4, double real and complex
+     - Pentium III, all precisions
+     - UltraSparc, big boost for single precision
+
+ATLAS 3.4.0, selected changes from 3.2.1:
+   * Optimization of Level 1 BLAS
+   * Additional architecture-specific support:
+     - OS X and AltiVec support
+     - IA64 prefetch
+     - Julian Ruhe's Athlon kernel boosts performance to ~80% of peak
+   * New LAPACK routines: 
+     - xTRTRI
+     - XGETRI
+     - XPOTRI
+     - xLAUUM
+   * User callable info function ATL_buildinfo()
+   * User callable sanity check
+   * Numerous small speedups and error corrections, see below for details
+
+ATLAS 3.3.15, changes from 3.3.14:
+   * Fixed PPCG4 arch defaults
+   * Made it so Linux_21164 does not use GOTO gemm
+   * Fixed config hang when using Solaris make
+   * Relaxed too-strict residual tests in lapack testers
+   * Updated atlas_contrib to point at SourceForge rather than atlas-comm
+   * Fixed error in no-copy case of aliased gemm (SSE&3DNOW [s,c]TRMM/TRSM)
+   * Fixed GETRI workspace query
+ATLAS 3.3.14, changes from 3.3.13:
+   * Got rid of duplicate ger and gemv symbols in libatlas
+ATLAS 3.3.13, changes from 3.3.12:
+   * Bug fixes release:
+     - error in dsdot tester
+     - g77 flags for compiler error on Itanium
+     - Error in emit_mm (K cleanup)
+     - Error in threaded syrk
+     - Error in Ultra5/10 arch defaults
+ATLAS 3.3.12, changes from 3.3.11:
+   * Bug fixes, including:
+     - Error in Level 1 tester
+     - Error in Level 1 routine
+     - Error in threaded SYMM
+     - Error in fc.c
+   * Addition of ATLAS/doc/atlas_devel.ps, with description of how to use
+     the ATLAS tester.
+ATLAS 3.3.11, changes from 3.3.10:
+   * With Peter's extension to Julian's Athlon code, 80% of peak on all
+     precisions, providing massively improved Athlon performance
+   * Additional arch defaults, and config changes
+ATLAS 3.3.10, changes from 3.3.9:
+   * Boatload of bug fixes
+   * Applied Goto's Linux patch
+   * New arch defaults
+ATLAS 3.3.9, changes from 3.3.8:
+   * Slightly improved [Z,D]GEMM on PIIISSE1 (prefetched kernels)
+   * Slightly improved DGEMM kernel for Athlon
+   * Updated ATLAS/tune/blas/[gemv,ger] to match other levels
+     - All kernels now have ID
+     - All kernels can now extend line and give compiler and flags
+     - If compiler line is given as +, get default compiler with added flags
+       (useful for changing prefetch distances, etc)
+     - gcc sub is done, as for other levels
+     - basic infrastructure for xccobj is in place (untested)
+   * SYMV update
+     - SYMV now tuned seperately from GEMV
+     - Slightly improved GetPartSYMV
+ATLAS 3.3.8, changes from 3.3.7:
+   * Addition of Julian Ruhe's double precision Athlon kernel
+   * Addition of sanity_test build check
+   * Addition of LAPACK routines xGETRI & xPOTRI (row & col-major versions)
+   * Addition of recursive version of LAPACK routine xLAUUM
+   * Ability to tune xROT
+   * Bunch of bug fixes.
+ATLAS 3.3.7, changes from 3.3.6:
+   * Bug fix release:
+     - AltiVec support had been messed up since change to CVS at 3.3.3
+     - Fix in CacheEdge printing of ATL_buildinfo
+ATLAS 3.3.6, changes from 3.3.5:
+   * Peter Soendergaard's recursive TRTRI now built into lapack lib.
+   * Version and build informational routine, ATL_buildinfo 
+   * Config supports avoiding gcc 3.0 on x86 archs, whenever possible
+ATLAS 3.3.5, changes from 3.3.4:
+   * Removes dummy TRTRI from lapack lib
+   * Improves IA64 complex gemm performance (removes prefetching)
+ATLAS 3.3.4, changes from 3.3.3:
+   * Bug fix release, fixing P4 and Athlon archs.
+ATLAS 3.3.3, changes from 3.3.2:
+   * First release based on SourceForge CVS, rather than my home area
+   * IA64 prefetch added, speeding up all levels
+ATLAS 3.3.2, changes from 3.3.1:
+   * Index files for user-contributed GEMM kernels take ID parameter
+   * Updated ATLAS/doc/atlas_contrib.ps to include changed GEMM index and
+     ability to tune Level 1
+   * Added OS X support to config
+   * Added AltiVec support to ATLAS, speedup up all precisions, all levels
+   * Bug fixes for Level 1 tuning
+ATLAS 3.3.1, changes from 3.3.0:
+   * Tuning and kernel contribution for Level 1
+   * Level 1 tuned decently well for Athlon classic
+ATLAS 3.3.0, changes from stable:
+   * Camm & Peter's SSE2 GEMM kernel
+   * Small-case LU & Cholesky speedup
+   * Complex TRSM speedup
+
+ATLAS 3.2 (stable), released December 2000.  The highlights of
+changes from v3.0Beta are:
+  ** SMP support via posix threads for Level 3 BLAS
+  ** Addition of infrastructure for contribution of kernels, thus allowing:
+     ** SSE support
+     ** 3DNow! support
+     ** Speedups on ev6x, ev5x, UltraSparcs, IA64, PowerPC archs
+  ** Level 1 BLAS tester/timer added
+  ** Additional OS and architectural support
+  ** Bug fixes and misc. speedups
+
+ATLAS version 3.0Beta (stable), released December 1999.  The highlights of
+changes from v2.0 are:
+  ** ATLAS now supplies complete BLAS, although some level 1 and 2 BLAS not
+     fully optimized on all architectures
+  ** Some LAPACK routines explicitly supported (LU, Cholesky and related
+     routines)
+  ** Standard C and Fortran77 APIs for all BLAS and provided LAPACK routines;
+     C routines support both row- & column-major access
+  ** Improved small-case GEMM performance made possible by code generator that
+     can generate all transpose cases (and thus avoid data copy), with
+     associated speed boost in many Level 3 BLAS routines.
+  ** Support for complex matrix multiplication without copying user data
+  ** Support for additional looping structures for complex GEMM, providing
+     better performance and reducing memory usage for many cases
+
+ATLAS version 2.0, released February 1999.  The highlights of changes
+from 1.1 are:
+  ** Support for all 4 types/precisions
+  ** All Level 3 BLAS routines now supported
+  ** Fortran77 is not required for installation
+  ** Install & configure steps are now automated & logged
+  ** Timer/tester for all Level 3 BLAS now included
+  ** C interface to BLAS supported, and tester provided
+  ** Improved small-case matrix multiply performance
+
+ATLAS version 1.0, released September 1998.  The highlights of changes
+from version 0.1 are:
+  ** Support for entire real Level 3 BLAS via the Superscalar gemm-based
+     BLAS (written in Fortran77)
+  ** Improved matmul generator, including support for explicit
+     register blocking in GEMM
+
+First ATLAS release, version 0.1, released December 1997.  Provided:
+  ** Optimized, real matrix multiplication
+  ** Real GEMM tester/timer

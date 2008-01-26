@@ -1,0 +1,572 @@
+<HTML>
+<HEAD>
+<TITLE>class Matrix</TITLE>
+
+<META NAME="Generator" CONTENT="KDOC ">
+</HEAD>
+<BODY bgcolor="#ffffff" text="#000000" link="#0000ff" vlink="#000099" alink= "#ffffff">
+<TABLE WIDTH="100%" BORDER="0">
+<TR>
+<TD>
+	<TABLE BORDER="0">
+		<TR><TD valign="top" align="left" cellspacing="10">
+		<h1>class Matrix</h1>
+		</TD>
+		<TD valign="top" align="right" colspan="1">
+     This is the concrete basic matrix class. <small><A HREF="#longdesc">More...</A></small></TD></TR>
+	</TABLE>
+	<HR>
+	<TABLE BORDER="0">
+		<TR><TH>Full name</TH><TD><code><A HREF="Llama.html">Llama</A>::Matrix</code></TD></TR>
+<TR><TH>Definition</TH><TD><code>#include &lt;<A HREF="Matrix_h.html">Matrix.h</A>&gt;</code></TD></TR>
+<TR><TH>Template form</TH><TD>Matrix&lt;class Scalar&gt; </code></TD></TR>
+<TR><TH>Inherits</TH><TD><i><A HREF="Llama__AbstMatrix.html">Llama::AbstMatrix</A></i> <small>[public ]</small></TD></TR>
+<TR><TH><A HREF="full-list-Llama__Matrix.html">List of all Methods</A></TH></TR>
+	</TABLE>
+	</TD>
+<TD align="right"><TABLE BORDER="0"><TD rowspan="6"><IMG SRC="./llama2.gif"></TD><TR><TD><small><A HREF="index-long.html">Annotated List</A></small></TD></TR>
+<TR><TD><small><A HREF="header-list.html">Files</A></small></TD></TR>
+<TR><TD><small><A HREF="all-globals.html">Globals</A></small></TD></TR>
+<TR><TD><small><A HREF="hier.html">Hierarchy</A></small></TD></TR>
+<TR><TD><small><A HREF="index.html">Index</A></small></TD></TR>
+</TABLE></TD></TR></TABLE>
+<h4>Public Methods</h4><ul><LI>Index &nbsp;<b><A HREF="#ref9">size</A></b> (void)  const
+</LI>
+<LI>Index &nbsp;<b><A HREF="#ref10">rows</A></b> (void)  const
+</LI>
+<LI>Index &nbsp;<b><A HREF="#ref11">cols</A></b> (void)  const
+</LI>
+<LI>Scalar *&nbsp;<b><A HREF="#ref12">data</A></b> (void)  const
+</LI>
+<LI><A HREF="#Transpose_t">Transpose_t</A> &nbsp;<b><A HREF="#ref13">trans</A></b> (void)  const
+</LI>
+<LI>Scalar &nbsp;<b><A HREF="#ref14">operator ()</A></b> (const Index k)  const
+</LI>
+<LI>Scalar& &nbsp;<b><A HREF="#ref15">operator ()</A></b> (const Index k) 
+</LI>
+<LI>Scalar &nbsp;<b><A HREF="#ref16">operator ()</A></b> (const Index j, const Index k)  const
+</LI>
+<LI>Scalar& &nbsp;<b><A HREF="#ref17">operator ()</A></b> (const Index j, const Index k) 
+</LI>
+<LI>&nbsp;<b><A HREF="#ref18">~Matrix</A></b> (void) 
+</LI>
+<LI>&nbsp;<b><A HREF="#ref19">Matrix</A></b> (Index r = 0, Index c = 1, Scalar *d = 0, Index inc = 1) 
+</LI>
+<LI>&nbsp;<b><A HREF="#ref20">Matrix</A></b> (const Matrix& x) 
+</LI>
+<LI>Matrix& &nbsp;<b><A HREF="#ref21">operator = </A></b> (const Matrix& x) 
+</LI>
+<LI>Matrix& &nbsp;<b><A HREF="#ref22">operator += </A></b> (const Matrix& x) 
+</LI>
+<LI>Matrix& &nbsp;<b><A HREF="#ref23">operator -= </A></b> (const Matrix& x) 
+</LI>
+<LI>Transpose<Scalar> &nbsp;<b><A HREF="#ref24">t</A></b> (void)  const
+</LI>
+<LI>Transpose<Scalar> &nbsp;<b><A HREF="#ref25">h</A></b> (void)  const
+</LI>
+<LI>&nbsp;<b><A HREF="#ref26">Matrix</A></b> (const CAbstMatrix<Scalar>& x) 
+</LI>
+<LI>Matrix& &nbsp;<b><A HREF="#ref27">operator = </A></b> (const CAbstMatrix<Scalar>& x) 
+</LI>
+<LI>Matrix& &nbsp;<b><A HREF="#ref28">operator += </A></b> (const CAbstMatrix<Scalar>& x) 
+</LI>
+<LI>Matrix& &nbsp;<b><A HREF="#ref29">operator -= </A></b> (const CAbstMatrix<Scalar>& x) 
+</LI>
+<LI>Submatrix<Scalar> &nbsp;<b><A HREF="#ref30">operator ()</A></b> (const Index r, const Range& c) 
+</LI>
+<LI>Submatrix<Scalar> &nbsp;<b><A HREF="#ref31">operator ()</A></b> (const Range& r, const Index c) 
+</LI>
+<LI>Submatrix<Scalar> &nbsp;<b><A HREF="#ref32">operator ()</A></b> (const Range& r, const Range& c) 
+</LI>
+<LI>Submatrix<Scalar> &nbsp;<b><A HREF="#ref33">operator ()</A></b> (const Index r, const Matrix<Index>& c) 
+</LI>
+<LI>Submatrix<Scalar> &nbsp;<b><A HREF="#ref34">operator ()</A></b> (const Matrix<Index>& r, const Index c) 
+</LI>
+<LI>Submatrix<Scalar> &nbsp;<b><A HREF="#ref35">operator ()</A></b> (const Range& r, const Matrix<Index>& c) 
+</LI>
+<LI>Submatrix<Scalar> &nbsp;<b><A HREF="#ref36">operator ()</A></b> (const Matrix<Index>& r, const Range& c) 
+</LI>
+<LI>Submatrix<Scalar> &nbsp;<b><A HREF="#ref37">operator ()</A></b> (const Matrix<Index>& r, const Matrix<Index>& c) 
+</LI>
+<LI>Diagonal<Scalar> &nbsp;<b><A HREF="#ref38">diag</A></b> (Integer k = 0) 
+</LI>
+<LI>Matrix& &nbsp;<b><A HREF="#ref39">operator + </A></b> (void) 
+</LI>
+<LI>SMClosure<Scalar> &nbsp;<b><A HREF="#ref40">operator - </A></b> (void) 
+</LI>
+<LI>Matrix& &nbsp;<b><A HREF="#ref41">operator = </A></b> (const Scalar& a) 
+</LI>
+<LI>Matrix& &nbsp;<b><A HREF="#ref42">operator += </A></b> (const Scalar& a) 
+</LI>
+<LI>Matrix& &nbsp;<b><A HREF="#ref43">operator -= </A></b> (const Scalar& a) 
+</LI>
+<LI>Matrix& &nbsp;<b><A HREF="#ref44">operator *= </A></b> (const Scalar& a) 
+</LI>
+<LI>Matrix& &nbsp;<b><A HREF="#ref45">operator /= </A></b> (const Scalar& a) 
+</LI>
+<LI>Matrix& &nbsp;<b><A HREF="#ref46">operator = </A></b> (const SMClosure<Scalar>& x) 
+</LI>
+<LI>Matrix& &nbsp;<b><A HREF="#ref47">operator += </A></b> (const SMClosure<Scalar>& x) 
+</LI>
+<LI>Matrix& &nbsp;<b><A HREF="#ref48">operator -= </A></b> (const SMClosure<Scalar>& x) 
+</LI>
+<LI>Matrix& &nbsp;<b><A HREF="#ref49">operator = </A></b> (const MMClosure<Scalar>& x) 
+</LI>
+<LI>Matrix& &nbsp;<b><A HREF="#ref50">operator += </A></b> (const MMClosure<Scalar>& x) 
+</LI>
+<LI>Matrix& &nbsp;<b><A HREF="#ref51">operator -= </A></b> (const MMClosure<Scalar>& x) 
+</LI>
+<LI>template <class OScalar>
+    FAMClosure<OScalar, Scalar> &nbsp;<b><A HREF="#ref52">apply</A></b> (OScalar f(Scalar)) 
+</LI>
+<LI>Matrix& &nbsp;<b><A HREF="#ref53">operator << </A></b> (std::istream& i) 
+</LI>
+<LI>void &nbsp;<b><A HREF="#ref54">operator >> </A></b> (std::ostream& o)  const
+</LI>
+<LI>Matrix& &nbsp;<b><A HREF="#ref55">resize</A></b> (Index r, Index c = 1) 
+</LI>
+<LI>Matrix& &nbsp;<b><A HREF="#ref56">reshape</A></b> (void) 
+</LI>
+<LI>Matrix& &nbsp;<b><A HREF="#ref57">reshape</A></b> (Index r, Index c) 
+</LI>
+<LI>Matrix& &nbsp;<b><A HREF="#ref58">append_cols</A></b> (const CAbstMatrix<Scalar>& x) 
+</LI>
+<LI>Matrix& &nbsp;<b><A HREF="#ref59">sort</A></b> (Order o) 
+</LI>
+<LI>Real &nbsp;<b><A HREF="#ref60">norm1</A></b> (void)  const
+</LI>
+<LI>Real &nbsp;<b><A HREF="#ref61">norminf</A></b> (void)  const
+</LI>
+<LI>Real &nbsp;<b><A HREF="#ref62">frobnorm</A></b> (void)  const
+</LI>
+<LI>virtual  Real &nbsp;<b><A HREF="#ref63">norm</A></b> (void)  const
+</LI>
+<LI>virtual  Real &nbsp;<b><A HREF="#ref64">sumnorm</A></b> (void)  const
+</LI>
+<LI>virtual  Real &nbsp;<b><A HREF="#ref65">maxnorm</A></b> (void)  const
+</LI>
+<LI>virtual  Scalar &nbsp;<b><A HREF="#ref66">dot</A></b> (const Matrix<Scalar>& x)  const
+</LI>
+<LI>Matrix& &nbsp;<b><A HREF="#ref67">operator = </A></b> (Random& r) 
+</LI>
+<LI>template <class RScalar> 
+    Matrix& &nbsp;<b><A HREF="#ref68">all_entries</A></b> (const RScalar& t) 
+</LI>
+<LI>inline void 
+  &nbsp;<b><A HREF="#ref74">_copy</A></b> (Real *dest, const Index incd, const Real *src, 
+		       const Index incs, const Index size) 
+</LI>
+<LI>inline void 
+  &nbsp;<b><A HREF="#ref75">_axpy</A></b> (Real *y, const Index incy, const Real a, const Real *x, 
+		       const Index incx, const Index size) 
+</LI>
+<LI>inline void
+  &nbsp;<b><A HREF="#ref76">_scal</A></b> (Real *x, const Index inc, const Real a, const Index size) 
+</LI>
+<LI>inline void
+  &nbsp;<b><A HREF="#ref77">_gemm</A></b> (const <A HREF="#Transpose_t">Transpose_t</A> lt, const <A HREF="#Transpose_t">Transpose_t</A> rt, 
+		       const Index m, const Index n, const Index k,
+		       const Real alpha, 
+		       const Real *a, const Index lda,
+		       const Real *b, const Index ldb,
+		       const Real beta,
+		       Real *c, const Index ldc) 
+</LI>
+<LI>inline Real
+  &nbsp;<b><A HREF="#ref78">frobnorm</A></b> (void)  const
+</LI>
+<LI>inline Real
+  &nbsp;<b><A HREF="#ref79">norm1</A></b> (void)  const
+</LI>
+<LI>inline Real
+  &nbsp;<b><A HREF="#ref80">norminf</A></b> (void)  const
+</LI>
+<LI>inline Real
+  &nbsp;<b><A HREF="#ref81">norm</A></b> (void)  const
+</LI>
+<LI>inline Real
+  &nbsp;<b><A HREF="#ref82">sumnorm</A></b> (void)  const
+</LI>
+<LI>inline Real
+  &nbsp;<b><A HREF="#ref83">dot</A></b> (const Matrix<Real>& x)  const
+</LI>
+<LI>inline void 
+  &nbsp;<b><A HREF="#ref84">_copy</A></b> (Complex *dest, const Index incd, const Complex *src, 
+			  const Index incs, const Index size) 
+</LI>
+<LI>inline void 
+  &nbsp;<b><A HREF="#ref85">_axpy</A></b> (Complex *y, const Index incy, const Complex a, const Complex *x, 
+			  const Index incx, const Index size) 
+</LI>
+<LI>inline void
+  &nbsp;<b><A HREF="#ref86">_scal</A></b> (Complex *x, const Index inc, const Complex a, const Index size) 
+</LI>
+<LI>inline void
+  &nbsp;<b><A HREF="#ref87">_gemm</A></b> (const <A HREF="#Transpose_t">Transpose_t</A> lt, const <A HREF="#Transpose_t">Transpose_t</A> rt, 
+			  const Index m, const Index n, const Index k,
+			  const Complex alpha, 
+			  const Complex *a, const Index lda,
+			  const Complex *b, const Index ldb,
+			  const Complex beta,
+			  Complex *c, const Index ldc) 
+</LI>
+<LI>inline Real
+  &nbsp;<b><A HREF="#ref88">frobnorm</A></b> (void)  const
+</LI>
+<LI>inline Real
+  &nbsp;<b><A HREF="#ref89">norm1</A></b> (void)  const
+</LI>
+<LI>inline Real
+  &nbsp;<b><A HREF="#ref90">norminf</A></b> (void)  const
+</LI>
+<LI>inline Real
+  &nbsp;<b><A HREF="#ref91">norm</A></b> (void)  const
+</LI>
+<LI>inline Real
+  &nbsp;<b><A HREF="#ref92">sumnorm</A></b> (void)  const
+</LI>
+<LI>inline Complex
+  &nbsp;<b><A HREF="#ref93">dot</A></b> (const Matrix<Complex>& x)  const
+</LI>
+</ul><h4>Public Members</h4><ul><LI>friend class <b><A HREF="#ref69">EigenDecomposition<Scalar></A></b></LI>
+<LI>friend class <b><A HREF="#ref70">LUDecomposition<Scalar></A></b></LI>
+<LI>friend class <b><A HREF="#ref71">SVDecomposition<Scalar></A></b></LI>
+<LI>friend class <b><A HREF="#ref72">QRDecomposition<Scalar></A></b></LI>
+<LI>friend class <b><A HREF="#ref73">CholeskyDecomposition<Scalar></A></b></LI>
+</ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><p>
+     This is the concrete basic matrix class.  Memory allocated is contiguous 
+     and entries are stored in column-major order for ease of interface with BLAS
+     and LAPACK routines.  Matrix arithmetic utilizes inlined BLAS routines
+     for speed and efficiency, at the cost of compilation speed.
+  </p>
+<A NAME="size"></A><A NAME="ref9"></A><table width="100%"><tr bgcolor="#eeeeee"><td>Index &nbsp;<strong>size</strong> (void)
+<br></td><td align="right"><h3><strong>size</strong></h3></td></tr></table><p> <small>[const]</small></p><p>
+       Return number of rows x columns
+    </p>
+<p>Reimplemented from <A HREF="Llama__CAbstMatrix.html#size">CAbstMatrix</A>.</p>
+<A NAME="rows"></A><A NAME="ref10"></A><table width="100%"><tr bgcolor="#eeeeee"><td>Index &nbsp;<strong>rows</strong> (void)
+<br></td><td align="right"><h3><strong>rows</strong></h3></td></tr></table><p> <small>[const]</small></p><p>
+       Return number of rows
+    </p>
+<p>Reimplemented from <A HREF="Llama__CAbstMatrix.html#rows">CAbstMatrix</A>.</p>
+<A NAME="cols"></A><A NAME="ref11"></A><table width="100%"><tr bgcolor="#eeeeee"><td>Index &nbsp;<strong>cols</strong> (void)
+<br></td><td align="right"><h3><strong>cols</strong></h3></td></tr></table><p> <small>[const]</small></p><p>
+       Return number of columns
+    </p>
+<p>Reimplemented from <A HREF="Llama__CAbstMatrix.html#cols">CAbstMatrix</A>.</p>
+<A NAME="data"></A><A NAME="ref12"></A><table width="100%"><tr bgcolor="#eeeeee"><td>Scalar *&nbsp;<strong>data</strong> (void)
+<br></td><td align="right"><h3><strong>data</strong></h3></td></tr></table><p> <small>[const]</small></p><p>
+       Pointer to data storage.
+    </p>
+<A NAME="trans"></A><A NAME="ref13"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="#Transpose_t">Transpose_t</A> &nbsp;<strong>trans</strong> (void)
+<br></td><td align="right"><h3><strong>trans</strong></h3></td></tr></table><p> <small>[const]</small></p><p>
+       Return transpose status
+    </p>
+<A NAME="operator%20()"></A><A NAME="ref14"></A><table width="100%"><tr bgcolor="#eeeeee"><td>Scalar &nbsp;<strong>operator ()</strong> (const Index k)
+<br></td><td align="right"><h3><strong>operator ()</strong></h3></td></tr></table><p> <small>[const]</small></p><p>
+       Access to elements: vector format
+    </p>
+<p>Reimplemented from <A HREF="Llama__AbstMatrix.html#operator%20()">AbstMatrix</A>.</p>
+<A NAME="operator%20()"></A><A NAME="ref15"></A><table width="100%"><tr bgcolor="#eeeeee"><td>Scalar& &nbsp;<strong>operator ()</strong> (const Index k)
+<br></td><td align="right"><h3><strong>operator ()</strong></h3></td></tr></table><p></p><p>
+       Access to elements: vector format
+    </p>
+<p>Reimplemented from <A HREF="Llama__AbstMatrix.html#operator%20()">AbstMatrix</A>.</p>
+<A NAME="operator%20()"></A><A NAME="ref16"></A><table width="100%"><tr bgcolor="#eeeeee"><td>Scalar &nbsp;<strong>operator ()</strong> (const Index j, const Index k)
+<br></td><td align="right"><h3><strong>operator ()</strong></h3></td></tr></table><p> <small>[const]</small></p><p>
+       Access to elements: matrix format
+    </p>
+<p>Reimplemented from <A HREF="Llama__AbstMatrix.html#operator%20()">AbstMatrix</A>.</p>
+<A NAME="operator%20()"></A><A NAME="ref17"></A><table width="100%"><tr bgcolor="#eeeeee"><td>Scalar& &nbsp;<strong>operator ()</strong> (const Index j, const Index k)
+<br></td><td align="right"><h3><strong>operator ()</strong></h3></td></tr></table><p></p><p>
+       Access to elements: matrix format
+    </p>
+<p>Reimplemented from <A HREF="Llama__AbstMatrix.html#operator%20()">AbstMatrix</A>.</p>
+<A NAME="~Matrix"></A><A NAME="ref18"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>~Matrix</strong> (void)
+<br></td><td align="right"><h3><strong>~Matrix</strong></h3></td></tr></table><p></p><p>
+       Destructor
+    </p>
+<A NAME="Matrix"></A><A NAME="ref19"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>Matrix</strong> (Index r = 0, Index c = 1, Scalar *d = 0, Index inc = 1)
+<br></td><td align="right"><h3><strong>Matrix</strong></h3></td></tr></table><p></p><p>
+       Default constructor
+    </p>
+<A NAME="Matrix"></A><A NAME="ref20"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>Matrix</strong> (const Matrix& x)
+<br></td><td align="right"><h3><strong>Matrix</strong></h3></td></tr></table><p></p><p>
+       Copy constructor
+    </p>
+<A NAME="operator%20=%20"></A><A NAME="ref21"></A><table width="100%"><tr bgcolor="#eeeeee"><td>Matrix& &nbsp;<strong>operator = </strong> (const Matrix& x)
+<br></td><td align="right"><h3><strong>operator = </strong></h3></td></tr></table><p></p><p>
+       Matrix assignment.  Data are copied.
+    </p>
+<A NAME="operator%20+=%20"></A><A NAME="ref22"></A><table width="100%"><tr bgcolor="#eeeeee"><td>Matrix& &nbsp;<strong>operator += </strong> (const Matrix& x)
+<br></td><td align="right"><h3><strong>operator += </strong></h3></td></tr></table><p></p><p>
+       Add a matrix to a matrix
+    </p>
+<A NAME="operator%20-=%20"></A><A NAME="ref23"></A><table width="100%"><tr bgcolor="#eeeeee"><td>Matrix& &nbsp;<strong>operator -= </strong> (const Matrix& x)
+<br></td><td align="right"><h3><strong>operator -= </strong></h3></td></tr></table><p></p><p>
+       Subtract a matrix from a matrix
+    </p>
+<A NAME="t"></A><A NAME="ref24"></A><table width="100%"><tr bgcolor="#eeeeee"><td>Transpose<Scalar> &nbsp;<strong>t</strong> (void)
+<br></td><td align="right"><h3><strong>t</strong></h3></td></tr></table><p> <small>[const]</small></p><p>
+       The ordinary matrix transpose.
+    </p>
+<A NAME="h"></A><A NAME="ref25"></A><table width="100%"><tr bgcolor="#eeeeee"><td>Transpose<Scalar> &nbsp;<strong>h</strong> (void)
+<br></td><td align="right"><h3><strong>h</strong></h3></td></tr></table><p> <small>[const]</small></p><p>
+       The Hermitian transpose (conjugate transpose).
+    </p>
+<A NAME="Matrix"></A><A NAME="ref26"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>Matrix</strong> (const CAbstMatrix<Scalar>& x)
+<br></td><td align="right"><h3><strong>Matrix</strong></h3></td></tr></table><p></p><p>
+       Copy from abstract matrix
+    </p>
+<A NAME="operator%20=%20"></A><A NAME="ref27"></A><table width="100%"><tr bgcolor="#eeeeee"><td>Matrix& &nbsp;<strong>operator = </strong> (const CAbstMatrix<Scalar>& x)
+<br></td><td align="right"><h3><strong>operator = </strong></h3></td></tr></table><p></p><p>
+       Assign from abstract matrix.
+    </p>
+<A NAME="operator%20+=%20"></A><A NAME="ref28"></A><table width="100%"><tr bgcolor="#eeeeee"><td>Matrix& &nbsp;<strong>operator += </strong> (const CAbstMatrix<Scalar>& x)
+<br></td><td align="right"><h3><strong>operator += </strong></h3></td></tr></table><p></p><p>
+       Add elements from an abstract matrix to a matrix
+    </p>
+<A NAME="operator%20-=%20"></A><A NAME="ref29"></A><table width="100%"><tr bgcolor="#eeeeee"><td>Matrix& &nbsp;<strong>operator -= </strong> (const CAbstMatrix<Scalar>& x)
+<br></td><td align="right"><h3><strong>operator -= </strong></h3></td></tr></table><p></p><p>
+       Subtract elements from an abstract matrix from a matrix
+    </p>
+<A NAME="operator%20()"></A><A NAME="ref30"></A><table width="100%"><tr bgcolor="#eeeeee"><td>Submatrix<Scalar> &nbsp;<strong>operator ()</strong> (const Index r, const Range& c)
+<br></td><td align="right"><h3><strong>operator ()</strong></h3></td></tr></table><p></p><p>
+       Reference the submatrix consisting of a range of elements
+       in the r-th row
+    </p>
+<p>Reimplemented from <A HREF="Llama__AbstMatrix.html#operator%20()">AbstMatrix</A>.</p>
+<A NAME="operator%20()"></A><A NAME="ref31"></A><table width="100%"><tr bgcolor="#eeeeee"><td>Submatrix<Scalar> &nbsp;<strong>operator ()</strong> (const Range& r, const Index c)
+<br></td><td align="right"><h3><strong>operator ()</strong></h3></td></tr></table><p></p><p>
+       Reference the submatrix consisting of a range of elements
+       in the c-th column
+    </p>
+<p>Reimplemented from <A HREF="Llama__AbstMatrix.html#operator%20()">AbstMatrix</A>.</p>
+<A NAME="operator%20()"></A><A NAME="ref32"></A><table width="100%"><tr bgcolor="#eeeeee"><td>Submatrix<Scalar> &nbsp;<strong>operator ()</strong> (const Range& r, const Range& c)
+<br></td><td align="right"><h3><strong>operator ()</strong></h3></td></tr></table><p></p><p>
+       Reference the submatrix defined by two ranges of indices
+    </p>
+<p>Reimplemented from <A HREF="Llama__AbstMatrix.html#operator%20()">AbstMatrix</A>.</p>
+<A NAME="operator%20()"></A><A NAME="ref33"></A><table width="100%"><tr bgcolor="#eeeeee"><td>Submatrix<Scalar> &nbsp;<strong>operator ()</strong> (const Index r, const Matrix<Index>& c)
+<br></td><td align="right"><h3><strong>operator ()</strong></h3></td></tr></table><p></p><p>
+       Reference the submatrix consisting of a set of elements
+       in the r-th row
+    </p>
+<p>Reimplemented from <A HREF="Llama__AbstMatrix.html#operator%20()">AbstMatrix</A>.</p>
+<A NAME="operator%20()"></A><A NAME="ref34"></A><table width="100%"><tr bgcolor="#eeeeee"><td>Submatrix<Scalar> &nbsp;<strong>operator ()</strong> (const Matrix<Index>& r, const Index c)
+<br></td><td align="right"><h3><strong>operator ()</strong></h3></td></tr></table><p></p><p>
+       Reference the submatrix consisting of a set of elements
+       in the c-th column
+    </p>
+<p>Reimplemented from <A HREF="Llama__AbstMatrix.html#operator%20()">AbstMatrix</A>.</p>
+<A NAME="operator%20()"></A><A NAME="ref35"></A><table width="100%"><tr bgcolor="#eeeeee"><td>Submatrix<Scalar> &nbsp;<strong>operator ()</strong> (const Range& r, const Matrix<Index>& c)
+<br></td><td align="right"><h3><strong>operator ()</strong></h3></td></tr></table><p></p><p>
+       Reference the submatrix with row and column indices specified by
+       a range and a vector of indices.
+    </p>
+<p>Reimplemented from <A HREF="Llama__AbstMatrix.html#operator%20()">AbstMatrix</A>.</p>
+<A NAME="operator%20()"></A><A NAME="ref36"></A><table width="100%"><tr bgcolor="#eeeeee"><td>Submatrix<Scalar> &nbsp;<strong>operator ()</strong> (const Matrix<Index>& r, const Range& c)
+<br></td><td align="right"><h3><strong>operator ()</strong></h3></td></tr></table><p></p><p>
+       Reference the submatrix with row and column indices specified by
+       a vector and a range of indices.
+    </p>
+<p>Reimplemented from <A HREF="Llama__AbstMatrix.html#operator%20()">AbstMatrix</A>.</p>
+<A NAME="operator%20()"></A><A NAME="ref37"></A><table width="100%"><tr bgcolor="#eeeeee"><td>Submatrix<Scalar> &nbsp;<strong>operator ()</strong> (const Matrix<Index>& r, const Matrix<Index>& c)
+<br></td><td align="right"><h3><strong>operator ()</strong></h3></td></tr></table><p></p><p>
+       Reference the submatrix with row and column indices specified by
+       two vectors of indices.
+    </p>
+<p>Reimplemented from <A HREF="Llama__AbstMatrix.html#operator%20()">AbstMatrix</A>.</p>
+<A NAME="diag"></A><A NAME="ref38"></A><table width="100%"><tr bgcolor="#eeeeee"><td>Diagonal<Scalar> &nbsp;<strong>diag</strong> (Integer k = 0)
+<br></td><td align="right"><h3><strong>diag</strong></h3></td></tr></table><p></p><p>
+       Reference the k-th diagonal.  If k > 0, a superdiagonal is
+       referenced; if k < 0, a subdiagonal is referenced.  
+    </p>
+<A NAME="operator%20+%20"></A><A NAME="ref39"></A><table width="100%"><tr bgcolor="#eeeeee"><td>Matrix& &nbsp;<strong>operator + </strong> (void)
+<br></td><td align="right"><h3><strong>operator + </strong></h3></td></tr></table><p></p><p>
+       Unary plus
+    </p>
+<A NAME="operator%20-%20"></A><A NAME="ref40"></A><table width="100%"><tr bgcolor="#eeeeee"><td>SMClosure<Scalar> &nbsp;<strong>operator - </strong> (void)
+<br></td><td align="right"><h3><strong>operator - </strong></h3></td></tr></table><p></p><p>
+       Unary minus
+    </p>
+<A NAME="operator%20=%20"></A><A NAME="ref41"></A><table width="100%"><tr bgcolor="#eeeeee"><td>Matrix& &nbsp;<strong>operator = </strong> (const Scalar& a)
+<br></td><td align="right"><h3><strong>operator = </strong></h3></td></tr></table><p></p><p>
+       Set a matrix equal to a scalar multiple of the identity matrix.
+       If the matrix is nonsquare, only the diagonal elements will be
+       nonzero.
+    </p>
+<A NAME="operator%20+=%20"></A><A NAME="ref42"></A><table width="100%"><tr bgcolor="#eeeeee"><td>Matrix& &nbsp;<strong>operator += </strong> (const Scalar& a)
+<br></td><td align="right"><h3><strong>operator += </strong></h3></td></tr></table><p></p><p>
+       Add a scalar multiple of the identity matrix
+    </p>
+<A NAME="operator%20-=%20"></A><A NAME="ref43"></A><table width="100%"><tr bgcolor="#eeeeee"><td>Matrix& &nbsp;<strong>operator -= </strong> (const Scalar& a)
+<br></td><td align="right"><h3><strong>operator -= </strong></h3></td></tr></table><p></p><p>
+       Subtract a scalar multiple of the identity matrix
+    </p>
+<A NAME="operator%20*=%20"></A><A NAME="ref44"></A><table width="100%"><tr bgcolor="#eeeeee"><td>Matrix& &nbsp;<strong>operator *= </strong> (const Scalar& a)
+<br></td><td align="right"><h3><strong>operator *= </strong></h3></td></tr></table><p></p><p>
+       Multiply a matrix by a scalar
+    </p>
+<A NAME="operator%20/=%20"></A><A NAME="ref45"></A><table width="100%"><tr bgcolor="#eeeeee"><td>Matrix& &nbsp;<strong>operator /= </strong> (const Scalar& a)
+<br></td><td align="right"><h3><strong>operator /= </strong></h3></td></tr></table><p></p><p>
+       Divide a matrix by a scalar
+    </p>
+<A NAME="operator%20=%20"></A><A NAME="ref46"></A><table width="100%"><tr bgcolor="#eeeeee"><td>Matrix& &nbsp;<strong>operator = </strong> (const SMClosure<Scalar>& x)
+<br></td><td align="right"><h3><strong>operator = </strong></h3></td></tr></table><p></p><A NAME="operator%20+=%20"></A><A NAME="ref47"></A><table width="100%"><tr bgcolor="#eeeeee"><td>Matrix& &nbsp;<strong>operator += </strong> (const SMClosure<Scalar>& x)
+<br></td><td align="right"><h3><strong>operator += </strong></h3></td></tr></table><p></p><A NAME="operator%20-=%20"></A><A NAME="ref48"></A><table width="100%"><tr bgcolor="#eeeeee"><td>Matrix& &nbsp;<strong>operator -= </strong> (const SMClosure<Scalar>& x)
+<br></td><td align="right"><h3><strong>operator -= </strong></h3></td></tr></table><p></p><A NAME="operator%20=%20"></A><A NAME="ref49"></A><table width="100%"><tr bgcolor="#eeeeee"><td>Matrix& &nbsp;<strong>operator = </strong> (const MMClosure<Scalar>& x)
+<br></td><td align="right"><h3><strong>operator = </strong></h3></td></tr></table><p></p><A NAME="operator%20+=%20"></A><A NAME="ref50"></A><table width="100%"><tr bgcolor="#eeeeee"><td>Matrix& &nbsp;<strong>operator += </strong> (const MMClosure<Scalar>& x)
+<br></td><td align="right"><h3><strong>operator += </strong></h3></td></tr></table><p></p><A NAME="operator%20-=%20"></A><A NAME="ref51"></A><table width="100%"><tr bgcolor="#eeeeee"><td>Matrix& &nbsp;<strong>operator -= </strong> (const MMClosure<Scalar>& x)
+<br></td><td align="right"><h3><strong>operator -= </strong></h3></td></tr></table><p></p><A NAME="apply"></A><A NAME="ref52"></A><table width="100%"><tr bgcolor="#eeeeee"><td>template <class OScalar>
+    FAMClosure<OScalar, Scalar> &nbsp;<strong>apply</strong> (OScalar f(Scalar))
+<br></td><td align="right"><h3><strong>apply</strong></h3></td></tr></table><p></p><p>
+       Apply a function elementwise
+    </p>
+<A NAME="operator%20%3C%3C%20"></A><A NAME="ref53"></A><table width="100%"><tr bgcolor="#eeeeee"><td>Matrix& &nbsp;<strong>operator << </strong> (std::istream& i)
+<br></td><td align="right"><h3><strong>operator << </strong></h3></td></tr></table><p></p><p>
+       Binary input.
+    </p>
+<A NAME="operator%20%3E%3E%20"></A><A NAME="ref54"></A><table width="100%"><tr bgcolor="#eeeeee"><td>void &nbsp;<strong>operator >> </strong> (std::ostream& o)
+<br></td><td align="right"><h3><strong>operator >> </strong></h3></td></tr></table><p> <small>[const]</small></p><p>
+       Binary output.
+    </p>
+<p>Reimplemented from <A HREF="Llama__CAbstMatrix.html#operator%20%3E%3E%20">CAbstMatrix</A>.</p>
+<A NAME="resize"></A><A NAME="ref55"></A><table width="100%"><tr bgcolor="#eeeeee"><td>Matrix& &nbsp;<strong>resize</strong> (Index r, Index c = 1)
+<br></td><td align="right"><h3><strong>resize</strong></h3></td></tr></table><p></p><p>
+       Resize a matrix.  All data are destroyed.  This policy may change in future.
+    </p>
+<A NAME="reshape"></A><A NAME="ref56"></A><table width="100%"><tr bgcolor="#eeeeee"><td>Matrix& &nbsp;<strong>reshape</strong> (void)
+<br></td><td align="right"><h3><strong>reshape</strong></h3></td></tr></table><p></p><p>
+       Reshape a matrix as a vector.
+    </p>
+<A NAME="reshape"></A><A NAME="ref57"></A><table width="100%"><tr bgcolor="#eeeeee"><td>Matrix& &nbsp;<strong>reshape</strong> (Index r, Index c)
+<br></td><td align="right"><h3><strong>reshape</strong></h3></td></tr></table><p></p><p>
+       Reshape a matrix arbitrarily.
+    </p>
+<A NAME="append_cols"></A><A NAME="ref58"></A><table width="100%"><tr bgcolor="#eeeeee"><td>Matrix& &nbsp;<strong>append_cols</strong> (const CAbstMatrix<Scalar>& x)
+<br></td><td align="right"><h3><strong>append_cols</strong></h3></td></tr></table><p></p><p>
+       Append columns in matrix x.
+    </p>
+<A NAME="sort"></A><A NAME="ref59"></A><table width="100%"><tr bgcolor="#eeeeee"><td>Matrix& &nbsp;<strong>sort</strong> (Order o)
+<br></td><td align="right"><h3><strong>sort</strong></h3></td></tr></table><p></p><p>
+       Sort all elements linearly, assuming vector format,
+       using a given total order.  The latter is passed in the form
+       of a function of type
+</p>
+<p>       int (*Order)(const void *a, const void *b)
+</p>
+<p>       This function should have return values of 1, 0, or -1 for any
+       combination of inputs a, b.  The entries will be sorted so that if
+       for all j, k, j < k implies (*order)(&x(j), &x(k)) <= 0.
+    </p>
+<A NAME="norm1"></A><A NAME="ref60"></A><table width="100%"><tr bgcolor="#eeeeee"><td>Real &nbsp;<strong>norm1</strong> (void)
+<br></td><td align="right"><h3><strong>norm1</strong></h3></td></tr></table><p> <small>[const]</small></p><p>
+       Return the matrix 1-norm (column-sum norm).
+    </p>
+<A NAME="norminf"></A><A NAME="ref61"></A><table width="100%"><tr bgcolor="#eeeeee"><td>Real &nbsp;<strong>norminf</strong> (void)
+<br></td><td align="right"><h3><strong>norminf</strong></h3></td></tr></table><p> <small>[const]</small></p><p>
+       Return the matrix infinity-norm (row-sum norm).
+    </p>
+<A NAME="frobnorm"></A><A NAME="ref62"></A><table width="100%"><tr bgcolor="#eeeeee"><td>Real &nbsp;<strong>frobnorm</strong> (void)
+<br></td><td align="right"><h3><strong>frobnorm</strong></h3></td></tr></table><p> <small>[const]</small></p><p>
+       Return the Frobenius norm.
+    </p>
+<A NAME="norm"></A><A NAME="ref63"></A><table width="100%"><tr bgcolor="#eeeeee"><td> Real &nbsp;<strong>norm</strong> (void)
+<br></td><td align="right"><h3><strong>norm</strong></h3></td></tr></table><p> <small>[const virtual]</small></p><p>
+       The vector 2-norm (Euclidean norm)
+    </p>
+<A NAME="sumnorm"></A><A NAME="ref64"></A><table width="100%"><tr bgcolor="#eeeeee"><td> Real &nbsp;<strong>sumnorm</strong> (void)
+<br></td><td align="right"><h3><strong>sumnorm</strong></h3></td></tr></table><p> <small>[const virtual]</small></p><p>
+       The vector 1-norm (sum-norm).
+    </p>
+<A NAME="maxnorm"></A><A NAME="ref65"></A><table width="100%"><tr bgcolor="#eeeeee"><td> Real &nbsp;<strong>maxnorm</strong> (void)
+<br></td><td align="right"><h3><strong>maxnorm</strong></h3></td></tr></table><p> <small>[const virtual]</small></p><p>
+       The vector infinity-norm (max-norm).
+    </p>
+<A NAME="dot"></A><A NAME="ref66"></A><table width="100%"><tr bgcolor="#eeeeee"><td> Scalar &nbsp;<strong>dot</strong> (const Matrix<Scalar>& x)
+<br></td><td align="right"><h3><strong>dot</strong></h3></td></tr></table><p> <small>[const virtual]</small></p><p>
+       Inner product with another vector.
+    </p>
+<A NAME="operator%20=%20"></A><A NAME="ref67"></A><table width="100%"><tr bgcolor="#eeeeee"><td>Matrix& &nbsp;<strong>operator = </strong> (Random& r)
+<br></td><td align="right"><h3><strong>operator = </strong></h3></td></tr></table><p></p><p>
+       Randomize the matrix
+    </p>
+<A NAME="all_entries"></A><A NAME="ref68"></A><table width="100%"><tr bgcolor="#eeeeee"><td>template <class RScalar> 
+    Matrix& &nbsp;<strong>all_entries</strong> (const RScalar& t)
+<br></td><td align="right"><h3><strong>all_entries</strong></h3></td></tr></table><p></p><p>
+       Set all entries equal to a constant
+    </p>
+<A NAME="EigenDecomposition%3CScalar%3E"></A><A NAME="ref69"></A><table width="100%"><tr bgcolor="#eeeeee"><td>friend class  <strong>EigenDecomposition<Scalar></strong>
+</td><td align="right"><h3><strong>EigenDecomposition<Scalar></strong></h3></td></tr></table><p></p><A NAME="LUDecomposition%3CScalar%3E"></A><A NAME="ref70"></A><table width="100%"><tr bgcolor="#eeeeee"><td>friend class  <strong>LUDecomposition<Scalar></strong>
+</td><td align="right"><h3><strong>LUDecomposition<Scalar></strong></h3></td></tr></table><p></p><A NAME="SVDecomposition%3CScalar%3E"></A><A NAME="ref71"></A><table width="100%"><tr bgcolor="#eeeeee"><td>friend class  <strong>SVDecomposition<Scalar></strong>
+</td><td align="right"><h3><strong>SVDecomposition<Scalar></strong></h3></td></tr></table><p></p><A NAME="QRDecomposition%3CScalar%3E"></A><A NAME="ref72"></A><table width="100%"><tr bgcolor="#eeeeee"><td>friend class  <strong>QRDecomposition<Scalar></strong>
+</td><td align="right"><h3><strong>QRDecomposition<Scalar></strong></h3></td></tr></table><p></p><A NAME="CholeskyDecomposition%3CScalar%3E"></A><A NAME="ref73"></A><table width="100%"><tr bgcolor="#eeeeee"><td>friend class  <strong>CholeskyDecomposition<Scalar></strong>
+</td><td align="right"><h3><strong>CholeskyDecomposition<Scalar></strong></h3></td></tr></table><p></p><A NAME="_copy"></A><A NAME="ref74"></A><table width="100%"><tr bgcolor="#eeeeee"><td>inline void 
+  &nbsp;<strong>_copy</strong> (Real *dest, const Index incd, const Real *src, 
+		       const Index incs, const Index size)
+<br></td><td align="right"><h3><strong>_copy</strong></h3></td></tr></table><p></p><A NAME="_axpy"></A><A NAME="ref75"></A><table width="100%"><tr bgcolor="#eeeeee"><td>inline void 
+  &nbsp;<strong>_axpy</strong> (Real *y, const Index incy, const Real a, const Real *x, 
+		       const Index incx, const Index size)
+<br></td><td align="right"><h3><strong>_axpy</strong></h3></td></tr></table><p></p><A NAME="_scal"></A><A NAME="ref76"></A><table width="100%"><tr bgcolor="#eeeeee"><td>inline void
+  &nbsp;<strong>_scal</strong> (Real *x, const Index inc, const Real a, const Index size)
+<br></td><td align="right"><h3><strong>_scal</strong></h3></td></tr></table><p></p><A NAME="_gemm"></A><A NAME="ref77"></A><table width="100%"><tr bgcolor="#eeeeee"><td>inline void
+  &nbsp;<strong>_gemm</strong> (const <A HREF="#Transpose_t">Transpose_t</A> lt, const <A HREF="#Transpose_t">Transpose_t</A> rt, 
+		       const Index m, const Index n, const Index k,
+		       const Real alpha, 
+		       const Real *a, const Index lda,
+		       const Real *b, const Index ldb,
+		       const Real beta,
+		       Real *c, const Index ldc)
+<br></td><td align="right"><h3><strong>_gemm</strong></h3></td></tr></table><p></p><A NAME="frobnorm"></A><A NAME="ref78"></A><table width="100%"><tr bgcolor="#eeeeee"><td>inline Real
+  &nbsp;<strong>frobnorm</strong> (void)
+<br></td><td align="right"><h3><strong>frobnorm</strong></h3></td></tr></table><p> <small>[const]</small></p><A NAME="norm1"></A><A NAME="ref79"></A><table width="100%"><tr bgcolor="#eeeeee"><td>inline Real
+  &nbsp;<strong>norm1</strong> (void)
+<br></td><td align="right"><h3><strong>norm1</strong></h3></td></tr></table><p> <small>[const]</small></p><A NAME="norminf"></A><A NAME="ref80"></A><table width="100%"><tr bgcolor="#eeeeee"><td>inline Real
+  &nbsp;<strong>norminf</strong> (void)
+<br></td><td align="right"><h3><strong>norminf</strong></h3></td></tr></table><p> <small>[const]</small></p><A NAME="norm"></A><A NAME="ref81"></A><table width="100%"><tr bgcolor="#eeeeee"><td>inline Real
+  &nbsp;<strong>norm</strong> (void)
+<br></td><td align="right"><h3><strong>norm</strong></h3></td></tr></table><p> <small>[const]</small></p><A NAME="sumnorm"></A><A NAME="ref82"></A><table width="100%"><tr bgcolor="#eeeeee"><td>inline Real
+  &nbsp;<strong>sumnorm</strong> (void)
+<br></td><td align="right"><h3><strong>sumnorm</strong></h3></td></tr></table><p> <small>[const]</small></p><A NAME="dot"></A><A NAME="ref83"></A><table width="100%"><tr bgcolor="#eeeeee"><td>inline Real
+  &nbsp;<strong>dot</strong> (const Matrix<Real>& x)
+<br></td><td align="right"><h3><strong>dot</strong></h3></td></tr></table><p> <small>[const]</small></p><p>
+     Ordinary inner product with another vector.
+  </p>
+<A NAME="_copy"></A><A NAME="ref84"></A><table width="100%"><tr bgcolor="#eeeeee"><td>inline void 
+  &nbsp;<strong>_copy</strong> (Complex *dest, const Index incd, const Complex *src, 
+			  const Index incs, const Index size)
+<br></td><td align="right"><h3><strong>_copy</strong></h3></td></tr></table><p></p><A NAME="_axpy"></A><A NAME="ref85"></A><table width="100%"><tr bgcolor="#eeeeee"><td>inline void 
+  &nbsp;<strong>_axpy</strong> (Complex *y, const Index incy, const Complex a, const Complex *x, 
+			  const Index incx, const Index size)
+<br></td><td align="right"><h3><strong>_axpy</strong></h3></td></tr></table><p></p><A NAME="_scal"></A><A NAME="ref86"></A><table width="100%"><tr bgcolor="#eeeeee"><td>inline void
+  &nbsp;<strong>_scal</strong> (Complex *x, const Index inc, const Complex a, const Index size)
+<br></td><td align="right"><h3><strong>_scal</strong></h3></td></tr></table><p></p><A NAME="_gemm"></A><A NAME="ref87"></A><table width="100%"><tr bgcolor="#eeeeee"><td>inline void
+  &nbsp;<strong>_gemm</strong> (const <A HREF="#Transpose_t">Transpose_t</A> lt, const <A HREF="#Transpose_t">Transpose_t</A> rt, 
+			  const Index m, const Index n, const Index k,
+			  const Complex alpha, 
+			  const Complex *a, const Index lda,
+			  const Complex *b, const Index ldb,
+			  const Complex beta,
+			  Complex *c, const Index ldc)
+<br></td><td align="right"><h3><strong>_gemm</strong></h3></td></tr></table><p></p><A NAME="frobnorm"></A><A NAME="ref88"></A><table width="100%"><tr bgcolor="#eeeeee"><td>inline Real
+  &nbsp;<strong>frobnorm</strong> (void)
+<br></td><td align="right"><h3><strong>frobnorm</strong></h3></td></tr></table><p> <small>[const]</small></p><A NAME="norm1"></A><A NAME="ref89"></A><table width="100%"><tr bgcolor="#eeeeee"><td>inline Real
+  &nbsp;<strong>norm1</strong> (void)
+<br></td><td align="right"><h3><strong>norm1</strong></h3></td></tr></table><p> <small>[const]</small></p><A NAME="norminf"></A><A NAME="ref90"></A><table width="100%"><tr bgcolor="#eeeeee"><td>inline Real
+  &nbsp;<strong>norminf</strong> (void)
+<br></td><td align="right"><h3><strong>norminf</strong></h3></td></tr></table><p> <small>[const]</small></p><A NAME="norm"></A><A NAME="ref91"></A><table width="100%"><tr bgcolor="#eeeeee"><td>inline Real
+  &nbsp;<strong>norm</strong> (void)
+<br></td><td align="right"><h3><strong>norm</strong></h3></td></tr></table><p> <small>[const]</small></p><A NAME="sumnorm"></A><A NAME="ref92"></A><table width="100%"><tr bgcolor="#eeeeee"><td>inline Real
+  &nbsp;<strong>sumnorm</strong> (void)
+<br></td><td align="right"><h3><strong>sumnorm</strong></h3></td></tr></table><p> <small>[const]</small></p><A NAME="dot"></A><A NAME="ref93"></A><table width="100%"><tr bgcolor="#eeeeee"><td>inline Complex
+  &nbsp;<strong>dot</strong> (const Matrix<Complex>& x)
+<br></td><td align="right"><h3><strong>dot</strong></h3></td></tr></table><p> <small>[const]</small></p><p>
+     Ordinary inner product with another vector.
+  </p>
+<HR>
+	<table>
+	<tr><td><small>Generated by: king on larix.tiem.utk.edu on Tue Jun 29 10:55:51 2004, using kdoc 2.0a54.</small></td></tr>
+	</table>
+</BODY>
+</HTML>

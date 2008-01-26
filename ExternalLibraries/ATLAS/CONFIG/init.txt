@@ -1,0 +1,24 @@
+
+Configure will ask a series of questions, in one of two forms.  The first form
+of question is a menu of choices.  One option in almost all menus is
+'Other/UNKNOWN'.  If you are unsure of the answer, always choose this option.
+The second form of question is a single line, with a default answer shown in
+square braces.  If you hit return without typing anything, this default answer
+will be used.  Again, if you are unsure of the answer, simply accept the
+default.
+
+ATLAS can detect almost everything it needs to know, so choosing the default
+or 'Other/UNKNOWN' will at worst simply extend the install time (if you tell
+config the answer to something ATLAS can skip some tests).
+
+Configure makes no changes to the state of things until all questions have
+been asked and answered.  Therefore, if you get confused and want to start
+over, feel free to break out of this program (CTRL-C, CTRL-BREAK, etc)
+and start again.  Alternatively, if you make a mistake you can finish the
+configure process, and then edit the created make include file by hand to fix
+the mistake manually (the name and location of this file will be printed
+out at the end of configure).
+
+If you have problems during configure or installation, consult the file
+'ATLAS/README/TroubleShoot.txt'.
+

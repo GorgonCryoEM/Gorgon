@@ -1,0 +1,12 @@
+
+
+Your architectural defaults do not include defaults for the
+Level 1 BLAS.  ATLAS now has the ability to tune the Level 1 BLAS to
+your machine.  However, this will add time to the install.  If your
+algorithm utilizes the Level 2 or Level 3 BLAS to any degree, the
+the Level 1 BLAS will usually be a low order term, and thus only matter
+for small problems.  Therefore, if you don't think you need good performance
+from the Level 1 BLAS, you can answer "no" to the question below, and ATLAS
+will skip the Level 1 tuning.  ATLAS will still provide Level 1 BLAS, but
+their performance may be much worse than if tuning were allowed.
+

@@ -1,0 +1,235 @@
+include Make.inc
+
+sobj = ATL_sktrmvLNN.o ATL_sktrmvLNU.o ATL_sktrmvLTN.o ATL_sktrmvLTU.o \
+       ATL_sktrmvUNN.o ATL_sktrmvUNU.o ATL_sktrmvUTN.o ATL_sktrmvUTU.o \
+       ATL_strmv.o ATL_strmvLN.o ATL_strmvLT.o ATL_strmvUN.o ATL_strmvUT.o
+
+dobj = ATL_dktrmvLNN.o ATL_dktrmvLNU.o ATL_dktrmvLTN.o ATL_dktrmvLTU.o \
+       ATL_dktrmvUNN.o ATL_dktrmvUNU.o ATL_dktrmvUTN.o ATL_dktrmvUTU.o \
+       ATL_dtrmv.o ATL_dtrmvLN.o ATL_dtrmvLT.o ATL_dtrmvUN.o ATL_dtrmvUT.o
+
+cobj = ATL_cktrmvLCN.o ATL_cktrmvLCU.o ATL_cktrmvLNN.o ATL_cktrmvLNU.o \
+       ATL_cktrmvLNcN.o ATL_cktrmvLNcU.o ATL_cktrmvLTN.o ATL_cktrmvLTU.o \
+       ATL_cktrmvUCN.o ATL_cktrmvUCU.o ATL_cktrmvUNN.o ATL_cktrmvUNU.o \
+       ATL_cktrmvUNcN.o ATL_cktrmvUNcU.o ATL_cktrmvUTN.o ATL_cktrmvUTU.o \
+       ATL_ctrmv.o ATL_ctrmvLC.o ATL_ctrmvLN.o ATL_ctrmvLNc.o ATL_ctrmvLT.o \
+       ATL_ctrmvUC.o ATL_ctrmvUN.o ATL_ctrmvUNc.o ATL_ctrmvUT.o
+
+zobj = ATL_zktrmvLCN.o ATL_zktrmvLCU.o ATL_zktrmvLNN.o ATL_zktrmvLNU.o \
+       ATL_zktrmvLNcN.o ATL_zktrmvLNcU.o ATL_zktrmvLTN.o ATL_zktrmvLTU.o \
+       ATL_zktrmvUCN.o ATL_zktrmvUCU.o ATL_zktrmvUNN.o ATL_zktrmvUNU.o \
+       ATL_zktrmvUNcN.o ATL_zktrmvUNcU.o ATL_zktrmvUTN.o ATL_zktrmvUTU.o \
+       ATL_ztrmv.o ATL_ztrmvLC.o ATL_ztrmvLN.o ATL_ztrmvLNc.o ATL_ztrmvLT.o \
+       ATL_ztrmvUC.o ATL_ztrmvUN.o ATL_ztrmvUNc.o ATL_ztrmvUT.o
+
+
+all : slib dlib clib zlib
+clean : sclean dclean cclean zclean
+
+slvl2 : slib
+slib : 
+	$(PMAKE) slib.grd
+slib.grd : $(sobj)
+	$(ARCHIVER) $(ARFLAGS) $(ATLASlib) $(sobj)
+	$(RANLIB) $(ATLASlib)
+	touch slib.grd
+sclean :
+	rm -f $(sobj) s*.grd
+dlvl2 : dlib
+dlib : 
+	$(PMAKE) dlib.grd
+dlib.grd : $(dobj)
+	$(ARCHIVER) $(ARFLAGS) $(ATLASlib) $(dobj)
+	$(RANLIB) $(ATLASlib)
+	touch dlib.grd
+dclean :
+	rm -f $(dobj) d*.grd
+clvl2 : clib
+clib : 
+	$(PMAKE) clib.grd
+clib.grd : $(cobj)
+	$(ARCHIVER) $(ARFLAGS) $(ATLASlib) $(cobj)
+	$(RANLIB) $(ATLASlib)
+	touch clib.grd
+cclean :
+	rm -f $(cobj) c*.grd
+zlvl2 : zlib
+zlib : 
+	$(PMAKE) zlib.grd
+zlib.grd : $(zobj)
+	$(ARCHIVER) $(ARFLAGS) $(ATLASlib) $(zobj)
+	$(RANLIB) $(ATLASlib)
+	touch zlib.grd
+zclean :
+	rm -f $(zobj) z*.grd
+
+ATL_strmv.o : ../ATL_trmv.c
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL ../ATL_trmv.c
+ATL_sktrmvUTU.o : ../kernel/ATL_ktrmvUTU.c
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL ../kernel/ATL_ktrmvUTU.c
+ATL_sktrmvUTN.o : ../kernel/ATL_ktrmvUTN.c
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL ../kernel/ATL_ktrmvUTN.c
+ATL_sktrmvUNU.o : ../kernel/ATL_ktrmvUNU.c
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL ../kernel/ATL_ktrmvUNU.c
+ATL_sktrmvUNN.o : ../kernel/ATL_ktrmvUNN.c
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL ../kernel/ATL_ktrmvUNN.c
+ATL_sktrmvLTU.o : ../kernel/ATL_ktrmvLTU.c
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL ../kernel/ATL_ktrmvLTU.c
+ATL_sktrmvLTN.o : ../kernel/ATL_ktrmvLTN.c
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL ../kernel/ATL_ktrmvLTN.c
+ATL_sktrmvLNU.o : ../kernel/ATL_ktrmvLNU.c
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL ../kernel/ATL_ktrmvLNU.c
+ATL_sktrmvLNN.o : ../kernel/ATL_ktrmvLNN.c
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL ../kernel/ATL_ktrmvLNN.c
+ATL_strmvLT.o : ../kernel/ATL_trmvLT.c
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL ../kernel/ATL_trmvLT.c
+ATL_strmvLN.o : ../kernel/ATL_trmvLN.c
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL ../kernel/ATL_trmvLN.c
+ATL_strmvUT.o : ../kernel/ATL_trmvUT.c
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL ../kernel/ATL_trmvUT.c
+ATL_strmvUN.o : ../kernel/ATL_trmvUN.c
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL ../kernel/ATL_trmvUN.c
+
+
+ATL_dtrmv.o : ../ATL_trmv.c
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL ../ATL_trmv.c
+ATL_dktrmvUTU.o : ../kernel/ATL_ktrmvUTU.c
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL ../kernel/ATL_ktrmvUTU.c
+ATL_dktrmvUTN.o : ../kernel/ATL_ktrmvUTN.c
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL ../kernel/ATL_ktrmvUTN.c
+ATL_dktrmvUNU.o : ../kernel/ATL_ktrmvUNU.c
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL ../kernel/ATL_ktrmvUNU.c
+ATL_dktrmvUNN.o : ../kernel/ATL_ktrmvUNN.c
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL ../kernel/ATL_ktrmvUNN.c
+ATL_dktrmvLTU.o : ../kernel/ATL_ktrmvLTU.c
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL ../kernel/ATL_ktrmvLTU.c
+ATL_dktrmvLTN.o : ../kernel/ATL_ktrmvLTN.c
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL ../kernel/ATL_ktrmvLTN.c
+ATL_dktrmvLNU.o : ../kernel/ATL_ktrmvLNU.c
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL ../kernel/ATL_ktrmvLNU.c
+ATL_dktrmvLNN.o : ../kernel/ATL_ktrmvLNN.c
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL ../kernel/ATL_ktrmvLNN.c
+ATL_dtrmvLT.o : ../kernel/ATL_trmvLT.c
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL ../kernel/ATL_trmvLT.c
+ATL_dtrmvLN.o : ../kernel/ATL_trmvLN.c
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL ../kernel/ATL_trmvLN.c
+ATL_dtrmvUT.o : ../kernel/ATL_trmvUT.c
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL ../kernel/ATL_trmvUT.c
+ATL_dtrmvUN.o : ../kernel/ATL_trmvUN.c
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL ../kernel/ATL_trmvUN.c
+
+
+ATL_ctrmv.o : ../ATL_trmv.c
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX ../ATL_trmv.c
+
+ATL_cktrmvUTU.o : ../kernel/ATL_ktrmvUTU.c
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX ../kernel/ATL_ktrmvUTU.c
+ATL_cktrmvUTN.o : ../kernel/ATL_ktrmvUTN.c
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX ../kernel/ATL_ktrmvUTN.c
+ATL_cktrmvUNU.o : ../kernel/ATL_ktrmvUNU.c
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX ../kernel/ATL_ktrmvUNU.c
+ATL_cktrmvUNN.o : ../kernel/ATL_ktrmvUNN.c
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX ../kernel/ATL_ktrmvUNN.c
+ATL_cktrmvLTU.o : ../kernel/ATL_ktrmvLTU.c
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX ../kernel/ATL_ktrmvLTU.c
+ATL_cktrmvLTN.o : ../kernel/ATL_ktrmvLTN.c
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX ../kernel/ATL_ktrmvLTN.c
+ATL_cktrmvLNU.o : ../kernel/ATL_ktrmvLNU.c
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX ../kernel/ATL_ktrmvLNU.c
+ATL_cktrmvLNN.o : ../kernel/ATL_ktrmvLNN.c
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX ../kernel/ATL_ktrmvLNN.c
+ATL_cktrmvUNcU.o : ../kernel/ATL_ktrmvUNcU.c
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX ../kernel/ATL_ktrmvUNcU.c
+ATL_cktrmvUNcN.o : ../kernel/ATL_ktrmvUNcN.c
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX ../kernel/ATL_ktrmvUNcN.c
+ATL_cktrmvUCU.o : ../kernel/ATL_ktrmvUCU.c
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX ../kernel/ATL_ktrmvUCU.c
+ATL_cktrmvUCN.o : ../kernel/ATL_ktrmvUCN.c
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX ../kernel/ATL_ktrmvUCN.c
+ATL_cktrmvLNcU.o : ../kernel/ATL_ktrmvLNcU.c
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX ../kernel/ATL_ktrmvLNcU.c
+ATL_cktrmvLNcN.o : ../kernel/ATL_ktrmvLNcN.c
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX ../kernel/ATL_ktrmvLNcN.c
+ATL_cktrmvLCU.o : ../kernel/ATL_ktrmvLCU.c
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX ../kernel/ATL_ktrmvLCU.c
+ATL_cktrmvLCN.o : ../kernel/ATL_ktrmvLCN.c
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX ../kernel/ATL_ktrmvLCN.c
+ATL_ctrmvLT.o : ../kernel/ATL_trmvLT.c
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX ../kernel/ATL_trmvLT.c
+ATL_ctrmvLN.o : ../kernel/ATL_trmvLN.c
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX ../kernel/ATL_trmvLN.c
+ATL_ctrmvUT.o : ../kernel/ATL_trmvUT.c
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX ../kernel/ATL_trmvUT.c
+ATL_ctrmvUN.o : ../kernel/ATL_trmvUN.c
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX ../kernel/ATL_trmvUN.c
+ATL_ctrmvLNc.o : ../kernel/ATL_trmvLN.c
+	$(CC) -o $@ -c $(CCFLAGS) -DConj_ -DSCPLX \
+              ../kernel/ATL_trmvLN.c
+ATL_ctrmvLC.o : ../kernel/ATL_trmvLT.c
+	$(CC) -o $@ -c $(CCFLAGS) -DConj_ -DSCPLX \
+              ../kernel/ATL_trmvLT.c
+ATL_ctrmvUNc.o : ../kernel/ATL_trmvUN.c
+	$(CC) -o $@ -c $(CCFLAGS) -DConj_ -DSCPLX \
+              ../kernel/ATL_trmvUN.c
+ATL_ctrmvUC.o : ../kernel/ATL_trmvUT.c
+	$(CC) -o $@ -c $(CCFLAGS) -DConj_ -DSCPLX \
+              ../kernel/ATL_trmvUT.c
+
+
+ATL_ztrmv.o : ../ATL_trmv.c
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX ../ATL_trmv.c
+
+ATL_zktrmvUTU.o : ../kernel/ATL_ktrmvUTU.c
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX ../kernel/ATL_ktrmvUTU.c
+ATL_zktrmvUTN.o : ../kernel/ATL_ktrmvUTN.c
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX ../kernel/ATL_ktrmvUTN.c
+ATL_zktrmvUNU.o : ../kernel/ATL_ktrmvUNU.c
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX ../kernel/ATL_ktrmvUNU.c
+ATL_zktrmvUNN.o : ../kernel/ATL_ktrmvUNN.c
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX ../kernel/ATL_ktrmvUNN.c
+ATL_zktrmvLTU.o : ../kernel/ATL_ktrmvLTU.c
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX ../kernel/ATL_ktrmvLTU.c
+ATL_zktrmvLTN.o : ../kernel/ATL_ktrmvLTN.c
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX ../kernel/ATL_ktrmvLTN.c
+ATL_zktrmvLNU.o : ../kernel/ATL_ktrmvLNU.c
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX ../kernel/ATL_ktrmvLNU.c
+ATL_zktrmvLNN.o : ../kernel/ATL_ktrmvLNN.c
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX ../kernel/ATL_ktrmvLNN.c
+ATL_zktrmvUNcU.o : ../kernel/ATL_ktrmvUNcU.c
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX ../kernel/ATL_ktrmvUNcU.c
+ATL_zktrmvUNcN.o : ../kernel/ATL_ktrmvUNcN.c
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX ../kernel/ATL_ktrmvUNcN.c
+ATL_zktrmvUCU.o : ../kernel/ATL_ktrmvUCU.c
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX ../kernel/ATL_ktrmvUCU.c
+ATL_zktrmvUCN.o : ../kernel/ATL_ktrmvUCN.c
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX ../kernel/ATL_ktrmvUCN.c
+ATL_zktrmvLNcU.o : ../kernel/ATL_ktrmvLNcU.c
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX ../kernel/ATL_ktrmvLNcU.c
+ATL_zktrmvLNcN.o : ../kernel/ATL_ktrmvLNcN.c
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX ../kernel/ATL_ktrmvLNcN.c
+ATL_zktrmvLCU.o : ../kernel/ATL_ktrmvLCU.c
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX ../kernel/ATL_ktrmvLCU.c
+ATL_zktrmvLCN.o : ../kernel/ATL_ktrmvLCN.c
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX ../kernel/ATL_ktrmvLCN.c
+ATL_ztrmvLT.o : ../kernel/ATL_trmvLT.c
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX ../kernel/ATL_trmvLT.c
+ATL_ztrmvLN.o : ../kernel/ATL_trmvLN.c
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX ../kernel/ATL_trmvLN.c
+ATL_ztrmvUT.o : ../kernel/ATL_trmvUT.c
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX ../kernel/ATL_trmvUT.c
+ATL_ztrmvUN.o : ../kernel/ATL_trmvUN.c
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX ../kernel/ATL_trmvUN.c
+ATL_ztrmvLNc.o : ../kernel/ATL_trmvLN.c
+	$(CC) -o $@ -c $(CCFLAGS) -DConj_ -DDCPLX \
+              ../kernel/ATL_trmvLN.c
+ATL_ztrmvLC.o : ../kernel/ATL_trmvLT.c
+	$(CC) -o $@ -c $(CCFLAGS) -DConj_ -DDCPLX \
+              ../kernel/ATL_trmvLT.c
+ATL_ztrmvUNc.o : ../kernel/ATL_trmvUN.c
+	$(CC) -o $@ -c $(CCFLAGS) -DConj_ -DDCPLX \
+              ../kernel/ATL_trmvUN.c
+ATL_ztrmvUC.o : ../kernel/ATL_trmvUT.c
+	$(CC) -o $@ -c $(CCFLAGS) -DConj_ -DDCPLX \
+              ../kernel/ATL_trmvUT.c
+
+

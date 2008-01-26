@@ -1,0 +1,22 @@
+
+topd = /home/rwhaley/atlas3.5/AtlasBase
+incs = -def topd /home/rwhaley/atlas3.5/AtlasBase \
+       -def incd /home/rwhaley/atlas3.5/AtlasBase/Clint \
+       -def BASEdir /home/rwhaley/atlas3.5/AtlasBase/Antoine/ \
+       -def basd /home/rwhaley/atlas3.5/AtlasBase/Clint
+ext  = extract
+extF = $(ext) -langF -lnlen71 -Remtblank -llwarn2 -LAPACK1 $(incs)
+extC = $(ext) -langC -lnlen79 -Remtblank -llwarn2 $(incs)
+extM = $(ext) -langM -lnlen79 -llwarn2 $(incs)
+
+default: all
+force_build:
+basd = /home/rwhaley/atlas3.5/AtlasBase/Clint
+basdRCW = /home/rwhaley/atlas3.5/AtlasBase/Clint
+basdAPP = /home/rwhaley/atlas3.5/AtlasBase/Antoine
+incf = /home/rwhaley/atlas3.5/AtlasBase/gen.inc
+
+all : test_dynlink.c
+test_dynlink.c:
+	cp $(basdRCW)/misc/test_dynlink.c .
+all :

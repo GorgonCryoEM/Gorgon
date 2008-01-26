@@ -1,0 +1,10 @@
+
+
+There is a compiler error in Sun WorkShop cc 5.0 (and the 4.X versions as well),
+which causes ATLAS's Level 3 BLAS routines to bus error.
+   http://math-atlas.sourceforge.net/errata.html
+Should have any new information on this bug.  In the meantime, the error
+goes away if you compile these routines with gcc.  If you have gcc on your
+machine, use it for this compilation.  Otherwise, be aware that the some
+of the BLAS may fail.
+

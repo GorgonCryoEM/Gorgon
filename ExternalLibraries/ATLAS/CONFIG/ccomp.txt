@@ -1,0 +1,17 @@
+
+
+I am now going to ask for two C compilers, and their associated flags.
+The first such set (CC & CCFLAGS) are used in compiling the non-generated
+ATLAS code.  This code is written in normal C, and responds well to high
+levels of optimization.  Typically, this is set to your default compiler,
+and your highest levels of optimization.
+
+The second set of C compilers (MCC & MMFLAGS) is used to compile the generated
+ATLAS code.  Generated codes are written at a very low-level (think of C used
+as a kind of portable assembler).  On many platforms, high levels of
+optimization are detrimental, as the compiler tries to pipeline a perfectly
+pipelined code, and succeeds in reducing performance substantially (this
+occurs on DEC ALPHAs & Sun UltraSparcs, for instance).  If the default does
+not work for you, try a midrange optimization such as -O.  The generated code
+does not alias any output arguments, so aliasing optimizations should be OK.
+

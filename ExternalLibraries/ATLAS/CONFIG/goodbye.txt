@@ -1,0 +1,3 @@
+
+Configuration complete.  You should examine the created make include file
+and make sure it is accurate.  If it is, you are ready to install the libraries.

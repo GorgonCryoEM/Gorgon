@@ -1,0 +1,148 @@
+2003-05-23  Aaron A. King  <king@quercus.tiem.utk.edu>
+
+	* CholeskyDecomposition.cc, EigenDecomposition.cc, LUDecomposition.cc, Minimization.cc, Odessa.cc, QRDecomposition.cc, SVDecomposition.cc:
+	namespace bugfix
+
+	* CholeskyDecomposition.cc, EigenDecomposition.cc, LUDecomposition.cc, Minimization.cc, Odessa.cc, QRDecomposition.cc, SVDecomposition.cc:
+	namespace support added
+
+2002-12-18  Aaron A. King  <king@quercus.tiem.utk.edu>
+
+	* rand.c: Knuth's code
+
+2002-12-18  Aaron King  <king@nyssa.localdomain>
+
+	* rand.c: Knuth's code
+
+2002-12-17  Aaron King  <king@nyssa.localdomain>
+
+	* CholeskyDecomposition.cc, EigenDecomposition.cc, LUDecomposition.cc, Minimization.cc, Odessa.cc, QRDecomposition.cc, SVDecomposition.cc:
+	fixed for g++-3.2
+
+2000-09-29  aking  <aking@nyssa.localdomain>
+
+	* CholeskyDecomposition.cc, EigenDecomposition.cc, LUDecomposition.cc, Odessa.cc, SVDecomposition.cc:
+	new simplified hierarchy
+
+2000-08-15  aking  <aking@nyssa.localdomain>
+
+	* Minimization.cc: *** empty log message ***
+
+2000-08-11  aking  <aking@nyssa.localdomain>
+
+	* CholeskyDecomposition.cc, EigenDecomposition.cc, Minimization.cc:
+	*** empty log message ***
+
+2000-08-09  aking  <aking@nyssa.localdomain>
+
+	* Minimization.cc: *** empty log message ***
+
+2000-08-08  aking  <aking@nyssa.localdomain>
+
+	* Minimization.cc: *** empty log message ***
+
+2000-08-07  aking  <aking@nyssa.localdomain>
+
+	* Minimization.cc: *** empty log message ***
+
+	* Minimization.cc: New file.
+
+2000-06-08  aking  <aking@nyssa.localdomain>
+
+	* Odessa.cc: *** empty log message ***
+
+2000-06-07  aking  <aking@nyssa.localdomain>
+
+	* CholeskyDecomposition.cc, EigenDecomposition.cc, LUDecomposition.cc, Odessa.cc, QRDecomposition.cc, SVDecomposition.cc:
+	.
+
+	* Odessa.cc: New file.
+
+2000-06-03  aking  <aking@nyssa.localdomain>
+
+	* Diffeomorphism.cc, SVDecomposition.cc, QRDecomposition.cc, LUDecomposition.cc:
+	*** empty log message ***
+
+2000-06-02  aking  <aking@nyssa.localdomain>
+
+	* CholeskyDecomposition.cc, EigenDecomposition.cc, LUDecomposition.cc, SVDecomposition.cc:
+	.
+
+2000-05-24  aking  <aking@nyssa.localdomain>
+
+	* EigenDecomposition.cc, LUDecomposition.cc, NewtonRaphson.cc:
+	*** empty log message ***
+
+2000-05-23  aking  <aking@nyssa.localdomain>
+
+	* Diffeomorphism.cc, NewtonRaphson.cc: *** empty log message ***
+
+2000-05-22  aking  <aking@nyssa.localdomain>
+
+	* Diffeomorphism.cc: *** empty log message ***
+
+2000-05-19  aking  <aking@nyssa.localdomain>
+
+	* SVDecomposition.cc, Diffeomorphism.cc: *** empty log message ***
+
+2000-05-18  aking  <aking@nyssa.localdomain>
+
+	* LUDecomposition.cc: *** empty log message ***
+
+2000-05-17  aking  <aking@nyssa.localdomain>
+
+	* SVDecomposition.cc: *** empty log message ***
+
+2000-05-15  aking  <aking@nyssa.localdomain>
+
+	* QRDecomposition.cc: New file.
+
+2000-05-13  aking  <aking@nyssa.localdomain>
+
+	* SVDecomposition.cc, NewtonRaphson.cc: *** empty log message ***
+
+	* Diffeomorphism.cc: New file.
+
+2000-05-12  aking  <aking@nyssa.localdomain>
+
+	* EigenDecomposition.cc, CholeskyDecomposition.cc:
+	*** empty log message ***
+
+2000-05-11  aking  <aking@nyssa.localdomain>
+
+	* CholeskyDecomposition.cc: New file.
+
+	* SVDecomposition.cc: *** empty log message ***
+
+2000-05-08  aking  <aking@nyssa.localdomain>
+
+	* NewtonRaphson.cc, EigenDecomposition.cc, LUDecomposition.cc, SVDecomposition.cc:
+	*** empty log message ***
+
+2000-05-05  aking  <aking@nyssa.localdomain>
+
+	* EigenDecomposition.cc: *** empty log message ***
+
+2000-05-04  aking  <aking@nyssa.localdomain>
+
+	* LUDecomposition.cc, SVDecomposition.cc: *** empty log message ***
+
+2000-05-03  aking  <aking@nyssa.localdomain>
+
+	* NewtonRaphson.cc: *** empty log message ***
+
+	* d1mach.c, machar.c: New file.
+
+	* NewtonRaphson.cc: *** empty log message ***
+
+	* NewtonRaphson.cc: New file.
+
+2000-04-28  aking  <aking@nyssa.localdomain>
+
+	* EigenDecomposition.cc, LUDecomposition.cc, SVDecomposition.cc:
+	New file.
+
+2000-03-20  aking  <aking@nyssa.localdomain>
+
+	* rand.c: New file.
+

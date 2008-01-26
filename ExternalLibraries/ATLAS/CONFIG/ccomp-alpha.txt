@@ -1,0 +1,10 @@
+
+
+I see you are using a DEC ALPHA.  Gcc 3.0 is the best compiler for ATLAS
+for these platforms.  It appears that DEC's cc reserves several registers
+(probably for use in software pipelining), that prevents ATLAS from achieving
+maximal performance.  I therefore recommend that you use gcc 3.0 as for all C
+compilation, rather than cc.
+
+If you don't have gcc 3.0 installed, I recommend you do so.  Older gccs and
+OSF1's cc will not yield as good performance.

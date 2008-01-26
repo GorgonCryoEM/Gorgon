@@ -1,0 +1,671 @@
+include Make.inc
+
+$(INCdir)/atlas_type.h :
+	cd $(SYSdir) ; $(MAKE) RunTyp
+
+
+all : lib
+lib : dlib slib zlib clib
+double    : dlib
+single    : slib
+complex   : clib
+complex16 : zlib
+
+
+clean : dclean sclean cclean zclean
+	rm -f KERNEL/*.o
+
+sINCdep = $(INCdir)/../atlas_misc.h $(INCdir)/atlas_type.h \
+          $(INCdir)/smm.h $(INCdir)/../atlas_lvl3.h
+
+sobj = ATL_sMBJBmm.o ATL_sIBNBmm.o ATL_sIBJBmm.o ATL_sgemm.o ATL_sGetNB.o \
+       ATL_sGetNCNB.o ATL_sgemmNN.o ATL_sgemmNT.o ATL_sgemmTN.o ATL_sgemmTT.o \
+       ATL_sNCmmIJK.o ATL_sNCmmJIK.o ATL_sNCmmIJK_c.o ATL_sNCmmJIK_c.o \
+       ATL_saliased_gemm.o ATL_sAgemmNN.o ATL_sAgemmNT.o ATL_sAgemmTN.o \
+       ATL_sAgemmTT.o ATL_smmJIK.o ATL_smmIJK.o ATL_scol2blk_aX.o \
+       ATL_srow2blkT_aX.o ATL_scol2blk_a1.o ATL_srow2blkT_a1.o \
+       ATL_sputblk_bX.o ATL_sputblk_b1.o ATL_sputblk_bn1.o ATL_sputblk_b0.o
+
+dINCdep = $(INCdir)/../atlas_misc.h $(INCdir)/atlas_type.h \
+          $(INCdir)/dmm.h $(INCdir)/../atlas_lvl3.h
+
+dobj = ATL_dMBJBmm.o ATL_dIBNBmm.o ATL_dIBJBmm.o ATL_dgemm.o ATL_dGetNB.o \
+       ATL_dGetNCNB.o ATL_dgemmNN.o ATL_dgemmNT.o ATL_dgemmTN.o ATL_dgemmTT.o \
+       ATL_dNCmmIJK.o ATL_dNCmmJIK.o ATL_dNCmmIJK_c.o ATL_dNCmmJIK_c.o \
+       ATL_daliased_gemm.o ATL_dAgemmNN.o ATL_dAgemmNT.o ATL_dAgemmTN.o \
+       ATL_dAgemmTT.o ATL_dmmJIK.o ATL_dmmIJK.o ATL_dcol2blk_aX.o \
+       ATL_drow2blkT_aX.o ATL_dcol2blk_a1.o ATL_drow2blkT_a1.o \
+       ATL_dputblk_bX.o ATL_dputblk_b1.o ATL_dputblk_bn1.o ATL_dputblk_b0.o
+
+cINCdep = $(INCdir)/../atlas_misc.h $(INCdir)/atlas_type.h \
+          $(INCdir)/cmm.h $(INCdir)/../atlas_lvl3.h
+
+cobj = ATL_cMBJBmm.o ATL_cIBNBmm.o ATL_cIBJBmm.o ATL_cgemm.o ATL_cGetNB.o \
+       ATL_cGetNCNB.o ATL_cgemmNN.o ATL_cgemmNT.o ATL_cgemmTN.o ATL_cgemmTT.o \
+       ATL_cNCmmIJK.o ATL_cNCmmJIK.o ATL_cNCmmIJK_c.o ATL_cNCmmJIK_c.o \
+       ATL_caliased_gemm.o ATL_cAgemmNN.o ATL_cAgemmNT.o ATL_cAgemmTN.o \
+       ATL_cAgemmTT.o ATL_cmmJIK.o ATL_cmmIJK.o ATL_cAgemmNC.o ATL_cAgemmTC.o \
+       ATL_cAgemmCN.o ATL_cAgemmCT.o ATL_cAgemmCC.o ATL_cCNBmm_b0.o \
+       ATL_cCNBmm_b1.o ATL_cCNBmm_bX.o ATL_cgemmNC.o ATL_cgemmCN.o \
+       ATL_cgemmTC.o ATL_cgemmCT.o ATL_cgemmCC.o ATL_ccol2blk_aXi0.o \
+       ATL_crow2blkT_aXi0.o ATL_ccol2blkConj_aXi0.o ATL_crow2blkC_aXi0.o \
+       ATL_ccol2blk_aX.o ATL_crow2blkT_aX.o ATL_ccol2blkConj_aX.o \
+       ATL_crow2blkC_aX.o ATL_ccol2blk_a1.o ATL_crow2blkT_a1.o \
+       ATL_ccol2blkConj_a1.o ATL_crow2blkC_a1.o ATL_cputblk_bXi0.o \
+       ATL_cputblk_bX.o ATL_cputblk_b1.o ATL_cputblk_bn1.o ATL_cputblk_b0.o
+
+zINCdep = $(INCdir)/../atlas_misc.h $(INCdir)/atlas_type.h \
+          $(INCdir)/zmm.h $(INCdir)/../atlas_lvl3.h
+
+zobj = ATL_zMBJBmm.o ATL_zIBNBmm.o ATL_zIBJBmm.o ATL_zgemm.o ATL_zGetNB.o \
+       ATL_zGetNCNB.o ATL_zgemmNN.o ATL_zgemmNT.o ATL_zgemmTN.o ATL_zgemmTT.o \
+       ATL_zNCmmIJK.o ATL_zNCmmJIK.o ATL_zNCmmIJK_c.o ATL_zNCmmJIK_c.o \
+       ATL_zaliased_gemm.o ATL_zAgemmNN.o ATL_zAgemmNT.o ATL_zAgemmTN.o \
+       ATL_zAgemmTT.o ATL_zmmJIK.o ATL_zmmIJK.o ATL_zAgemmNC.o ATL_zAgemmTC.o \
+       ATL_zAgemmCN.o ATL_zAgemmCT.o ATL_zAgemmCC.o ATL_zCNBmm_b0.o \
+       ATL_zCNBmm_b1.o ATL_zCNBmm_bX.o ATL_zgemmNC.o ATL_zgemmCN.o \
+       ATL_zgemmTC.o ATL_zgemmCT.o ATL_zgemmCC.o ATL_zcol2blk_aXi0.o \
+       ATL_zrow2blkT_aXi0.o ATL_zcol2blkConj_aXi0.o ATL_zrow2blkC_aXi0.o \
+       ATL_zcol2blk_aX.o ATL_zrow2blkT_aX.o ATL_zcol2blkConj_aX.o \
+       ATL_zrow2blkC_aX.o ATL_zcol2blk_a1.o ATL_zrow2blkT_a1.o \
+       ATL_zcol2blkConj_a1.o ATL_zrow2blkC_a1.o ATL_zputblk_bXi0.o \
+       ATL_zputblk_bX.o ATL_zputblk_b1.o ATL_zputblk_bn1.o ATL_zputblk_b0.o
+
+
+auxillib :
+	cd $(AUXdir) ; $(MAKE) lib
+sclean :
+	rm -f $(sobj) s*.grd
+scleanuplib :
+	cd KERNEL ; $(MAKE) -f sMakefile slib
+
+slib : 
+	$(MAKE) auxillib scleanuplib susergemm
+	$(PMAKE) slib.grd
+slib.grd : $(sobj) ATL_sbig_mm.o ATL_ssmall_mm.o
+	$(ARCHIVER) $(ARFLAGS) $(ATLASlib) $(sobj)
+	$(RANLIB) $(ATLASlib)
+	touch slib.grd
+
+susergemm :
+	cd $(UMMdir) ; $(MAKE) susermm
+
+susermm :
+	touch susermm
+ATL_sgemmNN.o : ../ATL_gemmXX.c $(sINCdep) $(INCdir)/atlas_cacheedge.h
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL \
+              -DNoTransA_ -DNoTransB_ ../ATL_gemmXX.c
+ATL_sAgemmNN.o : ../ATL_AgemmXX.c $(sINCdep) $(INCdir)/atlas_cacheedge.h
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL \
+              -DNoTransA_ -DNoTransB_ ../ATL_AgemmXX.c
+ATL_sgemmNT.o : ../ATL_gemmXX.c $(sINCdep) $(INCdir)/atlas_cacheedge.h
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL \
+              -DNoTransA_ -DTransB_ ../ATL_gemmXX.c
+ATL_sAgemmNT.o : ../ATL_AgemmXX.c $(sINCdep) $(INCdir)/atlas_cacheedge.h
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL \
+              -DNoTransA_ -DTransB_ ../ATL_AgemmXX.c
+ATL_sgemmTN.o : ../ATL_gemmXX.c $(sINCdep) $(INCdir)/atlas_cacheedge.h
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL \
+              -DTransA_ -DNoTransB_ ../ATL_gemmXX.c
+ATL_sAgemmTN.o : ../ATL_AgemmXX.c $(sINCdep) $(INCdir)/atlas_cacheedge.h
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL \
+              -DTransA_ -DNoTransB_ ../ATL_AgemmXX.c
+ATL_sgemmTT.o : ../ATL_gemmXX.c $(sINCdep) $(INCdir)/atlas_cacheedge.h
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL \
+              -DTransA_ -DTransB_ ../ATL_gemmXX.c
+ATL_sAgemmTT.o : ../ATL_AgemmXX.c $(sINCdep) $(INCdir)/atlas_cacheedge.h
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL \
+              -DTransA_ -DTransB_ ../ATL_AgemmXX.c
+
+ATL_sIBNBmm.o : ../ATL_IBNBmm.c $(sINCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL ../ATL_IBNBmm.c
+ATL_sMBJBmm.o : ../ATL_MBJBmm.c $(sINCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL ../ATL_MBJBmm.c
+ATL_sIBJBmm.o : ../ATL_IBJBmm.c $(sINCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL ../ATL_IBJBmm.c
+ATL_smmJIK.o : ../ATL_mmJIK.c $(sINCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL ../ATL_mmJIK.c
+ATL_smmIJK.o : ../ATL_mmIJK.c $(sINCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL ../ATL_mmIJK.c
+
+ATL_srow2blkT_aX.o : ../ATL_row2blkT.c $(sINCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL -DALPHAX ../ATL_row2blkT.c
+ATL_scol2blk_aX.o : ../ATL_col2blk.c $(sINCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL -DALPHAX ../ATL_col2blk.c
+ATL_srow2blkT_a1.o : ../ATL_row2blkT.c $(sINCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL -DALPHA1 ../ATL_row2blkT.c
+ATL_scol2blk_a1.o : ../ATL_col2blk.c $(sINCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL -DALPHA1 ../ATL_col2blk.c
+ATL_sNCmmJIK_c.o : ../ATL_NCmmJIK_c.c $(sINCdep) \
+                  $(INCdir)/sXover.h $(INCdir)/atlas_cacheedge.h
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL   ../ATL_NCmmJIK_c.c
+ATL_sNCmmJIK.o : ../ATL_NCmmJIK.c $(sINCdep) \
+                  $(INCdir)/sXover.h $(INCdir)/atlas_cacheedge.h
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL   ../ATL_NCmmJIK.c
+ATL_sNCmmIJK_c.o : ../ATL_NCmmIJK_c.c $(sINCdep) \
+                  $(INCdir)/sXover.h $(INCdir)/atlas_cacheedge.h
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL   ../ATL_NCmmIJK_c.c
+ATL_sNCmmIJK.o : ../ATL_NCmmIJK.c $(sINCdep) \
+                  $(INCdir)/sXover.h $(INCdir)/atlas_cacheedge.h
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL   ../ATL_NCmmIJK.c
+
+ATL_sGetNCNB.o : ../ATL_GetNCNB.c $(sINCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL ../ATL_GetNCNB.c
+ATL_sGetNB.o : ../ATL_GetNB.c $(sINCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL ../ATL_GetNB.c
+
+ATL_sputblk_bX.o : ../ATL_putblk.c $(sINCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL -DBETAX ../ATL_putblk.c
+ATL_sputblk_bn1.o : ../ATL_putblk.c $(sINCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL -DBETAN1 ../ATL_putblk.c
+ATL_sputblk_b1.o : ../ATL_putblk.c $(sINCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL -DBETA1 ../ATL_putblk.c
+ATL_sputblk_b0.o : ../ATL_putblk.c $(sINCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL -DBETA0 ../ATL_putblk.c
+
+ATL_saliased_gemm.o : ../ATL_gemm.c ../ATL_AgemmXX.c $(sINCdep) \
+                           $(INCdir)/sXover.h $(INCdir)/atlas_cacheedge.h
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL -DALIASED_GEMM -I./ \
+              ../ATL_gemm.c
+
+ATL_ssmall_mm.o : ../ATL_gemm.c ../ATL_gemmXX.c $(sINCdep) \
+                  $(INCdir)/sXover.h $(INCdir)/atlas_cacheedge.h
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL -DSMALL_MM -I./ \
+              ../ATL_gemm.c
+ATL_sbig_mm.o : ../ATL_gemm.c ../ATL_gemmXX.c $(sINCdep) \
+                  $(INCdir)/sXover.h $(INCdir)/atlas_cacheedge.h
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL -DBIG_MM -I./ \
+              ../ATL_gemm.c
+ATL_sgemm.o : ../ATL_gemm.c ../ATL_gemmXX.c $(sINCdep) \
+                  $(INCdir)/atlas_cacheedge.h $(INCdir)/sXover.h
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL -DATLGEMM -I./ \
+              ../ATL_gemm.c
+ATL_sFindCE_mm.o : ../ATL_gemm.c ../ATL_gemmXX.c $(sINCdep) \
+                        $(INCdir)/sXover.h
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL -DFindingCE -I./ ../ATL_gemm.c
+
+ATL_sNCgemm.o : ../ATL_NCgemm.c $(sINCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSREAL ../ATL_NCgemm.c
+
+dclean :
+	rm -f $(dobj) d*.grd
+dcleanuplib :
+	cd KERNEL ; $(MAKE) -f dMakefile dlib
+
+dlib : 
+	$(MAKE) auxillib dcleanuplib dusergemm
+	$(PMAKE) dlib.grd
+dlib.grd : $(dobj) ATL_dbig_mm.o ATL_dsmall_mm.o
+	$(ARCHIVER) $(ARFLAGS) $(ATLASlib) $(dobj)
+	$(RANLIB) $(ATLASlib)
+	touch dlib.grd
+
+dusergemm :
+	cd $(UMMdir) ; $(MAKE) dusermm
+
+dusermm :
+	touch dusermm
+ATL_dgemmNN.o : ../ATL_gemmXX.c $(dINCdep) $(INCdir)/atlas_cacheedge.h
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL \
+              -DNoTransA_ -DNoTransB_ ../ATL_gemmXX.c
+ATL_dAgemmNN.o : ../ATL_AgemmXX.c $(dINCdep) $(INCdir)/atlas_cacheedge.h
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL \
+              -DNoTransA_ -DNoTransB_ ../ATL_AgemmXX.c
+ATL_dgemmNT.o : ../ATL_gemmXX.c $(dINCdep) $(INCdir)/atlas_cacheedge.h
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL \
+              -DNoTransA_ -DTransB_ ../ATL_gemmXX.c
+ATL_dAgemmNT.o : ../ATL_AgemmXX.c $(dINCdep) $(INCdir)/atlas_cacheedge.h
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL \
+              -DNoTransA_ -DTransB_ ../ATL_AgemmXX.c
+ATL_dgemmTN.o : ../ATL_gemmXX.c $(dINCdep) $(INCdir)/atlas_cacheedge.h
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL \
+              -DTransA_ -DNoTransB_ ../ATL_gemmXX.c
+ATL_dAgemmTN.o : ../ATL_AgemmXX.c $(dINCdep) $(INCdir)/atlas_cacheedge.h
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL \
+              -DTransA_ -DNoTransB_ ../ATL_AgemmXX.c
+ATL_dgemmTT.o : ../ATL_gemmXX.c $(dINCdep) $(INCdir)/atlas_cacheedge.h
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL \
+              -DTransA_ -DTransB_ ../ATL_gemmXX.c
+ATL_dAgemmTT.o : ../ATL_AgemmXX.c $(dINCdep) $(INCdir)/atlas_cacheedge.h
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL \
+              -DTransA_ -DTransB_ ../ATL_AgemmXX.c
+
+ATL_dIBNBmm.o : ../ATL_IBNBmm.c $(dINCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL ../ATL_IBNBmm.c
+ATL_dMBJBmm.o : ../ATL_MBJBmm.c $(dINCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL ../ATL_MBJBmm.c
+ATL_dIBJBmm.o : ../ATL_IBJBmm.c $(dINCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL ../ATL_IBJBmm.c
+ATL_dmmJIK.o : ../ATL_mmJIK.c $(dINCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL ../ATL_mmJIK.c
+ATL_dmmIJK.o : ../ATL_mmIJK.c $(dINCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL ../ATL_mmIJK.c
+
+ATL_drow2blkT_aX.o : ../ATL_row2blkT.c $(dINCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL -DALPHAX ../ATL_row2blkT.c
+ATL_dcol2blk_aX.o : ../ATL_col2blk.c $(dINCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL -DALPHAX ../ATL_col2blk.c
+ATL_drow2blkT_a1.o : ../ATL_row2blkT.c $(dINCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL -DALPHA1 ../ATL_row2blkT.c
+ATL_dcol2blk_a1.o : ../ATL_col2blk.c $(dINCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL -DALPHA1 ../ATL_col2blk.c
+ATL_dNCmmJIK_c.o : ../ATL_NCmmJIK_c.c $(dINCdep) \
+                  $(INCdir)/dXover.h $(INCdir)/atlas_cacheedge.h
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL   ../ATL_NCmmJIK_c.c
+ATL_dNCmmJIK.o : ../ATL_NCmmJIK.c $(dINCdep) \
+                  $(INCdir)/dXover.h $(INCdir)/atlas_cacheedge.h
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL   ../ATL_NCmmJIK.c
+ATL_dNCmmIJK_c.o : ../ATL_NCmmIJK_c.c $(dINCdep) \
+                  $(INCdir)/dXover.h $(INCdir)/atlas_cacheedge.h
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL   ../ATL_NCmmIJK_c.c
+ATL_dNCmmIJK.o : ../ATL_NCmmIJK.c $(dINCdep) \
+                  $(INCdir)/dXover.h $(INCdir)/atlas_cacheedge.h
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL   ../ATL_NCmmIJK.c
+
+ATL_dGetNCNB.o : ../ATL_GetNCNB.c $(dINCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL ../ATL_GetNCNB.c
+ATL_dGetNB.o : ../ATL_GetNB.c $(dINCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL ../ATL_GetNB.c
+
+ATL_dputblk_bX.o : ../ATL_putblk.c $(dINCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL -DBETAX ../ATL_putblk.c
+ATL_dputblk_bn1.o : ../ATL_putblk.c $(dINCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL -DBETAN1 ../ATL_putblk.c
+ATL_dputblk_b1.o : ../ATL_putblk.c $(dINCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL -DBETA1 ../ATL_putblk.c
+ATL_dputblk_b0.o : ../ATL_putblk.c $(dINCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL -DBETA0 ../ATL_putblk.c
+
+ATL_daliased_gemm.o : ../ATL_gemm.c ../ATL_AgemmXX.c $(dINCdep) \
+                           $(INCdir)/dXover.h $(INCdir)/atlas_cacheedge.h
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL -DALIASED_GEMM -I./ \
+              ../ATL_gemm.c
+
+ATL_dsmall_mm.o : ../ATL_gemm.c ../ATL_gemmXX.c $(dINCdep) \
+                  $(INCdir)/dXover.h $(INCdir)/atlas_cacheedge.h
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL -DSMALL_MM -I./ \
+              ../ATL_gemm.c
+ATL_dbig_mm.o : ../ATL_gemm.c ../ATL_gemmXX.c $(dINCdep) \
+                  $(INCdir)/dXover.h $(INCdir)/atlas_cacheedge.h
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL -DBIG_MM -I./ \
+              ../ATL_gemm.c
+ATL_dgemm.o : ../ATL_gemm.c ../ATL_gemmXX.c $(dINCdep) \
+                  $(INCdir)/atlas_cacheedge.h $(INCdir)/dXover.h
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL -DATLGEMM -I./ \
+              ../ATL_gemm.c
+ATL_dFindCE_mm.o : ../ATL_gemm.c ../ATL_gemmXX.c $(dINCdep) \
+                        $(INCdir)/dXover.h
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL -DFindingCE -I./ ../ATL_gemm.c
+
+ATL_dNCgemm.o : ../ATL_NCgemm.c $(dINCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDREAL ../ATL_NCgemm.c
+
+cclean :
+	rm -f $(cobj) c*.grd
+ccleanuplib :
+	cd KERNEL ; $(MAKE) -f cMakefile clib
+
+clib : 
+	$(MAKE) auxillib ccleanuplib cusergemm
+	$(PMAKE) clib.grd
+clib.grd : $(cobj) ATL_cbig_mm.o ATL_csmall_mm.o
+	$(ARCHIVER) $(ARFLAGS) $(ATLASlib) $(cobj)
+	$(RANLIB) $(ATLASlib)
+	touch clib.grd
+
+cusergemm :
+	cd $(UMMdir) ; $(MAKE) cusermm
+
+cusermm :
+	touch cusermm
+ATL_cgemmNN.o : ../ATL_gemmXX.c $(cINCdep) $(INCdir)/atlas_cacheedge.h
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX \
+              -DNoTransA_ -DNoTransB_ ../ATL_gemmXX.c
+ATL_cAgemmNN.o : ../ATL_AgemmXX.c $(cINCdep) $(INCdir)/atlas_cacheedge.h
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX -DNoTransA_ -DNoTransB_ \
+              -DALIASED_GEMM ../ATL_AgemmXX.c
+ATL_cgemmNT.o : ../ATL_gemmXX.c $(cINCdep) $(INCdir)/atlas_cacheedge.h
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX \
+              -DNoTransA_ -DTransB_ ../ATL_gemmXX.c
+ATL_cAgemmNT.o : ../ATL_AgemmXX.c $(cINCdep) $(INCdir)/atlas_cacheedge.h
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX -DNoTransA_ -DTransB_ \
+              -DALIASED_GEMM ../ATL_AgemmXX.c
+ATL_cgemmNC.o : ../ATL_gemmXX.c $(cINCdep) $(INCdir)/atlas_cacheedge.h
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX \
+              -DNoTransA_ -DConjTransB_ ../ATL_gemmXX.c
+ATL_cAgemmNC.o : ../ATL_AgemmXX.c $(cINCdep) $(INCdir)/atlas_cacheedge.h
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX -DNoTransA_ -DConjTransB_ \
+              -DALIASED_GEMM ../ATL_AgemmXX.c
+ATL_cgemmTN.o : ../ATL_gemmXX.c $(cINCdep) $(INCdir)/atlas_cacheedge.h
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX \
+              -DTransA_ -DNoTransB_ ../ATL_gemmXX.c
+ATL_cAgemmTN.o : ../ATL_AgemmXX.c $(cINCdep) $(INCdir)/atlas_cacheedge.h
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX -DTransA_ -DNoTransB_ \
+              -DALIASED_GEMM ../ATL_AgemmXX.c
+ATL_cgemmTT.o : ../ATL_gemmXX.c $(cINCdep) $(INCdir)/atlas_cacheedge.h
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX \
+              -DTransA_ -DTransB_ ../ATL_gemmXX.c
+ATL_cAgemmTT.o : ../ATL_AgemmXX.c $(cINCdep) $(INCdir)/atlas_cacheedge.h
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX -DTransA_ -DTransB_ \
+              -DALIASED_GEMM ../ATL_AgemmXX.c
+ATL_cgemmTC.o : ../ATL_gemmXX.c $(cINCdep) $(INCdir)/atlas_cacheedge.h
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX \
+              -DTransA_ -DConjTransB_ ../ATL_gemmXX.c
+ATL_cAgemmTC.o : ../ATL_AgemmXX.c $(cINCdep) $(INCdir)/atlas_cacheedge.h
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX -DTransA_ -DConjTransB_ \
+              -DALIASED_GEMM ../ATL_AgemmXX.c
+ATL_cgemmCN.o : ../ATL_gemmXX.c $(cINCdep) $(INCdir)/atlas_cacheedge.h
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX \
+              -DConjTransA_ -DNoTransB_ ../ATL_gemmXX.c
+ATL_cAgemmCN.o : ../ATL_AgemmXX.c $(cINCdep) $(INCdir)/atlas_cacheedge.h
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX -DConjTransA_ -DNoTransB_ \
+              -DALIASED_GEMM ../ATL_AgemmXX.c
+ATL_cgemmCT.o : ../ATL_gemmXX.c $(cINCdep) $(INCdir)/atlas_cacheedge.h
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX \
+              -DConjTransA_ -DTransB_ ../ATL_gemmXX.c
+ATL_cAgemmCT.o : ../ATL_AgemmXX.c $(cINCdep) $(INCdir)/atlas_cacheedge.h
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX -DConjTransA_ -DTransB_ \
+              -DALIASED_GEMM ../ATL_AgemmXX.c
+ATL_cgemmCC.o : ../ATL_gemmXX.c $(cINCdep) $(INCdir)/atlas_cacheedge.h
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX \
+              -DConjTransA_ -DConjTransB_ ../ATL_gemmXX.c
+ATL_cAgemmCC.o : ../ATL_AgemmXX.c $(cINCdep) $(INCdir)/atlas_cacheedge.h
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX -DConjTransA_ -DConjTransB_ \
+              -DALIASED_GEMM ../ATL_AgemmXX.c
+
+ATL_cIBNBmm.o : ../ATL_IBNBmm.c $(cINCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX ../ATL_IBNBmm.c
+ATL_cMBJBmm.o : ../ATL_MBJBmm.c $(cINCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX ../ATL_MBJBmm.c
+ATL_cIBJBmm.o : ../ATL_IBJBmm.c $(cINCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX ../ATL_IBJBmm.c
+
+ATL_cmmIJK.o : ../ATL_cmmIJK.c $(cINCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX ../ATL_cmmIJK.c
+ATL_cmmJIK.o : ../ATL_cmmJIK.c $(cINCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX ../ATL_cmmJIK.c
+
+ATL_crow2blkT_aX.o : ../ATL_crow2blkT.c $(cINCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX -DALPHAX ../ATL_crow2blkT.c
+ATL_ccol2blk_aX.o : ../ATL_ccol2blk.c $(cINCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX -DALPHAX ../ATL_ccol2blk.c
+ATL_ccol2blkConj_aX.o : ../ATL_ccol2blk.c $(cINCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX -DALPHAX \
+              -DConj_ ../ATL_ccol2blk.c
+ATL_crow2blkC_aX.o : ../ATL_crow2blkT.c $(cINCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX -DALPHAX \
+              -DConj_ ../ATL_crow2blkT.c
+
+ATL_crow2blkT_aXi0.o : ../ATL_crow2blkT.c $(cINCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX -DALPHAXI0 ../ATL_crow2blkT.c
+ATL_ccol2blk_aXi0.o : ../ATL_ccol2blk.c $(cINCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX -DALPHAXI0 ../ATL_ccol2blk.c
+ATL_ccol2blkConj_aXi0.o : ../ATL_ccol2blk.c $(cINCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX -DALPHAXI0 \
+              -DConj_ ../ATL_ccol2blk.c
+ATL_crow2blkC_aXi0.o : ../ATL_crow2blkT.c $(cINCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX -DALPHAXI0 \
+              -DConj_ ../ATL_crow2blkT.c
+
+ATL_crow2blkT_a1.o : ../ATL_crow2blkT.c $(cINCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX -DALPHA1 ../ATL_crow2blkT.c
+ATL_ccol2blk_a1.o : ../ATL_ccol2blk.c $(cINCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX -DALPHA1 ../ATL_ccol2blk.c
+ATL_ccol2blkConj_a1.o : ../ATL_ccol2blk.c $(cINCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX -DALPHA1 \
+              -DConj_ ../ATL_ccol2blk.c
+ATL_crow2blkC_a1.o : ../ATL_crow2blkT.c $(cINCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX -DALPHA1 \
+              -DConj_ ../ATL_crow2blkT.c
+
+ATL_cNCmmJIK_c.o : ../ATL_cNCmmJIK_c.c $(cINCdep) \
+                           $(INCdir)/cXover.h $(INCdir)/atlas_cacheedge.h
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX   ../ATL_cNCmmJIK_c.c
+ATL_cNCmmJIK.o : ../ATL_cNCmmJIK.c $(cINCdep) \
+                           $(INCdir)/cXover.h $(INCdir)/atlas_cacheedge.h
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX   ../ATL_cNCmmJIK.c
+ATL_cNCmmIJK_c.o : ../ATL_cNCmmIJK_c.c $(cINCdep) \
+                           $(INCdir)/cXover.h $(INCdir)/atlas_cacheedge.h
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX   ../ATL_cNCmmIJK_c.c
+ATL_cNCmmIJK.o : ../ATL_cNCmmIJK.c $(cINCdep) \
+                           $(INCdir)/cXover.h $(INCdir)/atlas_cacheedge.h
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX   ../ATL_cNCmmIJK.c
+
+ATL_cCNBmm_bX.o : ../ATL_CNBmm_bX.c $(cINCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX ../ATL_CNBmm_bX.c
+ATL_cCNBmm_b1.o : ../ATL_CNBmm_b1.c $(cINCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX ../ATL_CNBmm_b1.c
+ATL_cCNBmm_b0.o : ../ATL_CNBmm_b0.c $(cINCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX ../ATL_CNBmm_b0.c
+ATL_cGetNCNB.o : ../ATL_GetNCNB.c $(cINCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX ../ATL_GetNCNB.c
+ATL_cGetNB.o : ../ATL_GetNB.c $(cINCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX ../ATL_GetNB.c
+
+ATL_cputblk_bXi0.o : ../ATL_putblk.c $(cINCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX -DBETAXI0 ../ATL_putblk.c
+ATL_cputblk_bX.o : ../ATL_putblk.c $(cINCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX -DBETAX ../ATL_putblk.c
+ATL_cputblk_bn1.o : ../ATL_putblk.c $(cINCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX -DBETAN1 ../ATL_putblk.c
+ATL_cputblk_b1.o : ../ATL_putblk.c $(cINCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX -DBETA1 ../ATL_putblk.c
+ATL_cputblk_b0.o : ../ATL_putblk.c $(cINCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX -DBETA0 ../ATL_putblk.c
+
+ATL_caliased_gemm.o : ../ATL_gemm.c ../ATL_AgemmXX.c $(cINCdep) \
+                           $(INCdir)/cXover.h $(INCdir)/atlas_cacheedge.h
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX -DALIASED_GEMM -I./ \
+              ../ATL_gemm.c
+
+ATL_csmall_mm.o : ../ATL_gemm.c ../ATL_gemmXX.c $(cINCdep) \
+                  $(INCdir)/cXover.h $(INCdir)/atlas_cacheedge.h
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX -DSMALL_MM -I./ \
+              ../ATL_gemm.c
+ATL_cbig_mm.o : ../ATL_gemm.c ../ATL_gemmXX.c $(cINCdep) \
+                  $(INCdir)/cXover.h $(INCdir)/atlas_cacheedge.h
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX -DBIG_MM -I./ \
+              ../ATL_gemm.c
+ATL_cgemm.o : ../ATL_gemm.c ../ATL_gemmXX.c $(cINCdep) \
+                  $(INCdir)/atlas_cacheedge.h $(INCdir)/cXover.h
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX -DATLGEMM -I./ \
+              ../ATL_gemm.c
+ATL_cFindCE_mm.o : ../ATL_gemm.c ../ATL_gemmXX.c $(cINCdep) \
+                        $(INCdir)/cXover.h
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX -DFindingCE -I./ ../ATL_gemm.c
+
+ATL_cNCgemm.o : ../ATL_NCgemm.c $(cINCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DSCPLX ../ATL_NCgemm.c
+
+zclean :
+	rm -f $(zobj) z*.grd
+zcleanuplib :
+	cd KERNEL ; $(MAKE) -f zMakefile zlib
+
+zlib : 
+	$(MAKE) auxillib zcleanuplib zusergemm
+	$(PMAKE) zlib.grd
+zlib.grd : $(zobj) ATL_zbig_mm.o ATL_zsmall_mm.o
+	$(ARCHIVER) $(ARFLAGS) $(ATLASlib) $(zobj)
+	$(RANLIB) $(ATLASlib)
+	touch zlib.grd
+
+zusergemm :
+	cd $(UMMdir) ; $(MAKE) zusermm
+
+zusermm :
+	touch zusermm
+ATL_zgemmNN.o : ../ATL_gemmXX.c $(zINCdep) $(INCdir)/atlas_cacheedge.h
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX \
+              -DNoTransA_ -DNoTransB_ ../ATL_gemmXX.c
+ATL_zAgemmNN.o : ../ATL_AgemmXX.c $(zINCdep) $(INCdir)/atlas_cacheedge.h
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX -DNoTransA_ -DNoTransB_ \
+              -DALIASED_GEMM ../ATL_AgemmXX.c
+ATL_zgemmNT.o : ../ATL_gemmXX.c $(zINCdep) $(INCdir)/atlas_cacheedge.h
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX \
+              -DNoTransA_ -DTransB_ ../ATL_gemmXX.c
+ATL_zAgemmNT.o : ../ATL_AgemmXX.c $(zINCdep) $(INCdir)/atlas_cacheedge.h
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX -DNoTransA_ -DTransB_ \
+              -DALIASED_GEMM ../ATL_AgemmXX.c
+ATL_zgemmNC.o : ../ATL_gemmXX.c $(zINCdep) $(INCdir)/atlas_cacheedge.h
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX \
+              -DNoTransA_ -DConjTransB_ ../ATL_gemmXX.c
+ATL_zAgemmNC.o : ../ATL_AgemmXX.c $(zINCdep) $(INCdir)/atlas_cacheedge.h
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX -DNoTransA_ -DConjTransB_ \
+              -DALIASED_GEMM ../ATL_AgemmXX.c
+ATL_zgemmTN.o : ../ATL_gemmXX.c $(zINCdep) $(INCdir)/atlas_cacheedge.h
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX \
+              -DTransA_ -DNoTransB_ ../ATL_gemmXX.c
+ATL_zAgemmTN.o : ../ATL_AgemmXX.c $(zINCdep) $(INCdir)/atlas_cacheedge.h
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX -DTransA_ -DNoTransB_ \
+              -DALIASED_GEMM ../ATL_AgemmXX.c
+ATL_zgemmTT.o : ../ATL_gemmXX.c $(zINCdep) $(INCdir)/atlas_cacheedge.h
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX \
+              -DTransA_ -DTransB_ ../ATL_gemmXX.c
+ATL_zAgemmTT.o : ../ATL_AgemmXX.c $(zINCdep) $(INCdir)/atlas_cacheedge.h
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX -DTransA_ -DTransB_ \
+              -DALIASED_GEMM ../ATL_AgemmXX.c
+ATL_zgemmTC.o : ../ATL_gemmXX.c $(zINCdep) $(INCdir)/atlas_cacheedge.h
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX \
+              -DTransA_ -DConjTransB_ ../ATL_gemmXX.c
+ATL_zAgemmTC.o : ../ATL_AgemmXX.c $(zINCdep) $(INCdir)/atlas_cacheedge.h
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX -DTransA_ -DConjTransB_ \
+              -DALIASED_GEMM ../ATL_AgemmXX.c
+ATL_zgemmCN.o : ../ATL_gemmXX.c $(zINCdep) $(INCdir)/atlas_cacheedge.h
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX \
+              -DConjTransA_ -DNoTransB_ ../ATL_gemmXX.c
+ATL_zAgemmCN.o : ../ATL_AgemmXX.c $(zINCdep) $(INCdir)/atlas_cacheedge.h
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX -DConjTransA_ -DNoTransB_ \
+              -DALIASED_GEMM ../ATL_AgemmXX.c
+ATL_zgemmCT.o : ../ATL_gemmXX.c $(zINCdep) $(INCdir)/atlas_cacheedge.h
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX \
+              -DConjTransA_ -DTransB_ ../ATL_gemmXX.c
+ATL_zAgemmCT.o : ../ATL_AgemmXX.c $(zINCdep) $(INCdir)/atlas_cacheedge.h
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX -DConjTransA_ -DTransB_ \
+              -DALIASED_GEMM ../ATL_AgemmXX.c
+ATL_zgemmCC.o : ../ATL_gemmXX.c $(zINCdep) $(INCdir)/atlas_cacheedge.h
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX \
+              -DConjTransA_ -DConjTransB_ ../ATL_gemmXX.c
+ATL_zAgemmCC.o : ../ATL_AgemmXX.c $(zINCdep) $(INCdir)/atlas_cacheedge.h
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX -DConjTransA_ -DConjTransB_ \
+              -DALIASED_GEMM ../ATL_AgemmXX.c
+
+ATL_zIBNBmm.o : ../ATL_IBNBmm.c $(zINCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX ../ATL_IBNBmm.c
+ATL_zMBJBmm.o : ../ATL_MBJBmm.c $(zINCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX ../ATL_MBJBmm.c
+ATL_zIBJBmm.o : ../ATL_IBJBmm.c $(zINCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX ../ATL_IBJBmm.c
+
+ATL_zmmIJK.o : ../ATL_cmmIJK.c $(zINCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX ../ATL_cmmIJK.c
+ATL_zmmJIK.o : ../ATL_cmmJIK.c $(zINCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX ../ATL_cmmJIK.c
+
+ATL_zrow2blkT_aX.o : ../ATL_crow2blkT.c $(zINCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX -DALPHAX ../ATL_crow2blkT.c
+ATL_zcol2blk_aX.o : ../ATL_ccol2blk.c $(zINCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX -DALPHAX ../ATL_ccol2blk.c
+ATL_zcol2blkConj_aX.o : ../ATL_ccol2blk.c $(zINCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX -DALPHAX \
+              -DConj_ ../ATL_ccol2blk.c
+ATL_zrow2blkC_aX.o : ../ATL_crow2blkT.c $(zINCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX -DALPHAX \
+              -DConj_ ../ATL_crow2blkT.c
+
+ATL_zrow2blkT_aXi0.o : ../ATL_crow2blkT.c $(zINCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX -DALPHAXI0 ../ATL_crow2blkT.c
+ATL_zcol2blk_aXi0.o : ../ATL_ccol2blk.c $(zINCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX -DALPHAXI0 ../ATL_ccol2blk.c
+ATL_zcol2blkConj_aXi0.o : ../ATL_ccol2blk.c $(zINCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX -DALPHAXI0 \
+              -DConj_ ../ATL_ccol2blk.c
+ATL_zrow2blkC_aXi0.o : ../ATL_crow2blkT.c $(zINCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX -DALPHAXI0 \
+              -DConj_ ../ATL_crow2blkT.c
+
+ATL_zrow2blkT_a1.o : ../ATL_crow2blkT.c $(zINCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX -DALPHA1 ../ATL_crow2blkT.c
+ATL_zcol2blk_a1.o : ../ATL_ccol2blk.c $(zINCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX -DALPHA1 ../ATL_ccol2blk.c
+ATL_zcol2blkConj_a1.o : ../ATL_ccol2blk.c $(zINCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX -DALPHA1 \
+              -DConj_ ../ATL_ccol2blk.c
+ATL_zrow2blkC_a1.o : ../ATL_crow2blkT.c $(zINCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX -DALPHA1 \
+              -DConj_ ../ATL_crow2blkT.c
+
+ATL_zNCmmJIK_c.o : ../ATL_cNCmmJIK_c.c $(zINCdep) \
+                           $(INCdir)/zXover.h $(INCdir)/atlas_cacheedge.h
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX   ../ATL_cNCmmJIK_c.c
+ATL_zNCmmJIK.o : ../ATL_cNCmmJIK.c $(zINCdep) \
+                           $(INCdir)/zXover.h $(INCdir)/atlas_cacheedge.h
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX   ../ATL_cNCmmJIK.c
+ATL_zNCmmIJK_c.o : ../ATL_cNCmmIJK_c.c $(zINCdep) \
+                           $(INCdir)/zXover.h $(INCdir)/atlas_cacheedge.h
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX   ../ATL_cNCmmIJK_c.c
+ATL_zNCmmIJK.o : ../ATL_cNCmmIJK.c $(zINCdep) \
+                           $(INCdir)/zXover.h $(INCdir)/atlas_cacheedge.h
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX   ../ATL_cNCmmIJK.c
+
+ATL_zCNBmm_bX.o : ../ATL_CNBmm_bX.c $(zINCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX ../ATL_CNBmm_bX.c
+ATL_zCNBmm_b1.o : ../ATL_CNBmm_b1.c $(zINCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX ../ATL_CNBmm_b1.c
+ATL_zCNBmm_b0.o : ../ATL_CNBmm_b0.c $(zINCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX ../ATL_CNBmm_b0.c
+ATL_zGetNCNB.o : ../ATL_GetNCNB.c $(zINCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX ../ATL_GetNCNB.c
+ATL_zGetNB.o : ../ATL_GetNB.c $(zINCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX ../ATL_GetNB.c
+
+ATL_zputblk_bXi0.o : ../ATL_putblk.c $(zINCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX -DBETAXI0 ../ATL_putblk.c
+ATL_zputblk_bX.o : ../ATL_putblk.c $(zINCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX -DBETAX ../ATL_putblk.c
+ATL_zputblk_bn1.o : ../ATL_putblk.c $(zINCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX -DBETAN1 ../ATL_putblk.c
+ATL_zputblk_b1.o : ../ATL_putblk.c $(zINCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX -DBETA1 ../ATL_putblk.c
+ATL_zputblk_b0.o : ../ATL_putblk.c $(zINCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX -DBETA0 ../ATL_putblk.c
+
+ATL_zaliased_gemm.o : ../ATL_gemm.c ../ATL_AgemmXX.c $(zINCdep) \
+                           $(INCdir)/zXover.h $(INCdir)/atlas_cacheedge.h
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX -DALIASED_GEMM -I./ \
+              ../ATL_gemm.c
+
+ATL_zsmall_mm.o : ../ATL_gemm.c ../ATL_gemmXX.c $(zINCdep) \
+                  $(INCdir)/zXover.h $(INCdir)/atlas_cacheedge.h
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX -DSMALL_MM -I./ \
+              ../ATL_gemm.c
+ATL_zbig_mm.o : ../ATL_gemm.c ../ATL_gemmXX.c $(zINCdep) \
+                  $(INCdir)/zXover.h $(INCdir)/atlas_cacheedge.h
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX -DBIG_MM -I./ \
+              ../ATL_gemm.c
+ATL_zgemm.o : ../ATL_gemm.c ../ATL_gemmXX.c $(zINCdep) \
+                  $(INCdir)/atlas_cacheedge.h $(INCdir)/zXover.h
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX -DATLGEMM -I./ \
+              ../ATL_gemm.c
+ATL_zFindCE_mm.o : ../ATL_gemm.c ../ATL_gemmXX.c $(zINCdep) \
+                        $(INCdir)/zXover.h
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX -DFindingCE -I./ ../ATL_gemm.c
+
+ATL_zNCgemm.o : ../ATL_NCgemm.c $(zINCdep)
+	$(CC) -o $@ -c $(CCFLAGS) -DDCPLX ../ATL_NCgemm.c
+
+ass.grd:
+	- $(MAKE) ATL_dasrc2blk_NB_aX.o ATL_dasrc2blk_NB_a1.o
+	- $(ARCHIVER) $(ARFLAGS) $(ATLASlib) \
+                      ATL_dasrc2blk_NB_aX.o ATL_dasrc2blk_NB_a1.o
+	- $(RANLIB) $(ATLASlib)
+
+ATL_dasrc2blk_NB_aX.o: ../ATL_asrc2blk_NB.c
+	$(GOODGCC) $(CDEFS) -o $@ -c -x assembler-with-cpp \
+                    -DDREAL -DALPHAX ../ATL_asrc2blk_NB.c
+ATL_dasrc2blk_NB_a1.o: ../ATL_asrc2blk_NB.c
+	$(GOODGCC) $(CDEFS) -o $@ -c -x assembler-with-cpp \
+                    -DDREAL -DALPHA1 ../ATL_asrc2blk_NB.c
+
+.c.o:
+	$(MCC) -c $(CDEFS) $(MMFLAGS) $<

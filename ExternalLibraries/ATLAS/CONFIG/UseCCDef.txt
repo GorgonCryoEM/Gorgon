@@ -1,0 +1,12 @@
+
+You have chosen a different C compiler than the default one ATLAS has been
+built with.  For most machines, this will usually result in a substantial
+performance penalty.  If you choose to do this, we strongly recommend that
+you build ATLAS with the default settings as well, and make sure your
+non-default compiler library gets roughly the same performance.  An easy
+comparison can be made by examining each install's:
+   ATLAS/bin/<arch>/INSTALL_LOG/SUMMARY.LOG
+If you are not absolutely certain you want to do this, we recommend you
+quit this install and try again, letting ATLAS use its default compiler
+for this platform.
+

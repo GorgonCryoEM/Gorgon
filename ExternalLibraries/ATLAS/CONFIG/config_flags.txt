@@ -1,0 +1,24 @@
+
+   -A #           : Set config mach to #
+   -C 'string'    : Add string to CDEFS
+   -D #           : Set various levels of what config will do (additive):
+      0           : Create Make.ARCH and config logfiles only
+      1           : Unpack & set arch defauls
+      2           : Create ARCH subdirectories
+      4           : Create the ATLrun shell script
+      8           : If needed, create winf77.exe
+     16           : Store the known L1 value
+     32           : Move the config logfiles to ARCH subdir
+   -N #           : Set ncpu to #
+   -t <TOPdir>    : Set TOPdir as indicated
+   -a <arch>      : Set ARCH to <arch>
+   -b <1/blaslib> : Use this BLAS for BLASlib (1: search for blas)
+   -f <f77>       : Use <f77> for F77
+   -c <CC>        : Use <CC> for CC
+   -m <MM>        : Use <MM> for MCC
+   -g <gcc>       : Use <gcc> for gcc
+   -x <XCC>       : Use <XCC> for XCC
+   -F [c,f,m,x] '<flags>': set the indicated compiler flags
+NOTE: If a compiler is specified without flags, ATLAS will try to fill in
+      appropriate flags.  This is the recommended way to get config to select
+      a non-default supported compiler.

@@ -1,0 +1,75 @@
+<HTML>
+<HEAD>
+<TITLE>class Transpose</TITLE>
+
+<META NAME="Generator" CONTENT="KDOC ">
+</HEAD>
+<BODY bgcolor="#ffffff" text="#000000" link="#0000ff" vlink="#000099" alink= "#ffffff">
+<TABLE WIDTH="100%" BORDER="0">
+<TR>
+<TD>
+	<TABLE BORDER="0">
+		<TR><TD valign="top" align="left" cellspacing="10">
+		<h1>class Transpose</h1>
+		</TD>
+		<TD valign="top" align="right" colspan="1">
+     Matrix transposition closure. <small><A HREF="#longdesc">More...</A></small></TD></TR>
+	</TABLE>
+	<HR>
+	<TABLE BORDER="0">
+		<TR><TH>Full name</TH><TD><code><A HREF="Llama.html">Llama</A>::Transpose</code></TD></TR>
+<TR><TH>Definition</TH><TD><code>#include &lt;<A HREF="Transpose_h.html">Transpose.h</A>&gt;</code></TD></TR>
+<TR><TH>Template form</TH><TD>Transpose&lt;class Scalar&gt; </code></TD></TR>
+<TR><TH>Inherits</TH><TD><i><A HREF="Llama__CAbstMatrix.html">Llama::CAbstMatrix</A></i> <small>[public ]</small></TD></TR>
+<TR><TH><A HREF="full-list-Llama__Transpose.html">List of all Methods</A></TH></TR>
+	</TABLE>
+	</TD>
+<TD align="right"><TABLE BORDER="0"><TD rowspan="6"><IMG SRC="./llama2.gif"></TD><TR><TD><small><A HREF="index-long.html">Annotated List</A></small></TD></TR>
+<TR><TD><small><A HREF="header-list.html">Files</A></small></TD></TR>
+<TR><TD><small><A HREF="all-globals.html">Globals</A></small></TD></TR>
+<TR><TD><small><A HREF="hier.html">Hierarchy</A></small></TD></TR>
+<TR><TD><small><A HREF="index.html">Index</A></small></TD></TR>
+</TABLE></TD></TR></TABLE>
+<h4>Public Methods</h4><ul><LI>const Matrix<Scalar> * &nbsp;<b><A HREF="#ref6">matrix</A></b> (void)  const
+</LI>
+<LI><A HREF="#Transpose_t">Transpose_t</A> &nbsp;<b><A HREF="#ref7">trans</A></b> (void)  const
+</LI>
+<LI>Index &nbsp;<b><A HREF="#ref8">rows</A></b> (void)  const
+</LI>
+<LI>Index &nbsp;<b><A HREF="#ref9">cols</A></b> (void)  const
+</LI>
+<LI>Index &nbsp;<b><A HREF="#ref10">size</A></b> (void)  const
+</LI>
+<LI>&nbsp;<b><A HREF="#ref11">Transpose</A></b> (const Transpose& x) 
+</LI>
+<LI>Scalar &nbsp;<b><A HREF="#ref12">operator ()</A></b> (const Index j, const Index k)  const
+</LI>
+<LI>Scalar &nbsp;<b><A HREF="#ref13">operator ()</A></b> (const Index k)  const
+</LI>
+</ul><h4>Public Members</h4><ul><LI>friend class <b><A HREF="#ref14">Matrix<Scalar></A></b></LI>
+</ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><p>
+     Matrix transposition closure.  Transposing a matrix creates a Transpose object
+     to hold the matrix and the type of transposition.  Transpose objects can be 
+     assigned to matrix objects (which involves only a single copy operation), or 
+     multiplied by other matrices.
+  </p>
+<A NAME="matrix"></A><A NAME="ref6"></A><table width="100%"><tr bgcolor="#eeeeee"><td>const Matrix<Scalar> * &nbsp;<strong>matrix</strong> (void)
+<br></td><td align="right"><h3><strong>matrix</strong></h3></td></tr></table><p> <small>[const]</small></p><A NAME="trans"></A><A NAME="ref7"></A><table width="100%"><tr bgcolor="#eeeeee"><td><A HREF="#Transpose_t">Transpose_t</A> &nbsp;<strong>trans</strong> (void)
+<br></td><td align="right"><h3><strong>trans</strong></h3></td></tr></table><p> <small>[const]</small></p><A NAME="rows"></A><A NAME="ref8"></A><table width="100%"><tr bgcolor="#eeeeee"><td>Index &nbsp;<strong>rows</strong> (void)
+<br></td><td align="right"><h3><strong>rows</strong></h3></td></tr></table><p> <small>[const]</small></p><p>Reimplemented from <A HREF="Llama__CAbstMatrix.html#rows">CAbstMatrix</A>.</p>
+<A NAME="cols"></A><A NAME="ref9"></A><table width="100%"><tr bgcolor="#eeeeee"><td>Index &nbsp;<strong>cols</strong> (void)
+<br></td><td align="right"><h3><strong>cols</strong></h3></td></tr></table><p> <small>[const]</small></p><p>Reimplemented from <A HREF="Llama__CAbstMatrix.html#cols">CAbstMatrix</A>.</p>
+<A NAME="size"></A><A NAME="ref10"></A><table width="100%"><tr bgcolor="#eeeeee"><td>Index &nbsp;<strong>size</strong> (void)
+<br></td><td align="right"><h3><strong>size</strong></h3></td></tr></table><p> <small>[const]</small></p><p>Reimplemented from <A HREF="Llama__CAbstMatrix.html#size">CAbstMatrix</A>.</p>
+<A NAME="Transpose"></A><A NAME="ref11"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>Transpose</strong> (const Transpose& x)
+<br></td><td align="right"><h3><strong>Transpose</strong></h3></td></tr></table><p></p><A NAME="operator%20()"></A><A NAME="ref12"></A><table width="100%"><tr bgcolor="#eeeeee"><td>Scalar &nbsp;<strong>operator ()</strong> (const Index j, const Index k)
+<br></td><td align="right"><h3><strong>operator ()</strong></h3></td></tr></table><p> <small>[const]</small></p><p>Reimplemented from <A HREF="Llama__CAbstMatrix.html#operator%20()">CAbstMatrix</A>.</p>
+<A NAME="operator%20()"></A><A NAME="ref13"></A><table width="100%"><tr bgcolor="#eeeeee"><td>Scalar &nbsp;<strong>operator ()</strong> (const Index k)
+<br></td><td align="right"><h3><strong>operator ()</strong></h3></td></tr></table><p> <small>[const]</small></p><p>Reimplemented from <A HREF="Llama__CAbstMatrix.html#operator%20()">CAbstMatrix</A>.</p>
+<A NAME="Matrix%3CScalar%3E"></A><A NAME="ref14"></A><table width="100%"><tr bgcolor="#eeeeee"><td>friend class  <strong>Matrix<Scalar></strong>
+</td><td align="right"><h3><strong>Matrix<Scalar></strong></h3></td></tr></table><p></p><HR>
+	<table>
+	<tr><td><small>Generated by: king on larix.tiem.utk.edu on Tue Jun 29 10:55:51 2004, using kdoc 2.0a54.</small></td></tr>
+	</table>
+</BODY>
+</HTML>

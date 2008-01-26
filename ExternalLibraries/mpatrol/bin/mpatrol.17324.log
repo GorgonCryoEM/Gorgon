@@ -1,0 +1,256 @@
+mpatrol 1.4.8 (08 January 2002)
+Copyright (C) 1997-2002 Graeme S. Roy
+
+This is free software, and you are welcome to redistribute it under certain
+conditions; see the GNU Library General Public License for details.
+
+For the latest mpatrol release and documentation,
+visit http://www.cbmamiga.demon.co.uk/mpatrol.
+
+operating system:       Microsoft Windows 95/98/ME/NT/2000
+system variant:         N/A
+processor architecture: Intel 80x86
+processor word size:    32-bit
+object file format:     PE
+dynamic linker type:    Windows
+
+Log file generated on Tue Sep 11 16:09:02 2007
+
+read 1315 symbols from 
+read 949 symbols from 
+read 105 symbols from 
+read 108 symbols from 
+read 830 symbols from 
+read 31 symbols from 
+read 339 symbols from 
+read 675 symbols from 
+read 514 symbols from 
+read 609 symbols from 
+read 732 symbols from 
+read 551 symbols from 
+read 1550 symbols from 
+read 1 symbol from 
+read 837 symbols from 
+read 41 symbols from 
+read 1486 symbols from 
+read 1417 symbols from 
+read 42 symbols from 
+read 2903 symbols from 
+read 442 symbols from 
+read 98 symbols from 
+read 14 symbols from 
+read 0 symbols from C:\_WashU\ssa1\memleak\GraySkeletonCPP.exe
+
+FREE: free (0x00A425B8) [_setenvp|f:\rtm\vctools\crt_bld\self_x86\crt\src\stdenvp.c|138]
+	0x0044AA00 libeng_build_date+1145324 at f:\rtm\vctools\crt_bld\self_x86\crt\src\stdenvp.c:138
+
+ERROR: [NOTALL]: free: 0x00A425B8 has not been allocated
+
+FREE: free (0x00A442B8) [_setlocale_get_all|f:\rtm\vctools\crt_bld\self_x86\crt\src\setlocal.c|1168]
+	0x0043A1B6 libeng_build_date+1077666 at f:\rtm\vctools\crt_bld\self_x86\crt\src\setlocal.c:1168
+
+ERROR: [NOTALL]: free: 0x00A442B8 has not been allocated
+
+FREE: free (0x00A446F8) [_setlocale_get_all|f:\rtm\vctools\crt_bld\self_x86\crt\src\setlocal.c|1168]
+	0x0043A1B6 libeng_build_date+1077666 at f:\rtm\vctools\crt_bld\self_x86\crt\src\setlocal.c:1168
+
+ERROR: [NOTALL]: free: 0x00A446F8 has not been allocated
+
+FREE: free (0x00A441D8) [__freetlocinfo|f:\rtm\vctools\crt_bld\self_x86\crt\src\setlocal.c|214]
+	0x00439AEA libeng_build_date+1075926 at f:\rtm\vctools\crt_bld\self_x86\crt\src\setlocal.c:214
+
+ERROR: [NOTALL]: free: 0x00A441D8 has not been allocated
+
+FREE: free (0x00A44D40) [_setlocale_get_all|f:\rtm\vctools\crt_bld\self_x86\crt\src\setlocal.c|1168]
+	0x0043A1B6 libeng_build_date+1077666 at f:\rtm\vctools\crt_bld\self_x86\crt\src\setlocal.c:1168
+
+ERROR: [NOTALL]: free: 0x00A44D40 has not been allocated
+
+FREE: free (0x00A44618) [__freetlocinfo|f:\rtm\vctools\crt_bld\self_x86\crt\src\setlocal.c|214]
+	0x00439AEA libeng_build_date+1075926 at f:\rtm\vctools\crt_bld\self_x86\crt\src\setlocal.c:214
+
+ERROR: [NOTALL]: free: 0x00A44618 has not been allocated
+
+FREE: free (0x00A45180) [_setlocale_get_all|f:\rtm\vctools\crt_bld\self_x86\crt\src\setlocal.c|1168]
+	0x0043A1B6 libeng_build_date+1077666 at f:\rtm\vctools\crt_bld\self_x86\crt\src\setlocal.c:1168
+
+ERROR: [NOTALL]: free: 0x00A45180 has not been allocated
+
+FREE: free (0x00A44C60) [__freetlocinfo|f:\rtm\vctools\crt_bld\self_x86\crt\src\setlocal.c|214]
+	0x00439AEA libeng_build_date+1075926 at f:\rtm\vctools\crt_bld\self_x86\crt\src\setlocal.c:214
+
+ERROR: [NOTALL]: free: 0x00A44C60 has not been allocated
+
+FREE: free (0x00A455C0) [_setlocale_get_all|f:\rtm\vctools\crt_bld\self_x86\crt\src\setlocal.c|1168]
+	0x0043A1B6 libeng_build_date+1077666 at f:\rtm\vctools\crt_bld\self_x86\crt\src\setlocal.c:1168
+
+ERROR: [NOTALL]: free: 0x00A455C0 has not been allocated
+
+FREE: free (0x00A450A0) [__freetlocinfo|f:\rtm\vctools\crt_bld\self_x86\crt\src\setlocal.c|214]
+	0x00439AEA libeng_build_date+1075926 at f:\rtm\vctools\crt_bld\self_x86\crt\src\setlocal.c:214
+
+ERROR: [NOTALL]: free: 0x00A450A0 has not been allocated
+
+FREE: free (0x00A45A00) [_setlocale_get_all|f:\rtm\vctools\crt_bld\self_x86\crt\src\setlocal.c|1168]
+	0x0043A1B6 libeng_build_date+1077666 at f:\rtm\vctools\crt_bld\self_x86\crt\src\setlocal.c:1168
+
+ERROR: [NOTALL]: free: 0x00A45A00 has not been allocated
+
+FREE: free (0x00A454E0) [__freetlocinfo|f:\rtm\vctools\crt_bld\self_x86\crt\src\setlocal.c|214]
+	0x00439AEA libeng_build_date+1075926 at f:\rtm\vctools\crt_bld\self_x86\crt\src\setlocal.c:214
+
+ERROR: [NOTALL]: free: 0x00A454E0 has not been allocated
+
+FREE: free (0x00A45E40) [_setlocale_get_all|f:\rtm\vctools\crt_bld\self_x86\crt\src\setlocal.c|1168]
+	0x0043A1B6 libeng_build_date+1077666 at f:\rtm\vctools\crt_bld\self_x86\crt\src\setlocal.c:1168
+
+ERROR: [NOTALL]: free: 0x00A45E40 has not been allocated
+
+FREE: free (0x00A45920) [__freetlocinfo|f:\rtm\vctools\crt_bld\self_x86\crt\src\setlocal.c|214]
+	0x00439AEA libeng_build_date+1075926 at f:\rtm\vctools\crt_bld\self_x86\crt\src\setlocal.c:214
+
+ERROR: [NOTALL]: free: 0x00A45920 has not been allocated
+
+FREE: free (0x00A46280) [_setlocale_get_all|f:\rtm\vctools\crt_bld\self_x86\crt\src\setlocal.c|1168]
+	0x0043A1B6 libeng_build_date+1077666 at f:\rtm\vctools\crt_bld\self_x86\crt\src\setlocal.c:1168
+
+ERROR: [NOTALL]: free: 0x00A46280 has not been allocated
+
+FREE: free (0x00A45D60) [__freetlocinfo|f:\rtm\vctools\crt_bld\self_x86\crt\src\setlocal.c|214]
+	0x00439AEA libeng_build_date+1075926 at f:\rtm\vctools\crt_bld\self_x86\crt\src\setlocal.c:214
+
+ERROR: [NOTALL]: free: 0x00A45D60 has not been allocated
+
+FREE: free (0x00A466C0) [_setlocale_get_all|f:\rtm\vctools\crt_bld\self_x86\crt\src\setlocal.c|1168]
+	0x0043A1B6 libeng_build_date+1077666 at f:\rtm\vctools\crt_bld\self_x86\crt\src\setlocal.c:1168
+
+ERROR: [NOTALL]: free: 0x00A466C0 has not been allocated
+
+FREE: free (0x00A461A0) [__freetlocinfo|f:\rtm\vctools\crt_bld\self_x86\crt\src\setlocal.c|214]
+	0x00439AEA libeng_build_date+1075926 at f:\rtm\vctools\crt_bld\self_x86\crt\src\setlocal.c:214
+
+ERROR: [NOTALL]: free: 0x00A461A0 has not been allocated
+
+FREE: free (0x00A46A60) [_freebuf|f:\rtm\vctools\crt_bld\self_x86\crt\src\_freebuf.c|52]
+	0x0043FCA4 libeng_build_date+1100944 at f:\rtm\vctools\crt_bld\self_x86\crt\src\_freebuf.c:52
+	0x00402DBF libeng_build_date+851371 at c:\_washu\ssa1\source\skeletonmaker\reader.h:781
+	0x00420EC3 libeng_build_date+974511 at c:\_washu\ssa1\source\grayskeletoncpp\grayskeletoncpp.cpp:120
+	0x0043970F libeng_build_date+1074939 at f:\rtm\vctools\crt_bld\self_x86\crt\src\crt0.c:318
+	0x7C816FD7 RegisterWaitForInputIdle+73
+
+ERROR: [NOTALL]: free: 0x00A46A60 has not been allocated
+
+FREE: free (0x00A47A68) [_freebuf|f:\rtm\vctools\crt_bld\self_x86\crt\src\_freebuf.c|52]
+	0x0043FCA4 libeng_build_date+1100944 at f:\rtm\vctools\crt_bld\self_x86\crt\src\_freebuf.c:52
+	0x004030EE libeng_build_date+852186 at c:\_washu\ssa1\source\skeletonmaker\reader.h:514
+	0x00402E43 libeng_build_date+851503 at c:\_washu\ssa1\source\skeletonmaker\reader.h:795
+	0x00420EC3 libeng_build_date+974511 at c:\_washu\ssa1\source\grayskeletoncpp\grayskeletoncpp.cpp:120
+	0x0043970F libeng_build_date+1074939 at f:\rtm\vctools\crt_bld\self_x86\crt\src\crt0.c:318
+	0x7C816FD7 RegisterWaitForInputIdle+73
+
+ERROR: [NOTALL]: free: 0x00A47A68 has not been allocated
+
+FREE: free (0x00A48A70) [_freebuf|f:\rtm\vctools\crt_bld\self_x86\crt\src\_freebuf.c|52]
+	0x0043FCA4 libeng_build_date+1100944 at f:\rtm\vctools\crt_bld\self_x86\crt\src\_freebuf.c:52
+	0x00403341 libeng_build_date+852781 at c:\_washu\ssa1\source\skeletonmaker\reader.h:583
+	0x00420EDE libeng_build_date+974538 at c:\_washu\ssa1\source\grayskeletoncpp\grayskeletoncpp.cpp:121
+	0x0043970F libeng_build_date+1074939 at f:\rtm\vctools\crt_bld\self_x86\crt\src\crt0.c:318
+	0x7C816FD7 RegisterWaitForInputIdle+73
+
+ERROR: [NOTALL]: free: 0x00A48A70 has not been allocated
+
+FREE: free (0x00A4AA80) [_freebuf|f:\rtm\vctools\crt_bld\self_x86\crt\src\_freebuf.c|52]
+	0x0043FCA4 libeng_build_date+1100944 at f:\rtm\vctools\crt_bld\self_x86\crt\src\_freebuf.c:52
+	0x00403CFC libeng_build_date+855272 at c:\_washu\ssa1\source\skeletonmaker\volume.h:11378
+	0x00420FE3 libeng_build_date+974799 at c:\_washu\ssa1\source\grayskeletoncpp\grayskeletoncpp.cpp:127
+	0x0043970F libeng_build_date+1074939 at f:\rtm\vctools\crt_bld\self_x86\crt\src\crt0.c:318
+	0x7C816FD7 RegisterWaitForInputIdle+73
+
+ERROR: [NOTALL]: free: 0x00A4AA80 has not been allocated
+
+FREE: operator delete (0x01A8BD30) [wustl_mm::MatlabInterface::MatlabWrapper::~MatlabWrapper|c:\_washu\ssa1\source\matlabinterface\matlabwrapper.h|34]
+	0x0040D52B libeng_build_date+894231 at c:\_washu\ssa1\source\matlabinterface\matlabwrapper.h:34
+	0x0040DF14 libeng_build_date+896768
+	0x0040DEEA libeng_build_date+896726 at c:\_washu\ssa1\source\matlabinterface\mathlib.h:34
+	0x0040E1A4 libeng_build_date+897424
+	0x0040E17A libeng_build_date+897382 at c:\_washu\ssa1\source\grayskeletoncpp\volumeskeletonizer.h:89
+	0x0041C5E4 libeng_build_date+955856
+	0x00421051 libeng_build_date+974909 at c:\_washu\ssa1\source\grayskeletoncpp\grayskeletoncpp.cpp:129
+	0x0043970F libeng_build_date+1074939 at f:\rtm\vctools\crt_bld\self_x86\crt\src\crt0.c:318
+	0x7C816FD7 RegisterWaitForInputIdle+73
+
+ERROR: [NOTALL]: operator delete: 0x01A8BD30 has not been allocated
+
+FREE: free (0x00A44A58) [std::ctype<char>::_Tidy|c:\program files\microsoft visual studio 8\vc\include\xlocale|1781]
+	0x0042BAD1 libeng_build_date+1018557 at c:\program files\microsoft visual studio 8\vc\include\xlocale:1781
+	0x0042BDE3 libeng_build_date+1019343 at c:\program files\microsoft visual studio 8\vc\include\xlocale:1769
+	0x0042BD74 libeng_build_date+1019232
+	0x00433A3C libeng_build_date+1051176 at f:\rtm\vctools\crt_bld\self_x86\crt\src\locale0.cpp:18
+	0x00434807 libeng_build_date+1054707 at f:\rtm\vctools\crt_bld\self_x86\crt\src\iosptrs.cpp:49
+	0x00436CF6 libeng_build_date+1064162 at f:\rtm\vctools\crt_bld\self_x86\crt\src\crt0dat.c:398
+	0x7C816FD7 RegisterWaitForInputIdle+73
+
+ERROR: [NOTALL]: free: 0x00A44A58 has not been allocated
+
+FREE: free (0x00000000) [std::locale::_Locimp::_Locimp_dtor|f:\rtm\vctools\crt_bld\self_x86\crt\src\locale0.cpp|186]
+	0x00433B41 libeng_build_date+1051437 at f:\rtm\vctools\crt_bld\self_x86\crt\src\locale0.cpp:186
+	0x00433C60 libeng_build_date+1051724 at f:\rtm\vctools\crt_bld\self_x86\crt\src\xlocale:190
+	0x00433C81 libeng_build_date+1051757
+	0x00434807 libeng_build_date+1054707 at f:\rtm\vctools\crt_bld\self_x86\crt\src\iosptrs.cpp:49
+	0x00436CF6 libeng_build_date+1064162 at f:\rtm\vctools\crt_bld\self_x86\crt\src\crt0dat.c:398
+	0x7C816FD7 RegisterWaitForInputIdle+73
+
+WARNING: [FRENUL]: free: attempt to free a NULL pointer
+
+FREE: free (0x00A439D0) [__endstdio|f:\rtm\vctools\crt_bld\self_x86\crt\src\_file.c|198]
+	0x0043E80C libeng_build_date+1095672 at f:\rtm\vctools\crt_bld\self_x86\crt\src\_file.c:198
+	0x00436CF6 libeng_build_date+1064162 at f:\rtm\vctools\crt_bld\self_x86\crt\src\crt0dat.c:398
+	0x7C816FD7 RegisterWaitForInputIdle+73
+
+ERROR: [NOTALL]: free: 0x00A439D0 has not been allocated
+
+system page size:  4096 bytes
+default alignment: 8 bytes
+overflow size:     0 bytes
+overflow byte:     0xAA
+allocation byte:   0xFF
+free byte:         0x55
+allocation stop:   0
+reallocation stop: 0
+free stop:         0
+unfreed abort:     0
+small boundary:    32 bytes
+medium boundary:   256 bytes
+large boundary:    2048 bytes
+lower check range: 0
+upper check range: 0
+check frequency:   1
+failure frequency: 0
+failure seed:      1189544942
+prologue function: <unset>
+epilogue function: <unset>
+handler function:  <unset>
+log file:          mpatrol.17324.log
+profiling file:    mpatrol.17324.out
+tracing file:      mpatrol.17324.trace
+program filename:  C:\_WashU\ssa1\memleak\GraySkeletonCPP.exe
+symbols read:      15589
+autosave count:    0
+freed queue size:  0
+allocation count:  165022
+allocation peak:   7466 (10826100 bytes)
+allocation limit:  0 bytes
+allocated blocks:  0 (0 bytes)
+marked blocks:     0 (0 bytes)
+freed blocks:      0 (0 bytes)
+free blocks:       6 (11010048 bytes)
+internal blocks:   54 (3538944 bytes)
+total heap usage:  14548992 bytes
+total compared:    1 byte
+total located:     16 bytes
+total copied:      2198405 bytes
+total set:         769 bytes
+total warnings:    1
+total errors:      25
+
+no unfreed memory entries in leak table

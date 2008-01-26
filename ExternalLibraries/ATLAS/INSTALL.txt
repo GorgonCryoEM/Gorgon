@@ -1,0 +1,106 @@
+Before doing anything, scope the ATLAS errata file for known errors/problems:
+   http://math-atlas.sourceforge.net/errata.html
+and apply any bug fixes/workarounds you find there.
+
+Note that the documentation on the website will repeat most of this
+information, and will be much more current.  The docs in this tarfile
+are here mainly for convenience and for users not connected to the net.
+Others should scope the website for the most current documentation:
+   http://math-atlas.sourceforge.net/faq.html#doc
+
+If you are a Windows (95/98/NT/2K/XP) user please read ATLAS/doc/Windows.txt
+before proceeding.
+
+There are two mandatory steps to ATLAS installation, config & install, as
+well as one optional step, sanity test.
+
+********************************** CONFIG *************************************
+From the ATLAS/ directory, create the necessary make include file by typing:
+   make config CC=<ANSI C compiler>
+If CC is not supplied, gcc is used by default.  If your system has gcc, you
+can therefore simply type:
+   make
+
+Config then prompts you for input, and provides all required instructions.
+This invocation gets the default compilers and flags.  See the FAQ
+for further documentation if you do not want the default compiler and flags.
+You can also get some help on command-line switches with:
+      make xconfig ./xconfig --help
+
+
+********************************** INSTALL ************************************
+If config finishes without error, start the install process by:
+   make install arch=<arch>
+where <arch> is the architecture name you chose in config (config prints this
+out at the last, if you have forgotten it).
+
+Install times vary widely, depending largely on the speed of your compiler.
+Under gcc/linux, an install may take as little as 15 minutes for all four
+types/precisions.  Under IRIX using SGI's rather slow (but high performance)
+compilers, the install might take as long as four hours.  1-2 hours is probably
+fairly typical.  However, the user is not required to enter any input during
+the install phase, and all operations are logged, so it is safe to start the
+install and ignore it until completion.
+
+If you experience problems, read the TROUBLESHOOTING section in
+ATLAS/doc/TroubleShoot.txt.  ATLAS/README provides an index of all
+included ATLAS documentation files.
+
+You should then read ATLAS/doc/TestTime.txt for instructions on testing
+and timing your installation.
+
+******************************* SANITY TEST ***********************************
+This optional step merely verifies that the install done previously has
+resulted in a normal library.  It has the same format as the install step,
+but substitute "sanity_test" for "install", i.e.:
+   make sanity_test arch=<arch>
+
+If you have elected to build the threaded library, you can run the same tests
+with the threaded library with:
+   make ptsanity_test arch=<arch>
+
+A successful sanity test will dump a lot of compilation to the window, followed
+with something like:
+
+===========================================================================
+DONE BUILDING TESTERS, RUNNING:
+SCOPING FOR FAILURES IN BIN TESTS:
+fgrep -e fault -e FAULT -e error -e ERROR -e fail -e FAIL \
+        bin/Linux_PIIISSE1/sanity.out
+8 cases: 8 passed, 0 skipped, 0 failed
+4 cases: 4 passed, 0 skipped, 0 failed
+8 cases: 8 passed, 0 skipped, 0 failed
+4 cases: 4 passed, 0 skipped, 0 failed
+8 cases: 8 passed, 0 skipped, 0 failed
+4 cases: 4 passed, 0 skipped, 0 failed
+8 cases: 8 passed, 0 skipped, 0 failed
+4 cases: 4 passed, 0 skipped, 0 failed
+DONE
+SCOPING FOR FAILURES IN CBLAS TESTS:
+fgrep -e fault -e FAULT -e error -e ERROR -e fail -e FAIL \
+        interfaces/blas/C/testing/Linux_PIIISSE1/sanity.out | \
+                fgrep -v PASSED
+make[1]: [sanity_test] Error 1 (ignored)
+DONE
+SCOPING FOR FAILURES IN F77BLAS TESTS:
+fgrep -e fault -e FAULT -e error -e ERROR -e fail -e FAIL \
+        interfaces/blas/F77/testing/Linux_PIIISSE1/sanity.out | \
+                fgrep -v PASSED
+make[1]: [sanity_test] Error 1 (ignored)
+DONE
+make[1]: Leaving directory `/home/rwhaley/TEST/TEST/ATLAS3.3.15'
+===========================================================================
+
+Note that the "Error 1 (ignored)" is coming from grepping for failure, and
+grep is saying it doesn't find any . . .
+
+
+******************* INSTALLING ATLAS FOR MULTIPLE ARCHITECTURES ***************
+If you are installing ATLAS for multiple architectures, you can run all
+installs in parallel (i.e., you can be installing for two or more architectures
+at the same time).  However, the config steps must be done sequentially.
+
+Therefore, if you wanted to install for two architectures, you must run
+config for architecture A, and then start the install, then run config
+for arch B;  you may now start the install for arch B even while arch A's
+install is still ongoing.

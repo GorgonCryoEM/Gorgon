@@ -1,0 +1,7 @@
+
+
+Next I need a pointer to your BLAS library.  If you don't have one, you can
+simply leave this entry blank.  However, without another BLAS implementation,
+you will not be able to test your ATLAS BLAS without downloading the BLAS
+tester off of netlib (the ATLAS testers assume a trusted BLAS).
+

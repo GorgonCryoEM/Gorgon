@@ -1,0 +1,10 @@
+
+The requirements for ATLAS to operate using cross-compilation are as follows:
+
+  (1) Both the cross-compiler and target system must share the filesystem
+      where the ATLAS files are stored
+  (2) The target system must be accessible from the cross-compiling system
+      via ssh
+
+You will need to tell ATLAS the target system's name to ssh to, eg.
+cupid.cs.utk.edu.

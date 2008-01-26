@@ -1,0 +1,9 @@
+
+
+You need to choose a name which represents this architecture (eg. UltraSparc,
+Dec21164, etc).  Do not use a generic name (eg. solaris, linux), which might
+apply to different  hardware.  This architecture name will be appended to the
+name of the created make include file, and appear in all subdirectories, so
+don't make it longer than you like to type.  The name should follow the rules
+for file names (so don't use punctuation and spaces, for instance).
+

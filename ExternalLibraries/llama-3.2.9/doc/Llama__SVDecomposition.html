@@ -1,0 +1,93 @@
+<HTML>
+<HEAD>
+<TITLE>class SVDecomposition</TITLE>
+
+<META NAME="Generator" CONTENT="KDOC ">
+</HEAD>
+<BODY bgcolor="#ffffff" text="#000000" link="#0000ff" vlink="#000099" alink= "#ffffff">
+<TABLE WIDTH="100%" BORDER="0">
+<TR>
+<TD>
+	<TABLE BORDER="0">
+		<TR><TD valign="top" align="left" cellspacing="10">
+		<h1>class SVDecomposition</h1>
+		</TD>
+		<TD valign="top" align="right" colspan="1">
+     Perform singular-value decomposition. <small><A HREF="#longdesc">More...</A></small></TD></TR>
+	</TABLE>
+	<HR>
+	<TABLE BORDER="0">
+		<TR><TH>Full name</TH><TD><code><A HREF="Llama.html">Llama</A>::SVDecomposition</code></TD></TR>
+<TR><TH>Definition</TH><TD><code>#include &lt;<A HREF="SVDecomposition_h.html">SVDecomposition.h</A>&gt;</code></TD></TR>
+<TR><TH>Template form</TH><TD>SVDecomposition&lt;class Scalar&gt; </code></TD></TR>
+<TR><TH><A HREF="full-list-Llama__SVDecomposition.html">List of all Methods</A></TH></TR>
+	</TABLE>
+	</TD>
+<TD align="right"><TABLE BORDER="0"><TD rowspan="6"><IMG SRC="./llama2.gif"></TD><TR><TD><small><A HREF="index-long.html">Annotated List</A></small></TD></TR>
+<TR><TD><small><A HREF="header-list.html">Files</A></small></TD></TR>
+<TR><TD><small><A HREF="all-globals.html">Globals</A></small></TD></TR>
+<TR><TD><small><A HREF="hier.html">Hierarchy</A></small></TD></TR>
+<TR><TD><small><A HREF="index.html">Index</A></small></TD></TR>
+</TABLE></TD></TR></TABLE>
+<h4>Public Methods</h4><ul><LI>&nbsp;<b><A HREF="#ref4">SVDecomposition</A></b> (const Matrix<Scalar>&) 
+</LI>
+<LI>&nbsp;<b><A HREF="#ref5">~SVDecomposition</A></b> (void) 
+</LI>
+<LI>const Matrix<Scalar> *&nbsp;<b><A HREF="#ref6">left_singular_vectors</A></b> (void) 
+</LI>
+<LI>const Matrix<Scalar> *&nbsp;<b><A HREF="#ref7">singular_values</A></b> (void) 
+</LI>
+<LI>const Matrix<Scalar> *&nbsp;<b><A HREF="#ref8">rsvt</A></b> (void) 
+</LI>
+<LI>Transpose<Scalar> &nbsp;<b><A HREF="#ref9">right_singular_vectors</A></b> (void) 
+</LI>
+<LI>Scalar &nbsp;<b><A HREF="#ref10">norm2</A></b> (void)  const
+</LI>
+<LI>Scalar &nbsp;<b><A HREF="#ref11">condition</A></b> (void)  const
+</LI>
+<LI>Scalar &nbsp;<b><A HREF="#ref12">rcondn</A></b> (void)  const
+</LI>
+</ul><HR><H2><A NAME="longdesc">Detailed Description</A></H2><p>
+     Perform singular-value decomposition.  The constructor is a wrapper around the LAPACK
+     routine DGEEVX.  The singular values are computed as a vector, the left eigenvectors
+     are computed as a matrix, and the right eigenvectors as the Transpose of a matrix.
+  </p>
+<A NAME="SVDecomposition"></A><A NAME="ref4"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>SVDecomposition</strong> (const Matrix<Scalar>&)
+<br></td><td align="right"><h3><strong>SVDecomposition</strong></h3></td></tr></table><p></p><A NAME="~SVDecomposition"></A><A NAME="ref5"></A><table width="100%"><tr bgcolor="#eeeeee"><td>&nbsp;<strong>~SVDecomposition</strong> (void)
+<br></td><td align="right"><h3><strong>~SVDecomposition</strong></h3></td></tr></table><p></p><A NAME="left_singular_vectors"></A><A NAME="ref6"></A><table width="100%"><tr bgcolor="#eeeeee"><td>const Matrix<Scalar> *&nbsp;<strong>left_singular_vectors</strong> (void)
+<br></td><td align="right"><h3><strong>left_singular_vectors</strong></h3></td></tr></table><p></p><p>
+       Return a pointer to the matrix of left singular vectors (as columns).
+    </p>
+<A NAME="singular_values"></A><A NAME="ref7"></A><table width="100%"><tr bgcolor="#eeeeee"><td>const Matrix<Scalar> *&nbsp;<strong>singular_values</strong> (void)
+<br></td><td align="right"><h3><strong>singular_values</strong></h3></td></tr></table><p></p><p>
+       Return a pointer to the matrix of singular values (in vector format).
+    </p>
+<A NAME="rsvt"></A><A NAME="ref8"></A><table width="100%"><tr bgcolor="#eeeeee"><td>const Matrix<Scalar> *&nbsp;<strong>rsvt</strong> (void)
+<br></td><td align="right"><h3><strong>rsvt</strong></h3></td></tr></table><p></p><p>
+       Return a pointer to a matrix containing the 
+       right singular vectors (as columns).
+    </p>
+<A NAME="right_singular_vectors"></A><A NAME="ref9"></A><table width="100%"><tr bgcolor="#eeeeee"><td>Transpose<Scalar> &nbsp;<strong>right_singular_vectors</strong> (void)
+<br></td><td align="right"><h3><strong>right_singular_vectors</strong></h3></td></tr></table><p></p><p>
+       Return a Transpose<Scalar> containing the right
+       singular vectors (as columns).  
+    </p>
+<A NAME="norm2"></A><A NAME="ref10"></A><table width="100%"><tr bgcolor="#eeeeee"><td>Scalar &nbsp;<strong>norm2</strong> (void)
+<br></td><td align="right"><h3><strong>norm2</strong></h3></td></tr></table><p> <small>[const]</small></p><p>
+       The matrix operator 2-norm.
+    </p>
+<A NAME="condition"></A><A NAME="ref11"></A><table width="100%"><tr bgcolor="#eeeeee"><td>Scalar &nbsp;<strong>condition</strong> (void)
+<br></td><td align="right"><h3><strong>condition</strong></h3></td></tr></table><p> <small>[const]</small></p><p>
+       Return an estimate of the condition number.
+    </p>
+<A NAME="rcondn"></A><A NAME="ref12"></A><table width="100%"><tr bgcolor="#eeeeee"><td>Scalar &nbsp;<strong>rcondn</strong> (void)
+<br></td><td align="right"><h3><strong>rcondn</strong></h3></td></tr></table><p> <small>[const]</small></p><p>
+       The estimated reciprocal condition number 
+       (compare to machine precision).
+    </p>
+<HR>
+	<table>
+	<tr><td><small>Generated by: king on larix.tiem.utk.edu on Tue Jun 29 10:55:51 2004, using kdoc 2.0a54.</small></td></tr>
+	</table>
+</BODY>
+</HTML>

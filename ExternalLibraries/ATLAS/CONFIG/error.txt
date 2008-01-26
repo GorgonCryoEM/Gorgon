@@ -1,0 +1,16 @@
+
+
+First, make sure this error is not covered in the ATLAS errata file,
+   http://math-atlas.sourceforge.net/errata.html
+All known errors, and most common mistakes/system problems are documented
+in this file, so it will save everyone hassle in the long run if you take
+the time to scope it out before sending e-mail to the help list.
+
+If this does not have the solution to your problem, and you can't figure out
+what went wrong, submit a support request to the ATLAS support tracker, as
+discussed here:
+   http://math-atlas.sourceforge.net/faq.html#help
+
+In the above examples, <ARCH> should be replaced with your architecture
+string, such as "Linux_PIII" or "FreeBSD_21264".
+

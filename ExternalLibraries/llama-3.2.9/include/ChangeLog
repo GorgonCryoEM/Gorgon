@@ -1,0 +1,408 @@
+2003-08-13  Aaron King  <king@otho.hoochecoo.org>
+
+	* Diagonal.h, Range.h, General.h, Submatrix.h, ComplexMatrix.h, Random.h:
+	*** empty log message ***
+
+2003-05-23  Aaron King  <king@otho.hoochecoo.org>
+
+	* AbstDiffeomorphism.h, AbstMapping.h, AbstMatrix.h, AbstVectorfield.h, CholeskyDecomposition.h, ComplexMatrix.h, Decls.h, Diagonal.h, Diffeomorphism.h, EigenDecomposition.h, Exception.h, FAClosure.h, Fourier.h, GenMatrix.h, General.h, LUDecomposition.h, MMClosure.h, Mapping.h, Matrix.h, Minimization.h, Odessa.h, QRDecomposition.h, Random.h, Range.h, RealMatrix.h, SMClosure.h, SVDecomposition.h, Statistics.h, Submatrix.h, TinyVector.h, Transpose.h, Vectorfield.h, f77fun.h:
+	namespace support added
+
+2003-05-23  Aaron A. King  <king@quercus.tiem.utk.edu>
+
+	* AbstDiffeomorphism.h, AbstMapping.h, AbstMatrix.h, AbstVectorfield.h, CholeskyDecomposition.h, ComplexMatrix.h, Decls.h, Diagonal.h, Diffeomorphism.h, EigenDecomposition.h, Exception.h, FAClosure.h, Fourier.h, GenMatrix.h, General.h, LUDecomposition.h, MMClosure.h, Mapping.h, Matrix.h, Minimization.h, Odessa.h, QRDecomposition.h, Random.h, Range.h, RealMatrix.h, SMClosure.h, SVDecomposition.h, Statistics.h, Submatrix.h, TinyVector.h, Transpose.h, Vectorfield.h, f77fun.h:
+	namespace support added
+
+2003-05-17  Aaron A. King  <king@quercus.tiem.utk.edu>
+
+	* FAClosure.h: implemented some scalar functions applied to matrices
+
+	* Matrix.h: implement Matrix::resize method
+
+2003-05-17  Aaron King  <king@nyssa.localdomain>
+
+	* FAClosure.h: implemented some scalar functions applied to matrices
+
+	* Matrix.h: implement Matrix::resize method
+
+2002-12-21  Aaron King  <king@nyssa.localdomain>
+
+	* AbstDiffeomorphism.h, AbstMapping.h, AbstMatrix.h, AbstVectorfield.h, Decls.h, Diagonal.h, Diffeomorphism.h, FAClosure.h, GenMatrix.h, General.h, Mapping.h, Matrix.h, Random.h, Submatrix.h, Vectorfield.h:
+	3.2.7
+
+2002-12-17  Aaron King  <king@nyssa.localdomain>
+
+	* Mapping.h, Matrix.h, RealMatrix.h, Submatrix.h, Vectorfield.h, AbstMatrix.h, CholeskyDecomposition.h, ComplexMatrix.h, Decls.h, Diagonal.h, Diffeomorphism.h, Exception.h, Fourier.h, GenMatrix.h, General.h:
+	fixed for g++-3.2
+
+2001-03-28  aking  <aking@nyssa.localdomain>
+
+	* Matrix.h: put sort back in as a method
+
+2001-02-27  aking  <aking@nyssa.localdomain>
+
+	* ComplexMatrix.h, Matrix.h, RealMatrix.h:
+	added inner product functionality (dot)
+
+2001-02-12  aking  <aking@nyssa.localdomain>
+
+	* FAClosure.h, GenMatrix.h, MMClosure.h, Matrix.h: bug fix
+
+2000-09-29  aking  <aking@nyssa.localdomain>
+
+	* AbstDiffeomorphism.h, AbstMapping.h, AbstMatrix.h, AbstVectorfield.h, CholeskyDecomposition.h, ComplexMatrix.h, Decls.h, Diagonal.h, Diffeomorphism.h, EigenDecomposition.h, FAClosure.h, GenMatrix.h, LUDecomposition.h, Mapping.h, Matrix.h, Odessa.h, QRDecomposition.h, Range.h, RealMatrix.h, SMClosure.h, SVDecomposition.h, Statistics.h, Submatrix.h, TinyVector.h, Vectorfield.h, llama.h:
+	new simplified class hierarchy
+
+	* Random.h: *** empty log message ***
+
+	* Fourier.h: both direct and inverse plans are created at construction
+	of FourierTransform object
+
+2000-09-14  aking  <aking@nyssa.localdomain>
+
+	* Decls.h, llama.h: fourier transforms
+
+	* Fourier.h: New file.
+
+2000-08-11  aking  <aking@nyssa.localdomain>
+
+	* Exception.h, General.h, llama.h, Minimization.h:
+	*** empty log message ***
+
+	* Exception.h:
+	removed bad_alloc definition and replaced by std::bad_alloc
+
+2000-08-09  aking  <aking@nyssa.localdomain>
+
+	* Minimization.h, Exception.h, General.h: *** empty log message ***
+
+2000-08-08  aking  <aking@nyssa.localdomain>
+
+	* Exception.h: *** empty log message ***
+
+2000-08-07  aking  <aking@nyssa.localdomain>
+
+	* Vector.h, Minimization.h: *** empty log message ***
+
+	* Minimization.h: New file.
+
+	* Matrix.h, llama.h: *** empty log message ***
+
+2000-06-09  aking  <aking@nyssa.localdomain>
+
+	* GenMatrix.h, Matrix.h: *** empty log message ***
+
+	* ComplexMatrix.h, ComplexVector.h: .
+
+	* Vectorfield.h, Exception.h: *** empty log message ***
+
+2000-06-08  aking  <aking@nyssa.localdomain>
+
+	* GenMatrix.h: *** empty log message ***
+
+2000-06-07  aking  <aking@nyssa.localdomain>
+
+	* CholeskyDecomposition.h, ComplexMatrix.h, ComplexVector.h, Diagonal.h, Diffeomorphism.h, Exception.h, MMClosure.h, MVClosure.h, Mapping.h, Matrix.h, Random.h, Range.h, RealMatrix.h, Submatrix.h, Subvector.h, Transpose.h, Vector.h, Vectorfield.h:
+	.
+
+	* Odessa.h: *** empty log message ***
+
+	* Odessa.h: New file.
+
+	* AbstVectorfield.h, Vectorfield.h: *** empty log message ***
+
+2000-06-06  aking  <aking@nyssa.localdomain>
+
+	* Vectorfield.h, Submatrix.h, Mapping.h, Diffeomorphism.h, AbstVectorfield.h, f77fun.h:
+	*** empty log message ***
+
+2000-06-05  aking  <aking@nyssa.localdomain>
+
+	* Vectorfield.h, Mapping.h, Decls.h, llama.h: *** empty log message ***
+
+	* Vectorfield.h: New file.
+
+	* Mapping.h, Diffeomorphism.h, AbstVectorfield.h, AbstMapping.h, AbstDiffeomorphism.h, Range.h, Submatrix.h, Subvector.h, Matrix.h, Vector.h:
+	*** empty log message ***
+
+	* Diffeomorphism.h, Mapping.h, AbstDiffeomorphism.h, AbstMapping.h, AbstMatrix.h, AbstVector.h, AbstVectorfield.h, Decls.h, llama.h:
+	.
+
+2000-06-04  aking  <aking@nyssa.localdomain>
+
+	* TinyVector.h: New file.
+
+	* General.h, llama.h, Vector.h, Decls.h: *** empty log message ***
+
+2000-06-03  aking  <aking@nyssa.localdomain>
+
+	* Diffeomorphism.h, Submatrix.h, Subvector.h, llama.h: .
+
+	* Decls.h: *** empty log message ***
+
+	* AbstMatrix.h, AbstVector.h, CholeskyDecomposition.h, Diffeomorphism.h, EigenDecomposition.h, LUDecomposition.h, Matrix.h, QRDecomposition.h, SVDecomposition.h, Vector.h:
+	.
+
+	* AbstTensor.h, Tensor.h: New file.
+
+	* Diffeomorphism.h: *** empty log message ***
+
+	* AbstMatrix.h, AbstVector.h, CholeskyDecomposition.h, ComplexMatrix.h, ComplexVector.h, Decls.h, Diagonal.h, EigenDecomposition.h, FAClosure.h, GenMatrix.h, LUDecomposition.h, Matrix.h, QRDecomposition.h, SMClosure.h, SVClosure.h, Statistics.h, Submatrix.h, Subvector.h, Transpose.h, Vector.h:
+	.
+
+2000-06-02  aking  <aking@nyssa.localdomain>
+
+	* General.h, SMClosure.h: *** empty log message ***
+
+	* AbstMatrix.h, AbstVector.h, CholeskyDecomposition.h, ComplexMatrix.h, ComplexVector.h, Decls.h, Diagonal.h, EigenDecomposition.h, FAClosure.h, GenMatrix.h, General.h, LUDecomposition.h, MMClosure.h, MVClosure.h, Matrix.h, QRDecomposition.h, Range.h, RealMatrix.h, RealVector.h, SMClosure.h, SVClosure.h, SVDecomposition.h, Statistics.h, Submatrix.h, Subvector.h, Transpose.h, Vector.h, llama.h:
+	.
+
+2000-05-31  aking  <aking@nyssa.localdomain>
+
+	* Submatrix.h, Matrix.h, GenMatrix.h, AbstMatrix.h, FAClosure.h, Statistics.h, Decls.h, ComplexMatrix.h, Transpose.h:
+	*** empty log message ***
+
+	* Statistics.h: New file.
+
+	* Matrix.h, llama.h: *** empty log message ***
+
+2000-05-30  aking  <aking@nyssa.localdomain>
+
+	* General.h, AbstMatrix.h, Matrix.h, Random.h:
+	*** empty log message ***
+
+2000-05-24  aking  <aking@nyssa.localdomain>
+
+	* Matrix.h, Random.h, Exception.h, llama.h, EigenDecomposition.h, ComplexMatrix.h, RealMatrix.h, f77fun.h, GenMatrix.h:
+	*** empty log message ***
+
+2000-05-23  aking  <aking@nyssa.localdomain>
+
+	* Diffeomorphism.h, General.h, GenMatrix.h: *** empty log message ***
+
+2000-05-22  aking  <aking@nyssa.localdomain>
+
+	* QRDecomposition.h, NewtonRaphson.h, Decls.h, Matrix.h, Diffeomorphism.h:
+	*** empty log message ***
+
+2000-05-19  aking  <aking@nyssa.localdomain>
+
+	* Diffeomorphism.h, FAClosure.h, Matrix.h, Random.h:
+	*** empty log message ***
+
+2000-05-18  aking  <aking@nyssa.localdomain>
+
+	* LUDecomposition.h, Matrix.h, Decls.h: *** empty log message ***
+
+	* FAClosure.h: New file.
+
+2000-05-17  aking  <aking@nyssa.localdomain>
+
+	* Transpose.h, Submatrix.h, Matrix.h, SVDecomposition.h:
+	*** empty log message ***
+
+2000-05-16  aking  <aking@nyssa.localdomain>
+
+	* ComplexMatrix.h, Matrix.h, General.h, Submatrix.h, RealMatrix.h:
+	*** empty log message ***
+
+2000-05-15  aking  <aking@nyssa.localdomain>
+
+	* QRDecomposition.h: New file.
+
+	* Decls.h, Matrix.h, f77fun.h, llama.h, Submatrix.h, AbstMatrix.h, ComplexMatrix.h, Exception.h, Transpose.h, MMClosure.h, SMClosure.h:
+	*** empty log message ***
+
+2000-05-13  aking  <aking@nyssa.localdomain>
+
+	* MMClosure.h, SMClosure.h, ComplexMatrix.h, GenMatrix.h, Matrix.h, RealMatrix.h, Submatrix.h, AbstMatrix.h, Decls.h, NewtonRaphson.h, SVDecomposition.h, Transpose.h, llama.h, AbstVector.h, Vector.h, ComplexVector.h, RealVector.h, Multiplication.h:
+	*** empty log message ***
+
+	* ComplexVector.h, RealVector.h: New file.
+
+	* Vector.h: *** empty log message ***
+
+	* Scalar.h, Multiplication.h, AbstVector.h: New file.
+
+	* GenMatrix.h, AbstMatrix.h, ComplexMatrix.h, Decls.h, Diffeomorphism.h, General.h, MMClosure.h, Matrix.h, NewtonRaphson.h, Random.h, RealMatrix.h, SMClosure.h, SVDecomposition.h, Submatrix.h, Transpose.h, llama.h:
+	*** empty log message ***
+
+2000-05-12  aking  <aking@nyssa.localdomain>
+
+	* Diffeomorphism.h, ComplexMatrix.h, GenMatrix.h, MMClosure.h, Matrix.h, RealMatrix.h, SMClosure.h, Submatrix.h, Transpose.h, SVDecomposition.h:
+	*** empty log message ***
+
+	* Random.h: virtual
+
+	* Decls.h, CholeskyDecomposition.h, Diffeomorphism.h, EigenDecomposition.h, LUDecomposition.h, NewtonRaphson.h, f77fun.h, GenMatrix.h, Matrix.h:
+	*** empty log message ***
+
+2000-05-11  aking  <aking@nyssa.localdomain>
+
+	* CholeskyDecomposition.h: New file.
+
+	* SVDecomposition.h, Matrix.h, GenMatrix.h, llama.h, f77fun.h, Decls.h, LUDecomposition.h, ComplexMatrix.h, RealMatrix.h, Submatrix.h, Random.h:
+	*** empty log message ***
+
+2000-05-09  aking  <aking@nyssa.localdomain>
+
+	* ComplexMatrix.h, Diffeomorphism.h, EigenDecomposition.h, Exception.h, GenMatrix.h, General.h, MMClosure.h, NewtonRaphson.h, Random.h, Range.h, RealMatrix.h, SMClosure.h, Submatrix.h, Transpose.h, LUDecomposition.h, Matrix.h, SVDecomposition.h:
+	*** empty log message ***
+
+2000-05-08  aking  <aking@nyssa.localdomain>
+
+	* llama.h, GenMatrix.h, ComplexMatrix.h, RealMatrix.h, EigenDecomposition.h, LUDecomposition.h, SVDecomposition.h, NewtonRaphson.h, Matrix.h, Exception.h:
+	*** empty log message ***
+
+	* Decls.h: New file.
+
+	* ComplexMatrix.h, Transpose.h, Submatrix.h, SVDecomposition.h, MMClosure.h, Random.h, RealMatrix.h, Diffeomorphism.h, Matrix.h, GenMatrix.h, General.h:
+	*** empty log message ***
+
+2000-05-05  aking  <aking@nyssa.localdomain>
+
+	* GenMatrix.h, Matrix.h, Submatrix.h, ComplexMatrix.h, f77fun.h, llama.h, LUDecomposition.h, SVDecomposition.h, NewtonRaphson.h, Random.h, Range.h, General.h, EigenDecomposition.h, Diffeomorphism.h, Exception.h:
+	*** empty log message ***
+
+2000-05-04  aking  <aking@nyssa.localdomain>
+
+	* ComplexMatrix.h, RealMatrix.h, MMClosure.h, SMClosure.h, Transpose.h:
+	*** empty log message ***
+
+2000-05-03  aking  <aking@nyssa.localdomain>
+
+	* NewtonRaphson.h, Diffeomorphism.h, EigenDecomposition.h, Random.h, Exception.h:
+	*** empty log message ***
+
+	* NewtonRaphson.h: New file.
+
+	* Diffeomorphism.h, llama.h: *** empty log message ***
+
+2000-05-02  aking  <aking@nyssa.localdomain>
+
+	* Submatrix.h, Diffeomorphism.h, Exception.h, LUDecomposition.h:
+	*** empty log message ***
+
+	* Diffeomorphism.h: better
+
+	* GenMatrix.h: *** empty log message ***
+
+	* GenMatrix.h: added diff, cumsum
+
+	* GenMatrix.h: *** empty log message ***
+
+	* Matrix.h: /
+	/
+
+	* Submatrix.h, Transpose.h: *** empty log message ***
+
+2000-05-01  aking  <aking@nyssa.localdomain>
+
+	* Matrix.h, Submatrix.h, Transpose.h, RealMatrix.h, Range.h, SVDecomposition.h, GenMatrix.h, ComplexMatrix.h:
+	*** empty log message ***
+
+2000-04-28  aking  <aking@nyssa.localdomain>
+
+	* EigenDecomposition.h: New file.
+
+	* ComplexMatrix.h, GenMatrix.h, f77fun.h, General.h, Matrix.h, llama.h:
+	*** empty log message ***
+
+	* LUDecomposition.h: moved routines to LUDecomposition.h
+
+	* SVDecomposition.h: moved routines to SVDecomposition.cc
+
+	* RealMatrix.h: *** empty log message ***
+
+	* GenMatrix.h: New file.
+
+	* Matrix.h: split to GenMatrix.h
+
+	* llama.h: *** empty log message ***
+
+	* SVDecomposition.h: New file.
+
+	* LUDecomposition.h, MMClosure.h, RealMatrix.h, f77fun.h:
+	*** empty log message ***
+
+2000-04-27  aking  <aking@nyssa.localdomain>
+
+	* llama.h: *** empty log message ***
+
+	* Diffeomorphism.h: New file.
+
+	* Submatrix.h, f77fun.h, Transpose.h, RealMatrix.h, Matrix.h, LUDecomposition.h, General.h, Exception.h, Complex.h, ComplexMatrix.h:
+	*** empty log message ***
+
+2000-04-26  aking  <aking@nyssa.localdomain>
+
+	* LUDecomposition.h, f77fun.h, MMClosure.h, RealMatrix.h, Transpose.h, Matrix.h, ComplexMatrix.h, General.h, Complex.h:
+	*** empty log message ***
+
+	* Complex.h, Exception.h, LUDecomposition.h, MXClosure.h, Matrix.h, Random.h, Vector.h, VectorField.h, CVector.h, ComplexMatrix.h, General.h, MMClosure.h, RVector.h, Range.h, RealMatrix.h, Slice.h, Submatrix.h, f77fun.h:
+	.
+
+2000-04-13  aking  <aking@nyssa.localdomain>
+
+	* Complex.h, ComplexMatrix.h, Exception.h, MMClosure.h, MXClosure.h, Matrix.h, Random.h, RealMatrix.h, SMClosure.h, Transpose.h, Vector.h, VectorField.h, f77fun.h:
+	OK for now
+
+2000-03-30  aking  <aking@nyssa.localdomain>
+
+	* VectorField.h: New file.
+
+	* f77fun.h: *** empty log message ***
+
+	* SMClosure.h, SVClosure.h: New file.
+
+	* CVector.h, RVector.h, Vector.h, ComplexMatrix.h, Matrix.h, RealMatrix.h:
+	using closures in separate files
+
+	* Complex.h: *** empty log message ***
+
+2000-03-23  aking  <aking@nyssa.localdomain>
+
+	* Vector.h: better binary i/o
+	more vectorized functions
+
+	* Complex.h: better binary i/o
+
+2000-03-22  aking  <aking@nyssa.localdomain>
+
+	* Complex.h, Exception.h, Matrix.h, Random.h, Vector.h:
+	new naming scheme for header files
+
+	* llama.h: new naming convention for header files
+
+	* Matrix.h: New file.
+
+	* Exception.h: use stdexcept
+
+	* f77fun.h: New file.
+
+	* Vector.h: use F77_FUN macro
+
+	* Complex.h: better ascii display
+
+2000-03-20  aking  <aking@nyssa.localdomain>
+
+	* Vector.h: new constructor (with increments)
+
+	* Random.h, Exception.h, Complex.h: *** empty log message ***
+
+	* llama.h: Added LlamaMatrix.h
+
+	* Vector.h, Random.h: New file.
+
+	* Exception.h: more messages
+
+	* Complex.h: more functionality
+
+	* General.h: different format
+
+	* llama.h: added vector and random
+
+2000-03-18  aking  <aking@nyssa.localdomain>
+
+	* Complex.h, Exception.h, General.h, llama.h: New file.
+
