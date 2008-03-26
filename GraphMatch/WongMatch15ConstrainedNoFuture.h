@@ -287,7 +287,9 @@ namespace wustl_mm {
 					!((patternGraph->adjacencyMatrix[d-1][d][0] == GRAPHEDGE_LOOP) && (baseGraph->adjacencyMatrix[qj-1][qp-1][0] == GRAPHEDGE_LOOP_EUCLIDEAN))) 	{
 					return -1;
 				}		
+				// TODO: Figure out why I had put in the following code!!!!
 				if((qj != -1) && (baseGraph->euclideanMatrix[qj-1][qp-1] > (patternGraph->adjacencyMatrix[d-1][d][1] * EUCLIDEAN_VOXEL_TO_PDB_RATIO ))){
+				//	printf("%lf %lf %lf %lf \n", baseGraph->euclideanMatrix[qj-1][qp-1], patternGraph->adjacencyMatrix[d-1][d][1] * EUCLIDEAN_VOXEL_TO_PDB_RATIO, patternGraph->adjacencyMatrix[d-1][d][1], EUCLIDEAN_VOXEL_TO_PDB_RATIO);
 					return -1;
 				}
 			} else {
@@ -347,7 +349,7 @@ namespace wustl_mm {
 			// Expanding nodes with a real terminal node
 			for(int i = 1; i <= baseGraph->nodeCount; i++) {		
 				if((currentNode->depth == 0) || 
-					(LinkedNode::IsNodeInBitmap(currentNode->m2Bitmap, i) && (baseGraph->EdgeExists(currentNode->n2Node-1, i-1)))) {
+					(LinkedNode::IsNodeInBitmap(currentNode->m2Bitmap, i) && (baseGraph->EdgeExists(currentNode->n2Node-1, i-1)))) {						
 					for(int j = 0; j <= min(missingHelixCount * 2 - currentNode->missingNodesUsed + 1, currentM1Top); j += 2) {  // Stepping by two since we jump every 2 loops
 						notConstrained = true;
 
@@ -356,7 +358,7 @@ namespace wustl_mm {
 						}
 						notConstrained = notConstrained && IsNodeAssignmentAllowed(currentNode->n1Node + j + 1, i);
 
-						if(notConstrained) {
+						if(notConstrained) {							
 							temp = currentNode;
 							currentNode = new LinkedNode(currentNode, currentStub, i, j);
 							currentNode->costGStar = 0;
@@ -369,9 +371,11 @@ namespace wustl_mm {
 
 							if(temp->depth == 0) {
 								edgeCost = 0;
-							} else {
+							} else {								
 								edgeCost = GetCost(temp->n1Node, j+1, temp->n2Node, currentNode->n2Node);
+								//printf("%i %i %i %i %lf\n", temp->n1Node, j+1, temp->n2Node, currentNode->n2Node, edgeCost);
 							}
+							
 
 							if(edgeCost >= 0) {
 								currentNode->costGStar += temp->costGStar + edgeCost +	MISSING_HELIX_PENALTY * (j/2.0) + GetC(currentNode->n1Node, currentNode->n2Node);

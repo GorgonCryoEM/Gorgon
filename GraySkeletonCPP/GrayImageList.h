@@ -1,5 +1,5 @@
-#ifndef GRAY_IMAGE_LIST_H
-#define GRAY_IMAGE_LIST_H
+#ifndef GRAYSKELETONCPP_GRAY_IMAGE_LIST_H
+#define GRAYSKELETONCPP_GRAY_IMAGE_LIST_H
 
 #include <vector>
 #include "GrayImage.h"

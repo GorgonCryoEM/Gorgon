@@ -12,6 +12,7 @@
 #include "GlobalDefinitions.h"
 #include <Foundation/TimeManager.h>
 #include <Foundation/StringUtils.h>
+#include "InteractiveSkeletonizer.h"
 
 using namespace wustl_mm::GraySkeletonCPP;
 using namespace wustl_mm::Foundation;
@@ -21,7 +22,8 @@ namespace wustl_mm {
 	namespace GraySkeletonCPP {
 		const int DO_NOTHING = -1;
 		const int DO_SKELETONIZATION = 1;
-		const int DO_SKELETONIZATION_AND_PRUNING = 2;
+		const int DO_SKELETONIZATION_AND_PRUNING = 2;			
+		const int DO_INTERACTIVE_SKELETONIZATION = 70;
 
 		const int DO_BINARY_THINNING_JU2007 = 50;
 		const int DO_TOPOLOGICAL_WATERSHED_JU2007  = 60;
@@ -101,6 +103,14 @@ namespace wustl_mm {
 					printf("\t[stepSize]	  : The grayscale stepsize.\n");
 					printf("\t[smoothingIterations]: The number of smoothing steps.\n");
 					printf("\t[smoothingRadius]: The radius for the structure tensor used in smoothing.\n\n");
+					break;
+
+				case DO_INTERACTIVE_SKELETONIZATION:
+					printf("To perform Interactive skeletonization (debug only.. dosent load a UI)\n");
+					printf("\tGraySkeletonCPP.exe %i [dimensions] [inputfile] [outfile] [minCurveSize] [curveRadius] [minGray] [maxGray] [stepSize] [startX] [startY] [startZ] [endX] [endY] [endZ] [skeletonRatio] [structureTensorRatio]\n\n", DO_INTERACTIVE_SKELETONIZATION);
+					printf("\t[dimensions]    : The number of dimensions\n");
+					printf("\t[inputfile]     : an input image file (MRC)\n");
+					printf("\t[outfile]       : the filename to be used when generating the skeleton (NB)\n");
 					break;
 				case DO_BINARY_THINNING_JU2007:
 					printf("To perform Binary Thinning (Ju2007)\n");
@@ -314,6 +324,40 @@ namespace wustl_mm {
 
 
 
+
+		void DoInteractiveSkeletonization(int dimensions, string inFile, string outFile, int minCurveSize, int curveRadius, int minGray, int maxGray, int stepSize, int startX, int startY, int startZ, int endX, int endY, int endZ, double skeletonRatio, double stRatio) {
+			string outPath = outFile.substr(0, outFile.rfind("."));
+			switch(dimensions){
+				case 2:
+					printf("Not implemented yet! \n");
+					break;
+				case 3: {
+					MRCReader * reader = (MRCReader*)MRCReaderPicker::pick((char *)inFile.c_str());
+					Volume * sourceVol = reader->getVolume();
+					delete reader;
+
+					InteractiveSkeletonizer * skel = new InteractiveSkeletonizer(sourceVol, minGray, maxGray, stepSize, curveRadius, minCurveSize);
+					skel->SetGraphWeights(skeletonRatio, stRatio);
+					skel->UpdateReturnPath(skel->FindClosestSkeletalPoint(Vector3DInt(startX, startY, startZ)));
+					vector<Vector3DInt> path = skel->GetPath(skel->FindClosestSkeletalPoint(Vector3DInt(endX, endY, endZ)));
+
+					Volume * skeletonPath = new Volume(sourceVol->getSizeX(), sourceVol->getSizeY(), sourceVol->getSizeZ());
+					for(int i = 0; i < path.size(); i++) {
+						skeletonPath->setDataAt(path[i].X(), path[i].Y(), path[i].Z(), 1);
+					}
+					skeletonPath->toMRCFile((char *)outFile.c_str());					
+
+					delete skeletonPath;
+					delete sourceVol;
+					delete skel;
+					break;
+				}
+				default:
+					DisplayInputParams(DO_INTERACTIVE_SKELETONIZATION);
+					break;
+			}
+			
+		}
 
 		void Do_Resize(string inFile, string outFile, int newX, int newY, int newZ) {
 			MRCReader * reader = (MRCReader*)MRCReaderPicker::pick((char *)inFile.c_str());
@@ -601,6 +645,16 @@ int main( int args, char * argv[] ) {
 						StringUtils::StringToInt(argv[14]), StringUtils::StringToInt(argv[15]), StringUtils::StringToInt(argv[16]), StringUtils::StringToInt(argv[17]), StringUtils::StringToInt(argv[18]), StringUtils::StringToInt(argv[19]), StringUtils::StringToInt(argv[20]));
 					error = false;
 				} 
+				break;
+			case DO_INTERACTIVE_SKELETONIZATION:
+				if(args == 18) {
+					DoInteractiveSkeletonization(StringUtils::StringToInt(argv[2]), argv[3], argv[4], StringUtils::StringToInt(argv[5]), 
+						StringUtils::StringToInt(argv[6]), StringUtils::StringToInt(argv[7]), StringUtils::StringToInt(argv[8]), 
+						StringUtils::StringToInt(argv[8]), StringUtils::StringToInt(argv[10]), StringUtils::StringToInt(argv[11]), 
+						StringUtils::StringToInt(argv[12]), StringUtils::StringToInt(argv[13]), StringUtils::StringToInt(argv[14]), 
+						StringUtils::StringToInt(argv[15]), StringUtils::StringToDouble(argv[16]), StringUtils::StringToDouble(argv[17]));
+					error = false;					
+				}
 				break;
 			case DO_DISPLAY_VOXEL_COUNT:
 				// GraySkeletonCPP.exe DO_DISPLAY_VOXEL_COUNT [inputfile]

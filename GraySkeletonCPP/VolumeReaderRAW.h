@@ -1,5 +1,5 @@
-#ifndef VOLUME_READER_RAW_H
-#define VOLUME_READER_RAW_H
+#ifndef GRAYSKELETONCPP_VOLUME_READER_RAW_H
+#define GRAYSKELETONCPP_VOLUME_READER_RAW_H
 
 #include "VolumeReader.h"
 #include <sys/stat.h>
@@ -9,7 +9,8 @@ namespace wustl_mm {
 		class VolumeReaderRAW : VolumeReader {
 		public:
 			static Volume * LoadVolume(string fileName);
-			static Volume * LoadVolume(string fileName, int xSize, int ySize, int zSize, int xSpacing, int ySpacing, int zSpacing);
+			static Volume * LoadVolume8bit(string fileName, int xSize, int ySize, int zSize, int xSpacing, int ySpacing, int zSpacing);
+			static Volume * LoadVolume16bit(string fileName, int xSize, int ySize, int zSize, int xSpacing, int ySpacing, int zSpacing);
 			static Volume * SaveVolume(Volume * volume, string fileName);
 		};
 
@@ -23,10 +24,10 @@ namespace wustl_mm {
 					sideSize = dimension;
 				}
 			}
-			return LoadVolume(fileName, sideSize, sideSize, sideSize, 1, 1, 1);
+			return LoadVolume8bit(fileName, sideSize, sideSize, sideSize, 1, 1, 1);
 		}
 
-		Volume * VolumeReaderRAW::LoadVolume(string fileName, int xSize, int ySize, int zSize, int xSpacing, int ySpacing, int zSpacing) {
+		Volume * VolumeReaderRAW::LoadVolume8bit(string fileName, int xSize, int ySize, int zSize, int xSpacing, int ySpacing, int zSpacing) {
 			FILE* fin = fopen( fileName.c_str(), "rb" );		
 
 			Volume* vol = new Volume( xSize, ySize, zSize) ;	
@@ -34,6 +35,30 @@ namespace wustl_mm {
 			int size = xSize * ySize * zSize;
 			unsigned char * tempdata = new unsigned char[size] ;
 			fread(tempdata, sizeof(unsigned char), size, fin) ;
+			int ct = 0 ;
+			for(int x = 0; x < xSize ; x++) {
+				for (int y = 0; y < ySize ; y++) {
+					for (int z = 0 ; z < zSize ; z++) {
+						vol->setDataAt(x,y,z, tempdata[ ct ]);
+						ct ++ ;
+					}
+				}
+			}		
+			fclose( fin ) ;
+			vol->setSpacing(xSpacing, ySpacing, zSpacing);
+
+			delete [] tempdata ;	
+			return vol;
+		}
+
+		Volume * VolumeReaderRAW::LoadVolume16bit(string fileName, int xSize, int ySize, int zSize, int xSpacing, int ySpacing, int zSpacing) {
+			FILE* fin = fopen( fileName.c_str(), "rb" );		
+
+			Volume* vol = new Volume( xSize, ySize, zSize) ;	
+			
+			int size = xSize * ySize * zSize;
+			unsigned short * tempdata = new unsigned short[size] ;
+			fread(tempdata, sizeof(unsigned short), size, fin) ;
 			int ct = 0 ;
 			for(int x = 0; x < xSize ; x++) {
 				for (int y = 0; y < ySize ; y++) {

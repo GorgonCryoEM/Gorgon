@@ -1,5 +1,5 @@
-#ifndef DISCRETE_MESH_H
-#define DISCRETE_MESH_H
+#ifndef GRAYSKELETONCPP_DISCRETE_MESH_H
+#define GRAYSKELETONCPP_DISCRETE_MESH_H
 
 #include <SkeletonMaker/volume.h>
 #include <MathTools/DataStructures.h>

@@ -1,5 +1,5 @@
-#ifndef VOLUME_SKELETONIZER_H
-#define VOLUME_SKELETONIZER_H
+#ifndef GRAYSKELETONCPP_VOLUME_SKELETONIZER_H
+#define GRAYSKELETONCPP_VOLUME_SKELETONIZER_H
 
 #include "GrayImage.h"
 #include "GrayImageList.h"
@@ -58,7 +58,7 @@ namespace wustl_mm {
 			Vector3D * GetVolumeGradient(Volume * sourceVolume);
 			Vector3D * GetVolumeGradient2(Volume * sourceVolume);
 			Vector3D * GetSkeletonDirection(Volume * skeleton, int type);
-		private:
+		protected:
 			
 			double AngleToParameter(double angle);
 			double GetVoxelCost(EigenResults3D imageEigen, Vector3D skeletonDirection, int type);
@@ -1643,8 +1643,15 @@ namespace wustl_mm {
 					prunedCurveVol->toMRCFile((char *)(outputPath + "-C-Post-Prune.mrc").c_str());
 				#endif
 
+				Volume * filledCurveVol = FillCurveHoles(prunedCurveVol, curveVol, maxCurveHole);
+				#ifdef SAVE_INTERMEDIATE_RESULTS
+					filledCurveVol->toMRCFile((char *)(outputPath + "-C-Post-Fill.mrc").c_str());
+				#endif
 				delete curveVol;
-				curveVol = prunedCurveVol;
+				delete prunedCurveVol;
+				curveVol = filledCurveVol;
+
+				
 			}
 
 			VoxelOr(curveVol, surfaceVol);

@@ -7,6 +7,8 @@
 #include <GraySkeletonCPP/VolumeReaderATOM.h>
 #include <string>
 #include <Foundation/StringUtils.h>
+#include "NonManifoldMesh.h"
+
 
 using namespace std;
 using namespace wustl_mm::GraySkeletonCPP;
@@ -16,6 +18,7 @@ namespace wustl_mm {
 
 		const int DO_NOTHING = -1;
 		const int DO_SIMPLIFY = 1;
+
 
 		void DisplayInputFormat(int function) {
 			switch(function) {

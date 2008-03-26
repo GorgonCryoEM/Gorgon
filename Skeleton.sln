@@ -4,8 +4,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SkeletonMaker", "SkeletonMa
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GraphMatch", "GraphMatch\GraphMatch.vcproj", "{E98C9677-C8CA-4CC3-8AE7-A06140EA49BB}"
 	ProjectSection(ProjectDependencies) = postProject
-		{EC8F7758-80CF-436B-978B-717297945FAB} = {EC8F7758-80CF-436B-978B-717297945FAB}
 		{817660CF-4E6C-48F6-BF18-FB75FC2B6B5E} = {817660CF-4E6C-48F6-BF18-FB75FC2B6B5E}
+		{EC8F7758-80CF-436B-978B-717297945FAB} = {EC8F7758-80CF-436B-978B-717297945FAB}
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SkeletonVisualizer", "SkeletonVisualizer\SkeletonVisualizer.csproj", "{E6AC7995-0C10-4D59-9F75-45E3795D51C9}"
@@ -32,6 +32,9 @@ Global
 		MemLeak|Any CPU = MemLeak|Any CPU
 		MemLeak|Mixed Platforms = MemLeak|Mixed Platforms
 		MemLeak|Win32 = MemLeak|Win32
+		Python|Any CPU = Python|Any CPU
+		Python|Mixed Platforms = Python|Mixed Platforms
+		Python|Win32 = Python|Win32
 		Release|Any CPU = Release|Any CPU
 		Release|Mixed Platforms = Release|Mixed Platforms
 		Release|Win32 = Release|Win32
@@ -50,6 +53,11 @@ Global
 		{817660CF-4E6C-48F6-BF18-FB75FC2B6B5E}.MemLeak|Mixed Platforms.Build.0 = MemLeak|Win32
 		{817660CF-4E6C-48F6-BF18-FB75FC2B6B5E}.MemLeak|Win32.ActiveCfg = MemLeak|Win32
 		{817660CF-4E6C-48F6-BF18-FB75FC2B6B5E}.MemLeak|Win32.Build.0 = MemLeak|Win32
+		{817660CF-4E6C-48F6-BF18-FB75FC2B6B5E}.Python|Any CPU.ActiveCfg = Python|Win32
+		{817660CF-4E6C-48F6-BF18-FB75FC2B6B5E}.Python|Mixed Platforms.ActiveCfg = Python|Win32
+		{817660CF-4E6C-48F6-BF18-FB75FC2B6B5E}.Python|Mixed Platforms.Build.0 = Python|Win32
+		{817660CF-4E6C-48F6-BF18-FB75FC2B6B5E}.Python|Win32.ActiveCfg = Python|Win32
+		{817660CF-4E6C-48F6-BF18-FB75FC2B6B5E}.Python|Win32.Build.0 = Python|Win32
 		{817660CF-4E6C-48F6-BF18-FB75FC2B6B5E}.Release|Any CPU.ActiveCfg = Release|Win32
 		{817660CF-4E6C-48F6-BF18-FB75FC2B6B5E}.Release|Mixed Platforms.ActiveCfg = Release|Win32
 		{817660CF-4E6C-48F6-BF18-FB75FC2B6B5E}.Release|Mixed Platforms.Build.0 = Release|Win32
@@ -70,6 +78,11 @@ Global
 		{E98C9677-C8CA-4CC3-8AE7-A06140EA49BB}.MemLeak|Mixed Platforms.Build.0 = MemLeak|Win32
 		{E98C9677-C8CA-4CC3-8AE7-A06140EA49BB}.MemLeak|Win32.ActiveCfg = MemLeak|Win32
 		{E98C9677-C8CA-4CC3-8AE7-A06140EA49BB}.MemLeak|Win32.Build.0 = MemLeak|Win32
+		{E98C9677-C8CA-4CC3-8AE7-A06140EA49BB}.Python|Any CPU.ActiveCfg = Python|Win32
+		{E98C9677-C8CA-4CC3-8AE7-A06140EA49BB}.Python|Mixed Platforms.ActiveCfg = Python|Win32
+		{E98C9677-C8CA-4CC3-8AE7-A06140EA49BB}.Python|Mixed Platforms.Build.0 = Python|Win32
+		{E98C9677-C8CA-4CC3-8AE7-A06140EA49BB}.Python|Win32.ActiveCfg = Python|Win32
+		{E98C9677-C8CA-4CC3-8AE7-A06140EA49BB}.Python|Win32.Build.0 = Python|Win32
 		{E98C9677-C8CA-4CC3-8AE7-A06140EA49BB}.Release|Any CPU.ActiveCfg = Release|Win32
 		{E98C9677-C8CA-4CC3-8AE7-A06140EA49BB}.Release|Mixed Platforms.ActiveCfg = Release|Win32
 		{E98C9677-C8CA-4CC3-8AE7-A06140EA49BB}.Release|Mixed Platforms.Build.0 = Release|Win32
@@ -91,6 +104,11 @@ Global
 		{E6AC7995-0C10-4D59-9F75-45E3795D51C9}.MemLeak|Mixed Platforms.ActiveCfg = MemLeak|Any CPU
 		{E6AC7995-0C10-4D59-9F75-45E3795D51C9}.MemLeak|Mixed Platforms.Build.0 = MemLeak|Any CPU
 		{E6AC7995-0C10-4D59-9F75-45E3795D51C9}.MemLeak|Win32.ActiveCfg = MemLeak|Any CPU
+		{E6AC7995-0C10-4D59-9F75-45E3795D51C9}.Python|Any CPU.ActiveCfg = Python|Any CPU
+		{E6AC7995-0C10-4D59-9F75-45E3795D51C9}.Python|Any CPU.Build.0 = Python|Any CPU
+		{E6AC7995-0C10-4D59-9F75-45E3795D51C9}.Python|Mixed Platforms.ActiveCfg = Python|Any CPU
+		{E6AC7995-0C10-4D59-9F75-45E3795D51C9}.Python|Mixed Platforms.Build.0 = Python|Any CPU
+		{E6AC7995-0C10-4D59-9F75-45E3795D51C9}.Python|Win32.ActiveCfg = Python|Any CPU
 		{E6AC7995-0C10-4D59-9F75-45E3795D51C9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E6AC7995-0C10-4D59-9F75-45E3795D51C9}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E6AC7995-0C10-4D59-9F75-45E3795D51C9}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
@@ -112,6 +130,11 @@ Global
 		{E3B1B536-8C7A-45E8-9BAA-5FE4F7B9FE13}.MemLeak|Mixed Platforms.Build.0 = MemLeak|Win32
 		{E3B1B536-8C7A-45E8-9BAA-5FE4F7B9FE13}.MemLeak|Win32.ActiveCfg = MemLeak|Win32
 		{E3B1B536-8C7A-45E8-9BAA-5FE4F7B9FE13}.MemLeak|Win32.Build.0 = MemLeak|Win32
+		{E3B1B536-8C7A-45E8-9BAA-5FE4F7B9FE13}.Python|Any CPU.ActiveCfg = Python|Win32
+		{E3B1B536-8C7A-45E8-9BAA-5FE4F7B9FE13}.Python|Mixed Platforms.ActiveCfg = Python|Win32
+		{E3B1B536-8C7A-45E8-9BAA-5FE4F7B9FE13}.Python|Mixed Platforms.Build.0 = Python|Win32
+		{E3B1B536-8C7A-45E8-9BAA-5FE4F7B9FE13}.Python|Win32.ActiveCfg = Python|Win32
+		{E3B1B536-8C7A-45E8-9BAA-5FE4F7B9FE13}.Python|Win32.Build.0 = Python|Win32
 		{E3B1B536-8C7A-45E8-9BAA-5FE4F7B9FE13}.Release|Any CPU.ActiveCfg = Release|Win32
 		{E3B1B536-8C7A-45E8-9BAA-5FE4F7B9FE13}.Release|Mixed Platforms.ActiveCfg = Release|Win32
 		{E3B1B536-8C7A-45E8-9BAA-5FE4F7B9FE13}.Release|Mixed Platforms.Build.0 = Release|Win32
@@ -132,6 +155,11 @@ Global
 		{9868724F-D44A-4315-A809-C3F5ECA9110E}.MemLeak|Mixed Platforms.Build.0 = Release|Win32
 		{9868724F-D44A-4315-A809-C3F5ECA9110E}.MemLeak|Win32.ActiveCfg = Release|Win32
 		{9868724F-D44A-4315-A809-C3F5ECA9110E}.MemLeak|Win32.Build.0 = Release|Win32
+		{9868724F-D44A-4315-A809-C3F5ECA9110E}.Python|Any CPU.ActiveCfg = Python|Win32
+		{9868724F-D44A-4315-A809-C3F5ECA9110E}.Python|Mixed Platforms.ActiveCfg = Python|Win32
+		{9868724F-D44A-4315-A809-C3F5ECA9110E}.Python|Mixed Platforms.Build.0 = Python|Win32
+		{9868724F-D44A-4315-A809-C3F5ECA9110E}.Python|Win32.ActiveCfg = Python|Win32
+		{9868724F-D44A-4315-A809-C3F5ECA9110E}.Python|Win32.Build.0 = Python|Win32
 		{9868724F-D44A-4315-A809-C3F5ECA9110E}.Release|Any CPU.ActiveCfg = Release|Win32
 		{9868724F-D44A-4315-A809-C3F5ECA9110E}.Release|Mixed Platforms.ActiveCfg = Release|Win32
 		{9868724F-D44A-4315-A809-C3F5ECA9110E}.Release|Mixed Platforms.Build.0 = Release|Win32
@@ -152,6 +180,11 @@ Global
 		{5B1E0736-9D9C-43BF-A60D-210292DCB7FC}.MemLeak|Mixed Platforms.Build.0 = Release|Win32
 		{5B1E0736-9D9C-43BF-A60D-210292DCB7FC}.MemLeak|Win32.ActiveCfg = Release|Win32
 		{5B1E0736-9D9C-43BF-A60D-210292DCB7FC}.MemLeak|Win32.Build.0 = Release|Win32
+		{5B1E0736-9D9C-43BF-A60D-210292DCB7FC}.Python|Any CPU.ActiveCfg = Python|Win32
+		{5B1E0736-9D9C-43BF-A60D-210292DCB7FC}.Python|Mixed Platforms.ActiveCfg = Python|Win32
+		{5B1E0736-9D9C-43BF-A60D-210292DCB7FC}.Python|Mixed Platforms.Build.0 = Python|Win32
+		{5B1E0736-9D9C-43BF-A60D-210292DCB7FC}.Python|Win32.ActiveCfg = Python|Win32
+		{5B1E0736-9D9C-43BF-A60D-210292DCB7FC}.Python|Win32.Build.0 = Python|Win32
 		{5B1E0736-9D9C-43BF-A60D-210292DCB7FC}.Release|Any CPU.ActiveCfg = Release|Win32
 		{5B1E0736-9D9C-43BF-A60D-210292DCB7FC}.Release|Mixed Platforms.ActiveCfg = Release|Win32
 		{5B1E0736-9D9C-43BF-A60D-210292DCB7FC}.Release|Mixed Platforms.Build.0 = Release|Win32
@@ -172,6 +205,11 @@ Global
 		{EC8F7758-80CF-436B-978B-717297945FAB}.MemLeak|Mixed Platforms.Build.0 = MemLeak|Win32
 		{EC8F7758-80CF-436B-978B-717297945FAB}.MemLeak|Win32.ActiveCfg = MemLeak|Win32
 		{EC8F7758-80CF-436B-978B-717297945FAB}.MemLeak|Win32.Build.0 = MemLeak|Win32
+		{EC8F7758-80CF-436B-978B-717297945FAB}.Python|Any CPU.ActiveCfg = Python|Win32
+		{EC8F7758-80CF-436B-978B-717297945FAB}.Python|Mixed Platforms.ActiveCfg = Python|Win32
+		{EC8F7758-80CF-436B-978B-717297945FAB}.Python|Mixed Platforms.Build.0 = Python|Win32
+		{EC8F7758-80CF-436B-978B-717297945FAB}.Python|Win32.ActiveCfg = Python|Win32
+		{EC8F7758-80CF-436B-978B-717297945FAB}.Python|Win32.Build.0 = Python|Win32
 		{EC8F7758-80CF-436B-978B-717297945FAB}.Release|Any CPU.ActiveCfg = Release|Win32
 		{EC8F7758-80CF-436B-978B-717297945FAB}.Release|Mixed Platforms.ActiveCfg = Release|Win32
 		{EC8F7758-80CF-436B-978B-717297945FAB}.Release|Mixed Platforms.Build.0 = Release|Win32

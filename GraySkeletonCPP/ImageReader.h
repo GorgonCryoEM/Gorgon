@@ -1,5 +1,5 @@
-#ifndef IMAGE_READER_H
-#define IMAGE_READER_H
+#ifndef GRAYSKELETONCPP_IMAGE_READER_H
+#define GRAYSKELETONCPP_IMAGE_READER_H
 
 #include "GrayImage.h"
 

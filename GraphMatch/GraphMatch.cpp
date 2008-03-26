@@ -1,6 +1,4 @@
 /*
-
-
 Author: Sasakthi S. Abeysinghe
 Date  : 01/23/2006
 */
@@ -169,25 +167,3 @@ int main( int args, char * argv[] ) {
 		exit(0);
 	}
 }
-
-/*
-// FOR BUILDING INTO PYTHON LIB
-// UNCOMMENT FOR JAM PURPOSES
-
-#include <boost/python.hpp>
-using namespace boost::python;
-
-BOOST_PYTHON_MODULE(TopologyHunter)
-{
-    class_<BackEndInterface>("BackEndInterface", init<>())
-        .def("SetConstantsFromFile", &BackEndInterface::SetConstantsFromFile)
-		.def("LoadSkeletonGraph", &BackEndInterface::LoadSkeletonGraph)
-		.def("LoadSequenceGraph", &BackEndInterface::LoadSequenceGraph)
-		.def("ExecuteQuery", &BackEndInterface::ExecuteQuery)
-		.def("DrawSkeleton", &BackEndInterface::DrawSkeleton)
-		.def("DrawSequence", &BackEndInterface::DrawSequence)
-		.def("CleanupMemory", &BackEndInterface::CleanupMemory)
-		.def("DrawResult", &BackEndInterface::DrawResult)
-    ;
-}
-*/

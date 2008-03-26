@@ -13,7 +13,8 @@ namespace wustl_mm {
 			int Y();
 			int Z();
 
-						
+			bool operator!=(Vector3DInt &d);
+			bool operator==(Vector3DInt &d);						
 			Vector3DInt operator+(Vector3DInt &d );
 			Vector3DInt operator-();
 			Vector3DInt operator-(Vector3DInt &d );
@@ -21,6 +22,7 @@ namespace wustl_mm {
 			Vector3DInt& operator=(const Vector3DInt& d);
 			Vector3DInt& operator+=(const Vector3DInt& d);
 			Vector3DInt& operator-=(const Vector3DInt& d);
+		public:
 			int values[3];
 		};
 
@@ -51,6 +53,15 @@ namespace wustl_mm {
 			return values[2];
 		}
 
+
+
+		bool Vector3DInt::operator!=(Vector3DInt &d) {
+			return (X() != d.X()) || (Y() != d.Y()) || (Z() != d.Z());
+		}
+
+		bool Vector3DInt::operator==(Vector3DInt &d) {
+			return (X() == d.X()) && (Y() == d.Y()) && (Z() == d.Z());
+		}
 
 		Vector3DInt Vector3DInt::operator+(Vector3DInt &d ) {
 			return Vector3DInt(X() + d.X(), Y() + d.Y(), Z() + d.Z());	

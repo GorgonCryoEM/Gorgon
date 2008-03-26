@@ -224,7 +224,7 @@ namespace wustl_mm {
 						adjacencyMatrix[i][j][1] = euclideanMatrix[i][j];
 						adjacencyMatrix[i][j][0] = GRAPHEDGE_LOOP_EUCLIDEAN;
 					}
-					//printf("%f \t", euclidianMatrix[i][j]);
+					//printf("%f \t", euclideanMatrix[i][j]);
 				}
 				//printf("\n");
 			}
