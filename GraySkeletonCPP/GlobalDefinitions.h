@@ -1,5 +1,5 @@
-#ifndef GLOBAL_DEFINITIONS_H
-#define GLOBAL_DEFINITIONS_H
+#ifndef GRAYSKELETONCPP_GLOBAL_DEFINITIONS_H
+#define GRAYSKELETONCPP_GLOBAL_DEFINITIONS_H
 
 #include <Foundation/TimeManager.h>
 
@@ -16,7 +16,7 @@ namespace wustl_mm {
 
 		const bool WRITE_DEBUG_FILES = false;
 		const int PRUNE_AMOUNT = 3;
-		const int MAX_GAUSSIAN_FILTER_RADIUS = 10;
+		const int MAX_GAUSSIAN_FILTER_RADIUS = 10;		
 		const unsigned char PIXEL_CLASS_BACKGROUND = 0;
 		const unsigned char PIXEL_CLASS_POINT = 254;
 		const unsigned char PIXEL_CLASS_CURVE_END = 223;
@@ -37,6 +37,7 @@ namespace wustl_mm {
 		const unsigned char VOXEL_BINARY_FALSE = 0;
 		const unsigned char VOXEL_BINARY_TRUE = 255;
 		const double BAD_NORMAL = 9999.0;
+		const double MIN_EIGEN_VALUE = 0.000001;
 
 		const int DEFAULT_SKELETON_DIRECTION_RADIUS = 3;
 
@@ -48,10 +49,15 @@ namespace wustl_mm {
 			{0,-1,0}, {0,-1,1}, {0,0,-1}, {0,0,1}, {0,1,-1}, {0,1,0},
 			{0,1,1}, {1,-1,0}, {1,0,-1}, {1,0,0}, {1,0,1}, {1,1,0}};
 
+		// If changing VOLUME_NEIGHBORS_26, remember to also change VOLUME_NEIGHBORS_26_INVERSE_INDEX accordingly
 		const int VOLUME_NEIGHBORS_26[26][3]   ={
 			{-1,-1,-1}, {-1,-1,0}, {-1,-1,1}, {-1,0,-1}, {-1,0,0}, {-1,0,1}, {-1,1,-1},	{-1,1,0}, {-1,1,1}, 
 			{0,-1,-1},  {0,-1,0},  {0,-1,1},  {0,0,-1},            {0,0,1},  {0,1,-1},  {0,1,0},  {0,1,1}, 
 			{1,-1,-1},  {1,-1,0},  {1,-1,1},  {1,0,-1},  {1,0,0},  {1,0,1},  {1,1,-1},  {1,1,0},  {1,1,1}};
+
+		const int VOLUME_NEIGHBORS_26_INVERSE_INDEX[26]   ={25, 24, 23, 22, 21, 20, 19, 18, 17, 16, 15, 14, 
+			13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0};
+
 		const int VOLUME_NEIGHBOR_CUBES[8][7][3] = {
 			{{1,0,0},  {1,-1,0},  {0,-1,0}, {0,0,-1}, {1,0,-1},  {1,-1,-1},  {0,-1,-1}},	// Bottom right back
 			{{1,0,0},  {1,-1,0},  {0,-1,0}, {0,0,1},  {1,0,1},   {1,-1,1},   {0,-1,1}},		// Bottom right front

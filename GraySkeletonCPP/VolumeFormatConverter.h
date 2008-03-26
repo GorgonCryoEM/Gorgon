@@ -1,5 +1,5 @@
-#ifndef VOLUME_FORMAT_CONVERTER_H
-#define VOLUME_FORMAT_CONVERTER_H
+#ifndef GRAYSKELETONCPP_VOLUME_FORMAT_CONVERTER_H
+#define GRAYSKELETONCPP_VOLUME_FORMAT_CONVERTER_H
 
 #include <string>
 #include "VolumeReaderRAW.h"
@@ -18,8 +18,10 @@ namespace wustl_mm {
 			Volume * vol = NULL;			
 			if(stricmp(inputFormat.c_str(), "MRC") == 0) {
 				vol = MRCReaderPicker::pick((char *)inputFile.c_str())->getVolume();
-			} else if (stricmp(inputFormat.c_str(), "RAW") == 0) {		
-				vol = VolumeReaderRAW::LoadVolume(inputFile, sizeX, sizeY, sizeZ, 1, 1, 1);
+			} else if (stricmp(inputFormat.c_str(), "RAW8") == 0) {		
+				vol = VolumeReaderRAW::LoadVolume8bit(inputFile, sizeX, sizeY, sizeZ, 1, 1, 1);
+			} else if (stricmp(inputFormat.c_str(), "RAW16") == 0) {		
+				vol = VolumeReaderRAW::LoadVolume16bit(inputFile, sizeX, sizeY, sizeZ, 1, 1, 1);
 			} else if (stricmp(inputFormat.c_str(), "ATOM") == 0) {		
 				vol = VolumeReaderATOM::LoadVolume(inputFile);
 			} else {

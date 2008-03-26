@@ -1,5 +1,5 @@
-#ifndef VOLUME_DELTA_ANALYZER_H
-#define VOLUME_DELTA_ANALYZER_H
+#ifndef GRAYSKELETONCPP_VOLUME_DELTA_ANALYZER_H
+#define GRAYSKELETONCPP_VOLUME_DELTA_ANALYZER_H
 
 #include <vector>
 #include <MathTools/DataStructures.h>

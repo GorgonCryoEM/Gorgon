@@ -1,5 +1,5 @@
-#ifndef SKELETAL_CURVE_H
-#define SKELETAL_CURVE_H
+#ifndef GRAYSKELETONCPP_SKELETAL_CURVE_H
+#define GRAYSKELETONCPP_SKELETAL_CURVE_H
 
 #include <vector>
 #include <MathTools/DataStructures.h>

@@ -1,5 +1,5 @@
-#ifndef VOLUME_READER_H
-#define VOLUME_READER_H
+#ifndef GRAYSKELETONCPP_VOLUME_READER_H
+#define GRAYSKELETONCPP_VOLUME_READER_H
 
 #include <SkeletonMaker/volume.h>
 

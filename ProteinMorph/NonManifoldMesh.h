@@ -47,6 +47,7 @@ namespace wustl_mm {
 			int GetVertexIndex(int vertexId);
 			int GetFaceIndex(int faceId);
 			int GetEdgeIndex(int edgeId);
+			void AddArticulationPoint(Vector3DInt point);
 			void AddEdge(int vertexId1, int vertexId2, bool isHelix);
 			void AddQuad(int vertexId1, int vertexId2, int vertexId3, int vertexId4, bool isSheet, bool addMiddleEdge);
 			void MarkFixedVertices();
@@ -219,6 +220,13 @@ namespace wustl_mm {
 			return edgeId;
 		}
 
+		void NonManifoldMesh::AddArticulationPoint(Vector3DInt point) {
+			for(int i = 0; i < vertexCount; i++) {
+				if(Vector3DInt((int)round(vertices[i].position.X()), (int)round(vertices[i].position.Y()), (int)round(vertices[i].position.Z())) == point) {
+					vertices[i].articulationPoint = true;
+				}
+			}
+		}
 		void NonManifoldMesh::AddEdge(int vertexId1, int vertexId2, bool isHelix){
 			NonManifoldMeshEdge edge;
 			edge.isHelix = isHelix;

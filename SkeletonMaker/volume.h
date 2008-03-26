@@ -16,7 +16,7 @@
 #include <vector>
 
 #define MAX_SHEETS 100000
-#define MAX_QUEUELEN 500000
+#define MAX_QUEUELEN 5000000
 
 #define MAX_ERODE 1000
 

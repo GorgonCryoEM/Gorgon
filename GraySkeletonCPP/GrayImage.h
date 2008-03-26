@@ -1,5 +1,5 @@
-#ifndef GRAY_IMAGE_H
-#define GRAY_IMAGE_H
+#ifndef GRAYSKELETONCPP_GRAY_IMAGE_H
+#define GRAYSKELETONCPP_GRAY_IMAGE_H
 
 #include <SkeletonMaker/reader.h>
 #include <SkeletonMaker/volume.h>

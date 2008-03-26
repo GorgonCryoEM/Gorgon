@@ -1,5 +1,5 @@
-#ifndef NORMAL_FINDER_H
-#define NORMAL_FINDER_H
+#ifndef GRAYSKELETONCPP_NORMAL_FINDER_H
+#define GRAYSKELETONCPP_NORMAL_FINDER_H
 
 #include <MathTools/Vector3D.h>
 

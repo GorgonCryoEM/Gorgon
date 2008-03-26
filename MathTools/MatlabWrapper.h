@@ -55,9 +55,12 @@ namespace wustl_mm {
 			double x2 = (a+d - insidesqrt) / 2.0;
 
 			Vector3D v1, v2, mv1, mv2;
-			if(b == 0) {
+			if((b == 0) && (d == 0)) {
 				v1 = Vector3D(1.0, 0.0, 0.0);
 				v2 = Vector3D(0.0, 1.0, 0.0);
+			} else if (b == 0) {
+				v1 = Vector3D(0.0, 1.0, 0.0);
+				v2 = Vector3D(1.0, 0.0, 0.0);
 			} else {
 				v1 = Vector3D(1.0, (x1-a)/b, 0.0);
 				v2 = Vector3D(1.0, (x2-a)/b, 0.0);

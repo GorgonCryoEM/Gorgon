@@ -11,8 +11,8 @@ Date  : 02/06/2006
 
 //#define INCLUDE_SHEETS
 //#define GET_STATS
-//#define VERBOSE
-#define MAKE_FINAL_MRC
+#define VERBOSE
+//#define MAKE_FINAL_MRC
 #define GET_AMINO_SEQUENCE
 
 #include <string.h>
@@ -27,7 +27,7 @@ namespace wustl_mm {
 
 		const int PRIORITYQUEUESIZE = 50000000;
 		const int RESULT_COUNT = 35;
-		const int MAX_NODES = 50;
+		const int MAX_NODES = 20;
 		const int MAXINT = 2147483647;
 		const unsigned int MAXUNSIGNEDINT = 4294967295;
 		const double MAXDOUBLE = 1.7E308;
@@ -315,9 +315,10 @@ namespace wustl_mm {
 			}
 			printf("\n\tNODE_MISMATCHES                  = ");
 			for(int i = 0 ; i < MAX_NODES; i++) {
-				if(notAllowedConstraintCount[i] > 0) {
+				int x = notAllowedConstraintCount[i];
+				if(x > 0) {
 					printf("(%d -", i+1);
-					for(unsigned int j = 0; j < notAllowedConstraintCount[i]; j++) {
+					for(unsigned int j = 0; j < x; j++) {
 						printf(" %d", notAllowedConstraintCollection[i][j]);
 					}
 					printf(") ");				
