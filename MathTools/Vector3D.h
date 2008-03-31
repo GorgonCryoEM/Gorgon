@@ -1,144 +1,147 @@
 #ifndef VECTOR3D_H
 #define VECTOR3D_H
 
-#include <stdio.h>
-#include <math.h>
-#include "BasicDefines.h"
-#include "Vector3DInt.h"
+#include "Vector3DTemplate.h"
 
 namespace wustl_mm {
 	namespace MathTools {
-		class Vector3D {
+
+		typedef Vector3DTemplate<int>	 Vector3DInt;
+		typedef Vector3DTemplate<float>  Vector3DFloat;
+		typedef Vector3DTemplate<double> Vector3DDouble;
+
+/*
+		class Vector3DDouble {
 		public:
-			Vector3D();
-			Vector3D(double x, double y, double z);
-			~Vector3D();
+			Vector3DDouble();
+			Vector3DDouble(double x, double y, double z);
+			~Vector3DDouble();
 
 			double X();
 			double Y();
 			double Z();
 			double Length();
-			double operator*(Vector3D &d ); // Dot Product							
+			double operator*(Vector3DDouble &d ); // Dot Product							
 			int XInt();
 			int YInt();
 			int ZInt();
-			Vector3D operator+(Vector3D &d );
-			Vector3D operator-();
-			Vector3D operator-(Vector3D &d );
-			Vector3D operator^(Vector3D &d );		 // Cross Product
-			Vector3D operator*(double s);			
-			Vector3D& operator=(const Vector3D& d);
-			Vector3D& operator=(const Vector3DInt& d);
-			Vector3D& operator+=(const Vector3D& d);
-			Vector3D& operator-=(const Vector3D& d);
-			Vector3D Rotate(Vector3D axis, double angle);
+			Vector3DDouble operator+(Vector3DDouble &d );
+			Vector3DDouble operator-();
+			Vector3DDouble operator-(Vector3DDouble &d );
+			Vector3DDouble operator^(Vector3DDouble &d );		 // Cross Product
+			Vector3DDouble operator*(double s);			
+			Vector3DDouble& operator=(const Vector3DDouble& d);
+			Vector3DDouble& operator=(const Vector3DInt& d);
+			Vector3DDouble& operator+=(const Vector3DDouble& d);
+			Vector3DDouble& operator-=(const Vector3DDouble& d);
+			Vector3DDouble Rotate(Vector3DDouble axis, double angle);
 			void Normalize();
 			bool IsBadNormal();
 
-			static Vector3D Normalize(Vector3D d);
+			static Vector3DDouble Normalize(Vector3DDouble d);
 
 			double values[3];
 		};
 
-		Vector3D::Vector3D() {
+		Vector3DDouble::Vector3DDouble() {
 			values[0] = 0.0;
 			values[1] = 0.0;
 			values[2] = 0.0;
 		}
 
-		Vector3D::Vector3D(double x, double y, double z) {
+		Vector3DDouble::Vector3DDouble(double x, double y, double z) {
 			values[0] = x;
 			values[1] = y;
 			values[2] = z;
 		}
 
-		Vector3D::~Vector3D() {
+		Vector3DDouble::~Vector3DDouble() {
 		}
 
-		double Vector3D::X() {
+		double Vector3DDouble::X() {
 			return values[0];
 		}
 
-		double Vector3D::Y() {
+		double Vector3DDouble::Y() {
 			return values[1];
 		}
 
-		double Vector3D::Z() {
+		double Vector3DDouble::Z() {
 			return values[2];
 		}
 
 
-		double Vector3D::Length() {
+		double Vector3DDouble::Length() {
 			return sqrt(values[0] * values[0] + values[1] * values[1] + values[2] * values[2]);
 		}
-		int Vector3D::XInt() {
+		int Vector3DDouble::XInt() {
 			return (int)round(values[0]);
 		}
 
-		int Vector3D::YInt() {
+		int Vector3DDouble::YInt() {
 			return (int)round(values[1]);
 		}
 
-		int Vector3D::ZInt() {
+		int Vector3DDouble::ZInt() {
 			return (int)round(values[2]);
 		}
 
 
-		double Vector3D::operator*(Vector3D &d ) {		// Dot Product
+		double Vector3DDouble::operator*(Vector3DDouble &d ) {		// Dot Product
 			return X() * d.X() + Y() * d.Y() + Z() * d.Z();
 		}
 
-		Vector3D Vector3D::operator+(Vector3D &d ) {
-			return Vector3D(X() + d.X(), Y() + d.Y(), Z() + d.Z());	
+		Vector3DDouble Vector3DDouble::operator+(Vector3DDouble &d ) {
+			return Vector3DDouble(X() + d.X(), Y() + d.Y(), Z() + d.Z());	
 		}
 
-		Vector3D Vector3D::operator-() {
-			return Vector3D(-X(), -Y(), -Z());	
+		Vector3DDouble Vector3DDouble::operator-() {
+			return Vector3DDouble(-X(), -Y(), -Z());	
 		}
 
-		Vector3D Vector3D::operator-(Vector3D &d ) {
-			return Vector3D(X() - d.X(), Y() - d.Y(), Z() - d.Z());	
+		Vector3DDouble Vector3DDouble::operator-(Vector3DDouble &d ) {
+			return Vector3DDouble(X() - d.X(), Y() - d.Y(), Z() - d.Z());	
 		}
 
-		Vector3D Vector3D::operator^(Vector3D &d ) { // Cross Product
-			return Vector3D(
+		Vector3DDouble Vector3DDouble::operator^(Vector3DDouble &d ) { // Cross Product
+			return Vector3DDouble(
 				values[1] * d.values[2] - values[2] * d.values[1], 
 				values[2] * d.values[0] - values[0] * d.values[2], 
 				values[0] * d.values[1] - values[1] * d.values[0]);	
 		}
 
-		Vector3D Vector3D::operator*(double s) {
-			return Vector3D(X()*s, Y()*s, Z()*s);
+		Vector3DDouble Vector3DDouble::operator*(double s) {
+			return Vector3DDouble(X()*s, Y()*s, Z()*s);
 		}
 
-		Vector3D& Vector3D::operator+=(const Vector3D& d) {
+		Vector3DDouble& Vector3DDouble::operator+=(const Vector3DDouble& d) {
 			for(int i = 0; i < 3; i++) {
 				values[i] += d.values[i];
 			}
 			return *this;
 		}
 
-		Vector3D& Vector3D::operator-=(const Vector3D& d) {
+		Vector3DDouble& Vector3DDouble::operator-=(const Vector3DDouble& d) {
 			for(int i = 0; i < 3; i++) {
 				values[i] -= d.values[i];
 			}
 			return *this;
 		}
-		Vector3D& Vector3D::operator=(const Vector3D& d) {
+		Vector3DDouble& Vector3DDouble::operator=(const Vector3DDouble& d) {
 			for(int i = 0; i < 3; i++) {
 				values[i] = d.values[i];
 			}
 			return *this;
 		}
 
-		Vector3D& Vector3D::operator=(const Vector3DInt& d) {
+		Vector3DDouble& Vector3DDouble::operator=(const Vector3DInt& d) {
 			for(int i = 0; i < 3; i++) {
 				values[i] = d.values[i];
 			}
 			return *this;
 		}
 
-		void Vector3D::Normalize() {
+		void Vector3DDouble::Normalize() {
 			double base = 0;
 			for(int i = 0; i < 3; i++) {
 				base += (values[i] * values[i]);
@@ -155,13 +158,13 @@ namespace wustl_mm {
 			}
 		}
 
-		Vector3D Vector3D::Normalize(Vector3D d) {
-			Vector3D ret = d;
+		Vector3DDouble Vector3DDouble::Normalize(Vector3DDouble d) {
+			Vector3DDouble ret = d;
 			d.Normalize();
 			return ret;
 		}
 
-		Vector3D Vector3D::Rotate(Vector3D axis, double angle) {
+		Vector3DDouble Vector3DDouble::Rotate(Vector3DDouble axis, double angle) {
 			double r = angle;
 			double a = axis.values[0];
 			double b = axis.values[1];
@@ -178,7 +181,7 @@ namespace wustl_mm {
 							  {2*(q3*q1 - q0*q2),					2*(q3*q2 + q0*q1),					q0*q0 - q1*q1 - q2*q2 + q3*q3}};
 
 
-			Vector3D v = Vector3D(0.0, 0.0, 0.0);
+			Vector3DDouble v = Vector3DDouble(0.0, 0.0, 0.0);
 			for(int x = 0; x < 3; x++) {
 				for(int y = 0; y < 3; y++) {
 					v.values[x] = v.values[x] + R[y][x] * values[y];
@@ -187,9 +190,9 @@ namespace wustl_mm {
 			return v;
 		}
 
-		bool Vector3D::IsBadNormal() {
+		bool Vector3DDouble::IsBadNormal() {
 			return !isZero(Length() - 1.0, 0.00001);
-		}
+		}  */
 	}
 }
 

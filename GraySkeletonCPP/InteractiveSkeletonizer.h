@@ -8,6 +8,7 @@
 namespace wustl_mm {
 	namespace GraySkeletonCPP {
 		
+		typedef Graph3D<float> GraphType;
 
 		class InteractiveSkeletonizer : public VolumeSkeletonizer {
 		public:
@@ -16,20 +17,20 @@ namespace wustl_mm {
 			vector<Vector3DInt> GetPath(Vector3DInt endPoint);			
 			Vector3DInt FindClosestSkeletalPoint(Vector3DInt point);
 			void SetGraphWeights(double skeletonRatio, double structureTensorRatio);
-			void UpdateReturnPath(Vector3DInt seedPoint);
+			void CalculateMinimalSpanningTree(Vector3DInt seedPoint);
 			Volume * GetSkeleton();
 									
 		private:
-			double GetStructureTensorProjectedScore(EigenResults3D imageEigen, Vector3D skeletonDirection, double power, int type);			
-			Graph3D * skeletonGraph;
-			Graph3D * stGraph;
-			Graph3D * mergedGraph;
+			double GetStructureTensorProjectedScore(EigenResults3D imageEigen, Vector3DFloat skeletonDirection, float power, int type);			
+			GraphType * skeletonGraph;
+			GraphType * stGraph;
+			GraphType * mergedGraph;
 			Volume * skeleton;
 			char * returnPath;
 			Vector3DInt seedPoint;
 			Vector3DInt offset;
 			Vector3DInt * vectors26;
-			Vector3D * nVectors26;
+			Vector3DFloat * nVectors26;
 
 			static const int CONNECTIVITY = 26;
 			static const char SEED_POINT_FLAG = 50;
@@ -45,15 +46,15 @@ namespace wustl_mm {
 			returnPath = new char[sourceVol->getSizeX() * sourceVol->getSizeY() * sourceVol->getSizeZ()];
 			
 			vectors26 = new Vector3DInt[CONNECTIVITY];
-			nVectors26 = new Vector3D[CONNECTIVITY];
+			nVectors26 = new Vector3DFloat[CONNECTIVITY];
 			for(int i = 0; i < CONNECTIVITY; i++) {
 				vectors26[i] = Vector3DInt(VOLUME_NEIGHBORS_26[i][0], VOLUME_NEIGHBORS_26[i][1], VOLUME_NEIGHBORS_26[i][2]);
-				nVectors26[i] = Vector3D(VOLUME_NEIGHBORS_26[i][0], VOLUME_NEIGHBORS_26[i][1], VOLUME_NEIGHBORS_26[i][2]);
+				nVectors26[i] = Vector3DFloat(VOLUME_NEIGHBORS_26[i][0], VOLUME_NEIGHBORS_26[i][1], VOLUME_NEIGHBORS_26[i][2]);
 				nVectors26[i].Normalize();
 			}
 
-			skeletonGraph = new Graph3D(sourceVol->getSizeX(), sourceVol->getSizeY(), sourceVol->getSizeZ(), CONNECTIVITY);
-			stGraph = new Graph3D(sourceVol->getSizeX(), sourceVol->getSizeY(), sourceVol->getSizeZ(), CONNECTIVITY);
+			skeletonGraph = new GraphType(sourceVol->getSizeX(), sourceVol->getSizeY(), sourceVol->getSizeZ(), CONNECTIVITY);
+			stGraph = new GraphType(sourceVol->getSizeX(), sourceVol->getSizeY(), sourceVol->getSizeZ(), CONNECTIVITY);
 			int index;
 			
 			Volume * nullVol = new Volume(sourceVol->getSizeX(), sourceVol->getSizeY(), sourceVol->getSizeZ());
@@ -66,7 +67,7 @@ namespace wustl_mm {
 				skeleton->toMRCFile("CurveSkeleton.mrc");				
 			#endif
 
-			Vector3D * volumeGradient = GetVolumeGradient2(sourceVol);					
+			Vector3DFloat * volumeGradient = GetVolumeGradient2(sourceVol);					
 			EigenResults3D * volumeEigens = GetEigenResults2(skeleton, volumeGradient, gaussianFilterCurveRadius, curveRadius, true);
 
 			for(int x = MAX_GAUSSIAN_FILTER_RADIUS; x < sourceVol->getSizeX() - MAX_GAUSSIAN_FILTER_RADIUS; x++) {
@@ -107,8 +108,8 @@ namespace wustl_mm {
 			delete [] nVectors26;
 		}
 
-		double InteractiveSkeletonizer::GetStructureTensorProjectedScore(EigenResults3D imageEigen, Vector3D skeletonDirection, double power, int type) {
-			double score = 0.0;
+		double InteractiveSkeletonizer::GetStructureTensorProjectedScore(EigenResults3D imageEigen, Vector3DFloat skeletonDirection, float power, int type) {
+			float score = 0.0;
 			switch(type) {
 				case PRUNING_CLASS_PRUNE_CURVES:
 					for(int i = 0 ; i < 3; i++) {
@@ -139,7 +140,7 @@ namespace wustl_mm {
 			bool completed = false;
 
 			while(!completed && found) {
-				returnIndex = returnPath[mergedGraph->GetIndex(currentPoint.X(), currentPoint.Y(), currentPoint.Z())];
+				returnIndex = returnPath[skeleton->getIndex(currentPoint.X(), currentPoint.Y(), currentPoint.Z())];
 				found = (returnIndex >= 0);				
 				completed = (returnIndex == SEED_POINT_FLAG);
 				//printf("{%d %d %d} -> %d \n", currentPoint.X(), currentPoint.Y(), currentPoint.Z(), returnIndex);
@@ -200,14 +201,16 @@ namespace wustl_mm {
 		}
 
 		void InteractiveSkeletonizer::SetGraphWeights(double skeletonRatio, double structureTensorRatio){
+			printf("input\n");
+			getchar();
 			appTimeManager.PushCurrentTime();
 			if(mergedGraph != NULL) {
 				delete mergedGraph;
 			}
-			mergedGraph = Graph3D::MergeGraphs(skeletonGraph, stGraph, skeletonRatio, structureTensorRatio);
+			mergedGraph = GraphType::MergeGraphs(skeletonGraph, stGraph, skeletonRatio, structureTensorRatio);
 			appTimeManager.PopAndDisplayTime("Merging graphs: %f seconds!\n");
 		}
-		void InteractiveSkeletonizer::UpdateReturnPath(Vector3DInt seedPoint) {
+		void InteractiveSkeletonizer::CalculateMinimalSpanningTree(Vector3DInt seedPoint) {
 			Volume * costMap = new Volume(skeleton->getSizeX(), skeleton->getSizeY(), skeleton->getSizeZ());
 			appTimeManager.PushCurrentTime();
 			seedPoint = seedPoint + offset;
@@ -247,7 +250,8 @@ namespace wustl_mm {
 							pointList.push(newPoint);
 						}					
 					}
-				}				
+				}
+
 			}
 			#ifdef SAVE_INTERMEDIATE_RESULTS
 				costMap->toMRCFile("costMap.mrc");

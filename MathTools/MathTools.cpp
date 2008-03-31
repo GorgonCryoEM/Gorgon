@@ -10,7 +10,6 @@
 #include "MathLib.h"
 #include "MatlabWrapper.h"
 #include "Vector3D.h"
-#include "Vector3DInt.h"
 
 void main()
 {	

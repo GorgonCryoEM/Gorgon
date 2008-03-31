@@ -3,20 +3,22 @@
 
 #include "GlobalDefinitions.h"
 #include <MathTools/BasicDefines.h>
+#include <hash_map>
 
 using namespace wustl_mm::MathTools;
+using namespace stdext;
 
+// All edge costs have to be positive 
 namespace wustl_mm {
 	namespace GraySkeletonCPP {
-
+	
 		const int NO_NODE_MARKER = -1;
-		const double NO_EDGE_MARKER = -1.0;
 
-		struct GraphNodeType {
-			double edgeCosts[26];
+		template <class T>	struct GraphNodeType {			
+			T edgeCosts[26];
 		};
 
-		class Graph3D {
+		template <class T>	class Graph3D {
 		public:
 			
 			Graph3D(int sizeX, int sizeY, int sizeZ, int connectivity);
@@ -25,25 +27,25 @@ namespace wustl_mm {
 			bool IsEdge(int index, int neighborIndex);
 			bool IsEdge(int x, int y, int z, int neighborIndex);
 			int GetIndex(int x, int y, int z);
-			double GetEdgeCost(int index, int neighborIndex);
-			double GetEdgeCost(int x, int y, int z, int neighborIndex);
-			double MaxEdgeCost();
-			double MinEdgeCost();
-			void SetEdgeCost(double cost, int index, int neighborIndex);			
-			void SetEdgeCost(double cost, int x, int y, int z, int neighborIndex);			
-			void MultiplyAllEdgeCostsByConstant(double c);
+			T GetEdgeCost(int index, int neighborIndex);
+			T GetEdgeCost(int x, int y, int z, int neighborIndex);
+			T MaxEdgeCost();
+			T MinEdgeCost();
+			void SetEdgeCost(T cost, int index, int neighborIndex);			
+			void SetEdgeCost(T cost, int x, int y, int z, int neighborIndex);			
+			void MultiplyAllEdgeCostsByConstant(T c);
 			void Normalize();
-			static Graph3D * MergeGraphs(Graph3D * graph1, Graph3D * graph2, double ratio1, double ratio2);
+			static Graph3D<T> * MergeGraphs(Graph3D<T> * graph1, Graph3D<T> * graph2, T ratio1, T ratio2);
 		protected:
 			int sizeX;
 			int sizeY;
 			int sizeZ;
 			int connectivity;
 			int * graphPtrs;
-			vector<GraphNodeType> nodeList;
+			vector<GraphNodeType<T>> nodeList;
 		};
 
-		Graph3D::Graph3D(int sizeX, int sizeY, int sizeZ, int connectivity) {
+		template <class T>	Graph3D<T>::Graph3D(int sizeX, int sizeY, int sizeZ, int connectivity) {
 			this->sizeX = sizeX;
 			this->sizeY = sizeY;
 			this->sizeZ = sizeZ;
@@ -55,36 +57,37 @@ namespace wustl_mm {
 			}
 		}	
 
-		Graph3D::~Graph3D() {
+		template <class T>	Graph3D<T>::~Graph3D() {
+			
 			nodeList.clear();
 			delete [] graphPtrs;
 		}
 
-		bool Graph3D::IsEdge(int index, int neighborIndex) {
-			return ((graphPtrs[index] != NO_NODE_MARKER) && !isEqual(nodeList[graphPtrs[index]].edgeCosts[neighborIndex], NO_EDGE_MARKER));			
+		template <class T>	bool Graph3D<T>::IsEdge(int index, int neighborIndex) {
+			return ((graphPtrs[index] != NO_NODE_MARKER) && (nodeList[graphPtrs[index]].edgeCosts[neighborIndex] >= 0));			
 		}
 
-		bool Graph3D::IsEdge(int x, int y, int z, int neighborIndex) {
+		template <class T>	bool Graph3D<T>::IsEdge(int x, int y, int z, int neighborIndex) {
 			return IsEdge(GetIndex(x, y, z), neighborIndex);
 		}
 
-		int Graph3D::GetIndex(int x, int y, int z) {
+		template <class T>	int Graph3D<T>::GetIndex(int x, int y, int z) {
 			return (x * sizeY * sizeZ + y * sizeZ + z);
 		}
 
-		double Graph3D::GetEdgeCost(int index, int neighborIndex) {
+		template <class T>	T Graph3D<T>::GetEdgeCost(int index, int neighborIndex) {
 			return nodeList[graphPtrs[index]].edgeCosts[neighborIndex];
 		}
 
-		double Graph3D::GetEdgeCost(int x, int y, int z, int neighborIndex) {
+		template <class T>	T Graph3D<T>::GetEdgeCost(int x, int y, int z, int neighborIndex) {
 			return GetEdgeCost(GetIndex(x, y, z), neighborIndex);
 		}
 
-		double Graph3D::MaxEdgeCost() {
-			double maxCost = MIN_DOUBLE;
+		template <class T>	T Graph3D<T>::MaxEdgeCost() {
+			T maxCost = MIN_DOUBLE;
 			for(int i = 0; i < nodeList.size(); i++) {
 				for(int j = 0; j < connectivity; j++) {					
-					if(!isEqual(nodeList[i].edgeCosts[j], NO_EDGE_MARKER)) {
+					if(nodeList[i].edgeCosts[j] >= 0) {
 						maxCost = max(maxCost, nodeList[i].edgeCosts[j]);
 					}
 				}
@@ -92,11 +95,11 @@ namespace wustl_mm {
 			return maxCost;
 		}
 
-		double Graph3D::MinEdgeCost() {
-			double minCost = MAX_DOUBLE;
+		template <class T>	T Graph3D<T>::MinEdgeCost() {
+			T minCost = MAX_DOUBLE;
 			for(int i = 0; i < nodeList.size(); i++) {
 				for(int j = 0; j < connectivity; j++) {					
-					if(!isEqual(nodeList[i].edgeCosts[j], NO_EDGE_MARKER)) {
+					if(nodeList[i].edgeCosts[j] >= 0) {
 						minCost = min(minCost, nodeList[i].edgeCosts[j]);
 					}
 				}
@@ -104,12 +107,12 @@ namespace wustl_mm {
 			return minCost;
 		}
 
-		void Graph3D::SetEdgeCost(double cost, int index, int neighborIndex) {
+		template <class T>	void Graph3D<T>::SetEdgeCost(T cost, int index, int neighborIndex) {
 			if(graphPtrs[index] == NO_NODE_MARKER) {
 				graphPtrs[index] = nodeList.size();
-				GraphNodeType node;
+				GraphNodeType<T> node;
 				for(int i = 0; i < connectivity; i++) {
-					node.edgeCosts[i] = NO_EDGE_MARKER;
+					node.edgeCosts[i] = NO_NODE_MARKER;
 				}
 				nodeList.push_back(node);
 			}
@@ -117,39 +120,39 @@ namespace wustl_mm {
 			nodeList[graphPtrs[index]].edgeCosts[neighborIndex] = cost;
 		}
 
-		void Graph3D::SetEdgeCost(double cost, int x, int y, int z, int neighborIndex) {
+		template <class T>	void Graph3D<T>::SetEdgeCost(T cost, int x, int y, int z, int neighborIndex) {
 			SetEdgeCost(cost, GetIndex(x, y, z), neighborIndex);
 		}
 
-		void Graph3D::MultiplyAllEdgeCostsByConstant(double c) {
+		template <class T>	void Graph3D<T>::MultiplyAllEdgeCostsByConstant(T c) {
 			for(int i = 0; i < nodeList.size(); i++) {
 				for(int j = 0; j < connectivity; j++) {					
-					if(!isEqual(nodeList[i].edgeCosts[j], NO_EDGE_MARKER)) {
+					if(nodeList[i].edgeCosts[j] >= 0) {
 						nodeList[i].edgeCosts[j] = nodeList[i].edgeCosts[j] * c;
 					}
 				}
 			}
 		}
 
-		void Graph3D::Normalize() {
-			double maxCost = MaxEdgeCost();
-			double minCost = MinEdgeCost();
+		template <class T>	void Graph3D<T>::Normalize() {
+			T maxCost = MaxEdgeCost();
+			T minCost = MinEdgeCost();
 			for(int i = 0; i < nodeList.size(); i++) {
 				for(int j = 0; j < connectivity; j++) {					
-					if(!isEqual(nodeList[i].edgeCosts[j], NO_EDGE_MARKER)) {
+					if(nodeList[i].edgeCosts[j] >= 0) {
 						nodeList[i].edgeCosts[j] = (nodeList[i].edgeCosts[j] - minCost)/(maxCost - minCost);
 					}
 				}
 			}
 		}
 
-		Graph3D * Graph3D::MergeGraphs(Graph3D * graph1, Graph3D * graph2, double ratio1, double ratio2) {
+		template <class T>	Graph3D<T> * Graph3D<T>::MergeGraphs(Graph3D<T> * graph1, Graph3D<T> * graph2, T ratio1, T ratio2) {
 			if((graph1->sizeX != graph2->sizeX) || (graph1->sizeY != graph2->sizeY) || (graph1->sizeZ != graph2->sizeZ) || (graph1->connectivity != graph2->connectivity)) {
 				printf("Graphs cannot be combined, they have mismatched sizes!\n");
 				return NULL;
 			}
 
-			Graph3D * merged = new Graph3D(graph1->sizeX, graph1->sizeY, graph1->sizeZ, graph1->connectivity);
+			Graph3D<T> * merged = new Graph3D(graph1->sizeX, graph1->sizeY, graph1->sizeZ, graph1->connectivity);
 			for(int i = 0; i < graph1->sizeX * graph1->sizeY * graph1->sizeZ; i++) {
 				for(int j = 0; j < graph1->connectivity; j++) {
 					if(graph1->IsEdge(i,j) && graph2->IsEdge(i,j)) {
@@ -166,4 +169,6 @@ namespace wustl_mm {
 		}
 	}
 }
+
+
 #endif
