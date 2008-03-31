@@ -405,7 +405,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Vector3DInt.h"
+				RelativePath=".\Vector3DTemplate.h"
 				>
 			</File>
 		</Filter>

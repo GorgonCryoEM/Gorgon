@@ -28,14 +28,14 @@ namespace wustl_mm {
 
 		private:		
 
-			void GetEigenResult(EigenResults3D & returnVal, Vector3D * imageGradient, ProbabilityDistribution2D & gaussianFilter, int x, int y, int sizeX, int sizeY, int gaussianFilterRadius, bool clear);
-			EigenResults3D * GetEigenResults(GrayImage * sourceImage, Vector3D * imageGradient, ProbabilityDistribution2D & gaussianFilter, int gaussianFilterRadius, bool useMask);
-			Vector3D * GetSkeletonDirection(GrayImage * skeleton);
-			void NormalizeVector2D(Vector3D & vector);
-			double GetPixelCost(EigenResults3D imageEigen, Vector3D skeletonDirection, int type);
-			GrayImage * GetPixelCosts(GrayImage * skeleton, EigenResults3D * imageEigens, Vector3D * skeletonDirections);
+			void GetEigenResult(EigenResults3D & returnVal, Vector3DFloat * imageGradient, ProbabilityDistribution2D & gaussianFilter, int x, int y, int sizeX, int sizeY, int gaussianFilterRadius, bool clear);
+			EigenResults3D * GetEigenResults(GrayImage * sourceImage, Vector3DFloat * imageGradient, ProbabilityDistribution2D & gaussianFilter, int gaussianFilterRadius, bool useMask);
+			Vector3DFloat * GetSkeletonDirection(GrayImage * skeleton);
+			void NormalizeVector2D(Vector3DFloat & vector);
+			double GetPixelCost(EigenResults3D imageEigen, Vector3DFloat skeletonDirection, int type);
+			GrayImage * GetPixelCosts(GrayImage * skeleton, EigenResults3D * imageEigens, Vector3DFloat * skeletonDirections);
 			void WriteEigenResultsToFile(GrayImage * sourceImage, EigenResults3D * eigenResults, string outputFile);
-			void WriteDirectionsToFile(GrayImage * sourceImage, Vector3D * skeletonDirections, string outputFile);
+			void WriteDirectionsToFile(GrayImage * sourceImage, Vector3DFloat * skeletonDirections, string outputFile);
 
 			void AddIterationToImage(GrayImage * compositeImage, Volume * iterationVolume, int threshold);
 			void MarkDeletablePixels(GrayImage * deletedPixels, GrayImage * pixelClassification, GrayImage * originalImage);
@@ -178,7 +178,7 @@ namespace wustl_mm {
 
 			printf("Getting image Eigens\n");
 			Volume * imageVol = sourceImage->ToVolume();
-			Vector3D * imageGradient = volumeSkeletonizer->GetVolumeGradient(imageVol);
+			Vector3DFloat * imageGradient = volumeSkeletonizer->GetVolumeGradient(imageVol);
 			EigenResults3D * imageEigens = GetEigenResults(sourceImage, imageGradient, gaussianFilterMaxRadius, MAX_GAUSSIAN_FILTER_RADIUS, false);
 
 			GrayImage * binarySkeleton;
@@ -190,8 +190,8 @@ namespace wustl_mm {
 			double cost, cost2;
 			Vector3DInt * pointList;
 			SkeletalCurve * curveList;
-			Vector3D * skeletonGradient;
-			Vector3D * skeletonDirections;
+			Vector3DFloat * skeletonGradient;
+			Vector3DFloat * skeletonDirections;
 			SkeletalCurve curve;
 
 			GrayImageList * images = new GrayImageList();
@@ -383,7 +383,7 @@ namespace wustl_mm {
 
 
 		
-		void GrayImageSkeletonizer::GetEigenResult(EigenResults3D & returnVal, Vector3D * imageGradient, ProbabilityDistribution2D & gaussianFilter, int x, int y, int sizeX, int sizeY, int gaussianFilterRadius, bool clear) {
+		void GrayImageSkeletonizer::GetEigenResult(EigenResults3D & returnVal, Vector3DFloat * imageGradient, ProbabilityDistribution2D & gaussianFilter, int x, int y, int sizeX, int sizeY, int gaussianFilterRadius, bool clear) {
 			if(clear) {
 				for(int r = 0; r < 2; r++) {
 					returnVal.values[r] = 0;
@@ -424,7 +424,7 @@ namespace wustl_mm {
 			}
 		}
 
-		EigenResults3D * GrayImageSkeletonizer::GetEigenResults(GrayImage * maskImage, Vector3D * imageGradient, ProbabilityDistribution2D & gaussianFilter, int gaussianFilterRadius, bool useMask) {
+		EigenResults3D * GrayImageSkeletonizer::GetEigenResults(GrayImage * maskImage, Vector3DFloat * imageGradient, ProbabilityDistribution2D & gaussianFilter, int gaussianFilterRadius, bool useMask) {
 			EigenResults3D * resultTable = new EigenResults3D[maskImage->GetSizeX() * maskImage->GetSizeY()];
 
 			for(int x = MAX_GAUSSIAN_FILTER_RADIUS; x < maskImage->GetSizeX() - MAX_GAUSSIAN_FILTER_RADIUS; x++) {
@@ -437,12 +437,12 @@ namespace wustl_mm {
 		}
 
 
-		Vector3D * GrayImageSkeletonizer::GetSkeletonDirection(GrayImage * skeleton) {
-			Vector3D * directions = new Vector3D[skeleton->GetSizeX() * skeleton->GetSizeY()];
+		Vector3DFloat * GrayImageSkeletonizer::GetSkeletonDirection(GrayImage * skeleton) {
+			Vector3DFloat * directions = new Vector3DFloat[skeleton->GetSizeX() * skeleton->GetSizeY()];
 			int index;
-			Vector3D v0, v1, v2, currentPos;
+			Vector3DFloat v0, v1, v2, currentPos;
 			bool allFound;
-			Vector3D * n4 = new Vector3D[4];
+			Vector3DFloat * n4 = new Vector3DFloat[4];
 			int n4Count;
 
 
@@ -450,8 +450,8 @@ namespace wustl_mm {
 				for(int y = 1; y < skeleton->GetSizeY()-1; y++) {
 					index = skeleton->GetIndex(x, y);
 
-					directions[index] = Vector3D(0,0,0);
-					currentPos = Vector3D(x, y, 0);
+					directions[index] = Vector3DFloat(0,0,0);
+					currentPos = Vector3DFloat(x, y, 0);
 			
 					if(IsPoint(skeleton, x, y) || (skeleton->GetDataAt(x, y) == 0)) {
 						// Set direction to {0,0,0} already done by default.
@@ -459,7 +459,7 @@ namespace wustl_mm {
 						n4Count = 0;
 						for(int i = 0; i < 4; i++) {							
 							if(skeleton->GetDataAt(x + IMAGE_NEIGHBORS_4[i][0], y + IMAGE_NEIGHBORS_4[i][1]) > 0) {
-								n4[n4Count] = Vector3D(x + IMAGE_NEIGHBORS_4[i][0], y + IMAGE_NEIGHBORS_4[i][1], 0);
+								n4[n4Count] = Vector3DFloat(x + IMAGE_NEIGHBORS_4[i][0], y + IMAGE_NEIGHBORS_4[i][1], 0);
 								if(n4Count > 0) {
 									v1  = n4[n4Count-1] - n4[n4Count];
 									directions[index] = directions[index] + v1;
@@ -468,12 +468,12 @@ namespace wustl_mm {
 							}
 						}
 						if(n4Count == 1) {
-							v1 = Vector3D(x, y, 0);
+							v1 = Vector3DFloat(x, y, 0);
 							v1 = v1 - n4[0];
 							directions[index] = directions[index] + v1;
 						}
 					}
-					directions[index] = Vector3D::Normalize(directions[index]);
+					directions[index] = Vector3DFloat::Normalize(directions[index]);
 				}
 			}
 
@@ -481,7 +481,7 @@ namespace wustl_mm {
 			return directions;
 		}
 
-		void GrayImageSkeletonizer::NormalizeVector2D(Vector3D & vector) {
+		void GrayImageSkeletonizer::NormalizeVector2D(Vector3DFloat & vector) {
 			double base = sqrt(vector.values[0] * vector.values[0] + vector.values[1] * vector.values[1]);
 			if(base == 0) {
 				vector.values[0] = 0;
@@ -493,7 +493,7 @@ namespace wustl_mm {
 		}
 
 
-		double GrayImageSkeletonizer::GetPixelCost(EigenResults3D imageEigen, Vector3D skeletonDirection, int type) {
+		double GrayImageSkeletonizer::GetPixelCost(EigenResults3D imageEigen, Vector3DFloat skeletonDirection, int type) {
 			double cost = 1;
 			if(imageEigen.values[0] != 0) {
 				//double dotValue = skeletonDirection.values[0] * imageEigen.vectors[0].values[0] + skeletonDirection.values[1] * imageEigen.vectors[0].values[1];
@@ -520,7 +520,7 @@ namespace wustl_mm {
 
 		}
 
-		GrayImage * GrayImageSkeletonizer::GetPixelCosts(GrayImage * skeleton, EigenResults3D * imageEigens, Vector3D * skeletonDirections) {
+		GrayImage * GrayImageSkeletonizer::GetPixelCosts(GrayImage * skeleton, EigenResults3D * imageEigens, Vector3DFloat * skeletonDirections) {
 			GrayImage * costs = new GrayImage(skeleton->GetSizeX(),skeleton->GetSizeY());			
 			int index;
 			for(int x = 0; x < skeleton->GetSizeX(); x++) {
@@ -586,7 +586,7 @@ namespace wustl_mm {
 			delete outFile;
 		}
 
-		void GrayImageSkeletonizer::WriteDirectionsToFile(GrayImage * sourceImage, Vector3D * skeletonDirections, string outputFile) {
+		void GrayImageSkeletonizer::WriteDirectionsToFile(GrayImage * sourceImage, Vector3DFloat * skeletonDirections, string outputFile) {
 			int index;
 			FILE * outFile = fopen(outputFile.c_str(), "wt");
 			fprintf(outFile, "%i\n", sourceImage->GetSizeX());

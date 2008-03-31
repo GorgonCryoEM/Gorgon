@@ -338,7 +338,7 @@ namespace wustl_mm {
 
 					InteractiveSkeletonizer * skel = new InteractiveSkeletonizer(sourceVol, minGray, maxGray, stepSize, curveRadius, minCurveSize);
 					skel->SetGraphWeights(skeletonRatio, stRatio);
-					skel->UpdateReturnPath(skel->FindClosestSkeletalPoint(Vector3DInt(startX, startY, startZ)));
+					skel->CalculateMinimalSpanningTree(skel->FindClosestSkeletalPoint(Vector3DInt(startX, startY, startZ)));
 					vector<Vector3DInt> path = skel->GetPath(skel->FindClosestSkeletalPoint(Vector3DInt(endX, endY, endZ)));
 
 					Volume * skeletonPath = new Volume(sourceVol->getSizeX(), sourceVol->getSizeY(), sourceVol->getSizeZ());
@@ -525,7 +525,7 @@ namespace wustl_mm {
 			return max(0.0, 1.0 - sqrt(pow(x-px, 2) + pow(y-py, 2) + pow(z-pz, 2))/((double)radius));
 		}
 
-		Volume * GetDistanceField(Vector3D * points, int pointCount, int xSize, int ySize, int zSize, int gaussianBlur) {
+		Volume * GetDistanceField(Vector3DDouble * points, int pointCount, int xSize, int ySize, int zSize, int gaussianBlur) {
 			Volume * field = new Volume(xSize, ySize, zSize);
 			int x1,x2,y1,y2,z1,z2;
 
@@ -553,13 +553,13 @@ namespace wustl_mm {
 			int maxPointCount = 2*PI*PI/(samplingRateI*samplingRateJ) + 10;
 			int pointCount = 0;
 			int offset = margin+radius + gaussianBlur;
-			Vector3D * points = new Vector3D[maxPointCount];
+			Vector3DDouble * points = new Vector3DDouble[maxPointCount];
 			
 			double step = 1;
 			for(double i = 0; i < 2.0 * PI; i+= samplingRateI) {
 				step = 1.0;
 				for(double j = 0; j < PI/2.0; j+= (samplingRateJ*step) ) {
-					points[pointCount] = Vector3D(offset + radius* cos(i) * sin(j), offset + radius* sin(i)*sin(j), offset + radius*cos(j));
+					points[pointCount] = Vector3DDouble(offset + radius* cos(i) * sin(j), offset + radius* sin(i)*sin(j), offset + radius*cos(j));
 					pointCount++;
 					step += 0.3;
 				}
@@ -579,11 +579,11 @@ namespace wustl_mm {
 			double xDiffCumu = 0;
 			double yDiffCumu = 0;
 			int margin = 5;
-			Vector3D * points = new Vector3D[10000];
+			Vector3DDouble * points = new Vector3DDouble[10000];
 			int pointCount = 0;
 			for (int x = 0; x < xCount; x++) {		
 				for(int y = 0; y < yCount; y++) {
-					points[pointCount] = Vector3D(startX + xIncrement*x + xDiffCumu, startY + yIncrement*y + yDiffCumu, margin);
+					points[pointCount] = Vector3DDouble(startX + xIncrement*x + xDiffCumu, startY + yIncrement*y + yDiffCumu, margin);
 					pointCount++;
 					yDiffCumu += yDiff * y;
 				}

@@ -51,24 +51,24 @@ namespace wustl_mm {
 			void VoxelBinarySubtract(Volume * sourceAndDestVolume1, Volume * sourceVolume2);
 			void VoxelSubtract(Volume * sourceAndDestVolume1, Volume * sourceVolume2);
 			void VoxelOr(Volume * sourceAndDestVolume1, Volume * sourceVolume2);
-			Vector3D GetCurveDirection(Volume * skeleton, int x, int y, int z);
-			Vector3D GetCurveDirection(Volume * skeleton, int x, int y, int z, int radius);
-			Vector3D GetSurfaceNormal(Volume * skeleton, int x, int y, int z);
-			Vector3D GetSurfaceNormal(Volume * skeleton, int x, int y, int z, int radius, Vector3D * localDirections);
-			Vector3D * GetVolumeGradient(Volume * sourceVolume);
-			Vector3D * GetVolumeGradient2(Volume * sourceVolume);
-			Vector3D * GetSkeletonDirection(Volume * skeleton, int type);
+			Vector3DFloat GetCurveDirection(Volume * skeleton, int x, int y, int z);
+			Vector3DFloat GetCurveDirection(Volume * skeleton, int x, int y, int z, int radius);
+			Vector3DFloat GetSurfaceNormal(Volume * skeleton, int x, int y, int z);
+			Vector3DFloat GetSurfaceNormal(Volume * skeleton, int x, int y, int z, int radius, Vector3DFloat * localDirections);
+			Vector3DFloat * GetVolumeGradient(Volume * sourceVolume);
+			Vector3DFloat * GetVolumeGradient2(Volume * sourceVolume);
+			Vector3DFloat * GetSkeletonDirection(Volume * skeleton, int type);
 		protected:
 			
 			double AngleToParameter(double angle);
-			double GetVoxelCost(EigenResults3D imageEigen, Vector3D skeletonDirection, int type);
-			EigenResults3D * GetEigenResults(Volume * maskVol, Vector3D * imageGradient, ProbabilityDistribution3D & gaussianFilter, int gaussianFilterRadius, bool useMask);
-			EigenResults3D * GetEigenResults2(Volume * maskVol, Vector3D * imageGradient, ProbabilityDistribution3D & gaussianFilter, int gaussianFilterRadius, bool useMask);
+			double GetVoxelCost(EigenResults3D imageEigen, Vector3DFloat skeletonDirection, int type);
+			EigenResults3D * GetEigenResults(Volume * maskVol, Vector3DFloat * imageGradient, ProbabilityDistribution3D & gaussianFilter, int gaussianFilterRadius, bool useMask);
+			EigenResults3D * GetEigenResults2(Volume * maskVol, Vector3DFloat * imageGradient, ProbabilityDistribution3D & gaussianFilter, int gaussianFilterRadius, bool useMask);
 			void AddIterationToVolume(Volume * compositeVolume, Volume * iterationVolume, unsigned char threshold);
 			void ApplyMask(Volume * sourceVolume, Volume * maskVolume, unsigned char maskValue, bool keepMaskValue);
-			void FindOrthogonalAxes(Vector3D axis, Vector3D & res1, Vector3D & res2);			
-			void GetEigenResult(EigenResults3D & returnVal, Vector3D * imageGradient, ProbabilityDistribution3D & gaussianFilter, int x, int y, int z, int sizeX, int sizeY, int sizeZ, int gaussianFilterRadius, bool clear);
-			void GetEigenResult2(EigenResults3D & returnVal, Vector3D * imageGradient, ProbabilityDistribution3D & gaussianFilter, int x, int y, int z, int sizeX, int sizeY, int sizeZ, int gaussianFilterRadius, bool clear);
+			void FindOrthogonalAxes(Vector3DFloat axis, Vector3DFloat & res1, Vector3DFloat & res2);			
+			void GetEigenResult(EigenResults3D & returnVal, Vector3DFloat * imageGradient, ProbabilityDistribution3D & gaussianFilter, int x, int y, int z, int sizeX, int sizeY, int sizeZ, int gaussianFilterRadius, bool clear);
+			void GetEigenResult2(EigenResults3D & returnVal, Vector3DFloat * imageGradient, ProbabilityDistribution3D & gaussianFilter, int x, int y, int z, int sizeX, int sizeY, int sizeZ, int gaussianFilterRadius, bool clear);
 			void GetSTBasedDistribution(ProbabilityDistribution3D & distributionInfo, EigenResults3D eigen);
 			void HueR(double value, double &r, double &g, double &b);
 			void HueRB(double value, double &r, double &g, double &b);
@@ -80,9 +80,9 @@ namespace wustl_mm {
 			void WriteEigenResultsToOFFFile(Volume * sourceVolume, Volume * cost, Volume * skeleton, EigenResults3D * eigenResults, string outputPath);
 			void WriteEigenResultsToOFFFileWireframe(Volume * sourceVolume, Volume * cost, Volume * skeleton, EigenResults3D * eigenResults, string outputPath);
 			void WriteEigenResultsToVRMLFile(Volume * sourceVolume, Volume * cost, Volume * skeleton, EigenResults3D * eigenResults, string outputPath, bool doInverse);
-			void WriteSkeletonDirectionToVRMLFile(Volume * skeleton, Volume * cost, Vector3D * skeletonDirections, string outputPath, bool surfaces, double curveSize);
+			void WriteSkeletonDirectionToVRMLFile(Volume * skeleton, Volume * cost, Vector3DFloat * skeletonDirections, string outputPath, bool surfaces, double curveSize);
 			void WriteVolumeToVRMLFile(Volume * vol, string outputPath);			
-			Vector3D XYZtoUVW(Vector3D vec, Vector3D u, Vector3D v, Vector3D w);
+			Vector3DFloat XYZtoUVW(Vector3DFloat vec, Vector3DFloat u, Vector3DFloat v, Vector3DFloat w);
 			Volume * FillCurveHoles(Volume * thresholdedSkeleton, Volume * originalSkeleton, int maxHoleSize);
 			Volume * FillSurfaceHoles(Volume * thresholdedSkeleton, Volume * originalSkeleton, int maxHoleSize);
 			Volume * GetJuThinning(Volume * sourceVolume, Volume * preserve, double threshold, char thinningClass);
@@ -146,18 +146,18 @@ namespace wustl_mm {
 			return (1-abs(2*angle/PI -1));
 		}
 
-		double VolumeSkeletonizer::GetVoxelCost(EigenResults3D imageEigen, Vector3D skeletonDirection, int type) {
+		double VolumeSkeletonizer::GetVoxelCost(EigenResults3D imageEigen, Vector3DFloat skeletonDirection, int type) {
 			double cost = 1;
 
 			if(!isZero(imageEigen.values[0])) {
 				double theta, a, b;
-				Vector3D temp, skelDirectionST, n;
+				Vector3DFloat temp, skelDirectionST, n;
 				double u1 = 1.0;
 				double u2 = abs(imageEigen.values[1]/imageEigen.values[0]);
 				double u3 = abs(imageEigen.values[2]/imageEigen.values[0]);
-				Vector3D v1 = imageEigen.vectors[0];
-				Vector3D v2 = imageEigen.vectors[1];
-				Vector3D v3 = imageEigen.vectors[2];				
+				Vector3DFloat v1 = imageEigen.vectors[0];
+				Vector3DFloat v2 = imageEigen.vectors[1];
+				Vector3DFloat v3 = imageEigen.vectors[2];				
 				switch(type) {
 					case PRUNING_CLASS_PRUNE_POINTS:
 
@@ -183,12 +183,12 @@ namespace wustl_mm {
 							if(skeletonDirection.IsBadNormal()) {
 								cost = 1.0;
 							} else {
-								Vector3D n1, n2, m1, m2;
+								Vector3DFloat n1, n2, m1, m2;
 								skelDirectionST = XYZtoUVW(skeletonDirection, imageEigen.vectors[0],imageEigen.vectors[1], imageEigen.vectors[2]);
 								FindOrthogonalAxes(skelDirectionST, n1, n2);
 
-								m1 = Vector3D(n1.values[0]/u1, n1.values[1]/u2, n1.values[2]/u3);
-								m2 = Vector3D(n2.values[0]/u1, n2.values[1]/u2, n2.values[2]/u3);
+								m1 = Vector3DFloat(n1.values[0]/u1, n1.values[1]/u2, n1.values[2]/u3);
+								m2 = Vector3DFloat(n2.values[0]/u1, n2.values[1]/u2, n2.values[2]/u3);
 								theta = atan((2.0 * (m1 * m2)) / ((m1 * m1) - (m2 * m2))) / 2.0;							
 								a = 1.0 / ((m1 * cos(theta)) + (m2 * sin(theta))).Length();
 								b = 1.0 / ((m1 * sin(theta)) - (m2 * cos(theta))).Length();
@@ -210,7 +210,7 @@ namespace wustl_mm {
 
 		}
 
-		EigenResults3D * VolumeSkeletonizer::GetEigenResults(Volume * maskVol, Vector3D * imageGradient, ProbabilityDistribution3D & gaussianFilter, int gaussianFilterRadius, bool useMask) {
+		EigenResults3D * VolumeSkeletonizer::GetEigenResults(Volume * maskVol, Vector3DFloat * imageGradient, ProbabilityDistribution3D & gaussianFilter, int gaussianFilterRadius, bool useMask) {
 			EigenResults3D * resultTable = new EigenResults3D[maskVol->getSizeX() * maskVol->getSizeY() * maskVol->getSizeZ()];
 
 			for(int x = MAX_GAUSSIAN_FILTER_RADIUS; x < maskVol->getSizeX() - MAX_GAUSSIAN_FILTER_RADIUS; x++) {
@@ -225,7 +225,7 @@ namespace wustl_mm {
 		}
 
 		// Use 8 local gradients instead of 1 gradient
-		EigenResults3D * VolumeSkeletonizer::GetEigenResults2(Volume * maskVol, Vector3D * imageGradient, ProbabilityDistribution3D & gaussianFilter, int gaussianFilterRadius, bool useMask) {
+		EigenResults3D * VolumeSkeletonizer::GetEigenResults2(Volume * maskVol, Vector3DFloat * imageGradient, ProbabilityDistribution3D & gaussianFilter, int gaussianFilterRadius, bool useMask) {
 			EigenResults3D * resultTable = new EigenResults3D[maskVol->getSizeX() * maskVol->getSizeY() * maskVol->getSizeZ()];
 			for(int x = MAX_GAUSSIAN_FILTER_RADIUS; x < maskVol->getSizeX() - MAX_GAUSSIAN_FILTER_RADIUS; x++) {
 				for(int y = MAX_GAUSSIAN_FILTER_RADIUS; y < maskVol->getSizeY() - MAX_GAUSSIAN_FILTER_RADIUS; y++) {
@@ -238,29 +238,29 @@ namespace wustl_mm {
 			return resultTable;
 		}
 
-		Vector3D VolumeSkeletonizer::XYZtoUVW(Vector3D vec, Vector3D u, Vector3D v, Vector3D w) {
+		Vector3DFloat VolumeSkeletonizer::XYZtoUVW(Vector3DFloat vec, Vector3DFloat u, Vector3DFloat v, Vector3DFloat w) {
 			double uContri = vec * u; 
 			double vContri = vec * v;
 			double wContri = vec * w;
-			Vector3D inUVW = Vector3D(uContri, vContri, wContri);
+			Vector3DFloat inUVW = Vector3DFloat(uContri, vContri, wContri);
 			inUVW.Normalize();
 			return inUVW;
 		}
 
-		Vector3D VolumeSkeletonizer::GetCurveDirection(Volume * skeleton, int x, int y, int z) {
-			Vector3D v1, currentPos;
-			Vector3D * n6 = new Vector3D[6];
+		Vector3DFloat VolumeSkeletonizer::GetCurveDirection(Volume * skeleton, int x, int y, int z) {
+			Vector3DFloat v1, currentPos;
+			Vector3DFloat * n6 = new Vector3DFloat[6];
 			int n6Count;
-			Vector3D direction = Vector3D(0,0,0);
+			Vector3DFloat direction = Vector3DFloat(0,0,0);
 			if(skeleton->getDataAt(x,y,z) <= 0) {
 				return direction;
 			}
 			
-			currentPos = Vector3D(x, y, z);						
+			currentPos = Vector3DFloat(x, y, z);						
 			n6Count = 0;
 			for(int i = 0; i < 6; i++) {							
 				if(skeleton->getDataAt(x + VOLUME_NEIGHBORS_6[i][0], y + VOLUME_NEIGHBORS_6[i][1], z + VOLUME_NEIGHBORS_6[i][2]) > 0) {
-					n6[n6Count] = Vector3D(x + VOLUME_NEIGHBORS_6[i][0], y + VOLUME_NEIGHBORS_6[i][1], z + VOLUME_NEIGHBORS_6[i][2]);
+					n6[n6Count] = Vector3DFloat(x + VOLUME_NEIGHBORS_6[i][0], y + VOLUME_NEIGHBORS_6[i][1], z + VOLUME_NEIGHBORS_6[i][2]);
 					if(n6Count > 0) {
 						v1 = n6[n6Count-1] - n6[n6Count];
 						direction = direction + v1;
@@ -269,13 +269,13 @@ namespace wustl_mm {
 				}
 			}
 			if(n6Count == 1) {
-				v1 = Vector3D(x, y, z);
+				v1 = Vector3DFloat(x, y, z);
 				v1 = v1 - n6[0];
 				direction = direction + v1;
 			}
 			direction.Normalize();
 			if(n6Count > 2) {
-				direction = Vector3D(BAD_NORMAL, BAD_NORMAL, BAD_NORMAL);
+				direction = Vector3DFloat(BAD_NORMAL, BAD_NORMAL, BAD_NORMAL);
 			}
 
 			delete [] n6;
@@ -283,10 +283,10 @@ namespace wustl_mm {
 		}
 
 
-		Vector3D VolumeSkeletonizer::GetCurveDirection(Volume * skeleton, int x, int y, int z, int radius) {
-			Vector3D direction = Vector3D(0,0,0);
+		Vector3DFloat VolumeSkeletonizer::GetCurveDirection(Volume * skeleton, int x, int y, int z, int radius) {
+			Vector3DFloat direction = Vector3DFloat(0,0,0);
 			if(DiscreteMesh::GetN6Count(skeleton, x, y, z) > 2) {
-				direction = Vector3D(BAD_NORMAL, BAD_NORMAL, BAD_NORMAL);
+				direction = Vector3DFloat(BAD_NORMAL, BAD_NORMAL, BAD_NORMAL);
 			} else {
 
 				int margin = 2;
@@ -326,7 +326,7 @@ namespace wustl_mm {
 
 				delete block;
 
-				Vector3D * gradient = GetVolumeGradient2(visited);
+				Vector3DFloat * gradient = GetVolumeGradient2(visited);
 				EigenResults3D eigen;
 				GetEigenResult2(eigen, gradient, uniformFilterSkeletonDirectionRadius,  
 					margin+radius, margin+radius, margin+radius,
@@ -340,15 +340,15 @@ namespace wustl_mm {
 
 			return direction;
 		}
-		Vector3D VolumeSkeletonizer::GetSurfaceNormal(Volume * skeleton, int x, int y, int z) {
+		Vector3DFloat VolumeSkeletonizer::GetSurfaceNormal(Volume * skeleton, int x, int y, int z) {
 			surfaceNormalFinder->InitializeGraph(skeleton, x, y, z);
 			return surfaceNormalFinder->GetSurfaceNormal();
 		}
 
 
 
-		Vector3D VolumeSkeletonizer::GetSurfaceNormal(Volume * skeleton, int x, int y, int z, int radius, Vector3D * localDirections) {
-			Vector3D direction = localDirections[skeleton->getIndex(x, y, z)];
+		Vector3DFloat VolumeSkeletonizer::GetSurfaceNormal(Volume * skeleton, int x, int y, int z, int radius, Vector3DFloat * localDirections) {
+			Vector3DFloat direction = localDirections[skeleton->getIndex(x, y, z)];
 
 
 			if(!direction.IsBadNormal()) {
@@ -369,7 +369,7 @@ namespace wustl_mm {
 				vector<Vector3DInt> list;
 				list.push_back(Vector3DInt(margin+radius, margin+radius, margin+radius));
 				Vector3DInt currentPos, newPos;
-				Vector3D tempDir;
+				Vector3DFloat tempDir;
 
 				while(list.size() > 0) {
 					currentPos = list[list.size()-1];
@@ -396,7 +396,7 @@ namespace wustl_mm {
 
 				delete block;
 
-				Vector3D * gradient = GetVolumeGradient2(visited);
+				Vector3DFloat * gradient = GetVolumeGradient2(visited);
 
 				EigenResults3D eigen;
 
@@ -415,15 +415,15 @@ namespace wustl_mm {
 			return direction;
 		}
 		// Gradient = (x+1,y,z) - (x-1,y,z) ....
-		Vector3D * VolumeSkeletonizer::GetVolumeGradient(Volume * sourceVolume) {
-			Vector3D * gradient = new Vector3D[sourceVolume->getSizeX() * sourceVolume->getSizeY() * sourceVolume->getSizeZ()];
+		Vector3DFloat * VolumeSkeletonizer::GetVolumeGradient(Volume * sourceVolume) {
+			Vector3DFloat * gradient = new Vector3DFloat[sourceVolume->getSizeX() * sourceVolume->getSizeY() * sourceVolume->getSizeZ()];
 			int index;
 
 			for(int x = 0; x < sourceVolume->getSizeX(); x = x + sourceVolume->getSizeX()-1) {
 				for(int y = 0; y < sourceVolume->getSizeY(); y = y + sourceVolume->getSizeY()-1) {
 					for(int z = 0; z < sourceVolume->getSizeZ(); z = z + sourceVolume->getSizeZ()-1) {
 						index = sourceVolume->getIndex(x, y, z);
-						gradient[index] = Vector3D(0, 0, 0);
+						gradient[index] = Vector3DFloat(0, 0, 0);
 					}
 				}
 			}
@@ -432,7 +432,7 @@ namespace wustl_mm {
 				for(int y = 1; y < sourceVolume->getSizeY()-1; y++) {
 					for(int z = 1; z < sourceVolume->getSizeZ()-1; z++) {
 						index = sourceVolume->getIndex(x, y, z);
-						gradient[index] = Vector3D(sourceVolume->getDataAt(x+1, y, z) - sourceVolume->getDataAt(x-1, y, z),
+						gradient[index] = Vector3DFloat(sourceVolume->getDataAt(x+1, y, z) - sourceVolume->getDataAt(x-1, y, z),
 												   sourceVolume->getDataAt(x, y+1, z) - sourceVolume->getDataAt(x, y-1, z),
 												   sourceVolume->getDataAt(x, y, z+1) - sourceVolume->getDataAt(x, y, z-1));
 					}
@@ -441,9 +441,9 @@ namespace wustl_mm {
 			return gradient;
 		}
 		// Gradient = (x,y,z) - (x-1,y,z) ....
-		Vector3D * VolumeSkeletonizer::GetVolumeGradient2(Volume * sourceVolume) {
+		Vector3DFloat * VolumeSkeletonizer::GetVolumeGradient2(Volume * sourceVolume) {
 			int size = sourceVolume->getSizeX() * sourceVolume->getSizeY() * sourceVolume->getSizeZ();
-			Vector3D * gradient = new Vector3D[sourceVolume->getSizeX() * sourceVolume->getSizeY() * sourceVolume->getSizeZ() * 8];
+			Vector3DFloat * gradient = new Vector3DFloat[sourceVolume->getSizeX() * sourceVolume->getSizeY() * sourceVolume->getSizeZ() * 8];
 			int index, index2;
 
 			for(int x = 0; x < sourceVolume->getSizeX(); x = x + sourceVolume->getSizeX()-1) {
@@ -452,7 +452,7 @@ namespace wustl_mm {
 						index = sourceVolume->getIndex(x, y, z);
 						for(int a = 0; a < 8; a++) {
 							index2 = a * size + index;
-							gradient[index2] = Vector3D(0, 0, 0);
+							gradient[index2] = Vector3DFloat(0, 0, 0);
 						}
 					}
 				}
@@ -507,16 +507,16 @@ namespace wustl_mm {
 			return gradient;
 		}
 
-		Vector3D * VolumeSkeletonizer::GetSkeletonDirection(Volume * skeleton, int type) {
+		Vector3DFloat * VolumeSkeletonizer::GetSkeletonDirection(Volume * skeleton, int type) {
 			int index;
 
-			Vector3D * localDirections = new Vector3D[skeleton->getSizeX() * skeleton->getSizeY() * skeleton->getSizeZ()];
+			Vector3DFloat * localDirections = new Vector3DFloat[skeleton->getSizeX() * skeleton->getSizeY() * skeleton->getSizeZ()];
 
 			for(int x = 1; x < skeleton->getSizeX()-1; x++) {
 				for(int y = 1; y < skeleton->getSizeY()-1; y++) {
 					for(int z = 1; z < skeleton->getSizeZ()-1; z++) {						
 						index = skeleton->getIndex(x, y, z);
-						localDirections[index] = Vector3D(0,0,0);
+						localDirections[index] = Vector3DFloat(0,0,0);
 						if(skeleton->getDataAt(x,y,z) > 0) {
 							switch(type){
 								case PRUNING_CLASS_PRUNE_SURFACES:
@@ -528,13 +528,13 @@ namespace wustl_mm {
 				}
 			}
 
-			Vector3D * directions = new Vector3D[skeleton->getSizeX() * skeleton->getSizeY() * skeleton->getSizeZ()];
+			Vector3DFloat * directions = new Vector3DFloat[skeleton->getSizeX() * skeleton->getSizeY() * skeleton->getSizeZ()];
 
 			for(int x = 1; x < skeleton->getSizeX()-1; x++) {
 				for(int y = 1; y < skeleton->getSizeY()-1; y++) {
 					for(int z = 1; z < skeleton->getSizeZ()-1; z++) {						
 						index = skeleton->getIndex(x, y, z);
-						directions[index] = Vector3D(0,0,0);
+						directions[index] = Vector3DFloat(0,0,0);
 						if(skeleton->getDataAt(x,y,z) > 0) {
 							switch(type){
 								case PRUNING_CLASS_PRUNE_CURVES:
@@ -591,10 +591,10 @@ namespace wustl_mm {
 				}
 			}
 		}
-		void VolumeSkeletonizer::FindOrthogonalAxes(Vector3D axis, Vector3D & res1, Vector3D & res2) {
-			res1 = Vector3D(1.0, 0.0, 0.0);
+		void VolumeSkeletonizer::FindOrthogonalAxes(Vector3DFloat axis, Vector3DFloat & res1, Vector3DFloat & res2) {
+			res1 = Vector3DFloat(1.0, 0.0, 0.0);
 			if(abs(axis * res1) > 0.95) {
-				res1 = Vector3D(0.0, 1.0, 0.0);
+				res1 = Vector3DFloat(0.0, 1.0, 0.0);
 			}
 			res1 = axis ^ res1;
 			res2 = axis ^ res1;
@@ -602,7 +602,7 @@ namespace wustl_mm {
 			res2.Normalize();
 		}
 
-		void VolumeSkeletonizer::GetEigenResult(EigenResults3D & returnVal, Vector3D * imageGradient, ProbabilityDistribution3D & gaussianFilter, int x, int y, int z, int sizeX, int sizeY, int sizeZ, int gaussianFilterRadius, bool clear) {
+		void VolumeSkeletonizer::GetEigenResult(EigenResults3D & returnVal, Vector3DFloat * imageGradient, ProbabilityDistribution3D & gaussianFilter, int x, int y, int z, int sizeX, int sizeY, int sizeZ, int gaussianFilterRadius, bool clear) {
 			if(clear) {
 				for(int r = 0; r < 3; r++) {
 					returnVal.values[r] = 0;
@@ -651,7 +651,7 @@ namespace wustl_mm {
 
 
 		// Works on 8 local gradients instead of 1
-		void VolumeSkeletonizer::GetEigenResult2(EigenResults3D & returnVal, Vector3D * imageGradient, ProbabilityDistribution3D & gaussianFilter, int x, int y, int z, int sizeX, int sizeY, int sizeZ, int gaussianFilterRadius, bool clear) {
+		void VolumeSkeletonizer::GetEigenResult2(EigenResults3D & returnVal, Vector3DFloat * imageGradient, ProbabilityDistribution3D & gaussianFilter, int x, int y, int z, int sizeX, int sizeY, int sizeZ, int gaussianFilterRadius, bool clear) {
 			int size = sizeX*sizeY*sizeZ;
 			if(clear) {
 				for(int r = 0; r < 3; r++) {
@@ -708,14 +708,14 @@ namespace wustl_mm {
 
 
 		void VolumeSkeletonizer::GetSTBasedDistribution(ProbabilityDistribution3D & distributionInfo, EigenResults3D eigen) {
-			Vector3D skeletonDirection;
+			Vector3DFloat skeletonDirection;
 			double total = 0;
 			double cell;
 			for(int x = -distributionInfo.radius; x <= distributionInfo.radius; x++) {
 				for(int y = -distributionInfo.radius; y <= distributionInfo.radius; y++) {
 					for(int z = -distributionInfo.radius; z <= distributionInfo.radius; z++) {
 						if((x!=0) && (y!=0) && (z!=0)) {
-							skeletonDirection = Vector3D(0,0,0) - Vector3D(x, y, z);
+							skeletonDirection = Vector3DFloat(0,0,0) - Vector3DFloat(x, y, z);
 							skeletonDirection.Normalize();
 							cell = GetVoxelCost(eigen, skeletonDirection, PRUNING_CLASS_PRUNE_CURVES);
 							distributionInfo.values[x+distributionInfo.radius][y+distributionInfo.radius][z+distributionInfo.radius] = cell;
@@ -830,7 +830,7 @@ namespace wustl_mm {
 		void VolumeSkeletonizer::PruneUsingStructureTensor(Volume * skeleton, Volume * sourceVolume, EigenResults3D * volumeEigens, double threshold, char pruningClass, string outputPath) {									
 			Volume * tempSkel = new Volume(skeleton->getSizeX(), skeleton->getSizeY(), skeleton->getSizeZ(), 0, 0, 0, skeleton);
 			Volume * costVol = new Volume(skeleton->getSizeX(), skeleton->getSizeY(), skeleton->getSizeZ()); 
-			Vector3D * skeletonDirections = GetSkeletonDirection(skeleton, pruningClass);
+			Vector3DFloat * skeletonDirections = GetSkeletonDirection(skeleton, pruningClass);
 			int index;
 			double cost;
 
@@ -955,7 +955,7 @@ namespace wustl_mm {
 				}
 			}
 
-			Vector3D * volumeGradient = GetVolumeGradient2(sourceVolume);
+			Vector3DFloat * volumeGradient = GetVolumeGradient2(sourceVolume);
 			EigenResults3D * eigens = GetEigenResults2(maskVolume, volumeGradient, smoothenMask, stRadius, true);	
 			Volume * destVolume = new Volume(sourceVolume->getSizeX(), sourceVolume->getSizeY(), sourceVolume->getSizeZ());
 			double sourceData;
@@ -1219,10 +1219,10 @@ namespace wustl_mm {
 			srand( (unsigned)time( NULL ) );
 			double r, g, b, colorCost;
 			double theta, theta1, theta2, theta3, s;
-			Vector3D axis, axis1, axis2, axis3;
-			Vector3D newY, newX;
-			Vector3D xAxis = Vector3D(1.0, 0.0, 0.0);
-			Vector3D yAxis = Vector3D(0.0, 1.0, 0.0);
+			Vector3DFloat axis, axis1, axis2, axis3;
+			Vector3DFloat newY, newX;
+			Vector3DFloat xAxis = Vector3DFloat(1.0, 0.0, 0.0);
+			Vector3DFloat yAxis = Vector3DFloat(0.0, 1.0, 0.0);
 
 			double sizeX, sizeY, sizeZ;
 
@@ -1315,7 +1315,7 @@ namespace wustl_mm {
 			delete outFile;
 		}
 
-		void VolumeSkeletonizer::WriteSkeletonDirectionToVRMLFile(Volume * skeleton, Volume * cost, Vector3D * skeletonDirections, string outputPath, bool surfaces, double curveSize) {
+		void VolumeSkeletonizer::WriteSkeletonDirectionToVRMLFile(Volume * skeleton, Volume * cost, Vector3DFloat * skeletonDirections, string outputPath, bool surfaces, double curveSize) {
 			int index;
 			FILE * outFile = fopen(outputPath.c_str(), "wt");
 			fprintf(outFile, "#VRML V2.0 utf8\n");
@@ -1329,9 +1329,9 @@ namespace wustl_mm {
 						if((skeleton->getDataAt(index) > 0) &&  !skeletonDirections[index].IsBadNormal()) {
 							colorCost = cost->getDataAt(x, y, z);
 							HueRB(colorCost, r, g, b);
-							Vector3D axis = skeletonDirections[index] ^ Vector3D(1.0, 0.0, 0.0);
+							Vector3DFloat axis = skeletonDirections[index] ^ Vector3DFloat(1.0, 0.0, 0.0);
 							axis.Normalize();
-							double angle = -(skeletonDirections[index] * Vector3D(1.0, 0.0, 0.0));
+							double angle = -(skeletonDirections[index] * Vector3DFloat(1.0, 0.0, 0.0));
 							angle = acos(angle);
 
 							if(surfaces) {
@@ -1552,7 +1552,7 @@ namespace wustl_mm {
 				SmoothenVolume(sourceVol, startGray, endGray, smoothingRadius);
 			}
 			appTimeManager.PopAndDisplayTime("Smoothing : %f seconds!\n");
-			Vector3D * volumeGradient;
+			Vector3DFloat * volumeGradient;
 			EigenResults3D * volumeEigens;
 			sourceVol->pad(MAX_GAUSSIAN_FILTER_RADIUS, 0);
 
@@ -1897,7 +1897,7 @@ namespace wustl_mm {
 			//sourceSkeleton->pad(MAX_GAUSSIAN_FILTER_RADIUS, 0);
 
 			//printf("Getting volume Eigens\n");
-			//Vector3D * volumeGradient = GetVolumeGradient(sourceVolume);
+			//Vector3DFloat * volumeGradient = GetVolumeGradient(sourceVolume);
 			//EigenResults3D * volumeEigens = GetEigenResults(sourceSkeleton, volumeGradient, gaussianFilterMaxRadius, MAX_GAUSSIAN_FILTER_RADIUS, true);
 
 			//WriteEigenResultsToOFFFile(sourceVolume, new Volume(sourceVolume->getSizeX(), sourceVolume->getSizeY(), sourceVolume->getSizeZ()), sourceSkeleton, volumeEigens, outputPath + "NoColorEigens.off");
@@ -1916,7 +1916,7 @@ namespace wustl_mm {
 			//double cost, cost2;
 			//Vector3DInt * pointList;
 			//SkeletalCurve * featureList;
-			//Vector3D * skeletonDirections;
+			//Vector3DFloat * skeletonDirections;
 			//SkeletalCurve feature;
 
 			//{ //Remove after debugging.. not needed at all only for visualization

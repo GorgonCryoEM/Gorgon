@@ -1,8 +1,10 @@
+/*
 #ifndef VECTOR3D_INT_H
 #define VECTOR3D_INT_H
 
 namespace wustl_mm {
 	namespace MathTools {
+		
 		class Vector3DInt {
 		public:
 			Vector3DInt();
@@ -98,8 +100,8 @@ namespace wustl_mm {
 			}
 			return *this;
 		}
-
 	}
 }
 
 #endif
+*/

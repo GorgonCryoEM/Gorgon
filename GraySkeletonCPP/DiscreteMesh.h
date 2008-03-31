@@ -3,7 +3,7 @@
 
 #include <SkeletonMaker/volume.h>
 #include <MathTools/DataStructures.h>
-#include <MathTools/Vector3DInt.h>
+#include <MathTools/Vector3D.h>
 #include <string.h>
 #include <list>
 
@@ -75,11 +75,11 @@ namespace wustl_mm {
 			static bool IsVolumeBorder(Volume * sourceVolume, int x, int y, int z, bool doDependantChecks);
 			static bool IsVolumeBody(Volume * sourceVolume, int x, int y, int z);
 			static bool IsSimple(Volume * sourceVolume, int x, int y, int z);
-			static bool IsValidSurface(Volume * sourceVolume, Vector3D p0, Vector3D p1, Vector3D p2, Vector3D p3);
+			static bool IsValidSurface(Volume * sourceVolume, Vector3DDouble p0, Vector3DDouble p1, Vector3DDouble p2, Vector3DDouble p3);
 
-			static void FindCurveBase(Vector3D &p1, Vector3D &p2);
+			static void FindCurveBase(Vector3DDouble &p1, Vector3DDouble &p2);
 			static void FindCurveBase(Vector3DInt &p1, Vector3DInt &p2);
-			static void FindSurfaceBase(Vector3D &p1, Vector3D &p2, Vector3D &p3, Vector3D &p4);
+			static void FindSurfaceBase(Vector3DDouble &p1, Vector3DDouble &p2, Vector3DDouble &p3, Vector3DDouble &p4);
 			static void FindSurfaceBase(Vector3DInt &p1, Vector3DInt &p2, Vector3DInt &p3, Vector3DInt &p4);
 
 
@@ -455,8 +455,8 @@ namespace wustl_mm {
 		}
 
 
-		void DiscreteMesh::FindCurveBase(Vector3D &p1, Vector3D &p2) {
-			Vector3D temp;
+		void DiscreteMesh::FindCurveBase(Vector3DDouble &p1, Vector3DDouble &p2) {
+			Vector3DDouble temp;
 			if ((p1.values[0] > p2.values[0]) || 
 				(p1.values[1] > p2.values[1]) || 
 				(p1.values[2] > p2.values[2])) {
@@ -477,10 +477,10 @@ namespace wustl_mm {
 			}
 		}
 
-		void DiscreteMesh::FindSurfaceBase(Vector3D &p1, Vector3D &p2, Vector3D &p3, Vector3D &p4) {
+		void DiscreteMesh::FindSurfaceBase(Vector3DDouble &p1, Vector3DDouble &p2, Vector3DDouble &p3, Vector3DDouble &p4) {
 
-			Vector3D points[4] = {p1, p2, p3, p4};
-			Vector3D temp;
+			Vector3DDouble points[4] = {p1, p2, p3, p4};
+			Vector3DDouble temp;
 			int jVal, minVal, minIndex;
 
 			for(int i = 0; i < 3; i++) {
@@ -911,23 +911,23 @@ namespace wustl_mm {
 		bool DiscreteMesh::IsSimple(Volume * sourceVolume, int x, int y, int z) {
 			return sourceVolume->isSimple(x, y, z); 
 		}
-		bool DiscreteMesh::IsValidSurface(Volume * sourceVolume, Vector3D p0, Vector3D p1, Vector3D p2, Vector3D p3) {
-			Vector3D surface[4] = {p0, p1, p2, p3};
-			Vector3D pDelta = p2 - p0;
-			Vector3D upperVector, lowerVector;
+		bool DiscreteMesh::IsValidSurface(Volume * sourceVolume, Vector3DDouble p0, Vector3DDouble p1, Vector3DDouble p2, Vector3DDouble p3) {
+			Vector3DDouble surface[4] = {p0, p1, p2, p3};
+			Vector3DDouble pDelta = p2 - p0;
+			Vector3DDouble upperVector, lowerVector;
 			if((int)round(pDelta.values[0]) == 0) {
-				upperVector = Vector3D(1, 0, 0);
-				lowerVector = Vector3D(-1, 0, 0);
+				upperVector = Vector3DDouble(1, 0, 0);
+				lowerVector = Vector3DDouble(-1, 0, 0);
 			} else if ((int)round(pDelta.values[1]) == 0) {
-				upperVector = Vector3D(0, 1, 0);
-				lowerVector = Vector3D(0, -1, 0);
+				upperVector = Vector3DDouble(0, 1, 0);
+				lowerVector = Vector3DDouble(0, -1, 0);
 			} else {
-				upperVector = Vector3D(0, 0, 1);
-				lowerVector = Vector3D(0, 0, -1);
+				upperVector = Vector3DDouble(0, 0, 1);
+				lowerVector = Vector3DDouble(0, 0, -1);
 			}
 
 			bool allFound = true;
-			Vector3D currentPos;
+			Vector3DDouble currentPos;
 			for(int i = 0; i < 4; i++) {
 				currentPos = surface[i] + upperVector;
 				allFound = allFound && (sourceVolume->getDataAt(currentPos.XInt(), currentPos.YInt(), currentPos.ZInt()) > 0);

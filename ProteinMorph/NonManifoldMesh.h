@@ -28,7 +28,7 @@ namespace wustl_mm {
 
 		struct NonManifoldMeshVertex {
 			unsigned int id;
-			Vector3D position;
+			Vector3DDouble position;
 			vector<unsigned int> edgeIds;
 			bool valid;
 			bool stationary;
@@ -118,7 +118,7 @@ namespace wustl_mm {
 						vertexLocations[index] = -1;
 						value = (int)round(sourceVol->getDataAt(index));
 						if(value > 0) {							
-							tempVertex.position = Vector3D(x,y,z);	
+							tempVertex.position = Vector3DDouble(x,y,z);	
 							tempVertex.articulationPoint = (value == 2);
 							tempVertex.stationary = (value >= 2);
 							if(value >= 3) {
@@ -578,13 +578,13 @@ namespace wustl_mm {
 		NonManifoldMesh * NonManifoldMesh::SmoothLaplacian(double converganceRate) {
 			NonManifoldMesh * smoothedMesh = new NonManifoldMesh(this);
 			int i, j, vertexIndex;
-			Vector3D newPosition;
+			Vector3DDouble newPosition;
 			NonManifoldMeshVertex vertex;
 			for(i = 0; i < vertices.size(); i++) {
 				vertex = vertices[i];
 				if(vertex.valid && !vertex.stationary) {
 					if(vertex.edgeIds.size() > 0) {
-						newPosition = Vector3D(0,0,0);
+						newPosition = Vector3DDouble(0,0,0);
 						for(j = 0; j < vertex.edgeIds.size(); j++) {
 							if(edges[GetEdgeIndex(vertex.edgeIds[j])].vertexIds[0] == i) {
 								vertexIndex = 1;
