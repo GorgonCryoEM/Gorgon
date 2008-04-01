@@ -15,53 +15,77 @@ except ImportError:
     sys.exit(1)
 
 class Isosurface(QtGui.QWidget):
-    def __init__(self, parent=None):
+    def __init__(self, main, parent=None):
         QtGui.QWidget.__init__(self, parent)
-        #self.engine = MarchingCubes()
+        self.app = main
+        self.createUI()
+        
         self.thread = RenderThread()
         self.connect(self.thread, QtCore.SIGNAL("meshCreated()"), self.meshChanged)
         self.gllist = 0
 
-    def drawMesh(self, xRot, yRot, zRot, scale):
+    def createUI(self):
+        self.createActions()
+        self.createMenus()
+        self.surfaceSlider, self.delayedSurface = self.createHorizontalSlider(self.setSurfaceValue,1,1000)
+        self.sampleSlider, self.delayedSample = self.createHorizontalSlider(self.setSampleDensity,1,10)
+
+        dock = QtGui.QDockWidget(self.tr("Isosurface"), self.app)
+        dock.setAllowedAreas(QtCore.Qt.LeftDockWidgetArea | QtCore.Qt.RightDockWidgetArea)
+        widget = QtGui.QWidget(dock);
+        
+        mainLayout = QtGui.QHBoxLayout()
+        mainLayout.addWidget(self.surfaceSlider)
+        mainLayout.addWidget(self.sampleSlider)
+        widget.setLayout(mainLayout)
+        
+        dock.setWidget(widget)
+        self.app.addDockWidget(QtCore.Qt.RightDockWidgetArea,dock)
+
+    def createActions(self):
+        self.openAct = QtGui.QAction(self.tr("&Open MRC..."), self)
+        self.openAct.setShortcut(self.tr("Ctrl+O"))
+        self.openAct.setStatusTip(self.tr("Open an existing file"))
+        self.connect(self.openAct, QtCore.SIGNAL("triggered()"), self.openDialog)
+
+    def createMenus(self):
+        self.app.menuOpen().addAction(self.openAct)
+    
+    def createHorizontalSlider(self, setterSlot, minVal, maxVal):
+        slider = QtGui.QSlider(QtCore.Qt.Vertical)
+        delayed = DelayedFilter()
+
+        slider.setRange(minVal, maxVal)
+        delayed.connect(slider, QtCore.SIGNAL("valueChanged(int)"), delayed.setValue)
+        self.connect(delayed, QtCore.SIGNAL("valueChanged(int)"), setterSlot)
+
+        return slider, delayed
+
+    def openDialog(self):
+        fileName = QtGui.QFileDialog.getOpenFileName(self)
+        if not fileName.isEmpty():
+            self.load(fileName)
+            
+    def draw(self):
+        self.drawMesh()
+        
+    def drawMesh(self):
         if self.gllist != 0:
             glPushMatrix()
-            glTranslated(0.0, 0.0, -1.0)
-            glRotated(xRot, 1.0, 0.0, 0.0)
-            glRotated(yRot, 0.0, 1.0, 0.0)
-            glRotated(zRot, 0.0, 0.0, 1.0)
-            #glScale(scale, scale, scale)
-            glPushAttrib(GL_LIGHTING_BIT)
-            glDisable(GL_LIGHTING)
-            glColor3f(1.0, 1.0, 1.0)
-            
-            glutWireCube(1.0)
-            glPopAttrib()
-            
-            glPushMatrix()
             glTranslated(-0.5, -0.5, -0.5)
-            #self.engine.drawMesh(True)
             glCallList(self.gllist)
             glPopMatrix()
-            glPopMatrix()
-
+            
     def load(self, filename):
-        #self.engine.loadMRC(str(filename))
         self.thread.loadMRC(filename)
-        #self.meshChanged()
         
     def setSurfaceValue(self, value):
-        #self.engine.setSurfaceValue(value)
-        #self.meshChanged()
         self.thread.setSurfaceValue(value)
 
     def setSampleDensity(self, value):
-        #self.engine.setSampleDensity(value)
-        #self.meshChanged()
-        #self.thread.setSampleDensity(value)
         pass
 
     def meshChanged(self):
-        #print "Mesh Created..."
         if self.gllist != 0:
             glDeleteLists(self.gllist,1)
             
@@ -125,28 +149,22 @@ class RenderThread(QtCore.QThread):
 
     def run(self):
         while True:
-            #print "Running..."
             self.mutex.lock()
             surface = self.surface
             engine = self.engine
             isLoading = self.isLoading
             self.mutex.unlock()
 
-            #print "Unlocking..."
             if self.isLoading:
-                #print "Loading..."
-                # load filename
                 engine.loadMRC(str(self.filename))
                 self.isLoading = False
                 self.emit(QtCore.SIGNAL("meshCreated()"))
             elif self.surfaceChanged:
-                #print "Surface Changed..."
                 level = 1
                 engine.setSampleDensity(level)
                 engine.setSurfaceValue(surface)
                 level = 5
                 engine.setSampleDensity(level)
-                #print "Finished Changing Surface..."
                 self.mutex.lock()
                 self.engine = engine
                 self.mutex.unlock()
@@ -162,7 +180,6 @@ class RenderThread(QtCore.QThread):
                     self.emit(QtCore.SIGNAL("meshCreated()"))
                     self.msleep(level*90)
                     level = level + 1
-                #print "Restart: " + str(self.restart) + ", Level: " + str(level)
                 if not self.restart:
                     self.surfaceChanged = False
             
@@ -172,7 +189,28 @@ class RenderThread(QtCore.QThread):
                 self.condition.wait(self.mutex)
             self.restart = False
             self.mutex.unlock()
-  
+
+class DelayedFilter(QtGui.QWidget):
+    def __init__(self, parent=None):
+        QtGui.QWidget.__init__(self, parent)
+        self.delay = 200
+        self.waiting = False
+        self.value = 0
+        self.timer = QtCore.QTimer(self)
+        self.connect(self.timer, QtCore.SIGNAL("timeout()"), self.emitValue)
+    
+    def setValue(self, value):
+        self.value = value
+        if not self.waiting:
+            self.timer.start(self.delay)
+            self.waiting = True
+
+    def emitValue(self):
+        self.timer.stop()
+        self.emit(QtCore.SIGNAL("valueChanged(int)"), self.value)
+        self.waiting = False
+
+ 
 class GLMesh:
     """Holds a mesh object of points, triangles, and normals"""
     def __init__(self, points=[], triangles=[], normals=[]):
