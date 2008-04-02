@@ -2,10 +2,10 @@
 #define _CRT_NONSTDC_NO_DEPRECATE 1
 
 #include <boost/python.hpp>
-#include <GraySkeletonCPP/MarchingCubes.h>
+#include <Gorgon/MarchingCubes.h>
 
 using namespace boost::python;
-using namespace wustl_mm::GraySkeletonCPP;
+using namespace wustl_mm::Visualization;
 
 
 BOOST_PYTHON_MODULE(gorgon)
