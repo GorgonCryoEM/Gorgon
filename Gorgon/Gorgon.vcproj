@@ -4,6 +4,7 @@
 	Version="8.00"
 	Name="Gorgon"
 	ProjectGUID="{CB638ABC-F441-4AFC-8768-1A9A9031B408}"
+	RootNamespace="Gorgon"
 	>
 	<Platforms>
 		<Platform
@@ -86,6 +87,7 @@
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
+				CommandLine="$(ProjectDir)\build.bat"
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
@@ -135,6 +137,8 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				Description="Post Build Event"
+				CommandLine="$(ProjectDir)\build.bat"
 			/>
 		</Configuration>
 	</Configurations>
@@ -147,7 +151,7 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath=".\src_cpp\Gorgon.cpp"
+				RelativePath=".\Gorgon.cpp"
 				>
 			</File>
 		</Filter>
@@ -157,11 +161,11 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath=".\src_cpp\GLVisualizer.h"
+				RelativePath=".\GLVisualizer.h"
 				>
 			</File>
 			<File
-				RelativePath=".\src_cpp\MarchingCubes.h"
+				RelativePath=".\MarchingCubes.h"
 				>
 			</File>
 		</Filter>
