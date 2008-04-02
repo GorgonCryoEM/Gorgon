@@ -21,18 +21,22 @@ import python ;
 # python-extension extending : extending.cpp ;
 # python-extension hello : hello.cpp ;
 
-python-extension TopologyHunter : src_cpp/PythonWrappers/TopologyHunter.cpp
+python-extension gorgon_cpp_wrapper : src_cpp/GorgonCppWrapper.cpp
 	: <include>../. 
         <include>../ExternalLibraries ;
 
-python-extension gorgon : src_cpp/PythonWrappers/Gorgon.cpp 
-	: <include>../. 
-		<include>../ExternalLibraries/gsl/include 
-		<include>../ExternalLibraries
-		<include>../ExternalLibraries/eman2/libEM 
-	: <library>../ExternalLibraries/GL/glut32.lib 
-		<library>../ExternalLibraries/gsl/lib/gsl.lib
-		<library>../ExternalLibraries/gsl/lib/cblas.lib ;
+#python-extension TopologyHunter : src_cpp/TopologyHunter.cpp
+#	: <include>../. 
+#        <include>../ExternalLibraries ;
+
+#python-extension gorgon : src_cpp/Gorgon.cpp 
+#	: <include>../. 
+#		<include>../ExternalLibraries/gsl/include 
+#		<include>../ExternalLibraries
+#		<include>../ExternalLibraries/eman2/libEM 
+#	: <library>../ExternalLibraries/GL/glut32.lib 
+#		<library>../ExternalLibraries/gsl/lib/gsl.lib
+#		<library>../ExternalLibraries/gsl/lib/cblas.lib ;
 
 # Declare an executable called embedding that embeds Python
 # exe embedding : embedding.cpp /python//python ;
