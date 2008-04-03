@@ -25,9 +25,9 @@ class TopologyHunter(QtGui.QWidget):
         self.results = ResultViewer(self.app, self.back_end)
         self.mrc_engine = IsoSurface(main)
         self.gl_options = GLOptions(main)
-        #self.gl_main = GLWidget(self.mrc_engine, self.gl_options)
+        self.gl_main = GLWidget(self.mrc_engine, self.gl_options)
         self.gl_main = GLWidget([self.skeleton, self.mrc_engine], self.gl_options)
-        self.gl_main.connect(self.mrc_engine, QtCore.SIGNAL("meshChanged()"), self.gl_main.updateGL)
+        #self.gl_main.connect(self.mrc_engine, QtCore.SIGNAL("meshChanged()"), self.gl_main.updateGL)
         
         # create UI and add its components to the MainWindow
         self.createUI()
