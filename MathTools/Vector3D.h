@@ -10,6 +10,16 @@ namespace wustl_mm {
 		typedef Vector3DTemplate<float>  Vector3DFloat;
 		typedef Vector3DTemplate<double> Vector3DDouble;
 
+		inline Vector3DFloat Vector3DInt2Float(Vector3DInt & v) {
+			return Vector3DFloat(v.X(), v.Y(), v.Z());
+		}
+
+		inline Vector3DDouble Vector3DInt2Double(Vector3DInt & v) {
+			return Vector3DDouble(v.X(), v.Y(), v.Z());
+		}
+
+
+
 /*
 		class Vector3DDouble {
 		public:

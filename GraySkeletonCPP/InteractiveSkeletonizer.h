@@ -12,7 +12,7 @@ namespace wustl_mm {
 
 		class InteractiveSkeletonizer : public VolumeSkeletonizer {
 		public:
-			InteractiveSkeletonizer(Volume * sourceVol, int minGray, int maxGray, int stepSize, int curveRadius, int minCurveSize);
+			InteractiveSkeletonizer(Volume * sourceVol, int minGray, int maxGray, int stepSize, int curveRadius, int minCurveSize, bool storeEigenInfo = false);
 			~InteractiveSkeletonizer();
 			vector<Vector3DInt> GetPath(Vector3DInt endPoint);			
 			Vector3DInt FindClosestSkeletalPoint(Vector3DInt point);
@@ -20,7 +20,7 @@ namespace wustl_mm {
 			void CalculateMinimalSpanningTree(Vector3DInt seedPoint);
 			Volume * GetSkeleton();
 									
-		private:
+		protected:
 			double GetStructureTensorProjectedScore(EigenResults3D imageEigen, Vector3DFloat skeletonDirection, float power, int type);			
 			GraphType * skeletonGraph;
 			GraphType * stGraph;
@@ -31,12 +31,13 @@ namespace wustl_mm {
 			Vector3DInt offset;
 			Vector3DInt * vectors26;
 			Vector3DFloat * nVectors26;
+			EigenResults3D * volumeEigens;
 
 			static const int CONNECTIVITY = 26;
 			static const char SEED_POINT_FLAG = 50;
 		};
 
-		InteractiveSkeletonizer::InteractiveSkeletonizer(Volume * sourceVol, int minGray, int maxGray, int stepSize, int curveRadius, int minCurveSize) : VolumeSkeletonizer(0, curveRadius, 0,0) {
+		InteractiveSkeletonizer::InteractiveSkeletonizer(Volume * sourceVol, int minGray, int maxGray, int stepSize, int curveRadius, int minCurveSize, bool storeEigenInfo) : VolumeSkeletonizer(0, curveRadius, 0,0) {
 			appTimeManager.PushCurrentTime();
 			NormalizeVolume(sourceVol);
 			CleanupVolume(sourceVol, minGray, maxGray);
@@ -68,7 +69,8 @@ namespace wustl_mm {
 			#endif
 
 			Vector3DFloat * volumeGradient = GetVolumeGradient2(sourceVol);					
-			EigenResults3D * volumeEigens = GetEigenResults2(skeleton, volumeGradient, gaussianFilterCurveRadius, curveRadius, true);
+			volumeEigens = GetEigenResults2(skeleton, volumeGradient, gaussianFilterCurveRadius, curveRadius, true);
+			float cost; 
 
 			for(int x = MAX_GAUSSIAN_FILTER_RADIUS; x < sourceVol->getSizeX() - MAX_GAUSSIAN_FILTER_RADIUS; x++) {
 				for(int y = MAX_GAUSSIAN_FILTER_RADIUS; y < sourceVol->getSizeY() - MAX_GAUSSIAN_FILTER_RADIUS; y++) {
@@ -77,7 +79,8 @@ namespace wustl_mm {
 							index = skeleton->getIndex(x, y, z);
 							for(int i = 0; i < CONNECTIVITY; i++) {														
 								if(skeleton->getDataAt(x + VOLUME_NEIGHBORS_26[i][0], y + VOLUME_NEIGHBORS_26[i][1], z + VOLUME_NEIGHBORS_26[i][2]) > 0) {
-									skeletonGraph->SetEdgeCost(1.0, x, y, z, i);
+									cost = 1.0 - (skeleton->getDataAt(x, y, z) + skeleton->getDataAt(x + VOLUME_NEIGHBORS_26[i][0], y + VOLUME_NEIGHBORS_26[i][1], z + VOLUME_NEIGHBORS_26[i][2]))/(2*255);
+									skeletonGraph->SetEdgeCost(cost, x, y, z, i);
 									stGraph->SetEdgeCost(GetStructureTensorProjectedScore(volumeEigens[index], nVectors26[i], 2, PRUNING_CLASS_PRUNE_CURVES), x, y, z, i);
 								}
 							}
@@ -89,7 +92,10 @@ namespace wustl_mm {
 			stGraph->Normalize();
 
 			delete [] volumeGradient;
-			delete [] volumeEigens;
+			if(!storeEigenInfo) {
+				delete [] volumeEigens; 
+				volumeEigens = NULL;
+			}
 			sourceVol->pad(-MAX_GAUSSIAN_FILTER_RADIUS, 0);
 			appTimeManager.PopAndDisplayTime("Creating graphs: %f seconds!\n");
 		}
@@ -102,6 +108,10 @@ namespace wustl_mm {
 				delete mergedGraph;
 			}
 			delete skeleton;
+
+			if(volumeEigens != NULL) {
+				delete [] volumeEigens;
+			}
 
 			delete [] returnPath;
 			delete [] vectors26;
@@ -122,7 +132,7 @@ namespace wustl_mm {
 			return score;
 		}
 		vector<Vector3DInt> InteractiveSkeletonizer::GetPath(Vector3DInt endPoint) {
-			appTimeManager.PushCurrentTime();
+			//appTimeManager.PushCurrentTime();
 
 			vector<Vector3DInt> path;
 			vector<Vector3DInt> outPath;
@@ -134,7 +144,6 @@ namespace wustl_mm {
 			outPath.push_back(currentPoint - offset);
 
 			Vector3DInt oldPoint;
-			int index;
 			int returnIndex;
 			bool found = true;
 			bool completed = false;
@@ -150,13 +159,15 @@ namespace wustl_mm {
 						currentPoint = currentPoint - vectors26[returnIndex];
 						path.push_back(currentPoint);
 						outPath.push_back(currentPoint - offset);
+						//printf(".");
 					} else {
-						printf("ERROR! Return path not found!\n");
+						//printf("N");
+						outPath.clear();
 					}
 				}
 			}
 
-			appTimeManager.PopAndDisplayTime("Finding path: %f seconds!\n");
+			//appTimeManager.PopAndDisplayTime("Finding path: %f seconds!\n");
 			return outPath;
 		}
 		Vector3DInt InteractiveSkeletonizer::FindClosestSkeletalPoint(Vector3DInt point) {
@@ -201,8 +212,6 @@ namespace wustl_mm {
 		}
 
 		void InteractiveSkeletonizer::SetGraphWeights(double skeletonRatio, double structureTensorRatio){
-			printf("input\n");
-			getchar();
 			appTimeManager.PushCurrentTime();
 			if(mergedGraph != NULL) {
 				delete mergedGraph;
