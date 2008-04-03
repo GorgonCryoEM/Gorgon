@@ -852,7 +852,7 @@ namespace wustl_mm {
 			
 			#ifdef SAVE_INTERMEDIATE_RESULTS
 				costVol->toMRCFile((char *)((outputPath + "-Score.mrc").c_str()));
-				//WriteEigenResultsToVRMLFile(sourceVolume, costVol, tempSkel, volumeEigens, outputPath + "-Eigens.wrl", (pruningClass != PRUNING_CLASS_PRUNE_SURFACES));
+				WriteEigenResultsToVRMLFile(sourceVolume, costVol, tempSkel, volumeEigens, outputPath + "-Eigens.wrl", (pruningClass != PRUNING_CLASS_PRUNE_SURFACES));
 				WriteEigenResultsToVRMLFile(sourceVolume, costVol, tempSkel, volumeEigens, outputPath + "-Eigens-inverted.wrl", true);
 				WriteEigenResultsToVRMLFile(sourceVolume, costVol, tempSkel, volumeEigens, outputPath + "-Eigens.wrl", false);
 				WriteSkeletonDirectionToVRMLFile(tempSkel, costVol, skeletonDirections, outputPath + "-SkeletonDirections.wrl", pruningClass == PRUNING_CLASS_PRUNE_SURFACES, 0.1);
@@ -914,7 +914,7 @@ namespace wustl_mm {
 				}
 			}
 
-			for(int i = 0; i < colors.size(); i++) {
+			for(int i = 0; i < (int)colors.size(); i++) {
 				if(!colors[i]) {
 					currentColor = -(i+1);
 					for(int x = 1; x < skeleton->getSizeX()-1; x++) {
@@ -1218,7 +1218,7 @@ namespace wustl_mm {
 			fprintf(outFile, "#VRML V2.0 utf8\n");
 			srand( (unsigned)time( NULL ) );
 			double r, g, b, colorCost;
-			double theta, theta1, theta2, theta3, s;
+			double theta1, theta2;
 			Vector3DFloat axis, axis1, axis2, axis3;
 			Vector3DFloat newY, newX;
 			Vector3DFloat xAxis = Vector3DFloat(1.0, 0.0, 0.0);
@@ -1373,7 +1373,6 @@ namespace wustl_mm {
 			delete outFile;
 		}
 		void VolumeSkeletonizer::WriteVolumeToVRMLFile(Volume * vol, string outputPath) {
-			int index;
 			FILE * outFile = fopen(outputPath.c_str(), "wt");
 			fprintf(outFile, "#VRML V2.0 utf8\n");
 			fprintf(outFile, "DEF object0 Transform {\n children [\n Shape {\n geometry IndexedFaceSet {\n coord Coordinate { point [");
@@ -1443,10 +1442,10 @@ namespace wustl_mm {
 			Volume * temp;
 			for(int g = 255; g >= 1; g--) {
 				temp = new Volume(skeleton->getSizeX(), skeleton->getSizeY(), skeleton->getSizeZ());
-				for(int i = 0; i < bins[g].size(); i++) {
+				for(unsigned int i = 0; i < bins[g].size(); i++) {
 					temp->setDataAt(bins[g][i].values[0], bins[g][i].values[1], bins[g][i].values[2], 1);
 				}
-				for(int i = 0; i < bins[g].size(); i++) {
+				for(unsigned int i = 0; i < bins[g].size(); i++) {
 					if(DiscreteMesh::IsVolumeBody(temp, bins[g][i].values[0], bins[g][i].values[1], bins[g][i].values[2])) {
 						cleanedSkel->setDataAt(bins[g][i].values[0], bins[g][i].values[1], bins[g][i].values[2], 0);
 					}
@@ -1741,7 +1740,7 @@ namespace wustl_mm {
 				do { 
 					printf("\tIteration : %i\n", iteration++);
 
-					for(int i = 0; i < bins[g].size(); i++) {
+					for(unsigned int i = 0; i < bins[g].size(); i++) {
 						n6Count = DiscreteMesh::GetImmersionN6Count(skeleton, bins[g][i]);
 						if(n6Count < 6) {
 							element = new ImmersionBeachElement();
@@ -1765,7 +1764,7 @@ namespace wustl_mm {
 					}
 
 					cleanupIndices.sort(greater<int>());
-					for(int i = 0; i < cleanupIndices.size(); i++) {
+					for(unsigned int i = 0; i < cleanupIndices.size(); i++) {
 						index = cleanupIndices.front();
 						cleanupIndices.pop_front();
 						bins[g].erase(bins[g].begin() + index);

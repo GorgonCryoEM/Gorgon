@@ -38,6 +38,7 @@ namespace wustl_mm {
 		const unsigned char VOXEL_BINARY_TRUE = 255;
 		const double BAD_NORMAL = 9999.0;
 		const double MIN_EIGEN_VALUE = 0.000001;
+		const double DEFAULT_PRUNE_THRESHOLD = 0.57735;
 
 		const int DEFAULT_SKELETON_DIRECTION_RADIUS = 3;
 

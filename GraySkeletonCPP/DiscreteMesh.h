@@ -779,7 +779,7 @@ namespace wustl_mm {
 					}
 				}
 				thresholds.sort(greater<double>());
-				for(int i = 0; i < thresholds.size(); i++) {
+				for(unsigned int i = 0; i < thresholds.size(); i++) {
 					value = thresholds.front();
 					thresholds.pop_front();
 					thresholdedRange = new Volume(range->getSizeX(), range->getSizeY(), range->getSizeZ(), 0, 0, 0, range);

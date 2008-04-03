@@ -84,7 +84,6 @@ namespace wustl_mm {
 			GrayImage * thresholdedImage;
 			GrayImage * pixelClassification;
 			GrayImage * finalSkeleton;
-			GrayImage * topologyImage;
 			GrayImage * newVoxelImage;
 
 			Volume * imageVol = image->ToVolume();
@@ -190,7 +189,6 @@ namespace wustl_mm {
 			double cost, cost2;
 			Vector3DInt * pointList;
 			SkeletalCurve * curveList;
-			Vector3DFloat * skeletonGradient;
 			Vector3DFloat * skeletonDirections;
 			SkeletalCurve curve;
 
@@ -229,7 +227,7 @@ namespace wustl_mm {
 					curve = curveList[i];
 					cost = 0;
 					curvePointCount = 0;
-					for(int j = 0; j < curve.points.size(); j++) {
+					for(unsigned int j = 0; j < curve.points.size(); j++) {
 						ccc++;
 						index = binarySkeleton->GetIndex(curve.points[j].values[0], curve.points[j].values[1]);
 						newCurveImage->SetDataAt(curve.points[j].values[0], curve.points[j].values[1], 255);
@@ -249,12 +247,12 @@ namespace wustl_mm {
 						printf("                 zero cost!!!\n");
 					}
 
-					for(int j = 0; j < curve.points.size(); j++) {
+					for(unsigned int j = 0; j < curve.points.size(); j++) {
 						newCurveCostImage->SetDataAt(curve.points[j].values[0], curve.points[j].values[1], unsigned int(cost * 255.0));
 					}
 					
 					if(cost > curveThreshold) {
-						for(int j = 0; j < curve.points.size(); j++) {
+						for(unsigned int j = 0; j < curve.points.size(); j++) {
 							index = binarySkeletonVol->getIndex(curve.points[j].values[0], curve.points[j].values[1], curve.points[j].values[2]);
 							preservedSkeletonVol->setDataAt(index, 1);							
 						}
@@ -366,10 +364,10 @@ namespace wustl_mm {
 			GrayImage * temp = new GrayImage(skeleton->GetSizeX(), skeleton->GetSizeY());
 			for(int g = 255; g >= 1; g--) {
 				//temp = new GrayImage(skeleton->GetSizeX(), skeleton->GetSizeY());
-				for(int i = 0; i < bins[g].size(); i++) {
+				for(unsigned int i = 0; i < bins[g].size(); i++) {
 					temp->SetDataAt(bins[g][i].values[0], bins[g][i].values[1], 1);
 				}
-				for(int i = 0; i < bins[g].size(); i++) {
+				for(unsigned int i = 0; i < bins[g].size(); i++) {
 					if(IsSurfaceBody(temp, bins[g][i].values[0], bins[g][i].values[1])) {
 						cleanedSkel->SetDataAt(bins[g][i].values[0], bins[g][i].values[1], 0);
 						//temp->SetDataAt(bins[g][i].values[0], bins[g][i].values[1], 0);
@@ -441,7 +439,6 @@ namespace wustl_mm {
 			Vector3DFloat * directions = new Vector3DFloat[skeleton->GetSizeX() * skeleton->GetSizeY()];
 			int index;
 			Vector3DFloat v0, v1, v2, currentPos;
-			bool allFound;
 			Vector3DFloat * n4 = new Vector3DFloat[4];
 			int n4Count;
 

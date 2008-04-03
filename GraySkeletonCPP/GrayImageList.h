@@ -46,7 +46,7 @@ namespace wustl_mm {
 		
 
 			
-			for(int i = 0; i < imageList.size(); i++) {
+			for(unsigned int i = 0; i < imageList.size(); i++) {
 				xImage = i % xCount;
 				yImage = yCount - 1 - i / xCount;
 				currentImage = imageList[i];

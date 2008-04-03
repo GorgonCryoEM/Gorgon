@@ -94,7 +94,6 @@ namespace wustl_mm {
 			vector<SkeletalCurve> curves;
 			curves.clear();
 			curveCount = 0;
-			SkeletalCurve * currentCurve;
 			DiscreteMesh * tempMesh = new DiscreteMesh(newMesh);
 
 			for(int x = 0; x < sizeX; x++) {
@@ -122,7 +121,6 @@ namespace wustl_mm {
 			vector<SkeletalCurve> surfaces;
 			surfaces.clear();
 			surfaceCount = 0;
-			SkeletalCurve * currentSurface;
 			DiscreteMesh * tempMesh = new DiscreteMesh(newMesh);
 
 			for(int x = 0; x < sizeX; x++) {

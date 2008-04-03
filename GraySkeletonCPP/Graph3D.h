@@ -84,27 +84,27 @@ namespace wustl_mm {
 		}
 
 		template <class T>	T Graph3D<T>::MaxEdgeCost() {
-			T maxCost = MIN_DOUBLE;
-			for(int i = 0; i < nodeList.size(); i++) {
+			double maxCost = MIN_DOUBLE;
+			for(unsigned int i = 0; i < nodeList.size(); i++) {
 				for(int j = 0; j < connectivity; j++) {					
 					if(nodeList[i].edgeCosts[j] >= 0) {
-						maxCost = max(maxCost, nodeList[i].edgeCosts[j]);
+						maxCost = max(maxCost, (double)nodeList[i].edgeCosts[j]);
 					}
 				}
 			}
-			return maxCost;
+			return (T)maxCost;
 		}
 
 		template <class T>	T Graph3D<T>::MinEdgeCost() {
-			T minCost = MAX_DOUBLE;
-			for(int i = 0; i < nodeList.size(); i++) {
+			double minCost = MAX_DOUBLE;
+			for(unsigned int i = 0; i < nodeList.size(); i++) {
 				for(int j = 0; j < connectivity; j++) {					
 					if(nodeList[i].edgeCosts[j] >= 0) {
-						minCost = min(minCost, nodeList[i].edgeCosts[j]);
+						minCost = min(minCost, (double)nodeList[i].edgeCosts[j]);
 					}
 				}
 			}
-			return minCost;
+			return (T)minCost;
 		}
 
 		template <class T>	void Graph3D<T>::SetEdgeCost(T cost, int index, int neighborIndex) {
@@ -137,7 +137,7 @@ namespace wustl_mm {
 		template <class T>	void Graph3D<T>::Normalize() {
 			T maxCost = MaxEdgeCost();
 			T minCost = MinEdgeCost();
-			for(int i = 0; i < nodeList.size(); i++) {
+			for(unsigned int i = 0; i < nodeList.size(); i++) {
 				for(int j = 0; j < connectivity; j++) {					
 					if(nodeList[i].edgeCosts[j] >= 0) {
 						nodeList[i].edgeCosts[j] = (nodeList[i].edgeCosts[j] - minCost)/(maxCost - minCost);

@@ -4,9 +4,10 @@
 #include "GlobalConstants.h"
 #include "QueryEngine.h"
 #include "LinkedNode.h"
-#include "GLVisualizer.h"
+#include <Gorgon/GLVisualizer.h>
 
 using namespace std;
+using namespace wustl_mm::Visualization;
 
 namespace wustl_mm {
 	namespace GraphMatch {

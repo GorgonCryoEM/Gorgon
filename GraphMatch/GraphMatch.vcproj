@@ -450,10 +450,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\GLVisualizer.h"
-				>
-			</File>
-			<File
 				RelativePath=".\GraphGenerator.h"
 				>
 			</File>

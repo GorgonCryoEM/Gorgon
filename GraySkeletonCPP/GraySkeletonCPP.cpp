@@ -13,6 +13,8 @@
 #include <Foundation/TimeManager.h>
 #include <Foundation/StringUtils.h>
 #include "InteractiveSkeletonizer.h"
+#include "TreeSkeletonizer.h"
+#include "MarchingCubes.h"
 
 using namespace wustl_mm::GraySkeletonCPP;
 using namespace wustl_mm::Foundation;
@@ -23,10 +25,11 @@ namespace wustl_mm {
 		const int DO_NOTHING = -1;
 		const int DO_SKELETONIZATION = 1;
 		const int DO_SKELETONIZATION_AND_PRUNING = 2;			
-		const int DO_INTERACTIVE_SKELETONIZATION = 70;
 
 		const int DO_BINARY_THINNING_JU2007 = 50;
 		const int DO_TOPOLOGICAL_WATERSHED_JU2007  = 60;
+		const int DO_INTERACTIVE_SKELETONIZATION = 70;
+		const int DO_TREE_SKELETONIZATION = 80;
 
 		const int DO_DISPLAY_VOXEL_COUNT = 800;
 
@@ -110,8 +113,34 @@ namespace wustl_mm {
 					printf("\tGraySkeletonCPP.exe %i [dimensions] [inputfile] [outfile] [minCurveSize] [curveRadius] [minGray] [maxGray] [stepSize] [startX] [startY] [startZ] [endX] [endY] [endZ] [skeletonRatio] [structureTensorRatio]\n\n", DO_INTERACTIVE_SKELETONIZATION);
 					printf("\t[dimensions]    : The number of dimensions\n");
 					printf("\t[inputfile]     : an input image file (MRC)\n");
-					printf("\t[outfile]       : the filename to be used when generating the skeleton (NB)\n");
+					printf("\t[outfile]       : the filename to be used when generating the skeleton (MRC)\n");
+					printf("\t[minCurveSize]  : The minimum curve size in the skeleton graph\n");
+					printf("\t[curveRadius]   : The gaussian filter radius to use when pruning curves\n");
+					printf("\t[minGray]       : The minimum grayscale value to consider.\n");
+					printf("\t[maxGray]       : The maximum grayscale value to consider.\n");
+					printf("\t[stepSize]	  : The grayscale stepsize.\n");
+					printf("\t[start[D]]	  : The starting seed point (dimension d).\n");
+					printf("\t[end[D]]        : The ending seed point (dimension d).\n");
+					printf("\t[skeletonRatio] : The ratio for the skeleton component in the graph.\n");
+					printf("\t[structureTensorRatio] : The ratio for the structure tensor component in the graph.\n\n");
 					break;
+
+				case DO_TREE_SKELETONIZATION:
+					printf("To perform automatic skeletonization of trees\n");
+					printf("\tGraySkeletonCPP.exe %i [dimensions] [inputfile] [outfile] [minCurveSize] [curveRadius] [minGray] [maxGray] [stepSize] [rootX] [rootY] [rootZ] [skeletonRatio] [structureTensorRatio]\n\n", DO_INTERACTIVE_SKELETONIZATION);
+					printf("\t[dimensions]    : The number of dimensions\n");
+					printf("\t[inputfile]     : an input image file (MRC)\n");
+					printf("\t[outfile]       : the filename to be used when generating the skeleton (OFF)\n");
+					printf("\t[minCurveSize]  : The minimum curve size in the skeleton graph\n");
+					printf("\t[curveRadius]   : The gaussian filter radius to use when pruning curves\n");
+					printf("\t[minGray]       : The minimum grayscale value to consider.\n");
+					printf("\t[maxGray]       : The maximum grayscale value to consider.\n");
+					printf("\t[stepSize]	  : The grayscale stepsize.\n");
+					printf("\t[root[D]]       : The root seed point (dimension d).\n");
+					printf("\t[skeletonRatio] : The ratio for the skeleton component in the graph.\n");
+					printf("\t[structureTensorRatio] : The ratio for the structure tensor component in the graph.\n\n");
+					break;
+
 				case DO_BINARY_THINNING_JU2007:
 					printf("To perform Binary Thinning (Ju2007)\n");
 					printf("\tGraySkeletonCPP.exe %i [dimensions] [inputfile] [outfile] [minCurveSize] [minSurfaceSize] [threshold]\n\n", DO_BINARY_THINNING_JU2007);
@@ -122,6 +151,7 @@ namespace wustl_mm {
 					printf("\t[minSurfaceSize]: The minimum radius of surface segments (only used for 3D objects).\n");
 					printf("\t[pointThreshold]: The cost threshold of the input file\n\n");
 					break;
+
 				case DO_TOPOLOGICAL_WATERSHED_JU2007:
 					printf("To perform Topological Watershed (Ju2007 iteratively)\n");
 					printf("\tGraySkeletonCPP.exe %i [dimensions] [inputfile] [outfile] [minCurveSize] [minSurfaceSize] [minGrayValue] [maxGrayValue] [stepSize]\n\n", DO_TOPOLOGICAL_WATERSHED_JU2007);
@@ -134,6 +164,7 @@ namespace wustl_mm {
 					printf("\t[maxGrayValue]  : The maximum grayscale value to consider.\n");
 					printf("\t[stepSize]	  : The grayscale stepsize.\n\n");
 					break;
+
 				case DO_RESIZE:
 					printf("To resize a volume\n");
 					printf("\tGraySkeletonCPP.exe %i [inputfile] [outfile] [newsizeX] [newsizeY] [newsizeZ]\n\n", DO_RESIZE);
@@ -143,17 +174,20 @@ namespace wustl_mm {
 					printf("\t[newsizeY]      : The new size of the data set in the y-Dimension\n");
 					printf("\t[newsizeZ]      : The new size of the data set in the z-Dimension\n\n");
 					break;
+
 				case DO_DISPLAY_VOXEL_COUNT:
 					printf("To display the non-zero voxel count of a volume \n");
 					printf("\tGraySkeletonCPP.exe %i [inputfile]\n\n", DO_DISPLAY_VOXEL_COUNT);
 					printf("\t[inputfile]     : The source file\n\n");
 					break;
+
 				case DO_TEXT_TO_VOLUME:
 					printf("To convert a text file into a volume\n");
 					printf("\tGraySkeletonCPP.exe %i [inputfile] [outfile]\n\n", DO_TEXT_TO_VOLUME);
 					printf("\t[inputfile]     : The source file\n");
 					printf("\t[outfile]       : The destination file\n\n");
 					break;
+
 				case DO_CROPPING:
 					printf("To Crop a volume\n");
 					printf("\tGraySkeletonCPP.exe %i [inputfile] [outfile] [startx] [endx] [starty] [endy] [startz] [endz]\n\n", DO_CROPPING);
@@ -162,12 +196,14 @@ namespace wustl_mm {
 					printf("\t[startd]        : The starting coordinate in the d dimension\n");
 					printf("\t[endd]          : The ending coordinate in the d dimension\n\n");
 					break;
+
 				case DO_DOWNSAMPLING:
 					printf("To Downsample a volume\n");
 					printf("\tGraySkeletonCPP.exe %i [inputfile] [outfile]\n\n", DO_DOWNSAMPLING);
 					printf("\t[inputfile]     : The source file\n");
 					printf("\t[outfile]       : The destination file\n\n");
 					break;
+
 				case DO_SMOOTHING:
 					printf("To Smoothen a volume\n");
 					printf("\tGraySkeletonCPP.exe %i [inputfile] [outfile] [minGrayscale] [maxGrayscale] [stRadius] [iterations]\n\n", DO_SMOOTHING);
@@ -178,6 +214,7 @@ namespace wustl_mm {
 					printf("\t[stRadius]      : The radius to be used for the structure tensor when smoothing\n");
 					printf("\t[iterations]    : The number of smoothing iterations\n\n");
 					break;
+
 				case DO_THRESHOLD_GRAY_RANGE:
 					printf("To threshold the grayrange of a volume. (Results in those out of range set to zero)\n");
 					printf("\tGraySkeletonCPP.exe %i [inputfile] [outfile] [minGrayscale] [maxGrayscale]\n\n", DO_THRESHOLD_GRAY_RANGE);
@@ -186,6 +223,7 @@ namespace wustl_mm {
 					printf("\t[minGrayscale]  : The minimum grayscale to consider (non-normalized)\n");
 					printf("\t[maxGrayscale]  : The maximum grayscale to consider (non-normalized)\n\n");
 					break;
+
 				case DO_CONVERSION:
 					printf("To convert file formats\n");
 					printf("\tGraySkeletonCPP.exe %i [inputfile] [inputformat] [outfile] [outformat] [x-size] [y-size] [z-size]\n\n", DO_CONVERSION);
@@ -342,7 +380,7 @@ namespace wustl_mm {
 					vector<Vector3DInt> path = skel->GetPath(skel->FindClosestSkeletalPoint(Vector3DInt(endX, endY, endZ)));
 
 					Volume * skeletonPath = new Volume(sourceVol->getSizeX(), sourceVol->getSizeY(), sourceVol->getSizeZ());
-					for(int i = 0; i < path.size(); i++) {
+					for(unsigned int i = 0; i < path.size(); i++) {
 						skeletonPath->setDataAt(path[i].X(), path[i].Y(), path[i].Z(), 1);
 					}
 					skeletonPath->toMRCFile((char *)outFile.c_str());					
@@ -358,6 +396,34 @@ namespace wustl_mm {
 			}
 			
 		}
+
+		void DoTreeSkeletonization(int dimensions, string inFile, string outFile, int minCurveSize, int curveRadius, int minGray, int maxGray, int stepSize, int rootX, int rootY, int rootZ, double skeletonRatio, double stRatio) {
+			string outPath = outFile.substr(0, outFile.rfind("."));
+			switch(dimensions){
+				case 2:
+					printf("Not implemented yet! \n");
+					break;
+				case 3: {
+					MRCReader * reader = (MRCReader*)MRCReaderPicker::pick((char *)inFile.c_str());
+					Volume * sourceVol = reader->getVolume();
+					delete reader;
+
+					TreeSkeletonizer * skel = new TreeSkeletonizer(sourceVol, minGray, maxGray, stepSize, curveRadius, minCurveSize);
+					NonManifoldMesh * mesh = skel->BuildTree(skel->FindClosestSkeletalPoint(Vector3DInt(rootX, rootY, rootZ)), skeletonRatio, stRatio);
+					mesh->ToOffCells(outFile);
+					
+					delete sourceVol;
+					delete skel;
+					delete mesh;
+					break;
+				}
+				default:
+					DisplayInputParams(DO_INTERACTIVE_SKELETONIZATION);
+					break;
+			}
+			
+		}
+
 
 		void Do_Resize(string inFile, string outFile, int newX, int newY, int newZ) {
 			MRCReader * reader = (MRCReader*)MRCReaderPicker::pick((char *)inFile.c_str());
@@ -653,6 +719,15 @@ int main( int args, char * argv[] ) {
 						StringUtils::StringToInt(argv[8]), StringUtils::StringToInt(argv[10]), StringUtils::StringToInt(argv[11]), 
 						StringUtils::StringToInt(argv[12]), StringUtils::StringToInt(argv[13]), StringUtils::StringToInt(argv[14]), 
 						StringUtils::StringToInt(argv[15]), StringUtils::StringToDouble(argv[16]), StringUtils::StringToDouble(argv[17]));
+					error = false;					
+				}
+				break;
+			case DO_TREE_SKELETONIZATION:
+				if(args == 15) {
+					DoTreeSkeletonization(StringUtils::StringToInt(argv[2]), argv[3], argv[4], StringUtils::StringToInt(argv[5]), 
+						StringUtils::StringToInt(argv[6]), StringUtils::StringToInt(argv[7]), StringUtils::StringToInt(argv[8]), 
+						StringUtils::StringToInt(argv[8]), StringUtils::StringToInt(argv[10]), StringUtils::StringToInt(argv[11]), 
+						StringUtils::StringToInt(argv[12]), StringUtils::StringToDouble(argv[13]), StringUtils::StringToDouble(argv[14]));
 					error = false;					
 				}
 				break;
