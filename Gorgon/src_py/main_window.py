@@ -30,6 +30,8 @@ class MainWindow(QtGui.QMainWindow):
         self.fileMenu.addAction(self.exitAct)
         
         self.optionsMenu = self.menuBar().addMenu(self.tr("&Options"))
+        
+        self.windowMenu = self.menuBar().addMenu(self.tr("Window"))
                 
         self.helpMenu = self.menuBar().addMenu(self.tr("&Help"))
 
@@ -38,6 +40,9 @@ class MainWindow(QtGui.QMainWindow):
 
     def menuOptions(self):
         return self.optionsMenu
+    
+    def menuWindow(self):
+        return self.windowMenu
     
     def menuHelp(self):
         return self.helpMenu
