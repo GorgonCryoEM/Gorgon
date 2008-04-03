@@ -1,6 +1,6 @@
 import sys
 from topology_hunter import TopologyHunter
-from about_window import AboutWindow
+from about_window import Ui_DialogAbout
 from PyQt4 import QtCore, QtGui
 
 class MainWindow(QtGui.QMainWindow):
@@ -26,7 +26,7 @@ class MainWindow(QtGui.QMainWindow):
         self.aboutAct = QtGui.QAction(self.tr("&About"), self)
         self.aboutAct.setStatusTip(self.tr("About Gorgon"))
         self.aboutWindow = Ui_DialogAbout()
-        self.connect(self.aboutAct, self.aboutWindow.show )
+        self.connect(self.aboutAct, QtCore.SIGNAL("show()"), self.aboutWindow )
         
         self.connect(self.exitAct, QtCore.SIGNAL("triggered()"), QtGui.qApp.closeAllWindows)
         
@@ -37,10 +37,11 @@ class MainWindow(QtGui.QMainWindow):
 
         self.openMenu = self.fileMenu.addMenu(self.tr("&Open"))
         
+        self.optionsMenu = self.menuBar().addMenu(self.tr("&Options"))
+                
         self.helpMenu = self.menuBar().addMenu(self.tr("&Help"))
         self.helpMenu.addAction(self.aboutAct)
 
-        self.optionsMenu = self.menuBar().addMenu(self.tr("&Options"))
 
     def menuOpen(self):
         return self.openMenu
