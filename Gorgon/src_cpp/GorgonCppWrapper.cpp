@@ -6,6 +6,7 @@
 
 #include <Gorgon/MarchingCubes.h>
 #include <GraphMatch/BackEndInterface.h>
+#include <Gorgon/MeshRenderer.h>
 
 #include <boost/python.hpp>
 
@@ -15,6 +16,16 @@ using namespace wustl_mm::GraphMatch;
 
 BOOST_PYTHON_MODULE(gorgon_cpp_wrapper)
 {
+	class_<MeshRenderer>("MeshRenderer", init<>())
+		.def("center", &MeshRenderer::Center)
+		.def("draw", &MeshRenderer::Draw)
+		.def("focus", &MeshRenderer::Focus)
+		.def("loadFile", &MeshRenderer::LoadFile)
+		.def("setDrawBoundingBox", &MeshRenderer::SetDrawBoundingBox)
+		.def("getDrawBoundingBox", &MeshRenderer::GetDrawBoundingBox)
+		.def("getSupportedFileFormats", &MeshRenderer::GetSupportedFileFormats)
+	;
+
 	class_<MarchingCubes>("MarchingCubes", init<>())
         .def("drawMesh", &MarchingCubes::drawMesh)
 		.def("setSurfaceValue", &MarchingCubes::setSurfaceValue)

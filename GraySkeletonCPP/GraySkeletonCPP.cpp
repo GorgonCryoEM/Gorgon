@@ -14,7 +14,6 @@
 #include <Foundation/StringUtils.h>
 #include "InteractiveSkeletonizer.h"
 #include "TreeSkeletonizer.h"
-#include "MarchingCubes.h"
 
 using namespace wustl_mm::GraySkeletonCPP;
 using namespace wustl_mm::Foundation;

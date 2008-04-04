@@ -87,7 +87,7 @@
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
-				CommandLine="$(ProjectDir)\build.bat"
+				CommandLine="$(ProjectDir)\build.bat&#x0D;&#x0A;"
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
@@ -166,6 +166,14 @@
 			</File>
 			<File
 				RelativePath=".\MarchingCubes.h"
+				>
+			</File>
+			<File
+				RelativePath=".\MeshRenderer.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Renderer.h"
 				>
 			</File>
 		</Filter>
