@@ -11,8 +11,21 @@ namespace wustl_mm {
 	namespace GraySkeletonCPP {
 		class VolumeFormatConverter {
 		public:
+			static Volume * LoadVolume(string inputFile, string inputFormat);
 			static void ConvertVolume(string inputFile, string inputFormat, string outputFile, string outputFormat, int sizeX, int sizeY, int sizeZ);
 		};
+
+		Volume * VolumeFormatConverter::LoadVolume(string inputFile, string inputFormat) {
+			Volume * vol = NULL;			
+			if(stricmp(inputFormat.c_str(), "MRC") == 0) {
+				vol = MRCReaderPicker::pick((char *)inputFile.c_str())->getVolume();
+			} else if (stricmp(inputFormat.c_str(), "ATOM") == 0) {		
+				vol = VolumeReaderATOM::LoadVolume(inputFile);
+			} else {
+				printf("Input format %s not supported!\n", inputFormat);			
+			}
+			return vol;
+		}
 
 		void VolumeFormatConverter::ConvertVolume(string inputFile, string inputFormat, string outputFile, string outputFormat, int sizeX, int sizeY, int sizeZ) {
 			Volume * vol = NULL;			
