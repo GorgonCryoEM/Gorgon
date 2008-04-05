@@ -4,8 +4,8 @@
 #define _CRT_SECURE_NO_DEPRECATE 1
 #define _CRT_NONSTDC_NO_DEPRECATE 1
 
-#include <Gorgon/MarchingCubes.h>
 #include <GraphMatch/BackEndInterface.h>
+#include <Gorgon/VolumeRenderer.h>
 #include <Gorgon/MeshRenderer.h>
 
 #include <boost/python.hpp>
@@ -27,14 +27,18 @@ BOOST_PYTHON_MODULE(gorgon_cpp_wrapper)
 		.def("getMax", &MeshRenderer::GetMax)
 	;
 
-	class_<MarchingCubes>("MarchingCubes", init<>())
-        .def("drawMesh", &MarchingCubes::drawMesh)
-		.def("setSurfaceValue", &MarchingCubes::setSurfaceValue)
-		.def("getSurfaceValue", &MarchingCubes::getSurfaceValue)
-		.def("setSampleDensity", &MarchingCubes::setSampleDensity)
-		.def("getSampleDensity", &MarchingCubes::getSampleDensity)
-		//.def("loadMRC", &MarchingCubes::loadMRC)
-		.def("loadMRC", &MarchingCubes::loadOFF)
+	class_<VolumeRenderer>("VolumeRenderer", init<>())
+		.def("draw", &VolumeRenderer::Draw)
+		.def("drawBoundingBox", &VolumeRenderer::DrawBoundingBox)
+		.def("loadFile", &VolumeRenderer::LoadFile)
+		.def("unload", &VolumeRenderer::Unload)
+		.def("getSupportedFileFormats", &VolumeRenderer::GetSupportedFileFormats)
+		.def("getMin", &VolumeRenderer::GetMin)
+		.def("getMax", &VolumeRenderer::GetMax)
+		.def("getMinDensity", &VolumeRenderer::GetMinDensity)
+		.def("getMaxDensity", &VolumeRenderer::GetMaxDensity)
+		.def("setSurfaceValue", &VolumeRenderer::SetSurfaceValue)
+		.def("setSampleDensity", &VolumeRenderer::SetSampleDensity)
     ;
 
 	class_<BackEndInterface>("BackEndInterface", init<>())

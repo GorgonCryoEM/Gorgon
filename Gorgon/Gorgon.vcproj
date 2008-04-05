@@ -165,7 +165,15 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
+				RelativePath=".\GlobalConstants.h"
+				>
+			</File>
+			<File
 				RelativePath=".\GLVisualizer.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Mesh.h"
 				>
 			</File>
 			<File
@@ -174,6 +182,14 @@
 			</File>
 			<File
 				RelativePath=".\Renderer.h"
+				>
+			</File>
+			<File
+				RelativePath=".\VolumeRenderer.h"
+				>
+			</File>
+			<File
+				RelativePath=".\VoxelData.h"
 				>
 			</File>
 		</Filter>
