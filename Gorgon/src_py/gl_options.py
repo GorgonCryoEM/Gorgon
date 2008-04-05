@@ -36,20 +36,12 @@ class GLOptions(QtGui.QWidget):
         self.shadingGroup.addAction(shadeSmoothAct)
         shadeSmoothAct.setChecked(True)
 
-        showBoxAct = QtGui.QAction(self.tr("&Show Box"), self)
-        showBoxAct.setCheckable(True)
-        showBoxAct.setChecked(True)
-        showBoxAct.setStatusTip(self.tr("Show bounding box"))
-        self.connect(showBoxAct, QtCore.SIGNAL("triggered()"), self.showBox)        
-        self.app.actions.addAction("set_ShowBoundingBox", showBoxAct)  
-
     def createMenus(self):
         visualizationMenu = self.app.menus.addMenu("options-visualization", self.tr("&Visualization"), "options")
         self.app.menus.addAction("options-visualization-shadeWireFrame", self.app.actions.getAction("set_WireframeShading"), "options-visualization")
         self.app.menus.addAction("options-visualization-shadeFlat", self.app.actions.getAction("set_FlatShading"), "options-visualization")
         self.app.menus.addAction("options-visualization-shadeSmooth", self.app.actions.getAction("set_SmoothShading"), "options-visualization")       
         visualizationMenu.addSeparator()
-        self.app.menus.addAction("options-visualization-showBoundingBox", self.app.actions.getAction("set_ShowBoundingBox"), "options-visualization")
 
     def addGLWindow(self, window):
         self.windows.append(window)
@@ -65,9 +57,5 @@ class GLOptions(QtGui.QWidget):
     def shadeSmooth(self):
         for w in self.windows:
             w.setDisplayType(2)
-
-    def showBox(self):
-        for w in self.windows:
-            w.setShowBox(self.app.actions.getAction("set_ShowBoundingBox").isChecked())
 
         

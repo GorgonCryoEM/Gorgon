@@ -50,6 +50,8 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="glut32.lib"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)\ExternalLibraries\GL&quot;"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -113,6 +115,8 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="glut32.lib"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)\ExternalLibraries\GL&quot;"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -162,10 +166,6 @@
 			>
 			<File
 				RelativePath=".\GLVisualizer.h"
-				>
-			</File>
-			<File
-				RelativePath=".\MarchingCubes.h"
 				>
 			</File>
 			<File

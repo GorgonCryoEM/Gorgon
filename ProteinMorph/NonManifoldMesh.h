@@ -51,14 +51,17 @@ namespace wustl_mm {
 			int GetFaceIndex(int faceId);
 			int GetEdgeIndex(int edgeId);
 			void AddEdge(int vertexId1, int vertexId2, bool isHelix);
-			void AddQuad(int vertexId1, int vertexId2, int vertexId3, int vertexId4, bool isSheet, bool addMiddleEdge);
+			void AddQuad(int vertexId1, int vertexId2, int vertexId3, int vertexId4, bool isSheet);
+			void AddTriangle(int vertexId1, int vertexId2, int vertexId3, bool isSheet);
 			void MarkFixedVertices();
 			void RemoveFace(int faceId);
 			void RemoveEdge(int edgeId);
 			void RemoveVertex(int vertexId);
 			void RemoveNullEntries();
 			void ToOffCells(string fileName);
-			void ToMathematicaFile(string fileName);			
+			void ToMathematicaFile(string fileName);
+			Vector3DFloat GetVertexNormal(int vertexId);
+			Vector3DFloat GetFaceNormal(int faceId);
 			NonManifoldMesh * SmoothLaplacian(double converganceRate);	
 			static NonManifoldMesh * LoadOffFile(string fileName);
 
@@ -175,7 +178,7 @@ namespace wustl_mm {
 									faceFound = faceFound && vertexLocations[index2] >= 0;
 								}
 								if(faceFound) {
-									AddQuad(indices[0], indices[1], indices[2], indices[3], isSheet, true);
+									AddQuad(indices[0], indices[1], indices[2], indices[3], isSheet);
 								}
 							}
 						}
@@ -254,13 +257,20 @@ namespace wustl_mm {
 			vertices[GetVertexIndex(vertexId2)].edgeIds.push_back(edgeId);
 		}
 
-		void NonManifoldMesh::AddQuad(int vertexId1, int vertexId2, int vertexId3, int vertexId4, bool isSheet, bool addMiddleEdge) {
-			if(addMiddleEdge) {
-				AddEdge(vertexId1, vertexId3, false);
+		void NonManifoldMesh::AddQuad(int vertexId1, int vertexId2, int vertexId3, int vertexId4, bool isSheet) {
+			if(!IsEdgePresent(vertexId1, vertexId3)) {
+					AddEdge(vertexId1, vertexId3, false);
 			}
+
+			AddTriangle(vertexId1, vertexId2, vertexId3, isSheet);
+			AddTriangle(vertexId1, vertexId3, vertexId4, isSheet);
+		}
+
+		void NonManifoldMesh::AddTriangle(int vertexId1, int vertexId2, int vertexId3, bool isSheet) {
 			NonManifoldMeshFace face;
 			face.isSheet = isSheet;
 			face.edgeIds.clear();
+
 			int vertexIds[4] = {vertexId1, vertexId2, vertexId3, vertexId1};
 			int i,j, edgeIndex, vertexIndex;
 
@@ -279,27 +289,6 @@ namespace wustl_mm {
 			for(i = 0; i < (int)face.edgeIds.size(); i++) {		
 				edges[GetEdgeIndex(face.edgeIds[i])].faceIds.push_back(faceId);
 			}
-
-			face.edgeIds.clear();
-			int vertexIds2[4] = {vertexId1, vertexId3, vertexId4, vertexId1};
-
-			for(i = 0; i < 3; i++) {
-				vertexIndex = GetVertexIndex(vertexIds2[i]);
-				for (j = 0; j < (int)vertices[vertexIndex].edgeIds.size(); j++) {
-					edgeIndex = GetEdgeIndex(vertices[vertexIndex].edgeIds[j]);
-
-					if( ((edges[edgeIndex].vertexIds[0] == vertexIds2[i])   && (edges[edgeIndex].vertexIds[1] == vertexIds2[i+1])) ||
-						((edges[edgeIndex].vertexIds[0] == vertexIds2[i+1]) && (edges[edgeIndex].vertexIds[1] == vertexIds2[i]))) {
-						face.edgeIds.push_back(vertices[vertexIndex].edgeIds[j]);					 
-					}
-				}				
-			}
-			faceId = AddFace(face);
-			for(i = 0; i < (int)face.edgeIds.size(); i++) {		
-				edges[GetEdgeIndex(face.edgeIds[i])].faceIds.push_back(faceId);
-			}
-
-
 		}
 
 		void NonManifoldMesh::MarkFixedVertices() {
@@ -592,6 +581,46 @@ namespace wustl_mm {
 
 			fclose(outF);
 		}
+		Vector3DFloat NonManifoldMesh::GetVertexNormal(int vertexId) {
+			int index = GetVertexIndex(vertexId);
+			int edgeIndex;
+			Vector3DFloat normal = Vector3DFloat(0,0,0);
+			for(int i = 0; i < vertices[index].edgeIds.size(); i++) {
+				edgeIndex = GetEdgeIndex(vertices[index].edgeIds[i]);
+				for(int j = 0; j < edges[edgeIndex].faceIds.size(); j++) {
+					normal += GetFaceNormal(edges[edgeIndex].faceIds[j]);
+				}
+			}
+			normal.Normalize();
+			return normal;
+		}
+
+		Vector3DFloat NonManifoldMesh::GetFaceNormal(int faceId) {
+
+			int lastVertex = -1;
+			int i = GetFaceIndex(faceId);
+			int vertexIds[40];
+			vertexCount = 0;
+
+			for(int j = (int)faces[i].edgeIds.size()-1; j >= 0; j--) {
+				if((edges[faces[i].edgeIds[j]].vertexIds[0] == edges[faces[i].edgeIds[(j+1)%faces[i].edgeIds.size()]].vertexIds[0]) || 
+					(edges[faces[i].edgeIds[j]].vertexIds[0] == edges[faces[i].edgeIds[(j+1)%faces[i].edgeIds.size()]].vertexIds[1])) {
+					lastVertex = edges[faces[i].edgeIds[j]].vertexIds[1];						
+				} else {
+					lastVertex = edges[faces[i].edgeIds[j]].vertexIds[0];
+				}
+				vertexIds[vertexCount] = lastVertex;
+				vertexCount++;
+			}
+
+			Vector3DFloat normal = Vector3DFloat(1,0,0);
+			if(vertexCount >= 3) {
+				normal = -(vertices[GetVertexIndex(vertexIds[1])].position - vertices[GetVertexIndex(vertexIds[0])].position) ^
+								(vertices[GetVertexIndex(vertexIds[2])].position - vertices[GetVertexIndex(vertexIds[0])].position);
+				normal.Normalize();
+			} 
+			return normal;
+		}
 		NonManifoldMesh * NonManifoldMesh::SmoothLaplacian(double converganceRate) {
 			NonManifoldMesh * smoothedMesh = new NonManifoldMesh(this);
 			int i, j, vertexIndex;
@@ -627,6 +656,9 @@ namespace wustl_mm {
 			FILE * inFile = fopen(fileName.c_str(), "rt");
 			char strTemp[255];
 			int nVertices, nEdges, nFaces;
+			int lVertices, lFaces;
+			lVertices = 0;
+			lFaces = 0;
 
 			fscanf(inFile, "%s\n", strTemp);
 			//printf("[%s]\n", strTemp);
@@ -634,35 +666,77 @@ namespace wustl_mm {
 			//printf("[%d] [%d] [%d]\n", nVertices, nFaces, nEdges);
 
 			float xPos, yPos, zPos;
+			lVertices = 0;
 			for(int i=0; i < nVertices; i++) {
-				fscanf(inFile, "%f %f %f\n", &xPos, &yPos, &zPos);
+				lVertices++;
+				fscanf(inFile, "%f %f %f", &xPos, &yPos, &zPos);
 				//printf("[%f] [%f] [%f]\n", xPos, yPos, zPos);
 				mesh->AddVertex(Vector3DFloat(xPos, yPos, zPos), false, false, NOT_A_HELIX_VERTEX);
+				fgets(strTemp, 255, inFile);
 			}
 
 
-			int faceNodes[4], nFaceNodes;
+			int faceNodes[100], nFaceNodes;
+			lFaces = 0;
 			for(int i=0; i < nFaces; i++) {
 				fscanf(inFile, "%d", &nFaceNodes);
 				//printf("[%d]\n", nFaceNodes);
 				switch(nFaceNodes) {
-					case 4:
-						fscanf(inFile, "%d %d %d %d", &faceNodes[0], &faceNodes[1], &faceNodes[2], &faceNodes[3]);
-						//printf("[%d] [%d] [%d] [%d]\n", faceNodes[0], faceNodes[1], faceNodes[2], faceNodes[3]);
-						mesh->AddQuad(faceNodes[0], faceNodes[1], faceNodes[2], faceNodes[3], false, true);
-						break;
-					default:
+					case 1:
+					case 2:
 						printf("Cannot load polygon... unsupported polygon size: %d\n", nFaceNodes);
 						break;
+					case 4:
+						lFaces++;
+						for(int i = 0; i < nFaceNodes; i++) {
+							fscanf(inFile, "");
+							fscanf(inFile, "%d", &faceNodes[i]);
+						}
+						for(int i = 0; i < nFaceNodes; i++) {
+							if(!mesh->IsEdgePresent(faceNodes[i], faceNodes[(i+1)%nFaceNodes])) {
+								mesh->AddEdge(faceNodes[i], faceNodes[(i+1)%nFaceNodes], false);
+							}
+						}
+
+						if(!mesh->IsEdgePresent(faceNodes[0], faceNodes[2])) {
+								mesh->AddEdge(faceNodes[0], faceNodes[2], false);
+						}
+
+						if((faceNodes[0] != faceNodes[1]) && (faceNodes[0] != faceNodes[2]) && (faceNodes[0] != faceNodes[3])
+							&& (faceNodes[1] != faceNodes[2]) && (faceNodes[1] != faceNodes[3]) && (faceNodes[2] != faceNodes[3])) {
+							mesh->AddQuad(faceNodes[0], faceNodes[1], faceNodes[2], faceNodes[3], false);
+						}
+						break;
+					default :
+						lFaces++;
+						for(int i = 0; i < nFaceNodes; i++) {
+							fscanf(inFile, "");
+							fscanf(inFile, "%d", &faceNodes[i]);
+						}
+						for(int i = 0; i < nFaceNodes; i++) {
+							if(!mesh->IsEdgePresent(faceNodes[i], faceNodes[(i+1)%nFaceNodes])) {
+								mesh->AddEdge(faceNodes[i], faceNodes[(i+1)%nFaceNodes], false);
+							}
+						}
+
+						for(int i = 2; i < nFaceNodes; i++) {
+							mesh->AddTriangle(faceNodes[0], faceNodes[i-1], faceNodes[i], false);
+						}
+						break;
+
 				}
 				fgets(strTemp, 255, inFile);
 			}
 
-			int v1, v2;
-			for(int i=0; i < nEdges; i++) {
-				fscanf(inFile, "%d %d\n", &v1, &v2);
-				mesh->AddEdge(v1, v2, false);
-			}
+			//printf(" Vertices %d of %d loaded.  Faces %d of %d loaded", lVertices, nVertices, lFaces, nFaces);
+
+			//int v1, v2;
+			//for(int i=0; i < nEdges; i++) {
+			//	fscanf(inFile, "%d %d\n", &v1, &v2);
+			//	if(!mesh->IsEdgePresent(v1, v2)) {
+			//		mesh->AddEdge(v1, v2, false);
+			//	}
+			//}
 
 			fclose(inFile);
 			return mesh;
