@@ -69,6 +69,7 @@ using namespace wustl_mm::Protein_Morph;
 using namespace wustl_mm::Foundation;
 
 int main( int args, char * argv[] ) {
+	NonManifoldMesh * m = NonManifoldMesh::LoadOffFile("C:\\_WUSTL\\sasakthi\\research\\source\\Gorgon\\src_py\\temp\\Apple.off");
 	int function = DO_NOTHING;
 	bool error = true;
 

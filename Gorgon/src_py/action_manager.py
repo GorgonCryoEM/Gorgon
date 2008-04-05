@@ -9,8 +9,7 @@ class ActionManager(object):
         if(tag in self.actionList) :
             return self.actionList[tag]
         else :
-            QtGui.QMessageBox.critical(None, "Invalid Action", "Attempting to use non-existant action: " + tag, QtGui.QMessageBox.Ok | QtGui.QMessageBox.Default, QtGui.QMessageBox.NoButton)
-            sys.exit(1)
+            raise Exception("Attempting to use non-existant action: " + tag)
         
     def addAction(self, tag, action):                   
         self.actionList[tag] = action    

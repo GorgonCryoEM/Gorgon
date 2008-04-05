@@ -17,13 +17,14 @@ using namespace wustl_mm::GraphMatch;
 BOOST_PYTHON_MODULE(gorgon_cpp_wrapper)
 {
 	class_<MeshRenderer>("MeshRenderer", init<>())
-		.def("center", &MeshRenderer::Center)
 		.def("draw", &MeshRenderer::Draw)
-		.def("focus", &MeshRenderer::Focus)
+		.def("drawBoundingBox", &MeshRenderer::DrawBoundingBox)
 		.def("loadFile", &MeshRenderer::LoadFile)
-		.def("setDrawBoundingBox", &MeshRenderer::SetDrawBoundingBox)
-		.def("getDrawBoundingBox", &MeshRenderer::GetDrawBoundingBox)
+		.def("unload", &MeshRenderer::Unload)
+		.def("smoothLaplacian", &MeshRenderer::SmoothLaplacian)
 		.def("getSupportedFileFormats", &MeshRenderer::GetSupportedFileFormats)
+		.def("getMin", &MeshRenderer::GetMin)
+		.def("getMax", &MeshRenderer::GetMax)
 	;
 
 	class_<MarchingCubes>("MarchingCubes", init<>())

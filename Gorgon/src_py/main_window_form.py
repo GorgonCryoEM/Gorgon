@@ -27,8 +27,10 @@ class MainWindowForm(QtGui.QMainWindow):
     def createMenus(self):
         self.menus.addMenu("file", self.tr("&File"))
         self.menus.addMenu("file-open", self.tr("&Open"), "file")
+        self.menus.addMenu("file-close", self.tr("&Close"), "file")
         self.menus.getMenu("file").addSeparator()
         self.menus.addAction("file-exit", self.actions.getAction("exit_Application"), "file")        
-        self.menus.addMenu("options", self.tr("&Options"))        
+        self.menus.addMenu("options", self.tr("&Options"))    
+        self.menus.addMenu("actions", self.tr("&Actions"))     
         self.menus.addMenu("window", self.tr("&Window"))
         self.menus.addMenu("help", self.tr("&Help"))

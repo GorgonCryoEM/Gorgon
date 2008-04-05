@@ -9,8 +9,7 @@ class MenuManager(object):
         if(tag in self.menuList) :
             return self.menuList[tag]
         else :
-            QtGui.QMessageBox.critical(None, "Invalid Menu", "Attempting to use non-existant menu item: " + tag, QtGui.QMessageBox.Ok | QtGui.QMessageBox.Default, QtGui.QMessageBox.NoButton)
-            sys.exit(1)
+            raise Exception("Attempting to use non-existant menu item: " + tag)
         
     def addMenu(self, tag, text, parentTag=""):        
         if (parentTag == "") :
@@ -21,5 +20,9 @@ class MenuManager(object):
         self.menuList[tag] = parentMenu.addMenu(text)
         return self.menuList[tag]
     
-    def addAction(self, tag, action, parentTag):
-        self.menuList[parentTag].addAction(action)
+    def addAction(self, tag, action, parentTag=""):
+        if (parentTag == "") :
+            parentMenu = self.app.menuBar()
+        else :
+            parentMenu = self.getMenu(parentTag)         
+        parentMenu.addAction(action)

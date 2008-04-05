@@ -5,7 +5,7 @@
 # Specify the path to the Boost project.  If you move this project,
 # adjust the path to refer to the Boost root directory.
 use-project boost 
-  : "../../../../Program Files/boost/boost_1_34_1" ;
+  : "../ExternalLibraries/boost_1_34_1" ;
 
 # Set up the project-wide requirements that everything uses the
 # boost_python library defined in the project whose global ID is
@@ -23,7 +23,8 @@ import python ;
 
 python-extension gorgon_cpp_wrapper : src_cpp/GorgonCppWrapper.cpp
 	: <include>../. 
-        <include>../ExternalLibraries ;
+        <include>../ExternalLibraries 
+	: <library>../ExternalLibraries/GL/glut32.lib ;
 
 #python-extension TopologyHunter : src_cpp/TopologyHunter.cpp
 #	: <include>../. 

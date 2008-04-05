@@ -1,4 +1,5 @@
 from PyQt4 import QtOpenGL, QtCore
+from vector_lib import *
 
 try:
     from OpenGL.GL import *
@@ -16,27 +17,75 @@ class GLWidget(QtOpenGL.QGLWidget):
         self.scene = scene
         glOptions.addGLWindow(self)
         
-        self.xRot = 0
-        self.yRot = 0
-        self.zRot = 0
-        self.scale = 1000
+        self.setCenter(0, 0, 0)
+        self.setEye(0, -4, 0) 
+        self.setUp(0, 0, 1)     
+        self.setEyeRotation(0, 0, 0)
+        self.setEyeZoom(0)
 
-        self.z = 4
-        self.x = 0
-        self.y = 0
-
-        self.showBox = True
         self.lastPos = QtCore.QPoint()
         
-    def xRotation(self):
-        return self.xRot
+        for s in self.scene:
+            self.connect(s, QtCore.SIGNAL("viewerSetCenter(float, float, float, float, float, float)"), self.sceneSetCenter)
+            self.connect(s, QtCore.SIGNAL("modelChanged()"), self.updateGL)
 
-    def yRotation(self):
-        return self.yRot
-
-    def zRotation(self):
-        return self.zRot
-
+    
+    def setEye(self, x, y, z):
+        self.eye = [x, y, z]
+        #print("Eye :", self.eye)
+        try:
+            self.look = vectorNormalize([self.center[0] - self.eye[0], self.center[1] - self.eye[1], self.center[2] - self.eye[2]])
+            #print("Eye: look :", self.look)
+            self.right = vectorNormalize(vectorCrossProduct(self.look, self.up))
+            #print("Eye: right :", self.right)        
+        except:
+            self.look = [0,1,0]
+            self.right = [-1,0,0]
+    
+    def setCenter(self, x, y, z):
+        self.center = [x, y, z]
+        try:
+            self.look = vectorNormalize([self.center[0] - self.eye[0], self.center[1] - self.eye[1], self.center[2] - self.eye[2]])
+            #print("Center: look :", self.look)
+            self.right = vectorNormalize(vectorCrossProduct(self.look, self.up))
+            #print("Center: right :", self.right)
+        except:
+            self.look = [0,1,0]
+            self.right = [-1,0,0]
+        
+    def setUp(self, x, y, z):
+        self.up = vectorNormalize([x, y, z])
+        #print("Up: up :", self.up)
+        try:
+            self.right = vectorNormalize(vectorCrossProduct(self.look, self.up))
+            #print("Up: right :", self.right)
+            self.up = vectorNormalize(vectorCrossProduct(self.look, self.right))
+            #print("Up: up :", self.up)
+        except:
+            self.right = [-1,0,0]
+        
+    def setEyeRotation(self, yaw, pitch, roll):
+        self.eyeRotation = [yaw, pitch, roll]
+    
+    def setEyeZoom(self, value):
+        self.eyeZoom = value;
+    
+    def sceneSetCenter(self, minX, minY, minZ, maxX, maxY, maxZ):
+        self.setEye(maxX+(maxX-minX), maxY+(maxY-minY), maxZ+(maxZ-minZ))
+        self.setCenter((minX+maxX)/2.0, (minY+maxY)/2.0, (minZ+maxZ)/2.0)
+        self.setUp(0, 0, 1)
+        self.setGluLookAt()
+        self.initializeSceneMatrix()      
+        self.updateGL()
+    
+    def initializeSceneMatrix(self):
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+        glMatrixMode(GL_MODELVIEW)
+        glLoadIdentity()        
+        glPushMatrix()
+        self.sceneMatrix = glGetFloatv( GL_MODELVIEW_MATRIX )
+        glPopMatrix()  
+        
     def scale(self):
         return self.scale
     
@@ -44,61 +93,12 @@ class GLWidget(QtOpenGL.QGLWidget):
         return QtCore.QSize(50, 50)
 
     def sizeHint(self):
-        return QtCore.QSize(400, 400)
-
-    def setXRotation(self, angle):
-        angle = self.normalizeAngle(angle)
-        if angle != self.xRot:
-            self.xRot = angle
-            #self.emit(QtCore.SIGNAL("xRotationChanged(int)"), angle)
-            #self.updateGL()
-
-    def setYRotation(self, angle):
-        angle = self.normalizeAngle(angle)
-        if angle != self.yRot:
-            self.yRot = angle
-            #self.emit(QtCore.SIGNAL("yRotationChanged(int)"), angle)
-            #self.updateGL()
-
-    def setZRotation(self, angle):
-        angle = self.normalizeAngle(angle)
-        if angle != self.zRot:
-            self.zRot = angle
-            #self.emit(QtCore.SIGNAL("zRotationChanged(int)"), angle)
-            #self.updateGL()
-
-    def setX(self, num):
-        if num != self.x:
-            self.x = num
-            #self.emit(QtCore.SIGNAL("zTranslationChanged(double)"), num)
-            #self.updateGL()
-
-    def setY(self, num):
-        if num != self.y:
-            self.y = num
-            #self.emit(QtCore.SIGNAL("zTranslationChanged(double)"), num)
-            #self.updateGL()
-
-    def setZ(self, num):
-        if num != self.z and num >= 0:
-            self.z = num
-            #self.emit(QtCore.SIGNAL("zTranslationChanged(double)"), num)
-            #self.updateGL()
-            
-    def setScale(self, size):
-        if size != self.scale and size >= 0:
-            self.scale = size
-            #self.emit(QtCore.SIGNAL("scaleChanged(int)"), size)
-            #self.updateGL()
-
-    def setShowBox(self, show):
-        self.showBox = show
-        
+        return QtCore.QSize(400, 400)        
     def initializeGL(self):
         afPropertiesAmbient = [0.50, 0.50, 0.50, 1.00] 
         afPropertiesDiffuse = [0.75, 0.75, 0.75, 1.00] 
-        afPropertiesSpecular = [1.00, 1.00, 1.00, 1.00]
-        afSpecularWhite = [1.00, 1.00, 1.00, 1.00]
+        afPropertiesSpecular = [0.0, 0.0, 0.0, 1.00]
+        afSpecularWhite =  [0.0, 0.0, 0.0, 1.00]
         afDiffuseBlue = [0.00, 0.00, 0.75, 1.00]
         afAmbientBlue = [0.00, 0.00, 0.25, 1.00]
         afDiffuseGray = [0.75, 0.75, 0.75, 1.00]
@@ -124,7 +124,7 @@ class GLWidget(QtOpenGL.QGLWidget):
         glMaterialfv(GL_FRONT, GL_AMBIENT,   afAmbientGray) 
         glMaterialfv(GL_FRONT, GL_DIFFUSE,   afDiffuseGray) 
         glMaterialfv(GL_FRONT, GL_SPECULAR,  afSpecularWhite) 
-        glMaterialf( GL_FRONT, GL_SHININESS, 25.0)
+        glMaterialf( GL_FRONT, GL_SHININESS, 1.0)
 
         #fColor = [0.5, 0.5, 0.5, 1.0]
         #glEnable(GL_FOG)
@@ -150,25 +150,31 @@ class GLWidget(QtOpenGL.QGLWidget):
             glEnable(GL_DEPTH_TEST)
             glEnable(GL_LIGHTING)
             glPolygonMode(GL_FRONT, GL_LINE)
+            glPolygonMode(GL_BACK, GL_LINE)
             
         elif numType == 1:
             # Flat Shade
             glEnable(GL_DEPTH_TEST) 
             glEnable(GL_LIGHTING)
             glPolygonMode(GL_FRONT, GL_FILL)
+            glPolygonMode(GL_BACK, GL_FILL)
             glShadeModel(GL_FLAT)
             
         elif numType == 2:
             glEnable(GL_DEPTH_TEST) 
             glEnable(GL_LIGHTING)
             glPolygonMode(GL_FRONT, GL_FILL)
+            glPolygonMode(GL_BACK, GL_FILL)
             glShadeModel(GL_SMOOTH)
             
         else:
             self.setDisplayType(2)
+
             
     def setGluLookAt(self):
-        gluLookAt(self.x,self.y,self.z, self.x, self.y, 0, 0,1,0)
+        gluLookAt(self.eye[0], self.eye[1], self.eye[2], 
+                  self.center[0], self.center[1], self.center[2], 
+                  self.up[0], self.up[1], self.up[2])
         
     def paintGL(self):
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
@@ -176,27 +182,26 @@ class GLWidget(QtOpenGL.QGLWidget):
         glLoadIdentity()
         
         glPushMatrix()
-        glRotated(self.xRot/16, 0, 1, 0)
-        glRotated(self.yRot/16, 1, 0, 0)
+        glTranslated(self.center[0], self.center[1], self.center[2])
+        glRotatef(self.eyeRotation[0], self.up[0], self.up[1], self.up[2])
+        glRotated(self.eyeRotation[1], self.right[0], self.right[1], self.right[2])       
+        glRotated(self.eyeRotation[2], self.look[0], self.look[1], self.look[2])
+        glScaled(1+self.eyeZoom, 1+self.eyeZoom, 1+self.eyeZoom) 
+        glTranslated(-self.center[0], -self.center[1], -self.center[2])
         glMultMatrixf(self.sceneMatrix)
         self.sceneMatrix = glGetFloatv( GL_MODELVIEW_MATRIX )
-        self.xRot = 0
-        self.yRot = 0
+        self.setEyeRotation(0, 0, 0)
+        self.setEyeZoom(0)
         glPopMatrix()
         
-        self.drawScene(self.showBox)      
+        self.drawScene()      
 
-    def drawScene(self, draw_box):
+    def drawScene(self):
         glPushMatrix()
+        
         self.setGluLookAt()
+        
         glMultMatrixf(self.sceneMatrix)
-
-        if(draw_box):
-            glPushAttrib(GL_LIGHTING_BIT)
-            glDisable(GL_LIGHTING)
-            glColor3f(1.0, 1.0, 1.0)
-            glutWireCube(1.0)
-            glPopAttrib()
             
         glPushName(0)
         for s in self.scene:
@@ -205,34 +210,34 @@ class GLWidget(QtOpenGL.QGLWidget):
         glPopName()
         glPopMatrix()
        
-    def pickObject(self, x, y):
-        SIZE = 100
-        viewport = list(glGetIntegerv(GL_VIEWPORT))
-
-        glSelectBuffer(SIZE)
-        glRenderMode(GL_SELECT)
-
-        glInitNames()
-
-        glMatrixMode(GL_PROJECTION)
-        glPushMatrix()
-        glLoadIdentity()
-        gluPickMatrix(x, viewport[3]-y, 10, 10, viewport)
-        gluPerspective(45, self.ratio, 0.1, 1000)
-
-        self.drawScene(False)
-        
-        glMatrixMode(GL_PROJECTION)
-        glPopMatrix()
-        glFlush()
-
-        bufferStack = glRenderMode(GL_RENDER)
-        for hit_record in bufferStack:
-            min_depth, max_depth, names = hit_record
-            namelist = list(names)
-            for n in namelist:
-                print n
-            print min_depth, max_depth, names
+#    def pickObject(self, x, y):
+#        SIZE = 100
+#        viewport = list(glGetIntegerv(GL_VIEWPORT))
+#
+#        glSelectBuffer(SIZE)
+#        glRenderMode(GL_SELECT)
+#
+#        glInitNames()
+#
+#        glMatrixMode(GL_PROJECTION)
+#        glPushMatrix()
+#        glLoadIdentity()
+#        gluPickMatrix(x, viewport[3]-y, 10, 10, viewport)
+#        gluPerspective(45, self.ratio, 0.1, 1000)
+#
+#        self.drawScene(False)
+#        
+#        glMatrixMode(GL_PROJECTION)
+#        glPopMatrix()
+#        glFlush()
+#
+#        bufferStack = glRenderMode(GL_RENDER)
+#        for hit_record in bufferStack:
+#            min_depth, max_depth, names = hit_record
+#            namelist = list(names)
+#            for n in namelist:
+#                print n
+#            print min_depth, max_depth, names 
         
     def resizeGL(self, width, height):
         self.ratio = width/(1.0*height)
@@ -253,22 +258,16 @@ class GLWidget(QtOpenGL.QGLWidget):
         dy = event.y() - self.lastPos.y()
 
         if event.buttons() & QtCore.Qt.LeftButton:
-            self.setXRotation(8 * dx)
-            self.setYRotation(8 * dy)
-            #self.setX(self.x + dx/16.0)
-            #self.setY(self.y + dy/16.0)
-            
+            self.setEyeRotation(dx, -dy, 0)
         elif event.buttons() & QtCore.Qt.RightButton:
-            #self.setScale(self.scale + 8 * dx)
-            self.setZ(self.z + dx/8.0)
-            
-            #self.setXRotation(self.xRot + 8 * dy)
-            #self.setZRotation(self.zRot + 8 * dx)
-
+            self.setEyeRotation(0, 0, dx)
+        
         self.lastPos = QtCore.QPoint(event.pos())
 
         self.updateGL()
-        
-    def normalizeAngle(self, angle):
-        return angle
-        
+    
+    def wheelEvent(self, event):
+        direction = event.delta()/abs(event.delta())
+        self.setEyeZoom(direction * 0.1)
+        self.updateGL()
+                                   
