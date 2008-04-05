@@ -14,7 +14,7 @@ class SkeletonLaplacianSmoothingForm(QtGui.QWidget):
     def createUI(self):
         self.ui = Ui_DialogSkeletonLaplacianSmoothing()
         self.ui.setupUi(self)       
-        self.dock = QtGui.QDockWidget(self.tr("Laplacian Smoothing"), self.app)
+        self.dock = QtGui.QDockWidget(self.tr("Skeleton - Laplacian Smoothing"), self.app)
         self.dock.setAllowedAreas(QtCore.Qt.LeftDockWidgetArea | QtCore.Qt.RightDockWidgetArea | QtCore.Qt.BottomDockWidgetArea)
         self.dock.setWidget(self)
         self.dock.close()

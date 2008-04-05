@@ -115,7 +115,7 @@ namespace wustl_mm {
 			if(stricmp(extension.c_str(), "OFF") == 0) {
 				mesh = NonManifoldMesh::LoadOffFile(fileName);				
 			} else if((stricmp(extension.c_str(), "MRC") == 0) || (stricmp(extension.c_str(), "ATOM") == 0)) {
-				Volume * volume = VolumeFormatConverter::LoadVolume(fileName, extension);
+				Volume * volume = VolumeFormatConverter::LoadVolume(fileName);
 				mesh = new NonManifoldMesh(volume);
 				delete volume;			
 			} else {
