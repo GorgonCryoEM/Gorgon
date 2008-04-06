@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_dialog_volume_surface_editor.ui'
 #
-# Created: Sun Apr 06 03:35:18 2008
+# Created: Sun Apr 06 13:15:28 2008
 #      by: PyQt4 UI code generator 4.3.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -67,34 +67,6 @@ class Ui_DialogVolumeSurfaceEditor(object):
         self.gridlayout1.addWidget(self.labelSamplingDisplay,1,2,1,1)
         self.gridlayout.addWidget(self.groupBoxSurfaceOptions,0,0,1,1)
 
-        self.groupBoxVisualization = QtGui.QGroupBox(DialogVolumeSurfaceEditor)
-        self.groupBoxVisualization.setObjectName("groupBoxVisualization")
-
-        self.gridlayout2 = QtGui.QGridLayout(self.groupBoxVisualization)
-        self.gridlayout2.setObjectName("gridlayout2")
-
-        self.labelTransparency = QtGui.QLabel(self.groupBoxVisualization)
-        self.labelTransparency.setObjectName("labelTransparency")
-        self.gridlayout2.addWidget(self.labelTransparency,0,0,1,1)
-
-        self.horizontalSliderTransparency = QtGui.QSlider(self.groupBoxVisualization)
-        self.horizontalSliderTransparency.setMaximum(100)
-        self.horizontalSliderTransparency.setSingleStep(1)
-        self.horizontalSliderTransparency.setPageStep(10)
-        self.horizontalSliderTransparency.setProperty("value",QtCore.QVariant(0))
-        self.horizontalSliderTransparency.setOrientation(QtCore.Qt.Horizontal)
-        self.horizontalSliderTransparency.setTickPosition(QtGui.QSlider.NoTicks)
-        self.horizontalSliderTransparency.setObjectName("horizontalSliderTransparency")
-        self.gridlayout2.addWidget(self.horizontalSliderTransparency,0,1,1,1)
-
-        self.labelTransparencyDisplay = QtGui.QLabel(self.groupBoxVisualization)
-        self.labelTransparencyDisplay.setMinimumSize(QtCore.QSize(60,0))
-        self.labelTransparencyDisplay.setMaximumSize(QtCore.QSize(60,16777215))
-        self.labelTransparencyDisplay.setLayoutDirection(QtCore.Qt.RightToLeft)
-        self.labelTransparencyDisplay.setObjectName("labelTransparencyDisplay")
-        self.gridlayout2.addWidget(self.labelTransparencyDisplay,0,2,1,1)
-        self.gridlayout.addWidget(self.groupBoxVisualization,0,1,1,1)
-
         self.retranslateUi(DialogVolumeSurfaceEditor)
         QtCore.QObject.connect(self.horizontalSliderSampling,QtCore.SIGNAL("valueChanged(int)"),self.labelSamplingDisplay.setNum)
         QtCore.QMetaObject.connectSlotsByName(DialogVolumeSurfaceEditor)
@@ -106,7 +78,4 @@ class Ui_DialogVolumeSurfaceEditor(object):
         self.labelIsoValueDisplay.setText(QtGui.QApplication.translate("DialogVolumeSurfaceEditor", "128", None, QtGui.QApplication.UnicodeUTF8))
         self.labelSamplingInterval.setText(QtGui.QApplication.translate("DialogVolumeSurfaceEditor", "Sampling Interval:", None, QtGui.QApplication.UnicodeUTF8))
         self.labelSamplingDisplay.setText(QtGui.QApplication.translate("DialogVolumeSurfaceEditor", "1", None, QtGui.QApplication.UnicodeUTF8))
-        self.groupBoxVisualization.setTitle(QtGui.QApplication.translate("DialogVolumeSurfaceEditor", "Visualization:", None, QtGui.QApplication.UnicodeUTF8))
-        self.labelTransparency.setText(QtGui.QApplication.translate("DialogVolumeSurfaceEditor", "Transparency:", None, QtGui.QApplication.UnicodeUTF8))
-        self.labelTransparencyDisplay.setText(QtGui.QApplication.translate("DialogVolumeSurfaceEditor", "0", None, QtGui.QApplication.UnicodeUTF8))
 

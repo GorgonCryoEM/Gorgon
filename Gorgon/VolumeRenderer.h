@@ -7,9 +7,9 @@
 #include <string>
 #include <GraphMatch/VectorMath.h>
 #include "Renderer.h"
-//#include "VolumeMesh.h"
 #include "GlobalConstants.h"
 #include <SkeletonMaker/volume.h>
+#include <GraySkeletonCPP/VolumeSkeletonizer.h>
 #include <GraySkeletonCPP/VolumeFormatConverter.h>
 #include <ProteinMorph/NonManifoldMesh.h>
 #include <MathTools/Vector3D.h>
@@ -32,13 +32,15 @@ namespace wustl_mm {
 			float GetMinDensity();
 			float GetSurfaceValue() const ;
 			int GetSampleInterval() const ;
-			string GetSupportedFileFormats();
-			void LoadFile(string fileName);
-			void Unload();
-			void SetSurfaceValue(const float value);
-			void SetSampleInterval(const int size);
+			string GetSupportedLoadFileFormats();
+			string GetSupportedSaveFileFormats();
 			void Draw() const;
+			void LoadFile(string fileName);
+			void SetSampleInterval(const int size);
+			void SetSurfaceValue(const float value);
 			void UpdateBoundingBox() ;
+			void Unload();
+			Volume * PerformBinarySkeletonizationJu2007(double threshold, int minCurveSize, int minSurfaceSize);
 		
 		private:
 			int GetHashKey(int x, int y, int z, int edge, int iScale);
@@ -67,8 +69,12 @@ namespace wustl_mm {
 			}
 		}
 
-		float VolumeRenderer::GetSurfaceValue() const { 
-			return _surf_value; 
+		float VolumeRenderer::GetMaxDensity(){
+			return _voxel->getMax();
+		}
+
+		float VolumeRenderer::GetMinDensity() {
+			return _voxel->getMin();
 		}
 
 		float VolumeRenderer::GetOffset(float fValue1, float fValue2, float fValueDesired)
@@ -82,20 +88,18 @@ namespace wustl_mm {
 				return (fValueDesired - fValue1)/fDelta;
 		}
 
+
+
+		float VolumeRenderer::GetSurfaceValue() const { 
+			return _surf_value; 
+		}
+
 		float VolumeRenderer::GetVoxelData(int x, int y, int z) {
 			if((x < 0) || (x > _voxel->getSizeX()-1) || (y < 0) || (y > _voxel->getSizeY()-1) || (z < 0) || (z > _voxel->getSizeZ()-1)) {
 				return 0.0f;
 			} else {
 				return _voxel->getDataAt(x, y, z);
 			}
-		}
-
-		float VolumeRenderer::GetMinDensity() {
-			return _voxel->getMin();
-		}
-
-		float VolumeRenderer::GetMaxDensity(){
-			return _voxel->getMax();
 		}
 
 		int VolumeRenderer::GetHashKey(int x, int y, int z, int edge, int iScale) {
@@ -112,7 +116,11 @@ namespace wustl_mm {
 			return _sample; 
 		}
 
-		string VolumeRenderer::GetSupportedFileFormats() {
+		string VolumeRenderer::GetSupportedLoadFileFormats() {
+			return "Volumes (*.mrc)";
+		}
+
+		string VolumeRenderer::GetSupportedSaveFileFormats() {
 			return "Volumes (*.mrc)";
 		}
 
@@ -151,16 +159,6 @@ namespace wustl_mm {
 
 		}
 
-		void VolumeRenderer::SetSurfaceValue(const float value) {
-			_surf_value = value;
-			CalculateSurface();
-		}
-
-		void VolumeRenderer::SetSampleInterval(const int size) {
-			_sample = size;
-			CalculateSurface();
-		}
-
 		void VolumeRenderer::CalculateSurface() {
 			_mesh->Clear();
 			if(_voxel != NULL) {
@@ -176,6 +174,15 @@ namespace wustl_mm {
 		}
 
 
+
+		void VolumeRenderer::LoadFile(string fileName) {
+			if(_voxel != NULL) {
+				delete _voxel;
+			}
+			_voxel = VolumeFormatConverter::LoadVolume(fileName);
+			CalculateSurface();
+			UpdateBoundingBox();
+		}
 
 		void VolumeRenderer::MarchingCube(int iX, int iY, int iZ, int iScale){
 			extern int aiCubeEdgeFlags[256];
@@ -253,14 +260,16 @@ namespace wustl_mm {
 			}
 		}
 
-		void VolumeRenderer::LoadFile(string fileName) {
-			if(_voxel != NULL) {
-				delete _voxel;
-			}
-			_voxel = VolumeFormatConverter::LoadVolume(fileName);
+		void VolumeRenderer::SetSampleInterval(const int size) {
+			_sample = size;
 			CalculateSurface();
-			UpdateBoundingBox();
 		}
+
+		void VolumeRenderer::SetSurfaceValue(const float value) {
+			_surf_value = value;
+			CalculateSurface();
+		}
+
 
 		void VolumeRenderer::Unload() {
 			if(_voxel != NULL) {
@@ -285,6 +294,14 @@ namespace wustl_mm {
 				maxPts[1] = _voxel->getSizeY()-1;
 				maxPts[2] = _voxel->getSizeZ()-1;
 			}
+		}
+
+		Volume * VolumeRenderer::PerformBinarySkeletonizationJu2007(double threshold, int minCurveSize, int minSurfaceSize) {
+			VolumeSkeletonizer * skeletonizer = new VolumeSkeletonizer(0,0,0,DEFAULT_SKELETON_DIRECTION_RADIUS);
+			Volume * outputVol = skeletonizer->PerformPureJuSkeletonization(_voxel, "", threshold, minCurveSize, minSurfaceSize);
+			delete skeletonizer;
+			return outputVol;
+
 		}
 
 	}

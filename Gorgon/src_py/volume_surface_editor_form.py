@@ -22,16 +22,13 @@ class VolumeSurfaceEditorForm(QtGui.QWidget):
         self.dock.close()
         self.connect(self.dock, QtCore.SIGNAL("visibilityChanged (bool)"), self.dockVisibilityChanged)
         self.connect(self.ui.horizontalSliderIsoLevel,QtCore.SIGNAL("valueChanged(int)"),self.isoValueIndicatorChanged)
-        self.connect(self.ui.horizontalSliderTransparency,QtCore.SIGNAL("valueChanged(int)"),self.transparencyIndicatorChanged)
         self.filterIsoValue = DelayedFilter()
         self.filterSampling = DelayedFilter()
         self.filterTransparency = DelayedFilter()
         self.connect(self.ui.horizontalSliderIsoLevel, QtCore.SIGNAL("valueChanged(int)"),self.filterIsoValue.setValue)
         self.connect(self.ui.horizontalSliderSampling, QtCore.SIGNAL("valueChanged(int)"),self.filterSampling.setValue)
-        self.connect(self.ui.horizontalSliderTransparency, QtCore.SIGNAL("valueChanged(int)"),self.filterTransparency.setValue)
         self.connect(self.filterIsoValue, QtCore.SIGNAL("valueChanged(int)"), self.isoValueChanged )
         self.connect(self.filterSampling, QtCore.SIGNAL("valueChanged(int)"), self.samplingChanged )
-        self.connect(self.filterTransparency, QtCore.SIGNAL("valueChanged(int)"), self.transparencyChanged )
             
     def loadWidget(self):
         if(self.app.actions.getAction("show_VolumeSurfaceEditor").isChecked()) :
@@ -86,8 +83,3 @@ class VolumeSurfaceEditorForm(QtGui.QWidget):
         self.viewer.renderer.setSampleInterval(newLevel)
         self.viewer.emitModelChanged()
         
-    def transparencyIndicatorChanged(self, newLevel):
-        self.ui.labelTransparencyDisplay.setNum(newLevel/100.0)
-
-    def transparencyChanged(self, newLevel):
-        self.viewer.setTransparencyValue(newLevel/100.0)   

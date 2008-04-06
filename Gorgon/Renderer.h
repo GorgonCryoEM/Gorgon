@@ -16,7 +16,8 @@ namespace wustl_mm {
 			virtual void DrawBoundingBox();
 			virtual void LoadFile(string fileName);
 			virtual void Unload();
-			virtual string GetSupportedFileFormats();
+			virtual string GetSupportedLoadFileFormats();
+			virtual string GetSupportedSaveFileFormats();
 
 			float GetMin(int dimension);
 			float GetMax(int dimension);
@@ -62,7 +63,12 @@ namespace wustl_mm {
 
 		void Renderer::Unload() {
 		}
-		string Renderer::GetSupportedFileFormats() {
+
+		string Renderer::GetSupportedLoadFileFormats() {
+			return "All Files (*.*)";
+		}
+
+		string Renderer::GetSupportedSaveFileFormats() {
 			return "All Files (*.*)";
 		}
 

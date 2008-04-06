@@ -30,7 +30,7 @@ class BaseViewer(QtGui.QWidget):
             glPopMatrix()    
           
     def loadData(self):
-        fileName = QtGui.QFileDialog.getOpenFileName(self, self.tr("Open Data"), "", self.tr(self.renderer.getSupportedFileFormats()))
+        fileName = QtGui.QFileDialog.getOpenFileName(self, self.tr("Open Data"), "", self.tr(self.renderer.getSupportedLoadFileFormats()))
         if not fileName.isEmpty():  
             self.renderer.loadFile(str(fileName))
             self.loaded = True

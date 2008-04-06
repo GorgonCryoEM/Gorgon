@@ -7,6 +7,7 @@
 #include <GraphMatch/BackEndInterface.h>
 #include <Gorgon/VolumeRenderer.h>
 #include <Gorgon/MeshRenderer.h>
+#include <Gorgon/Renderer.h>
 
 #include <boost/python.hpp>
 
@@ -16,29 +17,48 @@ using namespace wustl_mm::GraphMatch;
 
 BOOST_PYTHON_MODULE(gorgon_cpp_wrapper)
 {
-	class_<MeshRenderer>("MeshRenderer", init<>())
+	class_<Volume>("Volume", init<int,int,int>())
+	;
+
+	class_<Renderer>("Renderer", init<>())
+		.def("draw", &Renderer::Draw)
+		.def("drawBoundingBox", &Renderer::DrawBoundingBox)
+		.def("loadFile", &Renderer::LoadFile)
+		.def("unload", &Renderer::Unload)
+		.def("getSupportedLoadFileFormats", &Renderer::GetSupportedLoadFileFormats)
+		.def("getSupportedSaveFileFormats", &Renderer::GetSupportedSaveFileFormats)
+		.def("getMin", &Renderer::GetMin)
+		.def("getMax", &Renderer::GetMax)
+	;
+
+
+	class_<MeshRenderer, bases<Renderer>>("MeshRenderer", init<>())
 		.def("draw", &MeshRenderer::Draw)
 		.def("drawBoundingBox", &MeshRenderer::DrawBoundingBox)
 		.def("loadFile", &MeshRenderer::LoadFile)
+		.def("loadVolume", &MeshRenderer::LoadVolume)
 		.def("unload", &MeshRenderer::Unload)
-		.def("smoothLaplacian", &MeshRenderer::SmoothLaplacian)
-		.def("getSupportedFileFormats", &MeshRenderer::GetSupportedFileFormats)
+		.def("performSmoothLaplacian", &MeshRenderer::PerformSmoothLaplacian)
+		.def("getSupportedLoadFileFormats", &MeshRenderer::GetSupportedLoadFileFormats)
+		.def("getSupportedSaveFileFormats", &MeshRenderer::GetSupportedSaveFileFormats)
 		.def("getMin", &MeshRenderer::GetMin)
 		.def("getMax", &MeshRenderer::GetMax)
 	;
 
-	class_<VolumeRenderer>("VolumeRenderer", init<>())
+	class_<VolumeRenderer, bases<Renderer>>("VolumeRenderer", init<>())
 		.def("draw", &VolumeRenderer::Draw)
 		.def("drawBoundingBox", &VolumeRenderer::DrawBoundingBox)
 		.def("loadFile", &VolumeRenderer::LoadFile)
 		.def("unload", &VolumeRenderer::Unload)
-		.def("getSupportedFileFormats", &VolumeRenderer::GetSupportedFileFormats)
+		.def("getSupportedLoadFileFormats", &VolumeRenderer::GetSupportedLoadFileFormats)
+		.def("getSupportedSaveFileFormats", &VolumeRenderer::GetSupportedSaveFileFormats)
 		.def("getMin", &VolumeRenderer::GetMin)
 		.def("getMax", &VolumeRenderer::GetMax)
 		.def("getMinDensity", &VolumeRenderer::GetMinDensity)
 		.def("getMaxDensity", &VolumeRenderer::GetMaxDensity)
 		.def("setSurfaceValue", &VolumeRenderer::SetSurfaceValue)
 		.def("setSampleInterval", &VolumeRenderer::SetSampleInterval)
+		.def("performBinarySkeletonizationJu2007", &VolumeRenderer::PerformBinarySkeletonizationJu2007, return_value_policy<manage_new_object>())		
     ;
 
 	class_<BackEndInterface>("BackEndInterface", init<>())

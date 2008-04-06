@@ -920,7 +920,7 @@ namespace wustl_mm {
 					for(int x = 1; x < skeleton->getSizeX()-1; x++) {
 						for(int y = 1; y < skeleton->getSizeY()-1; y++) {
 							for(int z = 1; z < skeleton->getSizeZ(); z++) {
-								if(isZero(visited->getDataAt(x, y, z) - currentColor)) {
+								if(isZero(visited->getDataAt(x, y, z) - (double)currentColor)) {
 									skeleton->setDataAt(x, y, z, 0);
 								}
 							}
@@ -1877,7 +1877,6 @@ namespace wustl_mm {
 
 			topologyVol = VolumeSkeletonizer::GetJuTopologySkeleton(imageVol, preservedVol, threshold);
 
-			imageVol->threshold(threshold);
 			imageVol->pad(-MAX_GAUSSIAN_FILTER_RADIUS, 0);			
 			topologyVol->pad(-MAX_GAUSSIAN_FILTER_RADIUS, 0);
 

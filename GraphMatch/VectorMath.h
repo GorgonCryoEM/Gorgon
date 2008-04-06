@@ -11,14 +11,12 @@ Date  : 01/28/2006
 #include <iostream>
 #include <cmath>
 #include <cassert>
+#include <MathTools/BasicDefines.h>
+
+using namespace wustl_mm::MathTools;
 
 namespace wustl_mm {
 	namespace GraphMatch {
-
-		inline bool isZero(double in_d, double in_dEps = 1e-16 ) 
-		{ 
-			return (in_d < in_dEps && in_d > -in_dEps)? true : false; 
-		}
 
 
 		// Dot product, subtraction, ofstream, etc., are declared after class
