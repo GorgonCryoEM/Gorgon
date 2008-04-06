@@ -15,11 +15,12 @@ class BaseViewer(QtGui.QWidget):
         QtGui.QWidget.__init__(self, parent)
         self.app = main      
         self.loaded = False
-        self.connect(self, QtCore.SIGNAL("modelChanged()"), self.meshChanged)    
+        self.connect(self, QtCore.SIGNAL("modelChanged()"), self.modelChanged) 
+        self.connect(self, QtCore.SIGNAL("modelLoaded()"), self.modelChanged) 
+        self.connect(self, QtCore.SIGNAL("modelUnloaded()"), self.modelChanged)    
         self.gllist = 0
         self.showBox = True
-                          
-                
+                                          
     def draw(self):
         if self.gllist != 0:
             glPushMatrix()
@@ -33,14 +34,12 @@ class BaseViewer(QtGui.QWidget):
             self.renderer.loadFile(str(fileName))
             self.loaded = True
             self.emitModelLoaded()
-            self.emitModelChanged()
             self.emitViewerSetCenter()
     
     def unloadData(self):
         self.renderer.unload()
         self.loaded = False
-        self.emitModelChanged()
-
+        self.emitModelUnloaded()
         
     def modelChanged(self):
         self.updateActionsAndMenus()
@@ -61,6 +60,10 @@ class BaseViewer(QtGui.QWidget):
 
     def emitModelLoaded(self):
         self.emit(QtCore.SIGNAL("modelLoaded()"))
+
+    def emitModelUnloaded(self):
+        self.emit(QtCore.SIGNAL("modelUnloaded()"))
+        
     def emitModelChanged(self):
         self.emit(QtCore.SIGNAL("modelChanged()"))
         

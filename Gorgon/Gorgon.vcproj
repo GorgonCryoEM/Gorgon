@@ -173,10 +173,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Mesh.h"
-				>
-			</File>
-			<File
 				RelativePath=".\MeshRenderer.h"
 				>
 			</File>
@@ -185,11 +181,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\VolumeRenderer.h"
+				RelativePath=".\VolumeMesh.h"
 				>
 			</File>
 			<File
-				RelativePath=".\VoxelData.h"
+				RelativePath=".\VolumeRenderer.h"
 				>
 			</File>
 		</Filter>

@@ -10,6 +10,7 @@ Date  : 01/28/2006
 
 #include <iostream>
 #include <cmath>
+#include <cassert>
 
 namespace wustl_mm {
 	namespace GraphMatch {

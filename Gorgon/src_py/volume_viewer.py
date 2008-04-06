@@ -14,14 +14,10 @@ except ImportError:
 
 class VolumeViewer(BaseViewer):
     def __init__(self, main, parent=None):
-        QtGui.QWidget.__init__(self, parent)
-        self.app = main
+        BaseViewer.__init__(self, main, parent)
         self.renderer = VolumeRenderer()          
         self.loaded = False
-        self.showBox = True
-        self.connect(self, QtCore.SIGNAL("modelChanged()"), self.modelChanged)
         self.createUI()      
-        self.gllist = 0
 
     def createUI(self):
         self.createActions()

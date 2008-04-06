@@ -38,7 +38,7 @@ BOOST_PYTHON_MODULE(gorgon_cpp_wrapper)
 		.def("getMinDensity", &VolumeRenderer::GetMinDensity)
 		.def("getMaxDensity", &VolumeRenderer::GetMaxDensity)
 		.def("setSurfaceValue", &VolumeRenderer::SetSurfaceValue)
-		.def("setSampleDensity", &VolumeRenderer::SetSampleDensity)
+		.def("setSampleInterval", &VolumeRenderer::SetSampleInterval)
     ;
 
 	class_<BackEndInterface>("BackEndInterface", init<>())

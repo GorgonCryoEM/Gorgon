@@ -4,11 +4,11 @@
 namespace wustl_mm {
 	namespace Visualization {
 
-		//a2fVertexOffset lists the positions, relative to vertex0, of each of the 8 vertices of a cube
-		static const float a2fVertexOffset[8][3] =
+		//a2iVertexOffset lists the positions, relative to vertex0, of each of the 8 vertices of a cube
+		static const int a2iVertexOffset[8][3] =
 		{
-				{0.0, 0.0, 0.0},{1.0, 0.0, 0.0},{1.0, 1.0, 0.0},{0.0, 1.0, 0.0},
-				{0.0, 0.0, 1.0},{1.0, 0.0, 1.0},{1.0, 1.0, 1.0},{0.0, 1.0, 1.0}
+				{0, 0, 0},{1, 0, 0},{1, 1, 0},{0, 1, 0},
+				{0, 0, 1},{1, 0, 1},{1, 1, 1},{0, 1, 1}
 		};
 
 		//a2iEdgeConnection lists the index of the endpoint vertices for each of the 12 edges of the cube
@@ -19,12 +19,12 @@ namespace wustl_mm {
 				{0,4}, {1,5}, {2,6}, {3,7}
 		};
 
-		//a2fEdgeDirection lists the direction vector (vertex1-vertex0) for each edge in the cube
-		static const float a2fEdgeDirection[12][3] =
+		//a2iEdgeDirection lists the direction vector (vertex1-vertex0) for each edge in the cube
+		static const int a2iEdgeDirection[12][3] =
 		{
-				{1.0, 0.0, 0.0},{0.0, 1.0, 0.0},{-1.0, 0.0, 0.0},{0.0, -1.0, 0.0},
-				{1.0, 0.0, 0.0},{0.0, 1.0, 0.0},{-1.0, 0.0, 0.0},{0.0, -1.0, 0.0},
-				{0.0, 0.0, 1.0},{0.0, 0.0, 1.0},{ 0.0, 0.0, 1.0},{0.0,  0.0, 1.0}
+				{1, 0, 0},{0, 1, 0},{-1, 0, 0},{0, -1, 0},
+				{1, 0, 0},{0, 1, 0},{-1, 0, 0},{0, -1, 0},
+				{0, 0, 1},{0, 0, 1},{ 0, 0, 1},{0,  0, 1}
 		};
 
 		//getNormal() finds the gradient of the scalar field at a point
