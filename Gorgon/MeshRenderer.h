@@ -86,8 +86,8 @@ namespace wustl_mm {
 
 
 
-				glPushAttrib(GL_LIGHTING_BIT);
-				glDisable(GL_LIGHTING);
+				//glPushAttrib(GL_LIGHTING_BIT);
+				//glDisable(GL_LIGHTING);
 
 				glBegin(GL_LINES);
 				for(unsigned int i = 0; i < mesh->edges.size(); i++) {
@@ -105,7 +105,7 @@ namespace wustl_mm {
 					}
 				}
 				glEnd();
-				glPopAttrib();
+				//glPopAttrib();
 
 				glFlush();
 			}

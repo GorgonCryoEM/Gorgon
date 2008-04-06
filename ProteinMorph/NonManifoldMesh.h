@@ -5,8 +5,11 @@
 #include <MathTools/Vector3D.h>
 #include <SkeletonMaker/volume.h>
 #include <string>
+#include <hash_map>
 
 using namespace std;
+using namespace stdext;
+
 using namespace wustl_mm::MathTools;
 
 namespace wustl_mm {
@@ -45,6 +48,7 @@ namespace wustl_mm {
 			bool IsEdgePresent(int vertexId1, int vertexId2);
 			int AddVertex(NonManifoldMeshVertex vertex);
 			int AddVertex(Vector3DFloat location, bool stationary, bool articulationPoint, int helixId);
+			int AddHashedVertex(Vector3DFloat location, bool stationary, bool articulationPoint, int helixId, int hashKey);
 			int AddEdge(NonManifoldMeshEdge edge);
 			int AddFace(NonManifoldMeshFace face);
 			int GetVertexIndex(int vertexId);
@@ -53,6 +57,7 @@ namespace wustl_mm {
 			void AddEdge(int vertexId1, int vertexId2, bool isHelix);
 			void AddQuad(int vertexId1, int vertexId2, int vertexId3, int vertexId4, bool isSheet);
 			void AddTriangle(int vertexId1, int vertexId2, int vertexId3, bool isSheet);
+			void Clear();
 			void MarkFixedVertices();
 			void RemoveFace(int faceId);
 			void RemoveEdge(int edgeId);
@@ -72,25 +77,15 @@ namespace wustl_mm {
 			int edgeCount;
 			int vertexCount;
 			int faceCount;
+			hash_map<int, int> vertexHashMap;
 		};
 
 		NonManifoldMesh::NonManifoldMesh() {
-			vertices.clear();
-			edges.clear();
-			faces.clear();
-			vertexCount = 0;
-			edgeCount = 0;
-			faceCount = 0;
-			
+			Clear();			
 		}
 
 		NonManifoldMesh::NonManifoldMesh(NonManifoldMesh * srcMesh) {
-			vertices.clear();
-			edges.clear();
-			faces.clear();
-			vertexCount = 0;
-			edgeCount = 0;
-			faceCount = 0;
+			Clear();
 			for(unsigned int i = 0; i < srcMesh->vertices.size(); i++) {
 				vertices.push_back(srcMesh->vertices[i]);
 			}
@@ -103,12 +98,7 @@ namespace wustl_mm {
 		}
 
 		NonManifoldMesh::NonManifoldMesh(Volume * sourceVol, Volume * helixVol, Volume * sheetVol) {
-			vertices.clear();
-			edges.clear();
-			faces.clear();
-			vertexCount = 0;
-			edgeCount = 0;
-			faceCount = 0;
+			Clear();
 
 			int x, y, z, i, j, index, index2;
 			int * vertexLocations = new int[sourceVol->getSizeX() * sourceVol->getSizeY() * sourceVol->getSizeZ()];
@@ -205,9 +195,8 @@ namespace wustl_mm {
 			vertices.push_back(vertex);
 			vertexCount++;
 			return vertex.id;
-			
-		}
-		
+		}	
+
 		int NonManifoldMesh::AddVertex(Vector3DFloat location, bool stationary, bool articulationPoint, int helixId) {
 			NonManifoldMeshVertex v;
 			v.position = location;
@@ -216,6 +205,17 @@ namespace wustl_mm {
 			v.helixId = helixId;
 			return AddVertex(v);
 
+		}
+
+		int NonManifoldMesh::AddHashedVertex(Vector3DFloat location, bool stationary, bool articulationPoint, int helixId, int hashKey) {
+			hash_map<int, int>::const_iterator pos = vertexHashMap.find(hashKey);
+			int vertexId;
+			if(pos == vertexHashMap.end()) {
+				vertexId = AddVertex(location, stationary, articulationPoint, helixId);
+			} else {
+				vertexId = pos->second;
+			}
+			return vertexId;
 		}
 
 		int NonManifoldMesh::AddEdge(NonManifoldMeshEdge edge) {
@@ -289,6 +289,16 @@ namespace wustl_mm {
 			for(i = 0; i < (int)face.edgeIds.size(); i++) {		
 				edges[GetEdgeIndex(face.edgeIds[i])].faceIds.push_back(faceId);
 			}
+		}
+
+		void NonManifoldMesh::Clear() {
+			vertices.clear();
+			edges.clear();
+			faces.clear();
+			vertexCount = 0;
+			edgeCount = 0;
+			faceCount = 0;
+			vertexHashMap.clear();
 		}
 
 		void NonManifoldMesh::MarkFixedVertices() {

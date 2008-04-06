@@ -19,6 +19,7 @@ class BaseViewer(QtGui.QWidget):
         self.connect(self, QtCore.SIGNAL("modelLoaded()"), self.modelChanged) 
         self.connect(self, QtCore.SIGNAL("modelUnloaded()"), self.modelChanged)    
         self.gllist = 0
+        self.transparency = 0
         self.showBox = True
                                           
     def draw(self):
@@ -48,6 +49,7 @@ class BaseViewer(QtGui.QWidget):
             
         self.gllist = glGenLists(1)
         glNewList(self.gllist, GL_COMPILE)
+        
         self.renderer.draw()
         
         if(self.loaded and self.showBox):
@@ -57,6 +59,10 @@ class BaseViewer(QtGui.QWidget):
             glPopAttrib()
 
         glEndList() 
+        
+    def setTransparencyValue(self, value):
+        self.transparency = value;   
+        self.emitModelChanged()
 
     def emitModelLoaded(self):
         self.emit(QtCore.SIGNAL("modelLoaded()"))
