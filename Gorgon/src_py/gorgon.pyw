@@ -8,6 +8,6 @@ if __name__ == '__main__':
     app = QtGui.QApplication(sys.argv)
     window = MainWindowForm()
     window.addModule(WindowManager(window))
-    window.show()
+    window.showMaximized()
     sys.exit(app.exec_())
     

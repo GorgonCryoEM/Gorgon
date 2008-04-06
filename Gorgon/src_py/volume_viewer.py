@@ -2,6 +2,7 @@ from PyQt4 import QtGui, QtCore, QtOpenGL
 from base_viewer import BaseViewer
 from gorgon_cpp_wrapper import VolumeRenderer
 from volume_surface_editor_form import VolumeSurfaceEditorForm
+from volume_binary_skeletonization_form import VolumeBinarySkeletonizationForm
 
 try:
     from OpenGL.GL import *
@@ -17,7 +18,8 @@ class VolumeViewer(BaseViewer):
         BaseViewer.__init__(self, main, parent)
         self.renderer = VolumeRenderer()          
         self.loaded = False
-        self.createUI()      
+        self.createUI()
+        self.app.viewers["volume"] = self;
 
     def createUI(self):
         self.createActions()
@@ -59,6 +61,7 @@ class VolumeViewer(BaseViewer):
     
     def createChildWindows(self):
         self.surfaceEditor = VolumeSurfaceEditorForm(self.app, self)
+        self.binarySkeletonizer = VolumeBinarySkeletonizationForm(self.app, self)
         
     def updateActionsAndMenus(self):
         self.app.actions.getAction("unload_Volume").setEnabled(self.loaded)

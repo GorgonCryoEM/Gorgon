@@ -1,6 +1,7 @@
 #ifndef GORGON_GLOBAL_CONSTANTS_H
 #define GORGON_GLOBAL_CONSTANTS_H
 
+
 namespace wustl_mm {
 	namespace Visualization {
 

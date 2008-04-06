@@ -95,7 +95,8 @@ class GLWidget(QtOpenGL.QGLWidget):
         return QtCore.QSize(50, 50)
 
     def sizeHint(self):
-        return QtCore.QSize(400, 400)        
+        return QtCore.QSize(400, 400)     
+       
     def initializeGL(self):
         afPropertiesAmbient = [0.50, 0.50, 0.50, 1.00] 
         afPropertiesDiffuse = [0.75, 0.75, 0.75, 1.00] 
@@ -207,7 +208,10 @@ class GLWidget(QtOpenGL.QGLWidget):
         glRotated(self.eyeRotation[1], self.right[0], self.right[1], self.right[2])       
         glRotated(self.eyeRotation[2], self.look[0], self.look[1], self.look[2])
         glScaled(1+self.eyeZoom, 1+self.eyeZoom, 1+self.eyeZoom) 
+
         glTranslated(-self.center[0], -self.center[1], -self.center[2])
+        
+        
         glMultMatrixf(self.sceneMatrix)
         self.sceneMatrix = glGetFloatv( GL_MODELVIEW_MATRIX )
         self.setEyeRotation(0, 0, 0)

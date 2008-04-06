@@ -17,6 +17,7 @@ class SkeletonViewer(BaseViewer):
         BaseViewer.__init__(self, main, parent)
         self.renderer = MeshRenderer()          
         self.createUI()      
+        self.app.viewers["skeleton"] = self;
 
     def createUI(self):
         self.createActions()
@@ -68,4 +69,12 @@ class SkeletonViewer(BaseViewer):
     def setShowBox(self):
         self.showBox = self.app.actions.getAction("boundingBox_Skeleton").isChecked()
         self.emitModelChanged()
+        
+    def loadVolume(self, volume):
+        if(self.loaded):
+            self.unloadData
+        self.renderer.loadVolume(volume)
+        self.loaded = True
+        self.emitModelLoaded()
+        self.emitViewerSetCenter()
       

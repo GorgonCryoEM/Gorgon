@@ -13,6 +13,9 @@ namespace wustl_mm {
 			return (value < varience && value > -varience)? true : false; 
 		}
 
+		inline bool isZero(float value, float varience = 1e-6) { 
+			return (value < varience && value > -varience)? true : false; 
+		}
 		inline bool isEqual(double value1, double value2, double varience = 1e-16) {
 			return isZero(value1-value2, varience);
 		}

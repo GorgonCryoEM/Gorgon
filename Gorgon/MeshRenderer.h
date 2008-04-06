@@ -11,6 +11,7 @@
 #include <GraySkeletonCPP/VolumeFormatConverter.h>
 #include "Renderer.h"
 
+
 using namespace wustl_mm::Protein_Morph;
 using namespace wustl_mm::GraySkeletonCPP;
 
@@ -23,9 +24,11 @@ namespace wustl_mm {
 
 			void Draw();
 			void LoadFile(string fileName);
+			void LoadVolume(Volume * sourceVolume);
 			void Unload();
-			void SmoothLaplacian(double convergenceRate, int iterations);
-			string GetSupportedFileFormats();
+			void PerformSmoothLaplacian(double convergenceRate, int iterations);
+			string GetSupportedLoadFileFormats();
+			string GetSupportedSaveFileFormats();
 		private:
 			void UpdateBoundingBox();
 			NonManifoldMesh * mesh;
@@ -135,6 +138,14 @@ namespace wustl_mm {
 			
 		}
 
+		void MeshRenderer::LoadVolume(Volume * sourceVolume) {
+			if(mesh != NULL) {
+				delete mesh;
+			}
+			mesh = new NonManifoldMesh(sourceVolume);
+			UpdateBoundingBox();
+		}
+
 		void MeshRenderer::Unload() {
 			if(mesh != NULL) {
 				delete mesh;
@@ -143,7 +154,7 @@ namespace wustl_mm {
 			UpdateBoundingBox();
 
 		}
-		void MeshRenderer::SmoothLaplacian(double convergenceRate, int iterations) {
+		void MeshRenderer::PerformSmoothLaplacian(double convergenceRate, int iterations) {
 			NonManifoldMesh * newMesh;
 			for(int i = 0; i < iterations; i++) {
 				newMesh = mesh->SmoothLaplacian(convergenceRate);
@@ -172,8 +183,11 @@ namespace wustl_mm {
 				}
 			}
 		}
-		string MeshRenderer::GetSupportedFileFormats() {
+		string MeshRenderer::GetSupportedLoadFileFormats() {
 			return "Meshes (*.off);;Volumes (*.mrc *.atom);;All Files (*.off *.mrc *.atom)";
+		}
+		string MeshRenderer::GetSupportedSaveFileFormats() {
+			return "Meshes (*.off)";
 		}
 	}
 }

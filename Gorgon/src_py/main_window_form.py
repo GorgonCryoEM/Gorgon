@@ -6,8 +6,10 @@ class MainWindowForm(QtGui.QMainWindow):
     def __init__(self, parent=None):
         QtGui.QMainWindow.__init__(self, parent)
         self.modules = []
+        self.viewers = {}
         self.menus = MenuManager(self)       
         self.actions = ActionManager(self) 
+        self.createUI()
         self.createActions()
         self.createMenus()
                 
@@ -17,6 +19,9 @@ class MainWindowForm(QtGui.QMainWindow):
     def addModule(self, module):
         self.modules.append(module)
             
+    def createUI(self):
+        pass
+        
     def createActions(self):
         exitAct = QtGui.QAction(self.tr("E&xit"), self)
         exitAct.setShortcut(self.tr("Ctrl+Q"))
