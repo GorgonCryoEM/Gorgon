@@ -27,6 +27,13 @@ namespace wustl_mm {
 				{0, 0, 1},{0, 0, 1},{ 0, 0, 1},{0,  0, 1}
 		};
 
+		static const int a2iEdgeHash[12][4] =
+		{
+				{0, 0, 0, 0},{1, 1, 0, 0},{0, 0, 1, 0},{1, 0, 0, 0},
+				{0, 0, 0, 1},{1, 1, 0, 1},{0, 0, 1, 1},{1, 0, 0, 1},
+				{2, 0, 0, 0},{2, 1, 0, 0},{2, 1, 1, 0},{2, 0, 1, 0}
+		};
+
 		//getNormal() finds the gradient of the scalar field at a point
 		//This gradient can be used as a very accurate vertx normal for lighting calculations
 		//getOffset finds the approximate point of intersection of the surface
