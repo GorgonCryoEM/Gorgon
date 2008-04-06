@@ -4,6 +4,9 @@
 #include <string>
 #include "VolumeReaderRAW.h"
 #include "VolumeReaderATOM.h"
+#include <SkeletonMaker/reader.h>
+#include <SkeletonMaker/volume.h>
+
 
 using namespace std;
 
@@ -11,11 +14,14 @@ namespace wustl_mm {
 	namespace GraySkeletonCPP {
 		class VolumeFormatConverter {
 		public:
-			static Volume * LoadVolume(string inputFile, string inputFormat);
+			static Volume * LoadVolume(string inputFile);
 			static void ConvertVolume(string inputFile, string inputFormat, string outputFile, string outputFormat, int sizeX, int sizeY, int sizeZ);
 		};
 
-		Volume * VolumeFormatConverter::LoadVolume(string inputFile, string inputFormat) {
+		Volume * VolumeFormatConverter::LoadVolume(string inputFile) {
+			int pos = inputFile.rfind(".") + 1;
+			string inputFormat = inputFile.substr(pos, inputFile.length()-pos);
+
 			Volume * vol = NULL;			
 			if(stricmp(inputFormat.c_str(), "MRC") == 0) {
 				vol = MRCReaderPicker::pick((char *)inputFile.c_str())->getVolume();
