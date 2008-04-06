@@ -69,4 +69,4 @@ class VolumeViewer(BaseViewer):
           
     def setShowBox(self):
         self.showBox = self.app.actions.getAction("boundingBox_Volume").isChecked()
-        self.emitModelChanged()           
+        self.emitModelChanged()        

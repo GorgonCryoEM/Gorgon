@@ -100,7 +100,7 @@ class GLWidget(QtOpenGL.QGLWidget):
         afPropertiesAmbient = [0.50, 0.50, 0.50, 1.00] 
         afPropertiesDiffuse = [0.75, 0.75, 0.75, 1.00] 
         afPropertiesSpecular = [0.0, 0.0, 0.0, 1.00]
-        afSpecularWhite =  [0.0, 0.0, 0.0, 1.00]
+        afSpecularWhite =  [1.0, 1.0, 1.0, 1.00]
         afDiffuseBlue = [0.00, 0.00, 0.75, 1.00]
         afAmbientBlue = [0.00, 0.00, 0.25, 1.00]
         afDiffuseGray = [0.75, 0.75, 0.75, 1.00]
@@ -114,19 +114,36 @@ class GLWidget(QtOpenGL.QGLWidget):
 
         self.setDisplayType(2)
         
+        afLightPosition = [1000,1000,1000]
+        
         glLightfv( GL_LIGHT0, GL_AMBIENT,  afPropertiesAmbient);
         glLightfv( GL_LIGHT0, GL_DIFFUSE,  afPropertiesDiffuse) 
         glLightfv( GL_LIGHT0, GL_SPECULAR, afPropertiesSpecular) 
         #glLightModelf(GL_LIGHT_MODEL_TWO_SIDE, 1.0)
+        glLightfv( GL_LIGHT0, GL_POSITION, afLightPosition)
 
         glEnable( GL_LIGHT0 ) 
 
-        glMaterialfv(GL_BACK,  GL_AMBIENT,   afAmbientGreen)
-        glMaterialfv(GL_BACK,  GL_DIFFUSE,   afDiffuseGreen) 
+
+        afLightPosition = [-1000,-1000,-1000]        
+        glLightfv( GL_LIGHT1, GL_AMBIENT,  afPropertiesAmbient);
+        glLightfv( GL_LIGHT1, GL_DIFFUSE,  afPropertiesDiffuse) 
+        glLightfv( GL_LIGHT1, GL_SPECULAR, afPropertiesSpecular) 
+        #glLightModelf(GL_LIGHT_MODEL_TWO_SIDE, 1.0)
+        glLightfv( GL_LIGHT1, GL_POSITION, afLightPosition)
+
+        glEnable( GL_LIGHT1 ) 
+               
+
+        glMaterialfv(GL_BACK, GL_AMBIENT,   afAmbientGray) 
+        glMaterialfv(GL_BACK, GL_DIFFUSE,   afDiffuseGray) 
+        glMaterialfv(GL_BACK, GL_SPECULAR,  afSpecularWhite) 
+        glMaterialf( GL_BACK, GL_SHININESS, 0.1)
         glMaterialfv(GL_FRONT, GL_AMBIENT,   afAmbientGray) 
         glMaterialfv(GL_FRONT, GL_DIFFUSE,   afDiffuseGray) 
         glMaterialfv(GL_FRONT, GL_SPECULAR,  afSpecularWhite) 
-        glMaterialf( GL_FRONT, GL_SHININESS, 1.0)
+        glMaterialf( GL_FRONT, GL_SHININESS, 0.1)
+        #glMaterialfv(GL_FRONT, GL_EMISSION, afSpecularWhite)
 
         #fColor = [0.5, 0.5, 0.5, 1.0]
         #glEnable(GL_FOG)
@@ -140,6 +157,7 @@ class GLWidget(QtOpenGL.QGLWidget):
         #glClearColor(0.5, 0.5, 0.5, 1.0)
         
         #self.engine.produceMesh(["venusm.obj"],self)
+        #glDisable(GL_CULL_FACE)
 
         glMatrixMode(GL_MODELVIEW)
         glLoadIdentity()
@@ -271,5 +289,6 @@ class GLWidget(QtOpenGL.QGLWidget):
     def wheelEvent(self, event):
         direction = event.delta()/abs(event.delta())
         self.setEyeZoom(direction * 0.1)
-        self.updateGL()
-                                   
+        #distance = vectorDistance(self.eye, self.center) * direction * 0.1
+        #self.setEye(self.eye[0] + self.look[0]*distance, self.eye[1] + self.look[1]*distance, self.eye[2] + self.look[2]*distance)
+        self.updateGL()                          
