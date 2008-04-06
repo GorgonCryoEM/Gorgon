@@ -7,8 +7,8 @@ class VolumeSurfaceEditorForm(QtGui.QWidget):
         QtGui.QWidget.__init__(self, parent)
         self.app = main
         self.viewer = volumeViewer
-        self.connect(self.viewer, QtCore.SIGNAL("modelChanged()"), self.modelChanged)
         self.connect(self.viewer, QtCore.SIGNAL("modelLoaded()"), self.modelLoaded)
+        self.connect(self.viewer, QtCore.SIGNAL("modelUnloaded()"), self.modelUnloaded)
         self.createUI()
         self.createActions()
         self.createMenus()
@@ -28,23 +28,22 @@ class VolumeSurfaceEditorForm(QtGui.QWidget):
         self.connect(self.ui.horizontalSliderSampling, QtCore.SIGNAL("valueChanged(int)"),self.filterSampling.setValue)
         self.connect(self.filterIsoValue, QtCore.SIGNAL("valueChanged(int)"), self.isoValueChanged )
         self.connect(self.filterSampling, QtCore.SIGNAL("valueChanged(int)"), self.samplingChanged )
-        
-        
+            
     def loadWidget(self):
         if(self.app.actions.getAction("show_VolumeSurfaceEditor").isChecked()) :
+            self.showWidget(True)
+        else:
+            self.showWidget(False)
+
+    def showWidget(self, show):
+        if(show):
             self.app.addDockWidget(QtCore.Qt.BottomDockWidgetArea, self.dock)
             self.dock.show()
         else:
-            self.app.removeDockWidget(self.dock)
-            
+             self.app.removeDockWidget(self.dock)                       
+                    
     def dockVisibilityChanged(self, visible):
         self.app.actions.getAction("show_VolumeSurfaceEditor").setChecked(visible)
-    
-    def modelChanged(self):
-        if(not self.viewer.loaded) and self.app.actions.getAction("show_VolumeSurfaceEditor").isChecked():
-            self.app.actions.getAction("show_VolumeSurfaceEditor").trigger() 
-        elif (self.viewer.loaded) and self.app.actions.getAction("show_VolumeSurfaceEditor").isChecked() and not self.dock.isVisible():
-            self.loadWidget()
             
     def modelLoaded(self):
         maxDensity = self.viewer.renderer.getMaxDensity()
@@ -53,8 +52,13 @@ class VolumeSurfaceEditorForm(QtGui.QWidget):
         self.ui.horizontalSliderIsoLevel.setMaximum(int(maxDensity*100)+1)
         defaultDensity = (int(minDensity*100) + int(maxDensity*100.0)+1) / 2
         self.ui.horizontalSliderIsoLevel.setValue(defaultDensity)
-        self.viewer.renderer.setSampleDensity(self.ui.horizontalSliderSampling.value())
+        self.viewer.renderer.setSampleInterval(self.ui.horizontalSliderSampling.value())
         self.viewer.renderer.setSurfaceValue(defaultDensity/100.0)
+        self.app.actions.getAction("show_VolumeSurfaceEditor").setChecked(True)
+        self.showWidget(True)
+    
+    def modelUnloaded(self):
+        self.showWidget(False)            
         
     def createActions(self):               
         volumeEditorAct = QtGui.QAction(self.tr("&Volume Surface Editor"), self)
@@ -75,5 +79,5 @@ class VolumeSurfaceEditorForm(QtGui.QWidget):
         self.viewer.emitModelChanged()
     
     def samplingChanged(self, newLevel):
-        self.viewer.renderer.setSampleDensity(newLevel)
+        self.viewer.renderer.setSampleInterval(newLevel)
         self.viewer.emitModelChanged()

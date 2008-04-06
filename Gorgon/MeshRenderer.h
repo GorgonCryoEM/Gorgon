@@ -73,6 +73,15 @@ namespace wustl_mm {
 						glVertex3f(mesh->vertices[vertices[j]].position.X(), mesh->vertices[vertices[j]].position.Y(), mesh->vertices[vertices[j]].position.Z());
 					}
 					glEnd();
+
+					//glBegin(GL_POLYGON);
+					//for(int j = k-1; j >=0; j--) {
+					//	normal = -mesh->GetVertexNormal(vertices[j]);
+
+					//	glNormal3f(normal.X(), normal.Y(), normal.Z());
+					//	glVertex3f(mesh->vertices[vertices[j]].position.X(), mesh->vertices[vertices[j]].position.Y(), mesh->vertices[vertices[j]].position.Z());
+					//}
+					//glEnd();
 				}
 
 

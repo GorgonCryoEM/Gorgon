@@ -11,7 +11,7 @@ Date  : 02/06/2006
 
 //#define INCLUDE_SHEETS
 //#define GET_STATS
-#define VERBOSE
+//#define VERBOSE
 //#define MAKE_FINAL_MRC
 #define GET_AMINO_SEQUENCE
 

@@ -4,14 +4,16 @@
 #include <iostream>
 #include <tchar.h>
 #include <GL/glut.h>
+#include <string>
 #include <GraphMatch/VectorMath.h>
 #include "Renderer.h"
-#include "VoxelData.h"
-#include "Mesh.h"
-#include <string>
+#include "VolumeMesh.h"
 #include "GlobalConstants.h"
+#include <SkeletonMaker/volume.h>
+#include <GraySkeletonCPP/VolumeFormatConverter.h>
 
 using namespace std;
+using namespace wustl_mm::GraySkeletonCPP;
 
 namespace wustl_mm {
 	namespace Visualization {
@@ -21,88 +23,48 @@ namespace wustl_mm {
 			VolumeRenderer();
 			~VolumeRenderer();
 
-			void SetVoxelData(const VoxelData& data);
-			void LoadFile(string fileName);
-			void SetSurfaceValue(const float value);
-			float GetSurfaceValue() const ;
-			void SetSampleDensity(const float size);
-			float GetSampleDensity() const ;
-			const Mesh& getMesh() const ;
-			void Draw() const;
-			const Mesh& GetMesh() const;
-			string GetSupportedFileFormats();
-			void UpdateBoundingBox() ;
-			float GetMinDensity();
 			float GetMaxDensity();
+			float GetMinDensity();
+			float GetSurfaceValue() const ;
+			int GetSampleInterval() const ;
+			string GetSupportedFileFormats();
+			void LoadFile(string fileName);
+			void Unload();
+			void SetSurfaceValue(const float value);
+			void SetSampleInterval(const int size);
+			void Draw() const;
+			void UpdateBoundingBox() ;
 		
 		private:
-			void CalculateSurface();
-			void MarchingCube(float fX, float fY, float fZ, float fScale);
-			void GetNormal(Vector3 &normal, float fX, float fY, float fZ);
+			float GetVoxelData(int x, int y, int z);
 			float GetOffset(float fValue1, float fValue2, float fValueDesired);
+			void CalculateSurface();
+			void MarchingCube(int iX, int iY, int iZ, int iScale);
+			void GetNormal(Vector3 &normal, int iX, int iY, int iZ);
 
 		private:
-			Mesh _mesh;
-			float _surf_value, _sample;
-			VoxelData _voxel;
+			VolumeMesh _mesh;
+			float _surf_value;
+			int _sample;
+			Volume * _voxel;
 		};
 
 		VolumeRenderer::VolumeRenderer() {
-			_mesh = *(new Mesh());
-			_voxel = *(new VoxelData());
+			_mesh = *(new VolumeMesh());
+			_voxel = NULL;
 			_surf_value = 1.5;
-			_sample = 10;
-			CalculateSurface();
+			_sample = 1;
 		}
 		VolumeRenderer::~VolumeRenderer() {
 			delete &_mesh;
-			delete &_voxel;
-		}
-
-
-		void VolumeRenderer::Draw() const {
-			if(_voxel.IsLoaded()) {
-				_mesh.drawGL(_voxel.data->getSizeX(), _voxel.data->getSizeY(), _voxel.data->getSizeZ()); 
+			if(_voxel != NULL) {
+				delete _voxel;
 			}
 		}
 
-		void VolumeRenderer::SetVoxelData(const VoxelData& data) {
-			delete &_voxel;
-			_voxel = data;
-			CalculateSurface();
+		float VolumeRenderer::GetSurfaceValue() const { 
+			return _surf_value; 
 		}
-
-		void VolumeRenderer::SetSurfaceValue(const float value) {
-			_surf_value = value;
-			CalculateSurface();
-		}
-
-		float VolumeRenderer::GetSurfaceValue() const { return _surf_value; }
-
-		void VolumeRenderer::SetSampleDensity(const float size) {
-			_sample = size;
-			CalculateSurface();
-		}
-
-		float VolumeRenderer::GetSampleDensity() const  { return _sample; }
-
-		const Mesh& VolumeRenderer::GetMesh() const  { return _mesh; }
-
-		void VolumeRenderer::CalculateSurface() {
-			_mesh.clear();
-			//_mesh.addTriangle(Point3(0,0,0), Point3(0,1,0), Point3(0,1,1), Vector3(1,0,0));
-
-			int iX, iY, iZ;
-			float fStepSize = 1.0/_sample;
-			for(iX = 0; iX < _sample; iX++)
-			for(iY = 0; iY < _sample; iY++)
-			for(iZ = 0; iZ < _sample; iZ++)
-			{
-					MarchingCube(iX*fStepSize, iY*fStepSize, iZ*fStepSize, fStepSize);
-			}
-		}
-
-
 
 		float VolumeRenderer::GetOffset(float fValue1, float fValue2, float fValueDesired)
 		{
@@ -115,9 +77,62 @@ namespace wustl_mm {
 				return (fValueDesired - fValue1)/fDelta;
 		}
 
-		//MarchCube performs the Marching Cubes algorithm on a single cube
-		void VolumeRenderer::MarchingCube(float fX, float fY, float fZ, float fScale)
-		{
+		float VolumeRenderer::GetVoxelData(int x, int y, int z) {
+			if((x < 0) || (x > _voxel->getSizeX()-1) || (y < 0) || (y > _voxel->getSizeY()-1) || (z < 0) || (z > _voxel->getSizeZ()-1)) {
+				return 0.0f;
+			} else {
+				return _voxel->getDataAt(x, y, z);
+			}
+		}
+
+		float VolumeRenderer::GetMinDensity() {
+			return _voxel->getMin();
+		}
+
+		float VolumeRenderer::GetMaxDensity(){
+			return _voxel->getMax();
+		}
+		int VolumeRenderer::GetSampleInterval() const  { 
+			return _sample; 
+		}
+
+		string VolumeRenderer::GetSupportedFileFormats() {
+			return "Volumes (*.mrc)";
+		}
+
+		void VolumeRenderer::Draw() const {
+			if(_voxel != NULL) {
+				_mesh.drawGL(); 
+			}
+		}
+
+		void VolumeRenderer::SetSurfaceValue(const float value) {
+			_surf_value = value;
+			CalculateSurface();
+		}
+
+		void VolumeRenderer::SetSampleInterval(const int size) {
+			_sample = size;
+			CalculateSurface();
+		}
+
+		void VolumeRenderer::CalculateSurface() {
+			_mesh.clear();
+			if(_voxel != NULL) {
+				int iX, iY, iZ;
+				for(iX = 0; iX < _voxel->getSizeX(); iX++) {
+					for(iY = 0; iY < _voxel->getSizeY(); iY++) {
+						for(iZ = 0; iZ < _voxel->getSizeZ(); iZ++) {
+								MarchingCube(iX*_sample, iY*_sample, iZ*_sample, _sample);
+						}
+					}
+				}
+			}
+		}
+
+
+
+		void VolumeRenderer::MarchingCube(int iX, int iY, int iZ, int iScale){
 				extern int aiCubeEdgeFlags[256];
 				extern int a2iTriangleConnectionTable[256][16];
 
@@ -131,9 +146,9 @@ namespace wustl_mm {
 				//Make a local copy of the values at the cube's corners
 				for(iVertex = 0; iVertex < 8; iVertex++)
 				{
-					afCubeValue[iVertex] = _voxel.getValue(fX + a2fVertexOffset[iVertex][0]*fScale,
-														   fY + a2fVertexOffset[iVertex][1]*fScale,
-														   fZ + a2fVertexOffset[iVertex][2]*fScale);
+					afCubeValue[iVertex] = GetVoxelData(iX + a2iVertexOffset[iVertex][0]*iScale,
+														iY + a2iVertexOffset[iVertex][1]*iScale,
+														iZ + a2iVertexOffset[iVertex][2]*iScale);
 				}
 
 				//Find which vertices are inside of the surface and which are outside
@@ -163,9 +178,9 @@ namespace wustl_mm {
 								fOffset = GetOffset(afCubeValue[ a2iEdgeConnection[iEdge][0] ], 
 															 afCubeValue[ a2iEdgeConnection[iEdge][1] ], _surf_value);
 
-								asEdgeVertex[iEdge][0] = fX + (a2fVertexOffset[ a2iEdgeConnection[iEdge][0] ][0]  +  fOffset * a2fEdgeDirection[iEdge][0]) * fScale;
-								asEdgeVertex[iEdge][1] = fY + (a2fVertexOffset[ a2iEdgeConnection[iEdge][0] ][1]  +  fOffset * a2fEdgeDirection[iEdge][1]) * fScale;
-								asEdgeVertex[iEdge][2] = fZ + (a2fVertexOffset[ a2iEdgeConnection[iEdge][0] ][2]  +  fOffset * a2fEdgeDirection[iEdge][2]) * fScale;
+								asEdgeVertex[iEdge][0] = (float)(iX + (a2iVertexOffset[ a2iEdgeConnection[iEdge][0] ][0]) +  fOffset * (float)(a2iEdgeDirection[iEdge][0]) * iScale);
+								asEdgeVertex[iEdge][1] = (float)(iY + (a2iVertexOffset[ a2iEdgeConnection[iEdge][0] ][1]) +  fOffset * (float)(a2iEdgeDirection[iEdge][1]) * iScale);
+								asEdgeVertex[iEdge][2] = (float)(iZ + (a2iVertexOffset[ a2iEdgeConnection[iEdge][0] ][2]) +  fOffset * (float)(a2iEdgeDirection[iEdge][2]) * iScale);
 
 								GetNormal(asEdgeNorm[iEdge], asEdgeVertex[iEdge][0], asEdgeVertex[iEdge][1], asEdgeVertex[iEdge][2]);
 						}
@@ -198,37 +213,47 @@ namespace wustl_mm {
 		}
 
 		void VolumeRenderer::LoadFile(string fileName) {
-			_voxel.loadVolume(fileName);
+			if(_voxel != NULL) {
+				delete _voxel;
+			}
+			_voxel = VolumeFormatConverter::LoadVolume(fileName);
+			CalculateSurface();
 			UpdateBoundingBox();
 		}
 
-		void VolumeRenderer::UpdateBoundingBox() {
-			for(int i = 0; i < 3; i++) {
-				minPts[i] = 0;
+		void VolumeRenderer::Unload() {
+			if(_voxel != NULL) {
+				delete _voxel;
 			}
-			maxPts[0] = _voxel.data->getSizeX()-1;
-			maxPts[1] = _voxel.data->getSizeY()-1;
-			maxPts[2] = _voxel.data->getSizeZ()-1;
+			_voxel = NULL;
+			CalculateSurface();
+			UpdateBoundingBox();
+
+		}
+		void VolumeRenderer::UpdateBoundingBox() {
+			if(_voxel == NULL) {
+				for(int i = 0; i < 3; i++) {
+					minPts[i] = 0;
+					maxPts[i] = 1;
+				}
+			} else {
+				for(int i = 0; i < 3; i++) {
+					minPts[i] = 0;
+				}
+				maxPts[0] = _voxel->getSizeX()-1;
+				maxPts[1] = _voxel->getSizeY()-1;
+				maxPts[2] = _voxel->getSizeZ()-1;
+			}
 		}
 
-		void VolumeRenderer::GetNormal(Vector3 &normal, float fX, float fY, float fZ) {
-				normal[0] = _voxel.getValue(fX-0.01, fY, fZ) - _voxel.getValue(fX+0.01, fY, fZ);
-				normal[1] = _voxel.getValue(fX, fY-0.01, fZ) - _voxel.getValue(fX, fY+0.01, fZ);
-				normal[2] = _voxel.getValue(fX, fY, fZ-0.01) - _voxel.getValue(fX, fY, fZ+0.01);
+		void VolumeRenderer::GetNormal(Vector3 &normal, int iX, int iY, int iZ) {
+				normal[0] = GetVoxelData(iX+1, iY, iZ) + GetVoxelData(iX-1, iY, iZ);
+				normal[1] = GetVoxelData(iX, iY+1, iZ) + GetVoxelData(iX, iY-1, iZ);
+				normal[2] = GetVoxelData(iX, iY, iZ+1) + GetVoxelData(iX, iY, iZ-1);
 				normal.normalize();
 		}
 
-		string VolumeRenderer::GetSupportedFileFormats() {
-			return "Volumes (*.mrc)";
-		}
 
-		float VolumeRenderer::GetMinDensity() {
-			return _voxel.data->getMin();
-		}
-
-		float VolumeRenderer::GetMaxDensity(){
-			return _voxel.data->getMax();
-		}
 	}
 }
 

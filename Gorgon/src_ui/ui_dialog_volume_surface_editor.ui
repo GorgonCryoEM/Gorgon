@@ -58,13 +58,13 @@
     <widget class="QLabel" name="labelIsoValueDisplay" >
      <property name="minimumSize" >
       <size>
-       <width>20</width>
+       <width>40</width>
        <height>0</height>
       </size>
      </property>
      <property name="maximumSize" >
       <size>
-       <width>20</width>
+       <width>40</width>
        <height>16777215</height>
       </size>
      </property>
@@ -83,22 +83,22 @@
    <item row="1" column="1" >
     <widget class="QSlider" name="horizontalSliderSampling" >
      <property name="minimum" >
-      <number>10</number>
+      <number>1</number>
      </property>
      <property name="maximum" >
-      <number>256</number>
+      <number>8</number>
      </property>
      <property name="pageStep" >
-      <number>10</number>
+      <number>1</number>
      </property>
      <property name="value" >
-      <number>50</number>
+      <number>1</number>
      </property>
      <property name="orientation" >
       <enum>Qt::Horizontal</enum>
      </property>
      <property name="tickPosition" >
-      <enum>QSlider::NoTicks</enum>
+      <enum>QSlider::TicksBelow</enum>
      </property>
      <property name="tickInterval" >
       <number>0</number>
@@ -108,7 +108,7 @@
    <item row="1" column="2" >
     <widget class="QLabel" name="labelSamplingDisplay" >
      <property name="text" >
-      <string>50</string>
+      <string>1</string>
      </property>
     </widget>
    </item>
