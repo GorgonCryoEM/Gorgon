@@ -56,7 +56,7 @@ class BaseViewer(QtGui.QWidget):
             self.renderer.drawBoundingBox()
             glPopAttrib()
 
-        glEndList()            
+        glEndList() 
 
     def emitModelLoaded(self):
         self.emit(QtCore.SIGNAL("modelLoaded()"))

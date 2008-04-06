@@ -54,7 +54,8 @@ class VolumeViewer(BaseViewer):
         self.app.menus.addMenu("options-visualization-volume", self.tr("V&olume"), "options-visualization");
         self.app.menus.addAction("options-visualization-volume-boundingBox", self.app.actions.getAction("boundingBox_Volume"), "options-visualization-volume")
         self.app.menus.addAction("options-visualization-volume-center", self.app.actions.getAction("center_Volume"), "options-visualization-volume");     
-        self.app.menus.addMenu("actions-volume", self.tr("V&olume"), "actions");             
+        self.app.menus.addMenu("actions-volume", self.tr("V&olume"), "actions");   
+        self.app.menus.addMenu("actions-volume-skeletonization", self.tr("S&keletonization"), "actions-volume");               
     
     def createChildWindows(self):
         self.surfaceEditor = VolumeSurfaceEditorForm(self.app, self)

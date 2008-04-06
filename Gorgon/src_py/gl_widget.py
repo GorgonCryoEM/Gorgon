@@ -28,6 +28,8 @@ class GLWidget(QtOpenGL.QGLWidget):
         for s in self.scene:
             self.connect(s, QtCore.SIGNAL("viewerSetCenter(float, float, float, float, float, float)"), self.sceneSetCenter)
             self.connect(s, QtCore.SIGNAL("modelChanged()"), self.updateGL)
+            self.connect(s, QtCore.SIGNAL("modelLoaded()"), self.updateGL)
+            self.connect(s, QtCore.SIGNAL("modelUnloaded()"), self.updateGL)
 
     
     def setEye(self, x, y, z):
