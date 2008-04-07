@@ -59,7 +59,8 @@ BOOST_PYTHON_MODULE(gorgon_cpp_wrapper)
 		.def("setSurfaceValue", &VolumeRenderer::SetSurfaceValue)
 		.def("setSampleInterval", &VolumeRenderer::SetSampleInterval)
 		.def("performBinarySkeletonizationJu2007", &VolumeRenderer::PerformBinarySkeletonizationJu2007, return_value_policy<manage_new_object>())		
-    ;
+		.def("performGrayscaleSkeletonizationAbeysinghe2008", &VolumeRenderer::PerformGrayscaleSkeletonizationAbeysinghe2008, return_value_policy<manage_new_object>())		
+	;
 
 	class_<BackEndInterface>("BackEndInterface", init<>())
         .def("SetConstantsFromFile", &BackEndInterface::SetConstantsFromFile)

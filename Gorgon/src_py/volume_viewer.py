@@ -3,6 +3,8 @@ from base_viewer import BaseViewer
 from gorgon_cpp_wrapper import VolumeRenderer
 from volume_surface_editor_form import VolumeSurfaceEditorForm
 from volume_binary_skeletonization_form import VolumeBinarySkeletonizationForm
+from volume_grayscale_skeletonization_form import VolumeGrayscaleSkeletonizationForm
+
 
 try:
     from OpenGL.GL import *
@@ -62,6 +64,7 @@ class VolumeViewer(BaseViewer):
     def createChildWindows(self):
         self.surfaceEditor = VolumeSurfaceEditorForm(self.app, self)
         self.binarySkeletonizer = VolumeBinarySkeletonizationForm(self.app, self)
+        self.grayscaleSkeletonizer = VolumeGrayscaleSkeletonizationForm(self.app, self)
         
     def updateActionsAndMenus(self):
         self.app.actions.getAction("unload_Volume").setEnabled(self.loaded)
