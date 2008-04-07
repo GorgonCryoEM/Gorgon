@@ -15,9 +15,11 @@ except ImportError:
 class SkeletonViewer(BaseViewer):
     def __init__(self, main, parent=None):
         BaseViewer.__init__(self, main, parent)
+        self.title = "Skeleton"
         self.renderer = MeshRenderer()          
         self.createUI()      
         self.app.viewers["skeleton"] = self;
+        self.initVisualizationOptions()
 
     def createUI(self):
         self.createActions()
@@ -40,35 +42,16 @@ class SkeletonViewer(BaseViewer):
         self.connect(closeAct, QtCore.SIGNAL("triggered()"), self.unloadData)
         self.app.actions.addAction("unload_Skeleton", closeAct)
         
-        boundingBoxAct = QtGui.QAction(self.tr("Show bounding box"), self)
-        boundingBoxAct.setStatusTip(self.tr("Show a bounding box surrounding the skeleton"))
-        boundingBoxAct.setCheckable(True)
-        boundingBoxAct.setChecked(self.showBox)
-        self.connect(boundingBoxAct, QtCore.SIGNAL("triggered()"), self.setShowBox)
-        self.app.actions.addAction("boundingBox_Skeleton", boundingBoxAct)
-                
-        centerAct = QtGui.QAction(self.tr("&Center"), self)
-        self.connect(centerAct, QtCore.SIGNAL("triggered()"), self.emitViewerSetCenter)
-        self.app.actions.addAction("center_Skeleton", centerAct)
                         
     def createMenus(self):
         self.app.menus.addAction("file-open-skeleton", self.app.actions.getAction("load_Skeleton"), "file-open")    
         self.app.menus.addAction("file-close-skeleton", self.app.actions.getAction("unload_Skeleton"), "file-close");
-        self.app.menus.addMenu("options-visualization-skeleton", self.tr("S&keleton"), "options-visualization");
-        self.app.menus.addAction("options-visualization-skeleton-boundingBox", self.app.actions.getAction("boundingBox_Skeleton"), "options-visualization-skeleton")
-        self.app.menus.addAction("options-visualization-skeleton-center", self.app.actions.getAction("center_Skeleton"), "options-visualization-skeleton");     
         self.app.menus.addMenu("actions-skeleton", self.tr("S&keleton"), "actions");
                    
     def updateActionsAndMenus(self):
         self.app.actions.getAction("unload_Skeleton").setEnabled(self.loaded)
-        self.app.actions.getAction("center_Skeleton").setEnabled(self.loaded)
-        self.app.actions.getAction("boundingBox_Skeleton").setEnabled(self.loaded)   
-        self.app.menus.getMenu("options-visualization-skeleton").setEnabled(self.loaded) 
         self.app.menus.getMenu("actions-skeleton").setEnabled(self.loaded)       
           
-    def setShowBox(self):
-        self.showBox = self.app.actions.getAction("boundingBox_Skeleton").isChecked()
-        self.emitModelChanged()
         
     def loadVolume(self, volume):
         if(self.loaded):

@@ -57,9 +57,11 @@ class VolumeSurfaceEditorForm(QtGui.QWidget):
         self.viewer.renderer.setSampleInterval(self.ui.horizontalSliderSampling.value())
         self.viewer.renderer.setSurfaceValue(defaultDensity/100.0)
         self.app.actions.getAction("show_VolumeSurfaceEditor").setChecked(True)
+        self.app.actions.getAction("show_VolumeSurfaceEditor").setEnabled(True)
         self.showWidget(True)
     
     def modelUnloaded(self):
+        self.app.actions.getAction("show_VolumeSurfaceEditor").setEnabled(False)
         self.showWidget(False)            
         
     def createActions(self):               
@@ -67,6 +69,7 @@ class VolumeSurfaceEditorForm(QtGui.QWidget):
         volumeEditorAct.setStatusTip(self.tr("Modify the volume surface"))
         volumeEditorAct.setCheckable(True)
         volumeEditorAct.setChecked(True)
+        volumeEditorAct.setEnabled(False)
         self.connect(volumeEditorAct, QtCore.SIGNAL("triggered()"), self.loadWidget)
         self.app.actions.addAction("show_VolumeSurfaceEditor", volumeEditorAct)
   

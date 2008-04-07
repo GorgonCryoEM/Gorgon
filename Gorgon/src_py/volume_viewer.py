@@ -18,10 +18,12 @@ except ImportError:
 class VolumeViewer(BaseViewer):
     def __init__(self, main, parent=None):
         BaseViewer.__init__(self, main, parent)
+        self.title = "Volume"
         self.renderer = VolumeRenderer()          
         self.loaded = False
         self.createUI()
         self.app.viewers["volume"] = self;
+        self.initVisualizationOptions()        
 
     def createUI(self):
         self.createActions()
@@ -40,24 +42,11 @@ class VolumeViewer(BaseViewer):
         closeAct.setStatusTip(self.tr("Close the loaded volume"))
         self.connect(closeAct, QtCore.SIGNAL("triggered()"), self.unloadData)
         self.app.actions.addAction("unload_Volume", closeAct)
-        
-        boundingBoxAct = QtGui.QAction(self.tr("Show bounding box"), self)
-        boundingBoxAct.setStatusTip(self.tr("Show a bounding box surrounding the volume"))
-        boundingBoxAct.setCheckable(True)
-        boundingBoxAct.setChecked(self.showBox)
-        self.connect(boundingBoxAct, QtCore.SIGNAL("triggered()"), self.setShowBox)
-        self.app.actions.addAction("boundingBox_Volume", boundingBoxAct)
-                
-        centerAct = QtGui.QAction(self.tr("&Center"), self)
-        self.connect(centerAct, QtCore.SIGNAL("triggered()"), self.emitViewerSetCenter)
-        self.app.actions.addAction("center_Volume", centerAct)
+                       
                         
     def createMenus(self):
         self.app.menus.addAction("file-open-volume", self.app.actions.getAction("load_Volume"), "file-open")    
         self.app.menus.addAction("file-close-volume", self.app.actions.getAction("unload_Volume"), "file-close");
-        self.app.menus.addMenu("options-visualization-volume", self.tr("V&olume"), "options-visualization");
-        self.app.menus.addAction("options-visualization-volume-boundingBox", self.app.actions.getAction("boundingBox_Volume"), "options-visualization-volume")
-        self.app.menus.addAction("options-visualization-volume-center", self.app.actions.getAction("center_Volume"), "options-visualization-volume");     
         self.app.menus.addMenu("actions-volume", self.tr("V&olume"), "actions");   
         self.app.menus.addMenu("actions-volume-skeletonization", self.tr("S&keletonization"), "actions-volume");               
     
@@ -68,11 +57,6 @@ class VolumeViewer(BaseViewer):
         
     def updateActionsAndMenus(self):
         self.app.actions.getAction("unload_Volume").setEnabled(self.loaded)
-        self.app.actions.getAction("center_Volume").setEnabled(self.loaded)
-        self.app.actions.getAction("boundingBox_Volume").setEnabled(self.loaded)   
-        self.app.menus.getMenu("options-visualization-volume").setEnabled(self.loaded) 
         self.app.menus.getMenu("actions-volume").setEnabled(self.loaded)       
           
-    def setShowBox(self):
-        self.showBox = self.app.actions.getAction("boundingBox_Volume").isChecked()
-        self.emitModelChanged()        
+      

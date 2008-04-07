@@ -1,7 +1,6 @@
 from PyQt4 import QtGui, QtCore
 from about_form import AboutForm
-from gl_widget import GLWidget
-from gl_options import GLOptions
+from camera import Camera
 from volume_viewer import VolumeViewer;
 from skeleton_viewer import SkeletonViewer;
 
@@ -19,11 +18,10 @@ class WindowManager(QtGui.QWidget):
         
     def createChildWindows(self):
         self.aboutForm = AboutForm(self.app)
-        self.glOptions = GLOptions(self.app)
         self.volumeViewer = VolumeViewer(self.app)
         self.skeletonViewer = SkeletonViewer(self.app)
-        self.displayArea = GLWidget([self.volumeViewer, self.skeletonViewer], self.glOptions)   
-        self.app.setCentralWidget(self.displayArea)
+        self.mainCamera = Camera([self.volumeViewer, self.skeletonViewer])   
+        self.app.setCentralWidget(self.mainCamera)
         
     def createActions(self):
         pass
