@@ -46,7 +46,9 @@ class SkeletonLaplacianSmoothingForm(QtGui.QWidget):
         self.app.menus.addAction("actions-skeleton-laplacianSmoothing", self.app.actions.getAction("perform_SkeletonLaplacianSmoothing"), "actions-skeleton")        
     
     def accept(self):
+        self.setCursor(QtCore.Qt.BusyCursor)
         self.viewer.renderer.performSmoothLaplacian(self.ui.doubleSpinBoxConvergenceRate.value(), self.ui.spinBoxNoOfIterations.value())
+        self.setCursor(QtCore.Qt.ArrowCursor)
         self.viewer.emitModelChanged()
         
     def reject(self):

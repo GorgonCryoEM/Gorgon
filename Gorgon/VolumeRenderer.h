@@ -9,6 +9,7 @@
 #include "Renderer.h"
 #include "GlobalConstants.h"
 #include <SkeletonMaker/volume.h>
+#include <GraySkeletonCPP/GlobalDefinitions.h>
 #include <GraySkeletonCPP/VolumeSkeletonizer.h>
 #include <GraySkeletonCPP/VolumeFormatConverter.h>
 #include <ProteinMorph/NonManifoldMesh.h>
@@ -41,6 +42,7 @@ namespace wustl_mm {
 			void UpdateBoundingBox() ;
 			void Unload();
 			Volume * PerformBinarySkeletonizationJu2007(double threshold, int minCurveSize, int minSurfaceSize);
+			Volume * PerformGrayscaleSkeletonizationAbeysinghe2008(double startDensity, int stepCount, int minCurveSize, int minSurfaceSize, int curveRadius, int surfaceRadius, int skeletonSmoothenRadius);
 		
 		private:
 			int GetHashKey(int x, int y, int z, int edge, int iScale);
@@ -301,9 +303,19 @@ namespace wustl_mm {
 			Volume * outputVol = skeletonizer->PerformPureJuSkeletonization(_voxel, "", threshold, minCurveSize, minSurfaceSize);
 			delete skeletonizer;
 			return outputVol;
-
 		}
 
+		Volume * VolumeRenderer::PerformGrayscaleSkeletonizationAbeysinghe2008(double startDensity, int stepCount, int minCurveSize, int minSurfaceSize, int curveRadius, int surfaceRadius, int skeletonRadius) {
+			double stepSize = (_voxel->getMax() - startDensity) / stepCount;
+			if(!isZero(stepSize)) {
+				VolumeSkeletonizer * skeletonizer = new VolumeSkeletonizer(0, curveRadius, surfaceRadius, skeletonRadius);
+				Volume * outputVol = skeletonizer->PerformImmersionSkeletonizationAndPruning(_voxel, startDensity, _voxel->getMax(), stepSize, 0, 0, minCurveSize, minSurfaceSize, 0, 0, "", true, 1.0, DEFAULT_PRUNE_THRESHOLD, DEFAULT_PRUNE_THRESHOLD);
+				delete skeletonizer;
+				return outputVol;
+			} else {
+				return NULL;
+			}
+		}
 	}
 }
 

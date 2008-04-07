@@ -50,8 +50,8 @@ class VolumeSurfaceEditorForm(QtGui.QWidget):
         maxDensity = self.viewer.renderer.getMaxDensity()
         minDensity = self.viewer.renderer.getMinDensity()
         self.ui.horizontalSliderIsoLevel.setMinimum(int(minDensity*100))
-        self.ui.horizontalSliderIsoLevel.setMaximum(int(maxDensity*100)+1)
-        defaultDensity = (int(minDensity*100) + int(maxDensity*100.0)+1) / 2
+        self.ui.horizontalSliderIsoLevel.setMaximum(int(maxDensity*100))
+        defaultDensity = (int(minDensity*100) + int(maxDensity*100.0)) / 2
         self.ui.horizontalSliderIsoLevel.setValue(defaultDensity)
         self.viewer.renderer.setSampleInterval(self.ui.horizontalSliderSampling.value())
         self.viewer.renderer.setSurfaceValue(defaultDensity/100.0)
@@ -76,7 +76,9 @@ class VolumeSurfaceEditorForm(QtGui.QWidget):
         self.ui.labelIsoValueDisplay.setNum(newLevel/100.0)
         
     def isoValueChanged(self, newLevel):
+        self.setCursor(QtCore.Qt.BusyCursor)
         self.viewer.renderer.setSurfaceValue(newLevel/100.0)
+        self.setCursor(QtCore.Qt.ArrowCursor)
         self.viewer.emitModelChanged()
     
     def samplingChanged(self, newLevel):
