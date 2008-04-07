@@ -1,5 +1,6 @@
 from PyQt4 import QtGui, QtCore, QtOpenGL
 from gorgon_cpp_wrapper import VolumeRenderer
+from model_visualization_form import ModelVisualizationForm
 
 try:
     from OpenGL.GL import *
@@ -12,18 +13,52 @@ except ImportError:
 
 class BaseViewer(QtGui.QWidget):
     def __init__(self, main, parent=None):
-        QtGui.QWidget.__init__(self, parent)
+        QtGui.QWidget.__init__(self, parent)        
         self.app = main      
+        self.title = "Untitled"
         self.loaded = False
+        self.displayStyle = 2;
+        self.modelVisible = True;
         self.connect(self, QtCore.SIGNAL("modelChanged()"), self.modelChanged) 
         self.connect(self, QtCore.SIGNAL("modelLoaded()"), self.modelChanged) 
         self.connect(self, QtCore.SIGNAL("modelUnloaded()"), self.modelChanged)    
         self.gllist = 0
         self.transparency = 0
         self.showBox = True
+        
+    def initVisualizationOptions(self):
+        self.visualizationOptions = ModelVisualizationForm(self.app, self)
+                        
+    def setDisplayType(self):
+        if self.displayStyle == 0:
+            # Wireframe
+            glEnable(GL_DEPTH_TEST)
+            glEnable(GL_LIGHTING)
+            glPolygonMode(GL_FRONT, GL_LINE)
+            glPolygonMode(GL_BACK, GL_LINE)
+            
+        elif self.displayStyle == 1:
+            # Flat Shade
+            glEnable(GL_DEPTH_TEST) 
+            glEnable(GL_LIGHTING)
+            glPolygonMode(GL_FRONT, GL_FILL)
+            glPolygonMode(GL_BACK, GL_FILL)
+            glShadeModel(GL_FLAT)
+            
+        elif self.displayStyle == 2:
+            glEnable(GL_DEPTH_TEST) 
+            glEnable(GL_LIGHTING)
+            glPolygonMode(GL_FRONT, GL_FILL)
+            glPolygonMode(GL_BACK, GL_FILL)
+            glShadeModel(GL_SMOOTH)
+            
+        else:
+            self.displayStyle = 2;
+            self.setDisplayType()            
                                           
     def draw(self):
-        if self.gllist != 0:
+        if self.modelVisible and (self.gllist != 0):
+            self.setDisplayType()
             glPushMatrix()
             glTranslated(-0.5, -0.5, -0.5)
             glCallList(self.gllist)
@@ -74,6 +109,10 @@ class BaseViewer(QtGui.QWidget):
         
     def emitModelChanged(self):
         self.emit(QtCore.SIGNAL("modelChanged()"))
+        
+    def emitModelVisualizationChanged(self):
+        self.emit(QtCore.SIGNAL("modelVisualizationChanged()"))
+        
         
     def emitViewerSetCenter(self):
         self.emit(QtCore.SIGNAL("viewerSetCenter(float, float, float, float, float, float)"), 
