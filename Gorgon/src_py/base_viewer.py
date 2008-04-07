@@ -32,8 +32,10 @@ class BaseViewer(QtGui.QWidget):
     def loadData(self):
         fileName = QtGui.QFileDialog.getOpenFileName(self, self.tr("Open Data"), "", self.tr(self.renderer.getSupportedLoadFileFormats()))
         if not fileName.isEmpty():  
+            self.setCursor(QtCore.Qt.WaitCursor)
             self.renderer.loadFile(str(fileName))
             self.loaded = True
+            self.setCursor(QtCore.Qt.ArrowCursor)
             self.emitModelLoaded()
             self.emitViewerSetCenter()
     

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_dialog_volume_grayscale_skeletonization.ui'
 #
-# Created: Sun Apr 06 21:00:38 2008
+# Created: Sun Apr 06 21:13:16 2008
 #      by: PyQt4 UI code generator 4.3.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -131,6 +131,7 @@ class Ui_DialogVolumeGrayscaleSkeletonization(object):
         self.retranslateUi(DialogVolumeGrayscaleSkeletonization)
         QtCore.QObject.connect(self.buttonBox,QtCore.SIGNAL("accepted()"),DialogVolumeGrayscaleSkeletonization.accept)
         QtCore.QObject.connect(self.buttonBox,QtCore.SIGNAL("rejected()"),DialogVolumeGrayscaleSkeletonization.reject)
+        QtCore.QObject.connect(self.horizontalSliderStepCount,QtCore.SIGNAL("valueChanged(int)"),self.labelStepSizeDisplay.setNum)
         QtCore.QMetaObject.connectSlotsByName(DialogVolumeGrayscaleSkeletonization)
         DialogVolumeGrayscaleSkeletonization.setTabOrder(self.comboBoxMethod,self.textCitation)
         DialogVolumeGrayscaleSkeletonization.setTabOrder(self.textCitation,self.horizontalSliderStartingDensity)

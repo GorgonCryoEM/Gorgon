@@ -1,6 +1,7 @@
 from PyQt4 import QtCore, QtGui
 from ui_dialog_volume_surface_editor import Ui_DialogVolumeSurfaceEditor
 from delayed_filter import DelayedFilter
+import threading
 
 class VolumeSurfaceEditorForm(QtGui.QWidget):
     def __init__(self, main, volumeViewer, parent=None):
@@ -76,6 +77,9 @@ class VolumeSurfaceEditorForm(QtGui.QWidget):
         self.ui.labelIsoValueDisplay.setNum(newLevel/100.0)
         
     def isoValueChanged(self, newLevel):
+        threading.Thread(target = self.updateIsoValue, args=(newLevel,)).start()
+        
+    def updateIsoValue(self, newLevel):
         self.setCursor(QtCore.Qt.BusyCursor)
         self.viewer.renderer.setSurfaceValue(newLevel/100.0)
         self.setCursor(QtCore.Qt.ArrowCursor)

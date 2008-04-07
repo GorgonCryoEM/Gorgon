@@ -182,7 +182,6 @@ namespace wustl_mm {
 				delete _voxel;
 			}
 			_voxel = VolumeFormatConverter::LoadVolume(fileName);
-			CalculateSurface();
 			UpdateBoundingBox();
 		}
 
