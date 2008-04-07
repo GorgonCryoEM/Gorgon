@@ -12,6 +12,8 @@ except ImportError:
     
 class GLWidget(QtOpenGL.QGLWidget):
     def __init__(self, scene, glOptions, parent=None):
+        self.aspectRatio = 1.0;        
+        self.setEyeZoom(0.25)
         QtOpenGL.QGLWidget.__init__(self, parent)
 
         self.scene = scene
@@ -21,7 +23,6 @@ class GLWidget(QtOpenGL.QGLWidget):
         self.setEye(0, -4, 0) 
         self.setUp(0, 0, 1)     
         self.setEyeRotation(0, 0, 0)
-        self.setEyeZoom(0)
 
         self.lastPos = QtCore.QPoint()
         
@@ -70,7 +71,8 @@ class GLWidget(QtOpenGL.QGLWidget):
         self.eyeRotation = [yaw, pitch, roll]
     
     def setEyeZoom(self, value):
-        self.eyeZoom = value;
+        self.eyeZoom = min(max(value, 0.0001), 0.9999);
+        self.setGlProjection()
     
     def sceneSetCenter(self, minX, minY, minZ, maxX, maxY, maxZ):
         self.setEye(maxX+(maxX-minX), maxY+(maxY-minY), maxZ+(maxZ-minZ))
@@ -87,9 +89,6 @@ class GLWidget(QtOpenGL.QGLWidget):
         glPushMatrix()
         self.sceneMatrix = glGetFloatv( GL_MODELVIEW_MATRIX )
         glPopMatrix()  
-        
-    def scale(self):
-        return self.scale
     
     def minimumSizeHint(self):
         return QtCore.QSize(50, 50)
@@ -190,8 +189,7 @@ class GLWidget(QtOpenGL.QGLWidget):
             
         else:
             self.setDisplayType(2)
-
-            
+      
     def setGluLookAt(self):
         gluLookAt(self.eye[0], self.eye[1], self.eye[2], 
                   self.center[0], self.center[1], self.center[2], 
@@ -207,30 +205,24 @@ class GLWidget(QtOpenGL.QGLWidget):
         glRotatef(self.eyeRotation[0], self.up[0], self.up[1], self.up[2])
         glRotated(self.eyeRotation[1], self.right[0], self.right[1], self.right[2])       
         glRotated(self.eyeRotation[2], self.look[0], self.look[1], self.look[2])
-        glScaled(1+self.eyeZoom, 1+self.eyeZoom, 1+self.eyeZoom) 
-
-        glTranslated(-self.center[0], -self.center[1], -self.center[2])
-        
-        
+        glTranslated(-self.center[0], -self.center[1], -self.center[2])      
         glMultMatrixf(self.sceneMatrix)
         self.sceneMatrix = glGetFloatv( GL_MODELVIEW_MATRIX )
-        self.setEyeRotation(0, 0, 0)
-        self.setEyeZoom(0)
         glPopMatrix()
         
+        self.setEyeRotation(0, 0, 0)
         self.drawScene()      
-
+               
     def drawScene(self):
         glPushMatrix()
         
         self.setGluLookAt()
-        
+                
         glMultMatrixf(self.sceneMatrix)
             
         glPushName(0)
         for s in self.scene:
             s.draw()
-        #self.scene.draw()
         glPopName()
         glPopMatrix()
        
@@ -264,14 +256,17 @@ class GLWidget(QtOpenGL.QGLWidget):
 #            print min_depth, max_depth, names 
         
     def resizeGL(self, width, height):
-        self.ratio = width/(1.0*height)
+        self.aspectRatio = width/(1.0*height)
         glViewport(0,0, width, height)
-        glMatrixMode(GL_PROJECTION)
-        glLoadIdentity()
-        gluPerspective(45, self.ratio, 0.1, 1000)
+        self.setGlProjection()
         glMatrixMode(GL_MODELVIEW)
         glLoadIdentity()
 
+    def setGlProjection(self):
+        glMatrixMode(GL_PROJECTION)
+        glLoadIdentity()
+        gluPerspective(180 * self.eyeZoom, self.aspectRatio, 0.1, 1000)
+        
     def mousePressEvent(self, event):
         self.lastPos = QtCore.QPoint(event.pos())
         
@@ -292,7 +287,7 @@ class GLWidget(QtOpenGL.QGLWidget):
     
     def wheelEvent(self, event):
         direction = event.delta()/abs(event.delta())
-        self.setEyeZoom(direction * 0.1)
+        self.setEyeZoom(self.eyeZoom + direction * 10.0/360.0)
         #distance = vectorDistance(self.eye, self.center) * direction * 0.1
         #self.setEye(self.eye[0] + self.look[0]*distance, self.eye[1] + self.look[1]*distance, self.eye[2] + self.look[2]*distance)
         self.updateGL()                          
