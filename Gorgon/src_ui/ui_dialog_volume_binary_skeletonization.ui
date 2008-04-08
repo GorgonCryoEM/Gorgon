@@ -1,0 +1,197 @@
+<ui version="4.0" >
+ <class>DialogVolumeBinarySkeletonization</class>
+ <widget class="QDialog" name="DialogVolumeBinarySkeletonization" >
+  <property name="windowModality" >
+   <enum>Qt::NonModal</enum>
+  </property>
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>401</width>
+    <height>217</height>
+   </rect>
+  </property>
+  <property name="minimumSize" >
+   <size>
+    <width>319</width>
+    <height>217</height>
+   </size>
+  </property>
+  <property name="windowTitle" >
+   <string>Volume - Binary Skeletonization</string>
+  </property>
+  <layout class="QGridLayout" >
+   <item row="0" column="0" >
+    <widget class="QLabel" name="labelMethod" >
+     <property name="text" >
+      <string>Method:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1" colspan="2" >
+    <widget class="QComboBox" name="comboBoxMethod" >
+     <property name="whatsThis" >
+      <string>The skeletonization method to use</string>
+     </property>
+     <item>
+      <property name="text" >
+       <string>Ju, Baker and Chiu [2007]</string>
+      </property>
+     </item>
+    </widget>
+   </item>
+   <item row="1" column="1" colspan="2" >
+    <widget class="QTextBrowser" name="textCitation" >
+     <property name="enabled" >
+      <bool>true</bool>
+     </property>
+     <property name="whatsThis" >
+      <string>Paper discussing the skeletonization method</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0" >
+    <widget class="QLabel" name="labelIsoLevel" >
+     <property name="text" >
+      <string>Density Threshold:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1" >
+    <widget class="QSlider" name="horizontalSliderIsoLevel" >
+     <property name="whatsThis" >
+      <string>Picks the density to use when performing skeletonization</string>
+     </property>
+     <property name="maximum" >
+      <number>25500</number>
+     </property>
+     <property name="singleStep" >
+      <number>1</number>
+     </property>
+     <property name="pageStep" >
+      <number>10</number>
+     </property>
+     <property name="value" >
+      <number>12800</number>
+     </property>
+     <property name="orientation" >
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="tickPosition" >
+      <enum>QSlider::NoTicks</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="2" >
+    <widget class="QLabel" name="labelIsoValueDisplay" >
+     <property name="minimumSize" >
+      <size>
+       <width>60</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="maximumSize" >
+      <size>
+       <width>60</width>
+       <height>16777215</height>
+      </size>
+     </property>
+     <property name="layoutDirection" >
+      <enum>Qt::RightToLeft</enum>
+     </property>
+     <property name="text" >
+      <string>128</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0" >
+    <widget class="QLabel" name="labelMinimumCurve" >
+     <property name="text" >
+      <string>Minimum Curve Length:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="1" colspan="2" >
+    <widget class="QSpinBox" name="spinBoxMinCurve" >
+     <property name="maximum" >
+      <number>1000000</number>
+     </property>
+     <property name="value" >
+      <number>4</number>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="0" >
+    <widget class="QLabel" name="labelMaximumCurve" >
+     <property name="text" >
+      <string>Minimum Surface Size:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="1" colspan="2" >
+    <widget class="QSpinBox" name="spinBoxMinSurface" >
+     <property name="maximum" >
+      <number>1000000</number>
+     </property>
+     <property name="value" >
+      <number>4</number>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="0" colspan="3" >
+    <widget class="QDialogButtonBox" name="buttonBox" >
+     <property name="orientation" >
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons" >
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::NoButton|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <tabstops>
+  <tabstop>comboBoxMethod</tabstop>
+  <tabstop>textCitation</tabstop>
+  <tabstop>horizontalSliderIsoLevel</tabstop>
+  <tabstop>spinBoxMinCurve</tabstop>
+  <tabstop>spinBoxMinSurface</tabstop>
+  <tabstop>buttonBox</tabstop>
+ </tabstops>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>DialogVolumeBinarySkeletonization</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>248</x>
+     <y>254</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>157</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>DialogVolumeBinarySkeletonization</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>316</x>
+     <y>260</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>286</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

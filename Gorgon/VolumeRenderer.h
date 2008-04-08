@@ -127,38 +127,9 @@ namespace wustl_mm {
 		}
 
 		void VolumeRenderer::Draw() const {
-			int vertices[40];
-			int lastVertex;
-			int k;
-
-			for(unsigned int i = 0; i < _mesh->faces.size(); i++) {
-				lastVertex = -1;
-
-				k = 0;
-				for(int j = _mesh->faces[i].edgeIds.size()-1; j >= 0; j--) {
-					if((_mesh->edges[_mesh->faces[i].edgeIds[j]].vertexIds[0] == _mesh->edges[_mesh->faces[i].edgeIds[(j+1)%_mesh->faces[i].edgeIds.size()]].vertexIds[0]) || 
-						(_mesh->edges[_mesh->faces[i].edgeIds[j]].vertexIds[0] == _mesh->edges[_mesh->faces[i].edgeIds[(j+1)%_mesh->faces[i].edgeIds.size()]].vertexIds[1])) {
-						lastVertex = _mesh->edges[_mesh->faces[i].edgeIds[j]].vertexIds[1];						
-					} else {
-						lastVertex = _mesh->edges[_mesh->faces[i].edgeIds[j]].vertexIds[0];
-					}
-					vertices[k] = lastVertex;
-					k++;						
-				}
-
-				glBegin(GL_POLYGON);
-				Vector3DFloat normal;
-				for(int j = 0; j < k; j++) {
-					normal = _mesh->GetVertexNormal(vertices[j]);
-
-					glNormal3f(normal.X(), normal.Y(), normal.Z());
-					glVertex3f(_mesh->vertices[vertices[j]].position.X(), _mesh->vertices[vertices[j]].position.Y(), _mesh->vertices[vertices[j]].position.Z());
-				}
-				glEnd();
+			if(_mesh != NULL) {
+				_mesh->Draw();
 			}
-
-			glFlush();
-
 		}
 
 		void VolumeRenderer::CalculateSurface() {
@@ -173,6 +144,15 @@ namespace wustl_mm {
 					}
 				}
 			}
+
+			for (unsigned int i = 0; i < _mesh->vertices.size(); i++) {
+				float jitter = (float)rand()/((float)RAND_MAX * 10);
+				_mesh->vertices[i].position = Vector3DFloat(_mesh->vertices[i].position.X()+jitter, _mesh->vertices[i].position.Y()+jitter, _mesh->vertices[i].position.Z()+jitter);
+			}
+
+			//NonManifoldMesh * newMesh = _mesh->SmoothLaplacian(0.25, 5);
+			//delete _mesh;
+			//_mesh = newMesh;
 		}
 
 

@@ -19,6 +19,7 @@ class SkeletonViewer(BaseViewer):
         self.renderer = MeshRenderer()          
         self.createUI()      
         self.app.viewers["skeleton"] = self;
+        self.modelColor = QtGui.QColor.fromRgba(QtGui.qRgba(255, 0, 0, 255))
         self.initVisualizationOptions()
 
     def createUI(self):

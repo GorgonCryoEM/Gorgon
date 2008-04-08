@@ -52,6 +52,8 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="glut32.lib"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)\ExternalLibraries\GL&quot;"
 				GenerateDebugInformation="true"
 				AssemblyDebug="1"
 				GenerateMapFile="true"
@@ -117,6 +119,8 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="glut32.lib"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)\ExternalLibraries\GL&quot;"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -179,6 +183,8 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="glut32.lib"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)\ExternalLibraries\GL&quot;"
 			/>
 			<Tool
 				Name="VCALinkTool"

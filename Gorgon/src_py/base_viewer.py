@@ -8,44 +8,65 @@ try:
     from OpenGL.GLUT import *
 except ImportError:
     app = QtGui.QApplication(sys.argv)
-    QtGui.QMessageBox.critical(None, "OpenGL grabber", "PyOpenGL must be installed to run Gorgon.", QtGui.QMessageBox.Ok | QtGui.QMessageBox.Default, QtGui.QMessageBox.NoButton)
+    QtGui.QMessageBox.critical(None, "Gorgon", "PyOpenGL must be installed to run Gorgon.", QtGui.QMessageBox.Ok | QtGui.QMessageBox.Default, QtGui.QMessageBox.NoButton)
     sys.exit(1)
 
 class BaseViewer(QtGui.QWidget):
+    DisplayStyleWireframe, DisplayStyleFlat, DisplayStyleSmooth = range(3)
+    
     def __init__(self, main, parent=None):
         QtGui.QWidget.__init__(self, parent)        
         self.app = main      
         self.title = "Untitled"
         self.loaded = False
-        self.displayStyle = 2;
+        self.displayStyle = self.DisplayStyleSmooth;
         self.modelVisible = True;
         self.connect(self, QtCore.SIGNAL("modelChanged()"), self.modelChanged) 
         self.connect(self, QtCore.SIGNAL("modelLoaded()"), self.modelChanged) 
         self.connect(self, QtCore.SIGNAL("modelUnloaded()"), self.modelChanged)    
         self.gllist = 0
-        self.transparency = 0
         self.showBox = True
+        self.modelColor = QtGui.QColor.fromRgba(QtGui.qRgba(128, 128, 128, 255))
+        self.boxColor = QtGui.QColor.fromRgba(QtGui.qRgba(255, 255, 255, 255))
         
     def initVisualizationOptions(self):
         self.visualizationOptions = ModelVisualizationForm(self.app, self)
                         
-    def setDisplayType(self):
-        if self.displayStyle == 0:
-            # Wireframe
+    def setBoundingBox(self, visible):
+        self.showBox = visible
+        self.emitModelChanged();
+
+    def setBoundingBoxColor(self, color):
+        self.boxColor = color
+        self.emitModelChanged()
+
+    def setDisplayStyle(self, style):
+        self.displayStyle = style
+        self.emitModelVisualizationChanged()
+
+    def setModelVisibility(self, visible):
+        self.modelVisible = visible
+        self.emitModelVisualizationChanged()
+
+    def setModelColor(self, color):
+        self.modelColor = color
+        self.emitModelChanged()
+
+    def initializeGLDisplayType(self):
+        if self.displayStyle == self.DisplayStyleWireframe:
             glEnable(GL_DEPTH_TEST)
             glEnable(GL_LIGHTING)
             glPolygonMode(GL_FRONT, GL_LINE)
             glPolygonMode(GL_BACK, GL_LINE)
             
-        elif self.displayStyle == 1:
-            # Flat Shade
+        elif self.displayStyle == self.DisplayStyleFlat:
             glEnable(GL_DEPTH_TEST) 
             glEnable(GL_LIGHTING)
             glPolygonMode(GL_FRONT, GL_FILL)
             glPolygonMode(GL_BACK, GL_FILL)
             glShadeModel(GL_FLAT)
             
-        elif self.displayStyle == 2:
+        elif self.displayStyle == self.DisplayStyleSmooth:
             glEnable(GL_DEPTH_TEST) 
             glEnable(GL_LIGHTING)
             glPolygonMode(GL_FRONT, GL_FILL)
@@ -53,12 +74,25 @@ class BaseViewer(QtGui.QWidget):
             glShadeModel(GL_SMOOTH)
             
         else:
-            self.displayStyle = 2;
+            self.displayStyle = self.DisplayStyleSmooth;
             self.setDisplayType()            
-                                          
+                                                                 
+    def setMaterials(self, color):
+        diffuseMaterial = [color.redF(), color.greenF(), color.blueF(), 1.0]
+        ambientMaterial = [color.redF()*0.2, color.greenF()*0.2, color.blueF()*0.2, 1.0]
+        specularMaterial = [1.0, 1.0, 1.0, 1.0]
+        glMaterialfv(GL_BACK, GL_AMBIENT,   ambientMaterial) 
+        glMaterialfv(GL_BACK, GL_DIFFUSE,   diffuseMaterial) 
+        glMaterialfv(GL_BACK, GL_SPECULAR,  specularMaterial) 
+        glMaterialf( GL_BACK, GL_SHININESS, 0.1)
+        glMaterialfv(GL_FRONT, GL_AMBIENT,   ambientMaterial) 
+        glMaterialfv(GL_FRONT, GL_DIFFUSE,   diffuseMaterial) 
+        glMaterialfv(GL_FRONT, GL_SPECULAR,  specularMaterial) 
+        glMaterialf( GL_FRONT, GL_SHININESS, 0.1)
+
     def draw(self):
-        if self.modelVisible and (self.gllist != 0):
-            self.setDisplayType()
+        if self.modelVisible and (self.gllist != 0):          
+            self.initializeGLDisplayType()
             glPushMatrix()
             glTranslated(-0.5, -0.5, -0.5)
             glCallList(self.gllist)
@@ -87,19 +121,14 @@ class BaseViewer(QtGui.QWidget):
         self.gllist = glGenLists(1)
         glNewList(self.gllist, GL_COMPILE)
         
+        self.setMaterials(self.modelColor)
         self.renderer.draw()
         
         if(self.loaded and self.showBox):
-            glPushAttrib(GL_LIGHTING_BIT)
-            glDisable(GL_LIGHTING)
+            self.setMaterials(self.boxColor)
             self.renderer.drawBoundingBox()
-            glPopAttrib()
 
         glEndList() 
-        
-    def setTransparencyValue(self, value):
-        self.transparency = value;   
-        self.emitModelChanged()
 
     def emitModelLoaded(self):
         self.emit(QtCore.SIGNAL("modelLoaded()"))
@@ -112,10 +141,8 @@ class BaseViewer(QtGui.QWidget):
         
     def emitModelVisualizationChanged(self):
         self.emit(QtCore.SIGNAL("modelVisualizationChanged()"))
-        
-        
+               
     def emitViewerSetCenter(self):
         self.emit(QtCore.SIGNAL("viewerSetCenter(float, float, float, float, float, float)"), 
                                 self.renderer.getMin(0), self.renderer.getMin(1), self.renderer.getMin(2),
                                 self.renderer.getMax(0), self.renderer.getMax(1), self.renderer.getMax(2))
-       

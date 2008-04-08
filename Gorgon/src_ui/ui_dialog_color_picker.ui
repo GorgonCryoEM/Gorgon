@@ -1,34 +1,21 @@
 <ui version="4.0" >
  <class>DialogColorPicker</class>
  <widget class="QDialog" name="DialogColorPicker" >
+  <property name="windowModality" >
+   <enum>Qt::ApplicationModal</enum>
+  </property>
   <property name="geometry" >
    <rect>
     <x>0</x>
     <y>0</y>
     <width>345</width>
-    <height>146</height>
+    <height>168</height>
    </rect>
   </property>
   <property name="windowTitle" >
    <string>Color Picker</string>
   </property>
   <layout class="QGridLayout" >
-   <item row="0" column="0" colspan="3" >
-    <widget class="QFrame" name="frameColorDisplay" >
-     <property name="minimumSize" >
-      <size>
-       <width>16</width>
-       <height>30</height>
-      </size>
-     </property>
-     <property name="frameShape" >
-      <enum>QFrame::StyledPanel</enum>
-     </property>
-     <property name="frameShadow" >
-      <enum>QFrame::Raised</enum>
-     </property>
-    </widget>
-   </item>
    <item row="1" column="0" >
     <widget class="QLabel" name="labelRed" >
      <property name="text" >
@@ -137,7 +124,43 @@
      </property>
     </widget>
    </item>
-   <item row="4" column="0" colspan="3" >
+   <item row="4" column="0" >
+    <widget class="QLabel" name="labelAlpha" >
+     <property name="text" >
+      <string>Alpha:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="1" >
+    <widget class="QSlider" name="horizontalSliderAlpha" >
+     <property name="maximum" >
+      <number>255</number>
+     </property>
+     <property name="value" >
+      <number>255</number>
+     </property>
+     <property name="orientation" >
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="2" >
+    <widget class="QLabel" name="labelAlphaDisplay" >
+     <property name="minimumSize" >
+      <size>
+       <width>25</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="layoutDirection" >
+      <enum>Qt::RightToLeft</enum>
+     </property>
+     <property name="text" >
+      <string>255</string>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="0" colspan="3" >
     <widget class="QDialogButtonBox" name="buttonBox" >
      <property name="orientation" >
       <enum>Qt::Horizontal</enum>
@@ -147,8 +170,33 @@
      </property>
     </widget>
    </item>
+   <item row="0" column="0" colspan="3" >
+    <widget class="ColoredWidget" native="1" name="colorPanel" >
+     <property name="minimumSize" >
+      <size>
+       <width>0</width>
+       <height>30</height>
+      </size>
+     </property>
+    </widget>
+   </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>ColoredWidget</class>
+   <extends>QWidget</extends>
+   <header>colored_widget.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <tabstops>
+  <tabstop>horizontalSliderRed</tabstop>
+  <tabstop>horizontalSliderGreen</tabstop>
+  <tabstop>horizontalSliderBlue</tabstop>
+  <tabstop>horizontalSliderAlpha</tabstop>
+  <tabstop>buttonBox</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>
@@ -158,8 +206,8 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>227</x>
-     <y>125</y>
+     <x>237</x>
+     <y>165</y>
     </hint>
     <hint type="destinationlabel" >
      <x>157</x>
@@ -174,8 +222,8 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>295</x>
-     <y>131</y>
+     <x>305</x>
+     <y>165</y>
     </hint>
     <hint type="destinationlabel" >
      <x>286</x>
@@ -228,6 +276,22 @@
     <hint type="destinationlabel" >
      <x>327</x>
      <y>96</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>horizontalSliderAlpha</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>labelAlphaDisplay</receiver>
+   <slot>setNum(int)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>234</x>
+     <y>115</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>326</x>
+     <y>122</y>
     </hint>
    </hints>
   </connection>
