@@ -6,6 +6,7 @@
 #include <SkeletonMaker/volume.h>
 #include <string>
 #include <hash_map>
+#include <GL/glut.h>
 
 using namespace std;
 using namespace stdext;
@@ -26,6 +27,7 @@ namespace wustl_mm {
 		struct NonManifoldMeshFace {
 			unsigned int id;
 			vector<unsigned int> edgeIds;
+			vector<unsigned int> vertexIds;
 			bool isSheet;
 			bool valid;
 		};
@@ -40,6 +42,8 @@ namespace wustl_mm {
 			int helixId;
 		};
 
+
+		typedef hash_map<int, int> HashMapType;
 		class NonManifoldMesh{
 		public:
 			NonManifoldMesh();
@@ -58,6 +62,7 @@ namespace wustl_mm {
 			void AddQuad(int vertexId1, int vertexId2, int vertexId3, int vertexId4, bool isSheet);
 			void AddTriangle(int vertexId1, int vertexId2, int vertexId3, bool isSheet);
 			void Clear();
+			void Draw();
 			void MarkFixedVertices();
 			void RemoveFace(int faceId);
 			void RemoveEdge(int edgeId);
@@ -68,6 +73,7 @@ namespace wustl_mm {
 			Vector3DFloat GetVertexNormal(int vertexId);
 			Vector3DFloat GetFaceNormal(int faceId);
 			NonManifoldMesh * SmoothLaplacian(double converganceRate);	
+			NonManifoldMesh * SmoothLaplacian(double converganceRate, int iterations);	
 			static NonManifoldMesh * LoadOffFile(string fileName);
 
 		public:
@@ -77,7 +83,7 @@ namespace wustl_mm {
 			int edgeCount;
 			int vertexCount;
 			int faceCount;
-			hash_map<int, int> vertexHashMap;
+			HashMapType vertexHashMap;
 		};
 
 		NonManifoldMesh::NonManifoldMesh() {
@@ -204,14 +210,14 @@ namespace wustl_mm {
 			v.articulationPoint = articulationPoint;
 			v.helixId = helixId;
 			return AddVertex(v);
-
 		}
 
 		int NonManifoldMesh::AddHashedVertex(Vector3DFloat location, bool stationary, bool articulationPoint, int helixId, int hashKey) {
-			hash_map<int, int>::const_iterator pos = vertexHashMap.find(hashKey);
+			HashMapType::const_iterator pos = vertexHashMap.find(hashKey);
 			int vertexId;
 			if(pos == vertexHashMap.end()) {
 				vertexId = AddVertex(location, stationary, articulationPoint, helixId);
+				vertexHashMap[hashKey] = vertexId;
 			} else {
 				vertexId = pos->second;
 			}
@@ -269,6 +275,10 @@ namespace wustl_mm {
 		void NonManifoldMesh::AddTriangle(int vertexId1, int vertexId2, int vertexId3, bool isSheet) {
 			NonManifoldMeshFace face;
 			face.isSheet = isSheet;
+			face.vertexIds.clear();
+			face.vertexIds.push_back(vertexId1);
+			face.vertexIds.push_back(vertexId2);
+			face.vertexIds.push_back(vertexId3);
 			face.edgeIds.clear();
 
 			int vertexIds[4] = {vertexId1, vertexId2, vertexId3, vertexId1};
@@ -301,6 +311,42 @@ namespace wustl_mm {
 			vertexHashMap.clear();
 		}
 
+		void NonManifoldMesh::Draw() {
+			int k;
+
+			for(unsigned int i = 0; i < faces.size(); i++) {
+				glBegin(GL_POLYGON);
+				Vector3DFloat normal;
+				for(unsigned int j = 0; j < faces[i].vertexIds.size(); j++) {
+					normal = GetVertexNormal(faces[i].vertexIds[j]);
+					k = GetVertexIndex(faces[i].vertexIds[j]);
+					glNormal3f(normal.X(), normal.Y(), normal.Z());
+					glVertex3f(vertices[k].position.X(), vertices[k].position.Y(), vertices[k].position.Z());
+				}
+				glEnd();
+			}
+
+			glBegin(GL_LINES);
+			for(unsigned int i = 0; i < edges.size(); i++) {
+				if(edges[i].faceIds.size() == 0) {
+					k = GetVertexIndex(edges[i].vertexIds[0]);
+					glVertex3f(vertices[k].position.X(), vertices[k].position.Y(), vertices[k].position.Z());
+					k = GetVertexIndex(edges[i].vertexIds[1]);
+					glVertex3f(vertices[k].position.X(), vertices[k].position.Y(), vertices[k].position.Z());			
+				}
+			}
+			glEnd();
+
+			glBegin(GL_POINTS);
+			for(unsigned int i = 0; i < vertices.size(); i++) {
+				if(vertices[i].edgeIds.size() == 0) {
+					glVertex3f(vertices[i].position.X(), vertices[i].position.Y(), vertices[i].position.Z());
+				}
+			}
+			glEnd();
+
+			glFlush();
+		}
 		void NonManifoldMesh::MarkFixedVertices() {
 			bool sheetFound;
 			bool edgeFound;
@@ -456,17 +502,10 @@ namespace wustl_mm {
 				fprintf(outFile, "%li ", faces[i].edgeIds.size());
 				lastVertex = -1;
 
-				for(j = (int)faces[i].edgeIds.size()-1; j >= 0; j--) {
-					if((edges[faces[i].edgeIds[j]].vertexIds[0] == edges[faces[i].edgeIds[(j+1)%faces[i].edgeIds.size()]].vertexIds[0]) || 
-						(edges[faces[i].edgeIds[j]].vertexIds[0] == edges[faces[i].edgeIds[(j+1)%faces[i].edgeIds.size()]].vertexIds[1])) {
-						lastVertex = edges[faces[i].edgeIds[j]].vertexIds[1];						
-					} else {
-						lastVertex = edges[faces[i].edgeIds[j]].vertexIds[0];
-					}
-
-					//printf("%li %li %li \n", lastVertex, edges[faces[i].edgeIds[j]].vertexIds[0], edges[faces[i].edgeIds[j]].vertexIds[1]);
-					fprintf(outFile, "%li ", lastVertex);
+				for(j =0; j < (int)faces[i].vertexIds.size(); j++) {
+					fprintf(outFile, "%li ", GetVertexIndex(faces[i].vertexIds[j]));
 				}
+
 				if(faces[i].isSheet) {
 					r = 0.0;
 					g = 0.0;
@@ -595,9 +634,9 @@ namespace wustl_mm {
 			int index = GetVertexIndex(vertexId);
 			int edgeIndex;
 			Vector3DFloat normal = Vector3DFloat(0,0,0);
-			for(int i = 0; i < vertices[index].edgeIds.size(); i++) {
+			for(unsigned int i = 0; i < vertices[index].edgeIds.size(); i++) {
 				edgeIndex = GetEdgeIndex(vertices[index].edgeIds[i]);
-				for(int j = 0; j < edges[edgeIndex].faceIds.size(); j++) {
+				for(unsigned int j = 0; j < edges[edgeIndex].faceIds.size(); j++) {
 					normal += GetFaceNormal(edges[edgeIndex].faceIds[j]);
 				}
 			}
@@ -607,26 +646,13 @@ namespace wustl_mm {
 
 		Vector3DFloat NonManifoldMesh::GetFaceNormal(int faceId) {
 
-			int lastVertex = -1;
-			int i = GetFaceIndex(faceId);
-			int vertexIds[40];
-			vertexCount = 0;
-
-			for(int j = (int)faces[i].edgeIds.size()-1; j >= 0; j--) {
-				if((edges[faces[i].edgeIds[j]].vertexIds[0] == edges[faces[i].edgeIds[(j+1)%faces[i].edgeIds.size()]].vertexIds[0]) || 
-					(edges[faces[i].edgeIds[j]].vertexIds[0] == edges[faces[i].edgeIds[(j+1)%faces[i].edgeIds.size()]].vertexIds[1])) {
-					lastVertex = edges[faces[i].edgeIds[j]].vertexIds[1];						
-				} else {
-					lastVertex = edges[faces[i].edgeIds[j]].vertexIds[0];
-				}
-				vertexIds[vertexCount] = lastVertex;
-				vertexCount++;
-			}
-
 			Vector3DFloat normal = Vector3DFloat(1,0,0);
-			if(vertexCount >= 3) {
-				normal = -(vertices[GetVertexIndex(vertexIds[1])].position - vertices[GetVertexIndex(vertexIds[0])].position) ^
-								(vertices[GetVertexIndex(vertexIds[2])].position - vertices[GetVertexIndex(vertexIds[0])].position);
+
+			NonManifoldMeshFace face = faces[GetFaceIndex(faceId)];
+
+			if(face.vertexIds.size() >= 3) {
+				normal = -(vertices[GetVertexIndex(face.vertexIds[0])].position - vertices[GetVertexIndex(face.vertexIds[1])].position) ^
+								(vertices[GetVertexIndex(face.vertexIds[2])].position - vertices[GetVertexIndex(face.vertexIds[0])].position);
 				normal.Normalize();
 			} 
 			return normal;
@@ -661,6 +687,18 @@ namespace wustl_mm {
 		}
 
 
+		NonManifoldMesh * NonManifoldMesh::SmoothLaplacian(double converganceRate, int iterations) {
+			NonManifoldMesh * newMesh;
+			NonManifoldMesh * oldMesh = new NonManifoldMesh(this);
+
+			for(int i = 0; i < iterations; i++) {
+				newMesh = oldMesh->SmoothLaplacian(converganceRate);
+				delete oldMesh;
+				oldMesh = newMesh;
+			}
+
+			return oldMesh;
+		}
 		NonManifoldMesh * NonManifoldMesh::LoadOffFile(string fileName) {
 			NonManifoldMesh * mesh = new NonManifoldMesh();
 			FILE * inFile = fopen(fileName.c_str(), "rt");

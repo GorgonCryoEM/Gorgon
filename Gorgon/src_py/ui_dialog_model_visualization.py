@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_dialog_model_visualization.ui'
 #
-# Created: Mon Apr 07 15:53:55 2008
+# Created: Tue Apr 08 01:10:04 2008
 #      by: PyQt4 UI code generator 4.3.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,50 +12,64 @@ from PyQt4 import QtCore, QtGui
 class Ui_DialogModelVisualization(object):
     def setupUi(self, DialogModelVisualization):
         DialogModelVisualization.setObjectName("DialogModelVisualization")
-        DialogModelVisualization.resize(QtCore.QSize(QtCore.QRect(0,0,222,133).size()).expandedTo(DialogModelVisualization.minimumSizeHint()))
-        DialogModelVisualization.setMinimumSize(QtCore.QSize(222,133))
-        DialogModelVisualization.setMaximumSize(QtCore.QSize(222,133))
+        DialogModelVisualization.resize(QtCore.QSize(QtCore.QRect(0,0,224,174).size()).expandedTo(DialogModelVisualization.minimumSizeHint()))
+        DialogModelVisualization.setMinimumSize(QtCore.QSize(222,174))
+        DialogModelVisualization.setMaximumSize(QtCore.QSize(224,174))
 
         self.gridlayout = QtGui.QGridLayout(DialogModelVisualization)
         self.gridlayout.setObjectName("gridlayout")
 
+        self.gridlayout1 = QtGui.QGridLayout()
+        self.gridlayout1.setObjectName("gridlayout1")
+
         self.groupBoxDisplayStyle = QtGui.QGroupBox(DialogModelVisualization)
         self.groupBoxDisplayStyle.setObjectName("groupBoxDisplayStyle")
 
-        self.gridlayout1 = QtGui.QGridLayout(self.groupBoxDisplayStyle)
-        self.gridlayout1.setObjectName("gridlayout1")
+        self.gridlayout2 = QtGui.QGridLayout(self.groupBoxDisplayStyle)
+        self.gridlayout2.setObjectName("gridlayout2")
 
         self.radioButtonWireframe = QtGui.QRadioButton(self.groupBoxDisplayStyle)
         self.radioButtonWireframe.setObjectName("radioButtonWireframe")
-        self.gridlayout1.addWidget(self.radioButtonWireframe,0,0,1,1)
+        self.gridlayout2.addWidget(self.radioButtonWireframe,0,0,1,1)
 
         self.radioButtonFlat = QtGui.QRadioButton(self.groupBoxDisplayStyle)
         self.radioButtonFlat.setObjectName("radioButtonFlat")
-        self.gridlayout1.addWidget(self.radioButtonFlat,0,1,1,1)
+        self.gridlayout2.addWidget(self.radioButtonFlat,0,1,1,1)
 
         self.radioButtonSmooth = QtGui.QRadioButton(self.groupBoxDisplayStyle)
         self.radioButtonSmooth.setChecked(True)
         self.radioButtonSmooth.setObjectName("radioButtonSmooth")
-        self.gridlayout1.addWidget(self.radioButtonSmooth,0,2,1,1)
-        self.gridlayout.addWidget(self.groupBoxDisplayStyle,0,0,1,2)
+        self.gridlayout2.addWidget(self.radioButtonSmooth,0,2,1,1)
+        self.gridlayout1.addWidget(self.groupBoxDisplayStyle,0,0,1,2)
 
         self.checkBoxBoundingBox = QtGui.QCheckBox(DialogModelVisualization)
         self.checkBoxBoundingBox.setChecked(True)
         self.checkBoxBoundingBox.setObjectName("checkBoxBoundingBox")
-        self.gridlayout.addWidget(self.checkBoxBoundingBox,1,0,1,1)
+        self.gridlayout1.addWidget(self.checkBoxBoundingBox,1,0,1,1)
 
-        self.pushButtonBoundingBoxColor = QtGui.QPushButton(DialogModelVisualization)
+        self.pushButtonBoundingBoxColor = ColoredPushButton(DialogModelVisualization)
         self.pushButtonBoundingBoxColor.setObjectName("pushButtonBoundingBoxColor")
-        self.gridlayout.addWidget(self.pushButtonBoundingBoxColor,1,1,1,1)
+        self.gridlayout1.addWidget(self.pushButtonBoundingBoxColor,1,1,1,1)
 
         self.checkBoxModelVisible = QtGui.QCheckBox(DialogModelVisualization)
         self.checkBoxModelVisible.setChecked(True)
         self.checkBoxModelVisible.setObjectName("checkBoxModelVisible")
-        self.gridlayout.addWidget(self.checkBoxModelVisible,2,0,1,1)
+        self.gridlayout1.addWidget(self.checkBoxModelVisible,2,0,1,1)
 
-        self.pushButtonModelColor = QtGui.QPushButton(DialogModelVisualization)
+        self.pushButtonModelColor = ColoredPushButton(DialogModelVisualization)
         self.pushButtonModelColor.setObjectName("pushButtonModelColor")
-        self.gridlayout.addWidget(self.pushButtonModelColor,2,1,1,1)
+        self.gridlayout1.addWidget(self.pushButtonModelColor,2,1,1,1)
+
+        self.line = QtGui.QFrame(DialogModelVisualization)
+        self.line.setFrameShape(QtGui.QFrame.HLine)
+        self.line.setFrameShadow(QtGui.QFrame.Sunken)
+        self.line.setObjectName("line")
+        self.gridlayout1.addWidget(self.line,3,0,1,2)
+        self.gridlayout.addLayout(self.gridlayout1,0,0,1,2)
+
+        self.pushButtonCenter = QtGui.QPushButton(DialogModelVisualization)
+        self.pushButtonCenter.setObjectName("pushButtonCenter")
+        self.gridlayout.addWidget(self.pushButtonCenter,1,0,1,1)
 
         self.retranslateUi(DialogModelVisualization)
         QtCore.QMetaObject.connectSlotsByName(DialogModelVisualization)
@@ -68,4 +82,6 @@ class Ui_DialogModelVisualization(object):
         self.radioButtonSmooth.setText(QtGui.QApplication.translate("DialogModelVisualization", "Smooth", None, QtGui.QApplication.UnicodeUTF8))
         self.checkBoxBoundingBox.setText(QtGui.QApplication.translate("DialogModelVisualization", "Show outline box colored:", None, QtGui.QApplication.UnicodeUTF8))
         self.checkBoxModelVisible.setText(QtGui.QApplication.translate("DialogModelVisualization", "Show model colored:", None, QtGui.QApplication.UnicodeUTF8))
+        self.pushButtonCenter.setText(QtGui.QApplication.translate("DialogModelVisualization", "Center", None, QtGui.QApplication.UnicodeUTF8))
 
+from colored_push_button import ColoredPushButton

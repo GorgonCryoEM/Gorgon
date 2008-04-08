@@ -121,8 +121,8 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="libeng.lib libfixedpoint.lib libmat.lib libmex.lib libmwservices.lib libmx.lib libut.lib"
-				AdditionalLibraryDirectories="C:\MATLAB701\extern\lib\win32\microsoft\msvc71"
+				AdditionalDependencies="libeng.lib libfixedpoint.lib libmat.lib libmex.lib libmwservices.lib libmx.lib libut.lib glut32.lib"
+				AdditionalLibraryDirectories="C:\_WUSTL\sasakthi\research\source\ExternalLibraries\GL;C:\MATLAB701\extern\lib\win32\microsoft\msvc71"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -147,7 +147,6 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				Description=""
 				CommandLine=""
 				ExcludedFromBuild="false"
 			/>

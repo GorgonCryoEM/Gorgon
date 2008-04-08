@@ -37,7 +37,6 @@ namespace wustl_mm {
 
 		MeshRenderer::MeshRenderer() {
 			mesh = NULL;
-			drawBoundingBox = true;
 		}
 
 		MeshRenderer::~MeshRenderer() {
@@ -48,69 +47,7 @@ namespace wustl_mm {
 
 		void MeshRenderer::Draw() {
 			if(mesh != NULL) {
-				int vertices[40];
-				int lastVertex;
-				int k;
-
-				for(unsigned int i = 0; i < mesh->faces.size(); i++) {
-					lastVertex = -1;
-
-					k = 0;
-					for(int j = mesh->faces[i].edgeIds.size()-1; j >= 0; j--) {
-						if((mesh->edges[mesh->faces[i].edgeIds[j]].vertexIds[0] == mesh->edges[mesh->faces[i].edgeIds[(j+1)%mesh->faces[i].edgeIds.size()]].vertexIds[0]) || 
-							(mesh->edges[mesh->faces[i].edgeIds[j]].vertexIds[0] == mesh->edges[mesh->faces[i].edgeIds[(j+1)%mesh->faces[i].edgeIds.size()]].vertexIds[1])) {
-							lastVertex = mesh->edges[mesh->faces[i].edgeIds[j]].vertexIds[1];						
-						} else {
-							lastVertex = mesh->edges[mesh->faces[i].edgeIds[j]].vertexIds[0];
-						}
-						vertices[k] = lastVertex;
-						k++;						
-					}
-
-					glBegin(GL_POLYGON);
-					Vector3DFloat normal;
-					for(int j = 0; j < k; j++) {
-						normal = mesh->GetVertexNormal(vertices[j]);
-
-						glNormal3f(normal.X(), normal.Y(), normal.Z());
-						glVertex3f(mesh->vertices[vertices[j]].position.X(), mesh->vertices[vertices[j]].position.Y(), mesh->vertices[vertices[j]].position.Z());
-					}
-					glEnd();
-
-					//glBegin(GL_POLYGON);
-					//for(int j = k-1; j >=0; j--) {
-					//	normal = -mesh->GetVertexNormal(vertices[j]);
-
-					//	glNormal3f(normal.X(), normal.Y(), normal.Z());
-					//	glVertex3f(mesh->vertices[vertices[j]].position.X(), mesh->vertices[vertices[j]].position.Y(), mesh->vertices[vertices[j]].position.Z());
-					//}
-					//glEnd();
-				}
-
-
-
-				//glPushAttrib(GL_LIGHTING_BIT);
-				//glDisable(GL_LIGHTING);
-
-				glBegin(GL_LINES);
-				for(unsigned int i = 0; i < mesh->edges.size(); i++) {
-					if(mesh->edges[i].faceIds.size() == 0) {
-						glVertex3f(mesh->vertices[mesh->edges[i].vertexIds[0]].position.X(), mesh->vertices[mesh->edges[i].vertexIds[0]].position.Y(), mesh->vertices[mesh->edges[i].vertexIds[0]].position.Z());
-						glVertex3f(mesh->vertices[mesh->edges[i].vertexIds[1]].position.X(), mesh->vertices[mesh->edges[i].vertexIds[1]].position.Y(), mesh->vertices[mesh->edges[i].vertexIds[1]].position.Z());
-					}
-				}
-				glEnd();
-
-				glBegin(GL_POINTS);
-				for(unsigned int i = 0; i < mesh->vertices.size(); i++) {
-					if(mesh->vertices[i].edgeIds.size() == 0) {
-						glVertex3f(mesh->vertices[i].position.X(), mesh->vertices[i].position.Y(), mesh->vertices[i].position.Z());
-					}
-				}
-				glEnd();
-				//glPopAttrib();
-
-				glFlush();
+				mesh->Draw();
 			}
 		}
 
@@ -155,13 +92,9 @@ namespace wustl_mm {
 
 		}
 		void MeshRenderer::PerformSmoothLaplacian(double convergenceRate, int iterations) {
-			NonManifoldMesh * newMesh;
-			for(int i = 0; i < iterations; i++) {
-				newMesh = mesh->SmoothLaplacian(convergenceRate);
-				delete mesh;
-				mesh = newMesh;
-			}
-
+			NonManifoldMesh * newMesh = mesh->SmoothLaplacian(convergenceRate, iterations);
+			delete mesh;
+			mesh = newMesh;
 		}
 		void MeshRenderer::UpdateBoundingBox() {
 			if(mesh != NULL && mesh->vertices.size() > 0) {
@@ -170,7 +103,7 @@ namespace wustl_mm {
 					maxPts[i] = mesh->vertices[0].position.values[i];
 				}
 
-				for(int i = 1; i < mesh->vertices.size(); i++) {
+				for(unsigned int i = 1; i < mesh->vertices.size(); i++) {
 					for(int j = 0; j < 3; j++) {
 						minPts[j] = min(minPts[j], mesh->vertices[i].position.values[j]);
 						maxPts[j] = max(maxPts[j], mesh->vertices[i].position.values[j]);

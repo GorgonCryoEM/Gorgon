@@ -2,26 +2,21 @@
 
 # Form implementation generated from reading ui file 'ui_dialog_color_picker.ui'
 #
-# Created: Mon Apr 07 13:18:17 2008
+# Created: Mon Apr 07 19:47:09 2008
 #      by: PyQt4 UI code generator 4.3.3
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt4 import QtCore, QtGui
-from render_area import RenderArea
 
 class Ui_DialogColorPicker(object):
     def setupUi(self, DialogColorPicker):
         DialogColorPicker.setObjectName("DialogColorPicker")
-        DialogColorPicker.resize(QtCore.QSize(QtCore.QRect(0,0,345,146).size()).expandedTo(DialogColorPicker.minimumSizeHint()))
+        DialogColorPicker.setWindowModality(QtCore.Qt.ApplicationModal)
+        DialogColorPicker.resize(QtCore.QSize(QtCore.QRect(0,0,345,168).size()).expandedTo(DialogColorPicker.minimumSizeHint()))
 
         self.gridlayout = QtGui.QGridLayout(DialogColorPicker)
         self.gridlayout.setObjectName("gridlayout")
-
-        self.frameColorDisplay = RenderArea(DialogColorPicker)
-        self.frameColorDisplay.setMinimumSize(QtCore.QSize(16,30))
-        self.frameColorDisplay.setObjectName("frameColorDisplay")        
-        self.gridlayout.addWidget(self.frameColorDisplay,0,0,1,3)    
 
         self.labelRed = QtGui.QLabel(DialogColorPicker)
         self.labelRed.setObjectName("labelRed")
@@ -74,11 +69,33 @@ class Ui_DialogColorPicker(object):
         self.labelBlueDisplay.setObjectName("labelBlueDisplay")
         self.gridlayout.addWidget(self.labelBlueDisplay,3,2,1,1)
 
+        self.labelAlpha = QtGui.QLabel(DialogColorPicker)
+        self.labelAlpha.setObjectName("labelAlpha")
+        self.gridlayout.addWidget(self.labelAlpha,4,0,1,1)
+
+        self.horizontalSliderAlpha = QtGui.QSlider(DialogColorPicker)
+        self.horizontalSliderAlpha.setMaximum(255)
+        self.horizontalSliderAlpha.setProperty("value",QtCore.QVariant(255))
+        self.horizontalSliderAlpha.setOrientation(QtCore.Qt.Horizontal)
+        self.horizontalSliderAlpha.setObjectName("horizontalSliderAlpha")
+        self.gridlayout.addWidget(self.horizontalSliderAlpha,4,1,1,1)
+
+        self.labelAlphaDisplay = QtGui.QLabel(DialogColorPicker)
+        self.labelAlphaDisplay.setMinimumSize(QtCore.QSize(25,0))
+        self.labelAlphaDisplay.setLayoutDirection(QtCore.Qt.RightToLeft)
+        self.labelAlphaDisplay.setObjectName("labelAlphaDisplay")
+        self.gridlayout.addWidget(self.labelAlphaDisplay,4,2,1,1)
+
         self.buttonBox = QtGui.QDialogButtonBox(DialogColorPicker)
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
         self.buttonBox.setStandardButtons(QtGui.QDialogButtonBox.Cancel|QtGui.QDialogButtonBox.NoButton|QtGui.QDialogButtonBox.Ok)
         self.buttonBox.setObjectName("buttonBox")
-        self.gridlayout.addWidget(self.buttonBox,4,0,1,3)
+        self.gridlayout.addWidget(self.buttonBox,5,0,1,3)
+
+        self.colorPanel = ColoredWidget(DialogColorPicker)
+        self.colorPanel.setMinimumSize(QtCore.QSize(0,30))
+        self.colorPanel.setObjectName("colorPanel")
+        self.gridlayout.addWidget(self.colorPanel,0,0,1,3)
 
         self.retranslateUi(DialogColorPicker)
         QtCore.QObject.connect(self.buttonBox,QtCore.SIGNAL("accepted()"),DialogColorPicker.accept)
@@ -86,7 +103,12 @@ class Ui_DialogColorPicker(object):
         QtCore.QObject.connect(self.horizontalSliderRed,QtCore.SIGNAL("valueChanged(int)"),self.labelRedDisplay.setNum)
         QtCore.QObject.connect(self.horizontalSliderGreen,QtCore.SIGNAL("valueChanged(int)"),self.labelGreenDisplay.setNum)
         QtCore.QObject.connect(self.horizontalSliderBlue,QtCore.SIGNAL("valueChanged(int)"),self.labelBlueDisplay.setNum)
+        QtCore.QObject.connect(self.horizontalSliderAlpha,QtCore.SIGNAL("valueChanged(int)"),self.labelAlphaDisplay.setNum)
         QtCore.QMetaObject.connectSlotsByName(DialogColorPicker)
+        DialogColorPicker.setTabOrder(self.horizontalSliderRed,self.horizontalSliderGreen)
+        DialogColorPicker.setTabOrder(self.horizontalSliderGreen,self.horizontalSliderBlue)
+        DialogColorPicker.setTabOrder(self.horizontalSliderBlue,self.horizontalSliderAlpha)
+        DialogColorPicker.setTabOrder(self.horizontalSliderAlpha,self.buttonBox)
 
     def retranslateUi(self, DialogColorPicker):
         DialogColorPicker.setWindowTitle(QtGui.QApplication.translate("DialogColorPicker", "Color Picker", None, QtGui.QApplication.UnicodeUTF8))
@@ -96,4 +118,7 @@ class Ui_DialogColorPicker(object):
         self.labelGreenDisplay.setText(QtGui.QApplication.translate("DialogColorPicker", "128", None, QtGui.QApplication.UnicodeUTF8))
         self.labelBlue.setText(QtGui.QApplication.translate("DialogColorPicker", "Blue:", None, QtGui.QApplication.UnicodeUTF8))
         self.labelBlueDisplay.setText(QtGui.QApplication.translate("DialogColorPicker", "128", None, QtGui.QApplication.UnicodeUTF8))
+        self.labelAlpha.setText(QtGui.QApplication.translate("DialogColorPicker", "Alpha:", None, QtGui.QApplication.UnicodeUTF8))
+        self.labelAlphaDisplay.setText(QtGui.QApplication.translate("DialogColorPicker", "255", None, QtGui.QApplication.UnicodeUTF8))
 
+from colored_widget import ColoredWidget

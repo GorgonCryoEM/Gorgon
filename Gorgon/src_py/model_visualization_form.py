@@ -9,11 +9,13 @@ class ModelVisualizationForm(QtGui.QWidget):
         self.viewer = viewer
         self.title = viewer.title + " Visualization Options"
         self.connect(self.viewer, QtCore.SIGNAL("modelLoaded()"), self.modelLoaded)
-        self.connect(self.viewer, QtCore.SIGNAL("modelUnloaded()"), self.modelUnloaded)        
+        self.connect(self.viewer, QtCore.SIGNAL("modelUnloaded()"), self.modelUnloaded)   
         self.setWindowTitle(self.title)
+        
         self.createUI()
         self.createActions()
         self.createMenus()
+        self.updateFromViewer()
 
     def createUI(self):
         self.ui = Ui_DialogModelVisualization()
@@ -22,18 +24,28 @@ class ModelVisualizationForm(QtGui.QWidget):
         self.dock = QtGui.QDockWidget(self.tr(self.title), self.app)
         self.dock.setAllowedAreas(QtCore.Qt.LeftDockWidgetArea | QtCore.Qt.RightDockWidgetArea | QtCore.Qt.BottomDockWidgetArea)
         self.dock.setWidget(self)
-        self.dock.close()        
+        self.dock.close()  
         self.connect(self.dock, QtCore.SIGNAL("visibilityChanged (bool)"), self.dockVisibilityChanged)
         self.connect(self.ui.radioButtonWireframe, QtCore.SIGNAL("toggled (bool)"), self.setDisplayStyle)
         self.connect(self.ui.radioButtonFlat, QtCore.SIGNAL("toggled (bool)"), self.setDisplayStyle)
         self.connect(self.ui.radioButtonSmooth, QtCore.SIGNAL("toggled (bool)"), self.setDisplayStyle)
-        self.connect(self.ui.checkBoxBoundingBox, QtCore.SIGNAL("toggled (bool)"), self.setBoundingBox)
-        self.connect(self.ui.checkBoxModelVisible, QtCore.SIGNAL("toggled (bool)"), self.setModelVisibility)
+        self.connect(self.ui.checkBoxBoundingBox, QtCore.SIGNAL("toggled (bool)"), self.viewer.setBoundingBox)
+        self.connect(self.ui.checkBoxModelVisible, QtCore.SIGNAL("toggled (bool)"), self.viewer.setModelVisibility)
         self.connect(self.ui.pushButtonBoundingBoxColor, QtCore.SIGNAL("pressed ()"), self.setBoundingBoxColor)        
-        self.connect(self.ui.pushButtonModelColor, QtCore.SIGNAL("pressed ()"), self.setModelColor)
+        self.connect(self.ui.pushButtonModelColor, QtCore.SIGNAL("pressed ()"), self.setModelColor)   
+        self.connect(self.ui.pushButtonCenter, QtCore.SIGNAL("pressed ()"), self.viewer.emitViewerSetCenter)
         
-        
-        
+    def updateFromViewer(self):
+        self.ui.pushButtonModelColor.setColor(self.viewer.modelColor)  
+        self.ui.pushButtonBoundingBoxColor.setColor(self.viewer.boxColor)            
+        self.ui.checkBoxBoundingBox.setChecked(self.viewer.showBox)    
+        self.ui.checkBoxModelVisible.setChecked(self.viewer.modelVisible)    
+        if(self.viewer.displayStyle == self.viewer.DisplayStyleWireframe):
+            self.ui.radioButtonWireframe.setChecked(True) 
+        elif(self.viewer.displayStyle == self.viewer.DisplayStyleFlat):
+            self.ui.radioButtonFlat.setChecked(True)   
+        else :
+            self.ui.radioButtonSmooth.setChecked(True)                                  
     def createActions(self):               
         self.visualizerAct = QtGui.QAction(self.tr(self.title), self)
         self.visualizerAct.setStatusTip(self.tr("Load the " + self.viewer.title + " visualization options"))
@@ -69,29 +81,27 @@ class ModelVisualizationForm(QtGui.QWidget):
         self.showWidget(False)    
 
     def setBoundingBoxColor(self):
-        self.colorPicker.show()
-        
-        pass;
+        self.colorPicker.setColor(self.viewer.boxColor)
+        if(self.colorPicker.exec_() == QtGui.QDialog.Accepted) :
+            color = self.colorPicker.getColor()
+            self.ui.pushButtonBoundingBoxColor.setColor(color)
+            self.viewer.setBoundingBoxColor(color)
         
     def setModelColor(self):
-        pass;
+        self.colorPicker.setColor(self.viewer.modelColor)
+        if(self.colorPicker.exec_() == QtGui.QDialog.Accepted) :
+            color = self.colorPicker.getColor()
+            self.ui.pushButtonModelColor.setColor(color)
+            self.viewer.setModelColor(color)
     
     def setDisplayStyle(self, dummy):
         if(self.ui.radioButtonWireframe.isChecked()) :
-            self.viewer.displayStyle = 0       
+            displayStyle = self.viewer.DisplayStyleWireframe      
         elif(self.ui.radioButtonFlat.isChecked()) :
-            self.viewer.displayStyle = 1        
+            displayStyle = self.viewer.DisplayStyleFlat    
         elif(self.ui.radioButtonSmooth.isChecked()) :
-            self.viewer.displayStyle = 2
-        self.viewer.emitModelVisualizationChanged()
-    
-    def setBoundingBox(self, visible):
-        self.viewer.showBox = visible
-        self.viewer.emitModelChanged();
-    
-    def setModelVisibility(self, visible):
-        self.viewer.modelVisible = visible
-        self.viewer.emitModelVisualizationChanged()
+            displayStyle = self.viewer.DisplayStyleSmooth
+        self.viewer.setDisplayStyle(displayStyle)
                     
     def dockVisibilityChanged(self, visible):
         self.visualizerAct.setChecked(visible)

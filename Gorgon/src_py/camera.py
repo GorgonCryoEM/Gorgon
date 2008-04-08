@@ -13,6 +13,8 @@ except ImportError:
 class Camera(QtOpenGL.QGLWidget):
     def __init__(self, scene, parent=None):
         self.aspectRatio = 1.0;        
+        self.near = 0.1;
+        self.far = 1000;
         self.setEyeZoom(0.25)
         QtOpenGL.QGLWidget.__init__(self, parent)
 
@@ -31,16 +33,12 @@ class Camera(QtOpenGL.QGLWidget):
             self.connect(s, QtCore.SIGNAL("modelLoaded()"), self.updateGL)
             self.connect(s, QtCore.SIGNAL("modelUnloaded()"), self.updateGL)
             self.connect(s, QtCore.SIGNAL("modelVisualizationChanged()"), self.updateGL)
-
-    
+ 
     def setEye(self, x, y, z):
         self.eye = [x, y, z]
-        #print("Eye :", self.eye)
         try:
             self.look = vectorNormalize([self.center[0] - self.eye[0], self.center[1] - self.eye[1], self.center[2] - self.eye[2]])
-            #print("Eye: look :", self.look)
-            self.right = vectorNormalize(vectorCrossProduct(self.look, self.up))
-            #print("Eye: right :", self.right)        
+            self.right = vectorNormalize(vectorCrossProduct(self.look, self.up))            #print("Eye: right :", self.right)        
         except:
             self.look = [0,1,0]
             self.right = [-1,0,0]
@@ -49,21 +47,16 @@ class Camera(QtOpenGL.QGLWidget):
         self.center = [x, y, z]
         try:
             self.look = vectorNormalize([self.center[0] - self.eye[0], self.center[1] - self.eye[1], self.center[2] - self.eye[2]])
-            #print("Center: look :", self.look)
             self.right = vectorNormalize(vectorCrossProduct(self.look, self.up))
-            #print("Center: right :", self.right)
         except:
             self.look = [0,1,0]
             self.right = [-1,0,0]
         
     def setUp(self, x, y, z):
         self.up = vectorNormalize([x, y, z])
-        #print("Up: up :", self.up)
         try:
             self.right = vectorNormalize(vectorCrossProduct(self.look, self.up))
-            #print("Up: right :", self.right)
             self.up = vectorNormalize(vectorCrossProduct(self.look, self.right))
-            #print("Up: up :", self.up)
         except:
             self.right = [-1,0,0]
         
@@ -73,14 +66,20 @@ class Camera(QtOpenGL.QGLWidget):
     def setEyeZoom(self, value):
         self.eyeZoom = min(max(value, 0.0001), 0.9999);
         self.setGlProjection()
+        
+    def setNearFar(self, near, far):
+        self.near = near
+        self.far = far
+        self.setGlProjection()
     
     def sceneSetCenter(self, minX, minY, minZ, maxX, maxY, maxZ):
-        self.setEye(maxX+(maxX-minX), maxY+(maxY-minY), maxZ+(maxZ-minZ))
         self.setCenter((minX+maxX)/2.0, (minY+maxY)/2.0, (minZ+maxZ)/2.0)
-        self.setUp(0, 0, 1)
+        self.setEye(self.center[0], self.center[1], self.center[2] + 2*(maxZ-minZ))
+        self.setUp(0, 1, 0)
         self.setGluLookAt()
         self.initializeSceneMatrix()      
         self.updateGL()
+
     
     def initializeSceneMatrix(self):
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
@@ -100,24 +99,14 @@ class Camera(QtOpenGL.QGLWidget):
         afPropertiesAmbient = [0.50, 0.50, 0.50, 1.00] 
         afPropertiesDiffuse = [0.75, 0.75, 0.75, 1.00] 
         afPropertiesSpecular = [0.0, 0.0, 0.0, 1.00]
-        afSpecularWhite =  [1.0, 1.0, 1.0, 1.00]
-        afDiffuseBlue = [0.00, 0.00, 0.75, 1.00]
-        afAmbientBlue = [0.00, 0.00, 0.25, 1.00]
-        afDiffuseGray = [0.75, 0.75, 0.75, 1.00]
-        afAmbientGray = [0.25, 0.25, 0.25, 1.00]
-        afAmbientGreen = [0.00, 0.25, 0.00, 1.00]
-        afDiffuseGreen = [0.00, 0.75, 0.00, 1.00]
-        
-        #glutInitDisplayMode( GLUT_RGB | GLUT_DEPTH | GLUT_DOUBLE )
         glClearColor( 0.0, 0.0, 0.0, 1.0 )
-        glClearDepth( 5.0 )
+        #glClearDepth( 5.0 )
         
         afLightPosition = [1000,1000,1000]
         
         glLightfv( GL_LIGHT0, GL_AMBIENT,  afPropertiesAmbient);
         glLightfv( GL_LIGHT0, GL_DIFFUSE,  afPropertiesDiffuse) 
         glLightfv( GL_LIGHT0, GL_SPECULAR, afPropertiesSpecular) 
-        #glLightModelf(GL_LIGHT_MODEL_TWO_SIDE, 1.0)
         glLightfv( GL_LIGHT0, GL_POSITION, afLightPosition)
 
         glEnable( GL_LIGHT0 ) 
@@ -127,35 +116,13 @@ class Camera(QtOpenGL.QGLWidget):
         glLightfv( GL_LIGHT1, GL_AMBIENT,  afPropertiesAmbient);
         glLightfv( GL_LIGHT1, GL_DIFFUSE,  afPropertiesDiffuse) 
         glLightfv( GL_LIGHT1, GL_SPECULAR, afPropertiesSpecular) 
-        #glLightModelf(GL_LIGHT_MODEL_TWO_SIDE, 1.0)
         glLightfv( GL_LIGHT1, GL_POSITION, afLightPosition)
 
         glEnable( GL_LIGHT1 ) 
                
+        #glEnable (GL_BLEND); glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-        glMaterialfv(GL_BACK, GL_AMBIENT,   afAmbientGray) 
-        glMaterialfv(GL_BACK, GL_DIFFUSE,   afDiffuseGray) 
-        glMaterialfv(GL_BACK, GL_SPECULAR,  afSpecularWhite) 
-        glMaterialf( GL_BACK, GL_SHININESS, 0.1)
-        glMaterialfv(GL_FRONT, GL_AMBIENT,   afAmbientGray) 
-        glMaterialfv(GL_FRONT, GL_DIFFUSE,   afDiffuseGray) 
-        glMaterialfv(GL_FRONT, GL_SPECULAR,  afSpecularWhite) 
-        glMaterialf( GL_FRONT, GL_SHININESS, 0.1)
-        #glMaterialfv(GL_FRONT, GL_EMISSION, afSpecularWhite)
 
-        #fColor = [0.5, 0.5, 0.5, 1.0]
-        #glEnable(GL_FOG)
-        #fogMode = GL_EXP
-        #glFogi(GL_FOG_MODE, fogMode)
-        #glFogfv(GL_FOG_COLOR, fColor)
-        #glFogf(GL_FOG_DENSITY, 0.35)
-        #glHint(GL_FOG_HINT, GL_DONT_CARE)
-        #glFogf(GL_FOG_START, 1.0)
-        #glFogf(GL_FOG_END, -1.0)
-        #glClearColor(0.5, 0.5, 0.5, 1.0)
-        
-        #self.engine.produceMesh(["venusm.obj"],self)
-        #glDisable(GL_CULL_FACE)
 
         glMatrixMode(GL_MODELVIEW)
         glLoadIdentity()
@@ -236,7 +203,7 @@ class Camera(QtOpenGL.QGLWidget):
     def setGlProjection(self):
         glMatrixMode(GL_PROJECTION)
         glLoadIdentity()
-        gluPerspective(180 * self.eyeZoom, self.aspectRatio, 0.1, 1000)
+        gluPerspective(180 * self.eyeZoom, self.aspectRatio, self.near, self.far)
         
     def mousePressEvent(self, event):
         self.lastPos = QtCore.QPoint(event.pos())
@@ -259,6 +226,4 @@ class Camera(QtOpenGL.QGLWidget):
     def wheelEvent(self, event):
         direction = event.delta()/abs(event.delta())
         self.setEyeZoom(self.eyeZoom + direction * 10.0/360.0)
-        #distance = vectorDistance(self.eye, self.center) * direction * 0.1
-        #self.setEye(self.eye[0] + self.look[0]*distance, self.eye[1] + self.look[1]*distance, self.eye[2] + self.look[2]*distance)
         self.updateGL()                          

@@ -5,20 +5,20 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>222</width>
-    <height>133</height>
+    <width>224</width>
+    <height>174</height>
    </rect>
   </property>
   <property name="minimumSize" >
    <size>
     <width>222</width>
-    <height>133</height>
+    <height>174</height>
    </size>
   </property>
   <property name="maximumSize" >
    <size>
-    <width>222</width>
-    <height>133</height>
+    <width>224</width>
+    <height>174</height>
    </size>
   </property>
   <property name="windowTitle" >
@@ -26,74 +26,99 @@
   </property>
   <layout class="QGridLayout" >
    <item row="0" column="0" colspan="2" >
-    <widget class="QGroupBox" name="groupBoxDisplayStyle" >
-     <property name="title" >
-      <string>Display Style:</string>
-     </property>
-     <layout class="QGridLayout" >
-      <item row="0" column="0" >
-       <widget class="QRadioButton" name="radioButtonWireframe" >
-        <property name="text" >
-         <string>Wireframe</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1" >
-       <widget class="QRadioButton" name="radioButtonFlat" >
-        <property name="text" >
-         <string>Flat</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="2" >
-       <widget class="QRadioButton" name="radioButtonSmooth" >
-        <property name="text" >
-         <string>Smooth</string>
-        </property>
-        <property name="checked" >
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
+    <layout class="QGridLayout" >
+     <item row="0" column="0" colspan="2" >
+      <widget class="QGroupBox" name="groupBoxDisplayStyle" >
+       <property name="title" >
+        <string>Display Style:</string>
+       </property>
+       <layout class="QGridLayout" >
+        <item row="0" column="0" >
+         <widget class="QRadioButton" name="radioButtonWireframe" >
+          <property name="text" >
+           <string>Wireframe</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1" >
+         <widget class="QRadioButton" name="radioButtonFlat" >
+          <property name="text" >
+           <string>Flat</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="2" >
+         <widget class="QRadioButton" name="radioButtonSmooth" >
+          <property name="text" >
+           <string>Smooth</string>
+          </property>
+          <property name="checked" >
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item row="1" column="0" >
+      <widget class="QCheckBox" name="checkBoxBoundingBox" >
+       <property name="text" >
+        <string>Show outline box colored:</string>
+       </property>
+       <property name="checked" >
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1" >
+      <widget class="ColoredPushButton" name="pushButtonBoundingBoxColor" >
+       <property name="text" >
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0" >
+      <widget class="QCheckBox" name="checkBoxModelVisible" >
+       <property name="text" >
+        <string>Show model colored:</string>
+       </property>
+       <property name="checked" >
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1" >
+      <widget class="ColoredPushButton" name="pushButtonModelColor" >
+       <property name="text" >
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="0" colspan="2" >
+      <widget class="Line" name="line" >
+       <property name="orientation" >
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
    <item row="1" column="0" >
-    <widget class="QCheckBox" name="checkBoxBoundingBox" >
+    <widget class="QPushButton" name="pushButtonCenter" >
      <property name="text" >
-      <string>Show outline box colored:</string>
-     </property>
-     <property name="checked" >
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="1" >
-    <widget class="QPushButton" name="pushButtonBoundingBoxColor" >
-     <property name="text" >
-      <string/>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="0" >
-    <widget class="QCheckBox" name="checkBoxModelVisible" >
-     <property name="text" >
-      <string>Show model colored:</string>
-     </property>
-     <property name="checked" >
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="1" >
-    <widget class="QPushButton" name="pushButtonModelColor" >
-     <property name="text" >
-      <string/>
+      <string>Center</string>
      </property>
     </widget>
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>ColoredPushButton</class>
+   <extends>QPushButton</extends>
+   <header>colored_push_button.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

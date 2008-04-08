@@ -24,7 +24,6 @@ namespace wustl_mm {
 
 		protected:
 			virtual void UpdateBoundingBox();
-			bool drawBoundingBox;
 			float minPts[3];
 			float maxPts[3];
 		};
@@ -42,13 +41,11 @@ namespace wustl_mm {
 		}
 
 		void Renderer::DrawBoundingBox() {
-			if(drawBoundingBox) {
-				glPushMatrix();
-				glTranslatef(minPts[0]+(maxPts[0]-minPts[0])/2.0, minPts[1]+(maxPts[1]-minPts[1])/2.0, minPts[2]+(maxPts[2]-minPts[2])/2.0);
-				glScalef(maxPts[0]-minPts[0], maxPts[1]-minPts[1], maxPts[2]-minPts[2]);
-				glutWireCube(1.0);
-				glPopMatrix();
-			}
+			glPushMatrix();
+			glTranslatef(minPts[0]+(maxPts[0]-minPts[0])/2.0, minPts[1]+(maxPts[1]-minPts[1])/2.0, minPts[2]+(maxPts[2]-minPts[2])/2.0);
+			glScalef(maxPts[0]-minPts[0], maxPts[1]-minPts[1], maxPts[2]-minPts[2]);
+			glutWireCube(1.0);
+			glPopMatrix();
 		}
 
 		void Renderer::UpdateBoundingBox() {
