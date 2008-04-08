@@ -18,7 +18,7 @@
 		<Configuration
 			Name="Debug|Win32"
 			OutputDirectory="$(SolutionDir)\..\bin\$(ConfigurationName)"
-			IntermediateDirectory="$(SolutionDir)\..\temp\$(ConfigurationName)"
+			IntermediateDirectory="$(SolutionDir)\..\temp\$(ConfigurationName)\$(ProjectName)"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			CharacterSet="2"
@@ -94,7 +94,7 @@
 		<Configuration
 			Name="Release|Win32"
 			OutputDirectory="$(SolutionDir)\..\bin\$(ConfigurationName)"
-			IntermediateDirectory="$(SolutionDir)\..\temp\$(ConfigurationName)"
+			IntermediateDirectory="$(SolutionDir)\..\temp\$(ConfigurationName)\$(ProjectName)"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			CharacterSet="2"
@@ -158,7 +158,7 @@
 		<Configuration
 			Name="MemLeak|Win32"
 			OutputDirectory="$(SolutionDir)\..\bin\$(ConfigurationName)"
-			IntermediateDirectory="$(SolutionDir)\..\temp\$(ConfigurationName)"
+			IntermediateDirectory="$(SolutionDir)\..\temp\$(ConfigurationName)\$(ProjectName)"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			CharacterSet="2"
@@ -236,7 +236,7 @@
 		<Configuration
 			Name="SansMatlab|Win32"
 			OutputDirectory="$(SolutionDir)\..\bin\$(ConfigurationName)"
-			IntermediateDirectory="$(SolutionDir)\..\temp\$(ConfigurationName)"
+			IntermediateDirectory="$(SolutionDir)\..\temp\$(ConfigurationName)\$(ProjectName)"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			CharacterSet="2"
@@ -308,8 +308,8 @@
 		</Configuration>
 		<Configuration
 			Name="Python|Win32"
-			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
-			IntermediateDirectory="$(ConfigurationName)"
+			OutputDirectory="$(SolutionDir)\..\bin\$(ConfigurationName)"
+			IntermediateDirectory="$(SolutionDir)\..\temp\$(ConfigurationName)\$(ProjectName)"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			CharacterSet="2"

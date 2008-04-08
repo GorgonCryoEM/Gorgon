@@ -16,11 +16,12 @@ class SkeletonViewer(BaseViewer):
     def __init__(self, main, parent=None):
         BaseViewer.__init__(self, main, parent)
         self.title = "Skeleton"
+        self.isClosedMesh = False
         self.renderer = MeshRenderer()          
         self.createUI()      
         self.app.viewers["skeleton"] = self;
-        self.modelColor = QtGui.QColor.fromRgba(QtGui.qRgba(255, 0, 0, 255))
-        self.initVisualizationOptions()
+        self.modelColor = QtGui.QColor.fromRgba(QtGui.qRgba(180, 0, 0, 255))
+        self.initVisualizationOptions()        
 
     def createUI(self):
         self.createActions()
@@ -61,4 +62,4 @@ class SkeletonViewer(BaseViewer):
         self.loaded = True
         self.emitModelLoaded()
         self.emitViewerSetCenter()
-      
+             

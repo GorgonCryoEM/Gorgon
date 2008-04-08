@@ -13,8 +13,8 @@ except ImportError:
 class Camera(QtOpenGL.QGLWidget):
     def __init__(self, scene, parent=None):
         self.aspectRatio = 1.0;        
-        self.near = 0.1;
-        self.far = 1000;
+        self.near = 10;
+        self.far = 500;
         self.setEyeZoom(0.25)
         QtOpenGL.QGLWidget.__init__(self, parent)
 
@@ -72,11 +72,15 @@ class Camera(QtOpenGL.QGLWidget):
         self.far = far
         self.setGlProjection()
     
-    def sceneSetCenter(self, minX, minY, minZ, maxX, maxY, maxZ):
+    def sceneSetCenter(self, minX, minY, minZ, maxX, maxY, maxZ):        
         self.setCenter((minX+maxX)/2.0, (minY+maxY)/2.0, (minZ+maxZ)/2.0)
-        self.setEye(self.center[0], self.center[1], self.center[2] + 2*(maxZ-minZ))
+        self.setEye(self.center[0], self.center[1] + (maxY-minY), self.center[2] + 2*(maxZ-minZ))        
         self.setUp(0, 1, 0)
-        self.setGluLookAt()
+        #radius = vectorDistance([minX, minY, minZ], [maxX, maxY, maxZ]) / 2.0;
+        #eyeDistance = vectorDistance(self.center, self.eye)
+        #self.setNearFar(max(eyeDistance-radius, 0.1), eyeDistance + 2*radius)
+        
+        self.setGluLookAt()                
         self.initializeSceneMatrix()      
         self.updateGL()
 
@@ -100,7 +104,7 @@ class Camera(QtOpenGL.QGLWidget):
         afPropertiesDiffuse = [0.75, 0.75, 0.75, 1.00] 
         afPropertiesSpecular = [0.0, 0.0, 0.0, 1.00]
         glClearColor( 0.0, 0.0, 0.0, 1.0 )
-        #glClearDepth( 5.0 )
+        glClearDepth( 5.0 )
         
         afLightPosition = [1000,1000,1000]
         
@@ -119,14 +123,11 @@ class Camera(QtOpenGL.QGLWidget):
         glLightfv( GL_LIGHT1, GL_POSITION, afLightPosition)
 
         glEnable( GL_LIGHT1 ) 
-               
-        #glEnable (GL_BLEND); glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-
 
         glMatrixMode(GL_MODELVIEW)
         glLoadIdentity()
         self.sceneMatrix = glGetFloatv( GL_MODELVIEW_MATRIX )
+        
               
     def setGluLookAt(self):
         gluLookAt(self.eye[0], self.eye[1], self.eye[2], 
@@ -149,7 +150,8 @@ class Camera(QtOpenGL.QGLWidget):
         glPopMatrix()
         
         self.setEyeRotation(0, 0, 0)
-        self.drawScene()      
+        self.drawScene()
+
                
     def drawScene(self):
         glPushMatrix()
@@ -159,10 +161,13 @@ class Camera(QtOpenGL.QGLWidget):
         glMultMatrixf(self.sceneMatrix)
             
         glPushName(0)
-        for s in self.scene:
+        glPushAttrib(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+        for s in self.scene:         
             s.draw()
         glPopName()
+        glPopAttrib()
         glPopMatrix()
+    
        
 #    def pickObject(self, x, y):
 #        SIZE = 100

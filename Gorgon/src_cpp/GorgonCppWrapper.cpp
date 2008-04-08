@@ -7,6 +7,7 @@
 #include <GraphMatch/BackEndInterface.h>
 #include <Gorgon/VolumeRenderer.h>
 #include <Gorgon/MeshRenderer.h>
+#include <Gorgon/SSERenderer.h>
 #include <Gorgon/Renderer.h>
 
 #include <boost/python.hpp>
@@ -31,20 +32,6 @@ BOOST_PYTHON_MODULE(gorgon_cpp_wrapper)
 		.def("getMax", &Renderer::GetMax)
 	;
 
-
-	class_<MeshRenderer, bases<Renderer>>("MeshRenderer", init<>())
-		.def("draw", &MeshRenderer::Draw)
-		.def("drawBoundingBox", &MeshRenderer::DrawBoundingBox)
-		.def("loadFile", &MeshRenderer::LoadFile)
-		.def("loadVolume", &MeshRenderer::LoadVolume)
-		.def("unload", &MeshRenderer::Unload)
-		.def("performSmoothLaplacian", &MeshRenderer::PerformSmoothLaplacian)
-		.def("getSupportedLoadFileFormats", &MeshRenderer::GetSupportedLoadFileFormats)
-		.def("getSupportedSaveFileFormats", &MeshRenderer::GetSupportedSaveFileFormats)
-		.def("getMin", &MeshRenderer::GetMin)
-		.def("getMax", &MeshRenderer::GetMax)
-	;
-
 	class_<VolumeRenderer, bases<Renderer>>("VolumeRenderer", init<>())
 		.def("draw", &VolumeRenderer::Draw)
 		.def("drawBoundingBox", &VolumeRenderer::DrawBoundingBox)
@@ -61,6 +48,33 @@ BOOST_PYTHON_MODULE(gorgon_cpp_wrapper)
 		.def("performBinarySkeletonizationJu2007", &VolumeRenderer::PerformBinarySkeletonizationJu2007, return_value_policy<manage_new_object>())		
 		.def("performGrayscaleSkeletonizationAbeysinghe2008", &VolumeRenderer::PerformGrayscaleSkeletonizationAbeysinghe2008, return_value_policy<manage_new_object>())		
 	;
+
+	class_<MeshRenderer, bases<Renderer>>("MeshRenderer", init<>())
+		.def("draw", &MeshRenderer::Draw)
+		.def("drawBoundingBox", &MeshRenderer::DrawBoundingBox)
+		.def("loadFile", &MeshRenderer::LoadFile)
+		.def("loadVolume", &MeshRenderer::LoadVolume)
+		.def("unload", &MeshRenderer::Unload)
+		.def("performSmoothLaplacian", &MeshRenderer::PerformSmoothLaplacian)
+		.def("getSupportedLoadFileFormats", &MeshRenderer::GetSupportedLoadFileFormats)
+		.def("getSupportedSaveFileFormats", &MeshRenderer::GetSupportedSaveFileFormats)
+		.def("getMin", &MeshRenderer::GetMin)
+		.def("getMax", &MeshRenderer::GetMax)
+	;
+
+	class_<SSERenderer, bases<Renderer>>("SSERenderer", init<>())
+		.def("draw", &SSERenderer::Draw)
+		.def("drawBoundingBox", &SSERenderer::DrawBoundingBox)
+		.def("loadFile", &SSERenderer::LoadFile)
+		.def("unload", &SSERenderer::Unload)
+		.def("getSupportedLoadFileFormats", &SSERenderer::GetSupportedLoadFileFormats)
+		.def("getSupportedSaveFileFormats", &SSERenderer::GetSupportedSaveFileFormats)
+		.def("getMin", &SSERenderer::GetMin)
+		.def("getMax", &SSERenderer::GetMax)
+		.def("setSkeletonRenderer", &SSERenderer::SetSkeletonRenderer, return_value_policy<manage_new_object>())
+		.def("performAutomaticAnnotation", &SSERenderer::PerformAutomaticAnnotation)		
+	;
+
 
 	class_<BackEndInterface>("BackEndInterface", init<>())
         .def("SetConstantsFromFile", &BackEndInterface::SetConstantsFromFile)

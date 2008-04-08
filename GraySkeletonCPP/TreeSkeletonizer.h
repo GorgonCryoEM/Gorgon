@@ -14,7 +14,7 @@ namespace wustl_mm {
 			TreeSkeletonizer(Volume * sourceVol, int minGray, int maxGray, int stepSize, int curveRadius, int minCurveSize);
 			~TreeSkeletonizer();
 
-			NonManifoldMesh * BuildTree(Vector3DInt rootSeed, double skeletonRatio, double structureTensorRatio);
+			NonManifoldMesh_NoTags * BuildTree(Vector3DInt rootSeed, double skeletonRatio, double structureTensorRatio);
 		private:
 			vector<Vector3DInt> seedPoints;
 		};
@@ -54,7 +54,7 @@ namespace wustl_mm {
 
 
 
-		NonManifoldMesh * TreeSkeletonizer::BuildTree(Vector3DInt rootSeed, double skeletonRatio, double structureTensorRatio) {
+		NonManifoldMesh_NoTags * TreeSkeletonizer::BuildTree(Vector3DInt rootSeed, double skeletonRatio, double structureTensorRatio) {
 			SetGraphWeights(skeletonRatio, structureTensorRatio);
 			CalculateMinimalSpanningTree(rootSeed);
 
@@ -65,7 +65,7 @@ namespace wustl_mm {
 				vertexIds[i] = -1;
 			}
 
-			NonManifoldMesh * tree = new NonManifoldMesh();
+			NonManifoldMesh_NoTags * tree = new NonManifoldMesh_NoTags();
 
 			vector<Vector3DInt> branch;
 			int v1Id, v2Id;
@@ -74,10 +74,10 @@ namespace wustl_mm {
 				for(int j = 0; j < (int)branch.size()-1; j++) {
 
 					if(vertexIds[skeleton->getIndex(branch[j].X(), branch[j].Y(), branch[j].Z())] < 0) {
-						vertexIds[skeleton->getIndex(branch[j].X(), branch[j].Y(), branch[j].Z())] = tree->AddVertex(Vector3DInt2Float(branch[j]), false, false, NOT_A_HELIX_VERTEX);
+						vertexIds[skeleton->getIndex(branch[j].X(), branch[j].Y(), branch[j].Z())] = tree->AddVertex(Vector3DInt2Float(branch[j]));
 					}
 					if(vertexIds[skeleton->getIndex(branch[j+1].X(), branch[j+1].Y(), branch[j+1].Z())] < 0) {
-						vertexIds[skeleton->getIndex(branch[j+1].X(), branch[j+1].Y(), branch[j+1].Z())] = tree->AddVertex(Vector3DInt2Float(branch[j+1]), false, false, NOT_A_HELIX_VERTEX);
+						vertexIds[skeleton->getIndex(branch[j+1].X(), branch[j+1].Y(), branch[j+1].Z())] = tree->AddVertex(Vector3DInt2Float(branch[j+1]));
 					} 
 
 					v1Id = vertexIds[skeleton->getIndex(branch[j].X(), branch[j].Y(), branch[j].Z())];

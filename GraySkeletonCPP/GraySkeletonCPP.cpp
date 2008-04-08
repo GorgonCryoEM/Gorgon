@@ -1,6 +1,9 @@
 #ifndef GRAY_SKELETON_CPP_CPP
 #define GRAY_SKELETON_CPP_CPP
 
+#define _CRT_SECURE_NO_DEPRECATE 1
+#define _CRT_NONSTDC_NO_DEPRECATE 1
+
 #include "GrayImageSkeletonizer.h"
 #include "VolumeReaderRAW.h"
 #include "VolumeFormatConverter.h"
@@ -408,7 +411,7 @@ namespace wustl_mm {
 					delete reader;
 
 					TreeSkeletonizer * skel = new TreeSkeletonizer(sourceVol, minGray, maxGray, stepSize, curveRadius, minCurveSize);
-					NonManifoldMesh * mesh = skel->BuildTree(skel->FindClosestSkeletalPoint(Vector3DInt(rootX, rootY, rootZ)), skeletonRatio, stRatio);
+					NonManifoldMesh_NoTags * mesh = skel->BuildTree(skel->FindClosestSkeletalPoint(Vector3DInt(rootX, rootY, rootZ)), skeletonRatio, stRatio);
 					mesh->ToOffCells(outFile);
 					
 					delete sourceVol;

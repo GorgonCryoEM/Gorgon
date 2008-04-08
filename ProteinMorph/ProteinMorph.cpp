@@ -1,7 +1,9 @@
 #ifndef PROTEINMORPH_SWITCHBOARD_CPP
 #define PROTEINMORPH_SWITCHBOARD_CPP
 
-#include "ProteinMesh.h"
+#define _CRT_SECURE_NO_DEPRECATE 1
+#define _CRT_NONSTDC_NO_DEPRECATE 1
+
 #include <Foundation/TimeManager.h>
 #include <SkeletonMaker/volume.h>
 #include <GraySkeletonCPP/VolumeReaderATOM.h>
@@ -45,10 +47,10 @@ namespace wustl_mm {
 			//Volume * helixVol = VolumeReaderATOM::LoadVolume(helix, "", skeletonVol->getSizeX(), skeletonVol->getSizeY(), skeletonVol->getSizeZ());
 			Volume * sheetVol = VolumeReaderATOM::LoadVolume(sheet, "", "", skeletonVol->getSizeX(), skeletonVol->getSizeY(), skeletonVol->getSizeZ());
 			//NonManifoldMesh * mesh = new ProteinMesh(skeletonVol, helixVol, sheetVol);
-			NonManifoldMesh * mesh = new ProteinMesh(skeletonVol, NULL, sheetVol);
-			NonManifoldMesh * smoothedMesh = mesh->SmoothLaplacian(0.5);
-			NonManifoldMesh * smoothedMesh2 = smoothedMesh->SmoothLaplacian(0.5);
-			NonManifoldMesh * smoothedMesh3 = smoothedMesh2->SmoothLaplacian(0.5);
+			NonManifoldMesh_NoTags * mesh = new NonManifoldMesh_NoTags(skeletonVol);
+			NonManifoldMesh_NoTags * smoothedMesh = mesh->SmoothLaplacian(0.5);
+			NonManifoldMesh_NoTags * smoothedMesh2 = smoothedMesh->SmoothLaplacian(0.5);
+			NonManifoldMesh_NoTags * smoothedMesh3 = smoothedMesh2->SmoothLaplacian(0.5);
 			mesh->ToOffCells(outPath + "-Skeleton.off");
 			smoothedMesh->ToOffCells(outPath + "-Skeleton-Smoothed.off");
 			smoothedMesh2->ToOffCells(outPath + "-Skeleton-Smoothed2.off");
@@ -69,7 +71,7 @@ using namespace wustl_mm::Protein_Morph;
 using namespace wustl_mm::Foundation;
 
 int main( int args, char * argv[] ) {
-	NonManifoldMesh * m = NonManifoldMesh::LoadOffFile("C:\\_WUSTL\\sasakthi\\research\\source\\Gorgon\\src_py\\temp\\Apple.off");
+	NonManifoldMesh_NoTags * m = NonManifoldMesh_NoTags::LoadOffFile("C:\\_WUSTL\\sasakthi\\research\\source\\Gorgon\\src_py\\temp\\Apple.off");
 	int function = DO_NOTHING;
 	bool error = true;
 

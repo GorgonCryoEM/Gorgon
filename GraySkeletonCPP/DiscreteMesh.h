@@ -909,7 +909,7 @@ namespace wustl_mm {
 
 
 		bool DiscreteMesh::IsSimple(Volume * sourceVolume, int x, int y, int z) {
-			return sourceVolume->isSimple(x, y, z); 
+			return sourceVolume->isSimple(x, y, z) != 0;
 		}
 		bool DiscreteMesh::IsValidSurface(Volume * sourceVolume, Vector3DDouble p0, Vector3DDouble p1, Vector3DDouble p2, Vector3DDouble p3) {
 			Vector3DDouble surface[4] = {p0, p1, p2, p3};

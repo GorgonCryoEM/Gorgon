@@ -17,11 +17,13 @@ using namespace wustl_mm::GraySkeletonCPP;
 
 namespace wustl_mm {
 	namespace Visualization {	
+		typedef NonManifoldMesh<bool, unsigned char, unsigned char> NonManifoldMesh_Annotated;
 		class MeshRenderer : public Renderer{
 		public:
 			MeshRenderer();
 			~MeshRenderer();
 
+			NonManifoldMesh_Annotated * GetMesh();
 			void Draw();
 			void LoadFile(string fileName);
 			void LoadVolume(Volume * sourceVolume);
@@ -31,7 +33,7 @@ namespace wustl_mm {
 			string GetSupportedSaveFileFormats();
 		private:
 			void UpdateBoundingBox();
-			NonManifoldMesh * mesh;
+			NonManifoldMesh_Annotated * mesh;
 		};
 
 
@@ -45,9 +47,13 @@ namespace wustl_mm {
 			}
 		}
 
+		NonManifoldMesh_Annotated * MeshRenderer::GetMesh() {
+			return mesh;
+		}
+
 		void MeshRenderer::Draw() {
 			if(mesh != NULL) {
-				mesh->Draw();
+				mesh->Draw(true, true, true);
 			}
 		}
 
@@ -62,10 +68,10 @@ namespace wustl_mm {
 			}
 
 			if(stricmp(extension.c_str(), "OFF") == 0) {
-				mesh = NonManifoldMesh::LoadOffFile(fileName);				
+				mesh = NonManifoldMesh_Annotated::LoadOffFile(fileName);				
 			} else if((stricmp(extension.c_str(), "MRC") == 0) || (stricmp(extension.c_str(), "ATOM") == 0)) {
 				Volume * volume = VolumeFormatConverter::LoadVolume(fileName);
-				mesh = new NonManifoldMesh(volume);
+				mesh = new NonManifoldMesh_Annotated(volume);
 				delete volume;			
 			} else {
 				printf("Input format %s not supported!\n", extension);
@@ -79,7 +85,7 @@ namespace wustl_mm {
 			if(mesh != NULL) {
 				delete mesh;
 			}
-			mesh = new NonManifoldMesh(sourceVolume);
+			mesh = new NonManifoldMesh_Annotated(sourceVolume);
 			UpdateBoundingBox();
 		}
 
@@ -92,7 +98,7 @@ namespace wustl_mm {
 
 		}
 		void MeshRenderer::PerformSmoothLaplacian(double convergenceRate, int iterations) {
-			NonManifoldMesh * newMesh = mesh->SmoothLaplacian(convergenceRate, iterations);
+			NonManifoldMesh_Annotated * newMesh = mesh->SmoothLaplacian(convergenceRate, iterations);
 			delete mesh;
 			mesh = newMesh;
 		}

@@ -19,14 +19,15 @@ class BaseViewer(QtGui.QWidget):
         self.app = main      
         self.title = "Untitled"
         self.loaded = False
+        self.isClosedMesh = True
         self.displayStyle = self.DisplayStyleSmooth;
-        self.modelVisible = True;
+        self.modelVisible = True
         self.connect(self, QtCore.SIGNAL("modelChanged()"), self.modelChanged) 
         self.connect(self, QtCore.SIGNAL("modelLoaded()"), self.modelChanged) 
         self.connect(self, QtCore.SIGNAL("modelUnloaded()"), self.modelChanged)    
         self.gllist = 0
         self.showBox = True
-        self.modelColor = QtGui.QColor.fromRgba(QtGui.qRgba(128, 128, 128, 255))
+        self.modelColor = QtGui.QColor.fromRgba(QtGui.qRgba(180, 180, 180, 255))
         self.boxColor = QtGui.QColor.fromRgba(QtGui.qRgba(255, 255, 255, 255))
         
     def initVisualizationOptions(self):
@@ -52,34 +53,9 @@ class BaseViewer(QtGui.QWidget):
         self.modelColor = color
         self.emitModelChanged()
 
-    def initializeGLDisplayType(self):
-        if self.displayStyle == self.DisplayStyleWireframe:
-            glEnable(GL_DEPTH_TEST)
-            glEnable(GL_LIGHTING)
-            glPolygonMode(GL_FRONT, GL_LINE)
-            glPolygonMode(GL_BACK, GL_LINE)
-            
-        elif self.displayStyle == self.DisplayStyleFlat:
-            glEnable(GL_DEPTH_TEST) 
-            glEnable(GL_LIGHTING)
-            glPolygonMode(GL_FRONT, GL_FILL)
-            glPolygonMode(GL_BACK, GL_FILL)
-            glShadeModel(GL_FLAT)
-            
-        elif self.displayStyle == self.DisplayStyleSmooth:
-            glEnable(GL_DEPTH_TEST) 
-            glEnable(GL_LIGHTING)
-            glPolygonMode(GL_FRONT, GL_FILL)
-            glPolygonMode(GL_BACK, GL_FILL)
-            glShadeModel(GL_SMOOTH)
-            
-        else:
-            self.displayStyle = self.DisplayStyleSmooth;
-            self.setDisplayType()            
-                                                                 
     def setMaterials(self, color):
-        diffuseMaterial = [color.redF(), color.greenF(), color.blueF(), 1.0]
-        ambientMaterial = [color.redF()*0.2, color.greenF()*0.2, color.blueF()*0.2, 1.0]
+        diffuseMaterial = [color.redF(), color.greenF(), color.blueF(), color.alphaF()]
+        ambientMaterial = [color.redF()*0.2, color.greenF()*0.2, color.blueF()*0.2, color.alphaF()]
         specularMaterial = [1.0, 1.0, 1.0, 1.0]
         glMaterialfv(GL_BACK, GL_AMBIENT,   ambientMaterial) 
         glMaterialfv(GL_BACK, GL_DIFFUSE,   diffuseMaterial) 
@@ -90,13 +66,50 @@ class BaseViewer(QtGui.QWidget):
         glMaterialfv(GL_FRONT, GL_SPECULAR,  specularMaterial) 
         glMaterialf( GL_FRONT, GL_SHININESS, 0.1)
 
+    def initializeGLDisplayType(self):
+        glPushAttrib(GL_DEPTH_BUFFER_BIT | GL_LIGHTING_BIT | GL_ENABLE_BIT)
+        glEnable(GL_DEPTH_TEST);        
+        glDepthMask(GL_TRUE);
+        if(self.isClosedMesh):
+            glEnable(GL_CULL_FACE)
+        else:
+            glDisable(GL_CULL_FACE)
+                        
+        glEnable(GL_LIGHTING)
+        
+        glEnable (GL_BLEND); 
+        glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        
+        
+        if self.displayStyle == self.DisplayStyleWireframe:
+            glPolygonMode(GL_FRONT, GL_LINE)
+            glPolygonMode(GL_BACK, GL_LINE)
+            
+        elif self.displayStyle == self.DisplayStyleFlat:
+            glPolygonMode(GL_FRONT, GL_FILL)
+            glPolygonMode(GL_BACK, GL_FILL)
+            glShadeModel(GL_FLAT)
+            
+        elif self.displayStyle == self.DisplayStyleSmooth:
+            glPolygonMode(GL_FRONT, GL_FILL)
+            glPolygonMode(GL_BACK, GL_FILL)
+            glShadeModel(GL_SMOOTH)
+            
+        else:
+            self.displayStyle = self.DisplayStyleSmooth;
+            self.setDisplayType()
+    
+    def unInitializeGLDisplayType(self):
+        glPopAttrib()    
+
     def draw(self):
         if self.modelVisible and (self.gllist != 0):          
             self.initializeGLDisplayType()
             glPushMatrix()
             glTranslated(-0.5, -0.5, -0.5)
             glCallList(self.gllist)
-            glPopMatrix()    
+            glPopMatrix()
+            self.unInitializeGLDisplayType();
           
     def loadData(self):
         fileName = QtGui.QFileDialog.getOpenFileName(self, self.tr("Open Data"), "", self.tr(self.renderer.getSupportedLoadFileFormats()))
