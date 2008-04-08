@@ -61,22 +61,22 @@ namespace wustl_mm {
 			// Read the volume file and load volume data structure
 			Volume * vol = (MRCReaderPicker::pick(volumeFile))->getVolume();
 			//vol->toMathematicaFile("myVolume.nb");
-		#ifdef VERBOSE
-			printf("Constructing 'paintedVol'...\n");
-		#endif
+			#ifdef VERBOSE
+				printf("Constructing 'paintedVol'...\n");
+			#endif
 			Volume * paintedVol = new Volume(vol->getSizeX(), vol->getSizeY(), vol->getSizeZ());
 
-		#ifdef VERBOSE
-			printf("Finished reading volume file, now moving on to helixes...\n");
-		#endif
+			#ifdef VERBOSE
+				printf("Finished reading volume file, now moving on to helixes...\n");
+			#endif
 
 			// Read the helix file
 			vector<GeometricShape*> helixes;
 			helixes.clear();
 			ReadHelixFile(helixFile, sseFile, helixes);
-		#ifdef INCLUDE_SHEETS
-			ReadSheetFile(sheetFile, helixes);
-		#endif
+			#ifdef INCLUDE_SHEETS
+				ReadSheetFile(sheetFile, helixes);
+			#endif
 			Point3 point;
 
 			double xOffset = 0;

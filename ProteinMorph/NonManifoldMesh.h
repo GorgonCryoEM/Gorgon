@@ -15,54 +15,51 @@ using namespace wustl_mm::MathTools;
 
 namespace wustl_mm {
 	namespace Protein_Morph {
-		const int NOT_A_HELIX_VERTEX = -1;
-		struct NonManifoldMeshEdge {
+		template <class TEdge> struct NonManifoldMeshEdge {
 			unsigned int id;
 			unsigned int vertexIds[2];
 			vector<unsigned int> faceIds;
-			bool isHelix;
+			TEdge tag;
 			bool valid;
 		};
 
-		struct NonManifoldMeshFace {
+		template <class TFace> struct NonManifoldMeshFace {
 			unsigned int id;
 			vector<unsigned int> edgeIds;
 			vector<unsigned int> vertexIds;
-			bool isSheet;
+			TFace tag;
 			bool valid;
 		};
 
-		struct NonManifoldMeshVertex {
+		template <class TVertex> struct NonManifoldMeshVertex {
 			unsigned int id;
 			Vector3DFloat position;
 			vector<unsigned int> edgeIds;
 			bool valid;
-			bool stationary;
-			bool articulationPoint;
-			int helixId;
+			TVertex tag;
 		};
 
 
 		typedef hash_map<int, int> HashMapType;
-		class NonManifoldMesh{
+		template <class TVertex, class TEdge, class TFace> class NonManifoldMesh{
 		public:
 			NonManifoldMesh();
-			NonManifoldMesh(NonManifoldMesh * srcMesh);
-			NonManifoldMesh(Volume * sourceVol, Volume * helixVol = NULL, Volume * sheetVol = NULL);
+			NonManifoldMesh(NonManifoldMesh<TVertex, TEdge, TFace> * srcMesh);
+			NonManifoldMesh(Volume * sourceVol);
 			bool IsEdgePresent(int vertexId1, int vertexId2);
-			int AddVertex(NonManifoldMeshVertex vertex);
-			int AddVertex(Vector3DFloat location, bool stationary, bool articulationPoint, int helixId);
-			int AddHashedVertex(Vector3DFloat location, bool stationary, bool articulationPoint, int helixId, int hashKey);
-			int AddEdge(NonManifoldMeshEdge edge);
-			int AddFace(NonManifoldMeshFace face);
+			int AddVertex(NonManifoldMeshVertex<TVertex> vertex);
+			int AddVertex(Vector3DFloat location, TVertex tag = NULL);
+			int AddHashedVertex(Vector3DFloat location, int hashKey, TVertex tag = NULL);
+			int AddEdge(NonManifoldMeshEdge<TEdge> edge);
+			int AddFace(NonManifoldMeshFace<TFace> face);
 			int GetVertexIndex(int vertexId);
 			int GetFaceIndex(int faceId);
 			int GetEdgeIndex(int edgeId);
-			void AddEdge(int vertexId1, int vertexId2, bool isHelix);
-			void AddQuad(int vertexId1, int vertexId2, int vertexId3, int vertexId4, bool isSheet);
-			void AddTriangle(int vertexId1, int vertexId2, int vertexId3, bool isSheet);
+			void AddEdge(int vertexId1, int vertexId2, TEdge tag = NULL);
+			void AddQuad(int vertexId1, int vertexId2, int vertexId3, int vertexId4, TEdge newEdgeTag = NULL, TFace faceTag = NULL);
+			void AddTriangle(int vertexId1, int vertexId2, int vertexId3, TEdge newEdgeTag = NULL, TFace faceTag = NULL);
 			void Clear();
-			void Draw();
+			void Draw(bool drawSurfaces, bool drawLines, bool drawPoints);
 			void MarkFixedVertices();
 			void RemoveFace(int faceId);
 			void RemoveEdge(int edgeId);
@@ -77,20 +74,23 @@ namespace wustl_mm {
 			static NonManifoldMesh * LoadOffFile(string fileName);
 
 		public:
-			vector<NonManifoldMeshVertex> vertices;
-			vector<NonManifoldMeshEdge> edges;
-			vector<NonManifoldMeshFace> faces;
+			vector<NonManifoldMeshVertex<TVertex>> vertices;
+			vector<NonManifoldMeshEdge<TEdge>> edges;
+			vector<NonManifoldMeshFace<TFace>> faces;
 			int edgeCount;
 			int vertexCount;
 			int faceCount;
 			HashMapType vertexHashMap;
 		};
 
-		NonManifoldMesh::NonManifoldMesh() {
+
+		typedef NonManifoldMesh<bool, bool, bool> NonManifoldMesh_NoTags;
+
+		template <class TVertex, class TEdge, class TFace> NonManifoldMesh<TVertex, TEdge, TFace>::NonManifoldMesh() {
 			Clear();			
 		}
 
-		NonManifoldMesh::NonManifoldMesh(NonManifoldMesh * srcMesh) {
+		template <class TVertex, class TEdge, class TFace> NonManifoldMesh<TVertex, TEdge, TFace>::NonManifoldMesh(NonManifoldMesh<TVertex, TEdge, TFace> * srcMesh) {
 			Clear();
 			for(unsigned int i = 0; i < srcMesh->vertices.size(); i++) {
 				vertices.push_back(srcMesh->vertices[i]);
@@ -103,7 +103,7 @@ namespace wustl_mm {
 			}
 		}
 
-		NonManifoldMesh::NonManifoldMesh(Volume * sourceVol, Volume * helixVol, Volume * sheetVol) {
+		template <class TVertex, class TEdge, class TFace> NonManifoldMesh<TVertex, TEdge, TFace>::NonManifoldMesh(Volume * sourceVol) {
 			Clear();
 
 			int x, y, z, i, j, index, index2;
@@ -111,7 +111,7 @@ namespace wustl_mm {
 			int value;
 
 			// Adding vertices
-			NonManifoldMeshVertex tempVertex;
+			NonManifoldMeshVertex<TVertex> tempVertex;
 			tempVertex.edgeIds.clear();
 			for(x = 0; x < sourceVol->getSizeX(); x++) {
 				for(y = 0; y < sourceVol->getSizeY(); y++) {
@@ -120,14 +120,7 @@ namespace wustl_mm {
 						vertexLocations[index] = -1;
 						value = (int)round(sourceVol->getDataAt(index));
 						if(value > 0) {							
-							tempVertex.position = Vector3DFloat(x,y,z);	
-							tempVertex.articulationPoint = (value == 2);
-							tempVertex.stationary = (value >= 2);
-							if(value >= 3) {
-								tempVertex.helixId = value-3;
-							} else {
-								tempVertex.helixId = -1;
-							}
+							tempVertex.position = Vector3DFloat(x,y,z);								
 							vertexLocations[index] = AddVertex(tempVertex);
 						}
 					}
@@ -136,16 +129,14 @@ namespace wustl_mm {
 
 			//Adding edges
 			int edgeNeighbors[3][3] = {{1,0,0}, {0,1,0}, {0,0,1}};
-			bool isHelix;
 			for(x = 0; x < sourceVol->getSizeX()-1; x++) {
 				for(y = 0; y < sourceVol->getSizeY()-1; y++) {
 					for(z = 0; z < sourceVol->getSizeZ()-1; z++) {
 						index = sourceVol->getIndex(x, y, z);
 						for(i = 0; i < 3; i++) {
 							index2 = sourceVol->getIndex(x+edgeNeighbors[i][0], y+edgeNeighbors[i][1], z+edgeNeighbors[i][2]);		
-							if((vertexLocations[index] >= 0) && (vertexLocations[index2] >= 0)) {
-								isHelix = (helixVol != NULL) && (helixVol->getDataAt(index) > 0) && (helixVol->getDataAt(index2) > 0);
-								AddEdge(vertexLocations[index], vertexLocations[index2], isHelix);								
+							if((vertexLocations[index] >= 0) && (vertexLocations[index2] >= 0)) {								
+								AddEdge(vertexLocations[index], vertexLocations[index2]);								
 							}
 						}
 					}
@@ -157,7 +148,7 @@ namespace wustl_mm {
 											{{1,0,0}, {1,1,0}, {0,1,0}}, 
 											{{0,1,0}, {0,1,1}, {0,0,1}}};
 			int indices[4];
-			bool faceFound, isSheet;
+			bool faceFound;
 			for(x = 0; x < sourceVol->getSizeX()-1; x++) {
 				for(y = 0; y < sourceVol->getSizeY()-1; y++) {
 					for(z = 0; z < sourceVol->getSizeZ()-1; z++) {
@@ -165,16 +156,14 @@ namespace wustl_mm {
 						if(vertexLocations[index] >= 0) {
 							for(i = 0; i < 3; i++) {
 								faceFound = true;
-								isSheet = (sheetVol != NULL) && (sheetVol->getDataAt(index) > 0);
 								indices[0] = vertexLocations[index];
 								for(j = 0; j < 3; j++) {
 									index2 = sourceVol->getIndex(x+faceNeighbors[i][j][0], y+faceNeighbors[i][j][1], z+faceNeighbors[i][j][2]);
 									indices[j+1] = vertexLocations[index2];
-									isSheet = isSheet && (sheetVol->getDataAt(index2) > 0);
 									faceFound = faceFound && vertexLocations[index2] >= 0;
 								}
 								if(faceFound) {
-									AddQuad(indices[0], indices[1], indices[2], indices[3], isSheet);
+									AddQuad(indices[0], indices[1], indices[2], indices[3]);
 								}
 							}
 						}
@@ -185,7 +174,7 @@ namespace wustl_mm {
 			MarkFixedVertices();
 		}
 
-		bool NonManifoldMesh::IsEdgePresent(int vertexId1, int vertexId2) {
+		template <class TVertex, class TEdge, class TFace> bool NonManifoldMesh<TVertex, TEdge, TFace>::IsEdgePresent(int vertexId1, int vertexId2) {
 			bool isPresent = false;
 			int v1Index = GetVertexIndex(vertexId1);
 			int v2Index = GetVertexIndex(vertexId2);
@@ -195,7 +184,7 @@ namespace wustl_mm {
 			return isPresent;
 
 		}
-		int NonManifoldMesh::AddVertex(NonManifoldMeshVertex vertex) {			
+		template <class TVertex, class TEdge, class TFace> int NonManifoldMesh<TVertex, TEdge, TFace>::AddVertex(NonManifoldMeshVertex<TVertex> vertex) {			
 			vertex.id = vertices.size();
 			vertex.valid = true;
 			vertices.push_back(vertex);
@@ -203,20 +192,18 @@ namespace wustl_mm {
 			return vertex.id;
 		}	
 
-		int NonManifoldMesh::AddVertex(Vector3DFloat location, bool stationary, bool articulationPoint, int helixId) {
-			NonManifoldMeshVertex v;
+		template <class TVertex, class TEdge, class TFace> int NonManifoldMesh<TVertex, TEdge, TFace>::AddVertex(Vector3DFloat location, TVertex tag) {
+			NonManifoldMeshVertex<TVertex> v;
 			v.position = location;
-			v.stationary = stationary;
-			v.articulationPoint = articulationPoint;
-			v.helixId = helixId;
+			v.tag = tag;
 			return AddVertex(v);
 		}
 
-		int NonManifoldMesh::AddHashedVertex(Vector3DFloat location, bool stationary, bool articulationPoint, int helixId, int hashKey) {
+		template <class TVertex, class TEdge, class TFace> int NonManifoldMesh<TVertex, TEdge, TFace>::AddHashedVertex(Vector3DFloat location, int hashKey, TVertex tag) {
 			HashMapType::const_iterator pos = vertexHashMap.find(hashKey);
 			int vertexId;
 			if(pos == vertexHashMap.end()) {
-				vertexId = AddVertex(location, stationary, articulationPoint, helixId);
+				vertexId = AddVertex(location, tag);
 				vertexHashMap[hashKey] = vertexId;
 			} else {
 				vertexId = pos->second;
@@ -224,7 +211,7 @@ namespace wustl_mm {
 			return vertexId;
 		}
 
-		int NonManifoldMesh::AddEdge(NonManifoldMeshEdge edge) {
+		template <class TVertex, class TEdge, class TFace> int NonManifoldMesh<TVertex, TEdge, TFace>::AddEdge(NonManifoldMeshEdge<TEdge> edge) {
 			edge.id = edges.size();
 			edge.valid = true;
 			edges.push_back(edge);
@@ -232,7 +219,7 @@ namespace wustl_mm {
 			return edge.id;
 		}
 
-		int NonManifoldMesh::AddFace(NonManifoldMeshFace face) {
+		template <class TVertex, class TEdge, class TFace> int NonManifoldMesh<TVertex, TEdge, TFace>::AddFace(NonManifoldMeshFace<TFace> face) {
 			face.id = faces.size();
 			face.valid = true;
 			faces.push_back(face);
@@ -240,21 +227,21 @@ namespace wustl_mm {
 			return face.id;
 		}
 
-		int NonManifoldMesh::GetVertexIndex(int vertexId) {
+		template <class TVertex, class TEdge, class TFace> int NonManifoldMesh<TVertex, TEdge, TFace>::GetVertexIndex(int vertexId) {
 			return vertexId;
 		}
 
-		int NonManifoldMesh::GetFaceIndex(int faceId) {
+		template <class TVertex, class TEdge, class TFace> int NonManifoldMesh<TVertex, TEdge, TFace>::GetFaceIndex(int faceId) {
 			return faceId;
 		}
 
-		int NonManifoldMesh::GetEdgeIndex(int edgeId) {
+		template <class TVertex, class TEdge, class TFace> int NonManifoldMesh<TVertex, TEdge, TFace>::GetEdgeIndex(int edgeId) {
 			return edgeId;
 		}
 
-		void NonManifoldMesh::AddEdge(int vertexId1, int vertexId2, bool isHelix){
-			NonManifoldMeshEdge edge;
-			edge.isHelix = isHelix;
+		template <class TVertex, class TEdge, class TFace> void NonManifoldMesh<TVertex, TEdge, TFace>::AddEdge(int vertexId1, int vertexId2, TEdge tag){
+			NonManifoldMeshEdge<TEdge> edge;
+			edge.tag = tag;
 			edge.faceIds.clear();
 			edge.vertexIds[0] = vertexId1;
 			edge.vertexIds[1] = vertexId2;
@@ -263,18 +250,24 @@ namespace wustl_mm {
 			vertices[GetVertexIndex(vertexId2)].edgeIds.push_back(edgeId);
 		}
 
-		void NonManifoldMesh::AddQuad(int vertexId1, int vertexId2, int vertexId3, int vertexId4, bool isSheet) {
-			if(!IsEdgePresent(vertexId1, vertexId3)) {
-					AddEdge(vertexId1, vertexId3, false);
-			}
-
-			AddTriangle(vertexId1, vertexId2, vertexId3, isSheet);
-			AddTriangle(vertexId1, vertexId3, vertexId4, isSheet);
+		template <class TVertex, class TEdge, class TFace> void NonManifoldMesh<TVertex, TEdge, TFace>::AddQuad(int vertexId1, int vertexId2, int vertexId3, int vertexId4, TEdge newEdgeTag, TFace faceTag) {
+			AddTriangle(vertexId1, vertexId2, vertexId3, newEdgeTag, faceTag);
+			AddTriangle(vertexId1, vertexId3, vertexId4, newEdgeTag, faceTag);
 		}
 
-		void NonManifoldMesh::AddTriangle(int vertexId1, int vertexId2, int vertexId3, bool isSheet) {
-			NonManifoldMeshFace face;
-			face.isSheet = isSheet;
+		template <class TVertex, class TEdge, class TFace> void NonManifoldMesh<TVertex, TEdge, TFace>::AddTriangle(int vertexId1, int vertexId2, int vertexId3, TEdge newEdgeTag, TFace faceTag) {
+			if(!IsEdgePresent(vertexId1, vertexId2)) {
+					AddEdge(vertexId1, vertexId2, newEdgeTag);
+			}
+			if(!IsEdgePresent(vertexId2, vertexId3)) {
+					AddEdge(vertexId2, vertexId3, newEdgeTag);
+			}
+			if(!IsEdgePresent(vertexId3, vertexId1)) {
+					AddEdge(vertexId3, vertexId1, newEdgeTag);
+			}
+
+			NonManifoldMeshFace<TFace> face;
+			face.tag = faceTag;
 			face.vertexIds.clear();
 			face.vertexIds.push_back(vertexId1);
 			face.vertexIds.push_back(vertexId2);
@@ -301,7 +294,7 @@ namespace wustl_mm {
 			}
 		}
 
-		void NonManifoldMesh::Clear() {
+		template <class TVertex, class TEdge, class TFace> void NonManifoldMesh<TVertex, TEdge, TFace>::Clear() {
 			vertices.clear();
 			edges.clear();
 			faces.clear();
@@ -311,43 +304,55 @@ namespace wustl_mm {
 			vertexHashMap.clear();
 		}
 
-		void NonManifoldMesh::Draw() {
+		template <class TVertex, class TEdge, class TFace> void NonManifoldMesh<TVertex, TEdge, TFace>::Draw(bool drawSurfaces, bool drawLines, bool drawPoints) {
 			int k;
+			glPushAttrib(GL_ENABLE_BIT | GL_HINT_BIT);
 
-			for(unsigned int i = 0; i < faces.size(); i++) {
-				glBegin(GL_POLYGON);
-				Vector3DFloat normal;
-				for(unsigned int j = 0; j < faces[i].vertexIds.size(); j++) {
-					normal = GetVertexNormal(faces[i].vertexIds[j]);
-					k = GetVertexIndex(faces[i].vertexIds[j]);
-					glNormal3f(normal.X(), normal.Y(), normal.Z());
-					glVertex3f(vertices[k].position.X(), vertices[k].position.Y(), vertices[k].position.Z());
+			if(drawSurfaces) {
+				for(unsigned int i = 0; i < faces.size(); i++) {
+					glBegin(GL_POLYGON);
+					Vector3DFloat normal;
+					for(unsigned int j = 0; j < faces[i].vertexIds.size(); j++) {
+						normal = GetVertexNormal(faces[i].vertexIds[j]);
+						k = GetVertexIndex(faces[i].vertexIds[j]);
+						glNormal3f(normal.X(), normal.Y(), normal.Z());
+						glVertex3fv(vertices[k].position.values);
+					}
+					glEnd();
+				}
+			}
+
+			if(drawLines) {
+				glEnable(GL_LINE_SMOOTH);
+				glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+				glBegin(GL_LINES);
+				for(unsigned int i = 0; i < edges.size(); i++) {
+					if(edges[i].faceIds.size() == 0) {
+						k = GetVertexIndex(edges[i].vertexIds[0]);
+						glVertex3f(vertices[k].position.X(), vertices[k].position.Y(), vertices[k].position.Z());
+						k = GetVertexIndex(edges[i].vertexIds[1]);
+						glVertex3f(vertices[k].position.X(), vertices[k].position.Y(), vertices[k].position.Z());			
+					}
 				}
 				glEnd();
 			}
 
-			glBegin(GL_LINES);
-			for(unsigned int i = 0; i < edges.size(); i++) {
-				if(edges[i].faceIds.size() == 0) {
-					k = GetVertexIndex(edges[i].vertexIds[0]);
-					glVertex3f(vertices[k].position.X(), vertices[k].position.Y(), vertices[k].position.Z());
-					k = GetVertexIndex(edges[i].vertexIds[1]);
-					glVertex3f(vertices[k].position.X(), vertices[k].position.Y(), vertices[k].position.Z());			
+			if(drawPoints) {
+				glEnable(GL_POINT_SMOOTH);
+				glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
+				glBegin(GL_POINTS);
+				for(unsigned int i = 0; i < vertices.size(); i++) {
+					if(vertices[i].edgeIds.size() == 0) {
+						glVertex3f(vertices[i].position.X(), vertices[i].position.Y(), vertices[i].position.Z());
+					}
 				}
+				glEnd();
 			}
-			glEnd();
-
-			glBegin(GL_POINTS);
-			for(unsigned int i = 0; i < vertices.size(); i++) {
-				if(vertices[i].edgeIds.size() == 0) {
-					glVertex3f(vertices[i].position.X(), vertices[i].position.Y(), vertices[i].position.Z());
-				}
-			}
-			glEnd();
+			glPopAttrib();
 
 			glFlush();
 		}
-		void NonManifoldMesh::MarkFixedVertices() {
+		template <class TVertex, class TEdge, class TFace> void NonManifoldMesh<TVertex, TEdge, TFace>::MarkFixedVertices() {
 			bool sheetFound;
 			bool edgeFound;
 
@@ -359,13 +364,11 @@ namespace wustl_mm {
 						sheetFound = sheetFound || (edges[GetEdgeIndex(vertices[i].edgeIds[j])].faceIds.size() > 0);
 						edgeFound = edgeFound || (edges[GetEdgeIndex(vertices[i].edgeIds[j])].faceIds.size() == 0);
 					}
-
-					vertices[i].stationary = vertices[i].stationary || (vertices[i].edgeIds.size() <= 1) || (sheetFound && edgeFound);
 				}
 			}
 		}
 
-		void NonManifoldMesh::RemoveFace(int faceId) {
+		template <class TVertex, class TEdge, class TFace> void NonManifoldMesh<TVertex, TEdge, TFace>::RemoveFace(int faceId) {
 			int faceIndex = GetFaceIndex(faceId); 
 			int edgeIndex;
 			faces[faceIndex].valid = false;
@@ -380,7 +383,7 @@ namespace wustl_mm {
 			}
 		}
 
-		void NonManifoldMesh::RemoveEdge(int edgeId) {
+		template <class TVertex, class TEdge, class TFace> void NonManifoldMesh<TVertex, TEdge, TFace>::RemoveEdge(int edgeId) {
 			int edgeIndex = GetEdgeIndex(edgeId);
 			int vertexIndex;
 			if(edges[edgeIndex].faceIds.size() > 0) {
@@ -400,7 +403,7 @@ namespace wustl_mm {
 			}
 		}
 
-		void NonManifoldMesh::RemoveVertex(int vertexId) {
+		template <class TVertex, class TEdge, class TFace> void NonManifoldMesh<TVertex, TEdge, TFace>::RemoveVertex(int vertexId) {
 			int vertexIndex = GetVertexIndex(vertexId);
 			vertices[vertexIndex].valid = false;
 			vertexCount--;
@@ -411,7 +414,7 @@ namespace wustl_mm {
 			}
 		}
 
-		void NonManifoldMesh::RemoveNullEntries() {
+		template <class TVertex, class TEdge, class TFace> void NonManifoldMesh<TVertex, TEdge, TFace>::RemoveNullEntries() {
 			for(int i = (int)vertices.size()-1; i >= 0; i--) {
 				if(!vertices[i].valid) {
 					vertices.erase(vertices.begin() + i);
@@ -487,7 +490,7 @@ namespace wustl_mm {
 		}	
 
 
-		void NonManifoldMesh::ToOffCells(string fileName) {
+		template <class TVertex, class TEdge, class TFace> void NonManifoldMesh<TVertex, TEdge, TFace>::ToOffCells(string fileName) {
 			RemoveNullEntries();
 			FILE * outFile = fopen(fileName.c_str(), "wt");
 			fprintf(outFile, "OFF\n");
@@ -497,7 +500,6 @@ namespace wustl_mm {
 				fprintf(outFile, "%lf %lf %lf\n", vertices[i].position.X(), vertices[i].position.Y(), vertices[i].position.Z());
 			}
 			int lastVertex;
-			double r,g,b;
 			for(i = 0; i < (int)faces.size(); i++) {
 				fprintf(outFile, "%li ", faces[i].edgeIds.size());
 				lastVertex = -1;
@@ -506,35 +508,17 @@ namespace wustl_mm {
 					fprintf(outFile, "%li ", GetVertexIndex(faces[i].vertexIds[j]));
 				}
 
-				if(faces[i].isSheet) {
-					r = 0.0;
-					g = 0.0;
-					b = 1.0;
-				} else {
-					r = 0.5;
-					g = 0.5;
-					b = 0.0;
-				}
-				fprintf(outFile, "%lf %lf %lf\n", r, g, b);
+				fprintf(outFile, "\n");
 			}
 
-			for(i = 0; i < (int)edges.size(); i++) {
-				if(edges[i].isHelix) {
-					r = 0.0;
-					g = 1.0;
-					b = 0;0;
-				} else {
-					r = 0.5;
-					g = 0.5;
-					b = 0.0;
-				}
-				fprintf(outFile, "4 %li %li %li %li %lf %lf %lf\n", edges[i].vertexIds[0], edges[i].vertexIds[0], edges[i].vertexIds[1], edges[i].vertexIds[1], r, g, b);
+			for(i = 0; i < (int)edges.size(); i++) {		
+				fprintf(outFile, "4 %li %li %li %li \n", edges[i].vertexIds[0], edges[i].vertexIds[0], edges[i].vertexIds[1], edges[i].vertexIds[1]);
 			}
 			fclose(outFile);
 		}
 
 
-		void NonManifoldMesh::ToMathematicaFile(string fileName) {
+		template <class TVertex, class TEdge, class TFace> void NonManifoldMesh<TVertex, TEdge, TFace>::ToMathematicaFile(string fileName) {
 			RemoveNullEntries();
 			FILE * outF = fopen(fileName.c_str(), "wt");
 			// Vertices
@@ -582,55 +566,13 @@ namespace wustl_mm {
 					fprintf(outF, ", ");
 				}
 			}
-			fprintf(outF, "},\n");
-
-			// Articulation Points
-			fprintf(outF, "{");
-			bool first = true;
-			for(unsigned int i = 0; i < vertices.size(); i++) {
-				if(vertices[i].articulationPoint) {
-					if(!first) {
-						fprintf(outF, ", ");
-					} 
-					fprintf(outF, "%li", i+1);
-					first = false;
-				}
-			}
-			fprintf(outF, "},\n");
-
-			// Fixed Points
-			fprintf(outF, "{");
-			first = true;
-			for(unsigned int i = 0; i < vertices.size(); i++) {
-				if(vertices[i].stationary) {
-					if(!first) {
-						fprintf(outF, ", ");
-					} 
-					fprintf(outF, "%li", i+1);
-					first = false;
-				}
-			}
-			fprintf(outF, "},\n");
-
-			// Helix Ends
-			fprintf(outF, "{");
-			first = true;
-			for(unsigned int i = 0; i < vertices.size(); i++) {
-				if(vertices[i].helixId >= 0) {
-					if(!first) {
-						fprintf(outF, ", ");
-					} 
-					fprintf(outF, "{%li, %li}", i+1, vertices[i].helixId+1);
-					first = false;
-				}
-			}
 			fprintf(outF, "}\n");
 
 			fprintf(outF, "}");
 
 			fclose(outF);
 		}
-		Vector3DFloat NonManifoldMesh::GetVertexNormal(int vertexId) {
+		template <class TVertex, class TEdge, class TFace> Vector3DFloat NonManifoldMesh<TVertex, TEdge, TFace>::GetVertexNormal(int vertexId) {
 			int index = GetVertexIndex(vertexId);
 			int edgeIndex;
 			Vector3DFloat normal = Vector3DFloat(0,0,0);
@@ -644,27 +586,27 @@ namespace wustl_mm {
 			return normal;
 		}
 
-		Vector3DFloat NonManifoldMesh::GetFaceNormal(int faceId) {
+		template <class TVertex, class TEdge, class TFace> Vector3DFloat NonManifoldMesh<TVertex, TEdge, TFace>::GetFaceNormal(int faceId) {
 
 			Vector3DFloat normal = Vector3DFloat(1,0,0);
 
-			NonManifoldMeshFace face = faces[GetFaceIndex(faceId)];
+			NonManifoldMeshFace<TFace> face = faces[GetFaceIndex(faceId)];
 
 			if(face.vertexIds.size() >= 3) {
-				normal = -(vertices[GetVertexIndex(face.vertexIds[0])].position - vertices[GetVertexIndex(face.vertexIds[1])].position) ^
+				normal = (vertices[GetVertexIndex(face.vertexIds[1])].position - vertices[GetVertexIndex(face.vertexIds[0])].position) ^
 								(vertices[GetVertexIndex(face.vertexIds[2])].position - vertices[GetVertexIndex(face.vertexIds[0])].position);
 				normal.Normalize();
 			} 
 			return normal;
 		}
-		NonManifoldMesh * NonManifoldMesh::SmoothLaplacian(double converganceRate) {
+		template <class TVertex, class TEdge, class TFace> NonManifoldMesh<TVertex, TEdge, TFace> * NonManifoldMesh<TVertex, TEdge, TFace>::SmoothLaplacian(double converganceRate) {
 			NonManifoldMesh * smoothedMesh = new NonManifoldMesh(this);
 			int i, j, vertexIndex;
 			Vector3DFloat newPosition;
-			NonManifoldMeshVertex vertex;
+			NonManifoldMeshVertex<TVertex> vertex;
 			for(i = 0; i < (int)vertices.size(); i++) {
 				vertex = vertices[i];
-				if(vertex.valid && !vertex.stationary) {
+				if(vertex.valid) {
 					if(vertex.edgeIds.size() > 0) {
 						newPosition = Vector3DFloat(0,0,0);
 						for(j = 0; j < (int)vertex.edgeIds.size(); j++) {
@@ -687,7 +629,7 @@ namespace wustl_mm {
 		}
 
 
-		NonManifoldMesh * NonManifoldMesh::SmoothLaplacian(double converganceRate, int iterations) {
+		template <class TVertex, class TEdge, class TFace> NonManifoldMesh<TVertex, TEdge, TFace> * NonManifoldMesh<TVertex, TEdge, TFace>::SmoothLaplacian(double converganceRate, int iterations) {
 			NonManifoldMesh * newMesh;
 			NonManifoldMesh * oldMesh = new NonManifoldMesh(this);
 
@@ -699,7 +641,7 @@ namespace wustl_mm {
 
 			return oldMesh;
 		}
-		NonManifoldMesh * NonManifoldMesh::LoadOffFile(string fileName) {
+		template <class TVertex, class TEdge, class TFace> NonManifoldMesh<TVertex, TEdge, TFace> * NonManifoldMesh<TVertex, TEdge, TFace>::LoadOffFile(string fileName) {
 			NonManifoldMesh * mesh = new NonManifoldMesh();
 			FILE * inFile = fopen(fileName.c_str(), "rt");
 			char strTemp[255];
@@ -719,7 +661,7 @@ namespace wustl_mm {
 				lVertices++;
 				fscanf(inFile, "%f %f %f", &xPos, &yPos, &zPos);
 				//printf("[%f] [%f] [%f]\n", xPos, yPos, zPos);
-				mesh->AddVertex(Vector3DFloat(xPos, yPos, zPos), false, false, NOT_A_HELIX_VERTEX);
+				mesh->AddVertex(Vector3DFloat(xPos, yPos, zPos));
 				fgets(strTemp, 255, inFile);
 			}
 
@@ -740,19 +682,12 @@ namespace wustl_mm {
 							fscanf(inFile, "");
 							fscanf(inFile, "%d", &faceNodes[i]);
 						}
-						for(int i = 0; i < nFaceNodes; i++) {
-							if(!mesh->IsEdgePresent(faceNodes[i], faceNodes[(i+1)%nFaceNodes])) {
-								mesh->AddEdge(faceNodes[i], faceNodes[(i+1)%nFaceNodes], false);
-							}
-						}
-
-						if(!mesh->IsEdgePresent(faceNodes[0], faceNodes[2])) {
-								mesh->AddEdge(faceNodes[0], faceNodes[2], false);
-						}
 
 						if((faceNodes[0] != faceNodes[1]) && (faceNodes[0] != faceNodes[2]) && (faceNodes[0] != faceNodes[3])
 							&& (faceNodes[1] != faceNodes[2]) && (faceNodes[1] != faceNodes[3]) && (faceNodes[2] != faceNodes[3])) {
-							mesh->AddQuad(faceNodes[0], faceNodes[1], faceNodes[2], faceNodes[3], false);
+							mesh->AddQuad(faceNodes[0], faceNodes[1], faceNodes[2], faceNodes[3]);
+						} else {
+							mesh->AddEdge(faceNodes[0], faceNodes[2]);
 						}
 						break;
 					default :
@@ -761,14 +696,8 @@ namespace wustl_mm {
 							fscanf(inFile, "");
 							fscanf(inFile, "%d", &faceNodes[i]);
 						}
-						for(int i = 0; i < nFaceNodes; i++) {
-							if(!mesh->IsEdgePresent(faceNodes[i], faceNodes[(i+1)%nFaceNodes])) {
-								mesh->AddEdge(faceNodes[i], faceNodes[(i+1)%nFaceNodes], false);
-							}
-						}
-
 						for(int i = 2; i < nFaceNodes; i++) {
-							mesh->AddTriangle(faceNodes[0], faceNodes[i-1], faceNodes[i], false);
+							mesh->AddTriangle(faceNodes[0], faceNodes[i-1], faceNodes[i]);
 						}
 						break;
 

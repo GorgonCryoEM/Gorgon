@@ -3,6 +3,9 @@ Author: Sasakthi S. Abeysinghe
 Date  : 01/23/2006
 */
 
+#define _CRT_SECURE_NO_DEPRECATE 1
+#define _CRT_NONSTDC_NO_DEPRECATE 1
+
 #include <stdlib.h>
 #include <stdio.h>
 #include "StandardGraph.h"
@@ -18,6 +21,8 @@ Date  : 01/23/2006
 #include <time.h>
 
 #define DllExport   __declspec( dllexport )
+
+
 
 using namespace wustl_mm::GraphMatch;
 

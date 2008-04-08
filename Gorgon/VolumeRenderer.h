@@ -52,14 +52,14 @@ namespace wustl_mm {
 			void MarchingCube(int iX, int iY, int iZ, int iScale);
 
 		private:
-			NonManifoldMesh * _mesh;
+			NonManifoldMesh_NoTags * _mesh;
 			float _surf_value;
 			int _sample;
 			Volume * _voxel;
 		};
 
 		VolumeRenderer::VolumeRenderer() {
-			_mesh = new NonManifoldMesh();
+			_mesh = new NonManifoldMesh_NoTags();
 			_voxel = NULL;
 			_surf_value = 1.5;
 			_sample = 1;
@@ -128,7 +128,7 @@ namespace wustl_mm {
 
 		void VolumeRenderer::Draw() const {
 			if(_mesh != NULL) {
-				_mesh->Draw();
+				_mesh->Draw(true, false, false);
 			}
 		}
 
@@ -144,15 +144,6 @@ namespace wustl_mm {
 					}
 				}
 			}
-
-			for (unsigned int i = 0; i < _mesh->vertices.size(); i++) {
-				float jitter = (float)rand()/((float)RAND_MAX * 10);
-				_mesh->vertices[i].position = Vector3DFloat(_mesh->vertices[i].position.X()+jitter, _mesh->vertices[i].position.Y()+jitter, _mesh->vertices[i].position.Z()+jitter);
-			}
-
-			//NonManifoldMesh * newMesh = _mesh->SmoothLaplacian(0.25, 5);
-			//delete _mesh;
-			//_mesh = newMesh;
 		}
 
 
@@ -213,7 +204,7 @@ namespace wustl_mm {
 							asEdgeVertex[iEdge][1] = (float)iY + ((float)a2iVertexOffset[ a2iEdgeConnection[iEdge][0] ][1] +  fOffset * (float)a2iEdgeDirection[iEdge][1]) * (float)iScale;
 							asEdgeVertex[iEdge][2] = (float)iZ + ((float)a2iVertexOffset[ a2iEdgeConnection[iEdge][0] ][2] +  fOffset * (float)a2iEdgeDirection[iEdge][2]) * (float)iScale;
 				
-							vertexIds[iEdge] = _mesh->AddHashedVertex(Vector3DFloat(asEdgeVertex[iEdge][0], asEdgeVertex[iEdge][1], asEdgeVertex[iEdge][2]), false, false, -1, GetHashKey(iX, iY, iZ, iEdge, iScale)); 
+							vertexIds[iEdge] = _mesh->AddHashedVertex(Vector3DFloat(asEdgeVertex[iEdge][0], asEdgeVertex[iEdge][1], asEdgeVertex[iEdge][2]), GetHashKey(iX, iY, iZ, iEdge, iScale)); 
 					}
 			}
 
@@ -237,7 +228,7 @@ namespace wustl_mm {
 						}
 					}
 
-					_mesh->AddTriangle(triangleVertices[0], triangleVertices[1], triangleVertices[2], false);
+					_mesh->AddTriangle(triangleVertices[0], triangleVertices[1], triangleVertices[2], false, false);
 			}
 		}
 

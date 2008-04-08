@@ -3,6 +3,7 @@ from about_form import AboutForm
 from camera import Camera
 from volume_viewer import VolumeViewer;
 from skeleton_viewer import SkeletonViewer;
+from sse_viewer import SSEViewer
 
 class WindowManager(QtGui.QWidget):
     
@@ -20,7 +21,8 @@ class WindowManager(QtGui.QWidget):
         self.aboutForm = AboutForm(self.app)
         self.volumeViewer = VolumeViewer(self.app)
         self.skeletonViewer = SkeletonViewer(self.app)
-        self.mainCamera = Camera([self.volumeViewer, self.skeletonViewer])   
+        self.sseViewer = SSEViewer(self.app, self.skeletonViewer)
+        self.mainCamera = Camera([self.sseViewer, self.skeletonViewer, self.volumeViewer])   
         self.app.setCentralWidget(self.mainCamera)
         
     def createActions(self):
