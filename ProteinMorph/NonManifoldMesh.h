@@ -306,7 +306,7 @@ namespace wustl_mm {
 
 		template <class TVertex, class TEdge, class TFace> void NonManifoldMesh<TVertex, TEdge, TFace>::Draw(bool drawSurfaces, bool drawLines, bool drawPoints) {
 			int k;
-			glPushAttrib(GL_ENABLE_BIT | GL_HINT_BIT);
+			glPushAttrib(GL_LINE_BIT | GL_ENABLE_BIT | GL_HINT_BIT);
 
 			if(drawSurfaces) {
 				for(unsigned int i = 0; i < faces.size(); i++) {
@@ -323,6 +323,7 @@ namespace wustl_mm {
 			}
 
 			if(drawLines) {
+				glLineWidth(1.5);
 				glEnable(GL_LINE_SMOOTH);
 				glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
 				glBegin(GL_LINES);

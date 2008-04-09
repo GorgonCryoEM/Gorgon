@@ -859,6 +859,26 @@ namespace wustl_mm {
 									   t * a[2] * a[2] + c,
 									   0),
 							   Vector4(0, 0, 0, 1));
+				//
+				//Vector3 a = axis;
+				//a.normalize();
+				//double u = a[0];
+				//double v = a[1];
+				//double w = a[2];
+				//double u2 = u*u;
+				//double v2 = v*v;
+				//double w2 = w*w;
+				//double b = u2 + v2 + w2;
+				//double sq = sqrt(u2 + v2 + w2);
+
+				//double c = cos(angle);
+				//double s = sin(angle);
+				//return Matrix4(
+				//	Vector4((u2 + (v2+w2)*c)/b,			(u*v*(1-c) - w*sq*s)/b,		(u*v*(1-c) + v*sq*s)/b,		0),
+				//	Vector4((u*v*(1-c) + w*sq*s)/b,		(v2+(u2+w2)*c)/b,			(v*w*(1-c) - u*sq*s)/b,		0),
+				//	Vector4((u*w*(1-c) - v*sq*s)/b,		(v*w*(1-c) + u*sq*s)/b,		(w2 + (u2+v2)*c)/b,			0),
+				//	Vector4(0,							0,							0,							1));
+								
 			}
 		  
 			static Matrix4 xrotation(double angle) {
@@ -908,8 +928,7 @@ namespace wustl_mm {
 			static Matrix4 scaling(double scale) {
 				return scaling(Vector3(scale, scale, scale));
 			}
-
-		private:
+		
 			double mat[16];
 		};
 

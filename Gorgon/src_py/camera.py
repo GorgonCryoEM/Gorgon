@@ -11,12 +11,21 @@ except ImportError:
     sys.exit(1)
     
 class Camera(QtOpenGL.QGLWidget):
-    def __init__(self, scene, parent=None):
+    def __init__(self, scene, parent=None):        
+        
+        QtOpenGL.QGLWidget.__init__(self, parent)
+
+        #print("Depth Buffer:", self.format().depthBufferSize(), 
+        #      " Red: ", self.format().redBufferSize(), 
+        #      " Green: ", self.format().greenBufferSize(), 
+       #       " Blue: ", self.format().blueBufferSize(), 
+       #       " Alpha:", self.format().alphaBufferSize())
+
+        
         self.aspectRatio = 1.0;        
         self.near = 10;
         self.far = 500;
         self.setEyeZoom(0.25)
-        QtOpenGL.QGLWidget.__init__(self, parent)
 
         self.scene = scene
         
@@ -74,8 +83,8 @@ class Camera(QtOpenGL.QGLWidget):
     
     def sceneSetCenter(self, minX, minY, minZ, maxX, maxY, maxZ):        
         self.setCenter((minX+maxX)/2.0, (minY+maxY)/2.0, (minZ+maxZ)/2.0)
-        self.setEye(self.center[0], self.center[1] + (maxY-minY), self.center[2] + 2*(maxZ-minZ))        
-        self.setUp(0, 1, 0)
+        self.setEye(self.center[0] , self.center[1], self.center[2] - 2*(maxZ-minZ))        
+        self.setUp(0, -1, 0)
         #radius = vectorDistance([minX, minY, minZ], [maxX, maxY, maxZ]) / 2.0;
         #eyeDistance = vectorDistance(self.center, self.eye)
         #self.setNearFar(max(eyeDistance-radius, 0.1), eyeDistance + 2*radius)
@@ -89,9 +98,7 @@ class Camera(QtOpenGL.QGLWidget):
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
         glMatrixMode(GL_MODELVIEW)
         glLoadIdentity()        
-        glPushMatrix()
         self.sceneMatrix = glGetFloatv( GL_MODELVIEW_MATRIX )
-        glPopMatrix()  
     
     def minimumSizeHint(self):
         return QtCore.QSize(50, 50)
@@ -140,10 +147,10 @@ class Camera(QtOpenGL.QGLWidget):
         glLoadIdentity()
         
         glPushMatrix()
-        glTranslated(self.center[0], self.center[1], self.center[2])
+        glTranslatef(self.center[0], self.center[1], self.center[2])
         glRotatef(self.eyeRotation[0], self.up[0], self.up[1], self.up[2])
-        glRotated(self.eyeRotation[1], self.right[0], self.right[1], self.right[2])       
-        glRotated(self.eyeRotation[2], self.look[0], self.look[1], self.look[2])
+        glRotatef(self.eyeRotation[1], self.right[0], self.right[1], self.right[2])       
+        glRotatef(self.eyeRotation[2], self.look[0], self.look[1], self.look[2])
         glTranslated(-self.center[0], -self.center[1], -self.center[2])      
         glMultMatrixf(self.sceneMatrix)
         self.sceneMatrix = glGetFloatv( GL_MODELVIEW_MATRIX )
@@ -154,18 +161,16 @@ class Camera(QtOpenGL.QGLWidget):
 
                
     def drawScene(self):
-        glPushMatrix()
         
         self.setGluLookAt()
-                
-        glMultMatrixf(self.sceneMatrix)
-            
+        
+        glPushMatrix()                
+        glMultMatrixf(self.sceneMatrix)            
         glPushName(0)
-        glPushAttrib(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
         for s in self.scene:         
             s.draw()
+           
         glPopName()
-        glPopAttrib()
         glPopMatrix()
     
        

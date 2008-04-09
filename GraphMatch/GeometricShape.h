@@ -36,6 +36,7 @@ namespace wustl_mm {
 			int GetLocationInVector(vector<Point3Int> v, Point3Int point);
 			void FindCornerCellsInHelix();
 			Point3Int GetCornerCell(int node);
+			int GetGeometricShapeType();
 		public:
 			int geometricShapeType;
 			int length;
@@ -123,7 +124,7 @@ namespace wustl_mm {
 
 		bool GeometricShape::IsInsideCylinder(Point3 point) {
 			point = objectToWorld * point;
-			return ((point[0]*point[0] + point[2]*point[2] <= 1) && (abs(point[1]) <= 0.5));
+			return ((point[0]*point[0] + point[2]*point[2] <= 0.5) && (abs(point[1]) <= 0.5));
 		}
 
 		Point3 GeometricShape::GetWorldCoordinates(Point3 point) {
@@ -205,6 +206,9 @@ namespace wustl_mm {
 			return loc;
 		}
 
+		int GeometricShape::GetGeometricShapeType() {
+			return geometricShapeType;
+		}
 		Point3Int GeometricShape::GetCornerCell(int node) {
 			for(unsigned int i = 0; i < cornerCells.size(); i++) {
 				if(cornerCells[i].node == node) {

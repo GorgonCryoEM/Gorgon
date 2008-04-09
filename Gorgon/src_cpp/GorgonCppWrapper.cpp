@@ -65,15 +65,13 @@ BOOST_PYTHON_MODULE(gorgon_cpp_wrapper)
 	class_<SSERenderer, bases<Renderer>>("SSERenderer", init<>())
 		.def("draw", &SSERenderer::Draw)
 		.def("drawBoundingBox", &SSERenderer::DrawBoundingBox)
-		.def("loadFile", &SSERenderer::LoadFile)
 		.def("loadHelixFile", &SSERenderer::LoadHelixFile)
+		.def("loadSheetFile", &SSERenderer::LoadSheetFile)
 		.def("unload", &SSERenderer::Unload)
 		.def("getSupportedLoadFileFormats", &SSERenderer::GetSupportedLoadFileFormats)
 		.def("getSupportedSaveFileFormats", &SSERenderer::GetSupportedSaveFileFormats)
 		.def("getMin", &SSERenderer::GetMin)
 		.def("getMax", &SSERenderer::GetMax)
-		.def("setSkeletonRenderer", &SSERenderer::SetSkeletonRenderer, return_value_policy<manage_new_object>())
-		.def("performAutomaticAnnotation", &SSERenderer::PerformAutomaticAnnotation)		
 	;
 
 
