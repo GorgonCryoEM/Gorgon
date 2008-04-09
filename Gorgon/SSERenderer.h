@@ -3,9 +3,15 @@
 
 #include "Renderer.h"
 #include "MeshRenderer.h"
+#include <GraphMatch/SkeletonReader.h>
+#include <GraphMatch/GeometricShape.h>
+#include <GraphMatch/VectorMath.h>
+#include <vector>
 
 using namespace wustl_mm::Protein_Morph;
 using namespace wustl_mm::GraySkeletonCPP;
+using namespace wustl_mm::GraphMatch;
+using namespace std;
 
 namespace wustl_mm {
 	namespace Visualization {	
@@ -16,22 +22,27 @@ namespace wustl_mm {
 
 			void Draw();
 			void LoadFile(string fileName);
+			void LoadHelixFile(string fileName, bool reset);
 			void PerformAutomaticAnnotation(double maximumHelixAngle, double minHelixLength, double maximumSheetAngle, double minSheetArea);
 			void SetSkeletonRenderer(MeshRenderer * skeletonRenderer);
 			void Unload();
 			string GetSupportedLoadFileFormats();
 			string GetSupportedSaveFileFormats();
-			float GetMin(int dimension);
-			float GetMax(int dimension);
 		private:
+			void UpdateBoundingBox();
 			MeshRenderer * skeletonRenderer;
+			vector<GeometricShape*> helices;
 		};
 
 
 		SSERenderer::SSERenderer() {
+			helices.clear();
 		}
 
 		SSERenderer::~SSERenderer() {
+			for(unsigned int i = 0; i < helices.size(); i++) {
+				delete helices[i];
+			}
 		}
 
 		void SSERenderer::Draw() {
@@ -59,8 +70,38 @@ namespace wustl_mm {
 
 
 		void SSERenderer::LoadFile(string fileName) {
-			UpdateBoundingBox();
-			
+			LoadHelixFile(fileName, true);
+		}
+
+		void SSERenderer::LoadHelixFile(string fileName, bool reset) {
+			NonManifoldMesh_Annotated * mesh = skeletonRenderer->GetMesh();
+			if(mesh != NULL) {
+				if(reset) {
+					for(unsigned int i = 0; i < helices.size(); i++) {
+						delete helices[i];
+					}
+					helices.clear();
+					for(unsigned int i = 0; i < mesh->edges.size(); i++) {
+						mesh->edges[i].tag = 0;
+					}
+				}
+				SkeletonReader::ReadHelixFile((char *)fileName.c_str(), NULL, helices);
+
+				Vector3DFloat vertex0, vertex1;
+				for(unsigned int j = 0; j < helices.size(); j++) {
+					for(unsigned int i = 0; i < mesh->edges.size(); i++) {
+						if(mesh->edges[i].tag == 0) {
+							vertex0 = mesh->vertices[mesh->GetVertexIndex(mesh->edges[i].vertexIds[0])].position;
+							vertex1 = mesh->vertices[mesh->GetVertexIndex(mesh->edges[i].vertexIds[1])].position;
+							if(helices[j]->IsInsideShape(Point3(vertex0.X(), vertex0.Y(), vertex0.Z())) && helices[j]->IsInsideShape(Point3(vertex1.X(), vertex1.Y(), vertex1.Z()))) {
+								mesh->edges[i].tag = j+1;
+							}
+						}
+					}
+				}
+			}
+
+			UpdateBoundingBox();			
 		}
 
 		void SSERenderer::PerformAutomaticAnnotation(double maximumHelixAngle, double minHelixLength, double maximumSheetAngle, double minSheetArea) {
@@ -92,15 +133,22 @@ namespace wustl_mm {
 			UpdateBoundingBox();
 		}
 
-		float SSERenderer::GetMin(int dimension) {
-			return skeletonRenderer->GetMin(dimension);
+		void SSERenderer::UpdateBoundingBox() {
+			if(skeletonRenderer != NULL) {
+				for(int i = 0; i < 3; i++) {
+					minPts[i] = skeletonRenderer->GetMin(i);
+					maxPts[i] = skeletonRenderer->GetMax(i);
+				}			
+			} else {
+				for(int i = 0; i < 3; i++) {
+					minPts[i] = -0.5;
+					maxPts[i] = 0.5;
+				}
+			}
 		}
 
-		float SSERenderer::GetMax(int dimension) {
-			return skeletonRenderer->GetMax(dimension);
-		}
 		string SSERenderer::GetSupportedLoadFileFormats() {
-			return "VRML models (*.vrml, *.wrl)";
+			return "VRML models (*.vrml *.wrl)";
 		}
 		string SSERenderer::GetSupportedSaveFileFormats() {
 			return "VRML models (*.vrml, *.wrl)";
