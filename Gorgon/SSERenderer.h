@@ -21,129 +21,101 @@ namespace wustl_mm {
 			~SSERenderer();
 
 			void Draw();
-			void LoadFile(string fileName);
-			void LoadHelixFile(string fileName, bool reset);
-			void PerformAutomaticAnnotation(double maximumHelixAngle, double minHelixLength, double maximumSheetAngle, double minSheetArea);
-			void SetSkeletonRenderer(MeshRenderer * skeletonRenderer);
+			void LoadHelixFile(string fileName);
+			void LoadSheetFile(string fileName);
 			void Unload();
 			string GetSupportedLoadFileFormats();
 			string GetSupportedSaveFileFormats();
 		private:
 			void UpdateBoundingBox();
-			MeshRenderer * skeletonRenderer;
-			vector<GeometricShape*> helices;
+			vector<GeometricShape*> shapes;
+			vector<GLUquadric *> shapeQuadrics;
+			NonManifoldMesh_NoTags * sheetMesh;
 		};
 
 
 		SSERenderer::SSERenderer() {
-			helices.clear();
+			shapes.clear();
+			shapeQuadrics.clear();	
+			sheetMesh = NULL;
 		}
 
 		SSERenderer::~SSERenderer() {
-			for(unsigned int i = 0; i < helices.size(); i++) {
-				delete helices[i];
+			for(unsigned int i = 0; i < shapes.size(); i++) {
+				delete shapes[i];
+				gluDeleteQuadric(shapeQuadrics[i]);
+			}
+			if(sheetMesh != NULL) {
+				delete sheetMesh;
 			}
 		}
 
 		void SSERenderer::Draw() {
-			NonManifoldMesh_Annotated * mesh = skeletonRenderer->GetMesh();
-			if(mesh != NULL) {
-				glPushAttrib(GL_LINE_BIT | GL_ENABLE_BIT | GL_HINT_BIT);
-				glLineWidth(3.0);
-				glEnable(GL_LINE_SMOOTH);
-				glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
-				glBegin(GL_LINES);
-				int k;
-
-				for(unsigned int i = 0; i < mesh->edges.size(); i++) {
-					if((mesh->edges[i].faceIds.size() == 0) && (mesh->edges[i].tag > 0)) {
-						k = mesh->GetVertexIndex(mesh->edges[i].vertexIds[0]);
-						glVertex3f(mesh->vertices[k].position.X(), mesh->vertices[k].position.Y(), mesh->vertices[k].position.Z());
-						k = mesh->GetVertexIndex(mesh->edges[i].vertexIds[1]);
-						glVertex3f(mesh->vertices[k].position.X(), mesh->vertices[k].position.Y(), mesh->vertices[k].position.Z());			
-					}
-				}
-				glEnd();
-				glPopAttrib();
+			Point3 pt;
+			for(unsigned int i = 0; i < shapes.size(); i++) {
+				if(shapes[i]->GetGeometricShapeType() == GRAPHEDGE_HELIX) {
+					glPushMatrix();
+					glMultMatrixd(shapes[i]->worldToObject.mat);
+					glRotated(90, 1,0,0);
+					glTranslated(0.0, 0.0, -0.5);
+					gluCylinder(gluNewQuadric(), 0.5, 0.5, 1.0, 10, 10);
+					glPopMatrix();
+				} 
+			}
+			if(sheetMesh != NULL) {
+				sheetMesh->Draw(true, false, false);
 			}
 		}
 
-
-		void SSERenderer::LoadFile(string fileName) {
-			LoadHelixFile(fileName, true);
-		}
-
-		void SSERenderer::LoadHelixFile(string fileName, bool reset) {
-			NonManifoldMesh_Annotated * mesh = skeletonRenderer->GetMesh();
-			if(mesh != NULL) {
-				if(reset) {
-					for(unsigned int i = 0; i < helices.size(); i++) {
-						delete helices[i];
-					}
-					helices.clear();
-					for(unsigned int i = 0; i < mesh->edges.size(); i++) {
-						mesh->edges[i].tag = 0;
-					}
-				}
-				SkeletonReader::ReadHelixFile((char *)fileName.c_str(), NULL, helices);
-
-				Vector3DFloat vertex0, vertex1;
-				for(unsigned int j = 0; j < helices.size(); j++) {
-					for(unsigned int i = 0; i < mesh->edges.size(); i++) {
-						if(mesh->edges[i].tag == 0) {
-							vertex0 = mesh->vertices[mesh->GetVertexIndex(mesh->edges[i].vertexIds[0])].position;
-							vertex1 = mesh->vertices[mesh->GetVertexIndex(mesh->edges[i].vertexIds[1])].position;
-							if(helices[j]->IsInsideShape(Point3(vertex0.X(), vertex0.Y(), vertex0.Z())) && helices[j]->IsInsideShape(Point3(vertex1.X(), vertex1.Y(), vertex1.Z()))) {
-								mesh->edges[i].tag = j+1;
-							}
-						}
-					}
-				}
-			}
-
+		void SSERenderer::LoadHelixFile(string fileName) {
+			vector<GeometricShape *> helices;
+			helices.clear();
+			SkeletonReader::ReadHelixFile((char *)fileName.c_str(), NULL, helices);
+			for(unsigned int i = 0; i < helices.size(); i++) {
+				shapes.push_back(helices[i]);
+				shapeQuadrics.push_back(gluNewQuadric());
+			}	
 			UpdateBoundingBox();			
 		}
 
-		void SSERenderer::PerformAutomaticAnnotation(double maximumHelixAngle, double minHelixLength, double maximumSheetAngle, double minSheetArea) {
-			NonManifoldMesh_Annotated * mesh = skeletonRenderer->GetMesh();
-			if(mesh != NULL) {
-				bool * edgeVisited = new bool[mesh->edges.size()];
-				for(unsigned int i = 0; i < mesh->edges.size(); i++) {
-					edgeVisited[i] = false;
-				}
-
-				for(unsigned int i = 0; i < mesh->edges.size(); i++) {
-					if(!edgeVisited[i]) {
-						mesh->edges[i].tag = (int)((double)rand()*10.0/(double)RAND_MAX);
-					}
-					
-				}
-
-				delete [] edgeVisited;
+		void SSERenderer::LoadSheetFile(string fileName) {
+			vector<GeometricShape *> sheets;
+			sheets.clear();
+			if(sheetMesh != NULL) {
+				delete sheetMesh;
 			}
+			sheetMesh = new NonManifoldMesh_NoTags();
+			SkeletonReader::ReadSheetFile((char *)fileName.c_str(), sheets);
+			for(unsigned int i = 0; i < sheets.size(); i++) {
+				shapes.push_back(sheets[i]);
+				shapeQuadrics.push_back(gluNewQuadric());
+				for(unsigned int j = 0; j < sheets[i]->polygonPoints.size(); j++) {
+					sheetMesh->AddVertex(Vector3DFloat(sheets[i]->polygonPoints[j][0], sheets[i]->polygonPoints[j][1], sheets[i]->polygonPoints[j][2]));
+				}
 
-		}
-
-
-		void SSERenderer::SetSkeletonRenderer(MeshRenderer * skeletonRenderer) {
-			this->skeletonRenderer = skeletonRenderer;
+				for(unsigned int j = 0; j < sheets[i]->polygons.size(); j++) {								
+					sheetMesh->AddTriangle(sheets[i]->polygons[j].pointIndex1, sheets[i]->polygons[j].pointIndex2, sheets[i]->polygons[j].pointIndex3);					
+				}				
+			}	
+			UpdateBoundingBox();			
 		}
 
 		void SSERenderer::Unload() {
+			for(unsigned int i = 0; i < shapes.size(); i++) {
+				delete shapes[i];
+				gluDeleteQuadric(shapeQuadrics[i]);
+			}
+			if(sheetMesh != NULL) {
+				delete sheetMesh;
+			}
+			sheetMesh = NULL;
 			UpdateBoundingBox();
 		}
 
 		void SSERenderer::UpdateBoundingBox() {
-			if(skeletonRenderer != NULL) {
-				for(int i = 0; i < 3; i++) {
-					minPts[i] = skeletonRenderer->GetMin(i);
-					maxPts[i] = skeletonRenderer->GetMax(i);
-				}			
-			} else {
-				for(int i = 0; i < 3; i++) {
-					minPts[i] = -0.5;
-					maxPts[i] = 0.5;
-				}
+			for(int i = 0; i < 3; i++) {
+				minPts[i] = -0.5;
+				maxPts[i] = 0.5;
 			}
 		}
 

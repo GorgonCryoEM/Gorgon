@@ -21,7 +21,7 @@ class WindowManager(QtGui.QWidget):
         self.aboutForm = AboutForm(self.app)
         self.volumeViewer = VolumeViewer(self.app)
         self.skeletonViewer = SkeletonViewer(self.app)
-        self.sseViewer = SSEViewer(self.app, self.skeletonViewer)
+        self.sseViewer = SSEViewer(self.app)
         self.mainCamera = Camera([self.sseViewer, self.skeletonViewer, self.volumeViewer])   
         self.app.setCentralWidget(self.mainCamera)
         

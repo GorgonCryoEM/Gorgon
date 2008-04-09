@@ -105,10 +105,7 @@ class BaseViewer(QtGui.QWidget):
     def draw(self):
         if self.modelVisible and (self.gllist != 0):          
             self.initializeGLDisplayType()
-            glPushMatrix()
-            glTranslated(-0.5, -0.5, -0.5)
             glCallList(self.gllist)
-            glPopMatrix()
             self.unInitializeGLDisplayType();
           
     def loadData(self):
