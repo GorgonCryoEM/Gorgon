@@ -253,25 +253,27 @@ namespace wustl_mm {
 
 			fclose(fin);
 
-			fin = fopen(sseFile, "rt");
-			if (fin == NULL) {
-				printf("Error reading input file %s.\n", sseFile) ;
-				exit(0) ;
-			}
-
-			char t1[80], t2[80], t3[80];
-			int length; 
-			int count = 0;
-
-			while (!feof(fin)) {
-				fscanf(fin, "%s", token);
-				if(strcmp(token, TOKEN_SSE_ALPHA) == 0) {
-					fscanf(fin, "%s %s %s %d", t1, t2, t3, &length);
-					helixes[count]->length = length;
-					count++;
+			if(sseFile != NULL) {
+				fin = fopen(sseFile, "rt");
+				if (fin == NULL) {
+					printf("Error reading input file %s.\n", sseFile) ;
+					exit(0) ;
 				}
+
+				char t1[80], t2[80], t3[80];
+				int length; 
+				int count = 0;
+
+				while (!feof(fin)) {
+					fscanf(fin, "%s", token);
+					if(strcmp(token, TOKEN_SSE_ALPHA) == 0) {
+						fscanf(fin, "%s %s %s %d", t1, t2, t3, &length);
+						helixes[count]->length = length;
+						count++;
+					}
+				}
+				fclose(fin);
 			}
-			fclose(fin);
 		}
 
 		void SkeletonReader::FindSizes(int startHelix, int startCell, vector<GeometricShape*> & helixList, Volume * vol, Volume * coloredVol, StandardGraph * graph) {
