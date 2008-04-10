@@ -308,6 +308,7 @@ namespace wustl_mm {
 			int k;
 			glPushAttrib(GL_LINE_BIT | GL_ENABLE_BIT | GL_HINT_BIT);
 
+			glPushName(0);
 			if(drawSurfaces) {
 				for(unsigned int i = 0; i < faces.size(); i++) {
 					glBegin(GL_POLYGON);
@@ -321,7 +322,9 @@ namespace wustl_mm {
 					glEnd();
 				}
 			}
+			glPopName();
 
+			glPushName(1);
 			if(drawLines) {
 				glLineWidth(1.5);
 				glEnable(GL_LINE_SMOOTH);
@@ -337,7 +340,9 @@ namespace wustl_mm {
 				}
 				glEnd();
 			}
+			glPopName();
 
+			glPushName(2);
 			if(drawPoints) {
 				glEnable(GL_POINT_SMOOTH);
 				glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
@@ -349,6 +354,7 @@ namespace wustl_mm {
 				}
 				glEnd();
 			}
+			glPopName();
 			glPopAttrib();
 
 			glFlush();

@@ -166,42 +166,44 @@ class Camera(QtOpenGL.QGLWidget):
         
         glPushMatrix()                
         glMultMatrixf(self.sceneMatrix)            
-        glPushName(0)
-        for s in self.scene:         
+        i = 0
+        for s in self.scene:    
+            glPushName(i)
+            s.sceneIndex = i;     
+            i = i + 1
             s.draw()
-           
-        glPopName()
+            glPopName()
         glPopMatrix()
     
        
-#    def pickObject(self, x, y):
-#        SIZE = 100
-#        viewport = list(glGetIntegerv(GL_VIEWPORT))
-#
-#        glSelectBuffer(SIZE)
-#        glRenderMode(GL_SELECT)
-#
-#        glInitNames()
-#
-#        glMatrixMode(GL_PROJECTION)
-#        glPushMatrix()
-#        glLoadIdentity()
-#        gluPickMatrix(x, viewport[3]-y, 10, 10, viewport)
-#        gluPerspective(45, self.ratio, 0.1, 1000)
-#
-#        self.drawScene(False)
-#        
-#        glMatrixMode(GL_PROJECTION)
-#        glPopMatrix()
-#        glFlush()
-#
-#        bufferStack = glRenderMode(GL_RENDER)
-#        for hit_record in bufferStack:
-#            min_depth, max_depth, names = hit_record
-#            namelist = list(names)
-#            for n in namelist:
-#                print n
-#            print min_depth, max_depth, names 
+    def pickObject(self, x, y):
+        SIZE = 10000
+        glSelectBuffer(SIZE)
+        glRenderMode(GL_SELECT)
+
+
+        glMatrixMode(GL_PROJECTION)
+        glPushMatrix()
+        glLoadIdentity()
+        viewport = list(glGetIntegerv(GL_VIEWPORT))
+        gluPickMatrix(x, viewport[3]-y, 10, 10, viewport)
+        gluPerspective(180 * self.eyeZoom, self.aspectRatio, self.near, self.far)
+        glMatrixMode(GL_MODELVIEW)
+        glInitNames()
+        self.drawScene()
+        
+        glMatrixMode(GL_PROJECTION)
+        glPopMatrix()
+        glMatrixMode(GL_MODELVIEW)
+        glFlush()
+
+        bufferStack = glRenderMode(GL_RENDER)
+        for hit_record in bufferStack:
+            min_depth, max_depth, names = hit_record
+            namelist = list(names)
+            for n in namelist:
+                print n
+            print min_depth, max_depth, names 
         
     def resizeGL(self, width, height):
         self.aspectRatio = width/(1.0*height)
@@ -214,11 +216,11 @@ class Camera(QtOpenGL.QGLWidget):
         glMatrixMode(GL_PROJECTION)
         glLoadIdentity()
         gluPerspective(180 * self.eyeZoom, self.aspectRatio, self.near, self.far)
+        glMatrixMode(GL_MODELVIEW)
         
     def mousePressEvent(self, event):
-        self.lastPos = QtCore.QPoint(event.pos())
-        
-        #self.pickObject(event.x(), event.y())
+        self.lastPos = QtCore.QPoint(event.pos())        
+        self.pickObject(event.x(), event.y())
 
     def mouseMoveEvent(self, event):
         dx = event.x() - self.lastPos.x()

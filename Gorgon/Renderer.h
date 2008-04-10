@@ -12,7 +12,7 @@ namespace wustl_mm {
 	namespace Visualization {	
 		class Renderer {
 		public:
-			virtual void Draw();
+			virtual void Draw(int subSceneIndex);
 			virtual void DrawBoundingBox();
 			virtual void LoadFile(string fileName);
 			virtual void Unload();
@@ -37,7 +37,7 @@ namespace wustl_mm {
 			return maxPts[dimension];
 		}
 
-		void Renderer::Draw() { 
+		void Renderer::Draw(int subSceneIndex) { 
 		}
 
 		void Renderer::DrawBoundingBox() {

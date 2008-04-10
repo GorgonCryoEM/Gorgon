@@ -24,7 +24,7 @@ namespace wustl_mm {
 			~MeshRenderer();
 
 			NonManifoldMesh_Annotated * GetMesh();
-			void Draw();
+			void Draw(int subSceneIndex);
 			void LoadFile(string fileName);
 			void LoadVolume(Volume * sourceVolume);
 			void Unload();
@@ -51,9 +51,11 @@ namespace wustl_mm {
 			return mesh;
 		}
 
-		void MeshRenderer::Draw() {
-			if(mesh != NULL) {
-				mesh->Draw(true, true, true);
+		void MeshRenderer::Draw(int subSceneIndex) {
+			if(subSceneIndex == 0) {
+				if(mesh != NULL) {
+					mesh->Draw(true, true, true);
+				}
 			}
 		}
 

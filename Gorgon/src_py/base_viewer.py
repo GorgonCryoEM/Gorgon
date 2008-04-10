@@ -18,16 +18,19 @@ class BaseViewer(QtGui.QWidget):
         QtGui.QWidget.__init__(self, parent)        
         self.app = main      
         self.title = "Untitled"
+        self.sceneIndex = -1;
         self.loaded = False
         self.isClosedMesh = True
         self.displayStyle = self.DisplayStyleSmooth;
         self.modelVisible = True
+        self.model2Visible = False
         self.connect(self, QtCore.SIGNAL("modelChanged()"), self.modelChanged) 
         self.connect(self, QtCore.SIGNAL("modelLoaded()"), self.modelChanged) 
         self.connect(self, QtCore.SIGNAL("modelUnloaded()"), self.modelChanged)    
         self.gllist = 0
         self.showBox = True
         self.modelColor = QtGui.QColor.fromRgba(QtGui.qRgba(180, 180, 180, 255))
+        self.model2Color = QtGui.QColor.fromRgba(QtGui.qRgba(180, 180, 180, 255))
         self.boxColor = QtGui.QColor.fromRgba(QtGui.qRgba(255, 255, 255, 255))
         
     def initVisualizationOptions(self):
@@ -47,10 +50,18 @@ class BaseViewer(QtGui.QWidget):
 
     def setModelVisibility(self, visible):
         self.modelVisible = visible
-        self.emitModelVisualizationChanged()
+        self.emitModelChanged()
+
+    def setModel2Visibility(self, visible):
+        self.model2Visible = visible
+        self.emitModelChanged()
 
     def setModelColor(self, color):
         self.modelColor = color
+        self.emitModelChanged()
+
+    def setModel2Color(self, color):
+        self.model2Color = color
         self.emitModelChanged()
 
     def setMaterials(self, color):
@@ -103,7 +114,7 @@ class BaseViewer(QtGui.QWidget):
         glPopAttrib()    
 
     def draw(self):
-        if self.modelVisible and (self.gllist != 0):          
+        if (self.gllist != 0):          
             self.initializeGLDisplayType()
             glCallList(self.gllist)
             self.unInitializeGLDisplayType();
@@ -131,8 +142,9 @@ class BaseViewer(QtGui.QWidget):
         self.gllist = glGenLists(1)
         glNewList(self.gllist, GL_COMPILE)
         
-        self.setMaterials(self.modelColor)
-        self.renderer.draw()
+        if(self.loaded and self.modelVisible):
+            self.setMaterials(self.modelColor)
+            self.renderer.draw(0)
         
         if(self.loaded and self.showBox):
             self.setMaterials(self.boxColor)

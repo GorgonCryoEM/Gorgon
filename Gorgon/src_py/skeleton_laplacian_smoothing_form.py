@@ -22,7 +22,7 @@ class SkeletonLaplacianSmoothingForm(QtGui.QWidget):
         
     def loadWidget(self):
         if(self.app.actions.getAction("perform_SkeletonLaplacianSmoothing").isChecked()) :
-            self.app.addDockWidget(QtCore.Qt.BottomDockWidgetArea, self.dock)
+            self.app.addDockWidget(QtCore.Qt.RightDockWidgetArea, self.dock)
             self.dock.show()
         else:
             self.app.removeDockWidget(self.dock)
