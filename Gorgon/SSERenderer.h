@@ -21,9 +21,9 @@ namespace wustl_mm {
 			SSERenderer();
 			~SSERenderer();
 
-			void Draw(int subSceneIndex);
-			void LoadHelixFile(string fileName);
-			void LoadSheetFile(string fileName);
+			void Draw(int subSceneIndex, bool selectEnabled);
+			void LoadHelixFile(string fileName);			
+			void LoadSheetFile(string fileName);			
 			void Unload();
 			string GetSupportedLoadFileFormats();
 			string GetSupportedSaveFileFormats();
@@ -51,25 +51,79 @@ namespace wustl_mm {
 			}
 		}
 
-		void SSERenderer::Draw(int subSceneIndex) {
+		void SSERenderer::Draw(int subSceneIndex, bool selectEnabled) {
+			bool selected;
+			GLfloat frontMaterial[4];
+			GLfloat backMaterial[4];
+			GLfloat emissionColor[4] = {1.0, 1.0, 1.0, 1.0};
+
 			glPushName(subSceneIndex);
 			if(subSceneIndex == 0) {
-				glPushName(0);
+				if(selectEnabled) {
+					glPushName(0);
+				}
 				
 				Point3 pt;
 				for(unsigned int i = 0; i < helices.size(); i++) {
+					selected = ((subSceneIndex == selectedSubSceneIndex) && (i == selectedIx[0]));
+					if(selected) {
+						glGetMaterialfv(GL_FRONT, GL_EMISSION, frontMaterial);
+						glGetMaterialfv(GL_BACK, GL_EMISSION, backMaterial);
+						glMaterialfv(GL_FRONT, GL_EMISSION, emissionColor);
+						glMaterialfv(GL_BACK, GL_EMISSION, emissionColor);
+					}
 					glPushMatrix();
-					glMultMatrixd(helices[i]->worldToObject.mat);
-					glRotated(90, 1,0,0);
+					glMultMatrixd(helices[i]->GetWorldToObjectMatrix().mat);
+					glRotated(90, 1, 0, 0);
 					glTranslated(0.0, 0.0, -0.5);
-					glLoadName(i);
+					if(selectEnabled) {
+						glLoadName(i);
+					}
 					gluCylinder(gluNewQuadric(), 0.5, 0.5, 1.0, 10, 10);
 					glPopMatrix();
+					if(selected) {
+						glMaterialfv(GL_FRONT, GL_EMISSION, frontMaterial);
+						glMaterialfv(GL_BACK, GL_EMISSION, backMaterial);
+					}
 				}
-				glPopName();
+				if(selectEnabled) {
+					glPopName();
+				}
+
 			}
 			else if((subSceneIndex == 1) && (sheetMesh != NULL)) {
-				sheetMesh->Draw(true, false, false);
+				int k;
+				if(selectEnabled) {
+					glPushName(0);
+				}
+				for(unsigned int i = 0; i < sheetMesh->faces.size(); i++) {
+					selected = ((subSceneIndex == selectedSubSceneIndex) && (sheetMesh->faces[i].tag == selectedIx[0]));
+					if(selected) {
+						glGetMaterialfv(GL_FRONT, GL_EMISSION, frontMaterial);
+						glGetMaterialfv(GL_BACK, GL_EMISSION, backMaterial);
+						glMaterialfv(GL_FRONT, GL_EMISSION, emissionColor);
+						glMaterialfv(GL_BACK, GL_EMISSION, emissionColor);
+					}
+					if(selectEnabled) {
+						glLoadName(sheetMesh->faces[i].tag);
+					}
+					glBegin(GL_POLYGON);
+					Vector3DFloat normal;
+					for(unsigned int j = 0; j < sheetMesh->faces[i].vertexIds.size(); j++) {
+						normal = sheetMesh->GetVertexNormal(sheetMesh->faces[i].vertexIds[j]);
+						k = sheetMesh->GetVertexIndex(sheetMesh->faces[i].vertexIds[j]);
+						glNormal3f(normal.X(), normal.Y(), normal.Z());
+						glVertex3fv(sheetMesh->vertices[k].position.values);
+					}
+					glEnd();
+					if(selected) {
+						glMaterialfv(GL_FRONT, GL_EMISSION, frontMaterial);
+						glMaterialfv(GL_BACK, GL_EMISSION, backMaterial);
+					}
+				}
+				if(selectEnabled) {
+					glPopName();
+				}
 			}
 			glPopName();
 		}
@@ -117,6 +171,7 @@ namespace wustl_mm {
 		}
 
 		void SSERenderer::Unload() {
+			Renderer::Unload();
 			for(unsigned int i = 0; i < helices.size(); i++) {
 				delete helices[i];
 				gluDeleteQuadric(helixQuadrics[i]);

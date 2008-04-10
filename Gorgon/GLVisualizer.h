@@ -32,7 +32,7 @@ namespace wustl_mm {
 
 
 			for(unsigned int i=0; i<skeleton->skeletonHelixes.size(); i++) {
-				Matrix4 matrix = skeleton->skeletonHelixes[i]->worldToObject;
+				Matrix4 matrix = skeleton->skeletonHelixes[i]->GetWorldToObjectMatrix();
 				glPushMatrix();
 					glMultMatrixd((double*)&matrix);
 					DrawHelix();

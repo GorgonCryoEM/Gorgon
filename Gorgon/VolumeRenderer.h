@@ -35,7 +35,7 @@ namespace wustl_mm {
 			int GetSampleInterval() const ;
 			string GetSupportedLoadFileFormats();
 			string GetSupportedSaveFileFormats();
-			void Draw(int subSceneIndex) const;
+			void Draw(int subSceneIndex, bool selectEnabled) const;
 			void LoadFile(string fileName);
 			void SetSampleInterval(const int size);
 			void SetSurfaceValue(const float value);
@@ -126,10 +126,10 @@ namespace wustl_mm {
 			return "Volumes (*.mrc)";
 		}
 
-		void VolumeRenderer::Draw(int subSceneIndex) const {
+		void VolumeRenderer::Draw(int subSceneIndex, bool selectEnabled) const {
 			if(subSceneIndex == 0) {
 				if(_mesh != NULL) {
-					_mesh->Draw(true, false, false);
+					_mesh->Draw(true, false, false, selectEnabled, false, false);
 				}
 			}
 		}
@@ -246,6 +246,7 @@ namespace wustl_mm {
 
 
 		void VolumeRenderer::Unload() {
+			Renderer::Unload();
 			if(_voxel != NULL) {
 				delete _voxel;
 			}
