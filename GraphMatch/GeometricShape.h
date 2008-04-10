@@ -128,7 +128,7 @@ namespace wustl_mm {
 		}
 
 		Point3 GeometricShape::GetWorldCoordinates(Point3 point) {
-			return objectToWorld * point;
+			return worldToObject * point;
 		}
 
 		void GeometricShape::AddInternalCell(Point3Int point) {

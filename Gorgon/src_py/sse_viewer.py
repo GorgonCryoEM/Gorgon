@@ -21,7 +21,14 @@ class SSEViewer(BaseViewer):
         self.createUI()      
         self.app.viewers["sse"] = self;
         self.modelColor = QtGui.QColor.fromRgba(QtGui.qRgba(0, 180, 0, 255))
-        self.initVisualizationOptions()        
+        self.model2Color = QtGui.QColor.fromRgba(QtGui.qRgba(120, 185, 255, 255))
+        self.model2Visible = True
+        self.initVisualizationOptions()
+        self.visualizationOptions.ui.checkBoxModelVisible.setText("Show helices colored:")
+        self.visualizationOptions.ui.checkBoxModel2Visible.setText("Show sheets colored:")
+        self.visualizationOptions.ui.checkBoxModel2Visible.setVisible(True)
+        self.visualizationOptions.ui.pushButtonModel2Color.setVisible(True)
+    
 
     def createUI(self):
         self.createActions()
@@ -51,6 +58,30 @@ class SSEViewer(BaseViewer):
             self.setCursor(QtCore.Qt.ArrowCursor)
             self.emitModelLoaded()
             self.emitViewerSetCenter()                 
+               
+               
+    def modelChanged(self):
+        self.updateActionsAndMenus()
+        if self.gllist != 0:
+            glDeleteLists(self.gllist,1)
+            
+        self.gllist = glGenLists(1)
+        glNewList(self.gllist, GL_COMPILE)
+        
+        if(self.loaded and self.modelVisible):
+            self.setMaterials(self.modelColor)
+            self.renderer.draw(0)
+
+        if(self.loaded and self.model2Visible):
+            self.setMaterials(self.model2Color)
+            self.renderer.draw(1)
+        
+        if(self.loaded and self.showBox):
+            self.setMaterials(self.boxColor)
+            self.renderer.drawBoundingBox()
+
+        glEndList()                
+               
                
     def createActions(self):
         openHelixAct = QtGui.QAction(self.tr("&Helix Annotations"), self)

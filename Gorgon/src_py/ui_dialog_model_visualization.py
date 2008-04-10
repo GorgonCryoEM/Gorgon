@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_dialog_model_visualization.ui'
 #
-# Created: Tue Apr 08 01:10:04 2008
+# Created: Wed Apr 09 21:54:38 2008
 #      by: PyQt4 UI code generator 4.3.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,9 +12,9 @@ from PyQt4 import QtCore, QtGui
 class Ui_DialogModelVisualization(object):
     def setupUi(self, DialogModelVisualization):
         DialogModelVisualization.setObjectName("DialogModelVisualization")
-        DialogModelVisualization.resize(QtCore.QSize(QtCore.QRect(0,0,224,174).size()).expandedTo(DialogModelVisualization.minimumSizeHint()))
+        DialogModelVisualization.resize(QtCore.QSize(QtCore.QRect(0,0,224,204).size()).expandedTo(DialogModelVisualization.minimumSizeHint()))
         DialogModelVisualization.setMinimumSize(QtCore.QSize(222,174))
-        DialogModelVisualization.setMaximumSize(QtCore.QSize(224,174))
+        DialogModelVisualization.setMaximumSize(QtCore.QSize(224,204))
 
         self.gridlayout = QtGui.QGridLayout(DialogModelVisualization)
         self.gridlayout.setObjectName("gridlayout")
@@ -60,16 +60,29 @@ class Ui_DialogModelVisualization(object):
         self.pushButtonModelColor.setObjectName("pushButtonModelColor")
         self.gridlayout1.addWidget(self.pushButtonModelColor,2,1,1,1)
 
+        self.checkBoxModel2Visible = QtGui.QCheckBox(DialogModelVisualization)
+        self.checkBoxModel2Visible.setChecked(True)
+        self.checkBoxModel2Visible.setObjectName("checkBoxModel2Visible")
+        self.gridlayout1.addWidget(self.checkBoxModel2Visible,3,0,1,1)
+
+        self.pushButtonModel2Color = ColoredPushButton(DialogModelVisualization)
+        self.pushButtonModel2Color.setObjectName("pushButtonModel2Color")
+        self.gridlayout1.addWidget(self.pushButtonModel2Color,3,1,1,1)
+
         self.line = QtGui.QFrame(DialogModelVisualization)
         self.line.setFrameShape(QtGui.QFrame.HLine)
         self.line.setFrameShadow(QtGui.QFrame.Sunken)
         self.line.setObjectName("line")
-        self.gridlayout1.addWidget(self.line,3,0,1,2)
+        self.gridlayout1.addWidget(self.line,4,0,1,2)
         self.gridlayout.addLayout(self.gridlayout1,0,0,1,2)
 
         self.pushButtonCenter = QtGui.QPushButton(DialogModelVisualization)
         self.pushButtonCenter.setObjectName("pushButtonCenter")
         self.gridlayout.addWidget(self.pushButtonCenter,1,0,1,1)
+
+        self.pushButtonClose = QtGui.QPushButton(DialogModelVisualization)
+        self.pushButtonClose.setObjectName("pushButtonClose")
+        self.gridlayout.addWidget(self.pushButtonClose,1,1,1,1)
 
         self.retranslateUi(DialogModelVisualization)
         QtCore.QMetaObject.connectSlotsByName(DialogModelVisualization)
@@ -82,6 +95,8 @@ class Ui_DialogModelVisualization(object):
         self.radioButtonSmooth.setText(QtGui.QApplication.translate("DialogModelVisualization", "Smooth", None, QtGui.QApplication.UnicodeUTF8))
         self.checkBoxBoundingBox.setText(QtGui.QApplication.translate("DialogModelVisualization", "Show outline box colored:", None, QtGui.QApplication.UnicodeUTF8))
         self.checkBoxModelVisible.setText(QtGui.QApplication.translate("DialogModelVisualization", "Show model colored:", None, QtGui.QApplication.UnicodeUTF8))
+        self.checkBoxModel2Visible.setText(QtGui.QApplication.translate("DialogModelVisualization", "Show 2nd model colored:", None, QtGui.QApplication.UnicodeUTF8))
         self.pushButtonCenter.setText(QtGui.QApplication.translate("DialogModelVisualization", "Center", None, QtGui.QApplication.UnicodeUTF8))
+        self.pushButtonClose.setText(QtGui.QApplication.translate("DialogModelVisualization", "Close", None, QtGui.QApplication.UnicodeUTF8))
 
 from colored_push_button import ColoredPushButton

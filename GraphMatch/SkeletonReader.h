@@ -243,7 +243,7 @@ namespace wustl_mm {
 					shape->Scale(1.0, a, 1.0);
 				} else if(strcmp(token, TOKEN_VRML_RADIUS) == 0) {
 					fscanf(fin, "%lf", &a);
-					shape->Scale(a, 1.0, a);
+					shape->Scale(a*2, 1.0, a*2);
 					helixes.push_back(shape);
 					shape = new GeometricShape();
 					shape->geometricShapeType = GRAPHEDGE_HELIX;
