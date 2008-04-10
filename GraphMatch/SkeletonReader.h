@@ -234,16 +234,19 @@ namespace wustl_mm {
 				fscanf(fin, "%s", token);
 				if(strcmp(token, TOKEN_VRML_TRANSLATION) == 0) {
 					fscanf(fin, "%lf %lf %lf", &x, &y, &z);
-					shape->Translate(Vector3(x, y, z));
+					//shape->Translate(Vector3(x, y, z));
+					shape->SetCenter(Point3(x, y, z));
 				} else if(strcmp(token, TOKEN_VRML_ROTATION) == 0) {
 					fscanf(fin, "%lf %lf %lf %lf", &x, &y, &z, &a);
 					shape->Rotate(Vector3(x, y, z), a);
 				} else if(strcmp(token, TOKEN_VRML_HEIGHT) == 0) {
 					fscanf(fin, "%lf", &a);
-					shape->Scale(1.0, a, 1.0);
+					//shape->Scale(1.0, a, 1.0);
+					shape->SetHeight(a);
 				} else if(strcmp(token, TOKEN_VRML_RADIUS) == 0) {
 					fscanf(fin, "%lf", &a);
-					shape->Scale(a*2, 1.0, a*2);
+					//shape->Scale(a*2, 1.0, a*2);
+					shape->SetRadius(a);
 					helixes.push_back(shape);
 					shape = new GeometricShape();
 					shape->geometricShapeType = GRAPHEDGE_HELIX;

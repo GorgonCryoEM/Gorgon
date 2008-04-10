@@ -20,13 +20,14 @@ class BaseViewer(QtGui.QWidget):
         self.title = "Untitled"
         self.sceneIndex = -1;
         self.loaded = False
+        self.selectEnabled = False
         self.isClosedMesh = True
         self.displayStyle = self.DisplayStyleSmooth;
         self.modelVisible = True
         self.model2Visible = False
         self.connect(self, QtCore.SIGNAL("modelChanged()"), self.modelChanged) 
         self.connect(self, QtCore.SIGNAL("modelLoaded()"), self.modelChanged) 
-        self.connect(self, QtCore.SIGNAL("modelUnloaded()"), self.modelChanged)    
+        self.connect(self, QtCore.SIGNAL("modelUnloaded()"), self.modelChanged)            
         self.gllist = 0
         self.showBox = True
         self.modelColor = QtGui.QColor.fromRgba(QtGui.qRgba(180, 180, 180, 255))
@@ -76,6 +77,11 @@ class BaseViewer(QtGui.QWidget):
         glMaterialfv(GL_FRONT, GL_DIFFUSE,   diffuseMaterial) 
         glMaterialfv(GL_FRONT, GL_SPECULAR,  specularMaterial) 
         glMaterialf( GL_FRONT, GL_SHININESS, 0.1)
+
+    def setSelectEnabled(self, value):
+        if(value != self.selectEnabled):
+            self.selectEnabled = value
+            self.emitModelChanged()
 
     def initializeGLDisplayType(self):
         glPushAttrib(GL_DEPTH_BUFFER_BIT | GL_LIGHTING_BIT | GL_ENABLE_BIT)
@@ -144,13 +150,41 @@ class BaseViewer(QtGui.QWidget):
         
         if(self.loaded and self.modelVisible):
             self.setMaterials(self.modelColor)
-            self.renderer.draw(0)
+            self.renderer.draw(0, self.selectEnabled)
         
         if(self.loaded and self.showBox):
             self.setMaterials(self.boxColor)
             self.renderer.drawBoundingBox()
 
         glEndList() 
+        
+        
+    def performElementSelection(self, hitStack):
+        #Override this method to enable mouse selection functionality
+        pass
+            
+        
+    def processMouseClick(self, hitStack):
+        print self.title, ": ", hitStack
+        if(self.selectEnabled):
+            self.performElementSelection(hitStack)
+            if(len(hitStack) == 2):
+                self.renderer.select(hitStack[0], hitStack[1], -1, -1, -1, -1)
+            elif (len(hitStack) == 3):
+                self.renderer.select(hitStack[0], hitStack[1], hitStack[2], -1, -1, -1)
+            elif (len(hitStack) == 4):
+                self.renderer.select(hitStack[0], hitStack[1], hitStack[2], hitStack[3], -1, -1)
+            elif (len(hitStack) == 5):
+                self.renderer.select(hitStack[0], hitStack[1], hitStack[2], hitStack[3], hitStack[4], -1)
+            elif (len(hitStack) == 6):
+                self.renderer.select(hitStack[0], hitStack[1], hitStack[2], hitStack[3], hitStack[4], hitStack[5])
+            else:
+                raise Exception("Unable to call renderer.select method due as there are too many levels in the hit stack")
+            self.emitModelChanged()            
+            self.emitElementSelected(hitStack)
+
+    def emitElementSelected(self, hitStack):
+        self.emit(QtCore.SIGNAL("elementSelected (list)"), hitStack)        
 
     def emitModelLoaded(self):
         self.emit(QtCore.SIGNAL("modelLoaded()"))

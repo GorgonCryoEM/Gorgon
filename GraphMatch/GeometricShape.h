@@ -27,16 +27,31 @@ namespace wustl_mm {
 		public:
 			GeometricShape();
 			~GeometricShape();
-			void Translate(Vector3 translationVector);
-			void Rotate(Vector3 axis, double angle);
-			void Scale(double x, double y, double z);
 			bool IsInsideShape(Point3 p);
-			Point3 GetWorldCoordinates(Point3 point);
-			void AddInternalCell(Point3Int point);
+			double GetHeight();
+			double GetRadius();
 			int GetLocationInVector(vector<Point3Int> v, Point3Int point);
-			void FindCornerCellsInHelix();
-			Point3Int GetCornerCell(int node);
 			int GetGeometricShapeType();
+			Matrix4 GetRotationMatrix();
+			Matrix4 GetWorldToObjectMatrix();
+			Point3 GetCenter();
+			void AddInternalCell(Point3Int point);
+			void FindCornerCellsInHelix();
+			void Rotate(Vector3 axis, double angle);
+			void SetCenter(Point3 center);
+			void SetHeight(double height);
+			void SetRadius(double radius);
+
+
+			Point3 GetWorldCoordinates(Point3 point);
+			Point3Int GetCornerCell(int node);
+		private:
+			bool IsInsideCylinder(Point3 point);
+			bool IsInsidePolygon(Point3 point);
+			void Scale(double x, double y, double z);
+			void Translate(Vector3 translationVector);
+			void UpdateWorldToObjectMatrix();
+
 		public:
 			int geometricShapeType;
 			int length;
@@ -44,16 +59,19 @@ namespace wustl_mm {
 			vector<Point3Int> cornerCells;
 			vector<Point3> polygonPoints;
 			vector<Polygon> polygons;
+		private:
 			Matrix4 worldToObject;
 			Matrix4 objectToWorld;
-		private:
-			bool IsInsideCylinder(Point3 point);
-			bool IsInsidePolygon(Point3 point);
+			Point3	centerPoint;
+			double  radius;
+			double  height;
+			Matrix4 rotationMatrix;
+			Matrix4 inverseRotationMatrix;
 		};
 
 		GeometricShape::GeometricShape() {
 			worldToObject = Matrix4::identity();
-			objectToWorld = Matrix4::identity();
+			rotationMatrix = Matrix4::identity();
 			internalCells.clear();
 		}
 
@@ -62,20 +80,6 @@ namespace wustl_mm {
 			cornerCells.clear();
 			polygonPoints.clear();
 			polygons.clear();
-		}
-
-		void GeometricShape::Translate(Vector3 translationVector) {
-			worldToObject = worldToObject * Matrix4::translation(translationVector);
-			objectToWorld = Matrix4::translation(-translationVector) * objectToWorld;
-		}
-
-		void GeometricShape::Rotate(Vector3 axis, double angle){
-			worldToObject = worldToObject * Matrix4::rotation(axis, angle);
-			objectToWorld = Matrix4::rotation(axis, -angle) * objectToWorld;
-		}
-		void GeometricShape::Scale(double x, double y, double z){
-			worldToObject = worldToObject * Matrix4::scaling(x, y, z);
-			objectToWorld = Matrix4::scaling(1.0/x, 1.0/y, 1.0/z) * objectToWorld;
 		}
 
 		bool GeometricShape::IsInsideShape(Point3 point) {
@@ -123,14 +127,54 @@ namespace wustl_mm {
 		}
 
 		bool GeometricShape::IsInsideCylinder(Point3 point) {
-			point = objectToWorld * point;
+			point = worldToObject * point;
 			return ((point[0]*point[0] + point[2]*point[2] <= 0.5) && (abs(point[1]) <= 0.5));
+		}
+
+		double GeometricShape::GetHeight() {
+			return height;
+		}
+
+		double GeometricShape::GetRadius(){
+			return radius;
+		}
+
+		int GeometricShape::GetLocationInVector(vector<Point3Int> v, Point3Int point) {
+			int loc = -1;
+			for(unsigned int i = 0; (i < v.size() && loc < 0); i++) {
+				if(v[i] == point) {
+					loc = i;
+				}
+			}
+			return loc;
+		}
+
+		int GeometricShape::GetGeometricShapeType() {
+			return geometricShapeType;
+		}
+		Matrix4 GeometricShape::GetRotationMatrix() {
+			return rotationMatrix;
+		}
+
+		Matrix4 GeometricShape::GetWorldToObjectMatrix() {
+			return worldToObject;
+		}
+		Point3 GeometricShape::GetCenter() {
+			return centerPoint;
 		}
 
 		Point3 GeometricShape::GetWorldCoordinates(Point3 point) {
 			return worldToObject * point;
 		}
 
+		Point3Int GeometricShape::GetCornerCell(int node) {
+			for(unsigned int i = 0; i < cornerCells.size(); i++) {
+				if(cornerCells[i].node == node) {
+					return cornerCells[i];
+				}
+			}
+			return Point3Int(0,0,0,0);
+		}
 		void GeometricShape::AddInternalCell(Point3Int point) {
 			internalCells.push_back(point);
 		}
@@ -196,26 +240,28 @@ namespace wustl_mm {
 			assert(cornerCells.size() >= 2);
 		}
 
-		int GeometricShape::GetLocationInVector(vector<Point3Int> v, Point3Int point) {
-			int loc = -1;
-			for(unsigned int i = 0; (i < v.size() && loc < 0); i++) {
-				if(v[i] == point) {
-					loc = i;
-				}
-			}
-			return loc;
+		void GeometricShape::Rotate(Vector3 axis, double angle){
+			rotationMatrix = Matrix4::rotation(axis, angle) * rotationMatrix;
+			UpdateWorldToObjectMatrix();
 		}
 
-		int GeometricShape::GetGeometricShapeType() {
-			return geometricShapeType;
+		void GeometricShape::SetCenter(Point3 center) {
+			this->centerPoint = center;
+			UpdateWorldToObjectMatrix();
 		}
-		Point3Int GeometricShape::GetCornerCell(int node) {
-			for(unsigned int i = 0; i < cornerCells.size(); i++) {
-				if(cornerCells[i].node == node) {
-					return cornerCells[i];
-				}
-			}
-			return Point3Int(0,0,0,0);
+
+		void GeometricShape::SetHeight(double height) {
+			this->height = height;
+			UpdateWorldToObjectMatrix();
+		}
+
+		void GeometricShape::SetRadius(double radius) {
+			this->radius = radius;
+			UpdateWorldToObjectMatrix();
+		}
+
+		void GeometricShape::UpdateWorldToObjectMatrix() {
+			worldToObject = Matrix4::translation(centerPoint) * rotationMatrix * Matrix4::scaling(radius*2, height, radius*2);
 		}
 	}
 }

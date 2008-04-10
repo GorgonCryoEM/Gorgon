@@ -59,7 +59,7 @@ namespace wustl_mm {
 			void AddQuad(int vertexId1, int vertexId2, int vertexId3, int vertexId4, TEdge newEdgeTag = NULL, TFace faceTag = NULL);
 			void AddTriangle(int vertexId1, int vertexId2, int vertexId3, TEdge newEdgeTag = NULL, TFace faceTag = NULL);
 			void Clear();
-			void Draw(bool drawSurfaces, bool drawLines, bool drawPoints);
+			void Draw(bool drawSurfaces, bool drawLines, bool drawPoints, bool annotateSurfaces, bool annotateLines, bool annotatePoints);
 			void MarkFixedVertices();
 			void RemoveFace(int faceId);
 			void RemoveEdge(int edgeId);
@@ -304,13 +304,19 @@ namespace wustl_mm {
 			vertexHashMap.clear();
 		}
 
-		template <class TVertex, class TEdge, class TFace> void NonManifoldMesh<TVertex, TEdge, TFace>::Draw(bool drawSurfaces, bool drawLines, bool drawPoints) {
+		template <class TVertex, class TEdge, class TFace> void NonManifoldMesh<TVertex, TEdge, TFace>::Draw(bool drawSurfaces, bool drawLines, bool drawPoints, bool annotateSurfaces, bool annotateLines, bool annotatePoints) {
 			int k;
 			glPushAttrib(GL_LINE_BIT | GL_ENABLE_BIT | GL_HINT_BIT);
-
-			glPushName(0);
+			
 			if(drawSurfaces) {
+				if(annotateSurfaces) {
+					glPushName(0);
+					glPushName(0);
+				}
 				for(unsigned int i = 0; i < faces.size(); i++) {
+					if(annotateSurfaces) {
+						glLoadName(i);
+					}
 					glBegin(GL_POLYGON);
 					Vector3DFloat normal;
 					for(unsigned int j = 0; j < faces[i].vertexIds.size(); j++) {
@@ -321,40 +327,61 @@ namespace wustl_mm {
 					}
 					glEnd();
 				}
-			}
-			glPopName();
-
-			glPushName(1);
+				if(annotateSurfaces) {
+					glPopName();
+					glPopName();
+				}
+			}			
+			
 			if(drawLines) {
+				if(annotateLines) {
+					glPushName(1);
+					glPushName(0);
+				}
 				glLineWidth(1.5);
 				glEnable(GL_LINE_SMOOTH);
-				glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
-				glBegin(GL_LINES);
-				for(unsigned int i = 0; i < edges.size(); i++) {
+				glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);				
+				for(unsigned int i = 0; i < edges.size(); i++) {					
 					if(edges[i].faceIds.size() == 0) {
+						if(annotateLines) {
+							glLoadName(i);
+						}
+						glBegin(GL_LINES);
 						k = GetVertexIndex(edges[i].vertexIds[0]);
 						glVertex3f(vertices[k].position.X(), vertices[k].position.Y(), vertices[k].position.Z());
 						k = GetVertexIndex(edges[i].vertexIds[1]);
 						glVertex3f(vertices[k].position.X(), vertices[k].position.Y(), vertices[k].position.Z());			
+						glEnd();
 					}
+				}	
+				if(annotateLines) {
+					glPopName();
+					glPopName();
 				}
-				glEnd();
-			}
-			glPopName();
-
-			glPushName(2);
+			}			
+			
 			if(drawPoints) {
-				glEnable(GL_POINT_SMOOTH);
-				glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
-				glBegin(GL_POINTS);
-				for(unsigned int i = 0; i < vertices.size(); i++) {
-					if(vertices[i].edgeIds.size() == 0) {
-						glVertex3f(vertices[i].position.X(), vertices[i].position.Y(), vertices[i].position.Z());
-					}
+				if(annotatePoints) {
+					glPushName(2);
+					glPushName(0);
 				}
-				glEnd();
-			}
-			glPopName();
+				glEnable(GL_POINT_SMOOTH);
+				glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);								
+				for(unsigned int i = 0; i < vertices.size(); i++) {										
+					if(vertices[i].edgeIds.size() == 0) {
+						if(annotatePoints) {
+							glBegin(GL_POINTS);
+						}
+						glLoadName(i);
+						glVertex3f(vertices[i].position.X(), vertices[i].position.Y(), vertices[i].position.Z());
+						glEnd();
+					}
+				}		
+				if(annotatePoints) {
+					glPopName();
+					glPopName();
+				}
+			}			
 			glPopAttrib();
 
 			glFlush();

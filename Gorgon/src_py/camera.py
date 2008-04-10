@@ -162,49 +162,53 @@ class Camera(QtOpenGL.QGLWidget):
                
     def drawScene(self):
         
-        self.setGluLookAt()
-        
-        glPushMatrix()                
+        glMatrixMode(GL_MODELVIEW)   
+        glPushMatrix()
+        self.setGluLookAt()                              
         glMultMatrixf(self.sceneMatrix)            
-        i = 0
-        for s in self.scene:    
+        for i in range(len(self.scene)): 
             glPushName(i)
-            s.sceneIndex = i;     
-            i = i + 1
-            s.draw()
+            self.scene[i].sceneIndex = i;     
+            self.scene[i].draw()
             glPopName()
         glPopMatrix()
     
+    def processMouseClick(self, mouseHits):               
+        globalMinDepth = self.far + 1;
+        minNames = list()        
+        sceneId = -1
+        for hit_record in mouseHits:
+            minDepth, maxDepth, names = hit_record
+            names = list(names)
+            if(self.scene[names[0]].selectEnabled and globalMinDepth > minDepth):
+                globalMinDepth = minDepth
+                minNames = names
+        if(minNames != list()):
+            sceneId = minNames[0];
+            minNames.pop(0)
+        if(sceneId >= 0):
+            self.scene[sceneId].processMouseClick(minNames)
        
-    def pickObject(self, x, y):
-        SIZE = 10000
-        glSelectBuffer(SIZE)
+    def pickObject(self, x, y):        
+        
+        viewport = list(glGetIntegerv(GL_VIEWPORT))        
+        glSelectBuffer(10000)
         glRenderMode(GL_SELECT)
 
-
-        glMatrixMode(GL_PROJECTION)
-        glPushMatrix()
-        glLoadIdentity()
-        viewport = list(glGetIntegerv(GL_VIEWPORT))
-        gluPickMatrix(x, viewport[3]-y, 10, 10, viewport)
-        gluPerspective(180 * self.eyeZoom, self.aspectRatio, self.near, self.far)
-        glMatrixMode(GL_MODELVIEW)
         glInitNames()
-        self.drawScene()
-        
+        glMatrixMode(GL_PROJECTION)        
+        glPushMatrix()
+        glLoadIdentity()        
+        gluPickMatrix(x, viewport[3]-y, 1, 1, viewport)
+        gluPerspective(180 * self.eyeZoom, self.aspectRatio, self.near, self.far)            
+        self.drawScene()        
         glMatrixMode(GL_PROJECTION)
         glPopMatrix()
-        glMatrixMode(GL_MODELVIEW)
         glFlush()
 
-        bufferStack = glRenderMode(GL_RENDER)
-        for hit_record in bufferStack:
-            min_depth, max_depth, names = hit_record
-            namelist = list(names)
-            for n in namelist:
-                print n
-            print min_depth, max_depth, names 
-        
+        mouseHits = glRenderMode(GL_RENDER)
+        self.processMouseClick(mouseHits)
+                
     def resizeGL(self, width, height):
         self.aspectRatio = width/(1.0*height)
         glViewport(0,0, width, height)
@@ -219,19 +223,25 @@ class Camera(QtOpenGL.QGLWidget):
         glMatrixMode(GL_MODELVIEW)
         
     def mousePressEvent(self, event):
-        self.lastPos = QtCore.QPoint(event.pos())        
-        self.pickObject(event.x(), event.y())
+        self.mouseDownPoint = QtCore.QPoint(event.pos())
+        self.mouseMovePoint = QtCore.QPoint(event.pos())  
+        
+    def mouseReleaseEvent(self, event):
+        self.mouseUpPoint = QtCore.QPoint(event.pos())
+        #Enter selection mode only if we didnt move the mouse much.. (If the mouse was moved, then we assume a camera motion instead of a selection
+        if (pow(self.mouseDownPoint.x() - self.mouseUpPoint.x(), 2) + pow(self.mouseDownPoint.y() - self.mouseUpPoint.y(), 2) <= 2): 
+            self.pickObject(self.mouseUpPoint.x(), self.mouseUpPoint.y())
 
     def mouseMoveEvent(self, event):
-        dx = event.x() - self.lastPos.x()
-        dy = event.y() - self.lastPos.y()
+        dx = event.x() - self.mouseMovePoint.x()
+        dy = event.y() - self.mouseMovePoint.y()
 
         if event.buttons() & QtCore.Qt.LeftButton:
             self.setEyeRotation(dx, -dy, 0)
         elif event.buttons() & QtCore.Qt.RightButton:
             self.setEyeRotation(0, 0, dx)
         
-        self.lastPos = QtCore.QPoint(event.pos())
+        self.mouseMovePoint = QtCore.QPoint(event.pos())
 
         self.updateGL()
     

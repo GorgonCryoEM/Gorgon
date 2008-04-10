@@ -19,6 +19,7 @@ class SSEViewer(BaseViewer):
         self.showBox = False;
         self.renderer = SSERenderer()
         self.createUI()      
+        self.selectEnabled = True
         self.app.viewers["sse"] = self;
         self.modelColor = QtGui.QColor.fromRgba(QtGui.qRgba(0, 180, 0, 255))
         self.model2Color = QtGui.QColor.fromRgba(QtGui.qRgba(120, 185, 255, 255))
@@ -70,11 +71,11 @@ class SSEViewer(BaseViewer):
         
         if(self.loaded and self.modelVisible):
             self.setMaterials(self.modelColor)
-            self.renderer.draw(0)
+            self.renderer.draw(0, self.selectEnabled)
 
         if(self.loaded and self.model2Visible):
             self.setMaterials(self.model2Color)
-            self.renderer.draw(1)
+            self.renderer.draw(1, self.selectEnabled)
         
         if(self.loaded and self.showBox):
             self.setMaterials(self.boxColor)

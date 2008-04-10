@@ -43,8 +43,7 @@ class SkeletonViewer(BaseViewer):
         closeAct.setStatusTip(self.tr("Close the loaded skeleton"))
         self.connect(closeAct, QtCore.SIGNAL("triggered()"), self.unloadData)
         self.app.actions.addAction("unload_Skeleton", closeAct)
-        
-                        
+                                
     def createMenus(self):
         self.app.menus.addAction("file-open-skeleton", self.app.actions.getAction("load_Skeleton"), "file-open")    
         self.app.menus.addAction("file-close-skeleton", self.app.actions.getAction("unload_Skeleton"), "file-close");
@@ -53,8 +52,7 @@ class SkeletonViewer(BaseViewer):
     def updateActionsAndMenus(self):
         self.app.actions.getAction("unload_Skeleton").setEnabled(self.loaded)
         self.app.menus.getMenu("actions-skeleton").setEnabled(self.loaded)       
-          
-        
+                  
     def loadVolume(self, volume):
         if(self.loaded):
             self.unloadData
