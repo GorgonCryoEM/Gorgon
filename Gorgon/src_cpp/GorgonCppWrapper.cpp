@@ -21,6 +21,9 @@ BOOST_PYTHON_MODULE(gorgon_cpp_wrapper)
 	class_<Volume>("Volume", init<int,int,int>())
 	;
 
+	class_<NonManifoldMesh_Annotated>("NonManifoldMesh_Annotated", init<>())
+	;
+
 	class_<Renderer>("Renderer", init<>())
 		.def("draw", &Renderer::Draw)
 		.def("drawBoundingBox", &Renderer::DrawBoundingBox)
@@ -57,12 +60,13 @@ BOOST_PYTHON_MODULE(gorgon_cpp_wrapper)
 		.def("loadFile", &MeshRenderer::LoadFile)
 		.def("loadVolume", &MeshRenderer::LoadVolume)
 		.def("unload", &MeshRenderer::Unload)
-		.def("select", &MeshRenderer::Select)
+		.def("select", &MeshRenderer::Select)		
 		.def("performSmoothLaplacian", &MeshRenderer::PerformSmoothLaplacian)
 		.def("getSupportedLoadFileFormats", &MeshRenderer::GetSupportedLoadFileFormats)
 		.def("getSupportedSaveFileFormats", &MeshRenderer::GetSupportedSaveFileFormats)
 		.def("getMin", &MeshRenderer::GetMin)
 		.def("getMax", &MeshRenderer::GetMax)
+		.def("getMesh", &MeshRenderer::GetMesh, return_value_policy<manage_new_object>())
 	;
 
 	class_<SSERenderer, bases<Renderer>>("SSERenderer", init<>())

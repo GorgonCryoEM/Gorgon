@@ -21,8 +21,8 @@ class SkeletonViewer(BaseViewer):
         self.createUI()      
         self.app.viewers["skeleton"] = self;
         self.modelColor = QtGui.QColor.fromRgba(QtGui.qRgba(180, 0, 0, 255))
-        self.initVisualizationOptions()        
-
+        self.initVisualizationOptions()      
+                 
     def createUI(self):
         self.createActions()
         self.createMenus()
@@ -33,7 +33,7 @@ class SkeletonViewer(BaseViewer):
         self.optionsWindow = SkeletonLaplacianSmoothingForm(self.app, self)
         
     def createActions(self):
-        openAct = QtGui.QAction(self.tr("S&keleton..."), self)
+        openAct = QtGui.QAction(self.tr("&S&keleton..."), self)
         openAct.setShortcut(self.tr("Ctrl+K"))
         openAct.setStatusTip(self.tr("Load a skeleton file"))
         self.connect(openAct, QtCore.SIGNAL("triggered()"), self.loadData)
@@ -50,9 +50,19 @@ class SkeletonViewer(BaseViewer):
         self.app.menus.addMenu("actions-skeleton", self.tr("S&keleton"), "actions");
                    
     def updateActionsAndMenus(self):
-        self.app.actions.getAction("unload_Skeleton").setEnabled(self.loaded)
-        self.app.menus.getMenu("actions-skeleton").setEnabled(self.loaded)       
-                  
+        if(self.viewerAutonomous):
+            self.app.actions.getAction("load_Skeleton").setEnabled(True)
+            self.app.actions.getAction("unload_Skeleton").setEnabled(self.loaded)
+            self.app.menus.getMenu("actions-skeleton").setEnabled(self.loaded)
+        
+    def updateViewerAutonomy(self, autonomous): 
+        if(not autonomous):
+            self.app.actions.getAction("load_Skeleton").setEnabled(autonomous)
+            self.app.actions.getAction("unload_Skeleton").setEnabled(autonomous)
+            self.app.menus.getMenu("actions-skeleton").setEnabled(autonomous)
+        else:            
+            self.updateActionsAndMenus()        
+                   
     def loadVolume(self, volume):
         if(self.loaded):
             self.unloadData

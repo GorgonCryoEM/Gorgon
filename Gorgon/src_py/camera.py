@@ -21,7 +21,7 @@ class Camera(QtOpenGL.QGLWidget):
        #       " Blue: ", self.format().blueBufferSize(), 
        #       " Alpha:", self.format().alphaBufferSize())
 
-        
+        self.mouseTrackingEnabled = False
         self.aspectRatio = 1.0;        
         self.near = 10;
         self.far = 500;
@@ -42,6 +42,7 @@ class Camera(QtOpenGL.QGLWidget):
             self.connect(s, QtCore.SIGNAL("modelLoaded()"), self.updateGL)
             self.connect(s, QtCore.SIGNAL("modelUnloaded()"), self.updateGL)
             self.connect(s, QtCore.SIGNAL("modelVisualizationChanged()"), self.updateGL)
+            self.connect(s, QtCore.SIGNAL("mouseTrackingChanged()"), self.refreshMouseTracking)
  
     def setEye(self, x, y, z):
         self.eye = [x, y, z]
@@ -173,8 +174,8 @@ class Camera(QtOpenGL.QGLWidget):
             glPopName()
         glPopMatrix()
     
-    def processMouseClick(self, mouseHits):               
-        globalMinDepth = self.far + 1;
+    def processMouseClick(self, mouseHits):   
+        globalMinDepth = self.far + 1
         minNames = list()        
         sceneId = -1
         for hit_record in mouseHits:
@@ -188,6 +189,22 @@ class Camera(QtOpenGL.QGLWidget):
             minNames.pop(0)
         if(sceneId >= 0):
             self.scene[sceneId].processMouseClick(minNames)
+       
+    def processMouseMove(self, mouseHits):       
+        globalMinDepth = self.far + 1
+        minNames = list()        
+        sceneId = -1
+        for hit_record in mouseHits:
+            minDepth, maxDepth, names = hit_record
+            names = list(names)
+            if(self.scene[names[0]].mouseMoveEnabled and globalMinDepth > minDepth):
+                globalMinDepth = minDepth
+                minNames = names
+        if(minNames != list()):
+            sceneId = minNames[0];
+            minNames.pop(0)
+        if(sceneId >= 0):            
+            self.scene[sceneId].processMouseMove(minNames)       
        
     def pickObject(self, x, y):        
         
@@ -207,7 +224,7 @@ class Camera(QtOpenGL.QGLWidget):
         glFlush()
 
         mouseHits = glRenderMode(GL_RENDER)
-        self.processMouseClick(mouseHits)
+        return mouseHits
                 
     def resizeGL(self, width, height):
         self.aspectRatio = width/(1.0*height)
@@ -221,7 +238,14 @@ class Camera(QtOpenGL.QGLWidget):
         glLoadIdentity()
         gluPerspective(180 * self.eyeZoom, self.aspectRatio, self.near, self.far)
         glMatrixMode(GL_MODELVIEW)
-        
+    
+    def refreshMouseTracking(self):
+        self.mouseTrackingEnabled = False
+        for s in self.scene:
+            self.mouseTrackingEnabled = self.mouseTrackingEnabled or s.mouseMoveEnabled
+        self.setMouseTracking(self.mouseTrackingEnabled)
+        self.updateGL()
+    
     def mousePressEvent(self, event):
         self.mouseDownPoint = QtCore.QPoint(event.pos())
         self.mouseMovePoint = QtCore.QPoint(event.pos())  
@@ -230,9 +254,12 @@ class Camera(QtOpenGL.QGLWidget):
         self.mouseUpPoint = QtCore.QPoint(event.pos())
         #Enter selection mode only if we didnt move the mouse much.. (If the mouse was moved, then we assume a camera motion instead of a selection
         if (pow(self.mouseDownPoint.x() - self.mouseUpPoint.x(), 2) + pow(self.mouseDownPoint.y() - self.mouseUpPoint.y(), 2) <= 2): 
-            self.pickObject(self.mouseUpPoint.x(), self.mouseUpPoint.y())
+            self.processMouseClick(self.pickObject(self.mouseUpPoint.x(), self.mouseUpPoint.y()))
 
     def mouseMoveEvent(self, event):
+        if(self.mouseTrackingEnabled):
+            self.processMouseMove(self.pickObject(event.x(), event.y()))
+            
         dx = event.x() - self.mouseMovePoint.x()
         dy = event.y() - self.mouseMovePoint.y()
 
@@ -241,7 +268,7 @@ class Camera(QtOpenGL.QGLWidget):
         elif event.buttons() & QtCore.Qt.RightButton:
             self.setEyeRotation(0, 0, dx)
         
-        self.mouseMovePoint = QtCore.QPoint(event.pos())
+        self.mouseMovePoint = QtCore.QPoint(event.pos())        
 
         self.updateGL()
     

@@ -4,6 +4,7 @@ from gorgon_cpp_wrapper import VolumeRenderer
 from volume_surface_editor_form import VolumeSurfaceEditorForm
 from volume_binary_skeletonization_form import VolumeBinarySkeletonizationForm
 from volume_grayscale_skeletonization_form import VolumeGrayscaleSkeletonizationForm
+from volume_manual_skeletonization_form import VolumeManualSkeletonizationForm
 
 
 try:
@@ -32,13 +33,13 @@ class VolumeViewer(BaseViewer):
         self.updateActionsAndMenus()
                           
     def createActions(self):
-        openAct = QtGui.QAction(self.tr("V&olume..."), self)
-        openAct.setShortcut(self.tr("Ctrl+O"))
+        openAct = QtGui.QAction(self.tr("&Volume..."), self)
+        openAct.setShortcut(self.tr("Ctrl+V"))
         openAct.setStatusTip(self.tr("Load a volume file"))
         self.connect(openAct, QtCore.SIGNAL("triggered()"), self.loadData)
         self.app.actions.addAction("load_Volume", openAct)
         
-        closeAct = QtGui.QAction(self.tr("V&olume"), self)
+        closeAct = QtGui.QAction(self.tr("&Volume"), self)
         closeAct.setStatusTip(self.tr("Close the loaded volume"))
         self.connect(closeAct, QtCore.SIGNAL("triggered()"), self.unloadData)
         self.app.actions.addAction("unload_Volume", closeAct)
@@ -52,6 +53,7 @@ class VolumeViewer(BaseViewer):
     
     def createChildWindows(self):
         self.surfaceEditor = VolumeSurfaceEditorForm(self.app, self)
+        self.manualSkeletonizer = VolumeManualSkeletonizationForm(self.app, self)
         self.binarySkeletonizer = VolumeBinarySkeletonizationForm(self.app, self)
         self.grayscaleSkeletonizer = VolumeGrayscaleSkeletonizationForm(self.app, self)
         

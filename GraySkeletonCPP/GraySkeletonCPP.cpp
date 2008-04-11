@@ -372,7 +372,7 @@ namespace wustl_mm {
 					printf("Not implemented yet! \n");
 					break;
 				case 3: {
-					MRCReader * reader = (MRCReader*)MRCReaderPicker::pick((char *)inFile.c_str());
+					/*MRCReader * reader = (MRCReader*)MRCReaderPicker::pick((char *)inFile.c_str());
 					Volume * sourceVol = reader->getVolume();
 					delete reader;
 
@@ -390,7 +390,7 @@ namespace wustl_mm {
 					delete skeletonPath;
 					delete sourceVol;
 					delete skel;
-					break;
+					break;*/
 				}
 				default:
 					DisplayInputParams(DO_INTERACTIVE_SKELETONIZATION);
