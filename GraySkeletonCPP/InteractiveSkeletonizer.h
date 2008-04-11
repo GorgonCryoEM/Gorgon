@@ -4,6 +4,9 @@
 #include "Graph3D.h"
 #include <queue>
 #include "GlobalDefinitions.h"
+#include <ProteinMorph/NonManifoldMesh.h>
+
+using namespace wustl_mm::Protein_Morph;
 
 namespace wustl_mm {
 	namespace GraySkeletonCPP {
@@ -12,7 +15,7 @@ namespace wustl_mm {
 
 		class InteractiveSkeletonizer : public VolumeSkeletonizer {
 		public:
-			InteractiveSkeletonizer(Volume * sourceVol, int minGray, int maxGray, int stepSize, int curveRadius, int minCurveSize, bool storeEigenInfo = false);
+			InteractiveSkeletonizer(Volume * sourceVol, float minGray, float maxGray, float stepSize, int curveRadius, int minCurveSize, bool storeEigenInfo = false);
 			~InteractiveSkeletonizer();
 			vector<Vector3DInt> GetPath(Vector3DInt endPoint);			
 			Vector3DInt FindClosestSkeletalPoint(Vector3DInt point);
@@ -37,10 +40,10 @@ namespace wustl_mm {
 			static const char SEED_POINT_FLAG = 50;
 		};
 
-		InteractiveSkeletonizer::InteractiveSkeletonizer(Volume * sourceVol, int minGray, int maxGray, int stepSize, int curveRadius, int minCurveSize, bool storeEigenInfo) : VolumeSkeletonizer(0, curveRadius, 0,0) {
+		InteractiveSkeletonizer::InteractiveSkeletonizer(Volume * sourceVol, float minGray, float maxGray, float stepSize, int curveRadius, int minCurveSize, bool storeEigenInfo) : VolumeSkeletonizer(0, curveRadius, 0,0) {
 			appTimeManager.PushCurrentTime();
-			NormalizeVolume(sourceVol);
-			CleanupVolume(sourceVol, minGray, maxGray);
+			//NormalizeVolume(sourceVol);
+			//CleanupVolume(sourceVol, minGray, maxGray);
 			mergedGraph = NULL;		
 			offset = Vector3DInt(MAX_GAUSSIAN_FILTER_RADIUS, MAX_GAUSSIAN_FILTER_RADIUS, MAX_GAUSSIAN_FILTER_RADIUS);
 			sourceVol->pad(MAX_GAUSSIAN_FILTER_RADIUS, 0);

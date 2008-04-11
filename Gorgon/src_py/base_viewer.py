@@ -21,7 +21,9 @@ class BaseViewer(QtGui.QWidget):
         self.sceneIndex = -1;
         self.loaded = False
         self.selectEnabled = False
+        self.mouseMoveEnabled = False
         self.isClosedMesh = True
+        self.viewerAutonomous = True
         self.displayStyle = self.DisplayStyleSmooth;
         self.modelVisible = True
         self.model2Visible = False
@@ -68,20 +70,34 @@ class BaseViewer(QtGui.QWidget):
     def setMaterials(self, color):
         diffuseMaterial = [color.redF(), color.greenF(), color.blueF(), color.alphaF()]
         ambientMaterial = [color.redF()*0.2, color.greenF()*0.2, color.blueF()*0.2, color.alphaF()]
-        specularMaterial = [1.0, 1.0, 1.0, 1.0]
+        specularMaterial = [1.0, 1.0, 1.0, 1.0]        
         glMaterialfv(GL_BACK, GL_AMBIENT,   ambientMaterial) 
         glMaterialfv(GL_BACK, GL_DIFFUSE,   diffuseMaterial) 
         glMaterialfv(GL_BACK, GL_SPECULAR,  specularMaterial) 
-        glMaterialf( GL_BACK, GL_SHININESS, 0.1)
+        glMaterialf(GL_BACK, GL_SHININESS, 0.1)
         glMaterialfv(GL_FRONT, GL_AMBIENT,   ambientMaterial) 
         glMaterialfv(GL_FRONT, GL_DIFFUSE,   diffuseMaterial) 
         glMaterialfv(GL_FRONT, GL_SPECULAR,  specularMaterial) 
-        glMaterialf( GL_FRONT, GL_SHININESS, 0.1)
+        glMaterialf(GL_FRONT, GL_SHININESS, 0.1)
 
     def setSelectEnabled(self, value):
         if(value != self.selectEnabled):
             self.selectEnabled = value
             self.emitModelChanged()
+
+    def setMouseMoveEnabled(self, value):
+        if(value != self.mouseMoveEnabled):
+            self.mouseMoveEnabled = value
+            self.emitModelChanged()
+            self.emitMouseTrackingChanged()            
+
+    #Override this method to handle menu enabling / disabling when another viewer takes control of this one. 
+    def updateViewerAutonomy(self, value):
+        pass
+
+    def setViewerAutonomy(self, value):
+        self.viewerAutonomous = value;
+        self.updateViewerAutonomy(value)
 
     def initializeGLDisplayType(self):
         glPushAttrib(GL_DEPTH_BUFFER_BIT | GL_LIGHTING_BIT | GL_ENABLE_BIT)
@@ -147,23 +163,36 @@ class BaseViewer(QtGui.QWidget):
             
         self.gllist = glGenLists(1)
         glNewList(self.gllist, GL_COMPILE)
+        visibility = [self.modelVisible, self.model2Visible]
+        colors = [self.modelColor, self.model2Color]
         
-        if(self.loaded and self.modelVisible):
-            self.setMaterials(self.modelColor)
-            self.renderer.draw(0, self.selectEnabled)
+        glPushAttrib(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT)
         
+        for i in range(2):
+            if(self.loaded and visibility[i]):
+                self.setMaterials(colors[i])
+                if(colors[i].alpha() < 255):
+                    glDepthFunc(GL_LESS)        
+                    glColorMask(False, False, False, False)                        
+                    self.renderer.draw(i, False)
+                    glDepthFunc(GL_LEQUAL)
+                    glColorMask(True, True, True, True) 
+                    self.renderer.draw(i, self.selectEnabled or self.mouseMoveEnabled)
+                else:
+                    self.renderer.draw(i, self.selectEnabled or self.mouseMoveEnabled)
+                
         if(self.loaded and self.showBox):
             self.setMaterials(self.boxColor)
             self.renderer.drawBoundingBox()
 
+        glPopAttrib()
+
         glEndList() 
-        
         
     def performElementSelection(self, hitStack):
         #Override this method to enable mouse selection functionality
         pass
-            
-        
+                    
     def processMouseClick(self, hitStack):
         print self.title, ": ", hitStack
         if(self.selectEnabled):
@@ -183,8 +212,17 @@ class BaseViewer(QtGui.QWidget):
             self.emitModelChanged()            
             self.emitElementSelected(hitStack)
 
+    def processMouseMove(self, hitStack):
+        self.emitElementMouseOver(hitStack)
+
     def emitElementSelected(self, hitStack):
-        self.emit(QtCore.SIGNAL("elementSelected (list)"), hitStack)        
+        self.emit(QtCore.SIGNAL("elementSelected (list)"), hitStack)      
+        
+    def emitMouseTrackingChanged(self):
+        self.emit(QtCore.SIGNAL("mouseTrackingChanged ()"))
+        
+    def emitElementMouseOver(self, hitStack):  
+        self.emit(QtCore.SIGNAL("elementMouseOver (list)"), hitStack)
 
     def emitModelLoaded(self):
         self.emit(QtCore.SIGNAL("modelLoaded()"))

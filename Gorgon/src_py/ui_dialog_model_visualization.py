@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_dialog_model_visualization.ui'
 #
-# Created: Wed Apr 09 21:54:38 2008
+# Created: Fri Apr 11 16:02:13 2008
 #      by: PyQt4 UI code generator 4.3.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -97,6 +97,6 @@ class Ui_DialogModelVisualization(object):
         self.checkBoxModelVisible.setText(QtGui.QApplication.translate("DialogModelVisualization", "Show model colored:", None, QtGui.QApplication.UnicodeUTF8))
         self.checkBoxModel2Visible.setText(QtGui.QApplication.translate("DialogModelVisualization", "Show 2nd model colored:", None, QtGui.QApplication.UnicodeUTF8))
         self.pushButtonCenter.setText(QtGui.QApplication.translate("DialogModelVisualization", "Center", None, QtGui.QApplication.UnicodeUTF8))
-        self.pushButtonClose.setText(QtGui.QApplication.translate("DialogModelVisualization", "Close", None, QtGui.QApplication.UnicodeUTF8))
+        self.pushButtonClose.setText(QtGui.QApplication.translate("DialogModelVisualization", "Unload Model", None, QtGui.QApplication.UnicodeUTF8))
 
 from colored_push_button import ColoredPushButton

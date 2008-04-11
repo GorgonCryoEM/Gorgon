@@ -48,6 +48,9 @@ namespace wustl_mm {
 		}
 
 		NonManifoldMesh_Annotated * MeshRenderer::GetMesh() {
+			if(mesh == NULL) {
+				mesh = new NonManifoldMesh_Annotated();
+			}
 			return mesh;
 		}
 

@@ -61,28 +61,6 @@ class SSEViewer(BaseViewer):
             self.emitViewerSetCenter()                 
                
                
-    def modelChanged(self):
-        self.updateActionsAndMenus()
-        if self.gllist != 0:
-            glDeleteLists(self.gllist,1)
-            
-        self.gllist = glGenLists(1)
-        glNewList(self.gllist, GL_COMPILE)
-        
-        if(self.loaded and self.modelVisible):
-            self.setMaterials(self.modelColor)
-            self.renderer.draw(0, self.selectEnabled)
-
-        if(self.loaded and self.model2Visible):
-            self.setMaterials(self.model2Color)
-            self.renderer.draw(1, self.selectEnabled)
-        
-        if(self.loaded and self.showBox):
-            self.setMaterials(self.boxColor)
-            self.renderer.drawBoundingBox()
-
-        glEndList()                
-               
                
     def createActions(self):
         openHelixAct = QtGui.QAction(self.tr("&Helix Annotations"), self)
