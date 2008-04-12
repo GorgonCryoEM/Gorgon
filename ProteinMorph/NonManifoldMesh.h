@@ -306,7 +306,7 @@ namespace wustl_mm {
 
 		template <class TVertex, class TEdge, class TFace> void NonManifoldMesh<TVertex, TEdge, TFace>::Draw(bool drawSurfaces, bool drawLines, bool drawPoints, bool annotateSurfaces, bool annotateLines, bool annotatePoints) {
 			int k;
-			glPushAttrib(GL_LINE_BIT | GL_ENABLE_BIT | GL_HINT_BIT);
+			glPushAttrib(GL_LINE_BIT | GL_ENABLE_BIT | GL_HINT_BIT | GL_POINT_BIT);
 			
 			if(drawSurfaces) {
 				if(annotateSurfaces) {
@@ -338,7 +338,7 @@ namespace wustl_mm {
 					glPushName(1);
 					glPushName(0);
 				}
-				glLineWidth(1.5);
+				glLineWidth(3);
 				glEnable(GL_LINE_SMOOTH);
 				glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);				
 				for(unsigned int i = 0; i < edges.size(); i++) {					
@@ -365,14 +365,15 @@ namespace wustl_mm {
 					glPushName(2);
 					glPushName(0);
 				}
+				glPointSize(2);
 				glEnable(GL_POINT_SMOOTH);
 				glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);								
 				for(unsigned int i = 0; i < vertices.size(); i++) {										
 					if(vertices[i].edgeIds.size() == 0) {
 						if(annotatePoints) {
-							glBegin(GL_POINTS);
+							glLoadName(i);
 						}
-						glLoadName(i);
+						glBegin(GL_POINTS);
 						glVertex3f(vertices[i].position.X(), vertices[i].position.Y(), vertices[i].position.Z());
 						glEnd();
 					}

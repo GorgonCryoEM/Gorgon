@@ -9,6 +9,7 @@
 #include <Gorgon/MeshRenderer.h>
 #include <Gorgon/SSERenderer.h>
 #include <Gorgon/Renderer.h>
+#include <Gorgon/InteractiveSkeletonEngine.h>
 
 #include <boost/python.hpp>
 
@@ -48,6 +49,7 @@ BOOST_PYTHON_MODULE(gorgon_cpp_wrapper)
 		.def("getMax", &VolumeRenderer::GetMax)
 		.def("getMinDensity", &VolumeRenderer::GetMinDensity)
 		.def("getMaxDensity", &VolumeRenderer::GetMaxDensity)
+		.def("getVolume", &VolumeRenderer::GetVolume, return_value_policy<manage_new_object>())		
 		.def("setSurfaceValue", &VolumeRenderer::SetSurfaceValue)
 		.def("setSampleInterval", &VolumeRenderer::SetSampleInterval)
 		.def("performBinarySkeletonizationJu2007", &VolumeRenderer::PerformBinarySkeletonizationJu2007, return_value_policy<manage_new_object>())		
@@ -81,6 +83,12 @@ BOOST_PYTHON_MODULE(gorgon_cpp_wrapper)
 		.def("getMin", &SSERenderer::GetMin)
 		.def("getMax", &SSERenderer::GetMax)
 	;
+
+	class_<InteractiveSkeletonEngine>("InteractiveSkeletonEngine", init<Volume *, NonManifoldMesh_Annotated *, float, float, float, int, int, int>())
+		.def("selectSeed", &InteractiveSkeletonEngine::SelectSeed)
+		.def("analyzePath", &InteractiveSkeletonEngine::AnalyzePath)		
+	;
+
 
 
 	class_<BackEndInterface>("BackEndInterface", init<>())
