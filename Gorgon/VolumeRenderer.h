@@ -41,6 +41,7 @@ namespace wustl_mm {
 			void SetSurfaceValue(const float value);
 			void UpdateBoundingBox() ;
 			void Unload();
+			Volume * GetVolume();
 			Volume * PerformBinarySkeletonizationJu2007(double threshold, int minCurveSize, int minSurfaceSize);
 			Volume * PerformGrayscaleSkeletonizationAbeysinghe2008(double startDensity, int stepCount, int minCurveSize, int minSurfaceSize, int curveRadius, int surfaceRadius, int skeletonSmoothenRadius);
 		
@@ -288,6 +289,9 @@ namespace wustl_mm {
 			} else {
 				return NULL;
 			}
+		}
+		Volume * VolumeRenderer::GetVolume() {
+			return _voxel;
 		}
 	}
 }

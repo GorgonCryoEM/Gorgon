@@ -195,18 +195,14 @@ class BaseViewer(QtGui.QWidget):
                     
     def processMouseClick(self, hitStack):
         print self.title, ": ", hitStack
+        hits = [-1,-1,-1,-1,-1]
         if(self.selectEnabled):
+            for i in range(5):
+                if(len(hitStack) > i+1):
+                    hits[i] = hitStack[i+1]
             self.performElementSelection(hitStack)
-            if(len(hitStack) == 2):
-                self.renderer.select(hitStack[0], hitStack[1], -1, -1, -1, -1)
-            elif (len(hitStack) == 3):
-                self.renderer.select(hitStack[0], hitStack[1], hitStack[2], -1, -1, -1)
-            elif (len(hitStack) == 4):
-                self.renderer.select(hitStack[0], hitStack[1], hitStack[2], hitStack[3], -1, -1)
-            elif (len(hitStack) == 5):
-                self.renderer.select(hitStack[0], hitStack[1], hitStack[2], hitStack[3], hitStack[4], -1)
-            elif (len(hitStack) == 6):
-                self.renderer.select(hitStack[0], hitStack[1], hitStack[2], hitStack[3], hitStack[4], hitStack[5])
+            if(len(hitStack) <= 6):
+                self.renderer.select(hitStack[0], hits[0], hits[1], hits[2], hits[3], hits[4])
             else:
                 raise Exception("Unable to call renderer.select method due as there are too many levels in the hit stack")
             self.emitModelChanged()            
@@ -216,13 +212,21 @@ class BaseViewer(QtGui.QWidget):
         self.emitElementMouseOver(hitStack)
 
     def emitElementSelected(self, hitStack):
-        self.emit(QtCore.SIGNAL("elementSelected (list)"), hitStack)      
+        hits = [-1,-1,-1,-1,-1]
+        for i in range(5):
+                if(len(hitStack) > i):
+                    hits[i] = hitStack[i]
+        self.emit(QtCore.SIGNAL("elementSelected (int, int, int, int, int)"), hits[0], hits[1], hits[2], hits[3], hits[4])      
         
     def emitMouseTrackingChanged(self):
         self.emit(QtCore.SIGNAL("mouseTrackingChanged ()"))
         
     def emitElementMouseOver(self, hitStack):  
-        self.emit(QtCore.SIGNAL("elementMouseOver (list)"), hitStack)
+        hits = [-1,-1,-1,-1,-1]
+        for i in range(5):
+                if(len(hitStack) > i):
+                    hits[i] = hitStack[i]        
+        self.emit(QtCore.SIGNAL("elementMouseOver (int, int, int, int, int)"), hits[0], hits[1], hits[2], hits[3], hits[4])
 
     def emitModelLoaded(self):
         self.emit(QtCore.SIGNAL("modelLoaded()"))

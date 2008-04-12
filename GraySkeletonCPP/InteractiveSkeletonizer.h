@@ -21,7 +21,7 @@ namespace wustl_mm {
 			Vector3DInt FindClosestSkeletalPoint(Vector3DInt point);
 			void SetGraphWeights(double skeletonRatio, double structureTensorRatio);
 			void CalculateMinimalSpanningTree(Vector3DInt seedPoint);
-			Volume * GetSkeleton();
+			Volume * GetSkeletonCopy();
 									
 		protected:
 			double GetStructureTensorProjectedScore(EigenResults3D imageEigen, Vector3DFloat skeletonDirection, float power, int type);			
@@ -273,8 +273,10 @@ namespace wustl_mm {
 			appTimeManager.PopAndDisplayTime("Initializing seed point: %f seconds!\n");
 		}
 
-		Volume * InteractiveSkeletonizer::GetSkeleton() {
-			return skeleton;
+		Volume * InteractiveSkeletonizer::GetSkeletonCopy() {
+			Volume * newSkel = new Volume(skeleton->getSizeX(), skeleton->getSizeY(), skeleton->getSizeZ(), 0, 0, 0, skeleton);
+			newSkel->pad(-MAX_GAUSSIAN_FILTER_RADIUS, 0);
+			return newSkel;
 		}
 	}
 }

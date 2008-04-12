@@ -216,7 +216,7 @@ class Camera(QtOpenGL.QGLWidget):
         glMatrixMode(GL_PROJECTION)        
         glPushMatrix()
         glLoadIdentity()        
-        gluPickMatrix(x, viewport[3]-y, 1, 1, viewport)
+        gluPickMatrix(x, viewport[3]-y, 5, 5, viewport)
         gluPerspective(180 * self.eyeZoom, self.aspectRatio, self.near, self.far)            
         self.drawScene()        
         glMatrixMode(GL_PROJECTION)
@@ -260,12 +260,13 @@ class Camera(QtOpenGL.QGLWidget):
         if(self.mouseTrackingEnabled):
             self.processMouseMove(self.pickObject(event.x(), event.y()))
             
-        dx = event.x() - self.mouseMovePoint.x()
-        dy = event.y() - self.mouseMovePoint.y()
-
         if event.buttons() & QtCore.Qt.LeftButton:
+            dx = event.x() - self.mouseMovePoint.x()
+            dy = event.y() - self.mouseMovePoint.y()            
             self.setEyeRotation(dx, -dy, 0)
         elif event.buttons() & QtCore.Qt.RightButton:
+            dx = event.x() - self.mouseMovePoint.x()
+            dy = event.y() - self.mouseMovePoint.y()
             self.setEyeRotation(0, 0, dx)
         
         self.mouseMovePoint = QtCore.QPoint(event.pos())        
