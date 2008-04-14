@@ -103,11 +103,12 @@ class BaseViewer(QtGui.QWidget):
         glPushAttrib(GL_DEPTH_BUFFER_BIT | GL_LIGHTING_BIT | GL_ENABLE_BIT)
         glEnable(GL_DEPTH_TEST);        
         glDepthMask(GL_TRUE);
-        if(self.isClosedMesh):
-            glEnable(GL_CULL_FACE)
-        else:
-            glDisable(GL_CULL_FACE)
+        #if(self.isClosedMesh):
+        #    glEnable(GL_CULL_FACE)
+        #else:
+        #    glDisable(GL_CULL_FACE)
                         
+        glDisable(GL_CULL_FACE)
         glEnable(GL_LIGHTING)
         
         glEnable (GL_BLEND); 
