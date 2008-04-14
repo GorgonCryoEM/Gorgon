@@ -11,28 +11,16 @@ except ImportError:
     sys.exit(1)
     
 class Camera(QtOpenGL.QGLWidget):
-    def __init__(self, scene, parent=None):        
-        
+    def __init__(self, scene, parent=None):                
         QtOpenGL.QGLWidget.__init__(self, parent)
-
-        #print("Depth Buffer:", self.format().depthBufferSize(), 
-        #      " Red: ", self.format().redBufferSize(), 
-        #      " Green: ", self.format().greenBufferSize(), 
-       #       " Blue: ", self.format().blueBufferSize(), 
-       #       " Alpha:", self.format().alphaBufferSize())
-
-        self.mouseTrackingEnabled = False
-        self.aspectRatio = 1.0;        
-        self.near = 10;
-        self.far = 500;
-        self.setEyeZoom(0.25)
-
         self.scene = scene
-        
+        self.mouseTrackingEnabled = False
+        self.aspectRatio = 1.0;            
         self.setCenter(0, 0, 0)
         self.setEye(0, -4, 0) 
         self.setUp(0, 0, 1)     
         self.setEyeRotation(0, 0, 0)
+        self.setNearFarZoom(10, 500, 0.25)
 
         self.lastPos = QtCore.QPoint()
         
@@ -72,15 +60,23 @@ class Camera(QtOpenGL.QGLWidget):
         
     def setEyeRotation(self, yaw, pitch, roll):
         self.eyeRotation = [yaw, pitch, roll]
-    
-    def setEyeZoom(self, value):
-        self.eyeZoom = min(max(value, 0.0001), 0.9999);
+        
+    def setNearFarZoom(self, near, far, zoom):
+        self.eyeZoom = min(max(zoom, 0.0001), 0.9999);
+        self.near = max(min(near, far), 0.1)
+        self.far = max(self.near, far)
+        self.setRendererCuttingPlanes();
         self.setGlProjection()
         
-    def setNearFar(self, near, far):
-        self.near = near
-        self.far = far
-        self.setGlProjection()
+    def setRendererCuttingPlanes(self):
+        dir = [self.center[0] - self.eye[0], 
+               self.center[1] - self.eye[1], 
+               self.center[2] - self.eye[2]]
+        pt = [self.eye[0] + dir[0]*self.near, 
+              self.eye[1] + dir[1]*self.near,
+              self.eye[2] + dir[2]*self.near]
+        for s in self.scene:
+            s.renderer.setCuttingPlane(pt[0], pt[1], pt[2], dir[0], dir[1], dir[2])
     
     def sceneSetCenter(self, minX, minY, minZ, maxX, maxY, maxZ):        
         self.setCenter((minX+maxX)/2.0, (minY+maxY)/2.0, (minZ+maxZ)/2.0)
@@ -275,5 +271,10 @@ class Camera(QtOpenGL.QGLWidget):
     
     def wheelEvent(self, event):
         direction = event.delta()/abs(event.delta())
-        self.setEyeZoom(self.eyeZoom + direction * 10.0/360.0)
+        if(event.modifiers() & QtCore.Qt.CTRL) :
+            self.setNearFarZoom(self.near + direction * 10, self.far, self.eyeZoom);
+        elif (event.modifiers() & QtCore.Qt.ALT):
+            self.setNearFarZoom(self.near, self.far + direction * 10, self.eyeZoom);
+        else:
+            self.setNearFarZoom(self.near, self.far, self.eyeZoom + direction * 10.0/360.0)
         self.updateGL()                          

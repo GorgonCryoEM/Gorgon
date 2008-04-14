@@ -20,6 +20,7 @@ namespace wustl_mm {
 			virtual void Select(int subsceneIndex, int ix0, int ix1 = -1, int ix2 = -1, int ix3 = -1, int ix4 = -1);
 			virtual string GetSupportedLoadFileFormats();
 			virtual string GetSupportedSaveFileFormats();
+			virtual void SetCuttingPlane(float ptX, float ptY, float ptZ, float vecX, float vecY, float vecZ);
 
 			float GetMin(int dimension);
 			float GetMax(int dimension);
@@ -30,6 +31,9 @@ namespace wustl_mm {
 			float maxPts[3];
 			int selectedSubSceneIndex;
 			int selectedIx[5];
+			Vector3DFloat cuttingPlaneCenter;
+			Vector3DFloat cuttingPlaneDirection;
+
 		};
 
 		Renderer::Renderer() {
@@ -90,6 +94,12 @@ namespace wustl_mm {
 
 		string Renderer::GetSupportedSaveFileFormats() {
 			return "All Files (*.*)";
+		}
+
+		void Renderer::SetCuttingPlane(float ptX, float ptY, float ptZ, float vecX, float vecY, float vecZ) {
+			cuttingPlaneCenter = Vector3DFloat(ptX, ptY, ptZ);
+			cuttingPlaneDirection = Vector3DFloat(vecX, vecY, vecZ);	
+			cuttingPlaneDirection.Normalize();
 		}
 
 	}

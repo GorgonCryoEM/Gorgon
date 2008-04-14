@@ -39,6 +39,7 @@ namespace wustl_mm {
 			void LoadFile(string fileName);
 			void SetSampleInterval(const int size);
 			void SetSurfaceValue(const float value);
+			void SetCuttingPlane(float ptX, float ptY, float ptZ, float vecX, float vecY, float vecZ);
 			void UpdateBoundingBox() ;
 			void Unload();
 			Volume * GetVolume();
@@ -47,21 +48,26 @@ namespace wustl_mm {
 		
 		private:
 			int GetHashKey(int x, int y, int z, int edge, int iScale);
-			float GetVoxelData(int x, int y, int z);
+			float GetVoxelData(Volume * vol, int x, int y, int z);
 			float GetOffset(float fValue1, float fValue2, float fValueDesired);
 			void CalculateSurface();
-			void MarchingCube(int iX, int iY, int iZ, int iScale);
+			void CalculateCuttingSurface();
+			void MarchingCube(Volume * vol, NonManifoldMesh_NoTags * mesh, const float iso_level, int iX, int iY, int iZ, int iScale);
 
 		private:
-			NonManifoldMesh_NoTags * _mesh;
 			float _surf_value;
 			int _sample;
 			Volume * _voxel;
+			NonManifoldMesh_NoTags * _mesh;
+			Volume * cuttingVol;
+			NonManifoldMesh_NoTags * cuttingMesh;
 		};
 
 		VolumeRenderer::VolumeRenderer() {
 			_mesh = new NonManifoldMesh_NoTags();
+			cuttingMesh = new NonManifoldMesh_NoTags();
 			_voxel = NULL;
+			cuttingVol = NULL;
 			_surf_value = 1.5;
 			_sample = 1;
 		}
@@ -69,6 +75,10 @@ namespace wustl_mm {
 			delete _mesh;
 			if(_voxel != NULL) {
 				delete _voxel;
+			}
+			delete cuttingMesh;
+			if(cuttingVol != NULL) {
+				delete cuttingVol;
 			}
 		}
 
@@ -97,11 +107,11 @@ namespace wustl_mm {
 			return _surf_value; 
 		}
 
-		float VolumeRenderer::GetVoxelData(int x, int y, int z) {
-			if((x < 0) || (x > _voxel->getSizeX()-1) || (y < 0) || (y > _voxel->getSizeY()-1) || (z < 0) || (z > _voxel->getSizeZ()-1)) {
+		float VolumeRenderer::GetVoxelData(Volume * vol, int x, int y, int z) {
+			if((x < 0) || (x > vol->getSizeX()-1) || (y < 0) || (y > vol->getSizeY()-1) || (z < 0) || (z > vol->getSizeZ()-1)) {
 				return 0.0f;
 			} else {
-				return _voxel->getDataAt(x, y, z);
+				return vol->getDataAt(x, y, z);
 			}
 		}
 
@@ -127,10 +137,18 @@ namespace wustl_mm {
 			return "Volumes (*.mrc)";
 		}
 
+		void VolumeRenderer::SetCuttingPlane(float ptX, float ptY, float ptZ, float vecX, float vecY, float vecZ) {
+			cuttingPlaneCenter = Vector3DFloat(ptX, ptY, ptZ);
+			cuttingPlaneDirection = Vector3DFloat(vecX, vecY, vecZ);	
+			cuttingPlaneDirection.Normalize();
+			cuttingPlaneCenter = cuttingPlaneCenter + cuttingPlaneDirection * 0.0001;
+			CalculateCuttingSurface();
+		}
 		void VolumeRenderer::Draw(int subSceneIndex, bool selectEnabled) const {
 			if(subSceneIndex == 0) {
 				if(_mesh != NULL) {
 					_mesh->Draw(true, false, false, selectEnabled, false, false);
+					cuttingMesh->Draw(true, false, false, selectEnabled, false, false);
 				}
 			}
 		}
@@ -142,7 +160,28 @@ namespace wustl_mm {
 				for(iX = 0; iX < _voxel->getSizeX(); iX+=_sample) {
 					for(iY = 0; iY < _voxel->getSizeY(); iY+=_sample) {
 						for(iZ = 0; iZ < _voxel->getSizeZ(); iZ+=_sample) {
-								MarchingCube(iX, iY, iZ, _sample);
+							MarchingCube(_voxel, _mesh, _surf_value, iX, iY, iZ, _sample);
+						}
+					}
+				}
+			}
+		}
+
+		void VolumeRenderer::CalculateCuttingSurface() {
+			if(_voxel != NULL) {
+				int iX, iY, iZ;
+				for(iX = 0; iX < _voxel->getSizeX(); iX+=_sample) {
+					for(iY = 0; iY < _voxel->getSizeY(); iY+=_sample) {
+						for(iZ = 0; iZ < _voxel->getSizeZ(); iZ+=_sample) {
+							cuttingVol->setDataAt(iX, iY, iZ, (cuttingPlaneCenter - Vector3DFloat(iX, iY, iZ))* cuttingPlaneDirection);
+						}
+					}
+				}
+				cuttingMesh->Clear();
+				for(iX = 0; iX < _voxel->getSizeX(); iX+=_sample) {
+					for(iY = 0; iY < _voxel->getSizeY(); iY+=_sample) {
+						for(iZ = 0; iZ < _voxel->getSizeZ(); iZ+=_sample) {
+							MarchingCube(cuttingVol, cuttingMesh, 0.0f, iX, iY, iZ, _sample);							
 						}
 					}
 				}
@@ -155,11 +194,15 @@ namespace wustl_mm {
 			if(_voxel != NULL) {
 				delete _voxel;
 			}
+			if(cuttingVol != NULL) {
+				delete cuttingVol;
+			}
 			_voxel = VolumeFormatConverter::LoadVolume(fileName);
+			cuttingVol = new Volume(_voxel->getSizeX(), _voxel->getSizeY(), _voxel->getSizeZ());
 			UpdateBoundingBox();
 		}
 
-		void VolumeRenderer::MarchingCube(int iX, int iY, int iZ, int iScale){
+		void VolumeRenderer::MarchingCube(Volume * vol, NonManifoldMesh_NoTags * mesh, const float iso_level, int iX, int iY, int iZ, int iScale){
 			extern int aiCubeEdgeFlags[256];
 			extern int a2iTriangleConnectionTable[256][16];
 
@@ -172,7 +215,8 @@ namespace wustl_mm {
 
 			//Make a local copy of the values at the cube's corners
 			for(iVertex = 0; iVertex < 8; iVertex++) {
-				afCubeValue[iVertex] = GetVoxelData(iX + a2iVertexOffset[iVertex][0]*iScale,
+				afCubeValue[iVertex] = GetVoxelData(vol, 
+													iX + a2iVertexOffset[iVertex][0]*iScale,
 													iY + a2iVertexOffset[iVertex][1]*iScale,
 													iZ + a2iVertexOffset[iVertex][2]*iScale);
 			}
@@ -181,7 +225,7 @@ namespace wustl_mm {
 			iFlagIndex = 0;
 			for(iVertexTest = 0; iVertexTest < 8; iVertexTest++)
 			{
-					if(afCubeValue[iVertexTest] <= _surf_value) 
+					if(afCubeValue[iVertexTest] <= iso_level) 
 							iFlagIndex |= 1<<iVertexTest;
 			}
 
@@ -207,7 +251,7 @@ namespace wustl_mm {
 							asEdgeVertex[iEdge][1] = (float)iY + ((float)a2iVertexOffset[ a2iEdgeConnection[iEdge][0] ][1] +  fOffset * (float)a2iEdgeDirection[iEdge][1]) * (float)iScale;
 							asEdgeVertex[iEdge][2] = (float)iZ + ((float)a2iVertexOffset[ a2iEdgeConnection[iEdge][0] ][2] +  fOffset * (float)a2iEdgeDirection[iEdge][2]) * (float)iScale;
 				
-							vertexIds[iEdge] = _mesh->AddHashedVertex(Vector3DFloat(asEdgeVertex[iEdge][0], asEdgeVertex[iEdge][1], asEdgeVertex[iEdge][2]), GetHashKey(iX, iY, iZ, iEdge, iScale)); 
+							vertexIds[iEdge] = mesh->AddHashedVertex(Vector3DFloat(asEdgeVertex[iEdge][0], asEdgeVertex[iEdge][1], asEdgeVertex[iEdge][2]), GetHashKey(iX, iY, iZ, iEdge, iScale)); 
 					}
 			}
 
@@ -225,13 +269,7 @@ namespace wustl_mm {
 						triangleVertices[iCorner] = vertexIds[iVertex];
 					}
 
-					for(iCorner = 0; iCorner < 3; iCorner++) {
-						if(!_mesh->IsEdgePresent(triangleVertices[iCorner], triangleVertices[(iCorner + 1) % 3])) {
-							_mesh->AddEdge(triangleVertices[iCorner], triangleVertices[(iCorner + 1) % 3], false);
-						}
-					}
-
-					_mesh->AddTriangle(triangleVertices[0], triangleVertices[1], triangleVertices[2], false, false);
+					mesh->AddTriangle(triangleVertices[0], triangleVertices[1], triangleVertices[2], false, false);
 			}
 		}
 

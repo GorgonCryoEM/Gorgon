@@ -35,6 +35,8 @@ BOOST_PYTHON_MODULE(gorgon_cpp_wrapper)
 		.def("getSupportedSaveFileFormats", &Renderer::GetSupportedSaveFileFormats)
 		.def("getMin", &Renderer::GetMin)
 		.def("getMax", &Renderer::GetMax)
+		.def("setCuttingPlane", &Renderer::SetCuttingPlane)
+		
 	;
 
 	class_<VolumeRenderer, bases<Renderer>>("VolumeRenderer", init<>())
@@ -52,6 +54,7 @@ BOOST_PYTHON_MODULE(gorgon_cpp_wrapper)
 		.def("getVolume", &VolumeRenderer::GetVolume, return_value_policy<manage_new_object>())		
 		.def("setSurfaceValue", &VolumeRenderer::SetSurfaceValue)
 		.def("setSampleInterval", &VolumeRenderer::SetSampleInterval)
+		.def("setCuttingPlane", &VolumeRenderer::SetCuttingPlane)
 		.def("performBinarySkeletonizationJu2007", &VolumeRenderer::PerformBinarySkeletonizationJu2007, return_value_policy<manage_new_object>())		
 		.def("performGrayscaleSkeletonizationAbeysinghe2008", &VolumeRenderer::PerformGrayscaleSkeletonizationAbeysinghe2008, return_value_policy<manage_new_object>())		
 	;
