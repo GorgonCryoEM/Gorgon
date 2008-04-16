@@ -5,20 +5,20 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>558</width>
-    <height>95</height>
+    <width>329</width>
+    <height>124</height>
    </rect>
   </property>
   <property name="minimumSize" >
    <size>
     <width>230</width>
-    <height>95</height>
+    <height>124</height>
    </size>
   </property>
   <property name="maximumSize" >
    <size>
     <width>16777215</width>
-    <height>95</height>
+    <height>124</height>
    </size>
   </property>
   <property name="windowTitle" >
@@ -31,14 +31,35 @@
       <string>Surface Parameters:</string>
      </property>
      <layout class="QGridLayout" >
-      <item row="0" column="0" >
+      <item row="0" column="0" colspan="2" >
+       <layout class="QGridLayout" >
+        <item row="0" column="0" >
+         <widget class="QRadioButton" name="radioButtonIsoSurface" >
+          <property name="text" >
+           <string>Iso-surface view</string>
+          </property>
+          <property name="checked" >
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1" >
+         <widget class="QRadioButton" name="radioButtonCrossSection" >
+          <property name="text" >
+           <string>Cross-Section view</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item row="1" column="0" >
        <widget class="QLabel" name="labelIsoLevel" >
         <property name="text" >
          <string>Density Threshold:</string>
         </property>
        </widget>
       </item>
-      <item row="0" column="1" >
+      <item row="1" column="1" >
        <widget class="QSlider" name="horizontalSliderIsoLevel" >
         <property name="maximum" >
          <number>25500</number>
@@ -60,7 +81,7 @@
         </property>
        </widget>
       </item>
-      <item row="0" column="2" >
+      <item row="1" column="2" >
        <widget class="QLabel" name="labelIsoValueDisplay" >
         <property name="minimumSize" >
          <size>
@@ -82,14 +103,14 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="0" >
+      <item row="2" column="0" >
        <widget class="QLabel" name="labelSamplingInterval" >
         <property name="text" >
          <string>Sampling Interval:</string>
         </property>
        </widget>
       </item>
-      <item row="1" column="1" >
+      <item row="2" column="1" >
        <widget class="QSlider" name="horizontalSliderSampling" >
         <property name="minimum" >
          <number>1</number>
@@ -114,7 +135,7 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="2" >
+      <item row="2" column="2" >
        <widget class="QLabel" name="labelSamplingDisplay" >
         <property name="layoutDirection" >
          <enum>Qt::RightToLeft</enum>
@@ -138,12 +159,60 @@
    <slot>setNum(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>133</x>
-     <y>39</y>
+     <x>242</x>
+     <y>103</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>207</x>
-     <y>43</y>
+     <x>308</x>
+     <y>103</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>radioButtonIsoSurface</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>horizontalSliderIsoLevel</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>70</x>
+     <y>45</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>142</x>
+     <y>64</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>radioButtonIsoSurface</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>labelIsoLevel</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>60</x>
+     <y>45</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>65</x>
+     <y>66</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>radioButtonIsoSurface</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>labelIsoValueDisplay</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>94</x>
+     <y>42</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>294</x>
+     <y>64</y>
     </hint>
    </hints>
   </connection>

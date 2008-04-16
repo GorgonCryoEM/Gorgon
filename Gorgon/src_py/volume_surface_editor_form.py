@@ -1,9 +1,14 @@
+# Author:      Sasakthi S. Abeysinghe (sasakthi@gmail.com)
+# Description: A widget to alter the surface properties of a volume
+
 from PyQt4 import QtCore, QtGui
 from ui_dialog_volume_surface_editor import Ui_DialogVolumeSurfaceEditor
 from delayed_filter import DelayedFilter
 import threading
 
 class VolumeSurfaceEditorForm(QtGui.QWidget):
+    ViewingTypeIsoSurface, ViewingTypeCrossSection = range(2)
+    
     def __init__(self, main, volumeViewer, parent=None):
         QtGui.QWidget.__init__(self, parent)
         self.app = main
@@ -30,6 +35,8 @@ class VolumeSurfaceEditorForm(QtGui.QWidget):
         self.connect(self.ui.horizontalSliderSampling, QtCore.SIGNAL("valueChanged(int)"),self.filterSampling.setValue)
         self.connect(self.filterIsoValue, QtCore.SIGNAL("valueChanged(int)"), self.isoValueChanged )
         self.connect(self.filterSampling, QtCore.SIGNAL("valueChanged(int)"), self.samplingChanged )
+        self.connect(self.ui.radioButtonIsoSurface, QtCore.SIGNAL("toggled(bool)"), self.setViewingType)
+        self.connect(self.ui.radioButtonCrossSection, QtCore.SIGNAL("toggled(bool)"), self.setViewingType)
             
     def loadWidget(self):
         if(self.app.actions.getAction("show_VolumeSurfaceEditor").isChecked()) :
@@ -46,7 +53,14 @@ class VolumeSurfaceEditorForm(QtGui.QWidget):
                     
     def dockVisibilityChanged(self, visible):
         self.app.actions.getAction("show_VolumeSurfaceEditor").setChecked(visible)
-            
+    
+    def setViewingType(self, dummy):
+        if(self.ui.radioButtonIsoSurface.isChecked()):
+           self.viewer.renderer.setViewingType(self.ViewingTypeIsoSurface)
+        elif self.ui.radioButtonCrossSection.isChecked():
+            self.viewer.renderer.setViewingType(self.ViewingTypeCrossSection)
+        self.viewer.emitModelChanged()
+    
     def modelLoaded(self):
         maxDensity = self.viewer.renderer.getMaxDensity()
         minDensity = self.viewer.renderer.getMinDensity()

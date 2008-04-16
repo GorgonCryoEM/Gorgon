@@ -1,3 +1,6 @@
+# Author:      Sasakthi S. Abeysinghe (sasakthi@gmail.com)
+# Description: The Gorgon application
+
 import sys
 from window_manager import WindowManager
 from PyQt4 import QtGui

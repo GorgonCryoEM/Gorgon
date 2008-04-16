@@ -13,15 +13,19 @@ Date  : 01/28/2006
 #include "SheetStrand.h"
 #include "GlobalConstants.h"
 #include <string.h>
-
+#include <MathTools/Vector3D.h>
+#include "PDBAtom.h"
 
 using namespace std;
+using namespace wustl_mm::MathTools;
+
 
 namespace wustl_mm {
 	namespace GraphMatch {
 		class PDBReader {
 		public:
 			static StandardGraph * ReadFile(char * fname);
+			static vector<PDBAtom> ReadAtomPositions(string fileName);
 			static char * TrimString(char * string);
 			static int ToInt(char * string);
 		private:
@@ -227,6 +231,35 @@ namespace wustl_mm {
 
 			return graph;
 		}
+
+
+		vector<PDBAtom> PDBReader::ReadAtomPositions(string fileName) {
+			vector<PDBAtom> atomPositions;
+
+			FILE* fin = fopen((char *)fileName.c_str(), "rt");
+			if (fin == NULL)
+			{
+				printf("Error reading input file %s.\n", fileName) ;
+				exit(0) ;
+			}
+
+			char line[100];
+			string lineStr;
+			string token;
+			while(!feof(fin))
+			{
+				fgets(line, 100, fin);
+				lineStr = line;
+				token = lineStr.substr(0, 6);
+
+				if(token.compare("ATOM  ") == 0) {
+					atomPositions.push_back(PDBAtom(lineStr));
+				}
+			}
+
+			return atomPositions;
+		}
+
 
 		char * PDBReader::TrimString(char * string) {
 			int startPos = 0;

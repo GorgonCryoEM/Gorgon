@@ -1,3 +1,6 @@
+# Author:      Sasakthi S. Abeysinghe (sasakthi@gmail.com)
+# Description: A pushbutton which instead of displaying text, displays a color
+
 from PyQt4 import QtCore, QtGui
 
 class ColoredPushButton(QtGui.QPushButton):

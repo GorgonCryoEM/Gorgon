@@ -1,3 +1,6 @@
+# Author:      Sasakthi S. Abeysinghe (sasakthi@gmail.com)
+# Description: A widget used to perform grayscale skeletonization on a volume
+
 from PyQt4 import QtCore, QtGui
 from ui_dialog_volume_grayscale_skeletonization import Ui_DialogVolumeGrayscaleSkeletonization
 from delayed_filter import DelayedFilter

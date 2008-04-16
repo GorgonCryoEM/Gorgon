@@ -1,3 +1,7 @@
+# Author:      Sasakthi S. Abeysinghe (sasakthi@gmail.com)
+# Description: A widget can be used to perform laplacian smoothing on a skeleton
+
+
 from PyQt4 import QtCore, QtGui
 from ui_dialog_skeleton_laplacian_smoothing import Ui_DialogSkeletonLaplacianSmoothing
 

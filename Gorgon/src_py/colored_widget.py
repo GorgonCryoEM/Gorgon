@@ -1,3 +1,6 @@
+# Author:      Sasakthi S. Abeysinghe (sasakthi@gmail.com)
+# Description: A widget which paints itself based on the specified color
+
 from PyQt4 import QtCore, QtGui
 
 class ColoredWidget(QtGui.QWidget):

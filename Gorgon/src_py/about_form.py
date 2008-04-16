@@ -1,3 +1,7 @@
+# Author:      Sasakthi S. Abeysinghe (sasakthi@gmail.com)
+# Description: This form displays information about Gorgon.
+
+
 from PyQt4 import QtCore, QtGui
 from ui_dialog_about import Ui_DialogAbout
 
