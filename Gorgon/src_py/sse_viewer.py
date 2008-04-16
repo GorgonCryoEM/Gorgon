@@ -1,3 +1,6 @@
+# Author:      Sasakthi S. Abeysinghe (sasakthi@gmail.com)
+# Description: A viewer for secondary structure elements
+
 from PyQt4 import QtGui, QtCore, QtOpenGL
 from gorgon_cpp_wrapper import SSERenderer
 from base_viewer import BaseViewer
@@ -8,7 +11,7 @@ try:
     from OpenGL.GLUT import *
 except ImportError:
     app = QtGui.QApplication(sys.argv)
-    QtGui.QMessageBox.critical(None, "OpenGL grabber", "PyOpenGL must be installed to run Gorgon.", QtGui.QMessageBox.Ok | QtGui.QMessageBox.Default, QtGui.QMessageBox.NoButton)
+    QtGui.QMessageBox.critical(None, "Gorgon", "PyOpenGL must be installed to run Gorgon.", QtGui.QMessageBox.Ok | QtGui.QMessageBox.Default, QtGui.QMessageBox.NoButton)
     sys.exit(1)
 
 class SSEViewer(BaseViewer):

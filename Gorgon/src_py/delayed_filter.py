@@ -1,3 +1,6 @@
+# Author:      Sasakthi S. Abeysinghe (sasakthi@gmail.com)
+# Description: A filter which transmits events based on a timer.. (simply bundles events into one event)
+
 from PyQt4 import QtGui, QtCore
 
 class DelayedFilter(QtGui.QWidget):

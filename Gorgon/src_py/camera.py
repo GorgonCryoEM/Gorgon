@@ -1,3 +1,6 @@
+# Author:      Sasakthi S. Abeysinghe (sasakthi@gmail.com)
+# Description: This manages a single camera, and the scenes which are rendered using this camera
+
 from PyQt4 import QtOpenGL, QtCore
 from vector_lib import *
 
@@ -13,6 +16,8 @@ except ImportError:
 class Camera(QtOpenGL.QGLWidget):
     def __init__(self, scene, parent=None):                
         QtOpenGL.QGLWidget.__init__(self, parent)
+        self.near = 0;
+        self.cuttingPlane = 10;
         self.scene = scene
         self.mouseTrackingEnabled = False
         self.aspectRatio = 1.0;            
@@ -20,7 +25,7 @@ class Camera(QtOpenGL.QGLWidget):
         self.setEye(0, -4, 0) 
         self.setUp(0, 0, 1)     
         self.setEyeRotation(0, 0, 0)
-        self.setNearFarZoom(10, 500, 0.25)
+        self.setNearFarZoom(0.1, 1000, 0.25)
 
         self.lastPos = QtCore.QPoint()
         
@@ -31,7 +36,7 @@ class Camera(QtOpenGL.QGLWidget):
             self.connect(s, QtCore.SIGNAL("modelUnloaded()"), self.updateGL)
             self.connect(s, QtCore.SIGNAL("modelVisualizationChanged()"), self.updateGL)
             self.connect(s, QtCore.SIGNAL("mouseTrackingChanged()"), self.refreshMouseTracking)
- 
+            
     def setEye(self, x, y, z):
         self.eye = [x, y, z]
         try:
@@ -63,25 +68,34 @@ class Camera(QtOpenGL.QGLWidget):
         
     def setNearFarZoom(self, near, far, zoom):
         self.eyeZoom = min(max(zoom, 0.0001), 0.9999);
+        nearChanged = (self.near != near)
         self.near = max(min(near, far), 0.1)
         self.far = max(self.near, far)
-        self.setRendererCuttingPlanes();
         self.setGlProjection()
-        
+    
+    def setCuttingPlane(self, cuttingPlane):        
+        if(cuttingPlane != self.cuttingPlane):
+            self.cuttingPlane = cuttingPlane;
+            self.setRendererCuttingPlanes();        
+    
     def setRendererCuttingPlanes(self):
-        dir = [self.center[0] - self.eye[0], 
-               self.center[1] - self.eye[1], 
-               self.center[2] - self.eye[2]]
-        pt = [self.eye[0] + dir[0]*self.near, 
-              self.eye[1] + dir[1]*self.near,
-              self.eye[2] + dir[2]*self.near]
+        dir = vectorNormalize([self.center[0] - self.eye[0], 
+                               self.center[1] - self.eye[1],
+                               self.center[2] - self.eye[2]])
+        
+        pt = [self.eye[0] + dir[0]*self.cuttingPlane, 
+              self.eye[1] + dir[1]*self.cuttingPlane,
+              self.eye[2] + dir[2]*self.cuttingPlane]
+        #pt = self.center
         for s in self.scene:
-            s.renderer.setCuttingPlane(pt[0], pt[1], pt[2], dir[0], dir[1], dir[2])
+            if(s.renderer.setCuttingPlane(pt[0], pt[1], pt[2], dir[0], dir[1], dir[2])) :
+                s.emitModelChanged()  
     
     def sceneSetCenter(self, minX, minY, minZ, maxX, maxY, maxZ):        
         self.setCenter((minX+maxX)/2.0, (minY+maxY)/2.0, (minZ+maxZ)/2.0)
-        self.setEye(self.center[0] , self.center[1], self.center[2] - 2*(maxZ-minZ))        
+        self.setEye(self.center[0] , self.center[1], self.center[2] - 2*(maxZ-minZ))
         self.setUp(0, -1, 0)
+        self.setCuttingPlane(vectorDistance(self.center, self.eye))
         #radius = vectorDistance([minX, minY, minZ], [maxX, maxY, maxZ]) / 2.0;
         #eyeDistance = vectorDistance(self.center, self.eye)
         #self.setNearFar(max(eyeDistance-radius, 0.1), eyeDistance + 2*radius)
@@ -272,9 +286,7 @@ class Camera(QtOpenGL.QGLWidget):
     def wheelEvent(self, event):
         direction = event.delta()/abs(event.delta())
         if(event.modifiers() & QtCore.Qt.CTRL) :
-            self.setNearFarZoom(self.near + direction * 10, self.far, self.eyeZoom);
-        elif (event.modifiers() & QtCore.Qt.ALT):
-            self.setNearFarZoom(self.near, self.far + direction * 10, self.eyeZoom);
+            self.setCuttingPlane(self.cuttingPlane + direction * 10);        
         else:
             self.setNearFarZoom(self.near, self.far, self.eyeZoom + direction * 10.0/360.0)
         self.updateGL()                          

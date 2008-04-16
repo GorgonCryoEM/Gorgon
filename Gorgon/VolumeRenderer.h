@@ -14,8 +14,10 @@
 #include <GraySkeletonCPP/VolumeFormatConverter.h>
 #include <ProteinMorph/NonManifoldMesh.h>
 #include <MathTools/Vector3D.h>
+#include <hash_map>
 
 using namespace std;
+using namespace stdext;
 using namespace wustl_mm::GraySkeletonCPP;
 using namespace wustl_mm::Protein_Morph;
 using namespace wustl_mm::MathTools;
@@ -23,6 +25,8 @@ using namespace wustl_mm::GraphMatch;
 
 namespace wustl_mm {
 	namespace Visualization {
+		const int VIEWING_TYPE_ISO_SURFACE = 0;
+		const int VIEWING_TYPE_CROSS_SECTION = 1;
 
 		class VolumeRenderer : public Renderer {
 		public:
@@ -35,11 +39,13 @@ namespace wustl_mm {
 			int GetSampleInterval() const ;
 			string GetSupportedLoadFileFormats();
 			string GetSupportedSaveFileFormats();
-			void Draw(int subSceneIndex, bool selectEnabled) const;
+			void Draw(int subSceneIndex, bool selectEnabled);
 			void LoadFile(string fileName);
+			void SaveFile(string fileName);
+			void SetViewingType(const int type);
 			void SetSampleInterval(const int size);
 			void SetSurfaceValue(const float value);
-			void SetCuttingPlane(float ptX, float ptY, float ptZ, float vecX, float vecY, float vecZ);
+			bool SetCuttingPlane(float ptX, float ptY, float ptZ, float vecX, float vecY, float vecZ);
 			void UpdateBoundingBox() ;
 			void Unload();
 			Volume * GetVolume();
@@ -49,14 +55,16 @@ namespace wustl_mm {
 		private:
 			int GetHashKey(int x, int y, int z, int edge, int iScale);
 			float GetVoxelData(Volume * vol, int x, int y, int z);
+			float GetVoxelData(Volume * vol, float x, float y, float z);
 			float GetOffset(float fValue1, float fValue2, float fValueDesired);
 			void CalculateSurface();
-			void CalculateCuttingSurface();
+			bool CalculateCuttingSurface();
 			void MarchingCube(Volume * vol, NonManifoldMesh_NoTags * mesh, const float iso_level, int iX, int iY, int iZ, int iScale);
 
 		private:
 			float _surf_value;
 			int _sample;
+			int viewingType;
 			Volume * _voxel;
 			NonManifoldMesh_NoTags * _mesh;
 			Volume * cuttingVol;
@@ -64,6 +72,7 @@ namespace wustl_mm {
 		};
 
 		VolumeRenderer::VolumeRenderer() {
+			viewingType = VIEWING_TYPE_ISO_SURFACE;
 			_mesh = new NonManifoldMesh_NoTags();
 			cuttingMesh = new NonManifoldMesh_NoTags();
 			_voxel = NULL;
@@ -115,6 +124,22 @@ namespace wustl_mm {
 			}
 		}
 
+		float VolumeRenderer::GetVoxelData(Volume * vol, float x, float y, float z) {
+			int f[3] = {(int)x, (int)y, (int)z};
+			int c[3] = {f[0]+1, f[1]+1, f[2]+1};
+			float d[3] = {x - f[0], y - f[1], z - f[2]};
+
+			float i1 = GetVoxelData(vol, f[0], f[1], f[2]) * (1.0 - d[2]) + GetVoxelData(vol, f[0], f[1], c[2]) * d[2];
+			float i2 = GetVoxelData(vol, f[0], c[1], f[2]) * (1.0 - d[2]) + GetVoxelData(vol, f[0], c[1], c[2]) * d[2];
+			float j1 = GetVoxelData(vol, c[0], f[1], f[2]) * (1.0 - d[2]) + GetVoxelData(vol, c[0], f[1], c[2]) * d[2];
+			float j2 = GetVoxelData(vol, c[0], c[1], f[2]) * (1.0 - d[2]) + GetVoxelData(vol, c[0], c[1], c[2]) * d[2];
+
+			float w1 = i1 * (1.0 - d[1]) + i2 * d[1];
+			float w2 = j1 * (1.0 - d[1]) + j2 * d[1];
+
+			return w1 * (1.0 - d[0]) + w2 * d[0];
+		}
+
 		int VolumeRenderer::GetHashKey(int x, int y, int z, int edge, int iScale) {
 
 			x += a2iEdgeHash[edge][1]*iScale;
@@ -137,18 +162,68 @@ namespace wustl_mm {
 			return "Volumes (*.mrc)";
 		}
 
-		void VolumeRenderer::SetCuttingPlane(float ptX, float ptY, float ptZ, float vecX, float vecY, float vecZ) {
+		void VolumeRenderer::SetViewingType(const int type) {
+			viewingType = type;
+			if(viewingType == VIEWING_TYPE_ISO_SURFACE) {
+				CalculateSurface();
+			} else if(viewingType == VIEWING_TYPE_CROSS_SECTION) {
+				CalculateCuttingSurface();
+			} 
+		}
+		bool VolumeRenderer::SetCuttingPlane(float ptX, float ptY, float ptZ, float vecX, float vecY, float vecZ) {
 			cuttingPlaneCenter = Vector3DFloat(ptX, ptY, ptZ);
 			cuttingPlaneDirection = Vector3DFloat(vecX, vecY, vecZ);	
 			cuttingPlaneDirection.Normalize();
-			cuttingPlaneCenter = cuttingPlaneCenter + cuttingPlaneDirection * 0.0001;
-			CalculateCuttingSurface();
+			cuttingPlaneCenter = cuttingPlaneCenter + cuttingPlaneDirection * 1;
+			bool redraw = false;
+			if(viewingType == VIEWING_TYPE_CROSS_SECTION) {
+				redraw = CalculateCuttingSurface();
+			}
+			return redraw;
 		}
-		void VolumeRenderer::Draw(int subSceneIndex, bool selectEnabled) const {
+		void VolumeRenderer::Draw(int subSceneIndex, bool selectEnabled) {
 			if(subSceneIndex == 0) {
-				if(_mesh != NULL) {
+				if((viewingType == VIEWING_TYPE_ISO_SURFACE) && (_mesh != NULL)) {
 					_mesh->Draw(true, false, false, selectEnabled, false, false);
-					cuttingMesh->Draw(true, false, false, selectEnabled, false, false);
+				} else if((viewingType == VIEWING_TYPE_CROSS_SECTION) && (cuttingMesh != NULL)) {
+					float material[4];
+					float material2[4];					
+					glGetMaterialfv(GL_FRONT, GL_DIFFUSE, material);
+					material2[3] = material[3];
+					float maxVal = _voxel->getMax();
+					float minVal = _voxel->getMin();
+					float val;
+					int k;
+					if(selectEnabled) {
+						glPushName(0);
+						glPushName(0);
+					}
+					for(unsigned int i = 0; i < cuttingMesh->faces.size(); i++) {
+						if(selectEnabled) {
+							glLoadName(i);
+						}
+						glBegin(GL_POLYGON);
+						Vector3DFloat normal;
+						for(unsigned int j = 0; j < cuttingMesh->faces[i].vertexIds.size(); j++) {
+							normal = cuttingMesh->GetVertexNormal(cuttingMesh->faces[i].vertexIds[j]);
+							k = cuttingMesh->GetVertexIndex(cuttingMesh->faces[i].vertexIds[j]);
+							val = this->GetVoxelData(_voxel, cuttingMesh->vertices[k].position.values[0], cuttingMesh->vertices[k].position.values[1], cuttingMesh->vertices[k].position.values[2]);
+							material2[0] = (val - minVal)* material[0] / (maxVal - minVal);
+							material2[1] = (val - minVal)* material[1] / (maxVal - minVal);
+							material2[2] = (val - minVal)* material[2] / (maxVal - minVal);							
+
+							glMaterialfv(GL_FRONT, GL_DIFFUSE, material2);
+							glMaterialfv(GL_BACK, GL_DIFFUSE, material2);
+							glNormal3f(normal.X(), normal.Y(), normal.Z());
+							glVertex3fv(cuttingMesh->vertices[k].position.values);
+						}
+						glEnd();
+					}
+					if(selectEnabled) {
+						glPopName();
+						glPopName();
+					}
+
 				}
 			}
 		}
@@ -167,25 +242,49 @@ namespace wustl_mm {
 			}
 		}
 
-		void VolumeRenderer::CalculateCuttingSurface() {
+		bool VolumeRenderer::CalculateCuttingSurface() {
+			bool redraw = false;
 			if(_voxel != NULL) {
-				int iX, iY, iZ;
-				for(iX = 0; iX < _voxel->getSizeX(); iX+=_sample) {
-					for(iY = 0; iY < _voxel->getSizeY(); iY+=_sample) {
-						for(iZ = 0; iZ < _voxel->getSizeZ(); iZ+=_sample) {
-							cuttingVol->setDataAt(iX, iY, iZ, (cuttingPlaneCenter - Vector3DFloat(iX, iY, iZ))* cuttingPlaneDirection);
-						}
-					}
-				}
 				cuttingMesh->Clear();
-				for(iX = 0; iX < _voxel->getSizeX(); iX+=_sample) {
-					for(iY = 0; iY < _voxel->getSizeY(); iY+=_sample) {
-						for(iZ = 0; iZ < _voxel->getSizeZ(); iZ+=_sample) {
-							MarchingCube(cuttingVol, cuttingMesh, 0.0f, iX, iY, iZ, _sample);							
+				if((cuttingPlaneCenter.X() >= minPts[0]) && (cuttingPlaneCenter.X() <= maxPts[0]) &&
+					(cuttingPlaneCenter.Y() >= minPts[1]) && (cuttingPlaneCenter.Y() <= maxPts[1]) &&
+					(cuttingPlaneCenter.Z() >= minPts[2]) && (cuttingPlaneCenter.Z() <= maxPts[2])) {
+
+					redraw = true;
+
+					int iX, iY, iZ;
+
+					for(iX = 0; iX < _voxel->getSizeX(); iX+=_sample) {
+						for(iY = 0; iY < _voxel->getSizeY(); iY+=_sample) {
+							for(iZ = 0; iZ < _voxel->getSizeZ(); iZ+=_sample) {
+								cuttingVol->setDataAt(iX, iY, iZ, (cuttingPlaneCenter - Vector3DFloat(iX, iY, iZ))* cuttingPlaneDirection);
+							}
+						}
+					}				
+
+					float data;
+					int iV;
+					bool posFound = false, negFound = false;
+
+					for(iX = 0; iX < _voxel->getSizeX() - _sample; iX+=_sample) {
+						for(iY = 0; iY < _voxel->getSizeY() - _sample ; iY+=_sample) {
+							for(iZ = 0; iZ < _voxel->getSizeZ() - _sample; iZ+=_sample) {
+								posFound = false;
+								negFound = false;
+								for(iV = 0; iV < 8; iV++) {
+									data = GetVoxelData(cuttingVol, iX + a2iVertexOffset[iV][0] * _sample,  iY + a2iVertexOffset[iV][1] * _sample, iZ + a2iVertexOffset[iV][2] * _sample);
+									posFound = posFound || (data >= 0);
+									negFound = negFound || (data < 0);																		
+								}
+								if(posFound && negFound) {
+									MarchingCube(cuttingVol, cuttingMesh, 0.0f, iX, iY, iZ, _sample);							
+								}
+							}
 						}
 					}
 				}
 			}
+			return redraw;
 		}
 
 
@@ -202,6 +301,11 @@ namespace wustl_mm {
 			UpdateBoundingBox();
 		}
 
+		void VolumeRenderer::SaveFile(string fileName) {
+			if(_voxel != NULL) {
+				_voxel->toMRCFile((char *)fileName.c_str());
+			}
+		}
 		void VolumeRenderer::MarchingCube(Volume * vol, NonManifoldMesh_NoTags * mesh, const float iso_level, int iX, int iY, int iZ, int iScale){
 			extern int aiCubeEdgeFlags[256];
 			extern int a2iTriangleConnectionTable[256][16];
@@ -275,7 +379,11 @@ namespace wustl_mm {
 
 		void VolumeRenderer::SetSampleInterval(const int size) {
 			_sample = size;
-			CalculateSurface();
+			if(viewingType == VIEWING_TYPE_ISO_SURFACE) {
+				CalculateSurface();
+			} else if (viewingType == VIEWING_TYPE_CROSS_SECTION) {
+				CalculateCuttingSurface();
+			}
 		}
 
 		void VolumeRenderer::SetSurfaceValue(const float value) {

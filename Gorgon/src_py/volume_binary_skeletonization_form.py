@@ -1,3 +1,6 @@
+# Author:      Sasakthi S. Abeysinghe (sasakthi@gmail.com)
+# Description: A widget used ot perform binary skeletonization on a volume
+
 from PyQt4 import QtCore, QtGui
 from ui_dialog_volume_binary_skeletonization import Ui_DialogVolumeBinarySkeletonization
 from delayed_filter import DelayedFilter

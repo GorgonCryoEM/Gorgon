@@ -27,6 +27,7 @@ namespace wustl_mm {
 			void Draw(int subSceneIndex, bool selectEnabled);
 			void LoadFile(string fileName);
 			void LoadVolume(Volume * sourceVolume);
+			void SaveFile(string fileName);
 			void Unload();
 			void PerformSmoothLaplacian(double convergenceRate, int iterations);
 			string GetSupportedLoadFileFormats();
@@ -84,6 +85,12 @@ namespace wustl_mm {
 
 			UpdateBoundingBox();
 			
+		}
+
+		void MeshRenderer::SaveFile(string fileName) {
+			if(mesh != NULL) {
+				mesh->ToOffCells(fileName);
+			}
 		}
 
 		void MeshRenderer::LoadVolume(Volume * sourceVolume) {

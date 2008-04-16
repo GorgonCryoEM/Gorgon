@@ -1,3 +1,6 @@
+# Author:      Sasakthi S. Abeysinghe (sasakthi@gmail.com)
+# Description: A dialog box which can be used to pick a color
+
 from PyQt4 import QtCore, QtGui
 from ui_dialog_color_picker import Ui_DialogColorPicker
 

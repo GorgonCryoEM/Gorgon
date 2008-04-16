@@ -1,3 +1,6 @@
+# Author:      Sasakthi S. Abeysinghe (sasakthi@gmail.com)
+# Description: The base class for a viewable scene.
+
 from PyQt4 import QtGui, QtCore, QtOpenGL
 from gorgon_cpp_wrapper import VolumeRenderer
 from model_visualization_form import ModelVisualizationForm
@@ -103,12 +106,12 @@ class BaseViewer(QtGui.QWidget):
         glPushAttrib(GL_DEPTH_BUFFER_BIT | GL_LIGHTING_BIT | GL_ENABLE_BIT)
         glEnable(GL_DEPTH_TEST);        
         glDepthMask(GL_TRUE);
-        #if(self.isClosedMesh):
-        #    glEnable(GL_CULL_FACE)
-        #else:
-        #    glDisable(GL_CULL_FACE)
+        if(self.isClosedMesh):
+            glEnable(GL_CULL_FACE)
+        else:
+            glDisable(GL_CULL_FACE)
                         
-        glDisable(GL_CULL_FACE)
+        #glDisable(GL_CULL_FACE)
         glEnable(GL_LIGHTING)
         
         glEnable (GL_BLEND); 
@@ -148,13 +151,23 @@ class BaseViewer(QtGui.QWidget):
             self.setCursor(QtCore.Qt.WaitCursor)
             self.renderer.loadFile(str(fileName))
             self.loaded = True
+            self.dirty = False
             self.setCursor(QtCore.Qt.ArrowCursor)
             self.emitModelLoaded()
             self.emitViewerSetCenter()
+            
+    def saveData(self):
+        fileName = QtGui.QFileDialog.getSaveFileName(self, self.tr("Save Data"), "", self.tr(self.renderer.getSupportedSaveFileFormats()))
+        if not fileName.isEmpty():  
+            self.setCursor(QtCore.Qt.WaitCursor)
+            self.renderer.saveFile(str(fileName))
+            self.dirty = False
+            self.setCursor(QtCore.Qt.ArrowCursor)
     
     def unloadData(self):
         self.renderer.unload()
         self.loaded = False
+        self.dirty = False
         self.emitModelUnloaded()
         
     def modelChanged(self):

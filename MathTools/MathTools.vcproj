@@ -408,6 +408,10 @@
 				RelativePath=".\Vector3DTemplate.h"
 				>
 			</File>
+			<Filter
+				Name="Resource Files"
+				>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Resource Files"

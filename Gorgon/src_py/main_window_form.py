@@ -1,3 +1,6 @@
+# Author:      Sasakthi S. Abeysinghe (sasakthi@gmail.com)
+# Description: The main window of the Gorgon application
+
 from PyQt4 import QtCore, QtGui
 from menu_manager import MenuManager
 from action_manager import ActionManager
@@ -32,6 +35,7 @@ class MainWindowForm(QtGui.QMainWindow):
     def createMenus(self):
         self.menus.addMenu("file", self.tr("&File"))
         self.menus.addMenu("file-open", self.tr("&Open"), "file")
+        self.menus.addMenu("file-save", self.tr("&Save"), "file")
         self.menus.addMenu("file-close", self.tr("&Close"), "file")
         self.menus.getMenu("file").addSeparator()
         self.menus.addAction("file-exit", self.actions.getAction("exit_Application"), "file")        

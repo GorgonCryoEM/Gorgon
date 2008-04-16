@@ -43,9 +43,9 @@ namespace wustl_mm {
 		};
 
 		template <class T> Vector3DTemplate<T>::Vector3DTemplate() {
-			values[0] = 0.0;
-			values[1] = 0.0;
-			values[2] = 0.0;
+			values[0] = (T)0.0;
+			values[1] = (T)0.0;
+			values[2] = (T)0.0;
 		}
 
 		template <class T> Vector3DTemplate<T>::Vector3DTemplate(T x, T y, T z) {
@@ -119,7 +119,7 @@ namespace wustl_mm {
 		}
 
 		template <class T> Vector3DTemplate<T> Vector3DTemplate<T>::operator*(double s) {
-			return Vector3DTemplate<T>(X()*s, Y()*s, Z()*s);
+			return Vector3DTemplate<T>((T)(X()*s), (T)(Y()*s), (T)(Z()*s));
 		}
 
 		template <class T> Vector3DTemplate<T>& Vector3DTemplate<T>::operator+=(const Vector3DTemplate<T>& d) {
@@ -143,7 +143,7 @@ namespace wustl_mm {
 		}
 
 		template <class T> void Vector3DTemplate<T>::Normalize() {
-			double base = 0;
+			T base = 0;
 			for(int i = 0; i < 3; i++) {
 				base += (values[i] * values[i]);
 			}
@@ -171,10 +171,10 @@ namespace wustl_mm {
 			T b = axis.values[1];
 			T c = axis.values[2];
 			
-			T q0 = cos(r/2.0);
-			T q1 = sin(r/2.0)* a;
-			T q2 = sin(r/2.0)* b;
-			T q3 = sin(r/2.0)* c;
+			T q0 = (T)cos(r/2.0);
+			T q1 = (T)sin(r/2.0)* a;
+			T q2 = (T)sin(r/2.0)* b;
+			T q3 = (T)sin(r/2.0)* c;
 
 
 			T R[3][3] = {{q0*q0 + q1*q1 - q2*q2 - q3*q3,		2*(q1*q2 - q0*q3),					2*(q1*q3 + q0*q2)},

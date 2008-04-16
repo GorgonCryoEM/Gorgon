@@ -10,6 +10,7 @@
 #include "MeshRenderer.h"
 #include "SSERenderer.h"
 #include "InteractiveSkeletonEngine.h"
+#include "CAlphaRenderer.h"
 
 unsigned char neighbors[8][3] = {
 	{1,4,3},

@@ -1,3 +1,6 @@
+# Author:      Sasakthi S. Abeysinghe (sasakthi@gmail.com)
+# Description: Maintains a repository of all the actions in the system.
+
 from PyQt4 import QtGui
 
 class ActionManager(object):

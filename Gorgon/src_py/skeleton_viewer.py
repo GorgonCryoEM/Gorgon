@@ -1,3 +1,6 @@
+# Author:      Sasakthi S. Abeysinghe (sasakthi@gmail.com)
+# Description: A viewer for skeletons
+
 from PyQt4 import QtGui, QtCore, QtOpenGL
 from gorgon_cpp_wrapper import MeshRenderer
 from base_viewer import BaseViewer
@@ -9,7 +12,7 @@ try:
     from OpenGL.GLUT import *
 except ImportError:
     app = QtGui.QApplication(sys.argv)
-    QtGui.QMessageBox.critical(None, "OpenGL grabber", "PyOpenGL must be installed to run Gorgon.", QtGui.QMessageBox.Ok | QtGui.QMessageBox.Default, QtGui.QMessageBox.NoButton)
+    QtGui.QMessageBox.critical(None, "Gorgon", "PyOpenGL must be installed to run Gorgon.", QtGui.QMessageBox.Ok | QtGui.QMessageBox.Default, QtGui.QMessageBox.NoButton)
     sys.exit(1)
 
 class SkeletonViewer(BaseViewer):
@@ -33,11 +36,16 @@ class SkeletonViewer(BaseViewer):
         self.optionsWindow = SkeletonLaplacianSmoothingForm(self.app, self)
         
     def createActions(self):
-        openAct = QtGui.QAction(self.tr("&S&keleton..."), self)
+        openAct = QtGui.QAction(self.tr("S&keleton..."), self)
         openAct.setShortcut(self.tr("Ctrl+K"))
         openAct.setStatusTip(self.tr("Load a skeleton file"))
         self.connect(openAct, QtCore.SIGNAL("triggered()"), self.loadData)
         self.app.actions.addAction("load_Skeleton", openAct)
+        
+        saveAct = QtGui.QAction(self.tr("S&keleton..."), self)
+        saveAct.setStatusTip(self.tr("Save a skeleton file"))
+        self.connect(saveAct, QtCore.SIGNAL("triggered()"), self.saveData)
+        self.app.actions.addAction("save_Skeleton", saveAct)                
         
         closeAct = QtGui.QAction(self.tr("S&keleton"), self)
         closeAct.setStatusTip(self.tr("Close the loaded skeleton"))
@@ -46,18 +54,21 @@ class SkeletonViewer(BaseViewer):
                                 
     def createMenus(self):
         self.app.menus.addAction("file-open-skeleton", self.app.actions.getAction("load_Skeleton"), "file-open")    
+        self.app.menus.addAction("file-save-skeleton", self.app.actions.getAction("save_Skeleton"), "file-save")
         self.app.menus.addAction("file-close-skeleton", self.app.actions.getAction("unload_Skeleton"), "file-close");
         self.app.menus.addMenu("actions-skeleton", self.tr("S&keleton"), "actions");
                    
     def updateActionsAndMenus(self):
         if(self.viewerAutonomous):
             self.app.actions.getAction("load_Skeleton").setEnabled(True)
+            self.app.actions.getAction("save_Skeleton").setEnabled(self.loaded)
             self.app.actions.getAction("unload_Skeleton").setEnabled(self.loaded)
             self.app.menus.getMenu("actions-skeleton").setEnabled(self.loaded)
         
     def updateViewerAutonomy(self, autonomous): 
         if(not autonomous):
             self.app.actions.getAction("load_Skeleton").setEnabled(autonomous)
+            self.app.actions.getAction("save_Skeleton").setEnabled(autonomous)
             self.app.actions.getAction("unload_Skeleton").setEnabled(autonomous)
             self.app.menus.getMenu("actions-skeleton").setEnabled(autonomous)
         else:            

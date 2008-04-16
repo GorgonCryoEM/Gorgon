@@ -1,3 +1,6 @@
+# Author:      Sasakthi S. Abeysinghe (sasakthi@gmail.com)
+# Description: A widget used to perform manual skeletonization of a volume
+
 from PyQt4 import QtCore, QtGui
 from ui_dialog_volume_manual_skeletonization import Ui_DialogVolumeManualSkeletonization
 from gorgon_cpp_wrapper import InteractiveSkeletonEngine

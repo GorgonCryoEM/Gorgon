@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_dialog_volume_surface_editor.ui'
 #
-# Created: Sun Apr 06 13:15:28 2008
+# Created: Mon Apr 14 11:44:26 2008
 #      by: PyQt4 UI code generator 4.3.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,9 +12,9 @@ from PyQt4 import QtCore, QtGui
 class Ui_DialogVolumeSurfaceEditor(object):
     def setupUi(self, DialogVolumeSurfaceEditor):
         DialogVolumeSurfaceEditor.setObjectName("DialogVolumeSurfaceEditor")
-        DialogVolumeSurfaceEditor.resize(QtCore.QSize(QtCore.QRect(0,0,558,95).size()).expandedTo(DialogVolumeSurfaceEditor.minimumSizeHint()))
-        DialogVolumeSurfaceEditor.setMinimumSize(QtCore.QSize(230,95))
-        DialogVolumeSurfaceEditor.setMaximumSize(QtCore.QSize(16777215,95))
+        DialogVolumeSurfaceEditor.resize(QtCore.QSize(QtCore.QRect(0,0,329,124).size()).expandedTo(DialogVolumeSurfaceEditor.minimumSizeHint()))
+        DialogVolumeSurfaceEditor.setMinimumSize(QtCore.QSize(230,124))
+        DialogVolumeSurfaceEditor.setMaximumSize(QtCore.QSize(16777215,124))
 
         self.gridlayout = QtGui.QGridLayout(DialogVolumeSurfaceEditor)
         self.gridlayout.setObjectName("gridlayout")
@@ -25,9 +25,22 @@ class Ui_DialogVolumeSurfaceEditor(object):
         self.gridlayout1 = QtGui.QGridLayout(self.groupBoxSurfaceOptions)
         self.gridlayout1.setObjectName("gridlayout1")
 
+        self.gridlayout2 = QtGui.QGridLayout()
+        self.gridlayout2.setObjectName("gridlayout2")
+
+        self.radioButtonIsoSurface = QtGui.QRadioButton(self.groupBoxSurfaceOptions)
+        self.radioButtonIsoSurface.setChecked(True)
+        self.radioButtonIsoSurface.setObjectName("radioButtonIsoSurface")
+        self.gridlayout2.addWidget(self.radioButtonIsoSurface,0,0,1,1)
+
+        self.radioButtonCrossSection = QtGui.QRadioButton(self.groupBoxSurfaceOptions)
+        self.radioButtonCrossSection.setObjectName("radioButtonCrossSection")
+        self.gridlayout2.addWidget(self.radioButtonCrossSection,0,1,1,1)
+        self.gridlayout1.addLayout(self.gridlayout2,0,0,1,2)
+
         self.labelIsoLevel = QtGui.QLabel(self.groupBoxSurfaceOptions)
         self.labelIsoLevel.setObjectName("labelIsoLevel")
-        self.gridlayout1.addWidget(self.labelIsoLevel,0,0,1,1)
+        self.gridlayout1.addWidget(self.labelIsoLevel,1,0,1,1)
 
         self.horizontalSliderIsoLevel = QtGui.QSlider(self.groupBoxSurfaceOptions)
         self.horizontalSliderIsoLevel.setMaximum(25500)
@@ -37,18 +50,18 @@ class Ui_DialogVolumeSurfaceEditor(object):
         self.horizontalSliderIsoLevel.setOrientation(QtCore.Qt.Horizontal)
         self.horizontalSliderIsoLevel.setTickPosition(QtGui.QSlider.NoTicks)
         self.horizontalSliderIsoLevel.setObjectName("horizontalSliderIsoLevel")
-        self.gridlayout1.addWidget(self.horizontalSliderIsoLevel,0,1,1,1)
+        self.gridlayout1.addWidget(self.horizontalSliderIsoLevel,1,1,1,1)
 
         self.labelIsoValueDisplay = QtGui.QLabel(self.groupBoxSurfaceOptions)
         self.labelIsoValueDisplay.setMinimumSize(QtCore.QSize(60,0))
         self.labelIsoValueDisplay.setMaximumSize(QtCore.QSize(60,16777215))
         self.labelIsoValueDisplay.setLayoutDirection(QtCore.Qt.RightToLeft)
         self.labelIsoValueDisplay.setObjectName("labelIsoValueDisplay")
-        self.gridlayout1.addWidget(self.labelIsoValueDisplay,0,2,1,1)
+        self.gridlayout1.addWidget(self.labelIsoValueDisplay,1,2,1,1)
 
         self.labelSamplingInterval = QtGui.QLabel(self.groupBoxSurfaceOptions)
         self.labelSamplingInterval.setObjectName("labelSamplingInterval")
-        self.gridlayout1.addWidget(self.labelSamplingInterval,1,0,1,1)
+        self.gridlayout1.addWidget(self.labelSamplingInterval,2,0,1,1)
 
         self.horizontalSliderSampling = QtGui.QSlider(self.groupBoxSurfaceOptions)
         self.horizontalSliderSampling.setMinimum(1)
@@ -59,21 +72,26 @@ class Ui_DialogVolumeSurfaceEditor(object):
         self.horizontalSliderSampling.setTickPosition(QtGui.QSlider.TicksBelow)
         self.horizontalSliderSampling.setTickInterval(0)
         self.horizontalSliderSampling.setObjectName("horizontalSliderSampling")
-        self.gridlayout1.addWidget(self.horizontalSliderSampling,1,1,1,1)
+        self.gridlayout1.addWidget(self.horizontalSliderSampling,2,1,1,1)
 
         self.labelSamplingDisplay = QtGui.QLabel(self.groupBoxSurfaceOptions)
         self.labelSamplingDisplay.setLayoutDirection(QtCore.Qt.RightToLeft)
         self.labelSamplingDisplay.setObjectName("labelSamplingDisplay")
-        self.gridlayout1.addWidget(self.labelSamplingDisplay,1,2,1,1)
+        self.gridlayout1.addWidget(self.labelSamplingDisplay,2,2,1,1)
         self.gridlayout.addWidget(self.groupBoxSurfaceOptions,0,0,1,1)
 
         self.retranslateUi(DialogVolumeSurfaceEditor)
         QtCore.QObject.connect(self.horizontalSliderSampling,QtCore.SIGNAL("valueChanged(int)"),self.labelSamplingDisplay.setNum)
+        QtCore.QObject.connect(self.radioButtonIsoSurface,QtCore.SIGNAL("toggled(bool)"),self.horizontalSliderIsoLevel.setEnabled)
+        QtCore.QObject.connect(self.radioButtonIsoSurface,QtCore.SIGNAL("toggled(bool)"),self.labelIsoLevel.setEnabled)
+        QtCore.QObject.connect(self.radioButtonIsoSurface,QtCore.SIGNAL("toggled(bool)"),self.labelIsoValueDisplay.setEnabled)
         QtCore.QMetaObject.connectSlotsByName(DialogVolumeSurfaceEditor)
 
     def retranslateUi(self, DialogVolumeSurfaceEditor):
         DialogVolumeSurfaceEditor.setWindowTitle(QtGui.QApplication.translate("DialogVolumeSurfaceEditor", "Volume - Surface Editor", None, QtGui.QApplication.UnicodeUTF8))
         self.groupBoxSurfaceOptions.setTitle(QtGui.QApplication.translate("DialogVolumeSurfaceEditor", "Surface Parameters:", None, QtGui.QApplication.UnicodeUTF8))
+        self.radioButtonIsoSurface.setText(QtGui.QApplication.translate("DialogVolumeSurfaceEditor", "Iso-surface view", None, QtGui.QApplication.UnicodeUTF8))
+        self.radioButtonCrossSection.setText(QtGui.QApplication.translate("DialogVolumeSurfaceEditor", "Cross-Section view", None, QtGui.QApplication.UnicodeUTF8))
         self.labelIsoLevel.setText(QtGui.QApplication.translate("DialogVolumeSurfaceEditor", "Density Threshold:", None, QtGui.QApplication.UnicodeUTF8))
         self.labelIsoValueDisplay.setText(QtGui.QApplication.translate("DialogVolumeSurfaceEditor", "128", None, QtGui.QApplication.UnicodeUTF8))
         self.labelSamplingInterval.setText(QtGui.QApplication.translate("DialogVolumeSurfaceEditor", "Sampling Interval:", None, QtGui.QApplication.UnicodeUTF8))
