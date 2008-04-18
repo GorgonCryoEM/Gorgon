@@ -11,6 +11,8 @@
 #include <Gorgon/Renderer.h>
 #include <Gorgon/InteractiveSkeletonEngine.h>
 #include <Gorgon/CAlphaRenderer.h>
+#include <MathTools/Vector3D.h>
+#include <GraphMatch/PDBAtom.h>
 
 #include <boost/python.hpp>
 
@@ -20,6 +22,39 @@ using namespace wustl_mm::GraphMatch;
 
 BOOST_PYTHON_MODULE(gorgon_cpp_wrapper)
 {
+	class_<Vector3DFloat>("Vector3DFloat", init<float, float, float>())
+		.def("x", &Vector3DFloat::X)
+		.def("y", &Vector3DFloat::Y)
+		.def("z", &Vector3DFloat::Z)
+	;
+
+	class_<PDBAtom>("PDBAtom", init<>())
+		.def("getSerial", &PDBAtom::GetSerial)
+		.def("getName", &PDBAtom::GetName)
+		.def("getAltLoc", &PDBAtom::GetAltLoc)
+		.def("getResName", &PDBAtom::GetResName)
+		.def("getChainId", &PDBAtom::GetChainId)
+		.def("getResSeq", &PDBAtom::GetResSeq)
+		.def("getICode", &PDBAtom::GetICode)
+		.def("getPosition", &PDBAtom::GetPosition)
+		.def("getOccupancy", &PDBAtom::GetOccupancy)
+		.def("getTempFactor", &PDBAtom::GetTempFactor)
+		.def("getElement", &PDBAtom::GetElement)
+		.def("getCharge", &PDBAtom::GetCharge)
+		.def("setSerial", &PDBAtom::SetSerial)
+		.def("setName", &PDBAtom::SetName)
+		.def("setAltLoc", &PDBAtom::SetAltLoc)
+		.def("setResName", &PDBAtom::SetResName)
+		.def("setChainId", &PDBAtom::SetChainId)
+		.def("setResSeq", &PDBAtom::SetResSeq)
+		.def("setICode", &PDBAtom::SetICode)
+		.def("setPosition", &PDBAtom::SetPosition)
+		.def("setOccupancy", &PDBAtom::SetOccupancy)
+		.def("setTempFactor", &PDBAtom::SetTempFactor)
+		.def("setElement", &PDBAtom::SetElement)
+		.def("setCharge", &PDBAtom::SetCharge)
+	;
+
 	class_<Volume>("Volume", init<int,int,int>())
 	;
 
@@ -37,6 +72,7 @@ BOOST_PYTHON_MODULE(gorgon_cpp_wrapper)
 		.def("getSupportedSaveFileFormats", &Renderer::GetSupportedSaveFileFormats)
 		.def("getMin", &Renderer::GetMin)
 		.def("getMax", &Renderer::GetMax)
+		.def("get3DCoordinates", &Renderer::Get3DCoordinates)
 		.def("setCuttingPlane", &Renderer::SetCuttingPlane)
 		
 	;
@@ -55,6 +91,7 @@ BOOST_PYTHON_MODULE(gorgon_cpp_wrapper)
 		.def("getMinDensity", &VolumeRenderer::GetMinDensity)
 		.def("getMaxDensity", &VolumeRenderer::GetMaxDensity)
 		.def("getVolume", &VolumeRenderer::GetVolume, return_value_policy<manage_new_object>())		
+		.def("get3DCoordinates", &VolumeRenderer::Get3DCoordinates)
 		.def("setSurfaceValue", &VolumeRenderer::SetSurfaceValue)
 		.def("setSampleInterval", &VolumeRenderer::SetSampleInterval)
 		.def("setCuttingPlane", &VolumeRenderer::SetCuttingPlane)
@@ -77,6 +114,7 @@ BOOST_PYTHON_MODULE(gorgon_cpp_wrapper)
 		.def("getMin", &MeshRenderer::GetMin)
 		.def("getMax", &MeshRenderer::GetMax)
 		.def("getMesh", &MeshRenderer::GetMesh, return_value_policy<manage_new_object>())
+		.def("get3DCoordinates", &MeshRenderer::Get3DCoordinates)
 	;
 
 	class_<SSERenderer, bases<Renderer>>("SSERenderer", init<>())
@@ -90,6 +128,7 @@ BOOST_PYTHON_MODULE(gorgon_cpp_wrapper)
 		.def("getSupportedSaveFileFormats", &SSERenderer::GetSupportedSaveFileFormats)
 		.def("getMin", &SSERenderer::GetMin)
 		.def("getMax", &SSERenderer::GetMax)
+		.def("get3DCoordinates", &SSERenderer::Get3DCoordinates)
 	;
 
 	class_<CAlphaRenderer, bases<Renderer>>("CAlphaRenderer", init<>())
@@ -103,6 +142,8 @@ BOOST_PYTHON_MODULE(gorgon_cpp_wrapper)
 		.def("getSupportedSaveFileFormats", &CAlphaRenderer::GetSupportedSaveFileFormats)
 		.def("getMin", &CAlphaRenderer::GetMin)
 		.def("getMax", &CAlphaRenderer::GetMax)
+		.def("addAtom", &CAlphaRenderer::AddAtom)
+		.def("get3DCoordinates", &CAlphaRenderer::Get3DCoordinates)
 	;
 
 	class_<InteractiveSkeletonEngine>("InteractiveSkeletonEngine", init<Volume *, NonManifoldMesh_Annotated *, float, float, float, int, int, int>())

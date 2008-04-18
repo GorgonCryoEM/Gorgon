@@ -4,6 +4,7 @@
 from PyQt4 import QtGui, QtCore, QtOpenGL
 from gorgon_cpp_wrapper import CAlphaRenderer
 from base_viewer import BaseViewer
+from calpha_atom_placer_form import CAlphaAtomPlacerForm
 
 try:
     from OpenGL.GL import *
@@ -19,6 +20,7 @@ class CAlphaViewer(BaseViewer):
         BaseViewer.__init__(self, main, parent)
         self.title = "C-Alpha"
         self.isClosedMesh = False
+        self.selectEnabled = True
         self.renderer = CAlphaRenderer()          
         self.createUI()      
         self.app.viewers["calpha"] = self;
@@ -38,7 +40,7 @@ class CAlphaViewer(BaseViewer):
         self.updateActionsAndMenus()
                   
     def createChildWindows(self):
-        pass
+        self.manualAtomPlacer = CAlphaAtomPlacerForm(self.app, self)
         
     def createActions(self):
         openAct = QtGui.QAction(self.tr("C-&Alpha Atoms..."), self)
@@ -65,6 +67,5 @@ class CAlphaViewer(BaseViewer):
                    
     def updateActionsAndMenus(self):        
         self.app.actions.getAction("save_CAlpha").setEnabled(self.loaded)
-        self.app.actions.getAction("unload_CAlpha").setEnabled(self.loaded)
-        self.app.menus.getMenu("actions-calpha").setEnabled(self.loaded)        
+        self.app.actions.getAction("unload_CAlpha").setEnabled(self.loaded)  
              
