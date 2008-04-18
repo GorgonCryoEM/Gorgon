@@ -24,6 +24,7 @@ namespace wustl_mm {
 			~MeshRenderer();
 
 			NonManifoldMesh_Annotated * GetMesh();
+			Vector3DFloat Get3DCoordinates(int subsceneIndex, int ix0, int ix1 = -1, int ix2 = -1, int ix3 = -1, int ix4 = -1);
 			void Draw(int subSceneIndex, bool selectEnabled);
 			void LoadFile(string fileName);
 			void LoadVolume(Volume * sourceVolume);
@@ -140,6 +141,30 @@ namespace wustl_mm {
 		}
 		string MeshRenderer::GetSupportedSaveFileFormats() {
 			return "Meshes (*.off)";
+		}
+
+		Vector3DFloat MeshRenderer::Get3DCoordinates(int subsceneIndex, int ix0, int ix1, int ix2, int ix3, int ix4) {
+			Vector3DFloat position = Vector3DFloat(0, 0, 0);
+			if((subsceneIndex >= 0) && (ix0 >= 0)) {
+				switch(subsceneIndex){
+					case 0:
+						for(unsigned int i = 0; i < mesh->faces[ix1].vertexIds.size(); i++) {
+							position += mesh->vertices[mesh->GetVertexIndex(mesh->faces[ix0].vertexIds[i])].position;
+						}
+						position = position * (1.0 / mesh->faces[ix1].vertexIds.size());
+						break;
+					case 1:
+						for(unsigned int i = 0; i < 2; i++) {
+							position += mesh->vertices[mesh->GetVertexIndex(mesh->edges[ix0].vertexIds[i])].position;
+						}
+						position = position * 0.5;
+						break;
+					case 2:
+						position = mesh->vertices[ix0].position;
+						break;
+				}
+			}
+			return position;
 		}
 	}
 }

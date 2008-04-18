@@ -22,6 +22,7 @@ namespace wustl_mm {
 			virtual string GetSupportedLoadFileFormats();
 			virtual string GetSupportedSaveFileFormats();
 			virtual bool SetCuttingPlane(float ptX, float ptY, float ptZ, float vecX, float vecY, float vecZ);
+			virtual Vector3DFloat Get3DCoordinates(int subsceneIndex, int ix0, int ix1 = -1, int ix2 = -1, int ix3 = -1, int ix4 = -1);
 
 			float GetMin(int dimension);
 			float GetMax(int dimension);
@@ -83,6 +84,10 @@ namespace wustl_mm {
 			selectedIx[2] = ix2;
 			selectedIx[3] = ix3;
 			selectedIx[4] = ix4;
+		}
+
+		Vector3DFloat Renderer::Get3DCoordinates(int subsceneIndex, int ix0, int ix1, int ix2, int ix3, int ix4) {
+			return Vector3DFloat(0,0,0);
 		}
 
 		void Renderer::Unload() {

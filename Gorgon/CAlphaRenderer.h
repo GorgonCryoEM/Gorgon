@@ -25,6 +25,7 @@ namespace wustl_mm {
 			CAlphaRenderer();
 			~CAlphaRenderer();
 
+			void AddAtom(PDBAtom atom);
 			void Draw(int subSceneIndex, bool selectEnabled);
 			void LoadFile(string fileName);
 			void Unload();
@@ -54,20 +55,42 @@ namespace wustl_mm {
 			atomQuadrics.clear();
 		}
 
+		void CAlphaRenderer::AddAtom(PDBAtom atom) {
+			atoms.push_back(atom);
+			atomQuadrics.push_back(gluNewQuadric());
+		}
 		void CAlphaRenderer::Draw(int subSceneIndex, bool selectEnabled) {
+
+			bool selected;
+			GLfloat frontMaterial[4];
+			GLfloat backMaterial[4];
+			GLfloat emissionColor[4] = {1.0, 1.0, 1.0, 1.0};
+
 			if(subSceneIndex == 0) {
 				if(selectEnabled) {
 					glPushName(0);
 					glPushName(0);
 				}
 				for(unsigned int i=0; i < atoms.size(); i++) {
+					selected = ((subSceneIndex == selectedSubSceneIndex) && (i == selectedIx[0]));
+					if(selected) {
+						glGetMaterialfv(GL_FRONT, GL_EMISSION, frontMaterial);
+						glGetMaterialfv(GL_BACK, GL_EMISSION, backMaterial);
+						glMaterialfv(GL_FRONT, GL_EMISSION, emissionColor);
+						glMaterialfv(GL_BACK, GL_EMISSION, emissionColor);
+					}
+
 					glPushMatrix();
 					if(selectEnabled){
 						glLoadName(i);
 					}
-					glTranslatef(atoms[i].position.X(), atoms[i].position.Y(), atoms[i].position.Z());
+					glTranslatef(atoms[i].GetPosition().X(), atoms[i].GetPosition().Y(), atoms[i].GetPosition().Z());
 					gluSphere(atomQuadrics[i], 0.3, 10, 10);
 					glPopMatrix();
+					if(selected) {
+						glMaterialfv(GL_FRONT, GL_EMISSION, frontMaterial);
+						glMaterialfv(GL_BACK, GL_EMISSION, backMaterial);
+					}
 				}
 				if(selectEnabled) {
 					glPopName();
@@ -83,13 +106,25 @@ namespace wustl_mm {
 				glEnable(GL_LINE_SMOOTH);
 				glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);		
 				for(unsigned int i=0; i < backboneSegments.size(); i++) {
+					selected = ((subSceneIndex == selectedSubSceneIndex) && (i == selectedIx[0]));
+					if(selected) {
+						glGetMaterialfv(GL_FRONT, GL_EMISSION, frontMaterial);
+						glGetMaterialfv(GL_BACK, GL_EMISSION, backMaterial);
+						glMaterialfv(GL_FRONT, GL_EMISSION, emissionColor);
+						glMaterialfv(GL_BACK, GL_EMISSION, emissionColor);
+					}
+
 					if(selectEnabled){
 						glLoadName(i);
 					}
 					glBegin(GL_LINES);
-					glVertex3f(atoms[backboneSegments[i].a0].position.X(), atoms[backboneSegments[i].a0].position.Y(), atoms[backboneSegments[i].a0].position.Z());
-					glVertex3f(atoms[backboneSegments[i].a1].position.X(), atoms[backboneSegments[i].a1].position.Y(), atoms[backboneSegments[i].a1].position.Z());
+					glVertex3f(atoms[backboneSegments[i].a0].GetPosition().X(), atoms[backboneSegments[i].a0].GetPosition().Y(), atoms[backboneSegments[i].a0].GetPosition().Z());
+					glVertex3f(atoms[backboneSegments[i].a1].GetPosition().X(), atoms[backboneSegments[i].a1].GetPosition().Y(), atoms[backboneSegments[i].a1].GetPosition().Z());
 					glEnd();
+					if(selected) {
+						glMaterialfv(GL_FRONT, GL_EMISSION, frontMaterial);
+						glMaterialfv(GL_BACK, GL_EMISSION, backMaterial);
+					}
 				}
 				glPopAttrib();
 				if(selectEnabled) {
@@ -135,13 +170,13 @@ namespace wustl_mm {
 		void CAlphaRenderer::UpdateBoundingBox() {
 			if(atoms.size() > 0) {
 				for(int i = 0; i < 3; i++) {
-					minPts[i] = atoms[0].position.values[i];
-					maxPts[i] = atoms[0].position.values[i];
+					minPts[i] = atoms[0].GetPosition().values[i];
+					maxPts[i] = atoms[0].GetPosition().values[i];
 				}
 				for(unsigned int j = 1; j < atoms.size(); j++) {
 					for(int i = 0; i < 3; i++) {
-						minPts[i] = min(minPts[i], atoms[j].position.values[i]);
-						maxPts[i] = max(maxPts[i], atoms[j].position.values[i]);
+						minPts[i] = min(minPts[i], atoms[j].GetPosition().values[i]);
+						maxPts[i] = max(maxPts[i], atoms[j].GetPosition().values[i]);
 					}
 				}
 			} else {

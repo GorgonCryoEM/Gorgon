@@ -226,21 +226,21 @@ class BaseViewer(QtGui.QWidget):
         self.emitElementMouseOver(hitStack)
 
     def emitElementSelected(self, hitStack):
-        hits = [-1,-1,-1,-1,-1]
-        for i in range(5):
+        hits = [-1,-1,-1,-1,-1,-1]
+        for i in range(6):
                 if(len(hitStack) > i):
                     hits[i] = hitStack[i]
-        self.emit(QtCore.SIGNAL("elementSelected (int, int, int, int, int)"), hits[0], hits[1], hits[2], hits[3], hits[4])      
+        self.emit(QtCore.SIGNAL("elementSelected (int, int, int, int, int, int)"), hits[0], hits[1], hits[2], hits[3], hits[4], hits[5])      
         
     def emitMouseTrackingChanged(self):
         self.emit(QtCore.SIGNAL("mouseTrackingChanged ()"))
         
     def emitElementMouseOver(self, hitStack):  
-        hits = [-1,-1,-1,-1,-1]
-        for i in range(5):
+        hits = [-1,-1,-1,-1,-1,-1]
+        for i in range(6):
                 if(len(hitStack) > i):
                     hits[i] = hitStack[i]        
-        self.emit(QtCore.SIGNAL("elementMouseOver (int, int, int, int, int)"), hits[0], hits[1], hits[2], hits[3], hits[4])
+        self.emit(QtCore.SIGNAL("elementMouseOver (int, int, int, int, int)"), hits[0], hits[1], hits[2], hits[3], hits[4], hits[5])
 
     def emitModelLoaded(self):
         self.emit(QtCore.SIGNAL("modelLoaded()"))
