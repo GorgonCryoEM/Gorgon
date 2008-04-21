@@ -49,9 +49,9 @@ class CAlphaAtomPlacerForm(QtGui.QWidget):
         atom = PDBAtom()
         atom.setSerial(self.ui.spinBoxSerial.value())
         #TODO: Find out how to convert QStrings to Std:Strings
-        #atom.setName(self.ui.lineEditAtomName.text())
+        atom.setName(str(self.ui.lineEditAtomName.text()))
         #atom.setAltLoc(self.ui.lineEditAlternateLocation.text()[0])
-        #atom.setResName(self.ui.lineEditResidueName.text())
+        atom.setResName(str(self.ui.lineEditResidueName.text()))
         #atom.setChainId(self.ui.lineEditChainIdentifier.text()[0])
         atom.setResSeq(self.ui.spinBoxResidueSequenceNo.value())
         #atom.setICode(self.ui.lineEditInsertionCode.text()[0])
@@ -60,8 +60,8 @@ class CAlphaAtomPlacerForm(QtGui.QWidget):
                                        self.ui.doubleSpinBoxPositionZ.value()))
         atom.setOccupancy(self.ui.doubleSpinBoxOccupancy.value())
         atom.setTempFactor(self.ui.doubleSpinBoxTemperatureFactor.value())
-        #atom.setElement(self.ui.lineEditElement.text())
-        #atom.setCharge(self.ui.lineEditCharge.text())
+        atom.setElement(str(self.ui.lineEditElement.text()))
+        atom.setCharge(str(self.ui.lineEditCharge.text()))
         self.viewer.renderer.addAtom(atom)
         if(not self.viewer.loaded):
             self.viewer.loaded = True

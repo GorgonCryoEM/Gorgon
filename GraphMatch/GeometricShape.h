@@ -71,7 +71,9 @@ namespace wustl_mm {
 
 		GeometricShape::GeometricShape() {
 			worldToObject = Matrix4::identity();
+			objectToWorld = Matrix4::identity();
 			rotationMatrix = Matrix4::identity();
+			inverseRotationMatrix = Matrix4::identity();
 			internalCells.clear();
 		}
 
@@ -127,7 +129,7 @@ namespace wustl_mm {
 		}
 
 		bool GeometricShape::IsInsideCylinder(Point3 point) {
-			point = worldToObject * point;
+			point = objectToWorld * point;
 			return ((point[0]*point[0] + point[2]*point[2] <= 0.5) && (abs(point[1]) <= 0.5));
 		}
 
@@ -242,6 +244,7 @@ namespace wustl_mm {
 
 		void GeometricShape::Rotate(Vector3 axis, double angle){
 			rotationMatrix = Matrix4::rotation(axis, angle) * rotationMatrix;
+			inverseRotationMatrix = inverseRotationMatrix * Matrix4::rotation(axis, -angle);
 			UpdateWorldToObjectMatrix();
 		}
 
@@ -262,6 +265,7 @@ namespace wustl_mm {
 
 		void GeometricShape::UpdateWorldToObjectMatrix() {
 			worldToObject = Matrix4::translation(centerPoint) * rotationMatrix * Matrix4::scaling(radius*2, height, radius*2);
+			objectToWorld = Matrix4::scaling(1.0/(radius*2.0), 1.0/height, 1.0/(radius*2.0)) * inverseRotationMatrix * Matrix4::translation(Point3(-centerPoint[0], -centerPoint[1], -centerPoint[2]));
 		}
 	}
 }

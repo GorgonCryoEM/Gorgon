@@ -51,8 +51,12 @@ namespace wustl_mm {
 		BackEndInterface::~BackEndInterface() {
 			delete queryEngine;
 			delete visualizer;
-			delete skeleton;
-			delete sequence;
+			if(skeleton != NULL) {
+				delete skeleton;
+			}
+			if(sequence != NULL) {
+				delete sequence;
+			}
 		}
 
 		void BackEndInterface::SetConstantsFromFile(char * fileName) {
@@ -76,10 +80,16 @@ namespace wustl_mm {
 		}
 
 		void BackEndInterface::LoadSequenceGraph() {
+			if(sequence != NULL) {
+				delete sequence;
+			}
 			sequence = queryEngine->LoadSequenceGraph();
 		}
 
 		void BackEndInterface::LoadSkeletonGraph() {
+			if(skeleton != NULL) {
+				delete skeleton;
+			}
 			skeleton = queryEngine->LoadSkeletonGraph();
 		}
 		/*

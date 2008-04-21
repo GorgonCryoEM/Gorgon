@@ -11,6 +11,7 @@ Date  : 01/23/2006
 #include <vector>
 #include "GlobalConstants.h"
 #include "LinkedNodeStub.h"
+#include <string>
 
 using namespace std;
 
@@ -31,6 +32,8 @@ namespace wustl_mm {
 			LinkedNode(LinkedNode * olderNode, LinkedNodeStub * olderStub, int n1Node, int n2Node, int dummyHelixCount);
 			~LinkedNode();
 			void PrintNodeConcise(int rank, bool endOfLine = true, bool printCostBreakdown = false);
+			string GetNodeString();
+			double GetCost();
 			unsigned long long GetN1Bitmap();
 			unsigned long long GetN2Bitmap();
 			bool operator==(LinkedNode &other);
@@ -167,6 +170,68 @@ namespace wustl_mm {
 			if(endOfLine) {
 				printf("\n");
 			}
+		}
+
+		string LinkedNode::GetNodeString() {
+			bool used[MAX_NODES];
+			int n1[MAX_NODES];
+			int n2[MAX_NODES];
+			int top = 0;
+			for(int i = 0; i < MAX_NODES; i++) {
+				used[i] = false;
+			}
+
+			LinkedNodeStub * currentNode = this;
+			bool continueLoop = true;
+			while(continueLoop) {
+				if(currentNode->parentNode == NULL) {
+					 break;
+				}
+				n1[top] = currentNode->n1Node;
+				n2[top] = currentNode->n2Node;
+				used[currentNode->n1Node] = true;
+				top++;
+				currentNode = currentNode->parentNode;		
+			}
+
+			for(int i = 1; i <= this->depth; i++) {
+				if(!used[i]) {
+					n1[top] = i;
+					n2[top] = -1;
+					top++;
+				}
+			}
+
+			int minIndex;
+			int temp;
+			for(int i = 0; i < top - 1; i++) {
+				minIndex = i;
+				for(int j = i+1; j < top; j++) {
+					if(n1[minIndex] > n1[j]) {
+						minIndex = j;
+					}
+				}
+				temp = n1[minIndex];
+				n1[minIndex] = n1[i];
+				n1[i] = temp;
+
+				temp = n2[minIndex];
+				n2[minIndex] = n2[i];
+				n2[i] = temp;
+			}
+			string nodeString = string("");
+
+			char text[100];
+			for(int i = 0; i < top; i++) {
+				itoa(n2[i], text, 10);
+				nodeString.append(text);
+				nodeString.append(" ");
+			}
+			return nodeString;
+		}
+
+		double LinkedNode::GetCost() {
+			return cost;
 		}
 
 		bool LinkedNode::IsUserSpecifiedSolution() {
