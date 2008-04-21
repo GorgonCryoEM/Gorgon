@@ -13,6 +13,7 @@
 #include <Gorgon/CAlphaRenderer.h>
 #include <MathTools/Vector3D.h>
 #include <GraphMatch/PDBAtom.h>
+#include <GraphMatch/LinkedNode.h>
 
 #include <boost/python.hpp>
 
@@ -151,18 +152,30 @@ BOOST_PYTHON_MODULE(gorgon_cpp_wrapper)
 		.def("analyzePath", &InteractiveSkeletonEngine::AnalyzePath)		
 	;
 
-	/* Dont use this... will end up changing this
-	class_<BackEndInterface>("BackEndInterface", init<>())
-        .def("SetConstantsFromFile", &BackEndInterface::SetConstantsFromFile)
-		.def("LoadSkeletonGraph", &BackEndInterface::LoadSkeletonGraph)
-		.def("LoadSequenceGraph", &BackEndInterface::LoadSequenceGraph)
-		.def("ExecuteQuery", &BackEndInterface::ExecuteQuery)
-		.def("DrawSkeleton", &BackEndInterface::DrawSkeleton)
-		.def("DrawSequence", &BackEndInterface::DrawSequence)
-		.def("CleanupMemory", &BackEndInterface::CleanupMemory)
-		.def("DrawResult", &BackEndInterface::DrawResult)
+
+	bool (BackEndInterface::*SetConstant1)(char *, char *)	= &BackEndInterface::SetConstant;
+	bool (BackEndInterface::*SetConstant2)(char *, double)	= &BackEndInterface::SetConstant;
+	bool (BackEndInterface::*SetConstant3)(char *, int)		= &BackEndInterface::SetConstant;
+	bool (BackEndInterface::*SetConstant4)(char *, bool)	= &BackEndInterface::SetConstant;
+
+
+	class_<LinkedNode>("HelixCorrespondenceResult", init<>())
+		.def("getNodeString", &LinkedNode::GetNodeString)
+		.def("getCost", &LinkedNode::GetCost)
+	;
+
+	class_<BackEndInterface>("HelixCorrespondenceEngine", init<>())
+		.def("setConstant", SetConstant1)
+		.def("setConstant", SetConstant2)
+		.def("setConstant", SetConstant3)
+		.def("setConstant", SetConstant4)
+        .def("setConstantsFromFile", &BackEndInterface::SetConstantsFromFile)		
+		.def("loadSkeletonGraph", &BackEndInterface::LoadSkeletonGraph)
+		.def("loadSequenceGraph", &BackEndInterface::LoadSequenceGraph)
+		.def("executeQuery", &BackEndInterface::ExecuteQuery)
+		.def("cleanupMemory", &BackEndInterface::CleanupMemory)
+		.def("getResult", &BackEndInterface::GetResult, return_value_policy<manage_new_object>())
     ;
-	*/
 
 }
 

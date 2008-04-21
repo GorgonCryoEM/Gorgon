@@ -21,6 +21,7 @@ class BaseViewer(QtGui.QWidget):
         QtGui.QWidget.__init__(self, parent)        
         self.app = main      
         self.title = "Untitled"
+        self.fileName = "";
         self.sceneIndex = -1;
         self.loaded = False
         self.selectEnabled = False
@@ -146,10 +147,10 @@ class BaseViewer(QtGui.QWidget):
             self.unInitializeGLDisplayType();
           
     def loadData(self):
-        fileName = QtGui.QFileDialog.getOpenFileName(self, self.tr("Open Data"), "", self.tr(self.renderer.getSupportedLoadFileFormats()))
-        if not fileName.isEmpty():  
+        self.fileName = QtGui.QFileDialog.getOpenFileName(self, self.tr("Open Data"), "", self.tr(self.renderer.getSupportedLoadFileFormats()))
+        if not self.fileName.isEmpty():  
             self.setCursor(QtCore.Qt.WaitCursor)
-            self.renderer.loadFile(str(fileName))
+            self.renderer.loadFile(str(self.fileName))
             self.loaded = True
             self.dirty = False
             self.setCursor(QtCore.Qt.ArrowCursor)
@@ -157,14 +158,15 @@ class BaseViewer(QtGui.QWidget):
             self.emitViewerSetCenter()
             
     def saveData(self):
-        fileName = QtGui.QFileDialog.getSaveFileName(self, self.tr("Save Data"), "", self.tr(self.renderer.getSupportedSaveFileFormats()))
-        if not fileName.isEmpty():  
+        self.fileName = QtGui.QFileDialog.getSaveFileName(self, self.tr("Save Data"), "", self.tr(self.renderer.getSupportedSaveFileFormats()))
+        if not self.fileName.isEmpty():  
             self.setCursor(QtCore.Qt.WaitCursor)
-            self.renderer.saveFile(str(fileName))
+            self.renderer.saveFile(str(self.fileName))
             self.dirty = False
             self.setCursor(QtCore.Qt.ArrowCursor)
     
     def unloadData(self):
+        self.fileName = ""
         self.renderer.unload()
         self.loaded = False
         self.dirty = False

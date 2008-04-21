@@ -4,6 +4,7 @@
 from PyQt4 import QtGui, QtCore, QtOpenGL
 from gorgon_cpp_wrapper import SSERenderer
 from base_viewer import BaseViewer
+from sse_helix_correspondence_finder_form import SSEHelixCorrespondenceFinderForm
 
 try:
     from OpenGL.GL import *
@@ -19,6 +20,8 @@ class SSEViewer(BaseViewer):
         BaseViewer.__init__(self, main, parent)
         self.title = "Secondary Structure Element"
         self.isClosedMesh = False
+        self.helixFileName = ""
+        self.sheetFileName = ""
         self.showBox = False;
         self.renderer = SSERenderer()
         self.createUI()      
@@ -41,29 +44,32 @@ class SSEViewer(BaseViewer):
         self.updateActionsAndMenus()
                   
     def createChildWindows(self):
-        pass
+        self.helixCorrespondanceFinder = SSEHelixCorrespondenceFinderForm(self.app, self)
     
     def loadHelixData(self):
-        fileName = QtGui.QFileDialog.getOpenFileName(self, self.tr("Open Data"), "", self.tr(self.renderer.getSupportedLoadFileFormats()))
-        if not fileName.isEmpty():  
+        self.helixFileName = QtGui.QFileDialog.getOpenFileName(self, self.tr("Open Data"), "", self.tr(self.renderer.getSupportedLoadFileFormats()))
+        if not self.helixFileName.isEmpty():  
             self.setCursor(QtCore.Qt.WaitCursor)
-            self.renderer.loadHelixFile(str(fileName))
+            self.renderer.loadHelixFile(str(self.helixFileName))
             self.loaded = True
             self.setCursor(QtCore.Qt.ArrowCursor)
             self.emitModelLoaded()
             self.emitViewerSetCenter()        
                
     def loadSheetData(self):
-        fileName = QtGui.QFileDialog.getOpenFileName(self, self.tr("Open Data"), "", self.tr(self.renderer.getSupportedLoadFileFormats()))
-        if not fileName.isEmpty():  
+        self.sheetFileName = QtGui.QFileDialog.getOpenFileName(self, self.tr("Open Data"), "", self.tr(self.renderer.getSupportedLoadFileFormats()))
+        if not self.sheetFileName.isEmpty():  
             self.setCursor(QtCore.Qt.WaitCursor)
-            self.renderer.loadSheetFile(str(fileName))
+            self.renderer.loadSheetFile(str(self.sheetFileName))
             self.loaded = True
             self.setCursor(QtCore.Qt.ArrowCursor)
             self.emitModelLoaded()
-            self.emitViewerSetCenter()                 
-               
-               
+            self.emitViewerSetCenter()
+                                          
+    def unloadData(self):
+        self.helixFileName = ""
+        self.sheetFileName = ""
+        BaseViewer.unloadData(self)
                
     def createActions(self):
         openHelixAct = QtGui.QAction(self.tr("&Helix Annotations"), self)
@@ -92,7 +98,6 @@ class SSEViewer(BaseViewer):
                    
     def updateActionsAndMenus(self):
         self.app.actions.getAction("unload_SSE").setEnabled(self.loaded)
-        self.app.menus.getMenu("actions-sse").setEnabled(self.loaded)       
           
     
              
