@@ -165,8 +165,8 @@ class BaseViewer(QtGui.QWidget):
             self.loaded = True
             self.dirty = False
             self.setCursor(QtCore.Qt.ArrowCursor)
-            self.emitModelLoaded()
             self.emitViewerSetCenter()
+            self.emitModelLoaded()            
             
     def saveData(self):
         self.fileName = QtGui.QFileDialog.getSaveFileName(self, self.tr("Save Data"), "", self.tr(self.renderer.getSupportedSaveFileFormats()))
@@ -233,6 +233,8 @@ class BaseViewer(QtGui.QWidget):
                 if(len(hitStack) > i+1):
                     hits[i] = hitStack[i+1]
             self.performElementSelection(hitStack)
+            if len(hitStack) == 0:
+                hitStack[0] = -1            
             if(len(hitStack) <= 6):
                 self.renderer.select(hitStack[0], hits[0], hits[1], hits[2], hits[3], hits[4])
             else:

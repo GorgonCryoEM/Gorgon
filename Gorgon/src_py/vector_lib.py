@@ -20,5 +20,8 @@ def vectorCrossProduct(v1, v2):
 def vectorAdd(v1, v2):
     return [v1[0] + v2[0], v1[1] + v2[1], v1[2] + v2[2]]
 
+def vectorSubtract(v1, v2):
+    return [v1[0] - v2[0], v1[1] - v2[1], v1[2] - v2[2]]
+
 def vectorScalarMultiply(s, v):
     return [s*v[0], s*v[1], s*v[2]]
