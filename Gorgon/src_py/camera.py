@@ -30,7 +30,7 @@ class Camera(QtOpenGL.QGLWidget):
         self.lastPos = QtCore.QPoint()
         
         for s in self.scene:
-            self.connect(s, QtCore.SIGNAL("viewerSetCenter(float, float, float, float, float, float)"), self.sceneSetCenter)
+            self.connect(s, QtCore.SIGNAL("viewerSetCenter(float, float, float, float)"), self.sceneSetCenter)
             self.connect(s, QtCore.SIGNAL("modelChanged()"), self.updateGL)
             self.connect(s, QtCore.SIGNAL("modelLoaded()"), self.updateGL)
             self.connect(s, QtCore.SIGNAL("modelUnloaded()"), self.updateGL)
@@ -91,9 +91,9 @@ class Camera(QtOpenGL.QGLWidget):
             if(s.renderer.setCuttingPlane(pt[0], pt[1], pt[2], dir[0], dir[1], dir[2])) :
                 s.emitModelChanged()  
     
-    def sceneSetCenter(self, minX, minY, minZ, maxX, maxY, maxZ):        
-        self.setCenter((minX+maxX)/2.0, (minY+maxY)/2.0, (minZ+maxZ)/2.0)
-        self.setEye(self.center[0] , self.center[1], self.center[2] - 2*(maxZ-minZ))
+    def sceneSetCenter(self, centerX, centerY, centerZ, distance):        
+        self.setCenter(centerX, centerY, centerZ)
+        self.setEye(self.center[0] , self.center[1], self.center[2] - distance)
         self.setUp(0, -1, 0)
         self.setCuttingPlane(vectorDistance(self.center, self.eye))
         #radius = vectorDistance([minX, minY, minZ], [maxX, maxY, maxZ]) / 2.0;

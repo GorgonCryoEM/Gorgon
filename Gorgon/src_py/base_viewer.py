@@ -4,6 +4,7 @@
 from PyQt4 import QtGui, QtCore, QtOpenGL
 from gorgon_cpp_wrapper import VolumeRenderer
 from model_visualization_form import ModelVisualizationForm
+from vector_lib import *
 
 try:
     from OpenGL.GL import *
@@ -31,6 +32,8 @@ class BaseViewer(QtGui.QWidget):
         self.displayStyle = self.DisplayStyleSmooth;
         self.modelVisible = True
         self.model2Visible = False
+        self.location = [0,0,0]
+        self.scale = [1,1,1]
         self.connect(self, QtCore.SIGNAL("modelChanged()"), self.modelChanged) 
         self.connect(self, QtCore.SIGNAL("modelLoaded()"), self.modelChanged) 
         self.connect(self, QtCore.SIGNAL("modelUnloaded()"), self.modelChanged)            
@@ -42,6 +45,14 @@ class BaseViewer(QtGui.QWidget):
         
     def initVisualizationOptions(self):
         self.visualizationOptions = ModelVisualizationForm(self.app, self)
+    
+    def setScale(self, scaleX, scaleY, scaleZ):
+        self.scale = [scaleX, scaleY, scaleZ]
+        self.emitModelChanged()
+    
+    def setLocation(self, locationX, locationY, locationZ):
+        self.location = [locationX, locationY, locationZ]
+        self.emitModelChanged()
                         
     def setBoundingBox(self, visible):
         self.showBox = visible
@@ -184,12 +195,16 @@ class BaseViewer(QtGui.QWidget):
         
         glPushAttrib(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT)
         
+        glPushMatrix()
+        glTranslated(self.location[0], self.location[1], self.location[2])
+        glScaled(self.scale[0], self.scale[1], self.scale[2])            
+        
         for i in range(2):
             if(self.loaded and visibility[i]):
                 self.setMaterials(colors[i])
                 if(colors[i].alpha() < 255):
                     glDepthFunc(GL_LESS)        
-                    glColorMask(False, False, False, False)                        
+                    glColorMask(False, False, False, False)
                     self.renderer.draw(i, False)
                     glDepthFunc(GL_LEQUAL)
                     glColorMask(True, True, True, True) 
@@ -197,10 +212,11 @@ class BaseViewer(QtGui.QWidget):
                 else:
                     self.renderer.draw(i, self.selectEnabled or self.mouseMoveEnabled)
                 
-        if(self.loaded and self.showBox):
-            self.setMaterials(self.boxColor)
+        if(self.loaded and self.showBox):            
+            self.setMaterials(self.boxColor)       
             self.renderer.drawBoundingBox()
 
+        glPopMatrix()
         glPopAttrib()
 
         glEndList() 
@@ -257,6 +273,12 @@ class BaseViewer(QtGui.QWidget):
         self.emit(QtCore.SIGNAL("modelVisualizationChanged()"))
                
     def emitViewerSetCenter(self):
-        self.emit(QtCore.SIGNAL("viewerSetCenter(float, float, float, float, float, float)"), 
-                                self.renderer.getMin(0), self.renderer.getMin(1), self.renderer.getMin(2),
-                                self.renderer.getMax(0), self.renderer.getMax(1), self.renderer.getMax(2))
+        minPos = [(self.renderer.getMin(0)*self.scale[0] + self.location[0]), 
+                  (self.renderer.getMin(1)*self.scale[1] + self.location[1]), 
+                  (self.renderer.getMin(2)*self.scale[2] + self.location[2])]
+        maxPos = [(self.renderer.getMax(0)*self.scale[0] + self.location[0]),
+                  (self.renderer.getMax(1)*self.scale[1] + self.location[1]), 
+                  (self.renderer.getMax(2)*self.scale[2] + self.location[2])]
+
+        center = vectorScalarMultiply(0.5, vectorAdd(minPos, maxPos))        
+        self.emit(QtCore.SIGNAL("viewerSetCenter(float, float, float, float)"), center[0], center[1], center[2], 2*(maxPos[2]-minPos[2]))
