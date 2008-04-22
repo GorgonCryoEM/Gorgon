@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_dialog_model_visualization.ui'
 #
-# Created: Tue Apr 22 14:14:23 2008
+# Created: Tue Apr 22 18:06:35 2008
 #      by: PyQt4 UI code generator 4.3.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -160,7 +160,9 @@ class Ui_DialogModelVisualization(object):
         self.gridlayout5.addWidget(self.labelLocationX,0,0,1,1)
 
         self.doubleSpinBoxLocationX = QtGui.QDoubleSpinBox(self.GroupBoxLocation)
+        self.doubleSpinBoxLocationX.setMinimum(-1e+014)
         self.doubleSpinBoxLocationX.setMaximum(1e+014)
+        self.doubleSpinBoxLocationX.setProperty("value",QtCore.QVariant(0.0))
         self.doubleSpinBoxLocationX.setObjectName("doubleSpinBoxLocationX")
         self.gridlayout5.addWidget(self.doubleSpinBoxLocationX,0,1,1,1)
 
@@ -169,6 +171,7 @@ class Ui_DialogModelVisualization(object):
         self.gridlayout5.addWidget(self.labelLocationY,1,0,1,1)
 
         self.doubleSpinBoxLocationY = QtGui.QDoubleSpinBox(self.GroupBoxLocation)
+        self.doubleSpinBoxLocationY.setMinimum(-1e+014)
         self.doubleSpinBoxLocationY.setMaximum(1e+014)
         self.doubleSpinBoxLocationY.setObjectName("doubleSpinBoxLocationY")
         self.gridlayout5.addWidget(self.doubleSpinBoxLocationY,1,1,1,1)
@@ -178,6 +181,7 @@ class Ui_DialogModelVisualization(object):
         self.gridlayout5.addWidget(self.labelLocationZ,2,0,1,1)
 
         self.doubleSpinBoxLocationZ = QtGui.QDoubleSpinBox(self.GroupBoxLocation)
+        self.doubleSpinBoxLocationZ.setMinimum(-1e+014)
         self.doubleSpinBoxLocationZ.setMaximum(1e+014)
         self.doubleSpinBoxLocationZ.setObjectName("doubleSpinBoxLocationZ")
         self.gridlayout5.addWidget(self.doubleSpinBoxLocationZ,2,1,1,1)

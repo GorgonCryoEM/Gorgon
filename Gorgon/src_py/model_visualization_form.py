@@ -12,6 +12,7 @@ class ModelVisualizationForm(QtGui.QWidget):
         self.viewer = viewer
         self.title = viewer.title + " Visualization Options"
         self.connect(self.viewer, QtCore.SIGNAL("modelLoaded()"), self.modelLoaded)
+        self.connect(self.viewer, QtCore.SIGNAL("modelChanged()"), self.modelChanged)
         self.connect(self.viewer, QtCore.SIGNAL("modelUnloaded()"), self.modelUnloaded)   
         self.setWindowTitle(self.title)
         
@@ -106,6 +107,9 @@ class ModelVisualizationForm(QtGui.QWidget):
         self.visualizerAct.setEnabled(True)
         self.updateFromViewer()        
         self.showWidget(True)
+    
+    def modelChanged(self):
+        self.updateFromViewer()
     
     def modelUnloaded(self):
         self.visualizerAct.setEnabled(False)
