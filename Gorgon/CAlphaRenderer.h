@@ -143,6 +143,14 @@ namespace wustl_mm {
 			atomQuadrics.clear();
 			backboneSegments.clear();
 			atoms = PDBReader::ReadAtomPositions(fileName);
+
+			// Keeping only C-Alpha atoms
+			for(int i = atoms.size()-1; i >= 0; i--) {
+				if(atoms[i].GetName().compare(" CA ") != 0) {
+					atoms.erase(atoms.begin() + i);
+				}
+			}
+
 			for(unsigned int i = 0; i < atoms.size(); i++) {
 				atomQuadrics.push_back(gluNewQuadric());				
 			}

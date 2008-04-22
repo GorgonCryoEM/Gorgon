@@ -42,6 +42,13 @@ class ModelVisualizationForm(QtGui.QWidget):
         self.connect(self.ui.pushButtonModel2Color, QtCore.SIGNAL("pressed ()"), self.setModel2Color)  
         self.connect(self.ui.pushButtonCenter, QtCore.SIGNAL("pressed ()"), self.viewer.emitViewerSetCenter)
         self.connect(self.ui.pushButtonClose, QtCore.SIGNAL("pressed ()"), self.viewer.unloadData)
+        self.connect(self.ui.doubleSpinBoxSizeX, QtCore.SIGNAL("valueChanged (double)"), self.scaleChanged)
+        self.connect(self.ui.doubleSpinBoxSizeY, QtCore.SIGNAL("valueChanged (double)"), self.scaleChanged)
+        self.connect(self.ui.doubleSpinBoxSizeZ, QtCore.SIGNAL("valueChanged (double)"), self.scaleChanged)
+        self.connect(self.ui.doubleSpinBoxLocationX, QtCore.SIGNAL("valueChanged (double)"), self.locationChanged)
+        self.connect(self.ui.doubleSpinBoxLocationY, QtCore.SIGNAL("valueChanged (double)"), self.locationChanged)
+        self.connect(self.ui.doubleSpinBoxLocationZ, QtCore.SIGNAL("valueChanged (double)"), self.locationChanged)
+                                                 
         
     def updateFromViewer(self):
         self.ui.pushButtonModelColor.setColor(self.viewer.modelColor)
@@ -56,7 +63,18 @@ class ModelVisualizationForm(QtGui.QWidget):
         elif(self.viewer.displayStyle == self.viewer.DisplayStyleFlat):
             self.ui.radioButtonFlat.setChecked(True)   
         else :
-            self.ui.radioButtonSmooth.setChecked(True)      
+            self.ui.radioButtonSmooth.setChecked(True)   
+            
+        self.ui.doubleSpinBoxSizeX.setValue(self.viewer.scale[0])   
+        self.ui.doubleSpinBoxSizeY.setValue(self.viewer.scale[1])
+        self.ui.doubleSpinBoxSizeZ.setValue(self.viewer.scale[2])
+        self.ui.doubleSpinBoxLocationX.setValue(self.viewer.location[0])
+        self.ui.doubleSpinBoxLocationY.setValue(self.viewer.location[1])
+        self.ui.doubleSpinBoxLocationZ.setValue(self.viewer.location[2])
+        self.ui.labelModelSize.setText("{" + 
+                                       str(round(self.viewer.renderer.getMax(0) - self.viewer.renderer.getMin(0) ,2)) + ", " +
+                                       str(round(self.viewer.renderer.getMax(1) - self.viewer.renderer.getMin(1) ,2)) + ", " +
+                                       str(round(self.viewer.renderer.getMax(2) - self.viewer.renderer.getMin(2) ,2)) + "}")
                                     
     def createActions(self):               
         self.visualizerAct = QtGui.QAction(self.tr(self.title), self)
@@ -86,6 +104,7 @@ class ModelVisualizationForm(QtGui.QWidget):
     def modelLoaded(self):
         self.visualizerAct.setChecked(True)
         self.visualizerAct.setEnabled(True)
+        self.updateFromViewer()        
         self.showWidget(True)
     
     def modelUnloaded(self):
@@ -125,3 +144,8 @@ class ModelVisualizationForm(QtGui.QWidget):
     def dockVisibilityChanged(self, visible):
         self.visualizerAct.setChecked(visible)
                                  
+    def scaleChanged(self, dummy):
+        self.viewer.setScale(self.ui.doubleSpinBoxSizeX.value(), self.ui.doubleSpinBoxSizeY.value(), self.ui.doubleSpinBoxSizeZ.value())        
+    
+    def locationChanged(self, dummy):
+        self.viewer.setLocation(self.ui.doubleSpinBoxLocationX.value(), self.ui.doubleSpinBoxLocationY.value(), self.ui.doubleSpinBoxLocationZ.value())
