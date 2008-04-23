@@ -88,6 +88,8 @@ class Camera(QtOpenGL.QGLWidget):
         nearChanged = (self.near != near)
         self.near = max(min(near, far), 0.1)
         self.far = max(self.near, far)
+        glFogf(GL_FOG_START, self.near)       
+        glFogf(GL_FOG_END, self.far)
         self.setGlProjection()
     
     def setCuttingPlane(self, cuttingPlane):        
@@ -113,7 +115,8 @@ class Camera(QtOpenGL.QGLWidget):
         self.setEye(self.center[0] , self.center[1], self.center[2] - distance)
         self.setUp(0, -1, 0)
         self.setCuttingPlane(vectorDistance(self.center, self.eye))
-        self.setNearFarZoom(0.1, 1000, 0.25)
+        centerDistance = vectorDistance(self.eye, self.center)
+        self.setNearFarZoom(centerDistance - distance/2.0, centerDistance + distance/2.0, 0.25)
         #radius = vectorDistance([minX, minY, minZ], [maxX, maxY, maxZ]) / 2.0;
         #eyeDistance = vectorDistance(self.center, self.eye)
         #self.setNearFar(max(eyeDistance-radius, 0.1), eyeDistance + 2*radius)
@@ -152,6 +155,15 @@ class Camera(QtOpenGL.QGLWidget):
         glLightfv( GL_LIGHT1, GL_POSITION, afLightPosition)
 
         glEnable( GL_LIGHT1 ) 
+
+        fogColor = [0.0, 0.0, 0.0, 1.00]
+        glFogi(GL_FOG_MODE, GL_LINEAR)
+        glFogfv(GL_FOG_COLOR, fogColor)
+        glFogf(GL_FOG_DENSITY, 0.1)        
+        glHint(GL_FOG_HINT, GL_DONT_CARE) 
+        glFogf(GL_FOG_START, self.near)       
+        glFogf(GL_FOG_END, self.far)
+        glEnable(GL_FOG);    
 
         glMatrixMode(GL_MODELVIEW)
         glLoadIdentity()

@@ -281,6 +281,8 @@ class BaseViewer(QtGui.QWidget):
         maxPos = [(self.renderer.getMax(0)*self.scale[0] + self.location[0]),
                   (self.renderer.getMax(1)*self.scale[1] + self.location[1]), 
                   (self.renderer.getMax(2)*self.scale[2] + self.location[2])]
+        
+        distance = vectorDistance(minPos, maxPos)
 
         center = vectorScalarMultiply(0.5, vectorAdd(minPos, maxPos))        
-        self.emit(QtCore.SIGNAL("viewerSetCenter(float, float, float, float)"), center[0], center[1], center[2], 2*(maxPos[2]-minPos[2]))
+        self.emit(QtCore.SIGNAL("viewerSetCenter(float, float, float, float)"), center[0], center[1], center[2], distance)
