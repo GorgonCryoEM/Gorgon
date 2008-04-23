@@ -3,6 +3,7 @@
 
 from PyQt4 import QtOpenGL, QtCore
 from vector_lib import *
+from scene_editor_form import SceneEditorForm
 
 try:
     from OpenGL.GL import *
@@ -14,20 +15,30 @@ except ImportError:
     sys.exit(1)
     
 class Camera(QtOpenGL.QGLWidget):
-    def __init__(self, scene, parent=None):                
+    def __init__(self, scene, main, parent=None):                
         QtOpenGL.QGLWidget.__init__(self, parent)
-        self.near = 0;
-        self.cuttingPlane = 10;
+        self.app = main
+        self.near = 0
+        self.cuttingPlane = 10
         self.scene = scene
         self.mouseTrackingEnabled = False
-        self.aspectRatio = 1.0;            
+        self.aspectRatio = 1.0
+        self.lightsEnabled = [True, True]
+        self.lightsColor = [[1.0, 1.0, 1.0, 1.0], [1.0, 1.0, 1.0, 1.0]]
+        self.lightsPosition = [[1000,1000,1000], [-1000,-1000,-1000]]        
+        self.backgroundColor = [0.0, 0.0, 0.0, 1.0]
+        
+        self.fogColor = [0.0, 0.0, 0.0, 1.0]
+        self.fogDensity = 0.01
+        self.fogEnabled = True
+            
         self.setCenter(0, 0, 0)
         self.setEye(0, -4, 0) 
         self.setUp(0, 0, 1)     
         self.setEyeRotation(0, 0, 0)
         self.setNearFarZoom(0.1, 1000, 0.25)
-
         self.lastPos = QtCore.QPoint()
+        self.sceneEditor = SceneEditorForm(self.app, self)
         
         for s in self.scene:
             self.connect(s, QtCore.SIGNAL("viewerSetCenter(float, float, float, float)"), self.sceneSetCenter)
@@ -47,6 +58,7 @@ class Camera(QtOpenGL.QGLWidget):
             self.look = [0,1,0]
             self.right = [-1,0,0]
             self.up = [0,0,1]
+        self.emitCameraChanged()
     
     def setCenter(self, x, y, z):
         self.center = [x, y, z]
@@ -56,6 +68,7 @@ class Camera(QtOpenGL.QGLWidget):
         except:
             self.look = [0,1,0]
             self.right = [-1,0,0]
+        self.emitCameraChanged()
         
     def setUp(self, x, y, z):
         self.up = vectorNormalize([x, y, z])
@@ -64,6 +77,7 @@ class Camera(QtOpenGL.QGLWidget):
             self.up = vectorNormalize(vectorCrossProduct(self.right, self.look))
         except:
             self.right = [-1,0,0]
+        self.emitCameraChanged()
         
     def setEyeRotation(self, yaw, pitch, roll):
         newLook = vectorNormalize(vectorSubtract(vectorAdd(self.eye, vectorScalarMultiply(yaw, self.right)), self.center));
@@ -79,10 +93,6 @@ class Camera(QtOpenGL.QGLWidget):
         newUp = vectorNormalize(vectorAdd(vectorScalarMultiply(roll*0.01, self.right), self.up))
         self.setUp(newUp[0], newUp[1], newUp[2])        
         
-        
-        
-        #self.eyeRotation = [yaw, pitch, roll]
-        
     def setNearFarZoom(self, near, far, zoom):
         self.eyeZoom = min(max(zoom, 0.0001), 0.9999);
         nearChanged = (self.near != near)
@@ -91,6 +101,7 @@ class Camera(QtOpenGL.QGLWidget):
         glFogf(GL_FOG_START, self.near)       
         glFogf(GL_FOG_END, self.far)
         self.setGlProjection()
+        self.emitCameraChanged()
     
     def setCuttingPlane(self, cuttingPlane):        
         if(cuttingPlane != self.cuttingPlane):
@@ -122,9 +133,7 @@ class Camera(QtOpenGL.QGLWidget):
         #self.setNearFar(max(eyeDistance-radius, 0.1), eyeDistance + 2*radius)
          
         self.updateGL()
-
-    
-    
+     
     def minimumSizeHint(self):
         return QtCore.QSize(50, 50)
 
@@ -132,43 +141,43 @@ class Camera(QtOpenGL.QGLWidget):
         return QtCore.QSize(400, 400)     
        
     def initializeGL(self):
-        afPropertiesAmbient = [0.50, 0.50, 0.50, 1.00] 
-        afPropertiesDiffuse = [0.75, 0.75, 0.75, 1.00] 
-        afPropertiesSpecular = [0.0, 0.0, 0.0, 1.00]
-        glClearColor( 0.0, 0.0, 0.0, 1.0 )
-        glClearDepth( 5.0 )
+        self.initializeScene()
+
+    def initializeScene(self):
+        glClearColor(self.backgroundColor[0], self.backgroundColor[1], self.backgroundColor[2], self.backgroundColor[3])
+        glClearDepth( 1.0 )
         
-        afLightPosition = [1000,1000,1000]
+        glLight = [GL_LIGHT0, GL_LIGHT1]
         
-        glLightfv( GL_LIGHT0, GL_AMBIENT,  afPropertiesAmbient);
-        glLightfv( GL_LIGHT0, GL_DIFFUSE,  afPropertiesDiffuse) 
-        glLightfv( GL_LIGHT0, GL_SPECULAR, afPropertiesSpecular) 
-        glLightfv( GL_LIGHT0, GL_POSITION, afLightPosition)
+        
+        for i in range(2):
+            if(self.lightsEnabled[i]):
+                afPropertiesAmbient = [self.lightsColor[i][0]*0.3, self.lightsColor[i][1]*0.3, self.lightsColor[i][2]*0.3, 1.00] 
+                afPropertiesDiffuse = self.lightsColor[i]
+                afPropertiesSpecular = [self.lightsColor[i][0]*0.1, self.lightsColor[i][0]*0.1, self.lightsColor[i][0]*0.1, 1.00]
+                afLightPosition = self.lightsPosition[i]         
+                glLightfv(glLight[i], GL_AMBIENT,  afPropertiesAmbient)
+                glLightfv(glLight[i], GL_DIFFUSE,  afPropertiesDiffuse) 
+                glLightfv(glLight[i], GL_SPECULAR, afPropertiesSpecular) 
+                glLightfv(glLight[i], GL_POSITION, afLightPosition)               
+                glEnable(glLight[i]) 
+            else:
+                glDisable(glLight[i])
 
-        glEnable( GL_LIGHT0 ) 
-
-
-        afLightPosition = [-1000,-1000,-1000]        
-        glLightfv( GL_LIGHT1, GL_AMBIENT,  afPropertiesAmbient);
-        glLightfv( GL_LIGHT1, GL_DIFFUSE,  afPropertiesDiffuse) 
-        glLightfv( GL_LIGHT1, GL_SPECULAR, afPropertiesSpecular) 
-        glLightfv( GL_LIGHT1, GL_POSITION, afLightPosition)
-
-        glEnable( GL_LIGHT1 ) 
-
-        fogColor = [0.0, 0.0, 0.0, 1.00]
-        glFogi(GL_FOG_MODE, GL_LINEAR)
-        glFogfv(GL_FOG_COLOR, fogColor)
-        glFogf(GL_FOG_DENSITY, 0.1)        
-        glHint(GL_FOG_HINT, GL_DONT_CARE) 
-        glFogf(GL_FOG_START, self.near)       
-        glFogf(GL_FOG_END, self.far)
-        glEnable(GL_FOG);    
+        if(self.fogEnabled):
+            glFogi(GL_FOG_MODE, GL_LINEAR)
+            glFogfv(GL_FOG_COLOR, self.fogColor)
+            glFogf(GL_FOG_DENSITY, self.fogDensity)   
+            glHint(GL_FOG_HINT, GL_DONT_CARE) 
+            glFogf(GL_FOG_START, self.near)       
+            glFogf(GL_FOG_END, self.far)
+            glEnable(GL_FOG)
+        else:
+            glDisable(GL_FOG)    
 
         glMatrixMode(GL_MODELVIEW)
-        glLoadIdentity()
+        glLoadIdentity()        
        
-              
     def setGluLookAt(self):
         gluLookAt(self.eye[0], self.eye[1], self.eye[2], 
                   self.center[0], self.center[1], self.center[2], 
@@ -295,4 +304,8 @@ class Camera(QtOpenGL.QGLWidget):
             self.setNearFarZoom(self.near, self.far, self.eyeZoom + direction * 10.0/360.0)
             #newEye = vectorAdd(self.eye, vectorScalarMultiply(-direction * 0.1 * (vectorDistance(self.eye, self.look)), self.look))
             #self.setEye(newEye[0], newEye[1], newEye[2])
-        self.updateGL()                          
+        self.updateGL()  
+        
+    def emitCameraChanged(self):
+        self.emit(QtCore.SIGNAL("cameraChanged()"))                        
+        

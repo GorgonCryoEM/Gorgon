@@ -3,7 +3,6 @@
 
 from PyQt4 import QtCore, QtGui
 from ui_dialog_model_visualization import Ui_DialogModelVisualization
-from color_picker_form import ColorPickerForm
 
 class ModelVisualizationForm(QtGui.QWidget):
     def __init__(self, main, viewer, parent=None):
@@ -26,7 +25,6 @@ class ModelVisualizationForm(QtGui.QWidget):
         self.ui.setupUi(self)    
         self.ui.checkBoxModel2Visible.setVisible(False)
         self.ui.pushButtonModel2Color.setVisible(False)
-        self.colorPicker = ColorPickerForm();
         self.dock = QtGui.QDockWidget(self.tr(self.title), self.app)
         self.dock.setAllowedAreas(QtCore.Qt.LeftDockWidgetArea | QtCore.Qt.RightDockWidgetArea | QtCore.Qt.BottomDockWidgetArea)
         self.dock.setWidget(self)
@@ -38,17 +36,17 @@ class ModelVisualizationForm(QtGui.QWidget):
         self.connect(self.ui.checkBoxBoundingBox, QtCore.SIGNAL("toggled (bool)"), self.viewer.setBoundingBox)
         self.connect(self.ui.checkBoxModelVisible, QtCore.SIGNAL("toggled (bool)"), self.viewer.setModelVisibility)
         self.connect(self.ui.checkBoxModel2Visible, QtCore.SIGNAL("toggled (bool)"), self.viewer.setModel2Visibility)
-        self.connect(self.ui.pushButtonBoundingBoxColor, QtCore.SIGNAL("pressed ()"), self.setBoundingBoxColor)        
-        self.connect(self.ui.pushButtonModelColor, QtCore.SIGNAL("pressed ()"), self.setModelColor)  
-        self.connect(self.ui.pushButtonModel2Color, QtCore.SIGNAL("pressed ()"), self.setModel2Color)  
+        self.connect(self.ui.pushButtonBoundingBoxColor, QtCore.SIGNAL("colorChanged ()"), self.setBoundingBoxColor)        
+        self.connect(self.ui.pushButtonModelColor, QtCore.SIGNAL("colorChanged ()"), self.setModelColor)  
+        self.connect(self.ui.pushButtonModel2Color, QtCore.SIGNAL("colorChanged ()"), self.setModel2Color)  
         self.connect(self.ui.pushButtonCenter, QtCore.SIGNAL("pressed ()"), self.viewer.emitViewerSetCenter)
         self.connect(self.ui.pushButtonClose, QtCore.SIGNAL("pressed ()"), self.viewer.unloadData)
-        self.connect(self.ui.doubleSpinBoxSizeX, QtCore.SIGNAL("valueChanged (double)"), self.scaleChanged)
-        self.connect(self.ui.doubleSpinBoxSizeY, QtCore.SIGNAL("valueChanged (double)"), self.scaleChanged)
-        self.connect(self.ui.doubleSpinBoxSizeZ, QtCore.SIGNAL("valueChanged (double)"), self.scaleChanged)
-        self.connect(self.ui.doubleSpinBoxLocationX, QtCore.SIGNAL("valueChanged (double)"), self.locationChanged)
-        self.connect(self.ui.doubleSpinBoxLocationY, QtCore.SIGNAL("valueChanged (double)"), self.locationChanged)
-        self.connect(self.ui.doubleSpinBoxLocationZ, QtCore.SIGNAL("valueChanged (double)"), self.locationChanged)
+        self.connect(self.ui.doubleSpinBoxSizeX, QtCore.SIGNAL("editingFinished ()"), self.scaleChanged)
+        self.connect(self.ui.doubleSpinBoxSizeY, QtCore.SIGNAL("editingFinished ()"), self.scaleChanged)
+        self.connect(self.ui.doubleSpinBoxSizeZ, QtCore.SIGNAL("editingFinished ()"), self.scaleChanged)
+        self.connect(self.ui.doubleSpinBoxLocationX, QtCore.SIGNAL("editingFinished ()"), self.locationChanged)
+        self.connect(self.ui.doubleSpinBoxLocationY, QtCore.SIGNAL("editingFinished ()"), self.locationChanged)
+        self.connect(self.ui.doubleSpinBoxLocationZ, QtCore.SIGNAL("editingFinished ()"), self.locationChanged)
                                                  
         
     def updateFromViewer(self):
@@ -116,25 +114,13 @@ class ModelVisualizationForm(QtGui.QWidget):
         self.showWidget(False)    
 
     def setBoundingBoxColor(self):
-        self.colorPicker.setColor(self.viewer.boxColor)
-        if(self.colorPicker.exec_() == QtGui.QDialog.Accepted) :
-            color = self.colorPicker.getColor()
-            self.ui.pushButtonBoundingBoxColor.setColor(color)
-            self.viewer.setBoundingBoxColor(color)
+        self.viewer.setBoundingBoxColor(self.ui.pushButtonBoundingBoxColor.color())
         
     def setModelColor(self):
-        self.colorPicker.setColor(self.viewer.modelColor)
-        if(self.colorPicker.exec_() == QtGui.QDialog.Accepted) :
-            color = self.colorPicker.getColor()
-            self.ui.pushButtonModelColor.setColor(color)
-            self.viewer.setModelColor(color)
+        self.viewer.setModelColor(self.ui.pushButtonModelColor.color())
 
     def setModel2Color(self):
-        self.colorPicker.setColor(self.viewer.model2Color)
-        if(self.colorPicker.exec_() == QtGui.QDialog.Accepted) :
-            color = self.colorPicker.getColor()
-            self.ui.pushButtonModel2Color.setColor(color)
-            self.viewer.setModel2Color(color)
+        self.viewer.setModel2Color(self.ui.pushButtonModel2Color.color())
     
     def setDisplayStyle(self, dummy):
         if(self.ui.radioButtonWireframe.isChecked()) :
@@ -148,8 +134,8 @@ class ModelVisualizationForm(QtGui.QWidget):
     def dockVisibilityChanged(self, visible):
         self.visualizerAct.setChecked(visible)
                                  
-    def scaleChanged(self, dummy):
+    def scaleChanged(self):
         self.viewer.setScale(self.ui.doubleSpinBoxSizeX.value(), self.ui.doubleSpinBoxSizeY.value(), self.ui.doubleSpinBoxSizeZ.value())        
     
-    def locationChanged(self, dummy):
+    def locationChanged(self):
         self.viewer.setLocation(self.ui.doubleSpinBoxLocationX.value(), self.ui.doubleSpinBoxLocationY.value(), self.ui.doubleSpinBoxLocationZ.value())
