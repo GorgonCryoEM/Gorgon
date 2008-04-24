@@ -4,6 +4,7 @@
 from PyQt4 import QtOpenGL, QtCore
 from vector_lib import *
 from scene_editor_form import SceneEditorForm
+from cmath import *   
 
 try:
     from OpenGL.GL import *
@@ -23,6 +24,7 @@ class Camera(QtOpenGL.QGLWidget):
         self.scene = scene
         self.mouseTrackingEnabled = False
         self.aspectRatio = 1.0
+        self.selectedScene = -1
         self.lightsEnabled = [True, True]
         self.lightsColor = [[1.0, 1.0, 1.0, 1.0], [1.0, 1.0, 1.0, 1.0]]
         self.lightsPosition = [[1000,1000,1000], [-1000,-1000,-1000]]        
@@ -42,10 +44,10 @@ class Camera(QtOpenGL.QGLWidget):
         
         for s in self.scene:
             self.connect(s, QtCore.SIGNAL("viewerSetCenter(float, float, float, float)"), self.sceneSetCenter)
-            self.connect(s, QtCore.SIGNAL("modelChanged()"), self.updateGL)
-            self.connect(s, QtCore.SIGNAL("modelLoaded()"), self.updateGL)
-            self.connect(s, QtCore.SIGNAL("modelUnloaded()"), self.updateGL)
-            self.connect(s, QtCore.SIGNAL("modelVisualizationChanged()"), self.updateGL)
+            self.connect(s, QtCore.SIGNAL("modelChanged()"), self.modelChanged)
+            self.connect(s, QtCore.SIGNAL("modelLoaded()"), self.modelChanged)
+            self.connect(s, QtCore.SIGNAL("modelUnloaded()"), self.modelChanged)
+            self.connect(s, QtCore.SIGNAL("modelVisualizationChanged()"), self.modelChanged)
             self.connect(s, QtCore.SIGNAL("mouseTrackingChanged()"), self.refreshMouseTracking)
             
     def setEye(self, x, y, z):
@@ -127,7 +129,8 @@ class Camera(QtOpenGL.QGLWidget):
         self.setUp(0, -1, 0)
         self.setCuttingPlane(vectorDistance(self.center, self.eye))
         centerDistance = vectorDistance(self.eye, self.center)
-        self.setNearFarZoom(centerDistance - distance/2.0, centerDistance + distance/2.0, 0.25)
+        self.modelChanged()
+        #self.setNearFarZoom(centerDistance - distance/2.0, centerDistance + distance/2.0, 0.25)
         #radius = vectorDistance([minX, minY, minZ], [maxX, maxY, maxZ]) / 2.0;
         #eyeDistance = vectorDistance(self.center, self.eye)
         #self.setNearFar(max(eyeDistance-radius, 0.1), eyeDistance + 2*radius)
@@ -185,8 +188,7 @@ class Camera(QtOpenGL.QGLWidget):
         
     def paintGL(self):
         self.drawScene()
-
-               
+              
     def drawScene(self):
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
         glMatrixMode(GL_MODELVIEW)   
@@ -198,7 +200,22 @@ class Camera(QtOpenGL.QGLWidget):
             self.scene[i].draw()
             glPopName()
         glPopMatrix()
-    
+     
+    def processMouseDown(self, mouseHits):   
+        globalMinDepth = self.far + 1
+        minNames = list()        
+        sceneId = -1
+        for hit_record in mouseHits:
+            minDepth, maxDepth, names = hit_record
+            names = list(names)
+            if(globalMinDepth > minDepth):
+                globalMinDepth = minDepth
+                minNames = names
+        if(minNames != list()):
+            sceneId = minNames[0];
+            minNames.pop(0)
+        self.selectedScene = sceneId;
+            
     def processMouseClick(self, mouseHits):   
         globalMinDepth = self.far + 1
         minNames = list()        
@@ -268,10 +285,25 @@ class Camera(QtOpenGL.QGLWidget):
             self.mouseTrackingEnabled = self.mouseTrackingEnabled or s.mouseMoveEnabled
         self.setMouseTracking(self.mouseTrackingEnabled)
         self.updateGL()
+     
+    def moveSelectedScene(self, dx, dy):
+        if(self.selectedScene >= 0):
+            newDx = vectorDistance(self.eye, self.center) * abs(tan(pi * self.eyeZoom)) * dx / float(self.width())
+            newDy = vectorDistance(self.eye, self.center) * abs(tan(pi * self.eyeZoom)) * dy / float(self.height())            
+            newLocation = vectorAdd(self.scene[self.selectedScene].location,  vectorScalarMultiply(newDx, self.right))   
+            newLocation = vectorAdd(newLocation,  vectorScalarMultiply(-newDy, self.up))
+            self.scene[self.selectedScene].setLocation(newLocation[0], newLocation[1], newLocation[2])
+    
+    def rotateSelectedScene(self, dx, dy):
+        if(self.selectedScene >= 0):
+            self.scene[self.selectedScene].setRotation(self.up, dx)
+            self.scene[self.selectedScene].setRotation(self.right, dy)
+            self.scene[self.selectedScene].emitModelChanged()
     
     def mousePressEvent(self, event):
         self.mouseDownPoint = QtCore.QPoint(event.pos())
-        self.mouseMovePoint = QtCore.QPoint(event.pos())  
+        self.mouseMovePoint = QtCore.QPoint(event.pos())
+        self.processMouseDown(self.pickObject(self.mouseDownPoint.x(), self.mouseDownPoint.y()))   
         
     def mouseReleaseEvent(self, event):
         self.mouseUpPoint = QtCore.QPoint(event.pos())
@@ -282,15 +314,18 @@ class Camera(QtOpenGL.QGLWidget):
     def mouseMoveEvent(self, event):
         if(self.mouseTrackingEnabled):
             self.processMouseMove(self.pickObject(event.x(), event.y()))
-            
-        if (event.buttons() & QtCore.Qt.LeftButton) and (event.modifiers() & QtCore.Qt.ALT) :
-            dx = event.x() - self.mouseMovePoint.x()
-            dy = event.y() - self.mouseMovePoint.y()
+
+        dx = event.x() - self.mouseMovePoint.x()
+        dy = event.y() - self.mouseMovePoint.y()
+                        
+        if (event.buttons() & QtCore.Qt.LeftButton) and (event.modifiers() & QtCore.Qt.CTRL) :
             self.setEyeRotation(0, 0, dx)
         elif (event.buttons() & QtCore.Qt.LeftButton):
-            dx = event.x() - self.mouseMovePoint.x()
-            dy = event.y() - self.mouseMovePoint.y()            
             self.setEyeRotation(-dx, dy, 0)
+        elif (event.buttons() & QtCore.Qt.RightButton) and (event.modifiers() & QtCore.Qt.ALT):
+            self.moveSelectedScene(dx, dy)
+        elif (event.buttons() & QtCore.Qt.RightButton):
+            self.rotateSelectedScene(dx, dy)            
         
         self.mouseMovePoint = QtCore.QPoint(event.pos())        
 
@@ -305,6 +340,18 @@ class Camera(QtOpenGL.QGLWidget):
             #newEye = vectorAdd(self.eye, vectorScalarMultiply(-direction * 0.1 * (vectorDistance(self.eye, self.look)), self.look))
             #self.setEye(newEye[0], newEye[1], newEye[2])
         self.updateGL()  
+        
+    def modelChanged(self):
+        minDistance = 1000000000000.0
+        maxDistance = 0.0
+        eyeDist = vectorDistance(self.eye, self.center)
+        for s in self.scene:
+            (center, distance) = s.getCenterAndDistance()
+            modelDist = vectorDistance(self.center, center)
+            minDistance = min(minDistance, eyeDist - modelDist - distance/2.0)
+            maxDistance = max(maxDistance, eyeDist + modelDist + distance/2.0)
+        self.setNearFarZoom(minDistance, maxDistance, self.eyeZoom)
+        self.updateGL()
         
     def emitCameraChanged(self):
         self.emit(QtCore.SIGNAL("cameraChanged()"))                        

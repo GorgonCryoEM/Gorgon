@@ -34,6 +34,7 @@ class BaseViewer(QtGui.QWidget):
         self.model2Visible = False
         self.location = [0,0,0]
         self.scale = [1,1,1]
+        self.rotation = self.identityMatrix()
         self.connect(self, QtCore.SIGNAL("modelChanged()"), self.modelChanged) 
         self.connect(self, QtCore.SIGNAL("modelLoaded()"), self.modelChanged) 
         self.connect(self, QtCore.SIGNAL("modelUnloaded()"), self.modelChanged)            
@@ -46,6 +47,9 @@ class BaseViewer(QtGui.QWidget):
     def initVisualizationOptions(self):
         self.visualizationOptions = ModelVisualizationForm(self.app, self)
     
+    def identityMatrix(self):
+        return [[1.0, 0.0, 0.0, 0.0],[0.0, 1.0, 0.0, 0.0], [0.0, 0.0, 1.0, 0.0], [0.0, 0.0, 0.0, 1.0]] 
+    
     def setScale(self, scaleX, scaleY, scaleZ):
         self.scale = [scaleX, scaleY, scaleZ]
         self.emitModelChanged()
@@ -53,6 +57,17 @@ class BaseViewer(QtGui.QWidget):
     def setLocation(self, locationX, locationY, locationZ):
         self.location = [locationX, locationY, locationZ]
         self.emitModelChanged()
+                        
+    def setRotation(self, axis, angle):
+        glMatrixMode(GL_MODELVIEW)
+        glPushMatrix()
+        glLoadIdentity()
+        glRotatef(angle, axis[0], axis[1], axis[2])
+        
+        glMultMatrixf(self.rotation)
+        
+        self.rotation = glGetFloatv(GL_MODELVIEW_MATRIX)        
+        glPopMatrix()
                         
     def setBoundingBox(self, visible):
         self.showBox = visible
@@ -113,6 +128,20 @@ class BaseViewer(QtGui.QWidget):
     def setViewerAutonomy(self, value):
         self.viewerAutonomous = value;
         self.updateViewerAutonomy(value)
+
+    def getCenterAndDistance(self):
+        minPos = [(self.renderer.getMin(0)*self.scale[0] + self.location[0]), 
+                  (self.renderer.getMin(1)*self.scale[1] + self.location[1]), 
+                  (self.renderer.getMin(2)*self.scale[2] + self.location[2])]
+        maxPos = [(self.renderer.getMax(0)*self.scale[0] + self.location[0]),
+                  (self.renderer.getMax(1)*self.scale[1] + self.location[1]), 
+                  (self.renderer.getMax(2)*self.scale[2] + self.location[2])]
+        
+        distance = vectorDistance(minPos, maxPos)
+
+        center = vectorScalarMultiply(0.5, vectorAdd(minPos, maxPos))        
+
+        return (center, distance)
 
     def initializeGLDisplayType(self):
         glPushAttrib(GL_DEPTH_BUFFER_BIT | GL_LIGHTING_BIT | GL_ENABLE_BIT)
@@ -181,6 +210,9 @@ class BaseViewer(QtGui.QWidget):
         self.renderer.unload()
         self.loaded = False
         self.dirty = False
+        self.location = [0,0,0]
+        self.scale = [1,1,1]
+        self.rotation = self.identityMatrix()
         self.emitModelUnloaded()
         
     def modelChanged(self):
@@ -197,6 +229,11 @@ class BaseViewer(QtGui.QWidget):
         
         glPushMatrix()
         glTranslated(self.location[0], self.location[1], self.location[2])
+        #print self.rotation[0][0], self.rotation[0][1], self.rotation[0][2], self.rotation[0][3]
+        #print self.rotation[1][0], self.rotation[1][1], self.rotation[1][2], self.rotation[1][3]
+        #print self.rotation[2][0], self.rotation[2][1], self.rotation[2][2], self.rotation[2][3]
+        #print self.rotation[3][0], self.rotation[3][1], self.rotation[3][2], self.rotation[3][3]
+        glMultMatrixf(self.rotation)
         glScaled(self.scale[0], self.scale[1], self.scale[2])            
         
         for i in range(2):
@@ -273,16 +310,7 @@ class BaseViewer(QtGui.QWidget):
         
     def emitModelVisualizationChanged(self):
         self.emit(QtCore.SIGNAL("modelVisualizationChanged()"))
-               
+    
     def emitViewerSetCenter(self):
-        minPos = [(self.renderer.getMin(0)*self.scale[0] + self.location[0]), 
-                  (self.renderer.getMin(1)*self.scale[1] + self.location[1]), 
-                  (self.renderer.getMin(2)*self.scale[2] + self.location[2])]
-        maxPos = [(self.renderer.getMax(0)*self.scale[0] + self.location[0]),
-                  (self.renderer.getMax(1)*self.scale[1] + self.location[1]), 
-                  (self.renderer.getMax(2)*self.scale[2] + self.location[2])]
-        
-        distance = vectorDistance(minPos, maxPos)
-
-        center = vectorScalarMultiply(0.5, vectorAdd(minPos, maxPos))        
+        (center, distance) = self.getCenterAndDistance()
         self.emit(QtCore.SIGNAL("viewerSetCenter(float, float, float, float)"), center[0], center[1], center[2], distance)
