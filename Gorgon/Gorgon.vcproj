@@ -185,6 +185,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\SSECorrespondenceEngine.h"
+				>
+			</File>
+			<File
 				RelativePath=".\SSERenderer.h"
 				>
 			</File>

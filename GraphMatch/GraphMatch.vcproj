@@ -490,6 +490,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\SSECorrespondenceResult.h"
+				>
+			</File>
+			<File
 				RelativePath=".\StandardGraph.h"
 				>
 			</File>
@@ -499,10 +503,6 @@
 			</File>
 			<File
 				RelativePath=".\VectorMath.h"
-				>
-			</File>
-			<File
-				RelativePath=".\VisualizationTest.h"
 				>
 			</File>
 			<File

@@ -20,6 +20,7 @@ Date  : 08/14/2006
 #include "Structures.h"
 #include <time.h>
 #include <SkeletonMaker/PriorityQueue.h>
+#include "SSECorrespondenceResult.h"
 
 namespace wustl_mm {
 	namespace GraphMatch {
@@ -33,7 +34,7 @@ namespace wustl_mm {
 			WongMatch15ConstrainedNoFuture(StandardGraph * patternGraph, StandardGraph * baseGraph, int missingHelixCount, int missingSheetCount);
 			~WongMatch15ConstrainedNoFuture();
 			int RunMatching(clock_t startTime);
-			LinkedNode * GetResult(int rank);
+			SSECorrespondenceResult GetResult(int rank);
 			void SaveResults();
 
 
@@ -46,7 +47,7 @@ namespace wustl_mm {
 			LinkedNode * currentNode;
 			PriorityQueue<LinkedNode, double> * queue;
 			vector<LinkedNodeStub*> usedNodes;
-			vector<LinkedNode*> solutions;
+			vector<SSECorrespondenceResult> solutions;
 			int missingHelixCount;
 			int missingSheetCount;
 			int expandCount;
@@ -85,12 +86,7 @@ namespace wustl_mm {
 				delete usedNodes[i];
 			}
 			usedNodes.clear();
-
-			for(unsigned int i = 0; i < solutions.size(); i++) {
-				delete solutions[i];
-			}
 			solutions.clear();
-
 			int queueSize = queue->getLength();
 			double tempKey;
 			LinkedNode * tempNode;
@@ -153,7 +149,7 @@ namespace wustl_mm {
 					foundCount++;
 					currentNode->PrintNodeConcise(foundCount, false);
 					printf(": (%d expanded) (%f seconds) (%fkB Memory) (%d queue size) (%d parent size)\n", expandCount, (double) (finishTime - startTime) / (double) CLOCKS_PER_SEC, (queue->getLength() * sizeof(LinkedNode) + usedNodes.size() * sizeof(LinkedNodeStub)) / 1024.0, queue->getLength(), usedNodes.size());
-					solutions.push_back(currentNode);
+					solutions.push_back(SSECorrespondenceResult(currentNode));
 
 					#ifdef MAKE_FINAL_MRC
 						char fileName[80];
@@ -171,10 +167,25 @@ namespace wustl_mm {
 				}		
 				continueLoop = (foundCount < RESULT_COUNT);
 			}
+
+			//Cleaning up memory
+			for(unsigned int i = 0; i < usedNodes.size(); i++) {
+				delete usedNodes[i];
+			}
+			usedNodes.clear();
+
+			int queueSize = queue->getLength();
+			double tempKey;
+			LinkedNode * tempNode;
+			for(int i = 0; i < queueSize; i++) {		
+				queue->remove(tempNode, tempKey);
+				delete tempNode;
+			}
+
 			return foundCount;
 		}
 
-		LinkedNode * WongMatch15ConstrainedNoFuture::GetResult(int rank) {
+		SSECorrespondenceResult WongMatch15ConstrainedNoFuture::GetResult(int rank) {
 			if(rank <= (int)solutions.size() && (rank >= 1)) {
 				return solutions[rank-1];
 			} else {

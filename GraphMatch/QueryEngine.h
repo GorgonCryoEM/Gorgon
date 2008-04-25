@@ -21,7 +21,7 @@ namespace wustl_mm {
 		class QueryEngine {
 		public:
 			int DoGraphMatching(StandardGraph * sequenceGraph, StandardGraph * skeletonGraph);
-			LinkedNode * GetSolution(int rank);
+			SSECorrespondenceResult GetSolution(int rank);
 			void FinishGraphMatching();
 			StandardGraph * LoadSequenceGraph();
 			StandardGraph * LoadSkeletonGraph();
@@ -82,7 +82,7 @@ namespace wustl_mm {
 			return matchCount;
 		}
 
-		LinkedNode * QueryEngine::GetSolution(int rank) {
+		SSECorrespondenceResult QueryEngine::GetSolution(int rank) {
 			return matcherConstrainedNoFuture->GetResult(rank);
 		}
 

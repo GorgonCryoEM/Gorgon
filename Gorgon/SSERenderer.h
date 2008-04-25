@@ -29,9 +29,9 @@ namespace wustl_mm {
 			string GetSupportedSaveFileFormats();
 		private:
 			void UpdateBoundingBox();
-			vector<GeometricShape*> helices;
-			vector<GLUquadric *> helixQuadrics;
-			NonManifoldMesh_SheetIds * sheetMesh;
+				vector<GeometricShape*> helices;
+				vector<GLUquadric *> helixQuadrics;
+				NonManifoldMesh_SheetIds * sheetMesh;
 		};
 
 

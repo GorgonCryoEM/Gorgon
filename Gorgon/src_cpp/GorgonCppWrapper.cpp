@@ -4,7 +4,7 @@
 #define _CRT_SECURE_NO_DEPRECATE 1
 #define _CRT_NONSTDC_NO_DEPRECATE 1
 
-#include <GraphMatch/BackEndInterface.h>
+#include <Gorgon/SSECorrespondenceEngine.h>
 #include <Gorgon/VolumeRenderer.h>
 #include <Gorgon/MeshRenderer.h>
 #include <Gorgon/SSERenderer.h>
@@ -153,30 +153,34 @@ BOOST_PYTHON_MODULE(gorgon_cpp_wrapper)
 	;
 
 
-	bool (BackEndInterface::*SetConstant1)(char *, char *)	= &BackEndInterface::SetConstant;
-	bool (BackEndInterface::*SetConstant2)(char *, double)	= &BackEndInterface::SetConstant;
-	bool (BackEndInterface::*SetConstant3)(char *, int)		= &BackEndInterface::SetConstant;
-	bool (BackEndInterface::*SetConstant4)(char *, bool)	= &BackEndInterface::SetConstant;
+	bool (SSECorrespondenceEngine::*SetConstant1)(char *, char *)	= &SSECorrespondenceEngine::SetConstant;
+	bool (SSECorrespondenceEngine::*SetConstant2)(char *, double)	= &SSECorrespondenceEngine::SetConstant;
+	bool (SSECorrespondenceEngine::*SetConstant3)(char *, int)		= &SSECorrespondenceEngine::SetConstant;
+	bool (SSECorrespondenceEngine::*SetConstant4)(char *, bool)		= &SSECorrespondenceEngine::SetConstant;
 
 
-	class_<LinkedNode>("HelixCorrespondenceResult", init<>())
-		.def("getNodeString", &LinkedNode::GetNodeString)
-		.def("getCost", &LinkedNode::GetCost)
+	class_<SSECorrespondenceResult>("SSECorrespondenceResult", init<>())
+		.def("getNodeString", &SSECorrespondenceResult::GetNodeString)
+		.def("getCost", &SSECorrespondenceResult::GetCost)
 	;
 
-	class_<BackEndInterface>("HelixCorrespondenceEngine", init<>())
+	class_<SSECorrespondenceEngine>("SSECorrespondenceEngine", init<>())
 		.def("setConstant", SetConstant1)
 		.def("setConstant", SetConstant2)
 		.def("setConstant", SetConstant3)
 		.def("setConstant", SetConstant4)
-        .def("setConstantsFromFile", &BackEndInterface::SetConstantsFromFile)		
-		.def("loadSkeletonGraph", &BackEndInterface::LoadSkeletonGraph)
-		.def("loadSequenceGraph", &BackEndInterface::LoadSequenceGraph)
-		.def("executeQuery", &BackEndInterface::ExecuteQuery)
-		.def("cleanupMemory", &BackEndInterface::CleanupMemory)
-		.def("getResult", &BackEndInterface::GetResult, return_value_policy<manage_new_object>())
+        .def("setConstantsFromFile", &SSECorrespondenceEngine::SetConstantsFromFile)		
+		.def("saveCorrespondenceToFile", &SSECorrespondenceEngine::SaveCorrespondenceToFile)
+		.def("loadSkeletonGraph", &SSECorrespondenceEngine::LoadSkeletonGraph)
+		.def("loadSequenceGraph", &SSECorrespondenceEngine::LoadSequenceGraph)
+		.def("loadCorrespondenceFromFile", &SSECorrespondenceEngine::LoadCorrespondenceFromFile)
+		.def("executeQuery", &SSECorrespondenceEngine::ExecuteQuery)
+		.def("cleanupMemory", &SSECorrespondenceEngine::CleanupMemory)
+		.def("getResult", &SSECorrespondenceEngine::GetResult)
+		.def("getResultCount", &SSECorrespondenceEngine::GetResultCount)
+		.def("getSupportedLoadFileFormats", &SSECorrespondenceEngine::GetSupportedLoadFileFormats)
+		.def("getSupportedSaveFileFormats", &SSECorrespondenceEngine::GetSupportedSaveFileFormats)
     ;
-
 }
 
 #endif
