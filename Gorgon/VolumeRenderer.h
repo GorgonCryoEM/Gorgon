@@ -62,28 +62,28 @@ namespace wustl_mm {
 			void MarchingCube(Volume * vol, NonManifoldMesh_NoTags * mesh, const float iso_level, int iX, int iY, int iZ, int iScale);
 
 		private:
-			float _surf_value;
-			int _sample;
+			float surfaceValue;
+			int sampleInterval;
 			int viewingType;
-			Volume * _voxel;
-			NonManifoldMesh_NoTags * _mesh;
+			Volume * dataVolume;
+			NonManifoldMesh_NoTags * surfaceMesh;
 			Volume * cuttingVol;
 			NonManifoldMesh_NoTags * cuttingMesh;
 		};
 
 		VolumeRenderer::VolumeRenderer() {
 			viewingType = VIEWING_TYPE_ISO_SURFACE;
-			_mesh = new NonManifoldMesh_NoTags();
+			surfaceMesh = new NonManifoldMesh_NoTags();
 			cuttingMesh = new NonManifoldMesh_NoTags();
-			_voxel = NULL;
+			dataVolume = NULL;
 			cuttingVol = NULL;
-			_surf_value = 1.5;
-			_sample = 1;
+			surfaceValue = 1.5;
+			sampleInterval = 1;
 		}
 		VolumeRenderer::~VolumeRenderer() {
-			delete _mesh;
-			if(_voxel != NULL) {
-				delete _voxel;
+			delete surfaceMesh;
+			if(dataVolume != NULL) {
+				delete dataVolume;
 			}
 			delete cuttingMesh;
 			if(cuttingVol != NULL) {
@@ -92,11 +92,11 @@ namespace wustl_mm {
 		}
 
 		float VolumeRenderer::GetMaxDensity(){
-			return _voxel->getMax();
+			return dataVolume->getMax();
 		}
 
 		float VolumeRenderer::GetMinDensity() {
-			return _voxel->getMin();
+			return dataVolume->getMin();
 		}
 
 		float VolumeRenderer::GetOffset(float fValue1, float fValue2, float fValueDesired)
@@ -113,7 +113,7 @@ namespace wustl_mm {
 
 
 		float VolumeRenderer::GetSurfaceValue() const { 
-			return _surf_value; 
+			return surfaceValue; 
 		}
 
 		float VolumeRenderer::GetVoxelData(Volume * vol, int x, int y, int z) {
@@ -147,11 +147,11 @@ namespace wustl_mm {
 			z += a2iEdgeHash[edge][3]*iScale;
 
 			edge = a2iEdgeHash[edge][0];
-			return x * _voxel->getSizeY() * _voxel->getSizeZ() * 3 + y * _voxel->getSizeZ() * 3 + z * 3 + edge;
+			return x * dataVolume->getSizeY() * dataVolume->getSizeZ() * 3 + y * dataVolume->getSizeZ() * 3 + z * 3 + edge;
 		}
 
 		int VolumeRenderer::GetSampleInterval() const  { 
-			return _sample; 
+			return sampleInterval; 
 		}
 
 		string VolumeRenderer::GetSupportedLoadFileFormats() {
@@ -183,15 +183,15 @@ namespace wustl_mm {
 		}
 		void VolumeRenderer::Draw(int subSceneIndex, bool selectEnabled) {
 			if(subSceneIndex == 0) {
-				if((viewingType == VIEWING_TYPE_ISO_SURFACE) && (_mesh != NULL)) {
-					_mesh->Draw(true, false, false, selectEnabled, false, false);
+				if((viewingType == VIEWING_TYPE_ISO_SURFACE) && (surfaceMesh != NULL)) {
+					surfaceMesh->Draw(true, false, false, selectEnabled, false, false);
 				} else if((viewingType == VIEWING_TYPE_CROSS_SECTION) && (cuttingMesh != NULL)) {
 					float material[4];
 					float material2[4];					
 					glGetMaterialfv(GL_FRONT, GL_DIFFUSE, material);
 					material2[3] = material[3];
-					float maxVal = _voxel->getMax();
-					float minVal = _voxel->getMin();
+					float maxVal = dataVolume->getMax();
+					float minVal = dataVolume->getMin();
 					float val;
 					int k;
 					if(selectEnabled) {
@@ -207,7 +207,7 @@ namespace wustl_mm {
 						for(unsigned int j = 0; j < cuttingMesh->faces[i].vertexIds.size(); j++) {
 							normal = cuttingMesh->GetVertexNormal(cuttingMesh->faces[i].vertexIds[j]);
 							k = cuttingMesh->GetVertexIndex(cuttingMesh->faces[i].vertexIds[j]);
-							val = this->GetVoxelData(_voxel, cuttingMesh->vertices[k].position.values[0], cuttingMesh->vertices[k].position.values[1], cuttingMesh->vertices[k].position.values[2]);
+							val = this->GetVoxelData(dataVolume, cuttingMesh->vertices[k].position.values[0], cuttingMesh->vertices[k].position.values[1], cuttingMesh->vertices[k].position.values[2]);
 							material2[0] = (val - minVal)* material[0] / (maxVal - minVal);
 							material2[1] = (val - minVal)* material[1] / (maxVal - minVal);
 							material2[2] = (val - minVal)* material[2] / (maxVal - minVal);							
@@ -229,13 +229,13 @@ namespace wustl_mm {
 		}
 
 		void VolumeRenderer::CalculateSurface() {
-			_mesh->Clear();
-			if(_voxel != NULL) {
+			surfaceMesh->Clear();
+			if(dataVolume != NULL) {
 				int iX, iY, iZ;
-				for(iX = 0; iX < _voxel->getSizeX(); iX+=_sample) {
-					for(iY = 0; iY < _voxel->getSizeY(); iY+=_sample) {
-						for(iZ = 0; iZ < _voxel->getSizeZ(); iZ+=_sample) {
-							MarchingCube(_voxel, _mesh, _surf_value, iX, iY, iZ, _sample);
+				for(iX = 0; iX < dataVolume->getSizeX(); iX+=sampleInterval) {
+					for(iY = 0; iY < dataVolume->getSizeY(); iY+=sampleInterval) {
+						for(iZ = 0; iZ < dataVolume->getSizeZ(); iZ+=sampleInterval) {
+							MarchingCube(dataVolume, surfaceMesh, surfaceValue, iX, iY, iZ, sampleInterval);
 						}
 					}
 				}
@@ -244,7 +244,7 @@ namespace wustl_mm {
 
 		bool VolumeRenderer::CalculateCuttingSurface() {
 			bool redraw = false;
-			if(_voxel != NULL) {
+			if(dataVolume != NULL) {
 				cuttingMesh->Clear();
 				if((cuttingPlaneCenter.X() >= minPts[0]) && (cuttingPlaneCenter.X() <= maxPts[0]) &&
 					(cuttingPlaneCenter.Y() >= minPts[1]) && (cuttingPlaneCenter.Y() <= maxPts[1]) &&
@@ -254,9 +254,9 @@ namespace wustl_mm {
 
 					int iX, iY, iZ;
 
-					for(iX = 0; iX < _voxel->getSizeX(); iX+=_sample) {
-						for(iY = 0; iY < _voxel->getSizeY(); iY+=_sample) {
-							for(iZ = 0; iZ < _voxel->getSizeZ(); iZ+=_sample) {
+					for(iX = 0; iX < dataVolume->getSizeX(); iX+=sampleInterval) {
+						for(iY = 0; iY < dataVolume->getSizeY(); iY+=sampleInterval) {
+							for(iZ = 0; iZ < dataVolume->getSizeZ(); iZ+=sampleInterval) {
 								cuttingVol->setDataAt(iX, iY, iZ, (cuttingPlaneCenter - Vector3DFloat(iX, iY, iZ))* cuttingPlaneDirection);
 							}
 						}
@@ -266,18 +266,18 @@ namespace wustl_mm {
 					int iV;
 					bool posFound = false, negFound = false;
 
-					for(iX = 0; iX < _voxel->getSizeX() - _sample; iX+=_sample) {
-						for(iY = 0; iY < _voxel->getSizeY() - _sample ; iY+=_sample) {
-							for(iZ = 0; iZ < _voxel->getSizeZ() - _sample; iZ+=_sample) {
+					for(iX = 0; iX < dataVolume->getSizeX() - sampleInterval; iX+=sampleInterval) {
+						for(iY = 0; iY < dataVolume->getSizeY() - sampleInterval ; iY+=sampleInterval) {
+							for(iZ = 0; iZ < dataVolume->getSizeZ() - sampleInterval; iZ+=sampleInterval) {
 								posFound = false;
 								negFound = false;
 								for(iV = 0; iV < 8; iV++) {
-									data = GetVoxelData(cuttingVol, iX + a2iVertexOffset[iV][0] * _sample,  iY + a2iVertexOffset[iV][1] * _sample, iZ + a2iVertexOffset[iV][2] * _sample);
+									data = GetVoxelData(cuttingVol, iX + a2iVertexOffset[iV][0] * sampleInterval,  iY + a2iVertexOffset[iV][1] * sampleInterval, iZ + a2iVertexOffset[iV][2] * sampleInterval);
 									posFound = posFound || (data >= 0);
 									negFound = negFound || (data < 0);																		
 								}
 								if(posFound && negFound) {
-									MarchingCube(cuttingVol, cuttingMesh, 0.0f, iX, iY, iZ, _sample);							
+									MarchingCube(cuttingVol, cuttingMesh, 0.0f, iX, iY, iZ, sampleInterval);							
 								}
 							}
 						}
@@ -290,20 +290,20 @@ namespace wustl_mm {
 
 
 		void VolumeRenderer::LoadFile(string fileName) {
-			if(_voxel != NULL) {
-				delete _voxel;
+			if(dataVolume != NULL) {
+				delete dataVolume;
 			}
 			if(cuttingVol != NULL) {
 				delete cuttingVol;
 			}
-			_voxel = VolumeFormatConverter::LoadVolume(fileName);
-			cuttingVol = new Volume(_voxel->getSizeX(), _voxel->getSizeY(), _voxel->getSizeZ());
+			dataVolume = VolumeFormatConverter::LoadVolume(fileName);
+			cuttingVol = new Volume(dataVolume->getSizeX(), dataVolume->getSizeY(), dataVolume->getSizeZ());
 			UpdateBoundingBox();
 		}
 
 		void VolumeRenderer::SaveFile(string fileName) {
-			if(_voxel != NULL) {
-				_voxel->toMRCFile((char *)fileName.c_str());
+			if(dataVolume != NULL) {
+				dataVolume->toMRCFile((char *)fileName.c_str());
 			}
 		}
 		void VolumeRenderer::MarchingCube(Volume * vol, NonManifoldMesh_NoTags * mesh, const float iso_level, int iX, int iY, int iZ, int iScale){
@@ -349,7 +349,7 @@ namespace wustl_mm {
 					//if there is an intersection on this edge
 					if(iEdgeFlags & (1<<iEdge))
 					{
-							fOffset = GetOffset(afCubeValue[ a2iEdgeConnection[iEdge][0] ], afCubeValue[ a2iEdgeConnection[iEdge][1] ], _surf_value);
+							fOffset = GetOffset(afCubeValue[ a2iEdgeConnection[iEdge][0] ], afCubeValue[ a2iEdgeConnection[iEdge][1] ], surfaceValue);
 
 							asEdgeVertex[iEdge][0] = (float)iX + ((float)a2iVertexOffset[ a2iEdgeConnection[iEdge][0] ][0] +  fOffset * (float)a2iEdgeDirection[iEdge][0]) * (float)iScale;
 							asEdgeVertex[iEdge][1] = (float)iY + ((float)a2iVertexOffset[ a2iEdgeConnection[iEdge][0] ][1] +  fOffset * (float)a2iEdgeDirection[iEdge][1]) * (float)iScale;
@@ -378,7 +378,7 @@ namespace wustl_mm {
 		}
 
 		void VolumeRenderer::SetSampleInterval(const int size) {
-			_sample = size;
+			sampleInterval = size;
 			if(viewingType == VIEWING_TYPE_ISO_SURFACE) {
 				CalculateSurface();
 			} else if (viewingType == VIEWING_TYPE_CROSS_SECTION) {
@@ -387,23 +387,23 @@ namespace wustl_mm {
 		}
 
 		void VolumeRenderer::SetSurfaceValue(const float value) {
-			_surf_value = value;
+			surfaceValue = value;
 			CalculateSurface();
 		}
 
 
 		void VolumeRenderer::Unload() {
 			Renderer::Unload();
-			if(_voxel != NULL) {
-				delete _voxel;
+			if(dataVolume != NULL) {
+				delete dataVolume;
 			}
-			_voxel = NULL;
+			dataVolume = NULL;
 			CalculateSurface();
 			UpdateBoundingBox();
 
 		}
 		void VolumeRenderer::UpdateBoundingBox() {
-			if(_voxel == NULL) {
+			if(dataVolume == NULL) {
 				for(int i = 0; i < 3; i++) {
 					minPts[i] = 0;
 					maxPts[i] = 1;
@@ -412,24 +412,24 @@ namespace wustl_mm {
 				for(int i = 0; i < 3; i++) {
 					minPts[i] = 0;
 				}
-				maxPts[0] = _voxel->getSizeX()-1;
-				maxPts[1] = _voxel->getSizeY()-1;
-				maxPts[2] = _voxel->getSizeZ()-1;
+				maxPts[0] = dataVolume->getSizeX()-1;
+				maxPts[1] = dataVolume->getSizeY()-1;
+				maxPts[2] = dataVolume->getSizeZ()-1;
 			}
 		}
 
 		Volume * VolumeRenderer::PerformBinarySkeletonizationJu2007(double threshold, int minCurveSize, int minSurfaceSize) {
 			VolumeSkeletonizer * skeletonizer = new VolumeSkeletonizer(0,0,0,DEFAULT_SKELETON_DIRECTION_RADIUS);
-			Volume * outputVol = skeletonizer->PerformPureJuSkeletonization(_voxel, "", threshold, minCurveSize, minSurfaceSize);
+			Volume * outputVol = skeletonizer->PerformPureJuSkeletonization(dataVolume, "", threshold, minCurveSize, minSurfaceSize);
 			delete skeletonizer;
 			return outputVol;
 		}
 
 		Volume * VolumeRenderer::PerformGrayscaleSkeletonizationAbeysinghe2008(double startDensity, int stepCount, int minCurveSize, int minSurfaceSize, int curveRadius, int surfaceRadius, int skeletonRadius) {
-			double stepSize = (_voxel->getMax() - startDensity) / stepCount;
+			double stepSize = (dataVolume->getMax() - startDensity) / stepCount;
 			if(!isZero(stepSize)) {
 				VolumeSkeletonizer * skeletonizer = new VolumeSkeletonizer(0, curveRadius, surfaceRadius, skeletonRadius);
-				Volume * outputVol = skeletonizer->PerformImmersionSkeletonizationAndPruning(_voxel, startDensity, _voxel->getMax(), stepSize, 0, 0, minCurveSize, minSurfaceSize, 0, 0, "", true, 1.0, DEFAULT_PRUNE_THRESHOLD, DEFAULT_PRUNE_THRESHOLD);
+				Volume * outputVol = skeletonizer->PerformImmersionSkeletonizationAndPruning(dataVolume, startDensity, dataVolume->getMax(), stepSize, 0, 0, minCurveSize, minSurfaceSize, 0, 0, "", true, 1.0, DEFAULT_PRUNE_THRESHOLD, DEFAULT_PRUNE_THRESHOLD);
 				delete skeletonizer;
 				return outputVol;
 			} else {
@@ -437,7 +437,7 @@ namespace wustl_mm {
 			}
 		}
 		Volume * VolumeRenderer::GetVolume() {
-			return _voxel;
+			return dataVolume;
 		}
 	}
 }

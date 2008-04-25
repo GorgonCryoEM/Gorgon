@@ -4,7 +4,7 @@
 
 from PyQt4 import QtCore, QtGui
 from ui_dialog_sse_helix_correspondence_finder import Ui_DialogSSEHelixCorrespondenceFinder
-from gorgon_cpp_wrapper import HelixCorrespondenceEngine, HelixCorrespondenceResult
+from gorgon_cpp_wrapper import SSECorrespondenceEngine, SSECorrespondenceResult
 
 class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):   
     def __init__(self, main, viewer, parent=None):
@@ -162,7 +162,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
             self.engine.cleanupMemory()
             
         self.setCursor(QtCore.Qt.BusyCursor)
-        self.engine = HelixCorrespondenceEngine()
+        self.engine = SSECorrespondenceEngine()
         self.setConstants()                       
         self.engine.loadSequenceGraph()
         self.engine.loadSkeletonGraph()

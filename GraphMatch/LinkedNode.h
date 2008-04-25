@@ -12,6 +12,7 @@ Date  : 01/23/2006
 #include "GlobalConstants.h"
 #include "LinkedNodeStub.h"
 #include <string>
+#include <assert.h>
 
 using namespace std;
 
@@ -32,7 +33,7 @@ namespace wustl_mm {
 			LinkedNode(LinkedNode * olderNode, LinkedNodeStub * olderStub, int n1Node, int n2Node, int dummyHelixCount);
 			~LinkedNode();
 			void PrintNodeConcise(int rank, bool endOfLine = true, bool printCostBreakdown = false);
-			string GetNodeString();
+			vector<int> GetNodeCorrespondence();
 			double GetCost();
 			unsigned long long GetN1Bitmap();
 			unsigned long long GetN2Bitmap();
@@ -172,7 +173,7 @@ namespace wustl_mm {
 			}
 		}
 
-		string LinkedNode::GetNodeString() {
+		vector<int> LinkedNode::GetNodeCorrespondence() {
 			bool used[MAX_NODES];
 			int n1[MAX_NODES];
 			int n2[MAX_NODES];
@@ -219,15 +220,18 @@ namespace wustl_mm {
 				n2[minIndex] = n2[i];
 				n2[i] = temp;
 			}
-			string nodeString = string("");
 
-			char text[100];
+			vector<int> correspondance;
+			correspondance.clear();
+
 			for(int i = 0; i < top; i++) {
-				itoa(n2[i], text, 10);
-				nodeString.append(text);
-				nodeString.append(" ");
+				if(n2[i] >= 0) {
+					correspondance.push_back(n2[i]-1);
+				} else {
+					correspondance.push_back(n2[i]);
+				}
 			}
-			return nodeString;
+			return correspondance;
 		}
 
 		double LinkedNode::GetCost() {

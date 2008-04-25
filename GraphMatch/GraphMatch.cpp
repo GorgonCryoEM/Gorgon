@@ -17,7 +17,6 @@ Date  : 01/23/2006
 #include "GlobalConstants.h"
 #include "GraphGenerator.h"
 #include "BackEndInterface.h"
-#include "VisualizationTest.h"
 #include <time.h>
 
 #define DllExport   __declspec( dllexport )
@@ -148,12 +147,7 @@ int main( int args, char * argv[] ) {
 		Volume * vol = (MRCReaderPicker::pick(argv[2]))->getVolume();
 		vol->toMathematicaFile("myVolume.nb");
 		delete(vol);
-	} else if((args == 3) && (strcmp(argv[2], "-gl") == 0)) {
-		// Test Visualization Code
-		printf("Running OpenGL Test...\n");
-
-		executeTest(args, argv);
-	}
+	} 
 	//else if((args == 5) && (strcmp(argv[1], "1") == 0)) {
 	//	DisplayConstants();
 

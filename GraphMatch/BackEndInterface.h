@@ -4,10 +4,8 @@
 #include "GlobalConstants.h"
 #include "QueryEngine.h"
 #include "LinkedNode.h"
-#include <Gorgon/GLVisualizer.h>
 
 using namespace std;
-using namespace wustl_mm::Visualization;
 
 namespace wustl_mm {
 	namespace GraphMatch {
@@ -27,30 +25,23 @@ namespace wustl_mm {
 			void LoadSkeletonGraph();
 			// Process Execution
 			//int ExecuteQuery(StandardGraph * sequenceGraph, StandardGraph * skeletonGraph);
-			int ExecuteQuery();
+			virtual int ExecuteQuery();
 			// Result Retrieval
-			LinkedNode * GetResult(int rank);
-			// OpenGL drawing/selecting
-			bool DrawResult(int rank);
-			bool DrawSkeleton();
-			bool DrawSequence();
+			virtual SSECorrespondenceResult GetResult(int rank);
 			// Cleanup
 			void CleanupMemory();
-		private:
+		protected:
 			QueryEngine * queryEngine;
-			GLVisualizer * visualizer;
 			StandardGraph * skeleton;
 			StandardGraph * sequence;
 		};
 
 		BackEndInterface::BackEndInterface(): skeleton(NULL), sequence(NULL) {
 			queryEngine = new QueryEngine();
-			visualizer = new GLVisualizer();
 		}
 
 		BackEndInterface::~BackEndInterface() {
 			delete queryEngine;
-			delete visualizer;
 			if(skeleton != NULL) {
 				delete skeleton;
 			}
@@ -104,32 +95,12 @@ namespace wustl_mm {
 				return 0;
 		}
 
-		LinkedNode * BackEndInterface::GetResult(int rank) {
+		SSECorrespondenceResult BackEndInterface::GetResult(int rank) {
 			return queryEngine->GetSolution(rank);
 		}
 
 		void BackEndInterface::CleanupMemory() {
 			queryEngine->FinishGraphMatching();
-		}
-
-		bool BackEndInterface::DrawResult(int rank) {
-			return false;
-		}
-
-		bool BackEndInterface::DrawSkeleton() {
-			if(skeleton != NULL) 
-				visualizer->DrawSkeleton(skeleton);
-			else 
-				return false;
-			return true;	
-		}
-
-		bool BackEndInterface::DrawSequence() {
-			if(sequence != NULL)
-				visualizer->DrawSequence(sequence);
-			else
-				return false;
-			return true;
 		}
 	}
 }
