@@ -287,22 +287,22 @@ namespace wustl_mm {
 		{
 		#ifdef VERBOSE
 			printf("Constants...\n");
-			printf("\tEUCLIDEAN_DISTANCE_THRESHOLD     = %f\n", EUCLIDEAN_DISTANCE_THRESHOLD);
-			printf("\tBORDER_MARGIN_THRESHOLD          = %d\n", BORDER_MARGIN_THRESHOLD);
-			printf("\tNORMALIZE_GRAPHS                 = %d\n", NORMALIZE_GRAPHS);
-			printf("\tTRANSLATE_VOLUMETRIC_COORDINATES = %d\n", TRANSLATE_VOLUMETRIC_COORDINATES);
-			printf("\tMISSING_HELIX_PENALTY            = %f\n", MISSING_HELIX_PENALTY);
-			printf("\tEUCLIDEAN_LOOP_PENALTY           = %f\n", EUCLIDEAN_LOOP_PENALTY);
-			printf("\tSTART_END_MISSING_HELIX_PENALTY  = %f\n", START_END_MISSING_HELIX_PENALTY);
-			printf("\tHELIX_WEIGHT_COEFFICIENT         = %f\n", HELIX_WEIGHT_COEFFICIENT);
-			printf("\tLOOP_WEIGHT_COEFFICIENT          = %f\n", LOOP_WEIGHT_COEFFICIENT);
-			printf("\tSHEET_WEIGHT_COEFFICIENT         = %f\n", SHEET_WEIGHT_COEFFICIENT);
-			printf("\tMISSING_HELIX_LENGTH             = %f\n", MISSING_HELIX_LENGTH);
-			printf("\tCOST_FUNCTION                    = %d -- 1 : |a-b|       2 : |a-b|/(a+b)      3:|a-b|^2\n", COST_FUNCTION);
-			printf("\tVOXEL_SIZE                       = %f\n", VOXEL_SIZE);
-			printf("\tMISSING_HELIX_COUNT              = %d\n", MISSING_HELIX_COUNT);
-			printf("\tMISSING_SHEET_COUNT              = %d\n", MISSING_SHEET_COUNT);
-			printf("\tEUCLIDEAN_VOXEL_TO_PDB_RATIO     = %f\n", EUCLIDEAN_VOXEL_TO_PDB_RATIO);
+			printf("\tEUCLIDEAN_DISTANCE_THRESHOLD     = %lf\n", EUCLIDEAN_DISTANCE_THRESHOLD);
+			printf("\tBORDER_MARGIN_THRESHOLD          = %ld\n", BORDER_MARGIN_THRESHOLD);
+			printf("\tNORMALIZE_GRAPHS                 = %ld\n", NORMALIZE_GRAPHS);
+			printf("\tTRANSLATE_VOLUMETRIC_COORDINATES = %ld\n", TRANSLATE_VOLUMETRIC_COORDINATES);
+			printf("\tMISSING_HELIX_PENALTY            = %lf\n", MISSING_HELIX_PENALTY);
+			printf("\tEUCLIDEAN_LOOP_PENALTY           = %lf\n", EUCLIDEAN_LOOP_PENALTY);
+			printf("\tSTART_END_MISSING_HELIX_PENALTY  = %lf\n", START_END_MISSING_HELIX_PENALTY);
+			printf("\tHELIX_WEIGHT_COEFFICIENT         = %lf\n", HELIX_WEIGHT_COEFFICIENT);
+			printf("\tLOOP_WEIGHT_COEFFICIENT          = %lf\n", LOOP_WEIGHT_COEFFICIENT);
+			printf("\tSHEET_WEIGHT_COEFFICIENT         = %lf\n", SHEET_WEIGHT_COEFFICIENT);
+			printf("\tMISSING_HELIX_LENGTH             = %lf\n", MISSING_HELIX_LENGTH);
+			printf("\tCOST_FUNCTION                    = %ld -- 1 : |a-b|       2 : |a-b|/(a+b)      3:|a-b|^2\n", COST_FUNCTION);
+			printf("\tVOXEL_SIZE                       = %lf\n", VOXEL_SIZE);
+			printf("\tMISSING_HELIX_COUNT              = %ld\n", MISSING_HELIX_COUNT);
+			printf("\tMISSING_SHEET_COUNT              = %ld\n", MISSING_SHEET_COUNT);
+			printf("\tEUCLIDEAN_VOXEL_TO_PDB_RATIO     = %lf\n", EUCLIDEAN_VOXEL_TO_PDB_RATIO);
 			printf("\tNODE_CONSTRAINTS                 = ");
 			for(int i = 0 ; i < MAX_NODES; i++) {
 				if(allowedConstraintCount[i] > 0) {
@@ -318,7 +318,7 @@ namespace wustl_mm {
 				int x = notAllowedConstraintCount[i];
 				if(x > 0) {
 					printf("(%d -", i+1);
-					for(unsigned int j = 0; j < x; j++) {
+					for(int j = 0; j < x; j++) {
 						printf(" %d", notAllowedConstraintCollection[i][j]);
 					}
 					printf(") ");				

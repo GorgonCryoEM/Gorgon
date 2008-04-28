@@ -113,68 +113,61 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
     
     def setConstants(self):
         #Tab 1
-        self.engine.setConstant("SSE_FILE_NAME", str(self.ui.lineEditHelixLengthFile.text()))
-        self.engine.setConstant("VRML_HELIX_FILE_NAME", str(self.ui.lineEditHelixLocationFile.text()))
-        self.engine.setConstant("MRC_FILE_NAME", str(self.ui.lineEditSkeletonFile.text()))
-        self.engine.setConstant("PDB_FILE_NAME", str(self.ui.lineEditSequenceFile.text()))
+        self.viewer.correspondenceEngine.setConstant("SSE_FILE_NAME", str(self.ui.lineEditHelixLengthFile.text()))
+        self.viewer.correspondenceEngine.setConstant("VRML_HELIX_FILE_NAME", str(self.ui.lineEditHelixLocationFile.text()))
+        self.viewer.correspondenceEngine.setConstant("MRC_FILE_NAME", str(self.ui.lineEditSkeletonFile.text()))
+        self.viewer.correspondenceEngine.setConstant("PDB_FILE_NAME", str(self.ui.lineEditSequenceFile.text()))
         
         #Tab 2
         if(self.ui.radioButtonAbsoluteDifference.isChecked()):
-            self.engine.setConstant("COST_FUNCTION", 1)
+            self.viewer.correspondenceEngine.setConstantInt("COST_FUNCTION", 1)
         elif (self.ui.radioButtonNormalizedDifference.isChecked()):
-            self.engine.setConstant("COST_FUNCTION", 2)
+            self.viewer.correspondenceEngine.setConstantInt("COST_FUNCTION", 2)
         else :
-            self.engine.setConstant("COST_FUNCTION", 3)
+            self.viewer.correspondenceEngine.setConstantInt("COST_FUNCTION", 3)
 
-        self.engine.setConstant("VOXEL_SIZE", self.ui.doubleSpinBoxVoxelSize.value())        
-        self.engine.setConstant("EUCLIDEAN_DISTANCE_THRESHOLD", self.ui.doubleSpinBoxEuclideanDistance.value())
-        
+        self.viewer.correspondenceEngine.setConstant("VOXEL_SIZE", self.ui.doubleSpinBoxVoxelSize.value())        
+        self.viewer.correspondenceEngine.setConstant("EUCLIDEAN_DISTANCE_THRESHOLD", self.ui.doubleSpinBoxEuclideanDistance.value())
+                                                      
         if(self.ui.checkBoxMissingHelices.isChecked()):
-            self.engine.setConstant("MISSING_HELIX_COUNT", self.ui.spinBoxMissingHelixCount.value())
+            self.viewer.correspondenceEngine.setConstantInt("MISSING_HELIX_COUNT", self.ui.spinBoxMissingHelixCount.value())
         else:
-            self.engine.setConstant("MISSING_HELIX_COUNT", -1)            
+            self.viewer.correspondenceEngine.setConstantInt("MISSING_HELIX_COUNT", -1)            
         
-        self.engine.setConstant("TRANSLATE_VOLUMETRIC_COORDINATES", self.ui.checkBoxRepositionSkeleton.isChecked());
+        self.viewer.correspondenceEngine.setConstantBool("TRANSLATE_VOLUMETRIC_COORDINATES", self.ui.checkBoxRepositionSkeleton.isChecked());
         
         #Tab 3
-        self.engine.setConstant("MISSING_HELIX_PENALTY", self.ui.doubleSpinBoxHelixMissingPenalty.value())
-        self.engine.setConstant("START_END_MISSING_HELIX_PENALTY", self.ui.doubleSpinBoxEndHelixMissingPenalty.value())
-        self.engine.setConstant("EUCLIDEAN_LOOP_PENALTY", self.ui.doubleSpinBoxEuclideanLoopUsedPenalty.value())
-        self.engine.setConstant("HELIX_WEIGHT_COEFFICIENT", self.ui.doubleSpinBoxHelixImportance.value())
-        self.engine.setConstant("LOOP_WEIGHT_COEFFICIENT", self.ui.doubleSpinBoxLoopImportance.value())
-        self.engine.setConstant("MISSING_HELIX_LENGTH", self.ui.doubleSpinBoxAverageMissingHelixLength.value())    
-        self.engine.setConstant("EUCLIDEAN_VOXEL_TO_PDB_RATIO", self.ui.doubleSpinBoxEuclideanToPDBRatio.value())
-        self.engine.setConstant("BORDER_MARGIN_THRESHOLD", self.ui.spinBoxBorderMarginThreshold.value())
-        self.engine.setConstant("NORMALIZE_GRAPHS", True)        
+        self.viewer.correspondenceEngine.setConstant("MISSING_HELIX_PENALTY", self.ui.doubleSpinBoxHelixMissingPenalty.value())
+        self.viewer.correspondenceEngine.setConstant("START_END_MISSING_HELIX_PENALTY", self.ui.doubleSpinBoxEndHelixMissingPenalty.value())
+        self.viewer.correspondenceEngine.setConstant("EUCLIDEAN_LOOP_PENALTY", self.ui.doubleSpinBoxEuclideanLoopUsedPenalty.value())
+        self.viewer.correspondenceEngine.setConstant("HELIX_WEIGHT_COEFFICIENT", self.ui.doubleSpinBoxHelixImportance.value())
+        self.viewer.correspondenceEngine.setConstant("LOOP_WEIGHT_COEFFICIENT", self.ui.doubleSpinBoxLoopImportance.value())
+        self.viewer.correspondenceEngine.setConstant("MISSING_HELIX_LENGTH", self.ui.doubleSpinBoxAverageMissingHelixLength.value())    
+        self.viewer.correspondenceEngine.setConstant("EUCLIDEAN_VOXEL_TO_PDB_RATIO", self.ui.doubleSpinBoxEuclideanToPDBRatio.value())
+        self.viewer.correspondenceEngine.setConstantInt("BORDER_MARGIN_THRESHOLD", self.ui.spinBoxBorderMarginThreshold.value())
+        self.viewer.correspondenceEngine.setConstantBool("NORMALIZE_GRAPHS", True)        
     
     def populateResults(self):
         self.ui.tabWidget.setCurrentIndex(3)
         self.ui.tableWidgetResults.setEnabled(True)
         self.ui.tableWidgetResults.setRowCount(self.resultCount)
         for i in range(self.resultCount):                    
-            result = self.engine.getResult(i+1)
+            result = self.viewer.correspondenceEngine.getResult(i+1)
             self.ui.tableWidgetResults.setItem(i, 0, QtGui.QTableWidgetItem(result.getNodeString()))
             self.ui.tableWidgetResults.setItem(i, 1, QtGui.QTableWidgetItem(str(result.getCost())))
-            
-    
+                
     def accept(self):
-        if(self.executed):
-            self.engine.cleanupMemory()
-            
         self.setCursor(QtCore.Qt.BusyCursor)
-        self.engine = SSECorrespondenceEngine()
         self.setConstants()                       
-        self.engine.loadSequenceGraph()
-        self.engine.loadSkeletonGraph()
-        self.resultCount = self.engine.executeQuery()        
+        self.viewer.correspondenceEngine.loadSequenceGraph()
+        self.viewer.correspondenceEngine.loadSkeletonGraph()
+        self.resultCount = self.viewer.correspondenceEngine.executeQuery()
+        self.viewer.correspondenceEngine.cleanupMemory()
         self.populateResults()                                       
         self.setCursor(QtCore.Qt.ArrowCursor)
         self.viewer.emitModelChanged()
         self.executed = True 
         
-    def reject(self):
-        if(self.executed):
-            self.engine.cleanupMemory()
-            
+    def reject(self):           
         self.app.actions.getAction("perform_SSEFindHelixCorrespondences").trigger()
         
