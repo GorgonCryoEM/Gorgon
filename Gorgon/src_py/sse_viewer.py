@@ -5,6 +5,7 @@ from PyQt4 import QtGui, QtCore, QtOpenGL
 from gorgon_cpp_wrapper import SSERenderer
 from base_viewer import BaseViewer
 from sse_helix_correspondence_finder_form import SSEHelixCorrespondenceFinderForm
+from gorgon_cpp_wrapper import SSECorrespondenceEngine, SSECorrespondenceResult
 
 try:
     from OpenGL.GL import *
@@ -24,6 +25,7 @@ class SSEViewer(BaseViewer):
         self.sheetFileName = ""
         self.showBox = False;
         self.renderer = SSERenderer()
+        self.correspondenceEngine = SSECorrespondenceEngine()
         self.createUI()      
         self.selectEnabled = True
         self.app.viewers["sse"] = self;
