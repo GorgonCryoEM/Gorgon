@@ -90,7 +90,23 @@ namespace wustl_mm {
 
 		void MeshRenderer::SaveFile(string fileName) {
 			if(mesh != NULL) {
-				mesh->ToOffCells(fileName);
+				int pos = fileName.rfind(".") + 1;
+				string extension = fileName.substr(pos, fileName.length()-pos);
+				
+				if(stricmp(extension.c_str(), "OFF") == 0) {
+					mesh->ToOffCells(fileName);
+				} else if(stricmp(extension.c_str(), "MRC") == 0) {
+					Volume * volume = mesh->ToVolume();
+					volume->toMRCFile((char *)fileName.c_str());
+					delete volume;			
+				} else {
+					printf("Input format %s not supported!\n", extension);
+				}
+			}
+
+
+			if(mesh != NULL) {
+				
 			}
 		}
 
@@ -140,7 +156,7 @@ namespace wustl_mm {
 			return "Meshes (*.off);;Volumes (*.mrc *.atom);;All Files (*.off *.mrc *.atom)";
 		}
 		string MeshRenderer::GetSupportedSaveFileFormats() {
-			return "Meshes (*.off)";
+			return "Meshes (*.off);;Volumes (*.mrc)";
 		}
 
 		Vector3DFloat MeshRenderer::Get3DCoordinates(int subsceneIndex, int ix0, int ix1, int ix2, int ix3, int ix4) {

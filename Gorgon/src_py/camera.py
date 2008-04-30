@@ -29,6 +29,7 @@ class Camera(QtOpenGL.QGLWidget):
         self.lightsColor = [[1.0, 1.0, 1.0, 1.0], [1.0, 1.0, 1.0, 1.0]]
         self.lightsPosition = [[1000,1000,1000], [-1000,-1000,-1000]]        
         self.backgroundColor = [0.0, 0.0, 0.0, 1.0]
+        self.mouseMovePoint = QtCore.QPoint(0,0)
         
         self.fogColor = [0.0, 0.0, 0.0, 1.0]
         self.fogDensity = 0.01
@@ -201,7 +202,7 @@ class Camera(QtOpenGL.QGLWidget):
             glPopName()
         glPopMatrix()
      
-    def processMouseDown(self, mouseHits):   
+    def processMouseDown(self, mouseHits, event):   
         globalMinDepth = self.far + 1
         minNames = list()        
         sceneId = -1
@@ -216,7 +217,7 @@ class Camera(QtOpenGL.QGLWidget):
             minNames.pop(0)
         self.selectedScene = sceneId;
             
-    def processMouseClick(self, mouseHits):   
+    def processMouseClick(self, mouseHits, event):   
         globalMinDepth = self.far + 1
         minNames = list()        
         sceneId = -1
@@ -230,9 +231,9 @@ class Camera(QtOpenGL.QGLWidget):
             sceneId = minNames[0];
             minNames.pop(0)
         if(sceneId >= 0):
-            self.scene[sceneId].processMouseClick(minNames)
+            self.scene[sceneId].processMouseClick(minNames, event)
        
-    def processMouseMove(self, mouseHits):       
+    def processMouseMove(self, mouseHits, event):       
         globalMinDepth = self.far + 1
         minNames = list()        
         sceneId = -1
@@ -246,7 +247,7 @@ class Camera(QtOpenGL.QGLWidget):
             sceneId = minNames[0];
             minNames.pop(0)
         if(sceneId >= 0):            
-            self.scene[sceneId].processMouseMove(minNames)       
+            self.scene[sceneId].processMouseMove(minNames, event)       
        
     def pickObject(self, x, y):        
         
@@ -303,17 +304,17 @@ class Camera(QtOpenGL.QGLWidget):
     def mousePressEvent(self, event):
         self.mouseDownPoint = QtCore.QPoint(event.pos())
         self.mouseMovePoint = QtCore.QPoint(event.pos())
-        self.processMouseDown(self.pickObject(self.mouseDownPoint.x(), self.mouseDownPoint.y()))   
+        self.processMouseDown(self.pickObject(self.mouseDownPoint.x(), self.mouseDownPoint.y()), event)   
         
     def mouseReleaseEvent(self, event):
         self.mouseUpPoint = QtCore.QPoint(event.pos())
         #Enter selection mode only if we didnt move the mouse much.. (If the mouse was moved, then we assume a camera motion instead of a selection
         if (pow(self.mouseDownPoint.x() - self.mouseUpPoint.x(), 2) + pow(self.mouseDownPoint.y() - self.mouseUpPoint.y(), 2) <= 2): 
-            self.processMouseClick(self.pickObject(self.mouseUpPoint.x(), self.mouseUpPoint.y()))
+            self.processMouseClick(self.pickObject(self.mouseUpPoint.x(), self.mouseUpPoint.y()), event)
 
     def mouseMoveEvent(self, event):
         if(self.mouseTrackingEnabled):
-            self.processMouseMove(self.pickObject(event.x(), event.y()))
+            self.processMouseMove(self.pickObject(event.x(), event.y()), event)
 
         dx = event.x() - self.mouseMovePoint.x()
         dy = event.y() - self.mouseMovePoint.y()

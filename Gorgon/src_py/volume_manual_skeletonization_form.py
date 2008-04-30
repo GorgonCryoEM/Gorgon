@@ -23,11 +23,11 @@ class VolumeManualSkeletonizationForm(QtGui.QWidget):
         self.dock = QtGui.QDockWidget(self.tr("Interactive Skeletonization Mode"), self.app)
         self.dock.setAllowedAreas(QtCore.Qt.LeftDockWidgetArea | QtCore.Qt.RightDockWidgetArea | QtCore.Qt.BottomDockWidgetArea)
         self.dock.setWidget(self)
-        self.dock.close()  
-        self.connect(self.ui.pushButtonClose, QtCore.SIGNAL("pressed ()"), self.dock.close)
+        self.dock.close()          
         self.connect(self.dock, QtCore.SIGNAL("visibilityChanged (bool)"), self.dockVisibilityChanged)
         self.connect(self.ui.horizontalSliderStartingDensity,QtCore.SIGNAL("valueChanged(int)"),self.startingDensityChanged)     
-        self.connect(self.ui.pushButtonStart,QtCore.SIGNAL("pressed ()"),self.startSkeletonization)   
+        self.connect(self.ui.pushButtonStart,QtCore.SIGNAL("pressed ()"),self.startSkeletonization)
+        self.connect(self.ui.pushButtonClose, QtCore.SIGNAL("pressed ()"), self.endSkeletonization)   
                                             
     def createActions(self):               
         self.skeletonizeAct = QtGui.QAction(self.tr("&Interactive Skeletonization"), self)
@@ -59,6 +59,10 @@ class VolumeManualSkeletonizationForm(QtGui.QWidget):
     
     def startSkeletonization(self):
         self.startEndSkeletonization(True)
+        
+    def endSkeletonization(self):
+        self.startEndSkeletonization(False)
+        self.dock.close()
                
     def startEndSkeletonization(self, start):
         self.started = start
@@ -75,6 +79,7 @@ class VolumeManualSkeletonizationForm(QtGui.QWidget):
             self.ui.pushButtonClose.setEnabled(True)
             self.skeletonViewer.emitModelLoaded()                        
         else:
+            self.engine.finalizeSkeleton()
             self.setSkeletonViewerProperties(False)
             self.ui.pushButtonStart.setEnabled(True)
             self.ui.pushButtonClose.setEnabled(False)      
@@ -114,24 +119,27 @@ class VolumeManualSkeletonizationForm(QtGui.QWidget):
             self.skeletonViewer.setSelectEnabled(self.oldSkeletonViewerSelectEnabled)
             self.skeletonViewer.setMouseMoveEnabled(self.oldSkeletonViewerMouseMoveEnabled)               
     
-    def processClick(self, h0, h1, h2, h3, h4):
+    def processClick(self, h0, h1, h2, h3, h4, h5, event):
+        #print h0, h1, h2, h3, h4
         if(self.started and h0 >= 0 and h1 >= 0):
-            print "a"
-            self.engine.selectSeed(h0, h1)
-            pass
+            if(event.modifiers() & QtCore.Qt.CTRL):
+                self.engine.selectStartSeed(h0, h1)
+            elif (event.modifiers() & QtCore.Qt.ALT):
+                self.engine.selectEndSeed(h0, h1)
         
-    def processMouseOver(self, h0, h1, h2, h3, h4):
+    def processMouseOver(self, h0, h1, h2, h3, h4, h5, event):
+        #print h0, h1, h2, h3, h4
         if(self.started and h0 >= 0 and h1 >= 0):
-            self.engine.analyzePath(h0, h1)
-            self.skeletonViewer.emitModelChanged()
-            pass
+            if(event.modifiers() & QtCore.Qt.ALT ):
+                self.engine.analyzePath(h0, h1)
+                self.skeletonViewer.emitModelChanged()
     
     def modelLoaded(self):
         self.skeletonViewer = self.app.viewers["skeleton"]; 
         self.oldSkeletonViewerSelectEnabled = self.skeletonViewer.selectEnabled
         self.oldSkeletonViewerMouseMoveEnabled = self.skeletonViewer.mouseMoveEnabled  
-        self.connect(self.skeletonViewer, QtCore.SIGNAL("elementSelected (int, int, int, int, int)"), self.processClick)    
-        self.connect(self.skeletonViewer, QtCore.SIGNAL("elementMouseOver (int, int, int, int, int)"), self.processMouseOver)  
+        self.connect(self.skeletonViewer, QtCore.SIGNAL("elementSelected (int, int, int, int, int, int, QMouseEvent)"), self.processClick)    
+        self.connect(self.skeletonViewer, QtCore.SIGNAL("elementMouseOver (int, int, int, int, int, int, QMouseEvent)"), self.processMouseOver)  
         self.skeletonizeAct.setChecked(False)
         self.skeletonizeAct.setEnabled(True)
         self.showWidget(False)

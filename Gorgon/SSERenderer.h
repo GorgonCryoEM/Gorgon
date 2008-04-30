@@ -29,22 +29,19 @@ namespace wustl_mm {
 			string GetSupportedSaveFileFormats();
 		private:
 			void UpdateBoundingBox();
-				vector<GeometricShape*> helices;
-				vector<GLUquadric *> helixQuadrics;
-				NonManifoldMesh_SheetIds * sheetMesh;
+			vector<GeometricShape*> helices;
+			NonManifoldMesh_SheetIds * sheetMesh;
 		};
 
 
 		SSERenderer::SSERenderer() {
 			helices.clear();
-			helixQuadrics.clear();	
 			sheetMesh = NULL;
 		}
 
 		SSERenderer::~SSERenderer() {
 			for(unsigned int i = 0; i < helices.size(); i++) {
-				delete helices[i];
-				gluDeleteQuadric(helixQuadrics[i]);
+				delete helices[i];				
 			}
 			if(sheetMesh != NULL) {
 				delete sheetMesh;
@@ -79,7 +76,7 @@ namespace wustl_mm {
 					if(selectEnabled) {
 						glLoadName(i);
 					}
-					gluCylinder(gluNewQuadric(), 0.5, 0.5, 1.0, 10, 10);
+					gluCylinder(quadricCylinder, 0.5, 0.5, 1.0, 10, 10);
 					glPopMatrix();
 					if(selected) {
 						glMaterialfv(GL_FRONT, GL_EMISSION, frontMaterial);
@@ -131,14 +128,9 @@ namespace wustl_mm {
 		void SSERenderer::LoadHelixFile(string fileName) {
 			for(unsigned int i = 0; i < helices.size(); i++) {
 				delete helices[i];
-				gluDeleteQuadric(helixQuadrics[i]);
 			}
 			helices.clear();
-			helixQuadrics.clear();
 			SkeletonReader::ReadHelixFile((char *)fileName.c_str(), NULL, helices);
-			for(unsigned int i = 0; i < helices.size(); i++) {
-				helixQuadrics.push_back(gluNewQuadric());
-			}	
 			UpdateBoundingBox();			
 		}
 
@@ -174,7 +166,6 @@ namespace wustl_mm {
 			Renderer::Unload();
 			for(unsigned int i = 0; i < helices.size(); i++) {
 				delete helices[i];
-				gluDeleteQuadric(helixQuadrics[i]);
 			}
 			helices.clear();
 			if(sheetMesh != NULL) {

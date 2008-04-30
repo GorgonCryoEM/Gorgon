@@ -12,7 +12,7 @@ class CAlphaAtomPlacerForm(QtGui.QWidget):
         self.app = main
         self.viewer = viewer
         self.skeletonViewer = self.app.viewers["skeleton"]
-        self.connect(self.skeletonViewer, QtCore.SIGNAL("elementSelected (int, int, int, int, int, int)"), self.skeletonSelected)
+        self.connect(self.skeletonViewer, QtCore.SIGNAL("elementSelected (int, int, int, int, int, int, QMouseEvent)"), self.skeletonSelected)
         self.createUI()
         self.createActions()
         self.createMenus()
@@ -39,7 +39,7 @@ class CAlphaAtomPlacerForm(QtGui.QWidget):
     def dockVisibilityChanged(self, visible):
         self.app.actions.getAction("perform_CAlphaManualAtomPlacement").setChecked(visible)
         
-    def skeletonSelected(self, h0, h1, h2, h3, h4, h5):
+    def skeletonSelected(self, h0, h1, h2, h3, h4, h5, event):
         position = self.skeletonViewer.renderer.get3DCoordinates(h0, h1, h2, h3, h4, h5)
         self.ui.doubleSpinBoxPositionX.setValue(position.x());
         self.ui.doubleSpinBoxPositionY.setValue(position.y());

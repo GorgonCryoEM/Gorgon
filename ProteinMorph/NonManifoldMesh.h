@@ -13,6 +13,7 @@ using namespace stdext;
 
 using namespace wustl_mm::MathTools;
 
+
 namespace wustl_mm {
 	namespace Protein_Morph {
 		template <class TEdge> struct NonManifoldMeshEdge {
@@ -67,6 +68,7 @@ namespace wustl_mm {
 			void RemoveNullEntries();
 			void ToOffCells(string fileName);
 			void ToMathematicaFile(string fileName);
+			Volume * ToVolume();
 			Vector3DFloat GetVertexNormal(int vertexId);
 			Vector3DFloat GetFaceNormal(int faceId);
 			NonManifoldMesh * SmoothLaplacian(double converganceRate);	
@@ -607,6 +609,36 @@ namespace wustl_mm {
 
 			fclose(outF);
 		}
+		template <class TVertex, class TEdge, class TFace> Volume * NonManifoldMesh<TVertex, TEdge, TFace>::ToVolume() {
+			double minPos[3] = {0,0,0};
+			double maxPos[3] = {MIN_DOUBLE, MIN_DOUBLE, MIN_DOUBLE};
+			for(unsigned int i = 0; i < vertices.size(); i++) {
+				for(unsigned int j = 0; j < 3; j++) {
+					minPos[j] = min(minPos[j], (double)vertices[i].position.values[j]);
+					maxPos[j] = max(maxPos[j], (double)vertices[i].position.values[j]);
+				}				
+			}
+
+			int minPosInt[3];
+			int maxPosInt[3];
+
+			for(unsigned int j = 0; j < 3; j++) {
+				minPosInt[j] = (int)floor(minPos[j]);
+				maxPosInt[j] = (int)ceil(maxPos[j]);
+			}
+			Volume * vol = new Volume(maxPosInt[0] - minPosInt[0]+1, maxPosInt[1] - minPosInt[1]+1, maxPosInt[2] - minPosInt[2]+1);
+			
+			int pos[3];
+			for(unsigned int i = 0; i < vertices.size(); i++) {
+				for(unsigned int j = 0; j < 3; j++) {
+					pos[j] = (int)round(vertices[i].position.values[j]) - minPosInt[j];
+				}				
+				vol->setDataAt(pos[0], pos[1], pos[2], 1.0);
+			}		
+			return vol;
+		}
+
+
 		template <class TVertex, class TEdge, class TFace> Vector3DFloat NonManifoldMesh<TVertex, TEdge, TFace>::GetVertexNormal(int vertexId) {
 			int index = GetVertexIndex(vertexId);
 			int edgeIndex;
