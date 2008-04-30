@@ -4,6 +4,7 @@
 #include <string>
 #include <GL/glut.h>
 #include <MathTools/Vector3D.h>
+#include <MathTools/MathLib.h>
 
 using namespace std;
 using namespace wustl_mm::MathTools;
@@ -13,6 +14,7 @@ namespace wustl_mm {
 		class Renderer {
 		public:
 			Renderer();
+			~Renderer();
 			virtual void Draw(int subSceneIndex, bool selectEnabled);
 			virtual void DrawBoundingBox();
 			virtual void LoadFile(string fileName);
@@ -23,18 +25,22 @@ namespace wustl_mm {
 			virtual string GetSupportedSaveFileFormats();
 			virtual bool SetCuttingPlane(float ptX, float ptY, float ptZ, float vecX, float vecY, float vecZ);
 			virtual Vector3DFloat Get3DCoordinates(int subsceneIndex, int ix0, int ix1 = -1, int ix2 = -1, int ix3 = -1, int ix4 = -1);
+			void DrawCylinder(Vector3DFloat pt1, Vector3DFloat pt2, float radius);
 
 			float GetMin(int dimension);
 			float GetMax(int dimension);
 
 		protected:
-			virtual void UpdateBoundingBox();
+			virtual void UpdateBoundingBox();			
 			float minPts[3];
 			float maxPts[3];
 			int selectedSubSceneIndex;
 			int selectedIx[5];
 			Vector3DFloat cuttingPlaneCenter;
 			Vector3DFloat cuttingPlaneDirection;
+			GLUquadric * quadricSphere;
+			GLUquadric * quadricCylinder;
+
 
 		};
 
@@ -43,6 +49,14 @@ namespace wustl_mm {
 			for(int i = 0; i < 5; i++) {
 				selectedIx[i] = -1;
 			}
+			quadricSphere = gluNewQuadric();
+			quadricCylinder = gluNewQuadric();
+
+		}
+
+		Renderer::~Renderer() {
+			gluDeleteQuadric(quadricSphere);
+			gluDeleteQuadric(quadricCylinder);
 		}
 
 		float Renderer::GetMin(int dimension) {
@@ -112,6 +126,20 @@ namespace wustl_mm {
 			return false;
 		}
 
+		void Renderer::DrawCylinder(Vector3DFloat pt1, Vector3DFloat pt2, float radius) {
+			Vector3DFloat qmp = pt1-pt2;
+			float length = qmp.Length();
+			qmp.Normalize();			
+			Vector3DFloat z = Vector3DFloat(0,0,1);
+			Vector3DFloat axis = z ^ qmp;
+			float angle = acos(qmp * z)* 180.0 / PI;
+
+			glPushMatrix();
+			glTranslatef(pt2.X(), pt2.Y(), pt2.Z());
+			glRotatef(angle, axis.X(), axis.Y(), axis.Z());
+			gluCylinder(quadricCylinder, radius, radius, length, 10, 10);
+			glPopMatrix();
+		}
 	}
 }
 

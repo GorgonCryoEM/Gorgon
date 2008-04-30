@@ -35,7 +35,6 @@ namespace wustl_mm {
 			void UpdateBoundingBox();
 		private:
 			vector<PDBAtom> atoms;
-			vector<GLUquadric *> atomQuadrics;
 			vector<CAlphaBackboneSegment> backboneSegments;
 		};
 
@@ -43,21 +42,15 @@ namespace wustl_mm {
 		CAlphaRenderer::CAlphaRenderer() {
 			atoms.clear();
 			backboneSegments.clear();
-			atomQuadrics.clear();
 		}
 
 		CAlphaRenderer::~CAlphaRenderer() {
 			atoms.clear();
-			for(unsigned int i = 0; i < atomQuadrics.size(); i++) {
-				gluDeleteQuadric(atomQuadrics[i]);
-			}
 			backboneSegments.clear();
-			atomQuadrics.clear();
 		}
 
 		void CAlphaRenderer::AddAtom(PDBAtom atom) {
 			atoms.push_back(atom);
-			atomQuadrics.push_back(gluNewQuadric());
 		}
 		void CAlphaRenderer::Draw(int subSceneIndex, bool selectEnabled) {
 
@@ -85,7 +78,7 @@ namespace wustl_mm {
 						glLoadName(i);
 					}
 					glTranslatef(atoms[i].GetPosition().X(), atoms[i].GetPosition().Y(), atoms[i].GetPosition().Z());
-					gluSphere(atomQuadrics[i], 0.3, 10, 10);
+					gluSphere(quadricSphere, 0.3, 10, 10);
 					glPopMatrix();
 					if(selected) {
 						glMaterialfv(GL_FRONT, GL_EMISSION, frontMaterial);
@@ -117,10 +110,7 @@ namespace wustl_mm {
 					if(selectEnabled){
 						glLoadName(i);
 					}
-					glBegin(GL_LINES);
-					glVertex3f(atoms[backboneSegments[i].a0].GetPosition().X(), atoms[backboneSegments[i].a0].GetPosition().Y(), atoms[backboneSegments[i].a0].GetPosition().Z());
-					glVertex3f(atoms[backboneSegments[i].a1].GetPosition().X(), atoms[backboneSegments[i].a1].GetPosition().Y(), atoms[backboneSegments[i].a1].GetPosition().Z());
-					glEnd();
+					DrawCylinder(atoms[backboneSegments[i].a0].GetPosition(), atoms[backboneSegments[i].a1].GetPosition(), 0.1);
 					if(selected) {
 						glMaterialfv(GL_FRONT, GL_EMISSION, frontMaterial);
 						glMaterialfv(GL_BACK, GL_EMISSION, backMaterial);
@@ -137,10 +127,6 @@ namespace wustl_mm {
 
 		void CAlphaRenderer::LoadFile(string fileName) {
 			atoms.clear();
-			for(unsigned int i = 0; i < atomQuadrics.size(); i++) {
-				gluDeleteQuadric(atomQuadrics[i]);
-			}
-			atomQuadrics.clear();
 			backboneSegments.clear();
 			atoms = PDBReader::ReadAtomPositions(fileName);
 
@@ -151,9 +137,6 @@ namespace wustl_mm {
 				}
 			}
 
-			for(unsigned int i = 0; i < atoms.size(); i++) {
-				atomQuadrics.push_back(gluNewQuadric());				
-			}
 			CAlphaBackboneSegment segment;
 			for(unsigned int i = 0; i < atoms.size()-1; i++) {
 				segment.a0 = i;
@@ -166,10 +149,6 @@ namespace wustl_mm {
 
 		void CAlphaRenderer::Unload() {
 			atoms.clear();
-			for(unsigned int i = 0; i < atomQuadrics.size(); i++) {
-				gluDeleteQuadric(atomQuadrics[i]);
-			}
-			atomQuadrics.clear();
 			backboneSegments.clear();
 			UpdateBoundingBox();
 

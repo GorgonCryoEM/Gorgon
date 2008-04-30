@@ -17,8 +17,10 @@ namespace wustl_mm {
 		public:
 			InteractiveSkeletonEngine(Volume * volume, NonManifoldMesh_Annotated * skeleton, float skeletonRatio, float stRatio, float minGray, int stepCount, int curveRadius, int minCurveSize);
 			~InteractiveSkeletonEngine();
-			void SelectSeed(int hit0, int hit1);
+			void SelectEndSeed(int hit0, int hit1);
+			void SelectStartSeed(int hit0, int hit1);
 			void AnalyzePath(int hit0, int hit1);
+			void FinalizeSkeleton();
 		private:
 			Volume * volume;
 			NonManifoldMesh_Annotated * skeleton;
@@ -64,7 +66,7 @@ namespace wustl_mm {
 			delete skeletonizer;
 		}
 
-		void InteractiveSkeletonEngine::SelectSeed(int hit0, int hit1) {
+		void InteractiveSkeletonEngine::SelectEndSeed(int hit0, int hit1) {
 			if((hit0 == 1) && (hit1 >= 0)) {
 				hit0 = 2;
 				if(skeleton->vertices[skeleton->GetVertexIndex(skeleton->edges[hit1].vertexIds[0])].edgeIds.size() == 1) {
@@ -78,8 +80,27 @@ namespace wustl_mm {
 				for(unsigned int i = 0; i < skeleton->edges.size(); i++) {
 					skeleton->edges[i].tag = true;
 				}
-				skeletonizer->CalculateMinimalSpanningTree(vertexToLocationMap[hit1]);
+			}
+		}
 
+		void InteractiveSkeletonEngine::SelectStartSeed(int hit0, int hit1) {
+			if((hit0 == 1) && (hit1 >= 0)) {
+				hit0 = 2;
+				if(skeleton->vertices[skeleton->GetVertexIndex(skeleton->edges[hit1].vertexIds[0])].edgeIds.size() == 1) {
+					hit1 = skeleton->edges[hit1].vertexIds[0];
+				} else {
+					hit1 = skeleton->edges[hit1].vertexIds[1];
+				}
+			}
+			if((hit0 == 2) && (hit1 >= 0)) { // Clicked on a vertex point
+				started = true;
+				for(unsigned int i = 0; i < skeleton->edges.size(); i++) {
+					if(!skeleton->edges[i].tag) {
+						skeleton->RemoveEdge(i);
+					}
+				}
+				skeleton->RemoveNullEntries();
+				skeletonizer->CalculateMinimalSpanningTree(vertexToLocationMap[hit1]);
 			}
 		}
 
@@ -104,6 +125,14 @@ namespace wustl_mm {
 			}
 		}
 
+		void InteractiveSkeletonEngine::FinalizeSkeleton() {
+			for(unsigned int i = 0; i < skeleton->vertices.size(); i++) {
+				if(skeleton->vertices[i].edgeIds.size() == 0) {
+					skeleton->RemoveVertex(i);
+				}
+			}
+			skeleton->RemoveNullEntries();
+		}
 	}
 }
 

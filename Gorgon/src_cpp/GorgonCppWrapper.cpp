@@ -148,8 +148,10 @@ BOOST_PYTHON_MODULE(gorgon_cpp_wrapper)
 	;
 
 	class_<InteractiveSkeletonEngine>("InteractiveSkeletonEngine", init<Volume *, NonManifoldMesh_Annotated *, float, float, float, int, int, int>())
-		.def("selectSeed", &InteractiveSkeletonEngine::SelectSeed)
-		.def("analyzePath", &InteractiveSkeletonEngine::AnalyzePath)		
+		.def("selectStartSeed", &InteractiveSkeletonEngine::SelectStartSeed)
+		.def("selectEndSeed", &InteractiveSkeletonEngine::SelectEndSeed)
+		.def("analyzePath", &InteractiveSkeletonEngine::AnalyzePath)
+		.def("finalizeSkeleton", &InteractiveSkeletonEngine::FinalizeSkeleton)		
 	;
 
 
