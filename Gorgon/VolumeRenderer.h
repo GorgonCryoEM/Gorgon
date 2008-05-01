@@ -15,6 +15,7 @@
 #include <ProteinMorph/NonManifoldMesh.h>
 #include <MathTools/Vector3D.h>
 #include <hash_map>
+#include <GL/glExt.h>
 
 using namespace std;
 using namespace stdext;
@@ -45,7 +46,7 @@ namespace wustl_mm {
 			void SetViewingType(const int type);
 			void SetSampleInterval(const int size);
 			void SetSurfaceValue(const float value);
-			bool SetCuttingPlane(float ptX, float ptY, float ptZ, float vecX, float vecY, float vecZ);
+			bool SetCuttingPlane(float position, float vecX, float vecY, float vecZ);
 			void UpdateBoundingBox() ;
 			void Unload();
 			Volume * GetVolume();
@@ -60,35 +61,42 @@ namespace wustl_mm {
 			void CalculateSurface();
 			bool CalculateCuttingSurface();
 			void MarchingCube(Volume * vol, NonManifoldMesh_NoTags * mesh, const float iso_level, int iX, int iY, int iZ, int iScale);
-
+			int Smallest2ndPower(int value);
 		private:
+			bool textureLoaded;
+			int textureSizeX, textureSizeY, textureSizeZ;
+			unsigned int textureName;
 			float surfaceValue;
 			int sampleInterval;
 			int viewingType;
 			Volume * dataVolume;
+			Volume * cuttingVolume;
 			NonManifoldMesh_NoTags * surfaceMesh;
-			Volume * cuttingVol;
 			NonManifoldMesh_NoTags * cuttingMesh;
 		};
 
 		VolumeRenderer::VolumeRenderer() {
+			textureLoaded = false;
 			viewingType = VIEWING_TYPE_ISO_SURFACE;
 			surfaceMesh = new NonManifoldMesh_NoTags();
-			cuttingMesh = new NonManifoldMesh_NoTags();
 			dataVolume = NULL;
-			cuttingVol = NULL;
 			surfaceValue = 1.5;
 			sampleInterval = 1;
+			cuttingVolume = new Volume(2, 2, 2);
+			cuttingMesh = new NonManifoldMesh_NoTags();
 		}
+
 		VolumeRenderer::~VolumeRenderer() {
+			if(textureLoaded) {
+				glDeleteTextures(1, &textureName);
+				textureLoaded = false;
+			}
 			delete surfaceMesh;
 			if(dataVolume != NULL) {
 				delete dataVolume;
 			}
 			delete cuttingMesh;
-			if(cuttingVol != NULL) {
-				delete cuttingVol;
-			}
+			delete cuttingVolume;
 		}
 
 		float VolumeRenderer::GetMaxDensity(){
@@ -154,6 +162,13 @@ namespace wustl_mm {
 			return sampleInterval; 
 		}
 
+		int VolumeRenderer::Smallest2ndPower(int value) {
+			int power = 1;
+			while (power < value) {
+				power = power * 2;
+			}
+			return power;
+		}
 		string VolumeRenderer::GetSupportedLoadFileFormats() {
 			return "Volumes (*.mrc)";
 		}
@@ -170,11 +185,9 @@ namespace wustl_mm {
 				CalculateCuttingSurface();
 			} 
 		}
-		bool VolumeRenderer::SetCuttingPlane(float ptX, float ptY, float ptZ, float vecX, float vecY, float vecZ) {
-			cuttingPlaneCenter = Vector3DFloat(ptX, ptY, ptZ);
-			cuttingPlaneDirection = Vector3DFloat(vecX, vecY, vecZ);	
-			cuttingPlaneDirection.Normalize();
-			cuttingPlaneCenter = cuttingPlaneCenter + cuttingPlaneDirection * 1;
+
+		bool VolumeRenderer::SetCuttingPlane(float position, float vecX, float vecY, float vecZ) {
+			Renderer::SetCuttingPlane(position, vecX, vecY, vecZ);
 			bool redraw = false;
 			if(viewingType == VIEWING_TYPE_CROSS_SECTION) {
 				redraw = CalculateCuttingSurface();
@@ -185,45 +198,38 @@ namespace wustl_mm {
 			if(subSceneIndex == 0) {
 				if((viewingType == VIEWING_TYPE_ISO_SURFACE) && (surfaceMesh != NULL)) {
 					surfaceMesh->Draw(true, false, false, selectEnabled, false, false);
-				} else if((viewingType == VIEWING_TYPE_CROSS_SECTION) && (cuttingMesh != NULL)) {
-					float material[4];
-					float material2[4];					
-					glGetMaterialfv(GL_FRONT, GL_DIFFUSE, material);
-					material2[3] = material[3];
-					float maxVal = dataVolume->getMax();
-					float minVal = dataVolume->getMin();
-					float val;
-					int k;
-					if(selectEnabled) {
-						glPushName(0);
-						glPushName(0);
-					}
-					for(unsigned int i = 0; i < cuttingMesh->faces.size(); i++) {
-						if(selectEnabled) {
-							glLoadName(i);
+				} else if(viewingType == VIEWING_TYPE_CROSS_SECTION) {
+					glPushAttrib(GL_ENABLE_BIT);
+					glDisable(GL_CULL_FACE);
+					glBindTexture(GL_TEXTURE_3D, textureName);
+					Vector3DFloat vertex;
+					glBegin(GL_LINES);
+					for(unsigned int i = 0; i < cuttingMesh->edges.size(); i++) {
+						if(cuttingMesh->edges[i].faceIds.size() == 1) {
+							
+							for(unsigned int j = 0; j < 2; j++) {
+								vertex = cuttingMesh->vertices[cuttingMesh->GetVertexIndex(cuttingMesh->edges[i].vertexIds[j])].position;
+								glVertex3f(vertex.X() * (float)dataVolume->getSizeX(), vertex.Y() * (float)dataVolume->getSizeY(), vertex.Z() * (float)dataVolume->getSizeZ());
+							}
 						}
-						glBegin(GL_POLYGON);
-						Vector3DFloat normal;
-						for(unsigned int j = 0; j < cuttingMesh->faces[i].vertexIds.size(); j++) {
-							normal = cuttingMesh->GetVertexNormal(cuttingMesh->faces[i].vertexIds[j]);
-							k = cuttingMesh->GetVertexIndex(cuttingMesh->faces[i].vertexIds[j]);
-							val = this->GetVoxelData(dataVolume, cuttingMesh->vertices[k].position.values[0], cuttingMesh->vertices[k].position.values[1], cuttingMesh->vertices[k].position.values[2]);
-							material2[0] = (val - minVal)* material[0] / (maxVal - minVal);
-							material2[1] = (val - minVal)* material[1] / (maxVal - minVal);
-							material2[2] = (val - minVal)* material[2] / (maxVal - minVal);							
+					}
+					glEnd();
+					glEnable(GL_TEXTURE_3D);
+					double xRatio = (double)dataVolume->getSizeX() / (double)textureSizeX;
+					double yRatio = (double)dataVolume->getSizeY() / (double)textureSizeY;
+					double zRatio = (double)dataVolume->getSizeZ() / (double)textureSizeZ;
 
-							glMaterialfv(GL_FRONT, GL_DIFFUSE, material2);
-							glMaterialfv(GL_BACK, GL_DIFFUSE, material2);
-							glNormal3f(normal.X(), normal.Y(), normal.Z());
-							glVertex3fv(cuttingMesh->vertices[k].position.values);
+					for(unsigned int i = 0; i < cuttingMesh->faces.size(); i++) {
+						glBegin(GL_POLYGON);
+						for(unsigned int j = 0; j < cuttingMesh->faces[i].vertexIds.size(); j++) {
+							vertex = cuttingMesh->vertices[cuttingMesh->GetVertexIndex(cuttingMesh->faces[i].vertexIds[j])].position;
+							glTexCoord3d(vertex.Y() * yRatio, vertex.Z()* zRatio, vertex.X() * xRatio);
+							glVertex3f(vertex.X() * (float)dataVolume->getSizeX(), vertex.Y() * (float)dataVolume->getSizeY(), vertex.Z() * (float)dataVolume->getSizeZ());
 						}
 						glEnd();
 					}
-					if(selectEnabled) {
-						glPopName();
-						glPopName();
-					}
-
+					
+					glPopAttrib();
 				}
 			}
 		}
@@ -244,8 +250,9 @@ namespace wustl_mm {
 
 		bool VolumeRenderer::CalculateCuttingSurface() {
 			bool redraw = false;
+			cuttingMesh->Clear();
 			if(dataVolume != NULL) {
-				cuttingMesh->Clear();
+
 				if((cuttingPlaneCenter.X() >= minPts[0]) && (cuttingPlaneCenter.X() <= maxPts[0]) &&
 					(cuttingPlaneCenter.Y() >= minPts[1]) && (cuttingPlaneCenter.Y() <= maxPts[1]) &&
 					(cuttingPlaneCenter.Z() >= minPts[2]) && (cuttingPlaneCenter.Z() <= maxPts[2])) {
@@ -254,51 +261,64 @@ namespace wustl_mm {
 
 					int iX, iY, iZ;
 
-					for(iX = 0; iX < dataVolume->getSizeX(); iX+=sampleInterval) {
-						for(iY = 0; iY < dataVolume->getSizeY(); iY+=sampleInterval) {
-							for(iZ = 0; iZ < dataVolume->getSizeZ(); iZ+=sampleInterval) {
-								cuttingVol->setDataAt(iX, iY, iZ, (cuttingPlaneCenter - Vector3DFloat(iX, iY, iZ))* cuttingPlaneDirection);
-							}
-						}
-					}				
-
-					float data;
-					int iV;
-					bool posFound = false, negFound = false;
-
-					for(iX = 0; iX < dataVolume->getSizeX() - sampleInterval; iX+=sampleInterval) {
-						for(iY = 0; iY < dataVolume->getSizeY() - sampleInterval ; iY+=sampleInterval) {
-							for(iZ = 0; iZ < dataVolume->getSizeZ() - sampleInterval; iZ+=sampleInterval) {
-								posFound = false;
-								negFound = false;
-								for(iV = 0; iV < 8; iV++) {
-									data = GetVoxelData(cuttingVol, iX + a2iVertexOffset[iV][0] * sampleInterval,  iY + a2iVertexOffset[iV][1] * sampleInterval, iZ + a2iVertexOffset[iV][2] * sampleInterval);
-									posFound = posFound || (data >= 0);
-									negFound = negFound || (data < 0);																		
-								}
-								if(posFound && negFound) {
-									MarchingCube(cuttingVol, cuttingMesh, 0.0f, iX, iY, iZ, sampleInterval);							
-								}
+					for(iX = 0; iX < 2; iX++) {
+						for(iY = 0; iY < 2; iY++) {
+							for(iZ = 0; iZ < 2; iZ++) {
+								cuttingVolume->setDataAt(iX, iY, iZ, (cuttingPlaneCenter - Vector3DFloat(iX * dataVolume->getSizeX(), iY * dataVolume->getSizeY(), iZ * dataVolume->getSizeZ()))* cuttingPlaneDirection);
 							}
 						}
 					}
+					MarchingCube(cuttingVolume, cuttingMesh, 0.0f, 0, 0, 0, 1);	
 				}
 			}
+
 			return redraw;
 		}
-
 
 
 		void VolumeRenderer::LoadFile(string fileName) {
 			if(dataVolume != NULL) {
 				delete dataVolume;
 			}
-			if(cuttingVol != NULL) {
-				delete cuttingVol;
-			}
 			dataVolume = VolumeFormatConverter::LoadVolume(fileName);
-			cuttingVol = new Volume(dataVolume->getSizeX(), dataVolume->getSizeY(), dataVolume->getSizeZ());
 			UpdateBoundingBox();
+
+			// Loading 3D texture into graphics card
+			PFNGLTEXIMAGE3DPROC glTexImage3D = (PFNGLTEXIMAGE3DPROC) wglGetProcAddress("glTexImage3D");
+			textureSizeX = Smallest2ndPower(dataVolume->getSizeX());
+			textureSizeY = Smallest2ndPower(dataVolume->getSizeY());
+			textureSizeZ = Smallest2ndPower(dataVolume->getSizeZ());
+			double maxVal = dataVolume->getMax();
+			double minVal = dataVolume->getMin();
+			unsigned char val;
+
+			unsigned char * texels = new unsigned char[textureSizeX * textureSizeY * textureSizeZ];
+			for(int x = 0; x < textureSizeX; x++) {
+				for(int y = 0; y < textureSizeY; y++) {
+					for(int z = 0; z < textureSizeZ; z++) {
+						if((x < dataVolume->getSizeX()) && (y < dataVolume->getSizeY()) && (z < dataVolume->getSizeZ())) {
+							val = (unsigned char)round((dataVolume->getDataAt(x, y, z) - minVal) * 255.0 / (maxVal - minVal));
+						} else {
+							val = 0;
+						}
+						texels[x * textureSizeY * textureSizeZ + y * textureSizeZ + z] = val;
+					}
+				}
+			}
+			glGenTextures(1, &textureName);
+			glBindTexture(GL_TEXTURE_3D, textureName);
+			glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+			glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+			glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_REPEAT);
+			try {
+				glTexImage3D(GL_TEXTURE_3D, 0, GL_INTENSITY, textureSizeX, textureSizeY, textureSizeZ, 0, GL_RED, GL_UNSIGNED_BYTE, texels);
+				textureLoaded = true;
+			}   catch (int) {
+				textureLoaded = false;
+			}
+			delete [] texels;
 		}
 
 		void VolumeRenderer::SaveFile(string fileName) {
@@ -324,7 +344,7 @@ namespace wustl_mm {
 													iY + a2iVertexOffset[iVertex][1]*iScale,
 													iZ + a2iVertexOffset[iVertex][2]*iScale);
 			}
-
+	
 			//Find which vertices are inside of the surface and which are outside
 			iFlagIndex = 0;
 			for(iVertexTest = 0; iVertexTest < 8; iVertexTest++)
@@ -349,7 +369,7 @@ namespace wustl_mm {
 					//if there is an intersection on this edge
 					if(iEdgeFlags & (1<<iEdge))
 					{
-							fOffset = GetOffset(afCubeValue[ a2iEdgeConnection[iEdge][0] ], afCubeValue[ a2iEdgeConnection[iEdge][1] ], surfaceValue);
+							fOffset = GetOffset(afCubeValue[ a2iEdgeConnection[iEdge][0] ], afCubeValue[ a2iEdgeConnection[iEdge][1] ], iso_level);
 
 							asEdgeVertex[iEdge][0] = (float)iX + ((float)a2iVertexOffset[ a2iEdgeConnection[iEdge][0] ][0] +  fOffset * (float)a2iEdgeDirection[iEdge][0]) * (float)iScale;
 							asEdgeVertex[iEdge][1] = (float)iY + ((float)a2iVertexOffset[ a2iEdgeConnection[iEdge][0] ][1] +  fOffset * (float)a2iEdgeDirection[iEdge][1]) * (float)iScale;
@@ -357,6 +377,10 @@ namespace wustl_mm {
 				
 							vertexIds[iEdge] = mesh->AddHashedVertex(Vector3DFloat(asEdgeVertex[iEdge][0], asEdgeVertex[iEdge][1], asEdgeVertex[iEdge][2]), GetHashKey(iX, iY, iZ, iEdge, iScale)); 
 					}
+			}
+			if(viewingType == VIEWING_TYPE_CROSS_SECTION)
+			{
+				printf("\n ");flushall();
 			}
 
 
@@ -398,6 +422,10 @@ namespace wustl_mm {
 				delete dataVolume;
 			}
 			dataVolume = NULL;
+			if(textureLoaded) {
+				glDeleteTextures(1, &textureName);
+				textureLoaded = false;
+			}
 			CalculateSurface();
 			UpdateBoundingBox();
 
