@@ -23,8 +23,8 @@ namespace wustl_mm {
 			virtual void Select(int subsceneIndex, int ix0, int ix1 = -1, int ix2 = -1, int ix3 = -1, int ix4 = -1);
 			virtual string GetSupportedLoadFileFormats();
 			virtual string GetSupportedSaveFileFormats();
-			virtual bool SetCuttingPlane(float ptX, float ptY, float ptZ, float vecX, float vecY, float vecZ);
 			virtual Vector3DFloat Get3DCoordinates(int subsceneIndex, int ix0, int ix1 = -1, int ix2 = -1, int ix3 = -1, int ix4 = -1);
+			bool SetCuttingPlane(float position, float vecX, float vecY, float vecZ);
 			void DrawCylinder(Vector3DFloat pt1, Vector3DFloat pt2, float radius);
 
 			float GetMin(int dimension);
@@ -119,10 +119,13 @@ namespace wustl_mm {
 			return "All Files (*.*)";
 		}
 
-		bool Renderer::SetCuttingPlane(float ptX, float ptY, float ptZ, float vecX, float vecY, float vecZ) {
-			cuttingPlaneCenter = Vector3DFloat(ptX, ptY, ptZ);
+		bool Renderer::SetCuttingPlane(float position, float vecX, float vecY, float vecZ) {
+			Vector3DFloat center = Vector3DFloat( (minPts[0] + maxPts[0])/2.0, (minPts[1] + maxPts[1])/2.0, (minPts[2] + maxPts[2])/2.0);
+			float distance = (Vector3DFloat(minPts[0], minPts[1], minPts[2]) - center).Length();
 			cuttingPlaneDirection = Vector3DFloat(vecX, vecY, vecZ);	
 			cuttingPlaneDirection.Normalize();
+			cuttingPlaneCenter = center + cuttingPlaneDirection * position * distance;
+			//printf("%lf %lf %lf - %lf %lf\n", cuttingPlaneCenter.values[0], cuttingPlaneCenter.values[1], cuttingPlaneCenter.values[2], position, distance); flushall();
 			return false;
 		}
 

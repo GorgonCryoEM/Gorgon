@@ -20,7 +20,7 @@ class Camera(QtOpenGL.QGLWidget):
         QtOpenGL.QGLWidget.__init__(self, parent)
         self.app = main
         self.near = 0
-        self.cuttingPlane = 10
+        self.cuttingPlane = 0.0
         self.scene = scene
         self.mouseTrackingEnabled = False
         self.aspectRatio = 1.0
@@ -61,6 +61,7 @@ class Camera(QtOpenGL.QGLWidget):
             self.look = [0,1,0]
             self.right = [-1,0,0]
             self.up = [0,0,1]
+        self.setRendererCuttingPlanes()
         self.emitCameraChanged()
     
     def setCenter(self, x, y, z):
@@ -71,6 +72,7 @@ class Camera(QtOpenGL.QGLWidget):
         except:
             self.look = [0,1,0]
             self.right = [-1,0,0]
+        self.setRendererCuttingPlanes()
         self.emitCameraChanged()
         
     def setUp(self, x, y, z):
@@ -80,6 +82,7 @@ class Camera(QtOpenGL.QGLWidget):
             self.up = vectorNormalize(vectorCrossProduct(self.right, self.look))
         except:
             self.right = [-1,0,0]
+        self.setRendererCuttingPlanes()
         self.emitCameraChanged()
         
     def setEyeRotation(self, yaw, pitch, roll):
@@ -94,7 +97,8 @@ class Camera(QtOpenGL.QGLWidget):
         self.setEye(newEye[0], newEye[1], newEye[2])
         
         newUp = vectorNormalize(vectorAdd(vectorScalarMultiply(roll*0.01, self.right), self.up))
-        self.setUp(newUp[0], newUp[1], newUp[2])        
+        self.setUp(newUp[0], newUp[1], newUp[2])       
+        
         
     def setNearFarZoom(self, near, far, zoom):
         self.eyeZoom = min(max(zoom, 0.0001), 0.9999);
@@ -106,30 +110,23 @@ class Camera(QtOpenGL.QGLWidget):
         self.setGlProjection()
         self.emitCameraChanged()
     
-    def setCuttingPlane(self, cuttingPlane):        
-        if(cuttingPlane != self.cuttingPlane):
-            self.cuttingPlane = cuttingPlane;
-            self.setRendererCuttingPlanes();        
+    def setCuttingPlane(self, cuttingPlane): 
+        newCuttingPlane = min(max(cuttingPlane, -1.0), 1.0)   
+        if(self.cuttingPlane != newCuttingPlane):
+            self.cuttingPlane = newCuttingPlane
+            self.setRendererCuttingPlanes()    
     
     def setRendererCuttingPlanes(self):
-        dir = vectorNormalize([self.center[0] - self.eye[0], 
-                               self.center[1] - self.eye[1],
-                               self.center[2] - self.eye[2]])
-        
-        pt = [self.eye[0] + dir[0]*self.cuttingPlane, 
-              self.eye[1] + dir[1]*self.cuttingPlane,
-              self.eye[2] + dir[2]*self.cuttingPlane]
-        #pt = self.center
         for s in self.scene:
-            if(s.renderer.setCuttingPlane(pt[0], pt[1], pt[2], dir[0], dir[1], dir[2])) :
+            if(s.renderer.setCuttingPlane(self.cuttingPlane, self.look[0], self.look[1], self.look[2])) :
                 s.emitModelChanged()  
     
     def sceneSetCenter(self, centerX, centerY, centerZ, distance):        
         self.setCenter(centerX, centerY, centerZ)
         self.setEye(self.center[0] , self.center[1], self.center[2] - distance)
         self.setUp(0, -1, 0)
-        self.setCuttingPlane(vectorDistance(self.center, self.eye))
         centerDistance = vectorDistance(self.eye, self.center)
+        self.setCuttingPlane(0.0)
         self.modelChanged()
         #self.setNearFarZoom(centerDistance - distance/2.0, centerDistance + distance/2.0, 0.25)
         #radius = vectorDistance([minX, minY, minZ], [maxX, maxY, maxZ]) / 2.0;
@@ -335,7 +332,7 @@ class Camera(QtOpenGL.QGLWidget):
     def wheelEvent(self, event):
         direction = event.delta()/abs(event.delta())
         if(event.modifiers() & QtCore.Qt.CTRL) :
-            self.setCuttingPlane(self.cuttingPlane + direction * 10);        
+            self.setCuttingPlane(self.cuttingPlane + direction * 0.01);        
         else:
             self.setNearFarZoom(self.near, self.far, self.eyeZoom + direction * 10.0/360.0)
             #newEye = vectorAdd(self.eye, vectorScalarMultiply(-direction * 0.1 * (vectorDistance(self.eye, self.look)), self.look))
