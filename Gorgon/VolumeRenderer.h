@@ -223,7 +223,7 @@ namespace wustl_mm {
 						glBegin(GL_POLYGON);
 						for(unsigned int j = 0; j < cuttingMesh->faces[i].vertexIds.size(); j++) {
 							vertex = cuttingMesh->vertices[cuttingMesh->GetVertexIndex(cuttingMesh->faces[i].vertexIds[j])].position;
-							glTexCoord3d(vertex.Y() * yRatio, vertex.Z()* zRatio, vertex.X() * xRatio);
+							glTexCoord3d(vertex.X() * xRatio, vertex.Y()* yRatio, vertex.Z() * zRatio);
 							glVertex3f(vertex.X() * (float)dataVolume->getSizeX(), vertex.Y() * (float)dataVolume->getSizeY(), vertex.Z() * (float)dataVolume->getSizeZ());
 						}
 						glEnd();
@@ -293,15 +293,18 @@ namespace wustl_mm {
 			unsigned char val;
 
 			unsigned char * texels = new unsigned char[textureSizeX * textureSizeY * textureSizeZ];
-			for(int x = 0; x < textureSizeX; x++) {
+			unsigned int pos = 0;
+			for(int z = 0; z < textureSizeZ; z++) {
 				for(int y = 0; y < textureSizeY; y++) {
-					for(int z = 0; z < textureSizeZ; z++) {
+					for(int x = 0; x < textureSizeX; x++) {
 						if((x < dataVolume->getSizeX()) && (y < dataVolume->getSizeY()) && (z < dataVolume->getSizeZ())) {
 							val = (unsigned char)round((dataVolume->getDataAt(x, y, z) - minVal) * 255.0 / (maxVal - minVal));
 						} else {
 							val = 0;
 						}
-						texels[x * textureSizeY * textureSizeZ + y * textureSizeZ + z] = val;
+						//texels[x * textureSizeY * textureSizeZ + y * textureSizeZ + z] = val;
+						texels[pos] = val;
+						pos++;
 					}
 				}
 			}
@@ -313,7 +316,7 @@ namespace wustl_mm {
 			glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 			glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_REPEAT);
 			try {
-				glTexImage3D(GL_TEXTURE_3D, 0, GL_INTENSITY, textureSizeX, textureSizeY, textureSizeZ, 0, GL_RED, GL_UNSIGNED_BYTE, texels);
+				glTexImage3D(GL_TEXTURE_3D, 0, GL_COMPRESSED_INTENSITY, textureSizeX, textureSizeY, textureSizeZ, 0, GL_RED, GL_UNSIGNED_BYTE, texels);
 				textureLoaded = true;
 			}   catch (int) {
 				textureLoaded = false;
