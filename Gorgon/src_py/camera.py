@@ -1,7 +1,8 @@
 # Author:      Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 # Description: This manages a single camera, and the scenes which are rendered using this camera
 
-from PyQt4 import QtOpenGL, QtCore
+import sys
+from PyQt4 import QtOpenGL, QtCore, QtGui
 from vector_lib import *
 from scene_editor_form import SceneEditorForm
 from cmath import *   
