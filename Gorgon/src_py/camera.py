@@ -345,10 +345,11 @@ class Camera(QtOpenGL.QGLWidget):
         maxDistance = 0.0
         eyeDist = vectorDistance(self.eye, self.center)
         for s in self.scene:
-            (center, distance) = s.getCenterAndDistance()
-            modelDist = vectorDistance(self.center, center)
-            minDistance = min(minDistance, eyeDist - modelDist - distance/2.0)
-            maxDistance = max(maxDistance, eyeDist + modelDist + distance/2.0)
+            if(s.loaded):
+                (center, distance) = s.getCenterAndDistance()
+                modelDist = vectorDistance(self.center, center)
+                minDistance = min(minDistance, eyeDist - modelDist - distance/2.0)
+                maxDistance = max(maxDistance, eyeDist + modelDist + distance/2.0)
         self.setNearFarZoom(minDistance, maxDistance, self.eyeZoom)
         self.updateGL()
         
