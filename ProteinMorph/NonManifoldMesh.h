@@ -62,6 +62,7 @@ namespace wustl_mm {
 			void Clear();
 			void Draw(bool drawSurfaces, bool drawLines, bool drawPoints, bool annotateSurfaces, bool annotateLines, bool annotatePoints);
 			void MarkFixedVertices();
+			void MergeMesh(NonManifoldMesh<TVertex, TEdge, TFace> * srcMesh);
 			void RemoveFace(int faceId);
 			void RemoveEdge(int edgeId);
 			void RemoveVertex(int vertexId);
@@ -401,6 +402,24 @@ namespace wustl_mm {
 						sheetFound = sheetFound || (edges[GetEdgeIndex(vertices[i].edgeIds[j])].faceIds.size() > 0);
 						edgeFound = edgeFound || (edges[GetEdgeIndex(vertices[i].edgeIds[j])].faceIds.size() == 0);
 					}
+				}
+			}
+		}
+
+		template <class TVertex, class TEdge, class TFace> void NonManifoldMesh<TVertex, TEdge, TFace>::MergeMesh(NonManifoldMesh<TVertex, TEdge, TFace> * srcMesh) {
+			vector<int> indices;
+			indices.clear();
+			for(unsigned int i = 0; i < srcMesh->vertices.size(); i++) {
+				indices.push_back(AddVertex(srcMesh->vertices[i]));
+			}
+			for(unsigned int i = 0; i < srcMesh->edges.size(); i++) {
+				AddEdge(indices[srcMesh->edges[i].vertexIds[0]], indices[srcMesh->edges[i].vertexIds[1]], srcMesh->edges[i].tag);
+			}
+			for(unsigned int i = 0; i < srcMesh->faces.size(); i++) {
+				if(srcMesh->faces[i].vertexIds.size() == 3) {
+					AddTriangle(indices[srcMesh->faces[i].vertexIds[0]], indices[srcMesh->faces[i].vertexIds[1]], indices[srcMesh->faces[i].vertexIds[2]], NULL, srcMesh->faces[i].tag);
+				} else if(srcMesh->faces[i].vertexIds.size() == 3) {
+					AddQuad(indices[srcMesh->faces[i].vertexIds[0]], indices[srcMesh->faces[i].vertexIds[1]], indices[srcMesh->faces[i].vertexIds[2]], indices[srcMesh->faces[i].vertexIds[3]], NULL, srcMesh->faces[i].tag);
 				}
 			}
 		}

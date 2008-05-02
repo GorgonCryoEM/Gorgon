@@ -5,7 +5,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>329</width>
+    <width>338</width>
     <height>124</height>
    </rect>
   </property>
@@ -31,7 +31,7 @@
       <string>Surface Parameters:</string>
      </property>
      <layout class="QGridLayout" >
-      <item row="0" column="0" colspan="2" >
+      <item row="0" column="0" colspan="3" >
        <layout class="QGridLayout" >
         <item row="0" column="0" >
          <widget class="QRadioButton" name="radioButtonIsoSurface" >
@@ -47,6 +47,13 @@
          <widget class="QRadioButton" name="radioButtonCrossSection" >
           <property name="text" >
            <string>Cross-Section view</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="2" >
+         <widget class="QRadioButton" name="radioButtonSolid" >
+          <property name="text" >
+           <string>Solid view</string>
           </property>
          </widget>
         </item>
@@ -150,6 +157,13 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>radioButtonIsoSurface</tabstop>
+  <tabstop>radioButtonCrossSection</tabstop>
+  <tabstop>radioButtonSolid</tabstop>
+  <tabstop>horizontalSliderIsoLevel</tabstop>
+  <tabstop>horizontalSliderSampling</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>
@@ -171,7 +185,7 @@
   <connection>
    <sender>radioButtonIsoSurface</sender>
    <signal>toggled(bool)</signal>
-   <receiver>horizontalSliderIsoLevel</receiver>
+   <receiver>horizontalSliderSampling</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
@@ -179,15 +193,15 @@
      <y>45</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>142</x>
-     <y>64</y>
+     <x>183</x>
+     <y>93</y>
     </hint>
    </hints>
   </connection>
   <connection>
    <sender>radioButtonIsoSurface</sender>
    <signal>toggled(bool)</signal>
-   <receiver>labelIsoLevel</receiver>
+   <receiver>labelSamplingInterval</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
@@ -195,15 +209,15 @@
      <y>45</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>65</x>
-     <y>66</y>
+     <x>64</x>
+     <y>93</y>
     </hint>
    </hints>
   </connection>
   <connection>
    <sender>radioButtonIsoSurface</sender>
    <signal>toggled(bool)</signal>
-   <receiver>labelIsoValueDisplay</receiver>
+   <receiver>labelSamplingDisplay</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
@@ -211,8 +225,8 @@
      <y>42</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>294</x>
-     <y>64</y>
+     <x>287</x>
+     <y>93</y>
     </hint>
    </hints>
   </connection>

@@ -28,6 +28,7 @@ namespace wustl_mm {
 	namespace Visualization {
 		const int VIEWING_TYPE_ISO_SURFACE = 0;
 		const int VIEWING_TYPE_CROSS_SECTION = 1;
+		const int VIEWING_TYPE_SOLID = 2;
 
 		class VolumeRenderer : public Renderer {
 		public:
@@ -58,8 +59,11 @@ namespace wustl_mm {
 			float GetVoxelData(Volume * vol, int x, int y, int z);
 			float GetVoxelData(Volume * vol, float x, float y, float z);
 			float GetOffset(float fValue1, float fValue2, float fValueDesired);
-			void CalculateSurface();
+			bool CalculateSurface();
 			bool CalculateCuttingSurface();
+			bool CalculateSolidRendering();
+			bool CalculateDisplay();
+			void Load3DTexture();
 			void MarchingCube(Volume * vol, NonManifoldMesh_NoTags * mesh, const float iso_level, int iX, int iY, int iZ, int iScale);
 			int Smallest2ndPower(int value);
 		private:
@@ -73,6 +77,7 @@ namespace wustl_mm {
 			Volume * cuttingVolume;
 			NonManifoldMesh_NoTags * surfaceMesh;
 			NonManifoldMesh_NoTags * cuttingMesh;
+			PFNGLTEXIMAGE3DPROC glTexImage3D;
 		};
 
 		VolumeRenderer::VolumeRenderer() {
@@ -107,15 +112,12 @@ namespace wustl_mm {
 			return dataVolume->getMin();
 		}
 
-		float VolumeRenderer::GetOffset(float fValue1, float fValue2, float fValueDesired)
-		{
-				double fDelta = fValue2 - fValue1;
-
-				if(fDelta == 0.0)
-				{
-						return 0.5;
-				}
-				return (fValueDesired - fValue1)/fDelta;
+		float VolumeRenderer::GetOffset(float fValue1, float fValue2, float fValueDesired) {
+			double fDelta = fValue2 - fValue1;
+			if(fDelta == 0.0) {
+					return 0.5;
+			}
+			return (fValueDesired - fValue1)/fDelta;
 		}
 
 
@@ -179,18 +181,17 @@ namespace wustl_mm {
 
 		void VolumeRenderer::SetViewingType(const int type) {
 			viewingType = type;
-			if(viewingType == VIEWING_TYPE_ISO_SURFACE) {
-				CalculateSurface();
-			} else if(viewingType == VIEWING_TYPE_CROSS_SECTION) {
-				CalculateCuttingSurface();
-			} 
+			if((viewingType == VIEWING_TYPE_SOLID) || (viewingType == VIEWING_TYPE_CROSS_SECTION)) {
+				Load3DTexture();
+			}
+			CalculateDisplay();
 		}
 
 		bool VolumeRenderer::SetCuttingPlane(float position, float vecX, float vecY, float vecZ) {
 			Renderer::SetCuttingPlane(position, vecX, vecY, vecZ);
 			bool redraw = false;
-			if(viewingType == VIEWING_TYPE_CROSS_SECTION) {
-				redraw = CalculateCuttingSurface();
+			if((viewingType == VIEWING_TYPE_CROSS_SECTION) || (viewingType == VIEWING_TYPE_SOLID)) {
+				redraw = CalculateDisplay();
 			}
 			return redraw;
 		}
@@ -198,22 +199,52 @@ namespace wustl_mm {
 			if(subSceneIndex == 0) {
 				if((viewingType == VIEWING_TYPE_ISO_SURFACE) && (surfaceMesh != NULL)) {
 					surfaceMesh->Draw(true, false, false, selectEnabled, false, false);
-				} else if(viewingType == VIEWING_TYPE_CROSS_SECTION) {
+				} else if((viewingType == VIEWING_TYPE_CROSS_SECTION) || (viewingType == VIEWING_TYPE_SOLID)) {
 					glPushAttrib(GL_ENABLE_BIT);
 					glDisable(GL_CULL_FACE);
 					glBindTexture(GL_TEXTURE_3D, textureName);
 					Vector3DFloat vertex;
-					glBegin(GL_LINES);
-					for(unsigned int i = 0; i < cuttingMesh->edges.size(); i++) {
-						if(cuttingMesh->edges[i].faceIds.size() == 1) {
-							
-							for(unsigned int j = 0; j < 2; j++) {
-								vertex = cuttingMesh->vertices[cuttingMesh->GetVertexIndex(cuttingMesh->edges[i].vertexIds[j])].position;
-								glVertex3f(vertex.X() * (float)dataVolume->getSizeX(), vertex.Y() * (float)dataVolume->getSizeY(), vertex.Z() * (float)dataVolume->getSizeZ());
+					// The outside box
+					if((viewingType == VIEWING_TYPE_CROSS_SECTION)) {
+						glBegin(GL_LINES);
+						for(unsigned int i = 0; i < cuttingMesh->edges.size(); i++) {
+							if(cuttingMesh->edges[i].faceIds.size() == 1) {
+								
+								for(unsigned int j = 0; j < 2; j++) {
+									vertex = cuttingMesh->vertices[cuttingMesh->GetVertexIndex(cuttingMesh->edges[i].vertexIds[j])].position;
+									glVertex3f(vertex.X() * (float)dataVolume->getSizeX(), vertex.Y() * (float)dataVolume->getSizeY(), vertex.Z() * (float)dataVolume->getSizeZ());
+								}
 							}
 						}
+						glEnd();
 					}
-					glEnd();
+
+
+					float material[4];
+					float alphaValue = 0.9;
+					if(viewingType == VIEWING_TYPE_SOLID) {
+						glGetMaterialfv(GL_FRONT, GL_DIFFUSE, material);
+						material[3] = alphaValue;
+						glMaterialfv(GL_FRONT, GL_DIFFUSE, material);
+						glGetMaterialfv(GL_FRONT, GL_AMBIENT, material);
+						material[3] = alphaValue;
+						glMaterialfv(GL_FRONT, GL_AMBIENT, material);
+						glGetMaterialfv(GL_FRONT, GL_SPECULAR, material);
+						material[3] = alphaValue;
+						glMaterialfv(GL_FRONT, GL_SPECULAR, material);
+
+						glGetMaterialfv(GL_BACK, GL_DIFFUSE, material);
+						material[3] = alphaValue;
+						glMaterialfv(GL_BACK, GL_DIFFUSE, material);
+						glGetMaterialfv(GL_BACK, GL_AMBIENT, material);
+						material[3] = alphaValue;
+						glMaterialfv(GL_BACK, GL_AMBIENT, material);
+						glGetMaterialfv(GL_BACK, GL_SPECULAR, material);
+						material[3] = alphaValue;
+						glMaterialfv(GL_BACK, GL_SPECULAR, material);
+					}
+
+					// The cutting surface
 					glEnable(GL_TEXTURE_3D);
 					double xRatio = (double)dataVolume->getSizeX() / (double)textureSizeX;
 					double yRatio = (double)dataVolume->getSizeY() / (double)textureSizeY;
@@ -234,9 +265,11 @@ namespace wustl_mm {
 			}
 		}
 
-		void VolumeRenderer::CalculateSurface() {
+		bool VolumeRenderer::CalculateSurface() {
 			surfaceMesh->Clear();
+			bool redraw = false;
 			if(dataVolume != NULL) {
+				redraw = true;
 				int iX, iY, iZ;
 				for(iX = 0; iX < dataVolume->getSizeX(); iX+=sampleInterval) {
 					for(iY = 0; iY < dataVolume->getSizeY(); iY+=sampleInterval) {
@@ -246,18 +279,21 @@ namespace wustl_mm {
 					}
 				}
 			}
+			return redraw;
 		}
 
 		bool VolumeRenderer::CalculateCuttingSurface() {
-			bool redraw = false;
 			cuttingMesh->Clear();
+
+			bool redraw = false;
+
 			if(dataVolume != NULL) {
+				redraw = true;
 
 				if((cuttingPlaneCenter.X() >= minPts[0]) && (cuttingPlaneCenter.X() <= maxPts[0]) &&
 					(cuttingPlaneCenter.Y() >= minPts[1]) && (cuttingPlaneCenter.Y() <= maxPts[1]) &&
 					(cuttingPlaneCenter.Z() >= minPts[2]) && (cuttingPlaneCenter.Z() <= maxPts[2])) {
 
-					redraw = true;
 
 					int iX, iY, iZ;
 
@@ -271,10 +307,61 @@ namespace wustl_mm {
 					MarchingCube(cuttingVolume, cuttingMesh, 0.0f, 0, 0, 0, 1);	
 				}
 			}
-
 			return redraw;
 		}
 
+
+		bool VolumeRenderer::CalculateSolidRendering() {
+			cuttingMesh->Clear();
+			bool redraw = false;
+			if(dataVolume != NULL) {
+				redraw = true;
+				NonManifoldMesh_NoTags tempMesh;
+
+				
+				Vector3DFloat modelCenter = Vector3DFloat( (minPts[0] + maxPts[0])/2.0, (minPts[1] + maxPts[1])/2.0, (minPts[2] + maxPts[2])/2.0);
+				Vector3DFloat center;
+				float distance = (Vector3DFloat(minPts[0], minPts[1], minPts[2]) - modelCenter).Length();
+				int iX, iY, iZ;
+
+				for(float position = 1.0; position >= -1.0; position -= 0.02) {
+					center = modelCenter + cuttingPlaneDirection * position * distance;
+
+					if((center.X() >= minPts[0]) && (center.X() <= maxPts[0]) &&
+						(center.Y() >= minPts[1]) && (center.Y() <= maxPts[1]) &&
+						(center.Z() >= minPts[2]) && (center.Z() <= maxPts[2])) {
+
+
+						for(iX = 0; iX < 2; iX++) {
+							for(iY = 0; iY < 2; iY++) {
+								for(iZ = 0; iZ < 2; iZ++) {
+									cuttingVolume->setDataAt(iX, iY, iZ, (center - Vector3DFloat(iX * dataVolume->getSizeX(), iY * dataVolume->getSizeY(), iZ * dataVolume->getSizeZ()))* cuttingPlaneDirection);
+								}
+							}
+						}
+						tempMesh.Clear();
+						MarchingCube(cuttingVolume, &tempMesh, 0.0f, 0, 0, 0, 1);	
+						cuttingMesh->MergeMesh(&tempMesh);
+					}
+				}
+			}
+			return redraw;
+		}
+		bool VolumeRenderer::CalculateDisplay() {
+			bool redraw = false;
+			switch (viewingType) {
+				case VIEWING_TYPE_ISO_SURFACE:
+					redraw = CalculateSurface();
+					break;
+				case VIEWING_TYPE_CROSS_SECTION:
+					redraw = CalculateCuttingSurface();
+					break;
+				case VIEWING_TYPE_SOLID:
+					redraw = CalculateSolidRendering();
+					break;
+			}
+			return redraw;
+		}
 
 		void VolumeRenderer::LoadFile(string fileName) {
 			if(dataVolume != NULL) {
@@ -283,45 +370,56 @@ namespace wustl_mm {
 			dataVolume = VolumeFormatConverter::LoadVolume(fileName);
 			UpdateBoundingBox();
 
-			// Loading 3D texture into graphics card
-			PFNGLTEXIMAGE3DPROC glTexImage3D = (PFNGLTEXIMAGE3DPROC) wglGetProcAddress("glTexImage3D");
-			textureSizeX = Smallest2ndPower(dataVolume->getSizeX());
-			textureSizeY = Smallest2ndPower(dataVolume->getSizeY());
-			textureSizeZ = Smallest2ndPower(dataVolume->getSizeZ());
-			double maxVal = dataVolume->getMax();
-			double minVal = dataVolume->getMin();
-			unsigned char val;
+			glTexImage3D = (PFNGLTEXIMAGE3DPROC) wglGetProcAddress("glTexImage3D");
 
-			unsigned char * texels = new unsigned char[textureSizeX * textureSizeY * textureSizeZ];
-			unsigned int pos = 0;
-			for(int z = 0; z < textureSizeZ; z++) {
-				for(int y = 0; y < textureSizeY; y++) {
-					for(int x = 0; x < textureSizeX; x++) {
-						if((x < dataVolume->getSizeX()) && (y < dataVolume->getSizeY()) && (z < dataVolume->getSizeZ())) {
-							val = (unsigned char)round((dataVolume->getDataAt(x, y, z) - minVal) * 255.0 / (maxVal - minVal));
-						} else {
-							val = 0;
-						}
-						//texels[x * textureSizeY * textureSizeZ + y * textureSizeZ + z] = val;
-						texels[pos] = val;
-						pos++;
-					}
-				}
-			}
-			glGenTextures(1, &textureName);
-			glBindTexture(GL_TEXTURE_3D, textureName);
-			glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-			glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-			glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-			glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-			glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_REPEAT);
-			try {
-				glTexImage3D(GL_TEXTURE_3D, 0, GL_COMPRESSED_INTENSITY, textureSizeX, textureSizeY, textureSizeZ, 0, GL_RED, GL_UNSIGNED_BYTE, texels);
-				textureLoaded = true;
-			}   catch (int) {
+		}
+
+		void VolumeRenderer::Load3DTexture() {
+			if(textureLoaded) {
+				glDeleteTextures(1, &textureName);
 				textureLoaded = false;
 			}
-			delete [] texels;
+
+			if(dataVolume != NULL) {
+				textureSizeX = Smallest2ndPower(dataVolume->getSizeX());
+				textureSizeY = Smallest2ndPower(dataVolume->getSizeY());
+				textureSizeZ = Smallest2ndPower(dataVolume->getSizeZ());
+				double maxVal = dataVolume->getMax();
+				double minVal = surfaceValue;
+				unsigned char val;
+
+				unsigned char * texels = new unsigned char[textureSizeX * textureSizeY * textureSizeZ];
+				unsigned int pos = 0;
+				for(int z = 0; z < textureSizeZ; z++) {
+					for(int y = 0; y < textureSizeY; y++) {
+						for(int x = 0; x < textureSizeX; x++) {
+							if((x < dataVolume->getSizeX()) && (y < dataVolume->getSizeY()) && (z < dataVolume->getSizeZ())) {
+								val = (unsigned char)round((max(dataVolume->getDataAt(x, y, z), minVal) - minVal) * 255.0 / (maxVal - minVal));
+							} else {
+								val = 0;
+							}
+							texels[pos] = val;
+							pos++;
+						}
+					}
+				}
+				glGenTextures(1, &textureName);
+				glBindTexture(GL_TEXTURE_3D, textureName);
+				glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+				glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+				glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+				glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+				glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_REPEAT);
+				try {
+					glTexImage3D(GL_TEXTURE_3D, 0, GL_COMPRESSED_INTENSITY, textureSizeX, textureSizeY, textureSizeZ, 0, GL_RED, GL_UNSIGNED_BYTE, texels);
+					textureLoaded = true;
+				}   catch (int) {
+					textureLoaded = false;
+				}
+				delete [] texels;
+
+			}
+
 		}
 
 		void VolumeRenderer::SaveFile(string fileName) {
@@ -415,7 +513,17 @@ namespace wustl_mm {
 
 		void VolumeRenderer::SetSurfaceValue(const float value) {
 			surfaceValue = value;
-			CalculateSurface();
+			switch(viewingType) {
+				case VIEWING_TYPE_ISO_SURFACE:
+					CalculateSurface();
+					break;
+				case VIEWING_TYPE_CROSS_SECTION:
+					Load3DTexture();
+					break;
+				case VIEWING_TYPE_SOLID:
+					Load3DTexture();
+					break;
+			}
 		}
 
 
@@ -431,8 +539,8 @@ namespace wustl_mm {
 			}
 			CalculateSurface();
 			UpdateBoundingBox();
-
 		}
+
 		void VolumeRenderer::UpdateBoundingBox() {
 			if(dataVolume == NULL) {
 				for(int i = 0; i < 3; i++) {

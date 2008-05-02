@@ -7,7 +7,7 @@ from delayed_filter import DelayedFilter
 import threading
 
 class VolumeSurfaceEditorForm(QtGui.QWidget):
-    ViewingTypeIsoSurface, ViewingTypeCrossSection = range(2)
+    ViewingTypeIsoSurface, ViewingTypeCrossSection, ViewingTypeSolid = range(3)
     
     def __init__(self, main, volumeViewer, parent=None):
         QtGui.QWidget.__init__(self, parent)
@@ -28,15 +28,15 @@ class VolumeSurfaceEditorForm(QtGui.QWidget):
         self.dock.close()
         self.connect(self.dock, QtCore.SIGNAL("visibilityChanged (bool)"), self.dockVisibilityChanged)
         self.connect(self.ui.horizontalSliderIsoLevel,QtCore.SIGNAL("valueChanged(int)"),self.isoValueIndicatorChanged)
-        self.filterIsoValue = DelayedFilter()
-        self.filterSampling = DelayedFilter()
-        self.filterTransparency = DelayedFilter()
+        self.filterIsoValue = DelayedFilter(self.thread())
+        self.filterSampling = DelayedFilter(self.thread())
         self.connect(self.ui.horizontalSliderIsoLevel, QtCore.SIGNAL("valueChanged(int)"),self.filterIsoValue.setValue)
         self.connect(self.ui.horizontalSliderSampling, QtCore.SIGNAL("valueChanged(int)"),self.filterSampling.setValue)
         self.connect(self.filterIsoValue, QtCore.SIGNAL("valueChanged(int)"), self.isoValueChanged )
         self.connect(self.filterSampling, QtCore.SIGNAL("valueChanged(int)"), self.samplingChanged )
         self.connect(self.ui.radioButtonIsoSurface, QtCore.SIGNAL("toggled(bool)"), self.setViewingType)
         self.connect(self.ui.radioButtonCrossSection, QtCore.SIGNAL("toggled(bool)"), self.setViewingType)
+        self.connect(self.ui.radioButtonSolid, QtCore.SIGNAL("toggled(bool)"), self.setViewingType)
             
     def loadWidget(self):
         if(self.app.actions.getAction("show_VolumeSurfaceEditor").isChecked()) :
@@ -59,6 +59,9 @@ class VolumeSurfaceEditorForm(QtGui.QWidget):
            self.viewer.renderer.setViewingType(self.ViewingTypeIsoSurface)
         elif self.ui.radioButtonCrossSection.isChecked():
             self.viewer.renderer.setViewingType(self.ViewingTypeCrossSection)
+        elif self.ui.radioButtonSolid.isChecked():
+            self.viewer.renderer.setViewingType(self.ViewingTypeSolid)
+        print "setViewingType", QtCore.QThread.currentThreadId()
         self.viewer.emitModelChanged()
     
     def modelLoaded(self):

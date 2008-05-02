@@ -125,7 +125,6 @@ namespace wustl_mm {
 			cuttingPlaneDirection = Vector3DFloat(vecX, vecY, vecZ);	
 			cuttingPlaneDirection.Normalize();
 			cuttingPlaneCenter = center + cuttingPlaneDirection * position * distance;
-			//printf("%lf %lf %lf - %lf %lf\n", cuttingPlaneCenter.values[0], cuttingPlaneCenter.values[1], cuttingPlaneCenter.values[2], position, distance); flushall();
 			return false;
 		}
 

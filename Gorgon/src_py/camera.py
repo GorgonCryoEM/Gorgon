@@ -331,14 +331,15 @@ class Camera(QtOpenGL.QGLWidget):
         self.updateGL()
     
     def wheelEvent(self, event):
-        direction = event.delta()/abs(event.delta())
-        if(event.modifiers() & QtCore.Qt.CTRL) :
-            self.setCuttingPlane(self.cuttingPlane + direction * 0.01);        
-        else:
-            self.setNearFarZoom(self.near, self.far, self.eyeZoom + direction * 10.0/360.0)
-            #newEye = vectorAdd(self.eye, vectorScalarMultiply(-direction * 0.1 * (vectorDistance(self.eye, self.look)), self.look))
-            #self.setEye(newEye[0], newEye[1], newEye[2])
-        self.updateGL()  
+        if(event.delta() != 0):
+            direction = event.delta()/abs(event.delta())
+            if(event.modifiers() & QtCore.Qt.CTRL) :
+                self.setCuttingPlane(self.cuttingPlane + direction * 0.01);        
+            else:
+                self.setNearFarZoom(self.near, self.far, self.eyeZoom + direction * 10.0/360.0)
+                #newEye = vectorAdd(self.eye, vectorScalarMultiply(-direction * 0.1 * (vectorDistance(self.eye, self.look)), self.look))
+                #self.setEye(newEye[0], newEye[1], newEye[2])
+            self.updateGL()  
         
     def modelChanged(self):
         minDistance = 1000000000000.0

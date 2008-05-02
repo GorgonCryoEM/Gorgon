@@ -235,6 +235,10 @@ class BaseViewer(QtGui.QWidget):
         glMultMatrixf(self.rotation)
         glScaled(self.scale[0], self.scale[1], self.scale[2])            
         
+        if(self.loaded and self.showBox):            
+            self.setMaterials(self.boxColor)       
+            self.renderer.drawBoundingBox()        
+        
         for i in range(2):
             if(self.loaded and visibility[i]):
                 self.setMaterials(colors[i])
@@ -248,9 +252,6 @@ class BaseViewer(QtGui.QWidget):
                 else:
                     self.renderer.draw(i, self.selectEnabled or self.mouseMoveEnabled)
                 
-        if(self.loaded and self.showBox):            
-            self.setMaterials(self.boxColor)       
-            self.renderer.drawBoundingBox()
 
         glPopMatrix()
         glPopAttrib()
