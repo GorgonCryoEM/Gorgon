@@ -37,6 +37,9 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				Optimization="0"
+				WarningLevel="1"
+				DebugInformationFormat="4"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -49,6 +52,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				GenerateDebugInformation="true"
+				AssemblyDebug="1"
+				GenerateMapFile="false"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -216,6 +222,10 @@
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
+			<File
+				RelativePath=".\Octree.h"
+				>
+			</File>
 			<File
 				RelativePath=".\StringUtils.h"
 				>

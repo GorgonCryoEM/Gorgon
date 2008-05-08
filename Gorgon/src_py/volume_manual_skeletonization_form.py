@@ -5,6 +5,15 @@ from PyQt4 import QtCore, QtGui
 from ui_dialog_volume_manual_skeletonization import Ui_DialogVolumeManualSkeletonization
 from gorgon_cpp_wrapper import InteractiveSkeletonEngine
 
+try:
+    from OpenGL.GL import *
+    from OpenGL.GLU import *
+    from OpenGL.GLUT import *
+except ImportError:
+    app = QtGui.QApplication(sys.argv)
+    QtGui.QMessageBox.critical(None, "Gorgon", "PyOpenGL must be installed to run Gorgon.", QtGui.QMessageBox.Ok | QtGui.QMessageBox.Default, QtGui.QMessageBox.NoButton)
+    sys.exit(1)
+
 class VolumeManualSkeletonizationForm(QtGui.QWidget):
     def __init__(self, main, viewer, parent=None):
         QtGui.QWidget.__init__(self, parent)
@@ -12,10 +21,14 @@ class VolumeManualSkeletonizationForm(QtGui.QWidget):
         self.started = False
         self.viewer = viewer
         self.connect(self.viewer, QtCore.SIGNAL("modelLoaded()"), self.modelLoaded)
-        self.connect(self.viewer, QtCore.SIGNAL("modelUnloaded()"), self.modelUnloaded)          
+        self.connect(self.viewer, QtCore.SIGNAL("modelUnloaded()"), self.modelUnloaded)
+        self.manualColors = [QtGui.QColor.fromRgba(QtGui.qRgba(0, 255, 0, 255)),
+                             QtGui.QColor.fromRgba(QtGui.qRgba(0, 0, 255, 255)),
+                             QtGui.QColor.fromRgba(QtGui.qRgba(0, 255, 255, 255)),
+                             QtGui.QColor.fromRgba(QtGui.qRgba(255, 0, 0, 255))]
         self.createUI()
         self.createActions()
-        self.createMenus()
+        self.createMenus()        
 
     def createUI(self):
         self.ui = Ui_DialogVolumeManualSkeletonization()
@@ -158,4 +171,12 @@ class VolumeManualSkeletonizationForm(QtGui.QWidget):
     def dockVisibilityChanged(self, visible):
         self.skeletonizeAct.setChecked(visible)
         self.showWidget(visible)
+        
+    def drawOverlay(self):     
+        print "a"
+        if self.started:
+            for i in range(4):
+                print(i)
+                self.skeletonViewer.setMaterials(self.manualColors[i])
+                self.engine.draw(i)        
                                  

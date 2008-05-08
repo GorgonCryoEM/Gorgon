@@ -214,6 +214,9 @@ class BaseViewer(QtGui.QWidget):
         self.rotation = self.identityMatrix()
         self.emitModelUnloaded()
         
+    def extraDrawingRoutines(self):
+        pass
+        
     def modelChanged(self):
         self.updateActionsAndMenus()
         if self.gllist != 0:
@@ -228,10 +231,6 @@ class BaseViewer(QtGui.QWidget):
         
         glPushMatrix()
         glTranslated(self.location[0], self.location[1], self.location[2])
-        #print self.rotation[0][0], self.rotation[0][1], self.rotation[0][2], self.rotation[0][3]
-        #print self.rotation[1][0], self.rotation[1][1], self.rotation[1][2], self.rotation[1][3]
-        #print self.rotation[2][0], self.rotation[2][1], self.rotation[2][2], self.rotation[2][3]
-        #print self.rotation[3][0], self.rotation[3][1], self.rotation[3][2], self.rotation[3][3]
         glMultMatrixf(self.rotation)
         glScaled(self.scale[0], self.scale[1], self.scale[2])            
         
@@ -250,8 +249,9 @@ class BaseViewer(QtGui.QWidget):
                     glColorMask(True, True, True, True) 
                     self.renderer.draw(i, self.selectEnabled or self.mouseMoveEnabled)
                 else:
-                    self.renderer.draw(i, self.selectEnabled or self.mouseMoveEnabled)
-                
+                    self.renderer.draw(i, self.selectEnabled or self.mouseMoveEnabled)                    
+                            
+        self.extraDrawingRoutines()
 
         glPopMatrix()
         glPopAttrib()
