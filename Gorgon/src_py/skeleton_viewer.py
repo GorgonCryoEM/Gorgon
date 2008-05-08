@@ -23,6 +23,7 @@ class SkeletonViewer(BaseViewer):
         self.renderer = MeshRenderer()          
         self.createUI()      
         self.app.viewers["skeleton"] = self;
+        self.volumeViewer = self.app.viewers["volume"]
         self.modelColor = QtGui.QColor.fromRgba(QtGui.qRgba(180, 0, 0, 255))
         self.initVisualizationOptions()      
                  
@@ -82,3 +83,5 @@ class SkeletonViewer(BaseViewer):
         self.emitModelLoaded()
         self.emitViewerSetCenter()
              
+    def extraDrawingRoutines(self):
+        self.volumeViewer.manualSkeletonizer.drawOverlay()

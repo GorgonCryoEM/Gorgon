@@ -152,6 +152,7 @@ BOOST_PYTHON_MODULE(gorgon_cpp_wrapper)
 		.def("selectEndSeed", &InteractiveSkeletonEngine::SelectEndSeed)
 		.def("analyzePath", &InteractiveSkeletonEngine::AnalyzePath)
 		.def("finalizeSkeleton", &InteractiveSkeletonEngine::FinalizeSkeleton)		
+		.def("draw", &InteractiveSkeletonEngine::Draw)		
 	;
 
 

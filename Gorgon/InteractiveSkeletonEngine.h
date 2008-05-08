@@ -21,6 +21,7 @@ namespace wustl_mm {
 			void SelectStartSeed(int hit0, int hit1);
 			void AnalyzePath(int hit0, int hit1);
 			void FinalizeSkeleton();
+			void Draw(int subscene);
 		private:
 			Volume * volume;
 			NonManifoldMesh_Annotated * skeleton;
@@ -28,6 +29,9 @@ namespace wustl_mm {
 			hash_map<int, int> locationToVertexMap;
 			hash_map<int, Vector3DInt> vertexToLocationMap;
 			bool started;
+			Vector3DInt startPos;
+			Vector3DInt currentPos;
+			GLUquadric * quadricSphere;			
 		};
 
 		InteractiveSkeletonEngine::InteractiveSkeletonEngine(Volume * volume, NonManifoldMesh_Annotated * skeleton, float skeletonRatio, float stRatio, float minGray, int stepCount, int curveRadius, int minCurveSize) {
@@ -58,12 +62,12 @@ namespace wustl_mm {
 			delete skelVol;
 			started = false;
 			skeletonizer->SetGraphWeights(skeletonRatio, stRatio);
-
-			
+			quadricSphere = gluNewQuadric();			
 		}
 
 		InteractiveSkeletonEngine::~InteractiveSkeletonEngine() {
 			delete skeletonizer;
+			gluDeleteQuadric(quadricSphere);
 		}
 
 		void InteractiveSkeletonEngine::SelectEndSeed(int hit0, int hit1) {
@@ -100,7 +104,8 @@ namespace wustl_mm {
 					}
 				}
 				skeleton->RemoveNullEntries();
-				skeletonizer->CalculateMinimalSpanningTree(vertexToLocationMap[hit1]);
+				startPos = vertexToLocationMap[hit1];
+				skeletonizer->CalculateMinimalSpanningTree(startPos);
 			}
 		}
 
@@ -113,7 +118,8 @@ namespace wustl_mm {
 				}
 				skeleton->RemoveNullEntries();
 				int v1, v2;
-				vector<Vector3DInt> path = skeletonizer->GetPath(vertexToLocationMap[hit1]);
+				currentPos = vertexToLocationMap[hit1];
+				vector<Vector3DInt> path = skeletonizer->GetPath(currentPos);
 				for(unsigned int i = 1; i < path.size(); i++) {
 					v1 = locationToVertexMap[volume->getIndex(path[i-1].X(),path[i-1].Y(), path[i-1].Z())];
 					v2 = locationToVertexMap[volume->getIndex(path[i].X(),path[i].Y(), path[i].Z())];
@@ -132,6 +138,31 @@ namespace wustl_mm {
 				}
 			}
 			skeleton->RemoveNullEntries();
+		}
+		void InteractiveSkeletonEngine::Draw(int subscene) {
+			printf("aaa : %d\n" ,subscene);
+			flushall();
+			if(started) {
+				switch (subscene) {
+					case(0) :
+						glPushMatrix();
+						glTranslatef(currentPos.X(), currentPos.Y(), currentPos.Z());
+						gluSphere(quadricSphere, 1.0, 10, 10);  
+						glPopMatrix();
+						break;
+					case(1) :
+						glPushMatrix();
+						glTranslatef(startPos.X(), startPos.Y(), startPos.Z());
+						gluSphere(quadricSphere, 1.0, 10, 10);  
+						glPopMatrix();
+						break;
+					case(2):
+						break;
+					case(3):
+						//skeleton->Draw(false, false, true, false, false, true);
+						break;
+				}
+			}
 		}
 	}
 }

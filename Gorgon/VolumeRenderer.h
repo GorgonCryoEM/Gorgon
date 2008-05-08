@@ -202,7 +202,6 @@ namespace wustl_mm {
 				} else if((viewingType == VIEWING_TYPE_CROSS_SECTION) || (viewingType == VIEWING_TYPE_SOLID)) {
 					glPushAttrib(GL_ENABLE_BIT);
 					glDisable(GL_CULL_FACE);
-					glBindTexture(GL_TEXTURE_3D, textureName);
 					Vector3DFloat vertex;
 					// The outside box
 					if((viewingType == VIEWING_TYPE_CROSS_SECTION)) {
@@ -246,19 +245,25 @@ namespace wustl_mm {
 
 					// The cutting surface
 					glEnable(GL_TEXTURE_3D);
-					double xRatio = (double)dataVolume->getSizeX() / (double)textureSizeX;
-					double yRatio = (double)dataVolume->getSizeY() / (double)textureSizeY;
-					double zRatio = (double)dataVolume->getSizeZ() / (double)textureSizeZ;
+					//GLboolean resident;
+					//glAreTexturesResident(1, &textureName, &resident);
+					//if(resident) {
+						glBindTexture(GL_TEXTURE_3D, textureName);
 
-					for(unsigned int i = 0; i < cuttingMesh->faces.size(); i++) {
-						glBegin(GL_POLYGON);
-						for(unsigned int j = 0; j < cuttingMesh->faces[i].vertexIds.size(); j++) {
-							vertex = cuttingMesh->vertices[cuttingMesh->GetVertexIndex(cuttingMesh->faces[i].vertexIds[j])].position;
-							glTexCoord3d(vertex.X() * xRatio, vertex.Y()* yRatio, vertex.Z() * zRatio);
-							glVertex3f(vertex.X() * (float)dataVolume->getSizeX(), vertex.Y() * (float)dataVolume->getSizeY(), vertex.Z() * (float)dataVolume->getSizeZ());
+						double xRatio = (double)dataVolume->getSizeX() / (double)textureSizeX;
+						double yRatio = (double)dataVolume->getSizeY() / (double)textureSizeY;
+						double zRatio = (double)dataVolume->getSizeZ() / (double)textureSizeZ;
+
+						for(unsigned int i = 0; i < cuttingMesh->faces.size(); i++) {
+							glBegin(GL_POLYGON);
+							for(unsigned int j = 0; j < cuttingMesh->faces[i].vertexIds.size(); j++) {
+								vertex = cuttingMesh->vertices[cuttingMesh->GetVertexIndex(cuttingMesh->faces[i].vertexIds[j])].position;
+								glTexCoord3d(vertex.X() * xRatio, vertex.Y()* yRatio, vertex.Z() * zRatio);
+								glVertex3f(vertex.X() * (float)dataVolume->getSizeX(), vertex.Y() * (float)dataVolume->getSizeY(), vertex.Z() * (float)dataVolume->getSizeZ());
+							}
+							glEnd();
 						}
-						glEnd();
-					}
+					//}
 					
 					glPopAttrib();
 				}
@@ -324,7 +329,7 @@ namespace wustl_mm {
 				float distance = (Vector3DFloat(minPts[0], minPts[1], minPts[2]) - modelCenter).Length();
 				int iX, iY, iZ;
 
-				for(float position = 1.0; position >= -1.0; position -= 0.02) {
+				for(float position = 1.0; position >= -1.0; position -= 0.01) {
 					center = modelCenter + cuttingPlaneDirection * position * distance;
 
 					if((center.X() >= minPts[0]) && (center.X() <= maxPts[0]) &&

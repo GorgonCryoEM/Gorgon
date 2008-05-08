@@ -22,12 +22,13 @@ except ImportError:
 class VolumeViewer(BaseViewer):
     def __init__(self, main, parent=None):
         BaseViewer.__init__(self, main, parent)
-        self.title = "Volume"
+        self.title = "Volume"                           
         self.renderer = VolumeRenderer()          
         self.loaded = False
         self.createUI()
-        self.app.viewers["volume"] = self;
-        self.initVisualizationOptions()        
+        self.app.viewers["volume"] = self
+        self.initVisualizationOptions()    
+                      
 
     def createUI(self):
         self.createActions()
@@ -64,10 +65,11 @@ class VolumeViewer(BaseViewer):
         self.manualSkeletonizer = VolumeManualSkeletonizationForm(self.app, self)
         self.binarySkeletonizer = VolumeBinarySkeletonizationForm(self.app, self)
         self.grayscaleSkeletonizer = VolumeGrayscaleSkeletonizationForm(self.app, self)
-        
+    
     def updateActionsAndMenus(self):
         self.app.actions.getAction("save_Volume").setEnabled(self.loaded)
         self.app.actions.getAction("unload_Volume").setEnabled(self.loaded)
         self.app.menus.getMenu("actions-volume").setEnabled(self.loaded)       
-          
+    
+              
       
