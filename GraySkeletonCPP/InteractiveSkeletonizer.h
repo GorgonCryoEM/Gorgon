@@ -112,10 +112,13 @@ namespace wustl_mm {
 			for(unsigned int i = 0; i < graph->edges.size(); i++) {
 				n1 = graph->vertices[graph->GetVertexIndex(graph->edges[i].vertexIds[0])].tag.octreeNode;
 				n2 = graph->vertices[graph->GetVertexIndex(graph->edges[i].vertexIds[1])].tag.octreeNode;
-
-				graph->edges[i].tag.medialCost = 1.0 - 
-					(skeleton->getDataAt(n1->pos[0]+MAX_GAUSSIAN_FILTER_RADIUS, n1->pos[1]+MAX_GAUSSIAN_FILTER_RADIUS, n1->pos[2]+MAX_GAUSSIAN_FILTER_RADIUS) +  
-					 skeleton->getDataAt(n2->pos[0]+MAX_GAUSSIAN_FILTER_RADIUS, n2->pos[1]+MAX_GAUSSIAN_FILTER_RADIUS, n2->pos[2]+MAX_GAUSSIAN_FILTER_RADIUS)) / 2.0;
+				if( (graph->vertices[graph->GetVertexIndex(graph->edges[i].vertexIds[0])].position - graph->vertices[graph->GetVertexIndex(graph->edges[i].vertexIds[1])].position).Length() < 2.0) {						
+					graph->edges[i].tag.medialCost = 1.0 - 
+						(skeleton->getDataAt(n1->pos[0]+MAX_GAUSSIAN_FILTER_RADIUS, n1->pos[1]+MAX_GAUSSIAN_FILTER_RADIUS, n1->pos[2]+MAX_GAUSSIAN_FILTER_RADIUS) +  
+						 skeleton->getDataAt(n2->pos[0]+MAX_GAUSSIAN_FILTER_RADIUS, n2->pos[1]+MAX_GAUSSIAN_FILTER_RADIUS, n2->pos[2]+MAX_GAUSSIAN_FILTER_RADIUS)) / 2.0;
+				} else {
+					graph->edges[i].tag.medialCost = 1.0;
+				}
 				s1 = GetStructureTensorProjectedScore(
 						volumeEigens[skeleton->getIndex(n1->pos[0]+MAX_GAUSSIAN_FILTER_RADIUS, n1->pos[1]+MAX_GAUSSIAN_FILTER_RADIUS, n1->pos[2]+MAX_GAUSSIAN_FILTER_RADIUS)], 
 						graph->vertices[graph->GetVertexIndex(graph->edges[i].vertexIds[0])].position - graph->vertices[graph->GetVertexIndex(graph->edges[i].vertexIds[1])].position,
@@ -204,13 +207,14 @@ namespace wustl_mm {
 		}
 
 		void InteractiveSkeletonizer::SetGraphWeights(double skeletonRatio, double structureTensorRatio){
-			
 			appTimeManager.PushCurrentTime();
 			Vector3DFloat p1, p2;
+			float length;
 			for(unsigned int i = 0; i < graph->edges.size(); i++) {
 				p1 = graph->vertices[graph->GetVertexIndex(graph->edges[i].vertexIds[0])].position;
 				p2 = graph->vertices[graph->GetVertexIndex(graph->edges[i].vertexIds[1])].position;
-				graph->edges[i].tag.totalCost = (skeletonRatio * graph->edges[i].tag.medialCost * (p1-p2).Length() + structureTensorRatio * graph->edges[i].tag.smoothCost);
+				length = (p1-p2).Length();
+				graph->edges[i].tag.totalCost = (skeletonRatio * graph->edges[i].tag.medialCost + structureTensorRatio * graph->edges[i].tag.smoothCost) * length;
 			}
 
 			appTimeManager.PopAndDisplayTime("Merging graphs: %f seconds!\n");

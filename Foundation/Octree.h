@@ -60,9 +60,14 @@ namespace wustl_mm {
 			if (n1->cellSize < n2->cellSize) {
 				return IsAdjacent(n2, n1);
 			} else {
-				return ((n2->pos[0] >= n1->pos[0]) && (n2->pos[0] <= n1->pos[0] + n1->cellSize) && 
-					    (n2->pos[1] >= n1->pos[1]) && (n2->pos[1] <= n1->pos[1] + n1->cellSize) && 
-						(n2->pos[2] >= n1->pos[2]) && (n2->pos[2] <= n1->pos[2] + n1->cellSize));
+				bool adjacent = false;
+				for(int i = 0; (i < 8) && !adjacent; i ++) {
+					adjacent = adjacent || 
+						((n2->pos[0] + n2->cellSize * octreeChildren[i][0] >= n1->pos[0]) && (n2->pos[0] + n2->cellSize * octreeChildren[i][0] <= n1->pos[0] + n1->cellSize) && 
+						 (n2->pos[1] + n2->cellSize * octreeChildren[i][1] >= n1->pos[1]) && (n2->pos[1] + n2->cellSize * octreeChildren[i][1] <= n1->pos[1] + n1->cellSize) && 
+						 (n2->pos[2] + n2->cellSize * octreeChildren[i][2] >= n1->pos[2]) && (n2->pos[2] + n2->cellSize * octreeChildren[i][2] <= n1->pos[2] + n1->cellSize));
+				}
+				return adjacent;
 			}
 		}
 
@@ -165,7 +170,7 @@ namespace wustl_mm {
 			OctreeNode<TTag> * neigh;
 			bool found;
 			for(int i = 1; i < 8; i++) {				
-				neigh = GetLeaf(node->pos[0] * node->cellSize * octreeChildren[i][0], node->pos[1] * node->cellSize * octreeChildren[i][1], node->pos[2] * node->cellSize * octreeChildren[i][2]);
+				neigh = GetLeaf(node->pos[0] + node->cellSize * octreeChildren[i][0], node->pos[1] + node->cellSize * octreeChildren[i][1], node->pos[2] + node->cellSize * octreeChildren[i][2]);
 				if(neigh != NULL) {
 					if(neigh->cellSize == node->cellSize) {
 						neighbors.push_back(neigh);
