@@ -364,13 +364,13 @@ namespace wustl_mm {
 			}			
 			
 			if(drawPoints) {
-				GLfloat color[4] = {0.0, 0.0, 0.0, 0.0};
+				/*GLfloat color[4] = {0.0, 0.0, 0.0, 0.0};
 				glMaterialfv(GL_FRONT, GL_AMBIENT, color);
 				glMaterialfv(GL_FRONT, GL_DIFFUSE, color);
 				glMaterialfv(GL_FRONT, GL_SPECULAR, color);
 				glMaterialfv(GL_BACK, GL_AMBIENT, color);
 				glMaterialfv(GL_BACK, GL_DIFFUSE, color);
-				glMaterialfv(GL_BACK, GL_SPECULAR, color);
+				glMaterialfv(GL_BACK, GL_SPECULAR, color); */
 
 				if(annotatePoints) {
 					glPushName(2);

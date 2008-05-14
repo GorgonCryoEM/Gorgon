@@ -45,21 +45,16 @@ namespace wustl_mm {
 
 
 			skeletonizer = new InteractiveSkeletonizer(volume, minVal, maxVal, stepSize, curveRadius, minCurveSize, false);
-			Volume * skelVol = skeletonizer->GetSkeletonCopy();
-			int ix;
-			for(int x = 0; x < skelVol->getSizeX(); x++) {
-				for(int y = 0; y < skelVol->getSizeY(); y++) {
-					for(int z = 0; z < skelVol->getSizeZ(); z++) {
-						if(skelVol->getDataAt(x, y, z) > 0.0) {
-							ix = skeleton->AddVertex(Vector3DFloat(x, y, z), false);
-							locationToVertexMap[skelVol->getIndex(x, y, z)] = ix;
-							vertexToLocationMap[ix] = Vector3DInt(x, y, z);
-						}
-					}
-				}
+			GraphType * graph = skeletonizer->GetGraph();
+			OctreeNode<unsigned int> * node;
+			unsigned int ix;
+			for(unsigned int i = 0; i < graph->vertices.size(); i++) {
+				ix = skeleton->AddVertex(graph->vertices[i].position, false);
+				node = graph->vertices[i].tag.octreeNode;
+				locationToVertexMap[volume->getIndex(node->pos[0], node->pos[1], node->pos[2])] = ix;
+				vertexToLocationMap[ix] = Vector3DInt(node->pos[0], node->pos[1], node->pos[2]);
 			}
 
-			delete skelVol;
 			started = false;
 			skeletonizer->SetGraphWeights(skeletonRatio, stRatio);
 			quadricSphere = gluNewQuadric();			
@@ -119,7 +114,13 @@ namespace wustl_mm {
 				skeleton->RemoveNullEntries();
 				int v1, v2;
 				currentPos = vertexToLocationMap[hit1];
+				//printf("Getting Path {%ld %ld %ld}\n", currentPos.X(), currentPos.Y(), currentPos.Z()); flushall();
 				vector<Vector3DInt> path = skeletonizer->GetPath(currentPos);
+				//printf("Done\n"); flushall();
+				//for(unsigned int i = 0; i < path.size(); i++) {
+					//printf("{%ld %ld %ld} ", path[i].X(), path[i].Y(), path[i].Z()); flushall();
+				//}
+				//printf("\nGot Path\n"); flushall();
 				for(unsigned int i = 1; i < path.size(); i++) {
 					v1 = locationToVertexMap[volume->getIndex(path[i-1].X(),path[i-1].Y(), path[i-1].Z())];
 					v2 = locationToVertexMap[volume->getIndex(path[i].X(),path[i].Y(), path[i].Z())];
@@ -140,8 +141,6 @@ namespace wustl_mm {
 			skeleton->RemoveNullEntries();
 		}
 		void InteractiveSkeletonEngine::Draw(int subscene) {
-			printf("aaa : %d\n" ,subscene);
-			flushall();
 			if(started) {
 				switch (subscene) {
 					case(0) :
