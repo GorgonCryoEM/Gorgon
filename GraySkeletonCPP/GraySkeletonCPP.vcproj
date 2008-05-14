@@ -455,6 +455,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\VolumeReaderTXT.h"
+				>
+			</File>
+			<File
 				RelativePath=".\VolumeSkeletonizer.h"
 				>
 			</File>

@@ -8,6 +8,9 @@ namespace wustl_mm {
 
 		const double MIN_DOUBLE = 1.7E-308;
 		const double MAX_DOUBLE = 1.7E+308;
+		const float MIN_FLOAT = 3.4E-38f;
+		const float MAX_FLOAT = 3.4E+38f;
+		const int MAX_INT = 2147483647;
 
 		inline bool isZero(double value, double varience = 1e-16) { 
 			return (value < varience && value > -varience)? true : false; 

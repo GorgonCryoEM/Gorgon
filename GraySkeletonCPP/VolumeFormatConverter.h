@@ -4,6 +4,7 @@
 #include <string>
 #include "VolumeReaderRAW.h"
 #include "VolumeReaderATOM.h"
+#include "VolumeReaderTXT.h"
 #include <SkeletonMaker/reader.h>
 #include <SkeletonMaker/volume.h>
 
@@ -27,8 +28,10 @@ namespace wustl_mm {
 				vol = MRCReaderPicker::pick((char *)inputFile.c_str())->getVolume();
 			} else if (stricmp(inputFormat.c_str(), "ATOM") == 0) {		
 				vol = VolumeReaderATOM::LoadVolume(inputFile);
+			} else if (stricmp(inputFormat.c_str(), "TXT") == 0) {		
+				vol = VolumeReaderTXT::LoadVolume(inputFile);
 			} else {
-				printf("Input format %s not supported!\n", inputFormat);			
+				printf("Input format [%s] not supported!\n", (char *)inputFormat.c_str());			
 			}
 			return vol;
 		}
@@ -43,8 +46,10 @@ namespace wustl_mm {
 				vol = VolumeReaderRAW::LoadVolume16bit(inputFile, sizeX, sizeY, sizeZ, 1, 1, 1);
 			} else if (stricmp(inputFormat.c_str(), "ATOM") == 0) {		
 				vol = VolumeReaderATOM::LoadVolume(inputFile);
+			} else if (stricmp(inputFormat.c_str(), "TXT") == 0) {		
+				vol = VolumeReaderTXT::LoadVolume(inputFile);
 			} else {
-				printf("Input format %s not supported!\n", inputFormat);
+				printf("Input format [%s] not supported!\n", inputFormat.c_str());
 				return;
 			}
 					

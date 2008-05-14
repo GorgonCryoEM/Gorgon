@@ -13,7 +13,7 @@ using namespace wustl_mm::Foundation;
 
 int main( int args, char * argv[] ) {
 
-	Octree * tree = new Octree(64, 64, 64);
+	Octree<bool> * tree = new Octree<bool>(64, 64, 64);
 	tree->PrintStructure();
 	tree->AddNewLeaf(18, 26, 16, 1);
 	printf("\n\n");

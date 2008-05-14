@@ -16,7 +16,7 @@
 #include <Foundation/TimeManager.h>
 #include <Foundation/StringUtils.h>
 #include "InteractiveSkeletonizer.h"
-#include "TreeSkeletonizer.h"
+//#include "TreeSkeletonizer.h"
 
 using namespace wustl_mm::GraySkeletonCPP;
 using namespace wustl_mm::Foundation;
@@ -31,7 +31,7 @@ namespace wustl_mm {
 		const int DO_BINARY_THINNING_JU2007 = 50;
 		const int DO_TOPOLOGICAL_WATERSHED_JU2007  = 60;
 		const int DO_INTERACTIVE_SKELETONIZATION = 70;
-		const int DO_TREE_SKELETONIZATION = 80;
+		/*const int DO_TREE_SKELETONIZATION = 80;*/
 
 		const int DO_DISPLAY_VOXEL_COUNT = 800;
 
@@ -127,7 +127,7 @@ namespace wustl_mm {
 					printf("\t[structureTensorRatio] : The ratio for the structure tensor component in the graph.\n\n");
 					break;
 
-				case DO_TREE_SKELETONIZATION:
+				/*case DO_TREE_SKELETONIZATION:
 					printf("To perform automatic skeletonization of trees\n");
 					printf("\tGraySkeletonCPP.exe %i [dimensions] [inputfile] [outfile] [minCurveSize] [curveRadius] [minGray] [maxGray] [stepSize] [rootX] [rootY] [rootZ] [skeletonRatio] [structureTensorRatio]\n\n", DO_INTERACTIVE_SKELETONIZATION);
 					printf("\t[dimensions]    : The number of dimensions\n");
@@ -141,7 +141,7 @@ namespace wustl_mm {
 					printf("\t[root[D]]       : The root seed point (dimension d).\n");
 					printf("\t[skeletonRatio] : The ratio for the skeleton component in the graph.\n");
 					printf("\t[structureTensorRatio] : The ratio for the structure tensor component in the graph.\n\n");
-					break;
+					break; */
 
 				case DO_BINARY_THINNING_JU2007:
 					printf("To perform Binary Thinning (Ju2007)\n");
@@ -372,7 +372,7 @@ namespace wustl_mm {
 					printf("Not implemented yet! \n");
 					break;
 				case 3: {
-					/*MRCReader * reader = (MRCReader*)MRCReaderPicker::pick((char *)inFile.c_str());
+					MRCReader * reader = (MRCReader*)MRCReaderPicker::pick((char *)inFile.c_str());
 					Volume * sourceVol = reader->getVolume();
 					delete reader;
 
@@ -390,7 +390,7 @@ namespace wustl_mm {
 					delete skeletonPath;
 					delete sourceVol;
 					delete skel;
-					break;*/
+					break;
 				}
 				default:
 					DisplayInputParams(DO_INTERACTIVE_SKELETONIZATION);
@@ -399,7 +399,7 @@ namespace wustl_mm {
 			
 		}
 
-		void DoTreeSkeletonization(int dimensions, string inFile, string outFile, int minCurveSize, int curveRadius, int minGray, int maxGray, int stepSize, int rootX, int rootY, int rootZ, double skeletonRatio, double stRatio) {
+/*		void DoTreeSkeletonization(int dimensions, string inFile, string outFile, int minCurveSize, int curveRadius, int minGray, int maxGray, int stepSize, int rootX, int rootY, int rootZ, double skeletonRatio, double stRatio) {
 			string outPath = outFile.substr(0, outFile.rfind("."));
 			switch(dimensions){
 				case 2:
@@ -424,7 +424,7 @@ namespace wustl_mm {
 					break;
 			}
 			
-		}
+		}*/
 
 
 		void Do_Resize(string inFile, string outFile, int newX, int newY, int newZ) {
@@ -724,7 +724,7 @@ int main( int args, char * argv[] ) {
 					error = false;					
 				}
 				break;
-			case DO_TREE_SKELETONIZATION:
+			/*case DO_TREE_SKELETONIZATION:
 				if(args == 15) {
 					DoTreeSkeletonization(StringUtils::StringToInt(argv[2]), argv[3], argv[4], StringUtils::StringToInt(argv[5]), 
 						StringUtils::StringToInt(argv[6]), StringUtils::StringToInt(argv[7]), StringUtils::StringToInt(argv[8]), 
@@ -732,7 +732,7 @@ int main( int args, char * argv[] ) {
 						StringUtils::StringToInt(argv[12]), StringUtils::StringToDouble(argv[13]), StringUtils::StringToDouble(argv[14]));
 					error = false;					
 				}
-				break;
+				break;*/
 			case DO_DISPLAY_VOXEL_COUNT:
 				// GraySkeletonCPP.exe DO_DISPLAY_VOXEL_COUNT [inputfile]
 				if(args == 3) {
