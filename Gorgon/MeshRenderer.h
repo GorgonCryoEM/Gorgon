@@ -59,7 +59,7 @@ namespace wustl_mm {
 		void MeshRenderer::Draw(int subSceneIndex, bool selectEnabled) {
 			if(subSceneIndex == 0) {
 				if(mesh != NULL) {
-					mesh->Draw(true, true, true, selectEnabled, selectEnabled, selectEnabled);
+					mesh->Draw(true, true, false, selectEnabled, selectEnabled, false);
 				}
 			}
 		}

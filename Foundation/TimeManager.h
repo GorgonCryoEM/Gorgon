@@ -42,7 +42,8 @@ namespace wustl_mm {
 			clock_t start = times[times.size()-1];			
 			clock_t finish = clock();			
 			double timeTaken = ((double) (finish - start) / (double) CLOCKS_PER_SEC);
-			printf(textFormat.c_str(), timeTaken);
+			printf(textFormat.c_str(), timeTaken); 
+			flushall();			
 			times.pop_back();			
 		}
 

@@ -60,9 +60,9 @@ namespace wustl_mm {
 			appTimeManager.PopAndDisplayTime("	Thinning completed: %f seconds\n");
 			delete nullVol;
 			PruneCurves(skeleton, minCurveSize);
-			//#ifdef SAVE_INTERMEDIATE_RESULTS
+			#ifdef SAVE_INTERMEDIATE_RESULTS
 				skeleton->toMRCFile("CurveSkeleton.mrc");				
-			//#endif
+			#endif
 			
 			octree = new Octree<unsigned int>(skeleton->getSizeX() - 2*MAX_GAUSSIAN_FILTER_RADIUS, skeleton->getSizeY() - 2*MAX_GAUSSIAN_FILTER_RADIUS, skeleton->getSizeZ()- 2*MAX_GAUSSIAN_FILTER_RADIUS);
 			//octree->PrintStructure();
@@ -176,7 +176,7 @@ namespace wustl_mm {
 		}
 		vector<Vector3DInt> InteractiveSkeletonizer::GetPath(Vector3DInt endPoint) {
 			
-			appTimeManager.PushCurrentTime();
+			//appTimeManager.PushCurrentTime();
 			//printf("Getting path at {%ld %ld %ld}\n", endPoint.X(), endPoint.Y(), endPoint.Z()); flushall();
 
 			vector<Vector3DInt> outPath;
@@ -191,16 +191,15 @@ namespace wustl_mm {
 				outPath.push_back(Vector3DInt(currentNode->tag.octreeNode->pos[0], currentNode->tag.octreeNode->pos[1], currentNode->tag.octreeNode->pos[2]));
 			}
 
-			appTimeManager.PopAndDisplayTime("Finding path: %f seconds!\n");
+			//appTimeManager.PopAndDisplayTime("Finding path: %f seconds!\n");
 			return outPath; 
 
 
 		}
 		Vector3DInt InteractiveSkeletonizer::FindClosestSkeletalPoint(Vector3DInt point) {
 			appTimeManager.PushCurrentTime();
-			//printf("Starting finding closest skeletal point at {%ld %ld %ld}\n", point.X(), point.Y(), point.Z()); flushall();
 			OctreeNode<unsigned int> * node = octree->GetLeaf(point.X(), point.Y(), point.Z());
-			appTimeManager.PopAndDisplayTime("Done: %f seconds!\n");
+			appTimeManager.PopAndDisplayTime("Found Closest skeletal point: %f seconds!\n");
 			return Vector3DInt(node->pos[0], node->pos[1], node->pos[2]);	
 			
 			
@@ -216,7 +215,6 @@ namespace wustl_mm {
 				length = (p1-p2).Length();
 				graph->edges[i].tag.totalCost = (skeletonRatio * graph->edges[i].tag.medialCost + structureTensorRatio * graph->edges[i].tag.smoothCost) * length;
 			}
-
 			appTimeManager.PopAndDisplayTime("Merging graphs: %f seconds!\n");
 			
 		}
@@ -225,15 +223,14 @@ namespace wustl_mm {
 			//printf("Calculating MST {%ld %ld %ld}\n", seedPoint.X(), seedPoint.Y(), seedPoint.Z()); flushall();
 			OctreeNode<unsigned int> * node = octree->GetLeaf(seedPoint.X(), seedPoint.Y(), seedPoint.Z());
 			NonManifoldMeshVertex<nodeAttrib> * currentNode;
-			Volume * costVol = new Volume(octree->size[0], octree->size[1], octree->size[2]);
-
+			//Volume * costVol = new Volume(octree->size[0], octree->size[1], octree->size[2]);
 			for(unsigned int i = 0; i < graph->vertices.size(); i++) {
 				graph->vertices[i].tag.cost = -1;
 			}
 
 			currentNode = &graph->vertices[node->tag];
 			currentNode->tag.cost = 0;
-			costVol->setDataAt(currentNode->tag.octreeNode->pos[0], currentNode->tag.octreeNode->pos[1], currentNode->tag.octreeNode->pos[2], currentNode->tag.cost);
+			//costVol->setDataAt(currentNode->tag.octreeNode->pos[0], currentNode->tag.octreeNode->pos[1], currentNode->tag.octreeNode->pos[2], currentNode->tag.cost);
 			currentNode->tag.returnNode = NULL;
 
 			queue<NonManifoldMeshVertex<nodeAttrib> *> pointList;
@@ -253,7 +250,7 @@ namespace wustl_mm {
 						vertexIx = graph->GetVertexIndex(graph->edges[edgeIx].vertexIds[j]);
 						vertexCost = graph->vertices[vertexIx].tag.cost;
 						if((vertexCost < 0) || (vertexCost > cost)) {
-							costVol->setDataAt(graph->vertices[vertexIx].tag.octreeNode->pos[0], graph->vertices[vertexIx].tag.octreeNode->pos[1], graph->vertices[vertexIx].tag.octreeNode->pos[2], graph->vertices[vertexIx].tag.cost);
+							//costVol->setDataAt(graph->vertices[vertexIx].tag.octreeNode->pos[0], graph->vertices[vertexIx].tag.octreeNode->pos[1], graph->vertices[vertexIx].tag.octreeNode->pos[2], graph->vertices[vertexIx].tag.cost);
 							graph->vertices[vertexIx].tag.cost = cost;
 							graph->vertices[vertexIx].tag.returnNode = currentNode;
 							pointList.push(&graph->vertices[vertexIx]);
@@ -261,8 +258,8 @@ namespace wustl_mm {
 					}
 				}				
 			}
-			costVol->toMRCFile("Cost.mrc");
-			delete costVol;
+			//costVol->toMRCFile("Cost.mrc");
+			//delete costVol;
 			appTimeManager.PopAndDisplayTime("Initializing seed point: %f seconds!\n");
 
 		}

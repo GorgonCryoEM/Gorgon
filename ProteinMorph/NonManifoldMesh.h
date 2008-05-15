@@ -336,7 +336,7 @@ namespace wustl_mm {
 				}
 			}			
 			
-			if(drawLines) {
+			if(drawLines) {				
 				if(annotateLines) {
 					glPushName(1);
 					glPushName(0);

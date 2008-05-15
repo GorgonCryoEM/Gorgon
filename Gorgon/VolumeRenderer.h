@@ -201,6 +201,7 @@ namespace wustl_mm {
 					surfaceMesh->Draw(true, false, false, selectEnabled, false, false);
 				} else if((viewingType == VIEWING_TYPE_CROSS_SECTION) || (viewingType == VIEWING_TYPE_SOLID)) {
 					glPushAttrib(GL_ENABLE_BIT);
+					glDisable(GL_LIGHTING);
 					glDisable(GL_CULL_FACE);
 					Vector3DFloat vertex;
 					// The outside box
