@@ -21,9 +21,10 @@ class VolumeManualSkeletonizationForm(QtGui.QWidget):
         self.started = False
         self.viewer = viewer
         self.connect(self.viewer, QtCore.SIGNAL("modelLoaded()"), self.modelLoaded)
+        self.connect(self.viewer, QtCore.SIGNAL("modelChanged()"), self.modelChanged)
         self.connect(self.viewer, QtCore.SIGNAL("modelUnloaded()"), self.modelUnloaded)
-        self.manualColors = [QtGui.QColor.fromRgba(QtGui.qRgba(0, 255, 0, 255)),
-                             QtGui.QColor.fromRgba(QtGui.qRgba(0, 0, 255, 255)),
+        self.manualColors = [QtGui.QColor.fromRgba(QtGui.qRgba(0, 0, 255, 255)),
+                             QtGui.QColor.fromRgba(QtGui.qRgba(0, 255, 0, 255)),
                              QtGui.QColor.fromRgba(QtGui.qRgba(0, 255, 255, 255)),
                              QtGui.QColor.fromRgba(QtGui.qRgba(255, 0, 0, 255))]
         self.createUI()
@@ -86,6 +87,7 @@ class VolumeManualSkeletonizationForm(QtGui.QWidget):
             skeletonRatio = float(self.getMedialness())/float(self.getMedialness()+self.getSmoothness())
             stRatio = float(self.getSmoothness())/float(self.getMedialness()+self.getSmoothness())
             self.engine = InteractiveSkeletonEngine(self.volume, self.mesh, skeletonRatio, stRatio, self.getStartingDensity(), self.getStepCount(), self.getCurveRadius(), self.getMinCurveLength())
+            self.engine.setIsoValue(self.viewer.renderer.getSurfaceValue())
             self.setSkeletonViewerProperties(True)
             self.skeletonViewer.loaded = True
             self.ui.pushButtonStart.setEnabled(False)
@@ -134,11 +136,13 @@ class VolumeManualSkeletonizationForm(QtGui.QWidget):
     
     def processClick(self, h0, h1, h2, h3, h4, h5, event):
         #print h0, h1, h2, h3, h4
-        if(self.started and h0 >= 0 and h1 >= 0):
+        if(self.started):
             if(event.modifiers() & QtCore.Qt.CTRL):
                 self.engine.selectStartSeed(h0, h1)
+                self.skeletonViewer.emitModelChanged()
             elif (event.modifiers() & QtCore.Qt.ALT):
                 self.engine.selectEndSeed(h0, h1)
+                self.skeletonViewer.emitModelChanged()
         
     def processMouseOver(self, h0, h1, h2, h3, h4, h5, event):
         #print h0, h1, h2, h3, h4
@@ -161,22 +165,27 @@ class VolumeManualSkeletonizationForm(QtGui.QWidget):
         self.ui.horizontalSliderStartingDensity.setMinimum(int(minDensity*100))
         self.ui.horizontalSliderStartingDensity.setMaximum(int(maxDensity*100))
         defaultDensity = (int(minDensity*100) + int(maxDensity*100.0)) / 2
-        self.ui.horizontalSliderStartingDensity.setValue(defaultDensity)        
+        self.ui.horizontalSliderStartingDensity.setValue(defaultDensity)
+        if(self.started):
+            self.engine.setIsoValue(self.viewer.renderer.getSurfaceValue())   
                    
     def modelUnloaded(self):
         self.skeletonizeAct.setChecked(False)
         self.skeletonizeAct.setEnabled(False)
-        self.showWidget(False)    
+        self.showWidget(False)
+            
+    def modelChanged(self):
+        if(self.started):
+            self.engine.setIsoValue(self.viewer.renderer.getSurfaceValue())
+            self.skeletonViewer.emitModelChanged()           
                     
     def dockVisibilityChanged(self, visible):
         self.skeletonizeAct.setChecked(visible)
         self.showWidget(visible)
         
     def drawOverlay(self):     
-        print "a"
         if self.started:
             for i in range(4):
-                print(i)
                 self.skeletonViewer.setMaterials(self.manualColors[i])
                 self.engine.draw(i)        
                                  
