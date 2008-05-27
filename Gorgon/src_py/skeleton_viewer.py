@@ -2,7 +2,7 @@
 # Description: A viewer for skeletons
 
 from PyQt4 import QtGui, QtCore, QtOpenGL
-from gorgon_cpp_wrapper import MeshRenderer
+from libpyGORGON import MeshRenderer
 from base_viewer import BaseViewer
 from skeleton_laplacian_smoothing_form import SkeletonLaplacianSmoothingForm
 

@@ -2,7 +2,7 @@
 # Description: This viewer displays c-alpha atoms
 
 from PyQt4 import QtGui, QtCore, QtOpenGL
-from gorgon_cpp_wrapper import CAlphaRenderer
+from libpyGORGON import CAlphaRenderer
 from base_viewer import BaseViewer
 from calpha_atom_placer_form import CAlphaAtomPlacerForm
 

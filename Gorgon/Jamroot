@@ -21,7 +21,7 @@ import python ;
 # python-extension extending : extending.cpp ;
 # python-extension hello : hello.cpp ;
 
-python-extension gorgon_cpp_wrapper : src_cpp/GorgonCppWrapper.cpp
+python-extension libpyGORGON : src_cpp/LibPyGorgon.cpp
 	: <include>../. 
         <include>../ExternalLibraries 
 	: <library>../ExternalLibraries/GL/glut32.lib ;
