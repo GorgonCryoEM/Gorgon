@@ -1,6 +1,7 @@
 #ifndef GORGON_MESH_RENDERER_H
 #define GORGON_MESH_RENDERER_H
 
+#include <algorithm>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -68,15 +69,18 @@ namespace wustl_mm {
 		void MeshRenderer::LoadFile(string fileName) {
 			int pos = fileName.rfind(".") + 1;
 			string extension = fileName.substr(pos, fileName.length()-pos);
+			
+			std::transform(extension.begin(), extension.end(), extension.begin(), toupper);
+
 			//printf("<%s>\n", (char *)extension.c_str());
 
 			if(mesh != NULL) {
 				delete mesh;
 			}
 
-			if(stricmp(extension.c_str(), "OFF") == 0) {
+			if(strcmp(extension.c_str(), "OFF") == 0) {
 				mesh = NonManifoldMesh_Annotated::LoadOffFile(fileName);				
-			} else if((stricmp(extension.c_str(), "MRC") == 0) || (stricmp(extension.c_str(), "ATOM") == 0)) {
+			} else if((strcmp(extension.c_str(), "MRC") == 0) || (stricmp(extension.c_str(), "ATOM") == 0)) {
 				Volume * volume = VolumeFormatConverter::LoadVolume(fileName);
 				mesh = new NonManifoldMesh_Annotated(volume);
 				delete volume;			
@@ -92,10 +96,12 @@ namespace wustl_mm {
 			if(mesh != NULL) {
 				int pos = fileName.rfind(".") + 1;
 				string extension = fileName.substr(pos, fileName.length()-pos);
+
+				std::transform(extension.begin(), extension.end(), extension.begin(), toupper);
 				
-				if(stricmp(extension.c_str(), "OFF") == 0) {
+				if(strcmp(extension.c_str(), "OFF") == 0) {
 					mesh->ToOffCells(fileName);
-				} else if(stricmp(extension.c_str(), "MRC") == 0) {
+				} else if(strcmp(extension.c_str(), "MRC") == 0) {
 					Volume * volume = mesh->ToVolume();
 					volume->toMRCFile((char *)fileName.c_str());
 					delete volume;			

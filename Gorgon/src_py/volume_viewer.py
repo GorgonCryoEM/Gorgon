@@ -3,7 +3,7 @@
 
 from PyQt4 import QtGui, QtCore, QtOpenGL
 from base_viewer import BaseViewer
-from gorgon_cpp_wrapper import VolumeRenderer
+from libpyGORGON import VolumeRenderer
 from volume_surface_editor_form import VolumeSurfaceEditorForm
 from volume_binary_skeletonization_form import VolumeBinarySkeletonizationForm
 from volume_grayscale_skeletonization_form import VolumeGrayscaleSkeletonizationForm

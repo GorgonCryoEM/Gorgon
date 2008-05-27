@@ -2,7 +2,7 @@
 # Description: The base class for a viewable scene.
 
 from PyQt4 import QtGui, QtCore, QtOpenGL
-from gorgon_cpp_wrapper import VolumeRenderer
+from libpyGORGON import VolumeRenderer
 from model_visualization_form import ModelVisualizationForm
 from vector_lib import *
 
@@ -15,11 +15,11 @@ except ImportError:
     QtGui.QMessageBox.critical(None, "Gorgon", "PyOpenGL must be installed to run Gorgon.", QtGui.QMessageBox.Ok | QtGui.QMessageBox.Default, QtGui.QMessageBox.NoButton)
     sys.exit(1)
 
-class BaseViewer(QtGui.QWidget):
+class BaseViewer(QtOpenGL.QGLWidget):
     DisplayStyleWireframe, DisplayStyleFlat, DisplayStyleSmooth = range(3)
     
     def __init__(self, main, parent=None):
-        QtGui.QWidget.__init__(self, parent)        
+        QtOpenGL.QGLWidget.__init__(self, parent)        
         self.app = main      
         self.title = "Untitled"
         self.fileName = "";

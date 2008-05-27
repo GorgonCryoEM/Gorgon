@@ -2,10 +2,10 @@
 # Description: A viewer for secondary structure elements
 
 from PyQt4 import QtGui, QtCore, QtOpenGL
-from gorgon_cpp_wrapper import SSERenderer
+from libpyGORGON import SSERenderer
 from base_viewer import BaseViewer
 from sse_helix_correspondence_finder_form import SSEHelixCorrespondenceFinderForm
-from gorgon_cpp_wrapper import SSECorrespondenceEngine, SSECorrespondenceResult
+from libpyGORGON import SSECorrespondenceEngine, SSECorrespondenceResult
 
 try:
     from OpenGL.GL import *

@@ -4,7 +4,7 @@
 
 from PyQt4 import QtCore, QtGui
 from ui_dialog_calpha_atom_placer import Ui_DialogCAlphaAtomPlacer
-from gorgon_cpp_wrapper import PDBAtom, Vector3DFloat
+from libpyGORGON import PDBAtom, Vector3DFloat
 
 class CAlphaAtomPlacerForm(QtGui.QWidget):
     def __init__(self, main, viewer, parent=None):

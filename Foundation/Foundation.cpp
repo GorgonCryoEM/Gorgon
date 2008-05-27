@@ -13,7 +13,7 @@
 using namespace wustl_mm::Foundation;
 
 int main( int args, char * argv[] ) {
-
+	printf("MS VC version: %d\n", _MSC_VER);
 	Octree<bool> * tree = new Octree<bool>(8, 8, 8);
 	tree->PrintStructure();
 	tree->AddNewLeaf(4, 0, 0, 1);

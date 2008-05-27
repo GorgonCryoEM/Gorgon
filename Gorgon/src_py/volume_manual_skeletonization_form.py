@@ -3,7 +3,7 @@
 
 from PyQt4 import QtCore, QtGui
 from ui_dialog_volume_manual_skeletonization import Ui_DialogVolumeManualSkeletonization
-from gorgon_cpp_wrapper import InteractiveSkeletonEngine
+from libpyGORGON import InteractiveSkeletonEngine
 
 try:
     from OpenGL.GL import *
