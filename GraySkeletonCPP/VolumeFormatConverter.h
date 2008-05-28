@@ -2,7 +2,7 @@
 #define GRAYSKELETONCPP_VOLUME_FORMAT_CONVERTER_H
 
 #include <string>
-#include <algorithm>
+#include "Foundation/StringUtils.h"
 #include "VolumeReaderRAW.h"
 #include "VolumeReaderATOM.h"
 #include "VolumeReaderTXT.h"
@@ -12,6 +12,8 @@
 
 
 using namespace std;
+using namespace wustl_mm::Foundation;
+
 
 namespace wustl_mm {
 	namespace GraySkeletonCPP {
@@ -24,7 +26,7 @@ namespace wustl_mm {
 		Volume * VolumeFormatConverter::LoadVolume(string inputFile) {
 			int pos = inputFile.rfind(".") + 1;
 			string inputFormat = inputFile.substr(pos, inputFile.length()-pos);
-			std::transform(inputFormat.begin(), inputFormat.end(), inputFormat.begin(), toupper);
+			inputFormat = StringUtils::StringToUpper(inputFormat);
 
 			Volume * vol = NULL;						
 			if(strcmp(inputFormat.c_str(), "MRC") == 0) {
@@ -41,7 +43,7 @@ namespace wustl_mm {
 
 		void VolumeFormatConverter::ConvertVolume(string inputFile, string inputFormat, string outputFile, string outputFormat, int sizeX, int sizeY, int sizeZ) {
 			Volume * vol = NULL;			
-			std::transform(inputFormat.begin(), inputFormat.end(), inputFormat.begin(), toupper);
+			inputFormat = StringUtils::StringToUpper(inputFormat);
 
 			if(strcmp(inputFormat.c_str(), "MRC") == 0) {
 				vol = MRCReaderPicker::pick((char *)inputFile.c_str())->getVolume();
@@ -58,7 +60,7 @@ namespace wustl_mm {
 				return;
 			}
 
-			std::transform(outputFormat.begin(), outputFormat.end(), outputFormat.begin(), toupper);
+			outputFormat = StringUtils::StringToUpper(outputFormat);
 					
 			if(strcmp(outputFormat.c_str(), "MRC") == 0) {
 				vol->toMRCFile((char *)outputFile.c_str());

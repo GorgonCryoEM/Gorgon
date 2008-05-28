@@ -1,9 +1,9 @@
 #ifndef EIGEN_H
 #define EIGEN_H
 
-#include <math.h>
-#include <stdio.h>
-#include <stdlib.h>
+#include <cmath>
+#include <cstdio>
+#include <cstdlib>
 #include <assert.h>
 #include "GeoCommon.h"
 

@@ -1,8 +1,8 @@
 #ifndef VECTORT3DTEMPLATE_H
 #define VECTORT3DTEMPLATE_H
 
-#include <stdio.h>
-#include <math.h>
+#include <cstdio>
+#include <cmath>
 #include "BasicDefines.h"
 
 namespace wustl_mm {
@@ -11,13 +11,14 @@ namespace wustl_mm {
 		public:
 			Vector3DTemplate();
 			Vector3DTemplate(T x, T y, T z);
+			Vector3DTemplate(const Vector3DTemplate<T>& rhs);			
 			~Vector3DTemplate();
 
-			T X();
-			T Y();
-			T Z();
+			T X() const;
+			T Y() const;
+			T Z() const;
 			T Length();
-			T operator*(Vector3DTemplate<T> &d ); // Dot Product							
+			T operator*(const Vector3DTemplate<T> &d ); // Dot Product							
 			int XInt();
 			int YInt();
 			int ZInt();
@@ -25,10 +26,10 @@ namespace wustl_mm {
 			bool operator!=(Vector3DTemplate<T> &d);
 			bool operator==(Vector3DTemplate<T> &d);	
 
-			Vector3DTemplate<T> operator+(Vector3DTemplate<T> &d );
+			Vector3DTemplate<T> operator+(const Vector3DTemplate<T> &d);
 			Vector3DTemplate<T> operator-();
-			Vector3DTemplate<T> operator-(Vector3DTemplate<T> &d );
-			Vector3DTemplate<T> operator^(Vector3DTemplate<T> &d );		 // Cross Product
+			Vector3DTemplate<T> operator-(const Vector3DTemplate<T> &d );
+			Vector3DTemplate<T> operator^(const Vector3DTemplate<T> &d );		 // Cross Product
 			Vector3DTemplate<T> operator*(double s);			
 			Vector3DTemplate<T>& operator=(const Vector3DTemplate<T>& d);
 			Vector3DTemplate<T>& operator+=(const Vector3DTemplate<T>& d);
@@ -53,6 +54,12 @@ namespace wustl_mm {
 			values[1] = y;
 			values[2] = z;
 		}
+		
+		template <class T> Vector3DTemplate<T>::Vector3DTemplate(const Vector3DTemplate<T>& rhs) {
+			values[0] = rhs.values[0];
+			values[1] = rhs.values[1];
+			values[2] = rhs.values[2];
+		}		
 
 		template <class T> Vector3DTemplate<T>::~Vector3DTemplate() {
 		}
@@ -66,15 +73,15 @@ namespace wustl_mm {
 			return (X() == d.X()) && (Y() == d.Y()) && (Z() == d.Z());
 		}
 
-		template <class T> T Vector3DTemplate<T>::X() {
+		template <class T> T Vector3DTemplate<T>::X() const {
 			return values[0];
 		}
 
-		template <class T> T Vector3DTemplate<T>::Y() {
+		template <class T> T Vector3DTemplate<T>::Y() const {
 			return values[1];
 		}
 
-		template <class T> T Vector3DTemplate<T>::Z() {
+		template <class T> T Vector3DTemplate<T>::Z() const {
 			return values[2];
 		}
 
@@ -95,23 +102,23 @@ namespace wustl_mm {
 			return (int)round(values[2]);
 		}
 
-		template <class T> T Vector3DTemplate<T>::operator*(Vector3DTemplate<T> &d ) {		// Dot Product
+		template <class T> T Vector3DTemplate<T>::operator*(const Vector3DTemplate<T> &d ) {		// Dot Product
 			return X() * d.X() + Y() * d.Y() + Z() * d.Z();
 		}
 
-		template <class T> Vector3DTemplate<T> Vector3DTemplate<T>::operator+(Vector3DTemplate<T> &d ) {
+		template <class T> Vector3DTemplate<T> Vector3DTemplate<T>::operator+(const Vector3DTemplate<T> &d) {
 			return Vector3DTemplate<T>(X() + d.X(), Y() + d.Y(), Z() + d.Z());	
-		}
-
+		}		
+		
 		template <class T> Vector3DTemplate<T> Vector3DTemplate<T>::operator-() {
 			return Vector3DTemplate<T>(-X(), -Y(), -Z());	
 		}
 
-		template <class T> Vector3DTemplate<T> Vector3DTemplate<T>::operator-(Vector3DTemplate<T> &d ) {
+		template <class T> Vector3DTemplate<T> Vector3DTemplate<T>::operator-(const Vector3DTemplate<T> &d ) {
 			return Vector3DTemplate<T>(X() - d.X(), Y() - d.Y(), Z() - d.Z());	
 		}
 
-		template <class T> Vector3DTemplate<T> Vector3DTemplate<T>::operator^(Vector3DTemplate<T> &d ) { // Cross Product
+		template <class T> Vector3DTemplate<T> Vector3DTemplate<T>::operator^(const Vector3DTemplate<T> &d ) { // Cross Product
 			return Vector3DTemplate<T>(
 				values[1] * d.values[2] - values[2] * d.values[1], 
 				values[2] * d.values[0] - values[0] * d.values[2], 

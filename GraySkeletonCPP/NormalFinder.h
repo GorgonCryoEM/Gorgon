@@ -201,7 +201,7 @@ namespace wustl_mm {
 					if(graph2[from][to]) {
 						v1 = Vector3DFloat(nodeVectors[from][0], nodeVectors[from][1], nodeVectors[from][2]);
 						v2 = Vector3DFloat(nodeVectors[to][0], nodeVectors[to][1], nodeVectors[to][2]);
-						normal = normal + (v1^v2);			
+						normal += (v1^v2);			
 						graph2[from][to] = false;
 						graph2[to][from] = false;
 					}

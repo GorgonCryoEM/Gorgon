@@ -15,6 +15,7 @@ Date  : 01/28/2006
 #include <string.h>
 #include <MathTools/Vector3D.h>
 #include "PDBAtom.h"
+#include "StandardGraph.h"
 
 using namespace std;
 using namespace wustl_mm::MathTools;
@@ -22,6 +23,8 @@ using namespace wustl_mm::MathTools;
 
 namespace wustl_mm {
 	namespace GraphMatch {
+		typedef StandardGraph GraphType;
+		
 		class PDBReader {
 		public:
 			static StandardGraph * ReadFile(char * fname);

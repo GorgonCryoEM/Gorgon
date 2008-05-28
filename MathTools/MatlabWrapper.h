@@ -5,10 +5,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include "DataStructures.h"
-#include <math.h>
 #include "Vector3D.h"
 #include "ComplexNumber.h"
 #include "eigen.h"
+#include <cmath>
 #ifdef USE_MATLAB
 #include "engine.h"
 #endif
@@ -87,7 +87,7 @@ namespace wustl_mm {
 			jacobi(st, values, vectors);
 			
 			for(int i = 0; i < 3; i++) {
-				eigenInformation.eigenValues[i] = abs(values[i]);
+				eigenInformation.eigenValues[i] = fabs(values[i]);
 				for(int j = 0; j < 3; j++) {
 					eigenInformation.eigenVectors[i][j] = vectors[i][j];
 				}

@@ -2,6 +2,7 @@
 #define COMPLEX_NUMBER_H
 
 #include "BasicDefines.h"
+#include <cmath>
 
 namespace wustl_mm {
 	namespace MathTools {
