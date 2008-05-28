@@ -38,7 +38,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="$(SolutionDir);C:\MATLAB701\extern\include;$(SolutionDir)\ExternalLibraries"
+				AdditionalIncludeDirectories="$(SolutionDir);C:\MATLAB701\extern\include;$(SolutionDir)\ExternalLibraries;$(SolutionDir)\ExternalLibraries\GL;"
 				WarningLevel="3"
 				DebugInformationFormat="4"
 			/>
@@ -107,7 +107,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="$(SolutionDir);C:\MATLAB701\extern\include;$(SolutionDir)\ExternalLibraries"
+				AdditionalIncludeDirectories="$(SolutionDir);C:\MATLAB701\extern\include;$(SolutionDir)\ExternalLibraries;$(SolutionDir)\ExternalLibraries\GL;"
 				PreprocessorDefinitions="WIN32"
 			/>
 			<Tool
@@ -175,7 +175,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="$(SolutionDir);C:\_WashU\ssa1\source\ExternalLibraries\mpatrol\include;C:\MATLAB701\extern\include;$(SolutionDir)\ExternalLibraries"
+				AdditionalIncludeDirectories="$(SolutionDir);C:\_WashU\ssa1\source\ExternalLibraries\mpatrol\include;C:\MATLAB701\extern\include;$(SolutionDir)\ExternalLibraries;$(SolutionDir)\ExternalLibraries\GL;"
 				WarningLevel="3"
 				DebugInformationFormat="4"
 			/>
@@ -245,7 +245,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="$(SolutionDir);$(SolutionDir)\ExternalLibraries"
+				AdditionalIncludeDirectories="$(SolutionDir);$(SolutionDir)\ExternalLibraries;$(SolutionDir)\ExternalLibraries\GL;"
 				PreprocessorDefinitions="WIN32;_CRT_SECURE_NO_DEPRECATE"
 			/>
 			<Tool
@@ -309,7 +309,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="$(SolutionDir);C:\MATLAB701\extern\include"
+				AdditionalIncludeDirectories="$(SolutionDir);C:\MATLAB701\extern\include;$(SolutionDir)\ExternalLibraries\GL;"
 				PreprocessorDefinitions="WIN32;_CRT_SECURE_NO_DEPRECATE"
 			/>
 			<Tool

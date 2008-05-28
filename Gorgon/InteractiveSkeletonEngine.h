@@ -2,14 +2,20 @@
 #define GORGON_INTERACTIVE_SKELETON_ENGINE_H
 
 #include "MeshRenderer.h"
-#include <ProteinMorph/NonManifoldMesh.h>
-#include <GraySkeletonCPP/InteractiveSkeletonizer.h>
-#include <hash_map>
+#include "ProteinMorph/NonManifoldMesh.h"
+#include "GraySkeletonCPP/InteractiveSkeletonizer.h"
+#ifdef _WIN32
+	#include <hash_map>
+	using namespace stdext;
+#else
+	#include <map>
+#endif
 #include <MathTools/Vector3D.h>
 
 using namespace wustl_mm::Protein_Morph;
 using namespace wustl_mm::GraySkeletonCPP;
-using namespace stdext;
+using namespace std;
+
 
 namespace wustl_mm {
 	namespace Visualization {	
@@ -27,8 +33,13 @@ namespace wustl_mm {
 			Volume * volume;
 			NonManifoldMesh_Annotated * skeleton;
 			InteractiveSkeletonizer * skeletonizer;
-			hash_map<int, int> locationToVertexMap;
-			hash_map<int, Vector3DInt> vertexToLocationMap;
+			#ifdef _WIN32
+				hash_map<int, int> locationToVertexMap;
+				hash_map<int, Vector3DInt> vertexToLocationMap;
+			#else
+				map<int, int> locationToVertexMap;
+				map<int, Vector3DInt> vertexToLocationMap;
+			#endif 
 			bool started;
 			bool analyzed;
 			Vector3DInt startPos;
@@ -49,7 +60,7 @@ namespace wustl_mm {
 
 
 			skeletonizer = new InteractiveSkeletonizer(volume, minVal, maxVal, stepSize, curveRadius, minCurveSize, false);
-			GraphType * graph = skeletonizer->GetGraph();
+			wustl_mm::GraySkeletonCPP::GraphType * graph = skeletonizer->GetGraph();
 			OctreeNode<unsigned int> * node;
 			unsigned int ix;
 			for(unsigned int i = 0; i < graph->vertices.size(); i++) {

@@ -1,8 +1,12 @@
 #ifndef GL_VISUALIZER_H_
 #define GL_VISUALIZER_H_
 
-#include <GL/glut.h>
-#include <GraphMatch/StandardGraph.h>
+#ifdef _WIN32
+	#include <GL/glut.h>
+#else
+	#include <glut.h>
+#endif
+#include "GraphMatch/StandardGraph.h"
 
 using namespace std;
 using namespace wustl_mm::GraphMatch;

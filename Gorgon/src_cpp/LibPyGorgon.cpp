@@ -4,16 +4,16 @@
 #define _CRT_SECURE_NO_DEPRECATE 1
 #define _CRT_NONSTDC_NO_DEPRECATE 1
 
-#include <Gorgon/SSECorrespondenceEngine.h>
-#include <Gorgon/VolumeRenderer.h>
-#include <Gorgon/MeshRenderer.h>
-#include <Gorgon/SSERenderer.h>
-#include <Gorgon/Renderer.h>
-#include <Gorgon/InteractiveSkeletonEngine.h>
-#include <Gorgon/CAlphaRenderer.h>
-#include <MathTools/Vector3D.h>
-#include <GraphMatch/PDBAtom.h>
-#include <GraphMatch/LinkedNode.h>
+#include "Gorgon/SSECorrespondenceEngine.h"
+#include "Gorgon/VolumeRenderer.h"
+#include "Gorgon/MeshRenderer.h"
+#include "Gorgon/SSERenderer.h"
+#include "Gorgon/Renderer.h"
+#include "Gorgon/InteractiveSkeletonEngine.h"
+#include "Gorgon/CAlphaRenderer.h"
+#include "MathTools/Vector3D.h"
+#include "GraphMatch/PDBAtom.h"
+#include "GraphMatch/LinkedNode.h"
 
 #include <boost/python.hpp>
 
@@ -61,7 +61,7 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 
 	class_<NonManifoldMesh_Annotated>("NonManifoldMesh_Annotated", init<>())
 	;
-
+	
 	class_<Renderer>("Renderer", init<>())
 		.def("draw", &Renderer::Draw)
 		.def("drawBoundingBox", &Renderer::DrawBoundingBox)
@@ -75,10 +75,10 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("getMax", &Renderer::GetMax)
 		.def("get3DCoordinates", &Renderer::Get3DCoordinates)
 		.def("setCuttingPlane", &Renderer::SetCuttingPlane)
-		
 	;
-
-	class_<VolumeRenderer, bases<Renderer>>("VolumeRenderer", init<>())
+	
+	
+	class_< VolumeRenderer, bases<Renderer> >("VolumeRenderer", init<>())
 		.def("draw", &VolumeRenderer::Draw)
 		.def("drawBoundingBox", &VolumeRenderer::DrawBoundingBox)
 		.def("loadFile", &VolumeRenderer::LoadFile)
@@ -102,7 +102,7 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("performGrayscaleSkeletonizationAbeysinghe2008", &VolumeRenderer::PerformGrayscaleSkeletonizationAbeysinghe2008, return_value_policy<manage_new_object>())		
 	;
 
-	class_<MeshRenderer, bases<Renderer>>("MeshRenderer", init<>())
+	class_< MeshRenderer, bases<Renderer> >("MeshRenderer", init<>())
 		.def("draw", &MeshRenderer::Draw)
 		.def("drawBoundingBox", &MeshRenderer::DrawBoundingBox)
 		.def("loadFile", &MeshRenderer::LoadFile)
@@ -119,7 +119,7 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("get3DCoordinates", &MeshRenderer::Get3DCoordinates)
 	;
 
-	class_<SSERenderer, bases<Renderer>>("SSERenderer", init<>())
+	class_< SSERenderer, bases<Renderer> >("SSERenderer", init<>())
 		.def("draw", &SSERenderer::Draw)
 		.def("drawBoundingBox", &SSERenderer::DrawBoundingBox)
 		.def("loadHelixFile", &SSERenderer::LoadHelixFile)
@@ -133,7 +133,7 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("get3DCoordinates", &SSERenderer::Get3DCoordinates)
 	;
 
-	class_<CAlphaRenderer, bases<Renderer>>("CAlphaRenderer", init<>())
+	class_< CAlphaRenderer, bases<Renderer> >("CAlphaRenderer", init<>())
 		.def("draw", &CAlphaRenderer::Draw)
 		.def("drawBoundingBox", &CAlphaRenderer::DrawBoundingBox)
 		.def("loadFile", &CAlphaRenderer::LoadFile)

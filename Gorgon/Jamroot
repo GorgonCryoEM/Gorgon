@@ -24,6 +24,7 @@ import python ;
 python-extension libpyGORGON : src_cpp/LibPyGorgon.cpp
 	: <include>../. 
         <include>../ExternalLibraries 
+	<include>../ExternalLibraries/GL
 	: <library>../ExternalLibraries/GL/glut32.lib ;
 
 #python-extension TopologyHunter : src_cpp/TopologyHunter.cpp

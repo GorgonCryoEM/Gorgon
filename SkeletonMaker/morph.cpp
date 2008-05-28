@@ -55,7 +55,7 @@ float totWeights ;
 void prepareWeights() ;
 void computeScore( Volume* hvol, Volume* svol, int x, int y, int z, float score[3] ) ;
 
-void main( int args, char* argv[] )
+int main( int args, char* argv[] )
 {
 	if ( args != 6 )
 	{
@@ -206,7 +206,7 @@ void main( int args, char* argv[] )
 	sprintf( nname2, "%s2.off", nname2) ;
 	hvol->toOFFCells2(nname1) ;
 	svol->toOFFCells2(nname2) ;
-		
+	return 0;	
 
 }
 
