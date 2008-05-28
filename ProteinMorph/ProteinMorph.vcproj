@@ -37,7 +37,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="$(SolutionDir);$(SolutionDir)\ExternalLibraries"
+				AdditionalIncludeDirectories="$(SolutionDir);$(SolutionDir)\ExternalLibraries;$(SolutionDir)\ExternalLibraries\GL;"
 				WarningLevel="3"
 				DebugInformationFormat="4"
 			/>
@@ -106,7 +106,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="$(SolutionDir);$(SolutionDir)\ExternalLibraries"
+				AdditionalIncludeDirectories="$(SolutionDir);$(SolutionDir)\ExternalLibraries;$(SolutionDir)\ExternalLibraries\GL;"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -170,7 +170,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="$(SolutionDir);$(SolutionDir)\ExternalLibraries"
+				AdditionalIncludeDirectories="$(SolutionDir);$(SolutionDir)\ExternalLibraries;$(SolutionDir)\ExternalLibraries\GL;"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"

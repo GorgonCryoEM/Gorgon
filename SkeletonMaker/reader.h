@@ -2607,7 +2607,10 @@ public:
 			for ( int y = 0 ; y < size ; y ++ )
 				for ( int z = 0 ; z < size ; z ++ )
 				{
-					double dis = abs( z - cent );
+					double dis = z - cent;
+					if(dis < 0) {
+						dis = -dis;
+					}
 					vol->setDataAt( x, y, z, 10 - 10 * dis / height ) ;
 
 					// double dis = ( z - cent ) * ( z - cent ) + ( x - cent ) * ( x - cent );

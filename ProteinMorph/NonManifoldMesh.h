@@ -5,12 +5,15 @@
 #include <MathTools/Vector3D.h>
 #include <SkeletonMaker/volume.h>
 #include <string>
-#include <hash_map>
-#include <GL/glut.h>
+#include <glut.h>
+#ifdef _WIN32
+	#include <hash_map>
+	using namespace stdext;
+#else
+	#include <map>	
+#endif
 
 using namespace std;
-using namespace stdext;
-
 using namespace wustl_mm::MathTools;
 
 
@@ -41,7 +44,12 @@ namespace wustl_mm {
 		};
 
 
-		typedef hash_map<int, int> HashMapType;
+		#ifdef _WIN32
+			typedef hash_map<int, int> HashMapType;
+		#else
+			typedef map<int, int> HashMapType;
+		#endif
+
 		template <class TVertex, class TEdge, class TFace> class NonManifoldMesh{
 		public:
 			NonManifoldMesh();
@@ -77,9 +85,9 @@ namespace wustl_mm {
 			static NonManifoldMesh * LoadOffFile(string fileName);
 
 		public:
-			vector<NonManifoldMeshVertex<TVertex>> vertices;
-			vector<NonManifoldMeshEdge<TEdge>> edges;
-			vector<NonManifoldMeshFace<TFace>> faces;
+			vector< NonManifoldMeshVertex<TVertex> > vertices;
+			vector< NonManifoldMeshEdge<TEdge> > edges;
+			vector< NonManifoldMeshFace<TFace> > faces;
 			int edgeCount;
 			int vertexCount;
 			int faceCount;

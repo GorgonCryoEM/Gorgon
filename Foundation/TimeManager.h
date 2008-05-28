@@ -1,8 +1,8 @@
 #ifndef FOUNDATION_TIME_MANAGER_H
 #define FOUNDATION_TIME_MANAGER_H
 
-#include <time.h>
-#include <string.h>
+#include <ctime>
+#include <string>
 #include <vector>
 
 using namespace std;
@@ -43,7 +43,6 @@ namespace wustl_mm {
 			clock_t finish = clock();			
 			double timeTaken = ((double) (finish - start) / (double) CLOCKS_PER_SEC);
 			printf(textFormat.c_str(), timeTaken); 
-			flushall();			
 			times.pop_back();			
 		}
 

@@ -1,16 +1,17 @@
 #ifndef GORGON_CALPHA_RENDERER_H
 #define GORGON_CALPHA_RENDERER_H
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <GL/glut.h>
-#include <ProteinMorph/NonManifoldMesh.h>
-#include <GraphMatch/PDBReader.h>
+
+#include <glut.h>
+#include <cstdlib>
+#include <cstdio>
+#include "ProteinMorph/NonManifoldMesh.h"
+#include "GraphMatch/PDBReader.h"
+#include "GraphMatch/PDBAtom.h"
 #include "Renderer.h"
 
+using namespace std;
 using namespace wustl_mm::Protein_Morph;
-using namespace wustl_mm::GraySkeletonCPP;
 using namespace wustl_mm::GraphMatch;
 
 namespace wustl_mm {

@@ -2,8 +2,8 @@
 #define GORGON_MARCHING_CUBES_H
 
 #include <iostream>
-#include <tchar.h>
-#include <GL/glut.h>
+#include <glut.h>
+#include <glext.h>
 #include <string>
 #include <GraphMatch/VectorMath.h>
 #include "Renderer.h"
@@ -14,11 +14,11 @@
 #include <GraySkeletonCPP/VolumeFormatConverter.h>
 #include <ProteinMorph/NonManifoldMesh.h>
 #include <MathTools/Vector3D.h>
-#include <hash_map>
-#include <GL/glExt.h>
+
+
 
 using namespace std;
-using namespace stdext;
+
 using namespace wustl_mm::GraySkeletonCPP;
 using namespace wustl_mm::Protein_Morph;
 using namespace wustl_mm::MathTools;
@@ -29,6 +29,9 @@ namespace wustl_mm {
 		const int VIEWING_TYPE_ISO_SURFACE = 0;
 		const int VIEWING_TYPE_CROSS_SECTION = 1;
 		const int VIEWING_TYPE_SOLID = 2;
+		#ifndef _WIN32
+			typedef int PFNGLTEXIMAGE3DPROC;
+		#endif
 
 		class VolumeRenderer : public Renderer {
 		public:
@@ -69,7 +72,7 @@ namespace wustl_mm {
 		private:
 			bool textureLoaded;
 			int textureSizeX, textureSizeY, textureSizeZ;
-			unsigned int textureName;
+			GLuint textureName;
 			float surfaceValue;
 			int sampleInterval;
 			int viewingType;
@@ -376,7 +379,11 @@ namespace wustl_mm {
 			dataVolume = VolumeFormatConverter::LoadVolume(fileName);
 			UpdateBoundingBox();
 
-			glTexImage3D = (PFNGLTEXIMAGE3DPROC) wglGetProcAddress("glTexImage3D");
+			#ifdef _WIN32
+				glTexImage3D = (PFNGLTEXIMAGE3DPROC) wglGetProcAddress("glTexImage3D");
+			#else
+				glTexImage3D = NULL;
+			#endif
 
 		}
 
@@ -416,12 +423,16 @@ namespace wustl_mm {
 				glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 				glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 				glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_REPEAT);
-				try {
-					glTexImage3D(GL_TEXTURE_3D, 0, GL_COMPRESSED_INTENSITY, textureSizeX, textureSizeY, textureSizeZ, 0, GL_RED, GL_UNSIGNED_BYTE, texels);
-					textureLoaded = true;
-				}   catch (int) {
+				#ifdef _WIN32
+					try {
+						glTexImage3D(GL_TEXTURE_3D, 0, GL_COMPRESSED_INTENSITY, textureSizeX, textureSizeY, textureSizeZ, 0, GL_RED, GL_UNSIGNED_BYTE, texels);
+						textureLoaded = true;
+					}   catch (int) {
+						textureLoaded = false;
+					}
+				#else
 					textureLoaded = false;
-				}
+				#endif
 				delete [] texels;
 
 			}
@@ -487,7 +498,7 @@ namespace wustl_mm {
 			}
 			if(viewingType == VIEWING_TYPE_CROSS_SECTION)
 			{
-				printf("\n ");flushall();
+				printf("\n ");
 			}
 
 

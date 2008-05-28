@@ -1,7 +1,7 @@
 #ifndef FOUNDATION_OCTREE_H
 #define FOUNDATION_OCTREE_H
 
-#include <Vector>
+#include <vector>
 
 using namespace std;
 
@@ -33,7 +33,7 @@ namespace wustl_mm {
 			bool IsAdjacent(OctreeNode<TTag> * n1, OctreeNode<TTag> * n2);
 			OctreeNode<TTag> * CreateNewLeaf(unsigned int xPos, unsigned int yPos, unsigned int zPos, unsigned int cellSize, OctreeNode<TTag> * parent);			
 			OctreeNode<TTag> * MakeBlankStructure(unsigned int xPos, unsigned int yPos, unsigned int zPos, unsigned int cellSize, OctreeNode<TTag> * parent);			
-			vector<OctreeNode<TTag> *> Octree<TTag>::GetAdjacentLeafs(OctreeNode<TTag> * node, OctreeNode<TTag> * leafParent);
+			vector<OctreeNode<TTag> *> GetAdjacentLeafs(OctreeNode<TTag> * node, OctreeNode<TTag> * leafParent);
 			void CleanNodeRecursively(OctreeNode<TTag> * &node);
 			void SplitLeaf(OctreeNode<TTag> * node);
 			unsigned int GetLargest2ndPower(unsigned int value);
@@ -133,6 +133,7 @@ namespace wustl_mm {
 			}
 			return node;
 		}
+
 
 		template <class TTag> vector<OctreeNode<TTag> *> Octree<TTag>::GetAdjacentLeafs(OctreeNode<TTag> * node, OctreeNode<TTag> * leafParent) {
 			vector<OctreeNode<TTag> *> leafs, childLeafs;

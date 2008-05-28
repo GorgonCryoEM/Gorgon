@@ -4,13 +4,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SkeletonMaker", "SkeletonMa
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GraphMatch", "GraphMatch\GraphMatch.vcproj", "{E98C9677-C8CA-4CC3-8AE7-A06140EA49BB}"
 	ProjectSection(ProjectDependencies) = postProject
-		{817660CF-4E6C-48F6-BF18-FB75FC2B6B5E} = {817660CF-4E6C-48F6-BF18-FB75FC2B6B5E}
 		{EC8F7758-80CF-436B-978B-717297945FAB} = {EC8F7758-80CF-436B-978B-717297945FAB}
-	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SkeletonVisualizer", "SkeletonVisualizer\SkeletonVisualizer.csproj", "{E6AC7995-0C10-4D59-9F75-45E3795D51C9}"
-	ProjectSection(ProjectDependencies) = postProject
-		{E98C9677-C8CA-4CC3-8AE7-A06140EA49BB} = {E98C9677-C8CA-4CC3-8AE7-A06140EA49BB}
+		{817660CF-4E6C-48F6-BF18-FB75FC2B6B5E} = {817660CF-4E6C-48F6-BF18-FB75FC2B6B5E}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GraySkeletonCPP", "GraySkeletonCPP\GraySkeletonCPP.vcproj", "{E3B1B536-8C7A-45E8-9BAA-5FE4F7B9FE13}"
@@ -95,33 +90,6 @@ Global
 		{E98C9677-C8CA-4CC3-8AE7-A06140EA49BB}.SansMatlab|Mixed Platforms.Build.0 = SansMatlab|Win32
 		{E98C9677-C8CA-4CC3-8AE7-A06140EA49BB}.SansMatlab|Win32.ActiveCfg = SansMatlab|Win32
 		{E98C9677-C8CA-4CC3-8AE7-A06140EA49BB}.SansMatlab|Win32.Build.0 = SansMatlab|Win32
-		{E6AC7995-0C10-4D59-9F75-45E3795D51C9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E6AC7995-0C10-4D59-9F75-45E3795D51C9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E6AC7995-0C10-4D59-9F75-45E3795D51C9}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{E6AC7995-0C10-4D59-9F75-45E3795D51C9}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{E6AC7995-0C10-4D59-9F75-45E3795D51C9}.Debug|Win32.ActiveCfg = Debug|Any CPU
-		{E6AC7995-0C10-4D59-9F75-45E3795D51C9}.Debug|Win32.Build.0 = Debug|Any CPU
-		{E6AC7995-0C10-4D59-9F75-45E3795D51C9}.MemLeak|Any CPU.ActiveCfg = MemLeak|Any CPU
-		{E6AC7995-0C10-4D59-9F75-45E3795D51C9}.MemLeak|Any CPU.Build.0 = MemLeak|Any CPU
-		{E6AC7995-0C10-4D59-9F75-45E3795D51C9}.MemLeak|Mixed Platforms.ActiveCfg = MemLeak|Any CPU
-		{E6AC7995-0C10-4D59-9F75-45E3795D51C9}.MemLeak|Mixed Platforms.Build.0 = MemLeak|Any CPU
-		{E6AC7995-0C10-4D59-9F75-45E3795D51C9}.MemLeak|Win32.ActiveCfg = MemLeak|Any CPU
-		{E6AC7995-0C10-4D59-9F75-45E3795D51C9}.Python|Any CPU.ActiveCfg = Python|Any CPU
-		{E6AC7995-0C10-4D59-9F75-45E3795D51C9}.Python|Any CPU.Build.0 = Python|Any CPU
-		{E6AC7995-0C10-4D59-9F75-45E3795D51C9}.Python|Mixed Platforms.ActiveCfg = Python|Any CPU
-		{E6AC7995-0C10-4D59-9F75-45E3795D51C9}.Python|Mixed Platforms.Build.0 = Python|Any CPU
-		{E6AC7995-0C10-4D59-9F75-45E3795D51C9}.Python|Win32.ActiveCfg = Python|Any CPU
-		{E6AC7995-0C10-4D59-9F75-45E3795D51C9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E6AC7995-0C10-4D59-9F75-45E3795D51C9}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E6AC7995-0C10-4D59-9F75-45E3795D51C9}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{E6AC7995-0C10-4D59-9F75-45E3795D51C9}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{E6AC7995-0C10-4D59-9F75-45E3795D51C9}.Release|Win32.ActiveCfg = Release|Any CPU
-		{E6AC7995-0C10-4D59-9F75-45E3795D51C9}.Release|Win32.Build.0 = Release|Any CPU
-		{E6AC7995-0C10-4D59-9F75-45E3795D51C9}.SansMatlab|Any CPU.ActiveCfg = SansMatlab|Any CPU
-		{E6AC7995-0C10-4D59-9F75-45E3795D51C9}.SansMatlab|Any CPU.Build.0 = SansMatlab|Any CPU
-		{E6AC7995-0C10-4D59-9F75-45E3795D51C9}.SansMatlab|Mixed Platforms.ActiveCfg = SansMatlab|Any CPU
-		{E6AC7995-0C10-4D59-9F75-45E3795D51C9}.SansMatlab|Mixed Platforms.Build.0 = SansMatlab|Any CPU
-		{E6AC7995-0C10-4D59-9F75-45E3795D51C9}.SansMatlab|Win32.ActiveCfg = SansMatlab|Any CPU
 		{E3B1B536-8C7A-45E8-9BAA-5FE4F7B9FE13}.Debug|Any CPU.ActiveCfg = Debug|Win32
 		{E3B1B536-8C7A-45E8-9BAA-5FE4F7B9FE13}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
 		{E3B1B536-8C7A-45E8-9BAA-5FE4F7B9FE13}.Debug|Mixed Platforms.Build.0 = Debug|Win32

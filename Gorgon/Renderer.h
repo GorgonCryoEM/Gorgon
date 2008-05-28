@@ -2,9 +2,9 @@
 #define GORGON_RENDERER_H
 
 #include <string>
-#include <GL/glut.h>
-#include <MathTools/Vector3D.h>
-#include <MathTools/MathLib.h>
+#include <glut.h>
+#include "MathTools/Vector3D.h"
+#include "MathTools/MathLib.h"
 
 using namespace std;
 using namespace wustl_mm::MathTools;
@@ -14,7 +14,7 @@ namespace wustl_mm {
 		class Renderer {
 		public:
 			Renderer();
-			~Renderer();
+			virtual ~Renderer();
 			virtual void Draw(int subSceneIndex, bool selectEnabled);
 			virtual void DrawBoundingBox();
 			virtual void LoadFile(string fileName);
@@ -124,7 +124,7 @@ namespace wustl_mm {
 			float distance = (Vector3DFloat(minPts[0], minPts[1], minPts[2]) - center).Length();
 			cuttingPlaneDirection = Vector3DFloat(vecX, vecY, vecZ);	
 			cuttingPlaneDirection.Normalize();
-			cuttingPlaneCenter = center + cuttingPlaneDirection * position * distance;
+			cuttingPlaneCenter = center +  cuttingPlaneDirection * position * distance;
 			//printf("%lf %lf %lf - %lf %lf\n", cuttingPlaneCenter.values[0], cuttingPlaneCenter.values[1], cuttingPlaneCenter.values[2], position, distance); flushall();
 			return false;
 		}
