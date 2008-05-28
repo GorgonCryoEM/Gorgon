@@ -1,7 +1,9 @@
 #ifndef BASIC_DEFINES_H
 #define BASIC_DEFINES_H
 
-#define round(f) ((f >= 0)?(int)(f + .5):(int)(f - .5))
+#ifdef _WIN32
+	#define round(f) ((f >= 0)?(int)(f + .5):(int)(f - .5))
+#endif
 
 namespace wustl_mm {
 	namespace MathTools {

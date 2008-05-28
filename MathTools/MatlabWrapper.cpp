@@ -1,10 +1,10 @@
 #ifndef MATLAB_WRAPPER_H
 #define MATLAB_WRAPPER_H
 
-#include <stdio.h>
-#include <stdlib.h>
+#include <cstdio>
+#include <cstdlib>
 #include "engine.h"
-#include <string.h>
+#include <string>
 #include "MatlabWrapper.h"
 
 namespace wustl_mm {

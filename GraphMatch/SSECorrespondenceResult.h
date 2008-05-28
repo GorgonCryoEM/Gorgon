@@ -3,6 +3,7 @@
 
 #include "LinkedNode.h"
 #include <vector>
+#include <cstdio>
 
 using namespace std;
 
@@ -49,7 +50,7 @@ namespace wustl_mm {
 			string nodeString = string("");
 			char text[100];
 			for(unsigned int i = 0; i < correspondence.size(); i++) {
-				itoa(correspondence[i], text, 10);
+				sprintf(text, "%ld", correspondence[i]);
 				nodeString.append(text);
 				nodeString.append(" ");
 			}

@@ -213,7 +213,7 @@ namespace wustl_mm {
 					index = binarySkeleton->GetIndex(pointList[i].values[0], pointList[i].values[1]);				
 					cost = GetPixelCost(imageEigens[index], skeletonDirections[index], PIXEL_CLASS_POINT);
 					newPointImage->SetDataAt(pointList[i].values[0], pointList[i].values[1], 255);
-					newCostImage->SetDataAt(pointList[i].values[0], pointList[i].values[1], unsigned int(cost * 255.0));
+					newCostImage->SetDataAt(pointList[i].values[0], pointList[i].values[1], (unsigned int)(cost * 255.0));
 					if(cost >= pointThreshold) {
 						preservedSkeletonVol->setDataAt(pointList[i].values[0], pointList[i].values[1], pointList[i].values[2], 1);
 					}
@@ -235,7 +235,7 @@ namespace wustl_mm {
 							cost2 = GetPixelCost(imageEigens[index], skeletonDirections[index], PIXEL_CLASS_CURVE_BODY);
 							cost += cost2;
 
-							newCostImage->SetDataAt(curve.points[j].values[0], curve.points[j].values[1], unsigned int(cost2 * 255.0));
+							newCostImage->SetDataAt(curve.points[j].values[0], curve.points[j].values[1], (unsigned int)(cost2 * 255.0));
 
 							curvePointCount++;	
 						}
@@ -248,7 +248,7 @@ namespace wustl_mm {
 					}
 
 					for(unsigned int j = 0; j < curve.points.size(); j++) {
-						newCurveCostImage->SetDataAt(curve.points[j].values[0], curve.points[j].values[1], unsigned int(cost * 255.0));
+						newCurveCostImage->SetDataAt(curve.points[j].values[0], curve.points[j].values[1], (unsigned int)(cost * 255.0));
 					}
 					
 					if(cost > curveThreshold) {

@@ -14,8 +14,9 @@
 #include "MatlabWrapper.h"
 #include "Vector3D.h"
 
-void main()
+int main()
 {	
+	return 0;
 } 
 
 #endif

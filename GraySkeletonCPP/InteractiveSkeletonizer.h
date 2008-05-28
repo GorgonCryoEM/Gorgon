@@ -3,8 +3,9 @@
 
 #include <queue>
 #include "GlobalDefinitions.h"
-#include <ProteinMorph/NonManifoldMesh.h>
-#include <Foundation/Octree.h>
+#include "VolumeSkeletonizer.h"
+#include "ProteinMorph/NonManifoldMesh.h"
+#include "Foundation/Octree.h"
 
 using namespace wustl_mm::Protein_Morph;
 using namespace wustl_mm::Foundation;

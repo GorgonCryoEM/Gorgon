@@ -21,6 +21,7 @@ using namespace std;
 
 namespace wustl_mm {
 	namespace GraySkeletonCPP {
+	
 		struct ImmersionBeachElement {
 			Vector3DInt p;
 			int binIndex;
@@ -88,14 +89,16 @@ namespace wustl_mm {
 			Volume * GetJuThinning(Volume * sourceVolume, Volume * preserve, double threshold, char thinningClass);
 			Volume * GetImmersionThinning(Volume * sourceVolume, Volume * preserve, double lowGrayscale, double highGrayscale, double stepSize, char thinningClass);									
 
-			static const char THINNING_CLASS_SURFACE_PRESERVATION = 4;
-			static const char THINNING_CLASS_CURVE_PRESERVATION_2D = 3;
-			static const char THINNING_CLASS_CURVE_PRESERVATION = 2;
-			static const char THINNING_CLASS_POINT_PRESERVATION = 1;
-			static const char THINNING_CLASS_TOPOLOGY_PRESERVATION = 0;
-			static const char PRUNING_CLASS_PRUNE_SURFACES = 5;
-			static const char PRUNING_CLASS_PRUNE_CURVES = 6;
-			static const char PRUNING_CLASS_PRUNE_POINTS = 7;
+			
+			static const char THINNING_CLASS_SURFACE_PRESERVATION;
+			static const char THINNING_CLASS_CURVE_PRESERVATION_2D;
+			static const char THINNING_CLASS_CURVE_PRESERVATION;
+			static const char THINNING_CLASS_POINT_PRESERVATION;
+			static const char THINNING_CLASS_TOPOLOGY_PRESERVATION;
+			static const char PRUNING_CLASS_PRUNE_SURFACES;
+			static const char PRUNING_CLASS_PRUNE_CURVES;
+			static const char PRUNING_CLASS_PRUNE_POINTS;
+			
 		public:
 			MathLib * math;
 			NormalFinder * surfaceNormalFinder;
@@ -110,6 +113,16 @@ namespace wustl_mm {
 			int skeletonDirectionRadius;
 
 		};
+		
+		const char VolumeSkeletonizer::THINNING_CLASS_SURFACE_PRESERVATION = 4;
+		const char VolumeSkeletonizer::THINNING_CLASS_CURVE_PRESERVATION_2D = 3;
+		const char VolumeSkeletonizer::THINNING_CLASS_CURVE_PRESERVATION = 2;
+		const char VolumeSkeletonizer::THINNING_CLASS_POINT_PRESERVATION = 1;
+		const char VolumeSkeletonizer::THINNING_CLASS_TOPOLOGY_PRESERVATION = 0;
+		const char VolumeSkeletonizer::PRUNING_CLASS_PRUNE_SURFACES = 5;
+		const char VolumeSkeletonizer::PRUNING_CLASS_PRUNE_CURVES = 6;
+		const char VolumeSkeletonizer::PRUNING_CLASS_PRUNE_POINTS = 7;	
+		
 
 		VolumeSkeletonizer::VolumeSkeletonizer(int pointRadius, int curveRadius, int surfaceRadius, int skeletonDirectionRadius) {
 			math = new MathLib();

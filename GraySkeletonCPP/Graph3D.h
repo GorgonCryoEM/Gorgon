@@ -2,11 +2,10 @@
 #define GRAYSKELETONCPP_GRAPH_3D_H
 
 #include "GlobalDefinitions.h"
-#include <MathTools/BasicDefines.h>
-#include <hash_map>
+#include "MathTools/BasicDefines.h"
 
 using namespace wustl_mm::MathTools;
-using namespace stdext;
+
 
 // All edge costs have to be positive 
 namespace wustl_mm {
@@ -42,7 +41,7 @@ namespace wustl_mm {
 			int sizeZ;
 			int connectivity;
 			int * graphPtrs;
-			vector<GraphNodeType<T>> nodeList;
+			vector< GraphNodeType<T> > nodeList;
 		};
 
 		template <class T>	Graph3D<T>::Graph3D(int sizeX, int sizeY, int sizeZ, int connectivity) {
