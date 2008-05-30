@@ -268,9 +268,10 @@ class Camera(QtOpenGL.QGLWidget):
         return mouseHits
                 
     def resizeGL(self, width, height):
-        self.aspectRatio = width/(1.0*height)
-        glViewport(0,0, width, height)
-        self.setGlProjection()
+        if(height > 0) :
+            self.aspectRatio = width/(1.0*height)
+            glViewport(0,0, width, height)
+            self.setGlProjection()        
 
     def setGlProjection(self):
         glMatrixMode(GL_PROJECTION)

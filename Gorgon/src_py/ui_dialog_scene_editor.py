@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_dialog_scene_editor.ui'
 #
-# Created: Wed Apr 23 17:23:29 2008
+# Created: Fri May 30 11:44:03 2008
 #      by: PyQt4 UI code generator 4.3.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -13,7 +13,6 @@ class Ui_DialogSceneEditor(object):
     def setupUi(self, DialogSceneEditor):
         DialogSceneEditor.setObjectName("DialogSceneEditor")
         DialogSceneEditor.resize(QtCore.QSize(QtCore.QRect(0,0,456,410).size()).expandedTo(DialogSceneEditor.minimumSizeHint()))
-        DialogSceneEditor.setMaximumSize(QtCore.QSize(456,410))
 
         self.gridlayout = QtGui.QGridLayout(DialogSceneEditor)
         self.gridlayout.setObjectName("gridlayout")
@@ -112,8 +111,9 @@ class Ui_DialogSceneEditor(object):
 
         self.doubleSpinBoxZoom = QtGui.QDoubleSpinBox(self.tabCamera)
         self.doubleSpinBoxZoom.setDecimals(4)
-        self.doubleSpinBoxZoom.setMinimum(0.0)
-        self.doubleSpinBoxZoom.setMaximum(1.0)
+        self.doubleSpinBoxZoom.setMinimum(0.0001)
+        self.doubleSpinBoxZoom.setMaximum(0.9999)
+        self.doubleSpinBoxZoom.setSingleStep(0.1)
         self.doubleSpinBoxZoom.setProperty("value",QtCore.QVariant(0.25))
         self.doubleSpinBoxZoom.setObjectName("doubleSpinBoxZoom")
         self.gridlayout2.addWidget(self.doubleSpinBoxZoom,3,1,1,1)

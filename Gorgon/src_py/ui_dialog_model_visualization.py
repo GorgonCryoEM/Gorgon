@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_dialog_model_visualization.ui'
 #
-# Created: Tue Apr 22 18:06:35 2008
+# Created: Fri May 30 11:39:47 2008
 #      by: PyQt4 UI code generator 4.3.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,9 +12,7 @@ from PyQt4 import QtCore, QtGui
 class Ui_DialogModelVisualization(object):
     def setupUi(self, DialogModelVisualization):
         DialogModelVisualization.setObjectName("DialogModelVisualization")
-        DialogModelVisualization.resize(QtCore.QSize(QtCore.QRect(0,0,244,335).size()).expandedTo(DialogModelVisualization.minimumSizeHint()))
-        DialogModelVisualization.setMinimumSize(QtCore.QSize(240,335))
-        DialogModelVisualization.setMaximumSize(QtCore.QSize(244,335))
+        DialogModelVisualization.resize(QtCore.QSize(QtCore.QRect(0,0,228,262).size()).expandedTo(DialogModelVisualization.minimumSizeHint()))
 
         self.gridlayout = QtGui.QGridLayout(DialogModelVisualization)
         self.gridlayout.setMargin(1)

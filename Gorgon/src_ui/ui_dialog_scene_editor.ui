@@ -9,12 +9,6 @@
     <height>410</height>
    </rect>
   </property>
-  <property name="maximumSize" >
-   <size>
-    <width>456</width>
-    <height>410</height>
-   </size>
-  </property>
   <property name="windowTitle" >
    <string>Scene Editor</string>
   </property>

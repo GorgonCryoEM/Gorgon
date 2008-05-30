@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_dialog_skeleton_laplacian_smoothing.ui'
 #
-# Created: Sat Apr 05 00:42:50 2008
+# Created: Fri May 30 11:47:45 2008
 #      by: PyQt4 UI code generator 4.3.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,9 +12,7 @@ from PyQt4 import QtCore, QtGui
 class Ui_DialogSkeletonLaplacianSmoothing(object):
     def setupUi(self, DialogSkeletonLaplacianSmoothing):
         DialogSkeletonLaplacianSmoothing.setObjectName("DialogSkeletonLaplacianSmoothing")
-        DialogSkeletonLaplacianSmoothing.resize(QtCore.QSize(QtCore.QRect(0,0,178,96).size()).expandedTo(DialogSkeletonLaplacianSmoothing.minimumSizeHint()))
-        DialogSkeletonLaplacianSmoothing.setMinimumSize(QtCore.QSize(178,96))
-        DialogSkeletonLaplacianSmoothing.setMaximumSize(QtCore.QSize(311,96))
+        DialogSkeletonLaplacianSmoothing.resize(QtCore.QSize(QtCore.QRect(0,0,281,96).size()).expandedTo(DialogSkeletonLaplacianSmoothing.minimumSizeHint()))
 
         self.gridlayout = QtGui.QGridLayout(DialogSkeletonLaplacianSmoothing)
         self.gridlayout.setObjectName("gridlayout")

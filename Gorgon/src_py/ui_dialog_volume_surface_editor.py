@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_dialog_volume_surface_editor.ui'
 #
-# Created: Fri May 02 00:05:41 2008
+# Created: Fri May 30 11:53:10 2008
 #      by: PyQt4 UI code generator 4.3.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -14,7 +14,6 @@ class Ui_DialogVolumeSurfaceEditor(object):
         DialogVolumeSurfaceEditor.setObjectName("DialogVolumeSurfaceEditor")
         DialogVolumeSurfaceEditor.resize(QtCore.QSize(QtCore.QRect(0,0,338,124).size()).expandedTo(DialogVolumeSurfaceEditor.minimumSizeHint()))
         DialogVolumeSurfaceEditor.setMinimumSize(QtCore.QSize(230,124))
-        DialogVolumeSurfaceEditor.setMaximumSize(QtCore.QSize(16777215,124))
 
         self.gridlayout = QtGui.QGridLayout(DialogVolumeSurfaceEditor)
         self.gridlayout.setObjectName("gridlayout")
