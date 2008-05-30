@@ -5,21 +5,9 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>244</width>
-    <height>335</height>
+    <width>228</width>
+    <height>262</height>
    </rect>
-  </property>
-  <property name="minimumSize" >
-   <size>
-    <width>240</width>
-    <height>335</height>
-   </size>
-  </property>
-  <property name="maximumSize" >
-   <size>
-    <width>244</width>
-    <height>335</height>
-   </size>
   </property>
   <property name="windowTitle" >
    <string>Visualization</string>
