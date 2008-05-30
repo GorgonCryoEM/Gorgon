@@ -140,7 +140,11 @@ namespace wustl_mm {
 			glPushMatrix();
 			glTranslatef(pt2.X(), pt2.Y(), pt2.Z());
 			glRotatef(angle, axis.X(), axis.Y(), axis.Z());
+
+			GLUquadric * quadricCylinder = gluNewQuadric();
 			gluCylinder(quadricCylinder, radius, radius, length, 10, 10);
+			gluDeleteQuadric(quadricCylinder);
+
 			glPopMatrix();
 		}
 	}

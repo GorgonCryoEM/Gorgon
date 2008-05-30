@@ -79,7 +79,9 @@ namespace wustl_mm {
 						glLoadName(i);
 					}
 					glTranslatef(atoms[i].GetPosition().X(), atoms[i].GetPosition().Y(), atoms[i].GetPosition().Z());
+					GLUquadric * quadricSphere = gluNewQuadric();
 					gluSphere(quadricSphere, 0.3, 10, 10);
+					gluDeleteQuadric(quadricSphere);
 					glPopMatrix();
 					if(selected) {
 						glMaterialfv(GL_FRONT, GL_EMISSION, frontMaterial);

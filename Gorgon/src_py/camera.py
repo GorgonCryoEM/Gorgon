@@ -31,6 +31,7 @@ class Camera(QtOpenGL.QGLWidget):
         self.lightsPosition = [[1000,1000,1000], [-1000,-1000,-1000]]        
         self.backgroundColor = [0.0, 0.0, 0.0, 1.0]
         self.mouseMovePoint = QtCore.QPoint(0,0)
+        self.mouseDownPoint = QtCore.QPoint(0,0)        
         
         self.fogColor = [0.0, 0.0, 0.0, 1.0]
         self.fogDensity = 0.01
@@ -105,7 +106,7 @@ class Camera(QtOpenGL.QGLWidget):
         self.eyeZoom = min(max(zoom, 0.0001), 0.9999);
         nearChanged = (self.near != near)
         self.near = max(min(near, far), 0.1)
-        self.far = max(self.near, far)
+        self.far = max(self.near + 1.0, far)
         glFogf(GL_FOG_START, self.near)       
         glFogf(GL_FOG_END, self.far)
         self.setGlProjection()
