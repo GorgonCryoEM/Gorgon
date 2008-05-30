@@ -76,7 +76,10 @@ namespace wustl_mm {
 					if(selectEnabled) {
 						glLoadName(i);
 					}
+
+					GLUquadric * quadricCylinder = gluNewQuadric();
 					gluCylinder(quadricCylinder, 0.5, 0.5, 1.0, 10, 10);
+					gluDeleteQuadric(quadricCylinder);
 					glPopMatrix();
 					if(selected) {
 						glMaterialfv(GL_FRONT, GL_EMISSION, frontMaterial);
