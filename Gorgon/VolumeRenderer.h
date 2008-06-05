@@ -80,7 +80,9 @@ namespace wustl_mm {
 			Volume * cuttingVolume;
 			NonManifoldMesh_NoTags * surfaceMesh;
 			NonManifoldMesh_NoTags * cuttingMesh;
-			PFNGLTEXIMAGE3DPROC glTexImage3D;
+			#ifdef _WIN32
+				PFNGLTEXIMAGE3DPROC glTexImage3D;
+			#endif
 		};
 
 		VolumeRenderer::VolumeRenderer() {
@@ -381,8 +383,6 @@ namespace wustl_mm {
 
 			#ifdef _WIN32
 				glTexImage3D = (PFNGLTEXIMAGE3DPROC) wglGetProcAddress("glTexImage3D");
-			#else
-				glTexImage3D = NULL;
 			#endif
 
 		}
@@ -423,16 +423,12 @@ namespace wustl_mm {
 				glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 				glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 				glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_REPEAT);
-				#ifdef _WIN32
-					try {
-						glTexImage3D(GL_TEXTURE_3D, 0, GL_COMPRESSED_INTENSITY, textureSizeX, textureSizeY, textureSizeZ, 0, GL_RED, GL_UNSIGNED_BYTE, texels);
-						textureLoaded = true;
-					}   catch (int) {
-						textureLoaded = false;
-					}
-				#else
+				try {
+					glTexImage3D(GL_TEXTURE_3D, 0, GL_INTENSITY, textureSizeX, textureSizeY, textureSizeZ, 0, GL_RED, GL_UNSIGNED_BYTE, texels);
+					textureLoaded = true;
+				}   catch (int) {
 					textureLoaded = false;
-				#endif
+				}
 				delete [] texels;
 
 			}
