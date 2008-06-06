@@ -39,7 +39,6 @@ namespace wustl_mm {
 			Volume * newVol = new Volume(skeletonVol->getSizeX(), skeletonVol->getSizeY(), skeletonVol->getSizeZ());
 			int startNode = 0;
 			int endNode = 1;
-			int i = 0;
 			while (endNode < node->n2Top) {
 				while((startNode < node->n2Top) && (node->n2[startNode] >= (int)graph->skeletonHelixes.size() * 2)) {
 					startNode++;			

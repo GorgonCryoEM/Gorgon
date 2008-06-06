@@ -935,15 +935,8 @@ public:
 
 		Volume* vol = new Volume( dimx, dimy, dimz ) ;
 
-		int dim[3] = {dimx, dimy, dimz};
+		int dim[3] = {dimx, dimy, dimz};		
 
-		int d1 = dim[ 0 ] ;
-
-		int d2 = dim[ 1 ] * dim[ 0 ] ;
-
-		
-
-		
 
 		// Read in data
 
@@ -1115,11 +1108,6 @@ public:
 
 		int dim[3] = {dimx, dimy, dimz};
 
-		int d1 = dim[ 0 ] ;
-
-		int d2 = dim[ 1 ] * dim[ 0 ] ;
-
-		
 
 		
 
@@ -2550,7 +2538,6 @@ public:
 		int thick = size / 6 ;
 
 		double cent = (size - 1) / 2.0 ;
-		double r2 = radius * radius ;
 		for ( int x = 0 ; x < size ; x ++ )
 			for ( int y = 0 ; y < size ; y ++ )
 				for ( int z = 0 ; z < size ; z ++ )

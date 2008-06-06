@@ -823,7 +823,6 @@ namespace wustl_mm {
 			Vector3DInt * n6_2, * n6;
 			Vector3DInt currPoint = Vector3DInt(x, y, z);			
 			int n6_2Count = GetN6_2(n6_2, sourceVolume, x, y, z);
-			int cn6_2Count = GetC6(n6_2, n6_2Count, currPoint);
 			int n6Count = GetN6(n6, sourceVolume, x, y, z);
 			int mZigma = 0;
 			for(int i = 0; i < n6Count; i++) {
