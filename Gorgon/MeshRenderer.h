@@ -82,7 +82,7 @@ namespace wustl_mm {
 				mesh = new NonManifoldMesh_Annotated(volume);
 				delete volume;			
 			} else {
-				printf("Input format %s not supported!\n", extension);
+				printf("Input format %s not supported!\n", extension.c_str());
 			}
 
 			UpdateBoundingBox();
@@ -103,7 +103,7 @@ namespace wustl_mm {
 					volume->toMRCFile((char *)fileName.c_str());
 					delete volume;			
 				} else {
-					printf("Input format %s not supported!\n", extension);
+					printf("Input format %s not supported!\n", extension.c_str());
 				}
 			}
 

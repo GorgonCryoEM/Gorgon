@@ -182,7 +182,7 @@ namespace wustl_mm {
 			double x,y,z;
 			int a,b,c,d;
 			Polygon p;
-			bool lastSheet;
+			bool lastSheet = false;
 			while (!feof(fin)) {
 				fscanf(fin, "%s", token);
 				if(strcmp(token, TOKEN_VRML_SHAPE) == 0) {

@@ -61,7 +61,7 @@ namespace wustl_mm {
 				}
 				
 				Point3 pt;
-				for(unsigned int i = 0; i < helices.size(); i++) {
+				for(int i = 0; i < (int)helices.size(); i++) {
 					selected = ((subSceneIndex == selectedSubSceneIndex) && (i == selectedIx[0]));
 					if(selected) {
 						glGetMaterialfv(GL_FRONT, GL_EMISSION, frontMaterial);

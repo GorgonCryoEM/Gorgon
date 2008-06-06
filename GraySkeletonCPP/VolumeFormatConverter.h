@@ -71,7 +71,7 @@ namespace wustl_mm {
 			} else if (strcmp(outputFormat.c_str(), "OFF") == 0) {
 				vol->toOFFCells2((char *)outputFile.c_str());
 			} else {
-				printf("Output format %s not supported!\n", outputFormat);
+				printf("Output format %s not supported!\n", outputFormat.c_str());
 			}
 			delete vol;
 			

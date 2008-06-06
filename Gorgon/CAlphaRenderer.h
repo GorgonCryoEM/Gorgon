@@ -65,7 +65,7 @@ namespace wustl_mm {
 					glPushName(0);
 					glPushName(0);
 				}
-				for(unsigned int i=0; i < atoms.size(); i++) {
+				for(int i=0; i < (int)atoms.size(); i++) {
 					selected = ((subSceneIndex == selectedSubSceneIndex) && (i == selectedIx[0]));
 					if(selected) {
 						glGetMaterialfv(GL_FRONT, GL_EMISSION, frontMaterial);
@@ -101,7 +101,7 @@ namespace wustl_mm {
 				glLineWidth(3);
 				glEnable(GL_LINE_SMOOTH);
 				glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);		
-				for(unsigned int i=0; i < backboneSegments.size(); i++) {
+				for(int i=0; i < (int)backboneSegments.size(); i++) {
 					selected = ((subSceneIndex == selectedSubSceneIndex) && (i == selectedIx[0]));
 					if(selected) {
 						glGetMaterialfv(GL_FRONT, GL_EMISSION, frontMaterial);

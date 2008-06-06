@@ -19,6 +19,7 @@ class VolumeReader
 {
 public:
 	VolumeReader ( ){} ;
+	virtual ~VolumeReader() {};
 
 	/* Read volume from input */
 	virtual Volume* getVolume( ) = 0 ;
@@ -554,7 +555,7 @@ public:
 		char chard ;
 		short shortd ;
 		float floatd ;
-		double d ;
+		double d = 0.0;
 
 		
 		Volume* vol = new Volume( dimx, dimy, dimz ) ;

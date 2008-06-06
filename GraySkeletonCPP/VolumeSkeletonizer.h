@@ -1564,7 +1564,7 @@ namespace wustl_mm {
 				SmoothenVolume(sourceVol, startGray, endGray, smoothingRadius);
 			}
 			appTimeManager.PopAndDisplayTime("Smoothing : %f seconds!\n");
-			Vector3DFloat * volumeGradient;
+			Vector3DFloat * volumeGradient = NULL;
 			EigenResults3D * volumeEigens;
 			sourceVol->pad(MAX_GAUSSIAN_FILTER_RADIUS, 0);
 
@@ -1748,7 +1748,7 @@ namespace wustl_mm {
 				imageList.AddImage(GrayImage::GrayImageVolumeToImage(thresholdedImage));
 				imageList.AddImage(GrayImage::GrayImageVolumeToImage(skeleton));
 				delete thresholdedImage;
-				printf("Threshold = %i - %i points\n", g, bins[g].size());
+				printf("Threshold = %i - %i points\n", g, (int)bins[g].size());
 				int iteration = 1;
 				do { 
 					printf("\tIteration : %i\n", iteration++);

@@ -7775,11 +7775,11 @@ public:
 	}
 
 	/************************************************************************/
-	/* A sequential thinning method for extracting 6-connected skeletons                
-	/* Properties: medial, topology preserving, shape preserving, noise resistance!
-	/* @param thr: threshold
-	/* @param type: 0 for curve preserving, 1 for surface preserving
-	/* @param noise: 0 for no-noise-reduction, n for level-n noise reduction
+	// A sequential thinning method for extracting 6-connected skeletons                
+	// Properties: medial, topology preserving, shape preserving, noise resistance!
+	// @param thr: threshold
+	// @param type: 0 for curve preserving, 1 for surface preserving
+	// @param noise: 0 for no-noise-reduction, n for level-n noise reduction
 	/************************************************************************/
 	void sequentialSkeleton( float thr, int type, int noise )
 	{

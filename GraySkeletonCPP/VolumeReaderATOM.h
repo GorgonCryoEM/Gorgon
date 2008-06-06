@@ -27,14 +27,14 @@ namespace wustl_mm {
 			FILE* fin = fopen((char *)fileName.c_str(), "rt");
 			if (fin == NULL)
 			{
-				printf("Error reading input file %s.\n", fileName) ;
+				printf("Error reading input file %s.\n", fileName.c_str()) ;
 				exit(0) ;
 			}
 			int x, y, z;
 			double gray;
 			while(!feof(fin))
 			{
-				fscanf(fin, "%i %i %i %f\n", &x, &y, &z, &gray);
+				fscanf(fin, "%i %i %i %lf\n", &x, &y, &z, &gray);
 				minX = min(x, minX);
 				minY = min(y, minY);
 				minZ = min(z, minZ);
@@ -53,7 +53,7 @@ namespace wustl_mm {
 			if(fixFile.length() > 0) {
 				fin = fopen((char *)fixFile.c_str(), "rt");
 				while (!feof(fin)) {
-					fscanf(fin, "%li\n", &coord);
+					fscanf(fin, "%i\n", &coord);
 					fixPoints[fixPointCount] = coord;
 					fixPointCount++;
 				}
@@ -68,7 +68,7 @@ namespace wustl_mm {
 			if(helixFile.length() > 0) {
 				fin = fopen((char *)helixFile.c_str(), "rt");
 				while (!feof(fin)) {
-					fscanf(fin, "%li %li\n", &helixStart, &helixEnd);
+					fscanf(fin, "%i %i\n", &helixStart, &helixEnd);
 					helixStarts[helixCount] = helixStart;
 					helixEnds[helixCount] = helixEnd;
 					helixCount++;
@@ -94,7 +94,7 @@ namespace wustl_mm {
 			fin = fopen((char *)fileName.c_str(), "rt");
 			if (fin == NULL)
 			{
-				printf("Error reading input file %s.\n", fileName) ;
+				printf("Error reading input file %s.\n", fileName.c_str()) ;
 				exit(0) ;
 			}
 			int x, y, z;
@@ -102,10 +102,10 @@ namespace wustl_mm {
 			int index = 1;
 			bool isFixed;
 			bool isHelix;
-			double helixNum;
+			double helixNum = 0;
 			while(!feof(fin))
 			{
-				fscanf(fin, "%li %li %li %lf\n", &x, &y, &z, &gray);				
+				fscanf(fin, "%i %i %i %lf\n", &x, &y, &z, &gray);				
 				isFixed = false;
 				for(int i = 0; (i < fixPointCount) && !isFixed; i++) {
 					isFixed = isFixed || index == fixPoints[i];

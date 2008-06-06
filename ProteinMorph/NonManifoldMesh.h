@@ -190,7 +190,7 @@ namespace wustl_mm {
 			int v1Index = GetVertexIndex(vertexId1);
 			int v2Index = GetVertexIndex(vertexId2);
 			for(unsigned int i = 0; (i < vertices[v1Index].edgeIds.size()) && !isPresent; i++) {
-				isPresent = (edges[GetEdgeIndex(vertices[v1Index].edgeIds[i])].vertexIds[0] == v2Index) || (edges[GetEdgeIndex(vertices[v1Index].edgeIds[i])].vertexIds[1] == v2Index);
+				isPresent = ((int)edges[GetEdgeIndex(vertices[v1Index].edgeIds[i])].vertexIds[0] == v2Index) || ((int)edges[GetEdgeIndex(vertices[v1Index].edgeIds[i])].vertexIds[1] == v2Index);
 			}
 			return isPresent;
 
@@ -293,8 +293,8 @@ namespace wustl_mm {
 				for (j = 0; j < (int)vertices[vertexIndex].edgeIds.size(); j++) {
 					edgeIndex = GetEdgeIndex(vertices[vertexIndex].edgeIds[j]);
 
-					if( ((edges[edgeIndex].vertexIds[0] == vertexIds[i])   && (edges[edgeIndex].vertexIds[1] == vertexIds[i+1])) ||
-						((edges[edgeIndex].vertexIds[0] == vertexIds[i+1]) && (edges[edgeIndex].vertexIds[1] == vertexIds[i]))) {
+					if( (((int)edges[edgeIndex].vertexIds[0] == vertexIds[i])   && ((int)edges[edgeIndex].vertexIds[1] == vertexIds[i+1])) ||
+						(((int)edges[edgeIndex].vertexIds[0] == vertexIds[i+1]) && ((int)edges[edgeIndex].vertexIds[1] == vertexIds[i]))) {
 						face.edgeIds.push_back(vertices[vertexIndex].edgeIds[j]);					 
 					}
 				}				
@@ -468,7 +468,7 @@ namespace wustl_mm {
 			for(int i = 0; i < 2; i++) {				
 				vertexIndex = GetVertexIndex(edges[edgeIndex].vertexIds[i]);								
 				for(int j = (int)vertices[vertexIndex].edgeIds.size()-1; j >= 0; j--) {
-					if(vertices[vertexIndex].edgeIds[j] == edgeId) {
+					if((int)vertices[vertexIndex].edgeIds[j] == edgeId) {
 						vertices[vertexIndex].edgeIds.erase(vertices[vertexIndex].edgeIds.begin() + j);
 					}
 				}
@@ -501,7 +501,7 @@ namespace wustl_mm {
 					vertices[i].id = newId;
 					for(unsigned int j = 0; j < vertices[i].edgeIds.size(); j++) {
 						for(int k = 0; k < 2; k++) {
-							if(edges[GetEdgeIndex(vertices[i].edgeIds[j])].vertexIds[k] == oldId) {
+							if((int)edges[GetEdgeIndex(vertices[i].edgeIds[j])].vertexIds[k] == oldId) {
 								edges[GetEdgeIndex(vertices[i].edgeIds[j])].vertexIds[k] = newId;
 							}
 						}
@@ -523,7 +523,7 @@ namespace wustl_mm {
 
 					for(int j = 0; j < 2; j++)  {
 						for(unsigned int k = 0; k < vertices[GetVertexIndex(edges[i].vertexIds[j])].edgeIds.size(); k++) {
-							if(vertices[GetVertexIndex(edges[i].vertexIds[j])].edgeIds[k] == oldId) {
+							if((int)vertices[GetVertexIndex(edges[i].vertexIds[j])].edgeIds[k] == oldId) {
 								vertices[GetVertexIndex(edges[i].vertexIds[j])].edgeIds[k] = newId;
 							}
 						}
@@ -531,7 +531,7 @@ namespace wustl_mm {
 
 					for(unsigned int j = 0; j < edges[i].faceIds.size(); j++)  {
 						for(unsigned int k = 0; k < faces[GetFaceIndex(edges[i].faceIds[j])].edgeIds.size(); k++) {
-							if(faces[GetFaceIndex(edges[i].faceIds[j])].edgeIds[k] == oldId) {
+							if((int)faces[GetFaceIndex(edges[i].faceIds[j])].edgeIds[k] == oldId) {
 								faces[GetFaceIndex(edges[i].faceIds[j])].edgeIds[k] = newId;
 							}
 						}
@@ -552,7 +552,7 @@ namespace wustl_mm {
 					faces[i].id = newId;
 					for(unsigned int j = 0; j < faces[i].edgeIds.size(); j++) {
 						for(unsigned int k = 0; k < edges[GetEdgeIndex(faces[i].edgeIds[j])].faceIds.size(); k++) {
-							if(edges[GetEdgeIndex(faces[i].edgeIds[j])].faceIds[k] == oldId) {
+							if((int)edges[GetEdgeIndex(faces[i].edgeIds[j])].faceIds[k] == oldId) {
 								edges[GetEdgeIndex(faces[i].edgeIds[j])].faceIds[k] = newId;
 							}
 						}
@@ -566,7 +566,7 @@ namespace wustl_mm {
 			RemoveNullEntries();
 			FILE * outFile = fopen(fileName.c_str(), "wt");
 			fprintf(outFile, "OFF\n");
-			fprintf(outFile, "%li %li %li\n", vertices.size(), faces.size() + edges.size(), 0);
+			fprintf(outFile, "%i %li %i\n", (int)vertices.size(), faces.size() + edges.size(), 0);
 			int i,j;
 			for(i = 0; i < (int)vertices.size(); i++) {
 				fprintf(outFile, "%lf %lf %lf\n", vertices[i].position.X(), vertices[i].position.Y(), vertices[i].position.Z());
@@ -577,14 +577,14 @@ namespace wustl_mm {
 				lastVertex = -1;
 
 				for(j =0; j < (int)faces[i].vertexIds.size(); j++) {
-					fprintf(outFile, "%li ", GetVertexIndex(faces[i].vertexIds[j]));
+					fprintf(outFile, "%i ", GetVertexIndex(faces[i].vertexIds[j]));
 				}
 
 				fprintf(outFile, "\n");
 			}
 
 			for(i = 0; i < (int)edges.size(); i++) {		
-				fprintf(outFile, "4 %li %li %li %li \n", edges[i].vertexIds[0], edges[i].vertexIds[0], edges[i].vertexIds[1], edges[i].vertexIds[1]);
+				fprintf(outFile, "4 %i %i %i %i \n", edges[i].vertexIds[0], edges[i].vertexIds[0], edges[i].vertexIds[1], edges[i].vertexIds[1]);
 			}
 			fclose(outFile);
 		}
@@ -712,7 +712,7 @@ namespace wustl_mm {
 					if(vertex.edgeIds.size() > 0) {
 						newPosition = Vector3DFloat(0,0,0);
 						for(j = 0; j < (int)vertex.edgeIds.size(); j++) {
-							if(edges[GetEdgeIndex(vertex.edgeIds[j])].vertexIds[0] == i) {
+							if((int)edges[GetEdgeIndex(vertex.edgeIds[j])].vertexIds[0] == i) {
 								vertexIndex = 1;
 							} else {
 								vertexIndex = 0;

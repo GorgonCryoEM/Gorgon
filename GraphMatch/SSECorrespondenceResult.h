@@ -50,7 +50,7 @@ namespace wustl_mm {
 			string nodeString = string("");
 			char text[100];
 			for(unsigned int i = 0; i < correspondence.size(); i++) {
-				sprintf(text, "%ld", correspondence[i]);
+				sprintf(text, "%d", correspondence[i]);
 				nodeString.append(text);
 				nodeString.append(" ");
 			}
