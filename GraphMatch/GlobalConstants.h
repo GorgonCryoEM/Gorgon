@@ -15,9 +15,12 @@ Date  : 02/06/2006
 //#define MAKE_FINAL_MRC
 #define GET_AMINO_SEQUENCE
 
-#include <string.h>
-#include <stdio.h>
-#include <stdlib.h>
+#include <string>
+#include <cstdio>
+#include <cstdlib>
+#include <limits>
+
+using namespace std;
 
 namespace wustl_mm {
 	namespace GraphMatch {
@@ -29,7 +32,7 @@ namespace wustl_mm {
 		const int RESULT_COUNT = 35;
 		const int MAX_NODES = 20;
 		const int MAXINT = 2147483647;
-		const unsigned int MAXUNSIGNEDINT = 4294967295;
+		const unsigned int MAXUNSIGNEDINT = numeric_limits<unsigned int>::max();
 		const double MAXDOUBLE = 1.7E308;
 		const int GRAPHEDGE_HELIX = 0;
 		const int GRAPHEDGE_LOOP = 1;

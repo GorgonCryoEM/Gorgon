@@ -353,7 +353,6 @@ namespace wustl_mm {
 		#endif //VERBOSE
 			
 			int currentM1Top = patternGraph->nodeCount - currentNode->depth;
-			int currentM2Top = baseGraph->nodeCount - currentNode->depth + currentNode->missingNodesUsed;
 			bool notConstrained;
 			//currentNode->PrintNodeConcise(0, true, true);
 

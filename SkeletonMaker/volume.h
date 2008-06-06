@@ -812,7 +812,6 @@ public:
 		// First: assign a density value at each point
 		int i, j, k ;
 		Volume* res = new Volume( sizex, sizey, sizez, 0, 0, 0, this ) ;
-		int size = sizex * sizey * sizez ;
 		srand( 123 ) ;
 
 		for ( i = 0 ; i < sizex ; i ++ )
@@ -2341,7 +2340,7 @@ public:
 	{
 		
 		int i ;
-		int c1 = 0 , c2 = 0 ;
+		int c1 = 0;
 		int nx, ny, nz ;
 		int j ;
 
@@ -2397,7 +2396,7 @@ public:
 	{
 		
 		int i ;
-		int c1 = 0 , c2 = 0 ;
+		int c1 = 0;
 		int nx, ny, nz ;
 		int j ;
 
@@ -2555,7 +2554,6 @@ public:
 		// return isSheetEnd(ox,oy,oz) ;
 
 		int i, j, k ;
-		int cn = 12 ;
 		int nx, ny, nz ;
 
 		double vox[3][3][3] ;
@@ -2565,7 +2563,6 @@ public:
 				{
 					vox[ i + 1 ][ j + 1 ][ k + 1 ] = getDataAt( ox + i, oy + j, oz + k ) ;
 				}
-		double val = vox[1][1][1] ;
 
 		int edge[6] = { 4,4,4,4,4,4 } ;
 		int edge2[6] = { 4,4,4,4,4,4 } ;
@@ -2872,7 +2869,6 @@ public:
 
 		int cells = 0 ;
 
-		int ct = 0 ;
 		for (  i = -1 ; i < 1 ; i ++ )
 			for (  j = -1 ; j < 1 ; j ++ )
 				for (  k = -1 ; k < 1 ; k ++ )
@@ -3079,9 +3075,7 @@ public:
 		int i, j, k ;
 		int nx, ny, nz ;
 
-		int edge[6] = { 0,0,0,0,0,0 } ;
 		int faceflag ;
-		int tot = 0 ;
 		int cellflag[ 8 ] ;
 
 		// Get cells
@@ -3138,7 +3132,6 @@ public:
 		// return testIsSheetEnd( ox, oy, oz ) ;
 		
 		int i, j, k ;
-		int cn = 12 ;
 		int nx, ny, nz ;
 
 		double vox[3][3][3] ;
@@ -3148,7 +3141,6 @@ public:
 				{
 					vox[ i + 1 ][ j + 1 ][ k + 1 ] = getDataAt( ox + i, oy + j, oz + k ) ;
 				}
-		double val = vox[1][1][1] ;
 
 		int edge[6] = { 4,4,4,4,4,4 } ;
 		int edge2[6] = { 4,4,4,4,4,4 } ;
@@ -3216,7 +3208,6 @@ public:
 	{
 		// int flag = 0 ;
 		double vox[3][3][3] ;
-		double val = getDataAt( ox, oy, oz ) ;
 
 		int i, j, k ;
 		for ( i = -1 ; i < 2 ; i ++ )
@@ -3282,7 +3273,6 @@ public:
 	{
 		// int flag = 0 ;
 		double vox[3][3][3] ;
-		double val = getDataAt( ox, oy, oz ) ;
 
 		int i, j, k ;
 		for ( i = -1 ; i < 2 ; i ++ )
@@ -3386,7 +3376,7 @@ public:
 		}
 		double val = getDataAt( ox, oy, oz ) ;
 
-		int rvalue = 30, nx, ny, nz ;
+		int nx, ny, nz ;
 
 
 		int numSimple = 0 ;
@@ -3437,13 +3427,11 @@ public:
 
 	int getNumPotComplex4( int ox, int oy, int oz )
 	{
-		double val = getDataAt(ox,oy,oz) ;
-		int rvalue = 0;
 
 		int cells = getNumCells(ox,oy,oz) ;
-		int ifaces = getNumIsolatedFaces(ox,oy,oz) ;
+		//int ifaces = getNumIsolatedFaces(ox,oy,oz) ;
 		int faces = getNumFaces(ox,oy,oz) ;
-		int iedges = getNumIsolatedEdges(ox,oy,oz) ;
+		//int iedges = getNumIsolatedEdges(ox,oy,oz) ;
 
 		return ( cells * 6 - 2 * faces ) ; // + 2 * ( faces * 4 - 4 * iedges ) ;
 	}
@@ -4083,7 +4071,6 @@ public:
 		printf("Start erosion to %d...\n", wid) ;
 		#endif
 		gridQueueEle* ele ;
-		double val = 0;
 		int ox, oy, oz ;
 
 		for ( int curwid = 1 ; curwid <= wid ; curwid ++ )
@@ -4288,7 +4275,6 @@ public:
 		#endif
 		gridQueueEle* ele ;
 		gridPoint* gp ;
-		double val = 0;
 		int ox, oy, oz ;
 		int score ;
 		Volume* scrvol = new Volume( this->sizex , this->sizey, this->sizez ) ;
@@ -4528,7 +4514,6 @@ public:
 
 		gridQueueEle* ele ;
 		gridPoint* gp ;
-		double val = 0;
 		int ox, oy, oz ;
 		int score ;
 		Volume* scrvol = new Volume( this->sizex , this->sizey, this->sizez ) ;
@@ -4774,7 +4759,6 @@ public:
 		// Perform erosion 
 		gridQueueEle* ele ;
 		gridPoint* gp ;
-		double val = 0;
 		int ox, oy, oz ;
 		int score ;
 		Volume* scrvol = new Volume( this->sizex , this->sizey, this->sizez ) ;
@@ -5231,7 +5215,6 @@ public:
 		// Perform erosion 
 		gridQueueEle* ele ;
 		gridPoint* gp ;
-		double val = 0;
 		int ox, oy, oz ;
 		int score ;
 		Volume* scrvol = new Volume( this->sizex , this->sizey, this->sizez ) ;
@@ -5641,7 +5624,6 @@ public:
 		// Perform erosion 
 		gridQueueEle* ele ;
 		gridPoint* gp ;
-		double val = 0;
 		int ox, oy, oz ;
 		int score ;
 		Volume* scrvol = new Volume( this->sizex , this->sizey, this->sizez ) ;
@@ -6044,7 +6026,6 @@ public:
 
 		// Perform erosion 
 		gridQueueEle* ele ;
-		double val = 0;
 		int ox, oy, oz ;
 
 		while( 1 )
@@ -6190,7 +6171,6 @@ public:
 
 		gridQueueEle* ele ;
 		gridPoint* gp ;
-		double val = 0;
 		int ox, oy, oz ;
 		int score ;
 
@@ -6405,7 +6385,6 @@ public:
 		#endif
 		gridQueueEle* ele ;
 		gridPoint* gp ;
-		double val = 0;
 		int ox, oy, oz ;
 		int score ;
 		Volume* scrvol = new Volume( this->sizex , this->sizey, this->sizez ) ;
@@ -6658,7 +6637,6 @@ public:
 		#endif
 		gridQueueEle* ele ;
 		gridPoint* gp ;
-		double val = 0;
 		int ox, oy, oz ;
 		int score ;
 		Volume* scrvol = new Volume( this->sizex , this->sizey, this->sizez ) ;
@@ -7263,8 +7241,8 @@ public:
 				{
 					if ( getDataAt( i, j, k ) == 0 )
 					{
-						int fval = (int) fvol->getDataAt( i, j, k ) ;
 						/*
+						int fval = (int) fvol->getDataAt( i, j, k ) ;
 						if ( fval == 0)
 						{
 							setDataAt( i, j, k, dis - 2 ) ;
@@ -7803,7 +7781,6 @@ public:
 		#endif
 		GridQueue2* queue2 = new GridQueue2( ) ;
 		GridQueue2* queue3 = new GridQueue2( ) ;
-		GridQueue2* queue4 = new GridQueue2( ) ;
 		gridQueueEle* ele ;
 
 		for ( i = 0 ; i < sizex ; i ++ )
@@ -8108,7 +8085,6 @@ public:
 		#endif
 		gridQueueEle* ele ;
 		gridPoint* gp ;
-		double val = 0;
 		int ox, oy, oz ;
 		int score ;
 		Volume* scrvol = new Volume( this->sizex , this->sizey, this->sizez ) ;
@@ -8554,7 +8530,6 @@ public:
 		#endif
 		gridQueueEle* ele ;
 		gridPoint* gp ;
-		double val = 0;
 		int ox, oy, oz ;
 		int score ;
 		Volume* scrvol = new Volume( this->sizex , this->sizey, this->sizez ) ;
@@ -8958,7 +8933,6 @@ public:
 		#endif
 		gridQueueEle* ele ;
 		gridPoint* gp ;
-		double val = 0;
 		int ox, oy, oz ;
 		int score ;
 		Volume* scrvol = new Volume( this->sizex , this->sizey, this->sizez ) ;
@@ -9362,7 +9336,6 @@ public:
 		#endif
 		gridQueueEle* ele ;
 		gridPoint* gp ;
-		double val = 0;
 		int ox, oy, oz ;
 		int score ;
 		Volume* scrvol = new Volume( this->sizex , this->sizey, this->sizez ) ;
@@ -9764,7 +9737,6 @@ public:
 		// Perform erosion 
 		gridQueueEle* ele ;
 		gridPoint* gp ;
-		double val = 0;
 		int ox, oy, oz ;
 		int score ;
 		Volume* scrvol = new Volume( this->sizex , this->sizey, this->sizez ) ;
@@ -10999,7 +10971,6 @@ public:
 				}
 
 		// Write faces
-		int ct = 0 ;
 		for ( i = 0 ; i < sizex ; i ++ )
 			for ( j = 0 ; j < sizey ; j ++ )
 				for ( k = 0 ; k < sizez ; k ++ )

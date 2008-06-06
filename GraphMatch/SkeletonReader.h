@@ -88,7 +88,6 @@ namespace wustl_mm {
 				yOffset = vol->getSizeY() / 2.0;
 				zOffset = vol->getSizeZ() / 2.0;
 			}
-			int count = 0;
 
 			// Finding all points inside of the helixes.
 			for(point[0] = -xOffset; point[0] < vol->getSizeX() - xOffset; point[0]++) {

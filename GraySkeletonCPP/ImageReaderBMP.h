@@ -60,7 +60,7 @@ namespace wustl_mm {
 			ImageReaderBMPInfoHeader infoHeader;
 			ImageReaderBMPRgbQuad palette[256];
 
-			int n = fread(&fileHeader, sizeof(fileHeader), 1, inFile); 
+			fread(&fileHeader, sizeof(fileHeader), 1, inFile); 
 			fread(&infoHeader, sizeof(infoHeader), 1, inFile); 
 			fread(&palette, sizeof(ImageReaderBMPRgbQuad), 256, inFile); 
 

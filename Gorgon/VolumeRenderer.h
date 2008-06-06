@@ -502,7 +502,6 @@ namespace wustl_mm {
 			{
 					if(a2iTriangleConnectionTable[iFlagIndex][3*iTriangle] < 0)
 							break;
-					Point3 pts[3];
 					int triangleVertices[3];
 					for(iCorner = 0; iCorner < 3; iCorner++)
 					{

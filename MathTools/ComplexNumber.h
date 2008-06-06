@@ -191,7 +191,6 @@ namespace wustl_mm {
 			return ComplexNumber(v, i);
 		}	
 		void ComplexNumber::SquareRoot() {
-			double v = value, i = iValue;
 			
 			if(isZero(value) && isZero(iValue)) {
 				value = 0;
@@ -215,7 +214,6 @@ namespace wustl_mm {
 		}
 
 		void ComplexNumber::CubeRoot(int rootCount) {
-			double v = value, i = iValue;
 			
 			if(isZero(value) && isZero(iValue)) {
 				value = 0;
