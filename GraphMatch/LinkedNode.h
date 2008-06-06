@@ -119,7 +119,7 @@ namespace wustl_mm {
 				}
 				n1[top] = currentNode->n1Node;
 				n2[top] = currentNode->n2Node;
-				used[currentNode->n1Node] = true;
+				used[(int)currentNode->n1Node] = true;
 				top++;
 				currentNode = currentNode->parentNode;		
 			}
@@ -190,7 +190,7 @@ namespace wustl_mm {
 				}
 				n1[top] = currentNode->n1Node;
 				n2[top] = currentNode->n2Node;
-				used[currentNode->n1Node] = true;
+				used[(int)currentNode->n1Node] = true;
 				top++;
 				currentNode = currentNode->parentNode;		
 			}
@@ -255,7 +255,7 @@ namespace wustl_mm {
 				}
 				n1[top] = currentNode->n1Node;
 				n2[top] = currentNode->n2Node;
-				used[currentNode->n1Node] = true;
+				used[(int)currentNode->n1Node] = true;
 				top++;
 				currentNode = currentNode->parentNode;		
 			}

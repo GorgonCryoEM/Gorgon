@@ -119,7 +119,7 @@ namespace wustl_mm {
 			}	
 
 			Point3Int * currentPoint; //CurrentPoint
-			int x, y, z, xx, yy, zz;
+			int x, y, z, xx = 0, yy = 0, zz = 0;
 			int d[6][3];
 			d[0][0] = 0;		d[0][1] = 0;		d[0][2] = -1;
 			d[1][0] = 0;		d[1][1] = 0;		d[1][2] = 1;
@@ -129,7 +129,7 @@ namespace wustl_mm {
 			d[5][0] = 1;		d[5][1] = 0;		d[5][2] = 0;
 			Volume * visited = new Volume(skeletonVol->getSizeX(), skeletonVol->getSizeY(), skeletonVol->getSizeZ());
 
-			for(unsigned int i = 0; i < graph->skeletonHelixes.size(); i++) {
+			for(int i = 0; i < (int)graph->skeletonHelixes.size(); i++) {
 				if(((i != endHelix) && (i != startHelix))) {
 				//if(i != endHelix) {
 					for(unsigned int j = 0; j < graph->skeletonHelixes[i]->internalCells.size(); j++) {

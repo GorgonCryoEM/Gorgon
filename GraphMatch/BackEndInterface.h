@@ -13,7 +13,7 @@ namespace wustl_mm {
 		class BackEndInterface {
 		public:
 			BackEndInterface();
-			~BackEndInterface();
+			virtual ~BackEndInterface();
 			// Initialization Methods
 			void SetConstantsFromFile(char * fileName);
 			bool SetConstant(char * token, char * value);

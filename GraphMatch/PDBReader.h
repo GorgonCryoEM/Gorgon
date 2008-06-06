@@ -242,7 +242,7 @@ namespace wustl_mm {
 			FILE* fin = fopen((char *)fileName.c_str(), "rt");
 			if (fin == NULL)
 			{
-				printf("Error reading input file %s.\n", fileName) ;
+				printf("Error reading input file %s.\n", fileName.c_str()) ;
 				exit(0) ;
 			}
 

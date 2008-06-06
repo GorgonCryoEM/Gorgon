@@ -169,7 +169,7 @@ namespace wustl_mm {
 
 
 			OctreeNode<TTag> * neigh;
-			bool found;
+			bool found = false;
 			for(int i = 1; i < 8; i++) {				
 				neigh = GetLeaf(node->pos[0] + node->cellSize * octreeChildren[i][0], node->pos[1] + node->cellSize * octreeChildren[i][1], node->pos[2] + node->cellSize * octreeChildren[i][2]);
 				if(neigh != NULL) {

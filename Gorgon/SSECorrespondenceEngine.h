@@ -57,7 +57,7 @@ namespace wustl_mm {
 			FILE* fin = fopen((char*)fileName.c_str(), "rt");
 			if (fin == NULL)
 			{
-				printf("Error opening input file %s.\n", fileName) ;
+				printf("Error opening input file %s.\n", fileName.c_str()) ;
 				exit(0) ;
 			}
 
@@ -66,13 +66,13 @@ namespace wustl_mm {
 			int correspondenceCount = 0, nodeCount, skeletonNode;
 			vector<int> nodes;
 			double cost;
-			fscanf(fin, "%ld\n", &correspondenceCount);
+			fscanf(fin, "%d\n", &correspondenceCount);
 
 			for(int i = 0; i < correspondenceCount; i++) {
 				nodes.clear();
-				fscanf(fin, "%ld ", &nodeCount);				
+				fscanf(fin, "%d ", &nodeCount);				
 				for(int j = 0; j < nodeCount; j++) {
-					fscanf(fin, "%ld ", &skeletonNode);
+					fscanf(fin, "%d ", &skeletonNode);
 					nodes.push_back(skeletonNode);
 				}
 				fscanf(fin, "%lf\n", &cost);
@@ -103,15 +103,15 @@ namespace wustl_mm {
 			FILE* fout = fopen((char*)fileName.c_str(), "wt");
 			if (fout == NULL)
 			{
-				printf("Error opening output file %s.\n", fileName) ;
+				printf("Error opening output file %s.\n", fileName.c_str()) ;
 				exit(0) ;
 			}
 
 			fprintf(fout, "%ld\n", correspondence.size());
 			for(unsigned int i = 0; i < correspondence.size(); i++) {
-				fprintf(fout, "%ld ", correspondence[i].GetNodeCount());
+				fprintf(fout, "%d ", correspondence[i].GetNodeCount());
 				for(int j = 0; j < correspondence[i].GetNodeCount(); j++) {
-					fprintf(fout, "%ld ", correspondence[i].GetSkeletonNode(j));
+					fprintf(fout, "%d ", correspondence[i].GetSkeletonNode(j));
 				}
 				fprintf(fout, "%lf\n", correspondence[i].GetCost());
 			}

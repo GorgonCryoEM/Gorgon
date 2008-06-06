@@ -19,8 +19,8 @@ namespace wustl_mm {
 		};
 
 		GrayImage * ImageReaderMRC::LoadGrayscaleImage(string fileName, int slice, char dimension) {
-			double minVal, maxVal, currVal;
-			int sizeX, sizeY;
+			double minVal = 0.0, maxVal = 0.0, currVal = 0.0;
+			int sizeX = 0, sizeY = 0;
 			GrayImage * outImage;
 
 			Volume * vol = (MRCReaderPicker::pick((char *)fileName.c_str()))->getVolume();
@@ -58,6 +58,9 @@ namespace wustl_mm {
 							break;
 						case 'z' :
 							currVal = vol->getDataAt(i, j, slice);
+							break;
+						default:
+							currVal = 0;
 							break;
 					}
 					if(currVal < minVal) {

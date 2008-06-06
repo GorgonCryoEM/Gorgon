@@ -208,7 +208,7 @@ namespace wustl_mm {
 					finishTime = clock();
 					foundCount++;
 					currentNode->PrintNodeConcise(foundCount, false);
-					printf(": (%d expanded) (%f seconds) (%fkB Memory) (%d queue size) (%d parent size)\n", expandCount, (double) (finishTime - startTime) / (double) CLOCKS_PER_SEC, (queue->getLength() * sizeof(LinkedNode) + usedNodes.size() * sizeof(LinkedNodeStub)) / 1024.0, queue->getLength(), usedNodes.size());
+					printf(": (%d expanded) (%f seconds) (%fkB Memory) (%d queue size) (%d parent size)\n", expandCount, (double) (finishTime - startTime) / (double) CLOCKS_PER_SEC, (queue->getLength() * sizeof(LinkedNode) + usedNodes.size() * sizeof(LinkedNodeStub)) / 1024.0, queue->getLength(), (int)usedNodes.size());
 
 
 		#ifdef MAKE_FINAL_MRC
@@ -284,8 +284,8 @@ namespace wustl_mm {
 			}
 
 			// Adding the length of the edges
-			bool firstIsLoop;
-			bool lastIsLoop;
+			bool firstIsLoop = false;
+			bool lastIsLoop = false;
 			for(int i = 0; i < m; i++) {
 				lastIsLoop = ((patternGraph->adjacencyMatrix[d+i-1][d+i][0] == GRAPHEDGE_LOOP) || (patternGraph->adjacencyMatrix[d+i-1][d+i][0] == GRAPHEDGE_LOOP_EUCLIDEAN));
 				if(i==0) {

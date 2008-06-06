@@ -88,10 +88,10 @@ namespace wustl_mm {
 				exit(0) ;
 			}
 
-			fscanf(fin, "%ld\n", &nodeCount);
+			fscanf(fin, "%d\n", &nodeCount);
 			for(int i = 0; i < nodeCount; i++) {
 				for(int j = 0; j < nodeCount; j++) {
-					fscanf(fin, "%ld", &(adjacencyMatrix[i][j][1]));
+					fscanf(fin, "%lf", &(adjacencyMatrix[i][j][1]));
 				}
 				fscanf(fin, "\n");
 			}

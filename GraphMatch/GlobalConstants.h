@@ -203,7 +203,7 @@ namespace wustl_mm {
 
 
 		void LoadConstantsFromFile(char * settingsFile) {
-			for(unsigned int i = 0; i < MAX_NODES; i++) {
+			for(int i = 0; i < MAX_NODES; i++) {
 				SOLUTION[i] = -2;
 				allowedConstraintCount[i] = 0;
 				notAllowedConstraintCount[i] = 0;

@@ -724,7 +724,7 @@ float calcPoint ( float halfA[], float b[], float btb, float midpoint[], float r
 		method = 2;
 		calcPoint ( halfA, b, btb, midpoint, rvalue, box, mat );
 		method = 4;
-/*
+
 		if ( rank == 0 )
 		{
 			// it's zero, no equations

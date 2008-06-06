@@ -448,7 +448,6 @@ namespace wustl_mm {
 			float fOffset;
 			float afCubeValue[8];
 			Vector3 asEdgeVertex[12];
-			Vector3 asEdgeNorm[12];
 			int vertexIds[12];
 
 			//Make a local copy of the values at the cube's corners
