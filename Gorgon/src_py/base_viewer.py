@@ -261,7 +261,8 @@ class BaseViewer(QtOpenGL.QGLWidget):
     def performElementSelection(self, hitStack):
         #Override this method to enable mouse selection functionality
         pass
-                    
+            
+                                
     def processMouseClick(self, hitStack, event):
         print self.title, ": ", hitStack
         hits = [-1,-1,-1,-1,-1]

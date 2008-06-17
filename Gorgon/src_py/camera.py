@@ -19,7 +19,7 @@ except ImportError:
 class Camera(QtOpenGL.QGLWidget):
     def __init__(self, scene, main, parent=None):                
         QtOpenGL.QGLWidget.__init__(self, parent)
-        self.app = main
+        self.app = main        
         self.near = 0
         self.cuttingPlane = 0.0
         self.scene = scene
@@ -45,6 +45,9 @@ class Camera(QtOpenGL.QGLWidget):
         self.lastPos = QtCore.QPoint()
         self.sceneEditor = SceneEditorForm(self.app, self)
         
+        for i in range(len(self.scene)): 
+            self.scene[i].sceneIndex = i;     
+
         for s in self.scene:
             self.connect(s, QtCore.SIGNAL("viewerSetCenter(float, float, float, float)"), self.sceneSetCenter)
             self.connect(s, QtCore.SIGNAL("modelChanged()"), self.modelChanged)
@@ -52,6 +55,7 @@ class Camera(QtOpenGL.QGLWidget):
             self.connect(s, QtCore.SIGNAL("modelUnloaded()"), self.modelChanged)
             self.connect(s, QtCore.SIGNAL("modelVisualizationChanged()"), self.modelChanged)
             self.connect(s, QtCore.SIGNAL("mouseTrackingChanged()"), self.refreshMouseTracking)
+            
             
     def setEye(self, x, y, z):
         self.eye = [x, y, z]
@@ -196,7 +200,6 @@ class Camera(QtOpenGL.QGLWidget):
         self.setGluLookAt()                                      
         for i in range(len(self.scene)): 
             glPushName(i)
-            self.scene[i].sceneIndex = i;     
             self.scene[i].draw()
             glPopName()
         glPopMatrix()
@@ -216,7 +219,9 @@ class Camera(QtOpenGL.QGLWidget):
             minNames.pop(0)
         self.selectedScene = sceneId;
             
-    def processMouseClick(self, mouseHits, event):   
+    def processMouseClick(self, mouseHits, event): 
+        self.emitMouseClickedRaw(mouseHits, event)
+
         globalMinDepth = self.far + 1
         minNames = list()        
         sceneId = -1
@@ -227,12 +232,14 @@ class Camera(QtOpenGL.QGLWidget):
                 globalMinDepth = minDepth
                 minNames = names
         if(minNames != list()):
-            sceneId = minNames[0];
+            sceneId = minNames[0]
             minNames.pop(0)
         if(sceneId >= 0):
             self.scene[sceneId].processMouseClick(minNames, event)
        
-    def processMouseMove(self, mouseHits, event):       
+    def processMouseMove(self, mouseHits, event):     
+        self.emitMouseMovedRaw(mouseHits, event)      
+                          
         globalMinDepth = self.far + 1
         minNames = list()        
         sceneId = -1
@@ -258,7 +265,7 @@ class Camera(QtOpenGL.QGLWidget):
         glMatrixMode(GL_PROJECTION)        
         glPushMatrix()
         glLoadIdentity()        
-        gluPickMatrix(x, viewport[3]-y, 5, 5, viewport)
+        gluPickMatrix(x, viewport[3]-y, 10, 10, viewport)
         gluPerspective(180 * self.eyeZoom, self.aspectRatio, self.near, self.far)            
         self.drawScene()        
         glMatrixMode(GL_PROJECTION)
@@ -357,5 +364,11 @@ class Camera(QtOpenGL.QGLWidget):
         self.updateGL()
         
     def emitCameraChanged(self):
-        self.emit(QtCore.SIGNAL("cameraChanged()"))                        
+        self.emit(QtCore.SIGNAL("cameraChanged()"))
+    
+    def emitMouseMovedRaw(self, mouseHits, event):
+        self.emit(QtCore.SIGNAL("mouseMovedRAW(PyQt_PyObject, QMouseEvent)"), mouseHits, event)
+
+    def emitMouseClickedRaw(self, mouseHits, event):
+        self.emit(QtCore.SIGNAL("mouseClickedRAW(PyQt_PyObject, QMouseEvent)"), mouseHits, event)                        
         

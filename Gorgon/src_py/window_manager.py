@@ -27,7 +27,8 @@ class WindowManager(QtGui.QWidget):
         self.skeletonViewer = SkeletonViewer(self.app)
         self.sseViewer = SSEViewer(self.app)
         self.calphaViewer = CAlphaViewer(self.app)
-        self.mainCamera = Camera([self.calphaViewer, self.sseViewer, self.skeletonViewer, self.volumeViewer], self.app)   
+        self.mainCamera = Camera([self.calphaViewer, self.sseViewer, self.skeletonViewer, self.volumeViewer], self.app)
+        self.app.mainCamera = self.mainCamera   
         self.app.setCentralWidget(self.mainCamera)
         
     def createActions(self):
