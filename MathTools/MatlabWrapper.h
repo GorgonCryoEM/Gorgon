@@ -7,7 +7,7 @@
 #include "DataStructures.h"
 #include "Vector3D.h"
 #include "ComplexNumber.h"
-#include "eigen.h"
+#include "Eigen.h"
 #include <cmath>
 #ifdef USE_MATLAB
 #include "engine.h"
