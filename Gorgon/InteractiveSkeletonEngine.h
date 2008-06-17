@@ -11,6 +11,7 @@
 	#include <map>
 #endif
 #include <MathTools/Vector3D.h>
+#include <vector>
 
 using namespace wustl_mm::Protein_Morph;
 using namespace wustl_mm::GraySkeletonCPP;
@@ -23,11 +24,13 @@ namespace wustl_mm {
 		public:
 			InteractiveSkeletonEngine(Volume * volume, NonManifoldMesh_Annotated * skeleton, float skeletonRatio, float stRatio, float minGray, int stepCount, int curveRadius, int minCurveSize);
 			~InteractiveSkeletonEngine();			
-			void AnalyzePath(int hit0, int hit1);
+			void AnalyzePathSingle(int hit0, int hit1);
+			void AnalyzePathMultiple(int hit0, int hit1, bool reset, bool final);
 			void Draw(int subscene);
 			void FinalizeSkeleton();
 			void SelectEndSeed(int hit0, int hit1);
-			void SelectStartSeed(int hit0, int hit1);
+			void SelectStartSeedSingle(int hit0, int hit1);
+			void SelectStartSeedMultiple(int hit0, int hit1, bool reset, bool final);
 			void SetIsoValue(float isoValue);
 		private:
 			Volume * volume;
@@ -43,7 +46,9 @@ namespace wustl_mm {
 			bool started;
 			bool analyzed;
 			Vector3DInt startPos;
+			vector<Vector3DInt> startPositions;
 			Vector3DInt currentPos;
+			vector<Vector3DInt> currentPositions;
 			GLUquadric * quadricSphere;			
 			float isoValue;
 		};
@@ -88,7 +93,7 @@ namespace wustl_mm {
 			}
 		}
 
-		void InteractiveSkeletonEngine::SelectStartSeed(int hit0, int hit1) {
+		void InteractiveSkeletonEngine::SelectStartSeedSingle(int hit0, int hit1) {
 			if((hit0 == 1) && (hit1 >= 0)) {
 				hit0 = 2;
 				if(skeleton->vertices[skeleton->GetVertexIndex(skeleton->edges[hit1].vertexIds[0])].edgeIds.size() == 1) {
@@ -122,10 +127,43 @@ namespace wustl_mm {
 			}
 		}
 
+		void InteractiveSkeletonEngine::SelectStartSeedMultiple(int hit0, int hit1, bool reset, bool final) {
+			if(reset) {
+				started = false;
+				analyzed = false;
+				startPositions.clear();				
+				for(unsigned int i = 0; i < skeleton->edges.size(); i++) {
+					if(!skeleton->edges[i].tag) {
+						skeleton->RemoveEdge(i);
+					}
+				}
+				skeleton->RemoveNullEntries();
+			}
+
+			if((hit0 == 1) && (hit1 >= 0)) { // Clicked on an edge
+				hit0 = 2;
+				if(skeleton->vertices[skeleton->GetVertexIndex(skeleton->edges[hit1].vertexIds[0])].edgeIds.size() == 1) {
+					hit1 = skeleton->edges[hit1].vertexIds[0];
+				} else {
+					hit1 = skeleton->edges[hit1].vertexIds[1];
+				}
+			}
+			if((hit0 == 2) && (hit1 >= 0)) { // Clicked on a vertex point
+				startPositions.push_back(vertexToLocationMap[hit1]);
+			} else if((hit0 == -1) && (hit1 == -1)) { // Clicked on the current Point
+				startPositions.push_back(currentPos);
+			}
+
+			if(final) {
+				started = true;
+				skeletonizer->CalculateMinimalSpanningTree(startPositions);
+			}
+		}
+
 		void InteractiveSkeletonEngine::SetIsoValue(float isoValue) {
 			this->isoValue = isoValue;
 		}
-		void InteractiveSkeletonEngine::AnalyzePath(int hit0, int hit1) {
+		void InteractiveSkeletonEngine::AnalyzePathSingle(int hit0, int hit1) {
 			analyzed = true;
 			if(started && (hit0 == 2) && (hit1 >= 0)) {
 				for(unsigned int i = 0; i < skeleton->edges.size(); i++) {
@@ -150,6 +188,40 @@ namespace wustl_mm {
 						skeleton->AddEdge(v1, v2, false);
 					}
 
+				}
+			}
+		}
+
+		void InteractiveSkeletonEngine::AnalyzePathMultiple(int hit0, int hit1, bool reset, bool final) {
+			if(reset) {				
+				analyzed = false;	
+				currentPositions.clear();
+				if(started) {
+					for(unsigned int i = 0; i < skeleton->edges.size(); i++) {
+						if(!skeleton->edges[i].tag) {
+							skeleton->RemoveEdge(i);
+						}
+					}
+					skeleton->RemoveNullEntries();
+				}
+			}
+			if(started && (hit0 == 2) && (hit1 >= 0)) {
+				currentPos = vertexToLocationMap[hit1];
+				currentPositions.push_back(currentPos);
+			}
+
+			if(final) {
+				int v1, v2;
+				analyzed = true;
+				vector<Vector3DInt> path = skeletonizer->GetPath(currentPositions);
+				currentPos = path[0];
+				startPos = path[path.size()-1];
+				for(unsigned int i = 1; i < path.size(); i++) {
+					v1 = locationToVertexMap[volume->getIndex(path[i-1].X(),path[i-1].Y(), path[i-1].Z())];
+					v2 = locationToVertexMap[volume->getIndex(path[i].X(),path[i].Y(), path[i].Z())];
+					if(!skeleton->IsEdgePresent(v1, v2)) {
+						skeleton->AddEdge(v1, v2, false);
+					}
 				}
 			}
 		}
@@ -194,6 +266,7 @@ namespace wustl_mm {
 					for(unsigned int i = 0; i < skeleton->vertices.size(); i++) {										
 						if((skeleton->vertices[i].edgeIds.size() == 0) && 
 								(volume->getDataAt(skeleton->vertices[i].position.XInt(), skeleton->vertices[i].position.YInt(), skeleton->vertices[i].position.ZInt()) > isoValue)) {
+						//if((skeleton->vertices[i].edgeIds.size() == 0)) {
 							glLoadName(i);
 							glBegin(GL_POINTS);
 							glVertex3f(skeleton->vertices[i].position.X(), skeleton->vertices[i].position.Y(), skeleton->vertices[i].position.Z());

@@ -149,9 +149,11 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 	;
 
 	class_<InteractiveSkeletonEngine>("InteractiveSkeletonEngine", init<Volume *, NonManifoldMesh_Annotated *, float, float, float, int, int, int>())
-		.def("selectStartSeed", &InteractiveSkeletonEngine::SelectStartSeed)
+		.def("selectStartSeedSingle", &InteractiveSkeletonEngine::SelectStartSeedSingle)
+		.def("selectStartSeedMultiple", &InteractiveSkeletonEngine::SelectStartSeedMultiple)
 		.def("selectEndSeed", &InteractiveSkeletonEngine::SelectEndSeed)
-		.def("analyzePath", &InteractiveSkeletonEngine::AnalyzePath)
+		.def("analyzePathSingle", &InteractiveSkeletonEngine::AnalyzePathSingle)
+		.def("analyzePathMultiple", &InteractiveSkeletonEngine::AnalyzePathMultiple)
 		.def("setIsoValue", &InteractiveSkeletonEngine::SetIsoValue)		
 		.def("finalizeSkeleton", &InteractiveSkeletonEngine::FinalizeSkeleton)		
 		.def("draw", &InteractiveSkeletonEngine::Draw)		

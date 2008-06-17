@@ -33,9 +33,11 @@ namespace wustl_mm {
 			~InteractiveSkeletonizer();
 			GraphType * GetGraph();
 			vector<Vector3DInt> GetPath(Vector3DInt endPoint);			
+			vector<Vector3DInt> GetPath(vector<Vector3DInt> endPoints);
 			Vector3DInt FindClosestSkeletalPoint(Vector3DInt point);
 			void SetGraphWeights(double skeletonRatio, double structureTensorRatio);
 			void CalculateMinimalSpanningTree(Vector3DInt seedPoint);
+			void CalculateMinimalSpanningTree(vector<Vector3DInt> seedPoints);
 									
 		protected:
 			double GetStructureTensorProjectedScore(EigenResults3D imageEigen, Vector3DFloat skeletonDirection, float power, int type);			
@@ -197,13 +199,34 @@ namespace wustl_mm {
 
 
 		}
+		vector<Vector3DInt> InteractiveSkeletonizer::GetPath(vector<Vector3DInt> endPoints) {
+			
+			//appTimeManager.PushCurrentTime();
+			//printf("Getting path at {%ld %ld %ld}\n", endPoint.X(), endPoint.Y(), endPoint.Z()); flushall();
+
+
+			NonManifoldMeshVertex<nodeAttrib> * currentNode;
+			float minCost = MAX_FLOAT;
+			unsigned int minCostIndex = 0;
+			OctreeNode<unsigned int> * node; 
+
+			for(unsigned int i = 0; i < endPoints.size(); i++) {
+				node = octree->GetLeaf(endPoints[i].X(), endPoints[i].Y(), endPoints[i].Z());
+				currentNode = &graph->vertices[node->tag];
+				if(currentNode->tag.cost <= minCost) {
+					minCost = currentNode->tag.cost;
+					minCostIndex = i;
+				}
+			}			
+			return GetPath(endPoints[minCostIndex]); 
+		}
+
+
 		Vector3DInt InteractiveSkeletonizer::FindClosestSkeletalPoint(Vector3DInt point) {
 			appTimeManager.PushCurrentTime();
 			OctreeNode<unsigned int> * node = octree->GetLeaf(point.X(), point.Y(), point.Z());
 			appTimeManager.PopAndDisplayTime("Found Closest skeletal point: %f seconds!\n");
-			return Vector3DInt(node->pos[0], node->pos[1], node->pos[2]);	
-			
-			
+			return Vector3DInt(node->pos[0], node->pos[1], node->pos[2]);							
 		}
 
 		void InteractiveSkeletonizer::SetGraphWeights(double skeletonRatio, double structureTensorRatio){
@@ -262,6 +285,54 @@ namespace wustl_mm {
 			//costVol->toMRCFile("Cost.mrc");
 			//delete costVol;
 			appTimeManager.PopAndDisplayTime("Initializing seed point: %f seconds!\n");
+
+		}
+
+		void InteractiveSkeletonizer::CalculateMinimalSpanningTree(vector<Vector3DInt> seedPoints) {
+			appTimeManager.PushCurrentTime();
+			
+			OctreeNode<unsigned int> * node;
+			NonManifoldMeshVertex<nodeAttrib> * currentNode;
+			queue<NonManifoldMeshVertex<nodeAttrib> *> pointList;
+
+			for(unsigned int i = 0; i < graph->vertices.size(); i++) {
+				graph->vertices[i].tag.cost = -1;
+			}
+
+			for(unsigned int i = 0; i < seedPoints.size(); i++) {
+				node = octree->GetLeaf(seedPoints[i].X(), seedPoints[i].Y(), seedPoints[i].Z());
+		
+				currentNode = &graph->vertices[node->tag];
+				currentNode->tag.cost = 0;
+				currentNode->tag.returnNode = NULL;
+
+				pointList.push(currentNode);
+			}
+
+
+			float cost, vertexCost;
+			unsigned int edgeIx;
+			unsigned int vertexIx;
+
+
+			while(!pointList.empty()) {	
+				currentNode = pointList.front();
+				pointList.pop();
+				for(unsigned int i = 0; i < currentNode->edgeIds.size(); i++) {
+					edgeIx = graph->GetEdgeIndex(currentNode->edgeIds[i]);
+					cost = currentNode->tag.cost + graph->edges[edgeIx].tag.totalCost;
+					for(unsigned int j = 0; j < 2; j++) {
+						vertexIx = graph->GetVertexIndex(graph->edges[edgeIx].vertexIds[j]);
+						vertexCost = graph->vertices[vertexIx].tag.cost;
+						if((vertexCost < 0) || (vertexCost > cost)) {
+							graph->vertices[vertexIx].tag.cost = cost;
+							graph->vertices[vertexIx].tag.returnNode = currentNode;
+							pointList.push(&graph->vertices[vertexIx]);
+						}
+					}
+				}				
+			}
+			appTimeManager.PopAndDisplayTime("Initializing seed points: %f seconds!\n");
 
 		}
 

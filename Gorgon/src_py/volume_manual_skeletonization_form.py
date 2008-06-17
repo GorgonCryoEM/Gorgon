@@ -74,6 +74,7 @@ class VolumeManualSkeletonizationForm(QtGui.QWidget):
     def startSkeletonization(self):
         self.startEndSkeletonization(True)
         
+        
     def endSkeletonization(self):
         self.startEndSkeletonization(False)
         self.dock.close()
@@ -134,29 +135,74 @@ class VolumeManualSkeletonizationForm(QtGui.QWidget):
             self.skeletonViewer.setSelectEnabled(self.oldSkeletonViewerSelectEnabled)
             self.skeletonViewer.setMouseMoveEnabled(self.oldSkeletonViewerMouseMoveEnabled)               
     
-    def processClick(self, h0, h1, h2, h3, h4, h5, event):
-        #print h0, h1, h2, h3, h4
+    def filterMouseHits(self, mouseHits):
+        hits = list()
+        for hit_record in mouseHits:
+            minDepth, maxDepth, names = hit_record
+            names = list(names)
+            if(names[0] == self.skeletonViewer.sceneIndex):
+                names.pop(0)
+                for i in range(2-len(names)):
+                    names.append(-1)
+                hits.append(names)
+        return hits
+                
+    
+    def processClickMultiple(self, mouseHits, event):
+        hits = self.filterMouseHits(mouseHits)
+        
         if(self.started):
             if(event.modifiers() & QtCore.Qt.CTRL):
-                self.engine.selectStartSeed(h0, h1)
+                for i in range(len(hits)):
+                    start = (i == 0)
+                    end = (i == len(hits)-1)                                    
+                    self.engine.selectStartSeedMultiple(hits[i][0], hits[i][1], start, end)                    
+                self.skeletonViewer.emitModelChanged()                    
+            elif (event.modifiers() & QtCore.Qt.ALT):
+                self.engine.selectEndSeed(-1, -1)
+                self.skeletonViewer.emitModelChanged()        
+                
+    
+    def processClick(self, h0, h1, h2, h3, h4, h5, event):
+        print "single click"
+        if(self.started):
+            if(event.modifiers() & QtCore.Qt.CTRL):
+                self.engine.selectStartSeedMultiple(h0, h1, True, True)
                 self.skeletonViewer.emitModelChanged()
             elif (event.modifiers() & QtCore.Qt.ALT):
                 self.engine.selectEndSeed(h0, h1)
                 self.skeletonViewer.emitModelChanged()
-        
+                
+
+
+    def processMouseOverMultiple(self, mouseHits, event):
+        hits = self.filterMouseHits(mouseHits)
+                
+        if(self.started and event.modifiers() & QtCore.Qt.ALT ):
+            for i in range(len(hits)):
+                if(hits[i][0] >= 0 and hits[i][1] >= 0):
+                    start = (i == 0)
+                    end = (i == len(hits)-1)                        
+                    self.engine.analyzePathMultiple(hits[i][0], hits[i][1], start, end)
+            self.skeletonViewer.emitModelChanged()        
+               
+       
     def processMouseOver(self, h0, h1, h2, h3, h4, h5, event):
-        #print h0, h1, h2, h3, h4
+        print "single over"
         if(self.started and h0 >= 0 and h1 >= 0):
             if(event.modifiers() & QtCore.Qt.ALT ):
-                self.engine.analyzePath(h0, h1)
+                self.engine.analyzePathMultiple(h0, h1, True, True)
                 self.skeletonViewer.emitModelChanged()
     
     def modelLoaded(self):
         self.skeletonViewer = self.app.viewers["skeleton"]; 
         self.oldSkeletonViewerSelectEnabled = self.skeletonViewer.selectEnabled
-        self.oldSkeletonViewerMouseMoveEnabled = self.skeletonViewer.mouseMoveEnabled  
-        self.connect(self.skeletonViewer, QtCore.SIGNAL("elementSelected (int, int, int, int, int, int, QMouseEvent)"), self.processClick)    
-        self.connect(self.skeletonViewer, QtCore.SIGNAL("elementMouseOver (int, int, int, int, int, int, QMouseEvent)"), self.processMouseOver)  
+        self.oldSkeletonViewerMouseMoveEnabled = self.skeletonViewer.mouseMoveEnabled
+        self.connect(self.app.mainCamera, QtCore.SIGNAL("mouseMovedRAW(PyQt_PyObject, QMouseEvent)"), self.processMouseOverMultiple)
+        self.connect(self.app.mainCamera, QtCore.SIGNAL("mouseClickedRAW(PyQt_PyObject, QMouseEvent)"), self.processClickMultiple)
+
+        #self.connect(self.skeletonViewer, QtCore.SIGNAL("elementSelected (int, int, int, int, int, int, QMouseEvent)"), self.processClick)    
+        #self.connect(self.skeletonViewer, QtCore.SIGNAL("elementMouseOver (int, int, int, int, int, int, QMouseEvent)"), self.processMouseOver)  
         self.skeletonizeAct.setChecked(False)
         self.skeletonizeAct.setEnabled(True)
         self.showWidget(False)
