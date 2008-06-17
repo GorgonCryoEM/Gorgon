@@ -1,6 +1,8 @@
 #ifndef GORGON_MARCHING_CUBES_H
 #define GORGON_MARCHING_CUBES_H
 
+#define GL_GLEXT_PROTOTYPES
+
 #include <iostream>
 #include <glut.h>
 #include <glext.h>
