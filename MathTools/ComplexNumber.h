@@ -13,15 +13,15 @@ namespace wustl_mm {
 
 			ComplexNumber& operator=(const double& d);
 			ComplexNumber& operator=(const ComplexNumber& d);
-			ComplexNumber& ComplexNumber::operator+=(const double& d);
-			ComplexNumber& ComplexNumber::operator+=(const ComplexNumber& d);
-			ComplexNumber& ComplexNumber::operator-=(const double& d);
-			ComplexNumber& ComplexNumber::operator-=(const ComplexNumber& d);
-			ComplexNumber& ComplexNumber::operator*=(const double& d);
-			ComplexNumber& ComplexNumber::operator*=(const ComplexNumber& d);
-			ComplexNumber& ComplexNumber::operator/=(const double& d);
-			ComplexNumber& ComplexNumber::operator/=(const ComplexNumber& d);
-			ComplexNumber ComplexNumber::operator-() const;
+			ComplexNumber& operator+=(const double& d);
+			ComplexNumber& operator+=(const ComplexNumber& d);
+			ComplexNumber& operator-=(const double& d);
+			ComplexNumber& operator-=(const ComplexNumber& d);
+			ComplexNumber& operator*=(const double& d);
+			ComplexNumber& operator*=(const ComplexNumber& d);
+			ComplexNumber& operator/=(const double& d);
+			ComplexNumber& operator/=(const ComplexNumber& d);
+			ComplexNumber operator-() const;
 			ComplexNumber operator+( const ComplexNumber &d ) const;
 			ComplexNumber operator+( const double &d ) const;
 			ComplexNumber operator-( const ComplexNumber &d ) const;
