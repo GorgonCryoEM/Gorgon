@@ -1,5 +1,16 @@
-# Author:      Sasakthi S. Abeysinghe (sasakthi@gmail.com)
-# Description: A widget used to perform manual skeletonization of a volume
+# Copyright (C) 2005-2008 Washington University in St Louis, Baylor College of Medicine.  All rights reserved
+# Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
+# Description:   A widget used to perform manual skeletonization of a volume 
+
+# CVS Meta Information: 
+#   $Source$
+#   $Revision$
+#   $Date$
+#   $Author$
+#   $State$
+#
+# History Log: 
+#   $Log$
 
 from PyQt4 import QtCore, QtGui
 from ui_dialog_volume_manual_skeletonization import Ui_DialogVolumeManualSkeletonization
@@ -43,7 +54,7 @@ class VolumeManualSkeletonizationForm(QtGui.QWidget):
         self.connect(self.ui.pushButtonStart,QtCore.SIGNAL("pressed ()"),self.startSkeletonization)
         self.connect(self.ui.pushButtonClose, QtCore.SIGNAL("pressed ()"), self.endSkeletonization)   
                                             
-    def createActions(self):               
+    def createActions(self):
         self.skeletonizeAct = QtGui.QAction(self.tr("&Interactive Skeletonization"), self)
         self.skeletonizeAct.setStatusTip(self.tr("Perform interactive skeletonization"))
         self.skeletonizeAct.setCheckable(True)
@@ -55,7 +66,7 @@ class VolumeManualSkeletonizationForm(QtGui.QWidget):
     def createMenus(self):
         self.app.menus.addAction("actions-volume-skeletonization-manual", self.skeletonizeAct, "actions-volume-skeletonization")                                   
                 
-    def loadWidget(self):        
+    def loadWidget(self):
         if(self.skeletonizeAct.isChecked()) :
             self.showWidget(True)
         else:
@@ -73,8 +84,7 @@ class VolumeManualSkeletonizationForm(QtGui.QWidget):
     
     def startSkeletonization(self):
         self.startEndSkeletonization(True)
-        
-        
+                
     def endSkeletonization(self):
         self.startEndSkeletonization(False)
         self.dock.close()
@@ -146,9 +156,9 @@ class VolumeManualSkeletonizationForm(QtGui.QWidget):
                     names.append(-1)
                 hits.append(names)
         return hits
-                
-    
+                    
     def processClickMultiple(self, mouseHits, event):
+        print "multiple click", event
         hits = self.filterMouseHits(mouseHits)
         
         if(self.started):
@@ -161,8 +171,7 @@ class VolumeManualSkeletonizationForm(QtGui.QWidget):
             elif (event.modifiers() & QtCore.Qt.ALT):
                 self.engine.selectEndSeed(-1, -1)
                 self.skeletonViewer.emitModelChanged()        
-                
-    
+                    
     def processClick(self, h0, h1, h2, h3, h4, h5, event):
         print "single click"
         if(self.started):
@@ -173,8 +182,6 @@ class VolumeManualSkeletonizationForm(QtGui.QWidget):
                 self.engine.selectEndSeed(h0, h1)
                 self.skeletonViewer.emitModelChanged()
                 
-
-
     def processMouseOverMultiple(self, mouseHits, event):
         hits = self.filterMouseHits(mouseHits)
                 
@@ -185,8 +192,7 @@ class VolumeManualSkeletonizationForm(QtGui.QWidget):
                     end = (i == len(hits)-1)                        
                     self.engine.analyzePathMultiple(hits[i][0], hits[i][1], start, end)
             self.skeletonViewer.emitModelChanged()        
-               
-       
+                      
     def processMouseOver(self, h0, h1, h2, h3, h4, h5, event):
         print "single over"
         if(self.started and h0 >= 0 and h1 >= 0):
