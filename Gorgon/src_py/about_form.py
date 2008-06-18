@@ -1,16 +1,19 @@
-# Copyright (C) 2005-2008 Washington University in St Louis, Baylor College of Medicine.  All rights reserved
+# Copyright (C) 2005-2008 Washington University in St Louis, Baylor College of Medicine.  All rights reserved.
 # Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 # Description:   A utility class which hooks up events for a form which displays information about Gorgon. 
 
 # CVS Meta Information: 
-#   File:      $Source$
-#   Revision:  $Revision$
-#   Date:      $Date$
-#   Author:    $Author$
-#   Status:    $State$
+#   $Source$
+#   $Revision$
+#   $Date$
+#   $Author$
+#   $State$
 #
 # History Log: 
 #   $Log$
+#   Revision 1.5  2008/06/18 17:56:32  ssa1
+#   Adding in CVS meta data
+#
 
 
 from PyQt4 import QtCore, QtGui
