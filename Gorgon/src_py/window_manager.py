@@ -1,5 +1,16 @@
-# Author:      Sasakthi S. Abeysinghe (sasakthi@gmail.com)
-# Description: A widget that manages all the windows of the main form.
+# Copyright (C) 2005-2008 Washington University in St Louis, Baylor College of Medicine.  All rights reserved
+# Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
+# Description:   A widget that manages all the windows of the main form. 
+
+# CVS Meta Information: 
+#   $Source$
+#   $Revision$
+#   $Date$
+#   $Author$
+#   $State$
+#
+# History Log: 
+#   $Log$
 
 from PyQt4 import QtGui, QtCore
 from about_form import AboutForm

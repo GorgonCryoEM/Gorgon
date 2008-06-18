@@ -1,5 +1,16 @@
-# Author:      Sasakthi S. Abeysinghe (sasakthi@gmail.com)
-# Description: A dialog box which can be used to pick a color
+# Copyright (C) 2005-2008 Washington University in St Louis, Baylor College of Medicine.  All rights reserved
+# Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
+# Description:   A dialog box which can be used to pick a color 
+
+# CVS Meta Information: 
+#   $Source$
+#   $Revision$
+#   $Date$
+#   $Author$
+#   $State$
+#
+# History Log: 
+#   $Log$
 
 from PyQt4 import QtCore, QtGui
 from ui_dialog_color_picker import Ui_DialogColorPicker

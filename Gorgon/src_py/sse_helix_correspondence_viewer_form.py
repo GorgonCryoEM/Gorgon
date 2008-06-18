@@ -1,6 +1,16 @@
-# Author:      Sasakthi S. Abeysinghe (sasakthi@gmail.com)
-# Description: A widget that can be used to view correspondence between helices
+# Copyright (C) 2005-2008 Washington University in St Louis, Baylor College of Medicine.  All rights reserved
+# Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
+# Description:   A widget that can be used to view correspondence between helices 
 
+# CVS Meta Information: 
+#   $Source$
+#   $Revision$
+#   $Date$
+#   $Author$
+#   $State$
+#
+# History Log: 
+#   $Log$
 
 from PyQt4 import QtCore, QtGui
 from ui_dialog_sse_helix_correspondence_viewer import Ui_DialogSSEHelixCorrespondenceViewer

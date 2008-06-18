@@ -1,5 +1,16 @@
-# Author:      Sasakthi S. Abeysinghe (sasakthi@gmail.com)
-# Description: This manages a single camera, and the scenes which are rendered using this camera
+# Copyright (C) 2005-2008 Washington University in St Louis, Baylor College of Medicine.  All rights reserved
+# Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
+# Description:   This manages a single camera, and the scenes which are rendered using this camera 
+
+# CVS Meta Information: 
+#   $Source$
+#   $Revision$
+#   $Date$
+#   $Author$
+#   $State$
+#
+# History Log: 
+#   $Log$
 
 import sys
 from PyQt4 import QtOpenGL, QtCore, QtGui
