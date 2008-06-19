@@ -8,7 +8,7 @@ Date  : 01/23/2006
 #ifndef STANDARDGRAPH_H
 #define STANDARDGRAPH_H
 
-#include <assert.h>
+#include <cassert>
 #include <vector>
 #include "GlobalConstants.h"
 #include "Matcher2Helix.h"

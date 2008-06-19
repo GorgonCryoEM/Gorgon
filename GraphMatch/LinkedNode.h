@@ -12,7 +12,7 @@ Date  : 01/23/2006
 #include "GlobalConstants.h"
 #include "LinkedNodeStub.h"
 #include <string>
-#include <assert.h>
+#include <cassert>
 
 using namespace std;
 

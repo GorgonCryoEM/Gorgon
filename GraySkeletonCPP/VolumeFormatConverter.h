@@ -2,7 +2,7 @@
 #define GRAYSKELETONCPP_VOLUME_FORMAT_CONVERTER_H
 
 #include <string>
-#include "Foundation/StringUtils.h"
+#include <Foundation/StringUtils.h>
 #include "VolumeReaderRAW.h"
 #include "VolumeReaderATOM.h"
 #include "VolumeReaderTXT.h"

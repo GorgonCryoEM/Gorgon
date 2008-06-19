@@ -12,7 +12,7 @@ Date  : 01/28/2006
 #include "SecondaryStructure.h"
 #include "SheetStrand.h"
 #include "GlobalConstants.h"
-#include <string.h>
+#include <string>
 #include <MathTools/Vector3D.h>
 #include "PDBAtom.h"
 #include "StandardGraph.h"

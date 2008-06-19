@@ -4,7 +4,7 @@
 #include "GrayImage.h"
 #include "ImageReader.h"
 #include "GlobalDefinitions.h"
-#include <string.h>
+#include <string>
 
 
 using namespace std;

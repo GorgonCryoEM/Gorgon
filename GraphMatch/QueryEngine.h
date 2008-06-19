@@ -1,8 +1,8 @@
 #ifndef QUERY_ENGINE_H
 #define QUERY_ENGINE_H
 
-#include <stdlib.h>
-#include <stdio.h>
+#include <cstdlib>
+#include <cstdio>
 #include "StandardGraph.h"
 #include "WongMatch15Constrained.h"
 #include "WongMatch15ConstrainedNoFuture.h"
@@ -11,7 +11,7 @@
 #include "SkeletonReader.h"
 #include "GlobalConstants.h"
 #include "GraphGenerator.h"
-#include <time.h>
+#include <ctime>
 
 using namespace std;
 

@@ -5,7 +5,7 @@
 #include <SkeletonMaker/volume.h>
 #include <MathTools/DataStructures.h>
 #include <MathTools/Vector3D.h>
-#include <string.h>
+#include <string>
 #include <list>
 
 using namespace std;

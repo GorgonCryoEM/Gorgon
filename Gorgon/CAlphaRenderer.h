@@ -5,9 +5,9 @@
 #include <glut.h>
 #include <cstdlib>
 #include <cstdio>
-#include "ProteinMorph/NonManifoldMesh.h"
-#include "GraphMatch/PDBReader.h"
-#include "GraphMatch/PDBAtom.h"
+#include <ProteinMorph/NonManifoldMesh.h>
+#include <GraphMatch/PDBReader.h>
+#include <GraphMatch/PDBAtom.h>
 #include "Renderer.h"
 
 using namespace std;

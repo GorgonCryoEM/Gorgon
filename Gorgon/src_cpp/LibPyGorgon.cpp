@@ -4,16 +4,16 @@
 #define _CRT_SECURE_NO_DEPRECATE 1
 #define _CRT_NONSTDC_NO_DEPRECATE 1
 
-#include "Gorgon/SSECorrespondenceEngine.h"
-#include "Gorgon/VolumeRenderer.h"
-#include "Gorgon/MeshRenderer.h"
-#include "Gorgon/SSERenderer.h"
-#include "Gorgon/Renderer.h"
-#include "Gorgon/InteractiveSkeletonEngine.h"
-#include "Gorgon/CAlphaRenderer.h"
-#include "MathTools/Vector3D.h"
-#include "GraphMatch/PDBAtom.h"
-#include "GraphMatch/LinkedNode.h"
+#include <Gorgon/SSECorrespondenceEngine.h>
+#include <Gorgon/VolumeRenderer.h>
+#include <Gorgon/MeshRenderer.h>
+#include <Gorgon/SSERenderer.h>
+#include <Gorgon/Renderer.h>
+#include <Gorgon/InteractiveSkeletonEngine.h>
+#include <Gorgon/CAlphaRenderer.h>
+#include <MathTools/Vector3D.h>
+#include <GraphMatch/PDBAtom.h>
+#include <GraphMatch/LinkedNode.h>
 
 #include <boost/python.hpp>
 

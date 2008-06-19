@@ -7,7 +7,7 @@
 #include "GrayImageSkeletonizer.h"
 #include "VolumeReaderRAW.h"
 #include "VolumeFormatConverter.h"
-#include <math.h>
+#include <cmath>
 #include "NormalFinder.h"
 #include "DiscreteMesh.h"
 #include <MathTools/DataStructures.h>

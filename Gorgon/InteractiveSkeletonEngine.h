@@ -2,16 +2,16 @@
 #define GORGON_INTERACTIVE_SKELETON_ENGINE_H
 
 #include "MeshRenderer.h"
-#include "ProteinMorph/NonManifoldMesh.h"
-#include "GraySkeletonCPP/InteractiveSkeletonizer.h"
+#include <ProteinMorph/NonManifoldMesh.h>
+#include <GraySkeletonCPP/InteractiveSkeletonizer.h>
+#include <MathTools/Vector3D.h>
+#include <vector>
 #ifdef _WIN32
 	#include <hash_map>
 	using namespace stdext;
 #else
 	#include <map>
 #endif
-#include <MathTools/Vector3D.h>
-#include <vector>
 
 using namespace wustl_mm::Protein_Morph;
 using namespace wustl_mm::GraySkeletonCPP;

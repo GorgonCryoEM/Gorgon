@@ -9,9 +9,9 @@
 #ifndef VOLUME_H
 #define VOLUME_H
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
+#include <cstdio>
+#include <cstdlib>
+#include <cmath>
 #include "PriorityQueue.h"
 #include <vector>
 

@@ -2,7 +2,7 @@
 #define GRAYSKELETONCPP_GRAPH_3D_H
 
 #include "GlobalDefinitions.h"
-#include "MathTools/BasicDefines.h"
+#include <MathTools/BasicDefines.h>
 
 using namespace wustl_mm::MathTools;
 

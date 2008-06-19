@@ -1,9 +1,9 @@
 #ifndef MATLAB_WRAPPER_H
 #define MATLAB_WRAPPER_H
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include <cstdio>
+#include <cstdlib>
+#include <string>
 #include "DataStructures.h"
 #include "Vector3D.h"
 #include "ComplexNumber.h"
