@@ -5,7 +5,7 @@
 #include "ImageReader.h"
 #include <SkeletonMaker/reader.h>
 #include <SkeletonMaker/volume.h>
-#include <string.h>
+#include <string>
 
 using namespace std;
 

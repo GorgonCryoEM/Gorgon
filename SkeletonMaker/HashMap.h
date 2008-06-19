@@ -1,8 +1,8 @@
 #ifndef HASHMAP_H
 #define HASHMAP_H
 
-#include <iostream.h>
-#include <stdio.h>
+#include <iostream>
+#include <cstdio>
 #include <windows.h>
 
 /* A hash table hashed by three int integers

@@ -3,9 +3,9 @@
 
 #include "Renderer.h"
 #include "MeshRenderer.h"
-#include "GraphMatch/SkeletonReader.h"
-#include "GraphMatch/GeometricShape.h"
-#include "GraphMatch/VectorMath.h"
+#include <GraphMatch/SkeletonReader.h>
+#include <GraphMatch/GeometricShape.h>
+#include <GraphMatch/VectorMath.h>
 #include <vector>
 
 using namespace wustl_mm::Protein_Morph;

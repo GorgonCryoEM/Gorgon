@@ -6,8 +6,8 @@ Date  : 01/23/2006
 #define _CRT_SECURE_NO_DEPRECATE 1
 #define _CRT_NONSTDC_NO_DEPRECATE 1
 
-#include <stdlib.h>
-#include <stdio.h>
+#include <cstdlib>
+#include <cstdio>
 #include "StandardGraph.h"
 #include "WongMatch15Constrained.h"
 #include "WongMatch15ConstrainedNoFuture.h"
@@ -17,7 +17,7 @@ Date  : 01/23/2006
 #include "GlobalConstants.h"
 #include "GraphGenerator.h"
 #include "BackEndInterface.h"
-#include <time.h>
+#include <ctime>
 
 #define DllExport   __declspec( dllexport )
 

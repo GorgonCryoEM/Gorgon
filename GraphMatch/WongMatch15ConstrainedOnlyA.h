@@ -18,7 +18,7 @@ Date  : 08/14/2006
 #include "GlobalConstants.h"
 #include "PathGenerator.h"
 #include "Structures.h"
-#include <time.h>
+#include <ctime>
 #include <SkeletonMaker/PriorityQueue.h>
 
 namespace wustl_mm {

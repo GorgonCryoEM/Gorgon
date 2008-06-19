@@ -7,10 +7,10 @@
 #include <string>
 #include <SkeletonMaker/volume.h>
 #include <SkeletonMaker/reader.h>
-#include "ProteinMorph/NonManifoldMesh.h"
-#include "GraySkeletonCPP/VolumeFormatConverter.h"
+#include <ProteinMorph/NonManifoldMesh.h>
+#include <GraySkeletonCPP/VolumeFormatConverter.h>
 #include "Renderer.h"
-#include "Foundation/StringUtils.h"
+#include <Foundation/StringUtils.h>
 
 using namespace wustl_mm::Protein_Morph;
 using namespace wustl_mm::GraySkeletonCPP;

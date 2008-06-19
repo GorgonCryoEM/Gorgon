@@ -3,8 +3,8 @@
 
 #include <string>
 #include <glut.h>
-#include "MathTools/Vector3D.h"
-#include "MathTools/MathLib.h"
+#include <MathTools/Vector3D.h>
+#include <MathTools/MathLib.h>
 
 using namespace std;
 using namespace wustl_mm::MathTools;
