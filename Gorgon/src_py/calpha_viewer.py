@@ -11,11 +11,15 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.4  2008/06/18 18:15:41  ssa1
+#   Adding in CVS meta data
+#
 
 from PyQt4 import QtGui, QtCore, QtOpenGL
 from libpyGORGON import CAlphaRenderer
 from base_viewer import BaseViewer
 from calpha_atom_placer_form import CAlphaAtomPlacerForm
+from seq_model import Chain
 
 try:
     from OpenGL.GL import *
@@ -33,6 +37,7 @@ class CAlphaViewer(BaseViewer):
         self.isClosedMesh = False
         self.selectEnabled = True
         self.renderer = CAlphaRenderer()          
+        self.main_chain = Chain('')
         self.createUI()      
         self.app.viewers["calpha"] = self;
         self.modelColor = QtGui.QColor.fromRgba(QtGui.qRgba(170, 170, 0, 255))
@@ -43,6 +48,7 @@ class CAlphaViewer(BaseViewer):
         self.visualizationOptions.ui.checkBoxModel2Visible.setText("Show backbone colored:")
         self.visualizationOptions.ui.checkBoxModel2Visible.setVisible(True)
         self.visualizationOptions.ui.pushButtonModel2Color.setVisible(True)        
+
                  
     def createUI(self):
         self.createActions()
@@ -51,7 +57,7 @@ class CAlphaViewer(BaseViewer):
         self.updateActionsAndMenus()
                   
     def createChildWindows(self):
-        self.manualAtomPlacer = CAlphaAtomPlacerForm(self.app, self)
+        self.manualAtomPlacer = CAlphaAtomPlacerForm(self.app, self, self.main_chain)
         
     def createActions(self):
         openAct = QtGui.QAction(self.tr("C-&Alpha Atoms..."), self)
