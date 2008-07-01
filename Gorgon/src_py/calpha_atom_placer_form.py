@@ -11,13 +11,18 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.5  2008/06/18 18:15:41  ssa1
+#   Adding in CVS meta data
+#
 
 from PyQt4 import QtCore, QtGui
 from ui_dialog_calpha_atom_placer import Ui_DialogCAlphaAtomPlacer
 from libpyGORGON import PDBAtom, Vector3DFloat
+from gorgon_model import GAtom
+from seq_model import Residue
 
 class CAlphaAtomPlacerForm(QtGui.QWidget):
-    def __init__(self, main, viewer, parent=None):
+    def __init__(self, main, viewer, main_chain, parent=None):
         QtGui.QWidget.__init__(self, parent)
         self.app = main
         self.viewer = viewer
@@ -26,6 +31,7 @@ class CAlphaAtomPlacerForm(QtGui.QWidget):
         self.createUI()
         self.createActions()
         self.createMenus()
+        self.main_chain=main_chain
 
     def createUI(self):
         self.ui = Ui_DialogCAlphaAtomPlacer()
@@ -56,7 +62,7 @@ class CAlphaAtomPlacerForm(QtGui.QWidget):
         self.ui.doubleSpinBoxPositionZ.setValue(position.z());
     
     def addAtom(self):
-        atom = PDBAtom()
+				'''
         atom.setSerial(self.ui.spinBoxSerial.value())
         #TODO: Find out how to convert QStrings to Std:Strings
         atom.setName(str(self.ui.lineEditAtomName.text()))
@@ -68,17 +74,26 @@ class CAlphaAtomPlacerForm(QtGui.QWidget):
         atom.setPosition(Vector3DFloat(self.ui.doubleSpinBoxPositionX.value(), 
                                        self.ui.doubleSpinBoxPositionY.value(),
                                        self.ui.doubleSpinBoxPositionZ.value()))
-        atom.setOccupancy(self.ui.doubleSpinBoxOccupancy.value())
-        atom.setTempFactor(self.ui.doubleSpinBoxTemperatureFactor.value())
-        atom.setElement(str(self.ui.lineEditElement.text()))
-        atom.setCharge(str(self.ui.lineEditCharge.text()))
-        self.viewer.renderer.addAtom(atom)
-        if(not self.viewer.loaded):
-            self.viewer.loaded = True
-            self.viewer.emitModelLoaded()
-        self.viewer.dirty = True
-        self.viewer.emitModelChanged()
-    
+				'''
+				#Atom attributes
+				x,y,z = self.ui.doubleSpinBoxPositionX.value(), self.ui.doubleSpinBoxPositionY.value(), self.ui.doubleSpinBoxPositionZ.value() 
+				element= str(self.ui.lineEditElement.text())
+				occupancy = self.ui.doubleSpinBoxOccupancy.value()
+				temp_factor = self.ui.doubleSpinBoxTemperatureFactor.value() 
+				atom_name=str(self.ui.lineEditAtomName.text())
+
+				#Residue attributes
+				residue=Residue(str(self.ui.lineEditResidueName.text()))
+				residue.atoms[atom_name]=GAtom(element, x,y,z, self.viewer, occupancy, temp_factor)
+				index=int(self.ui.spinBoxResidueSequenceNo.value())
+
+				#Add residue to main_chain
+				self.main_chain[index] = residue
+				print self.main_chain.to_pdb()
+				
+
+				#Add residue to main_chain
+				self.ui.spinBoxResidueSequenceNo.setValue(self.ui.spinBoxResidueSequenceNo.value()+1)
     def createActions(self):               
         placeAct = QtGui.QAction(self.tr("&Manual C-Alpha Atom Placement"), self)
         placeAct.setStatusTip(self.tr("Perform Manual C-Alpha atom placement"))
