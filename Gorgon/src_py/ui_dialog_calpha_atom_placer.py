@@ -33,6 +33,7 @@ class Ui_DialogCAlphaAtomPlacer(object):
 
         self.lineEditAtomName = QtGui.QLineEdit(DialogCAlphaAtomPlacer)
         self.lineEditAtomName.setObjectName("lineEditAtomName")
+        self.lineEditAtomName.setText(QtCore.QString('CA'))
         self.gridlayout.addWidget(self.lineEditAtomName,0,3,1,1)
 
         self.labelName_2 = QtGui.QLabel(DialogCAlphaAtomPlacer)
@@ -49,6 +50,7 @@ class Ui_DialogCAlphaAtomPlacer(object):
 
         self.lineEditResidueName = QtGui.QLineEdit(DialogCAlphaAtomPlacer)
         self.lineEditResidueName.setObjectName("lineEditResidueName")
+        self.lineEditResidueName.setText(QtCore.QString('ALA'))
         self.gridlayout.addWidget(self.lineEditResidueName,1,3,1,1)
 
         self.labelName_5 = QtGui.QLabel(DialogCAlphaAtomPlacer)
@@ -133,6 +135,7 @@ class Ui_DialogCAlphaAtomPlacer(object):
 
         self.lineEditElement = QtGui.QLineEdit(DialogCAlphaAtomPlacer)
         self.lineEditElement.setObjectName("lineEditElement")
+        self.lineEditElement.setText(QtCore.QString('C'))
         self.gridlayout.addWidget(self.lineEditElement,6,1,1,1)
 
         self.labelName_11 = QtGui.QLabel(DialogCAlphaAtomPlacer)
