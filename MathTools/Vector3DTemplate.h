@@ -34,11 +34,13 @@ namespace wustl_mm {
 			Vector3DTemplate<T>& operator=(const Vector3DTemplate<T>& d);
 			Vector3DTemplate<T>& operator+=(const Vector3DTemplate<T>& d);
 			Vector3DTemplate<T>& operator-=(const Vector3DTemplate<T>& d);
-			Vector3DTemplate<T> Rotate(Vector3DTemplate<T> axis, double angle);
+			Vector3DTemplate<T> GetOrthogonal();
+			Vector3DTemplate<T> Rotate(Vector3DTemplate<T> axis, double angle);			
 			void Normalize();
 			bool IsBadNormal();
 
 			static Vector3DTemplate<T> Normalize(Vector3DTemplate<T> d);
+			static Vector3DTemplate<T> Project3Dto2D(Vector3DTemplate<T> point, Vector3DTemplate<T> planePt, Vector3DTemplate<T> planeVec1, Vector3DTemplate<T> planeVec2);
 
 			T values[3];
 		};
@@ -172,6 +174,16 @@ namespace wustl_mm {
 			return ret;
 		}
 
+		template <class T> Vector3DTemplate<T> Vector3DTemplate<T>::GetOrthogonal() {
+			Vector3DTemplate<T> orthVec = Vector3DTemplate<T>(1, 1, 1);
+			orthVec = Vector3DTemplate<T>(this->X(), this->Y(), this->Z()) ^ orthVec;
+			if(isZero(orthVec.Length())) {
+				orthVec = Vector3DTemplate<T>(1, -1, -1);
+				orthVec = Vector3DTemplate<T>(this->X(), this->Y(), this->Z()) ^ orthVec;
+			}
+			return orthVec;
+		}
+
 		template <class T> Vector3DTemplate<T> Vector3DTemplate<T>::Rotate(Vector3DTemplate<T> axis, double angle) {
 			double r = angle;
 			T a = axis.values[0];
@@ -200,6 +212,13 @@ namespace wustl_mm {
 
 		template <class T> bool Vector3DTemplate<T>::IsBadNormal() {
 			return !isZero(Length() - 1.0, 0.00001);
+		}
+
+		template <class T> Vector3DTemplate<T> Vector3DTemplate<T>::Project3Dto2D(Vector3DTemplate<T> point, Vector3DTemplate<T> planePt, Vector3DTemplate<T> planeVec1, Vector3DTemplate<T> planeVec2) {
+			Vector3DTemplate<T> ray = point - planePt;
+			return Vector3DTemplate<T>(ray * planeVec1, ray * planeVec2, 0);
+			//return Vector3DTemplate<T>(point * planeVec1, point * planeVec2, 0);
+			
 		}
 	}
 }

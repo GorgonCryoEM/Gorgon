@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.9  2008/06/18 18:15:41  ssa1
+#   Adding in CVS meta data
+#
 
 from PyQt4 import QtCore, QtGui
 from ui_dialog_volume_manual_skeletonization import Ui_DialogVolumeManualSkeletonization
@@ -133,17 +136,20 @@ class VolumeManualSkeletonizationForm(QtGui.QWidget):
     
     def setSkeletonViewerProperties(self, opening):
         if(opening):
-            self.oldSkeletonViewerSelectEnabled = self.skeletonViewer.selectEnabled
-            self.oldSkeletonViewerMouseMoveEnabled = self.skeletonViewer.mouseMoveEnabled
+            #self.oldSkeletonViewerSelectEnabled = self.skeletonViewer.selectEnabled
+            #self.oldSkeletonViewerMouseMoveEnabled = self.skeletonViewer.mouseMoveEnabled
+            self.oldSkeletonViewerMouseMoveEnabledRay = self.skeletonViewer.mouseMoveEnabledRay
             self.skeletonViewer.setViewerAutonomy(False);
             if self.skeletonViewer.loaded:
                 self.skeletonViewer.unloadData()
             self.skeletonViewer.setSelectEnabled(True)
-            self.skeletonViewer.setMouseMoveEnabled(True)            
+            self.skeletonViewer.setMouseMoveEnabledRay(True)
+            #self.skeletonViewer.setMouseMoveEnabled(True)            
         else:
             self.skeletonViewer.setViewerAutonomy(True);
-            self.skeletonViewer.setSelectEnabled(self.oldSkeletonViewerSelectEnabled)
-            self.skeletonViewer.setMouseMoveEnabled(self.oldSkeletonViewerMouseMoveEnabled)               
+            #self.skeletonViewer.setSelectEnabled(self.oldSkeletonViewerSelectEnabled)
+            self.skeletonViewer.setMouseMoveEnabledRay(self.oldSkeletonViewerMouseMoveEnabledRay)
+            #self.skeletonViewer.setMouseMoveEnabled(self.oldSkeletonViewerMouseMoveEnabled)               
     
     def filterMouseHits(self, mouseHits):
         hits = list()
@@ -157,8 +163,16 @@ class VolumeManualSkeletonizationForm(QtGui.QWidget):
                 hits.append(names)
         return hits
                     
+    def processClickRay(self, ray, rayWidth, eye, event):
+        if(self.started):
+            if(event.modifiers() & QtCore.Qt.CTRL):
+                self.engine.selectStartSeedRay(ray[0], ray[1], ray[2], eye[0], eye[1], eye[2], rayWidth)                    
+                self.skeletonViewer.emitModelChanged()                    
+            elif (event.modifiers() & QtCore.Qt.ALT):
+                self.engine.selectEndSeed(-1, -1)
+                self.skeletonViewer.emitModelChanged()                          
+                    
     def processClickMultiple(self, mouseHits, event):
-        print "multiple click", event
         hits = self.filterMouseHits(mouseHits)
         
         if(self.started):
@@ -173,7 +187,6 @@ class VolumeManualSkeletonizationForm(QtGui.QWidget):
                 self.skeletonViewer.emitModelChanged()        
                     
     def processClick(self, h0, h1, h2, h3, h4, h5, event):
-        print "single click"
         if(self.started):
             if(event.modifiers() & QtCore.Qt.CTRL):
                 self.engine.selectStartSeedMultiple(h0, h1, True, True)
@@ -181,6 +194,11 @@ class VolumeManualSkeletonizationForm(QtGui.QWidget):
             elif (event.modifiers() & QtCore.Qt.ALT):
                 self.engine.selectEndSeed(h0, h1)
                 self.skeletonViewer.emitModelChanged()
+
+    def processMouseOverRay(self, ray, rayWidth, eye, event):
+        if(self.started and event.modifiers() & QtCore.Qt.ALT ):
+            self.engine.analyzePathRay(ray[0], ray[1], ray[2], eye[0], eye[1], eye[2], rayWidth)
+            self.skeletonViewer.emitModelChanged()      
                 
     def processMouseOverMultiple(self, mouseHits, event):
         hits = self.filterMouseHits(mouseHits)
@@ -194,7 +212,6 @@ class VolumeManualSkeletonizationForm(QtGui.QWidget):
             self.skeletonViewer.emitModelChanged()        
                       
     def processMouseOver(self, h0, h1, h2, h3, h4, h5, event):
-        print "single over"
         if(self.started and h0 >= 0 and h1 >= 0):
             if(event.modifiers() & QtCore.Qt.ALT ):
                 self.engine.analyzePathMultiple(h0, h1, True, True)
@@ -202,13 +219,18 @@ class VolumeManualSkeletonizationForm(QtGui.QWidget):
     
     def modelLoaded(self):
         self.skeletonViewer = self.app.viewers["skeleton"]; 
-        self.oldSkeletonViewerSelectEnabled = self.skeletonViewer.selectEnabled
-        self.oldSkeletonViewerMouseMoveEnabled = self.skeletonViewer.mouseMoveEnabled
-        self.connect(self.app.mainCamera, QtCore.SIGNAL("mouseMovedRAW(PyQt_PyObject, QMouseEvent)"), self.processMouseOverMultiple)
-        self.connect(self.app.mainCamera, QtCore.SIGNAL("mouseClickedRAW(PyQt_PyObject, QMouseEvent)"), self.processClickMultiple)
+        #self.oldSkeletonViewerSelectEnabled = self.skeletonViewer.selectEnabled
+        #self.oldSkeletonViewerMouseMoveEnabled = self.skeletonViewer.mouseMoveEnabled
+        self.oldSkeletonViewerMouseMoveEnabledRay = self.skeletonViewer.mouseMoveEnabledRay
+        #self.connect(self.app.mainCamera, QtCore.SIGNAL("mouseMovedRAW(PyQt_PyObject, QMouseEvent)"), self.processMouseOverMultiple)
+        #self.connect(self.app.mainCamera, QtCore.SIGNAL("mouseClickedRAW(PyQt_PyObject, QMouseEvent)"), self.processClickMultiple)
 
         #self.connect(self.skeletonViewer, QtCore.SIGNAL("elementSelected (int, int, int, int, int, int, QMouseEvent)"), self.processClick)    
-        #self.connect(self.skeletonViewer, QtCore.SIGNAL("elementMouseOver (int, int, int, int, int, int, QMouseEvent)"), self.processMouseOver)  
+        #self.connect(self.skeletonViewer, QtCore.SIGNAL("elementMouseOver (int, int, int, int, int, int, QMouseEvent)"), self.processMouseOver)
+
+        self.connect(self.skeletonViewer, QtCore.SIGNAL("mouseClickRay(PyQt_PyObject, float, PyQt_PyObject, QMouseEvent)"), self.processClickRay)    
+        self.connect(self.skeletonViewer, QtCore.SIGNAL("mouseOverRay(PyQt_PyObject, float, PyQt_PyObject, QMouseEvent)"), self.processMouseOverRay)  
+        
         self.skeletonizeAct.setChecked(False)
         self.skeletonizeAct.setEnabled(True)
         self.showWidget(False)

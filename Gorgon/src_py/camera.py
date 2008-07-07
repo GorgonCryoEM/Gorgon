@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.24  2008/06/18 18:15:41  ssa1
+#   Adding in CVS meta data
+#
 
 import sys
 from PyQt4 import QtOpenGL, QtCore, QtGui
@@ -28,13 +31,14 @@ except ImportError:
     sys.exit(1)
     
 class Camera(QtOpenGL.QGLWidget):
-    def __init__(self, scene, main, parent=None):                
+    def __init__(self, scene, main, parent=None):
         QtOpenGL.QGLWidget.__init__(self, parent)
         self.app = main        
         self.near = 0
         self.cuttingPlane = 0.0
         self.scene = scene
         self.mouseTrackingEnabled = False
+        self.mouseTrackingEnabledRay = False
         self.aspectRatio = 1.0
         self.selectedScene = -1
         self.lightsEnabled = [True, True]
@@ -66,8 +70,7 @@ class Camera(QtOpenGL.QGLWidget):
             self.connect(s, QtCore.SIGNAL("modelUnloaded()"), self.modelChanged)
             self.connect(s, QtCore.SIGNAL("modelVisualizationChanged()"), self.modelChanged)
             self.connect(s, QtCore.SIGNAL("mouseTrackingChanged()"), self.refreshMouseTracking)
-            
-            
+                        
     def setEye(self, x, y, z):
         self.eye = [x, y, z]
         try:
@@ -76,7 +79,7 @@ class Camera(QtOpenGL.QGLWidget):
             self.up = vectorNormalize(vectorCrossProduct(self.right, self.look))  
         except:
             self.look = [0,1,0]
-            self.right = [-1,0,0]
+            self.right = [1,0,0]
             self.up = [0,0,1]
         self.setRendererCuttingPlanes()
         self.emitCameraChanged()
@@ -88,7 +91,7 @@ class Camera(QtOpenGL.QGLWidget):
             self.right = vectorNormalize(vectorCrossProduct(self.look, self.up))
         except:
             self.look = [0,1,0]
-            self.right = [-1,0,0]
+            self.right = [1,0,0]
         self.setRendererCuttingPlanes()
         self.emitCameraChanged()
         
@@ -98,7 +101,7 @@ class Camera(QtOpenGL.QGLWidget):
             self.right = vectorNormalize(vectorCrossProduct(self.look, self.up))
             self.up = vectorNormalize(vectorCrossProduct(self.right, self.look))
         except:
-            self.right = [-1,0,0]
+            self.right = [1,0,0]
         self.setRendererCuttingPlanes()
         self.emitCameraChanged()
         
@@ -115,8 +118,7 @@ class Camera(QtOpenGL.QGLWidget):
         
         newUp = vectorNormalize(vectorAdd(vectorScalarMultiply(roll*0.01, self.right), self.up))
         self.setUp(newUp[0], newUp[1], newUp[2])       
-        
-        
+            
     def setNearFarZoom(self, near, far, zoom):
         self.eyeZoom = min(max(zoom, 0.0001), 0.9999);
         nearChanged = (self.near != near)
@@ -138,7 +140,7 @@ class Camera(QtOpenGL.QGLWidget):
             if(s.renderer.setCuttingPlane(self.cuttingPlane, self.look[0], self.look[1], self.look[2])) :
                 s.emitModelChanged()  
     
-    def sceneSetCenter(self, centerX, centerY, centerZ, distance):        
+    def sceneSetCenter(self, centerX, centerY, centerZ, distance):
         self.setCenter(centerX, centerY, centerZ)
         self.setEye(self.center[0] , self.center[1], self.center[2] - distance)
         self.setUp(0, -1, 0)
@@ -266,7 +268,7 @@ class Camera(QtOpenGL.QGLWidget):
         if(sceneId >= 0):            
             self.scene[sceneId].processMouseMove(minNames, event)       
        
-    def pickObject(self, x, y):        
+    def pickObject(self, x, y):
         
         viewport = list(glGetIntegerv(GL_VIEWPORT))        
         glSelectBuffer(10000)
@@ -285,6 +287,21 @@ class Camera(QtOpenGL.QGLWidget):
 
         mouseHits = glRenderMode(GL_RENDER)
         return mouseHits
+
+    def getMouseRay(self, x, y):        
+        glMatrixMode(GL_MODELVIEW)   
+        glPushMatrix()
+        self.setGluLookAt() 
+        viewport = glGetIntegerv(GL_VIEWPORT)
+        modelview = glGetDoublev(GL_MODELVIEW_MATRIX)
+        projection = glGetDoublev(GL_PROJECTION_MATRIX)
+        oglX = x
+        oglY = viewport[3] - y
+        oglZ = glReadPixels(oglX, oglY, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT)[0][0]
+        
+        p2 = gluUnProject(oglX, oglY, oglZ, modelview, projection, viewport)
+        glPopMatrix()
+        return vectorSubtract([p2[0], p2[1], p2[2]], self.eye)
                 
     def resizeGL(self, width, height):
         if(height > 0) :
@@ -296,13 +313,16 @@ class Camera(QtOpenGL.QGLWidget):
         glMatrixMode(GL_PROJECTION)
         glLoadIdentity()
         gluPerspective(180 * self.eyeZoom, self.aspectRatio, self.near, self.far)
+        #glOrtho(-200 * self.eyeZoom, 200 * self.eyeZoom, -200 * self.eyeZoom, 200 * self.eyeZoom, self.near, self.far)
         glMatrixMode(GL_MODELVIEW)
     
     def refreshMouseTracking(self):
         self.mouseTrackingEnabled = False
+        self.mouseTrackingEnabledRay = False
         for s in self.scene:
             self.mouseTrackingEnabled = self.mouseTrackingEnabled or s.mouseMoveEnabled
-        self.setMouseTracking(self.mouseTrackingEnabled)
+            self.mouseTrackingEnabledRay = self.mouseTrackingEnabledRay or s.mouseMoveEnabledRay
+        self.setMouseTracking(self.mouseTrackingEnabled or self.mouseTrackingEnabledRay)
         self.updateGL()
      
     def moveSelectedScene(self, dx, dy):
@@ -329,8 +349,21 @@ class Camera(QtOpenGL.QGLWidget):
         #Enter selection mode only if we didnt move the mouse much.. (If the mouse was moved, then we assume a camera motion instead of a selection
         if (pow(self.mouseDownPoint.x() - self.mouseUpPoint.x(), 2) + pow(self.mouseDownPoint.y() - self.mouseUpPoint.y(), 2) <= 2): 
             self.processMouseClick(self.pickObject(self.mouseUpPoint.x(), self.mouseUpPoint.y()), event)
+            
+        if(self.mouseTrackingEnabledRay):
+            ray = self.getMouseRay(event.x(), event.y())            
+            for s in self.scene:
+                if(s.mouseMoveEnabledRay):
+                    s.processMouseClickRay(ray, 0.1, self.eye, event)            
 
     def mouseMoveEvent(self, event):
+        if(self.mouseTrackingEnabledRay):
+            ray = self.getMouseRay(event.x(), event.y())            
+            for s in self.scene:
+                if(s.mouseMoveEnabledRay):
+                    s.processMouseMoveRay(ray, 0.1, self.eye, event)
+                       
+            
         if(self.mouseTrackingEnabled):
             self.processMouseMove(self.pickObject(event.x(), event.y()), event)
 

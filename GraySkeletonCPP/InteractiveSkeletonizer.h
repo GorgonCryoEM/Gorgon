@@ -32,6 +32,7 @@ namespace wustl_mm {
 			InteractiveSkeletonizer(Volume * sourceVol, float minGray, float maxGray, float stepSize, int curveRadius, int minCurveSize, bool storeEigenInfo = false);
 			~InteractiveSkeletonizer();
 			GraphType * GetGraph();
+			Octree<unsigned int> * GetOctree();
 			vector<Vector3DInt> GetPath(Vector3DInt endPoint);			
 			vector<Vector3DInt> GetPath(vector<Vector3DInt> endPoints);
 			Vector3DInt FindClosestSkeletalPoint(Vector3DInt point);
@@ -177,11 +178,11 @@ namespace wustl_mm {
 		GraphType * InteractiveSkeletonizer::GetGraph() {
 			return graph;
 		}
-		vector<Vector3DInt> InteractiveSkeletonizer::GetPath(Vector3DInt endPoint) {
-			
-			//appTimeManager.PushCurrentTime();
-			//printf("Getting path at {%ld %ld %ld}\n", endPoint.X(), endPoint.Y(), endPoint.Z()); flushall();
+		Octree<unsigned int> * InteractiveSkeletonizer::GetOctree() {
+			return octree;
+		}
 
+		vector<Vector3DInt> InteractiveSkeletonizer::GetPath(Vector3DInt endPoint) {
 			vector<Vector3DInt> outPath;
 			
 			OctreeNode<unsigned int> * node = octree->GetLeaf(endPoint.X(), endPoint.Y(), endPoint.Z());
@@ -193,18 +194,12 @@ namespace wustl_mm {
 				currentNode = currentNode->tag.returnNode;
 				outPath.push_back(Vector3DInt(currentNode->tag.octreeNode->pos[0], currentNode->tag.octreeNode->pos[1], currentNode->tag.octreeNode->pos[2]));
 			}
-
-			//appTimeManager.PopAndDisplayTime("Finding path: %f seconds!\n");
 			return outPath; 
 
 
 		}
 		vector<Vector3DInt> InteractiveSkeletonizer::GetPath(vector<Vector3DInt> endPoints) {
 			
-			//appTimeManager.PushCurrentTime();
-			//printf("Getting path at {%ld %ld %ld}\n", endPoint.X(), endPoint.Y(), endPoint.Z()); flushall();
-
-
 			NonManifoldMeshVertex<nodeAttrib> * currentNode;
 			float minCost = MAX_FLOAT;
 			unsigned int minCostIndex = 0;
@@ -217,7 +212,7 @@ namespace wustl_mm {
 					minCost = currentNode->tag.cost;
 					minCostIndex = i;
 				}
-			}			
+			}	
 			return GetPath(endPoints[minCostIndex]); 
 		}
 
