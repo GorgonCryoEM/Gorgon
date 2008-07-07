@@ -4,6 +4,7 @@
 #include <ctime>
 #include <string>
 #include <vector>
+#include <cstdio>
 
 using namespace std;
 
@@ -43,6 +44,10 @@ namespace wustl_mm {
 			clock_t finish = clock();			
 			double timeTaken = ((double) (finish - start) / (double) CLOCKS_PER_SEC);
 			printf(textFormat.c_str(), timeTaken); 
+			#ifdef _WIN32
+				flushall();
+			#endif
+			
 			times.pop_back();			
 		}
 

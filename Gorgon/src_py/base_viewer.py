@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.29  2008/06/18 18:15:41  ssa1
+#   Adding in CVS meta data
+#
 
 from PyQt4 import QtGui, QtCore, QtOpenGL
 from libpyGORGON import VolumeRenderer
@@ -38,6 +41,7 @@ class BaseViewer(QtOpenGL.QGLWidget):
         self.loaded = False
         self.selectEnabled = False
         self.mouseMoveEnabled = False
+        self.mouseMoveEnabledRay = False
         self.isClosedMesh = True
         self.viewerAutonomous = True
         self.displayStyle = self.DisplayStyleSmooth;
@@ -130,7 +134,12 @@ class BaseViewer(QtOpenGL.QGLWidget):
         if(value != self.mouseMoveEnabled):
             self.mouseMoveEnabled = value
             self.emitModelChanged()
-            self.emitMouseTrackingChanged()            
+            self.emitMouseTrackingChanged()   
+
+    def setMouseMoveEnabledRay(self, value):
+        if(value != self.mouseMoveEnabledRay):
+            self.mouseMoveEnabledRay = value
+            self.emitMouseTrackingChanged()                       
 
     #Override this method to handle menu enabling / disabling when another viewer takes control of this one. 
     def updateViewerAutonomy(self, value):
@@ -291,8 +300,20 @@ class BaseViewer(QtOpenGL.QGLWidget):
             self.emitModelChanged()            
             self.emitElementSelected(hitStack, event)
 
+    def processMouseClickRay(self, ray, rayWidth, eye, event):
+        self.emitMouseClickRay(ray, rayWidth, eye, event)
+
     def processMouseMove(self, hitStack, event):
         self.emitElementMouseOver(hitStack, event)
+        
+    def processMouseMoveRay(self, ray, rayWidth, eye, event):
+        self.emitMouseOverRay(ray, rayWidth, eye, event)
+
+    def emitMouseClickRay(self, ray, rayWidth, eye, event):
+        self.emit(QtCore.SIGNAL("mouseClickRay(PyQt_PyObject, float, PyQt_PyObject, QMouseEvent)"), ray, rayWidth, eye, event);
+
+    def emitMouseOverRay(self, ray, rayWidth, eye, event):
+        self.emit(QtCore.SIGNAL("mouseOverRay(PyQt_PyObject, float, PyQt_PyObject, QMouseEvent)"), ray, rayWidth, eye, event);
 
     def emitElementSelected(self, hitStack, event):
         hits = [-1,-1,-1,-1,-1,-1]

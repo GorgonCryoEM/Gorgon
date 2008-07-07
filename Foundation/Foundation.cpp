@@ -18,9 +18,10 @@ int main( int args, char * argv[] ) {
 	tree->AddNewLeaf(4, 0, 0, 1);
 	printf("\n\n");
 	tree->PrintStructure();
-	vector<OctreeNode<bool> * > neigh = tree->GetNeighbors(tree->GetLeaf(0,0,0));
-	for(int i = 0; i < neigh.size(); i++) {
-		printf("%ld - %ld %ld %ld\n", neigh[i]->cellSize, neigh[i]->pos[0], neigh[i]->pos[1], neigh[i]->pos[2]);
+	vector<OctreeNode<bool> *> intersects = tree->IntersectRay(Vector3DFloat(0,0,1), Vector3DFloat(5, 1, -10), 0.01);
+	printf("Intersections: \n");
+	for(unsigned int i = 0; i < intersects.size(); i++) {
+		printf("%d %d %d - %d \n", intersects[i]->pos[0], intersects[i]->pos[1], intersects[i]->pos[2], intersects[i]->cellSize); 
 	}
 	return 0;
 
