@@ -183,7 +183,7 @@ namespace wustl_mm {
 		}
 
 		string VolumeRenderer::GetSupportedSaveFileFormats() {
-			return "Volumes (*.mrc)";
+			return "Volumes (*.mrc);;Bitmap Image set (*.bmp)";
 		}
 
 		void VolumeRenderer::SetViewingType(const int type) {
@@ -439,7 +439,20 @@ namespace wustl_mm {
 
 		void VolumeRenderer::SaveFile(string fileName) {
 			if(dataVolume != NULL) {
-				dataVolume->toMRCFile((char *)fileName.c_str());
+				int pos = fileName.rfind(".") + 1;
+				string extension = fileName.substr(pos, fileName.length()-pos);
+				
+				extension = StringUtils::StringToUpper(extension);
+				
+				if(strcmp(extension.c_str(), "MRC") == 0) {
+					dataVolume->toMRCFile((char *)fileName.c_str());
+				} else if(strcmp(extension.c_str(), "BMP") == 0) {
+					ImageReaderBMP::SaveVolumeAsImageSet(dataVolume, fileName);
+				} else {
+					printf("Input format %s not supported!\n", extension.c_str());
+				}
+
+				
 			}
 		}
 		void VolumeRenderer::MarchingCube(Volume * vol, NonManifoldMesh_NoTags * mesh, const float iso_level, int iX, int iY, int iZ, int iScale){

@@ -40,7 +40,8 @@ namespace wustl_mm {
 		const int DO_CROPPING = 902;
 		const int DO_DOWNSAMPLING = 903;
 		const int DO_SMOOTHING = 904;
-		const int DO_THRESHOLD_GRAY_RANGE = 905;
+		const int DO_SMOOTHING_ANISOTROPIC_AXIS_ALIGNED = 905;
+		const int DO_THRESHOLD_GRAY_RANGE = 906;
 		const int DO_CONVERSION = 950;
 
 		void DisplayInputParams(int process) {
@@ -60,6 +61,7 @@ namespace wustl_mm {
 					printf(" %i  \t- Crop a volume \n", DO_CROPPING);
 					printf(" %i  \t- Downsample a volume by a scale of 2 in all dimensions\n", DO_DOWNSAMPLING);
 					printf(" %i  \t- Smoothen a volume \n", DO_SMOOTHING);
+					printf(" %i  \t- Smoothen a volume (Anisotropic axis aligned)\n", DO_SMOOTHING_ANISOTROPIC_AXIS_ALIGNED);
 					printf(" %i  \t- Threshold the gray-range of a volume (Results in those out of range set to zero)\n", DO_THRESHOLD_GRAY_RANGE);
 					printf(" %i  \t- Convert the data type \n", DO_CONVERSION);			
 					break;
@@ -217,6 +219,16 @@ namespace wustl_mm {
 					printf("\t[iterations]    : The number of smoothing iterations\n\n");
 					break;
 
+				case DO_SMOOTHING_ANISOTROPIC_AXIS_ALIGNED:
+					printf("To Smoothen a volume in an anisotropic fashion\n");
+					printf("\tGraySkeletonCPP.exe %i [inputfile] [outfile] [xRadius] [yRadius] [zRadius] [iterations]\n\n", DO_SMOOTHING_ANISOTROPIC_AXIS_ALIGNED);
+					printf("\t[inputfile]     : The source file\n");
+					printf("\t[outfile]       : The destination file\n");
+					printf("\t[dRadius]       : The radius in the d dimension (0 - 10)\n");
+					printf("\t[iterations]    : The number of smoothing iterations\n\n");
+					break;
+
+
 				case DO_THRESHOLD_GRAY_RANGE:
 					printf("To threshold the grayrange of a volume. (Results in those out of range set to zero)\n");
 					printf("\tGraySkeletonCPP.exe %i [inputfile] [outfile] [minGrayscale] [maxGrayscale]\n\n", DO_THRESHOLD_GRAY_RANGE);
@@ -372,24 +384,25 @@ namespace wustl_mm {
 					printf("Not implemented yet! \n");
 					break;
 				case 3: {
-					MRCReader * reader = (MRCReader*)MRCReaderPicker::pick((char *)inFile.c_str());
-					Volume * sourceVol = reader->getVolume();
-					delete reader;
+					printf("Not implemented yet! \n");
+					//MRCReader * reader = (MRCReader*)MRCReaderPicker::pick((char *)inFile.c_str());
+					//Volume * sourceVol = reader->getVolume();
+					//delete reader;
 
-					InteractiveSkeletonizer * skel = new InteractiveSkeletonizer(sourceVol, minGray, maxGray, stepSize, curveRadius, minCurveSize);
-					skel->SetGraphWeights(skeletonRatio, stRatio);
-					skel->CalculateMinimalSpanningTree(skel->FindClosestSkeletalPoint(Vector3DInt(startX, startY, startZ)));
-					vector<Vector3DInt> path = skel->GetPath(skel->FindClosestSkeletalPoint(Vector3DInt(endX, endY, endZ)));
+					//InteractiveSkeletonizer * skel = new InteractiveSkeletonizer(sourceVol, minGray, maxGray, stepSize, curveRadius, minCurveSize);
+					//skel->SetGraphWeights(skeletonRatio, stRatio);
+					//skel->CalculateMinimalSpanningTree(skel->FindClosestSkeletalPoint(Vector3DInt(startX, startY, startZ)));
+					//vector<Vector3DInt> path = skel->GetPath(skel->FindClosestSkeletalPoint(Vector3DInt(endX, endY, endZ)));
 
-					Volume * skeletonPath = new Volume(sourceVol->getSizeX(), sourceVol->getSizeY(), sourceVol->getSizeZ());
-					for(unsigned int i = 0; i < path.size(); i++) {
-						skeletonPath->setDataAt(path[i].X(), path[i].Y(), path[i].Z(), 1);
-					}
-					skeletonPath->toMRCFile((char *)outFile.c_str());					
+					//Volume * skeletonPath = new Volume(sourceVol->getSizeX(), sourceVol->getSizeY(), sourceVol->getSizeZ());
+					//for(unsigned int i = 0; i < path.size(); i++) {
+					//	skeletonPath->setDataAt(path[i].X(), path[i].Y(), path[i].Z(), 1);
+					//}
+					//skeletonPath->toMRCFile((char *)outFile.c_str());					
 
-					delete skeletonPath;
-					delete sourceVol;
-					delete skel;
+					//delete skeletonPath;
+					//delete sourceVol;
+					//delete skel;
 					break;
 				}
 				default:
@@ -539,6 +552,21 @@ namespace wustl_mm {
 			}
 			sourceVol->toMRCFile((char *)outFile.c_str());
 			delete skeletonizer;
+			delete reader;
+			delete sourceVol;
+		}
+
+		void DoSmoothingAnisotropicAxisAligned(string inFile, string outFile, int xRadius, int yRadius, int zRadius, int iterations) {
+			MRCReader * reader = (MRCReader*)MRCReaderPicker::pick((char *)inFile.c_str());
+			Volume * sourceVol = reader->getVolume();
+			Volume * tempVol;
+			VolumeSkeletonizer * skeletonizer = new VolumeSkeletonizer(1,1,1,1);
+			for(int i = 0; i < iterations; i++) {
+				tempVol = VolumeSkeletonizer::PerformAnisotropicSmoothingAxisAligned(sourceVol, xRadius, yRadius, zRadius);
+				delete sourceVol;
+				sourceVol = tempVol;
+			}
+			sourceVol->toMRCFile((char *)outFile.c_str());
 			delete reader;
 			delete sourceVol;
 		}
@@ -778,6 +806,13 @@ int main( int args, char * argv[] ) {
 				// GraySkeletonCPP.exe DO_THRESHOLD_GRAY_RANGE [inputfile] [outfile] [minGrayscale] [maxGrayscale]
 				if(args == 6) {					
 					DoThresholdGrayRange(argv[2], argv[3], StringUtils::StringToDouble(argv[4]), StringUtils::StringToDouble(argv[5]));
+					error = false;
+				} 
+				break;
+			case DO_SMOOTHING_ANISOTROPIC_AXIS_ALIGNED:
+				// GraySkeletonCPP.exe DO_SMOOTHING_ANISOTROPIC_AXIS_ALIGNED [inputfile] [outfile] [xRadius] [yRadius] [zRadius] [iterations]
+				if(args == 8) {					
+					DoSmoothingAnisotropicAxisAligned(argv[2], argv[3], StringUtils::StringToInt(argv[4]), StringUtils::StringToInt(argv[5]), StringUtils::StringToInt(argv[6]), StringUtils::StringToInt(argv[7]));
 					error = false;
 				} 
 				break;

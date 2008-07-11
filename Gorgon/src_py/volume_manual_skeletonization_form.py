@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.10  2008/07/07 14:45:06  ssa1
+#   Changing the interactive skeletonization to go from OpenGL Hitstack to RayTracing
+#
 #   Revision 1.9  2008/06/18 18:15:41  ssa1
 #   Adding in CVS meta data
 #
@@ -169,7 +172,7 @@ class VolumeManualSkeletonizationForm(QtGui.QWidget):
                 self.engine.selectStartSeedRay(ray[0], ray[1], ray[2], eye[0], eye[1], eye[2], rayWidth)                    
                 self.skeletonViewer.emitModelChanged()                    
             elif (event.modifiers() & QtCore.Qt.ALT):
-                self.engine.selectEndSeed(-1, -1)
+                self.engine.selectEndSeed()
                 self.skeletonViewer.emitModelChanged()                          
                     
     def processClickMultiple(self, mouseHits, event):
