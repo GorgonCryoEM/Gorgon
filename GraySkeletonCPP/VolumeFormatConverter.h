@@ -55,6 +55,8 @@ namespace wustl_mm {
 				vol = VolumeReaderATOM::LoadVolume(inputFile);
 			} else if (strcmp(inputFormat.c_str(), "TXT") == 0) {		
 				vol = VolumeReaderTXT::LoadVolume(inputFile);
+			} else if(strcmp(inputFormat.c_str(), "BMP") == 0) {
+				vol = ImageReaderBMP::LoadVolumeAsImageSet(inputFile, sizeZ);
 			} else {
 				printf("Input format [%s] not supported!\n", inputFormat.c_str());
 				return;
@@ -64,6 +66,8 @@ namespace wustl_mm {
 					
 			if(strcmp(outputFormat.c_str(), "MRC") == 0) {
 				vol->toMRCFile((char *)outputFile.c_str());
+			} else if(strcmp(outputFormat.c_str(), "BMP") == 0) {
+				ImageReaderBMP::SaveVolumeAsImageSet(vol, outputFile);
 			} else if (strcmp(outputFormat.c_str(), "NB") == 0) {
 				vol->toMathematicaFile((char *)outputFile.c_str());
 			} else if (strcmp(outputFormat.c_str(), "OFF0") == 0) {

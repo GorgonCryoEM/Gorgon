@@ -5,9 +5,12 @@
 #include "ImageReader.h"
 #include "GlobalDefinitions.h"
 #include <string>
+#include <SkeletonMaker/volume.h>
+#include <Foundation/StringUtils.h>
 
 
 using namespace std;
+using namespace wustl_mm::Foundation;
 
 namespace wustl_mm {
 	namespace GraySkeletonCPP {
@@ -48,7 +51,9 @@ namespace wustl_mm {
 		class ImageReaderBMP : ImageReader {
 		public:
 			static GrayImage * LoadGrayscaleImage(string fileName);
+			static Volume * LoadVolumeAsImageSet(string fileName, int sliceCount);
 			static void SaveGrayscaleImage(GrayImage * image, string fileName);
+			static void SaveVolumeAsImageSet(Volume * volume, string fileName);
 		private:
 			static ImageReaderBMPFileHeader GetBMPFileHeader(GrayImage * image);
 			static ImageReaderBMPInfoHeader GetBMPInfoHeader(GrayImage * image);
@@ -69,21 +74,67 @@ namespace wustl_mm {
 				width = width + 4;
 			}
 			unsigned char value;
+			unsigned char value8;
+			unsigned char value24[3];
+			bool error = false;
 
 			GrayImage * image = new GrayImage(infoHeader.biWidth, infoHeader.biHeight);
 
 			for(int y = 0; y < infoHeader.biHeight; y++) {		
 				for(int x = 0; x < width; x++) {
-					fread(&value, sizeof(unsigned char), 1, inFile);
-					if(x < infoHeader.biWidth) {
-						value = (unsigned char)round(((double)palette[value].rgbBlue + (double)palette[value].rgbGreen +  (double)palette[value].rgbRed) / 3.0);
-						image->SetDataAt(x, y, value);
+
+					switch(infoHeader.biBitCount) {
+						case 8:
+							fread(&value8, sizeof(unsigned char), 1, inFile);													
+							if(x < infoHeader.biWidth) {
+								value = (unsigned char)round(((double)palette[value8].rgbBlue + (double)palette[value8].rgbGreen +  (double)palette[value8].rgbRed) / 3.0);
+								image->SetDataAt(x, y, value);
+							}
+							break;
+						case 24:
+							fread(&value24, sizeof(unsigned char), 3, inFile);													
+							if(x < infoHeader.biWidth) {
+								value = (unsigned char)round(((double)value24[0] + (double)value24[1] +  (double)value24[2]) / 3.0);
+								image->SetDataAt(x, y, value);
+							}
+							break;
+						default:
+							error = true;
+							break;
 					}
 				}
 			}
 
+			if(error) {
+				printf("%s is in an unsupported format... Image might be corrupted!\n", (char *)fileName.c_str());
+			}
+
 			fclose(inFile);
 			return image;
+		}
+
+		Volume * ImageReaderBMP::LoadVolumeAsImageSet(string fileName, int sliceCount) {
+			Volume * vol;
+			string actualFileName;
+			GrayImage * image;
+
+
+			for(int z = 0; z < sliceCount; z++) {
+				actualFileName = fileName + StringUtils::IntToString(z, 5) + string(".bmp");
+				image = LoadGrayscaleImage(actualFileName);	
+				if(z == 0) {
+					vol = new Volume(image->GetSizeX(), image->GetSizeY(), sliceCount);
+				}
+				for(int x = 0; x < image->GetSizeX(); x++) {
+					for(int y = 0; y < image->GetSizeY(); y++) {
+						vol->setDataAt(x, y, z, 255 - image->GetDataAt(x, y));
+					}
+				}
+
+				delete image;
+			}
+
+			return vol;
 		}
 
 		void ImageReaderBMP::SaveGrayscaleImage(GrayImage * image, string fileName) {
@@ -124,6 +175,29 @@ namespace wustl_mm {
 
 
 
+
+		void ImageReaderBMP::SaveVolumeAsImageSet(Volume * volume, string fileName) {
+			volume->normalize(0.0, 255.0);
+			string actualFileName;
+			int value;
+
+			for(unsigned int z = 0; z < volume->getSizeZ(); z++) {
+				GrayImage * image = new GrayImage(volume->getSizeX(), volume->getSizeY());
+				for(unsigned int x = 0; x < volume->getSizeX(); x++) {
+					for(unsigned int y = 0; y < volume->getSizeY(); y++) {
+						value = 255 - (int)round(volume->getDataAt(x, y, z));
+						//printf("%d ", value);
+
+						image->SetDataAt(x, y, value);
+					}
+				}
+				actualFileName = fileName + StringUtils::IntToString(z, 5) + string(".bmp");
+				SaveGrayscaleImage(image, actualFileName);	
+
+				delete image;
+				//printf("\n"); flushall();
+			}
+		}
 
 		ImageReaderBMPFileHeader ImageReaderBMP::GetBMPFileHeader(GrayImage * image) {
 			ImageReaderBMPFileHeader header;

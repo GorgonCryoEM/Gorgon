@@ -5,6 +5,7 @@
 	Name="GraySkeletonCPP"
 	ProjectGUID="{E3B1B536-8C7A-45E8-9BAA-5FE4F7B9FE13}"
 	RootNamespace="GraySkeletonCPP"
+	AssemblyReferenceSearchPaths="&quot;..\..\temp\Release\Foundation&quot;"
 	>
 	<Platforms>
 		<Platform

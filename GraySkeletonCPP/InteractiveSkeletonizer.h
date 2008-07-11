@@ -13,10 +13,15 @@ using namespace wustl_mm::Foundation;
 namespace wustl_mm {
 	namespace GraySkeletonCPP {
 		
+		struct octreeTagType {
+			unsigned int tag1;
+			unsigned int tag2;
+		};
+
 		struct nodeAttrib{
 			float cost;
 			NonManifoldMeshVertex<nodeAttrib> * returnNode;
-			OctreeNode<unsigned int> * octreeNode;
+			OctreeNode<octreeTagType> * octreeNode;
 		};
 
 		struct edgeAttrib {
@@ -25,6 +30,7 @@ namespace wustl_mm {
 			float totalCost;
 		};
 
+
 		typedef NonManifoldMesh<nodeAttrib, edgeAttrib, bool> GraphType;
 
 		class InteractiveSkeletonizer : public VolumeSkeletonizer {
@@ -32,9 +38,9 @@ namespace wustl_mm {
 			InteractiveSkeletonizer(Volume * sourceVol, float minGray, float maxGray, float stepSize, int curveRadius, int minCurveSize, bool storeEigenInfo = false);
 			~InteractiveSkeletonizer();
 			GraphType * GetGraph();
-			Octree<unsigned int> * GetOctree();
-			vector<Vector3DInt> GetPath(Vector3DInt endPoint);			
-			vector<Vector3DInt> GetPath(vector<Vector3DInt> endPoints);
+			Octree<octreeTagType> * GetOctree();
+			vector<OctreeNode< octreeTagType > *> GetPath(Vector3DInt endPoint);			
+			vector<OctreeNode< octreeTagType > *> GetPath(vector<Vector3DInt> endPoints);
 			Vector3DInt FindClosestSkeletalPoint(Vector3DInt point);
 			void SetGraphWeights(double skeletonRatio, double structureTensorRatio);
 			void CalculateMinimalSpanningTree(Vector3DInt seedPoint);
@@ -43,7 +49,7 @@ namespace wustl_mm {
 		protected:
 			double GetStructureTensorProjectedScore(EigenResults3D imageEigen, Vector3DFloat skeletonDirection, float power, int type);			
 			GraphType * graph;
-			Octree<unsigned int> * octree;
+			Octree<octreeTagType> * octree;
 			Vector3DInt seedPoint;
 			Vector3DInt offset;
 			EigenResults3D * volumeEigens;
@@ -68,7 +74,7 @@ namespace wustl_mm {
 				skeleton->toMRCFile("CurveSkeleton.mrc");				
 			#endif
 			
-			octree = new Octree<unsigned int>(skeleton->getSizeX() - 2*MAX_GAUSSIAN_FILTER_RADIUS, skeleton->getSizeY() - 2*MAX_GAUSSIAN_FILTER_RADIUS, skeleton->getSizeZ()- 2*MAX_GAUSSIAN_FILTER_RADIUS);
+			octree = new Octree<octreeTagType>(skeleton->getSizeX() - 2*MAX_GAUSSIAN_FILTER_RADIUS, skeleton->getSizeY() - 2*MAX_GAUSSIAN_FILTER_RADIUS, skeleton->getSizeZ()- 2*MAX_GAUSSIAN_FILTER_RADIUS);
 			//octree->PrintStructure();
 			for(int x = MAX_GAUSSIAN_FILTER_RADIUS; x < sourceVol->getSizeX() - MAX_GAUSSIAN_FILTER_RADIUS; x++) {
 				for(int y = MAX_GAUSSIAN_FILTER_RADIUS; y < sourceVol->getSizeY() - MAX_GAUSSIAN_FILTER_RADIUS; y++) {
@@ -81,22 +87,22 @@ namespace wustl_mm {
 			}
 
 			Volume * maskVol = new Volume(skeleton->getSizeX(), skeleton->getSizeY(), skeleton->getSizeZ());
-			vector<OctreeNode<unsigned int> *> cells = octree->GetCells();
+			vector<OctreeNode<octreeTagType> *> cells = octree->GetCells();
 			for(unsigned int i = 0; i < cells.size(); i++) {
 				if(cells[i]->isLeaf) {
-					cells[i]->tag = graph->AddVertex(Vector3DFloat(cells[i]->pos[0], cells[i]->pos[1], cells[i]->pos[2]), nodeAttrib());
-					graph->vertices[cells[i]->tag].tag.octreeNode = cells[i];
+					cells[i]->tag.tag1 = graph->AddVertex(Vector3DFloat(cells[i]->pos[0], cells[i]->pos[1], cells[i]->pos[2]), nodeAttrib());
+					graph->vertices[cells[i]->tag.tag1].tag.octreeNode = cells[i];
 					maskVol->setDataAt(cells[i]->pos[0]+MAX_GAUSSIAN_FILTER_RADIUS, cells[i]->pos[1]+MAX_GAUSSIAN_FILTER_RADIUS, cells[i]->pos[2]+MAX_GAUSSIAN_FILTER_RADIUS, 1.0);
 				}
 			}
 
-			vector<OctreeNode<unsigned int> *> neighbors;
+			vector<OctreeNode<octreeTagType> *> neighbors;
 
 			for(unsigned int i = 0; i < cells.size(); i++) {
 				if(cells[i]->isLeaf) {
 					neighbors = octree->GetNeighbors(cells[i]);
 					for(unsigned int j = 0; j < neighbors.size(); j++) {
-						graph->AddEdge(cells[i]->tag, neighbors[j]->tag, edgeAttrib());
+						graph->AddEdge(cells[i]->tag.tag1, neighbors[j]->tag.tag1, edgeAttrib());
 					}				
 				}
 			}
@@ -110,7 +116,7 @@ namespace wustl_mm {
 
 			float maxProjectedScore = MIN_FLOAT;
 			float minProjectedScore = MAX_FLOAT;
-			OctreeNode<unsigned int> * n1, * n2;
+			OctreeNode<octreeTagType> * n1, * n2;
 			float s1, s2;
 
 			for(unsigned int i = 0; i < graph->edges.size(); i++) {
@@ -178,36 +184,35 @@ namespace wustl_mm {
 		GraphType * InteractiveSkeletonizer::GetGraph() {
 			return graph;
 		}
-		Octree<unsigned int> * InteractiveSkeletonizer::GetOctree() {
+		Octree<octreeTagType> * InteractiveSkeletonizer::GetOctree() {
 			return octree;
 		}
 
-		vector<Vector3DInt> InteractiveSkeletonizer::GetPath(Vector3DInt endPoint) {
-			vector<Vector3DInt> outPath;
+		vector<OctreeNode< octreeTagType > *> InteractiveSkeletonizer::GetPath(Vector3DInt endPoint) {
+			vector<OctreeNode< octreeTagType > *> outPath;
 			
-			OctreeNode<unsigned int> * node = octree->GetLeaf(endPoint.X(), endPoint.Y(), endPoint.Z());
+			OctreeNode<octreeTagType> * node = octree->GetLeaf(endPoint.X(), endPoint.Y(), endPoint.Z());
 			NonManifoldMeshVertex<nodeAttrib> * currentNode;
-			currentNode = &graph->vertices[node->tag];
-			outPath.push_back(Vector3DInt(currentNode->tag.octreeNode->pos[0], currentNode->tag.octreeNode->pos[1], currentNode->tag.octreeNode->pos[2]));
+			currentNode = &graph->vertices[node->tag.tag1];
+			outPath.push_back(currentNode->tag.octreeNode);
 
 			while(currentNode->tag.returnNode != NULL) {
 				currentNode = currentNode->tag.returnNode;
-				outPath.push_back(Vector3DInt(currentNode->tag.octreeNode->pos[0], currentNode->tag.octreeNode->pos[1], currentNode->tag.octreeNode->pos[2]));
+				outPath.push_back(currentNode->tag.octreeNode);
 			}
 			return outPath; 
-
-
 		}
-		vector<Vector3DInt> InteractiveSkeletonizer::GetPath(vector<Vector3DInt> endPoints) {
+
+		vector<OctreeNode< octreeTagType > *> InteractiveSkeletonizer::GetPath(vector<Vector3DInt> endPoints) {
 			
 			NonManifoldMeshVertex<nodeAttrib> * currentNode;
 			float minCost = MAX_FLOAT;
 			unsigned int minCostIndex = 0;
-			OctreeNode<unsigned int> * node; 
+			OctreeNode<octreeTagType> * node; 
 
 			for(unsigned int i = 0; i < endPoints.size(); i++) {
 				node = octree->GetLeaf(endPoints[i].X(), endPoints[i].Y(), endPoints[i].Z());
-				currentNode = &graph->vertices[node->tag];
+				currentNode = &graph->vertices[node->tag.tag1];
 				if(currentNode->tag.cost <= minCost) {
 					minCost = currentNode->tag.cost;
 					minCostIndex = i;
@@ -219,7 +224,7 @@ namespace wustl_mm {
 
 		Vector3DInt InteractiveSkeletonizer::FindClosestSkeletalPoint(Vector3DInt point) {
 			appTimeManager.PushCurrentTime();
-			OctreeNode<unsigned int> * node = octree->GetLeaf(point.X(), point.Y(), point.Z());
+			OctreeNode<octreeTagType> * node = octree->GetLeaf(point.X(), point.Y(), point.Z());
 			appTimeManager.PopAndDisplayTime("Found Closest skeletal point: %f seconds!\n");
 			return Vector3DInt(node->pos[0], node->pos[1], node->pos[2]);							
 		}
@@ -240,14 +245,14 @@ namespace wustl_mm {
 		void InteractiveSkeletonizer::CalculateMinimalSpanningTree(Vector3DInt seedPoint) {
 			appTimeManager.PushCurrentTime();
 			//printf("Calculating MST {%ld %ld %ld}\n", seedPoint.X(), seedPoint.Y(), seedPoint.Z()); flushall();
-			OctreeNode<unsigned int> * node = octree->GetLeaf(seedPoint.X(), seedPoint.Y(), seedPoint.Z());
+			OctreeNode<octreeTagType> * node = octree->GetLeaf(seedPoint.X(), seedPoint.Y(), seedPoint.Z());
 			NonManifoldMeshVertex<nodeAttrib> * currentNode;
 			//Volume * costVol = new Volume(octree->size[0], octree->size[1], octree->size[2]);
 			for(unsigned int i = 0; i < graph->vertices.size(); i++) {
 				graph->vertices[i].tag.cost = -1;
 			}
 
-			currentNode = &graph->vertices[node->tag];
+			currentNode = &graph->vertices[node->tag.tag1];
 			currentNode->tag.cost = 0;
 			//costVol->setDataAt(currentNode->tag.octreeNode->pos[0], currentNode->tag.octreeNode->pos[1], currentNode->tag.octreeNode->pos[2], currentNode->tag.cost);
 			currentNode->tag.returnNode = NULL;
@@ -286,7 +291,7 @@ namespace wustl_mm {
 		void InteractiveSkeletonizer::CalculateMinimalSpanningTree(vector<Vector3DInt> seedPoints) {
 			appTimeManager.PushCurrentTime();
 			
-			OctreeNode<unsigned int> * node;
+			OctreeNode<octreeTagType> * node;
 			NonManifoldMeshVertex<nodeAttrib> * currentNode;
 			queue<NonManifoldMeshVertex<nodeAttrib> *> pointList;
 
@@ -297,7 +302,7 @@ namespace wustl_mm {
 			for(unsigned int i = 0; i < seedPoints.size(); i++) {
 				node = octree->GetLeaf(seedPoints[i].X(), seedPoints[i].Y(), seedPoints[i].Z());
 		
-				currentNode = &graph->vertices[node->tag];
+				currentNode = &graph->vertices[node->tag.tag1];
 				currentNode->tag.cost = 0;
 				currentNode->tag.returnNode = NULL;
 

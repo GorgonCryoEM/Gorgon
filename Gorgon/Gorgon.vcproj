@@ -143,10 +143,15 @@
 				Name="VCPostBuildEventTool"
 				Description="Post Build Event"
 				CommandLine="$(ProjectDir)\build.bat"
+				ExcludedFromBuild="true"
 			/>
 		</Configuration>
 	</Configurations>
 	<References>
+		<ProjectReference
+			ReferencedProjectIdentifier="{5B1E0736-9D9C-43BF-A60D-210292DCB7FC}"
+			RelativePathToProject=".\Foundation\Foundation.vcproj"
+		/>
 	</References>
 	<Files>
 		<Filter

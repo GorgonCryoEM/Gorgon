@@ -7,6 +7,7 @@
 #include "ImageReaderMRC.h"
 #include "GlobalDefinitions.h"
 #include "VolumeDeltaAnalyzer.h"
+#include <MathTools/Combinatorics.h>
 #include <SkeletonMaker/PriorityQueue.h>
 #include <MathTools/MathLib.h>
 #include <MathTools/DataStructures.h>
@@ -41,7 +42,7 @@ namespace wustl_mm {
 			Volume * PerformSkeletonPruning(Volume * sourceVolume, Volume * sourceSkeleton, double curveThreshold, double surfaceThreshold, int minGray, int maxGray, string outputPath);
 			Volume * GetJuSurfaceSkeleton(Volume * sourceVolume, Volume * preserve, double threshold);
 			Volume * GetJuCurveSkeleton(Volume * sourceVolume, Volume * preserve, double threshold, bool is3D);
-			Volume * GetJuTopologySkeleton(Volume * sourceVolume, Volume * preserve, double threshold);
+			Volume * GetJuTopologySkeleton(Volume * sourceVolume, Volume * preserve, double threshold);			
 			void CleanupVolume(Volume * sourceVolume, double low, double high);
 			void NormalizeVolume(Volume * sourceVolume);			
 			void PruneCurves(Volume * sourceVolume, int pruneLength);
@@ -59,6 +60,8 @@ namespace wustl_mm {
 			Vector3DFloat * GetVolumeGradient(Volume * sourceVolume);
 			Vector3DFloat * GetVolumeGradient2(Volume * sourceVolume);
 			Vector3DFloat * GetSkeletonDirection(Volume * skeleton, int type);
+
+			static Volume * PerformAnisotropicSmoothingAxisAligned(Volume * sourceVolume, int xRadius, int yRadius, int zRadius);
 		protected:
 			
 			double AngleToParameter(double angle);
@@ -2056,6 +2059,30 @@ namespace wustl_mm {
 
 
 
+		Volume * VolumeSkeletonizer::PerformAnisotropicSmoothingAxisAligned(Volume * sourceVolume, int xRadius, int yRadius, int zRadius) {
+			Volume * smoothedVol = new Volume(sourceVolume->getSizeX(), sourceVolume->getSizeY(), sourceVolume->getSizeZ());
+			ProbabilityDistribution3D dist;
+			Combinatorics::GetAnisotropicDistributionAxisAligned(dist, xRadius, yRadius, zRadius);
+			float val;
+			
+			for(int x = dist.radius; x < sourceVolume->getSizeX() - dist.radius; x++) {
+				for(int y = dist.radius; y < sourceVolume->getSizeY() - dist.radius; y++) {
+					for(int z = dist.radius; z < sourceVolume->getSizeZ() - dist.radius; z++) {
+						val = 0;						
+						for(int xx = -xRadius; xx <= xRadius; xx++) {
+							for(int yy = -yRadius; yy <= yRadius; yy++) {
+								for(int zz = -zRadius; zz <= zRadius; zz++) {
+									val += (sourceVolume->getDataAt(x+xx, y+yy, z+zz) * dist.values[xx+dist.radius][yy+dist.radius][zz+dist.radius]);									
+								}
+							}
+						}
+						smoothedVol->setDataAt(x, y, z, val);
+					}
+				}
+			}
+
+			return smoothedVol;
+		}
 	}
 }
 
