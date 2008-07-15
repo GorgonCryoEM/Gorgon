@@ -1,0 +1,32 @@
+Package: correspondence
+=======================
+Classes for mapping predicted secels onto observed secels.
+
+OBSERVATIONS
+
+ObservedHelix/Sheet/Strand
+  Class that denotes indvidual helix/sheet/strand found by SSEHunter/Builder or any other 
+  routine that identifies secels in cryoEM maps.
+
+StructureObservation:
+  Class that represents aggregate of the secels found in an EM map.
+
+
+---------------------------------------
+PREDICTIONS
+
+StructurePrediction:
+  Class that represents all of the secels predicted to exist based on primary sequence.
+
+
+
+---------------------------------------
+CORRESPONDENCES
+Match.py:
+  Class that maps a single predicted secel to an observed secel.
+
+Correspondence:
+  Class that aggregates a self-consistent set of matches.
+
+CorrespondenceLibrary.py:
+  Class that stores a set of correspondences and the parameters used to compute them.
