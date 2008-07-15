@@ -74,6 +74,8 @@ namespace wustl_mm {
 				vol->toOFFCells((char *)outputFile.c_str());
 			} else if (strcmp(outputFormat.c_str(), "OFF") == 0) {
 				vol->toOFFCells2((char *)outputFile.c_str());
+			} else if (strcmp(outputFormat.c_str(), "RAW16") == 0) {		
+				VolumeReaderRAW::SaveVolume16bit(vol, outputFile);
 			} else {
 				printf("Output format %s not supported!\n", outputFormat.c_str());
 			}

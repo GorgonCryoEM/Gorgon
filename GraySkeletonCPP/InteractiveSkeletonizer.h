@@ -45,6 +45,7 @@ namespace wustl_mm {
 			void SetGraphWeights(double skeletonRatio, double structureTensorRatio);
 			void CalculateMinimalSpanningTree(Vector3DInt seedPoint);
 			void CalculateMinimalSpanningTree(vector<Vector3DInt> seedPoints);
+			void IsolateStartSeed(Vector3DInt startPos);
 									
 		protected:
 			double GetStructureTensorProjectedScore(EigenResults3D imageEigen, Vector3DFloat skeletonDirection, float power, int type);			
@@ -336,6 +337,9 @@ namespace wustl_mm {
 
 		}
 
+		void InteractiveSkeletonizer::IsolateStartSeed(Vector3DInt startPos) {
+			CalculateMinimalSpanningTree(startPos);
+		}
 	}
 }
 
