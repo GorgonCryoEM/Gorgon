@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.11  2008/07/11 16:29:52  ssa1
+#   Anisotropic Smoothing, and loading and saving volumes as sets of images
+#
 #   Revision 1.10  2008/07/07 14:45:06  ssa1
 #   Changing the interactive skeletonization to go from OpenGL Hitstack to RayTracing
 #
@@ -40,8 +43,8 @@ class VolumeManualSkeletonizationForm(QtGui.QWidget):
         self.connect(self.viewer, QtCore.SIGNAL("modelLoaded()"), self.modelLoaded)
         self.connect(self.viewer, QtCore.SIGNAL("modelChanged()"), self.modelChanged)
         self.connect(self.viewer, QtCore.SIGNAL("modelUnloaded()"), self.modelUnloaded)
-        self.manualColors = [QtGui.QColor.fromRgba(QtGui.qRgba(0, 0, 255, 255)),
-                             QtGui.QColor.fromRgba(QtGui.qRgba(0, 255, 0, 255)),
+        self.manualColors = [QtGui.QColor.fromRgba(QtGui.qRgba(0, 0, 255, 128)),
+                             QtGui.QColor.fromRgba(QtGui.qRgba(0, 255, 0, 128)),
                              QtGui.QColor.fromRgba(QtGui.qRgba(0, 255, 255, 255)),
                              QtGui.QColor.fromRgba(QtGui.qRgba(255, 0, 0, 255))]
         self.createUI()

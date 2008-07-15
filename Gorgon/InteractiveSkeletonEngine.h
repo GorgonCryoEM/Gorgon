@@ -37,6 +37,7 @@ namespace wustl_mm {
 			vector<Vector3DInt> currentPositions;
 			GLUquadric * quadricSphere;			
 			float isoValue;
+			bool startSeedIsolated;
 		};
 
 		InteractiveSkeletonEngine::InteractiveSkeletonEngine(Volume * volume, NonManifoldMesh_Annotated * skeleton, float skeletonRatio, float stRatio, float minGray, int stepCount, int curveRadius, int minCurveSize) {
@@ -59,6 +60,7 @@ namespace wustl_mm {
 
 			started = false;
 			analyzed = false;
+			startSeedIsolated = false;
 			skeletonizer->SetGraphWeights(skeletonRatio, stRatio);
 			quadricSphere = gluNewQuadric();			
 		}
@@ -72,11 +74,15 @@ namespace wustl_mm {
 			for(unsigned int i = 0; i < skeleton->edges.size(); i++) {
 				skeleton->edges[i].tag = true;
 			}
+			if(!startSeedIsolated) {
+				skeletonizer->IsolateStartSeed(startPos);
+				startSeedIsolated = true;
+			}
 		}
 
 		void InteractiveSkeletonEngine::SelectStartSeedRay(float rayX, float rayY, float rayZ, float eyeX, float eyeY, float eyeZ, float rayWidth) {
 			analyzed = false;
-			started = false;
+			started = false;			
 			startPositions.clear();				
 			for(unsigned int i = 0; i < skeleton->edges.size(); i++) {
 				if(!skeleton->edges[i].tag) {
@@ -87,14 +93,26 @@ namespace wustl_mm {
 
 			vector<OctreeNode<octreeTagType> *> intersectingCells = skeletonizer->GetOctree()->IntersectRay(Vector3DFloat(rayX, rayY, rayZ), Vector3DFloat(eyeX, eyeY, eyeZ), rayWidth);
 
-			for(unsigned int i = 0; i < intersectingCells.size(); i++) {
+
+			bool snapOn = false;
+			for(unsigned int i = 0; !snapOn && (i < intersectingCells.size()); i++) {
 				if(intersectingCells[i]->cellSize == 1) {
-					startPositions.push_back(Vector3DInt(intersectingCells[i]->pos[0], intersectingCells[i]->pos[1], intersectingCells[i]->pos[2]));
+					snapOn = snapOn || (skeleton->vertices[intersectingCells[i]->tag.tag2].edgeIds.size() > 0);					
 				}
 			}			
+
+			for(unsigned int i = 0; i < intersectingCells.size(); i++) {
+				if(intersectingCells[i]->cellSize == 1) {
+					if(!snapOn || (snapOn && (skeleton->vertices[intersectingCells[i]->tag.tag2].edgeIds.size() > 0))) {
+						startPositions.push_back(Vector3DInt(intersectingCells[i]->pos[0], intersectingCells[i]->pos[1], intersectingCells[i]->pos[2]));
+					}
+				}
+			}			
+
 			if(startPositions.size() > 0) {
 				skeletonizer->CalculateMinimalSpanningTree(startPositions);
 				startPos = startPositions[0];
+				startSeedIsolated = false;
 				started = true;
 			}					
 		}
