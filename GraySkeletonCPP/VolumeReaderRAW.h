@@ -11,7 +11,7 @@ namespace wustl_mm {
 			static Volume * LoadVolume(string fileName);
 			static Volume * LoadVolume8bit(string fileName, int xSize, int ySize, int zSize, int xSpacing, int ySpacing, int zSpacing);
 			static Volume * LoadVolume16bit(string fileName, int xSize, int ySize, int zSize, int xSpacing, int ySpacing, int zSpacing);
-			static Volume * SaveVolume(Volume * volume, string fileName);
+			static void SaveVolume16bit(Volume * vol, string fileName);
 		};
 
 		Volume * VolumeReaderRAW::LoadVolume(string fileName) {
@@ -73,6 +73,22 @@ namespace wustl_mm {
 
 			delete [] tempdata ;	
 			return vol;
+		}
+
+		void VolumeReaderRAW::SaveVolume16bit(Volume * vol, string fileName) {
+			FILE* fin = fopen( fileName.c_str(), "wb" );		
+			
+			unsigned short value;
+
+
+			for(int x = 0; x < vol->getSizeX(); x++) {
+				for (int y = 0; y < vol->getSizeY(); y++) {
+					for (int z = 0 ; z < vol->getSizeZ(); z++) {
+						value = vol->getDataAt(x, y, z);
+						fwrite(&value, sizeof(unsigned short), 1, fin);						
+					}
+				}
+			}		
 		}
 	}
 }

@@ -50,6 +50,7 @@ namespace wustl_mm {
 
 		class ImageReaderBMP : ImageReader {
 		public:
+
 			static GrayImage * LoadGrayscaleImage(string fileName);
 			static Volume * LoadVolumeAsImageSet(string fileName, int sliceCount);
 			static void SaveGrayscaleImage(GrayImage * image, string fileName);
@@ -67,7 +68,11 @@ namespace wustl_mm {
 
 			fread(&fileHeader, sizeof(fileHeader), 1, inFile); 
 			fread(&infoHeader, sizeof(infoHeader), 1, inFile); 
-			fread(&palette, sizeof(ImageReaderBMPRgbQuad), 256, inFile); 
+
+			if( infoHeader.biBitCount <= 8) {
+				fread(&palette, sizeof(ImageReaderBMPRgbQuad), 256, inFile); 
+			}
+			
 
 			int width = ((int)(infoHeader.biWidth / 4)) * 4;
 			if(width < infoHeader.biWidth) {
@@ -76,6 +81,7 @@ namespace wustl_mm {
 			unsigned char value;
 			unsigned char value8;
 			unsigned char value24[3];
+			unsigned char value32[4];
 			bool error = false;
 
 			GrayImage * image = new GrayImage(infoHeader.biWidth, infoHeader.biHeight);
@@ -98,6 +104,14 @@ namespace wustl_mm {
 								image->SetDataAt(x, y, value);
 							}
 							break;
+						case 32:
+							fread(&value32, sizeof(unsigned char), 4, inFile);													
+							if(x < infoHeader.biWidth) {
+								value = (unsigned char)round(((double)value32[0] + (double)value32[1] +  (double)value32[2]) / 3.0);
+								image->SetDataAt(x, y, value);
+							}
+							break;
+
 						default:
 							error = true;
 							break;
@@ -181,10 +195,10 @@ namespace wustl_mm {
 			string actualFileName;
 			int value;
 
-			for(unsigned int z = 0; z < volume->getSizeZ(); z++) {
+			for(int z = 0; z < volume->getSizeZ(); z++) {
 				GrayImage * image = new GrayImage(volume->getSizeX(), volume->getSizeY());
-				for(unsigned int x = 0; x < volume->getSizeX(); x++) {
-					for(unsigned int y = 0; y < volume->getSizeY(); y++) {
+				for(int x = 0; x < volume->getSizeX(); x++) {
+					for(int y = 0; y < volume->getSizeY(); y++) {
 						value = 255 - (int)round(volume->getDataAt(x, y, z));
 						//printf("%d ", value);
 
