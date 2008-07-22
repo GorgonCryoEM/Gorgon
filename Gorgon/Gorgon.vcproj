@@ -103,6 +103,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="&quot;$(SolutionDir)&quot;;&quot;$(SolutionDir)\ExternalLibraries&quot;;&quot;$(SolutionDir)\ExternalLibraries\GL&quot;"
+				WarningLevel="1"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"

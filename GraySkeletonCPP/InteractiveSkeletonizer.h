@@ -52,17 +52,12 @@ namespace wustl_mm {
 			GraphType * graph;
 			Octree<octreeTagType> * octree;
 			Vector3DInt seedPoint;
-			Vector3DInt offset;
 			EigenResults3D * volumeEigens;
-
-			static const int CONNECTIVITY = 26;
-			static const char SEED_POINT_FLAG = 50;
 		};
 
 		InteractiveSkeletonizer::InteractiveSkeletonizer(Volume * sourceVol, float minGray, float maxGray, float stepSize, int curveRadius, int minCurveSize, bool storeEigenInfo) : VolumeSkeletonizer(0, curveRadius, 0,0) {
 			appTimeManager.PushCurrentTime();
 			graph = new GraphType();		
-			offset = Vector3DInt(MAX_GAUSSIAN_FILTER_RADIUS, MAX_GAUSSIAN_FILTER_RADIUS, MAX_GAUSSIAN_FILTER_RADIUS);
 			sourceVol->pad(MAX_GAUSSIAN_FILTER_RADIUS, 0);
 					
 			Volume * nullVol = new Volume(sourceVol->getSizeX(), sourceVol->getSizeY(), sourceVol->getSizeZ());
@@ -109,16 +104,25 @@ namespace wustl_mm {
 			}
 
 			//graph->ToOffCells("Graph.off");
+			printf("1\n");flushall();
 
 
 			Vector3DFloat * volumeGradient = GetVolumeGradient2(sourceVol);					
-			volumeEigens = GetEigenResults2(maskVol, volumeGradient, gaussianFilterCurveRadius, curveRadius, true);
+			printf("2\n");flushall();
+
+			//volumeEigens = GetEigenResults2(maskVol, volumeGradient, gaussianFilterCurveRadius, curveRadius, true);
+			printf("3\n");flushall();
 			delete maskVol;
 
 			float maxProjectedScore = MIN_FLOAT;
 			float minProjectedScore = MAX_FLOAT;
 			OctreeNode<octreeTagType> * n1, * n2;
 			float s1, s2;
+
+			EigenResults3D eig1;
+			EigenResults3D eig2;
+
+			
 
 			for(unsigned int i = 0; i < graph->edges.size(); i++) {
 				n1 = graph->vertices[graph->GetVertexIndex(graph->edges[i].vertexIds[0])].tag.octreeNode;
@@ -130,12 +134,19 @@ namespace wustl_mm {
 				} else {
 					graph->edges[i].tag.medialCost = 1.0;
 				}
+
+				GetEigenResult2(eig1, volumeGradient, gaussianFilterCurveRadius, n1->pos[0]+MAX_GAUSSIAN_FILTER_RADIUS, n1->pos[1]+MAX_GAUSSIAN_FILTER_RADIUS, n1->pos[2]+MAX_GAUSSIAN_FILTER_RADIUS, skeleton->getSizeX(), skeleton->getSizeY(), skeleton->getSizeZ(), curveRadius, false);
+				GetEigenResult2(eig2, volumeGradient, gaussianFilterCurveRadius, n2->pos[0]+MAX_GAUSSIAN_FILTER_RADIUS, n2->pos[1]+MAX_GAUSSIAN_FILTER_RADIUS, n2->pos[2]+MAX_GAUSSIAN_FILTER_RADIUS, skeleton->getSizeX(), skeleton->getSizeY(), skeleton->getSizeZ(), curveRadius, false);
+
+
 				s1 = GetStructureTensorProjectedScore(
-						volumeEigens[skeleton->getIndex(n1->pos[0]+MAX_GAUSSIAN_FILTER_RADIUS, n1->pos[1]+MAX_GAUSSIAN_FILTER_RADIUS, n1->pos[2]+MAX_GAUSSIAN_FILTER_RADIUS)], 
+						//volumeEigens[skeleton->getIndex(n1->pos[0]+MAX_GAUSSIAN_FILTER_RADIUS, n1->pos[1]+MAX_GAUSSIAN_FILTER_RADIUS, n1->pos[2]+MAX_GAUSSIAN_FILTER_RADIUS)], 
+						eig1,
 						graph->vertices[graph->GetVertexIndex(graph->edges[i].vertexIds[0])].position - graph->vertices[graph->GetVertexIndex(graph->edges[i].vertexIds[1])].position,
 						2, PRUNING_CLASS_PRUNE_CURVES);
 				s2 = GetStructureTensorProjectedScore(
-						volumeEigens[skeleton->getIndex(n1->pos[0]+MAX_GAUSSIAN_FILTER_RADIUS, n1->pos[1]+MAX_GAUSSIAN_FILTER_RADIUS, n1->pos[2]+MAX_GAUSSIAN_FILTER_RADIUS)], 
+						//volumeEigens[skeleton->getIndex(n2->pos[0]+MAX_GAUSSIAN_FILTER_RADIUS, n2->pos[1]+MAX_GAUSSIAN_FILTER_RADIUS, n2->pos[2]+MAX_GAUSSIAN_FILTER_RADIUS)], 
+						eig2,
 						graph->vertices[graph->GetVertexIndex(graph->edges[i].vertexIds[0])].position - graph->vertices[graph->GetVertexIndex(graph->edges[i].vertexIds[1])].position,
 						2, PRUNING_CLASS_PRUNE_CURVES);
 				graph->edges[i].tag.smoothCost = s1 + s2;
@@ -149,14 +160,15 @@ namespace wustl_mm {
 
 
 			delete [] volumeGradient;
-			if(!storeEigenInfo) {
-				delete [] volumeEigens; 
+			//if(!storeEigenInfo) {
+			//	delete [] volumeEigens; 
 				volumeEigens = NULL;
-			}
+			//}
 			sourceVol->pad(-MAX_GAUSSIAN_FILTER_RADIUS, 0);
 			delete skeleton;
 
 			appTimeManager.PopAndDisplayTime("Creating graphs: %f seconds!\n"); 
+			printf("Graph size: %d nodes, %d edges\n", graph->vertices.size(), graph->edges.size());
 		}
 
 
