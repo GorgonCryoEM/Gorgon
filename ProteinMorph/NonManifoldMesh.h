@@ -55,6 +55,7 @@ namespace wustl_mm {
 			NonManifoldMesh();
 			NonManifoldMesh(NonManifoldMesh<TVertex, TEdge, TFace> * srcMesh);
 			NonManifoldMesh(Volume * sourceVol);
+			~NonManifoldMesh();
 			bool IsEdgePresent(int vertexId1, int vertexId2);
 			int AddVertex(NonManifoldMeshVertex<TVertex> vertex);
 			int AddVertex(Vector3DFloat location, TVertex tag = NULL);
@@ -183,6 +184,10 @@ namespace wustl_mm {
 			}
 			delete [] vertexLocations;
 			MarkFixedVertices();
+		}
+
+		template <class TVertex, class TEdge, class TFace> NonManifoldMesh<TVertex, TEdge, TFace>::~NonManifoldMesh() {
+			Clear();
 		}
 
 		template <class TVertex, class TEdge, class TFace> bool NonManifoldMesh<TVertex, TEdge, TFace>::IsEdgePresent(int vertexId1, int vertexId2) {

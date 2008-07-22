@@ -763,7 +763,7 @@ namespace wustl_mm {
 		int DiscreteMesh::GetImmersionSkeletalValue(Volume * skeleton, Vector3DInt point) {
 			Volume * range = skeleton->getDataRange(point.values[0], point.values[1], point.values[2], 2);
 			Volume * thresholdedRange = new Volume(range->getSizeX(), range->getSizeY(), range->getSizeZ(), 0, 0, 0, range);
-			double value;
+			double value = 0;
 			thresholdedRange->threshold(range->getDataAt(2, 2, 2), -1, 1, -1, false);
 			/*if(IsSurfaceBorder(thresholdedRange, 2, 2, 2) || IsCurveEnd(thresholdedRange, 2, 2, 2) || IsPoint(thresholdedRange, 2, 2, 2)) {
 				delete thresholdedRange;
@@ -862,7 +862,7 @@ namespace wustl_mm {
 				}
 			}			
 
-			bool surfaceFound;
+			bool surfaceFound = true;
 			for(int i = 0; i < 12; i++) {
 				surfaceFound = true;
 				for(int e = 0; e < 3; e++) {

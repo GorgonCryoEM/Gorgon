@@ -57,7 +57,6 @@ namespace wustl_mm {
 				node = graph->vertices[i].tag.octreeNode;	
 				node->tag.tag2 = ix;
 			}
-
 			started = false;
 			analyzed = false;
 			startSeedIsolated = false;

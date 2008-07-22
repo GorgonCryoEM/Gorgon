@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.12  2008/07/15 15:10:17  ssa1
+#   Adding snapping to Interactive skeletonization
+#
 #   Revision 1.11  2008/07/11 16:29:52  ssa1
 #   Anisotropic Smoothing, and loading and saving volumes as sets of images
 #
@@ -43,8 +46,8 @@ class VolumeManualSkeletonizationForm(QtGui.QWidget):
         self.connect(self.viewer, QtCore.SIGNAL("modelLoaded()"), self.modelLoaded)
         self.connect(self.viewer, QtCore.SIGNAL("modelChanged()"), self.modelChanged)
         self.connect(self.viewer, QtCore.SIGNAL("modelUnloaded()"), self.modelUnloaded)
-        self.manualColors = [QtGui.QColor.fromRgba(QtGui.qRgba(0, 0, 255, 128)),
-                             QtGui.QColor.fromRgba(QtGui.qRgba(0, 255, 0, 128)),
+        self.manualColors = [QtGui.QColor.fromRgba(QtGui.qRgba(0, 0, 255, 255)),
+                             QtGui.QColor.fromRgba(QtGui.qRgba(0, 255, 0, 255)),
                              QtGui.QColor.fromRgba(QtGui.qRgba(0, 255, 255, 255)),
                              QtGui.QColor.fromRgba(QtGui.qRgba(255, 0, 0, 255))]
         self.createUI()
@@ -98,14 +101,14 @@ class VolumeManualSkeletonizationForm(QtGui.QWidget):
         self.startEndSkeletonization(False)
         self.dock.close()
                
-    def startEndSkeletonization(self, start):
-        self.started = start
+    def startEndSkeletonization(self, start):        
         if(start):
             self.volume = self.viewer.renderer.getVolume()
+            if self.skeletonViewer.loaded:
+                self.skeletonViewer.unloadData()
             self.mesh = self.skeletonViewer.renderer.getMesh()
-            
             skeletonRatio = float(self.getMedialness())/float(self.getMedialness()+self.getSmoothness())
-            stRatio = float(self.getSmoothness())/float(self.getMedialness()+self.getSmoothness())
+            stRatio = float(self.getSmoothness())/float(self.getMedialness()+self.getSmoothness())            
             self.engine = InteractiveSkeletonEngine(self.volume, self.mesh, skeletonRatio, stRatio, self.getStartingDensity(), self.getStepCount(), self.getCurveRadius(), self.getMinCurveLength())
             self.engine.setIsoValue(self.viewer.renderer.getSurfaceValue())
             self.setSkeletonViewerProperties(True)
@@ -115,9 +118,11 @@ class VolumeManualSkeletonizationForm(QtGui.QWidget):
             self.skeletonViewer.emitModelLoaded()                        
         else:
             self.engine.finalizeSkeleton()
+            del self.engine
             self.setSkeletonViewerProperties(False)
             self.ui.pushButtonStart.setEnabled(True)
-            self.ui.pushButtonClose.setEnabled(False)      
+            self.ui.pushButtonClose.setEnabled(False)
+        self.started = start
 
     def startingDensityChanged(self, newLevel):
         self.ui.labelStartingDensityDisplay.setNum(newLevel/100.0)

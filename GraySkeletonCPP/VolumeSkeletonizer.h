@@ -168,9 +168,9 @@ namespace wustl_mm {
 			if(!isZero(imageEigen.values[0])) {
 				double theta, a, b;
 				Vector3DFloat temp, skelDirectionST, n;
-				double u1 = 1.0;
-				double u2 = abs(imageEigen.values[1]/imageEigen.values[0]);
-				double u3 = abs(imageEigen.values[2]/imageEigen.values[0]);
+				float u1 = 1.0;
+				float u2 = abs(imageEigen.values[1]/imageEigen.values[0]);
+				float u3 = abs(imageEigen.values[2]/imageEigen.values[0]);
 				Vector3DFloat v1 = imageEigen.vectors[0];
 				Vector3DFloat v2 = imageEigen.vectors[1];
 				Vector3DFloat v3 = imageEigen.vectors[2];				
@@ -255,9 +255,9 @@ namespace wustl_mm {
 		}
 
 		Vector3DFloat VolumeSkeletonizer::XYZtoUVW(Vector3DFloat vec, Vector3DFloat u, Vector3DFloat v, Vector3DFloat w) {
-			double uContri = vec * u; 
-			double vContri = vec * v;
-			double wContri = vec * w;
+			float uContri = vec * u; 
+			float vContri = vec * v;
+			float wContri = vec * w;
 			Vector3DFloat inUVW = Vector3DFloat(uContri, vContri, wContri);
 			inUVW.Normalize();
 			return inUVW;
@@ -272,7 +272,7 @@ namespace wustl_mm {
 				return direction;
 			}
 			
-			currentPos = Vector3DFloat(x, y, z);						
+			currentPos = Vector3DFloat((float)x, (float)y, (float)z);						
 			n6Count = 0;
 			for(int i = 0; i < 6; i++) {							
 				if(skeleton->getDataAt(x + VOLUME_NEIGHBORS_6[i][0], y + VOLUME_NEIGHBORS_6[i][1], z + VOLUME_NEIGHBORS_6[i][2]) > 0) {
