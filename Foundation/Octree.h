@@ -389,7 +389,7 @@ namespace wustl_mm {
 		}
 
 		template <class TTag> vector< vector<float> > Octree<TTag>::GetCubeProjectionValues(vector<Vector3DFloat> & testVectors, vector<Vector3DFloat> & points2D) {
-			vector<vector<float>> retVal;
+			vector< vector<float> > retVal;
 			vector<float> values;
 
 			for(unsigned int i = 0; i < testVectors.size(); i++)  {
