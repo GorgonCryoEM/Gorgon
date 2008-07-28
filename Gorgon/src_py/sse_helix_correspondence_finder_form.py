@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.6  2008/07/28 16:19:22  ssa1
+#   Adding in correspondance data repository
+#
 #   Revision 1.5  2008/06/18 18:15:41  ssa1
 #   Adding in CVS meta data
 #
@@ -172,6 +175,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
         self.ui.tabWidget.setCurrentIndex(3)
         self.ui.tableWidgetResults.setEnabled(True)
         self.ui.tableWidgetResults.setRowCount(self.resultCount)        
+        corrList = []
         for i in range(self.resultCount):                                
             result = self.viewer.correspondenceEngine.getResult(i+1)
             self.ui.tableWidgetResults.setItem(i, 0, QtGui.QTableWidgetItem(result.getNodeString()))
@@ -196,6 +200,10 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
                 matchList.append(Match(observed, predicted, direction))         
                                       
             corr = Correspondence(libray=library, matchList=matchList, score=result.getCost())
+            corrList.append(corr)
+        return corrList
+            
+        
             
                 
     def accept(self):
