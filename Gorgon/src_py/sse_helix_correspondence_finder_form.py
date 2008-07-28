@@ -11,10 +11,21 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.5  2008/06/18 18:15:41  ssa1
+#   Adding in CVS meta data
+#
 
 from PyQt4 import QtCore, QtGui
 from ui_dialog_sse_helix_correspondence_finder import Ui_DialogSSEHelixCorrespondenceFinder
 from libpyGORGON import SSECorrespondenceEngine, SSECorrespondenceResult
+from correspondence.CorrespondenceLibrary import CorrespondenceLibrary
+from correspondence.Correspondence import Correspondence
+from correspondence.Match import Match
+from correspondence.ObservedHelix import ObservedHelix
+from correspondence.ObservedSheet import ObservedSheet
+from correspondence.StructureObservation import StructureObservation
+from correspondence.StructurePrediction import StructurePrediction
+from seq_model.Helix import Helix
 
 class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):   
     def __init__(self, main, viewer, parent=None):
@@ -157,26 +168,89 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
         self.viewer.correspondenceEngine.setConstantInt("BORDER_MARGIN_THRESHOLD", self.ui.spinBoxBorderMarginThreshold.value())
         self.viewer.correspondenceEngine.setConstantBool("NORMALIZE_GRAPHS", True)        
     
-    def populateResults(self):
+    def populateResults(self, library):
         self.ui.tabWidget.setCurrentIndex(3)
         self.ui.tableWidgetResults.setEnabled(True)
-        self.ui.tableWidgetResults.setRowCount(self.resultCount)
-        for i in range(self.resultCount):                    
+        self.ui.tableWidgetResults.setRowCount(self.resultCount)        
+        for i in range(self.resultCount):                                
             result = self.viewer.correspondenceEngine.getResult(i+1)
             self.ui.tableWidgetResults.setItem(i, 0, QtGui.QTableWidgetItem(result.getNodeString()))
             self.ui.tableWidgetResults.setItem(i, 1, QtGui.QTableWidgetItem(str(result.getCost())))
+            
+            matchList = []            
+            for j in range(result.getNodeCount()/2):
+                n1 = result.getSkeletonNode(j*2)
+                n2 = result.getSkeletonNode(j*2+1)
+                if n1 < n2:
+                    direction = Match.FORWARD
+                else:
+                    direction = Match.REVERSE
+                
+                observedNo = result.nodeToHelix(n1)
+                if observedNo >= 0:
+                    observed = library.structureObservation.helixDict[observedNo]
+                else:
+                    observed = None
+                    
+                predicted = library.structurePrediction.secelDict[j]                            
+                matchList.append(Match(observed, predicted, direction))         
+                                      
+            corr = Correspondence(libray=library, matchList=matchList, score=result.getCost())
+            
                 
     def accept(self):
         self.setCursor(QtCore.Qt.BusyCursor)
-        self.setConstants()                       
-        self.viewer.correspondenceEngine.loadSequenceGraph()
+        self.setConstants()          
+        
+        
+        #Loading Predicted SSEs                     
+        self.viewer.correspondenceEngine.loadSequenceGraph()        
+        predictedSecels = {}
+        sseCount = self.viewer.correspondenceEngine.getSequenceSSECount()
+        for sseIx in range(sseCount):
+            cppSse = self.viewer.correspondenceEngine.getSequenceSSE(sseIx)
+            if cppSse.isHelix(): 
+                pyHelix = Helix(None, str(cppSse.getSecondaryStructureID()), cppSse.getStartPosition(), cppSse.getEndPosition())
+                predictedSecels[sseIx] = pyHelix                                
+            elif cppSse.isSheet():
+                #TODO: Add Sheet support
+                predictedSecels[sseIx] = None
+                pass
+        #TODO: Mike, What should I pass in for the chain ??? 
+        structPred = StructurePrediction(secelDict = predictedSecels, chain = None)
+            
+        
+        #Loading Observed SSEs
         self.viewer.correspondenceEngine.loadSkeletonGraph()
+        observedHelices = {}
+        helixCount = 0
+        observedSheets = {}
+        sheetCount = 0
+        sseCount = self.viewer.correspondenceEngine.getSkeletonSSECount()
+        for sseIx in range(sseCount):
+            cppSse = self.viewer.correspondenceEngine.getSkeletonSSE(sseIx)        
+            p1 = cppSse.getCornerCell2(1)
+            p2 = cppSse.getCornerCell2(2)
+            if cppSse.isHelix():            
+                pyHelix = ObservedHelix(sseIx, p1.x(), p1.y(), p1.z(), p2.x(), p2.y(), p2.z())            
+                observedHelices[helixCount] = pyHelix
+                helixCount = helixCount + 1
+            elif cppSse.isSheet():
+                pass
+                #TODO: Add Sheet support
+        
+        #TODO: Mike this raises an error!;
+        structObserv = StructureObservation(helixDict = observedHelices, sheetDict = observedSheets)          
+                
         self.resultCount = self.viewer.correspondenceEngine.executeQuery()
         self.viewer.correspondenceEngine.cleanupMemory()
-        self.populateResults()                                       
+        self.viewer.correspondenceLibrary = CorrespondenceLibrary(sp = structPred, so = structObserv)
+        self.viewer.correspondenceLibrary.correspondenceList = self.populateResults(self.viewer.correspondenceLibrary)
+        
         self.setCursor(QtCore.Qt.ArrowCursor)
         self.viewer.emitModelChanged()
         self.executed = True 
+        
         
     def reject(self):           
         self.app.actions.getAction("perform_SSEFindHelixCorrespondences").trigger()

@@ -6,6 +6,8 @@
 #                    More info in: correspondence-doc.txt
 #
 
+import cPickle as pickle
+
 class CorrespondenceLibrary:
   def __init__(self, sp=None, so=None, algo=None, params=None, correspondenceList=None, comments=None, filename=None):
     if (filename):
@@ -15,8 +17,9 @@ class CorrespondenceLibrary:
       self.structureObservation=sp
       self.algorithm=algo
       self.params=params
-      self.correspondenceList=corresondenceList
-      self.comments=comments
+      self.correspondenceList=correspondenceList
+      self.otherAttribs={}
+      self.otherAttribs['comments']=comments
       # sort correspondences by score
 
   def save(self, filename):
@@ -24,7 +27,47 @@ class CorrespondenceLibrary:
     # write StructurePrediction & params
     # write algorithm, params, comments
     # write correspondence list by calling Correspondence.__repr__
-    pass
+    outfile=open(filename,'w')
+    pickle.dump(self, outfile)
+    outfile.close()
   
-  def load(self, filename):
-    pass
+  @classmethod
+  def load(cls, filename):
+    infile=open(filename,'r')
+    result = pickle.load(infile)
+    infile.close()
+    return result
+
+#    self.structurePrediction=None
+#    self.structureObservation=None
+#    self.algorithm=None
+#    self.params=None
+#    self.correspondenceList=None
+#    self.params={}
+#    self.files={}
+#    self.otherAttribs={}
+#
+#    infile=open(filename)
+#    lines=infile.readlines()
+#
+#    for line in lines:
+#
+#      # Attributes with arbitrary key values.  Includes 'comments'
+#      if line.rfind('\t') < 1 and line.find('=') > 0 :
+#        key=line.strip().split('=')[0]
+#        value=line.strip().split('=')[1]
+#        self.otherAttribs[key]=value
+#
+#      # Nested Dictionary Items those found in dictionaries 'files' and 'params'
+#      else:
+#        # last character in line is ':'
+#        if line.find(':') == len(line.strip()) :
+#          dictName=line.strip().split(':')[0]
+#
+#        else:
+#          # line holds key=value pair
+#          if line.find('=') > 0:
+#            split=line.strip().split('=')
+#            key=split[0]
+#            value=split[1]
+#            self.__addAttrib (dictName, key, value)
