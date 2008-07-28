@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.6  2008/07/01 13:41:39  marshm
+#   made changes to accomodate seq_model.py:Chain object for calpha-backbone models
+#
 #   Revision 1.5  2008/06/18 18:15:41  ssa1
 #   Adding in CVS meta data
 #
@@ -18,7 +21,7 @@
 from PyQt4 import QtCore, QtGui
 from ui_dialog_calpha_atom_placer import Ui_DialogCAlphaAtomPlacer
 from libpyGORGON import PDBAtom, Vector3DFloat
-from gorgon_model import GAtom
+from seq_model import GAtom
 from seq_model import Residue
 
 class CAlphaAtomPlacerForm(QtGui.QWidget):

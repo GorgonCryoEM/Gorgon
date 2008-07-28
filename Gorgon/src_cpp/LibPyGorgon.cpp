@@ -158,16 +158,33 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 	;
 
 
+	class_<SSECorrespondenceResult>("SSECorrespondenceResult", init<>())
+		.def("getNodeString", &SSECorrespondenceResult::GetNodeString)
+		.def("getCost", &SSECorrespondenceResult::GetCost)
+		.def("getNodeCount", &SSECorrespondenceResult::GetNodeCount)
+		.def("getSkeletonNode", &SSECorrespondenceResult::GetSkeletonNode)
+		.def("nodeToHelix", &SSECorrespondenceResult::NodeToHelix)		
+	;
+
+	class_<SecondaryStructure>("SecondaryStructure", init<>())
+		.def("isHelix", &SecondaryStructure::IsHelix)
+		.def("isSheet", &SecondaryStructure::IsSheet)
+		.def("getSerialNumber", &SecondaryStructure::GetSerialNumber)
+		.def("getStartPosition", &SecondaryStructure::GetStartPosition)
+		.def("getEndPosition", &SecondaryStructure::GetEndPosition)
+		.def("getSecondaryStructureID", &SecondaryStructure::GetSecondaryStructureID)
+	;
+
+	class_<GeometricShape>("GeometricShape", init<>())
+		.def("isHelix", &GeometricShape::IsHelix)
+		.def("isSheet", &GeometricShape::IsSheet)
+		.def("getCornerCell2", &GeometricShape::GetCornerCell2)
+	;
+
 	bool (SSECorrespondenceEngine::*SetConstant1)(char *, char *)	= &SSECorrespondenceEngine::SetConstant;
 	bool (SSECorrespondenceEngine::*SetConstant2)(char *, double)	= &SSECorrespondenceEngine::SetConstant;
 	bool (SSECorrespondenceEngine::*SetConstant3)(char *, int)		= &SSECorrespondenceEngine::SetConstant;
 	bool (SSECorrespondenceEngine::*SetConstant4)(char *, bool)		= &SSECorrespondenceEngine::SetConstant;
-
-
-	class_<SSECorrespondenceResult>("SSECorrespondenceResult", init<>())
-		.def("getNodeString", &SSECorrespondenceResult::GetNodeString)
-		.def("getCost", &SSECorrespondenceResult::GetCost)
-	;
 
 	class_<SSECorrespondenceEngine>("SSECorrespondenceEngine", init<>())
 		.def("setConstant", SetConstant1)
@@ -185,7 +202,15 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("getResultCount", &SSECorrespondenceEngine::GetResultCount)
 		.def("getSupportedLoadFileFormats", &SSECorrespondenceEngine::GetSupportedLoadFileFormats)
 		.def("getSupportedSaveFileFormats", &SSECorrespondenceEngine::GetSupportedSaveFileFormats)
-    ;
+		.def("getSkeletonSSE", &SSECorrespondenceEngine::GetSkeletonSSE, return_value_policy<manage_new_object>())
+		.def("getSequenceSSE", &SSECorrespondenceEngine::GetSequenceSSE, return_value_policy<manage_new_object>())
+		.def("getSkeletonSSECount", &SSECorrespondenceEngine::GetSkeletonSSECount)
+		.def("getSequenceSSECount", &SSECorrespondenceEngine::GetSequenceSSECount)
+		;
+
+	
 }
+
+
 
 #endif

@@ -1,6 +1,10 @@
 #ifndef SECONDARYSTRUCTURE_H
 #define SECONDARYSTRUCTURE_H
 
+#include <string>
+
+using namespace std;
+
 namespace wustl_mm {
 	namespace GraphMatch {
 
@@ -15,8 +19,15 @@ namespace wustl_mm {
 		public:
 			SecondaryStructure();
 			~SecondaryStructure();
+			bool IsHelix();
+			bool IsSheet();
 			int GetLength();
+			int GetSerialNumber();
+			int GetStartPosition();
+			int GetEndPosition();
+			string GetSecondaryStructureID();
 		};
+
 		SecondaryStructure::SecondaryStructure() {
 			secondaryStructureID = NULL;
 		}
@@ -27,8 +38,32 @@ namespace wustl_mm {
 			}
 		}
 
+		bool SecondaryStructure::IsHelix() {
+			return (secondaryStructureType == GRAPHEDGE_HELIX);
+		}
+
+		bool SecondaryStructure::IsSheet() {
+			return (secondaryStructureType == GRAPHEDGE_SHEET);
+		}
+
 		int SecondaryStructure::GetLength() {
 			return endPosition - startPosition + 1;
+		}
+
+		int SecondaryStructure::GetSerialNumber() {
+			return serialNumber;
+		}
+
+		int SecondaryStructure::GetStartPosition() {
+			return startPosition;
+		}
+
+		int SecondaryStructure::GetEndPosition() {
+			return endPosition;
+		}
+
+		string SecondaryStructure::GetSecondaryStructureID() {
+			return secondaryStructureID;
 		}
 	}
 }

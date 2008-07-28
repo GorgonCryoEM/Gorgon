@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.5  2008/07/01 13:41:39  marshm
+#   made changes to accomodate seq_model.py:Chain object for calpha-backbone models
+#
 #   Revision 1.4  2008/06/18 18:15:41  ssa1
 #   Adding in CVS meta data
 #
@@ -19,7 +22,7 @@ from PyQt4 import QtGui, QtCore, QtOpenGL
 from libpyGORGON import CAlphaRenderer
 from base_viewer import BaseViewer
 from calpha_atom_placer_form import CAlphaAtomPlacerForm
-from seq_model import Chain
+from seq_model.Chain import Chain
 
 try:
     from OpenGL.GL import *

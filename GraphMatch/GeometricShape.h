@@ -10,8 +10,10 @@ Date  : 01/28/2006
 
 #include "VectorMath.h"
 #include <vector>
+#include <MathTools/Vector3D.h>
 
 using namespace std;
+using namespace wustl_mm::MathTools;
 
 namespace wustl_mm {
 	namespace GraphMatch {
@@ -27,6 +29,8 @@ namespace wustl_mm {
 		public:
 			GeometricShape();
 			~GeometricShape();
+			bool IsHelix();
+			bool IsSheet();
 			bool IsInsideShape(Point3 p);
 			double GetHeight();
 			double GetRadius();
@@ -45,6 +49,7 @@ namespace wustl_mm {
 
 			Point3 GetWorldCoordinates(Point3 point);
 			Point3Int GetCornerCell(int node);
+			Vector3DFloat GetCornerCell2(int node);
 		private:
 			bool IsInsideCylinder(Point3 point);
 			bool IsInsidePolygon(Point3 point);
@@ -82,6 +87,14 @@ namespace wustl_mm {
 			cornerCells.clear();
 			polygonPoints.clear();
 			polygons.clear();
+		}
+
+		bool GeometricShape::IsHelix() {
+			return (geometricShapeType == GRAPHEDGE_HELIX);
+		}
+
+		bool GeometricShape::IsSheet() {
+			return (geometricShapeType != GRAPHEDGE_HELIX);
 		}
 
 		bool GeometricShape::IsInsideShape(Point3 point) {
@@ -177,6 +190,13 @@ namespace wustl_mm {
 			}
 			return Point3Int(0,0,0,0);
 		}
+
+		Vector3DFloat GeometricShape::GetCornerCell2(int node) {
+			Point3Int cell = GetCornerCell(node);
+			return Vector3DFloat((float)cell.x, (float)cell.y, (float)cell.z);
+		}
+
+
 		void GeometricShape::AddInternalCell(Point3Int point) {
 			internalCells.push_back(point);
 		}

@@ -22,6 +22,11 @@ namespace wustl_mm {
 			string GetSupportedLoadFileFormats();
 			string GetSupportedSaveFileFormats();
 			void SaveCorrespondenceToFile(string fileName);
+			GeometricShape * GetSkeletonSSE(int sseId);
+			SecondaryStructure * GetSequenceSSE(int sseId);
+			int GetSkeletonSSECount();
+			int GetSequenceSSECount();
+			
 		private:
 			vector<SSECorrespondenceResult> correspondence;			
 		};
@@ -32,7 +37,7 @@ namespace wustl_mm {
 		}
 
 		SSECorrespondenceEngine::~SSECorrespondenceEngine() {
-			correspondence.clear();
+			correspondence.clear();			
 		}
 
 		int SSECorrespondenceEngine::ExecuteQuery() {
@@ -118,6 +123,32 @@ namespace wustl_mm {
 
 			fclose(fout);
 		}
+
+		GeometricShape * SSECorrespondenceEngine::GetSkeletonSSE(int sseId) {
+			if((skeleton != NULL) && (sseId < (int)skeleton->skeletonHelixes.size())) {
+				return skeleton->skeletonHelixes[sseId];				
+			} else {
+				return NULL;
+			}			
+		}
+
+		SecondaryStructure * SSECorrespondenceEngine::GetSequenceSSE(int sseId) {
+			if((sequence != NULL) && (sseId < (int)sequence->pdbStructures.size())) {
+				return sequence->pdbStructures[sseId];				
+			} else {
+				return NULL;
+			}			
+		}
+
+
+		int SSECorrespondenceEngine::GetSkeletonSSECount() {
+			return skeleton->skeletonHelixes.size();
+		}
+
+		int SSECorrespondenceEngine::GetSequenceSSECount() {
+			return sequence->pdbStructures.size();
+		}
+
 	}
 }
 

@@ -8,8 +8,8 @@
 #
 
 class Match:
-  FOREWARD=0
-  REVERSE=0
+  FORWARD=0
+  REVERSE=1
   def __init__(self, observed, predicted, direction):
     # A forward match aligns the N-terminus with lesser vertex, and C-terminus with greater vertex
     #    lesser vertex is vertex closer to 0,0,0
