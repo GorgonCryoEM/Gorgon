@@ -104,14 +104,11 @@ namespace wustl_mm {
 			}
 
 			//graph->ToOffCells("Graph.off");
-			printf("1\n");flushall();
 
 
 			Vector3DFloat * volumeGradient = GetVolumeGradient2(sourceVol);					
-			printf("2\n");flushall();
 
 			//volumeEigens = GetEigenResults2(maskVol, volumeGradient, gaussianFilterCurveRadius, curveRadius, true);
-			printf("3\n");flushall();
 			delete maskVol;
 
 			float maxProjectedScore = MIN_FLOAT;
