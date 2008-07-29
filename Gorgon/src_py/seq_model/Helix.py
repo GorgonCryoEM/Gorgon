@@ -2,39 +2,52 @@
 # Copyright (C) 2005-2008 Washington University in St Louis, Baylor College of Medicine.  All rights reserved
 # Author:  Mike Marsh (michael.marsh@bcm.edu)
 # Class:  Helix
-# Class Description: extends seq_model.Atom to account for Gorgon Viewer interface 
+# Class Description: Class that models alpha helices
 #                    More info in: seq_model-doc.txt
 #
 
 from Secel import Secel
 
 class Helix(Secel):
-  serial_num=0
-  def __init__(self, chain, label, start_index, stop_index):
-    Secel.__init__(self, chain, label, start_index, stop_index)
+  serialNo=0
+  def __init__(self, chain, serialNo, label, startIndex, stopIndex):
+    Secel.__init__(self, chain, serialNo, label, startIndex, stopIndex)
     self.type="helix"
 
 
-  def to_pdb(self):
-    Helix.serial_num=Helix.serial_num+1
-    init_res_name=self.chain.residue_list[self.start_index].symbol3
-    init_chain_id=self.chain.chain_id
-    init_seq_num=self.start_index
-    end_res_name=self.chain.residue_list[self.stop_index].symbol3
-    end_seq_num=self.stop_index
+  @classmethod
+  def parsePDB(cls,line,chain):
+    serialNo     =         int(line[7:10].strip())
+    helixID     =         line[11:14].strip()
+    #chainID     =         line[19:20]
+    start     =         int(line[21:25].strip())
+    stop     =         int(line[33:37].strip())
+
+    if helixID in chain.helices.keys():
+      raise ValueError, 'Duplicate Helix entries in PDB'
+    else:
+      chain.helices[serialNo]=Helix(chain,serialNo,helixID,start,stop)
+
+  def toPDB(self):
+    Helix.serialNo=Helix.serialNo+1
+    init_res_name=self.chain.residueList[self.startIndex].symbol3
+    init_chainID=self.chain.chainID
+    init_seq_num=self.startIndex
+    end_res_name=self.chain.residueList[self.stopIndex].symbol3
+    end_seq_num=self.stopIndex
 
     s= "HELIX"
-    s=s+ str(Helix.serial_num).rjust(4) +' '
+    s=s+ str(Helix.serialNo).rjust(4) +' '
     s=s+ self.label.rjust(3) +' '
     s=s+ init_res_name.rjust(3) +' '
-    s=s+ init_chain_id.rjust(1) +' '
+    s=s+ init_chainID.rjust(1) +' '
     s=s+ str(init_seq_num).rjust(4) +' '
 
     s=s+ end_res_name.rjust(4) +' '
-    s=s+ init_chain_id.rjust(1) +' '
+    s=s+ init_chainID.rjust(1) +' '
     s=s+ str(end_seq_num).rjust(4) +' '
     s=s+ str(1).rjust(1) +' '
 
-    s=s+ str(self.stop_index-self.start_index).rjust(36) + "\n"
+    s=s+ str(self.stopIndex-self.startIndex).rjust(36) + "\n"
 
     return s

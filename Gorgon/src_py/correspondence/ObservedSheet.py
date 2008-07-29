@@ -9,7 +9,7 @@
 
 class ObservedSheet:
   def __init__(self, params):
-    pass
+    raise NotImplementedError, 'Not Yet Implemented: ObservedSheet contructor'
 
   def __parseSheet(self, inputString):
     pass

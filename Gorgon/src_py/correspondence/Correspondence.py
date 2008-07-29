@@ -25,6 +25,9 @@ class Correspondence:
     #    StructurePrediction 2:   no match
     #    StructurePrediction 3:   StructureObservation c (reverse)
     #    
-    if chain:
-      s=s+chain
+    for match in self.matchList:
+      s=s+match
+    s=s+'\n'
+    if self.chain:
+      s=s+self.chain
     return s

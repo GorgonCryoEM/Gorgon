@@ -8,9 +8,9 @@
 
 from Secel import Secel
 class Coil(Secel):
-  def __init__(self, chain, label, start_index, stop_index):
-    Secel.__init__(self, chain, label, start_index, stop_index)
+  def __init__(self, chain, serialNo, label, startIndex, stopIndex):
+    Secel.__init__(self, chain, serialNo, label, startIndex, stopIndex)
     self.type="loop"
 
-  def to_pdb(self):
+  def toPDB(self):
     return ''

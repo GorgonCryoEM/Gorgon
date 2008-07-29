@@ -7,11 +7,10 @@
 #
 
 class Atom:
-  def __init__(self,element,x,y,z, occupancy=1.0,temp_factor=1.0):
+  def __init__(self,element,x,y,z, residue=None, serialNo=None, occupancy=1.0,tempFactor=1.0):
 		self.element=element
 		self.x=x
 		self.y=y
 		self.z=z
 		self.occupancy=occupancy
-		self.temp_factor=temp_factor
-		print x,y,z
+		self.tempFactor=tempFactor
