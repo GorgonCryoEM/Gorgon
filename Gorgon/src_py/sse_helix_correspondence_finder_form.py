@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.9  2008/07/29 16:57:18  ssa1
+#   Visualizing the correspondence and fixing bug in the CorrespondenceLibrary
+#
 #   Revision 1.8  2008/07/29 15:50:31  ssa1
 #   Fixing import errors
 #
@@ -61,6 +64,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
         self.connect(self.ui.pushButtonReset, QtCore.SIGNAL("pressed ()"), self.loadDefaults)
         self.connect(self.ui.pushButtonCancel, QtCore.SIGNAL("pressed ()"), self.reject)
         self.connect(self.ui.pushButtonOk, QtCore.SIGNAL("pressed ()"), self.accept)
+        self.connect(self.ui.comboBoxCorrespondences, QtCore.SIGNAL("currentIndexChanged (int)"), self.selectCorrespondence)
             
     def loadDefaults(self):
         self.ui.lineEditHelixLengthFile.setText("")
@@ -186,8 +190,6 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
             result = self.viewer.correspondenceEngine.getResult(i+1)
             self.ui.tableWidgetResults.setItem(i, 0, QtGui.QTableWidgetItem(result.getNodeString()))
             self.ui.tableWidgetResults.setItem(i, 1, QtGui.QTableWidgetItem(str(result.getCost())))
-            self.ui.comboBoxCorrespondences.addItem("Correspondence " + str(i+1))
-
                                     
             matchList = []            
             for j in range(result.getNodeCount()/2):
@@ -213,7 +215,11 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
             corrList.append(corr)
         return corrList
             
-        
+    def populateComboBox(self, library):
+        self.ui.comboBoxCorrespondences.clear()
+        for i in range(len(library.correspondenceList)):
+            corr = library.correspondenceList[i]                                
+            self.ui.comboBoxCorrespondences.addItem("Correspondence " + str(i+1) + " - [Cost: " + str(corr.score) + "]")        
             
                 
     def accept(self):
@@ -265,6 +271,8 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
         self.viewer.correspondenceLibrary = CorrespondenceLibrary(sp = structPred, so = structObserv)
         self.viewer.correspondenceLibrary.correspondenceList = self.populateResults(self.viewer.correspondenceLibrary)
         
+        self.populateComboBox(self.viewer.correspondenceLibrary)       
+        
         self.setCursor(QtCore.Qt.ArrowCursor)
         self.viewer.emitModelChanged()
         self.executed = True 
@@ -272,4 +280,39 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
         
     def reject(self):           
         self.app.actions.getAction("perform_SSEFindHelixCorrespondences").trigger()
+    
+    def getIndexedColor(self, index, size):
+        mid = float((size-1)/2)        
+        if(index <= mid):
+            index = float(index/mid)
+            r = 1.0 - index
+            g = index
+            b = 0.0
+            a = 1.0           
+        else:            
+            index = float((index - mid)/ mid);
+            r = 0.0
+            g = 1.0 - index
+            b = index
+            a = 1.0          
+            
+        return QtGui.QColor.fromRgba(QtGui.qRgba(r*255, g*255, b*255, a*255))
+        
+    def selectCorrespondence(self, correspondenceIndex):
+        self.ui.tableWidgetCorrespondenceList.clear()
+        if(correspondenceIndex >= 0):
+            corr = self.viewer.correspondenceLibrary.correspondenceList[correspondenceIndex]
+            self.ui.tableWidgetCorrespondenceList.setRowCount(len(corr.matchList))   
+            for i in range(len(corr.matchList)):
+                match = corr.matchList[i]
+                if(match.predicted):
+                    self.ui.tableWidgetCorrespondenceList.setItem(i, 0, QtGui.QTableWidgetItem(match.predicted.type + " " + str(match.predicted.serialNo + 1) + " : " + str(match.predicted.label)))
+                if(match.observed):
+                    self.ui.tableWidgetCorrespondenceList.setItem(i, 1, QtGui.QTableWidgetItem("helix " + str(match.observed.label + 1)))
+                    color = self.getIndexedColor(i, len(corr.matchList))
+                    self.viewer.renderer.setHelixColor(match.observed.label, color.redF(), color.greenF(), color.blueF(), color.alphaF())
+                self.ui.tableWidgetCorrespondenceList.setCellWidget(i, 2, QtGui.QCheckBox())
+                self.ui.tableWidgetCorrespondenceList.cellWidget(i, 2).setCheckState(QtCore.Qt.Unchecked)
+        self.viewer.emitModelChanged()
+            
         

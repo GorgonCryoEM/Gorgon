@@ -26,6 +26,7 @@ namespace wustl_mm {
 			virtual Vector3DFloat Get3DCoordinates(int subsceneIndex, int ix0, int ix1 = -1, int ix2 = -1, int ix3 = -1, int ix4 = -1);
 			bool SetCuttingPlane(float position, float vecX, float vecY, float vecZ);
 			void DrawCylinder(Vector3DFloat pt1, Vector3DFloat pt2, float radius);
+			void SetColor(float colorR, float colorG, float colorB, float colorA);
 
 			float GetMin(int dimension);
 			float GetMax(int dimension);
@@ -146,6 +147,20 @@ namespace wustl_mm {
 			gluDeleteQuadric(quadricCylinder);
 
 			glPopMatrix();
+		}
+		void Renderer::SetColor(float colorR, float colorG, float colorB, float colorA)  {
+			GLfloat diffuse[4] = {colorR, colorG, colorB, colorA};
+			GLfloat ambient[4] = {colorR*0.2, colorG*0.2, colorB*0.2, colorA};
+			GLfloat specular[4] = {1.0, 1.0, 1.0, 1.0};
+			glMaterialfv(GL_BACK, GL_AMBIENT,   ambient);
+			glMaterialfv(GL_BACK, GL_DIFFUSE,   diffuse); 
+			glMaterialfv(GL_BACK, GL_SPECULAR,  specular); 
+			glMaterialf(GL_BACK, GL_SHININESS, 0.1);
+			glMaterialfv(GL_FRONT, GL_AMBIENT,   ambient);
+			glMaterialfv(GL_FRONT, GL_DIFFUSE,   diffuse); 
+			glMaterialfv(GL_FRONT, GL_SPECULAR,  specular); 
+			glMaterialf(GL_FRONT, GL_SHININESS, 0.1);
+
 		}
 	}
 }

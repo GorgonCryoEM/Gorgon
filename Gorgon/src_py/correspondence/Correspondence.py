@@ -9,8 +9,8 @@
 
 class Correspondence:
   def __init__(self, library, matchList, score, comments=None, chain=None):
-    self.matchList=[]
-    self.score=0.0
+    self.matchList=matchList
+    self.score=score
     self.libary=library
     self.comments=None
     self.chain=None
