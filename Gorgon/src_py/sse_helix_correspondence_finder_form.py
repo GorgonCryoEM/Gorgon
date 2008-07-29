@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.7  2008/07/28 16:28:16  ssa1
+#   Adding in correspondance data repository
+#
 #   Revision 1.6  2008/07/28 16:19:22  ssa1
 #   Adding in correspondance data repository
 #
@@ -218,7 +221,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
         for sseIx in range(sseCount):
             cppSse = self.viewer.correspondenceEngine.getSequenceSSE(sseIx)
             if cppSse.isHelix(): 
-                pyHelix = Helix(None, str(cppSse.getSecondaryStructureID()), cppSse.getStartPosition(), cppSse.getEndPosition())
+                pyHelix = Helix(None, sseIx, str(cppSse.getSecondaryStructureID()), cppSse.getStartPosition(), cppSse.getEndPosition())
                 predictedSecels[sseIx] = pyHelix                                
             elif cppSse.isSheet():
                 #TODO: Add Sheet support
