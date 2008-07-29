@@ -14,7 +14,7 @@ class CorrespondenceLibrary:
       self.load(filename)
     else:
       self.structurePrediction=sp
-      self.structureObservation=sp
+      self.structureObservation=so
       self.algorithm=algo
       self.params=params
       self.correspondenceList=correspondenceList

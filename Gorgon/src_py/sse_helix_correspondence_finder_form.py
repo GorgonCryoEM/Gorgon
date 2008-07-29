@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.8  2008/07/29 15:50:31  ssa1
+#   Fixing import errors
+#
 #   Revision 1.7  2008/07/28 16:28:16  ssa1
 #   Adding in correspondance data repository
 #
@@ -175,7 +178,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
         self.viewer.correspondenceEngine.setConstantBool("NORMALIZE_GRAPHS", True)        
     
     def populateResults(self, library):
-        self.ui.tabWidget.setCurrentIndex(3)
+        self.ui.tabWidget.setCurrentIndex(4)
         self.ui.tableWidgetResults.setEnabled(True)
         self.ui.tableWidgetResults.setRowCount(self.resultCount)        
         corrList = []
@@ -183,7 +186,9 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
             result = self.viewer.correspondenceEngine.getResult(i+1)
             self.ui.tableWidgetResults.setItem(i, 0, QtGui.QTableWidgetItem(result.getNodeString()))
             self.ui.tableWidgetResults.setItem(i, 1, QtGui.QTableWidgetItem(str(result.getCost())))
-            
+            self.ui.comboBoxCorrespondences.addItem("Correspondence " + str(i+1))
+
+                                    
             matchList = []            
             for j in range(result.getNodeCount()/2):
                 n1 = result.getSkeletonNode(j*2)
@@ -202,7 +207,9 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
                 predicted = library.structurePrediction.secelDict[j]                            
                 matchList.append(Match(observed, predicted, direction))         
                                       
-            corr = Correspondence(libray=library, matchList=matchList, score=result.getCost())
+            corr = Correspondence(library=library, matchList=matchList, score=result.getCost())
+            
+            
             corrList.append(corr)
         return corrList
             
