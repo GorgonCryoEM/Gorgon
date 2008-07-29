@@ -131,6 +131,7 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("getMin", &SSERenderer::GetMin)
 		.def("getMax", &SSERenderer::GetMax)
 		.def("get3DCoordinates", &SSERenderer::Get3DCoordinates)
+		.def("setHelixColor", &SSERenderer::SetHelixColor)		
 	;
 
 	class_< CAlphaRenderer, bases<Renderer> >("CAlphaRenderer", init<>())
@@ -179,6 +180,7 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("isHelix", &GeometricShape::IsHelix)
 		.def("isSheet", &GeometricShape::IsSheet)
 		.def("getCornerCell2", &GeometricShape::GetCornerCell2)
+		.def("setColor", &GeometricShape::SetColor)
 	;
 
 	bool (SSECorrespondenceEngine::*SetConstant1)(char *, char *)	= &SSECorrespondenceEngine::SetConstant;

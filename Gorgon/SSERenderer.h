@@ -25,6 +25,7 @@ namespace wustl_mm {
 			void LoadHelixFile(string fileName);			
 			void LoadSheetFile(string fileName);			
 			void Unload();
+			void SetHelixColor(int index, float r, float g, float b, float a);
 			string GetSupportedLoadFileFormats();
 			string GetSupportedSaveFileFormats();
 		private:
@@ -55,6 +56,7 @@ namespace wustl_mm {
 			GLfloat emissionColor[4] = {1.0, 1.0, 1.0, 1.0};
 
 			glPushName(subSceneIndex);
+			float colorR, colorG, colorB, colorA;
 			if(subSceneIndex == 0) {
 				if(selectEnabled) {
 					glPushName(0);
@@ -62,6 +64,9 @@ namespace wustl_mm {
 				
 				Point3 pt;
 				for(int i = 0; i < (int)helices.size(); i++) {
+					helices[i]->GetColor(colorR, colorG, colorB, colorA);	
+					SetColor(colorR, colorG, colorB, colorA);
+
 					selected = ((subSceneIndex == selectedSubSceneIndex) && (i == selectedIx[0]));
 					if(selected) {
 						glGetMaterialfv(GL_FRONT, GL_EMISSION, frontMaterial);
@@ -222,6 +227,10 @@ namespace wustl_mm {
 			}
 		}
 
+		void SSERenderer::SetHelixColor(int index, float r, float g, float b, float a) {
+			helices[index]->SetColor(r, g, b, a);
+
+		}
 		string SSERenderer::GetSupportedLoadFileFormats() {
 			return "VRML models (*.vrml *.wrl)";
 		}

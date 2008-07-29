@@ -54,9 +54,9 @@ class StructureObservation:  #SSEBuilderResults
       self.helixDict = helixDict
       self.sheetDict = sheetDict
       self.sheetDict = strandDict
-      self.__loadHelices()
-      self.__loadSheets()
-      self.__loadStrands()
+      #self.__loadHelices()
+      #self.__loadSheets()
+      #self.__loadStrands()
 
 
   def __loadHelices(self):

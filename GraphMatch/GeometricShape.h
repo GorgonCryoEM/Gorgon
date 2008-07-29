@@ -33,7 +33,7 @@ namespace wustl_mm {
 			bool IsSheet();
 			bool IsInsideShape(Point3 p);
 			double GetHeight();
-			double GetRadius();
+			double GetRadius();			
 			int GetLocationInVector(vector<Point3Int> v, Point3Int point);
 			int GetGeometricShapeType();
 			Matrix4 GetRotationMatrix();
@@ -42,9 +42,11 @@ namespace wustl_mm {
 			void AddInternalCell(Point3Int point);
 			void FindCornerCellsInHelix();
 			void Rotate(Vector3 axis, double angle);
+			void SetColor(float r, float g, float b, float a);
 			void SetCenter(Point3 center);
 			void SetHeight(double height);
 			void SetRadius(double radius);
+			void GetColor(float & r, float & g, float & b, float & a);
 
 
 			Point3 GetWorldCoordinates(Point3 point);
@@ -72,6 +74,10 @@ namespace wustl_mm {
 			double  height;
 			Matrix4 rotationMatrix;
 			Matrix4 inverseRotationMatrix;
+			float colorR;
+			float colorG;
+			float colorB;
+			float colorA;
 		};
 
 		GeometricShape::GeometricShape() {
@@ -80,6 +86,11 @@ namespace wustl_mm {
 			rotationMatrix = Matrix4::identity();
 			inverseRotationMatrix = Matrix4::identity();
 			internalCells.clear();
+			colorR = 0.0f;
+			colorG = 1.0f;
+			colorB = 0.0f;
+			colorA = 1.0f;
+			
 		}
 
 		GeometricShape::~GeometricShape(){
@@ -268,6 +279,13 @@ namespace wustl_mm {
 			UpdateWorldToObjectMatrix();
 		}
 
+		void GeometricShape::SetColor(float r, float g, float b, float a) {
+			colorR = r;
+			colorG = g;
+			colorB = b;
+			colorA = a;
+		}
+
 		void GeometricShape::SetCenter(Point3 center) {
 			this->centerPoint = center;
 			UpdateWorldToObjectMatrix();
@@ -286,6 +304,12 @@ namespace wustl_mm {
 		void GeometricShape::UpdateWorldToObjectMatrix() {
 			worldToObject = Matrix4::translation(centerPoint) * rotationMatrix * Matrix4::scaling(radius*2, height, radius*2);
 			objectToWorld = Matrix4::scaling(1.0/(radius*2.0), 1.0/height, 1.0/(radius*2.0)) * inverseRotationMatrix * Matrix4::translation(Point3(-centerPoint[0], -centerPoint[1], -centerPoint[2]));
+		}
+		void GeometricShape::GetColor(float & r, float & g, float & b, float & a) {
+			r = colorR;
+			g = colorG;
+			b = colorB;
+			a = colorA;
 		}
 	}
 }

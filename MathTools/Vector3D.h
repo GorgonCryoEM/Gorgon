@@ -9,6 +9,7 @@ namespace wustl_mm {
 		typedef Vector3DTemplate<int>	 Vector3DInt;
 		typedef Vector3DTemplate<float>  Vector3DFloat;
 		typedef Vector3DTemplate<double> Vector3DDouble;
+		typedef Vector3DTemplate<char> Vector3DChar;
 
 		inline Vector3DFloat Vector3DInt2Float(Vector3DInt & v) {
 			return Vector3DFloat((float)v.X(), (float)v.Y(), (float)v.Z());
