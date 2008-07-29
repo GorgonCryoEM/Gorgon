@@ -2,7 +2,7 @@
 # Copyright (C) 2005-2008 Washington University in St Louis, Baylor College of Medicine.  All rights reserved
 # Author:  Mike Marsh (michael.marsh@bcm.edu)
 # Class:  Residue
-# Class Description: Class that models amino acid residues.  Resiudes aggregate Atom objects.
+# Class Description: Class that models amino acid residues.  Residue objects aggregate Atom objects.
 #                    More info in: seq_model-doc.txt
 #
 
@@ -51,22 +51,22 @@ class Residue:
   _aa_dict['TRP']='W'
 
 
-  def __init__(self, symbol):
-		symbol=symbol.upper()
-		if len(symbol)==1:
-			self.symbol1=symbol
-			self.symbol3=Residue._aa_dict[symbol]
+  def __init__(self, symbol, chain=None):
+    symbol=symbol.upper()
+    if len(symbol)==1:
+      self.symbol1=symbol
+      self.symbol3=Residue._aa_dict[symbol]
 
-		elif len(symbol)==3:
-			self.symbol3=symbol
-			self.symbol1=Residue._aa_dict[symbol]
+    elif len(symbol)==3:
+      self.symbol3=symbol
+      self.symbol1=Residue._aa_dict[symbol]
 
-		else:
-			raise ValueError, "Residue must be instantiated with either a 1-letter or 3-letter symbol" 
+    else:
+      raise ValueError, "Residue must be instantiated with either a 1-letter or 3-letter symbol" 
 
-		self.atoms={}
+    self.atoms={}
 
 
 
-  def __str__(self):
+  def __repr__(self):
     return self.symbol1

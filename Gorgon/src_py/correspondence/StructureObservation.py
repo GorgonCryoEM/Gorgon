@@ -38,10 +38,10 @@ class StructureObservation:  #SSEBuilderResults
       
       2. SSEBuilder or Autocluster         (output files)
      *** helix-vrml           (.wrl)
-     *** sheet-vrml           (.wrl)
-     *** coil-vrml            (.wrl)
+         sheet-vrml           (.wrl)
+         coil-vrml            (.wrl)
          helices              (.pdb)
-         sse                  (.dejavu)  #this file is redundant with previous 2
+     *** dejavu               (.sse)  #this file is redundant with previous 2
      *** labeled psuedo-atoms (.pdb)
     '''
     if (filename):
@@ -67,14 +67,14 @@ class StructureObservation:  #SSEBuilderResults
     for line in lines:
       split=line.split()
       if split[0]=="ALPHA":
-	label=split[1].split("'")[1]
-	x0=float(split[5])
-	y0=float(split[6])
-	z0=float(split[7])
-	x1=float(split[8])
-	y1=float(split[9])
-	z1=float(split[10])
-	self.helixDict[label]=ObservedHelix(label, x0, y0, z0, x1, y1, z1)
+        label=split[1].split("'")[1]
+        x0=float(split[5])
+        y0=float(split[6])
+        z0=float(split[7])
+        x1=float(split[8])
+        y1=float(split[9])
+        z1=float(split[10])
+        self.helixDict[label]=ObservedHelix(label, x0, y0, z0, x1, y1, z1)
 
   def __loadSheets(self):
     pass
@@ -85,9 +85,9 @@ class StructureObservation:  #SSEBuilderResults
   def __addAttrib(self, dictName, key, value):
     if dictName in ('params','files'):
       try:
-	getattr(self, dictName)[key]=value
+        getattr(self, dictName)[key]=value
       except AttributeError:
-	print "%s is not a valid dictionary for StructureObseration objects" %dictName
+        print "%s is not a valid dictionary for StructureObseration objects" %dictName
 
     #elif dictName == ('helixDict','strandDict','sheetDict'):
       #getattr(self, dictName).__init__(key,value)
@@ -107,23 +107,23 @@ class StructureObservation:  #SSEBuilderResults
 
       # Attributes with arbitrary key values.  Includes 'comments'
       if line.rfind('\t') < 1 and line.find('=') > 0 :
-	key=line.strip().split('=')[0]
-	value=line.strip().split('=')[1]
-	self.otherAttribs[key]=value
+        key=line.strip().split('=')[0]
+        value=line.strip().split('=')[1]
+        self.otherAttribs[key]=value
 
       # Nested Dictionary Items those found in dictionaries 'files' and 'params'
       else:
-	# last character in line is ':'
-	if line.find(':') == len(line.strip()) :
-	  dictName=line.strip().split(':')[0]
-	
-	else:
-	  # line holds key=value pair
-	  if line.find('=') > 0:
-	    split=line.strip().split('=')
-	    key=split[0]
-	    value=split[1]
-	    self.__addAttrib (dictName, key, value)
+        # last character in line is ':'
+        if line.find(':') == len(line.strip()) :
+          dictName=line.strip().split(':')[0]
+
+        else:
+          # line holds key=value pair
+          if line.find('=') > 0:
+            split=line.strip().split('=')
+            key=split[0]
+            value=split[1]
+            self.__addAttrib (dictName, key, value)
 
 
   def save(self, filename):

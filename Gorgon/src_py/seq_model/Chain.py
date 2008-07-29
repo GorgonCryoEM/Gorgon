@@ -7,59 +7,122 @@
 #
 
 from Residue import Residue
+from Atom import Atom
 from Helix import Helix
-from Strand import Strand
-from Coil import Coil
+from Sheet import Sheet
+#from Strand import Strand
+#from Coil import Coil
+
 class Chain(object):
   """Chain objects represent single polypeptide chains, which are sequences of Residue objects"""
-  chains_dict = {}
+  chainsDict = {}
 
   #Chain ID management
-  __last_chain_id = 64  # chr(64) is A;  chr(65) is B, etc.
-  def __next_chain_id(self):
-    Chain.__last_chain_id=Chain.__last_chain_id+1
-    return chr(Chain.__last_chain_id)
+  __lastChainID = 64  # chr(64) is A;  chr(65) is B, etc.
+
+  @classmethod
+  def __nextChainID(cls):
+    Chain.__lastChainID=Chain.__lastChainID+1
+    return chr(Chain.__lastChainID)
 
 
 
 
   #Chain Constructor
-  def __init__(self,char_string):
-    self.secel_list=[]
-    self.residue_list={}
-    self.chain_id = self.__next_chain_id()
+  def __init__(self,char_string=None):
+    self.residueList={}
+    self.chainID = Chain.__nextChainID()
+    self.atoms = {}
+
+    self.helices = {}
+    self.sheets = {}
+    self.orphanStrands = {}
 
     i=1
     for char in char_string:
-      self.residue_list[i]=Residue(char)
+      self.residueList[i]=Residue(char,self)
       i=i+1
 
-    Chain.chains_dict[self.chain_id]=self
+    Chain.chainsDict[self.chainID]=self
 
+
+
+  @classmethod
+  def __loadFromPDB (cls,filename):
+    infile=open(filename,'U')
+    lines=infile.readlines()
+
+    result=Chain('')
+    residue=None
+    for line in lines:
+      if line[0:4]=='ATOM':
+  
+        residueIndex=    int (line[22:26])
+        if residueIndex not in result.residueRange():
+          residue   = Residue(line[17:20].strip(),result)
+      
+        chainID     =         line[21:22]
+        serialNo    =    int (line[6:11].strip())
+      
+        atomName    =         line[12:16].strip()
+        element     =         line[76:78].strip()
+        tempFactor  =  float (line[60:66].strip())
+        occupancy   =  float (line[54:60].strip())
+      
+        x           =  float (line[30:38])
+        y           =  float (line[38:46])
+        z           =  float (line[46:54])
+      
+        if residueIndex not in result.residueRange():
+          result[residueIndex]=residue
+        atom=Atom(element, x,y,z, residue, serialNo, occupancy ,tempFactor)
+      
+        residue.atoms[atomName]=atom
+      
+        result.atoms[serialNo]=atom
+
+      elif line[0:6].strip()=='HELIX':
+        Helix.parsePDB(line,result)
+
+      elif line[0:6].strip()=='SHEET':
+        Sheet.parsePDB(line,result)
+
+    infile.close()
+    return result
+
+
+
+  @classmethod
+  def load (cls,filename):
+    extension = filename.split('.')[-1].lower()
+    if extension == 'pdb':
+      return Chain.__loadFromPDB(filename)
+    else:
+      raise NotImplementedError, 'NYI'
 
 
   def __repr__(self):
     s=''
-    residue_range=self.residue_range()
-    for index in residue_range:
-			if (index!=1)  and not (index-1) in residue_range:
-				s=s+'...'
-			s=s + self[index].symbol1
+    residueRange=self.residueRange()
+    for index in residueRange:
+      if (index!=1)  and not (index-1) in residueRange:
+        s=s+'...'
+      s=s + self[index].symbol1
     return s
 
 
 
 
   def __iter__(self):
-    # suppose residue_list keys are {3,4,5,6,7,8, 13,14,15,16, 21,22,23}
-    #eys=self.residue_list.keys().sort()
-    keys=self.residue_list.keys()
+    # suppose residueList keys are {3,4,5,6,7,8, 13,14,15,16, 21,22,23}
+    #eys=self.residueList.keys().sort()
+    keys=self.residueList.keys()
     key_index=0
     next_residue_key=keys[key_index]
 
 
     while True:
-      yield self.residue_list[next_residue_key]
+      yield self.residueList[next_residue_key]
       key_index=key_index+1
       try:
         next_residue_key=keys[key_index]
@@ -68,8 +131,16 @@ class Chain(object):
 
 
 
+  def __convertNegativeIndex(self,i):
+    return len(self)+i+1
+
   def __setitem__(self,i, residue):
-    self.residue_list[i]=residue
+    if isinstance(residue,Residue):
+      self.residueList[i]=residue
+    elif isinstance(residue,str):
+      self.residueList[i]=Residue(residue,self)
+    else:
+      raise TypeError
 
 
 
@@ -85,23 +156,27 @@ class Chain(object):
       if i.start is None: 
         start=1
       elif i.start < 0:
-        start=len(self)+i.start+1
+        #start=len(self)+i.start+1
+        start=self.__convertNegativeIndex(i.start)
 
       if i.stop is None: 
         stop=len(self)
       elif i.stop < 0:
-        stop=len(self)+i.stop+1
+        #stop=len(self)+i.stop+1
+        stop=self.__convertNegativeIndex(i.stop)
       return self.__slicehelper(start,stop)
 
     # branch for non-slices
     else:
+      if i<0:
+        i=self.__convertNegativeIndex(i)
       #rint 'getitem(%i)' %i
-      return self.residue_list[i]
+      return self.residueList[i]
 
 
   def __slicehelper(self,i,j):
     #rint 'slice_helper(%s,%s)' %(i,j)
-    keys=self.residue_list.keys()
+    keys=self.residueList.keys()
     keys.sort()
     start=keys.index(i)
     stop=keys.index(j)
@@ -112,107 +187,134 @@ class Chain(object):
     for index in keys:
       new_chain[index]=self[index]
 
-    for secel in self.secel_list:
+
+    # Slice output should be annotated for helix, strand, coil
+    # ???  what about strands that become orphaned?
+    '''
+    for label in self.secelList.keys():
+      secel=self.secelList[label]
       need_to_duplicate_secel=False
       
-      # Secel start_index
-      if new_chain.residue_list.has_key(secel.start_index):
-	start_index=secel.start_index
+      # Secel startIndex
+      if new_chain.residueList.has_key(secel.startIndex):
+  startIndex=secel.startIndex
         need_to_duplicate_secel=True
       else: 
-	keys=new_chain.residue_list.keys()
-	keys.sort()
-	start_index=keys[0]
+  keys=new_chain.residueList.keys()
+  keys.sort()
+  startIndex=keys[0]
 
-      # Secel stop_index
-      if new_chain.residue_list.has_key(secel.stop_index):
-	stop_index=secel.stop_index
+      # Secel stopIndex
+      if new_chain.residueList.has_key(secel.stopIndex):
+  stopIndex=secel.stopIndex
         need_to_duplicate_secel=True
       else: 
-	keys=new_chain.residue_list.keys()
-	keys.sort()
-	stop_index=keys[-1]
+  keys=new_chain.residueList.keys()
+  keys.sort()
+  stopIndex=keys[-1]
 
       if need_to_duplicate_secel:
         if isinstance(secel,Helix):  cls=Helix
         if isinstance(secel,Strand): cls=Strand
         if isinstance(secel,Coil):   cls=Coil
-        new_chain.secel_list.append(cls(new_chain, new_chain.chain_id, start_index, stop_index))
+        new_chain.secelList[label]=cls(new_chain, new_chain.chainID, startIndex, stopIndex)
         #rint 'secel.__class__=%s' %secel.__class__
+    '''
 
     return new_chain
 
 
 
-  # len(my_chain) returns the length of residue_list
+  # len(my_chain) returns the length of residueList
   def __len__(self):
-    return_value= len(self.residue_list)
+    return_value= len(self.residueList)
     return return_value
 
 
 
   def clear_coordinates(self):
-    for index in self.residue_range():
+    for index in self.residueRange():
       self[index].atoms={}
 
 
 
   def append(self,residue):
-    if len(self.residue_list)==0:
-      self.residue_list[1]=residue
+    if len(self.residueList)==0:
+      #self.residueList[1]=residue
+      self.__setitem__(1,residue)
+      return 1
     else:
-      keys=self.residue_list.keys()
+      keys=self.residueList.keys()
       keys.sort()
       key=1+keys[-1]
-      self.residue_list[key]=residue
-      #elf.residue_list.append(residue)
+
+      #self.residueList[key]=residue
+      #this fails unit tests if residue is a str, must delegate to __setitem__ intead
+
+      self.__setitem__(key,residue)
+      return key
 
 
 
-  def residue_range(self):
-    return sorted(self.residue_list.keys())
+  def residueRange(self):
+    return sorted(self.residueList.keys())
 
 
+  def saveToPDB(self, filename):
+    s = self.toPDB()
+    outfile=open(filename,'w')
+    outfile.write(s)
+    outfile.flush()
+    outfile.close()
 
   #Return a pdb-compliant string
-  def to_pdb(self, backbone_only=False): 
+  def toPDB(self, backboneOnly=False, suppressWarning=False): 
     """decomposes chain into constituent residues and atoms to render pdb coordinate model.  residue is ommitted if it has no atoms."""
     #Not Thread-Safe
     atom_index=1
-    Helix.serial_num=0  #This is what makes it not thread-safe
+    Helix.serialNo=0  #This is what makes it not thread-safe
 
     s=''
 
-    for secel in self.secel_list:
-      s=s+secel.to_pdb()
+    for serialNo in sorted(self.helices.keys()):
+      helix=self.helices[serialNo]
+      s=s+helix.toPDB()
 
-    for residue_index in self.residue_range():
-     #rint residue_index
-     residue=self[residue_index]
+    for sheetID in sorted(self.sheets.keys()):
+      sheet=self.sheets[sheetID]
+      s=s+sheet.toPDB(sheetID)
 
-     if backbone_only:
-      atoms = ['CA']
-     else:
-      atoms=residue.atoms.keys()
+    for strand in self.orphanStrands:
+      s=s+strand.toPDB()
 
-     try:
-       for atom_name in atoms:
-	  atom=residue.atoms[atom_name]
-	  s=s+ "ATOM" + ' '
-	  s=s+ str(atom_index).rjust(6) + ' '
-	  atom_index=atom_index+1 
-	  s=s+ atom_name.rjust(3) + ' '
-	  s=s+ residue.symbol3.rjust(4) + ' '
-	  s=s+ self.chain_id.rjust(1) + ' ' #chainID
-	  s=s+ str(residue_index).rjust(3) + ' '
-	  s=s+ "%11.2f " %atom.x
-	  s=s+ "%7.2f " %atom.y
-	  s=s+ "%7.2f " %atom.z
-	  s=s+ "%5.2f " %atom.occupancy
-	  s=s+ "%5.2f " %atom.temp_factor
-	  s=s+ atom.element.rjust(11) + "\n"
-     except KeyError, e:
-        print "Chain.to_pdb() warning:  No atom record for %s in %s%s." %(atom_name,residue_index,residue.symbol3)
+    for residue_index in self.residueRange():
+      residue=self[residue_index]
+
+      if backboneOnly:
+        atoms = ['CA']
+        #print 'writing CA only'
+      else:
+        atoms=residue.atoms.keys()
+
+      try:
+        for atom_name in atoms:
+          atom=residue.atoms[atom_name]
+          s=s+ "ATOM" + ' '
+          s=s+ str(atom_index).rjust(6) + ' '
+          atom_index=atom_index+1 
+          s=s+ atom_name.rjust(3) + ' '
+          s=s+ residue.symbol3.rjust(4) + ' '
+          s=s+ self.chainID.rjust(1) + ' ' #chainID
+          s=s+ str(residue_index).rjust(3) + ' '
+          s=s+ "%11.3f " %atom.x
+          s=s+ "%7.3f " %atom.y
+          s=s+ "%7.3f " %atom.z
+          s=s+ "%5.2f " %atom.occupancy
+          s=s+ "%5.2f " %atom.tempFactor
+          s=s+ atom.element.rjust(11) + "\n"
+      except KeyError:
+        if not suppressWarning:
+          print "Chain.toPDB() warning:  No atom record for %s in %s%s." %(atom_name,residue_index,residue.symbol3)
     if len(atoms) > 0:
       s=s+ "TER\n"
 
