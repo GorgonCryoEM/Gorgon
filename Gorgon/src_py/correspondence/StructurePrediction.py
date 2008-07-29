@@ -6,10 +6,10 @@
 #                    More info in: correspondence-doc.txt
 #
 
-from Helix import Helix
-from Coil import Coil
-from Strand import Strand
-from Chain import Chain
+from seq_model.Helix import Helix
+from seq_model.Coil import Coil
+from seq_model.Strand import Strand
+from seq_model.Chain import Chain
 
 class StructurePrediction:  #results of secondary-structure prediction
   def __init__(self, secelDict, chain, params=None, comments=None):
