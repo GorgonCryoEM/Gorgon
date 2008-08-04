@@ -6,7 +6,7 @@
     <x>0</x>
     <y>0</y>
     <width>416</width>
-    <height>144</height>
+    <height>188</height>
    </rect>
   </property>
   <property name="minimumSize" >
@@ -28,13 +28,13 @@
        </property>
       </widget>
      </item>
-     <item row="0" column="1" >
+     <item row="0" column="1" colspan="2" >
       <widget class="QSlider" name="horizontalSliderMedialness" >
        <property name="whatsThis" >
         <string>Picks the density to use when performing skeletonization</string>
        </property>
        <property name="minimum" >
-        <number>1</number>
+        <number>0</number>
        </property>
        <property name="maximum" >
         <number>100</number>
@@ -56,7 +56,7 @@
        </property>
       </widget>
      </item>
-     <item row="0" column="2" >
+     <item row="0" column="3" >
       <widget class="QLabel" name="labelMedialnessDisplay" >
        <property name="minimumSize" >
         <size>
@@ -78,30 +78,6 @@
        </property>
       </widget>
      </item>
-     <item rowspan="4" row="0" column="3" >
-      <widget class="Line" name="line" >
-       <property name="orientation" >
-        <enum>Qt::Vertical</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="4" >
-      <widget class="QLabel" name="labelMinimumCurve" >
-       <property name="text" >
-        <string>Minimum Curve Length:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="5" >
-      <widget class="QSpinBox" name="spinBoxMinCurve" >
-       <property name="maximum" >
-        <number>1000000</number>
-       </property>
-       <property name="value" >
-        <number>4</number>
-       </property>
-      </widget>
-     </item>
      <item row="1" column="0" >
       <widget class="QLabel" name="labelSmoothness" >
        <property name="text" >
@@ -109,13 +85,13 @@
        </property>
       </widget>
      </item>
-     <item row="1" column="1" >
+     <item row="1" column="1" colspan="2" >
       <widget class="QSlider" name="horizontalSliderSmoothness" >
        <property name="whatsThis" >
         <string>Picks the density to use when performing skeletonization</string>
        </property>
        <property name="minimum" >
-        <number>1</number>
+        <number>0</number>
        </property>
        <property name="maximum" >
         <number>100</number>
@@ -137,7 +113,7 @@
        </property>
       </widget>
      </item>
-     <item row="1" column="2" >
+     <item row="1" column="3" >
       <widget class="QLabel" name="labeSmoothnessDisplay" >
        <property name="minimumSize" >
         <size>
@@ -159,26 +135,6 @@
        </property>
       </widget>
      </item>
-     <item rowspan="2" row="1" column="4" >
-      <widget class="QLabel" name="labelCurveRadius" >
-       <property name="whatsThis" >
-        <string>The Radius to use when obtaining the structure tensor of a curve... The larger the radius, the more global information is used</string>
-       </property>
-       <property name="text" >
-        <string>Curve Radius:</string>
-       </property>
-      </widget>
-     </item>
-     <item rowspan="2" row="1" column="5" >
-      <widget class="QSpinBox" name="spinBoxCurveRadius" >
-       <property name="maximum" >
-        <number>10</number>
-       </property>
-       <property name="value" >
-        <number>2</number>
-       </property>
-      </widget>
-     </item>
      <item row="2" column="0" >
       <widget class="QLabel" name="labelStartDensity" >
        <property name="text" >
@@ -186,7 +142,7 @@
        </property>
       </widget>
      </item>
-     <item row="2" column="1" >
+     <item row="2" column="1" colspan="2" >
       <widget class="QSlider" name="horizontalSliderStartingDensity" >
        <property name="whatsThis" >
         <string>Picks the density to use when performing skeletonization</string>
@@ -211,7 +167,7 @@
        </property>
       </widget>
      </item>
-     <item row="2" column="2" >
+     <item row="2" column="3" >
       <widget class="QLabel" name="labelStartingDensityDisplay" >
        <property name="minimumSize" >
         <size>
@@ -240,7 +196,7 @@
        </property>
       </widget>
      </item>
-     <item row="3" column="1" >
+     <item row="3" column="1" colspan="2" >
       <widget class="QSlider" name="horizontalSliderStepCount" >
        <property name="whatsThis" >
         <string>Picks the density to use when performing skeletonization</string>
@@ -265,7 +221,7 @@
        </property>
       </widget>
      </item>
-     <item row="3" column="2" >
+     <item row="3" column="3" >
       <widget class="QLabel" name="labelStepSizeDisplay" >
        <property name="minimumSize" >
         <size>
@@ -287,9 +243,86 @@
        </property>
       </widget>
      </item>
+     <item row="4" column="0" colspan="2" >
+      <widget class="QLabel" name="labelMinimumCurve" >
+       <property name="text" >
+        <string>Minimum Curve Length:</string>
+       </property>
+      </widget>
+     </item>
+     <item rowspan="2" row="4" column="2" colspan="2" >
+      <widget class="QSpinBox" name="spinBoxMinCurve" >
+       <property name="maximum" >
+        <number>1000000</number>
+       </property>
+       <property name="value" >
+        <number>4</number>
+       </property>
+      </widget>
+     </item>
+     <item rowspan="2" row="5" column="0" colspan="2" >
+      <widget class="QLabel" name="labelCurveRadius" >
+       <property name="whatsThis" >
+        <string>The Radius to use when obtaining the structure tensor of a curve... The larger the radius, the more global information is used</string>
+       </property>
+       <property name="text" >
+        <string>Curve Radius:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="6" column="2" colspan="2" >
+      <widget class="QSpinBox" name="spinBoxCurveRadius" >
+       <property name="maximum" >
+        <number>10</number>
+       </property>
+       <property name="value" >
+        <number>2</number>
+       </property>
+      </widget>
+     </item>
     </layout>
    </item>
-   <item row="1" column="0" >
+   <item row="0" column="1" >
+    <widget class="Line" name="line" >
+     <property name="orientation" >
+      <enum>Qt::Vertical</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="2" >
+    <widget class="QGroupBox" name="groupBoxMedialnessScore" >
+     <property name="title" >
+      <string>Medialness Scoring Function:</string>
+     </property>
+     <layout class="QGridLayout" >
+      <item row="0" column="0" >
+       <widget class="QRadioButton" name="radioButtonBinary" >
+        <property name="text" >
+         <string>Binary</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0" >
+       <widget class="QRadioButton" name="radioButtonGlobalRank" >
+        <property name="text" >
+         <string>Global Rank</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0" >
+       <widget class="QRadioButton" name="radioButtonLocalRank" >
+        <property name="text" >
+         <string>Local Rank</string>
+        </property>
+        <property name="checked" >
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="1" column="0" colspan="3" >
     <layout class="QGridLayout" >
      <item row="0" column="0" >
       <spacer>
@@ -325,6 +358,19 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>horizontalSliderMedialness</tabstop>
+  <tabstop>horizontalSliderSmoothness</tabstop>
+  <tabstop>horizontalSliderStartingDensity</tabstop>
+  <tabstop>horizontalSliderStepCount</tabstop>
+  <tabstop>spinBoxMinCurve</tabstop>
+  <tabstop>spinBoxCurveRadius</tabstop>
+  <tabstop>radioButtonBinary</tabstop>
+  <tabstop>radioButtonGlobalRank</tabstop>
+  <tabstop>radioButtonLocalRank</tabstop>
+  <tabstop>pushButtonStart</tabstop>
+  <tabstop>pushButtonClose</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>
@@ -356,6 +402,22 @@
     <hint type="destinationlabel" >
      <x>192</x>
      <y>41</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>horizontalSliderStepCount</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>labelStepSizeDisplay</receiver>
+   <slot>setNum(int)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>109</x>
+     <y>89</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>193</x>
+     <y>88</y>
     </hint>
    </hints>
   </connection>
