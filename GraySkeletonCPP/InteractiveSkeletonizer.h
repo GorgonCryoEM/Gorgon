@@ -33,9 +33,13 @@ namespace wustl_mm {
 
 		typedef NonManifoldMesh<nodeAttrib, edgeAttrib, bool> GraphType;
 
+		const unsigned int MEDIALNESS_SCORING_FUNCTION_BINARY = 0;
+		const unsigned int MEDIALNESS_SCORING_FUNCTION_GLOBAL_RANK = 1;
+		const unsigned int MEDIALNESS_SCORING_FUNCTION_LOCAL_RANK = 2;
+
 		class InteractiveSkeletonizer : public VolumeSkeletonizer {
 		public:
-			InteractiveSkeletonizer(Volume * sourceVol, float minGray, float maxGray, float stepSize, int curveRadius, int minCurveSize, bool storeEigenInfo = false);
+			InteractiveSkeletonizer(Volume * sourceVol, float minGray, float maxGray, float stepSize, int curveRadius, int minCurveSize, bool storeEigenInfo, unsigned int medialnessScoringFunction);
 			~InteractiveSkeletonizer();
 			GraphType * GetGraph();
 			Octree<octreeTagType> * GetOctree();
@@ -53,10 +57,12 @@ namespace wustl_mm {
 			Octree<octreeTagType> * octree;
 			Vector3DInt seedPoint;
 			EigenResults3D * volumeEigens;
+			unsigned int medialnessScoringFunction;
 		};
 
-		InteractiveSkeletonizer::InteractiveSkeletonizer(Volume * sourceVol, float minGray, float maxGray, float stepSize, int curveRadius, int minCurveSize, bool storeEigenInfo) : VolumeSkeletonizer(0, curveRadius, 0,0) {
+		InteractiveSkeletonizer::InteractiveSkeletonizer(Volume * sourceVol, float minGray, float maxGray, float stepSize, int curveRadius, int minCurveSize, bool storeEigenInfo, unsigned int medialnessScoringFunction) : VolumeSkeletonizer(0, curveRadius, 0,0) {			
 			appTimeManager.PushCurrentTime();
+			this->medialnessScoringFunction = medialnessScoringFunction;
 			graph = new GraphType();		
 			sourceVol->pad(MAX_GAUSSIAN_FILTER_RADIUS, 0);
 					
@@ -119,17 +125,64 @@ namespace wustl_mm {
 			EigenResults3D eig1;
 			EigenResults3D eig2;
 
-			
+			float maxGray = sourceVol->getMax();
+			float minGray = sourceVol->getMin();
+			float lMaxGray1, lMinGray1, lMaxGray2, lMinGray2;
 
 			for(unsigned int i = 0; i < graph->edges.size(); i++) {
 				n1 = graph->vertices[graph->GetVertexIndex(graph->edges[i].vertexIds[0])].tag.octreeNode;
 				n2 = graph->vertices[graph->GetVertexIndex(graph->edges[i].vertexIds[1])].tag.octreeNode;
-				if( (graph->vertices[graph->GetVertexIndex(graph->edges[i].vertexIds[0])].position - graph->vertices[graph->GetVertexIndex(graph->edges[i].vertexIds[1])].position).Length() < 2.0) {						
-					graph->edges[i].tag.medialCost = 1.0 - 
-						(skeleton->getDataAt(n1->pos[0]+MAX_GAUSSIAN_FILTER_RADIUS, n1->pos[1]+MAX_GAUSSIAN_FILTER_RADIUS, n1->pos[2]+MAX_GAUSSIAN_FILTER_RADIUS) +  
-						 skeleton->getDataAt(n2->pos[0]+MAX_GAUSSIAN_FILTER_RADIUS, n2->pos[1]+MAX_GAUSSIAN_FILTER_RADIUS, n2->pos[2]+MAX_GAUSSIAN_FILTER_RADIUS)) / 2.0;
-				} else {
-					graph->edges[i].tag.medialCost = 1.0;
+				switch(medialnessScoringFunction) {
+					case MEDIALNESS_SCORING_FUNCTION_BINARY :
+						if( (graph->vertices[graph->GetVertexIndex(graph->edges[i].vertexIds[0])].position - graph->vertices[graph->GetVertexIndex(graph->edges[i].vertexIds[1])].position).Length() < 2.0) {						
+							graph->edges[i].tag.medialCost = 1.0 - 
+								(skeleton->getDataAt(n1->pos[0]+MAX_GAUSSIAN_FILTER_RADIUS, n1->pos[1]+MAX_GAUSSIAN_FILTER_RADIUS, n1->pos[2]+MAX_GAUSSIAN_FILTER_RADIUS) +  
+								 skeleton->getDataAt(n2->pos[0]+MAX_GAUSSIAN_FILTER_RADIUS, n2->pos[1]+MAX_GAUSSIAN_FILTER_RADIUS, n2->pos[2]+MAX_GAUSSIAN_FILTER_RADIUS)) / 2.0;
+						} else {
+							graph->edges[i].tag.medialCost = 1.0;
+						}
+						break;
+					case MEDIALNESS_SCORING_FUNCTION_GLOBAL_RANK :
+						if((skeleton->getDataAt(n1->pos[0]+MAX_GAUSSIAN_FILTER_RADIUS, n1->pos[1]+MAX_GAUSSIAN_FILTER_RADIUS, n1->pos[2]+MAX_GAUSSIAN_FILTER_RADIUS) < 1.0) &&
+							(skeleton->getDataAt(n2->pos[0]+MAX_GAUSSIAN_FILTER_RADIUS, n2->pos[1]+MAX_GAUSSIAN_FILTER_RADIUS, n2->pos[2]+MAX_GAUSSIAN_FILTER_RADIUS) < 1.0)) {
+								graph->edges[i].tag.medialCost = 
+									(maxGray - sourceVol->getDataAt(n1->pos[0]+MAX_GAUSSIAN_FILTER_RADIUS, n1->pos[1]+MAX_GAUSSIAN_FILTER_RADIUS, n1->pos[2]+MAX_GAUSSIAN_FILTER_RADIUS) +  
+									maxGray - sourceVol->getDataAt(n2->pos[0]+MAX_GAUSSIAN_FILTER_RADIUS, n2->pos[1]+MAX_GAUSSIAN_FILTER_RADIUS, n2->pos[2]+MAX_GAUSSIAN_FILTER_RADIUS)) / (maxGray - minGray);
+						} else {
+							graph->edges[i].tag.medialCost = 1.0;
+						}
+						break;
+					case MEDIALNESS_SCORING_FUNCTION_LOCAL_RANK:
+						if((skeleton->getDataAt(n1->pos[0]+MAX_GAUSSIAN_FILTER_RADIUS, n1->pos[1]+MAX_GAUSSIAN_FILTER_RADIUS, n1->pos[2]+MAX_GAUSSIAN_FILTER_RADIUS) < 1.0) &&
+							(skeleton->getDataAt(n2->pos[0]+MAX_GAUSSIAN_FILTER_RADIUS, n2->pos[1]+MAX_GAUSSIAN_FILTER_RADIUS, n2->pos[2]+MAX_GAUSSIAN_FILTER_RADIUS) < 1.0)) {
+
+							lMaxGray1 = sourceVol->getLocalMax(n1->pos[0]+MAX_GAUSSIAN_FILTER_RADIUS, n1->pos[1]+MAX_GAUSSIAN_FILTER_RADIUS, n1->pos[2]+MAX_GAUSSIAN_FILTER_RADIUS, curveRadius);
+							lMinGray1 = sourceVol->getLocalMin(n1->pos[0]+MAX_GAUSSIAN_FILTER_RADIUS, n1->pos[1]+MAX_GAUSSIAN_FILTER_RADIUS, n1->pos[2]+MAX_GAUSSIAN_FILTER_RADIUS, curveRadius);
+							lMaxGray2 = sourceVol->getLocalMax(n2->pos[0]+MAX_GAUSSIAN_FILTER_RADIUS, n2->pos[1]+MAX_GAUSSIAN_FILTER_RADIUS, n2->pos[2]+MAX_GAUSSIAN_FILTER_RADIUS, curveRadius);
+							lMinGray2 = sourceVol->getLocalMin(n2->pos[0]+MAX_GAUSSIAN_FILTER_RADIUS, n2->pos[1]+MAX_GAUSSIAN_FILTER_RADIUS, n2->pos[2]+MAX_GAUSSIAN_FILTER_RADIUS, curveRadius);
+							maxGray = max(lMaxGray1, lMaxGray2);
+							minGray = min(lMinGray1, lMinGray2);
+
+							
+							graph->edges[i].tag.medialCost = 
+								(maxGray - sourceVol->getDataAt(n1->pos[0]+MAX_GAUSSIAN_FILTER_RADIUS, n1->pos[1]+MAX_GAUSSIAN_FILTER_RADIUS, n1->pos[2]+MAX_GAUSSIAN_FILTER_RADIUS) +  
+								maxGray - sourceVol->getDataAt(n2->pos[0]+MAX_GAUSSIAN_FILTER_RADIUS, n2->pos[1]+MAX_GAUSSIAN_FILTER_RADIUS, n2->pos[2]+MAX_GAUSSIAN_FILTER_RADIUS)) / (maxGray - minGray);
+						} else {
+							graph->edges[i].tag.medialCost = 1.0;
+						}
+						break;
+
+						//graph->edges[i].tag.medialCost = 
+						//	(maxGray - sourceVol->getDataAt(n1->pos[0]+MAX_GAUSSIAN_FILTER_RADIUS, n1->pos[1]+MAX_GAUSSIAN_FILTER_RADIUS, n1->pos[2]+MAX_GAUSSIAN_FILTER_RADIUS) +  
+						//	maxGray - sourceVol->getDataAt(n2->pos[0]+MAX_GAUSSIAN_FILTER_RADIUS, n2->pos[1]+MAX_GAUSSIAN_FILTER_RADIUS, n2->pos[2]+MAX_GAUSSIAN_FILTER_RADIUS)) / (maxGray - minGray);
+
+
+						//graph->edges[i].tag.medialCost = 
+						//	(lMaxGray1 - sourceVol->getDataAt(n1->pos[0]+MAX_GAUSSIAN_FILTER_RADIUS, n1->pos[1]+MAX_GAUSSIAN_FILTER_RADIUS, n1->pos[2]+MAX_GAUSSIAN_FILTER_RADIUS)) / (2*(lMaxGray1 - lMinGray1)) +  
+						//	(lMaxGray2 - sourceVol->getDataAt(n2->pos[0]+MAX_GAUSSIAN_FILTER_RADIUS, n2->pos[1]+MAX_GAUSSIAN_FILTER_RADIUS, n2->pos[2]+MAX_GAUSSIAN_FILTER_RADIUS)) / (2*(lMaxGray2 - lMinGray2));
+
+
+						break;
 				}
 
 				GetEigenResult2(eig1, volumeGradient, gaussianFilterCurveRadius, n1->pos[0]+MAX_GAUSSIAN_FILTER_RADIUS, n1->pos[1]+MAX_GAUSSIAN_FILTER_RADIUS, n1->pos[2]+MAX_GAUSSIAN_FILTER_RADIUS, skeleton->getSizeX(), skeleton->getSizeY(), skeleton->getSizeZ(), curveRadius, false);

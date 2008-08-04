@@ -149,7 +149,7 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("get3DCoordinates", &CAlphaRenderer::Get3DCoordinates)
 	;
 
-	class_<InteractiveSkeletonEngine>("InteractiveSkeletonEngine", init<Volume *, NonManifoldMesh_Annotated *, float, float, float, int, int, int>())
+	class_<InteractiveSkeletonEngine>("InteractiveSkeletonEngine", init<Volume *, NonManifoldMesh_Annotated *, float, float, float, int, int, int, unsigned int>())
 		.def("selectStartSeedRay", &InteractiveSkeletonEngine::SelectStartSeedRay)
 		.def("selectEndSeed", &InteractiveSkeletonEngine::SelectEndSeed)
 		.def("analyzePathRay", &InteractiveSkeletonEngine::AnalyzePathRay)

@@ -984,6 +984,30 @@ public:
 		return rvalue ;
 	}
 
+	double getLocalMax(int x, int y, int z, int radius) {
+		double mx = getDataAt(x, y, z);
+		for(int xx = x - radius; xx <= x + radius; xx++) {
+			for(int yy = y - radius; yy <= y + radius; yy++) {
+				for(int zz = z - radius; zz <= z + radius; zz++) {
+					mx = max(mx, getDataAt(xx, yy, zz));
+				}
+			}
+		}
+		return mx;
+	}
+
+	double getLocalMin(int x, int y, int z, int radius) {
+		double mn = getDataAt(x, y, z);
+		for(int xx = x - radius; xx <= x + radius; xx++) {
+			for(int yy = y - radius; yy <= y + radius; yy++) {
+				for(int zz = z - radius; zz <= z + radius; zz++) {
+					mn = min(mn, getDataAt(xx, yy, zz));
+				}
+			}
+		}
+		return mn;
+	}
+
 	void fill( double val )
 	{
 		for ( int i = 0 ; i < sizex * sizey * sizez ; i ++ )

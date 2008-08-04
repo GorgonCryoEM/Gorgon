@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.13  2008/07/22 13:21:17  ssa1
+#   Reducing memory footprint while manual skeletonization
+#
 #   Revision 1.12  2008/07/15 15:10:17  ssa1
 #   Adding snapping to Interactive skeletonization
 #
@@ -38,6 +41,8 @@ except ImportError:
     sys.exit(1)
 
 class VolumeManualSkeletonizationForm(QtGui.QWidget):
+    MedialnessScoringFunctionBinary, MedialnessScoringFunctionGlobalRank, MedialnessScoringFunctionLocalRank = range(3)
+    
     def __init__(self, main, viewer, parent=None):
         QtGui.QWidget.__init__(self, parent)
         self.app = main
@@ -65,6 +70,8 @@ class VolumeManualSkeletonizationForm(QtGui.QWidget):
         self.connect(self.ui.horizontalSliderStartingDensity,QtCore.SIGNAL("valueChanged(int)"),self.startingDensityChanged)     
         self.connect(self.ui.pushButtonStart,QtCore.SIGNAL("pressed ()"),self.startSkeletonization)
         self.connect(self.ui.pushButtonClose, QtCore.SIGNAL("pressed ()"), self.endSkeletonization)   
+        self.connect(self.ui.horizontalSliderMedialness, QtCore.SIGNAL("valueChanged(int)"), self.medialnessChanged)
+        self.connect(self.ui.horizontalSliderSmoothness, QtCore.SIGNAL("valueChanged(int)"), self.smoothnessChanged)
                                             
     def createActions(self):
         self.skeletonizeAct = QtGui.QAction(self.tr("&Interactive Skeletonization"), self)
@@ -108,8 +115,15 @@ class VolumeManualSkeletonizationForm(QtGui.QWidget):
                 self.skeletonViewer.unloadData()
             self.mesh = self.skeletonViewer.renderer.getMesh()
             skeletonRatio = float(self.getMedialness())/float(self.getMedialness()+self.getSmoothness())
-            stRatio = float(self.getSmoothness())/float(self.getMedialness()+self.getSmoothness())            
-            self.engine = InteractiveSkeletonEngine(self.volume, self.mesh, skeletonRatio, stRatio, self.getStartingDensity(), self.getStepCount(), self.getCurveRadius(), self.getMinCurveLength())
+            stRatio = float(self.getSmoothness())/float(self.getMedialness()+self.getSmoothness())
+            if self.ui.radioButtonBinary.isChecked():
+                medialnessScoringFunction = self.MedialnessScoringFunctionBinary
+            elif self.ui.radioButtonGlobalRank.isChecked():
+                medialnessScoringFunction = self.MedialnessScoringFunctionGlobalRank
+            else :
+                medialnessScoringFunction = self.MedialnessScoringFunctionLocalRank 
+                       
+            self.engine = InteractiveSkeletonEngine(self.volume, self.mesh, skeletonRatio, stRatio, self.getStartingDensity(), self.getStepCount(), self.getCurveRadius(), self.getMinCurveLength(), medialnessScoringFunction)
             self.engine.setIsoValue(self.viewer.renderer.getSurfaceValue())
             self.setSkeletonViewerProperties(True)
             self.skeletonViewer.loaded = True
@@ -267,6 +281,16 @@ class VolumeManualSkeletonizationForm(QtGui.QWidget):
     def dockVisibilityChanged(self, visible):
         self.skeletonizeAct.setChecked(visible)
         self.showWidget(visible)
+        
+    def medialnessChanged(self, value):
+        smoothnessValue = 100 - value
+        if self.ui.horizontalSliderSmoothness.value != smoothnessValue:
+            self.ui.horizontalSliderSmoothness.setValue(smoothnessValue)
+                
+    def smoothnessChanged(self, value):
+        medialnessValue = 100 - value
+        if self.ui.horizontalSliderMedialness.value != medialnessValue:
+            self.ui.horizontalSliderMedialness.setValue(medialnessValue)
         
     def drawOverlay(self):     
         if self.started:

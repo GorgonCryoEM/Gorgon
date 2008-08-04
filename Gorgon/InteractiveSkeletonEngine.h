@@ -17,7 +17,7 @@ namespace wustl_mm {
 	namespace Visualization {	
 		class InteractiveSkeletonEngine {
 		public:
-			InteractiveSkeletonEngine(Volume * volume, NonManifoldMesh_Annotated * skeleton, float skeletonRatio, float stRatio, float minGray, int stepCount, int curveRadius, int minCurveSize);
+			InteractiveSkeletonEngine(Volume * volume, NonManifoldMesh_Annotated * skeleton, float skeletonRatio, float stRatio, float minGray, int stepCount, int curveRadius, int minCurveSize, unsigned int medialnessScoringFunction);
 			~InteractiveSkeletonEngine();			
 			void AnalyzePathRay(float rayX, float rayY, float rayZ, float eyeX, float eyeY, float eyeZ, float rayWidth);
 			void Draw(int subscene);
@@ -40,7 +40,7 @@ namespace wustl_mm {
 			bool startSeedIsolated;
 		};
 
-		InteractiveSkeletonEngine::InteractiveSkeletonEngine(Volume * volume, NonManifoldMesh_Annotated * skeleton, float skeletonRatio, float stRatio, float minGray, int stepCount, int curveRadius, int minCurveSize) {
+		InteractiveSkeletonEngine::InteractiveSkeletonEngine(Volume * volume, NonManifoldMesh_Annotated * skeleton, float skeletonRatio, float stRatio, float minGray, int stepCount, int curveRadius, int minCurveSize, unsigned int medialnessScoringFunction) {
 			this->volume = volume;
 			this->skeleton = skeleton;
 			float minVal = minGray;
@@ -48,7 +48,7 @@ namespace wustl_mm {
 			float stepSize = (maxVal - minVal)/(float)stepCount;
 			this->isoValue = 0.0f;
 
-			skeletonizer = new InteractiveSkeletonizer(volume, minVal, maxVal, stepSize, curveRadius, minCurveSize, false);
+			skeletonizer = new InteractiveSkeletonizer(volume, minVal, maxVal, stepSize, curveRadius, minCurveSize, false, medialnessScoringFunction);
 			wustl_mm::GraySkeletonCPP::GraphType * graph = skeletonizer->GetGraph();
 			OctreeNode<octreeTagType> * node;
 			unsigned int ix;
