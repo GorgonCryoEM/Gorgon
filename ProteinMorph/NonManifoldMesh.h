@@ -663,12 +663,12 @@ namespace wustl_mm {
 			int maxPosInt[3];
 
 			for(unsigned int j = 0; j < 3; j++) {
-				//minPosInt[j] = (int)floor(minPos[j]);
-				//maxPosInt[j] = (int)ceil(maxPos[j]);
-				minPosInt[j] = 0;
+				minPosInt[j] = (int)floor(minPos[j]);
+				maxPosInt[j] = (int)ceil(maxPos[j]);
+				//minPosInt[j] = 0;
 			}
-			//Volume * vol = new Volume(maxPosInt[0] - minPosInt[0]+1, maxPosInt[1] - minPosInt[1]+1, maxPosInt[2] - minPosInt[2]+1);
-			Volume * vol = new Volume(200,260,120);
+			Volume * vol = new Volume(maxPosInt[0] - minPosInt[0]+1, maxPosInt[1] - minPosInt[1]+1, maxPosInt[2] - minPosInt[2]+1);
+			//Volume * vol = new Volume(200,260,120);
 			
 			int pos[3];
 			for(unsigned int i = 0; i < vertices.size(); i++) {
@@ -716,9 +716,7 @@ namespace wustl_mm {
 						yPos = dir.Y() * (zPos - v1.position.Z()) / dir.Z() + v1.position.Y() - minPosInt[1];						
 						vol->setDataAt((int)round(xPos), (int)round(yPos), (int)round(zPos), 1.0);
 					}
-				}
-
-				
+				}		
 				
 
 			}

@@ -12,6 +12,7 @@ Date  : 01/30/2006
 #include <SkeletonMaker/volume.h>
 #include "GeometricShape.h"
 #include <vector>
+#include <queue>
 #include "GlobalConstants.h"
 
 using namespace std;
@@ -30,6 +31,8 @@ namespace wustl_mm {
 			static void ReadSheetFile(char * sheetFile, vector<GeometricShape*> & helixes);
 			static void ReadHelixFile(char * helixFile, char * sseFile, vector<GeometricShape*> & helixes);
 			static void FindSizes(int startHelix, int startCell, vector<GeometricShape*> & helixList, Volume * vol, Volume * coloredVol, StandardGraph * graph);
+			static void FindPaths(StandardGraph * graph);
+			static void FindPath(int startIx, int endIx, vector<Vector3DInt> endPoints, Volume * maskVol, StandardGraph * graph, bool eraseMask);
 			static void FindCornerCellsInSheet(Volume * vol, Volume * paintedVol, vector<GeometricShape*> & helixes, int sheetId);
 		};
 
@@ -131,6 +134,7 @@ namespace wustl_mm {
 			graph->skeletonVolume = vol;
 			delete paintedVol;
 			graph->GenerateEuclidianMatrix();
+			FindPaths(graph);
 			return graph;
 		}
 
@@ -282,8 +286,11 @@ namespace wustl_mm {
 			vector<Point3Int *> oldStack;
 			vector<Point3Int *> newStack;
 			int currentHelix;
+			Point3Int * startPoint = new Point3Int(helixList[startHelix]->cornerCells[startCell].x, helixList[startHelix]->cornerCells[startCell].y, helixList[startHelix]->cornerCells[startCell].z, 0);
 
-			oldStack.push_back(new Point3Int(helixList[startHelix]->cornerCells[startCell].x, helixList[startHelix]->cornerCells[startCell].y, helixList[startHelix]->cornerCells[startCell].z, 0));
+
+
+			oldStack.push_back(startPoint);
 
 			Point3Int * currentPoint; //CurrentPoint
 			int x, y, z, xx, yy, zz;
@@ -365,6 +372,102 @@ namespace wustl_mm {
 			}
 			delete visited;
 		}
+
+		void SkeletonReader::FindPaths(StandardGraph * graph) {
+			vector<Vector3DInt> endPoints;
+			Point3Int pt = Point3Int(0,0,0,0);
+
+			for(unsigned int i = 0; i < graph->skeletonHelixes.size(); i++) {
+				for(unsigned int j = 1; j <= 2; j++) {
+					pt = graph->skeletonHelixes[i]->GetCornerCell(j);
+					endPoints.push_back(Vector3DInt(pt.x, pt.y, pt.z));
+				}
+			}
+
+			Volume * maskVol = new Volume(graph->skeletonVolume->getSizeX(), graph->skeletonVolume->getSizeY(), graph->skeletonVolume->getSizeZ(), 0, 0, 0, graph->skeletonVolume);
+
+			for(unsigned int i = 0; i < endPoints.size(); i+=2) {
+				FindPath(i, i+1, endPoints, maskVol, graph, true);
+			}
+
+
+			for(unsigned int i = 0; i < endPoints.size()-1; i++) {
+				for(unsigned int j = i+1; j < endPoints.size(); j++) {
+					if(graph->paths[i][j].size() == 0) {
+						FindPath(i, j, endPoints, maskVol, graph, false);						
+					}
+				}
+			}
+
+			delete maskVol;
+
+
+		}
+
+		void SkeletonReader::FindPath(int startIx, int endIx, vector<Vector3DInt> endPoints, Volume * maskVol, StandardGraph * graph, bool eraseMask) {
+			queue<Vector3DInt> positions;
+			Vector3DInt currentPos = endPoints[startIx], newPos, endPos = endPoints[endIx];			
+			positions.push(currentPos);
+
+			int * paintVol = new int[maskVol->getSizeX() * maskVol->getSizeY() * maskVol->getSizeZ()];
+			int * backVol = new int[maskVol->getSizeX() * maskVol->getSizeY() * maskVol->getSizeZ()];
+			for(int i = 0; i < maskVol->getSizeX() * maskVol->getSizeY() * maskVol->getSizeZ(); i++) {
+				paintVol[i] = -1;
+				backVol[i] = -1;
+			}
+			paintVol[maskVol->getIndex(currentPos.X(), currentPos.Y(), currentPos.Z())] = 0;
+
+			
+			bool found = false;
+			int currVal, newIx;
+			
+
+			while(!found && !positions.empty()) {
+				currentPos = positions.front();
+				positions.pop();
+				currVal = paintVol[maskVol->getIndex(currentPos.X(), currentPos.Y(), currentPos.Z())];
+				found = (currentPos == endPos);
+
+				if(!found) {
+					for(int i = 0; i < 26; i++) {
+						newPos = currentPos + Vector3DInt(D26[i][0], D26[i][1], D26[i][2]);
+						newIx = maskVol->getIndex(newPos.X(), newPos.Y(), newPos.Z());
+						if((maskVol->getDataAt(newIx) > 0.5) && ((paintVol[newIx] < 0) || (paintVol[newIx] > currVal + 1))) {
+							positions.push(newPos);
+							paintVol[newIx] = currVal + 1;
+							backVol[newIx] = BACK26[i];
+						}
+					}
+				}
+			}
+
+			bool backFound = false;
+			if(found) {	
+				currentPos = Vector3DInt(endPos.X(), endPos.Y(), endPos.Z());
+				graph->paths[startIx][endIx].push_back(currentPos);
+				while(!backFound) {
+					newIx = maskVol->getIndex(currentPos.X(), currentPos.Y(), currentPos.Z());
+					backFound = (backVol[newIx] < 0);
+					if(!backFound) {
+						currentPos = currentPos + Vector3DInt(D26[backVol[newIx]][0], D26[backVol[newIx]][1], D26[backVol[newIx]][2]);
+						graph->paths[startIx][endIx].push_back(currentPos);
+					}
+				}
+			}
+
+			if(eraseMask) {
+				for(unsigned int i = 1; i < graph->paths[startIx][endIx].size()-1; i++) {
+					currentPos = graph->paths[startIx][endIx][i];
+					maskVol->setDataAt(currentPos.X(), currentPos.Y(), currentPos.Z(), 0.0);
+				}
+			}
+
+			delete [] paintVol;
+			delete [] backVol;
+
+
+		}
+
 
 		inline int Round(double number) {
 			return (int)(number + 0.5);

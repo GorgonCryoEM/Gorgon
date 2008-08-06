@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.10  2008/07/29 20:40:43  ssa1
+#   Re-formatting graph matching results
+#
 #   Revision 1.9  2008/07/29 16:57:18  ssa1
 #   Visualizing the correspondence and fixing bug in the CorrespondenceLibrary
 #
@@ -274,27 +277,35 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
         self.populateComboBox(self.viewer.correspondenceLibrary)       
         
         self.setCursor(QtCore.Qt.ArrowCursor)
-        self.viewer.emitModelChanged()
         self.executed = True 
+        self.viewer.emitModelChanged()
         
         
-    def reject(self):           
+    def reject(self):  
+        self.executed = False
         self.app.actions.getAction("perform_SSEFindHelixCorrespondences").trigger()
     
     def getIndexedColor(self, index, size):
-        mid = float((size-1)/2)        
-        if(index <= mid):
-            index = float(index/mid)
-            r = 1.0 - index
-            g = index
-            b = 0.0
-            a = 1.0           
-        else:            
-            index = float((index - mid)/ mid);
-            r = 0.0
-            g = 1.0 - index
-            b = index
-            a = 1.0          
+        #mid = float((size-1)/2)        
+        #if(index <= mid):
+        #    index = float(index/mid)
+        #    r = 1.0 - index
+        #    g = index
+        #    b = 0.0
+        #    a = 1.0           
+        #else:            
+        #    index = float((index - mid)/ mid);
+        #    r = 0.0
+        #    g = 1.0 - index
+        #    b = index
+        #    a = 1.0
+        
+        index = float(index)/(float(size)-1.0)
+        r = 1.0 - index
+        g = 0.0
+        b = index
+        a = 1.0
+                                
             
         return QtGui.QColor.fromRgba(QtGui.qRgba(r*255, g*255, b*255, a*255))
         
@@ -313,6 +324,12 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
                     self.viewer.renderer.setHelixColor(match.observed.label, color.redF(), color.greenF(), color.blueF(), color.alphaF())
                 self.ui.tableWidgetCorrespondenceList.setCellWidget(i, 2, QtGui.QCheckBox())
                 self.ui.tableWidgetCorrespondenceList.cellWidget(i, 2).setCheckState(QtCore.Qt.Unchecked)
+        self.viewer.correspondenceEngine.setVisibleCorrespondence(correspondenceIndex)
         self.viewer.emitModelChanged()
+        
+    def drawOverlay(self):
+        if self.executed:
+            self.viewer.correspondenceEngine.draw(0)
+        
             
         
