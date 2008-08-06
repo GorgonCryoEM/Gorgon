@@ -15,6 +15,7 @@ Date  : 01/23/2006
 #include "SecondaryStructure.h"
 #include "GeometricShape.h"
 #include <SkeletonMaker/volume.h>
+#include <MathTools/Vector3D.h>
 using namespace std;
 
 namespace wustl_mm {
@@ -43,6 +44,7 @@ namespace wustl_mm {
 		public:
 			double adjacencyMatrix[MAX_NODES][MAX_NODES][2]; // 0th dimension edge type... 1st dimension distance
 			double euclideanMatrix[MAX_NODES][MAX_NODES];
+			vector<Vector3DInt> paths[MAX_NODES][MAX_NODES];
 			vector<SecondaryStructure*> pdbStructures;
 			vector<GeometricShape*> skeletonHelixes;
 			Volume * skeletonVolume;

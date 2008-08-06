@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.11  2008/06/18 18:15:41  ssa1
+#   Adding in CVS meta data
+#
 
 from PyQt4 import QtGui, QtCore, QtOpenGL
 from libpyGORGON import SSERenderer
@@ -111,6 +114,8 @@ class SSEViewer(BaseViewer):
                    
     def updateActionsAndMenus(self):
         self.app.actions.getAction("unload_SSE").setEnabled(self.loaded)
-          
+
+    def extraDrawingRoutines(self):
+        self.helixCorrespondanceFinder.drawOverlay()          
     
              

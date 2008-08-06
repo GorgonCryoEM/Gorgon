@@ -208,7 +208,9 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("getSequenceSSE", &SSECorrespondenceEngine::GetSequenceSSE, return_value_policy<manage_new_object>())
 		.def("getSkeletonSSECount", &SSECorrespondenceEngine::GetSkeletonSSECount)
 		.def("getSequenceSSECount", &SSECorrespondenceEngine::GetSequenceSSECount)
-		;
+		.def("setVisibleCorrespondence", &SSECorrespondenceEngine::SetVisibleCorrespondence)
+		.def("draw", &SSECorrespondenceEngine::Draw)
+	;
 
 	
 }

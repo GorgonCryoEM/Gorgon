@@ -4,6 +4,7 @@
 #include <GraphMatch/SSECorrespondenceResult.h>
 #include <GraphMatch/BackEndInterface.h>
 #include <vector>
+#include <glut.h>
 
 using namespace wustl_mm::GraphMatch;
 using namespace std;
@@ -26,14 +27,18 @@ namespace wustl_mm {
 			SecondaryStructure * GetSequenceSSE(int sseId);
 			int GetSkeletonSSECount();
 			int GetSequenceSSECount();
+			void SetVisibleCorrespondence(int correspondenceIndex);
+			void Draw(int sceneIndex);
 			
 		private:
-			vector<SSECorrespondenceResult> correspondence;			
+			vector<SSECorrespondenceResult> correspondence;		
+			int correspondenceIndex;
 		};
 		
 
 		SSECorrespondenceEngine::SSECorrespondenceEngine() {
 			correspondence.clear();
+			correspondenceIndex = -1;
 		}
 
 		SSECorrespondenceEngine::~SSECorrespondenceEngine() {
@@ -149,6 +154,32 @@ namespace wustl_mm {
 			return sequence->pdbStructures.size();
 		}
 
+		void SSECorrespondenceEngine::SetVisibleCorrespondence(int correspondenceIndex) {
+			this->correspondenceIndex = correspondenceIndex;
+		}
+
+		void SSECorrespondenceEngine::Draw(int sceneIndex) {
+			int n1, n2;
+			vector<Vector3DInt> path;
+			if(correspondenceIndex >= 0) {
+				SSECorrespondenceResult result = GetResult(correspondenceIndex + 1);
+				for(int i = 2; i < result.GetNodeCount(); i += 2) {
+					n1 = result.GetSkeletonNode(i-1);
+					n2 = result.GetSkeletonNode(i);
+					if((n1 >= 0)  && (n2 >= 0)) {
+						path = skeleton->paths[n1][n2];
+						if(path.size() == 0) {
+							path = skeleton->paths[n2][n1];
+						}
+						glBegin(GL_LINE_STRIP);
+						for(unsigned int j = 0; j < path.size(); j++) {
+							glVertex3d(path[j].X(), path[j].Y(), path[j].Z());
+						}
+						glEnd();
+					}
+				}
+			}
+		}
 	}
 }
 
