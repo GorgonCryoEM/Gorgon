@@ -6,12 +6,20 @@
 #                    More info in: seq_model-doc.txt
 #
 
+try:
+  from PyQt4 import QtCore, QtGui
+  qtcolor=True
+except:
+  qtcolor=False
+
 from Secel import Secel
 
 class Helix(Secel):
   serialNo=0
-  def __init__(self, chain, serialNo, label, startIndex, stopIndex):
-    Secel.__init__(self, chain, serialNo, label, startIndex, stopIndex)
+  def __init__(self, chain, serialNo, label, startIndex, stopIndex, color=None):
+    if qtcolor and color==None:
+      color=QtGui.QColor(51,208,208)
+    Secel.__init__(self, chain, serialNo, label, startIndex, stopIndex, color)
     self.type="helix"
 
 
@@ -26,7 +34,9 @@ class Helix(Secel):
     if helixID in chain.helices.keys():
       raise ValueError, 'Duplicate Helix entries in PDB'
     else:
-      chain.helices[serialNo]=Helix(chain,serialNo,helixID,start,stop)
+      #chain.helices[serialNo]=Helix(chain,serialNo,helixID,start,stop)
+      helix=Helix(chain,serialNo,helixID,start,stop)
+      chain.addHelix(serialNo, helix)
 
   def toPDB(self):
     Helix.serialNo=Helix.serialNo+1

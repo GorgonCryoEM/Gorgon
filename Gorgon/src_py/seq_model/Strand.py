@@ -6,13 +6,23 @@
 #                    More info in: seq_model-doc.txt
 #
 
+try:
+  from PyQt4 import QtCore, QtGui
+  qtcolor=True
+except:
+  qtcolor=False
+
 from Secel import Secel
 
 class Strand(Secel):
-  def __init__(self, chain, strandNo, label, startIndex, stopIndex):
-    Secel.__init__(self, chain, strandNo, label, startIndex, stopIndex)
+  def __init__(self, chain, strandNo, label, startIndex, stopIndex, color=None):
+    if qtcolor and color==None:
+      color=QtGui.QColor(0,180,50)
+    Secel.__init__(self, chain, strandNo, label, startIndex, stopIndex, color)
     self.type="strand"
     self.strandNo=strandNo
+
+    #chain.addStrand(label,self)
 
   def toPDB(self,sheetID,sheet):
     startResName=self.chain.residueList[self.startIndex].symbol3

@@ -9,6 +9,7 @@
 from libpyGORGON import PDBAtom,Vector3DFloat
 from Atom import Atom
 from Chain import Chain
+from Residue import Residue
 
 #--------------------------------------
 class GAtom(Atom):

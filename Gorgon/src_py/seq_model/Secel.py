@@ -6,15 +6,29 @@
 #                    More info in: seq_model-doc.txt
 #
 
+try:
+  from PyQt4 import QtGui
+  qtcolor=True
+except:
+  qtcolor=False
+
+	
 class Secel(object):
-  def __init__(self, chain, serialNo, label, startIndex, stopIndex):
+  def __init__(self, chain, serialNo, label, startIndex, stopIndex, color=None):
     self.chain=chain
     self.serialNo=serialNo
     self.label=label
     self.startIndex=startIndex
     self.stopIndex=stopIndex
+    self.color=color
+    if qtcolor and color==None:
+      self.color=QtGui.QColor(0,0,0)
 
+  def setColor(self, newColor):
+    self.color=newColor
 
+  def getColor(self):
+    return self.color
 
   def __str__(self):
     s = self.type
