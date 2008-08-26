@@ -125,8 +125,8 @@ namespace wustl_mm {
 			EigenResults3D eig1;
 			EigenResults3D eig2;
 
-			float maxGray = sourceVol->getMax();
-			float minGray = sourceVol->getMin();
+			maxGray = sourceVol->getMax();
+			minGray = sourceVol->getMin();
 			float lMaxGray1, lMinGray1, lMaxGray2, lMinGray2;
 
 			for(unsigned int i = 0; i < graph->edges.size(); i++) {
