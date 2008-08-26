@@ -26,9 +26,11 @@ class Residue:
   _aa_dict['S']='SER'
   _aa_dict['T']='THR'
   _aa_dict['V']='VAL'
-  _aa_dict['Y']='TYR'
   _aa_dict['W']='TRP'
+  _aa_dict['X']='ANY'
+  _aa_dict['Y']='TYR'
 
+  _aa_dict['ANY']='X'
   _aa_dict['ALA']='A'
   _aa_dict['CYS']='C'
   _aa_dict['ASP']='D'

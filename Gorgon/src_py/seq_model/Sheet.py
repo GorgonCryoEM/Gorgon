@@ -26,9 +26,12 @@ class Sheet:
     strand = Strand (chain,strandNo,sheetID,start,stop)
 
     if sheetID not in chain.sheets.keys():
-      chain.sheets[sheetID]=Sheet(strand)
+      #chain.sheets[sheetID]=Sheet(strand)
+      sheet=Sheet(strand)
+      chain.addSheet(sheetID, sheet)
     else:
-      chain.sheets[sheetID].strandList[strandNo] = strand
+      #chain.sheets[sheetID].strandList[strandNo] = strand
+      chain.addStrand(strand, strandNo, sheetID)
 
 
   def toPDB(self,sheetID):

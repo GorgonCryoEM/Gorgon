@@ -11,7 +11,7 @@ from Atom import Atom
 from Helix import Helix
 from Sheet import Sheet
 #from Strand import Strand
-#from Coil import Coil
+from Coil import Coil
 
 class Chain(object):
   """Chain objects represent single polypeptide chains, which are sequences of Residue objects"""
@@ -31,6 +31,7 @@ class Chain(object):
   #Chain Constructor
   def __init__(self,char_string=None):
     self.residueList={}
+    self.secelList={}
     self.chainID = Chain.__nextChainID()
     self.atoms = {}
 
@@ -142,6 +143,31 @@ class Chain(object):
     else:
       raise TypeError
 
+
+  def addSecel(self, secel):
+    for index in range(secel.startIndex, secel.stopIndex+1):
+      self.secelList[index]=secel
+
+  def addHelix(self, serialNo, helix):
+    self.helices[serialNo]=helix
+    self.addSecel(helix)
+
+  def addStrand(self, strand, strandNo, sheetID=None):
+    if sheetID is None:
+      self.orphanStrands[strandNo]=strand
+    else:
+      self.sheets[sheetID].strandList[strandNo]=strand
+    self.addSecel(strand)
+
+  def addSheet(self, sheetID, sheet):
+    if not self.sheets.has_key(sheetID):
+      self.sheets[sheetID]=sheet
+
+  def getSecelByIndex(self,i):
+    if self.secelList.has_key(i):
+      return self.secelList[i]
+    else:
+      return Coil(self,0, 'no-label',i,i)
 
 
   # my_chain[7] returns the seventh residue (assuming that indexing starts at 1
