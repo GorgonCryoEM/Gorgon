@@ -70,5 +70,9 @@ class Residue:
 
 
 
+  def clearAtoms(self):
+    self.atoms={}
+
+
   def __repr__(self):
     return self.symbol1

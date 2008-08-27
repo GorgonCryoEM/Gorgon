@@ -88,6 +88,7 @@ class SequenceView(QtGui.QWidget):
 
       secel=self.sequence.getSecelByIndex(index)
       color=secel.getColor()
+      color.setAlpha(255)
 
       if secel.type=='strand':
 	painter.setPen(QtCore.Qt.blue)
@@ -153,10 +154,10 @@ class SequenceView(QtGui.QWidget):
 
     for index in self.residueRange:
       if len(sequence[index].atoms)==0:
-	self.font.setBold(True)
+	self.font.setBold(False)
 	painter.setFont(self.font)
       else:
-	self.font.setBold(False)
+	self.font.setBold(True)
 	painter.setFont(self.font)
 
       nextChar=self.sequence[index].__repr__()
@@ -202,6 +203,7 @@ class SequenceView(QtGui.QWidget):
 	  self.updateSelectedResidues(addOne=additionalResidue)
 	else:
 	  self.updateSelectedResidues(removeOne=additionalResidue)
+	self.repaint()
 
       #  SHIFT key pressed
       elif mouseEvent.modifiers() & QtCore.Qt.SHIFT:
@@ -212,6 +214,7 @@ class SequenceView(QtGui.QWidget):
 	elif additionalResidue < sorted(self.selectedResidues)[0]:
 	  addedRange=range( additionalResidue, sorted(self.selectedResidues)[0])
 	  self.updateSelectedResidues(addRange=addedRange)
+	self.repaint()
 
       #  No key pressed
       elif mouseEvent.modifiers() == QtCore.Qt.NoModifier:
@@ -526,6 +529,7 @@ def tempZoomDialog(seqView, scrollArea):
   dialog.resize(QtCore.QSize(150,40))
   dialog.setModal(False)
   dialog.setLayout(layout)
+  dialog.setWindowTitle(QtCore.QString('Zoom Dialog'))
   #dialog.show() ;dialog.raise_()
 
   return dialog
@@ -533,6 +537,28 @@ def tempZoomDialog(seqView, scrollArea):
 app = QtGui.QApplication(sys.argv)
 
 sequence = Chain.load('1KPO.pdb')
+
+lastRandom = random.gauss (100.0, 1.0)
+lastCleared=True
+for residue in sequence.residueRange():
+  nextRandom = random.gauss(lastRandom, 1.0)
+
+  #invert
+  if abs(nextRandom - lastRandom) > 1.8:
+
+    if lastCleared==True:
+      lastCleared=False
+    else:
+      sequence[residue].clearAtoms()
+      lastCleared=True
+
+  #don't invert
+  else:
+
+    if lastCleared==True:
+      sequence[residue].clearAtoms()
+
+
 
 seqView=ScrollableSequenceView(sequence)
 seqView.show()

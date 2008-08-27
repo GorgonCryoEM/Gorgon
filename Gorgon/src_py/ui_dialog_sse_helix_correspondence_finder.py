@@ -275,7 +275,6 @@ class Ui_DialogSSEHelixCorrespondenceFinder(object):
 
         self.tableWidgetResults = QtGui.QTableWidget(self.tabResults)
         self.tableWidgetResults.setEnabled(False)
-        self.tableWidgetResults.setObjectName("tableWidgetResults")
         self.gridlayout8.addWidget(self.tableWidgetResults,0,0,1,1)
         self.tabWidget.addTab(self.tabResults,"")
 

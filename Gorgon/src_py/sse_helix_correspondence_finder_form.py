@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.11  2008/08/06 06:21:37  ssa1
+#   Tracing protein path, for SSE Correspondance matching
+#
 #   Revision 1.10  2008/07/29 20:40:43  ssa1
 #   Re-formatting graph matching results
 #
@@ -284,28 +287,50 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
     def reject(self):  
         self.executed = False
         self.app.actions.getAction("perform_SSEFindHelixCorrespondences").trigger()
+        
     
     def getIndexedColor(self, index, size):
-        #mid = float((size-1)/2)        
-        #if(index <= mid):
-        #    index = float(index/mid)
-        #    r = 1.0 - index
-        #    g = index
-        #    b = 0.0
-        #    a = 1.0           
-        #else:            
-        #    index = float((index - mid)/ mid);
-        #    r = 0.0
-        #    g = 1.0 - index
-        #    b = index
-        #    a = 1.0
-        
-        index = float(index)/(float(size)-1.0)
-        r = 1.0 - index
-        g = 0.0
-        b = index
         a = 1.0
-                                
+
+	i = float(index)
+	N = float(size)
+
+
+	# blue  (0,0,1)
+	if (i/N) == 0:
+	  r=0;g=0;b=1.0
+
+	  # blue - cyan(0,1,1)
+	elif (i/N) <= 0.25:
+	  coeff = (i/N)/0.25
+	  r=0.0
+	  g=coeff
+	  b=1.0
+
+	    # cyan - green (0,1,0)
+	elif (i/N) > 0.25:
+	  coeff=((i/N)-0.25)/0.25
+	  r=0.0
+	  g=1.0
+	  b=1.0-coeff
+
+	  # green - yellow (1,1,0)
+	  if (i/N) > 0.50:
+	    coeff=((i/N)-0.25)/0.50
+	    r=coeff
+	    g=1.0
+	    b=0.0
+
+	    # yelow - red (1,0,0)
+	    if (i/N) > 0.75:
+	      coeff=((i/N)-0.25)/0.75
+	      r=1.0
+	      g=1-coeff
+	      b=0.0
+
+	      # red
+	      if (i/N)==1.0:
+		r=1.0;g=0;b=0
             
         return QtGui.QColor.fromRgba(QtGui.qRgba(r*255, g*255, b*255, a*255))
         
@@ -316,11 +341,16 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
             self.ui.tableWidgetCorrespondenceList.setRowCount(len(corr.matchList))   
             for i in range(len(corr.matchList)):
                 match = corr.matchList[i]
+                color = self.getIndexedColor(i, len(corr.matchList))
+		match.predicted.setColor(color)
                 if(match.predicted):
-                    self.ui.tableWidgetCorrespondenceList.setItem(i, 0, QtGui.QTableWidgetItem(match.predicted.type + " " + str(match.predicted.serialNo + 1) + " : " + str(match.predicted.label)))
+		    cellItemPredicted =  QtGui.QTableWidgetItem(match.predicted.type + " " + str(match.predicted.serialNo + 1) + " : " + str(match.predicted.label))
+		    cellItemPredicted.setBackgroundColor(color)
+                    self.ui.tableWidgetCorrespondenceList.setItem(i, 0, cellItemPredicted)
                 if(match.observed):
-                    self.ui.tableWidgetCorrespondenceList.setItem(i, 1, QtGui.QTableWidgetItem("helix " + str(match.observed.label + 1)))
-                    color = self.getIndexedColor(i, len(corr.matchList))
+                    cellItemObserved =  QtGui.QTableWidgetItem("helix " + str(match.observed.label + 1))
+		    cellItemObserved.setBackgroundColor(color)
+                    self.ui.tableWidgetCorrespondenceList.setItem(i, 1, cellItemObserved)
                     self.viewer.renderer.setHelixColor(match.observed.label, color.redF(), color.greenF(), color.blueF(), color.alphaF())
                 self.ui.tableWidgetCorrespondenceList.setCellWidget(i, 2, QtGui.QCheckBox())
                 self.ui.tableWidgetCorrespondenceList.cellWidget(i, 2).setCheckState(QtCore.Qt.Unchecked)
@@ -329,7 +359,6 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
         
     def drawOverlay(self):
         if self.executed:
-            self.viewer.correspondenceEngine.draw(0)
+	    self.viewer.correspondenceEngine.draw(0)
         
             
-        

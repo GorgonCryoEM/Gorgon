@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.7  2008/07/28 16:19:22  ssa1
+#   Adding in correspondance data repository
+#
 #   Revision 1.6  2008/07/01 13:41:39  marshm
 #   made changes to accomodate seq_model.py:Chain object for calpha-backbone models
 #
@@ -21,8 +24,8 @@
 from PyQt4 import QtCore, QtGui
 from ui_dialog_calpha_atom_placer import Ui_DialogCAlphaAtomPlacer
 from libpyGORGON import PDBAtom, Vector3DFloat
-from seq_model import GAtom
-from seq_model import Residue
+from seq_model.GAtom import GAtom
+from seq_model.Residue import Residue
 
 class CAlphaAtomPlacerForm(QtGui.QWidget):
     def __init__(self, main, viewer, main_chain, parent=None):
