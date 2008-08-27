@@ -260,7 +260,7 @@ class Chain(object):
 
   def clear_coordinates(self):
     for index in self.residueRange():
-      self[index].atoms={}
+      self[index].clearAtoms()
 
 
 

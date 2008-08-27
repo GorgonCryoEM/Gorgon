@@ -6,7 +6,8 @@
 # extends seq_model.Atom to account for Gorgon Viewer interface 
 
 from libpyGORGON import PDBAtom,Vector3DFloat
-from seq_model import Chain, Atom
+from seq_model.Chain import Chain
+from seq_model.Atom import Atom
 
 #--------------------------------------
 class GAtom(Atom):
