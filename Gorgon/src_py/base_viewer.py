@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.32  2008/09/03 19:48:19  ssa1
+#   Maximizing performance of volume visualization by minimizing method call count
+#
 #   Revision 1.31  2008/08/27 15:26:52  marshm
 #   Updates to SequenceView.  Updated coloring scheme for correspondence matches.
 #
@@ -220,9 +223,9 @@ class BaseViewer(QtOpenGL.QGLWidget):
             self.loaded = True
             self.dirty = False
             self.setCursor(QtCore.Qt.ArrowCursor)
-            self.emitViewerSetCenter()
             self.emitModelLoadedPreDraw()
             self.emitModelLoaded()            
+            self.emitViewerSetCenter()
             
     def saveData(self):
         self.fileName = QtGui.QFileDialog.getSaveFileName(self, self.tr("Save Data"), "", self.tr(self.renderer.getSupportedSaveFileFormats()))
