@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_dialog_volume_surface_editor.ui'
 #
-# Created: Fri May 30 11:53:10 2008
+# Created: Wed Sep 03 13:31:59 2008
 #      by: PyQt4 UI code generator 4.3.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,7 +12,7 @@ from PyQt4 import QtCore, QtGui
 class Ui_DialogVolumeSurfaceEditor(object):
     def setupUi(self, DialogVolumeSurfaceEditor):
         DialogVolumeSurfaceEditor.setObjectName("DialogVolumeSurfaceEditor")
-        DialogVolumeSurfaceEditor.resize(QtCore.QSize(QtCore.QRect(0,0,338,124).size()).expandedTo(DialogVolumeSurfaceEditor.minimumSizeHint()))
+        DialogVolumeSurfaceEditor.resize(QtCore.QSize(QtCore.QRect(0,0,338,146).size()).expandedTo(DialogVolumeSurfaceEditor.minimumSizeHint()))
         DialogVolumeSurfaceEditor.setMinimumSize(QtCore.QSize(230,124))
 
         self.gridlayout = QtGui.QGridLayout(DialogVolumeSurfaceEditor)
@@ -81,6 +81,26 @@ class Ui_DialogVolumeSurfaceEditor(object):
         self.labelSamplingDisplay.setLayoutDirection(QtCore.Qt.RightToLeft)
         self.labelSamplingDisplay.setObjectName("labelSamplingDisplay")
         self.gridlayout1.addWidget(self.labelSamplingDisplay,2,2,1,1)
+
+        self.labelDisplayRadius = QtGui.QLabel(self.groupBoxSurfaceOptions)
+        self.labelDisplayRadius.setObjectName("labelDisplayRadius")
+        self.gridlayout1.addWidget(self.labelDisplayRadius,3,0,1,1)
+
+        self.horizontalSliderDisplayRadius = QtGui.QSlider(self.groupBoxSurfaceOptions)
+        self.horizontalSliderDisplayRadius.setMinimum(1)
+        self.horizontalSliderDisplayRadius.setMaximum(255)
+        self.horizontalSliderDisplayRadius.setPageStep(1)
+        self.horizontalSliderDisplayRadius.setProperty("value",QtCore.QVariant(255))
+        self.horizontalSliderDisplayRadius.setOrientation(QtCore.Qt.Horizontal)
+        self.horizontalSliderDisplayRadius.setTickPosition(QtGui.QSlider.NoTicks)
+        self.horizontalSliderDisplayRadius.setTickInterval(0)
+        self.horizontalSliderDisplayRadius.setObjectName("horizontalSliderDisplayRadius")
+        self.gridlayout1.addWidget(self.horizontalSliderDisplayRadius,3,1,1,1)
+
+        self.labelDisplayRadiusDisplay = QtGui.QLabel(self.groupBoxSurfaceOptions)
+        self.labelDisplayRadiusDisplay.setLayoutDirection(QtCore.Qt.RightToLeft)
+        self.labelDisplayRadiusDisplay.setObjectName("labelDisplayRadiusDisplay")
+        self.gridlayout1.addWidget(self.labelDisplayRadiusDisplay,3,2,1,1)
         self.gridlayout.addWidget(self.groupBoxSurfaceOptions,0,0,1,1)
 
         self.retranslateUi(DialogVolumeSurfaceEditor)
@@ -88,6 +108,7 @@ class Ui_DialogVolumeSurfaceEditor(object):
         QtCore.QObject.connect(self.radioButtonIsoSurface,QtCore.SIGNAL("toggled(bool)"),self.horizontalSliderSampling.setEnabled)
         QtCore.QObject.connect(self.radioButtonIsoSurface,QtCore.SIGNAL("toggled(bool)"),self.labelSamplingInterval.setEnabled)
         QtCore.QObject.connect(self.radioButtonIsoSurface,QtCore.SIGNAL("toggled(bool)"),self.labelSamplingDisplay.setEnabled)
+        QtCore.QObject.connect(self.horizontalSliderDisplayRadius,QtCore.SIGNAL("valueChanged(int)"),self.labelDisplayRadiusDisplay.setNum)
         QtCore.QMetaObject.connectSlotsByName(DialogVolumeSurfaceEditor)
         DialogVolumeSurfaceEditor.setTabOrder(self.radioButtonIsoSurface,self.radioButtonCrossSection)
         DialogVolumeSurfaceEditor.setTabOrder(self.radioButtonCrossSection,self.radioButtonSolid)
@@ -104,4 +125,6 @@ class Ui_DialogVolumeSurfaceEditor(object):
         self.labelIsoValueDisplay.setText(QtGui.QApplication.translate("DialogVolumeSurfaceEditor", "128", None, QtGui.QApplication.UnicodeUTF8))
         self.labelSamplingInterval.setText(QtGui.QApplication.translate("DialogVolumeSurfaceEditor", "Sampling Interval:", None, QtGui.QApplication.UnicodeUTF8))
         self.labelSamplingDisplay.setText(QtGui.QApplication.translate("DialogVolumeSurfaceEditor", "1", None, QtGui.QApplication.UnicodeUTF8))
+        self.labelDisplayRadius.setText(QtGui.QApplication.translate("DialogVolumeSurfaceEditor", "Display Radius:", None, QtGui.QApplication.UnicodeUTF8))
+        self.labelDisplayRadiusDisplay.setText(QtGui.QApplication.translate("DialogVolumeSurfaceEditor", "255", None, QtGui.QApplication.UnicodeUTF8))
 

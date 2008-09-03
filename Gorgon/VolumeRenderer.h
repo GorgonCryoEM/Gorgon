@@ -49,6 +49,7 @@ namespace wustl_mm {
 			void Draw(int subSceneIndex, bool selectEnabled);
 			void LoadFile(string fileName);
 			void SaveFile(string fileName);
+			void SetDisplayRadius(const int radius);
 			void SetViewingType(const int type);
 			void SetSampleInterval(const int size);
 			void SetSurfaceValue(const float value);
@@ -77,7 +78,8 @@ namespace wustl_mm {
 			GLuint textureName;
 			float surfaceValue;
 			int sampleInterval;
-			int viewingType;
+			int displayRadius;
+			int viewingType;			
 			Volume * dataVolume;
 			Volume * cuttingVolume;
 			NonManifoldMesh_NoTags * surfaceMesh;
@@ -93,6 +95,7 @@ namespace wustl_mm {
 			surfaceMesh = new NonManifoldMesh_NoTags();
 			dataVolume = NULL;
 			surfaceValue = 1.5;
+			displayRadius = 1;
 			sampleInterval = 1;
 			cuttingVolume = new Volume(2, 2, 2);
 			cuttingMesh = new NonManifoldMesh_NoTags();
@@ -284,9 +287,12 @@ namespace wustl_mm {
 			if(dataVolume != NULL) {
 				redraw = true;
 				int iX, iY, iZ;
-				for(iX = 0; iX < dataVolume->getSizeX(); iX+=sampleInterval) {
-					for(iY = 0; iY < dataVolume->getSizeY(); iY+=sampleInterval) {
-						for(iZ = 0; iZ < dataVolume->getSizeZ(); iZ+=sampleInterval) {
+				int maxX = dataVolume->getSizeX();
+				int maxY = dataVolume->getSizeY();
+				int maxZ = dataVolume->getSizeZ();
+				for(iX = max(maxX/2 - displayRadius, 0); iX < min(maxX, maxX/2 + displayRadius); iX+=sampleInterval) {
+					for(iY = max(maxY/2 - displayRadius, 0); iY < min(maxY, maxY/2 + displayRadius); iY+=sampleInterval) {
+						for(iZ = max(maxZ/2 - displayRadius, 0); iZ < min(maxZ, maxZ/2 + displayRadius); iZ+=sampleInterval) {
 							MarchingCube(dataVolume, surfaceMesh, surfaceValue, iX, iY, iZ, sampleInterval);
 						}
 					}
@@ -553,6 +559,14 @@ namespace wustl_mm {
 		}
 
 
+		void VolumeRenderer::SetDisplayRadius(const int radius) {
+			displayRadius = radius;
+			switch(viewingType) {
+				case VIEWING_TYPE_ISO_SURFACE:
+					CalculateSurface();
+					break;
+			}
+		}
 		void VolumeRenderer::Unload() {
 			Renderer::Unload();
 			if(dataVolume != NULL) {

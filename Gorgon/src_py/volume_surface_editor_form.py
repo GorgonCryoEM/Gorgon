@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.10  2008/06/18 18:15:41  ssa1
+#   Adding in CVS meta data
+#
 
 from PyQt4 import QtCore, QtGui
 from ui_dialog_volume_surface_editor import Ui_DialogVolumeSurfaceEditor
@@ -41,10 +44,13 @@ class VolumeSurfaceEditorForm(QtGui.QWidget):
         self.connect(self.ui.horizontalSliderIsoLevel,QtCore.SIGNAL("valueChanged(int)"),self.isoValueIndicatorChanged)
         self.filterIsoValue = DelayedFilter(self.thread())
         self.filterSampling = DelayedFilter(self.thread())
+        self.filterDisplayRadius = DelayedFilter(self.thread())
         self.connect(self.ui.horizontalSliderIsoLevel, QtCore.SIGNAL("valueChanged(int)"),self.filterIsoValue.setValue)
         self.connect(self.ui.horizontalSliderSampling, QtCore.SIGNAL("valueChanged(int)"),self.filterSampling.setValue)
+        self.connect(self.ui.horizontalSliderDisplayRadius, QtCore.SIGNAL("valueChanged(int)"),self.filterDisplayRadius.setValue)
         self.connect(self.filterIsoValue, QtCore.SIGNAL("valueChanged(int)"), self.isoValueChanged )
-        self.connect(self.filterSampling, QtCore.SIGNAL("valueChanged(int)"), self.samplingChanged )
+        self.connect(self.filterSampling, QtCore.SIGNAL("valueChanged(int)"), self.samplingChanged )        
+        self.connect(self.filterDisplayRadius, QtCore.SIGNAL("valueChanged(int)"), self.displayRadiusChanged )
         self.connect(self.ui.radioButtonIsoSurface, QtCore.SIGNAL("toggled(bool)"), self.setViewingType)
         self.connect(self.ui.radioButtonCrossSection, QtCore.SIGNAL("toggled(bool)"), self.setViewingType)
         self.connect(self.ui.radioButtonSolid, QtCore.SIGNAL("toggled(bool)"), self.setViewingType)
@@ -81,9 +87,13 @@ class VolumeSurfaceEditorForm(QtGui.QWidget):
         self.ui.horizontalSliderIsoLevel.setMinimum(int(minDensity*100))
         self.ui.horizontalSliderIsoLevel.setMaximum(int(maxDensity*100))
         defaultDensity = (int(minDensity*100) + int(maxDensity*100.0)) / 2
+        maxRadius = int(max(self.viewer.renderer.getMax(0)/2, self.viewer.renderer.getMax(1)/2, self.viewer.renderer.getMax(2)/2));
         self.ui.horizontalSliderIsoLevel.setValue(defaultDensity)
+        self.ui.horizontalSliderDisplayRadius.setMaximum(maxRadius)
+        self.ui.horizontalSliderDisplayRadius.setValue(maxRadius)
         self.viewer.renderer.setSampleInterval(self.ui.horizontalSliderSampling.value())
         self.viewer.renderer.setSurfaceValue(defaultDensity/100.0)
+        self.viewer.renderer.setDisplayRadius(maxRadius)
         self.app.actions.getAction("show_VolumeSurfaceEditor").setChecked(True)
         self.app.actions.getAction("show_VolumeSurfaceEditor").setEnabled(True)
         self.showWidget(True)
@@ -118,5 +128,9 @@ class VolumeSurfaceEditorForm(QtGui.QWidget):
     
     def samplingChanged(self, newLevel):
         self.viewer.renderer.setSampleInterval(newLevel)
+        self.viewer.emitModelChanged()
+        
+    def displayRadiusChanged(self, newRadius):
+        self.viewer.renderer.setDisplayRadius(newRadius)
         self.viewer.emitModelChanged()
         
