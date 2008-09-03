@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.11  2008/09/03 18:41:07  ssa1
+#   Setting a display radius for surfaces
+#
 #   Revision 1.10  2008/06/18 18:15:41  ssa1
 #   Adding in CVS meta data
 #
@@ -27,7 +30,7 @@ class VolumeSurfaceEditorForm(QtGui.QWidget):
         QtGui.QWidget.__init__(self, parent)
         self.app = main
         self.viewer = volumeViewer
-        self.connect(self.viewer, QtCore.SIGNAL("modelLoaded()"), self.modelLoaded)
+        self.connect(self.viewer, QtCore.SIGNAL("modelLoadedPreDraw()"), self.modelLoadedPreDraw)
         self.connect(self.viewer, QtCore.SIGNAL("modelUnloaded()"), self.modelUnloaded)
         self.createUI()
         self.createActions()
@@ -54,6 +57,7 @@ class VolumeSurfaceEditorForm(QtGui.QWidget):
         self.connect(self.ui.radioButtonIsoSurface, QtCore.SIGNAL("toggled(bool)"), self.setViewingType)
         self.connect(self.ui.radioButtonCrossSection, QtCore.SIGNAL("toggled(bool)"), self.setViewingType)
         self.connect(self.ui.radioButtonSolid, QtCore.SIGNAL("toggled(bool)"), self.setViewingType)
+        
             
     def loadWidget(self):
         if(self.app.actions.getAction("show_VolumeSurfaceEditor").isChecked()) :
@@ -72,6 +76,7 @@ class VolumeSurfaceEditorForm(QtGui.QWidget):
         self.app.actions.getAction("show_VolumeSurfaceEditor").setChecked(visible)
     
     def setViewingType(self, dummy):
+        print "***SetViewingType"
         if(self.ui.radioButtonIsoSurface.isChecked()):
            self.viewer.renderer.setViewingType(self.ViewingTypeIsoSurface)
         elif self.ui.radioButtonCrossSection.isChecked():
@@ -81,7 +86,11 @@ class VolumeSurfaceEditorForm(QtGui.QWidget):
         print "setViewingType", QtCore.QThread.currentThreadId()
         self.viewer.emitModelChanged()
     
-    def modelLoaded(self):
+    def modelLoadedPreDraw(self):
+        self.viewer.renderer.enableDraw(False)
+        self.filterIsoValue.enabled = False
+        self.filterSampling.enabled = False
+        self.filterDisplayRadius.enabled = False        
         maxDensity = self.viewer.renderer.getMaxDensity()
         minDensity = self.viewer.renderer.getMinDensity()
         self.ui.horizontalSliderIsoLevel.setMinimum(int(minDensity*100))
@@ -97,8 +106,14 @@ class VolumeSurfaceEditorForm(QtGui.QWidget):
         self.app.actions.getAction("show_VolumeSurfaceEditor").setChecked(True)
         self.app.actions.getAction("show_VolumeSurfaceEditor").setEnabled(True)
         self.showWidget(True)
+        self.filterIsoValue.enabled = True
+        self.filterSampling.enabled = True
+        self.filterDisplayRadius.enabled = True
+        self.viewer.renderer.enableDraw(True)
+        
     
     def modelUnloaded(self):
+        self.viewer.renderer.enableDraw(False)
         self.app.actions.getAction("show_VolumeSurfaceEditor").setEnabled(False)
         self.showWidget(False)            
         
@@ -118,9 +133,10 @@ class VolumeSurfaceEditorForm(QtGui.QWidget):
         self.ui.labelIsoValueDisplay.setNum(newLevel/100.0)
         
     def isoValueChanged(self, newLevel):
-        threading.Thread(target = self.updateIsoValue, args=(newLevel,)).start()
+        #threading.Thread(target = self.updateIsoValue, args=(newLevel,)).start()
+        self.updateIsoValue(newLevel)
         
-    def updateIsoValue(self, newLevel):
+    def updateIsoValue(self, newLevel):        
         self.setCursor(QtCore.Qt.BusyCursor)
         self.viewer.renderer.setSurfaceValue(newLevel/100.0)
         self.setCursor(QtCore.Qt.ArrowCursor)
