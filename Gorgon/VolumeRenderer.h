@@ -46,6 +46,7 @@ namespace wustl_mm {
 			int GetSampleInterval() const ;
 			string GetSupportedLoadFileFormats();
 			string GetSupportedSaveFileFormats();
+			void EnableDraw(bool enable);
 			void Draw(int subSceneIndex, bool selectEnabled);
 			void LoadFile(string fileName);
 			void SaveFile(string fileName);
@@ -73,6 +74,7 @@ namespace wustl_mm {
 			void MarchingCube(Volume * vol, NonManifoldMesh_NoTags * mesh, const float iso_level, int iX, int iY, int iZ, int iScale);
 			int Smallest2ndPower(int value);
 		private:
+			bool drawEnabled;
 			bool textureLoaded;
 			int textureSizeX, textureSizeY, textureSizeZ;
 			GLuint textureName;
@@ -99,6 +101,7 @@ namespace wustl_mm {
 			sampleInterval = 1;
 			cuttingVolume = new Volume(2, 2, 2);
 			cuttingMesh = new NonManifoldMesh_NoTags();
+			drawEnabled = false;
 		}
 
 		VolumeRenderer::~VolumeRenderer() {
@@ -189,6 +192,14 @@ namespace wustl_mm {
 			return "Volumes (*.mrc);;Bitmap Image set (*.bmp)";
 		}
 
+		void VolumeRenderer::EnableDraw(bool enable) {			
+			if(drawEnabled != enable) {
+				drawEnabled = enable;
+				if(drawEnabled) {
+					CalculateDisplay();
+				}
+			}
+		}
 		void VolumeRenderer::SetViewingType(const int type) {
 			viewingType = type;
 			if((viewingType == VIEWING_TYPE_SOLID) || (viewingType == VIEWING_TYPE_CROSS_SECTION)) {
@@ -284,7 +295,7 @@ namespace wustl_mm {
 		bool VolumeRenderer::CalculateSurface() {
 			surfaceMesh->Clear();
 			bool redraw = false;
-			if(dataVolume != NULL) {
+			if(drawEnabled && dataVolume != NULL) {
 				redraw = true;
 				int iX, iY, iZ;
 				int maxX = dataVolume->getSizeX();

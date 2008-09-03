@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.31  2008/08/27 15:26:52  marshm
+#   Updates to SequenceView.  Updated coloring scheme for correspondence matches.
+#
 #   Revision 1.30  2008/07/07 14:45:06  ssa1
 #   Changing the interactive skeletonization to go from OpenGL Hitstack to RayTracing
 #
@@ -218,6 +221,7 @@ class BaseViewer(QtOpenGL.QGLWidget):
             self.dirty = False
             self.setCursor(QtCore.Qt.ArrowCursor)
             self.emitViewerSetCenter()
+            self.emitModelLoadedPreDraw()
             self.emitModelLoaded()            
             
     def saveData(self):
@@ -336,6 +340,9 @@ class BaseViewer(QtOpenGL.QGLWidget):
                     hits[i] = hitStack[i]        
         self.emit(QtCore.SIGNAL("elementMouseOver (int, int, int, int, int, int, QMouseEvent)"), hits[0], hits[1], hits[2], hits[3], hits[4], hits[5], event)
 
+    def emitModelLoadedPreDraw(self):
+        self.emit(QtCore.SIGNAL("modelLoadedPreDraw()"))
+        
     def emitModelLoaded(self):
         self.emit(QtCore.SIGNAL("modelLoaded()"))
 

@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.6  2008/06/18 18:15:41  ssa1
+#   Adding in CVS meta data
+#
 
 from PyQt4 import QtGui, QtCore
 import thread
@@ -25,6 +28,7 @@ class DelayedFilter(QtGui.QWidget):
         self.value = 0
         self.timer = QtCore.QTimer(self)
         self.connect(self.timer, QtCore.SIGNAL("timeout()"), self.emitValue)
+        self.enabled = True
 
 #    def eventFilter(self,obj,event):
 #        if event.type() == QtCore.QEvent.User:
@@ -67,8 +71,9 @@ class DelayedFilter(QtGui.QWidget):
     
     def setValue(self, value):
         self.value = value
-        self.timer.stop()
-        self.timer.start(self.delay)
+        if(self.enabled):
+            self.timer.stop()
+            self.timer.start(self.delay)
         
     def emitValue(self):
         print "emitValue", QtCore.QThread.currentThreadId()

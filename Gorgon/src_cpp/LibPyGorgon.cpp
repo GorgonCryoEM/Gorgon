@@ -78,9 +78,10 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 	;
 	
 	
-	class_< VolumeRenderer, bases<Renderer> >("VolumeRenderer", init<>())
+	class_< VolumeRenderer, bases<Renderer> >("VolumeRenderer", init<>())		
 		.def("draw", &VolumeRenderer::Draw)
 		.def("drawBoundingBox", &VolumeRenderer::DrawBoundingBox)
+		.def("enableDraw", &VolumeRenderer::EnableDraw)
 		.def("loadFile", &VolumeRenderer::LoadFile)
 		.def("saveFile", &VolumeRenderer::SaveFile)
 		.def("unload", &VolumeRenderer::Unload)
