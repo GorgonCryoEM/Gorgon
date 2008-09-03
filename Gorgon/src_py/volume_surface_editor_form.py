@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.12  2008/09/03 19:48:19  ssa1
+#   Maximizing performance of volume visualization by minimizing method call count
+#
 #   Revision 1.11  2008/09/03 18:41:07  ssa1
 #   Setting a display radius for surfaces
 #
@@ -76,7 +79,6 @@ class VolumeSurfaceEditorForm(QtGui.QWidget):
         self.app.actions.getAction("show_VolumeSurfaceEditor").setChecked(visible)
     
     def setViewingType(self, dummy):
-        print "***SetViewingType"
         if(self.ui.radioButtonIsoSurface.isChecked()):
            self.viewer.renderer.setViewingType(self.ViewingTypeIsoSurface)
         elif self.ui.radioButtonCrossSection.isChecked():
