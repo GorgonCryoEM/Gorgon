@@ -6,7 +6,7 @@
 #                    More info in: seq_model-doc.txt
 #
 
-from Strand import Strand
+from seq_model.Strand import Strand
 
 class Sheet:
   def __init__(self, initialStrand=None):

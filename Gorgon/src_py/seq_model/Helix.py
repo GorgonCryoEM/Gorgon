@@ -8,16 +8,16 @@
 
 try:
   from PyQt4 import QtCore, QtGui
-  qtcolor=True
+  qtEnabled=True
 except:
-  qtcolor=False
+  qtEnabled=False
 
-from Secel import Secel
+from seq_model.Secel import Secel
 
 class Helix(Secel):
   serialNo=0
   def __init__(self, chain, serialNo, label, startIndex, stopIndex, color=None):
-    if qtcolor and color==None:
+    if qtEnabled and color==None:
       color=QtGui.QColor(51,208,208)
     Secel.__init__(self, chain, serialNo, label, startIndex, stopIndex, color)
     self.type="helix"

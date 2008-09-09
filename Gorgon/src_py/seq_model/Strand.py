@@ -8,15 +8,15 @@
 
 try:
   from PyQt4 import QtCore, QtGui
-  qtcolor=True
+  qtEnabled=True
 except:
-  qtcolor=False
+  qtEnabled=False
 
-from Secel import Secel
+from seq_model.Secel import Secel
 
 class Strand(Secel):
   def __init__(self, chain, strandNo, label, startIndex, stopIndex, color=None):
-    if qtcolor and color==None:
+    if qtEnabled and color==None:
       color=QtGui.QColor(0,180,50)
     Secel.__init__(self, chain, strandNo, label, startIndex, stopIndex, color)
     self.type="strand"
