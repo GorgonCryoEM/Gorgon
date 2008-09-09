@@ -8,14 +8,15 @@
 
 try:
   from PyQt4 import QtGui
-  qtcolor=True
+  qtEnabled=True
 except:
-  qtcolor=False
+  qtEnabled=False
 
-from Secel import Secel
+from seq_model.Secel import Secel
+
 class Coil(Secel):
   def __init__(self, chain, serialNo, label, startIndex, stopIndex, color=None):
-    if qtcolor and color==None:
+    if qtEnabled and color==None:
       color=QtGui.QColor(60,60,60)
     Secel.__init__(self, chain, serialNo, label, startIndex, stopIndex, color)
     self.type="loop"

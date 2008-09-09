@@ -7,8 +7,8 @@ import os
 
 import random
 from libpyGORGON import PDBAtom,Vector3DFloat
-from Atom import Atom
-from Chain import Chain
+from seq_model.Atom import Atom
+from seq_model.Chain import Chain
 
 
 class SeqModelTests(unittest.TestCase):
@@ -164,5 +164,5 @@ class SeqModelTests(unittest.TestCase):
 
 
     # Test toPDB on both chains
-    '\nmy_chain.PDB\n' + my_chain.toPDB(backboneOnly=True, suppressWarning=True)
-    '\nsub_chain.PDB\n' + sub_chain.toPDB(backboneOnly=True, suppressWarning=True)
+    '\nmy_chain.PDB\n' + my_chain.toPDB(backboneOnly=True, verbose=False)
+    '\nsub_chain.PDB\n' + sub_chain.toPDB(backboneOnly=True, verbose=False)

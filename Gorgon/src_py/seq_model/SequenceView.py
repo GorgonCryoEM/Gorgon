@@ -2,19 +2,10 @@
 import sys
 from PyQt4 import Qt,QtGui,QtCore
 
-from Helix import Helix
-from Strand import Strand
-from Chain import Chain
-from Residue import Residue
-import random
-
-def fillGaps(inSequence):
-  for i in inSequence.residueRange():
-    while i+1 not in inSequence.residueRange():
-      if i+1>inSequence.residueRange()[-1]:
-	break
-      inSequence[i+1]=Residue('X')
-      i=i+1
+from seq_model.Helix import Helix
+from seq_model.Strand import Strand
+from seq_model.Chain import Chain
+#from seq_model.Residue import Residue
 
 class SequenceView(QtGui.QWidget):
   def __init__(self,sequence,parent=None):
@@ -28,23 +19,27 @@ class SequenceView(QtGui.QWidget):
     self.font=QtGui.QFont(self.fontName,self.fontSize)
 
     # Initialize sequence
-    self.sequence = sequence
-    fillGaps(self.sequence)
-    self.residueRange=self.sequence.residueRange()
+    self.setSequence(sequence)
 
-    # Initialize residue selection
-    self.selectedResidues=[]
-
-    # Set up QWidget Behavior
     #self.connect(self, QtCore.SIGNAL('SequencePanelUpdate'), self.repaint)
     self.setWindowModality(QtCore.Qt.NonModal)
     self.setMouseTracking(True) #necessary to listen to mouse with no buttons pressed
 
     metrics=QtGui.QFontMetrics(self.font)
-    self.cellWidth=metrics.maxWidth()
     height=int(3.5*metrics.lineSpacing())
     self.resize(int(40*metrics.maxWidth()),height)
 
+
+  def setSequence(self, newSequence):
+    self.sequence = newSequence
+    self.sequence.fillGaps()
+    self.residueRange=self.sequence.residueRange()
+    self.connect(self.sequence, QtCore.SIGNAL("selection updated"), self.__selectionUpdated)
+    self.repaint()
+
+
+  def __selectionUpdated(self):
+    self.repaint()
 
   def __paintIndices(self, painter, metrics, cellWidth, cellHeight):
     x=0
@@ -52,10 +47,16 @@ class SequenceView(QtGui.QWidget):
 
     paint=False
     for index in self.residueRange:
+      # Thousands place
+      if (index+3)%10==0:
+	if index+3 >= 1000:
+	  thousandsPlace=((index+3)/1000)%10
+	  nextChar=str(thousandsPlace)
+	  paint=True
       # Hundreds place
-      if (index+2)%10==0:
-	if index+2 > 100:
-	  hundredsPlace=((index+2)/100)%100
+      elif (index+2)%10==0:
+	if index+2 >= 100:
+	  hundredsPlace=((index+2)/100)%10
 	  nextChar=str(hundredsPlace)
 	  paint=True
       # Tens place
@@ -69,7 +70,7 @@ class SequenceView(QtGui.QWidget):
 	paint=True
       else:
 	paint=False
-	
+
       if paint:
 	charWidth=metrics.width(QtCore.QChar(nextChar))
 	painter.setPen(QtCore.Qt.gray)
@@ -77,7 +78,10 @@ class SequenceView(QtGui.QWidget):
 	painter.drawText(x+xOffset, y, QtCore.QString(nextChar))
       x = x + cellWidth
 
-  def __paintSecels(self, painter, cellWidth, cellHeight):
+  def __paintSecels(self, painter):
+
+    cellWidth=self.cellWidth()
+    cellHeight=self.cellHeight()
 
     x=0
     y=0*cellHeight
@@ -145,34 +149,44 @@ class SequenceView(QtGui.QWidget):
 
 
 
-  def __paintResidues(self, painter, metrics, cellWidth, cellHeight):
+  def __paintResidues(self, painter):
     brush=QtGui.QBrush(QtCore.Qt.black, QtCore.Qt.SolidPattern)
-
-
-    x=0
+    metrics=QtGui.QFontMetrics(self.font)
+    cellWidth=self.cellWidth()
+    cellHeight=self.cellHeight()
     y=2*cellHeight
 
+    # initialize loop conditions and iterate for each residue
+    x=0
     for index in self.residueRange:
-      if len(sequence[index].atoms)==0:
+
+      # residues without coordinates are NOT BOLD and GRAY
+      if len(self.sequence[index].atoms)==0:
 	self.font.setBold(False)
-	painter.setFont(self.font)
-      else:
-	self.font.setBold(True)
+	painter.setPen(QtCore.Qt.gray)
 	painter.setFont(self.font)
 
-      nextChar=self.sequence[index].__repr__()
-      charWidth=metrics.width(QtCore.QChar(nextChar))
-      if index in self.selectedResidues:
+      # residues with coordinates are BOLD and BLACK
+      else:
+	self.font.setBold(True)
+	painter.setPen(QtCore.Qt.black)
+	painter.setFont(self.font)
+
+      # selected residues are YELLOW with a BLACK BACKGROUND
+      if index in self.sequence.getSelection():
 	yOffset= 0.75*(cellHeight-metrics.ascent()) 
 	rect=QtCore.QRectF ( float(x), yOffset+float(y), float(cellWidth), float(-cellHeight))
 	painter.fillRect(rect,brush)
 	painter.setPen(QtCore.Qt.yellow)
-      else:
-	painter.setPen(QtCore.Qt.black)
+
+      # draw the glyph 
+      nextChar=self.sequence[index].__repr__()
+      charWidth=metrics.width(QtCore.QChar(nextChar))
       xOffset=int((cellWidth-charWidth)/2)
       painter.drawText(x+xOffset, y, QtCore.QString(nextChar))
       x = x + cellWidth
 
+    # Restore standard properties
     self.font.setBold(False)
     painter.setFont(self.font)
 
@@ -188,10 +202,22 @@ class SequenceView(QtGui.QWidget):
     if y > 1*cellHeight and y < 2*cellHeight:
       return self.residueRange[index]
     else:
-      print y/float(cellHeight)
       return None
 
   def mousePressEvent(self, mouseEvent):
+
+    if mouseEvent.button() == QtCore.Qt.LeftButton and mouseEvent.y() < self.cellHeight():
+      residue=self.getResidueIndexByMousePosition(mouseEvent.x(),self.cellHeight() +1)
+      secel= self.sequence.getSecelByIndex(residue)
+      newSelection=range(secel.startIndex, secel.stopIndex+1)
+      #  CTRL key pressed
+      if mouseEvent.modifiers() & QtCore.Qt.CTRL:
+	self.setSequenceSelection(addRange=newSelection)
+      else:
+	self.setSequenceSelection(newSelection)
+
+      self.repaint()
+      return
 
     # LEFT MOUSE PRESS
     if mouseEvent.button() == QtCore.Qt.LeftButton:
@@ -199,43 +225,45 @@ class SequenceView(QtGui.QWidget):
 
       #  CTRL key pressed
       if mouseEvent.modifiers() & QtCore.Qt.CTRL:
-	if additionalResidue not in self.selectedResidues:
-	  self.updateSelectedResidues(addOne=additionalResidue)
+	if additionalResidue not in self.sequence.getSelection():
+	  self.setSequenceSelection(addOne=additionalResidue)
 	else:
-	  self.updateSelectedResidues(removeOne=additionalResidue)
-	self.repaint()
+	  self.setSequenceSelection(removeOne=additionalResidue)
 
       #  SHIFT key pressed
       elif mouseEvent.modifiers() & QtCore.Qt.SHIFT:
 	additionalResidue=self.getResidueIndexByMousePosition(mouseEvent.x(),mouseEvent.y())
-	if additionalResidue > sorted(self.selectedResidues)[-1]:
-	  addedRange=range( 1+sorted(self.selectedResidues)[-1],1+additionalResidue)
-	  self.updateSelectedResidues(addRange=addedRange)
-	elif additionalResidue < sorted(self.selectedResidues)[0]:
-	  addedRange=range( additionalResidue, sorted(self.selectedResidues)[0])
-	  self.updateSelectedResidues(addRange=addedRange)
-	self.repaint()
+	if additionalResidue > sorted(self.sequence.getSelection())[-1]:
+	  addedRange=range( 1+sorted(self.sequence.getSelection())[-1],1+additionalResidue)
+	  self.setSequenceSelection(addRange=addedRange)
+	elif additionalResidue < sorted(self.sequence.getSelection())[0]:
+	  addedRange=range( additionalResidue, sorted(self.sequence.getSelection())[0])
+	  self.setSequenceSelection(addRange=addedRange)
 
       #  No key pressed
       elif mouseEvent.modifiers() == QtCore.Qt.NoModifier:
-	self.updateSelectedResidues(newSelection=[additionalResidue])
+	self.setSequenceSelection(newSelection=[additionalResidue])
       
     if mouseEvent.buttons() & QtCore.Qt.MidButton:
       self.setCursor(QtCore.Qt.ClosedHandCursor)
       self.mouseXInitial=mouseEvent.globalX()
       self.scrollbarInitialX=self.scrollbar.value()
 
+    self.repaint()
+
   def updateCursor(self, mouseEvent):
     metrics=QtGui.QFontMetrics(self.font)
+    # cursor is Arrow when positioned over secel row or index row
     if mouseEvent.y() > metrics.lineSpacing() and mouseEvent.y() < 2*metrics.lineSpacing():
       self.setCursor(QtCore.Qt.IBeamCursor)
+    # cursor is TextSelector when positioned over residue row
     else:
       self.setCursor(QtCore.Qt.ArrowCursor)
 
   def mouseMoveEvent(self, mouseEvent):
     if mouseEvent.buttons() & QtCore.Qt.LeftButton:
       addedResidue=self.getResidueIndexByMousePosition(mouseEvent.x(), mouseEvent.y())
-      self.updateSelectedResidues(addOne=addedResidue)
+      self.setSequenceSelection(addOne=addedResidue)
       self.repaint()
 
     if mouseEvent.buttons() & QtCore.Qt.MidButton:
@@ -257,22 +285,10 @@ class SequenceView(QtGui.QWidget):
     self.resize(QtCore.QSize(width,height))
 
 
-  def updateSelectedResidues(self, newSelection=None, removeOne=None, addOne=None, addRange=None):
-    if newSelection is not None:
-      self.selectedResidues=newSelection
+  def setSequenceSelection(self, newSelection=None, removeOne=None, addOne=None, addRange=None):
+    self.sequence.setSelection(newSelection,removeOne,addOne,addRange)
 
-    elif removeOne is not None:
-      if removeOne in self.selectedResidues:
-	self.selectedResidues.remove(removeOne)
-
-    elif addOne is not None:
-      if addOne not in self.selectedResidues:
-	self.selectedResidues.append(addOne)
-
-    elif addRange is not None:
-      self.selectedResidues.extend(addRange)
-
-    self.emit( QtCore.SIGNAL('SequencePanelUpdate'))
+    #self.emit( QtCore.SIGNAL('SequencePanelUpdate'))
 
 
   def setFont(self, newFont):
@@ -288,7 +304,6 @@ class SequenceView(QtGui.QWidget):
     self.fontSize=newFontSize
     self.font=QtGui.QFont(self.fontName,self.fontSize)
     self.fontMetrics=QtGui.QFontMetrics(self.font)  #How do I do this correctly so I don't duplicate code? 
-    self.cellWidth=self.fontMetrics.maxWidth()
     self.updatePanelHeight()
 
     newValue=self.scrollbar.value()
@@ -299,9 +314,17 @@ class SequenceView(QtGui.QWidget):
     self.scrollbar.setValue(int(oldValue*ratio))
 
   def height(self):
+    return 4*self.cellHeight()
+
+  def cellHeight(self):
     metrics=QtGui.QFontMetrics(self.font)
-    cellHeight=4*metrics.lineSpacing()
+    cellHeight=metrics.lineSpacing()
     return cellHeight
+
+  def cellWidth(self):
+    metrics=QtGui.QFontMetrics(self.font)
+    cellWidth=metrics.maxWidth()
+    return cellWidth
 
   def paintEvent(self, event):
     painter=QtGui.QPainter(self)
@@ -309,11 +332,11 @@ class SequenceView(QtGui.QWidget):
 
     # Establish widget geometry
     metrics=QtGui.QFontMetrics(self.font)
-    cellWidth=metrics.maxWidth()
-    cellHeight=metrics.lineSpacing()
+    cellWidth=self.cellWidth()
+    cellHeight=self.cellHeight()
 
-    self.__paintSecels(painter, cellWidth, cellHeight)
-    self.__paintResidues(painter, metrics, cellWidth, cellHeight)
+    self.__paintSecels(painter)
+    self.__paintResidues(painter)
     self.__paintIndices(painter, metrics, cellWidth, cellHeight)
 
 
@@ -334,20 +357,26 @@ class ScrollableSequenceView(QtGui.QScrollArea):
     self.seqView=seqView
     self.setWidget(self.seqView)
 
-    globalView=GlobalSequenceView(sequence)
-    globalView.setLocalView(seqView)
-    globalView.updateViewportRange()
-    globalView.show()
-    globalView.raise_()
+    self.globalView=GlobalSequenceView(sequence)
+    self.globalView.setLocalView(seqView)
+    self.globalView.updateViewportRange()
+    self.globalView.show()
+    self.globalView.raise_()
 
-    self.connect(seqView.scrollbar, QtCore.SIGNAL('actionTriggered(int)'), globalView.updateViewportRange)
-    self.connect(seqView.scrollbar, QtCore.SIGNAL('valueChanged(int)'), globalView.updateViewportRange)
-    #self.connect(seqView.scrollbar, QtCore.SIGNAL('rangeChanged(int)'), globalView.updateViewportRange)
-    self.connect(seqView, QtCore.SIGNAL('SequencePanelUpdate'), globalView.updateViewportRange)
+    self.connect(seqView.scrollbar, QtCore.SIGNAL('actionTriggered(int)'), self.globalView.updateViewportRange)
+    self.connect(seqView.scrollbar, QtCore.SIGNAL('valueChanged(int)'), self.globalView.updateViewportRange)
+    #self.connect(seqView.scrollbar, QtCore.SIGNAL('rangeChanged(int)'), self.globalView.updateViewportRange)
+    self.connect(seqView, QtCore.SIGNAL('SequencePanelUpdate'), self.globalView.updateViewportRange)
 
     self.setWidgetResizable(False)
     self.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
     self.setWindowTitle(QtCore.QString('Local View'))
+    self.updateHeight()
+
+  def setSequence(self, newSequence):
+    self.globalView.setSequence(newSequence)
+    self.seqView.setSequence(newSequence)
+
 
   def updateHeight(self):
     scrollbar=self.horizontalScrollBar()
@@ -363,22 +392,30 @@ class GlobalSequenceView(QtGui.QWidget):
   def __init__(self,sequence,parent=None):
     super(GlobalSequenceView,self).__init__(parent)
 
-    self.sequence=sequence
-    seqLength=len(self.sequence.residueRange())
-
+    # Set up Geometry
     self.nCols=100
-    self.nRows=1+seqLength/self.nCols
-
-    widgetWidth=600
+    self.widgetWidth=600
     self.cellHeight=40
-    self.cellWidth=widgetWidth/self.nCols
+    self.cellWidth=self.widgetWidth/self.nCols
+
+    self.setSequence(sequence)
 
     # Set up QWidget Behavior
     self.connect(self, QtCore.SIGNAL('SequencePanelUpdate'), self.repaint)
     self.setWindowModality(QtCore.Qt.NonModal)
-    self.resize(QtCore.QSize(widgetWidth,self.nRows*self.cellHeight))
-
     self.setWindowTitle(QtCore.QString('Global View'))
+
+  def setSequence(self, newSequence):
+    self.sequence=newSequence
+    self.connect(self.sequence, QtCore.SIGNAL("selection updated"), self.__selectionUpdated)
+    seqLength=len(self.sequence.residueRange())
+    self.nRows=1+seqLength/self.nCols
+    self.resize(QtCore.QSize(self.widgetWidth,self.nRows*self.cellHeight))
+    self.repaint()
+
+
+  def __selectionUpdated(self):
+    self.repaint()
 
   def updateViewportRange(self):
     self.viewportRange=self.localView.calculateViewportRange(0)
@@ -395,8 +432,8 @@ class GlobalSequenceView(QtGui.QWidget):
     position=(y/self.cellHeight)*self.nCols + (x/self.cellWidth)
 
     viewportRange=self.localView.calculateViewportRange(0)
-    windowOffset = - 0.5 * self.localView.cellWidth * len(viewportRange)
-    self.localView.scrollbar.setValue(windowOffset + position*self.localView.cellWidth)
+    windowOffset = - 0.5 * self.localView.cellWidth() * len(viewportRange)
+    self.localView.scrollbar.setValue(windowOffset + position*self.localView.cellWidth())
 
   def mouseReleaseEvent(self, mouseEvent):
     self.setCursor(QtCore.Qt.ArrowCursor)
@@ -414,9 +451,9 @@ class GlobalSequenceView(QtGui.QWidget):
     markerRange=range( len(indexRange) )
     for index,marker in zip(indexRange,markerRange):
 
-      if len(sequence[index].atoms)==0:
+      if len(self.sequence[index].atoms)==0:
 	alpha=100
-      elif len(sequence[index].atoms)==1:
+      elif len(self.sequence[index].atoms)==1:
 	alpha=200
       else:
 	alpha=255
@@ -427,23 +464,23 @@ class GlobalSequenceView(QtGui.QWidget):
       secel=self.sequence.getSecelByIndex(index)
       color=secel.getColor()
 
-      if index in self.viewportRange:
-	viewportColor=QtGui.QColor(0,0,0)
-	brush=QtGui.QBrush(QtCore.Qt.gray, QtCore.Qt.SolidPattern)
+      # Paint Selection Blocks
+      if index in self.localView.sequence.getSelection():
+	viewportColor=QtCore.Qt.yellow
 	brush=QtGui.QBrush(viewportColor, QtCore.Qt.SolidPattern)
-	rect=QtCore.QRectF ( float(xOffset), float(yOffset)-0.5*cellHeight, float(cellWidth), 2.0*float(cellHeight))
+	rect=QtCore.QRectF ( float(xOffset), float(yOffset)-0.25*cellHeight, float(cellWidth), 1.5*float(cellHeight))
 	painter.fillRect(rect,brush)
 
-
+      # Paint Strand
       if secel.type=='strand':
 	color.setAlpha(alpha)
 	brush=QtGui.QBrush(color, QtCore.Qt.SolidPattern)
-	# strand end
+
+	# strand end (triangle)
 	if index==secel.stopIndex:
 	  p0 = QtCore.QPointF(float(xOffset+0.4*float(cellWidth)),yOffset+0.15*float(cellHeight))
 	  p1 = QtCore.QPointF(float(xOffset+cellWidth),yOffset+float(cellHeight)/2.0)
 	  p2 = QtCore.QPointF(float(xOffset+0.4*float(cellWidth)),yOffset+0.85*float(cellHeight))
-	  #painter.drawPolygon(p0,p1,p2,brush=brush)
 	  path=QtGui.QPainterPath(p0)
 	  path.lineTo(p1)
 	  path.lineTo(p2)
@@ -453,61 +490,46 @@ class GlobalSequenceView(QtGui.QWidget):
 	  height=int(cellHeight*.36)
 	  rect=QtCore.QRectF ( float(xOffset), yOffset+float(y0), 0.4*float(cellWidth), float(height))
 	  painter.fillRect(rect,brush)
+	# strand main (wide bar)
 	else:
 	  y0=int(cellHeight*.32)
 	  height=int(cellHeight*.36)
 	  rect=QtCore.QRectF ( float(xOffset), yOffset+float(y0), float(cellWidth), float(height))
 	  painter.fillRect(rect,brush)
 
+      # Paint Helix
       elif secel.type=='helix':
 	color.setAlpha(alpha)
 	brush=QtGui.QBrush(color, QtCore.Qt.SolidPattern)
-	# helix end
-	if index==secel.stopIndex:
-	  y0=int(cellHeight*.20)
-	  height=int(cellHeight*.60)
-	  rect=QtCore.QRectF ( float(xOffset), yOffset+float(y0), float(cellWidth), float(height))
-	  painter.fillRect(rect,brush)
-	# helix start
-	#elif index==secel.startIndex: pass
-	# helix middle
-	else:
-	  y0=int(cellHeight*.20)
-	  height=int(cellHeight*.60)
-	  rect=QtCore.QRectF ( float(xOffset), yOffset+float(y0), float(cellWidth), float(height))
-	  painter.fillRect(rect,brush)
+	y0=int(cellHeight*.20)
+	height=int(cellHeight*.60)
+	rect=QtCore.QRectF ( float(xOffset), yOffset+float(y0), float(cellWidth), float(height))
+	painter.fillRect(rect,brush)
 
+      # Paint Coil
       elif secel.type=='loop':
-	#painter.setPen(QtCore.Qt.gray)
 	if index in self.viewportRange:
 	  (r,g,b,a)=color.getRgb()
 	  color=QtGui.QColor(255-r,255-g,255-b)
-	#else:
-	  #color=QtGui.QColor(0,0,0)
 
-	color.setAlpha(alpha)
+	#color.setAlpha(alpha)
 	brush=QtGui.QBrush(color, QtCore.Qt.SolidPattern)
 
 	y0=int(cellHeight*.45)
 	height=int(cellHeight*.10)
 	rect=QtCore.QRectF ( float(xOffset), yOffset+float(y0), float(cellWidth), float(height))
 	painter.fillRect(rect,brush)
+
+      # Paint Viewport
+      if index in self.viewportRange:
+	viewportColor=QtCore.Qt.gray
+	viewportColor=QtGui.QColor(40,40,40)
+	viewportColor.setAlpha(100)
+	brush=QtGui.QBrush(viewportColor, QtCore.Qt.SolidPattern)
+	rect=QtCore.QRectF ( float(xOffset), float(yOffset)-0.5*cellHeight, float(cellWidth), 2.0*float(cellHeight))
+	painter.fillRect(rect,brush)
+
       xOffset = xOffset + cellWidth
-
-def makeToolbar():
-  toolbar=QtGui.QToolBar()
-  toolbar.setToolButtonStyle(QtCore.Qt.ToolButtonIconOnly)
-
-
-  zoomInIcon=QtGui.QIcon('zoom-in.png')
-  zoomInAction=QtGui.QAction(zoomInIcon,'LargerFont',None)
-  toolbar.addAction(zoomInAction)
-
-  zoomOutIcon=QtGui.QIcon('zoom-out.png')
-  zoomOutAction=QtGui.QAction(zoomOutIcon,'LargerFont',None)
-  toolbar.addAction(zoomOutAction)
-
-  return toolbar
 
 
 def tempZoomDialog(seqView, scrollArea):
@@ -520,6 +542,8 @@ def tempZoomDialog(seqView, scrollArea):
   minusButton.setMaximumWidth(50)
   minusButton.connect(minusButton, QtCore.SIGNAL("clicked()"), seqView.decrementPointSize)
   minusButton.connect(minusButton, QtCore.SIGNAL("clicked()"), scrollArea.updateHeight)
+  minusButton.emit(QtCore.SIGNAL("clicked()"))
+  # There is some bug with the scroll widget.  If I don't use the minusButton or plusButton once (e.g. previous line), then the scrollbar is wrong size.
 
   layout=QtGui.QBoxLayout(QtGui.QBoxLayout.LeftToRight)
   layout.addWidget(plusButton)
@@ -530,39 +554,17 @@ def tempZoomDialog(seqView, scrollArea):
   dialog.setModal(False)
   dialog.setLayout(layout)
   dialog.setWindowTitle(QtCore.QString('Zoom Dialog'))
-  #dialog.show() ;dialog.raise_()
 
   return dialog
 
 app = QtGui.QApplication(sys.argv)
 
-sequence = Chain.load('1KPO.pdb')
+groel = Chain.load('1KPO-singlechain.pdb',app)
+for residue in groel.residueRange()[80:-80]:
+      groel[residue].clearAtoms()
 
-lastRandom = random.gauss (100.0, 1.0)
-lastCleared=True
-for residue in sequence.residueRange():
-  nextRandom = random.gauss(lastRandom, 1.0)
-
-  #invert
-  if abs(nextRandom - lastRandom) > 1.8:
-
-    if lastCleared==True:
-      lastCleared=False
-    else:
-      sequence[residue].clearAtoms()
-      lastCleared=True
-
-  #don't invert
-  else:
-
-    if lastCleared==True:
-      sequence[residue].clearAtoms()
-
-
-
-seqView=ScrollableSequenceView(sequence)
+seqView=ScrollableSequenceView(groel)
 seqView.show()
-seqView.updateHeight()
 seqView.raise_()
 
 dialog=tempZoomDialog(seqView.getSeqview(),seqView)

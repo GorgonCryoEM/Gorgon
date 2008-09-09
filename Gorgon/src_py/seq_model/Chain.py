@@ -6,15 +6,25 @@
 #                    More info in: seq_model-doc.txt
 #
 
-from Residue import Residue
-from Atom import Atom
-from Helix import Helix
-from Sheet import Sheet
-#from Strand import Strand
-from Coil import Coil
+from seq_model.Residue import Residue
+from seq_model.Atom import Atom
+from seq_model.Helix import Helix
+from seq_model.Sheet import Sheet
+from seq_model.Coil import Coil
 
-class Chain(object):
-  """Chain objects represent single polypeptide chains, which are sequences of Residue objects"""
+try:
+  from PyQt4 import QtCore, QtGui
+  qtEnabled=True
+  baseClass=QtCore.QObject
+except:
+  qtEnabled=False
+  baseClass=object
+
+
+class Chain(baseClass):
+  '''
+  Chain objects represent single polypeptide chains, which are sequences of Residue objects
+  '''
   chainsDict = {}
 
   #Chain ID management
@@ -25,13 +35,15 @@ class Chain(object):
     Chain.__lastChainID=Chain.__lastChainID+1
     return chr(Chain.__lastChainID)
 
-
-
-
   #Chain Constructor
-  def __init__(self,char_string=None):
+  def __init__(self,char_string=None,qparent=None):
+
+    if qparent and qtEnabled:
+      super(QtCore.QObject,self).__init__(qparent)
+
     self.residueList={}
     self.secelList={}
+    self.selectedResidues=[]
     self.chainID = Chain.__nextChainID()
     self.atoms = {}
 
@@ -46,14 +58,20 @@ class Chain(object):
 
     Chain.chainsDict[self.chainID]=self
 
-
-
   @classmethod
-  def __loadFromPDB (cls,filename):
+  def __loadFromPDB (cls,filename,qparent=None):
+    '''
+    Multi-chain PDB files are not supported
+    '''
+
     infile=open(filename,'U')
     lines=infile.readlines()
 
-    result=Chain('')
+    if qparent and qtEnabled:
+      result=Chain('', qparent=qparent)
+    else:
+      result=Chain('')
+
     residue=None
     for line in lines:
       if line[0:4]=='ATOM':
@@ -91,16 +109,13 @@ class Chain(object):
     infile.close()
     return result
 
-
-
   @classmethod
-  def load (cls,filename):
+  def load (cls,filename,qparent=None):
     extension = filename.split('.')[-1].lower()
     if extension == 'pdb':
-      return Chain.__loadFromPDB(filename)
+      return Chain.__loadFromPDB(filename,qparent)
     else:
       raise NotImplementedError, 'NYI'
-
 
   def __repr__(self):
     s=''
@@ -111,16 +126,12 @@ class Chain(object):
       s=s + self[index].symbol1
     return s
 
-
-
-
   def __iter__(self):
-    # suppose residueList keys are {3,4,5,6,7,8, 13,14,15,16, 21,22,23}
+    # must handle discontinuous residueList keys such as {3,4,5,6,7,8, 13,14,15,16, 21,22,23}
     #eys=self.residueList.keys().sort()
     keys=self.residueList.keys()
     key_index=0
     next_residue_key=keys[key_index]
-
 
     while True:
       yield self.residueList[next_residue_key]
@@ -129,8 +140,6 @@ class Chain(object):
         next_residue_key=keys[key_index]
       except IndexError:
         raise StopIteration 
-
-
 
   def __convertNegativeIndex(self,i):
     return len(self)+i+1
@@ -143,6 +152,46 @@ class Chain(object):
     else:
       raise TypeError
 
+  def getSelection(self):
+    '''
+    Returns the list of selected residues
+    The selection is a list object where each element is an index in the Chain
+    '''
+    return self.selectedResidues
+
+  def setSelection(self, newSelection=None, removeOne=None, addOne=None, addRange=None):
+    '''
+    Sets the selection attribute to reflect a new set of selected residues
+    The selection is a list object where each element is an index in the Chain
+      To REPLACE the existing selection use 'newSelection' parameter
+      To REMOVE ONE RESIDUE from the existing selection use 'removeOne' parameter
+      To ADD ONE RESIDUE to the existing selection use 'addOne' parameter
+      To ADD A RANGE OF RESIDUES to the existing selection use 'addRange' parameter
+    '''
+    if newSelection is not None:
+      self.selectedResidues=newSelection
+
+    elif removeOne is not None:
+      if removeOne in self.selectedResidues:
+	self.selectedResidues.remove(removeOne)
+
+    elif addOne is not None:
+      if addOne not in self.selectedResidues:
+	self.selectedResidues.append(addOne)
+
+    elif addRange is not None:
+      self.selectedResidues.extend(addRange)
+
+    if qtEnabled:
+      self.emit( QtCore.SIGNAL('selection updated'))
+
+  def fillGaps(self):
+    for i in self.residueRange():
+      while i+1 not in self.residueRange():
+	if i+1>self.residueRange()[-1]:
+	  break
+	self[i+1]=Residue('X')
+	i=i+1
 
   def addSecel(self, secel):
     for index in range(secel.startIndex, secel.stopIndex+1):
@@ -280,11 +329,8 @@ class Chain(object):
       self.__setitem__(key,residue)
       return key
 
-
-
   def residueRange(self):
     return sorted(self.residueList.keys())
-
 
   def saveToPDB(self, filename):
     s = self.toPDB()
@@ -294,7 +340,7 @@ class Chain(object):
     outfile.close()
 
   #Return a pdb-compliant string
-  def toPDB(self, backboneOnly=False, suppressWarning=False): 
+  def toPDB(self, backboneOnly=False, verbose=True): 
     """decomposes chain into constituent residues and atoms to render pdb coordinate model.  residue is ommitted if it has no atoms."""
     #Not Thread-Safe
     atom_index=1
@@ -339,7 +385,7 @@ class Chain(object):
           s=s+ "%5.2f " %atom.tempFactor
           s=s+ atom.element.rjust(11) + "\n"
       except KeyError:
-        if not suppressWarning:
+        if verbose:
           print "Chain.toPDB() warning:  No atom record for %s in %s%s." %(atom_name,residue_index,residue.symbol3)
     if len(atoms) > 0:
       s=s+ "TER\n"
