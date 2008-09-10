@@ -8,9 +8,9 @@
 
 try:
   from PyQt4 import QtGui
-  qtcolor=True
+  qtEnabled=True
 except:
-  qtcolor=False
+  qtEnabled=False
 
 	
 class Secel(object):
@@ -21,7 +21,7 @@ class Secel(object):
     self.startIndex=startIndex
     self.stopIndex=stopIndex
     self.color=color
-    if qtcolor and color==None:
+    if qtEnabled and color==None:
       self.color=QtGui.QColor(0,0,0)
 
   def setColor(self, newColor):
