@@ -29,6 +29,7 @@ namespace wustl_mm {
 			void AddAtom(PDBAtom atom);
 			void Draw(int subSceneIndex, bool selectEnabled);
 			void LoadFile(string fileName);
+			void Select(int subsceneIndex, int ix0, int ix1 = -1, int ix2 = -1, int ix3 = -1, int ix4 = -1);
 			void Unload();
 			string GetSupportedLoadFileFormats();
 			string GetSupportedSaveFileFormats();
@@ -56,23 +57,25 @@ namespace wustl_mm {
 		void CAlphaRenderer::Draw(int subSceneIndex, bool selectEnabled) {
 
 			bool selected;
-			GLfloat frontMaterial[4];
-			GLfloat backMaterial[4];
 			GLfloat emissionColor[4] = {1.0, 1.0, 1.0, 1.0};
 
-			if(subSceneIndex == 0) {
+			if(subSceneIndex == 0) {				
 				if(selectEnabled) {
 					glPushName(0);
 					glPushName(0);
 				}
 				for(int i=0; i < (int)atoms.size(); i++) {
-					selected = ((subSceneIndex == selectedSubSceneIndex) && (i == selectedIx[0]));
+					//selected = ((subSceneIndex == selectedSubSceneIndex) && (i == selectedIx[0]));
+					selected = atoms[i].GetSelected();
+					glPushAttrib(GL_LIGHTING_BIT);
 					if(selected) {
-						glGetMaterialfv(GL_FRONT, GL_EMISSION, frontMaterial);
-						glGetMaterialfv(GL_BACK, GL_EMISSION, backMaterial);
 						glMaterialfv(GL_FRONT, GL_EMISSION, emissionColor);
 						glMaterialfv(GL_BACK, GL_EMISSION, emissionColor);
-					}
+					} else {
+						GLfloat material[4] = {atoms[i].GetColorR(), atoms[i].GetColorG(), atoms[i].GetColorB(), atoms[i].GetColorA()};
+						glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, material);
+						glMaterialfv(GL_BACK, GL_AMBIENT_AND_DIFFUSE, material);
+					}					
 
 					glPushMatrix();
 					if(selectEnabled){
@@ -80,13 +83,11 @@ namespace wustl_mm {
 					}
 					glTranslatef(atoms[i].GetPosition().X(), atoms[i].GetPosition().Y(), atoms[i].GetPosition().Z());
 					GLUquadric * quadricSphere = gluNewQuadric();
-					gluSphere(quadricSphere, 0.3, 10, 10);
+					gluSphere(quadricSphere, atoms[i].GetAtomRadius() * 0.3, 10, 10);
 					gluDeleteQuadric(quadricSphere);
 					glPopMatrix();
-					if(selected) {
-						glMaterialfv(GL_FRONT, GL_EMISSION, frontMaterial);
-						glMaterialfv(GL_BACK, GL_EMISSION, backMaterial);
-					}
+					glPopAttrib();
+
 				}
 				if(selectEnabled) {
 					glPopName();
@@ -102,10 +103,9 @@ namespace wustl_mm {
 				glEnable(GL_LINE_SMOOTH);
 				glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);		
 				for(int i=0; i < (int)backboneSegments.size(); i++) {
+					glPushAttrib(GL_LIGHTING_BIT);
 					selected = ((subSceneIndex == selectedSubSceneIndex) && (i == selectedIx[0]));
 					if(selected) {
-						glGetMaterialfv(GL_FRONT, GL_EMISSION, frontMaterial);
-						glGetMaterialfv(GL_BACK, GL_EMISSION, backMaterial);
 						glMaterialfv(GL_FRONT, GL_EMISSION, emissionColor);
 						glMaterialfv(GL_BACK, GL_EMISSION, emissionColor);
 					}
@@ -114,10 +114,7 @@ namespace wustl_mm {
 						glLoadName(i);
 					}
 					DrawCylinder(atoms[backboneSegments[i].a0].GetPosition(), atoms[backboneSegments[i].a1].GetPosition(), 0.1);
-					if(selected) {
-						glMaterialfv(GL_FRONT, GL_EMISSION, frontMaterial);
-						glMaterialfv(GL_BACK, GL_EMISSION, backMaterial);
-					}
+					glPopAttrib();
 				}
 				glPopAttrib();
 				if(selectEnabled) {
@@ -150,6 +147,17 @@ namespace wustl_mm {
 			
 		}
 
+		void CAlphaRenderer::Select(int subsceneIndex, int ix0, int ix1, int ix2, int ix3, int ix4) {
+			Renderer::Select(subsceneIndex, ix0, ix1, ix2, ix3, ix4);
+			if((selectedSubSceneIndex == 0) && (selectedIx[0] >= 0) && (selectedIx[0] < atoms.size())){
+				for(int i = 0; i < atoms.size(); i++) {					
+					atoms[i].SetSelected(i == selectedIx[0]);
+				}
+			}
+
+
+		}
+
 		void CAlphaRenderer::Unload() {
 			atoms.clear();
 			backboneSegments.clear();
@@ -176,6 +184,7 @@ namespace wustl_mm {
 				}
 			}
 		}
+
 
 		string CAlphaRenderer::GetSupportedLoadFileFormats() {
 			return "Atom Positions (*.pdb)";

@@ -31,7 +31,13 @@ namespace wustl_mm {
 			float			GetOccupancy();
 			float			GetTempFactor();
 			string			GetElement();
-			string			GetCharge();
+			string			GetCharge();		
+			float			GetColorA();
+			float			GetColorR();
+			float			GetColorG();
+			float			GetColorB();
+			float			GetAtomRadius();
+			bool			GetSelected();
 
 			void SetSerial(unsigned int serial);
 			void SetName(string	name);
@@ -45,6 +51,9 @@ namespace wustl_mm {
 			void SetTempFactor(float tempFactor);
 			void SetElement(string element);
 			void SetCharge(string charge);
+			void SetColor(float r, float g, float b, float a);
+			void SetAtomRadius(float radius);
+			void SetSelected(bool selected);
 		private:
 			unsigned int	serial;
 			string			name;
@@ -58,6 +67,12 @@ namespace wustl_mm {
 			float			tempFactor;
 			string			element;
 			string			charge;
+			float			atomRadius;
+			float			colorR;
+			float			colorG;
+			float			colorB;
+			float			colorA;
+			bool			selected;
 		};
 
 		PDBAtom::PDBAtom() {
@@ -73,6 +88,12 @@ namespace wustl_mm {
 			tempFactor = 0;
 			element = "  ";
 			charge = "  ";
+			atomRadius = 1;
+			colorR = 0.66f;
+			colorG = 0.66f;
+			colorB = 0.0f;
+			colorA = 1.0f;
+			selected = false;
 		}
 
 		PDBAtom::PDBAtom(string PDBLine) {
@@ -90,6 +111,12 @@ namespace wustl_mm {
 			tempFactor = (float)atof((char *)PDBLine.substr(60, 6).c_str());
 			element = PDBLine.substr(76, 2);
 			charge = PDBLine.substr(78, 2);
+			atomRadius = 1;
+			colorR = 0.66f;
+			colorG = 0.66f;
+			colorB = 0.0f;
+			colorA = 1.0f;
+			selected = false;
 		}
 
 		void PDBAtom::Print() {
@@ -144,6 +171,30 @@ namespace wustl_mm {
 			return charge;
 		}
 
+		float PDBAtom::GetColorA(){
+			return colorA;
+		}
+
+		float PDBAtom::GetColorR(){
+			return colorR;
+		}
+
+		float PDBAtom::GetColorG(){
+			return colorG;
+		}
+
+		float PDBAtom::GetColorB(){
+			return colorB;
+		}
+
+		float PDBAtom::GetAtomRadius(){
+			return atomRadius;
+		}
+
+		bool PDBAtom::GetSelected() {
+			return selected;
+		}
+
 		void PDBAtom::SetSerial(unsigned int serial){
 			this->serial = serial;
 		}
@@ -190,6 +241,21 @@ namespace wustl_mm {
 
 		void PDBAtom::SetCharge(string charge){
 			this->charge = charge;
+		}
+
+		void PDBAtom::SetColor(float r, float g, float b, float a) {
+			colorR = r;
+			colorG = g;
+			colorB = b;
+			colorA = a;
+		}
+
+		void PDBAtom::SetAtomRadius(float radius){
+			atomRadius = radius;
+		}
+
+		void PDBAtom::SetSelected(bool selected) {
+			this->selected = selected;
 		}
 
 	}
