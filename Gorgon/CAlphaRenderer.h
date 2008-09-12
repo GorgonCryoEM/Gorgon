@@ -26,13 +26,19 @@ namespace wustl_mm {
 			CAlphaRenderer();
 			~CAlphaRenderer();
 
-			void AddAtom(PDBAtom atom);
 			void Draw(int subSceneIndex, bool selectEnabled);
 			void LoadFile(string fileName);
 			void Select(int subsceneIndex, int ix0, int ix1 = -1, int ix2 = -1, int ix3 = -1, int ix4 = -1);
 			void Unload();
 			string GetSupportedLoadFileFormats();
 			string GetSupportedSaveFileFormats();
+
+			// Controlling the atom vector
+			void AddAtom(PDBAtom atom);
+			PDBAtom GetAtom(int index);
+			void DeleteAtom(int index);
+			int GetAtomCount();
+
 		private:
 			void UpdateBoundingBox();
 		private:
@@ -192,6 +198,17 @@ namespace wustl_mm {
 
 		string CAlphaRenderer::GetSupportedSaveFileFormats() {
 			return "Atom Positions (*.atom)";
+		}
+		PDBAtom CAlphaRenderer::GetAtom(int index) {
+			return atoms[index];
+		}
+
+		int CAlphaRenderer::GetAtomCount() {
+			return atoms.size();
+		}
+
+		void CAlphaRenderer::DeleteAtom(int index) {
+			atoms.erase(atoms.begin() + index);
 		}
 	}
 }

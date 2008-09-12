@@ -157,8 +157,11 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("getSupportedSaveFileFormats", &CAlphaRenderer::GetSupportedSaveFileFormats)
 		.def("getMin", &CAlphaRenderer::GetMin)
 		.def("getMax", &CAlphaRenderer::GetMax)
-		.def("addAtom", &CAlphaRenderer::AddAtom)
 		.def("get3DCoordinates", &CAlphaRenderer::Get3DCoordinates)
+		.def("addAtom", &CAlphaRenderer::AddAtom)
+		.def("getAtom", &CAlphaRenderer::GetAtom)
+		.def("getAtomCount", &CAlphaRenderer::GetAtomCount)
+		.def("deleteAtom", &CAlphaRenderer::DeleteAtom)		
 	;
 
 	class_<InteractiveSkeletonEngine>("InteractiveSkeletonEngine", init<Volume *, NonManifoldMesh_Annotated *, float, float, float, int, int, int, unsigned int>())
