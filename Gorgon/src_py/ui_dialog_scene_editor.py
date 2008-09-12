@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_dialog_scene_editor.ui'
 #
-# Created: Fri May 30 11:44:03 2008
+# Created: Fri Sep 12 13:09:28 2008
 #      by: PyQt4 UI code generator 4.3.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -140,6 +140,7 @@ class Ui_DialogSceneEditor(object):
         self.gridlayout4.addWidget(self.label_2,1,0,1,1)
 
         self.doubleSpinBoxLight1X = QtGui.QDoubleSpinBox(self.groupBox_4)
+        self.doubleSpinBoxLight1X.setEnabled(False)
         self.doubleSpinBoxLight1X.setMinimum(-9999999999.99)
         self.doubleSpinBoxLight1X.setMaximum(9999999999.99)
         self.doubleSpinBoxLight1X.setProperty("value",QtCore.QVariant(0.0))
@@ -147,6 +148,7 @@ class Ui_DialogSceneEditor(object):
         self.gridlayout4.addWidget(self.doubleSpinBoxLight1X,1,1,1,1)
 
         self.doubleSpinBoxLight1Y = QtGui.QDoubleSpinBox(self.groupBox_4)
+        self.doubleSpinBoxLight1Y.setEnabled(False)
         self.doubleSpinBoxLight1Y.setMinimum(-9999999999.99)
         self.doubleSpinBoxLight1Y.setMaximum(9999999999.99)
         self.doubleSpinBoxLight1Y.setProperty("value",QtCore.QVariant(0.0))
@@ -154,6 +156,7 @@ class Ui_DialogSceneEditor(object):
         self.gridlayout4.addWidget(self.doubleSpinBoxLight1Y,1,2,1,1)
 
         self.doubleSpinBoxLight1Z = QtGui.QDoubleSpinBox(self.groupBox_4)
+        self.doubleSpinBoxLight1Z.setEnabled(False)
         self.doubleSpinBoxLight1Z.setMinimum(-9999999999.99)
         self.doubleSpinBoxLight1Z.setMaximum(9999999999.99)
         self.doubleSpinBoxLight1Z.setProperty("value",QtCore.QVariant(0.0))
@@ -169,8 +172,14 @@ class Ui_DialogSceneEditor(object):
         self.gridlayout4.addWidget(self.pushButtonLight1Color,2,1,1,1)
 
         self.checkBoxLight1Enabled = QtGui.QCheckBox(self.groupBox_4)
+        self.checkBoxLight1Enabled.setChecked(True)
         self.checkBoxLight1Enabled.setObjectName("checkBoxLight1Enabled")
         self.gridlayout4.addWidget(self.checkBoxLight1Enabled,0,0,1,1)
+
+        self.checkBoxLight1EyePosition = QtGui.QCheckBox(self.groupBox_4)
+        self.checkBoxLight1EyePosition.setChecked(True)
+        self.checkBoxLight1EyePosition.setObjectName("checkBoxLight1EyePosition")
+        self.gridlayout4.addWidget(self.checkBoxLight1EyePosition,0,1,1,1)
         self.gridlayout3.addWidget(self.groupBox_4,0,0,1,2)
 
         self.groupBox_5 = QtGui.QGroupBox(self.tabLighting)
@@ -188,6 +197,7 @@ class Ui_DialogSceneEditor(object):
         self.gridlayout5.addWidget(self.label_5,1,0,1,1)
 
         self.doubleSpinBoxLight2X = QtGui.QDoubleSpinBox(self.groupBox_5)
+        self.doubleSpinBoxLight2X.setEnabled(False)
         self.doubleSpinBoxLight2X.setMinimum(-9999999999.99)
         self.doubleSpinBoxLight2X.setMaximum(9999999999.99)
         self.doubleSpinBoxLight2X.setProperty("value",QtCore.QVariant(0.0))
@@ -195,6 +205,7 @@ class Ui_DialogSceneEditor(object):
         self.gridlayout5.addWidget(self.doubleSpinBoxLight2X,1,1,1,1)
 
         self.doubleSpinBoxLight2Y = QtGui.QDoubleSpinBox(self.groupBox_5)
+        self.doubleSpinBoxLight2Y.setEnabled(False)
         self.doubleSpinBoxLight2Y.setMinimum(-9999999999.99)
         self.doubleSpinBoxLight2Y.setMaximum(9999999999.99)
         self.doubleSpinBoxLight2Y.setProperty("value",QtCore.QVariant(0.0))
@@ -202,6 +213,7 @@ class Ui_DialogSceneEditor(object):
         self.gridlayout5.addWidget(self.doubleSpinBoxLight2Y,1,2,1,1)
 
         self.doubleSpinBoxLight2Z = QtGui.QDoubleSpinBox(self.groupBox_5)
+        self.doubleSpinBoxLight2Z.setEnabled(False)
         self.doubleSpinBoxLight2Z.setMinimum(-9999999999.99)
         self.doubleSpinBoxLight2Z.setMaximum(9999999999.99)
         self.doubleSpinBoxLight2Z.setProperty("value",QtCore.QVariant(0.0))
@@ -213,6 +225,7 @@ class Ui_DialogSceneEditor(object):
         self.gridlayout5.addWidget(self.label_6,2,0,1,1)
 
         self.pushButtonLight2Color = ColoredPushButton(self.groupBox_5)
+        self.pushButtonLight2Color.setEnabled(False)
         self.pushButtonLight2Color.setObjectName("pushButtonLight2Color")
         self.gridlayout5.addWidget(self.pushButtonLight2Color,2,1,1,1)
         self.gridlayout3.addWidget(self.groupBox_5,1,0,1,2)
@@ -277,10 +290,11 @@ class Ui_DialogSceneEditor(object):
         QtCore.QObject.connect(self.checkBoxLight2Enabled,QtCore.SIGNAL("toggled(bool)"),self.doubleSpinBoxLight2Y.setEnabled)
         QtCore.QObject.connect(self.checkBoxLight2Enabled,QtCore.SIGNAL("toggled(bool)"),self.doubleSpinBoxLight2X.setEnabled)
         QtCore.QObject.connect(self.checkBoxLight2Enabled,QtCore.SIGNAL("toggled(bool)"),self.doubleSpinBoxLight2Z.setEnabled)
-        QtCore.QObject.connect(self.checkBoxLight1Enabled,QtCore.SIGNAL("toggled(bool)"),self.doubleSpinBoxLight1Y.setEnabled)
+        QtCore.QObject.connect(self.checkBoxLight1EyePosition,QtCore.SIGNAL("toggled(bool)"),self.doubleSpinBoxLight1X.setDisabled)
+        QtCore.QObject.connect(self.checkBoxLight1EyePosition,QtCore.SIGNAL("toggled(bool)"),self.doubleSpinBoxLight1Y.setDisabled)
+        QtCore.QObject.connect(self.checkBoxLight1EyePosition,QtCore.SIGNAL("toggled(bool)"),self.doubleSpinBoxLight1Z.setDisabled)
         QtCore.QObject.connect(self.checkBoxLight1Enabled,QtCore.SIGNAL("toggled(bool)"),self.pushButtonLight1Color.setEnabled)
-        QtCore.QObject.connect(self.checkBoxLight1Enabled,QtCore.SIGNAL("toggled(bool)"),self.doubleSpinBoxLight1Z.setEnabled)
-        QtCore.QObject.connect(self.checkBoxLight1Enabled,QtCore.SIGNAL("toggled(bool)"),self.doubleSpinBoxLight1X.setEnabled)
+        QtCore.QObject.connect(self.checkBoxLight1Enabled,QtCore.SIGNAL("toggled(bool)"),self.checkBoxLight1EyePosition.setEnabled)
         QtCore.QMetaObject.connectSlotsByName(DialogSceneEditor)
         DialogSceneEditor.setTabOrder(self.tabWidget,self.doubleSpinBoxEyeX)
         DialogSceneEditor.setTabOrder(self.doubleSpinBoxEyeX,self.doubleSpinBoxEyeY)
@@ -293,7 +307,8 @@ class Ui_DialogSceneEditor(object):
         DialogSceneEditor.setTabOrder(self.doubleSpinBoxUpY,self.doubleSpinBoxUpZ)
         DialogSceneEditor.setTabOrder(self.doubleSpinBoxUpZ,self.doubleSpinBoxZoom)
         DialogSceneEditor.setTabOrder(self.doubleSpinBoxZoom,self.checkBoxLight1Enabled)
-        DialogSceneEditor.setTabOrder(self.checkBoxLight1Enabled,self.doubleSpinBoxLight1X)
+        DialogSceneEditor.setTabOrder(self.checkBoxLight1Enabled,self.checkBoxLight1EyePosition)
+        DialogSceneEditor.setTabOrder(self.checkBoxLight1EyePosition,self.doubleSpinBoxLight1X)
         DialogSceneEditor.setTabOrder(self.doubleSpinBoxLight1X,self.doubleSpinBoxLight1Y)
         DialogSceneEditor.setTabOrder(self.doubleSpinBoxLight1Y,self.doubleSpinBoxLight1Z)
         DialogSceneEditor.setTabOrder(self.doubleSpinBoxLight1Z,self.pushButtonLight1Color)
@@ -318,6 +333,7 @@ class Ui_DialogSceneEditor(object):
         self.label_2.setText(QtGui.QApplication.translate("DialogSceneEditor", "Position:", None, QtGui.QApplication.UnicodeUTF8))
         self.label.setText(QtGui.QApplication.translate("DialogSceneEditor", "Color:", None, QtGui.QApplication.UnicodeUTF8))
         self.checkBoxLight1Enabled.setText(QtGui.QApplication.translate("DialogSceneEditor", "Enabled", None, QtGui.QApplication.UnicodeUTF8))
+        self.checkBoxLight1EyePosition.setText(QtGui.QApplication.translate("DialogSceneEditor", "Use Eye Position", None, QtGui.QApplication.UnicodeUTF8))
         self.groupBox_5.setTitle(QtGui.QApplication.translate("DialogSceneEditor", "Light 2:", None, QtGui.QApplication.UnicodeUTF8))
         self.checkBoxLight2Enabled.setText(QtGui.QApplication.translate("DialogSceneEditor", "Enabled", None, QtGui.QApplication.UnicodeUTF8))
         self.label_5.setText(QtGui.QApplication.translate("DialogSceneEditor", "Position:", None, QtGui.QApplication.UnicodeUTF8))

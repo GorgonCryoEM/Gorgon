@@ -229,6 +229,9 @@
           </item>
           <item row="1" column="1" >
            <widget class="QDoubleSpinBox" name="doubleSpinBoxLight1X" >
+            <property name="enabled" >
+             <bool>false</bool>
+            </property>
             <property name="minimum" >
              <double>-9999999999.989999771118164</double>
             </property>
@@ -242,6 +245,9 @@
           </item>
           <item row="1" column="2" >
            <widget class="QDoubleSpinBox" name="doubleSpinBoxLight1Y" >
+            <property name="enabled" >
+             <bool>false</bool>
+            </property>
             <property name="minimum" >
              <double>-9999999999.989999771118164</double>
             </property>
@@ -255,6 +261,9 @@
           </item>
           <item row="1" column="3" >
            <widget class="QDoubleSpinBox" name="doubleSpinBoxLight1Z" >
+            <property name="enabled" >
+             <bool>false</bool>
+            </property>
             <property name="minimum" >
              <double>-9999999999.989999771118164</double>
             </property>
@@ -285,6 +294,19 @@
             <property name="text" >
              <string>Enabled</string>
             </property>
+            <property name="checked" >
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1" >
+           <widget class="QCheckBox" name="checkBoxLight1EyePosition" >
+            <property name="text" >
+             <string>Use Eye Position</string>
+            </property>
+            <property name="checked" >
+             <bool>true</bool>
+            </property>
            </widget>
           </item>
          </layout>
@@ -312,6 +334,9 @@
           </item>
           <item row="1" column="1" >
            <widget class="QDoubleSpinBox" name="doubleSpinBoxLight2X" >
+            <property name="enabled" >
+             <bool>false</bool>
+            </property>
             <property name="minimum" >
              <double>-9999999999.989999771118164</double>
             </property>
@@ -325,6 +350,9 @@
           </item>
           <item row="1" column="2" >
            <widget class="QDoubleSpinBox" name="doubleSpinBoxLight2Y" >
+            <property name="enabled" >
+             <bool>false</bool>
+            </property>
             <property name="minimum" >
              <double>-9999999999.989999771118164</double>
             </property>
@@ -338,6 +366,9 @@
           </item>
           <item row="1" column="3" >
            <widget class="QDoubleSpinBox" name="doubleSpinBoxLight2Z" >
+            <property name="enabled" >
+             <bool>false</bool>
+            </property>
             <property name="minimum" >
              <double>-9999999999.989999771118164</double>
             </property>
@@ -358,6 +389,9 @@
           </item>
           <item row="2" column="1" >
            <widget class="ColoredPushButton" name="pushButtonLight2Color" >
+            <property name="enabled" >
+             <bool>false</bool>
+            </property>
             <property name="text" >
              <string/>
             </property>
@@ -484,6 +518,7 @@
   <tabstop>doubleSpinBoxUpZ</tabstop>
   <tabstop>doubleSpinBoxZoom</tabstop>
   <tabstop>checkBoxLight1Enabled</tabstop>
+  <tabstop>checkBoxLight1EyePosition</tabstop>
   <tabstop>doubleSpinBoxLight1X</tabstop>
   <tabstop>doubleSpinBoxLight1Y</tabstop>
   <tabstop>doubleSpinBoxLight1Z</tabstop>
@@ -527,8 +562,8 @@
      <y>306</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>328</x>
-     <y>364</y>
+     <x>424</x>
+     <y>376</y>
     </hint>
    </hints>
   </connection>
@@ -597,18 +632,50 @@
    </hints>
   </connection>
   <connection>
-   <sender>checkBoxLight1Enabled</sender>
+   <sender>checkBoxLight1EyePosition</sender>
    <signal>toggled(bool)</signal>
-   <receiver>doubleSpinBoxLight1Y</receiver>
-   <slot>setEnabled(bool)</slot>
+   <receiver>doubleSpinBoxLight1X</receiver>
+   <slot>setDisabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>54</x>
-     <y>69</y>
+     <x>184</x>
+     <y>73</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>267</x>
-     <y>97</y>
+     <x>169</x>
+     <y>104</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkBoxLight1EyePosition</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>doubleSpinBoxLight1Y</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>123</x>
+     <y>74</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>280</x>
+     <y>100</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkBoxLight1EyePosition</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>doubleSpinBoxLight1Z</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>185</x>
+     <y>71</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>364</x>
+     <y>93</y>
     </hint>
    </hints>
   </connection>
@@ -619,44 +686,28 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>49</x>
+     <x>61</x>
+     <y>73</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>123</x>
+     <y>126</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkBoxLight1Enabled</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>checkBoxLight1EyePosition</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>75</x>
      <y>69</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>184</x>
-     <y>127</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>checkBoxLight1Enabled</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>doubleSpinBoxLight1Z</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>63</x>
-     <y>67</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>361</x>
-     <y>100</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>checkBoxLight1Enabled</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>doubleSpinBoxLight1X</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>71</x>
+     <x>115</x>
      <y>70</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>157</x>
-     <y>102</y>
     </hint>
    </hints>
   </connection>

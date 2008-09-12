@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.25  2008/07/07 14:45:06  ssa1
+#   Changing the interactive skeletonization to go from OpenGL Hitstack to RayTracing
+#
 #   Revision 1.24  2008/06/18 18:15:41  ssa1
 #   Adding in CVS meta data
 #
@@ -41,9 +44,10 @@ class Camera(QtOpenGL.QGLWidget):
         self.mouseTrackingEnabledRay = False
         self.aspectRatio = 1.0
         self.selectedScene = -1
-        self.lightsEnabled = [True, True]
+        self.lightsEnabled = [True, False]
         self.lightsColor = [[1.0, 1.0, 1.0, 1.0], [1.0, 1.0, 1.0, 1.0]]
-        self.lightsPosition = [[1000,1000,1000], [-1000,-1000,-1000]]        
+        self.lightsPosition = [[1000,1000,1000], [-1000,-1000,-1000]]
+        self.lightsUseEyePosition = [True, False]        
         self.backgroundColor = [0.0, 0.0, 0.0, 1.0]
         self.mouseMovePoint = QtCore.QPoint(0,0)
         self.mouseDownPoint = QtCore.QPoint(0,0)        
@@ -167,22 +171,7 @@ class Camera(QtOpenGL.QGLWidget):
         glClearColor(self.backgroundColor[0], self.backgroundColor[1], self.backgroundColor[2], self.backgroundColor[3])
         glClearDepth( 1.0 )
         
-        glLight = [GL_LIGHT0, GL_LIGHT1]
-        
-        
-        for i in range(2):
-            if(self.lightsEnabled[i]):
-                afPropertiesAmbient = [self.lightsColor[i][0]*0.3, self.lightsColor[i][1]*0.3, self.lightsColor[i][2]*0.3, 1.00] 
-                afPropertiesDiffuse = self.lightsColor[i]
-                afPropertiesSpecular = [self.lightsColor[i][0]*0.1, self.lightsColor[i][0]*0.1, self.lightsColor[i][0]*0.1, 1.00]
-                afLightPosition = self.lightsPosition[i]         
-                glLightfv(glLight[i], GL_AMBIENT,  afPropertiesAmbient)
-                glLightfv(glLight[i], GL_DIFFUSE,  afPropertiesDiffuse) 
-                glLightfv(glLight[i], GL_SPECULAR, afPropertiesSpecular) 
-                glLightfv(glLight[i], GL_POSITION, afLightPosition)               
-                glEnable(glLight[i]) 
-            else:
-                glDisable(glLight[i])
+        self.setLights()
 
         if(self.fogEnabled):
             glFogi(GL_FOG_MODE, GL_LINEAR)
@@ -196,7 +185,27 @@ class Camera(QtOpenGL.QGLWidget):
             glDisable(GL_FOG)    
 
         glMatrixMode(GL_MODELVIEW)
-        glLoadIdentity()        
+        glLoadIdentity()      
+
+    def setLights(self):
+        glLight = [GL_LIGHT0, GL_LIGHT1]
+        
+        for i in range(2):
+            if(self.lightsEnabled[i]):
+                afPropertiesAmbient = [self.lightsColor[i][0]*0.3, self.lightsColor[i][1]*0.3, self.lightsColor[i][2]*0.3, 1.00] 
+                afPropertiesDiffuse = self.lightsColor[i]
+                afPropertiesSpecular = [self.lightsColor[i][0]*0.1, self.lightsColor[i][0]*0.1, self.lightsColor[i][0]*0.1, 1.00]
+                if(self.lightsUseEyePosition[i]):
+                    afLightPosition = self.eye
+                else:
+                    afLightPosition = self.lightsPosition[i]         
+                glLightfv(glLight[i], GL_AMBIENT,  afPropertiesAmbient)
+                glLightfv(glLight[i], GL_DIFFUSE,  afPropertiesDiffuse) 
+                glLightfv(glLight[i], GL_SPECULAR, afPropertiesSpecular) 
+                glLightfv(glLight[i], GL_POSITION, afLightPosition)               
+                glEnable(glLight[i]) 
+            else:
+                glDisable(glLight[i])
        
     def setGluLookAt(self):
         gluLookAt(self.eye[0], self.eye[1], self.eye[2], 
@@ -210,7 +219,8 @@ class Camera(QtOpenGL.QGLWidget):
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
         glMatrixMode(GL_MODELVIEW)   
         glPushMatrix()
-        self.setGluLookAt()                                      
+        self.setGluLookAt()
+        self.setLights()                                      
         for i in range(len(self.scene)): 
             glPushName(i)
             self.scene[i].draw()
