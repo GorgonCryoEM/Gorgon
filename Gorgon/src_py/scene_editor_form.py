@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.2  2008/06/18 18:15:41  ssa1
+#   Adding in CVS meta data
+#
 
 from PyQt4 import QtCore, QtGui
 from ui_dialog_scene_editor import Ui_DialogSceneEditor
@@ -59,7 +62,8 @@ class SceneEditorForm(QtGui.QWidget):
         self.connect(self.ui.pushButtonBackgroundColor, QtCore.SIGNAL("colorChanged ()"), self.backgroundColorChanged)
         self.connect(self.ui.checkBoxFogEnabled, QtCore.SIGNAL("toggled (bool)"), self.fogEnabled)
         self.connect(self.ui.doubleSpinBoxFogDensity, QtCore.SIGNAL("editingFinished ()"), self.fogDensityChanged)
-        self.connect(self.ui.pushButtonFogColor, QtCore.SIGNAL("colorChanged ()"), self.fogColorChanged)        
+        self.connect(self.ui.pushButtonFogColor, QtCore.SIGNAL("colorChanged ()"), self.fogColorChanged)
+        self.connect(self.ui.checkBoxLight1EyePosition, QtCore.SIGNAL("toggled (bool)"), self.light1EyePositionChecked)
                   
         
         
@@ -147,6 +151,9 @@ class SceneEditorForm(QtGui.QWidget):
     
     def light1Enabled(self, value):
         self.camera.lightsEnabled[0] = value
+        self.ui.doubleSpinBoxLight1X.setEnabled(self.ui.checkBoxLight1Enabled.isChecked() and not self.ui.checkBoxLight1EyePosition.isChecked());
+        self.ui.doubleSpinBoxLight1Y.setEnabled(self.ui.checkBoxLight1Enabled.isChecked() and not self.ui.checkBoxLight1EyePosition.isChecked());
+        self.ui.doubleSpinBoxLight1Z.setEnabled(self.ui.checkBoxLight1Enabled.isChecked() and not self.ui.checkBoxLight1EyePosition.isChecked());
         self.camera.initializeScene()
         self.camera.updateGL()        
 
@@ -159,7 +166,12 @@ class SceneEditorForm(QtGui.QWidget):
     def light1PositionChanged(self):
         self.camera.lightsPosition[0] = [self.ui.doubleSpinBoxLight1X.value(), self.ui.doubleSpinBoxLight1Y.value(), self.ui.doubleSpinBoxLight1Z.value()]
         self.camera.initializeScene()
-        self.camera.updateGL()               
+        self.camera.updateGL()        
+    
+    def light1EyePositionChecked(self, value):
+        self.camera.lightsUseEyePosition[0] = value
+        self.camera.initializeScene()
+        self.camera.updateGL()
         
     def light2Enabled(self, value):
         self.camera.lightsEnabled[1] = value
