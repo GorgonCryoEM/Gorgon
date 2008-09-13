@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.26  2008/09/12 20:57:44  ssa1
+#   Adding an Eye light source
+#
 #   Revision 1.25  2008/07/07 14:45:06  ssa1
 #   Changing the interactive skeletonization to go from OpenGL Hitstack to RayTracing
 #
@@ -50,7 +53,10 @@ class Camera(QtOpenGL.QGLWidget):
         self.lightsUseEyePosition = [True, False]        
         self.backgroundColor = [0.0, 0.0, 0.0, 1.0]
         self.mouseMovePoint = QtCore.QPoint(0,0)
-        self.mouseDownPoint = QtCore.QPoint(0,0)        
+        self.mouseDownPoint = QtCore.QPoint(0,0)     
+        self.mouseLeftPressed = False
+        self.mouseMidPressed = False   
+        self.mouseRightPressed = False
         
         self.fogColor = [0.0, 0.0, 0.0, 1.0]
         self.fogDensity = 0.01
@@ -242,7 +248,7 @@ class Camera(QtOpenGL.QGLWidget):
             minNames.pop(0)
         self.selectedScene = sceneId;
             
-    def processMouseClick(self, mouseHits, event): 
+    def processMouseClick(self, mouseHits, event, leftPressed, midPressed, rightPressed): 
         self.emitMouseClickedRaw(mouseHits, event)
 
         globalMinDepth = self.far + 1
@@ -257,8 +263,26 @@ class Camera(QtOpenGL.QGLWidget):
         if(minNames != list()):
             sceneId = minNames[0]
             minNames.pop(0)
-        if(sceneId >= 0):
-            self.scene[sceneId].processMouseClick(minNames, event)
+            
+        if(leftPressed):
+            print "Left"
+        if (event.modifiers() & QtCore.Qt.CTRL):
+            print "ctrl"
+        print sceneId
+            
+        if (leftPressed) and (event.modifiers() & QtCore.Qt.CTRL) and (sceneId >= 0):
+            print 1
+            self.scene[sceneId].processMouseClick(minNames, event, False)
+            print 1.1
+        elif (leftPressed):  
+            print 2
+            for i in range(len(self.scene)):
+                self.scene[sceneId].clearSelection()
+                if (i == sceneId):
+                    self.scene[sceneId].processMouseClick(minNames, event, True) 
+            print 2.1
+        
+            
        
     def processMouseMove(self, mouseHits, event):     
         self.emitMouseMovedRaw(mouseHits, event)      
@@ -349,16 +373,19 @@ class Camera(QtOpenGL.QGLWidget):
             self.scene[self.selectedScene].setRotation(self.right, dy)
             self.scene[self.selectedScene].emitModelChanged()
     
-    def mousePressEvent(self, event):
+    def mousePressEvent(self, event):      
         self.mouseDownPoint = QtCore.QPoint(event.pos())
         self.mouseMovePoint = QtCore.QPoint(event.pos())
+        self.mouseLeftPressed = (event.buttons() & QtCore.Qt.LeftButton)
+        self.mouseMidPressed = (event.buttons() & QtCore.Qt.MidButton)
+        self.mouseRightPressed = (event.buttons() & QtCore.Qt.RightButton)
         self.processMouseDown(self.pickObject(self.mouseDownPoint.x(), self.mouseDownPoint.y()), event)   
         
     def mouseReleaseEvent(self, event):
         self.mouseUpPoint = QtCore.QPoint(event.pos())
         #Enter selection mode only if we didnt move the mouse much.. (If the mouse was moved, then we assume a camera motion instead of a selection
         if (pow(self.mouseDownPoint.x() - self.mouseUpPoint.x(), 2) + pow(self.mouseDownPoint.y() - self.mouseUpPoint.y(), 2) <= 2): 
-            self.processMouseClick(self.pickObject(self.mouseUpPoint.x(), self.mouseUpPoint.y()), event)
+            self.processMouseClick(self.pickObject(self.mouseUpPoint.x(), self.mouseUpPoint.y()), event, self.mouseLeftPressed, self.mouseMidPressed, self.mouseRightPressed)
             
         if(self.mouseTrackingEnabledRay):
             ray = self.getMouseRay(event.x(), event.y())            
