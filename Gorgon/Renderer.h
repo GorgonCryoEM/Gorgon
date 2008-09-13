@@ -20,7 +20,8 @@ namespace wustl_mm {
 			virtual void LoadFile(string fileName);
 			virtual void SaveFile(string fileName);
 			virtual void Unload();
-			virtual void Select(int subsceneIndex, int ix0, int ix1 = -1, int ix2 = -1, int ix3 = -1, int ix4 = -1);
+			virtual void SelectionClear();
+			virtual void SelectionToggle(int subsceneIndex, bool forceTrue, int ix0, int ix1 = -1, int ix2 = -1, int ix3 = -1, int ix4 = -1);
 			virtual string GetSupportedLoadFileFormats();
 			virtual string GetSupportedSaveFileFormats();
 			virtual Vector3DFloat Get3DCoordinates(int subsceneIndex, int ix0, int ix1 = -1, int ix2 = -1, int ix3 = -1, int ix4 = -1);
@@ -92,7 +93,16 @@ namespace wustl_mm {
 		void Renderer::SaveFile(string fileName) {
 		}
 
-		void Renderer::Select(int subsceneIndex, int ix0, int ix1, int ix2, int ix3, int ix4) {
+		void Renderer::SelectionClear() {
+			selectedSubSceneIndex = -1;
+			selectedIx[0] = -1;
+			selectedIx[1] = -1;
+			selectedIx[2] = -1;
+			selectedIx[3] = -1;
+			selectedIx[4] = -1;
+		}
+
+		void Renderer::SelectionToggle(int subsceneIndex, bool forceTrue, int ix0, int ix1, int ix2, int ix3, int ix4) {
 			selectedSubSceneIndex = subsceneIndex;
 			selectedIx[0] = ix0;
 			selectedIx[1] = ix1;

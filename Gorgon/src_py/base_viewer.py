@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.33  2008/09/03 19:53:20  ssa1
+#   First loading the model, and then changing the viewing position
+#
 #   Revision 1.32  2008/09/03 19:48:19  ssa1
 #   Maximizing performance of volume visualization by minimizing method call count
 #
@@ -289,12 +292,15 @@ class BaseViewer(QtOpenGL.QGLWidget):
 
         glEndList() 
         
+    def clearSelection(self):
+        self.renderer.selectionClear()
+        
     def performElementSelection(self, hitStack):
         #Override this method to enable mouse selection functionality
         pass
             
                                 
-    def processMouseClick(self, hitStack, event):
+    def processMouseClick(self, hitStack, event, forceTrue):
         print self.title, ": ", hitStack
         hits = [-1,-1,-1,-1,-1]
         if(self.selectEnabled):
@@ -305,7 +311,7 @@ class BaseViewer(QtOpenGL.QGLWidget):
             if len(hitStack) == 0:
                 hitStack.append(-1)            
             if(len(hitStack) <= 6):
-                self.renderer.select(hitStack[0], hits[0], hits[1], hits[2], hits[3], hits[4])
+                self.renderer.selectionToggle(hitStack[0], forceTrue, hits[0], hits[1], hits[2], hits[3], hits[4])
             else:
                 raise Exception("Unable to call renderer.select method due as there are too many levels in the hit stack")
             self.emitModelChanged()            

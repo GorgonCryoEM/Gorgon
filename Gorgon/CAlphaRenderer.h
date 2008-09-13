@@ -19,6 +19,7 @@ namespace wustl_mm {
 		struct CAlphaBackboneSegment {
 			unsigned int a0;
 			unsigned int a1;
+			bool selected;
 		};
 
 		class CAlphaRenderer : public Renderer{
@@ -28,7 +29,8 @@ namespace wustl_mm {
 
 			void Draw(int subSceneIndex, bool selectEnabled);
 			void LoadFile(string fileName);
-			void Select(int subsceneIndex, int ix0, int ix1 = -1, int ix2 = -1, int ix3 = -1, int ix4 = -1);
+			void SelectionClear();
+			void SelectionToggle(int subsceneIndex, bool forceTrue, int ix0, int ix1 = -1, int ix2 = -1, int ix3 = -1, int ix4 = -1);
 			void Unload();
 			string GetSupportedLoadFileFormats();
 			string GetSupportedSaveFileFormats();
@@ -62,7 +64,6 @@ namespace wustl_mm {
 		}
 		void CAlphaRenderer::Draw(int subSceneIndex, bool selectEnabled) {
 
-			bool selected;
 			GLfloat emissionColor[4] = {1.0, 1.0, 1.0, 1.0};
 
 			if(subSceneIndex == 0) {				
@@ -71,10 +72,8 @@ namespace wustl_mm {
 					glPushName(0);
 				}
 				for(int i=0; i < (int)atoms.size(); i++) {
-					//selected = ((subSceneIndex == selectedSubSceneIndex) && (i == selectedIx[0]));
-					selected = atoms[i].GetSelected();
 					glPushAttrib(GL_LIGHTING_BIT);
-					if(selected) {
+					if(atoms[i].GetSelected()) {
 						glMaterialfv(GL_FRONT, GL_EMISSION, emissionColor);
 						glMaterialfv(GL_BACK, GL_EMISSION, emissionColor);
 					} else {
@@ -110,8 +109,7 @@ namespace wustl_mm {
 				glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);		
 				for(int i=0; i < (int)backboneSegments.size(); i++) {
 					glPushAttrib(GL_LIGHTING_BIT);
-					selected = ((subSceneIndex == selectedSubSceneIndex) && (i == selectedIx[0]));
-					if(selected) {
+					if(backboneSegments[i].selected) {
 						glMaterialfv(GL_FRONT, GL_EMISSION, emissionColor);
 						glMaterialfv(GL_BACK, GL_EMISSION, emissionColor);
 					}
@@ -137,31 +135,43 @@ namespace wustl_mm {
 			atoms = PDBReader::ReadAtomPositions(fileName);
 
 			// Keeping only C-Alpha atoms
-			for(int i = atoms.size()-1; i >= 0; i--) {
+			for(int i = (int)atoms.size()-1; i >= 0; i--) {
 				if(atoms[i].GetName().compare(" CA ") != 0) {
 					atoms.erase(atoms.begin() + i);
 				}
 			}
 
 			CAlphaBackboneSegment segment;
-			for(unsigned int i = 0; i < atoms.size()-1; i++) {
+			for(int i = 0; i < (int)atoms.size()-1; i++) {
 				segment.a0 = i;
 				segment.a1 = i+1;
+				segment.selected = false;
 				backboneSegments.push_back(segment);				
 			}
 			UpdateBoundingBox();
 			
 		}
 
-		void CAlphaRenderer::Select(int subsceneIndex, int ix0, int ix1, int ix2, int ix3, int ix4) {
-			Renderer::Select(subsceneIndex, ix0, ix1, ix2, ix3, ix4);
-			if((selectedSubSceneIndex == 0) && (selectedIx[0] >= 0) && (selectedIx[0] < atoms.size())){
-				for(int i = 0; i < atoms.size(); i++) {					
-					atoms[i].SetSelected(i == selectedIx[0]);
-				}
+		void CAlphaRenderer::SelectionClear() {
+			Renderer::SelectionClear();
+			for(unsigned int i = 0; i < atoms.size(); i++) {					
+				atoms[i].SetSelected(false);
 			}
 
+			for(unsigned int i = 0; i < backboneSegments.size(); i++) {
+				backboneSegments[i].selected = false;
+			}
+		}
 
+		void CAlphaRenderer::SelectionToggle(int subsceneIndex, bool forceTrue, int ix0, int ix1, int ix2, int ix3, int ix4) {
+			Renderer::SelectionToggle(subsceneIndex, forceTrue, ix0, ix1, ix2, ix3, ix4);
+			if((subsceneIndex == 0) && (ix0 >= 0) && (ix0 <= (int)atoms.size())) {
+				atoms[ix0].SetSelected(forceTrue || !atoms[ix0].GetSelected());
+			} else if((subsceneIndex == 1) && (ix0 >= 0) && (ix0 <= (int)backboneSegments.size())) {
+				backboneSegments[ix0].selected = (forceTrue || !backboneSegments[ix0].selected);
+			}
+
+			
 		}
 
 		void CAlphaRenderer::Unload() {
