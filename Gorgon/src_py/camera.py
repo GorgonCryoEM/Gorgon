@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.27  2008/09/13 02:46:51  ssa1
+#   Multiple selection behavior for cAlpha atoms
+#
 #   Revision 1.26  2008/09/12 20:57:44  ssa1
 #   Adding an Eye light source
 #
@@ -264,23 +267,16 @@ class Camera(QtOpenGL.QGLWidget):
             sceneId = minNames[0]
             minNames.pop(0)
             
-        if(leftPressed):
-            print "Left"
-        if (event.modifiers() & QtCore.Qt.CTRL):
-            print "ctrl"
-        print sceneId
-            
-        if (leftPressed) and (event.modifiers() & QtCore.Qt.CTRL) and (sceneId >= 0):
-            print 1
-            self.scene[sceneId].processMouseClick(minNames, event, False)
-            print 1.1
-        elif (leftPressed):  
-            print 2
-            for i in range(len(self.scene)):
-                self.scene[sceneId].clearSelection()
-                if (i == sceneId):
-                    self.scene[sceneId].processMouseClick(minNames, event, True) 
-            print 2.1
+           
+        if (leftPressed):
+            if (event.modifiers() & QtCore.Qt.CTRL):
+                if (sceneId >= 0):
+                    self.scene[sceneId].processMouseClick(minNames, event, False)
+            else: 
+                for i in range(len(self.scene)):
+                    self.scene[i].clearSelection()
+                    if (i == sceneId):
+                        self.scene[sceneId].processMouseClick(minNames, event, True) 
         
             
        
@@ -302,8 +298,7 @@ class Camera(QtOpenGL.QGLWidget):
         if(sceneId >= 0):            
             self.scene[sceneId].processMouseMove(minNames, event)       
        
-    def pickObject(self, x, y):
-        
+    def pickObject(self, x, y):        
         viewport = list(glGetIntegerv(GL_VIEWPORT))        
         glSelectBuffer(10000)
         glRenderMode(GL_SELECT)
@@ -312,7 +307,7 @@ class Camera(QtOpenGL.QGLWidget):
         glMatrixMode(GL_PROJECTION)        
         glPushMatrix()
         glLoadIdentity()        
-        gluPickMatrix(x, viewport[3]-y, 10, 10, viewport)
+        gluPickMatrix(x, viewport[3]-y, 1, 1, viewport)
         gluPerspective(180 * self.eyeZoom, self.aspectRatio, self.near, self.far)            
         self.drawScene()        
         glMatrixMode(GL_PROJECTION)

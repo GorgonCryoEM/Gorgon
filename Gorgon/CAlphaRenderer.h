@@ -29,7 +29,7 @@ namespace wustl_mm {
 
 			void Draw(int subSceneIndex, bool selectEnabled);
 			void LoadFile(string fileName);
-			void SelectionClear();
+			bool SelectionClear();
 			void SelectionToggle(int subsceneIndex, bool forceTrue, int ix0, int ix1 = -1, int ix2 = -1, int ix3 = -1, int ix4 = -1);
 			void Unload();
 			string GetSupportedLoadFileFormats();
@@ -77,9 +77,7 @@ namespace wustl_mm {
 						glMaterialfv(GL_FRONT, GL_EMISSION, emissionColor);
 						glMaterialfv(GL_BACK, GL_EMISSION, emissionColor);
 					} else {
-						GLfloat material[4] = {atoms[i].GetColorR(), atoms[i].GetColorG(), atoms[i].GetColorB(), atoms[i].GetColorA()};
-						glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, material);
-						glMaterialfv(GL_BACK, GL_AMBIENT_AND_DIFFUSE, material);
+						SetColor(atoms[i].GetColorR(), atoms[i].GetColorG(), atoms[i].GetColorB(), atoms[i].GetColorA());
 					}					
 
 					glPushMatrix();
@@ -152,15 +150,18 @@ namespace wustl_mm {
 			
 		}
 
-		void CAlphaRenderer::SelectionClear() {
-			Renderer::SelectionClear();
-			for(unsigned int i = 0; i < atoms.size(); i++) {					
-				atoms[i].SetSelected(false);
-			}
+		bool CAlphaRenderer::SelectionClear() {
+			if(Renderer::SelectionClear()) {
+				for(unsigned int i = 0; i < atoms.size(); i++) {					
+					atoms[i].SetSelected(false);
+				}
 
-			for(unsigned int i = 0; i < backboneSegments.size(); i++) {
-				backboneSegments[i].selected = false;
+				for(unsigned int i = 0; i < backboneSegments.size(); i++) {
+					backboneSegments[i].selected = false;
+				}
+				return true;
 			}
+			return false;
 		}
 
 		void CAlphaRenderer::SelectionToggle(int subsceneIndex, bool forceTrue, int ix0, int ix1, int ix2, int ix3, int ix4) {
@@ -169,9 +170,7 @@ namespace wustl_mm {
 				atoms[ix0].SetSelected(forceTrue || !atoms[ix0].GetSelected());
 			} else if((subsceneIndex == 1) && (ix0 >= 0) && (ix0 <= (int)backboneSegments.size())) {
 				backboneSegments[ix0].selected = (forceTrue || !backboneSegments[ix0].selected);
-			}
-
-			
+			}			
 		}
 
 		void CAlphaRenderer::Unload() {

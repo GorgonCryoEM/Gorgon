@@ -15,7 +15,12 @@ using namespace std;
 
 namespace wustl_mm {
 	namespace Visualization {	
-		typedef NonManifoldMesh<bool, bool, unsigned char> NonManifoldMesh_SheetIds;
+		struct SheetIdsAndSelect {
+			unsigned char id;
+			bool selected;
+		};
+
+		typedef NonManifoldMesh<bool, bool, SheetIdsAndSelect> NonManifoldMesh_SheetIds;
 		class SSERenderer : public Renderer{
 		public:
 			SSERenderer();
@@ -26,6 +31,8 @@ namespace wustl_mm {
 			void LoadSheetFile(string fileName);			
 			void Unload();
 			void SetHelixColor(int index, float r, float g, float b, float a);
+			bool SelectionClear();
+			void SelectionToggle(int subsceneIndex, bool forceTrue, int ix0, int ix1 = -1, int ix2 = -1, int ix3 = -1, int ix4 = -1);
 			string GetSupportedLoadFileFormats();
 			string GetSupportedSaveFileFormats();
 		private:
@@ -50,9 +57,6 @@ namespace wustl_mm {
 		}
 
 		void SSERenderer::Draw(int subSceneIndex, bool selectEnabled) {
-			bool selected;
-			GLfloat frontMaterial[4];
-			GLfloat backMaterial[4];
 			GLfloat emissionColor[4] = {1.0, 1.0, 1.0, 1.0};
 
 			glPushName(subSceneIndex);
@@ -64,13 +68,11 @@ namespace wustl_mm {
 				
 				Point3 pt;
 				for(int i = 0; i < (int)helices.size(); i++) {
+					glPushAttrib(GL_LIGHTING_BIT);
 					helices[i]->GetColor(colorR, colorG, colorB, colorA);	
 					SetColor(colorR, colorG, colorB, colorA);
 
-					selected = ((subSceneIndex == selectedSubSceneIndex) && (i == selectedIx[0]));
-					if(selected) {
-						glGetMaterialfv(GL_FRONT, GL_EMISSION, frontMaterial);
-						glGetMaterialfv(GL_BACK, GL_EMISSION, backMaterial);
+					if(helices[i]->GetSelected()) {
 						glMaterialfv(GL_FRONT, GL_EMISSION, emissionColor);
 						glMaterialfv(GL_BACK, GL_EMISSION, emissionColor);
 					}
@@ -86,10 +88,7 @@ namespace wustl_mm {
 					gluCylinder(quadricCylinder, 0.5, 0.5, 1.0, 10, 10);
 					gluDeleteQuadric(quadricCylinder);
 					glPopMatrix();
-					if(selected) {
-						glMaterialfv(GL_FRONT, GL_EMISSION, frontMaterial);
-						glMaterialfv(GL_BACK, GL_EMISSION, backMaterial);
-					}
+					glPopAttrib();
 				}
 				if(selectEnabled) {
 					glPopName();
@@ -102,15 +101,13 @@ namespace wustl_mm {
 					glPushName(0);
 				}
 				for(unsigned int i = 0; i < sheetMesh->faces.size(); i++) {
-					selected = ((subSceneIndex == selectedSubSceneIndex) && (sheetMesh->faces[i].tag == selectedIx[0]));
-					if(selected) {
-						glGetMaterialfv(GL_FRONT, GL_EMISSION, frontMaterial);
-						glGetMaterialfv(GL_BACK, GL_EMISSION, backMaterial);
+					glPushAttrib(GL_LIGHTING_BIT);
+					if(sheetMesh->faces[i].tag.selected) {
 						glMaterialfv(GL_FRONT, GL_EMISSION, emissionColor);
 						glMaterialfv(GL_BACK, GL_EMISSION, emissionColor);
 					}
 					if(selectEnabled) {
-						glLoadName(sheetMesh->faces[i].tag);
+						glLoadName(sheetMesh->faces[i].tag.id);
 					}
 					glBegin(GL_POLYGON);
 					Vector3DFloat normal;
@@ -121,10 +118,8 @@ namespace wustl_mm {
 						glVertex3fv(sheetMesh->vertices[k].position.values);
 					}
 					glEnd();
-					if(selected) {
-						glMaterialfv(GL_FRONT, GL_EMISSION, frontMaterial);
-						glMaterialfv(GL_BACK, GL_EMISSION, backMaterial);
-					}
+					glPopAttrib();
+					
 				}
 				if(selectEnabled) {
 					glPopName();
@@ -152,6 +147,9 @@ namespace wustl_mm {
 			SkeletonReader::ReadSheetFile((char *)fileName.c_str(), sheets);
 			Point3 pt;
 			vector<int> indices;
+			SheetIdsAndSelect faceTag;
+			faceTag.selected = false;
+
 			for(unsigned int i = 0; i < sheets.size(); i++) {
 				indices.clear();
 				for(unsigned int j = 0; j < sheets[i]->polygonPoints.size(); j++) {
@@ -160,7 +158,8 @@ namespace wustl_mm {
 				}
 
 				for(unsigned int j = 0; j < sheets[i]->polygons.size(); j++) {								
-					sheetMesh->AddTriangle(indices[sheets[i]->polygons[j].pointIndex1], indices[sheets[i]->polygons[j].pointIndex2], indices[sheets[i]->polygons[j].pointIndex3], NULL, i+1);					
+					faceTag.id = i+1;
+					sheetMesh->AddTriangle(indices[sheets[i]->polygons[j].pointIndex1], indices[sheets[i]->polygons[j].pointIndex2], indices[sheets[i]->polygons[j].pointIndex3], NULL, faceTag);					
 				}				
 			}
 			for(unsigned int i = 0; i < sheets.size(); i++) { 
@@ -231,6 +230,37 @@ namespace wustl_mm {
 			helices[index]->SetColor(r, g, b, a);
 
 		}
+
+		bool SSERenderer::SelectionClear() {
+			if(Renderer::SelectionClear()) {
+				for(unsigned int i = 0; i < helices.size(); i++) {					
+					helices[i]->SetSelected(false);
+				}
+
+				for(unsigned int i = 0; i < sheetMesh->faces.size(); i++) {
+					sheetMesh->faces[i].tag.selected = false;
+				}
+
+				return true;
+			}
+			return false;
+		}
+
+		void SSERenderer::SelectionToggle(int subsceneIndex, bool forceTrue, int ix0, int ix1, int ix2, int ix3, int ix4) {
+			Renderer::SelectionToggle(subsceneIndex, forceTrue, ix0, ix1, ix2, ix3, ix4);
+			if((subsceneIndex == 0) && (ix0 >= 0) && (ix0 <= (int)helices.size())) {
+				helices[ix0]->SetSelected(forceTrue || !helices[ix0]->GetSelected());			
+			}
+
+			if((subsceneIndex == 1)) {
+				for(unsigned int i = 0; i < sheetMesh->faces.size(); i++) {
+					if(sheetMesh->faces[i].tag.id == ix0) {
+						sheetMesh->faces[i].tag.selected = forceTrue || !sheetMesh->faces[i].tag.selected;
+					}
+				}
+			}
+		}
+
 		string SSERenderer::GetSupportedLoadFileFormats() {
 			return "VRML models (*.vrml *.wrl)";
 		}

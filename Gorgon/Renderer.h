@@ -20,7 +20,7 @@ namespace wustl_mm {
 			virtual void LoadFile(string fileName);
 			virtual void SaveFile(string fileName);
 			virtual void Unload();
-			virtual void SelectionClear();
+			virtual bool SelectionClear();
 			virtual void SelectionToggle(int subsceneIndex, bool forceTrue, int ix0, int ix1 = -1, int ix2 = -1, int ix3 = -1, int ix4 = -1);
 			virtual string GetSupportedLoadFileFormats();
 			virtual string GetSupportedSaveFileFormats();
@@ -36,8 +36,7 @@ namespace wustl_mm {
 			virtual void UpdateBoundingBox();			
 			float minPts[3];
 			float maxPts[3];
-			int selectedSubSceneIndex;
-			int selectedIx[5];
+			bool selected;
 			Vector3DFloat cuttingPlaneCenter;
 			Vector3DFloat cuttingPlaneDirection;
 			GLUquadric * quadricSphere;
@@ -47,10 +46,7 @@ namespace wustl_mm {
 		};
 
 		Renderer::Renderer() {
-			selectedSubSceneIndex = -1;
-			for(int i = 0; i < 5; i++) {
-				selectedIx[i] = -1;
-			}
+			selected = false;
 			quadricSphere = gluNewQuadric();
 			quadricCylinder = gluNewQuadric();
 
@@ -93,22 +89,18 @@ namespace wustl_mm {
 		void Renderer::SaveFile(string fileName) {
 		}
 
-		void Renderer::SelectionClear() {
-			selectedSubSceneIndex = -1;
-			selectedIx[0] = -1;
-			selectedIx[1] = -1;
-			selectedIx[2] = -1;
-			selectedIx[3] = -1;
-			selectedIx[4] = -1;
+		bool Renderer::SelectionClear() {
+			if(selected) {
+				selected = false;
+				return true;
+			} else {
+				return false;
+			}
+
 		}
 
 		void Renderer::SelectionToggle(int subsceneIndex, bool forceTrue, int ix0, int ix1, int ix2, int ix3, int ix4) {
-			selectedSubSceneIndex = subsceneIndex;
-			selectedIx[0] = ix0;
-			selectedIx[1] = ix1;
-			selectedIx[2] = ix2;
-			selectedIx[3] = ix3;
-			selectedIx[4] = ix4;
+			selected = true;
 		}
 
 		Vector3DFloat Renderer::Get3DCoordinates(int subsceneIndex, int ix0, int ix1, int ix2, int ix3, int ix4) {
@@ -116,10 +108,7 @@ namespace wustl_mm {
 		}
 
 		void Renderer::Unload() {
-			selectedSubSceneIndex = -1;
-			for(int i = 0; i < 5; i++) {
-				selectedIx[i] = -1;
-			}
+			selected = false;
 		}
 
 		string Renderer::GetSupportedLoadFileFormats() {
