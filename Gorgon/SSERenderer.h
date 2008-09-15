@@ -35,6 +35,7 @@ namespace wustl_mm {
 			void SelectionToggle(int subsceneIndex, bool forceTrue, int ix0, int ix1 = -1, int ix2 = -1, int ix3 = -1, int ix4 = -1);
 			string GetSupportedLoadFileFormats();
 			string GetSupportedSaveFileFormats();
+			Vector3DFloat Get3DCoordinates(int subsceneIndex, int ix0, int ix1 = -1, int ix2 = -1, int ix3 = -1, int ix4 = -1);
 		private:
 			void UpdateBoundingBox();
 			vector<GeometricShape*> helices;
@@ -267,6 +268,34 @@ namespace wustl_mm {
 		string SSERenderer::GetSupportedSaveFileFormats() {
 			return "VRML models (*.vrml, *.wrl)";
 		}
+
+		Vector3DFloat SSERenderer::Get3DCoordinates(int subsceneIndex, int ix0, int ix1, int ix2, int ix3, int ix4) {
+			Vector3DFloat position;
+			switch(subsceneIndex) {
+				case(0):
+					if((ix0 >= 0) && (ix0 <= (int)helices.size())) {
+						Point3 pt = helices[ix0]->GetCenter();
+						position = Vector3DFloat(pt[0], pt[1], pt[2]);
+					}
+					break;
+				case(1):
+					position = Vector3DFloat(0,0,0);
+					for(unsigned int i = 0; i < sheetMesh->faces.size(); i++) {
+						if(sheetMesh->faces[i].tag.id == ix0) {
+							for(unsigned int j = 0; j < sheetMesh->faces[i].vertexIds.size(); j++) {
+								position += sheetMesh->vertices[sheetMesh->faces[i].vertexIds[j]].position;
+							}						
+						}
+					}
+					position = position * (1.0/(sheetMesh->faces.size() * 3.0));
+					break;
+				default:
+					position = Vector3DFloat(0,0,0);
+					break;
+			}
+			return position;
+		}
+
 	}
 }
 

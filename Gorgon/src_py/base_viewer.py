@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.35  2008/09/15 16:37:54  ssa1
+#   Implementing multiple selection behavior
+#
 #   Revision 1.34  2008/09/13 02:46:51  ssa1
 #   Multiple selection behavior for cAlpha atoms
 #
@@ -31,7 +34,7 @@
 #
 
 from PyQt4 import QtGui, QtCore, QtOpenGL
-from libpyGORGON import VolumeRenderer
+from libpyGORGON import VolumeRenderer, Vector3DFloat
 from model_visualization_form import ModelVisualizationForm
 from vector_lib import *
 
@@ -294,6 +297,21 @@ class BaseViewer(QtOpenGL.QGLWidget):
         glPopAttrib()
 
         glEndList() 
+        
+    def getClickCoordinates(self, hitStack):
+        hits = [-1,-1,-1,-1,-1]
+        for i in range(5):
+            if(len(hitStack) > i+1):
+                hits[i] = hitStack[i+1]
+
+        if len(hitStack) == 0:
+            hitStack.append(-1)            
+        
+        if(len(hitStack) <= 6):
+            coords = self.renderer.get3DCoordinates(hitStack[0], hits[0], hits[1], hits[2], hits[3], hits[4])
+            return [coords.x(), coords.y(), coords.z()]
+        else:
+            raise Exception("Unable to call renderer.get3DCoordinates method due as there are too many levels in the hit stack")
         
     def clearSelection(self):
         if self.renderer.selectionClear():

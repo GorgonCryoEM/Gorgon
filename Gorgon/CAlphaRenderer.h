@@ -40,6 +40,7 @@ namespace wustl_mm {
 			PDBAtom GetAtom(int index);
 			void DeleteAtom(int index);
 			int GetAtomCount();
+			virtual Vector3DFloat Get3DCoordinates(int subsceneIndex, int ix0, int ix1 = -1, int ix2 = -1, int ix3 = -1, int ix4 = -1);
 
 		private:
 			void UpdateBoundingBox();
@@ -218,6 +219,25 @@ namespace wustl_mm {
 
 		void CAlphaRenderer::DeleteAtom(int index) {
 			atoms.erase(atoms.begin() + index);
+		}
+		Vector3DFloat CAlphaRenderer::Get3DCoordinates(int subsceneIndex, int ix0, int ix1, int ix2, int ix3, int ix4) {
+			Vector3DFloat position;
+			switch(subsceneIndex) {
+				case(0):
+					if((ix0 >= 0) && (ix0 <= (int)atoms.size())) {
+						position = atoms[ix0].GetPosition();
+					}
+					break;
+				case(1):
+					if((ix0 >= 0) && (ix0 <= (int)backboneSegments.size())) {
+						position = (atoms[backboneSegments[ix0].a0].GetPosition() + atoms[backboneSegments[ix0].a1].GetPosition()) * 0.5;
+					}
+					break;
+				default:
+					position = Vector3DFloat(0,0,0);
+					break;
+			}
+			return position;
 		}
 	}
 }

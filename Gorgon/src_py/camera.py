@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.28  2008/09/15 16:37:54  ssa1
+#   Implementing multiple selection behavior
+#
 #   Revision 1.27  2008/09/13 02:46:51  ssa1
 #   Multiple selection behavior for cAlpha atoms
 #
@@ -269,14 +272,21 @@ class Camera(QtOpenGL.QGLWidget):
             
            
         if (leftPressed):
-            if (event.modifiers() & QtCore.Qt.CTRL):
+            if (event.modifiers() & QtCore.Qt.CTRL):        # Multiple selection mode
                 if (sceneId >= 0):
                     self.scene[sceneId].processMouseClick(minNames, event, False)
-            else: 
+            else:                                           # Single selection mode
                 for i in range(len(self.scene)):
                     self.scene[i].clearSelection()
                     if (i == sceneId):
-                        self.scene[sceneId].processMouseClick(minNames, event, True) 
+                        self.scene[sceneId].processMouseClick(minNames, event, True)
+        elif (rightPressed):                                # Focusing on current point
+            if(sceneId >= 0):
+                focusPoint = self.scene[sceneId].getClickCoordinates(minNames)
+                self.setCenter(focusPoint[0], focusPoint[1], focusPoint[2])
+                self.updateGL()
+                
+                 
         
             
        
