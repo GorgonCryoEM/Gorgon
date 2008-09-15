@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.29  2008/09/15 18:43:13  ssa1
+#   Adding in right clicking (Focus) functionality
+#
 #   Revision 1.28  2008/09/15 16:37:54  ssa1
 #   Implementing multiple selection behavior
 #
@@ -412,15 +415,27 @@ class Camera(QtOpenGL.QGLWidget):
         dx = event.x() - self.mouseMovePoint.x()
         dy = event.y() - self.mouseMovePoint.y()
                         
-        if (event.buttons() & QtCore.Qt.LeftButton) and (event.modifiers() & QtCore.Qt.CTRL) :
-            self.setEyeRotation(0, 0, dx)
-        elif (event.buttons() & QtCore.Qt.LeftButton):
-            self.setEyeRotation(-dx, dy, 0)
-        elif (event.buttons() & QtCore.Qt.RightButton) and (event.modifiers() & QtCore.Qt.ALT):
-            self.moveSelectedScene(dx, dy)
+        if (event.buttons() & QtCore.Qt.LeftButton):
+            if (event.buttons() & QtCore.Qt.RightButton):           # Rolling the scene
+                self.setEyeRotation(0, 0, dx)
+            else:
+                if (event.modifiers() & QtCore.Qt.CTRL) :           # Rotating the selection
+                    self.rotateSelectedScene(dx, dy)
+                else:                                               # Rotating the scene
+                    self.setEyeRotation(-dx, dy, 0)
+            
         elif (event.buttons() & QtCore.Qt.RightButton):
-            self.rotateSelectedScene(dx, dy)            
-        
+            if (event.modifiers() & QtCore.Qt.ALT):             # Translating the selection
+                self.moveSelectedScene(dx, dy)
+            else:                                               # Translating the scene
+                newDx = vectorDistance(self.eye, self.center) * abs(tan(pi * self.eyeZoom)) * dx / float(self.width())
+                newDy = vectorDistance(self.eye, self.center) * abs(tan(pi * self.eyeZoom)) * dy / float(self.height())                       
+                translation = vectorAdd(vectorScalarMultiply(newDy, self.up), vectorScalarMultiply(-newDx, self.right));
+                newEye = vectorAdd(self.eye, translation);               
+                newCenter = vectorAdd(self.center, translation);                
+                self.setEye(newEye[0], newEye[1], newEye[2])                            
+                self.setCenter(newCenter[0], newCenter[1], newCenter[2])
+                
         self.mouseMovePoint = QtCore.QPoint(event.pos())        
 
         self.updateGL()
@@ -429,7 +444,7 @@ class Camera(QtOpenGL.QGLWidget):
         if(event.delta() != 0):
             direction = event.delta()/abs(event.delta())
             if(event.modifiers() & QtCore.Qt.CTRL) :
-                self.setCuttingPlane(self.cuttingPlane + direction * 0.01);        
+                self.setCuttingPlane(self.cuttingPlane + direction * 0.01);
             else:
                 self.setNearFarZoom(self.near, self.far, self.eyeZoom + direction * 10.0/360.0)
                 #newEye = vectorAdd(self.eye, vectorScalarMultiply(-direction * 0.1 * (vectorDistance(self.eye, self.look)), self.look))
