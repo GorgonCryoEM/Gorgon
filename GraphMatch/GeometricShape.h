@@ -29,6 +29,7 @@ namespace wustl_mm {
 		public:
 			GeometricShape();
 			~GeometricShape();
+			bool GetSelected();
 			bool IsHelix();
 			bool IsSheet();
 			bool IsInsideShape(Point3 p);
@@ -47,6 +48,7 @@ namespace wustl_mm {
 			void SetHeight(double height);
 			void SetRadius(double radius);
 			void GetColor(float & r, float & g, float & b, float & a);
+			void SetSelected(bool selected);
 
 
 			Point3 GetWorldCoordinates(Point3 point);
@@ -78,6 +80,7 @@ namespace wustl_mm {
 			float colorG;
 			float colorB;
 			float colorA;
+			bool selected;
 		};
 
 		GeometricShape::GeometricShape() {
@@ -90,6 +93,7 @@ namespace wustl_mm {
 			colorG = 1.0f;
 			colorB = 0.0f;
 			colorA = 1.0f;
+			selected = false;
 			
 		}
 
@@ -98,6 +102,10 @@ namespace wustl_mm {
 			cornerCells.clear();
 			polygonPoints.clear();
 			polygons.clear();
+		}
+
+		bool GeometricShape::GetSelected() {
+			return selected;
 		}
 
 		bool GeometricShape::IsHelix() {
@@ -310,6 +318,9 @@ namespace wustl_mm {
 			g = colorG;
 			b = colorB;
 			a = colorA;
+		}
+		void GeometricShape::SetSelected(bool selected) {
+			this->selected = selected;
 		}
 	}
 }

@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.34  2008/09/13 02:46:51  ssa1
+#   Multiple selection behavior for cAlpha atoms
+#
 #   Revision 1.33  2008/09/03 19:53:20  ssa1
 #   First loading the model, and then changing the viewing position
 #
@@ -293,7 +296,8 @@ class BaseViewer(QtOpenGL.QGLWidget):
         glEndList() 
         
     def clearSelection(self):
-        self.renderer.selectionClear()
+        if self.renderer.selectionClear():
+            self.emitModelChanged()           
         
     def performElementSelection(self, hitStack):
         #Override this method to enable mouse selection functionality
