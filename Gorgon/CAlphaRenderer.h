@@ -62,6 +62,7 @@ namespace wustl_mm {
 
 		void CAlphaRenderer::AddAtom(PDBAtom atom) {
 			atoms.push_back(atom);
+			UpdateBoundingBox();
 		}
 		void CAlphaRenderer::Draw(int subSceneIndex, bool selectEnabled) {
 
