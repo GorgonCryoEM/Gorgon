@@ -524,7 +524,7 @@ namespace wustl_mm {
 				if(notConstrained) {
 					temp = currentNode;
 					currentNode = new LinkedNode(temp);
-					currentNode->depth = patternGraph->nodeCount;
+					currentNode->depth = (char)patternGraph->nodeCount;
 					currentNode->costGStar = temp->costGStar + MISSING_HELIX_PENALTY * (patternGraph->nodeCount - temp->depth) / 2.0 + START_END_MISSING_HELIX_PENALTY;
 					currentNode->cost = currentNode->costGStar;
 					queue->add(currentNode, currentNode->cost);

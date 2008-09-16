@@ -126,7 +126,7 @@
 				PreprocessorDefinitions="_RELEASE;WIN32"
 				MinimalRebuild="false"
 				RuntimeLibrary="2"
-				WarningLevel="3"
+				WarningLevel="4"
 				DebugInformationFormat="0"
 			/>
 			<Tool

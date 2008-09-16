@@ -74,9 +74,9 @@ namespace wustl_mm {
 
 
 		LinkedNode::LinkedNode(LinkedNode * olderNode, LinkedNodeStub * olderStub, int n2Node, int dummyHelixCount) {
-			this->n1Node = olderNode->n1Node + dummyHelixCount + 1;
-			this->n2Node = n2Node;
-			this->depth = olderNode->depth + dummyHelixCount + 1;
+			this->n1Node = olderNode->n1Node + (char)dummyHelixCount + 1;
+			this->n2Node = (char)n2Node;
+			this->depth = olderNode->depth + (char)dummyHelixCount + 1;
 			this->parentNode = olderStub;
 			this->m1Bitmap = olderNode->m1Bitmap;
 			this->m2Bitmap = olderNode->m2Bitmap;
@@ -84,13 +84,13 @@ namespace wustl_mm {
 				LinkedNode::RemoveNodeFromBitmap(this->m1Bitmap, i);
 			}
 			LinkedNode::RemoveNodeFromBitmap(this->m2Bitmap, this->n2Node);
-			this->missingNodesUsed = olderNode->missingNodesUsed + dummyHelixCount;
+			this->missingNodesUsed = olderNode->missingNodesUsed + (char)dummyHelixCount;
 		}
 
 		LinkedNode::LinkedNode(LinkedNode * olderNode, LinkedNodeStub * olderStub, int n1Node, int n2Node, int dummyHelixCount) {
-			this->n1Node = n1Node + dummyHelixCount + 1;
-			this->n2Node = n2Node;
-			this->depth = olderNode->depth + dummyHelixCount + 1;
+			this->n1Node = n1Node + (char)dummyHelixCount + 1;
+			this->n2Node = (char)n2Node;
+			this->depth = olderNode->depth + (char)dummyHelixCount + 1;
 			this->parentNode = olderStub;
 			this->m1Bitmap = olderNode->m1Bitmap;
 			this->m2Bitmap = olderNode->m2Bitmap;
@@ -98,7 +98,7 @@ namespace wustl_mm {
 				LinkedNode::RemoveNodeFromBitmap(this->m1Bitmap, i);
 			}
 			LinkedNode::RemoveNodeFromBitmap(this->m2Bitmap, this->n2Node);
-			this->missingNodesUsed = olderNode->missingNodesUsed + dummyHelixCount;
+			this->missingNodesUsed = olderNode->missingNodesUsed + (char)dummyHelixCount;
 		}
 
 
