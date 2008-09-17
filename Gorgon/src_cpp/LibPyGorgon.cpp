@@ -14,6 +14,7 @@
 #include <MathTools/Vector3D.h>
 #include <GraphMatch/PDBAtom.h>
 #include <GraphMatch/LinkedNode.h>
+#include <GraphMatch/PDBBond.h>
 
 #include <boost/python.hpp>
 
@@ -63,7 +64,15 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("setAtomRadius", &PDBAtom::SetAtomRadius)
 		.def("setColor", &PDBAtom::SetColor)
 		.def("setSelected", &PDBAtom::SetSelected)
+	;
 
+	class_<PDBBond>("PDBBond", init<>())
+		.def("getAtom0Ix", &PDBBond::GetAtom0Ix)
+		.def("getAtom1Ix", &PDBBond::GetAtom1Ix)
+		.def("getSelected", &PDBBond::GetSelected)
+		.def("setAtom0Ix", &PDBBond::SetAtom0Ix)
+		.def("setAtom1Ix", &PDBBond::SetAtom1Ix)
+		.def("setSelected", &PDBBond::SetSelected)
 	;
 
 	class_<Volume>("Volume", init<int,int,int>())
@@ -167,6 +176,10 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("getAtom", &CAlphaRenderer::GetAtom)
 		.def("getAtomCount", &CAlphaRenderer::GetAtomCount)
 		.def("deleteAtom", &CAlphaRenderer::DeleteAtom)		
+		.def("addBond", &CAlphaRenderer::AddBond)
+		.def("getBond", &CAlphaRenderer::GetBond)
+		.def("getBondCount", &CAlphaRenderer::GetBondCount)
+		.def("deleteBond", &CAlphaRenderer::DeleteBond)		
 	;
 
 	class_<InteractiveSkeletonEngine>("InteractiveSkeletonEngine", init<Volume *, NonManifoldMesh_Annotated *, float, float, float, int, int, int, unsigned int>())

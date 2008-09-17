@@ -8,6 +8,7 @@
 #include <ProteinMorph/NonManifoldMesh.h>
 #include <GraphMatch/PDBReader.h>
 #include <GraphMatch/PDBAtom.h>
+#include <GraphMatch/PDBBond.h>
 #include "Renderer.h"
 
 using namespace std;
@@ -16,12 +17,6 @@ using namespace wustl_mm::GraphMatch;
 
 namespace wustl_mm {
 	namespace Visualization {	
-		struct CAlphaBackboneSegment {
-			unsigned int a0;
-			unsigned int a1;
-			bool selected;
-		};
-
 		class CAlphaRenderer : public Renderer{
 		public:
 			CAlphaRenderer();
@@ -34,36 +29,46 @@ namespace wustl_mm {
 			void Unload();
 			string GetSupportedLoadFileFormats();
 			string GetSupportedSaveFileFormats();
+			virtual Vector3DFloat Get3DCoordinates(int subsceneIndex, int ix0, int ix1 = -1, int ix2 = -1, int ix3 = -1, int ix4 = -1);
 
 			// Controlling the atom vector
 			void AddAtom(PDBAtom atom);
 			PDBAtom GetAtom(int index);
 			void DeleteAtom(int index);
 			int GetAtomCount();
-			virtual Vector3DFloat Get3DCoordinates(int subsceneIndex, int ix0, int ix1 = -1, int ix2 = -1, int ix3 = -1, int ix4 = -1);
+			
+			//Controlling the bond vector
+			void AddBond(PDBBond bond);
+			PDBBond GetBond(int index);
+			void DeleteBond(int index);
+			int GetBondCount();
 
 		private:
 			void UpdateBoundingBox();
 		private:
 			vector<PDBAtom> atoms;
-			vector<CAlphaBackboneSegment> backboneSegments;
+			vector<PDBBond> bonds;
 		};
 
 
 		CAlphaRenderer::CAlphaRenderer() {
 			atoms.clear();
-			backboneSegments.clear();
+			bonds.clear();
 		}
 
 		CAlphaRenderer::~CAlphaRenderer() {
 			atoms.clear();
-			backboneSegments.clear();
+			bonds.clear();
 		}
 
 		void CAlphaRenderer::AddAtom(PDBAtom atom) {
 			atoms.push_back(atom);
 			UpdateBoundingBox();
 		}
+		void CAlphaRenderer::AddBond(PDBBond bond) {
+			bonds.push_back(bond);
+		}
+
 		void CAlphaRenderer::Draw(int subSceneIndex, bool selectEnabled) {
 
 			GLfloat emissionColor[4] = {1.0, 1.0, 1.0, 1.0};
@@ -107,9 +112,9 @@ namespace wustl_mm {
 				glLineWidth(3);
 				glEnable(GL_LINE_SMOOTH);
 				glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);		
-				for(int i=0; i < (int)backboneSegments.size(); i++) {
+				for(int i=0; i < (int)bonds.size(); i++) {
 					glPushAttrib(GL_LIGHTING_BIT);
-					if(backboneSegments[i].selected) {
+					if(bonds[i].GetSelected()) {
 						glMaterialfv(GL_FRONT, GL_EMISSION, emissionColor);
 						glMaterialfv(GL_BACK, GL_EMISSION, emissionColor);
 					}
@@ -117,7 +122,7 @@ namespace wustl_mm {
 					if(selectEnabled){
 						glLoadName(i);
 					}
-					DrawCylinder(atoms[backboneSegments[i].a0].GetPosition(), atoms[backboneSegments[i].a1].GetPosition(), 0.1);
+					DrawCylinder(atoms[bonds[i].GetAtom0Ix()].GetPosition(), atoms[bonds[i].GetAtom1Ix()].GetPosition(), 0.1);
 					glPopAttrib();
 				}
 				glPopAttrib();
@@ -131,7 +136,7 @@ namespace wustl_mm {
 
 		void CAlphaRenderer::LoadFile(string fileName) {
 			atoms.clear();
-			backboneSegments.clear();
+			bonds.clear();
 			atoms = PDBReader::ReadAtomPositions(fileName);
 
 			// Keeping only C-Alpha atoms
@@ -141,12 +146,9 @@ namespace wustl_mm {
 				}
 			}
 
-			CAlphaBackboneSegment segment;
+			
 			for(int i = 0; i < (int)atoms.size()-1; i++) {
-				segment.a0 = i;
-				segment.a1 = i+1;
-				segment.selected = false;
-				backboneSegments.push_back(segment);				
+				bonds.push_back(PDBBond(i, i+1, false));				
 			}
 			UpdateBoundingBox();
 			
@@ -158,8 +160,8 @@ namespace wustl_mm {
 					atoms[i].SetSelected(false);
 				}
 
-				for(unsigned int i = 0; i < backboneSegments.size(); i++) {
-					backboneSegments[i].selected = false;
+				for(unsigned int i = 0; i < bonds.size(); i++) {
+					bonds[i].SetSelected(false);
 				}
 				return true;
 			}
@@ -170,16 +172,15 @@ namespace wustl_mm {
 			Renderer::SelectionToggle(subsceneIndex, forceTrue, ix0, ix1, ix2, ix3, ix4);
 			if((subsceneIndex == 0) && (ix0 >= 0) && (ix0 <= (int)atoms.size())) {
 				atoms[ix0].SetSelected(forceTrue || !atoms[ix0].GetSelected());
-			} else if((subsceneIndex == 1) && (ix0 >= 0) && (ix0 <= (int)backboneSegments.size())) {
-				backboneSegments[ix0].selected = (forceTrue || !backboneSegments[ix0].selected);
+			} else if((subsceneIndex == 1) && (ix0 >= 0) && (ix0 <= (int)bonds.size())) {
+				bonds[ix0].SetSelected(forceTrue || !bonds[ix0].GetSelected());
 			}			
 		}
 
 		void CAlphaRenderer::Unload() {
 			atoms.clear();
-			backboneSegments.clear();
+			bonds.clear();
 			UpdateBoundingBox();
-
 		}
 
 		void CAlphaRenderer::UpdateBoundingBox() {
@@ -214,13 +215,26 @@ namespace wustl_mm {
 			return atoms[index];
 		}
 
+		PDBBond CAlphaRenderer::GetBond(int index) {
+			return bonds[index];
+		}
+
 		int CAlphaRenderer::GetAtomCount() {
 			return atoms.size();
+		}
+
+		int CAlphaRenderer::GetBondCount() {
+			return bonds.size();
 		}
 
 		void CAlphaRenderer::DeleteAtom(int index) {
 			atoms.erase(atoms.begin() + index);
 		}
+
+		void CAlphaRenderer::DeleteBond(int index) {
+			bonds.erase(bonds.begin() + index);
+		}
+
 		Vector3DFloat CAlphaRenderer::Get3DCoordinates(int subsceneIndex, int ix0, int ix1, int ix2, int ix3, int ix4) {
 			Vector3DFloat position;
 			switch(subsceneIndex) {
@@ -230,8 +244,8 @@ namespace wustl_mm {
 					}
 					break;
 				case(1):
-					if((ix0 >= 0) && (ix0 <= (int)backboneSegments.size())) {
-						position = (atoms[backboneSegments[ix0].a0].GetPosition() + atoms[backboneSegments[ix0].a1].GetPosition()) * 0.5;
+					if((ix0 >= 0) && (ix0 <= (int)bonds.size())) {
+						position = (atoms[bonds[ix0].GetAtom0Ix()].GetPosition() + atoms[bonds[ix0].GetAtom1Ix()].GetPosition()) * 0.5;
 					}
 					break;
 				default:
