@@ -32,7 +32,7 @@ namespace wustl_mm {
 			virtual Vector3DFloat Get3DCoordinates(int subsceneIndex, int ix0, int ix1 = -1, int ix2 = -1, int ix3 = -1, int ix4 = -1);
 
 			// Controlling the atom vector
-			void AddAtom(PDBAtom atom);
+			int AddAtom(PDBAtom atom);
 			PDBAtom GetAtom(int index);
 			void DeleteAtom(int index);
 			int GetAtomCount();
@@ -61,9 +61,13 @@ namespace wustl_mm {
 			bonds.clear();
 		}
 
-		void CAlphaRenderer::AddAtom(PDBAtom atom) {
+		int CAlphaRenderer::AddAtom(PDBAtom atom) {
+		  	int index;
+			index = atoms.size();
+			atom.SetSerial(index);
 			atoms.push_back(atom);
 			UpdateBoundingBox();
+			return index;
 		}
 		void CAlphaRenderer::AddBond(PDBBond bond) {
 			bonds.push_back(bond);
