@@ -18,7 +18,8 @@ class SeqModelTests(unittest.TestCase):
   def setUp(self):
     if not os.path.exists('groel.pdb'):
       urllib.urlretrieve('http://www.rcsb.org/pdb/download/downloadFile.do?fileFormat=pdb&compression=NO&structureId=1JON','groel.pdb')
-
+    if not os.path.exists('1KPOgroel.pdb'):
+        urllib.urlretrieve('http://www.rcsb.org/pdb/download/downloadFile.do?fileFormat=pdb&compression=NO&structureId=1KPO', '1KPOgroel.pdb')
   def tearDown(self):
     if self.DELETE_PDB_FILES:
       os.remove('groel.pdb')
@@ -134,13 +135,24 @@ class SeqModelTests(unittest.TestCase):
     self.__validateSecels(chain)
 
 
-  def _test05_MultiChainPDB(self):
-    self.fail('NotYetImplemented')
-
+  def test05_MultiChainPDB(self):
+    filename = '1KPOgroel.pdb'
+    mychain = Chain.load(filename) #gets the first one
+    mychain_origKey = mychain.getIDs()
+    mychain.setIDs('mypdb', 'A')
+    self.assertEqual( mychain.getIDs(), ('mypdb', 'A') )
+    Chain.loadAllChains(filename)
+    chainIDset = set([ x[1] for x in Chain.getChainKeys() ])
+    chainIDsetPDB = set(Chain.getChainIDsFromPDB(filename))
+    self.assert_( chainIDsetPDB.issubset(chainIDset) ) #Check for subset because we have chain objects from previous tests that are not in a PDB file
+    loadAllChains_mychain = Chain.getChain( mychain_origKey ) #the original key is the one given by the PDB file
+    self.assertEqual( loadAllChains_mychain.__repr__(), mychain.__repr__() )
+    ####Ross's question: why are chain objects from other functions in Chain.getChainIDs()?
+    ####Aren't they deleted after each function is tested?
+    
   def test06_GAtom(self):
     my_chain = Chain("ACEFGHIKLACEFGHIKLMNPYVWQPMIKESMATTHEW")
     '''
-
     my_chain.secelList.append (Coil (my_chain,'l0',1,9))
     my_chain.secelList.append (Helix(my_chain,'h1',10,20))
     my_chain.secelList.append (Coil (my_chain,'l2',21,25))
