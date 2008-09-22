@@ -9,6 +9,7 @@ Date  : 01/28/2006
 #define PDBREADER_H
 
 #include <vector>
+#include <map>
 #include "SecondaryStructure.h"
 #include "SheetStrand.h"
 #include "GlobalConstants.h"
@@ -28,7 +29,7 @@ namespace wustl_mm {
 		class PDBReader {
 		public:
 			static StandardGraph * ReadFile(char * fname);
-			static vector<PDBAtom> ReadAtomPositions(string fileName);
+			static map<unsigned long long, PDBAtom> ReadAtomPositions(string fileName);
 			static char * TrimString(char * string);
 			static int ToInt(char * string);
 		private:
@@ -236,8 +237,8 @@ namespace wustl_mm {
 		}
 
 
-		vector<PDBAtom> PDBReader::ReadAtomPositions(string fileName) {
-			vector<PDBAtom> atomPositions;
+		map<unsigned long long, PDBAtom> PDBReader::ReadAtomPositions(string fileName) {
+			map<unsigned long long, PDBAtom> atomPositions;
 
 			FILE* fin = fopen((char *)fileName.c_str(), "rt");
 			if (fin == NULL)
@@ -256,7 +257,8 @@ namespace wustl_mm {
 				token = lineStr.substr(0, 6);
 
 				if(token.compare("ATOM  ") == 0) {
-					atomPositions.push_back(PDBAtom(lineStr));
+					PDBAtom atom = PDBAtom(lineStr);
+					atomPositions[atom.GetHashKey()] = atom;
 				}
 			}
 
