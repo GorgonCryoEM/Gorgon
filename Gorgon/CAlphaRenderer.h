@@ -10,6 +10,8 @@
 #include <GraphMatch/PDBAtom.h>
 #include <GraphMatch/PDBBond.h>
 #include "Renderer.h"
+#include <map>
+#include <list>
 
 using namespace std;
 using namespace wustl_mm::Protein_Morph;
@@ -17,6 +19,19 @@ using namespace wustl_mm::GraphMatch;
 
 namespace wustl_mm {
 	namespace Visualization {	
+		typedef map<unsigned long long, PDBAtom> AtomMapType;
+		struct SerialAndHashType {
+			unsigned int serial;
+			unsigned long long hashKey;
+		};
+
+		class SerialAndHashTypePredicate {
+		public:
+			bool operator() (const SerialAndHashType& lhs, const SerialAndHashType& rhs) {
+				return lhs.serial < rhs.serial;
+			}
+		};
+
 		class CAlphaRenderer : public Renderer{
 		public:
 			CAlphaRenderer();
@@ -33,8 +48,8 @@ namespace wustl_mm {
 
 			// Controlling the atom vector
 			int AddAtom(PDBAtom atom);
-			PDBAtom GetAtom(int index);
-			void DeleteAtom(int index);
+			PDBAtom GetAtom(unsigned long long index);
+			void DeleteAtom(unsigned long long index);
 			int GetAtomCount();
 			
 			//Controlling the bond vector
@@ -46,7 +61,7 @@ namespace wustl_mm {
 		private:
 			void UpdateBoundingBox();
 		private:
-			vector<PDBAtom> atoms;
+			AtomMapType atoms;
 			vector<PDBBond> bonds;
 		};
 
@@ -65,10 +80,11 @@ namespace wustl_mm {
 		  	int index;
 			index = atoms.size();
 			atom.SetSerial(index);
-			atoms.push_back(atom);
+			atoms[atom.GetHashKey()] = atom;
 			UpdateBoundingBox();
 			return index;
 		}
+
 		void CAlphaRenderer::AddBond(PDBBond bond) {
 			bonds.push_back(bond);
 		}
@@ -82,22 +98,22 @@ namespace wustl_mm {
 					glPushName(0);
 					glPushName(0);
 				}
-				for(int i=0; i < (int)atoms.size(); i++) {
+				for(AtomMapType::iterator i = atoms.begin(); i != atoms.end(); i++) {
 					glPushAttrib(GL_LIGHTING_BIT);
-					if(atoms[i].GetSelected()) {
+					if(i->second.GetSelected()) {
 						glMaterialfv(GL_FRONT, GL_EMISSION, emissionColor);
 						glMaterialfv(GL_BACK, GL_EMISSION, emissionColor);
 					} else {
-						SetColor(atoms[i].GetColorR(), atoms[i].GetColorG(), atoms[i].GetColorB(), atoms[i].GetColorA());
+						SetColor(i->second.GetColorR(), i->second.GetColorG(), i->second.GetColorB(), i->second.GetColorA());
 					}					
 
 					glPushMatrix();
 					if(selectEnabled){
-						glLoadName(i);
+						glLoadName((int)&(i->second));
 					}
-					glTranslatef(atoms[i].GetPosition().X(), atoms[i].GetPosition().Y(), atoms[i].GetPosition().Z());
+					glTranslatef(i->second.GetPosition().X(), i->second.GetPosition().Y(), i->second.GetPosition().Z());
 					GLUquadric * quadricSphere = gluNewQuadric();
-					gluSphere(quadricSphere, atoms[i].GetAtomRadius() * 0.3, 10, 10);
+					gluSphere(quadricSphere, i->second.GetAtomRadius() * 0.3, 10, 10);
 					gluDeleteQuadric(quadricSphere);
 					glPopMatrix();
 					glPopAttrib();
@@ -141,27 +157,52 @@ namespace wustl_mm {
 		void CAlphaRenderer::LoadFile(string fileName) {
 			atoms.clear();
 			bonds.clear();
-			atoms = PDBReader::ReadAtomPositions(fileName);
-
+			atoms = PDBReader::ReadAtomPositions(fileName);			
+						
 			// Keeping only C-Alpha atoms
-			for(int i = (int)atoms.size()-1; i >= 0; i--) {
-				if(atoms[i].GetName().compare(" CA ") != 0) {
-					atoms.erase(atoms.begin() + i);
-				}
+			vector<unsigned long long> eraseKeys;
+			eraseKeys.clear();
+
+			for(AtomMapType::iterator i = atoms.begin(); i != atoms.end(); i++) {				
+				if(i->second.GetName().compare("CA") != 0) {					
+					eraseKeys.push_back(i->first);
+				} 
 			}
 
-			
-			for(int i = 0; i < (int)atoms.size()-1; i++) {
-				bonds.push_back(PDBBond(i, i+1, false));				
+			for(unsigned int i = 0; i < eraseKeys.size(); i++) {
+				atoms.erase(atoms.find(eraseKeys[i]));
 			}
+
+			eraseKeys.clear();
+
+			list<SerialAndHashType> sortedSerials;
+			SerialAndHashType elem;
+			for(AtomMapType::iterator i = atoms.begin(); i != atoms.end(); i++) {
+				elem.hashKey = i->first;
+				elem.serial = i->second.GetSerial();
+
+				sortedSerials.push_back(elem);				
+			}
+			sortedSerials.sort(SerialAndHashTypePredicate());
+
+
+			list<SerialAndHashType>::iterator oldAtom = sortedSerials.begin();
+			list<SerialAndHashType>::iterator startAtom = sortedSerials.begin();
+
+			startAtom++;
+			for(list<SerialAndHashType>::iterator i = startAtom; i != sortedSerials.end(); i++) {
+				bonds.push_back(PDBBond(oldAtom->hashKey, i->hashKey, false));	
+				oldAtom = i;
+			}
+			sortedSerials.clear();
 			UpdateBoundingBox();
 			
 		}
 
 		bool CAlphaRenderer::SelectionClear() {
 			if(Renderer::SelectionClear()) {
-				for(unsigned int i = 0; i < atoms.size(); i++) {					
-					atoms[i].SetSelected(false);
+				for(AtomMapType::iterator i = atoms.begin(); i != atoms.end(); i++) {					
+					i->second.SetSelected(false);
 				}
 
 				for(unsigned int i = 0; i < bonds.size(); i++) {
@@ -174,8 +215,9 @@ namespace wustl_mm {
 
 		void CAlphaRenderer::SelectionToggle(int subsceneIndex, bool forceTrue, int ix0, int ix1, int ix2, int ix3, int ix4) {
 			Renderer::SelectionToggle(subsceneIndex, forceTrue, ix0, ix1, ix2, ix3, ix4);
-			if((subsceneIndex == 0) && (ix0 >= 0) && (ix0 <= (int)atoms.size())) {
-				atoms[ix0].SetSelected(forceTrue || !atoms[ix0].GetSelected());
+			if((subsceneIndex == 0) && (ix0 != NULL)) {
+				PDBAtom * a = (PDBAtom*)ix0;
+				a->SetSelected(forceTrue || !a->GetSelected());
 			} else if((subsceneIndex == 1) && (ix0 >= 0) && (ix0 <= (int)bonds.size())) {
 				bonds[ix0].SetSelected(forceTrue || !bonds[ix0].GetSelected());
 			}			
@@ -190,13 +232,14 @@ namespace wustl_mm {
 		void CAlphaRenderer::UpdateBoundingBox() {
 			if(atoms.size() > 0) {
 				for(int i = 0; i < 3; i++) {
-					minPts[i] = atoms[0].GetPosition().values[i];
-					maxPts[i] = atoms[0].GetPosition().values[i];
+					minPts[i] = atoms.begin()->second.GetPosition().values[i];
+					maxPts[i] = atoms.begin()->second.GetPosition().values[i];
 				}
-				for(unsigned int j = 1; j < atoms.size(); j++) {
+
+				for(AtomMapType::iterator j = atoms.begin(); j != atoms.end(); j++) {
 					for(int i = 0; i < 3; i++) {
-						minPts[i] = min(minPts[i], atoms[j].GetPosition().values[i]);
-						maxPts[i] = max(maxPts[i], atoms[j].GetPosition().values[i]);
+						minPts[i] = min(minPts[i], j->second.GetPosition().values[i]);
+						maxPts[i] = max(maxPts[i], j->second.GetPosition().values[i]);
 					}
 				}
 			} else {
@@ -215,7 +258,7 @@ namespace wustl_mm {
 		string CAlphaRenderer::GetSupportedSaveFileFormats() {
 			return "Atom Positions (*.atom)";
 		}
-		PDBAtom CAlphaRenderer::GetAtom(int index) {
+		PDBAtom CAlphaRenderer::GetAtom(unsigned long long index) {
 			return atoms[index];
 		}
 
@@ -231,8 +274,8 @@ namespace wustl_mm {
 			return bonds.size();
 		}
 
-		void CAlphaRenderer::DeleteAtom(int index) {
-			atoms.erase(atoms.begin() + index);
+		void CAlphaRenderer::DeleteAtom(unsigned long long index) {
+			atoms.erase(atoms.find(index));
 		}
 
 		void CAlphaRenderer::DeleteBond(int index) {
@@ -244,7 +287,8 @@ namespace wustl_mm {
 			switch(subsceneIndex) {
 				case(0):
 					if((ix0 >= 0) && (ix0 <= (int)atoms.size())) {
-						position = atoms[ix0].GetPosition();
+						PDBAtom * a = (PDBAtom*)ix0;
+						position = a->GetPosition();
 					}
 					break;
 				case(1):

@@ -8,15 +8,27 @@ Date  : 01/28/2006
 #define GRAPH_MATCH_PDB_ATOM_H
 
 #include <MathTools/Vector3D.h>
+#include <Foundation/StringUtils.h>
 #include <string>
 
 using namespace wustl_mm::MathTools;
+using namespace wustl_mm::Foundation;
 
 namespace wustl_mm {
 	namespace GraphMatch {
+		static const int ATOM_ROLE_COUNT = 44;
+		static const string ATOM_ROLE_NAMES[ATOM_ROLE_COUNT] = {
+			"C",    "CA",   "CB",   "CD",   "CD1",  "CD2",  "CE",   "CE1",  "CE2",  "CE3",
+			"CH",   "CH1",  "CH2",  "CG",   "CG1",  "CG2",  "CZ",   "CZ1",  "CZ2",  "CZ3",  
+			"N",    "ND1",  "ND2",  "NE",   "NE1",  "NE2",  "NH",   "NH1",  "NH2",  "NZ",   
+			"O",    "OD",   "OD1",  "OD2",  "OE",   "OE1",  "OE2",  "OG",   "OG1",  "OG2",  
+			"OH",   "OXT",  "SD",   "SG"
+		};
+
 		class PDBAtom {
 		public:
 			PDBAtom();
+			PDBAtom(string pdbId, char chainId, unsigned int resSeq, string name);
 			PDBAtom(string PDBLine);
 			void Print();
 
@@ -38,6 +50,8 @@ namespace wustl_mm {
 			float			GetColorB();
 			float			GetAtomRadius();
 			bool			GetSelected();
+			unsigned long long	GetHashKey();
+			static unsigned long long ConstructHashKey(string pdbId, char chainId, unsigned int resSeq, string name);
 
 			void SetSerial(unsigned int serial);
 			void SetName(string	name);
@@ -55,6 +69,13 @@ namespace wustl_mm {
 			void SetAtomRadius(float radius);
 			void SetSelected(bool selected);
 		private:
+			static unsigned long long PDBAtom::GetCharIndex(char c);
+			static unsigned long long PDBAtom::GetPDBIdIndex(string pdbId);
+			static unsigned long long PDBAtom::GetChainIdIndex(char chainId);
+			static unsigned long long PDBAtom::GetAtomTypeIndex(string atomType);
+
+		private:
+			string			pdbId;
 			unsigned int	serial;
 			string			name;
 			char			altLoc;
@@ -76,12 +97,35 @@ namespace wustl_mm {
 		};
 
 		PDBAtom::PDBAtom() {
-			serial = 1;
-			name = "    ";
+			this->pdbId = "";
+			this->serial = 0;
+			this->name = "";
 			altLoc = ' ';
 			resName = "   ";
-			chainId = ' ';
-			resSeq = 1;
+			this->chainId = '0';
+			this->resSeq = 0;
+			iCode = ' ';
+			position = Vector3DFloat(0,0,0);
+			occupancy = 0;
+			tempFactor = 0;
+			element = "  ";
+			charge = "  ";
+			atomRadius = 1;
+			colorR = 0.66f;
+			colorG = 0.66f;
+			colorB = 0.0f;
+			colorA = 1.0f;
+			selected = false;
+		}
+
+		PDBAtom::PDBAtom(string pdbId, char chainId, unsigned int resSeq, string name) {
+			this->pdbId = pdbId;
+			this->serial = 0;
+			this->name = name;
+			altLoc = ' ';
+			resName = "   ";
+			this->chainId = chainId;
+			this->resSeq = resSeq;
 			iCode = ' ';
 			position = Vector3DFloat(0,0,0);
 			occupancy = 0;
@@ -97,8 +141,11 @@ namespace wustl_mm {
 		}
 
 		PDBAtom::PDBAtom(string PDBLine) {
+			pdbId = "----";
 			serial = atoi((char *)PDBLine.substr(6, 5).c_str());
 			name = PDBLine.substr(12, 4);
+			LeftTrim(name, string(" \t\f\v\n\r"));
+			RightTrim(name, string(" \t\f\v\n\r"));
 			altLoc = PDBLine[16];
 			resName = PDBLine.substr(17, 3);
 			chainId = PDBLine[21];
@@ -193,6 +240,60 @@ namespace wustl_mm {
 
 		bool PDBAtom::GetSelected() {
 			return selected;
+		}
+
+		unsigned long long PDBAtom::GetCharIndex(char c) {
+			unsigned long long value;
+			if((c >= 48) && (c <= 57)) {		// 0..9
+				value = (unsigned long long)c - 48;
+			} else if ((c >= 65) && (c <= 90))  {  // A..Z
+				value = (unsigned long long)c - 55;
+			} else if ((c >= 97) && (c <= 122))  {  // a..z  (same as A..Z)
+				value = (unsigned long long)c - 87;
+			} else {
+				value = 36;
+			}
+			return value;
+		}
+
+		unsigned long long PDBAtom::GetPDBIdIndex(string pdbId) {
+			return GetCharIndex(pdbId.c_str()[0]) * 37*37*37 + 
+				GetCharIndex(pdbId.c_str()[1]) * 37*37 + 
+				GetCharIndex(pdbId.c_str()[2]) * 37 + 
+				GetCharIndex(pdbId.c_str()[3]);
+		}
+
+		unsigned long long PDBAtom::GetChainIdIndex(char chainId) {
+			return GetCharIndex(chainId);
+		}
+
+		unsigned long long PDBAtom::GetAtomTypeIndex(string atomType) {
+			unsigned long long ix = ATOM_ROLE_COUNT;
+			for(unsigned long long i = 0; i < ATOM_ROLE_COUNT; i++) {
+				if(atomType.compare(ATOM_ROLE_NAMES[i]) == 0) {
+					ix = i;
+					break;
+				}
+			}
+
+			if(ix == ATOM_ROLE_COUNT) {
+				printf("Atom role [%s] not defined.. inaccurate hashing will occur!\n", (char *)atomType.c_str());
+			}
+			return ix;
+		}	
+		unsigned long long PDBAtom::GetHashKey() {
+			return ConstructHashKey(pdbId, chainId, resSeq, name);
+		}
+
+		unsigned long long PDBAtom::ConstructHashKey(string pdbId, char chainId, unsigned int resSeq, string name) {
+			unsigned long long chainIDCount = 37;
+			unsigned long long residueNumCount = 10000;
+			unsigned long long atomTypeCount = ATOM_ROLE_COUNT + 1;
+
+			return GetPDBIdIndex(pdbId) * chainIDCount * residueNumCount * atomTypeCount + 
+				GetChainIdIndex(chainId) * residueNumCount * atomTypeCount +
+				(unsigned long long)resSeq * atomTypeCount +
+				GetAtomTypeIndex(name);
 		}
 
 		void PDBAtom::SetSerial(unsigned int serial){
