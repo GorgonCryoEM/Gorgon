@@ -26,94 +26,149 @@ class Chain(baseClass):
   Chain objects represent single polypeptide chains, which are sequences of Residue objects
   '''
   chainsDict = {}
-
-  #Chain ID management
-  __lastChainID = 64  # chr(64) is A;  chr(65) is B, etc.
+  __lastAuto_pdbID = 0
 
   @classmethod
-  def __nextChainID(cls):
-    Chain.__lastChainID=Chain.__lastChainID+1
-    return chr(Chain.__lastChainID)
+  def getChainKeys(cls):
+      return cls.chainsDict.keys()
+    
+  @classmethod
+  def getChainIDsFromPDB(cls, filename, qparent=None):
+    """
+    This only finds the first list of chains in the PDB file.  If the file defines multiple molecules, this would only find the chains for the first one.
+    """
+    extension = filename.split('.')[-1].lower()
+    if extension == 'pdb':
+        for line in open(filename, 'U'):
+            if line[:6] == 'COMPND' and line[11:16] == 'CHAIN':
+                linelist = line[17:].split(', ')
+                linelist[0] = linelist[0].strip()
+                if ';' in linelist[-1]:
+                    linelist[-1] = linelist[-1].split(';')[0]	#removes the terminating semicolon and extra whitespace
+                return linelist
+    else:
+      raise NotImplementedError, 'NYI'
+    
+  @classmethod
+  def loadAllChains(cls, filename, qparent=None):
+    chain = True
+    chainIDs = cls.getChainIDsFromPDB(filename,qparent)
+    for whichChainID in chainIDs:
+        chain = Chain.load(filename, qparent, whichChainID)
+        cls.chainsDict[chain.key] = chain
+#    return cls.chainsDict
+  @classmethod
+  def getChain(cls, key):
+    return cls.chainsDict.get(key)	#{}.get() can handle non-existent key errors
+
+  @classmethod
+  def __createUniquePDBID(cls):
+    #####We might want to modify this to use any unused numbers (after a rename)
+    pdbNum = cls.__lastAuto_pdbID + 1
+    numUnderscores = 4 - len(str(pdbNum))
+    assert numUnderscores >= 0
+    ####We need to figure out how to handle this exception
+    pdbID = '_'*numUnderscores + str(pdbNum)
+    cls.__lastAuto_pdbID += 1
+    return pdbID
 
   #Chain Constructor
-  def __init__(self,char_string=None,qparent=None):
-
+  def __init__(self,char_string=None,qparent=None, pdbID=None, chainID='A'):
+    #####if the chain with a given (pdbID, chainID) key already exists, reference that
+    #####perhaps we should change this behavior, in case someone modified a chain object
+    #####then imported a PDB with a chain of the same name
     if qparent and qtEnabled:
-      super(QtCore.QObject,self).__init__(qparent)
+        super(QtCore.QObject,self).__init__(qparent)
 
     self.residueList={}
     self.secelList={}
     self.selectedResidues=[]
-    self.chainID = Chain.__nextChainID()
     self.atoms = {}
 
     self.helices = {}
     self.sheets = {}
     self.orphanStrands = {}
+    if (pdbID, chainID) in Chain.getIDs():  #What to do if the key already exists
+        self = Chain.getChain( (pdbID, chainID) )
+        return
+    if pdbID:
+        self.pdbID = pdbID
+    else:
+        self.pdbID = self.__createUniquePDBID()
+    self.chainID = chainID
+    self.key = (self.pdbID, self.chainID)
 
     i=1
     for char in char_string:
-      self.residueList[i]=Residue(char,self)
-      i=i+1
-
-    Chain.chainsDict[self.chainID]=self
+        self.residueList[i]=Residue(char,self)
+        i += 1
+    Chain.chainsDict[self.key]=self
 
   @classmethod
-  def __loadFromPDB (cls,filename,qparent=None):
+  def __loadFromPDB (cls,filename,qparent=None, whichChainID=None):
     '''
-    Multi-chain PDB files are not supported
+    This loads the specified chain ID from a PDF file and returns a Chain object.  If no chain ID is specified, it loads the first chain.
     '''
-
-    infile=open(filename,'U')
-    lines=infile.readlines()
 
     if qparent and qtEnabled:
-      result=Chain('', qparent=qparent)
+        result = Chain('', qparent=qparent)
     else:
-      result=Chain('')
+        result = Chain('')
+    
+    header = open(filename, 'U')
+    pdbID = header.read()[62:66]
+    header.close()
+    
+    residue = None
+    firstChain = None
+    for line in open(filename, 'U'):	#calls the iterator for the file object each time the loop is run - don't have to load entire file into memory
+        if line[0:4]=='ATOM':
+            chainID = line[21:22]
+            if whichChainID and chainID != whichChainID:	#This will search for the correct polypeptide chain if one is specified, otherwise we find the first chain.
+                continue
+            if not firstChain:	#Sets the value of the first and only chain we will store
+                firstChain = chainID
+                ####if the chain key already exists, point to that chain object
+                ####perhaps this should be modified
+                if not (pdbID, firstChain) in cls.getChainKeys():
+                    result.setIDs(pdbID, firstChain)
+                else:
+                    result = cls.getChain( (pdbID, firstChain) )
+                    break
+            if firstChain and chainID != firstChain:		#If we've gone past the only chain we want to store, we will break out of the for loop
+                break
+            
+            residueIndex = int( line[22:26] )
+            if residueIndex not in result.residueRange():
+                residue = Residue( line[17:20].strip(), result ) 
+                result[residueIndex] = residue
+            
+            serialNo    = int( line[6:11].strip() )
+            atomName    = line[12:16].strip()
+            element     = line[76:78].strip()
+            tempFactor  = float( line[60:66].strip() )
+            occupancy   = float( line[54:60].strip() )
+            x           = float( line[30:38] )
+            y           = float( line[38:46] )
+            z           = float( line[46:54] )
+            
+            atom=Atom(element, x,y,z, residue, serialNo, occupancy ,tempFactor)
+            
+            residue.atoms[atomName]=atom            
+            result.atoms[serialNo]=atom
+            Chain.chainsDict[result.key] = result
 
-    residue=None
-    for line in lines:
-      if line[0:4]=='ATOM':
-  
-        residueIndex=    int (line[22:26])
-        if residueIndex not in result.residueRange():
-          residue   = Residue(line[17:20].strip(),result)
-      
-        chainID     =         line[21:22]
-        serialNo    =    int (line[6:11].strip())
-      
-        atomName    =         line[12:16].strip()
-        element     =         line[76:78].strip()
-        tempFactor  =  float (line[60:66].strip())
-        occupancy   =  float (line[54:60].strip())
-      
-        x           =  float (line[30:38])
-        y           =  float (line[38:46])
-        z           =  float (line[46:54])
-      
-        if residueIndex not in result.residueRange():
-          result[residueIndex]=residue
-        atom=Atom(element, x,y,z, residue, serialNo, occupancy ,tempFactor)
-      
-        residue.atoms[atomName]=atom
-      
-        result.atoms[serialNo]=atom
-
-      elif line[0:6].strip()=='HELIX':
-        Helix.parsePDB(line,result)
-
-      elif line[0:6].strip()=='SHEET':
-        Sheet.parsePDB(line,result)
-
-    infile.close()
+        elif line[0:6].strip()=='HELIX':
+            Helix.parsePDB(line,result)
+        elif line[0:6].strip()=='SHEET':
+            Sheet.parsePDB(line,result)
     return result
 
   @classmethod
-  def load (cls,filename,qparent=None):
+  def load (cls,filename,qparent=None, whichChainID=None):
     extension = filename.split('.')[-1].lower()
     if extension == 'pdb':
-      return Chain.__loadFromPDB(filename,qparent)
+      return Chain.__loadFromPDB(filename,qparent, whichChainID)
     else:
       raise NotImplementedError, 'NYI'
 
@@ -151,7 +206,23 @@ class Chain(baseClass):
       self.residueList[i]=Residue(residue,self)
     else:
       raise TypeError
+  def getIDs(self):
+    """
+    Returns (pdbID, chainID) for a chain instance.
+    """
+    return self.key
 
+  def setIDs(self, new_pdbID, new_chainID):
+    """
+    Changes the pdbID and chainID attributes of a Chain instance.
+    """
+    #### We need to figure out how to handle the possible exception
+    assert (new_pdbID, new_chainID) != self.key
+    value = self.chainsDict.pop(self.key)
+    self.pdbID = new_pdbID
+    self.chainID = new_chainID
+    self.key = (self.pdbID, self.chainID)
+    Chain.chainsDict[self.key] = value
   def getSelection(self):
     '''
     Returns the list of selected residues
@@ -173,11 +244,11 @@ class Chain(baseClass):
 
     elif removeOne is not None:
       if removeOne in self.selectedResidues:
-	self.selectedResidues.remove(removeOne)
+        self.selectedResidues.remove(removeOne)
 
     elif addOne is not None:
       if addOne not in self.selectedResidues:
-	self.selectedResidues.append(addOne)
+        self.selectedResidues.append(addOne)
 
     elif addRange is not None:
       self.selectedResidues.extend(addRange)
@@ -188,10 +259,10 @@ class Chain(baseClass):
   def fillGaps(self):
     for i in self.residueRange():
       while i+1 not in self.residueRange():
-	if i+1>self.residueRange()[-1]:
-	  break
-	self[i+1]=Residue('X')
-	i=i+1
+        if i+1>self.residueRange()[-1]:
+          break
+        self[i+1]=Residue('X')
+        i=i+1
 
   def addSecel(self, secel):
     for index in range(secel.startIndex, secel.stopIndex+1):
