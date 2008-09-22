@@ -88,7 +88,7 @@ class Chain(baseClass):
     self.helices = {}
     self.sheets = {}
     self.orphanStrands = {}
-    if (pdbID, chainID) in Chain.getIDs():  #What to do if the key already exists
+    if (pdbID, chainID) in Chain.getChainKeys():  #What to do if the key already exists
         self = Chain.getChain( (pdbID, chainID) )
         return
     if pdbID:
