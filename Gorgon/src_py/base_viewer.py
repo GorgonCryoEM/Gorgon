@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.36  2008/09/15 18:43:13  ssa1
+#   Adding in right clicking (Focus) functionality
+#
 #   Revision 1.35  2008/09/15 16:37:54  ssa1
 #   Implementing multiple selection behavior
 #
@@ -321,6 +324,9 @@ class BaseViewer(QtOpenGL.QGLWidget):
         #Override this method to enable mouse selection functionality
         pass
             
+    def processMouseWheel(self, amount, event):
+        #Override this method to enable mouse wheel functionality
+        pass
                                 
     def processMouseClick(self, hitStack, event, forceTrue):
         print self.title, ": ", hitStack
