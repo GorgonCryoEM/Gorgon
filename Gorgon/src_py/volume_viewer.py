@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.12  2008/06/18 18:15:41  ssa1
+#   Adding in CVS meta data
+#
 
 from PyQt4 import QtGui, QtCore, QtOpenGL
 from base_viewer import BaseViewer
@@ -82,5 +85,9 @@ class VolumeViewer(BaseViewer):
         self.app.actions.getAction("unload_Volume").setEnabled(self.loaded)
         self.app.menus.getMenu("actions-volume").setEnabled(self.loaded)       
     
-              
+    def processMouseWheel(self, amount, event):
+        if(event.modifiers() & QtCore.Qt.CTRL) :
+            self.surfaceEditor.ui.horizontalSliderIsoLevel.setValue(self.surfaceEditor.ui.horizontalSliderIsoLevel.value() - amount )
+            
+                          
       

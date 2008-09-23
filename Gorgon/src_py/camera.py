@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.30  2008/09/15 19:38:12  ssa1
+#   Adding in scene translation, and scene roll
+#
 #   Revision 1.29  2008/09/15 18:43:13  ssa1
 #   Adding in right clicking (Focus) functionality
 #
@@ -241,6 +244,10 @@ class Camera(QtOpenGL.QGLWidget):
             self.scene[i].draw()
             glPopName()
         glPopMatrix()
+        
+    def processMouseWheel(self, direction, event):
+        for s in self.scene:
+            s.processMouseWheel(direction, event)
      
     def processMouseDown(self, mouseHits, event):   
         globalMinDepth = self.far + 1
@@ -288,9 +295,6 @@ class Camera(QtOpenGL.QGLWidget):
                 focusPoint = self.scene[sceneId].getClickCoordinates(minNames)
                 self.setCenter(focusPoint[0], focusPoint[1], focusPoint[2])
                 self.updateGL()
-                
-                 
-        
             
        
     def processMouseMove(self, mouseHits, event):     
@@ -425,9 +429,9 @@ class Camera(QtOpenGL.QGLWidget):
                     self.setEyeRotation(-dx, dy, 0)
             
         elif (event.buttons() & QtCore.Qt.RightButton):
-            if (event.modifiers() & QtCore.Qt.ALT):             # Translating the selection
+            if (event.modifiers() & QtCore.Qt.ALT):                 # Translating the selection
                 self.moveSelectedScene(dx, dy)
-            else:                                               # Translating the scene
+            else:                                                   # Translating the scene
                 newDx = vectorDistance(self.eye, self.center) * abs(tan(pi * self.eyeZoom)) * dx / float(self.width())
                 newDy = vectorDistance(self.eye, self.center) * abs(tan(pi * self.eyeZoom)) * dy / float(self.height())                       
                 translation = vectorAdd(vectorScalarMultiply(newDy, self.up), vectorScalarMultiply(-newDx, self.right));
@@ -443,9 +447,10 @@ class Camera(QtOpenGL.QGLWidget):
     def wheelEvent(self, event):
         if(event.delta() != 0):
             direction = event.delta()/abs(event.delta())
-            if(event.modifiers() & QtCore.Qt.CTRL) :
-                self.setCuttingPlane(self.cuttingPlane + direction * 0.01);
-            else:
+            self.processMouseWheel(direction, event)
+            if(event.modifiers() & QtCore.Qt.ALT) :                 # Setting the cutting plane
+                self.setCuttingPlane(self.cuttingPlane + direction * 0.01)                
+            elif (not (event.modifiers() & QtCore.Qt.ALT) and not (event.modifiers() & QtCore.Qt.CTRL)):     # Zoom in / out
                 self.setNearFarZoom(self.near, self.far, self.eyeZoom + direction * 10.0/360.0)
                 #newEye = vectorAdd(self.eye, vectorScalarMultiply(-direction * 0.1 * (vectorDistance(self.eye, self.look)), self.look))
                 #self.setEye(newEye[0], newEye[1], newEye[2])
@@ -472,4 +477,3 @@ class Camera(QtOpenGL.QGLWidget):
 
     def emitMouseClickedRaw(self, mouseHits, event):
         self.emit(QtCore.SIGNAL("mouseClickedRAW(PyQt_PyObject, QMouseEvent)"), mouseHits, event)                        
-        
