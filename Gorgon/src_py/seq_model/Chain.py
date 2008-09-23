@@ -7,7 +7,6 @@
 #
 
 from seq_model.Residue import Residue
-from seq_model.Atom import Atom
 from seq_model.Helix import Helix
 from seq_model.Sheet import Sheet
 from seq_model.Coil import Coil
@@ -57,11 +56,24 @@ class Chain(baseClass):
         chain = Chain.load(filename, qparent, whichChainID)
         cls.chainsDict[chain.key] = chain
 #    return cls.chainsDict
+
   @classmethod
   def getChain(cls, key):
     return cls.chainsDict.get(key)	#{}.get() can handle non-existent key errors
 
   @classmethod
+  def getViewer(cls):
+    return Chain.__viewer
+    
+  @classmethod
+  def setViewer(cls, viewer):
+    Chain.__viewer=viewer
+    
+  @classmethod
+  def __nextChainID(cls):
+    Chain.__lastChainID=Chain.__lastChainID+1
+    return chr(Chain.__lastChainID)
+
   def __createUniquePDBID(cls):
     #####We might want to modify this to use any unused numbers (after a rename)
     pdbNum = cls.__lastAuto_pdbID + 1
@@ -105,6 +117,24 @@ class Chain(baseClass):
     Chain.chainsDict[self.key]=self
 
   @classmethod
+  def __loadFromFASTA (cls,filename,qparent=None):
+    infile=open(filename,'U')
+    lines=infile.readlines()
+
+    charString=''
+    for line in lines:
+      if line[0] != '>':
+	charString=charString+line.strip()
+
+    if qparent and qtEnabled:
+      result=Chain(charString, qparent=qparent)
+    else:
+      result=Chain(charString)
+
+    return result
+
+
+  @classmethod
   def __loadFromPDB (cls,filename,qparent=None, whichChainID=None):
     '''
     This loads the specified chain ID from a PDF file and returns a Chain object.  If no chain ID is specified, it loads the first chain.
@@ -124,7 +154,7 @@ class Chain(baseClass):
     for line in open(filename, 'U'):	#calls the iterator for the file object each time the loop is run - don't have to load entire file into memory
         if line[0:4]=='ATOM':
             chainID = line[21:22]
-            if whichChainID and chainID != whichChainID:	#This will search for the correct polypeptide chain if one is specified, otherwise we find the first chain.
+            if whichChainID and chainID != whichChainID:	#Search for the specified chainID (if one is specified), otherwise we find the first chain.
                 continue
             if not firstChain:	#Sets the value of the first and only chain we will store
                 firstChain = chainID
@@ -152,9 +182,9 @@ class Chain(baseClass):
             y           = float( line[38:46] )
             z           = float( line[46:54] )
             
-            atom=Atom(element, x,y,z, residue, serialNo, occupancy ,tempFactor)
+            atom = residue.addAtom(atomName, x,y,z, element, serialNo, occupancy, tempFactor)
             
-            residue.atoms[atomName]=atom            
+            #residue.atoms[atomName]=atom            
             result.atoms[serialNo]=atom
             Chain.chainsDict[result.key] = result
 
@@ -169,6 +199,8 @@ class Chain(baseClass):
     extension = filename.split('.')[-1].lower()
     if extension == 'pdb':
       return Chain.__loadFromPDB(filename,qparent, whichChainID)
+    elif extension == 'fasta' or extension=='fa' or extension=='fas':
+      return Chain.__loadFromFASTA(filename,qparent)
     else:
       raise NotImplementedError, 'NYI'
 
@@ -206,11 +238,18 @@ class Chain(baseClass):
       self.residueList[i]=Residue(residue,self)
     else:
       raise TypeError
+
+  def getChainID(self):
+    return self.chainID
+
+  def getPdbID(self):
+    return self.pdbID
+
   def getIDs(self):
     """
     Returns (pdbID, chainID) for a chain instance.
     """
-    return self.key
+    return (self.getPdbID(), self.getChainID())
 
   def setIDs(self, new_pdbID, new_chainID):
     """
@@ -256,6 +295,13 @@ class Chain(baseClass):
     if qtEnabled:
       self.emit( QtCore.SIGNAL('selection updated'))
 
+  def findIndexForRes (self, inputRes):
+    #indexList=[key for key in self.residueList.keys() if self.residueList[key] is inputRes]
+    for index in self.residueRange():
+      if self.residueList[index] is inputRes:
+	return index
+
+    
   def fillGaps(self):
     for i in self.residueRange():
       while i+1 not in self.residueRange():
@@ -435,13 +481,12 @@ class Chain(baseClass):
 
       if backboneOnly:
         atoms = ['CA']
-        #print 'writing CA only'
       else:
-        atoms=residue.atoms.keys()
+        atoms=residue.getAtomNames()
 
       try:
         for atom_name in atoms:
-          atom=residue.atoms[atom_name]
+	  atom=residue.getAtom(atom_name)
           s=s+ "ATOM" + ' '
           s=s+ str(atom_index).rjust(6) + ' '
           atom_index=atom_index+1 
@@ -449,12 +494,12 @@ class Chain(baseClass):
           s=s+ residue.symbol3.rjust(4) + ' '
           s=s+ self.chainID.rjust(1) + ' ' #chainID
           s=s+ str(residue_index).rjust(3) + ' '
-          s=s+ "%11.3f " %atom.x
-          s=s+ "%7.3f " %atom.y
-          s=s+ "%7.3f " %atom.z
-          s=s+ "%5.2f " %atom.occupancy
-          s=s+ "%5.2f " %atom.tempFactor
-          s=s+ atom.element.rjust(11) + "\n"
+          s=s+ "%11.3f " %atom.getPosition().x()
+          s=s+ "%7.3f " %atom.getPosition().y()
+          s=s+ "%7.3f " %atom.getPosition().z()
+          s=s+ "%5.2f " %atom.getOccupancy()
+          s=s+ "%5.2f " %atom.getTempFactor()
+          s=s+ atom.getElement().rjust(11) + "\n"
       except KeyError:
         if verbose:
           print "Chain.toPDB() warning:  No atom record for %s in %s%s." %(atom_name,residue_index,residue.symbol3)
