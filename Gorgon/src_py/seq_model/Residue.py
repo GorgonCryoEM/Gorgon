@@ -6,6 +6,8 @@
 #                    More info in: seq_model-doc.txt
 #
 
+from libpyGORGON import PDBAtom,Vector3DFloat
+
 class Residue:
   _aa_dict={}
   _aa_dict['A']='ALA'
@@ -66,12 +68,45 @@ class Residue:
     else:
       raise ValueError, "Residue must be instantiated with either a 1-letter or 3-letter symbol" 
 
-    self.atoms={}
+    self.__atoms={}
+    self.chain=chain
+
+
+
+  def getAtomNames(self):
+    return self.__atoms.keys()
+
+
+  def getAtom(self, atomName):
+    return self.__atoms[atomName]
+
+
+  def addAtom(self, atomName, x, y, z, element=None, serialNo=None, occupancy=None, tempFactor=None ):
+    residueIndex=self.chain.findIndexForRes(self)
+    rawAtom=PDBAtom(self.chain.getPdbID(), self.chain.getChainID() , residueIndex, atomName)
+    rawAtom.setPosition(Vector3DFloat(x,y,z))
+    rawAtom.setElement(element)
+    #rawAtom.setOccupancy(occupancy)
+    #rawAtom.setTempFactor(temp_factor)
+    #rawAtom.setCharge('')
+    self.__atoms[atomName]=rawAtom
+    #print "%s PDBAtom added to %s Residue"  %(atomName,self)
+
+    #Add atom to viewer and update
+    #self.chain.getViewer().renderer.addAtom(rawAtom)
+    '''
+    if(not self.chain.getViewer().loaded):
+        self.chain.getViewer().loaded = True
+        self.chain.getViewer().emitModelLoaded()
+    self.chain.getViewer().dirty = True
+    self.chain.getViewer().emitModelChanged()
+    '''
+    return rawAtom
 
 
 
   def clearAtoms(self):
-    self.atoms={}
+    self.__atoms={}
 
 
   def __repr__(self):
