@@ -23,8 +23,8 @@ namespace wustl_mm {
 			   return strToConvert;
 			}
 			static string StringToLower(string strToConvert);
-			static void RightTrim(string &source, string &t);
-			static void LeftTrim(string &source, string &t);
+			static void RightTrim(string &source, string t);
+			static void LeftTrim(string &source, string t);
 		};	
 		
 		string StringUtils::DoubleToString(double number) {
@@ -77,11 +77,11 @@ namespace wustl_mm {
 		   return strToConvert;
 		}			
 
-		void RightTrim(string &source, string &t) {
+		void RightTrim(string &source, string t) {
 			source.erase(source.find_last_not_of(t)+1);
 		}
 
-		void LeftTrim(string &source, string &t) {
+		void LeftTrim(string &source, string t) {
 			source.erase(0, source.find_first_not_of(t));
 		}			
 	}
