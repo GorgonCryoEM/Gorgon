@@ -31,6 +31,7 @@ namespace wustl_mm {
 			void LoadSheetFile(string fileName);			
 			void Unload();
 			void SetHelixColor(int index, float r, float g, float b, float a);
+			bool SelectionMove(Vector3DFloat moveDirection);
 			bool SelectionClear();
 			void SelectionToggle(int subsceneIndex, bool forceTrue, int ix0, int ix1 = -1, int ix2 = -1, int ix3 = -1, int ix4 = -1);
 			string GetSupportedLoadFileFormats();
@@ -230,6 +231,35 @@ namespace wustl_mm {
 		void SSERenderer::SetHelixColor(int index, float r, float g, float b, float a) {
 			helices[index]->SetColor(r, g, b, a);
 
+		}
+
+		bool SSERenderer::SelectionMove(Vector3DFloat moveDirection) {
+			bool moved = false;
+			for(unsigned int i = 0; i < helices.size(); i++) {					
+				if(helices[i]->GetSelected()) {
+					helices[i]->SetCenter(helices[i]->GetCenter() + Vector3(moveDirection.X(), moveDirection.Y(), moveDirection.Z()));
+					moved = true;
+				}
+			}
+
+			for(unsigned int i=0; i < sheetMesh->vertices.size(); i++) {
+				sheetMesh->vertices[i].tag = false;
+			}
+
+
+			for(unsigned int i = 0; i < sheetMesh->faces.size(); i++) {
+				if(sheetMesh->faces[i].tag.selected) {
+					for(unsigned int j = 0; j < sheetMesh->faces[i].vertexIds.size(); j++) {
+						NonManifoldMeshVertex<bool> * v = &(sheetMesh->vertices[sheetMesh->faces[i].vertexIds[j]]);
+						if(!v->tag) {
+							v->position = v->position + moveDirection;
+							moved = true;
+							v->tag = true;
+						}
+					}
+				}
+			}			
+			return moved;
 		}
 
 		bool SSERenderer::SelectionClear() {
