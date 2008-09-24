@@ -32,6 +32,7 @@ namespace wustl_mm {
 			PDBAtom(string PDBLine);
 			void Print();
 
+			string			GetPDBId();
 			unsigned int	GetSerial();
 			string			GetName();
 			char			GetAltLoc();
@@ -69,10 +70,10 @@ namespace wustl_mm {
 			void SetAtomRadius(float radius);
 			void SetSelected(bool selected);
 		private:
-			static unsigned long long PDBAtom::GetCharIndex(char c);
-			static unsigned long long PDBAtom::GetPDBIdIndex(string pdbId);
-			static unsigned long long PDBAtom::GetChainIdIndex(char chainId);
-			static unsigned long long PDBAtom::GetAtomTypeIndex(string atomType);
+			static unsigned long long GetCharIndex(char c);
+			static unsigned long long GetPDBIdIndex(string pdbId);
+			static unsigned long long GetChainIdIndex(char chainId);
+			static unsigned long long GetAtomTypeIndex(string atomType);
 
 		private:
 			string			pdbId;
@@ -168,6 +169,11 @@ namespace wustl_mm {
 
 		void PDBAtom::Print() {
 			printf("%d) %s - {%f, %f, %f}\n", serial, name.c_str(), position.X(), position.Y(), position.Z());
+		}
+
+
+		string PDBAtom::GetPDBId() {
+			return pdbId;
 		}
 
 		unsigned int PDBAtom::GetSerial() {

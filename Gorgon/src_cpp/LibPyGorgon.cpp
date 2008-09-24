@@ -31,6 +31,7 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 	;
 
 	class_<PDBAtom>("PDBAtom", init<string, char, unsigned int, string>())
+		.def("getPDBId", &PDBAtom::GetPDBId)
 		.def("getSerial", &PDBAtom::GetSerial)
 		.def("getName", &PDBAtom::GetName)
 		.def("getAltLoc", &PDBAtom::GetAltLoc)
