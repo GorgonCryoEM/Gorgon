@@ -68,6 +68,8 @@ namespace wustl_mm {
 				vol->toMRCFile((char *)outputFile.c_str());
 			} else if(strcmp(outputFormat.c_str(), "BMP") == 0) {
 				ImageReaderBMP::SaveVolumeAsImageSet(vol, outputFile);
+			} else if(strcmp(outputFormat.c_str(), "BMPPROJ") == 0) {
+				ImageReaderMRC::SaveGrayscaleImage(vol, outputFile);
 			} else if (strcmp(outputFormat.c_str(), "NB") == 0) {
 				vol->toMathematicaFile((char *)outputFile.c_str());
 			} else if (strcmp(outputFormat.c_str(), "OFF0") == 0) {
