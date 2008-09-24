@@ -39,12 +39,13 @@ namespace wustl_mm {
 
 			void Draw(int subSceneIndex, bool selectEnabled);
 			void LoadFile(string fileName);
+			bool SelectionMove(Vector3DFloat moveDirection);
 			bool SelectionClear();
 			void SelectionToggle(int subsceneIndex, bool forceTrue, int ix0, int ix1 = -1, int ix2 = -1, int ix3 = -1, int ix4 = -1);
 			void Unload();
 			string GetSupportedLoadFileFormats();
 			string GetSupportedSaveFileFormats();
-			virtual Vector3DFloat Get3DCoordinates(int subsceneIndex, int ix0, int ix1 = -1, int ix2 = -1, int ix3 = -1, int ix4 = -1);
+			Vector3DFloat Get3DCoordinates(int subsceneIndex, int ix0, int ix1 = -1, int ix2 = -1, int ix3 = -1, int ix4 = -1);
 
 			// Controlling the atom vector
 			int AddAtom(PDBAtom atom);
@@ -198,6 +199,41 @@ namespace wustl_mm {
 			UpdateBoundingBox();
 			
 		}
+
+		bool CAlphaRenderer::SelectionMove(Vector3DFloat moveDirection) {
+			bool moved = false;
+			for(AtomMapType::iterator i = atoms.begin(); i != atoms.end(); i++) {					
+				if(i->second.GetSelected()) {
+					i->second.SetPosition(i->second.GetPosition() + moveDirection);
+					i->second.SetFlag(1);
+					moved = true;
+				} else {
+					i->second.SetFlag(0);
+				}
+			}
+
+			for(unsigned int i = 0; i < bonds.size(); i++) {
+				if(bonds[i].GetSelected()) {
+					PDBAtom a = atoms[bonds[i].GetAtom0Ix()];
+					if(a.GetFlag() == 0) {
+						a.SetPosition(a.GetPosition() + moveDirection);
+						a.SetFlag(1);
+						moved = true;
+					}
+
+					a = atoms[bonds[i].GetAtom1Ix()];
+					if(a.GetFlag() == 0) {
+						a.SetPosition(a.GetPosition() + moveDirection);
+						a.SetFlag(1);
+						moved = true;
+					}
+				}
+			}
+			UpdateBoundingBox();
+			return moved;
+
+		}
+
 
 		bool CAlphaRenderer::SelectionClear() {
 			if(Renderer::SelectionClear()) {

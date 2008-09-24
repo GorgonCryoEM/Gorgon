@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.32  2008/09/24 19:34:34  ssa1
+#   Fixing scaling bug in CTRL + zoom, Providing function for neighboring atoms, Saving volumes as projections
+#
 #   Revision 1.31  2008/09/23 16:46:57  ssa1
 #   CTRL + Mouse wheel for iso-value modification
 #
@@ -40,6 +43,7 @@ import sys
 from PyQt4 import QtOpenGL, QtCore, QtGui
 from vector_lib import *
 from scene_editor_form import SceneEditorForm
+from libpyGORGON import Vector3DFloat
 from cmath import *   
 
 try:
@@ -375,12 +379,14 @@ class Camera(QtOpenGL.QGLWidget):
         self.updateGL()
      
     def moveSelectedScene(self, dx, dy):
-        if(self.selectedScene >= 0):
-            newDx = vectorDistance(self.eye, self.center) * abs(tan(pi * self.eyeZoom)) * dx / float(self.width())
-            newDy = vectorDistance(self.eye, self.center) * abs(tan(pi * self.eyeZoom)) * dy / float(self.height())            
-            newLocation = vectorAdd(self.scene[self.selectedScene].location,  vectorScalarMultiply(newDx, self.right))   
-            newLocation = vectorAdd(newLocation,  vectorScalarMultiply(-newDy, self.up))
-            self.scene[self.selectedScene].setLocation(newLocation[0], newLocation[1], newLocation[2])
+        newDx = vectorDistance(self.eye, self.center) * abs(tan(pi * self.eyeZoom)) * dx / float(self.width())
+        newDy = vectorDistance(self.eye, self.center) * abs(tan(pi * self.eyeZoom)) * dy / float(self.height())
+        moveDirection = vectorAdd(vectorScalarMultiply(-newDy, self.up), vectorScalarMultiply(newDx, self.right))
+        dirVec = Vector3DFloat(moveDirection[0], moveDirection[1], moveDirection[2])
+        for s in self.scene:
+            if(s.renderer.selectionMove(dirVec)):
+                s.emitModelChanged()
+
     
     def rotateSelectedScene(self, dx, dy):
         if(self.selectedScene >= 0):
@@ -432,7 +438,7 @@ class Camera(QtOpenGL.QGLWidget):
                     self.setEyeRotation(-dx, dy, 0)
             
         elif (event.buttons() & QtCore.Qt.RightButton):
-            if (event.modifiers() & QtCore.Qt.ALT):                 # Translating the selection
+            if (event.modifiers() & QtCore.Qt.CTRL):                 # Translating the selection
                 self.moveSelectedScene(dx, dy)
             else:                                                   # Translating the scene
                 newDx = vectorDistance(self.eye, self.center) * abs(tan(pi * self.eyeZoom)) * dx / float(self.width())

@@ -20,6 +20,7 @@ namespace wustl_mm {
 			virtual void LoadFile(string fileName);
 			virtual void SaveFile(string fileName);
 			virtual void Unload();
+			virtual bool SelectionMove(Vector3DFloat moveDirection);
 			virtual bool SelectionClear();
 			virtual void SelectionToggle(int subsceneIndex, bool forceTrue, int ix0, int ix1 = -1, int ix2 = -1, int ix3 = -1, int ix4 = -1);
 			virtual string GetSupportedLoadFileFormats();
@@ -87,6 +88,11 @@ namespace wustl_mm {
 		}
 
 		void Renderer::SaveFile(string fileName) {
+		}
+
+		bool Renderer::SelectionMove(Vector3DFloat moveDirection) {
+			//printf("Moving by %f %f %f\n", moveDirection.X(), moveDirection.Y(), moveDirection.Z());
+			return false;
 		}
 
 		bool Renderer::SelectionClear() {

@@ -52,6 +52,7 @@ namespace wustl_mm {
 			float			GetAtomRadius();
 			bool			GetSelected();
 			unsigned long long	GetHashKey();
+			int				GetFlag();		// Purely for implementation purposes
 			static unsigned long long ConstructHashKey(string pdbId, char chainId, unsigned int resSeq, string name);
 
 			void SetSerial(unsigned int serial);
@@ -69,6 +70,7 @@ namespace wustl_mm {
 			void SetColor(float r, float g, float b, float a);
 			void SetAtomRadius(float radius);
 			void SetSelected(bool selected);
+			void SetFlag(int flag);
 		private:
 			static unsigned long long GetCharIndex(char c);
 			static unsigned long long GetPDBIdIndex(string pdbId);
@@ -95,6 +97,7 @@ namespace wustl_mm {
 			float			colorB;
 			float			colorA;
 			bool			selected;
+			int				flag;
 		};
 
 		PDBAtom::PDBAtom() {
@@ -248,6 +251,9 @@ namespace wustl_mm {
 			return selected;
 		}
 
+		int  PDBAtom::GetFlag() {
+			return flag;
+		}
 		unsigned long long PDBAtom::GetCharIndex(char c) {
 			unsigned long long value;
 			if((c >= 48) && (c <= 57)) {		// 0..9
@@ -365,6 +371,9 @@ namespace wustl_mm {
 			this->selected = selected;
 		}
 
+		void PDBAtom::SetFlag(int flag) {
+			this->flag = flag;
+		}
 	}
 }
 
