@@ -241,24 +241,26 @@ namespace wustl_mm {
 					moved = true;
 				}
 			}
+			if(sheetMesh != NULL) {
+				for(unsigned int i=0; i < sheetMesh->vertices.size(); i++) {
+					sheetMesh->vertices[i].tag = false;
+				}
 
-			for(unsigned int i=0; i < sheetMesh->vertices.size(); i++) {
-				sheetMesh->vertices[i].tag = false;
-			}
 
-
-			for(unsigned int i = 0; i < sheetMesh->faces.size(); i++) {
-				if(sheetMesh->faces[i].tag.selected) {
-					for(unsigned int j = 0; j < sheetMesh->faces[i].vertexIds.size(); j++) {
-						NonManifoldMeshVertex<bool> * v = &(sheetMesh->vertices[sheetMesh->faces[i].vertexIds[j]]);
-						if(!v->tag) {
-							v->position = v->position + moveDirection;
-							moved = true;
-							v->tag = true;
+				for(unsigned int i = 0; i < sheetMesh->faces.size(); i++) {
+					if(sheetMesh->faces[i].tag.selected) {
+						for(unsigned int j = 0; j < sheetMesh->faces[i].vertexIds.size(); j++) {
+							NonManifoldMeshVertex<bool> * v = &(sheetMesh->vertices[sheetMesh->faces[i].vertexIds[j]]);
+							if(!v->tag) {
+								v->position = v->position + moveDirection;
+								moved = true;
+								v->tag = true;
+							}
 						}
 					}
-				}
-			}			
+				}			
+			}
+			UpdateBoundingBox();
 			return moved;
 		}
 
