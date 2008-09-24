@@ -34,9 +34,12 @@ namespace wustl_mm {
 			void PerformSmoothLaplacian(double convergenceRate, int iterations);
 			string GetSupportedLoadFileFormats();
 			string GetSupportedSaveFileFormats();
+			int IntersectMeshAndSphere(Vector3DFloat center, float radius);
+			Vector3DFloat GetIntersectionPoint(int ix);
 		private:
 			void UpdateBoundingBox();
 			NonManifoldMesh_Annotated * mesh;
+			vector<Vector3DFloat> intersectionPoints;
 		};
 
 
@@ -55,6 +58,10 @@ namespace wustl_mm {
 				mesh = new NonManifoldMesh_Annotated();
 			}
 			return mesh;
+		}
+
+		Vector3DFloat MeshRenderer::GetIntersectionPoint(int ix) {
+			return intersectionPoints[ix];
 		}
 
 		void MeshRenderer::Draw(int subSceneIndex, bool selectEnabled) {
@@ -155,6 +162,48 @@ namespace wustl_mm {
 				}
 			}
 		}
+
+		int MeshRenderer::IntersectMeshAndSphere(Vector3DFloat center, float radius) {
+			float x1, y1, z1, x2, y2, z2, x3, y3, z3, r, a, b, c, d, u;
+			Vector3DFloat p1, p2;
+			x3 = center.X();
+			y3 = center.Y();
+			z3 = center.Z();
+			r = radius;
+			intersectionPoints.clear();
+
+			for(unsigned int i = 0; i < mesh->edges.size(); i++) {
+				p1 = mesh->vertices[mesh->edges[i].vertexIds[0]].position;
+				p2 = mesh->vertices[mesh->edges[i].vertexIds[1]].position;
+				x1 = p1.X();
+				y1 = p1.Y();
+				z1 = p1.Z();
+				x2 = p2.X();
+				y2 = p2.Y();
+				z2 = p2.Z();
+				a = (x2-x1)*(x2-x1) + (y2-y1)*(y2-y1) + (z2-z1)*(z2-z1);
+				b = 2*((x2-x1)*(x1-x3) + (y2-y1)*(y1-y3) + (z2-z1)*(z1-z3));
+				c = x3*x3 + y3*y3 + z3*z3 + x1*x1 + y1*y1 + z1*z1 - 2*(x3*x1 + y3*y1 + z3*z1) - r*r;
+				d = b*b - 4*a*c;
+
+				if(a != 0) {
+					if(d >= 0) {
+						u = (-b + sqrt(d))/2*a;
+						if((u >=0) && (u <= 1)) {
+							intersectionPoints.push_back(p1 + (p2 - p1)*u);
+						}
+					} 
+					if (d > 0) {
+						u = (-b - sqrt(d))/2*a;
+						if((u >=0) && (u <= 1)) {
+							intersectionPoints.push_back(p1 + (p2 - p1)*u);
+						}
+					}			
+				}
+			}
+			return intersectionPoints.size();
+		}
+
 		string MeshRenderer::GetSupportedLoadFileFormats() {
 			return "Meshes (*.off);;Volumes (*.mrc *.atom);;All Files (*.off *.mrc *.atom)";
 		}

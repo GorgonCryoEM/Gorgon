@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.13  2008/09/23 16:46:57  ssa1
+#   CTRL + Mouse wheel for iso-value modification
+#
 #   Revision 1.12  2008/06/18 18:15:41  ssa1
 #   Adding in CVS meta data
 #
@@ -87,7 +90,10 @@ class VolumeViewer(BaseViewer):
     
     def processMouseWheel(self, amount, event):
         if(event.modifiers() & QtCore.Qt.CTRL) :
-            self.surfaceEditor.ui.horizontalSliderIsoLevel.setValue(self.surfaceEditor.ui.horizontalSliderIsoLevel.value() - amount )
+            range = self.surfaceEditor.ui.horizontalSliderIsoLevel.maximum() - self.surfaceEditor.ui.horizontalSliderIsoLevel.minimum()
+            delta = round(range * amount / 100.0)
+            
+            self.surfaceEditor.ui.horizontalSliderIsoLevel.setValue(self.surfaceEditor.ui.horizontalSliderIsoLevel.value() - delta)
             
                           
       

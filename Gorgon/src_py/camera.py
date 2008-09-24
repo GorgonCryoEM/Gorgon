@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.31  2008/09/23 16:46:57  ssa1
+#   CTRL + Mouse wheel for iso-value modification
+#
 #   Revision 1.30  2008/09/15 19:38:12  ssa1
 #   Adding in scene translation, and scene roll
 #
@@ -324,7 +327,7 @@ class Camera(QtOpenGL.QGLWidget):
         glMatrixMode(GL_PROJECTION)        
         glPushMatrix()
         glLoadIdentity()        
-        gluPickMatrix(x, viewport[3]-y, 1, 1, viewport)
+        gluPickMatrix(x, viewport[3]-y, 5, 5, viewport)
         gluPerspective(180 * self.eyeZoom, self.aspectRatio, self.near, self.far)            
         self.drawScene()        
         glMatrixMode(GL_PROJECTION)

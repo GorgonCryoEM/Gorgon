@@ -143,6 +143,8 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("getMax", &MeshRenderer::GetMax)
 		.def("getMesh", &MeshRenderer::GetMesh, return_value_policy<manage_new_object>())
 		.def("get3DCoordinates", &MeshRenderer::Get3DCoordinates)
+		.def("intersectMeshAndSphere", &MeshRenderer::IntersectMeshAndSphere)
+		.def("getIntersectionPoint", &MeshRenderer::GetIntersectionPoint)
 	;
 
 	class_< SSERenderer, bases<Renderer> >("SSERenderer", init<>())
