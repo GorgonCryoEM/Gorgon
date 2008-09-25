@@ -110,7 +110,7 @@ namespace wustl_mm {
 
 					glPushMatrix();
 					if(selectEnabled){
-						glLoadName((GLint)&(i->second));
+						glLoadName((long)&(i->second));
 					}
 					glTranslatef(i->second.GetPosition().X(), i->second.GetPosition().Y(), i->second.GetPosition().Z());
 					GLUquadric * quadricSphere = gluNewQuadric();
