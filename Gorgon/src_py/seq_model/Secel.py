@@ -12,7 +12,7 @@ try:
 except:
   qtEnabled=False
 
-	
+        
 class Secel(object):
   def __init__(self, chain, serialNo, label, startIndex, stopIndex, color=None):
     self.chain=chain
@@ -23,6 +23,17 @@ class Secel(object):
     self.color=color
     if qtEnabled and color==None:
       self.color=QtGui.QColor(0,0,0)
+
+  def __repr__(self):
+    res = ''
+    if self.label[0] == 'H':
+        res = 'Helix#'
+    elif self.label[0] == 'S':
+        res = 'Strand#'
+    elif self.label[0] == 'C':
+        res = 'Coil#'
+    res = res + str(self.serialNo) + ':' + str(self.startIndex) + '-' + str(self.stopIndex)
+    return res
 
   def setColor(self, newColor):
     self.color=newColor
