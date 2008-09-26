@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.37  2008/09/23 16:46:57  ssa1
+#   CTRL + Mouse wheel for iso-value modification
+#
 #   Revision 1.36  2008/09/15 18:43:13  ssa1
 #   Adding in right clicking (Focus) functionality
 #
@@ -261,6 +264,8 @@ class BaseViewer(QtOpenGL.QGLWidget):
         pass
         
     def modelChanged(self):
+        glutInit(sys.argv)      #This must be here to get it to work with Freeglut.
+        #otherwise you get: "freeglut  ERROR:  Function <glutWireCube> called without first calling 'glutInit'."
         self.updateActionsAndMenus()
         if self.gllist != 0:
             glDeleteLists(self.gllist,1)
