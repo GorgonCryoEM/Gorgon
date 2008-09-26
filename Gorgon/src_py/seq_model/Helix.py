@@ -26,7 +26,7 @@ class Helix(Secel):
   @classmethod
   def parsePDB(cls,line,chain):
     serialNo     =         int(line[7:10].strip())
-    helixID     =         line[11:14].strip()
+    helixID     =     'H' +    line[11:14].strip()
     #chainID     =         line[19:20]
     start     =         int(line[21:25].strip())
     stop     =         int(line[33:37].strip())
