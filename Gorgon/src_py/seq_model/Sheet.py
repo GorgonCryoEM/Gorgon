@@ -23,7 +23,8 @@ class Sheet:
     start     =         int(line[22:26].strip())
     stop     =         int(line[33:37].strip())
 
-    strand = Strand (chain,strandNo,sheetID,start,stop)
+    label = 'S' + sheetID
+    strand = Strand (chain,strandNo,label,start,stop)
 
     if sheetID not in chain.sheets.keys():
       #chain.sheets[sheetID]=Sheet(strand)
