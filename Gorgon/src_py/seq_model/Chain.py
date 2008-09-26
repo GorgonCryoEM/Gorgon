@@ -10,6 +10,7 @@ from seq_model.Residue import Residue
 from seq_model.Helix import Helix
 from seq_model.Sheet import Sheet
 from seq_model.Coil import Coil
+from seq_model.Strand import Strand
 
 try:
   from PyQt4 import QtCore, QtGui
@@ -26,63 +27,6 @@ class Chain(baseClass):
   '''
   chainsDict = {}
   __lastAuto_pdbID = 0
-
-  @classmethod
-  def getChainKeys(cls):
-      return cls.chainsDict.keys()
-    
-  @classmethod
-  def getChainIDsFromPDB(cls, filename, qparent=None):
-    """
-    This only finds the first list of chains in the PDB file.  If the file defines multiple molecules, this would only find the chains for the first one.
-    """
-    extension = filename.split('.')[-1].lower()
-    if extension == 'pdb':
-        for line in open(filename, 'U'):
-            if line[:6] == 'COMPND' and line[11:16] == 'CHAIN':
-                linelist = line[17:].split(', ')
-                linelist[0] = linelist[0].strip()
-                if ';' in linelist[-1]:
-                    linelist[-1] = linelist[-1].split(';')[0]	#removes the terminating semicolon and extra whitespace
-                return linelist
-    else:
-      raise NotImplementedError, 'NYI'
-    
-  @classmethod
-  def loadAllChains(cls, filename, qparent=None):
-    chain = True
-    chainIDs = cls.getChainIDsFromPDB(filename,qparent)
-    for whichChainID in chainIDs:
-        chain = Chain.load(filename, qparent, whichChainID)
-        cls.chainsDict[chain.key] = chain
-#    return cls.chainsDict
-
-  @classmethod
-  def getChain(cls, key):
-    return cls.chainsDict.get(key)	#{}.get() can handle non-existent key errors
-
-  @classmethod
-  def getViewer(cls):
-    return Chain.__viewer
-    
-  @classmethod
-  def setViewer(cls, viewer):
-    Chain.__viewer=viewer
-    
-  @classmethod
-  def __nextChainID(cls):
-    Chain.__lastChainID=Chain.__lastChainID+1
-    return chr(Chain.__lastChainID)
-
-  def __createUniquePDBID(cls):
-    #####We might want to modify this to use any unused numbers (after a rename)
-    pdbNum = cls.__lastAuto_pdbID + 1
-    numUnderscores = 4 - len(str(pdbNum))
-    assert numUnderscores >= 0
-    ####We need to figure out how to handle this exception
-    pdbID = '_'*numUnderscores + str(pdbNum)
-    cls.__lastAuto_pdbID += 1
-    return pdbID
 
   #Chain Constructor
   def __init__(self,char_string=None,qparent=None, pdbID=None, chainID='A'):
@@ -116,6 +60,18 @@ class Chain(baseClass):
         i += 1
     Chain.chainsDict[self.key]=self
 
+
+  @classmethod
+  def __createUniquePDBID(cls):
+    #####We might want to modify this to use any unused numbers (after a rename)
+    pdbNum = cls.__lastAuto_pdbID + 1
+    numUnderscores = 4 - len(str(pdbNum))
+    assert numUnderscores >= 0
+    ####We need to figure out how to handle this exception
+    pdbID = '_'*numUnderscores + str(pdbNum)
+    cls.__lastAuto_pdbID += 1
+    return pdbID
+
   @classmethod
   def __loadFromFASTA (cls,filename,qparent=None):
     infile=open(filename,'U')
@@ -124,7 +80,7 @@ class Chain(baseClass):
     charString=''
     for line in lines:
       if line[0] != '>':
-	charString=charString+line.strip()
+        charString=charString+line.strip()
 
     if qparent and qtEnabled:
       result=Chain(charString, qparent=qparent)
@@ -154,6 +110,8 @@ class Chain(baseClass):
     for line in open(filename, 'U'):	#calls the iterator for the file object each time the loop is run - don't have to load entire file into memory
         if line[0:4]=='ATOM':
             chainID = line[21:22]
+            if chainID == ' ':
+                chainID = 'A'
             if whichChainID and chainID != whichChainID:	#Search for the specified chainID (if one is specified), otherwise we find the first chain.
                 continue
             if not firstChain:	#Sets the value of the first and only chain we will store
@@ -195,146 +153,129 @@ class Chain(baseClass):
     return result
 
   @classmethod
+  def __loadFromSeq(cls, filename, qparent=None):
+    F = open(filename)
+    lines = []
+    for line in F:
+        line = line.strip()
+        lines.append(line)
+    lines = ''.join(lines)
+    linesSize = len(lines)
+    try:
+        assert (linesSize % 2 == 0)
+    except:
+        "The file does not have an equal number of reisdues and secondary structure indicators."
+    
+    sequence = lines[:(linesSize//2)]
+    structure = lines[(linesSize//2):]
+
+    newChain = Chain(sequence)
+    helix = 'H'
+    strand = 'E'
+    coil = '-'
+    elementNum, helixSerialNum, strandSerialNum, coilSerialNum = 1, 1, 1, 1
+    currentElement = structure[0]
+    assert currentElement in (helix, strand, coil)
+    startIndex = 1
+    stopIndex = None  
+    i = 2
+    for character in structure[1:]:
+        if character:
+            assert character in (helix, strand, coil)
+            if character == currentElement:
+                i += 1
+#                continue   #redundant right now
+            else:
+                stopIndex = i - 1
+                if currentElement == helix:
+                    newHelix = Helix(chain=newChain.getChainID(), serialNo=helixSerialNum, 
+                                label='H' + str(elementNum), startIndex=startIndex, stopIndex=stopIndex)
+                    newChain.addHelix(serialNo = helixSerialNum, helix = newHelix)
+                    helixSerialNum += 1
+                    elementNum += 1
+                elif currentElement == strand:
+                    newStrand = Strand(chain=newChain.getChainID(), strandNo=strandSerialNum, 
+                                    label='S' + str(elementNum) ,startIndex=startIndex, stopIndex=stopIndex)
+                    newChain.addStrand(strand = newStrand, strandNo=strandSerialNum)
+                    strandSerialNum += 1
+                    elementNum += 1
+                elif currentElement == coil:
+                    newCoil = Coil(chain=newChain.getChainID(), serialNo=coilSerialNum, label='Coil', 
+                                    startIndex=startIndex, stopIndex=stopIndex)
+                else:
+                    pass
+                startIndex = i
+                stopIndex = None
+                currentElement = character
+                i += 1
+                
+    return newChain
+
+  @classmethod
+  def __nextChainID(cls):
+    Chain.__lastChainID=Chain.__lastChainID+1
+    return chr(Chain.__lastChainID)
+
+  @classmethod
+  def getChain(cls, key):
+    return cls.chainsDict.get(key)	#{}.get() can handle non-existent key errors
+
+  @classmethod
+  def getChainIDsFromPDB(cls, filename, qparent=None):
+    """
+    This only finds the first list of chains in the PDB file.  If the file defines multiple molecules, this would only find the chains for the first one.
+    """
+    extension = filename.split('.')[-1].lower()
+    if extension == 'pdb':
+        linelist = []
+        for line in open(filename, 'U'):
+            if line[:6] == 'COMPND' and line[11:16] == 'CHAIN':
+                linelist = line[17:].split(', ')
+                linelist[0] = linelist[0].strip()
+                if ';' in linelist[-1]:
+                    linelist[-1] = linelist[-1].split(';')[0]	#removes the terminating semicolon and extra whitespace
+                return linelist
+        if linelist == []:
+            return ['A']
+    else:
+      raise NotImplementedError, 'NYI'
+
+  @classmethod
+  def getChainKeys(cls):
+      return cls.chainsDict.keys()
+
+  @classmethod
+  def getViewer(cls):
+    return Chain.__viewer
+
+  @classmethod
   def load (cls,filename,qparent=None, whichChainID=None):
     extension = filename.split('.')[-1].lower()
     if extension == 'pdb':
       return Chain.__loadFromPDB(filename,qparent, whichChainID)
     elif extension == 'fasta' or extension=='fa' or extension=='fas':
       return Chain.__loadFromFASTA(filename,qparent)
+    elif extension == 'seq':
+        return Chain.__loadFromSeq(filename,qparent)
     else:
       raise NotImplementedError, 'NYI'
 
-  def __repr__(self):
-    s=''
-    residueRange=self.residueRange()
-    for index in residueRange:
-      if (index!=1)  and not (index-1) in residueRange:
-        s=s+'...'
-      s=s + self[index].symbol1
-    return s
+  @classmethod
+  def loadAllChains(cls, filename, qparent=None):
+    chain = True
+    chainIDs = cls.getChainIDsFromPDB(filename,qparent)
+    for whichChainID in chainIDs:
+        chain = Chain.load(filename, qparent, whichChainID)
+        cls.chainsDict[chain.key] = chain
+  
+  @classmethod
+  def setViewer(cls, viewer):
+    Chain.__viewer=viewer
+    
 
-  def __iter__(self):
-    # must handle discontinuous residueList keys such as {3,4,5,6,7,8, 13,14,15,16, 21,22,23}
-    #eys=self.residueList.keys().sort()
-    keys=self.residueList.keys()
-    key_index=0
-    next_residue_key=keys[key_index]
-
-    while True:
-      yield self.residueList[next_residue_key]
-      key_index=key_index+1
-      try:
-        next_residue_key=keys[key_index]
-      except IndexError:
-        raise StopIteration 
 
   def __convertNegativeIndex(self,i):
     return len(self)+i+1
-
-  def __setitem__(self,i, residue):
-    if isinstance(residue,Residue):
-      self.residueList[i]=residue
-    elif isinstance(residue,str):
-      self.residueList[i]=Residue(residue,self)
-    else:
-      raise TypeError
-
-  def getChainID(self):
-    return self.chainID
-
-  def getPdbID(self):
-    return self.pdbID
-
-  def getIDs(self):
-    """
-    Returns (pdbID, chainID) for a chain instance.
-    """
-    return (self.getPdbID(), self.getChainID())
-
-  def setIDs(self, new_pdbID, new_chainID):
-    """
-    Changes the pdbID and chainID attributes of a Chain instance.
-    """
-    #### We need to figure out how to handle the possible exception
-    assert (new_pdbID, new_chainID) != self.key
-    value = self.chainsDict.pop(self.key)
-    self.pdbID = new_pdbID
-    self.chainID = new_chainID
-    self.key = (self.pdbID, self.chainID)
-    Chain.chainsDict[self.key] = value
-  def getSelection(self):
-    '''
-    Returns the list of selected residues
-    The selection is a list object where each element is an index in the Chain
-    '''
-    return self.selectedResidues
-
-  def setSelection(self, newSelection=None, removeOne=None, addOne=None, addRange=None):
-    '''
-    Sets the selection attribute to reflect a new set of selected residues
-    The selection is a list object where each element is an index in the Chain
-      To REPLACE the existing selection use 'newSelection' parameter
-      To REMOVE ONE RESIDUE from the existing selection use 'removeOne' parameter
-      To ADD ONE RESIDUE to the existing selection use 'addOne' parameter
-      To ADD A RANGE OF RESIDUES to the existing selection use 'addRange' parameter
-    '''
-    if newSelection is not None:
-      self.selectedResidues=newSelection
-
-    elif removeOne is not None:
-      if removeOne in self.selectedResidues:
-        self.selectedResidues.remove(removeOne)
-
-    elif addOne is not None:
-      if addOne not in self.selectedResidues:
-        self.selectedResidues.append(addOne)
-
-    elif addRange is not None:
-      self.selectedResidues.extend(addRange)
-
-    if qtEnabled:
-      self.emit( QtCore.SIGNAL('selection updated'))
-
-  def findIndexForRes (self, inputRes):
-    #indexList=[key for key in self.residueList.keys() if self.residueList[key] is inputRes]
-    for index in self.residueRange():
-      if self.residueList[index] is inputRes:
-	return index
-
-    
-  def fillGaps(self):
-    for i in self.residueRange():
-      while i+1 not in self.residueRange():
-        if i+1>self.residueRange()[-1]:
-          break
-        self[i+1]=Residue('X')
-        i=i+1
-
-  def addSecel(self, secel):
-    for index in range(secel.startIndex, secel.stopIndex+1):
-      self.secelList[index]=secel
-
-  def addHelix(self, serialNo, helix):
-    self.helices[serialNo]=helix
-    self.addSecel(helix)
-
-  def addStrand(self, strand, strandNo, sheetID=None):
-    if sheetID is None:
-      self.orphanStrands[strandNo]=strand
-    else:
-      self.sheets[sheetID].strandList[strandNo]=strand
-    self.addSecel(strand)
-
-  def addSheet(self, sheetID, sheet):
-    if not self.sheets.has_key(sheetID):
-      self.sheets[sheetID]=sheet
-
-  def getSecelByIndex(self,i):
-    if self.secelList.has_key(i):
-      return self.secelList[i]
-    else:
-      return Coil(self,0, 'no-label',i,i)
-
 
   # my_chain[7] returns the seventh residue (assuming that indexing starts at 1
   def __getitem__(self,i):
@@ -365,6 +306,42 @@ class Chain(baseClass):
       #rint 'getitem(%i)' %i
       return self.residueList[i]
 
+  def __iter__(self):
+    # must handle discontinuous residueList keys such as {3,4,5,6,7,8, 13,14,15,16, 21,22,23}
+    #eys=self.residueList.keys().sort()
+    keys=self.residueList.keys()
+    key_index=0
+    next_residue_key=keys[key_index]
+
+    while True:
+      yield self.residueList[next_residue_key]
+      key_index=key_index+1
+      try:
+        next_residue_key=keys[key_index]
+      except IndexError:
+        raise StopIteration 
+
+  # len(my_chain) returns the length of residueList
+  def __len__(self):
+    return_value= len(self.residueList)
+    return return_value
+
+  def __repr__(self):
+    s=''
+    residueRange=self.residueRange()
+    for index in residueRange:
+      if (index!=1)  and not (index-1) in residueRange:
+        s=s+'...'
+      s=s + self[index].symbol1
+    return s
+
+  def __setitem__(self,i, residue):
+    if isinstance(residue,Residue):
+      self.residueList[i]=residue
+    elif isinstance(residue,str):
+      self.residueList[i]=Residue(residue,self)
+    else:
+      raise TypeError
 
   def __slicehelper(self,i,j):
     #rint 'slice_helper(%s,%s)' %(i,j)
@@ -378,7 +355,6 @@ class Chain(baseClass):
     new_chain=Chain('')
     for index in keys:
       new_chain[index]=self[index]
-
 
     # Slice output should be annotated for helix, strand, coil
     # ???  what about strands that become orphaned?
@@ -417,18 +393,24 @@ class Chain(baseClass):
 
 
 
-  # len(my_chain) returns the length of residueList
-  def __len__(self):
-    return_value= len(self.residueList)
-    return return_value
+  def addSecel(self, secel):
+    for index in range(secel.startIndex, secel.stopIndex+1):
+      self.secelList[index]=secel
 
+  def addHelix(self, serialNo, helix):
+    self.helices[serialNo]=helix
+    self.addSecel(helix)
 
+  def addStrand(self, strand, strandNo, sheetID=None):
+    if sheetID is None:
+      self.orphanStrands[strandNo]=strand
+    else:
+      self.sheets[sheetID].strandList[strandNo]=strand
+    self.addSecel(strand)
 
-  def clear_coordinates(self):
-    for index in self.residueRange():
-      self[index].clearAtoms()
-
-
+  def addSheet(self, sheetID, sheet):
+    if not self.sheets.has_key(sheetID):
+      self.sheets[sheetID]=sheet
 
   def append(self,residue):
     if len(self.residueList)==0:
@@ -446,6 +428,51 @@ class Chain(baseClass):
       self.__setitem__(key,residue)
       return key
 
+  def clear_coordinates(self):
+    for index in self.residueRange():
+      self[index].clearAtoms()
+
+  def findIndexForRes (self, inputRes):
+#    Generator objects turn out to be a bit slower than the for loop, which surprises me (Ross).
+#    indexGenerator = (index for index in self.residueRange()[::-1] if self.residueList[index] is inputRes) #Generator Object
+#    return indexGenerator.next()
+    for index in self.residueRange()[::-1]:
+      if self.residueList[index] is inputRes:
+        return index
+    
+  def fillGaps(self):
+    for i in self.residueRange():
+      while i+1 not in self.residueRange():
+        if i+1>self.residueRange()[-1]:
+          break
+        self[i+1]=Residue('X')
+        i=i+1
+
+  def getChainID(self):
+    return self.chainID
+
+  def getIDs(self):
+    """
+    Returns (pdbID, chainID) for a chain instance.
+    """
+    return (self.getPdbID(), self.getChainID())
+
+  def getPdbID(self):
+    return self.pdbID
+
+  def getSecelByIndex(self,i):
+    if self.secelList.has_key(i):
+      return self.secelList[i]
+    else:
+      return Coil(self,0, 'no-label',i,i)
+
+  def getSelection(self):
+    '''
+    Returns the list of selected residues
+    The selection is a list object where each element is an index in the Chain
+    '''
+    return self.selectedResidues
+
   def residueRange(self):
     return sorted(self.residueList.keys())
 
@@ -455,6 +482,44 @@ class Chain(baseClass):
     outfile.write(s)
     outfile.flush()
     outfile.close()
+
+  def setIDs(self, new_pdbID, new_chainID):
+    """
+    Changes the pdbID and chainID attributes of a Chain instance.
+    """
+    #### We need to figure out how to handle the possible exception
+    assert (new_pdbID, new_chainID) != self.key
+    value = self.chainsDict.pop(self.key)
+    self.pdbID = new_pdbID
+    self.chainID = new_chainID
+    self.key = (self.pdbID, self.chainID)
+    Chain.chainsDict[self.key] = value
+
+  def setSelection(self, newSelection=None, removeOne=None, addOne=None, addRange=None):
+    '''
+    Sets the selection attribute to reflect a new set of selected residues
+    The selection is a list object where each element is an index in the Chain
+      To REPLACE the existing selection use 'newSelection' parameter
+      To REMOVE ONE RESIDUE from the existing selection use 'removeOne' parameter
+      To ADD ONE RESIDUE to the existing selection use 'addOne' parameter
+      To ADD A RANGE OF RESIDUES to the existing selection use 'addRange' parameter
+    '''
+    if newSelection is not None:
+      self.selectedResidues=newSelection
+
+    elif removeOne is not None:
+      if removeOne in self.selectedResidues:
+        self.selectedResidues.remove(removeOne)
+
+    elif addOne is not None:
+      if addOne not in self.selectedResidues:
+        self.selectedResidues.append(addOne)
+
+    elif addRange is not None:
+      self.selectedResidues.extend(addRange)
+
+    if qtEnabled:
+      self.emit( QtCore.SIGNAL('selection updated'))
 
   #Return a pdb-compliant string
   def toPDB(self, backboneOnly=False, verbose=True): 
@@ -486,7 +551,7 @@ class Chain(baseClass):
 
       try:
         for atom_name in atoms:
-	  atom=residue.getAtom(atom_name)
+          atom=residue.getAtom(atom_name)
           s=s+ "ATOM" + ' '
           s=s+ str(atom_index).rjust(6) + ' '
           atom_index=atom_index+1 
