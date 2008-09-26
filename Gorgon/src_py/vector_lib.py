@@ -11,11 +11,17 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.4  2008/06/18 18:15:41  ssa1
+#   Adding in CVS meta data
+#
 
 from cmath import *   
     
 def vectorDistance(v1, v2):
     return abs(sqrt(pow(v1[0]-v2[0], 2) + pow(v1[1]-v2[1], 2) + pow(v1[2]-v2[2], 2)))
+        
+def vectorSize(v):        
+    return abs(sqrt(v[0]*v[0] + v[1]*v[1] + v[2]*v[2]))
         
 def vectorNormalize(v):
     base = abs(sqrt(v[0]*v[0] + v[1]*v[1] + v[2]*v[2]))

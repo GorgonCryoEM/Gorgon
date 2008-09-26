@@ -39,6 +39,8 @@ namespace wustl_mm {
 
 			void Draw(int subSceneIndex, bool selectEnabled);
 			void LoadFile(string fileName);
+			int SelectionObjectCount();
+			Vector3DFloat SelectionCenterOfMass();
 			bool SelectionMove(Vector3DFloat moveDirection);
 			bool SelectionClear();
 			void SelectionToggle(int subsceneIndex, bool forceTrue, int ix0, int ix1 = -1, int ix2 = -1, int ix3 = -1, int ix4 = -1);
@@ -198,6 +200,46 @@ namespace wustl_mm {
 			sortedSerials.clear();
 			UpdateBoundingBox();
 			
+		}
+
+		int CAlphaRenderer::SelectionObjectCount(){
+			int count = 0;
+			for(AtomMapType::iterator i = atoms.begin(); i != atoms.end(); i++) {					
+				if(i->second.GetSelected()) {
+					count++;
+				}
+			}
+
+			for(unsigned int i = 0; i < bonds.size(); i++) {
+				if(bonds[i].GetSelected()) {
+					count++;
+				}
+			}
+			return count;
+		}
+
+		Vector3DFloat CAlphaRenderer::SelectionCenterOfMass() {
+			int count = 0;
+			Vector3DFloat centerOfMass = Vector3DFloat(0,0,0);
+			for(AtomMapType::iterator i = atoms.begin(); i != atoms.end(); i++) {					
+				if(i->second.GetSelected()) {
+					count++;
+					centerOfMass = centerOfMass + i->second.GetPosition();
+				}
+			}
+
+			for(unsigned int i = 0; i < bonds.size(); i++) {
+				if(bonds[i].GetSelected()) {
+					count++;
+					centerOfMass = centerOfMass + (atoms[bonds[i].GetAtom0Ix()].GetPosition() + atoms[bonds[i].GetAtom1Ix()].GetPosition()) * 0.5;
+				}
+			}
+			if(count == 0) {
+				centerOfMass = Renderer::SelectionCenterOfMass();
+			} else {
+				centerOfMass = centerOfMass * (1.0f/(float)count);
+			}
+			return centerOfMass;
 		}
 
 		bool CAlphaRenderer::SelectionMove(Vector3DFloat moveDirection) {

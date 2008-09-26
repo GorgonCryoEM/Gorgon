@@ -31,6 +31,9 @@ namespace wustl_mm {
 			void LoadSheetFile(string fileName);			
 			void Unload();
 			void SetHelixColor(int index, float r, float g, float b, float a);
+			bool SelectionRotate(Vector3DFloat centerOfMass, Vector3DFloat rotationAxis, float angle);
+			int SelectionObjectCount();
+			Vector3DFloat SelectionCenterOfMass();
 			bool SelectionMove(Vector3DFloat moveDirection);
 			bool SelectionClear();
 			void SelectionToggle(int subsceneIndex, bool forceTrue, int ix0, int ix1 = -1, int ix2 = -1, int ix3 = -1, int ix4 = -1);
@@ -233,6 +236,117 @@ namespace wustl_mm {
 
 		}
 
+		bool SSERenderer::SelectionRotate(Vector3DFloat centerOfMass, Vector3DFloat rotationAxis, float angle) {
+			bool rotated = false;
+			for(unsigned int i = 0; i < helices.size(); i++) {					
+				if(helices[i]->GetSelected()) {
+					rotated = true;
+					Vector3DFloat move = centerOfMass - Vector3DFloat(helices[i]->GetCenter()[0], helices[i]->GetCenter()[1], helices[i]->GetCenter()[2]);
+					helices[i]->Rotate(Vector3(rotationAxis.X(), rotationAxis.Y(), rotationAxis.Z()), angle);
+				}
+			}
+			return rotated;
+
+		}
+
+		int SSERenderer::SelectionObjectCount() {
+			int count = 0;
+			for(unsigned int i = 0; i < helices.size(); i++) {					
+				if(helices[i]->GetSelected()) {
+					count++;
+				}
+			}
+
+			if(sheetMesh != NULL) {
+				bool sheets[256];
+				for(unsigned int i = 0; i < 256; i++) {
+					sheets[i] = false;
+				}
+
+				for(unsigned int i = 0; i < sheetMesh->faces.size(); i++) {
+					if(sheetMesh->faces[i].tag.selected) {
+						sheets[sheetMesh->faces[i].id] = true;
+					}
+				}	
+
+				for(unsigned int i = 0; i < 256; i++) {
+					if(sheets[i]) {
+						count++;
+					}
+				}
+			}
+			return count;
+		}
+
+		Vector3DFloat SSERenderer::SelectionCenterOfMass(){ 
+			Vector3DFloat helixCenterOfMass = Vector3DFloat(0,0,0);
+			Point3 helixCenter;
+			int helixCount = 0;
+
+			for(unsigned int i = 0; i < helices.size(); i++) {					
+				if(helices[i]->GetSelected()) {
+					helixCount++;
+					helixCenter = helices[i]->GetCenter();
+					helixCenterOfMass = helixCenterOfMass + Vector3DFloat(helixCenter[0], helixCenter[1], helixCenter[2]);
+				}
+			}
+
+			int totalCount = SelectionObjectCount();
+			int sheetCount = totalCount - helixCount;
+
+			Vector3DFloat sheetsCenterOfMass = Vector3DFloat(0,0,0);
+			Vector3DFloat currentFaceCenterOfMass;
+			Vector3DFloat currentSheetCenterOfMass;
+
+			if((sheetCount > 0) && (sheetMesh != NULL)) {
+				bool sheets[256];
+				for(unsigned int i = 0; i < 256; i++) {
+					sheets[i] = false;
+				}
+
+				for(unsigned int i = 0; i < sheetMesh->faces.size(); i++) {
+					if(sheetMesh->faces[i].tag.selected) {
+						sheets[sheetMesh->faces[i].id] = true;
+					}
+				}	
+
+				int currentSheetFaceCount;
+
+				for(unsigned int j = 0; j < 256; j++) {
+					if(sheets[j]) {
+						currentSheetCenterOfMass = Vector3DFloat(0,0,0);
+						currentSheetFaceCount = 0;
+						for(unsigned int i = 0; i < sheetMesh->faces.size(); i++) {
+							if(sheetMesh->faces[i].tag.id == j) {
+								currentSheetFaceCount++;
+								currentFaceCenterOfMass = Vector3DFloat(0,0,0);
+								for(unsigned int k = 0; k < sheetMesh->faces[i].vertexIds.size(); k++) {
+									currentFaceCenterOfMass = currentFaceCenterOfMass + sheetMesh->vertices[sheetMesh->faces[i].vertexIds[k]].position;
+								}
+								currentFaceCenterOfMass = currentFaceCenterOfMass * (1.0f / (float)sheetMesh->faces[i].vertexIds.size());
+								currentSheetCenterOfMass = currentSheetCenterOfMass + currentFaceCenterOfMass;
+							}
+						}
+						
+						currentSheetCenterOfMass = currentSheetCenterOfMass * (1.0f / (float)currentSheetFaceCount);
+					}
+					sheetsCenterOfMass = sheetsCenterOfMass + currentSheetCenterOfMass;
+				}
+			}
+			
+			Vector3DFloat centerOfMass;
+			if(totalCount == 0) {
+				centerOfMass = Renderer::SelectionCenterOfMass();
+			} else if ((helixCount > 0) && (sheetCount > 0)) {
+				centerOfMass = (helixCenterOfMass + sheetsCenterOfMass) * (1.0f/(float)totalCount);
+			} else if (helixCount > 0) {
+				centerOfMass = helixCenterOfMass * (1.0f/(float)helixCount);
+			} else {
+				centerOfMass = sheetsCenterOfMass * (1.0f/(float)sheetCount);
+			}
+			return centerOfMass;
+		}
+
 		bool SSERenderer::SelectionMove(Vector3DFloat moveDirection) {
 			bool moved = false;
 			for(unsigned int i = 0; i < helices.size(); i++) {					
@@ -270,8 +384,10 @@ namespace wustl_mm {
 					helices[i]->SetSelected(false);
 				}
 
-				for(unsigned int i = 0; i < sheetMesh->faces.size(); i++) {
-					sheetMesh->faces[i].tag.selected = false;
+				if(sheetMesh != NULL) {
+					for(unsigned int i = 0; i < sheetMesh->faces.size(); i++) {
+						sheetMesh->faces[i].tag.selected = false;
+					}
 				}
 
 				return true;
