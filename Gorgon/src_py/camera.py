@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.33  2008/09/24 20:46:12  ssa1
+#   Translating the selected elements
+#
 #   Revision 1.32  2008/09/24 19:34:34  ssa1
 #   Fixing scaling bug in CTRL + zoom, Providing function for neighboring atoms, Saving volumes as projections
 #
@@ -389,10 +392,34 @@ class Camera(QtOpenGL.QGLWidget):
 
     
     def rotateSelectedScene(self, dx, dy):
-        if(self.selectedScene >= 0):
-            self.scene[self.selectedScene].setRotation(self.up, dx)
-            self.scene[self.selectedScene].setRotation(self.right, dy)
-            self.scene[self.selectedScene].emitModelChanged()
+        newDx = vectorDistance(self.eye, self.center) * abs(tan(pi * self.eyeZoom)) * dx / float(self.width())
+        newDy = vectorDistance(self.eye, self.center) * abs(tan(pi * self.eyeZoom)) * dy / float(self.height())
+        moveLength = vectorAdd(vectorScalarMultiply(-newDy, self.up), vectorScalarMultiply(newDx, self.right))
+        moveDirection = vectorNormalize(moveLength)
+        rotationAxis = vectorCrossProduct(moveDirection, self.look)
+        
+        
+        rotationAxis3D = Vector3DFloat(rotationAxis[0], rotationAxis[1], rotationAxis[2])
+        centerOfMass = Vector3DFloat(0,0,0)
+        
+        totalCount = 0
+        for s in self.scene:
+            objectCount = s.renderer.selectionObjectCount()            
+            if(objectCount > 0):
+                totalCount = totalCount + objectCount
+                centerOfMass = centerOfMass + (s.renderer.selectionCenterOfMass() * float(objectCount))
+        if(totalCount > 0):
+            centerOfMass = centerOfMass * float(1.0 / totalCount)
+
+        for s in self.scene:
+            if(s.renderer.selectionRotate(centerOfMass, rotationAxis3D, vectorSize(moveLength))):
+                s.emitModelChanged()
+                     
+            
+        
+
+        
+        
     
     def mousePressEvent(self, event):      
         self.mouseDownPoint = QtCore.QPoint(event.pos())

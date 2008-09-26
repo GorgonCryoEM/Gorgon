@@ -20,6 +20,9 @@ namespace wustl_mm {
 			virtual void LoadFile(string fileName);
 			virtual void SaveFile(string fileName);
 			virtual void Unload();
+			virtual bool SelectionRotate(Vector3DFloat centerOfMass, Vector3DFloat rotationAxis, float angle);
+			virtual int SelectionObjectCount();
+			virtual Vector3DFloat SelectionCenterOfMass();
 			virtual bool SelectionMove(Vector3DFloat moveDirection);
 			virtual bool SelectionClear();
 			virtual void SelectionToggle(int subsceneIndex, bool forceTrue, int ix0, int ix1 = -1, int ix2 = -1, int ix3 = -1, int ix4 = -1);
@@ -42,8 +45,6 @@ namespace wustl_mm {
 			Vector3DFloat cuttingPlaneDirection;
 			GLUquadric * quadricSphere;
 			GLUquadric * quadricCylinder;
-
-
 		};
 
 		Renderer::Renderer() {
@@ -88,6 +89,18 @@ namespace wustl_mm {
 		}
 
 		void Renderer::SaveFile(string fileName) {
+		}
+
+		bool Renderer::SelectionRotate(Vector3DFloat centerOfMass, Vector3DFloat rotationAxis, float angle) {
+			return false;
+		}
+
+		int	Renderer::SelectionObjectCount() {
+			return 0;
+		}
+
+		Vector3DFloat Renderer::SelectionCenterOfMass() {
+			return Vector3DFloat((maxPts[0] - minPts[0]) / 2.0, (maxPts[1] - minPts[1]) / 2.0, (maxPts[2] - minPts[2]) / 2.0);
 		}
 
 		bool Renderer::SelectionMove(Vector3DFloat moveDirection) {
