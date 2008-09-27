@@ -188,20 +188,22 @@ class Chain(baseClass):
             else:
                 stopIndex = i - 1
                 if currentElement == helix:
-                    newHelix = Helix(chain=newChain.getChainID(), serialNo=helixSerialNum, 
-                                label='H' + str(elementNum), startIndex=startIndex, stopIndex=stopIndex)
+                    newHelix = Helix(chain=newChain, serialNo=helixSerialNum, 
+                                label = 'H' + str(elementNum),
+                                startIndex=startIndex, stopIndex=stopIndex)
                     newChain.addHelix(serialNo = helixSerialNum, helix = newHelix)
                     helixSerialNum += 1
                     elementNum += 1
                 elif currentElement == strand:
-                    newStrand = Strand(chain=newChain.getChainID(), strandNo=strandSerialNum, 
-                                    label='S' + str(elementNum) ,startIndex=startIndex, stopIndex=stopIndex)
+                    newStrand = Strand(chain=newChain, strandNo=strandSerialNum, 
+                                    label = 'S' + str(elementNum),
+                                    startIndex=startIndex, stopIndex=stopIndex)
                     newChain.addStrand(strand = newStrand, strandNo=strandSerialNum)
                     strandSerialNum += 1
                     elementNum += 1
                 elif currentElement == coil:
-                    newCoil = Coil(chain=newChain.getChainID(), serialNo=coilSerialNum, label='Coil', 
-                                    startIndex=startIndex, stopIndex=stopIndex)
+                    newCoil = Coil(chain=newChain, serialNo=coilSerialNum, 
+                                    label = 'Coil', startIndex=startIndex, stopIndex=stopIndex)
                 else:
                     pass
                 startIndex = i

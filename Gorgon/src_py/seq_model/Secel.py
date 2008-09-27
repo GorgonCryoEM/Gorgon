@@ -15,25 +15,17 @@ except:
         
 class Secel(object):
   def __init__(self, chain, serialNo, label, startIndex, stopIndex, color=None):
-    self.chain=chain
+    self.chain=chain    #Actual chain instance object
     self.serialNo=serialNo
     self.label=label
-    self.startIndex=startIndex
-    self.stopIndex=stopIndex
+    self.startIndex=startIndex  #The number (there is no zero residue) of the first residue of that secondary structure element
+    self.stopIndex=stopIndex    #The number of the last residue of that secondary structure element on the chain
     self.color=color
     if qtEnabled and color==None:
-      self.color=QtGui.QColor(0,0,0)
+        self.color=QtGui.QColor(0,0,0)
 
   def __repr__(self):
-    res = ''
-    if self.label[0] == 'H':
-        res = 'Helix#'
-    elif self.label[0] == 'S':
-        res = 'Strand#'
-    elif self.label[0] == 'C':
-        res = 'Coil#'
-    res = res + str(self.serialNo) + ':' + str(self.startIndex) + '-' + str(self.stopIndex)
-    return res
+    return self.__str__()
 
   def setColor(self, newColor):
     self.color=newColor
@@ -49,7 +41,7 @@ class Secel(object):
     s = s + str(self.stopIndex)
     s = s + ')'
     s = s + ':'
-    residues = self.chain.residueList[self.startIndex-1:self.stopIndex-1]
+    residues = self.chain[self.startIndex:self.stopIndex]
 
     for residue in residues:
       s = s + residue.symbol1
