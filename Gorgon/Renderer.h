@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.22  2008/09/29 16:01:17  ssa1
+//   Adding in CVS meta information
+//
 
 #ifndef GORGON_RENDERER_H
 #define GORGON_RENDERER_H
@@ -44,6 +47,7 @@ namespace wustl_mm {
 			virtual string GetSupportedSaveFileFormats();
 			virtual Vector3DFloat Get3DCoordinates(int subsceneIndex, int ix0, int ix1 = -1, int ix2 = -1, int ix3 = -1, int ix4 = -1);
 			bool SetCuttingPlane(float position, float vecX, float vecY, float vecZ);
+			void DrawSphere(Vector3DFloat center, float radius);
 			void DrawCylinder(Vector3DFloat pt1, Vector3DFloat pt2, float radius);
 			void SetColor(float colorR, float colorG, float colorB, float colorA);
 
@@ -160,6 +164,15 @@ namespace wustl_mm {
 			cuttingPlaneCenter = center +  cuttingPlaneDirection * position * distance;
 			//printf("%lf %lf %lf - %lf %lf\n", cuttingPlaneCenter.values[0], cuttingPlaneCenter.values[1], cuttingPlaneCenter.values[2], position, distance); flushall();
 			return false;
+		}
+
+		void Renderer::DrawSphere(Vector3DFloat center, float radius) {
+			glPushMatrix();
+			glTranslatef(center.X(), center.Y(), center.Z());
+			GLUquadric * quadricSphere = gluNewQuadric();
+			gluSphere(quadricSphere, radius, 10, 10);
+			gluDeleteQuadric(quadricSphere);
+			glPopMatrix();
 		}
 
 		void Renderer::DrawCylinder(Vector3DFloat pt1, Vector3DFloat pt2, float radius) {
