@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.7  2008/09/29 16:01:17  ssa1
+//   Adding in CVS meta information
+//
 
 #ifndef GORGON_GORGON_CPP
 #define GORGON_GORGON_CPP
@@ -20,11 +23,11 @@
 
 #include "Renderer.h"
 #include "VolumeRenderer.h"
-#include "GlVisualizer.h"
 #include "MeshRenderer.h"
 #include "SSERenderer.h"
 #include "InteractiveSkeletonEngine.h"
 #include "CAlphaRenderer.h"
+
 
 unsigned char neighbors[8][3] = {
 	{1,4,3},
