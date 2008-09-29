@@ -1,9 +1,17 @@
-/*
-Has basic functions on primitive geometric shapes
+// Copyright (C) 2005-2008 Washington University in St Louis, Baylor College of Medicine.  All rights reserved
+// Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
+// Description:   Data storage and basic functions on primitive geometric shapes
 
-Author: Sasakthi S. Abeysinghe
-Date  : 01/28/2006
-*/
+// CVS Meta Information: 
+//   $Source$
+//   $Revision$
+//   $Date$
+//   $Author$
+//   $State$
+//
+// History Log: 
+//   $Log$
+
 
 #ifndef GEOMETRICSHAPE_H
 #define GEOMETRICSHAPE_H

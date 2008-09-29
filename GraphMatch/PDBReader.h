@@ -1,9 +1,17 @@
-/*
-Reads PDB files and creates Graphs from them.
+// Copyright (C) 2005-2008 Washington University in St Louis, Baylor College of Medicine.  All rights reserved
+// Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
+// Description:   Reads PDB files.
 
-Author: Sasakthi S. Abeysinghe
-Date  : 01/28/2006
-*/
+// CVS Meta Information: 
+//   $Source$
+//   $Revision$
+//   $Date$
+//   $Author$
+//   $State$
+//
+// History Log: 
+//   $Log$
+
 
 #ifndef PDBREADER_H
 #define PDBREADER_H
