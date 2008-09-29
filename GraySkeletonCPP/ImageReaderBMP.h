@@ -1,3 +1,17 @@
+// Copyright (C) 2005-2008 Washington University in St Louis, Baylor College of Medicine.  All rights reserved
+// Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
+// Description:   Reads grayscale images from BMP files
+
+// CVS Meta Information: 
+//   $Source$
+//   $Revision$
+//   $Date$
+//   $Author$
+//   $State$
+//
+// History Log: 
+//   $Log$
+
 #ifndef GRAYSKELETONCPP_IMAGE_READER_BMP_H
 #define GRAYSKELETONCPP_IMAGE_READER_BMP_H
 

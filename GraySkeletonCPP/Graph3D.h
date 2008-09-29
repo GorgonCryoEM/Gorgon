@@ -1,3 +1,17 @@
+// Copyright (C) 2005-2008 Washington University in St Louis, Baylor College of Medicine.  All rights reserved
+// Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
+// Description:   An implementation of a 3D Spatial graph
+
+// CVS Meta Information: 
+//   $Source$
+//   $Revision$
+//   $Date$
+//   $Author$
+//   $State$
+//
+// History Log: 
+//   $Log$
+
 #ifndef GRAYSKELETONCPP_GRAPH_3D_H
 #define GRAYSKELETONCPP_GRAPH_3D_H
 
