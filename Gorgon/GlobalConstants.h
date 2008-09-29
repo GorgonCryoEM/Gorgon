@@ -1,3 +1,18 @@
+// Copyright (C) 2005-2008 Washington University in St Louis, Baylor College of Medicine.  All rights reserved
+// Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
+// Description:   A class for storing the global constants for the GORGON module
+
+// CVS Meta Information: 
+//   $Source$
+//   $Revision$
+//   $Date$
+//   $Author$
+//   $State$
+//
+// History Log: 
+//   $Log$
+
+
 #ifndef GORGON_GLOBAL_CONSTANTS_H
 #define GORGON_GLOBAL_CONSTANTS_H
 
