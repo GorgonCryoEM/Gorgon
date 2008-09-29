@@ -1,9 +1,16 @@
-/*
-Library to generate random graphs
+// Copyright (C) 2005-2008 Washington University in St Louis, Baylor College of Medicine.  All rights reserved
+// Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
+// Description:   A library that generates random graphs
 
-Author: Sasakthi S. Abeysinghe
-Date  : 06/30/2006
-*/
+// CVS Meta Information: 
+//   $Source$
+//   $Revision$
+//   $Date$
+//   $Author$
+//   $State$
+//
+// History Log: 
+//   $Log$
 
 #ifndef GRAPHGENERATOR_H
 #define GRAPHGENERATOR_H

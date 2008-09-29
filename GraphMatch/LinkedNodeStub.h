@@ -1,9 +1,16 @@
-/*
-Storage structure for a node in the graph traversal.
+// Copyright (C) 2005-2008 Washington University in St Louis, Baylor College of Medicine.  All rights reserved
+// Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
+// Description:   Storage structure for a node in the graph traversal.
 
-Author: Sasakthi S. Abeysinghe
-Date  : 01/23/2006
-*/
+// CVS Meta Information: 
+//   $Source$
+//   $Revision$
+//   $Date$
+//   $Author$
+//   $State$
+//
+// History Log: 
+//   $Log$
 
 #ifndef LINKEDNODESTUB_H
 #define LINKEDNODESTUB_H

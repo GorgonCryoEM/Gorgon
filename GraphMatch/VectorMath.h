@@ -1,9 +1,17 @@
-/*
-Has basic functions on vector operations
+// Copyright (C) 2005-2008 Washington University in St Louis, Baylor College of Medicine.  All rights reserved
+// Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
+// Description:   Has basic vector functions
 
-Author: Cindy M. Grimm, Sasakthi S. Abeysinghe (Added Point3Int)
-Date  : 01/28/2006
-*/
+// CVS Meta Information: 
+//   $Source$
+//   $Revision$
+//   $Date$
+//   $Author$
+//   $State$
+//
+// History Log: 
+//   $Log$
+
 
 #ifndef VECMATH_H
 #define VECMATH_H

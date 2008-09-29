@@ -1,13 +1,21 @@
-/*
-Graph Matching algorithm based on the following paper:
-  Wong et al., An algorithm for graph optimal monomorphism, 
-  IEEE Transactions on Systems, Man, and Cybernetics, Vol 20, No 3, May/June 1990, pp628-636
+// Copyright (C) 2005-2008 Washington University in St Louis, Baylor College of Medicine.  All rights reserved
+// Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
+// Description:   Graph Matching algorithm based on the following paper:
+//				  Wong et al., An algorithm for graph optimal monomorphism, 
+//				  IEEE Transactions on Systems, Man, and Cybernetics, Vol 20, No 3, May/June 1990, pp628-636
+//				  Modified to support missing helixes and constrained nodes
+//				  Contains all future information
 
-  Modified to support missing helixes and constrained nodes
+// CVS Meta Information: 
+//   $Source$
+//   $Revision$
+//   $Date$
+//   $Author$
+//   $State$
+//
+// History Log: 
+//   $Log$
 
-Author: Sasakthi S. Abeysinghe
-Date  : 08/14/2006
-*/
 
 #ifndef WONGMATCH15CONSTRAINED_H
 #define WONGMATCH15CONSTRAINED_H
