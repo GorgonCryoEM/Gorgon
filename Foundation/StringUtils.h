@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.7  2008/09/29 16:22:17  ssa1
+//   Removing compiler warnings
+//
 //   Revision 1.6  2008/09/29 15:45:09  ssa1
 //   Adding in CVS meta information
 //
@@ -33,12 +36,7 @@ namespace wustl_mm {
 			static string CharToString(char c);
 			static double StringToDouble(string s);
 			static int StringToInt(const string &s);
-			static string StringToUpper(string strToConvert) {
-			   for(unsigned int i=0;i<strToConvert.length();i++)   {
-			      strToConvert[i] = (char)toupper(strToConvert[i]);
-			   }
-			   return strToConvert;
-			}
+			static string StringToUpper(string strToConvert);
 			static string StringToLower(string strToConvert);
 			static void RightTrim(string &source, string t);
 			static void LeftTrim(string &source, string t);
@@ -86,7 +84,15 @@ namespace wustl_mm {
 		  myStream>>i;
 		  return i;
 		}
-		string StringToLower(string strToConvert)
+
+		string StringUtils::StringToUpper(string strToConvert) {
+		   for(unsigned int i=0;i<strToConvert.length();i++)   {
+		      strToConvert[i] = (char)toupper(strToConvert[i]);
+		   }
+		   return strToConvert;
+		}
+
+		string StringUtils::StringToLower(string strToConvert)
 		{
 		   for(unsigned int i=0;i<strToConvert.length();i++)  {
 		      strToConvert[i] = (char)tolower(strToConvert[i]);
@@ -94,11 +100,11 @@ namespace wustl_mm {
 		   return strToConvert;
 		}			
 
-		void RightTrim(string &source, string t) {
+		void StringUtils::RightTrim(string &source, string t) {
 			source.erase(source.find_last_not_of(t)+1);
 		}
 
-		void LeftTrim(string &source, string t) {
+		void StringUtils::LeftTrim(string &source, string t) {
 			source.erase(0, source.find_first_not_of(t));
 		}			
 	}

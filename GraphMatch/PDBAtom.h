@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.7  2008/09/29 16:19:30  ssa1
+//   Adding in CVS meta information
+//
 
 
 #ifndef GRAPH_MATCH_PDB_ATOM_H
@@ -157,8 +160,8 @@ namespace wustl_mm {
 			pdbId = "----";
 			serial = atoi((char *)PDBLine.substr(6, 5).c_str());
 			name = PDBLine.substr(12, 4);
-			LeftTrim(name, string(" \t\f\v\n\r"));
-			RightTrim(name, string(" \t\f\v\n\r"));
+			StringUtils::LeftTrim(name, string(" \t\f\v\n\r"));
+			StringUtils::RightTrim(name, string(" \t\f\v\n\r"));
 			altLoc = PDBLine[16];
 			resName = PDBLine.substr(17, 3);
 			chainId = PDBLine[21];
