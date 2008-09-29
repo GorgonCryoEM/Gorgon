@@ -11,12 +11,16 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.18  2008/09/29 16:01:17  ssa1
+//   Adding in CVS meta information
+//
 
 #ifndef GORGON_SSE_RENDERER_H
 #define GORGON_SSE_RENDERER_H
 
 #include "Renderer.h"
 #include "MeshRenderer.h"
+#include <GraphMatch/StandardGraph.h>
 #include <GraphMatch/SkeletonReader.h>
 #include <GraphMatch/GeometricShape.h>
 #include <GraphMatch/VectorMath.h>
