@@ -1,3 +1,17 @@
+// Copyright (C) 2005-2008 Washington University in St Louis, Baylor College of Medicine.  All rights reserved
+// Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
+// Description:   Renderer for rendering volumetric data sets
+
+// CVS Meta Information: 
+//   $Source$
+//   $Revision$
+//   $Date$
+//   $Author$
+//   $State$
+//
+// History Log: 
+//   $Log$
+
 #ifndef GORGON_MARCHING_CUBES_H
 #define GORGON_MARCHING_CUBES_H
 

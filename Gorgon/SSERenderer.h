@@ -1,3 +1,17 @@
+// Copyright (C) 2005-2008 Washington University in St Louis, Baylor College of Medicine.  All rights reserved
+// Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
+// Description:   Renderer for rendering secondary structure elements.
+
+// CVS Meta Information: 
+//   $Source$
+//   $Revision$
+//   $Date$
+//   $Author$
+//   $State$
+//
+// History Log: 
+//   $Log$
+
 #ifndef GORGON_SSE_RENDERER_H
 #define GORGON_SSE_RENDERER_H
 

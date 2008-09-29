@@ -1,3 +1,17 @@
+// Copyright (C) 2005-2008 Washington University in St Louis, Baylor College of Medicine.  All rights reserved
+// Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
+// Description:   An engine for finding the correspondance between secondary structure elements and the amino acid sequence.
+
+// CVS Meta Information: 
+//   $Source$
+//   $Revision$
+//   $Date$
+//   $Author$
+//   $State$
+//
+// History Log: 
+//   $Log$
+
 #ifndef GORGON_SSE_CORRESPONDENCE_ENGINE_H
 #define GORGON_SSE_CORRESPONDENCE_ENGINE_H
 
