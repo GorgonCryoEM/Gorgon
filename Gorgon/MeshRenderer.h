@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.21  2008/09/29 16:01:17  ssa1
+//   Adding in CVS meta information
+//
 
 
 #ifndef GORGON_MESH_RENDERER_H
@@ -82,7 +85,41 @@ namespace wustl_mm {
 		void MeshRenderer::Draw(int subSceneIndex, bool selectEnabled) {
 			if(subSceneIndex == 0) {
 				if(mesh != NULL) {
-					mesh->Draw(true, true, false, selectEnabled, selectEnabled, false);
+					mesh->Draw(true, false, false, selectEnabled, false, false);
+
+					if(selectEnabled) {
+						glPushName(1);
+						glPushName(0);
+					}
+					
+					for(unsigned int i = 0; i < mesh->vertices.size(); i++) {
+						mesh->vertices[i].tag = false;
+					}
+
+					for(unsigned int i = 0; i <  mesh->edges.size(); i++) {					
+						if(mesh->edges[i].faceIds.size() == 0) {
+							if(selectEnabled) {
+								glLoadName(i);
+							}
+							NonManifoldMeshVertex<bool> v0 = mesh->vertices[mesh->GetVertexIndex(mesh->edges[i].vertexIds[0])];
+							NonManifoldMeshVertex<bool> v1 = mesh->vertices[mesh->GetVertexIndex(mesh->edges[i].vertexIds[1])];
+							if(!v0.tag) {
+								DrawSphere(v0.position, 0.1);
+								v0.tag = true;
+							}
+							if(!v1.tag) {
+								DrawSphere(v1.position, 0.1);
+								v1.tag = true;
+							}
+
+							DrawCylinder( v0.position, v1.position, 0.1);
+						}
+					}	
+					if(selectEnabled) {
+						glPopName();
+						glPopName();
+					}
+
 				}
 			}
 		}

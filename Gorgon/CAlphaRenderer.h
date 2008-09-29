@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.22  2008/09/29 16:01:17  ssa1
+//   Adding in CVS meta information
+//
 
 #ifndef GORGON_CALPHA_RENDERER_H
 #define GORGON_CALPHA_RENDERER_H
@@ -124,15 +127,10 @@ namespace wustl_mm {
 						SetColor(i->second.GetColorR(), i->second.GetColorG(), i->second.GetColorB(), i->second.GetColorA());
 					}					
 
-					glPushMatrix();
 					if(selectEnabled){
 						glLoadName((long)&(i->second));
 					}
-					glTranslatef(i->second.GetPosition().X(), i->second.GetPosition().Y(), i->second.GetPosition().Z());
-					GLUquadric * quadricSphere = gluNewQuadric();
-					gluSphere(quadricSphere, i->second.GetAtomRadius() * 0.3, 10, 10);
-					gluDeleteQuadric(quadricSphere);
-					glPopMatrix();
+					DrawSphere(i->second.GetPosition(), i->second.GetAtomRadius() * 0.3);
 					glPopAttrib();
 
 				}
@@ -145,10 +143,6 @@ namespace wustl_mm {
 					glPushName(1);
 					glPushName(0);
 				}
-				glPushAttrib(GL_LINE_BIT | GL_ENABLE_BIT | GL_HINT_BIT);
-				glLineWidth(3);
-				glEnable(GL_LINE_SMOOTH);
-				glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);		
 				for(int i=0; i < (int)bonds.size(); i++) {
 					glPushAttrib(GL_LIGHTING_BIT);
 					if(bonds[i].GetSelected()) {
@@ -162,7 +156,6 @@ namespace wustl_mm {
 					DrawCylinder(atoms[bonds[i].GetAtom0Ix()].GetPosition(), atoms[bonds[i].GetAtom1Ix()].GetPosition(), 0.1);
 					glPopAttrib();
 				}
-				glPopAttrib();
 				if(selectEnabled) {
 					glPopName();
 					glPopName();
