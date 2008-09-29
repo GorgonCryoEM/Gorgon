@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.13  2008/09/29 16:19:30  ssa1
+//   Adding in CVS meta information
+//
 
 #ifndef LINKEDNODE_H
 #define LINKEDNODE_H
@@ -95,7 +98,7 @@ namespace wustl_mm {
 		}
 
 		LinkedNode::LinkedNode(LinkedNode * olderNode, LinkedNodeStub * olderStub, int n1Node, int n2Node, int dummyHelixCount) {
-			this->n1Node = n1Node + (char)dummyHelixCount + 1;
+			this->n1Node = (char)n1Node + (char)dummyHelixCount + 1;
 			this->n2Node = (char)n2Node;
 			this->depth = olderNode->depth + (char)dummyHelixCount + 1;
 			this->parentNode = olderStub;
