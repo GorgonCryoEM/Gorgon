@@ -1,3 +1,17 @@
+// Copyright (C) 2005-2008 Washington University in St Louis, Baylor College of Medicine.  All rights reserved
+// Author:        Tao Ju (taoju@cse.wustl.edu)
+// Description:   A Priority queue implementation
+
+// CVS Meta Information: 
+//   $Source$
+//   $Revision$
+//   $Date$
+//   $Author$
+//   $State$
+//
+// History Log: 
+//   $Log$
+
 #ifndef PRIORITYQUEUE_H
 #define PRIORITYQUEUE_H
 
