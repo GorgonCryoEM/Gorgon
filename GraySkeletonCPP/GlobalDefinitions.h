@@ -1,3 +1,17 @@
+// Copyright (C) 2005-2008 Washington University in St Louis, Baylor College of Medicine.  All rights reserved
+// Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
+// Description:   Stores the global definitions for the GRAYSKELETONCPP module
+
+// CVS Meta Information: 
+//   $Source$
+//   $Revision$
+//   $Date$
+//   $Author$
+//   $State$
+//
+// History Log: 
+//   $Log$
+
 #ifndef GRAYSKELETONCPP_GLOBAL_DEFINITIONS_H
 #define GRAYSKELETONCPP_GLOBAL_DEFINITIONS_H
 
