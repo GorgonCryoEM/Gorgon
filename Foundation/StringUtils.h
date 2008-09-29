@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.6  2008/09/29 15:45:09  ssa1
+//   Adding in CVS meta information
+//
 
 #ifndef FOUNDATION_STRING_UTILS_H
 #define FOUNDATION_STRING_UTILS_H
@@ -32,7 +35,7 @@ namespace wustl_mm {
 			static int StringToInt(const string &s);
 			static string StringToUpper(string strToConvert) {
 			   for(unsigned int i=0;i<strToConvert.length();i++)   {
-			      strToConvert[i] = toupper(strToConvert[i]);
+			      strToConvert[i] = (char)toupper(strToConvert[i]);
 			   }
 			   return strToConvert;
 			}
@@ -86,7 +89,7 @@ namespace wustl_mm {
 		string StringToLower(string strToConvert)
 		{
 		   for(unsigned int i=0;i<strToConvert.length();i++)  {
-		      strToConvert[i] = tolower(strToConvert[i]);
+		      strToConvert[i] = (char)tolower(strToConvert[i]);
 		   }
 		   return strToConvert;
 		}			

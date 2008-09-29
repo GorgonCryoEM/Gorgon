@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.28  2008/09/29 16:19:30  ssa1
+//   Adding in CVS meta information
+//
 
 
 #define _CRT_SECURE_NO_DEPRECATE 1
@@ -41,8 +44,8 @@ void DisplayInputFormat()
 	printf("    <settings file> \t The file containing the settings \n") ;
 }
 
-void DoPerformanceComparison(StandardGraph * patternGraph, StandardGraph * baseGraph, double & ourTime, double & wongTime, double & wongTime15, double & wongTime2, double & vfTime, double & vf2Time, double & inexactTime) 
-{
+//void DoPerformanceComparison(StandardGraph * patternGraph, StandardGraph * baseGraph, double & ourTime, double & wongTime, double & wongTime15, double & wongTime2, double & vfTime, double & vf2Time, double & inexactTime) 
+//{
 	// Things to undo: Normalize Matcher7, WongMatch, Printfs in Matcher7
 
 	//clock_t start, finish;
@@ -89,7 +92,7 @@ void DoPerformanceComparison(StandardGraph * patternGraph, StandardGraph * baseG
 	//delete(matcherInexact);
 
 
-}
+//}
 
 
 
