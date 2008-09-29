@@ -1,3 +1,19 @@
+// Copyright (C) 2005-2008 Washington University in St Louis, Baylor College of Medicine.  All rights reserved
+// Author:        Sasakthi Abeysinghe (sasakthi@gmail.com)
+// Description:   Boosts the interfaces required for the python GORGON interface.
+
+// CVS Meta Information: 
+//   $Source$
+//   $Revision$
+//   $Date$
+//   $Author$
+//   $State$
+//
+// History Log: 
+//   $Log$
+
+
+
 #ifndef GORGON_LIB_PY_GORGON
 #define GORGON_LIB_PY_GORGON
 
