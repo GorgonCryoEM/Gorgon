@@ -6,26 +6,34 @@ from seq_model.Helix import Helix
 from seq_model.Strand import Strand
 from seq_model.Chain import Chain
 #from seq_model.Residue import Residue
+from ui_threeResidues import Ui_Form
 
 class SequenceDlg(QtGui.QDialog):
     def __init__(self, sequence, parent=None):
         super(SequenceDlg, self).__init__(parent)
         seqWidget = SequenceWidget(sequence, parent=self)
-        seqWidget.show()
-        #layout = QtGui.QVBoxLayout()
-        #layout.addWidget(seqWidget)
-        #self.setLayout(layout)
+        layout = QtGui.QVBoxLayout()
+        layout.addWidget(seqWidget)
+        self.setLayout(layout)
         self.setWindowTitle('Sequence Dialog')
-        
+class ThreeResidues(QtGui.QWidget, Ui_Form):
+    def __init__(self, parent=None):
+        super(ThreeResidues, self).__init__(parent)
+        self.setupUi(self)
+        self.setMinimumSize(400,220)
+
 class SequenceWidget(QtGui.QWidget):
     def __init__(self, sequence, parent=None):
         super(SequenceWidget, self).__init__(parent)
-        self.seqView = ScrollableSequenceView(sequence)
-        self.globalView = self.seqView.globalView
+        self.scrollable = ScrollableSequenceView(sequence)
+        self.scrollable.setMinimumSize(400, 180)
+        self.globalView = self.scrollable.globalView
+        threeResidues = ThreeResidues(self)
+                
         layout = QtGui.QVBoxLayout()
         layout.addWidget(self.globalView)
-        layout.addWidget(self.seqView)
-        
+        layout.addWidget(self.scrollable)
+        layout.addWidget(threeResidues)
         self.setLayout(layout)
         self.setWindowTitle('Sequence Widget')
 
@@ -48,8 +56,10 @@ class SequenceView(QtGui.QWidget):
     self.setMouseTracking(True) #necessary to listen to mouse with no buttons pressed
 
     metrics=QtGui.QFontMetrics(self.font)
-    height=int(3.5*metrics.lineSpacing())
-    self.resize(int(40*metrics.maxWidth()),height)
+    self.height = int(3.5*metrics.lineSpacing())
+    self.width = int(40*metrics.maxWidth())
+    self.resize(self.width, self.height)
+    self.setMinimumSize(self.width, self.height)
 
 
   def setSequence(self, newSequence):
@@ -375,9 +385,12 @@ class ScrollableSequenceView(QtGui.QScrollArea):
     super(ScrollableSequenceView,self).__init__()
 
     seqView=SequenceView(sequence,parent=self)
+    seqView.updatePanelHeight() ####This is needed to get all residues to show up in this widget.
+    ####Note: updatePanelHeight also adjusts width - I'm guessing that is the part that fixes things.
     seqView.scrollbar=self.horizontalScrollBar()
     self.seqView=seqView
     self.setWidget(self.seqView)
+    
     self.globalView=GlobalSequenceView(sequence)
     self.globalView.setLocalView(seqView)
     self.globalView.updateViewportRange()
@@ -402,7 +415,7 @@ class ScrollableSequenceView(QtGui.QScrollArea):
   def updateHeight(self):
     scrollbar=self.horizontalScrollBar()
     scrollbarHeight=scrollbar.height()
-    widgetHeight=self.widget().height()
+    widgetHeight=self.widget().height#()
     #self.resize(QtCore.QSize(self.width(), scrollbarHeight+widgetHeight))
     self.resize(QtCore.QSize(self.width(), widgetHeight))
 
@@ -566,6 +579,8 @@ def tempZoomDialog(seqView, scrollArea):
   minusButton.connect(minusButton, QtCore.SIGNAL("clicked()"), scrollArea.updateHeight)
   minusButton.emit(QtCore.SIGNAL("clicked()"))
   # There is some bug with the scroll widget.  If I don't use the minusButton or plusButton once (e.g. previous line), then the scrollbar is wrong size.
+  # Ross: I traced down the fix to SequenceView.updatePanelHeight().  That is what must be executed to get all residues to display.
+  # Ross: Thus, I added a line to ScrollableSequenceWidget.__init__()
 
   layout=QtGui.QBoxLayout(QtGui.QBoxLayout.LeftToRight)
   layout.addWidget(plusButton)
@@ -582,20 +597,20 @@ def tempZoomDialog(seqView, scrollArea):
 if __name__ == '__main__':
     app = QtGui.QApplication(sys.argv)
     groel = Chain.load('1KPO.pdb',app)
-    for residue in groel.residueRange()[80:-80]:
-        groel[residue].clearAtoms()
+#    for residue in groel.residueRange()[80:-80]:
+#        groel[residue].clearAtoms()
 
     seqWidget = SequenceWidget(groel)
     seqWidget.show()
-    ####For some reason seqWidget will display all residues in the scrollable view    #####whereas seqDlg will display only the first 40 in the scrollable view
-    #####WHY???
-    ####Based on what I see from creating a SequenceWidget in another module (modified gorgon.pyw)
-    ####whenever a SequenceWidget has a qparent (belongs to another window), this happens
-    seqDlg = SequenceDlg(groel)
-    seqDlg.show()
+    #seqDlg = SequenceDlg(groel)
+    #seqDlg.show()
+    
+    #seqScroll = ScrollableSequenceView(groel)
+    #seqScroll.show()
 
-    dialog=tempZoomDialog(seqWidget.seqView.getSeqview(),seqWidget.seqView)
-    dialog.show()
-    dialog.raise_()
+    
+    #dialog=tempZoomDialog(seqWidget.scrollable.getSeqview(),seqWidget.scrollable)
+    #dialog.show()
+    #dialog.raise_()
 
     sys.exit(app.exec_())
