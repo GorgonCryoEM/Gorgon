@@ -6,7 +6,7 @@ from seq_model.Helix import Helix
 from seq_model.Strand import Strand
 from seq_model.Chain import Chain
 #from seq_model.Residue import Residue
-from ui_threeResidues import Ui_Form
+from ui_threeResidues import Ui_threeResidues
 
 class SequenceDlg(QtGui.QDialog):
     def __init__(self, sequence, parent=None):
@@ -16,17 +16,17 @@ class SequenceDlg(QtGui.QDialog):
         layout.addWidget(seqWidget)
         self.setLayout(layout)
         self.setWindowTitle('Sequence Dialog')
-class ThreeResidues(QtGui.QWidget, Ui_Form):
+class ThreeResidues(QtGui.QWidget, Ui_threeResidues):
     def __init__(self, parent=None):
         super(ThreeResidues, self).__init__(parent)
         self.setupUi(self)
-        self.setMinimumSize(400,220)
+        self.setMinimumSize(400,280)
 
 class SequenceWidget(QtGui.QWidget):
     def __init__(self, sequence, parent=None):
         super(SequenceWidget, self).__init__(parent)
         self.scrollable = ScrollableSequenceView(sequence)
-        self.scrollable.setMinimumSize(400, 180)
+        self.scrollable.setMinimumSize(300, 180)
         self.globalView = self.scrollable.globalView
         threeResidues = ThreeResidues(self)
                 
