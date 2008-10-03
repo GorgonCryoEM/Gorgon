@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.6  2008/07/28 16:19:22  ssa1
+#   Adding in correspondance data repository
+#
 #   Revision 1.5  2008/07/01 13:41:39  marshm
 #   made changes to accomodate seq_model.py:Chain object for calpha-backbone models
 #
@@ -22,6 +25,7 @@ from PyQt4 import QtGui, QtCore, QtOpenGL
 from libpyGORGON import CAlphaRenderer
 from base_viewer import BaseViewer
 from calpha_atom_placer_form import CAlphaAtomPlacerForm
+from seq_model.SequenceView import SequenceDock
 from seq_model.Chain import Chain
 
 try:
@@ -40,7 +44,7 @@ class CAlphaViewer(BaseViewer):
         self.isClosedMesh = False
         self.selectEnabled = True
         self.renderer = CAlphaRenderer()          
-        self.main_chain = Chain('')
+        self.main_chain = None #Chain('') #I don't know why an empty chain was used, but it adds a needless Chain to Chain.chainsDict
         self.createUI()      
         self.app.viewers["calpha"] = self;
         self.modelColor = QtGui.QColor.fromRgba(QtGui.qRgba(170, 170, 0, 255))
@@ -78,13 +82,20 @@ class CAlphaViewer(BaseViewer):
         closeAct.setStatusTip(self.tr("Close the loaded C-Alpha atom file"))
         self.connect(closeAct, QtCore.SIGNAL("triggered()"), self.unloadData)
         self.app.actions.addAction("unload_CAlpha", closeAct)
+        
+        seqDockAct = QtGui.QAction(self.tr("Partly automated atom placement"), self)
+        seqDockAct.setStatusTip(self.tr("Perform partly automated atom placement"))
+        def showDock():
+            SequenceDock.showDock(self.app, self)
+        self.connect(seqDockAct, QtCore.SIGNAL("triggered()"), showDock)
+        self.app.actions.addAction("seqDock", seqDockAct)
                                 
     def createMenus(self):
         self.app.menus.addAction("file-open-calpha", self.app.actions.getAction("load_CAlpha"), "file-open")    
         self.app.menus.addAction("file-save-calpha", self.app.actions.getAction("save_CAlpha"), "file-save")
         self.app.menus.addAction("file-close-calpha", self.app.actions.getAction("unload_CAlpha"), "file-close");
         self.app.menus.addMenu("actions-calpha", self.tr("C-&Alpha Atoms"), "actions");
-                   
+        self.app.menus.addAction("showSeqDock", self.app.actions.getAction("seqDock"), "actions-calpha")           
     def updateActionsAndMenus(self):        
         self.app.actions.getAction("save_CAlpha").setEnabled(self.loaded)
         self.app.actions.getAction("unload_CAlpha").setEnabled(self.loaded)  

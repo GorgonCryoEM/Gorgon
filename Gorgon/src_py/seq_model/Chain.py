@@ -5,12 +5,12 @@
 # Class Description: Class that models polypeptide chains, whih are sequences of Residue objects.
 #                    More info in: seq_model-doc.txt
 #
-
 from seq_model.Residue import Residue
 from seq_model.Helix import Helix
 from seq_model.Sheet import Sheet
 from seq_model.Coil import Coil
 from seq_model.Strand import Strand
+from libpyGORGON import PDBBond
 
 try:
   from PyQt4 import QtCore, QtGui
@@ -95,7 +95,7 @@ class Chain(baseClass):
     '''
     This loads the specified chain ID from a PDF file and returns a Chain object.  If no chain ID is specified, it loads the first chain.
     '''
-
+    #print Chain.getChainKeys()
     if qparent and qtEnabled:
         result = Chain('', qparent=qparent)
     else:
@@ -144,12 +144,13 @@ class Chain(baseClass):
             
             #residue.atoms[atomName]=atom            
             result.atoms[serialNo]=atom
-            Chain.chainsDict[result.key] = result
+            #Chain.chainsDict[result.key] = result
 
         elif line[0:6].strip()=='HELIX':
             Helix.parsePDB(line,result)
         elif line[0:6].strip()=='SHEET':
             Sheet.parsePDB(line,result)
+    Chain.chainsDict[result.key] = result
     return result
 
   @classmethod
@@ -393,7 +394,23 @@ class Chain(baseClass):
 
     return new_chain
 
-
+  def addCalphaBonds(self):
+    try: 
+        viewer = Chain.getViewer()
+    except:
+        print 'Error: No viewer is set for Chain!'
+        return
+    prevIndex = self.residueRange()[0]
+    prevAtom = self[prevIndex].getAtom('CA')
+    for resIndex in self.residueRange()[1:]:
+        atom = self[resIndex].getAtom('CA')
+        if prevIndex == resIndex - 1:
+            bond = PDBBond()
+            bond.setAtom0Ix(prevAtom.getHashKey())
+            bond.setAtom1Ix(atom.getHashKey())
+            viewer.renderer.addBond(bond)
+            prevAtom = atom
+            prevIndex = resIndex
 
   def addSecel(self, secel):
     for index in range(secel.startIndex, secel.stopIndex+1):
@@ -574,3 +591,7 @@ class Chain(baseClass):
       s=s+ "TER\n"
 
     return s
+
+if __name__ == '__main__':
+    mychain = Chain.load('1KPO.pdb')
+    print mychain
