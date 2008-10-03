@@ -27,6 +27,7 @@ class Chain(baseClass):
   '''
   chainsDict = {}
   __lastAuto_pdbID = 0
+  __selectedChainKey = None
 
   #Chain Constructor
   def __init__(self,char_string=None,qparent=None, pdbID=None, chainID='A'):
@@ -244,6 +245,10 @@ class Chain(baseClass):
       raise NotImplementedError, 'NYI'
 
   @classmethod
+  def getSelectedChainKey(cls):
+    return cls.__selectedChainKey
+
+  @classmethod
   def getChainKeys(cls):
       return cls.chainsDict.keys()
 
@@ -265,12 +270,18 @@ class Chain(baseClass):
 
   @classmethod
   def loadAllChains(cls, filename, qparent=None):
-    chain = True
+    chain = None
+    chains = []
     chainIDs = cls.getChainIDsFromPDB(filename,qparent)
     for whichChainID in chainIDs:
         chain = Chain.load(filename, qparent, whichChainID)
+        chains.append(chain.getIDs())
         cls.chainsDict[chain.key] = chain
+    return chains
   
+  @classmethod
+  def setSelectedChainKey(cls, key):
+    Chain.__selectedChainKey = key
   @classmethod
   def setViewer(cls, viewer):
     Chain.__viewer=viewer
