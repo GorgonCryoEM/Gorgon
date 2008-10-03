@@ -21,6 +21,7 @@ if __name__ == '__main__':
     viewer = window.viewers["calpha"]
     mychain = Chain.Chain.load('1KPO.pdb', qparent=app)
     mychain.setViewer(viewer)
+    Chain.Chain.setSelectedChainKey(mychain.getIDs())
     mychain.addCalphaBonds()
     renderer = mychain.getViewer().renderer
     for i in mychain.residueRange():
