@@ -14,22 +14,22 @@ class SequenceDock(QtGui.QDockWidget):
     def __init__(self, main, viewer, chainObj, parent=None):
         super(SequenceDock, self).__init__(parent)
         self.app = main
-        self.seqWidget = SequenceWidget(self.app, viewer, chainObj)
+        self.viewer=viewer
+        self.skeletonViewer = self.app.viewers["skeleton"]
+        self.seqWidget = SequenceWidget(chainObj)
         self.setWidget(self.seqWidget)
         self.createActions()
         SequenceDock.__dock = self
     
     @classmethod
     def showDock(cls, main, viewer):
-        try:
-            ####Change this!
-            chainObj = Chain.getChain(Chain.getChainKeys()[0]) ####This should be changed to something more useful!!!!
-        except:
-            chainObj = None
+        chainObj = Chain.getChain( Chain.getSelectedChainKey() )
+        if not chainObj: chainObj = Chain('', main)
         if cls.__dock:
+            cls.seqWidget.setChain(chainObj)
             cls.__dock.show()
         else:
-            if main and viewer and chainObj:
+            if main and viewer:
                 dock = SequenceDock(main, viewer, chainObj)
                 main.addDockWidget(QtCore.Qt.LeftDockWidgetArea, dock)
                 dock.show()
@@ -48,16 +48,22 @@ class SequenceDock(QtGui.QDockWidget):
         self.app.actions.addAction("perform_autoAtomPlacement", seqDockAct)
 
 class SequenceWidget(QtGui.QWidget):
-    def __init__(self, main, viewer, chainObj, parent=None):
+    def __init__(self, chainObj, parent=None):
         super(SequenceWidget, self).__init__(parent)
         self.setMinimumSize(400,600)
         self.scrollable = ScrollableSequenceView(chainObj)
         self.scrollable.setMinimumSize(300, 180)
-        self.globalView = self.scrollable.globalView
-        self.app = main
-        self.viewer=viewer
-        self.skeletonViewer = self.app.viewers["skeleton"]
         threeResidues = ThreeResidues(self)
+        
+        self.globalView=GlobalSequenceView(chainObj)
+        self.globalView.setLocalView(self.scrollable.seqView)
+        self.globalView.updateViewportRange()
+
+        self.connect(self.scrollable.seqView.scrollbar, QtCore.SIGNAL('actionTriggered(int)'), self.globalView.updateViewportRange)
+        self.connect(self.scrollable.seqView.scrollbar, QtCore.SIGNAL('valueChanged(int)'), self.globalView.updateViewportRange)
+        #self.connect(self.scrollable.seqView.scrollbar, QtCore.SIGNAL('rangeChanged(int)'), self.globalView.updateViewportRange)
+        self.connect(self.scrollable.seqView, QtCore.SIGNAL('SequencePanelUpdate'), self.globalView.updateViewportRange)
+
                 
         layout = QtGui.QVBoxLayout()
         layout.addWidget(self.globalView)
@@ -66,14 +72,6 @@ class SequenceWidget(QtGui.QWidget):
         self.setLayout(layout)
         self.setWindowTitle('Sequence Widget')
 
-#class SequenceDlg(QtGui.QDialog):
-#    def __init__(self, sequence, parent=None):
-#        super(SequenceDlg, self).__init__(parent)
-#        seqWidget = SequenceWidget(sequence, parent=self)
-#        layout = QtGui.QVBoxLayout()
-#        layout.addWidget(seqWidget)
-#        self.setLayout(layout)
-#        self.setWindowTitle('Sequence Dialog')
 class ThreeResidues(QtGui.QWidget, Ui_threeResidues):
     def __init__(self, parent=None):
         super(ThreeResidues, self).__init__(parent)
@@ -81,6 +79,11 @@ class ThreeResidues(QtGui.QWidget, Ui_threeResidues):
         self.setMinimumSize(400,280)
 
 class SequenceView(QtGui.QWidget):
+  """
+  This QWidget gives residues as one letter abbreviations for residues and the index below.  
+  Most chains will be too big to fit on the screen on this class. Thus, a ScrollableSequenceView
+  contains this class.
+  """
   def __init__(self,sequence,parent=None):
     super(SequenceView,self).__init__(parent)
 
@@ -420,11 +423,17 @@ class SequenceView(QtGui.QWidget):
     cellWidth=metrics.maxWidth()
     viewportStart=self.scrollbar.value()/cellWidth
     viewportWidth=self.parent.width()/cellWidth
-    start=self.residueRange[viewportStart]
+    try: 
+        start=self.residueRange[viewportStart]
+    except:
+        start = 1
     return range(start,start+viewportWidth+1)
 
 class ScrollableSequenceView(QtGui.QScrollArea):
-  def __init__(self,sequence):
+  """
+  This QWidget contains a SequenceView object but in a scrollable view.
+  """
+  def __init__(self,sequence, parent=None):
     super(ScrollableSequenceView,self).__init__()
 
     self.seqView=SequenceView(sequence,parent=self)
@@ -435,24 +444,13 @@ class ScrollableSequenceView(QtGui.QScrollArea):
     self.seqView=seqView
     self.setWidget(self.seqView)
     
-    self.globalView=GlobalSequenceView(sequence)
-    self.globalView.setLocalView(seqView)
-    self.globalView.updateViewportRange()
-    #self.globalView.show()
-    #self.globalView.raise_()
-
-    self.connect(seqView.scrollbar, QtCore.SIGNAL('actionTriggered(int)'), self.globalView.updateViewportRange)
-    self.connect(seqView.scrollbar, QtCore.SIGNAL('valueChanged(int)'), self.globalView.updateViewportRange)
-    #self.connect(seqView.scrollbar, QtCore.SIGNAL('rangeChanged(int)'), self.globalView.updateViewportRange)
-    self.connect(seqView, QtCore.SIGNAL('SequencePanelUpdate'), self.globalView.updateViewportRange)
-
     self.setWidgetResizable(False)
     self.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
-    self.setWindowTitle(QtCore.QString('Local View'))
+    self.setWindowTitle(QtCore.QString('Scrollable Local View'))
     self.updateHeight()
 
   def setSequence(self, newSequence):
-    self.globalView.setSequence(newSequence)
+    #self.globalView.setSequence(newSequence)
     self.seqView.setSequence(newSequence)
 
 
@@ -467,6 +465,12 @@ class ScrollableSequenceView(QtGui.QScrollArea):
     return self.seqView
 
 class GlobalSequenceView(QtGui.QWidget):
+  """
+  This QWidget shows a pictographic representation of a chain, with blocks
+  for helices and arrows for strands.  It contains a SequenceView
+  QWidget Object, and updates the SequenceView to show the residues corresponding
+  to the selection on it, and vice versa.
+  """
   def __init__(self,sequence,parent=None):
     super(GlobalSequenceView,self).__init__(parent)
 
@@ -641,20 +645,20 @@ def tempZoomDialog(seqView, scrollArea):
 if __name__ == '__main__':
     app = QtGui.QApplication(sys.argv)
     groel = Chain.load('1KPO.pdb',app)
-#    for residue in groel.residueRange()[80:-80]:
-#        groel[residue].clearAtoms()
+    for residue in groel.residueRange()[80:-80]:
+        groel[residue].clearAtoms()
 
     seqWidget = SequenceWidget(groel)
     seqWidget.show()
-    #seqDlg = SequenceDlg(groel)
-    #seqDlg.show()
     
     #seqScroll = ScrollableSequenceView(groel)
     #seqScroll.show()
-
     
-    #dialog=tempZoomDialog(seqWidget.scrollable.getSeqview(),seqWidget.scrollable)
-    #dialog.show()
-    #dialog.raise_()
+    #seqVw = SequenceView(groel)
+    #seqVw.show()
+    
+    dialog=tempZoomDialog(seqWidget.scrollable.getSeqview(),seqWidget.scrollable)
+    dialog.show()
+    dialog.raise_()
 
     sys.exit(app.exec_())
