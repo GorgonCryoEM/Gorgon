@@ -8,26 +8,55 @@ from seq_model.Chain import Chain
 #from seq_model.Residue import Residue
 from ui_threeResidues import Ui_threeResidues
 
-class SequenceDlg(QtGui.QDialog):
-    def __init__(self, sequence, parent=None):
-        super(SequenceDlg, self).__init__(parent)
-        seqWidget = SequenceWidget(sequence, parent=self)
-        layout = QtGui.QVBoxLayout()
-        layout.addWidget(seqWidget)
-        self.setLayout(layout)
-        self.setWindowTitle('Sequence Dialog')
-class ThreeResidues(QtGui.QWidget, Ui_threeResidues):
-    def __init__(self, parent=None):
-        super(ThreeResidues, self).__init__(parent)
-        self.setupUi(self)
-        self.setMinimumSize(400,280)
+class SequenceDock(QtGui.QDockWidget):
+    __dock = None
+    
+    def __init__(self, main, viewer, chainObj, parent=None):
+        super(SequenceDock, self).__init__(parent)
+        self.app = main
+        self.seqWidget = SequenceWidget(self.app, viewer, chainObj)
+        self.setWidget(self.seqWidget)
+        self.createActions()
+        SequenceDock.__dock = self
+    
+    @classmethod
+    def showDock(cls, main, viewer):
+        try:
+            ####Change this!
+            chainObj = Chain.getChain(Chain.getChainKeys()[0]) ####This should be changed to something more useful!!!!
+        except:
+            chainObj = None
+        if cls.__dock:
+            cls.__dock.show()
+        else:
+            if main and viewer and chainObj:
+                dock = SequenceDock(main, viewer, chainObj)
+                main.addDockWidget(QtCore.Qt.LeftDockWidgetArea, dock)
+                dock.show()
+            else:
+                if not main: print 'Sequence Dock Error: no main app'
+                if not viewer: print 'Sequence Dock Error: no viewer'
+                if not chainObj: print 'Sequence Dock: no chain to load'
+                            
+    def createActions(self):
+        seqDockAct = QtGui.QAction(self.tr("Partly &Automated Atom Placement"), self)
+        self.seqDockAct = seqDockAct
+        seqDockAct.setStatusTip(self.tr("Place atoms based on predicted SSE's"))
+        seqDockAct.setCheckable(True)
+        seqDockAct.setChecked(False)
+        self.connect(seqDockAct, QtCore.SIGNAL("triggered()"), SequenceDock.showDock)
+        self.app.actions.addAction("perform_autoAtomPlacement", seqDockAct)
 
 class SequenceWidget(QtGui.QWidget):
-    def __init__(self, sequence, parent=None):
+    def __init__(self, main, viewer, chainObj, parent=None):
         super(SequenceWidget, self).__init__(parent)
-        self.scrollable = ScrollableSequenceView(sequence)
+        self.setMinimumSize(400,600)
+        self.scrollable = ScrollableSequenceView(chainObj)
         self.scrollable.setMinimumSize(300, 180)
         self.globalView = self.scrollable.globalView
+        self.app = main
+        self.viewer=viewer
+        self.skeletonViewer = self.app.viewers["skeleton"]
         threeResidues = ThreeResidues(self)
                 
         layout = QtGui.QVBoxLayout()
@@ -36,6 +65,20 @@ class SequenceWidget(QtGui.QWidget):
         layout.addWidget(threeResidues)
         self.setLayout(layout)
         self.setWindowTitle('Sequence Widget')
+
+#class SequenceDlg(QtGui.QDialog):
+#    def __init__(self, sequence, parent=None):
+#        super(SequenceDlg, self).__init__(parent)
+#        seqWidget = SequenceWidget(sequence, parent=self)
+#        layout = QtGui.QVBoxLayout()
+#        layout.addWidget(seqWidget)
+#        self.setLayout(layout)
+#        self.setWindowTitle('Sequence Dialog')
+class ThreeResidues(QtGui.QWidget, Ui_threeResidues):
+    def __init__(self, parent=None):
+        super(ThreeResidues, self).__init__(parent)
+        self.setupUi(self)
+        self.setMinimumSize(400,280)
 
 class SequenceView(QtGui.QWidget):
   def __init__(self,sequence,parent=None):
@@ -384,7 +427,8 @@ class ScrollableSequenceView(QtGui.QScrollArea):
   def __init__(self,sequence):
     super(ScrollableSequenceView,self).__init__()
 
-    seqView=SequenceView(sequence,parent=self)
+    self.seqView=SequenceView(sequence,parent=self)
+    seqView = self.seqView
     seqView.updatePanelHeight() ####This is needed to get all residues to show up in this widget.
     ####Note: updatePanelHeight also adjusts width - I'm guessing that is the part that fixes things.
     seqView.scrollbar=self.horizontalScrollBar()
