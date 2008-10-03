@@ -11,6 +11,10 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.38  2008/09/26 18:55:34  colemanr
+#   Added glutInit(sys.argv) to the modelChanged method to get it to work
+#   with Freeglut.
+#
 #   Revision 1.37  2008/09/23 16:46:57  ssa1
 #   CTRL + Mouse wheel for iso-value modification
 #
@@ -234,7 +238,7 @@ class BaseViewer(QtOpenGL.QGLWidget):
         if not self.fileName.isEmpty():  
             self.setCursor(QtCore.Qt.WaitCursor)
             self.renderer.loadFile(str(self.fileName))
-	    #SequenceView(filename)
+            #SequenceView(filename)
             self.loaded = True
             self.dirty = False
             self.setCursor(QtCore.Qt.ArrowCursor)
@@ -339,12 +343,13 @@ class BaseViewer(QtOpenGL.QGLWidget):
         if(self.selectEnabled):
             for i in range(5):
                 if(len(hitStack) > i+1):
-                    hits[i] = hitStack[i+1]
+                    hits[i] = int(hitStack[i+1]) #On a 64 bit system, some of these are type numpy.int32 rather than int
             self.performElementSelection(hitStack)
             if len(hitStack) == 0:
                 hitStack.append(-1)            
             if(len(hitStack) <= 6):
-                self.renderer.selectionToggle(hitStack[0], forceTrue, hits[0], hits[1], hits[2], hits[3], hits[4])
+                #On a 64 bit system, hitStack[0] is of type numpy.int32 rather than int (which is 64 bit)
+                self.renderer.selectionToggle(int(hitStack[0]), forceTrue, hits[0], hits[1], hits[2], hits[3], hits[4])
             else:
                 raise Exception("Unable to call renderer.select method due as there are too many levels in the hit stack")
             self.emitModelChanged()            
