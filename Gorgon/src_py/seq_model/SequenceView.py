@@ -7,6 +7,7 @@ from seq_model.Strand import Strand
 from seq_model.Chain import Chain
 #from seq_model.Residue import Residue
 from ui_threeResidues import Ui_threeResidues
+from libpyGORGON import CAlphaRenderer, PDBAtom
 
 class SequenceDock(QtGui.QDockWidget):
     __dock = None
@@ -16,13 +17,15 @@ class SequenceDock(QtGui.QDockWidget):
         self.app = main
         self.viewer=viewer
         self.skeletonViewer = self.app.viewers["skeleton"]
-        self.seqWidget = SequenceWidget(chainObj)
+        self.seqWidget = SequenceWidget(chainObj, self)
         self.setWidget(self.seqWidget)
         self.createActions()
         SequenceDock.__dock = self
-    
+        if main:
+            self.connect(self.app.viewers["calpha"], QtCore.SIGNAL("elementSelected (int, int, int, int, int, int, QMouseEvent)"), self.updateFromViewerSelection)    
     @classmethod
-    def showDock(cls, main, viewer):
+    def changeDockVisibility(cls, main, viewer):
+        #### To do: hide the dock if unchecked & handle close button on the dock correctly
         chainObj = Chain.getChain( Chain.getSelectedChainKey() )
         if not chainObj: chainObj = Chain('', main)
         if cls.__dock:
@@ -44,16 +47,36 @@ class SequenceDock(QtGui.QDockWidget):
         seqDockAct.setStatusTip(self.tr("Place atoms based on predicted SSE's"))
         seqDockAct.setCheckable(True)
         seqDockAct.setChecked(False)
-        self.connect(seqDockAct, QtCore.SIGNAL("triggered()"), SequenceDock.showDock)
+        self.connect(seqDockAct, QtCore.SIGNAL("triggered()"), SequenceDock.changeDockVisibility)
         self.app.actions.addAction("perform_autoAtomPlacement", seqDockAct)
+    def updateFromViewerSelection(self, *argv):
+        #hits = argv[:-1]
+        #event = argv[-1]
+        #print "SequenceDock.updateFromViewerSelection()"
+        ####I don't understand the purpose of the boolean variable in the Hit Stack!
+        try: 
+            atom = CAlphaRenderer.getAtomFromHitStack(self.app.viewers['calpha'].renderer, argv[0], True, *argv[1:-1])
+        except:
+            print "Not an atom."
+            return
+        pdbID = atom.getPDBId()
+        chainID = atom.getChainId()
+        resNum = atom.getResSeq()
+        print pdbID, chainID, resNum
+        self.seqWidget.scrollable.seqView.setSequenceSelection([resNum])
+        selectedChain = Chain.getChain((pdbID, chainID))
+        selectedChain.setSelection([resNum])
+#        self.emit( QtCore.SIGNAL("selection updated") )
+#        self.emit( QtCore.SIGNAL('SequencePanelUpdate'))
 
 class SequenceWidget(QtGui.QWidget):
     def __init__(self, chainObj, parent=None):
         super(SequenceWidget, self).__init__(parent)
         self.setMinimumSize(400,600)
-        self.scrollable = ScrollableSequenceView(chainObj)
+        self.scrollable = ScrollableSequenceView(chainObj, self)
         self.scrollable.setMinimumSize(300, 180)
-        threeResidues = ThreeResidues(self)
+        self.threeResidues = ThreeResidues(chainObj, self)
+        self.chainObj = chainObj
         
         self.globalView=GlobalSequenceView(chainObj)
         self.globalView.setLocalView(self.scrollable.seqView)
@@ -64,19 +87,41 @@ class SequenceWidget(QtGui.QWidget):
         #self.connect(self.scrollable.seqView.scrollbar, QtCore.SIGNAL('rangeChanged(int)'), self.globalView.updateViewportRange)
         self.connect(self.scrollable.seqView, QtCore.SIGNAL('SequencePanelUpdate'), self.globalView.updateViewportRange)
 
-                
         layout = QtGui.QVBoxLayout()
         layout.addWidget(self.globalView)
         layout.addWidget(self.scrollable)
-        layout.addWidget(threeResidues)
+        layout.addWidget(self.threeResidues)
         self.setLayout(layout)
         self.setWindowTitle('Sequence Widget')
 
 class ThreeResidues(QtGui.QWidget, Ui_threeResidues):
-    def __init__(self, parent=None):
+    def __init__(self, chainObj, parent=None):
         super(ThreeResidues, self).__init__(parent)
         self.setupUi(self)
         self.setMinimumSize(400,280)
+        self.chainObj = chainObj
+        self.connect(self.back1resButton, QtCore.SIGNAL('clicked()'), self.prevButtonPress)
+        self.connect(self.forward1resButton, QtCore.SIGNAL('clicked()'), self.nextButtonPress)
+    def setResidues(self, newSelection):
+        #newSelection is a list of Residue indeces that are selected
+        prevResNum = newSelection[-1]
+        self.prevNum.setText(unicode(prevResNum))
+        self.prevName.setText(unicode(self.chainObj[prevResNum]))
+        self.curNum.setText(unicode(prevResNum+1))
+        self.curName.setText(unicode(self.chainObj[prevResNum+1]))
+        self.nextNum.setText(unicode(prevResNum+2))
+        self.nextName.setText(unicode(self.chainObj[prevResNum+2]))
+    def prevButtonPress(self):
+        newSelection = [ self.parent().chainObj.getSelection()[-1] - 1 ]
+        self.parent().scrollable.seqView.setSequenceSelection(newSelection)
+        self.setResidues(newSelection)
+        print 'prevButton'
+        
+    def nextButtonPress(self):
+        newSelection = [ self.parent().chainObj.getSelection()[-1] + 1 ]
+        self.parent().scrollable.seqView.setSequenceSelection(newSelection)
+        self.setResidues(newSelection)        
+        print 'nextButton'
 
 class SequenceView(QtGui.QWidget):
   """
@@ -86,9 +131,7 @@ class SequenceView(QtGui.QWidget):
   """
   def __init__(self,sequence,parent=None):
     super(SequenceView,self).__init__(parent)
-
-    self.parent=parent
-
+    self.parent = parent
     # Initialize font
     self.fontName='Arial'
     self.fontSize=30
@@ -364,11 +407,20 @@ class SequenceView(QtGui.QWidget):
 
 
   def setSequenceSelection(self, newSelection=None, removeOne=None, addOne=None, addRange=None):
+    print 'In SequenceView.setSequenceSelection'
     self.sequence.setSelection(newSelection,removeOne,addOne,addRange)
-
-    #self.emit( QtCore.SIGNAL('SequencePanelUpdate'))
-
-
+    #print newSelection
+    #print self.parent.parent.threeResidues
+    self.parent.parent.threeResidues.setResidues(newSelection)
+    
+    ####To do: Need to select residue in SequenceView if an atom is clicked in the renderer.
+    viewer = self.parent.parent.parent().viewer
+    atom = self.sequence[ self.sequence.getSelection()[-1] ].getAtom('CA')
+    atom.setSelected(True)
+    viewer.emitModelChanged()
+    #viewer.loaded = True
+    #viewer.emitModelLoaded()
+          
   def setFont(self, newFont):
     self.fontName=newFont
     self.font=QtGui.QFont(self.fontName,self.fontSize)
@@ -435,7 +487,7 @@ class ScrollableSequenceView(QtGui.QScrollArea):
   """
   def __init__(self,sequence, parent=None):
     super(ScrollableSequenceView,self).__init__()
-
+    self.parent = parent
     self.seqView=SequenceView(sequence,parent=self)
     seqView = self.seqView
     seqView.updatePanelHeight() ####This is needed to get all residues to show up in this widget.
