@@ -11,6 +11,10 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.8  2008/10/03 23:47:59  colemanr
+#   I overwrote loadData in BaseViewer.  Here it loads Calpha atoms using
+#   Chain.load or Chain.loadAllChains.
+#
 #   Revision 1.7  2008/10/03 00:29:09  colemanr
 #   Chain.py now has an addCAlphaBonds instance method.  calpha_viewer.py now adds the sequence viewer to the Actions:C-Alpha menu.  SequenceView.py now has a dock widget class that contains a SequenceWidget object.
 #
@@ -88,8 +92,10 @@ class CAlphaViewer(BaseViewer):
         
         seqDockAct = QtGui.QAction(self.tr("Partly &Automated Atom Placement"), self)
         seqDockAct.setStatusTip(self.tr("Perform partly automated atom placement"))
+        seqDockAct.setCheckable(True)
+        seqDockAct.setChecked(False)
         def showDock():
-            SequenceDock.showDock(self.app, self)
+            SequenceDock.changeDockVisibility(self.app, self)
         self.connect(seqDockAct, QtCore.SIGNAL("triggered()"), showDock)
         self.app.actions.addAction("seqDock", seqDockAct)
         
