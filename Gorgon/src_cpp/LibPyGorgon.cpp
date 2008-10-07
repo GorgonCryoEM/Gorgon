@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.23  2008/09/29 16:43:13  ssa1
+//   Adding in CVS meta information
+//
 
 
 
@@ -217,6 +220,7 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("selectionMove", &CAlphaRenderer::SelectionMove)
 		.def("selectionClear", &CAlphaRenderer::SelectionClear)		
 		.def("selectionToggle", &CAlphaRenderer::SelectionToggle)	
+		.def("getAtomFromHitStack", &CAlphaRenderer::GetAtomFromHitStack)
 		.def("getSupportedLoadFileFormats", &CAlphaRenderer::GetSupportedLoadFileFormats)
 		.def("getSupportedSaveFileFormats", &CAlphaRenderer::GetSupportedSaveFileFormats)
 		.def("getMin", &CAlphaRenderer::GetMin)
