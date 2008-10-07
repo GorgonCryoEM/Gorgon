@@ -18,8 +18,12 @@ class SeqModelTests(unittest.TestCase):
   def setUp(self):
     if not os.path.exists('groel.pdb'):
       urllib.urlretrieve('http://www.rcsb.org/pdb/download/downloadFile.do?fileFormat=pdb&compression=NO&structureId=1JON','groel.pdb')
-    if not os.path.exists('1KPOgroel.pdb'):
-        urllib.urlretrieve('http://www.rcsb.org/pdb/download/downloadFile.do?fileFormat=pdb&compression=NO&structureId=1KPO', '1KPOgroel.pdb')
+    #if not os.path.exists('1IRK.pdb'):
+    #    urllib.urlretrieve('http://www.rcsb.org/pdb/download/downloadFile.do?fileFormat=pdb&compression=NO&structureId=1IRK')
+    #if not os.path.exists('3B8E.pdb'):
+    #    urllib.urlretrieve('http://www.rcsb.org/pdb/download/downloadFile.do?fileFormat=pdb&compression=NO&structureId=3B8E')
+    if not os.path.exists('1KPO.pdb'):
+        urllib.urlretrieve('http://www.rcsb.org/pdb/download/downloadFile.do?fileFormat=pdb&compression=NO&structureId=1KPO', '1KPO.pdb')
   def tearDown(self):
     if self.DELETE_PDB_FILES:
       os.remove('groel.pdb')
@@ -141,7 +145,7 @@ class SeqModelTests(unittest.TestCase):
 
 
   def test05_MultiChainPDB(self):
-    filename = '1KPOgroel.pdb'
+    filename = '1KPO.pdb'
     mychain = Chain.load(filename) #gets the first one
     mychain_origKey = mychain.getIDs()
     mychain.setIDs('mypdb', 'A')
