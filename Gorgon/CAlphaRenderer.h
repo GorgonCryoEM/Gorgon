@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.23  2008/09/29 20:36:35  ssa1
+//   Drawing skeletal curves as cylinders and spheres
+//
 //   Revision 1.22  2008/09/29 16:01:17  ssa1
 //   Adding in CVS meta information
 //
@@ -69,6 +72,7 @@ namespace wustl_mm {
 			// Controlling the atom vector
 			int AddAtom(PDBAtom atom);
 			PDBAtom GetAtom(unsigned long long index);
+			PDBAtom GetAtomFromHitStack(int subsceneIndex, bool forceTrue, int ix0, int ix1, int ix2, int ix3, int ix4);
 			void DeleteAtom(unsigned long long index);
 			int GetAtomCount();
 			
@@ -164,6 +168,15 @@ namespace wustl_mm {
 		}
 
 
+		PDBAtom CAlphaRenderer::GetAtomFromHitStack(int subsceneIndex, bool forceTrue, int ix0, int ix1, int ix2, int ix3, int ix4) {
+			if((subsceneIndex == 0) && (ix0 != NULL)) {
+				PDBAtom * a = (PDBAtom*)ix0;
+				return *a;
+			} else if((subsceneIndex == 1) && (ix0 >= 0) && (ix0 <= (int)bonds.size())) {
+				return PDBAtom (NULL);
+			}           
+		}
+			
 		void CAlphaRenderer::LoadFile(string fileName) {
 			atoms.clear();
 			bonds.clear();
