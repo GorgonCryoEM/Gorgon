@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.14  2008/09/29 16:01:17  ssa1
+//   Adding in CVS meta information
+//
 
 #ifndef GORGON_INTERACTIVE_SKELETON_ENGINE_H
 #define GORGON_INTERACTIVE_SKELETON_ENGINE_H
@@ -31,13 +34,14 @@ namespace wustl_mm {
 	namespace Visualization {	
 		class InteractiveSkeletonEngine {
 		public:
-			InteractiveSkeletonEngine(Volume * volume, NonManifoldMesh_Annotated * skeleton, float skeletonRatio, float stRatio, float minGray, int stepCount, int curveRadius, int minCurveSize, unsigned int medialnessScoringFunction);
+			InteractiveSkeletonEngine(Volume * volume, NonManifoldMesh_Annotated * skeleton, float minGray, int stepCount, int curveRadius, int minCurveSize, unsigned int medialnessScoringFunction);
 			~InteractiveSkeletonEngine();			
 			void AnalyzePathRay(float rayX, float rayY, float rayZ, float eyeX, float eyeY, float eyeZ, float rayWidth);
 			void Draw(int subscene);
 			void FinalizeSkeleton();
-			void SelectEndSeed();
-			void SelectStartSeedRay(float rayX, float rayY, float rayZ, float eyeX, float eyeY, float eyeZ, float rayWidth);
+			void SelectEndSeed(float medialnessRatio, float smoothnessRatio, float sketchRatio, float lengthRatio);
+			void SelectStartSeedRay(float rayX, float rayY, float rayZ, float eyeX, float eyeY, float eyeZ, float rayWidth, float medialnessRatio, float smoothnessRatio, float sketchRatio, float lengthRatio);
+			void SelectRootRay(float rayX, float rayY, float rayZ, float eyeX, float eyeY, float eyeZ, float rayWidth, float medialnessRatio, float smoothnessRatio, float sketchRatio, float lengthRatio);
 			void SetIsoValue(float isoValue);
 		private:
 			Volume * volume;
@@ -54,7 +58,7 @@ namespace wustl_mm {
 			bool startSeedIsolated;
 		};
 
-		InteractiveSkeletonEngine::InteractiveSkeletonEngine(Volume * volume, NonManifoldMesh_Annotated * skeleton, float skeletonRatio, float stRatio, float minGray, int stepCount, int curveRadius, int minCurveSize, unsigned int medialnessScoringFunction) {
+		InteractiveSkeletonEngine::InteractiveSkeletonEngine(Volume * volume, NonManifoldMesh_Annotated * skeleton, float minGray, int stepCount, int curveRadius, int minCurveSize, unsigned int medialnessScoringFunction) {
 			this->volume = volume;
 			this->skeleton = skeleton;
 			float minVal = minGray;
@@ -74,7 +78,6 @@ namespace wustl_mm {
 			started = false;
 			analyzed = false;
 			startSeedIsolated = false;
-			skeletonizer->SetGraphWeights(skeletonRatio, stRatio);
 			quadricSphere = gluNewQuadric();			
 		}
 
@@ -83,17 +86,17 @@ namespace wustl_mm {
 			gluDeleteQuadric(quadricSphere);			
 		}
 
-		void InteractiveSkeletonEngine::SelectEndSeed() {
+		void InteractiveSkeletonEngine::SelectEndSeed(float medialnessRatio, float smoothnessRatio, float sketchRatio, float lengthRatio) {
 			for(unsigned int i = 0; i < skeleton->edges.size(); i++) {
 				skeleton->edges[i].tag = true;
 			}
 			if(!startSeedIsolated) {
-				skeletonizer->IsolateStartSeed(startPos);
+				skeletonizer->IsolateStartSeed(startPos, medialnessRatio, smoothnessRatio, sketchRatio, lengthRatio, false);
 				startSeedIsolated = true;
 			}
 		}
 
-		void InteractiveSkeletonEngine::SelectStartSeedRay(float rayX, float rayY, float rayZ, float eyeX, float eyeY, float eyeZ, float rayWidth) {
+		void InteractiveSkeletonEngine::SelectStartSeedRay(float rayX, float rayY, float rayZ, float eyeX, float eyeY, float eyeZ, float rayWidth, float medialnessRatio, float smoothnessRatio, float sketchRatio, float lengthRatio) {
 			analyzed = false;
 			started = false;			
 			startPositions.clear();				
@@ -123,11 +126,58 @@ namespace wustl_mm {
 			}			
 
 			if(startPositions.size() > 0) {
-				skeletonizer->CalculateMinimalSpanningTree(startPositions);
+				skeletonizer->CalculateMinimalSpanningTree(startPositions, medialnessRatio, smoothnessRatio, sketchRatio, lengthRatio, false);
 				startPos = startPositions[0];
 				startSeedIsolated = false;
 				started = true;
 			}					
+		}
+
+		void InteractiveSkeletonEngine::SelectRootRay(float rayX, float rayY, float rayZ, float eyeX, float eyeY, float eyeZ, float rayWidth, float medialnessRatio, float smoothnessRatio, float sketchRatio, float lengthRatio) {
+			analyzed = false;
+			started = false;			
+			startPositions.clear();				
+			for(unsigned int i = 0; i < skeleton->edges.size(); i++) {
+				if(!skeleton->edges[i].tag) {
+					skeleton->RemoveEdge(i);
+				}
+			}
+			skeleton->RemoveNullEntries();
+
+			vector<OctreeNode<octreeTagType> *> intersectingCells = skeletonizer->GetOctree()->IntersectRay(Vector3DFloat(rayX, rayY, rayZ), Vector3DFloat(eyeX, eyeY, eyeZ), rayWidth);
+
+
+			bool snapOn = false;
+			for(unsigned int i = 0; !snapOn && (i < intersectingCells.size()); i++) {
+				if(intersectingCells[i]->cellSize == 1) {
+					snapOn = snapOn || (skeleton->vertices[intersectingCells[i]->tag.tag2].edgeIds.size() > 0);					
+				}
+			}			
+
+			for(unsigned int i = 0; i < intersectingCells.size(); i++) {
+				if(intersectingCells[i]->cellSize == 1) {
+					if(!snapOn || (snapOn && (skeleton->vertices[intersectingCells[i]->tag.tag2].edgeIds.size() > 0))) {
+						startPositions.push_back(Vector3DInt(intersectingCells[i]->pos[0], intersectingCells[i]->pos[1], intersectingCells[i]->pos[2]));
+					}
+				}
+			}
+
+			float grayValue, maxGrayValue = MIN_FLOAT;
+			int maxIndex = -1;
+			for(unsigned int i = 0; i < startPositions.size(); i++) {
+				grayValue = volume->getDataAt(startPositions[i].X(), startPositions[i].Y(), startPositions[i].Z());
+				if(grayValue > maxGrayValue) {
+					grayValue = maxGrayValue;
+					maxIndex = i;
+				}
+			}
+
+			if(maxIndex >= 0) {
+				startPos = startPositions[maxIndex];				
+				skeletonizer->IsolateStartSeed(startPos, medialnessRatio, smoothnessRatio, sketchRatio, lengthRatio, true);
+				startSeedIsolated = true;
+				//skeletonizer->DrawTree(startPos);
+			}
 		}
 
 		void InteractiveSkeletonEngine::SetIsoValue(float isoValue) {

@@ -6,7 +6,7 @@
     <x>0</x>
     <y>0</y>
     <width>416</width>
-    <height>188</height>
+    <height>213</height>
    </rect>
   </property>
   <property name="minimumSize" >
@@ -20,276 +20,63 @@
   </property>
   <layout class="QGridLayout" >
    <item row="0" column="0" >
-    <layout class="QGridLayout" >
-     <item row="0" column="0" >
-      <widget class="QLabel" name="labelMedialness" >
-       <property name="text" >
-        <string>Medialness:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="1" colspan="2" >
-      <widget class="QSlider" name="horizontalSliderMedialness" >
-       <property name="whatsThis" >
-        <string>Picks the density to use when performing skeletonization</string>
-       </property>
-       <property name="minimum" >
-        <number>0</number>
-       </property>
-       <property name="maximum" >
-        <number>100</number>
-       </property>
-       <property name="singleStep" >
-        <number>1</number>
-       </property>
-       <property name="pageStep" >
-        <number>10</number>
-       </property>
-       <property name="value" >
-        <number>50</number>
-       </property>
-       <property name="orientation" >
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="tickPosition" >
-        <enum>QSlider::NoTicks</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="3" >
-      <widget class="QLabel" name="labelMedialnessDisplay" >
-       <property name="minimumSize" >
-        <size>
-         <width>60</width>
-         <height>0</height>
-        </size>
-       </property>
-       <property name="maximumSize" >
-        <size>
-         <width>60</width>
-         <height>16777215</height>
-        </size>
-       </property>
-       <property name="layoutDirection" >
-        <enum>Qt::RightToLeft</enum>
-       </property>
-       <property name="text" >
-        <string>50</string>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="0" >
-      <widget class="QLabel" name="labelSmoothness" >
-       <property name="text" >
-        <string>Smoothness:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="1" colspan="2" >
-      <widget class="QSlider" name="horizontalSliderSmoothness" >
-       <property name="whatsThis" >
-        <string>Picks the density to use when performing skeletonization</string>
-       </property>
-       <property name="minimum" >
-        <number>0</number>
-       </property>
-       <property name="maximum" >
-        <number>100</number>
-       </property>
-       <property name="singleStep" >
-        <number>1</number>
-       </property>
-       <property name="pageStep" >
-        <number>10</number>
-       </property>
-       <property name="value" >
-        <number>50</number>
-       </property>
-       <property name="orientation" >
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="tickPosition" >
-        <enum>QSlider::NoTicks</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="3" >
-      <widget class="QLabel" name="labeSmoothnessDisplay" >
-       <property name="minimumSize" >
-        <size>
-         <width>60</width>
-         <height>0</height>
-        </size>
-       </property>
-       <property name="maximumSize" >
-        <size>
-         <width>60</width>
-         <height>16777215</height>
-        </size>
-       </property>
-       <property name="layoutDirection" >
-        <enum>Qt::RightToLeft</enum>
-       </property>
-       <property name="text" >
-        <string>50</string>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="0" >
-      <widget class="QLabel" name="labelStartDensity" >
-       <property name="text" >
-        <string>Starting Density:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="1" colspan="2" >
-      <widget class="QSlider" name="horizontalSliderStartingDensity" >
-       <property name="whatsThis" >
-        <string>Picks the density to use when performing skeletonization</string>
-       </property>
-       <property name="maximum" >
-        <number>25500</number>
-       </property>
-       <property name="singleStep" >
-        <number>1</number>
-       </property>
-       <property name="pageStep" >
-        <number>10</number>
-       </property>
-       <property name="value" >
-        <number>12800</number>
-       </property>
-       <property name="orientation" >
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="tickPosition" >
-        <enum>QSlider::NoTicks</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="3" >
-      <widget class="QLabel" name="labelStartingDensityDisplay" >
-       <property name="minimumSize" >
-        <size>
-         <width>60</width>
-         <height>0</height>
-        </size>
-       </property>
-       <property name="maximumSize" >
-        <size>
-         <width>60</width>
-         <height>16777215</height>
-        </size>
-       </property>
-       <property name="layoutDirection" >
-        <enum>Qt::RightToLeft</enum>
-       </property>
-       <property name="text" >
-        <string>128</string>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="0" >
-      <widget class="QLabel" name="labelStepSize" >
-       <property name="text" >
-        <string>Step Count:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="1" colspan="2" >
-      <widget class="QSlider" name="horizontalSliderStepCount" >
-       <property name="whatsThis" >
-        <string>Picks the density to use when performing skeletonization</string>
-       </property>
-       <property name="maximum" >
-        <number>1000</number>
-       </property>
-       <property name="singleStep" >
-        <number>1</number>
-       </property>
-       <property name="pageStep" >
-        <number>10</number>
-       </property>
-       <property name="value" >
-        <number>250</number>
-       </property>
-       <property name="orientation" >
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="tickPosition" >
-        <enum>QSlider::NoTicks</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="3" >
-      <widget class="QLabel" name="labelStepSizeDisplay" >
-       <property name="minimumSize" >
-        <size>
-         <width>60</width>
-         <height>0</height>
-        </size>
-       </property>
-       <property name="maximumSize" >
-        <size>
-         <width>60</width>
-         <height>16777215</height>
-        </size>
-       </property>
-       <property name="layoutDirection" >
-        <enum>Qt::RightToLeft</enum>
-       </property>
-       <property name="text" >
-        <string>250</string>
-       </property>
-      </widget>
-     </item>
-     <item row="4" column="0" colspan="2" >
-      <widget class="QLabel" name="labelMinimumCurve" >
-       <property name="text" >
-        <string>Minimum Curve Length:</string>
-       </property>
-      </widget>
-     </item>
-     <item rowspan="2" row="4" column="2" colspan="2" >
-      <widget class="QSpinBox" name="spinBoxMinCurve" >
-       <property name="maximum" >
-        <number>1000000</number>
-       </property>
-       <property name="value" >
-        <number>4</number>
-       </property>
-      </widget>
-     </item>
-     <item rowspan="2" row="5" column="0" colspan="2" >
-      <widget class="QLabel" name="labelCurveRadius" >
-       <property name="whatsThis" >
-        <string>The Radius to use when obtaining the structure tensor of a curve... The larger the radius, the more global information is used</string>
-       </property>
-       <property name="text" >
-        <string>Curve Radius:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="6" column="2" colspan="2" >
-      <widget class="QSpinBox" name="spinBoxCurveRadius" >
-       <property name="maximum" >
-        <number>10</number>
-       </property>
-       <property name="value" >
-        <number>2</number>
-       </property>
-      </widget>
-     </item>
-    </layout>
+    <widget class="QLabel" name="labelMedialness" >
+     <property name="text" >
+      <string>Medialness:</string>
+     </property>
+    </widget>
    </item>
    <item row="0" column="1" >
-    <widget class="Line" name="line" >
+    <widget class="QSlider" name="horizontalSliderMedialness" >
+     <property name="whatsThis" >
+      <string>Picks the density to use when performing skeletonization</string>
+     </property>
+     <property name="minimum" >
+      <number>0</number>
+     </property>
+     <property name="maximum" >
+      <number>100</number>
+     </property>
+     <property name="singleStep" >
+      <number>1</number>
+     </property>
+     <property name="pageStep" >
+      <number>10</number>
+     </property>
+     <property name="value" >
+      <number>25</number>
+     </property>
      <property name="orientation" >
-      <enum>Qt::Vertical</enum>
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="tickPosition" >
+      <enum>QSlider::NoTicks</enum>
      </property>
     </widget>
    </item>
    <item row="0" column="2" >
+    <widget class="QLabel" name="labelMedialnessDisplay" >
+     <property name="minimumSize" >
+      <size>
+       <width>20</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="maximumSize" >
+      <size>
+       <width>60</width>
+       <height>16777215</height>
+      </size>
+     </property>
+     <property name="layoutDirection" >
+      <enum>Qt::RightToLeft</enum>
+     </property>
+     <property name="text" >
+      <string>25</string>
+     </property>
+    </widget>
+   </item>
+   <item rowspan="5" row="0" column="3" >
     <widget class="QGroupBox" name="groupBoxMedialnessScore" >
      <property name="title" >
       <string>Medialness Scoring Function:</string>
@@ -307,6 +94,9 @@
         <property name="text" >
          <string>Global Rank</string>
         </property>
+        <property name="checked" >
+         <bool>true</bool>
+        </property>
        </widget>
       </item>
       <item row="2" column="0" >
@@ -315,14 +105,338 @@
          <string>Local Rank</string>
         </property>
         <property name="checked" >
-         <bool>true</bool>
+         <bool>false</bool>
         </property>
        </widget>
       </item>
      </layout>
     </widget>
    </item>
-   <item row="1" column="0" colspan="3" >
+   <item row="1" column="0" >
+    <widget class="QLabel" name="labelSmoothness" >
+     <property name="text" >
+      <string>Smoothness:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1" >
+    <widget class="QSlider" name="horizontalSliderSmoothness" >
+     <property name="whatsThis" >
+      <string>Picks the density to use when performing skeletonization</string>
+     </property>
+     <property name="minimum" >
+      <number>0</number>
+     </property>
+     <property name="maximum" >
+      <number>100</number>
+     </property>
+     <property name="singleStep" >
+      <number>1</number>
+     </property>
+     <property name="pageStep" >
+      <number>10</number>
+     </property>
+     <property name="value" >
+      <number>25</number>
+     </property>
+     <property name="orientation" >
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="tickPosition" >
+      <enum>QSlider::NoTicks</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="2" >
+    <widget class="QLabel" name="labeSmoothnessDisplay" >
+     <property name="minimumSize" >
+      <size>
+       <width>20</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="maximumSize" >
+      <size>
+       <width>60</width>
+       <height>16777215</height>
+      </size>
+     </property>
+     <property name="layoutDirection" >
+      <enum>Qt::RightToLeft</enum>
+     </property>
+     <property name="text" >
+      <string>25</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0" >
+    <widget class="QLabel" name="labelSketchImportance" >
+     <property name="text" >
+      <string>Sketch Priority:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1" >
+    <widget class="QSlider" name="horizontalSliderSketchPriority" >
+     <property name="whatsThis" >
+      <string>Picks the density to use when performing skeletonization</string>
+     </property>
+     <property name="minimum" >
+      <number>0</number>
+     </property>
+     <property name="maximum" >
+      <number>100</number>
+     </property>
+     <property name="singleStep" >
+      <number>1</number>
+     </property>
+     <property name="pageStep" >
+      <number>10</number>
+     </property>
+     <property name="value" >
+      <number>25</number>
+     </property>
+     <property name="orientation" >
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="tickPosition" >
+      <enum>QSlider::NoTicks</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="2" >
+    <widget class="QLabel" name="labeSketchPriorityDisplay" >
+     <property name="minimumSize" >
+      <size>
+       <width>20</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="maximumSize" >
+      <size>
+       <width>60</width>
+       <height>16777215</height>
+      </size>
+     </property>
+     <property name="layoutDirection" >
+      <enum>Qt::RightToLeft</enum>
+     </property>
+     <property name="text" >
+      <string>25</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0" >
+    <widget class="QLabel" name="labelEdgeLength" >
+     <property name="text" >
+      <string>Edge Length:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="1" >
+    <widget class="QSlider" name="horizontalSliderEdgeLength" >
+     <property name="whatsThis" >
+      <string>Picks the density to use when performing skeletonization</string>
+     </property>
+     <property name="minimum" >
+      <number>0</number>
+     </property>
+     <property name="maximum" >
+      <number>100</number>
+     </property>
+     <property name="singleStep" >
+      <number>1</number>
+     </property>
+     <property name="pageStep" >
+      <number>10</number>
+     </property>
+     <property name="value" >
+      <number>25</number>
+     </property>
+     <property name="orientation" >
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="tickPosition" >
+      <enum>QSlider::NoTicks</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="2" >
+    <widget class="QLabel" name="labeEdgeLengthDisplay" >
+     <property name="minimumSize" >
+      <size>
+       <width>20</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="maximumSize" >
+      <size>
+       <width>60</width>
+       <height>16777215</height>
+      </size>
+     </property>
+     <property name="layoutDirection" >
+      <enum>Qt::RightToLeft</enum>
+     </property>
+     <property name="text" >
+      <string>25</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="0" >
+    <widget class="QLabel" name="labelStartDensity" >
+     <property name="text" >
+      <string>Starting Density:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="1" >
+    <widget class="QSlider" name="horizontalSliderStartingDensity" >
+     <property name="whatsThis" >
+      <string>Picks the density to use when performing skeletonization</string>
+     </property>
+     <property name="maximum" >
+      <number>25500</number>
+     </property>
+     <property name="singleStep" >
+      <number>1</number>
+     </property>
+     <property name="pageStep" >
+      <number>10</number>
+     </property>
+     <property name="value" >
+      <number>12800</number>
+     </property>
+     <property name="orientation" >
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="tickPosition" >
+      <enum>QSlider::NoTicks</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="2" >
+    <widget class="QLabel" name="labelStartingDensityDisplay" >
+     <property name="minimumSize" >
+      <size>
+       <width>20</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="maximumSize" >
+      <size>
+       <width>60</width>
+       <height>16777215</height>
+      </size>
+     </property>
+     <property name="layoutDirection" >
+      <enum>Qt::RightToLeft</enum>
+     </property>
+     <property name="text" >
+      <string>128</string>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="0" >
+    <widget class="QLabel" name="labelStepSize" >
+     <property name="text" >
+      <string>Step Count:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="1" >
+    <widget class="QSlider" name="horizontalSliderStepCount" >
+     <property name="whatsThis" >
+      <string>Picks the density to use when performing skeletonization</string>
+     </property>
+     <property name="maximum" >
+      <number>1000</number>
+     </property>
+     <property name="singleStep" >
+      <number>1</number>
+     </property>
+     <property name="pageStep" >
+      <number>10</number>
+     </property>
+     <property name="value" >
+      <number>100</number>
+     </property>
+     <property name="orientation" >
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="tickPosition" >
+      <enum>QSlider::NoTicks</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="2" >
+    <widget class="QLabel" name="labelStepSizeDisplay" >
+     <property name="minimumSize" >
+      <size>
+       <width>20</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="maximumSize" >
+      <size>
+       <width>60</width>
+       <height>16777215</height>
+      </size>
+     </property>
+     <property name="layoutDirection" >
+      <enum>Qt::RightToLeft</enum>
+     </property>
+     <property name="text" >
+      <string>100</string>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="3" >
+    <layout class="QGridLayout" >
+     <item row="0" column="0" >
+      <widget class="QLabel" name="labelMinimumCurve" >
+       <property name="text" >
+        <string>Minimum Curve Length:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1" >
+      <widget class="QSpinBox" name="spinBoxMinCurve" >
+       <property name="maximum" >
+        <number>1000000</number>
+       </property>
+       <property name="value" >
+        <number>4</number>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="6" column="3" >
+    <layout class="QGridLayout" >
+     <item row="0" column="0" >
+      <widget class="QLabel" name="labelCurveRadius" >
+       <property name="whatsThis" >
+        <string>The Radius to use when obtaining the structure tensor of a curve... The larger the radius, the more global information is used</string>
+       </property>
+       <property name="text" >
+        <string>Curve Radius:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1" >
+      <widget class="QSpinBox" name="spinBoxCurveRadius" >
+       <property name="maximum" >
+        <number>10</number>
+       </property>
+       <property name="value" >
+        <number>2</number>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="7" column="0" colspan="4" >
     <layout class="QGridLayout" >
      <item row="0" column="0" >
       <spacer>
@@ -361,6 +475,8 @@
  <tabstops>
   <tabstop>horizontalSliderMedialness</tabstop>
   <tabstop>horizontalSliderSmoothness</tabstop>
+  <tabstop>horizontalSliderSketchPriority</tabstop>
+  <tabstop>horizontalSliderEdgeLength</tabstop>
   <tabstop>horizontalSliderStartingDensity</tabstop>
   <tabstop>horizontalSliderStepCount</tabstop>
   <tabstop>spinBoxMinCurve</tabstop>
@@ -412,12 +528,44 @@
    <slot>setNum(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>109</x>
-     <y>89</y>
+     <x>183</x>
+     <y>145</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>193</x>
-     <y>88</y>
+     <x>242</x>
+     <y>145</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>horizontalSliderSketchPriority</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>labeSketchPriorityDisplay</receiver>
+   <slot>setNum(int)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>163</x>
+     <y>71</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>233</x>
+     <y>71</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>horizontalSliderEdgeLength</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>labeEdgeLengthDisplay</receiver>
+   <slot>setNum(int)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>146</x>
+     <y>92</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>234</x>
+     <y>93</y>
     </hint>
    </hints>
   </connection>

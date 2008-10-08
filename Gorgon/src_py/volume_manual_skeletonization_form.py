@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.14  2008/08/04 15:39:15  ssa1
+#   Alternative scoring functions for interactive skeletonization
+#
 #   Revision 1.13  2008/07/22 13:21:17  ssa1
 #   Reducing memory footprint while manual skeletonization
 #
@@ -70,8 +73,6 @@ class VolumeManualSkeletonizationForm(QtGui.QWidget):
         self.connect(self.ui.horizontalSliderStartingDensity,QtCore.SIGNAL("valueChanged(int)"),self.startingDensityChanged)     
         self.connect(self.ui.pushButtonStart,QtCore.SIGNAL("pressed ()"),self.startSkeletonization)
         self.connect(self.ui.pushButtonClose, QtCore.SIGNAL("pressed ()"), self.endSkeletonization)   
-        self.connect(self.ui.horizontalSliderMedialness, QtCore.SIGNAL("valueChanged(int)"), self.medialnessChanged)
-        self.connect(self.ui.horizontalSliderSmoothness, QtCore.SIGNAL("valueChanged(int)"), self.smoothnessChanged)
                                             
     def createActions(self):
         self.skeletonizeAct = QtGui.QAction(self.tr("&Interactive Skeletonization"), self)
@@ -114,8 +115,7 @@ class VolumeManualSkeletonizationForm(QtGui.QWidget):
             if self.skeletonViewer.loaded:
                 self.skeletonViewer.unloadData()
             self.mesh = self.skeletonViewer.renderer.getMesh()
-            skeletonRatio = float(self.getMedialness())/float(self.getMedialness()+self.getSmoothness())
-            stRatio = float(self.getSmoothness())/float(self.getMedialness()+self.getSmoothness())
+            
             if self.ui.radioButtonBinary.isChecked():
                 medialnessScoringFunction = self.MedialnessScoringFunctionBinary
             elif self.ui.radioButtonGlobalRank.isChecked():
@@ -123,7 +123,7 @@ class VolumeManualSkeletonizationForm(QtGui.QWidget):
             else :
                 medialnessScoringFunction = self.MedialnessScoringFunctionLocalRank 
                        
-            self.engine = InteractiveSkeletonEngine(self.volume, self.mesh, skeletonRatio, stRatio, self.getStartingDensity(), self.getStepCount(), self.getCurveRadius(), self.getMinCurveLength(), medialnessScoringFunction)
+            self.engine = InteractiveSkeletonEngine(self.volume, self.mesh, self.getStartingDensity(), self.getStepCount(), self.getCurveRadius(), self.getMinCurveLength(), medialnessScoringFunction)
             self.engine.setIsoValue(self.viewer.renderer.getSurfaceValue())
             self.setSkeletonViewerProperties(True)
             self.skeletonViewer.loaded = True
@@ -149,6 +149,12 @@ class VolumeManualSkeletonizationForm(QtGui.QWidget):
     
     def getSmoothness(self):
         return self.ui.horizontalSliderSmoothness.value()
+
+    def getSketchPriority(self):
+        return self.ui.horizontalSliderSketchPriority.value()
+
+    def getEdgeLengthPriority(self):
+        return self.ui.horizontalSliderEdgeLength.value()
 
     def getStepCount(self):
         return self.ui.horizontalSliderStepCount.value()
@@ -189,58 +195,27 @@ class VolumeManualSkeletonizationForm(QtGui.QWidget):
         return hits
                     
     def processClickRay(self, ray, rayWidth, eye, event):
+        medialnessRatio = float(self.getMedialness())/100.0;
+        smoothnessRatio = float(self.getSmoothness())/100.0;
+        sketchPriorityRatio = float(self.getSketchPriority())/100.0;
+        edgeLengthRatio = float(self.getEdgeLengthPriority())/100.0;
+
         if(self.started):
-            if(event.modifiers() & QtCore.Qt.CTRL):
-                self.engine.selectStartSeedRay(ray[0], ray[1], ray[2], eye[0], eye[1], eye[2], rayWidth)                    
+            if((event.modifiers() & QtCore.Qt.CTRL) and (event.modifiers() & QtCore.Qt.ALT)):
+                self.engine.selectRootRay(ray[0], ray[1], ray[2], eye[0], eye[1], eye[2], rayWidth, medialnessRatio, smoothnessRatio, sketchPriorityRatio, edgeLengthRatio)
+            elif(event.modifiers() & QtCore.Qt.CTRL):
+                self.engine.selectStartSeedRay(ray[0], ray[1], ray[2], eye[0], eye[1], eye[2], rayWidth, medialnessRatio, smoothnessRatio, sketchPriorityRatio, edgeLengthRatio)                    
                 self.skeletonViewer.emitModelChanged()                    
             elif (event.modifiers() & QtCore.Qt.ALT):
-                self.engine.selectEndSeed()
+                self.engine.selectEndSeed(medialnessRatio, smoothnessRatio, sketchPriorityRatio, edgeLengthRatio)
                 self.skeletonViewer.emitModelChanged()                          
                     
-    def processClickMultiple(self, mouseHits, event):
-        hits = self.filterMouseHits(mouseHits)
-        
-        if(self.started):
-            if(event.modifiers() & QtCore.Qt.CTRL):
-                for i in range(len(hits)):
-                    start = (i == 0)
-                    end = (i == len(hits)-1)                                    
-                    self.engine.selectStartSeedMultiple(hits[i][0], hits[i][1], start, end)                    
-                self.skeletonViewer.emitModelChanged()                    
-            elif (event.modifiers() & QtCore.Qt.ALT):
-                self.engine.selectEndSeed(-1, -1)
-                self.skeletonViewer.emitModelChanged()        
-                    
-    def processClick(self, h0, h1, h2, h3, h4, h5, event):
-        if(self.started):
-            if(event.modifiers() & QtCore.Qt.CTRL):
-                self.engine.selectStartSeedMultiple(h0, h1, True, True)
-                self.skeletonViewer.emitModelChanged()
-            elif (event.modifiers() & QtCore.Qt.ALT):
-                self.engine.selectEndSeed(h0, h1)
-                self.skeletonViewer.emitModelChanged()
 
     def processMouseOverRay(self, ray, rayWidth, eye, event):
         if(self.started and event.modifiers() & QtCore.Qt.ALT ):
             self.engine.analyzePathRay(ray[0], ray[1], ray[2], eye[0], eye[1], eye[2], rayWidth)
             self.skeletonViewer.emitModelChanged()      
                 
-    def processMouseOverMultiple(self, mouseHits, event):
-        hits = self.filterMouseHits(mouseHits)
-                
-        if(self.started and event.modifiers() & QtCore.Qt.ALT ):
-            for i in range(len(hits)):
-                if(hits[i][0] >= 0 and hits[i][1] >= 0):
-                    start = (i == 0)
-                    end = (i == len(hits)-1)                        
-                    self.engine.analyzePathMultiple(hits[i][0], hits[i][1], start, end)
-            self.skeletonViewer.emitModelChanged()        
-                      
-    def processMouseOver(self, h0, h1, h2, h3, h4, h5, event):
-        if(self.started and h0 >= 0 and h1 >= 0):
-            if(event.modifiers() & QtCore.Qt.ALT ):
-                self.engine.analyzePathMultiple(h0, h1, True, True)
-                self.skeletonViewer.emitModelChanged()
     
     def modelLoaded(self):
         self.skeletonViewer = self.app.viewers["skeleton"]; 
@@ -282,15 +257,6 @@ class VolumeManualSkeletonizationForm(QtGui.QWidget):
         self.skeletonizeAct.setChecked(visible)
         self.showWidget(visible)
         
-    def medialnessChanged(self, value):
-        smoothnessValue = 100 - value
-        if self.ui.horizontalSliderSmoothness.value != smoothnessValue:
-            self.ui.horizontalSliderSmoothness.setValue(smoothnessValue)
-                
-    def smoothnessChanged(self, value):
-        medialnessValue = 100 - value
-        if self.ui.horizontalSliderMedialness.value != medialnessValue:
-            self.ui.horizontalSliderMedialness.setValue(medialnessValue)
         
     def drawOverlay(self):     
         if self.started:

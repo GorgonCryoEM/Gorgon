@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.24  2008/10/07 23:49:43  colemanr
+//   Added CAlphaViewer::GetAtomFromHitStack.
+//
 //   Revision 1.23  2008/09/29 16:43:13  ssa1
 //   Adding in CVS meta information
 //
@@ -236,9 +239,10 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("deleteBond", &CAlphaRenderer::DeleteBond)		
 	;
 
-	class_<InteractiveSkeletonEngine>("InteractiveSkeletonEngine", init<Volume *, NonManifoldMesh_Annotated *, float, float, float, int, int, int, unsigned int>())
+	class_<InteractiveSkeletonEngine>("InteractiveSkeletonEngine", init<Volume *, NonManifoldMesh_Annotated *, float, int, int, int, unsigned int>())
 		.def("selectStartSeedRay", &InteractiveSkeletonEngine::SelectStartSeedRay)
 		.def("selectEndSeed", &InteractiveSkeletonEngine::SelectEndSeed)
+		.def("selectRootRay", &InteractiveSkeletonEngine::SelectRootRay)
 		.def("analyzePathRay", &InteractiveSkeletonEngine::AnalyzePathRay)
 		.def("setIsoValue", &InteractiveSkeletonEngine::SetIsoValue)		
 		.def("finalizeSkeleton", &InteractiveSkeletonEngine::FinalizeSkeleton)		
