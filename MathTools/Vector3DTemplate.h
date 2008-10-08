@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.5  2008/09/29 16:43:15  ssa1
+//   Adding in CVS meta information
+//
 
 #ifndef VECTORT3DTEMPLATE_H
 #define VECTORT3DTEMPLATE_H
@@ -31,7 +34,7 @@ namespace wustl_mm {
 			T X() const;
 			T Y() const;
 			T Z() const;
-			T Length();
+			double Length();
 			T operator*(const Vector3DTemplate<T> &d ); // Dot Product							
 			int XInt();
 			int YInt();
@@ -102,8 +105,8 @@ namespace wustl_mm {
 		}
 
 
-		template <class T> T Vector3DTemplate<T>::Length() {
-			return sqrt(values[0] * values[0] + values[1] * values[1] + values[2] * values[2]);
+		template <class T> double Vector3DTemplate<T>::Length() {
+			return (double)sqrt((double)(values[0] * values[0] + values[1] * values[1] + values[2] * values[2]));
 		}
 
 		template <class T> int Vector3DTemplate<T>::XInt() {
@@ -166,7 +169,7 @@ namespace wustl_mm {
 		}
 
 		template <class T> void Vector3DTemplate<T>::Normalize() {
-			T base = 0;
+			double base = 0;
 			for(int i = 0; i < 3; i++) {
 				base += (values[i] * values[i]);
 			}
@@ -176,9 +179,9 @@ namespace wustl_mm {
 				values[2] = 0;
 			} else {				
 				base = sqrt(base);
-				values[0] = values[0]/base;
-				values[1] = values[1]/base;
-				values[2] = values[2]/base;
+				values[0] = (T)(values[0]/base);
+				values[1] = (T)(values[1]/base);
+				values[2] = (T)(values[2]/base);
 			}
 		}
 
