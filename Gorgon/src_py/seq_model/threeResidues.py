@@ -1,10 +1,10 @@
 import sys
 import PyQt4.QtGui as QtGui
 
-class threeResidues(QtGui.QWidget):
-	def __init__(self, parent=None):
-		super(threeResidues, self).__init__(parent)
-		
+class Ui_threeResidues(QtGui.QWidget):
+    def __init__(self, parent=None):
+		super(Ui_threeResidues, self).__init__(parent)
+    def setupUI(self):		
 		self.undoButton = QtGui.QPushButton('Undo')
 		self.redoButton = QtGui.QPushButton('Redo')
 		self.CAdoubleSpinBox = QtGui.QDoubleSpinBox()
@@ -87,6 +87,6 @@ class threeResidues(QtGui.QWidget):
 		self.setLayout(layout)
 		
 app = QtGui.QApplication(sys.argv)
-window = threeResidues()
+window = Ui_threeResidues()
 window.show()
 sys.exit(app.exec_())
