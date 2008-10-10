@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>595</width>
-    <height>298</height>
+    <width>559</width>
+    <height>264</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -15,22 +15,25 @@
   <widget class="QWidget" name="layoutWidget" >
    <property name="geometry" >
     <rect>
-     <x>13</x>
-     <y>11</y>
+     <x>0</x>
+     <y>0</y>
      <width>551</width>
      <height>251</height>
     </rect>
    </property>
-   <layout class="QHBoxLayout" name="horizontalLayout_6" >
+   <layout class="QHBoxLayout" >
     <property name="sizeConstraint" >
      <enum>QLayout::SetDefaultConstraint</enum>
     </property>
     <item>
-     <layout class="QVBoxLayout" name="verticalLayout_5" >
+     <layout class="QVBoxLayout" >
+      <property name="spacing" >
+       <number>6</number>
+      </property>
       <item>
-       <layout class="QVBoxLayout" name="verticalLayout_4" >
+       <layout class="QVBoxLayout" >
         <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_2" >
+         <layout class="QHBoxLayout" >
           <item>
            <widget class="QToolButton" name="undoButton" >
             <property name="focusPolicy" >
@@ -52,13 +55,13 @@
            </widget>
           </item>
           <item>
-           <spacer name="horizontalSpacer" >
+           <spacer>
             <property name="orientation" >
              <enum>Qt::Horizontal</enum>
             </property>
-            <property name="sizeHint" stdset="0" >
+            <property name="sizeHint" >
              <size>
-              <width>38</width>
+              <width>20</width>
               <height>51</height>
              </size>
             </property>
@@ -74,7 +77,7 @@
          </widget>
         </item>
         <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_3" >
+         <layout class="QHBoxLayout" >
           <item>
            <widget class="QDoubleSpinBox" name="CAdoubleSpinBox" >
             <property name="sizePolicy" >
@@ -108,6 +111,12 @@
           </item>
           <item>
            <widget class="QLabel" name="CAlabel" >
+            <property name="sizePolicy" >
+             <sizepolicy vsizetype="Preferred" hsizetype="Minimum" >
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="text" >
              <string>C-Alpha Interval</string>
             </property>
@@ -118,15 +127,15 @@
        </layout>
       </item>
       <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_5" >
+       <layout class="QHBoxLayout" >
         <item>
-         <spacer name="horizontalSpacer_2" >
+         <spacer>
           <property name="orientation" >
            <enum>Qt::Horizontal</enum>
           </property>
-          <property name="sizeHint" stdset="0" >
+          <property name="sizeHint" >
            <size>
-            <width>38</width>
+            <width>20</width>
             <height>51</height>
            </size>
           </property>
@@ -140,13 +149,13 @@
          </widget>
         </item>
         <item>
-         <spacer name="horizontalSpacer_3" >
+         <spacer>
           <property name="orientation" >
            <enum>Qt::Horizontal</enum>
           </property>
-          <property name="sizeHint" stdset="0" >
+          <property name="sizeHint" >
            <size>
-            <width>38</width>
+            <width>20</width>
             <height>51</height>
            </size>
           </property>
@@ -159,7 +168,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget" >
       <property name="sizePolicy" >
-       <sizepolicy vsizetype="Expanding" hsizetype="Fixed" >
+       <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
         <horstretch>0</horstretch>
         <verstretch>0</verstretch>
        </sizepolicy>
@@ -173,26 +182,22 @@
        <number>1</number>
       </property>
       <widget class="QWidget" name="helixTab" >
-       <property name="geometry" >
-        <rect>
-         <x>0</x>
-         <y>0</y>
-         <width>200</width>
-         <height>219</height>
-        </rect>
+       <property name="sizePolicy" >
+        <sizepolicy vsizetype="Preferred" hsizetype="Expanding" >
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
        </property>
        <attribute name="title" >
         <string>Helix Editor</string>
        </attribute>
       </widget>
       <widget class="QWidget" name="atomicTab" >
-       <property name="geometry" >
-        <rect>
-         <x>0</x>
-         <y>0</y>
-         <width>200</width>
-         <height>219</height>
-        </rect>
+       <property name="sizePolicy" >
+        <sizepolicy vsizetype="Preferred" hsizetype="Expanding" >
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
        </property>
        <attribute name="title" >
         <string>Atomic Editor</string>
@@ -206,11 +211,11 @@
           <height>216</height>
          </rect>
         </property>
-        <layout class="QVBoxLayout" name="verticalLayout_6" >
+        <layout class="QVBoxLayout" >
          <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_8" >
+          <layout class="QHBoxLayout" >
            <property name="spacing" >
-            <number>3</number>
+            <number>6</number>
            </property>
            <property name="sizeConstraint" >
             <enum>QLayout::SetDefaultConstraint</enum>
@@ -250,24 +255,24 @@
             </widget>
            </item>
            <item>
-            <widget class="QLabel" name="numPossibilitiesLabel" >
+            <widget class="QLabel" name="label_4" >
              <property name="sizePolicy" >
-              <sizepolicy vsizetype="Preferred" hsizetype="Maximum" >
+              <sizepolicy vsizetype="Minimum" hsizetype="Minimum" >
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
              </property>
              <property name="text" >
-              <string>/ 3</string>
+              <string>of 3</string>
              </property>
             </widget>
            </item>
           </layout>
          </item>
          <item>
-          <layout class="QHBoxLayout" name="horizontalLayout" >
+          <layout class="QHBoxLayout" >
            <item>
-            <layout class="QVBoxLayout" name="prevRes" >
+            <layout class="QVBoxLayout" >
              <item>
               <widget class="QLabel" name="prevNum" >
                <property name="text" >
@@ -304,7 +309,7 @@ p, li { white-space: pre-wrap; }
             </layout>
            </item>
            <item>
-            <layout class="QVBoxLayout" name="currentRes" >
+            <layout class="QVBoxLayout" >
              <item>
               <widget class="QLabel" name="curNum" >
                <property name="text" >
@@ -341,7 +346,7 @@ p, li { white-space: pre-wrap; }
             </layout>
            </item>
            <item>
-            <layout class="QVBoxLayout" name="nextRes" >
+            <layout class="QVBoxLayout" >
              <item>
               <widget class="QLabel" name="nextNum" >
                <property name="text" >
@@ -380,7 +385,7 @@ p, li { white-space: pre-wrap; }
           </layout>
          </item>
          <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_7" >
+          <layout class="QHBoxLayout" >
            <item>
             <widget class="QPushButton" name="back1resButton" >
              <property name="text" >
@@ -401,17 +406,126 @@ p, li { white-space: pre-wrap; }
        </widget>
       </widget>
       <widget class="QWidget" name="loopTab" >
-       <property name="geometry" >
-        <rect>
-         <x>0</x>
-         <y>0</y>
-         <width>200</width>
-         <height>219</height>
-        </rect>
+       <property name="sizePolicy" >
+        <sizepolicy vsizetype="Preferred" hsizetype="Expanding" >
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
        </property>
        <attribute name="title" >
         <string>Loop Editor</string>
        </attribute>
+       <widget class="QWidget" name="verticalLayout" >
+        <property name="geometry" >
+         <rect>
+          <x>0</x>
+          <y>10</y>
+          <width>277</width>
+          <height>201</height>
+         </rect>
+        </property>
+        <layout class="QVBoxLayout" >
+         <item>
+          <layout class="QHBoxLayout" >
+           <item>
+            <widget class="QLabel" name="label" >
+             <property name="sizePolicy" >
+              <sizepolicy vsizetype="Preferred" hsizetype="Minimum" >
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text" >
+              <string>Start Residue</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QSpinBox" name="spinBox" />
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" >
+           <item>
+            <widget class="QLabel" name="label_2" >
+             <property name="sizePolicy" >
+              <sizepolicy vsizetype="Preferred" hsizetype="Minimum" >
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text" >
+              <string>Stop Residue</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QSpinBox" name="spinBox_2" />
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" >
+           <item>
+            <widget class="QLabel" name="label_3" >
+             <property name="sizePolicy" >
+              <sizepolicy vsizetype="Preferred" hsizetype="Minimum" >
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text" >
+              <string>Loop ID/ Score</string>
+             </property>
+             <property name="alignment" >
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" >
+           <item>
+            <widget class="QPushButton" name="pushButton" >
+             <property name="text" >
+              <string>Find Loops</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QComboBox" name="comboBox" >
+             <property name="sizePolicy" >
+              <sizepolicy vsizetype="Fixed" hsizetype="Minimum" >
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" >
+           <item>
+            <widget class="QPushButton" name="pushButton_3" >
+             <property name="text" >
+              <string>Accept Loop</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pushButton_2" >
+             <property name="text" >
+              <string>Reject Loop</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </widget>
       </widget>
      </widget>
     </item>
