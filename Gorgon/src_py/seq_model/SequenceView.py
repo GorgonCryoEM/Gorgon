@@ -5,8 +5,9 @@ from PyQt4 import Qt,QtGui,QtCore
 from seq_model.Helix import Helix
 from seq_model.Strand import Strand
 from seq_model.Chain import Chain
-#from seq_model.Residue import Residue
-from ui_threeResidues import Ui_threeResidues
+from seq_model.Residue import Residue
+#from ui_threeResidues import Ui_threeResidues
+#from threeResidues import Ui_threeResidues
 from libpyGORGON import CAlphaRenderer, PDBAtom
 
 class SequenceDock(QtGui.QDockWidget):
@@ -15,22 +16,28 @@ class SequenceDock(QtGui.QDockWidget):
     def __init__(self, main, viewer, chainObj, parent=None):
         super(SequenceDock, self).__init__(parent)
         self.app = main
+        self.chainObj = chainObj
         self.viewer=viewer
         self.skeletonViewer = self.app.viewers["skeleton"]
         self.seqWidget = SequenceWidget(chainObj, self)
         self.setWidget(self.seqWidget)
         self.createActions()
         SequenceDock.__dock = self
+        self.connect(self.seqWidget.threeResidues.mockSidechainsCheckBox,  QtCore.SIGNAL('stateChanged(int)'),  self.toggleMockSideChains)
         if main:
             self.connect(self.app.viewers["calpha"], QtCore.SIGNAL("elementSelected (int, int, int, int, int, int, QMouseEvent)"), self.updateFromViewerSelection)    
+    
     @classmethod
     def changeDockVisibility(cls, main, viewer):
-        #### To do: hide the dock if unchecked & handle close button on the dock correctly
         chainObj = Chain.getChain( Chain.getSelectedChainKey() )
         if not chainObj: chainObj = Chain('', main)
         if cls.__dock:
-            cls.seqWidget.setChain(chainObj)
-            cls.__dock.show()
+            if cls.__dock.app.actions.getAction("seqDock").isChecked():
+                cls.__dock.app.addDockWidget(QtCore.Qt.LeftDockWidgetArea,  cls.__dock)
+                cls.__dock.seqWidget.scrollable.setSequence(chainObj)
+                cls.__dock.show()
+            else:
+                cls.__dock.app.removeDockWidget(cls.__dock)
         else:
             if main and viewer:
                 dock = SequenceDock(main, viewer, chainObj)
@@ -49,11 +56,14 @@ class SequenceDock(QtGui.QDockWidget):
         seqDockAct.setChecked(False)
         self.connect(seqDockAct, QtCore.SIGNAL("triggered()"), SequenceDock.changeDockVisibility)
         self.app.actions.addAction("perform_autoAtomPlacement", seqDockAct)
+    
+    def closeEvent(self, event):
+        self.app.actions.getAction("seqDock").setChecked(False)
     def updateFromViewerSelection(self, *argv):
         #hits = argv[:-1]
         #event = argv[-1]
         #print "SequenceDock.updateFromViewerSelection()"
-        ####I don't understand the purpose of the boolean variable in the Hit Stack!
+        #TODO: I don't understand the purpose of the boolean variable in the Hit Stack!
         try: 
             atom = CAlphaRenderer.getAtomFromHitStack(self.app.viewers['calpha'].renderer, argv[0], True, *argv[1:-1])
         except:
@@ -68,7 +78,23 @@ class SequenceDock(QtGui.QDockWidget):
         selectedChain.setSelection([resNum])
 #        self.emit( QtCore.SIGNAL("selection updated") )
 #        self.emit( QtCore.SIGNAL('SequencePanelUpdate'))
-
+    
+    def toggleMockSideChains(self):
+        if self.seqWidget.threeResidues.mockSidechainsCheckBox.isChecked():
+            self.seqWidget.threeResidues.renderMockSidechains(self.chainObj)
+            #TODO: learn how to refresh the drawing in the renderer.
+            #self.viewer.draw()
+            #self.viewer.emitModelLoadedPreDraw()
+            #self.viewer.emitModelChanged()
+            #self.viewer.emitModelLoaded()
+            #self.viewer.emitViewerSetCenter()
+        else:
+            self.seqWidget.threeResidues.clearMockSidechains(self.chainObj) 
+            self.viewer.emitModelLoadedPreDraw()
+            self.viewer.emitModelChanged()
+            #self.viewer.emitModelLoaded()
+            self.viewer.emitViewerSetCenter()
+            
 class SequenceWidget(QtGui.QWidget):
     def __init__(self, chainObj, parent=None):
         super(SequenceWidget, self).__init__(parent)
@@ -81,6 +107,7 @@ class SequenceWidget(QtGui.QWidget):
         self.globalView=GlobalSequenceView(chainObj)
         self.globalView.setLocalView(self.scrollable.seqView)
         self.globalView.updateViewportRange()
+        self.setMaximumWidth(self.globalView.width())
 
         self.connect(self.scrollable.seqView.scrollbar, QtCore.SIGNAL('actionTriggered(int)'), self.globalView.updateViewportRange)
         self.connect(self.scrollable.seqView.scrollbar, QtCore.SIGNAL('valueChanged(int)'), self.globalView.updateViewportRange)
@@ -91,38 +118,264 @@ class SequenceWidget(QtGui.QWidget):
         layout.addWidget(self.globalView)
         layout.addWidget(self.scrollable)
         layout.addWidget(self.threeResidues)
+        layout.addStretch()
         self.setLayout(layout)
         self.setWindowTitle('Sequence Widget')
 
-class ThreeResidues(QtGui.QWidget, Ui_threeResidues):
+class ThreeResidues(QtGui.QWidget):
     def __init__(self, chainObj, parent=None):
         super(ThreeResidues, self).__init__(parent)
-        self.setupUi(self)
-        self.setMinimumSize(400,280)
+        
         self.chainObj = chainObj
+        
+        self.undoButton = QtGui.QPushButton('Undo')
+        self.redoButton = QtGui.QPushButton('Redo')
+        self.CAdoubleSpinBox = QtGui.QDoubleSpinBox()
+        self.CAlabel = QtGui.QLabel('C-Alplha Interval')
+        self.mockSidechainsCheckBox = QtGui.QCheckBox('Mock Sidechains')
+        self.acceptButton = QtGui.QPushButton('Accept')
+        self.tabWidget = QtGui.QTabWidget()
+        self.helixTab = QtGui.QWidget()
+        self.atomicTab = QtGui.QWidget()
+        self.loopTab = QtGui.QWidget()
+        self.optimizeTab = QtGui.QWidget()
+        
+        #These go on the left hand side
+        self.possibilityNumSpinBox = QtGui.QSpinBox()
+        self.numPossibilities = QtGui.QLabel('of 3')
+        resNameFont = QtGui.QFont(self.font())
+        resNameFont.setPointSize(41)
+        resIndexFont = QtGui.QFont(self.font())
+        resIndexFont.setPointSize(13)
+        
+        #These go in the atomic tab
+        self.prevName = QtGui.QLabel('?')
+        self.prevName.setFont(resNameFont)
+        self.prevNum = QtGui.QLabel('#?')
+        self.prevNum.setAlignment(QtCore.Qt.AlignHCenter)
+        self.prevNum.setFont(resIndexFont)
+        self.curName = QtGui.QLabel('?')
+        self.curName.setFont(resNameFont)
+        self.curNum = QtGui.QLabel('#?')
+        self.curNum.setAlignment(QtCore.Qt.AlignHCenter)
+        self.curNum.setFont(resIndexFont)
+        self.nextName = QtGui.QLabel('?')
+        self.nextName.setFont(resNameFont)
+        self.nextNum = QtGui.QLabel('#?')
+        self.nextNum.setAlignment(QtCore.Qt.AlignHCenter)
+        self.nextNum.setFont(resIndexFont)
+        self.back1resButton = QtGui.QPushButton('<-')
+        self.forward1resButton = QtGui.QPushButton('->') 
+        
+        #These go in the loop tab
+        self.loopStartLabel = QtGui.QLabel('Start Residue')
+        self.loopStartSpinBox = QtGui.QSpinBox()
+        self.loopStopLabel = QtGui.QLabel('Stop Residue')
+        self.loopStopSpinBox = QtGui.QSpinBox()
+        self.loopIDLabel = QtGui.QLabel('Loop ID & Score')
+        self.loopFindButton = QtGui.QPushButton('Find Loops')
+        self.loopComboBox = QtGui.QComboBox()
+        self.loopAcceptButton = QtGui.QPushButton('Accept Loop')
+        self.loopRejectButton = QtGui.QPushButton('Reject Loop')
+        
+        #These go in the optimize tab
+        self.optimizeButton = QtGui.QPushButton('Optimize')
+        self.optFastRadioButton = QtGui.QRadioButton('Fast')
+        self.optExhaustiveRadioButton = QtGui.QRadioButton('Exhaustive')
+        self.optTranslateLabel = QtGui.QLabel('Translate')
+        self.optRotateLabel = QtGui.QLabel('Rotate')
+        self.optMoveLabelsDict = {
+                              'x': QtGui.QLabel('x'), 
+                              'y': QtGui.QLabel('y'), 
+                              'z': QtGui.QLabel('z'), 
+                              'alt': QtGui.QLabel('alt'), 
+                              'az': QtGui.QLabel('az'), 
+                              'phi': QtGui.QLabel('phi')
+                              }
+        self.optMoveSpinBoxDict = {
+                                   'x': QtGui.QDoubleSpinBox(), 
+                                   'y': QtGui.QDoubleSpinBox(), 
+                                   'z': QtGui.QDoubleSpinBox(), 
+                                   'alt': QtGui.QDoubleSpinBox(), 
+                                   'az': QtGui.QDoubleSpinBox(), 
+                                   'phi': QtGui.QDoubleSpinBox()
+                                   }
+        self.setupUi()
         self.connect(self.back1resButton, QtCore.SIGNAL('clicked()'), self.prevButtonPress)
         self.connect(self.forward1resButton, QtCore.SIGNAL('clicked()'), self.nextButtonPress)
-    def setResidues(self, newSelection):
-        #newSelection is a list of Residue indeces that are selected
-        prevResNum = newSelection[-1]
-        self.prevNum.setText(unicode(prevResNum))
-        self.prevName.setText(unicode(self.chainObj[prevResNum]))
-        self.curNum.setText(unicode(prevResNum+1))
-        self.curName.setText(unicode(self.chainObj[prevResNum+1]))
-        self.nextNum.setText(unicode(prevResNum+2))
-        self.nextName.setText(unicode(self.chainObj[prevResNum+2]))
+    
+    def setupUi(self):
+        layout = QtGui.QHBoxLayout()
+        
+        leftLayout = QtGui.QVBoxLayout()
+        leftLayout.addStretch()
+        
+        undoRedoLayout = QtGui.QHBoxLayout()
+        undoRedoLayout.addWidget(self.undoButton)
+        undoRedoLayout.addWidget(self.redoButton)
+        undoRedoLayout.addStretch()
+        
+        leftLayout.addLayout(undoRedoLayout)
+        leftLayout.addWidget(self.mockSidechainsCheckBox)
+        
+        CAIntervalLayout = QtGui.QHBoxLayout()
+        CAIntervalLayout.addWidget(self.CAdoubleSpinBox)
+        CAIntervalLayout.addWidget(self.CAlabel)
+        
+        acceptLayout = QtGui.QHBoxLayout()
+        acceptLayout.addStretch()
+        acceptLayout.addWidget(self.acceptButton)
+        acceptLayout.addStretch()
+        
+        leftLayout.addLayout(CAIntervalLayout)        
+        leftLayout.addLayout(acceptLayout)
+        leftLayout.addStretch()
+        
+        self.tabWidget.addTab(self.helixTab, self.tr('Helix Editor'))
+        self.tabWidget.addTab(self.atomicTab, self.tr('Atomic Editor'))
+        self.tabWidget.addTab(self.loopTab, self.tr('Loop Editor'))
+        self.tabWidget.addTab(self.optimizeTab, self.tr('Optimize'))
+        
+        atomicLayout = QtGui.QVBoxLayout()
+        
+        atomicPossibilityLayout = QtGui.QHBoxLayout()
+        atomicPossibilityLayout.addWidget(self.possibilityNumSpinBox)
+        atomicPossibilityLayout.addWidget(self.numPossibilities)
+        atomicLayout.addLayout(atomicPossibilityLayout)
+        
+        atomic3ResLayout = QtGui.QHBoxLayout()
+        
+        atomicPrevLayout = QtGui.QVBoxLayout()
+        atomicPrevLayout.addWidget(self.prevNum)
+        atomicPrevLayout.addWidget(self.prevName)
+        atomicCurLayout = QtGui.QVBoxLayout()
+        atomicCurLayout.addWidget(self.curNum)
+        atomicCurLayout.addWidget(self.curName)
+        atomicNextLayout = QtGui.QVBoxLayout()
+        atomicNextLayout.addWidget(self.nextNum)
+        atomicNextLayout.addWidget(self.nextName)
+        
+        atomic3ResLayout.addStretch()
+        atomic3ResLayout.addLayout(atomicPrevLayout)
+        atomic3ResLayout.addSpacing(15)
+        atomic3ResLayout.addLayout(atomicCurLayout)
+        atomic3ResLayout.addSpacing(15)
+        atomic3ResLayout.addLayout(atomicNextLayout)
+        atomic3ResLayout.addStretch()
+        atomicLayout.addLayout(atomic3ResLayout)
+
+        atomicResButtonLayout = QtGui.QHBoxLayout()
+        atomicResButtonLayout.addWidget(self.back1resButton)
+        atomicResButtonLayout.addWidget(self.forward1resButton)
+        atomicLayout.addLayout(atomicResButtonLayout)
+        self.atomicTab.setLayout(atomicLayout)
+        
+        loopLayout = QtGui.QGridLayout()
+        loopLayout.addWidget(self.loopStartLabel, 0, 0)
+        loopLayout.addWidget(self.loopStartSpinBox, 0, 1)
+        loopLayout.addWidget(self.loopStopLabel, 1, 0)
+        loopLayout.addWidget(self.loopStopSpinBox, 1, 1)
+        loopLayout.addWidget(self.loopIDLabel, 2, 1)
+        loopLayout.addWidget(self.loopFindButton, 3, 0)
+        loopLayout.addWidget(self.loopComboBox, 3, 1)
+        loopLayout.addWidget(self.loopAcceptButton, 4, 0)
+        loopLayout.addWidget(self.loopRejectButton, 4, 1)
+        self.loopTab.setLayout(loopLayout)
+        
+        optimizeLayout = QtGui.QGridLayout()
+        optimizeLayout.addWidget(self.optimizeButton, 0, 0,  2, 1)
+        optimizeLayout.addWidget(self.optFastRadioButton, 0, 1)
+        optimizeLayout.addWidget(self.optExhaustiveRadioButton, 1, 1)
+        optimizeLayout.addWidget(self.optTranslateLabel, 2, 0)
+        optimizeLayout.addWidget(self.optRotateLabel, 2, 1)
+        optSpinLabelLayoutDict = {
+                              'x': QtGui.QHBoxLayout(), 
+                              'y': QtGui.QHBoxLayout(), 
+                              'z': QtGui.QHBoxLayout(), 
+                              'alt': QtGui.QHBoxLayout(), 
+                              'az': QtGui.QHBoxLayout(), 
+                              'phi': QtGui.QHBoxLayout()
+                              }
+        for key in optSpinLabelLayoutDict.keys():
+            curLayout = optSpinLabelLayoutDict[key]
+            curLayout.addWidget(self.optMoveSpinBoxDict[key])
+            curLayout.addWidget(self.optMoveLabelsDict[key])
+        
+        optimizeLayout.addLayout(optSpinLabelLayoutDict['x'], 3, 0)
+        optimizeLayout.addLayout(optSpinLabelLayoutDict['y'], 4, 0)
+        optimizeLayout.addLayout(optSpinLabelLayoutDict['z'], 5, 0)
+        optimizeLayout.addLayout(optSpinLabelLayoutDict['alt'], 3, 1)
+        optimizeLayout.addLayout(optSpinLabelLayoutDict['az'], 4, 1)
+        optimizeLayout.addLayout(optSpinLabelLayoutDict['phi'], 5, 1)
+        self.optimizeTab.setLayout(optimizeLayout)
+        
+        layout.addLayout(leftLayout)
+        layout.addWidget(self.tabWidget)
+        self.setLayout(layout)
+        
+    def clearMockSidechains(self,  chain):
+        for index in chain.residueRange():
+            res = chain[index]
+            res.setCAlphaColorToDefault()
+            res.setCAlphaSizeToDefault()
+        print "The mock side-chains should be cleared,  but not yet drawn to the screen."
+    
     def prevButtonPress(self):
         newSelection = [ self.parent().chainObj.getSelection()[-1] - 1 ]
+        if newSelection[0] <min(self.parent().chainObj.residueRange()): 
+            return
         self.parent().scrollable.seqView.setSequenceSelection(newSelection)
         self.setResidues(newSelection)
-        print 'prevButton'
         
     def nextButtonPress(self):
         newSelection = [ self.parent().chainObj.getSelection()[-1] + 1 ]
+        if newSelection[0] > max(self.parent().chainObj.residueRange()): 
+            return
         self.parent().scrollable.seqView.setSequenceSelection(newSelection)
-        self.setResidues(newSelection)        
-        print 'nextButton'
+        self.setResidues(newSelection)
+        
+    def renderMockSidechains(self,  chain):
+        color = {
+            'greasy': (0.0, 1.0, 0.0, 1.0), 
+            'polar': (0.0, 0.0, 0.6, 1.0), 
+            'charged': (0.0, 0.0, 1.0, 1.0), 
+            'sulfur': (1.0, 1.0, 0.0, 1.0)
+            }
+        for index in chain.residueRange():
+            res = chain[index]
+            atom = res.getAtom('CA')
+            size = 1.8 * res.size[res.symbol3]
+            atom.setAtomRadius( size  )
+            for key in color.keys():
+                if res.symbol3 in res.residueTypes[key]:
+                    atom.setColor( *color[key] )
+                    break
+        print "The mock side-chains should be ready to draw to the screen"
 
+    def setResidues(self, newSelection):
+        #newSelection is a list of Residue indeces that are selected
+        prevResNum = newSelection[-1]
+        lastResidueIndex = max(self.parent().chainObj.residueRange())
+        self.prevNum.setText(unicode(prevResNum))
+        self.prevName.setText(unicode(self.chainObj[prevResNum]))
+        if prevResNum >= lastResidueIndex:
+            self.nextName.setText('')
+            self.nextNum.setText('')
+            self.curName.setText('')
+            self.curNum.setText('')
+            return
+        elif prevResNum >= lastResidueIndex-1:
+            self.nextName.setText('')
+            self.nextNum.setText('')
+            self.curNum.setText(unicode(prevResNum+1))
+            self.curName.setText(unicode(self.chainObj[prevResNum+1]))
+            return
+        else:
+            self.curNum.setText(unicode(prevResNum+1))
+            self.curName.setText(unicode(self.chainObj[prevResNum+1]))
+            self.nextNum.setText(unicode(prevResNum+2))
+            self.nextName.setText(unicode(self.chainObj[prevResNum+2]))
+            
 class SequenceView(QtGui.QWidget):
   """
   This QWidget gives residues as one letter abbreviations for residues and the index below.  
@@ -157,7 +410,6 @@ class SequenceView(QtGui.QWidget):
     self.residueRange=self.sequence.residueRange()
     self.connect(self.sequence, QtCore.SIGNAL("selection updated"), self.__selectionUpdated)
     self.repaint()
-
 
   def __selectionUpdated(self):
     self.repaint()
@@ -266,9 +518,6 @@ class SequenceView(QtGui.QWidget):
         painter.fillRect(rect,brush)
       x = x + cellWidth
       x0 = x0 + cellWidth
-
-
-
 
   def __paintResidues(self, painter):
     brush=QtGui.QBrush(QtCore.Qt.black, QtCore.Qt.SolidPattern)
@@ -412,14 +661,27 @@ class SequenceView(QtGui.QWidget):
     #print newSelection
     #print self.parent.parent.threeResidues
     self.parent.parent.threeResidues.setResidues(newSelection)
-    
-    ####To do: Need to select residue in SequenceView if an atom is clicked in the renderer.
-    viewer = self.parent.parent.parent().viewer
+    dock = self.parent.parent.parent()
+    #TODO: Need to select an atom in the renderer when a residue is selected in SequenceView
+    #TODO: Figure out how to center the screen on the selected atom
+    viewer = dock.viewer
+    app = dock.app
     atom = self.sequence[ self.sequence.getSelection()[-1] ].getAtom('CA')
-    atom.setSelected(True)
-    viewer.emitModelChanged()
-    #viewer.loaded = True
-    #viewer.emitModelLoaded()
+    #atom.setSelected(True)
+    #viewer.emitModelChanged()
+    PDBposition = [ atom.getPosition().x(),  atom.getPosition().y(),  atom.getPosition().z() ]
+    minPos = [(viewer.renderer.getMin(0)*viewer.scale[0]),
+                        (viewer.renderer.getMin(1)*viewer.scale[1]),
+                        (viewer.renderer.getMin(2)*viewer.scale[2])]
+    
+    maxPos = [(viewer.renderer.getMax(0)*viewer.scale[0]),
+                        (viewer.renderer.getMax(1)*viewer.scale[1] ),
+                        (viewer.renderer.getMax(2)*viewer.scale[2])]
+    size = [maxPos[i] - minPos[i] for i in range(3)]
+    position = [PDBposition[i] - 0.5*size[i] for i in range(3)] 
+    #I don't know why hitting the center button or right clicking and dragging does not affect viewer.location
+    print PDBposition, position
+    #app.mainCamera.setCenter( *position ) This does call the correct function, but it does not move how I want.
           
   def setFont(self, newFont):
     self.fontName=newFont
@@ -490,8 +752,8 @@ class ScrollableSequenceView(QtGui.QScrollArea):
     self.parent = parent
     self.seqView=SequenceView(sequence,parent=self)
     seqView = self.seqView
-    seqView.updatePanelHeight() ####This is needed to get all residues to show up in this widget.
-    ####Note: updatePanelHeight also adjusts width - I'm guessing that is the part that fixes things.
+    seqView.updatePanelHeight() #This is needed to get all residues to show up in this widget.
+    #Note: updatePanelHeight also adjusts width - I'm guessing that is the part that fixes things.
     seqView.scrollbar=self.horizontalScrollBar()
     self.seqView=seqView
     self.setWidget(self.seqView)
@@ -667,6 +929,71 @@ class GlobalSequenceView(QtGui.QWidget):
       xOffset = xOffset + cellWidth
 
 
+def renderCAlphas(chain):
+  for index in chain.residueRange():
+    res=chain[index]
+    if 'CA' in res.getAtomNames():
+      thisAtom=res.getAtom('CA')
+      Chain.getViewer().renderer.addAtom(groel[index].getAtom('CA'))
+
+    if index-1 in chain.residueList:
+        previousRes=chain[index-1]
+    if 'CA' in previousRes.getAtomNames():
+      print 'index=%s' %index
+      previousAtom=previousRes.getAtom('CA')
+      bond=PDBBond()
+      bond.setAtom0Ix(previousAtom.getSerial())
+      bond.setAtom0Ix(thisAtom.getSerial())
+      Chain.getViewer().renderer.addBond(bond)
+
+def renderMockSidechains(chain):
+    obj = ThreeResidues(chain)
+    obj.renderMockSidechains(chain)
+def clearMockSidechains(chain):
+    obj = ThreeResidues(chain)
+    obj.clearMockSidechains(chain)
+
+#Below is Mike's version of this function -- Ross's version is in SequenceWidget
+'''
+def renderMockSidechains(chain):
+  for index in chain.residueRange():
+    res=chain[index]
+    atom=res.getAtom('CA')
+    
+    if res.symbol3 in ['GLY','PRO']:
+      relativeSize=1
+
+    elif res.symbol3 in ['ALA','VAL','THR','CYS']:
+      relativeSize=2
+
+    elif res.symbol3 in ['MET','LEU','ILE','ASN','GLN','ASP','GLU']:
+      relativeSize=3
+
+    else:# res.symbol3 in ['TRP','HIS','TYR','PHE','ARG','LYS']
+      relativeSize=4
+    atom.setAtomRadius(relativeSize*1.8)
+
+    greasy =(0.0, 1.0, 0.0, 1.0)
+    polar  =(0.0, 0.0, 0.6, 1.0)
+    charged=(0.0, 0.0, 1.0, 1.0)
+    sulfur =(1.0, 1.0, 0.0, 1.0)
+
+    if res.symbol3 in ['MET','CYS']:
+      atom.setColor(sulfur[0], sulfur[1], sulfur[2], sulfur[3])
+
+    elif res.symbol3 in ['ARG','LYS','HIS','GLU','ASP']:
+      atom.setColor(charged[0], charged[1], charged[2], charged[3])
+
+    elif res.symbol3 in ['ASN','GLN','TYR','SER','THR']:
+      atom.setColor(polar[0], polar[1], polar[2], polar[3])
+
+    elif res.symbol3 in ['VAL','ILE','LEU','PRO','GLY','ALA','TRP','PRO']:
+      atom.setColor(greasy[0], greasy[1], greasy[2], greasy[3])
+
+    print 'adding atom %s' %Chain.getViewer().renderer.addAtom(atom)
+    #Chain.getViewer().emitModelChanged()
+ ''' 
+
 def tempZoomDialog(seqView, scrollArea):
   plusButton=QtGui.QPushButton('+')
   plusButton.setMaximumWidth(50)
@@ -703,14 +1030,17 @@ if __name__ == '__main__':
     seqWidget = SequenceWidget(groel)
     seqWidget.show()
     
+    #threeRes = ThreeResidues(groel)
+    #threeRes.show()
+    
     #seqScroll = ScrollableSequenceView(groel)
     #seqScroll.show()
     
     #seqVw = SequenceView(groel)
     #seqVw.show()
     
-    dialog=tempZoomDialog(seqWidget.scrollable.getSeqview(),seqWidget.scrollable)
-    dialog.show()
-    dialog.raise_()
+    #dialog=tempZoomDialog(seqWidget.scrollable.getSeqview(),seqWidget.scrollable)
+    #dialog.show()
+    #dialog.raise_()
 
     sys.exit(app.exec_())
