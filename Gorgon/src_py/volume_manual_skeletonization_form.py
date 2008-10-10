@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.15  2008/10/08 16:43:19  ssa1
+#   Interactive skeletonization changes
+#
 #   Revision 1.14  2008/08/04 15:39:15  ssa1
 #   Alternative scoring functions for interactive skeletonization
 #
@@ -153,9 +156,6 @@ class VolumeManualSkeletonizationForm(QtGui.QWidget):
     def getSketchPriority(self):
         return self.ui.horizontalSliderSketchPriority.value()
 
-    def getEdgeLengthPriority(self):
-        return self.ui.horizontalSliderEdgeLength.value()
-
     def getStepCount(self):
         return self.ui.horizontalSliderStepCount.value()
 
@@ -194,20 +194,21 @@ class VolumeManualSkeletonizationForm(QtGui.QWidget):
                 hits.append(names)
         return hits
                     
-    def processClickRay(self, ray, rayWidth, eye, event):
-        medialnessRatio = float(self.getMedialness())/100.0;
-        smoothnessRatio = float(self.getSmoothness())/100.0;
-        sketchPriorityRatio = float(self.getSketchPriority())/100.0;
-        edgeLengthRatio = float(self.getEdgeLengthPriority())/100.0;
+    def processClickRay(self, ray, rayWidth, eye, event):        
+        divisor =  float(self.getMedialness()) + float(self.getSmoothness()) +  float(self.getSketchPriority());
+
+        medialnessRatio = float(self.getMedialness()) / divisor;
+        smoothnessRatio = float(self.getSmoothness()) / divisor;
+        sketchPriorityRatio = float(self.getSketchPriority()) / divisor;
 
         if(self.started):
             if((event.modifiers() & QtCore.Qt.CTRL) and (event.modifiers() & QtCore.Qt.ALT)):
-                self.engine.selectRootRay(ray[0], ray[1], ray[2], eye[0], eye[1], eye[2], rayWidth, medialnessRatio, smoothnessRatio, sketchPriorityRatio, edgeLengthRatio)
+                self.engine.selectRootRay(ray[0], ray[1], ray[2], eye[0], eye[1], eye[2], rayWidth, medialnessRatio, smoothnessRatio, sketchPriorityRatio)
             elif(event.modifiers() & QtCore.Qt.CTRL):
-                self.engine.selectStartSeedRay(ray[0], ray[1], ray[2], eye[0], eye[1], eye[2], rayWidth, medialnessRatio, smoothnessRatio, sketchPriorityRatio, edgeLengthRatio)                    
+                self.engine.selectStartSeedRay(ray[0], ray[1], ray[2], eye[0], eye[1], eye[2], rayWidth, medialnessRatio, smoothnessRatio, sketchPriorityRatio)                    
                 self.skeletonViewer.emitModelChanged()                    
             elif (event.modifiers() & QtCore.Qt.ALT):
-                self.engine.selectEndSeed(medialnessRatio, smoothnessRatio, sketchPriorityRatio, edgeLengthRatio)
+                self.engine.selectEndSeed(medialnessRatio, smoothnessRatio, sketchPriorityRatio)
                 self.skeletonViewer.emitModelChanged()                          
                     
 

@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.36  2008/09/29 16:30:15  ssa1
+//   Adding in CVS meta information
+//
 
 #ifndef GRAYSKELETONCPP_VOLUME_SKELETONIZER_H
 #define GRAYSKELETONCPP_VOLUME_SKELETONIZER_H
@@ -229,8 +232,8 @@ namespace wustl_mm {
 				}
 				
 			} else {
-				cost = 0.0;
-				printf("Zero\n");
+				cost = 1.0;
+				//printf("Zero\n");
 			}
 
 			if(cost != cost) {

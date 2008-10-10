@@ -6,7 +6,7 @@
     <x>0</x>
     <y>0</y>
     <width>416</width>
-    <height>213</height>
+    <height>185</height>
    </rect>
   </property>
   <property name="minimumSize" >
@@ -79,7 +79,7 @@
    <item rowspan="5" row="0" column="3" >
     <widget class="QGroupBox" name="groupBoxMedialnessScore" >
      <property name="title" >
-      <string>Medialness Scoring Function:</string>
+      <string>Medialness Function:</string>
      </property>
      <layout class="QGridLayout" >
       <item row="0" column="0" >
@@ -227,70 +227,13 @@
     </widget>
    </item>
    <item row="3" column="0" >
-    <widget class="QLabel" name="labelEdgeLength" >
-     <property name="text" >
-      <string>Edge Length:</string>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="1" >
-    <widget class="QSlider" name="horizontalSliderEdgeLength" >
-     <property name="whatsThis" >
-      <string>Picks the density to use when performing skeletonization</string>
-     </property>
-     <property name="minimum" >
-      <number>0</number>
-     </property>
-     <property name="maximum" >
-      <number>100</number>
-     </property>
-     <property name="singleStep" >
-      <number>1</number>
-     </property>
-     <property name="pageStep" >
-      <number>10</number>
-     </property>
-     <property name="value" >
-      <number>25</number>
-     </property>
-     <property name="orientation" >
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="tickPosition" >
-      <enum>QSlider::NoTicks</enum>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="2" >
-    <widget class="QLabel" name="labeEdgeLengthDisplay" >
-     <property name="minimumSize" >
-      <size>
-       <width>20</width>
-       <height>0</height>
-      </size>
-     </property>
-     <property name="maximumSize" >
-      <size>
-       <width>60</width>
-       <height>16777215</height>
-      </size>
-     </property>
-     <property name="layoutDirection" >
-      <enum>Qt::RightToLeft</enum>
-     </property>
-     <property name="text" >
-      <string>25</string>
-     </property>
-    </widget>
-   </item>
-   <item row="4" column="0" >
     <widget class="QLabel" name="labelStartDensity" >
      <property name="text" >
       <string>Starting Density:</string>
      </property>
     </widget>
    </item>
-   <item row="4" column="1" >
+   <item row="3" column="1" >
     <widget class="QSlider" name="horizontalSliderStartingDensity" >
      <property name="whatsThis" >
       <string>Picks the density to use when performing skeletonization</string>
@@ -315,7 +258,7 @@
      </property>
     </widget>
    </item>
-   <item row="4" column="2" >
+   <item row="3" column="2" >
     <widget class="QLabel" name="labelStartingDensityDisplay" >
      <property name="minimumSize" >
       <size>
@@ -337,14 +280,14 @@
      </property>
     </widget>
    </item>
-   <item row="5" column="0" >
+   <item row="4" column="0" >
     <widget class="QLabel" name="labelStepSize" >
      <property name="text" >
       <string>Step Count:</string>
      </property>
     </widget>
    </item>
-   <item row="5" column="1" >
+   <item row="4" column="1" >
     <widget class="QSlider" name="horizontalSliderStepCount" >
      <property name="whatsThis" >
       <string>Picks the density to use when performing skeletonization</string>
@@ -369,7 +312,7 @@
      </property>
     </widget>
    </item>
-   <item row="5" column="2" >
+   <item row="4" column="2" >
     <widget class="QLabel" name="labelStepSizeDisplay" >
      <property name="minimumSize" >
       <size>
@@ -391,7 +334,7 @@
      </property>
     </widget>
    </item>
-   <item row="5" column="3" >
+   <item row="5" column="0" colspan="3" >
     <layout class="QGridLayout" >
      <item row="0" column="0" >
       <widget class="QLabel" name="labelMinimumCurve" >
@@ -412,7 +355,7 @@
      </item>
     </layout>
    </item>
-   <item row="6" column="3" >
+   <item row="5" column="3" >
     <layout class="QGridLayout" >
      <item row="0" column="0" >
       <widget class="QLabel" name="labelCurveRadius" >
@@ -436,7 +379,7 @@
      </item>
     </layout>
    </item>
-   <item row="7" column="0" colspan="4" >
+   <item row="6" column="0" colspan="4" >
     <layout class="QGridLayout" >
      <item row="0" column="0" >
       <spacer>
@@ -476,7 +419,6 @@
   <tabstop>horizontalSliderMedialness</tabstop>
   <tabstop>horizontalSliderSmoothness</tabstop>
   <tabstop>horizontalSliderSketchPriority</tabstop>
-  <tabstop>horizontalSliderEdgeLength</tabstop>
   <tabstop>horizontalSliderStartingDensity</tabstop>
   <tabstop>horizontalSliderStepCount</tabstop>
   <tabstop>spinBoxMinCurve</tabstop>
@@ -550,22 +492,6 @@
     <hint type="destinationlabel" >
      <x>233</x>
      <y>71</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>horizontalSliderEdgeLength</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>labeEdgeLengthDisplay</receiver>
-   <slot>setNum(int)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>146</x>
-     <y>92</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>234</x>
-     <y>93</y>
     </hint>
    </hints>
   </connection>
