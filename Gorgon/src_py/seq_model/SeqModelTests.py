@@ -83,19 +83,24 @@ class SeqModelTests(unittest.TestCase):
 
     self.assertEquals(chain.helices[helixID].startIndex, startIndex)
     self.assertEquals(chain[startIndex].symbol3, startResName)
-
+    
     self.assertEquals(chain.helices[helixID].stopIndex, stopIndex)
     self.assertEquals(chain[stopIndex].symbol3, stopResName)
+
+    self.assertEquals(chain.helices[helixID].__repr__().split(':')[1], chain[startIndex:stopIndex].__repr__().strip('...'))
+
 
 
   def __assertStrand(self, chain, strandNo, sheetID, nStrands, startResName, startChainID, startIndex, stopResName, stopChainID, stopIndex):
     self.assert_(chain.sheets.has_key(sheetID))
-
+    
     self.assertEquals(chain.sheets[sheetID].strandList[strandNo].startIndex, startIndex)
     self.assertEquals(chain[startIndex].symbol3, startResName)
 
     self.assertEquals(chain.sheets[sheetID].strandList[strandNo].stopIndex, stopIndex)
     self.assertEquals(chain[stopIndex].symbol3, stopResName)
+    
+    self.assertEquals(chain.sheets[sheetID].strandList[strandNo].__repr__().split(':')[1], chain[startIndex:stopIndex].__repr__().strip('...'))
 
 
   def __validateSecels(self, chain):
@@ -187,3 +192,5 @@ class SeqModelTests(unittest.TestCase):
     # Test toPDB on both chains
     '\nmy_chain.PDB\n' + my_chain.toPDB(backboneOnly=True, verbose=False)
     '\nsub_chain.PDB\n' + sub_chain.toPDB(backboneOnly=True, verbose=False)
+
+#TODO: Add a test for input of *.seq files
