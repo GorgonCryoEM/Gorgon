@@ -9,6 +9,7 @@
 from libpyGORGON import PDBAtom,Vector3DFloat
 
 class Residue:
+  '''Residue objects have one-letter and three-letter abbreviations and contain PDBAtoms'''
   _aa_dict={}
   _aa_dict['A']='ALA'
   _aa_dict['C']='CYS'
@@ -53,8 +54,25 @@ class Residue:
   _aa_dict['VAL']='V'
   _aa_dict['TYR']='Y'
   _aa_dict['TRP']='W'
-
-
+  
+  residueTypes = {
+        'nonpolar': ('GLY', 'ALA', 'VAL', 'LEU', 'ILE', 'PHE', 'TRP', 'MET', 'PRO'), 
+        'polar': ('ASN','GLN','TYR','SER','THR'), 
+        'negative': ('ASP',  'GLU'), 
+        'positive': ('HIS',  'LYS',  'ARG'), 
+        'sulfur': ('MET','CYS'), 
+        'greasy': ('VAL','ILE','LEU','PRO','GLY','ALA','TRP','PRO')
+        }
+  residueTypes['neutral'] = residueTypes['nonpolar'] + residueTypes['polar']
+  residueTypes['charged'] = residueTypes['negative'] + residueTypes['positive']
+  
+  size = {
+                'GLY':1, 'PRO':1,  
+                'ALA':2,'VAL':2,'THR':2,'CYS':2,  'SER':2, 
+                'MET':3,'LEU':3,'ILE':3,'ASN':3,'GLN':3,'ASP':3,'GLU':3,
+                'TRP':4,'HIS':4,'TYR':4,'PHE':4,'ARG':4,'LYS':4
+            }
+  
   def __init__(self, symbol, chain=None):
     symbol=symbol.upper()
     if len(symbol)==1:
@@ -74,14 +92,17 @@ class Residue:
 
 
   def getAtomNames(self):
+    '''Returns the names of the residue's atoms'''
     return self.__atoms.keys()
 
 
   def getAtom(self, atomName):
+    '''Returns the residue's PDBAtom given an atom name such as CA'''
     return self.__atoms[atomName]
 
 
   def addAtom(self, atomName, x, y, z, element=None, serialNo=None, occupancy=None, tempFactor=None ):
+    '''Adds a PDBAtom to the residue.'''
     residueIndex=self.chain.findIndexForRes(self)
     rawAtom=PDBAtom(self.chain.getPdbID(), self.chain.getChainID() , residueIndex, atomName)
     rawAtom.setPosition(Vector3DFloat(x,y,z))
@@ -106,8 +127,35 @@ class Residue:
 
 
   def clearAtoms(self):
+    '''Removes all the PDBAtoms from the residue'''
     self.__atoms={}
 
 
   def __repr__(self):
     return self.symbol1
+  
+  def setCAlphaColorToDefault(self):
+    ''''
+    Sets the residue's C-alpha atom to the default color.  This is useful if the color has been changed somewhere.
+    '''
+    try:
+        temp = PDBAtom('____',  '9', 1, 'CA')
+        defaultColor = ( temp.getColorR(),  temp.getColorG(),  temp.getColorB(),  temp.getColorA() )
+        del temp
+        atom = self.getAtom('CA')
+        atom.setColor(*defaultColor)
+    except:
+        pass
+  
+  def setCAlphaSizeToDefault(self):
+    ''''
+    Sets the residue's C-alpha atom to the default size.  This is useful if the size has been changed somewhere.
+    '''
+    try:
+        temp = PDBAtom('____',  '9', 1, 'CA')
+        defaultSize = temp.getAtomRadius()
+        del temp
+        atom = self.getAtom('CA')
+        atom.setAtomRadius(defaultSize)
+    except:
+        pass
