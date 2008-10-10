@@ -34,15 +34,13 @@ class Secel(object):
     return self.color
 
   def __str__(self):
-    s = self.type
-    s = s + '('
-    s = s + str(self.startIndex)
-    s = s + ','
-    s = s + str(self.stopIndex)
-    s = s + ')'
-    s = s + ':'
+    s = self.type + '(' + str(self.startIndex) + ',' + str(self.stopIndex) + ')' + ':'
     residues = self.chain[self.startIndex:self.stopIndex]
-
-    for residue in residues:
-      s = s + residue.symbol1
-    return s
+    residues = residues.__repr__().split('...')
+    noPeriods = []
+    for item in residues:
+        if item == '': 
+            continue
+        noPeriods.append(item)
+    residues = ''.join(noPeriods)
+    return s + residues
