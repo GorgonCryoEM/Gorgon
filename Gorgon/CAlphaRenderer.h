@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.24  2008/10/07 23:48:14  colemanr
+//   added a function which returns the PDBAtom for a given hitStack
+//
 //   Revision 1.23  2008/09/29 20:36:35  ssa1
 //   Drawing skeletal curves as cylinders and spheres
 //
@@ -172,9 +175,8 @@ namespace wustl_mm {
 			if((subsceneIndex == 0) && (ix0 != NULL)) {
 				PDBAtom * a = (PDBAtom*)ix0;
 				return *a;
-			} else if((subsceneIndex == 1) && (ix0 >= 0) && (ix0 <= (int)bonds.size())) {
-				return PDBAtom (NULL);
-			}           
+			}  
+			return PDBAtom (NULL);
 		}
 			
 		void CAlphaRenderer::LoadFile(string fileName) {

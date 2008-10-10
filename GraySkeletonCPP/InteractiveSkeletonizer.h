@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.20  2008/10/08 16:43:19  ssa1
+//   Interactive skeletonization changes
+//
 //   Revision 1.19  2008/09/29 16:30:15  ssa1
 //   Adding in CVS meta information
 //
@@ -23,6 +26,7 @@
 #include "VolumeSkeletonizer.h"
 #include <ProteinMorph/NonManifoldMesh.h>
 #include <Foundation/Octree.h>
+#include <Foundation/Rasterizer.h>
 
 using namespace wustl_mm::Protein_Morph;
 using namespace wustl_mm::Foundation;
@@ -36,16 +40,15 @@ namespace wustl_mm {
 		};
 
 		struct nodeAttrib{
-			float medialnessCost;
-			float sketchCost;
 			float mstCost;
 			NonManifoldMeshVertex<nodeAttrib> * returnNode;
 			OctreeNode<octreeTagType> * octreeNode;
 		};
 
 		struct edgeAttrib {
+			float medialnessCost;
+			float sketchCost;
 			float smoothCost;
-			float lengthCost;
 		};
 
 
@@ -65,9 +68,9 @@ namespace wustl_mm {
 			vector<OctreeNode< octreeTagType > *> GetPath(Vector3DInt endPoint);			
 			vector<OctreeNode< octreeTagType > *> GetPath(vector<Vector3DInt> endPoints);
 			Vector3DInt FindClosestSkeletalPoint(Vector3DInt point);
-			void CalculateMinimalSpanningTree(Vector3DInt seedPoint, float medialnessRatio, float smoothnessRatio, float sketchRatio, float lengthRatio, bool terminate);
-			void CalculateMinimalSpanningTree(vector<Vector3DInt> seedPoints, float medialnessRatio, float smoothnessRatio, float sketchRatio, float lengthRatio, bool terminate);
-			void IsolateStartSeed(Vector3DInt startPos, float medialnessRatio, float smoothnessRatio, float sketchRatio, float lengthRatio, bool terminate);
+			void CalculateMinimalSpanningTree(Vector3DInt seedPoint, float medialnessRatio, float smoothnessRatio, float sketchRatio, bool terminate);
+			void CalculateMinimalSpanningTree(vector<Vector3DInt> seedPoints, float medialnessRatio, float smoothnessRatio, float sketchRatio, bool terminate);
+			void IsolateStartSeed(Vector3DInt startPos, float medialnessRatio, float smoothnessRatio, float sketchRatio, bool terminate);
 									
 		protected:
 			double GetStructureTensorProjectedScore(EigenResults3D imageEigen, Vector3DFloat skeletonDirection, float power, int type);			
@@ -76,14 +79,21 @@ namespace wustl_mm {
 			Vector3DInt seedPoint;
 			EigenResults3D * volumeEigens;
 			unsigned int medialnessScoringFunction;
+			
+			float maxEdgeSegmentSmoothness;
+			float minEdgeSegmentSmoothness;
+
 		private:
-			//Volume * GetAutomaticSkeleton(Volume * sourceVol, float minGray, float maxGray, float stepSize, int minCurveSize);
+			Volume * GetAutomaticSkeleton(Volume * sourceVol, float minGray, float maxGray, float stepSize, int minCurveSize);
+			Octree<octreeTagType> * GetOctreeFromSkeleton(Volume * skeleton);
+			void CreateAndAnnotateVertices(GraphType * graph, Octree<octreeTagType> * octree, Volume * sourceVol, Volume * skeleton, unsigned int medialnessScoringFunction, int curveRadius);
+			void CreateAndAnnotateEdges(GraphType * graph, Octree<octreeTagType> * octree, Volume * sourceVol, Volume * skeleton, unsigned int medialnessScoringFunction, int curveRadius);
+			float GetVertexMedialnessCost(unsigned int medialnessScoringFunction, Volume * sourceVol, Volume * skeleton, int x, int y, int z, unsigned int curveRadius, float minGray, float maxGray);
+			float GetVertexMedialnessCost(vector<Vector3DInt> vertices, unsigned int medialnessScoringFunction, Volume * sourceVol, Volume * skeleton, unsigned int curveRadius, float minGray, float maxGray);
+			float GetEdgeSmoothnessCost(GraphType * graph, Vector3DFloat * volumeGradient, Volume * sourceVol, Vector3DInt p1, Vector3DInt p2, Vector3DFloat direction, int curveRadius);
+			float GetEdgeSmoothnessCost(vector<Vector3DInt> vertices, GraphType * graph, Vector3DFloat * volumeGradient, Volume * sourceVol, Vector3DFloat direction, int curveRadius);
 		};
 
-
-		//Volume * InteractiveSkeletonizer::GetAutomaticSkeleton(Volume * sourceVol, float minGray, float maxGray, float stepSize, int minCurveSize) {
-
-		//}
 
 
 		InteractiveSkeletonizer::InteractiveSkeletonizer(Volume * sourceVol, float minGray, float maxGray, float stepSize, int curveRadius, int minCurveSize, bool storeEigenInfo, unsigned int medialnessScoringFunction) : VolumeSkeletonizer(0, curveRadius, 0,0) {			
@@ -91,128 +101,12 @@ namespace wustl_mm {
 			this->medialnessScoringFunction = medialnessScoringFunction;
 			graph = new GraphType();		
 			sourceVol->pad(MAX_GAUSSIAN_FILTER_RADIUS, 0);
-					
-			// Generating the Skeleton
-			Volume * nullVol = new Volume(sourceVol->getSizeX(), sourceVol->getSizeY(), sourceVol->getSizeZ());
-			appTimeManager.PushCurrentTime();
-			Volume * skeleton = GetImmersionThinning(sourceVol, nullVol, minGray, maxGray, stepSize, THINNING_CLASS_CURVE_PRESERVATION);
-			appTimeManager.PopAndDisplayTime("	Thinning completed: %f seconds\n");
-			delete nullVol;
-			PruneCurves(skeleton, minCurveSize);
-			#ifdef SAVE_INTERMEDIATE_RESULTS
-				skeleton->toMRCFile("CurveSkeleton.mrc");				
-			#endif
-		
-			// Creating the octree
-			octree = new Octree<octreeTagType>(skeleton->getSizeX() - 2*MAX_GAUSSIAN_FILTER_RADIUS, skeleton->getSizeY() - 2*MAX_GAUSSIAN_FILTER_RADIUS, skeleton->getSizeZ()- 2*MAX_GAUSSIAN_FILTER_RADIUS);
-			//octree->PrintStructure();
-			for(int x = MAX_GAUSSIAN_FILTER_RADIUS; x < sourceVol->getSizeX() - MAX_GAUSSIAN_FILTER_RADIUS; x++) {
-				for(int y = MAX_GAUSSIAN_FILTER_RADIUS; y < sourceVol->getSizeY() - MAX_GAUSSIAN_FILTER_RADIUS; y++) {
-					for(int z = MAX_GAUSSIAN_FILTER_RADIUS; z < sourceVol->getSizeZ() - MAX_GAUSSIAN_FILTER_RADIUS; z++) {
-						if(skeleton->getDataAt(x, y, z) > 0) {
-							octree->AddNewLeaf(x - MAX_GAUSSIAN_FILTER_RADIUS, y - MAX_GAUSSIAN_FILTER_RADIUS, z - MAX_GAUSSIAN_FILTER_RADIUS, 1);
-						}
-					}
-				}
-			}
 
-			// Creating graph vertices and also a mask for finding eigen values
-			Volume * maskVol = new Volume(skeleton->getSizeX(), skeleton->getSizeY(), skeleton->getSizeZ());
-			vector<OctreeNode<octreeTagType> *> cells = octree->GetCells();
-			for(unsigned int i = 0; i < cells.size(); i++) {
-				if(cells[i]->isLeaf) {
-					cells[i]->tag.tag1 = graph->AddVertex(Vector3DFloat(cells[i]->pos[0], cells[i]->pos[1], cells[i]->pos[2]), nodeAttrib());
-					graph->vertices[cells[i]->tag.tag1].tag.octreeNode = cells[i];
-					maskVol->setDataAt(cells[i]->pos[0]+MAX_GAUSSIAN_FILTER_RADIUS, cells[i]->pos[1]+MAX_GAUSSIAN_FILTER_RADIUS, cells[i]->pos[2]+MAX_GAUSSIAN_FILTER_RADIUS, 1.0);
-				}
-			}
+			Volume * skeleton = GetAutomaticSkeleton(sourceVol, minGray, maxGray, stepSize, minCurveSize);					
+			octree = GetOctreeFromSkeleton(skeleton);
+			CreateAndAnnotateVertices(graph, octree, sourceVol, skeleton, medialnessScoringFunction, curveRadius);
+			CreateAndAnnotateEdges(graph, octree, sourceVol, skeleton, medialnessScoringFunction, curveRadius);
 
-			// Creating graph edges
-			vector<OctreeNode<octreeTagType> *> neighbors;
-			for(unsigned int i = 0; i < cells.size(); i++) {
-				if(cells[i]->isLeaf) {
-					neighbors = octree->GetNeighbors(cells[i]);
-					for(unsigned int j = 0; j < neighbors.size(); j++) {
-						graph->AddEdge(cells[i]->tag.tag1, neighbors[j]->tag.tag1, edgeAttrib());
-					}				
-				}
-			}
-
-
-			// Annnotating the medial cost, and sketch cost in the graph.
-			float skeletonValue;
-			maxGray = sourceVol->getMax();
-			minGray = sourceVol->getMin();
-			float lMaxGray, lMinGray;
-			OctreeNode<octreeTagType> * n1, * n2;
-
-			for(unsigned int i = 0; i < graph->vertices.size(); i++) {
-				n1 = graph->vertices[i].tag.octreeNode;
-				skeletonValue = skeleton->getDataAt(n1->pos[0] + MAX_GAUSSIAN_FILTER_RADIUS, n1->pos[1] + MAX_GAUSSIAN_FILTER_RADIUS, n1->pos[2] + MAX_GAUSSIAN_FILTER_RADIUS);
-				if(isZero(skeletonValue)) {
-					graph->vertices[i].tag.medialnessCost = 1.0;
-				} else {
-					switch(medialnessScoringFunction) {
-						case MEDIALNESS_SCORING_FUNCTION_BINARY :
-							graph->vertices[i].tag.medialnessCost = 0.0;
-							break;
-						case MEDIALNESS_SCORING_FUNCTION_GLOBAL_RANK :
-							graph->vertices[i].tag.medialnessCost = 1.0 - (skeletonValue - minGray)/(maxGray-minGray);
-							break;
-						case MEDIALNESS_SCORING_FUNCTION_LOCAL_RANK:
-							lMaxGray = sourceVol->getLocalMax(n1->pos[0]+MAX_GAUSSIAN_FILTER_RADIUS, n1->pos[1]+MAX_GAUSSIAN_FILTER_RADIUS, n1->pos[2]+MAX_GAUSSIAN_FILTER_RADIUS, curveRadius);
-							lMinGray = sourceVol->getLocalMin(n1->pos[0]+MAX_GAUSSIAN_FILTER_RADIUS, n1->pos[1]+MAX_GAUSSIAN_FILTER_RADIUS, n1->pos[2]+MAX_GAUSSIAN_FILTER_RADIUS, curveRadius);
-							graph->vertices[i].tag.medialnessCost = 1.0 - (skeletonValue - lMinGray)/(lMaxGray-lMinGray);
-							break;
-					}
-				}
-				graph->vertices[i].tag.sketchCost = 0.0;
-			}
-
-			// Annotating the smoothness cost in the graph.
-			Vector3DFloat * volumeGradient = GetVolumeGradient2(sourceVol);					
-			delete maskVol;
-			float maxProjectedScore = MIN_FLOAT;
-			float minProjectedScore = MAX_FLOAT;
-			
-			float s1, s2;
-
-			EigenResults3D eig1;
-			EigenResults3D eig2;
-
-			for(unsigned int i = 0; i < graph->edges.size(); i++) {
-				n1 = graph->vertices[graph->GetVertexIndex(graph->edges[i].vertexIds[0])].tag.octreeNode;
-				n2 = graph->vertices[graph->GetVertexIndex(graph->edges[i].vertexIds[1])].tag.octreeNode;
-				graph->edges[i].tag.lengthCost = (Vector3DInt(n1->pos[0], n1->pos[1], n1->pos[2]) - Vector3DInt(n2->pos[0], n2->pos[1], n2->pos[2])).Length();
-
-
-				GetEigenResult2(eig1, volumeGradient, gaussianFilterCurveRadius, n1->pos[0]+MAX_GAUSSIAN_FILTER_RADIUS, n1->pos[1]+MAX_GAUSSIAN_FILTER_RADIUS, n1->pos[2]+MAX_GAUSSIAN_FILTER_RADIUS, skeleton->getSizeX(), skeleton->getSizeY(), skeleton->getSizeZ(), curveRadius, false);
-				GetEigenResult2(eig2, volumeGradient, gaussianFilterCurveRadius, n2->pos[0]+MAX_GAUSSIAN_FILTER_RADIUS, n2->pos[1]+MAX_GAUSSIAN_FILTER_RADIUS, n2->pos[2]+MAX_GAUSSIAN_FILTER_RADIUS, skeleton->getSizeX(), skeleton->getSizeY(), skeleton->getSizeZ(), curveRadius, false);
-
-
-				s1 = GetStructureTensorProjectedScore(
-						eig1,
-						graph->vertices[graph->GetVertexIndex(graph->edges[i].vertexIds[0])].position - graph->vertices[graph->GetVertexIndex(graph->edges[i].vertexIds[1])].position,
-						2, PRUNING_CLASS_PRUNE_CURVES);
-				s2 = GetStructureTensorProjectedScore(
-						eig2,
-						graph->vertices[graph->GetVertexIndex(graph->edges[i].vertexIds[0])].position - graph->vertices[graph->GetVertexIndex(graph->edges[i].vertexIds[1])].position,
-						2, PRUNING_CLASS_PRUNE_CURVES);
-				graph->edges[i].tag.smoothCost = s1 + s2;
-				minProjectedScore = min(graph->edges[i].tag.smoothCost, minProjectedScore);
-				maxProjectedScore = max(graph->edges[i].tag.smoothCost, maxProjectedScore);								
-			}
-
-			for(unsigned int i = 0; i < graph->edges.size(); i++) {
-				graph->edges[i].tag.smoothCost = (graph->edges[i].tag.smoothCost - minProjectedScore) / (maxProjectedScore - minProjectedScore);
-			}
-
-
-			delete [] volumeGradient;
-			//if(!storeEigenInfo) {
-			//	delete [] volumeEigens; 
-				volumeEigens = NULL;
-			//}
 			sourceVol->pad(-MAX_GAUSSIAN_FILTER_RADIUS, 0);
 			delete skeleton;
 
@@ -229,9 +123,177 @@ namespace wustl_mm {
 			}
 		}
 
+
+		Volume * InteractiveSkeletonizer::GetAutomaticSkeleton(Volume * sourceVol, float minGray, float maxGray, float stepSize, int minCurveSize) {
+			Volume * nullVol = new Volume(sourceVol->getSizeX(), sourceVol->getSizeY(), sourceVol->getSizeZ());
+			appTimeManager.PushCurrentTime();
+			Volume * skeleton = GetImmersionThinning(sourceVol, nullVol, minGray, maxGray, stepSize, THINNING_CLASS_CURVE_PRESERVATION);
+			delete nullVol;
+			PruneCurves(skeleton, minCurveSize);
+			#ifdef SAVE_INTERMEDIATE_RESULTS
+				skeleton->toMRCFile("CurveSkeleton.mrc");				
+			#endif			
+			appTimeManager.PopAndDisplayTime("	Thinning and pruning completed: %f seconds\n");
+			return skeleton;
+		}
+
+		Octree<octreeTagType> * InteractiveSkeletonizer::GetOctreeFromSkeleton(Volume * skeleton) {
+			Octree<octreeTagType> * octree = new Octree<octreeTagType>(skeleton->getSizeX() - 2*MAX_GAUSSIAN_FILTER_RADIUS, skeleton->getSizeY() - 2*MAX_GAUSSIAN_FILTER_RADIUS, skeleton->getSizeZ()- 2*MAX_GAUSSIAN_FILTER_RADIUS);
+			for(int x = MAX_GAUSSIAN_FILTER_RADIUS; x < skeleton->getSizeX() - MAX_GAUSSIAN_FILTER_RADIUS; x++) {
+				for(int y = MAX_GAUSSIAN_FILTER_RADIUS; y < skeleton->getSizeY() - MAX_GAUSSIAN_FILTER_RADIUS; y++) {
+					for(int z = MAX_GAUSSIAN_FILTER_RADIUS; z < skeleton->getSizeZ() - MAX_GAUSSIAN_FILTER_RADIUS; z++) {
+						if(skeleton->getDataAt(x, y, z) > 0) {
+							octree->AddNewLeaf(x - MAX_GAUSSIAN_FILTER_RADIUS, y - MAX_GAUSSIAN_FILTER_RADIUS, z - MAX_GAUSSIAN_FILTER_RADIUS, 1);
+						}
+					}
+				}
+			}
+			return octree;
+		}			
+		float InteractiveSkeletonizer::GetVertexMedialnessCost(unsigned int medialnessScoringFunction, Volume * sourceVol, Volume * skeleton, int x, int y, int z, unsigned int curveRadius, float minGray, float maxGray) {
+			float lMaxGray, lMinGray;
+			float cost = 1.0f;
+			if(isZero(skeleton->getDataAt(x, y, z))) {
+				cost = 1.0f;
+			} else {
+				switch(medialnessScoringFunction) {
+					case MEDIALNESS_SCORING_FUNCTION_BINARY :
+						cost = 0.0f;
+						break;
+					case MEDIALNESS_SCORING_FUNCTION_GLOBAL_RANK :
+						cost = 1.0f - (sourceVol->getDataAt(x, y, z) - minGray)/(maxGray-minGray);
+						break;
+					case MEDIALNESS_SCORING_FUNCTION_LOCAL_RANK:
+						lMaxGray = sourceVol->getLocalMax(x, y, z, curveRadius);
+						lMinGray = sourceVol->getLocalMin(x, y, z, curveRadius);
+						cost = 1.0f - (sourceVol->getDataAt(x, y, z) - lMinGray)/(lMaxGray-lMinGray);
+						break;
+				}
+			}
+			return cost;
+		}
+
+
+		float InteractiveSkeletonizer::GetVertexMedialnessCost(vector<Vector3DInt> vertices, unsigned int medialnessScoringFunction, Volume * sourceVol, Volume * skeleton, unsigned int curveRadius, float minGray, float maxGray) {
+			float cost = 0.0f;
+			if(vertices.size() > 1) {
+				// dividing the first and last vertices by 2 since they get added in twice when traversing the graph.
+				cost += GetVertexMedialnessCost(medialnessScoringFunction, sourceVol, skeleton, vertices[0].X(), vertices[0].Y(), vertices[0].Z(), curveRadius, minGray, maxGray);
+				cost += GetVertexMedialnessCost(medialnessScoringFunction, sourceVol, skeleton, vertices[vertices.size()-1].X(), vertices[vertices.size()-1].Y(), vertices[vertices.size()-1].Z(), curveRadius, minGray, maxGray);
+				cost = cost / 2.0f;	
+				for(unsigned int i = 1; i < vertices.size()-1; i++) {
+					cost += GetVertexMedialnessCost(medialnessScoringFunction, sourceVol, skeleton, vertices[i].X(), vertices[i].Y(), vertices[i].Z(), curveRadius, minGray, maxGray);
+				}
+			} else if (vertices.size() == 1) {
+				cost = GetVertexMedialnessCost(medialnessScoringFunction, sourceVol, skeleton, vertices[0].X(), vertices[0].Y(), vertices[0].Z(), curveRadius, minGray, maxGray);
+			} else {
+				cost = 1.0f;
+			}
+
+			return cost;
+		}
+
+		float InteractiveSkeletonizer::GetEdgeSmoothnessCost(GraphType * graph, Vector3DFloat * volumeGradient, Volume * sourceVol, Vector3DInt p1, Vector3DInt p2, Vector3DFloat direction, int curveRadius) {
+			EigenResults3D eig1, eig2;
+			GetEigenResult2(eig1, volumeGradient, gaussianFilterCurveRadius, p1.X(), p1.Y(), p1.Z(), sourceVol->getSizeX(), sourceVol->getSizeY(), sourceVol->getSizeZ(), curveRadius, false);
+			GetEigenResult2(eig2, volumeGradient, gaussianFilterCurveRadius, p2.X(), p2.Y(), p2.Z(), sourceVol->getSizeX(), sourceVol->getSizeY(), sourceVol->getSizeZ(), curveRadius, false);
+
+			float segmentCost = (GetStructureTensorProjectedScore(eig1, direction, 2, PRUNING_CLASS_PRUNE_CURVES) + 
+								 GetStructureTensorProjectedScore(eig2, direction, 2, PRUNING_CLASS_PRUNE_CURVES)) * (p1 - p2).Length() / 2.0f;
+
+			maxEdgeSegmentSmoothness = max(segmentCost, maxEdgeSegmentSmoothness);
+			minEdgeSegmentSmoothness = min(segmentCost, minEdgeSegmentSmoothness);
+
+			return  segmentCost;
+		}
+
+		float InteractiveSkeletonizer::GetEdgeSmoothnessCost(vector<Vector3DInt> vertices, GraphType * graph, Vector3DFloat * volumeGradient, Volume * sourceVol, Vector3DFloat direction, int curveRadius) {
+			float cost = 0.0f;
+
+			for(unsigned int i = 0; i < vertices.size() - 1; i++) {
+				cost += GetEdgeSmoothnessCost(graph, volumeGradient, sourceVol, vertices[i], vertices[i+1], direction, curveRadius);
+			}
+			return cost;			
+		}
+
+		void InteractiveSkeletonizer::CreateAndAnnotateVertices(GraphType * graph, Octree<octreeTagType> * octree, Volume * sourceVol, Volume * skeleton, unsigned int medialnessScoringFunction, int curveRadius) {
+			//Creating
+			vector<OctreeNode<octreeTagType> *> cells = octree->GetCells();
+			for(unsigned int i = 0; i < cells.size(); i++) {
+				if(cells[i]->isLeaf) {
+					cells[i]->tag.tag1 = graph->AddVertex(Vector3DFloat(cells[i]->pos[0], cells[i]->pos[1], cells[i]->pos[2]), nodeAttrib());
+					graph->vertices[cells[i]->tag.tag1].tag.octreeNode = cells[i];
+				}
+			}
+
+			/*
+			//Annotating			
+			OctreeNode<octreeTagType> * n1;
+			float maxGray = sourceVol->getMax();
+			float minGray = sourceVol->getMin();
+
+			for(unsigned int i = 0; i < graph->vertices.size(); i++) {
+				n1 = graph->vertices[i].tag.octreeNode;
+				graph->vertices[i].tag.medialnessCost = GetVertexMedialnessCost(medialnessScoringFunction, sourceVol, skeleton, 
+					n1->pos[0]+MAX_GAUSSIAN_FILTER_RADIUS, n1->pos[1]+MAX_GAUSSIAN_FILTER_RADIUS, n1->pos[2]+MAX_GAUSSIAN_FILTER_RADIUS, curveRadius, minGray, maxGray);
+				graph->vertices[i].tag.sketchCost = 0.0;
+			} */
+		}
+
+
+		void InteractiveSkeletonizer::CreateAndAnnotateEdges(GraphType * graph, Octree<octreeTagType> * octree, Volume * sourceVol, Volume * skeleton, unsigned int medialnessScoringFunction, int curveRadius) {
+			// Creating
+			vector<OctreeNode<octreeTagType> *> cells = octree->GetCells();
+			vector<OctreeNode<octreeTagType> *> neighbors;
+			for(unsigned int i = 0; i < cells.size(); i++) {
+				if(cells[i]->isLeaf) {
+					neighbors = octree->GetNeighbors(cells[i]);
+					for(unsigned int j = 0; j < neighbors.size(); j++) {
+						graph->AddEdge(cells[i]->tag.tag1, neighbors[j]->tag.tag1, edgeAttrib());
+					}				
+				}
+			}
+
+
+			// Annotating
+			Vector3DFloat * volumeGradient = GetVolumeGradient2(sourceVol);					
+			float maxGray = sourceVol->getMax();
+			float minGray = sourceVol->getMin();
+
+			OctreeNode<octreeTagType> * n1, * n2;
+			vector<Vector3DInt> pseudoVertices;
+			
+			minEdgeSegmentSmoothness = MAX_FLOAT;		// These two values will be set in the GetEdgeSmoothnessCost method.
+			maxEdgeSegmentSmoothness = MIN_FLOAT;
+
+
+			for(unsigned int i = 0; i < graph->edges.size(); i++) {
+				n1 = graph->vertices[graph->GetVertexIndex(graph->edges[i].vertexIds[0])].tag.octreeNode;
+				n2 = graph->vertices[graph->GetVertexIndex(graph->edges[i].vertexIds[1])].tag.octreeNode;
+				Vector3DInt p1 = Vector3DInt(n1->pos[0]+MAX_GAUSSIAN_FILTER_RADIUS, n1->pos[1]+MAX_GAUSSIAN_FILTER_RADIUS, n1->pos[2]+MAX_GAUSSIAN_FILTER_RADIUS);
+				Vector3DInt p2 = Vector3DInt(n2->pos[0]+MAX_GAUSSIAN_FILTER_RADIUS, n2->pos[1]+MAX_GAUSSIAN_FILTER_RADIUS, n2->pos[2]+MAX_GAUSSIAN_FILTER_RADIUS);
+
+				pseudoVertices = Rasterizer::ScanConvertLine(p1, p2);
+				graph->edges[i].tag.medialnessCost = GetVertexMedialnessCost(pseudoVertices, medialnessScoringFunction, sourceVol, skeleton, curveRadius, minGray, maxGray);
+				graph->edges[i].tag.smoothCost = GetEdgeSmoothnessCost(pseudoVertices, graph, volumeGradient, sourceVol, 
+					graph->vertices[graph->GetVertexIndex(graph->edges[i].vertexIds[0])].position - graph->vertices[graph->GetVertexIndex(graph->edges[i].vertexIds[1])].position,
+					curveRadius); 
+				graph->edges[i].tag.sketchCost = 0.0f;
+			}
+
+
+			// Re-normalizing the smoothness cost so each edge segment cost is between 0 and 1.
+			for(unsigned int i = 0; i < graph->edges.size(); i++) {
+				graph->edges[i].tag.smoothCost = (graph->edges[i].tag.smoothCost - minEdgeSegmentSmoothness) / (maxEdgeSegmentSmoothness - minEdgeSegmentSmoothness);
+			}
+
+			delete [] volumeGradient;
+		}
+
 		double InteractiveSkeletonizer::GetStructureTensorProjectedScore(EigenResults3D imageEigen, Vector3DFloat skeletonDirection, float power, int type) {						
 			skeletonDirection.Normalize();
 			//return GetVoxelCost(imageEigen, skeletonDirection, PRUNING_CLASS_PRUNE_CURVES);
+
 			float score = 0.0;
 			switch(type) {
 				case PRUNING_CLASS_PRUNE_CURVES:
@@ -293,15 +355,15 @@ namespace wustl_mm {
 		}
 
 
-		void InteractiveSkeletonizer::CalculateMinimalSpanningTree(Vector3DInt seedPoint, float medialnessRatio, float smoothnessRatio, float sketchRatio, float lengthRatio, bool terminate) {
+		void InteractiveSkeletonizer::CalculateMinimalSpanningTree(Vector3DInt seedPoint, float medialnessRatio, float smoothnessRatio, float sketchRatio, bool terminate) {
 			appTimeManager.PushCurrentTime();
 			vector<Vector3DInt> seedPoints;
 			seedPoints.push_back(seedPoint);
-			CalculateMinimalSpanningTree(seedPoints, medialnessRatio, smoothnessRatio, sketchRatio, lengthRatio, terminate);
+			CalculateMinimalSpanningTree(seedPoints, medialnessRatio, smoothnessRatio, sketchRatio, terminate);
 			appTimeManager.PopAndDisplayTime("Initializing seed point: %f seconds!\n");
 		}
 
-		void InteractiveSkeletonizer::CalculateMinimalSpanningTree(vector<Vector3DInt> seedPoints, float medialnessRatio, float smoothnessRatio, float sketchRatio, float lengthRatio, bool terminate) {
+		void InteractiveSkeletonizer::CalculateMinimalSpanningTree(vector<Vector3DInt> seedPoints, float medialnessRatio, float smoothnessRatio, float sketchRatio, bool terminate) {
 			appTimeManager.PushCurrentTime();
 			
 			OctreeNode<octreeTagType> * node;
@@ -316,14 +378,14 @@ namespace wustl_mm {
 				node = octree->GetLeaf(seedPoints[i].X(), seedPoints[i].Y(), seedPoints[i].Z());
 		
 				currentNode = &graph->vertices[node->tag.tag1];
-				currentNode->tag.mstCost = medialnessRatio * currentNode->tag.medialnessCost + sketchRatio * currentNode->tag.sketchCost;
+				currentNode->tag.mstCost = 0;
 				currentNode->tag.returnNode = NULL;
 
 				pointList.push(currentNode);
 			}
 
 
-			float cost, vertexCost, newCost;
+			float cost, vertexCost;
 			unsigned int edgeIx;
 			unsigned int vertexIx;
 
@@ -334,20 +396,17 @@ namespace wustl_mm {
 				for(unsigned int i = 0; i < currentNode->edgeIds.size(); i++) {
 					edgeIx = graph->GetEdgeIndex(currentNode->edgeIds[i]);
 					cost = currentNode->tag.mstCost 
-							+ smoothnessRatio * graph->edges[edgeIx].tag.smoothCost * graph->edges[edgeIx].tag.lengthCost // Scale the edge weight by the length
-							+ medialnessRatio * max(graph->edges[edgeIx].tag.lengthCost - sqrt(2.0), 0.0)				  // Add cost for all the vertices we skipped because of long edge
-							+ lengthRatio * pow(max(graph->edges[edgeIx].tag.lengthCost - sqrt(2.0), 0.0), 2.0);		  // Add edge length so we minimize edge length
+							+ smoothnessRatio * graph->edges[edgeIx].tag.smoothCost
+							+ medialnessRatio * graph->edges[edgeIx].tag.medialnessCost
+							+ sketchRatio * graph->edges[edgeIx].tag.sketchCost;
 
 					for(unsigned int j = 0; j < 2; j++) {
 						vertexIx = graph->GetVertexIndex(graph->edges[edgeIx].vertexIds[j]);
 						vertexCost = graph->vertices[vertexIx].tag.mstCost;
-						if(!terminate || graph->vertices[vertexIx].tag.medialnessCost <= MAX_ALLOWED_NODE_COST) {
-							newCost = cost + medialnessRatio * graph->vertices[vertexIx].tag.medialnessCost + sketchRatio * graph->vertices[vertexIx].tag.sketchCost;
-							if((vertexCost < 0) || (vertexCost > newCost)) {
-								graph->vertices[vertexIx].tag.mstCost = newCost;
-								graph->vertices[vertexIx].tag.returnNode = currentNode;
-								pointList.push(&graph->vertices[vertexIx]);
-							}
+						if((vertexCost < 0) || (vertexCost > cost)) {
+							graph->vertices[vertexIx].tag.mstCost = cost;
+							graph->vertices[vertexIx].tag.returnNode = currentNode;
+							pointList.push(&graph->vertices[vertexIx]);
 						}
 					}
 				}				
@@ -356,8 +415,8 @@ namespace wustl_mm {
 
 		}
 
-		void InteractiveSkeletonizer::IsolateStartSeed(Vector3DInt startPos, float medialnessRatio, float smoothnessRatio, float sketchRatio, float lengthRatio, bool terminate) {
-			CalculateMinimalSpanningTree(startPos, medialnessRatio, smoothnessRatio, sketchRatio, lengthRatio, terminate);
+		void InteractiveSkeletonizer::IsolateStartSeed(Vector3DInt startPos, float medialnessRatio, float smoothnessRatio, float sketchRatio, bool terminate) {
+			CalculateMinimalSpanningTree(startPos, medialnessRatio, smoothnessRatio, sketchRatio, terminate);
 		}
 	}
 }

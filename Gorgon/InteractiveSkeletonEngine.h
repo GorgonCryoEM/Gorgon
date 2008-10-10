@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.15  2008/10/08 16:43:19  ssa1
+//   Interactive skeletonization changes
+//
 //   Revision 1.14  2008/09/29 16:01:17  ssa1
 //   Adding in CVS meta information
 //
@@ -39,9 +42,9 @@ namespace wustl_mm {
 			void AnalyzePathRay(float rayX, float rayY, float rayZ, float eyeX, float eyeY, float eyeZ, float rayWidth);
 			void Draw(int subscene);
 			void FinalizeSkeleton();
-			void SelectEndSeed(float medialnessRatio, float smoothnessRatio, float sketchRatio, float lengthRatio);
-			void SelectStartSeedRay(float rayX, float rayY, float rayZ, float eyeX, float eyeY, float eyeZ, float rayWidth, float medialnessRatio, float smoothnessRatio, float sketchRatio, float lengthRatio);
-			void SelectRootRay(float rayX, float rayY, float rayZ, float eyeX, float eyeY, float eyeZ, float rayWidth, float medialnessRatio, float smoothnessRatio, float sketchRatio, float lengthRatio);
+			void SelectEndSeed(float medialnessRatio, float smoothnessRatio, float sketchRatio);
+			void SelectStartSeedRay(float rayX, float rayY, float rayZ, float eyeX, float eyeY, float eyeZ, float rayWidth, float medialnessRatio, float smoothnessRatio, float sketchRatio);
+			void SelectRootRay(float rayX, float rayY, float rayZ, float eyeX, float eyeY, float eyeZ, float rayWidth, float medialnessRatio, float smoothnessRatio, float sketchRatio);
 			void SetIsoValue(float isoValue);
 		private:
 			Volume * volume;
@@ -86,17 +89,17 @@ namespace wustl_mm {
 			gluDeleteQuadric(quadricSphere);			
 		}
 
-		void InteractiveSkeletonEngine::SelectEndSeed(float medialnessRatio, float smoothnessRatio, float sketchRatio, float lengthRatio) {
+		void InteractiveSkeletonEngine::SelectEndSeed(float medialnessRatio, float smoothnessRatio, float sketchRatio) {
 			for(unsigned int i = 0; i < skeleton->edges.size(); i++) {
 				skeleton->edges[i].tag = true;
 			}
 			if(!startSeedIsolated) {
-				skeletonizer->IsolateStartSeed(startPos, medialnessRatio, smoothnessRatio, sketchRatio, lengthRatio, false);
+				skeletonizer->IsolateStartSeed(startPos, medialnessRatio, smoothnessRatio, sketchRatio, false);
 				startSeedIsolated = true;
 			}
 		}
 
-		void InteractiveSkeletonEngine::SelectStartSeedRay(float rayX, float rayY, float rayZ, float eyeX, float eyeY, float eyeZ, float rayWidth, float medialnessRatio, float smoothnessRatio, float sketchRatio, float lengthRatio) {
+		void InteractiveSkeletonEngine::SelectStartSeedRay(float rayX, float rayY, float rayZ, float eyeX, float eyeY, float eyeZ, float rayWidth, float medialnessRatio, float smoothnessRatio, float sketchRatio) {
 			analyzed = false;
 			started = false;			
 			startPositions.clear();				
@@ -126,14 +129,14 @@ namespace wustl_mm {
 			}			
 
 			if(startPositions.size() > 0) {
-				skeletonizer->CalculateMinimalSpanningTree(startPositions, medialnessRatio, smoothnessRatio, sketchRatio, lengthRatio, false);
+				skeletonizer->CalculateMinimalSpanningTree(startPositions, medialnessRatio, smoothnessRatio, sketchRatio, false);
 				startPos = startPositions[0];
 				startSeedIsolated = false;
 				started = true;
 			}					
 		}
 
-		void InteractiveSkeletonEngine::SelectRootRay(float rayX, float rayY, float rayZ, float eyeX, float eyeY, float eyeZ, float rayWidth, float medialnessRatio, float smoothnessRatio, float sketchRatio, float lengthRatio) {
+		void InteractiveSkeletonEngine::SelectRootRay(float rayX, float rayY, float rayZ, float eyeX, float eyeY, float eyeZ, float rayWidth, float medialnessRatio, float smoothnessRatio, float sketchRatio) {
 			analyzed = false;
 			started = false;			
 			startPositions.clear();				
@@ -174,7 +177,7 @@ namespace wustl_mm {
 
 			if(maxIndex >= 0) {
 				startPos = startPositions[maxIndex];				
-				skeletonizer->IsolateStartSeed(startPos, medialnessRatio, smoothnessRatio, sketchRatio, lengthRatio, true);
+				skeletonizer->IsolateStartSeed(startPos, medialnessRatio, smoothnessRatio, sketchRatio, true);
 				startSeedIsolated = true;
 				//skeletonizer->DrawTree(startPos);
 			}

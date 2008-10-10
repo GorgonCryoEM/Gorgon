@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_dialog_volume_manual_skeletonization.ui'
 #
-# Created: Mon Oct 06 16:46:38 2008
+# Created: Fri Oct 10 09:10:39 2008
 #      by: PyQt4 UI code generator 4.3.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,7 +12,7 @@ from PyQt4 import QtCore, QtGui
 class Ui_DialogVolumeManualSkeletonization(object):
     def setupUi(self, DialogVolumeManualSkeletonization):
         DialogVolumeManualSkeletonization.setObjectName("DialogVolumeManualSkeletonization")
-        DialogVolumeManualSkeletonization.resize(QtCore.QSize(QtCore.QRect(0,0,416,213).size()).expandedTo(DialogVolumeManualSkeletonization.minimumSizeHint()))
+        DialogVolumeManualSkeletonization.resize(QtCore.QSize(QtCore.QRect(0,0,416,185).size()).expandedTo(DialogVolumeManualSkeletonization.minimumSizeHint()))
         DialogVolumeManualSkeletonization.setMinimumSize(QtCore.QSize(416,144))
 
         self.gridlayout = QtGui.QGridLayout(DialogVolumeManualSkeletonization)
@@ -105,31 +105,9 @@ class Ui_DialogVolumeManualSkeletonization(object):
         self.labeSketchPriorityDisplay.setObjectName("labeSketchPriorityDisplay")
         self.gridlayout.addWidget(self.labeSketchPriorityDisplay,2,2,1,1)
 
-        self.labelEdgeLength = QtGui.QLabel(DialogVolumeManualSkeletonization)
-        self.labelEdgeLength.setObjectName("labelEdgeLength")
-        self.gridlayout.addWidget(self.labelEdgeLength,3,0,1,1)
-
-        self.horizontalSliderEdgeLength = QtGui.QSlider(DialogVolumeManualSkeletonization)
-        self.horizontalSliderEdgeLength.setMinimum(0)
-        self.horizontalSliderEdgeLength.setMaximum(100)
-        self.horizontalSliderEdgeLength.setSingleStep(1)
-        self.horizontalSliderEdgeLength.setPageStep(10)
-        self.horizontalSliderEdgeLength.setProperty("value",QtCore.QVariant(25))
-        self.horizontalSliderEdgeLength.setOrientation(QtCore.Qt.Horizontal)
-        self.horizontalSliderEdgeLength.setTickPosition(QtGui.QSlider.NoTicks)
-        self.horizontalSliderEdgeLength.setObjectName("horizontalSliderEdgeLength")
-        self.gridlayout.addWidget(self.horizontalSliderEdgeLength,3,1,1,1)
-
-        self.labeEdgeLengthDisplay = QtGui.QLabel(DialogVolumeManualSkeletonization)
-        self.labeEdgeLengthDisplay.setMinimumSize(QtCore.QSize(20,0))
-        self.labeEdgeLengthDisplay.setMaximumSize(QtCore.QSize(60,16777215))
-        self.labeEdgeLengthDisplay.setLayoutDirection(QtCore.Qt.RightToLeft)
-        self.labeEdgeLengthDisplay.setObjectName("labeEdgeLengthDisplay")
-        self.gridlayout.addWidget(self.labeEdgeLengthDisplay,3,2,1,1)
-
         self.labelStartDensity = QtGui.QLabel(DialogVolumeManualSkeletonization)
         self.labelStartDensity.setObjectName("labelStartDensity")
-        self.gridlayout.addWidget(self.labelStartDensity,4,0,1,1)
+        self.gridlayout.addWidget(self.labelStartDensity,3,0,1,1)
 
         self.horizontalSliderStartingDensity = QtGui.QSlider(DialogVolumeManualSkeletonization)
         self.horizontalSliderStartingDensity.setMaximum(25500)
@@ -139,18 +117,18 @@ class Ui_DialogVolumeManualSkeletonization(object):
         self.horizontalSliderStartingDensity.setOrientation(QtCore.Qt.Horizontal)
         self.horizontalSliderStartingDensity.setTickPosition(QtGui.QSlider.NoTicks)
         self.horizontalSliderStartingDensity.setObjectName("horizontalSliderStartingDensity")
-        self.gridlayout.addWidget(self.horizontalSliderStartingDensity,4,1,1,1)
+        self.gridlayout.addWidget(self.horizontalSliderStartingDensity,3,1,1,1)
 
         self.labelStartingDensityDisplay = QtGui.QLabel(DialogVolumeManualSkeletonization)
         self.labelStartingDensityDisplay.setMinimumSize(QtCore.QSize(20,0))
         self.labelStartingDensityDisplay.setMaximumSize(QtCore.QSize(60,16777215))
         self.labelStartingDensityDisplay.setLayoutDirection(QtCore.Qt.RightToLeft)
         self.labelStartingDensityDisplay.setObjectName("labelStartingDensityDisplay")
-        self.gridlayout.addWidget(self.labelStartingDensityDisplay,4,2,1,1)
+        self.gridlayout.addWidget(self.labelStartingDensityDisplay,3,2,1,1)
 
         self.labelStepSize = QtGui.QLabel(DialogVolumeManualSkeletonization)
         self.labelStepSize.setObjectName("labelStepSize")
-        self.gridlayout.addWidget(self.labelStepSize,5,0,1,1)
+        self.gridlayout.addWidget(self.labelStepSize,4,0,1,1)
 
         self.horizontalSliderStepCount = QtGui.QSlider(DialogVolumeManualSkeletonization)
         self.horizontalSliderStepCount.setMaximum(1000)
@@ -160,14 +138,14 @@ class Ui_DialogVolumeManualSkeletonization(object):
         self.horizontalSliderStepCount.setOrientation(QtCore.Qt.Horizontal)
         self.horizontalSliderStepCount.setTickPosition(QtGui.QSlider.NoTicks)
         self.horizontalSliderStepCount.setObjectName("horizontalSliderStepCount")
-        self.gridlayout.addWidget(self.horizontalSliderStepCount,5,1,1,1)
+        self.gridlayout.addWidget(self.horizontalSliderStepCount,4,1,1,1)
 
         self.labelStepSizeDisplay = QtGui.QLabel(DialogVolumeManualSkeletonization)
         self.labelStepSizeDisplay.setMinimumSize(QtCore.QSize(20,0))
         self.labelStepSizeDisplay.setMaximumSize(QtCore.QSize(60,16777215))
         self.labelStepSizeDisplay.setLayoutDirection(QtCore.Qt.RightToLeft)
         self.labelStepSizeDisplay.setObjectName("labelStepSizeDisplay")
-        self.gridlayout.addWidget(self.labelStepSizeDisplay,5,2,1,1)
+        self.gridlayout.addWidget(self.labelStepSizeDisplay,4,2,1,1)
 
         self.gridlayout2 = QtGui.QGridLayout()
         self.gridlayout2.setObjectName("gridlayout2")
@@ -181,7 +159,7 @@ class Ui_DialogVolumeManualSkeletonization(object):
         self.spinBoxMinCurve.setProperty("value",QtCore.QVariant(4))
         self.spinBoxMinCurve.setObjectName("spinBoxMinCurve")
         self.gridlayout2.addWidget(self.spinBoxMinCurve,0,1,1,1)
-        self.gridlayout.addLayout(self.gridlayout2,5,3,1,1)
+        self.gridlayout.addLayout(self.gridlayout2,5,0,1,3)
 
         self.gridlayout3 = QtGui.QGridLayout()
         self.gridlayout3.setObjectName("gridlayout3")
@@ -195,7 +173,7 @@ class Ui_DialogVolumeManualSkeletonization(object):
         self.spinBoxCurveRadius.setProperty("value",QtCore.QVariant(2))
         self.spinBoxCurveRadius.setObjectName("spinBoxCurveRadius")
         self.gridlayout3.addWidget(self.spinBoxCurveRadius,0,1,1,1)
-        self.gridlayout.addLayout(self.gridlayout3,6,3,1,1)
+        self.gridlayout.addLayout(self.gridlayout3,5,3,1,1)
 
         self.gridlayout4 = QtGui.QGridLayout()
         self.gridlayout4.setObjectName("gridlayout4")
@@ -211,19 +189,17 @@ class Ui_DialogVolumeManualSkeletonization(object):
         self.pushButtonClose.setEnabled(False)
         self.pushButtonClose.setObjectName("pushButtonClose")
         self.gridlayout4.addWidget(self.pushButtonClose,0,2,1,1)
-        self.gridlayout.addLayout(self.gridlayout4,7,0,1,4)
+        self.gridlayout.addLayout(self.gridlayout4,6,0,1,4)
 
         self.retranslateUi(DialogVolumeManualSkeletonization)
         QtCore.QObject.connect(self.horizontalSliderMedialness,QtCore.SIGNAL("valueChanged(int)"),self.labelMedialnessDisplay.setNum)
         QtCore.QObject.connect(self.horizontalSliderSmoothness,QtCore.SIGNAL("valueChanged(int)"),self.labeSmoothnessDisplay.setNum)
         QtCore.QObject.connect(self.horizontalSliderStepCount,QtCore.SIGNAL("valueChanged(int)"),self.labelStepSizeDisplay.setNum)
         QtCore.QObject.connect(self.horizontalSliderSketchPriority,QtCore.SIGNAL("valueChanged(int)"),self.labeSketchPriorityDisplay.setNum)
-        QtCore.QObject.connect(self.horizontalSliderEdgeLength,QtCore.SIGNAL("valueChanged(int)"),self.labeEdgeLengthDisplay.setNum)
         QtCore.QMetaObject.connectSlotsByName(DialogVolumeManualSkeletonization)
         DialogVolumeManualSkeletonization.setTabOrder(self.horizontalSliderMedialness,self.horizontalSliderSmoothness)
         DialogVolumeManualSkeletonization.setTabOrder(self.horizontalSliderSmoothness,self.horizontalSliderSketchPriority)
-        DialogVolumeManualSkeletonization.setTabOrder(self.horizontalSliderSketchPriority,self.horizontalSliderEdgeLength)
-        DialogVolumeManualSkeletonization.setTabOrder(self.horizontalSliderEdgeLength,self.horizontalSliderStartingDensity)
+        DialogVolumeManualSkeletonization.setTabOrder(self.horizontalSliderSketchPriority,self.horizontalSliderStartingDensity)
         DialogVolumeManualSkeletonization.setTabOrder(self.horizontalSliderStartingDensity,self.horizontalSliderStepCount)
         DialogVolumeManualSkeletonization.setTabOrder(self.horizontalSliderStepCount,self.spinBoxMinCurve)
         DialogVolumeManualSkeletonization.setTabOrder(self.spinBoxMinCurve,self.spinBoxCurveRadius)
@@ -238,7 +214,7 @@ class Ui_DialogVolumeManualSkeletonization(object):
         self.labelMedialness.setText(QtGui.QApplication.translate("DialogVolumeManualSkeletonization", "Medialness:", None, QtGui.QApplication.UnicodeUTF8))
         self.horizontalSliderMedialness.setWhatsThis(QtGui.QApplication.translate("DialogVolumeManualSkeletonization", "Picks the density to use when performing skeletonization", None, QtGui.QApplication.UnicodeUTF8))
         self.labelMedialnessDisplay.setText(QtGui.QApplication.translate("DialogVolumeManualSkeletonization", "25", None, QtGui.QApplication.UnicodeUTF8))
-        self.groupBoxMedialnessScore.setTitle(QtGui.QApplication.translate("DialogVolumeManualSkeletonization", "Medialness Scoring Function:", None, QtGui.QApplication.UnicodeUTF8))
+        self.groupBoxMedialnessScore.setTitle(QtGui.QApplication.translate("DialogVolumeManualSkeletonization", "Medialness Function:", None, QtGui.QApplication.UnicodeUTF8))
         self.radioButtonBinary.setText(QtGui.QApplication.translate("DialogVolumeManualSkeletonization", "Binary", None, QtGui.QApplication.UnicodeUTF8))
         self.radioButtonGlobalRank.setText(QtGui.QApplication.translate("DialogVolumeManualSkeletonization", "Global Rank", None, QtGui.QApplication.UnicodeUTF8))
         self.radioButtonLocalRank.setText(QtGui.QApplication.translate("DialogVolumeManualSkeletonization", "Local Rank", None, QtGui.QApplication.UnicodeUTF8))
@@ -248,9 +224,6 @@ class Ui_DialogVolumeManualSkeletonization(object):
         self.labelSketchImportance.setText(QtGui.QApplication.translate("DialogVolumeManualSkeletonization", "Sketch Priority:", None, QtGui.QApplication.UnicodeUTF8))
         self.horizontalSliderSketchPriority.setWhatsThis(QtGui.QApplication.translate("DialogVolumeManualSkeletonization", "Picks the density to use when performing skeletonization", None, QtGui.QApplication.UnicodeUTF8))
         self.labeSketchPriorityDisplay.setText(QtGui.QApplication.translate("DialogVolumeManualSkeletonization", "25", None, QtGui.QApplication.UnicodeUTF8))
-        self.labelEdgeLength.setText(QtGui.QApplication.translate("DialogVolumeManualSkeletonization", "Edge Length:", None, QtGui.QApplication.UnicodeUTF8))
-        self.horizontalSliderEdgeLength.setWhatsThis(QtGui.QApplication.translate("DialogVolumeManualSkeletonization", "Picks the density to use when performing skeletonization", None, QtGui.QApplication.UnicodeUTF8))
-        self.labeEdgeLengthDisplay.setText(QtGui.QApplication.translate("DialogVolumeManualSkeletonization", "25", None, QtGui.QApplication.UnicodeUTF8))
         self.labelStartDensity.setText(QtGui.QApplication.translate("DialogVolumeManualSkeletonization", "Starting Density:", None, QtGui.QApplication.UnicodeUTF8))
         self.horizontalSliderStartingDensity.setWhatsThis(QtGui.QApplication.translate("DialogVolumeManualSkeletonization", "Picks the density to use when performing skeletonization", None, QtGui.QApplication.UnicodeUTF8))
         self.labelStartingDensityDisplay.setText(QtGui.QApplication.translate("DialogVolumeManualSkeletonization", "128", None, QtGui.QApplication.UnicodeUTF8))
