@@ -24,14 +24,47 @@ if __name__ == '__main__':
     Chain.Chain.setSelectedChainKey(mychain.getIDs())
     mychain.addCalphaBonds()
     renderer = mychain.getViewer().renderer
+    
+    SequenceView.renderMockSidechains(mychain)
+    
     for i in mychain.residueRange():
         atom = mychain[i].getAtom('CA')
+        #mychain[i].setCAlphaColorScheme1()
+        #mychain[i].setCAlphaColorScheme2()
+        #mychain[i].setCAlphaColorsToDefault()
+        renderer.addAtom(atom)
+    
+    if (not mychain.getViewer().loaded):
+        viewer.dirty = False
+        mychain.getViewer().loaded = True
+        viewer.emitModelLoadedPreDraw()
+        mychain.getViewer().emitModelLoaded()
+        mychain.getViewer().emitViewerSetCenter()
+    
+    SequenceView.clearMockSidechains(mychain)
+    viewer.setModelVisibility(False)
+    viewer.setModelVisibility(True)
+    #Note: setModelVisibility calls base_viewer.modelChanged(), which doesn't seem to pick up on changes in atom attributes
+    #The 3 lines of code above should cause the default yellow atoms all the same size with light blue bonds to be displayed.
+    #However, our mock side chains continue to be displayed
+    #On the other hand, if we unload the data, and then reload it, changes to atom attributes do show up, as the code below shows.
+    
+    '''
+    SequenceView.clearMockSidechains(mychain)
+    viewer.unloadData()
+    mychain.addCalphaBonds()
+    
+    for i in mychain.residueRange():
+        atom = mychain[i].getAtom('CA')
+        #mychain[i].setCAlphaColorScheme1()
+        #mychain[i].setCAlphaColorScheme2()
+        #mychain[i].setCAlphaColorsToDefault()
         renderer.addAtom(atom)
     if (not mychain.getViewer().loaded):
         viewer.dirty = False
         mychain.getViewer().loaded = True
         viewer.emitModelLoadedPreDraw()
         mychain.getViewer().emitModelLoaded()
-        mychain.getViewer().emitViewerSetCenter()    
-
+        mychain.getViewer().emitViewerSetCenter()
+    '''
     sys.exit(app.exec_())
