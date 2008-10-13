@@ -25,7 +25,10 @@ class Secel(object):
         self.color=QtGui.QColor(0,0,0)
 
   def __repr__(self):
-    return self.__str__()
+    typeOfSecel = str(type(self)).split('.')[-1]
+    typeOfSecel = typeOfSecel.split("'")[0]
+    return "%s(chain=Chain.getChain(%s), serialNo=%s, label=%s, startIndex=%i, stopIndex=%i)" % (typeOfSecel,  
+                                self.chain.getIDs(),  self.serialNo,  self.label,  self.startIndex, self.stopIndex)
 
   def setColor(self, newColor):
     self.color=newColor
@@ -34,13 +37,5 @@ class Secel(object):
     return self.color
 
   def __str__(self):
-    s = self.type + '(' + str(self.startIndex) + ',' + str(self.stopIndex) + ')' + ':'
-    residues = self.chain[self.startIndex:self.stopIndex]
-    residues = residues.__repr__().split('...')
-    noPeriods = []
-    for item in residues:
-        if item == '': 
-            continue
-        noPeriods.append(item)
-    residues = ''.join(noPeriods)
-    return s + residues
+    residues = str(self.chain[self.startIndex:self.stopIndex]).strip('...')
+    return "%s(%i,%i):%s" % (self.type, self.startIndex, self.stopIndex, residues)
