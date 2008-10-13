@@ -656,32 +656,17 @@ class SequenceView(QtGui.QWidget):
 
 
   def setSequenceSelection(self, newSelection=None, removeOne=None, addOne=None, addRange=None):
-    print 'In SequenceView.setSequenceSelection'
     self.sequence.setSelection(newSelection,removeOne,addOne,addRange)
-    #print newSelection
-    #print self.parent.parent.threeResidues
     self.parent.parent.threeResidues.setResidues(newSelection)
     dock = self.parent.parent.parent()
     #TODO: Need to select an atom in the renderer when a residue is selected in SequenceView
-    #TODO: Figure out how to center the screen on the selected atom
     viewer = dock.viewer
     app = dock.app
     atom = self.sequence[ self.sequence.getSelection()[-1] ].getAtom('CA')
-    #atom.setSelected(True)
-    #viewer.emitModelChanged()
-    PDBposition = [ atom.getPosition().x(),  atom.getPosition().y(),  atom.getPosition().z() ]
-    minPos = [(viewer.renderer.getMin(0)*viewer.scale[0]),
-                        (viewer.renderer.getMin(1)*viewer.scale[1]),
-                        (viewer.renderer.getMin(2)*viewer.scale[2])]
-    
-    maxPos = [(viewer.renderer.getMax(0)*viewer.scale[0]),
-                        (viewer.renderer.getMax(1)*viewer.scale[1] ),
-                        (viewer.renderer.getMax(2)*viewer.scale[2])]
-    size = [maxPos[i] - minPos[i] for i in range(3)]
-    position = [PDBposition[i] - 0.5*size[i] for i in range(3)] 
-    #I don't know why hitting the center button or right clicking and dragging does not affect viewer.location
-    print PDBposition, position
-    #app.mainCamera.setCenter( *position ) This does call the correct function, but it does not move how I want.
+    atom.setSelected(True)
+    x, y, z = atom.getPosition().x()*viewer.scale[0],  atom.getPosition().y()*viewer.scale[1],  atom.getPosition().z()*viewer.scale[2]
+    app.mainCamera.setCenter( x, y, z )
+    viewer.emitModelChanged()
           
   def setFont(self, newFont):
     self.fontName=newFont
