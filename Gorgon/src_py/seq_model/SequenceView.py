@@ -6,8 +6,6 @@ from seq_model.Helix import Helix
 from seq_model.Strand import Strand
 from seq_model.Chain import Chain
 from seq_model.Residue import Residue
-#from ui_threeResidues import Ui_threeResidues
-#from threeResidues import Ui_threeResidues
 from libpyGORGON import CAlphaRenderer, PDBAtom
 
 class SequenceDock(QtGui.QDockWidget):
@@ -23,7 +21,7 @@ class SequenceDock(QtGui.QDockWidget):
         self.setWidget(self.seqWidget)
         self.createActions()
         SequenceDock.__dock = self
-        self.connect(self.seqWidget.threeResidues.mockSidechainsCheckBox,  QtCore.SIGNAL('stateChanged(int)'),  self.toggleMockSideChains)
+        self.connect(self.seqWidget.structureEditor.mockSidechainsCheckBox,  QtCore.SIGNAL('stateChanged(int)'),  self.toggleMockSideChains)
         if main:
             self.connect(self.app.viewers["calpha"], QtCore.SIGNAL("elementSelected (int, int, int, int, int, int, QMouseEvent)"), self.updateFromViewerSelection)    
     
@@ -80,8 +78,12 @@ class SequenceDock(QtGui.QDockWidget):
 #        self.emit( QtCore.SIGNAL('SequencePanelUpdate'))
     
     def toggleMockSideChains(self):
-        if self.seqWidget.threeResidues.mockSidechainsCheckBox.isChecked():
-            self.seqWidget.threeResidues.renderMockSidechains(self.chainObj)
+        viewer = self.viewer
+        renderer = self.viewer.renderer
+        mychain = self.chainObj
+        
+        if self.seqWidget.structureEditor.mockSidechainsCheckBox.isChecked():
+            self.seqWidget.structureEditor.renderMockSidechains(self.chainObj)
             #TODO: learn how to refresh the drawing in the renderer.
             #self.viewer.draw()
             #self.viewer.emitModelLoadedPreDraw()
@@ -89,11 +91,27 @@ class SequenceDock(QtGui.QDockWidget):
             #self.viewer.emitModelLoaded()
             #self.viewer.emitViewerSetCenter()
         else:
-            self.seqWidget.threeResidues.clearMockSidechains(self.chainObj) 
-            self.viewer.emitModelLoadedPreDraw()
-            self.viewer.emitModelChanged()
+            self.seqWidget.structureEditor.clearMockSidechains(self.chainObj) 
+            #self.viewer.emitModelLoadedPreDraw()
+            #self.viewer.emitModelChanged()
             #self.viewer.emitModelLoaded()
-            self.viewer.emitViewerSetCenter()
+            #self.viewer.emitViewerSetCenter()
+        
+        #TODO: find a better way than unloading and reloading data to do this
+        viewer.unloadData()
+        mychain.addCalphaBonds()
+       
+        for i in mychain.residueRange():
+            atom = mychain[i].getAtom('CA')
+            renderer.addAtom(atom)
+    
+        if not viewer.loaded:
+            viewer.dirty = False
+            viewer.loaded = True
+            viewer.emitModelLoadedPreDraw()
+            viewer.emitModelLoaded()
+        
+        #viewer.emitModelChanged()
             
 class SequenceWidget(QtGui.QWidget):
     def __init__(self, chainObj, parent=None):
@@ -101,7 +119,7 @@ class SequenceWidget(QtGui.QWidget):
         self.setMinimumSize(400,600)
         self.scrollable = ScrollableSequenceView(chainObj, self)
         self.scrollable.setMinimumSize(300, 180)
-        self.threeResidues = ThreeResidues(chainObj, self)
+        self.structureEditor = StructureEditor(chainObj, self)
         self.chainObj = chainObj
         
         self.globalView=GlobalSequenceView(chainObj)
@@ -117,14 +135,14 @@ class SequenceWidget(QtGui.QWidget):
         layout = QtGui.QVBoxLayout()
         layout.addWidget(self.globalView)
         layout.addWidget(self.scrollable)
-        layout.addWidget(self.threeResidues)
+        layout.addWidget(self.structureEditor)
         layout.addStretch()
         self.setLayout(layout)
         self.setWindowTitle('Sequence Widget')
 
-class ThreeResidues(QtGui.QWidget):
+class StructureEditor(QtGui.QWidget):
     def __init__(self, chainObj, parent=None):
-        super(ThreeResidues, self).__init__(parent)
+        super(StructureEditor, self).__init__(parent)
         
         self.chainObj = chainObj
         
@@ -656,17 +674,44 @@ class SequenceView(QtGui.QWidget):
 
 
   def setSequenceSelection(self, newSelection=None, removeOne=None, addOne=None, addRange=None):
+    selectionToClear = self.sequence.getSelection()
+    for i in selectionToClear:
+        atom = self.sequence[i].getAtom('CA')
+        atom.setSelected(False)
     self.sequence.setSelection(newSelection,removeOne,addOne,addRange)
-    self.parent.parent.threeResidues.setResidues(newSelection)
+    self.parent.parent.structureEditor.setResidues(newSelection)
     dock = self.parent.parent.parent()
     #TODO: Need to select an atom in the renderer when a residue is selected in SequenceView
     viewer = dock.viewer
+    renderer = viewer.renderer
     app = dock.app
-    atom = self.sequence[ self.sequence.getSelection()[-1] ].getAtom('CA')
-    atom.setSelected(True)
-    x, y, z = atom.getPosition().x()*viewer.scale[0],  atom.getPosition().y()*viewer.scale[1],  atom.getPosition().z()*viewer.scale[2]
+    selectedAtom = self.sequence[ self.sequence.getSelection()[-1] ].getAtom('CA')
+    selectedAtom.setSelected(True)
+    pos = selectedAtom.getPosition()
+    x, y, z = pos.x()*viewer.scale[0],  pos.y()*viewer.scale[1],  pos.z()*viewer.scale[2]
+    
+    mychain = self.sequence
+    #TODO: change BaseViewer.modelLoaded() to redraw PDBAtoms if their attributes have changed
+    #Current: Here we completely unload and re-load the model, which isn't really the best way to do things, 
+    #but it's the only way I can get selected atoms to display
+    viewer.unloadData()
+    mychain.addCalphaBonds()
+   
     app.mainCamera.setCenter( x, y, z )
-    viewer.emitModelChanged()
+   
+    for i in mychain.residueRange():
+        atom = mychain[i].getAtom('CA')
+        renderer.addAtom(atom)
+
+    if not viewer.loaded:
+        viewer.dirty = False
+        viewer.loaded = True
+        viewer.emitModelLoadedPreDraw()
+        viewer.emitModelLoaded()
+    
+    #viewer.emitModelChanged()
+    
+
           
   def setFont(self, newFont):
     self.fontName=newFont
@@ -932,10 +977,10 @@ def renderCAlphas(chain):
       Chain.getViewer().renderer.addBond(bond)
 
 def renderMockSidechains(chain):
-    obj = ThreeResidues(chain)
+    obj = StructureEditor(chain)
     obj.renderMockSidechains(chain)
 def clearMockSidechains(chain):
-    obj = ThreeResidues(chain)
+    obj = StructureEditor(chain)
     obj.clearMockSidechains(chain)
 
 #Below is Mike's version of this function -- Ross's version is in SequenceWidget
@@ -1015,7 +1060,7 @@ if __name__ == '__main__':
     seqWidget = SequenceWidget(groel)
     seqWidget.show()
     
-    #threeRes = ThreeResidues(groel)
+    #threeRes = StructureEditor(groel)
     #threeRes.show()
     
     #seqScroll = ScrollableSequenceView(groel)
