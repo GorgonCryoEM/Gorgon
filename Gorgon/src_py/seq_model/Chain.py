@@ -31,9 +31,8 @@ class Chain(baseClass):
 
   #Chain Constructor
   def __init__(self,char_string=None,qparent=None, pdbID=None, chainID='A'):
-    #####if the chain with a given (pdbID, chainID) key already exists, reference that
-    #####perhaps we should change this behavior, in case someone modified a chain object
-    #####then imported a PDB with a chain of the same name
+    #CURRENT: If the chain with a given (pdbID, chainID) key already exists, reference that
+    #TODO: perhaps we should change this behavior, in case someone modified a chain object then imported a PDB with a chain of the same name
     if qparent and qtEnabled:
         super(QtCore.QObject,self).__init__(qparent)
 
@@ -64,11 +63,14 @@ class Chain(baseClass):
 
   @classmethod
   def __createUniquePDBID(cls):
-    #####We might want to modify this to use any unused numbers (after a rename)
+    '''
+    If no PDB ID is specified when creating a chain, this method will create one that is simply a number preceded by enough underscores to give a 4 character identifier.
+    '''
+    #TODO:We might want to modify this to use any unused numbers (after a rename)
     pdbNum = cls.__lastAuto_pdbID + 1
     numUnderscores = 4 - len(str(pdbNum))
     assert numUnderscores >= 0
-    ####We need to figure out how to handle this exception
+    #TODO: We need to figure out how to handle this exception
     pdbID = '_'*numUnderscores + str(pdbNum)
     cls.__lastAuto_pdbID += 1
     return pdbID
@@ -156,6 +158,13 @@ class Chain(baseClass):
 
   @classmethod
   def __loadFromSeq(cls, filename, qparent=None):
+    '''
+    Sequence files are a file type we defined.  The first line gives the one-letter abbreviations for the sequence.  The line below it shows the predicted secondary structure element for each residue as "H" for helix, "E" for strand, and "-" otherwise.  
+    Ex:
+    GAPCSTLARFKEI
+    HHHHHH--EEEE
+    Actually, there may be linebreaks within the sequence or the predicted secondary structure, because the first half of the characters are treated as sequence, the second half are treated as secondary structure predictions, and the linebreaks are removed.  
+    '''
     F = open(filename)
     lines = []
     for line in F:
@@ -217,11 +226,18 @@ class Chain(baseClass):
 
   @classmethod
   def __nextChainID(cls):
+    '''
+    If a chain ID isn't specified, this function generatres one.
+    '''
+    #TODO: make sure this will not eventually overwrite chain IDs from a PDB file that doesn't start at A.
     Chain.__lastChainID=Chain.__lastChainID+1
     return chr(Chain.__lastChainID)
 
   @classmethod
   def getChain(cls, key):
+    '''
+    Given a key (which is a (pdbID, chainID) tuple), returns a chain object.  
+    '''
     return cls.chainsDict.get(key)	#{}.get() can handle non-existent key errors
 
   @classmethod
@@ -238,6 +254,9 @@ class Chain(baseClass):
                 linelist[0] = linelist[0].strip()
                 if ';' in linelist[-1]:
                     linelist[-1] = linelist[-1].split(';')[0]	#removes the terminating semicolon and extra whitespace
+                    while True:
+                        try: linelist.remove('NULL')
+                        except: break
                 return linelist
         if linelist == []:
             return ['A']
@@ -246,18 +265,30 @@ class Chain(baseClass):
 
   @classmethod
   def getSelectedChainKey(cls):
+    '''
+    If we have multiple chains loaded into memory, this returns the key for the one that is currently selected.
+    '''
     return cls.__selectedChainKey
 
   @classmethod
   def getChainKeys(cls):
+      '''
+      This returns the keys (PDB ID, Chain ID) for all the chains loaded into memory.
+      '''
       return cls.chainsDict.keys()
 
   @classmethod
   def getViewer(cls):
+    '''
+    returns the viewer associated with the chain class
+    '''
     return Chain.__viewer
 
   @classmethod
   def load (cls,filename,qparent=None, whichChainID=None):
+    '''
+    This calls the correct load method based on the file extension.
+    '''
     extension = filename.split('.')[-1].lower()
     if extension == 'pdb':
       return Chain.__loadFromPDB(filename,qparent, whichChainID)
@@ -270,9 +301,17 @@ class Chain(baseClass):
 
   @classmethod
   def loadAllChains(cls, filename, qparent=None):
+    '''
+    This loads all the chains specified in a PDB file.  
+    '''
     chain = None
     chains = []
     chainIDs = cls.getChainIDsFromPDB(filename,qparent)
+    while True:
+        try: chanIDs.remove('NULL')
+        except: break
+    if not chainIDs:
+        chainIDs = [None]
     for whichChainID in chainIDs:
         chain = Chain.load(filename, qparent, whichChainID)
         chains.append(chain.getIDs())
@@ -281,9 +320,15 @@ class Chain(baseClass):
   
   @classmethod
   def setSelectedChainKey(cls, key):
+    '''
+    If there are multiple chains loaded into memory, this can be used to set which chain is currently selected.
+    '''
     Chain.__selectedChainKey = key
   @classmethod
   def setViewer(cls, viewer):
+    '''
+    This sets the viewer for the Chain class.
+    '''
     Chain.__viewer=viewer
     
 
@@ -322,7 +367,7 @@ class Chain(baseClass):
 
   def __iter__(self):
     # must handle discontinuous residueList keys such as {3,4,5,6,7,8, 13,14,15,16, 21,22,23}
-    #eys=self.residueList.keys().sort()
+    #keys=self.residueList.keys().sort()
     keys=self.residueList.keys()
     key_index=0
     next_residue_key=keys[key_index]
@@ -337,6 +382,9 @@ class Chain(baseClass):
 
   # len(my_chain) returns the length of residueList
   def __len__(self):
+    '''
+    returns the length of the residueList
+    '''
     return_value= len(self.residueList)
     return return_value
 
@@ -358,7 +406,7 @@ class Chain(baseClass):
       raise TypeError
 
   def __slicehelper(self,i,j):
-    #rint 'slice_helper(%s,%s)' %(i,j)
+    #print 'slice_helper(%s,%s)' %(i,j)
     keys=self.residueList.keys()
     keys.sort()
     start=keys.index(i)
@@ -406,6 +454,9 @@ class Chain(baseClass):
     return new_chain
 
   def addCalphaBonds(self):
+    '''
+    Adds the Calpha bonds for all the residues in a chain.  If there is a gap in the sequence of residues, this will not place a C-alpha bond--one doesn't want a bond between the 97th and 103rd residue if there are no residues listed in between.
+    '''
     try: 
         viewer = Chain.getViewer()
     except:
@@ -424,14 +475,23 @@ class Chain(baseClass):
             prevIndex = resIndex
 
   def addSecel(self, secel):
+    '''
+    adds a secel object to the chain
+    '''
     for index in range(secel.startIndex, secel.stopIndex+1):
       self.secelList[index]=secel
 
   def addHelix(self, serialNo, helix):
+    '''
+    adds a helix object to the chain
+    '''
     self.helices[serialNo]=helix
     self.addSecel(helix)
 
   def addStrand(self, strand, strandNo, sheetID=None):
+    '''
+    adds a strand object to the chain
+    '''
     if sheetID is None:
       self.orphanStrands[strandNo]=strand
     else:
@@ -439,6 +499,9 @@ class Chain(baseClass):
     self.addSecel(strand)
 
   def addSheet(self, sheetID, sheet):
+    '''
+    adds a sheet object to the chain
+    '''    
     if not self.sheets.has_key(sheetID):
       self.sheets[sheetID]=sheet
 
@@ -463,6 +526,9 @@ class Chain(baseClass):
       self[index].clearAtoms()
 
   def findIndexForRes (self, inputRes):
+    '''
+    Finds the index for a residue object.
+    '''
 #    Generator objects turn out to be a bit slower than the for loop, which surprises me (Ross).
 #    indexGenerator = (index for index in self.residueRange()[::-1] if self.residueList[index] is inputRes) #Generator Object
 #    return indexGenerator.next()
@@ -471,6 +537,9 @@ class Chain(baseClass):
         return index
     
   def fillGaps(self):
+    '''
+    If there are missing residues in a chain, inserts "X" unknown residues.
+    '''
     for i in self.residueRange():
       while i+1 not in self.residueRange():
         if i+1>self.residueRange()[-1]:
@@ -504,6 +573,9 @@ class Chain(baseClass):
     return self.selectedResidues
 
   def residueRange(self):
+    '''
+    Returns a list of all the residue indices.
+    '''
     return sorted(self.residueList.keys())
 
   def saveToPDB(self, filename):
