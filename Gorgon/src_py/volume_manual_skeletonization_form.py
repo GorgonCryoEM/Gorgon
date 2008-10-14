@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.16  2008/10/10 14:25:57  ssa1
+#   Setting the cost functions to scale with the edge length
+#
 #   Revision 1.15  2008/10/08 16:43:19  ssa1
 #   Interactive skeletonization changes
 #
@@ -53,6 +56,7 @@ class VolumeManualSkeletonizationForm(QtGui.QWidget):
         QtGui.QWidget.__init__(self, parent)
         self.app = main
         self.started = False
+        self.sketchStarted = False
         self.viewer = viewer
         self.connect(self.viewer, QtCore.SIGNAL("modelLoaded()"), self.modelLoaded)
         self.connect(self.viewer, QtCore.SIGNAL("modelChanged()"), self.modelChanged)
@@ -195,11 +199,11 @@ class VolumeManualSkeletonizationForm(QtGui.QWidget):
         return hits
                     
     def processClickRay(self, ray, rayWidth, eye, event):        
-        divisor =  float(self.getMedialness()) + float(self.getSmoothness()) +  float(self.getSketchPriority());
+        divisor =  float(self.getMedialness()) + float(self.getSmoothness());
 
         medialnessRatio = float(self.getMedialness()) / divisor;
         smoothnessRatio = float(self.getSmoothness()) / divisor;
-        sketchPriorityRatio = float(self.getSketchPriority()) / divisor;
+        sketchPriorityRatio = float(self.getSketchPriority()) / 100.0;
 
         if(self.started):
             if((event.modifiers() & QtCore.Qt.CTRL) and (event.modifiers() & QtCore.Qt.ALT)):
@@ -209,13 +213,24 @@ class VolumeManualSkeletonizationForm(QtGui.QWidget):
                 self.skeletonViewer.emitModelChanged()                    
             elif (event.modifiers() & QtCore.Qt.ALT):
                 self.engine.selectEndSeed(medialnessRatio, smoothnessRatio, sketchPriorityRatio)
-                self.skeletonViewer.emitModelChanged()                          
+                self.skeletonViewer.emitModelChanged()
+            elif (event.modifiers() & QtCore.Qt.SHIFT):
+                self.sketchStarted = not self.sketchStarted
+                if(self.sketchStarted):
+                    self.engine.clearSketchRay()
+                    self.engine.startSketchRay(ray[0], ray[1], ray[2], eye[0], eye[1], eye[2], rayWidth)
+                else :
+                    self.engine.endSketchRay(ray[0], ray[1], ray[2], eye[0], eye[1], eye[2], rayWidth, medialnessRatio, smoothnessRatio, sketchPriorityRatio)
+                self.skeletonViewer.emitModelChanged()       
                     
 
     def processMouseOverRay(self, ray, rayWidth, eye, event):
         if(self.started and event.modifiers() & QtCore.Qt.ALT ):
             self.engine.analyzePathRay(ray[0], ray[1], ray[2], eye[0], eye[1], eye[2], rayWidth)
-            self.skeletonViewer.emitModelChanged()      
+            self.skeletonViewer.emitModelChanged()
+        elif(event.modifiers() & QtCore.Qt.SHIFT):
+            if(self.engine.setSketchRay(ray[0], ray[1], ray[2], eye[0], eye[1], eye[2], rayWidth)):
+                self.skeletonViewer.emitModelChanged()
                 
     
     def modelLoaded(self):

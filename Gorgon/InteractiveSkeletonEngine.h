@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.16  2008/10/10 14:25:55  ssa1
+//   Setting the cost functions to scale with the edge length
+//
 //   Revision 1.15  2008/10/08 16:43:19  ssa1
 //   Interactive skeletonization changes
 //
@@ -27,6 +30,7 @@
 #include <MathTools/Vector3D.h>
 #include <Foundation/Octree.h>
 #include <vector>
+#include <map>
 
 using namespace wustl_mm::Protein_Morph;
 using namespace wustl_mm::GraySkeletonCPP;
@@ -35,11 +39,17 @@ using namespace std;
 
 namespace wustl_mm {
 	namespace Visualization {	
+		typedef map<unsigned long long, bool> SketchMapType;
 		class InteractiveSkeletonEngine {
 		public:
 			InteractiveSkeletonEngine(Volume * volume, NonManifoldMesh_Annotated * skeleton, float minGray, int stepCount, int curveRadius, int minCurveSize, unsigned int medialnessScoringFunction);
 			~InteractiveSkeletonEngine();			
 			void AnalyzePathRay(float rayX, float rayY, float rayZ, float eyeX, float eyeY, float eyeZ, float rayWidth);
+			void ClearSketchRay();
+			void StartSketchRay(float rayX, float rayY, float rayZ, float eyeX, float eyeY, float eyeZ, float rayWidth);
+			bool SetSketchRay(float rayX, float rayY, float rayZ, float eyeX, float eyeY, float eyeZ, float rayWidth);
+			void EndSketchRay(float rayX, float rayY, float rayZ, float eyeX, float eyeY, float eyeZ, float rayWidth, float medialnessRatio, float smoothnessRatio, float sketchRatio);
+
 			void Draw(int subscene);
 			void FinalizeSkeleton();
 			void SelectEndSeed(float medialnessRatio, float smoothnessRatio, float sketchRatio);
@@ -59,6 +69,11 @@ namespace wustl_mm {
 			GLUquadric * quadricSphere;			
 			float isoValue;
 			bool startSeedIsolated;
+
+
+			SketchMapType sketchPositions;
+			bool sketchStarted;
+			float rayStart[3], eyeStart[3], rayWidthStart;
 		};
 
 		InteractiveSkeletonEngine::InteractiveSkeletonEngine(Volume * volume, NonManifoldMesh_Annotated * skeleton, float minGray, int stepCount, int curveRadius, int minCurveSize, unsigned int medialnessScoringFunction) {
@@ -81,7 +96,8 @@ namespace wustl_mm {
 			started = false;
 			analyzed = false;
 			startSeedIsolated = false;
-			quadricSphere = gluNewQuadric();			
+			quadricSphere = gluNewQuadric();	
+			sketchStarted = false;
 		}
 
 		InteractiveSkeletonEngine::~InteractiveSkeletonEngine() {
@@ -223,6 +239,58 @@ namespace wustl_mm {
 			}
 		}
 
+		void InteractiveSkeletonEngine::ClearSketchRay() {
+			sketchPositions.clear();
+			vector<Vector3DInt> sketchPts;
+			skeletonizer->SetSketchPoints(sketchPts, sketchRatio);
+		}
+
+		void InteractiveSkeletonEngine::StartSketchRay(float rayX, float rayY, float rayZ, float eyeX, float eyeY, float eyeZ, float rayWidth) {
+			ClearSketchRay();
+			rayStart[0] = rayX;
+			rayStart[1] = rayY;
+			rayStart[2] = rayZ;
+			eyeStart[0] = eyeX;
+			eyeStart[1] = eyeY;
+			eyeStart[2] = eyeZ;
+			rayWidthStart = rayWidth;
+			sketchStarted = true;			
+			SetSketchRay(rayX, rayY, rayZ, eyeX, eyeY, eyeZ, rayWidth);
+		}
+
+		bool InteractiveSkeletonEngine::SetSketchRay(float rayX, float rayY, float rayZ, float eyeX, float eyeY, float eyeZ, float rayWidth) {
+			bool added = false;
+			if(sketchStarted) {
+				vector<OctreeNode<octreeTagType> *> intersectingCells = skeletonizer->GetOctree()->IntersectRay(Vector3DFloat(rayX, rayY, rayZ), Vector3DFloat(eyeX, eyeY, eyeZ), rayWidth);
+				unsigned long long hash;
+				
+				for(unsigned int i = 0; i < intersectingCells.size(); i++) {
+					hash = GetHashFromVector3DInt(Vector3DInt(intersectingCells[i]->pos[0], intersectingCells[i]->pos[1], intersectingCells[i]->pos[2]));
+					if(sketchPositions.find(hash) == sketchPositions.end()) {
+						sketchPositions[hash] = true;
+						added = true;
+					}
+				}
+			}
+			return added;
+		}
+
+		
+		void InteractiveSkeletonEngine::EndSketchRay(float rayX, float rayY, float rayZ, float eyeX, float eyeY, float eyeZ, float rayWidth, float medialnessRatio, float smoothnessRatio, float sketchRatio) {
+			if(sketchStarted) {
+				vector<Vector3DInt> sketchPts;
+				for(SketchMapType::iterator i = sketchPositions.begin(); i!= sketchPositions.end(); i++) {
+					sketchPts.push_back(GetVector3DIntFromHash(i->first));
+				}
+
+				SetSketchRay(rayX, rayY, rayZ, eyeX, eyeY, eyeZ, rayWidth);
+				skeletonizer->SetSketchPoints(sketchPts, sketchRatio);
+				SelectStartSeedRay(rayStart[0], rayStart[1], rayStart[2], eyeStart[0], eyeStart[1], eyeStart[2], rayWidthStart, medialnessRatio, smoothnessRatio, sketchRatio);
+				AnalyzePathRay(rayX, rayY, rayZ, eyeX, eyeY, eyeZ, rayWidth);
+				SelectEndSeed(medialnessRatio, smoothnessRatio, sketchRatio);
+			}
+		}
+
 		void InteractiveSkeletonEngine::FinalizeSkeleton() {
 			for(unsigned int i = 0; i < skeleton->vertices.size(); i++) {
 				if(skeleton->vertices[i].edgeIds.size() == 0) {
@@ -250,6 +318,16 @@ namespace wustl_mm {
 					}
 					break;
 				case(2):
+					/*{
+						Vector3DInt v;
+						for(SketchMapType::iterator i = sketchPositions.begin(); i != sketchPositions.end(); i++) {
+							v = GetVector3DIntFromHash(i->first);
+							glPushMatrix();
+							glTranslatef(v.X(), v.Y(), v.Z());
+							gluSphere(quadricSphere, 1.0, 10, 10);  
+							glPopMatrix();						
+						}
+					}*/
 					break;
 				case(3):
 					/*glPushAttrib(GL_ENABLE_BIT | GL_HINT_BIT | GL_POINT_BIT);

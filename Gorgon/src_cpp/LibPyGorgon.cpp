@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.25  2008/10/08 16:43:19  ssa1
+//   Interactive skeletonization changes
+//
 //   Revision 1.24  2008/10/07 23:49:43  colemanr
 //   Added CAlphaViewer::GetAtomFromHitStack.
 //
@@ -247,6 +250,10 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("setIsoValue", &InteractiveSkeletonEngine::SetIsoValue)		
 		.def("finalizeSkeleton", &InteractiveSkeletonEngine::FinalizeSkeleton)		
 		.def("draw", &InteractiveSkeletonEngine::Draw)		
+		.def("setSketchRay", &InteractiveSkeletonEngine::SetSketchRay)		
+		.def("clearSketchRay", &InteractiveSkeletonEngine::ClearSketchRay)
+		.def("startSketchRay", &InteractiveSkeletonEngine::StartSketchRay)
+		.def("endSketchRay", &InteractiveSkeletonEngine::EndSketchRay)
 	;
 
 
