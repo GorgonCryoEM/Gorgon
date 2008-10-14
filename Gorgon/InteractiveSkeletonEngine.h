@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.17  2008/10/14 14:59:33  ssa1
+//   Adding in sketching mode for interactive skeletonization
+//
 //   Revision 1.16  2008/10/10 14:25:55  ssa1
 //   Setting the cost functions to scale with the edge length
 //
@@ -242,7 +245,7 @@ namespace wustl_mm {
 		void InteractiveSkeletonEngine::ClearSketchRay() {
 			sketchPositions.clear();
 			vector<Vector3DInt> sketchPts;
-			skeletonizer->SetSketchPoints(sketchPts, sketchRatio);
+			skeletonizer->SetSketchPoints(sketchPts, 1.0);
 		}
 
 		void InteractiveSkeletonEngine::StartSketchRay(float rayX, float rayY, float rayZ, float eyeX, float eyeY, float eyeZ, float rayWidth) {
