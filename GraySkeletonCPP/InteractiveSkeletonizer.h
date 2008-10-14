@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.21  2008/10/10 14:25:55  ssa1
+//   Setting the cost functions to scale with the edge length
+//
 //   Revision 1.20  2008/10/08 16:43:19  ssa1
 //   Interactive skeletonization changes
 //
@@ -40,6 +43,7 @@ namespace wustl_mm {
 		};
 
 		struct nodeAttrib{
+			float sketchRatio;
 			float mstCost;
 			NonManifoldMeshVertex<nodeAttrib> * returnNode;
 			OctreeNode<octreeTagType> * octreeNode;
@@ -47,7 +51,6 @@ namespace wustl_mm {
 
 		struct edgeAttrib {
 			float medialnessCost;
-			float sketchCost;
 			float smoothCost;
 		};
 
@@ -58,6 +61,7 @@ namespace wustl_mm {
 		const unsigned int MEDIALNESS_SCORING_FUNCTION_GLOBAL_RANK = 1;
 		const unsigned int MEDIALNESS_SCORING_FUNCTION_LOCAL_RANK = 2;
 		const float MAX_ALLOWED_NODE_COST = 0.9f;
+		const float SKETCH_RADIUS = 5.0f;
 
 		class InteractiveSkeletonizer : public VolumeSkeletonizer {
 		public:
@@ -71,7 +75,8 @@ namespace wustl_mm {
 			void CalculateMinimalSpanningTree(Vector3DInt seedPoint, float medialnessRatio, float smoothnessRatio, float sketchRatio, bool terminate);
 			void CalculateMinimalSpanningTree(vector<Vector3DInt> seedPoints, float medialnessRatio, float smoothnessRatio, float sketchRatio, bool terminate);
 			void IsolateStartSeed(Vector3DInt startPos, float medialnessRatio, float smoothnessRatio, float sketchRatio, bool terminate);
-									
+			void SetSketchPoints(vector<Vector3DInt> sketchPoints, float sketchRatio);
+
 		protected:
 			double GetStructureTensorProjectedScore(EigenResults3D imageEigen, Vector3DFloat skeletonDirection, float power, int type);			
 			GraphType * graph;
@@ -84,6 +89,7 @@ namespace wustl_mm {
 			float minEdgeSegmentSmoothness;
 
 		private:
+			float GetSketchRatio(float oldY, float xValue, float minSketchRatio);
 			Volume * GetAutomaticSkeleton(Volume * sourceVol, float minGray, float maxGray, float stepSize, int minCurveSize);
 			Octree<octreeTagType> * GetOctreeFromSkeleton(Volume * skeleton);
 			void CreateAndAnnotateVertices(GraphType * graph, Octree<octreeTagType> * octree, Volume * sourceVol, Volume * skeleton, unsigned int medialnessScoringFunction, int curveRadius);
@@ -226,18 +232,12 @@ namespace wustl_mm {
 				}
 			}
 
-			/*
+			
 			//Annotating			
-			OctreeNode<octreeTagType> * n1;
-			float maxGray = sourceVol->getMax();
-			float minGray = sourceVol->getMin();
 
 			for(unsigned int i = 0; i < graph->vertices.size(); i++) {
-				n1 = graph->vertices[i].tag.octreeNode;
-				graph->vertices[i].tag.medialnessCost = GetVertexMedialnessCost(medialnessScoringFunction, sourceVol, skeleton, 
-					n1->pos[0]+MAX_GAUSSIAN_FILTER_RADIUS, n1->pos[1]+MAX_GAUSSIAN_FILTER_RADIUS, n1->pos[2]+MAX_GAUSSIAN_FILTER_RADIUS, curveRadius, minGray, maxGray);
-				graph->vertices[i].tag.sketchCost = 0.0;
-			} */
+				graph->vertices[i].tag.sketchRatio = 1.0f;
+			}
 		}
 
 
@@ -278,7 +278,6 @@ namespace wustl_mm {
 				graph->edges[i].tag.smoothCost = GetEdgeSmoothnessCost(pseudoVertices, graph, volumeGradient, sourceVol, 
 					graph->vertices[graph->GetVertexIndex(graph->edges[i].vertexIds[0])].position - graph->vertices[graph->GetVertexIndex(graph->edges[i].vertexIds[1])].position,
 					curveRadius); 
-				graph->edges[i].tag.sketchCost = 0.0f;
 			}
 
 
@@ -385,7 +384,7 @@ namespace wustl_mm {
 			}
 
 
-			float cost, vertexCost;
+			float cost, vertexCost, avgSketchRatio;
 			unsigned int edgeIx;
 			unsigned int vertexIx;
 
@@ -395,10 +394,14 @@ namespace wustl_mm {
 				pointList.pop();
 				for(unsigned int i = 0; i < currentNode->edgeIds.size(); i++) {
 					edgeIx = graph->GetEdgeIndex(currentNode->edgeIds[i]);
+
+					avgSketchRatio = (graph->vertices[graph->GetVertexIndex(graph->edges[edgeIx].vertexIds[0])].tag.sketchRatio + 
+								      graph->vertices[graph->GetVertexIndex(graph->edges[edgeIx].vertexIds[1])].tag.sketchRatio) / 2.0f;
+
+
 					cost = currentNode->tag.mstCost 
-							+ smoothnessRatio * graph->edges[edgeIx].tag.smoothCost
-							+ medialnessRatio * graph->edges[edgeIx].tag.medialnessCost
-							+ sketchRatio * graph->edges[edgeIx].tag.sketchCost;
+							+ (smoothnessRatio * graph->edges[edgeIx].tag.smoothCost +
+							   medialnessRatio * graph->edges[edgeIx].tag.medialnessCost) * avgSketchRatio;
 
 					for(unsigned int j = 0; j < 2; j++) {
 						vertexIx = graph->GetVertexIndex(graph->edges[edgeIx].vertexIds[j]);
@@ -417,6 +420,63 @@ namespace wustl_mm {
 
 		void InteractiveSkeletonizer::IsolateStartSeed(Vector3DInt startPos, float medialnessRatio, float smoothnessRatio, float sketchRatio, bool terminate) {
 			CalculateMinimalSpanningTree(startPos, medialnessRatio, smoothnessRatio, sketchRatio, terminate);
+		}
+
+
+		float InteractiveSkeletonizer::GetSketchRatio(float oldY, float xValue, float minSketchRatio) {
+			float oldX = (1.0f - minSketchRatio)/(1.0f - oldY) - 1.0f;
+			float newX = oldX + xValue;
+			return ((1.0f - 1.0f/(newX + 1.0f)) * (1.0f - minSketchRatio) + minSketchRatio);
+		}
+
+		void InteractiveSkeletonizer::SetSketchPoints(vector<Vector3DInt> sketchPoints, float sketchRatio) {
+			appTimeManager.PushCurrentTime();
+			
+			OctreeNode<octreeTagType> * node;
+			NonManifoldMeshVertex<nodeAttrib> * currentNode;
+			queue<NonManifoldMeshVertex<nodeAttrib> *> pointList;
+
+			for(int i = 0; i < graph->vertices.size(); i++) {
+				graph->vertices[i].tag.sketchRatio = 1.0f;
+			}
+
+			for(unsigned int i = 0; i < sketchPoints.size(); i++) {
+				node = octree->GetLeaf(sketchPoints[i].X(), sketchPoints[i].Y(), sketchPoints[i].Z());
+		
+				currentNode = &graph->vertices[node->tag.tag1];
+				currentNode->tag.sketchRatio = sketchRatio;
+				pointList.push(currentNode);
+			}
+
+
+			float newRatio, edgeLength;
+			unsigned int edgeIx;
+			unsigned int vertexIx;
+
+
+			while(!pointList.empty()) {	
+				currentNode = pointList.front();
+				pointList.pop();
+				for(unsigned int i = 0; i < currentNode->edgeIds.size(); i++) {
+					edgeIx = graph->GetEdgeIndex(currentNode->edgeIds[i]);
+					edgeLength = (graph->vertices[graph->GetVertexIndex(graph->edges[edgeIx].vertexIds[0])].position - 
+								  graph->vertices[graph->GetVertexIndex(graph->edges[edgeIx].vertexIds[1])].position).Length();
+
+					newRatio = GetSketchRatio(currentNode->tag.sketchRatio, edgeLength, sketchRatio);
+							
+
+					for(unsigned int j = 0; j < 2; j++) {
+						vertexIx = graph->GetVertexIndex(graph->edges[edgeIx].vertexIds[j]);
+						if((graph->vertices[vertexIx].tag.sketchRatio > newRatio)) {
+							graph->vertices[vertexIx].tag.sketchRatio = newRatio;
+							pointList.push(&graph->vertices[vertexIx]);
+						}
+					}
+				}				
+			}
+			appTimeManager.PopAndDisplayTime("Resetting sketch ratios: %f seconds!\n");
+
+
 		}
 	}
 }
