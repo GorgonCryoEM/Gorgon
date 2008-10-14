@@ -259,7 +259,7 @@ class Chain(baseClass):
                         except: break
                 return linelist
         if linelist == []:
-            return ['A']
+            return []
     else:
       raise NotImplementedError, 'NYI'
 
