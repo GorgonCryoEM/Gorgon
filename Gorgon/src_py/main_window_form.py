@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.5  2008/06/18 18:15:41  ssa1
+#   Adding in CVS meta data
+#
 
 from PyQt4 import QtCore, QtGui
 from menu_manager import MenuManager
@@ -54,3 +57,15 @@ class MainWindowForm(QtGui.QMainWindow):
         self.menus.addMenu("actions", self.tr("&Actions"))     
         self.menus.addMenu("window", self.tr("&Window"))
         self.menus.addMenu("help", self.tr("&Help"))
+        
+    def keyPressEvent(self, event):
+        self.emitKeyPressed(event)
+        
+    def keyReleaseEvent(self, event):
+        self.emitKeyReleased(event)
+        
+    def emitKeyPressed(self, event):
+        self.emit(QtCore.SIGNAL("keyPressed(QKeyEvent)"), event);        
+
+    def emitKeyReleased(self, event):
+        self.emit(QtCore.SIGNAL("keyReleased(QKeyEvent)"), event);        

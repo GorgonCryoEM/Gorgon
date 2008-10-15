@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.1  2008/10/10 14:25:55  ssa1
+//   Setting the cost functions to scale with the edge length
+//
 
 #ifndef FOUNDATION_RASTERIZER_H
 #define FOUNDATION_RASTERIZER_H
@@ -19,6 +22,7 @@
 #include <MathTools/Vector3D.h> 
 
 using namespace std;
+using namespace wustl_mm::MathTools;
 
 namespace wustl_mm {
 	namespace Foundation {

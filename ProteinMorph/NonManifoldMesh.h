@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.24  2008/09/29 16:43:15  ssa1
+//   Adding in CVS meta information
+//
 
 #ifndef PROTEINMORPH_NON_MANIFOLD_MESH_H
 #define PROTEINMORPH_NON_MANIFOLD_MESH_H
@@ -20,6 +23,7 @@
 #include <SkeletonMaker/volume.h>
 #include <string>
 #include <glut.h>
+#include <Foundation/Rasterizer.h>
 #ifdef _WIN32
 	#include <hash_map>
 	using namespace stdext;
@@ -29,6 +33,7 @@
 
 using namespace std;
 using namespace wustl_mm::MathTools;
+using namespace wustl_mm::Foundation;
 
 
 namespace wustl_mm {
@@ -684,55 +689,19 @@ namespace wustl_mm {
 			Volume * vol = new Volume(maxPosInt[0] - minPosInt[0]+1, maxPosInt[1] - minPosInt[1]+1, maxPosInt[2] - minPosInt[2]+1);
 			//Volume * vol = new Volume(200,260,120);
 			
-			int pos[3];
-			for(unsigned int i = 0; i < vertices.size(); i++) {
-				for(unsigned int j = 0; j < 3; j++) {
-					pos[j] = (int)round(vertices[i].position.values[j]) - minPosInt[j];
-				}				
-				vol->setDataAt(pos[0], pos[1], pos[2], 1.0);
-			}
-
-			bool xDir = false;
-			bool yDir = false; 
-			float dX, dY, dZ;
-			float xPos, yPos, zPos;
-			Vector3DFloat dir;
-			
 			NonManifoldMeshVertex<TVertex> v1,v2;
+			int pos[3];
 
 			for(unsigned int i = 0;  i < edges.size(); i++) {
 				v1 = vertices[GetVertexIndex(edges[i].vertexIds[0])];
 				v2 = vertices[GetVertexIndex(edges[i].vertexIds[1])];
-				dir = v1.position - v2.position;
-
-				dX = abs(v1.position.X() - v2.position.X());
-				dY = abs(v1.position.Y() - v2.position.Y());
-				dZ = abs(v1.position.Z() - v2.position.Z());
-				
-				xDir = (dX >= dY) && (dX >= dZ);
-				yDir = (dY >= dX) && (dY >= dZ);
-
-				if(xDir) {
-					for(xPos = round(v1.position.X()); xPos <= v2.position.X(); xPos++) {
-						yPos = dir.Y() * (xPos - v1.position.X()) / dir.X() + v1.position.Y() - minPosInt[1];
-						zPos = dir.Z() * (xPos - v1.position.X()) / dir.X() + v1.position.Z() - minPosInt[2];
-						vol->setDataAt((int)round(xPos), (int)round(yPos), (int)round(zPos), 1.0);
+				vector<Vector3DInt> positions = Rasterizer::ScanConvertLine(v1.position.XInt(), v1.position.YInt(), v1.position.ZInt(), v2.position.XInt(), v2.position.YInt(), v2.position.ZInt());
+				for(unsigned int j = 0; j < positions.size(); j++) {
+					for(unsigned int k = 0; k < 3; k++) {
+						pos[k] = positions[j].values[k] - minPosInt[j];
 					}
-				} else if (yDir) {
-					for(yPos = round(v1.position.Y()); yPos <= v2.position.Y(); yPos++) {
-						xPos = dir.X() * (yPos - v1.position.Y()) / dir.Y() + v1.position.X() - minPosInt[0];
-						zPos = dir.Z() * (yPos - v1.position.Y()) / dir.Y() + v1.position.Z() - minPosInt[2];
-						vol->setDataAt((int)round(xPos), (int)round(yPos), (int)round(zPos), 1.0);
-					}
-				} else {
-					for(zPos = round(v1.position.Z()); zPos <= v2.position.Z(); zPos++) {
-						xPos = dir.X() * (zPos - v1.position.Z()) / dir.Z() + v1.position.X() - minPosInt[0];
-						yPos = dir.Y() * (zPos - v1.position.Z()) / dir.Z() + v1.position.Y() - minPosInt[1];						
-						vol->setDataAt((int)round(xPos), (int)round(yPos), (int)round(zPos), 1.0);
-					}
-				}		
-				
-
+					vol->setDataAt(pos[0], pos[1], pos[2], 1.0);
+				}				
 			}
 			return vol;
 		}

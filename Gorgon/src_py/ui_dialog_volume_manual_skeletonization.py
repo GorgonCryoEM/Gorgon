@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_dialog_volume_manual_skeletonization.ui'
 #
-# Created: Tue Oct 14 14:28:34 2008
+# Created: Wed Oct 15 13:01:20 2008
 #      by: PyQt4 UI code generator 4.3.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -89,10 +89,10 @@ class Ui_DialogVolumeManualSkeletonization(object):
 
         self.horizontalSliderSketchPriority = QtGui.QSlider(DialogVolumeManualSkeletonization)
         self.horizontalSliderSketchPriority.setMinimum(1)
-        self.horizontalSliderSketchPriority.setMaximum(100)
+        self.horizontalSliderSketchPriority.setMaximum(10000)
         self.horizontalSliderSketchPriority.setSingleStep(1)
         self.horizontalSliderSketchPriority.setPageStep(10)
-        self.horizontalSliderSketchPriority.setProperty("value",QtCore.QVariant(10))
+        self.horizontalSliderSketchPriority.setProperty("value",QtCore.QVariant(1000))
         self.horizontalSliderSketchPriority.setOrientation(QtCore.Qt.Horizontal)
         self.horizontalSliderSketchPriority.setTickPosition(QtGui.QSlider.NoTicks)
         self.horizontalSliderSketchPriority.setObjectName("horizontalSliderSketchPriority")
@@ -178,17 +178,21 @@ class Ui_DialogVolumeManualSkeletonization(object):
         self.gridlayout4 = QtGui.QGridLayout()
         self.gridlayout4.setObjectName("gridlayout4")
 
-        spacerItem = QtGui.QSpacerItem(40,20,QtGui.QSizePolicy.Expanding,QtGui.QSizePolicy.Minimum)
-        self.gridlayout4.addItem(spacerItem,0,0,1,1)
+        self.pushButtonClear = QtGui.QPushButton(DialogVolumeManualSkeletonization)
+        self.pushButtonClear.setObjectName("pushButtonClear")
+        self.gridlayout4.addWidget(self.pushButtonClear,0,0,1,1)
+
+        spacerItem = QtGui.QSpacerItem(141,26,QtGui.QSizePolicy.Expanding,QtGui.QSizePolicy.Minimum)
+        self.gridlayout4.addItem(spacerItem,0,1,1,1)
 
         self.pushButtonStart = QtGui.QPushButton(DialogVolumeManualSkeletonization)
         self.pushButtonStart.setObjectName("pushButtonStart")
-        self.gridlayout4.addWidget(self.pushButtonStart,0,1,1,1)
+        self.gridlayout4.addWidget(self.pushButtonStart,0,2,1,1)
 
         self.pushButtonClose = QtGui.QPushButton(DialogVolumeManualSkeletonization)
         self.pushButtonClose.setEnabled(False)
         self.pushButtonClose.setObjectName("pushButtonClose")
-        self.gridlayout4.addWidget(self.pushButtonClose,0,2,1,1)
+        self.gridlayout4.addWidget(self.pushButtonClose,0,3,1,1)
         self.gridlayout.addLayout(self.gridlayout4,6,0,1,4)
 
         self.retranslateUi(DialogVolumeManualSkeletonization)
@@ -223,7 +227,7 @@ class Ui_DialogVolumeManualSkeletonization(object):
         self.labeSmoothnessDisplay.setText(QtGui.QApplication.translate("DialogVolumeManualSkeletonization", "25", None, QtGui.QApplication.UnicodeUTF8))
         self.labelSketchImportance.setText(QtGui.QApplication.translate("DialogVolumeManualSkeletonization", "Sketch Priority:", None, QtGui.QApplication.UnicodeUTF8))
         self.horizontalSliderSketchPriority.setWhatsThis(QtGui.QApplication.translate("DialogVolumeManualSkeletonization", "Picks the density to use when performing skeletonization", None, QtGui.QApplication.UnicodeUTF8))
-        self.labeSketchPriorityDisplay.setText(QtGui.QApplication.translate("DialogVolumeManualSkeletonization", "10", None, QtGui.QApplication.UnicodeUTF8))
+        self.labeSketchPriorityDisplay.setText(QtGui.QApplication.translate("DialogVolumeManualSkeletonization", "1000", None, QtGui.QApplication.UnicodeUTF8))
         self.labelStartDensity.setText(QtGui.QApplication.translate("DialogVolumeManualSkeletonization", "Starting Density:", None, QtGui.QApplication.UnicodeUTF8))
         self.horizontalSliderStartingDensity.setWhatsThis(QtGui.QApplication.translate("DialogVolumeManualSkeletonization", "Picks the density to use when performing skeletonization", None, QtGui.QApplication.UnicodeUTF8))
         self.labelStartingDensityDisplay.setText(QtGui.QApplication.translate("DialogVolumeManualSkeletonization", "128", None, QtGui.QApplication.UnicodeUTF8))
@@ -233,6 +237,7 @@ class Ui_DialogVolumeManualSkeletonization(object):
         self.labelMinimumCurve.setText(QtGui.QApplication.translate("DialogVolumeManualSkeletonization", "Minimum Curve Length:", None, QtGui.QApplication.UnicodeUTF8))
         self.labelCurveRadius.setWhatsThis(QtGui.QApplication.translate("DialogVolumeManualSkeletonization", "The Radius to use when obtaining the structure tensor of a curve... The larger the radius, the more global information is used", None, QtGui.QApplication.UnicodeUTF8))
         self.labelCurveRadius.setText(QtGui.QApplication.translate("DialogVolumeManualSkeletonization", "Curve Radius:", None, QtGui.QApplication.UnicodeUTF8))
+        self.pushButtonClear.setText(QtGui.QApplication.translate("DialogVolumeManualSkeletonization", "Clear", None, QtGui.QApplication.UnicodeUTF8))
         self.pushButtonStart.setText(QtGui.QApplication.translate("DialogVolumeManualSkeletonization", "Start", None, QtGui.QApplication.UnicodeUTF8))
         self.pushButtonClose.setText(QtGui.QApplication.translate("DialogVolumeManualSkeletonization", "Finish", None, QtGui.QApplication.UnicodeUTF8))
 

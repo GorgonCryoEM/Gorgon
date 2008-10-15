@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.20  2008/10/15 16:34:18  colemanr
+//   includes grant's fix for a gcc compile error.
+//
 //   Revision 1.19  2008/10/15 12:23:50  ssa1
 //   Modifying the cost function for sketch interraction, and changing mousebehavior to trigger different interaction modes
 //
@@ -61,7 +64,10 @@ namespace wustl_mm {
 
 			void Draw(int subscene);
 			void FinalizeSkeleton();
+			void ClearSkeleton();
+			void ClearCurrentPath();
 			void SelectEndSeed(float medialnessRatio, float smoothnessRatio);
+			void BrowseStartSeedRay(float rayX, float rayY, float rayZ, float eyeX, float eyeY, float eyeZ, float rayWidth, bool clearBrowsePoint);
 			void SelectStartSeedRay(float rayX, float rayY, float rayZ, float eyeX, float eyeY, float eyeZ, float rayWidth, float medialnessRatio, float smoothnessRatio);
 			void SelectRootRay(float rayX, float rayY, float rayZ, float eyeX, float eyeY, float eyeZ, float rayWidth, float medialnessRatio, float smoothnessRatio);
 			void SetIsoValue(float isoValue);
@@ -71,6 +77,8 @@ namespace wustl_mm {
 			InteractiveSkeletonizer * skeletonizer;
 			bool started;
 			bool analyzed;
+			bool browseStarted;
+			Vector3DInt browseStartPos;
 			Vector3DInt startPos;
 			vector<Vector3DInt> startPositions;
 			Vector3DInt currentPos;
@@ -103,6 +111,7 @@ namespace wustl_mm {
 				node->tag.tag2 = ix;
 			}
 			started = false;
+			browseStarted = false;
 			analyzed = false;
 			startSeedIsolated = false;
 			quadricSphere = gluNewQuadric();	
@@ -124,9 +133,41 @@ namespace wustl_mm {
 			}
 		}
 
+		void InteractiveSkeletonEngine::BrowseStartSeedRay(float rayX, float rayY, float rayZ, float eyeX, float eyeY, float eyeZ, float rayWidth, bool clearBrowsePoint) {
+			if(clearBrowsePoint) {
+				browseStarted = false;
+			} else {
+				browseStarted = true;
+				vector<Vector3DInt> newStartPositions;
+
+				vector<OctreeNode<octreeTagType> *> intersectingCells = skeletonizer->GetOctree()->IntersectRay(Vector3DFloat(rayX, rayY, rayZ), Vector3DFloat(eyeX, eyeY, eyeZ), rayWidth);
+
+				bool snapOn = false;
+				for(unsigned int i = 0; !snapOn && (i < intersectingCells.size()); i++) {
+					if(intersectingCells[i]->cellSize == 1) {
+						snapOn = snapOn || (skeleton->vertices[intersectingCells[i]->tag.tag2].edgeIds.size() > 0);					
+					}
+				}			
+
+				for(unsigned int i = 0; i < intersectingCells.size(); i++) {
+					if(intersectingCells[i]->cellSize == 1) {
+						if(!snapOn || (snapOn && (skeleton->vertices[intersectingCells[i]->tag.tag2].edgeIds.size() > 0))) {
+							newStartPositions.push_back(Vector3DInt(intersectingCells[i]->pos[0], intersectingCells[i]->pos[1], intersectingCells[i]->pos[2]));
+						}
+					}
+				}			
+
+				if(newStartPositions.size() > 0) {
+					browseStartPos = newStartPositions[0];
+				}		
+			}
+		}
+
+
 		void InteractiveSkeletonEngine::SelectStartSeedRay(float rayX, float rayY, float rayZ, float eyeX, float eyeY, float eyeZ, float rayWidth, float medialnessRatio, float smoothnessRatio) {
 			analyzed = false;
 			started = false;			
+			browseStarted = false;
 			startPositions.clear();				
 			for(unsigned int i = 0; i < skeleton->edges.size(); i++) {
 				if(!skeleton->edges[i].tag) {
@@ -303,7 +344,37 @@ namespace wustl_mm {
 			}
 		}
 
+		void InteractiveSkeletonEngine::ClearCurrentPath() {
+			if(started) {
+				analyzed = false;
+				started = false;			
+				startPositions.clear();		
+				currentPositions.clear();
+
+				for(unsigned int i = 0; i < skeleton->edges.size(); i++) {
+					if(!skeleton->edges[i].tag) {
+						skeleton->RemoveEdge(i);
+					}
+				}
+				skeleton->RemoveNullEntries();
+			}
+		}
+		void InteractiveSkeletonEngine::ClearSkeleton() {
+			analyzed = false;
+			started = false;			
+			startPositions.clear();		
+			currentPositions.clear();
+
+			for(unsigned int i = 0; i < skeleton->edges.size(); i++) {
+				skeleton->RemoveEdge(i);
+			}
+			skeleton->RemoveNullEntries();
+		}
+
 		void InteractiveSkeletonEngine::FinalizeSkeleton() {
+			analyzed = false;
+			started = false;	
+			browseStarted = false;
 			for(unsigned int i = 0; i < skeleton->vertices.size(); i++) {
 				if(skeleton->vertices[i].edgeIds.size() == 0) {
 					skeleton->RemoveVertex(i);
@@ -317,6 +388,12 @@ namespace wustl_mm {
 					if(started) {
 						glPushMatrix();
 						glTranslatef(startPos.X(), startPos.Y(), startPos.Z());
+						gluSphere(quadricSphere, 1.0, 10, 10);  
+						glPopMatrix();
+					}
+					if(browseStarted) {
+						glPushMatrix();
+						glTranslatef(browseStartPos.X(), browseStartPos.Y(), browseStartPos.Z());
 						gluSphere(quadricSphere, 1.0, 10, 10);  
 						glPopMatrix();
 					}
