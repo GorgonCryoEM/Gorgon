@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.19  2008/10/15 12:23:50  ssa1
+//   Modifying the cost function for sketch interraction, and changing mousebehavior to trigger different interaction modes
+//
 //   Revision 1.18  2008/10/14 17:52:07  ssa1
 //   Fixing SketchRatio error
 //
@@ -272,7 +275,8 @@ namespace wustl_mm {
 				
 				for(unsigned int i = 0; i < intersectingCells.size(); i++) {
 					if(intersectingCells[i]->cellSize == 1) {
-						hash = GetHashFromVector3DInt(Vector3DInt(intersectingCells[i]->pos[0], intersectingCells[i]->pos[1], intersectingCells[i]->pos[2]));
+						Vector3DInt tmpv = Vector3DInt(intersectingCells[i]->pos[0], intersectingCells[i]->pos[1], intersectingCells[i]->pos[2]);
+						hash = GetHashFromVector3DInt(tmpv);
 						if(sketchPositions.find(hash) == sketchPositions.end()) {
 							sketchPositions[hash] = true;
 							added = true;
