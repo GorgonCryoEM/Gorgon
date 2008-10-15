@@ -87,7 +87,7 @@ class SeqModelTests(unittest.TestCase):
     self.assertEquals(chain.helices[helixID].stopIndex, stopIndex)
     self.assertEquals(chain[stopIndex].symbol3, stopResName)
 
-    self.assertEquals(chain.helices[helixID].__repr__().split(':')[1], chain[startIndex:stopIndex].__repr__().strip('...'))
+    self.assertEquals( str(chain.helices[helixID]).split(':')[1], chain[startIndex:stopIndex].__repr__().strip('...'))
 
 
 
@@ -100,7 +100,7 @@ class SeqModelTests(unittest.TestCase):
     self.assertEquals(chain.sheets[sheetID].strandList[strandNo].stopIndex, stopIndex)
     self.assertEquals(chain[stopIndex].symbol3, stopResName)
     
-    self.assertEquals(chain.sheets[sheetID].strandList[strandNo].__repr__().split(':')[1], chain[startIndex:stopIndex].__repr__().strip('...'))
+    self.assertEquals( str(chain.sheets[sheetID].strandList[strandNo]).split(':')[1], chain[startIndex:stopIndex].__repr__().strip('...'))
 
 
   def __validateSecels(self, chain):
@@ -181,8 +181,8 @@ class SeqModelTests(unittest.TestCase):
 
 
     # Add coordinate records to my_chain
-    for residue in my_chain[3:-5]:
-    #or residue in my_chain:
+    #for residue in my_chain[3:-5]:
+    for residue in my_chain:
       x=random.gauss(20.0,5.0)
       y=random.gauss(20.0,5.0)
       z=random.gauss(20.0,5.0)
