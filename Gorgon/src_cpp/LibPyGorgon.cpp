@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.26  2008/10/14 14:59:33  ssa1
+//   Adding in sketching mode for interactive skeletonization
+//
 //   Revision 1.25  2008/10/08 16:43:19  ssa1
 //   Interactive skeletonization changes
 //
@@ -243,11 +246,14 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 	;
 
 	class_<InteractiveSkeletonEngine>("InteractiveSkeletonEngine", init<Volume *, NonManifoldMesh_Annotated *, float, int, int, int, unsigned int>())
+		.def("browseStartSeedRay", &InteractiveSkeletonEngine::BrowseStartSeedRay)
 		.def("selectStartSeedRay", &InteractiveSkeletonEngine::SelectStartSeedRay)
 		.def("selectEndSeed", &InteractiveSkeletonEngine::SelectEndSeed)
 		.def("selectRootRay", &InteractiveSkeletonEngine::SelectRootRay)
 		.def("analyzePathRay", &InteractiveSkeletonEngine::AnalyzePathRay)
 		.def("setIsoValue", &InteractiveSkeletonEngine::SetIsoValue)		
+		.def("clearSkeleton", &InteractiveSkeletonEngine::ClearSkeleton)		
+		.def("clearCurrentPath", &InteractiveSkeletonEngine::ClearCurrentPath)		
 		.def("finalizeSkeleton", &InteractiveSkeletonEngine::FinalizeSkeleton)		
 		.def("draw", &InteractiveSkeletonEngine::Draw)		
 		.def("setSketchRay", &InteractiveSkeletonEngine::SetSketchRay)		

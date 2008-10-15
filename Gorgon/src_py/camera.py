@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.34  2008/09/26 20:23:33  ssa1
+#   Rotations of helices
+#
 #   Revision 1.33  2008/09/24 20:46:12  ssa1
 #   Translating the selected elements
 #
@@ -503,7 +506,7 @@ class Camera(QtOpenGL.QGLWidget):
                 minDistance = min(minDistance, eyeDist - modelDist - distance/2.0)
                 maxDistance = max(maxDistance, eyeDist + modelDist + distance/2.0)
         self.setNearFarZoom(minDistance, maxDistance, self.eyeZoom)
-        self.updateGL()
+        self.updateGL()        
         
     def emitCameraChanged(self):
         self.emit(QtCore.SIGNAL("cameraChanged()"))

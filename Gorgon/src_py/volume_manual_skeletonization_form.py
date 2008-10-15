@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.18  2008/10/15 12:23:50  ssa1
+#   Modifying the cost function for sketch interraction, and changing mousebehavior to trigger different interaction modes
+#
 #   Revision 1.17  2008/10/14 14:59:33  ssa1
 #   Adding in sketching mode for interactive skeletonization
 #
@@ -64,9 +67,11 @@ class VolumeManualSkeletonizationForm(QtGui.QWidget):
         self.connect(self.viewer, QtCore.SIGNAL("modelLoaded()"), self.modelLoaded)
         self.connect(self.viewer, QtCore.SIGNAL("modelChanged()"), self.modelChanged)
         self.connect(self.viewer, QtCore.SIGNAL("modelUnloaded()"), self.modelUnloaded)
+        
+        self.isSkeletonClicked = False;
         self.manualColors = [QtGui.QColor.fromRgba(QtGui.qRgba(0, 0, 255, 255)),
                              QtGui.QColor.fromRgba(QtGui.qRgba(0, 255, 0, 255)),
-                             QtGui.QColor.fromRgba(QtGui.qRgba(0, 255, 255, 255)),
+                             QtGui.QColor.fromRgba(QtGui.qRgba(0, 255, 255, 100)),
                              QtGui.QColor.fromRgba(QtGui.qRgba(255, 0, 0, 255))]
         self.createUI()
         self.createActions()
@@ -83,6 +88,8 @@ class VolumeManualSkeletonizationForm(QtGui.QWidget):
         self.connect(self.ui.horizontalSliderStartingDensity,QtCore.SIGNAL("valueChanged(int)"),self.startingDensityChanged)     
         self.connect(self.ui.pushButtonStart,QtCore.SIGNAL("pressed ()"),self.startSkeletonization)
         self.connect(self.ui.pushButtonClose, QtCore.SIGNAL("pressed ()"), self.endSkeletonization)   
+        self.connect(self.ui.pushButtonClear, QtCore.SIGNAL("pressed ()"), self.clearSkeleton)
+        self.connect(self.app, QtCore.SIGNAL("keyReleased(QKeyEvent)"), self.keyReleased)
                                             
     def createActions(self):
         self.skeletonizeAct = QtGui.QAction(self.tr("&Interactive Skeletonization"), self)
@@ -135,6 +142,8 @@ class VolumeManualSkeletonizationForm(QtGui.QWidget):
                        
             self.engine = InteractiveSkeletonEngine(self.volume, self.mesh, self.getStartingDensity(), self.getStepCount(), self.getCurveRadius(), self.getMinCurveLength(), medialnessScoringFunction)
             self.engine.setIsoValue(self.viewer.renderer.getSurfaceValue())
+            self.connect(self.app.viewers["skeleton"], QtCore.SIGNAL("elementSelected (int, int, int, int, int, int, QMouseEvent)"), self.skeletonClicked)
+            
             self.setSkeletonViewerProperties(True)
             self.skeletonViewer.loaded = True
             self.ui.pushButtonStart.setEnabled(False)
@@ -228,14 +237,19 @@ class VolumeManualSkeletonizationForm(QtGui.QWidget):
                     self.engine.clearSketchRay();
                 self.skeletonViewer.emitModelChanged()       
                     
-
     def processMouseOverRay(self, ray, rayWidth, eye, event):
-        if(self.started and event.modifiers() & QtCore.Qt.ALT ):
+        if(self.started and event.modifiers() & QtCore.Qt.CTRL ):
+            self.engine.browseStartSeedRay(ray[0], ray[1], ray[2], eye[0], eye[1], eye[2], rayWidth, False)
+            self.skeletonViewer.emitModelChanged()                    
+        elif(self.started and event.modifiers() & QtCore.Qt.ALT ):
+            self.engine.browseStartSeedRay(ray[0], ray[1], ray[2], eye[0], eye[1], eye[2], rayWidth, True)
             self.engine.analyzePathRay(ray[0], ray[1], ray[2], eye[0], eye[1], eye[2], rayWidth)
             self.skeletonViewer.emitModelChanged()
         elif(event.modifiers() & QtCore.Qt.SHIFT):
-            if(self.engine.setSketchRay(ray[0], ray[1], ray[2], eye[0], eye[1], eye[2], rayWidth)):
-                self.skeletonViewer.emitModelChanged()
+            self.engine.browseStartSeedRay(ray[0], ray[1], ray[2], eye[0], eye[1], eye[2], rayWidth, True)
+            if(self.sketchStarted):
+                if(self.engine.setSketchRay(ray[0], ray[1], ray[2], eye[0], eye[1], eye[2], rayWidth)):
+                    self.skeletonViewer.emitModelChanged()
                     
     def modelLoaded(self):
         self.skeletonViewer = self.app.viewers["skeleton"]; 
@@ -276,7 +290,19 @@ class VolumeManualSkeletonizationForm(QtGui.QWidget):
     def dockVisibilityChanged(self, visible):
         self.skeletonizeAct.setChecked(visible)
         self.showWidget(visible)
+    
+    def clearSkeleton(self):
+        self.engine.clearSkeleton()
+        self.skeletonViewer.emitModelChanged()
         
+    def skeletonClicked(self, hit0, hit1, hit2, hit3, hit4, hit5, event):
+        pass;
+    
+    def keyReleased(self, event):
+        if self.started:
+            if(event.key() == QtCore.Qt.Key_Escape):
+                self.engine.clearCurrentPath();
+                self.skeletonViewer.emitModelChanged()
         
     def drawOverlay(self):     
         if self.started:
