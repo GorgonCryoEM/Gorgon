@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.18  2008/10/14 17:52:07  ssa1
+//   Fixing SketchRatio error
+//
 //   Revision 1.17  2008/10/14 14:59:33  ssa1
 //   Adding in sketching mode for interactive skeletonization
 //
@@ -51,13 +54,13 @@ namespace wustl_mm {
 			void ClearSketchRay();
 			void StartSketchRay(float rayX, float rayY, float rayZ, float eyeX, float eyeY, float eyeZ, float rayWidth);
 			bool SetSketchRay(float rayX, float rayY, float rayZ, float eyeX, float eyeY, float eyeZ, float rayWidth);
-			void EndSketchRay(float rayX, float rayY, float rayZ, float eyeX, float eyeY, float eyeZ, float rayWidth, float medialnessRatio, float smoothnessRatio, float sketchRatio);
+			void EndSketchRay(float rayX, float rayY, float rayZ, float eyeX, float eyeY, float eyeZ, float rayWidth, float medialnessRatio, float smoothnessRatio, float minSketchRatio, float maxSketchRatio);
 
 			void Draw(int subscene);
 			void FinalizeSkeleton();
-			void SelectEndSeed(float medialnessRatio, float smoothnessRatio, float sketchRatio);
-			void SelectStartSeedRay(float rayX, float rayY, float rayZ, float eyeX, float eyeY, float eyeZ, float rayWidth, float medialnessRatio, float smoothnessRatio, float sketchRatio);
-			void SelectRootRay(float rayX, float rayY, float rayZ, float eyeX, float eyeY, float eyeZ, float rayWidth, float medialnessRatio, float smoothnessRatio, float sketchRatio);
+			void SelectEndSeed(float medialnessRatio, float smoothnessRatio);
+			void SelectStartSeedRay(float rayX, float rayY, float rayZ, float eyeX, float eyeY, float eyeZ, float rayWidth, float medialnessRatio, float smoothnessRatio);
+			void SelectRootRay(float rayX, float rayY, float rayZ, float eyeX, float eyeY, float eyeZ, float rayWidth, float medialnessRatio, float smoothnessRatio);
 			void SetIsoValue(float isoValue);
 		private:
 			Volume * volume;
@@ -108,17 +111,17 @@ namespace wustl_mm {
 			gluDeleteQuadric(quadricSphere);			
 		}
 
-		void InteractiveSkeletonEngine::SelectEndSeed(float medialnessRatio, float smoothnessRatio, float sketchRatio) {
+		void InteractiveSkeletonEngine::SelectEndSeed(float medialnessRatio, float smoothnessRatio) {
 			for(unsigned int i = 0; i < skeleton->edges.size(); i++) {
 				skeleton->edges[i].tag = true;
 			}
 			if(!startSeedIsolated) {
-				skeletonizer->IsolateStartSeed(startPos, medialnessRatio, smoothnessRatio, sketchRatio, false);
+				skeletonizer->IsolateStartSeed(startPos, medialnessRatio, smoothnessRatio, false);
 				startSeedIsolated = true;
 			}
 		}
 
-		void InteractiveSkeletonEngine::SelectStartSeedRay(float rayX, float rayY, float rayZ, float eyeX, float eyeY, float eyeZ, float rayWidth, float medialnessRatio, float smoothnessRatio, float sketchRatio) {
+		void InteractiveSkeletonEngine::SelectStartSeedRay(float rayX, float rayY, float rayZ, float eyeX, float eyeY, float eyeZ, float rayWidth, float medialnessRatio, float smoothnessRatio) {
 			analyzed = false;
 			started = false;			
 			startPositions.clear();				
@@ -148,14 +151,14 @@ namespace wustl_mm {
 			}			
 
 			if(startPositions.size() > 0) {
-				skeletonizer->CalculateMinimalSpanningTree(startPositions, medialnessRatio, smoothnessRatio, sketchRatio, false);
+				skeletonizer->CalculateMinimalSpanningTree(startPositions, medialnessRatio, smoothnessRatio, false);
 				startPos = startPositions[0];
 				startSeedIsolated = false;
 				started = true;
 			}					
 		}
 
-		void InteractiveSkeletonEngine::SelectRootRay(float rayX, float rayY, float rayZ, float eyeX, float eyeY, float eyeZ, float rayWidth, float medialnessRatio, float smoothnessRatio, float sketchRatio) {
+		void InteractiveSkeletonEngine::SelectRootRay(float rayX, float rayY, float rayZ, float eyeX, float eyeY, float eyeZ, float rayWidth, float medialnessRatio, float smoothnessRatio) {
 			analyzed = false;
 			started = false;			
 			startPositions.clear();				
@@ -196,7 +199,7 @@ namespace wustl_mm {
 
 			if(maxIndex >= 0) {
 				startPos = startPositions[maxIndex];				
-				skeletonizer->IsolateStartSeed(startPos, medialnessRatio, smoothnessRatio, sketchRatio, true);
+				skeletonizer->IsolateStartSeed(startPos, medialnessRatio, smoothnessRatio, true);
 				startSeedIsolated = true;
 				//skeletonizer->DrawTree(startPos);
 			}
@@ -245,7 +248,7 @@ namespace wustl_mm {
 		void InteractiveSkeletonEngine::ClearSketchRay() {
 			sketchPositions.clear();
 			vector<Vector3DInt> sketchPts;
-			skeletonizer->SetSketchPoints(sketchPts, 1.0);
+			skeletonizer->SetSketchPoints(sketchPts, 1.0f, 1.0f);
 		}
 
 		void InteractiveSkeletonEngine::StartSketchRay(float rayX, float rayY, float rayZ, float eyeX, float eyeY, float eyeZ, float rayWidth) {
@@ -268,10 +271,12 @@ namespace wustl_mm {
 				unsigned long long hash;
 				
 				for(unsigned int i = 0; i < intersectingCells.size(); i++) {
-					hash = GetHashFromVector3DInt(Vector3DInt(intersectingCells[i]->pos[0], intersectingCells[i]->pos[1], intersectingCells[i]->pos[2]));
-					if(sketchPositions.find(hash) == sketchPositions.end()) {
-						sketchPositions[hash] = true;
-						added = true;
+					if(intersectingCells[i]->cellSize == 1) {
+						hash = GetHashFromVector3DInt(Vector3DInt(intersectingCells[i]->pos[0], intersectingCells[i]->pos[1], intersectingCells[i]->pos[2]));
+						if(sketchPositions.find(hash) == sketchPositions.end()) {
+							sketchPositions[hash] = true;
+							added = true;
+						}
 					}
 				}
 			}
@@ -279,7 +284,7 @@ namespace wustl_mm {
 		}
 
 		
-		void InteractiveSkeletonEngine::EndSketchRay(float rayX, float rayY, float rayZ, float eyeX, float eyeY, float eyeZ, float rayWidth, float medialnessRatio, float smoothnessRatio, float sketchRatio) {
+		void InteractiveSkeletonEngine::EndSketchRay(float rayX, float rayY, float rayZ, float eyeX, float eyeY, float eyeZ, float rayWidth, float medialnessRatio, float smoothnessRatio, float minSketchRatio, float maxSketchRatio) {
 			if(sketchStarted) {
 				vector<Vector3DInt> sketchPts;
 				for(SketchMapType::iterator i = sketchPositions.begin(); i!= sketchPositions.end(); i++) {
@@ -287,10 +292,10 @@ namespace wustl_mm {
 				}
 
 				SetSketchRay(rayX, rayY, rayZ, eyeX, eyeY, eyeZ, rayWidth);
-				skeletonizer->SetSketchPoints(sketchPts, sketchRatio);
-				SelectStartSeedRay(rayStart[0], rayStart[1], rayStart[2], eyeStart[0], eyeStart[1], eyeStart[2], rayWidthStart, medialnessRatio, smoothnessRatio, sketchRatio);
+				skeletonizer->SetSketchPoints(sketchPts, minSketchRatio, maxSketchRatio);
+				SelectStartSeedRay(rayStart[0], rayStart[1], rayStart[2], eyeStart[0], eyeStart[1], eyeStart[2], rayWidthStart, medialnessRatio, smoothnessRatio);
 				AnalyzePathRay(rayX, rayY, rayZ, eyeX, eyeY, eyeZ, rayWidth);
-				SelectEndSeed(medialnessRatio, smoothnessRatio, sketchRatio);
+				SelectEndSeed(medialnessRatio, smoothnessRatio);
 			}
 		}
 
@@ -321,7 +326,7 @@ namespace wustl_mm {
 					}
 					break;
 				case(2):
-					/*{
+					{
 						Vector3DInt v;
 						for(SketchMapType::iterator i = sketchPositions.begin(); i != sketchPositions.end(); i++) {
 							v = GetVector3DIntFromHash(i->first);
@@ -330,7 +335,7 @@ namespace wustl_mm {
 							gluSphere(quadricSphere, 1.0, 10, 10);  
 							glPopMatrix();						
 						}
-					}*/
+					}
 					break;
 				case(3):
 					/*glPushAttrib(GL_ENABLE_BIT | GL_HINT_BIT | GL_POINT_BIT);

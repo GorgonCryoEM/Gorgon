@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.22  2008/10/14 14:59:33  ssa1
+//   Adding in sketching mode for interactive skeletonization
+//
 //   Revision 1.21  2008/10/10 14:25:55  ssa1
 //   Setting the cost functions to scale with the edge length
 //
@@ -72,10 +75,10 @@ namespace wustl_mm {
 			vector<OctreeNode< octreeTagType > *> GetPath(Vector3DInt endPoint);			
 			vector<OctreeNode< octreeTagType > *> GetPath(vector<Vector3DInt> endPoints);
 			Vector3DInt FindClosestSkeletalPoint(Vector3DInt point);
-			void CalculateMinimalSpanningTree(Vector3DInt seedPoint, float medialnessRatio, float smoothnessRatio, float sketchRatio, bool terminate);
-			void CalculateMinimalSpanningTree(vector<Vector3DInt> seedPoints, float medialnessRatio, float smoothnessRatio, float sketchRatio, bool terminate);
-			void IsolateStartSeed(Vector3DInt startPos, float medialnessRatio, float smoothnessRatio, float sketchRatio, bool terminate);
-			void SetSketchPoints(vector<Vector3DInt> sketchPoints, float sketchRatio);
+			void CalculateMinimalSpanningTree(Vector3DInt seedPoint, float medialnessRatio, float smoothnessRatio, bool terminate);
+			void CalculateMinimalSpanningTree(vector<Vector3DInt> seedPoints, float medialnessRatio, float smoothnessRatio, bool terminate);
+			void IsolateStartSeed(Vector3DInt startPos, float medialnessRatio, float smoothnessRatio, bool terminate);
+			void SetSketchPoints(vector<Vector3DInt> sketchPoints, float minSketchRatio, float maxSketchRatio);
 
 		protected:
 			double GetStructureTensorProjectedScore(EigenResults3D imageEigen, Vector3DFloat skeletonDirection, float power, int type);			
@@ -89,7 +92,7 @@ namespace wustl_mm {
 			float minEdgeSegmentSmoothness;
 
 		private:
-			float GetSketchRatio(float oldY, float xValue, float minSketchRatio);
+			float GetSketchRatio(float oldY, float xValue, float minSketchRatio, float maxSketchRatio);
 			Volume * GetAutomaticSkeleton(Volume * sourceVol, float minGray, float maxGray, float stepSize, int minCurveSize);
 			Octree<octreeTagType> * GetOctreeFromSkeleton(Volume * skeleton);
 			void CreateAndAnnotateVertices(GraphType * graph, Octree<octreeTagType> * octree, Volume * sourceVol, Volume * skeleton, unsigned int medialnessScoringFunction, int curveRadius);
@@ -354,15 +357,15 @@ namespace wustl_mm {
 		}
 
 
-		void InteractiveSkeletonizer::CalculateMinimalSpanningTree(Vector3DInt seedPoint, float medialnessRatio, float smoothnessRatio, float sketchRatio, bool terminate) {
+		void InteractiveSkeletonizer::CalculateMinimalSpanningTree(Vector3DInt seedPoint, float medialnessRatio, float smoothnessRatio, bool terminate) {
 			appTimeManager.PushCurrentTime();
 			vector<Vector3DInt> seedPoints;
 			seedPoints.push_back(seedPoint);
-			CalculateMinimalSpanningTree(seedPoints, medialnessRatio, smoothnessRatio, sketchRatio, terminate);
+			CalculateMinimalSpanningTree(seedPoints, medialnessRatio, smoothnessRatio, terminate);
 			appTimeManager.PopAndDisplayTime("Initializing seed point: %f seconds!\n");
 		}
 
-		void InteractiveSkeletonizer::CalculateMinimalSpanningTree(vector<Vector3DInt> seedPoints, float medialnessRatio, float smoothnessRatio, float sketchRatio, bool terminate) {
+		void InteractiveSkeletonizer::CalculateMinimalSpanningTree(vector<Vector3DInt> seedPoints, float medialnessRatio, float smoothnessRatio, bool terminate) {
 			appTimeManager.PushCurrentTime();
 			
 			OctreeNode<octreeTagType> * node;
@@ -418,33 +421,38 @@ namespace wustl_mm {
 
 		}
 
-		void InteractiveSkeletonizer::IsolateStartSeed(Vector3DInt startPos, float medialnessRatio, float smoothnessRatio, float sketchRatio, bool terminate) {
-			CalculateMinimalSpanningTree(startPos, medialnessRatio, smoothnessRatio, sketchRatio, terminate);
+		void InteractiveSkeletonizer::IsolateStartSeed(Vector3DInt startPos, float medialnessRatio, float smoothnessRatio, bool terminate) {
+			CalculateMinimalSpanningTree(startPos, medialnessRatio, smoothnessRatio, terminate);
 		}
 
 
-		float InteractiveSkeletonizer::GetSketchRatio(float oldY, float xValue, float minSketchRatio) {
-			float oldX = (1.0f - minSketchRatio)/(1.0f - oldY) - 1.0f;
+		float InteractiveSkeletonizer::GetSketchRatio(float oldY, float xValue, float minSketchRatio, float maxSketchRatio) {
+			float p = 4.0f;
+			float pp = pow(p, p);
+			float a = maxSketchRatio;
+			float b = minSketchRatio;
+			float oldX = pow((pp * (a-b) / (a - oldY) - pp), 1.0f/p);
 			float newX = oldX + xValue;
-			return ((1.0f - 1.0f/(newX + 1.0f)) * (1.0f - minSketchRatio) + minSketchRatio);
+
+			return (1.0f - 1.0f / (pow(newX, p) / pp + 1.0f)) * (a-b)+ b;
 		}
 
-		void InteractiveSkeletonizer::SetSketchPoints(vector<Vector3DInt> sketchPoints, float sketchRatio) {
+		void InteractiveSkeletonizer::SetSketchPoints(vector<Vector3DInt> sketchPoints, float minSketchRatio, float maxSketchRatio) {
 			appTimeManager.PushCurrentTime();
 			
 			OctreeNode<octreeTagType> * node;
 			NonManifoldMeshVertex<nodeAttrib> * currentNode;
 			queue<NonManifoldMeshVertex<nodeAttrib> *> pointList;
 
-			for(int i = 0; i < graph->vertices.size(); i++) {
-				graph->vertices[i].tag.sketchRatio = 1.0f;
+			for(unsigned int i = 0; i < graph->vertices.size(); i++) {
+				graph->vertices[i].tag.sketchRatio = maxSketchRatio;
 			}
 
 			for(unsigned int i = 0; i < sketchPoints.size(); i++) {
 				node = octree->GetLeaf(sketchPoints[i].X(), sketchPoints[i].Y(), sketchPoints[i].Z());
 		
 				currentNode = &graph->vertices[node->tag.tag1];
-				currentNode->tag.sketchRatio = sketchRatio;
+				currentNode->tag.sketchRatio = minSketchRatio;
 				pointList.push(currentNode);
 			}
 
@@ -462,7 +470,7 @@ namespace wustl_mm {
 					edgeLength = (graph->vertices[graph->GetVertexIndex(graph->edges[edgeIx].vertexIds[0])].position - 
 								  graph->vertices[graph->GetVertexIndex(graph->edges[edgeIx].vertexIds[1])].position).Length();
 
-					newRatio = GetSketchRatio(currentNode->tag.sketchRatio, edgeLength, sketchRatio);
+					newRatio = GetSketchRatio(currentNode->tag.sketchRatio, edgeLength, minSketchRatio, maxSketchRatio);
 							
 
 					for(unsigned int j = 0; j < 2; j++) {

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_dialog_volume_manual_skeletonization.ui'
 #
-# Created: Fri Oct 10 09:10:39 2008
+# Created: Tue Oct 14 14:28:34 2008
 #      by: PyQt4 UI code generator 4.3.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -88,11 +88,11 @@ class Ui_DialogVolumeManualSkeletonization(object):
         self.gridlayout.addWidget(self.labelSketchImportance,2,0,1,1)
 
         self.horizontalSliderSketchPriority = QtGui.QSlider(DialogVolumeManualSkeletonization)
-        self.horizontalSliderSketchPriority.setMinimum(0)
+        self.horizontalSliderSketchPriority.setMinimum(1)
         self.horizontalSliderSketchPriority.setMaximum(100)
         self.horizontalSliderSketchPriority.setSingleStep(1)
         self.horizontalSliderSketchPriority.setPageStep(10)
-        self.horizontalSliderSketchPriority.setProperty("value",QtCore.QVariant(25))
+        self.horizontalSliderSketchPriority.setProperty("value",QtCore.QVariant(10))
         self.horizontalSliderSketchPriority.setOrientation(QtCore.Qt.Horizontal)
         self.horizontalSliderSketchPriority.setTickPosition(QtGui.QSlider.NoTicks)
         self.horizontalSliderSketchPriority.setObjectName("horizontalSliderSketchPriority")
@@ -223,7 +223,7 @@ class Ui_DialogVolumeManualSkeletonization(object):
         self.labeSmoothnessDisplay.setText(QtGui.QApplication.translate("DialogVolumeManualSkeletonization", "25", None, QtGui.QApplication.UnicodeUTF8))
         self.labelSketchImportance.setText(QtGui.QApplication.translate("DialogVolumeManualSkeletonization", "Sketch Priority:", None, QtGui.QApplication.UnicodeUTF8))
         self.horizontalSliderSketchPriority.setWhatsThis(QtGui.QApplication.translate("DialogVolumeManualSkeletonization", "Picks the density to use when performing skeletonization", None, QtGui.QApplication.UnicodeUTF8))
-        self.labeSketchPriorityDisplay.setText(QtGui.QApplication.translate("DialogVolumeManualSkeletonization", "25", None, QtGui.QApplication.UnicodeUTF8))
+        self.labeSketchPriorityDisplay.setText(QtGui.QApplication.translate("DialogVolumeManualSkeletonization", "10", None, QtGui.QApplication.UnicodeUTF8))
         self.labelStartDensity.setText(QtGui.QApplication.translate("DialogVolumeManualSkeletonization", "Starting Density:", None, QtGui.QApplication.UnicodeUTF8))
         self.horizontalSliderStartingDensity.setWhatsThis(QtGui.QApplication.translate("DialogVolumeManualSkeletonization", "Picks the density to use when performing skeletonization", None, QtGui.QApplication.UnicodeUTF8))
         self.labelStartingDensityDisplay.setText(QtGui.QApplication.translate("DialogVolumeManualSkeletonization", "128", None, QtGui.QApplication.UnicodeUTF8))

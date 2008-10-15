@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.17  2008/10/14 14:59:33  ssa1
+#   Adding in sketching mode for interactive skeletonization
+#
 #   Revision 1.16  2008/10/10 14:25:57  ssa1
 #   Setting the cost functions to scale with the edge length
 #
@@ -203,16 +206,17 @@ class VolumeManualSkeletonizationForm(QtGui.QWidget):
 
         medialnessRatio = float(self.getMedialness()) / divisor;
         smoothnessRatio = float(self.getSmoothness()) / divisor;
-        sketchPriorityRatio = float(self.getSketchPriority()) / 100.0;
+        sketchPriority = float(self.getSketchPriority());
 
         if(self.started):
             if((event.modifiers() & QtCore.Qt.CTRL) and (event.modifiers() & QtCore.Qt.ALT)):
-                self.engine.selectRootRay(ray[0], ray[1], ray[2], eye[0], eye[1], eye[2], rayWidth, medialnessRatio, smoothnessRatio, sketchPriorityRatio)
+                self.engine.selectRootRay(ray[0], ray[1], ray[2], eye[0], eye[1], eye[2], rayWidth, medialnessRatio, smoothnessRatio)
             elif(event.modifiers() & QtCore.Qt.CTRL):
-                self.engine.selectStartSeedRay(ray[0], ray[1], ray[2], eye[0], eye[1], eye[2], rayWidth, medialnessRatio, smoothnessRatio, sketchPriorityRatio)                    
+                self.engine.selectEndSeed(medialnessRatio, smoothnessRatio)
+                self.engine.selectStartSeedRay(ray[0], ray[1], ray[2], eye[0], eye[1], eye[2], rayWidth, medialnessRatio, smoothnessRatio)                    
                 self.skeletonViewer.emitModelChanged()                    
             elif (event.modifiers() & QtCore.Qt.ALT):
-                self.engine.selectEndSeed(medialnessRatio, smoothnessRatio, sketchPriorityRatio)
+                self.engine.selectEndSeed(medialnessRatio, smoothnessRatio)
                 self.skeletonViewer.emitModelChanged()
             elif (event.modifiers() & QtCore.Qt.SHIFT):
                 self.sketchStarted = not self.sketchStarted
@@ -220,7 +224,8 @@ class VolumeManualSkeletonizationForm(QtGui.QWidget):
                     self.engine.clearSketchRay()
                     self.engine.startSketchRay(ray[0], ray[1], ray[2], eye[0], eye[1], eye[2], rayWidth)
                 else :
-                    self.engine.endSketchRay(ray[0], ray[1], ray[2], eye[0], eye[1], eye[2], rayWidth, medialnessRatio, smoothnessRatio, sketchPriorityRatio)
+                    self.engine.endSketchRay(ray[0], ray[1], ray[2], eye[0], eye[1], eye[2], rayWidth, medialnessRatio, smoothnessRatio, 1.0, sketchPriority)
+                    self.engine.clearSketchRay();
                 self.skeletonViewer.emitModelChanged()       
                     
 
@@ -231,8 +236,7 @@ class VolumeManualSkeletonizationForm(QtGui.QWidget):
         elif(event.modifiers() & QtCore.Qt.SHIFT):
             if(self.engine.setSketchRay(ray[0], ray[1], ray[2], eye[0], eye[1], eye[2], rayWidth)):
                 self.skeletonViewer.emitModelChanged()
-                
-    
+                    
     def modelLoaded(self):
         self.skeletonViewer = self.app.viewers["skeleton"]; 
         #self.oldSkeletonViewerSelectEnabled = self.skeletonViewer.selectEnabled
