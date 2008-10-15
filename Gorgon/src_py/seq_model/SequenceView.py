@@ -116,11 +116,12 @@ class SequenceDock(QtGui.QDockWidget):
 class SequenceWidget(QtGui.QWidget):
     def __init__(self, chainObj, parent=None):
         super(SequenceWidget, self).__init__(parent)
+        self.chainObj = chainObj
         self.setMinimumSize(400,600)
         self.scrollable = ScrollableSequenceView(chainObj, self)
         self.scrollable.setMinimumSize(300, 180)
         self.structureEditor = StructureEditor(chainObj, self)
-        self.chainObj = chainObj
+        
         
         self.globalView=GlobalSequenceView(chainObj)
         self.globalView.setLocalView(self.scrollable.seqView)
@@ -346,20 +347,39 @@ class StructureEditor(QtGui.QWidget):
         skeletonViewer = self.parent().parent().app.viewers['skeleton']
         meshRenderer = skeletonViewer.renderer
         atom = self.chainObj[ int( str(self.prevNum.text()) ) ].getAtom('CA')
+        if not atom:
+            self.possibilityNumSpinBox.setRange(0, 0)
+            self.numPossibilities.setText('of ?')
+            return
         atomPos = atom.getPosition()
         #print atomPos,  radius
         #TODO: determine how to display possible atom locations
         if skeletonViewer.loaded:
+            print "Number of intersections:", 
             numIntersections = meshRenderer.intersectMeshAndSphere(atomPos, radius)
+            print numIntersections
             self.numPossibilities.setText('of ' + str(numIntersections))
             if numIntersections == 0:
+                print "No possibilities!"
                 self.possibilityNumSpinBox.setRange(0, 0)
             else:
                 self.possibilityNumSpinBox.setRange(1, numIntersections)
             possiblePositionsList = []
             for i in range(numIntersections):
                 possiblePositionsList.append( meshRenderer.getIntersectionPoint(i) )
-            print 'Possible positions:',  possiblePositionsList
+            #print 'Possible positions:',  possiblePositionsList
+            counter = 100000 #shouldn't clash with actually placed atoms
+            for pos in possiblePositionsList:
+                x, y, z = (pos.x(), pos.y(), pos.z())
+                print '(%f, %f, %f)' % (x, y, z)
+                rawAtom=PDBAtom(self.chainObj.getPdbID(), self.chainObj.getChainID() , counter, 'CA')
+                rawAtom.setPosition(pos)
+                rawAtom.setElement('C')
+                rawAtom.setColor(0, 1, 1, 1)
+                self.parent().parent().viewer.renderer.addAtom(rawAtom)
+                counter += 1
+            if possiblePositionsList:
+                self.parent().parent().viewer.emitModelChanged()
     
     def prevButtonPress(self):
         selection = self.parent().chainObj.getSelection()
@@ -406,6 +426,7 @@ class StructureEditor(QtGui.QWidget):
         lastResidueIndex = max(self.parent().chainObj.residueRange())
         self.prevNum.setText(unicode(prevResNum))
         self.prevName.setText(unicode(self.chainObj[prevResNum]))
+        self.findCAlphaPositionPossibilities()
         if prevResNum >= lastResidueIndex:
             self.nextName.setText('')
             self.nextNum.setText('')
@@ -423,7 +444,6 @@ class StructureEditor(QtGui.QWidget):
             self.curName.setText(unicode(self.chainObj[prevResNum+1]))
             self.nextNum.setText(unicode(prevResNum+2))
             self.nextName.setText(unicode(self.chainObj[prevResNum+2]))
-        self.findCAlphaPositionPossibilities()
             
 class SequenceView(QtGui.QWidget):
   """
@@ -440,6 +460,7 @@ class SequenceView(QtGui.QWidget):
     self.font=QtGui.QFont(self.fontName,self.fontSize)
 
     # Initialize sequence
+    self.sequence = sequence
     self.setSequence(sequence)
 
     #self.connect(self, QtCore.SIGNAL('SequencePanelUpdate'), self.repaint)
@@ -708,6 +729,8 @@ class SequenceView(QtGui.QWidget):
     selectionToClear = self.sequence.getSelection()
     for i in selectionToClear:
         atom = self.sequence[i].getAtom('CA')
+        if atom == None:
+            break
         atom.setSelected(False)
     self.sequence.setSelection(newSelection,removeOne,addOne,addRange)
     self.parent.parent.structureEditor.setResidues(newSelection)
@@ -732,7 +755,8 @@ class SequenceView(QtGui.QWidget):
    
     for i in mychain.residueRange():
         atom = mychain[i].getAtom('CA')
-        renderer.addAtom(atom)
+        if atom:
+            renderer.addAtom(atom)
 
     if not viewer.loaded:
         viewer.dirty = False
