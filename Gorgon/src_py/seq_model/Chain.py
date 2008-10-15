@@ -139,15 +139,17 @@ class Chain(baseClass):
             element     = line[76:78].strip()
             tempFactor  = float( line[60:66].strip() )
             occupancy   = float( line[54:60].strip() )
-            x           = float( line[30:38] )
-            y           = float( line[38:46] )
-            z           = float( line[46:54] )
-            
-            atom = residue.addAtom(atomName, x,y,z, element, serialNo, occupancy, tempFactor)
-            
-            #residue.atoms[atomName]=atom            
-            result.atoms[serialNo]=atom
-            #Chain.chainsDict[result.key] = result
+            try: 
+                x = float( line[30:38] )
+                y = float( line[38:46] )
+                z = float( line[46:54] )
+                
+                atom = residue.addAtom(atomName, x,y,z, element, serialNo, occupancy, tempFactor)
+                #residue.atoms[atomName]=atom            
+                result.atoms[serialNo]=atom
+                #Chain.chainsDict[result.key] = result
+            except ValueError:
+                print 'Missing coordinates--not adding atom...'
 
         elif line[0:6].strip()=='HELIX':
             Helix.parsePDB(line,result)
@@ -180,7 +182,7 @@ class Chain(baseClass):
     sequence = lines[:(linesSize//2)]
     structure = lines[(linesSize//2):]
 
-    newChain = Chain(sequence)
+    newChain = Chain(sequence,  qparent)
     helix = 'H'
     strand = 'E'
     coil = '-'
@@ -455,24 +457,32 @@ class Chain(baseClass):
 
   def addCalphaBonds(self):
     '''
-    Adds the Calpha bonds for all the residues in a chain.  If there is a gap in the sequence of residues, this will not place a C-alpha bond--one doesn't want a bond between the 97th and 103rd residue if there are no residues listed in between.
+    Adds the Calpha bonds for all the residues in a chain.  If there is a gap in the sequence of residues, this will not place a C-alpha bond--one doesn't want a bond between the 97th and 103rd residue.
     '''
     try: 
         viewer = Chain.getViewer()
     except:
         print 'Error: No viewer is set for Chain!'
         return
-    prevIndex = self.residueRange()[0]
-    prevAtom = self[prevIndex].getAtom('CA')
-    for resIndex in self.residueRange()[1:]:
-        atom = self[resIndex].getAtom('CA')
-        if prevIndex == resIndex - 1:
-            bond = PDBBond()
-            bond.setAtom0Ix(prevAtom.getHashKey())
-            bond.setAtom1Ix(atom.getHashKey())
-            viewer.renderer.addBond(bond)
-            prevAtom = atom
-            prevIndex = resIndex
+    for firstCAlphaIndex in range( len(self.residueRange()) ):
+        #The purpose of the above for loop is just to find the first residue with a CAlpha PDBAtom object
+        prevNum = self.residueRange()[firstCAlphaIndex]
+        prevAtom = self[prevNum].getAtom('CA')
+        if prevAtom == None:
+            continue
+        for resNum in self.residueRange()[firstCAlphaIndex+1:]:
+            #Searching for residues next to each other to add bonds between them.
+            atom = self[resNum].getAtom('CA')
+            if not atom:
+                continue
+            if prevNum == resNum - 1:
+                bond = PDBBond()
+                bond.setAtom0Ix(prevAtom.getHashKey())
+                bond.setAtom1Ix(atom.getHashKey())
+                viewer.renderer.addBond(bond)
+                prevAtom = atom
+                prevNum = resNum
+        return
 
   def addSecel(self, secel):
     '''
