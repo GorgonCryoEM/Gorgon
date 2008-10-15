@@ -98,7 +98,11 @@ class Residue:
 
   def getAtom(self, atomName):
     '''Returns the residue's PDBAtom given an atom name such as CA'''
-    return self.__atoms[atomName]
+    try:
+        return self.__atoms[atomName]
+    except KeyError:
+        print "In Residue.getAtom()--%s atom doesn't exist for this residue." % atomName
+    
 
 
   def addAtom(self, atomName, x, y, z, element=None, serialNo=None, occupancy=None, tempFactor=None ):
