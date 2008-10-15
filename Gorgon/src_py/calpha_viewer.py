@@ -11,6 +11,10 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.9  2008/10/07 23:40:17  colemanr
+#   I made the menu item for the sequence viewer dock checkable.  Hiding the
+#   dock is not handled properly yet.
+#
 #   Revision 1.8  2008/10/03 23:47:59  colemanr
 #   I overwrote loadData in BaseViewer.  Here it loads Calpha atoms using
 #   Chain.load or Chain.loadAllChains.
@@ -61,8 +65,7 @@ class CAlphaViewer(BaseViewer):
         self.visualizationOptions.ui.checkBoxModelVisible.setText("Show atoms colored:")
         self.visualizationOptions.ui.checkBoxModel2Visible.setText("Show backbone colored:")
         self.visualizationOptions.ui.checkBoxModel2Visible.setVisible(True)
-        self.visualizationOptions.ui.pushButtonModel2Color.setVisible(True)        
-
+        self.visualizationOptions.ui.pushButtonModel2Color.setVisible(True) 
                  
     def createUI(self):
         self.createActions()
@@ -118,6 +121,8 @@ class CAlphaViewer(BaseViewer):
             renderer = self.renderer
             for i in mychain.residueRange():
                 atom = mychain[i].getAtom('CA')
+                if atom == None:
+                    continue
                 renderer.addAtom(atom)
         
         if not self.fileName.isEmpty():
