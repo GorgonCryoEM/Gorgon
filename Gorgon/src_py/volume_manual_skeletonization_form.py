@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.19  2008/10/15 19:41:32  ssa1
+#   Esc to cancel path, Clear Button and Tracking of start seed point
+#
 #   Revision 1.18  2008/10/15 12:23:50  ssa1
 #   Modifying the cost function for sketch interraction, and changing mousebehavior to trigger different interaction modes
 #
@@ -69,10 +72,10 @@ class VolumeManualSkeletonizationForm(QtGui.QWidget):
         self.connect(self.viewer, QtCore.SIGNAL("modelUnloaded()"), self.modelUnloaded)
         
         self.isSkeletonClicked = False;
-        self.manualColors = [QtGui.QColor.fromRgba(QtGui.qRgba(0, 0, 255, 255)),
-                             QtGui.QColor.fromRgba(QtGui.qRgba(0, 255, 0, 255)),
-                             QtGui.QColor.fromRgba(QtGui.qRgba(0, 255, 255, 100)),
-                             QtGui.QColor.fromRgba(QtGui.qRgba(255, 0, 0, 255))]
+        self.manualColors = [QtGui.QColor.fromRgba(QtGui.qRgba(0, 0, 255, 255)),    #Starting Points
+                             QtGui.QColor.fromRgba(QtGui.qRgba(0, 255, 0, 255)),    #Ending Poitns
+                             QtGui.QColor.fromRgba(QtGui.qRgba(0, 255, 255, 100)),  #Sketch Poitns
+                             QtGui.QColor.fromRgba(QtGui.qRgba(255, 255, 0, 255))]  #Temp Skeletal curves
         self.createUI()
         self.createActions()
         self.createMenus()        
@@ -191,6 +194,10 @@ class VolumeManualSkeletonizationForm(QtGui.QWidget):
                 self.skeletonViewer.unloadData()
             self.skeletonViewer.setSelectEnabled(True)
             self.skeletonViewer.setMouseMoveEnabledRay(True)
+            
+            color = self.viewer.modelColor
+            color.setAlpha(150)
+            self.viewer.setModelColor(color)
             #self.skeletonViewer.setMouseMoveEnabled(True)            
         else:
             self.skeletonViewer.setViewerAutonomy(True);
@@ -227,15 +234,6 @@ class VolumeManualSkeletonizationForm(QtGui.QWidget):
             elif (event.modifiers() & QtCore.Qt.ALT):
                 self.engine.selectEndSeed(medialnessRatio, smoothnessRatio)
                 self.skeletonViewer.emitModelChanged()
-            elif (event.modifiers() & QtCore.Qt.SHIFT):
-                self.sketchStarted = not self.sketchStarted
-                if(self.sketchStarted):
-                    self.engine.clearSketchRay()
-                    self.engine.startSketchRay(ray[0], ray[1], ray[2], eye[0], eye[1], eye[2], rayWidth)
-                else :
-                    self.engine.endSketchRay(ray[0], ray[1], ray[2], eye[0], eye[1], eye[2], rayWidth, medialnessRatio, smoothnessRatio, 1.0, sketchPriority)
-                    self.engine.clearSketchRay();
-                self.skeletonViewer.emitModelChanged()       
                     
     def processMouseOverRay(self, ray, rayWidth, eye, event):
         if(self.started and event.modifiers() & QtCore.Qt.CTRL ):
@@ -246,10 +244,8 @@ class VolumeManualSkeletonizationForm(QtGui.QWidget):
             self.engine.analyzePathRay(ray[0], ray[1], ray[2], eye[0], eye[1], eye[2], rayWidth)
             self.skeletonViewer.emitModelChanged()
         elif(event.modifiers() & QtCore.Qt.SHIFT):
-            self.engine.browseStartSeedRay(ray[0], ray[1], ray[2], eye[0], eye[1], eye[2], rayWidth, True)
-            if(self.sketchStarted):
-                if(self.engine.setSketchRay(ray[0], ray[1], ray[2], eye[0], eye[1], eye[2], rayWidth)):
-                    self.skeletonViewer.emitModelChanged()
+            if(self.engine.setSketchRay(ray[0], ray[1], ray[2], eye[0], eye[1], eye[2], rayWidth)):
+                self.skeletonViewer.emitModelChanged()
                     
     def modelLoaded(self):
         self.skeletonViewer = self.app.viewers["skeleton"]; 
@@ -300,8 +296,19 @@ class VolumeManualSkeletonizationForm(QtGui.QWidget):
     
     def keyReleased(self, event):
         if self.started:
+            divisor =  float(self.getMedialness()) + float(self.getSmoothness());
+            medialnessRatio = float(self.getMedialness()) / divisor;
+            smoothnessRatio = float(self.getSmoothness()) / divisor;
+            sketchPriority = float(self.getSketchPriority());                
+            
             if(event.key() == QtCore.Qt.Key_Escape):
                 self.engine.clearCurrentPath();
+                self.skeletonViewer.emitModelChanged()
+            elif(event.key() == QtCore.Qt.Key_Shift):
+                self.engine.endSketchRay(medialnessRatio, smoothnessRatio, 1.0, sketchPriority)
+                self.skeletonViewer.emitModelChanged()
+            elif(event.key() == QtCore.Qt.Key_Plus):
+                self.engine.selectEndSeed(medialnessRatio, smoothnessRatio)
                 self.skeletonViewer.emitModelChanged()
         
     def drawOverlay(self):     
