@@ -101,7 +101,7 @@ class Residue:
     try:
         return self.__atoms[atomName]
     except KeyError:
-        print "In Residue.getAtom()--%s atom doesn't exist for this residue." % atomName
+        print "Residue.getAtom()--no %s atom." % atomName, 
     
 
 
@@ -128,7 +128,9 @@ class Residue:
     '''
     return rawAtom
 
-
+  def addAtomObject(self, atomObject):
+      atomName = atomObject.getName()
+      self.__atoms[atomName] = atomObject
 
   def clearAtoms(self):
     '''Removes all the PDBAtoms from the residue'''

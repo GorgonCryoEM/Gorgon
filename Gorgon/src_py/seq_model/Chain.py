@@ -149,7 +149,7 @@ class Chain(baseClass):
                 result.atoms[serialNo]=atom
                 #Chain.chainsDict[result.key] = result
             except ValueError:
-                print 'Missing coordinates--not adding atom...'
+                print 'Chain.__loadFromPDB--no coordinates', 
 
         elif line[0:6].strip()=='HELIX':
             Helix.parsePDB(line,result)
