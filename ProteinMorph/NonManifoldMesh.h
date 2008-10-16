@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.25  2008/10/15 19:41:30  ssa1
+//   Esc to cancel path, Clear Button and Tracking of start seed point
+//
 //   Revision 1.24  2008/09/29 16:43:15  ssa1
 //   Adding in CVS meta information
 //
@@ -24,11 +27,11 @@
 #include <string>
 #include <glut.h>
 #include <Foundation/Rasterizer.h>
+#include <map>	
+#include <queue>
 #ifdef _WIN32
 	#include <hash_map>
 	using namespace stdext;
-#else
-	#include <map>	
 #endif
 
 using namespace std;
@@ -97,6 +100,7 @@ namespace wustl_mm {
 			void RemoveNullEntries();
 			void ToOffCells(string fileName);
 			void ToMathematicaFile(string fileName);
+			vector<unsigned int> GetPath(unsigned int edge0Ix, unsigned int edge1Ix);
 			Volume * ToVolume();
 			Vector3DFloat GetVertexNormal(int vertexId);
 			Vector3DFloat GetFaceNormal(int faceId);
@@ -852,6 +856,45 @@ namespace wustl_mm {
 
 			fclose(inFile);
 			return mesh;
+		}
+		template <class TVertex, class TEdge, class TFace> vector<unsigned int> NonManifoldMesh<TVertex, TEdge, TFace>::GetPath(unsigned int edge0Ix, unsigned int edge1Ix) {
+			vector<unsigned int> path;
+			map<unsigned int,  unsigned int> source;
+			
+			queue<unsigned int> edgeList;
+			edgeList.push(edge0Ix);		
+
+			bool found = false;
+			unsigned int currentEdge, vertexIx, edgeIx;
+
+			while((edgeList.size() > 0) && !found) {
+				currentEdge = edgeList.front();
+				edgeList.pop();
+				found = currentEdge == edge1Ix;
+				if(!found) {
+					for(unsigned int v = 0; v < 2; v++) {
+						vertexIx = GetVertexIndex(edges[currentEdge].vertexIds[v]);
+						for(unsigned int e = 0; e < vertices[vertexIx].edgeIds.size(); e++) {
+							edgeIx = GetEdgeIndex(vertices[vertexIx].edgeIds[e]);
+							if(source.find(edgeIx) == source.end()) {
+								source[edgeIx] = currentEdge;
+								edgeList.push(edgeIx);
+							}
+						}
+					}
+				}
+			}
+
+			if(found) {
+				currentEdge = edge1Ix;
+				path.push_back(currentEdge);
+				while(currentEdge != edge0Ix) {
+					currentEdge = source[currentEdge];
+					path.push_back(currentEdge);
+				}
+			}
+
+			return path;
 		}
 	}
 }
