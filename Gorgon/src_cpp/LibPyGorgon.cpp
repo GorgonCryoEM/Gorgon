@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.27  2008/10/15 19:41:32  ssa1
+//   Esc to cancel path, Clear Button and Tracking of start seed point
+//
 //   Revision 1.26  2008/10/14 14:59:33  ssa1
 //   Adding in sketching mode for interactive skeletonization
 //
@@ -258,7 +261,6 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("draw", &InteractiveSkeletonEngine::Draw)		
 		.def("setSketchRay", &InteractiveSkeletonEngine::SetSketchRay)		
 		.def("clearSketchRay", &InteractiveSkeletonEngine::ClearSketchRay)
-		.def("startSketchRay", &InteractiveSkeletonEngine::StartSketchRay)
 		.def("endSketchRay", &InteractiveSkeletonEngine::EndSketchRay)
 	;
 

@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.23  2008/09/29 20:36:35  ssa1
+//   Drawing skeletal curves as cylinders and spheres
+//
 //   Revision 1.22  2008/09/29 16:01:17  ssa1
 //   Adding in CVS meta information
 //
@@ -47,8 +50,8 @@ namespace wustl_mm {
 			virtual string GetSupportedSaveFileFormats();
 			virtual Vector3DFloat Get3DCoordinates(int subsceneIndex, int ix0, int ix1 = -1, int ix2 = -1, int ix3 = -1, int ix4 = -1);
 			bool SetCuttingPlane(float position, float vecX, float vecY, float vecZ);
-			void DrawSphere(Vector3DFloat center, float radius);
-			void DrawCylinder(Vector3DFloat pt1, Vector3DFloat pt2, float radius);
+			void static DrawSphere(Vector3DFloat center, float radius);
+			void static DrawCylinder(Vector3DFloat pt1, Vector3DFloat pt2, float radius);
 			void SetColor(float colorR, float colorG, float colorB, float colorA);
 
 			float GetMin(int dimension);

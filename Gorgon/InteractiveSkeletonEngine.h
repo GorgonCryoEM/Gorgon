@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.21  2008/10/15 19:41:30  ssa1
+//   Esc to cancel path, Clear Button and Tracking of start seed point
+//
 //   Revision 1.20  2008/10/15 16:34:18  colemanr
 //   includes grant's fix for a gcc compile error.
 //
@@ -58,9 +61,8 @@ namespace wustl_mm {
 			~InteractiveSkeletonEngine();			
 			void AnalyzePathRay(float rayX, float rayY, float rayZ, float eyeX, float eyeY, float eyeZ, float rayWidth);
 			void ClearSketchRay();
-			void StartSketchRay(float rayX, float rayY, float rayZ, float eyeX, float eyeY, float eyeZ, float rayWidth);
 			bool SetSketchRay(float rayX, float rayY, float rayZ, float eyeX, float eyeY, float eyeZ, float rayWidth);
-			void EndSketchRay(float rayX, float rayY, float rayZ, float eyeX, float eyeY, float eyeZ, float rayWidth, float medialnessRatio, float smoothnessRatio, float minSketchRatio, float maxSketchRatio);
+			void EndSketchRay(float medialnessRatio, float smoothnessRatio, float minSketchRatio, float maxSketchRatio);
 
 			void Draw(int subscene);
 			void FinalizeSkeleton();
@@ -72,6 +74,8 @@ namespace wustl_mm {
 			void SelectRootRay(float rayX, float rayY, float rayZ, float eyeX, float eyeY, float eyeZ, float rayWidth, float medialnessRatio, float smoothnessRatio);
 			void SetIsoValue(float isoValue);
 		private:
+			void SelectStartSeed(vector<Vector3DInt> & startPts, float medialnessRatio, float smoothnessRatio);
+			void AnalyzePath(vector<Vector3DInt> & endPts);
 			Volume * volume;
 			NonManifoldMesh_Annotated * skeleton;
 			InteractiveSkeletonizer * skeletonizer;
@@ -89,8 +93,6 @@ namespace wustl_mm {
 
 
 			SketchMapType sketchPositions;
-			bool sketchStarted;
-			float rayStart[3], eyeStart[3], rayWidthStart;
 		};
 
 		InteractiveSkeletonEngine::InteractiveSkeletonEngine(Volume * volume, NonManifoldMesh_Annotated * skeleton, float minGray, int stepCount, int curveRadius, int minCurveSize, unsigned int medialnessScoringFunction) {
@@ -115,7 +117,6 @@ namespace wustl_mm {
 			analyzed = false;
 			startSeedIsolated = false;
 			quadricSphere = gluNewQuadric();	
-			sketchStarted = false;
 		}
 
 		InteractiveSkeletonEngine::~InteractiveSkeletonEngine() {
@@ -131,6 +132,7 @@ namespace wustl_mm {
 				skeletonizer->IsolateStartSeed(startPos, medialnessRatio, smoothnessRatio, false);
 				startSeedIsolated = true;
 			}
+			ClearSketchRay();
 		}
 
 		void InteractiveSkeletonEngine::BrowseStartSeedRay(float rayX, float rayY, float rayZ, float eyeX, float eyeY, float eyeZ, float rayWidth, bool clearBrowsePoint) {
@@ -169,12 +171,6 @@ namespace wustl_mm {
 			started = false;			
 			browseStarted = false;
 			startPositions.clear();				
-			for(unsigned int i = 0; i < skeleton->edges.size(); i++) {
-				if(!skeleton->edges[i].tag) {
-					skeleton->RemoveEdge(i);
-				}
-			}
-			skeleton->RemoveNullEntries();
 
 			vector<OctreeNode<octreeTagType> *> intersectingCells = skeletonizer->GetOctree()->IntersectRay(Vector3DFloat(rayX, rayY, rayZ), Vector3DFloat(eyeX, eyeY, eyeZ), rayWidth);
 
@@ -193,10 +189,9 @@ namespace wustl_mm {
 					}
 				}
 			}			
-
+			
 			if(startPositions.size() > 0) {
-				skeletonizer->CalculateMinimalSpanningTree(startPositions, medialnessRatio, smoothnessRatio, false);
-				startPos = startPositions[0];
+				SelectStartSeed(startPositions, medialnessRatio, smoothnessRatio);				
 				startSeedIsolated = false;
 				started = true;
 			}					
@@ -255,13 +250,7 @@ namespace wustl_mm {
 
 		void InteractiveSkeletonEngine::AnalyzePathRay(float rayX, float rayY, float rayZ, float eyeX, float eyeY, float eyeZ, float rayWidth) {
 			if(started) {
-				currentPositions.clear();
-				for(unsigned int i = 0; i < skeleton->edges.size(); i++) {
-					if(!skeleton->edges[i].tag) {
-						skeleton->RemoveEdge(i);
-					}
-				}
-				skeleton->RemoveNullEntries();
+				currentPositions.clear();			
 
 				vector<OctreeNode<octreeTagType> *> intersectingCells = skeletonizer->GetOctree()->IntersectRay(Vector3DFloat(rayX, rayY, rayZ), Vector3DFloat(eyeX, eyeY, eyeZ), rayWidth);
 
@@ -269,48 +258,28 @@ namespace wustl_mm {
 					if(intersectingCells[i]->cellSize == 1) {
 						currentPositions.push_back(Vector3DInt(intersectingCells[i]->pos[0], intersectingCells[i]->pos[1], intersectingCells[i]->pos[2]));
 					}
-				}
+				}				
 
 				if(currentPositions.size() > 0) {
-
-					int v1, v2;
 					analyzed = true;
-					vector<OctreeNode< octreeTagType > *> path = skeletonizer->GetPath(currentPositions);
-					currentPos = Vector3DInt(path[0]->pos[0], path[0]->pos[1], path[0]->pos[2]);
-					startPos = Vector3DInt(path[path.size()-1]->pos[0], path[path.size()-1]->pos[1], path[path.size()-1]->pos[2]); 
-					for(unsigned int i = 1; i < path.size(); i++) {
-						v1 = path[i-1]->tag.tag2;
-						v2 = path[i]->tag.tag2;
-						if(!skeleton->IsEdgePresent(v1, v2)) {
-							skeleton->AddEdge(v1, v2, false);
-						}
-					}
+					AnalyzePath(currentPositions);
 				}
 			}
 		}
 
-		void InteractiveSkeletonEngine::ClearSketchRay() {
-			sketchPositions.clear();
-			vector<Vector3DInt> sketchPts;
-			skeletonizer->SetSketchPoints(sketchPts, 1.0f, 1.0f);
-		}
 
-		void InteractiveSkeletonEngine::StartSketchRay(float rayX, float rayY, float rayZ, float eyeX, float eyeY, float eyeZ, float rayWidth) {
-			ClearSketchRay();
-			rayStart[0] = rayX;
-			rayStart[1] = rayY;
-			rayStart[2] = rayZ;
-			eyeStart[0] = eyeX;
-			eyeStart[1] = eyeY;
-			eyeStart[2] = eyeZ;
-			rayWidthStart = rayWidth;
-			sketchStarted = true;			
-			SetSketchRay(rayX, rayY, rayZ, eyeX, eyeY, eyeZ, rayWidth);
+
+		void InteractiveSkeletonEngine::ClearSketchRay() {
+			if(sketchPositions.size() > 0) {
+				sketchPositions.clear();
+				vector<Vector3DInt> sketchPts;
+				skeletonizer->SetSketchPoints(sketchPts, 1.0f, 1.0f);
+			}
 		}
 
 		bool InteractiveSkeletonEngine::SetSketchRay(float rayX, float rayY, float rayZ, float eyeX, float eyeY, float eyeZ, float rayWidth) {
 			bool added = false;
-			if(sketchStarted) {
+			if(started && (startPositions.size() > 0) && (currentPositions.size() > 0)) {
 				vector<OctreeNode<octreeTagType> *> intersectingCells = skeletonizer->GetOctree()->IntersectRay(Vector3DFloat(rayX, rayY, rayZ), Vector3DFloat(eyeX, eyeY, eyeZ), rayWidth);
 				unsigned long long hash;
 				
@@ -325,22 +294,19 @@ namespace wustl_mm {
 					}
 				}
 			}
-			return added;
-		}
 
-		
-		void InteractiveSkeletonEngine::EndSketchRay(float rayX, float rayY, float rayZ, float eyeX, float eyeY, float eyeZ, float rayWidth, float medialnessRatio, float smoothnessRatio, float minSketchRatio, float maxSketchRatio) {
-			if(sketchStarted) {
+			return added;
+		}		
+		void InteractiveSkeletonEngine::EndSketchRay(float medialnessRatio, float smoothnessRatio, float minSketchRatio, float maxSketchRatio) {
+			if(started && (startPositions.size() > 0) && (currentPositions.size() > 0)) {
 				vector<Vector3DInt> sketchPts;
 				for(SketchMapType::iterator i = sketchPositions.begin(); i!= sketchPositions.end(); i++) {
 					sketchPts.push_back(GetVector3DIntFromHash(i->first));
 				}
 
-				SetSketchRay(rayX, rayY, rayZ, eyeX, eyeY, eyeZ, rayWidth);
 				skeletonizer->SetSketchPoints(sketchPts, minSketchRatio, maxSketchRatio);
-				SelectStartSeedRay(rayStart[0], rayStart[1], rayStart[2], eyeStart[0], eyeStart[1], eyeStart[2], rayWidthStart, medialnessRatio, smoothnessRatio);
-				AnalyzePathRay(rayX, rayY, rayZ, eyeX, eyeY, eyeZ, rayWidth);
-				SelectEndSeed(medialnessRatio, smoothnessRatio);
+				SelectStartSeed(startPositions, medialnessRatio, smoothnessRatio);
+				AnalyzePath(currentPositions);
 			}
 		}
 
@@ -357,6 +323,7 @@ namespace wustl_mm {
 					}
 				}
 				skeleton->RemoveNullEntries();
+				ClearSketchRay();
 			}
 		}
 		void InteractiveSkeletonEngine::ClearSkeleton() {
@@ -384,7 +351,7 @@ namespace wustl_mm {
 		}
 		void InteractiveSkeletonEngine::Draw(int subscene) {
 			switch (subscene) {
-				case(0) :
+				case(0) :	// Start Points
 					if(started) {
 						glPushMatrix();
 						glTranslatef(startPos.X(), startPos.Y(), startPos.Z());
@@ -398,7 +365,7 @@ namespace wustl_mm {
 						glPopMatrix();
 					}
 					break;
-				case(1) :
+				case(1) :	// End Points
 					if(analyzed && started) {
 						glPushMatrix();
 						glTranslatef(currentPos.X(), currentPos.Y(), currentPos.Z());
@@ -406,7 +373,7 @@ namespace wustl_mm {
 						glPopMatrix();
 					}
 					break;
-				case(2):
+				case(2):	// Sketch Points
 					{
 						Vector3DInt v;
 						for(SketchMapType::iterator i = sketchPositions.begin(); i != sketchPositions.end(); i++) {
@@ -418,33 +385,59 @@ namespace wustl_mm {
 						}
 					}
 					break;
-				case(3):
-					/*glPushAttrib(GL_ENABLE_BIT | GL_HINT_BIT | GL_POINT_BIT);
-										
-					glPushName(2);
-					glPushName(0);
-
-					glPointSize(2);
-					glEnable(GL_POINT_SMOOTH);
-					glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);								
-					for(unsigned int i = 0; i < skeleton->vertices.size(); i++) {										
-						if((skeleton->vertices[i].edgeIds.size() == 0) && 
-								(volume->getDataAt(skeleton->vertices[i].position.XInt(), skeleton->vertices[i].position.YInt(), skeleton->vertices[i].position.ZInt()) > isoValue)) {
-						//if((skeleton->vertices[i].edgeIds.size() == 0)) {
-							glLoadName(i);
-							glBegin(GL_POINTS);
-							glVertex3f(skeleton->vertices[i].position.X(), skeleton->vertices[i].position.Y(), skeleton->vertices[i].position.Z());
-							glEnd();
+				case(3):	// Temporary skeletal paths
+					for(unsigned int i = 0; i <  skeleton->edges.size(); i++) {					
+						if((skeleton->edges[i].faceIds.size() == 0) && !skeleton->edges[i].tag) {
+							NonManifoldMeshVertex<bool> v0 = skeleton->vertices[skeleton->GetVertexIndex(skeleton->edges[i].vertexIds[0])];
+							NonManifoldMeshVertex<bool> v1 = skeleton->vertices[skeleton->GetVertexIndex(skeleton->edges[i].vertexIds[1])];
+							Renderer::DrawCylinder(v0.position, v1.position, 0.11);
 						}
-					}		
-					glPopName();
-					glPopName();
-					glPopAttrib();
-
-					glFlush();*/
+					}	
 					break;
 			}
 		}
+
+		void InteractiveSkeletonEngine::SelectStartSeed(vector<Vector3DInt> & startPts, float medialnessRatio, float smoothnessRatio) {
+			for(unsigned int i = 0; i < skeleton->edges.size(); i++) {
+				if(!skeleton->edges[i].tag) {
+					skeleton->RemoveEdge(i);
+				}
+			}
+			skeleton->RemoveNullEntries();
+
+			if(startPts.size() > 0) {
+				skeletonizer->CalculateMinimalSpanningTree(startPts, medialnessRatio, smoothnessRatio, false);
+				startPos = startPts[0];
+			}
+		}
+
+		void InteractiveSkeletonEngine::AnalyzePath(vector<Vector3DInt> & endPts) {
+			if(started) {
+
+				for(unsigned int i = 0; i < skeleton->edges.size(); i++) {
+					if(!skeleton->edges[i].tag) {
+						skeleton->RemoveEdge(i);
+					}
+				}
+				skeleton->RemoveNullEntries();
+
+
+				if(endPts.size() > 0) {
+					int v1, v2;
+					vector<OctreeNode< octreeTagType > *> path = skeletonizer->GetPath(currentPositions);
+					currentPos = Vector3DInt(path[0]->pos[0], path[0]->pos[1], path[0]->pos[2]);
+					startPos = Vector3DInt(path[path.size()-1]->pos[0], path[path.size()-1]->pos[1], path[path.size()-1]->pos[2]); 
+					for(unsigned int i = 1; i < path.size(); i++) {
+						v1 = path[i-1]->tag.tag2;
+						v2 = path[i]->tag.tag2;
+						if(!skeleton->IsEdgePresent(v1, v2)) {
+							skeleton->AddEdge(v1, v2, false);
+						}
+					}
+				}
+			}
+		}
+
 	}
 }
 
