@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.22  2008/10/16 02:39:57  ssa1
+//   Modifying the sketch behavior to supplement line drawing instead of replace it.
+//
 //   Revision 1.21  2008/10/15 19:41:30  ssa1
 //   Esc to cancel path, Clear Button and Tracking of start seed point
 //
@@ -69,10 +72,18 @@ namespace wustl_mm {
 			void ClearSkeleton();
 			void ClearCurrentPath();
 			void SelectEndSeed(float medialnessRatio, float smoothnessRatio);
-			void BrowseStartSeedRay(float rayX, float rayY, float rayZ, float eyeX, float eyeY, float eyeZ, float rayWidth, bool clearBrowsePoint);
+			void StartEndPolyLineMode(bool start);
+			void StartEndSingleRootMode(bool start);
+			void BrowseStartSeedRay(float rayX, float rayY, float rayZ, float eyeX, float eyeY, float eyeZ, float rayWidth);
 			void SelectStartSeedRay(float rayX, float rayY, float rayZ, float eyeX, float eyeY, float eyeZ, float rayWidth, float medialnessRatio, float smoothnessRatio);
 			void SelectRootRay(float rayX, float rayY, float rayZ, float eyeX, float eyeY, float eyeZ, float rayWidth, float medialnessRatio, float smoothnessRatio);
 			void SetIsoValue(float isoValue);
+			
+			void AddSelectionPoint(int subsceneIndex, int ix0);
+			void SelectSelection();
+			void DeleteSelection();
+			void CancelSelection();
+
 		private:
 			void SelectStartSeed(vector<Vector3DInt> & startPts, float medialnessRatio, float smoothnessRatio);
 			void AnalyzePath(vector<Vector3DInt> & endPts);
@@ -81,7 +92,8 @@ namespace wustl_mm {
 			InteractiveSkeletonizer * skeletonizer;
 			bool started;
 			bool analyzed;
-			bool browseStarted;
+			bool polyLineMode;
+			bool singleRootMode;
 			Vector3DInt browseStartPos;
 			Vector3DInt startPos;
 			vector<Vector3DInt> startPositions;
@@ -89,10 +101,11 @@ namespace wustl_mm {
 			vector<Vector3DInt> currentPositions;
 			GLUquadric * quadricSphere;			
 			float isoValue;
-			bool startSeedIsolated;
-
-
+			bool startSeedIsolated;			
 			SketchMapType sketchPositions;
+
+			vector<unsigned int> selectedEdges;
+			vector<unsigned int> removableEdges;
 		};
 
 		InteractiveSkeletonEngine::InteractiveSkeletonEngine(Volume * volume, NonManifoldMesh_Annotated * skeleton, float minGray, int stepCount, int curveRadius, int minCurveSize, unsigned int medialnessScoringFunction) {
@@ -113,7 +126,8 @@ namespace wustl_mm {
 				node->tag.tag2 = ix;
 			}
 			started = false;
-			browseStarted = false;
+			polyLineMode = true;
+			singleRootMode = false;
 			analyzed = false;
 			startSeedIsolated = false;
 			quadricSphere = gluNewQuadric();	
@@ -135,41 +149,44 @@ namespace wustl_mm {
 			ClearSketchRay();
 		}
 
-		void InteractiveSkeletonEngine::BrowseStartSeedRay(float rayX, float rayY, float rayZ, float eyeX, float eyeY, float eyeZ, float rayWidth, bool clearBrowsePoint) {
-			if(clearBrowsePoint) {
-				browseStarted = false;
-			} else {
-				browseStarted = true;
-				vector<Vector3DInt> newStartPositions;
+		void InteractiveSkeletonEngine::BrowseStartSeedRay(float rayX, float rayY, float rayZ, float eyeX, float eyeY, float eyeZ, float rayWidth) {
+			vector<Vector3DInt> newStartPositions;
 
-				vector<OctreeNode<octreeTagType> *> intersectingCells = skeletonizer->GetOctree()->IntersectRay(Vector3DFloat(rayX, rayY, rayZ), Vector3DFloat(eyeX, eyeY, eyeZ), rayWidth);
+			vector<OctreeNode<octreeTagType> *> intersectingCells = skeletonizer->GetOctree()->IntersectRay(Vector3DFloat(rayX, rayY, rayZ), Vector3DFloat(eyeX, eyeY, eyeZ), rayWidth);
 
-				bool snapOn = false;
-				for(unsigned int i = 0; !snapOn && (i < intersectingCells.size()); i++) {
-					if(intersectingCells[i]->cellSize == 1) {
-						snapOn = snapOn || (skeleton->vertices[intersectingCells[i]->tag.tag2].edgeIds.size() > 0);					
+			bool snapOn = false;
+			for(unsigned int i = 0; !snapOn && (i < intersectingCells.size()); i++) {
+				if(intersectingCells[i]->cellSize == 1) {
+					snapOn = snapOn || (skeleton->vertices[intersectingCells[i]->tag.tag2].edgeIds.size() > 0);					
+				}
+			}			
+
+			for(unsigned int i = 0; i < intersectingCells.size(); i++) {
+				if(intersectingCells[i]->cellSize == 1) {
+					if(!snapOn || (snapOn && (skeleton->vertices[intersectingCells[i]->tag.tag2].edgeIds.size() > 0))) {
+						newStartPositions.push_back(Vector3DInt(intersectingCells[i]->pos[0], intersectingCells[i]->pos[1], intersectingCells[i]->pos[2]));
 					}
-				}			
+				}
+			}			
 
-				for(unsigned int i = 0; i < intersectingCells.size(); i++) {
-					if(intersectingCells[i]->cellSize == 1) {
-						if(!snapOn || (snapOn && (skeleton->vertices[intersectingCells[i]->tag.tag2].edgeIds.size() > 0))) {
-							newStartPositions.push_back(Vector3DInt(intersectingCells[i]->pos[0], intersectingCells[i]->pos[1], intersectingCells[i]->pos[2]));
-						}
-					}
-				}			
+			if(newStartPositions.size() > 0) {
+				browseStartPos = newStartPositions[0];
+			}		
+		}
 
-				if(newStartPositions.size() > 0) {
-					browseStartPos = newStartPositions[0];
-				}		
-			}
+
+		void InteractiveSkeletonEngine::StartEndPolyLineMode(bool start) {
+			polyLineMode = start;
+		}
+		
+		void InteractiveSkeletonEngine::StartEndSingleRootMode(bool start) {
+			singleRootMode = start;
 		}
 
 
 		void InteractiveSkeletonEngine::SelectStartSeedRay(float rayX, float rayY, float rayZ, float eyeX, float eyeY, float eyeZ, float rayWidth, float medialnessRatio, float smoothnessRatio) {
 			analyzed = false;
 			started = false;			
-			browseStarted = false;
 			startPositions.clear();				
 
 			vector<OctreeNode<octreeTagType> *> intersectingCells = skeletonizer->GetOctree()->IntersectRay(Vector3DFloat(rayX, rayY, rayZ), Vector3DFloat(eyeX, eyeY, eyeZ), rayWidth);
@@ -324,6 +341,7 @@ namespace wustl_mm {
 				}
 				skeleton->RemoveNullEntries();
 				ClearSketchRay();
+				CancelSelection();
 			}
 		}
 		void InteractiveSkeletonEngine::ClearSkeleton() {
@@ -336,12 +354,14 @@ namespace wustl_mm {
 				skeleton->RemoveEdge(i);
 			}
 			skeleton->RemoveNullEntries();
+			ClearSketchRay();
 		}
 
 		void InteractiveSkeletonEngine::FinalizeSkeleton() {
 			analyzed = false;
 			started = false;	
-			browseStarted = false;
+			polyLineMode = false;
+			singleRootMode = false;
 			for(unsigned int i = 0; i < skeleton->vertices.size(); i++) {
 				if(skeleton->vertices[i].edgeIds.size() == 0) {
 					skeleton->RemoveVertex(i);
@@ -358,7 +378,7 @@ namespace wustl_mm {
 						gluSphere(quadricSphere, 1.0, 10, 10);  
 						glPopMatrix();
 					}
-					if(browseStarted) {
+					if(polyLineMode) {
 						glPushMatrix();
 						glTranslatef(browseStartPos.X(), browseStartPos.Y(), browseStartPos.Z());
 						gluSphere(quadricSphere, 1.0, 10, 10);  
@@ -366,7 +386,7 @@ namespace wustl_mm {
 					}
 					break;
 				case(1) :	// End Points
-					if(analyzed && started) {
+					if(analyzed && started && (singleRootMode || !polyLineMode)) {
 						glPushMatrix();
 						glTranslatef(currentPos.X(), currentPos.Y(), currentPos.Z());
 						gluSphere(quadricSphere, 1.0, 10, 10);  
@@ -392,6 +412,13 @@ namespace wustl_mm {
 							NonManifoldMeshVertex<bool> v1 = skeleton->vertices[skeleton->GetVertexIndex(skeleton->edges[i].vertexIds[1])];
 							Renderer::DrawCylinder(v0.position, v1.position, 0.11);
 						}
+					}	
+					break;
+				case(4):	// Removable Edges
+					for(unsigned int i = 0; i < removableEdges.size(); i++) {					
+						NonManifoldMeshVertex<bool> v0 = skeleton->vertices[skeleton->GetVertexIndex(skeleton->edges[removableEdges[i]].vertexIds[0])];
+						NonManifoldMeshVertex<bool> v1 = skeleton->vertices[skeleton->GetVertexIndex(skeleton->edges[removableEdges[i]].vertexIds[1])];
+						Renderer::DrawCylinder(v0.position, v1.position, 0.15);
 					}	
 					break;
 			}
@@ -436,6 +463,52 @@ namespace wustl_mm {
 					}
 				}
 			}
+		}
+
+
+		void InteractiveSkeletonEngine::AddSelectionPoint(int subsceneIndex, int ix0) {			
+			if((subsceneIndex >= 0) && (ix0 >= 0)) {
+				switch(subsceneIndex){
+					case 1:						
+						selectedEdges.push_back(ix0);
+						break;
+				}
+			}
+			if(selectedEdges.size() > 2) {
+				selectedEdges.erase(selectedEdges.begin());
+			}
+			SelectSelection();
+		}
+
+		void InteractiveSkeletonEngine::SelectSelection() {
+			removableEdges.clear();
+			switch(selectedEdges.size()) {
+				case(1):
+					removableEdges.push_back(selectedEdges[0]);
+					break;
+				case(2):
+					vector<unsigned int> path = skeleton->GetPath(selectedEdges[0], selectedEdges[1]);
+					for(unsigned int i = 0; i < path.size(); i++) {
+						removableEdges.push_back(path[i]);
+					}
+					break;
+			}					
+		}
+
+		void InteractiveSkeletonEngine::CancelSelection() {
+			selectedEdges.clear();
+			removableEdges.clear();
+			SelectSelection();
+		}
+
+		void InteractiveSkeletonEngine::DeleteSelection() {
+			for(unsigned int i = 0; i < removableEdges.size(); i++) {
+				skeleton->RemoveEdge(removableEdges[i]);
+			}
+			skeleton->RemoveNullEntries();
+			removableEdges.clear();
+			selectedEdges.clear();
+
 		}
 
 	}

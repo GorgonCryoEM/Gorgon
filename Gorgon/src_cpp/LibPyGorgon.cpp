@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.28  2008/10/16 02:39:57  ssa1
+//   Modifying the sketch behavior to supplement line drawing instead of replace it.
+//
 //   Revision 1.27  2008/10/15 19:41:32  ssa1
 //   Esc to cancel path, Clear Button and Tracking of start seed point
 //
@@ -248,7 +251,9 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("deleteBond", &CAlphaRenderer::DeleteBond)		
 	;
 
-	class_<InteractiveSkeletonEngine>("InteractiveSkeletonEngine", init<Volume *, NonManifoldMesh_Annotated *, float, int, int, int, unsigned int>())
+	class_<InteractiveSkeletonEngine>("InteractiveSkeletonEngine", init<Volume *, NonManifoldMesh_Annotated *, float, int, int, int, unsigned int>())		
+		.def("startEndPolyLineMode", &InteractiveSkeletonEngine::StartEndPolyLineMode)
+		.def("startEndSingleRootMode", &InteractiveSkeletonEngine::StartEndSingleRootMode)
 		.def("browseStartSeedRay", &InteractiveSkeletonEngine::BrowseStartSeedRay)
 		.def("selectStartSeedRay", &InteractiveSkeletonEngine::SelectStartSeedRay)
 		.def("selectEndSeed", &InteractiveSkeletonEngine::SelectEndSeed)
@@ -262,8 +267,11 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("setSketchRay", &InteractiveSkeletonEngine::SetSketchRay)		
 		.def("clearSketchRay", &InteractiveSkeletonEngine::ClearSketchRay)
 		.def("endSketchRay", &InteractiveSkeletonEngine::EndSketchRay)
+		.def("addSelectionPoint", &InteractiveSkeletonEngine::AddSelectionPoint)
+		.def("selectSelection", &InteractiveSkeletonEngine::SelectSelection)
+		.def("deleteSelection", &InteractiveSkeletonEngine::DeleteSelection)
+		.def("cancelSelection", &InteractiveSkeletonEngine::CancelSelection)
 	;
-
 
 	class_<SSECorrespondenceResult>("SSECorrespondenceResult", init<>())
 		.def("getNodeString", &SSECorrespondenceResult::GetNodeString)
