@@ -21,12 +21,13 @@ class Residue:
 
     residueTypes = {
         'nonpolar': ('GLY', 'ALA', 'VAL', 'LEU', 'ILE', 'PHE', 'TRP', 'MET', 'PRO'), 
-        'polar': ('ASN','GLN','TYR','SER','THR'), 
+        'polarNoSulfur': ('ASN','GLN','TYR','SER','THR'), 
         'negative': ('ASP',  'GLU'), 
         'positive': ('HIS',  'LYS',  'ARG'), 
         'sulfur': ('MET','CYS'), 
         'greasy': ('VAL','ILE','LEU','PRO','GLY','ALA','TRP','PRO')
         }
+    residueTypes['polar'] = residueTypes['polarNoSulfur'] + ['CYS']
     residueTypes['neutral'] = residueTypes['nonpolar'] + residueTypes['polar']
     residueTypes['charged'] = residueTypes['negative'] + residueTypes['positive']
 
