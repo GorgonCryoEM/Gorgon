@@ -40,33 +40,20 @@ if __name__ == '__main__':
     
     print "The mock sidechains should now be visible."    
     SequenceView.clearMockSidechains(mychain)
-    viewer.setModelVisibility(False)
-    viewer.setModelVisibility(True)
+    
+    #Note: the line below doesn't cause the change (no mock sidechains) to be displayed
+    viewer.emitModelChanged()
     print "There should now be no mock sidechains displayed."
-    #Note: setModelVisibility calls base_viewer.modelChanged(), which doesn't seem to pick up on changes in atom attributes
-    #The 3 lines of code (excluding print statements) above should cause the default yellow atoms to be displayed.
-    #However, our mock side chains continue to be displayed
-    #On the other hand, if we unload the data, and then reload it, changes to atom attributes do show up, as the code below shows.
+    #Note: base_viewer.modelChanged()doesn't seem to pick up on changes in atom attributes
     
+    #On the other hand, if we delete the atoms from the renderer, and add them back to the renderer, 
+    #then base_viewer.modelChanged() does cause the changes to be applied
     '''
-    SequenceView.clearMockSidechains(mychain)
-    viewer.unloadData()
-    mychain.addCalphaBonds()
-    
     for i in mychain.residueRange():
         atom = mychain[i].getAtom('CA')
-        #mychain[i].setCAlphaColorScheme1()
-        #mychain[i].setCAlphaColorScheme2()
-        #mychain[i].setCAlphaColorsToDefault()
+        renderer.deleteAtom(atom.getHashKey())
         renderer.addAtom(atom)
-    if (not mychain.getViewer().loaded):
-        viewer.dirty = False
-        mychain.getViewer().loaded = True
-        viewer.emitModelLoadedPreDraw()
-        mychain.getViewer().emitModelLoaded()
-        mychain.getViewer().emitViewerSetCenter()
+    viewer.emitModelChanged()
     '''
-    
-    
-    
+        
     sys.exit(app.exec_())
