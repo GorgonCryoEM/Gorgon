@@ -6,7 +6,7 @@ from seq_model.Helix import Helix
 from seq_model.Strand import Strand
 from seq_model.Chain import Chain
 from seq_model.Residue import Residue
-from libpyGORGON import CAlphaRenderer, PDBAtom
+from libpyGORGON import CAlphaRenderer, PDBAtom,  PDBBond
 
 class SequenceDock(QtGui.QDockWidget):
     __dock = None
@@ -75,46 +75,23 @@ class SequenceDock(QtGui.QDockWidget):
         self.seqWidget.structureEditor.setResidues([resNum])
         selectedChain = Chain.getChain((pdbID, chainID))
         selectedChain.setSelection([resNum])
-#        self.emit( QtCore.SIGNAL("selection updated") )
-#        self.emit( QtCore.SIGNAL('SequencePanelUpdate'))
     
     def toggleMockSideChains(self):
+        #TODO: determine if there is a way to update the display without deleting and re-adding atoms to the renderer
         viewer = self.viewer
-        renderer = self.viewer.renderer
-        mychain = self.chainObj
         
         if self.seqWidget.structureEditor.mockSidechainsCheckBox.isChecked():
             self.seqWidget.structureEditor.renderMockSidechains(self.chainObj)
-            #TODO: learn how to refresh the drawing in the renderer.
-            #self.viewer.draw()
-            #self.viewer.emitModelLoadedPreDraw()
-            #self.viewer.emitModelChanged()
-            #self.viewer.emitModelLoaded()
-            #self.viewer.emitViewerSetCenter()
         else:
-            self.seqWidget.structureEditor.clearMockSidechains(self.chainObj) 
-            #self.viewer.emitModelLoadedPreDraw()
-            #self.viewer.emitModelChanged()
-            #self.viewer.emitModelLoaded()
-            #self.viewer.emitViewerSetCenter()
-        
-        #TODO: find a better way than unloading and reloading data to do this
-        viewer.unloadData()
-        mychain.addCalphaBonds()
+            self.seqWidget.structureEditor.clearMockSidechains(self.chainObj)         
        
-        for i in mychain.residueRange():
-            atom = mychain[i].getAtom('CA')
-            if not atom:
-                continue
-            renderer.addAtom(atom)
-    
-        if not viewer.loaded:
-            viewer.dirty = False
-            viewer.loaded = True
-            viewer.emitModelLoadedPreDraw()
-            viewer.emitModelLoaded()
-        
-        #viewer.emitModelChanged()
+        for i in self.chainObj.residueRange():
+            atom = self.chainObj[i].getAtom('CA')
+            if atom:
+                viewer.renderer.deleteAtom(atom.getHashKey())
+                viewer.renderer.addAtom(atom)
+                
+        viewer.emitModelChanged()
             
 class SequenceWidget(QtGui.QWidget):
     def __init__(self, chainObj, parent=None):
@@ -355,11 +332,26 @@ class StructureEditor(QtGui.QWidget):
                     del atom
             resSeqNum = int(self.curNum.text())
             chosenAtom.setResSeq(resSeqNum)
-            chosenAtom.setColor(0, 1, 1, 1)
             self.chainObj[resSeqNum].addAtomObject(chosenAtom)
-            self.chainObj[resSeqNum].setCAlphaColorToDefault()
+            viewer = self.parentWidget().parentWidget().viewer
             #self.parentWidget()=>SequenceWidget, self.parentWidget().parentWidget() => SequenceDock
-            self.parentWidget().parentWidget().viewer.emitModelChanged()
+            self.chainObj[resSeqNum].setCAlphaColorToDefault()            
+            viewer.renderer.addAtom(chosenAtom)
+            if resSeqNum - 1 in self.chainObj.residueRange():
+                prevCAlpha = self.chainObj[resSeqNum - 1].getAtom('CA')
+                if prevCAlpha:
+                    bond=PDBBond()
+                    bond.setAtom0Ix(prevCAlpha.getHashKey())
+                    bond.setAtom1Ix(chosenAtom.getHashKey())
+                    viewer.renderer.addBond(bond)
+            if resSeqNum + 1 in self.chainObj.residueRange():
+                nextCAlpha = self.chainObj[resSeqNum + 1].getAtom('CA')
+                if nextCAlpha:
+                    bond = PDBBond()
+                    bond.setAtom0Ix(chosenAtom.getHashKey())
+                    bond.setAtom1Ix(nextCAlpha.getHashKey())
+            viewer.emitModelChanged()
+            print 'end acceptButtonPress'
             
     def clearMockSidechains(self,  chain):
         for index in chain.residueRange():
@@ -371,11 +363,12 @@ class StructureEditor(QtGui.QWidget):
     def choosePossibleAtomToDisplay(self,  choiceNum):
         if choiceNum == 0:
             return
+        viewer = self.parentWidget().parentWidget().viewer
         if self.previouslyChosenPossibleAtomToDisplay:
-            self.parentWidget().parentWidget().viewer.renderer.deleteAtom(self.previouslyChosenPossibleAtomToDisplay.getHashKey())
+            viewer.renderer.deleteAtom(self.previouslyChosenPossibleAtomToDisplay.getHashKey())
         atomToDisplay = self.possibleAtomsList[choiceNum-1]
-        self.parentWidget().parentWidget().viewer.renderer.addAtom(atomToDisplay)
-        self.parentWidget().parentWidget().viewer.emitModelChanged()
+        viewer.renderer.addAtom(atomToDisplay)
+        viewer.emitModelChanged()
         self.previouslyChosenPossibleAtomToDisplay = atomToDisplay
     
     def findCAlphaPositionPossibilities(self):
@@ -407,35 +400,44 @@ class StructureEditor(QtGui.QWidget):
             for i in range(numIntersections):
                 possiblePositionsList.append( meshRenderer.getIntersectionPoint(i) )
             print 'Possible positions:',  possiblePositionsList
-            counter = 1 #100000 #shouldn't clash with actually placed atoms
             for i in range(len(possiblePositionsList)):
                 pos = possiblePositionsList[i]
                 x, y, z = (pos.x(), pos.y(), pos.z())
                 print '(%f, %f, %f)' % (x, y, z)
-                rawAtom=PDBAtom(self.chainObj.getPdbID(), self.chainObj.getChainID() , counter, 'CA')
+                rawAtom=PDBAtom(self.chainObj.getPdbID(), self.chainObj.getChainID() , i+1, 'CA')
                 rawAtom.setPosition(pos)
                 rawAtom.setElement('C')
                 rawAtom.setColor(0, 1, 0, 1)
+                
                 try:
-                    previousAtomPos = self.chainObj[int( str(self.prevNum.text()) )-1].getAtom('CA').getPosition()
-                    if ((pos.x() - previousAtomPos.x())**2 + (pos.y() - previousAtomPos.y())**2 + (pos.z() - previousAtomPos.z())**2) < 4:
-                        print 'one possible atom was too close to an existing atom'
-                        pass
-                    else:
-                        print 'we were able to get the previous atom position'
-                        self.possibleAtomsList.append(rawAtom)
-                        counter += 1
-                except KeyError:
-                    print 'could not get previous atom position'
+                    prevAtom = self.chainObj[int( str(self.prevNum.text()) )-1].getAtom('CA')
+                    previousAtomPos = prevAtom.getPosition()
+                    prevDistSquared = (pos.x() - previousAtomPos.x())**2 + (pos.y() - previousAtomPos.y())**2 + (pos.z() - previousAtomPos.z())**2
+                except KeyError,  IndexError:
+                    prevDistSquared = 100000
+                except AttributeError:
+                    prevDistSquared = 100000
+                try:
+                    nextAtom = self.chainObj[int( str(self.prevNum.text()) )+1].getAtom('CA')
+                    nextAtomPos = nextAtom.getPosition()
+                    nextDistSquared = (pos.x() - nextAtomPos.x())**2 + (pos.y() - nextAtomPos.y())**2 + (pos.z() - nextAtomPos.z())**2
+                except KeyError,  IndexError:
+                    nextDistSquared = 100000
+                except AttributeError:
+                    nextDistSquared = 100000
+                
+                if  prevDistSquared < 4 or nextDistSquared < 4:
+                     print 'one possible atom was too close to an existing atom'
+                else:
                     self.possibleAtomsList.append(rawAtom)
-                    counter += 1
-
+                
             print 'possible atoms:',  self.possibleAtomsList
             self.numPossibilities.setText('of ' + str(len(self.possibleAtomsList)))
             self.possibilityNumSpinBox.setRange(1, len(self.possibleAtomsList))
             
             for atom in self.possibleAtomsList:
                 if atom.getResSeq() == self.possibilityNumSpinBox.value():
+                    self.previouslyChosenPossibleAtomToDisplay = atom #We remove this atom from the viewer when we display a different possibility
                     self.parentWidget().parentWidget().viewer.renderer.addAtom(atom)
                     self.parentWidget().parentWidget().viewer.emitModelChanged()
             
@@ -462,7 +464,7 @@ class StructureEditor(QtGui.QWidget):
     def renderMockSidechains(self,  chain):
         color = {
             'greasy': (0.0, 1.0, 0.0, 1.0), 
-            'polar': (0.0, 0.0, 0.6, 1.0), 
+            'polarNoSulfur': (0.0, 0.0, 0.6, 1.0), 
             'charged': (0.0, 0.0, 1.0, 1.0), 
             'sulfur': (1.0, 1.0, 0.0, 1.0)
             }
@@ -790,6 +792,13 @@ class SequenceView(QtGui.QWidget):
 
 
   def setSequenceSelection(self, newSelection=None, removeOne=None, addOne=None, addRange=None):
+    dock = self.parentWidget().parentWidget().parentWidget().parentWidget()
+    #self.parentWidget() => QWidget, self.parentWidget().parentWidget() => ScrollableSequenceView
+    #self.parentWidget().parentWidget().parentWidget() => SequenceDock
+    viewer = dock.viewer
+    renderer = viewer.renderer
+    app = dock.app
+    
     selectionToClear = self.sequence.getSelection()
     for i in selectionToClear:
         try: 
@@ -797,48 +806,29 @@ class SequenceView(QtGui.QWidget):
         except KeyError: 
             continue
         atom = self.sequence[i].getAtom('CA')
-        if not atom:
-            continue
-        atom.setSelected(False)
+        if atom:
+            renderer.deleteAtom(atom.getHashKey())
+            atom.setSelected(False)
+            renderer.addAtom(atom)
     self.sequence.setSelection(newSelection,removeOne,addOne,addRange)
-    dock = self.parentWidget().parentWidget().parentWidget().parentWidget()
-    #self.parentWidget() => QWidget, self.parentWidget().parentWidget() => ScrollableSequenceView
-    #self.parentWidget().parentWidget().parentWidget() => SequenceDock
-    viewer = dock.viewer
-    renderer = viewer.renderer
-    app = dock.app
+    
     try:
         selectedAtom = self.sequence[ self.sequence.getSelection()[-1] ].getAtom('CA')
     except KeyError:
         return
     if not selectedAtom:
         return
+    renderer.deleteAtom(selectedAtom.getHashKey())
     selectedAtom.setSelected(True)
+    renderer.addAtom(selectedAtom)
+    
     pos = selectedAtom.getPosition()
     x, y, z = pos.x()*viewer.scale[0],  pos.y()*viewer.scale[1],  pos.z()*viewer.scale[2]
-    
-    mychain = self.sequence
-    #TODO: change BaseViewer.modelLoaded() to redraw PDBAtoms if their attributes have changed
-    #Current: Here we completely unload and re-load the model, which isn't really the best way to do things, 
-    #but it's the only way I can get selected atoms to display
-    viewer.unloadData()
-    mychain.addCalphaBonds()
-   
     app.mainCamera.setCenter( x, y, z )
-   
-    for i in mychain.residueRange():
-        atom = mychain[i].getAtom('CA')
-        if atom:
-            renderer.addAtom(atom)
-
-    if not viewer.loaded:
-        viewer.dirty = False
-        viewer.loaded = True
-        viewer.emitModelLoadedPreDraw()
-        viewer.emitModelLoaded()
+    viewer.emitModelChanged()
     
-    #viewer.emitModelChanged()
-    
+    #TODO: change BaseViewer.modelLoaded() to redraw PDBAtoms if their attributes have changed
+    #Current: Here we delete atoms from the renderer and add them again, which isn't the best way, probably.
 
           
   def setFont(self, newFont):
@@ -1110,47 +1100,6 @@ def renderMockSidechains(chain):
 def clearMockSidechains(chain):
     obj = StructureEditor(chain)
     obj.clearMockSidechains(chain)
-
-#Below is Mike's version of this function -- Ross's version is in SequenceWidget
-'''
-def renderMockSidechains(chain):
-  for index in chain.residueRange():
-    res=chain[index]
-    atom=res.getAtom('CA')
-    
-    if res.symbol3 in ['GLY','PRO']:
-      relativeSize=1
-
-    elif res.symbol3 in ['ALA','VAL','THR','CYS']:
-      relativeSize=2
-
-    elif res.symbol3 in ['MET','LEU','ILE','ASN','GLN','ASP','GLU']:
-      relativeSize=3
-
-    else:# res.symbol3 in ['TRP','HIS','TYR','PHE','ARG','LYS']
-      relativeSize=4
-    atom.setAtomRadius(relativeSize*1.8)
-
-    greasy =(0.0, 1.0, 0.0, 1.0)
-    polar  =(0.0, 0.0, 0.6, 1.0)
-    charged=(0.0, 0.0, 1.0, 1.0)
-    sulfur =(1.0, 1.0, 0.0, 1.0)
-
-    if res.symbol3 in ['MET','CYS']:
-      atom.setColor(sulfur[0], sulfur[1], sulfur[2], sulfur[3])
-
-    elif res.symbol3 in ['ARG','LYS','HIS','GLU','ASP']:
-      atom.setColor(charged[0], charged[1], charged[2], charged[3])
-
-    elif res.symbol3 in ['ASN','GLN','TYR','SER','THR']:
-      atom.setColor(polar[0], polar[1], polar[2], polar[3])
-
-    elif res.symbol3 in ['VAL','ILE','LEU','PRO','GLY','ALA','TRP','PRO']:
-      atom.setColor(greasy[0], greasy[1], greasy[2], greasy[3])
-
-    print 'adding atom %s' %Chain.getViewer().renderer.addAtom(atom)
-    #Chain.getViewer().emitModelChanged()
- ''' 
 
 def tempZoomDialog(seqView, scrollArea):
   plusButton=QtGui.QPushButton('+')
