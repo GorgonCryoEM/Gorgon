@@ -35,6 +35,12 @@ class Chain(baseClass):
     #TODO: perhaps we should change this behavior, in case someone modified a chain object then imported a PDB with a chain of the same name
     if qparent and qtEnabled:
         super(QtCore.QObject,self).__init__(qparent)
+        '''
+        #Mike's addition:
+        self.parent=qparent
+        self.setViewer(qparent.viewers['calpha'])
+        print 'yes viewer was set'
+        '''
 
     self.residueList={}
     self.secelList={}
@@ -584,7 +590,7 @@ class Chain(baseClass):
 
   def residueRange(self):
     '''
-    Returns a list of all the residue indices.
+    Returns a list of all the residue numbers.
     '''
     return sorted(self.residueList.keys())
 
