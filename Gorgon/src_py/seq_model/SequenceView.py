@@ -1091,18 +1091,18 @@ def renderCAlphas(chain):
   for index in chain.residueRange():
     res=chain[index]
     if 'CA' in res.getAtomNames():
-      thisAtom=res.getAtom('CA')
-      Chain.getViewer().renderer.addAtom(groel[index].getAtom('CA'))
+        thisAtom=res.getAtom('CA')
+        Chain.getViewer().renderer.addAtom(groel[index].getAtom('CA'))
 
-    if index-1 in chain.residueList:
-        previousRes=chain[index-1]
-    if 'CA' in previousRes.getAtomNames():
-      print 'index=%s' %index
-      previousAtom=previousRes.getAtom('CA')
-      bond=PDBBond()
-      bond.setAtom0Ix(previousAtom.getSerial())
-      bond.setAtom0Ix(thisAtom.getSerial())
-      Chain.getViewer().renderer.addBond(bond)
+        if index-1 in chain.residueList:
+            previousRes=chain[index-1]
+            if 'CA' in previousRes.getAtomNames():
+              print 'index=%s' %index
+              previousAtom=previousRes.getAtom('CA')
+              bond=PDBBond()
+              bond.setAtom0Ix(previousAtom.getSerial())
+              bond.setAtom0Ix(thisAtom.getSerial())
+              Chain.getViewer().renderer.addBond(bond)
 
 def renderMockSidechains(chain):
     obj = StructureEditor(chain)
