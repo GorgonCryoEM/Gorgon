@@ -470,25 +470,18 @@ class Chain(baseClass):
     except:
         print 'Error: No viewer is set for Chain!'
         return
-    for firstCAlphaIndex in range( len(self.residueRange()) ):
-        #The purpose of the above for loop is just to find the first residue with a CAlpha PDBAtom object
-        prevNum = self.residueRange()[firstCAlphaIndex]
-        prevAtom = self[prevNum].getAtom('CA')
-        if prevAtom == None:
+    for res0num in self.residueRange():
+        atom0 = self[res0num].getAtom('CA')
+        if not atom0:
             continue
-        for resNum in self.residueRange()[firstCAlphaIndex+1:]:
-            #Searching for residues next to each other to add bonds between them.
-            atom = self[resNum].getAtom('CA')
-            if not atom:
+        if res0num + 1 in self.residueRange():
+            atom1 = self[res0num+1].getAtom('CA')
+            if not atom1:
                 continue
-            if prevNum == resNum - 1:
-                bond = PDBBond()
-                bond.setAtom0Ix(prevAtom.getHashKey())
-                bond.setAtom1Ix(atom.getHashKey())
-                viewer.renderer.addBond(bond)
-                prevAtom = atom
-                prevNum = resNum
-        return
+            bond = PDBBond()
+            bond.setAtom0Ix(atom0.getHashKey())
+            bond.setAtom1Ix(atom1.getHashKey())
+            viewer.renderer.addBond(bond)
 
   def addSecel(self, secel):
     '''
