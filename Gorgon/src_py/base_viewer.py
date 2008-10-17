@@ -11,6 +11,12 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.39  2008/10/03 17:26:57  colemanr
+#   base_viewer.py: On a 64 bit system, some of the numbers from hitstack
+#   list in camera.py are of type numpy.int32 rather than of type int.  This
+#   caused mouse clicks on atoms to raise an exception.  I have converted
+#   them to type int when they call a function in the renderer.
+#
 #   Revision 1.38  2008/09/26 18:55:34  colemanr
 #   Added glutInit(sys.argv) to the modelChanged method to get it to work
 #   with Freeglut.
@@ -314,13 +320,13 @@ class BaseViewer(QtOpenGL.QGLWidget):
         hits = [-1,-1,-1,-1,-1]
         for i in range(5):
             if(len(hitStack) > i+1):
-                hits[i] = hitStack[i+1]
+                hits[i] = int(hitStack[i+1]) #int conversion helpful for 64 bit systems
 
         if len(hitStack) == 0:
             hitStack.append(-1)            
         
         if(len(hitStack) <= 6):
-            coords = self.renderer.get3DCoordinates(hitStack[0], hits[0], hits[1], hits[2], hits[3], hits[4])
+            coords = self.renderer.get3DCoordinates(int(hitStack[0]), hits[0], hits[1], hits[2], hits[3], hits[4])
             return [coords.x(), coords.y(), coords.z()]
         else:
             raise Exception("Unable to call renderer.get3DCoordinates method due as there are too many levels in the hit stack")
