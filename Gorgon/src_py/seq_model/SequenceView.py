@@ -152,21 +152,22 @@ class StructureEditor(QtGui.QWidget):
         self.possibilityNumSpinBox = QtGui.QSpinBox()
         self.possibilityNumSpinBox.setRange(0, 0)
         self.numPossibilities = QtGui.QLabel('of ?')
-        self.prevName = QtGui.QLabel('?')
-        self.prevName.setFont(resNameFont)
-        self.prevNum = QtGui.QLabel('#?')
-        self.prevNum.setAlignment(QtCore.Qt.AlignHCenter)
-        self.prevNum.setFont(resIndexFont)
-        self.curName = QtGui.QLabel('?')
-        self.curName.setFont(resNameFont)
-        self.curNum = QtGui.QLabel('#?')
-        self.curNum.setAlignment(QtCore.Qt.AlignHCenter)
-        self.curNum.setFont(resIndexFont)
-        self.nextName = QtGui.QLabel('?')
-        self.nextName.setFont(resNameFont)
-        self.nextNum = QtGui.QLabel('#?')
-        self.nextNum.setAlignment(QtCore.Qt.AlignHCenter)
-        self.nextNum.setFont(resIndexFont)
+        self.atomicForwardRadioButton = QtGui.QRadioButton('Forward')
+        self.atomicForwardRadioButton.setChecked(True)
+        self.atomicBackwardRadioButton = QtGui.QRadioButton('Backward')
+        self.atomicResNames = { -2:QtGui.QLabel('?'),  -1:QtGui.QLabel('?'),  0:QtGui.QLabel('?'), 1:QtGui.QLabel('?'), 2:QtGui.QLabel('?') }
+        self.atomicResNumbers = { -2:QtGui.QLabel('#?'),  -1:QtGui.QLabel('#?'),  0:QtGui.QLabel('#?'), 1:QtGui.QLabel('#?'), 2:QtGui.QLabel('#?') }
+                
+        for i in self.atomicResNames.keys():
+            self.atomicResNames[i].setStyleSheet("QLabel {font-size: 40pt}")#.setFont(resNameFont)
+            self.atomicResNumbers[i].setAlignment(QtCore.Qt.AlignHCenter)
+            self.atomicResNumbers[i].setStyleSheet("QLabel {font-size: 12pt}") #.setFont(resIndexFont)
+        
+        self.atomicResNumbers[0].setStyleSheet("QLabel {color: white; background-color:black; font-size: 12pt}") #This uses syntax similar to Cascading Style Sheets (CSS)
+        self.atomicResNames[0].setStyleSheet("QLabel {color: white; background-color:black; font-size: 40pt}") 
+        self.atomicResNumbers[1].setStyleSheet("QLabel {color: green; font-size: 12pt}") #This uses syntax similar to Cascading Style Sheets (CSS)
+        self.atomicResNames[1].setStyleSheet("QLabel {color: green; font-size: 40pt}")
+        
         self.back1resButton = QtGui.QPushButton('<-')
         self.forward1resButton = QtGui.QPushButton('->') 
         
@@ -208,6 +209,7 @@ class StructureEditor(QtGui.QWidget):
         self.connect(self.forward1resButton, QtCore.SIGNAL('clicked()'), self.nextButtonPress)
         self.connect(self.acceptButton, QtCore.SIGNAL('clicked()'),  self.acceptButtonPress)
         self.connect(self.possibilityNumSpinBox,  QtCore.SIGNAL('valueChanged(int)'),  self.choosePossibleAtomToDisplay)
+        self.connect(self.atomicForwardRadioButton,  QtCore.SIGNAL('toggled(bool)'), self.forwardBackwardRadioButtonChange)
     
     def setupUi(self):
         layout = QtGui.QHBoxLayout()
@@ -247,26 +249,21 @@ class StructureEditor(QtGui.QWidget):
         atomicPossibilityLayout.setAlignment(QtCore.Qt.AlignHCenter)
         atomicPossibilityLayout.addWidget(self.possibilityNumSpinBox)
         atomicPossibilityLayout.addWidget(self.numPossibilities)
+        atomicForwardBackwardLayout = QtGui.QVBoxLayout()
+        atomicForwardBackwardLayout.addWidget(self.atomicForwardRadioButton)
+        atomicForwardBackwardLayout.addWidget(self.atomicBackwardRadioButton)
+        atomicPossibilityLayout.addLayout(atomicForwardBackwardLayout)        
         atomicLayout.addLayout(atomicPossibilityLayout)
         
         atomic3ResLayout = QtGui.QHBoxLayout()
-        
-        atomicPrevLayout = QtGui.QVBoxLayout()
-        atomicPrevLayout.addWidget(self.prevNum)
-        atomicPrevLayout.addWidget(self.prevName)
-        atomicCurLayout = QtGui.QVBoxLayout()
-        atomicCurLayout.addWidget(self.curNum)
-        atomicCurLayout.addWidget(self.curName)
-        atomicNextLayout = QtGui.QVBoxLayout()
-        atomicNextLayout.addWidget(self.nextNum)
-        atomicNextLayout.addWidget(self.nextName)
-        
+        atomic3ResSublayouts = {-2:QtGui.QVBoxLayout(), -1:QtGui.QVBoxLayout(), 0:QtGui.QVBoxLayout(), 1:QtGui.QVBoxLayout(), 2:QtGui.QVBoxLayout() }
+
         atomic3ResLayout.addStretch()
-        atomic3ResLayout.addLayout(atomicPrevLayout)
-        atomic3ResLayout.addSpacing(15)
-        atomic3ResLayout.addLayout(atomicCurLayout)
-        atomic3ResLayout.addSpacing(15)
-        atomic3ResLayout.addLayout(atomicNextLayout)
+        for i in sorted(atomic3ResSublayouts.keys()):
+            atomic3ResSublayouts[i].addWidget(self.atomicResNumbers[i])
+            atomic3ResSublayouts[i].addWidget(self.atomicResNames[i])
+            atomic3ResLayout.addLayout(atomic3ResSublayouts[i])
+
         atomic3ResLayout.addStretch()
         atomicLayout.addLayout(atomic3ResLayout)
 
@@ -330,16 +327,20 @@ class StructureEditor(QtGui.QWidget):
                     continue
                 else:
                     del atom
-            resSeqNum = int(self.curNum.text())
+            viewer = self.parentWidget().parentWidget().viewer
+            if self.atomicBackwardRadioButton.isChecked():
+                resSeqNum = int(self.atomicResNumbers[-1].text())
+            elif self.atomicForwardRadioButton.isChecked():
+                resSeqNum = int(self.atomicResNumbers[1].text())
             chosenAtom.setResSeq(resSeqNum)
             self.chainObj[resSeqNum].addAtomObject(chosenAtom)
-            viewer = self.parentWidget().parentWidget().viewer
             #self.parentWidget()=>SequenceWidget, self.parentWidget().parentWidget() => SequenceDock
             self.chainObj[resSeqNum].setCAlphaColorToDefault()            
             viewer.renderer.addAtom(chosenAtom)
             if resSeqNum - 1 in self.chainObj.residueRange():
                 prevCAlpha = self.chainObj[resSeqNum - 1].getAtom('CA')
                 if prevCAlpha:
+                    print "adding a bond before"
                     bond=PDBBond()
                     bond.setAtom0Ix(prevCAlpha.getHashKey())
                     bond.setAtom1Ix(chosenAtom.getHashKey())
@@ -347,10 +348,16 @@ class StructureEditor(QtGui.QWidget):
             if resSeqNum + 1 in self.chainObj.residueRange():
                 nextCAlpha = self.chainObj[resSeqNum + 1].getAtom('CA')
                 if nextCAlpha:
+                    print "adding a bond after"
                     bond = PDBBond()
-                    bond.setAtom0Ix(chosenAtom.getHashKey())
-                    bond.setAtom1Ix(nextCAlpha.getHashKey())
+                    bond.setAtom0Ix(nextCAlpha.getHashKey())
+                    bond.setAtom1Ix(chosenAtom.getHashKey())
+                    viewer.renderer.addBond(bond)
             viewer.emitModelChanged()
+            if self.atomicBackwardRadioButton.isChecked():
+                self.prevButtonPress()
+            elif self.atomicForwardRadioButton.isChecked():
+                self.nextButtonPress()
             print 'end acceptButtonPress'
             
     def clearMockSidechains(self,  chain):
@@ -378,14 +385,13 @@ class StructureEditor(QtGui.QWidget):
         #self.parentWidget()=>SequenceWidget, self.parentWidget().parentWidget() => SequenceDock
         skeletonViewer = self.parentWidget().parentWidget().app.viewers['skeleton']
         meshRenderer = skeletonViewer.renderer
-        atom = self.chainObj[ int( str(self.prevNum.text()) ) ].getAtom('CA')
+        atom = self.chainObj[ int( str(self.atomicResNumbers[0].text()) ) ].getAtom('CA')
         if not atom:
             self.possibilityNumSpinBox.setRange(0, 0)
             self.numPossibilities.setText('of ?')
             return
         atomPos = atom.getPosition()
         #print atomPos,  radius
-        #TODO: determine how to display possible atom locations
         if skeletonViewer.loaded:
             print "Number of intersections:", 
             numIntersections = meshRenderer.intersectMeshAndSphere(atomPos, radius)
@@ -410,7 +416,7 @@ class StructureEditor(QtGui.QWidget):
                 rawAtom.setColor(0, 1, 0, 1)
                 
                 try:
-                    prevAtom = self.chainObj[int( str(self.prevNum.text()) )-1].getAtom('CA')
+                    prevAtom = self.chainObj[int( str(self.atomicResNumbers[0].text()) )-1].getAtom('CA')
                     previousAtomPos = prevAtom.getPosition()
                     prevDistSquared = (pos.x() - previousAtomPos.x())**2 + (pos.y() - previousAtomPos.y())**2 + (pos.z() - previousAtomPos.z())**2
                 except KeyError,  IndexError:
@@ -418,7 +424,7 @@ class StructureEditor(QtGui.QWidget):
                 except AttributeError:
                     prevDistSquared = 100000
                 try:
-                    nextAtom = self.chainObj[int( str(self.prevNum.text()) )+1].getAtom('CA')
+                    nextAtom = self.chainObj[int( str(self.atomicResNumbers[0].text()) )+1].getAtom('CA')
                     nextAtomPos = nextAtom.getPosition()
                     nextDistSquared = (pos.x() - nextAtomPos.x())**2 + (pos.y() - nextAtomPos.y())**2 + (pos.z() - nextAtomPos.z())**2
                 except KeyError,  IndexError:
@@ -440,23 +446,34 @@ class StructureEditor(QtGui.QWidget):
                     self.previouslyChosenPossibleAtomToDisplay = atom #We remove this atom from the viewer when we display a different possibility
                     self.parentWidget().parentWidget().viewer.renderer.addAtom(atom)
                     self.parentWidget().parentWidget().viewer.emitModelChanged()
-            
     
-    def prevButtonPress(self):
-        #self.parentWidget() returns a SequenceWidget object
-        selection = self.parentWidget().chainObj.getSelection()
-        if selection:
-            newSelection = [ selection[-1] - 1 ]
-            if newSelection[0] <min(self.parentWidget().chainObj.residueRange()): 
+    def forwardBackwardRadioButtonChange(self):
+        if self.atomicForwardRadioButton.isChecked():
+            self.atomicResNumbers[1].setStyleSheet("QLabel {color: green; font-size: 12pt}")
+            self.atomicResNames[1].setStyleSheet("QLabel {color: green; font-size: 40pt}")
+            self.atomicResNumbers[-1].setStyleSheet("QLabel {color: black; font-size: 12pt}")
+            self.atomicResNames[-1].setStyleSheet("QLabel {color: black; font-size: 40pt}")
+        elif self.atomicBackwardRadioButton.isChecked():
+            self.atomicResNumbers[-1].setStyleSheet("QLabel {color: green; font-size: 12pt}")
+            self.atomicResNames[-1].setStyleSheet("QLabel {color: green; font-size: 40pt}")
+            self.atomicResNumbers[1].setStyleSheet("QLabel {color: black; font-size: 12pt}")
+            self.atomicResNames[1].setStyleSheet("QLabel {color: black; font-size: 40pt}")
+            
+    def nextButtonPress(self):
+        chainObj = self.parentWidget().chainObj
+        if chainObj.getSelection():
+            newSelection = [ chainObj.getSelection()[-1] + 1 ]
+            if newSelection[0] > max(chainObj.residueRange()): 
                 return
             self.parentWidget().scrollable.seqView.setSequenceSelection(newSelection)
             self.setResidues(newSelection)
-        
-    def nextButtonPress(self):
-        selection = self.parentWidget().chainObj.getSelection()
-        if selection:
-            newSelection = [ self.parentWidget().chainObj.getSelection()[-1] + 1 ]
-            if newSelection[0] > max(self.parentWidget().chainObj.residueRange()): 
+    
+    def prevButtonPress(self):
+        #self.parentWidget() returns a SequenceWidget object
+        chainObj = self.parentWidget().chainObj
+        if chainObj.getSelection():
+            newSelection = [ chainObj.getSelection()[-1] - 1 ]
+            if newSelection[0] <min(chainObj.residueRange()): 
                 return
             self.parentWidget().scrollable.seqView.setSequenceSelection(newSelection)
             self.setResidues(newSelection)
@@ -486,30 +503,17 @@ class StructureEditor(QtGui.QWidget):
         if not newSelection:
             print 'In sequence_view.StructureEdit.setResidues().  The new selection is empty!'
             return
-        prevResNum = newSelection[-1]
-        lastResidueIndex = max(self.parentWidget().chainObj.residueRange())
-        self.prevNum.setText(unicode(prevResNum))
-        self.prevName.setText(unicode(self.chainObj[prevResNum]))
-        if prevResNum >= lastResidueIndex:
-            self.nextName.setText('')
-            self.nextNum.setText('')
-            self.curName.setText('')
-            self.curNum.setText('')
-            self.findCAlphaPositionPossibilities()
-            return
-        elif prevResNum >= lastResidueIndex-1:
-            self.nextName.setText('')
-            self.nextNum.setText('')
-            self.curNum.setText(unicode(prevResNum+1))
-            self.curName.setText(unicode(self.chainObj[prevResNum+1]))
-            self.findCAlphaPositionPossibilities()
-            return
-        else:
-            self.curNum.setText(unicode(prevResNum+1))
-            self.curName.setText(unicode(self.chainObj[prevResNum+1]))
-            self.nextNum.setText(unicode(prevResNum+2))
-            self.nextName.setText(unicode(self.chainObj[prevResNum+2]))
-            self.findCAlphaPositionPossibilities()
+        curResNum = newSelection[-1]
+        
+        for i in self.atomicResNames.keys():
+            try: 
+                self.atomicResNames[i].setText(unicode(self.chainObj[curResNum+i]))
+                self.atomicResNumbers[i].setText(unicode(curResNum+i))
+            except (IndexError,  KeyError):
+                self.atomicResNames[i].setText('')
+                self.atomicResNumbers[i].setText('')
+        self.findCAlphaPositionPossibilities()
+
 class SequenceView(QtGui.QWidget):
   """
   This QWidget gives residues as one letter abbreviations for residues and the index below.  
