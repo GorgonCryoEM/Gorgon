@@ -27,7 +27,7 @@ class Residue:
         'sulfur': ('MET','CYS'), 
         'greasy': ('VAL','ILE','LEU','PRO','GLY','ALA','TRP','PRO')
         }
-    residueTypes['polar'] = residueTypes['polarNoSulfur'] + ['CYS']
+    residueTypes['polar'] = residueTypes['polarNoSulfur'] + ('CYS', )
     residueTypes['neutral'] = residueTypes['nonpolar'] + residueTypes['polar']
     residueTypes['charged'] = residueTypes['negative'] + residueTypes['positive']
 
