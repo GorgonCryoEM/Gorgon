@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.10  2008/10/15 23:55:45  colemanr
+#   handles the case of getting no atom for a residue
+#
 #   Revision 1.9  2008/10/07 23:40:17  colemanr
 #   I made the menu item for the sequence viewer dock checkable.  Hiding the
 #   dock is not handled properly yet.
@@ -55,7 +58,7 @@ class CAlphaViewer(BaseViewer):
         self.isClosedMesh = False
         self.selectEnabled = True
         self.renderer = CAlphaRenderer()          
-        self.main_chain = None #Chain('') #I don't know why an empty chain was used, but it adds a needless Chain to Chain.chainsDict
+        self.main_chain = None #Chain('')
         self.createUI()      
         self.app.viewers["calpha"] = self;
         self.modelColor = QtGui.QColor.fromRgba(QtGui.qRgba(170, 170, 0, 255))
@@ -151,6 +154,17 @@ class CAlphaViewer(BaseViewer):
         self.app.menus.addAction("file-close-calpha", self.app.actions.getAction("unload_CAlpha"), "file-close");
         self.app.menus.addMenu("actions-calpha", self.tr("C-&Alpha Atoms"), "actions");
         self.app.menus.addAction("showSeqDock", self.app.actions.getAction("seqDock"), "actions-calpha")           
+    
+    def saveData(self):
+        self.fileName = QtGui.QFileDialog.getSaveFileName(self, self.tr("Save Data"), "", 
+                                                          self.tr('Atom Positions (*.pdb)'))
+        if not self.fileName.isEmpty():  
+            self.setCursor(QtCore.Qt.WaitCursor)
+            selectedChain = Chain.getChain(Chain.getSelectedChainKey())
+            selectedChain.saveToPDB(self.fileName)
+            self.dirty = False
+            self.setCursor(QtCore.Qt.ArrowCursor)
+    
     def updateActionsAndMenus(self):        
         self.app.actions.getAction("save_CAlpha").setEnabled(self.loaded)
         self.app.actions.getAction("unload_CAlpha").setEnabled(self.loaded)
