@@ -111,7 +111,11 @@ class Chain(baseClass):
         result = Chain('')
     
     header = open(filename, 'U')
-    pdbID = header.read()[62:66]
+    headerLine = header.read()
+    if headerLine[:6] == 'HEADER':
+        pdbID = headerLine[62:66]
+    else:
+        pdbID = cls.__createUniquePDBID()
     header.close()
     
     residue = None
@@ -143,8 +147,14 @@ class Chain(baseClass):
             serialNo    = int( line[6:11].strip() )
             atomName    = line[12:16].strip()
             element     = line[76:78].strip()
-            tempFactor  = float( line[60:66].strip() )
-            occupancy   = float( line[54:60].strip() )
+            try:
+                tempFactor  = float( line[60:66].strip() )
+            except ValueError:
+                tempFactor = None
+            try:
+                occupancy   = float( line[54:60].strip() )
+            except ValueError:
+                occupancy = None
             try: 
                 x = float( line[30:38] )
                 y = float( line[38:46] )
@@ -633,8 +643,14 @@ class Chain(baseClass):
       self.emit( QtCore.SIGNAL('selection updated'))
 
   #Return a pdb-compliant string
-  def toPDB(self, backboneOnly=False, verbose=True): 
-    """decomposes chain into constituent residues and atoms to render pdb coordinate model.  residue is ommitted if it has no atoms."""
+  def toPDB(self, backboneOnly=False, CAlphaPlaceholders=True,  verbose=True): 
+    """
+    This decomposes chain into constituent residues and atoms to render pdb coordinate model.
+    If backboneOnly=True, only C-alpha atoms are saved.  Otherwise, all atoms are saved.
+    If CAlphaPlaceholders=True, the PDB file will have 'CA' ATOM entries with whitespace where coordinates would go.
+    If CAlphaPlaceholders=False, residues with no atoms will be ignored.
+    """
+    #Change: uses a C-alpha placeholder atom entry with no x,y,z coordinates if the residue has not atoms
     #Not Thread-Safe
     atom_index=1
     Helix.serialNo=0  #This is what makes it not thread-safe
@@ -661,21 +677,65 @@ class Chain(baseClass):
         atoms=residue.getAtomNames()
 
       try:
+        serial = str(atom_index).rjust(5)
+        altLoc = ' '
+        resName = residue.symbol3
+        chainID = self.chainID
+        resSeq = str(residue_index).rjust(4)
+        iCode = ' '
+        occupancy = ' '*6 #"%6.2f " %atom.getOccupancy()
+        tempFactor = ' '*6 #"%6.2f " %atom.getTempFactor()
+        
+        if not atoms:
+            if CAlphaPlaceholders:
+                name = 'CA'.center(4)
+                x = ' '*8
+                y = ' '*8
+                z = ' '*8
+                element = ' C'
+                charge = '  '
+                
+                line = 'ATOM  %s %s%s%s %s%s%s   %s%s%s%s%s          %s%s\n' % (serial,  name,  altLoc,  resName,  chainID,  
+                                                                                resSeq,  iCode,  x,  y,  z,  occupancy,  tempFactor,  element,  charge)
+                s = s + line
+                atom_index += 1
         for atom_name in atoms:
-          atom=residue.getAtom(atom_name)
-          s=s+ "ATOM" + ' '
-          s=s+ str(atom_index).rjust(6) + ' '
-          atom_index=atom_index+1 
-          s=s+ atom_name.rjust(3) + ' '
-          s=s+ residue.symbol3.rjust(4) + ' '
-          s=s+ self.chainID.rjust(1) + ' ' #chainID
-          s=s+ str(residue_index).rjust(3) + ' '
-          s=s+ "%11.3f " %atom.getPosition().x()
-          s=s+ "%7.3f " %atom.getPosition().y()
-          s=s+ "%7.3f " %atom.getPosition().z()
-          s=s+ "%5.2f " %atom.getOccupancy()
-          s=s+ "%5.2f " %atom.getTempFactor()
-          s=s+ atom.getElement().rjust(11) + "\n"
+            atom=residue.getAtom(atom_name)
+            
+            name = str(atom_name).center(4)
+            x = "%8.3f" %atom.getPosition().x()
+            if len(x) > 8:
+                raise ValueError
+            y = "%8.3f" %atom.getPosition().y()
+            if len(y) > 8:
+                raise ValueError
+            z = "%8.3f" %atom.getPosition().z()
+            if len(z) > 8:
+                raise ValueError
+            element = atom.getElement().rjust(2)
+            charge = '  '
+            line = 'ATOM  %s %s%s%s %s%s%s   %s%s%s%s%s          %s%s\n' % (serial,  name,  altLoc,  resName,  chainID,  
+                                                                            resSeq,  iCode,  x,  y,  z,  occupancy,  tempFactor,  element,  charge)
+            s = s + line
+            atom_index += 1
+            
+            #Mike's method below:
+            '''
+            atom=residue.getAtom(atom_name)
+            s=s+ "ATOM" + ' '
+            s=s+ str(atom_index).rjust(6) + ' '
+            atom_index=atom_index+1 
+            s=s+ atom_name.rjust(3) + ' '
+            s=s+ residue.symbol3.rjust(4) + ' '
+            s=s+ self.chainID.rjust(1) + ' ' #chainID
+            s=s+ str(residue_index).rjust(3) + ' '
+            s=s+ "%11.3f " %atom.getPosition().x()
+            s=s+ "%7.3f " %atom.getPosition().y()
+            s=s+ "%7.3f " %atom.getPosition().z()
+            s=s+ "%5.2f " %atom.getOccupancy()
+            s=s+ "%5.2f " %atom.getTempFactor()
+            s=s+ atom.getElement().rjust(11) + '  ' +"\n"
+            '''
       except KeyError:
         if verbose:
           print "Chain.toPDB() warning:  No atom record for %s in %s%s." %(atom_name,residue_index,residue.symbol3)
