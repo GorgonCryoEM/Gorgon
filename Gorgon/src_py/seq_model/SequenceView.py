@@ -32,7 +32,7 @@ class SequenceDock(QtGui.QDockWidget):
         if cls.__dock:
             if cls.__dock.app.actions.getAction("seqDock").isChecked():
                 cls.__dock.app.addDockWidget(QtCore.Qt.LeftDockWidgetArea,  cls.__dock)
-                cls.__dock.seqWidget.scrollable.setSequence(chainObj)
+                cls.__dock.changeSequence(chainObj)
                 cls.__dock.show()
             else:
                 cls.__dock.app.removeDockWidget(cls.__dock)
@@ -55,8 +55,20 @@ class SequenceDock(QtGui.QDockWidget):
         self.connect(seqDockAct, QtCore.SIGNAL("triggered()"), SequenceDock.changeDockVisibility)
         self.app.actions.addAction("perform_autoAtomPlacement", seqDockAct)
     
+    def changeSequence(self,  chainObj):
+        self.chainObj = chainObj
+        self.seqWidget.chainObj = chainObj
+        self.seqWidget.scrollable.seqView.setSequence(chainObj)
+        structureEditor = self.seqWidget.structureEditor
+        structureEditor.chainObj = chainObj        
+        for i in structureEditor.atomicResNumbers.keys():
+            structureEditor.atomicResNumbers[i].setText('?')
+            structureEditor.atomicResNames[i].setText('?')
+        self.seqWidget.globalView.setSequence(chainObj)       
+    
     def closeEvent(self, event):
         self.app.actions.getAction("seqDock").setChecked(False)
+        
     def updateFromViewerSelection(self, *argv):
         #hits = argv[:-1]
         #event = argv[-1]
@@ -101,7 +113,6 @@ class SequenceWidget(QtGui.QWidget):
         self.scrollable = ScrollableSequenceView(chainObj, self)
         self.scrollable.setMinimumSize(300, 180)
         self.structureEditor = StructureEditor(chainObj, self)
-        
         
         self.globalView=GlobalSequenceView(chainObj)
         self.globalView.setLocalView(self.scrollable.seqView)
@@ -595,9 +606,10 @@ class SequenceView(QtGui.QWidget):
   def setSequence(self, newSequence):
     self.sequence = newSequence
     self.sequence.fillGaps()
+    self.updatePanelHeight()
     self.residueRange=self.sequence.residueRange()
     self.connect(self.sequence, QtCore.SIGNAL("selection updated"), self.__selectionUpdated)
-    self.repaint()
+    self.repaint()    
 
   def __selectionUpdated(self):
     self.repaint()
