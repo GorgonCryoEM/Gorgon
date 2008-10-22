@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.26  2008/09/29 16:19:30  ssa1
+//   Adding in CVS meta information
+//
 
 
 #ifndef GLOBALCONSTANTS_H
@@ -22,7 +25,12 @@
 //#define MAKE_FINAL_MRC
 #define GET_AMINO_SEQUENCE
 
-#include <string>
+#ifdef _WIN32
+	#include <string>
+#else
+	#include <cstring>
+#endif
+
 #include <cstdio>
 #include <cstdlib>
 
