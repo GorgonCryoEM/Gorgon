@@ -95,7 +95,10 @@ class Residue:
     def addAtomObject(self, atomObject):
         atomName = atomObject.getName()
         self.__atoms[atomName] = atomObject
-
+    
+    def clearAtom(self, atomName):
+        '''Removes the PDBAtom specified by name from the residue'''
+        self.__atoms.pop(atomName)
     def clearAtoms(self):
         '''Removes all the PDBAtoms from the residue'''
         self.__atoms={}
@@ -114,7 +117,7 @@ class Residue:
   
     def __repr__(self):
         return self.symbol1
-  
+
     def setCAlphaColorToDefault(self):
         ''''
         Sets the residue's C-alpha atom to the default color.  This is useful if the color has been changed somewhere.
