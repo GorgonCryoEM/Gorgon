@@ -56,6 +56,6 @@ class Strand(Secel):
     # NYI:  Registration residue index    (previous strand)
     # NYI:  Registration insertion code   (previous strand)
 
-    s=s+ '\n'
+    s=s.ljust(80)+ '\n'
 
     return s
