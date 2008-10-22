@@ -26,7 +26,7 @@ class Helix(Secel):
   @classmethod
   def parsePDB(cls,line,chain):
     serialNo     =         int(line[7:10].strip())
-    helixID     =     'H' +    line[11:14].strip()
+    helixID     =     line[11:14].strip()
     #chainID     =         line[19:20]
     start     =         int(line[21:25].strip())
     stop     =         int(line[33:37].strip())
@@ -35,7 +35,7 @@ class Helix(Secel):
       raise ValueError, 'Duplicate Helix entries in PDB'
     else:
       #chain.helices[serialNo]=Helix(chain,serialNo,helixID,start,stop)
-      helix=Helix(chain,serialNo,helixID,start,stop)
+      helix=Helix(chain,serialNo,'H' + helixID,start,stop)
       chain.addHelix(serialNo, helix)
 
   def toPDB(self):
@@ -46,9 +46,9 @@ class Helix(Secel):
     end_res_name=self.chain.residueList[self.stopIndex].symbol3
     end_seq_num=self.stopIndex
 
-    s= "HELIX"
-    s=s+ str(Helix.serialNo).rjust(4) +' '
-    s=s+ self.label.rjust(3) +' '
+    s= "HELIX  "
+    s=s+ str(Helix.serialNo).rjust(3) +' '
+    s=s+ self.label.split('H')[-1].rjust(3) +' '
     s=s+ init_res_name.rjust(3) +' '
     s=s+ init_chainID.rjust(1) +' '
     s=s+ str(init_seq_num).rjust(4) +' '
@@ -58,6 +58,6 @@ class Helix(Secel):
     s=s+ str(end_seq_num).rjust(4) +' '
     s=s+ str(1).rjust(1) +' '
 
-    s=s+ str(self.stopIndex-self.startIndex).rjust(36) + "\n"
+    s=s+ str(self.stopIndex-self.startIndex).rjust(36) + "    \n"
 
     return s
