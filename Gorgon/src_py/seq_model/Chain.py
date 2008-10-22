@@ -95,7 +95,7 @@ class Chain(baseClass):
       result=Chain(charString, qparent=qparent)
     else:
       result=Chain(charString)
-
+    Chain.setSelectedChainKey(result.getIDs())
     return result
 
 
@@ -172,6 +172,7 @@ class Chain(baseClass):
         elif line[0:6].strip()=='SHEET':
             Sheet.parsePDB(line,result)
     Chain.chainsDict[result.key] = result
+    Chain.setSelectedChainKey(result.getIDs())
     return result
 
   @classmethod
@@ -239,7 +240,7 @@ class Chain(baseClass):
                 stopIndex = None
                 currentElement = character
                 i += 1
-                
+    Chain.setSelectedChainKey(newChain.getIDs())
     return newChain
 
   @classmethod
@@ -654,9 +655,27 @@ class Chain(baseClass):
     #Not Thread-Safe
     atom_index=1
     Helix.serialNo=0  #This is what makes it not thread-safe
-
-    s=''
-
+    dateTime = str(QtCore.QDateTime.currentDateTime().toString())
+    gorgonLine1 = 'REMARK   5'.ljust(80) + '\n'
+    gorgonLine2 = ('REMARK   5 Gorgon (C) 2005-2008 output on %s' % dateTime).ljust(80) + '\n'
+    s = gorgonLine1 + gorgonLine2
+    
+    i = 1
+    residueIndices = self.residueRange()
+    for index in residueIndices[::13]:
+        resList = ['   ']*13
+        for n in range(13):
+            try:
+                resList[n] = self[index+n].symbol3
+            except (KeyError,  IndexError):
+                break                
+        line = 'SEQRES %s %s %s  %s %s %s %s %s %s %s %s %s %s %s %s %s' % ( str(i).rjust(3), self.getChainID(), str(len(residueIndices)).rjust(4), 
+                                                                            resList[0], resList[1], resList[2], resList[3], resList[4], resList[5], resList[6], 
+                                                                            resList[7], resList[8], resList[9], resList[10], resList[11], resList[12] )
+        line += ' '*10 + '\n'
+        s += line
+        i += 1
+    
     for serialNo in sorted(self.helices.keys()):
       helix=self.helices[serialNo]
       s=s+helix.toPDB()
