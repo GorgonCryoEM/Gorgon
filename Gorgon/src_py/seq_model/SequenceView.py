@@ -884,14 +884,15 @@ class SequenceView(QtGui.QWidget):
         return
     if not selectedAtom:
         return
+    
     renderer.deleteAtom(selectedAtom.getHashKey())
     selectedAtom.setSelected(True)
     renderer.addAtom(selectedAtom)
     
-    pos = selectedAtom.getPosition()
-    x, y, z = pos.x()*viewer.scale[0],  pos.y()*viewer.scale[1],  pos.z()*viewer.scale[2]
-    app.mainCamera.setCenter( x, y, z )
+    dock.app.mainCamera.centerOnSelectedAtom()
+    
     viewer.emitModelChanged()
+    
     
     #TODO: change BaseViewer.modelLoaded() to redraw PDBAtoms if their attributes have changed
     #Current: Here we delete atoms from the renderer and add them again, which isn't the best way, probably.
