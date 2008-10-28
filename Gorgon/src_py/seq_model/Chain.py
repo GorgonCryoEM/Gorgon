@@ -651,14 +651,15 @@ class Chain(baseClass):
     If CAlphaPlaceholders=True, the PDB file will have 'CA' ATOM entries with whitespace where coordinates would go.
     If CAlphaPlaceholders=False, residues with no atoms will be ignored.
     """
-    #Change: uses a C-alpha placeholder atom entry with no x,y,z coordinates if the residue has not atoms
+    #Change: uses a C-alpha placeholder atom entry with no x,y,z coordinates if the residue has no atoms
     #Not Thread-Safe
+    header = ('HEADER' + ' '*56 + self.getPdbID()).ljust(80) + '\n'
     atom_index=1
     Helix.serialNo=0  #This is what makes it not thread-safe
     dateTime = str(QtCore.QDateTime.currentDateTime().toString())
     gorgonLine1 = 'REMARK   5'.ljust(80) + '\n'
     gorgonLine2 = ('REMARK   5 Gorgon (C) 2005-2008 output on %s' % dateTime).ljust(80) + '\n'
-    s = gorgonLine1 + gorgonLine2
+    s = header + gorgonLine1 + gorgonLine2
     
     i = 1
     residueIndices = self.residueRange()
@@ -668,7 +669,7 @@ class Chain(baseClass):
             try:
                 resList[n] = self[index+n].symbol3
             except (KeyError,  IndexError):
-                break                
+                continue                
         line = 'SEQRES %s %s %s  %s %s %s %s %s %s %s %s %s %s %s %s %s' % ( str(i).rjust(3), self.getChainID(), str(len(residueIndices)).rjust(4), 
                                                                             resList[0], resList[1], resList[2], resList[3], resList[4], resList[5], resList[6], 
                                                                             resList[7], resList[8], resList[9], resList[10], resList[11], resList[12] )
@@ -720,6 +721,8 @@ class Chain(baseClass):
                 atom_index += 1
         for atom_name in atoms:
             atom=residue.getAtom(atom_name)
+            
+            serial = str(atom_index).rjust(5)
             
             name = str(atom_name).center(4)
             x = "%8.3f" %atom.getPosition().x()
