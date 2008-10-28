@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.35  2008/10/15 19:41:32  ssa1
+#   Esc to cancel path, Clear Button and Tracking of start seed point
+#
 #   Revision 1.34  2008/09/26 20:23:33  ssa1
 #   Rotations of helices
 #
@@ -51,6 +54,8 @@ from vector_lib import *
 from scene_editor_form import SceneEditorForm
 from libpyGORGON import Vector3DFloat
 from cmath import *   
+from libpyGORGON import CAlphaRenderer
+from seq_model.Chain import Chain
 
 try:
     from OpenGL.GL import *
@@ -94,6 +99,7 @@ class Camera(QtOpenGL.QGLWidget):
         self.setNearFarZoom(0.1, 1000, 0.25)
         self.lastPos = QtCore.QPoint()
         self.sceneEditor = SceneEditorForm(self.app, self)
+        self.connect(self.app.viewers["calpha"], QtCore.SIGNAL("elementSelected (int, int, int, int, int, int, QMouseEvent)"), self.centerOnSelectedAtom)
         
         for i in range(len(self.scene)): 
             self.scene[i].sceneIndex = i;     
@@ -105,7 +111,30 @@ class Camera(QtOpenGL.QGLWidget):
             self.connect(s, QtCore.SIGNAL("modelUnloaded()"), self.modelChanged)
             self.connect(s, QtCore.SIGNAL("modelVisualizationChanged()"), self.modelChanged)
             self.connect(s, QtCore.SIGNAL("mouseTrackingChanged()"), self.refreshMouseTracking)
-                        
+
+    def centerOnSelectedAtom(self, *argv):
+        viewer = self.app.viewers['calpha']
+        
+        if not argv:
+            chain = Chain.getChain(Chain.getSelectedChainKey())
+            resIndex = chain.getSelection()[-1]
+            atomNames = chain[resIndex].getAtomNames()
+            if atomNames and 'CA' in atomNames:
+                atom = chain[resIndex].getAtom('CA')
+            elif atomNames:
+                atom = chain[resIndex].getAtom(atomNames[-1])
+            else:
+                return
+        elif argv:
+            try:
+                atom = CAlphaRenderer.getAtomFromHitStack(viewer.renderer, argv[0], True, *argv[1:-1])
+            except:
+                return
+        pos = atom.getPosition()
+        x, y, z = pos.x()*viewer.scale[0],  pos.y()*viewer.scale[1],  pos.z()*viewer.scale[2]
+        self.setCenter( x, y, z )
+        viewer.emitModelChanged()
+    
     def setEye(self, x, y, z):
         self.eye = [x, y, z]
         try:
@@ -418,12 +447,7 @@ class Camera(QtOpenGL.QGLWidget):
             if(s.renderer.selectionRotate(centerOfMass, rotationAxis3D, vectorSize(moveLength))):
                 s.emitModelChanged()
                      
-            
-        
-
-        
-        
-    
+   
     def mousePressEvent(self, event):      
         self.mouseDownPoint = QtCore.QPoint(event.pos())
         self.mouseMovePoint = QtCore.QPoint(event.pos())
