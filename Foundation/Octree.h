@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.8  2008/09/29 15:42:54  ssa1
+//   Adding in CVS meta information
+//
 
 #ifndef FOUNDATION_OCTREE_H
 #define FOUNDATION_OCTREE_H
@@ -59,6 +62,7 @@ namespace wustl_mm {
 			~Octree();
 									
 			OctreeNode<TTag> * GetLeaf(unsigned int xPos, unsigned int yPos, unsigned int zPos, OctreeNode<TTag> * node = NULL);
+			vector<OctreeNode<TTag> *> GetLeafs(unsigned int xPos, unsigned int yPos, unsigned int zPos, OctreeNode<TTag> * node = NULL);
 			OctreeNode<TTag> * GetRoot();
 			vector<OctreeNode<TTag> *> GetCells();
 			vector<OctreeNode<TTag> *> GetNeighbors(OctreeNode<TTag> * node);
@@ -155,6 +159,44 @@ namespace wustl_mm {
 		}
 
 
+		template <class TTag> vector<OctreeNode<TTag> *> Octree<TTag>::GetLeafs(unsigned int xPos, unsigned int yPos, unsigned int zPos, OctreeNode<TTag> * node) {
+			if(node == NULL) {
+				node = rootNode;
+			}
+
+			vector<OctreeNode<TTag> *> leafs, childLeafs;
+			leafs.clear();
+
+			if (node->isLeaf) {
+				leafs.push_back(node);
+			} else {
+
+				unsigned int position[3];
+				position[0] = xPos;
+				position[1] = yPos;
+				position[2] = zPos;
+
+				bool found;
+				for(int i = 0; i < 8; i++) {
+					if(node->children[i] != NULL) {
+						found = true;
+						for(int j = 0; j < 3; j++) {
+							found = found && (position[j] >= node->children[i]->pos[j]) && (position[j] <= node->children[i]->pos[j] + node->children[i]->cellSize);
+						}
+						if(found) {
+							
+							childLeafs = GetLeafs(xPos, yPos, zPos, node->children[i]);
+							for(unsigned int j = 0; j < childLeafs.size(); j++) {
+								leafs.push_back(childLeafs[j]);
+							}
+						}
+					}
+				}
+			}
+			return leafs;
+		}
+
+
 		template <class TTag> OctreeNode<TTag> * Octree<TTag>::GetRoot() {
 			return rootNode;
 		}
@@ -210,6 +252,7 @@ namespace wustl_mm {
 		}
 		template <class TTag> vector<OctreeNode<TTag> *> Octree<TTag>::GetNeighbors(OctreeNode<TTag> * node) {
 			vector<OctreeNode<TTag> *> neighbors;
+			vector<OctreeNode<TTag> *> possibleNeighbors;
 			vector<OctreeNode<TTag> *> leafs;
 			neighbors.clear();
 
@@ -217,25 +260,28 @@ namespace wustl_mm {
 			OctreeNode<TTag> * neigh;
 			bool found = false;
 			for(int i = 1; i < 8; i++) {				
-				neigh = GetLeaf(node->pos[0] + node->cellSize * octreeChildren[i][0], node->pos[1] + node->cellSize * octreeChildren[i][1], node->pos[2] + node->cellSize * octreeChildren[i][2]);
-				if(neigh != NULL) {
-					if(neigh->cellSize == node->cellSize) {
-						neighbors.push_back(neigh);
-					} else if (neigh->cellSize > node->cellSize) {
-						found = false;
-						for(unsigned int j = 0; !found && (j < neighbors.size()); j++) {
-							found = (neighbors[j] == neigh);
-						}
-						if(!found) {
+				possibleNeighbors = GetLeafs(node->pos[0] + node->cellSize * octreeChildren[i][0], node->pos[1] + node->cellSize * octreeChildren[i][1], node->pos[2] + node->cellSize * octreeChildren[i][2]);
+				for(unsigned int k = 0; k < possibleNeighbors.size(); k++) {
+					neigh = possibleNeighbors[k];
+					if(neigh != node) {
+						if(neigh->cellSize == node->cellSize) {
 							neighbors.push_back(neigh);
-						}
-					} else {
-						while(neigh->cellSize < node->cellSize) {
-							neigh = neigh->parent;
-						}
-						leafs = GetAdjacentLeafs(node, neigh);
-						for(unsigned int j = 0; !found && (j < leafs.size()); j++) {
-							neighbors.push_back(leafs[j]);
+						} else if (neigh->cellSize > node->cellSize) {
+							found = false;
+							for(unsigned int j = 0; !found && (j < neighbors.size()); j++) {
+								found = (neighbors[j] == neigh);
+							}
+							if(!found) {
+								neighbors.push_back(neigh);
+							}
+						} else {
+							while(neigh->cellSize < node->cellSize) {
+								neigh = neigh->parent;
+							}
+							leafs = GetAdjacentLeafs(node, neigh);
+							for(unsigned int j = 0; !found && (j < leafs.size()); j++) {
+								neighbors.push_back(leafs[j]);
+							}
 						}
 					}
 				}

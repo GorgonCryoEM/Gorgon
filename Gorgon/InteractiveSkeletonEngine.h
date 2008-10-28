@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.23  2008/10/16 19:50:44  ssa1
+//   Supporting line deletion
+//
 //   Revision 1.22  2008/10/16 02:39:57  ssa1
 //   Modifying the sketch behavior to supplement line drawing instead of replace it.
 //
@@ -410,7 +413,7 @@ namespace wustl_mm {
 						if((skeleton->edges[i].faceIds.size() == 0) && !skeleton->edges[i].tag) {
 							NonManifoldMeshVertex<bool> v0 = skeleton->vertices[skeleton->GetVertexIndex(skeleton->edges[i].vertexIds[0])];
 							NonManifoldMeshVertex<bool> v1 = skeleton->vertices[skeleton->GetVertexIndex(skeleton->edges[i].vertexIds[1])];
-							Renderer::DrawCylinder(v0.position, v1.position, 0.11);
+							Renderer::DrawCylinder(v0.position, v1.position, 0.3);
 						}
 					}	
 					break;
@@ -418,7 +421,7 @@ namespace wustl_mm {
 					for(unsigned int i = 0; i < removableEdges.size(); i++) {					
 						NonManifoldMeshVertex<bool> v0 = skeleton->vertices[skeleton->GetVertexIndex(skeleton->edges[removableEdges[i]].vertexIds[0])];
 						NonManifoldMeshVertex<bool> v1 = skeleton->vertices[skeleton->GetVertexIndex(skeleton->edges[removableEdges[i]].vertexIds[1])];
-						Renderer::DrawCylinder(v0.position, v1.position, 0.15);
+						Renderer::DrawCylinder(v0.position, v1.position, 0.3);
 					}	
 					break;
 			}
