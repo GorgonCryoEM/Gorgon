@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.26  2008/10/16 19:50:44  ssa1
+//   Supporting line deletion
+//
 //   Revision 1.25  2008/10/15 19:41:30  ssa1
 //   Esc to cancel path, Clear Button and Tracking of start seed point
 //
@@ -91,7 +94,7 @@ namespace wustl_mm {
 			void AddQuad(int vertexId1, int vertexId2, int vertexId3, int vertexId4, TEdge newEdgeTag = NULL, TFace faceTag = NULL);
 			void AddTriangle(int vertexId1, int vertexId2, int vertexId3, TEdge newEdgeTag = NULL, TFace faceTag = NULL);
 			void Clear();
-			void Draw(bool drawSurfaces, bool drawLines, bool drawPoints, bool annotateSurfaces, bool annotateLines, bool annotatePoints);
+			void Draw(bool drawSurfaces, bool drawLines, bool drawPoints, bool annotateSurfaces, bool annotateLines, bool annotatePoints, bool disableSurfaceLighting, bool disableCurveLighting, bool disablePointLighting);
 			void MarkFixedVertices();
 			void MergeMesh(NonManifoldMesh<TVertex, TEdge, TFace> * srcMesh);
 			void RemoveFace(int faceId);
@@ -343,11 +346,14 @@ namespace wustl_mm {
 			vertexHashMap.clear();
 		}
 
-		template <class TVertex, class TEdge, class TFace> void NonManifoldMesh<TVertex, TEdge, TFace>::Draw(bool drawSurfaces, bool drawLines, bool drawPoints, bool annotateSurfaces, bool annotateLines, bool annotatePoints) {
+		template <class TVertex, class TEdge, class TFace> void NonManifoldMesh<TVertex, TEdge, TFace>::Draw(bool drawSurfaces, bool drawLines, bool drawPoints, bool annotateSurfaces, bool annotateLines, bool annotatePoints, bool disableSurfaceLighting, bool disableCurveLighting, bool disablePointLighting) {
 			int k;
-			glPushAttrib(GL_LINE_BIT | GL_ENABLE_BIT | GL_HINT_BIT | GL_POINT_BIT);
-			
+			glPushAttrib(GL_LIGHTING | GL_LINE_BIT | GL_ENABLE_BIT | GL_HINT_BIT | GL_POINT_BIT);			
+
 			if(drawSurfaces) {
+				if(disableSurfaceLighting) {
+					glDisable(GL_LIGHTING);
+				}
 				if(annotateSurfaces) {
 					glPushName(0);
 					glPushName(0);
@@ -372,12 +378,15 @@ namespace wustl_mm {
 				}
 			}			
 			
-			if(drawLines) {				
+			if(drawLines) {		
+				if(disableCurveLighting) {
+					glDisable(GL_LIGHTING);
+				}
 				if(annotateLines) {
 					glPushName(1);
 					glPushName(0);
 				}
-				glLineWidth(3);
+				glLineWidth(4);
 				glEnable(GL_LINE_SMOOTH);
 				glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);				
 				for(unsigned int i = 0; i < edges.size(); i++) {					
@@ -400,13 +409,10 @@ namespace wustl_mm {
 			}			
 			
 			if(drawPoints) {
-				/*GLfloat color[4] = {0.0, 0.0, 0.0, 0.0};
-				glMaterialfv(GL_FRONT, GL_AMBIENT, color);
-				glMaterialfv(GL_FRONT, GL_DIFFUSE, color);
-				glMaterialfv(GL_FRONT, GL_SPECULAR, color);
-				glMaterialfv(GL_BACK, GL_AMBIENT, color);
-				glMaterialfv(GL_BACK, GL_DIFFUSE, color);
-				glMaterialfv(GL_BACK, GL_SPECULAR, color); */
+				if(disablePointLighting) {
+					glDisable(GL_LIGHTING);
+				}
+
 
 				if(annotatePoints) {
 					glPushName(2);

@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.24  2008/10/16 02:39:57  ssa1
+//   Modifying the sketch behavior to supplement line drawing instead of replace it.
+//
 //   Revision 1.23  2008/09/29 20:36:35  ssa1
 //   Drawing skeletal curves as cylinders and spheres
 //
@@ -197,6 +200,7 @@ namespace wustl_mm {
 			glPopMatrix();
 		}
 		void Renderer::SetColor(float colorR, float colorG, float colorB, float colorA)  {
+			glColor4f(colorR, colorG, colorB, colorA);
 			GLfloat diffuse[4] = {colorR, colorG, colorB, colorA};
 			GLfloat ambient[4] = {colorR*0.2, colorG*0.2, colorB*0.2, colorA};
 			GLfloat specular[4] = {1.0, 1.0, 1.0, 1.0};

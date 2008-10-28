@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.28  2008/09/29 16:01:17  ssa1
+//   Adding in CVS meta information
+//
 
 #ifndef GORGON_MARCHING_CUBES_H
 #define GORGON_MARCHING_CUBES_H
@@ -233,7 +236,7 @@ namespace wustl_mm {
 		void VolumeRenderer::Draw(int subSceneIndex, bool selectEnabled) {
 			if(subSceneIndex == 0) {
 				if((viewingType == VIEWING_TYPE_ISO_SURFACE) && (surfaceMesh != NULL)) {
-					surfaceMesh->Draw(true, false, false, selectEnabled, false, false);
+					surfaceMesh->Draw(true, false, false, selectEnabled, false, false, false, false, false);
 				} else if((viewingType == VIEWING_TYPE_CROSS_SECTION) || (viewingType == VIEWING_TYPE_SOLID)) {
 					glPushAttrib(GL_ENABLE_BIT);
 					glDisable(GL_LIGHTING);
