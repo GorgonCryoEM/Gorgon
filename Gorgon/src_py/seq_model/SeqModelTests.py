@@ -18,10 +18,10 @@ class SeqModelTests(unittest.TestCase):
   def setUp(self):
     if not os.path.exists('groel.pdb'):
       urllib.urlretrieve('http://www.rcsb.org/pdb/download/downloadFile.do?fileFormat=pdb&compression=NO&structureId=1JON','groel.pdb')
-    #if not os.path.exists('1IRK.pdb'):
-    #    urllib.urlretrieve('http://www.rcsb.org/pdb/download/downloadFile.do?fileFormat=pdb&compression=NO&structureId=1IRK')
+    #if not os.path.exists('1IRK.pdb'):  
+        #urllib.urlretrieve('http://www.rcsb.org/pdb/download/downloadFile.do?fileFormat=pdb&compression=NO&structureId=1IRK', '1IRK.pdb')
     #if not os.path.exists('3B8E.pdb'):
-    #    urllib.urlretrieve('http://www.rcsb.org/pdb/download/downloadFile.do?fileFormat=pdb&compression=NO&structureId=3B8E')
+        #urllib.urlretrieve('http://www.rcsb.org/pdb/download/downloadFile.do?fileFormat=pdb&compression=NO&structureId=3B8E',  '3B8E.pdb')
     if not os.path.exists('1KPO.pdb'):
         urllib.urlretrieve('http://www.rcsb.org/pdb/download/downloadFile.do?fileFormat=pdb&compression=NO&structureId=1KPO', '1KPO.pdb')
   def tearDown(self):
@@ -124,25 +124,36 @@ class SeqModelTests(unittest.TestCase):
     chain=Chain.load('groel.pdb')
     chain.saveToPDB('groel-out.pdb')
     chain2=Chain.load('groel-out.pdb')
+    
+    atoms = {}
+    atoms2 = {}
+    
+    for resIndex in chain.residueRange():
+        for atomName in chain[resIndex].getAtomNames():
+            atom = chain[resIndex].getAtom(atomName)
+            key = ( atom.getPDBId(), atom.getChainId(), atom.getResSeq(), atom.getName())
+            atoms[key] = atom
 
-    ''' #MUST BE REWRITTEN WITHOUT ACCESSING 'atoms' ATTRIBUTE
+    for resIndex in chain2.residueRange():
+        for atomName in chain2[resIndex].getAtomNames():
+            atom = chain2[resIndex].getAtom(atomName)
+            key = ( atom.getPDBId(), atom.getChainId(), atom.getResSeq(), atom.getName() )
+            atoms2[key] = atom
+
     #Validate atom records
-    for serialNo in chain.atoms.keys():
-      self.assertTrue (serialNo in chain2.atoms.keys())
-    ''' #MUST BE REWRITTEN WITHOUT ACCESSING 'atoms' ATTRIBUTE
+    for key in atoms.keys():
+        self.assertTrue (key in atoms2.keys())
 
-    ''' #MUST BE REWRITTEN WITHOUT ACCESSING 'atoms' ATTRIBUTE
     #Validate residue records
     for index in chain.residueRange():
-      residue1=chain[index]
-      residue2=chain2[index]
-      self.assertEquals( chain[index].symbol1, chain2[index].symbol1)
-      atomKeys1=residue1.atoms.keys()
-      for atomLabel in atomKeys1:
-        pass#self.assertAlmostEqual(residue1.atoms[atomLabel].x, residue2.atoms[atomLabel].x,3)
-        #self.assertAlmostEqual(residue1.atoms[atomLabel].y, residue2.atoms[atomLabel].y,3)
-        #self.assertAlmostEqual(residue1.atoms[atomLabel].z, residue2.atoms[atomLabel].z,3)
-    ''' #MUST BE REWRITTEN WITHOUT ACCESSING 'atoms' ATTRIBUTE
+        residue1=chain[index]
+        residue2=chain2[index]
+        self.assertEquals( chain[index].symbol1, chain2[index].symbol1)
+        atomKeys1=residue1.getAtomNames()
+        for atomLabel in atomKeys1:
+            self.assertAlmostEqual(residue1.getAtom(atomLabel).getPosition().x(), residue2.getAtom(atomLabel).getPosition().x(),3)
+            self.assertAlmostEqual(residue1.getAtom(atomLabel).getPosition().y(), residue2.getAtom(atomLabel).getPosition().y(),3)
+            self.assertAlmostEqual(residue1.getAtom(atomLabel).getPosition().z(), residue2.getAtom(atomLabel).getPosition().z(),3)
 
     #Validate secel records
     self.__validateSecels(chain)
@@ -161,7 +172,7 @@ class SeqModelTests(unittest.TestCase):
     self.assert_( chainIDsetPDB.issubset(chainIDset) ) #Check for subset because we have chain objects from previous tests that are not in a PDB file
     loadAllChains_mychain = Chain.getChain( mychain_origKey ) #the original key is the one given by the PDB file
     self.assertEqual( loadAllChains_mychain.__repr__(), mychain.__repr__() )
-    ####Ross's question: why are chain objects from other functions in Chain.getChainIDs()?
+    ####Ross's question: why are chain objects from other test??_* functions in Chain.getChainIDs()?
     ####Aren't they deleted after each function is tested?
     
   def test06_PDBAtoms(self):
