@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.24  2008/10/28 18:46:52  ssa1
+//   Fixing octree neighbor search, and changing the structure tensor cost function
+//
 //   Revision 1.23  2008/10/16 19:50:44  ssa1
 //   Supporting line deletion
 //
@@ -66,7 +69,9 @@ namespace wustl_mm {
 			InteractiveSkeletonEngine(Volume * volume, NonManifoldMesh_Annotated * skeleton, float minGray, int stepCount, int curveRadius, int minCurveSize, unsigned int medialnessScoringFunction);
 			~InteractiveSkeletonEngine();			
 			void AnalyzePathRay(float rayX, float rayY, float rayZ, float eyeX, float eyeY, float eyeZ, float rayWidth);
+			bool ClearSketch2D();
 			void ClearSketchRay();
+			void SetSketch2D(int width, int height, int xPos, int yPos);
 			bool SetSketchRay(float rayX, float rayY, float rayZ, float eyeX, float eyeY, float eyeZ, float rayWidth);
 			void EndSketchRay(float medialnessRatio, float smoothnessRatio, float minSketchRatio, float maxSketchRatio);
 
@@ -106,6 +111,8 @@ namespace wustl_mm {
 			float isoValue;
 			bool startSeedIsolated;			
 			SketchMapType sketchPositions;
+			vector<Vector3DInt> sketchDrawPositions;
+			int screenWidth, screenHeight;
 
 			vector<unsigned int> selectedEdges;
 			vector<unsigned int> removableEdges;
@@ -180,8 +187,7 @@ namespace wustl_mm {
 
 		void InteractiveSkeletonEngine::StartEndPolyLineMode(bool start) {
 			polyLineMode = start;
-		}
-		
+		}		
 		void InteractiveSkeletonEngine::StartEndSingleRootMode(bool start) {
 			singleRootMode = start;
 		}
@@ -289,12 +295,21 @@ namespace wustl_mm {
 
 
 
+		bool InteractiveSkeletonEngine::ClearSketch2D() {
+			if(sketchDrawPositions.size() > 0) {
+				sketchDrawPositions.clear();
+				return true;
+			} else {
+				return false;
+			}
+		}
 		void InteractiveSkeletonEngine::ClearSketchRay() {
 			if(sketchPositions.size() > 0) {
 				sketchPositions.clear();
 				vector<Vector3DInt> sketchPts;
 				skeletonizer->SetSketchPoints(sketchPts, 1.0f, 1.0f);
 			}
+			sketchDrawPositions.clear();
 		}
 
 		bool InteractiveSkeletonEngine::SetSketchRay(float rayX, float rayY, float rayZ, float eyeX, float eyeY, float eyeZ, float rayWidth) {
@@ -314,9 +329,15 @@ namespace wustl_mm {
 					}
 				}
 			}
-
 			return added;
 		}		
+
+		void InteractiveSkeletonEngine::SetSketch2D(int width, int height, int xPos, int yPos) {
+			screenWidth = width;
+			screenHeight = height;
+			sketchDrawPositions.push_back(Vector3DInt(xPos, yPos, 0));
+		}
+
 		void InteractiveSkeletonEngine::EndSketchRay(float medialnessRatio, float smoothnessRatio, float minSketchRatio, float maxSketchRatio) {
 			if(started && (startPositions.size() > 0) && (currentPositions.size() > 0)) {
 				vector<Vector3DInt> sketchPts;
@@ -327,6 +348,7 @@ namespace wustl_mm {
 				skeletonizer->SetSketchPoints(sketchPts, minSketchRatio, maxSketchRatio);
 				SelectStartSeed(startPositions, medialnessRatio, smoothnessRatio);
 				AnalyzePath(currentPositions);
+				sketchDrawPositions.push_back(Vector3DInt(-1, -1, -1));
 			}
 		}
 
@@ -398,31 +420,93 @@ namespace wustl_mm {
 					break;
 				case(2):	// Sketch Points
 					{
-						Vector3DInt v;
-						for(SketchMapType::iterator i = sketchPositions.begin(); i != sketchPositions.end(); i++) {
-							v = GetVector3DIntFromHash(i->first);
+						//Vector3DInt v;
+						//for(SketchMapType::iterator i = sketchPositions.begin(); i != sketchPositions.end(); i++) {
+						//	v = GetVector3DIntFromHash(i->first);
+						//	glPushMatrix();
+						//	glTranslatef(v.X(), v.Y(), v.Z());
+						//	gluSphere(quadricSphere, 1.0, 10, 10);  
+						//	glPopMatrix();						
+						//}
+						if(sketchDrawPositions.size() > 0) {
+							glPushAttrib(GL_LIGHTING | GL_LINE_BIT | GL_ENABLE_BIT | GL_HINT_BIT );
+							glDisable(GL_LIGHTING);
+							glLineWidth(4);
+							glEnable(GL_LINE_SMOOTH);
+							glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);	
+														
+							glMatrixMode(GL_PROJECTION);
 							glPushMatrix();
-							glTranslatef(v.X(), v.Y(), v.Z());
-							gluSphere(quadricSphere, 1.0, 10, 10);  
-							glPopMatrix();						
+							glLoadIdentity();
+
+							glMatrixMode(GL_MODELVIEW);
+							glPushMatrix();
+							glLoadIdentity();
+							
+							float x, y;
+							bool sketchStarted = false;
+							for(unsigned int i = 0; i < sketchDrawPositions.size(); i++) {
+								if(!sketchStarted) {
+									glBegin(GL_LINE_STRIP);
+									sketchStarted = true;
+								}
+								if(sketchDrawPositions[i].X() == -1) {
+									sketchStarted = false;
+									glEnd();
+								} 
+								else {
+									x = 2.0f * (float)sketchDrawPositions[i].X() / (float)screenWidth  - 1.0f;
+									y = 2.0f * ((float) screenHeight - (float)sketchDrawPositions[i].Y()) / (float)screenHeight  - 1.0f;
+									glVertex2f(x, y);
+								}
+							}
+							if(sketchStarted) {
+								glEnd();
+							}
+
+							glMatrixMode(GL_PROJECTION);
+							glPopMatrix();
+
+							glMatrixMode(GL_MODELVIEW);
+							glPopMatrix();
+
+							glPopAttrib();
 						}
 					}
 					break;
 				case(3):	// Temporary skeletal paths
+					glPushAttrib(GL_LIGHTING | GL_LINE_BIT | GL_ENABLE_BIT | GL_HINT_BIT );
+					glDisable(GL_LIGHTING);
+					glLineWidth(4);
+					glEnable(GL_LINE_SMOOTH);
+					glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);	
+					glBegin(GL_LINES);
 					for(unsigned int i = 0; i <  skeleton->edges.size(); i++) {					
 						if((skeleton->edges[i].faceIds.size() == 0) && !skeleton->edges[i].tag) {
 							NonManifoldMeshVertex<bool> v0 = skeleton->vertices[skeleton->GetVertexIndex(skeleton->edges[i].vertexIds[0])];
 							NonManifoldMeshVertex<bool> v1 = skeleton->vertices[skeleton->GetVertexIndex(skeleton->edges[i].vertexIds[1])];
-							Renderer::DrawCylinder(v0.position, v1.position, 0.3);
+							glVertex3d(v0.position.X(), v0.position.Y(), v0.position.Z());
+							glVertex3d(v1.position.X(), v1.position.Y(), v1.position.Z());
 						}
 					}	
+					glEnd();
+					glPopAttrib();
 					break;
 				case(4):	// Removable Edges
+					glPushAttrib(GL_LIGHTING | GL_LINE_BIT | GL_ENABLE_BIT | GL_HINT_BIT );
+					glDisable(GL_LIGHTING);
+					glLineWidth(4);
+					glEnable(GL_LINE_SMOOTH);
+					glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);	
+					glBegin(GL_LINES);
 					for(unsigned int i = 0; i < removableEdges.size(); i++) {					
 						NonManifoldMeshVertex<bool> v0 = skeleton->vertices[skeleton->GetVertexIndex(skeleton->edges[removableEdges[i]].vertexIds[0])];
 						NonManifoldMeshVertex<bool> v1 = skeleton->vertices[skeleton->GetVertexIndex(skeleton->edges[removableEdges[i]].vertexIds[1])];
-						Renderer::DrawCylinder(v0.position, v1.position, 0.3);
+						glVertex3d(v0.position.X(), v0.position.Y(), v0.position.Z());
+						glVertex3d(v1.position.X(), v1.position.Y(), v1.position.Z());
 					}	
+					glEnd();
+					glPopAttrib();
 					break;
 			}
 		}

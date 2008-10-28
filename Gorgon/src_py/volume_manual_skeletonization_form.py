@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.21  2008/10/16 19:50:44  ssa1
+#   Supporting line deletion
+#
 #   Revision 1.20  2008/10/16 02:39:58  ssa1
 #   Modifying the sketch behavior to supplement line drawing instead of replace it.
 #
@@ -76,8 +79,8 @@ class VolumeManualSkeletonizationForm(QtGui.QWidget):
         
         self.isSkeletonClicked = False;
         self.manualColors = [QtGui.QColor.fromRgba(QtGui.qRgba(0, 0, 255, 255)),    #Starting Points
-                             QtGui.QColor.fromRgba(QtGui.qRgba(0, 255, 0, 255)),    #Ending Poitns
-                             QtGui.QColor.fromRgba(QtGui.qRgba(0, 255, 255, 100)),  #Sketch Poitns
+                             QtGui.QColor.fromRgba(QtGui.qRgba(0, 255, 0, 255)),    #Ending Points
+                             QtGui.QColor.fromRgba(QtGui.qRgba(0, 255, 255, 100)),  #Sketch Points
                              QtGui.QColor.fromRgba(QtGui.qRgba(255, 255, 0, 255)),  #Temp Skeletal curves
                              QtGui.QColor.fromRgba(QtGui.qRgba(100, 255, 100, 255))]  #Removable Edges
         self.createUI()
@@ -151,6 +154,8 @@ class VolumeManualSkeletonizationForm(QtGui.QWidget):
             self.engine = InteractiveSkeletonEngine(self.volume, self.mesh, self.getStartingDensity(), self.getStepCount(), self.getCurveRadius(), self.getMinCurveLength(), medialnessScoringFunction)
             self.engine.setIsoValue(self.viewer.renderer.getSurfaceValue())
             self.connect(self.app.viewers["skeleton"], QtCore.SIGNAL("elementSelected (int, int, int, int, int, int, QMouseEvent)"), self.skeletonClicked)
+            self.connect(self.app.mainCamera, QtCore.SIGNAL("cameraChanged()"), self.processCameraChanged)
+            
             
             self.setSkeletonViewerProperties(True)
             self.skeletonViewer.loaded = True
@@ -250,9 +255,14 @@ class VolumeManualSkeletonizationForm(QtGui.QWidget):
             self.engine.analyzePathRay(ray[0], ray[1], ray[2], eye[0], eye[1], eye[2], rayWidth)
             self.skeletonViewer.emitModelChanged()
         elif(event.modifiers() & QtCore.Qt.SHIFT):
-            if(self.engine.setSketchRay(ray[0], ray[1], ray[2], eye[0], eye[1], eye[2], rayWidth)):
-                self.skeletonViewer.emitModelChanged()
-                    
+            self.engine.setSketch2D(self.app.mainCamera.width(), self.app.mainCamera.height(), event.x(), event.y())
+            self.engine.setSketchRay(ray[0], ray[1], ray[2], eye[0], eye[1], eye[2], rayWidth)               
+            self.skeletonViewer.emitModelChanged()
+    
+    def processCameraChanged(self):
+        if(self.engine.clearSketch2D()) :
+            self.skeletonViewer.emitModelChanged()        
+    
     def modelLoaded(self):
         self.skeletonViewer = self.app.viewers["skeleton"]; 
         #self.oldSkeletonViewerSelectEnabled = self.skeletonViewer.selectEnabled

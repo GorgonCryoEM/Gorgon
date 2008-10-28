@@ -11,6 +11,10 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.40  2008/10/17 22:58:36  colemanr
+#   Fixed a 64 bit issue with the hitstack by converting to int (some
+#   variables are of type numpy.32).
+#
 #   Revision 1.39  2008/10/03 17:26:57  colemanr
 #   base_viewer.py: On a 64 bit system, some of the numbers from hitstack
 #   list in camera.py are of type numpy.int32 rather than of type int.  This
@@ -147,6 +151,7 @@ class BaseViewer(QtOpenGL.QGLWidget):
         self.emitModelChanged()
 
     def setMaterials(self, color):
+        glColor4f(color.redF(), color.greenF(), color.blueF(), color.alphaF())
         diffuseMaterial = [color.redF(), color.greenF(), color.blueF(), color.alphaF()]
         ambientMaterial = [color.redF()*0.2, color.greenF()*0.2, color.blueF()*0.2, color.alphaF()]
         specularMaterial = [1.0, 1.0, 1.0, 1.0]        
@@ -296,6 +301,8 @@ class BaseViewer(QtOpenGL.QGLWidget):
             self.setMaterials(self.boxColor)       
             self.renderer.drawBoundingBox()        
         
+        self.extraDrawingRoutines()
+        
         for i in range(2):
             if(self.loaded and visibility[i]):
                 self.setMaterials(colors[i])
@@ -309,7 +316,7 @@ class BaseViewer(QtOpenGL.QGLWidget):
                 else:
                     self.renderer.draw(i, self.selectEnabled or self.mouseMoveEnabled)                    
                             
-        self.extraDrawingRoutines()
+        
 
         glPopMatrix()
         glPopAttrib()

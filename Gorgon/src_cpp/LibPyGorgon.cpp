@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.29  2008/10/16 19:50:44  ssa1
+//   Supporting line deletion
+//
 //   Revision 1.28  2008/10/16 02:39:57  ssa1
 //   Modifying the sketch behavior to supplement line drawing instead of replace it.
 //
@@ -264,6 +267,8 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("clearCurrentPath", &InteractiveSkeletonEngine::ClearCurrentPath)		
 		.def("finalizeSkeleton", &InteractiveSkeletonEngine::FinalizeSkeleton)		
 		.def("draw", &InteractiveSkeletonEngine::Draw)		
+		.def("clearSketch2D", &InteractiveSkeletonEngine::ClearSketch2D)		
+		.def("setSketch2D", &InteractiveSkeletonEngine::SetSketch2D)		
 		.def("setSketchRay", &InteractiveSkeletonEngine::SetSketchRay)		
 		.def("clearSketchRay", &InteractiveSkeletonEngine::ClearSketchRay)
 		.def("endSketchRay", &InteractiveSkeletonEngine::EndSketchRay)

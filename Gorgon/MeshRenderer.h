@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.23  2008/10/28 18:46:52  ssa1
+//   Fixing octree neighbor search, and changing the structure tensor cost function
+//
 //   Revision 1.22  2008/09/29 20:36:35  ssa1
 //   Drawing skeletal curves as cylinders and spheres
 //
@@ -88,7 +91,9 @@ namespace wustl_mm {
 		void MeshRenderer::Draw(int subSceneIndex, bool selectEnabled) {
 			if(subSceneIndex == 0) {
 				if(mesh != NULL) {
-					mesh->Draw(true, false, false, selectEnabled, false, false);
+					mesh->Draw(true, true, false, selectEnabled, selectEnabled, false, true, true, true);
+
+					/*
 
 					if(selectEnabled) {
 						glPushName(1);
@@ -121,7 +126,7 @@ namespace wustl_mm {
 					if(selectEnabled) {
 						glPopName();
 						glPopName();
-					}
+					} */
 
 				}
 			}

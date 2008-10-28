@@ -11,6 +11,10 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.36  2008/10/28 21:11:40  colemanr
+#   added camera.centerOnSelectedAtom() -- moved this functionality from
+#   sequence_view.py
+#
 #   Revision 1.35  2008/10/15 19:41:32  ssa1
 #   Esc to cancel path, Clear Button and Tracking of start seed point
 #
@@ -91,6 +95,16 @@ class Camera(QtOpenGL.QGLWidget):
         self.fogColor = [0.0, 0.0, 0.0, 1.0]
         self.fogDensity = 0.01
         self.fogEnabled = True
+        
+        self.center = [0,0,0]
+        self.eye = [0,-4.1,0]
+        self.look = [0,1.1,0]
+        self.right = [1.1,0,0]
+        self.up = [0,0,1.1]
+        self.near = 0.11
+        self.far = 1000.01
+        self.eyeZoom = 0.26
+        
             
         self.setCenter(0, 0, 0)
         self.setEye(0, -4, 0) 
@@ -136,38 +150,41 @@ class Camera(QtOpenGL.QGLWidget):
         viewer.emitModelChanged()
     
     def setEye(self, x, y, z):
-        self.eye = [x, y, z]
-        try:
-            self.look = vectorNormalize([self.center[0] - self.eye[0], self.center[1] - self.eye[1], self.center[2] - self.eye[2]])
-            self.right = vectorNormalize(vectorCrossProduct(self.look, self.up))            #print("Eye: right :", self.right)      
-            self.up = vectorNormalize(vectorCrossProduct(self.right, self.look))  
-        except:
-            self.look = [0,1,0]
-            self.right = [1,0,0]
-            self.up = [0,0,1]
-        self.setRendererCuttingPlanes()
-        self.emitCameraChanged()
+        if(self.eye != [x,y,z]):
+            self.eye = [x, y, z]
+            try:
+                self.look = vectorNormalize([self.center[0] - self.eye[0], self.center[1] - self.eye[1], self.center[2] - self.eye[2]])
+                self.right = vectorNormalize(vectorCrossProduct(self.look, self.up))            #print("Eye: right :", self.right)      
+                self.up = vectorNormalize(vectorCrossProduct(self.right, self.look))  
+            except:
+                self.look = [0,1,0]
+                self.right = [1,0,0]
+                self.up = [0,0,1]
+            self.setRendererCuttingPlanes()
+            self.emitCameraChanged()
     
     def setCenter(self, x, y, z):
-        self.center = [x, y, z]
-        try:
-            self.look = vectorNormalize([self.center[0] - self.eye[0], self.center[1] - self.eye[1], self.center[2] - self.eye[2]])
-            self.right = vectorNormalize(vectorCrossProduct(self.look, self.up))
-        except:
-            self.look = [0,1,0]
-            self.right = [1,0,0]
-        self.setRendererCuttingPlanes()
-        self.emitCameraChanged()
+        if(self.center != [x,y,z]):
+            self.center = [x, y, z]
+            try:
+                self.look = vectorNormalize([self.center[0] - self.eye[0], self.center[1] - self.eye[1], self.center[2] - self.eye[2]])
+                self.right = vectorNormalize(vectorCrossProduct(self.look, self.up))
+            except:
+                self.look = [0,1,0]
+                self.right = [1,0,0]
+            self.setRendererCuttingPlanes()
+            self.emitCameraChanged()
         
     def setUp(self, x, y, z):
-        self.up = vectorNormalize([x, y, z])
-        try:
-            self.right = vectorNormalize(vectorCrossProduct(self.look, self.up))
-            self.up = vectorNormalize(vectorCrossProduct(self.right, self.look))
-        except:
-            self.right = [1,0,0]
-        self.setRendererCuttingPlanes()
-        self.emitCameraChanged()
+        if(self.up != vectorNormalize([x, y, z])):
+            self.up = vectorNormalize([x, y, z])
+            try:
+                self.right = vectorNormalize(vectorCrossProduct(self.look, self.up))
+                self.up = vectorNormalize(vectorCrossProduct(self.right, self.look))
+            except:
+                self.right = [1,0,0]
+            self.setRendererCuttingPlanes()
+            self.emitCameraChanged()
         
     def setEyeRotation(self, yaw, pitch, roll):
         newLook = vectorNormalize(vectorSubtract(vectorAdd(self.eye, vectorScalarMultiply(yaw, self.right)), self.center));
@@ -184,14 +201,15 @@ class Camera(QtOpenGL.QGLWidget):
         self.setUp(newUp[0], newUp[1], newUp[2])       
             
     def setNearFarZoom(self, near, far, zoom):
-        self.eyeZoom = min(max(zoom, 0.0001), 0.9999);
-        nearChanged = (self.near != near)
-        self.near = max(min(near, far), 0.1)
-        self.far = max(self.near + 1.0, far)
-        glFogf(GL_FOG_START, self.near)       
-        glFogf(GL_FOG_END, self.far)
-        self.setGlProjection()
-        self.emitCameraChanged()
+        if((self.eyeZoom != zoom) or (self.near != near) or (self.far != far)) :
+            self.eyeZoom = min(max(zoom, 0.0001), 0.9999);
+            nearChanged = (self.near != near)
+            self.near = max(min(near, far), 0.1)
+            self.far = max(self.near + 1.0, far)
+            glFogf(GL_FOG_START, self.near)       
+            glFogf(GL_FOG_END, self.far)
+            self.setGlProjection()
+            self.emitCameraChanged()
     
     def setCuttingPlane(self, cuttingPlane): 
         newCuttingPlane = min(max(cuttingPlane, -1.0), 1.0)   
@@ -534,7 +552,7 @@ class Camera(QtOpenGL.QGLWidget):
         
     def emitCameraChanged(self):
         self.emit(QtCore.SIGNAL("cameraChanged()"))
-    
+            
     def emitMouseMovedRaw(self, mouseHits, event):
         self.emit(QtCore.SIGNAL("mouseMovedRAW(PyQt_PyObject, QMouseEvent)"), mouseHits, event)
 
