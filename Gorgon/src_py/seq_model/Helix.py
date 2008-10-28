@@ -58,6 +58,6 @@ class Helix(Secel):
     s=s+ str(end_seq_num).rjust(4) +' '
     s=s+ str(1).rjust(1) +' '
 
-    s=s+ str(self.stopIndex-self.startIndex).rjust(36) + "    \n"
+    s=s+ str(self.stopIndex-self.startIndex + 1 ).rjust(36) + "    \n"
 
     return s
