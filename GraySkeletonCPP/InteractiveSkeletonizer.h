@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.23  2008/10/15 12:23:50  ssa1
+//   Modifying the cost function for sketch interraction, and changing mousebehavior to trigger different interaction modes
+//
 //   Revision 1.22  2008/10/14 14:59:33  ssa1
 //   Adding in sketching mode for interactive skeletonization
 //
@@ -252,7 +255,9 @@ namespace wustl_mm {
 				if(cells[i]->isLeaf) {
 					neighbors = octree->GetNeighbors(cells[i]);
 					for(unsigned int j = 0; j < neighbors.size(); j++) {
-						graph->AddEdge(cells[i]->tag.tag1, neighbors[j]->tag.tag1, edgeAttrib());
+						if(!graph->IsEdgePresent(cells[i]->tag.tag1, neighbors[j]->tag.tag1)) {
+							graph->AddEdge(cells[i]->tag.tag1, neighbors[j]->tag.tag1, edgeAttrib());
+						}
 					}				
 				}
 			}
@@ -294,13 +299,16 @@ namespace wustl_mm {
 
 		double InteractiveSkeletonizer::GetStructureTensorProjectedScore(EigenResults3D imageEigen, Vector3DFloat skeletonDirection, float power, int type) {						
 			skeletonDirection.Normalize();
-			//return GetVoxelCost(imageEigen, skeletonDirection, PRUNING_CLASS_PRUNE_CURVES);
 
-			float score = 0.0;
+			double score = 0.0;
 			switch(type) {
 				case PRUNING_CLASS_PRUNE_CURVES:
-					for(int i = 0 ; i < 3; i++) {
-						score +=  pow(abs(skeletonDirection * imageEigen.vectors[i]) * sqrt(imageEigen.values[i]), power);
+					if(isZero(imageEigen.values[0])) {
+						score = 1.0;
+					} else {
+						for(int i = 0 ; i < 3; i++) {
+							score += (imageEigen.values[i] / imageEigen.values[0])  * pow(skeletonDirection * imageEigen.vectors[i], power);
+						}				
 					}
 					break;
 				default:

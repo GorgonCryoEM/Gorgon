@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.22  2008/09/29 20:36:35  ssa1
+//   Drawing skeletal curves as cylinders and spheres
+//
 //   Revision 1.21  2008/09/29 16:01:17  ssa1
 //   Adding in CVS meta information
 //
@@ -104,15 +107,15 @@ namespace wustl_mm {
 							NonManifoldMeshVertex<bool> v0 = mesh->vertices[mesh->GetVertexIndex(mesh->edges[i].vertexIds[0])];
 							NonManifoldMeshVertex<bool> v1 = mesh->vertices[mesh->GetVertexIndex(mesh->edges[i].vertexIds[1])];
 							if(!v0.tag) {
-								DrawSphere(v0.position, 0.1);
+								DrawSphere(v0.position, 0.25);
 								v0.tag = true;
 							}
 							if(!v1.tag) {
-								DrawSphere(v1.position, 0.1);
+								DrawSphere(v1.position, 0.25);
 								v1.tag = true;
 							}
 
-							DrawCylinder( v0.position, v1.position, 0.1);
+							DrawCylinder( v0.position, v1.position, 0.25);
 						}
 					}	
 					if(selectEnabled) {
