@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.37  2008/10/10 14:25:55  ssa1
+//   Setting the cost functions to scale with the edge length
+//
 //   Revision 1.36  2008/09/29 16:30:15  ssa1
 //   Adding in CVS meta information
 //
@@ -32,6 +35,7 @@
 #include "NormalFinder.h"
 #include <string>
 #include <Foundation/TimeManager.h>
+#include <new>
 
 using namespace wustl_mm::MathTools;
 using namespace wustl_mm::Foundation;
@@ -64,7 +68,7 @@ namespace wustl_mm {
 			void NormalizeVolume(Volume * sourceVolume);			
 			void PruneCurves(Volume * sourceVolume, int pruneLength);
 			void PruneSurfaces(Volume * sourceVolume, int pruneLength);
-			void PruneUsingStructureTensor(Volume * skeleton, Volume * sourceVolume, EigenResults3D * volumeEigens, double threshold, char pruningClass, string outputPath);
+			void PruneUsingStructureTensor(Volume * skeleton, Volume * sourceVolume, Vector3DFloat * volumeGradient, EigenResults3D * volumeEigens, ProbabilityDistribution3D & filter, double threshold, char pruningClass, string outputPath);
 			void SmoothenVolume(Volume * &sourceVolume, double minGrayscale, double maxGrayscale, int stRadius);
 			void ThresholdGrayValueRange(Volume * sourceVolume, double minGrayValue, double maxGrayValue);
 			void VoxelBinarySubtract(Volume * sourceAndDestVolume1, Volume * sourceVolume2);
@@ -244,13 +248,17 @@ namespace wustl_mm {
 		}
 
 		EigenResults3D * VolumeSkeletonizer::GetEigenResults(Volume * maskVol, Vector3DFloat * imageGradient, ProbabilityDistribution3D & gaussianFilter, int gaussianFilterRadius, bool useMask) {
-			EigenResults3D * resultTable = new EigenResults3D[maskVol->getSizeX() * maskVol->getSizeY() * maskVol->getSizeZ()];
+			EigenResults3D * resultTable = new(std::nothrow) EigenResults3D[maskVol->getSizeX() * maskVol->getSizeY() * maskVol->getSizeZ()];
 
-			for(int x = MAX_GAUSSIAN_FILTER_RADIUS; x < maskVol->getSizeX() - MAX_GAUSSIAN_FILTER_RADIUS; x++) {
-				for(int y = MAX_GAUSSIAN_FILTER_RADIUS; y < maskVol->getSizeY() - MAX_GAUSSIAN_FILTER_RADIUS; y++) {
-					for(int z = MAX_GAUSSIAN_FILTER_RADIUS; z < maskVol->getSizeZ() - MAX_GAUSSIAN_FILTER_RADIUS; z++) {
-						GetEigenResult(resultTable[maskVol->getIndex(x, y, z)], imageGradient, gaussianFilter, x, y, z,
-									   maskVol->getSizeX(), maskVol->getSizeY(), maskVol->getSizeZ(), gaussianFilterRadius, (useMask && (maskVol->getDataAt(x, y, z) == 0))); 
+			if(resultTable == NULL) {
+				printf("Not enough memory to store eigens, going to slower mode!\n"); 
+			} else {
+				for(int x = MAX_GAUSSIAN_FILTER_RADIUS; x < maskVol->getSizeX() - MAX_GAUSSIAN_FILTER_RADIUS; x++) {
+					for(int y = MAX_GAUSSIAN_FILTER_RADIUS; y < maskVol->getSizeY() - MAX_GAUSSIAN_FILTER_RADIUS; y++) {
+						for(int z = MAX_GAUSSIAN_FILTER_RADIUS; z < maskVol->getSizeZ() - MAX_GAUSSIAN_FILTER_RADIUS; z++) {
+							GetEigenResult(resultTable[maskVol->getIndex(x, y, z)], imageGradient, gaussianFilter, x, y, z,
+										   maskVol->getSizeX(), maskVol->getSizeY(), maskVol->getSizeZ(), gaussianFilterRadius, (useMask && (maskVol->getDataAt(x, y, z) == 0))); 
+						}
 					}
 				}
 			}
@@ -359,9 +367,9 @@ namespace wustl_mm {
 
 				delete block;
 
-				Vector3DFloat * gradient = GetVolumeGradient2(visited);
+				Vector3DFloat * gradient = GetVolumeGradient(visited);
 				EigenResults3D eigen;
-				GetEigenResult2(eigen, gradient, uniformFilterSkeletonDirectionRadius,  
+				GetEigenResult(eigen, gradient, uniformFilterSkeletonDirectionRadius,  
 					margin+radius, margin+radius, margin+radius,
 					size, size, size, radius, false);
 
@@ -429,11 +437,11 @@ namespace wustl_mm {
 
 				delete block;
 
-				Vector3DFloat * gradient = GetVolumeGradient2(visited);
+				Vector3DFloat * gradient = GetVolumeGradient(visited);
 
 				EigenResults3D eigen;
 
-				GetEigenResult2(eigen, gradient, uniformFilterSkeletonDirectionRadius,  
+				GetEigenResult(eigen, gradient, uniformFilterSkeletonDirectionRadius,  
 					margin+radius, margin+radius, margin+radius,
 					size, size, size, radius, false);
 
@@ -460,14 +468,28 @@ namespace wustl_mm {
 					}
 				}
 			}
+			Vector3DFloat grad1, grad2;
 
 			for(int x = 1; x < sourceVolume->getSizeX()-1; x++) {
 				for(int y = 1; y < sourceVolume->getSizeY()-1; y++) {
 					for(int z = 1; z < sourceVolume->getSizeZ()-1; z++) {
 						index = sourceVolume->getIndex(x, y, z);
-						gradient[index] = Vector3DFloat(sourceVolume->getDataAt(x+1, y, z) - sourceVolume->getDataAt(x-1, y, z),
-												   sourceVolume->getDataAt(x, y+1, z) - sourceVolume->getDataAt(x, y-1, z),
-												   sourceVolume->getDataAt(x, y, z+1) - sourceVolume->getDataAt(x, y, z-1));
+						grad1 = Vector3DFloat(sourceVolume->getDataAt(x, y, z) - sourceVolume->getDataAt(x-1, y, z),
+												   sourceVolume->getDataAt(x, y, z) - sourceVolume->getDataAt(x, y-1, z),
+												   sourceVolume->getDataAt(x, y, z) - sourceVolume->getDataAt(x, y, z-1));
+
+						grad2 = Vector3DFloat(sourceVolume->getDataAt(x+1, y, z) - sourceVolume->getDataAt(x, y, z),
+												   sourceVolume->getDataAt(x, y+1, z) - sourceVolume->getDataAt(x, y, z),
+												   sourceVolume->getDataAt(x, y, z+1) - sourceVolume->getDataAt(x, y, z));
+
+						
+						for(int i = 0; i < 3; i++) {
+							if(abs(grad1.values[i]) > abs(grad2.values[i])) {
+								gradient[index].values[i] = grad1.values[i];
+							} else {
+								gradient[index].values[i] = grad2.values[i];
+							}
+						}
 					}
 				}
 			}
@@ -860,19 +882,25 @@ namespace wustl_mm {
 		void VolumeSkeletonizer::PruneSurfaces(Volume * sourceVolume, int pruneLength) {
 			sourceVolume->erodeSheet(pruneLength);
 		}		
-		void VolumeSkeletonizer::PruneUsingStructureTensor(Volume * skeleton, Volume * sourceVolume, EigenResults3D * volumeEigens, double threshold, char pruningClass, string outputPath) {									
+		void VolumeSkeletonizer::PruneUsingStructureTensor(Volume * skeleton, Volume * sourceVolume, Vector3DFloat * volumeGradient, EigenResults3D * volumeEigens, ProbabilityDistribution3D & filter, double threshold, char pruningClass, string outputPath) {									
 			Volume * tempSkel = new Volume(skeleton->getSizeX(), skeleton->getSizeY(), skeleton->getSizeZ(), 0, 0, 0, skeleton);
 			Volume * costVol = new Volume(skeleton->getSizeX(), skeleton->getSizeY(), skeleton->getSizeZ()); 
 			Vector3DFloat * skeletonDirections = GetSkeletonDirection(skeleton, pruningClass);
 			int index;
 			double cost;
+			EigenResults3D eigen;
 
 			for(int x = 0; x < skeleton->getSizeX(); x++) {
 				for(int y = 0; y < skeleton->getSizeY(); y++) {
 					for(int z = 0; z < skeleton->getSizeZ(); z++) {						
 						index = skeleton->getIndex(x, y, z);						
 						if(tempSkel->getDataAt(index) > 0) {
-							cost = GetVoxelCost(volumeEigens[index], skeletonDirections[index], pruningClass);
+							if(volumeEigens == NULL) {
+								GetEigenResult(eigen, volumeGradient, filter, x, y, z, skeleton->getSizeX(), skeleton->getSizeY(), skeleton->getSizeZ(), filter.radius, false);
+							} else {
+								eigen = volumeEigens[index];
+							}
+							cost = GetVoxelCost(eigen, skeletonDirections[index], pruningClass);
 							if(cost < threshold) {
 								skeleton->setDataAt(index, 0.0);
 							}
@@ -988,8 +1016,8 @@ namespace wustl_mm {
 				}
 			}
 
-			Vector3DFloat * volumeGradient = GetVolumeGradient2(sourceVolume);
-			EigenResults3D * eigens = GetEigenResults2(maskVolume, volumeGradient, smoothenMask, stRadius, true);	
+			Vector3DFloat * volumeGradient = GetVolumeGradient(sourceVolume);
+			EigenResults3D * eigens = GetEigenResults(maskVolume, volumeGradient, smoothenMask, stRadius, true);	
 			Volume * destVolume = new Volume(sourceVolume->getSizeX(), sourceVolume->getSizeY(), sourceVolume->getSizeZ());
 			double sourceData;
 
@@ -1589,7 +1617,7 @@ namespace wustl_mm {
 			sourceVol->pad(MAX_GAUSSIAN_FILTER_RADIUS, 0);
 
 			if(doPruning) {
-				volumeGradient = GetVolumeGradient2(sourceVol);			
+				volumeGradient = GetVolumeGradient(sourceVol);			
 			}
 
 			Volume * nullVol = new Volume(sourceVol->getSizeX(), sourceVol->getSizeY(), sourceVol->getSizeZ());
@@ -1610,7 +1638,7 @@ namespace wustl_mm {
 					WriteVolumeToVRMLFile(surfaceVol, outputPath + "-S-Pre-Prune.wrl");
 				#endif
 				appTimeManager.PushCurrentTime();
-				volumeEigens = GetEigenResults2(surfaceVol, volumeGradient, gaussianFilterSurfaceRadius, surfaceRadius, true);
+				volumeEigens = GetEigenResults(surfaceVol, volumeGradient, gaussianFilterSurfaceRadius, surfaceRadius, true);
 				appTimeManager.PopAndDisplayTime("  Getting Eigens : %f seconds!\n");
 
 				appTimeManager.PushCurrentTime();
@@ -1619,7 +1647,7 @@ namespace wustl_mm {
 
 
 				appTimeManager.PushCurrentTime();
-				PruneUsingStructureTensor(prunedSurfaceVol, sourceVol, volumeEigens, surfaceThreshold, PRUNING_CLASS_PRUNE_SURFACES, outputPath + "-S");
+				PruneUsingStructureTensor(prunedSurfaceVol, sourceVol, volumeGradient, volumeEigens, gaussianFilterSurfaceRadius, surfaceThreshold, PRUNING_CLASS_PRUNE_SURFACES, outputPath + "-S");
 				appTimeManager.PopAndDisplayTime("  Pruning: %f seconds!\n");
 
 				appTimeManager.PushCurrentTime();
@@ -1667,9 +1695,9 @@ namespace wustl_mm {
 					curveVol->toMRCFile((char *)(outputPath + "-C-Pre-Prune.mrc").c_str());
 				#endif
 
-				volumeEigens = GetEigenResults2(curveVol, volumeGradient, gaussianFilterCurveRadius, curveRadius, true);
+				volumeEigens = GetEigenResults(curveVol, volumeGradient, gaussianFilterCurveRadius, curveRadius, true);
 				Volume * prunedCurveVol = new Volume(curveVol->getSizeX(), curveVol->getSizeY(), curveVol->getSizeZ(), 0, 0, 0, curveVol);
-				PruneUsingStructureTensor(prunedCurveVol, sourceVol, volumeEigens, curveThreshold, PRUNING_CLASS_PRUNE_CURVES, outputPath + "-C");
+				PruneUsingStructureTensor(prunedCurveVol, sourceVol, volumeGradient, volumeEigens, gaussianFilterCurveRadius, curveThreshold, PRUNING_CLASS_PRUNE_CURVES, outputPath + "-C");
 				delete [] volumeEigens;
 				#ifdef SAVE_INTERMEDIATE_RESULTS
 					prunedCurveVol->toMRCFile((char *)(outputPath + "-C-Post-Prune.mrc").c_str());

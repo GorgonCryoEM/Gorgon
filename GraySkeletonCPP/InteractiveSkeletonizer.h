@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.24  2008/10/28 18:46:52  ssa1
+//   Fixing octree neighbor search, and changing the structure tensor cost function
+//
 //   Revision 1.23  2008/10/15 12:23:50  ssa1
 //   Modifying the cost function for sketch interraction, and changing mousebehavior to trigger different interaction modes
 //
@@ -207,8 +210,8 @@ namespace wustl_mm {
 
 		float InteractiveSkeletonizer::GetEdgeSmoothnessCost(GraphType * graph, Vector3DFloat * volumeGradient, Volume * sourceVol, Vector3DInt p1, Vector3DInt p2, Vector3DFloat direction, int curveRadius) {
 			EigenResults3D eig1, eig2;
-			GetEigenResult2(eig1, volumeGradient, gaussianFilterCurveRadius, p1.X(), p1.Y(), p1.Z(), sourceVol->getSizeX(), sourceVol->getSizeY(), sourceVol->getSizeZ(), curveRadius, false);
-			GetEigenResult2(eig2, volumeGradient, gaussianFilterCurveRadius, p2.X(), p2.Y(), p2.Z(), sourceVol->getSizeX(), sourceVol->getSizeY(), sourceVol->getSizeZ(), curveRadius, false);
+			GetEigenResult(eig1, volumeGradient, gaussianFilterCurveRadius, p1.X(), p1.Y(), p1.Z(), sourceVol->getSizeX(), sourceVol->getSizeY(), sourceVol->getSizeZ(), curveRadius, false);
+			GetEigenResult(eig2, volumeGradient, gaussianFilterCurveRadius, p2.X(), p2.Y(), p2.Z(), sourceVol->getSizeX(), sourceVol->getSizeY(), sourceVol->getSizeZ(), curveRadius, false);
 
 			float segmentCost = (GetStructureTensorProjectedScore(eig1, direction, 2, PRUNING_CLASS_PRUNE_CURVES) + 
 								 GetStructureTensorProjectedScore(eig2, direction, 2, PRUNING_CLASS_PRUNE_CURVES)) * (p1 - p2).Length() / 2.0f;
@@ -264,7 +267,8 @@ namespace wustl_mm {
 
 
 			// Annotating
-			Vector3DFloat * volumeGradient = GetVolumeGradient2(sourceVol);					
+			Vector3DFloat * volumeGradient = GetVolumeGradient(sourceVol);					
+
 			float maxGray = sourceVol->getMax();
 			float minGray = sourceVol->getMin();
 
@@ -273,7 +277,6 @@ namespace wustl_mm {
 			
 			minEdgeSegmentSmoothness = MAX_FLOAT;		// These two values will be set in the GetEdgeSmoothnessCost method.
 			maxEdgeSegmentSmoothness = MIN_FLOAT;
-
 
 			for(unsigned int i = 0; i < graph->edges.size(); i++) {
 				n1 = graph->vertices[graph->GetVertexIndex(graph->edges[i].vertexIds[0])].tag.octreeNode;
@@ -295,6 +298,7 @@ namespace wustl_mm {
 			}
 
 			delete [] volumeGradient;
+
 		}
 
 		double InteractiveSkeletonizer::GetStructureTensorProjectedScore(EigenResults3D imageEigen, Vector3DFloat skeletonDirection, float power, int type) {						

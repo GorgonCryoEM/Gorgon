@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.22  2008/10/28 22:18:05  ssa1
+#   Changing visualization of meshes, and sketches
+#
 #   Revision 1.21  2008/10/16 19:50:44  ssa1
 #   Supporting line deletion
 #
@@ -163,6 +166,8 @@ class VolumeManualSkeletonizationForm(QtGui.QWidget):
             self.ui.pushButtonClose.setEnabled(True)
             self.skeletonViewer.emitModelLoaded()                        
         else:
+            self.disconnect(self.app.viewers["skeleton"], QtCore.SIGNAL("elementSelected (int, int, int, int, int, int, QMouseEvent)"), self.skeletonClicked)
+            self.disconnect(self.app.mainCamera, QtCore.SIGNAL("cameraChanged()"), self.processCameraChanged)
             self.engine.finalizeSkeleton()
             del self.engine
             self.setSkeletonViewerProperties(False)
