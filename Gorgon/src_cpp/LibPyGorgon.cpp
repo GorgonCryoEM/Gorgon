@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.30  2008/10/28 22:18:05  ssa1
+//   Changing visualization of meshes, and sketches
+//
 //   Revision 1.29  2008/10/16 19:50:44  ssa1
 //   Supporting line deletion
 //
@@ -178,6 +181,7 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("setDisplayRadius", &VolumeRenderer::SetDisplayRadius)
 		.def("setCuttingPlane", &VolumeRenderer::SetCuttingPlane)
 		.def("setViewingType", &VolumeRenderer::SetViewingType)
+		.def("normalizeVolume", &VolumeRenderer::NormalizeVolume)
 		.def("performBinarySkeletonizationJu2007", &VolumeRenderer::PerformBinarySkeletonizationJu2007, return_value_policy<manage_new_object>())		
 		.def("performGrayscaleSkeletonizationAbeysinghe2008", &VolumeRenderer::PerformGrayscaleSkeletonizationAbeysinghe2008, return_value_policy<manage_new_object>())		
 	;

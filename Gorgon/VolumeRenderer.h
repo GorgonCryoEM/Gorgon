@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.29  2008/10/28 22:18:05  ssa1
+//   Changing visualization of meshes, and sketches
+//
 //   Revision 1.28  2008/09/29 16:01:17  ssa1
 //   Adding in CVS meta information
 //
@@ -74,6 +77,7 @@ namespace wustl_mm {
 			bool SetCuttingPlane(float position, float vecX, float vecY, float vecZ);
 			void UpdateBoundingBox() ;
 			void Unload();
+			void NormalizeVolume();
 			Volume * GetVolume();
 			Volume * PerformBinarySkeletonizationJu2007(double threshold, int minCurveSize, int minSurfaceSize);
 			Volume * PerformGrayscaleSkeletonizationAbeysinghe2008(double startDensity, int stepCount, int minCurveSize, int minSurfaceSize, int curveRadius, int surfaceRadius, int skeletonSmoothenRadius);
@@ -562,6 +566,9 @@ namespace wustl_mm {
 			}
 		}
 
+		void VolumeRenderer::NormalizeVolume(){
+			dataVolume->normalize(0, 1);
+		}
 		void VolumeRenderer::SetSampleInterval(const int size) {
 			sampleInterval = size;
 			if(viewingType == VIEWING_TYPE_ISO_SURFACE) {

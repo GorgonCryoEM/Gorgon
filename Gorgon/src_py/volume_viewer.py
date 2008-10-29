@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.14  2008/09/24 19:34:34  ssa1
+#   Fixing scaling bug in CTRL + zoom, Providing function for neighboring atoms, Saving volumes as projections
+#
 #   Revision 1.13  2008/09/23 16:46:57  ssa1
 #   CTRL + Mouse wheel for iso-value modification
 #
@@ -69,12 +72,18 @@ class VolumeViewer(BaseViewer):
         closeAct.setStatusTip(self.tr("Close the loaded volume"))
         self.connect(closeAct, QtCore.SIGNAL("triggered()"), self.unloadData)
         self.app.actions.addAction("unload_Volume", closeAct)
+
+        normalizeAct = QtGui.QAction(self.tr("N&ormalize"), self)
+        closeAct.setStatusTip(self.tr("Normalized the loaded volume"))
+        self.connect(normalizeAct, QtCore.SIGNAL("triggered()"), self.normalizeVolume)
+        self.app.actions.addAction("normalize_Volume", normalizeAct)
                                                
     def createMenus(self):
         self.app.menus.addAction("file-open-volume", self.app.actions.getAction("load_Volume"), "file-open")
         self.app.menus.addAction("file-save-volume", self.app.actions.getAction("save_Volume"), "file-save");    
         self.app.menus.addAction("file-close-volume", self.app.actions.getAction("unload_Volume"), "file-close");
         self.app.menus.addMenu("actions-volume", self.tr("V&olume"), "actions");   
+        self.app.menus.addAction("actions-volume-normalize", self.app.actions.getAction("normalize_Volume"), "actions-volume");
         self.app.menus.addMenu("actions-volume-skeletonization", self.tr("S&keletonization"), "actions-volume");               
     
     def createChildWindows(self):
@@ -86,7 +95,12 @@ class VolumeViewer(BaseViewer):
     def updateActionsAndMenus(self):
         self.app.actions.getAction("save_Volume").setEnabled(self.loaded)
         self.app.actions.getAction("unload_Volume").setEnabled(self.loaded)
+        self.app.actions.getAction("normalize_Volume").setEnabled(self.loaded)
         self.app.menus.getMenu("actions-volume").setEnabled(self.loaded)       
+    
+    def normalizeVolume(self):
+        self.renderer.normalizeVolume()
+        self.surfaceEditor.modelLoadedPreDraw()
     
     def processMouseWheel(self, amount, event):
         if(event.modifiers() & QtCore.Qt.CTRL) :
