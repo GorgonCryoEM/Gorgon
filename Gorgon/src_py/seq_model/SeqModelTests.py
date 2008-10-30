@@ -7,7 +7,6 @@ import os
 
 import random
 from libpyGORGON import PDBAtom,Vector3DFloat
-from seq_model.Atom import Atom
 from seq_model.Chain import Chain
 
 
