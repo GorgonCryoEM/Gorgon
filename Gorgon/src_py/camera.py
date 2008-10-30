@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.37  2008/10/28 22:18:05  ssa1
+#   Changing visualization of meshes, and sketches
+#
 #   Revision 1.36  2008/10/28 21:11:40  colemanr
 #   added camera.centerOnSelectedAtom() -- moved this functionality from
 #   sequence_view.py
@@ -130,7 +133,8 @@ class Camera(QtOpenGL.QGLWidget):
         viewer = self.app.viewers['calpha']
         
         if not argv:
-            chain = Chain.getChain(Chain.getSelectedChainKey())
+            #chain = Chain.getChain(Chain.getSelectedChainKey())
+            chain = viewer.main_chain
             resIndex = chain.getSelection()[-1]
             atomNames = chain[resIndex].getAtomNames()
             if atomNames and 'CA' in atomNames:

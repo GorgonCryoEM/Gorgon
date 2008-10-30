@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.11  2008/10/21 21:49:55  colemanr
+#   Saving PDB files is now connected to the GUI, using Chain.saveToPDB().
+#
 #   Revision 1.10  2008/10/15 23:55:45  colemanr
 #   handles the case of getting no atom for a residue
 #
@@ -58,7 +61,7 @@ class CAlphaViewer(BaseViewer):
         self.isClosedMesh = False
         self.selectEnabled = True
         self.renderer = CAlphaRenderer()          
-        self.main_chain = None #Chain('')
+        self.main_chain = Chain('',  main)
         self.createUI()      
         self.app.viewers["calpha"] = self;
         self.modelColor = QtGui.QColor.fromRgba(QtGui.qRgba(170, 170, 0, 255))
@@ -101,7 +104,7 @@ class CAlphaViewer(BaseViewer):
         seqDockAct.setCheckable(True)
         seqDockAct.setChecked(False)
         def showDock():
-            SequenceDock.changeDockVisibility(self.app, self)
+            SequenceDock.changeDockVisibility(self.app, self,  self.main_chain)
         self.connect(seqDockAct, QtCore.SIGNAL("triggered()"), showDock)
         self.app.actions.addAction("seqDock", seqDockAct)
         
@@ -118,8 +121,9 @@ class CAlphaViewer(BaseViewer):
                 self.whichChainID = dlg.whichChainID
         
         def setupChain(mychain):
+            self.main_chain = mychain
             mychain.setViewer(self)
-            Chain.setSelectedChainKey(mychain.getIDs())
+            #Chain.setSelectedChainKey(mychain.getIDs())
             mychain.addCalphaBonds()
             renderer = self.renderer
             for i in mychain.residueRange():
