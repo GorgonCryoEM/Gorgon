@@ -3,11 +3,11 @@ Package: seq_model
 Classes for modeling proteins with support for .pdb i/o
 
 Atom:
-  Class that models atoms with atomic coordinates
+  Deprecated: Class that models atoms with atomic coordinates
 
 
 GAtom:
-  Class that extends seq_model.Atom to account for Gorgon Viewer interface.
+  Deprecated:Class that extends seq_model.Atom to account for Gorgon Viewer interface.
 
 
 Chain:
@@ -20,4 +20,4 @@ Residue:
 
 Secel:
   Class that models secondary structure elements.
-  subclassed by Helix, Strand, Sheet, Strand and Coil
+  subclassed by Helix, Strand, Sheet, and Coil
