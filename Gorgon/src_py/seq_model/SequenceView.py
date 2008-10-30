@@ -26,9 +26,7 @@ class SequenceDock(QtGui.QDockWidget):
             self.connect(self.app.viewers["calpha"], QtCore.SIGNAL("elementSelected (int, int, int, int, int, int, QMouseEvent)"), self.updateFromViewerSelection)    
     
     @classmethod
-    def changeDockVisibility(cls, main, viewer):
-        chainObj = Chain.getChain( Chain.getSelectedChainKey() )
-        if not chainObj: chainObj = Chain('', main)
+    def changeDockVisibility(cls, main, viewer,  chainObj):
         if cls.__dock:
             if cls.__dock.app.actions.getAction("seqDock").isChecked():
                 cls.__dock.app.addDockWidget(QtCore.Qt.LeftDockWidgetArea,  cls.__dock)
