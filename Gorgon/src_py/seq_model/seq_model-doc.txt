@@ -2,14 +2,6 @@ Package: seq_model
 =======================
 Classes for modeling proteins with support for .pdb i/o
 
-Atom:
-  Deprecated: Class that models atoms with atomic coordinates
-
-
-GAtom:
-  Deprecated:Class that extends seq_model.Atom to account for Gorgon Viewer interface.
-
-
 Chain:
   Class that models polypeptide chains, which are sequences of Residue objects.
 
