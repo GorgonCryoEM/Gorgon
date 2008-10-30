@@ -21,7 +21,8 @@ if __name__ == '__main__':
     viewer = window.viewers["calpha"]
     mychain = Chain.Chain.load('1KPO.pdb', qparent=app)
     mychain.setViewer(viewer)
-    Chain.Chain.setSelectedChainKey(mychain.getIDs())
+    #Chain.Chain.setSelectedChainKey(mychain.getIDs())
+    viewer.main_chain = mychain
     mychain.addCalphaBonds()
     renderer = mychain.getViewer().renderer
     
@@ -31,12 +32,14 @@ if __name__ == '__main__':
         atom = mychain[i].getAtom('CA')
         renderer.addAtom(atom)
     
-    if (not mychain.getViewer().loaded):
+    print "mychain.getViewer() is window.viewers['calpha']?",  mychain.getViewer() is window.viewers['calpha']
+    
+    if not viewer.loaded:
         viewer.dirty = False
-        mychain.getViewer().loaded = True
+        viewer.loaded = True
         viewer.emitModelLoadedPreDraw()
-        mychain.getViewer().emitModelLoaded()
-        mychain.getViewer().emitViewerSetCenter()
+        viewer.emitModelLoaded()
+        viewer.emitViewerSetCenter()
     
     print "The mock sidechains should now be visible."    
     SequenceView.clearMockSidechains(mychain)
