@@ -27,7 +27,7 @@ class Chain(baseClass):
   '''
   chainsDict = {}
   __lastAuto_pdbID = 0
-  __selectedChainKey = None
+  #__selectedChainKey = None
 
   #Chain Constructor
   def __init__(self,char_string=None,qparent=None, pdbID=None, chainID='A'):
@@ -95,7 +95,7 @@ class Chain(baseClass):
       result=Chain(charString, qparent=qparent)
     else:
       result=Chain(charString)
-    Chain.setSelectedChainKey(result.getIDs())
+    #Chain.setSelectedChainKey(result.getIDs())
     return result
 
 
@@ -172,7 +172,7 @@ class Chain(baseClass):
         elif line[0:6].strip()=='SHEET':
             Sheet.parsePDB(line,result)
     Chain.chainsDict[result.key] = result
-    Chain.setSelectedChainKey(result.getIDs())
+    #Chain.setSelectedChainKey(result.getIDs())
     return result
 
   @classmethod
@@ -240,7 +240,7 @@ class Chain(baseClass):
                 stopIndex = None
                 currentElement = character
                 i += 1
-    Chain.setSelectedChainKey(newChain.getIDs())
+    #Chain.setSelectedChainKey(newChain.getIDs())
     return newChain
 
   @classmethod
@@ -282,12 +282,12 @@ class Chain(baseClass):
     else:
       raise NotImplementedError, 'NYI'
 
-  @classmethod
-  def getSelectedChainKey(cls):
-    '''
-    If we have multiple chains loaded into memory, this returns the key for the one that is currently selected.
-    '''
-    return cls.__selectedChainKey
+  #@classmethod
+  #def getSelectedChainKey(cls):
+  #  '''
+  #  If we have multiple chains loaded into memory, this returns the key for the one that is currently selected.
+  #  '''
+  #  return cls.__selectedChainKey
 
   @classmethod
   def getChainKeys(cls):
@@ -337,12 +337,12 @@ class Chain(baseClass):
         cls.chainsDict[chain.key] = chain
     return chains
   
-  @classmethod
-  def setSelectedChainKey(cls, key):
-    '''
-    If there are multiple chains loaded into memory, this can be used to set which chain is currently selected.
-    '''
-    Chain.__selectedChainKey = key
+  #@classmethod
+  #def setSelectedChainKey(cls, key):
+  #  '''
+  #  If there are multiple chains loaded into memory, this can be used to set which chain is currently selected.
+  #  '''
+  #  Chain.__selectedChainKey = key
   @classmethod
   def setViewer(cls, viewer):
     '''
