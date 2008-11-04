@@ -11,6 +11,12 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.9  2008/10/30 21:13:26  colemanr
+#   no longer relies on deprecated GAtom objects, displays the correct
+#   residue symbol for the selected index, no longer depends on the output
+#   of the ui file & now has tabs to save screen space and show the most
+#   common options by default
+#
 #   Revision 1.8  2008/08/27 15:26:52  marshm
 #   Updates to SequenceView.  Updated coloring scheme for correspondence matches.
 #
@@ -25,7 +31,6 @@
 #
 
 from PyQt4 import QtCore, QtGui
-from ui_dialog_calpha_atom_placer import Ui_DialogCAlphaAtomPlacer
 from libpyGORGON import PDBAtom, Vector3DFloat
 from seq_model.Residue import Residue
 
