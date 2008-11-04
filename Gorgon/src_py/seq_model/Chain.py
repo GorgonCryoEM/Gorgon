@@ -177,71 +177,94 @@ class Chain(baseClass):
 
   @classmethod
   def __loadFromSeq(cls, filename, qparent=None):
-    '''
-    Sequence files are a file type we defined.  The first line gives the one-letter abbreviations for the sequence.  The line below it shows the predicted secondary structure element for each residue as "H" for helix, "E" for strand, and "-" otherwise.  
-    Ex:
-    GAPCSTLARFKEI
-    HHHHHH--EEEE
-    Actually, there may be linebreaks within the sequence or the predicted secondary structure, because the first half of the characters are treated as sequence, the second half are treated as secondary structure predictions, and the linebreaks are removed.  
-    '''
-    F = open(filename)
-    lines = []
-    for line in F:
-        line = line.strip()
-        lines.append(line)
-    lines = ''.join(lines)
-    linesSize = len(lines)
-    try:
-        assert (linesSize % 2 == 0)
-    except:
-        "The file does not have an equal number of reisdues and secondary structure indicators."
-    
-    sequence = lines[:(linesSize//2)]
-    structure = lines[(linesSize//2):]
-
-    newChain = Chain(sequence,  qparent)
-    helix = 'H'
-    strand = 'E'
-    coil = '-'
-    elementNum, helixSerialNum, strandSerialNum, coilSerialNum = 1, 1, 1, 1
-    currentElement = structure[0]
-    assert currentElement in (helix, strand, coil)
-    startIndex = 1
-    stopIndex = None  
-    i = 2
-    for character in structure[1:]:
-        if character:
-            assert character in (helix, strand, coil)
-            if character == currentElement:
-                i += 1
-#                continue   #redundant right now
-            else:
-                stopIndex = i - 1
-                if currentElement == helix:
-                    newHelix = Helix(chain=newChain, serialNo=helixSerialNum, 
-                                label = 'H' + str(elementNum),
-                                startIndex=startIndex, stopIndex=stopIndex)
-                    newChain.addHelix(serialNo = helixSerialNum, helix = newHelix)
-                    helixSerialNum += 1
-                    elementNum += 1
-                elif currentElement == strand:
-                    newStrand = Strand(chain=newChain, strandNo=strandSerialNum, 
-                                    label = 'S' + str(elementNum),
-                                    startIndex=startIndex, stopIndex=stopIndex)
-                    newChain.addStrand(strand = newStrand, strandNo=strandSerialNum)
-                    strandSerialNum += 1
-                    elementNum += 1
-                elif currentElement == coil:
-                    newCoil = Coil(chain=newChain, serialNo=coilSerialNum, 
-                                    label = 'Coil', startIndex=startIndex, stopIndex=stopIndex)
+        '''
+        Sequence files are a file type we defined.  The first line gives the one-letter abbreviations for the sequence.  
+        The line below it shows the predicted secondary structure element for each residue as "H" for helix, "E" for strand, and "-" otherwise.  
+        Ex 1:
+        GAPCSTLARFKEI
+        HHHHHH--EEEE
+        Ex 2:
+        START 45
+        SAPQRVPELYC
+        EEEHHHHHH-
+        
+        The first line may give a start residue (useful for post-translational modifications).  That line will be interpreted and removed.  
+        Linebreaks are then removed.  Finally, the first half of the remaining characters are interpreted as sequence, 
+        and the second half are treated as structure predictions.  
+        '''
+        F = open(filename)
+        lines = []
+        for line in F:
+            line = line.strip()
+            lines.append(line)
+        if lines[0][:5].upper() == 'START':
+            firstLine = lines.pop(0)
+            startIndex = int(firstLine.split()[-1])
+            print startIndex
+        else:
+            startIndex = 1
+        stopIndex = None  
+        
+        lines = ''.join(lines)
+        linesSize = len(lines)
+        try:
+            assert (linesSize % 2 == 0)
+        except:
+            "The file does not have an equal number of reisdues and secondary structure indicators."
+        
+        sequence = lines[:(linesSize//2)]
+        print sequence
+        structure = lines[(linesSize//2):]
+        print structure
+        
+        if startIndex == 1:
+            newChain = Chain(sequence,  qparent)
+        else:
+            newChain = Chain('', qparent)
+            n = 0
+            for char in sequence:
+                newChain[startIndex+n] = Residue(char, newChain)
+                n += 1
+                
+        helix = 'H'
+        strand = 'E'
+        coil = '-'
+        elementNum, helixSerialNum, strandSerialNum, coilSerialNum = 1, 1, 1, 1
+        currentElement = structure[0]
+        assert currentElement in (helix, strand, coil)
+        i = startIndex+1
+        for character in structure[1:]:
+            if character:
+                assert character in (helix, strand, coil)
+                if character == currentElement:
+                    i += 1
+                    #continue   #redundant right now
                 else:
-                    pass
-                startIndex = i
-                stopIndex = None
-                currentElement = character
-                i += 1
-    #Chain.setSelectedChainKey(newChain.getIDs())
-    return newChain
+                    stopIndex = i - 1
+                    if currentElement == helix:
+                        newHelix = Helix(chain=newChain, serialNo=helixSerialNum, 
+                                    label = 'H' + str(elementNum),
+                                    startIndex=startIndex, stopIndex=stopIndex)
+                        newChain.addHelix(serialNo = helixSerialNum, helix = newHelix)
+                        helixSerialNum += 1
+                        elementNum += 1
+                    elif currentElement == strand:
+                        newStrand = Strand(chain=newChain, strandNo=strandSerialNum, 
+                                        label = 'S' + str(elementNum),
+                                        startIndex=startIndex, stopIndex=stopIndex)
+                        newChain.addStrand(strand = newStrand, strandNo=strandSerialNum)
+                        strandSerialNum += 1
+                        elementNum += 1
+                    elif currentElement == coil:
+                        newCoil = Coil(chain=newChain, serialNo=coilSerialNum, 
+                                        label = 'Coil', startIndex=startIndex, stopIndex=stopIndex)
+                    else:
+                        pass
+                    startIndex = i
+                    stopIndex = None
+                    currentElement = character
+                    i += 1
+        return newChain
 
   @classmethod
   def __nextChainID(cls):
@@ -314,7 +337,7 @@ class Chain(baseClass):
     elif extension == 'fasta' or extension=='fa' or extension=='fas':
       return Chain.__loadFromFASTA(filename,qparent)
     elif extension == 'seq':
-        return Chain.__loadFromSeq(filename,qparent)
+         return Chain.__loadFromSeq(filename,qparent)
     else:
       raise NotImplementedError, 'NYI'
 
