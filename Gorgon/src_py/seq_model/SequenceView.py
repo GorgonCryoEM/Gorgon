@@ -6,18 +6,20 @@ from seq_model.Helix import Helix
 from seq_model.Strand import Strand
 from seq_model.Chain import Chain
 from seq_model.Residue import Residue
+from seq_model.structure_editor import StructureEditor
 from libpyGORGON import CAlphaRenderer, PDBAtom,  PDBBond
 
 class SequenceDock(QtGui.QDockWidget):
     __dock = None
     
-    def __init__(self, main, viewer, chainObj, parent=None):
+    def __init__(self, main, viewer, predictedSSEsequence, currentChainModel, parent=None):
         super(SequenceDock, self).__init__(parent)
         self.app = main
-        self.chainObj = chainObj
+        self.currentChainModel = currentChainModel
+        self.predictedSSEsequence = predictedSSEsequence
         self.viewer=viewer
         self.skeletonViewer = self.app.viewers["skeleton"]
-        self.seqWidget = SequenceWidget(chainObj, self)
+        self.seqWidget = SequenceWidget( predictedSSEsequence, currentChainModel, self)
         self.setWidget(self.seqWidget)
         self.createActions()
         SequenceDock.__dock = self
@@ -26,23 +28,35 @@ class SequenceDock(QtGui.QDockWidget):
             self.connect(self.app.viewers["calpha"], QtCore.SIGNAL("elementSelected (int, int, int, int, int, int, QMouseEvent)"), self.updateFromViewerSelection)    
     
     @classmethod
-    def changeDockVisibility(cls, main, viewer,  chainObj):
+    def changeDockVisibility(cls, main, viewer, predictedSSEsequence, currentChainModel):
+        if not predictedSSEsequence.residueRange():
+            return
+        if not currentChainModel.residueRange():
+            currentChainModel = Chain('', main)
+            for i in predictedSSEsequence.residueRange():
+                #This will not copy PDBAtom objects, but it will copy (not reference) the residue objects and place them in the new chain
+                #It will not copy any Secel objects (Helix, Strand, Sheet, Coil, Secel)
+                #Thus, it it prepares a clean chain object to begin building a model
+                resSymbol3 = predictedSSEsequence[i].symbol3
+                res = Residue(resSymbol3, currentChainModel)
+                currentChainModel[i] = res
+                
         if cls.__dock:
             if cls.__dock.app.actions.getAction("seqDock").isChecked():
                 cls.__dock.app.addDockWidget(QtCore.Qt.LeftDockWidgetArea,  cls.__dock)
-                cls.__dock.changeSequence(chainObj)
+                cls.__dock.changeCurrentChainModel(currentChainModel)
                 cls.__dock.show()
             else:
                 cls.__dock.app.removeDockWidget(cls.__dock)
         else:
             if main and viewer:
-                dock = SequenceDock(main, viewer, chainObj)
+                dock = SequenceDock(main, viewer, predictedSSEsequence, currentChainModel)
                 main.addDockWidget(QtCore.Qt.LeftDockWidgetArea, dock)
                 dock.show()
             else:
                 if not main: print 'Sequence Dock Error: no main app'
                 if not viewer: print 'Sequence Dock Error: no viewer'
-                if not chainObj: print 'Sequence Dock: no chain to load'
+                if not currentChainModel: print 'Sequence Dock: no chain to load'
                             
     def createActions(self):
         seqDockAct = QtGui.QAction(self.tr("Partly &Automated Atom Placement"), self)
@@ -53,16 +67,20 @@ class SequenceDock(QtGui.QDockWidget):
         self.connect(seqDockAct, QtCore.SIGNAL("triggered()"), SequenceDock.changeDockVisibility)
         self.app.actions.addAction("perform_autoAtomPlacement", seqDockAct)
     
-    def changeSequence(self,  chainObj):
-        self.chainObj = chainObj
-        self.seqWidget.chainObj = chainObj
-        self.seqWidget.scrollable.seqView.setSequence(chainObj)
+    def changeCurrentChainModel(self, currentChainModel):
+        self.currentChainModel = currentChainModel
+        self.seqWidget.currentChainModel = currentChainModel
+        seqView = self.seqWidget.scrollable.seqView
+        seqView.currentChainModel = currentChainModel
+        seqView.repaint()
         structureEditor = self.seqWidget.structureEditor
-        structureEditor.chainObj = chainObj        
+        structureEditor.currentChainModel = currentChainModel        
         for i in structureEditor.atomicResNumbers.keys():
             structureEditor.atomicResNumbers[i].setText('?')
             structureEditor.atomicResNames[i].setText('?')
-        self.seqWidget.globalView.setSequence(chainObj)       
+    
+    def changeSequenceSSE(self, predictedSSEsequence):
+        self.predictedSSEsequence
     
     def closeEvent(self, event):
         self.app.actions.getAction("seqDock").setChecked(False)
@@ -91,12 +109,12 @@ class SequenceDock(QtGui.QDockWidget):
         viewer = self.viewer
         
         if self.seqWidget.structureEditor.mockSidechainsCheckBox.isChecked():
-            self.seqWidget.structureEditor.renderMockSidechains(self.chainObj)
+            self.seqWidget.structureEditor.renderMockSidechains(self.currentChainModel)
         else:
-            self.seqWidget.structureEditor.clearMockSidechains(self.chainObj)         
+            self.seqWidget.structureEditor.clearMockSidechains(self.currentChainModel)         
        
-        for i in self.chainObj.residueRange():
-            atom = self.chainObj[i].getAtom('CA')
+        for i in self.currentChainModel.residueRange():
+            atom = self.currentChainModel[i].getAtom('CA')
             if atom:
                 viewer.renderer.deleteAtom(atom.getHashKey())
                 viewer.renderer.addAtom(atom)
@@ -104,15 +122,15 @@ class SequenceDock(QtGui.QDockWidget):
         viewer.emitModelChanged()
             
 class SequenceWidget(QtGui.QWidget):
-    def __init__(self, chainObj, parent=None):
+    def __init__(self, predictedSSEsequence, currentChainModel, parent=None):
         super(SequenceWidget, self).__init__(parent)
-        self.chainObj = chainObj
+        self.currentChainModel = currentChainModel
         self.setMinimumSize(400,600)
-        self.scrollable = ScrollableSequenceView(chainObj, self)
+        self.scrollable = ScrollableSequenceView(predictedSSEsequence, currentChainModel, self)
         self.scrollable.setMinimumSize(300, 180)
-        self.structureEditor = StructureEditor(chainObj, self)
+        self.structureEditor = StructureEditor(currentChainModel, self)
         
-        self.globalView=GlobalSequenceView(chainObj)
+        self.globalView=GlobalSequenceView(predictedSSEsequence, self)
         self.globalView.setLocalView(self.scrollable.seqView)
         self.globalView.updateViewportRange()
         self.setMaximumWidth(self.globalView.width())
@@ -130,448 +148,6 @@ class SequenceWidget(QtGui.QWidget):
         self.setLayout(layout)
         self.setWindowTitle('Sequence Widget')
 
-class StructureEditor(QtGui.QWidget):
-    def __init__(self, chainObj, parent=None):
-        super(StructureEditor, self).__init__(parent)
-        
-        self.chainObj = chainObj
-        self.atomJustAdded = None
-        self.possibleAtomsList = []
-        self.previouslyChosenPossibleAtomToDisplay = None
-        self.undoStack = QtGui.QUndoStack(self)
-        
-        #These go on the left hand side
-        self.undoButton = QtGui.QPushButton('Undo')
-        self.redoButton = QtGui.QPushButton('Redo')
-        self.CAdoubleSpinBox = QtGui.QDoubleSpinBox()
-        self.CAdoubleSpinBox.setValue(3.8)
-        self.CAlabel = QtGui.QLabel('C-Alplha Interval')
-        self.mockSidechainsCheckBox = QtGui.QCheckBox('Mock Sidechains')
-        self.acceptButton = QtGui.QPushButton('Accept')
-        self.tabWidget = QtGui.QTabWidget()
-        self.helixTab = QtGui.QWidget()
-        self.atomicTab = QtGui.QWidget()
-        self.loopTab = QtGui.QWidget()
-        self.optimizeTab = QtGui.QWidget()
-        
-        resNameFont = QtGui.QFont(self.font())
-        resNameFont.setPointSize(41)
-        resIndexFont = QtGui.QFont(self.font())
-        resIndexFont.setPointSize(13)
-        
-        #These go in the atomic tab
-        self.possibilityNumSpinBox = QtGui.QSpinBox()
-        self.possibilityNumSpinBox.setRange(0, 0)
-        self.numPossibilities = QtGui.QLabel('of ?')
-        self.atomicForwardRadioButton = QtGui.QRadioButton('Forward')
-        self.atomicForwardRadioButton.setChecked(True)
-        self.atomicBackwardRadioButton = QtGui.QRadioButton('Backward')
-        self.atomicResNames = { -2:QtGui.QLabel('?'),  -1:QtGui.QLabel('?'),  0:QtGui.QLabel('?'), 1:QtGui.QLabel('?'), 2:QtGui.QLabel('?') }
-        self.atomicResNumbers = { -2:QtGui.QLabel('#?'),  -1:QtGui.QLabel('#?'),  0:QtGui.QLabel('#?'), 1:QtGui.QLabel('#?'), 2:QtGui.QLabel('#?') }
-                
-        for i in self.atomicResNames.keys():
-            self.atomicResNames[i].setStyleSheet("QLabel {font-size: 40pt}")#.setFont(resNameFont)
-            self.atomicResNumbers[i].setAlignment(QtCore.Qt.AlignHCenter)
-            self.atomicResNumbers[i].setStyleSheet("QLabel {font-size: 12pt}") #.setFont(resIndexFont)
-        
-        self.atomicResNumbers[0].setStyleSheet("QLabel {color: white; background-color:black; font-size: 12pt}") #This uses syntax similar to Cascading Style Sheets (CSS)
-        self.atomicResNames[0].setStyleSheet("QLabel {color: white; background-color:black; font-size: 40pt}") 
-        self.atomicResNumbers[1].setStyleSheet("QLabel {color: green; font-size: 12pt}") #This uses syntax similar to Cascading Style Sheets (CSS)
-        self.atomicResNames[1].setStyleSheet("QLabel {color: green; font-size: 40pt}")
-        
-        self.back1resButton = QtGui.QPushButton('<-')
-        self.forward1resButton = QtGui.QPushButton('->') 
-        
-        #These go in the loop tab
-        self.loopStartLabel = QtGui.QLabel('Start Residue')
-        self.loopStartSpinBox = QtGui.QSpinBox()
-        self.loopStopLabel = QtGui.QLabel('Stop Residue')
-        self.loopStopSpinBox = QtGui.QSpinBox()
-        self.loopIDLabel = QtGui.QLabel('Loop ID & Score')
-        self.loopFindButton = QtGui.QPushButton('Find Loops')
-        self.loopComboBox = QtGui.QComboBox()
-        self.loopAcceptButton = QtGui.QPushButton('Accept Loop')
-        self.loopRejectButton = QtGui.QPushButton('Reject Loop')
-        
-        #These go in the optimize tab
-        self.optimizeButton = QtGui.QPushButton('Optimize')
-        self.optFastRadioButton = QtGui.QRadioButton('Fast')
-        self.optExhaustiveRadioButton = QtGui.QRadioButton('Exhaustive')
-        self.optTranslateLabel = QtGui.QLabel('Translate')
-        self.optRotateLabel = QtGui.QLabel('Rotate')
-        self.optMoveLabelsDict = {
-                              'x': QtGui.QLabel('x'), 
-                              'y': QtGui.QLabel('y'), 
-                              'z': QtGui.QLabel('z'), 
-                              'alt': QtGui.QLabel('alt'), 
-                              'az': QtGui.QLabel('az'), 
-                              'phi': QtGui.QLabel('phi')
-                              }
-        self.optMoveSpinBoxDict = {
-                                   'x': QtGui.QDoubleSpinBox(), 
-                                   'y': QtGui.QDoubleSpinBox(), 
-                                   'z': QtGui.QDoubleSpinBox(), 
-                                   'alt': QtGui.QDoubleSpinBox(), 
-                                   'az': QtGui.QDoubleSpinBox(), 
-                                   'phi': QtGui.QDoubleSpinBox()
-                                   }
-        self.setupUi()
-        self.connect(self.back1resButton, QtCore.SIGNAL('clicked()'), self.prevButtonPress)
-        self.connect(self.forward1resButton, QtCore.SIGNAL('clicked()'), self.nextButtonPress)
-        self.connect(self.acceptButton, QtCore.SIGNAL('clicked()'),  self.acceptButtonPress)
-        self.connect(self.possibilityNumSpinBox,  QtCore.SIGNAL('valueChanged(int)'),  self.choosePossibleAtomToDisplay)
-        self.connect(self.atomicForwardRadioButton,  QtCore.SIGNAL('toggled(bool)'), self.forwardBackwardRadioButtonChange)
-        self.connect(self.undoButton,  QtCore.SIGNAL('clicked()'), self.undoStack.undo)
-        self.connect(self.redoButton,  QtCore.SIGNAL('clicked()'), self.undoStack.redo)
-    
-    def setupUi(self):
-        layout = QtGui.QHBoxLayout()
-        
-        leftLayout = QtGui.QVBoxLayout()
-        leftLayout.addStretch()
-        
-        undoRedoLayout = QtGui.QHBoxLayout()
-        undoRedoLayout.addWidget(self.undoButton)
-        undoRedoLayout.addWidget(self.redoButton)
-        undoRedoLayout.addStretch()
-        
-        leftLayout.addLayout(undoRedoLayout)
-        leftLayout.addWidget(self.mockSidechainsCheckBox)
-        
-        CAIntervalLayout = QtGui.QHBoxLayout()
-        CAIntervalLayout.addWidget(self.CAdoubleSpinBox)
-        CAIntervalLayout.addWidget(self.CAlabel)
-        
-        acceptLayout = QtGui.QHBoxLayout()
-        acceptLayout.addStretch()
-        acceptLayout.addWidget(self.acceptButton)
-        acceptLayout.addStretch()
-        
-        leftLayout.addLayout(CAIntervalLayout)        
-        leftLayout.addLayout(acceptLayout)
-        leftLayout.addStretch()
-        
-        self.tabWidget.addTab(self.helixTab, self.tr('Helix Editor'))
-        self.tabWidget.addTab(self.atomicTab, self.tr('Atomic Editor'))
-        self.tabWidget.addTab(self.loopTab, self.tr('Loop Editor'))
-        self.tabWidget.addTab(self.optimizeTab, self.tr('Optimize'))
-        
-        atomicLayout = QtGui.QVBoxLayout()
-        
-        atomicPossibilityLayout = QtGui.QHBoxLayout()
-        atomicPossibilityLayout.setAlignment(QtCore.Qt.AlignHCenter)
-        atomicPossibilityLayout.addWidget(self.possibilityNumSpinBox)
-        atomicPossibilityLayout.addWidget(self.numPossibilities)
-        atomicForwardBackwardLayout = QtGui.QVBoxLayout()
-        atomicForwardBackwardLayout.addWidget(self.atomicForwardRadioButton)
-        atomicForwardBackwardLayout.addWidget(self.atomicBackwardRadioButton)
-        atomicPossibilityLayout.addLayout(atomicForwardBackwardLayout)        
-        atomicLayout.addLayout(atomicPossibilityLayout)
-        
-        atomic3ResLayout = QtGui.QHBoxLayout()
-        atomic3ResSublayouts = {-2:QtGui.QVBoxLayout(), -1:QtGui.QVBoxLayout(), 0:QtGui.QVBoxLayout(), 1:QtGui.QVBoxLayout(), 2:QtGui.QVBoxLayout() }
-
-        atomic3ResLayout.addStretch()
-        for i in sorted(atomic3ResSublayouts.keys()):
-            atomic3ResSublayouts[i].addWidget(self.atomicResNumbers[i])
-            atomic3ResSublayouts[i].addWidget(self.atomicResNames[i])
-            atomic3ResLayout.addLayout(atomic3ResSublayouts[i])
-
-        atomic3ResLayout.addStretch()
-        atomicLayout.addLayout(atomic3ResLayout)
-
-        atomicResButtonLayout = QtGui.QHBoxLayout()
-        atomicResButtonLayout.addWidget(self.back1resButton)
-        atomicResButtonLayout.addWidget(self.forward1resButton)
-        atomicLayout.addLayout(atomicResButtonLayout)
-        self.atomicTab.setLayout(atomicLayout)
-        
-        loopLayout = QtGui.QGridLayout()
-        loopLayout.addWidget(self.loopStartLabel, 0, 0)
-        loopLayout.addWidget(self.loopStartSpinBox, 0, 1)
-        loopLayout.addWidget(self.loopStopLabel, 1, 0)
-        loopLayout.addWidget(self.loopStopSpinBox, 1, 1)
-        loopLayout.addWidget(self.loopIDLabel, 2, 1)
-        loopLayout.addWidget(self.loopFindButton, 3, 0)
-        loopLayout.addWidget(self.loopComboBox, 3, 1)
-        loopLayout.addWidget(self.loopAcceptButton, 4, 0)
-        loopLayout.addWidget(self.loopRejectButton, 4, 1)
-        self.loopTab.setLayout(loopLayout)
-        
-        optimizeLayout = QtGui.QGridLayout()
-        optimizeLayout.addWidget(self.optimizeButton, 0, 0,  2, 1)
-        optimizeLayout.addWidget(self.optFastRadioButton, 0, 1)
-        optimizeLayout.addWidget(self.optExhaustiveRadioButton, 1, 1)
-        optimizeLayout.addWidget(self.optTranslateLabel, 2, 0)
-        optimizeLayout.addWidget(self.optRotateLabel, 2, 1)
-        optSpinLabelLayoutDict = {
-                              'x': QtGui.QHBoxLayout(), 
-                              'y': QtGui.QHBoxLayout(), 
-                              'z': QtGui.QHBoxLayout(), 
-                              'alt': QtGui.QHBoxLayout(), 
-                              'az': QtGui.QHBoxLayout(), 
-                              'phi': QtGui.QHBoxLayout()
-                              }
-        for key in optSpinLabelLayoutDict.keys():
-            curLayout = optSpinLabelLayoutDict[key]
-            curLayout.addWidget(self.optMoveSpinBoxDict[key])
-            curLayout.addWidget(self.optMoveLabelsDict[key])
-        
-        optimizeLayout.addLayout(optSpinLabelLayoutDict['x'], 3, 0)
-        optimizeLayout.addLayout(optSpinLabelLayoutDict['y'], 4, 0)
-        optimizeLayout.addLayout(optSpinLabelLayoutDict['z'], 5, 0)
-        optimizeLayout.addLayout(optSpinLabelLayoutDict['alt'], 3, 1)
-        optimizeLayout.addLayout(optSpinLabelLayoutDict['az'], 4, 1)
-        optimizeLayout.addLayout(optSpinLabelLayoutDict['phi'], 5, 1)
-        self.optimizeTab.setLayout(optimizeLayout)
-        
-        layout.addLayout(leftLayout)
-        layout.addWidget(self.tabWidget)
-        self.setLayout(layout)
-    
-    def acceptButtonPress(self):
-        currentWidget = self.tabWidget.currentWidget()
-        if currentWidget is self.atomicTab:
-            possibleAtoms = self.possibleAtomsList
-            possibilityNum = self.possibilityNumSpinBox.value()
-            chosenAtom = possibleAtoms[possibilityNum-1]
-            for atom in possibleAtoms:
-                if atom is chosenAtom:
-                    continue
-                else:
-                    del atom
-            #self.parentWidget()=>SequenceWidget, self.parentWidget().parentWidget() => SequenceDock
-            viewer = self.parentWidget().parentWidget().viewer
-            if self.atomicBackwardRadioButton.isChecked():
-                resSeqNum = int(self.atomicResNumbers[-1].text())
-            elif self.atomicForwardRadioButton.isChecked():
-                resSeqNum = int(self.atomicResNumbers[1].text())
-            chosenAtom.setResSeq(resSeqNum)
-            bondBefore = None
-            bondAfter = None
-            if resSeqNum - 1 in self.chainObj.residueRange():
-                prevCAlpha = self.chainObj[resSeqNum - 1].getAtom('CA')
-                if prevCAlpha:
-                    print "adding a bond before"
-                    bondBefore=PDBBond()
-                    bondBefore.setAtom0Ix(prevCAlpha.getHashKey())
-                    bondBefore.setAtom1Ix(chosenAtom.getHashKey())
-            if resSeqNum + 1 in self.chainObj.residueRange():
-                nextCAlpha = self.chainObj[resSeqNum + 1].getAtom('CA')
-                if nextCAlpha:
-                    print "adding a bond after"
-                    bondAfter = PDBBond()
-                    bondAfter.setAtom0Ix(nextCAlpha.getHashKey())
-                    bondAfter.setAtom1Ix(chosenAtom.getHashKey())
-            
-            
-            command = CommandAcceptAtomPlacement( self.chainObj, resSeqNum, chosenAtom, viewer, bondBefore, bondAfter,  
-                                "Accept Location of C-alpha atom for residue #%s" % resSeqNum)
-            self.undoStack.push(command)
-            self.atomJustAdded = chosenAtom
-            
-            if self.atomicBackwardRadioButton.isChecked():
-                self.prevButtonPress()
-            elif self.atomicForwardRadioButton.isChecked():
-                self.nextButtonPress()
-            
-    def clearMockSidechains(self,  chain):
-        for index in chain.residueRange():
-            res = chain[index]
-            res.setCAlphaColorToDefault()
-            res.setCAlphaSizeToDefault()
-        print "The mock side-chains should be cleared,  but not yet drawn to the screen."
-    
-    def choosePossibleAtomToDisplay(self,  choiceNum):
-        if choiceNum == 0:
-            return
-        viewer = self.parentWidget().parentWidget().viewer
-        if self.previouslyChosenPossibleAtomToDisplay:
-            viewer.renderer.deleteAtom(self.previouslyChosenPossibleAtomToDisplay.getHashKey())
-        atomToDisplay = self.possibleAtomsList[choiceNum-1]
-        viewer.renderer.addAtom(atomToDisplay)
-        viewer.emitModelChanged()
-        self.previouslyChosenPossibleAtomToDisplay = atomToDisplay
-            
-    def findCAlphaPositionPossibilities(self):
-        print 'in findCAlphaPositionPossibilities'
-        self.possibleAtomsList = []
-        radius = float( self.CAdoubleSpinBox.value() )
-        #self.parentWidget()=>SequenceWidget, self.parentWidget().parentWidget() => SequenceDock
-        skeletonViewer = self.parentWidget().parentWidget().app.viewers['skeleton']
-        meshRenderer = skeletonViewer.renderer
-        atom = self.chainObj[ int( str(self.atomicResNumbers[0].text()) ) ].getAtom('CA')
-        if not atom:
-            self.possibilityNumSpinBox.setRange(0, 0)
-            self.numPossibilities.setText('of ?')
-            return
-        atomPos = atom.getPosition()
-        #print atomPos,  radius
-        if skeletonViewer.loaded:
-            print "Number of intersections:", 
-            numIntersections = meshRenderer.intersectMeshAndSphere(atomPos, radius)
-            print numIntersections
-            
-            if numIntersections == 0:
-                print "No possibilities!"
-                self.numPossibilities.setText('of 0')
-                self.possibilityNumSpinBox.setRange(0, 0)
-                return
-            possiblePositionsList = []
-            for i in range(numIntersections):
-                possiblePositionsList.append( meshRenderer.getIntersectionPoint(i) )
-            print 'Possible positions:',  possiblePositionsList
-            for i in range(len(possiblePositionsList)):
-                pos = possiblePositionsList[i]
-                x, y, z = (pos.x(), pos.y(), pos.z())
-                print '(%f, %f, %f)' % (x, y, z)
-                rawAtom=PDBAtom(self.chainObj.getPdbID(), self.chainObj.getChainID() , i+1, 'CA')
-                rawAtom.setPosition(pos)
-                rawAtom.setElement('C')
-                rawAtom.setColor(0, 1, 0, 1)
-                
-                try:
-                    prevAtom = self.chainObj[int( str(self.atomicResNumbers[0].text()) )-1].getAtom('CA')
-                    previousAtomPos = prevAtom.getPosition()
-                    prevDistSquared = (pos.x() - previousAtomPos.x())**2 + (pos.y() - previousAtomPos.y())**2 + (pos.z() - previousAtomPos.z())**2
-                except KeyError,  IndexError:
-                    prevDistSquared = 100000
-                except AttributeError:
-                    prevDistSquared = 100000
-                try:
-                    nextAtom = self.chainObj[int( str(self.atomicResNumbers[0].text()) )+1].getAtom('CA')
-                    nextAtomPos = nextAtom.getPosition()
-                    nextDistSquared = (pos.x() - nextAtomPos.x())**2 + (pos.y() - nextAtomPos.y())**2 + (pos.z() - nextAtomPos.z())**2
-                except KeyError,  IndexError:
-                    nextDistSquared = 100000
-                except AttributeError:
-                    nextDistSquared = 100000
-                
-                if  prevDistSquared < 4 or nextDistSquared < 4: #two C-alpha atoms are never less than 2 angstroms apart
-                     print 'one possible atom was too close to an existing atom'
-                else:
-                    self.possibleAtomsList.append(rawAtom)
-                
-            print 'possible atoms:',  self.possibleAtomsList
-            self.numPossibilities.setText('of ' + str(len(self.possibleAtomsList)))
-            #Note that a valueChanged signal might be emitted in either or both of the following two lines.
-            self.possibilityNumSpinBox.setRange(1, len(self.possibleAtomsList))
-            self.possibilityNumSpinBox.setValue(1)
-            
-            for atom in self.possibleAtomsList:
-                if atom.getResSeq() == self.possibilityNumSpinBox.value():
-                    self.previouslyChosenPossibleAtomToDisplay = atom #We remove this atom from the viewer when we display a different possibility
-                    self.parentWidget().parentWidget().viewer.renderer.addAtom(atom)
-                    self.parentWidget().parentWidget().viewer.emitModelChanged()
-    
-    def forwardBackwardRadioButtonChange(self):
-        if self.atomicForwardRadioButton.isChecked():
-            self.atomicResNumbers[1].setStyleSheet("QLabel {color: green; font-size: 12pt}")
-            self.atomicResNames[1].setStyleSheet("QLabel {color: green; font-size: 40pt}")
-            self.atomicResNumbers[-1].setStyleSheet("QLabel {color: black; font-size: 12pt}")
-            self.atomicResNames[-1].setStyleSheet("QLabel {color: black; font-size: 40pt}")
-        elif self.atomicBackwardRadioButton.isChecked():
-            self.atomicResNumbers[-1].setStyleSheet("QLabel {color: green; font-size: 12pt}")
-            self.atomicResNames[-1].setStyleSheet("QLabel {color: green; font-size: 40pt}")
-            self.atomicResNumbers[1].setStyleSheet("QLabel {color: black; font-size: 12pt}")
-            self.atomicResNames[1].setStyleSheet("QLabel {color: black; font-size: 40pt}")
-            
-    def nextButtonPress(self):
-        chainObj = self.parentWidget().chainObj
-        if chainObj.getSelection():
-            newSelection = [ chainObj.getSelection()[-1] + 1 ]
-            if newSelection[0] > max(chainObj.residueRange()): 
-                return
-            self.parentWidget().scrollable.seqView.setSequenceSelection(newSelection)
-            self.setResidues(newSelection)
-    
-    def prevButtonPress(self):
-        #self.parentWidget() returns a SequenceWidget object
-        chainObj = self.parentWidget().chainObj
-        if chainObj.getSelection():
-            newSelection = [ chainObj.getSelection()[-1] - 1 ]
-            if newSelection[0] <min(chainObj.residueRange()): 
-                return
-            self.parentWidget().scrollable.seqView.setSequenceSelection(newSelection)
-            self.setResidues(newSelection)
-            
-    def renderMockSidechains(self,  chain):
-        color = {
-            'greasy': (0.0, 1.0, 0.0, 1.0), 
-            'polarNoSulfur': (0.0, 0.0, 0.6, 1.0), 
-            'charged': (0.0, 0.0, 1.0, 1.0), 
-            'sulfur': (1.0, 1.0, 0.0, 1.0)
-            }
-        for index in chain.residueRange():
-            res = chain[index]
-            atom = res.getAtom('CA')
-            if not atom:
-                continue
-            size = 1.8 * res.size[res.symbol3]
-            atom.setAtomRadius( size  )
-            for key in color.keys():
-                if res.symbol3 in res.residueTypes[key]:
-                    atom.setColor( *color[key] )
-                    break
-        print "The mock side-chains should be ready to draw to the screen"
-
-    def setResidues(self, newSelection):
-        print '\nin set residues\n'
-        #newSelection is a list of Residue indeces that are selected
-        if not newSelection:
-            print 'In sequence_view.StructureEdit.setResidues().  The new selection is empty!'
-            return
-        
-        if self.previouslyChosenPossibleAtomToDisplay and not (self.atomJustAdded is self.previouslyChosenPossibleAtomToDisplay): 
-            #If we did not add the atom to a residue, we want to remove it from the renderer
-            #self.parentWidget() is SequenceWidget & self.parentWidget().parentWidget() is SequenceDock
-            viewer = self.parentWidget().parentWidget().viewer
-            viewer.renderer.deleteAtom(self.previouslyChosenPossibleAtomToDisplay.getHashKey())
-            viewer.emitModelChanged()
-        
-        self.atomJustAdded = None
-        self.previouslyChosenPossibleAtomToDisplay = None
-        curResNum = newSelection[-1]
-        
-        for i in self.atomicResNames.keys():
-            try: 
-                self.atomicResNames[i].setText(unicode(self.chainObj[curResNum+i]))
-                self.atomicResNumbers[i].setText(unicode(curResNum+i))
-            except (IndexError,  KeyError):
-                self.atomicResNames[i].setText('')
-                self.atomicResNumbers[i].setText('')
-        self.findCAlphaPositionPossibilities()
-
-class CommandAcceptAtomPlacement(QtGui.QUndoCommand):
-        def __init__(self, chainObj, resSeqNum, chosenAtom, viewer, bondBefore=None, bondAfter=None, description=None):
-            super(CommandAcceptAtomPlacement, self).__init__(description)
-            self.chainObj = chainObj
-            self.resSeqNum = resSeqNum
-            self.chosenAtom = chosenAtom
-            self.viewer = viewer
-            self.bondBefore = bondBefore
-            self.bondAfter = bondAfter
-        def redo(self):
-            self.chainObj[self.resSeqNum].addAtomObject(self.chosenAtom)
-            self.chainObj[self.resSeqNum].setCAlphaColorToDefault()      
-            self.viewer.renderer.addAtom(self.chosenAtom)
-            if self.bondBefore:
-                self.viewer.renderer.addBond(self.bondBefore)
-            if self.bondAfter:
-                self.viewer.renderer.addBond(self.bondAfter)
-            self.viewer.emitModelChanged()
-        def undo(self):
-            self.chainObj[self.resSeqNum].clearAtom(self.chosenAtom.getName())
-            self.viewer.renderer.deleteAtom(self.chosenAtom.getHashKey())
-            if self.bondBefore:
-                #TODO: find out how to delete bond
-                #self.viewer.renderer.deleteBond(self.bondBefore.?) #The parameter is an integer
-                pass
-            if self.bondAfter:
-                #self.viewer.renderer.deleteBond(self.bondAfter.?)
-                pass
-            self.viewer.emitModelChanged()
-            
 
 class SequenceView(QtGui.QWidget):
   """
@@ -579,7 +155,7 @@ class SequenceView(QtGui.QWidget):
   Most chains will be too big to fit on the screen on this class. Thus, a ScrollableSequenceView
   contains this class.
   """
-  def __init__(self,sequence,parent=None):
+  def __init__(self, predictedSSEsequence, currentChainModel,parent=None):
     super(SequenceView,self).__init__(parent)
     # Initialize font
     self.fontName='Arial'
@@ -587,8 +163,10 @@ class SequenceView(QtGui.QWidget):
     self.font=QtGui.QFont(self.fontName,self.fontSize)
 
     # Initialize sequence
-    self.sequence = sequence
-    self.setSequence(sequence)
+    #self.sequence = predictedSSEsequence
+    self.currentChainModel = currentChainModel
+    self.setSequence(predictedSSEsequence)
+    
 
     #self.connect(self, QtCore.SIGNAL('SequencePanelUpdate'), self.repaint)
     self.setWindowModality(QtCore.Qt.NonModal)
@@ -729,7 +307,7 @@ class SequenceView(QtGui.QWidget):
     for index in self.residueRange:
 
       # residues without coordinates are NOT BOLD and GRAY
-      if len(self.sequence[index].getAtomNames())==0:
+      if len(self.currentChainModel[index].getAtomNames())==0:
         self.font.setBold(False)
         painter.setPen(QtCore.Qt.gray)
         painter.setFont(self.font)
@@ -863,21 +441,22 @@ class SequenceView(QtGui.QWidget):
     renderer = viewer.renderer
     app = dock.app
     
-    selectionToClear = self.sequence.getSelection()
+    selectionToClear = self.currentChainModel.getSelection()
     for i in selectionToClear:
         try: 
             self.sequence[i]
         except KeyError: 
             continue
-        atom = self.sequence[i].getAtom('CA')
+        atom = self.currentChainModel[i].getAtom('CA')
         if atom:
             renderer.deleteAtom(atom.getHashKey())
             atom.setSelected(False)
             renderer.addAtom(atom)
     self.sequence.setSelection(newSelection,removeOne,addOne,addRange)
+    self.currentChainModel.setSelection(newSelection,removeOne,addOne,addRange)
     
     try:
-        selectedAtom = self.sequence[ self.sequence.getSelection()[-1] ].getAtom('CA')
+        selectedAtom = self.currentChainModel[ self.currentChainModel.getSelection()[-1] ].getAtom('CA')
     except KeyError:
         return
     if not selectedAtom:
@@ -961,9 +540,9 @@ class ScrollableSequenceView(QtGui.QScrollArea):
   """
   This QWidget contains a SequenceView object but in a scrollable view.
   """
-  def __init__(self,sequence, parent=None):
+  def __init__(self,predictedSSEsequence, currentChainModel, parent=None):
     super(ScrollableSequenceView,self).__init__()
-    self.seqView=SequenceView(sequence,parent=self)
+    self.seqView=SequenceView(predictedSSEsequence, currentChainModel,parent=self)
     seqView = self.seqView
     seqView.updatePanelHeight() #This is needed to get all residues to show up in this widget.
     #Note: updatePanelHeight also adjusts width - I'm guessing that is the part that fixes things.
@@ -998,8 +577,8 @@ class GlobalSequenceView(QtGui.QWidget):
   QWidget Object, and updates the SequenceView to show the residues corresponding
   to the selection on it, and vice versa.
   """
-  def __init__(self,sequence,parent=None):
-    super(GlobalSequenceView,self).__init__(parent)
+  def __init__(self, predictedSSEsequence, parent=None):
+    super(GlobalSequenceView, self).__init__(parent)
 
     # Set up Geometry
     self.nCols=100
@@ -1007,7 +586,7 @@ class GlobalSequenceView(QtGui.QWidget):
     self.cellHeight=40
     self.cellWidth=self.widgetWidth/self.nCols
 
-    self.setSequence(sequence)
+    self.setSequence(predictedSSEsequence)    
 
     # Set up QWidget Behavior
     self.connect(self, QtCore.SIGNAL('SequencePanelUpdate'), self.repaint)
