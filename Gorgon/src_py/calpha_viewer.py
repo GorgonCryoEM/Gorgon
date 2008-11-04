@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.12  2008/10/30 21:19:06  colemanr
+#   actually making use of CAlphaViewer.main_chain
+#
 #   Revision 1.11  2008/10/21 21:49:55  colemanr
 #   Saving PDB files is now connected to the GUI, using Chain.saveToPDB().
 #
@@ -61,7 +64,8 @@ class CAlphaViewer(BaseViewer):
         self.isClosedMesh = False
         self.selectEnabled = True
         self.renderer = CAlphaRenderer()          
-        self.main_chain = Chain('',  main)
+        self.main_chain = Chain('', self.app)
+        self.predictedSSEsequence = Chain('', self.app)
         self.createUI()      
         self.app.viewers["calpha"] = self;
         self.modelColor = QtGui.QColor.fromRgba(QtGui.qRgba(170, 170, 0, 255))
@@ -89,6 +93,12 @@ class CAlphaViewer(BaseViewer):
         self.connect(openAct, QtCore.SIGNAL("triggered()"), self.loadData)
         self.app.actions.addAction("load_CAlpha", openAct)
         
+        openSeqAct = QtGui.QAction(self.tr('Se&quence and SSE prediction'), self)
+        openSeqAct.setShortcut(self.tr('Ctrl+U'))
+        openSeqAct.setStatusTip(self.tr('Load a sequence possibly with SSE predictions'))
+        self.connect(openSeqAct, QtCore.SIGNAL('triggered()'), self.loadSeq)
+        self.app.actions.addAction('load_sequence', openSeqAct)
+        
         saveAct = QtGui.QAction(self.tr("C-&Alpha Atoms..."), self)
         saveAct.setStatusTip(self.tr("Save a C-Alpha atom file"))
         self.connect(saveAct, QtCore.SIGNAL("triggered()"), self.saveData)
@@ -104,7 +114,7 @@ class CAlphaViewer(BaseViewer):
         seqDockAct.setCheckable(True)
         seqDockAct.setChecked(False)
         def showDock():
-            SequenceDock.changeDockVisibility(self.app, self,  self.main_chain)
+            SequenceDock.changeDockVisibility(self.app, self, self.predictedSSEsequence, self.main_chain)
         self.connect(seqDockAct, QtCore.SIGNAL("triggered()"), showDock)
         self.app.actions.addAction("seqDock", seqDockAct)
         
@@ -112,7 +122,7 @@ class CAlphaViewer(BaseViewer):
         #Overwriting the function in BaseViewer
         self.loaded = False #We want to load a chain to the screen each time
         self.fileName = QtGui.QFileDialog.getOpenFileName(self, self.tr("Open Data"), "", 
-                            self.tr('Atom Positions (*.pdb)\nPredicted SSE Indeces (*.seq)\nFASTA (*.fas *.fa *.fasta)'))
+                            self.tr('Atom Positions (*.pdb)\nFASTA (*.fas *.fa *.fasta)'))
         self.whichChainID = None
         filename = unicode(self.fileName)
         if filename.split('.')[-1].lower() == 'pdb':
@@ -151,9 +161,17 @@ class CAlphaViewer(BaseViewer):
                 self.emitModelLoadedPreDraw()
                 self.emitModelLoaded()
                 self.emitViewerSetCenter()
-                                
+    
+    def loadSeq(self):
+        fileName = QtGui.QFileDialog.getOpenFileName( self, self.tr('Open Sequence'), '', 
+                                            self.tr('Sequence possibly with SSE predictions (*.seq)') )
+        fileName = unicode(fileName)
+        if fileName:
+            self.predictedSSEsequence = Chain.load(fileName, self.app)
+    
     def createMenus(self):
-        self.app.menus.addAction("file-open-calpha", self.app.actions.getAction("load_CAlpha"), "file-open")    
+        self.app.menus.addAction("file-open-calpha", self.app.actions.getAction("load_CAlpha"), "file-open")
+        self.app.menus.addAction('file-open-sequence', self.app.actions.getAction('load_sequence'), 'file-open')
         self.app.menus.addAction("file-save-calpha", self.app.actions.getAction("save_CAlpha"), "file-save")
         self.app.menus.addAction("file-close-calpha", self.app.actions.getAction("unload_CAlpha"), "file-close");
         self.app.menus.addMenu("actions-calpha", self.tr("C-&Alpha Atoms"), "actions");
@@ -164,7 +182,7 @@ class CAlphaViewer(BaseViewer):
                                                           self.tr('Atom Positions (*.pdb)'))
         if not self.fileName.isEmpty():  
             self.setCursor(QtCore.Qt.WaitCursor)
-            selectedChain = Chain.getChain(Chain.getSelectedChainKey())
+            selectedChain = self.main_chain
             selectedChain.saveToPDB(self.fileName)
             self.dirty = False
             self.setCursor(QtCore.Qt.ArrowCursor)
