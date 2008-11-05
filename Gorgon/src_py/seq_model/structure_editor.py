@@ -450,9 +450,9 @@ class StructureEditor(QtGui.QWidget):
                                     'x': QtGui.QDoubleSpinBox(), 
                                     'y': QtGui.QDoubleSpinBox(), 
                                     'z': QtGui.QDoubleSpinBox(), 
-                                    'alt': QtGuiQDoubleSpinBox(), 
-                                    'az': QtGuiQDoubleSpinBox(), 
-                                    'phi': QtGuiQDoubleSpinBox()
+                                    'alt': QtGui.QDoubleSpinBox(), 
+                                    'az': QtGui.QDoubleSpinBox(), 
+                                    'phi': QtGui.QDoubleSpinBox()
                                     }
         
         for key in posSpinLabelLayoutDict.keys():
