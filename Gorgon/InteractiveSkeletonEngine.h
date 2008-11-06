@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.26  2008/11/06 05:29:04  ssa1
+//   CGI submission milestone for Interactive Skeletonization, and theme support, and fixing (hopefully) mac-os flicker bug
+//
 //   Revision 1.25  2008/10/28 22:18:05  ssa1
 //   Changing visualization of meshes, and sketches
 //
@@ -459,7 +462,7 @@ namespace wustl_mm {
 						//	glPopMatrix();						
 						//}
 						if(sketchDrawPositions.size() > 0) {
-							glPushAttrib(GL_LIGHTING | GL_LINE_BIT | GL_ENABLE_BIT | GL_HINT_BIT );
+							glPushAttrib(GL_LIGHTING_BIT | GL_LINE_BIT | GL_ENABLE_BIT | GL_HINT_BIT );
 							glDisable(GL_LIGHTING);
 							glLineWidth(lineThickness*3);
 							glEnable(GL_LINE_SMOOTH);
@@ -505,7 +508,7 @@ namespace wustl_mm {
 					}
 					break;
 				case(3):	// Temporary skeletal paths
-					glPushAttrib(GL_LIGHTING | GL_LINE_BIT | GL_ENABLE_BIT | GL_HINT_BIT );
+					glPushAttrib(GL_LIGHTING_BIT | GL_LINE_BIT | GL_ENABLE_BIT | GL_HINT_BIT );
 					glDisable(GL_LIGHTING);
 					glLineWidth(lineThickness);
 					glEnable(GL_LINE_SMOOTH);
@@ -523,7 +526,7 @@ namespace wustl_mm {
 					glPopAttrib();
 					break;
 				case(4):	// Removable Edges
-					glPushAttrib(GL_LIGHTING | GL_LINE_BIT | GL_ENABLE_BIT | GL_HINT_BIT );
+					glPushAttrib(GL_LIGHTING_BIT | GL_LINE_BIT | GL_ENABLE_BIT | GL_HINT_BIT );
 					glDisable(GL_LIGHTING);
 					glLineWidth(lineThickness);
 					glEnable(GL_LINE_SMOOTH);

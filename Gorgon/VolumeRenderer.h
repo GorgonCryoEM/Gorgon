@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.31  2008/11/06 05:29:04  ssa1
+//   CGI submission milestone for Interactive Skeletonization, and theme support, and fixing (hopefully) mac-os flicker bug
+//
 //   Revision 1.30  2008/10/29 19:26:26  ssa1
 //   Reducing memory footprint, Increasing performance and adding volume normalization
 //
@@ -280,7 +283,7 @@ namespace wustl_mm {
 				if((viewingType == VIEWING_TYPE_ISO_SURFACE) && (surfaceMesh != NULL)) {
 					surfaceMesh->Draw(true, false, false, selectEnabled, false, false, false, false, false, 1);
 				} else if((viewingType == VIEWING_TYPE_CROSS_SECTION) || (viewingType == VIEWING_TYPE_SOLID)) {
-					glPushAttrib(GL_LIGHTING | GL_ENABLE_BIT);
+					glPushAttrib(GL_LIGHTING_BIT | GL_ENABLE_BIT);
 					glDisable(GL_LIGHTING);
 					glDisable(GL_CULL_FACE);
 					Vector3DFloat vertex;
