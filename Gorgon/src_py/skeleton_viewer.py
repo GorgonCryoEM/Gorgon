@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.14  2008/06/18 18:15:41  ssa1
+#   Adding in CVS meta data
+#
 
 from PyQt4 import QtGui, QtCore, QtOpenGL
 from libpyGORGON import MeshRenderer
@@ -30,13 +33,20 @@ class SkeletonViewer(BaseViewer):
     def __init__(self, main, parent=None):
         BaseViewer.__init__(self, main, parent)
         self.title = "Skeleton"
+        self.app.themes.addDefaultRGB("Skeleton:Model:0", 180, 0, 0, 255)
+        self.app.themes.addDefaultRGB("Skeleton:Model:1", 180, 0, 0, 255)
+        self.app.themes.addDefaultRGB("Skeleton:BoundingBox", 255, 255, 255, 255)              
         self.isClosedMesh = False
+        self.lineThickness = 3
         self.renderer = MeshRenderer()          
+        self.renderer.setLineThickness(self.lineThickness)
         self.createUI()      
         self.app.viewers["skeleton"] = self;
-        self.volumeViewer = self.app.viewers["volume"]
-        self.modelColor = QtGui.QColor.fromRgba(QtGui.qRgba(180, 0, 0, 255))
+        self.volumeViewer = self.app.viewers["volume"]        
         self.initVisualizationOptions()      
+        self.visualizationOptions.ui.spinBoxThickness.setValue(self.lineThickness)
+        self.visualizationOptions.ui.spinBoxThickness.setVisible(True)
+        self.visualizationOptions.ui.labelThickness.setVisible(True)
                  
     def createUI(self):
         self.createActions()

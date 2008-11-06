@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.31  2008/10/29 19:26:26  ssa1
+//   Reducing memory footprint, Increasing performance and adding volume normalization
+//
 //   Revision 1.30  2008/10/28 22:18:05  ssa1
 //   Changing visualization of meshes, and sketches
 //
@@ -182,6 +185,7 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("setCuttingPlane", &VolumeRenderer::SetCuttingPlane)
 		.def("setViewingType", &VolumeRenderer::SetViewingType)
 		.def("normalizeVolume", &VolumeRenderer::NormalizeVolume)
+		.def("downsampleVolume", &VolumeRenderer::DownsampleVolume)
 		.def("performBinarySkeletonizationJu2007", &VolumeRenderer::PerformBinarySkeletonizationJu2007, return_value_policy<manage_new_object>())		
 		.def("performGrayscaleSkeletonizationAbeysinghe2008", &VolumeRenderer::PerformGrayscaleSkeletonizationAbeysinghe2008, return_value_policy<manage_new_object>())		
 	;
@@ -208,6 +212,7 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("get3DCoordinates", &MeshRenderer::Get3DCoordinates)
 		.def("intersectMeshAndSphere", &MeshRenderer::IntersectMeshAndSphere)
 		.def("getIntersectionPoint", &MeshRenderer::GetIntersectionPoint)
+		.def("setLineThickness", &MeshRenderer::SetLineThickness)
 	;
 
 	class_< SSERenderer, bases<Renderer> >("SSERenderer", init<>())
@@ -280,6 +285,7 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("selectSelection", &InteractiveSkeletonEngine::SelectSelection)
 		.def("deleteSelection", &InteractiveSkeletonEngine::DeleteSelection)
 		.def("cancelSelection", &InteractiveSkeletonEngine::CancelSelection)
+		.def("setLineThickness", &InteractiveSkeletonEngine::SetLineThickness)
 	;
 
 	class_<SSECorrespondenceResult>("SSECorrespondenceResult", init<>())

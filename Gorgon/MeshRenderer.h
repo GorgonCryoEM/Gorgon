@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.24  2008/10/28 22:18:05  ssa1
+//   Changing visualization of meshes, and sketches
+//
 //   Revision 1.23  2008/10/28 18:46:52  ssa1
 //   Fixing octree neighbor search, and changing the structure tensor cost function
 //
@@ -60,10 +63,12 @@ namespace wustl_mm {
 			string GetSupportedSaveFileFormats();
 			int IntersectMeshAndSphere(Vector3DFloat center, float radius);
 			Vector3DFloat GetIntersectionPoint(int ix);
+			void SetLineThickness(int thickness);
 		private:
 			void UpdateBoundingBox();
 			NonManifoldMesh_Annotated * mesh;
 			vector<Vector3DFloat> intersectionPoints;
+			int lineThickness;
 		};
 
 
@@ -75,6 +80,10 @@ namespace wustl_mm {
 			if(mesh != NULL) {
 				delete mesh;
 			}
+		}
+
+		void MeshRenderer::SetLineThickness(int thickness) {
+			lineThickness = thickness;
 		}
 
 		NonManifoldMesh_Annotated * MeshRenderer::GetMesh() {
@@ -91,7 +100,7 @@ namespace wustl_mm {
 		void MeshRenderer::Draw(int subSceneIndex, bool selectEnabled) {
 			if(subSceneIndex == 0) {
 				if(mesh != NULL) {
-					mesh->Draw(true, true, false, selectEnabled, selectEnabled, false, true, true, true);
+					mesh->Draw(true, true, false, selectEnabled, selectEnabled, false, true, true, true, lineThickness);
 
 					/*
 

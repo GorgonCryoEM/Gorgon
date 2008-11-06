@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.38  2008/10/30 21:19:39  colemanr
+#   actually making use of CAlphaViewer.main_chain
+#
 #   Revision 1.37  2008/10/28 22:18:05  ssa1
 #   Changing visualization of meshes, and sketches
 #
@@ -77,6 +80,10 @@ class Camera(QtOpenGL.QGLWidget):
     def __init__(self, scene, main, parent=None):
         QtOpenGL.QGLWidget.__init__(self, parent)
         self.app = main        
+        self.app.themes.addDefaultRGB("Camera:Light:0", 255, 255, 255, 255)
+        self.app.themes.addDefaultRGB("Camera:Light:1", 255, 255, 255, 255)
+        self.app.themes.addDefaultRGB("Camera:Fog", 0, 0, 0, 255)
+        self.app.themes.addDefaultRGB("Camera:Background", 0, 0, 0, 255)        
         self.near = 0
         self.cuttingPlane = 0.0
         self.scene = scene
@@ -85,17 +92,14 @@ class Camera(QtOpenGL.QGLWidget):
         self.aspectRatio = 1.0
         self.selectedScene = -1
         self.lightsEnabled = [True, False]
-        self.lightsColor = [[1.0, 1.0, 1.0, 1.0], [1.0, 1.0, 1.0, 1.0]]
         self.lightsPosition = [[1000,1000,1000], [-1000,-1000,-1000]]
         self.lightsUseEyePosition = [True, False]        
-        self.backgroundColor = [0.0, 0.0, 0.0, 1.0]
         self.mouseMovePoint = QtCore.QPoint(0,0)
         self.mouseDownPoint = QtCore.QPoint(0,0)     
         self.mouseLeftPressed = False
         self.mouseMidPressed = False   
         self.mouseRightPressed = False
         
-        self.fogColor = [0.0, 0.0, 0.0, 1.0]
         self.fogDensity = 0.01
         self.fogEnabled = True
         
@@ -117,6 +121,7 @@ class Camera(QtOpenGL.QGLWidget):
         self.lastPos = QtCore.QPoint()
         self.sceneEditor = SceneEditorForm(self.app, self)
         self.connect(self.app.viewers["calpha"], QtCore.SIGNAL("elementSelected (int, int, int, int, int, int, QMouseEvent)"), self.centerOnSelectedAtom)
+        self.connect(self.app.themes, QtCore.SIGNAL("themeChanged()"), self.themeChanged)
         
         for i in range(len(self.scene)): 
             self.scene[i].sceneIndex = i;     
@@ -250,14 +255,19 @@ class Camera(QtOpenGL.QGLWidget):
         self.initializeScene()
 
     def initializeScene(self):
-        glClearColor(self.backgroundColor[0], self.backgroundColor[1], self.backgroundColor[2], self.backgroundColor[3])
+        glutInit(sys.argv)      #This must be here to get it to work with Freeglut.
+        #otherwise you get: "freeglut  ERROR:  Function <glutWireCube> called without first calling 'glutInit'."
+       
+        backgroundColor = self.app.themes.getColor("Camera:Background")        
+        glClearColor(backgroundColor.redF(), backgroundColor.greenF(), backgroundColor.blueF(), backgroundColor.alphaF())
         glClearDepth( 1.0 )
         
         self.setLights()
 
         if(self.fogEnabled):
+            fogColor = self.app.themes.getColor("Camera:Fog")
             glFogi(GL_FOG_MODE, GL_LINEAR)
-            glFogfv(GL_FOG_COLOR, self.fogColor)
+            glFogfv(GL_FOG_COLOR, [fogColor.redF(), fogColor.greenF(), fogColor.blueF(), fogColor.alphaF()])
             glFogf(GL_FOG_DENSITY, self.fogDensity)   
             glHint(GL_FOG_HINT, GL_DONT_CARE) 
             glFogf(GL_FOG_START, self.near)       
@@ -271,12 +281,15 @@ class Camera(QtOpenGL.QGLWidget):
 
     def setLights(self):
         glLight = [GL_LIGHT0, GL_LIGHT1]
-        
+        light0Color = self.app.themes.getColor("Camera:Light:0")
+        light1Color = self.app.themes.getColor("Camera:Light:1")
+
+        lightsColor = [[light0Color.redF(), light0Color.greenF(), light0Color.blueF()],[light1Color.redF(), light1Color.greenF(), light1Color.blueF()]]
         for i in range(2):
             if(self.lightsEnabled[i]):
-                afPropertiesAmbient = [self.lightsColor[i][0]*0.3, self.lightsColor[i][1]*0.3, self.lightsColor[i][2]*0.3, 1.00] 
-                afPropertiesDiffuse = self.lightsColor[i]
-                afPropertiesSpecular = [self.lightsColor[i][0]*0.1, self.lightsColor[i][0]*0.1, self.lightsColor[i][0]*0.1, 1.00]
+                afPropertiesAmbient = [lightsColor[i][0]*0.3, lightsColor[i][1]*0.3, lightsColor[i][2]*0.3, 1.00]
+                afPropertiesDiffuse = lightsColor[i]
+                afPropertiesSpecular = [lightsColor[i][0]*0.1, lightsColor[i][0]*0.1, lightsColor[i][0]*0.1, 1.00]
                 if(self.lightsUseEyePosition[i]):
                     afLightPosition = self.eye
                 else:
@@ -552,7 +565,15 @@ class Camera(QtOpenGL.QGLWidget):
                 minDistance = min(minDistance, eyeDist - modelDist - distance/2.0)
                 maxDistance = max(maxDistance, eyeDist + modelDist + distance/2.0)
         self.setNearFarZoom(minDistance, maxDistance, self.eyeZoom)
-        self.updateGL()        
+        self.updateGL()  
+
+    def themeChanged(self):
+        self.sceneEditor.ui.pushButtonLight1Color.setColor(self.app.themes.getColor("Camera:Light:0"))
+        self.sceneEditor.ui.pushButtonLight2Color.setColor(self.app.themes.getColor("Camera:Light:1"))  
+        self.sceneEditor.ui.pushButtonBackgroundColor.setColor(self.app.themes.getColor("Camera:Background"))
+        self.sceneEditor.ui.pushButtonFogColor.setColor(self.app.themes.getColor("Camera:Fog"))
+        self.initializeGL()
+
         
     def emitCameraChanged(self):
         self.emit(QtCore.SIGNAL("cameraChanged()"))
@@ -561,4 +582,5 @@ class Camera(QtOpenGL.QGLWidget):
         self.emit(QtCore.SIGNAL("mouseMovedRAW(PyQt_PyObject, QMouseEvent)"), mouseHits, event)
 
     def emitMouseClickedRaw(self, mouseHits, event):
-        self.emit(QtCore.SIGNAL("mouseClickedRAW(PyQt_PyObject, QMouseEvent)"), mouseHits, event)                        
+        self.emit(QtCore.SIGNAL("mouseClickedRAW(PyQt_PyObject, QMouseEvent)"), mouseHits, event)   
+                             

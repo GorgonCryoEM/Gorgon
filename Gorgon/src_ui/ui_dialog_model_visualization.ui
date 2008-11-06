@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>228</width>
-    <height>262</height>
+    <width>241</width>
+    <height>263</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -41,7 +41,7 @@
        <string>Visualization</string>
       </attribute>
       <layout class="QGridLayout" >
-       <item row="0" column="0" colspan="2" >
+       <item row="0" column="0" colspan="3" >
         <widget class="QGroupBox" name="groupBoxDisplayStyle" >
          <property name="sizePolicy" >
           <sizepolicy vsizetype="Minimum" hsizetype="Minimum" >
@@ -80,7 +80,7 @@
          </layout>
         </widget>
        </item>
-       <item row="1" column="0" >
+       <item row="1" column="0" colspan="2" >
         <widget class="QCheckBox" name="checkBoxBoundingBox" >
          <property name="text" >
           <string>Show outline box colored:</string>
@@ -90,7 +90,7 @@
          </property>
         </widget>
        </item>
-       <item row="1" column="1" >
+       <item row="1" column="2" >
         <widget class="ColoredPushButton" name="pushButtonBoundingBoxColor" >
          <property name="sizePolicy" >
           <sizepolicy vsizetype="Minimum" hsizetype="Minimum" >
@@ -103,7 +103,7 @@
          </property>
         </widget>
        </item>
-       <item row="2" column="0" >
+       <item row="2" column="0" colspan="2" >
         <widget class="QCheckBox" name="checkBoxModelVisible" >
          <property name="text" >
           <string>Show model colored:</string>
@@ -113,7 +113,7 @@
          </property>
         </widget>
        </item>
-       <item row="2" column="1" >
+       <item row="2" column="2" >
         <widget class="ColoredPushButton" name="pushButtonModelColor" >
          <property name="sizePolicy" >
           <sizepolicy vsizetype="Minimum" hsizetype="Minimum" >
@@ -126,7 +126,7 @@
          </property>
         </widget>
        </item>
-       <item row="3" column="0" >
+       <item row="3" column="0" colspan="2" >
         <widget class="QCheckBox" name="checkBoxModel2Visible" >
          <property name="text" >
           <string>Show 2nd model colored:</string>
@@ -136,7 +136,7 @@
          </property>
         </widget>
        </item>
-       <item row="3" column="1" >
+       <item row="3" column="2" >
         <widget class="ColoredPushButton" name="pushButtonModel2Color" >
          <property name="sizePolicy" >
           <sizepolicy vsizetype="Minimum" hsizetype="Minimum" >
@@ -146,6 +146,20 @@
          </property>
          <property name="text" >
           <string/>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="0" >
+        <widget class="QLabel" name="labelThickness" >
+         <property name="text" >
+          <string>Thickness:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="1" colspan="2" >
+        <widget class="QSpinBox" name="spinBoxThickness" >
+         <property name="value" >
+          <number>3</number>
          </property>
         </widget>
        </item>
@@ -366,6 +380,23 @@
  <tabstops>
   <tabstop>pushButtonCenter</tabstop>
   <tabstop>pushButtonClose</tabstop>
+  <tabstop>tabWidget</tabstop>
+  <tabstop>radioButtonWireframe</tabstop>
+  <tabstop>radioButtonFlat</tabstop>
+  <tabstop>radioButtonSmooth</tabstop>
+  <tabstop>checkBoxBoundingBox</tabstop>
+  <tabstop>pushButtonBoundingBoxColor</tabstop>
+  <tabstop>checkBoxModelVisible</tabstop>
+  <tabstop>pushButtonModelColor</tabstop>
+  <tabstop>checkBoxModel2Visible</tabstop>
+  <tabstop>pushButtonModel2Color</tabstop>
+  <tabstop>spinBoxThickness</tabstop>
+  <tabstop>doubleSpinBoxSizeX</tabstop>
+  <tabstop>doubleSpinBoxSizeY</tabstop>
+  <tabstop>doubleSpinBoxSizeZ</tabstop>
+  <tabstop>doubleSpinBoxLocationX</tabstop>
+  <tabstop>doubleSpinBoxLocationY</tabstop>
+  <tabstop>doubleSpinBoxLocationZ</tabstop>
  </tabstops>
  <resources/>
  <connections/>

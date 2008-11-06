@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.3  2008/09/12 20:57:44  ssa1
+#   Adding an Eye light source
+#
 #   Revision 1.2  2008/06/18 18:15:41  ssa1
 #   Adding in CVS meta data
 #
@@ -82,28 +85,16 @@ class SceneEditorForm(QtGui.QWidget):
         self.ui.doubleSpinBoxLight1X.setValue(self.camera.lightsPosition[0][0])
         self.ui.doubleSpinBoxLight1Y.setValue(self.camera.lightsPosition[0][1])
         self.ui.doubleSpinBoxLight1Z.setValue(self.camera.lightsPosition[0][2])
-        self.ui.pushButtonLight1Color.setColor(QtGui.QColor.fromRgba(QtGui.qRgba(self.camera.lightsColor[0][0]*255.0, 
-                                                                                 self.camera.lightsColor[0][1]*255.0, 
-                                                                                 self.camera.lightsColor[0][2]*255.0, 
-                                                                                 self.camera.lightsColor[0][3]*255.0)))
+        self.ui.pushButtonLight1Color.setColor(self.app.themes.getColor("Camera:Light:0"))
         self.ui.checkBoxLight2Enabled.setChecked(self.camera.lightsEnabled[1])
         self.ui.doubleSpinBoxLight2X.setValue(self.camera.lightsPosition[1][0])
         self.ui.doubleSpinBoxLight2Y.setValue(self.camera.lightsPosition[1][1])
         self.ui.doubleSpinBoxLight2Z.setValue(self.camera.lightsPosition[1][2])
-        self.ui.pushButtonLight2Color.setColor(QtGui.QColor.fromRgba(QtGui.qRgba(self.camera.lightsColor[1][0]*255.0, 
-                                                                                 self.camera.lightsColor[1][1]*255.0, 
-                                                                                 self.camera.lightsColor[1][2]*255.0, 
-                                                                                 self.camera.lightsColor[1][3]*255.0)))   
-        self.ui.pushButtonBackgroundColor.setColor(QtGui.QColor.fromRgba(QtGui.qRgba(self.camera.backgroundColor[0]*255.0, 
-                                                                                     self.camera.backgroundColor[1]*255.0, 
-                                                                                     self.camera.backgroundColor[2]*255.0, 
-                                                                                     self.camera.backgroundColor[3]*255.0)))
+        self.ui.pushButtonLight2Color.setColor(self.app.themes.getColor("Camera:Light:1"))  
+        self.ui.pushButtonBackgroundColor.setColor(self.app.themes.getColor("Camera:Background"))
         self.ui.checkBoxFogEnabled.setChecked(self.camera.fogEnabled)
         self.ui.doubleSpinBoxFogDensity.setValue(self.camera.fogDensity)
-        self.ui.pushButtonFogColor.setColor(QtGui.QColor.fromRgba(QtGui.qRgba(self.camera.fogColor[0]*255.0, 
-                                                                              self.camera.fogColor[1]*255.0, 
-                                                                              self.camera.fogColor[2]*255.0, 
-                                                                              self.camera.fogColor[3]*255.0)))                          
+        self.ui.pushButtonFogColor.setColor(self.app.themes.getColor("Camera:Fog"))
             
     def createActions(self):
         self.visualizerAct = QtGui.QAction(self.tr("Scene Options"), self)
@@ -158,8 +149,7 @@ class SceneEditorForm(QtGui.QWidget):
         self.camera.updateGL()        
 
     def light1ColorChanged(self):
-        (r, g, b, a) = self.ui.pushButtonLight1Color.color().getRgbF()
-        self.camera.lightsColor[0] = [r, g, b, a]
+        self.app.themes.addColor("Camera:Light:0", self.ui.pushButtonLight1Color.color())
         self.camera.initializeScene()
         self.camera.updateGL()        
         
@@ -179,8 +169,7 @@ class SceneEditorForm(QtGui.QWidget):
         self.camera.updateGL()        
         
     def light2ColorChanged(self):
-        (r, g, b, a) = self.ui.pushButtonLight2Color.color().getRgbF()
-        self.camera.lightsColor[1] = [r, g, b, a]
+        self.app.themes.addColor("Camera:Light:1", self.ui.pushButtonLight2Color.color())
         self.camera.initializeScene()
         self.camera.updateGL()     
         
@@ -190,8 +179,7 @@ class SceneEditorForm(QtGui.QWidget):
         self.camera.updateGL()
         
     def backgroundColorChanged(self):
-        (r, g, b, a) = self.ui.pushButtonBackgroundColor.color().getRgbF()
-        self.camera.backgroundColor = [r, g, b, a]
+        self.app.themes.addColor("Camera:Background", self.ui.pushButtonBackgroundColor.color())
         self.camera.initializeScene()
         self.camera.updateGL()    
             
@@ -206,7 +194,6 @@ class SceneEditorForm(QtGui.QWidget):
         self.camera.updateGL()     
                 
     def fogColorChanged(self):
-        (r, g, b, a) = self.ui.pushButtonFogColor.color().getRgbF()
-        self.camera.fogColor = [r, g, b, a]
+        self.app.themes.addColor("Camera:Fog", self.ui.pushButtonFogColor.color())
         self.camera.initializeScene()
         self.camera.updateGL()             

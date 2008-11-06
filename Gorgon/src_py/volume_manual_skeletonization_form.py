@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.23  2008/10/29 19:26:26  ssa1
+#   Reducing memory footprint, Increasing performance and adding volume normalization
+#
 #   Revision 1.22  2008/10/28 22:18:05  ssa1
 #   Changing visualization of meshes, and sketches
 #
@@ -73,6 +76,11 @@ class VolumeManualSkeletonizationForm(QtGui.QWidget):
     def __init__(self, main, viewer, parent=None):
         QtGui.QWidget.__init__(self, parent)
         self.app = main
+        self.app.themes.addDefaultRGB("InteractiveSkeletonizer:StartingPoint", 0, 0, 255, 255)
+        self.app.themes.addDefaultRGB("InteractiveSkeletonizer:EndingPoint", 0, 255, 0, 255)         
+        self.app.themes.addDefaultRGB("InteractiveSkeletonizer:Sketch", 0, 128, 0, 255)
+        self.app.themes.addDefaultRGB("InteractiveSkeletonizer:UnconfirmedCurve", 255, 255, 0, 255)
+        self.app.themes.addDefaultRGB("InteractiveSkeletonizer:RemovableCurve", 100, 255, 100, 255)         
         self.started = False
         self.sketchStarted = False
         self.viewer = viewer
@@ -81,11 +89,6 @@ class VolumeManualSkeletonizationForm(QtGui.QWidget):
         self.connect(self.viewer, QtCore.SIGNAL("modelUnloaded()"), self.modelUnloaded)
         
         self.isSkeletonClicked = False;
-        self.manualColors = [QtGui.QColor.fromRgba(QtGui.qRgba(0, 0, 255, 255)),    #Starting Points
-                             QtGui.QColor.fromRgba(QtGui.qRgba(0, 255, 0, 255)),    #Ending Points
-                             QtGui.QColor.fromRgba(QtGui.qRgba(0, 255, 255, 100)),  #Sketch Points
-                             QtGui.QColor.fromRgba(QtGui.qRgba(255, 255, 0, 255)),  #Temp Skeletal curves
-                             QtGui.QColor.fromRgba(QtGui.qRgba(100, 255, 100, 255))]  #Removable Edges
         self.createUI()
         self.createActions()
         self.createMenus()        
@@ -158,6 +161,8 @@ class VolumeManualSkeletonizationForm(QtGui.QWidget):
             self.engine.setIsoValue(self.viewer.renderer.getSurfaceValue())
             self.connect(self.app.viewers["skeleton"], QtCore.SIGNAL("elementSelected (int, int, int, int, int, int, QMouseEvent)"), self.skeletonClicked)
             self.connect(self.app.mainCamera, QtCore.SIGNAL("cameraChanged()"), self.processCameraChanged)
+            self.connect(self.app.viewers["skeleton"], QtCore.SIGNAL("thicknessChanged(int)"), self.thicknessChanged)
+            self.engine.setLineThickness(self.skeletonViewer.lineThickness)
             
             
             self.setSkeletonViewerProperties(True)
@@ -168,6 +173,7 @@ class VolumeManualSkeletonizationForm(QtGui.QWidget):
         else:
             self.disconnect(self.app.viewers["skeleton"], QtCore.SIGNAL("elementSelected (int, int, int, int, int, int, QMouseEvent)"), self.skeletonClicked)
             self.disconnect(self.app.mainCamera, QtCore.SIGNAL("cameraChanged()"), self.processCameraChanged)
+            self.disconnect(self.app.viewers["skeleton"], QtCore.SIGNAL("thicknessChanged(int)"), self.thicknessChanged)
             self.engine.finalizeSkeleton()
             del self.engine
             self.setSkeletonViewerProperties(False)
@@ -211,7 +217,7 @@ class VolumeManualSkeletonizationForm(QtGui.QWidget):
             self.skeletonViewer.setSelectEnabled(True)
             self.skeletonViewer.setMouseMoveEnabledRay(True)
             
-            color = self.viewer.modelColor
+            color = self.app.themes.getColor("Volume:Model:0")
             color.setAlpha(150)
             self.viewer.setModelColor(color)
             #self.skeletonViewer.setMouseMoveEnabled(True)            
@@ -350,10 +356,18 @@ class VolumeManualSkeletonizationForm(QtGui.QWidget):
             elif(event.key() == QtCore.Qt.Key_Delete):
                 self.engine.deleteSelection();
                 self.skeletonViewer.emitModelChanged()
-        
-    def drawOverlay(self):     
+    
+    def thicknessChanged(self, value):
+        self.engine.setLineThickness(value)
+    
+    def drawOverlay(self):            
         if self.started:
+            manualColors = [self.app.themes.getColor("InteractiveSkeletonizer:StartingPoint"), 
+                            self.app.themes.getColor("InteractiveSkeletonizer:EndingPoint"),
+                            self.app.themes.getColor("InteractiveSkeletonizer:Sketch"),
+                            self.app.themes.getColor("InteractiveSkeletonizer:UnconfirmedCurve"),
+                            self.app.themes.getColor("InteractiveSkeletonizer:RemovableCurve")]              
             for i in range(5):
-                self.skeletonViewer.setMaterials(self.manualColors[i])
+                self.skeletonViewer.setMaterials(manualColors[i])
                 self.engine.draw(i)        
                                  

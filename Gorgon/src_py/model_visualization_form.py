@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.8  2008/06/18 18:15:41  ssa1
+#   Adding in CVS meta data
+#
 
 from PyQt4 import QtCore, QtGui
 from ui_dialog_model_visualization import Ui_DialogModelVisualization
@@ -36,6 +39,8 @@ class ModelVisualizationForm(QtGui.QWidget):
         self.ui.setupUi(self)    
         self.ui.checkBoxModel2Visible.setVisible(False)
         self.ui.pushButtonModel2Color.setVisible(False)
+        self.ui.spinBoxThickness.setVisible(False)
+        self.ui.labelThickness.setVisible(False)
         self.dock = QtGui.QDockWidget(self.tr(self.title), self.app)
         self.dock.setAllowedAreas(QtCore.Qt.LeftDockWidgetArea | QtCore.Qt.RightDockWidgetArea | QtCore.Qt.BottomDockWidgetArea)
         self.dock.setWidget(self)
@@ -58,12 +63,13 @@ class ModelVisualizationForm(QtGui.QWidget):
         self.connect(self.ui.doubleSpinBoxLocationX, QtCore.SIGNAL("editingFinished ()"), self.locationChanged)
         self.connect(self.ui.doubleSpinBoxLocationY, QtCore.SIGNAL("editingFinished ()"), self.locationChanged)
         self.connect(self.ui.doubleSpinBoxLocationZ, QtCore.SIGNAL("editingFinished ()"), self.locationChanged)
+        self.connect(self.ui.spinBoxThickness, QtCore.SIGNAL("editingFinished ()"), self.thicknessChanged)
                                                  
         
     def updateFromViewer(self):
-        self.ui.pushButtonModelColor.setColor(self.viewer.modelColor)
-        self.ui.pushButtonModel2Color.setColor(self.viewer.model2Color)
-        self.ui.pushButtonBoundingBoxColor.setColor(self.viewer.boxColor)            
+        self.ui.pushButtonModelColor.setColor(self.viewer.getModelColor())
+        self.ui.pushButtonModel2Color.setColor(self.viewer.getModel2Color())
+        self.ui.pushButtonBoundingBoxColor.setColor(self.viewer.getBoundingBoxColor())            
         self.ui.checkBoxBoundingBox.setChecked(self.viewer.showBox)    
         self.ui.checkBoxModelVisible.setChecked(self.viewer.modelVisible)
         self.ui.checkBoxModel2Visible.setChecked(self.viewer.model2Visible)
@@ -150,3 +156,6 @@ class ModelVisualizationForm(QtGui.QWidget):
     
     def locationChanged(self):
         self.viewer.setLocation(self.ui.doubleSpinBoxLocationX.value(), self.ui.doubleSpinBoxLocationY.value(), self.ui.doubleSpinBoxLocationZ.value())
+    
+    def thicknessChanged(self):
+        self.viewer.setThickness(self.ui.spinBoxThickness.value())

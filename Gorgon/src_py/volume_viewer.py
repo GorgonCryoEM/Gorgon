@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.15  2008/10/29 19:26:26  ssa1
+#   Reducing memory footprint, Increasing performance and adding volume normalization
+#
 #   Revision 1.14  2008/09/24 19:34:34  ssa1
 #   Fixing scaling bug in CTRL + zoom, Providing function for neighboring atoms, Saving volumes as projections
 #
@@ -42,7 +45,10 @@ except ImportError:
 class VolumeViewer(BaseViewer):
     def __init__(self, main, parent=None):
         BaseViewer.__init__(self, main, parent)
-        self.title = "Volume"                           
+        self.title = "Volume"          
+        self.app.themes.addDefaultRGB("Volume:Model:0", 180, 180, 180, 255)
+        self.app.themes.addDefaultRGB("Volume:Model:1", 180, 180, 180, 255)
+        self.app.themes.addDefaultRGB("Volume:BoundingBox", 255, 255, 255, 255)                         
         self.renderer = VolumeRenderer()          
         self.loaded = False
         self.createUI()
@@ -77,6 +83,11 @@ class VolumeViewer(BaseViewer):
         closeAct.setStatusTip(self.tr("Normalized the loaded volume"))
         self.connect(normalizeAct, QtCore.SIGNAL("triggered()"), self.normalizeVolume)
         self.app.actions.addAction("normalize_Volume", normalizeAct)
+        
+        downsampleAct = QtGui.QAction(self.tr("Do&wnsample"), self)
+        closeAct.setStatusTip(self.tr("Downsample the loaded volume"))
+        self.connect(downsampleAct, QtCore.SIGNAL("triggered()"), self.downsampleVolume)
+        self.app.actions.addAction("downsample_Volume", downsampleAct)        
                                                
     def createMenus(self):
         self.app.menus.addAction("file-open-volume", self.app.actions.getAction("load_Volume"), "file-open")
@@ -84,6 +95,7 @@ class VolumeViewer(BaseViewer):
         self.app.menus.addAction("file-close-volume", self.app.actions.getAction("unload_Volume"), "file-close");
         self.app.menus.addMenu("actions-volume", self.tr("V&olume"), "actions");   
         self.app.menus.addAction("actions-volume-normalize", self.app.actions.getAction("normalize_Volume"), "actions-volume");
+        self.app.menus.addAction("actions-volume-downsample", self.app.actions.getAction("downsample_Volume"), "actions-volume");
         self.app.menus.addMenu("actions-volume-skeletonization", self.tr("S&keletonization"), "actions-volume");               
     
     def createChildWindows(self):
@@ -101,6 +113,11 @@ class VolumeViewer(BaseViewer):
     def normalizeVolume(self):
         self.renderer.normalizeVolume()
         self.surfaceEditor.modelLoadedPreDraw()
+        
+    def downsampleVolume(self):
+        self.renderer.downsampleVolume()
+        self.surfaceEditor.modelLoadedPreDraw()
+        self.emitModelChanged();        
     
     def processMouseWheel(self, amount, event):
         if(event.modifiers() & QtCore.Qt.CTRL) :

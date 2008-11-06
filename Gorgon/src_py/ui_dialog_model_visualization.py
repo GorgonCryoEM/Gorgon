@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_dialog_model_visualization.ui'
 #
-# Created: Fri May 30 11:39:47 2008
+# Created: Fri Oct 31 21:28:55 2008
 #      by: PyQt4 UI code generator 4.3.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,7 +12,7 @@ from PyQt4 import QtCore, QtGui
 class Ui_DialogModelVisualization(object):
     def setupUi(self, DialogModelVisualization):
         DialogModelVisualization.setObjectName("DialogModelVisualization")
-        DialogModelVisualization.resize(QtCore.QSize(QtCore.QRect(0,0,228,262).size()).expandedTo(DialogModelVisualization.minimumSizeHint()))
+        DialogModelVisualization.resize(QtCore.QSize(QtCore.QRect(0,0,241,263).size()).expandedTo(DialogModelVisualization.minimumSizeHint()))
 
         self.gridlayout = QtGui.QGridLayout(DialogModelVisualization)
         self.gridlayout.setMargin(1)
@@ -52,12 +52,12 @@ class Ui_DialogModelVisualization(object):
         self.radioButtonSmooth.setChecked(True)
         self.radioButtonSmooth.setObjectName("radioButtonSmooth")
         self.gridlayout2.addWidget(self.radioButtonSmooth,0,2,1,1)
-        self.gridlayout1.addWidget(self.groupBoxDisplayStyle,0,0,1,2)
+        self.gridlayout1.addWidget(self.groupBoxDisplayStyle,0,0,1,3)
 
         self.checkBoxBoundingBox = QtGui.QCheckBox(self.tab)
         self.checkBoxBoundingBox.setChecked(True)
         self.checkBoxBoundingBox.setObjectName("checkBoxBoundingBox")
-        self.gridlayout1.addWidget(self.checkBoxBoundingBox,1,0,1,1)
+        self.gridlayout1.addWidget(self.checkBoxBoundingBox,1,0,1,2)
 
         self.pushButtonBoundingBoxColor = ColoredPushButton(self.tab)
 
@@ -67,12 +67,12 @@ class Ui_DialogModelVisualization(object):
         sizePolicy.setHeightForWidth(self.pushButtonBoundingBoxColor.sizePolicy().hasHeightForWidth())
         self.pushButtonBoundingBoxColor.setSizePolicy(sizePolicy)
         self.pushButtonBoundingBoxColor.setObjectName("pushButtonBoundingBoxColor")
-        self.gridlayout1.addWidget(self.pushButtonBoundingBoxColor,1,1,1,1)
+        self.gridlayout1.addWidget(self.pushButtonBoundingBoxColor,1,2,1,1)
 
         self.checkBoxModelVisible = QtGui.QCheckBox(self.tab)
         self.checkBoxModelVisible.setChecked(True)
         self.checkBoxModelVisible.setObjectName("checkBoxModelVisible")
-        self.gridlayout1.addWidget(self.checkBoxModelVisible,2,0,1,1)
+        self.gridlayout1.addWidget(self.checkBoxModelVisible,2,0,1,2)
 
         self.pushButtonModelColor = ColoredPushButton(self.tab)
 
@@ -82,12 +82,12 @@ class Ui_DialogModelVisualization(object):
         sizePolicy.setHeightForWidth(self.pushButtonModelColor.sizePolicy().hasHeightForWidth())
         self.pushButtonModelColor.setSizePolicy(sizePolicy)
         self.pushButtonModelColor.setObjectName("pushButtonModelColor")
-        self.gridlayout1.addWidget(self.pushButtonModelColor,2,1,1,1)
+        self.gridlayout1.addWidget(self.pushButtonModelColor,2,2,1,1)
 
         self.checkBoxModel2Visible = QtGui.QCheckBox(self.tab)
         self.checkBoxModel2Visible.setChecked(True)
         self.checkBoxModel2Visible.setObjectName("checkBoxModel2Visible")
-        self.gridlayout1.addWidget(self.checkBoxModel2Visible,3,0,1,1)
+        self.gridlayout1.addWidget(self.checkBoxModel2Visible,3,0,1,2)
 
         self.pushButtonModel2Color = ColoredPushButton(self.tab)
 
@@ -97,7 +97,16 @@ class Ui_DialogModelVisualization(object):
         sizePolicy.setHeightForWidth(self.pushButtonModel2Color.sizePolicy().hasHeightForWidth())
         self.pushButtonModel2Color.setSizePolicy(sizePolicy)
         self.pushButtonModel2Color.setObjectName("pushButtonModel2Color")
-        self.gridlayout1.addWidget(self.pushButtonModel2Color,3,1,1,1)
+        self.gridlayout1.addWidget(self.pushButtonModel2Color,3,2,1,1)
+
+        self.labelThickness = QtGui.QLabel(self.tab)
+        self.labelThickness.setObjectName("labelThickness")
+        self.gridlayout1.addWidget(self.labelThickness,4,0,1,1)
+
+        self.spinBoxThickness = QtGui.QSpinBox(self.tab)
+        self.spinBoxThickness.setProperty("value",QtCore.QVariant(3))
+        self.spinBoxThickness.setObjectName("spinBoxThickness")
+        self.gridlayout1.addWidget(self.spinBoxThickness,4,1,1,2)
         self.tabWidget.addTab(self.tab,"")
 
         self.tab_2 = QtGui.QWidget()
@@ -214,6 +223,23 @@ class Ui_DialogModelVisualization(object):
         self.tabWidget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(DialogModelVisualization)
         DialogModelVisualization.setTabOrder(self.pushButtonCenter,self.pushButtonClose)
+        DialogModelVisualization.setTabOrder(self.pushButtonClose,self.tabWidget)
+        DialogModelVisualization.setTabOrder(self.tabWidget,self.radioButtonWireframe)
+        DialogModelVisualization.setTabOrder(self.radioButtonWireframe,self.radioButtonFlat)
+        DialogModelVisualization.setTabOrder(self.radioButtonFlat,self.radioButtonSmooth)
+        DialogModelVisualization.setTabOrder(self.radioButtonSmooth,self.checkBoxBoundingBox)
+        DialogModelVisualization.setTabOrder(self.checkBoxBoundingBox,self.pushButtonBoundingBoxColor)
+        DialogModelVisualization.setTabOrder(self.pushButtonBoundingBoxColor,self.checkBoxModelVisible)
+        DialogModelVisualization.setTabOrder(self.checkBoxModelVisible,self.pushButtonModelColor)
+        DialogModelVisualization.setTabOrder(self.pushButtonModelColor,self.checkBoxModel2Visible)
+        DialogModelVisualization.setTabOrder(self.checkBoxModel2Visible,self.pushButtonModel2Color)
+        DialogModelVisualization.setTabOrder(self.pushButtonModel2Color,self.spinBoxThickness)
+        DialogModelVisualization.setTabOrder(self.spinBoxThickness,self.doubleSpinBoxSizeX)
+        DialogModelVisualization.setTabOrder(self.doubleSpinBoxSizeX,self.doubleSpinBoxSizeY)
+        DialogModelVisualization.setTabOrder(self.doubleSpinBoxSizeY,self.doubleSpinBoxSizeZ)
+        DialogModelVisualization.setTabOrder(self.doubleSpinBoxSizeZ,self.doubleSpinBoxLocationX)
+        DialogModelVisualization.setTabOrder(self.doubleSpinBoxLocationX,self.doubleSpinBoxLocationY)
+        DialogModelVisualization.setTabOrder(self.doubleSpinBoxLocationY,self.doubleSpinBoxLocationZ)
 
     def retranslateUi(self, DialogModelVisualization):
         DialogModelVisualization.setWindowTitle(QtGui.QApplication.translate("DialogModelVisualization", "Visualization", None, QtGui.QApplication.UnicodeUTF8))
@@ -224,6 +250,7 @@ class Ui_DialogModelVisualization(object):
         self.checkBoxBoundingBox.setText(QtGui.QApplication.translate("DialogModelVisualization", "Show outline box colored:", None, QtGui.QApplication.UnicodeUTF8))
         self.checkBoxModelVisible.setText(QtGui.QApplication.translate("DialogModelVisualization", "Show model colored:", None, QtGui.QApplication.UnicodeUTF8))
         self.checkBoxModel2Visible.setText(QtGui.QApplication.translate("DialogModelVisualization", "Show 2nd model colored:", None, QtGui.QApplication.UnicodeUTF8))
+        self.labelThickness.setText(QtGui.QApplication.translate("DialogModelVisualization", "Thickness:", None, QtGui.QApplication.UnicodeUTF8))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), QtGui.QApplication.translate("DialogModelVisualization", "Visualization", None, QtGui.QApplication.UnicodeUTF8))
         self.GroupBoxLocation_2.setTitle(QtGui.QApplication.translate("DialogModelVisualization", "Scale:", None, QtGui.QApplication.UnicodeUTF8))
         self.labelSizeX.setText(QtGui.QApplication.translate("DialogModelVisualization", "X:", None, QtGui.QApplication.UnicodeUTF8))
