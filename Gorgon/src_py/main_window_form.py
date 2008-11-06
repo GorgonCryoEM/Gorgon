@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.6  2008/10/15 19:41:32  ssa1
+#   Esc to cancel path, Clear Button and Tracking of start seed point
+#
 #   Revision 1.5  2008/06/18 18:15:41  ssa1
 #   Adding in CVS meta data
 #
@@ -18,6 +21,7 @@
 from PyQt4 import QtCore, QtGui
 from menu_manager import MenuManager
 from action_manager import ActionManager
+from theme_manager import ThemeManager
 
 class MainWindowForm(QtGui.QMainWindow):
     def __init__(self, parent=None):
@@ -29,6 +33,7 @@ class MainWindowForm(QtGui.QMainWindow):
         self.createUI()
         self.createActions()
         self.createMenus()
+        self.themes = ThemeManager(self)
                 
         self.statusBar().showMessage(self.tr("Gorgon: Protein Visualization Suite"))
         self.setWindowTitle(self.tr("Gorgon - v0.1 beta"))
@@ -56,6 +61,7 @@ class MainWindowForm(QtGui.QMainWindow):
         self.menus.addMenu("options", self.tr("&Options"))    
         self.menus.addMenu("actions", self.tr("&Actions"))     
         self.menus.addMenu("window", self.tr("&Window"))
+        self.menus.addMenu("themes", self.tr("&Themes"))
         self.menus.addMenu("help", self.tr("&Help"))
         
     def keyPressEvent(self, event):

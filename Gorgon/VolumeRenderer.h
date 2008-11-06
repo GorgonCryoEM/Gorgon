@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.30  2008/10/29 19:26:26  ssa1
+//   Reducing memory footprint, Increasing performance and adding volume normalization
+//
 //   Revision 1.29  2008/10/28 22:18:05  ssa1
 //   Changing visualization of meshes, and sketches
 //
@@ -78,6 +81,7 @@ namespace wustl_mm {
 			void UpdateBoundingBox() ;
 			void Unload();
 			void NormalizeVolume();
+			void DownsampleVolume();
 			Volume * GetVolume();
 			Volume * PerformBinarySkeletonizationJu2007(double threshold, int minCurveSize, int minSurfaceSize);
 			Volume * PerformGrayscaleSkeletonizationAbeysinghe2008(double startDensity, int stepCount, int minCurveSize, int minSurfaceSize, int curveRadius, int surfaceRadius, int skeletonSmoothenRadius);
@@ -237,12 +241,46 @@ namespace wustl_mm {
 			}
 			return redraw;
 		}
+		void VolumeRenderer::DownsampleVolume() {
+			Volume * sourceVol = dataVolume;
+			Volume * destVol = new Volume(sourceVol->getSizeX()/2, sourceVol->getSizeY()/2, sourceVol->getSizeZ()/2);
+			double val;
+
+			int radius = 1;
+			MathLib * math = new MathLib();
+
+			ProbabilityDistribution3D gaussianFilter;
+			gaussianFilter.radius = radius;
+			math->GetBinomialDistribution(gaussianFilter);
+
+			for(int x = radius; x < destVol->getSizeX()-radius; x++) {
+				for(int y = radius; y < destVol->getSizeY()-radius; y++) {
+					for(int z = radius; z < destVol->getSizeZ()-radius; z++) {
+						val = 0;
+						for(int xx = -radius; xx <= radius; xx++) {
+							for(int yy = -radius; yy <= radius; yy++) {
+								for(int zz = -radius; zz <= radius; zz++) {
+									val += sourceVol->getDataAt(2*x+xx, 2*y+yy, 2*z+zz) * gaussianFilter.values[xx+radius][yy+radius][zz+radius] ;
+								}
+							}
+						}
+						destVol->setDataAt(x, y, z, val);					
+					}
+				}
+			}
+
+			delete math;
+			delete sourceVol;
+			dataVolume = destVol;
+			UpdateBoundingBox();
+		}
+
 		void VolumeRenderer::Draw(int subSceneIndex, bool selectEnabled) {
 			if(subSceneIndex == 0) {
 				if((viewingType == VIEWING_TYPE_ISO_SURFACE) && (surfaceMesh != NULL)) {
-					surfaceMesh->Draw(true, false, false, selectEnabled, false, false, false, false, false);
+					surfaceMesh->Draw(true, false, false, selectEnabled, false, false, false, false, false, 1);
 				} else if((viewingType == VIEWING_TYPE_CROSS_SECTION) || (viewingType == VIEWING_TYPE_SOLID)) {
-					glPushAttrib(GL_ENABLE_BIT);
+					glPushAttrib(GL_LIGHTING | GL_ENABLE_BIT);
 					glDisable(GL_LIGHTING);
 					glDisable(GL_CULL_FACE);
 					Vector3DFloat vertex;

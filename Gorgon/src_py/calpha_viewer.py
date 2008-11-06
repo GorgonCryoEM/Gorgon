@@ -11,6 +11,12 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.13  2008/11/04 16:13:21  colemanr
+#   Loading a sequence with SSE predictions from a *.seq file is now
+#   seperate from loading a model.  Also, two chain objects are now passed
+#   to the SequenceDock - one for the sequence & SSE predictions and the
+#   other for the current model.
+#
 #   Revision 1.12  2008/10/30 21:19:06  colemanr
 #   actually making use of CAlphaViewer.main_chain
 #
@@ -61,6 +67,9 @@ class CAlphaViewer(BaseViewer):
     def __init__(self, main, parent=None):
         BaseViewer.__init__(self, main, parent)
         self.title = "C-Alpha"
+        self.app.themes.addDefaultRGB("C-Alpha:Model:0", 170, 170, 0, 255)
+        self.app.themes.addDefaultRGB("C-Alpha:Model:1", 120, 120, 170, 255)
+        self.app.themes.addDefaultRGB("C-Alpha:BoundingBox", 255, 255, 255, 255)         
         self.isClosedMesh = False
         self.selectEnabled = True
         self.renderer = CAlphaRenderer()          
@@ -68,8 +77,6 @@ class CAlphaViewer(BaseViewer):
         self.predictedSSEsequence = Chain('', self.app)
         self.createUI()      
         self.app.viewers["calpha"] = self;
-        self.modelColor = QtGui.QColor.fromRgba(QtGui.qRgba(170, 170, 0, 255))
-        self.model2Color = QtGui.QColor.fromRgba(QtGui.qRgba(120, 120, 170, 255))
         self.model2Visible = True
         self.initVisualizationOptions()
         self.visualizationOptions.ui.checkBoxModelVisible.setText("Show atoms colored:")

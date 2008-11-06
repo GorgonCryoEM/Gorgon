@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.27  2008/10/28 22:18:05  ssa1
+//   Changing visualization of meshes, and sketches
+//
 //   Revision 1.26  2008/10/16 19:50:44  ssa1
 //   Supporting line deletion
 //
@@ -94,7 +97,7 @@ namespace wustl_mm {
 			void AddQuad(int vertexId1, int vertexId2, int vertexId3, int vertexId4, TEdge newEdgeTag = NULL, TFace faceTag = NULL);
 			void AddTriangle(int vertexId1, int vertexId2, int vertexId3, TEdge newEdgeTag = NULL, TFace faceTag = NULL);
 			void Clear();
-			void Draw(bool drawSurfaces, bool drawLines, bool drawPoints, bool annotateSurfaces, bool annotateLines, bool annotatePoints, bool disableSurfaceLighting, bool disableCurveLighting, bool disablePointLighting);
+			void Draw(bool drawSurfaces, bool drawLines, bool drawPoints, bool annotateSurfaces, bool annotateLines, bool annotatePoints, bool disableSurfaceLighting, bool disableCurveLighting, bool disablePointLighting, int lineThickness);
 			void MarkFixedVertices();
 			void MergeMesh(NonManifoldMesh<TVertex, TEdge, TFace> * srcMesh);
 			void RemoveFace(int faceId);
@@ -346,7 +349,7 @@ namespace wustl_mm {
 			vertexHashMap.clear();
 		}
 
-		template <class TVertex, class TEdge, class TFace> void NonManifoldMesh<TVertex, TEdge, TFace>::Draw(bool drawSurfaces, bool drawLines, bool drawPoints, bool annotateSurfaces, bool annotateLines, bool annotatePoints, bool disableSurfaceLighting, bool disableCurveLighting, bool disablePointLighting) {
+		template <class TVertex, class TEdge, class TFace> void NonManifoldMesh<TVertex, TEdge, TFace>::Draw(bool drawSurfaces, bool drawLines, bool drawPoints, bool annotateSurfaces, bool annotateLines, bool annotatePoints, bool disableSurfaceLighting, bool disableCurveLighting, bool disablePointLighting, int lineThickness) {
 			int k;
 			glPushAttrib(GL_LIGHTING | GL_LINE_BIT | GL_ENABLE_BIT | GL_HINT_BIT | GL_POINT_BIT);			
 
@@ -386,7 +389,7 @@ namespace wustl_mm {
 					glPushName(1);
 					glPushName(0);
 				}
-				glLineWidth(4);
+				glLineWidth(lineThickness);
 				glEnable(GL_LINE_SMOOTH);
 				glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);				
 				for(unsigned int i = 0; i < edges.size(); i++) {					

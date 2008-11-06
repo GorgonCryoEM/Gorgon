@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.41  2008/10/28 22:18:05  ssa1
+#   Changing visualization of meshes, and sketches
+#
 #   Revision 1.40  2008/10/17 22:58:36  colemanr
 #   Fixed a 64 bit issue with the hitstack by converting to int (some
 #   variables are of type numpy.32).
@@ -90,12 +93,10 @@ class BaseViewer(QtOpenGL.QGLWidget):
         self.rotation = self.identityMatrix()
         self.connect(self, QtCore.SIGNAL("modelChanged()"), self.modelChanged) 
         self.connect(self, QtCore.SIGNAL("modelLoaded()"), self.modelChanged) 
-        self.connect(self, QtCore.SIGNAL("modelUnloaded()"), self.modelChanged)            
+        self.connect(self, QtCore.SIGNAL("modelUnloaded()"), self.modelChanged) 
+        self.connect(self.app.themes, QtCore.SIGNAL("themeChanged()"), self.themeChanged)           
         self.gllist = 0
         self.showBox = True
-        self.modelColor = QtGui.QColor.fromRgba(QtGui.qRgba(180, 180, 180, 255))
-        self.model2Color = QtGui.QColor.fromRgba(QtGui.qRgba(180, 180, 180, 255))
-        self.boxColor = QtGui.QColor.fromRgba(QtGui.qRgba(255, 255, 255, 255))
         
     def initVisualizationOptions(self):
         self.visualizationOptions = ModelVisualizationForm(self.app, self)
@@ -126,8 +127,11 @@ class BaseViewer(QtOpenGL.QGLWidget):
         self.showBox = visible
         self.emitModelChanged();
 
+    def getBoundingBoxColor(self):
+        return self.app.themes.getColor(self.title + ":" + "BoundingBox" )
+
     def setBoundingBoxColor(self, color):
-        self.boxColor = color
+        self.app.themes.addColor(self.title + ":" + "BoundingBox", color)
         self.emitModelChanged()
 
     def setDisplayStyle(self, style):
@@ -141,13 +145,19 @@ class BaseViewer(QtOpenGL.QGLWidget):
     def setModel2Visibility(self, visible):
         self.model2Visible = visible
         self.emitModelChanged()
+        
+    def getModelColor(self):
+        return self.app.themes.getColor(self.title + ":" + "Model:0" )
 
+    def getModel2Color(self):
+        return self.app.themes.getColor(self.title + ":" + "Model:1" )
+    
     def setModelColor(self, color):
-        self.modelColor = color
+        self.app.themes.addColor(self.title + ":" + "Model:0", color)
         self.emitModelChanged()
 
     def setModel2Color(self, color):
-        self.model2Color = color
+        self.app.themes.addColor(self.title + ":" + "Model:1", color)
         self.emitModelChanged()
 
     def setMaterials(self, color):
@@ -163,6 +173,13 @@ class BaseViewer(QtOpenGL.QGLWidget):
         glMaterialfv(GL_FRONT, GL_DIFFUSE,   diffuseMaterial) 
         glMaterialfv(GL_FRONT, GL_SPECULAR,  specularMaterial) 
         glMaterialf(GL_FRONT, GL_SHININESS, 0.1)
+
+    def setThickness(self, value):
+        self.thickness = value
+        self.renderer.setLineThickness(value)
+        self.emitThicknessChanged(value)
+        self.emitModelChanged()
+        
 
     def setSelectEnabled(self, value):
         if(value != self.selectEnabled):
@@ -279,8 +296,6 @@ class BaseViewer(QtOpenGL.QGLWidget):
         pass
         
     def modelChanged(self):
-        glutInit(sys.argv)      #This must be here to get it to work with Freeglut.
-        #otherwise you get: "freeglut  ERROR:  Function <glutWireCube> called without first calling 'glutInit'."
         self.updateActionsAndMenus()
         if self.gllist != 0:
             glDeleteLists(self.gllist,1)
@@ -288,7 +303,7 @@ class BaseViewer(QtOpenGL.QGLWidget):
         self.gllist = glGenLists(1)
         glNewList(self.gllist, GL_COMPILE)
         visibility = [self.modelVisible, self.model2Visible]
-        colors = [self.modelColor, self.model2Color]
+        colors = [self.getModelColor(),  self.getModel2Color()]
         
         glPushAttrib(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT)
         
@@ -298,7 +313,7 @@ class BaseViewer(QtOpenGL.QGLWidget):
         glScaled(self.scale[0], self.scale[1], self.scale[2])            
         
         if(self.loaded and self.showBox):            
-            self.setMaterials(self.boxColor)       
+            self.setMaterials(self.getBoundingBoxColor())       
             self.renderer.drawBoundingBox()        
         
         self.extraDrawingRoutines()
@@ -374,8 +389,18 @@ class BaseViewer(QtOpenGL.QGLWidget):
     def processMouseMove(self, hitStack, event):
         self.emitElementMouseOver(hitStack, event)
         
+    def themeChanged(self):
+        self.visualizationOptions.ui.pushButtonModelColor.setColor(self.getModelColor())
+        self.visualizationOptions.ui.pushButtonModel2Color.setColor(self.getModel2Color())
+        self.visualizationOptions.ui.pushButtonBoundingBoxColor.setColor(self.getBoundingBoxColor())  
+        self.emitModelChanged()          
+       
+        
     def processMouseMoveRay(self, ray, rayWidth, eye, event):
         self.emitMouseOverRay(ray, rayWidth, eye, event)
+        
+    def emitThicknessChanged(self, value):
+        self.emit(QtCore.SIGNAL("thicknessChanged(int)"), value);
 
     def emitMouseClickRay(self, ray, rayWidth, eye, event):
         self.emit(QtCore.SIGNAL("mouseClickRay(PyQt_PyObject, float, PyQt_PyObject, QMouseEvent)"), ray, rayWidth, eye, event);

@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.25  2008/10/28 22:18:05  ssa1
+//   Changing visualization of meshes, and sketches
+//
 //   Revision 1.24  2008/10/28 18:46:52  ssa1
 //   Fixing octree neighbor search, and changing the structure tensor cost function
 //
@@ -86,6 +89,7 @@ namespace wustl_mm {
 			void SelectStartSeedRay(float rayX, float rayY, float rayZ, float eyeX, float eyeY, float eyeZ, float rayWidth, float medialnessRatio, float smoothnessRatio);
 			void SelectRootRay(float rayX, float rayY, float rayZ, float eyeX, float eyeY, float eyeZ, float rayWidth, float medialnessRatio, float smoothnessRatio);
 			void SetIsoValue(float isoValue);
+			void SetLineThickness(int thickness);
 			
 			void AddSelectionPoint(int subsceneIndex, int ix0);
 			void SelectSelection();
@@ -113,6 +117,8 @@ namespace wustl_mm {
 			SketchMapType sketchPositions;
 			vector<Vector3DInt> sketchDrawPositions;
 			int screenWidth, screenHeight;
+			int lineThickness;
+			int clickCount;
 
 			vector<unsigned int> selectedEdges;
 			vector<unsigned int> removableEdges;
@@ -141,11 +147,17 @@ namespace wustl_mm {
 			analyzed = false;
 			startSeedIsolated = false;
 			quadricSphere = gluNewQuadric();	
+			clickCount = 0;
 		}
 
 		InteractiveSkeletonEngine::~InteractiveSkeletonEngine() {
 			delete skeletonizer;
 			gluDeleteQuadric(quadricSphere);			
+		}
+
+
+		void InteractiveSkeletonEngine::SetLineThickness(int thickness) {
+			lineThickness = thickness;
 		}
 
 		void InteractiveSkeletonEngine::SelectEndSeed(float medialnessRatio, float smoothnessRatio) {
@@ -157,6 +169,8 @@ namespace wustl_mm {
 				startSeedIsolated = true;
 			}
 			ClearSketchRay();
+			printf("Click count: %d\n", ++clickCount);
+
 		}
 
 		void InteractiveSkeletonEngine::BrowseStartSeedRay(float rayX, float rayY, float rayZ, float eyeX, float eyeY, float eyeZ, float rayWidth) {
@@ -173,7 +187,10 @@ namespace wustl_mm {
 
 			for(unsigned int i = 0; i < intersectingCells.size(); i++) {
 				if(intersectingCells[i]->cellSize == 1) {
-					if(!snapOn || (snapOn && (skeleton->vertices[intersectingCells[i]->tag.tag2].edgeIds.size() > 0))) {
+					if(snapOn && (skeleton->vertices[intersectingCells[i]->tag.tag2].edgeIds.size() > 0)) {
+						newStartPositions.push_back(Vector3DInt(intersectingCells[i]->pos[0], intersectingCells[i]->pos[1], intersectingCells[i]->pos[2]));
+					}
+					if(!snapOn && (volume->getDataAt(intersectingCells[i]->pos[0], intersectingCells[i]->pos[1], intersectingCells[i]->pos[2]) >= isoValue)) {						
 						newStartPositions.push_back(Vector3DInt(intersectingCells[i]->pos[0], intersectingCells[i]->pos[1], intersectingCells[i]->pos[2]));
 					}
 				}
@@ -210,9 +227,13 @@ namespace wustl_mm {
 
 			for(unsigned int i = 0; i < intersectingCells.size(); i++) {
 				if(intersectingCells[i]->cellSize == 1) {
-					if(!snapOn || (snapOn && (skeleton->vertices[intersectingCells[i]->tag.tag2].edgeIds.size() > 0))) {
+					if(snapOn && (skeleton->vertices[intersectingCells[i]->tag.tag2].edgeIds.size() > 0)) {						
 						startPositions.push_back(Vector3DInt(intersectingCells[i]->pos[0], intersectingCells[i]->pos[1], intersectingCells[i]->pos[2]));
 					}
+					if(!snapOn && (volume->getDataAt(intersectingCells[i]->pos[0], intersectingCells[i]->pos[1], intersectingCells[i]->pos[2]) >= isoValue)) {						
+						startPositions.push_back(Vector3DInt(intersectingCells[i]->pos[0], intersectingCells[i]->pos[1], intersectingCells[i]->pos[2]));
+					}
+
 				}
 			}			
 			
@@ -220,7 +241,7 @@ namespace wustl_mm {
 				SelectStartSeed(startPositions, medialnessRatio, smoothnessRatio);				
 				startSeedIsolated = false;
 				started = true;
-			}					
+			}		
 		}
 
 		void InteractiveSkeletonEngine::SelectRootRay(float rayX, float rayY, float rayZ, float eyeX, float eyeY, float eyeZ, float rayWidth, float medialnessRatio, float smoothnessRatio) {
@@ -246,7 +267,10 @@ namespace wustl_mm {
 
 			for(unsigned int i = 0; i < intersectingCells.size(); i++) {
 				if(intersectingCells[i]->cellSize == 1) {
-					if(!snapOn || (snapOn && (skeleton->vertices[intersectingCells[i]->tag.tag2].edgeIds.size() > 0))) {
+					if(snapOn && (skeleton->vertices[intersectingCells[i]->tag.tag2].edgeIds.size() > 0)) {
+						startPositions.push_back(Vector3DInt(intersectingCells[i]->pos[0], intersectingCells[i]->pos[1], intersectingCells[i]->pos[2]));
+					}
+					if(!snapOn && (volume->getDataAt(intersectingCells[i]->pos[0], intersectingCells[i]->pos[1], intersectingCells[i]->pos[2]) >= isoValue)) {						
 						startPositions.push_back(Vector3DInt(intersectingCells[i]->pos[0], intersectingCells[i]->pos[1], intersectingCells[i]->pos[2]));
 					}
 				}
@@ -268,6 +292,8 @@ namespace wustl_mm {
 				startSeedIsolated = true;
 				//skeletonizer->DrawTree(startPos);
 			}
+			printf("Click count: %d\n", ++clickCount);
+
 		}
 
 		void InteractiveSkeletonEngine::SetIsoValue(float isoValue) {
@@ -282,7 +308,9 @@ namespace wustl_mm {
 
 				for(unsigned int i = 0; i < intersectingCells.size(); i++) {
 					if(intersectingCells[i]->cellSize == 1) {
-						currentPositions.push_back(Vector3DInt(intersectingCells[i]->pos[0], intersectingCells[i]->pos[1], intersectingCells[i]->pos[2]));
+						if(volume->getDataAt(intersectingCells[i]->pos[0], intersectingCells[i]->pos[1], intersectingCells[i]->pos[2]) >= isoValue) {						
+							currentPositions.push_back(Vector3DInt(intersectingCells[i]->pos[0], intersectingCells[i]->pos[1], intersectingCells[i]->pos[2]));
+						}						
 					}
 				}				
 
@@ -319,12 +347,14 @@ namespace wustl_mm {
 				unsigned long long hash;
 				
 				for(unsigned int i = 0; i < intersectingCells.size(); i++) {
-					if(intersectingCells[i]->cellSize == 1) {
-						Vector3DInt tmpv = Vector3DInt(intersectingCells[i]->pos[0], intersectingCells[i]->pos[1], intersectingCells[i]->pos[2]);
-						hash = GetHashFromVector3DInt(tmpv);
-						if(sketchPositions.find(hash) == sketchPositions.end()) {
-							sketchPositions[hash] = true;
-							added = true;
+					if(intersectingCells[i]->cellSize == 1) {	
+						if(volume->getDataAt(intersectingCells[i]->pos[0], intersectingCells[i]->pos[1], intersectingCells[i]->pos[2]) >= isoValue) {
+							Vector3DInt tmpv = Vector3DInt(intersectingCells[i]->pos[0], intersectingCells[i]->pos[1], intersectingCells[i]->pos[2]);
+							hash = GetHashFromVector3DInt(tmpv);
+							if(sketchPositions.find(hash) == sketchPositions.end()) {
+								sketchPositions[hash] = true;
+								added = true;
+							}
 						}
 					}
 				}
@@ -400,13 +430,13 @@ namespace wustl_mm {
 					if(started) {
 						glPushMatrix();
 						glTranslatef(startPos.X(), startPos.Y(), startPos.Z());
-						gluSphere(quadricSphere, 1.0, 10, 10);  
+						gluSphere(quadricSphere, 2.0, 10, 10);  
 						glPopMatrix();
 					}
 					if(polyLineMode) {
 						glPushMatrix();
 						glTranslatef(browseStartPos.X(), browseStartPos.Y(), browseStartPos.Z());
-						gluSphere(quadricSphere, 1.0, 10, 10);  
+						gluSphere(quadricSphere, 2.0, 10, 10);  
 						glPopMatrix();
 					}
 					break;
@@ -414,7 +444,7 @@ namespace wustl_mm {
 					if(analyzed && started && (singleRootMode || !polyLineMode)) {
 						glPushMatrix();
 						glTranslatef(currentPos.X(), currentPos.Y(), currentPos.Z());
-						gluSphere(quadricSphere, 1.0, 10, 10);  
+						gluSphere(quadricSphere, 2.0, 10, 10);  
 						glPopMatrix();
 					}
 					break;
@@ -431,7 +461,7 @@ namespace wustl_mm {
 						if(sketchDrawPositions.size() > 0) {
 							glPushAttrib(GL_LIGHTING | GL_LINE_BIT | GL_ENABLE_BIT | GL_HINT_BIT );
 							glDisable(GL_LIGHTING);
-							glLineWidth(4);
+							glLineWidth(lineThickness*3);
 							glEnable(GL_LINE_SMOOTH);
 							glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);	
 														
@@ -477,7 +507,7 @@ namespace wustl_mm {
 				case(3):	// Temporary skeletal paths
 					glPushAttrib(GL_LIGHTING | GL_LINE_BIT | GL_ENABLE_BIT | GL_HINT_BIT );
 					glDisable(GL_LIGHTING);
-					glLineWidth(4);
+					glLineWidth(lineThickness);
 					glEnable(GL_LINE_SMOOTH);
 					glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);	
 					glBegin(GL_LINES);
@@ -495,7 +525,7 @@ namespace wustl_mm {
 				case(4):	// Removable Edges
 					glPushAttrib(GL_LIGHTING | GL_LINE_BIT | GL_ENABLE_BIT | GL_HINT_BIT );
 					glDisable(GL_LIGHTING);
-					glLineWidth(4);
+					glLineWidth(lineThickness);
 					glEnable(GL_LINE_SMOOTH);
 					glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);	
 					glBegin(GL_LINES);

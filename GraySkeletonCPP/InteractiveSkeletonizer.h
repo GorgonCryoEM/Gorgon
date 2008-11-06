@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.25  2008/10/29 19:26:26  ssa1
+//   Reducing memory footprint, Increasing performance and adding volume normalization
+//
 //   Revision 1.24  2008/10/28 18:46:52  ssa1
 //   Fixing octree neighbor search, and changing the structure tensor cost function
 //
@@ -343,7 +346,7 @@ namespace wustl_mm {
 		}
 
 		vector<OctreeNode< octreeTagType > *> InteractiveSkeletonizer::GetPath(vector<Vector3DInt> endPoints) {
-			
+			//appTimeManager.PushCurrentTime();
 			NonManifoldMeshVertex<nodeAttrib> * currentNode;
 			float minCost = MAX_FLOAT;
 			unsigned int minCostIndex = 0;
@@ -357,6 +360,7 @@ namespace wustl_mm {
 					minCostIndex = i;
 				}
 			}	
+			//appTimeManager.PopAndDisplayTime("Analyzed path %f seconds!\n");
 			return GetPath(endPoints[minCostIndex]); 
 		}
 

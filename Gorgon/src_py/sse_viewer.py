@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.12  2008/08/06 06:21:37  ssa1
+#   Tracing protein path, for SSE Correspondance matching
+#
 #   Revision 1.11  2008/06/18 18:15:41  ssa1
 #   Adding in CVS meta data
 #
@@ -34,6 +37,9 @@ class SSEViewer(BaseViewer):
     def __init__(self, main, parent=None):
         BaseViewer.__init__(self, main, parent)
         self.title = "Secondary Structure Element"
+        self.app.themes.addDefaultRGB("Secondary Structure Element:Model:0", 0, 180, 0, 255)
+        self.app.themes.addDefaultRGB("Secondary Structure Element:Model:1", 120, 185, 255, 255)
+        self.app.themes.addDefaultRGB("Secondary Structure Element:BoundingBox", 255, 255, 255, 255)          
         self.isClosedMesh = False
         self.helixFileName = ""
         self.sheetFileName = ""
@@ -43,8 +49,6 @@ class SSEViewer(BaseViewer):
         self.createUI()      
         self.selectEnabled = True
         self.app.viewers["sse"] = self;
-        self.modelColor = QtGui.QColor.fromRgba(QtGui.qRgba(0, 180, 0, 255))
-        self.model2Color = QtGui.QColor.fromRgba(QtGui.qRgba(120, 185, 255, 255))
         self.model2Visible = True
         self.initVisualizationOptions()
         self.visualizationOptions.ui.checkBoxModelVisible.setText("Show helices colored:")
