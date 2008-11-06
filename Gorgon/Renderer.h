@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.25  2008/10/28 22:18:05  ssa1
+//   Changing visualization of meshes, and sketches
+//
 //   Revision 1.24  2008/10/16 02:39:57  ssa1
 //   Modifying the sketch behavior to supplement line drawing instead of replace it.
 //
@@ -95,11 +98,14 @@ namespace wustl_mm {
 		}
 
 		void Renderer::DrawBoundingBox() {
+			glPushAttrib(GL_LIGHTING_BIT | GL_ENABLE_BIT);
+			glDisable(GL_LIGHTING);
 			glPushMatrix();
 			glTranslatef(minPts[0]+(maxPts[0]-minPts[0])/2.0, minPts[1]+(maxPts[1]-minPts[1])/2.0, minPts[2]+(maxPts[2]-minPts[2])/2.0);
 			glScalef(maxPts[0]-minPts[0], maxPts[1]-minPts[1], maxPts[2]-minPts[2]);
 			glutWireCube(1.0);
 			glPopMatrix();
+			glPopAttrib();
 		}
 
 		void Renderer::UpdateBoundingBox() {
