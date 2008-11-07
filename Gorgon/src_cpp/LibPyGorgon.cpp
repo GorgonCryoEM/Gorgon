@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.33  2008/11/07 21:22:25  ssa1
+//   Fixing memory corruption errors when python garbage collects c++ objects
+//
 //   Revision 1.32  2008/11/06 05:29:04  ssa1
 //   CGI submission milestone for Interactive Skeletonization, and theme support, and fixing (hopefully) mac-os flicker bug
 //
@@ -250,18 +253,18 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("selectionMove", &CAlphaRenderer::SelectionMove)
 		.def("selectionClear", &CAlphaRenderer::SelectionClear)		
 		.def("selectionToggle", &CAlphaRenderer::SelectionToggle)	
-		.def("getAtomFromHitStack", &CAlphaRenderer::GetAtomFromHitStack)
+		.def("getAtomFromHitStack", &CAlphaRenderer::GetAtomFromHitStack, return_value_policy<reference_existing_object>())
 		.def("getSupportedLoadFileFormats", &CAlphaRenderer::GetSupportedLoadFileFormats)
 		.def("getSupportedSaveFileFormats", &CAlphaRenderer::GetSupportedSaveFileFormats)
 		.def("getMin", &CAlphaRenderer::GetMin)
 		.def("getMax", &CAlphaRenderer::GetMax)
 		.def("get3DCoordinates", &CAlphaRenderer::Get3DCoordinates)
 		.def("addAtom", &CAlphaRenderer::AddAtom)
-		.def("getAtom", &CAlphaRenderer::GetAtom)
+		.def("getAtom", &CAlphaRenderer::GetAtom, return_value_policy<reference_existing_object>())
 		.def("getAtomCount", &CAlphaRenderer::GetAtomCount)
 		.def("deleteAtom", &CAlphaRenderer::DeleteAtom)		
 		.def("addBond", &CAlphaRenderer::AddBond)
-		.def("getBond", &CAlphaRenderer::GetBond)
+		.def("getBond", &CAlphaRenderer::GetBond, return_value_policy<reference_existing_object>())
 		.def("getBondCount", &CAlphaRenderer::GetBondCount)
 		.def("deleteBond", &CAlphaRenderer::DeleteBond)		
 	;

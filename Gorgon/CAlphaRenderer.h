@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.25  2008/10/10 14:25:55  ssa1
+//   Setting the cost functions to scale with the edge length
+//
 //   Revision 1.24  2008/10/07 23:48:14  colemanr
 //   added a function which returns the PDBAtom for a given hitStack
 //
@@ -74,14 +77,14 @@ namespace wustl_mm {
 
 			// Controlling the atom vector
 			int AddAtom(PDBAtom atom);
-			PDBAtom GetAtom(unsigned long long index);
-			PDBAtom GetAtomFromHitStack(int subsceneIndex, bool forceTrue, int ix0, int ix1, int ix2, int ix3, int ix4);
+			PDBAtom * GetAtom(unsigned long long index);
+			PDBAtom * GetAtomFromHitStack(int subsceneIndex, bool forceTrue, int ix0, int ix1, int ix2, int ix3, int ix4);
 			void DeleteAtom(unsigned long long index);
 			int GetAtomCount();
 			
 			//Controlling the bond vector
 			void AddBond(PDBBond bond);
-			PDBBond GetBond(int index);
+			PDBBond * GetBond(int index);
 			void DeleteBond(int index);
 			int GetBondCount();
 
@@ -171,12 +174,12 @@ namespace wustl_mm {
 		}
 
 
-		PDBAtom CAlphaRenderer::GetAtomFromHitStack(int subsceneIndex, bool forceTrue, int ix0, int ix1, int ix2, int ix3, int ix4) {
+		PDBAtom * CAlphaRenderer::GetAtomFromHitStack(int subsceneIndex, bool forceTrue, int ix0, int ix1, int ix2, int ix3, int ix4) {
 			if((subsceneIndex == 0) && (ix0 != NULL)) {
 				PDBAtom * a = (PDBAtom*)ix0;
-				return *a;
+				return a;
 			}  
-			return PDBAtom (NULL);
+			return NULL;
 		}
 			
 		void CAlphaRenderer::LoadFile(string fileName) {
@@ -358,12 +361,12 @@ namespace wustl_mm {
 		string CAlphaRenderer::GetSupportedSaveFileFormats() {
 			return "Atom Positions (*.atom)";
 		}
-		PDBAtom CAlphaRenderer::GetAtom(unsigned long long index) {
-			return atoms[index];
+		PDBAtom * CAlphaRenderer::GetAtom(unsigned long long index) {
+			return &atoms[index];
 		}
 
-		PDBBond CAlphaRenderer::GetBond(int index) {
-			return bonds[index];
+		PDBBond * CAlphaRenderer::GetBond(int index) {
+			return &bonds[index];
 		}
 
 		int CAlphaRenderer::GetAtomCount() {
