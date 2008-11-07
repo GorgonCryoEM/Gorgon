@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.5  2008/09/29 16:01:17  ssa1
+//   Adding in CVS meta information
+//
 
 #ifndef GORGON_SSE_CORRESPONDENCE_ENGINE_H
 #define GORGON_SSE_CORRESPONDENCE_ENGINE_H
@@ -177,6 +180,15 @@ namespace wustl_mm {
 			vector<Vector3DInt> path;
 			if(correspondenceIndex >= 0) {
 				SSECorrespondenceResult result = GetResult(correspondenceIndex + 1);
+
+				glPushAttrib(GL_LIGHTING_BIT | GL_LINE_BIT | GL_ENABLE_BIT | GL_HINT_BIT);
+				glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+				glDisable(GL_LIGHTING);
+				glLineWidth(5);
+				glEnable(GL_LINE_SMOOTH);
+				glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);	
+
+
 				for(int i = 2; i < result.GetNodeCount(); i += 2) {
 					n1 = result.GetSkeletonNode(i-1);
 					n2 = result.GetSkeletonNode(i);
@@ -192,6 +204,7 @@ namespace wustl_mm {
 						glEnd();
 					}
 				}
+				glPopAttrib();
 			}
 		}
 	}
