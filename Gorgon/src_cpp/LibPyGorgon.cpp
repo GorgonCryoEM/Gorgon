@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.32  2008/11/06 05:29:04  ssa1
+//   CGI submission milestone for Interactive Skeletonization, and theme support, and fixing (hopefully) mac-os flicker bug
+//
 //   Revision 1.31  2008/10/29 19:26:26  ssa1
 //   Reducing memory footprint, Increasing performance and adding volume normalization
 //
@@ -176,7 +179,7 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("getMax", &VolumeRenderer::GetMax)
 		.def("getMinDensity", &VolumeRenderer::GetMinDensity)
 		.def("getMaxDensity", &VolumeRenderer::GetMaxDensity)
-		.def("getVolume", &VolumeRenderer::GetVolume, return_value_policy<manage_new_object>())		
+		.def("getVolume", &VolumeRenderer::GetVolume, return_value_policy<reference_existing_object>())		
 		.def("getSurfaceValue", &VolumeRenderer::GetSurfaceValue)
 		.def("get3DCoordinates", &VolumeRenderer::Get3DCoordinates)
 		.def("setSurfaceValue", &VolumeRenderer::SetSurfaceValue)		
@@ -186,8 +189,8 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("setViewingType", &VolumeRenderer::SetViewingType)
 		.def("normalizeVolume", &VolumeRenderer::NormalizeVolume)
 		.def("downsampleVolume", &VolumeRenderer::DownsampleVolume)
-		.def("performBinarySkeletonizationJu2007", &VolumeRenderer::PerformBinarySkeletonizationJu2007, return_value_policy<manage_new_object>())		
-		.def("performGrayscaleSkeletonizationAbeysinghe2008", &VolumeRenderer::PerformGrayscaleSkeletonizationAbeysinghe2008, return_value_policy<manage_new_object>())		
+		.def("performBinarySkeletonizationJu2007", &VolumeRenderer::PerformBinarySkeletonizationJu2007, return_value_policy<reference_existing_object>())		
+		.def("performGrayscaleSkeletonizationAbeysinghe2008", &VolumeRenderer::PerformGrayscaleSkeletonizationAbeysinghe2008, return_value_policy<reference_existing_object>())		
 	;
 
 	class_< MeshRenderer, bases<Renderer> >("MeshRenderer", init<>())
@@ -208,7 +211,7 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("getSupportedSaveFileFormats", &MeshRenderer::GetSupportedSaveFileFormats)
 		.def("getMin", &MeshRenderer::GetMin)
 		.def("getMax", &MeshRenderer::GetMax)
-		.def("getMesh", &MeshRenderer::GetMesh, return_value_policy<manage_new_object>())
+		.def("getMesh", &MeshRenderer::GetMesh, return_value_policy<reference_existing_object>())
 		.def("get3DCoordinates", &MeshRenderer::Get3DCoordinates)
 		.def("intersectMeshAndSphere", &MeshRenderer::IntersectMeshAndSphere)
 		.def("getIntersectionPoint", &MeshRenderer::GetIntersectionPoint)
@@ -333,8 +336,8 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("getResultCount", &SSECorrespondenceEngine::GetResultCount)
 		.def("getSupportedLoadFileFormats", &SSECorrespondenceEngine::GetSupportedLoadFileFormats)
 		.def("getSupportedSaveFileFormats", &SSECorrespondenceEngine::GetSupportedSaveFileFormats)
-		.def("getSkeletonSSE", &SSECorrespondenceEngine::GetSkeletonSSE, return_value_policy<manage_new_object>())
-		.def("getSequenceSSE", &SSECorrespondenceEngine::GetSequenceSSE, return_value_policy<manage_new_object>())
+		.def("getSkeletonSSE", &SSECorrespondenceEngine::GetSkeletonSSE, return_value_policy<reference_existing_object>())
+		.def("getSequenceSSE", &SSECorrespondenceEngine::GetSequenceSSE, return_value_policy<reference_existing_object>())
 		.def("getSkeletonSSECount", &SSECorrespondenceEngine::GetSkeletonSSECount)
 		.def("getSequenceSSECount", &SSECorrespondenceEngine::GetSequenceSSECount)
 		.def("setVisibleCorrespondence", &SSECorrespondenceEngine::SetVisibleCorrespondence)
