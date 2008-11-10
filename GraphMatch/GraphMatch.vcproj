@@ -490,6 +490,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\SEQReader.h"
+				>
+			</File>
+			<File
 				RelativePath=".\SkeletonReader.h"
 				>
 			</File>

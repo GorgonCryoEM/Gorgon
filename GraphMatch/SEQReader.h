@@ -2,6 +2,20 @@
 // Author:        Ross Coleman (racolema@bcm.edu)
 // Description:   Reads SEQ Files
 
+// CVS Meta Information: 
+//   $Source$
+//   $Revision$
+//   $Date$
+//   $Author$
+//   $State$
+//
+// History Log: 
+//   $Log$
+
+
+#ifndef SEQREADER_H
+#define SEQREADER_H
+
 #include <vector>
 #include "GlobalConstants.h"
 #include "SecondaryStructure.h"
@@ -218,3 +232,5 @@ namespace wustl_mm {
 		}
 	}
 }
+
+#endif
