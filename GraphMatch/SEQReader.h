@@ -11,6 +11,10 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.3  2008/11/10 21:10:28  colemanr
+//   updated debugging code to show the line of a runtime error that was
+//   occurring
+//
 //   Revision 1.2  2008/11/10 16:15:22  ssa1
 //   Adding in ifdef statements to support compilation
 //
@@ -57,8 +61,7 @@ namespace wustl_mm {
 			string str;
 			getline(fin, str);
 			int startResNum = 1;	
-			if (str.compare(0,5,"START") or str.compare(0,5, "start"))
-			{
+			if (str.compare(0,5,"START") || str.compare(0,5, "start"))	{
 				size_t found;
 				found = str.find(" ");
 				string startResNumString;
@@ -104,7 +107,8 @@ namespace wustl_mm {
 			bool add;
 			unsigned int idNum = 1;
 		
-			if (currentChar == helixChar or currentChar == strandChar) startIndex = 0;
+			if (currentChar == helixChar || currentChar == strandChar)
+				startIndex = 0;
 			for (unsigned int i = 1; i < predictedSSEs.length(); i++)
 			{
 				ch = predictedSSEs[i];
