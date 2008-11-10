@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.27  2008/10/22 17:25:43  colemanr
+//   Added compile flags for Win32 to use std::string, and cstring otherwise.
+//
 //   Revision 1.26  2008/09/29 16:19:30  ssa1
 //   Adding in CVS meta information
 //
@@ -65,7 +68,8 @@ namespace wustl_mm {
 		const char * TOKEN_SSE_FILE_NAME = "SSE_FILE_NAME";
 		const char * TOKEN_VRML_HELIX_FILE_NAME = "VRML_HELIX_FILE_NAME";
 		const char * TOKEN_VRML_SHEET_FILE_NAME = "VRML_SHEET_FILE_NAME";
-		const char * TOKEN_PDB_FILE_NAME = "PDB_FILE_NAME";
+		const char * TOKEN_SEQUENCE_FILE_NAME = "SEQUENCE_FILE_NAME";
+		const char * TOKEN_SEQUENCE_FILE_TYPE = "SEQUENCE_FILE_TYPE";
 		const char * TOKEN_MRC_FILE_NAME = "MRC_FILE_NAME";
 		const char * TOKEN_EUCLIDEAN_DISTANCE_THRESHOLD = "EUCLIDEAN_DISTANCE_THRESHOLD";
 		const char * TOKEN_BORDER_MARGIN_THRESHOLD = "BORDER_MARGIN_THRESHOLD";
@@ -95,7 +99,8 @@ namespace wustl_mm {
 		char SSE_FILE_NAME[100];
 		char VRML_HELIX_FILE_NAME[100];
 		char VRML_SHEET_FILE_NAME[100];
-		char PDB_FILE_NAME[100];
+		char SEQUENCE_FILE_NAME[100];
+		char SEQUENCE_FILE_TYPE[100];
 		char MRC_FILE_NAME[100];
 		double EUCLIDEAN_DISTANCE_THRESHOLD = 15;
 		int BORDER_MARGIN_THRESHOLD = 3;
@@ -196,8 +201,10 @@ namespace wustl_mm {
 				strcpy(VRML_HELIX_FILE_NAME, stringValue);
 			} else if(strcmp(token, TOKEN_VRML_SHEET_FILE_NAME) == 0) {
 				strcpy(VRML_SHEET_FILE_NAME, stringValue);
-			} else if(strcmp(token, TOKEN_PDB_FILE_NAME) == 0) {
-				strcpy(PDB_FILE_NAME, stringValue);
+			} else if(strcmp(token, TOKEN_SEQUENCE_FILE_NAME) == 0) {
+				strcpy(SEQUENCE_FILE_NAME, stringValue);
+			} else if(strcmp(token, TOKEN_SEQUENCE_FILE_TYPE) == 0) {
+				strcpy(SEQUENCE_FILE_TYPE, stringValue);
 			} else if(strcmp(token, TOKEN_MRC_FILE_NAME) == 0) {
 				strcpy(MRC_FILE_NAME, stringValue);
 			} else if(strcmp(token, TOKEN_EUCLIDEAN_DISTANCE_THRESHOLD) == 0) {
@@ -263,8 +270,10 @@ namespace wustl_mm {
 					fscanf(fin, "%s", &VRML_HELIX_FILE_NAME);
 				} else if(strcmp(token, TOKEN_VRML_SHEET_FILE_NAME) == 0) {
 					fscanf(fin, "%s", &VRML_SHEET_FILE_NAME);
-				} else if(strcmp(token, TOKEN_PDB_FILE_NAME) == 0) {
-					fscanf(fin, "%s", &PDB_FILE_NAME);
+				} else if(strcmp(token, TOKEN_SEQUENCE_FILE_NAME) == 0) {
+					fscanf(fin, "%s", &SEQUENCE_FILE_NAME);
+				} else if(strcmp(token, TOKEN_SEQUENCE_FILE_TYPE) == 0) {
+					fscanf(fin, "%s", &SEQUENCE_FILE_TYPE);
 				} else if(strcmp(token, TOKEN_MRC_FILE_NAME) == 0) {
 					fscanf(fin, "%s", &MRC_FILE_NAME);
 				} else if(strcmp(token, TOKEN_EUCLIDEAN_DISTANCE_THRESHOLD) == 0) {
