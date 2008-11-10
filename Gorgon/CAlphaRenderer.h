@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.26  2008/11/07 21:32:21  ssa1
+//   Fixing returning of the actual c++ pdbatom object instead of a copy
+//
 //   Revision 1.25  2008/10/10 14:25:55  ssa1
 //   Setting the cost functions to scale with the edge length
 //
@@ -76,7 +79,7 @@ namespace wustl_mm {
 			Vector3DFloat Get3DCoordinates(int subsceneIndex, int ix0, int ix1 = -1, int ix2 = -1, int ix3 = -1, int ix4 = -1);
 
 			// Controlling the atom vector
-			int AddAtom(PDBAtom atom);
+			PDBAtom * AddAtom(PDBAtom atom);
 			PDBAtom * GetAtom(unsigned long long index);
 			PDBAtom * GetAtomFromHitStack(int subsceneIndex, bool forceTrue, int ix0, int ix1, int ix2, int ix3, int ix4);
 			void DeleteAtom(unsigned long long index);
@@ -106,13 +109,10 @@ namespace wustl_mm {
 			bonds.clear();
 		}
 
-		int CAlphaRenderer::AddAtom(PDBAtom atom) {
-		  	int index;
-			index = atoms.size();
-			atom.SetSerial(index);
+		PDBAtom * CAlphaRenderer::AddAtom(PDBAtom atom) {
 			atoms[atom.GetHashKey()] = atom;
 			UpdateBoundingBox();
-			return index;
+			return &atoms[atom.GetHashKey()];
 		}
 
 		void CAlphaRenderer::AddBond(PDBBond bond) {
