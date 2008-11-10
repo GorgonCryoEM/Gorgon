@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.12  2008/08/27 15:26:52  marshm
+#   Updates to SequenceView.  Updated coloring scheme for correspondence matches.
+#
 #   Revision 1.11  2008/08/06 06:21:37  ssa1
 #   Tracing protein path, for SSE Correspondance matching
 #
@@ -118,7 +121,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
         self.checkOk()
         
     def getSequenceFile(self):
-        self.ui.lineEditSequenceFile.setText(self.openFile("Load Helix Length File", "PDB Helix Annotations (*.pdb)"))
+        self.ui.lineEditSequenceFile.setText(self.openFile("Load Helix Length File", "Sequence with SSE predictions (*.seq)\nPDB Helix Annotations (*.pdb)"))
         self.checkOk()
     
     def checkOk(self):
@@ -156,7 +159,12 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
         self.viewer.correspondenceEngine.setConstant("SSE_FILE_NAME", str(self.ui.lineEditHelixLengthFile.text()))
         self.viewer.correspondenceEngine.setConstant("VRML_HELIX_FILE_NAME", str(self.ui.lineEditHelixLocationFile.text()))
         self.viewer.correspondenceEngine.setConstant("MRC_FILE_NAME", str(self.ui.lineEditSkeletonFile.text()))
-        self.viewer.correspondenceEngine.setConstant("PDB_FILE_NAME", str(self.ui.lineEditSequenceFile.text()))
+        sequenceName =  str(self.ui.lineEditSequenceFile.text())
+        self.viewer.correspondenceEngine.setConstant("SEQUENCE_FILE_NAME", sequenceName)
+        if sequenceName.split('.')[-1].lower() == 'pdb':
+            self.viewer.correspondenceEngine.setConstant("SEQUENCE_FILE_TYPE", "PDB")
+        elif sequenceName.split('.')[-1].lower() == 'seq':
+            self.viewer.correspondenceEngine.setConstant("SEQUENCE_FILE_TYPE", "SEQ")
         
         #Tab 2
         if(self.ui.radioButtonAbsoluteDifference.isChecked()):
