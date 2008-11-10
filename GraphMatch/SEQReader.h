@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.2  2008/11/10 16:15:22  ssa1
+//   Adding in ifdef statements to support compilation
+//
 
 
 #ifndef SEQREADER_H
@@ -25,7 +28,7 @@
 #include <fstream>
 #include <cstdlib>
 #include <Foundation/StringUtils.h>
-
+#define DEBUG
 #ifdef DEBUG
 	#include <iostream>
 #endif
@@ -46,6 +49,9 @@ namespace wustl_mm {
 		
 		StandardGraph * SEQReader::ReadFile(char* fileName)
 		{
+			#ifdef DEBUG
+			cout << "In SEQReader::ReadFile" << endl;
+			#endif
 			//Reading the file for start residue # (possibly), sequence, and predicted SSEs
 			ifstream fin(fileName);
 			string str;
@@ -81,7 +87,6 @@ namespace wustl_mm {
 				cout << "\nSequence:\n" << sequence << endl;
 				cout << "\nPredicted SSEs:\n" << predictedSSEs << endl;
 			#endif
-			
 			if (sequence.length() != predictedSSEs.length()) return NULL;
 			fin.close();
 		
@@ -93,7 +98,7 @@ namespace wustl_mm {
 			char currentChar = predictedSSEs[0];
 			int startIndex, stopIndex, length;
 			char ch;
-			string substr;
+			string substring;
 			vector<SecondaryStructure*> structures;
 			SecondaryStructure * currentStructure;
 			bool add;
@@ -107,7 +112,13 @@ namespace wustl_mm {
 				{
 					stopIndex = i - 1;
 					length = stopIndex - startIndex + 1;
-					substr = sequence.substr(startIndex, length);
+#ifdef DEBUG 
+cout << "error here?" << endl;
+#endif
+					substring = sequence.substr(startIndex, length);
+#ifdef DEBUG 
+cout << "error here?" << endl;
+#endif
 					if (currentChar == helixChar)
 					{
 						currentStructure = new SecondaryStructure();			
@@ -118,13 +129,16 @@ namespace wustl_mm {
 						currentStructure->endPosition = stopIndex+1;
 						currentStructure->secondaryStructureType = GRAPHEDGE_HELIX;
 						add = true;
+#ifdef DEBUG 
+cout << "error here?" << endl;
+#endif
 						for(unsigned int i = 0; i < structures.size(); i++) {
 							add = add && !((currentStructure->startPosition == structures[i]->startPosition) && 
 								(currentStructure->endPosition == structures[i]->endPosition));
 						}
 						
 						#ifdef DEBUG
-							cout << "\nHelix(" << startIndex+1 << ',' << stopIndex+1 << "):" << substr << endl;
+							cout << "\nHelix(" << startIndex+1 << ',' << stopIndex+1 << "):" << substring << endl;
 							cout << "Structure(" << currentStructure->GetStartPosition() << ',';
 							cout << currentStructure->GetEndPosition() << "):";
 							cout << " Serial=" << currentStructure->GetSerialNumber(); 
@@ -143,7 +157,7 @@ namespace wustl_mm {
 					currentChar = ch;
 				}
 			}
-			substr = sequence.substr(startIndex);
+			substring = sequence.substr(startIndex);
 			if (currentChar == helixChar) 
 			{
 				currentStructure = new SecondaryStructure();
@@ -160,7 +174,7 @@ namespace wustl_mm {
 				}
 				
 				#ifdef DEBUG
-					cout << "\nHelix(" << startIndex+1 << ',' << predictedSSEs.length() << "):" << substr << endl;
+					cout << "\nHelix(" << startIndex+1 << ',' << predictedSSEs.length() << "):" << substring << endl;
 					cout << "Structure(" << currentStructure->GetStartPosition() << ',';
 					cout << currentStructure->GetEndPosition() << "):";
 					cout << " Serial=" << currentStructure->GetSerialNumber(); 
