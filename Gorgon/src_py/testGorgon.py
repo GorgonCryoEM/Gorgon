@@ -27,10 +27,11 @@ if __name__ == '__main__':
     renderer = mychain.getViewer().renderer
     
     SequenceView.renderMockSidechains(mychain)
-    
+    atoms = []
     for i in mychain.residueRange():
         atom = mychain[i].getAtom('CA')
-        renderer.addAtom(atom)
+        atom = renderer.addAtom(atom)
+        mychain[i].addAtomObject(atom) #The residues need to reference the new atom objects created when we add them to the renderer
     
     print "mychain.getViewer() is window.viewers['calpha']?",  mychain.getViewer() is window.viewers['calpha']
     
@@ -47,10 +48,14 @@ if __name__ == '__main__':
     #Note: the line below doesn't cause the change (no mock sidechains) to be displayed
     viewer.emitModelChanged()
     print "There should now be no mock sidechains displayed."
+    
+    
+    ''' The code below is old
     #Note: base_viewer.modelChanged()doesn't seem to pick up on changes in atom attributes
     
     #On the other hand, if we delete the atoms from the renderer, and add them back to the renderer, 
     #then base_viewer.modelChanged() does cause the changes to be applied
+    '''
     '''
     for i in mychain.residueRange():
         atom = mychain[i].getAtom('CA')

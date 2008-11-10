@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.14  2008/11/06 05:29:04  ssa1
+#   CGI submission milestone for Interactive Skeletonization, and theme support, and fixing (hopefully) mac-os flicker bug
+#
 #   Revision 1.13  2008/11/04 16:13:21  colemanr
 #   Loading a sequence with SSE predictions from a *.seq file is now
 #   seperate from loading a model.  Also, two chain objects are now passed
@@ -147,7 +150,8 @@ class CAlphaViewer(BaseViewer):
                 atom = mychain[i].getAtom('CA')
                 if atom == None:
                     continue
-                renderer.addAtom(atom)
+                atom = renderer.addAtom(atom)
+                mychain[i].addAtomObject(atom)
         
         if not self.fileName.isEmpty():
             self.setCursor(QtCore.Qt.WaitCursor)
