@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.10  2008/11/04 16:09:45  colemanr
+#   no longer import ui_dialog_calpha_atom_placer - coded by hand now
+#
 #   Revision 1.9  2008/10/30 21:13:26  colemanr
 #   no longer relies on deprecated GAtom objects, displays the correct
 #   residue symbol for the selected index, no longer depends on the output
@@ -175,7 +178,7 @@ class CAlphaAtomPlacerForm(QtGui.QWidget):
         atom = residue.getAtom(atom_name)
         if atom_name == 'CA':
             viewer = self.app.viewers['calpha']
-            viewer.renderer.addAtom(atom)
+            residue.addAtomObject( viewer.renderer.addAtom(atom) )
             if not viewer.loaded:
                 viewer.dirty = False
                 viewer.loaded = True

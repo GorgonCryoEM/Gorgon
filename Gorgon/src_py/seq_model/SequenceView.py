@@ -113,11 +113,11 @@ class SequenceDock(QtGui.QDockWidget):
         else:
             self.seqWidget.structureEditor.clearMockSidechains(self.currentChainModel)         
        
-        for i in self.currentChainModel.residueRange():
-            atom = self.currentChainModel[i].getAtom('CA')
-            if atom:
-                viewer.renderer.deleteAtom(atom.getHashKey())
-                viewer.renderer.addAtom(atom)
+        #for i in self.currentChainModel.residueRange():
+            #atom = self.currentChainModel[i].getAtom('CA')
+            #if atom:
+                #viewer.renderer.deleteAtom(atom.getHashKey())
+                #atom = viewer.renderer.addAtom(atom)
                 
         viewer.emitModelChanged()
             
@@ -449,9 +449,9 @@ class SequenceView(QtGui.QWidget):
             continue
         atom = self.currentChainModel[i].getAtom('CA')
         if atom:
-            renderer.deleteAtom(atom.getHashKey())
+            #renderer.deleteAtom(atom.getHashKey())
             atom.setSelected(False)
-            renderer.addAtom(atom)
+            #atom = renderer.addAtom(atom)
     self.sequence.setSelection(newSelection,removeOne,addOne,addRange)
     self.currentChainModel.setSelection(newSelection,removeOne,addOne,addRange)
     
@@ -462,9 +462,9 @@ class SequenceView(QtGui.QWidget):
     if not selectedAtom:
         return
     
-    renderer.deleteAtom(selectedAtom.getHashKey())
+    #renderer.deleteAtom(selectedAtom.getHashKey())
     selectedAtom.setSelected(True)
-    renderer.addAtom(selectedAtom)
+    #selectedAtom = renderer.addAtom(selectedAtom)
     
     dock.app.mainCamera.centerOnSelectedAtom()
     
@@ -725,8 +725,8 @@ def renderCAlphas(chain):
   for index in chain.residueRange():
     res=chain[index]
     if 'CA' in res.getAtomNames():
-        thisAtom=res.getAtom('CA')
-        Chain.getViewer().renderer.addAtom(groel[index].getAtom('CA'))
+        thisAtom = Chain.getViewer().renderer.addAtom(res.getAtom('CA'))
+        res.addAtomObject(thisAtom)
 
         if index-1 in chain.residueList:
             previousRes=chain[index-1]

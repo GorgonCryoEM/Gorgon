@@ -25,8 +25,7 @@ class StructureEditor(QtGui.QWidget):
         self.CAlabel = QtGui.QLabel('C-Alplha Interval')
         self.mockSidechainsCheckBox = QtGui.QCheckBox('Mock Sidechains')
         self.acceptButton = QtGui.QPushButton('Accept')
-        
-        
+                
         self.setupUi()
         
         self.connect(self.back1resButton, QtCore.SIGNAL('clicked()'), self.prevButtonPress)
@@ -43,10 +42,12 @@ class StructureEditor(QtGui.QWidget):
             possibleAtoms = self.possibleAtomsList
             possibilityNum = self.possibilityNumSpinBox.value()
             chosenAtom = possibleAtoms[possibilityNum-1]
+            viewer = self.parentWidget().parentWidget().viewer
             for atom in possibleAtoms:
                 if atom is chosenAtom:
                     continue
                 else:
+                    viewer.renderer.deleteAtom(atom.getHashKey())
                     del atom
             #self.parentWidget()=>SequenceWidget, self.parentWidget().parentWidget() => SequenceDock
             viewer = self.parentWidget().parentWidget().viewer
@@ -83,14 +84,18 @@ class StructureEditor(QtGui.QWidget):
             elif self.atomicForwardRadioButton.isChecked():
                 self.nextButtonPress()
                 
-    def choosePossibleAtomToDisplay(self,  choiceNum):
+    def choosePossibleAtomToDisplay(self, choiceNum):
         if choiceNum == 0:
             return
         viewer = self.parentWidget().parentWidget().viewer
         if self.previouslyChosenPossibleAtomToDisplay:
-            viewer.renderer.deleteAtom(self.previouslyChosenPossibleAtomToDisplay.getHashKey())
+            self.previouslyChosenPossibleAtomToDisplay.setColor(0, 1, 0, 1)
+            #viewer.renderer.deleteAtom(self.previouslyChosenPossibleAtomToDisplay.getHashKey())
+        #atomToDisplay = viewer.renderer.addAtom(self.possibleAtomsList[choiceNum-1])
+        #self.possibleAtomsList.pop(choiceNum - 1)
+        #self.possibleAtomsList.insert(choiceNum-1, atomToDisplay)
         atomToDisplay = self.possibleAtomsList[choiceNum-1]
-        viewer.renderer.addAtom(atomToDisplay)
+        atomToDisplay.setColor(0, 1, 1, 1)
         viewer.emitModelChanged()
         self.previouslyChosenPossibleAtomToDisplay = atomToDisplay
             
@@ -108,7 +113,8 @@ class StructureEditor(QtGui.QWidget):
         #self.parentWidget()=>SequenceWidget, self.parentWidget().parentWidget() => SequenceDock
         skeletonViewer = self.parentWidget().parentWidget().app.viewers['skeleton']
         meshRenderer = skeletonViewer.renderer
-        atom = self.currentChainModel[ int( str(self.atomicResNumbers[0].text()) ) ].getAtom('CA')
+        residue = self.currentChainModel[ int( str(self.atomicResNumbers[0].text()) ) ]
+        atom = residue.getAtom('CA')
         if not atom:
             self.possibilityNumSpinBox.setRange(0, 0)
             self.numPossibilities.setText('of ?')
@@ -166,11 +172,18 @@ class StructureEditor(QtGui.QWidget):
             self.possibilityNumSpinBox.setRange(1, len(self.possibleAtomsList))
             self.possibilityNumSpinBox.setValue(1)
             
-            for atom in self.possibleAtomsList:
-                if atom.getResSeq() == self.possibilityNumSpinBox.value():
+            for index in range( len(self.possibleAtomsList) ):
+                atom = self.possibleAtomsList[index]
+                atom.setColor(0, 1, 0, 1)
+                self.possibleAtomsList.pop(index)
+                atom = self.parentWidget().parentWidget().viewer.renderer.addAtom(atom)
+                self.possibleAtomsList.insert(index, atom)
+                
+                if index + 1 == self.possibilityNumSpinBox.value():
+                    atom.setColor(0, 1, 1, 1)
                     self.previouslyChosenPossibleAtomToDisplay = atom #We remove this atom from the viewer when we display a different possibility
-                    self.parentWidget().parentWidget().viewer.renderer.addAtom(atom)
-                    self.parentWidget().parentWidget().viewer.emitModelChanged()
+                    
+            self.parentWidget().parentWidget().viewer.emitModelChanged()
     
     def forwardBackwardRadioButtonChange(self):
         if self.atomicForwardRadioButton.isChecked():
@@ -540,9 +553,10 @@ class CommandAcceptAtomPlacement(QtGui.QUndoCommand):
             self.bondBefore = bondBefore
             self.bondAfter = bondAfter
         def redo(self):
+            self.chosenAtom = self.viewer.renderer.addAtom(self.chosenAtom)
             self.currentChainModel[self.resSeqNum].addAtomObject(self.chosenAtom)
-            self.currentChainModel[self.resSeqNum].setCAlphaColorToDefault()      
-            self.viewer.renderer.addAtom(self.chosenAtom)
+            self.currentChainModel[self.resSeqNum].setCAlphaColorToDefault() 
+            
             if self.bondBefore:
                 self.viewer.renderer.addBond(self.bondBefore)
             if self.bondAfter:

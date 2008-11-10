@@ -18,12 +18,12 @@ cAlphaViewer=window.viewers['calpha']
 # Instantiate an Atom
 rawAtom=PDBAtom('AAAA', 'A', 1, 'CA')
 rawAtom.setPosition(Vector3DFloat(-.5,-0.5,-0.5))
-cAlphaViewer.renderer.addAtom(rawAtom)
+rawAtom = cAlphaViewer.renderer.addAtom(rawAtom) #A new PDBAtom is returned by this function, and rawAtom needs to refer to it
     
 # Instantiate an Second Atom
 rawAtom2=PDBAtom('AAAA', 'A', 2, 'CA')
 rawAtom2.setPosition(Vector3DFloat(.5,0.5,0.5))
-cAlphaViewer.renderer.addAtom(rawAtom2)
+rawAtom2 = cAlphaViewer.renderer.addAtom(rawAtom2)
 
 # Confirm that these accessor functions are working
 key=rawAtom2.getHashKey()
