@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.34  2008/11/07 21:32:21  ssa1
+//   Fixing returning of the actual c++ pdbatom object instead of a copy
+//
 //   Revision 1.33  2008/11/07 21:22:25  ssa1
 //   Fixing memory corruption errors when python garbage collects c++ objects
 //
@@ -259,7 +262,7 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("getMin", &CAlphaRenderer::GetMin)
 		.def("getMax", &CAlphaRenderer::GetMax)
 		.def("get3DCoordinates", &CAlphaRenderer::Get3DCoordinates)
-		.def("addAtom", &CAlphaRenderer::AddAtom)
+		.def("addAtom", &CAlphaRenderer::AddAtom, return_value_policy<reference_existing_object>())
 		.def("getAtom", &CAlphaRenderer::GetAtom, return_value_policy<reference_existing_object>())
 		.def("getAtomCount", &CAlphaRenderer::GetAtomCount)
 		.def("deleteAtom", &CAlphaRenderer::DeleteAtom)		
