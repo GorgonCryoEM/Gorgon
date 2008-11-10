@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.11  2008/09/29 16:19:30  ssa1
+//   Adding in CVS meta information
+//
 
 
 #ifndef BACK_END_INTERFACE_H
@@ -19,6 +22,10 @@
 #include "GlobalConstants.h"
 #include "QueryEngine.h"
 #include "LinkedNode.h"
+
+#ifdef DEBUG
+	#include <iostream>
+#endif
 
 using namespace std;
 
@@ -86,6 +93,9 @@ namespace wustl_mm {
 		}
 
 		void BackEndInterface::LoadSequenceGraph() {
+			#ifdef DEBUG
+			cout << "In BackEndInterface::LoadSequenceGraph" << endl;
+			#endif
 			if(sequence != NULL) {
 				delete sequence;
 			}
