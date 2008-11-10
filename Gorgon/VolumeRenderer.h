@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.32  2008/11/06 20:34:23  ssa1
+//   Proper lighting for bounding boxes
+//
 //   Revision 1.31  2008/11/06 05:29:04  ssa1
 //   CGI submission milestone for Interactive Skeletonization, and theme support, and fixing (hopefully) mac-os flicker bug
 //
@@ -42,8 +45,8 @@
 #include <GraySkeletonCPP/VolumeFormatConverter.h>
 #include <ProteinMorph/NonManifoldMesh.h>
 #include <MathTools/Vector3D.h>
-
-
+#include <Foundation/Octree.h>
+#include <queue>
 
 using namespace std;
 
@@ -60,6 +63,9 @@ namespace wustl_mm {
 		#ifndef _WIN32
 			typedef int PFNGLTEXIMAGE3DPROC;
 		#endif
+
+		typedef Octree<OctreeProjectionTestMinMaxStruct> VolumeRendererOctreeType;
+		typedef OctreeNode<OctreeProjectionTestMinMaxStruct> VolumeRendererOctreeNodeType;
 
 		class VolumeRenderer : public Renderer {
 		public:
@@ -99,9 +105,13 @@ namespace wustl_mm {
 			bool CalculateSolidRendering();
 			bool CalculateDisplay();
 			void Load3DTexture();
+			void InitializeOctree();
+			void InitializeOctreeTag(VolumeRendererOctreeNodeType * node);
+			void CalculateOctreeNode(VolumeRendererOctreeNodeType * node);
 			void MarchingCube(Volume * vol, NonManifoldMesh_NoTags * mesh, const float iso_level, int iX, int iY, int iZ, int iScale);
 			int Smallest2ndPower(int value);
 		private:
+			int marchingCubeCallCount;
 			bool drawEnabled;
 			bool textureLoaded;
 			int textureSizeX, textureSizeY, textureSizeZ;
@@ -114,6 +124,7 @@ namespace wustl_mm {
 			Volume * cuttingVolume;
 			NonManifoldMesh_NoTags * surfaceMesh;
 			NonManifoldMesh_NoTags * cuttingMesh;
+			VolumeRendererOctreeType * octree;
 			#ifdef _WIN32
 				PFNGLTEXIMAGE3DPROC glTexImage3D;
 			#endif
@@ -124,6 +135,7 @@ namespace wustl_mm {
 			viewingType = VIEWING_TYPE_ISO_SURFACE;
 			surfaceMesh = new NonManifoldMesh_NoTags();
 			dataVolume = NULL;
+			octree = NULL;
 			surfaceValue = 1.5;
 			displayRadius = 1;
 			sampleInterval = 1;
@@ -140,6 +152,9 @@ namespace wustl_mm {
 			delete surfaceMesh;
 			if(dataVolume != NULL) {
 				delete dataVolume;
+			}
+			if(octree != NULL) {
+				delete octree;
 			}
 			delete cuttingMesh;
 			delete cuttingVolume;
@@ -275,7 +290,67 @@ namespace wustl_mm {
 			delete math;
 			delete sourceVol;
 			dataVolume = destVol;
+			InitializeOctree();
 			UpdateBoundingBox();
+		}
+
+		void VolumeRenderer::InitializeOctree() {
+			if(octree != NULL) {
+				delete octree;
+			}
+			unsigned int sizeX = dataVolume->getSizeX();
+			unsigned int sizeY = dataVolume->getSizeY();
+			unsigned int sizeZ = dataVolume->getSizeZ();
+			octree  = new VolumeRendererOctreeType(sizeX, sizeY, sizeZ);
+			for(unsigned int x = 0; x < sizeX-1; x++) {
+				for(unsigned int y = 0; y < sizeY-1; y++) {
+					for(unsigned int z = 0; z < sizeZ-1; z++) {
+						octree->AddNewLeaf(x, y, z, 1);
+					}
+				}
+			}
+			InitializeOctreeTag(octree->GetRoot());
+			float minVal, maxVal, val;
+			VolumeRendererOctreeNodeType * node;
+
+			for(unsigned int x = 0; x < sizeX-1; x++) {
+				for(unsigned int y = 0; y < sizeY-1; y++) {
+					for(unsigned int z = 0; z < sizeZ-1; z++) {
+						node = octree->GetLeaf(x, y, z);
+						minVal = MAX_FLOAT;
+						maxVal = MIN_FLOAT;
+						for(unsigned int xx = 0; xx < 2; xx++) {
+							for(unsigned int yy = 0; yy < 2; yy++) {
+								for(unsigned int zz = 0; zz < 2; zz++) {
+									val = dataVolume->getDataAt(x+xx, y+yy, z+zz);
+									minVal = min(minVal, val);
+									maxVal = max(maxVal, val);
+								}
+							}
+						}
+
+						while(node != NULL) {
+							node->tag.maxVal = max(node->tag.maxVal, maxVal);
+							node->tag.minVal = min(node->tag.minVal, minVal);
+							node = node->parent;
+						}
+					}
+				}
+			}
+		}
+
+		void VolumeRenderer::InitializeOctreeTag(VolumeRendererOctreeNodeType * node) {
+			if(node != NULL) {
+				OctreeProjectionTestMinMaxStruct tag;
+				tag.maxVal = MIN_FLOAT;
+				tag.minVal = MAX_FLOAT;
+				node->tag = tag;
+				if (!node->isLeaf) {
+					for(int i = 0; i < 8; i++) {
+						InitializeOctreeTag(node->children[i]);
+					}
+				}
+			}
 		}
 
 		void VolumeRenderer::Draw(int subSceneIndex, bool selectEnabled) {
@@ -354,23 +429,66 @@ namespace wustl_mm {
 			}
 		}
 
-		bool VolumeRenderer::CalculateSurface() {
-			surfaceMesh->Clear();
-			bool redraw = false;
-			if(drawEnabled && dataVolume != NULL) {
-				redraw = true;
-				int iX, iY, iZ;
-				int maxX = dataVolume->getSizeX();
-				int maxY = dataVolume->getSizeY();
-				int maxZ = dataVolume->getSizeZ();
-				for(iX = max(maxX/2 - displayRadius, 0); iX < min(maxX, maxX/2 + displayRadius); iX+=sampleInterval) {
-					for(iY = max(maxY/2 - displayRadius, 0); iY < min(maxY, maxY/2 + displayRadius); iY+=sampleInterval) {
-						for(iZ = max(maxZ/2 - displayRadius, 0); iZ < min(maxZ, maxZ/2 + displayRadius); iZ+=sampleInterval) {
-							MarchingCube(dataVolume, surfaceMesh, surfaceValue, iX, iY, iZ, sampleInterval);
+
+		void VolumeRenderer::CalculateOctreeNode(VolumeRendererOctreeNodeType * node) {
+			queue<VolumeRendererOctreeNodeType *> q;
+			q.push(node);
+
+			while(!q.empty()) {
+				node = q.front();
+				q.pop();
+				if((node->tag.minVal <= surfaceValue) && (node->tag.maxVal >= surfaceValue)) {
+					if(node->cellSize <= sampleInterval + sampleInterval) {
+						for(int i = 0; i < 8; i++) {
+							if(node->children[i] != NULL) {
+								MarchingCube(dataVolume, surfaceMesh, surfaceValue, node->children[i]->pos[0], node->children[i]->pos[1], node->children[i]->pos[2], sampleInterval);
+							}
+						}						
+					} else {
+						for(int i = 0; i < 8; i++) {
+							if(node->children[i] != NULL) {
+								q.push(node->children[i]);
+							}
 						}
 					}
 				}
 			}
+		}
+
+		bool VolumeRenderer::CalculateSurface() {
+			//appTimeManager.PushCurrentTime();
+			//surfaceMesh->Clear();
+			//marchingCubeCallCount = 0;
+			//bool redraw = false;
+			//if(drawEnabled && dataVolume != NULL) {
+			//	redraw = true;
+			//	int iX, iY, iZ;
+			//	int maxX = dataVolume->getSizeX();
+			//	int maxY = dataVolume->getSizeY();
+			//	int maxZ = dataVolume->getSizeZ();
+			//	for(iX = max(maxX/2 - displayRadius, 0); iX < min(maxX, maxX/2 + displayRadius); iX+=sampleInterval) {
+			//		for(iY = max(maxY/2 - displayRadius, 0); iY < min(maxY, maxY/2 + displayRadius); iY+=sampleInterval) {
+			//			for(iZ = max(maxZ/2 - displayRadius, 0); iZ < min(maxZ, maxZ/2 + displayRadius); iZ+=sampleInterval) {
+			//				MarchingCube(dataVolume, surfaceMesh, surfaceValue, iX, iY, iZ, sampleInterval);
+			//			}
+			//		}
+			//	}
+			//}
+			//appTimeManager.PopAndDisplayTime("Calculating Surface marching-cubes: %f seconds |");
+			//printf("Marching Cubes called %d times\n", marchingCubeCallCount); flushall();
+
+			appTimeManager.PushCurrentTime();
+			surfaceMesh->Clear();
+			marchingCubeCallCount = 0;
+			bool redraw = false;
+			if(drawEnabled && dataVolume != NULL && octree != NULL) {
+				redraw = true;
+				CalculateOctreeNode(octree->GetRoot());
+			}
+
+			appTimeManager.PopAndDisplayTime("Calculating Surface octree-based: %f seconds |");
+			printf("Marching Cubes called %d times\n", marchingCubeCallCount); flushall();
+			
 			return redraw;
 		}
 
@@ -460,6 +578,7 @@ namespace wustl_mm {
 				delete dataVolume;
 			}
 			dataVolume = VolumeFormatConverter::LoadVolume(fileName);
+			InitializeOctree();
 			UpdateBoundingBox();
 
 			#ifdef _WIN32
@@ -535,6 +654,7 @@ namespace wustl_mm {
 			}
 		}
 		void VolumeRenderer::MarchingCube(Volume * vol, NonManifoldMesh_NoTags * mesh, const float iso_level, int iX, int iY, int iZ, int iScale){
+			marchingCubeCallCount++;
 			extern int aiCubeEdgeFlags[256];
 			extern int a2iTriangleConnectionTable[256][16];
 
@@ -584,10 +704,6 @@ namespace wustl_mm {
 				
 							vertexIds[iEdge] = mesh->AddHashedVertex(Vector3DFloat(asEdgeVertex[iEdge][0], asEdgeVertex[iEdge][1], asEdgeVertex[iEdge][2]), GetHashKey(iX, iY, iZ, iEdge, iScale)); 
 					}
-			}
-			if(viewingType == VIEWING_TYPE_CROSS_SECTION)
-			{
-				printf("\n ");
 			}
 
 
@@ -649,6 +765,10 @@ namespace wustl_mm {
 				delete dataVolume;
 			}
 			dataVolume = NULL;
+			if(octree != NULL) {
+				delete octree;
+			}
+			octree = NULL;
 			if(textureLoaded) {
 				glDeleteTextures(1, &textureName);
 				textureLoaded = false;
