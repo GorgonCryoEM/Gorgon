@@ -10,6 +10,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.9  2008/09/29 16:19:30  ssa1
+//   Adding in CVS meta information
+//
 
 #ifndef QUERY_ENGINE_H
 #define QUERY_ENGINE_H
@@ -21,10 +24,16 @@
 #include "WongMatch15ConstrainedNoFuture.h"
 #include "WongMatch15ConstrainedOnlyA.h"
 #include "PDBReader.h"
+#include "SEQReader.h"
 #include "SkeletonReader.h"
 #include "GlobalConstants.h"
 #include "GraphGenerator.h"
 #include <ctime>
+#include <string>
+
+#ifdef DEBUG
+	#include <iostream>
+#endif
 
 using namespace std;
 
@@ -44,13 +53,22 @@ namespace wustl_mm {
 
 
 		StandardGraph * QueryEngine::LoadSequenceGraph() {
+			#ifdef DEBUG
+				cout << "In QueryEngine::LoadSequenceGraph" << endl;
+			#endif
 			clock_t start, finish;
 			StandardGraph * graph;
+			string type = SEQUENCE_FILE_TYPE; //easier than doing comparison with a char array
 			#ifdef VERBOSE
 				printf("Pattern Graph \n");
 			#endif
 			start = clock();
-			graph = PDBReader::ReadFile(PDB_FILE_NAME);
+			if (type == "PDB")
+				graph = PDBReader::ReadFile(SEQUENCE_FILE_NAME);
+			else if (type == "SEQ")
+				graph = SEQReader::ReadFile(SEQUENCE_FILE_NAME);
+			else 
+				return NULL;
 			finish = clock();
 			#ifdef VERBOSE
 				printf("\tReading Pattern file Took %f seconds.\n", (double) (finish - start) / (double) CLOCKS_PER_SEC ) ;
