@@ -14,7 +14,7 @@ class StructureEditor(QtGui.QWidget):
         self.currentChainModel = currentChainModel
         self.atomJustAdded = None
         self.possibleAtomsList = []
-        self.previouslyChosenPossibleAtomToDisplay = None
+        self.previouslySelectedPossibleAtom = None
         self.undoStack = QtGui.QUndoStack(self)
         
         #These go on the left hand side
@@ -31,7 +31,7 @@ class StructureEditor(QtGui.QWidget):
         self.connect(self.back1resButton, QtCore.SIGNAL('clicked()'), self.prevButtonPress)
         self.connect(self.forward1resButton, QtCore.SIGNAL('clicked()'), self.nextButtonPress)
         self.connect(self.acceptButton, QtCore.SIGNAL('clicked()'),  self.acceptButtonPress)
-        self.connect(self.possibilityNumSpinBox,  QtCore.SIGNAL('valueChanged(int)'),  self.choosePossibleAtomToDisplay)
+        self.connect(self.possibilityNumSpinBox,  QtCore.SIGNAL('valueChanged(int)'),  self.choosePossibleAtom)
         self.connect(self.atomicForwardRadioButton,  QtCore.SIGNAL('toggled(bool)'), self.forwardBackwardRadioButtonChange)
         self.connect(self.undoButton,  QtCore.SIGNAL('clicked()'), self.undoStack.undo)
         self.connect(self.redoButton,  QtCore.SIGNAL('clicked()'), self.undoStack.redo)
@@ -39,16 +39,16 @@ class StructureEditor(QtGui.QWidget):
     def acceptButtonPress(self):
         currentWidget = self.tabWidget.currentWidget()
         if currentWidget is self.atomicTab:
-            possibleAtoms = self.possibleAtomsList
             possibilityNum = self.possibilityNumSpinBox.value()
-            chosenAtom = possibleAtoms[possibilityNum-1]
+            chosenAtom = self.possibleAtomsList[possibilityNum-1]
             viewer = self.parentWidget().parentWidget().viewer
-            for atom in possibleAtoms:
+            for atom in self.possibleAtomsList:
                 if atom is chosenAtom:
                     continue
                 else:
                     viewer.renderer.deleteAtom(atom.getHashKey())
                     del atom
+            self.possibleAtomsList = []
             #self.parentWidget()=>SequenceWidget, self.parentWidget().parentWidget() => SequenceDock
             viewer = self.parentWidget().parentWidget().viewer
             if self.atomicBackwardRadioButton.isChecked():
@@ -56,48 +56,26 @@ class StructureEditor(QtGui.QWidget):
             elif self.atomicForwardRadioButton.isChecked():
                 resSeqNum = int(self.atomicResNumbers[1].text())
             chosenAtom.setResSeq(resSeqNum)
-            bondBefore = None
-            bondAfter = None
-            if resSeqNum - 1 in self.currentChainModel.residueRange():
-                prevCAlpha = self.currentChainModel[resSeqNum - 1].getAtom('CA')
-                if prevCAlpha:
-                    print "adding a bond before"
-                    bondBefore=PDBBond()
-                    bondBefore.setAtom0Ix(prevCAlpha.getHashKey())
-                    bondBefore.setAtom1Ix(chosenAtom.getHashKey())
-            if resSeqNum + 1 in self.currentChainModel.residueRange():
-                nextCAlpha = self.currentChainModel[resSeqNum + 1].getAtom('CA')
-                if nextCAlpha:
-                    print "adding a bond after"
-                    bondAfter = PDBBond()
-                    bondAfter.setAtom0Ix(nextCAlpha.getHashKey())
-                    bondAfter.setAtom1Ix(chosenAtom.getHashKey())
-            
-            
-            command = CommandAcceptAtomPlacement( self.currentChainModel, resSeqNum, chosenAtom, viewer, bondBefore, bondAfter,  
-                                "Accept Location of C-alpha atom for residue #%s" % resSeqNum)
+            command = CommandAcceptAtomPlacement( self.currentChainModel, self, resSeqNum, chosenAtom, viewer,  
+                                description = "Accept Location of C-alpha atom for residue #%s" % resSeqNum )
             self.undoStack.push(command)
-            self.atomJustAdded = chosenAtom
             
             if self.atomicBackwardRadioButton.isChecked():
                 self.prevButtonPress()
             elif self.atomicForwardRadioButton.isChecked():
                 self.nextButtonPress()
                 
-    def choosePossibleAtomToDisplay(self, choiceNum):
+    def choosePossibleAtom(self, choiceNum):
         if choiceNum == 0:
             return
         viewer = self.parentWidget().parentWidget().viewer
-        if self.previouslyChosenPossibleAtomToDisplay:
-            self.previouslyChosenPossibleAtomToDisplay.setColor(0, 1, 0, 1)
-            #viewer.renderer.deleteAtom(self.previouslyChosenPossibleAtomToDisplay.getHashKey())
-        #atomToDisplay = viewer.renderer.addAtom(self.possibleAtomsList[choiceNum-1])
-        #self.possibleAtomsList.pop(choiceNum - 1)
-        #self.possibleAtomsList.insert(choiceNum-1, atomToDisplay)
+        if self.previouslySelectedPossibleAtom:
+            self.previouslySelectedPossibleAtom.setColor(0, 1, 0, 1)
+            
         atomToDisplay = self.possibleAtomsList[choiceNum-1]
         atomToDisplay.setColor(0, 1, 1, 1)
         viewer.emitModelChanged()
-        self.previouslyChosenPossibleAtomToDisplay = atomToDisplay
+        self.previouslySelectedPossibleAtom = atomToDisplay
             
     def clearMockSidechains(self,  chain):
         for index in chain.residueRange():
@@ -181,7 +159,7 @@ class StructureEditor(QtGui.QWidget):
                 
                 if index + 1 == self.possibilityNumSpinBox.value():
                     atom.setColor(0, 1, 1, 1)
-                    self.previouslyChosenPossibleAtomToDisplay = atom #We remove this atom from the viewer when we display a different possibility
+                    self.previouslySelectedPossibleAtom = atom #We remove this atom from the viewer when we display a different possibility
                     
             self.parentWidget().parentWidget().viewer.emitModelChanged()
     
@@ -242,16 +220,17 @@ class StructureEditor(QtGui.QWidget):
         if not newSelection:
             print 'In sequence_view.StructureEdit.setResidues().  The new selection is empty!'
             return
-        
-        if self.previouslyChosenPossibleAtomToDisplay and not (self.atomJustAdded is self.previouslyChosenPossibleAtomToDisplay): 
-            #If we did not add the atom to a residue, we want to remove it from the renderer
-            #self.parentWidget() is SequenceWidget & self.parentWidget().parentWidget() is SequenceDock
-            viewer = self.parentWidget().parentWidget().viewer
-            viewer.renderer.deleteAtom(self.previouslyChosenPossibleAtomToDisplay.getHashKey())
-            viewer.emitModelChanged()
-        
+        #self.parentWidget() is SequenceWidget & self.parentWidget().parentWidget() is SequenceDock
+        viewer = self.parentWidget().parentWidget().viewer
+        for atom in self.possibleAtomsList:
+            if atom is self.atomJustAdded: 
+                continue
+            else:
+                viewer.renderer.deleteAtom(atom.getHashKey())
+                viewer.emitModelChanged()
+        self.possbileAtomsList = []
         self.atomJustAdded = None
-        self.previouslyChosenPossibleAtomToDisplay = None
+        self.previouslySelectedPossibleAtom = None
         curResNum = newSelection[-1]
         
         for i in self.atomicResNames.keys():
@@ -544,27 +523,49 @@ class StructureEditor(QtGui.QWidget):
         self.setLayout(layout)
         
 class CommandAcceptAtomPlacement(QtGui.QUndoCommand):
-        def __init__(self, currentChainModel, resSeqNum, chosenAtom, viewer, bondBefore=None, bondAfter=None, description=None):
+        def __init__(self, currentChainModel, structureEditor, resSeqNum, chosenAtom, viewer, bondBefore=None, bondAfter=None, description=None):
             super(CommandAcceptAtomPlacement, self).__init__(description)
             self.currentChainModel = currentChainModel
+            self.structureEditor = structureEditor
             self.resSeqNum = resSeqNum
             self.chosenAtom = chosenAtom
             self.viewer = viewer
             self.bondBefore = bondBefore
             self.bondAfter = bondAfter
         def redo(self):
-            self.chosenAtom = self.viewer.renderer.addAtom(self.chosenAtom)
+            print "\nBefore error?"
+            #TODO: Fix segmentation fault!!!
+            atom = self.viewer.renderer.addAtom(self.chosenAtom) #Segmentation fault here if I click undo then redo
+            print "Before/After error?"
+            self.chosenAtom = atom
+            print "After error?"
             self.currentChainModel[self.resSeqNum].addAtomObject(self.chosenAtom)
             self.currentChainModel[self.resSeqNum].setCAlphaColorToDefault() 
-            
+            if self.resSeqNum - 1 in self.currentChainModel.residueRange():
+                prevCAlpha = self.currentChainModel[self.resSeqNum - 1].getAtom('CA')
+                if prevCAlpha:
+                    print "adding a bond before"
+                    self.bondBefore=PDBBond()
+                    self.bondBefore.setAtom0Ix(prevCAlpha.getHashKey())
+                    self.bondBefore.setAtom1Ix(self.chosenAtom.getHashKey())
+            if self.resSeqNum + 1 in self.currentChainModel.residueRange():
+                nextCAlpha = self.currentChainModel[self.resSeqNum + 1].getAtom('CA')
+                if nextCAlpha:
+                    print "adding a bond after"
+                    self.bondAfter = PDBBond()
+                    self.bondAfter.setAtom0Ix(nextCAlpha.getHashKey())
+                    self.bondAfter.setAtom1Ix(self.chosenAtom.getHashKey())
             if self.bondBefore:
                 self.viewer.renderer.addBond(self.bondBefore)
             if self.bondAfter:
                 self.viewer.renderer.addBond(self.bondAfter)
             self.viewer.emitModelChanged()
+            self.structureEditor.atomJustAdded = self.chosenAtom
+            
         def undo(self):
             self.currentChainModel[self.resSeqNum].clearAtom(self.chosenAtom.getName())
             self.viewer.renderer.deleteAtom(self.chosenAtom.getHashKey())
+
             if self.bondBefore:
                 #TODO: find out how to delete bond
                 #self.viewer.renderer.deleteBond(self.bondBefore.?) #The parameter is an integer
@@ -573,3 +574,8 @@ class CommandAcceptAtomPlacement(QtGui.QUndoCommand):
                 #self.viewer.renderer.deleteBond(self.bondAfter.?)
                 pass
             self.viewer.emitModelChanged()
+            
+            if self.structureEditor.atomicBackwardRadioButton.isChecked():
+                self.structureEditor.prevButtonPress()
+            elif self.structureEditor.atomicForwardRadioButton.isChecked():
+                self.structureEditor.nextButtonPress()
