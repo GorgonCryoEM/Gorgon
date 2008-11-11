@@ -11,6 +11,10 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.15  2008/11/10 19:36:11  colemanr
+#   Modified to work with the updated CAlphaRenderer.h--no longer need to
+#   delete and re-add atoms to the renderer to display changes
+#
 #   Revision 1.14  2008/11/06 05:29:04  ssa1
 #   CGI submission milestone for Interactive Skeletonization, and theme support, and fixing (hopefully) mac-os flicker bug
 #
@@ -56,6 +60,7 @@ from base_viewer import BaseViewer
 from calpha_atom_placer_form import CAlphaAtomPlacerForm
 from seq_model.SequenceView import SequenceDock
 from seq_model.Chain import Chain
+from correspondence.StructurePrediction import StructurePrediction
 
 try:
     from OpenGL.GL import *
@@ -124,6 +129,8 @@ class CAlphaViewer(BaseViewer):
         seqDockAct.setCheckable(True)
         seqDockAct.setChecked(False)
         def showDock():
+            if not self.predictedSSEsequence:
+                self.loadSeq()
             SequenceDock.changeDockVisibility(self.app, self, self.predictedSSEsequence, self.main_chain)
         self.connect(seqDockAct, QtCore.SIGNAL("triggered()"), showDock)
         self.app.actions.addAction("seqDock", seqDockAct)
@@ -178,20 +185,20 @@ class CAlphaViewer(BaseViewer):
                                             self.tr('Sequence possibly with SSE predictions (*.seq)') )
         fileName = unicode(fileName)
         if fileName:
-            self.predictedSSEsequence = Chain.load(fileName, self.app)
+            self.predictedSSEsequence = StructurePrediction.load(fileName, self.app)
     
     def createMenus(self):
         self.app.menus.addAction("file-open-calpha", self.app.actions.getAction("load_CAlpha"), "file-open")
         self.app.menus.addAction('file-open-sequence', self.app.actions.getAction('load_sequence'), 'file-open')
         self.app.menus.addAction("file-save-calpha", self.app.actions.getAction("save_CAlpha"), "file-save")
-        self.app.menus.addAction("file-close-calpha", self.app.actions.getAction("unload_CAlpha"), "file-close");
-        self.app.menus.addMenu("actions-calpha", self.tr("C-&Alpha Atoms"), "actions");
+        self.app.menus.addAction("file-close-calpha", self.app.actions.getAction("unload_CAlpha"), "file-close")
+        self.app.menus.addMenu("actions-calpha", self.tr("C-&Alpha Atoms"), "actions")
         self.app.menus.addAction("showSeqDock", self.app.actions.getAction("seqDock"), "actions-calpha")           
     
     def saveData(self):
         self.fileName = QtGui.QFileDialog.getSaveFileName(self, self.tr("Save Data"), "", 
                                                           self.tr('Atom Positions (*.pdb)'))
-        if not self.fileName.isEmpty():  
+        if not self.fileName.isEmpty():
             self.setCursor(QtCore.Qt.WaitCursor)
             selectedChain = self.main_chain
             selectedChain.saveToPDB(self.fileName)
