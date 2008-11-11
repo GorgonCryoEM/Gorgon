@@ -12,14 +12,14 @@ from libpyGORGON import CAlphaRenderer, PDBAtom,  PDBBond
 class SequenceDock(QtGui.QDockWidget):
     __dock = None
     
-    def __init__(self, main, viewer, predictedSSEsequence, currentChainModel, parent=None):
+    def __init__(self, main, viewer, structurePrediction, currentChainModel, parent=None):
         super(SequenceDock, self).__init__(parent)
         self.app = main
         self.currentChainModel = currentChainModel
-        self.predictedSSEsequence = predictedSSEsequence
+        self.structurePrediction = structurePrediction
         self.viewer=viewer
         self.skeletonViewer = self.app.viewers["skeleton"]
-        self.seqWidget = SequenceWidget( predictedSSEsequence, currentChainModel, self)
+        self.seqWidget = SequenceWidget( structurePrediction, currentChainModel, self)
         self.setWidget(self.seqWidget)
         self.createActions()
         SequenceDock.__dock = self
@@ -28,16 +28,16 @@ class SequenceDock(QtGui.QDockWidget):
             self.connect(self.app.viewers["calpha"], QtCore.SIGNAL("elementSelected (int, int, int, int, int, int, QMouseEvent)"), self.updateFromViewerSelection)    
     
     @classmethod
-    def changeDockVisibility(cls, main, viewer, predictedSSEsequence, currentChainModel):
-        if not predictedSSEsequence.residueRange():
+    def changeDockVisibility(cls, main, viewer, structurePrediction, currentChainModel):
+        if not structurePrediction.chain.residueRange():
             return
         if not currentChainModel.residueRange():
             currentChainModel = Chain('', main)
-            for i in predictedSSEsequence.residueRange():
+            for i in structurePrediction.chain.residueRange():
                 #This will not copy PDBAtom objects, but it will copy (not reference) the residue objects and place them in the new chain
                 #It will not copy any Secel objects (Helix, Strand, Sheet, Coil, Secel)
                 #Thus, it it prepares a clean chain object to begin building a model
-                resSymbol3 = predictedSSEsequence[i].symbol3
+                resSymbol3 = structurePrediction.chain[i].symbol3
                 res = Residue(resSymbol3, currentChainModel)
                 currentChainModel[i] = res
                 
@@ -50,7 +50,7 @@ class SequenceDock(QtGui.QDockWidget):
                 cls.__dock.app.removeDockWidget(cls.__dock)
         else:
             if main and viewer:
-                dock = SequenceDock(main, viewer, predictedSSEsequence, currentChainModel)
+                dock = SequenceDock(main, viewer, structurePrediction, currentChainModel)
                 main.addDockWidget(QtCore.Qt.LeftDockWidgetArea, dock)
                 dock.show()
             else:
@@ -79,8 +79,8 @@ class SequenceDock(QtGui.QDockWidget):
             structureEditor.atomicResNumbers[i].setText('?')
             structureEditor.atomicResNames[i].setText('?')
     
-    def changeSequenceSSE(self, predictedSSEsequence):
-        self.predictedSSEsequence
+    def changeSequenceSSE(self, structurePrediction):
+        self.structurePrediction = structurePrediction
     
     def closeEvent(self, event):
         self.app.actions.getAction("seqDock").setChecked(False)
@@ -105,32 +105,25 @@ class SequenceDock(QtGui.QDockWidget):
         selectedChain.setSelection([resNum])
     
     def toggleMockSideChains(self):
-        #TODO: determine if there is a way to update the display without deleting and re-adding atoms to the renderer
         viewer = self.viewer
         
         if self.seqWidget.structureEditor.mockSidechainsCheckBox.isChecked():
             self.seqWidget.structureEditor.renderMockSidechains(self.currentChainModel)
         else:
             self.seqWidget.structureEditor.clearMockSidechains(self.currentChainModel)         
-       
-        #for i in self.currentChainModel.residueRange():
-            #atom = self.currentChainModel[i].getAtom('CA')
-            #if atom:
-                #viewer.renderer.deleteAtom(atom.getHashKey())
-                #atom = viewer.renderer.addAtom(atom)
                 
         viewer.emitModelChanged()
             
 class SequenceWidget(QtGui.QWidget):
-    def __init__(self, predictedSSEsequence, currentChainModel, parent=None):
+    def __init__(self, structurePrediction, currentChainModel, parent=None):
         super(SequenceWidget, self).__init__(parent)
         self.currentChainModel = currentChainModel
         self.setMinimumSize(400,600)
-        self.scrollable = ScrollableSequenceView(predictedSSEsequence, currentChainModel, self)
+        self.scrollable = ScrollableSequenceView(structurePrediction, currentChainModel, self)
         self.scrollable.setMinimumSize(300, 180)
         self.structureEditor = StructureEditor(currentChainModel, self)
         
-        self.globalView=GlobalSequenceView(predictedSSEsequence, self)
+        self.globalView=GlobalSequenceView(structurePrediction, self)
         self.globalView.setLocalView(self.scrollable.seqView)
         self.globalView.updateViewportRange()
         self.setMaximumWidth(self.globalView.width())
@@ -155,7 +148,7 @@ class SequenceView(QtGui.QWidget):
   Most chains will be too big to fit on the screen on this class. Thus, a ScrollableSequenceView
   contains this class.
   """
-  def __init__(self, predictedSSEsequence, currentChainModel,parent=None):
+  def __init__(self, structurePrediction, currentChainModel, parent=None):
     super(SequenceView,self).__init__(parent)
     # Initialize font
     self.fontName='Arial'
@@ -163,9 +156,9 @@ class SequenceView(QtGui.QWidget):
     self.font=QtGui.QFont(self.fontName,self.fontSize)
 
     # Initialize sequence
-    #self.sequence = predictedSSEsequence
+    #self.structurePrediction = structurePrediction
     self.currentChainModel = currentChainModel
-    self.setSequence(predictedSSEsequence)
+    self.setStructurePrediction(structurePrediction)
     
 
     #self.connect(self, QtCore.SIGNAL('SequencePanelUpdate'), self.repaint)
@@ -179,12 +172,12 @@ class SequenceView(QtGui.QWidget):
     self.setMinimumSize(self.width, self.height)
 
 
-  def setSequence(self, newSequence):
-    self.sequence = newSequence
-    self.sequence.fillGaps()
+  def setStructurePrediction(self, newStructurePrediction):
+    self.structurePrediction = newStructurePrediction
+    self.structurePrediction.chain.fillGaps()
     self.updatePanelHeight()
-    self.residueRange=self.sequence.residueRange()
-    self.connect(self.sequence, QtCore.SIGNAL("selection updated"), self.__selectionUpdated)
+    self.residueRange=self.structurePrediction.chain.residueRange()
+    self.connect(self.structurePrediction.chain, QtCore.SIGNAL("selection updated"), self.__selectionUpdated)
     self.repaint()    
 
   def __selectionUpdated(self):
@@ -239,7 +232,7 @@ class SequenceView(QtGui.QWidget):
 
     for index in self.residueRange:
 
-      secel=self.sequence.getSecelByIndex(index)
+      secel=self.structurePrediction.getSecelByIndex(index)
       color=secel.getColor()
       color.setAlpha(255)
 
@@ -319,14 +312,14 @@ class SequenceView(QtGui.QWidget):
         painter.setFont(self.font)
 
       # selected residues are YELLOW with a BLACK BACKGROUND
-      if index in self.sequence.getSelection():
+      if index in self.structurePrediction.chain.getSelection():
         yOffset= 0.75*(cellHeight-metrics.ascent()) 
         rect=QtCore.QRectF ( float(x), yOffset+float(y), float(cellWidth), float(-cellHeight))
         painter.fillRect(rect,brush)
         painter.setPen(QtCore.Qt.yellow)
 
       # draw the glyph 
-      nextChar=self.sequence[index].__repr__()
+      nextChar=self.structurePrediction.chain[index].__repr__()
       charWidth=metrics.width(QtCore.QChar(nextChar))
       xOffset=int((cellWidth-charWidth)/2)
       painter.drawText(x+xOffset, y, QtCore.QString(nextChar))
@@ -354,7 +347,7 @@ class SequenceView(QtGui.QWidget):
 
     if mouseEvent.button() == QtCore.Qt.LeftButton and mouseEvent.y() < self.cellHeight():
       residue=self.getResidueIndexByMousePosition(mouseEvent.x(),self.cellHeight() +1)
-      secel= self.sequence.getSecelByIndex(residue)
+      secel= self.structurePrediction.getSecelByIndex(residue)
       newSelection=range(secel.startIndex, secel.stopIndex+1)
       #  CTRL key pressed
       if mouseEvent.modifiers() & QtCore.Qt.CTRL:
@@ -373,7 +366,7 @@ class SequenceView(QtGui.QWidget):
       
       #  CTRL key pressed
       if mouseEvent.modifiers() & QtCore.Qt.CTRL:
-        if additionalResidue not in self.sequence.getSelection():
+        if additionalResidue not in self.structurePrediction.chain.getSelection():
           self.setSequenceSelection(addOne=additionalResidue)
         else:
           self.setSequenceSelection(removeOne=additionalResidue)
@@ -381,11 +374,11 @@ class SequenceView(QtGui.QWidget):
       #  SHIFT key pressed
       elif mouseEvent.modifiers() & QtCore.Qt.SHIFT:
         additionalResidue=self.getResidueIndexByMousePosition(mouseEvent.x(),mouseEvent.y())
-        if additionalResidue > sorted(self.sequence.getSelection())[-1]:
-          addedRange=range( 1+sorted(self.sequence.getSelection())[-1],1+additionalResidue)
+        if additionalResidue > sorted(self.structurePrediction.chain.getSelection())[-1]:
+          addedRange=range( 1+sorted(self.structurePrediction.chain.getSelection())[-1],1+additionalResidue)
           self.setSequenceSelection(addRange=addedRange)
-        elif additionalResidue < sorted(self.sequence.getSelection())[0]:
-          addedRange=range( additionalResidue, sorted(self.sequence.getSelection())[0])
+        elif additionalResidue < sorted(self.structurePrediction.chainself.structurePrediction.getSelection())[0]:
+          addedRange=range( additionalResidue, sorted(self.structurePrediction.chain.gself.structurePredictionetSelection())[0])
           self.setSequenceSelection(addRange=addedRange)
 
       #  No key pressed
@@ -429,7 +422,7 @@ class SequenceView(QtGui.QWidget):
   def updatePanelHeight(self):
     metrics=QtGui.QFontMetrics(self.font)
     height=int(3.5*metrics.lineSpacing())
-    width=metrics.maxWidth()*len(self.sequence.residueRange())
+    width=metrics.maxWidth()*len(self.structurePrediction.chain.residueRange())
     self.resize(QtCore.QSize(width,height))
 
 
@@ -444,15 +437,13 @@ class SequenceView(QtGui.QWidget):
     selectionToClear = self.currentChainModel.getSelection()
     for i in selectionToClear:
         try: 
-            self.sequence[i]
+            self.structurePrediction.chain[i]
         except KeyError: 
             continue
         atom = self.currentChainModel[i].getAtom('CA')
         if atom:
-            #renderer.deleteAtom(atom.getHashKey())
             atom.setSelected(False)
-            #atom = renderer.addAtom(atom)
-    self.sequence.setSelection(newSelection,removeOne,addOne,addRange)
+    self.structurePrediction.chain.setSelection(newSelection,removeOne,addOne,addRange)
     self.currentChainModel.setSelection(newSelection,removeOne,addOne,addRange)
     
     try:
@@ -462,17 +453,9 @@ class SequenceView(QtGui.QWidget):
     if not selectedAtom:
         return
     
-    #renderer.deleteAtom(selectedAtom.getHashKey())
-    selectedAtom.setSelected(True)
-    #selectedAtom = renderer.addAtom(selectedAtom)
-    
-    dock.app.mainCamera.centerOnSelectedAtom()
-    
+    selectedAtom.setSelected(True)    
+    dock.app.mainCamera.centerOnSelectedAtom()    
     viewer.emitModelChanged()
-    
-    
-    #TODO: change BaseViewer.modelLoaded() to redraw PDBAtoms if their attributes have changed
-    #Current: Here we delete atoms from the renderer and add them again, which isn't the best way, probably.
 
           
   def setFont(self, newFont):
@@ -540,9 +523,9 @@ class ScrollableSequenceView(QtGui.QScrollArea):
   """
   This QWidget contains a SequenceView object but in a scrollable view.
   """
-  def __init__(self,predictedSSEsequence, currentChainModel, parent=None):
+  def __init__(self,structurePrediction, currentChainModel, parent=None):
     super(ScrollableSequenceView,self).__init__()
-    self.seqView=SequenceView(predictedSSEsequence, currentChainModel,parent=self)
+    self.seqView=SequenceView(structurePrediction, currentChainModel,parent=self)
     seqView = self.seqView
     seqView.updatePanelHeight() #This is needed to get all residues to show up in this widget.
     #Note: updatePanelHeight also adjusts width - I'm guessing that is the part that fixes things.
@@ -577,7 +560,7 @@ class GlobalSequenceView(QtGui.QWidget):
   QWidget Object, and updates the SequenceView to show the residues corresponding
   to the selection on it, and vice versa.
   """
-  def __init__(self, predictedSSEsequence, parent=None):
+  def __init__(self, structurePrediction, parent=None):
     super(GlobalSequenceView, self).__init__(parent)
 
     # Set up Geometry
@@ -586,17 +569,17 @@ class GlobalSequenceView(QtGui.QWidget):
     self.cellHeight=40
     self.cellWidth=self.widgetWidth/self.nCols
 
-    self.setSequence(predictedSSEsequence)    
+    self.setStructurePrediction(structurePrediction)    
 
     # Set up QWidget Behavior
     self.connect(self, QtCore.SIGNAL('SequencePanelUpdate'), self.repaint)
     self.setWindowModality(QtCore.Qt.NonModal)
     self.setWindowTitle(QtCore.QString('Global View'))
 
-  def setSequence(self, newSequence):
-    self.sequence=newSequence
-    self.connect(self.sequence, QtCore.SIGNAL("selection updated"), self.__selectionUpdated)
-    seqLength=len(self.sequence.residueRange())
+  def setStructurePrediction(self, newStructurePrediction):
+    self.structurePrediction = newStructurePrediction
+    self.connect(self.structurePrediction.chain, QtCore.SIGNAL("selection updated"), self.__selectionUpdated)
+    seqLength=len(self.structurePrediction.chain.residueRange())
     self.nRows=1+seqLength/self.nCols
     self.resize(QtCore.QSize(self.widgetWidth,self.nRows*self.cellHeight))
     self.setMinimumSize(QtCore.QSize(self.widgetWidth,self.nRows*self.cellHeight)) #Neccessary when adding as a widget.
@@ -636,13 +619,13 @@ class GlobalSequenceView(QtGui.QWidget):
 
   def __paintSecels(self, painter, cellWidth, cellHeight):
 
-    indexRange=self.sequence.residueRange()
+    indexRange=self.structurePrediction.chain.residueRange()
     markerRange=range( len(indexRange) )
     for index,marker in zip(indexRange,markerRange):
 
-      if len(self.sequence[index].getAtomNames())==0:
+      if len(self.structurePrediction.chain[index].getAtomNames())==0:
         alpha=100
-      elif len(self.sequence[index].getAtomNames())==1:
+      elif len(self.structurePrediction.chain[index].getAtomNames())==1:
         alpha=200
       else:
         alpha=255
@@ -650,11 +633,11 @@ class GlobalSequenceView(QtGui.QWidget):
       xOffset=(marker%self.nCols)*self.cellWidth
       yOffset=0.5*cellHeight+(marker/(self.nCols))*self.cellHeight
 
-      secel=self.sequence.getSecelByIndex(index)
+      secel=self.structurePrediction.getSecelByIndex(index)
       color=secel.getColor()
 
       # Paint Selection Blocks
-      if index in self.localView.sequence.getSelection():
+      if index in self.localView.structurePrediction.chain.getSelection():
         viewportColor=QtCore.Qt.yellow
         brush=QtGui.QBrush(viewportColor, QtCore.Qt.SolidPattern)
         rect=QtCore.QRectF ( float(xOffset), float(yOffset)-0.25*cellHeight, float(cellWidth), 1.5*float(cellHeight))
