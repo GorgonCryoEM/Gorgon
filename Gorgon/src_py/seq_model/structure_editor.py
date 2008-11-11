@@ -82,10 +82,9 @@ class StructureEditor(QtGui.QWidget):
             res = chain[index]
             res.setCAlphaColorToDefault()
             res.setCAlphaSizeToDefault()
-        print "The mock side-chains should be cleared,  but not yet drawn to the screen."
+        print "The mock side-chains should be cleared, but not yet drawn to the screen."
         
     def findCAlphaPositionPossibilities(self):
-        print 'in findCAlphaPositionPossibilities'
         self.possibleAtomsList = []
         radius = float( self.CAdoubleSpinBox.value() )
         #self.parentWidget()=>SequenceWidget, self.parentWidget().parentWidget() => SequenceDock
@@ -98,25 +97,18 @@ class StructureEditor(QtGui.QWidget):
             self.numPossibilities.setText('of ?')
             return
         atomPos = atom.getPosition()
-        #print atomPos,  radius
         if skeletonViewer.loaded:
-            print "Number of intersections:", 
             numIntersections = meshRenderer.intersectMeshAndSphere(atomPos, radius)
-            print numIntersections
-            
+            #print "\nNumber of intersections:", numIntersections
             if numIntersections == 0:
-                print "No possibilities!"
                 self.numPossibilities.setText('of 0')
                 self.possibilityNumSpinBox.setRange(0, 0)
                 return
             possiblePositionsList = []
             for i in range(numIntersections):
                 possiblePositionsList.append( meshRenderer.getIntersectionPoint(i) )
-            print 'Possible positions:',  possiblePositionsList
             for i in range(len(possiblePositionsList)):
                 pos = possiblePositionsList[i]
-                x, y, z = (pos.x(), pos.y(), pos.z())
-                print '(%f, %f, %f)' % (x, y, z)
                 rawAtom=PDBAtom(self.currentChainModel.getPdbID(), self.currentChainModel.getChainID() , i+1, 'CA')
                 rawAtom.setPosition(pos)
                 rawAtom.setElement('C')
@@ -140,11 +132,14 @@ class StructureEditor(QtGui.QWidget):
                     nextDistSquared = 100000
                 
                 if  prevDistSquared < 4 or nextDistSquared < 4: #two C-alpha atoms are never less than 2 angstroms apart
-                     print 'one possible atom was too close to an existing atom'
+                    #print "Removed impossibly close atom location"
+                    pass
                 else:
                     self.possibleAtomsList.append(rawAtom)
                 
-            print 'possible atoms:',  self.possibleAtomsList
+            print '\nPossible atom locations:'
+            for atom in self.possibleAtomsList:
+                print "(%f, %f, %f)" % (atom.getPosition().x(), atom.getPosition().y(), atom.getPosition().z())
             self.numPossibilities.setText('of ' + str(len(self.possibleAtomsList)))
             #Note that a valueChanged signal might be emitted in either or both of the following two lines.
             self.possibilityNumSpinBox.setRange(1, len(self.possibleAtomsList))
@@ -159,7 +154,7 @@ class StructureEditor(QtGui.QWidget):
                 
                 if index + 1 == self.possibilityNumSpinBox.value():
                     atom.setColor(0, 1, 1, 1)
-                    self.previouslySelectedPossibleAtom = atom #We remove this atom from the viewer when we display a different possibility
+                    self.previouslySelectedPossibleAtom = atom #We change this atom's colors when we select a different possibility
                     
             self.parentWidget().parentWidget().viewer.emitModelChanged()
     
@@ -215,7 +210,6 @@ class StructureEditor(QtGui.QWidget):
         print "The mock side-chains should be ready to draw to the screen"
 
     def setResidues(self, newSelection):
-        print '\nin set residues\n'
         #newSelection is a list of Residue indeces that are selected
         if not newSelection:
             print 'In sequence_view.StructureEdit.setResidues().  The new selection is empty!'
@@ -536,9 +530,8 @@ class CommandAcceptAtomPlacement(QtGui.QUndoCommand):
             print "\nBefore error?"
             #TODO: Fix segmentation fault!!!
             atom = self.viewer.renderer.addAtom(self.chosenAtom) #Segmentation fault here if I click undo then redo
-            print "Before/After error?"
-            self.chosenAtom = atom
             print "After error?"
+            self.chosenAtom = atom
             self.currentChainModel[self.resSeqNum].addAtomObject(self.chosenAtom)
             self.currentChainModel[self.resSeqNum].setCAlphaColorToDefault() 
             if self.resSeqNum - 1 in self.currentChainModel.residueRange():
@@ -564,7 +557,7 @@ class CommandAcceptAtomPlacement(QtGui.QUndoCommand):
             
         def undo(self):
             self.currentChainModel[self.resSeqNum].clearAtom(self.chosenAtom.getName())
-            self.viewer.renderer.deleteAtom(self.chosenAtom.getHashKey())
+            self.viewer.renderer.deleteAtom(self.chosenAtom.getHashKey()) #This line is the one that causes the segmentation fault if I undo then redo
 
             if self.bondBefore:
                 #TODO: find out how to delete bond
