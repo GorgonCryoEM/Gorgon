@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.25  2008/11/06 05:29:04  ssa1
+//   CGI submission milestone for Interactive Skeletonization, and theme support, and fixing (hopefully) mac-os flicker bug
+//
 //   Revision 1.24  2008/10/28 22:18:05  ssa1
 //   Changing visualization of meshes, and sketches
 //
@@ -274,7 +277,7 @@ namespace wustl_mm {
 		}
 
 		string MeshRenderer::GetSupportedLoadFileFormats() {
-			return "Meshes (*.off);;Volumes (*.mrc *.atom);;All Files (*.off *.mrc *.atom)";
+			return "Volumes (*.mrc *.atom);;Meshes (*.off);;All Files (*.off *.mrc *.atom)";
 		}
 		string MeshRenderer::GetSupportedSaveFileFormats() {
 			return "Meshes (*.off);;Volumes (*.mrc)";
