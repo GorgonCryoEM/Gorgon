@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.33  2008/11/10 20:41:01  ssa1
+//   Calculating the surface using an octree
+//
 //   Revision 1.32  2008/11/06 20:34:23  ssa1
 //   Proper lighting for bounding boxes
 //
@@ -487,7 +490,8 @@ namespace wustl_mm {
 			}
 
 			appTimeManager.PopAndDisplayTime("Calculating Surface octree-based: %f seconds |");
-			printf("Marching Cubes called %d times\n", marchingCubeCallCount); flushall();
+			//printf("Marching Cubes called %d times\n", marchingCubeCallCount); flushall(); //flushall() isn't ANSI
+			cout << "Marching Cubes called " << marchingCubeCallCount << " times" << endl;
 			
 			return redraw;
 		}
