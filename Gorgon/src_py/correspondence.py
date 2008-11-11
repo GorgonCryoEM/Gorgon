@@ -34,14 +34,14 @@ from seq_model import Chain,Helix,Strand,Coil
 # 'zz' --> 'aa'
 def nextLabel(prevLabel=None):
     if prevLabel is None:
-      return 'a'
+        return 'a'
     else:
-      nChars=len(prevLabel)
-      if prevLabel[0]=='z':
-	nChars=nChars+1
-	prevLabel=chr(ord(prevLabel[0])-26)
-      char=chr(ord(prevLabel[0])+1)
-      return nChars*char
+        nChars=len(prevLabel)
+        if prevLabel[0]=='z':
+            nChars=nChars+1
+            prevLabel=chr(ord(prevLabel[0])-26)
+        char=chr(ord(prevLabel[0])+1)
+        return nChars*char
 
 #--------------------------------------
 class StructureObservation:  #SSEBuilderResults
