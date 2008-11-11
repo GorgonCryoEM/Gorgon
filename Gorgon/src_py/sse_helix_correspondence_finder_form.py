@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.13  2008/11/10 21:12:54  colemanr
+#   allows either SEQ or PDB files to define the sequence
+#
 #   Revision 1.12  2008/08/27 15:26:52  marshm
 #   Updates to SequenceView.  Updated coloring scheme for correspondence matches.
 #
@@ -299,47 +302,45 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
     
     def getIndexedColor(self, index, size):
         a = 1.0
+        i = float(index)
+        N = float(size)
 
-	i = float(index)
-	N = float(size)
+        # blue  (0,0,1)
+        if (i/N) == 0:
+            r=0;g=0;b=1.0
 
+        # blue - cyan(0,1,1)
+        elif (i/N) <= 0.25:
+            coeff = (i/N)/0.25
+            r=0.0
+            g=coeff
+            b=1.0
 
-	# blue  (0,0,1)
-	if (i/N) == 0:
-	  r=0;g=0;b=1.0
+        # cyan - green (0,1,0)
+        elif (i/N) > 0.25:
+            coeff=((i/N)-0.25)/0.25
+            r=0.0
+            g=1.0
+            b=1.0-coeff
 
-	  # blue - cyan(0,1,1)
-	elif (i/N) <= 0.25:
-	  coeff = (i/N)/0.25
-	  r=0.0
-	  g=coeff
-	  b=1.0
+            # green - yellow (1,1,0)
+            if (i/N) > 0.50:
+                coeff=((i/N)-0.25)/0.50
+                r=coeff
+                g=1.0
+                b=0.0
 
-	    # cyan - green (0,1,0)
-	elif (i/N) > 0.25:
-	  coeff=((i/N)-0.25)/0.25
-	  r=0.0
-	  g=1.0
-	  b=1.0-coeff
+                # yelow - red (1,0,0)
+                if (i/N) > 0.75:
+                    coeff=((i/N)-0.25)/0.75
+                    r=1.0
+                    g=1-coeff
+                    b=0.0
 
-	  # green - yellow (1,1,0)
-	  if (i/N) > 0.50:
-	    coeff=((i/N)-0.25)/0.50
-	    r=coeff
-	    g=1.0
-	    b=0.0
-
-	    # yelow - red (1,0,0)
-	    if (i/N) > 0.75:
-	      coeff=((i/N)-0.25)/0.75
-	      r=1.0
-	      g=1-coeff
-	      b=0.0
-
-	      # red
-	      if (i/N)==1.0:
-		r=1.0;g=0;b=0
-            
+                    # red
+                    if (i/N)==1.0:
+                        r=1.0;g=0;b=0
+                    
         return QtGui.QColor.fromRgba(QtGui.qRgba(r*255, g*255, b*255, a*255))
         
     def selectCorrespondence(self, correspondenceIndex):
