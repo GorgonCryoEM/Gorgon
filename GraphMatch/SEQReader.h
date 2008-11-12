@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.4  2008/11/10 21:31:44  ssa1
+//   Fixing compilation errors
+//
 //   Revision 1.3  2008/11/10 21:10:28  colemanr
 //   updated debugging code to show the line of a runtime error that was
 //   occurring
@@ -32,7 +35,7 @@
 #include <fstream>
 #include <cstdlib>
 #include <Foundation/StringUtils.h>
-#define DEBUG
+
 #ifdef DEBUG
 	#include <iostream>
 #endif
@@ -99,7 +102,9 @@ namespace wustl_mm {
 			const char helixChar = 'H';
 			const char strandChar = 'E';
 			char currentChar = predictedSSEs[0];
-			int startIndex, stopIndex, length;
+			unsigned int startCharNum = 0;
+			unsigned int stopCharNum = 0;
+			unsigned int length = 0;
 			char ch;
 			string substring;
 			vector<SecondaryStructure*> structures;
@@ -107,42 +112,32 @@ namespace wustl_mm {
 			bool add;
 			unsigned int idNum = 1;
 		
-			if (currentChar == helixChar || currentChar == strandChar)
-				startIndex = 0;
 			for (unsigned int i = 1; i < predictedSSEs.length(); i++)
 			{
 				ch = predictedSSEs[i];
 				if (ch != currentChar)
 				{
-					stopIndex = i - 1;
-					length = stopIndex - startIndex + 1;
-#ifdef DEBUG 
-cout << "error here?" << endl;
-#endif
-					substring = sequence.substr(startIndex, length);
-#ifdef DEBUG 
-cout << "error here?" << endl;
-#endif
+					stopCharNum = i - 1;
+					length = stopCharNum - startCharNum + 1;
+					substring = sequence.substr(startCharNum, length);
+					
 					if (currentChar == helixChar)
 					{
 						currentStructure = new SecondaryStructure();			
 						currentStructure->serialNumber = idNum;
 						currentStructure->secondaryStructureID = (char * )(StringUtils::IntToString(idNum)).c_str();
 						idNum++;
-						currentStructure->startPosition = startIndex+1;
-						currentStructure->endPosition = stopIndex+1;
+						currentStructure->startPosition = startCharNum + startResNum;
+						currentStructure->endPosition = stopCharNum + startResNum;
 						currentStructure->secondaryStructureType = GRAPHEDGE_HELIX;
 						add = true;
-#ifdef DEBUG 
-cout << "error here?" << endl;
-#endif
 						for(unsigned int i = 0; i < structures.size(); i++) {
 							add = add && !((currentStructure->startPosition == structures[i]->startPosition) && 
 								(currentStructure->endPosition == structures[i]->endPosition));
 						}
 						
 						#ifdef DEBUG
-							cout << "\nHelix(" << startIndex+1 << ',' << stopIndex+1 << "):" << substring << endl;
+							cout << "\nHelix(" << startCharNum+startResNum << ',' << stopCharNum + startResNum << "):" << substring << endl;
 							cout << "Structure(" << currentStructure->GetStartPosition() << ',';
 							cout << currentStructure->GetEndPosition() << "):";
 							cout << " Serial=" << currentStructure->GetSerialNumber(); 
@@ -157,19 +152,20 @@ cout << "error here?" << endl;
 							delete currentStructure;
 						}
 					}		
-					startIndex = i;
+					startCharNum = i;
 					currentChar = ch;
 				}
 			}
-			substring = sequence.substr(startIndex);
+			substring = sequence.substr(startCharNum);
+			stopCharNum = predictedSSEs.length() - 1;
 			if (currentChar == helixChar) 
 			{
 				currentStructure = new SecondaryStructure();
 				currentStructure->serialNumber = idNum;
 				currentStructure->secondaryStructureID = (char * )(StringUtils::IntToString(idNum)).c_str();
 				idNum++;
-				currentStructure->startPosition = startIndex+1;
-				currentStructure->endPosition = stopIndex+1;
+				currentStructure->startPosition = startCharNum + startResNum;
+				currentStructure->endPosition = stopCharNum + startResNum;
 				currentStructure->secondaryStructureType = GRAPHEDGE_HELIX;
 				add = true;
 				for(unsigned int i = 0; i < structures.size(); i++) {
@@ -178,7 +174,7 @@ cout << "error here?" << endl;
 				}
 				
 				#ifdef DEBUG
-					cout << "\nHelix(" << startIndex+1 << ',' << predictedSSEs.length() << "):" << substring << endl;
+					cout << "\nHelix(" << startCharNum+startResNum << ',' << stopCharNum + startResNum << "):" << substring << endl;
 					cout << "Structure(" << currentStructure->GetStartPosition() << ',';
 					cout << currentStructure->GetEndPosition() << "):";
 					cout << " Serial=" << currentStructure->GetSerialNumber(); 
