@@ -11,6 +11,11 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.6  2008/11/13 00:40:33  colemanr
+//   Fixed a memory error.  string::c_str() returns a reference to a string, not a copy, so I am
+//   now making a copy using string::copy().  Also, switched from using Foundation/StringUtils.h to
+//   using <sstream> to convert integers to strings.
+//
 //   Revision 1.5  2008/11/12 20:40:10  colemanr
 //   fixed some indexing errors
 //
@@ -102,6 +107,7 @@ namespace wustl_mm {
 			//Interpreting strings or sequence and predicted SSEs
 			const char coilChar = '-';
 			const char helixChar = 'H';
+			const unsigned short minHelixLength = 6;
 			const char strandChar = 'E';
 			char currentChar = predictedSSEs[0];
 			unsigned int startCharNum = 0;
@@ -125,7 +131,7 @@ namespace wustl_mm {
 					length = stopCharNum - startCharNum + 1;
 					substring = sequence.substr(startCharNum, length);
 					
-					if (currentChar == helixChar)
+					if (currentChar == helixChar && length >= minHelixLength)
 					{
 						currentStructure = new SecondaryStructure();			
 						currentStructure->serialNumber = idNum;
