@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.5  2008/11/12 20:40:10  colemanr
+//   fixed some indexing errors
+//
 //   Revision 1.4  2008/11/10 21:31:44  ssa1
 //   Fixing compilation errors
 //
@@ -32,9 +35,9 @@
 #include "StandardGraph.h"
 #include "SheetStrand.h"
 #include <string>
+#include <sstream>
 #include <fstream>
 #include <cstdlib>
-#include <Foundation/StringUtils.h>
 
 #ifdef DEBUG
 	#include <iostream>
@@ -42,7 +45,6 @@
 
 
 using namespace std;
-using namespace wustl_mm::Foundation;
 
 namespace wustl_mm {
 	namespace GraphMatch {
@@ -107,10 +109,12 @@ namespace wustl_mm {
 			unsigned int length = 0;
 			char ch;
 			string substring;
+			string sseID;
 			vector<SecondaryStructure*> structures;
 			SecondaryStructure * currentStructure;
 			bool add;
 			unsigned int idNum = 1;
+			int strLen;
 		
 			for (unsigned int i = 1; i < predictedSSEs.length(); i++)
 			{
@@ -125,7 +129,13 @@ namespace wustl_mm {
 					{
 						currentStructure = new SecondaryStructure();			
 						currentStructure->serialNumber = idNum;
-						currentStructure->secondaryStructureID = (char * )(StringUtils::IntToString(idNum)).c_str();
+						stringstream ssOut;
+						ssOut << idNum;
+						sseID = "H" + ssOut.str();
+						char * cSseID = new char [sseID.size() + 1];
+						strLen = sseID.copy(cSseID, sseID.size());
+						cSseID[strLen] = '\0';
+						currentStructure->secondaryStructureID = cSseID;
 						idNum++;
 						currentStructure->startPosition = startCharNum + startResNum;
 						currentStructure->endPosition = stopCharNum + startResNum;
@@ -162,7 +172,13 @@ namespace wustl_mm {
 			{
 				currentStructure = new SecondaryStructure();
 				currentStructure->serialNumber = idNum;
-				currentStructure->secondaryStructureID = (char * )(StringUtils::IntToString(idNum)).c_str();
+				stringstream ssOut;
+				ssOut << idNum;
+				sseID = "H" + ssOut.str();
+				char * cSseID = new char [sseID.size() + 1];
+				strLen = sseID.copy(cSseID, sseID.size());
+				cSseID[strLen] = '\0';
+				currentStructure->secondaryStructureID = cSseID;
 				idNum++;
 				currentStructure->startPosition = startCharNum + startResNum;
 				currentStructure->endPosition = stopCharNum + startResNum;
@@ -197,8 +213,8 @@ namespace wustl_mm {
 		
 		
 			// Sorting the structures by the start position
-			int i,j;
-			for(i = 0; i < (int)structures.size()-1; i++)	{
+			int i;//,j;
+			/*for(i = 0; i < (int)structures.size()-1; i++)	{
 				for(j = i+1; j < (int)structures.size(); j++) {
 					if(structures[i]->startPosition > structures[j]->startPosition) {
 						currentStructure = structures[i];
@@ -206,7 +222,7 @@ namespace wustl_mm {
 						structures[j] = currentStructure;
 					}
 				}
-			}
+			}*/
 		
 			if(structures.size() == 0){
 				printf("No helixes or sheets found... Unable to perform matching");
