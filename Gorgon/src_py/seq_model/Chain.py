@@ -788,6 +788,25 @@ class Chain(baseClass):
       s=s+ "TER\n"
 
     return s
+    
+  def toSEQ(self):
+    lines = []
+    startIndex = min(self.residueRange())
+    if startIndex != 1:
+        lines.append("START " + str(startIndex))
+    lines.append( repr(self).lstrip('.') )
+    structure = []
+    for i in range( startIndex, max(self.residueRange()) + 1):
+        secel = self.getSecelByIndex(i)
+        if secel.type == "loop":
+            structure.append('-')
+        elif secel.type == "helix":
+            structure.append('H')
+        elif secel.type == "strand":
+            structure.append('E')
+    lines.append( ''.join(structure) )
+    return '\n'.join(lines)
+    
 
 if __name__ == '__main__':
     mychain = Chain.load('1KPO.pdb')
