@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.11  2008/09/29 16:43:15  ssa1
+//   Adding in CVS meta information
+//
 
 
 
@@ -507,6 +510,7 @@ public:
 		fread( &angsx, sizeof( float ), 1, fin ) ;
 		fread( &angsy, sizeof( float ), 1, fin ) ;
 		fread( &angsz, sizeof( float ), 1, fin ) ;
+		printf("Setting spacing: %f %f %f \n", angsx, angsy, angsz);
 
 		fread( &anglex, sizeof( float ), 1, fin ) ;
 		fread( &angley, sizeof( float ), 1, fin ) ;
@@ -590,6 +594,9 @@ public:
 					
 					vol->setDataAt( k, j, i, d ) ;
 				}
+				float ax, ay, az;
+				getSpacing(ax, ay, az);
+				vol->setSpacing(ax, ay, az);
 		fclose( fin ) ;
 
 		return vol ;
@@ -598,9 +605,9 @@ public:
 	/* Get resolution */
 	void getSpacing( float& ax, float& ay, float& az )
 	{
-		ax = angsx / (dimx - 1);
-		ay = angsy / (dimy - 1) ;
-		az = angsz / (dimz - 1) ;
+		ax = angsx / (float)(dimx-1);
+		ay = angsy / (float)(dimy-1) ;
+		az = angsz / (float)(dimz-1) ;
 	}
 
 
@@ -649,6 +656,7 @@ public:
 		ifread( &angsx, sizeof( float ), 1, fin ) ;
 		ifread( &angsy, sizeof( float ), 1, fin ) ;
 		ifread( &angsz, sizeof( float ), 1, fin ) ;
+		printf("Setting spacing: %f %f %f \n", angsx, angsy, angsz);
 
 		ifread( &anglex, sizeof( float ), 1, fin ) ;
 		ifread( &angley, sizeof( float ), 1, fin ) ;
@@ -709,6 +717,7 @@ public:
 
 		
 		Volume* vol = new Volume( dimx, dimy, dimz ) ;
+		vol->setSpacing(angsx, angsy, angsz);
 		for ( int i = 0 ; i < dimz ; i ++ )
 			for ( int j = 0 ; j < dimy ; j ++ )
 				for ( int k = 0 ; k < dimx ; k ++ )
@@ -747,9 +756,9 @@ public:
 	/* Get resolution */
 	void getSpacing( float& ax, float& ay, float& az )
 	{
-		ax = angsx / (dimx - 1);
-		ay = angsy / (dimy - 1) ;
-		az = angsz / (dimz - 1) ;
+		ax = angsx / (float)(dimx-1);
+		ay = angsy / (float)(dimy-1) ;
+		az = angsz / (float)(dimz-1) ;
 	}
 
 

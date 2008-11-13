@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.26  2008/11/11 00:20:18  colemanr
+//   changed to make *.mrc files appear above *.off files in an open dialog
+//
 //   Revision 1.25  2008/11/06 05:29:04  ssa1
 //   CGI submission milestone for Interactive Skeletonization, and theme support, and fixing (hopefully) mac-os flicker bug
 //
@@ -146,6 +149,7 @@ namespace wustl_mm {
 
 
 		void MeshRenderer::LoadFile(string fileName) {
+			Renderer::LoadFile(fileName);
 			int pos = fileName.rfind(".") + 1;
 			string extension = fileName.substr(pos, fileName.length()-pos);
 			extension = StringUtils::StringToUpper(extension);

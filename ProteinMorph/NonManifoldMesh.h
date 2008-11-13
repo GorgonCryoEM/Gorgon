@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.29  2008/11/06 20:34:23  ssa1
+//   Proper lighting for bounding boxes
+//
 //   Revision 1.28  2008/11/06 05:29:04  ssa1
 //   CGI submission milestone for Interactive Skeletonization, and theme support, and fixing (hopefully) mac-os flicker bug
 //
@@ -153,6 +156,9 @@ namespace wustl_mm {
 			int x, y, z, i, j, index, index2;
 			int * vertexLocations = new int[sourceVol->getSizeX() * sourceVol->getSizeY() * sourceVol->getSizeZ()];
 			int value;
+			float spacingX = sourceVol->getSpacingX();
+			float spacingY = sourceVol->getSpacingY();
+			float spacingZ = sourceVol->getSpacingZ();
 
 			// Adding vertices
 			NonManifoldMeshVertex<TVertex> tempVertex;
@@ -164,7 +170,7 @@ namespace wustl_mm {
 						vertexLocations[index] = -1;
 						value = (int)round(sourceVol->getDataAt(index));
 						if(value > 0) {							
-							tempVertex.position = Vector3DFloat(x,y,z);								
+							tempVertex.position = Vector3DFloat(x * spacingX, y * spacingY, z * spacingZ);								
 							vertexLocations[index] = AddVertex(tempVertex);
 						}
 					}

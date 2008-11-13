@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.16  2008/11/06 05:29:04  ssa1
+#   CGI submission milestone for Interactive Skeletonization, and theme support, and fixing (hopefully) mac-os flicker bug
+#
 #   Revision 1.15  2008/10/29 19:26:26  ssa1
 #   Reducing memory footprint, Increasing performance and adding volume normalization
 #
@@ -31,7 +34,7 @@ from volume_surface_editor_form import VolumeSurfaceEditorForm
 from volume_binary_skeletonization_form import VolumeBinarySkeletonizationForm
 from volume_grayscale_skeletonization_form import VolumeGrayscaleSkeletonizationForm
 from volume_manual_skeletonization_form import VolumeManualSkeletonizationForm
-
+from model_visualization_form import ModelVisualizationForm
 
 try:
     from OpenGL.GL import *
@@ -53,7 +56,7 @@ class VolumeViewer(BaseViewer):
         self.loaded = False
         self.createUI()
         self.app.viewers["volume"] = self
-        self.initVisualizationOptions()    
+        self.initVisualizationOptions(ModelVisualizationForm(self.app, self))    
                       
 
     def createUI(self):

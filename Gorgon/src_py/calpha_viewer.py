@@ -11,6 +11,11 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.16  2008/11/11 21:44:35  colemanr
+#   Loads *.seq files using the reader in StructurePrediction.py rather than
+#   the one in Chain.py, because SequenceView now uses a StructurePrediction
+#   object.
+#
 #   Revision 1.15  2008/11/10 19:36:11  colemanr
 #   Modified to work with the updated CAlphaRenderer.h--no longer need to
 #   delete and re-add atoms to the renderer to display changes
@@ -60,6 +65,7 @@ from base_viewer import BaseViewer
 from calpha_atom_placer_form import CAlphaAtomPlacerForm
 from seq_model.SequenceView import SequenceDock
 from seq_model.Chain import Chain
+from model_visualization_form import ModelVisualizationForm
 from correspondence.StructurePrediction import StructurePrediction
 
 try:
@@ -86,7 +92,7 @@ class CAlphaViewer(BaseViewer):
         self.createUI()      
         self.app.viewers["calpha"] = self;
         self.model2Visible = True
-        self.initVisualizationOptions()
+        self.initVisualizationOptions(ModelVisualizationForm(self.app, self))
         self.visualizationOptions.ui.checkBoxModelVisible.setText("Show atoms colored:")
         self.visualizationOptions.ui.checkBoxModel2Visible.setText("Show backbone colored:")
         self.visualizationOptions.ui.checkBoxModel2Visible.setVisible(True)

@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.19  2008/09/29 16:09:44  ssa1
+//   Removing GLVisualizer.h
+//
 //   Revision 1.18  2008/09/29 16:01:17  ssa1
 //   Adding in CVS meta information
 //
@@ -152,6 +155,9 @@ namespace wustl_mm {
 		}
 
 		void SSERenderer::LoadHelixFile(string fileName) {
+			if(sheetMesh == NULL) {
+				Renderer::LoadFile(fileName);
+			}
 			for(unsigned int i = 0; i < helices.size(); i++) {
 				delete helices[i];
 			}
@@ -161,6 +167,9 @@ namespace wustl_mm {
 		}
 
 		void SSERenderer::LoadSheetFile(string fileName) {
+			if(helices.size() == 0) {
+				Renderer::LoadFile(fileName);
+			}
 			vector<GeometricShape *> sheets;
 			sheets.clear();
 			if(sheetMesh != NULL) {

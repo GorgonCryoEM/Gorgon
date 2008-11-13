@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.24  2008/09/29 16:43:15  ssa1
+//   Adding in CVS meta information
+//
 
 
 
@@ -697,6 +700,7 @@ public:
 		sizez = z ;
 
 		data = new float [ x * y * z ] ;
+		setSpacing(vol->getSpacingX(), vol->getSpacingY(), vol->getSpacingZ());
 
 		int ct = 0 ;
 		for ( int i = offx ; i < x + offx; i ++ )
@@ -706,6 +710,7 @@ public:
 					data[ ct ] = (float)vol->getDataAt( i, j, k ) ;
 					ct ++ ;
 				}
+				
 	}
 
 	Volume* getPseudoDensity( )
@@ -12022,7 +12027,8 @@ public:
 		fwrite( off, sizeof( int ), 3, fout ) ;
 		fwrite( intv, sizeof( int ), 3, fout ) ;
 
-		float cella[3] = {2,2,2} ;
+		float cella[3] = {spacingX * (float)(sizex - 1), spacingY * (float)(sizey - 1), spacingZ * (float)(sizez - 1)};
+		printf("Saving spacing: %f %f %f \n", cella[0], cella[1], cella[2]);
 		float cellb[3] = {90,90,90} ;
 		fwrite( cella, sizeof( float ), 3, fout ) ;
 		fwrite( cellb, sizeof( float ), 3, fout ) ;
@@ -12064,8 +12070,21 @@ public:
 		fclose( fout ) ;
 	}
 
-	void setSpacing(float spx, float spy, float spz ) {
-		printf("volume::setSpacing not implemented yet! \n");
+	void setSpacing(float spx, float spy, float spz ) {		
+		spacingX = spx;
+		spacingY = spy;
+		spacingZ = spz;
+	}
+	float getSpacingX() {
+		return spacingX;
+	}
+
+	float getSpacingY() {
+		return spacingY;
+	}
+
+	float getSpacingZ() {
+		return spacingZ;
 	}
 /*	void toMathematicaFile(char * fname) {
 		FILE* fout = fopen( fname, "wb" ) ;
@@ -12102,6 +12121,7 @@ private:
 
 	/* Sizes */
 	int sizex, sizey, sizez ;
+	float spacingX, spacingY, spacingZ;
 
 	/* Data array */
 	float * data ;
