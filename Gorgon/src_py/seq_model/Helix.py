@@ -48,7 +48,7 @@ class Helix(Secel):
 
     s= "HELIX  "
     s=s+ str(Helix.serialNo).rjust(3) +' '
-    s=s+ self.label.split('H')[-1].rjust(3) +' '
+    s=s+ self.label.lstrip('H').rjust(3) +' '
     s=s+ init_res_name.rjust(3) +' '
     s=s+ init_chainID.rjust(1) +' '
     s=s+ str(init_seq_num).rjust(4) +' '
