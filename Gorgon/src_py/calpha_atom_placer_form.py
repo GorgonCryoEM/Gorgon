@@ -11,6 +11,10 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.11  2008/11/10 19:35:21  colemanr
+#   Modified to work with the updated CAlphaRenderer.h--no longer need to
+#   delete and re-add atoms to the renderer to display changes
+#
 #   Revision 1.10  2008/11/04 16:09:45  colemanr
 #   no longer import ui_dialog_calpha_atom_placer - coded by hand now
 #
@@ -163,7 +167,6 @@ class CAlphaAtomPlacerForm(QtGui.QWidget):
         self.zDoubleSpinBox.setValue(position.z());
     
     def addAtom(self):
-        #TODO: get this to work with the automated placer -- probably need to update main_chain (many objects have that property) to be the last loaded chain
         #Atom attributes
         x,y,z = self.xDoubleSpinBox.value(), self.yDoubleSpinBox.value(), self.zDoubleSpinBox.value() 
         element= str(self.elementLineEdit.text())
