@@ -11,6 +11,10 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.34  2008/11/11 16:14:12  colemanr
+//   Replaced printf and flushall() with cout, because flushall isn't in gcc
+//   and isn't ANSI.
+//
 //   Revision 1.33  2008/11/10 20:41:01  ssa1
 //   Calculating the surface using an octree
 //
@@ -34,6 +38,8 @@
 #define GORGON_MARCHING_CUBES_H
 
 #define GL_GLEXT_PROTOTYPES
+//#define USE_OCTREE_OPTIMIZATION
+
 
 #include <iostream>
 #include <glut.h>
@@ -47,6 +53,7 @@
 #include <GraySkeletonCPP/VolumeSkeletonizer.h>
 #include <GraySkeletonCPP/VolumeFormatConverter.h>
 #include <ProteinMorph/NonManifoldMesh.h>
+#include <ProteinMorph/TriangleMesh.h>
 #include <MathTools/Vector3D.h>
 #include <Foundation/Octree.h>
 #include <queue>
@@ -69,6 +76,7 @@ namespace wustl_mm {
 
 		typedef Octree<OctreeProjectionTestMinMaxStruct> VolumeRendererOctreeType;
 		typedef OctreeNode<OctreeProjectionTestMinMaxStruct> VolumeRendererOctreeNodeType;
+		typedef TriangleMesh<bool, bool> VolumeSurfaceMeshType;
 
 		class VolumeRenderer : public Renderer {
 		public:
@@ -112,6 +120,7 @@ namespace wustl_mm {
 			void InitializeOctreeTag(VolumeRendererOctreeNodeType * node);
 			void CalculateOctreeNode(VolumeRendererOctreeNodeType * node);
 			void MarchingCube(Volume * vol, NonManifoldMesh_NoTags * mesh, const float iso_level, int iX, int iY, int iZ, int iScale);
+			void MarchingCube(Volume * vol, VolumeSurfaceMeshType * mesh, const float iso_level, int iX, int iY, int iZ, int iScale);
 			int Smallest2ndPower(int value);
 		private:
 			int marchingCubeCallCount;
@@ -125,7 +134,8 @@ namespace wustl_mm {
 			int viewingType;			
 			Volume * dataVolume;
 			Volume * cuttingVolume;
-			NonManifoldMesh_NoTags * surfaceMesh;
+			
+			VolumeSurfaceMeshType * surfaceMesh;
 			NonManifoldMesh_NoTags * cuttingMesh;
 			VolumeRendererOctreeType * octree;
 			#ifdef _WIN32
@@ -136,7 +146,7 @@ namespace wustl_mm {
 		VolumeRenderer::VolumeRenderer() {
 			textureLoaded = false;
 			viewingType = VIEWING_TYPE_ISO_SURFACE;
-			surfaceMesh = new NonManifoldMesh_NoTags();
+			surfaceMesh = new VolumeSurfaceMeshType();
 			dataVolume = NULL;
 			octree = NULL;
 			surfaceValue = 1.5;
@@ -298,48 +308,50 @@ namespace wustl_mm {
 		}
 
 		void VolumeRenderer::InitializeOctree() {
-			if(octree != NULL) {
-				delete octree;
-			}
-			unsigned int sizeX = dataVolume->getSizeX();
-			unsigned int sizeY = dataVolume->getSizeY();
-			unsigned int sizeZ = dataVolume->getSizeZ();
-			octree  = new VolumeRendererOctreeType(sizeX, sizeY, sizeZ);
-			for(unsigned int x = 0; x < sizeX-1; x++) {
-				for(unsigned int y = 0; y < sizeY-1; y++) {
-					for(unsigned int z = 0; z < sizeZ-1; z++) {
-						octree->AddNewLeaf(x, y, z, 1);
+			#ifdef USE_OCTREE_OPTIMIZATION
+				if(octree != NULL) {
+					delete octree;
+				}
+				unsigned int sizeX = dataVolume->getSizeX();
+				unsigned int sizeY = dataVolume->getSizeY();
+				unsigned int sizeZ = dataVolume->getSizeZ();
+				octree  = new VolumeRendererOctreeType(sizeX, sizeY, sizeZ);
+				for(unsigned int x = 0; x < sizeX-1; x++) {
+					for(unsigned int y = 0; y < sizeY-1; y++) {
+						for(unsigned int z = 0; z < sizeZ-1; z++) {
+							octree->AddNewLeaf(x, y, z, 1);
+						}
 					}
 				}
-			}
-			InitializeOctreeTag(octree->GetRoot());
-			float minVal, maxVal, val;
-			VolumeRendererOctreeNodeType * node;
+				InitializeOctreeTag(octree->GetRoot());
+				float minVal, maxVal, val;
+				VolumeRendererOctreeNodeType * node;
 
-			for(unsigned int x = 0; x < sizeX-1; x++) {
-				for(unsigned int y = 0; y < sizeY-1; y++) {
-					for(unsigned int z = 0; z < sizeZ-1; z++) {
-						node = octree->GetLeaf(x, y, z);
-						minVal = MAX_FLOAT;
-						maxVal = MIN_FLOAT;
-						for(unsigned int xx = 0; xx < 2; xx++) {
-							for(unsigned int yy = 0; yy < 2; yy++) {
-								for(unsigned int zz = 0; zz < 2; zz++) {
-									val = dataVolume->getDataAt(x+xx, y+yy, z+zz);
-									minVal = min(minVal, val);
-									maxVal = max(maxVal, val);
+				for(unsigned int x = 0; x < sizeX-1; x++) {
+					for(unsigned int y = 0; y < sizeY-1; y++) {
+						for(unsigned int z = 0; z < sizeZ-1; z++) {
+							node = octree->GetLeaf(x, y, z);
+							minVal = MAX_FLOAT;
+							maxVal = MIN_FLOAT;
+							for(unsigned int xx = 0; xx < 2; xx++) {
+								for(unsigned int yy = 0; yy < 2; yy++) {
+									for(unsigned int zz = 0; zz < 2; zz++) {
+										val = dataVolume->getDataAt(x+xx, y+yy, z+zz);
+										minVal = min(minVal, val);
+										maxVal = max(maxVal, val);
+									}
 								}
 							}
-						}
 
-						while(node != NULL) {
-							node->tag.maxVal = max(node->tag.maxVal, maxVal);
-							node->tag.minVal = min(node->tag.minVal, minVal);
-							node = node->parent;
+							while(node != NULL) {
+								node->tag.maxVal = max(node->tag.maxVal, maxVal);
+								node->tag.minVal = min(node->tag.minVal, minVal);
+								node = node->parent;
+							}
 						}
 					}
 				}
-			}
+			#endif
 		}
 
 		void VolumeRenderer::InitializeOctreeTag(VolumeRendererOctreeNodeType * node) {
@@ -359,7 +371,7 @@ namespace wustl_mm {
 		void VolumeRenderer::Draw(int subSceneIndex, bool selectEnabled) {
 			if(subSceneIndex == 0) {
 				if((viewingType == VIEWING_TYPE_ISO_SURFACE) && (surfaceMesh != NULL)) {
-					surfaceMesh->Draw(true, false, false, selectEnabled, false, false, false, false, false, 1);
+					surfaceMesh->Draw(true, selectEnabled);
 				} else if((viewingType == VIEWING_TYPE_CROSS_SECTION) || (viewingType == VIEWING_TYPE_SOLID)) {
 					glPushAttrib(GL_LIGHTING_BIT | GL_ENABLE_BIT);
 					glDisable(GL_LIGHTING);
@@ -459,41 +471,46 @@ namespace wustl_mm {
 		}
 
 		bool VolumeRenderer::CalculateSurface() {
-			//appTimeManager.PushCurrentTime();
-			//surfaceMesh->Clear();
-			//marchingCubeCallCount = 0;
-			//bool redraw = false;
-			//if(drawEnabled && dataVolume != NULL) {
-			//	redraw = true;
-			//	int iX, iY, iZ;
-			//	int maxX = dataVolume->getSizeX();
-			//	int maxY = dataVolume->getSizeY();
-			//	int maxZ = dataVolume->getSizeZ();
-			//	for(iX = max(maxX/2 - displayRadius, 0); iX < min(maxX, maxX/2 + displayRadius); iX+=sampleInterval) {
-			//		for(iY = max(maxY/2 - displayRadius, 0); iY < min(maxY, maxY/2 + displayRadius); iY+=sampleInterval) {
-			//			for(iZ = max(maxZ/2 - displayRadius, 0); iZ < min(maxZ, maxZ/2 + displayRadius); iZ+=sampleInterval) {
-			//				MarchingCube(dataVolume, surfaceMesh, surfaceValue, iX, iY, iZ, sampleInterval);
-			//			}
-			//		}
-			//	}
-			//}
-			//appTimeManager.PopAndDisplayTime("Calculating Surface marching-cubes: %f seconds |");
-			//printf("Marching Cubes called %d times\n", marchingCubeCallCount); flushall();
-
-			appTimeManager.PushCurrentTime();
-			surfaceMesh->Clear();
-			marchingCubeCallCount = 0;
 			bool redraw = false;
-			if(drawEnabled && dataVolume != NULL && octree != NULL) {
-				redraw = true;
-				CalculateOctreeNode(octree->GetRoot());
-			}
+			#ifndef USE_OCTREE_OPTIMIZATION
+				appTimeManager.PushCurrentTime();
+				appTimeManager.PushCurrentTime();
+				surfaceMesh->Clear();
+				appTimeManager.PopAndDisplayTime("Marching Cubes)  Clearing : %f seconds |");
+				redraw = false;
+				marchingCubeCallCount = 0;
+				if(drawEnabled && dataVolume != NULL) {
+					redraw = true;
+					int iX, iY, iZ;
+					int maxX = dataVolume->getSizeX();
+					int maxY = dataVolume->getSizeY();
+					int maxZ = dataVolume->getSizeZ();
+					for(iX = max(maxX/2 - displayRadius, 0); iX < min(maxX, maxX/2 + displayRadius); iX+=sampleInterval) {
+						for(iY = max(maxY/2 - displayRadius, 0); iY < min(maxY, maxY/2 + displayRadius); iY+=sampleInterval) {
+							for(iZ = max(maxZ/2 - displayRadius, 0); iZ < min(maxZ, maxZ/2 + displayRadius); iZ+=sampleInterval) {
+								MarchingCube(dataVolume, surfaceMesh, surfaceValue, iX, iY, iZ, sampleInterval);
+							}
+						}
+					}
+				}
+				appTimeManager.PopAndDisplayTime("Meshing: %f seconds |");
+			#else 
+				appTimeManager.PushCurrentTime();
+				appTimeManager.PushCurrentTime();
+				surfaceMesh->Clear();
+				appTimeManager.PopAndDisplayTime("Octree)          Clearing : %f seconds |");
+				marchingCubeCallCount = 0;
+				redraw = false;
+				if(drawEnabled && dataVolume != NULL && octree != NULL) {
+					redraw = true;
+					CalculateOctreeNode(octree->GetRoot());
+				}
 
-			appTimeManager.PopAndDisplayTime("Calculating Surface octree-based: %f seconds |");
-			//printf("Marching Cubes called %d times\n", marchingCubeCallCount); flushall(); //flushall() isn't ANSI
-			cout << "Marching Cubes called " << marchingCubeCallCount << " times" << endl;
-			
+				appTimeManager.PopAndDisplayTime("Meshing: %f seconds |");
+			#endif
+			printf("Marching Cubes called %d times\n", marchingCubeCallCount); 
 			return redraw;
+			
 		}
 
 		bool VolumeRenderer::CalculateCuttingSurface() {
@@ -657,6 +674,76 @@ namespace wustl_mm {
 				
 			}
 		}
+		void VolumeRenderer::MarchingCube(Volume * vol, VolumeSurfaceMeshType * mesh, const float iso_level, int iX, int iY, int iZ, int iScale){
+			marchingCubeCallCount++;
+			extern int aiCubeEdgeFlags[256];
+			extern int a2iTriangleConnectionTable[256][16];
+
+			int iCorner, iVertex, iVertexTest, iEdge, iTriangle, iFlagIndex, iEdgeFlags;
+			float fOffset;
+			float afCubeValue[8];
+			Vector3 asEdgeVertex[12];
+			int vertexIds[12];
+
+			//Make a local copy of the values at the cube's corners
+			for(iVertex = 0; iVertex < 8; iVertex++) {
+				afCubeValue[iVertex] = GetVoxelData(vol, 
+													iX + a2iVertexOffset[iVertex][0]*iScale,
+													iY + a2iVertexOffset[iVertex][1]*iScale,
+													iZ + a2iVertexOffset[iVertex][2]*iScale);
+			}
+	
+			//Find which vertices are inside of the surface and which are outside
+			iFlagIndex = 0;
+			for(iVertexTest = 0; iVertexTest < 8; iVertexTest++)
+			{
+					if(afCubeValue[iVertexTest] <= iso_level) 
+							iFlagIndex |= 1<<iVertexTest;
+			}
+
+			//Find which edges are intersected by the surface
+			iEdgeFlags = aiCubeEdgeFlags[iFlagIndex];
+
+			//If the cube is entirely inside or outside of the surface, then there will be no intersections
+			if(iEdgeFlags == 0) 
+			{
+					return;
+			}
+
+			//Find the point of intersection of the surface with each edge
+			//Then find the normal to the surface at those points
+			for(iEdge = 0; iEdge < 12; iEdge++)
+			{
+					//if there is an intersection on this edge
+					if(iEdgeFlags & (1<<iEdge))
+					{
+							fOffset = GetOffset(afCubeValue[ a2iEdgeConnection[iEdge][0] ], afCubeValue[ a2iEdgeConnection[iEdge][1] ], iso_level);
+
+							asEdgeVertex[iEdge][0] = (float)iX + ((float)a2iVertexOffset[ a2iEdgeConnection[iEdge][0] ][0] +  fOffset * (float)a2iEdgeDirection[iEdge][0]) * (float)iScale;
+							asEdgeVertex[iEdge][1] = (float)iY + ((float)a2iVertexOffset[ a2iEdgeConnection[iEdge][0] ][1] +  fOffset * (float)a2iEdgeDirection[iEdge][1]) * (float)iScale;
+							asEdgeVertex[iEdge][2] = (float)iZ + ((float)a2iVertexOffset[ a2iEdgeConnection[iEdge][0] ][2] +  fOffset * (float)a2iEdgeDirection[iEdge][2]) * (float)iScale;
+				
+							vertexIds[iEdge] = mesh->AddVertex(TriangleMeshVertex<bool>(Vector3DFloat(asEdgeVertex[iEdge][0], asEdgeVertex[iEdge][1], asEdgeVertex[iEdge][2])), GetHashKey(iX, iY, iZ, iEdge, iScale));
+					}
+			}
+
+
+			//Draw the triangles that were found.  There can be up to five per cube
+			for(iTriangle = 0; iTriangle < 5; iTriangle++)
+			{
+					if(a2iTriangleConnectionTable[iFlagIndex][3*iTriangle] < 0)
+							break;
+					int triangleVertices[3];
+					for(iCorner = 0; iCorner < 3; iCorner++)
+					{
+						iVertex = a2iTriangleConnectionTable[iFlagIndex][3*iTriangle+iCorner];
+						triangleVertices[iCorner] = vertexIds[iVertex];
+					}
+
+					mesh->AddFace(triangleVertices[0], triangleVertices[1], triangleVertices[2]);
+			}
+		}
+
 		void VolumeRenderer::MarchingCube(Volume * vol, NonManifoldMesh_NoTags * mesh, const float iso_level, int iX, int iY, int iZ, int iScale){
 			marchingCubeCallCount++;
 			extern int aiCubeEdgeFlags[256];
@@ -726,6 +813,7 @@ namespace wustl_mm {
 					mesh->AddTriangle(triangleVertices[0], triangleVertices[1], triangleVertices[2], false, false);
 			}
 		}
+
 
 		void VolumeRenderer::NormalizeVolume(){
 			dataVolume->normalize(0, 1);

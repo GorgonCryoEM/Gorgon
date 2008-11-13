@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.6  2008/09/29 16:43:15  ssa1
+//   Adding in CVS meta information
+//
 
 #ifndef PROTEINMORPH_SWITCHBOARD_CPP
 #define PROTEINMORPH_SWITCHBOARD_CPP
@@ -24,6 +27,7 @@
 #include <string>
 #include <Foundation/StringUtils.h>
 #include "NonManifoldMesh.h"
+#include "NonManifoldMesh2.h"
 
 
 using namespace std;
