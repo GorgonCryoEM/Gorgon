@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.36  2008/11/13 17:01:58  ssa1
+//   Making the cross section and solid viewers slightly better
+//
 //   Revision 1.35  2008/11/13 15:49:00  ssa1
 //   Performance improvements for creating a mesh from marching cubes
 //
@@ -108,6 +111,10 @@ namespace wustl_mm {
 			Volume * GetVolume();
 			Volume * PerformBinarySkeletonizationJu2007(double threshold, int minCurveSize, int minSurfaceSize);
 			Volume * PerformGrayscaleSkeletonizationAbeysinghe2008(double startDensity, int stepCount, int minCurveSize, int minSurfaceSize, int curveRadius, int surfaceRadius, int skeletonSmoothenRadius);
+			void SetSpacing(float spX, float spY, float spZ);
+			float GetSpacingX();
+			float GetSpacingY();
+			float GetSpacingZ();
 		
 		private:
 			int GetHashKey(int x, int y, int z, int edge, int iScale);
@@ -576,6 +583,7 @@ namespace wustl_mm {
 		}
 
 		void VolumeRenderer::LoadFile(string fileName) {
+			Renderer::LoadFile(fileName);
 			if(dataVolume != NULL) {
 				delete dataVolume;
 			}
@@ -886,6 +894,35 @@ namespace wustl_mm {
 		}
 		Volume * VolumeRenderer::GetVolume() {
 			return dataVolume;
+		}
+
+		void VolumeRenderer::SetSpacing(float spX, float spY, float spZ) {
+			if(dataVolume != NULL) {
+				dataVolume->setSpacing(spX, spY, spZ);
+			} else {
+				Renderer::SetSpacing(spX, spY, spZ);
+			}
+		}
+
+		float VolumeRenderer::GetSpacingX() {
+			if(dataVolume != NULL) {
+				return dataVolume->getSpacingX();
+			}
+			return Renderer::GetSpacingX();
+		}
+
+		float VolumeRenderer::GetSpacingY() {
+			if(dataVolume != NULL) {
+				return dataVolume->getSpacingY();
+			}
+			return Renderer::GetSpacingY();
+		}
+
+		float VolumeRenderer::GetSpacingZ() {
+			if(dataVolume != NULL) {
+				return dataVolume->getSpacingY();
+			}
+			return Renderer::GetSpacingY();
 		}
 	}
 }

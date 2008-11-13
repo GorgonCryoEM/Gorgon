@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.26  2008/11/06 20:34:23  ssa1
+//   Proper lighting for bounding boxes
+//
 //   Revision 1.25  2008/10/28 22:18:05  ssa1
 //   Changing visualization of meshes, and sketches
 //
@@ -59,6 +62,10 @@ namespace wustl_mm {
 			void static DrawSphere(Vector3DFloat center, float radius);
 			void static DrawCylinder(Vector3DFloat pt1, Vector3DFloat pt2, float radius);
 			void SetColor(float colorR, float colorG, float colorB, float colorA);
+			virtual void SetSpacing(float spX, float spY, float spZ);
+			virtual float GetSpacingX();
+			virtual float GetSpacingY();
+			virtual float GetSpacingZ();
 
 			float GetMin(int dimension);
 			float GetMax(int dimension);
@@ -67,6 +74,7 @@ namespace wustl_mm {
 			virtual void UpdateBoundingBox();			
 			float minPts[3];
 			float maxPts[3];
+			float spacing[3];
 			bool selected;
 			Vector3DFloat cuttingPlaneCenter;
 			Vector3DFloat cuttingPlaneDirection;
@@ -75,6 +83,7 @@ namespace wustl_mm {
 		};
 
 		Renderer::Renderer() {
+			SetSpacing(1.0f, 1.0f, 1.0f);
 			selected = false;
 			quadricSphere = gluNewQuadric();
 			quadricCylinder = gluNewQuadric();
@@ -116,6 +125,7 @@ namespace wustl_mm {
 		}
 
 		void Renderer::LoadFile(string fileName) {
+			SetSpacing(1.0f, 1.0f, 1.0f);
 		}
 
 		void Renderer::SaveFile(string fileName) {
@@ -218,8 +228,26 @@ namespace wustl_mm {
 			glMaterialfv(GL_FRONT, GL_DIFFUSE,   diffuse); 
 			glMaterialfv(GL_FRONT, GL_SPECULAR,  specular); 
 			glMaterialf(GL_FRONT, GL_SHININESS, 0.1);
-
 		}
+
+		void Renderer::SetSpacing(float spX, float spY, float spZ) {	
+			spacing[0] = spX;
+			spacing[1] = spY;
+			spacing[2] = spZ;
+		}
+
+		float Renderer::GetSpacingX() {
+			return spacing[0];
+		}
+
+		float Renderer::GetSpacingY() {
+			return spacing[1];
+		}
+
+		float Renderer::GetSpacingZ() {
+			return spacing[2];
+		}
+
 	}
 }
 

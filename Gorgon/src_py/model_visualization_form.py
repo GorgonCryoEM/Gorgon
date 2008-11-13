@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.9  2008/11/06 05:29:04  ssa1
+#   CGI submission milestone for Interactive Skeletonization, and theme support, and fixing (hopefully) mac-os flicker bug
+#
 #   Revision 1.8  2008/06/18 18:15:41  ssa1
 #   Adding in CVS meta data
 #
@@ -81,9 +84,9 @@ class ModelVisualizationForm(QtGui.QWidget):
         else :
             self.ui.radioButtonSmooth.setChecked(True)   
             
-        self.ui.doubleSpinBoxSizeX.setValue(self.viewer.scale[0])   
-        self.ui.doubleSpinBoxSizeY.setValue(self.viewer.scale[1])
-        self.ui.doubleSpinBoxSizeZ.setValue(self.viewer.scale[2])
+        self.ui.doubleSpinBoxSizeX.setValue(self.viewer.renderer.getSpacingX())   
+        self.ui.doubleSpinBoxSizeY.setValue(self.viewer.renderer.getSpacingY())
+        self.ui.doubleSpinBoxSizeZ.setValue(self.viewer.renderer.getSpacingZ())
         self.ui.doubleSpinBoxLocationX.setValue(self.viewer.location[0])
         self.ui.doubleSpinBoxLocationY.setValue(self.viewer.location[1])
         self.ui.doubleSpinBoxLocationZ.setValue(self.viewer.location[2])

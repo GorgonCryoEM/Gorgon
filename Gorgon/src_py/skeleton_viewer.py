@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.15  2008/11/06 05:29:04  ssa1
+#   CGI submission milestone for Interactive Skeletonization, and theme support, and fixing (hopefully) mac-os flicker bug
+#
 #   Revision 1.14  2008/06/18 18:15:41  ssa1
 #   Adding in CVS meta data
 #
@@ -18,6 +21,7 @@
 from PyQt4 import QtGui, QtCore, QtOpenGL
 from libpyGORGON import MeshRenderer
 from base_viewer import BaseViewer
+from model_visualization_form import ModelVisualizationForm
 from skeleton_laplacian_smoothing_form import SkeletonLaplacianSmoothingForm
 
 try:
@@ -43,7 +47,7 @@ class SkeletonViewer(BaseViewer):
         self.createUI()      
         self.app.viewers["skeleton"] = self;
         self.volumeViewer = self.app.viewers["volume"]        
-        self.initVisualizationOptions()      
+        self.initVisualizationOptions(ModelVisualizationForm(self.app, self))      
         self.visualizationOptions.ui.spinBoxThickness.setValue(self.lineThickness)
         self.visualizationOptions.ui.spinBoxThickness.setVisible(True)
         self.visualizationOptions.ui.labelThickness.setVisible(True)

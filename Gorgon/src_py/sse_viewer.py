@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.13  2008/11/06 05:29:04  ssa1
+#   CGI submission milestone for Interactive Skeletonization, and theme support, and fixing (hopefully) mac-os flicker bug
+#
 #   Revision 1.12  2008/08/06 06:21:37  ssa1
 #   Tracing protein path, for SSE Correspondance matching
 #
@@ -22,6 +25,7 @@ from PyQt4 import QtGui, QtCore, QtOpenGL
 from libpyGORGON import SSERenderer
 from base_viewer import BaseViewer
 from sse_helix_correspondence_finder_form import SSEHelixCorrespondenceFinderForm
+from model_visualization_form import ModelVisualizationForm
 from libpyGORGON import SSECorrespondenceEngine, SSECorrespondenceResult
 
 try:
@@ -50,7 +54,7 @@ class SSEViewer(BaseViewer):
         self.selectEnabled = True
         self.app.viewers["sse"] = self;
         self.model2Visible = True
-        self.initVisualizationOptions()
+        self.initVisualizationOptions(ModelVisualizationForm(self.app, self))
         self.visualizationOptions.ui.checkBoxModelVisible.setText("Show helices colored:")
         self.visualizationOptions.ui.checkBoxModel2Visible.setText("Show sheets colored:")
         self.visualizationOptions.ui.checkBoxModel2Visible.setVisible(True)

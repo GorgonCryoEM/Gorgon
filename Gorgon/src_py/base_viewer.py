@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.42  2008/11/06 05:29:04  ssa1
+#   CGI submission milestone for Interactive Skeletonization, and theme support, and fixing (hopefully) mac-os flicker bug
+#
 #   Revision 1.41  2008/10/28 22:18:05  ssa1
 #   Changing visualization of meshes, and sketches
 #
@@ -58,7 +61,6 @@
 
 from PyQt4 import QtGui, QtCore, QtOpenGL
 from libpyGORGON import VolumeRenderer, Vector3DFloat
-from model_visualization_form import ModelVisualizationForm
 from vector_lib import *
 
 try:
@@ -89,7 +91,6 @@ class BaseViewer(QtOpenGL.QGLWidget):
         self.modelVisible = True
         self.model2Visible = False
         self.location = [0,0,0]
-        self.scale = [1,1,1]
         self.rotation = self.identityMatrix()
         self.connect(self, QtCore.SIGNAL("modelChanged()"), self.modelChanged) 
         self.connect(self, QtCore.SIGNAL("modelLoaded()"), self.modelChanged) 
@@ -98,15 +99,22 @@ class BaseViewer(QtOpenGL.QGLWidget):
         self.gllist = 0
         self.showBox = True
         
-    def initVisualizationOptions(self):
-        self.visualizationOptions = ModelVisualizationForm(self.app, self)
+    def initVisualizationOptions(self, visualizationForm):
+        self.visualizationOptions = visualizationForm
     
     def identityMatrix(self):
         return [[1.0, 0.0, 0.0, 0.0],[0.0, 1.0, 0.0, 0.0], [0.0, 0.0, 1.0, 0.0], [0.0, 0.0, 0.0, 1.0]] 
     
     def setScale(self, scaleX, scaleY, scaleZ):
-        self.scale = [scaleX, scaleY, scaleZ]
+        self.setScaleNoEmit(scaleX, scaleY, scaleZ)
         self.emitModelChanged()
+
+    def setScaleNoEmit(self, scaleX, scaleY, scaleZ):
+        self.renderer.setSpacing(scaleX, scaleY, scaleZ)
+        self.visualizationOptions.ui.doubleSpinBoxSizeX.setValue(scaleX)
+        self.visualizationOptions.ui.doubleSpinBoxSizeY.setValue(scaleY)
+        self.visualizationOptions.ui.doubleSpinBoxSizeZ.setValue(scaleZ)
+        
     
     def setLocation(self, locationX, locationY, locationZ):
         self.location = [locationX, locationY, locationZ]
@@ -206,12 +214,13 @@ class BaseViewer(QtOpenGL.QGLWidget):
         self.updateViewerAutonomy(value)
 
     def getCenterAndDistance(self):
-        minPos = [(self.renderer.getMin(0)*self.scale[0] + self.location[0]), 
-                  (self.renderer.getMin(1)*self.scale[1] + self.location[1]), 
-                  (self.renderer.getMin(2)*self.scale[2] + self.location[2])]
-        maxPos = [(self.renderer.getMax(0)*self.scale[0] + self.location[0]),
-                  (self.renderer.getMax(1)*self.scale[1] + self.location[1]), 
-                  (self.renderer.getMax(2)*self.scale[2] + self.location[2])]
+        scale = [self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ()]
+        minPos = [(self.renderer.getMin(0)*scale[0] + self.location[0]), 
+                  (self.renderer.getMin(1)*scale[1] + self.location[1]), 
+                  (self.renderer.getMin(2)*scale[2] + self.location[2])]
+        maxPos = [(self.renderer.getMax(0)*scale[0] + self.location[0]),
+                  (self.renderer.getMax(1)*scale[1] + self.location[1]), 
+                  (self.renderer.getMax(2)*scale[2] + self.location[2])]
         distance = vectorDistance(minPos, maxPos)
 
         center = vectorScalarMultiply(0.5, vectorAdd(minPos, maxPos))        
@@ -266,7 +275,7 @@ class BaseViewer(QtOpenGL.QGLWidget):
         if not self.fileName.isEmpty():  
             self.setCursor(QtCore.Qt.WaitCursor)
             self.renderer.loadFile(str(self.fileName))
-            #SequenceView(filename)
+            self.setScaleNoEmit(self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ())       
             self.loaded = True
             self.dirty = False
             self.setCursor(QtCore.Qt.ArrowCursor)
@@ -288,7 +297,7 @@ class BaseViewer(QtOpenGL.QGLWidget):
         self.loaded = False
         self.dirty = False
         self.location = [0,0,0]
-        self.scale = [1,1,1]
+        self.renderer.setSpacing(1, 1, 1)
         self.rotation = self.identityMatrix()
         self.emitModelUnloaded()
         
@@ -310,7 +319,8 @@ class BaseViewer(QtOpenGL.QGLWidget):
         glPushMatrix()
         glTranslated(self.location[0], self.location[1], self.location[2])
         glMultMatrixf(self.rotation)
-        glScaled(self.scale[0], self.scale[1], self.scale[2])            
+        scale = [self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ()]
+        glScaled(scale[0], scale[1], scale[2])            
         
         if(self.loaded and self.showBox):            
             self.setMaterials(self.getBoundingBoxColor())       

@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.35  2008/11/10 16:15:43  ssa1
+//   Making python and C++ use the same PDBAtom objects
+//
 //   Revision 1.34  2008/11/07 21:32:21  ssa1
 //   Fixing returning of the actual c++ pdbatom object instead of a copy
 //
@@ -163,6 +166,10 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("getMax", &Renderer::GetMax)
 		.def("get3DCoordinates", &Renderer::Get3DCoordinates)
 		.def("setCuttingPlane", &Renderer::SetCuttingPlane)	
+		.def("setSpacing", &Renderer::SetSpacing)
+		.def("getSpacingX", &Renderer::GetSpacingX)
+		.def("getSpacingY", &Renderer::GetSpacingY)
+		.def("getSpacingZ", &Renderer::GetSpacingZ)
 	;
 	
 	
@@ -197,6 +204,10 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("downsampleVolume", &VolumeRenderer::DownsampleVolume)
 		.def("performBinarySkeletonizationJu2007", &VolumeRenderer::PerformBinarySkeletonizationJu2007, return_value_policy<reference_existing_object>())		
 		.def("performGrayscaleSkeletonizationAbeysinghe2008", &VolumeRenderer::PerformGrayscaleSkeletonizationAbeysinghe2008, return_value_policy<reference_existing_object>())		
+		.def("setSpacing", &Renderer::SetSpacing)
+		.def("getSpacingX", &Renderer::GetSpacingX)
+		.def("getSpacingY", &Renderer::GetSpacingY)
+		.def("getSpacingZ", &Renderer::GetSpacingZ)
 	;
 
 	class_< MeshRenderer, bases<Renderer> >("MeshRenderer", init<>())
@@ -222,6 +233,10 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("intersectMeshAndSphere", &MeshRenderer::IntersectMeshAndSphere)
 		.def("getIntersectionPoint", &MeshRenderer::GetIntersectionPoint)
 		.def("setLineThickness", &MeshRenderer::SetLineThickness)
+		.def("setSpacing", &Renderer::SetSpacing)
+		.def("getSpacingX", &Renderer::GetSpacingX)
+		.def("getSpacingY", &Renderer::GetSpacingY)
+		.def("getSpacingZ", &Renderer::GetSpacingZ)
 	;
 
 	class_< SSERenderer, bases<Renderer> >("SSERenderer", init<>())
@@ -242,6 +257,10 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("getMax", &SSERenderer::GetMax)
 		.def("get3DCoordinates", &SSERenderer::Get3DCoordinates)
 		.def("setHelixColor", &SSERenderer::SetHelixColor)		
+		.def("setSpacing", &Renderer::SetSpacing)
+		.def("getSpacingX", &Renderer::GetSpacingX)
+		.def("getSpacingY", &Renderer::GetSpacingY)
+		.def("getSpacingZ", &Renderer::GetSpacingZ)
 	;
 
 	class_< CAlphaRenderer, bases<Renderer> >("CAlphaRenderer", init<>())
@@ -270,6 +289,10 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("getBond", &CAlphaRenderer::GetBond, return_value_policy<reference_existing_object>())
 		.def("getBondCount", &CAlphaRenderer::GetBondCount)
 		.def("deleteBond", &CAlphaRenderer::DeleteBond)		
+		.def("setSpacing", &Renderer::SetSpacing)
+		.def("getSpacingX", &Renderer::GetSpacingX)
+		.def("getSpacingY", &Renderer::GetSpacingY)
+		.def("getSpacingZ", &Renderer::GetSpacingZ)
 	;
 
 	class_<InteractiveSkeletonEngine>("InteractiveSkeletonEngine", init<Volume *, NonManifoldMesh_Annotated *, float, int, int, int, unsigned int>())		

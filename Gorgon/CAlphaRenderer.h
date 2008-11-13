@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.27  2008/11/10 16:15:43  ssa1
+//   Making python and C++ use the same PDBAtom objects
+//
 //   Revision 1.26  2008/11/07 21:32:21  ssa1
 //   Fixing returning of the actual c++ pdbatom object instead of a copy
 //
@@ -183,6 +186,7 @@ namespace wustl_mm {
 		}
 			
 		void CAlphaRenderer::LoadFile(string fileName) {
+			Renderer::LoadFile(fileName);
 			atoms.clear();
 			bonds.clear();
 			atoms = PDBReader::ReadAtomPositions(fileName);			
