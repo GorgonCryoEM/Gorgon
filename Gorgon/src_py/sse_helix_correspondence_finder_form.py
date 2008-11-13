@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.14  2008/11/11 15:38:55  colemanr
+#   fixed indentation problems
+#
 #   Revision 1.13  2008/11/10 21:12:54  colemanr
 #   allows either SEQ or PDB files to define the sequence
 #
@@ -162,11 +165,11 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
         self.viewer.correspondenceEngine.setConstant("SSE_FILE_NAME", str(self.ui.lineEditHelixLengthFile.text()))
         self.viewer.correspondenceEngine.setConstant("VRML_HELIX_FILE_NAME", str(self.ui.lineEditHelixLocationFile.text()))
         self.viewer.correspondenceEngine.setConstant("MRC_FILE_NAME", str(self.ui.lineEditSkeletonFile.text()))
-        sequenceName =  str(self.ui.lineEditSequenceFile.text())
-        self.viewer.correspondenceEngine.setConstant("SEQUENCE_FILE_NAME", sequenceName)
-        if sequenceName.split('.')[-1].lower() == 'pdb':
+        self.sequenceFileName = str(self.ui.lineEditSequenceFile.text())
+        self.viewer.correspondenceEngine.setConstant("SEQUENCE_FILE_NAME", self.sequenceFileName)
+        if self.sequenceFileName.split('.')[-1].lower() == 'pdb':
             self.viewer.correspondenceEngine.setConstant("SEQUENCE_FILE_TYPE", "PDB")
-        elif sequenceName.split('.')[-1].lower() == 'seq':
+        elif self.sequenceFileName.split('.')[-1].lower() == 'seq':
             self.viewer.correspondenceEngine.setConstant("SEQUENCE_FILE_TYPE", "SEQ")
         
         #Tab 2
@@ -245,7 +248,8 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
         
         
         #Loading Predicted SSEs                     
-        self.viewer.correspondenceEngine.loadSequenceGraph()        
+        self.viewer.correspondenceEngine.loadSequenceGraph()
+        
         predictedSecels = {}
         sseCount = self.viewer.correspondenceEngine.getSequenceSSECount()
         for sseIx in range(sseCount):
@@ -259,7 +263,10 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
                 pass
         #TODO: Mike, What should I pass in for the chain ??? 
         structPred = StructurePrediction(secelDict = predictedSecels, chain = None)
-            
+        
+        #cAlphaViewer = self.app.viewers['calpha']
+        #structPred = StructurePrediction.load( self.sequenceFileName )
+        #TODO: Is this ok--to load the file in C++ and to load the file again in python?  Or will the SSE's have different IDs, etc., and will that be a problem?
         
         #Loading Observed SSEs
         self.viewer.correspondenceEngine.loadSkeletonGraph()
@@ -351,14 +358,15 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
             for i in range(len(corr.matchList)):
                 match = corr.matchList[i]
                 color = self.getIndexedColor(i, len(corr.matchList))
-		match.predicted.setColor(color)
+                match.predicted.setColor(color)
                 if(match.predicted):
-		    cellItemPredicted =  QtGui.QTableWidgetItem(match.predicted.type + " " + str(match.predicted.serialNo + 1) + " : " + str(match.predicted.label))
-		    cellItemPredicted.setBackgroundColor(color)
+                    #print match.predicted, match.predicted.type, match.predicted.serialNo, match.predicted.label
+                    cellItemPredicted =  QtGui.QTableWidgetItem(match.predicted.type + " " + str(match.predicted.serialNo + 1) + " : " + str(match.predicted.label))
+                    cellItemPredicted.setBackgroundColor(color)
                     self.ui.tableWidgetCorrespondenceList.setItem(i, 0, cellItemPredicted)
                 if(match.observed):
                     cellItemObserved =  QtGui.QTableWidgetItem("helix " + str(match.observed.label + 1))
-		    cellItemObserved.setBackgroundColor(color)
+                    cellItemObserved.setBackgroundColor(color)
                     self.ui.tableWidgetCorrespondenceList.setItem(i, 1, cellItemObserved)
                     self.viewer.renderer.setHelixColor(match.observed.label, color.redF(), color.greenF(), color.blueF(), color.alphaF())
                 self.ui.tableWidgetCorrespondenceList.setCellWidget(i, 2, QtGui.QCheckBox())
@@ -368,6 +376,4 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
         
     def drawOverlay(self):
         if self.executed:
-	    self.viewer.correspondenceEngine.draw(0)
-        
-            
+            self.viewer.correspondenceEngine.draw(0)
