@@ -242,6 +242,22 @@
 				RelativePath=".\NonManifoldMesh.h"
 				>
 			</File>
+			<File
+				RelativePath=".\NonManifoldMesh2.h"
+				>
+			</File>
+			<File
+				RelativePath=".\TriangleMesh.h"
+				>
+			</File>
+			<File
+				RelativePath=".\TriangleMeshFace.h"
+				>
+			</File>
+			<File
+				RelativePath=".\TriangleMeshVertex.h"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Resource Files"
