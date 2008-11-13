@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.35  2008/11/13 15:49:00  ssa1
+//   Performance improvements for creating a mesh from marching cubes
+//
 //   Revision 1.34  2008/11/11 16:14:12  colemanr
 //   Replaced printf and flushall() with cout, because flushall isn't in gcc
 //   and isn't ANSI.
@@ -378,6 +381,8 @@ namespace wustl_mm {
 					glDisable(GL_CULL_FACE);
 					Vector3DFloat vertex;
 					// The outside box
+
+					glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 					if((viewingType == VIEWING_TYPE_CROSS_SECTION)) {
 						glBegin(GL_LINES);
 						for(unsigned int i = 0; i < cuttingMesh->edges.size(); i++) {
@@ -392,30 +397,6 @@ namespace wustl_mm {
 						glEnd();
 					}
 
-
-					float material[4];
-					float alphaValue = 0.9;
-					if(viewingType == VIEWING_TYPE_SOLID) {
-						glGetMaterialfv(GL_FRONT, GL_DIFFUSE, material);
-						material[3] = alphaValue;
-						glMaterialfv(GL_FRONT, GL_DIFFUSE, material);
-						glGetMaterialfv(GL_FRONT, GL_AMBIENT, material);
-						material[3] = alphaValue;
-						glMaterialfv(GL_FRONT, GL_AMBIENT, material);
-						glGetMaterialfv(GL_FRONT, GL_SPECULAR, material);
-						material[3] = alphaValue;
-						glMaterialfv(GL_FRONT, GL_SPECULAR, material);
-
-						glGetMaterialfv(GL_BACK, GL_DIFFUSE, material);
-						material[3] = alphaValue;
-						glMaterialfv(GL_BACK, GL_DIFFUSE, material);
-						glGetMaterialfv(GL_BACK, GL_AMBIENT, material);
-						material[3] = alphaValue;
-						glMaterialfv(GL_BACK, GL_AMBIENT, material);
-						glGetMaterialfv(GL_BACK, GL_SPECULAR, material);
-						material[3] = alphaValue;
-						glMaterialfv(GL_BACK, GL_SPECULAR, material);
-					}
 
 					// The cutting surface
 					glEnable(GL_TEXTURE_3D);
