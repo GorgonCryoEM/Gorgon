@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.39  2008/11/06 05:29:04  ssa1
+#   CGI submission milestone for Interactive Skeletonization, and theme support, and fixing (hopefully) mac-os flicker bug
+#
 #   Revision 1.38  2008/10/30 21:19:39  colemanr
 #   actually making use of CAlphaViewer.main_chain
 #
@@ -154,7 +157,7 @@ class Camera(QtOpenGL.QGLWidget):
             except:
                 return
         pos = atom.getPosition()
-        x, y, z = pos.x()*viewer.scale[0],  pos.y()*viewer.scale[1],  pos.z()*viewer.scale[2]
+        x, y, z = pos.x()*viewer.renderer.getSpacingX(),  pos.y()*viewer.renderer.getSpacingY(),  pos.z()*viewer.renderer.getSpacingZ()
         self.setCenter( x, y, z )
         viewer.emitModelChanged()
     
