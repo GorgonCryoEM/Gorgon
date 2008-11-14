@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.12  2008/11/13 01:02:08  colemanr
+#   removed a completed "#TODO: ..." comment
+#
 #   Revision 1.11  2008/11/10 19:35:21  colemanr
 #   Modified to work with the updated CAlphaRenderer.h--no longer need to
 #   delete and re-add atoms to the renderer to display changes
@@ -42,13 +45,14 @@ from libpyGORGON import PDBAtom, Vector3DFloat
 from seq_model.Residue import Residue
 
 class CAlphaAtomPlacerForm(QtGui.QWidget):
-    def __init__(self, main, viewer, main_chain, parent=None):
+    def __init__(self, main, viewer, main_chain, structPred, parent=None):
         QtGui.QWidget.__init__(self, parent)
         self.app = main
         self.viewer = viewer
         self.skeletonViewer = self.app.viewers["skeleton"]
         self.connect(self.skeletonViewer, QtCore.SIGNAL("elementSelected (int, int, int, int, int, int, QMouseEvent)"), self.skeletonSelected)
-        self.main_chain=main_chain        
+        self.main_chain=main_chain
+        self.structPred = structPred
         self.createUI()
         self.createActions()
         self.createMenus()
@@ -144,12 +148,18 @@ class CAlphaAtomPlacerForm(QtGui.QWidget):
         self.extraTab.setLayout(extraLayout)
         
     def loadWidget(self):
+        self.structPred = self.viewer.structPred
         if(self.app.actions.getAction("perform_CAlphaManualAtomPlacement").isChecked()) :
+            if self.structPred.chain:
+                self.resSeqNumSpinBox.setRange( min(self.structPred.chain.residueRange()), max(self.structPred.chain.residueRange()) )
+            else:
+                return            
             self.app.addDockWidget(QtCore.Qt.LeftDockWidgetArea, self.dock)
             self.skeletonViewer.setSelectEnabled(True)
+            if not self.viewer.main_chain:
+                self.viewer.main_chain = self.viewer.structPred.chain
             self.main_chain = self.viewer.main_chain
-            self.resSeqNumSpinBox.setRange( min(self.main_chain.residueRange()), max(self.main_chain.residueRange()) )
-            residue = self.main_chain[self.resSeqNumSpinBox.value()]
+            residue = self.structPred.chain[self.resSeqNumSpinBox.value()]
             self.resNameLabel.setText(residue.symbol3)
             self.identifierLabel.setText( self.main_chain.getPdbID() + ' chain ' + self.main_chain.getChainID() )
             self.dock.show()
@@ -203,4 +213,4 @@ class CAlphaAtomPlacerForm(QtGui.QWidget):
     
     def updateResName(self, index):
         print 'in updateResName'
-        self.resNameLabel.setText(self.main_chain[index].symbol3)
+        self.resNameLabel.setText(self.structPred.chain[index].symbol3)
