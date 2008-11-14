@@ -355,7 +355,7 @@ class SequenceView(QtGui.QWidget):
       else:
         self.setSequenceSelection(newSelection)
       
-      self.parentWidget().parentWidget().parentWidget().structureEditor.setResidues([resNum])
+      self.parentWidget().parentWidget().parentWidget().structureEditor.setResidues(newSelection)
       self.repaint()
       return
 
