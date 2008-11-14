@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.17  2008/11/13 20:54:40  ssa1
+#   Using the correct scale when loading volumes
+#
 #   Revision 1.16  2008/11/11 21:44:35  colemanr
 #   Loads *.seq files using the reader in StructurePrediction.py rather than
 #   the one in Chain.py, because SequenceView now uses a StructurePrediction
@@ -88,7 +91,7 @@ class CAlphaViewer(BaseViewer):
         self.selectEnabled = True
         self.renderer = CAlphaRenderer()          
         self.main_chain = Chain('', self.app)
-        self.predictedSSEsequence = Chain('', self.app)
+        self.structPred = None
         self.createUI()      
         self.app.viewers["calpha"] = self;
         self.model2Visible = True
@@ -105,7 +108,7 @@ class CAlphaViewer(BaseViewer):
         self.updateActionsAndMenus()
                   
     def createChildWindows(self):
-        self.manualAtomPlacer = CAlphaAtomPlacerForm(self.app, self, self.main_chain)
+        self.manualAtomPlacer = CAlphaAtomPlacerForm(self.app, self, self.main_chain, self.structPred)
         
     def createActions(self):
         openAct = QtGui.QAction(self.tr("C-&Alpha Atoms..."), self)
@@ -135,9 +138,11 @@ class CAlphaViewer(BaseViewer):
         seqDockAct.setCheckable(True)
         seqDockAct.setChecked(False)
         def showDock():
-            if not self.predictedSSEsequence:
+            if not self.structPred:
                 self.loadSeq()
-            SequenceDock.changeDockVisibility(self.app, self, self.predictedSSEsequence, self.main_chain)
+            if self.structPred and not self.main_chain:
+                self.main_chain = self.structPred
+            SequenceDock.changeDockVisibility(self.app, self, self.structPred, self.main_chain)
         self.connect(seqDockAct, QtCore.SIGNAL("triggered()"), showDock)
         self.app.actions.addAction("seqDock", seqDockAct)
         
@@ -191,7 +196,7 @@ class CAlphaViewer(BaseViewer):
                                             self.tr('Sequence possibly with SSE predictions (*.seq)') )
         fileName = unicode(fileName)
         if fileName:
-            self.predictedSSEsequence = StructurePrediction.load(fileName, self.app)
+            self.structPred = StructurePrediction.load(fileName, self.app)
     
     def createMenus(self):
         self.app.menus.addAction("file-open-calpha", self.app.actions.getAction("load_CAlpha"), "file-open")
