@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.7  2008/11/13 00:48:02  colemanr
+//   Ignores helices that are shorter than minHelixLength = 6
+//
 //   Revision 1.6  2008/11/13 00:40:33  colemanr
 //   Fixed a memory error.  string::c_str() returns a reference to a string, not a copy, so I am
 //   now making a copy using string::copy().  Also, switched from using Foundation/StringUtils.h to
@@ -55,13 +58,46 @@ namespace wustl_mm {
 	namespace GraphMatch {
 		typedef StandardGraph GraphType;
 		
+		/*class SEQFileData {
+		
+		public:
+			unsigned int GetStartResNo() { return startResNo; }
+			void SetStartResNo(unsigned int Ix) { startResNo = Ix; }
+			string GetSequenceString() { return sequenceString; }
+			void SetSequenceString(char * str) { sequenceString = str; }
+			void SetSequenceString(string str) { sequenceString = str; }
+			string GetStructureString() { return structureString; }
+			void SetStructureString(char * str) { structureString = str; }
+			void SetStructureString(string str) { structureString = str; }
+			SecondaryStructure* GetStructure(unsigned int Ix) { return structures[Ix]; }
+			vector<SecondaryStructure*> GetStructuresVector() { return structures; }
+			void SetStructures(vector<SecondaryStructure*> newStructures) { structures = newStructures; }
+			
+		private:
+			unsigned int startResNo;
+			string sequenceString;
+			string structureString;
+			vector<SecondaryStructure*> structures;
+		
+		}*/
+		
 		class SEQReader {
 		public:
 			static StandardGraph * ReadFile(char* fileName);
+			static vector<SecondaryStructure*> * ReadStructuresFromFile(char* fileName);
+			static StandardGraph * GetGraphFromStructures(vector<SecondaryStructure*> * pStructures);
 		};
 		
 		
 		StandardGraph * SEQReader::ReadFile(char* fileName)
+		{
+			vector<SecondaryStructure*> * pStructures = ReadStructuresFromFile(fileName);
+			StandardGraph * pGraph = GetGraphFromStructures(pStructures);
+			return pGraph;
+		}
+		
+		
+		vector<SecondaryStructure*> * SEQReader::ReadStructuresFromFile(char* fileName)
 		{
 			#ifdef DEBUG
 			cout << "In SEQReader::ReadFile" << endl;
@@ -90,7 +126,8 @@ namespace wustl_mm {
 			if (strLength % 2 == 1) 
 			{
 				cout << "Odd number of characters!" << endl;
-				return NULL;
+				vector<SecondaryStructure*> * pEmpty = new vector<SecondaryStructure*>;
+				return pEmpty;
 			}
 			string sequence = str.substr(0,strLength/2);
 			string predictedSSEs = str.substr(strLength/2);
@@ -100,7 +137,11 @@ namespace wustl_mm {
 				cout << "\nSequence:\n" << sequence << endl;
 				cout << "\nPredicted SSEs:\n" << predictedSSEs << endl;
 			#endif
-			if (sequence.length() != predictedSSEs.length()) return NULL;
+			if (sequence.length() != predictedSSEs.length())
+			{
+				vector<SecondaryStructure*> * pEmpty = new vector<SecondaryStructure*>;
+				return pEmpty;
+			}
 			fin.close();
 		
 			
@@ -116,7 +157,8 @@ namespace wustl_mm {
 			char ch;
 			string substring;
 			string sseID;
-			vector<SecondaryStructure*> structures;
+			vector<SecondaryStructure*> * pStructures = new vector<SecondaryStructure*>;
+			vector<SecondaryStructure*> & structures = *pStructures;
 			SecondaryStructure * currentStructure;
 			bool add;
 			unsigned int idNum = 1;
@@ -212,23 +254,19 @@ namespace wustl_mm {
 				}
 			}
 			
+			return pStructures;
+		}
 		
+		
+		StandardGraph * SEQReader::GetGraphFromStructures(vector<SecondaryStructure*> * pStructures)
+		{
+			vector<SecondaryStructure*> & structures = *pStructures;
+			int i;
 			//**********************************************************************************************
-			//Now it's copying and pasting from SEQReader.h
+			//Code below is copied and pasted from PDBReader.h
 			//**********************************************************************************************
 		
-		
-			// Sorting the structures by the start position
-			int i;//,j;
-			/*for(i = 0; i < (int)structures.size()-1; i++)	{
-				for(j = i+1; j < (int)structures.size(); j++) {
-					if(structures[i]->startPosition > structures[j]->startPosition) {
-						currentStructure = structures[i];
-						structures[i] = structures[j];
-						structures[j] = currentStructure;
-					}
-				}
-			}*/
+			
 		
 			if(structures.size() == 0){
 				printf("No helixes or sheets found... Unable to perform matching");
@@ -266,6 +304,8 @@ namespace wustl_mm {
 			return graph;
 		
 		}
+		
+		
 	}
 }
 
