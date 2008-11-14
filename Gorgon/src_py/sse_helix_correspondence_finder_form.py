@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.15  2008/11/13 00:30:32  colemanr
+#   changes concerning *.seq files
+#
 #   Revision 1.14  2008/11/11 15:38:55  colemanr
 #   fixed indentation problems
 #
@@ -261,12 +264,15 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
                 #TODO: Add Sheet support
                 predictedSecels[sseIx] = None
                 pass
-        #TODO: Mike, What should I pass in for the chain ??? 
-        structPred = StructurePrediction(secelDict = predictedSecels, chain = None)
-        
-        #cAlphaViewer = self.app.viewers['calpha']
-        #structPred = StructurePrediction.load( self.sequenceFileName )
+                
+        #TODO: Find a better way to get the chain object and build the StructurePrediction object - this is a temporary hack
         #TODO: Is this ok--to load the file in C++ and to load the file again in python?  Or will the SSE's have different IDs, etc., and will that be a problem?
+        tempStructPred = StructurePrediction.load(self.sequenceFileName, self.app)
+        chain = tempStructPred.chain
+        structPred = StructurePrediction(secelDict = predictedSecels, chain = chain, qparent=self.app)#None)
+        cAlphaViewer = self.app.viewers['calpha']
+        cAlphaViewer.structPred = structPred
+        
         
         #Loading Observed SSEs
         self.viewer.correspondenceEngine.loadSkeletonGraph()
