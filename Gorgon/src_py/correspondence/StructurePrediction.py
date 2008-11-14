@@ -28,7 +28,7 @@ class StructurePrediction(baseClass):  #results of secondary-structure predictio
         self.chain=chain
         self.params=params
         self.comments=comments
-        self.qparent = qparent
+        self.app = qparent
 
 
     @classmethod
@@ -85,13 +85,14 @@ class StructurePrediction(baseClass):  #results of secondary-structure predictio
             n = 0
             for char in sequence:
                 chain[startIndex+n] = Residue(char, chain)
-                n += 1
-    
+                n += 1 
+        
         # loop pre-conditions
         # i is the next char in the predictionStr
         current= predictionsStr[0]
         start=startIndex
         helixCount=0
+        minHelixLength = 6
         strandCount=0
         coilCount=0
         for nextChar,index in zip(predictionsStr,range(startIndex,len(predictionsStr)+startIndex)):
@@ -101,12 +102,14 @@ class StructurePrediction(baseClass):  #results of secondary-structure predictio
             
             if prev != current:
                 stop=index-1
+                length = stop - start + 1
         
                 if prev=='H':
-                    helixCount=helixCount+1
-                    label='H' + str(helixCount)
-                    secel = Helix(chain,None, label,start,stop)
-                    #chain.secel_list.append(secel)
+                    if length >= minHelixLength:
+                        helixCount=helixCount+1
+                        label='H' + str(helixCount)
+                        secel = Helix(chain,None, label,start,stop)
+                        #chain.secel_list.append(secel)
         
                 elif prev=='E':
                     strandCount=strandCount+1
@@ -126,12 +129,13 @@ class StructurePrediction(baseClass):  #results of secondary-structure predictio
                 start = index
                 print secel
                 secelDict[secelIndex]=secel
-                secelIndex = secelIndex+1
+                secelIndex = secelIndex+1        
         
         print chain
         #print chain.toPDB()
-        #print secelDict
+        print secelDict
         return StructurePrediction(secelDict,chain, params, comments, qparent)
+        
     def getSecelByIndex(self, index):
         for key in self.secelDict.keys():
             secel = self.secelDict[key]
