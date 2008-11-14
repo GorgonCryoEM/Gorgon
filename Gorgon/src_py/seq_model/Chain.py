@@ -708,7 +708,9 @@ class Chain(baseClass):
       sheet=self.sheets[sheetID]
       s=s+sheet.toPDB(sheetID)
 
-    for strand in self.orphanStrands:
+    #TODO: figure out how to handle orphan strands
+    for strandID in sorted(self.orphanStrands.keys()):
+      strand = self.orphanStrands[strandID]
       s=s+strand.toPDB()
 
     for residue_index in self.residueRange():
