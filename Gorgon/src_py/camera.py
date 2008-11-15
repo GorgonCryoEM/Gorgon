@@ -11,6 +11,10 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.40  2008/11/14 22:54:48  colemanr
+#   Fixed centerOnSelectedAtom to work with the changes to scaling in
+#   renderers and viewers
+#
 #   Revision 1.39  2008/11/06 05:29:04  ssa1
 #   CGI submission milestone for Interactive Skeletonization, and theme support, and fixing (hopefully) mac-os flicker bug
 #
@@ -157,7 +161,10 @@ class Camera(QtOpenGL.QGLWidget):
             except:
                 return
         pos = atom.getPosition()
-        x, y, z = pos.x()*viewer.renderer.getSpacingX(),  pos.y()*viewer.renderer.getSpacingY(),  pos.z()*viewer.renderer.getSpacingZ()
+        #print viewer.renderer.getSpacingX(), viewer.renderer.getSpacingY(), viewer.renderer.getSpacingZ()
+        x = pos.x()*viewer.renderer.getSpacingX() + viewer.location[0]
+        y = pos.y()*viewer.renderer.getSpacingY() + viewer.location[1]
+        z = pos.z()*viewer.renderer.getSpacingZ() + viewer.location[2]
         self.setCenter( x, y, z )
         viewer.emitModelChanged()
     
