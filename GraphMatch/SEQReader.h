@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.8  2008/11/14 22:18:30  colemanr
+//   ReadFile() logic is now broken down into two seperate functions
+//
 //   Revision 1.7  2008/11/13 00:48:02  colemanr
 //   Ignores helices that are shorter than minHelixLength = 6
 //
@@ -58,7 +61,7 @@ namespace wustl_mm {
 	namespace GraphMatch {
 		typedef StandardGraph GraphType;
 		
-		/*class SEQFileData {
+		class SEQFileData {
 		
 		public:
 			unsigned int GetStartResNo() { return startResNo; }
@@ -69,42 +72,59 @@ namespace wustl_mm {
 			string GetStructureString() { return structureString; }
 			void SetStructureString(char * str) { structureString = str; }
 			void SetStructureString(string str) { structureString = str; }
-			SecondaryStructure* GetStructure(unsigned int Ix) { return structures[Ix]; }
-			vector<SecondaryStructure*> GetStructuresVector() { return structures; }
-			void SetStructures(vector<SecondaryStructure*> newStructures) { structures = newStructures; }
+			unsigned int GetNumberOfStructures() { return pStructures->size(); }
+			SecondaryStructure* GetStructure(unsigned int Ix) { 
+				vector<SecondaryStructure*> & structures = *pStructures;
+				return structures[Ix];
+			}
+			vector<SecondaryStructure*> * GetStructuresVectorPointer() { return pStructures; }
+			void SetStructuresPointer(vector<SecondaryStructure*> * pNewStructures) { pStructures = pNewStructures; }
+			SEQFileData() {
+				startResNo = 1;
+				sequenceString = "";
+				structureString = "";
+				pStructures = NULL;
+			}
+			SEQFileData(unsigned int stRes, string seqStr, string structStr, vector<SecondaryStructure*> * pStructuresVect) {
+				startResNo = stRes;
+				sequenceString = seqStr;
+				structureString = structStr;
+				pStructures = pStructuresVect;
+			}
 			
 		private:
 			unsigned int startResNo;
 			string sequenceString;
 			string structureString;
-			vector<SecondaryStructure*> structures;
+			vector<SecondaryStructure*> * pStructures;
 		
-		}*/
+		};
 		
 		class SEQReader {
 		public:
-			static StandardGraph * ReadFile(char* fileName);
-			static vector<SecondaryStructure*> * ReadStructuresFromFile(char* fileName);
-			static StandardGraph * GetGraphFromStructures(vector<SecondaryStructure*> * pStructures);
+			static StandardGraph * ReadFile(string fileName);
+			static SEQFileData ReadSeqFileData(string fileName);
+			static StandardGraph * GetGraphFromSeqFileData(SEQFileData seqFData);
 		};
 		
 		
-		StandardGraph * SEQReader::ReadFile(char* fileName)
+		StandardGraph * SEQReader::ReadFile(string fileName)
 		{
-			vector<SecondaryStructure*> * pStructures = ReadStructuresFromFile(fileName);
-			StandardGraph * pGraph = GetGraphFromStructures(pStructures);
+			#ifdef DEBUG
+				cout << "In SEQReader::ReadFile" << endl;
+			#endif
+			SEQFileData seqFData = ReadSeqFileData(fileName);
+			StandardGraph * pGraph = GetGraphFromSeqFileData(seqFData);
 			return pGraph;
 		}
 		
 		
-		vector<SecondaryStructure*> * SEQReader::ReadStructuresFromFile(char* fileName)
+		SEQFileData SEQReader::ReadSeqFileData(string fileName)
 		{
-			#ifdef DEBUG
-			cout << "In SEQReader::ReadFile" << endl;
-			#endif
 			//Reading the file for start residue # (possibly), sequence, and predicted SSEs
-			ifstream fin(fileName);
+			ifstream fin(fileName.c_str());
 			string str;
+			string tempStr;
 			getline(fin, str);
 			int startResNum = 1;	
 			if (str.compare(0,5,"START") || str.compare(0,5, "start"))	{
@@ -116,7 +136,6 @@ namespace wustl_mm {
 				str.clear();
 			}
 			
-			string tempStr	;
 			while (!fin.eof())
 			{
 				getline(fin, tempStr);
@@ -127,7 +146,7 @@ namespace wustl_mm {
 			{
 				cout << "Odd number of characters!" << endl;
 				vector<SecondaryStructure*> * pEmpty = new vector<SecondaryStructure*>;
-				return pEmpty;
+				//return pEmpty;
 			}
 			string sequence = str.substr(0,strLength/2);
 			string predictedSSEs = str.substr(strLength/2);
@@ -140,7 +159,7 @@ namespace wustl_mm {
 			if (sequence.length() != predictedSSEs.length())
 			{
 				vector<SecondaryStructure*> * pEmpty = new vector<SecondaryStructure*>;
-				return pEmpty;
+				//return pEmpty;
 			}
 			fin.close();
 		
@@ -254,12 +273,13 @@ namespace wustl_mm {
 				}
 			}
 			
-			return pStructures;
+			return SEQFileData(startResNum, sequence, predictedSSEs, pStructures);
 		}
 		
 		
-		StandardGraph * SEQReader::GetGraphFromStructures(vector<SecondaryStructure*> * pStructures)
+		StandardGraph * SEQReader::GetGraphFromSeqFileData(SEQFileData seqFData)
 		{
+			vector<SecondaryStructure*> * pStructures = seqFData.GetStructuresVectorPointer();
 			vector<SecondaryStructure*> & structures = *pStructures;
 			int i;
 			//**********************************************************************************************
