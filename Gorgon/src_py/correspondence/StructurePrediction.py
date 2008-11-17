@@ -11,6 +11,7 @@ from seq_model.Coil import Coil
 from seq_model.Strand import Strand
 from seq_model.Chain import Chain
 from seq_model.Residue import Residue
+from libpyGORGON import SeqReader, SeqFileData
 
 try:
     from PyQt4 import QtCore, QtGui
@@ -32,7 +33,7 @@ class StructurePrediction(baseClass):  #results of secondary-structure predictio
 
 
     @classmethod
-    def load(cls, filename,  qparent=None):
+    def load(cls, filename, qparent=None):
         '''
             Sequence files are a file type we defined.  The first line gives the one-letter abbreviations for the sequence.  
             The line below it shows the predicted secondary structure element for each residue as "H" for helix, "E" for strand, and "-" otherwise.  
@@ -46,13 +47,40 @@ class StructurePrediction(baseClass):  #results of secondary-structure predictio
             
             The first line may give a start residue (useful for post-translational modifications).  That line will be interpreted and removed.  
             Linebreaks are then removed.  Finally, the first half of the remaining characters are interpreted as sequence, 
-            and the second half are treated as structure predictions.  
+            and the second half are treated as structure predictions.  The actual file reading and interpreting is handled in C++.
         '''
-        secelIndex=0
+        #secelIndex=0
         secelDict={}
         params=None
         comments=None
         
+        data = SeqReader.loadFile(filename)
+        startIndex = data.getStartResNo()
+        sequence = data.getSequenceString()
+        if startIndex == 1:
+            chain = Chain(sequence, qparent)
+        else:
+            chain = Chain('', qparent)
+            n = 0
+            for char in sequence:
+                chain[startIndex+n] = Residue(char, chain)
+                n += 1 
+        numSSEs = data.getNumberOfStructures()
+        for sseIx in range(numSSEs):
+            cppSse = data.getStructure(sseIx)
+            if cppSse.isHelix(): 
+                pyHelix = Helix(chain, sseIx, str(cppSse.getSecondaryStructureID()), cppSse.getStartPosition(), cppSse.getEndPosition())
+                secelDict[sseIx] = pyHelix                                
+            elif cppSse.isSheet():
+                #TODO: Add Sheet support
+                secelDict[sseIx] = None
+                pass
+        return StructurePrediction(secelDict, chain, params, comments, qparent)
+        
+        
+        
+        
+        '''
         F = open(filename)
         lines = []
         for line in F:
@@ -135,7 +163,7 @@ class StructurePrediction(baseClass):  #results of secondary-structure predictio
         #print chain.toPDB()
         print secelDict
         return StructurePrediction(secelDict,chain, params, comments, qparent)
-        
+        '''
     def getSecelByIndex(self, index):
         for key in self.secelDict.keys():
             secel = self.secelDict[key]
