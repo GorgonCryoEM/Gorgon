@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.36  2008/11/13 20:54:40  ssa1
+//   Using the correct scale when loading volumes
+//
 //   Revision 1.35  2008/11/10 16:15:43  ssa1
 //   Making python and C++ use the same PDBAtom objects
 //
@@ -70,6 +73,7 @@
 #include <GraphMatch/PDBAtom.h>
 #include <GraphMatch/LinkedNode.h>
 #include <GraphMatch/PDBBond.h>
+#include <GraphMatch/SEQReader.h>
 
 #include <boost/python.hpp>
 
@@ -373,7 +377,18 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("draw", &SSECorrespondenceEngine::Draw)
 	;
 
+	class_<SEQFileData>("SeqFileData", init<>())
+		.def("getStartResNo", &SEQFileData::GetStartResNo)
+		.def("getSequenceString", &SEQFileData::GetSequenceString)
+		.def("getStructureString", &SEQFileData::GetStructureString)
+		.def("getNumberOfStructures", &SEQFileData::GetNumberOfStructures)
+		.def("getStructure", &SEQFileData::GetStructure, return_value_policy<reference_existing_object>())
+	;
 	
+	class_<SEQReader>("SeqReader", init<>())
+		.def("loadFile", &SEQReader::ReadSeqFileData)
+		.staticmethod("loadFile")
+	;
 }
 
 
