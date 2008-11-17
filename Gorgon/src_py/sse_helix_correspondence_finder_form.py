@@ -11,6 +11,11 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.16  2008/11/14 22:42:45  colemanr
+#   temporary hack to set the chain object in the structure prediction; set
+#   CAlphaViewer.structPred to the structure prediction, so SequenceView.py
+#   will get the correct object
+#
 #   Revision 1.15  2008/11/13 00:30:32  colemanr
 #   changes concerning *.seq files
 #
@@ -252,7 +257,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
         
         #Loading Predicted SSEs                     
         self.viewer.correspondenceEngine.loadSequenceGraph()
-        
+        '''
         predictedSecels = {}
         sseCount = self.viewer.correspondenceEngine.getSequenceSSECount()
         for sseIx in range(sseCount):
@@ -270,6 +275,8 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
         tempStructPred = StructurePrediction.load(self.sequenceFileName, self.app)
         chain = tempStructPred.chain
         structPred = StructurePrediction(secelDict = predictedSecels, chain = chain, qparent=self.app)#None)
+        '''
+        structPred = StructurePrediction.load(self.sequenceFileName, self.app)
         cAlphaViewer = self.app.viewers['calpha']
         cAlphaViewer.structPred = structPred
         
