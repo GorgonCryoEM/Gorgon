@@ -11,6 +11,11 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.18  2008/11/14 22:39:53  colemanr
+#   Before changing the visibility of SequenceView.py, set self.main_chain
+#   to self.structPred.chain if self.main_chain is empty -- and other
+#   changes involving main_chain and structPred
+#
 #   Revision 1.17  2008/11/13 20:54:40  ssa1
 #   Using the correct scale when loading volumes
 #
@@ -141,7 +146,7 @@ class CAlphaViewer(BaseViewer):
             if not self.structPred:
                 self.loadSeq()
             if self.structPred and not self.main_chain:
-                self.main_chain = self.structPred
+                self.main_chain = self.structPred.chain
             SequenceDock.changeDockVisibility(self.app, self, self.structPred, self.main_chain)
         self.connect(seqDockAct, QtCore.SIGNAL("triggered()"), showDock)
         self.app.actions.addAction("seqDock", seqDockAct)
