@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.43  2008/11/13 20:54:40  ssa1
+#   Using the correct scale when loading volumes
+#
 #   Revision 1.42  2008/11/06 05:29:04  ssa1
 #   CGI submission milestone for Interactive Skeletonization, and theme support, and fixing (hopefully) mac-os flicker bug
 #
@@ -228,9 +231,7 @@ class BaseViewer(QtOpenGL.QGLWidget):
         return (center, distance)
 
     def initializeGLDisplayType(self):
-        glPushAttrib(GL_DEPTH_BUFFER_BIT | GL_LIGHTING_BIT | GL_ENABLE_BIT)
-        glEnable(GL_DEPTH_TEST);        
-        glDepthMask(GL_TRUE);
+        glPushAttrib(GL_LIGHTING_BIT | GL_ENABLE_BIT)
         if(self.isClosedMesh):
             glEnable(GL_CULL_FACE)
         else:
@@ -265,10 +266,26 @@ class BaseViewer(QtOpenGL.QGLWidget):
         glPopAttrib()    
 
     def draw(self):
+        glPushMatrix()
+        glTranslated(self.location[0], self.location[1], self.location[2])
+        glMultMatrixf(self.rotation)
+        scale = [self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ()]
+        glScaled(scale[0], scale[1], scale[2])   
+                
+        glPushAttrib(GL_DEPTH_BUFFER_BIT | GL_LIGHTING_BIT | GL_ENABLE_BIT)
+        glEnable(GL_DEPTH_TEST);        
+        glDepthMask(GL_TRUE);
+        
+        self.emitDrawingModel()
+        
         if (self.gllist != 0):          
             self.initializeGLDisplayType()
             glCallList(self.gllist)
             self.unInitializeGLDisplayType();
+
+        glPopAttrib()
+        glPopMatrix()
+            
           
     def loadData(self):
         self.fileName = QtGui.QFileDialog.getOpenFileName(self, self.tr("Open Data"), "", self.tr(self.renderer.getSupportedLoadFileFormats()))
@@ -315,12 +332,7 @@ class BaseViewer(QtOpenGL.QGLWidget):
         colors = [self.getModelColor(),  self.getModel2Color()]
         
         glPushAttrib(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT)
-        
-        glPushMatrix()
-        glTranslated(self.location[0], self.location[1], self.location[2])
-        glMultMatrixf(self.rotation)
-        scale = [self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ()]
-        glScaled(scale[0], scale[1], scale[2])            
+                 
         
         if(self.loaded and self.showBox):            
             self.setMaterials(self.getBoundingBoxColor())       
@@ -343,7 +355,6 @@ class BaseViewer(QtOpenGL.QGLWidget):
                             
         
 
-        glPopMatrix()
         glPopAttrib()
 
         glEndList() 
@@ -449,6 +460,9 @@ class BaseViewer(QtOpenGL.QGLWidget):
         
     def emitModelVisualizationChanged(self):
         self.emit(QtCore.SIGNAL("modelVisualizationChanged()"))
+    
+    def emitDrawingModel(self):
+        self.emit(QtCore.SIGNAL("modelDrawing()"))
     
     def emitViewerSetCenter(self):
         (center, distance) = self.getCenterAndDistance()

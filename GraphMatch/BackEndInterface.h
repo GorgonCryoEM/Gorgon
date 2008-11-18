@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.13  2008/11/18 18:10:24  ssa1
+//   Changing the scaling functions when doing graph matching to find correspondences
+//
 //   Revision 1.12  2008/11/10 21:11:19  colemanr
 //   added some debugging code
 //
@@ -103,7 +106,7 @@ namespace wustl_mm {
 				delete sequence;
 			}
 			sequence = queryEngine->LoadSequenceGraph();
-			sequence->PrintGraph();
+			//sequence->PrintGraph();
 		}
 
 		void BackEndInterface::LoadSkeletonGraph() {
@@ -111,7 +114,7 @@ namespace wustl_mm {
 				delete skeleton;
 			}
 			skeleton = queryEngine->LoadSkeletonGraph();
-			skeleton->PrintGraph();
+			//skeleton->PrintGraph();
 		}
 		/*
 		int BackEndInterface::ExecuteQuery(StandardGraph * sequenceGraph, StandardGraph * skeletonGraph) {

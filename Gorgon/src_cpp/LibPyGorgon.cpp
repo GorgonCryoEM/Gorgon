@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.37  2008/11/17 19:37:24  colemanr
+//   added "SeqFileData" and "SeqReader"
+//
 //   Revision 1.36  2008/11/13 20:54:40  ssa1
 //   Using the correct scale when loading volumes
 //
@@ -206,6 +209,7 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("setViewingType", &VolumeRenderer::SetViewingType)
 		.def("normalizeVolume", &VolumeRenderer::NormalizeVolume)
 		.def("downsampleVolume", &VolumeRenderer::DownsampleVolume)
+		.def("cropVolume", &VolumeRenderer::CropVolume)
 		.def("performBinarySkeletonizationJu2007", &VolumeRenderer::PerformBinarySkeletonizationJu2007, return_value_policy<reference_existing_object>())		
 		.def("performGrayscaleSkeletonizationAbeysinghe2008", &VolumeRenderer::PerformGrayscaleSkeletonizationAbeysinghe2008, return_value_policy<reference_existing_object>())		
 		.def("setSpacing", &Renderer::SetSpacing)

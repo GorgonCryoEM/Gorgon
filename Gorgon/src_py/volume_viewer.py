@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.17  2008/11/13 20:54:40  ssa1
+#   Using the correct scale when loading volumes
+#
 #   Revision 1.16  2008/11/06 05:29:04  ssa1
 #   CGI submission milestone for Interactive Skeletonization, and theme support, and fixing (hopefully) mac-os flicker bug
 #
@@ -35,6 +38,7 @@ from volume_binary_skeletonization_form import VolumeBinarySkeletonizationForm
 from volume_grayscale_skeletonization_form import VolumeGrayscaleSkeletonizationForm
 from volume_manual_skeletonization_form import VolumeManualSkeletonizationForm
 from model_visualization_form import ModelVisualizationForm
+from volume_crop_form import VolumeCropForm
 
 try:
     from OpenGL.GL import *
@@ -83,14 +87,16 @@ class VolumeViewer(BaseViewer):
         self.app.actions.addAction("unload_Volume", closeAct)
 
         normalizeAct = QtGui.QAction(self.tr("N&ormalize"), self)
-        closeAct.setStatusTip(self.tr("Normalized the loaded volume"))
+        normalizeAct.setStatusTip(self.tr("Normalized the loaded volume"))
         self.connect(normalizeAct, QtCore.SIGNAL("triggered()"), self.normalizeVolume)
         self.app.actions.addAction("normalize_Volume", normalizeAct)
         
         downsampleAct = QtGui.QAction(self.tr("Do&wnsample"), self)
-        closeAct.setStatusTip(self.tr("Downsample the loaded volume"))
+        downsampleAct.setStatusTip(self.tr("Downsample the loaded volume"))
         self.connect(downsampleAct, QtCore.SIGNAL("triggered()"), self.downsampleVolume)
-        self.app.actions.addAction("downsample_Volume", downsampleAct)        
+        self.app.actions.addAction("downsample_Volume", downsampleAct)     
+        
+ 
                                                
     def createMenus(self):
         self.app.menus.addAction("file-open-volume", self.app.actions.getAction("load_Volume"), "file-open")
@@ -106,6 +112,7 @@ class VolumeViewer(BaseViewer):
         self.manualSkeletonizer = VolumeManualSkeletonizationForm(self.app, self)
         self.binarySkeletonizer = VolumeBinarySkeletonizationForm(self.app, self)
         self.grayscaleSkeletonizer = VolumeGrayscaleSkeletonizationForm(self.app, self)
+        self.cropper = VolumeCropForm(self.app, self)
     
     def updateActionsAndMenus(self):
         self.app.actions.getAction("save_Volume").setEnabled(self.loaded)
@@ -120,7 +127,10 @@ class VolumeViewer(BaseViewer):
     def downsampleVolume(self):
         self.renderer.downsampleVolume()
         self.surfaceEditor.modelLoadedPreDraw()
-        self.emitModelChanged();        
+        self.emitModelChanged();       
+        
+    def cropVolume(self):
+        pass 
     
     def processMouseWheel(self, amount, event):
         if(event.modifiers() & QtCore.Qt.CTRL) :

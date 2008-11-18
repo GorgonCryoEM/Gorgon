@@ -1,0 +1,104 @@
+<ui version="4.0" >
+ <class>DialogVolumeCrop</class>
+ <widget class="QDialog" name="DialogVolumeCrop" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>281</width>
+    <height>96</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Volume Crop</string>
+  </property>
+  <layout class="QGridLayout" >
+   <item row="0" column="0" >
+    <widget class="QLabel" name="labelTopLeft" >
+     <property name="text" >
+      <string>Top Left:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1" >
+    <widget class="QSpinBox" name="spinBoxTopLeftX" />
+   </item>
+   <item row="0" column="2" >
+    <widget class="QSpinBox" name="spinBoxTopLeftY" />
+   </item>
+   <item row="0" column="3" >
+    <widget class="QSpinBox" name="spinBoxTopLeftZ" />
+   </item>
+   <item row="1" column="0" >
+    <widget class="QLabel" name="labelBottomRight" >
+     <property name="text" >
+      <string>Bottom Right:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1" >
+    <widget class="QSpinBox" name="spinBoxBottomRightX" />
+   </item>
+   <item row="1" column="2" >
+    <widget class="QSpinBox" name="spinBoxBottomRightY" />
+   </item>
+   <item row="1" column="3" >
+    <widget class="QSpinBox" name="spinBoxBottomRightZ" />
+   </item>
+   <item row="2" column="0" colspan="4" >
+    <widget class="QDialogButtonBox" name="buttonBox" >
+     <property name="orientation" >
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons" >
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::NoButton|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <tabstops>
+  <tabstop>spinBoxTopLeftX</tabstop>
+  <tabstop>spinBoxTopLeftY</tabstop>
+  <tabstop>spinBoxTopLeftZ</tabstop>
+  <tabstop>spinBoxBottomRightX</tabstop>
+  <tabstop>spinBoxBottomRightY</tabstop>
+  <tabstop>spinBoxBottomRightZ</tabstop>
+  <tabstop>buttonBox</tabstop>
+ </tabstops>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>DialogVolumeCrop</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>227</x>
+     <y>75</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>157</x>
+     <y>95</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>DialogVolumeCrop</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>271</x>
+     <y>81</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>280</x>
+     <y>95</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>
