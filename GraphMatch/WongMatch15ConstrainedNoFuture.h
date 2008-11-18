@@ -15,6 +15,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.13  2008/09/29 16:19:30  ssa1
+//   Adding in CVS meta information
+//
 
 
 #ifndef WONGMATCH15CONSTRAINEDNOFUTURE_H
@@ -118,9 +121,9 @@ namespace wustl_mm {
 			missingHelixCount = (patternGraph->GetNodeCount() - baseGraph->GetNodeCount()) / 2;
 			missingSheetCount = 0;
 
-			if(!PERFORMANCE_COMPARISON_MODE) {
-				NormalizeGraphs();
-			}
+			//if(!PERFORMANCE_COMPARISON_MODE) {
+			//	NormalizeGraphs();
+			//}
 			foundCount = 0;
 			longestMatch = 0;
 		#ifdef VERBOSE
@@ -152,6 +155,8 @@ namespace wustl_mm {
 				if(currentNode == NULL) {
 					break;
 				}
+				//currentNode->PrintNodeConcise(foundCount, false);
+				//printf("\n");
 				if(currentNode->depth == patternGraph->nodeCount) {
 					finishTime = clock();
 					foundCount++;
@@ -257,7 +262,7 @@ namespace wustl_mm {
 			bool firstIsLoop = false;
 			bool lastIsLoop = false;
 			for(int i = 0; i < m; i++) {
-				lastIsLoop = ((patternGraph->adjacencyMatrix[d+i-1][d+i][0] == GRAPHEDGE_LOOP) || (patternGraph->adjacencyMatrix[d+i-1][d+i][0] == GRAPHEDGE_LOOP_EUCLIDEAN));
+				lastIsLoop = (((int)(patternGraph->adjacencyMatrix[d+i-1][d+i][0] + 0.01) == GRAPHEDGE_LOOP) || ((int)(patternGraph->adjacencyMatrix[d+i-1][d+i][0] + 0.01) == GRAPHEDGE_LOOP_EUCLIDEAN));
 				if(i==0) {
 					firstIsLoop = lastIsLoop;
 				}
@@ -285,7 +290,7 @@ namespace wustl_mm {
 			else {
 				assert(baseGraph->EdgeExists(qj-1,qp-1));		
 				baseLength = baseGraph->adjacencyMatrix[qj-1][qp-1][1];
-				euclideanEstimate = (baseGraph->adjacencyMatrix[qj-1][qp-1][0] == GRAPHEDGE_LOOP_EUCLIDEAN);
+				euclideanEstimate = ((int)(baseGraph->adjacencyMatrix[qj-1][qp-1][0] + 0.01) == GRAPHEDGE_LOOP_EUCLIDEAN);
 				switch((int)(baseGraph->adjacencyMatrix[qj-1][qp-1][0] + 0.01)) {
 					case(GRAPHEDGE_HELIX) : 
 						weight = HELIX_WEIGHT_COEFFICIENT;
@@ -302,15 +307,15 @@ namespace wustl_mm {
 
 
 			if(m == 1) {		
-				if((qj!= -1) && (patternGraph->adjacencyMatrix[d-1][d][0] != baseGraph->adjacencyMatrix[qj-1][qp-1][0]) &&
-					!((patternGraph->adjacencyMatrix[d-1][d][0] == GRAPHEDGE_LOOP) && (baseGraph->adjacencyMatrix[qj-1][qp-1][0] == GRAPHEDGE_LOOP_EUCLIDEAN))) 	{
+				if((qj!= -1) && ((int)(patternGraph->adjacencyMatrix[d-1][d][0] + 0.01) != (int)(baseGraph->adjacencyMatrix[qj-1][qp-1][0] + 0.01)) &&
+					!(((int)(patternGraph->adjacencyMatrix[d-1][d][0] + 0.01) == GRAPHEDGE_LOOP) && ((int)(baseGraph->adjacencyMatrix[qj-1][qp-1][0] +0.01) == GRAPHEDGE_LOOP_EUCLIDEAN))) 	{
 					return -1;
 				}		
-				// TODO: Figure out why I had put in the following code!!!!
-				if((qj != -1) && (baseGraph->euclideanMatrix[qj-1][qp-1] > (patternGraph->adjacencyMatrix[d-1][d][1] * EUCLIDEAN_VOXEL_TO_PDB_RATIO ))){
-				//	printf("%lf %lf %lf %lf \n", baseGraph->euclideanMatrix[qj-1][qp-1], patternGraph->adjacencyMatrix[d-1][d][1] * EUCLIDEAN_VOXEL_TO_PDB_RATIO, patternGraph->adjacencyMatrix[d-1][d][1], EUCLIDEAN_VOXEL_TO_PDB_RATIO);
-					return -1;
-				}
+				//// TODO: Figure out why I had put in the following code!!!!
+				//if((qj != -1) && (baseGraph->euclideanMatrix[qj-1][qp-1] > patternGraph->adjacencyMatrix[d-1][d][1])){
+				////	printf("%lf %lf %lf %lf \n", baseGraph->euclideanMatrix[qj-1][qp-1], patternGraph->adjacencyMatrix[d-1][d][1], patternGraph->adjacencyMatrix[d-1][d][1], EUCLIDEAN_VOXEL_TO_PDB_RATIO);
+				//	return -1;
+				//}
 			} else {
 				if(!firstIsLoop || !lastIsLoop) {
 					return -1;
@@ -432,6 +437,7 @@ namespace wustl_mm {
 		}
 
 		void WongMatch15ConstrainedNoFuture::NormalizeGraphs() {
+			printf("Normalizing Graphs\n");
 
 		#ifdef VERBOSE
 			printf("\tNormalizing the base graph based on helix length ratio\nNormalized Graph:\n");

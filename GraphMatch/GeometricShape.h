@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.12  2008/09/29 16:19:30  ssa1
+//   Adding in CVS meta information
+//
 
 
 #ifndef GEOMETRICSHAPE_H
@@ -42,7 +45,8 @@ namespace wustl_mm {
 			bool IsSheet();
 			bool IsInsideShape(Point3 p);
 			double GetHeight();
-			double GetRadius();			
+			double GetRadius();
+			double GetCornerCellsMaxLength();
 			int GetLocationInVector(vector<Point3Int> v, Point3Int point);
 			int GetGeometricShapeType();
 			Matrix4 GetRotationMatrix();
@@ -71,7 +75,7 @@ namespace wustl_mm {
 
 		public:
 			int geometricShapeType;
-			int length;
+			float length;
 			vector<Point3Int> internalCells;
 			vector<Point3Int> cornerCells;
 			vector<Point3> polygonPoints;
@@ -125,7 +129,7 @@ namespace wustl_mm {
 		}
 
 		bool GeometricShape::IsInsideShape(Point3 point) {
-			Point3 newPoint = Point3(point[0] * VOXEL_SIZE, point[1] * VOXEL_SIZE, point[2] * VOXEL_SIZE);
+			Point3 newPoint = Point3(point[0], point[1], point[2]);
 			if(geometricShapeType == GRAPHEDGE_HELIX) {
 				return IsInsideCylinder(newPoint);
 			} else {
@@ -289,6 +293,16 @@ namespace wustl_mm {
 			assert(cornerCells.size() >= 2);
 		}
 
+		double GeometricShape::GetCornerCellsMaxLength() {
+			double length = 0;
+			for(int i = 0; i < (int)cornerCells.size() - 1; i++) {
+				for(int j = i+1; j < (int)cornerCells.size(); j++) {
+					length = max(length, Point3Int::EuclideanDistance(cornerCells[i], cornerCells[j]));
+				}
+			}
+			return length;
+		}
+		
 		void GeometricShape::Rotate(Vector3 axis, double angle){
 			rotationMatrix = Matrix4::rotation(axis, angle) * rotationMatrix;
 			inverseRotationMatrix = inverseRotationMatrix * Matrix4::rotation(axis, -angle);

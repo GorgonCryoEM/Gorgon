@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.9  2008/11/17 19:35:50  colemanr
+//   defined SEQFileData class, and used it in the functions
+//
 //   Revision 1.8  2008/11/14 22:18:30  colemanr
 //   ReadFile() logic is now broken down into two seperate functions
 //
@@ -301,16 +304,16 @@ namespace wustl_mm {
 				graph->SetCost(i*2+2, i*2+2, 0); // Second helix node.
 		
 				// An edge for the helix
-				graph->SetCost(i*2+1, i*2+2, structures[i]->GetLength()); 
+				graph->SetCost(i*2+1, i*2+2, structures[i]->GetLengthAngstroms()); 
 				graph->SetType(i*2+1, i*2+2, structures[i]->secondaryStructureType); 
-				graph->SetCost(i*2+2, i*2+1, structures[i]->GetLength()); 
+				graph->SetCost(i*2+2, i*2+1, structures[i]->GetLengthAngstroms()); 
 				graph->SetType(i*2+2, i*2+1, structures[i]->secondaryStructureType); 
 		
 				if(i != 0) {
 					// An edge for the loop before the helix
-					graph->SetCost(i*2, i*2+1, structures[i]->startPosition - structures[i-1]->endPosition);
+					graph->SetCost(i*2, i*2+1, (structures[i]->startPosition - structures[i-1]->endPosition) * LOOP_C_ALPHA_TO_ANGSTROMS);
 					graph->SetType(i*2, i*2+1, GRAPHEDGE_LOOP);
-					graph->SetCost(i*2+1, i*2, structures[i]->startPosition - structures[i-1]->endPosition);
+					graph->SetCost(i*2+1, i*2, (structures[i]->startPosition - structures[i-1]->endPosition) * LOOP_C_ALPHA_TO_ANGSTROMS);
 					graph->SetType(i*2+1, i*2, GRAPHEDGE_LOOP);
 				}
 			}

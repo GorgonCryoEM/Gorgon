@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.12  2008/11/10 21:11:19  colemanr
+//   added some debugging code
+//
 //   Revision 1.11  2008/09/29 16:19:30  ssa1
 //   Adding in CVS meta information
 //
@@ -100,6 +103,7 @@ namespace wustl_mm {
 				delete sequence;
 			}
 			sequence = queryEngine->LoadSequenceGraph();
+			sequence->PrintGraph();
 		}
 
 		void BackEndInterface::LoadSkeletonGraph() {
@@ -107,6 +111,7 @@ namespace wustl_mm {
 				delete skeleton;
 			}
 			skeleton = queryEngine->LoadSkeletonGraph();
+			skeleton->PrintGraph();
 		}
 		/*
 		int BackEndInterface::ExecuteQuery(StandardGraph * sequenceGraph, StandardGraph * skeletonGraph) {

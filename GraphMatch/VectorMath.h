@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.6  2008/09/29 16:19:30  ssa1
+//   Adding in CVS meta information
+//
 
 
 #ifndef VECMATH_H
@@ -1004,8 +1007,9 @@ namespace wustl_mm {
 		// Class used to store stack points..
 		class Point3Int {
 		public:
-			int x, y, z, distance, node;
-			Point3Int(int x, int y, int z, int distance) {
+			int x, y, z, node;
+			float distance;
+			Point3Int(int x, int y, int z, float distance) {
 				this->x = x;
 				this->y = y;
 				this->z = z;

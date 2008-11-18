@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.12  2008/09/29 16:19:30  ssa1
+//   Adding in CVS meta information
+//
 
 
 #ifndef STANDARDGRAPH_H
@@ -24,6 +27,7 @@
 #include "GeometricShape.h"
 #include <SkeletonMaker/volume.h>
 #include <MathTools/Vector3D.h>
+#include <SkeletonMaker/volume.h>
 using namespace std;
 
 namespace wustl_mm {
@@ -46,7 +50,7 @@ namespace wustl_mm {
 			void SetCost(int i, int j, double cost); // The cost based on the graph labels (index starting from 1)
 			void SetNodeCount(int nodeCount); // Sets the number of nodes
 			void PrintGraph();
-			void GenerateEuclidianMatrix();
+			void GenerateEuclidianMatrix(Volume * vol);
 			vector<Matcher2Helix> GetHelixLengths();
 			bool EdgeExists(int n, int m);
 		public:
@@ -147,17 +151,17 @@ namespace wustl_mm {
 			char temp;
 			for(int i = 0; i < (int)pdbStructures.size(); i++) {
 				if(pdbStructures[i]->secondaryStructureType == GRAPHEDGE_HELIX) {
-					printf("\tHelix %d \t\t( %d, %d )\t Length: %d \t Start Pos: %d \t End Pos: %d\n", pdbStructures[i]->serialNumber, i*2+1, i*2+2, pdbStructures[i]->GetLength(), pdbStructures[i]->startPosition, pdbStructures[i]->endPosition);
+					printf("\tHelix %d \t\t( %d, %d )\t Length: %f \t Start Pos: %d \t End Pos: %d\n", pdbStructures[i]->serialNumber, i*2+1, i*2+2, pdbStructures[i]->GetLengthAngstroms(), pdbStructures[i]->startPosition, pdbStructures[i]->endPosition);
 				} else {
-					printf("\tSheet Strand %s-%d \t( %d, %d )\t Length: %d \t Start Pos: %d \t End Pos: %d\n", pdbStructures[i]->secondaryStructureID, pdbStructures[i]->serialNumber, i*2+1, i*2+2, pdbStructures[i]->GetLength(), pdbStructures[i]->startPosition, pdbStructures[i]->endPosition);
+					printf("\tSheet Strand %s-%d \t( %d, %d )\t Length: %f \t Start Pos: %d \t End Pos: %d\n", pdbStructures[i]->secondaryStructureID, pdbStructures[i]->serialNumber, i*2+1, i*2+2, pdbStructures[i]->GetLengthAngstroms(), pdbStructures[i]->startPosition, pdbStructures[i]->endPosition);
 				}
 			}
 
 			for(int i = 0; i < (int)skeletonHelixes.size(); i++) {
 				if(skeletonHelixes[i]->geometricShapeType == GRAPHEDGE_HELIX) {
-					printf("\tHelix #%d \t( %d, %d )\t Length: %d\n", i+1, i*2+1, i*2+2, skeletonHelixes[i]->length);
+					printf("\tHelix #%d \t( %d, %d )\t Length: %f\n", i+1, i*2+1, i*2+2, skeletonHelixes[i]->length);
 				} else if(skeletonHelixes[i]->geometricShapeType == GRAPHEDGE_SHEET) {
-					printf("\tSheet #%d \t( %d, %d )\t Length: %d\n", i+1, i*2+1, i*2+2, skeletonHelixes[i]->length);
+					printf("\tSheet #%d \t( %d, %d )\t Length: %f\n", i+1, i*2+1, i*2+2, skeletonHelixes[i]->length);
 				}
 			}
 
@@ -206,7 +210,7 @@ namespace wustl_mm {
 			vector<Matcher2Helix> helixes;
 			helixes.clear();
 			for(int i = 0 ; i < (int)pdbStructures.size(); i++) {
-				helixes.push_back(Matcher2Helix(pdbStructures[i]->GetLength(), i*2, i*2+1));
+				helixes.push_back(Matcher2Helix(pdbStructures[i]->GetLengthAngstroms(), i*2, i*2+1));
 			}
 			for(int i = 0; i < (int)skeletonHelixes.size(); i++) {
 				helixes.push_back(Matcher2Helix(skeletonHelixes[i]->length, i*2, i*2+1));
@@ -215,7 +219,10 @@ namespace wustl_mm {
 			return helixes;
 		}
 
-		void StandardGraph::GenerateEuclidianMatrix() {
+		void StandardGraph::GenerateEuclidianMatrix(Volume * vol) {
+			double xSpacing = vol->getSpacingX();
+			double ySpacing = vol->getSpacingY();
+			double zSpacing = vol->getSpacingZ();
 			GeometricShape * helix1;
 			GeometricShape * helix2; 
 			for(int i = 0; i < nodeCount; i++) {
@@ -228,7 +235,7 @@ namespace wustl_mm {
 				for(int j = 0; j < nodeCount; j++) {
 					helix2 = skeletonHelixes[j/2];
 					Point3Int loc2 = helix2->GetCornerCell(j%2 + 1);				
-					euclideanMatrix[i][j] = sqrt(pow((double)(loc1.x - loc2.x), 2) + pow((double)(loc1.y - loc2.y), 2) + pow((double)(loc1.z - loc2.z), 2));
+					euclideanMatrix[i][j] = sqrt(pow(xSpacing * (double)(loc1.x - loc2.x), 2) + pow(ySpacing *(double)(loc1.y - loc2.y), 2) + pow(zSpacing *(double)(loc1.z - loc2.z), 2));
 					if((adjacencyMatrix[i][j][1] == MAXINT) && (euclideanMatrix[i][j] <= EUCLIDEAN_DISTANCE_THRESHOLD))
 					{
 						adjacencyMatrix[i][j][1] = euclideanMatrix[i][j];
