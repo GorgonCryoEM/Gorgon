@@ -15,6 +15,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.9  2008/09/29 16:19:30  ssa1
+//   Adding in CVS meta information
+//
 
 
 #ifndef WONGMATCH15CONSTRAINEDONLYA_H
@@ -119,9 +122,9 @@ namespace wustl_mm {
 			missingHelixCount = (patternGraph->GetNodeCount() - baseGraph->GetNodeCount()) / 2;
 			missingSheetCount = 0;
 
-			if(!PERFORMANCE_COMPARISON_MODE) {
-				NormalizeGraphs();
-			}
+			//if(!PERFORMANCE_COMPARISON_MODE) {
+			//	NormalizeGraphs();
+			//}
 			foundCount = 0;
 			longestMatch = 0;
 		#ifdef VERBOSE
@@ -344,7 +347,7 @@ namespace wustl_mm {
 					!((patternGraph->adjacencyMatrix[d-1][d][0] == GRAPHEDGE_LOOP) && (baseGraph->adjacencyMatrix[qj-1][qp-1][0] == GRAPHEDGE_LOOP_EUCLIDEAN))) 	{
 					return -1;
 				}		
-				if((qj != -1) && (baseGraph->euclideanMatrix[qj-1][qp-1] > (patternGraph->adjacencyMatrix[d-1][d][1] * EUCLIDEAN_VOXEL_TO_PDB_RATIO ))){
+				if((qj != -1) && (baseGraph->euclideanMatrix[qj-1][qp-1] > patternGraph->adjacencyMatrix[d-1][d][1])){
 					return -1;
 				}
 			} else {

@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.4  2008/09/29 16:19:30  ssa1
+//   Adding in CVS meta information
+//
 
 #ifndef SECONDARYSTRUCTURE_H
 #define SECONDARYSTRUCTURE_H
@@ -35,7 +38,8 @@ namespace wustl_mm {
 			~SecondaryStructure();
 			bool IsHelix();
 			bool IsSheet();
-			int GetLength();
+			int GetLengthResidues();
+			float GetLengthAngstroms();
 			int GetSerialNumber();
 			int GetStartPosition();
 			int GetEndPosition();
@@ -60,8 +64,16 @@ namespace wustl_mm {
 			return (secondaryStructureType == GRAPHEDGE_SHEET);
 		}
 
-		int SecondaryStructure::GetLength() {
-			return endPosition - startPosition + 1;
+		int SecondaryStructure::GetLengthResidues() {
+			return (endPosition - startPosition + 1);
+		}
+
+		float SecondaryStructure::GetLengthAngstroms() {
+			if(IsHelix()) {
+				return (float)(endPosition - startPosition + 1) * HELIX_C_ALPHA_TO_ANGSTROMS;
+			} else {
+				return (float)(endPosition - startPosition + 1) * LOOP_C_ALPHA_TO_ANGSTROMS;
+			}
 		}
 
 		int SecondaryStructure::GetSerialNumber() {

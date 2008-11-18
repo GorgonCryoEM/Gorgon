@@ -101,6 +101,9 @@ namespace wustl_mm {
 		const int MAX_RANDOM_LOOP_SIZE = 30;
 		const int WONG_HASH_TABLE_SIZE = 1024;
 
+		const float HELIX_C_ALPHA_TO_ANGSTROMS = 1.5f;
+		const float LOOP_C_ALPHA_TO_ANGSTROMS = 3.8f;
+
 		char SSE_FILE_NAME[100];
 		char VRML_HELIX_FILE_NAME[100];
 		char VRML_SHEET_FILE_NAME[100];

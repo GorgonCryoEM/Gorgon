@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.15  2008/09/29 16:19:30  ssa1
+//   Adding in CVS meta information
+//
 
 
 #ifndef SKELETONREADER_H
@@ -88,7 +91,7 @@ namespace wustl_mm {
 			#ifdef INCLUDE_SHEETS
 				ReadSheetFile(sheetFile, helixes);
 			#endif
-			Point3 point;
+			Point3 point, pointScaled;
 
 			double xOffset = 0;
 			double yOffset = 0;
@@ -102,10 +105,17 @@ namespace wustl_mm {
 
 			// Finding all points inside of the helixes.
 			for(point[0] = -xOffset; point[0] < vol->getSizeX() - xOffset; point[0]++) {
+				pointScaled[0] = point[0] * vol->getSpacingX();
+				
 				for(point[1] = -yOffset; point[1] < vol->getSizeY() - yOffset; point[1]++) {
+					pointScaled[1] = point[1] * vol->getSpacingY();
+
 					for(point[2] = -zOffset; point[2] < vol->getSizeY() - zOffset; point[2]++) {
+						pointScaled[2] = point[2] * vol->getSpacingZ();
+
 						for(int i = 0; i < (int)helixes.size(); i++) {
-							if((vol->getDataAt((int)(point[0]+xOffset), (int)(point[1]+yOffset), (int)(point[2]+zOffset)) > 0) && helixes[i]->IsInsideShape(point)) {						
+							
+							if((vol->getDataAt((int)(point[0]+xOffset), (int)(point[1]+yOffset), (int)(point[2]+zOffset)) > 0) && helixes[i]->IsInsideShape(pointScaled)) {						
 								paintedVol->setDataAt((int)(point[0]+xOffset), (int)(point[1]+yOffset), (int)(point[2]+zOffset), i + 1);
 								helixes[i]->AddInternalCell(Point3Int((int)(point[0]+xOffset), (int)(point[1]+yOffset), (int)(point[2]+zOffset), 0));
 							}
@@ -121,11 +131,15 @@ namespace wustl_mm {
 				} else if (helixes[i]->geometricShapeType == GRAPHEDGE_SHEET) {
 					FindCornerCellsInSheet(vol, paintedVol, helixes, i);
 				}
+
+				float length = helixes[i]->length;
+				//float length = helixes[i]->internalCells.size(); //Old Method
+
 				graph->SetCost((i*2)+1, (i*2)+1, 0);
 				graph->SetCost((i*2)+2, (i*2)+2, 0);
-				graph->SetCost((i*2)+1, (i*2)+2, helixes[i]->internalCells.size());
+				graph->SetCost((i*2)+1, (i*2)+2, length);
 				graph->SetType((i*2)+1, (i*2)+2, helixes[i]->geometricShapeType);
-				graph->SetCost((i*2)+2, (i*2)+1, helixes[i]->internalCells.size());
+				graph->SetCost((i*2)+2, (i*2)+1, length);
 				graph->SetType((i*2)+2, (i*2)+1, helixes[i]->geometricShapeType);
 			}
 
@@ -141,7 +155,7 @@ namespace wustl_mm {
 
 			graph->skeletonVolume = vol;
 			delete paintedVol;
-			graph->GenerateEuclidianMatrix();
+			graph->GenerateEuclidianMatrix(vol);
 			FindPaths(graph);
 			return graph;
 		}
@@ -282,7 +296,7 @@ namespace wustl_mm {
 					fscanf(fin, "%s", token);
 					if(strcmp(token, TOKEN_SSE_ALPHA) == 0) {
 						fscanf(fin, "%s %s %s %d", t1, t2, t3, &length);
-						helixes[count]->length = length;
+						helixes[count]->length = (float)length * HELIX_C_ALPHA_TO_ANGSTROMS;
 						count++;
 					}
 				}
@@ -301,6 +315,7 @@ namespace wustl_mm {
 			oldStack.push_back(startPoint);
 
 			Point3Int * currentPoint; //CurrentPoint
+			Point3 cPt, nPt;
 			int x, y, z, xx, yy, zz;
 			int d[26][3];
 			d[0][0] = 0;		d[0][1] = 0;		d[0][2] = -1;
@@ -338,6 +353,7 @@ namespace wustl_mm {
 				newStack.clear();
 				for(int i = 0; i < (int)oldStack.size(); i++) {
 					currentPoint = oldStack[i];
+					cPt = Point3(currentPoint->x * vol->getSpacingX(), currentPoint->y * vol->getSpacingY(), currentPoint->z * vol->getSpacingZ());
 					expand = true;
 					xx = currentPoint->x;	
 					yy = currentPoint->y;	
@@ -363,10 +379,12 @@ namespace wustl_mm {
 							x = currentPoint->x+d[j][0];	
 							y = currentPoint->y+d[j][1];	
 							z = currentPoint->z+d[j][2];
+							nPt = Point3(x * vol->getSpacingX(), y * vol->getSpacingY(), z * vol->getSpacingZ());
+
 							if((x >= 0) && (x < vol->getSizeX()) && (y >=0) && (y < vol->getSizeY()) && (z >= 0) && (z < vol->getSizeZ())) {
 								if((visited->getDataAt(x, y, z) <= 0.001) && (vol->getDataAt(x, y, z) > 0.001) &&
 									(Round(coloredVol->getDataAt(x, y, z)) - 1 != startHelix)) {
-									newStack.push_back(new Point3Int(x, y, z, currentPoint->distance + 1));
+									newStack.push_back(new Point3Int(x, y, z, currentPoint->distance + (cPt - nPt).length()));
 									visited->setDataAt(x, y, z, 1.0);
 								}
 							}

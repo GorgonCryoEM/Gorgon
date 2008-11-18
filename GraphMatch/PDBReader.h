@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.13  2008/09/29 16:19:30  ssa1
+//   Adding in CVS meta information
+//
 
 
 #ifndef PDBREADER_H
@@ -208,16 +211,16 @@ namespace wustl_mm {
 				graph->SetCost(i*2+2, i*2+2, 0); // Second helix node.
 
 				// An edge for the helix
-				graph->SetCost(i*2+1, i*2+2, structures[i]->GetLength()); 
+				graph->SetCost(i*2+1, i*2+2, structures[i]->GetLengthAngstroms()); 
 				graph->SetType(i*2+1, i*2+2, structures[i]->secondaryStructureType); 
-				graph->SetCost(i*2+2, i*2+1, structures[i]->GetLength()); 
+				graph->SetCost(i*2+2, i*2+1, structures[i]->GetLengthAngstroms()); 
 				graph->SetType(i*2+2, i*2+1, structures[i]->secondaryStructureType); 
 
 				if(i != 0) {
 					// An edge for the loop before the helix
-					graph->SetCost(i*2, i*2+1, structures[i]->startPosition - structures[i-1]->endPosition);
+					graph->SetCost(i*2, i*2+1, (structures[i]->startPosition - structures[i-1]->endPosition) * LOOP_C_ALPHA_TO_ANGSTROMS);
 					graph->SetType(i*2, i*2+1, GRAPHEDGE_LOOP);
-					graph->SetCost(i*2+1, i*2, structures[i]->startPosition - structures[i-1]->endPosition);
+					graph->SetCost(i*2+1, i*2, (structures[i]->startPosition - structures[i-1]->endPosition) * LOOP_C_ALPHA_TO_ANGSTROMS);
 					graph->SetType(i*2+1, i*2, GRAPHEDGE_LOOP);
 				}
 			}
