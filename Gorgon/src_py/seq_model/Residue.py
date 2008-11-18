@@ -41,12 +41,20 @@ class Residue:
     def __init__(self, symbol, chain=None):
         symbol=symbol.upper()
         if len(symbol)==1:
-          self.symbol1=symbol
-          self.symbol3=Residue._aa_dict[symbol]
+            try:
+                self.symbol1=symbol
+                self.symbol3=Residue._aa_dict[symbol]
+            except KeyError:
+                self.symbol1 = 'X'
+                self.symbol3='ANY'                
 
         elif len(symbol)==3:
-          self.symbol3=symbol
-          self.symbol1=Residue._aa_dict[symbol]
+            try:
+                self.symbol3=symbol
+                self.symbol1=Residue._aa_dict[symbol]
+            except KeyError:
+                self.symbol1 = 'X'
+                self.symbol3 = 'ANY'
 
         else:
           raise ValueError, "Residue must be instantiated with either a 1-letter or 3-letter symbol" 
