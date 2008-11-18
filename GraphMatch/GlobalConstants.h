@@ -11,6 +11,10 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.28  2008/11/10 21:07:11  colemanr
+//   Removed changed constants to allow sequences of several different file
+//   types to be loaded, and the file type to also be saved in a variable.
+//
 //   Revision 1.27  2008/10/22 17:25:43  colemanr
 //   Added compile flags for Win32 to use std::string, and cstring otherwise.
 //
@@ -70,6 +74,7 @@ namespace wustl_mm {
 		const char * TOKEN_VRML_SHEET_FILE_NAME = "VRML_SHEET_FILE_NAME";
 		const char * TOKEN_SEQUENCE_FILE_NAME = "SEQUENCE_FILE_NAME";
 		const char * TOKEN_SEQUENCE_FILE_TYPE = "SEQUENCE_FILE_TYPE";
+		const char * TOKEN_PDB_FILE_NAME = "PDB_FILE_NAME";
 		const char * TOKEN_MRC_FILE_NAME = "MRC_FILE_NAME";
 		const char * TOKEN_EUCLIDEAN_DISTANCE_THRESHOLD = "EUCLIDEAN_DISTANCE_THRESHOLD";
 		const char * TOKEN_BORDER_MARGIN_THRESHOLD = "BORDER_MARGIN_THRESHOLD";
@@ -272,6 +277,9 @@ namespace wustl_mm {
 					fscanf(fin, "%s", &VRML_SHEET_FILE_NAME);
 				} else if(strcmp(token, TOKEN_SEQUENCE_FILE_NAME) == 0) {
 					fscanf(fin, "%s", &SEQUENCE_FILE_NAME);
+				} else if(strcmp(token, TOKEN_PDB_FILE_NAME) == 0) {
+					fscanf(fin, "%s", &SEQUENCE_FILE_NAME);
+					sprintf(SEQUENCE_FILE_TYPE, "PDB");
 				} else if(strcmp(token, TOKEN_SEQUENCE_FILE_TYPE) == 0) {
 					fscanf(fin, "%s", &SEQUENCE_FILE_TYPE);
 				} else if(strcmp(token, TOKEN_MRC_FILE_NAME) == 0) {
