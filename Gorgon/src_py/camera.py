@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.41  2008/11/15 01:09:06  colemanr
+#   fixed centerOnSelectedAtom when the origin is translated
+#
 #   Revision 1.40  2008/11/14 22:54:48  colemanr
 #   Fixed centerOnSelectedAtom to work with the changes to scaling in
 #   renderers and viewers
@@ -108,7 +111,7 @@ class Camera(QtOpenGL.QGLWidget):
         self.mouseRightPressed = False
         
         self.fogDensity = 0.01
-        self.fogEnabled = True
+        self.fogEnabled = False
         
         self.center = [0,0,0]
         self.eye = [0,-4.1,0]

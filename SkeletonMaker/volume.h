@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.25  2008/11/13 20:54:40  ssa1
+//   Using the correct scale when loading volumes
+//
 //   Revision 1.24  2008/09/29 16:43:15  ssa1
 //   Adding in CVS meta information
 //
@@ -12028,7 +12031,6 @@ public:
 		fwrite( intv, sizeof( int ), 3, fout ) ;
 
 		float cella[3] = {spacingX * (float)(sizex - 1), spacingY * (float)(sizey - 1), spacingZ * (float)(sizez - 1)};
-		printf("Saving spacing: %f %f %f \n", cella[0], cella[1], cella[2]);
 		float cellb[3] = {90,90,90} ;
 		fwrite( cella, sizeof( float ), 3, fout ) ;
 		fwrite( cellb, sizeof( float ), 3, fout ) ;

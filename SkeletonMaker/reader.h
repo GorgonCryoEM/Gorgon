@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.12  2008/11/13 20:54:40  ssa1
+//   Using the correct scale when loading volumes
+//
 //   Revision 1.11  2008/09/29 16:43:15  ssa1
 //   Adding in CVS meta information
 //
@@ -510,7 +513,6 @@ public:
 		fread( &angsx, sizeof( float ), 1, fin ) ;
 		fread( &angsy, sizeof( float ), 1, fin ) ;
 		fread( &angsz, sizeof( float ), 1, fin ) ;
-		printf("Setting spacing: %f %f %f \n", angsx, angsy, angsz);
 
 		fread( &anglex, sizeof( float ), 1, fin ) ;
 		fread( &angley, sizeof( float ), 1, fin ) ;
@@ -656,7 +658,6 @@ public:
 		ifread( &angsx, sizeof( float ), 1, fin ) ;
 		ifread( &angsy, sizeof( float ), 1, fin ) ;
 		ifread( &angsz, sizeof( float ), 1, fin ) ;
-		printf("Setting spacing: %f %f %f \n", angsx, angsy, angsz);
 
 		ifread( &anglex, sizeof( float ), 1, fin ) ;
 		ifread( &angley, sizeof( float ), 1, fin ) ;

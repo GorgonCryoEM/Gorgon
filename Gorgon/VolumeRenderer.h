@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.37  2008/11/13 20:54:40  ssa1
+//   Using the correct scale when loading volumes
+//
 //   Revision 1.36  2008/11/13 17:01:58  ssa1
 //   Making the cross section and solid viewers slightly better
 //
@@ -108,6 +111,7 @@ namespace wustl_mm {
 			void Unload();
 			void NormalizeVolume();
 			void DownsampleVolume();
+			void CropVolume(int minX, int minY, int minZ, int maxX, int maxY, int maxZ);
 			Volume * GetVolume();
 			Volume * PerformBinarySkeletonizationJu2007(double threshold, int minCurveSize, int minSurfaceSize);
 			Volume * PerformGrayscaleSkeletonizationAbeysinghe2008(double startDensity, int stepCount, int minCurveSize, int minSurfaceSize, int curveRadius, int surfaceRadius, int skeletonSmoothenRadius);
@@ -317,6 +321,15 @@ namespace wustl_mm {
 			UpdateBoundingBox();
 		}
 
+
+		void VolumeRenderer::CropVolume(int startX, int startY, int startZ, int endX, int endY, int endZ) {
+			Volume * destVol = new Volume(endX-startX+1, endY-startY+1, endZ-startZ+1, startX, startY, startZ, dataVolume);
+			delete dataVolume;
+			dataVolume = destVol;
+			InitializeOctree();
+			UpdateBoundingBox();
+		}
+
 		void VolumeRenderer::InitializeOctree() {
 			#ifdef USE_OCTREE_OPTIMIZATION
 				if(octree != NULL) {
@@ -461,10 +474,10 @@ namespace wustl_mm {
 		bool VolumeRenderer::CalculateSurface() {
 			bool redraw = false;
 			#ifndef USE_OCTREE_OPTIMIZATION
-				appTimeManager.PushCurrentTime();
-				appTimeManager.PushCurrentTime();
+				//appTimeManager.PushCurrentTime();
+				//appTimeManager.PushCurrentTime();
 				surfaceMesh->Clear();
-				appTimeManager.PopAndDisplayTime("Marching Cubes)  Clearing : %f seconds |");
+				//appTimeManager.PopAndDisplayTime("Marching Cubes)  Clearing : %f seconds |");
 				redraw = false;
 				marchingCubeCallCount = 0;
 				if(drawEnabled && dataVolume != NULL) {
@@ -481,7 +494,7 @@ namespace wustl_mm {
 						}
 					}
 				}
-				appTimeManager.PopAndDisplayTime("Meshing: %f seconds |");
+				//appTimeManager.PopAndDisplayTime("Meshing: %f seconds |");
 			#else 
 				appTimeManager.PushCurrentTime();
 				appTimeManager.PushCurrentTime();
@@ -496,7 +509,7 @@ namespace wustl_mm {
 
 				appTimeManager.PopAndDisplayTime("Meshing: %f seconds |");
 			#endif
-			printf("Marching Cubes called %d times\n", marchingCubeCallCount); 
+			//printf("Marching Cubes called %d times\n", marchingCubeCallCount); 
 			return redraw;
 			
 		}
