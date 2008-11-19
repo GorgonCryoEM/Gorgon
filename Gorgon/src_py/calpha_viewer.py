@@ -11,6 +11,10 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.19  2008/11/17 19:41:13  colemanr
+#   bug-fix: if self.main_chain is empty, set it to self.structPred.chain before
+#   changing visibility of SequenceDock
+#
 #   Revision 1.18  2008/11/14 22:39:53  colemanr
 #   Before changing the visibility of SequenceView.py, set self.main_chain
 #   to self.structPred.chain if self.main_chain is empty -- and other
@@ -199,7 +203,7 @@ class CAlphaViewer(BaseViewer):
     def loadSeq(self):
         fileName = QtGui.QFileDialog.getOpenFileName( self, self.tr('Open Sequence'), '', 
                                             self.tr('Sequence possibly with SSE predictions (*.seq)') )
-        fileName = unicode(fileName)
+        fileName = str(fileName)
         if fileName:
             self.structPred = StructurePrediction.load(fileName, self.app)
     
