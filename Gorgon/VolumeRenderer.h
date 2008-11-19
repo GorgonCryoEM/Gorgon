@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.38  2008/11/18 22:01:18  ssa1
+//   Removing printfs, and adding cropping
+//
 //   Revision 1.37  2008/11/13 20:54:40  ssa1
 //   Using the correct scale when loading volumes
 //
@@ -647,7 +650,7 @@ namespace wustl_mm {
 				glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 				glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_REPEAT);
 				try {
-					glTexImage3D(GL_TEXTURE_3D, 0, GL_INTENSITY, textureSizeX, textureSizeY, textureSizeZ, 0, GL_RED, GL_UNSIGNED_BYTE, texels);
+					glTexImage3D(GL_TEXTURE_3D, 0, GL_ALPHA, textureSizeX, textureSizeY, textureSizeZ, 0, GL_ALPHA, GL_UNSIGNED_BYTE, texels);
 					textureLoaded = true;
 				}   catch (int) {
 					textureLoaded = false;
