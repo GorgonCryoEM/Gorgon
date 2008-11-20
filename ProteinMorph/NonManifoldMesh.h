@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.30  2008/11/13 20:54:40  ssa1
+//   Using the correct scale when loading volumes
+//
 //   Revision 1.29  2008/11/06 20:34:23  ssa1
 //   Proper lighting for bounding boxes
 //
@@ -159,6 +162,9 @@ namespace wustl_mm {
 			float spacingX = sourceVol->getSpacingX();
 			float spacingY = sourceVol->getSpacingY();
 			float spacingZ = sourceVol->getSpacingZ();
+			float originX = sourceVol->getOriginX();
+			float originY = sourceVol->getOriginY();
+			float originZ = sourceVol->getOriginZ();
 
 			// Adding vertices
 			NonManifoldMeshVertex<TVertex> tempVertex;
@@ -170,7 +176,7 @@ namespace wustl_mm {
 						vertexLocations[index] = -1;
 						value = (int)round(sourceVol->getDataAt(index));
 						if(value > 0) {							
-							tempVertex.position = Vector3DFloat(x * spacingX, y * spacingY, z * spacingZ);								
+							tempVertex.position = Vector3DFloat(originX + x * spacingX, originY + y * spacingY, originZ + z * spacingZ);								
 							vertexLocations[index] = AddVertex(tempVertex);
 						}
 					}

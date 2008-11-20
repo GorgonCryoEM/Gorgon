@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_dialog_model_visualization.ui'
 #
-# Created: Fri Oct 31 21:28:55 2008
+# Created: Thu Nov 20 10:59:18 2008
 #      by: PyQt4 UI code generator 4.3.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -128,6 +128,7 @@ class Ui_DialogModelVisualization(object):
         self.gridlayout4.addWidget(self.labelSizeX,0,0,1,1)
 
         self.doubleSpinBoxSizeX = QtGui.QDoubleSpinBox(self.GroupBoxLocation_2)
+        self.doubleSpinBoxSizeX.setDecimals(8)
         self.doubleSpinBoxSizeX.setMaximum(1e+014)
         self.doubleSpinBoxSizeX.setProperty("value",QtCore.QVariant(1.0))
         self.doubleSpinBoxSizeX.setObjectName("doubleSpinBoxSizeX")
@@ -138,6 +139,7 @@ class Ui_DialogModelVisualization(object):
         self.gridlayout4.addWidget(self.labelSizeY,1,0,1,1)
 
         self.doubleSpinBoxSizeY = QtGui.QDoubleSpinBox(self.GroupBoxLocation_2)
+        self.doubleSpinBoxSizeY.setDecimals(8)
         self.doubleSpinBoxSizeY.setMaximum(1e+014)
         self.doubleSpinBoxSizeY.setProperty("value",QtCore.QVariant(1.0))
         self.doubleSpinBoxSizeY.setObjectName("doubleSpinBoxSizeY")
@@ -148,6 +150,7 @@ class Ui_DialogModelVisualization(object):
         self.gridlayout4.addWidget(self.labelSizeZ,2,0,1,1)
 
         self.doubleSpinBoxSizeZ = QtGui.QDoubleSpinBox(self.GroupBoxLocation_2)
+        self.doubleSpinBoxSizeZ.setDecimals(8)
         self.doubleSpinBoxSizeZ.setMaximum(1e+014)
         self.doubleSpinBoxSizeZ.setProperty("value",QtCore.QVariant(1.0))
         self.doubleSpinBoxSizeZ.setObjectName("doubleSpinBoxSizeZ")
@@ -167,6 +170,7 @@ class Ui_DialogModelVisualization(object):
         self.gridlayout5.addWidget(self.labelLocationX,0,0,1,1)
 
         self.doubleSpinBoxLocationX = QtGui.QDoubleSpinBox(self.GroupBoxLocation)
+        self.doubleSpinBoxLocationX.setDecimals(8)
         self.doubleSpinBoxLocationX.setMinimum(-1e+014)
         self.doubleSpinBoxLocationX.setMaximum(1e+014)
         self.doubleSpinBoxLocationX.setProperty("value",QtCore.QVariant(0.0))
@@ -178,6 +182,7 @@ class Ui_DialogModelVisualization(object):
         self.gridlayout5.addWidget(self.labelLocationY,1,0,1,1)
 
         self.doubleSpinBoxLocationY = QtGui.QDoubleSpinBox(self.GroupBoxLocation)
+        self.doubleSpinBoxLocationY.setDecimals(8)
         self.doubleSpinBoxLocationY.setMinimum(-1e+014)
         self.doubleSpinBoxLocationY.setMaximum(1e+014)
         self.doubleSpinBoxLocationY.setObjectName("doubleSpinBoxLocationY")
@@ -188,6 +193,7 @@ class Ui_DialogModelVisualization(object):
         self.gridlayout5.addWidget(self.labelLocationZ,2,0,1,1)
 
         self.doubleSpinBoxLocationZ = QtGui.QDoubleSpinBox(self.GroupBoxLocation)
+        self.doubleSpinBoxLocationZ.setDecimals(8)
         self.doubleSpinBoxLocationZ.setMinimum(-1e+014)
         self.doubleSpinBoxLocationZ.setMaximum(1e+014)
         self.doubleSpinBoxLocationZ.setObjectName("doubleSpinBoxLocationZ")

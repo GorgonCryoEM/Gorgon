@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.13  2008/11/18 22:01:18  ssa1
+//   Removing printfs, and adding cropping
+//
 //   Revision 1.12  2008/11/13 20:54:40  ssa1
 //   Using the correct scale when loading volumes
 //
@@ -524,8 +527,12 @@ public:
 		fread( &dmax, sizeof( float ), 1, fin ) ;
 		fread( &dmean, sizeof( float ), 1, fin ) ;
 
-		fseek( fin, 4 * 32, SEEK_CUR ) ;
-
+		fseek (fin, 4 * 27, SEEK_CUR );
+		fread( &orgx, sizeof( float), 1, fin );
+		fread( &orgy, sizeof( float), 1, fin );
+		fread( &orgz, sizeof( float), 1, fin );
+		
+		fseek (fin, 4 * 2, SEEK_CUR);
 		fread( &drms, sizeof( float ), 1, fin ) ;
 		fclose( fin ) ;
 
@@ -534,11 +541,12 @@ public:
 		dimz = totz ;
 
 #ifdef VERBOSE
-		printf("\tDimension: %d %d %d\n", dimx, dimy, dimz ) ;
+		printf("\n\tDimension: %d %d %d\n", dimx, dimy, dimz ) ;
 		printf("\tMode: %d\n", mode) ;
 		printf("\tDensity: from %f to %f, mean at %f, rms at %f\n", dmin, dmax, dmean, drms ) ;
 		printf("\tCell size: %f %f %f\n", angsx / (dimx-1), angsy / (dimy-1), angsz / (dimz-1) ) ;
 		printf("\tCell angles: %f %f %f\n", anglex, angley, anglez ) ;
+		printf("\tOrigin location: %f %f %f\n", orgx, orgy, orgz );
 #endif // VERBOSE
 
 		if ( mode > 2 )
@@ -596,9 +604,11 @@ public:
 					
 					vol->setDataAt( k, j, i, d ) ;
 				}
-				float ax, ay, az;
-				getSpacing(ax, ay, az);
-				vol->setSpacing(ax, ay, az);
+
+		float ax, ay, az;				
+		getSpacing(ax, ay, az);
+		vol->setSpacing(ax, ay, az);
+		vol->setOrigin(orgx, orgy, orgz);
 		fclose( fin ) ;
 
 		return vol ;
@@ -622,6 +632,7 @@ private:
 	float angsx, angsy, angsz ;
 	float anglex, angley, anglez ;
 	float dmin, dmax, dmean, drms ;
+	float orgx, orgy, orgz;
 	
 	int mode ;
 
