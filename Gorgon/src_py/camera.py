@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.42  2008/11/18 22:01:18  ssa1
+#   Removing printfs, and adding cropping
+#
 #   Revision 1.41  2008/11/15 01:09:06  colemanr
 #   fixed centerOnSelectedAtom when the origin is translated
 #
@@ -165,9 +168,9 @@ class Camera(QtOpenGL.QGLWidget):
                 return
         pos = atom.getPosition()
         #print viewer.renderer.getSpacingX(), viewer.renderer.getSpacingY(), viewer.renderer.getSpacingZ()
-        x = pos.x()*viewer.renderer.getSpacingX() + viewer.location[0]
-        y = pos.y()*viewer.renderer.getSpacingY() + viewer.location[1]
-        z = pos.z()*viewer.renderer.getSpacingZ() + viewer.location[2]
+        x = pos.x()*viewer.renderer.getSpacingX() + viewer.renderer.getOriginX()
+        y = pos.y()*viewer.renderer.getSpacingY() + viewer.renderer.getOriginY()
+        z = pos.z()*viewer.renderer.getSpacingZ() + viewer.renderer.getOriginZ()
         self.setCenter( x, y, z )
         viewer.emitModelChanged()
     
