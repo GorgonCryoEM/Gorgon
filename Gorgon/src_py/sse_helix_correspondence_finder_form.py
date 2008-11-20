@@ -11,6 +11,10 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.17  2008/11/17 19:43:08  colemanr
+#   In self.accept, moved the logic for creating a StructurePrediciton object
+#   to StructurePrediction.load()
+#
 #   Revision 1.16  2008/11/14 22:42:45  colemanr
 #   temporary hack to set the chain object in the structure prediction; set
 #   CAlphaViewer.structPred to the structure prediction, so SequenceView.py
@@ -78,7 +82,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
         self.dock = QtGui.QDockWidget(self.tr("SSE - Helix Correspondence Finder"), self.app)
         self.dock.setAllowedAreas(QtCore.Qt.LeftDockWidgetArea | QtCore.Qt.RightDockWidgetArea | QtCore.Qt.BottomDockWidgetArea)
         self.dock.setWidget(self)
-        self.dock.close()
+        self.dock.close()        
         self.connect(self.dock, QtCore.SIGNAL("visibilityChanged (bool)"), self.dockVisibilityChanged)
         self.connect(self.ui.pushButtonGetHelixLengthFile, QtCore.SIGNAL("pressed ()"), self.getHelixLengthFile)
         self.connect(self.ui.pushButtonGetHelixLocationFile, QtCore.SIGNAL("pressed ()"), self.getHelixLocationFile)
@@ -88,6 +92,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
         self.connect(self.ui.pushButtonCancel, QtCore.SIGNAL("pressed ()"), self.reject)
         self.connect(self.ui.pushButtonOk, QtCore.SIGNAL("pressed ()"), self.accept)
         self.connect(self.ui.comboBoxCorrespondences, QtCore.SIGNAL("currentIndexChanged (int)"), self.selectCorrespondence)
+        self.connect(self.app.viewers["skeleton"], QtCore.SIGNAL("modelDrawing()"), self.drawOverlay)        
             
     def loadDefaults(self):
         self.ui.lineEditHelixLengthFile.setText("")

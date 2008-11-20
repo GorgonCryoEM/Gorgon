@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.14  2008/11/13 20:54:40  ssa1
+#   Using the correct scale when loading volumes
+#
 #   Revision 1.13  2008/11/06 05:29:04  ssa1
 #   CGI submission milestone for Interactive Skeletonization, and theme support, and fixing (hopefully) mac-os flicker bug
 #
@@ -122,8 +125,5 @@ class SSEViewer(BaseViewer):
                    
     def updateActionsAndMenus(self):
         self.app.actions.getAction("unload_SSE").setEnabled(self.loaded)
-
-    def extraDrawingRoutines(self):
-        self.helixCorrespondanceFinder.drawOverlay()          
     
              
