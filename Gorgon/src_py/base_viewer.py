@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.47  2008/11/20 19:33:48  ssa1
+#   Faster drawing of outline boxes
+#
 #   Revision 1.46  2008/11/20 19:04:07  ssa1
 #   Proper scaling for binary and grayscale skeletonization
 #
@@ -148,6 +151,20 @@ class BaseViewer(QtOpenGL.QGLWidget):
         self.rotation = glGetFloatv(GL_MODELVIEW_MATRIX)        
         glPopMatrix()
                         
+    def objectToWorldCoordinates(self, objectCoords):
+        #Need to apply rotations
+        origin = [self.renderer.getOriginX(), self.renderer.getOriginY(), self.renderer.getOriginZ()]        
+        scale = [self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ()]
+
+        return [objectCoords[0] * scale[0] + origin[0],  objectCoords[1] * scale[1] + origin[1], objectCoords[2] * scale[2] + origin[2]]
+    
+    def worldToObjectCoordinates(self, worldCoords):
+        origin = [self.renderer.getOriginX(), self.renderer.getOriginY(), self.renderer.getOriginZ()]        
+        scale = [self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ()]
+        
+        return [(worldCoords[0] - origin[0]) / scale[0], (worldCoords[1] - origin[1]) / scale[1], (worldCoords[2] - origin[2]) / scale[2]]
+        
+    
     def setBoundingBox(self, visible):
         self.showBox = visible
         if(hasattr(self.app, "mainCamera")) :

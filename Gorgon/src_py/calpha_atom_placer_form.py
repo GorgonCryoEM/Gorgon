@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.13  2008/11/14 23:06:54  colemanr
+#   now makes use of CAlphaViewer.strucPred in addition to CAlphaViewer.main_chain
+#
 #   Revision 1.12  2008/11/13 01:02:08  colemanr
 #   removed a completed "#TODO: ..." comment
 #
@@ -91,6 +94,12 @@ class CAlphaAtomPlacerForm(QtGui.QWidget):
         self.xDoubleSpinBox = QtGui.QDoubleSpinBox()
         self.yDoubleSpinBox = QtGui.QDoubleSpinBox()
         self.zDoubleSpinBox = QtGui.QDoubleSpinBox()
+        self.xDoubleSpinBox.setMaximum(99999999.99)
+        self.xDoubleSpinBox.setMinimum(-99999999.99)
+        self.yDoubleSpinBox.setMaximum(99999999.99)
+        self.yDoubleSpinBox.setMinimum(-99999999.99)
+        self.zDoubleSpinBox.setMaximum(99999999.99)
+        self.zDoubleSpinBox.setMinimum(-99999999.99)
         self.serialSpinBox = QtGui.QSpinBox()
         self.altLocLineEdit = QtGui.QLineEdit()
         self.altLocLineEdit.setMaxLength(1)
@@ -172,9 +181,12 @@ class CAlphaAtomPlacerForm(QtGui.QWidget):
         
     def skeletonSelected(self, h0, h1, h2, h3, h4, h5, event):
         position = self.skeletonViewer.renderer.get3DCoordinates(h0, h1, h2, h3, h4, h5)
-        self.xDoubleSpinBox.setValue(position.x());
-        self.yDoubleSpinBox.setValue(position.y());
-        self.zDoubleSpinBox.setValue(position.z());
+        skeletonCoordinates = [position.x(), position.y(), position.z()]
+        calphaCoordinates = self.viewer.worldToObjectCoordinates(self.skeletonViewer.objectToWorldCoordinates(skeletonCoordinates))         
+        
+        self.xDoubleSpinBox.setValue(calphaCoordinates[0]);
+        self.yDoubleSpinBox.setValue(calphaCoordinates[1]);
+        self.zDoubleSpinBox.setValue(calphaCoordinates[2]);
     
     def addAtom(self):
         #Atom attributes
