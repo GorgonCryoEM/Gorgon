@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.10  2008/11/18 18:10:24  ssa1
+//   Changing the scaling functions when doing graph matching to find correspondences
+//
 //   Revision 1.9  2008/11/17 19:35:50  colemanr
 //   defined SEQFileData class, and used it in the functions
 //
@@ -52,11 +55,7 @@
 #include <sstream>
 #include <fstream>
 #include <cstdlib>
-
-#ifdef DEBUG
-	#include <iostream>
-#endif
-
+#include <iostream>
 
 using namespace std;
 
@@ -118,6 +117,7 @@ namespace wustl_mm {
 			#endif
 			SEQFileData seqFData = ReadSeqFileData(fileName);
 			StandardGraph * pGraph = GetGraphFromSeqFileData(seqFData);
+			if (!pGraph) return NULL;
 			return pGraph;
 		}
 		
@@ -130,7 +130,10 @@ namespace wustl_mm {
 			string tempStr;
 			getline(fin, str);
 			int startResNum = 1;	
-			if (str.compare(0,5,"START") || str.compare(0,5, "start"))	{
+			if (!str.compare(0,5,"START") || !str.compare(0,5, "start"))	{
+				#ifdef DEBUG
+					cout << "There is a START line at the beginning" << endl;
+				#endif
 				size_t found;
 				found = str.find(" ");
 				string startResNumString;
@@ -144,12 +147,15 @@ namespace wustl_mm {
 				getline(fin, tempStr);
 				str.append(tempStr);
 			}
+			#ifdef DEBUG
+				cout << "str: " << str << endl;
+			#endif
 			int strLength = str.length();
 			if (strLength % 2 == 1) 
 			{
 				cout << "Odd number of characters!" << endl;
-				vector<SecondaryStructure*> * pEmpty = new vector<SecondaryStructure*>;
-				//return pEmpty;
+				SEQFileData empty;
+				return empty;
 			}
 			string sequence = str.substr(0,strLength/2);
 			string predictedSSEs = str.substr(strLength/2);
@@ -161,8 +167,9 @@ namespace wustl_mm {
 			#endif
 			if (sequence.length() != predictedSSEs.length())
 			{
-				vector<SecondaryStructure*> * pEmpty = new vector<SecondaryStructure*>;
-				//return pEmpty;
+				cout << "\nSequence and structure string lengths differ!" << endl;
+				SEQFileData empty;
+				return empty;
 			}
 			fin.close();
 		
@@ -202,8 +209,9 @@ namespace wustl_mm {
 						stringstream ssOut;
 						ssOut << idNum;
 						sseID = "H" + ssOut.str();
-						char * cSseID = new char [sseID.size() + 1];
-						strLen = sseID.copy(cSseID, sseID.size());
+						unsigned int sseIDSize = sseID.size();
+						char * cSseID = new char [sseIDSize + 1];
+						strLen = sseID.copy(cSseID, sseIDSize);
 						cSseID[strLen] = '\0';
 						currentStructure->secondaryStructureID = cSseID;
 						idNum++;
@@ -245,8 +253,9 @@ namespace wustl_mm {
 				stringstream ssOut;
 				ssOut << idNum;
 				sseID = "H" + ssOut.str();
-				char * cSseID = new char [sseID.size() + 1];
-				strLen = sseID.copy(cSseID, sseID.size());
+				unsigned int sseIDSize = sseID.size();
+				char * cSseID = new char [sseIDSize + 1];
+				strLen = sseID.copy(cSseID, sseIDSize);
 				cSseID[strLen] = '\0';
 				currentStructure->secondaryStructureID = cSseID;
 				idNum++;
@@ -283,6 +292,10 @@ namespace wustl_mm {
 		StandardGraph * SEQReader::GetGraphFromSeqFileData(SEQFileData seqFData)
 		{
 			vector<SecondaryStructure*> * pStructures = seqFData.GetStructuresVectorPointer();
+			if (!pStructures) {
+				cout << "Pointer to vector<SecondaryStructure*> object is NULL!" << endl;
+				return NULL;
+			}
 			vector<SecondaryStructure*> & structures = *pStructures;
 			int i;
 			//**********************************************************************************************
