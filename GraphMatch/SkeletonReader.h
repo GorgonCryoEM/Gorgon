@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.16  2008/11/18 18:10:24  ssa1
+//   Changing the scaling functions when doing graph matching to find correspondences
+//
 //   Revision 1.15  2008/09/29 16:19:30  ssa1
 //   Adding in CVS meta information
 //
@@ -93,36 +96,52 @@ namespace wustl_mm {
 			#endif
 			Point3 point, pointScaled;
 
-			double xOffset = 0;
-			double yOffset = 0;
-			double zOffset = 0;
 
-			if(TRANSLATE_VOLUMETRIC_COORDINATES) {
-				xOffset = vol->getSizeX() / 2.0;
-				yOffset = vol->getSizeY() / 2.0;
-				zOffset = vol->getSizeZ() / 2.0;
-			}
+			//if(TRANSLATE_VOLUMETRIC_COORDINATES) {
+			//	xOffset = vol->getSizeX() / 2.0;
+			//	yOffset = vol->getSizeY() / 2.0;
+			//	zOffset = vol->getSizeZ() / 2.0;
+			//}
 
 			// Finding all points inside of the helixes.
-			for(point[0] = -xOffset; point[0] < vol->getSizeX() - xOffset; point[0]++) {
-				pointScaled[0] = point[0] * vol->getSpacingX();
-				
-				for(point[1] = -yOffset; point[1] < vol->getSizeY() - yOffset; point[1]++) {
-					pointScaled[1] = point[1] * vol->getSpacingY();
 
-					for(point[2] = -zOffset; point[2] < vol->getSizeY() - zOffset; point[2]++) {
-						pointScaled[2] = point[2] * vol->getSpacingZ();
-
-						for(int i = 0; i < (int)helixes.size(); i++) {
-							
-							if((vol->getDataAt((int)(point[0]+xOffset), (int)(point[1]+yOffset), (int)(point[2]+zOffset)) > 0) && helixes[i]->IsInsideShape(pointScaled)) {						
-								paintedVol->setDataAt((int)(point[0]+xOffset), (int)(point[1]+yOffset), (int)(point[2]+zOffset), i + 1);
-								helixes[i]->AddInternalCell(Point3Int((int)(point[0]+xOffset), (int)(point[1]+yOffset), (int)(point[2]+zOffset), 0));
+			for(int x = 0; x < vol->getSizeX(); x++) {
+				point[0] = vol->getOriginX() + x * vol->getSpacingX();
+				for(int y = 0; y < vol->getSizeY(); y++) {
+					point[1] = vol->getOriginY() + y * vol->getSpacingY();
+					for(int z = 0; z < vol->getSizeZ(); z++) {
+						point[2] = vol->getOriginZ() + z * vol->getSpacingZ();
+						if(vol->getDataAt(x, y, z) > 0) {
+							for(int i = 0; i < (int)helixes.size(); i++) {
+								if(helixes[i]->IsInsideShape(point)) {
+									paintedVol->setDataAt(x, y, z, i+1);
+									helixes[i]->AddInternalCell(Point3Int(x, y, z, 0));
+								}
 							}
-						}
+						}						
 					}
 				}
 			}
+
+			//for(point[0] = -xOffset; point[0] < vol->getSizeX() - xOffset; point[0]++) {
+			//	pointScaled[0] = point[0] * vol->getSpacingX();
+			//	
+			//	for(point[1] = -yOffset; point[1] < vol->getSizeY() - yOffset; point[1]++) {
+			//		pointScaled[1] = point[1] * vol->getSpacingY();
+
+			//		for(point[2] = -zOffset; point[2] < vol->getSizeY() - zOffset; point[2]++) {
+			//			pointScaled[2] = point[2] * vol->getSpacingZ();
+
+			//			for(int i = 0; i < (int)helixes.size(); i++) {
+			//				
+			//				if((vol->getDataAt((int)(point[0]+xOffset), (int)(point[1]+yOffset), (int)(point[2]+zOffset)) > 0) && helixes[i]->IsInsideShape(pointScaled)) {						
+			//					paintedVol->setDataAt((int)(point[0]+xOffset), (int)(point[1]+yOffset), (int)(point[2]+zOffset), i + 1);
+			//					helixes[i]->AddInternalCell(Point3Int((int)(point[0]+xOffset), (int)(point[1]+yOffset), (int)(point[2]+zOffset), 0));
+			//				}
+			//			}
+			//		}
+			//	}
+			//}
 
 			StandardGraph * graph = new StandardGraph(2*helixes.size());
 			for(unsigned int i = 0; i < helixes.size(); i++) {

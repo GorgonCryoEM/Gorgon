@@ -15,6 +15,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.14  2008/11/18 18:10:24  ssa1
+//   Changing the scaling functions when doing graph matching to find correspondences
+//
 //   Revision 1.13  2008/09/29 16:19:30  ssa1
 //   Adding in CVS meta information
 //
@@ -119,6 +122,9 @@ namespace wustl_mm {
 
 			// TODO: Make this more accurate
 			missingHelixCount = (patternGraph->GetNodeCount() - baseGraph->GetNodeCount()) / 2;
+			if(missingHelixCount < 0)  {
+				missingHelixCount = 0;
+			}
 			missingSheetCount = 0;
 
 			//if(!PERFORMANCE_COMPARISON_MODE) {
