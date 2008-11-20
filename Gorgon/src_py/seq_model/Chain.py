@@ -291,7 +291,7 @@ class Chain(baseClass):
     if extension == 'pdb':
         linelist = []
         for line in open(filename, 'U'):
-            if line[:6] == 'COMPND' and line[11:16] == 'CHAIN':
+            if line[:6] == 'COMPND' and line[10:70].split(':')[0].strip() == 'CHAIN':
                 linelist = line[17:].split(', ')
                 linelist[0] = linelist[0].strip()
                 if ';' in linelist[-1]:
@@ -347,6 +347,7 @@ class Chain(baseClass):
     This loads all the chains specified in a PDB file.  
     '''
     chain = None
+    pdbID = None
     chains = []
     chainIDs = cls.getChainIDsFromPDB(filename,qparent)
     while True:
@@ -356,6 +357,10 @@ class Chain(baseClass):
         chainIDs = [None]
     for whichChainID in chainIDs:
         chain = Chain.load(filename, qparent, whichChainID)
+        if not pdbID: 
+            pdbID = chain.getPdbID()
+        else:
+            chain.setIDs(pdbID, chain.getChainID())  #Needed if PDB ID is auto-generated
         chains.append(chain.getIDs())
         cls.chainsDict[chain.key] = chain
     return chains
