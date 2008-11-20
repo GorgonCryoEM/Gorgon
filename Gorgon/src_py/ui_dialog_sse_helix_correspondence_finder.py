@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_dialog_sse_helix_correspondence_finder.ui'
 #
-# Created: Tue Jul 29 11:47:08 2008
+# Created: Thu Nov 20 15:03:22 2008
 #      by: PyQt4 UI code generator 4.3.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -118,17 +118,6 @@ class Ui_DialogSSEHelixCorrespondenceFinder(object):
         self.gridlayout4.addWidget(self.radioButtonQuadraticError,2,0,1,1)
         self.gridlayout3.addWidget(self.groupBoxCostFunction,0,0,1,2)
 
-        self.label_5 = QtGui.QLabel(self.tabStandardSettings)
-        self.label_5.setObjectName("label_5")
-        self.gridlayout3.addWidget(self.label_5,1,0,1,1)
-
-        self.doubleSpinBoxVoxelSize = QtGui.QDoubleSpinBox(self.tabStandardSettings)
-        self.doubleSpinBoxVoxelSize.setDecimals(4)
-        self.doubleSpinBoxVoxelSize.setMaximum(1000000000.0)
-        self.doubleSpinBoxVoxelSize.setProperty("value",QtCore.QVariant(1.0))
-        self.doubleSpinBoxVoxelSize.setObjectName("doubleSpinBoxVoxelSize")
-        self.gridlayout3.addWidget(self.doubleSpinBoxVoxelSize,1,1,1,1)
-
         self.label_6 = QtGui.QLabel(self.tabStandardSettings)
         self.label_6.setObjectName("label_6")
         self.gridlayout3.addWidget(self.label_6,2,0,1,1)
@@ -148,10 +137,6 @@ class Ui_DialogSSEHelixCorrespondenceFinder(object):
         self.spinBoxMissingHelixCount.setEnabled(False)
         self.spinBoxMissingHelixCount.setObjectName("spinBoxMissingHelixCount")
         self.gridlayout3.addWidget(self.spinBoxMissingHelixCount,3,1,1,1)
-
-        self.checkBoxRepositionSkeleton = QtGui.QCheckBox(self.tabStandardSettings)
-        self.checkBoxRepositionSkeleton.setObjectName("checkBoxRepositionSkeleton")
-        self.gridlayout3.addWidget(self.checkBoxRepositionSkeleton,4,0,1,2)
 
         spacerItem1 = QtGui.QSpacerItem(20,20,QtGui.QSizePolicy.Minimum,QtGui.QSizePolicy.Expanding)
         self.gridlayout3.addItem(spacerItem1,5,0,1,1)
@@ -267,37 +252,26 @@ class Ui_DialogSSEHelixCorrespondenceFinder(object):
         self.gridlayout5.addItem(spacerItem2,5,0,1,1)
         self.tabWidget.addTab(self.tabAdvancedSettings,"")
 
-        self.tabResults = QtGui.QWidget()
-        self.tabResults.setObjectName("tabResults")
-
-        self.gridlayout8 = QtGui.QGridLayout(self.tabResults)
-        self.gridlayout8.setObjectName("gridlayout8")
-
-        self.tableWidgetResults = QtGui.QTableWidget(self.tabResults)
-        self.tableWidgetResults.setEnabled(False)
-        self.gridlayout8.addWidget(self.tableWidgetResults,0,0,1,1)
-        self.tabWidget.addTab(self.tabResults,"")
-
         self.tab = QtGui.QWidget()
         self.tab.setObjectName("tab")
 
-        self.gridlayout9 = QtGui.QGridLayout(self.tab)
-        self.gridlayout9.setObjectName("gridlayout9")
+        self.gridlayout8 = QtGui.QGridLayout(self.tab)
+        self.gridlayout8.setObjectName("gridlayout8")
 
         self.labelCorrespondences = QtGui.QLabel(self.tab)
         self.labelCorrespondences.setObjectName("labelCorrespondences")
-        self.gridlayout9.addWidget(self.labelCorrespondences,0,0,1,1)
+        self.gridlayout8.addWidget(self.labelCorrespondences,0,0,1,1)
 
         self.comboBoxCorrespondences = QtGui.QComboBox(self.tab)
         self.comboBoxCorrespondences.setObjectName("comboBoxCorrespondences")
-        self.gridlayout9.addWidget(self.comboBoxCorrespondences,0,1,1,2)
+        self.gridlayout8.addWidget(self.comboBoxCorrespondences,0,1,1,2)
 
         self.tableWidgetCorrespondenceList = QtGui.QTableWidget(self.tab)
         self.tableWidgetCorrespondenceList.setObjectName("tableWidgetCorrespondenceList")
-        self.gridlayout9.addWidget(self.tableWidgetCorrespondenceList,1,0,4,2)
+        self.gridlayout8.addWidget(self.tableWidgetCorrespondenceList,1,0,4,2)
 
         spacerItem3 = QtGui.QSpacerItem(20,16,QtGui.QSizePolicy.Minimum,QtGui.QSizePolicy.Expanding)
-        self.gridlayout9.addItem(spacerItem3,1,2,1,1)
+        self.gridlayout8.addItem(spacerItem3,1,2,1,1)
 
         self.pushButtonMoveUp = QtGui.QPushButton(self.tab)
 
@@ -307,7 +281,7 @@ class Ui_DialogSSEHelixCorrespondenceFinder(object):
         sizePolicy.setHeightForWidth(self.pushButtonMoveUp.sizePolicy().hasHeightForWidth())
         self.pushButtonMoveUp.setSizePolicy(sizePolicy)
         self.pushButtonMoveUp.setObjectName("pushButtonMoveUp")
-        self.gridlayout9.addWidget(self.pushButtonMoveUp,2,2,1,1)
+        self.gridlayout8.addWidget(self.pushButtonMoveUp,2,2,1,1)
 
         self.pushButton_2 = QtGui.QPushButton(self.tab)
 
@@ -317,40 +291,40 @@ class Ui_DialogSSEHelixCorrespondenceFinder(object):
         sizePolicy.setHeightForWidth(self.pushButton_2.sizePolicy().hasHeightForWidth())
         self.pushButton_2.setSizePolicy(sizePolicy)
         self.pushButton_2.setObjectName("pushButton_2")
-        self.gridlayout9.addWidget(self.pushButton_2,3,2,1,1)
+        self.gridlayout8.addWidget(self.pushButton_2,3,2,1,1)
 
         spacerItem4 = QtGui.QSpacerItem(20,231,QtGui.QSizePolicy.Minimum,QtGui.QSizePolicy.Expanding)
-        self.gridlayout9.addItem(spacerItem4,4,2,1,1)
+        self.gridlayout8.addItem(spacerItem4,4,2,1,1)
         self.tabWidget.addTab(self.tab,"")
         self.gridlayout.addWidget(self.tabWidget,0,0,1,1)
 
-        self.gridlayout10 = QtGui.QGridLayout()
-        self.gridlayout10.setObjectName("gridlayout10")
+        self.gridlayout9 = QtGui.QGridLayout()
+        self.gridlayout9.setObjectName("gridlayout9")
 
         self.pushButtonReset = QtGui.QPushButton(DialogSSEHelixCorrespondenceFinder)
         self.pushButtonReset.setMaximumSize(QtCore.QSize(75,16777215))
         self.pushButtonReset.setObjectName("pushButtonReset")
-        self.gridlayout10.addWidget(self.pushButtonReset,0,0,1,1)
+        self.gridlayout9.addWidget(self.pushButtonReset,0,0,1,1)
 
         spacerItem5 = QtGui.QSpacerItem(40,20,QtGui.QSizePolicy.Expanding,QtGui.QSizePolicy.Minimum)
-        self.gridlayout10.addItem(spacerItem5,0,1,1,1)
+        self.gridlayout9.addItem(spacerItem5,0,1,1,1)
 
-        self.gridlayout11 = QtGui.QGridLayout()
-        self.gridlayout11.setSpacing(0)
-        self.gridlayout11.setObjectName("gridlayout11")
+        self.gridlayout10 = QtGui.QGridLayout()
+        self.gridlayout10.setSpacing(0)
+        self.gridlayout10.setObjectName("gridlayout10")
 
         self.pushButtonOk = QtGui.QPushButton(DialogSSEHelixCorrespondenceFinder)
         self.pushButtonOk.setEnabled(False)
         self.pushButtonOk.setMaximumSize(QtCore.QSize(75,16777215))
         self.pushButtonOk.setObjectName("pushButtonOk")
-        self.gridlayout11.addWidget(self.pushButtonOk,0,0,1,1)
+        self.gridlayout10.addWidget(self.pushButtonOk,0,0,1,1)
 
         self.pushButtonCancel = QtGui.QPushButton(DialogSSEHelixCorrespondenceFinder)
         self.pushButtonCancel.setMaximumSize(QtCore.QSize(75,16777215))
         self.pushButtonCancel.setObjectName("pushButtonCancel")
-        self.gridlayout11.addWidget(self.pushButtonCancel,0,1,1,1)
-        self.gridlayout10.addLayout(self.gridlayout11,0,2,1,1)
-        self.gridlayout.addLayout(self.gridlayout10,1,0,1,1)
+        self.gridlayout10.addWidget(self.pushButtonCancel,0,1,1,1)
+        self.gridlayout9.addLayout(self.gridlayout10,0,2,1,1)
+        self.gridlayout.addLayout(self.gridlayout9,1,0,1,1)
 
         self.retranslateUi(DialogSSEHelixCorrespondenceFinder)
         self.tabWidget.setCurrentIndex(0)
@@ -367,12 +341,10 @@ class Ui_DialogSSEHelixCorrespondenceFinder(object):
         DialogSSEHelixCorrespondenceFinder.setTabOrder(self.pushButtonGetSequenceFile,self.radioButtonAbsoluteDifference)
         DialogSSEHelixCorrespondenceFinder.setTabOrder(self.radioButtonAbsoluteDifference,self.radioButtonNormalizedDifference)
         DialogSSEHelixCorrespondenceFinder.setTabOrder(self.radioButtonNormalizedDifference,self.radioButtonQuadraticError)
-        DialogSSEHelixCorrespondenceFinder.setTabOrder(self.radioButtonQuadraticError,self.doubleSpinBoxVoxelSize)
-        DialogSSEHelixCorrespondenceFinder.setTabOrder(self.doubleSpinBoxVoxelSize,self.doubleSpinBoxEuclideanDistance)
+        DialogSSEHelixCorrespondenceFinder.setTabOrder(self.radioButtonQuadraticError,self.doubleSpinBoxEuclideanDistance)
         DialogSSEHelixCorrespondenceFinder.setTabOrder(self.doubleSpinBoxEuclideanDistance,self.checkBoxMissingHelices)
         DialogSSEHelixCorrespondenceFinder.setTabOrder(self.checkBoxMissingHelices,self.spinBoxMissingHelixCount)
-        DialogSSEHelixCorrespondenceFinder.setTabOrder(self.spinBoxMissingHelixCount,self.checkBoxRepositionSkeleton)
-        DialogSSEHelixCorrespondenceFinder.setTabOrder(self.checkBoxRepositionSkeleton,self.doubleSpinBoxHelixMissingPenalty)
+        DialogSSEHelixCorrespondenceFinder.setTabOrder(self.spinBoxMissingHelixCount,self.doubleSpinBoxHelixMissingPenalty)
         DialogSSEHelixCorrespondenceFinder.setTabOrder(self.doubleSpinBoxHelixMissingPenalty,self.doubleSpinBoxEndHelixMissingPenalty)
         DialogSSEHelixCorrespondenceFinder.setTabOrder(self.doubleSpinBoxEndHelixMissingPenalty,self.doubleSpinBoxEuclideanLoopUsedPenalty)
         DialogSSEHelixCorrespondenceFinder.setTabOrder(self.doubleSpinBoxEuclideanLoopUsedPenalty,self.doubleSpinBoxHelixImportance)
@@ -399,16 +371,11 @@ class Ui_DialogSSEHelixCorrespondenceFinder(object):
         self.radioButtonAbsoluteDifference.setText(QtGui.QApplication.translate("DialogSSEHelixCorrespondenceFinder", "Absolute Difference", None, QtGui.QApplication.UnicodeUTF8))
         self.radioButtonNormalizedDifference.setText(QtGui.QApplication.translate("DialogSSEHelixCorrespondenceFinder", "Normalized Difference", None, QtGui.QApplication.UnicodeUTF8))
         self.radioButtonQuadraticError.setText(QtGui.QApplication.translate("DialogSSEHelixCorrespondenceFinder", "Quadratic Error", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_5.setToolTip(QtGui.QApplication.translate("DialogSSEHelixCorrespondenceFinder", "The ratio between the size of the skeleton and the size of the 3D helix locations", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_5.setStatusTip(QtGui.QApplication.translate("DialogSSEHelixCorrespondenceFinder", "The ratio between the size of the skeleton and the size of the 3D helix locations", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_5.setWhatsThis(QtGui.QApplication.translate("DialogSSEHelixCorrespondenceFinder", "The ratio between the size of the skeleton and the size of the 3D helix locations", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_5.setText(QtGui.QApplication.translate("DialogSSEHelixCorrespondenceFinder", "Skeleton / Helix Size Ratio:", None, QtGui.QApplication.UnicodeUTF8))
         self.label_6.setToolTip(QtGui.QApplication.translate("DialogSSEHelixCorrespondenceFinder", "The maximum euclidean distance between possibly connected helices even if they are not connected in the skeleton", None, QtGui.QApplication.UnicodeUTF8))
         self.label_6.setStatusTip(QtGui.QApplication.translate("DialogSSEHelixCorrespondenceFinder", "The maximum euclidean distance between possibly connected helices even if they are not connected in the skeleton", None, QtGui.QApplication.UnicodeUTF8))
         self.label_6.setWhatsThis(QtGui.QApplication.translate("DialogSSEHelixCorrespondenceFinder", "The maximum euclidean distance between possibly connected helices even if they are not connected in the skeleton", None, QtGui.QApplication.UnicodeUTF8))
         self.label_6.setText(QtGui.QApplication.translate("DialogSSEHelixCorrespondenceFinder", "Max Euclidean Loop Distance:", None, QtGui.QApplication.UnicodeUTF8))
         self.checkBoxMissingHelices.setText(QtGui.QApplication.translate("DialogSSEHelixCorrespondenceFinder", "No of Missing Helices:", None, QtGui.QApplication.UnicodeUTF8))
-        self.checkBoxRepositionSkeleton.setText(QtGui.QApplication.translate("DialogSSEHelixCorrespondenceFinder", "3D Helixes in Wrong Coordinate Frame", None, QtGui.QApplication.UnicodeUTF8))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabStandardSettings), QtGui.QApplication.translate("DialogSSEHelixCorrespondenceFinder", "Standard Settings", None, QtGui.QApplication.UnicodeUTF8))
         self.groupBox.setTitle(QtGui.QApplication.translate("DialogSSEHelixCorrespondenceFinder", "Penalties", None, QtGui.QApplication.UnicodeUTF8))
         self.label_7.setText(QtGui.QApplication.translate("DialogSSEHelixCorrespondenceFinder", "\"Helix is missing\" Penalty:", None, QtGui.QApplication.UnicodeUTF8))
@@ -421,36 +388,22 @@ class Ui_DialogSSEHelixCorrespondenceFinder(object):
         self.label_13.setText(QtGui.QApplication.translate("DialogSSEHelixCorrespondenceFinder", "Euclidean to PDB Distance Ratio:", None, QtGui.QApplication.UnicodeUTF8))
         self.label_14.setText(QtGui.QApplication.translate("DialogSSEHelixCorrespondenceFinder", "Border Margin Threshold:", None, QtGui.QApplication.UnicodeUTF8))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabAdvancedSettings), QtGui.QApplication.translate("DialogSSEHelixCorrespondenceFinder", "Advanced Settings", None, QtGui.QApplication.UnicodeUTF8))
-        self.tableWidgetResults.setRowCount(0)
-        self.tableWidgetResults.setColumnCount(2)
-        self.tableWidgetResults.clear()
-        self.tableWidgetResults.setColumnCount(2)
-        self.tableWidgetResults.setRowCount(0)
-
-        headerItem = QtGui.QTableWidgetItem()
-        headerItem.setText(QtGui.QApplication.translate("DialogSSEHelixCorrespondenceFinder", "Result String", None, QtGui.QApplication.UnicodeUTF8))
-        self.tableWidgetResults.setHorizontalHeaderItem(0,headerItem)
-
-        headerItem1 = QtGui.QTableWidgetItem()
-        headerItem1.setText(QtGui.QApplication.translate("DialogSSEHelixCorrespondenceFinder", "Cost", None, QtGui.QApplication.UnicodeUTF8))
-        self.tableWidgetResults.setHorizontalHeaderItem(1,headerItem1)
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabResults), QtGui.QApplication.translate("DialogSSEHelixCorrespondenceFinder", "Debug", None, QtGui.QApplication.UnicodeUTF8))
         self.labelCorrespondences.setText(QtGui.QApplication.translate("DialogSSEHelixCorrespondenceFinder", "Correspondence:", None, QtGui.QApplication.UnicodeUTF8))
         self.tableWidgetCorrespondenceList.clear()
         self.tableWidgetCorrespondenceList.setColumnCount(3)
         self.tableWidgetCorrespondenceList.setRowCount(0)
 
+        headerItem = QtGui.QTableWidgetItem()
+        headerItem.setText(QtGui.QApplication.translate("DialogSSEHelixCorrespondenceFinder", "Predicted Helix", None, QtGui.QApplication.UnicodeUTF8))
+        self.tableWidgetCorrespondenceList.setHorizontalHeaderItem(0,headerItem)
+
+        headerItem1 = QtGui.QTableWidgetItem()
+        headerItem1.setText(QtGui.QApplication.translate("DialogSSEHelixCorrespondenceFinder", "Observed Helix", None, QtGui.QApplication.UnicodeUTF8))
+        self.tableWidgetCorrespondenceList.setHorizontalHeaderItem(1,headerItem1)
+
         headerItem2 = QtGui.QTableWidgetItem()
-        headerItem2.setText(QtGui.QApplication.translate("DialogSSEHelixCorrespondenceFinder", "Predicted Helix", None, QtGui.QApplication.UnicodeUTF8))
-        self.tableWidgetCorrespondenceList.setHorizontalHeaderItem(0,headerItem2)
-
-        headerItem3 = QtGui.QTableWidgetItem()
-        headerItem3.setText(QtGui.QApplication.translate("DialogSSEHelixCorrespondenceFinder", "Observed Helix", None, QtGui.QApplication.UnicodeUTF8))
-        self.tableWidgetCorrespondenceList.setHorizontalHeaderItem(1,headerItem3)
-
-        headerItem4 = QtGui.QTableWidgetItem()
-        headerItem4.setText(QtGui.QApplication.translate("DialogSSEHelixCorrespondenceFinder", "Constrained", None, QtGui.QApplication.UnicodeUTF8))
-        self.tableWidgetCorrespondenceList.setHorizontalHeaderItem(2,headerItem4)
+        headerItem2.setText(QtGui.QApplication.translate("DialogSSEHelixCorrespondenceFinder", "Constrained", None, QtGui.QApplication.UnicodeUTF8))
+        self.tableWidgetCorrespondenceList.setHorizontalHeaderItem(2,headerItem2)
         self.pushButtonMoveUp.setText(QtGui.QApplication.translate("DialogSSEHelixCorrespondenceFinder", "▲", None, QtGui.QApplication.UnicodeUTF8))
         self.pushButton_2.setText(QtGui.QApplication.translate("DialogSSEHelixCorrespondenceFinder", "▼", None, QtGui.QApplication.UnicodeUTF8))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), QtGui.QApplication.translate("DialogSSEHelixCorrespondenceFinder", "Results", None, QtGui.QApplication.UnicodeUTF8))

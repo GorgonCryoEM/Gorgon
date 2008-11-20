@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.18  2008/11/20 20:56:30  ssa1
+#   Properly scaling the suggested backbone
+#
 #   Revision 1.17  2008/11/17 19:43:08  colemanr
 #   In self.accept, moved the logic for creating a StructurePrediciton object
 #   to StructurePrediction.load()
@@ -103,11 +106,9 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
         self.ui.radioButtonAbsoluteDifference.setChecked(True)
         self.ui.radioButtonNormalizedDifference.setChecked(False)
         self.ui.radioButtonQuadraticError.setChecked(False)
-        self.ui.doubleSpinBoxVoxelSize.setValue(1.0)
         self.ui.doubleSpinBoxEuclideanDistance.setValue(0.0)
         self.ui.checkBoxMissingHelices.setChecked(False)
         self.ui.spinBoxMissingHelixCount.setValue(0)
-        self.ui.checkBoxRepositionSkeleton.setChecked(False)
         
         self.ui.doubleSpinBoxHelixMissingPenalty.setValue(5.0)
         self.ui.doubleSpinBoxEndHelixMissingPenalty.setValue(5.0)
@@ -193,7 +194,6 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
         else :
             self.viewer.correspondenceEngine.setConstantInt("COST_FUNCTION", 3)
 
-        self.viewer.correspondenceEngine.setConstant("VOXEL_SIZE", self.ui.doubleSpinBoxVoxelSize.value())        
         self.viewer.correspondenceEngine.setConstant("EUCLIDEAN_DISTANCE_THRESHOLD", self.ui.doubleSpinBoxEuclideanDistance.value())
                                                       
         if(self.ui.checkBoxMissingHelices.isChecked()):
@@ -201,7 +201,6 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
         else:
             self.viewer.correspondenceEngine.setConstantInt("MISSING_HELIX_COUNT", -1)            
         
-        self.viewer.correspondenceEngine.setConstantBool("TRANSLATE_VOLUMETRIC_COORDINATES", self.ui.checkBoxRepositionSkeleton.isChecked());
         
         #Tab 3
         self.viewer.correspondenceEngine.setConstant("MISSING_HELIX_PENALTY", self.ui.doubleSpinBoxHelixMissingPenalty.value())
@@ -215,14 +214,10 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
         self.viewer.correspondenceEngine.setConstantBool("NORMALIZE_GRAPHS", True)        
     
     def populateResults(self, library):
-        self.ui.tabWidget.setCurrentIndex(4)
-        self.ui.tableWidgetResults.setEnabled(True)
-        self.ui.tableWidgetResults.setRowCount(self.resultCount)        
+        self.ui.tabWidget.setCurrentIndex(3)
         corrList = []
         for i in range(self.resultCount):                                
             result = self.viewer.correspondenceEngine.getResult(i+1)
-            self.ui.tableWidgetResults.setItem(i, 0, QtGui.QTableWidgetItem(result.getNodeString()))
-            self.ui.tableWidgetResults.setItem(i, 1, QtGui.QTableWidgetItem(str(result.getCost())))
                                     
             matchList = []            
             for j in range(result.getNodeCount()/2):
