@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.10  2008/11/13 20:54:40  ssa1
+#   Using the correct scale when loading volumes
+#
 #   Revision 1.9  2008/11/06 05:29:04  ssa1
 #   CGI submission milestone for Interactive Skeletonization, and theme support, and fixing (hopefully) mac-os flicker bug
 #
@@ -87,9 +90,9 @@ class ModelVisualizationForm(QtGui.QWidget):
         self.ui.doubleSpinBoxSizeX.setValue(self.viewer.renderer.getSpacingX())   
         self.ui.doubleSpinBoxSizeY.setValue(self.viewer.renderer.getSpacingY())
         self.ui.doubleSpinBoxSizeZ.setValue(self.viewer.renderer.getSpacingZ())
-        self.ui.doubleSpinBoxLocationX.setValue(self.viewer.location[0])
-        self.ui.doubleSpinBoxLocationY.setValue(self.viewer.location[1])
-        self.ui.doubleSpinBoxLocationZ.setValue(self.viewer.location[2])
+        self.ui.doubleSpinBoxLocationX.setValue(self.viewer.renderer.getOriginX())
+        self.ui.doubleSpinBoxLocationY.setValue(self.viewer.renderer.getOriginY())
+        self.ui.doubleSpinBoxLocationZ.setValue(self.viewer.renderer.getOriginZ())
         self.ui.labelModelSize.setText("{" + 
                                        str(round(self.viewer.renderer.getMax(0) - self.viewer.renderer.getMin(0) ,2)) + ", " +
                                        str(round(self.viewer.renderer.getMax(1) - self.viewer.renderer.getMin(1) ,2)) + ", " +

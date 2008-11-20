@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.27  2008/11/13 20:54:40  ssa1
+//   Using the correct scale when loading volumes
+//
 //   Revision 1.26  2008/11/06 20:34:23  ssa1
 //   Proper lighting for bounding boxes
 //
@@ -66,6 +69,10 @@ namespace wustl_mm {
 			virtual float GetSpacingX();
 			virtual float GetSpacingY();
 			virtual float GetSpacingZ();
+			virtual void SetOrigin(float orgX, float orgY, float orgZ);
+			virtual float GetOriginX();
+			virtual float GetOriginY();
+			virtual float GetOriginZ();
 
 			float GetMin(int dimension);
 			float GetMax(int dimension);
@@ -75,6 +82,7 @@ namespace wustl_mm {
 			float minPts[3];
 			float maxPts[3];
 			float spacing[3];
+			float origin[3];
 			bool selected;
 			Vector3DFloat cuttingPlaneCenter;
 			Vector3DFloat cuttingPlaneDirection;
@@ -84,6 +92,7 @@ namespace wustl_mm {
 
 		Renderer::Renderer() {
 			SetSpacing(1.0f, 1.0f, 1.0f);
+			SetOrigin(0.0f, 0.0f, 0.0f);
 			selected = false;
 			quadricSphere = gluNewQuadric();
 			quadricCylinder = gluNewQuadric();
@@ -247,6 +256,26 @@ namespace wustl_mm {
 		float Renderer::GetSpacingZ() {
 			return spacing[2];
 		}
+
+		void Renderer::SetOrigin(float orgX, float orgY, float orgZ) {	
+			origin[0] = orgX;
+			origin[1] = orgY;
+			origin[2] = orgZ;
+		}
+
+
+		float Renderer::GetOriginX() {
+			return origin[0];
+		}
+
+		float Renderer::GetOriginY() {
+			return origin[1];
+		}
+
+		float Renderer::GetOriginZ() {
+			return origin[2];
+		}
+
 
 	}
 }

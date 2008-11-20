@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.38  2008/11/18 22:01:18  ssa1
+//   Removing printfs, and adding cropping
+//
 //   Revision 1.37  2008/11/17 19:37:24  colemanr
 //   added "SeqFileData" and "SeqReader"
 //
@@ -177,6 +180,10 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("getSpacingX", &Renderer::GetSpacingX)
 		.def("getSpacingY", &Renderer::GetSpacingY)
 		.def("getSpacingZ", &Renderer::GetSpacingZ)
+		.def("setOrigin", &Renderer::SetOrigin)
+		.def("getOriginX", &Renderer::GetOriginX)
+		.def("getOriginY", &Renderer::GetOriginY)
+		.def("getOriginZ", &Renderer::GetOriginZ)
 	;
 	
 	
@@ -212,10 +219,14 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("cropVolume", &VolumeRenderer::CropVolume)
 		.def("performBinarySkeletonizationJu2007", &VolumeRenderer::PerformBinarySkeletonizationJu2007, return_value_policy<reference_existing_object>())		
 		.def("performGrayscaleSkeletonizationAbeysinghe2008", &VolumeRenderer::PerformGrayscaleSkeletonizationAbeysinghe2008, return_value_policy<reference_existing_object>())		
-		.def("setSpacing", &Renderer::SetSpacing)
-		.def("getSpacingX", &Renderer::GetSpacingX)
-		.def("getSpacingY", &Renderer::GetSpacingY)
-		.def("getSpacingZ", &Renderer::GetSpacingZ)
+		.def("setSpacing", &VolumeRenderer::SetSpacing)
+		.def("getSpacingX", &VolumeRenderer::GetSpacingX)
+		.def("getSpacingY", &VolumeRenderer::GetSpacingY)
+		.def("getSpacingZ", &VolumeRenderer::GetSpacingZ)
+		.def("setOrigin", &VolumeRenderer::SetOrigin)
+		.def("getOriginX", &VolumeRenderer::GetOriginX)
+		.def("getOriginY", &VolumeRenderer::GetOriginY)
+		.def("getOriginZ", &VolumeRenderer::GetOriginZ)
 	;
 
 	class_< MeshRenderer, bases<Renderer> >("MeshRenderer", init<>())
@@ -241,10 +252,14 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("intersectMeshAndSphere", &MeshRenderer::IntersectMeshAndSphere)
 		.def("getIntersectionPoint", &MeshRenderer::GetIntersectionPoint)
 		.def("setLineThickness", &MeshRenderer::SetLineThickness)
-		.def("setSpacing", &Renderer::SetSpacing)
-		.def("getSpacingX", &Renderer::GetSpacingX)
-		.def("getSpacingY", &Renderer::GetSpacingY)
-		.def("getSpacingZ", &Renderer::GetSpacingZ)
+		.def("setSpacing", &MeshRenderer::SetSpacing)
+		.def("getSpacingX", &MeshRenderer::GetSpacingX)
+		.def("getSpacingY", &MeshRenderer::GetSpacingY)
+		.def("getSpacingZ", &MeshRenderer::GetSpacingZ)
+		.def("setOrigin", &MeshRenderer::SetOrigin)
+		.def("getOriginX", &MeshRenderer::GetOriginX)
+		.def("getOriginY", &MeshRenderer::GetOriginY)
+		.def("getOriginZ", &MeshRenderer::GetOriginZ)
 	;
 
 	class_< SSERenderer, bases<Renderer> >("SSERenderer", init<>())
@@ -265,10 +280,14 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("getMax", &SSERenderer::GetMax)
 		.def("get3DCoordinates", &SSERenderer::Get3DCoordinates)
 		.def("setHelixColor", &SSERenderer::SetHelixColor)		
-		.def("setSpacing", &Renderer::SetSpacing)
-		.def("getSpacingX", &Renderer::GetSpacingX)
-		.def("getSpacingY", &Renderer::GetSpacingY)
-		.def("getSpacingZ", &Renderer::GetSpacingZ)
+		.def("setSpacing", &SSERenderer::SetSpacing)
+		.def("getSpacingX", &SSERenderer::GetSpacingX)
+		.def("getSpacingY", &SSERenderer::GetSpacingY)
+		.def("getSpacingZ", &SSERenderer::GetSpacingZ)
+		.def("setOrigin", &SSERenderer::SetOrigin)
+		.def("getOriginX", &SSERenderer::GetOriginX)
+		.def("getOriginY", &SSERenderer::GetOriginY)
+		.def("getOriginZ", &SSERenderer::GetOriginZ)
 	;
 
 	class_< CAlphaRenderer, bases<Renderer> >("CAlphaRenderer", init<>())
@@ -297,10 +316,14 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("getBond", &CAlphaRenderer::GetBond, return_value_policy<reference_existing_object>())
 		.def("getBondCount", &CAlphaRenderer::GetBondCount)
 		.def("deleteBond", &CAlphaRenderer::DeleteBond)		
-		.def("setSpacing", &Renderer::SetSpacing)
-		.def("getSpacingX", &Renderer::GetSpacingX)
-		.def("getSpacingY", &Renderer::GetSpacingY)
-		.def("getSpacingZ", &Renderer::GetSpacingZ)
+		.def("setSpacing", &CAlphaRenderer::SetSpacing)
+		.def("getSpacingX", &CAlphaRenderer::GetSpacingX)
+		.def("getSpacingY", &CAlphaRenderer::GetSpacingY)
+		.def("getSpacingZ", &CAlphaRenderer::GetSpacingZ)
+		.def("setOrigin", &CAlphaRenderer::SetOrigin)
+		.def("getOriginX", &CAlphaRenderer::GetOriginX)
+		.def("getOriginY", &CAlphaRenderer::GetOriginY)
+		.def("getOriginZ", &CAlphaRenderer::GetOriginZ)
 	;
 
 	class_<InteractiveSkeletonEngine>("InteractiveSkeletonEngine", init<Volume *, NonManifoldMesh_Annotated *, float, int, int, int, unsigned int>())		

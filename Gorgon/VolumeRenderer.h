@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.39  2008/11/19 22:14:29  ssa1
+//   Properly setting solid rendering and cross section views
+//
 //   Revision 1.38  2008/11/18 22:01:18  ssa1
 //   Removing printfs, and adding cropping
 //
@@ -122,6 +125,10 @@ namespace wustl_mm {
 			float GetSpacingX();
 			float GetSpacingY();
 			float GetSpacingZ();
+			void SetOrigin(float orgX, float orgY, float orgZ);
+			float GetOriginX();
+			float GetOriginY();
+			float GetOriginZ();
 		
 		private:
 			int GetHashKey(int x, int y, int z, int edge, int iScale);
@@ -936,9 +943,38 @@ namespace wustl_mm {
 
 		float VolumeRenderer::GetSpacingZ() {
 			if(dataVolume != NULL) {
-				return dataVolume->getSpacingY();
+				return dataVolume->getSpacingZ();
 			}
-			return Renderer::GetSpacingY();
+			return Renderer::GetSpacingZ();
+		}
+
+		void VolumeRenderer::SetOrigin(float orgX, float orgY, float orgZ) {
+			if(dataVolume != NULL) {
+				dataVolume->setOrigin(orgX, orgY, orgZ);
+			} else {
+				Renderer::SetOrigin(orgX, orgY, orgZ);
+			}
+		}
+
+		float VolumeRenderer::GetOriginX() {
+			if(dataVolume != NULL) {
+				return dataVolume->getOriginX();
+			}
+			return Renderer::GetOriginX();
+		}
+
+		float VolumeRenderer::GetOriginY() {
+			if(dataVolume != NULL) {
+				return dataVolume->getOriginY();
+			}
+			return Renderer::GetOriginY();
+		}
+
+		float VolumeRenderer::GetOriginZ() {
+			if(dataVolume != NULL) {
+				return dataVolume->getOriginZ();
+			}
+			return Renderer::GetOriginZ();
 		}
 	}
 }

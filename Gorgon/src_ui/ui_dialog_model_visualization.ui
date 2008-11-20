@@ -203,6 +203,9 @@
           </item>
           <item row="0" column="1" >
            <widget class="QDoubleSpinBox" name="doubleSpinBoxSizeX" >
+            <property name="decimals" >
+             <number>8</number>
+            </property>
             <property name="maximum" >
              <double>99999999999999.984375000000000</double>
             </property>
@@ -220,6 +223,9 @@
           </item>
           <item row="1" column="1" >
            <widget class="QDoubleSpinBox" name="doubleSpinBoxSizeY" >
+            <property name="decimals" >
+             <number>8</number>
+            </property>
             <property name="maximum" >
              <double>99999999999999.984375000000000</double>
             </property>
@@ -237,6 +243,9 @@
           </item>
           <item row="2" column="1" >
            <widget class="QDoubleSpinBox" name="doubleSpinBoxSizeZ" >
+            <property name="decimals" >
+             <number>8</number>
+            </property>
             <property name="maximum" >
              <double>99999999999999.984375000000000</double>
             </property>
@@ -281,6 +290,9 @@
           </item>
           <item row="0" column="1" >
            <widget class="QDoubleSpinBox" name="doubleSpinBoxLocationX" >
+            <property name="decimals" >
+             <number>8</number>
+            </property>
             <property name="minimum" >
              <double>-100000000000000.000000000000000</double>
             </property>
@@ -301,6 +313,9 @@
           </item>
           <item row="1" column="1" >
            <widget class="QDoubleSpinBox" name="doubleSpinBoxLocationY" >
+            <property name="decimals" >
+             <number>8</number>
+            </property>
             <property name="minimum" >
              <double>-100000000000000.000000000000000</double>
             </property>
@@ -318,6 +333,9 @@
           </item>
           <item row="2" column="1" >
            <widget class="QDoubleSpinBox" name="doubleSpinBoxLocationZ" >
+            <property name="decimals" >
+             <number>8</number>
+            </property>
             <property name="minimum" >
              <double>-100000000000000.000000000000000</double>
             </property>

@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.44  2008/11/18 22:01:18  ssa1
+#   Removing printfs, and adding cropping
+#
 #   Revision 1.43  2008/11/13 20:54:40  ssa1
 #   Using the correct scale when loading volumes
 #
@@ -93,7 +96,6 @@ class BaseViewer(QtOpenGL.QGLWidget):
         self.displayStyle = self.DisplayStyleSmooth;
         self.modelVisible = True
         self.model2Visible = False
-        self.location = [0,0,0]
         self.rotation = self.identityMatrix()
         self.connect(self, QtCore.SIGNAL("modelChanged()"), self.modelChanged) 
         self.connect(self, QtCore.SIGNAL("modelLoaded()"), self.modelChanged) 
@@ -120,8 +122,14 @@ class BaseViewer(QtOpenGL.QGLWidget):
         
     
     def setLocation(self, locationX, locationY, locationZ):
-        self.location = [locationX, locationY, locationZ]
+        self.setLocationNoEmit(locationX, locationY, locationZ)
         self.emitModelChanged()
+        
+    def setLocationNoEmit(self, locationX, locationY, locationZ):
+        self.renderer.setOrigin(locationX, locationY, locationZ)
+        self.visualizationOptions.ui.doubleSpinBoxLocationX.setValue(locationX)
+        self.visualizationOptions.ui.doubleSpinBoxLocationY.setValue(locationY)
+        self.visualizationOptions.ui.doubleSpinBoxLocationZ.setValue(locationZ)
                         
     def setRotation(self, axis, angle):
         glMatrixMode(GL_MODELVIEW)
@@ -218,12 +226,13 @@ class BaseViewer(QtOpenGL.QGLWidget):
 
     def getCenterAndDistance(self):
         scale = [self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ()]
-        minPos = [(self.renderer.getMin(0)*scale[0] + self.location[0]), 
-                  (self.renderer.getMin(1)*scale[1] + self.location[1]), 
-                  (self.renderer.getMin(2)*scale[2] + self.location[2])]
-        maxPos = [(self.renderer.getMax(0)*scale[0] + self.location[0]),
-                  (self.renderer.getMax(1)*scale[1] + self.location[1]), 
-                  (self.renderer.getMax(2)*scale[2] + self.location[2])]
+        location = [self.renderer.getOriginX(), self.renderer.getOriginY(), self.renderer.getOriginZ()]
+        minPos = [(self.renderer.getMin(0)*scale[0] + location[0]), 
+                  (self.renderer.getMin(1)*scale[1] + location[1]), 
+                  (self.renderer.getMin(2)*scale[2] + location[2])]
+        maxPos = [(self.renderer.getMax(0)*scale[0] + location[0]),
+                  (self.renderer.getMax(1)*scale[1] + location[1]), 
+                  (self.renderer.getMax(2)*scale[2] + location[2])]
         distance = vectorDistance(minPos, maxPos)
 
         center = vectorScalarMultiply(0.5, vectorAdd(minPos, maxPos))        
@@ -267,7 +276,8 @@ class BaseViewer(QtOpenGL.QGLWidget):
 
     def draw(self):
         glPushMatrix()
-        glTranslated(self.location[0], self.location[1], self.location[2])
+        location = [self.renderer.getOriginX(), self.renderer.getOriginY(), self.renderer.getOriginZ()]
+        glTranslated(location[0], location[1], location[2])
         glMultMatrixf(self.rotation)
         scale = [self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ()]
         glScaled(scale[0], scale[1], scale[2])   
@@ -313,7 +323,7 @@ class BaseViewer(QtOpenGL.QGLWidget):
         self.renderer.unload()
         self.loaded = False
         self.dirty = False
-        self.location = [0,0,0]
+        self.renderer.setOrigin(0,0,0)
         self.renderer.setSpacing(1, 1, 1)
         self.rotation = self.identityMatrix()
         self.emitModelUnloaded()

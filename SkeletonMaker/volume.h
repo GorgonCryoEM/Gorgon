@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.26  2008/11/18 22:01:18  ssa1
+//   Removing printfs, and adding cropping
+//
 //   Revision 1.25  2008/11/13 20:54:40  ssa1
 //   Using the correct scale when loading volumes
 //
@@ -704,6 +707,7 @@ public:
 
 		data = new float [ x * y * z ] ;
 		setSpacing(vol->getSpacingX(), vol->getSpacingY(), vol->getSpacingZ());
+		setOrigin(vol->getOriginX(), vol->getOriginY(), vol->getOriginZ());
 
 		int ct = 0 ;
 		for ( int i = offx ; i < x + offx; i ++ )
@@ -12054,8 +12058,16 @@ public:
 		float ds[3] = {(float)dmin, (float)dmax, (float)0} ;
 		fwrite( ds, sizeof( float ), 3, fout ) ;
 
-		int zero = 0 ;
-		for (i = 22 ; i < 256 ; i ++ )
+		int zero = 0 ;		
+		for (i = 23 ; i <= 49 ; i ++ )
+		{
+			fwrite( &zero, sizeof( int ), 1, fout );
+		}
+
+		float origins[3] = {originX, originY, originZ};
+		fwrite( origins, sizeof( float ), 3, fout) ;
+
+		for (i = 53 ; i <= 256 ; i ++ )
 		{
 			fwrite( &zero, sizeof( int ), 1, fout ) ;
 		}
@@ -12077,6 +12089,13 @@ public:
 		spacingY = spy;
 		spacingZ = spz;
 	}
+
+	void setOrigin(float orgX, float orgY, float orgZ) {
+		originX = orgX;
+		originY = orgY;
+		originZ = orgZ;
+	}
+
 	float getSpacingX() {
 		return spacingX;
 	}
@@ -12088,6 +12107,19 @@ public:
 	float getSpacingZ() {
 		return spacingZ;
 	}
+
+	float getOriginX() {
+		return originX;
+	}
+
+	float getOriginY() {
+		return originY;
+	}
+
+	float getOriginZ() {
+		return originZ;
+	}
+
 /*	void toMathematicaFile(char * fname) {
 		FILE* fout = fopen( fname, "wb" ) ;
 
@@ -12124,6 +12156,7 @@ private:
 	/* Sizes */
 	int sizex, sizey, sizez ;
 	float spacingX, spacingY, spacingZ;
+	float originX, originY, originZ;
 
 	/* Data array */
 	float * data ;
