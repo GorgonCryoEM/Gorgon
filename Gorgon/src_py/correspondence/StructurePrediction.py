@@ -54,116 +54,46 @@ class StructurePrediction(baseClass):  #results of secondary-structure predictio
         params=None
         comments=None
         
-        data = SeqReader.loadFile(filename)
-        startIndex = data.getStartResNo()
-        sequence = data.getSequenceString()
-        if startIndex == 1:
-            chain = Chain(sequence, qparent)
-        else:
-            chain = Chain('', qparent)
-            n = 0
-            for char in sequence:
-                chain[startIndex+n] = Residue(char, chain)
-                n += 1 
-        numSSEs = data.getNumberOfStructures()
-        for sseIx in range(numSSEs):
-            cppSse = data.getStructure(sseIx)
-            if cppSse.isHelix(): 
-                pyHelix = Helix(chain, sseIx, str(cppSse.getSecondaryStructureID()), cppSse.getStartPosition(), cppSse.getEndPosition())
-                secelDict[sseIx] = pyHelix                                
-            elif cppSse.isSheet():
-                #TODO: Add Sheet support
-                secelDict[sseIx] = None
-                pass
-        return StructurePrediction(secelDict, chain, params, comments, qparent)
+        if filename.split('.')[-1].lower() == 'seq':
+            data = SeqReader.loadFile(filename)
+            startIndex = data.getStartResNo()
+            sequence = data.getSequenceString()
+            if startIndex == 1:
+                chain = Chain(sequence, qparent)
+            else:
+                chain = Chain('', qparent)
+                n = 0
+                for char in sequence:
+                    chain[startIndex+n] = Residue(char, chain)
+                    n += 1                
+
+            numSSEs = data.getNumberOfStructures()
+            for sseIx in range(numSSEs):
+                cppSse = data.getStructure(sseIx)
+                if cppSse.isHelix(): 
+                    pyHelix = Helix(chain, sseIx, str(cppSse.getSecondaryStructureID()), cppSse.getStartPosition(), cppSse.getEndPosition())
+                    secelDict[sseIx] = pyHelix                                
+                elif cppSse.isSheet():
+                    #TODO: Add Sheet support
+                    secelDict[sseIx] = None
+                    pass
+            return StructurePrediction(secelDict, chain, params, comments, qparent)
+        elif filename.split('.')[-1].lower() == 'pdb':
+            chain = Chain.load(filename, qparent)
+            i = 0
+            for helixKey in chain.helices.keys():
+                secelDict[i] = chain.helices[helixKey]
+                i += 1
+            chain.helices = {}
+            chain.sheets = {}
+            chain.secelList = {}
+            chain.orphanStrands = {}
+            chain.atoms = {}
+            for resIndex in chain.residueRange():
+                chain[resIndex].clearAtoms()
+            return StructurePrediction(secelDict, chain, params, comments, qparent)
         
         
-        
-        
-        '''
-        F = open(filename)
-        lines = []
-        for line in F:
-            line = line.strip()
-            lines.append(line)
-        if lines[0][:5].upper() == 'START':
-            firstLine = lines.pop(0)
-            startIndex = int(firstLine.split()[-1])
-            #print startIndex
-        else:
-            startIndex = 1
-        stopIndex = None  
-        
-        lines = ''.join(lines)
-        linesSize = len(lines)
-        try:
-            assert (linesSize % 2 == 0)
-        except:
-            "The file does not have an equal number of reisdues and secondary structure indicators."
-        
-        sequence = lines[:(linesSize//2)]
-        #print sequence
-        predictionsStr = lines[(linesSize//2):]
-        #print predictionsStr
-        
-        if startIndex == 1:
-            chain = Chain(sequence, qparent)
-        else:
-            chain = Chain('', qparent)
-            n = 0
-            for char in sequence:
-                chain[startIndex+n] = Residue(char, chain)
-                n += 1 
-        
-        # loop pre-conditions
-        # i is the next char in the predictionStr
-        current= predictionsStr[0]
-        start=startIndex
-        helixCount=0
-        minHelixLength = 6
-        strandCount=0
-        coilCount=0
-        for nextChar,index in zip(predictionsStr,range(startIndex,len(predictionsStr)+startIndex)):
-    
-            prev=current
-            current=nextChar
-            
-            if prev != current:
-                stop=index-1
-                length = stop - start + 1
-        
-                if prev=='H':
-                    if length >= minHelixLength:
-                        helixCount=helixCount+1
-                        label='H' + str(helixCount)
-                        secel = Helix(chain,None, label,start,stop)
-                        #chain.secel_list.append(secel)
-        
-                elif prev=='E':
-                    strandCount=strandCount+1
-                    label='E' + str(strandCount)
-                    secel = Strand(chain,None, label,start,stop)
-                    #chain.secel_list.append(secel)
-        
-                elif prev=='-':
-                    coilCount=coilCount+1
-                    label='C' + str(coilCount)
-                    secel = Coil(chain,None, label,start,stop)
-                    #chain.secel_list.append(secel)
-        
-                else:
-                    errString="got %s when expecting 'H','E', or '-'" %prev
-                    raise ValueError(errString)
-                start = index
-                print secel
-                secelDict[secelIndex]=secel
-                secelIndex = secelIndex+1        
-        
-        print chain
-        #print chain.toPDB()
-        print secelDict
-        return StructurePrediction(secelDict,chain, params, comments, qparent)
-        '''
     def getSecelByIndex(self, index):
         for key in self.secelDict.keys():
             secel = self.secelDict[key]
