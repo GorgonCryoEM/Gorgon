@@ -5,7 +5,7 @@
 # Class Description: Widget for placing atoms and secondary strucutre elements as well as for optimizing placement.
 
 from PyQt4 import QtGui, QtCore
-from libpyGORGON import PDBAtom, PDBBond
+from libpyGORGON import PDBAtom, PDBBond, Vector3DFloat
 
 class StructureEditor(QtGui.QWidget):
     def __init__(self, currentChainModel, parent=None):
@@ -88,6 +88,7 @@ class StructureEditor(QtGui.QWidget):
         self.possibleAtomsList = []
         radius = float( self.CAdoubleSpinBox.value() )
         #self.parentWidget()=>SequenceWidget, self.parentWidget().parentWidget() => SequenceDock
+        calphaViewer = self.parentWidget().parentWidget().app.viewers['calpha']
         skeletonViewer = self.parentWidget().parentWidget().app.viewers['skeleton']
         meshRenderer = skeletonViewer.renderer
         residue = self.currentChainModel[ int( str(self.atomicResNumbers[0].text()) ) ]
@@ -97,8 +98,11 @@ class StructureEditor(QtGui.QWidget):
             self.numPossibilities.setText('of ?')
             return
         atomPos = atom.getPosition()
+        atomPosMeshCoords =  skeletonViewer.worldToObjectCoordinates(calphaViewer.objectToWorldCoordinates([atomPos.x(), atomPos.y(), atomPos.z()]))
+        atomPosMeshCoords = Vector3DFloat(atomPosMeshCoords[0], atomPosMeshCoords[1], atomPosMeshCoords[2])
+         
         if skeletonViewer.loaded:
-            numIntersections = meshRenderer.intersectMeshAndSphere(atomPos, radius)
+            numIntersections = meshRenderer.intersectMeshAndSphere(atomPosMeshCoords, radius)
             #print "\nNumber of intersections:", numIntersections
             if numIntersections == 0:
                 self.numPossibilities.setText('of 0')
@@ -106,7 +110,10 @@ class StructureEditor(QtGui.QWidget):
                 return
             possiblePositionsList = []
             for i in range(numIntersections):
-                possiblePositionsList.append( meshRenderer.getIntersectionPoint(i) )
+                pos = meshRenderer.getIntersectionPoint(i)
+                pos = calphaViewer.worldToObjectCoordinates(skeletonViewer.objectToWorldCoordinates([pos.x(), pos.y(), pos.z()]))
+                pos = Vector3DFloat(pos[0], pos[1], pos[2])                               
+                possiblePositionsList.append(pos)
             for i in range(len(possiblePositionsList)):
                 pos = possiblePositionsList[i]
                 rawAtom=PDBAtom(self.currentChainModel.getPdbID(), self.currentChainModel.getChainID() , i+1, 'CA')
