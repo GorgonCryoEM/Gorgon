@@ -170,35 +170,6 @@
          </layout>
         </widget>
        </item>
-       <item row="1" column="0" >
-        <widget class="QLabel" name="label_5" >
-         <property name="toolTip" >
-          <string>The ratio between the size of the skeleton and the size of the 3D helix locations</string>
-         </property>
-         <property name="statusTip" >
-          <string>The ratio between the size of the skeleton and the size of the 3D helix locations</string>
-         </property>
-         <property name="whatsThis" >
-          <string>The ratio between the size of the skeleton and the size of the 3D helix locations</string>
-         </property>
-         <property name="text" >
-          <string>Skeleton / Helix Size Ratio:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="1" >
-        <widget class="QDoubleSpinBox" name="doubleSpinBoxVoxelSize" >
-         <property name="decimals" >
-          <number>4</number>
-         </property>
-         <property name="maximum" >
-          <double>999999999.999899983406067</double>
-         </property>
-         <property name="value" >
-          <double>1.000000000000000</double>
-         </property>
-        </widget>
-       </item>
        <item row="2" column="0" >
         <widget class="QLabel" name="label_6" >
          <property name="toolTip" >
@@ -239,13 +210,6 @@
         <widget class="QSpinBox" name="spinBoxMissingHelixCount" >
          <property name="enabled" >
           <bool>false</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="0" colspan="2" >
-        <widget class="QCheckBox" name="checkBoxRepositionSkeleton" >
-         <property name="text" >
-          <string>3D Helixes in Wrong Coordinate Frame</string>
          </property>
         </widget>
        </item>
@@ -456,36 +420,6 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tabResults" >
-      <attribute name="title" >
-       <string>Debug</string>
-      </attribute>
-      <layout class="QGridLayout" >
-       <item row="0" column="0" >
-        <widget class="QTableWidget" name="tableWidgetResults" >
-         <property name="enabled" >
-          <bool>false</bool>
-         </property>
-         <property name="rowCount" >
-          <number>0</number>
-         </property>
-         <property name="columnCount" >
-          <number>2</number>
-         </property>
-         <column>
-          <property name="text" >
-           <string>Result String</string>
-          </property>
-         </column>
-         <column>
-          <property name="text" >
-           <string>Cost</string>
-          </property>
-         </column>
-        </widget>
-       </item>
-      </layout>
-     </widget>
      <widget class="QWidget" name="tab" >
       <attribute name="title" >
        <string>Results</string>
@@ -660,11 +594,9 @@
   <tabstop>radioButtonAbsoluteDifference</tabstop>
   <tabstop>radioButtonNormalizedDifference</tabstop>
   <tabstop>radioButtonQuadraticError</tabstop>
-  <tabstop>doubleSpinBoxVoxelSize</tabstop>
   <tabstop>doubleSpinBoxEuclideanDistance</tabstop>
   <tabstop>checkBoxMissingHelices</tabstop>
   <tabstop>spinBoxMissingHelixCount</tabstop>
-  <tabstop>checkBoxRepositionSkeleton</tabstop>
   <tabstop>doubleSpinBoxHelixMissingPenalty</tabstop>
   <tabstop>doubleSpinBoxEndHelixMissingPenalty</tabstop>
   <tabstop>doubleSpinBoxEuclideanLoopUsedPenalty</tabstop>
