@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.3  2008/06/18 18:15:41  ssa1
+#   Adding in CVS meta data
+#
 
 from PyQt4 import QtCore, QtGui
 from ui_dialog_sse_helix_correspondence_viewer import Ui_DialogSSEHelixCorrespondenceViewer
@@ -65,7 +68,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
         self.engine.setConstant("SSE_FILE_NAME", str(self.ui.lineEditHelixLengthFile.text()))
         self.engine.setConstant("VRML_HELIX_FILE_NAME", str(self.ui.lineEditHelixLocationFile.text()))
         self.engine.setConstant("MRC_FILE_NAME", str(self.ui.lineEditSkeletonFile.text()))
-        self.engine.setConstant("PDB_FILE_NAME", str(self.ui.lineEditSequenceFile.text()))
+        self.engine.setConstant("SEQUENCE_FILE_NAME", str(self.ui.lineEditSequenceFile.text()))
         
         #Tab 2
         if(self.ui.radioButtonAbsoluteDifference.isChecked()):
