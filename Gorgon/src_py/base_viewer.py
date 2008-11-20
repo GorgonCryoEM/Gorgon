@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.45  2008/11/20 18:33:05  ssa1
+#   Using the origin of the MRC volume
+#
 #   Revision 1.44  2008/11/18 22:01:18  ssa1
 #   Removing printfs, and adding cropping
 #
@@ -102,7 +105,7 @@ class BaseViewer(QtOpenGL.QGLWidget):
         self.connect(self, QtCore.SIGNAL("modelUnloaded()"), self.modelChanged) 
         self.connect(self.app.themes, QtCore.SIGNAL("themeChanged()"), self.themeChanged)           
         self.gllist = 0
-        self.showBox = True
+        self.showBox = False
         
     def initVisualizationOptions(self, visualizationForm):
         self.visualizationOptions = visualizationForm
