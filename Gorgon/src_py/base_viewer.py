@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.46  2008/11/20 19:04:07  ssa1
+#   Proper scaling for binary and grayscale skeletonization
+#
 #   Revision 1.45  2008/11/20 18:33:05  ssa1
 #   Using the origin of the MRC volume
 #
@@ -115,7 +118,7 @@ class BaseViewer(QtOpenGL.QGLWidget):
     
     def setScale(self, scaleX, scaleY, scaleZ):
         self.setScaleNoEmit(scaleX, scaleY, scaleZ)
-        self.emitModelChanged()
+        self.app.mainCamera.updateGL()
 
     def setScaleNoEmit(self, scaleX, scaleY, scaleZ):
         self.renderer.setSpacing(scaleX, scaleY, scaleZ)
@@ -126,7 +129,7 @@ class BaseViewer(QtOpenGL.QGLWidget):
     
     def setLocation(self, locationX, locationY, locationZ):
         self.setLocationNoEmit(locationX, locationY, locationZ)
-        self.emitModelChanged()
+        self.app.mainCamera.updateGL()
         
     def setLocationNoEmit(self, locationX, locationY, locationZ):
         self.renderer.setOrigin(locationX, locationY, locationZ)
@@ -147,14 +150,16 @@ class BaseViewer(QtOpenGL.QGLWidget):
                         
     def setBoundingBox(self, visible):
         self.showBox = visible
-        self.emitModelChanged();
+        if(hasattr(self.app, "mainCamera")) :
+            self.app.mainCamera.updateGL()
 
     def getBoundingBoxColor(self):
         return self.app.themes.getColor(self.title + ":" + "BoundingBox" )
 
     def setBoundingBoxColor(self, color):
         self.app.themes.addColor(self.title + ":" + "BoundingBox", color)
-        self.emitModelChanged()
+        if(hasattr(self.app, "mainCamera")) :
+            self.app.mainCamera.updateGL()
 
     def setDisplayStyle(self, style):
         self.displayStyle = style
@@ -289,7 +294,11 @@ class BaseViewer(QtOpenGL.QGLWidget):
         glEnable(GL_DEPTH_TEST);        
         glDepthMask(GL_TRUE);
         
-        self.emitDrawingModel()
+        if(self.loaded and self.showBox):            
+            self.setMaterials(self.getBoundingBoxColor())       
+            self.renderer.drawBoundingBox()             
+        
+        self.emitDrawingModel()                
         
         if (self.gllist != 0):          
             self.initializeGLDisplayType()
@@ -345,12 +354,7 @@ class BaseViewer(QtOpenGL.QGLWidget):
         colors = [self.getModelColor(),  self.getModel2Color()]
         
         glPushAttrib(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT)
-                 
-        
-        if(self.loaded and self.showBox):            
-            self.setMaterials(self.getBoundingBoxColor())       
-            self.renderer.drawBoundingBox()        
-        
+                         
         self.extraDrawingRoutines()
         
         for i in range(2):
