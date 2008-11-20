@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.27  2008/11/13 20:54:40  ssa1
+//   Using the correct scale when loading volumes
+//
 //   Revision 1.26  2008/11/11 00:20:18  colemanr
 //   changed to make *.mrc files appear above *.off files in an open dialog
 //
@@ -70,6 +73,14 @@ namespace wustl_mm {
 			int IntersectMeshAndSphere(Vector3DFloat center, float radius);
 			Vector3DFloat GetIntersectionPoint(int ix);
 			void SetLineThickness(int thickness);
+			void SetSpacing(float spX, float spY, float spZ);
+			float GetSpacingX();
+			float GetSpacingY();
+			float GetSpacingZ();
+			void SetOrigin(float orgX, float orgY, float orgZ);
+			float GetOriginX();
+			float GetOriginY();
+			float GetOriginZ();
 		private:
 			void UpdateBoundingBox();
 			NonManifoldMesh_Annotated * mesh;
@@ -309,6 +320,64 @@ namespace wustl_mm {
 				}
 			}
 			return position;
+		}
+
+		void MeshRenderer::SetSpacing(float spX, float spY, float spZ) {
+			if(mesh != NULL) {
+				mesh->SetScale(spX, spY, spZ);
+			} else {
+				Renderer::SetSpacing(spX, spY, spZ);
+			}
+		}
+
+		float MeshRenderer::GetSpacingX() {
+			if(mesh != NULL) {
+				return mesh->scale[0];
+			}
+			return Renderer::GetSpacingX();
+		}
+
+		float MeshRenderer::GetSpacingY() {
+			if(mesh != NULL) {
+				return mesh->scale[1];
+			}
+			return Renderer::GetSpacingY();
+		}
+
+		float MeshRenderer::GetSpacingZ() {
+			if(mesh != NULL) {
+				return mesh->scale[2];
+			}
+			return Renderer::GetSpacingZ();
+		}
+
+		void MeshRenderer::SetOrigin(float orgX, float orgY, float orgZ) {
+			if(mesh != NULL) {
+				mesh->SetOrigin(orgX, orgY, orgZ);
+			} else {
+				Renderer::SetOrigin(orgX, orgY, orgZ);
+			}
+		}
+
+		float MeshRenderer::GetOriginX() {
+			if(mesh != NULL) {
+				return mesh->origin[0];
+			}
+			return Renderer::GetOriginX();
+		}
+
+		float MeshRenderer::GetOriginY() {
+			if(mesh != NULL) {
+				return mesh->origin[1];
+			}
+			return Renderer::GetOriginY();
+		}
+
+		float MeshRenderer::GetOriginZ() {
+			if(mesh != NULL) {
+				return mesh->origin[1];
+			}
+			return Renderer::GetOriginZ();
 		}
 	}
 }

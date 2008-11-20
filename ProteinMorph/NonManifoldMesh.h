@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.31  2008/11/20 18:33:00  ssa1
+//   Using the origin of the MRC volume
+//
 //   Revision 1.30  2008/11/13 20:54:40  ssa1
 //   Using the correct scale when loading volumes
 //
@@ -115,6 +118,8 @@ namespace wustl_mm {
 			void RemoveNullEntries();
 			void ToOffCells(string fileName);
 			void ToMathematicaFile(string fileName);
+			void SetOrigin(float x, float y, float z);
+			void SetScale(float x, float y, float z);
 			vector<unsigned int> GetPath(unsigned int edge0Ix, unsigned int edge1Ix);
 			Volume * ToVolume();
 			Vector3DFloat GetVertexNormal(int vertexId);
@@ -124,6 +129,8 @@ namespace wustl_mm {
 			static NonManifoldMesh * LoadOffFile(string fileName);
 
 		public:
+			float origin[3];
+			float scale[3];
 			vector< NonManifoldMeshVertex<TVertex> > vertices;
 			vector< NonManifoldMeshEdge<TEdge> > edges;
 			vector< NonManifoldMeshFace<TFace> > faces;
@@ -131,17 +138,26 @@ namespace wustl_mm {
 			int vertexCount;
 			int faceCount;
 			HashMapType vertexHashMap;
+			bool fromVolume;
+			int volSizeX, volSizeY, volSizeZ;
 		};
 
 
 		typedef NonManifoldMesh<bool, bool, bool> NonManifoldMesh_NoTags;
 
 		template <class TVertex, class TEdge, class TFace> NonManifoldMesh<TVertex, TEdge, TFace>::NonManifoldMesh() {
-			Clear();			
+			Clear();	
+			fromVolume = false;
+			SetOrigin(0,0,0);
+			SetScale(1,1,1);
+			
 		}
 
 		template <class TVertex, class TEdge, class TFace> NonManifoldMesh<TVertex, TEdge, TFace>::NonManifoldMesh(NonManifoldMesh<TVertex, TEdge, TFace> * srcMesh) {
 			Clear();
+			fromVolume = false;
+			SetOrigin(0,0,0);
+			SetScale(1,1,1);
 			for(unsigned int i = 0; i < srcMesh->vertices.size(); i++) {
 				vertices.push_back(srcMesh->vertices[i]);
 			}
@@ -159,12 +175,12 @@ namespace wustl_mm {
 			int x, y, z, i, j, index, index2;
 			int * vertexLocations = new int[sourceVol->getSizeX() * sourceVol->getSizeY() * sourceVol->getSizeZ()];
 			int value;
-			float spacingX = sourceVol->getSpacingX();
-			float spacingY = sourceVol->getSpacingY();
-			float spacingZ = sourceVol->getSpacingZ();
-			float originX = sourceVol->getOriginX();
-			float originY = sourceVol->getOriginY();
-			float originZ = sourceVol->getOriginZ();
+			fromVolume = true;
+			volSizeX = sourceVol->getSizeX();
+			volSizeY = sourceVol->getSizeY();
+			volSizeZ = sourceVol->getSizeZ();
+			SetOrigin(sourceVol->getOriginX(), sourceVol->getOriginY(), sourceVol->getOriginZ());
+			SetScale(sourceVol->getSpacingX(), sourceVol->getSpacingY(), sourceVol->getSpacingZ());
 
 			// Adding vertices
 			NonManifoldMeshVertex<TVertex> tempVertex;
@@ -176,7 +192,7 @@ namespace wustl_mm {
 						vertexLocations[index] = -1;
 						value = (int)round(sourceVol->getDataAt(index));
 						if(value > 0) {							
-							tempVertex.position = Vector3DFloat(originX + x * spacingX, originY + y * spacingY, originZ + z * spacingZ);								
+							tempVertex.position = Vector3DFloat(x, y, z);								
 							vertexLocations[index] = AddVertex(tempVertex);
 						}
 					}
@@ -621,7 +637,7 @@ namespace wustl_mm {
 			fprintf(outFile, "%i %li %i\n", (int)vertices.size(), faces.size() + edges.size(), 0);
 			int i,j;
 			for(i = 0; i < (int)vertices.size(); i++) {
-				fprintf(outFile, "%lf %lf %lf\n", vertices[i].position.X(), vertices[i].position.Y(), vertices[i].position.Z());
+				fprintf(outFile, "%lf %lf %lf\n", origin[0] + scale[0] * vertices[i].position.X(), origin[1] + scale[1] * vertices[i].position.Y(), origin[2] + scale[2] * vertices[i].position.Z());
 			}
 			int lastVertex;
 			for(i = 0; i < (int)faces.size(); i++) {
@@ -697,8 +713,16 @@ namespace wustl_mm {
 			fclose(outF);
 		}
 		template <class TVertex, class TEdge, class TFace> Volume * NonManifoldMesh<TVertex, TEdge, TFace>::ToVolume() {
-			double minPos[3] = {0,0,0};
+			double minPos[3] = {MAX_DOUBLE,MAX_DOUBLE,MAX_DOUBLE};
 			double maxPos[3] = {MIN_DOUBLE, MIN_DOUBLE, MIN_DOUBLE};
+			if(fromVolume) {
+				minPos[0] = 0;
+				minPos[1] = 0;
+				minPos[2] = 0;
+				maxPos[0] = volSizeX-1;
+				maxPos[1] = volSizeY-1;
+				maxPos[2] = volSizeZ-1;
+			}
 			for(unsigned int i = 0; i < vertices.size(); i++) {
 				for(unsigned int j = 0; j < 3; j++) {
 					minPos[j] = min(minPos[j], (double)vertices[i].position.values[j]);
@@ -712,10 +736,8 @@ namespace wustl_mm {
 			for(unsigned int j = 0; j < 3; j++) {
 				minPosInt[j] = (int)floor(minPos[j]);
 				maxPosInt[j] = (int)ceil(maxPos[j]);
-				//minPosInt[j] = 0;
 			}
 			Volume * vol = new Volume(maxPosInt[0] - minPosInt[0]+1, maxPosInt[1] - minPosInt[1]+1, maxPosInt[2] - minPosInt[2]+1);
-			//Volume * vol = new Volume(200,260,120);
 			
 			NonManifoldMeshVertex<TVertex> v1,v2;
 			int pos[3];
@@ -731,6 +753,8 @@ namespace wustl_mm {
 					vol->setDataAt(pos[0], pos[1], pos[2], 1.0);
 				}				
 			}
+			vol->setOrigin(origin[0], origin[1], origin[2]);
+			vol->setSpacing(scale[0], scale[1], scale[2]);
 			return vol;
 		}
 
@@ -919,6 +943,17 @@ namespace wustl_mm {
 			}
 
 			return path;
+		}
+		template <class TVertex, class TEdge, class TFace> void NonManifoldMesh<TVertex, TEdge, TFace>::SetOrigin(float x, float y, float z){
+			origin[0] = x;
+			origin[1] = y;
+			origin[2] = z;
+		}
+
+		template <class TVertex, class TEdge, class TFace> void NonManifoldMesh<TVertex, TEdge, TFace>::SetScale(float x, float y, float z){
+			scale[0] = x;
+			scale[1] = y;
+			scale[2] = z;
 		}
 	}
 }
