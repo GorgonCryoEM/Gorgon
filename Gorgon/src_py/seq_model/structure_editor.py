@@ -6,6 +6,9 @@
 
 from PyQt4 import QtGui, QtCore
 from libpyGORGON import PDBAtom, PDBBond, Vector3DFloat
+import sans_numpy as snum
+from seq_model.findHelixCalphas import helixEndpointsToCAlphaPositions
+from seq_model.Helix import Helix
 
 class StructureEditor(QtGui.QWidget):
     def __init__(self, currentChainModel, parent=None):
@@ -28,26 +31,26 @@ class StructureEditor(QtGui.QWidget):
                 
         self.setupUi()
         
-        self.connect(self.back1resButton, QtCore.SIGNAL('clicked()'), self.prevButtonPress)
-        self.connect(self.forward1resButton, QtCore.SIGNAL('clicked()'), self.nextButtonPress)
+        self.connect(self.atomicBack1resButton, QtCore.SIGNAL('clicked()'), self.prevButtonPress)
+        self.connect(self.atomicForward1resButton, QtCore.SIGNAL('clicked()'), self.nextButtonPress)
         self.connect(self.acceptButton, QtCore.SIGNAL('clicked()'),  self.acceptButtonPress)
-        self.connect(self.possibilityNumSpinBox,  QtCore.SIGNAL('valueChanged(int)'),  self.choosePossibleAtom)
+        self.connect(self.atomicPossibilityNumSpinBox,  QtCore.SIGNAL('valueChanged(int)'),  self.choosePossibleAtom)
         self.connect(self.atomicForwardRadioButton,  QtCore.SIGNAL('toggled(bool)'), self.forwardBackwardRadioButtonChange)
         self.connect(self.undoButton,  QtCore.SIGNAL('clicked()'), self.undoStack.undo)
         self.connect(self.redoButton,  QtCore.SIGNAL('clicked()'), self.undoStack.redo)
+        self.connect(self.helixCreateCAHelixButton, QtCore.SIGNAL('clicked()'), self.createCAhelix)
       
     def acceptButtonPress(self):
         currentWidget = self.tabWidget.currentWidget()
         if currentWidget is self.atomicTab:
-            possibilityNum = self.possibilityNumSpinBox.value()
+            possibilityNum = self.atomicPossibilityNumSpinBox.value()
             chosenAtom = self.possibleAtomsList[possibilityNum-1]
             viewer = self.parentWidget().parentWidget().viewer
             for atom in self.possibleAtomsList:
                 if atom is chosenAtom:
-                    continue
-                else:
-                    viewer.renderer.deleteAtom(atom.getHashKey())
-                    del atom
+                    chosenCoordinates = chosenAtom.getPosition()
+                viewer.renderer.deleteAtom(atom.getHashKey())
+                del atom
             self.possibleAtomsList = []
             #self.parentWidget()=>SequenceWidget, self.parentWidget().parentWidget() => SequenceDock
             viewer = self.parentWidget().parentWidget().viewer
@@ -55,16 +58,94 @@ class StructureEditor(QtGui.QWidget):
                 resSeqNum = int(self.atomicResNumbers[-1].text())
             elif self.atomicForwardRadioButton.isChecked():
                 resSeqNum = int(self.atomicResNumbers[1].text())
-            chosenAtom.setResSeq(resSeqNum)
-            command = CommandAcceptAtomPlacement( self.currentChainModel, self, resSeqNum, chosenAtom, viewer,  
+            command = CommandAcceptAtomPlacement( self.currentChainModel, self, resSeqNum, chosenCoordinates, viewer,  
                                 description = "Accept Location of C-alpha atom for residue #%s" % resSeqNum )
             self.undoStack.push(command)
-            
-            if self.atomicBackwardRadioButton.isChecked():
-                self.prevButtonPress()
-            elif self.atomicForwardRadioButton.isChecked():
-                self.nextButtonPress()
+                 
+    def clearMockSidechains(self,  chain):
+        for index in chain.residueRange():
+            res = chain[index]
+            res.setCAlphaColorToDefault()
+            res.setCAlphaSizeToDefault()
+        print "The mock side-chains should be cleared, but not yet drawn to the screen."
+    
+    def createCAhelix(self):
+        print 'In createCAhelix'
+        app = self.parentWidget().parentWidget().app
+        cAlphaViewer = app.viewers['calpha']
+        sseViewer = app.viewers['sse']
+        
+        startIndex = self.helixNtermSpinBox.value()
+        stopIndex = self.helixCtermSpinBox.value()
+        helix = Helix(self.currentChainModel, 1,  'H1', startIndex, stopIndex) #TODO: find the correct serial # and label!!!
+        self.currentChainModel.addHelix(1, helix) #TODO: use the correct serial number
+        sseViewer = self.parentWidget().parentWidget().app.viewers['sse']
+        match = sseViewer.correspondenceLibrary.correspondenceList[0].matchList[2] #TODO: choose correct match
+        observedHelix = match.observed
+        direction = match.direction #Forward=0, Reverse=1
+        
+        if observedHelix.__class__.__name__ != 'ObservedHelix':
+            raise TypeError, observedHelix.__class__.__name__
+        predHelix = match.predicted
+        moveStart = 1.5*(startIndex - predHelix.startIndex)
+        moveEnd = 1.5*stopIndex - predHelix.stopIndex
+        def sseToCAcoords(coord):
+            #return cAlphaViewer.worldToObjectCoordinates(sseViewer.objectToWorldCoordinates(coord))
+            return coord
+        
+        midpoint = sseToCAcoords(observedHelix.getMidpoint())
+        unitVector = sseToCAcoords(observedHelix.getUnitVector())
+        print 'unitVector', unitVector
+        length = 1.5*(1+stopIndex-startIndex)
+        structPredLesserCoord = snum.vectorAdd( midpoint, snum.scalarTimesVector(-1*length/2, unitVector) )
+        structPredGreaterCoord = snum.vectorAdd( midpoint, snum.scalarTimesVector(length/2, unitVector) )
+        startMoveVector = snum.scalarTimesVector( moveStart, unitVector)
+        endMoveVector = snum.scalarTimesVector( moveEnd, unitVector)
+        if direction == 0:
+            lesserCoord = snum.vectorAdd(structPredLesserCoord, startMoveVector)
+            greaterCoord = snum.vectorAdd(structPredGreaterCoord, endMoveVector)
+        elif direction == 1:
+            lesserCoord = snum.vectorAdd(structPredLesserCoord, endMoveVector)
+            greaterCoord = snum.vectorAdd(structPredGreaterCoord, startMoveVector)
+        
+        start = sseToCAcoords((observedHelix.x0,observedHelix.y0,observedHelix.z0))
+        stop = sseToCAcoords((observedHelix.x1,observedHelix.y1,observedHelix.z1))
+        
+        helixCoordList = helixEndpointsToCAlphaPositions(start,stop) #TODO: use lesserCoord, greaterCoord instead
+        print helixCoordList
                 
+        print "start:",  start
+        print "stop:", stop
+        startAtom = PDBAtom('AAAA', 'A', 1000, 'CA')
+        startAtom.setPosition(Vector3DFloat(*start))
+        startAtom.setColor(0, 1, 0, 1)
+        startAtom = cAlphaViewer.renderer.addAtom(startAtom)
+        stopAtom = startAtom = PDBAtom('AAAA', 'A', 1001, 'CA')
+        stopAtom.setPosition(Vector3DFloat(*stop))
+        stopAtom.setColor(1, 0, 0, 1)        
+        
+        stopAtom = cAlphaViewer.renderer.addAtom(stopAtom)
+        
+        for i in range(len(helixCoordList)):
+            pos = helixCoordList[i]
+            residue = self.currentChainModel[startIndex+i]
+            rawAtom = residue.addAtom('CA', pos[0], pos[1], pos[2], 'C')
+            atom = cAlphaViewer.renderer.addAtom(rawAtom)
+            residue.addAtomObject(atom)
+            if i != 0:
+                prevAtom = self.currentChainModel[startIndex+i-1].getAtom('CA')
+                bond = PDBBond()
+                bond.setAtom0Ix(prevAtom.getHashKey())
+                bond.setAtom1Ix(atom.getHashKey())
+                cAlphaViewer.renderer.addBond(bond)
+                
+        print helix
+        if not cAlphaViewer.loaded:
+            cAlphaViewer.loaded = True
+            cAlphaViewer.emitModelLoaded()
+        else:
+            cAlphaViewer.emitModelChanged()
+            
     def choosePossibleAtom(self, choiceNum):
         if choiceNum == 0:
             return
@@ -76,14 +157,7 @@ class StructureEditor(QtGui.QWidget):
         atomToDisplay.setColor(0, 1, 1, 1)
         viewer.emitModelChanged()
         self.previouslySelectedPossibleAtom = atomToDisplay
-            
-    def clearMockSidechains(self,  chain):
-        for index in chain.residueRange():
-            res = chain[index]
-            res.setCAlphaColorToDefault()
-            res.setCAlphaSizeToDefault()
-        print "The mock side-chains should be cleared, but not yet drawn to the screen."
-        
+    
     def findCAlphaPositionPossibilities(self):
         self.possibleAtomsList = []
         radius = float( self.CAdoubleSpinBox.value() )
@@ -94,8 +168,8 @@ class StructureEditor(QtGui.QWidget):
         residue = self.currentChainModel[ int( str(self.atomicResNumbers[0].text()) ) ]
         atom = residue.getAtom('CA')
         if not atom:
-            self.possibilityNumSpinBox.setRange(0, 0)
-            self.numPossibilities.setText('of ?')
+            self.atomicPossibilityNumSpinBox.setRange(0, 0)
+            self.atomicNumPossibilities.setText('of ?')
             return
         atomPos = atom.getPosition()
         atomPosMeshCoords =  skeletonViewer.worldToObjectCoordinates(calphaViewer.objectToWorldCoordinates([atomPos.x(), atomPos.y(), atomPos.z()]))
@@ -105,8 +179,8 @@ class StructureEditor(QtGui.QWidget):
             numIntersections = meshRenderer.intersectMeshAndSphere(atomPosMeshCoords, radius)
             #print "\nNumber of intersections:", numIntersections
             if numIntersections == 0:
-                self.numPossibilities.setText('of 0')
-                self.possibilityNumSpinBox.setRange(0, 0)
+                self.atomicNumPossibilities.setText('of 0')
+                self.atomicPossibilityNumSpinBox.setRange(0, 0)
                 return
             possiblePositionsList = []
             for i in range(numIntersections):
@@ -147,10 +221,10 @@ class StructureEditor(QtGui.QWidget):
             print '\nPossible atom locations:'
             for atom in self.possibleAtomsList:
                 print "(%f, %f, %f)" % (atom.getPosition().x(), atom.getPosition().y(), atom.getPosition().z())
-            self.numPossibilities.setText('of ' + str(len(self.possibleAtomsList)))
+            self.atomicNumPossibilities.setText('of ' + str(len(self.possibleAtomsList)))
             #Note that a valueChanged signal might be emitted in either or both of the following two lines.
-            self.possibilityNumSpinBox.setRange(1, len(self.possibleAtomsList))
-            self.possibilityNumSpinBox.setValue(1)
+            self.atomicPossibilityNumSpinBox.setRange(1, len(self.possibleAtomsList))
+            self.atomicPossibilityNumSpinBox.setValue(1)
             
             for index in range( len(self.possibleAtomsList) ):
                 atom = self.possibleAtomsList[index]
@@ -159,7 +233,7 @@ class StructureEditor(QtGui.QWidget):
                 atom = self.parentWidget().parentWidget().viewer.renderer.addAtom(atom)
                 self.possibleAtomsList.insert(index, atom)
                 
-                if index + 1 == self.possibilityNumSpinBox.value():
+                if index + 1 == self.atomicPossibilityNumSpinBox.value():
                     atom.setColor(0, 1, 1, 1)
                     self.previouslySelectedPossibleAtom = atom #We change this atom's colors when we select a different possibility
                     
@@ -245,9 +319,9 @@ class StructureEditor(QtGui.QWidget):
         
     def setupAtomicTab(self):
         #These go in the atomic tab
-        self.possibilityNumSpinBox = QtGui.QSpinBox()
-        self.possibilityNumSpinBox.setRange(0, 0)
-        self.numPossibilities = QtGui.QLabel('of ?')
+        self.atomicPossibilityNumSpinBox = QtGui.QSpinBox()
+        self.atomicPossibilityNumSpinBox.setRange(0, 0)
+        self.atomicNumPossibilities = QtGui.QLabel('of ?')
         self.atomicForwardRadioButton = QtGui.QRadioButton('Forward')
         self.atomicForwardRadioButton.setChecked(True)
         self.atomicBackwardRadioButton = QtGui.QRadioButton('Backward')
@@ -264,15 +338,15 @@ class StructureEditor(QtGui.QWidget):
         self.atomicResNumbers[1].setStyleSheet("QLabel {color: green; font-size: 12pt}") #This uses syntax similar to Cascading Style Sheets (CSS)
         self.atomicResNames[1].setStyleSheet("QLabel {color: green; font-size: 40pt}")
         
-        self.back1resButton = QtGui.QPushButton('<-')
-        self.forward1resButton = QtGui.QPushButton('->') 
+        self.atomicBack1resButton = QtGui.QPushButton('<-')
+        self.atomicForward1resButton = QtGui.QPushButton('->') 
         
         atomicLayout = QtGui.QVBoxLayout()
         
         atomicPossibilityLayout = QtGui.QHBoxLayout()
         atomicPossibilityLayout.setAlignment(QtCore.Qt.AlignHCenter)
-        atomicPossibilityLayout.addWidget(self.possibilityNumSpinBox)
-        atomicPossibilityLayout.addWidget(self.numPossibilities)
+        atomicPossibilityLayout.addWidget(self.atomicPossibilityNumSpinBox)
+        atomicPossibilityLayout.addWidget(self.atomicNumPossibilities)
         atomicForwardBackwardLayout = QtGui.QVBoxLayout()
         atomicForwardBackwardLayout.addWidget(self.atomicForwardRadioButton)
         atomicForwardBackwardLayout.addWidget(self.atomicBackwardRadioButton)
@@ -292,64 +366,64 @@ class StructureEditor(QtGui.QWidget):
         atomicLayout.addLayout(atomic3ResLayout)
 
         atomicResButtonLayout = QtGui.QHBoxLayout()
-        atomicResButtonLayout.addWidget(self.back1resButton)
-        atomicResButtonLayout.addWidget(self.forward1resButton)
+        atomicResButtonLayout.addWidget(self.atomicBack1resButton)
+        atomicResButtonLayout.addWidget(self.atomicForward1resButton)
         atomicLayout.addLayout(atomicResButtonLayout)
         self.atomicTab.setLayout(atomicLayout)
     
     def setupHelixTab(self):
         #These go in the Helix tab
-        self.modifyRadioButton = QtGui.QRadioButton(self.tr('Modify'))
-        self.newRadioButtion = QtGui.QRadioButton(self.tr('New'))
+        self.helixModifyRadioButton = QtGui.QRadioButton(self.tr('Modify'))
+        self.helixNewRadioButtion = QtGui.QRadioButton(self.tr('New'))
         NterminusLabel = QtGui.QLabel('N term')
-        self.NtermResNameLabel = QtGui.QLabel('?')
-        self.NtermSpinBox = QtGui.QSpinBox()
-        self.NtermSpinBox.setRange(1, 10000)
+        self.helixNtermResNameLabel = QtGui.QLabel('?')
+        self.helixNtermSpinBox = QtGui.QSpinBox()
+        self.helixNtermSpinBox.setRange(1, 10000)
         CterminusLabel = QtGui.QLabel('C term')
-        self.CtermResNameLabel = QtGui.QLabel('?')
-        self.CtermSpinBox = QtGui.QSpinBox()
-        self.CtermSpinBox.setRange(1, 10000)
+        self.helixCtermResNameLabel = QtGui.QLabel('?')
+        self.helixCtermSpinBox = QtGui.QSpinBox()
+        self.helixCtermSpinBox.setRange(1, 10000)
         
-        self.decreasePositionButton = QtGui.QPushButton('-')
-        self.decreasePositionButton.setMaximumWidth(30)
+        self.helixDecreasePositionButton = QtGui.QPushButton('-')
+        self.helixDecreasePositionButton.setMaximumWidth(30)
         positionLabel = QtGui.QLabel(self.tr('Position'))
-        self.increasePositionButton = QtGui.QPushButton('+')
-        self.increasePositionButton.setMaximumWidth(30)
-        self.createCAHelixButton = QtGui.QPushButton(self.tr('Create C-alpha Helix'))
-        self.removeButton = QtGui.QPushButton(self.tr('Remove'))
-        self.flipButton = QtGui.QPushButton(self.tr('Flip'))
+        self.helixIncreasePositionButton = QtGui.QPushButton('+')
+        self.helixIncreasePositionButton.setMaximumWidth(30)
+        self.helixCreateCAHelixButton = QtGui.QPushButton(self.tr('Create C-alpha Helix'))
+        self.helixRemoveButton = QtGui.QPushButton(self.tr('Remove'))
+        self.helixFlipButton = QtGui.QPushButton(self.tr('Flip'))
         
         radioLayout = QtGui.QHBoxLayout()
-        radioLayout.addWidget(self.modifyRadioButton)
-        radioLayout.addWidget(self.newRadioButtion)
+        radioLayout.addWidget(self.helixModifyRadioButton)
+        radioLayout.addWidget(self.helixNewRadioButtion)
         radioLayout.addStretch()
         
         NtermLayout = QtGui.QHBoxLayout()
         NtermLayout.addWidget(NterminusLabel)
-        NtermLayout.addWidget(self.NtermResNameLabel)
-        NtermLayout.addWidget(self.NtermSpinBox)
+        NtermLayout.addWidget(self.helixNtermResNameLabel)
+        NtermLayout.addWidget(self.helixNtermSpinBox)
         NtermLayout.addStretch()        
         
         CtermLayout = QtGui.QHBoxLayout()
         CtermLayout.addWidget(CterminusLabel)
-        CtermLayout.addWidget(self.CtermResNameLabel)
-        CtermLayout.addWidget(self.CtermSpinBox)
+        CtermLayout.addWidget(self.helixCtermResNameLabel)
+        CtermLayout.addWidget(self.helixCtermSpinBox)
         CtermLayout.addStretch()
         
         positionLayout = QtGui.QHBoxLayout()
-        positionLayout.addWidget(self.decreasePositionButton)
+        positionLayout.addWidget(self.helixDecreasePositionButton)
         positionLayout.addWidget(positionLabel)
-        positionLayout.addWidget(self.increasePositionButton)
+        positionLayout.addWidget(self.helixIncreasePositionButton)
         positionLayout.addStretch()
         
         createLayout = QtGui.QHBoxLayout()
-        createLayout.addWidget(self.createCAHelixButton)
+        createLayout.addWidget(self.helixCreateCAHelixButton)
         createLayout.addStretch()
         removeLayout = QtGui.QHBoxLayout()
-        removeLayout.addWidget(self.removeButton)
+        removeLayout.addWidget(self.helixRemoveButton)
         removeLayout.addStretch()
         flipLayout = QtGui.QHBoxLayout()
-        flipLayout.addWidget(self.flipButton)
+        flipLayout.addWidget(self.helixFlipButton)
         flipLayout.addStretch()
                 
         helixLayout  = QtGui.QVBoxLayout()
@@ -524,22 +598,22 @@ class StructureEditor(QtGui.QWidget):
         self.setLayout(layout)
         
 class CommandAcceptAtomPlacement(QtGui.QUndoCommand):
-        def __init__(self, currentChainModel, structureEditor, resSeqNum, chosenAtom, viewer, bondBefore=None, bondAfter=None, description=None):
+        def __init__(self, currentChainModel, structureEditor, resSeqNum, chosenCoordinates, viewer, bondBefore=None, bondAfter=None, description=None):
             super(CommandAcceptAtomPlacement, self).__init__(description)
             self.currentChainModel = currentChainModel
             self.structureEditor = structureEditor
             self.resSeqNum = resSeqNum
-            self.chosenAtom = chosenAtom
+            self.chosenCoordinates = chosenCoordinates
             self.viewer = viewer
             self.bondBefore = bondBefore
             self.bondAfter = bondAfter
         def redo(self):
-            print "\nBefore error?"
-            #TODO: Fix segmentation fault!!!
-            atom = self.viewer.renderer.addAtom(self.chosenAtom) #Segmentation fault here if I click undo then redo
-            print "After error?"
-            self.chosenAtom = atom
-            self.currentChainModel[self.resSeqNum].addAtomObject(self.chosenAtom)
+            print self.chosenCoordinates
+            raw = PDBAtom(self.currentChainModel.getPdbID(), self.currentChainModel.getChainID(), self.resSeqNum, 'CA')
+            raw.setPosition(self.chosenCoordinates)
+            atom = self.viewer.renderer.addAtom(raw) 
+            print atom
+            self.currentChainModel[self.resSeqNum].addAtomObject(atom)
             self.currentChainModel[self.resSeqNum].setCAlphaColorToDefault() 
             if self.resSeqNum - 1 in self.currentChainModel.residueRange():
                 prevCAlpha = self.currentChainModel[self.resSeqNum - 1].getAtom('CA')
@@ -547,35 +621,46 @@ class CommandAcceptAtomPlacement(QtGui.QUndoCommand):
                     print "adding a bond before"
                     self.bondBefore=PDBBond()
                     self.bondBefore.setAtom0Ix(prevCAlpha.getHashKey())
-                    self.bondBefore.setAtom1Ix(self.chosenAtom.getHashKey())
+                    self.bondBefore.setAtom1Ix(atom.getHashKey())
             if self.resSeqNum + 1 in self.currentChainModel.residueRange():
                 nextCAlpha = self.currentChainModel[self.resSeqNum + 1].getAtom('CA')
                 if nextCAlpha:
                     print "adding a bond after"
                     self.bondAfter = PDBBond()
                     self.bondAfter.setAtom0Ix(nextCAlpha.getHashKey())
-                    self.bondAfter.setAtom1Ix(self.chosenAtom.getHashKey())
+                    self.bondAfter.setAtom1Ix(atom.getHashKey())
+            
             if self.bondBefore:
                 self.viewer.renderer.addBond(self.bondBefore)
             if self.bondAfter:
                 self.viewer.renderer.addBond(self.bondAfter)
-            self.viewer.emitModelChanged()
-            self.structureEditor.atomJustAdded = self.chosenAtom
             
-        def undo(self):
-            self.currentChainModel[self.resSeqNum].clearAtom(self.chosenAtom.getName())
-            self.viewer.renderer.deleteAtom(self.chosenAtom.getHashKey()) #This line is the one that causes the segmentation fault if I undo then redo
-
-            if self.bondBefore:
-                #TODO: find out how to delete bond
-                #self.viewer.renderer.deleteBond(self.bondBefore.?) #The parameter is an integer
-                pass
-            if self.bondAfter:
-                #self.viewer.renderer.deleteBond(self.bondAfter.?)
-                pass
             self.viewer.emitModelChanged()
+            self.structureEditor.atomJustAdded = atom
             
             if self.structureEditor.atomicBackwardRadioButton.isChecked():
                 self.structureEditor.prevButtonPress()
             elif self.structureEditor.atomicForwardRadioButton.isChecked():
                 self.structureEditor.nextButtonPress()
+            
+        def undo(self):
+            print self.structureEditor.atomJustAdded
+            atom = self.currentChainModel[self.resSeqNum].getAtom('CA')
+            self.currentChainModel[self.resSeqNum].clearAtom('CA')
+            self.viewer.renderer.deleteAtom(atom.getHashKey())
+            
+            if self.bondBefore:
+                numBonds = self.viewer.renderer.getBondCount()
+                self.viewer.renderer.deleteBond(numBonds-1)
+                pass
+            if self.bondAfter:
+                numBonds = self.viewer.renderer.getBondCount()
+                self.viewer.renderer.deleteBond(numBonds-1)
+                pass
+            self.viewer.emitModelChanged()
+            
+            if self.structureEditor.atomicBackwardRadioButton.isChecked():
+                self.structureEditor.nextButtonPress()
+            elif self.structureEditor.atomicForwardRadioButton.isChecked():
+                self.structureEditor.prevButtonPress()
+            
