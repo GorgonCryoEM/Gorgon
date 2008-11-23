@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.14  2008/11/20 18:33:00  ssa1
+//   Using the origin of the MRC volume
+//
 //   Revision 1.13  2008/11/18 22:01:18  ssa1
 //   Removing printfs, and adding cropping
 //
@@ -509,9 +512,6 @@ public:
 		fread( &dimx, sizeof( int ), 1, fin ) ;
 		fread( &dimy, sizeof( int ), 1, fin ) ;
 		fread( &dimz, sizeof( int ), 1, fin ) ;
-		dimx ++ ;
-		dimy ++ ;
-		dimz ++ ;
 
 		fread( &angsx, sizeof( float ), 1, fin ) ;
 		fread( &angsy, sizeof( float ), 1, fin ) ;
@@ -535,10 +535,6 @@ public:
 		fseek (fin, 4 * 2, SEEK_CUR);
 		fread( &drms, sizeof( float ), 1, fin ) ;
 		fclose( fin ) ;
-
-		dimx = totx ;
-		dimy = toty ;
-		dimz = totz ;
 
 #ifdef VERBOSE
 		printf("\n\tDimension: %d %d %d\n", dimx, dimy, dimz ) ;
@@ -581,10 +577,10 @@ public:
 		double d = 0.0;
 
 		
-		Volume* vol = new Volume( dimx, dimy, dimz ) ;
-		for ( int i = 0 ; i < dimz ; i ++ )
-			for ( int j = 0 ; j < dimy ; j ++ )
-				for ( int k = 0 ; k < dimx ; k ++ )
+		Volume* vol = new Volume( totx, toty, totz) ;
+		for ( int i = 0 ; i < totz ; i ++ )
+			for ( int j = 0 ; j < toty ; j ++ )
+				for ( int k = 0 ; k < totx ; k ++ )
 				{
 					switch ( mode )
 					{
@@ -608,7 +604,9 @@ public:
 		float ax, ay, az;				
 		getSpacing(ax, ay, az);
 		vol->setSpacing(ax, ay, az);
-		vol->setOrigin(orgx, orgy, orgz);
+
+		getOffset(ax, ay, az);
+		vol->setOrigin(ax, ay, az);
 		fclose( fin ) ;
 
 		return vol ;
@@ -617,9 +615,18 @@ public:
 	/* Get resolution */
 	void getSpacing( float& ax, float& ay, float& az )
 	{
-		ax = angsx / (float)(dimx-1);
-		ay = angsy / (float)(dimy-1) ;
-		az = angsz / (float)(dimz-1) ;
+		ax = angsx / (float)(totx);
+		ay = angsy / (float)(toty) ;
+		az = angsz / (float)(totz) ;
+	}
+
+	void getOffset(float &x, float &y, float &z) 
+	{
+		float spx, spy, spz;
+		getSpacing(spx, spy, spz);
+		x = (orgx - 0.5f * (float)totx) * spx;
+		y = (orgy - 0.5f * (float)toty) * spy;
+		z = (orgz - 0.5f * (float)totz) * spz;
 	}
 
 
@@ -728,11 +735,11 @@ public:
 		double d ;
 
 		
-		Volume* vol = new Volume( dimx, dimy, dimz ) ;
-		vol->setSpacing(angsx, angsy, angsz);
-		for ( int i = 0 ; i < dimz ; i ++ )
-			for ( int j = 0 ; j < dimy ; j ++ )
-				for ( int k = 0 ; k < dimx ; k ++ )
+		Volume* vol = new Volume( totx, toty, totz) ;
+
+		for ( int i = 0 ; i < totz ; i ++ )
+			for ( int j = 0 ; j < toty ; j ++ )
+				for ( int k = 0 ; k < totx ; k ++ )
 				{
 					switch ( mode )
 					{
@@ -756,6 +763,9 @@ public:
 				}
 		fclose( fin ) ;
 
+		float ax, ay, az;				
+		getSpacing(ax, ay, az);
+		vol->setSpacing(ax, ay, az);
 		return vol ;
 	}
 
@@ -768,9 +778,9 @@ public:
 	/* Get resolution */
 	void getSpacing( float& ax, float& ay, float& az )
 	{
-		ax = angsx / (float)(dimx-1);
-		ay = angsy / (float)(dimy-1) ;
-		az = angsz / (float)(dimz-1) ;
+		ax = angsx / (float)(totx);
+		ay = angsy / (float)(toty) ;
+		az = angsz / (float)(totz) ;
 	}
 
 

@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.27  2008/11/20 18:33:00  ssa1
+//   Using the origin of the MRC volume
+//
 //   Revision 1.26  2008/11/18 22:01:18  ssa1
 //   Removing printfs, and adding cropping
 //
@@ -12034,7 +12037,7 @@ public:
 		fwrite( off, sizeof( int ), 3, fout ) ;
 		fwrite( intv, sizeof( int ), 3, fout ) ;
 
-		float cella[3] = {spacingX * (float)(sizex - 1), spacingY * (float)(sizey - 1), spacingZ * (float)(sizez - 1)};
+		float cella[3] = {spacingX * (float)(sizex), spacingY * (float)(sizey), spacingZ * (float)(sizez)};
 		float cellb[3] = {90,90,90} ;
 		fwrite( cella, sizeof( float ), 3, fout ) ;
 		fwrite( cellb, sizeof( float ), 3, fout ) ;
@@ -12064,7 +12067,11 @@ public:
 			fwrite( &zero, sizeof( int ), 1, fout );
 		}
 
-		float origins[3] = {originX, originY, originZ};
+		float origins[3];
+		origins[0] = originX / spacingX + 0.5f * (float)sizex;
+		origins[1] = originY / spacingY + 0.5f * (float)sizey;
+		origins[2] = originZ / spacingZ + 0.5f * (float)sizez;
+
 		fwrite( origins, sizeof( float ), 3, fout) ;
 
 		for (i = 53 ; i <= 256 ; i ++ )

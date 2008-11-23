@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.19  2008/11/20 21:05:16  ssa1
+#   Removing depricated items
+#
 #   Revision 1.18  2008/11/20 20:56:30  ssa1
 #   Properly scaling the suggested backbone
 #
@@ -117,7 +120,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
         self.ui.doubleSpinBoxLoopImportance.setValue(0.2)
         self.ui.doubleSpinBoxAverageMissingHelixLength.setValue(5.0)
         self.ui.doubleSpinBoxEuclideanToPDBRatio.setValue(10.0)
-        self.ui.spinBoxBorderMarginThreshold.setValue(3)               
+        self.ui.spinBoxBorderMarginThreshold.setValue(5)               
                 
         self.checkOk()
 
