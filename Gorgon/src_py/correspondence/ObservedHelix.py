@@ -9,41 +9,28 @@
 import math
 
 class ObservedHelix:
-    def __init__(self, label, x1, y1, z1, x2, y2, z2 ):
+    def __init__(self, label, beginningCoord, endCoord ):
 
-        # lesser is the vertex closer to 0,0,0
-        if (x1*x1 + y1*y1 +z1*z2) <  (x2*x2 + y2*y2 + z2*z2):
-            lesser =(x1,y1,z1)
-            greater=(x2,y2,z2)
-        else:
-            lesser=(x2,y2,z2)
-            greater=(x1,y1,z1)
+        self.beginningCoord = beginningCoord
+        self.endCoord = endCoord
     
         self.label = label
-        
-        self.x0=lesser[0]
-        self.y0=lesser[1]
-        self.z0=lesser[2]
-    
-        self.x1=greater[0]
-        self.y1=greater[1]
-        self.z1=greater[2]
 
     def __parseHelix(self, inputString):
-        return ObservedHelix('a', 1.0, 2.0, 3.0,4.0, 5.0,6.0 )
-    
+        return ObservedHelix('a', (1.0, 2.0, 3.0),(4.0, 5.0,6.0) )
+        
     def getMidpoint(self):
         '''
         Returns the midpoint of the two ends of the helical axis.
         '''
-        return ( 0.5*(self.x0+self.x1), 0.5*(self.y0+self.y1), 0.5*(self.z0+self.z1) )
-    
+        return ( 0.5*(self.beginningCoord[0]+self.endCoord[0]), 0.5*(self.beginningCoord[1]+self.endCoord[1]), 0.5*(self.beginningCoord[2]+self.endCoord[2]) )
+
     def getUnitVector(self):
         '''
         Returns a vector along the helical axis pointing toward the endpoint farther from the origin.
         '''
-        length = float( math.sqrt( (self.x0+self.x1)**2 + (self.y0+self.y1)**2 + (self.z0+self.z1)**2 ) )
-        return ( (self.x1-self.x0)/length, (self.y1-self.y0)/length, (self.z1-self.z0)/length )
+        length = float( math.sqrt( (self.beginningCoord[0]+self.endCoord[0])**2 + (self.beginningCoord[1]+self.endCoord[1])**2 + (self.beginningCoord[2]+self.endCoord[2])**2 ) )
+        return ( (self.beginningCoord[0]-self.endCoord[0])/length, (self.beginningCoord[1]-self.endCoord[1])/length, (self.beginningCoord[2]-self.endCoord[2])/length )
 
     def getLength(self):
-        return pow(pow(self.x0 - self.x1, 2) + pow(self.y0 - self.y1, 2) + pow(self.z0 - self.z1, 2), 0.5)  
+        return pow( (self.beginningCoord[0] - self.endCoord[0])**2 + (self.beginningCoord[1] - self.endCoord[1])**2 + (self.beginningCoord[2] - self.endCoord[2])**2, 0.5) 
