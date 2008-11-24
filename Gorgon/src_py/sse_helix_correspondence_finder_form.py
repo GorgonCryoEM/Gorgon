@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.21  2008/11/24 20:02:49  ssa1
+#   User constraints on finding correspondences (v1)
+#
 #   Revision 1.20  2008/11/23 19:56:07  ssa1
 #   Setting volume origin to be center of mass instead of bottom left...
 #
@@ -399,11 +402,16 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
                 match.predicted.setColor(color)
                 if(match.predicted):
                     #print match.predicted, match.predicted.type, match.predicted.serialNo, match.predicted.label
-                    cellItemPredicted =  QtGui.QTableWidgetItem(match.predicted.type + " " + str(match.predicted.serialNo + 1) + " : " + str(match.predicted.label))
+                    cellItemPredicted =  QtGui.QTableWidgetItem(match.predicted.type + " " + str(match.predicted.serialNo + 1) + " : " + str(match.predicted.label) +
+                                                                "\n  "  + str(round(match.predicted.getLengthInAngstroms(),2)) + "A length"
+                                                                "\n  "  + str(match.predicted.getResidueCount()) + " residues")
+                                                                 
                     cellItemPredicted.setBackgroundColor(color)
                     self.ui.tableWidgetCorrespondenceList.setItem(i, 0, cellItemPredicted)
                 if(match.observed):
-                    cellItemObserved =  QtGui.QTableWidgetItem("helix " + str(match.observed.label + 1))
+                    cellItemObserved =  QtGui.QTableWidgetItem("helix " + str(match.observed.label + 1) +
+                                                               "\n  " + str(round(match.observed.getLength(), 2)) + "A length" +
+                                                               "\n  " )
                     cellItemObserved.setBackgroundColor(color)
                     self.ui.tableWidgetCorrespondenceList.setItem(i, 1, cellItemObserved)
                     self.viewer.renderer.setHelixColor(match.observed.label, color.redF(), color.greenF(), color.blueF(), color.alphaF())
@@ -414,6 +422,8 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
                     self.ui.tableWidgetCorrespondenceList.cellWidget(i, 2).setCheckState(QtCore.Qt.Checked)
                 else :
                     self.ui.tableWidgetCorrespondenceList.cellWidget(i, 2).setCheckState(QtCore.Qt.Unchecked)
+                    
+                self.ui.tableWidgetCorrespondenceList.resizeRowToContents(i)
                     
         self.viewer.correspondenceEngine.setVisibleCorrespondence(correspondenceIndex)
         self.viewer.emitModelChanged()
