@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.14  2008/11/18 22:01:18  ssa1
+//   Removing printfs, and adding cropping
+//
 //   Revision 1.13  2008/11/18 18:10:24  ssa1
 //   Changing the scaling functions when doing graph matching to find correspondences
 //
@@ -48,6 +51,7 @@ namespace wustl_mm {
 			bool SetConstant(char * token, double value);
 			bool SetConstant(char * token, int value);
 			bool SetConstant(char * token, bool value);
+			void SetHelixConstraint(int sequenceHelix, int skeletonHelix);
 			// Graph Loading
 			void LoadSequenceGraph();
 			void LoadSkeletonGraph();
@@ -96,6 +100,10 @@ namespace wustl_mm {
 
 		bool BackEndInterface::SetConstant(char *token, bool value) {
 			return SetConstantFromToken(token, NULL, 0.0, 0, value);
+		}
+
+		void BackEndInterface::SetHelixConstraint(int sequenceHelix, int skeletonHelix) {
+			AddHelixConstraint(sequenceHelix, skeletonHelix);
 		}
 
 		void BackEndInterface::LoadSequenceGraph() {
