@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.40  2008/11/24 18:32:26  ssa1
+//   Giving helix end points
+//
 //   Revision 1.39  2008/11/20 18:33:04  ssa1
 //   Using the origin of the MRC volume
 //
@@ -377,6 +380,7 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("getCornerCell2", &GeometricShape::GetCornerCell2)
 		.def("getCornerCell3", &GeometricShape::GetCornerCell3)
 		.def("setColor", &GeometricShape::SetColor)
+		.def("getSelected", &GeometricShape::GetSelected)
 	;
 
 	bool (SSECorrespondenceEngine::*SetConstant1)(char *, char *)	= &SSECorrespondenceEngine::SetConstant;
