@@ -74,7 +74,7 @@ class StructureObservation:  #SSEBuilderResults
         x1=float(split[8])
         y1=float(split[9])
         z1=float(split[10])
-        self.helixDict[label]=ObservedHelix(label, x0, y0, z0, x1, y1, z1)
+        self.helixDict[label]=ObservedHelix(label, (x0, y0, z0), (x1, y1, z1))
 
   def __loadSheets(self):
     pass
@@ -146,12 +146,12 @@ class StructureObservation:  #SSEBuilderResults
      
     outfile.write("\thelixDict:\n")
     for label in self.helixDict:
-      x0=self.helixDict[label].x0
-      y0=self.helixDict[label].y0
-      z0=self.helixDict[label].z0
-      x1=self.helixDict[label].x1
-      y1=self.helixDict[label].y1
-      z1=self.helixDict[label].z1
+      x0=self.helixDict[label].beginningCoord[0]
+      y0=self.helixDict[label].beginningCoord[1]
+      z0=self.helixDict[label].beginningCoord[2]
+      x1=self.helixDict[label].endCoord[0]
+      y1=self.helixDict[label].endCoord[1]
+      z1=self.helixDict[label].endCoord[2]
       print "\t\t%s=%.3f, %.3f, %.3f, %.3f, %.3f, %.3f" %(label,x0,y0,z0,x1,y1,z1)
       outfile.write("\t\t%s=%.3f, %.3f, %.3f, %.3f, %.3f, %.3f\n" %(label,x0,y0,z0,x1,y1,z1))
       #outfile.write("\t\t%s=%s\n" %(label,'??'))
