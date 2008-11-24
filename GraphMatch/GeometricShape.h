@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.13  2008/11/18 18:10:24  ssa1
+//   Changing the scaling functions when doing graph matching to find correspondences
+//
 //   Revision 1.12  2008/09/29 16:19:30  ssa1
 //   Adding in CVS meta information
 //
@@ -66,6 +69,7 @@ namespace wustl_mm {
 			Point3 GetWorldCoordinates(Point3 point);
 			Point3Int GetCornerCell(int node);
 			Vector3DFloat GetCornerCell2(int node);
+			Vector3DFloat GetCornerCell3(int node);
 		private:
 			bool IsInsideCylinder(Point3 point);
 			bool IsInsidePolygon(Point3 point);
@@ -225,6 +229,18 @@ namespace wustl_mm {
 		Vector3DFloat GeometricShape::GetCornerCell2(int node) {
 			Point3Int cell = GetCornerCell(node);
 			return Vector3DFloat((float)cell.x, (float)cell.y, (float)cell.z);
+		}
+
+		Vector3DFloat GeometricShape::GetCornerCell3(int node) {
+			Point3 pt;
+			if(node == 1) {
+				pt = Point3(0, 0.5, 0);
+			} else {
+				pt = Point3(0, -0.5, 0);
+			}
+			pt = GetWorldCoordinates(pt);
+
+			return Vector3DFloat((float)pt[0], (float)pt[1], (float)pt[2]);
 		}
 
 
