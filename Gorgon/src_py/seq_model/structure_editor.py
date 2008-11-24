@@ -79,7 +79,7 @@ class StructureEditor(QtGui.QWidget):
         stopIndex = self.helixCtermSpinBox.value()
         helix = Helix(self.currentChainModel, 1,  'H1', startIndex, stopIndex) #TODO: find the correct serial # and label!!!
         self.currentChainModel.addHelix(1, helix) #TODO: use the correct serial number
-        sseViewer = self.parentWidget().parentWidget().app.viewers['sse']
+        skeletonViewer = self.parentWidget().parentWidget().app.viewers['skeleton']
         match = sseViewer.correspondenceLibrary.correspondenceList[0].matchList[2] #TODO: choose correct match
         observedHelix = match.observed
         direction = match.direction #Forward=0, Reverse=1
@@ -89,12 +89,8 @@ class StructureEditor(QtGui.QWidget):
         predHelix = match.predicted
         moveStart = 1.5*(startIndex - predHelix.startIndex)
         moveEnd = 1.5*stopIndex - predHelix.stopIndex
-        def sseToCAcoords(coord):
-            #return cAlphaViewer.worldToObjectCoordinates(sseViewer.objectToWorldCoordinates(coord))
-            return coord
-        
-        midpoint = sseToCAcoords(observedHelix.getMidpoint())
-        unitVector = sseToCAcoords(observedHelix.getUnitVector())
+        midpoint = observedHelix.getMidpoint()
+        unitVector = observedHelix.getUnitVector()
         print 'unitVector', unitVector
         length = 1.5*(1+stopIndex-startIndex)
         structPredLesserCoord = snum.vectorAdd( midpoint, snum.scalarTimesVector(-1*length/2, unitVector) )
@@ -108,8 +104,8 @@ class StructureEditor(QtGui.QWidget):
             lesserCoord = snum.vectorAdd(structPredLesserCoord, endMoveVector)
             greaterCoord = snum.vectorAdd(structPredGreaterCoord, startMoveVector)
         
-        start = sseToCAcoords((observedHelix.x0,observedHelix.y0,observedHelix.z0))
-        stop = sseToCAcoords((observedHelix.x1,observedHelix.y1,observedHelix.z1))
+        start = observedHelix.beginningCoord
+        stop = observedHelix.endCoord
         
         helixCoordList = helixEndpointsToCAlphaPositions(start,stop) #TODO: use lesserCoord, greaterCoord instead
         print helixCoordList
@@ -664,3 +660,11 @@ class CommandAcceptAtomPlacement(QtGui.QUndoCommand):
             elif self.structureEditor.atomicForwardRadioButton.isChecked():
                 self.structureEditor.prevButtonPress()
             
+if __name__ == '__main__':
+    from seq_model.Chain import Chain
+    import sys
+    app = QtGui.QApplication(sys.argv)
+    chain = Chain('', app)
+    window = StructureEditor(chain)
+    window.show()
+    sys.exit(app.exec_())
