@@ -347,7 +347,8 @@ class SequenceView(QtGui.QWidget):
 
     if mouseEvent.button() == QtCore.Qt.LeftButton and mouseEvent.y() < self.cellHeight():
       residue=self.getResidueIndexByMousePosition(mouseEvent.x(),self.cellHeight() +1)
-      secel= self.structurePrediction.getSecelByIndex(residue)
+      secel = self.structurePrediction.getSecelByIndex(residue)
+      self.structurePrediction.setSecelSelection(secel)
       newSelection=range(secel.startIndex, secel.stopIndex+1)
       #  CTRL key pressed
       if mouseEvent.modifiers() & QtCore.Qt.CTRL:
@@ -377,8 +378,8 @@ class SequenceView(QtGui.QWidget):
         if additionalResidue > sorted(self.structurePrediction.chain.getSelection())[-1]:
           addedRange=range( 1+sorted(self.structurePrediction.chain.getSelection())[-1],1+additionalResidue)
           self.setSequenceSelection(addRange=addedRange)
-        elif additionalResidue < sorted(self.structurePrediction.chainself.structurePrediction.getSelection())[0]:
-          addedRange=range( additionalResidue, sorted(self.structurePrediction.chain.gself.structurePredictionetSelection())[0])
+        elif additionalResidue < sorted(self.structurePrediction.chain.getSelection())[0]:
+          addedRange=range( additionalResidue, sorted(self.structurePrediction.chain.getSelection())[0])
           self.setSequenceSelection(addRange=addedRange)
 
       #  No key pressed
