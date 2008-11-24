@@ -26,6 +26,7 @@ class StructurePrediction(baseClass):  #results of secondary-structure predictio
         if qparent and qtEnabled:
             super(QtCore.QObject,self).__init__(qparent)
         self.secelDict=secelDict
+        self.selectedSecel = None
         self.chain=chain
         self.params=params
         self.comments=comments
@@ -101,3 +102,10 @@ class StructurePrediction(baseClass):  #results of secondary-structure predictio
                 return secel
                 
         return Coil(self.chain, 0, 'no-label', index, index)
+        
+    def setSecelSelection(self, secel):
+        if not secel in self.secelDict.values():
+            return
+        self.__selectedSecel = secel
+    def getSecelSelection(self):
+        return self.__selectedSecel
