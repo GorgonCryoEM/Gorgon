@@ -23,6 +23,7 @@ class Secel(object):
         self.color=color
         if qtEnabled and color==None:
             self.color=QtGui.QColor(0,0,0)
+        self.type="unknown"
             
     def __repr__(self):
         typeOfSecel = str(type(self)).split('.')[-1]
@@ -39,3 +40,13 @@ class Secel(object):
     def __str__(self):
         residues = str(self.chain[self.startIndex:self.stopIndex]).strip('...')
         return "%s(%i,%i):%s" % (self.type, self.startIndex, self.stopIndex, residues)
+    
+    def getResidueCount(self):
+        return self.stopIndex - self.startIndex + 1
+    
+    def getLengthInAngstroms(self):
+        resCount = self.getResidueCount()
+        if(self.type == "helix"):
+            return resCount * 1.5
+        else:
+            return resCount * 3.8

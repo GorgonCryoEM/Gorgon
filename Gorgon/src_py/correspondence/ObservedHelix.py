@@ -31,14 +31,19 @@ class ObservedHelix:
 
     def __parseHelix(self, inputString):
         return ObservedHelix('a', 1.0, 2.0, 3.0,4.0, 5.0,6.0 )
+    
     def getMidpoint(self):
         '''
         Returns the midpoint of the two ends of the helical axis.
         '''
         return ( 0.5*(self.x0+self.x1), 0.5*(self.y0+self.y1), 0.5*(self.z0+self.z1) )
+    
     def getUnitVector(self):
         '''
         Returns a vector along the helical axis pointing toward the endpoint farther from the origin.
         '''
         length = float( math.sqrt( (self.x0+self.x1)**2 + (self.y0+self.y1)**2 + (self.z0+self.z1)**2 ) )
         return ( (self.x1-self.x0)/length, (self.y1-self.y0)/length, (self.z1-self.z0)/length )
+
+    def getLength(self):
+        return pow(pow(self.x0 - self.x1, 2) + pow(self.y0 - self.y1, 2) + pow(self.z0 - self.z1, 2), 0.5)  
