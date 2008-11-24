@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.22  2008/11/24 20:49:52  ssa1
+#   Updating information on the correspondence finder
+#
 #   Revision 1.21  2008/11/24 20:02:49  ssa1
 #   User constraints on finding correspondences (v1)
 #
@@ -77,6 +80,7 @@ from correspondence.ObservedSheet import ObservedSheet
 from correspondence.StructureObservation import StructureObservation
 from correspondence.StructurePrediction import StructurePrediction
 from seq_model.Helix import Helix
+import sans_numpy as snum
 
 class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):   
     def __init__(self, main, viewer, parent=None):
@@ -284,29 +288,14 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
         
         #Loading Predicted SSEs                     
         self.viewer.correspondenceEngine.loadSequenceGraph()
-        '''
-        predictedSecels = {}
-        sseCount = self.viewer.correspondenceEngine.getSequenceSSECount()
-        for sseIx in range(sseCount):
-            cppSse = self.viewer.correspondenceEngine.getSequenceSSE(sseIx)
-            if cppSse.isHelix(): 
-                pyHelix = Helix(None, sseIx, str(cppSse.getSecondaryStructureID()), cppSse.getStartPosition(), cppSse.getEndPosition())
-                predictedSecels[sseIx] = pyHelix                                
-            elif cppSse.isSheet():
-                #TODO: Add Sheet support
-                predictedSecels[sseIx] = None
-                pass
-                
-        #TODO: Find a better way to get the chain object and build the StructurePrediction object - this is a temporary hack
-        #TODO: Is this ok--to load the file in C++ and to load the file again in python?  Or will the SSE's have different IDs, etc., and will that be a problem?
-        tempStructPred = StructurePrediction.load(self.sequenceFileName, self.app)
-        chain = tempStructPred.chain
-        structPred = StructurePrediction(secelDict = predictedSecels, chain = chain, qparent=self.app)#None)
-        '''
+
         structPred = StructurePrediction.load(self.sequenceFileName, self.app)
         cAlphaViewer = self.app.viewers['calpha']
+        sseViewer = self.app.viewers['sse']
+        skeletonViewer = self.app.viewers['skeleton']
         cAlphaViewer.structPred = structPred
-        
+        def vector3DFloatToTuple(v3df):
+            return (v3df.x(), v3df.y(), v3df.z())
         
         #Loading Observed SSEs
         self.viewer.correspondenceEngine.loadSkeletonGraph()
@@ -317,10 +306,16 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
         sseCount = self.viewer.correspondenceEngine.getSkeletonSSECount()
         for sseIx in range(sseCount):
             cppSse = self.viewer.correspondenceEngine.getSkeletonSSE(sseIx)        
-            p1 = cppSse.getCornerCell2(1)
-            p2 = cppSse.getCornerCell2(2)
+            p1 = cAlphaViewer.worldToObjectCoordinates(skeletonViewer.objectToWorldCoordinates(vector3DFloatToTuple(cppSse.getCornerCell2(1))))
+            p2 = cAlphaViewer.worldToObjectCoordinates(skeletonViewer.objectToWorldCoordinates(vector3DFloatToTuple(cppSse.getCornerCell2(2))))
+            q1 = cAlphaViewer.worldToObjectCoordinates(sseViewer.objectToWorldCoordinates(vector3DFloatToTuple(cppSse.getCornerCell3(1))))
+            q2 = cAlphaViewer.worldToObjectCoordinates(sseViewer.objectToWorldCoordinates(vector3DFloatToTuple(cppSse.getCornerCell3(2))))
+            if snum.vectorMagnitude(snum.vectorAdd(p1, snum.scalarTimesVector(-1, q1))) > snum.vectorMagnitude(
+                                    snum.vectorAdd(p1, snum.scalarTimesVector(-1, q2))): #to get proper orientation
+                q1, q2 = q2, q1 #python trick for exchanging values
+            
             if cppSse.isHelix():            
-                pyHelix = ObservedHelix(sseIx, p1.x(), p1.y(), p1.z(), p2.x(), p2.y(), p2.z())            
+                pyHelix = ObservedHelix(sseIx, q1, q2)
                 observedHelices[helixCount] = pyHelix
                 helixCount = helixCount + 1
             elif cppSse.isSheet():
