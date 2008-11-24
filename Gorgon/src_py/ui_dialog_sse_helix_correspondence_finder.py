@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_dialog_sse_helix_correspondence_finder.ui'
 #
-# Created: Thu Nov 20 15:03:22 2008
+# Created: Mon Nov 24 12:47:13 2008
 #      by: PyQt4 UI code generator 4.3.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -259,42 +259,28 @@ class Ui_DialogSSEHelixCorrespondenceFinder(object):
         self.gridlayout8.setObjectName("gridlayout8")
 
         self.labelCorrespondences = QtGui.QLabel(self.tab)
+
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Maximum,QtGui.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.labelCorrespondences.sizePolicy().hasHeightForWidth())
+        self.labelCorrespondences.setSizePolicy(sizePolicy)
         self.labelCorrespondences.setObjectName("labelCorrespondences")
         self.gridlayout8.addWidget(self.labelCorrespondences,0,0,1,1)
 
         self.comboBoxCorrespondences = QtGui.QComboBox(self.tab)
+
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Minimum,QtGui.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.comboBoxCorrespondences.sizePolicy().hasHeightForWidth())
+        self.comboBoxCorrespondences.setSizePolicy(sizePolicy)
         self.comboBoxCorrespondences.setObjectName("comboBoxCorrespondences")
-        self.gridlayout8.addWidget(self.comboBoxCorrespondences,0,1,1,2)
+        self.gridlayout8.addWidget(self.comboBoxCorrespondences,0,1,1,1)
 
         self.tableWidgetCorrespondenceList = QtGui.QTableWidget(self.tab)
         self.tableWidgetCorrespondenceList.setObjectName("tableWidgetCorrespondenceList")
-        self.gridlayout8.addWidget(self.tableWidgetCorrespondenceList,1,0,4,2)
-
-        spacerItem3 = QtGui.QSpacerItem(20,16,QtGui.QSizePolicy.Minimum,QtGui.QSizePolicy.Expanding)
-        self.gridlayout8.addItem(spacerItem3,1,2,1,1)
-
-        self.pushButtonMoveUp = QtGui.QPushButton(self.tab)
-
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed,QtGui.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.pushButtonMoveUp.sizePolicy().hasHeightForWidth())
-        self.pushButtonMoveUp.setSizePolicy(sizePolicy)
-        self.pushButtonMoveUp.setObjectName("pushButtonMoveUp")
-        self.gridlayout8.addWidget(self.pushButtonMoveUp,2,2,1,1)
-
-        self.pushButton_2 = QtGui.QPushButton(self.tab)
-
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed,QtGui.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.pushButton_2.sizePolicy().hasHeightForWidth())
-        self.pushButton_2.setSizePolicy(sizePolicy)
-        self.pushButton_2.setObjectName("pushButton_2")
-        self.gridlayout8.addWidget(self.pushButton_2,3,2,1,1)
-
-        spacerItem4 = QtGui.QSpacerItem(20,231,QtGui.QSizePolicy.Minimum,QtGui.QSizePolicy.Expanding)
-        self.gridlayout8.addItem(spacerItem4,4,2,1,1)
+        self.gridlayout8.addWidget(self.tableWidgetCorrespondenceList,1,0,1,2)
         self.tabWidget.addTab(self.tab,"")
         self.gridlayout.addWidget(self.tabWidget,0,0,1,1)
 
@@ -306,8 +292,8 @@ class Ui_DialogSSEHelixCorrespondenceFinder(object):
         self.pushButtonReset.setObjectName("pushButtonReset")
         self.gridlayout9.addWidget(self.pushButtonReset,0,0,1,1)
 
-        spacerItem5 = QtGui.QSpacerItem(40,20,QtGui.QSizePolicy.Expanding,QtGui.QSizePolicy.Minimum)
-        self.gridlayout9.addItem(spacerItem5,0,1,1,1)
+        spacerItem3 = QtGui.QSpacerItem(40,20,QtGui.QSizePolicy.Expanding,QtGui.QSizePolicy.Minimum)
+        self.gridlayout9.addItem(spacerItem3,0,1,1,1)
 
         self.gridlayout10 = QtGui.QGridLayout()
         self.gridlayout10.setSpacing(0)
@@ -404,8 +390,6 @@ class Ui_DialogSSEHelixCorrespondenceFinder(object):
         headerItem2 = QtGui.QTableWidgetItem()
         headerItem2.setText(QtGui.QApplication.translate("DialogSSEHelixCorrespondenceFinder", "Constrained", None, QtGui.QApplication.UnicodeUTF8))
         self.tableWidgetCorrespondenceList.setHorizontalHeaderItem(2,headerItem2)
-        self.pushButtonMoveUp.setText(QtGui.QApplication.translate("DialogSSEHelixCorrespondenceFinder", "▲", None, QtGui.QApplication.UnicodeUTF8))
-        self.pushButton_2.setText(QtGui.QApplication.translate("DialogSSEHelixCorrespondenceFinder", "▼", None, QtGui.QApplication.UnicodeUTF8))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), QtGui.QApplication.translate("DialogSSEHelixCorrespondenceFinder", "Results", None, QtGui.QApplication.UnicodeUTF8))
         self.pushButtonReset.setText(QtGui.QApplication.translate("DialogSSEHelixCorrespondenceFinder", "Reset", None, QtGui.QApplication.UnicodeUTF8))
         self.pushButtonOk.setText(QtGui.QApplication.translate("DialogSSEHelixCorrespondenceFinder", "OK", None, QtGui.QApplication.UnicodeUTF8))

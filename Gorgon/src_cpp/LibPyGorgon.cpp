@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.41  2008/11/24 19:37:48  ssa1
+//   Boosting the helix.GetSelected method
+//
 //   Revision 1.40  2008/11/24 18:32:26  ssa1
 //   Giving helix end points
 //
@@ -393,6 +396,7 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("setConstant", SetConstant2)
 		.def("setConstantInt", SetConstant3)
 		.def("setConstantBool", SetConstant4)
+		.def("setHelixConstraint", &SSECorrespondenceEngine::SetHelixConstraint)			
         .def("setConstantsFromFile", &SSECorrespondenceEngine::SetConstantsFromFile)		
 		.def("saveCorrespondenceToFile", &SSECorrespondenceEngine::SaveCorrespondenceToFile)
 		.def("loadSkeletonGraph", &SSECorrespondenceEngine::LoadSkeletonGraph)

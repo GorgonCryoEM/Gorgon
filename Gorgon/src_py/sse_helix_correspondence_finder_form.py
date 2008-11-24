@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.20  2008/11/23 19:56:07  ssa1
+#   Setting volume origin to be center of mass instead of bottom left...
+#
 #   Revision 1.19  2008/11/20 21:05:16  ssa1
 #   Removing depricated items
 #
@@ -80,7 +83,9 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
         self.viewer = viewer        
         self.createUI()
         self.createActions()
-        self.createMenus()        
+        self.createMenus()
+        self.loadingCorrespondance = False
+        self.userConstraints = {}
 
     def createUI(self):
         self.ui = Ui_DialogSSEHelixCorrespondenceFinder()
@@ -216,6 +221,17 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
         self.viewer.correspondenceEngine.setConstantInt("BORDER_MARGIN_THRESHOLD", self.ui.spinBoxBorderMarginThreshold.value())
         self.viewer.correspondenceEngine.setConstantBool("NORMALIZE_GRAPHS", True)        
     
+    
+        #Tab 4 User Constraints
+        correspondenceIndex = self.ui.comboBoxCorrespondences.currentIndex()
+        if(correspondenceIndex >= 0):
+            corr = self.viewer.correspondenceLibrary.correspondenceList[correspondenceIndex]            
+            for i in range(len(corr.matchList)):
+                match = corr.matchList[i]
+                self.userConstraints[i] = match.constrained
+                if(match.constrained):
+                    self.viewer.correspondenceEngine.setHelixConstraint(match.predicted.serialNo + 1, match.observed.label + 1)      
+    
     def populateResults(self, library):
         self.ui.tabWidget.setCurrentIndex(3)
         corrList = []
@@ -237,8 +253,13 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
                 else:
                     observed = None
                     
-                predicted = library.structurePrediction.secelDict[j]                            
-                matchList.append(Match(observed, predicted, direction))         
+                predicted = library.structurePrediction.secelDict[j]
+                currentMatch = Match(observed, predicted, direction)
+                if(self.userConstraints.has_key(j)):
+                    currentMatch.constrained = self.userConstraints[j]
+                else :                      
+                    currentMatch.constrained = False     
+                matchList.append(currentMatch)         
                                       
             corr = Correspondence(library=library, matchList=matchList, score=result.getCost())
             
@@ -367,7 +388,8 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
         return QtGui.QColor.fromRgba(QtGui.qRgba(r*255, g*255, b*255, a*255))
         
     def selectCorrespondence(self, correspondenceIndex):
-        self.ui.tableWidgetCorrespondenceList.clear()
+        self.loadingCorrespondance = True
+        self.ui.tableWidgetCorrespondenceList.clearContents()
         if(correspondenceIndex >= 0):
             corr = self.viewer.correspondenceLibrary.correspondenceList[correspondenceIndex]
             self.ui.tableWidgetCorrespondenceList.setRowCount(len(corr.matchList))   
@@ -385,11 +407,27 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
                     cellItemObserved.setBackgroundColor(color)
                     self.ui.tableWidgetCorrespondenceList.setItem(i, 1, cellItemObserved)
                     self.viewer.renderer.setHelixColor(match.observed.label, color.redF(), color.greenF(), color.blueF(), color.alphaF())
-                self.ui.tableWidgetCorrespondenceList.setCellWidget(i, 2, QtGui.QCheckBox())
-                self.ui.tableWidgetCorrespondenceList.cellWidget(i, 2).setCheckState(QtCore.Qt.Unchecked)
+                checkBox = QtGui.QCheckBox()
+                self.ui.tableWidgetCorrespondenceList.setCellWidget(i, 2, checkBox)
+                self.connect(checkBox, QtCore.SIGNAL("stateChanged (int)"), self.constraintAdded)
+                if(match.constrained):
+                    self.ui.tableWidgetCorrespondenceList.cellWidget(i, 2).setCheckState(QtCore.Qt.Checked)
+                else :
+                    self.ui.tableWidgetCorrespondenceList.cellWidget(i, 2).setCheckState(QtCore.Qt.Unchecked)
+                    
         self.viewer.correspondenceEngine.setVisibleCorrespondence(correspondenceIndex)
         self.viewer.emitModelChanged()
+        self.loadingCorrespondance = False
         
     def drawOverlay(self):
         if self.executed:
             self.viewer.correspondenceEngine.draw(0)
+
+    def constraintAdded(self, state):
+        if(not self.loadingCorrespondance):
+            correspondenceIndex = self.ui.comboBoxCorrespondences.currentIndex()
+            if(correspondenceIndex >= 0):
+                corr = self.viewer.correspondenceLibrary.correspondenceList[correspondenceIndex]            
+                for i in range(len(corr.matchList)):
+                    match = corr.matchList[i]
+                    match.constrained = (self.ui.tableWidgetCorrespondenceList.cellWidget(i, 2).checkState() == QtCore.Qt.Checked)
