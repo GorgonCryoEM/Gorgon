@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.39  2008/11/20 18:33:04  ssa1
+//   Using the origin of the MRC volume
+//
 //   Revision 1.38  2008/11/18 22:01:18  ssa1
 //   Removing printfs, and adding cropping
 //
@@ -372,6 +375,7 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("isHelix", &GeometricShape::IsHelix)
 		.def("isSheet", &GeometricShape::IsSheet)
 		.def("getCornerCell2", &GeometricShape::GetCornerCell2)
+		.def("getCornerCell3", &GeometricShape::GetCornerCell3)
 		.def("setColor", &GeometricShape::SetColor)
 	;
 
