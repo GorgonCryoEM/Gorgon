@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.26  2008/11/25 03:44:36  ssa1
+#   User constraints on finding correspondences (v2)
+#
 #   Revision 1.25  2008/11/25 03:36:08  ssa1
 #   User constraints on finding correspondences (v2)
 #
@@ -122,7 +125,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
         self.connect(self.ui.pushButtonOk, QtCore.SIGNAL("pressed ()"), self.accept)
         self.connect(self.ui.comboBoxCorrespondences, QtCore.SIGNAL("currentIndexChanged (int)"), self.selectCorrespondence)
         self.connect(self.app.viewers["skeleton"], QtCore.SIGNAL("modelDrawing()"), self.drawOverlay)
-        self.connect(self.ui.tableWidgetCorrespondenceList, QtCore.SIGNAL("cellClicked (int,int)"), self.cellClicked)
+        self.connect(self.ui.tableWidgetCorrespondenceList, QtCore.SIGNAL("cellClicked (int,int)"), self.cellClicked )
         self.ui.tableWidgetCorrespondenceList.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
         #self.connect(self.ui.tableWidgetCorrespondenceList, QtCore.SIGNAL("customContextMenuRequested (const QPoint&)"), self.customMenuRequested)
             
@@ -252,7 +255,10 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
                 match = corr.matchList[i]                
                 self.userConstraints[i] = match.constrained
                 if(match.constrained):
-                    self.viewer.correspondenceEngine.setHelixConstraint(match.predicted.serialNo + 1, match.observed.label + 1)      
+                    if(match.observed):
+                        self.viewer.correspondenceEngine.setHelixConstraint(match.predicted.serialNo + 1, match.observed.label + 1)
+                    else:      
+                        self.viewer.correspondenceEngine.setHelixConstraint(match.predicted.serialNo + 1, -1)
     
     def populateResults(self, library):
         self.ui.tabWidget.setCurrentIndex(3)
