@@ -85,25 +85,8 @@ class SequenceDock(QtGui.QDockWidget):
     def closeEvent(self, event):
         self.app.actions.getAction("seqDock").setChecked(False)
         
-    def updateFromViewerSelection(self, *argv):
-        #hits = argv[:-1]
-        #event = argv[-1]
-        #print "SequenceDock.updateFromViewerSelection()"
-        #TODO: I don't understand the purpose of the boolean variable in the Hit Stack!
-        try: 
-            atom = CAlphaRenderer.getAtomFromHitStack(self.app.viewers['calpha'].renderer, argv[0], True, *argv[1:-1])
-        except:
-            print "Not an atom."
-            return
-        pdbID = atom.getPDBId()
-        chainID = atom.getChainId()
-        resNum = atom.getResSeq()
-        print pdbID, chainID, resNum
-        #self.seqWidget.scrollable.seqView.setSequenceSelection([resNum])
+    def updateFromViewerSelection(self):
         self.seqWidget.scrollable.seqView.updateSequenceSelection()
-        self.seqWidget.structureEditor.setResidues([resNum])
-        selectedChain = Chain.getChain((pdbID, chainID))
-        selectedChain.setSelection([resNum])
     
     def toggleMockSideChains(self):
         viewer = self.viewer
@@ -179,6 +162,7 @@ class SequenceView(QtGui.QWidget):
     self.updatePanelHeight()
     self.residueRange=self.structurePrediction.chain.residueRange()
     self.connect(self.structurePrediction.chain, QtCore.SIGNAL("selection updated"), self.__selectionUpdated)
+    self.connect(self.currentChainModel, QtCore.SIGNAL("selection updated"), self.__selectionUpdated)
     self.repaint()    
 
   def __selectionUpdated(self):
@@ -459,10 +443,13 @@ class SequenceView(QtGui.QWidget):
         
     viewer.centerOnSelectedAtoms()    
     viewer.emitModelChanged()
+    
   def updateSequenceSelection(self):
     selection = self.currentChainModel.getSelection()
     self.structurePrediction.chain.setSelection(selection)
-          
+    dock = self.parentWidget().parentWidget().parentWidget().parentWidget()
+    dock.viewer.emitModelChanged()
+    
   def setFont(self, newFont):
     self.fontName=newFont
     self.font=QtGui.QFont(self.fontName,self.fontSize)
