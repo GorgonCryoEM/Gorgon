@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.25  2008/11/25 03:36:08  ssa1
+#   User constraints on finding correspondences (v2)
+#
 #   Revision 1.24  2008/11/25 00:05:39  colemanr
 #   updates the index of the currently selected correspondence in the CorrespondenceLibrary
 #
@@ -403,6 +406,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
         if(correspondenceIndex >= 0):
             corr = self.viewer.correspondenceLibrary.correspondenceList[correspondenceIndex]
             self.ui.tableWidgetCorrespondenceList.setRowCount(len(corr.matchList))   
+            notMissing = {}
             for i in range(len(corr.matchList)):
                 match = corr.matchList[i]
                 color = self.getIndexedColor(i, len(corr.matchList))
@@ -422,6 +426,8 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
                     cellItemObserved.setBackgroundColor(color)
                     self.ui.tableWidgetCorrespondenceList.setItem(i, 1, cellItemObserved)
                     self.viewer.renderer.setHelixColor(match.observed.label, color.redF(), color.greenF(), color.blueF(), color.alphaF())
+                    notMissing[match.observed.label] = True                                                     
+            
                 checkBox = QtGui.QCheckBox()
                 self.ui.tableWidgetCorrespondenceList.setCellWidget(i, 2, checkBox)
                 self.connect(checkBox, QtCore.SIGNAL("stateChanged (int)"), self.constraintAdded)
@@ -431,6 +437,12 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
                     self.ui.tableWidgetCorrespondenceList.cellWidget(i, 2).setCheckState(QtCore.Qt.Unchecked)
                     
                 self.ui.tableWidgetCorrespondenceList.resizeRowToContents(i)
+                
+            observedHelices = self.viewer.correspondenceLibrary.structureObservation.helixDict
+            for i in range(len(observedHelices)):
+                if(not notMissing.has_key(i)):
+                    self.viewer.renderer.setHelixColor(i, 0.5, 0.5, 0.5, 1.0)
+                
                     
         self.viewer.correspondenceEngine.setVisibleCorrespondence(correspondenceIndex)
         self.viewer.correspondenceLibrary.setCurrentCorrespondenceIndex(correspondenceIndex)
