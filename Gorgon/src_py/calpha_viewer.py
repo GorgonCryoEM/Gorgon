@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.23  2008/11/25 22:00:17  colemanr
+#   extended the inherited processMouseClick to change the selected residues in self.main_chain
+#
 #   Revision 1.22  2008/11/25 21:17:57  ssa1
 #   Moving focus functionality into only C-Alpha atoms
 #
@@ -120,7 +123,6 @@ class CAlphaViewer(BaseViewer):
         self.visualizationOptions.ui.pushButtonModel2Color.setVisible(True) 
         
         self.connect(self, QtCore.SIGNAL("elementSelected (int, int, int, int, int, int, QMouseEvent)"), self.centerOnSelectedAtoms)
-        self.connect(self, QtCore.SIGNAL("elementClicked (int, int, int, int, int, int, QMouseEvent)"), self.focusOnAtom)
         
 
     def centerOnSelectedAtoms(self, *argv):
@@ -306,12 +308,6 @@ class CAlphaViewer(BaseViewer):
     def updateActionsAndMenus(self):        
         self.app.actions.getAction("save_CAlpha").setEnabled(self.loaded)
         self.app.actions.getAction("unload_CAlpha").setEnabled(self.loaded)
-
-    def focusOnAtom(self, hit0, hit1, hit2, hit3, hit4, hit5, mouseEvent):
-        if(self.app.mainCamera.mouseRightPressed):
-            focusPoint = self.objectToWorldCoordinates(self.getClickCoordinates([hit0, hit1, hit2, hit3, hit4, hit5]))            
-            self.app.mainCamera.setCenter(focusPoint[0], focusPoint[1], focusPoint[2])
-            self.app.mainCamera.updateGL()
 
 
 class WhichChainToLoad(QtGui.QDialog):
