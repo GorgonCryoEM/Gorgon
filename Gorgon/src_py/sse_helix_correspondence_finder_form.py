@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.23  2008/11/24 21:11:49  colemanr
+#   changes to accept method so that the ObservedHelix objects have C-alpha coordinates
+#
 #   Revision 1.22  2008/11/24 20:49:52  ssa1
 #   Updating information on the correspondence finder
 #
@@ -421,6 +424,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
                 self.ui.tableWidgetCorrespondenceList.resizeRowToContents(i)
                     
         self.viewer.correspondenceEngine.setVisibleCorrespondence(correspondenceIndex)
+        self.viewer.correspondenceLibrary.setCurrentCorrespondenceIndex(correspondenceIndex)
         self.viewer.emitModelChanged()
         self.loadingCorrespondance = False
         
