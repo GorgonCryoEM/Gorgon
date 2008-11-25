@@ -21,6 +21,8 @@ class Helix(Secel):
           color=QtGui.QColor(51,208,208)
         Secel.__init__(self, chain, serialNo, label, startIndex, stopIndex, color)
         self.type="helix"
+        self.axisPoint1 = None
+        self.axisPoint2 = None
 
     @classmethod
     def parsePDB(cls,line,chain):
@@ -31,14 +33,43 @@ class Helix(Secel):
         stop     =         int(line[33:37].strip())
     
         if helixID in chain.helices.keys():
-          raise ValueError, 'Duplicate Helix entries in PDB'
+            raise ValueError, 'Duplicate Helix entries in PDB'
         else:
-          #chain.helices[serialNo]=Helix(chain,serialNo,helixID,start,stop)
-          helix=Helix(chain,serialNo,'H' + helixID,start,stop)
-          chain.addHelix(serialNo, helix)
-          
+            #chain.helices[serialNo]=Helix(chain,serialNo,helixID,start,stop)
+            helix=Helix(chain,serialNo,'H' + helixID,start,stop)
+            chain.addHelix(serialNo, helix)
+    
+    def flipHelix(self):
+        '''
+        This moves the C-alpha atoms so the one at the first residue of the helix is at the last residue of the helix, 
+        the atom at the second residue is now at the second from the last residue, etc.  
+        The "modelChanged()" signal must be emitted elsewhere.
+        '''
+        self.axisPoint1, self.axisPoint2 = self.axisPoint2, self.axisPoint1
+        atomList = []
+        for resNum in range(self.startIndex, 1+self.stopIndex):
+            CAatom = self.chain[resNum].getAtom('CA')
+            if CAatom:
+                atomList.append(CAatom)
+            else:
+                atomList.append(None)
+            self.chain[resNum].clearAtoms()
+        i = 0
+        assert len(atomList) == 1+self.stopIndex-self.startIndex
+        for CAatom in atomList[::-1]:
+            if CAatom:
+                self.chain[startIndex+i].addAtomObject(CAatom)
+            i += 1
+        
     def getAngstromLength(self):
         return 1.5*(1+self.stopIndex-self.startIndex)
+    
+    def getAxisPoints(self):
+        return (self.axisPoint1, self.axisPoint2)
+    
+    def setAxisPoints(self, point1, point2):
+        self.axisPoint1 = point1
+        self.axisPoint2 = point2
     
     def toPDB(self):
         Helix.serialNo=Helix.serialNo+1
