@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.15  2008/11/24 20:02:53  ssa1
+//   User constraints on finding correspondences (v1)
+//
 //   Revision 1.14  2008/11/18 22:01:18  ssa1
 //   Removing printfs, and adding cropping
 //
@@ -51,6 +54,7 @@ namespace wustl_mm {
 			bool SetConstant(char * token, double value);
 			bool SetConstant(char * token, int value);
 			bool SetConstant(char * token, bool value);
+			void ClearAllConstraints();
 			void SetHelixConstraint(int sequenceHelix, int skeletonHelix);
 			// Graph Loading
 			void LoadSequenceGraph();
@@ -100,6 +104,11 @@ namespace wustl_mm {
 
 		bool BackEndInterface::SetConstant(char *token, bool value) {
 			return SetConstantFromToken(token, NULL, 0.0, 0, value);
+		}
+
+		void BackEndInterface::ClearAllConstraints() {
+			ClearAllowedConstraints();
+			ClearNotAllowedConstraints();
 		}
 
 		void BackEndInterface::SetHelixConstraint(int sequenceHelix, int skeletonHelix) {
