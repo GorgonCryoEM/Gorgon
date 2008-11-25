@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.20  2008/11/19 18:41:14  colemanr
+#   filename must be a str not unicode to work with boost::python
+#
 #   Revision 1.19  2008/11/17 19:41:13  colemanr
 #   bug-fix: if self.main_chain is empty, set it to self.structPred.chain before
 #   changing visibility of SequenceDock
@@ -109,7 +112,47 @@ class CAlphaViewer(BaseViewer):
         self.visualizationOptions.ui.checkBoxModel2Visible.setText("Show backbone colored:")
         self.visualizationOptions.ui.checkBoxModel2Visible.setVisible(True)
         self.visualizationOptions.ui.pushButtonModel2Color.setVisible(True) 
-                 
+        
+        self.connect(self, QtCore.SIGNAL("elementSelected (int, int, int, int, int, int, QMouseEvent)"), self.centerOnSelectedAtoms)
+
+    def centerOnSelectedAtoms(self, *argv):
+                
+        if not argv:
+            chain = self.main_chain
+            resIndices = chain.getSelection()
+            posList = []
+            for resIndex in resIndices:
+                try: 
+                    atom = chain[resIndex].getAtom('CA')
+                except KeyError:
+                    continue
+                if not atom:
+                    continue
+                posList.append(atom.getPosition())
+            if not posList:
+                return
+            pos = posList[0]
+            for position in posList[1:]:
+                pos += position
+            pos =  pos * (1.0/len(posList))
+            
+        elif argv:
+            try:
+                atom = CAlphaRenderer.getAtomFromHitStack(self.renderer, argv[0], True, *argv[1:-1])
+            except:
+                print 'CAlphaViewer: could not get atom'
+                return
+            pos = atom.getPosition()
+        if not pos:
+            print 'CAlphaViewer: could not get pos'
+            return
+        #print viewer.renderer.getSpacingX(), viewer.renderer.getSpacingY(), viewer.renderer.getSpacingZ()
+        x = pos.x()*self.renderer.getSpacingX() + self.renderer.getOriginX()
+        y = pos.y()*self.renderer.getSpacingY() + self.renderer.getOriginY()
+        z = pos.z()*self.renderer.getSpacingZ() + self.renderer.getOriginZ()
+        self.app.mainCamera.setCenter( x, y, z )
+        self.emitModelChanged()
+    
     def createUI(self):
         self.createActions()
         self.createMenus()
