@@ -11,7 +11,7 @@ class Correspondence:
   def __init__(self, library, matchList, score, comments=None, chain=None):
     self.matchList=matchList
     self.score=score
-    self.libary=library
+    self.library=library
     self.comments=None
     self.chain=None
 
