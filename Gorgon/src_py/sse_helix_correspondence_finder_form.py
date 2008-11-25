@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.27  2008/11/25 16:16:47  ssa1
+#   Fixing constraining missing helices bug
+#
 #   Revision 1.26  2008/11/25 03:44:36  ssa1
 #   User constraints on finding correspondences (v2)
 #
@@ -125,9 +128,9 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
         self.connect(self.ui.pushButtonOk, QtCore.SIGNAL("pressed ()"), self.accept)
         self.connect(self.ui.comboBoxCorrespondences, QtCore.SIGNAL("currentIndexChanged (int)"), self.selectCorrespondence)
         self.connect(self.app.viewers["skeleton"], QtCore.SIGNAL("modelDrawing()"), self.drawOverlay)
-        self.connect(self.ui.tableWidgetCorrespondenceList, QtCore.SIGNAL("cellClicked (int,int)"), self.cellClicked )
-        self.ui.tableWidgetCorrespondenceList.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
-        #self.connect(self.ui.tableWidgetCorrespondenceList, QtCore.SIGNAL("customContextMenuRequested (const QPoint&)"), self.customMenuRequested)
+        #self.connect(self.ui.tableWidgetCorrespondenceList, QtCore.SIGNAL("cellClicked (int,int)"), self.cellClicked )
+        self.ui.tableWidgetCorrespondenceList.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        self.connect(self.ui.tableWidgetCorrespondenceList, QtCore.SIGNAL("customContextMenuRequested (const QPoint&)"), self.customMenuRequested)
             
     def loadDefaults(self):
         self.ui.lineEditHelixLengthFile.setText("")
@@ -468,7 +471,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
                     match = corr.matchList[i]
                     match.constrained = (self.ui.tableWidgetCorrespondenceList.cellWidget(i, 2).checkState() == QtCore.Qt.Checked)
                     
-    def cellClicked(self, row, col):
+    def createActionsForCell(self, row, col):
         self.selectedRow = row
         for act in self.ui.tableWidgetCorrespondenceList.actions()[:]:
             self.ui.tableWidgetCorrespondenceList.removeAction(act)        
@@ -506,7 +509,14 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
             self.connect(constrainAction, QtCore.SIGNAL("triggered()"), self.constrainObservedHelix(-1))       
             self.ui.tableWidgetCorrespondenceList.addAction(constrainAction)                
 
-                
+    def customMenuRequested(self, point):
+        self.createActionsForCell(self.ui.tableWidgetCorrespondenceList.currentRow(), self.ui.tableWidgetCorrespondenceList.currentColumn())
+        if(len(self.ui.tableWidgetCorrespondenceList.actions()) > 0):
+            menu = QtGui.QMenu()
+            for act in self.ui.tableWidgetCorrespondenceList.actions()[:]:
+                menu.addAction(act)
+            menu.exec_(self.ui.tableWidgetCorrespondenceList.mapToGlobal(point), self.ui.tableWidgetCorrespondenceList.actions()[0])
+                    
             
     def constrainObservedHelix(self, i):
         def constrainObservedHelix_i():
