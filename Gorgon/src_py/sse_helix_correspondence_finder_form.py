@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.24  2008/11/25 00:05:39  colemanr
+#   updates the index of the currently selected correspondence in the CorrespondenceLibrary
+#
 #   Revision 1.23  2008/11/24 21:11:49  colemanr
 #   changes to accept method so that the ObservedHelix objects have C-alpha coordinates
 #
@@ -96,6 +99,8 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
         self.createMenus()
         self.loadingCorrespondance = False
         self.userConstraints = {}
+        self.constraintActions = {}
+        self.selectedRow = 0
 
     def createUI(self):
         self.ui = Ui_DialogSSEHelixCorrespondenceFinder()
@@ -113,7 +118,10 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
         self.connect(self.ui.pushButtonCancel, QtCore.SIGNAL("pressed ()"), self.reject)
         self.connect(self.ui.pushButtonOk, QtCore.SIGNAL("pressed ()"), self.accept)
         self.connect(self.ui.comboBoxCorrespondences, QtCore.SIGNAL("currentIndexChanged (int)"), self.selectCorrespondence)
-        self.connect(self.app.viewers["skeleton"], QtCore.SIGNAL("modelDrawing()"), self.drawOverlay)        
+        self.connect(self.app.viewers["skeleton"], QtCore.SIGNAL("modelDrawing()"), self.drawOverlay)
+        self.connect(self.ui.tableWidgetCorrespondenceList, QtCore.SIGNAL("cellClicked (int,int)"), self.cellClicked)
+        self.ui.tableWidgetCorrespondenceList.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
+        #self.connect(self.ui.tableWidgetCorrespondenceList, QtCore.SIGNAL("customContextMenuRequested (const QPoint&)"), self.customMenuRequested)
             
     def loadDefaults(self):
         self.ui.lineEditHelixLengthFile.setText("")
@@ -233,11 +241,12 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
     
     
         #Tab 4 User Constraints
+        self.viewer.correspondenceEngine.clearAllConstraints()
         correspondenceIndex = self.ui.comboBoxCorrespondences.currentIndex()
         if(correspondenceIndex >= 0):
             corr = self.viewer.correspondenceLibrary.correspondenceList[correspondenceIndex]            
             for i in range(len(corr.matchList)):
-                match = corr.matchList[i]
+                match = corr.matchList[i]                
                 self.userConstraints[i] = match.constrained
                 if(match.constrained):
                     self.viewer.correspondenceEngine.setHelixConstraint(match.predicted.serialNo + 1, match.observed.label + 1)      
@@ -440,3 +449,62 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
                 for i in range(len(corr.matchList)):
                     match = corr.matchList[i]
                     match.constrained = (self.ui.tableWidgetCorrespondenceList.cellWidget(i, 2).checkState() == QtCore.Qt.Checked)
+                    
+    def cellClicked(self, row, col):
+        self.selectedRow = row
+        for act in self.ui.tableWidgetCorrespondenceList.actions()[:]:
+            self.ui.tableWidgetCorrespondenceList.removeAction(act)        
+        if(col == 1):
+            observedHelices = self.viewer.correspondenceLibrary.structureObservation.helixDict
+            constrained = {}
+            
+            correspondenceIndex = self.ui.comboBoxCorrespondences.currentIndex()
+            if(correspondenceIndex >= 0):
+                corr = self.viewer.correspondenceLibrary.correspondenceList[correspondenceIndex]  
+                for i in range(len(corr.matchList)):
+                    match = corr.matchList[i]
+                    if(match.constrained and match.observed) :
+                        constrained[match.observed.label] = True
+                match = corr.matchList[row]
+                
+            else:
+                match = False
+            
+            for i in range(len(observedHelices)):                
+                constrainAction = QtGui.QAction(self.tr("Helix " + str(i+1) + " (Length: " + str(round(observedHelices[i].getLength(), 2)) + "A)"), self)
+                constrainAction.setCheckable(True)
+                if(match and match.observed):
+                    constrainAction.setChecked(match.observed.label == i)
+                else:
+                    constrainAction.setChecked(False)
+                constrainAction.setEnabled(not constrained.has_key(i))
+                self.connect(constrainAction, QtCore.SIGNAL("triggered()"), self.constrainObservedHelix(i))       
+                self.ui.tableWidgetCorrespondenceList.addAction(constrainAction)
+                
+            constrainAction = QtGui.QAction(self.tr("Not observed"), self)
+            constrainAction.setCheckable(True)
+            constrainAction.setChecked(match and not match.observed)
+            constrainAction.setEnabled(True)
+            self.connect(constrainAction, QtCore.SIGNAL("triggered()"), self.constrainObservedHelix(-1))       
+            self.ui.tableWidgetCorrespondenceList.addAction(constrainAction)                
+
+                
+            
+    def constrainObservedHelix(self, i):
+        def constrainObservedHelix_i():
+                correspondenceIndex = self.ui.comboBoxCorrespondences.currentIndex()
+                if(correspondenceIndex >= 0):
+                    corr = self.viewer.correspondenceLibrary.correspondenceList[correspondenceIndex]
+                    for j in range(len(corr.matchList)):
+                        match = corr.matchList[j]
+                        if(match and match.observed and (match.observed.label == i)) :
+                            match.observed = None
+                    
+                    match = corr.matchList[self.selectedRow]
+                    match.constrained = True
+                    if(i == -1):
+                        match.observed = None
+                    else:
+                        match.observed = self.viewer.correspondenceLibrary.structureObservation.helixDict[i]
+                self.selectCorrespondence(correspondenceIndex)
+        return constrainObservedHelix_i
