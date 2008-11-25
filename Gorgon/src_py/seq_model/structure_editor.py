@@ -19,6 +19,7 @@ class StructureEditor(QtGui.QWidget):
         self.possibleAtomsList = []
         self.previouslySelectedPossibleAtom = None
         self.undoStack = QtGui.QUndoStack(self)
+        self.currentMatch = None
         
         #These go on the left hand side
         self.undoButton = QtGui.QPushButton('Undo')
@@ -39,6 +40,11 @@ class StructureEditor(QtGui.QWidget):
         self.connect(self.undoButton,  QtCore.SIGNAL('clicked()'), self.undoStack.undo)
         self.connect(self.redoButton,  QtCore.SIGNAL('clicked()'), self.undoStack.redo)
         self.connect(self.helixCreateCAHelixButton, QtCore.SIGNAL('clicked()'), self.createCAhelix)
+        self.connect(self.helixDecreasePositionButton, QtCore.SIGNAL('clicked()'), self.helixDecreaseButtonPress)
+        self.connect(self.helixIncreasePositionButton, QtCore.SIGNAL('clicked()'), self.helixIncreaseButtonPress)
+        if self.parentWidget().parentWidget().app:
+            self.app = self.parentWidget().parentWidget().app
+            self.connect(self.app.viewers['sse'], QtCore.SIGNAL('elementSelected (int, int, int, int, int, int, QMouseEvent)'), self.updateCurrentMatch)
       
     def acceptButtonPress(self):
         currentWidget = self.tabWidget.currentWidget()
@@ -71,54 +77,56 @@ class StructureEditor(QtGui.QWidget):
     
     def createCAhelix(self):
         print 'In createCAhelix'
-        app = self.parentWidget().parentWidget().app
-        cAlphaViewer = app.viewers['calpha']
-        sseViewer = app.viewers['sse']
-        
+        cAlphaViewer = self.app.viewers['calpha']
         startIndex = self.helixNtermSpinBox.value()
         stopIndex = self.helixCtermSpinBox.value()
-        helix = Helix(self.currentChainModel, 1,  'H1', startIndex, stopIndex) #TODO: find the correct serial # and label!!!
-        self.currentChainModel.addHelix(1, helix) #TODO: use the correct serial number
-        skeletonViewer = self.parentWidget().parentWidget().app.viewers['skeleton']
-        match = sseViewer.correspondenceLibrary.correspondenceList[0].matchList[2] #TODO: choose correct match
-        observedHelix = match.observed
-        direction = match.direction #Forward=0, Reverse=1
-        
+        observedHelix = self.currentMatch.observed
+        direction = self.currentMatch.direction #Forward=0, Reverse=1
+        predHelix = self.currentMatch.predicted
         if observedHelix.__class__.__name__ != 'ObservedHelix':
             raise TypeError, observedHelix.__class__.__name__
-        predHelix = match.predicted
+            
+        helix = Helix(self.currentChainModel, predHelix.serialNo,  predHelix.label, startIndex, stopIndex)
+        self.currentChainModel.addHelix(predHelix.serialNo, helix)
+        
         moveStart = 1.5*(startIndex - predHelix.startIndex)
-        moveEnd = 1.5*stopIndex - predHelix.stopIndex
+        print 'moveStart', moveStart
+        moveEnd = 1.5*(stopIndex - predHelix.stopIndex)
+        print 'moveEnd', moveEnd
         midpoint = observedHelix.getMidpoint()
         unitVector = observedHelix.getUnitVector()
         print 'unitVector', unitVector
-        length = 1.5*(1+stopIndex-startIndex)
-        structPredLesserCoord = snum.vectorAdd( midpoint, snum.scalarTimesVector(-1*length/2, unitVector) )
-        structPredGreaterCoord = snum.vectorAdd( midpoint, snum.scalarTimesVector(length/2, unitVector) )
-        startMoveVector = snum.scalarTimesVector( moveStart, unitVector)
-        endMoveVector = snum.scalarTimesVector( moveEnd, unitVector)
-        if direction == 0:
-            lesserCoord = snum.vectorAdd(structPredLesserCoord, startMoveVector)
-            greaterCoord = snum.vectorAdd(structPredGreaterCoord, endMoveVector)
-        elif direction == 1:
-            lesserCoord = snum.vectorAdd(structPredLesserCoord, endMoveVector)
-            greaterCoord = snum.vectorAdd(structPredGreaterCoord, startMoveVector)
+        structPredCoord1 = snum.vectorAdd( midpoint, snum.scalarTimesVector(-1*predHelix.getAngstromLength()/2, unitVector) )
+        structPredCoord2 = snum.vectorAdd( midpoint, snum.scalarTimesVector(predHelix.getAngstromLength()/2, unitVector) )
         
+        
+        if direction == 0:
+            startMoveVector = snum.scalarTimesVector( moveStart, unitVector)
+            endMoveVector = snum.scalarTimesVector( moveEnd, unitVector)
+            coord1 = snum.vectorAdd(structPredCoord1, startMoveVector)
+            coord2 = snum.vectorAdd(structPredCoord2, endMoveVector)
+        elif direction == 1:
+            startMoveVector = snum.scalarTimesVector( -1*moveStart, unitVector)
+            endMoveVector = snum.scalarTimesVector( -1*moveEnd, unitVector)
+            coord1 = snum.vectorAdd(structPredCoord1, endMoveVector)
+            coord2 = snum.vectorAdd(structPredCoord2, startMoveVector)
+        '''
         start = observedHelix.beginningCoord
         stop = observedHelix.endCoord
-        
-        helixCoordList = helixEndpointsToCAlphaPositions(start,stop) #TODO: use lesserCoord, greaterCoord instead
-        print helixCoordList
-                
+        helixCoordList = helixEndpointsToCAlphaPositions(start,stop) #TODO: use coord1, coord2 instead
         print "start:",  start
         print "stop:", stop
-        startAtom = PDBAtom('AAAA', 'A', 1000, 'CA')
-        startAtom.setPosition(Vector3DFloat(*start))
+        '''
+        helixCoordList = helixEndpointsToCAlphaPositions(coord1, coord2)
+        print helixCoordList                
+        
+        startAtom = PDBAtom('AAAA', 'A', 100000, 'CA')
+        startAtom.setPosition(Vector3DFloat(*coord1))
         startAtom.setColor(0, 1, 0, 1)
         startAtom = cAlphaViewer.renderer.addAtom(startAtom)
-        stopAtom = startAtom = PDBAtom('AAAA', 'A', 1001, 'CA')
-        stopAtom.setPosition(Vector3DFloat(*stop))
-        stopAtom.setColor(1, 0, 0, 1)        
+        stopAtom = startAtom = PDBAtom('AAAA', 'A', 100001, 'CA')
+        stopAtom.setPosition(Vector3DFloat(*coord2))
+        stopAtom.setColor(1, 0, 0, 1)
         
         stopAtom = cAlphaViewer.renderer.addAtom(stopAtom)
         
@@ -246,7 +254,27 @@ class StructureEditor(QtGui.QWidget):
             self.atomicResNames[-1].setStyleSheet("QLabel {color: green; font-size: 40pt}")
             self.atomicResNumbers[1].setStyleSheet("QLabel {color: black; font-size: 12pt}")
             self.atomicResNames[1].setStyleSheet("QLabel {color: black; font-size: 40pt}")
-            
+    
+    def helixDecreaseButtonPress(self):
+        startIx = self.helixNtermSpinBox.value()
+        stopIx = self.helixCtermSpinBox.value()
+        startIx -= 1
+        stopIx -= 1
+        self.helixNtermSpinBox.setValue(startIx)
+        self.helixNtermResNameLabel.setText(self.currentChainModel[startIx].symbol3)
+        self.helixCtermSpinBox.setValue(stopIx)
+        self.helixCtermResNameLabel.setText(self.currentChainModel[startIx].symbol3)
+        
+    def helixIncreaseButtonPress(self):
+        startIx = self.helixNtermSpinBox.value()
+        stopIx = self.helixCtermSpinBox.value()
+        startIx += 1
+        stopIx += 1
+        self.helixNtermSpinBox.setValue(startIx)
+        self.helixNtermResNameLabel.setText(self.currentChainModel[startIx].symbol3)
+        self.helixCtermSpinBox.setValue(stopIx)
+        self.helixCtermResNameLabel.setText(self.currentChainModel[startIx].symbol3)
+        
     def nextButtonPress(self):
         currentChainModel = self.parentWidget().currentChainModel
         if currentChainModel.getSelection():
@@ -372,13 +400,19 @@ class StructureEditor(QtGui.QWidget):
         self.helixModifyRadioButton = QtGui.QRadioButton(self.tr('Modify'))
         self.helixNewRadioButtion = QtGui.QRadioButton(self.tr('New'))
         NterminusLabel = QtGui.QLabel('N term')
-        self.helixNtermResNameLabel = QtGui.QLabel('?')
+        self.helixNtermResNameLabel = QtGui.QLabel('???')
         self.helixNtermSpinBox = QtGui.QSpinBox()
-        self.helixNtermSpinBox.setRange(1, 10000)
+        if self.currentChainModel.residueRange():
+            minIx = min(self.currentChainModel.residueRange())
+            maxIx = max(self.currentChainModel.residueRange())
+        else:
+            minIx = 1
+            maxIx = 10000
+        self.helixNtermSpinBox.setRange(minIx, maxIx)
         CterminusLabel = QtGui.QLabel('C term')
-        self.helixCtermResNameLabel = QtGui.QLabel('?')
+        self.helixCtermResNameLabel = QtGui.QLabel('???')
         self.helixCtermSpinBox = QtGui.QSpinBox()
-        self.helixCtermSpinBox.setRange(1, 10000)
+        self.helixCtermSpinBox.setRange(minIx, maxIx)
         
         self.helixDecreasePositionButton = QtGui.QPushButton('-')
         self.helixDecreasePositionButton.setMaximumWidth(30)
@@ -592,6 +626,24 @@ class StructureEditor(QtGui.QWidget):
         layout.addLayout(leftLayout)
         layout.addWidget(self.tabWidget)
         self.setLayout(layout)
+    
+    def updateCurrentMatch(self, sseType, sseIndex):
+        sseViewer = self.app.viewers['sse']
+        if sseType == 0:
+            print 'helix'
+            corrLib = sseViewer.correspondenceLibrary
+            currCorrIndex = corrLib.getCurrentCorrespondenceIndex()
+            print 'currCorrIndex:',  currCorrIndex
+            self.currentMatch = corrLib.correspondenceList[currCorrIndex].matchList[sseIndex]
+            print self.currentMatch.predicted, self.currentMatch.observed
+            startIx = self.currentMatch.predicted.startIndex
+            stopIx = self.currentMatch.predicted.stopIndex
+            self.helixNtermSpinBox.setValue(startIx)
+            self.helixCtermSpinBox.setValue(stopIx)
+            self.helixNtermResNameLabel.setText(self.currentChainModel[startIx].symbol3)
+            self.helixCtermResNameLabel.setText(self.currentChainModel[stopIx].symbol3)
+        print 'Index:', sseIndex
+        
         
 class CommandAcceptAtomPlacement(QtGui.QUndoCommand):
         def __init__(self, currentChainModel, structureEditor, resSeqNum, chosenCoordinates, viewer, bondBefore=None, bondAfter=None, description=None):
