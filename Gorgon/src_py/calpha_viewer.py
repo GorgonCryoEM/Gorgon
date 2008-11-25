@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.22  2008/11/25 21:17:57  ssa1
+#   Moving focus functionality into only C-Alpha atoms
+#
 #   Revision 1.21  2008/11/25 20:42:04  colemanr
 #   added self.centerOnSelectedAtoms()
 #
@@ -263,6 +266,33 @@ class CAlphaViewer(BaseViewer):
         self.app.menus.addMenu("actions-calpha", self.tr("C-&Alpha Atoms"), "actions")
         self.app.menus.addAction("showSeqDock", self.app.actions.getAction("seqDock"), "actions-calpha")           
     
+    def processMouseClick(self, hitStack, event, forceTrue):
+        super(CAlphaViewer, self).processMouseClick(hitStack, event, forceTrue)
+        hits = [-1,-1,-1,-1,-1]
+        if self.selectEnabled:
+            for i in range(5):
+                if(len(hitStack) > i+1):
+                    hits[i] = int(hitStack[i+1]) #On a 64 bit system, some of these are type numpy.int32 rather than int
+            if len(hitStack) == 0:
+                hitStack.append(-1)
+            if(len(hitStack) <= 6):
+                atom = CAlphaRenderer.getAtomFromHitStack(self.renderer, int(hitStack[0]), forceTrue, hits[0], hits[1], hits[2], hits[3], hits[4])
+                #On a 64 bit system, hitStack[0] is of type numpy.int32 rather than int (which is 64 bit)
+                if atom:
+                    if not forceTrue:
+                        #Multiple selection mode
+                        print 'CAlphaViewer: adding a residue to the selection'
+                        self.main_chain.setSelection(addOne=atom.getResSeq())
+                        print self.main_chain.getSelection()
+                    else:
+                        print 'CAlphaViewer: changing the selection to a residue'
+                        self.main_chain.setSelection([atom.getResSeq()])
+                        print self.main_chain.getSelection()
+            else:
+                raise Exception("Unable to call renderer.select method due as there are too many levels in the hit stack")
+            
+        
+            
     def saveData(self):
         self.fileName = QtGui.QFileDialog.getSaveFileName(self, self.tr("Save Data"), "", 
                                                           self.tr('Atom Positions (*.pdb)'))
