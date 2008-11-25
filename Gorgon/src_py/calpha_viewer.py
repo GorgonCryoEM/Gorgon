@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.21  2008/11/25 20:42:04  colemanr
+#   added self.centerOnSelectedAtoms()
+#
 #   Revision 1.20  2008/11/19 18:41:14  colemanr
 #   filename must be a str not unicode to work with boost::python
 #
@@ -114,6 +117,8 @@ class CAlphaViewer(BaseViewer):
         self.visualizationOptions.ui.pushButtonModel2Color.setVisible(True) 
         
         self.connect(self, QtCore.SIGNAL("elementSelected (int, int, int, int, int, int, QMouseEvent)"), self.centerOnSelectedAtoms)
+        self.connect(self, QtCore.SIGNAL("elementClicked (int, int, int, int, int, int, QMouseEvent)"), self.focusOnAtom)
+        
 
     def centerOnSelectedAtoms(self, *argv):
                 
@@ -271,6 +276,13 @@ class CAlphaViewer(BaseViewer):
     def updateActionsAndMenus(self):        
         self.app.actions.getAction("save_CAlpha").setEnabled(self.loaded)
         self.app.actions.getAction("unload_CAlpha").setEnabled(self.loaded)
+
+    def focusOnAtom(self, hit0, hit1, hit2, hit3, hit4, hit5, mouseEvent):
+        if(self.app.mainCamera.mouseRightPressed):
+            focusPoint = self.objectToWorldCoordinates(self.getClickCoordinates([hit0, hit1, hit2, hit3, hit4, hit5]))            
+            self.app.mainCamera.setCenter(focusPoint[0], focusPoint[1], focusPoint[2])
+            self.app.mainCamera.updateGL()
+
 
 class WhichChainToLoad(QtGui.QDialog):
     def __init__(self, fileName, parent=None):
