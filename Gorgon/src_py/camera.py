@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.43  2008/11/20 20:09:14  colemanr
+#   modified self.centerOnSelectedAtom() to use the new renderer origin
+#
 #   Revision 1.42  2008/11/18 22:01:18  ssa1
 #   Removing printfs, and adding cropping
 #
@@ -133,7 +136,6 @@ class Camera(QtOpenGL.QGLWidget):
         self.setNearFarZoom(0.1, 1000, 0.25)
         self.lastPos = QtCore.QPoint()
         self.sceneEditor = SceneEditorForm(self.app, self)
-        self.connect(self.app.viewers["calpha"], QtCore.SIGNAL("elementSelected (int, int, int, int, int, int, QMouseEvent)"), self.centerOnSelectedAtom)
         self.connect(self.app.themes, QtCore.SIGNAL("themeChanged()"), self.themeChanged)
         
         for i in range(len(self.scene)): 
@@ -146,33 +148,6 @@ class Camera(QtOpenGL.QGLWidget):
             self.connect(s, QtCore.SIGNAL("modelUnloaded()"), self.modelChanged)
             self.connect(s, QtCore.SIGNAL("modelVisualizationChanged()"), self.modelChanged)
             self.connect(s, QtCore.SIGNAL("mouseTrackingChanged()"), self.refreshMouseTracking)
-
-    def centerOnSelectedAtom(self, *argv):
-        viewer = self.app.viewers['calpha']
-        
-        if not argv:
-            #chain = Chain.getChain(Chain.getSelectedChainKey())
-            chain = viewer.main_chain
-            resIndex = chain.getSelection()[-1]
-            atomNames = chain[resIndex].getAtomNames()
-            if atomNames and 'CA' in atomNames:
-                atom = chain[resIndex].getAtom('CA')
-            elif atomNames:
-                atom = chain[resIndex].getAtom(atomNames[-1])
-            else:
-                return
-        elif argv:
-            try:
-                atom = CAlphaRenderer.getAtomFromHitStack(viewer.renderer, argv[0], True, *argv[1:-1])
-            except:
-                return
-        pos = atom.getPosition()
-        #print viewer.renderer.getSpacingX(), viewer.renderer.getSpacingY(), viewer.renderer.getSpacingZ()
-        x = pos.x()*viewer.renderer.getSpacingX() + viewer.renderer.getOriginX()
-        y = pos.y()*viewer.renderer.getSpacingY() + viewer.renderer.getOriginY()
-        z = pos.z()*viewer.renderer.getSpacingZ() + viewer.renderer.getOriginZ()
-        self.setCenter( x, y, z )
-        viewer.emitModelChanged()
     
     def setEye(self, x, y, z):
         if(self.eye != [x,y,z]):
