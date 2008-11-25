@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.45  2008/11/25 21:03:40  ssa1
+#   User constraints on finding correspondences (v3)
+#
 #   Revision 1.44  2008/11/25 20:43:10  colemanr
 #   Removed self.centerOnSelectedAtom; functionality moved to CAlphaViewer.
 #
@@ -363,9 +366,6 @@ class Camera(QtOpenGL.QGLWidget):
                         self.scene[sceneId].processMouseClick(minNames, event, True)
         elif (rightPressed):                                # Focusing on current point
             if(sceneId >= 0):
-                focusPoint = self.scene[sceneId].getClickCoordinates(minNames)
-                self.setCenter(focusPoint[0], focusPoint[1], focusPoint[2])
-                self.updateGL()
                 self.scene[sceneId].emitElementClicked(minNames, event)
             
        
