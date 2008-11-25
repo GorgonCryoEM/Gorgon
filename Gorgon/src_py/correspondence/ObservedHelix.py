@@ -29,7 +29,7 @@ class ObservedHelix:
         '''
         Returns a vector along the helical axis pointing toward the endpoint farther from the origin.
         '''
-        length = float( math.sqrt( (self.beginningCoord[0]+self.endCoord[0])**2 + (self.beginningCoord[1]+self.endCoord[1])**2 + (self.beginningCoord[2]+self.endCoord[2])**2 ) )
+        length = self.getLength()
         return ( (self.beginningCoord[0]-self.endCoord[0])/length, (self.beginningCoord[1]-self.endCoord[1])/length, (self.beginningCoord[2]-self.endCoord[2])/length )
 
     def getLength(self):
