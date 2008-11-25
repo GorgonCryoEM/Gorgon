@@ -359,7 +359,7 @@ class Chain(baseClass):
         chain = Chain.load(filename, qparent, whichChainID)
         if not pdbID: 
             pdbID = chain.getPdbID()
-        else:
+        elif pdbID != chain.getPdbID():
             chain.setIDs(pdbID, chain.getChainID())  #Needed if PDB ID is auto-generated
         chains.append(chain.getIDs())
         cls.chainsDict[chain.key] = chain
