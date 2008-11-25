@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_dialog_sse_helix_correspondence_finder.ui'
 #
-# Created: Mon Nov 24 12:47:13 2008
+# Created: Tue Nov 25 15:30:02 2008
 #      by: PyQt4 UI code generator 4.3.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -86,10 +86,10 @@ class Ui_DialogSSEHelixCorrespondenceFinder(object):
         self.pushButtonGetSequenceFile = QtGui.QPushButton(self.tabDataSources)
         self.pushButtonGetSequenceFile.setObjectName("pushButtonGetSequenceFile")
         self.gridlayout2.addWidget(self.pushButtonGetSequenceFile,3,2,1,1)
-        self.gridlayout1.addLayout(self.gridlayout2,0,0,1,1)
+        self.gridlayout1.addLayout(self.gridlayout2,0,0,1,2)
 
-        spacerItem = QtGui.QSpacerItem(20,40,QtGui.QSizePolicy.Minimum,QtGui.QSizePolicy.Expanding)
-        self.gridlayout1.addItem(spacerItem,1,0,1,1)
+        spacerItem = QtGui.QSpacerItem(494,101,QtGui.QSizePolicy.Minimum,QtGui.QSizePolicy.Expanding)
+        self.gridlayout1.addItem(spacerItem,1,0,1,2)
         self.tabWidget.addTab(self.tabDataSources,"")
 
         self.tabStandardSettings = QtGui.QWidget()
@@ -313,7 +313,6 @@ class Ui_DialogSSEHelixCorrespondenceFinder(object):
         self.gridlayout.addLayout(self.gridlayout9,1,0,1,1)
 
         self.retranslateUi(DialogSSEHelixCorrespondenceFinder)
-        self.tabWidget.setCurrentIndex(0)
         QtCore.QObject.connect(self.checkBoxMissingHelices,QtCore.SIGNAL("toggled(bool)"),self.spinBoxMissingHelixCount.setEnabled)
         QtCore.QMetaObject.connectSlotsByName(DialogSSEHelixCorrespondenceFinder)
         DialogSSEHelixCorrespondenceFinder.setTabOrder(self.tabWidget,self.lineEditHelixLengthFile)

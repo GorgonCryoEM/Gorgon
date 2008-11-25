@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.29  2008/11/25 21:03:40  ssa1
+#   User constraints on finding correspondences (v3)
+#
 #   Revision 1.28  2008/11/25 17:36:12  ssa1
 #   Fixing needing 2 clicks to get RMB bug
 #
@@ -113,6 +116,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
         self.userConstraints = {}
         self.constraintActions = {}
         self.selectedRow = 0
+        self.dataLoaded = False
 
     def createUI(self):
         self.ui = Ui_DialogSSEHelixCorrespondenceFinder()
@@ -155,7 +159,9 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
         self.ui.doubleSpinBoxLoopImportance.setValue(0.2)
         self.ui.doubleSpinBoxAverageMissingHelixLength.setValue(5.0)
         self.ui.doubleSpinBoxEuclideanToPDBRatio.setValue(10.0)
-        self.ui.spinBoxBorderMarginThreshold.setValue(5)               
+        self.ui.spinBoxBorderMarginThreshold.setValue(5)
+        self.ui.tableWidgetCorrespondenceList.clearContents()
+        self.ui.tabWidget.setCurrentIndex(0)         
                 
         self.checkOk()
         
@@ -182,8 +188,17 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
         self.checkOk()
     
     def checkOk(self):
-        self.ui.pushButtonOk.setEnabled(not(self.ui.lineEditHelixLengthFile.text().isEmpty() or self.ui.lineEditHelixLocationFile.text().isEmpty()
-                                            or self.ui.lineEditSkeletonFile.text().isEmpty() or self.ui.lineEditSequenceFile.text().isEmpty()))
+        self.dataLoaded = not(self.ui.lineEditHelixLengthFile.text().isEmpty() or self.ui.lineEditHelixLocationFile.text().isEmpty()
+                           or self.ui.lineEditSkeletonFile.text().isEmpty() or self.ui.lineEditSequenceFile.text().isEmpty())
+        self.ui.pushButtonOk.setEnabled(self.dataLoaded)
+        
+        self.ui.tabWidget.setTabEnabled(1, self.dataLoaded)
+        self.ui.tabWidget.setTabEnabled(2, self.dataLoaded)
+        self.ui.tabWidget.setTabEnabled(3, self.dataLoaded)
+        if(self.dataLoaded):
+            self.createBasicCorrespondence()            
+            self.viewer.correspondenceLibrary.correspondenceList = self.populateEmptyResults(self.viewer.correspondenceLibrary)
+            self.populateComboBox(self.viewer.correspondenceLibrary)            
     
     def loadWidget(self):
         if(self.app.actions.getAction("perform_SSEFindHelixCorrespondences").isChecked()) :
@@ -264,6 +279,21 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
                         self.viewer.correspondenceEngine.setHelixConstraint(match.predicted.serialNo + 1, match.observed.label + 1)
                     else:      
                         self.viewer.correspondenceEngine.setHelixConstraint(match.predicted.serialNo + 1, -1)
+
+    def populateEmptyResults(self, library):
+        corrList = []
+        matchList = []            
+        
+        for i in range(len(library.structurePrediction.secelDict)):                                   
+            observed = None
+            predicted = library.structurePrediction.secelDict[i]
+            currentMatch = Match(observed, predicted, Match.FORWARD)
+            currentMatch.constrained = False     
+            matchList.append(currentMatch)                                              
+            corr = Correspondence(library=library, matchList=matchList, score=0)            
+            
+        corrList.append(corr)
+        return corrList
     
     def populateResults(self, library):
         self.ui.tabWidget.setCurrentIndex(3)
@@ -304,9 +334,10 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
         self.ui.comboBoxCorrespondences.clear()
         for i in range(len(library.correspondenceList)):
             corr = library.correspondenceList[i]                                
-            self.ui.comboBoxCorrespondences.addItem("Correspondence " + str(i+1) + " - [Cost: " + str(corr.score) + "]")        
-                            
-    def accept(self):
+            self.ui.comboBoxCorrespondences.addItem("Correspondence " + str(i+1) + " - [Cost: " + str(corr.score) + "]")
+                   
+                   
+    def createBasicCorrespondence(self):
         self.setCursor(QtCore.Qt.BusyCursor)
         self.setConstants()          
         
@@ -348,16 +379,21 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
                 #TODO: Add Sheet support
         
         #TODO: Mike this raises an error!;
-        structObserv = StructureObservation(helixDict = observedHelices, sheetDict = observedSheets)          
+        structObserv = StructureObservation(helixDict = observedHelices, sheetDict = observedSheets)
+        self.viewer.correspondenceLibrary = CorrespondenceLibrary(sp = structPred, so = structObserv)          
+                
+        self.setCursor(QtCore.Qt.ArrowCursor)
+        
+        
+    def accept(self):
+        self.createBasicCorrespondence()          
                 
         self.resultCount = self.viewer.correspondenceEngine.executeQuery()
-        self.viewer.correspondenceEngine.cleanupMemory()
-        self.viewer.correspondenceLibrary = CorrespondenceLibrary(sp = structPred, so = structObserv)
+        self.viewer.correspondenceEngine.cleanupMemory()        
         self.viewer.correspondenceLibrary.correspondenceList = self.populateResults(self.viewer.correspondenceLibrary)
         
         self.populateComboBox(self.viewer.correspondenceLibrary)       
         
-        self.setCursor(QtCore.Qt.ArrowCursor)
         self.executed = True 
         self.viewer.emitModelChanged()
                 
@@ -552,7 +588,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
         return constrainPredictedHelix_po
     
     def sseClicked(self, hit0, hit1, hit2, hit3, hit4, hit5, event):
-        if(self.isVisible() and (hit0 == 0) and (hit1 >= 0)):
+        if(self.isVisible() and self.dataLoaded and (hit0 == 0) and (hit1 >= 0)):
             observedHelix = hit1
             constrained = {}
             match = None            
