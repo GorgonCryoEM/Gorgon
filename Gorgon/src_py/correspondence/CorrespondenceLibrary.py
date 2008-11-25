@@ -18,9 +18,14 @@ class CorrespondenceLibrary:
       self.algorithm=algo
       self.params=params
       self.correspondenceList=correspondenceList
+      self.currentCorrespondenceIndex = None
       self.otherAttribs={}
       self.otherAttribs['comments']=comments
       # sort correspondences by score
+  def getCurrentCorrespondenceIndex(self):
+      return self.currentCorrespondenceIndex
+  def setCurrentCorrespondenceIndex(self, corrIndex):
+      self.currentCorrespondenceIndex = corrIndex
 
   def save(self, filename):
     # write observed & SSE parameters
