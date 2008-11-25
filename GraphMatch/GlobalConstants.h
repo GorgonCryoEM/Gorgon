@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.30  2008/11/18 18:10:24  ssa1
+//   Changing the scaling functions when doing graph matching to find correspondences
+//
 //   Revision 1.28  2008/11/10 21:07:11  colemanr
 //   Removed changed constants to allow sequences of several different file
 //   types to be loaded, and the file type to also be saved in a variable.
@@ -156,6 +159,18 @@ namespace wustl_mm {
 		unsigned int allowedConstraintCount[MAX_NODES];
 		int notAllowedConstraintCollection[MAX_NODES][MAX_NODES];
 		unsigned int notAllowedConstraintCount[MAX_NODES];
+
+		void ClearAllowedConstraints() {
+			for(int i = 0; i < MAX_NODES; i++) {
+				allowedConstraintCount[i] = 0;
+			}
+		}
+
+		void ClearNotAllowedConstraints() {
+			for(int i = 0; i < MAX_NODES; i++) {
+				notAllowedConstraintCount[i] = 0;
+			}
+		}
 
 		void AddNodeConstraint(int patternNode, int baseNode) {
 			allowedConstraintCollection[patternNode-1][allowedConstraintCount[patternNode-1]] = baseNode;
