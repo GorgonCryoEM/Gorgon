@@ -634,14 +634,18 @@ class StructureEditor(QtGui.QWidget):
             corrLib = sseViewer.correspondenceLibrary
             currCorrIndex = corrLib.getCurrentCorrespondenceIndex()
             print 'currCorrIndex:',  currCorrIndex
-            self.currentMatch = corrLib.correspondenceList[currCorrIndex].matchList[sseIndex]
-            print self.currentMatch.predicted, self.currentMatch.observed
-            startIx = self.currentMatch.predicted.startIndex
-            stopIx = self.currentMatch.predicted.stopIndex
-            self.helixNtermSpinBox.setValue(startIx)
-            self.helixCtermSpinBox.setValue(stopIx)
-            self.helixNtermResNameLabel.setText(self.currentChainModel[startIx].symbol3)
-            self.helixCtermResNameLabel.setText(self.currentChainModel[stopIx].symbol3)
+            matchList = corrLib.correspondenceList[currCorrIndex].matchList
+            for match in matchList:
+                if match.observed.label == sseIndex: 
+                    self.currentMatch = match
+                    print self.currentMatch.predicted, self.currentMatch.observed
+                    startIx = self.currentMatch.predicted.startIndex
+                    stopIx = self.currentMatch.predicted.stopIndex
+                    self.helixNtermSpinBox.setValue(startIx)
+                    self.helixCtermSpinBox.setValue(stopIx)
+                    self.helixNtermResNameLabel.setText(self.currentChainModel[startIx].symbol3)
+                    self.helixCtermResNameLabel.setText(self.currentChainModel[stopIx].symbol3)
+                    break            
         print 'Index:', sseIndex
         
         
