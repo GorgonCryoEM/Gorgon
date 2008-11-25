@@ -99,7 +99,8 @@ class SequenceDock(QtGui.QDockWidget):
         chainID = atom.getChainId()
         resNum = atom.getResSeq()
         print pdbID, chainID, resNum
-        self.seqWidget.scrollable.seqView.setSequenceSelection([resNum])
+        #self.seqWidget.scrollable.seqView.setSequenceSelection([resNum])
+        self.seqWidget.scrollable.seqView.updateSequenceSelection()
         self.seqWidget.structureEditor.setResidues([resNum])
         selectedChain = Chain.getChain((pdbID, chainID))
         selectedChain.setSelection([resNum])
@@ -447,17 +448,20 @@ class SequenceView(QtGui.QWidget):
     self.structurePrediction.chain.setSelection(newSelection,removeOne,addOne,addRange)
     self.currentChainModel.setSelection(newSelection,removeOne,addOne,addRange)
     
-    try:
-        selectedAtom = self.currentChainModel[ self.currentChainModel.getSelection()[-1] ].getAtom('CA')
-    except KeyError:
-        return
-    if not selectedAtom:
-        return
-    
-    selectedAtom.setSelected(True)    
-    dock.app.mainCamera.centerOnSelectedAtom()    
+    for i in self.currentChainModel.getSelection():
+        try:
+            selectedAtom = self.currentChainModel[ i ].getAtom('CA')
+        except KeyError:
+            continue
+        if not selectedAtom:
+            continue    
+        selectedAtom.setSelected(True)
+        
+    viewer.centerOnSelectedAtoms()    
     viewer.emitModelChanged()
-
+  def updateSequenceSelection(self):
+    selection = self.currentChainModel.getSelection()
+    self.structurePrediction.chain.setSelection(selection)
           
   def setFont(self, newFont):
     self.fontName=newFont
