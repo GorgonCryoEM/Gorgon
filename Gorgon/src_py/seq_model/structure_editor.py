@@ -105,11 +105,13 @@ class StructureEditor(QtGui.QWidget):
             endMoveVector = snum.scalarTimesVector( moveEnd, unitVector)
             coord1 = snum.vectorAdd(structPredCoord1, startMoveVector)
             coord2 = snum.vectorAdd(structPredCoord2, endMoveVector)
+            helix.setAxisPoints(coord1, coord2)
         elif direction == 1:
             startMoveVector = snum.scalarTimesVector( -1*moveStart, unitVector)
             endMoveVector = snum.scalarTimesVector( -1*moveEnd, unitVector)
             coord1 = snum.vectorAdd(structPredCoord1, endMoveVector)
             coord2 = snum.vectorAdd(structPredCoord2, startMoveVector)
+            helix.setAxisPoints(coord1, coord2)
         '''
         start = observedHelix.beginningCoord
         stop = observedHelix.endCoord
@@ -149,7 +151,7 @@ class StructureEditor(QtGui.QWidget):
             cAlphaViewer.emitModelLoaded()
         else:
             cAlphaViewer.emitModelChanged()
-            
+        self.currentChainModel.setSelection(newSelection = range(helix.startIndex, 1+helix.stopIndex))
     def choosePossibleAtom(self, choiceNum):
         if choiceNum == 0:
             return
@@ -264,7 +266,8 @@ class StructureEditor(QtGui.QWidget):
         self.helixNtermResNameLabel.setText(self.currentChainModel[startIx].symbol3)
         self.helixCtermSpinBox.setValue(stopIx)
         self.helixCtermResNameLabel.setText(self.currentChainModel[startIx].symbol3)
-        
+    def helixFlipButtonPress(self):
+        pass
     def helixIncreaseButtonPress(self):
         startIx = self.helixNtermSpinBox.value()
         stopIx = self.helixCtermSpinBox.value()
