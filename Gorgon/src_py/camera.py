@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.44  2008/11/25 20:43:10  colemanr
+#   Removed self.centerOnSelectedAtom; functionality moved to CAlphaViewer.
+#
 #   Revision 1.43  2008/11/20 20:09:14  colemanr
 #   modified self.centerOnSelectedAtom() to use the new renderer origin
 #
@@ -114,7 +117,7 @@ class Camera(QtOpenGL.QGLWidget):
         self.mouseDownPoint = QtCore.QPoint(0,0)     
         self.mouseLeftPressed = False
         self.mouseMidPressed = False   
-        self.mouseRightPressed = False
+        self.mouseRightPressed = False        
         
         self.fogDensity = 0.01
         self.fogEnabled = False
@@ -363,6 +366,7 @@ class Camera(QtOpenGL.QGLWidget):
                 focusPoint = self.scene[sceneId].getClickCoordinates(minNames)
                 self.setCenter(focusPoint[0], focusPoint[1], focusPoint[2])
                 self.updateGL()
+                self.scene[sceneId].emitElementClicked(minNames, event)
             
        
     def processMouseMove(self, mouseHits, event):     

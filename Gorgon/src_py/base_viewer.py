@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.48  2008/11/20 21:52:10  ssa1
+#   Fixing manual placement form coordinate space bug
+#
 #   Revision 1.47  2008/11/20 19:33:48  ssa1
 #   Faster drawing of outline boxes
 #
@@ -435,7 +438,8 @@ class BaseViewer(QtOpenGL.QGLWidget):
                 self.renderer.selectionToggle(int(hitStack[0]), forceTrue, hits[0], hits[1], hits[2], hits[3], hits[4])
             else:
                 raise Exception("Unable to call renderer.select method due as there are too many levels in the hit stack")
-            self.emitModelChanged()            
+            self.emitModelChanged() 
+            self.emitElementClicked(hitStack, event)           
             self.emitElementSelected(hitStack, event)
 
     def processMouseClickRay(self, ray, rayWidth, eye, event):
@@ -462,6 +466,14 @@ class BaseViewer(QtOpenGL.QGLWidget):
 
     def emitMouseOverRay(self, ray, rayWidth, eye, event):
         self.emit(QtCore.SIGNAL("mouseOverRay(PyQt_PyObject, float, PyQt_PyObject, QMouseEvent)"), ray, rayWidth, eye, event);
+
+    def emitElementClicked(self, hitStack, event):
+        hits = [-1,-1,-1,-1,-1,-1]
+        for i in range(6):
+                if(len(hitStack) > i):
+                    hits[i] = hitStack[i]
+        self.emit(QtCore.SIGNAL("elementClicked (int, int, int, int, int, int, QMouseEvent)"), hits[0], hits[1], hits[2], hits[3], hits[4], hits[5], event)      
+
 
     def emitElementSelected(self, hitStack, event):
         hits = [-1,-1,-1,-1,-1,-1]

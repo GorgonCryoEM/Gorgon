@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.28  2008/11/25 17:36:12  ssa1
+#   Fixing needing 2 clicks to get RMB bug
+#
 #   Revision 1.27  2008/11/25 16:16:47  ssa1
 #   Fixing constraining missing helices bug
 #
@@ -128,9 +131,9 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
         self.connect(self.ui.pushButtonOk, QtCore.SIGNAL("pressed ()"), self.accept)
         self.connect(self.ui.comboBoxCorrespondences, QtCore.SIGNAL("currentIndexChanged (int)"), self.selectCorrespondence)
         self.connect(self.app.viewers["skeleton"], QtCore.SIGNAL("modelDrawing()"), self.drawOverlay)
-        #self.connect(self.ui.tableWidgetCorrespondenceList, QtCore.SIGNAL("cellClicked (int,int)"), self.cellClicked )
         self.ui.tableWidgetCorrespondenceList.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         self.connect(self.ui.tableWidgetCorrespondenceList, QtCore.SIGNAL("customContextMenuRequested (const QPoint&)"), self.customMenuRequested)
+        self.connect(self.viewer, QtCore.SIGNAL("elementClicked (int, int, int, int, int, int, QMouseEvent)"), self.sseClicked)
             
     def loadDefaults(self):
         self.ui.lineEditHelixLengthFile.setText("")
@@ -155,7 +158,6 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
         self.ui.spinBoxBorderMarginThreshold.setValue(5)               
                 
         self.checkOk()
-
         
     def openFile(self, title, fileformats):
         fileName = QtGui.QFileDialog.getOpenFileName(self, self.tr(title), "", self.tr(fileformats))
@@ -303,8 +305,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
         for i in range(len(library.correspondenceList)):
             corr = library.correspondenceList[i]                                
             self.ui.comboBoxCorrespondences.addItem("Correspondence " + str(i+1) + " - [Cost: " + str(corr.score) + "]")        
-            
-                
+                            
     def accept(self):
         self.setCursor(QtCore.Qt.BusyCursor)
         self.setConstants()          
@@ -359,13 +360,11 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
         self.setCursor(QtCore.Qt.ArrowCursor)
         self.executed = True 
         self.viewer.emitModelChanged()
-        
-        
+                
     def reject(self):  
         self.executed = False
         self.app.actions.getAction("perform_SSEFindHelixCorrespondences").trigger()
-        
-    
+            
     def getIndexedColor(self, index, size):
         a = 1.0
         i = float(index)
@@ -492,7 +491,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
                 match = False
             
             for i in range(len(observedHelices)):                
-                constrainAction = QtGui.QAction(self.tr("Helix " + str(i+1) + " (Length: " + str(round(observedHelices[i].getLength(), 2)) + "A)"), self)
+                constrainAction = QtGui.QAction(self.tr("Observed helix " + str(i+1) + " (Length: " + str(round(observedHelices[i].getLength(), 2)) + "A)"), self)
                 constrainAction.setCheckable(True)
                 if(match and match.observed):
                     constrainAction.setChecked(match.observed.label == i)
@@ -517,22 +516,76 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
                 menu.addAction(act)
             menu.exec_(self.ui.tableWidgetCorrespondenceList.mapToGlobal(point), self.ui.tableWidgetCorrespondenceList.actions()[0])
                     
-            
     def constrainObservedHelix(self, i):
         def constrainObservedHelix_i():
-                correspondenceIndex = self.ui.comboBoxCorrespondences.currentIndex()
-                if(correspondenceIndex >= 0):
-                    corr = self.viewer.correspondenceLibrary.correspondenceList[correspondenceIndex]
-                    for j in range(len(corr.matchList)):
-                        match = corr.matchList[j]
-                        if(match and match.observed and (match.observed.label == i)) :
-                            match.observed = None
-                    
-                    match = corr.matchList[self.selectedRow]
-                    match.constrained = True
-                    if(i == -1):
+            correspondenceIndex = self.ui.comboBoxCorrespondences.currentIndex()
+            if(correspondenceIndex >= 0):
+                corr = self.viewer.correspondenceLibrary.correspondenceList[correspondenceIndex]
+                for j in range(len(corr.matchList)):
+                    match = corr.matchList[j]
+                    if(match and match.observed and (match.observed.label == i)) :
                         match.observed = None
-                    else:
-                        match.observed = self.viewer.correspondenceLibrary.structureObservation.helixDict[i]
-                self.selectCorrespondence(correspondenceIndex)
+                
+                match = corr.matchList[self.selectedRow]
+                match.constrained = True
+                if(i == -1):
+                    match.observed = None
+                else:
+                    match.observed = self.viewer.correspondenceLibrary.structureObservation.helixDict[i]
+            self.selectCorrespondence(correspondenceIndex)
         return constrainObservedHelix_i
+
+    def constrainPredictedHelix(self, predicted, observed):
+        def constrainPredictedHelix_po():
+            correspondenceIndex = self.ui.comboBoxCorrespondences.currentIndex()
+            if(correspondenceIndex >= 0):
+                corr = self.viewer.correspondenceLibrary.correspondenceList[correspondenceIndex]
+                for j in range(len(corr.matchList)):
+                    match = corr.matchList[j]
+                    if(match and match.observed and (match.observed.label == observed)) :
+                        match.observed = None
+                
+                match = corr.matchList[predicted]
+                match.constrained = True
+                match.observed = self.viewer.correspondenceLibrary.structureObservation.helixDict[observed]
+            self.selectCorrespondence(correspondenceIndex)                
+        return constrainPredictedHelix_po
+    
+    def sseClicked(self, hit0, hit1, hit2, hit3, hit4, hit5, event):
+        if(self.isVisible() and (hit0 == 0) and (hit1 >= 0)):
+            observedHelix = hit1
+            constrained = {}
+            match = None            
+            correspondenceIndex = self.ui.comboBoxCorrespondences.currentIndex()            
+            if(correspondenceIndex >= 0):
+                corr = self.viewer.correspondenceLibrary.correspondenceList[correspondenceIndex]  
+                for i in range(len(corr.matchList)):
+                    m = corr.matchList[i]
+                    if(m.constrained) :
+                        constrained[m.predicted.serialNo] = True
+                    if(m.observed):
+                        if(m.observed.label == observedHelix):
+                            match = m
+            
+            if(match):
+                self.ui.tableWidgetCorrespondenceList.setRangeSelected(QtGui.QTableWidgetSelectionRange(0, 0, self.ui.tableWidgetCorrespondenceList.rowCount()-1, 2), False)                    
+                self.ui.tableWidgetCorrespondenceList.setRangeSelected(QtGui.QTableWidgetSelectionRange(match.predicted.serialNo, 0, match.predicted.serialNo, 2),True)
+                    
+            if(self.app.mainCamera.mouseRightPressed):                
+                predictedSecels = self.viewer.correspondenceLibrary.structurePrediction.secelDict                            
+                            
+                menu = QtGui.QMenu(self.tr("Constrain observed helix " + str(hit1+1)))
+                
+                for i in range(len(predictedSecels)):
+                    constrainAction = QtGui.QAction(self.tr("Predicted helix " + str(predictedSecels[i].serialNo + 1)), self)
+                    constrainAction.setCheckable(True)
+                    if(match and match.observed):
+                        constrainAction.setChecked(match.predicted.serialNo == i)
+                    else:
+                        constrainAction.setChecked(False)
+                    constrainAction.setEnabled(not constrained.has_key(predictedSecels[i].serialNo))
+                    self.connect(constrainAction, QtCore.SIGNAL("triggered()"), self.constrainPredictedHelix(predictedSecels[i].serialNo, observedHelix))       
+                    menu.addAction(constrainAction)           
+                
+                menu.exec_(self.app.mainCamera.mapToGlobal(self.app.mainCamera.mouseDownPoint))
+                self.app.mainCamera.updateGL()

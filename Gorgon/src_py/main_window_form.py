@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.7  2008/11/06 05:29:04  ssa1
+#   CGI submission milestone for Interactive Skeletonization, and theme support, and fixing (hopefully) mac-os flicker bug
+#
 #   Revision 1.6  2008/10/15 19:41:32  ssa1
 #   Esc to cancel path, Clear Button and Tracking of start seed point
 #
@@ -34,6 +37,7 @@ class MainWindowForm(QtGui.QMainWindow):
         self.createActions()
         self.createMenus()
         self.themes = ThemeManager(self)
+        self.setContextMenuPolicy(QtCore.Qt.NoContextMenu)
                 
         self.statusBar().showMessage(self.tr("Gorgon: Protein Visualization Suite"))
         self.setWindowTitle(self.tr("Gorgon - v0.1 beta"))
