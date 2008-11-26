@@ -42,6 +42,7 @@ class StructureEditor(QtGui.QWidget):
         self.connect(self.helixCreateCAHelixButton, QtCore.SIGNAL('clicked()'), self.createCAhelix)
         self.connect(self.helixDecreasePositionButton, QtCore.SIGNAL('clicked()'), self.helixDecreaseButtonPress)
         self.connect(self.helixIncreasePositionButton, QtCore.SIGNAL('clicked()'), self.helixIncreaseButtonPress)
+        self.connect(self.helixFlipButton, QtCore.SIGNAL('clicked()'), self.helixFlipButtonPress)
         if self.parentWidget().parentWidget().app:
             self.app = self.parentWidget().parentWidget().app
             self.connect(self.app.viewers['sse'], QtCore.SIGNAL('elementSelected (int, int, int, int, int, int, QMouseEvent)'), self.updateCurrentMatch)
@@ -112,25 +113,21 @@ class StructureEditor(QtGui.QWidget):
             coord1 = snum.vectorAdd(structPredCoord1, endMoveVector)
             coord2 = snum.vectorAdd(structPredCoord2, startMoveVector)
             helix.setAxisPoints(coord1, coord2)
-        '''
-        start = observedHelix.beginningCoord
-        stop = observedHelix.endCoord
-        helixCoordList = helixEndpointsToCAlphaPositions(start,stop) #TODO: use coord1, coord2 instead
-        print "start:",  start
-        print "stop:", stop
-        '''
+        
         helixCoordList = helixEndpointsToCAlphaPositions(coord1, coord2)
         print helixCoordList                
         
+        '''
+        #To see the ends of the helical axis as green and red atoms
         startAtom = PDBAtom('AAAA', 'A', 100000, 'CA')
         startAtom.setPosition(Vector3DFloat(*coord1))
         startAtom.setColor(0, 1, 0, 1)
         startAtom = cAlphaViewer.renderer.addAtom(startAtom)
         stopAtom = startAtom = PDBAtom('AAAA', 'A', 100001, 'CA')
         stopAtom.setPosition(Vector3DFloat(*coord2))
-        stopAtom.setColor(1, 0, 0, 1)
-        
+        stopAtom.setColor(1, 0, 0, 1)        
         stopAtom = cAlphaViewer.renderer.addAtom(stopAtom)
+        '''
         
         for i in range(len(helixCoordList)):
             pos = helixCoordList[i]
@@ -138,20 +135,22 @@ class StructureEditor(QtGui.QWidget):
             rawAtom = residue.addAtom('CA', pos[0], pos[1], pos[2], 'C')
             atom = cAlphaViewer.renderer.addAtom(rawAtom)
             residue.addAtomObject(atom)
+            atom.setSelected(True)
             if i != 0:
                 prevAtom = self.currentChainModel[startIndex+i-1].getAtom('CA')
                 bond = PDBBond()
                 bond.setAtom0Ix(prevAtom.getHashKey())
                 bond.setAtom1Ix(atom.getHashKey())
                 cAlphaViewer.renderer.addBond(bond)
-                
+        
+        self.currentChainModel.setSelection(newSelection = range(helix.startIndex, 1+helix.stopIndex))
         print helix
         if not cAlphaViewer.loaded:
             cAlphaViewer.loaded = True
             cAlphaViewer.emitModelLoaded()
         else:
             cAlphaViewer.emitModelChanged()
-        self.currentChainModel.setSelection(newSelection = range(helix.startIndex, 1+helix.stopIndex))
+        
     def choosePossibleAtom(self, choiceNum):
         if choiceNum == 0:
             return
@@ -266,8 +265,28 @@ class StructureEditor(QtGui.QWidget):
         self.helixNtermResNameLabel.setText(self.currentChainModel[startIx].symbol3)
         self.helixCtermSpinBox.setValue(stopIx)
         self.helixCtermResNameLabel.setText(self.currentChainModel[startIx].symbol3)
+    
+    def helixFindSelectedCAHelices(self):
+        selectedResidues = self.currentChainModel.getSelection()
+        helices = []
+        for resNum in selectedResidues:
+            secel = self.currentChainModel.getSecelByIndex(resNum)
+            if secel.type == 'helix':
+                if not secel in helices:
+                    helices.append(secel)
+        return helices
+    
     def helixFlipButtonPress(self):
-        pass
+        helices = self.helixFindSelectedCAHelices()
+        if len(helices) == 0:
+            return
+        elif len(helices) == 1:
+            helix = helices[0]
+            helix.flipHelix()
+        else:
+            print 'more than one helix selected!'
+            raise ValueError, len(helices)
+            
     def helixIncreaseButtonPress(self):
         startIx = self.helixNtermSpinBox.value()
         stopIx = self.helixCtermSpinBox.value()
