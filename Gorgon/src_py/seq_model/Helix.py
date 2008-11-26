@@ -58,7 +58,7 @@ class Helix(Secel):
         assert len(atomList) == 1+self.stopIndex-self.startIndex
         for CAatom in atomList[::-1]:
             if CAatom:
-                self.chain[startIndex+i].addAtomObject(CAatom)
+                self.chain[self.startIndex+i].addAtomObject(CAatom)
             i += 1
         
     def getAngstromLength(self):
