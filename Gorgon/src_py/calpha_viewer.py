@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.24  2008/11/25 22:35:39  ssa1
+#   Removing focus on atoms on right click
+#
 #   Revision 1.23  2008/11/25 22:00:17  colemanr
 #   extended the inherited processMouseClick to change the selected residues in self.main_chain
 #
@@ -123,7 +126,8 @@ class CAlphaViewer(BaseViewer):
         self.visualizationOptions.ui.pushButtonModel2Color.setVisible(True) 
         
         self.connect(self, QtCore.SIGNAL("elementSelected (int, int, int, int, int, int, QMouseEvent)"), self.centerOnSelectedAtoms)
-        
+        self.connect(self, QtCore.SIGNAL("elementClicked (int, int, int, int, int, int, QMouseEvent)"), self.processElementClick)
+      
 
     def centerOnSelectedAtoms(self, *argv):
                 
@@ -147,6 +151,8 @@ class CAlphaViewer(BaseViewer):
             pos =  pos * (1.0/len(posList))
             
         elif argv:
+            if argv[0]: #argv[0] is 0 for a click on an atom
+                return
             try:
                 atom = CAlphaRenderer.getAtomFromHitStack(self.renderer, argv[0], True, *argv[1:-1])
             except:
@@ -267,7 +273,7 @@ class CAlphaViewer(BaseViewer):
         self.app.menus.addAction("file-close-calpha", self.app.actions.getAction("unload_CAlpha"), "file-close")
         self.app.menus.addMenu("actions-calpha", self.tr("C-&Alpha Atoms"), "actions")
         self.app.menus.addAction("showSeqDock", self.app.actions.getAction("seqDock"), "actions-calpha")           
-    
+    '''
     def processMouseClick(self, hitStack, event, forceTrue):
         super(CAlphaViewer, self).processMouseClick(hitStack, event, forceTrue)
         hits = [-1,-1,-1,-1,-1]
@@ -292,8 +298,27 @@ class CAlphaViewer(BaseViewer):
                         print self.main_chain.getSelection()
             else:
                 raise Exception("Unable to call renderer.select method due as there are too many levels in the hit stack")
-            
-        
+    '''
+    def processElementClick(self, *argv):
+        if argv[0]: #argv[0] is 0 for a click on an atom
+            return
+        hits = argv[:-1]
+        event = argv[-1]
+        if event.button() == QtCore.Qt.LeftButton:
+            if event.modifiers() & QtCore.Qt.CTRL: #Multiple selection mode
+                atom = CAlphaRenderer.getAtomFromHitStack(self.renderer, hits[0], False, *hits[1:])
+                if atom.getResSeq() in self.main_chain.getSelection():
+                    print 'CAlphaViewer: removing a residue from the selection'
+                    self.main_chain.setSelection(removeOne=atom.getResSeq())
+                else:
+                    print 'CAlphaViewer: adding a residue to the selection'
+                    self.main_chain.setSelection(addOne=atom.getResSeq())
+                print self.main_chain.getSelection()
+            else:
+                atom = CAlphaRenderer.getAtomFromHitStack(self.renderer, hits[0], True, *hits[1:])
+                print 'CAlphaViewer: changing the selection to a residue'
+                self.main_chain.setSelection([atom.getResSeq()])
+                print self.main_chain.getSelection()
             
     def saveData(self):
         self.fileName = QtGui.QFileDialog.getSaveFileName(self, self.tr("Save Data"), "", 
