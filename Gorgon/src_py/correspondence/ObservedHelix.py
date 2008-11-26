@@ -10,11 +10,10 @@ import math
 
 class ObservedHelix:
     def __init__(self, label, beginningCoord, endCoord ):
-
+        
         self.beginningCoord = beginningCoord
         self.endCoord = endCoord
-    
-        self.label = label
+        self.label = label #Note: currently an integer, not a string
 
     def __parseHelix(self, inputString):
         return ObservedHelix('a', (1.0, 2.0, 3.0),(4.0, 5.0,6.0) )
