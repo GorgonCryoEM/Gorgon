@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.49  2008/11/25 21:03:40  ssa1
+#   User constraints on finding correspondences (v3)
+#
 #   Revision 1.48  2008/11/20 21:52:10  ssa1
 #   Fixing manual placement form coordinate space bug
 #
@@ -310,7 +313,7 @@ class BaseViewer(QtOpenGL.QGLWidget):
         scale = [self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ()]
         glScaled(scale[0], scale[1], scale[2])   
                 
-        glPushAttrib(GL_DEPTH_BUFFER_BIT | GL_LIGHTING_BIT | GL_ENABLE_BIT)
+        glPushAttrib(GL_DEPTH_BUFFER_BIT | GL_LIGHTING_BIT | GL_ENABLE_BIT | GL_COLOR_BUFFER_BIT)
         glEnable(GL_DEPTH_TEST);        
         glDepthMask(GL_TRUE);
         
@@ -321,7 +324,12 @@ class BaseViewer(QtOpenGL.QGLWidget):
         self.emitDrawingModel()                
         
         if (self.gllist != 0):          
-            self.initializeGLDisplayType()
+            self.initializeGLDisplayType()            
+            glDepthFunc(GL_LESS)        
+            glColorMask(False, False, False, False)
+            glCallList(self.gllist)
+            glDepthFunc(GL_LEQUAL)
+            glColorMask(True, True, True, True)                     
             glCallList(self.gllist)
             self.unInitializeGLDisplayType();
 
@@ -373,7 +381,7 @@ class BaseViewer(QtOpenGL.QGLWidget):
         visibility = [self.modelVisible, self.model2Visible]
         colors = [self.getModelColor(),  self.getModel2Color()]
         
-        glPushAttrib(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT)
+        #glPushAttrib(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT)
                          
         self.extraDrawingRoutines()
         
@@ -381,18 +389,18 @@ class BaseViewer(QtOpenGL.QGLWidget):
             if(self.loaded and visibility[i]):
                 self.setMaterials(colors[i])
                 if(colors[i].alpha() < 255):
-                    glDepthFunc(GL_LESS)        
-                    glColorMask(False, False, False, False)
-                    self.renderer.draw(i, False)
-                    glDepthFunc(GL_LEQUAL)
-                    glColorMask(True, True, True, True) 
+                    #glDepthFunc(GL_LESS)        
+                    #glColorMask(False, False, False, False)
+                    #self.renderer.draw(i, False)
+                    #glDepthFunc(GL_LEQUAL)
+                    #glColorMask(True, True, True, True) 
                     self.renderer.draw(i, self.selectEnabled or self.mouseMoveEnabled)
                 else:
                     self.renderer.draw(i, self.selectEnabled or self.mouseMoveEnabled)                    
                             
         
 
-        glPopAttrib()
+        #glPopAttrib()
 
         glEndList() 
         
