@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.48  2008/11/28 05:11:56  ssa1
+#   Not running glutInit on MacOS
+#
 #   Revision 1.47  2008/11/28 04:36:17  ssa1
 #   Removing error message if pyopengl does not exist.  (To make executable building easier to debug)
 #
@@ -254,7 +257,7 @@ class Camera(QtOpenGL.QGLWidget):
         self.initializeScene()
 
     def initializeScene(self):
-        if(os.uname()[0] != 'Darwin'):
+        if((sys.platform != 'darwin') and (sys.platform != 'win32')):
             glutInit(sys.argv)      #This must be here to get it to work with Freeglut.
             #otherwise you get: "freeglut  ERROR:  Function <glutWireCube> called without first calling 'glutInit'."
        
