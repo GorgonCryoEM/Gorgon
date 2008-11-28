@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.46  2008/11/25 21:17:57  ssa1
+#   Moving focus functionality into only C-Alpha atoms
+#
 #   Revision 1.45  2008/11/25 21:03:40  ssa1
 #   User constraints on finding correspondences (v3)
 #
@@ -89,14 +92,10 @@ from cmath import *
 from libpyGORGON import CAlphaRenderer
 from seq_model.Chain import Chain
 
-try:
-    from OpenGL.GL import *
-    from OpenGL.GLU import *
-    from OpenGL.GLUT import *
-except ImportError:
-    app = QtGui.QApplication(sys.argv)
-    QtGui.QMessageBox.critical(None, "OpenGL grabber", "PyOpenGL must be installed to run Gorgon.", QtGui.QMessageBox.Ok | QtGui.QMessageBox.Default, QtGui.QMessageBox.NoButton)
-    sys.exit(1)
+from OpenGL.GL import *
+from OpenGL.GLU import *
+from OpenGL.GLUT import *
+
     
 class Camera(QtOpenGL.QGLWidget):
     def __init__(self, scene, main, parent=None):

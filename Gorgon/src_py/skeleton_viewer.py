@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.16  2008/11/13 20:54:40  ssa1
+#   Using the correct scale when loading volumes
+#
 #   Revision 1.15  2008/11/06 05:29:04  ssa1
 #   CGI submission milestone for Interactive Skeletonization, and theme support, and fixing (hopefully) mac-os flicker bug
 #
@@ -24,14 +27,11 @@ from base_viewer import BaseViewer
 from model_visualization_form import ModelVisualizationForm
 from skeleton_laplacian_smoothing_form import SkeletonLaplacianSmoothingForm
 
-try:
-    from OpenGL.GL import *
-    from OpenGL.GLU import *
-    from OpenGL.GLUT import *
-except ImportError:
-    app = QtGui.QApplication(sys.argv)
-    QtGui.QMessageBox.critical(None, "Gorgon", "PyOpenGL must be installed to run Gorgon.", QtGui.QMessageBox.Ok | QtGui.QMessageBox.Default, QtGui.QMessageBox.NoButton)
-    sys.exit(1)
+
+from OpenGL.GL import *
+from OpenGL.GLU import *
+from OpenGL.GLUT import *
+
 
 class SkeletonViewer(BaseViewer):
     def __init__(self, main, parent=None):

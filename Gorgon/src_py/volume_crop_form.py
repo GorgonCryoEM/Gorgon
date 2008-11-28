@@ -11,17 +11,16 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.1  2008/11/19 17:53:43  ssa1
+#   Removing printfs, and adding cropping
+#
 
 from PyQt4 import QtCore, QtGui
 from ui_dialog_volume_crop import Ui_DialogVolumeCrop
-try:
-    from OpenGL.GL import *
-    from OpenGL.GLU import *
-    from OpenGL.GLUT import *
-except ImportError:
-    app = QtGui.QApplication(sys.argv)
-    QtGui.QMessageBox.critical(None, "OpenGL grabber", "PyOpenGL must be installed to run Gorgon.", QtGui.QMessageBox.Ok | QtGui.QMessageBox.Default, QtGui.QMessageBox.NoButton)
-    sys.exit(1)
+from OpenGL.GL import *
+from OpenGL.GLU import *
+from OpenGL.GLUT import *
+
     
 class VolumeCropForm(QtGui.QWidget, Ui_DialogVolumeCrop):
     

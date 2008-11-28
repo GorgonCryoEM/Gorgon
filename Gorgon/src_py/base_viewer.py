@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.50  2008/11/27 04:39:43  ssa1
+#   increasing drawing performance
+#
 #   Revision 1.49  2008/11/25 21:03:40  ssa1
 #   User constraints on finding correspondences (v3)
 #
@@ -84,14 +87,10 @@ from PyQt4 import QtGui, QtCore, QtOpenGL
 from libpyGORGON import VolumeRenderer, Vector3DFloat
 from vector_lib import *
 
-try:
-    from OpenGL.GL import *
-    from OpenGL.GLU import *
-    from OpenGL.GLUT import *
-except ImportError:
-    app = QtGui.QApplication(sys.argv)
-    QtGui.QMessageBox.critical(None, "Gorgon", "PyOpenGL must be installed to run Gorgon.", QtGui.QMessageBox.Ok | QtGui.QMessageBox.Default, QtGui.QMessageBox.NoButton)
-    sys.exit(1)
+from OpenGL.GL import *
+from OpenGL.GLU import *
+from OpenGL.GLUT import *
+
 
 class BaseViewer(QtOpenGL.QGLWidget):
     DisplayStyleWireframe, DisplayStyleFlat, DisplayStyleSmooth = range(3)
