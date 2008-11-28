@@ -12,5 +12,5 @@ del msvcp80.dll
 del glut32.dll
 copy  C:\Programs\Python25\Lib\site-packages\setuptools-0.6c9-py2.5.egg dist\ > NUL
 md dist\pyopengl-3.0.0b4-py2.5.egg > NUL
-xcopy C:\Programs\Python25\Lib\site-packages\pyopengl-3.0.0b4-py2.5.egg\* dist\pyopengl-3.0.0b4-py2.5.egg\ /E /D > NUL
+xcopy C:\Programs\Python25\Lib\site-packages\pyopengl-3.0.0b4-py2.5.egg\* dist\pyopengl-3.0.0b4-py2.5.egg\ /E /Y /Q > NUL
 
