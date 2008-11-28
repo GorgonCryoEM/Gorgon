@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.47  2008/11/28 04:36:17  ssa1
+#   Removing error message if pyopengl does not exist.  (To make executable building easier to debug)
+#
 #   Revision 1.46  2008/11/25 21:17:57  ssa1
 #   Moving focus functionality into only C-Alpha atoms
 #
@@ -83,7 +86,7 @@
 #   Adding in CVS meta data
 #
 
-import sys
+import sys, os
 from PyQt4 import QtOpenGL, QtCore, QtGui
 from vector_lib import *
 from scene_editor_form import SceneEditorForm
@@ -251,8 +254,9 @@ class Camera(QtOpenGL.QGLWidget):
         self.initializeScene()
 
     def initializeScene(self):
-        glutInit(sys.argv)      #This must be here to get it to work with Freeglut.
-        #otherwise you get: "freeglut  ERROR:  Function <glutWireCube> called without first calling 'glutInit'."
+        if(os.uname()[0] != 'Darwin'):
+            glutInit(sys.argv)      #This must be here to get it to work with Freeglut.
+            #otherwise you get: "freeglut  ERROR:  Function <glutWireCube> called without first calling 'glutInit'."
        
         backgroundColor = self.app.themes.getColor("Camera:Background")        
         glClearColor(backgroundColor.redF(), backgroundColor.greenF(), backgroundColor.blueF(), backgroundColor.alphaF())
