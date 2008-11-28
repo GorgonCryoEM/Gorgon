@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.24  2008/11/06 05:29:04  ssa1
+#   CGI submission milestone for Interactive Skeletonization, and theme support, and fixing (hopefully) mac-os flicker bug
+#
 #   Revision 1.23  2008/10/29 19:26:26  ssa1
 #   Reducing memory footprint, Increasing performance and adding volume normalization
 #
@@ -61,14 +64,9 @@ from PyQt4 import QtCore, QtGui
 from ui_dialog_volume_manual_skeletonization import Ui_DialogVolumeManualSkeletonization
 from libpyGORGON import InteractiveSkeletonEngine
 
-try:
-    from OpenGL.GL import *
-    from OpenGL.GLU import *
-    from OpenGL.GLUT import *
-except ImportError:
-    app = QtGui.QApplication(sys.argv)
-    QtGui.QMessageBox.critical(None, "Gorgon", "PyOpenGL must be installed to run Gorgon.", QtGui.QMessageBox.Ok | QtGui.QMessageBox.Default, QtGui.QMessageBox.NoButton)
-    sys.exit(1)
+from OpenGL.GL import *
+from OpenGL.GLU import *
+from OpenGL.GLUT import *
 
 class VolumeManualSkeletonizationForm(QtGui.QWidget):
     MedialnessScoringFunctionBinary, MedialnessScoringFunctionGlobalRank, MedialnessScoringFunctionLocalRank = range(3)

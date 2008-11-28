@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.15  2008/11/20 20:56:30  ssa1
+#   Properly scaling the suggested backbone
+#
 #   Revision 1.14  2008/11/13 20:54:40  ssa1
 #   Using the correct scale when loading volumes
 #
@@ -31,14 +34,10 @@ from sse_helix_correspondence_finder_form import SSEHelixCorrespondenceFinderFor
 from model_visualization_form import ModelVisualizationForm
 from libpyGORGON import SSECorrespondenceEngine, SSECorrespondenceResult
 
-try:
-    from OpenGL.GL import *
-    from OpenGL.GLU import *
-    from OpenGL.GLUT import *
-except ImportError:
-    app = QtGui.QApplication(sys.argv)
-    QtGui.QMessageBox.critical(None, "Gorgon", "PyOpenGL must be installed to run Gorgon.", QtGui.QMessageBox.Ok | QtGui.QMessageBox.Default, QtGui.QMessageBox.NoButton)
-    sys.exit(1)
+from OpenGL.GL import *
+from OpenGL.GLU import *
+from OpenGL.GLUT import *
+
 
 class SSEViewer(BaseViewer):
     def __init__(self, main, parent=None):

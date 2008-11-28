@@ -11,6 +11,11 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.25  2008/11/26 01:10:39  colemanr
+#   no longer overwriting processMouseClick
+#   instead, using elementClick signal in processElementClick()
+#   also, centering on atoms only if the first item of the hitstack is 0 (meaning it's an atom)
+#
 #   Revision 1.24  2008/11/25 22:35:39  ssa1
 #   Removing focus on atoms on right click
 #
@@ -95,14 +100,9 @@ from seq_model.Chain import Chain
 from model_visualization_form import ModelVisualizationForm
 from correspondence.StructurePrediction import StructurePrediction
 
-try:
-    from OpenGL.GL import *
-    from OpenGL.GLU import *
-    from OpenGL.GLUT import *
-except ImportError:
-    app = QtGui.QApplication(sys.argv)
-    QtGui.QMessageBox.critical(None, "Gorgon", "PyOpenGL must be installed to run Gorgon.", QtGui.QMessageBox.Ok | QtGui.QMessageBox.Default, QtGui.QMessageBox.NoButton)
-    sys.exit(1)
+from OpenGL.GL import *
+from OpenGL.GLU import *
+from OpenGL.GLUT import *
 
 class CAlphaViewer(BaseViewer):
     def __init__(self, main, parent=None):
