@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.10  2008/11/28 17:56:09  ssa1
+#   Splash screen for public beta 1 release
+#
 #   Revision 1.9  2008/11/28 04:36:17  ssa1
 #   Removing error message if pyopengl does not exist.  (To make executable building easier to debug)
 #
@@ -37,15 +40,11 @@ import time
 
 if __name__ == '__main__':
     app = QtGui.QApplication(sys.argv)
-    pixmap = QtGui.QPixmap(":splash.png")
+    pixmap = QtGui.QPixmap(pathname + "/splash.png")
     splash = QtGui.QSplashScreen(pixmap, QtCore.Qt.WindowStaysOnTopHint)
-    #splash.setMask(pixmap.mask())
+    splash.setMask(pixmap.mask())
     splash.show()
     app.processEvents()
-    splash.raise_()
-    app.processEvents()
-    time.sleep(10)
-    #splash.showMessage(_(u'Starting...'), QtCore.Qt.AlignRight | QtCore.Qt.AlignBottom, QtCore.Qt.yellow)    
     
     window = MainWindowForm()
     window.addModule(WindowManager(window))

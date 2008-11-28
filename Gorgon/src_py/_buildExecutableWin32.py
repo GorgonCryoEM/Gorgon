@@ -5,7 +5,7 @@ setup(
       name = "Gorgon",
       version = "1.0.0",
       description = "Gorgon: A toolkit for protein structure reconstruction",
-      console=['gorgon.pyw'],
+      windows=['gorgon.pyw'],
       options={
                "py2exe":{
                          "includes" : ["sip", "PyQt4._qt", "ctypes", "distutils.util", "logging", "ctypes.util", "weakref"],
