@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.9  2008/11/28 04:36:17  ssa1
+#   Removing error message if pyopengl does not exist.  (To make executable building easier to debug)
+#
 #   Revision 1.8  2008/06/18 18:15:41  ssa1
 #   Adding in CVS meta data
 #
@@ -26,15 +29,27 @@ sys.path.append(pathname + "\\pyopengl-3.0.0b4-py2.5.egg")
 
 
 from window_manager import WindowManager
-from PyQt4 import QtGui
+from PyQt4 import QtGui, QtCore
 from main_window_form import MainWindowForm
 from about_form import AboutForm
+import time
 
 
 if __name__ == '__main__':
     app = QtGui.QApplication(sys.argv)
+    pixmap = QtGui.QPixmap(":splash.png")
+    splash = QtGui.QSplashScreen(pixmap, QtCore.Qt.WindowStaysOnTopHint)
+    #splash.setMask(pixmap.mask())
+    splash.show()
+    app.processEvents()
+    splash.raise_()
+    app.processEvents()
+    time.sleep(10)
+    #splash.showMessage(_(u'Starting...'), QtCore.Qt.AlignRight | QtCore.Qt.AlignBottom, QtCore.Qt.yellow)    
+    
     window = MainWindowForm()
     window.addModule(WindowManager(window))
     window.showMaximized()
+    splash.finish(window)
     sys.exit(app.exec_())
     
