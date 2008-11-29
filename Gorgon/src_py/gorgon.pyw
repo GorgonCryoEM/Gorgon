@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.11  2008/11/28 19:47:18  ssa1
+#   Splash screen for public beta 1 release
+#
 #   Revision 1.10  2008/11/28 17:56:09  ssa1
 #   Splash screen for public beta 1 release
 #
@@ -39,7 +42,7 @@ import time
 
 
 if __name__ == '__main__':
-    app = QtGui.QApplication(sys.argv)
+    app = QtGui.QApplication(sys.argv)    
     pixmap = QtGui.QPixmap(pathname + "/splash.png")
     splash = QtGui.QSplashScreen(pixmap, QtCore.Qt.WindowStaysOnTopHint)
     splash.setMask(pixmap.mask())

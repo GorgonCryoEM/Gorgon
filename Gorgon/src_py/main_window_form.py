@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.8  2008/11/25 21:03:40  ssa1
+#   User constraints on finding correspondences (v3)
+#
 #   Revision 1.7  2008/11/06 05:29:04  ssa1
 #   CGI submission milestone for Interactive Skeletonization, and theme support, and fixing (hopefully) mac-os flicker bug
 #
@@ -25,6 +28,7 @@ from PyQt4 import QtCore, QtGui
 from menu_manager import MenuManager
 from action_manager import ActionManager
 from theme_manager import ThemeManager
+import sys, os
 
 class MainWindowForm(QtGui.QMainWindow):
     def __init__(self, parent=None):
@@ -41,6 +45,8 @@ class MainWindowForm(QtGui.QMainWindow):
                 
         self.statusBar().showMessage(self.tr("Gorgon: Protein Visualization Suite"))
         self.setWindowTitle(self.tr("Gorgon - v0.1 beta"))
+        pathname = os.path.abspath(os.path.dirname(sys.argv[0]))
+        self.setWindowIcon(QtGui.QIcon(pathname + '/gorgon.ico'))
 
     def addModule(self, module):
         self.modules.append(module)

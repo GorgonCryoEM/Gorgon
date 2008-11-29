@@ -7,7 +7,6 @@ python _buildExecutableWin32.py py2exe
 
 copy msvcr80.dll dist\ > NUL
 copy msvcp80.dll dist\ > NUL
-copy splash.png dist\ > NUL
 del msvcr80.dll
 del msvcp80.dll
 del glut32.dll
