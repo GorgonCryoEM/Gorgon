@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.6  2008/06/18 17:59:02  ssa1
+#   Adding in CVS meta data
+#
 #   Revision 1.5  2008/06/18 17:56:32  ssa1
 #   Adding in CVS meta data
 #
@@ -18,6 +21,7 @@
 
 from PyQt4 import QtCore, QtGui
 from ui_dialog_about import Ui_DialogAbout
+import webbrowser
 
 class AboutForm(QtGui.QDialog):
     def __init__(self, main, parent=None):
@@ -31,8 +35,29 @@ class AboutForm(QtGui.QDialog):
     def createActions(self):               
         aboutAct = QtGui.QAction(self.tr("&About"), self)
         aboutAct.setStatusTip(self.tr("About Gorgon"))
-        self.connect(aboutAct, QtCore.SIGNAL("triggered()"), self.show)
+        self.connect(aboutAct, QtCore.SIGNAL("triggered()"), self.showAbout)
         self.app.actions.addAction("show_AboutForm", aboutAct)
+        
+        updatesAct = QtGui.QAction(self.tr("Get &Updates"), self)
+        updatesAct.setStatusTip(self.tr("Download Gorgon Updates"))
+        self.connect(updatesAct, QtCore.SIGNAL("triggered()"), self.getUpdates)
+        self.app.actions.addAction("show_GetUpdatesForm", updatesAct)        
+
+        guideAct = QtGui.QAction(self.tr("User &Guide"), self)
+        guideAct.setStatusTip(self.tr("User Guide"))
+        self.connect(guideAct, QtCore.SIGNAL("triggered()"), self.userGuide)
+        self.app.actions.addAction("show_UserGuideForm", guideAct)   
   
     def createMenus(self):
-        self.app.menus.addAction("help-about", self.app.actions.getAction("show_AboutForm"), "help")        
+        self.app.menus.addAction("help-about", self.app.actions.getAction("show_AboutForm"), "help")
+        self.app.menus.addAction("help-updates", self.app.actions.getAction("show_GetUpdatesForm"), "help")
+        self.app.menus.addAction("help-guide", self.app.actions.getAction("show_UserGuideForm"), "help")
+        
+    def showAbout(self):
+        webbrowser.open('http://cse.wustl.edu/~ssa1/gorgon/')  
+        
+    def getUpdates(self):          
+        webbrowser.open('http://cse.wustl.edu/~ssa1/gorgon/pages/download.php')      
+        
+    def userGuide(self):          
+        webbrowser.open('http://cse.wustl.edu/~ssa1/gorgon/pages/userGuide.php')      
