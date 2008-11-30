@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.9  2008/11/29 04:48:28  ssa1
+#   Icon support and Redirecting help to website.
+#
 #   Revision 1.8  2008/11/25 21:03:40  ssa1
 #   User constraints on finding correspondences (v3)
 #
@@ -44,7 +47,7 @@ class MainWindowForm(QtGui.QMainWindow):
         self.setContextMenuPolicy(QtCore.Qt.NoContextMenu)
                 
         self.statusBar().showMessage(self.tr("Gorgon: Protein Visualization Suite"))
-        self.setWindowTitle(self.tr("Gorgon - v0.1 beta"))
+        self.setWindowTitle(self.tr("Gorgon - v1.0.0 beta"))
         pathname = os.path.abspath(os.path.dirname(sys.argv[0]))
         self.setWindowIcon(QtGui.QIcon(pathname + '/gorgon.ico'))
 
