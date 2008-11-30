@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.12  2008/11/29 04:48:28  ssa1
+#   Icon support and Redirecting help to website.
+#
 #   Revision 1.11  2008/11/28 19:47:18  ssa1
 #   Splash screen for public beta 1 release
 #
@@ -27,10 +30,13 @@
 ###########################################################################################################
 # Following is a hack to overcome a PyOpenGL bug with P2EXE Should be removed when py2exe adds egg support
 import sys, os
-pathname = os.path.dirname(sys.argv[0])
-pathname = os.path.abspath(pathname)
-sys.path.append(pathname + "\\setuptools-0.6c9-py2.5.egg")
-sys.path.append(pathname + "\\pyopengl-3.0.0b4-py2.5.egg")
+pathname = os.path.abspath(os.path.dirname(sys.argv[0]))
+if(sys.platform == 'win32'):
+    sys.path.append(pathname + "\\setuptools-0.6c9-py2.5.egg")
+    sys.path.append(pathname + "\\pyopengl-3.0.0b4-py2.5.egg")
+elif(sys.platform == 'darwin'):
+    if os.environ.has_key('RESOURCEPATH') :
+        sys.path = [os.path.join(os.environ['RESOURCEPATH'], 'lib', 'python2.5', 'lib-dynload')] + sys.path
 ###########################################################################################################
 
 
