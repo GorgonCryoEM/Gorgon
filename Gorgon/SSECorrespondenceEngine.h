@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.6  2008/11/07 21:22:25  ssa1
+//   Fixing memory corruption errors when python garbage collects c++ objects
+//
 //   Revision 1.5  2008/09/29 16:01:17  ssa1
 //   Adding in CVS meta information
 //
@@ -182,7 +185,6 @@ namespace wustl_mm {
 				SSECorrespondenceResult result = GetResult(correspondenceIndex + 1);
 
 				glPushAttrib(GL_LIGHTING_BIT | GL_LINE_BIT | GL_ENABLE_BIT | GL_HINT_BIT);
-				glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 				glDisable(GL_LIGHTING);
 				glLineWidth(5);
 				glEnable(GL_LINE_SMOOTH);
