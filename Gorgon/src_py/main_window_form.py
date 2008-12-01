@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.10  2008/11/30 00:25:44  ssa1
+#   Splash screen for public beta 1 release
+#
 #   Revision 1.9  2008/11/29 04:48:28  ssa1
 #   Icon support and Redirecting help to website.
 #
@@ -45,6 +48,7 @@ class MainWindowForm(QtGui.QMainWindow):
         self.createMenus()
         self.themes = ThemeManager(self)
         self.setContextMenuPolicy(QtCore.Qt.NoContextMenu)
+        self.dockWidgets = []
                 
         self.statusBar().showMessage(self.tr("Gorgon: Protein Visualization Suite"))
         self.setWindowTitle(self.tr("Gorgon - v1.0.0 beta"))
@@ -76,6 +80,30 @@ class MainWindowForm(QtGui.QMainWindow):
         self.menus.addMenu("window", self.tr("&Window"))
         self.menus.addMenu("themes", self.tr("&Themes"))
         self.menus.addMenu("help", self.tr("&Help"))
+        
+    def addDockWidget (self, area, dockwidget):
+        QtGui.QMainWindow.addDockWidget(self, area, dockwidget)
+        dockwidget.area = area
+        otherwidget = None
+        for widget in self.dockWidgets:
+            if (widget.area == area) and (widget != dockwidget):
+                otherwidget = widget
+        if(otherwidget):
+            self.tabifyDockWidget(otherwidget, dockwidget)
+        self.dockWidgets.append(dockwidget)
+        self.connect(dockwidget, QtCore.SIGNAL("dockLocationChanged ( Qt::DockWidgetArea )"), self.dockLocationChanged(dockwidget))
+        
+    def removeDockWidget (self, dockwidget):
+        QtGui.QMainWindow.removeDockWidget(self, dockwidget)
+        if(dockwidget in self.dockWidgets):
+            self.dockWidgets.remove(dockwidget)
+            self.disconnect(dockwidget, QtCore.SIGNAL("dockLocationChanged ( Qt::DockWidgetArea )"), self.dockLocationChanged(dockwidget))
+    
+    def dockLocationChanged(self, widget):
+        def dockLocationChanged_widget(area):
+            widget.area = area
+        return dockLocationChanged_widget
+    
         
     def keyPressEvent(self, event):
         self.emitKeyPressed(event)
