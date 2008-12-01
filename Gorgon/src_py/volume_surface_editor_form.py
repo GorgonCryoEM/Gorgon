@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.13  2008/09/03 19:53:20  ssa1
+#   First loading the model, and then changing the viewing position
+#
 #   Revision 1.12  2008/09/03 19:48:19  ssa1
 #   Maximizing performance of volume visualization by minimizing method call count
 #
@@ -78,15 +81,16 @@ class VolumeSurfaceEditorForm(QtGui.QWidget):
     def dockVisibilityChanged(self, visible):
         self.app.actions.getAction("show_VolumeSurfaceEditor").setChecked(visible)
     
-    def setViewingType(self, dummy):
-        if(self.ui.radioButtonIsoSurface.isChecked()):
-           self.viewer.renderer.setViewingType(self.ViewingTypeIsoSurface)
-        elif self.ui.radioButtonCrossSection.isChecked():
-            self.viewer.renderer.setViewingType(self.ViewingTypeCrossSection)
-        elif self.ui.radioButtonSolid.isChecked():
-            self.viewer.renderer.setViewingType(self.ViewingTypeSolid)
-        print "setViewingType", QtCore.QThread.currentThreadId()
-        self.viewer.emitModelChanged()
+    def setViewingType(self, toggled):
+        if(toggled):
+            if(self.ui.radioButtonIsoSurface.isChecked()):
+               self.viewer.renderer.setViewingType(self.ViewingTypeIsoSurface)
+            elif self.ui.radioButtonCrossSection.isChecked():
+                self.viewer.renderer.setViewingType(self.ViewingTypeCrossSection)
+            elif self.ui.radioButtonSolid.isChecked():
+                self.viewer.renderer.setViewingType(self.ViewingTypeSolid)
+            print "setViewingType", QtCore.QThread.currentThreadId()
+            self.viewer.emitModelChanged()
     
     def modelLoadedPreDraw(self):
         self.viewer.renderer.enableDraw(False)
