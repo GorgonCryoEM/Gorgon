@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.27  2008/11/06 20:34:23  ssa1
+//   Proper lighting for bounding boxes
+//
 //   Revision 1.26  2008/11/06 05:29:04  ssa1
 //   CGI submission milestone for Interactive Skeletonization, and theme support, and fixing (hopefully) mac-os flicker bug
 //
@@ -186,7 +189,7 @@ namespace wustl_mm {
 				if(intersectingCells[i]->cellSize == 1) {
 					snapOn = snapOn || (skeleton->vertices[intersectingCells[i]->tag.tag2].edgeIds.size() > 0);					
 				}
-			}			
+			}
 
 			for(unsigned int i = 0; i < intersectingCells.size(); i++) {
 				if(intersectingCells[i]->cellSize == 1) {

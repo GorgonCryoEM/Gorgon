@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.17  2008/11/28 04:36:17  ssa1
+#   Removing error message if pyopengl does not exist.  (To make executable building easier to debug)
+#
 #   Revision 1.16  2008/11/13 20:54:40  ssa1
 #   Using the correct scale when loading volumes
 #
@@ -106,7 +109,4 @@ class SkeletonViewer(BaseViewer):
         self.renderer.loadVolume(volume)
         self.loaded = True
         self.emitModelLoaded()
-        self.emitViewerSetCenter()
-             
-    def extraDrawingRoutines(self):
-        self.volumeViewer.manualSkeletonizer.drawOverlay()
+        self.emitViewerSetCenter()             
