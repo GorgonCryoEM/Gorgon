@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.32  2008/11/20 19:04:07  ssa1
+//   Proper scaling for binary and grayscale skeletonization
+//
 //   Revision 1.31  2008/11/20 18:33:00  ssa1
 //   Using the origin of the MRC volume
 //
@@ -156,8 +159,6 @@ namespace wustl_mm {
 		template <class TVertex, class TEdge, class TFace> NonManifoldMesh<TVertex, TEdge, TFace>::NonManifoldMesh(NonManifoldMesh<TVertex, TEdge, TFace> * srcMesh) {
 			Clear();
 			fromVolume = false;
-			SetOrigin(0,0,0);
-			SetScale(1,1,1);
 			for(unsigned int i = 0; i < srcMesh->vertices.size(); i++) {
 				vertices.push_back(srcMesh->vertices[i]);
 			}
@@ -167,6 +168,8 @@ namespace wustl_mm {
 			for(unsigned int i = 0; i < srcMesh->faces.size(); i++) {
 				faces.push_back(srcMesh->faces[i]);
 			}
+			SetOrigin(srcMesh->origin[0],srcMesh->origin[1],srcMesh->origin[2]);
+			SetScale(srcMesh->scale[0], srcMesh->scale[1], srcMesh->scale[2]);
 		}
 
 		template <class TVertex, class TEdge, class TFace> NonManifoldMesh<TVertex, TEdge, TFace>::NonManifoldMesh(Volume * sourceVol) {

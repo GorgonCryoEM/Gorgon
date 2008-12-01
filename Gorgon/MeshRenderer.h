@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.29  2008/12/01 01:31:34  ssa1
+//   Fixing resetting of scale and location when performing laplacian smoothing
+//
 //   Revision 1.28  2008/11/20 19:04:07  ssa1
 //   Proper scaling for binary and grayscale skeletonization
 //
@@ -229,10 +232,6 @@ namespace wustl_mm {
 		}
 		void MeshRenderer::PerformSmoothLaplacian(double convergenceRate, int iterations) {
 			NonManifoldMesh_Annotated * newMesh = mesh->SmoothLaplacian(convergenceRate, iterations);
-			for(int i = 0; i < 3; i++){
-				newMesh->origin[i] = mesh->origin[i];
-				newMesh->scale[i] = mesh->scale[i];
-			}
 			delete mesh;
 			mesh = newMesh;
 		}
