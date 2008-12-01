@@ -166,11 +166,12 @@ class StructureEditor(QtGui.QWidget):
     
     def findCAlphaPositionPossibilities(self):
         self.possibleAtomsList = []
-        radius = float( self.CAdoubleSpinBox.value() )
         #self.parentWidget()=>SequenceWidget, self.parentWidget().parentWidget() => SequenceDock
         calphaViewer = self.parentWidget().parentWidget().app.viewers['calpha']
         skeletonViewer = self.parentWidget().parentWidget().app.viewers['skeleton']
         meshRenderer = skeletonViewer.renderer
+        radius = float( self.CAdoubleSpinBox.value() )
+        #radius = skeletonViewer.worldToObjectCoordinates(calphaViewer.objectToWorldCoordinates((radius,0,0)) )[0]
         residue = self.currentChainModel[ int( str(self.atomicResNumbers[0].text()) ) ]
         atom = residue.getAtom('CA')
         if not atom:
@@ -182,7 +183,10 @@ class StructureEditor(QtGui.QWidget):
         atomPosMeshCoords = Vector3DFloat(atomPosMeshCoords[0], atomPosMeshCoords[1], atomPosMeshCoords[2])
          
         if skeletonViewer.loaded:
-            numIntersections = meshRenderer.intersectMeshAndSphere(atomPosMeshCoords, radius)
+            assert skeletonViewer.renderer.getSpacingX() == skeletonViewer.renderer.getSpacingY()
+            assert skeletonViewer.renderer.getSpacingX() == skeletonViewer.renderer.getSpacingZ()
+            numIntersections = meshRenderer.intersectMeshAndSphere( atomPosMeshCoords, radius/skeletonViewer.renderer.getSpacingX() )
+            #TODO: find a more elegant way than dividing radius by the apix_X to fix the scaling problem
             #print "\nNumber of intersections:", numIntersections
             if numIntersections == 0:
                 self.atomicNumPossibilities.setText('of 0')
