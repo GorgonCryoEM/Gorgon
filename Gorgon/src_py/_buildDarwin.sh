@@ -5,6 +5,7 @@ cp ../../../source/ExternalLibraries/boost_1_35_0/bin.v2/libs/python/build/darwi
 
 rm libpyGORGON.so
 rm -R dist
+rm -R build
 python _buildExecutableDarwin.py py2app
 cp libpyGORGON.dylib dist/gorgon.app/Contents/Frameworks
 cp libboost_python-mt-1_35.dylib dist/gorgon.app/Contents/Resources/ 
