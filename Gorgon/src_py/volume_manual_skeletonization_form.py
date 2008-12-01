@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.25  2008/11/28 04:36:17  ssa1
+#   Removing error message if pyopengl does not exist.  (To make executable building easier to debug)
+#
 #   Revision 1.24  2008/11/06 05:29:04  ssa1
 #   CGI submission milestone for Interactive Skeletonization, and theme support, and fixing (hopefully) mac-os flicker bug
 #
@@ -84,7 +87,7 @@ class VolumeManualSkeletonizationForm(QtGui.QWidget):
         self.viewer = viewer
         self.connect(self.viewer, QtCore.SIGNAL("modelLoaded()"), self.modelLoaded)
         self.connect(self.viewer, QtCore.SIGNAL("modelChanged()"), self.modelChanged)
-        self.connect(self.viewer, QtCore.SIGNAL("modelUnloaded()"), self.modelUnloaded)
+        self.connect(self.viewer, QtCore.SIGNAL("modelUnloaded()"), self.modelUnloaded)        
         
         self.isSkeletonClicked = False;
         self.createUI()
@@ -142,11 +145,14 @@ class VolumeManualSkeletonizationForm(QtGui.QWidget):
         self.dock.close()
                
     def startEndSkeletonization(self, start):        
-        if(start):
+        if(start):            
             self.volume = self.viewer.renderer.getVolume()
             if self.skeletonViewer.loaded:
                 self.skeletonViewer.unloadData()
             self.mesh = self.skeletonViewer.renderer.getMesh()
+                        
+            self.skeletonViewer.setScale(self.viewer.renderer.getSpacingX(), self.viewer.renderer.getSpacingY(), self.viewer.renderer.getSpacingZ())
+            self.skeletonViewer.setLocation(self.viewer.renderer.getOriginX(), self.viewer.renderer.getOriginY(), self.viewer.renderer.getOriginZ())            
             
             if self.ui.radioButtonBinary.isChecked():
                 medialnessScoringFunction = self.MedialnessScoringFunctionBinary
@@ -160,6 +166,7 @@ class VolumeManualSkeletonizationForm(QtGui.QWidget):
             self.connect(self.app.viewers["skeleton"], QtCore.SIGNAL("elementSelected (int, int, int, int, int, int, QMouseEvent)"), self.skeletonClicked)
             self.connect(self.app.mainCamera, QtCore.SIGNAL("cameraChanged()"), self.processCameraChanged)
             self.connect(self.app.viewers["skeleton"], QtCore.SIGNAL("thicknessChanged(int)"), self.thicknessChanged)
+            self.connect(self.app.viewers["skeleton"], QtCore.SIGNAL("modelDrawing()"), self.drawOverlay)
             self.engine.setLineThickness(self.skeletonViewer.lineThickness)
             
             
@@ -172,6 +179,7 @@ class VolumeManualSkeletonizationForm(QtGui.QWidget):
             self.disconnect(self.app.viewers["skeleton"], QtCore.SIGNAL("elementSelected (int, int, int, int, int, int, QMouseEvent)"), self.skeletonClicked)
             self.disconnect(self.app.mainCamera, QtCore.SIGNAL("cameraChanged()"), self.processCameraChanged)
             self.disconnect(self.app.viewers["skeleton"], QtCore.SIGNAL("thicknessChanged(int)"), self.thicknessChanged)
+            self.disconnect(self.app.viewers["skeleton"], QtCore.SIGNAL("modelDrawing()"), self.drawOverlay)
             self.engine.finalizeSkeleton()
             del self.engine
             self.setSkeletonViewerProperties(False)
@@ -237,7 +245,9 @@ class VolumeManualSkeletonizationForm(QtGui.QWidget):
                 hits.append(names)
         return hits
                     
-    def processClickRay(self, ray, rayWidth, eye, event):        
+    def processClickRay(self, rayWorld, rayWidth, eyeWorld, event):
+        ray = self.viewer.worldToObjectCoordinates(rayWorld)        
+        eye = self.viewer.worldToObjectCoordinates(eyeWorld)
         divisor =  float(self.getMedialness()) + float(self.getSmoothness());
 
         medialnessRatio = float(self.getMedialness()) / divisor;
@@ -255,7 +265,9 @@ class VolumeManualSkeletonizationForm(QtGui.QWidget):
                 self.engine.selectEndSeed(medialnessRatio, smoothnessRatio)
                 self.skeletonViewer.emitModelChanged()
                     
-    def processMouseOverRay(self, ray, rayWidth, eye, event):
+    def processMouseOverRay(self, rayWorld, rayWidth, eyeWorld, event):
+        ray = self.viewer.worldToObjectCoordinates(rayWorld)        
+        eye = self.viewer.worldToObjectCoordinates(eyeWorld)
         if(self.started and event.modifiers() & QtCore.Qt.CTRL ):
             self.engine.browseStartSeedRay(ray[0], ray[1], ray[2], eye[0], eye[1], eye[2], rayWidth)
             self.engine.analyzePathRay(ray[0], ray[1], ray[2], eye[0], eye[1], eye[2], rayWidth)
