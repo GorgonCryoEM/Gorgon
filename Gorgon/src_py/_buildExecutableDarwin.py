@@ -5,7 +5,8 @@ import py2app.recipes
 
 setup(
     app=['gorgon.pyw'],
-    data_files=['splash.png', 'gorgon.ico', 'gorgon.icns'],
+    data_files=[('', ['splash.png', 'gorgon.icns']), 
+                ('../../../themes', ['../resources/Dark.thm', '../resources/Light.thm'] )],
     options={
              'py2app': {
                         'iconfile' : 'gorgon.icns',
