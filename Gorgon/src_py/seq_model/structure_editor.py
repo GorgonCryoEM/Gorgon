@@ -46,6 +46,7 @@ class StructureEditor(QtGui.QWidget):
         if self.parentWidget().parentWidget().app:
             self.app = self.parentWidget().parentWidget().app
             self.connect(self.app.viewers['sse'], QtCore.SIGNAL('elementSelected (int, int, int, int, int, int, QMouseEvent)'), self.updateCurrentMatch)
+            self.connect(self.currentChainModel, QtCore.SIGNAL('selection updated'), self.updateSelectedResidues)
       
     def acceptButtonPress(self):
         currentWidget = self.tabWidget.currentWidget()
@@ -669,7 +670,10 @@ class StructureEditor(QtGui.QWidget):
                     self.helixCtermResNameLabel.setText(self.currentChainModel[stopIx].symbol3)
                     break            
         print 'Index:', sseIndex
-        
+    
+    def updateSelectedResidues(self):
+        if self.tabWidget.currentWidget() is self.atomicTab:
+            self.setResidues(self.currentChainModel.getSelection())
         
 class CommandAcceptAtomPlacement(QtGui.QUndoCommand):
         def __init__(self, currentChainModel, structureEditor, resSeqNum, chosenCoordinates, viewer, bondBefore=None, bondAfter=None, description=None):
