@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.51  2008/11/28 04:36:17  ssa1
+#   Removing error message if pyopengl does not exist.  (To make executable building easier to debug)
+#
 #   Revision 1.50  2008/11/27 04:39:43  ssa1
 #   increasing drawing performance
 #
@@ -324,11 +327,6 @@ class BaseViewer(QtOpenGL.QGLWidget):
         
         if (self.gllist != 0):          
             self.initializeGLDisplayType()            
-            glDepthFunc(GL_LESS)        
-            glColorMask(False, False, False, False)
-            glCallList(self.gllist)
-            glDepthFunc(GL_LEQUAL)
-            glColorMask(True, True, True, True)                     
             glCallList(self.gllist)
             self.unInitializeGLDisplayType();
 
@@ -380,7 +378,7 @@ class BaseViewer(QtOpenGL.QGLWidget):
         visibility = [self.modelVisible, self.model2Visible]
         colors = [self.getModelColor(),  self.getModel2Color()]
         
-        #glPushAttrib(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT)
+        glPushAttrib(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT)
                          
         self.extraDrawingRoutines()
         
@@ -388,18 +386,18 @@ class BaseViewer(QtOpenGL.QGLWidget):
             if(self.loaded and visibility[i]):
                 self.setMaterials(colors[i])
                 if(colors[i].alpha() < 255):
-                    #glDepthFunc(GL_LESS)        
-                    #glColorMask(False, False, False, False)
-                    #self.renderer.draw(i, False)
-                    #glDepthFunc(GL_LEQUAL)
-                    #glColorMask(True, True, True, True) 
+                    glDepthFunc(GL_LESS)        
+                    glColorMask(False, False, False, False)
+                    self.renderer.draw(i, False)
+                    glDepthFunc(GL_LEQUAL)
+                    glColorMask(True, True, True, True) 
                     self.renderer.draw(i, self.selectEnabled or self.mouseMoveEnabled)
                 else:
                     self.renderer.draw(i, self.selectEnabled or self.mouseMoveEnabled)                    
                             
         
 
-        #glPopAttrib()
+        glPopAttrib()
 
         glEndList() 
         
