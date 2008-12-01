@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.30  2008/11/25 22:26:04  ssa1
+#   User constraints on finding correspondences (v4 - Final)
+#
 #   Revision 1.29  2008/11/25 21:03:40  ssa1
 #   User constraints on finding correspondences (v3)
 #
@@ -108,6 +111,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
         QtGui.QWidget.__init__(self, parent)
         self.executed = False
         self.app = main
+        self.app.themes.addDefaultRGB("CorrespondenceFinder:BackboneTrace", 255, 255, 255, 255)
         self.viewer = viewer        
         self.createUI()
         self.createActions()
@@ -495,6 +499,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
         
     def drawOverlay(self):
         if self.executed:
+            self.viewer.setMaterials(self.app.themes.getColor("CorrespondenceFinder:BackboneTrace"))            
             self.viewer.correspondenceEngine.draw(0)
 
     def constraintAdded(self, state):
