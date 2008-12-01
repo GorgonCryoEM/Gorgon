@@ -10,7 +10,12 @@ setup(
                 'icon_resources': [(0, 'gorgon.ico')]
                 }
                ],
-      data_files=['splash.png', 'gorgon.ico'],
+      data_files=[('' ,[
+                        'splash.png', 
+                        'gorgon.ico',
+                        'msvcr80.dll',
+                        'msvcp80.dll']), 
+                  ('themes', ['..\\resources\\Dark.thm', '..\\resources\\Light.thm'] )],
       options={
                "py2exe":{
                          "includes" : ["sip", "PyQt4._qt", "ctypes", "distutils.util", "logging", "ctypes.util", "weakref"],
