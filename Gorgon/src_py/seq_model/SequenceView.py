@@ -13,7 +13,7 @@ class SequenceDock(QtGui.QDockWidget):
     __dock = None
     
     def __init__(self, main, viewer, structurePrediction, currentChainModel, parent=None):
-        super(SequenceDock, self).__init__(parent)
+        super(SequenceDock, self).__init__("Semi-automatic atom placement", parent)
         self.app = main
         self.currentChainModel = currentChainModel
         self.structurePrediction = structurePrediction
