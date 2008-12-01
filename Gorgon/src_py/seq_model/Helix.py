@@ -58,6 +58,7 @@ class Helix(Secel):
         assert len(atomList) == 1+self.stopIndex-self.startIndex
         for CAatom in atomList[::-1]:
             if CAatom:
+                CAatom.setResSeq(self.startIndex+i)
                 self.chain[self.startIndex+i].addAtomObject(CAatom)
             i += 1
         
