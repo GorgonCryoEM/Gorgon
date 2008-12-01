@@ -5,8 +5,6 @@ copy "C:\Program Files\Mozilla Firefox\plugins\Microsoft.VC80.CRT\msvcp80.dll" >
 
 python _buildExecutableWin32.py py2exe 
 
-copy msvcr80.dll dist\ > NUL
-copy msvcp80.dll dist\ > NUL
 del msvcr80.dll
 del msvcp80.dll
 del glut32.dll
