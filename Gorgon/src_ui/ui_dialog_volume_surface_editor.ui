@@ -82,28 +82,6 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="2" >
-       <widget class="QLabel" name="labelIsoValueDisplay" >
-        <property name="minimumSize" >
-         <size>
-          <width>60</width>
-          <height>0</height>
-         </size>
-        </property>
-        <property name="maximumSize" >
-         <size>
-          <width>60</width>
-          <height>16777215</height>
-         </size>
-        </property>
-        <property name="layoutDirection" >
-         <enum>Qt::RightToLeft</enum>
-        </property>
-        <property name="text" >
-         <string>128</string>
-        </property>
-       </widget>
-      </item>
       <item row="2" column="0" >
        <widget class="QLabel" name="labelSamplingInterval" >
         <property name="text" >
@@ -188,6 +166,16 @@
         </property>
        </widget>
       </item>
+      <item row="1" column="2" >
+       <widget class="QDoubleSpinBox" name="doubleSpinBoxDensity" >
+        <property name="decimals" >
+         <number>3</number>
+        </property>
+        <property name="maximum" >
+         <double>25500.000000000000000</double>
+        </property>
+       </widget>
+      </item>
      </layout>
     </widget>
    </item>
@@ -198,7 +186,9 @@
   <tabstop>radioButtonCrossSection</tabstop>
   <tabstop>radioButtonSolid</tabstop>
   <tabstop>horizontalSliderIsoLevel</tabstop>
+  <tabstop>doubleSpinBoxDensity</tabstop>
   <tabstop>horizontalSliderSampling</tabstop>
+  <tabstop>horizontalSliderDisplayRadius</tabstop>
  </tabstops>
  <resources/>
  <connections>
@@ -213,7 +203,7 @@
      <y>103</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>433</x>
+     <x>317</x>
      <y>103</y>
     </hint>
    </hints>
@@ -261,7 +251,7 @@
      <y>42</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>433</x>
+     <x>317</x>
      <y>103</y>
     </hint>
    </hints>
@@ -273,12 +263,12 @@
    <slot>setNum(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>277</x>
-     <y>113</y>
+     <x>251</x>
+     <y>125</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>420</x>
-     <y>121</y>
+     <x>317</x>
+     <y>125</y>
     </hint>
    </hints>
   </connection>

@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.14  2008/12/01 21:54:11  ssa1
+#   Improving performance when changing viewing type
+#
 #   Revision 1.13  2008/09/03 19:53:20  ssa1
 #   First loading the model, and then changing the viewing position
 #
@@ -63,6 +66,7 @@ class VolumeSurfaceEditorForm(QtGui.QWidget):
         self.connect(self.ui.radioButtonIsoSurface, QtCore.SIGNAL("toggled(bool)"), self.setViewingType)
         self.connect(self.ui.radioButtonCrossSection, QtCore.SIGNAL("toggled(bool)"), self.setViewingType)
         self.connect(self.ui.radioButtonSolid, QtCore.SIGNAL("toggled(bool)"), self.setViewingType)
+        self.connect(self.ui.doubleSpinBoxDensity, QtCore.SIGNAL("valueChanged (double)"), self.manualValueChanged)
         
             
     def loadWidget(self):
@@ -101,6 +105,8 @@ class VolumeSurfaceEditorForm(QtGui.QWidget):
         minDensity = self.viewer.renderer.getMinDensity()
         self.ui.horizontalSliderIsoLevel.setMinimum(int(minDensity*100))
         self.ui.horizontalSliderIsoLevel.setMaximum(int(maxDensity*100))
+        self.ui.doubleSpinBoxDensity.setMinimum(minDensity)
+        self.ui.doubleSpinBoxDensity.setMinimum(maxDensity)        
         defaultDensity = (int(minDensity*100) + int(maxDensity*100.0)) / 2
         maxRadius = int(max(self.viewer.renderer.getMax(0)/2, self.viewer.renderer.getMax(1)/2, self.viewer.renderer.getMax(2)/2));
         self.ui.horizontalSliderIsoLevel.setValue(defaultDensity)
@@ -136,7 +142,14 @@ class VolumeSurfaceEditorForm(QtGui.QWidget):
         self.app.menus.addAction("window-VolumeSurfaceEditor", self.app.actions.getAction("show_VolumeSurfaceEditor"), "window")        
 
     def isoValueIndicatorChanged(self, newLevel):
-        self.ui.labelIsoValueDisplay.setNum(newLevel/100.0)
+        newValue = newLevel/100.0
+        if(not (self.ui.doubleSpinBoxDensity.value() == newValue)):
+            self.ui.doubleSpinBoxDensity.setValue(newValue)
+        
+    def manualValueChanged(self, value):
+        newValue = int(value*100)
+        if (not(self.ui.horizontalSliderIsoLevel.value() == newValue)):
+            self.ui.horizontalSliderIsoLevel.setValue(newValue)
         
     def isoValueChanged(self, newLevel):
         #threading.Thread(target = self.updateIsoValue, args=(newLevel,)).start()
