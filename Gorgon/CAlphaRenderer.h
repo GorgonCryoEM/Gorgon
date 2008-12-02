@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.28  2008/11/13 20:54:40  ssa1
+//   Using the correct scale when loading volumes
+//
 //   Revision 1.27  2008/11/10 16:15:43  ssa1
 //   Making python and C++ use the same PDBAtom objects
 //
@@ -91,6 +94,7 @@ namespace wustl_mm {
 			//Controlling the bond vector
 			void AddBond(PDBBond bond);
 			PDBBond * GetBond(int index);
+			int GetBondIndex(unsigned long long atom0, unsigned long long atom1);
 			void DeleteBond(int index);
 			int GetBondCount();
 
@@ -373,6 +377,15 @@ namespace wustl_mm {
 			return &bonds[index];
 		}
 
+		int CAlphaRenderer::GetBondIndex(unsigned long long atom0, unsigned long long atom1) {
+			for(unsigned int i = 0; i < bonds.size(); i++) {
+				if(((bonds[i].GetAtom0Ix() == atom0) && (bonds[i].GetAtom1Ix() == atom1)) ||
+							((bonds[i].GetAtom0Ix() == atom1) || (bonds[i].GetAtom1Ix() == atom0))) {
+					return i;
+				}
+			}
+			return -1;
+		}
 		int CAlphaRenderer::GetAtomCount() {
 			return atoms.size();
 		}
