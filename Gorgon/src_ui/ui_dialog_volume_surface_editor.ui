@@ -6,7 +6,7 @@
     <x>0</x>
     <y>0</y>
     <width>338</width>
-    <height>146</height>
+    <height>156</height>
    </rect>
   </property>
   <property name="minimumSize" >
@@ -82,6 +82,16 @@
         </property>
        </widget>
       </item>
+      <item row="1" column="2" >
+       <widget class="QDoubleSpinBox" name="doubleSpinBoxDensity" >
+        <property name="decimals" >
+         <number>3</number>
+        </property>
+        <property name="maximum" >
+         <double>25500.000000000000000</double>
+        </property>
+       </widget>
+      </item>
       <item row="2" column="0" >
        <widget class="QLabel" name="labelSamplingInterval" >
         <property name="text" >
@@ -116,9 +126,6 @@
       </item>
       <item row="2" column="2" >
        <widget class="QLabel" name="labelSamplingDisplay" >
-        <property name="layoutDirection" >
-         <enum>Qt::RightToLeft</enum>
-        </property>
         <property name="text" >
          <string>1</string>
         </property>
@@ -158,26 +165,26 @@
       </item>
       <item row="3" column="2" >
        <widget class="QLabel" name="labelDisplayRadiusDisplay" >
-        <property name="layoutDirection" >
-         <enum>Qt::RightToLeft</enum>
-        </property>
         <property name="text" >
          <string>255</string>
         </property>
        </widget>
       </item>
-      <item row="1" column="2" >
-       <widget class="QDoubleSpinBox" name="doubleSpinBoxDensity" >
-        <property name="decimals" >
-         <number>3</number>
-        </property>
-        <property name="maximum" >
-         <double>25500.000000000000000</double>
-        </property>
-       </widget>
-      </item>
      </layout>
     </widget>
+   </item>
+   <item row="1" column="0" >
+    <spacer>
+     <property name="orientation" >
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" >
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
    </item>
   </layout>
  </widget>
@@ -269,6 +276,54 @@
     <hint type="destinationlabel" >
      <x>317</x>
      <y>125</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>radioButtonIsoSurface</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>labelDisplayRadius</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>38</x>
+     <y>39</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>40</x>
+     <y>120</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>radioButtonIsoSurface</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>horizontalSliderDisplayRadius</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>122</x>
+     <y>52</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>122</x>
+     <y>119</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>radioButtonIsoSurface</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>labelDisplayRadiusDisplay</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>34</x>
+     <y>43</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>286</x>
+     <y>116</y>
     </hint>
    </hints>
   </connection>
