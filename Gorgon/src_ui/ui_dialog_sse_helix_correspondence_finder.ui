@@ -5,7 +5,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>534</width>
+    <width>351</width>
     <height>396</height>
    </rect>
   </property>
@@ -21,12 +21,21 @@
   <layout class="QGridLayout" >
    <item row="0" column="0" >
     <widget class="QTabWidget" name="tabWidget" >
+     <property name="sizePolicy" >
+      <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="currentIndex" >
+      <number>0</number>
+     </property>
      <widget class="QWidget" name="tabDataSources" >
       <attribute name="title" >
        <string>Data Sources</string>
       </attribute>
       <layout class="QGridLayout" >
-       <item row="0" column="0" colspan="2" >
+       <item row="0" column="0" >
         <layout class="QGridLayout" >
          <item row="0" column="0" >
           <widget class="QLabel" name="label" >
@@ -114,15 +123,15 @@
          </item>
         </layout>
        </item>
-       <item row="1" column="0" colspan="2" >
+       <item row="1" column="0" >
         <spacer>
          <property name="orientation" >
           <enum>Qt::Vertical</enum>
          </property>
          <property name="sizeHint" >
           <size>
-           <width>494</width>
-           <height>101</height>
+           <width>311</width>
+           <height>200</height>
           </size>
          </property>
         </spacer>
@@ -142,6 +151,12 @@
          <layout class="QGridLayout" >
           <item row="0" column="0" >
            <widget class="QRadioButton" name="radioButtonAbsoluteDifference" >
+            <property name="sizePolicy" >
+             <sizepolicy vsizetype="Fixed" hsizetype="Maximum" >
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="text" >
              <string>Absolute Difference</string>
             </property>
@@ -150,15 +165,27 @@
             </property>
            </widget>
           </item>
-          <item row="1" column="0" >
+          <item row="0" column="1" >
            <widget class="QRadioButton" name="radioButtonNormalizedDifference" >
+            <property name="sizePolicy" >
+             <sizepolicy vsizetype="Fixed" hsizetype="Maximum" >
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="text" >
              <string>Normalized Difference</string>
             </property>
            </widget>
           </item>
-          <item row="2" column="0" >
+          <item row="0" column="2" >
            <widget class="QRadioButton" name="radioButtonQuadraticError" >
+            <property name="sizePolicy" >
+             <sizepolicy vsizetype="Fixed" hsizetype="Maximum" >
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="text" >
              <string>Quadratic Error</string>
             </property>
@@ -245,6 +272,12 @@
           </item>
           <item row="0" column="1" >
            <widget class="QDoubleSpinBox" name="doubleSpinBoxHelixMissingPenalty" >
+            <property name="sizePolicy" >
+             <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="decimals" >
              <number>4</number>
             </property>
@@ -265,6 +298,12 @@
           </item>
           <item row="1" column="1" >
            <widget class="QDoubleSpinBox" name="doubleSpinBoxEndHelixMissingPenalty" >
+            <property name="sizePolicy" >
+             <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="decimals" >
              <number>4</number>
             </property>
@@ -285,6 +324,12 @@
           </item>
           <item row="2" column="1" >
            <widget class="QDoubleSpinBox" name="doubleSpinBoxEuclideanLoopUsedPenalty" >
+            <property name="sizePolicy" >
+             <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="decimals" >
              <number>4</number>
             </property>
@@ -314,6 +359,12 @@
           </item>
           <item row="0" column="1" >
            <widget class="QDoubleSpinBox" name="doubleSpinBoxHelixImportance" >
+            <property name="sizePolicy" >
+             <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="decimals" >
              <number>4</number>
             </property>
@@ -334,6 +385,12 @@
           </item>
           <item row="1" column="1" >
            <widget class="QDoubleSpinBox" name="doubleSpinBoxLoopImportance" >
+            <property name="sizePolicy" >
+             <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="decimals" >
              <number>4</number>
             </property>
@@ -357,6 +414,12 @@
        </item>
        <item row="2" column="1" >
         <widget class="QDoubleSpinBox" name="doubleSpinBoxAverageMissingHelixLength" >
+         <property name="sizePolicy" >
+          <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <property name="decimals" >
           <number>4</number>
          </property>
@@ -377,6 +440,12 @@
        </item>
        <item row="3" column="1" >
         <widget class="QDoubleSpinBox" name="doubleSpinBoxEuclideanToPDBRatio" >
+         <property name="sizePolicy" >
+          <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <property name="decimals" >
           <number>4</number>
          </property>
@@ -397,6 +466,12 @@
        </item>
        <item row="4" column="1" >
         <widget class="QSpinBox" name="spinBoxBorderMarginThreshold" >
+         <property name="sizePolicy" >
+          <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <property name="value" >
           <number>3</number>
          </property>
@@ -436,14 +511,7 @@
         </widget>
        </item>
        <item row="0" column="1" >
-        <widget class="QComboBox" name="comboBoxCorrespondences" >
-         <property name="sizePolicy" >
-          <sizepolicy vsizetype="Fixed" hsizetype="Minimum" >
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-        </widget>
+        <widget class="QComboBox" name="comboBoxCorrespondences" />
        </item>
        <item row="1" column="0" colspan="2" >
         <widget class="QTableWidget" name="tableWidgetCorrespondenceList" >
