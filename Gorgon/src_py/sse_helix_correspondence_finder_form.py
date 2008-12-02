@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.32  2008/12/02 03:27:05  ssa1
+#   putting glpushattrib and glpopattrib when setting colors
+#
 #   Revision 1.31  2008/12/01 23:42:55  ssa1
 #   Setting theming support for backbone trace
 #
@@ -227,7 +230,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
             self.app.actions.getAction("perform_SSEFindHelixCorrespondences").trigger()        
         
     def createActions(self):               
-        corrAct = QtGui.QAction(self.tr("Find Alpha-Helix Correspondences"), self)
+        corrAct = QtGui.QAction(self.tr("Find Alpha-&Helix Correspondences"), self)
         corrAct.setStatusTip(self.tr("Find Alpha-Helix Correspondences"))
         corrAct.setCheckable(True)
         corrAct.setChecked(False)
