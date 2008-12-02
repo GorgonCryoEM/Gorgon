@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_dialog_scene_editor.ui'
 #
-# Created: Fri Sep 12 13:09:28 2008
+# Created: Tue Dec 02 14:59:49 2008
 #      by: PyQt4 UI code generator 4.3.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,12 +12,24 @@ from PyQt4 import QtCore, QtGui
 class Ui_DialogSceneEditor(object):
     def setupUi(self, DialogSceneEditor):
         DialogSceneEditor.setObjectName("DialogSceneEditor")
-        DialogSceneEditor.resize(QtCore.QSize(QtCore.QRect(0,0,456,410).size()).expandedTo(DialogSceneEditor.minimumSizeHint()))
+        DialogSceneEditor.resize(QtCore.QSize(QtCore.QRect(0,0,259,522).size()).expandedTo(DialogSceneEditor.minimumSizeHint()))
+
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred,QtGui.QSizePolicy.Maximum)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(DialogSceneEditor.sizePolicy().hasHeightForWidth())
+        DialogSceneEditor.setSizePolicy(sizePolicy)
 
         self.gridlayout = QtGui.QGridLayout(DialogSceneEditor)
         self.gridlayout.setObjectName("gridlayout")
 
         self.tabWidget = QtGui.QTabWidget(DialogSceneEditor)
+
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding,QtGui.QSizePolicy.Maximum)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.tabWidget.sizePolicy().hasHeightForWidth())
+        self.tabWidget.setSizePolicy(sizePolicy)
         self.tabWidget.setObjectName("tabWidget")
 
         self.tabCamera = QtGui.QWidget()
@@ -35,6 +47,12 @@ class Ui_DialogSceneEditor(object):
         self.gridlayout2.addWidget(self.label_3,0,0,1,1)
 
         self.doubleSpinBoxEyeX = QtGui.QDoubleSpinBox(self.tabCamera)
+
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Maximum,QtGui.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.doubleSpinBoxEyeX.sizePolicy().hasHeightForWidth())
+        self.doubleSpinBoxEyeX.setSizePolicy(sizePolicy)
         self.doubleSpinBoxEyeX.setMinimum(-9999999999.99)
         self.doubleSpinBoxEyeX.setMaximum(9999999999.99)
         self.doubleSpinBoxEyeX.setProperty("value",QtCore.QVariant(0.0))
@@ -42,6 +60,12 @@ class Ui_DialogSceneEditor(object):
         self.gridlayout2.addWidget(self.doubleSpinBoxEyeX,0,1,1,1)
 
         self.doubleSpinBoxEyeY = QtGui.QDoubleSpinBox(self.tabCamera)
+
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Maximum,QtGui.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.doubleSpinBoxEyeY.sizePolicy().hasHeightForWidth())
+        self.doubleSpinBoxEyeY.setSizePolicy(sizePolicy)
         self.doubleSpinBoxEyeY.setMinimum(-9999999999.99)
         self.doubleSpinBoxEyeY.setMaximum(9999999999.99)
         self.doubleSpinBoxEyeY.setProperty("value",QtCore.QVariant(0.0))
@@ -49,6 +73,12 @@ class Ui_DialogSceneEditor(object):
         self.gridlayout2.addWidget(self.doubleSpinBoxEyeY,0,2,1,1)
 
         self.doubleSpinBoxEyeZ = QtGui.QDoubleSpinBox(self.tabCamera)
+
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Maximum,QtGui.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.doubleSpinBoxEyeZ.sizePolicy().hasHeightForWidth())
+        self.doubleSpinBoxEyeZ.setSizePolicy(sizePolicy)
         self.doubleSpinBoxEyeZ.setMinimum(-9999999999.99)
         self.doubleSpinBoxEyeZ.setMaximum(9999999999.99)
         self.doubleSpinBoxEyeZ.setProperty("value",QtCore.QVariant(0.0))
@@ -60,6 +90,12 @@ class Ui_DialogSceneEditor(object):
         self.gridlayout2.addWidget(self.label_4,1,0,1,1)
 
         self.doubleSpinBoxCenterX = QtGui.QDoubleSpinBox(self.tabCamera)
+
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Maximum,QtGui.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.doubleSpinBoxCenterX.sizePolicy().hasHeightForWidth())
+        self.doubleSpinBoxCenterX.setSizePolicy(sizePolicy)
         self.doubleSpinBoxCenterX.setMinimum(-9999999999.99)
         self.doubleSpinBoxCenterX.setMaximum(9999999999.99)
         self.doubleSpinBoxCenterX.setProperty("value",QtCore.QVariant(0.0))
@@ -67,6 +103,12 @@ class Ui_DialogSceneEditor(object):
         self.gridlayout2.addWidget(self.doubleSpinBoxCenterX,1,1,1,1)
 
         self.doubleSpinBoxCenterY = QtGui.QDoubleSpinBox(self.tabCamera)
+
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Maximum,QtGui.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.doubleSpinBoxCenterY.sizePolicy().hasHeightForWidth())
+        self.doubleSpinBoxCenterY.setSizePolicy(sizePolicy)
         self.doubleSpinBoxCenterY.setMinimum(-9999999999.99)
         self.doubleSpinBoxCenterY.setMaximum(9999999999.99)
         self.doubleSpinBoxCenterY.setProperty("value",QtCore.QVariant(0.0))
@@ -74,6 +116,12 @@ class Ui_DialogSceneEditor(object):
         self.gridlayout2.addWidget(self.doubleSpinBoxCenterY,1,2,1,1)
 
         self.doubleSpinBoxCenterZ = QtGui.QDoubleSpinBox(self.tabCamera)
+
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Maximum,QtGui.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.doubleSpinBoxCenterZ.sizePolicy().hasHeightForWidth())
+        self.doubleSpinBoxCenterZ.setSizePolicy(sizePolicy)
         self.doubleSpinBoxCenterZ.setMinimum(-9999999999.99)
         self.doubleSpinBoxCenterZ.setMaximum(9999999999.99)
         self.doubleSpinBoxCenterZ.setProperty("value",QtCore.QVariant(0.0))
@@ -85,6 +133,12 @@ class Ui_DialogSceneEditor(object):
         self.gridlayout2.addWidget(self.label_19,2,0,1,1)
 
         self.doubleSpinBoxUpX = QtGui.QDoubleSpinBox(self.tabCamera)
+
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Maximum,QtGui.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.doubleSpinBoxUpX.sizePolicy().hasHeightForWidth())
+        self.doubleSpinBoxUpX.setSizePolicy(sizePolicy)
         self.doubleSpinBoxUpX.setMinimum(-9999999999.99)
         self.doubleSpinBoxUpX.setMaximum(9999999999.99)
         self.doubleSpinBoxUpX.setProperty("value",QtCore.QVariant(0.0))
@@ -92,6 +146,12 @@ class Ui_DialogSceneEditor(object):
         self.gridlayout2.addWidget(self.doubleSpinBoxUpX,2,1,1,1)
 
         self.doubleSpinBoxUpY = QtGui.QDoubleSpinBox(self.tabCamera)
+
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Maximum,QtGui.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.doubleSpinBoxUpY.sizePolicy().hasHeightForWidth())
+        self.doubleSpinBoxUpY.setSizePolicy(sizePolicy)
         self.doubleSpinBoxUpY.setMinimum(-9999999999.99)
         self.doubleSpinBoxUpY.setMaximum(9999999999.99)
         self.doubleSpinBoxUpY.setProperty("value",QtCore.QVariant(0.0))
@@ -99,6 +159,12 @@ class Ui_DialogSceneEditor(object):
         self.gridlayout2.addWidget(self.doubleSpinBoxUpY,2,2,1,1)
 
         self.doubleSpinBoxUpZ = QtGui.QDoubleSpinBox(self.tabCamera)
+
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Maximum,QtGui.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.doubleSpinBoxUpZ.sizePolicy().hasHeightForWidth())
+        self.doubleSpinBoxUpZ.setSizePolicy(sizePolicy)
         self.doubleSpinBoxUpZ.setMinimum(-9999999999.99)
         self.doubleSpinBoxUpZ.setMaximum(9999999999.99)
         self.doubleSpinBoxUpZ.setProperty("value",QtCore.QVariant(0.0))
@@ -110,6 +176,12 @@ class Ui_DialogSceneEditor(object):
         self.gridlayout2.addWidget(self.label_20,3,0,1,1)
 
         self.doubleSpinBoxZoom = QtGui.QDoubleSpinBox(self.tabCamera)
+
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Maximum,QtGui.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.doubleSpinBoxZoom.sizePolicy().hasHeightForWidth())
+        self.doubleSpinBoxZoom.setSizePolicy(sizePolicy)
         self.doubleSpinBoxZoom.setDecimals(4)
         self.doubleSpinBoxZoom.setMinimum(0.0001)
         self.doubleSpinBoxZoom.setMaximum(0.9999)
@@ -130,74 +202,146 @@ class Ui_DialogSceneEditor(object):
         self.gridlayout3.setObjectName("gridlayout3")
 
         self.groupBox_4 = QtGui.QGroupBox(self.tabLighting)
+
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding,QtGui.QSizePolicy.Maximum)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.groupBox_4.sizePolicy().hasHeightForWidth())
+        self.groupBox_4.setSizePolicy(sizePolicy)
         self.groupBox_4.setObjectName("groupBox_4")
 
         self.gridlayout4 = QtGui.QGridLayout(self.groupBox_4)
         self.gridlayout4.setObjectName("gridlayout4")
 
+        self.checkBoxLight1Enabled = QtGui.QCheckBox(self.groupBox_4)
+
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Maximum,QtGui.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.checkBoxLight1Enabled.sizePolicy().hasHeightForWidth())
+        self.checkBoxLight1Enabled.setSizePolicy(sizePolicy)
+        self.checkBoxLight1Enabled.setChecked(True)
+        self.checkBoxLight1Enabled.setObjectName("checkBoxLight1Enabled")
+        self.gridlayout4.addWidget(self.checkBoxLight1Enabled,0,0,1,2)
+
+        self.checkBoxLight1EyePosition = QtGui.QCheckBox(self.groupBox_4)
+
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Maximum,QtGui.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.checkBoxLight1EyePosition.sizePolicy().hasHeightForWidth())
+        self.checkBoxLight1EyePosition.setSizePolicy(sizePolicy)
+        self.checkBoxLight1EyePosition.setChecked(True)
+        self.checkBoxLight1EyePosition.setObjectName("checkBoxLight1EyePosition")
+        self.gridlayout4.addWidget(self.checkBoxLight1EyePosition,1,0,1,3)
+
         self.label_2 = QtGui.QLabel(self.groupBox_4)
+
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Maximum,QtGui.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.label_2.sizePolicy().hasHeightForWidth())
+        self.label_2.setSizePolicy(sizePolicy)
         self.label_2.setObjectName("label_2")
-        self.gridlayout4.addWidget(self.label_2,1,0,1,1)
+        self.gridlayout4.addWidget(self.label_2,2,0,1,1)
 
         self.doubleSpinBoxLight1X = QtGui.QDoubleSpinBox(self.groupBox_4)
         self.doubleSpinBoxLight1X.setEnabled(False)
+
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Maximum,QtGui.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.doubleSpinBoxLight1X.sizePolicy().hasHeightForWidth())
+        self.doubleSpinBoxLight1X.setSizePolicy(sizePolicy)
         self.doubleSpinBoxLight1X.setMinimum(-9999999999.99)
         self.doubleSpinBoxLight1X.setMaximum(9999999999.99)
         self.doubleSpinBoxLight1X.setProperty("value",QtCore.QVariant(0.0))
         self.doubleSpinBoxLight1X.setObjectName("doubleSpinBoxLight1X")
-        self.gridlayout4.addWidget(self.doubleSpinBoxLight1X,1,1,1,1)
+        self.gridlayout4.addWidget(self.doubleSpinBoxLight1X,2,1,1,1)
 
         self.doubleSpinBoxLight1Y = QtGui.QDoubleSpinBox(self.groupBox_4)
         self.doubleSpinBoxLight1Y.setEnabled(False)
+
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Maximum,QtGui.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.doubleSpinBoxLight1Y.sizePolicy().hasHeightForWidth())
+        self.doubleSpinBoxLight1Y.setSizePolicy(sizePolicy)
         self.doubleSpinBoxLight1Y.setMinimum(-9999999999.99)
         self.doubleSpinBoxLight1Y.setMaximum(9999999999.99)
         self.doubleSpinBoxLight1Y.setProperty("value",QtCore.QVariant(0.0))
         self.doubleSpinBoxLight1Y.setObjectName("doubleSpinBoxLight1Y")
-        self.gridlayout4.addWidget(self.doubleSpinBoxLight1Y,1,2,1,1)
+        self.gridlayout4.addWidget(self.doubleSpinBoxLight1Y,2,2,1,1)
 
         self.doubleSpinBoxLight1Z = QtGui.QDoubleSpinBox(self.groupBox_4)
         self.doubleSpinBoxLight1Z.setEnabled(False)
+
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Maximum,QtGui.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.doubleSpinBoxLight1Z.sizePolicy().hasHeightForWidth())
+        self.doubleSpinBoxLight1Z.setSizePolicy(sizePolicy)
         self.doubleSpinBoxLight1Z.setMinimum(-9999999999.99)
         self.doubleSpinBoxLight1Z.setMaximum(9999999999.99)
         self.doubleSpinBoxLight1Z.setProperty("value",QtCore.QVariant(0.0))
         self.doubleSpinBoxLight1Z.setObjectName("doubleSpinBoxLight1Z")
-        self.gridlayout4.addWidget(self.doubleSpinBoxLight1Z,1,3,1,1)
+        self.gridlayout4.addWidget(self.doubleSpinBoxLight1Z,2,3,1,1)
 
         self.label = QtGui.QLabel(self.groupBox_4)
+
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Maximum,QtGui.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.label.sizePolicy().hasHeightForWidth())
+        self.label.setSizePolicy(sizePolicy)
         self.label.setObjectName("label")
-        self.gridlayout4.addWidget(self.label,2,0,1,1)
+        self.gridlayout4.addWidget(self.label,3,0,1,1)
 
         self.pushButtonLight1Color = ColoredPushButton(self.groupBox_4)
         self.pushButtonLight1Color.setObjectName("pushButtonLight1Color")
-        self.gridlayout4.addWidget(self.pushButtonLight1Color,2,1,1,1)
-
-        self.checkBoxLight1Enabled = QtGui.QCheckBox(self.groupBox_4)
-        self.checkBoxLight1Enabled.setChecked(True)
-        self.checkBoxLight1Enabled.setObjectName("checkBoxLight1Enabled")
-        self.gridlayout4.addWidget(self.checkBoxLight1Enabled,0,0,1,1)
-
-        self.checkBoxLight1EyePosition = QtGui.QCheckBox(self.groupBox_4)
-        self.checkBoxLight1EyePosition.setChecked(True)
-        self.checkBoxLight1EyePosition.setObjectName("checkBoxLight1EyePosition")
-        self.gridlayout4.addWidget(self.checkBoxLight1EyePosition,0,1,1,1)
-        self.gridlayout3.addWidget(self.groupBox_4,0,0,1,2)
+        self.gridlayout4.addWidget(self.pushButtonLight1Color,3,2,1,2)
+        self.gridlayout3.addWidget(self.groupBox_4,0,0,1,1)
 
         self.groupBox_5 = QtGui.QGroupBox(self.tabLighting)
+
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding,QtGui.QSizePolicy.Maximum)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.groupBox_5.sizePolicy().hasHeightForWidth())
+        self.groupBox_5.setSizePolicy(sizePolicy)
         self.groupBox_5.setObjectName("groupBox_5")
 
         self.gridlayout5 = QtGui.QGridLayout(self.groupBox_5)
         self.gridlayout5.setObjectName("gridlayout5")
 
         self.checkBoxLight2Enabled = QtGui.QCheckBox(self.groupBox_5)
+
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Maximum,QtGui.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.checkBoxLight2Enabled.sizePolicy().hasHeightForWidth())
+        self.checkBoxLight2Enabled.setSizePolicy(sizePolicy)
         self.checkBoxLight2Enabled.setObjectName("checkBoxLight2Enabled")
-        self.gridlayout5.addWidget(self.checkBoxLight2Enabled,0,0,1,1)
+        self.gridlayout5.addWidget(self.checkBoxLight2Enabled,0,0,1,3)
 
         self.label_5 = QtGui.QLabel(self.groupBox_5)
+
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Maximum,QtGui.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.label_5.sizePolicy().hasHeightForWidth())
+        self.label_5.setSizePolicy(sizePolicy)
         self.label_5.setObjectName("label_5")
         self.gridlayout5.addWidget(self.label_5,1,0,1,1)
 
         self.doubleSpinBoxLight2X = QtGui.QDoubleSpinBox(self.groupBox_5)
         self.doubleSpinBoxLight2X.setEnabled(False)
+
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Maximum,QtGui.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.doubleSpinBoxLight2X.sizePolicy().hasHeightForWidth())
+        self.doubleSpinBoxLight2X.setSizePolicy(sizePolicy)
         self.doubleSpinBoxLight2X.setMinimum(-9999999999.99)
         self.doubleSpinBoxLight2X.setMaximum(9999999999.99)
         self.doubleSpinBoxLight2X.setProperty("value",QtCore.QVariant(0.0))
@@ -206,6 +350,12 @@ class Ui_DialogSceneEditor(object):
 
         self.doubleSpinBoxLight2Y = QtGui.QDoubleSpinBox(self.groupBox_5)
         self.doubleSpinBoxLight2Y.setEnabled(False)
+
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Maximum,QtGui.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.doubleSpinBoxLight2Y.sizePolicy().hasHeightForWidth())
+        self.doubleSpinBoxLight2Y.setSizePolicy(sizePolicy)
         self.doubleSpinBoxLight2Y.setMinimum(-9999999999.99)
         self.doubleSpinBoxLight2Y.setMaximum(9999999999.99)
         self.doubleSpinBoxLight2Y.setProperty("value",QtCore.QVariant(0.0))
@@ -214,6 +364,12 @@ class Ui_DialogSceneEditor(object):
 
         self.doubleSpinBoxLight2Z = QtGui.QDoubleSpinBox(self.groupBox_5)
         self.doubleSpinBoxLight2Z.setEnabled(False)
+
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Maximum,QtGui.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.doubleSpinBoxLight2Z.sizePolicy().hasHeightForWidth())
+        self.doubleSpinBoxLight2Z.setSizePolicy(sizePolicy)
         self.doubleSpinBoxLight2Z.setMinimum(-9999999999.99)
         self.doubleSpinBoxLight2Z.setMaximum(9999999999.99)
         self.doubleSpinBoxLight2Z.setProperty("value",QtCore.QVariant(0.0))
@@ -221,16 +377,28 @@ class Ui_DialogSceneEditor(object):
         self.gridlayout5.addWidget(self.doubleSpinBoxLight2Z,1,3,1,1)
 
         self.label_6 = QtGui.QLabel(self.groupBox_5)
+
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Maximum,QtGui.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.label_6.sizePolicy().hasHeightForWidth())
+        self.label_6.setSizePolicy(sizePolicy)
         self.label_6.setObjectName("label_6")
         self.gridlayout5.addWidget(self.label_6,2,0,1,1)
 
         self.pushButtonLight2Color = ColoredPushButton(self.groupBox_5)
         self.pushButtonLight2Color.setEnabled(False)
         self.pushButtonLight2Color.setObjectName("pushButtonLight2Color")
-        self.gridlayout5.addWidget(self.pushButtonLight2Color,2,1,1,1)
-        self.gridlayout3.addWidget(self.groupBox_5,1,0,1,2)
+        self.gridlayout5.addWidget(self.pushButtonLight2Color,2,2,1,2)
+        self.gridlayout3.addWidget(self.groupBox_5,1,0,1,1)
 
         self.groupBox_7 = QtGui.QGroupBox(self.tabLighting)
+
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding,QtGui.QSizePolicy.Maximum)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.groupBox_7.sizePolicy().hasHeightForWidth())
+        self.groupBox_7.setSizePolicy(sizePolicy)
         self.groupBox_7.setObjectName("groupBox_7")
 
         self.gridlayout6 = QtGui.QGridLayout(self.groupBox_7)
@@ -243,12 +411,15 @@ class Ui_DialogSceneEditor(object):
         self.pushButtonBackgroundColor = ColoredPushButton(self.groupBox_7)
         self.pushButtonBackgroundColor.setObjectName("pushButtonBackgroundColor")
         self.gridlayout6.addWidget(self.pushButtonBackgroundColor,0,1,1,1)
-
-        spacerItem1 = QtGui.QSpacerItem(20,40,QtGui.QSizePolicy.Minimum,QtGui.QSizePolicy.Expanding)
-        self.gridlayout6.addItem(spacerItem1,1,0,1,2)
         self.gridlayout3.addWidget(self.groupBox_7,2,0,1,1)
 
         self.groupBox_6 = QtGui.QGroupBox(self.tabLighting)
+
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding,QtGui.QSizePolicy.Maximum)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.groupBox_6.sizePolicy().hasHeightForWidth())
+        self.groupBox_6.setSizePolicy(sizePolicy)
         self.groupBox_6.setObjectName("groupBox_6")
 
         self.gridlayout7 = QtGui.QGridLayout(self.groupBox_6)
@@ -256,7 +427,7 @@ class Ui_DialogSceneEditor(object):
 
         self.checkBoxFogEnabled = QtGui.QCheckBox(self.groupBox_6)
         self.checkBoxFogEnabled.setObjectName("checkBoxFogEnabled")
-        self.gridlayout7.addWidget(self.checkBoxFogEnabled,0,0,1,1)
+        self.gridlayout7.addWidget(self.checkBoxFogEnabled,0,0,1,2)
 
         self.label_7 = QtGui.QLabel(self.groupBox_6)
         self.label_7.setObjectName("label_7")
@@ -278,14 +449,12 @@ class Ui_DialogSceneEditor(object):
         self.pushButtonFogColor = ColoredPushButton(self.groupBox_6)
         self.pushButtonFogColor.setObjectName("pushButtonFogColor")
         self.gridlayout7.addWidget(self.pushButtonFogColor,2,1,1,1)
-        self.gridlayout3.addWidget(self.groupBox_6,2,1,1,1)
+        self.gridlayout3.addWidget(self.groupBox_6,3,0,1,1)
         self.tabWidget.addTab(self.tabLighting,"")
         self.gridlayout.addWidget(self.tabWidget,0,0,1,1)
 
         self.retranslateUi(DialogSceneEditor)
         self.tabWidget.setCurrentIndex(0)
-        QtCore.QObject.connect(self.checkBoxFogEnabled,QtCore.SIGNAL("toggled(bool)"),self.doubleSpinBoxFogDensity.setEnabled)
-        QtCore.QObject.connect(self.checkBoxFogEnabled,QtCore.SIGNAL("toggled(bool)"),self.pushButtonFogColor.setEnabled)
         QtCore.QObject.connect(self.checkBoxLight2Enabled,QtCore.SIGNAL("toggled(bool)"),self.pushButtonLight2Color.setEnabled)
         QtCore.QObject.connect(self.checkBoxLight2Enabled,QtCore.SIGNAL("toggled(bool)"),self.doubleSpinBoxLight2Y.setEnabled)
         QtCore.QObject.connect(self.checkBoxLight2Enabled,QtCore.SIGNAL("toggled(bool)"),self.doubleSpinBoxLight2X.setEnabled)
@@ -295,6 +464,8 @@ class Ui_DialogSceneEditor(object):
         QtCore.QObject.connect(self.checkBoxLight1EyePosition,QtCore.SIGNAL("toggled(bool)"),self.doubleSpinBoxLight1Z.setDisabled)
         QtCore.QObject.connect(self.checkBoxLight1Enabled,QtCore.SIGNAL("toggled(bool)"),self.pushButtonLight1Color.setEnabled)
         QtCore.QObject.connect(self.checkBoxLight1Enabled,QtCore.SIGNAL("toggled(bool)"),self.checkBoxLight1EyePosition.setEnabled)
+        QtCore.QObject.connect(self.checkBoxFogEnabled,QtCore.SIGNAL("toggled(bool)"),self.doubleSpinBoxFogDensity.setEnabled)
+        QtCore.QObject.connect(self.checkBoxFogEnabled,QtCore.SIGNAL("toggled(bool)"),self.pushButtonFogColor.setEnabled)
         QtCore.QMetaObject.connectSlotsByName(DialogSceneEditor)
         DialogSceneEditor.setTabOrder(self.tabWidget,self.doubleSpinBoxEyeX)
         DialogSceneEditor.setTabOrder(self.doubleSpinBoxEyeX,self.doubleSpinBoxEyeY)
@@ -330,10 +501,10 @@ class Ui_DialogSceneEditor(object):
         self.label_20.setText(QtGui.QApplication.translate("DialogSceneEditor", "Zoom:", None, QtGui.QApplication.UnicodeUTF8))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabCamera), QtGui.QApplication.translate("DialogSceneEditor", "Camera", None, QtGui.QApplication.UnicodeUTF8))
         self.groupBox_4.setTitle(QtGui.QApplication.translate("DialogSceneEditor", "Light 1:", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_2.setText(QtGui.QApplication.translate("DialogSceneEditor", "Position:", None, QtGui.QApplication.UnicodeUTF8))
-        self.label.setText(QtGui.QApplication.translate("DialogSceneEditor", "Color:", None, QtGui.QApplication.UnicodeUTF8))
         self.checkBoxLight1Enabled.setText(QtGui.QApplication.translate("DialogSceneEditor", "Enabled", None, QtGui.QApplication.UnicodeUTF8))
         self.checkBoxLight1EyePosition.setText(QtGui.QApplication.translate("DialogSceneEditor", "Use Eye Position", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_2.setText(QtGui.QApplication.translate("DialogSceneEditor", "Position:", None, QtGui.QApplication.UnicodeUTF8))
+        self.label.setText(QtGui.QApplication.translate("DialogSceneEditor", "Color:", None, QtGui.QApplication.UnicodeUTF8))
         self.groupBox_5.setTitle(QtGui.QApplication.translate("DialogSceneEditor", "Light 2:", None, QtGui.QApplication.UnicodeUTF8))
         self.checkBoxLight2Enabled.setText(QtGui.QApplication.translate("DialogSceneEditor", "Enabled", None, QtGui.QApplication.UnicodeUTF8))
         self.label_5.setText(QtGui.QApplication.translate("DialogSceneEditor", "Position:", None, QtGui.QApplication.UnicodeUTF8))

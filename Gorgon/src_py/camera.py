@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.50  2008/12/02 18:31:33  ssa1
+#   Fixing the flicker bug on macos...
+#
 #   Revision 1.49  2008/11/28 16:05:59  ssa1
 #   Changing platform detection code for mac and windows
 #
@@ -299,7 +302,7 @@ class Camera(QtOpenGL.QGLWidget):
                 if(self.lightsUseEyePosition[i]):
                     afLightPosition = [self.eye[0], self.eye[1], self.eye[2], 0] 
                 else:
-                    afLightPosition = [self.lightsPosition[i][0], self.lightsPosition[1], self.lightsPosition[2], 0]         
+                    afLightPosition = [self.lightsPosition[i][0], self.lightsPosition[i][1], self.lightsPosition[i][2], 0]         
                 glLightfv(glLight[i], GL_AMBIENT,  afPropertiesAmbient)
                 glLightfv(glLight[i], GL_DIFFUSE,  afPropertiesDiffuse) 
                 glLightfv(glLight[i], GL_SPECULAR, afPropertiesSpecular) 

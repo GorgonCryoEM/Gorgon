@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_dialog_model_visualization.ui'
 #
-# Created: Mon Dec 01 22:49:15 2008
+# Created: Tue Dec 02 14:01:25 2008
 #      by: PyQt4 UI code generator 4.3.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,9 +12,9 @@ from PyQt4 import QtCore, QtGui
 class Ui_DialogModelVisualization(object):
     def setupUi(self, DialogModelVisualization):
         DialogModelVisualization.setObjectName("DialogModelVisualization")
-        DialogModelVisualization.resize(QtCore.QSize(QtCore.QRect(0,0,257,297).size()).expandedTo(DialogModelVisualization.minimumSizeHint()))
+        DialogModelVisualization.resize(QtCore.QSize(QtCore.QRect(0,0,244,297).size()).expandedTo(DialogModelVisualization.minimumSizeHint()))
 
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Maximum,QtGui.QSizePolicy.Maximum)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred,QtGui.QSizePolicy.Maximum)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(DialogModelVisualization.sizePolicy().hasHeightForWidth())
@@ -25,7 +25,7 @@ class Ui_DialogModelVisualization(object):
 
         self.tabWidget = QtGui.QTabWidget(DialogModelVisualization)
 
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Maximum,QtGui.QSizePolicy.Maximum)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding,QtGui.QSizePolicy.Maximum)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.tabWidget.sizePolicy().hasHeightForWidth())
@@ -40,7 +40,7 @@ class Ui_DialogModelVisualization(object):
 
         self.groupBoxDisplayStyle = QtGui.QGroupBox(self.tab)
 
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Maximum,QtGui.QSizePolicy.Maximum)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred,QtGui.QSizePolicy.Maximum)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.groupBoxDisplayStyle.sizePolicy().hasHeightForWidth())

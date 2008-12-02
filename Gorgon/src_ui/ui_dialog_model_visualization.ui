@@ -5,12 +5,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>257</width>
+    <width>244</width>
     <height>297</height>
    </rect>
   </property>
   <property name="sizePolicy" >
-   <sizepolicy vsizetype="Maximum" hsizetype="Maximum" >
+   <sizepolicy vsizetype="Maximum" hsizetype="Preferred" >
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
@@ -22,7 +22,7 @@
    <item row="0" column="0" >
     <widget class="QTabWidget" name="tabWidget" >
      <property name="sizePolicy" >
-      <sizepolicy vsizetype="Maximum" hsizetype="Maximum" >
+      <sizepolicy vsizetype="Maximum" hsizetype="Expanding" >
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
@@ -38,7 +38,7 @@
        <item row="0" column="0" colspan="3" >
         <widget class="QGroupBox" name="groupBoxDisplayStyle" >
          <property name="sizePolicy" >
-          <sizepolicy vsizetype="Maximum" hsizetype="Maximum" >
+          <sizepolicy vsizetype="Maximum" hsizetype="Preferred" >
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
