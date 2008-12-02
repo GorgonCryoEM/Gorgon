@@ -43,10 +43,10 @@ class StructureEditor(QtGui.QWidget):
         self.connect(self.helixDecreasePositionButton, QtCore.SIGNAL('clicked()'), self.helixDecreaseButtonPress)
         self.connect(self.helixIncreasePositionButton, QtCore.SIGNAL('clicked()'), self.helixIncreaseButtonPress)
         self.connect(self.helixFlipButton, QtCore.SIGNAL('clicked()'), self.helixFlipButtonPress)
+        self.connect(self.currentChainModel, QtCore.SIGNAL('selection updated'), self.updateSelectedResidues)
         if self.parentWidget().parentWidget().app:
             self.app = self.parentWidget().parentWidget().app
             self.connect(self.app.viewers['sse'], QtCore.SIGNAL('elementSelected (int, int, int, int, int, int, QMouseEvent)'), self.updateCurrentMatch)
-            self.connect(self.currentChainModel, QtCore.SIGNAL('selection updated'), self.updateSelectedResidues)
             self.connect(self.app.viewers["calpha"], QtCore.SIGNAL("elementSelected (int, int, int, int, int, int, QMouseEvent)"), self.posUpdateValues)
             self.connect(self.posMoveDict['x'], QtCore.SIGNAL('valueChanged(double)'), self.posMoveCM_x)
             self.connect(self.posMoveDict['y'], QtCore.SIGNAL('valueChanged(double)'), self.posMoveCM_y)
@@ -190,7 +190,7 @@ class StructureEditor(QtGui.QWidget):
             if newSelection[0] > max(currentChainModel.residueRange()): 
                 return
             self.parentWidget().scrollable.seqView.setSequenceSelection(newSelection)
-            self.setResidues(newSelection)
+            #self.setResidues(newSelection)
     
     def atomPrevButtonPress(self):
         #self.parentWidget() returns a SequenceWidget object
@@ -200,7 +200,7 @@ class StructureEditor(QtGui.QWidget):
             if newSelection[0] <min(currentChainModel.residueRange()): 
                 return
             self.parentWidget().scrollable.seqView.setSequenceSelection(newSelection)
-            self.setResidues(newSelection)
+            #self.setResidues(newSelection)
             
     def clearMockSidechains(self,  chain):
         for index in chain.residueRange():
@@ -386,6 +386,7 @@ class StructureEditor(QtGui.QWidget):
         print "The mock side-chains should be ready to draw to the screen"
 
     def setResidues(self, newSelection):
+        print 'In setResidues'
         #newSelection is a list of Residue indeces that are selected
         if not newSelection:
             print 'In sequence_view.StructureEdit.setResidues().  The new selection is empty!'
@@ -726,6 +727,7 @@ class StructureEditor(QtGui.QWidget):
         print 'Index:', sseIndex
     
     def updateSelectedResidues(self):
+        print '\nIn updateSelectedResidues'
         if self.tabWidget.currentWidget() is self.atomicTab:
             self.setResidues(self.currentChainModel.getSelection())
         
