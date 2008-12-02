@@ -29,6 +29,7 @@ class StructureEditor(QtGui.QWidget):
         self.CAlabel = QtGui.QLabel('C-Alplha Interval')
         self.mockSidechainsCheckBox = QtGui.QCheckBox('Mock Sidechains')
         self.acceptButton = QtGui.QPushButton('Accept')
+        self.removeButton = QtGui.QPushButton('Remove')
                 
         self.setupUi()
         self.enableDisable()
@@ -40,7 +41,7 @@ class StructureEditor(QtGui.QWidget):
         self.connect(self.atomicForwardRadioButton,  QtCore.SIGNAL('toggled(bool)'), self.atomForwardBackwardChange)
         self.connect(self.undoButton,  QtCore.SIGNAL('clicked()'), self.undoStack.undo)
         self.connect(self.redoButton,  QtCore.SIGNAL('clicked()'), self.undoStack.redo)
-        self.connect(self.helixCreateCAHelixButton, QtCore.SIGNAL('clicked()'), self.helixCreateCAhelix)
+        self.connect(self.acceptButton, QtCore.SIGNAL('clicked()'), self.acceptButtonPress)
         self.connect(self.helixDecreasePositionButton, QtCore.SIGNAL('clicked()'), self.helixDecreaseButtonPress)
         self.connect(self.helixIncreasePositionButton, QtCore.SIGNAL('clicked()'), self.helixIncreaseButtonPress)
         self.connect(self.helixFlipButton, QtCore.SIGNAL('clicked()'), self.helixFlipButtonPress)
@@ -75,6 +76,8 @@ class StructureEditor(QtGui.QWidget):
             command = CommandAcceptAtomPlacement( self.currentChainModel, self, resSeqNum, chosenCoordinates, viewer,  
                                 description = "Accept Location of C-alpha atom for residue #%s" % resSeqNum )
             self.undoStack.push(command)
+        elif currentWidget is self.helixTab:
+            self.helixCreateCAhelix()
     
     def atomChoosePossibleAtom(self, choiceNum):
         if choiceNum == 0:
@@ -217,24 +220,28 @@ class StructureEditor(QtGui.QWidget):
             self.CAdoubleSpinBox.setEnabled(True)
             self.CAlabel.setEnabled(True)
             self.acceptButton.setEnabled(True)
+            self.removeButton.setEnabled(False)
             self.redoButton.setEnabled(True)
             self.undoButton.setEnabled(True)
         elif currentTab is self.helixTab:
             self.CAdoubleSpinBox.setEnabled(False)
             self.CAlabel.setEnabled(False)
-            self.acceptButton.setEnabled(False)
+            self.acceptButton.setEnabled(True)
+            self.removeButton.setEnabled(False)
             self.redoButton.setEnabled(False)
             self.undoButton.setEnabled(False)
         elif currentTab is self.loopTab:
             self.CAdoubleSpinBox.setEnabled(False)
             self.CAlabel.setEnabled(False)
             self.acceptButton.setEnabled(False)
+            self.removeButton.setEnabled(False)
             self.redoButton.setEnabled(False)
             self.undoButton.setEnabled(False)
         elif currentTab is self.positionTab:
             self.CAdoubleSpinBox.setEnabled(False)
             self.CAlabel.setEnabled(False)
             self.acceptButton.setEnabled(False)
+            self.removeButton.setEnabled(False)
             self.redoButton.setEnabled(False)
             self.undoButton.setEnabled(False)            
     
@@ -520,8 +527,6 @@ class StructureEditor(QtGui.QWidget):
         positionLabel = QtGui.QLabel(self.tr('Position'))
         self.helixIncreasePositionButton = QtGui.QPushButton('+')
         self.helixIncreasePositionButton.setMaximumWidth(30)
-        self.helixCreateCAHelixButton = QtGui.QPushButton(self.tr('Create C-alpha Helix'))
-        self.helixRemoveButton = QtGui.QPushButton(self.tr('Remove'))
         self.helixFlipButton = QtGui.QPushButton(self.tr('Flip'))
         
         radioLayout = QtGui.QHBoxLayout()
@@ -546,13 +551,7 @@ class StructureEditor(QtGui.QWidget):
         positionLayout.addWidget(positionLabel)
         positionLayout.addWidget(self.helixIncreasePositionButton)
         positionLayout.addStretch()
-        
-        createLayout = QtGui.QHBoxLayout()
-        createLayout.addWidget(self.helixCreateCAHelixButton)
-        createLayout.addStretch()
-        removeLayout = QtGui.QHBoxLayout()
-        removeLayout.addWidget(self.helixRemoveButton)
-        removeLayout.addStretch()
+
         flipLayout = QtGui.QHBoxLayout()
         flipLayout.addWidget(self.helixFlipButton)
         flipLayout.addStretch()
@@ -562,15 +561,12 @@ class StructureEditor(QtGui.QWidget):
         helixLayout.addLayout(NtermLayout)
         helixLayout.addLayout(CtermLayout)
         helixLayout.addLayout(positionLayout)
-        helixLayout.addLayout(createLayout)
-        helixLayout.addLayout(removeLayout)
         helixLayout.addLayout(flipLayout)
         self.helixTab.setLayout(helixLayout)
         
         #Disabling widgets that are not yet implemented
         self.helixModifyRadioButton.setEnabled(False)
         self.helixNewRadioButtion.setEnabled(False)
-        self.helixRemoveButton.setEnabled(False)
         
     def setupLoopTab(self):
         self.loopStartLabel = QtGui.QLabel('Start Residue')
@@ -731,13 +727,14 @@ class StructureEditor(QtGui.QWidget):
         CAIntervalLayout.addWidget(self.CAdoubleSpinBox)
         CAIntervalLayout.addWidget(self.CAlabel)
         
-        acceptLayout = QtGui.QHBoxLayout()
-        acceptLayout.addStretch()
-        acceptLayout.addWidget(self.acceptButton)
-        acceptLayout.addStretch()
+        buttonLayout = QtGui.QHBoxLayout()
+        buttonLayout.addStretch()
+        buttonLayout.addWidget(self.acceptButton)
+        buttonLayout.addWidget(self.removeButton)
+        buttonLayout.addStretch()
         
         leftLayout.addLayout(CAIntervalLayout)        
-        leftLayout.addLayout(acceptLayout)
+        leftLayout.addLayout(buttonLayout)
         leftLayout.addStretch()
         
         self.tabWidget.addTab(self.helixTab, self.tr('Helix Editor'))
