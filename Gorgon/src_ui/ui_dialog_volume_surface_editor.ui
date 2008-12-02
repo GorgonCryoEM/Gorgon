@@ -5,15 +5,9 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>338</width>
-    <height>156</height>
+    <width>399</width>
+    <height>124</height>
    </rect>
-  </property>
-  <property name="sizePolicy" >
-   <sizepolicy vsizetype="Maximum" hsizetype="Preferred" >
-    <horstretch>0</horstretch>
-    <verstretch>0</verstretch>
-   </sizepolicy>
   </property>
   <property name="minimumSize" >
    <size>
@@ -25,178 +19,150 @@
    <string>Volume - Surface Editor</string>
   </property>
   <layout class="QGridLayout" >
-   <item row="0" column="0" >
-    <widget class="QGroupBox" name="groupBoxSurfaceOptions" >
-     <property name="sizePolicy" >
-      <sizepolicy vsizetype="Maximum" hsizetype="Preferred" >
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="title" >
-      <string>Surface Parameters:</string>
-     </property>
-     <layout class="QGridLayout" >
-      <item row="0" column="0" colspan="3" >
-       <layout class="QGridLayout" >
-        <item row="0" column="0" >
-         <widget class="QRadioButton" name="radioButtonIsoSurface" >
-          <property name="text" >
-           <string>Iso-surface view</string>
-          </property>
-          <property name="checked" >
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="1" >
-         <widget class="QRadioButton" name="radioButtonCrossSection" >
-          <property name="text" >
-           <string>Cross-Section view</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="2" >
-         <widget class="QRadioButton" name="radioButtonSolid" >
-          <property name="text" >
-           <string>Solid view</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
-      <item row="1" column="0" >
-       <widget class="QLabel" name="labelIsoLevel" >
-        <property name="text" >
-         <string>Density Threshold:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1" >
-       <widget class="QSlider" name="horizontalSliderIsoLevel" >
-        <property name="maximum" >
-         <number>25500</number>
-        </property>
-        <property name="singleStep" >
-         <number>1</number>
-        </property>
-        <property name="pageStep" >
-         <number>10</number>
-        </property>
-        <property name="value" >
-         <number>12800</number>
-        </property>
-        <property name="orientation" >
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="tickPosition" >
-         <enum>QSlider::NoTicks</enum>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="2" >
-       <widget class="QDoubleSpinBox" name="doubleSpinBoxDensity" >
-        <property name="decimals" >
-         <number>3</number>
-        </property>
-        <property name="maximum" >
-         <double>25500.000000000000000</double>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="0" >
-       <widget class="QLabel" name="labelSamplingInterval" >
-        <property name="text" >
-         <string>Sampling Interval:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="1" >
-       <widget class="QSlider" name="horizontalSliderSampling" >
-        <property name="minimum" >
-         <number>1</number>
-        </property>
-        <property name="maximum" >
-         <number>8</number>
-        </property>
-        <property name="pageStep" >
-         <number>1</number>
-        </property>
-        <property name="value" >
-         <number>1</number>
-        </property>
-        <property name="orientation" >
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="tickPosition" >
-         <enum>QSlider::TicksBelow</enum>
-        </property>
-        <property name="tickInterval" >
-         <number>0</number>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="2" >
-       <widget class="QLabel" name="labelSamplingDisplay" >
-        <property name="text" >
-         <string>1</string>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="0" >
-       <widget class="QLabel" name="labelDisplayRadius" >
-        <property name="text" >
-         <string>Display Radius:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="1" >
-       <widget class="QSlider" name="horizontalSliderDisplayRadius" >
-        <property name="minimum" >
-         <number>1</number>
-        </property>
-        <property name="maximum" >
-         <number>255</number>
-        </property>
-        <property name="pageStep" >
-         <number>1</number>
-        </property>
-        <property name="value" >
-         <number>255</number>
-        </property>
-        <property name="orientation" >
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="tickPosition" >
-         <enum>QSlider::NoTicks</enum>
-        </property>
-        <property name="tickInterval" >
-         <number>0</number>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="2" >
-       <widget class="QLabel" name="labelDisplayRadiusDisplay" >
-        <property name="text" >
-         <string>255</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
+   <item row="0" column="0" colspan="2" >
+    <layout class="QGridLayout" >
+     <item row="0" column="0" >
+      <widget class="QRadioButton" name="radioButtonIsoSurface" >
+       <property name="text" >
+        <string>Iso-surface view</string>
+       </property>
+       <property name="checked" >
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1" >
+      <widget class="QRadioButton" name="radioButtonCrossSection" >
+       <property name="text" >
+        <string>Cross-Section view</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="2" >
+      <widget class="QRadioButton" name="radioButtonSolid" >
+       <property name="text" >
+        <string>Solid view</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
    <item row="1" column="0" >
-    <spacer>
+    <widget class="QLabel" name="labelIsoLevel" >
+     <property name="text" >
+      <string>Density Threshold:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1" >
+    <widget class="QSlider" name="horizontalSliderIsoLevel" >
+     <property name="maximum" >
+      <number>25500</number>
+     </property>
+     <property name="singleStep" >
+      <number>1</number>
+     </property>
+     <property name="pageStep" >
+      <number>10</number>
+     </property>
+     <property name="value" >
+      <number>12800</number>
+     </property>
      <property name="orientation" >
-      <enum>Qt::Vertical</enum>
+      <enum>Qt::Horizontal</enum>
      </property>
-     <property name="sizeHint" >
-      <size>
-       <width>20</width>
-       <height>40</height>
-      </size>
+     <property name="tickPosition" >
+      <enum>QSlider::NoTicks</enum>
      </property>
-    </spacer>
+    </widget>
+   </item>
+   <item row="1" column="2" >
+    <widget class="QDoubleSpinBox" name="doubleSpinBoxDensity" >
+     <property name="decimals" >
+      <number>3</number>
+     </property>
+     <property name="maximum" >
+      <double>25500.000000000000000</double>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0" >
+    <widget class="QLabel" name="labelSamplingInterval" >
+     <property name="text" >
+      <string>Sampling Interval:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1" >
+    <widget class="QSlider" name="horizontalSliderSampling" >
+     <property name="minimum" >
+      <number>1</number>
+     </property>
+     <property name="maximum" >
+      <number>8</number>
+     </property>
+     <property name="pageStep" >
+      <number>1</number>
+     </property>
+     <property name="value" >
+      <number>1</number>
+     </property>
+     <property name="orientation" >
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="tickPosition" >
+      <enum>QSlider::TicksBelow</enum>
+     </property>
+     <property name="tickInterval" >
+      <number>0</number>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="2" >
+    <widget class="QLabel" name="labelSamplingDisplay" >
+     <property name="text" >
+      <string>1</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0" >
+    <widget class="QLabel" name="labelDisplayRadius" >
+     <property name="text" >
+      <string>Display Radius:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="1" >
+    <widget class="QSlider" name="horizontalSliderDisplayRadius" >
+     <property name="minimum" >
+      <number>1</number>
+     </property>
+     <property name="maximum" >
+      <number>255</number>
+     </property>
+     <property name="pageStep" >
+      <number>1</number>
+     </property>
+     <property name="value" >
+      <number>255</number>
+     </property>
+     <property name="orientation" >
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="tickPosition" >
+      <enum>QSlider::NoTicks</enum>
+     </property>
+     <property name="tickInterval" >
+      <number>0</number>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="2" >
+    <widget class="QLabel" name="labelDisplayRadiusDisplay" >
+     <property name="text" >
+      <string>255</string>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>

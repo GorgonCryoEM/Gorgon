@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_dialog_volume_surface_editor.ui'
 #
-# Created: Mon Dec 01 23:32:14 2008
+# Created: Tue Dec 02 14:30:15 2008
 #      by: PyQt4 UI code generator 4.3.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,52 +12,34 @@ from PyQt4 import QtCore, QtGui
 class Ui_DialogVolumeSurfaceEditor(object):
     def setupUi(self, DialogVolumeSurfaceEditor):
         DialogVolumeSurfaceEditor.setObjectName("DialogVolumeSurfaceEditor")
-        DialogVolumeSurfaceEditor.resize(QtCore.QSize(QtCore.QRect(0,0,338,156).size()).expandedTo(DialogVolumeSurfaceEditor.minimumSizeHint()))
-
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred,QtGui.QSizePolicy.Maximum)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(DialogVolumeSurfaceEditor.sizePolicy().hasHeightForWidth())
-        DialogVolumeSurfaceEditor.setSizePolicy(sizePolicy)
+        DialogVolumeSurfaceEditor.resize(QtCore.QSize(QtCore.QRect(0,0,399,124).size()).expandedTo(DialogVolumeSurfaceEditor.minimumSizeHint()))
         DialogVolumeSurfaceEditor.setMinimumSize(QtCore.QSize(230,124))
 
         self.gridlayout = QtGui.QGridLayout(DialogVolumeSurfaceEditor)
         self.gridlayout.setObjectName("gridlayout")
 
-        self.groupBoxSurfaceOptions = QtGui.QGroupBox(DialogVolumeSurfaceEditor)
-
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred,QtGui.QSizePolicy.Maximum)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.groupBoxSurfaceOptions.sizePolicy().hasHeightForWidth())
-        self.groupBoxSurfaceOptions.setSizePolicy(sizePolicy)
-        self.groupBoxSurfaceOptions.setObjectName("groupBoxSurfaceOptions")
-
-        self.gridlayout1 = QtGui.QGridLayout(self.groupBoxSurfaceOptions)
+        self.gridlayout1 = QtGui.QGridLayout()
         self.gridlayout1.setObjectName("gridlayout1")
 
-        self.gridlayout2 = QtGui.QGridLayout()
-        self.gridlayout2.setObjectName("gridlayout2")
-
-        self.radioButtonIsoSurface = QtGui.QRadioButton(self.groupBoxSurfaceOptions)
+        self.radioButtonIsoSurface = QtGui.QRadioButton(DialogVolumeSurfaceEditor)
         self.radioButtonIsoSurface.setChecked(True)
         self.radioButtonIsoSurface.setObjectName("radioButtonIsoSurface")
-        self.gridlayout2.addWidget(self.radioButtonIsoSurface,0,0,1,1)
+        self.gridlayout1.addWidget(self.radioButtonIsoSurface,0,0,1,1)
 
-        self.radioButtonCrossSection = QtGui.QRadioButton(self.groupBoxSurfaceOptions)
+        self.radioButtonCrossSection = QtGui.QRadioButton(DialogVolumeSurfaceEditor)
         self.radioButtonCrossSection.setObjectName("radioButtonCrossSection")
-        self.gridlayout2.addWidget(self.radioButtonCrossSection,0,1,1,1)
+        self.gridlayout1.addWidget(self.radioButtonCrossSection,0,1,1,1)
 
-        self.radioButtonSolid = QtGui.QRadioButton(self.groupBoxSurfaceOptions)
+        self.radioButtonSolid = QtGui.QRadioButton(DialogVolumeSurfaceEditor)
         self.radioButtonSolid.setObjectName("radioButtonSolid")
-        self.gridlayout2.addWidget(self.radioButtonSolid,0,2,1,1)
-        self.gridlayout1.addLayout(self.gridlayout2,0,0,1,3)
+        self.gridlayout1.addWidget(self.radioButtonSolid,0,2,1,1)
+        self.gridlayout.addLayout(self.gridlayout1,0,0,1,2)
 
-        self.labelIsoLevel = QtGui.QLabel(self.groupBoxSurfaceOptions)
+        self.labelIsoLevel = QtGui.QLabel(DialogVolumeSurfaceEditor)
         self.labelIsoLevel.setObjectName("labelIsoLevel")
-        self.gridlayout1.addWidget(self.labelIsoLevel,1,0,1,1)
+        self.gridlayout.addWidget(self.labelIsoLevel,1,0,1,1)
 
-        self.horizontalSliderIsoLevel = QtGui.QSlider(self.groupBoxSurfaceOptions)
+        self.horizontalSliderIsoLevel = QtGui.QSlider(DialogVolumeSurfaceEditor)
         self.horizontalSliderIsoLevel.setMaximum(25500)
         self.horizontalSliderIsoLevel.setSingleStep(1)
         self.horizontalSliderIsoLevel.setPageStep(10)
@@ -65,19 +47,19 @@ class Ui_DialogVolumeSurfaceEditor(object):
         self.horizontalSliderIsoLevel.setOrientation(QtCore.Qt.Horizontal)
         self.horizontalSliderIsoLevel.setTickPosition(QtGui.QSlider.NoTicks)
         self.horizontalSliderIsoLevel.setObjectName("horizontalSliderIsoLevel")
-        self.gridlayout1.addWidget(self.horizontalSliderIsoLevel,1,1,1,1)
+        self.gridlayout.addWidget(self.horizontalSliderIsoLevel,1,1,1,1)
 
-        self.doubleSpinBoxDensity = QtGui.QDoubleSpinBox(self.groupBoxSurfaceOptions)
+        self.doubleSpinBoxDensity = QtGui.QDoubleSpinBox(DialogVolumeSurfaceEditor)
         self.doubleSpinBoxDensity.setDecimals(3)
         self.doubleSpinBoxDensity.setMaximum(25500.0)
         self.doubleSpinBoxDensity.setObjectName("doubleSpinBoxDensity")
-        self.gridlayout1.addWidget(self.doubleSpinBoxDensity,1,2,1,1)
+        self.gridlayout.addWidget(self.doubleSpinBoxDensity,1,2,1,1)
 
-        self.labelSamplingInterval = QtGui.QLabel(self.groupBoxSurfaceOptions)
+        self.labelSamplingInterval = QtGui.QLabel(DialogVolumeSurfaceEditor)
         self.labelSamplingInterval.setObjectName("labelSamplingInterval")
-        self.gridlayout1.addWidget(self.labelSamplingInterval,2,0,1,1)
+        self.gridlayout.addWidget(self.labelSamplingInterval,2,0,1,1)
 
-        self.horizontalSliderSampling = QtGui.QSlider(self.groupBoxSurfaceOptions)
+        self.horizontalSliderSampling = QtGui.QSlider(DialogVolumeSurfaceEditor)
         self.horizontalSliderSampling.setMinimum(1)
         self.horizontalSliderSampling.setMaximum(8)
         self.horizontalSliderSampling.setPageStep(1)
@@ -86,17 +68,17 @@ class Ui_DialogVolumeSurfaceEditor(object):
         self.horizontalSliderSampling.setTickPosition(QtGui.QSlider.TicksBelow)
         self.horizontalSliderSampling.setTickInterval(0)
         self.horizontalSliderSampling.setObjectName("horizontalSliderSampling")
-        self.gridlayout1.addWidget(self.horizontalSliderSampling,2,1,1,1)
+        self.gridlayout.addWidget(self.horizontalSliderSampling,2,1,1,1)
 
-        self.labelSamplingDisplay = QtGui.QLabel(self.groupBoxSurfaceOptions)
+        self.labelSamplingDisplay = QtGui.QLabel(DialogVolumeSurfaceEditor)
         self.labelSamplingDisplay.setObjectName("labelSamplingDisplay")
-        self.gridlayout1.addWidget(self.labelSamplingDisplay,2,2,1,1)
+        self.gridlayout.addWidget(self.labelSamplingDisplay,2,2,1,1)
 
-        self.labelDisplayRadius = QtGui.QLabel(self.groupBoxSurfaceOptions)
+        self.labelDisplayRadius = QtGui.QLabel(DialogVolumeSurfaceEditor)
         self.labelDisplayRadius.setObjectName("labelDisplayRadius")
-        self.gridlayout1.addWidget(self.labelDisplayRadius,3,0,1,1)
+        self.gridlayout.addWidget(self.labelDisplayRadius,3,0,1,1)
 
-        self.horizontalSliderDisplayRadius = QtGui.QSlider(self.groupBoxSurfaceOptions)
+        self.horizontalSliderDisplayRadius = QtGui.QSlider(DialogVolumeSurfaceEditor)
         self.horizontalSliderDisplayRadius.setMinimum(1)
         self.horizontalSliderDisplayRadius.setMaximum(255)
         self.horizontalSliderDisplayRadius.setPageStep(1)
@@ -105,15 +87,11 @@ class Ui_DialogVolumeSurfaceEditor(object):
         self.horizontalSliderDisplayRadius.setTickPosition(QtGui.QSlider.NoTicks)
         self.horizontalSliderDisplayRadius.setTickInterval(0)
         self.horizontalSliderDisplayRadius.setObjectName("horizontalSliderDisplayRadius")
-        self.gridlayout1.addWidget(self.horizontalSliderDisplayRadius,3,1,1,1)
+        self.gridlayout.addWidget(self.horizontalSliderDisplayRadius,3,1,1,1)
 
-        self.labelDisplayRadiusDisplay = QtGui.QLabel(self.groupBoxSurfaceOptions)
+        self.labelDisplayRadiusDisplay = QtGui.QLabel(DialogVolumeSurfaceEditor)
         self.labelDisplayRadiusDisplay.setObjectName("labelDisplayRadiusDisplay")
-        self.gridlayout1.addWidget(self.labelDisplayRadiusDisplay,3,2,1,1)
-        self.gridlayout.addWidget(self.groupBoxSurfaceOptions,0,0,1,1)
-
-        spacerItem = QtGui.QSpacerItem(20,40,QtGui.QSizePolicy.Minimum,QtGui.QSizePolicy.Expanding)
-        self.gridlayout.addItem(spacerItem,1,0,1,1)
+        self.gridlayout.addWidget(self.labelDisplayRadiusDisplay,3,2,1,1)
 
         self.retranslateUi(DialogVolumeSurfaceEditor)
         QtCore.QObject.connect(self.horizontalSliderSampling,QtCore.SIGNAL("valueChanged(int)"),self.labelSamplingDisplay.setNum)
@@ -134,7 +112,6 @@ class Ui_DialogVolumeSurfaceEditor(object):
 
     def retranslateUi(self, DialogVolumeSurfaceEditor):
         DialogVolumeSurfaceEditor.setWindowTitle(QtGui.QApplication.translate("DialogVolumeSurfaceEditor", "Volume - Surface Editor", None, QtGui.QApplication.UnicodeUTF8))
-        self.groupBoxSurfaceOptions.setTitle(QtGui.QApplication.translate("DialogVolumeSurfaceEditor", "Surface Parameters:", None, QtGui.QApplication.UnicodeUTF8))
         self.radioButtonIsoSurface.setText(QtGui.QApplication.translate("DialogVolumeSurfaceEditor", "Iso-surface view", None, QtGui.QApplication.UnicodeUTF8))
         self.radioButtonCrossSection.setText(QtGui.QApplication.translate("DialogVolumeSurfaceEditor", "Cross-Section view", None, QtGui.QApplication.UnicodeUTF8))
         self.radioButtonSolid.setText(QtGui.QApplication.translate("DialogVolumeSurfaceEditor", "Solid view", None, QtGui.QApplication.UnicodeUTF8))
