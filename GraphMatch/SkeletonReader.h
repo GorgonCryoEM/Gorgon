@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.17  2008/11/20 20:49:09  ssa1
+//   Fixing bug with loading in more VRML helices than there are in the SEQ... Also using scale directly from volume instead of a user-parameter
+//
 //   Revision 1.16  2008/11/18 18:10:24  ssa1
 //   Changing the scaling functions when doing graph matching to find correspondences
 //
@@ -503,7 +506,11 @@ namespace wustl_mm {
 			if(eraseMask) {
 				for(unsigned int i = 1; i < graph->paths[startIx][endIx].size()-1; i++) {
 					currentPos = graph->paths[startIx][endIx][i];
-					maskVol->setDataAt(currentPos.X(), currentPos.Y(), currentPos.Z(), 0.0);
+					Point3 pt = Point3(currentPos.X(), currentPos.Y(), currentPos.Z());
+					if(graph->skeletonHelixes[(int)startIx/2]->IsInsideShape(pt) || 
+							graph->skeletonHelixes[(int)endIx/2]->IsInsideShape(pt)) {
+						maskVol->setDataAt(currentPos.X(), currentPos.Y(), currentPos.Z(), 0.0);
+					}
 				}
 			}
 
