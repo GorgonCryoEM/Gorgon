@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_dialog_volume_surface_editor.ui'
 #
-# Created: Mon Dec 01 23:28:11 2008
+# Created: Mon Dec 01 23:32:14 2008
 #      by: PyQt4 UI code generator 4.3.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -13,12 +13,24 @@ class Ui_DialogVolumeSurfaceEditor(object):
     def setupUi(self, DialogVolumeSurfaceEditor):
         DialogVolumeSurfaceEditor.setObjectName("DialogVolumeSurfaceEditor")
         DialogVolumeSurfaceEditor.resize(QtCore.QSize(QtCore.QRect(0,0,338,156).size()).expandedTo(DialogVolumeSurfaceEditor.minimumSizeHint()))
+
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred,QtGui.QSizePolicy.Maximum)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(DialogVolumeSurfaceEditor.sizePolicy().hasHeightForWidth())
+        DialogVolumeSurfaceEditor.setSizePolicy(sizePolicy)
         DialogVolumeSurfaceEditor.setMinimumSize(QtCore.QSize(230,124))
 
         self.gridlayout = QtGui.QGridLayout(DialogVolumeSurfaceEditor)
         self.gridlayout.setObjectName("gridlayout")
 
         self.groupBoxSurfaceOptions = QtGui.QGroupBox(DialogVolumeSurfaceEditor)
+
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred,QtGui.QSizePolicy.Maximum)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.groupBoxSurfaceOptions.sizePolicy().hasHeightForWidth())
+        self.groupBoxSurfaceOptions.setSizePolicy(sizePolicy)
         self.groupBoxSurfaceOptions.setObjectName("groupBoxSurfaceOptions")
 
         self.gridlayout1 = QtGui.QGridLayout(self.groupBoxSurfaceOptions)
