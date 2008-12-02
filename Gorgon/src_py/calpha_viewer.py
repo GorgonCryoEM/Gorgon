@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.26  2008/11/28 04:36:17  ssa1
+#   Removing error message if pyopengl does not exist.  (To make executable building easier to debug)
+#
 #   Revision 1.25  2008/11/26 01:10:39  colemanr
 #   no longer overwriting processMouseClick
 #   instead, using elementClick signal in processElementClick()
@@ -194,7 +197,12 @@ class CAlphaViewer(BaseViewer):
         saveAct = QtGui.QAction(self.tr("C-&Alpha Atoms..."), self)
         saveAct.setStatusTip(self.tr("Save a C-Alpha atom file"))
         self.connect(saveAct, QtCore.SIGNAL("triggered()"), self.saveData)
-        self.app.actions.addAction("save_CAlpha", saveAct)                
+        self.app.actions.addAction("save_CAlpha", saveAct)
+        
+        exportAct = QtGui.QAction(self.tr('Atoms to &PDB...'), self)
+        exportAct.setStatusTip(self.tr('Export a PDB file with no placeholder atoms'))
+        self.connect(exportAct, QtCore.SIGNAL('triggered()'), self.exportData)
+        self.app.actions.addAction('export_CAlpha', exportAct)
         
         closeAct = QtGui.QAction(self.tr("C-&Alpha Atoms"), self)
         closeAct.setStatusTip(self.tr("Close the loaded C-Alpha atom file"))
@@ -270,6 +278,7 @@ class CAlphaViewer(BaseViewer):
         self.app.menus.addAction("file-open-calpha", self.app.actions.getAction("load_CAlpha"), "file-open")
         self.app.menus.addAction('file-open-sequence', self.app.actions.getAction('load_sequence'), 'file-open')
         self.app.menus.addAction("file-save-calpha", self.app.actions.getAction("save_CAlpha"), "file-save")
+        self.app.menus.addAction("file-export-calpha", self.app.actions.getAction("export_CAlpha"), "file-export")
         self.app.menus.addAction("file-close-calpha", self.app.actions.getAction("unload_CAlpha"), "file-close")
         self.app.menus.addMenu("actions-calpha", self.tr("C-&Alpha Atoms"), "actions")
         self.app.menus.addAction("showSeqDock", self.app.actions.getAction("seqDock"), "actions-calpha")           
@@ -319,7 +328,20 @@ class CAlphaViewer(BaseViewer):
                 print 'CAlphaViewer: changing the selection to a residue'
                 self.main_chain.setSelection([atom.getResSeq()])
                 print self.main_chain.getSelection()
-            
+    
+    def exportData(self):
+        self.fileName = QtGui.QFileDialog.getSaveFileName(self, self.tr("Save Data"), "", 
+                                                          self.tr('Atom Positions (*.pdb)'))
+        if not self.fileName.isEmpty():
+            self.setCursor(QtCore.Qt.WaitCursor)
+            selectedChain = self.main_chain
+            PDBstring = selectedChain.toPDB( CAlphaPlaceholders=False)
+            F = open(self.fileName, 'w')
+            F.write(PDBstring)
+            F.close()
+            self.dirty = False
+            self.setCursor(QtCore.Qt.ArrowCursor)
+    
     def saveData(self):
         self.fileName = QtGui.QFileDialog.getSaveFileName(self, self.tr("Save Data"), "", 
                                                           self.tr('Atom Positions (*.pdb)'))
