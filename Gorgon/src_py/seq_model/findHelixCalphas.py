@@ -42,7 +42,7 @@ def helixEndpointsToCAlphaPositions(position1, position2, apix=1):
 	dz=z2f - z1f
 	
 	length=math.sqrt(dx*dx + dy*dy + dz*dz)
-	intlength=int( math.ceil(length/1.54) )
+	intlength=int( math.ceil(length/1.5) )
 		
 	xyplane=math.sqrt((dx*dx)+(dy*dy))
 
@@ -97,9 +97,9 @@ def helixEndpointsToCAlphaPositions(position1, position2, apix=1):
 
 	for n in range(intlength):
 		
-		CAxorigin=math.cos(((35+(100*n))*math.pi)/180)*2.5
-		CAyorigin=math.sin(((35+(100*n))*math.pi)/180)*2.5
-		CAzorigin=(n*1.54)+.87
+		CAxorigin=math.cos((35+100*n)*math.pi/180)*2.2629
+		CAyorigin=math.sin((35+100*n)*math.pi/180)*2.2629
+		CAzorigin=(n*14.0/9.0)+.87
 
 		x5=(mx[0]*CAxorigin+mx[3]*CAyorigin+mx[6]*CAzorigin)
 		y5=(mx[1]*CAxorigin+mx[4]*CAyorigin+mx[7]*CAzorigin)
