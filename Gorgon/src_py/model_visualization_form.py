@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.11  2008/11/20 18:33:05  ssa1
+#   Using the origin of the MRC volume
+#
 #   Revision 1.10  2008/11/13 20:54:40  ssa1
 #   Using the correct scale when loading volumes
 #
@@ -97,6 +100,15 @@ class ModelVisualizationForm(QtGui.QWidget):
                                        str(round(self.viewer.renderer.getMax(0) - self.viewer.renderer.getMin(0) ,2)) + ", " +
                                        str(round(self.viewer.renderer.getMax(1) - self.viewer.renderer.getMin(1) ,2)) + ", " +
                                        str(round(self.viewer.renderer.getMax(2) - self.viewer.renderer.getMin(2) ,2)) + "}")
+        if(len(self.viewer.fileName) > 0):
+            names = self.viewer.fileName.split('\\')
+            name = names[len(names)-1];
+            names = name.split('/')
+            name = names[len(names)-1];            
+            self.ui.labelModelName.setText(name)
+        else:
+            self.ui.labelModelName.setText("")
+            
                                     
     def createActions(self):               
         self.visualizerAct = QtGui.QAction(self.tr(self.title), self)

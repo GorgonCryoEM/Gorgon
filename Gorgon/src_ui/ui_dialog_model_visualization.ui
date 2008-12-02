@@ -5,34 +5,28 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>241</width>
-    <height>263</height>
+    <width>257</width>
+    <height>297</height>
    </rect>
+  </property>
+  <property name="sizePolicy" >
+   <sizepolicy vsizetype="Maximum" hsizetype="Maximum" >
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
   </property>
   <property name="windowTitle" >
    <string>Visualization</string>
   </property>
   <layout class="QGridLayout" >
-   <property name="leftMargin" >
-    <number>1</number>
-   </property>
-   <property name="topMargin" >
-    <number>1</number>
-   </property>
-   <property name="rightMargin" >
-    <number>1</number>
-   </property>
-   <property name="bottomMargin" >
-    <number>1</number>
-   </property>
-   <property name="horizontalSpacing" >
-    <number>6</number>
-   </property>
-   <property name="verticalSpacing" >
-    <number>6</number>
-   </property>
-   <item row="0" column="0" colspan="2" >
+   <item row="0" column="0" >
     <widget class="QTabWidget" name="tabWidget" >
+     <property name="sizePolicy" >
+      <sizepolicy vsizetype="Maximum" hsizetype="Maximum" >
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="currentIndex" >
       <number>0</number>
      </property>
@@ -44,7 +38,7 @@
        <item row="0" column="0" colspan="3" >
         <widget class="QGroupBox" name="groupBoxDisplayStyle" >
          <property name="sizePolicy" >
-          <sizepolicy vsizetype="Minimum" hsizetype="Minimum" >
+          <sizepolicy vsizetype="Maximum" hsizetype="Maximum" >
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
@@ -82,6 +76,12 @@
        </item>
        <item row="1" column="0" colspan="2" >
         <widget class="QCheckBox" name="checkBoxBoundingBox" >
+         <property name="sizePolicy" >
+          <sizepolicy vsizetype="Fixed" hsizetype="Maximum" >
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <property name="text" >
           <string>Show outline box colored:</string>
          </property>
@@ -105,6 +105,12 @@
        </item>
        <item row="2" column="0" colspan="2" >
         <widget class="QCheckBox" name="checkBoxModelVisible" >
+         <property name="sizePolicy" >
+          <sizepolicy vsizetype="Fixed" hsizetype="Maximum" >
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <property name="text" >
           <string>Show model colored:</string>
          </property>
@@ -128,6 +134,12 @@
        </item>
        <item row="3" column="0" colspan="2" >
         <widget class="QCheckBox" name="checkBoxModel2Visible" >
+         <property name="sizePolicy" >
+          <sizepolicy vsizetype="Fixed" hsizetype="Maximum" >
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <property name="text" >
           <string>Show 2nd model colored:</string>
          </property>
@@ -163,6 +175,19 @@
          </property>
         </widget>
        </item>
+       <item row="5" column="1" >
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" >
+          <size>
+           <width>20</width>
+           <height>16</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
       </layout>
      </widget>
      <widget class="QWidget" name="tab_2" >
@@ -196,6 +221,12 @@
           </property>
           <item row="0" column="0" >
            <widget class="QLabel" name="labelSizeX" >
+            <property name="sizePolicy" >
+             <sizepolicy vsizetype="Preferred" hsizetype="Maximum" >
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="text" >
              <string>X:</string>
             </property>
@@ -216,6 +247,12 @@
           </item>
           <item row="1" column="0" >
            <widget class="QLabel" name="labelSizeY" >
+            <property name="sizePolicy" >
+             <sizepolicy vsizetype="Preferred" hsizetype="Maximum" >
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="text" >
              <string>Y:</string>
             </property>
@@ -236,6 +273,12 @@
           </item>
           <item row="2" column="0" >
            <widget class="QLabel" name="labelSizeZ" >
+            <property name="sizePolicy" >
+             <sizepolicy vsizetype="Preferred" hsizetype="Maximum" >
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="text" >
              <string>Z:</string>
             </property>
@@ -283,6 +326,12 @@
           </property>
           <item row="0" column="0" >
            <widget class="QLabel" name="labelLocationX" >
+            <property name="sizePolicy" >
+             <sizepolicy vsizetype="Preferred" hsizetype="Maximum" >
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="text" >
              <string>X:</string>
             </property>
@@ -306,6 +355,12 @@
           </item>
           <item row="1" column="0" >
            <widget class="QLabel" name="labelLocationY" >
+            <property name="sizePolicy" >
+             <sizepolicy vsizetype="Preferred" hsizetype="Maximum" >
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="text" >
              <string>Y:</string>
             </property>
@@ -326,6 +381,12 @@
           </item>
           <item row="2" column="0" >
            <widget class="QLabel" name="labelLocationZ" >
+            <property name="sizePolicy" >
+             <sizepolicy vsizetype="Preferred" hsizetype="Maximum" >
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="text" >
              <string>Z:</string>
             </property>
@@ -355,36 +416,101 @@
       </attribute>
       <layout class="QGridLayout" >
        <item row="0" column="0" >
+        <widget class="QLabel" name="label_2" >
+         <property name="sizePolicy" >
+          <sizepolicy vsizetype="Preferred" hsizetype="Maximum" >
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text" >
+          <string>File Name:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1" >
+        <widget class="QLabel" name="labelModelName" >
+         <property name="maximumSize" >
+          <size>
+           <width>200</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="text" >
+          <string>...</string>
+         </property>
+         <property name="wordWrap" >
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0" >
         <widget class="QLabel" name="label" >
+         <property name="sizePolicy" >
+          <sizepolicy vsizetype="Preferred" hsizetype="Maximum" >
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <property name="text" >
           <string>Model Size:</string>
          </property>
         </widget>
        </item>
-       <item row="0" column="1" >
+       <item row="1" column="1" >
         <widget class="QLabel" name="labelModelSize" >
          <property name="text" >
           <string>{X, Y, Z}</string>
          </property>
         </widget>
        </item>
+       <item row="2" column="0" >
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" >
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
       </layout>
      </widget>
     </widget>
    </item>
    <item row="1" column="0" >
-    <widget class="QPushButton" name="pushButtonCenter" >
-     <property name="text" >
-      <string comment="Center the model" >Center</string>
-     </property>
-    </widget>
+    <layout class="QGridLayout" >
+     <item row="0" column="0" >
+      <widget class="QPushButton" name="pushButtonCenter" >
+       <property name="text" >
+        <string comment="Center the model" >Center</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1" >
+      <widget class="QPushButton" name="pushButtonClose" >
+       <property name="text" >
+        <string comment="Close the model" >Unload Model</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
-   <item row="1" column="1" >
-    <widget class="QPushButton" name="pushButtonClose" >
-     <property name="text" >
-      <string comment="Close the model" >Unload Model</string>
+   <item row="2" column="0" >
+    <spacer>
+     <property name="orientation" >
+      <enum>Qt::Vertical</enum>
      </property>
-    </widget>
+     <property name="sizeHint" >
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
    </item>
   </layout>
  </widget>
