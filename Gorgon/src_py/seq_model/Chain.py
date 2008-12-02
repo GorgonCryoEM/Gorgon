@@ -791,7 +791,7 @@ class Chain(baseClass):
       except KeyError:
         if verbose:
           print "Chain.toPDB() warning:  No atom record for %s in %s%s." %(atom_name,residue_index,residue.symbol3)
-    if len(atoms) > 0:
+    if self.residueRange():
       s=s+ "TER\n"
 
     return s
