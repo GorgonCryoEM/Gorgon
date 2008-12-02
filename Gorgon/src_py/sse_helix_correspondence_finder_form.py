@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.31  2008/12/01 23:42:55  ssa1
+#   Setting theming support for backbone trace
+#
 #   Revision 1.30  2008/11/25 22:26:04  ssa1
 #   User constraints on finding correspondences (v4 - Final)
 #
@@ -105,6 +108,10 @@ from correspondence.StructureObservation import StructureObservation
 from correspondence.StructurePrediction import StructurePrediction
 from seq_model.Helix import Helix
 import sans_numpy as snum
+
+from OpenGL.GL import *
+from OpenGL.GLU import *
+from OpenGL.GLUT import *
 
 class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):   
     def __init__(self, main, viewer, parent=None):
@@ -499,8 +506,10 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
         
     def drawOverlay(self):
         if self.executed:
+            glPushAttrib(GL_LIGHTING_BIT)
             self.viewer.setMaterials(self.app.themes.getColor("CorrespondenceFinder:BackboneTrace"))            
             self.viewer.correspondenceEngine.draw(0)
+            glPopAttrib()
 
     def constraintAdded(self, state):
         if(not self.loadingCorrespondance):

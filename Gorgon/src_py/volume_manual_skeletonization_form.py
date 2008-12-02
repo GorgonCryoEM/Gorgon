@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.26  2008/12/01 23:16:31  ssa1
+#   Restructuring interactive skeleton drawing, and fixing it for scale space changes.
+#
 #   Revision 1.25  2008/11/28 04:36:17  ssa1
 #   Removing error message if pyopengl does not exist.  (To make executable building easier to debug)
 #
@@ -378,6 +381,8 @@ class VolumeManualSkeletonizationForm(QtGui.QWidget):
                             self.app.themes.getColor("InteractiveSkeletonizer:UnconfirmedCurve"),
                             self.app.themes.getColor("InteractiveSkeletonizer:RemovableCurve")]              
             for i in range(5):
+                glPushAttrib(GL_LIGHTING_BIT)
                 self.skeletonViewer.setMaterials(manualColors[i])
                 self.engine.draw(i)        
+                glPopAttrib()
                                  
