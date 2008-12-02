@@ -31,6 +31,7 @@ class StructureEditor(QtGui.QWidget):
         self.acceptButton = QtGui.QPushButton('Accept')
                 
         self.setupUi()
+        self.enableDisable()
         
         self.connect(self.atomicBack1resButton, QtCore.SIGNAL('clicked()'), self.atomPrevButtonPress)
         self.connect(self.atomicForward1resButton, QtCore.SIGNAL('clicked()'), self.atomNextButtonPress)
@@ -44,6 +45,7 @@ class StructureEditor(QtGui.QWidget):
         self.connect(self.helixIncreasePositionButton, QtCore.SIGNAL('clicked()'), self.helixIncreaseButtonPress)
         self.connect(self.helixFlipButton, QtCore.SIGNAL('clicked()'), self.helixFlipButtonPress)
         self.connect(self.currentChainModel, QtCore.SIGNAL('selection updated'), self.updateSelectedResidues)
+        self.connect(self.tabWidget, QtCore.SIGNAL('currentChanged(int)'), self.enableDisable)
         if self.parentWidget().parentWidget().app:
             self.app = self.parentWidget().parentWidget().app
             self.connect(self.app.viewers['sse'], QtCore.SIGNAL('elementSelected (int, int, int, int, int, int, QMouseEvent)'), self.updateCurrentMatch)
@@ -208,6 +210,33 @@ class StructureEditor(QtGui.QWidget):
             res.setCAlphaColorToDefault()
             res.setCAlphaSizeToDefault()
         print "The mock side-chains should be cleared, but not yet drawn to the screen."
+    
+    def enableDisable(self):
+        currentTab = self.tabWidget.currentWidget()
+        if currentTab is self.atomicTab:
+            self.CAdoubleSpinBox.setEnabled(True)
+            self.CAlabel.setEnabled(True)
+            self.acceptButton.setEnabled(True)
+            self.redoButton.setEnabled(True)
+            self.undoButton.setEnabled(True)
+        elif currentTab is self.helixTab:
+            self.CAdoubleSpinBox.setEnabled(False)
+            self.CAlabel.setEnabled(False)
+            self.acceptButton.setEnabled(False)
+            self.redoButton.setEnabled(False)
+            self.undoButton.setEnabled(False)
+        elif currentTab is self.loopTab:
+            self.CAdoubleSpinBox.setEnabled(False)
+            self.CAlabel.setEnabled(False)
+            self.acceptButton.setEnabled(False)
+            self.redoButton.setEnabled(False)
+            self.undoButton.setEnabled(False)
+        elif currentTab is self.positionTab:
+            self.CAdoubleSpinBox.setEnabled(False)
+            self.CAlabel.setEnabled(False)
+            self.acceptButton.setEnabled(False)
+            self.redoButton.setEnabled(False)
+            self.undoButton.setEnabled(False)            
     
     def helixCreateCAhelix(self):
         print 'In helixCreateCAhelix'
@@ -538,6 +567,11 @@ class StructureEditor(QtGui.QWidget):
         helixLayout.addLayout(flipLayout)
         self.helixTab.setLayout(helixLayout)
         
+        #Disabling widgets that are not yet implemented
+        self.helixModifyRadioButton.setEnabled(False)
+        self.helixNewRadioButtion.setEnabled(False)
+        self.helixRemoveButton.setEnabled(False)
+        
     def setupLoopTab(self):
         self.loopStartLabel = QtGui.QLabel('Start Residue')
         self.loopStartSpinBox = QtGui.QSpinBox()
@@ -560,6 +594,17 @@ class StructureEditor(QtGui.QWidget):
         loopLayout.addWidget(self.loopAcceptButton, 4, 0)
         loopLayout.addWidget(self.loopRejectButton, 4, 1)
         self.loopTab.setLayout(loopLayout)
+        
+        #Disabling widgets that are not yet implemented
+        self.loopAcceptButton.setEnabled(False)
+        self.loopComboBox.setEnabled(False)
+        self.loopFindButton.setEnabled(False)
+        self.loopIDLabel.setEnabled(False)
+        self.loopRejectButton.setEnabled(False)
+        self.loopStartLabel.setEnabled(False)
+        self.loopStartSpinBox.setEnabled(False)
+        self.loopStopLabel.setEnabled(False)
+        self.loopStopSpinBox.setEnabled(False)
     
     def setupPositionTab(self):
         self.posTranslateLabel = QtGui.QLabel('Translate')
@@ -616,15 +661,6 @@ class StructureEditor(QtGui.QWidget):
                               'phi': QtGui.QHBoxLayout()
                               }
         
-        self.posAutofitRangeDict = {
-                                    'x': QtGui.QDoubleSpinBox(), 
-                                    'y': QtGui.QDoubleSpinBox(), 
-                                    'z': QtGui.QDoubleSpinBox(), 
-                                    'alt': QtGui.QDoubleSpinBox(), 
-                                    'az': QtGui.QDoubleSpinBox(), 
-                                    'phi': QtGui.QDoubleSpinBox()
-                                    }
-        
         for key in posSpinLabelLayoutDict.keys():
             curLayout = posSpinLabelLayoutDict[key]
             curLayout.addWidget(self.posMoveLabelsDict[key])
@@ -632,9 +668,7 @@ class StructureEditor(QtGui.QWidget):
             curLayout.addWidget(self.posMoveDict[key])
             curLayout.addWidget(self.posIncreaseButtonDict[key])
             curLayout.addStretch()
-        
-        
-        
+                
         positionLayout = QtGui.QGridLayout()
         positionLayout.addWidget(self.posTranslateLabel, 0, 0)
         positionLayout.addLayout(posSpinLabelLayoutDict['x'], 1, 0)
@@ -652,6 +686,21 @@ class StructureEditor(QtGui.QWidget):
         self.connect(self.posIncreaseButtonDict['x'], QtCore.SIGNAL('clicked()'), self.posXIncr)
         self.connect(self.posIncreaseButtonDict['y'], QtCore.SIGNAL('clicked()'), self.posYIncr)
         self.connect(self.posIncreaseButtonDict['z'], QtCore.SIGNAL('clicked()'), self.posZIncr)
+        
+        #Disabling widgets that are not yet implemented
+        self.posRotateLabel.setEnabled(False)
+        self.posMoveDict['alt'].setEnabled(False)
+        self.posMoveDict['az'].setEnabled(False)
+        self.posMoveDict['phi'].setEnabled(False)
+        self.posDecreaseButtonDict['alt'].setEnabled(False)
+        self.posDecreaseButtonDict['az'].setEnabled(False)
+        self.posDecreaseButtonDict['phi'].setEnabled(False)
+        self.posIncreaseButtonDict['alt'].setEnabled(False)
+        self.posIncreaseButtonDict['az'].setEnabled(False)
+        self.posIncreaseButtonDict['phi'].setEnabled(False)
+        self.posMoveLabelsDict['alt'].setEnabled(False)
+        self.posMoveLabelsDict['az'].setEnabled(False)
+        self.posMoveLabelsDict['phi'].setEnabled(False)
         
     def setupUi(self):
         self.tabWidget = QtGui.QTabWidget()
