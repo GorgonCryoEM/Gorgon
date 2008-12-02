@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_dialog_volume_surface_editor.ui'
 #
-# Created: Wed Sep 03 13:31:59 2008
+# Created: Mon Dec 01 23:00:37 2008
 #      by: PyQt4 UI code generator 4.3.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -55,13 +55,6 @@ class Ui_DialogVolumeSurfaceEditor(object):
         self.horizontalSliderIsoLevel.setObjectName("horizontalSliderIsoLevel")
         self.gridlayout1.addWidget(self.horizontalSliderIsoLevel,1,1,1,1)
 
-        self.labelIsoValueDisplay = QtGui.QLabel(self.groupBoxSurfaceOptions)
-        self.labelIsoValueDisplay.setMinimumSize(QtCore.QSize(60,0))
-        self.labelIsoValueDisplay.setMaximumSize(QtCore.QSize(60,16777215))
-        self.labelIsoValueDisplay.setLayoutDirection(QtCore.Qt.RightToLeft)
-        self.labelIsoValueDisplay.setObjectName("labelIsoValueDisplay")
-        self.gridlayout1.addWidget(self.labelIsoValueDisplay,1,2,1,1)
-
         self.labelSamplingInterval = QtGui.QLabel(self.groupBoxSurfaceOptions)
         self.labelSamplingInterval.setObjectName("labelSamplingInterval")
         self.gridlayout1.addWidget(self.labelSamplingInterval,2,0,1,1)
@@ -101,6 +94,12 @@ class Ui_DialogVolumeSurfaceEditor(object):
         self.labelDisplayRadiusDisplay.setLayoutDirection(QtCore.Qt.RightToLeft)
         self.labelDisplayRadiusDisplay.setObjectName("labelDisplayRadiusDisplay")
         self.gridlayout1.addWidget(self.labelDisplayRadiusDisplay,3,2,1,1)
+
+        self.doubleSpinBoxDensity = QtGui.QDoubleSpinBox(self.groupBoxSurfaceOptions)
+        self.doubleSpinBoxDensity.setDecimals(3)
+        self.doubleSpinBoxDensity.setMaximum(25500.0)
+        self.doubleSpinBoxDensity.setObjectName("doubleSpinBoxDensity")
+        self.gridlayout1.addWidget(self.doubleSpinBoxDensity,1,2,1,1)
         self.gridlayout.addWidget(self.groupBoxSurfaceOptions,0,0,1,1)
 
         self.retranslateUi(DialogVolumeSurfaceEditor)
@@ -113,7 +112,9 @@ class Ui_DialogVolumeSurfaceEditor(object):
         DialogVolumeSurfaceEditor.setTabOrder(self.radioButtonIsoSurface,self.radioButtonCrossSection)
         DialogVolumeSurfaceEditor.setTabOrder(self.radioButtonCrossSection,self.radioButtonSolid)
         DialogVolumeSurfaceEditor.setTabOrder(self.radioButtonSolid,self.horizontalSliderIsoLevel)
-        DialogVolumeSurfaceEditor.setTabOrder(self.horizontalSliderIsoLevel,self.horizontalSliderSampling)
+        DialogVolumeSurfaceEditor.setTabOrder(self.horizontalSliderIsoLevel,self.doubleSpinBoxDensity)
+        DialogVolumeSurfaceEditor.setTabOrder(self.doubleSpinBoxDensity,self.horizontalSliderSampling)
+        DialogVolumeSurfaceEditor.setTabOrder(self.horizontalSliderSampling,self.horizontalSliderDisplayRadius)
 
     def retranslateUi(self, DialogVolumeSurfaceEditor):
         DialogVolumeSurfaceEditor.setWindowTitle(QtGui.QApplication.translate("DialogVolumeSurfaceEditor", "Volume - Surface Editor", None, QtGui.QApplication.UnicodeUTF8))
@@ -122,7 +123,6 @@ class Ui_DialogVolumeSurfaceEditor(object):
         self.radioButtonCrossSection.setText(QtGui.QApplication.translate("DialogVolumeSurfaceEditor", "Cross-Section view", None, QtGui.QApplication.UnicodeUTF8))
         self.radioButtonSolid.setText(QtGui.QApplication.translate("DialogVolumeSurfaceEditor", "Solid view", None, QtGui.QApplication.UnicodeUTF8))
         self.labelIsoLevel.setText(QtGui.QApplication.translate("DialogVolumeSurfaceEditor", "Density Threshold:", None, QtGui.QApplication.UnicodeUTF8))
-        self.labelIsoValueDisplay.setText(QtGui.QApplication.translate("DialogVolumeSurfaceEditor", "128", None, QtGui.QApplication.UnicodeUTF8))
         self.labelSamplingInterval.setText(QtGui.QApplication.translate("DialogVolumeSurfaceEditor", "Sampling Interval:", None, QtGui.QApplication.UnicodeUTF8))
         self.labelSamplingDisplay.setText(QtGui.QApplication.translate("DialogVolumeSurfaceEditor", "1", None, QtGui.QApplication.UnicodeUTF8))
         self.labelDisplayRadius.setText(QtGui.QApplication.translate("DialogVolumeSurfaceEditor", "Display Radius:", None, QtGui.QApplication.UnicodeUTF8))
