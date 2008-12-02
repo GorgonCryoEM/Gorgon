@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.16  2008/11/28 04:36:17  ssa1
+#   Removing error message if pyopengl does not exist.  (To make executable building easier to debug)
+#
 #   Revision 1.15  2008/11/20 20:56:30  ssa1
 #   Properly scaling the suggested backbone
 #
@@ -74,6 +77,7 @@ class SSEViewer(BaseViewer):
     
     def loadHelixData(self):
         self.helixFileName = QtGui.QFileDialog.getOpenFileName(self, self.tr("Open Data"), "", self.tr(self.renderer.getSupportedLoadFileFormats()))
+        self.fileName = self.helixFileName;
         if not self.helixFileName.isEmpty():  
             self.setCursor(QtCore.Qt.WaitCursor)
             self.renderer.loadHelixFile(str(self.helixFileName))
@@ -84,6 +88,7 @@ class SSEViewer(BaseViewer):
                
     def loadSheetData(self):
         self.sheetFileName = QtGui.QFileDialog.getOpenFileName(self, self.tr("Open Data"), "", self.tr(self.renderer.getSupportedLoadFileFormats()))
+        self.fileName = self.sheetFileName;
         if not self.sheetFileName.isEmpty():  
             self.setCursor(QtCore.Qt.WaitCursor)
             self.renderer.loadSheetFile(str(self.sheetFileName))
