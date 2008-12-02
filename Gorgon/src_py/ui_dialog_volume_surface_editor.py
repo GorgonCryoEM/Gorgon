@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_dialog_volume_surface_editor.ui'
 #
-# Created: Mon Dec 01 23:00:37 2008
+# Created: Mon Dec 01 23:28:11 2008
 #      by: PyQt4 UI code generator 4.3.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,7 +12,7 @@ from PyQt4 import QtCore, QtGui
 class Ui_DialogVolumeSurfaceEditor(object):
     def setupUi(self, DialogVolumeSurfaceEditor):
         DialogVolumeSurfaceEditor.setObjectName("DialogVolumeSurfaceEditor")
-        DialogVolumeSurfaceEditor.resize(QtCore.QSize(QtCore.QRect(0,0,338,146).size()).expandedTo(DialogVolumeSurfaceEditor.minimumSizeHint()))
+        DialogVolumeSurfaceEditor.resize(QtCore.QSize(QtCore.QRect(0,0,338,156).size()).expandedTo(DialogVolumeSurfaceEditor.minimumSizeHint()))
         DialogVolumeSurfaceEditor.setMinimumSize(QtCore.QSize(230,124))
 
         self.gridlayout = QtGui.QGridLayout(DialogVolumeSurfaceEditor)
@@ -55,6 +55,12 @@ class Ui_DialogVolumeSurfaceEditor(object):
         self.horizontalSliderIsoLevel.setObjectName("horizontalSliderIsoLevel")
         self.gridlayout1.addWidget(self.horizontalSliderIsoLevel,1,1,1,1)
 
+        self.doubleSpinBoxDensity = QtGui.QDoubleSpinBox(self.groupBoxSurfaceOptions)
+        self.doubleSpinBoxDensity.setDecimals(3)
+        self.doubleSpinBoxDensity.setMaximum(25500.0)
+        self.doubleSpinBoxDensity.setObjectName("doubleSpinBoxDensity")
+        self.gridlayout1.addWidget(self.doubleSpinBoxDensity,1,2,1,1)
+
         self.labelSamplingInterval = QtGui.QLabel(self.groupBoxSurfaceOptions)
         self.labelSamplingInterval.setObjectName("labelSamplingInterval")
         self.gridlayout1.addWidget(self.labelSamplingInterval,2,0,1,1)
@@ -71,7 +77,6 @@ class Ui_DialogVolumeSurfaceEditor(object):
         self.gridlayout1.addWidget(self.horizontalSliderSampling,2,1,1,1)
 
         self.labelSamplingDisplay = QtGui.QLabel(self.groupBoxSurfaceOptions)
-        self.labelSamplingDisplay.setLayoutDirection(QtCore.Qt.RightToLeft)
         self.labelSamplingDisplay.setObjectName("labelSamplingDisplay")
         self.gridlayout1.addWidget(self.labelSamplingDisplay,2,2,1,1)
 
@@ -91,16 +96,12 @@ class Ui_DialogVolumeSurfaceEditor(object):
         self.gridlayout1.addWidget(self.horizontalSliderDisplayRadius,3,1,1,1)
 
         self.labelDisplayRadiusDisplay = QtGui.QLabel(self.groupBoxSurfaceOptions)
-        self.labelDisplayRadiusDisplay.setLayoutDirection(QtCore.Qt.RightToLeft)
         self.labelDisplayRadiusDisplay.setObjectName("labelDisplayRadiusDisplay")
         self.gridlayout1.addWidget(self.labelDisplayRadiusDisplay,3,2,1,1)
-
-        self.doubleSpinBoxDensity = QtGui.QDoubleSpinBox(self.groupBoxSurfaceOptions)
-        self.doubleSpinBoxDensity.setDecimals(3)
-        self.doubleSpinBoxDensity.setMaximum(25500.0)
-        self.doubleSpinBoxDensity.setObjectName("doubleSpinBoxDensity")
-        self.gridlayout1.addWidget(self.doubleSpinBoxDensity,1,2,1,1)
         self.gridlayout.addWidget(self.groupBoxSurfaceOptions,0,0,1,1)
+
+        spacerItem = QtGui.QSpacerItem(20,40,QtGui.QSizePolicy.Minimum,QtGui.QSizePolicy.Expanding)
+        self.gridlayout.addItem(spacerItem,1,0,1,1)
 
         self.retranslateUi(DialogVolumeSurfaceEditor)
         QtCore.QObject.connect(self.horizontalSliderSampling,QtCore.SIGNAL("valueChanged(int)"),self.labelSamplingDisplay.setNum)
@@ -108,6 +109,9 @@ class Ui_DialogVolumeSurfaceEditor(object):
         QtCore.QObject.connect(self.radioButtonIsoSurface,QtCore.SIGNAL("toggled(bool)"),self.labelSamplingInterval.setEnabled)
         QtCore.QObject.connect(self.radioButtonIsoSurface,QtCore.SIGNAL("toggled(bool)"),self.labelSamplingDisplay.setEnabled)
         QtCore.QObject.connect(self.horizontalSliderDisplayRadius,QtCore.SIGNAL("valueChanged(int)"),self.labelDisplayRadiusDisplay.setNum)
+        QtCore.QObject.connect(self.radioButtonIsoSurface,QtCore.SIGNAL("toggled(bool)"),self.labelDisplayRadius.setEnabled)
+        QtCore.QObject.connect(self.radioButtonIsoSurface,QtCore.SIGNAL("toggled(bool)"),self.horizontalSliderDisplayRadius.setEnabled)
+        QtCore.QObject.connect(self.radioButtonIsoSurface,QtCore.SIGNAL("toggled(bool)"),self.labelDisplayRadiusDisplay.setEnabled)
         QtCore.QMetaObject.connectSlotsByName(DialogVolumeSurfaceEditor)
         DialogVolumeSurfaceEditor.setTabOrder(self.radioButtonIsoSurface,self.radioButtonCrossSection)
         DialogVolumeSurfaceEditor.setTabOrder(self.radioButtonCrossSection,self.radioButtonSolid)
