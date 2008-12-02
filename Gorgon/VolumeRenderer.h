@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.40  2008/11/20 18:33:00  ssa1
+//   Using the origin of the MRC volume
+//
 //   Revision 1.39  2008/11/19 22:14:29  ssa1
 //   Properly setting solid rendering and cross section views
 //
@@ -412,7 +415,6 @@ namespace wustl_mm {
 					Vector3DFloat vertex;
 					// The outside box
 
-					glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 					if((viewingType == VIEWING_TYPE_CROSS_SECTION)) {
 						glBegin(GL_LINES);
 						for(unsigned int i = 0; i < cuttingMesh->edges.size(); i++) {
