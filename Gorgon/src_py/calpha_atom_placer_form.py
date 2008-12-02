@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.14  2008/11/20 21:52:10  ssa1
+#   Fixing manual placement form coordinate space bug
+#
 #   Revision 1.13  2008/11/14 23:06:54  colemanr
 #   now makes use of CAlphaViewer.strucPred in addition to CAlphaViewer.main_chain
 #
@@ -163,7 +166,7 @@ class CAlphaAtomPlacerForm(QtGui.QWidget):
                 self.resSeqNumSpinBox.setRange( min(self.structPred.chain.residueRange()), max(self.structPred.chain.residueRange()) )
             else:
                 return            
-            self.app.addDockWidget(QtCore.Qt.LeftDockWidgetArea, self.dock)
+            self.app.addDockWidget(QtCore.Qt.RightDockWidgetArea, self.dock)
             self.skeletonViewer.setSelectEnabled(True)
             if not self.viewer.main_chain:
                 self.viewer.main_chain = self.viewer.structPred.chain
