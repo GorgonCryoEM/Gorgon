@@ -32,14 +32,14 @@ class StructureEditor(QtGui.QWidget):
                 
         self.setupUi()
         
-        self.connect(self.atomicBack1resButton, QtCore.SIGNAL('clicked()'), self.prevButtonPress)
-        self.connect(self.atomicForward1resButton, QtCore.SIGNAL('clicked()'), self.nextButtonPress)
+        self.connect(self.atomicBack1resButton, QtCore.SIGNAL('clicked()'), self.atomPrevButtonPress)
+        self.connect(self.atomicForward1resButton, QtCore.SIGNAL('clicked()'), self.atomNextButtonPress)
         self.connect(self.acceptButton, QtCore.SIGNAL('clicked()'),  self.acceptButtonPress)
-        self.connect(self.atomicPossibilityNumSpinBox,  QtCore.SIGNAL('valueChanged(int)'),  self.choosePossibleAtom)
-        self.connect(self.atomicForwardRadioButton,  QtCore.SIGNAL('toggled(bool)'), self.forwardBackwardRadioButtonChange)
+        self.connect(self.atomicPossibilityNumSpinBox,  QtCore.SIGNAL('valueChanged(int)'),  self.atomChoosePossibleAtom)
+        self.connect(self.atomicForwardRadioButton,  QtCore.SIGNAL('toggled(bool)'), self.atomForwardBackwardChange)
         self.connect(self.undoButton,  QtCore.SIGNAL('clicked()'), self.undoStack.undo)
         self.connect(self.redoButton,  QtCore.SIGNAL('clicked()'), self.undoStack.redo)
-        self.connect(self.helixCreateCAHelixButton, QtCore.SIGNAL('clicked()'), self.createCAhelix)
+        self.connect(self.helixCreateCAHelixButton, QtCore.SIGNAL('clicked()'), self.helixCreateCAhelix)
         self.connect(self.helixDecreasePositionButton, QtCore.SIGNAL('clicked()'), self.helixDecreaseButtonPress)
         self.connect(self.helixIncreasePositionButton, QtCore.SIGNAL('clicked()'), self.helixIncreaseButtonPress)
         self.connect(self.helixFlipButton, QtCore.SIGNAL('clicked()'), self.helixFlipButtonPress)
@@ -47,6 +47,10 @@ class StructureEditor(QtGui.QWidget):
             self.app = self.parentWidget().parentWidget().app
             self.connect(self.app.viewers['sse'], QtCore.SIGNAL('elementSelected (int, int, int, int, int, int, QMouseEvent)'), self.updateCurrentMatch)
             self.connect(self.currentChainModel, QtCore.SIGNAL('selection updated'), self.updateSelectedResidues)
+            self.connect(self.app.viewers["calpha"], QtCore.SIGNAL("elementSelected (int, int, int, int, int, int, QMouseEvent)"), self.posUpdateValues)
+            self.connect(self.posMoveDict['x'], QtCore.SIGNAL('valueChanged(double)'), self.posMoveCM_x)
+            self.connect(self.posMoveDict['y'], QtCore.SIGNAL('valueChanged(double)'), self.posMoveCM_y)
+            self.connect(self.posMoveDict['z'], QtCore.SIGNAL('valueChanged(double)'), self.posMoveCM_z)
       
     def acceptButtonPress(self):
         currentWidget = self.tabWidget.currentWidget()
@@ -69,90 +73,8 @@ class StructureEditor(QtGui.QWidget):
             command = CommandAcceptAtomPlacement( self.currentChainModel, self, resSeqNum, chosenCoordinates, viewer,  
                                 description = "Accept Location of C-alpha atom for residue #%s" % resSeqNum )
             self.undoStack.push(command)
-                 
-    def clearMockSidechains(self,  chain):
-        for index in chain.residueRange():
-            res = chain[index]
-            res.setCAlphaColorToDefault()
-            res.setCAlphaSizeToDefault()
-        print "The mock side-chains should be cleared, but not yet drawn to the screen."
     
-    def createCAhelix(self):
-        print 'In createCAhelix'
-        cAlphaViewer = self.app.viewers['calpha']
-        startIndex = self.helixNtermSpinBox.value()
-        stopIndex = self.helixCtermSpinBox.value()
-        observedHelix = self.currentMatch.observed
-        direction = self.currentMatch.direction #Forward=0, Reverse=1
-        predHelix = self.currentMatch.predicted
-        if observedHelix.__class__.__name__ != 'ObservedHelix':
-            raise TypeError, observedHelix.__class__.__name__
-            
-        helix = Helix(self.currentChainModel, predHelix.serialNo,  predHelix.label, startIndex, stopIndex)
-        self.currentChainModel.addHelix(predHelix.serialNo, helix)
-        
-        moveStart = 1.5*(startIndex - predHelix.startIndex)
-        print 'moveStart', moveStart
-        moveEnd = 1.5*(stopIndex - predHelix.stopIndex)
-        print 'moveEnd', moveEnd
-        midpoint = observedHelix.getMidpoint()
-        unitVector = observedHelix.getUnitVector()
-        print 'unitVector', unitVector
-        structPredCoord1 = snum.vectorAdd( midpoint, snum.scalarTimesVector(-1*predHelix.getAngstromLength()/2, unitVector) )
-        structPredCoord2 = snum.vectorAdd( midpoint, snum.scalarTimesVector(predHelix.getAngstromLength()/2, unitVector) )
-        
-        
-        if direction == 0:
-            startMoveVector = snum.scalarTimesVector( moveStart, unitVector)
-            endMoveVector = snum.scalarTimesVector( moveEnd, unitVector)
-            coord1 = snum.vectorAdd(structPredCoord1, startMoveVector)
-            coord2 = snum.vectorAdd(structPredCoord2, endMoveVector)
-            helix.setAxisPoints(coord1, coord2)
-        elif direction == 1:
-            startMoveVector = snum.scalarTimesVector( -1*moveStart, unitVector)
-            endMoveVector = snum.scalarTimesVector( -1*moveEnd, unitVector)
-            coord1 = snum.vectorAdd(structPredCoord1, endMoveVector)
-            coord2 = snum.vectorAdd(structPredCoord2, startMoveVector)
-            helix.setAxisPoints(coord1, coord2)
-        
-        helixCoordList = helixEndpointsToCAlphaPositions(coord1, coord2)
-        print helixCoordList                
-        
-        '''
-        #To see the ends of the helical axis as green and red atoms
-        startAtom = PDBAtom('AAAA', 'A', 100000, 'CA')
-        startAtom.setPosition(Vector3DFloat(*coord1))
-        startAtom.setColor(0, 1, 0, 1)
-        startAtom = cAlphaViewer.renderer.addAtom(startAtom)
-        stopAtom = startAtom = PDBAtom('AAAA', 'A', 100001, 'CA')
-        stopAtom.setPosition(Vector3DFloat(*coord2))
-        stopAtom.setColor(1, 0, 0, 1)        
-        stopAtom = cAlphaViewer.renderer.addAtom(stopAtom)
-        '''
-        
-        for i in range(len(helixCoordList)):
-            pos = helixCoordList[i]
-            residue = self.currentChainModel[startIndex+i]
-            rawAtom = residue.addAtom('CA', pos[0], pos[1], pos[2], 'C')
-            atom = cAlphaViewer.renderer.addAtom(rawAtom)
-            residue.addAtomObject(atom)
-            atom.setSelected(True)
-            if i != 0:
-                prevAtom = self.currentChainModel[startIndex+i-1].getAtom('CA')
-                bond = PDBBond()
-                bond.setAtom0Ix(prevAtom.getHashKey())
-                bond.setAtom1Ix(atom.getHashKey())
-                cAlphaViewer.renderer.addBond(bond)
-        
-        self.currentChainModel.setSelection(newSelection = range(helix.startIndex, 1+helix.stopIndex))
-        print helix
-        if not cAlphaViewer.loaded:
-            cAlphaViewer.loaded = True
-            cAlphaViewer.emitModelLoaded()
-        else:
-            cAlphaViewer.emitModelChanged()
-        
-    def choosePossibleAtom(self, choiceNum):
+    def atomChoosePossibleAtom(self, choiceNum):
         if choiceNum == 0:
             return
         viewer = self.parentWidget().parentWidget().viewer
@@ -163,8 +85,8 @@ class StructureEditor(QtGui.QWidget):
         atomToDisplay.setColor(0, 1, 1, 1)
         viewer.emitModelChanged()
         self.previouslySelectedPossibleAtom = atomToDisplay
-    
-    def findCAlphaPositionPossibilities(self):
+        
+    def atomFindPositionPossibilities(self):
         self.possibleAtomsList = []
         #self.parentWidget()=>SequenceWidget, self.parentWidget().parentWidget() => SequenceDock
         calphaViewer = self.parentWidget().parentWidget().app.viewers['calpha']
@@ -249,7 +171,7 @@ class StructureEditor(QtGui.QWidget):
                     
             self.parentWidget().parentWidget().viewer.emitModelChanged()
     
-    def forwardBackwardRadioButtonChange(self):
+    def atomForwardBackwardChange(self):
         if self.atomicForwardRadioButton.isChecked():
             self.atomicResNumbers[1].setStyleSheet("QLabel {color: green; font-size: 12pt}")
             self.atomicResNames[1].setStyleSheet("QLabel {color: green; font-size: 40pt}")
@@ -261,6 +183,108 @@ class StructureEditor(QtGui.QWidget):
             self.atomicResNumbers[1].setStyleSheet("QLabel {color: black; font-size: 12pt}")
             self.atomicResNames[1].setStyleSheet("QLabel {color: black; font-size: 40pt}")
     
+    def atomNextButtonPress(self):
+        currentChainModel = self.parentWidget().currentChainModel
+        if currentChainModel.getSelection():
+            newSelection = [ currentChainModel.getSelection()[-1] + 1 ]
+            if newSelection[0] > max(currentChainModel.residueRange()): 
+                return
+            self.parentWidget().scrollable.seqView.setSequenceSelection(newSelection)
+            self.setResidues(newSelection)
+    
+    def atomPrevButtonPress(self):
+        #self.parentWidget() returns a SequenceWidget object
+        currentChainModel = self.parentWidget().currentChainModel
+        if currentChainModel.getSelection():
+            newSelection = [ currentChainModel.getSelection()[-1] - 1 ]
+            if newSelection[0] <min(currentChainModel.residueRange()): 
+                return
+            self.parentWidget().scrollable.seqView.setSequenceSelection(newSelection)
+            self.setResidues(newSelection)
+            
+    def clearMockSidechains(self,  chain):
+        for index in chain.residueRange():
+            res = chain[index]
+            res.setCAlphaColorToDefault()
+            res.setCAlphaSizeToDefault()
+        print "The mock side-chains should be cleared, but not yet drawn to the screen."
+    
+    def helixCreateCAhelix(self):
+        print 'In helixCreateCAhelix'
+        cAlphaViewer = self.app.viewers['calpha']
+        startIndex = self.helixNtermSpinBox.value()
+        stopIndex = self.helixCtermSpinBox.value()
+        observedHelix = self.currentMatch.observed
+        direction = self.currentMatch.direction #Forward=0, Reverse=1
+        predHelix = self.currentMatch.predicted
+        if observedHelix.__class__.__name__ != 'ObservedHelix':
+            raise TypeError, observedHelix.__class__.__name__
+            
+        helix = Helix(self.currentChainModel, predHelix.serialNo,  predHelix.label, startIndex, stopIndex)
+        self.currentChainModel.addHelix(predHelix.serialNo, helix)
+        
+        moveStart = 1.5*(startIndex - predHelix.startIndex)
+        print 'moveStart', moveStart
+        moveEnd = 1.5*(stopIndex - predHelix.stopIndex)
+        print 'moveEnd', moveEnd
+        midpoint = observedHelix.getMidpoint()
+        unitVector = observedHelix.getUnitVector()
+        print 'unitVector', unitVector
+        structPredCoord1 = snum.vectorAdd( midpoint, snum.scalarTimesVector(-1*predHelix.getAngstromLength()/2, unitVector) )
+        structPredCoord2 = snum.vectorAdd( midpoint, snum.scalarTimesVector(predHelix.getAngstromLength()/2, unitVector) )
+        
+        
+        if direction == 0:
+            startMoveVector = snum.scalarTimesVector( moveStart, unitVector)
+            endMoveVector = snum.scalarTimesVector( moveEnd, unitVector)
+            coord1 = snum.vectorAdd(structPredCoord1, startMoveVector)
+            coord2 = snum.vectorAdd(structPredCoord2, endMoveVector)
+            helix.setAxisPoints(coord1, coord2)
+        elif direction == 1:
+            startMoveVector = snum.scalarTimesVector( -1*moveStart, unitVector)
+            endMoveVector = snum.scalarTimesVector( -1*moveEnd, unitVector)
+            coord1 = snum.vectorAdd(structPredCoord1, endMoveVector)
+            coord2 = snum.vectorAdd(structPredCoord2, startMoveVector)
+            helix.setAxisPoints(coord1, coord2)
+        
+        helixCoordList = helixEndpointsToCAlphaPositions(coord1, coord2)
+        print helixCoordList                
+        
+        '''
+        #To see the ends of the helical axis as green and red atoms
+        startAtom = PDBAtom('AAAA', 'A', 100000, 'CA')
+        startAtom.setPosition(Vector3DFloat(*coord1))
+        startAtom.setColor(0, 1, 0, 1)
+        startAtom = cAlphaViewer.renderer.addAtom(startAtom)
+        stopAtom = startAtom = PDBAtom('AAAA', 'A', 100001, 'CA')
+        stopAtom.setPosition(Vector3DFloat(*coord2))
+        stopAtom.setColor(1, 0, 0, 1)        
+        stopAtom = cAlphaViewer.renderer.addAtom(stopAtom)
+        '''
+        
+        for i in range(len(helixCoordList)):
+            pos = helixCoordList[i]
+            residue = self.currentChainModel[startIndex+i]
+            rawAtom = residue.addAtom('CA', pos[0], pos[1], pos[2], 'C')
+            atom = cAlphaViewer.renderer.addAtom(rawAtom)
+            residue.addAtomObject(atom)
+            atom.setSelected(True)
+            if i != 0:
+                prevAtom = self.currentChainModel[startIndex+i-1].getAtom('CA')
+                bond = PDBBond()
+                bond.setAtom0Ix(prevAtom.getHashKey())
+                bond.setAtom1Ix(atom.getHashKey())
+                cAlphaViewer.renderer.addBond(bond)
+        
+        self.currentChainModel.setSelection(newSelection = range(helix.startIndex, 1+helix.stopIndex))
+        print helix
+        if not cAlphaViewer.loaded:
+            cAlphaViewer.loaded = True
+            cAlphaViewer.emitModelLoaded()
+        else:
+            cAlphaViewer.emitModelChanged()
+        
+
     def helixDecreaseButtonPress(self):
         startIx = self.helixNtermSpinBox.value()
         stopIx = self.helixCtermSpinBox.value()
@@ -302,25 +326,45 @@ class StructureEditor(QtGui.QWidget):
         self.helixCtermSpinBox.setValue(stopIx)
         self.helixCtermResNameLabel.setText(self.currentChainModel[startIx].symbol3)
         
-    def nextButtonPress(self):
-        currentChainModel = self.parentWidget().currentChainModel
-        if currentChainModel.getSelection():
-            newSelection = [ currentChainModel.getSelection()[-1] + 1 ]
-            if newSelection[0] > max(currentChainModel.residueRange()): 
-                return
-            self.parentWidget().scrollable.seqView.setSequenceSelection(newSelection)
-            self.setResidues(newSelection)
+    def posMoveCM_x(self):
+        cAlphaViewer = self.app.viewers['calpha']
+        moveX = self.posMoveDict['x'].value() - cAlphaViewer.renderer.selectionCenterOfMass().x()
+        translateVector = Vector3DFloat(moveX, 0, 0)
+        cAlphaViewer.renderer.selectionMove(translateVector)
+        cAlphaViewer.emitModelChanged()
+    def posMoveCM_y(self):
+        cAlphaViewer = self.app.viewers['calpha']
+        moveY = self.posMoveDict['y'].value() - cAlphaViewer.renderer.selectionCenterOfMass().y()
+        translateVector = Vector3DFloat(0, moveY, 0)
+        cAlphaViewer.renderer.selectionMove(translateVector)
+        cAlphaViewer.emitModelChanged()
+    def posMoveCM_z(self):
+        cAlphaViewer = self.app.viewers['calpha']
+        moveZ = self.posMoveDict['z'].value() - cAlphaViewer.renderer.selectionCenterOfMass().z()
+        translateVector = Vector3DFloat(0, 0, moveZ)
+        cAlphaViewer.renderer.selectionMove(translateVector)
+        cAlphaViewer.emitModelChanged()
     
-    def prevButtonPress(self):
-        #self.parentWidget() returns a SequenceWidget object
-        currentChainModel = self.parentWidget().currentChainModel
-        if currentChainModel.getSelection():
-            newSelection = [ currentChainModel.getSelection()[-1] - 1 ]
-            if newSelection[0] <min(currentChainModel.residueRange()): 
-                return
-            self.parentWidget().scrollable.seqView.setSequenceSelection(newSelection)
-            self.setResidues(newSelection)
+    def posUpdateValues(self):
+        cAlphaRenderer = self.app.viewers['calpha'].renderer
+        cm = cAlphaRenderer.selectionCenterOfMass()
+        self.posMoveDict['x'].setValue(cm.x())
+        self.posMoveDict['y'].setValue(cm.y())
+        self.posMoveDict['z'].setValue(cm.z())
             
+    def posXDecr(self):
+        self.posMoveDict['x'].setValue(self.posMoveDict['x'].value()-1)
+    def posXIncr(self):
+        self.posMoveDict['x'].setValue(self.posMoveDict['x'].value()+1)
+    def posYDecr(self):
+        self.posMoveDict['y'].setValue(self.posMoveDict['y'].value()-1)
+    def posYIncr(self):
+        self.posMoveDict['y'].setValue(self.posMoveDict['y'].value()+1)
+    def posZDecr(self):
+        self.posMoveDict['z'].setValue(self.posMoveDict['z'].value()-1)
+    def posZIncr(self):
+        self.posMoveDict['z'].setValue(self.posMoveDict['z'].value()+1)
+        
     def renderMockSidechains(self,  chain):
         color = {
             'greasy': (0.0, 1.0, 0.0, 1.0), 
@@ -366,7 +410,7 @@ class StructureEditor(QtGui.QWidget):
             except (IndexError,  KeyError):
                 self.atomicResNames[i].setText('')
                 self.atomicResNumbers[i].setText('')
-        self.findCAlphaPositionPossibilities()
+        self.atomFindPositionPossibilities()
         
     def setupAtomicTab(self):
         #These go in the atomic tab
@@ -536,7 +580,8 @@ class StructureEditor(QtGui.QWidget):
                                     'az': QtGui.QSlider(), 
                                     'phi': QtGui.QSlider()
                                    }
-        
+        for key in ['x', 'y', 'z']:
+            self.posMoveDict[key].setRange(-10000, 10000)
         for key in ['alt', 'az', 'phi']:
             self.posMoveDict[key].setRange(0, 360)
             self.posMoveDict[key].setOrientation(QtCore.Qt.Horizontal)
@@ -600,7 +645,12 @@ class StructureEditor(QtGui.QWidget):
         positionLayout.addLayout(posSpinLabelLayoutDict['phi'], 7, 0)
         self.positionTab.setLayout(positionLayout)
         
-        
+        self.connect(self.posDecreaseButtonDict['x'], QtCore.SIGNAL('clicked()'), self.posXDecr)
+        self.connect(self.posDecreaseButtonDict['y'], QtCore.SIGNAL('clicked()'), self.posYDecr)
+        self.connect(self.posDecreaseButtonDict['z'], QtCore.SIGNAL('clicked()'), self.posZDecr)
+        self.connect(self.posIncreaseButtonDict['x'], QtCore.SIGNAL('clicked()'), self.posXIncr)
+        self.connect(self.posIncreaseButtonDict['y'], QtCore.SIGNAL('clicked()'), self.posYIncr)
+        self.connect(self.posIncreaseButtonDict['z'], QtCore.SIGNAL('clicked()'), self.posZIncr)
         
     def setupUi(self):
         self.tabWidget = QtGui.QTabWidget()
@@ -721,9 +771,9 @@ class CommandAcceptAtomPlacement(QtGui.QUndoCommand):
             self.structureEditor.atomJustAdded = atom
             
             if self.structureEditor.atomicBackwardRadioButton.isChecked():
-                self.structureEditor.prevButtonPress()
+                self.structureEditor.atomPrevButtonPress()
             elif self.structureEditor.atomicForwardRadioButton.isChecked():
-                self.structureEditor.nextButtonPress()
+                self.structureEditor.atomNextButtonPress()
             
         def undo(self):
             print self.structureEditor.atomJustAdded
@@ -742,9 +792,9 @@ class CommandAcceptAtomPlacement(QtGui.QUndoCommand):
             self.viewer.emitModelChanged()
             
             if self.structureEditor.atomicBackwardRadioButton.isChecked():
-                self.structureEditor.nextButtonPress()
+                self.structureEditor.atomNextButtonPress()
             elif self.structureEditor.atomicForwardRadioButton.isChecked():
-                self.structureEditor.prevButtonPress()
+                self.structureEditor.atomPrevButtonPress()
             
 if __name__ == '__main__':
     from seq_model.Chain import Chain
