@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.11  2008/12/01 01:25:54  ssa1
+#   Docking widgets as tabs to preserve screen real-estate
+#
 #   Revision 1.10  2008/11/30 00:25:44  ssa1
 #   Splash screen for public beta 1 release
 #
@@ -72,6 +75,7 @@ class MainWindowForm(QtGui.QMainWindow):
         self.menus.addMenu("file", self.tr("&File"))
         self.menus.addMenu("file-open", self.tr("&Open"), "file")
         self.menus.addMenu("file-save", self.tr("&Save"), "file")
+        self.menus.addMenu("file-export", self.tr("&Export"), "file")
         self.menus.addMenu("file-close", self.tr("&Close"), "file")
         self.menus.getMenu("file").addSeparator()
         self.menus.addAction("file-exit", self.actions.getAction("exit_Application"), "file")        
