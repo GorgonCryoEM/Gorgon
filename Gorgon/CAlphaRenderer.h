@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.29  2008/12/02 21:25:44  ssa1
+//   adding getBondIndex method to give access to bonds
+//
 //   Revision 1.28  2008/11/13 20:54:40  ssa1
 //   Using the correct scale when loading volumes
 //
@@ -380,7 +383,7 @@ namespace wustl_mm {
 		int CAlphaRenderer::GetBondIndex(unsigned long long atom0, unsigned long long atom1) {
 			for(unsigned int i = 0; i < bonds.size(); i++) {
 				if(((bonds[i].GetAtom0Ix() == atom0) && (bonds[i].GetAtom1Ix() == atom1)) ||
-							((bonds[i].GetAtom0Ix() == atom1) || (bonds[i].GetAtom1Ix() == atom0))) {
+							((bonds[i].GetAtom0Ix() == atom1) && (bonds[i].GetAtom1Ix() == atom0))) {
 					return i;
 				}
 			}
