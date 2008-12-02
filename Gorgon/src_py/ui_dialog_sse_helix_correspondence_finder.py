@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_dialog_sse_helix_correspondence_finder.ui'
 #
-# Created: Tue Nov 25 15:30:02 2008
+# Created: Tue Dec 02 15:14:14 2008
 #      by: PyQt4 UI code generator 4.3.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,7 +12,7 @@ from PyQt4 import QtCore, QtGui
 class Ui_DialogSSEHelixCorrespondenceFinder(object):
     def setupUi(self, DialogSSEHelixCorrespondenceFinder):
         DialogSSEHelixCorrespondenceFinder.setObjectName("DialogSSEHelixCorrespondenceFinder")
-        DialogSSEHelixCorrespondenceFinder.resize(QtCore.QSize(QtCore.QRect(0,0,534,396).size()).expandedTo(DialogSSEHelixCorrespondenceFinder.minimumSizeHint()))
+        DialogSSEHelixCorrespondenceFinder.resize(QtCore.QSize(QtCore.QRect(0,0,351,396).size()).expandedTo(DialogSSEHelixCorrespondenceFinder.minimumSizeHint()))
 
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding,QtGui.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
@@ -24,6 +24,12 @@ class Ui_DialogSSEHelixCorrespondenceFinder(object):
         self.gridlayout.setObjectName("gridlayout")
 
         self.tabWidget = QtGui.QTabWidget(DialogSSEHelixCorrespondenceFinder)
+
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding,QtGui.QSizePolicy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.tabWidget.sizePolicy().hasHeightForWidth())
+        self.tabWidget.setSizePolicy(sizePolicy)
         self.tabWidget.setObjectName("tabWidget")
 
         self.tabDataSources = QtGui.QWidget()
@@ -86,10 +92,10 @@ class Ui_DialogSSEHelixCorrespondenceFinder(object):
         self.pushButtonGetSequenceFile = QtGui.QPushButton(self.tabDataSources)
         self.pushButtonGetSequenceFile.setObjectName("pushButtonGetSequenceFile")
         self.gridlayout2.addWidget(self.pushButtonGetSequenceFile,3,2,1,1)
-        self.gridlayout1.addLayout(self.gridlayout2,0,0,1,2)
+        self.gridlayout1.addLayout(self.gridlayout2,0,0,1,1)
 
-        spacerItem = QtGui.QSpacerItem(494,101,QtGui.QSizePolicy.Minimum,QtGui.QSizePolicy.Expanding)
-        self.gridlayout1.addItem(spacerItem,1,0,1,2)
+        spacerItem = QtGui.QSpacerItem(311,200,QtGui.QSizePolicy.Minimum,QtGui.QSizePolicy.Expanding)
+        self.gridlayout1.addItem(spacerItem,1,0,1,1)
         self.tabWidget.addTab(self.tabDataSources,"")
 
         self.tabStandardSettings = QtGui.QWidget()
@@ -105,17 +111,35 @@ class Ui_DialogSSEHelixCorrespondenceFinder(object):
         self.gridlayout4.setObjectName("gridlayout4")
 
         self.radioButtonAbsoluteDifference = QtGui.QRadioButton(self.groupBoxCostFunction)
+
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Maximum,QtGui.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.radioButtonAbsoluteDifference.sizePolicy().hasHeightForWidth())
+        self.radioButtonAbsoluteDifference.setSizePolicy(sizePolicy)
         self.radioButtonAbsoluteDifference.setChecked(True)
         self.radioButtonAbsoluteDifference.setObjectName("radioButtonAbsoluteDifference")
         self.gridlayout4.addWidget(self.radioButtonAbsoluteDifference,0,0,1,1)
 
         self.radioButtonNormalizedDifference = QtGui.QRadioButton(self.groupBoxCostFunction)
+
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Maximum,QtGui.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.radioButtonNormalizedDifference.sizePolicy().hasHeightForWidth())
+        self.radioButtonNormalizedDifference.setSizePolicy(sizePolicy)
         self.radioButtonNormalizedDifference.setObjectName("radioButtonNormalizedDifference")
-        self.gridlayout4.addWidget(self.radioButtonNormalizedDifference,1,0,1,1)
+        self.gridlayout4.addWidget(self.radioButtonNormalizedDifference,0,1,1,1)
 
         self.radioButtonQuadraticError = QtGui.QRadioButton(self.groupBoxCostFunction)
+
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Maximum,QtGui.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.radioButtonQuadraticError.sizePolicy().hasHeightForWidth())
+        self.radioButtonQuadraticError.setSizePolicy(sizePolicy)
         self.radioButtonQuadraticError.setObjectName("radioButtonQuadraticError")
-        self.gridlayout4.addWidget(self.radioButtonQuadraticError,2,0,1,1)
+        self.gridlayout4.addWidget(self.radioButtonQuadraticError,0,2,1,1)
         self.gridlayout3.addWidget(self.groupBoxCostFunction,0,0,1,2)
 
         self.label_6 = QtGui.QLabel(self.tabStandardSettings)
@@ -159,6 +183,12 @@ class Ui_DialogSSEHelixCorrespondenceFinder(object):
         self.gridlayout6.addWidget(self.label_7,0,0,1,1)
 
         self.doubleSpinBoxHelixMissingPenalty = QtGui.QDoubleSpinBox(self.groupBox)
+
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred,QtGui.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.doubleSpinBoxHelixMissingPenalty.sizePolicy().hasHeightForWidth())
+        self.doubleSpinBoxHelixMissingPenalty.setSizePolicy(sizePolicy)
         self.doubleSpinBoxHelixMissingPenalty.setDecimals(4)
         self.doubleSpinBoxHelixMissingPenalty.setMaximum(1000000000.0)
         self.doubleSpinBoxHelixMissingPenalty.setProperty("value",QtCore.QVariant(5.0))
@@ -170,6 +200,12 @@ class Ui_DialogSSEHelixCorrespondenceFinder(object):
         self.gridlayout6.addWidget(self.label_8,1,0,1,1)
 
         self.doubleSpinBoxEndHelixMissingPenalty = QtGui.QDoubleSpinBox(self.groupBox)
+
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred,QtGui.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.doubleSpinBoxEndHelixMissingPenalty.sizePolicy().hasHeightForWidth())
+        self.doubleSpinBoxEndHelixMissingPenalty.setSizePolicy(sizePolicy)
         self.doubleSpinBoxEndHelixMissingPenalty.setDecimals(4)
         self.doubleSpinBoxEndHelixMissingPenalty.setMaximum(1000000000.0)
         self.doubleSpinBoxEndHelixMissingPenalty.setProperty("value",QtCore.QVariant(5.0))
@@ -181,6 +217,12 @@ class Ui_DialogSSEHelixCorrespondenceFinder(object):
         self.gridlayout6.addWidget(self.label_9,2,0,1,1)
 
         self.doubleSpinBoxEuclideanLoopUsedPenalty = QtGui.QDoubleSpinBox(self.groupBox)
+
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred,QtGui.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.doubleSpinBoxEuclideanLoopUsedPenalty.sizePolicy().hasHeightForWidth())
+        self.doubleSpinBoxEuclideanLoopUsedPenalty.setSizePolicy(sizePolicy)
         self.doubleSpinBoxEuclideanLoopUsedPenalty.setDecimals(4)
         self.doubleSpinBoxEuclideanLoopUsedPenalty.setMaximum(1000000000.0)
         self.doubleSpinBoxEuclideanLoopUsedPenalty.setProperty("value",QtCore.QVariant(5.0))
@@ -199,6 +241,12 @@ class Ui_DialogSSEHelixCorrespondenceFinder(object):
         self.gridlayout7.addWidget(self.label_10,0,0,1,1)
 
         self.doubleSpinBoxHelixImportance = QtGui.QDoubleSpinBox(self.groupBox_2)
+
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred,QtGui.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.doubleSpinBoxHelixImportance.sizePolicy().hasHeightForWidth())
+        self.doubleSpinBoxHelixImportance.setSizePolicy(sizePolicy)
         self.doubleSpinBoxHelixImportance.setDecimals(4)
         self.doubleSpinBoxHelixImportance.setMaximum(1.0)
         self.doubleSpinBoxHelixImportance.setProperty("value",QtCore.QVariant(1.0))
@@ -210,6 +258,12 @@ class Ui_DialogSSEHelixCorrespondenceFinder(object):
         self.gridlayout7.addWidget(self.label_11,1,0,1,1)
 
         self.doubleSpinBoxLoopImportance = QtGui.QDoubleSpinBox(self.groupBox_2)
+
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred,QtGui.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.doubleSpinBoxLoopImportance.sizePolicy().hasHeightForWidth())
+        self.doubleSpinBoxLoopImportance.setSizePolicy(sizePolicy)
         self.doubleSpinBoxLoopImportance.setDecimals(4)
         self.doubleSpinBoxLoopImportance.setMaximum(1.0)
         self.doubleSpinBoxLoopImportance.setProperty("value",QtCore.QVariant(0.2))
@@ -222,6 +276,12 @@ class Ui_DialogSSEHelixCorrespondenceFinder(object):
         self.gridlayout5.addWidget(self.label_12,2,0,1,1)
 
         self.doubleSpinBoxAverageMissingHelixLength = QtGui.QDoubleSpinBox(self.tabAdvancedSettings)
+
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred,QtGui.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.doubleSpinBoxAverageMissingHelixLength.sizePolicy().hasHeightForWidth())
+        self.doubleSpinBoxAverageMissingHelixLength.setSizePolicy(sizePolicy)
         self.doubleSpinBoxAverageMissingHelixLength.setDecimals(4)
         self.doubleSpinBoxAverageMissingHelixLength.setMaximum(10000000000.0)
         self.doubleSpinBoxAverageMissingHelixLength.setProperty("value",QtCore.QVariant(5.0))
@@ -233,6 +293,12 @@ class Ui_DialogSSEHelixCorrespondenceFinder(object):
         self.gridlayout5.addWidget(self.label_13,3,0,1,1)
 
         self.doubleSpinBoxEuclideanToPDBRatio = QtGui.QDoubleSpinBox(self.tabAdvancedSettings)
+
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred,QtGui.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.doubleSpinBoxEuclideanToPDBRatio.sizePolicy().hasHeightForWidth())
+        self.doubleSpinBoxEuclideanToPDBRatio.setSizePolicy(sizePolicy)
         self.doubleSpinBoxEuclideanToPDBRatio.setDecimals(4)
         self.doubleSpinBoxEuclideanToPDBRatio.setMaximum(10000000.0)
         self.doubleSpinBoxEuclideanToPDBRatio.setProperty("value",QtCore.QVariant(10.0))
@@ -244,6 +310,12 @@ class Ui_DialogSSEHelixCorrespondenceFinder(object):
         self.gridlayout5.addWidget(self.label_14,4,0,1,1)
 
         self.spinBoxBorderMarginThreshold = QtGui.QSpinBox(self.tabAdvancedSettings)
+
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred,QtGui.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.spinBoxBorderMarginThreshold.sizePolicy().hasHeightForWidth())
+        self.spinBoxBorderMarginThreshold.setSizePolicy(sizePolicy)
         self.spinBoxBorderMarginThreshold.setProperty("value",QtCore.QVariant(3))
         self.spinBoxBorderMarginThreshold.setObjectName("spinBoxBorderMarginThreshold")
         self.gridlayout5.addWidget(self.spinBoxBorderMarginThreshold,4,1,1,1)
@@ -269,12 +341,6 @@ class Ui_DialogSSEHelixCorrespondenceFinder(object):
         self.gridlayout8.addWidget(self.labelCorrespondences,0,0,1,1)
 
         self.comboBoxCorrespondences = QtGui.QComboBox(self.tab)
-
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Minimum,QtGui.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.comboBoxCorrespondences.sizePolicy().hasHeightForWidth())
-        self.comboBoxCorrespondences.setSizePolicy(sizePolicy)
         self.comboBoxCorrespondences.setObjectName("comboBoxCorrespondences")
         self.gridlayout8.addWidget(self.comboBoxCorrespondences,0,1,1,1)
 
@@ -313,6 +379,7 @@ class Ui_DialogSSEHelixCorrespondenceFinder(object):
         self.gridlayout.addLayout(self.gridlayout9,1,0,1,1)
 
         self.retranslateUi(DialogSSEHelixCorrespondenceFinder)
+        self.tabWidget.setCurrentIndex(0)
         QtCore.QObject.connect(self.checkBoxMissingHelices,QtCore.SIGNAL("toggled(bool)"),self.spinBoxMissingHelixCount.setEnabled)
         QtCore.QMetaObject.connectSlotsByName(DialogSSEHelixCorrespondenceFinder)
         DialogSSEHelixCorrespondenceFinder.setTabOrder(self.tabWidget,self.lineEditHelixLengthFile)
