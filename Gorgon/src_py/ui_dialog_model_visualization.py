@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_dialog_model_visualization.ui'
 #
-# Created: Thu Nov 20 10:59:18 2008
+# Created: Mon Dec 01 22:49:15 2008
 #      by: PyQt4 UI code generator 4.3.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,14 +12,24 @@ from PyQt4 import QtCore, QtGui
 class Ui_DialogModelVisualization(object):
     def setupUi(self, DialogModelVisualization):
         DialogModelVisualization.setObjectName("DialogModelVisualization")
-        DialogModelVisualization.resize(QtCore.QSize(QtCore.QRect(0,0,241,263).size()).expandedTo(DialogModelVisualization.minimumSizeHint()))
+        DialogModelVisualization.resize(QtCore.QSize(QtCore.QRect(0,0,257,297).size()).expandedTo(DialogModelVisualization.minimumSizeHint()))
+
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Maximum,QtGui.QSizePolicy.Maximum)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(DialogModelVisualization.sizePolicy().hasHeightForWidth())
+        DialogModelVisualization.setSizePolicy(sizePolicy)
 
         self.gridlayout = QtGui.QGridLayout(DialogModelVisualization)
-        self.gridlayout.setMargin(1)
-        self.gridlayout.setSpacing(6)
         self.gridlayout.setObjectName("gridlayout")
 
         self.tabWidget = QtGui.QTabWidget(DialogModelVisualization)
+
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Maximum,QtGui.QSizePolicy.Maximum)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.tabWidget.sizePolicy().hasHeightForWidth())
+        self.tabWidget.setSizePolicy(sizePolicy)
         self.tabWidget.setObjectName("tabWidget")
 
         self.tab = QtGui.QWidget()
@@ -30,7 +40,7 @@ class Ui_DialogModelVisualization(object):
 
         self.groupBoxDisplayStyle = QtGui.QGroupBox(self.tab)
 
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Minimum,QtGui.QSizePolicy.Minimum)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Maximum,QtGui.QSizePolicy.Maximum)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.groupBoxDisplayStyle.sizePolicy().hasHeightForWidth())
@@ -55,6 +65,12 @@ class Ui_DialogModelVisualization(object):
         self.gridlayout1.addWidget(self.groupBoxDisplayStyle,0,0,1,3)
 
         self.checkBoxBoundingBox = QtGui.QCheckBox(self.tab)
+
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Maximum,QtGui.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.checkBoxBoundingBox.sizePolicy().hasHeightForWidth())
+        self.checkBoxBoundingBox.setSizePolicy(sizePolicy)
         self.checkBoxBoundingBox.setChecked(True)
         self.checkBoxBoundingBox.setObjectName("checkBoxBoundingBox")
         self.gridlayout1.addWidget(self.checkBoxBoundingBox,1,0,1,2)
@@ -70,6 +86,12 @@ class Ui_DialogModelVisualization(object):
         self.gridlayout1.addWidget(self.pushButtonBoundingBoxColor,1,2,1,1)
 
         self.checkBoxModelVisible = QtGui.QCheckBox(self.tab)
+
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Maximum,QtGui.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.checkBoxModelVisible.sizePolicy().hasHeightForWidth())
+        self.checkBoxModelVisible.setSizePolicy(sizePolicy)
         self.checkBoxModelVisible.setChecked(True)
         self.checkBoxModelVisible.setObjectName("checkBoxModelVisible")
         self.gridlayout1.addWidget(self.checkBoxModelVisible,2,0,1,2)
@@ -85,6 +107,12 @@ class Ui_DialogModelVisualization(object):
         self.gridlayout1.addWidget(self.pushButtonModelColor,2,2,1,1)
 
         self.checkBoxModel2Visible = QtGui.QCheckBox(self.tab)
+
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Maximum,QtGui.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.checkBoxModel2Visible.sizePolicy().hasHeightForWidth())
+        self.checkBoxModel2Visible.setSizePolicy(sizePolicy)
         self.checkBoxModel2Visible.setChecked(True)
         self.checkBoxModel2Visible.setObjectName("checkBoxModel2Visible")
         self.gridlayout1.addWidget(self.checkBoxModel2Visible,3,0,1,2)
@@ -107,6 +135,9 @@ class Ui_DialogModelVisualization(object):
         self.spinBoxThickness.setProperty("value",QtCore.QVariant(3))
         self.spinBoxThickness.setObjectName("spinBoxThickness")
         self.gridlayout1.addWidget(self.spinBoxThickness,4,1,1,2)
+
+        spacerItem = QtGui.QSpacerItem(20,16,QtGui.QSizePolicy.Minimum,QtGui.QSizePolicy.Expanding)
+        self.gridlayout1.addItem(spacerItem,5,1,1,1)
         self.tabWidget.addTab(self.tab,"")
 
         self.tab_2 = QtGui.QWidget()
@@ -124,6 +155,12 @@ class Ui_DialogModelVisualization(object):
         self.gridlayout4.setObjectName("gridlayout4")
 
         self.labelSizeX = QtGui.QLabel(self.GroupBoxLocation_2)
+
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Maximum,QtGui.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.labelSizeX.sizePolicy().hasHeightForWidth())
+        self.labelSizeX.setSizePolicy(sizePolicy)
         self.labelSizeX.setObjectName("labelSizeX")
         self.gridlayout4.addWidget(self.labelSizeX,0,0,1,1)
 
@@ -135,6 +172,12 @@ class Ui_DialogModelVisualization(object):
         self.gridlayout4.addWidget(self.doubleSpinBoxSizeX,0,1,1,1)
 
         self.labelSizeY = QtGui.QLabel(self.GroupBoxLocation_2)
+
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Maximum,QtGui.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.labelSizeY.sizePolicy().hasHeightForWidth())
+        self.labelSizeY.setSizePolicy(sizePolicy)
         self.labelSizeY.setObjectName("labelSizeY")
         self.gridlayout4.addWidget(self.labelSizeY,1,0,1,1)
 
@@ -146,6 +189,12 @@ class Ui_DialogModelVisualization(object):
         self.gridlayout4.addWidget(self.doubleSpinBoxSizeY,1,1,1,1)
 
         self.labelSizeZ = QtGui.QLabel(self.GroupBoxLocation_2)
+
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Maximum,QtGui.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.labelSizeZ.sizePolicy().hasHeightForWidth())
+        self.labelSizeZ.setSizePolicy(sizePolicy)
         self.labelSizeZ.setObjectName("labelSizeZ")
         self.gridlayout4.addWidget(self.labelSizeZ,2,0,1,1)
 
@@ -166,6 +215,12 @@ class Ui_DialogModelVisualization(object):
         self.gridlayout5.setObjectName("gridlayout5")
 
         self.labelLocationX = QtGui.QLabel(self.GroupBoxLocation)
+
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Maximum,QtGui.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.labelLocationX.sizePolicy().hasHeightForWidth())
+        self.labelLocationX.setSizePolicy(sizePolicy)
         self.labelLocationX.setObjectName("labelLocationX")
         self.gridlayout5.addWidget(self.labelLocationX,0,0,1,1)
 
@@ -178,6 +233,12 @@ class Ui_DialogModelVisualization(object):
         self.gridlayout5.addWidget(self.doubleSpinBoxLocationX,0,1,1,1)
 
         self.labelLocationY = QtGui.QLabel(self.GroupBoxLocation)
+
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Maximum,QtGui.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.labelLocationY.sizePolicy().hasHeightForWidth())
+        self.labelLocationY.setSizePolicy(sizePolicy)
         self.labelLocationY.setObjectName("labelLocationY")
         self.gridlayout5.addWidget(self.labelLocationY,1,0,1,1)
 
@@ -189,6 +250,12 @@ class Ui_DialogModelVisualization(object):
         self.gridlayout5.addWidget(self.doubleSpinBoxLocationY,1,1,1,1)
 
         self.labelLocationZ = QtGui.QLabel(self.GroupBoxLocation)
+
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Maximum,QtGui.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.labelLocationZ.sizePolicy().hasHeightForWidth())
+        self.labelLocationZ.setSizePolicy(sizePolicy)
         self.labelLocationZ.setObjectName("labelLocationZ")
         self.gridlayout5.addWidget(self.labelLocationZ,2,0,1,1)
 
@@ -207,23 +274,55 @@ class Ui_DialogModelVisualization(object):
         self.gridlayout6 = QtGui.QGridLayout(self.tab_3)
         self.gridlayout6.setObjectName("gridlayout6")
 
+        self.label_2 = QtGui.QLabel(self.tab_3)
+
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Maximum,QtGui.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.label_2.sizePolicy().hasHeightForWidth())
+        self.label_2.setSizePolicy(sizePolicy)
+        self.label_2.setObjectName("label_2")
+        self.gridlayout6.addWidget(self.label_2,0,0,1,1)
+
+        self.labelModelName = QtGui.QLabel(self.tab_3)
+        self.labelModelName.setMaximumSize(QtCore.QSize(200,16777215))
+        self.labelModelName.setWordWrap(True)
+        self.labelModelName.setObjectName("labelModelName")
+        self.gridlayout6.addWidget(self.labelModelName,0,1,1,1)
+
         self.label = QtGui.QLabel(self.tab_3)
+
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Maximum,QtGui.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.label.sizePolicy().hasHeightForWidth())
+        self.label.setSizePolicy(sizePolicy)
         self.label.setObjectName("label")
-        self.gridlayout6.addWidget(self.label,0,0,1,1)
+        self.gridlayout6.addWidget(self.label,1,0,1,1)
 
         self.labelModelSize = QtGui.QLabel(self.tab_3)
         self.labelModelSize.setObjectName("labelModelSize")
-        self.gridlayout6.addWidget(self.labelModelSize,0,1,1,1)
+        self.gridlayout6.addWidget(self.labelModelSize,1,1,1,1)
+
+        spacerItem1 = QtGui.QSpacerItem(20,40,QtGui.QSizePolicy.Minimum,QtGui.QSizePolicy.Expanding)
+        self.gridlayout6.addItem(spacerItem1,2,0,1,1)
         self.tabWidget.addTab(self.tab_3,"")
-        self.gridlayout.addWidget(self.tabWidget,0,0,1,2)
+        self.gridlayout.addWidget(self.tabWidget,0,0,1,1)
+
+        self.gridlayout7 = QtGui.QGridLayout()
+        self.gridlayout7.setObjectName("gridlayout7")
 
         self.pushButtonCenter = QtGui.QPushButton(DialogModelVisualization)
         self.pushButtonCenter.setObjectName("pushButtonCenter")
-        self.gridlayout.addWidget(self.pushButtonCenter,1,0,1,1)
+        self.gridlayout7.addWidget(self.pushButtonCenter,0,0,1,1)
 
         self.pushButtonClose = QtGui.QPushButton(DialogModelVisualization)
         self.pushButtonClose.setObjectName("pushButtonClose")
-        self.gridlayout.addWidget(self.pushButtonClose,1,1,1,1)
+        self.gridlayout7.addWidget(self.pushButtonClose,0,1,1,1)
+        self.gridlayout.addLayout(self.gridlayout7,1,0,1,1)
+
+        spacerItem2 = QtGui.QSpacerItem(20,40,QtGui.QSizePolicy.Minimum,QtGui.QSizePolicy.Expanding)
+        self.gridlayout.addItem(spacerItem2,2,0,1,1)
 
         self.retranslateUi(DialogModelVisualization)
         self.tabWidget.setCurrentIndex(0)
@@ -267,6 +366,8 @@ class Ui_DialogModelVisualization(object):
         self.labelLocationY.setText(QtGui.QApplication.translate("DialogModelVisualization", "Y:", None, QtGui.QApplication.UnicodeUTF8))
         self.labelLocationZ.setText(QtGui.QApplication.translate("DialogModelVisualization", "Z:", None, QtGui.QApplication.UnicodeUTF8))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), QtGui.QApplication.translate("DialogModelVisualization", "Positioning", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_2.setText(QtGui.QApplication.translate("DialogModelVisualization", "File Name:", None, QtGui.QApplication.UnicodeUTF8))
+        self.labelModelName.setText(QtGui.QApplication.translate("DialogModelVisualization", "...", None, QtGui.QApplication.UnicodeUTF8))
         self.label.setText(QtGui.QApplication.translate("DialogModelVisualization", "Model Size:", None, QtGui.QApplication.UnicodeUTF8))
         self.labelModelSize.setText(QtGui.QApplication.translate("DialogModelVisualization", "{X, Y, Z}", None, QtGui.QApplication.UnicodeUTF8))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_3), QtGui.QApplication.translate("DialogModelVisualization", "Properties", None, QtGui.QApplication.UnicodeUTF8))
