@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.52  2008/12/01 21:23:52  ssa1
+#   Fixing solid rendering bug after camera change
+#
 #   Revision 1.51  2008/11/28 04:36:17  ssa1
 #   Removing error message if pyopengl does not exist.  (To make executable building easier to debug)
 #
@@ -378,7 +381,7 @@ class BaseViewer(QtOpenGL.QGLWidget):
         visibility = [self.modelVisible, self.model2Visible]
         colors = [self.getModelColor(),  self.getModel2Color()]
         
-        glPushAttrib(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT)
+        glPushAttrib(GL_LIGHTING_BIT | GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT)
                          
         self.extraDrawingRoutines()
         
