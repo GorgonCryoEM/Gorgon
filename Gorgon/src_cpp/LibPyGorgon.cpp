@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.43  2008/11/25 03:36:08  ssa1
+//   User constraints on finding correspondences (v2)
+//
 //   Revision 1.42  2008/11/24 20:02:49  ssa1
 //   User constraints on finding correspondences (v1)
 //
@@ -326,6 +329,7 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("deleteAtom", &CAlphaRenderer::DeleteAtom)		
 		.def("addBond", &CAlphaRenderer::AddBond)
 		.def("getBond", &CAlphaRenderer::GetBond, return_value_policy<reference_existing_object>())
+		.def("getBondIndex", &CAlphaRenderer::GetBondIndex)		
 		.def("getBondCount", &CAlphaRenderer::GetBondCount)
 		.def("deleteBond", &CAlphaRenderer::DeleteBond)		
 		.def("setSpacing", &CAlphaRenderer::SetSpacing)
