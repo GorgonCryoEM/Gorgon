@@ -23,6 +23,7 @@ class SequenceDock(QtGui.QDockWidget):
         self.setWidget(self.seqWidget)
         self.createActions()
         SequenceDock.__dock = self
+        self.setAllowedAreas(QtCore.Qt.LeftDockWidgetArea | QtCore.Qt.RightDockWidgetArea | QtCore.Qt.BottomDockWidgetArea)
         self.connect(self.seqWidget.structureEditor.mockSidechainsCheckBox,  QtCore.SIGNAL('stateChanged(int)'),  self.toggleMockSideChains)
         if main:
             self.connect(self.app.viewers["calpha"], QtCore.SIGNAL("elementSelected (int, int, int, int, int, int, QMouseEvent)"), self.updateFromViewerSelection)    
@@ -43,7 +44,7 @@ class SequenceDock(QtGui.QDockWidget):
                 
         if cls.__dock:
             if cls.__dock.app.actions.getAction("seqDock").isChecked():
-                cls.__dock.app.addDockWidget(QtCore.Qt.LeftDockWidgetArea,  cls.__dock)
+                cls.__dock.app.addDockWidget(QtCore.Qt.RightDockWidgetArea,  cls.__dock)
                 cls.__dock.changeCurrentChainModel(currentChainModel)
                 cls.__dock.show()
             else:
@@ -51,7 +52,7 @@ class SequenceDock(QtGui.QDockWidget):
         else:
             if main and viewer:
                 dock = SequenceDock(main, viewer, structurePrediction, currentChainModel)
-                main.addDockWidget(QtCore.Qt.LeftDockWidgetArea, dock)
+                main.addDockWidget(QtCore.Qt.RightDockWidgetArea, dock)
                 dock.show()
             else:
                 if not main: print 'Sequence Dock Error: no main app'
@@ -102,15 +103,13 @@ class SequenceWidget(QtGui.QWidget):
     def __init__(self, structurePrediction, currentChainModel, parent=None):
         super(SequenceWidget, self).__init__(parent)
         self.currentChainModel = currentChainModel
-        self.setMinimumSize(400,600)
         self.scrollable = ScrollableSequenceView(structurePrediction, currentChainModel, self)
         self.scrollable.setMinimumSize(300, 180)
         self.structureEditor = StructureEditor(currentChainModel, self)
         
         self.globalView=GlobalSequenceView(structurePrediction, self)
         self.globalView.setLocalView(self.scrollable.seqView)
-        self.globalView.updateViewportRange()
-        self.setMaximumWidth(self.globalView.width())
+        self.globalView.updateViewportRange()        
 
         self.connect(self.scrollable.seqView.scrollbar, QtCore.SIGNAL('actionTriggered(int)'), self.globalView.updateViewportRange)
         self.connect(self.scrollable.seqView.scrollbar, QtCore.SIGNAL('valueChanged(int)'), self.globalView.updateViewportRange)
@@ -124,6 +123,9 @@ class SequenceWidget(QtGui.QWidget):
         layout.addStretch()
         self.setLayout(layout)
         self.setWindowTitle('Sequence Widget')
+        self.setMinimumHeight(400)
+        self.setMinimumWidth(self.globalView.width()+10)
+        #self.setMaximumWidth(self.globalView.width())
 
 
 class SequenceView(QtGui.QWidget):
