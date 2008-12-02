@@ -613,40 +613,40 @@ class StructureEditor(QtGui.QWidget):
                               'x': QtGui.QLabel('x'), 
                               'y': QtGui.QLabel('y'), 
                               'z': QtGui.QLabel('z'), 
-                              'alt': QtGui.QLabel('alt'), 
-                              'az': QtGui.QLabel('az'), 
-                              'phi': QtGui.QLabel('phi')
+                              'roll': QtGui.QLabel('roll'), 
+                              'pitch': QtGui.QLabel('pitch'), 
+                              'yaw': QtGui.QLabel('yaw')
                               }
                               
         self.posMoveDict = {
                                    'x': QtGui.QDoubleSpinBox(), 
                                    'y': QtGui.QDoubleSpinBox(), 
                                    'z': QtGui.QDoubleSpinBox(), 
-                                    'alt': QtGui.QSlider(), 
-                                    'az': QtGui.QSlider(), 
-                                    'phi': QtGui.QSlider()
+                                    'roll': QtGui.QSlider(), 
+                                    'pitch': QtGui.QSlider(), 
+                                    'yaw': QtGui.QSlider()
                                    }
         for key in ['x', 'y', 'z']:
             self.posMoveDict[key].setRange(-10000, 10000)
-        for key in ['alt', 'az', 'phi']:
-            self.posMoveDict[key].setRange(0, 360)
+        for key in ['roll', 'pitch', 'yaw']:
+            self.posMoveDict[key].setRange(-180, 180)
             self.posMoveDict[key].setOrientation(QtCore.Qt.Horizontal)
         
         self.posDecreaseButtonDict = {
                                    'x': QtGui.QPushButton('-'), 
                                    'y': QtGui.QPushButton('-'), 
                                    'z': QtGui.QPushButton('-'), 
-                                   'alt': QtGui.QPushButton('-5'), 
-                                   'az': QtGui.QPushButton('-5'), 
-                                   'phi': QtGui.QPushButton('-5')
+                                   'roll': QtGui.QPushButton('-5'), 
+                                   'pitch': QtGui.QPushButton('-5'), 
+                                   'yaw': QtGui.QPushButton('-5')
                                    }
         self.posIncreaseButtonDict = {
                                    'x': QtGui.QPushButton('+'), 
                                    'y': QtGui.QPushButton('+'), 
                                    'z': QtGui.QPushButton('+'), 
-                                   'alt': QtGui.QPushButton('+5'), 
-                                   'az': QtGui.QPushButton('+5'), 
-                                   'phi': QtGui.QPushButton('+5')
+                                   'roll': QtGui.QPushButton('+5'), 
+                                   'pitch': QtGui.QPushButton('+5'), 
+                                   'yaw': QtGui.QPushButton('+5')
                                    }
         for key in self.posDecreaseButtonDict.keys():
             self.posDecreaseButtonDict[key].setMaximumWidth(30)
@@ -656,9 +656,9 @@ class StructureEditor(QtGui.QWidget):
                               'x': QtGui.QHBoxLayout(), 
                               'y': QtGui.QHBoxLayout(), 
                               'z': QtGui.QHBoxLayout(), 
-                              'alt': QtGui.QHBoxLayout(), 
-                              'az': QtGui.QHBoxLayout(), 
-                              'phi': QtGui.QHBoxLayout()
+                              'roll': QtGui.QHBoxLayout(), 
+                              'pitch': QtGui.QHBoxLayout(), 
+                              'yaw': QtGui.QHBoxLayout()
                               }
         
         for key in posSpinLabelLayoutDict.keys():
@@ -675,9 +675,9 @@ class StructureEditor(QtGui.QWidget):
         positionLayout.addLayout(posSpinLabelLayoutDict['y'], 2,  0)
         positionLayout.addLayout(posSpinLabelLayoutDict['z'], 3, 0)
         positionLayout.addWidget(self.posRotateLabel, 4, 0)
-        positionLayout.addLayout(posSpinLabelLayoutDict['alt'], 5, 0)
-        positionLayout.addLayout(posSpinLabelLayoutDict['az'], 6, 0)
-        positionLayout.addLayout(posSpinLabelLayoutDict['phi'], 7, 0)
+        positionLayout.addLayout(posSpinLabelLayoutDict['roll'], 5, 0)
+        positionLayout.addLayout(posSpinLabelLayoutDict['pitch'], 6, 0)
+        positionLayout.addLayout(posSpinLabelLayoutDict['yaw'], 7, 0)
         self.positionTab.setLayout(positionLayout)
         
         self.connect(self.posDecreaseButtonDict['x'], QtCore.SIGNAL('clicked()'), self.posXDecr)
@@ -689,18 +689,18 @@ class StructureEditor(QtGui.QWidget):
         
         #Disabling widgets that are not yet implemented
         self.posRotateLabel.setEnabled(False)
-        self.posMoveDict['alt'].setEnabled(False)
-        self.posMoveDict['az'].setEnabled(False)
-        self.posMoveDict['phi'].setEnabled(False)
-        self.posDecreaseButtonDict['alt'].setEnabled(False)
-        self.posDecreaseButtonDict['az'].setEnabled(False)
-        self.posDecreaseButtonDict['phi'].setEnabled(False)
-        self.posIncreaseButtonDict['alt'].setEnabled(False)
-        self.posIncreaseButtonDict['az'].setEnabled(False)
-        self.posIncreaseButtonDict['phi'].setEnabled(False)
-        self.posMoveLabelsDict['alt'].setEnabled(False)
-        self.posMoveLabelsDict['az'].setEnabled(False)
-        self.posMoveLabelsDict['phi'].setEnabled(False)
+        self.posMoveDict['roll'].setEnabled(False)
+        self.posMoveDict['pitch'].setEnabled(False)
+        self.posMoveDict['yaw'].setEnabled(False)
+        self.posDecreaseButtonDict['roll'].setEnabled(False)
+        self.posDecreaseButtonDict['pitch'].setEnabled(False)
+        self.posDecreaseButtonDict['yaw'].setEnabled(False)
+        self.posIncreaseButtonDict['roll'].setEnabled(False)
+        self.posIncreaseButtonDict['pitch'].setEnabled(False)
+        self.posIncreaseButtonDict['yaw'].setEnabled(False)
+        self.posMoveLabelsDict['roll'].setEnabled(False)
+        self.posMoveLabelsDict['pitch'].setEnabled(False)
+        self.posMoveLabelsDict['yaw'].setEnabled(False)
         
     def setupUi(self):
         self.tabWidget = QtGui.QTabWidget()
