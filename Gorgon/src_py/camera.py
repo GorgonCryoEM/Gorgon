@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.51  2008/12/02 21:02:54  ssa1
+#   Saving screen real-estate
+#
 #   Revision 1.50  2008/12/02 18:31:33  ssa1
 #   Fixing the flicker bug on macos...
 #
@@ -468,6 +471,7 @@ class Camera(QtOpenGL.QGLWidget):
     def rotateSelectedScene(self, dx, dy):
         newDx = vectorDistance(self.eye, self.center) * abs(tan(pi * self.eyeZoom)) * dx / float(self.width())
         newDy = vectorDistance(self.eye, self.center) * abs(tan(pi * self.eyeZoom)) * dy / float(self.height())
+
         moveLength = vectorAdd(vectorScalarMultiply(-newDy, self.up), vectorScalarMultiply(newDx, self.right))
         moveDirection = vectorNormalize(moveLength)
         rotationAxis = vectorCrossProduct(moveDirection, self.look)
@@ -481,12 +485,14 @@ class Camera(QtOpenGL.QGLWidget):
             objectCount = s.renderer.selectionObjectCount()            
             if(objectCount > 0):
                 totalCount = totalCount + objectCount
-                centerOfMass = centerOfMass + (s.renderer.selectionCenterOfMass() * float(objectCount))
+                centerOfMass = centerOfMass + (s.objectToWorldCoordinatesVector(s.renderer.selectionCenterOfMass()) * float(objectCount))
         if(totalCount > 0):
             centerOfMass = centerOfMass * float(1.0 / totalCount)
 
         for s in self.scene:
-            if(s.renderer.selectionRotate(centerOfMass, rotationAxis3D, vectorSize(moveLength))):
+            selectionCOM = s.worldToObjectCoordinatesVector(centerOfMass)
+            selectionAxis = s.worldToObjectCoordinatesVector(rotationAxis3D)
+            if(s.renderer.selectionRotate(selectionCOM, selectionAxis, vectorSize(moveLength))):
                 s.emitModelChanged()
                      
    

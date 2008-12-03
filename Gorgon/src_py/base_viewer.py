@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.53  2008/12/02 03:27:05  ssa1
+#   putting glpushattrib and glpopattrib when setting colors
+#
 #   Revision 1.52  2008/12/01 21:23:52  ssa1
 #   Fixing solid rendering bug after camera change
 #
@@ -175,6 +178,13 @@ class BaseViewer(QtOpenGL.QGLWidget):
         
         return [(worldCoords[0] - origin[0]) / scale[0], (worldCoords[1] - origin[1]) / scale[1], (worldCoords[2] - origin[2]) / scale[2]]
         
+    def objectToWorldCoordinatesVector(self, objectCoords):
+        coords = self.objectToWorldCoordinates([objectCoords.x(), objectCoords.y(), objectCoords.z()])
+        return Vector3DFloat(coords[0], coords[1], coords[2])
+    
+    def worldToObjectCoordinatesVector(self, worldCoords):
+        coords = self.worldToObjectCoordinates([worldCoords.x(), worldCoords.y(), worldCoords.z()])
+        return Vector3DFloat(coords[0], coords[1], coords[2])    
     
     def setBoundingBox(self, visible):
         self.showBox = visible

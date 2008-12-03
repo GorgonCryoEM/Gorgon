@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.20  2008/11/13 20:54:40  ssa1
+//   Using the correct scale when loading volumes
+//
 //   Revision 1.19  2008/09/29 16:09:44  ssa1
 //   Removing GLVisualizer.h
 //
@@ -265,15 +268,21 @@ namespace wustl_mm {
 
 		bool SSERenderer::SelectionRotate(Vector3DFloat centerOfMass, Vector3DFloat rotationAxis, float angle) {
 			bool rotated = false;
+			Point3 centerOfMassP3 = Point3(centerOfMass.X(), centerOfMass.Y(), centerOfMass.Z());
+			Vector3 rotationV3 = Vector3(rotationAxis.X(), rotationAxis.Y(), rotationAxis.Z());
+			
 			for(unsigned int i = 0; i < helices.size(); i++) {					
 				if(helices[i]->GetSelected()) {
 					rotated = true;
-					Vector3DFloat move = centerOfMass - Vector3DFloat(helices[i]->GetCenter()[0], helices[i]->GetCenter()[1], helices[i]->GetCenter()[2]);
+					Vector3 move = centerOfMassP3 - helices[i]->GetCenter();										
+					Matrix4 rotMatrix = Matrix4::rotation(rotationV3, angle);
+					Vector3 newMove = rotMatrix * move; 
+					helices[i]->SetCenter(centerOfMassP3 - newMove);		
+
 					helices[i]->Rotate(Vector3(rotationAxis.X(), rotationAxis.Y(), rotationAxis.Z()), angle);
 				}
 			}
 			return rotated;
-
 		}
 
 		int SSERenderer::SelectionObjectCount() {
