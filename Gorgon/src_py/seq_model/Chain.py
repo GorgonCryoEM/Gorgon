@@ -620,6 +620,21 @@ class Chain(baseClass):
     '''
     return self.selectedResidues
 
+  def removeSecel(self, secel):
+    type = secel.__class__.__name__
+    if type == 'Helix':
+        if secel in self.helices.values():
+            for key in self.helices.keys():
+                if self.helices[key] is secel:
+                    self.helices.pop(key)
+    elif type == 'Strand':
+        if secel in self.orphanStrands.values():
+            for key in self.orphanStrands.keys():
+                if self.orphanStrands[key] is secel:
+                    self.orphanStrands.pop(secel)
+    for i in range(secel.startIndex, 1+secel.stopIndex):
+        self.secelList.pop(i)
+    
   def residueRange(self):
     '''
     Returns a list of all the residue numbers.
@@ -681,7 +696,10 @@ class Chain(baseClass):
     """
     #Change: uses a C-alpha placeholder atom entry with no x,y,z coordinates if the residue has no atoms
     #Not Thread-Safe
-    header = ('HEADER' + ' '*56 + self.getPdbID()).ljust(80) + '\n'
+    if self.getPdbID()[0] == '_':
+        header = ''
+    else:
+        header = ('HEADER' + ' '*56 + self.getPdbID()).ljust(80) + '\n'
     atom_index=1
     Helix.serialNo=0  #This is what makes it not thread-safe
     dateTime = str(QtCore.QDateTime.currentDateTime().toString())
