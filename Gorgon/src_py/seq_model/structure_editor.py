@@ -9,6 +9,7 @@ from libpyGORGON import PDBAtom, PDBBond, Vector3DFloat
 import sans_numpy as snum
 from seq_model.findHelixCalphas import helixEndpointsToCAlphaPositions
 from seq_model.Helix import Helix
+import math
 
 class StructureEditor(QtGui.QWidget):
     def __init__(self, currentChainModel, parent=None):
@@ -54,6 +55,9 @@ class StructureEditor(QtGui.QWidget):
             self.connect(self.posMoveDict['x'], QtCore.SIGNAL('valueChanged(double)'), self.posMoveCM_x)
             self.connect(self.posMoveDict['y'], QtCore.SIGNAL('valueChanged(double)'), self.posMoveCM_y)
             self.connect(self.posMoveDict['z'], QtCore.SIGNAL('valueChanged(double)'), self.posMoveCM_z)
+            self.connect(self.posMoveDict['roll'], QtCore.SIGNAL('valueChanged(int)'), self.posRotateCM_roll)
+            self.connect(self.posMoveDict['pitch'], QtCore.SIGNAL('valueChanged(int)'), self.posRotateCM_pitch)
+            self.connect(self.posMoveDict['yaw'], QtCore.SIGNAL('valueChanged(int)'), self.posRotateCM_yaw)
             self.connect(self.removeButton, QtCore.SIGNAL('clicked()'), self.removeSelectedAtoms)
       
     def acceptButtonPress(self):
@@ -386,7 +390,48 @@ class StructureEditor(QtGui.QWidget):
         translateVector = Vector3DFloat(0, 0, moveZ)
         cAlphaViewer.renderer.selectionMove(translateVector)
         cAlphaViewer.emitModelChanged()
-    
+       
+    def posRotateCM_roll(self, angle):
+        print 'roll:', angle
+        axis = self.app.mainCamera.look
+        oldAngle = self.roll
+        
+        axis = Vector3DFloat(axis[0], axis[1], axis[2])
+        cAlphaViewer = self.app.viewers['calpha']
+        cm = cAlphaViewer.renderer.selectionCenterOfMass()
+        newAngle = math.pi*angle/180
+        cAlphaViewer.renderer.selectionRotate(cm, axis, newAngle-oldAngle)
+        cAlphaViewer.emitModelChanged()
+        
+        self.roll = newAngle
+    def posRotateCM_pitch(self, angle):
+        print 'pitch:', angle
+        axis = self.app.mainCamera.right
+        oldAngle = self.pitch
+        
+        axis = Vector3DFloat(axis[0], axis[1], axis[2])
+        cAlphaViewer = self.app.viewers['calpha']
+        cm = cAlphaViewer.renderer.selectionCenterOfMass()
+        newAngle = math.pi*angle/180
+        cAlphaViewer.renderer.selectionRotate(cm, axis, newAngle-oldAngle)
+        cAlphaViewer.emitModelChanged()
+        
+        self.pitch = newAngle
+    def posRotateCM_yaw(self, angle):
+        print 'yaw:',  angle
+        axis =self.app.mainCamera.up
+        axis = (-1*axis[0], -1*axis[1], -1*axis[2])
+        oldAngle = self.yaw
+        
+        axis = Vector3DFloat(axis[0], axis[1], axis[2])
+        cAlphaViewer = self.app.viewers['calpha']
+        cm = cAlphaViewer.renderer.selectionCenterOfMass()
+        newAngle = math.pi*angle/180
+        cAlphaViewer.renderer.selectionRotate(cm, axis, newAngle-oldAngle)
+        cAlphaViewer.emitModelChanged()
+        
+        self.yaw = newAngle
+
     def posUpdateValues(self):
         cAlphaRenderer = self.app.viewers['calpha'].renderer
         cm = cAlphaRenderer.selectionCenterOfMass()
@@ -406,7 +451,18 @@ class StructureEditor(QtGui.QWidget):
         self.posMoveDict['z'].setValue(self.posMoveDict['z'].value()-1)
     def posZIncr(self):
         self.posMoveDict['z'].setValue(self.posMoveDict['z'].value()+1)
-        
+    def posRollDecr(self):
+        self.posMoveDict['roll'].setValue(self.posMoveDict['roll'].value()-3)
+    def posRollIncr(self):
+        self.posMoveDict['roll'].setValue(self.posMoveDict['roll'].value()+3)
+    def posPitchDecr(self):
+        self.posMoveDict['pitch'].setValue(self.posMoveDict['pitch'].value()-3)
+    def posPitchIncr(self):
+        self.posMoveDict['pitch'].setValue(self.posMoveDict['pitch'].value()+3)
+    def posYawDecr(self):
+        self.posMoveDict['yaw'].setValue(self.posMoveDict['yaw'].value()-3)
+    def posYawIncr(self):
+        self.posMoveDict['yaw'].setValue(self.posMoveDict['yaw'].value()+3)
     def removeSelectedAtoms(self):
         cAlphaViewer = self.app.viewers['calpha']
         print 'helices', self.currentChainModel.helices.keys()
@@ -670,24 +726,24 @@ class StructureEditor(QtGui.QWidget):
         for key in ['x', 'y', 'z']:
             self.posMoveDict[key].setRange(-10000, 10000)
         for key in ['roll', 'pitch', 'yaw']:
-            self.posMoveDict[key].setRange(-180, 180)
+            self.posMoveDict[key].setRange(0, 360)
             self.posMoveDict[key].setOrientation(QtCore.Qt.Horizontal)
         
         self.posDecreaseButtonDict = {
                                    'x': QtGui.QPushButton('-'), 
                                    'y': QtGui.QPushButton('-'), 
                                    'z': QtGui.QPushButton('-'), 
-                                   'roll': QtGui.QPushButton('-5'), 
-                                   'pitch': QtGui.QPushButton('-5'), 
-                                   'yaw': QtGui.QPushButton('-5')
+                                   'roll': QtGui.QPushButton('-3'), 
+                                   'pitch': QtGui.QPushButton('-3'), 
+                                   'yaw': QtGui.QPushButton('-3')
                                    }
         self.posIncreaseButtonDict = {
                                    'x': QtGui.QPushButton('+'), 
                                    'y': QtGui.QPushButton('+'), 
                                    'z': QtGui.QPushButton('+'), 
-                                   'roll': QtGui.QPushButton('+5'), 
-                                   'pitch': QtGui.QPushButton('+5'), 
-                                   'yaw': QtGui.QPushButton('+5')
+                                   'roll': QtGui.QPushButton('+3'), 
+                                   'pitch': QtGui.QPushButton('+3'), 
+                                   'yaw': QtGui.QPushButton('+3')
                                    }
         for key in self.posDecreaseButtonDict.keys():
             self.posDecreaseButtonDict[key].setMaximumWidth(30)
@@ -727,21 +783,17 @@ class StructureEditor(QtGui.QWidget):
         self.connect(self.posIncreaseButtonDict['x'], QtCore.SIGNAL('clicked()'), self.posXIncr)
         self.connect(self.posIncreaseButtonDict['y'], QtCore.SIGNAL('clicked()'), self.posYIncr)
         self.connect(self.posIncreaseButtonDict['z'], QtCore.SIGNAL('clicked()'), self.posZIncr)
+        self.connect(self.posDecreaseButtonDict['roll'], QtCore.SIGNAL('clicked()'), self.posRollDecr)
+        self.connect(self.posIncreaseButtonDict['roll'], QtCore.SIGNAL('clicked()'), self.posRollIncr)
+        self.connect(self.posDecreaseButtonDict['pitch'], QtCore.SIGNAL('clicked()'), self.posPitchDecr)
+        self.connect(self.posIncreaseButtonDict['pitch'], QtCore.SIGNAL('clicked()'), self.posPitchIncr)
+        self.connect(self.posDecreaseButtonDict['yaw'], QtCore.SIGNAL('clicked()'), self.posYawDecr)
+        self.connect(self.posIncreaseButtonDict['yaw'], QtCore.SIGNAL('clicked()'), self.posYawIncr)
         
-        #Disabling widgets that are not yet implemented
-        self.posRotateLabel.setEnabled(False)
-        self.posMoveDict['roll'].setEnabled(False)
-        self.posMoveDict['pitch'].setEnabled(False)
-        self.posMoveDict['yaw'].setEnabled(False)
-        self.posDecreaseButtonDict['roll'].setEnabled(False)
-        self.posDecreaseButtonDict['pitch'].setEnabled(False)
-        self.posDecreaseButtonDict['yaw'].setEnabled(False)
-        self.posIncreaseButtonDict['roll'].setEnabled(False)
-        self.posIncreaseButtonDict['pitch'].setEnabled(False)
-        self.posIncreaseButtonDict['yaw'].setEnabled(False)
-        self.posMoveLabelsDict['roll'].setEnabled(False)
-        self.posMoveLabelsDict['pitch'].setEnabled(False)
-        self.posMoveLabelsDict['yaw'].setEnabled(False)
+        self.roll = 0
+        self.pitch = 0
+        self.yaw = 0
+        
         
     def setupUi(self):
         self.tabWidget = QtGui.QTabWidget()
