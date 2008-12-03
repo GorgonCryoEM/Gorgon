@@ -441,7 +441,7 @@ class StructureEditor(QtGui.QWidget):
                 #print 'removing atom w/ resNum of:', atom.getResSeq()
                 cAlphaViewer.renderer.deleteAtom(atom.getHashKey())
                 del atom
-                cAlphaViewer.emitModelChanged()
+        cAlphaViewer.emitModelChanged()
         print 'helices', self.currentChainModel.helices.keys()
         print 'orphan strands', self.currentChainModel.orphanStrands.keys()
         print self.currentChainModel.secelList.keys()
