@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.30  2008/12/02 23:55:43  colemanr
+//   Fixed logic for GetBondIndex().
+//
 //   Revision 1.29  2008/12/02 21:25:44  ssa1
 //   adding getBondIndex method to give access to bonds
 //
@@ -50,6 +53,7 @@
 #include "Renderer.h"
 #include <map>
 #include <list>
+#include <GraphMatch/VectorMath.h>
 
 using namespace std;
 using namespace wustl_mm::Protein_Morph;
@@ -79,6 +83,7 @@ namespace wustl_mm {
 			void LoadFile(string fileName);
 			int SelectionObjectCount();
 			Vector3DFloat SelectionCenterOfMass();
+			bool SelectionRotate(Vector3DFloat centerOfMass, Vector3DFloat rotationAxis, float angle);
 			bool SelectionMove(Vector3DFloat moveDirection);
 			bool SelectionClear();
 			void SelectionToggle(int subsceneIndex, bool forceTrue, int ix0, int ix1 = -1, int ix2 = -1, int ix3 = -1, int ix4 = -1);
@@ -276,6 +281,25 @@ namespace wustl_mm {
 				centerOfMass = centerOfMass * (1.0f/(float)count);
 			}
 			return centerOfMass;
+		}
+
+		bool CAlphaRenderer::SelectionRotate(Vector3DFloat centerOfMass, Vector3DFloat rotationAxis, float angle) {
+			bool rotated = false;
+			Vector3 centerOfMassP3 = Vector3(centerOfMass.X(), centerOfMass.Y(), centerOfMass.Z());
+			Vector3 rotationV3 = Vector3(rotationAxis.X(), rotationAxis.Y(), rotationAxis.Z());
+			
+			for(AtomMapType::iterator i = atoms.begin(); i != atoms.end(); i++) {
+				if(i->second.GetSelected()) {
+					rotated = true;
+					Vector3DFloat move = centerOfMass - i->second.GetPosition();
+					Vector3 moveV3 = Vector3(move.X(), move.Y(), move.Z());
+					Matrix4 rotMatrix = Matrix4::rotation(rotationV3, angle);
+					Vector3 newMove = rotMatrix * moveV3; 
+					newMove = centerOfMassP3 - newMove;
+					i->second.SetPosition(Vector3DFloat(newMove[0], newMove[1], newMove[2]));
+				}
+			}
+			return rotated;
 		}
 
 		bool CAlphaRenderer::SelectionMove(Vector3DFloat moveDirection) {
