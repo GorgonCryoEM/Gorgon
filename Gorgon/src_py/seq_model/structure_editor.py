@@ -33,6 +33,7 @@ class StructureEditor(QtGui.QWidget):
                 
         self.setupUi()
         self.enableDisable()
+        print 'StructureEditor.parentWidget():', self.parentWidget()
         
         self.connect(self.atomicBack1resButton, QtCore.SIGNAL('clicked()'), self.atomPrevButtonPress)
         self.connect(self.atomicForward1resButton, QtCore.SIGNAL('clicked()'), self.atomNextButtonPress)
@@ -54,6 +55,7 @@ class StructureEditor(QtGui.QWidget):
             self.connect(self.posMoveDict['x'], QtCore.SIGNAL('valueChanged(double)'), self.posMoveCM_x)
             self.connect(self.posMoveDict['y'], QtCore.SIGNAL('valueChanged(double)'), self.posMoveCM_y)
             self.connect(self.posMoveDict['z'], QtCore.SIGNAL('valueChanged(double)'), self.posMoveCM_z)
+            self.connect(self.removeButton, QtCore.SIGNAL('clicked()'), self.removeSelectedAtoms)
       
     def acceptButtonPress(self):
         currentWidget = self.tabWidget.currentWidget()
@@ -220,28 +222,28 @@ class StructureEditor(QtGui.QWidget):
             self.CAdoubleSpinBox.setEnabled(True)
             self.CAlabel.setEnabled(True)
             self.acceptButton.setEnabled(True)
-            self.removeButton.setEnabled(False)
+            self.removeButton.setEnabled(True)
             self.redoButton.setEnabled(True)
             self.undoButton.setEnabled(True)
         elif currentTab is self.helixTab:
             self.CAdoubleSpinBox.setEnabled(False)
             self.CAlabel.setEnabled(False)
             self.acceptButton.setEnabled(True)
-            self.removeButton.setEnabled(False)
+            self.removeButton.setEnabled(True)
             self.redoButton.setEnabled(False)
             self.undoButton.setEnabled(False)
         elif currentTab is self.loopTab:
             self.CAdoubleSpinBox.setEnabled(False)
             self.CAlabel.setEnabled(False)
             self.acceptButton.setEnabled(False)
-            self.removeButton.setEnabled(False)
+            self.removeButton.setEnabled(True)
             self.redoButton.setEnabled(False)
             self.undoButton.setEnabled(False)
         elif currentTab is self.positionTab:
             self.CAdoubleSpinBox.setEnabled(False)
             self.CAlabel.setEnabled(False)
             self.acceptButton.setEnabled(False)
-            self.removeButton.setEnabled(False)
+            self.removeButton.setEnabled(True)
             self.redoButton.setEnabled(False)
             self.undoButton.setEnabled(False)            
     
@@ -401,6 +403,45 @@ class StructureEditor(QtGui.QWidget):
     def posZIncr(self):
         self.posMoveDict['z'].setValue(self.posMoveDict['z'].value()+1)
         
+    def removeSelectedAtoms(self):
+        cAlphaViewer = self.app.viewers['calpha']
+        print 'helices', self.currentChainModel.helices.keys()
+        print 'orphan strands', self.currentChainModel.orphanStrands.keys()
+        print self.currentChainModel.secelList.keys()
+        for resIndex in self.currentChainModel.getSelection():
+            res = self.currentChainModel[resIndex]
+            atom = res.getAtom('CA')
+            if not atom:
+                continue
+            if atom.getSelected():
+                #Check if it is in a Secel
+                secel = self.currentChainModel.getSecelByIndex(resIndex)
+                if secel.label != 'no-label':
+                    self.currentChainModel.removeSecel(secel)
+                prevAtom = self.currentChainModel[resIndex-1].getAtom('CA')
+                nextAtom = self.currentChainModel[resIndex+1].getAtom('CA')
+                if prevAtom:
+                    #print 'There is a previous atom'
+                    bondIndex = cAlphaViewer.renderer.getBondIndex(atom.getHashKey(), prevAtom.getHashKey())
+                    if bondIndex:
+                        #print 'removing bond before'
+                        cAlphaViewer.renderer.deleteBond(bondIndex)
+                if nextAtom:
+                    #print 'There is a next atom'
+                    bondIndex = cAlphaViewer.renderer.getBondIndex(atom.getHashKey(), nextAtom.getHashKey())
+                    if bondIndex:
+                        #print 'removing bond after'
+                        cAlphaViewer.renderer.deleteBond(bondIndex)
+                res.clearAtom('CA')
+                #print res.getAtomNames()
+                #print 'removing atom w/ resNum of:', atom.getResSeq()
+                cAlphaViewer.renderer.deleteAtom(atom.getHashKey())
+                del atom
+                cAlphaViewer.emitModelChanged()
+        print 'helices', self.currentChainModel.helices.keys()
+        print 'orphan strands', self.currentChainModel.orphanStrands.keys()
+        print self.currentChainModel.secelList.keys()
+
     def renderMockSidechains(self,  chain):
         color = {
             'greasy': (0.0, 1.0, 0.0, 1.0), 
