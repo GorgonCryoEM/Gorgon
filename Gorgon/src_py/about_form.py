@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.9  2008/12/03 20:27:05  ssa1
+#   adding in bug tracker
+#
 #   Revision 1.8  2008/12/01 21:02:14  ssa1
 #   Putting in link for related publications
 #
@@ -68,8 +71,8 @@ class AboutForm(QtGui.QDialog):
         self.app.menus.addAction("help-about", self.app.actions.getAction("show_AboutForm"), "help")
         self.app.menus.addAction("help-updates", self.app.actions.getAction("show_GetUpdatesForm"), "help")
         self.app.menus.addAction("help-guide", self.app.actions.getAction("show_UserGuideForm"), "help")
-        self.app.menus.addAction("help-publications", self.app.actions.getAction("show_PublicationsForm"), "help")
         self.app.menus.addAction("help-bugs", self.app.actions.getAction("show_BugReportForm"), "help")
+        self.app.menus.addAction("help-publications", self.app.actions.getAction("show_PublicationsForm"), "help")
         
     def openPage(self, url):
         try:

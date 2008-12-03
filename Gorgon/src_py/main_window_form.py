@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.12  2008/12/02 21:10:06  colemanr
+#   Added a file-export menu.
+#
 #   Revision 1.11  2008/12/01 01:25:54  ssa1
 #   Docking widgets as tabs to preserve screen real-estate
 #
@@ -79,7 +82,7 @@ class MainWindowForm(QtGui.QMainWindow):
         self.menus.addMenu("file-close", self.tr("&Close"), "file")
         self.menus.getMenu("file").addSeparator()
         self.menus.addAction("file-exit", self.actions.getAction("exit_Application"), "file")        
-        self.menus.addMenu("options", self.tr("&Options"))    
+        #self.menus.addMenu("options", self.tr("&Options"))    
         self.menus.addMenu("actions", self.tr("&Actions"))     
         self.menus.addMenu("window", self.tr("&Window"))
         self.menus.addMenu("themes", self.tr("&Themes"))
