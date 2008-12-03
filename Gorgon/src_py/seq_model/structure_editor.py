@@ -42,7 +42,6 @@ class StructureEditor(QtGui.QWidget):
         self.connect(self.atomicForwardRadioButton,  QtCore.SIGNAL('toggled(bool)'), self.atomForwardBackwardChange)
         self.connect(self.undoButton,  QtCore.SIGNAL('clicked()'), self.undoStack.undo)
         self.connect(self.redoButton,  QtCore.SIGNAL('clicked()'), self.undoStack.redo)
-        self.connect(self.acceptButton, QtCore.SIGNAL('clicked()'), self.acceptButtonPress)
         self.connect(self.helixDecreasePositionButton, QtCore.SIGNAL('clicked()'), self.helixDecreaseButtonPress)
         self.connect(self.helixIncreasePositionButton, QtCore.SIGNAL('clicked()'), self.helixIncreaseButtonPress)
         self.connect(self.helixFlipButton, QtCore.SIGNAL('clicked()'), self.helixFlipButtonPress)
@@ -58,10 +57,12 @@ class StructureEditor(QtGui.QWidget):
             self.connect(self.removeButton, QtCore.SIGNAL('clicked()'), self.removeSelectedAtoms)
       
     def acceptButtonPress(self):
+        print '\nAccept Button Pressed'
         currentWidget = self.tabWidget.currentWidget()
         if currentWidget is self.atomicTab:
             possibilityNum = self.atomicPossibilityNumSpinBox.value()
             chosenAtom = self.possibleAtomsList[possibilityNum-1]
+            #self.parentWidget()=>SequenceWidget, self.parentWidget().parentWidget() => SequenceDock
             viewer = self.parentWidget().parentWidget().viewer
             for atom in self.possibleAtomsList:
                 if atom is chosenAtom:
@@ -69,8 +70,6 @@ class StructureEditor(QtGui.QWidget):
                 viewer.renderer.deleteAtom(atom.getHashKey())
                 del atom
             self.possibleAtomsList = []
-            #self.parentWidget()=>SequenceWidget, self.parentWidget().parentWidget() => SequenceDock
-            viewer = self.parentWidget().parentWidget().viewer
             if self.atomicBackwardRadioButton.isChecked():
                 resSeqNum = int(self.atomicResNumbers[-1].text())
             elif self.atomicForwardRadioButton.isChecked():
@@ -101,11 +100,16 @@ class StructureEditor(QtGui.QWidget):
         meshRenderer = skeletonViewer.renderer
         radius = float( self.CAdoubleSpinBox.value() )
         #radius = skeletonViewer.worldToObjectCoordinates(calphaViewer.objectToWorldCoordinates((radius,0,0)) )[0]
-        residue = self.currentChainModel[ int( str(self.atomicResNumbers[0].text()) ) ]
+        resNum = int( str(self.atomicResNumbers[0].text()) )
+        residue = self.currentChainModel[ resNum ]
         atom = residue.getAtom('CA')
         if not atom:
             self.atomicPossibilityNumSpinBox.setRange(0, 0)
             self.atomicNumPossibilities.setText('of ?')
+            return
+        if self.currentChainModel[resNum-1].getAtomNames() and self.currentChainModel[resNum+1].getAtomNames():
+            self.atomicNumPossibilities.setText('of 0')
+            self.atomicPossibilityNumSpinBox.setRange(0, 0)
             return
         atomPos = atom.getPosition()
         atomPosMeshCoords =  skeletonViewer.worldToObjectCoordinates(calphaViewer.objectToWorldCoordinates([atomPos.x(), atomPos.y(), atomPos.z()]))
@@ -135,7 +139,7 @@ class StructureEditor(QtGui.QWidget):
                 rawAtom.setColor(0, 1, 0, 1)
                 
                 try:
-                    prevAtom = self.currentChainModel[int( str(self.atomicResNumbers[0].text()) )-1].getAtom('CA')
+                    prevAtom = self.currentChainModel[resNum-1].getAtom('CA')
                     previousAtomPos = prevAtom.getPosition()
                     prevDistSquared = (pos.x() - previousAtomPos.x())**2 + (pos.y() - previousAtomPos.y())**2 + (pos.z() - previousAtomPos.z())**2
                 except KeyError,  IndexError:
@@ -143,7 +147,7 @@ class StructureEditor(QtGui.QWidget):
                 except AttributeError:
                     prevDistSquared = 100000
                 try:
-                    nextAtom = self.currentChainModel[int( str(self.atomicResNumbers[0].text()) )+1].getAtom('CA')
+                    nextAtom = self.currentChainModel[resNum+1].getAtom('CA')
                     nextAtomPos = nextAtom.getPosition()
                     nextDistSquared = (pos.x() - nextAtomPos.x())**2 + (pos.y() - nextAtomPos.y())**2 + (pos.z() - nextAtomPos.z())**2
                 except KeyError,  IndexError:
