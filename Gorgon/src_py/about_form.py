@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.13  2008/12/04 20:23:09  ssa1
+#   Adding link to license
+#
 #   Revision 1.12  2008/12/04 20:02:01  ssa1
 #   sending system information when submitting bug report
 #
@@ -92,7 +95,7 @@ class AboutForm(QtGui.QDialog):
     def openPage(self, url):
         try:
             webbrowser.open(url)
-        except WindowsError:
+        except:
             pass;
         
 
@@ -119,6 +122,7 @@ class AboutForm(QtGui.QDialog):
         systemInfo = systemInfo + "File system encoding: " + str(sys.getfilesystemencoding()) + " | "
         systemInfo = systemInfo + "Executable: " + sys.executable + " | "
         systemInfo = systemInfo + "Python Version: " + sys.version + "," + str(sys.version_info) + " | "
-        systemInfo = systemInfo + "Installed Modules: " + str(sys.modules) + " | "
+        #systemInfo = systemInfo + "Installed Modules: " + str(sys.modules) + " | "
+        systemInfo = systemInfo.replace("'", "")
         self.openPage('http://www.cs.wustl.edu/~ssa1/gorgon/pages/contactUs.php?sysinfo=' + systemInfo)
         
