@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.11  2008/12/04 01:03:31  ssa1
+#   adding in bug tracker
+#
 #   Revision 1.10  2008/12/03 20:29:55  ssa1
 #   adding in bug tracker
 #
@@ -30,7 +33,7 @@
 #   Adding in CVS meta data
 #
 
-
+import sys
 from PyQt4 import QtCore, QtGui
 from ui_dialog_about import Ui_DialogAbout
 import webbrowser
@@ -97,5 +100,13 @@ class AboutForm(QtGui.QDialog):
         self.openPage('http://www.cs.wustl.edu/~ssa1/gorgon/pages/publications.php')
         
     def bugReport(self):
-        self.openPage('http://www.cs.wustl.edu/~ssa1/gorgon/pages/contactUs.php')
+        systemInfo = "Gorgon Version: " + self.app.windowTitle()+ " | "
+        systemInfo = systemInfo + "Platform: " + sys.platform + " | "
+        if(sys.platform == "win32"):
+            systemInfo = systemInfo +  "Windows version: " + str(sys.getwindowsversion()) + " | "
+        systemInfo = systemInfo + "File system encoding: " + str(sys.getfilesystemencoding()) + " | "
+        systemInfo = systemInfo + "Executable: " + sys.executable + " | "
+        systemInfo = systemInfo + "Python Version: " + sys.version + "," + str(sys.version_info) + " | "
+        systemInfo = systemInfo + "Installed Modules: " + str(sys.modules) + " | "
+        self.openPage('http://www.cs.wustl.edu/~ssa1/gorgon/pages/contactUs.php?sysinfo=' + systemInfo)
         
