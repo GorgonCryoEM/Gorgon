@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.12  2008/12/04 20:02:01  ssa1
+#   sending system information when submitting bug report
+#
 #   Revision 1.11  2008/12/04 01:03:31  ssa1
 #   adding in bug tracker
 #
@@ -68,6 +71,11 @@ class AboutForm(QtGui.QDialog):
         self.connect(bugAct, QtCore.SIGNAL("triggered()"), self.bugReport)
         self.app.actions.addAction("show_BugReportForm", bugAct)   
         
+        licenseAct = QtGui.QAction(self.tr("&License Agreement..."), self)
+        licenseAct.setStatusTip(self.tr("License Agreement"))
+        self.connect(licenseAct, QtCore.SIGNAL("triggered()"), self.license)
+        self.app.actions.addAction("show_LicenseForm", licenseAct)   
+                
         pubAct = QtGui.QAction(self.tr("Related &Publications..."), self)
         pubAct.setStatusTip(self.tr("Related Publications"))
         self.connect(pubAct, QtCore.SIGNAL("triggered()"), self.publications)
@@ -78,6 +86,7 @@ class AboutForm(QtGui.QDialog):
         self.app.menus.addAction("help-updates", self.app.actions.getAction("show_GetUpdatesForm"), "help")
         self.app.menus.addAction("help-guide", self.app.actions.getAction("show_UserGuideForm"), "help")
         self.app.menus.addAction("help-bugs", self.app.actions.getAction("show_BugReportForm"), "help")
+        self.app.menus.addAction("help-license", self.app.actions.getAction("show_LicenseForm"), "help")
         self.app.menus.addAction("help-publications", self.app.actions.getAction("show_PublicationsForm"), "help")
         
     def openPage(self, url):
@@ -98,6 +107,9 @@ class AboutForm(QtGui.QDialog):
         
     def publications(self):
         self.openPage('http://www.cs.wustl.edu/~ssa1/gorgon/pages/publications.php')
+    
+    def license(self):
+        self.openPage('http://www.cs.wustl.edu/~ssa1/gorgon/pages/viewLicense.php')
         
     def bugReport(self):
         systemInfo = "Gorgon Version: " + self.app.windowTitle()+ " | "
