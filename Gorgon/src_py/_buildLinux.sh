@@ -16,6 +16,9 @@ mkdir ../../../GorgonLinux/seq_model
 #p seq_model/*.py ../../../GorgonLinux/seq_model/
 cp seq_model/*.py? ../../../GorgonLinux/seq_model/
 
+mkdir ../../../GorgonLinux/themes
+cp -rL ../resources ../../../GorgonLinux/themes
+
 cp ~/Gorgon/lib/libpyGORGON.so ../../../GorgonLinux/
 cp /usr/lib/libglut.so.3 ../../../GorgonLinux/
 cp /usr/lib/libGLU.so.1 ../../../GorgonLinux/
@@ -38,3 +41,5 @@ cp /usr/lib/python2.5/site-packages/PyQt4/QtCore.so ../../../GorgonLinux/site-pa
 cp /usr/lib/python2.5/site-packages/PyQt4/QtGui.so ../../../GorgonLinux/site-packages/PyQt4/
 cp /usr/lib/python2.5/site-packages/PyQt4/QtOpenGL.so ../../../GorgonLinux/site-packages/PyQt4/
 cp /usr/lib/python2.5/site-packages/sip* ../../../GorgonLinux/site-packages/
+cd ../../..
+tar -cvzf GorgonLinux.tar.gz GorgonLinux/
