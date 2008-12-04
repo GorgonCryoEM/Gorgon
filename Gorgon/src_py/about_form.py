@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.10  2008/12/03 20:29:55  ssa1
+#   adding in bug tracker
+#
 #   Revision 1.9  2008/12/03 20:27:05  ssa1
 #   adding in bug tracker
 #
@@ -42,30 +45,30 @@ class AboutForm(QtGui.QDialog):
         self.createMenus()
 
     def createActions(self):               
-        aboutAct = QtGui.QAction(self.tr("&About"), self)
+        aboutAct = QtGui.QAction(self.tr("&About..."), self)
         aboutAct.setStatusTip(self.tr("About Gorgon"))
         self.connect(aboutAct, QtCore.SIGNAL("triggered()"), self.showAbout)
         self.app.actions.addAction("show_AboutForm", aboutAct)
         
-        updatesAct = QtGui.QAction(self.tr("Get &Updates"), self)
+        updatesAct = QtGui.QAction(self.tr("Get &Updates..."), self)
         updatesAct.setStatusTip(self.tr("Download Gorgon Updates"))
         self.connect(updatesAct, QtCore.SIGNAL("triggered()"), self.getUpdates)
         self.app.actions.addAction("show_GetUpdatesForm", updatesAct)        
 
-        guideAct = QtGui.QAction(self.tr("User &Guide"), self)
+        guideAct = QtGui.QAction(self.tr("User &Guide..."), self)
         guideAct.setStatusTip(self.tr("User Guide"))
         self.connect(guideAct, QtCore.SIGNAL("triggered()"), self.userGuide)
         self.app.actions.addAction("show_UserGuideForm", guideAct)   
 
-        pubAct = QtGui.QAction(self.tr("Related Publications"), self)
-        pubAct.setStatusTip(self.tr("Related Publications"))
-        self.connect(pubAct, QtCore.SIGNAL("triggered()"), self.publications)
-        self.app.actions.addAction("show_PublicationsForm", pubAct)   
-
-        bugAct = QtGui.QAction(self.tr("Report Bugs"), self)
+        bugAct = QtGui.QAction(self.tr("Report &Bugs..."), self)
         bugAct.setStatusTip(self.tr("Report bug"))
         self.connect(bugAct, QtCore.SIGNAL("triggered()"), self.bugReport)
         self.app.actions.addAction("show_BugReportForm", bugAct)   
+        
+        pubAct = QtGui.QAction(self.tr("Related &Publications..."), self)
+        pubAct.setStatusTip(self.tr("Related Publications"))
+        self.connect(pubAct, QtCore.SIGNAL("triggered()"), self.publications)
+        self.app.actions.addAction("show_PublicationsForm", pubAct)   
   
     def createMenus(self):
         self.app.menus.addAction("help-about", self.app.actions.getAction("show_AboutForm"), "help")
