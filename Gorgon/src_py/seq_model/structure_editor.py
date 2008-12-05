@@ -438,6 +438,9 @@ class StructureEditor(QtGui.QWidget):
     def posUpdateValues(self):
         cAlphaRenderer = self.app.viewers['calpha'].renderer
         cm = cAlphaRenderer.selectionCenterOfMass()
+        self.x = cm.x()
+        self.y = cm.y()
+        self.z = cm.z()
         self.posMoveDict['x'].setValue(cm.x())
         self.posMoveDict['y'].setValue(cm.y())
         self.posMoveDict['z'].setValue(cm.z())
@@ -792,9 +795,6 @@ class StructureEditor(QtGui.QWidget):
         self.connect(self.posDecreaseButtonDict['yaw'], QtCore.SIGNAL('clicked()'), self.posYawDecr)
         self.connect(self.posIncreaseButtonDict['yaw'], QtCore.SIGNAL('clicked()'), self.posYawIncr)
         
-        self.x = 0
-        self.y = 0
-        self.z = 0
         self.roll = 0
         self.pitch = 0
         self.yaw = 0
