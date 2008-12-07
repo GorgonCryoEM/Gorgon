@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.31  2008/12/03 21:58:25  ssa1
+//   Selection rotations for atoms and helices.
+//
 //   Revision 1.30  2008/12/02 23:55:43  colemanr
 //   Fixed logic for GetBondIndex().
 //
@@ -178,6 +181,16 @@ namespace wustl_mm {
 					if(selectEnabled){
 						glLoadName(i);
 					}
+					float length = (atoms[bonds[i].GetAtom0Ix()].GetPosition() - atoms[bonds[i].GetAtom1Ix()].GetPosition()).Length();
+					if(length > 4.2) {
+						SetColor(1.0, 0, 0, 1.0);
+					}
+
+					if(length < 3.3) {
+						SetColor(0, 0, 1.0, 1.0);
+					}
+
+
 					DrawCylinder(atoms[bonds[i].GetAtom0Ix()].GetPosition(), atoms[bonds[i].GetAtom1Ix()].GetPosition(), 0.1);
 					glPopAttrib();
 				}
