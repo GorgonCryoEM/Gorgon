@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.31  2008/11/25 03:30:12  ssa1
+//   User constraints on finding correspondences (v2)
+//
 //   Revision 1.30  2008/11/18 18:10:24  ssa1
 //   Changing the scaling functions when doing graph matching to find correspondences
 //
@@ -52,7 +55,7 @@ namespace wustl_mm {
 
 		const int PRIORITYQUEUESIZE = 50000000;
 		const int RESULT_COUNT = 35;
-		const int MAX_NODES = 20;
+		const int MAX_NODES = 50;
 		const int MAXINT = 2147483647;
 		const unsigned int MAXUNSIGNEDINT = 4294967295;
 		const double MAXDOUBLE = 1.7E308;

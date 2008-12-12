@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.18  2008/12/02 04:11:33  ssa1
+//   Fixing bug when tracing the backbone of a sequence
+//
 //   Revision 1.17  2008/11/20 20:49:09  ssa1
 //   Fixing bug with loading in more VRML helices than there are in the SEQ... Also using scale directly from volume instead of a user-parameter
 //
@@ -84,6 +87,7 @@ namespace wustl_mm {
 			#ifdef VERBOSE
 				printf("Constructing 'paintedVol'...\n");
 			#endif
+				
 			Volume * paintedVol = new Volume(vol->getSizeX(), vol->getSizeY(), vol->getSizeZ());
 
 			#ifdef VERBOSE
@@ -94,9 +98,11 @@ namespace wustl_mm {
 			vector<GeometricShape*> helixes;
 			helixes.clear();
 			ReadHelixFile(helixFile, sseFile, helixes);
+		
 			#ifdef INCLUDE_SHEETS
 				ReadSheetFile(sheetFile, helixes);
 			#endif
+				
 			Point3 point, pointScaled;
 
 
@@ -124,7 +130,7 @@ namespace wustl_mm {
 						}						
 					}
 				}
-			}
+			}			
 
 			//for(point[0] = -xOffset; point[0] < vol->getSizeX() - xOffset; point[0]++) {
 			//	pointScaled[0] = point[0] * vol->getSpacingX();
@@ -164,12 +170,13 @@ namespace wustl_mm {
 				graph->SetCost((i*2)+2, (i*2)+1, length);
 				graph->SetType((i*2)+2, (i*2)+1, helixes[i]->geometricShapeType);
 			}
-
+			
 			for(int i = 0; i < (int)helixes.size(); i++) {
 				for(int j = 0; j < (int)helixes[i]->cornerCells.size(); j++) {
 					FindSizes(i, j, helixes, vol, paintedVol, graph);
 				}
 			}
+			
 
 			for(int i = 0; i < (int)helixes.size(); i++) {
 				graph->skeletonHelixes.push_back(helixes[i]);
@@ -177,8 +184,11 @@ namespace wustl_mm {
 
 			graph->skeletonVolume = vol;
 			delete paintedVol;
+			
 			graph->GenerateEuclidianMatrix(vol);
+			
 			FindPaths(graph);
+			
 			return graph;
 		}
 
@@ -449,10 +459,11 @@ namespace wustl_mm {
 
 			delete maskVol;
 
-
 		}
 
 		void SkeletonReader::FindPath(int startIx, int endIx, vector<Vector3DInt> endPoints, Volume * maskVol, StandardGraph * graph, bool eraseMask) {
+			graph->paths[startIx][endIx] = vector<Vector3DInt>();
+
 			queue<Vector3DInt> positions;
 			Vector3DInt currentPos = endPoints[startIx], newPos, endPos = endPoints[endIx];			
 			positions.push(currentPos);
@@ -488,6 +499,8 @@ namespace wustl_mm {
 					}
 				}
 			}
+			
+			
 
 			bool backFound = false;
 			if(found) {	
@@ -504,7 +517,7 @@ namespace wustl_mm {
 			}
 
 			if(eraseMask) {
-				for(unsigned int i = 1; i < graph->paths[startIx][endIx].size()-1; i++) {
+				for(int i = 1; i < (int)graph->paths[startIx][endIx].size()-1; i++) {
 					currentPos = graph->paths[startIx][endIx][i];
 					Point3 pt = Point3(currentPos.X(), currentPos.Y(), currentPos.Z());
 					if(graph->skeletonHelixes[(int)startIx/2]->IsInsideShape(pt) || 
