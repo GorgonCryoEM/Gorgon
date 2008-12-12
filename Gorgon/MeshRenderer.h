@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.30  2008/12/01 01:38:03  ssa1
+//   Fixing resetting of scale and location when performing laplacian smoothing
+//
 //   Revision 1.29  2008/12/01 01:31:34  ssa1
 //   Fixing resetting of scale and location when performing laplacian smoothing
 //
@@ -381,7 +384,7 @@ namespace wustl_mm {
 
 		float MeshRenderer::GetOriginZ() {
 			if(mesh != NULL) {
-				return mesh->origin[1];
+				return mesh->origin[2];
 			}
 			return Renderer::GetOriginZ();
 		}
