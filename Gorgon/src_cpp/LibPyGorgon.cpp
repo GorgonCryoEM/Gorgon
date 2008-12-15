@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.44  2008/12/02 21:25:44  ssa1
+//   adding getBondIndex method to give access to bonds
+//
 //   Revision 1.43  2008/11/25 03:36:08  ssa1
 //   User constraints on finding correspondences (v2)
 //
@@ -207,6 +210,7 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("drawBoundingBox", &VolumeRenderer::DrawBoundingBox)
 		.def("enableDraw", &VolumeRenderer::EnableDraw)
 		.def("loadFile", &VolumeRenderer::LoadFile)
+		.def("loadFileRAW", &VolumeRenderer::LoadFileRAW)
 		.def("saveFile", &VolumeRenderer::SaveFile)
 		.def("unload", &VolumeRenderer::Unload)
 		.def("selectionRotate", &VolumeRenderer::SelectionRotate)

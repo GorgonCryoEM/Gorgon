@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.7  2008/09/29 16:30:15  ssa1
+//   Adding in CVS meta information
+//
 
 #ifndef GRAYSKELETONCPP_VOLUME_READER_RAW_H
 #define GRAYSKELETONCPP_VOLUME_READER_RAW_H
@@ -50,9 +53,9 @@ namespace wustl_mm {
 			unsigned char * tempdata = new unsigned char[size] ;
 			fread(tempdata, sizeof(unsigned char), size, fin) ;
 			int ct = 0 ;
-			for(int x = 0; x < xSize ; x++) {
+			for(int z = 0; z < zSize ; z++) {
 				for (int y = 0; y < ySize ; y++) {
-					for (int z = 0 ; z < zSize ; z++) {
+					for (int x = 0 ; x < xSize ; x++) {
 						vol->setDataAt(x,y,z, tempdata[ ct ]);
 						ct ++ ;
 					}
@@ -74,9 +77,9 @@ namespace wustl_mm {
 			unsigned short * tempdata = new unsigned short[size] ;
 			fread(tempdata, sizeof(unsigned short), size, fin) ;
 			int ct = 0 ;
-			for(int x = 0; x < xSize ; x++) {
+			for(int z = 0; z < zSize ; z++) {
 				for (int y = 0; y < ySize ; y++) {
-					for (int z = 0 ; z < zSize ; z++) {
+					for (int x = 0 ; x < xSize ; x++) {
 						vol->setDataAt(x,y,z, tempdata[ ct ]);
 						ct ++ ;
 					}

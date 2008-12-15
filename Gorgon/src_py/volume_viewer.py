@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.19  2008/11/28 04:36:17  ssa1
+#   Removing error message if pyopengl does not exist.  (To make executable building easier to debug)
+#
 #   Revision 1.18  2008/11/18 22:01:18  ssa1
 #   Removing printfs, and adding cropping
 #
@@ -42,6 +45,8 @@ from volume_grayscale_skeletonization_form import VolumeGrayscaleSkeletonization
 from volume_manual_skeletonization_form import VolumeManualSkeletonizationForm
 from model_visualization_form import ModelVisualizationForm
 from volume_crop_form import VolumeCropForm
+from volume_raw_loader_form import VolumeRawLoaderForm
+from string import split, upper
 
 from OpenGL.GL import *
 from OpenGL.GLU import *
@@ -112,6 +117,7 @@ class VolumeViewer(BaseViewer):
         self.binarySkeletonizer = VolumeBinarySkeletonizationForm(self.app, self)
         self.grayscaleSkeletonizer = VolumeGrayscaleSkeletonizationForm(self.app, self)
         self.cropper = VolumeCropForm(self.app, self)
+        self.rawLoader = VolumeRawLoaderForm(self.app, self)
     
     def updateActionsAndMenus(self):
         self.app.actions.getAction("save_Volume").setEnabled(self.loaded)
@@ -130,6 +136,30 @@ class VolumeViewer(BaseViewer):
         
     def cropVolume(self):
         pass 
+    
+    def loadData(self):
+        self.fileName = QtGui.QFileDialog.getOpenFileName(self, self.tr("Open Data"), "", self.tr(self.renderer.getSupportedLoadFileFormats()))
+                
+        if not self.fileName.isEmpty():  
+            self.setCursor(QtCore.Qt.WaitCursor)
+            
+            tokens = split(str(self.fileName), '.')            
+            extension = upper(tokens[len(tokens)-1])
+            if(extension == "RAW"):
+                if(self.rawLoader.exec_() == QtGui.QDialog.Accepted):                
+                    self.renderer.loadFileRAW(str(self.fileName), self.rawLoader.bitsPerCell(), self.rawLoader.sizeX(), self.rawLoader.sizeY(), self.rawLoader.sizeZ())
+                else:
+                    return;
+                    
+            else:
+                self.renderer.loadFile(str(self.fileName))
+            self.setScaleNoEmit(self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ())       
+            self.loaded = True
+            self.dirty = False
+            self.setCursor(QtCore.Qt.ArrowCursor)
+            self.emitModelLoadedPreDraw()
+            self.emitModelLoaded()            
+            self.emitViewerSetCenter()        
     
     def processMouseWheel(self, amount, event):
         if(event.modifiers() & QtCore.Qt.CTRL) :
