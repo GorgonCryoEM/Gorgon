@@ -10,6 +10,7 @@ import sans_numpy as snum
 from seq_model.findHelixCalphas import helixEndpointsToCAlphaPositions
 from seq_model.Helix import Helix
 import math
+import vector_lib
 
 class StructureEditor(QtGui.QWidget):
     def __init__(self, currentChainModel, parent=None):
@@ -34,7 +35,6 @@ class StructureEditor(QtGui.QWidget):
                 
         self.setupUi()
         self.enableDisable()
-        print 'StructureEditor.parentWidget():', self.parentWidget()
         
         self.connect(self.atomicBack1resButton, QtCore.SIGNAL('clicked()'), self.atomPrevButtonPress)
         self.connect(self.atomicForward1resButton, QtCore.SIGNAL('clicked()'), self.atomNextButtonPress)
@@ -50,7 +50,7 @@ class StructureEditor(QtGui.QWidget):
         self.connect(self.tabWidget, QtCore.SIGNAL('currentChanged(int)'), self.enableDisable)
         if self.parentWidget().parentWidget().app:
             self.app = self.parentWidget().parentWidget().app
-            self.CalphaViewer = self.app.viewers['calpha']
+            self.CAlphaViewer = self.app.viewers['calpha']            
             self.connect(self.app.viewers['sse'], QtCore.SIGNAL('elementSelected (int, int, int, int, int, int, QMouseEvent)'), self.updateCurrentMatch)
             self.connect(self.app.viewers["calpha"], QtCore.SIGNAL("elementSelected (int, int, int, int, int, int, QMouseEvent)"), self.posUpdateValues)
             self.connect(self.posMoveDict['x'], QtCore.SIGNAL('valueChanged(double)'), self.posMoveCM_x)
@@ -86,6 +86,7 @@ class StructureEditor(QtGui.QWidget):
             self.helixCreateCAhelix()
     
     def atomChoosePossibleAtom(self, choiceNum):
+    	print 'atomChoosePossibleAtom'
         if choiceNum == 0:
             return
         viewer = self.parentWidget().parentWidget().viewer
@@ -98,6 +99,7 @@ class StructureEditor(QtGui.QWidget):
         self.previouslySelectedPossibleAtom = atomToDisplay
         
     def atomFindPositionPossibilities(self):
+    	print 'atomFindPositionPossibilities'
         self.possibleAtomsList = []
         #self.parentWidget()=>SequenceWidget, self.parentWidget().parentWidget() => SequenceDock
         skeletonViewer = self.parentWidget().parentWidget().app.viewers['skeleton']
@@ -115,7 +117,7 @@ class StructureEditor(QtGui.QWidget):
             self.atomicPossibilityNumSpinBox.setRange(0, 0)
             return
         atomPos = atom.getPosition()
-        atomPosMeshCoords =  skeletonViewer.worldToObjectCoordinates(self.CalphaViewer.objectToWorldCoordinates([atomPos.x(), atomPos.y(), atomPos.z()]))
+        atomPosMeshCoords =  skeletonViewer.worldToObjectCoordinates(self.CAlphaViewer.objectToWorldCoordinates([atomPos.x(), atomPos.y(), atomPos.z()]))
         atomPosMeshCoords = Vector3DFloat(atomPosMeshCoords[0], atomPosMeshCoords[1], atomPosMeshCoords[2])
          
         if skeletonViewer.loaded:
@@ -131,7 +133,7 @@ class StructureEditor(QtGui.QWidget):
             possiblePositionsList = []
             for i in range(numIntersections):
                 pos = meshRenderer.getIntersectionPoint(i)
-                pos = self.CalphaViewer.worldToObjectCoordinates(skeletonViewer.objectToWorldCoordinates([pos.x(), pos.y(), pos.z()]))
+                pos = self.CAlphaViewer.worldToObjectCoordinates(skeletonViewer.objectToWorldCoordinates([pos.x(), pos.y(), pos.z()]))
                 pos = Vector3DFloat(pos[0], pos[1], pos[2])                               
                 possiblePositionsList.append(pos)
             for i in range(len(possiblePositionsList)):
@@ -186,6 +188,7 @@ class StructureEditor(QtGui.QWidget):
             self.parentWidget().parentWidget().viewer.emitModelChanged()
     
     def atomForwardBackwardChange(self):
+    	print 'atomForwardBackwardChange'
         if self.atomicForwardRadioButton.isChecked():
             self.atomicResNumbers[1].setStyleSheet("QLabel {color: green; font-size: 12pt}")
             self.atomicResNames[1].setStyleSheet("QLabel {color: green; font-size: 40pt}")
@@ -198,6 +201,7 @@ class StructureEditor(QtGui.QWidget):
             self.atomicResNames[1].setStyleSheet("QLabel {color: black; font-size: 40pt}")
     
     def atomNextButtonPress(self):
+    	print 'atomNextButtonPress'
         currentChainModel = self.parentWidget().currentChainModel
         if currentChainModel.getSelection():
             newSelection = [ currentChainModel.getSelection()[-1] + 1 ]
@@ -207,6 +211,7 @@ class StructureEditor(QtGui.QWidget):
             #self.setResidues(newSelection)
     
     def atomPrevButtonPress(self):
+    	print 'atomPrevButtonPress'
         #self.parentWidget() returns a SequenceWidget object
         currentChainModel = self.parentWidget().currentChainModel
         if currentChainModel.getSelection():
@@ -299,18 +304,18 @@ class StructureEditor(QtGui.QWidget):
         startAtom = PDBAtom('AAAA', 'A', 100000, 'CA')
         startAtom.setPosition(Vector3DFloat(*coord1))
         startAtom.setColor(0, 1, 0, 1)
-        startAtom = self.CalphaViewer.renderer.addAtom(startAtom)
+        startAtom = self.CAlphaViewer.renderer.addAtom(startAtom)
         stopAtom = startAtom = PDBAtom('AAAA', 'A', 100001, 'CA')
         stopAtom.setPosition(Vector3DFloat(*coord2))
         stopAtom.setColor(1, 0, 0, 1)        
-        stopAtom = self.CalphaViewer.renderer.addAtom(stopAtom)
+        stopAtom = self.CAlphaViewer.renderer.addAtom(stopAtom)
         '''
         
         for i in range(len(helixCoordList)):
             pos = helixCoordList[i]
             residue = self.currentChainModel[startIndex+i]
             rawAtom = residue.addAtom('CA', pos[0], pos[1], pos[2], 'C')
-            atom = self.CalphaViewer.renderer.addAtom(rawAtom)
+            atom = self.CAlphaViewer.renderer.addAtom(rawAtom)
             residue.addAtomObject(atom)
             atom.setSelected(True)
             if i != 0:
@@ -318,15 +323,15 @@ class StructureEditor(QtGui.QWidget):
                 bond = PDBBond()
                 bond.setAtom0Ix(prevAtom.getHashKey())
                 bond.setAtom1Ix(atom.getHashKey())
-                self.CalphaViewer.renderer.addBond(bond)
+                self.CAlphaViewer.renderer.addBond(bond)
         
         self.currentChainModel.setSelection(newSelection = range(helix.startIndex, 1+helix.stopIndex))
         print helix
-        if not self.CalphaViewer.loaded:
-            self.CalphaViewer.loaded = True
-            self.CalphaViewer.emitModelLoaded()
+        if not self.CAlphaViewer.loaded:
+            self.CAlphaViewer.loaded = True
+            self.CAlphaViewer.emitModelLoaded()
         else:
-            self.CalphaViewer.emitModelChanged()
+            self.CAlphaViewer.emitModelChanged()
         
 
     def helixDecreaseButtonPress(self):
@@ -350,12 +355,59 @@ class StructureEditor(QtGui.QWidget):
         return helices
     
     def helixFlipButtonPress(self):
+    	print 'helixFlipButtonPress'
         helices = self.helixFindSelectedCAHelices()
+        chain = self.currentChainModel
+        viewer = self.CAlphaViewer
+        renderer = self.CAlphaViewer.renderer
         if len(helices) == 0:
             return
         elif len(helices) == 1:
             helix = helices[0]
+            
+            #We have to re-make the starting and ending bonds after a helix flip
+            #Deleting the old starting and ending bonds
+            atomStart0 = chain[helix.startIndex-1].getAtom('CA')
+            atomStart1 = chain[helix.startIndex].getAtom('CA')
+            if atomStart0 and atomStart1:
+                startBondIndex = renderer.getBondIndex(atomStart0.getHashKey(), atomStart1.getHashKey())
+                renderer.deleteBond(startBondIndex)
+            #Must delete before we find the next index because all the indices after startBondIndex decrease by 1
+            atomStop0 = chain[helix.stopIndex].getAtom('CA')
+            atomStop1 = chain[helix.stopIndex+1].getAtom('CA')
+            if atomStop0 and atomStop1:
+                stopBondIndex = renderer.getBondIndex(atomStop0.getHashKey(), atomStop1.getHashKey())
+                renderer.deleteBond(stopBondIndex)
+            
             helix.flipHelix()
+            
+            atomStart0, atomStart1, atomStop0, atomStop1 = None, None, None, None
+            
+            #We now have to make new starting and ending bonds
+ 
+            #We must re-assign these variables because the helix has been flipped
+            atomStart0 = chain[helix.startIndex-1].getAtom('CA')
+            atomStart1 = chain[helix.startIndex].getAtom('CA')
+            if atomStart0 and atomStart1:
+            	disp = atomStart1.getPosition() - atomStart0.getPosition()
+                distance = vector_lib.vectorSize( (disp.x(), disp.y(), disp.z()) )
+                if distance <= 4.2:
+                    startBond = PDBBond()
+                    startBond.setAtom0Ix(atomStart0.getHashKey())
+                    stopBond.setAtom0Ix(atomStart1.getHashKey())
+                    renderer.addBond(startBond)
+ 
+            atomStop0 = chain[helix.stopIndex].getAtom('CA')
+            atomStop1 = chain[helix.stopIndex+1].getAtom('CA')
+            if atomStop0 and atomStop1:
+                disp = atomStop0.getPosition() - atomStop1.getPosition()
+                distance = vector_lib.vectorSize( (disp.x(), disp.y(), disp.z()) )
+                if distance <= 4.2:
+                    stopBond = PDBBond()
+                    stopBond.setAtom0Ix(atomStop0.getHashKey())
+                    stopBond.setAtom1Ix(atomStop1.getHashKey())
+                    renderer.addBond(stopBond)
+            self.CAlphaViewer.emitModelChanged()
         else:
             print 'more than one helix selected!'
             raise ValueError, len(helices)
@@ -376,62 +428,62 @@ class StructureEditor(QtGui.QWidget):
         moveX =  newX - oldX
         self.x = newX
         translateVector = Vector3DFloat(moveX, 0, 0)
-        self.CalphaViewer.renderer.selectionMove(translateVector)
-        self.CalphaViewer.emitModelChanged()
+        self.CAlphaViewer.renderer.selectionMove(translateVector)
+        self.CAlphaViewer.emitModelChanged()
     def posMoveCM_y(self):
         oldY = self.y
         newY = self.posMoveDict['y'].value()
         moveY =  newY - oldY
         self.y = newY
         translateVector = Vector3DFloat(0, moveY, 0)
-        self.CalphaViewer.renderer.selectionMove(translateVector)
-        self.CalphaViewer.emitModelChanged()
+        self.CAlphaViewer.renderer.selectionMove(translateVector)
+        self.CAlphaViewer.emitModelChanged()
     def posMoveCM_z(self):
         oldZ = self.z
         newZ = self.posMoveDict['z'].value()
         moveZ = newZ - oldZ
         self.z = newZ
         translateVector = Vector3DFloat(0, 0, moveZ)
-        self.CalphaViewer.renderer.selectionMove(translateVector)
-        self.CalphaViewer.emitModelChanged()
+        self.CAlphaViewer.renderer.selectionMove(translateVector)
+        self.CAlphaViewer.emitModelChanged()
        
     def posRotateCM_roll(self, angle):
         print 'roll:', angle
-        axis = self.CalphaViewer.worldToObjectCoordinates(self.app.mainCamera.look)
+        axis = self.CAlphaViewer.worldToObjectCoordinates(self.app.mainCamera.look)
         oldAngle = self.roll        
         
         axis = Vector3DFloat(axis[0], axis[1], axis[2])
         
-        cm = self.CalphaViewer.renderer.selectionCenterOfMass()
+        cm = self.CAlphaViewer.renderer.selectionCenterOfMass()
         newAngle = math.pi*angle/180
-        self.CalphaViewer.renderer.selectionRotate(cm, axis, newAngle-oldAngle)
-        self.CalphaViewer.emitModelChanged()
+        self.CAlphaViewer.renderer.selectionRotate(cm, axis, newAngle-oldAngle)
+        self.CAlphaViewer.emitModelChanged()
         
         self.roll = newAngle
     def posRotateCM_pitch(self, angle):
         print 'pitch:', angle
-        axis = self.CalphaViewer.worldToObjectCoordinates(self.app.mainCamera.right)
+        axis = self.CAlphaViewer.worldToObjectCoordinates(self.app.mainCamera.right)
         oldAngle = self.pitch
         
         axis = Vector3DFloat(axis[0], axis[1], axis[2])
         
-        cm = self.CalphaViewer.renderer.selectionCenterOfMass()
+        cm = self.CAlphaViewer.renderer.selectionCenterOfMass()
         newAngle = math.pi*angle/180
-        self.CalphaViewer.renderer.selectionRotate(cm, axis, newAngle-oldAngle)
-        self.CalphaViewer.emitModelChanged()
+        self.CAlphaViewer.renderer.selectionRotate(cm, axis, newAngle-oldAngle)
+        self.CAlphaViewer.emitModelChanged()
         
         self.pitch = newAngle
     def posRotateCM_yaw(self, angle):
         print 'yaw:',  angle
-        axis = self.CalphaViewer.worldToObjectCoordinates(self.app.mainCamera.up)
+        axis = self.CAlphaViewer.worldToObjectCoordinates(self.app.mainCamera.up)
         axis = (-1*axis[0], -1*axis[1], -1*axis[2])
         oldAngle = self.yaw
         
         axis = Vector3DFloat(axis[0], axis[1], axis[2])
-        cm = self.CalphaViewer.renderer.selectionCenterOfMass()
+        cm = self.CAlphaViewer.renderer.selectionCenterOfMass()
         newAngle = math.pi*angle/180
-        self.CalphaViewer.renderer.selectionRotate(cm, axis, newAngle-oldAngle)
-        self.CalphaViewer.emitModelChanged()
+        self.CAlphaViewer.renderer.selectionRotate(cm, axis, newAngle-oldAngle)
+        self.CAlphaViewer.emitModelChanged()
         
         self.yaw = newAngle
 
@@ -487,22 +539,22 @@ class StructureEditor(QtGui.QWidget):
                 nextAtom = self.currentChainModel[resIndex+1].getAtom('CA')
                 if prevAtom:
                     #print 'There is a previous atom'
-                    bondIndex = self.CalphaViewer.renderer.getBondIndex(atom.getHashKey(), prevAtom.getHashKey())
+                    bondIndex = self.CAlphaViewer.renderer.getBondIndex(atom.getHashKey(), prevAtom.getHashKey())
                     if bondIndex:
                         #print 'removing bond before'
-                        self.CalphaViewer.renderer.deleteBond(bondIndex)
+                        self.CAlphaViewer.renderer.deleteBond(bondIndex)
                 if nextAtom:
                     #print 'There is a next atom'
-                    bondIndex = self.CalphaViewer.renderer.getBondIndex(atom.getHashKey(), nextAtom.getHashKey())
+                    bondIndex = self.CAlphaViewer.renderer.getBondIndex(atom.getHashKey(), nextAtom.getHashKey())
                     if bondIndex:
                         #print 'removing bond after'
-                        self.CalphaViewer.renderer.deleteBond(bondIndex)
+                        self.CAlphaViewer.renderer.deleteBond(bondIndex)
                 res.clearAtom('CA')
                 #print res.getAtomNames()
                 #print 'removing atom w/ resNum of:', atom.getResSeq()
-                self.CalphaViewer.renderer.deleteAtom(atom.getHashKey())
+                self.CAlphaViewer.renderer.deleteAtom(atom.getHashKey())
                 del atom
-        self.CalphaViewer.emitModelChanged()
+        self.CAlphaViewer.emitModelChanged()
         print 'helices', self.currentChainModel.helices.keys()
         print 'orphan strands', self.currentChainModel.orphanStrands.keys()
         print self.currentChainModel.secelList.keys()
@@ -546,6 +598,7 @@ class StructureEditor(QtGui.QWidget):
         self.previouslySelectedPossibleAtom = None
         curResNum = newSelection[-1]
         
+        print 'curResNum:', curResNum
         for i in self.atomicResNames.keys():
             try: 
                 self.atomicResNames[i].setText(unicode(self.currentChainModel[curResNum+i]))
