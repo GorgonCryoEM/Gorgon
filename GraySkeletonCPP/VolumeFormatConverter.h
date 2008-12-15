@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.19  2008/12/15 21:16:20  ssa1
+//   Adding support for CCP4 files
+//
 //   Revision 1.18  2008/09/29 16:30:15  ssa1
 //   Adding in CVS meta information
 //
@@ -36,11 +39,11 @@ namespace wustl_mm {
 	namespace GraySkeletonCPP {
 		class VolumeFormatConverter {
 		public:
-			static Volume * LoadVolume(string inputFile);
+			static Volume * LoadVolume(string inputFile, int bitsPerCell = 8, int sizeX = 0, int sizeY = 0, int sizeZ = 0);
 			static void ConvertVolume(string inputFile, string inputFormat, string outputFile, string outputFormat, int sizeX, int sizeY, int sizeZ);
 		};
 
-		Volume * VolumeFormatConverter::LoadVolume(string inputFile) {
+		Volume * VolumeFormatConverter::LoadVolume(string inputFile, int bitsPerCell, int sizeX, int sizeY, int sizeZ) {
 			int pos = inputFile.rfind(".") + 1;
 			string inputFormat = inputFile.substr(pos, inputFile.length()-pos);
 			inputFormat = StringUtils::StringToUpper(inputFormat);
@@ -50,6 +53,18 @@ namespace wustl_mm {
 				vol = MRCReaderPicker::pick((char *)inputFile.c_str())->getVolume();
 			} else if(strcmp(inputFormat.c_str(), "CCP4") == 0) {
 				vol = MRCReaderPicker::pick((char *)inputFile.c_str())->getVolume();
+			} else if(strcmp(inputFormat.c_str(), "RAW") == 0) {
+				switch(bitsPerCell) {
+					case(8): 
+						vol = VolumeReaderRAW::LoadVolume8bit(inputFile, sizeX, sizeY, sizeZ, 1, 1, 1);
+						break;
+					case(16):
+						vol = VolumeReaderRAW::LoadVolume16bit(inputFile, sizeX, sizeY, sizeZ, 1, 1, 1);
+						break;
+					default:
+						printf("Input format [%s] (%d bits) not supported!\n", (char *)inputFormat.c_str(), bitsPerCell);		
+						break;
+				}
 			} else if (strcmp(inputFormat.c_str(), "ATOM") == 0) {		
 				vol = VolumeReaderATOM::LoadVolume(inputFile);
 			} else if (strcmp(inputFormat.c_str(), "TXT") == 0) {		

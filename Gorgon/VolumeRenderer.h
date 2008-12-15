@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.42  2008/12/15 21:16:20  ssa1
+//   Adding support for CCP4 files
+//
 //   Revision 1.41  2008/12/02 21:45:40  ssa1
 //   solid and cross section rendering using palette color
 //
@@ -113,6 +116,7 @@ namespace wustl_mm {
 			void EnableDraw(bool enable);
 			void Draw(int subSceneIndex, bool selectEnabled);
 			void LoadFile(string fileName);
+			void LoadFileRAW(string fileName, int bitsPerCell, int sizeX, int sizeY, int sizeZ);
 			void SaveFile(string fileName);
 			void SetDisplayRadius(const int radius);
 			void SetViewingType(const int type);
@@ -271,11 +275,11 @@ namespace wustl_mm {
 			return power;
 		}
 		string VolumeRenderer::GetSupportedLoadFileFormats() {
-			return "Volumes (*.mrc *.ccp4)";
+			return "Volumes (*.mrc *.ccp4 *.raw)";
 		}
 
 		string VolumeRenderer::GetSupportedSaveFileFormats() {
-			return "Volumes (*.mrc *.ccp4);;Bitmap Image set (*.bmp)";
+			return "Volumes (*.mrc *.ccp4 *.raw);;Bitmap Image set (*.bmp)";
 		}
 
 		void VolumeRenderer::EnableDraw(bool enable) {			
@@ -625,6 +629,21 @@ namespace wustl_mm {
 
 		}
 
+		void VolumeRenderer::LoadFileRAW(string fileName, int bitsPerCell, int sizeX, int sizeY, int sizeZ) {
+			Renderer::LoadFile(fileName);
+			if(dataVolume != NULL) {
+				delete dataVolume;
+			}
+			dataVolume = VolumeFormatConverter::LoadVolume(fileName, bitsPerCell, sizeX, sizeY, sizeZ);
+			InitializeOctree();
+			UpdateBoundingBox();
+
+			#ifdef _WIN32
+				glTexImage3D = (PFNGLTEXIMAGE3DPROC) wglGetProcAddress("glTexImage3D");
+			#endif
+
+		}
+
 		void VolumeRenderer::Load3DTexture() {
 			if(textureLoaded) {
 				glDeleteTextures(1, &textureName);
@@ -684,6 +703,8 @@ namespace wustl_mm {
 					dataVolume->toMRCFile((char *)fileName.c_str());
 				} else if(strcmp(extension.c_str(), "CCP4") == 0) {
 					dataVolume->toMRCFile((char *)fileName.c_str());
+				} else if(strcmp(extension.c_str(), "RAW") == 0) {
+					VolumeReaderRAW::SaveVolume16bit(dataVolume, fileName);
 				} else if(strcmp(extension.c_str(), "BMP") == 0) {
 					ImageReaderBMP::SaveVolumeAsImageSet(dataVolume, fileName);
 				} else {
