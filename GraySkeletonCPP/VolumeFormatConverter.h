@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.18  2008/09/29 16:30:15  ssa1
+//   Adding in CVS meta information
+//
 
 #ifndef GRAYSKELETONCPP_VOLUME_FORMAT_CONVERTER_H
 #define GRAYSKELETONCPP_VOLUME_FORMAT_CONVERTER_H
@@ -45,6 +48,8 @@ namespace wustl_mm {
 			Volume * vol = NULL;						
 			if(strcmp(inputFormat.c_str(), "MRC") == 0) {
 				vol = MRCReaderPicker::pick((char *)inputFile.c_str())->getVolume();
+			} else if(strcmp(inputFormat.c_str(), "CCP4") == 0) {
+				vol = MRCReaderPicker::pick((char *)inputFile.c_str())->getVolume();
 			} else if (strcmp(inputFormat.c_str(), "ATOM") == 0) {		
 				vol = VolumeReaderATOM::LoadVolume(inputFile);
 			} else if (strcmp(inputFormat.c_str(), "TXT") == 0) {		
@@ -60,6 +65,8 @@ namespace wustl_mm {
 			inputFormat = StringUtils::StringToUpper(inputFormat);
 
 			if(strcmp(inputFormat.c_str(), "MRC") == 0) {
+				vol = MRCReaderPicker::pick((char *)inputFile.c_str())->getVolume();
+			} else if(strcmp(inputFormat.c_str(), "CCP4") == 0) {
 				vol = MRCReaderPicker::pick((char *)inputFile.c_str())->getVolume();
 			} else if (strcmp(inputFormat.c_str(), "RAW8") == 0) {		
 				vol = VolumeReaderRAW::LoadVolume8bit(inputFile, sizeX, sizeY, sizeZ, 1, 1, 1);
@@ -79,6 +86,8 @@ namespace wustl_mm {
 			outputFormat = StringUtils::StringToUpper(outputFormat);
 					
 			if(strcmp(outputFormat.c_str(), "MRC") == 0) {
+				vol->toMRCFile((char *)outputFile.c_str());
+			} else if(strcmp(outputFormat.c_str(), "CCP4") == 0) {
 				vol->toMRCFile((char *)outputFile.c_str());
 			} else if(strcmp(outputFormat.c_str(), "BMP") == 0) {
 				ImageReaderBMP::SaveVolumeAsImageSet(vol, outputFile);

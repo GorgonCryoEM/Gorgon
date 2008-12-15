@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.41  2008/12/02 21:45:40  ssa1
+//   solid and cross section rendering using palette color
+//
 //   Revision 1.40  2008/11/20 18:33:00  ssa1
 //   Using the origin of the MRC volume
 //
@@ -268,11 +271,11 @@ namespace wustl_mm {
 			return power;
 		}
 		string VolumeRenderer::GetSupportedLoadFileFormats() {
-			return "Volumes (*.mrc)";
+			return "Volumes (*.mrc *.ccp4)";
 		}
 
 		string VolumeRenderer::GetSupportedSaveFileFormats() {
-			return "Volumes (*.mrc);;Bitmap Image set (*.bmp)";
+			return "Volumes (*.mrc *.ccp4);;Bitmap Image set (*.bmp)";
 		}
 
 		void VolumeRenderer::EnableDraw(bool enable) {			
@@ -678,6 +681,8 @@ namespace wustl_mm {
 				extension = StringUtils::StringToUpper(extension);
 				
 				if(strcmp(extension.c_str(), "MRC") == 0) {
+					dataVolume->toMRCFile((char *)fileName.c_str());
+				} else if(strcmp(extension.c_str(), "CCP4") == 0) {
 					dataVolume->toMRCFile((char *)fileName.c_str());
 				} else if(strcmp(extension.c_str(), "BMP") == 0) {
 					ImageReaderBMP::SaveVolumeAsImageSet(dataVolume, fileName);
