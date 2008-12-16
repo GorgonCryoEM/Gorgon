@@ -1,0 +1,81 @@
+<ui version="4.0" >
+ <class>DialogChooseChainModel</class>
+ <widget class="QWidget" name="DialogChooseChainModel" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>423</width>
+    <height>502</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Choose Chain Model</string>
+  </property>
+  <widget class="QWidget" name="layoutWidget" >
+   <property name="geometry" >
+    <rect>
+     <x>9</x>
+     <y>9</y>
+     <width>401</width>
+     <height>476</height>
+    </rect>
+   </property>
+   <layout class="QVBoxLayout" >
+    <item>
+     <widget class="QLabel" name="chainModelsLabel" >
+      <property name="text" >
+       <string>Chain Models</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QListWidget" name="chainModelsListWidget" />
+    </item>
+    <item>
+     <widget class="QLabel" name="sequenceBrowserLabel" >
+      <property name="text" >
+       <string>Sequence</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QTextBrowser" name="sequenceBrowser" />
+    </item>
+    <item>
+     <layout class="QHBoxLayout" >
+      <item>
+       <widget class="QPushButton" name="refreshPushButton" >
+        <property name="text" >
+         <string>Refresh</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="acceptPushButton" >
+        <property name="text" >
+         <string>Accept</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer>
+        <property name="orientation" >
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" >
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
