@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.27  2008/12/02 21:08:50  colemanr
+#   Added a file-export menu with an option that will create PDB files that do not have ATOM entries with blank coordinates.
+#
 #   Revision 1.26  2008/11/28 04:36:17  ssa1
 #   Removing error message if pyopengl does not exist.  (To make executable building easier to debug)
 #
@@ -102,6 +105,7 @@ from seq_model.SequenceView import SequenceDock
 from seq_model.Chain import Chain
 from model_visualization_form import ModelVisualizationForm
 from correspondence.StructurePrediction import StructurePrediction
+from seq_model.choose_chain_model import ChooseChainModel
 
 from OpenGL.GL import *
 from OpenGL.GLU import *
@@ -180,6 +184,7 @@ class CAlphaViewer(BaseViewer):
                   
     def createChildWindows(self):
         self.manualAtomPlacer = CAlphaAtomPlacerForm(self.app, self, self.main_chain, self.structPred)
+        self.chooseChainModel = ChooseChainModel(self.app)
         
     def createActions(self):
         openAct = QtGui.QAction(self.tr("C-&Alpha Atoms..."), self)
@@ -209,7 +214,7 @@ class CAlphaViewer(BaseViewer):
         self.connect(closeAct, QtCore.SIGNAL("triggered()"), self.unloadData)
         self.app.actions.addAction("unload_CAlpha", closeAct)
         
-        seqDockAct = QtGui.QAction(self.tr("Partly &Automated Atom Placement"), self)
+        seqDockAct = QtGui.QAction(self.tr("Semi-&automatic Atom Placement"), self)
         seqDockAct.setStatusTip(self.tr("Perform partly automated atom placement"))
         seqDockAct.setCheckable(True)
         seqDockAct.setChecked(False)
