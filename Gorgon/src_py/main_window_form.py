@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.13  2008/12/03 20:27:05  ssa1
+#   adding in bug tracker
+#
 #   Revision 1.12  2008/12/02 21:10:06  colemanr
 #   Added a file-export menu.
 #
@@ -43,8 +46,9 @@ from theme_manager import ThemeManager
 import sys, os
 
 class MainWindowForm(QtGui.QMainWindow):
-    def __init__(self, parent=None):
+    def __init__(self, version, parent=None):
         QtGui.QMainWindow.__init__(self, parent)
+        self.version = version
         self.modules = []
         self.viewers = {}
         self.menus = MenuManager(self)       
@@ -57,7 +61,7 @@ class MainWindowForm(QtGui.QMainWindow):
         self.dockWidgets = []
                 
         self.statusBar().showMessage(self.tr("Gorgon: Protein Visualization Suite"))
-        self.setWindowTitle(self.tr("Gorgon - v1.0.0 beta"))
+        self.setWindowTitle(self.tr("Gorgon - v" + self.version))
         pathname = os.path.abspath(os.path.dirname(sys.argv[0]))
         self.setWindowIcon(QtGui.QIcon(pathname + '/gorgon.ico'))
 

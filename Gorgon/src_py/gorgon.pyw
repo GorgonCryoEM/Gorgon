@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.13  2008/11/30 00:13:41  ssa1
+#   Build Configuration scripts on MacOSX
+#
 #   Revision 1.12  2008/11/29 04:48:28  ssa1
 #   Icon support and Redirecting help to website.
 #
@@ -48,6 +51,7 @@ import time
 
 
 if __name__ == '__main__':
+    gorgonVersion = '1.0.1'
     app = QtGui.QApplication(sys.argv)    
     pixmap = QtGui.QPixmap(pathname + "/splash.png")
     splash = QtGui.QSplashScreen(pixmap, QtCore.Qt.WindowStaysOnTopHint)
@@ -55,7 +59,7 @@ if __name__ == '__main__':
     splash.show()
     app.processEvents()
     
-    window = MainWindowForm()
+    window = MainWindowForm(gorgonVersion)
     window.addModule(WindowManager(window))
     window.showMaximized()
     splash.finish(window)

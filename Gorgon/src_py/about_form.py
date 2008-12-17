@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.14  2008/12/04 20:55:16  ssa1
+#   fixing bugs when running bug report in macos
+#
 #   Revision 1.13  2008/12/04 20:23:09  ssa1
 #   Adding link to license
 #
@@ -115,7 +118,7 @@ class AboutForm(QtGui.QDialog):
         self.openPage('http://www.cs.wustl.edu/~ssa1/gorgon/pages/viewLicense.php')
         
     def bugReport(self):
-        systemInfo = "Gorgon Version: " + self.app.windowTitle()+ " | "
+        systemInfo = "Gorgon Version: " + self.app.version + " | "
         systemInfo = systemInfo + "Platform: " + sys.platform + " | "
         if(sys.platform == "win32"):
             systemInfo = systemInfo +  "Windows version: " + str(sys.getwindowsversion()) + " | "
