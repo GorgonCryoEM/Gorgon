@@ -1,0 +1,109 @@
+# Copyright (C) 2005-2008 Washington University in St Louis, Baylor College of Medicine.  All rights reserved
+# Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
+# Description:   Using structure prediction servers to predict SSE elements from the sequence
+
+# CVS Meta Information: 
+#   $Source$
+#   $Revision$
+#   $Date$
+#   $Author$
+#   $State$
+#
+# History Log: 
+#   $Log$
+
+from PyQt4 import QtCore, QtGui
+from ui_dialog_sse_sequence_predictor import Ui_DialogSSESequencePredictor
+import webbrowser
+
+class SSESequencePredictorForm(QtGui.QWidget, Ui_DialogSSESequencePredictor):
+    def __init__(self, main, sseViewer, parent=None):
+        QtGui.QWidget.__init__(self, parent)
+        self.setupUi(self)
+        self.app = main
+        self.viewer = sseViewer
+        self.createActions()
+        self.createUI()
+        self.createMenus()
+
+    def createUI(self):        
+        self.dock = QtGui.QDockWidget(self.tr("SSE - Sequence Prediction"), self.app)
+        self.dock.setAllowedAreas(QtCore.Qt.LeftDockWidgetArea | QtCore.Qt.RightDockWidgetArea | QtCore.Qt.BottomDockWidgetArea)
+        self.dock.setWidget(self)
+        self.dock.close()
+        self.connect(self.dock, QtCore.SIGNAL("visibilityChanged (bool)"), self.dockVisibilityChanged)
+        self.connect(self.pushButtonClose, QtCore.SIGNAL("pressed ()"), self.closeWindow)
+        self.connect(self.pushButtonSave, QtCore.SIGNAL("pressed ()"), self.savePrediction)
+        self.connect(self.pushButtonPredict, QtCore.SIGNAL("pressed ()"), self.makePrediction)
+        self.connect(self.textEditSequence, QtCore.SIGNAL("textChanged ()"), self.enableButtons)
+        self.connect(self.textEditPrediction, QtCore.SIGNAL("textChanged ()"), self.enableButtons)
+        self.connect(self.checkBoxJpred, QtCore.SIGNAL("toggled (bool)"), self.enableButtons2)
+        self.connect(self.checkBoxPsipred, QtCore.SIGNAL("toggled (bool)"), self.enableButtons2)
+        self.connect(self.checkBoxScratch, QtCore.SIGNAL("toggled (bool)"), self.enableButtons2)
+        
+    def loadWidget(self):
+        if(self.app.actions.getAction("perform_SSESequencePrediction").isChecked()) :
+            self.app.addDockWidget(QtCore.Qt.RightDockWidgetArea, self.dock)
+            self.dock.show()
+        else:
+            self.app.removeDockWidget(self.dock)
+            
+    def dockVisibilityChanged(self, visible):
+        self.app.actions.getAction("perform_SSESequencePrediction").setChecked(visible)
+    
+        
+    def createActions(self):               
+        predAct = QtGui.QAction(self.tr("&Predict SSE from Sequence"), self)
+        predAct.setStatusTip(self.tr("Prediction of Secondary Structure Elements from the Sequence"))
+        predAct.setCheckable(True)
+        predAct.setChecked(False)
+        self.connect(predAct, QtCore.SIGNAL("triggered()"), self.loadWidget)
+        self.app.actions.addAction("perform_SSESequencePrediction", predAct)
+  
+    def createMenus(self):
+        self.app.menus.addAction("actions-sse-sequenceprediction", self.app.actions.getAction("perform_SSESequencePrediction"), "actions-sse")        
+    
+    def enableButtons(self):
+        self.pushButtonPredict.setEnabled(
+                                          (len(str(self.textEditSequence.toPlainText())) > 0) and
+                                          (self.checkBoxJpred.isChecked() or
+                                           self.checkBoxPsipred.isChecked() or
+                                           self.checkBoxScratch.isChecked())
+                                          )
+        self.pushButtonSave.setEnabled(
+                                       (len(str(self.textEditSequence.toPlainText())) > 0) and
+                                       (len(str(self.textEditPrediction.toPlainText())) > 0))
+    
+    def enableButtons2(self, temp):
+        self.enableButtons()
+        
+    def openPage(self, url):
+        #try:
+            webbrowser.open(url)
+        #except:
+        #    pass;        
+        
+    def closeWindow(self):
+        self.app.actions.getAction("perform_SSESequencePrediction").trigger()
+        
+    def savePrediction(self):
+        fileName = QtGui.QFileDialog.getSaveFileName(self, "Save sequence prediction", "", self.tr('Sequence Predictions (*.seq)'))
+        if not fileName.isEmpty():
+            filetext = 'START ' + str(self.spinBoxStart.value()) + "\n" + str(self.textEditSequence.toPlainText()) + "\n" + str(self.textEditPrediction.toPlainText())
+            fout = open(str(fileName), "w")
+            fout.write(filetext)
+            fout.close()
+    
+    def makePrediction(self):
+        if(self.checkBoxJpred.isChecked()):
+            jpredURL = 'http://www.compbio.dundee.ac.uk/~www-jpred/cgi-bin/jpred_form?seq=' + str(self.textEditSequence.toPlainText()) + '&input=seq&pdb=checked'
+            self.openPage(jpredURL)
+        if(self.checkBoxPsipred.isChecked()):
+            psipredURL = 'http://bioinf.cs.ucl.ac.uk/psipred/psiform.html'
+            self.openPage(psipredURL)        
+        if(self.checkBoxScratch.isChecked()):
+            scratchURL = 'http://scratch.proteomics.ics.uci.edu/'
+            self.openPage(scratchURL)                    
+        QtGui.QMessageBox.information(self, 'Sequence Submitted', 'Sequence submitted. \n Please copy and paste the results on the prediction text box')
+        
+        
