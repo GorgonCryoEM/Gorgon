@@ -1,0 +1,146 @@
+<ui version="4.0" >
+ <class>DialogSSESequencePredictor</class>
+ <widget class="QDialog" name="DialogSSESequencePredictor" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>283</width>
+    <height>313</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Sequence Predictor</string>
+  </property>
+  <layout class="QGridLayout" >
+   <item row="0" column="0" colspan="2" >
+    <widget class="QLabel" name="labelStartingResidue" >
+     <property name="sizePolicy" >
+      <sizepolicy vsizetype="Preferred" hsizetype="Maximum" >
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text" >
+      <string>Starting Residue No:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="2" colspan="2" >
+    <widget class="QSpinBox" name="spinBoxStart" >
+     <property name="minimum" >
+      <number>1</number>
+     </property>
+     <property name="maximum" >
+      <number>999999999</number>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0" colspan="2" >
+    <widget class="QLabel" name="labelSequence" >
+     <property name="text" >
+      <string>Sequence:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0" colspan="4" >
+    <widget class="QTextEdit" name="textEditSequence" />
+   </item>
+   <item row="3" column="0" >
+    <widget class="QLabel" name="labelServer" >
+     <property name="text" >
+      <string>Server:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="1" >
+    <widget class="QCheckBox" name="checkBoxJpred" >
+     <property name="text" >
+      <string>Jpred</string>
+     </property>
+     <property name="checked" >
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="2" >
+    <widget class="QCheckBox" name="checkBoxPsipred" >
+     <property name="enabled" >
+      <bool>true</bool>
+     </property>
+     <property name="text" >
+      <string>PSIPRED</string>
+     </property>
+     <property name="checked" >
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="3" >
+    <widget class="QCheckBox" name="checkBoxScratch" >
+     <property name="enabled" >
+      <bool>true</bool>
+     </property>
+     <property name="text" >
+      <string>Scratch</string>
+     </property>
+     <property name="checked" >
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="3" >
+    <widget class="QPushButton" name="pushButtonPredict" >
+     <property name="enabled" >
+      <bool>false</bool>
+     </property>
+     <property name="text" >
+      <string>&amp;Predict</string>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="0" colspan="2" >
+    <widget class="QLabel" name="labelPrediction" >
+     <property name="text" >
+      <string>Prediction:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="0" colspan="4" >
+    <widget class="QTextEdit" name="textEditPrediction" >
+     <property name="enabled" >
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="7" column="2" >
+    <widget class="QPushButton" name="pushButtonSave" >
+     <property name="enabled" >
+      <bool>false</bool>
+     </property>
+     <property name="text" >
+      <string>&amp;Save</string>
+     </property>
+    </widget>
+   </item>
+   <item row="7" column="3" >
+    <widget class="QPushButton" name="pushButtonClose" >
+     <property name="text" >
+      <string>&amp;Close</string>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <tabstops>
+  <tabstop>spinBoxStart</tabstop>
+  <tabstop>textEditSequence</tabstop>
+  <tabstop>checkBoxJpred</tabstop>
+  <tabstop>checkBoxPsipred</tabstop>
+  <tabstop>checkBoxScratch</tabstop>
+  <tabstop>pushButtonPredict</tabstop>
+  <tabstop>textEditPrediction</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+</ui>

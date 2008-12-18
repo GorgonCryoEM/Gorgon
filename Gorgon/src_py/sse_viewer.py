@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.17  2008/12/02 21:54:53  ssa1
+#   visualizing a dummy file name for sse elements
+#
 #   Revision 1.16  2008/11/28 04:36:17  ssa1
 #   Removing error message if pyopengl does not exist.  (To make executable building easier to debug)
 #
@@ -33,6 +36,7 @@
 from PyQt4 import QtGui, QtCore, QtOpenGL
 from libpyGORGON import SSERenderer
 from base_viewer import BaseViewer
+from sse_sequence_predictor_form import SSESequencePredictorForm
 from sse_helix_correspondence_finder_form import SSEHelixCorrespondenceFinderForm
 from model_visualization_form import ModelVisualizationForm
 from libpyGORGON import SSECorrespondenceEngine, SSECorrespondenceResult
@@ -73,6 +77,7 @@ class SSEViewer(BaseViewer):
         self.updateActionsAndMenus()
                   
     def createChildWindows(self):
+        self.sequencePredictor = SSESequencePredictorForm(self.app, self)
         self.helixCorrespondanceFinder = SSEHelixCorrespondenceFinderForm(self.app, self)
     
     def loadHelixData(self):
