@@ -12,7 +12,7 @@ class Residue:
     '''Residue objects have one-letter and three-letter abbreviations and contain PDBAtoms'''
     _aa_dict={
         'A':'ALA', 'C':'CYS', 'D':'ASP', 'E':'GLU', 'F':'PHE', 'G':'GLY', 'H':'HIS', 'I':'ILE', 
-        'K':'LYS', 'L':'LEU', 'M':'MET', 'N':'GLN', 'P':'PRO', 'Q':'GLN', 'R':'ARG', 'S':'SER', 
+        'K':'LYS', 'L':'LEU', 'M':'MET', 'N':'ASN', 'P':'PRO', 'Q':'GLN', 'R':'ARG', 'S':'SER', 
         'T':'THR', 'V':'VAL', 'W':'TRP', 'X':'ANY', 'Y':'TYR',
         'ANY':'X', 'ALA':'A', 'CYS':'C', 'ASP':'D', 'GLU':'E', 'PHE':'F', 'GLY':'G', 'HIS':'H', 
         'ILE':'I', 'LYS':'K', 'LEU':'L', 'MET':'M', 'ASN':'N', 'PRO':'P', 'GLN':'Q', 'ARG':'R', 
