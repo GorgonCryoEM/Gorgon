@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.14  2008/12/17 16:00:04  ssa1
+#   Changing Version information for next public release
+#
 #   Revision 1.13  2008/11/30 00:13:41  ssa1
 #   Build Configuration scripts on MacOSX
 #
@@ -46,7 +49,6 @@ elif(sys.platform == 'darwin'):
 from window_manager import WindowManager
 from PyQt4 import QtGui, QtCore
 from main_window_form import MainWindowForm
-from about_form import AboutForm
 import time
 
 

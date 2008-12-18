@@ -1,6 +1,6 @@
 # Copyright (C) 2005-2008 Washington University in St Louis, Baylor College of Medicine.  All rights reserved.
 # Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
-# Description:   A utility class which hooks up events for a form which displays information about Gorgon. 
+# Description:   Shows the help menus
 
 # CVS Meta Information: 
 #   $Source$
@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.15  2008/12/17 16:00:04  ssa1
+#   Changing Version information for next public release
+#
 #   Revision 1.14  2008/12/04 20:55:16  ssa1
 #   fixing bugs when running bug report in macos
 #
@@ -44,15 +47,12 @@
 
 import sys
 from PyQt4 import QtCore, QtGui
-from ui_dialog_about import Ui_DialogAbout
 import webbrowser
 
-class AboutForm(QtGui.QDialog):
+class HelpMenus(QtGui.QWidget):
     def __init__(self, main, parent=None):
-        QtGui.QWidget.__init__(self, parent)
+        QtGui.QWidget.__init__(self, parent)        
         self.app = main
-        self.ui = Ui_DialogAbout()
-        self.ui.setupUi(self)
         self.createActions()
         self.createMenus()
 

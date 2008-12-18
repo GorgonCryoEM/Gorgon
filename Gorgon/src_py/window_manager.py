@@ -11,9 +11,12 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.9  2008/06/18 18:15:41  ssa1
+#   Adding in CVS meta data
+#
 
 from PyQt4 import QtGui, QtCore
-from about_form import AboutForm
+from help_menus import HelpMenus
 from camera import Camera
 from volume_viewer import VolumeViewer;
 from skeleton_viewer import SkeletonViewer;
@@ -33,7 +36,7 @@ class WindowManager(QtGui.QWidget):
         self.createMenus()
         
     def createChildWindows(self):
-        self.aboutForm = AboutForm(self.app)
+        self.helpMenus = HelpMenus(self.app)
         self.volumeViewer = VolumeViewer(self.app)
         self.skeletonViewer = SkeletonViewer(self.app)
         self.sseViewer = SSEViewer(self.app)
