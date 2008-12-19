@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.18  2008/12/18 20:15:23  ssa1
+#   Adding sequence predictor
+#
 #   Revision 1.17  2008/12/02 21:54:53  ssa1
 #   visualizing a dummy file name for sse elements
 #
@@ -56,10 +59,11 @@ class SSEViewer(BaseViewer):
         self.isClosedMesh = False
         self.helixFileName = ""
         self.sheetFileName = ""
+        self.currentMatch = None
         self.showBox = False;
         self.renderer = SSERenderer()
         self.correspondenceEngine = SSECorrespondenceEngine()
-        self.createUI()      
+        self.createUI()
         self.selectEnabled = True
         self.app.viewers["sse"] = self;
         self.model2Visible = True
@@ -68,6 +72,8 @@ class SSEViewer(BaseViewer):
         self.visualizationOptions.ui.checkBoxModel2Visible.setText("Show sheets colored:")
         self.visualizationOptions.ui.checkBoxModel2Visible.setVisible(True)
         self.visualizationOptions.ui.pushButtonModel2Color.setVisible(True)
+        
+        self.connect(self, QtCore.SIGNAL('elementSelected (int, int, int, int, int, int, QMouseEvent)'), self.updateCurrentMatch)
     
 
     def createUI(self):
@@ -135,4 +141,22 @@ class SSEViewer(BaseViewer):
     def updateActionsAndMenus(self):
         self.app.actions.getAction("unload_SSE").setEnabled(self.loaded)
     
-             
+    def updateCurrentMatch(self, sseType, sseIndex):
+        self.currentMatch = None
+        if sseType == 0:
+            print 'helix'
+            try:
+                self.correspondenceLibrary
+            except AttributeError:
+                return
+            corrLib = self.correspondenceLibrary
+            currCorrIndex = corrLib.getCurrentCorrespondenceIndex()
+            print 'currCorrIndex:',  currCorrIndex
+            matchList = corrLib.correspondenceList[currCorrIndex].matchList
+            for match in matchList:
+                if match.observed.label == sseIndex: 
+                    self.currentMatch = match
+                    self.emit(QtCore.SIGNAL("SSE selected"))
+                    print self.currentMatch.predicted, self.currentMatch.observed
+                    break
+        print 'Index:', sseIndex
