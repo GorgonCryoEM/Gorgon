@@ -13,24 +13,17 @@ class SequenceError(Exception):
     def __str__(self):
         return "Chain model does not match the sequence"
 
+
+
 class SequenceDock(QtGui.QDockWidget):
     __dock = None
     
     def __init__(self, main, viewer, structurePrediction, currentChainModel, parent=None):
+        super(SequenceDock, self).__init__("Semi-automatic atom placement", parent)
+        
         self.currentChainModel = currentChainModel
         self.structurePrediction = structurePrediction
         self.app = main
-        super(SequenceDock, self).__init__("Semi-automatic atom placement", parent)
-        
-        try:
-            self.checkPredictionVsModel()
-        except SequenceError:
-            QtGui.QMessageBox.warning(self, "Chain model does not match the sequence",  
-            "The sequence of the current chain model (from PDB file) does not match the sequence of the structure prediction (from SEQ file)" )
-            self.close()
-            self.app.actions.getAction("seqDock").setChecked(False)
-            return
-        
         self.viewer=viewer
         self.skeletonViewer = self.app.viewers["skeleton"]
         self.seqWidget = SequenceWidget( structurePrediction, currentChainModel, self)
@@ -58,6 +51,14 @@ class SequenceDock(QtGui.QDockWidget):
                 
         if cls.__dock:
             if cls.__dock.app.actions.getAction("seqDock").isChecked():
+                try:
+                    SequenceDock.checkPredictionVsModel(structurePrediction, currentChainModel)
+                except SequenceError:
+                    QtGui.QMessageBox.warning(main, "Chain model does not match the sequence",  
+                    "The sequence of the current chain model (from PDB file) does not match the \
+                    sequence of the structure prediction (from SEQ file)" )
+                    cls.__dock.app.actions.getAction("seqDock").setChecked(False)
+                    return
                 cls.__dock.app.addDockWidget(QtCore.Qt.RightDockWidgetArea, cls.__dock)
                 cls.__dock.changeCurrentChainModel(currentChainModel)
                 cls.__dock.show()
@@ -65,6 +66,14 @@ class SequenceDock(QtGui.QDockWidget):
                 cls.__dock.app.removeDockWidget(cls.__dock)
         else:
             if main and viewer:
+                try:
+                    SequenceDock.checkPredictionVsModel(structurePrediction, currentChainModel)
+                except SequenceError:
+                    QtGui.QMessageBox.warning(main, "Chain model does not match the sequence",  
+                    "The sequence of the current chain model (from PDB file) does not match the \
+                    sequence of the structure prediction (from SEQ file)" )
+                    return
+                
                 dock = SequenceDock(main, viewer, structurePrediction, currentChainModel)
                 main.addDockWidget(QtCore.Qt.RightDockWidgetArea, dock)
                 dock.show()
@@ -74,21 +83,40 @@ class SequenceDock(QtGui.QDockWidget):
                 if not viewer: print 'Sequence Dock Error: no viewer'
                 if not currentChainModel: print 'Sequence Dock: no chain to load'
     
-    def checkPredictionVsModel(self):
-        for resIndex in self.currentChainModel.residueRange():
-            resName = self.currentChainModel[resIndex].symbol1
-            if resIndex in self.structurePrediction.chain.residueRange():
-                predResName = self.structurePrediction.chain[resIndex].symbol1
-                if resName == predResName:
-                    continue
-                else:
-                    print resIndex, ':',  resName, 'vs', predResName
-                    raise SequenceError
-                    break
-            else:
+    @classmethod
+    def checkPredictionVsModel(cls, structurePrediction, currentChainModel):
+        """
+        If the chain model's sequence is a subset of the structure prediction's
+            sequence, the model is simply incomplete, and this function adds 
+            the missing residues to the model, without adding any atoms to 
+            those residues. 
+        If the sequences are equal, the model will work, and this function does
+            nothing. 
+        If the chain model's sequence is not a subset of the structure 
+            prediction's sequence, a SequenceError is raised, because the model
+            can not work with the structure prediction.
+        """
+        modelResNumSet = set(currentChainModel.residueRange())
+        predResNumSet = set(structurePrediction.chain.residueRange())
+        if modelResNumSet != predResNumSet: 
+            #If the sequence of the model is a subset of the structure prediction sequence, we can work with it
+            if modelResNumSet.issubset(predResNumSet):
+                modelIsMissing = predResNumSet.difference(modelResNumSet)
+                for resNum in modelResNumSet:
+                    modelResName = currentChainModel[resNum].symbol3
+                    predResName = structurePrediction.chain[resNum].symbol3
+                    if modelResName != predResName: #If the residue names aren't the same, it isn't a subset
+                        print resNum, ':', modelResName, 'vs', predResName
+                        raise SequenceError
+                        break
+                for resNum in modelIsMissing:
+                    #If the model is missing some residues that are in the prediction, add them to the model
+                    resName = structurePrediction.chain[resNum].symbol3
+                    currentChainModel[resNum] = Residue(resName, currentChainModel)                        
+            else: #If the model has some residue numbers that the structure prediction doesn't, it must be a model of something else
+                print "Model sequence is not a subset of the structure prediction sequence!"
                 raise SequenceError
-                break
-            
+    
     def createActions(self):
         seqDockAct = QtGui.QAction(self.tr("Partly &Automated Atom Placement"), self)
         self.seqDockAct = seqDockAct
