@@ -1,3 +1,8 @@
+# Copyright (C) 2005-2008 Washington University in St Louis, Baylor College of Medicine.  All rights reserved
+# Author:        Ross A. Coleman (racolema@bcm.edu)
+# Class: ChooseChainModel
+# Class Description: Widget that lets the user see what chain models are in memory and select the one to work with
+
 import sys
 from PyQt4 import QtCore, QtGui
 from seq_model.ui_dialog_choose_chain_model import Ui_DialogChooseChainModel
