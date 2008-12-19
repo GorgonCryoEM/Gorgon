@@ -40,7 +40,11 @@
      </widget>
     </item>
     <item>
-     <widget class="QTextBrowser" name="sequenceBrowser" />
+     <widget class="QTextEdit" name="sequenceTextEdit" >
+      <property name="readOnly" >
+       <bool>false</bool>
+      </property>
+     </widget>
     </item>
     <item>
      <layout class="QHBoxLayout" >

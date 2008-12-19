@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '../src_ui/ui_dialog_choose_chain_model.ui'
+# Form implementation generated from reading ui file 'src_ui/ui_dialog_choose_chain_model.ui'
 #
-# Created: Tue Dec 16 17:26:39 2008
+# Created: Fri Dec 19 15:40:17 2008
 #      by: PyQt4 UI code generator 4.3.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -33,9 +33,10 @@ class Ui_DialogChooseChainModel(object):
         self.sequenceBrowserLabel.setObjectName("sequenceBrowserLabel")
         self.vboxlayout.addWidget(self.sequenceBrowserLabel)
 
-        self.sequenceBrowser = QtGui.QTextBrowser(self.layoutWidget)
-        self.sequenceBrowser.setObjectName("sequenceBrowser")
-        self.vboxlayout.addWidget(self.sequenceBrowser)
+        self.sequenceTextEdit = QtGui.QTextEdit(self.layoutWidget)
+        self.sequenceTextEdit.setReadOnly(False)
+        self.sequenceTextEdit.setObjectName("sequenceTextEdit")
+        self.vboxlayout.addWidget(self.sequenceTextEdit)
 
         self.hboxlayout = QtGui.QHBoxLayout()
         self.hboxlayout.setObjectName("hboxlayout")
