@@ -9,14 +9,28 @@ from seq_model.Residue import Residue
 from seq_model.structure_editor import StructureEditor
 from libpyGORGON import CAlphaRenderer, PDBAtom,  PDBBond
 
+class SequenceError(Exception):
+    def __str__(self):
+        return "Chain model does not match the sequence"
+
 class SequenceDock(QtGui.QDockWidget):
     __dock = None
     
     def __init__(self, main, viewer, structurePrediction, currentChainModel, parent=None):
-        super(SequenceDock, self).__init__("Semi-automatic atom placement", parent)
-        self.app = main
         self.currentChainModel = currentChainModel
         self.structurePrediction = structurePrediction
+        self.app = main
+        super(SequenceDock, self).__init__("Semi-automatic atom placement", parent)
+        
+        try:
+            self.checkPredictionVsModel()
+        except SequenceError:
+            QtGui.QMessageBox.warning(self, "Chain model does not match the sequence",  
+            "The sequence of the current chain model (from PDB file) does not match the sequence of the structure prediction (from SEQ file)" )
+            self.close()
+            self.app.actions.getAction("seqDock").setChecked(False)
+            return
+        
         self.viewer=viewer
         self.skeletonViewer = self.app.viewers["skeleton"]
         self.seqWidget = SequenceWidget( structurePrediction, currentChainModel, self)
@@ -26,7 +40,7 @@ class SequenceDock(QtGui.QDockWidget):
         self.setAllowedAreas(QtCore.Qt.LeftDockWidgetArea | QtCore.Qt.RightDockWidgetArea | QtCore.Qt.BottomDockWidgetArea)
         self.connect(self.seqWidget.structureEditor.mockSidechainsCheckBox,  QtCore.SIGNAL('stateChanged(int)'),  self.toggleMockSideChains)
         if main:
-            self.connect(self.app.viewers["calpha"], QtCore.SIGNAL("elementSelected (int, int, int, int, int, int, QMouseEvent)"), self.updateFromViewerSelection)    
+            self.connect(self.app.viewers["calpha"], QtCore.SIGNAL("elementSelected (int, int, int, int, int, int, QMouseEvent)"), self.updateFromViewerSelection)
     
     @classmethod
     def changeDockVisibility(cls, main, viewer, structurePrediction, currentChainModel):
@@ -44,7 +58,7 @@ class SequenceDock(QtGui.QDockWidget):
                 
         if cls.__dock:
             if cls.__dock.app.actions.getAction("seqDock").isChecked():
-                cls.__dock.app.addDockWidget(QtCore.Qt.RightDockWidgetArea,  cls.__dock)
+                cls.__dock.app.addDockWidget(QtCore.Qt.RightDockWidgetArea, cls.__dock)
                 cls.__dock.changeCurrentChainModel(currentChainModel)
                 cls.__dock.show()
             else:
@@ -54,11 +68,27 @@ class SequenceDock(QtGui.QDockWidget):
                 dock = SequenceDock(main, viewer, structurePrediction, currentChainModel)
                 main.addDockWidget(QtCore.Qt.RightDockWidgetArea, dock)
                 dock.show()
+                dock.show()
             else:
                 if not main: print 'Sequence Dock Error: no main app'
                 if not viewer: print 'Sequence Dock Error: no viewer'
                 if not currentChainModel: print 'Sequence Dock: no chain to load'
-                            
+    
+    def checkPredictionVsModel(self):
+        for resIndex in self.currentChainModel.residueRange():
+            resName = self.currentChainModel[resIndex].symbol1
+            if resIndex in self.structurePrediction.chain.residueRange():
+                predResName = self.structurePrediction.chain[resIndex].symbol1
+                if resName == predResName:
+                    continue
+                else:
+                    print resIndex, ':',  resName, 'vs', predResName
+                    raise SequenceError
+                    break
+            else:
+                raise SequenceError
+                break
+            
     def createActions(self):
         seqDockAct = QtGui.QAction(self.tr("Partly &Automated Atom Placement"), self)
         self.seqDockAct = seqDockAct
