@@ -12,6 +12,7 @@ class ChooseChainModel(QtGui.QWidget):
         self.createMenus()
         
         self.connect(self.ui.refreshPushButton, QtCore.SIGNAL("clicked()"), self.refresh)
+        self.connect(self.ui.chainModelsListWidget, QtCore.SIGNAL("currentTextChanged (const QString&)"), self.modelHighlighted)
     
     def acceptButtonPress(self):
         pass
@@ -31,10 +32,13 @@ class ChooseChainModel(QtGui.QWidget):
     def createUi(self):
         self.ui = Ui_DialogChooseChainModel()
         self.ui.setupUi(self)
+        self.ui.sequenceTextEdit.setReadOnly(True)
         self.dock = QtGui.QDockWidget(self.tr("Choose Chain Model"), self.app)
         self.dock.setAllowedAreas(QtCore.Qt.LeftDockWidgetArea | QtCore.Qt.RightDockWidgetArea | QtCore.Qt.BottomDockWidgetArea)
         self.dock.setWidget(self)
         self.dock.close()
+        
+        self.ui.acceptPushButton.setEnabled(False)
     
     def dockVisibilityChanged(self, visible):
         self.app.actions.getAction("perform_chooseModel").setChecked(visible)
@@ -46,7 +50,14 @@ class ChooseChainModel(QtGui.QWidget):
             self.dock.show()
         else:
             self.app.removeDockWidget(self.dock)
-
+    
+    def modelHighlighted(self, chainQString):
+        currText = str(chainQString)
+        currChainKey = tuple( currText.split(' - ') )
+        currChain = Chain.getChain(currChainKey)
+        text = str(currChain)
+        self.ui.sequenceTextEdit.setText(text)
+        
     def refresh(self):
         self.ui.chainModelsListWidget.clear()
         chainKeys = Chain.getChainKeys()
