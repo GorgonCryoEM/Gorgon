@@ -1,4 +1,3 @@
-#!/usr/bin/python
 # Copyright (C) 2005-2008 Washington University in St Louis, Baylor College of Medicine.  All rights reserved
 # Author:        Ross A. Coleman (racolema@bcm.edu)
 # Class: StructureEditor
@@ -21,7 +20,6 @@ class StructureEditor(QtGui.QWidget):
         self.possibleAtomsList = []
         self.previouslySelectedPossibleAtom = None
         self.undoStack = QtGui.QUndoStack(self)
-        self.currentMatch = None
         
         #These go on the left hand side
         self.undoButton = QtGui.QPushButton('Undo')
@@ -50,8 +48,9 @@ class StructureEditor(QtGui.QWidget):
         self.connect(self.tabWidget, QtCore.SIGNAL('currentChanged(int)'), self.enableDisable)
         if self.parentWidget().parentWidget().app:
             self.app = self.parentWidget().parentWidget().app
+            self.updateCurrentMatch() #In case an observed helix is already selected
             self.CAlphaViewer = self.app.viewers['calpha']            
-            self.connect(self.app.viewers['sse'], QtCore.SIGNAL('elementSelected (int, int, int, int, int, int, QMouseEvent)'), self.updateCurrentMatch)
+            self.connect(self.app.viewers['sse'], QtCore.SIGNAL("SSE selected"), self.updateCurrentMatch)
             self.connect(self.app.viewers["calpha"], QtCore.SIGNAL("elementSelected (int, int, int, int, int, int, QMouseEvent)"), self.posUpdateValues)
             self.connect(self.posMoveDict['x'], QtCore.SIGNAL('valueChanged(double)'), self.posMoveCM_x)
             self.connect(self.posMoveDict['y'], QtCore.SIGNAL('valueChanged(double)'), self.posMoveCM_y)
@@ -263,9 +262,9 @@ class StructureEditor(QtGui.QWidget):
         print 'In helixCreateCAhelix'
         startIndex = self.helixNtermSpinBox.value()
         stopIndex = self.helixCtermSpinBox.value()
-        observedHelix = self.currentMatch.observed
-        direction = self.currentMatch.direction #Forward=0, Reverse=1
-        predHelix = self.currentMatch.predicted
+        observedHelix = self.app.viewers['sse'].currentMatch.observed
+        direction = self.app.viewers['sse'].currentMatch.direction #Forward=0, Reverse=1
+        predHelix = self.app.viewers['sse'].currentMatch.predicted
         if observedHelix.__class__.__name__ != 'ObservedHelix':
             raise TypeError, observedHelix.__class__.__name__
             
@@ -906,8 +905,19 @@ class StructureEditor(QtGui.QWidget):
         layout.addWidget(self.tabWidget)
         self.setLayout(layout)
     
-    def updateCurrentMatch(self, sseType, sseIndex):
+    def updateCurrentMatch(self):
         sseViewer = self.app.viewers['sse']
+        if not sseViewer.currentMatch: 
+            return
+        startIx = sseViewer.currentMatch.predicted.startIndex
+        stopIx = sseViewer.currentMatch.predicted.stopIndex
+        self.helixNtermSpinBox.setValue(startIx)
+        self.helixCtermSpinBox.setValue(stopIx)
+        self.helixNtermResNameLabel.setText(self.currentChainModel[startIx].symbol3)
+        self.helixCtermResNameLabel.setText(self.currentChainModel[stopIx].symbol3)
+    '''
+    #This is the old version of this function
+    def updateCurrentMatch(self, sseType, sseIndex):
         if sseType == 0:
             print 'helix'
             corrLib = sseViewer.correspondenceLibrary
@@ -926,7 +936,7 @@ class StructureEditor(QtGui.QWidget):
                     self.helixCtermResNameLabel.setText(self.currentChainModel[stopIx].symbol3)
                     break            
         print 'Index:', sseIndex
-    
+    '''
     def updateSelectedResidues(self):
         print '\nIn updateSelectedResidues'
         if self.tabWidget.currentWidget() is self.atomicTab:
