@@ -1,45 +1,48 @@
 #!/bin/bash
-mkdir ../../../GorgonLinux
-#cp *.py ../../../GorgonLinux/
-cp *.py? ../../../GorgonLinux/
-#rm ../../../GorgonLinux/_build*
-cp gorgon-linux.sh ../../../GorgonLinux/gorgon.sh
-cp gorgon.icns ../../../GorgonLinux/
-cp gorgon.ico ../../../GorgonLinux/
-cp splash.png ../../../GorgonLinux/
+mv ~/Gorgon/lib/libpyGORGON.so ~/
+rm -rf ~/Gorgon
+mkdir ~/Gorgon
+mkdir ~/Gorgon/lib
+mv ~/libpyGORGON.so ~/Gorgon/lib
 
-mkdir ../../../GorgonLinux/correspondence
-#cp correspondence/*.py ../../../GorgonLinux/correspondence/
-cp correspondence/*.py? ../../../GorgonLinux/correspondence/
+#cp *.py ~/Gorgon/
+cp *.py? ~/Gorgon/
+#rm ~/Gorgon/_build*
+cp gorgon-linux.sh ~/Gorgon/gorgon.sh
+cp gorgon.icns ~/Gorgon/
+cp gorgon.ico ~/Gorgon/
+cp splash.png ~/Gorgon/
 
-mkdir ../../../GorgonLinux/seq_model
-#p seq_model/*.py ../../../GorgonLinux/seq_model/
-cp seq_model/*.py? ../../../GorgonLinux/seq_model/
+mkdir ~/Gorgon/correspondence
+#cp correspondence/*.py ~/Gorgon/correspondence/
+cp correspondence/*.py? ~/Gorgon/correspondence/
 
-mkdir ../../../GorgonLinux/themes
-cp -rL ../resources ../../../GorgonLinux/themes
+mkdir ~/Gorgon/seq_model
+#cp seq_model/*.py ~/Gorgon/seq_model/
+cp seq_model/*.py? ~/Gorgon/seq_model/
 
-cp ~/Gorgon/lib/libpyGORGON.so ../../../GorgonLinux/
-cp /usr/lib/libglut.so.3 ../../../GorgonLinux/
-cp /usr/lib/libGLU.so.1 ../../../GorgonLinux/
-cp /usr/lib/libGL.so.1 ../../../GorgonLinux/
-cp /usr/lib/libboost_python-gcc42-1_34_1.so.1.34.1 ../../../GorgonLinux/
-cp /usr/lib/libQtCore.so.4 ../../../GorgonLinux/
-cp /usr/lib/libQtGui.so.4 ../../../GorgonLinux/
-cp /usr/lib/libQtOpenGL.so.4 ../../../GorgonLinux
+mkdir ~/Gorgon/themes
+cp -rL ../resources ~/Gorgon/themes
 
-mkdir ../../../GorgonLinux/site-packages
-cp -rL /usr/lib/python2.5/site-packages/OpenGL ../../../GorgonLinux/site-packages/
-cp -rL /usr/lib/python2.5/site-packages/PyOpenGL-3.0.0b1.egg-info/ ../../../GorgonLinux/site-packages/
-cp /usr/lib/python2.5/site-packages/pkg_resources.py ../../../GorgonLinux/site-packages/
-cp /usr/lib/python2.5/site-packages/pkg_resources.pyc ../../../GorgonLinux/site-packages/
-mkdir ../../../GorgonLinux/site-packages/PyQt4
-cp /usr/lib/python2.5/site-packages/PyQt4/__init__.py ../../../GorgonLinux/site-packages/PyQt4/
-cp /usr/lib/python2.5/site-packages/PyQt4/__init__.pyc ../../../GorgonLinux/site-packages/PyQt4/
-cp /usr/lib/python2.5/site-packages/PyQt4/Qt.so ../../../GorgonLinux/site-packages/PyQt4/
-cp /usr/lib/python2.5/site-packages/PyQt4/QtCore.so ../../../GorgonLinux/site-packages/PyQt4/
-cp /usr/lib/python2.5/site-packages/PyQt4/QtGui.so ../../../GorgonLinux/site-packages/PyQt4/
-cp /usr/lib/python2.5/site-packages/PyQt4/QtOpenGL.so ../../../GorgonLinux/site-packages/PyQt4/
-cp /usr/lib/python2.5/site-packages/sip* ../../../GorgonLinux/site-packages/
-cd ../../..
-tar -cvzf GorgonLinux.tar.gz GorgonLinux/
+cp /usr/lib/libboost_python-gcc42-1_34_1.so.1.34.1 ~/Gorgon/lib/
+cp -P /usr/lib/libQtCore.so* ~/Gorgon/lib/
+cp -P /usr/lib/libQtGui.so* ~/Gorgon/lib/
+cp -P /usr/lib/libQtOpenGL.so* ~/Gorgon/lib/
+cp -P /usr/lib/libaudio.so* ~/Gorgon/lib/
+
+mkdir ~/Gorgon/bin
+cp -r /usr/bin/python* ~/Gorgon/bin/
+cp -rL /usr/lib/python2.5 ~/Gorgon/lib/
+
+rm -r ~/Gorgon/lib/python2.5/site-packages
+mkdir ~/Gorgon/lib/python2.5/site-packages
+cp -rL /usr/lib/python2.5/site-packages/OpenGL ~/Gorgon/lib/python2.5/site-packages/
+cp -rL /usr/lib/python2.5/site-packages/PyOpenGL* ~/Gorgon/lib/python2.5/site-packages/
+cp -L /usr/lib/python2.5/site-packages/pkg_resources.py* ~/Gorgon/lib/python2.5/site-packages/
+mkdir ~/Gorgon/lib/python2.5/site-packages/PyQt4
+cp -L /usr/lib/python2.5/site-packages/PyQt4/__init__.py* ~/Gorgon/lib/python2.5/site-packages/PyQt4/
+cp -L /usr/lib/python2.5/site-packages/PyQt4/Qt.so ~/Gorgon/lib/python2.5/site-packages/PyQt4/
+cp -L /usr/lib/python2.5/site-packages/PyQt4/QtCore.so ~/Gorgon/lib/python2.5/site-packages/PyQt4/
+cp -L /usr/lib/python2.5/site-packages/PyQt4/QtGui.so ~/Gorgon/lib/python2.5/site-packages/PyQt4/
+cp -L /usr/lib/python2.5/site-packages/PyQt4/QtOpenGL.so ~/Gorgon/lib/python2.5/site-packages/PyQt4/
+cp -L /usr/lib/python2.5/site-packages/sip* ~/Gorgon/lib/python2.5/site-packages/
