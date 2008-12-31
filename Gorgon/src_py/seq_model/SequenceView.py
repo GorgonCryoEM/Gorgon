@@ -16,6 +16,10 @@ class SequenceError(Exception):
 
 
 class SequenceDock(QtGui.QDockWidget):
+    '''
+This QDockWidget contains a SequenceWidget. Its methods handle much of 
+the interaction with the other parts of the Gorgon application.
+    '''
     __dock = None
     
     def __init__(self, main, viewer, structurePrediction, currentChainModel, parent=None):
@@ -86,15 +90,15 @@ class SequenceDock(QtGui.QDockWidget):
     @classmethod
     def checkPredictionVsModel(cls, structurePrediction, currentChainModel):
         """
-        If the chain model's sequence is a subset of the structure prediction's
-            sequence, the model is simply incomplete, and this function adds 
-            the missing residues to the model, without adding any atoms to 
-            those residues. 
-        If the sequences are equal, the model will work, and this function does
-            nothing. 
-        If the chain model's sequence is not a subset of the structure 
-            prediction's sequence, a SequenceError is raised, because the model
-            can not work with the structure prediction.
+If the chain model's sequence is a subset of the structure prediction's
+    sequence, the model is simply incomplete, and this function adds 
+    the missing residues to the model, without adding any atoms to 
+    those residues. 
+If the sequences are equal, the model will work, and this function does
+    nothing. 
+If the chain model's sequence is not a subset of the structure 
+    prediction's sequence, a SequenceError is raised, because the model
+    can not work with the structure prediction.
         """
         modelResNumSet = set(currentChainModel.residueRange())
         predResNumSet = set(structurePrediction.chain.residueRange())
@@ -127,6 +131,10 @@ class SequenceDock(QtGui.QDockWidget):
         self.app.actions.addAction("perform_autoAtomPlacement", seqDockAct)
     
     def changeCurrentChainModel(self, currentChainModel):
+        '''
+This changes the Chain object that is displayed and is edited by the 
+user.  A chain object represents a possible structure model.
+        '''
         self.currentChainModel = currentChainModel
         self.seqWidget.currentChainModel = currentChainModel
         seqView = self.seqWidget.scrollable.seqView
@@ -139,15 +147,27 @@ class SequenceDock(QtGui.QDockWidget):
             structureEditor.atomicResNames[i].setText('?')
     
     def changeSequenceSSE(self, structurePrediction):
+        '''
+This changes the structure prediction which has information about the
+sequence and predicted residue indices for helices and strands.
+        '''
         self.structurePrediction = structurePrediction
     
     def closeEvent(self, event):
         self.app.actions.getAction("seqDock").setChecked(False)
         
     def updateFromViewerSelection(self):
+        '''
+This responds to a new selection of atoms in the viewer.
+        '''
         self.seqWidget.scrollable.seqView.updateSequenceSelection()
     
     def toggleMockSideChains(self):
+        '''
+This toggles whether mock side-chains are displayed.  Mock side-chains
+represent residues as spheres with relative size of a residue indicated
+by radius and residue type indicated by color. 
+        '''
         viewer = self.viewer
         
         if self.seqWidget.structureEditor.mockSidechainsCheckBox.isChecked():
@@ -158,6 +178,11 @@ class SequenceDock(QtGui.QDockWidget):
         viewer.emitModelChanged()
             
 class SequenceWidget(QtGui.QWidget):
+    '''
+Since a QDockWidget can contain only one widget, this is a composite 
+widget of a global view of  a chain, a scrollable of its residues, and 
+a local view that provides chain editing features. 
+    '''
     def __init__(self, structurePrediction, currentChainModel, parent=None):
         super(SequenceWidget, self).__init__(parent)
         self.currentChainModel = currentChainModel
@@ -188,9 +213,9 @@ class SequenceWidget(QtGui.QWidget):
 
 class SequenceView(QtGui.QWidget):
   """
-  This QWidget gives residues as one letter abbreviations for residues and the index below.  
-  Most chains will be too big to fit on the screen on this class. Thus, a ScrollableSequenceView
-  contains this class.
+This QWidget gives residues as one letter abbreviations for residues 
+and the index below. Most chains will be too big to fit on the screen 
+on this class. Thus, a ScrollableSequenceView contains this class.
   """
   def __init__(self, structurePrediction, currentChainModel, parent=None):
     super(SequenceView,self).__init__(parent)
@@ -217,6 +242,10 @@ class SequenceView(QtGui.QWidget):
 
 
   def setStructurePrediction(self, newStructurePrediction):
+    '''
+This function changes what structure prediction is used for sequence
+and predicted residue indices of helices and strands.
+    '''
     self.structurePrediction = newStructurePrediction
     self.structurePrediction.chain.fillGaps()
     self.updatePanelHeight()
@@ -379,6 +408,10 @@ class SequenceView(QtGui.QWidget):
     self.updateCursor(mouseEvent)
 
   def getResidueIndexByMousePosition(self,x,y):
+    '''
+Given the x, y coordinates of a user mouse click on the SequenceView, 
+this returns the residue index of that residue.
+    '''
     metrics=QtGui.QFontMetrics(self.font)
     cellHeight=metrics.lineSpacing()
     maxCharWidth=QtGui.QFontMetrics(self.font).maxWidth()
@@ -389,6 +422,17 @@ class SequenceView(QtGui.QWidget):
       return None
 
   def mousePressEvent(self, mouseEvent):
+    '''
+If the user left clicks on a box representing a predicted helix or an 
+arrow representing a predicted strand, its residues are selected.  If 
+the control key is also pressed, it adds to or removes from the current 
+selection.
+
+If the user left clicks on a residue, it becomes the new selection.  If
+the control key is also pressed, it is added to or removed from the 
+selection.  If the shift key is pressed, a continuous sequence of
+residues is selected.
+    '''
 
     if mouseEvent.button() == QtCore.Qt.LeftButton and mouseEvent.y() < self.cellHeight():
       residue=self.getResidueIndexByMousePosition(mouseEvent.x(),self.cellHeight() +1)
@@ -460,12 +504,21 @@ class SequenceView(QtGui.QWidget):
       self.updateCursor(mouseEvent)
 
   def incrementPointSize(self):
+    '''
+This increases font size.
+    '''
     self.setFontSize(self.fontSize + 2)
 
   def decrementPointSize(self):
+    '''
+This decreases font size.
+    '''
     self.setFontSize(self.fontSize - 2)
 
   def updatePanelHeight(self):
+    '''
+This updates the height and width of the SequenceView.
+    '''
     metrics=QtGui.QFontMetrics(self.font)
     height=int(3.5*metrics.lineSpacing())
     width=metrics.maxWidth()*len(self.structurePrediction.chain.residueRange())
@@ -473,6 +526,12 @@ class SequenceView(QtGui.QWidget):
 
 
   def setSequenceSelection(self, newSelection=None, removeOne=None, addOne=None, addRange=None):
+    '''
+This changes what residues are selected in both the structure 
+prediction and the chain model by replacing the selection, removing a 
+residue from the selection, adding a residue to the selection, or 
+adding a list of residues to the selection.
+    '''
     dock = self.parentWidget().parentWidget().parentWidget().parentWidget()
     #self.parentWidget() => QWidget, self.parentWidget().parentWidget() => ScrollableSequenceView
     #self.parentWidget().parentWidget().parentWidget() => SequenceDock
@@ -505,6 +564,11 @@ class SequenceView(QtGui.QWidget):
     viewer.emitModelChanged()
     
   def updateSequenceSelection(self):
+    '''
+Based on the selection in the current chain model, this updates the 
+selection in the structure prediction and displays the changes in the
+SequenceView.
+    '''
     selection = self.currentChainModel.getSelection()
     self.structurePrediction.chain.setSelection(selection)
     dock = self.parentWidget().parentWidget().parentWidget().parentWidget()
@@ -590,12 +654,11 @@ class ScrollableSequenceView(QtGui.QScrollArea):
     self.setWindowTitle(QtCore.QString('Scrollable Local View'))
     self.updateHeight()
 
-  def setSequence(self, newSequence):
-    #self.globalView.setSequence(newSequence)
-    self.seqView.setSequence(newSequence)
-
-
   def updateHeight(self):
+    """
+This resizes the ScrollableSequenceView's height based on the size of 
+the SequenceView.
+    """
     scrollbar=self.horizontalScrollBar()
     scrollbarHeight=scrollbar.height()
     widgetHeight=self.widget().height#()
@@ -607,10 +670,10 @@ class ScrollableSequenceView(QtGui.QScrollArea):
 
 class GlobalSequenceView(QtGui.QWidget):
   """
-  This QWidget shows a pictographic representation of a chain, with blocks
-  for helices and arrows for strands.  It contains a SequenceView
-  QWidget Object, and updates the SequenceView to show the residues corresponding
-  to the selection on it, and vice versa.
+This QWidget shows a pictographic representation of a chain, with 
+blocks for helices and arrows for strands. It contains a SequenceView
+QWidget Object, and updates the SequenceView to show the residues 
+corresponding to the selection on it, and vice versa.
   """
   def __init__(self, structurePrediction, parent=None):
     super(GlobalSequenceView, self).__init__(parent)
@@ -629,6 +692,10 @@ class GlobalSequenceView(QtGui.QWidget):
     self.setWindowTitle(QtCore.QString('Global View'))
 
   def setStructurePrediction(self, newStructurePrediction):
+    """
+This sets the structure prediction used by the GlobalSequenceView, and
+updates its size based on the length of the sequence.
+    """
     self.structurePrediction = newStructurePrediction
     self.connect(self.structurePrediction.chain, QtCore.SIGNAL("selection updated"), self.__selectionUpdated)
     seqLength=len(self.structurePrediction.chain.residueRange())
@@ -757,6 +824,9 @@ class GlobalSequenceView(QtGui.QWidget):
 
 
 def renderCAlphas(chain):
+  '''
+top-level function for testing from a modified gorgon.pyw
+  '''
   for index in chain.residueRange():
     res=chain[index]
     if 'CA' in res.getAtomNames():
@@ -774,13 +844,23 @@ def renderCAlphas(chain):
               Chain.getViewer().renderer.addBond(bond)
 
 def renderMockSidechains(chain):
+    '''
+top-level function for testing from a modified gorgon.pyw
+    '''
     obj = StructureEditor(chain)
     obj.renderMockSidechains(chain)
 def clearMockSidechains(chain):
+    '''
+top-level function for testing from a modified gorgon.pyw
+    '''
     obj = StructureEditor(chain)
     obj.clearMockSidechains(chain)
 
 def tempZoomDialog(seqView, scrollArea):
+  '''
+This had been used to change font size in the scrollable view, 
+because that worked around a display bug at the time
+  '''
   plusButton=QtGui.QPushButton('+')
   plusButton.setMaximumWidth(50)
   plusButton.connect(plusButton, QtCore.SIGNAL("clicked()"), seqView.incrementPointSize)
@@ -809,7 +889,7 @@ def tempZoomDialog(seqView, scrollArea):
 
 if __name__ == '__main__':
     app = QtGui.QApplication(sys.argv)
-    groel = Chain.load('1KPO.pdb',app)
+    groel = Chain.load('groel.pdb',app)
     for residue in groel.residueRange()[80:-80]:
         groel[residue].clearAtoms()
 
