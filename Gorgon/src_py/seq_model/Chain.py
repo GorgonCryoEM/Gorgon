@@ -23,7 +23,8 @@ except:
 
 class Chain(baseClass):
   '''
-  Chain objects represent single polypeptide chains, which are sequences of Residue objects
+Chain objects represent single polypeptide chains, which are sequences
+of Residue objects
   '''
   chainsDict = {}
   __lastAuto_pdbID = 0
@@ -70,7 +71,9 @@ class Chain(baseClass):
   @classmethod
   def __createUniquePDBID(cls):
     '''
-    If no PDB ID is specified when creating a chain, this method will create one that is simply a number preceded by enough underscores to give a 4 character identifier.
+If no PDB ID is specified when creating a chain, this method will 
+create one that is simply a number preceded by enough underscores to
+give a 4 character identifier.
     '''
     #TODO:We might want to modify this to use any unused numbers (after a rename)
     pdbNum = cls.__lastAuto_pdbID + 1
@@ -83,6 +86,9 @@ class Chain(baseClass):
 
   @classmethod
   def __loadFromFASTA (cls,filename,qparent=None):
+    '''
+This creates a Chain object from a FASTA file.
+    '''
     infile=open(filename,'U')
     lines=infile.readlines()
 
@@ -102,7 +108,8 @@ class Chain(baseClass):
   @classmethod
   def __loadFromPDB (cls,filename,qparent=None, whichChainID=None):
     '''
-    This loads the specified chain ID from a PDF file and returns a Chain object.  If no chain ID is specified, it loads the first chain.
+This loads the specified chain ID from a PDF file and returns a Chain 
+object. If no chain ID is specified, it loads the first chain.
     '''
     #print Chain.getChainKeys()
     if qparent and qtEnabled:
@@ -178,19 +185,23 @@ class Chain(baseClass):
   @classmethod
   def __loadFromSeq(cls, filename, qparent=None):
         '''
-        Sequence files are a file type we defined.  The first line gives the one-letter abbreviations for the sequence.  
-        The line below it shows the predicted secondary structure element for each residue as "H" for helix, "E" for strand, and "-" otherwise.  
-        Ex 1:
-        GAPCSTLARFKEI
-        HHHHHH--EEEE
-        Ex 2:
-        START 45
-        SAPQRVPELYC
-        EEEHHHHHH-
-        
-        The first line may give a start residue (useful for post-translational modifications).  That line will be interpreted and removed.  
-        Linebreaks are then removed.  Finally, the first half of the remaining characters are interpreted as sequence, 
-        and the second half are treated as structure predictions.  
+Sequence files are a file type we defined. The first line gives the 
+one-letter abbreviations for the sequence. The line below it shows the
+predicted secondary structure element for each residue as "H" for
+helix, "E" for strand, and "-" otherwise.  
+Ex 1:
+GAPCSTLARFKEI
+HHHHHH--EEEE
+Ex 2:
+START 45
+SAPQRVPELYC
+EEEHHHHHH-
+
+The first line may give a start residue (useful for post-translational
+modifications). That line will be interpreted and removed. Linebreaks 
+are then removed. Finally, the first half of the remaining characters 
+are interpreted as sequence, and the second half are treated as 
+structure predictions.  
         '''
         F = open(filename)
         lines = []
@@ -269,7 +280,7 @@ class Chain(baseClass):
   @classmethod
   def __nextChainID(cls):
     '''
-    If a chain ID isn't specified, this function generatres one.
+If a chain ID isn't specified, this function generatres one.
     '''
     #TODO: make sure this will not eventually overwrite chain IDs from a PDB file that doesn't start at A.
     Chain.__lastChainID=Chain.__lastChainID+1
@@ -278,14 +289,16 @@ class Chain(baseClass):
   @classmethod
   def getChain(cls, key):
     '''
-    Given a key (which is a (pdbID, chainID) tuple), returns a chain object.  
+Given a (pdbID, chainID) key, returns a chain object.
     '''
     return cls.chainsDict.get(key)	#{}.get() can handle non-existent key errors
 
   @classmethod
   def getChainIDsFromPDB(cls, filename, qparent=None):
     """
-    This only finds the first list of chains in the PDB file.  If the file defines multiple molecules, this would only find the chains for the first one.
+This only finds the first list of chains in the PDB file.  If the file 
+defines multiple molecules, this would only find the chains for the 
+first one.
     """
     extension = filename.split('.')[-1].lower()
     if extension == 'pdb':
@@ -315,21 +328,22 @@ class Chain(baseClass):
   @classmethod
   def getChainKeys(cls):
       '''
-      This returns the keys (PDB ID, Chain ID) for all the chains loaded into memory.
+This returns the keys (PDB ID, Chain ID) for all the chains loaded into
+memory.
       '''
       return cls.chainsDict.keys()
 
   @classmethod
   def getViewer(cls):
     '''
-    returns the viewer associated with the chain class
+This returns the viewer associated with the chain class.
     '''
     return Chain.__viewer
 
   @classmethod
   def load (cls,filename,qparent=None, whichChainID=None):
     '''
-    This calls the correct load method based on the file extension.
+This calls the correct load method based on the file extension.
     '''
     extension = filename.split('.')[-1].lower()
     if extension == 'pdb':
@@ -344,7 +358,7 @@ class Chain(baseClass):
   @classmethod
   def loadAllChains(cls, filename, qparent=None):
     '''
-    This loads all the chains specified in a PDB file.  
+This loads all the chains specified in a PDB file.  
     '''
     chain = None
     pdbID = None
@@ -374,13 +388,17 @@ class Chain(baseClass):
   @classmethod
   def setViewer(cls, viewer):
     '''
-    This sets the viewer for the Chain class.
+This sets the viewer for the Chain class.
     '''
     Chain.__viewer=viewer
     
 
 
   def __convertNegativeIndex(self,i):
+    '''
+Makes indexing a Chain with a negative index behave similar to lists, 
+tuples, and strings. mychain[-1] returns the last residue of the chain.
+    '''
     return len(self)+i+1
 
   # my_chain[7] returns the seventh residue (assuming that indexing starts at 1
@@ -430,7 +448,7 @@ class Chain(baseClass):
   # len(my_chain) returns the length of residueList
   def __len__(self):
     '''
-    returns the length of the residueList
+This returns the length of the residueList.
     '''
     return_value= len(self.residueList)
     return return_value
@@ -502,7 +520,10 @@ class Chain(baseClass):
 
   def addCalphaBonds(self):
     '''
-    Adds the Calpha bonds for all the residues in a chain.  If there is a gap in the sequence of residues, this will not place a C-alpha bond--one doesn't want a bond between the 97th and 103rd residue.
+This adds the Calpha bonds for all the residues in a chain. If there is
+a gap in the sequence of residues, this will not place a C-alpha 
+bond.setAtom0Ix--one doesn't want a bond between the 97th and 103rd 
+residue.
     '''
     try: 
         viewer = Chain.getViewer()
@@ -524,21 +545,21 @@ class Chain(baseClass):
 
   def addSecel(self, secel):
     '''
-    adds a secel object to the chain
+This adds a secel object to the chain.
     '''
     for index in range(secel.startIndex, secel.stopIndex+1):
       self.secelList[index]=secel
 
   def addHelix(self, serialNo, helix):
     '''
-    adds a helix object to the chain
+This adds a helix object to the chain.
     '''
     self.helices[serialNo]=helix
     self.addSecel(helix)
 
   def addStrand(self, strand, strandNo, sheetID=None):
     '''
-    adds a strand object to the chain
+This adds a strand object to the chain.
     '''
     if sheetID is None:
       self.orphanStrands[strandNo]=strand
@@ -548,12 +569,15 @@ class Chain(baseClass):
 
   def addSheet(self, sheetID, sheet):
     '''
-    adds a sheet object to the chain
+This adds a sheet object to the chain.
     '''    
     if not self.sheets.has_key(sheetID):
       self.sheets[sheetID]=sheet
 
   def append(self,residue):
+    '''
+This appends a residue to the end of the Chain.
+    '''
     if len(self.residueList)==0:
       #self.residueList[1]=residue
       self.__setitem__(1,residue)
@@ -575,7 +599,7 @@ class Chain(baseClass):
 
   def findIndexForRes (self, inputRes):
     '''
-    Finds the index for a residue object.
+This finds the index for a residue object.
     '''
 #    Generator objects turn out to be a bit slower than the for loop, which surprises me (Ross).
 #    indexGenerator = (index for index in self.residueRange()[::-1] if self.residueList[index] is inputRes) #Generator Object
@@ -586,7 +610,8 @@ class Chain(baseClass):
     
   def fillGaps(self):
     '''
-    If there are missing residues in a chain, inserts "X" unknown residues.
+If there are missing residues in a chain, this inserts "X" for unknown
+residues.
     '''
     for i in self.residueRange():
       while i+1 not in self.residueRange():
@@ -600,14 +625,21 @@ class Chain(baseClass):
 
   def getIDs(self):
     """
-    Returns (pdbID, chainID) for a chain instance.
+This returns (pdbID, chainID) for a chain instance.
     """
     return (self.getPdbID(), self.getChainID())
 
   def getPdbID(self):
+    '''
+This returns the PDB ID for the Chain.
+    '''
     return self.pdbID
 
   def getSecelByIndex(self,i):
+    '''
+This returns the Secel present at residue number i, or a 
+single-residue Coil if no Secel is present at that residue number.
+    '''
     if self.secelList.has_key(i):
       return self.secelList[i]
     else:
@@ -615,12 +647,15 @@ class Chain(baseClass):
 
   def getSelection(self):
     '''
-    Returns the list of selected residues
-    The selection is a list object where each element is an index in the Chain
+This returns the list of selected residues. The selection is a list
+object where each element is an index in the Chain.
     '''
     return self.selectedResidues
 
   def removeSecel(self, secel):
+    '''
+This removes a Secel from the Chain.
+    '''
     type = secel.__class__.__name__
     if type == 'Helix':
         if secel in self.helices.values():
@@ -637,7 +672,7 @@ class Chain(baseClass):
     
   def residueRange(self):
     '''
-    Returns a list of all the residue numbers.
+This returns a list of all the residue numbers.
     '''
     return sorted(self.residueList.keys())
 
@@ -650,7 +685,7 @@ class Chain(baseClass):
 
   def setIDs(self, new_pdbID, new_chainID):
     """
-    Changes the pdbID and chainID attributes of a Chain instance.
+This changes the pdbID and chainID attributes of a Chain instance.
     """
     #### We need to figure out how to handle the possible exception
     assert (new_pdbID, new_chainID) != self.key
@@ -662,12 +697,13 @@ class Chain(baseClass):
 
   def setSelection(self, newSelection=None, removeOne=None, addOne=None, addRange=None):
     '''
-    Sets the selection attribute to reflect a new set of selected residues
-    The selection is a list object where each element is an index in the Chain
-      To REPLACE the existing selection use 'newSelection' parameter
-      To REMOVE ONE RESIDUE from the existing selection use 'removeOne' parameter
-      To ADD ONE RESIDUE to the existing selection use 'addOne' parameter
-      To ADD A RANGE OF RESIDUES to the existing selection use 'addRange' parameter
+Sets the selection attribute to reflect a new set of selected residues
+The selection is a list object of indices in the Chain
+  REPLACE the existing selection: 'newSelection' parameter
+  REMOVE ONE RESIDUE from the existing selection: 'removeOne' parameter
+  ADD ONE RESIDUE to the existing selection: use 'addOne' parameter
+  ADD A RANGE OF RESIDUES to the existing selection: use 'addRange' 
+  parameter
     '''
     if newSelection is not None:
       self.selectedResidues=newSelection
@@ -689,10 +725,13 @@ class Chain(baseClass):
   #Return a pdb-compliant string
   def toPDB(self, backboneOnly=False, CAlphaPlaceholders=True,  verbose=True): 
     """
-    This decomposes chain into constituent residues and atoms to render pdb coordinate model.
-    If backboneOnly=True, only C-alpha atoms are saved.  Otherwise, all atoms are saved.
-    If CAlphaPlaceholders=True, the PDB file will have 'CA' ATOM entries with whitespace where coordinates would go.
-    If CAlphaPlaceholders=False, residues with no atoms will be ignored.
+This decomposes chain into constituent residues and atoms to render pdb
+coordinate model.
+If backboneOnly=True, only C-alpha atoms are saved. Otherwise, all 
+atoms are saved.
+If CAlphaPlaceholders=True, the PDB file will have 'CA' ATOM entries
+with whitespace where coordinates would go.
+If CAlphaPlaceholders=False, residues with no atoms will be ignored.
     """
     #Change: uses a C-alpha placeholder atom entry with no x,y,z coordinates if the residue has no atoms
     #Not Thread-Safe
@@ -815,6 +854,9 @@ class Chain(baseClass):
     return s
     
   def toSEQ(self):
+    '''
+This returns a string in the format of an SEQ file for the Chain.
+    '''
     lines = []
     startIndex = min(self.residueRange())
     if startIndex != 1:

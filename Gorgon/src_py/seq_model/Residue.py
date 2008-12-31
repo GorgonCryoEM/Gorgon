@@ -77,7 +77,7 @@ class Residue:
             print "Residue.getAtom()--no %s atom." % atomName, 
     
     def addAtom(self, atomName, x, y, z, element=None, serialNo=None, occupancy=None, tempFactor=None ):
-        '''Adds a PDBAtom to the residue.'''
+        '''Adds a new PDBAtom to the residue.'''
         residueIndex=self.chain.findIndexForRes(self)
         rawAtom=PDBAtom(self.chain.getPdbID(), self.chain.getChainID() , residueIndex, atomName)
         rawAtom.setPosition(Vector3DFloat(x,y,z))
@@ -101,6 +101,7 @@ class Residue:
         return rawAtom
 
     def addAtomObject(self, atomObject):
+        '''Adds an existing PDBAtom object to the residue.'''
         atomName = atomObject.getName()
         self.__atoms[atomName] = atomObject
     
