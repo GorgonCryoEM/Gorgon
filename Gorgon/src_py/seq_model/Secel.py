@@ -14,6 +14,11 @@ except:
 
         
 class Secel(object):
+    """
+The Secel class stands for SECondary structure ELement, but doesn't use
+the common abbreviation SSE to distinguish it from other such classes. 
+It is subclassed by Helix, Strand, and Coil. 
+    """
     def __init__(self, chain, serialNo, label, startIndex, stopIndex, color=None):
         self.chain=chain    #Actual chain instance object
         self.serialNo=serialNo
@@ -42,9 +47,15 @@ class Secel(object):
         return "%s(%i,%i):%s" % (self.type, self.startIndex, self.stopIndex, residues)
     
     def getResidueCount(self):
+        """
+This returns the number of residues in the Secel object.
+        """
         return self.stopIndex - self.startIndex + 1
     
     def getLengthInAngstroms(self):
+        """
+This returns the length of the Secel in Angstroms.
+        """
         resCount = self.getResidueCount()
         if(self.type == "helix"):
             return resCount * 1.5
