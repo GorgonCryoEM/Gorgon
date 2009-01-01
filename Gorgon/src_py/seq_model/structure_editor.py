@@ -5,11 +5,10 @@
 
 from PyQt4 import QtGui, QtCore
 from libpyGORGON import PDBAtom, PDBBond, Vector3DFloat
-import sans_numpy as snum
 from seq_model.findHelixCalphas import helixEndpointsToCAlphaPositions
 from seq_model.Helix import Helix
 import math
-import vector_lib
+from vector_lib import *
 
 class StructureEditor(QtGui.QWidget):
     """
@@ -317,21 +316,21 @@ given by self.helixNtermSpinBox and self.helixCtermSpinBox.
         midpoint = observedHelix.getMidpoint()
         unitVector = observedHelix.getUnitVector()
         print 'unitVector', unitVector
-        structPredCoord1 = snum.vectorAdd( midpoint, snum.scalarTimesVector(-1*predHelix.getAngstromLength()/2, unitVector) )
-        structPredCoord2 = snum.vectorAdd( midpoint, snum.scalarTimesVector(predHelix.getAngstromLength()/2, unitVector) )
+        structPredCoord1 = vectorAdd( midpoint, vectorScalarMultiply(-1*predHelix.getLengthInAngstroms()/2, unitVector) )
+        structPredCoord2 = vectorAdd( midpoint, vectorScalarMultiply(predHelix.getLengthInAngstroms()/2, unitVector) )
         
         
         if direction == 0:
-            startMoveVector = snum.scalarTimesVector( moveStart, unitVector)
-            endMoveVector = snum.scalarTimesVector( moveEnd, unitVector)
-            coord1 = snum.vectorAdd(structPredCoord1, startMoveVector)
-            coord2 = snum.vectorAdd(structPredCoord2, endMoveVector)
+            startMoveVector = vectorScalarMultiply( moveStart, unitVector)
+            endMoveVector = vectorScalarMultiply( moveEnd, unitVector)
+            coord1 = vectorAdd(structPredCoord1, startMoveVector)
+            coord2 = vectorAdd(structPredCoord2, endMoveVector)
             helix.setAxisPoints(coord1, coord2)
         elif direction == 1:
-            startMoveVector = snum.scalarTimesVector( -1*moveStart, unitVector)
-            endMoveVector = snum.scalarTimesVector( -1*moveEnd, unitVector)
-            coord1 = snum.vectorAdd(structPredCoord1, endMoveVector)
-            coord2 = snum.vectorAdd(structPredCoord2, startMoveVector)
+            startMoveVector = vectorScalarMultiply( -1*moveStart, unitVector)
+            endMoveVector = vectorScalarMultiply( -1*moveEnd, unitVector)
+            coord1 = vectorAdd(structPredCoord1, endMoveVector)
+            coord2 = vectorAdd(structPredCoord2, startMoveVector)
             helix.setAxisPoints(coord1, coord2)
         
         helixCoordList = helixEndpointsToCAlphaPositions(coord1, coord2)
@@ -439,7 +438,7 @@ bonds are created only if the length of the new bond would be <= 4.2 A.
             atomStart1 = chain[helix.startIndex].getAtom('CA')
             if atomStart0 and atomStart1:
             	disp = atomStart1.getPosition() - atomStart0.getPosition()
-                distance = vector_lib.vectorSize( (disp.x(), disp.y(), disp.z()) )
+                distance = vectorSize( (disp.x(), disp.y(), disp.z()) )
                 if distance <= 4.2:
                     startBond = PDBBond()
                     startBond.setAtom0Ix(atomStart0.getHashKey())
@@ -450,7 +449,7 @@ bonds are created only if the length of the new bond would be <= 4.2 A.
             atomStop1 = chain[helix.stopIndex+1].getAtom('CA')
             if atomStop0 and atomStop1:
                 disp = atomStop0.getPosition() - atomStop1.getPosition()
-                distance = vector_lib.vectorSize( (disp.x(), disp.y(), disp.z()) )
+                distance = vectorSize( (disp.x(), disp.y(), disp.z()) )
                 if distance <= 4.2:
                     stopBond = PDBBond()
                     stopBond.setAtom0Ix(atomStop0.getHashKey())
