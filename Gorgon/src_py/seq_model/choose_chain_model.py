@@ -9,6 +9,10 @@ from seq_model.ui_dialog_choose_chain_model import Ui_DialogChooseChainModel
 from seq_model.Chain import Chain
 
 class ChooseChainModel(QtGui.QWidget):
+    """
+This widget displays the loaded chain models and allows the user to
+switch between models.
+    """
     def __init__(self, parent=None):
         super(ChooseChainModel, self).__init__(parent)
         self.app = parent
@@ -20,6 +24,10 @@ class ChooseChainModel(QtGui.QWidget):
         self.connect(self.ui.chainModelsListWidget, QtCore.SIGNAL("currentTextChanged (const QString&)"), self.modelHighlighted)
     
     def acceptButtonPress(self):
+        """
+This function makes the highlighted model the current model. (Not yet 
+implemented.)
+        """
         pass
         
     def createActions(self):
@@ -46,9 +54,17 @@ class ChooseChainModel(QtGui.QWidget):
         self.ui.acceptPushButton.setEnabled(False)
     
     def dockVisibilityChanged(self, visible):
+        """
+This sets the checkmark in the menu to indicate whether this widget is 
+visible.
+        """
         self.app.actions.getAction("perform_chooseModel").setChecked(visible)
     
     def loadWidget(self):
+        """
+This refreshes the information in this widget and displays the widget, 
+unless its menu item is unchecked, in which case it hides the widget.
+        """
         if self.app.actions.getAction("perform_chooseModel").isChecked():
             self.app.addDockWidget(QtCore.Qt.RightDockWidgetArea, self.dock)
             self.refresh()
@@ -57,6 +73,10 @@ class ChooseChainModel(QtGui.QWidget):
             self.app.removeDockWidget(self.dock)
     
     def modelHighlighted(self, chainQString):
+        """
+This responds to a model being highlighted by displaying the sequence
+of that model.
+        """
         currText = str(chainQString)
         currChainKey = tuple( currText.split(' - ') )
         currChain = Chain.getChain(currChainKey)
@@ -64,6 +84,9 @@ class ChooseChainModel(QtGui.QWidget):
         self.ui.sequenceTextEdit.setText(text)
         
     def refresh(self):
+        """
+This updates the list of chain models that are in memory. 
+        """
         self.ui.chainModelsListWidget.clear()
         chainKeys = Chain.getChainKeys()
         for key in chainKeys:
