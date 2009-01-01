@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.28  2008/12/16 23:48:56  colemanr
+#   Adding a dock widget to choose between different working models of a structure (different chain objects).
+#
 #   Revision 1.27  2008/12/02 21:08:50  colemanr
 #   Added a file-export menu with an option that will create PDB files that do not have ATOM entries with blank coordinates.
 #
@@ -137,6 +140,9 @@ class CAlphaViewer(BaseViewer):
       
 
     def centerOnSelectedAtoms(self, *argv):
+        """
+This centers the CAMERA on the last selected atom.
+        """
                 
         if not argv:
             chain = self.main_chain
@@ -228,6 +234,11 @@ class CAlphaViewer(BaseViewer):
         self.app.actions.addAction("seqDock", seqDockAct)
         
     def loadData(self):
+        """
+This overwrites the function inherited from BaseViewer. It prompts the
+user for which chain to load. It creates a Chain object and shows any
+atoms in the CAlphaViewer.
+        """
         #Overwriting the function in BaseViewer
         self.loaded = False #We want to load a chain to the screen each time
         self.fileName = QtGui.QFileDialog.getOpenFileName(self, self.tr("Open Data"), "", 
@@ -273,6 +284,9 @@ class CAlphaViewer(BaseViewer):
                 self.emitViewerSetCenter()
     
     def loadSeq(self):
+        """
+This function loads a SEQ file and creates a StructurePrediction object.
+        """
         fileName = QtGui.QFileDialog.getOpenFileName( self, self.tr('Open Sequence'), '', 
                                             self.tr('Sequence possibly with SSE predictions (*.seq)') )
         fileName = str(fileName)
@@ -314,6 +328,10 @@ class CAlphaViewer(BaseViewer):
                 raise Exception("Unable to call renderer.select method due as there are too many levels in the hit stack")
     '''
     def processElementClick(self, *argv):
+        """
+In response to a click on a C-alpha element, this updates the selected
+residues in the Chain object.
+        """
         if argv[0]: #argv[0] is 0 for a click on an atom
             return
         hits = argv[:-1]
@@ -335,6 +353,10 @@ class CAlphaViewer(BaseViewer):
                 print self.main_chain.getSelection()
     
     def exportData(self):
+        """
+This saves the current chain model to a PDB file with no "ATOM" lines
+for atoms that have not been placed.
+        """
         self.fileName = QtGui.QFileDialog.getSaveFileName(self, self.tr("Save Data"), "", 
                                                           self.tr('Atom Positions (*.pdb)'))
         if not self.fileName.isEmpty():
@@ -348,6 +370,13 @@ class CAlphaViewer(BaseViewer):
             self.setCursor(QtCore.Qt.ArrowCursor)
     
     def saveData(self):
+        """
+This saves the current chain model to a PDB file with 'ATOM' lines that
+have no coordinates for atoms that have not been placed. These 
+non-standard ATOM lines serve as placeholders so the entire sequence of
+the chain is known including residue numbers ('SEQRES' does not give a 
+starting residue number).
+        """
         self.fileName = QtGui.QFileDialog.getSaveFileName(self, self.tr("Save Data"), "", 
                                                           self.tr('Atom Positions (*.pdb)'))
         if not self.fileName.isEmpty():
@@ -357,12 +386,18 @@ class CAlphaViewer(BaseViewer):
             self.dirty = False
             self.setCursor(QtCore.Qt.ArrowCursor)
     
-    def updateActionsAndMenus(self):        
+    def updateActionsAndMenus(self):
+        """
+If a C-alpha model is loaded, this enables relevent actions.
+        """
         self.app.actions.getAction("save_CAlpha").setEnabled(self.loaded)
         self.app.actions.getAction("unload_CAlpha").setEnabled(self.loaded)
 
 
 class WhichChainToLoad(QtGui.QDialog):
+    """
+This dialog prompts the user for which chain to load.
+    """
     def __init__(self, fileName, parent=None):
         super(WhichChainToLoad, self).__init__(parent)
         message = QtGui.QLabel('Which chain do you want to load?')
@@ -381,6 +416,8 @@ class WhichChainToLoad(QtGui.QDialog):
         self.connect(buttonBox, QtCore.SIGNAL('accepted()'), self, QtCore.SLOT('accept()'))
         self.connect(buttonBox, QtCore.SIGNAL('rejected()'), self, QtCore.SLOT('reject()'))
     def accept(self):
+        """
+This function loads the selected chain(s).
+        """
         self.whichChainID = str( self.chainIDList.currentItem().text() )
         QtGui.QDialog.accept(self)
-             
