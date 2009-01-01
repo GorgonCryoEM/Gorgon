@@ -8,3 +8,10 @@ Helix.pyc
 Residue.pyc
 Secel.pyc
 Sheet.pyc
+SeqModelTests.pyc
+SequenceView.pyc
+choose_chain_model.pyc
+findHelixCalphas.pyc
+structure_editor.pyc
+ui_dialog_choose_chain_model.pyc
+
