@@ -11,6 +11,10 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.19  2008/12/19 23:00:54  colemanr
+#   In response to the signal elementSelected, SSE viewer saves the current match between an observed and predicted helix
+#   if the selected element is a helix.  If it is a helix, the SSE viewer emits "SSE selected"
+#
 #   Revision 1.18  2008/12/18 20:15:23  ssa1
 #   Adding sequence predictor
 #
@@ -142,6 +146,11 @@ class SSEViewer(BaseViewer):
         self.app.actions.getAction("unload_SSE").setEnabled(self.loaded)
     
     def updateCurrentMatch(self, sseType, sseIndex):
+        """
+When an element is selected in this viewer, if that item is a helix, 
+this sets self.currentMatch to the observed, predicted match for that
+helix. It then emits an 'SSE selected' signal. 
+        """
         self.currentMatch = None
         if sseType == 0:
             print 'helix'
