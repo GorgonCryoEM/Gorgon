@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.33  2008/12/02 21:11:32  colemanr
+#   Set Alt+h to launch this form.
+#
 #   Revision 1.32  2008/12/02 03:27:05  ssa1
 #   putting glpushattrib and glpopattrib when setting colors
 #
@@ -110,7 +113,7 @@ from correspondence.ObservedSheet import ObservedSheet
 from correspondence.StructureObservation import StructureObservation
 from correspondence.StructurePrediction import StructurePrediction
 from seq_model.Helix import Helix
-import sans_numpy as snum
+from vector_lib import *
 
 from OpenGL.GL import *
 from OpenGL.GLU import *
@@ -198,6 +201,9 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
         self.checkOk()
         
     def getSequenceFile(self):
+        """
+This loads a SEQ file or, for testing purposes, a PDB file.
+        """
         self.ui.lineEditSequenceFile.setText(self.openFile("Load Helix Length File", "Sequence with SSE predictions (*.seq)\nPDB Helix Annotations (*.pdb)"))
         self.checkOk()
     
@@ -375,13 +381,16 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
         sheetCount = 0
         sseCount = self.viewer.correspondenceEngine.getSkeletonSSECount()
         for sseIx in range(sseCount):
-            cppSse = self.viewer.correspondenceEngine.getSkeletonSSE(sseIx)        
+            cppSse = self.viewer.correspondenceEngine.getSkeletonSSE(sseIx)
+            
+            #TODO: check whether these should be getCornerCell3(...
             p1 = cAlphaViewer.worldToObjectCoordinates(skeletonViewer.objectToWorldCoordinates(vector3DFloatToTuple(cppSse.getCornerCell2(1))))
             p2 = cAlphaViewer.worldToObjectCoordinates(skeletonViewer.objectToWorldCoordinates(vector3DFloatToTuple(cppSse.getCornerCell2(2))))
+            
             q1 = cAlphaViewer.worldToObjectCoordinates(sseViewer.objectToWorldCoordinates(vector3DFloatToTuple(cppSse.getCornerCell3(1))))
             q2 = cAlphaViewer.worldToObjectCoordinates(sseViewer.objectToWorldCoordinates(vector3DFloatToTuple(cppSse.getCornerCell3(2))))
-            if snum.vectorMagnitude(snum.vectorAdd(p1, snum.scalarTimesVector(-1, q1))) > snum.vectorMagnitude(
-                                    snum.vectorAdd(p1, snum.scalarTimesVector(-1, q2))): #to get proper orientation
+            if vectorSize(vectorAdd(p1, vectorScalarMultiply(-1, q1))) > vectorSize(
+                                    vectorAdd(p1, vectorScalarMultiply(-1, q2))): #to get proper orientation
                 q1, q2 = q2, q1 #python trick for exchanging values
             
             if cppSse.isHelix():            
