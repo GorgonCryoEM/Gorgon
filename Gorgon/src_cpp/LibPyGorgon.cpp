@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.45  2008/12/15 22:38:31  ssa1
+//   Adding in support to load RAW volumes
+//
 //   Revision 1.44  2008/12/02 21:25:44  ssa1
 //   adding getBondIndex method to give access to bonds
 //
@@ -85,6 +88,12 @@
 
 #define _CRT_SECURE_NO_DEPRECATE 1
 #define _CRT_NONSTDC_NO_DEPRECATE 1
+
+#ifndef GL_GLEXT_PROTOTYPES
+	#ifdef __linux
+		#define GL_GLEXT_PROTOTYPES
+	#endif
+#endif
 
 #include <Gorgon/SSECorrespondenceEngine.h>
 #include <Gorgon/VolumeRenderer.h>
