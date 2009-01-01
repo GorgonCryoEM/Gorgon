@@ -26,6 +26,10 @@ class Helix(Secel):
 
     @classmethod
     def parsePDB(cls,line,chain):
+        """
+Given a line of a PDB file and a chain, this builds a Helix and adds it
+to the chain. 
+        """
         serialNo     =         int(line[7:10].strip())
         helixID     =     line[11:14].strip()
         #chainID     =         line[19:20]
@@ -61,18 +65,25 @@ class Helix(Secel):
                 CAatom.setResSeq(self.startIndex+i)
                 self.chain[self.startIndex+i].addAtomObject(CAatom)
             i += 1
-        
-    def getAngstromLength(self):
-        return 1.5*(1+self.stopIndex-self.startIndex)
     
     def getAxisPoints(self):
+        """
+This returns a tuple of the coordinates for the two endpoints of the 
+helical axis.
+        """
         return (self.axisPoint1, self.axisPoint2)
     
     def setAxisPoints(self, point1, point2):
+        """
+This sets the coordinates for the two endpoints of the helical axis.
+        """
         self.axisPoint1 = point1
         self.axisPoint2 = point2
     
     def toPDB(self):
+        """
+This returns a "HELIX" line of this helix for a PDB file.
+        """
         Helix.serialNo=Helix.serialNo+1
         init_res_name=self.chain.residueList[self.startIndex].symbol3
         init_chainID=self.chain.chainID
