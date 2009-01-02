@@ -570,8 +570,11 @@ selection's geometric center.
         cAlphaRenderer = self.app.viewers['calpha'].renderer
         cm = cAlphaRenderer.selectionCenterOfMass()
         self.x = cm.x()
+        print cm.x()
         self.y = cm.y()
+        print cm.y()
         self.z = cm.z()
+        print cm.z()
         self.posMoveDict['x'].setValue(cm.x())
         self.posMoveDict['y'].setValue(cm.y())
         self.posMoveDict['z'].setValue(cm.z())
@@ -1076,11 +1079,12 @@ Cterm spin boxes in the helix editor.
         """
 This gets the selected residues from the current chain model, and sends
 that list of residue indices to self.setResidues to update the current 
-residue in the atomic editor.
+residue in the atomic editor. It also updates the positions in the
+position editor.
         """
         print '\nIn updateSelectedResidues'
-        if self.tabWidget.currentWidget() is self.atomicTab:
-            self.setResidues(self.currentChainModel.getSelection())
+        self.setResidues(self.currentChainModel.getSelection())
+        self.posUpdateValues()
         
 class CommandAcceptAtomPlacement(QtGui.QUndoCommand):
     """
