@@ -5,11 +5,11 @@ MARK_AS_ADVANCED(CLEAR CMAKE_VERBOSE_MAKEFILE)
 OPTION(CMAKE_VERBOSE_MAKEFILE "if all commands will be echoed to the console during the make" ON)
 OPTION(ENABLE_PYTHON "enable boost python support" ON)
 
-SET(GORGON_INSTALL_PREFIX /data2/gtang/Gorgon CACHE PATH "installation prefix")
+SET(GORGON_INSTALL_PREFIX $ENV{HOME}/Gorgon CACHE PATH "installation prefix")
 SET(CMAKE_INSTALL_PREFIX ${GORGON_INSTALL_PREFIX} CACHE INTERNAL "installation prefix")
 MARK_AS_ADVANCED(CLEAR GORGON_INSTALL_PREFIX)
 
-SET(LIBRARY_OUTPUT_PATH ${EMAN_INSTALL_PREFIX}/lib CACHE PATH "output directory for building all libraries.")
+SET(LIBRARY_OUTPUT_PATH ${GORGON_INSTALL_PREFIX}/lib CACHE PATH "output directory for building all libraries.")
 
 IF(CMAKE_COMPILER_IS_GNUCXX)
     #SET(EMAN_CXX_FLAGS "-Wall -Werror" CACHE INTERNAL "EMAN CXX FLAGS")
