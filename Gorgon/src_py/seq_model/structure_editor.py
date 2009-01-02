@@ -1090,15 +1090,13 @@ class CommandAcceptAtomPlacement(QtGui.QUndoCommand):
     """
 This class creates the QUndoCommand objects for the undo/redo stack.
     """
-    def __init__(self, currentChainModel, structureEditor, resSeqNum, chosenCoordinates, viewer, bondBefore=None, bondAfter=None, description=None):
+    def __init__(self, currentChainModel, structureEditor, resSeqNum, chosenCoordinates, viewer, description=None):
         super(CommandAcceptAtomPlacement, self).__init__(description)
         self.currentChainModel = currentChainModel
         self.structureEditor = structureEditor
         self.resSeqNum = resSeqNum
         self.chosenCoordinates = chosenCoordinates
         self.viewer = viewer
-        self.bondBefore = bondBefore
-        self.bondAfter = bondAfter
     def redo(self):
         """
 In addition to being called to redo an action, this is called the first
@@ -1111,25 +1109,27 @@ time the action occurs.
         print atom
         self.currentChainModel[self.resSeqNum].addAtomObject(atom)
         self.currentChainModel[self.resSeqNum].setCAlphaColorToDefault() 
+        bondBefore = None
+        bondAfter = None
         if self.resSeqNum - 1 in self.currentChainModel.residueRange():
             prevCAlpha = self.currentChainModel[self.resSeqNum - 1].getAtom('CA')
             if prevCAlpha:
                 print "adding a bond before"
-                self.bondBefore=PDBBond()
-                self.bondBefore.setAtom0Ix(prevCAlpha.getHashKey())
-                self.bondBefore.setAtom1Ix(atom.getHashKey())
+                bondBefore=PDBBond()
+                bondBefore.setAtom0Ix(prevCAlpha.getHashKey())
+                bondBefore.setAtom1Ix(atom.getHashKey())
         if self.resSeqNum + 1 in self.currentChainModel.residueRange():
             nextCAlpha = self.currentChainModel[self.resSeqNum + 1].getAtom('CA')
             if nextCAlpha:
                 print "adding a bond after"
-                self.bondAfter = PDBBond()
-                self.bondAfter.setAtom0Ix(nextCAlpha.getHashKey())
-                self.bondAfter.setAtom1Ix(atom.getHashKey())
+                bondAfter = PDBBond()
+                bondAfter.setAtom0Ix(nextCAlpha.getHashKey())
+                bondAfter.setAtom1Ix(atom.getHashKey())
         
-        if self.bondBefore:
-            self.viewer.renderer.addBond(self.bondBefore)
-        if self.bondAfter:
-            self.viewer.renderer.addBond(self.bondAfter)
+        if bondBefore:
+            self.viewer.renderer.addBond(bondBefore)
+        if bondAfter:
+            self.viewer.renderer.addBond(bondAfter)
         
         self.viewer.emitModelChanged()
         self.structureEditor.atomJustAdded = atom
@@ -1142,17 +1142,28 @@ time the action occurs.
     def undo(self):
         print self.structureEditor.atomJustAdded
         atom = self.currentChainModel[self.resSeqNum].getAtom('CA')
+        
+        try:
+            atomBefore = self.currentChainModel[self.resSeqNum-1].getAtom('CA')
+        except (IndexError, AttributeError, KeyError):
+            atomBefore = None
+        try:
+            atomAfter = self.currentChainModel[self.resSeqNum+1].getAtom('CA')
+        except (IndexError, AttributeError, KeyError):
+            atomAfter = None
+        
+        if atomBefore:
+            bondBeforeIx = self.viewer.renderer.getBondIndex(atomBefore.getHashKey(), atom.getHashKey())
+            self.viewer.renderer.deleteBond(bondBeforeIx)
+            pass
+        if atomAfter:
+            bondAfterIx = self.viewer.renderer.getBondIndex(atomAfter.getHashKey(), atom.getHashKey())
+            self.viewer.renderer.deleteBond(bondAfterIx)
+            pass
+            
         self.currentChainModel[self.resSeqNum].clearAtom('CA')
         self.viewer.renderer.deleteAtom(atom.getHashKey())
         
-        if self.bondBefore:
-            numBonds = self.viewer.renderer.getBondCount()
-            self.viewer.renderer.deleteBond(numBonds-1)
-            pass
-        if self.bondAfter:
-            numBonds = self.viewer.renderer.getBondCount()
-            self.viewer.renderer.deleteBond(numBonds-1)
-            pass
         self.viewer.emitModelChanged()
         
         if self.structureEditor.atomicBackwardRadioButton.isChecked():
