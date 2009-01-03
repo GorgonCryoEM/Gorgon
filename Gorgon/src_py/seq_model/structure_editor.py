@@ -43,8 +43,8 @@ position editor, etc.
         self.connect(self.acceptButton, QtCore.SIGNAL('clicked()'),  self.acceptButtonPress)
         self.connect(self.atomicPossibilityNumSpinBox,  QtCore.SIGNAL('valueChanged(int)'),  self.atomChoosePossibleAtom)
         self.connect(self.atomicForwardRadioButton,  QtCore.SIGNAL('toggled(bool)'), self.atomForwardBackwardChange)
-        self.connect(self.undoButton,  QtCore.SIGNAL('clicked()'), self.undoStack.undo)
-        self.connect(self.redoButton,  QtCore.SIGNAL('clicked()'), self.undoStack.redo)
+        self.connect(self.undoButton, QtCore.SIGNAL('clicked()'), self.undoStack.undo)
+        self.connect(self.redoButton, QtCore.SIGNAL('clicked()'), self.undoStack.redo)
         self.connect(self.helixDecreasePositionButton, QtCore.SIGNAL('clicked()'), self.helixDecreaseButtonPress)
         self.connect(self.helixIncreasePositionButton, QtCore.SIGNAL('clicked()'), self.helixIncreaseButtonPress)
         self.connect(self.helixFlipButton, QtCore.SIGNAL('clicked()'), self.helixFlipButtonPress)
@@ -72,23 +72,7 @@ on which tab is active.
         print '\nAccept Button Pressed'
         currentWidget = self.tabWidget.currentWidget()
         if currentWidget is self.atomicTab:
-            possibilityNum = self.atomicPossibilityNumSpinBox.value()
-            chosenAtom = self.possibleAtomsList[possibilityNum-1]
-            #self.parentWidget()=>SequenceWidget, self.parentWidget().parentWidget() => SequenceDock
-            viewer = self.parentWidget().parentWidget().viewer
-            for atom in self.possibleAtomsList:
-                if atom is chosenAtom:
-                    chosenCoordinates = chosenAtom.getPosition()
-                viewer.renderer.deleteAtom(atom.getHashKey())
-                del atom
-            self.possibleAtomsList = []
-            if self.atomicBackwardRadioButton.isChecked():
-                resSeqNum = int(self.atomicResNumbers[-1].text())
-            elif self.atomicForwardRadioButton.isChecked():
-                resSeqNum = int(self.atomicResNumbers[1].text())
-            command = CommandAcceptAtomPlacement( self.currentChainModel, self, resSeqNum, chosenCoordinates, viewer,  
-                                description = "Accept Location of C-alpha atom for residue #%s" % resSeqNum )
-            self.undoStack.push(command)
+            self.atomPlaceCAatom()
         elif currentWidget is self.helixTab:
             self.helixCreateCAhelix()
     
@@ -233,6 +217,25 @@ This moves to the next residue and updates the selected residue.
             self.parentWidget().scrollable.seqView.setSequenceSelection(newSelection)
             #self.setResidues(newSelection)
     
+    def atomPlaceCAatom(self):
+            possibilityNum = self.atomicPossibilityNumSpinBox.value()
+            chosenAtom = self.possibleAtomsList[possibilityNum-1]
+            #self.parentWidget()=>SequenceWidget, self.parentWidget().parentWidget() => SequenceDock
+            viewer = self.parentWidget().parentWidget().viewer
+            for atom in self.possibleAtomsList:
+                if atom is chosenAtom:
+                    chosenCoordinates = chosenAtom.getPosition()
+                viewer.renderer.deleteAtom(atom.getHashKey())
+                del atom
+            self.possibleAtomsList = []
+            if self.atomicBackwardRadioButton.isChecked():
+                resSeqNum = int(self.atomicResNumbers[-1].text())
+            elif self.atomicForwardRadioButton.isChecked():
+                resSeqNum = int(self.atomicResNumbers[1].text())
+            command = CommandAcceptAtomPlacement( self.currentChainModel, self, resSeqNum, chosenCoordinates, viewer,  
+                                description = "Accept Location of C-alpha atom for residue #%s" % resSeqNum )
+            self.undoStack.push(command)
+            
     def atomPrevButtonPress(self):
         """
 This moves to the previous residue and updates the selected residue.
@@ -275,8 +278,8 @@ This is used for not-yet-implemented and non-applicable widgets.
             self.CAlabel.setEnabled(False)
             self.acceptButton.setEnabled(True)
             self.removeButton.setEnabled(True)
-            self.redoButton.setEnabled(False)
-            self.undoButton.setEnabled(False)
+            self.redoButton.setEnabled(True)
+            self.undoButton.setEnabled(True)
         elif currentTab is self.loopTab:
             self.CAdoubleSpinBox.setEnabled(False)
             self.CAlabel.setEnabled(False)
@@ -306,9 +309,6 @@ given by self.helixNtermSpinBox and self.helixCtermSpinBox.
         if observedHelix.__class__.__name__ != 'ObservedHelix':
             raise TypeError, observedHelix.__class__.__name__
             
-        helix = Helix(self.currentChainModel, predHelix.serialNo,  predHelix.label, startIndex, stopIndex)
-        self.currentChainModel.addHelix(predHelix.serialNo, helix)
-        
         moveStart = 1.5*(startIndex - predHelix.startIndex)
         print 'moveStart', moveStart
         moveEnd = 1.5*(stopIndex - predHelix.stopIndex)
@@ -318,58 +318,20 @@ given by self.helixNtermSpinBox and self.helixCtermSpinBox.
         print 'unitVector', unitVector
         structPredCoord1 = vectorAdd( midpoint, vectorScalarMultiply(-1*predHelix.getLengthInAngstroms()/2, unitVector) )
         structPredCoord2 = vectorAdd( midpoint, vectorScalarMultiply(predHelix.getLengthInAngstroms()/2, unitVector) )
-        
-        
+                
         if direction == 0:
             startMoveVector = vectorScalarMultiply( moveStart, unitVector)
             endMoveVector = vectorScalarMultiply( moveEnd, unitVector)
             coord1 = vectorAdd(structPredCoord1, startMoveVector)
             coord2 = vectorAdd(structPredCoord2, endMoveVector)
-            helix.setAxisPoints(coord1, coord2)
         elif direction == 1:
             startMoveVector = vectorScalarMultiply( -1*moveStart, unitVector)
             endMoveVector = vectorScalarMultiply( -1*moveEnd, unitVector)
             coord1 = vectorAdd(structPredCoord1, endMoveVector)
             coord2 = vectorAdd(structPredCoord2, startMoveVector)
-            helix.setAxisPoints(coord1, coord2)
-        
-        helixCoordList = helixEndpointsToCAlphaPositions(coord1, coord2)
-        print helixCoordList                
-        
-        '''
-        #To see the ends of the helical axis as green and red atoms
-        startAtom = PDBAtom('AAAA', 'A', 100000, 'CA')
-        startAtom.setPosition(Vector3DFloat(*coord1))
-        startAtom.setColor(0, 1, 0, 1)
-        startAtom = self.CAlphaViewer.renderer.addAtom(startAtom)
-        stopAtom = startAtom = PDBAtom('AAAA', 'A', 100001, 'CA')
-        stopAtom.setPosition(Vector3DFloat(*coord2))
-        stopAtom.setColor(1, 0, 0, 1)        
-        stopAtom = self.CAlphaViewer.renderer.addAtom(stopAtom)
-        '''
-        
-        for i in range(len(helixCoordList)):
-            pos = helixCoordList[i]
-            residue = self.currentChainModel[startIndex+i]
-            rawAtom = residue.addAtom('CA', pos[0], pos[1], pos[2], 'C')
-            atom = self.CAlphaViewer.renderer.addAtom(rawAtom)
-            residue.addAtomObject(atom)
-            atom.setSelected(True)
-            if i != 0:
-                prevAtom = self.currentChainModel[startIndex+i-1].getAtom('CA')
-                bond = PDBBond()
-                bond.setAtom0Ix(prevAtom.getHashKey())
-                bond.setAtom1Ix(atom.getHashKey())
-                self.CAlphaViewer.renderer.addBond(bond)
-        
-        self.currentChainModel.setSelection(newSelection = range(helix.startIndex, 1+helix.stopIndex))
-        print helix
-        if not self.CAlphaViewer.loaded:
-            self.CAlphaViewer.loaded = True
-            self.CAlphaViewer.emitModelLoaded()
-        else:
-            self.CAlphaViewer.emitModelChanged()
-        
+                
+        command = CommandPlaceHelix(self.currentChainModel, predHelix, startIndex, stopIndex, coord1, coord2, self, description = "Create C-alpha helix")
+        self.undoStack.push(command)        
 
     def helixDecreaseButtonPress(self):
         """
@@ -1170,7 +1132,123 @@ time the action occurs.
             self.structureEditor.atomNextButtonPress()
         elif self.structureEditor.atomicForwardRadioButton.isChecked():
             self.structureEditor.atomPrevButtonPress()
+#command = CommandPlaceHelix(currentChainModel, predHelix, startIndex, stopIndex, coord1, coord2, self, description = "Create C-alpha helix")
+class CommandPlaceHelix(QtGui.QUndoCommand):
+    """
+This class creates the QUndoCommand objects for the undo/redo stack.
+    """
+    def __init__(self, currentChainModel, predHelix, startIndex, stopIndex, coord1, coord2, structureEditor, description=None):
+        super(CommandPlaceHelix, self).__init__(description)
+        self.currentChainModel = currentChainModel
+        self.predHelix = predHelix
+        self.startIndex = startIndex
+        self.stopIndex = stopIndex
+        self.coord1 = coord1
+        self.coord2 = coord2
+        self.structureEditor = structureEditor
+        self.CAlphaViewer = self.structureEditor.CAlphaViewer
+    
+    def redo(self):
+        self.helix = Helix(self.currentChainModel, self.predHelix.serialNo, self.predHelix.label, self.startIndex, self.stopIndex)
+        self.currentChainModel.addHelix(self.predHelix.serialNo, self.helix)
+        self.helix.setAxisPoints(self.coord1, self.coord2)
+        
+        helixCoordList = helixEndpointsToCAlphaPositions(self.coord1, self.coord2)
+        print helixCoordList                
+        
+        '''
+        #To see the ends of the helical axis as green and red atoms
+        startAtom = PDBAtom('AAAA', 'A', 100000, 'CA')
+        startAtom.setPosition(Vector3DFloat(*coord1))
+        startAtom.setColor(0, 1, 0, 1)
+        startAtom = self.CAlphaViewer.renderer.addAtom(startAtom)
+        stopAtom = startAtom = PDBAtom('AAAA', 'A', 100001, 'CA')
+        stopAtom.setPosition(Vector3DFloat(*coord2))
+        stopAtom.setColor(1, 0, 0, 1)        
+        stopAtom = self.CAlphaViewer.renderer.addAtom(stopAtom)
+        '''
+        
+        for i in range(len(helixCoordList)):
+            pos = helixCoordList[i]
+            residue = self.currentChainModel[self.startIndex+i]
+            rawAtom = residue.addAtom('CA', pos[0], pos[1], pos[2], 'C')
+            atom = self.CAlphaViewer.renderer.addAtom(rawAtom)
+            residue.addAtomObject(atom)
+            atom.setSelected(True)
+            try:
+                prevAtom = self.currentChainModel[self.startIndex+i-1].getAtom('CA')
+                bond = PDBBond()
+                bond.setAtom0Ix(prevAtom.getHashKey())
+                bond.setAtom1Ix(atom.getHashKey())
+                self.CAlphaViewer.renderer.addBond(bond)
+            except (KeyError, IndexError, AttributeError):
+                continue
+
+        try:
+            nextAtom = self.currentChainModel[self.startIndex+len(helixCoordList)]
+            bond = PDBBond()
+            bond.setAtom0Ix(atom.getHashKey())
+            bond.setAtom1Ix(nextAtom.getHashKey())
+            self.CAlphaViewer.renderer.addBond(bond)
+        except (KeyError, IndexError, AttributeError):
+            pass
+        
+        self.currentChainModel.setSelection(newSelection = range(self.startIndex, 1+self.stopIndex))
+        print self.helix
+        
+        if not self.CAlphaViewer.loaded:
+            self.CAlphaViewer.loaded = True
+            self.CAlphaViewer.emitModelLoaded()
+        else:
+            self.CAlphaViewer.emitModelChanged()
+        
+    def undo(self):
+        for resNum in range(self.startIndex, 1+self.stopIndex):
+            print 'first helix undo for loop'
             
+            try:
+                atom = self.currentChainModel[resNum].getAtom('CA')
+            except (KeyError, IndexError, AttributeError):
+                atom = None
+            if atom:
+                
+                try:
+                    atomBefore = self.currentChainModel[resNum-1].getAtom('CA')
+                except (KeyError, IndexError, AttributeError):
+                    atomBefore = None
+                if atomBefore:
+                    bondBeforeIx = self.CAlphaViewer.renderer.getBondIndex(atomBefore.getHashKey(), atom.getHashKey())
+                    if bondBeforeIx != -1:
+                        self.CAlphaViewer.renderer.deleteBond(bondBeforeIx)
+                
+                try:
+                    atomAfter = self.currentChainModel[resNum+1].getAtom('CA')
+                except (KeyError, IndexError, AttributeError):
+                    atomAfter = None
+                if atomAfter:
+                    bondAfterIx = self.CAlphaViewer.renderer.getBondIndex(atomAfter.getHashKey(), atom.getHashKey())
+                    if bondAfterIx != -1:
+                        self.CAlphaViewer.renderer.deleteBond(bondAfterIx)
+        
+        for resNum in range(self.startIndex, 1+self.stopIndex):
+            print 'second helix undo for loop'
+            try:
+                atom = self.currentChainModel[resNum].getAtom('CA')
+            except (IndexError, AttributeError, KeyError):
+                continue
+            self.CAlphaViewer.renderer.deleteAtom(atom.getHashKey())                
+            self.currentChainModel[resNum].clearAtom('CA')
+        
+        print 'finished both helix undo for loops'
+        self.currentChainModel.removeSecel(self.helix)
+        
+        if not self.CAlphaViewer.loaded:
+            self.CAlphaViewer.loaded = True
+            self.CAlphaViewer.emitModelLoaded()
+        else:
+            self.CAlphaViewer.emitModelChanged()
+        print 'finished helix undo'
+
 if __name__ == '__main__':
     from seq_model.Chain import Chain
     import sys
