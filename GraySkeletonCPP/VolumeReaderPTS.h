@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.1  2009/03/02 16:31:47  ssa1
+//   Adding in Point Clouds and Structure Tensor Fields
+//
 //   Revision 1.3  2008/09/29 16:30:15  ssa1
 //   Adding in CVS meta information
 //
@@ -71,16 +74,30 @@ namespace wustl_mm {
 			Volume * vol = new Volume(sizeX, sizeY, sizeZ);
 
 			int xx, yy, zz;
+			int radius = 3;
 
 			inFile = fopen(fileName.c_str(), "rt");
 			fscanf(inFile, "%d\n", &count);
 
+			double currVal, r;
+			double cost;
 			for(int i = 0; i < count; i++){
 				fscanf(inFile, "%lf %lf %lf\n", &x, &y, &z);
 				xx = (int)round((x - minX) * ratio);
 				yy = (int)round((y - minY) * ratio);
-				zz = (int)round((z - minZ) * ratio);				
-				vol->setDataAt(xx, yy, zz, vol->getDataAt(xx, yy, zz) + 1);
+				zz = (int)round((z - minZ) * ratio);		
+	
+				for(int xxx = max(xx - radius, 0); xxx < min(xx + radius, sizeX); xxx++) {
+					for(int yyy = max(yy - radius, 0); yyy < min(yy + radius, sizeY); yyy++) {
+						for(int zzz = max(zz - radius, 0); zzz < min(zz + radius, sizeZ); zzz++) {
+							currVal = vol->getDataAt(xxx, yyy, zzz);
+							r = (Vector3DDouble((x - minX) * ratio, (y - minY) * ratio, (z - minZ) * ratio) - Vector3DDouble(xxx, yyy, zzz)).Length();
+							cost = pow(2.718281828, -(r * r) / 2.0);
+							vol->setDataAt(xxx, yyy, zzz, currVal + cost);
+						}
+					}
+				}
+				
 			}
 	
 			fclose(inFile);		
