@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.28  2008/11/23 19:56:09  ssa1
+//   Setting volume origin to be center of mass instead of bottom left...
+//
 //   Revision 1.27  2008/11/20 18:33:00  ssa1
 //   Using the origin of the MRC volume
 //
@@ -681,6 +684,8 @@ public:
 		sizex = x ;
 		sizey = y ; 
 		sizez = z ;
+		setSpacing(1,1,1);
+		setOrigin(0,0,0);
 
 		data = new float [ x * y * z ] ;
 		for ( int i = 0 ; i < x * y * z ; i ++ )
@@ -694,6 +699,8 @@ public:
 		sizex = x ;
 		sizey = y ; 
 		sizez = z ;
+		setSpacing(1,1,1);
+		setOrigin(0,0,0);
 
 		data = new float [ x * y * z ] ;
 		for ( int i = 0 ; i < x * y * z ; i ++ )

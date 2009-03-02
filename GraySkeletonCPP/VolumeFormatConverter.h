@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.20  2008/12/15 22:38:31  ssa1
+//   Adding in support to load RAW volumes
+//
 //   Revision 1.19  2008/12/15 21:16:20  ssa1
 //   Adding support for CCP4 files
 //
@@ -26,6 +29,8 @@
 #include "VolumeReaderRAW.h"
 #include "VolumeReaderATOM.h"
 #include "VolumeReaderTXT.h"
+#include "VolumeReaderPTS.h"
+#include "VolumeReaderTNS.h"
 #include <SkeletonMaker/reader.h>
 #include <SkeletonMaker/volume.h>
 
@@ -53,6 +58,8 @@ namespace wustl_mm {
 				vol = MRCReaderPicker::pick((char *)inputFile.c_str())->getVolume();
 			} else if(strcmp(inputFormat.c_str(), "CCP4") == 0) {
 				vol = MRCReaderPicker::pick((char *)inputFile.c_str())->getVolume();
+			} else if(strcmp(inputFormat.c_str(), "PTS") == 0) {
+				vol = VolumeReaderPTS::LoadVolume(inputFile);
 			} else if(strcmp(inputFormat.c_str(), "RAW") == 0) {
 				switch(bitsPerCell) {
 					case(8): 
@@ -83,6 +90,8 @@ namespace wustl_mm {
 				vol = MRCReaderPicker::pick((char *)inputFile.c_str())->getVolume();
 			} else if(strcmp(inputFormat.c_str(), "CCP4") == 0) {
 				vol = MRCReaderPicker::pick((char *)inputFile.c_str())->getVolume();
+			} else if(strcmp(inputFormat.c_str(), "PTS") == 0) {
+				vol = VolumeReaderPTS::LoadVolume(inputFile);
 			} else if (strcmp(inputFormat.c_str(), "RAW8") == 0) {		
 				vol = VolumeReaderRAW::LoadVolume8bit(inputFile, sizeX, sizeY, sizeZ, 1, 1, 1);
 			} else if (strcmp(inputFormat.c_str(), "RAW16") == 0) {		
@@ -116,6 +125,8 @@ namespace wustl_mm {
 				vol->toOFFCells2((char *)outputFile.c_str());
 			} else if (strcmp(outputFormat.c_str(), "RAW16") == 0) {		
 				VolumeReaderRAW::SaveVolume16bit(vol, outputFile);
+			} else if (strcmp(outputFormat.c_str(), "TNS") == 0) {		
+				VolumeReaderTNS::SaveVolume(vol, outputFile);
 			} else {
 				printf("Output format %s not supported!\n", outputFormat.c_str());
 			}
