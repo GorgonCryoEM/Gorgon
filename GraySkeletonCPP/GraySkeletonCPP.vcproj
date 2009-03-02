@@ -452,7 +452,15 @@
 				>
 			</File>
 			<File
+				RelativePath=".\VolumeReaderPTS.h"
+				>
+			</File>
+			<File
 				RelativePath=".\VolumeReaderRAW.h"
+				>
+			</File>
+			<File
+				RelativePath=".\VolumeReaderTNS.h"
 				>
 			</File>
 			<File

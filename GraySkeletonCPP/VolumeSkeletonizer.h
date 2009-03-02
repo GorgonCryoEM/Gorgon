@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.38  2008/10/29 19:26:26  ssa1
+//   Reducing memory footprint, Increasing performance and adding volume normalization
+//
 //   Revision 1.37  2008/10/10 14:25:55  ssa1
 //   Setting the cost functions to scale with the edge length
 //
@@ -82,18 +85,20 @@ namespace wustl_mm {
 			Vector3DFloat * GetVolumeGradient2(Volume * sourceVolume);
 			Vector3DFloat * GetSkeletonDirection(Volume * skeleton, int type);
 
+
+			void GetEigenResult(EigenResults3D & returnVal, Vector3DFloat * imageGradient, ProbabilityDistribution3D & gaussianFilter, int x, int y, int z, int sizeX, int sizeY, int sizeZ, int gaussianFilterRadius, bool clear);
+			void GetEigenResult2(EigenResults3D & returnVal, Vector3DFloat * imageGradient, ProbabilityDistribution3D & gaussianFilter, int x, int y, int z, int sizeX, int sizeY, int sizeZ, int gaussianFilterRadius, bool clear);
+			EigenResults3D * GetEigenResults(Volume * maskVol, Vector3DFloat * imageGradient, ProbabilityDistribution3D & gaussianFilter, int gaussianFilterRadius, bool useMask);
+			EigenResults3D * GetEigenResults2(Volume * maskVol, Vector3DFloat * imageGradient, ProbabilityDistribution3D & gaussianFilter, int gaussianFilterRadius, bool useMask);
+
 			static Volume * PerformAnisotropicSmoothingAxisAligned(Volume * sourceVolume, int xRadius, int yRadius, int zRadius);
 		protected:
 			
 			double AngleToParameter(double angle);
 			double GetVoxelCost(EigenResults3D imageEigen, Vector3DFloat skeletonDirection, int type);
-			EigenResults3D * GetEigenResults(Volume * maskVol, Vector3DFloat * imageGradient, ProbabilityDistribution3D & gaussianFilter, int gaussianFilterRadius, bool useMask);
-			EigenResults3D * GetEigenResults2(Volume * maskVol, Vector3DFloat * imageGradient, ProbabilityDistribution3D & gaussianFilter, int gaussianFilterRadius, bool useMask);
 			void AddIterationToVolume(Volume * compositeVolume, Volume * iterationVolume, unsigned char threshold);
 			void ApplyMask(Volume * sourceVolume, Volume * maskVolume, unsigned char maskValue, bool keepMaskValue);
 			void FindOrthogonalAxes(Vector3DFloat axis, Vector3DFloat & res1, Vector3DFloat & res2);			
-			void GetEigenResult(EigenResults3D & returnVal, Vector3DFloat * imageGradient, ProbabilityDistribution3D & gaussianFilter, int x, int y, int z, int sizeX, int sizeY, int sizeZ, int gaussianFilterRadius, bool clear);
-			void GetEigenResult2(EigenResults3D & returnVal, Vector3DFloat * imageGradient, ProbabilityDistribution3D & gaussianFilter, int x, int y, int z, int sizeX, int sizeY, int sizeZ, int gaussianFilterRadius, bool clear);
 			void GetSTBasedDistribution(ProbabilityDistribution3D & distributionInfo, EigenResults3D eigen);
 			void HueR(double value, double &r, double &g, double &b);
 			void HueRB(double value, double &r, double &g, double &b);
