@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.20  2009/01/01 22:09:39  colemanr
+#   added docstring
+#
 #   Revision 1.19  2008/12/19 23:00:54  colemanr
 #   In response to the signal elementSelected, SSE viewer saves the current match between an observed and predicted helix
 #   if the selected element is a helix.  If it is a helix, the SSE viewer emits "SSE selected"
@@ -78,6 +81,11 @@ class SSEViewer(BaseViewer):
         self.visualizationOptions.ui.pushButtonModel2Color.setVisible(True)
         
         self.connect(self, QtCore.SIGNAL('elementSelected (int, int, int, int, int, int, QMouseEvent)'), self.updateCurrentMatch)
+        
+        self.connect(self.app.viewers["volume"], QtCore.SIGNAL('modelLoaded()'), self.updateActionsAndMenus)
+        self.connect(self.app.viewers["volume"], QtCore.SIGNAL('modelUnloaded()'), self.updateActionsAndMenus)
+        self.connect(self, QtCore.SIGNAL('modelLoaded()'), self.updateActionsAndMenus)
+        self.connect(self, QtCore.SIGNAL('modelUnloaded()'), self.updateActionsAndMenus)
     
 
     def createUI(self):
@@ -134,16 +142,23 @@ class SSEViewer(BaseViewer):
         closeAct.setStatusTip(self.tr("Close the loaded secondary structure element file"))
         self.connect(closeAct, QtCore.SIGNAL("triggered()"), self.unloadData)
         self.app.actions.addAction("unload_SSE", closeAct)
-        
+
+        fitAct = QtGui.QAction(self.tr("Fit Selected SSE"), self)
+        fitAct.setShortcut(self.tr("Ctrl+F"))        
+        fitAct.setStatusTip(self.tr("Fit the selected SSEs into the density"))        
+        self.connect(fitAct, QtCore.SIGNAL("triggered()"), self.fitSelectedSSEs)
+        self.app.actions.addAction("fit_SSE", fitAct)        
                         
     def createMenus(self):
         self.app.menus.addAction("file-open-helix", self.app.actions.getAction("load_SSE_Helix"), "file-open")    
         self.app.menus.addAction("file-open-sheet", self.app.actions.getAction("load_SSE_Sheet"), "file-open")        
         self.app.menus.addAction("file-close-sse", self.app.actions.getAction("unload_SSE"), "file-close");
         self.app.menus.addMenu("actions-sse", self.tr("Secondary Structure &Element"), "actions");
+        self.app.menus.addAction("actions-sse-fit", self.app.actions.getAction("fit_SSE"), "actions-sse");
                    
     def updateActionsAndMenus(self):
         self.app.actions.getAction("unload_SSE").setEnabled(self.loaded)
+        self.app.actions.getAction("fit_SSE").setEnabled(self.loaded and self.app.viewers["volume"].loaded)
     
     def updateCurrentMatch(self, sseType, sseIndex):
         """
@@ -169,3 +184,7 @@ helix. It then emits an 'SSE selected' signal.
                     print self.currentMatch.predicted, self.currentMatch.observed
                     break
         print 'Index:', sseIndex
+
+    def fitSelectedSSEs(self):
+        self.renderer.fitSelectedSSEs(self.app.viewers["volume"].renderer.getVolume())
+        self.emitModelChanged()

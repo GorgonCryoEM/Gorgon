@@ -1,3 +1,18 @@
+// Copyright (C) 2005-2008 Washington University in St Louis, Baylor College of Medicine.  All rights reserved
+// Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
+// Description:   A class for a non-manifold mesh.
+
+// CVS Meta Information: 
+//   $Source$
+//   $Revision$
+//   $Date$
+//   $Author$
+//   $State$
+//
+// History Log: 
+//   $Log$
+
+
 #ifndef PROTEINMORPH_NON_MANIFOLD_MESH2_H
 #define PROTEINMORPH_NON_MANIFOLD_MESH2_H
 

@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.44  2009/03/02 16:31:47  ssa1
+//   Adding in Point Clouds and Structure Tensor Fields
+//
 //   Revision 1.43  2008/12/15 22:38:31  ssa1
 //   Adding in support to load RAW volumes
 //
@@ -282,7 +285,7 @@ namespace wustl_mm {
 		}
 
 		string VolumeRenderer::GetSupportedSaveFileFormats() {
-			return "Volumes (*.mrc *.ccp4 *.raw);;Bitmap Image set (*.bmp);;Structure Tensor Field (*.tns)";
+			return "Volumes (*.mrc *.ccp4 *.raw);;Mathematica List (*.nb);;Bitmap Image set (*.bmp);;Structure Tensor Field (*.tns)";
 		}
 
 		void VolumeRenderer::EnableDraw(bool enable) {			
@@ -708,6 +711,8 @@ namespace wustl_mm {
 					dataVolume->toMRCFile((char *)fileName.c_str());
 				} else if(strcmp(extension.c_str(), "RAW") == 0) {
 					VolumeReaderRAW::SaveVolume16bit(dataVolume, fileName);
+				} else if(strcmp(extension.c_str(), "NB") == 0) {
+					dataVolume->toMathematicaFile((char *)fileName.c_str());
 				} else if(strcmp(extension.c_str(), "TNS") == 0) {
 					VolumeReaderTNS::SaveVolume(dataVolume, fileName);
 				} else if(strcmp(extension.c_str(), "BMP") == 0) {

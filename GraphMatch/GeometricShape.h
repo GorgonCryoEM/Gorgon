@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.14  2008/11/24 18:32:28  ssa1
+//   Giving helix end points
+//
 //   Revision 1.13  2008/11/18 18:10:24  ssa1
 //   Changing the scaling functions when doing graph matching to find correspondences
 //
@@ -58,6 +61,7 @@ namespace wustl_mm {
 			void AddInternalCell(Point3Int point);
 			void FindCornerCellsInHelix();
 			void Rotate(Vector3 axis, double angle);
+			void Translate(Vector3 translationVector);
 			void SetColor(float r, float g, float b, float a);
 			void SetCenter(Point3 center);
 			void SetHeight(double height);
@@ -74,7 +78,6 @@ namespace wustl_mm {
 			bool IsInsideCylinder(Point3 point);
 			bool IsInsidePolygon(Point3 point);
 			void Scale(double x, double y, double z);
-			void Translate(Vector3 translationVector);
 			void UpdateWorldToObjectMatrix();
 
 		public:
@@ -322,6 +325,12 @@ namespace wustl_mm {
 		void GeometricShape::Rotate(Vector3 axis, double angle){
 			rotationMatrix = Matrix4::rotation(axis, angle) * rotationMatrix;
 			inverseRotationMatrix = inverseRotationMatrix * Matrix4::rotation(axis, -angle);
+			UpdateWorldToObjectMatrix();
+		}
+
+		void GeometricShape::Translate(Vector3 translationVector){
+			
+			centerPoint = centerPoint + translationVector;
 			UpdateWorldToObjectMatrix();
 		}
 
