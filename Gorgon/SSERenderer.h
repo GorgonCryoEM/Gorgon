@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.21  2008/12/03 21:58:25  ssa1
+//   Selection rotations for atoms and helices.
+//
 //   Revision 1.20  2008/11/13 20:54:40  ssa1
 //   Using the correct scale when loading volumes
 //
@@ -30,6 +33,7 @@
 #include <GraphMatch/SkeletonReader.h>
 #include <GraphMatch/GeometricShape.h>
 #include <GraphMatch/VectorMath.h>
+#include <ProteinMorph/SSEFlexibleFitter.h>
 #include <vector>
 
 using namespace wustl_mm::Protein_Morph;
@@ -64,6 +68,7 @@ namespace wustl_mm {
 			string GetSupportedLoadFileFormats();
 			string GetSupportedSaveFileFormats();
 			Vector3DFloat Get3DCoordinates(int subsceneIndex, int ix0, int ix1 = -1, int ix2 = -1, int ix3 = -1, int ix4 = -1);
+			void FitSelectedSSEs(Volume * vol);
 		private:
 			void UpdateBoundingBox();
 			vector<GeometricShape*> helices;
@@ -480,6 +485,16 @@ namespace wustl_mm {
 			return position;
 		}
 
+		void SSERenderer::FitSelectedSSEs(Volume * vol) {
+			SSEFlexibleFitter * fitter = new SSEFlexibleFitter(vol);
+			for(unsigned int i = 0; i < helices.size(); i++) {					
+				if(helices[i]->GetSelected()) {
+					fitter->FitHelix(helices[i], 0.01, 5.0/360.0, 0.01, 100);
+				}
+			}
+			delete fitter;
+			UpdateBoundingBox();
+		}
 	}
 }
 

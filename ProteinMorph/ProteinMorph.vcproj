@@ -247,6 +247,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\SSEFlexibleFitter.h"
+				>
+			</File>
+			<File
 				RelativePath=".\TriangleMesh.h"
 				>
 			</File>

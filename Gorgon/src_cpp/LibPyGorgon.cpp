@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.46  2009/01/01 18:00:50  colemanr
+//   If GL_GLEXT_PROTOTYPES is not defined and the platform is Linux, it is defined.
+//
 //   Revision 1.45  2008/12/15 22:38:31  ssa1
 //   Adding in support to load RAW volumes
 //
@@ -316,6 +319,7 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("getOriginX", &SSERenderer::GetOriginX)
 		.def("getOriginY", &SSERenderer::GetOriginY)
 		.def("getOriginZ", &SSERenderer::GetOriginZ)
+		.def("fitSelectedSSEs", &SSERenderer::FitSelectedSSEs)
 	;
 
 	class_< CAlphaRenderer, bases<Renderer> >("CAlphaRenderer", init<>())
