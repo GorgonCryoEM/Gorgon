@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.22  2009/03/16 16:17:34  ssa1
+//   Fitting SSEs into the Density
+//
 //   Revision 1.21  2008/12/03 21:58:25  ssa1
 //   Selection rotations for atoms and helices.
 //
@@ -268,7 +271,6 @@ namespace wustl_mm {
 
 		void SSERenderer::SetHelixColor(int index, float r, float g, float b, float a) {
 			helices[index]->SetColor(r, g, b, a);
-
 		}
 
 		bool SSERenderer::SelectionRotate(Vector3DFloat centerOfMass, Vector3DFloat rotationAxis, float angle) {
@@ -489,7 +491,7 @@ namespace wustl_mm {
 			SSEFlexibleFitter * fitter = new SSEFlexibleFitter(vol);
 			for(unsigned int i = 0; i < helices.size(); i++) {					
 				if(helices[i]->GetSelected()) {
-					fitter->FitHelix(helices[i], 0.01, 5.0/360.0, 0.01, 100);
+					fitter->FitHelix(helices[i], 0.005, 1.0/360.0, 0.01, 200);
 				}
 			}
 			delete fitter;
