@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.21  2009/03/16 16:17:34  ssa1
+#   Fitting SSEs into the Density
+#
 #   Revision 1.20  2009/01/01 22:09:39  colemanr
 #   added docstring
 #
@@ -186,5 +189,7 @@ helix. It then emits an 'SSE selected' signal.
         print 'Index:', sseIndex
 
     def fitSelectedSSEs(self):
+        self.app.mainCamera.setCursor(QtCore.Qt.BusyCursor)        
         self.renderer.fitSelectedSSEs(self.app.viewers["volume"].renderer.getVolume())
         self.emitModelChanged()
+        self.app.mainCamera.setCursor(QtCore.Qt.ArrowCursor)
