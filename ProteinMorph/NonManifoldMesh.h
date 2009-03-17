@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.33  2008/12/01 01:38:03  ssa1
+//   Fixing resetting of scale and location when performing laplacian smoothing
+//
 //   Revision 1.32  2008/11/20 19:04:07  ssa1
 //   Proper scaling for binary and grayscale skeletonization
 //
@@ -123,7 +126,9 @@ namespace wustl_mm {
 			void ToMathematicaFile(string fileName);
 			void SetOrigin(float x, float y, float z);
 			void SetScale(float x, float y, float z);
+			void TranslateVertex(int vertexIx, Vector3DFloat translateVector);
 			vector<unsigned int> GetPath(unsigned int edge0Ix, unsigned int edge1Ix);
+			vector<Vector3DFloat> SampleTriangle(int faceId, double discretizationStep);
 			Volume * ToVolume();
 			Vector3DFloat GetVertexNormal(int vertexId);
 			Vector3DFloat GetFaceNormal(int faceId);
@@ -947,6 +952,36 @@ namespace wustl_mm {
 
 			return path;
 		}
+		template <class TVertex, class TEdge, class TFace> vector<Vector3DFloat> NonManifoldMesh<TVertex, TEdge, TFace>::SampleTriangle(int faceId, double discretizationStep) {
+			int faceIndex = GetFaceIndex(faceId);
+			NonManifoldMeshFace<TFace> face = faces[faceIndex];
+
+			vector<Vector3DFloat> points;
+			if(face.vertexIds.size() != 3) {
+				printf("ERROR: Sampling a polygon NOT a triangle!\n");
+				return points;
+			} else {				
+				NonManifoldMeshVertex<TVertex> p = vertices[GetVertexIndex(face.vertexIds[0])];
+				NonManifoldMeshVertex<TVertex> q = vertices[GetVertexIndex(face.vertexIds[1])];
+				NonManifoldMeshVertex<TVertex> r = vertices[GetVertexIndex(face.vertexIds[2])];
+				Vector3DFloat v1 = q.position - p.position;
+				Vector3DFloat v2 = r.position - p.position;
+				double v1Length = v1.Length();
+				double v2Length = v2.Length();
+				v1.Normalize();
+				v2.Normalize();
+
+				for(double a1 = 0; a1 <= v1Length; a1 += discretizationStep) {
+					for(double a2 = 0; a2 <= v2Length; a2 += discretizationStep) {
+						if(a1/v1Length + a2/v2Length <= 1) {
+							points.push_back(p.position + v1 * a1 + v2 * a2);
+						}
+					}
+				}
+				return points;				
+			}
+		}
+
 		template <class TVertex, class TEdge, class TFace> void NonManifoldMesh<TVertex, TEdge, TFace>::SetOrigin(float x, float y, float z){
 			origin[0] = x;
 			origin[1] = y;
@@ -958,6 +993,11 @@ namespace wustl_mm {
 			scale[1] = y;
 			scale[2] = z;
 		}
+
+		template <class TVertex, class TEdge, class TFace> void NonManifoldMesh<TVertex, TEdge, TFace>::TranslateVertex(int vertexIx, Vector3DFloat translateVector) {
+			vertices[vertexIx].position = vertices[vertexIx].position + translateVector;
+		}
+
 	}
 }
 

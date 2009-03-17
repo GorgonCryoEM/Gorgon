@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.22  2009/03/16 17:15:24  ssa1
+#   setting busy state when fitting
+#
 #   Revision 1.21  2009/03/16 16:17:34  ssa1
 #   Fitting SSEs into the Density
 #
@@ -146,22 +149,22 @@ class SSEViewer(BaseViewer):
         self.connect(closeAct, QtCore.SIGNAL("triggered()"), self.unloadData)
         self.app.actions.addAction("unload_SSE", closeAct)
 
-        fitAct = QtGui.QAction(self.tr("Fit Selected SSE"), self)
+        fitAct = QtGui.QAction(self.tr("Fit Selected Helices"), self)
         fitAct.setShortcut(self.tr("Ctrl+F"))        
-        fitAct.setStatusTip(self.tr("Fit the selected SSEs into the density"))        
+        fitAct.setStatusTip(self.tr("Fit the selected Helices into the density"))        
         self.connect(fitAct, QtCore.SIGNAL("triggered()"), self.fitSelectedSSEs)
-        self.app.actions.addAction("fit_SSE", fitAct)        
+        self.app.actions.addAction("fit_SSE_Helix", fitAct)        
                         
     def createMenus(self):
         self.app.menus.addAction("file-open-helix", self.app.actions.getAction("load_SSE_Helix"), "file-open")    
         self.app.menus.addAction("file-open-sheet", self.app.actions.getAction("load_SSE_Sheet"), "file-open")        
         self.app.menus.addAction("file-close-sse", self.app.actions.getAction("unload_SSE"), "file-close");
         self.app.menus.addMenu("actions-sse", self.tr("Secondary Structure &Element"), "actions");
-        self.app.menus.addAction("actions-sse-fit", self.app.actions.getAction("fit_SSE"), "actions-sse");
+        self.app.menus.addAction("actions-sse-fit-helix", self.app.actions.getAction("fit_SSE_Helix"), "actions-sse");
                    
     def updateActionsAndMenus(self):
         self.app.actions.getAction("unload_SSE").setEnabled(self.loaded)
-        self.app.actions.getAction("fit_SSE").setEnabled(self.loaded and self.app.viewers["volume"].loaded)
+        self.app.actions.getAction("fit_SSE_Helix").setEnabled(self.loaded and self.app.viewers["volume"].loaded)
     
     def updateCurrentMatch(self, sseType, sseIndex):
         """

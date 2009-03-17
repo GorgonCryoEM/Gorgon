@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.23  2009/03/16 17:08:46  ssa1
+//   Fixing bug when densities have negative values
+//
 //   Revision 1.22  2009/03/16 16:17:34  ssa1
 //   Fitting SSEs into the Density
 //
@@ -46,12 +49,7 @@ using namespace std;
 
 namespace wustl_mm {
 	namespace Visualization {	
-		struct SheetIdsAndSelect {
-			unsigned char id;
-			bool selected;
-		};
 
-		typedef NonManifoldMesh<bool, bool, SheetIdsAndSelect> NonManifoldMesh_SheetIds;
 		class SSERenderer : public Renderer{
 		public:
 			SSERenderer();
@@ -76,6 +74,8 @@ namespace wustl_mm {
 			void UpdateBoundingBox();
 			vector<GeometricShape*> helices;
 			NonManifoldMesh_SheetIds * sheetMesh;
+			int sheetCount;
+			bool selectedSheets[256];
 		};
 
 
@@ -193,6 +193,11 @@ namespace wustl_mm {
 			SheetIdsAndSelect faceTag;
 			faceTag.selected = false;
 
+			sheetCount = sheets.size();
+			for(unsigned int i = 0; i <= sheetCount; i++) {
+				selectedSheets[i] = false;
+			}
+
 			for(unsigned int i = 0; i < sheets.size(); i++) {
 				indices.clear();
 				for(unsigned int j = 0; j < sheets[i]->polygonPoints.size(); j++) {
@@ -289,6 +294,29 @@ namespace wustl_mm {
 					helices[i]->Rotate(Vector3(rotationAxis.X(), rotationAxis.Y(), rotationAxis.Z()), angle);
 				}
 			}
+
+			// I think the sheet center of mass is wrong!  Need to fix this
+			/*for(unsigned int i=0; i < sheetMesh->vertices.size(); i++) {
+				sheetMesh->vertices[i].tag = false;
+			}
+
+			unsigned int vertexIx;
+			for(unsigned int i = 0; i < sheetMesh->faces.size(); i++) {
+				if(sheetMesh->faces[i].tag.selected) {
+					rotated = true;
+					for(unsigned int j = 0; j < sheetMesh->faces[i].vertexIds.size(); j++) {
+						vertexIx = sheetMesh->GetVertexIndex(sheetMesh->faces[i].vertexIds[j]);
+						NonManifoldMeshVertex<bool> * v = &(sheetMesh->vertices[vertexIx]);
+						if(!v->tag) {							
+							v->tag = true;
+							v->position = v->position - centerOfMass;
+							v->position = v->position.Rotate(rotationAxis, angle);
+							v->position = v->position + centerOfMass;
+						}
+					}
+				}
+			}		*/
+
 			return rotated;
 		}
 
@@ -301,23 +329,13 @@ namespace wustl_mm {
 			}
 
 			if(sheetMesh != NULL) {
-				bool sheets[256];
-				for(unsigned int i = 0; i < 256; i++) {
-					sheets[i] = false;
-				}
-
-				for(unsigned int i = 0; i < sheetMesh->faces.size(); i++) {
-					if(sheetMesh->faces[i].tag.selected) {
-						sheets[sheetMesh->faces[i].id] = true;
-					}
-				}	
-
-				for(unsigned int i = 0; i < 256; i++) {
-					if(sheets[i]) {
+				for(unsigned int i = 0; i <= sheetCount; i++) {
+					if(selectedSheets[i]) {
 						count++;
 					}
 				}
 			}
+
 			return count;
 		}
 
@@ -342,21 +360,12 @@ namespace wustl_mm {
 			Vector3DFloat currentSheetCenterOfMass;
 
 			if((sheetCount > 0) && (sheetMesh != NULL)) {
-				bool sheets[256];
-				for(unsigned int i = 0; i < 256; i++) {
-					sheets[i] = false;
-				}
 
-				for(unsigned int i = 0; i < sheetMesh->faces.size(); i++) {
-					if(sheetMesh->faces[i].tag.selected) {
-						sheets[sheetMesh->faces[i].id] = true;
-					}
-				}	
 
 				int currentSheetFaceCount;
 
-				for(unsigned int j = 0; j < 256; j++) {
-					if(sheets[j]) {
+				for(unsigned int j = 0; j <= this->sheetCount; j++) {
+					if(selectedSheets[j]) {
 						currentSheetCenterOfMass = Vector3DFloat(0,0,0);
 						currentSheetFaceCount = 0;
 						for(unsigned int i = 0; i < sheetMesh->faces.size(); i++) {
@@ -431,6 +440,9 @@ namespace wustl_mm {
 					for(unsigned int i = 0; i < sheetMesh->faces.size(); i++) {
 						sheetMesh->faces[i].tag.selected = false;
 					}
+					for(unsigned int i = 0; i <= sheetCount; i++) {
+						selectedSheets[i] = false;
+					}
 				}
 
 				return true;
@@ -450,6 +462,8 @@ namespace wustl_mm {
 						sheetMesh->faces[i].tag.selected = forceTrue || !sheetMesh->faces[i].tag.selected;
 					}
 				}
+
+				selectedSheets[ix0] = forceTrue || !selectedSheets[ix0];
 			}
 		}
 
@@ -489,11 +503,24 @@ namespace wustl_mm {
 
 		void SSERenderer::FitSelectedSSEs(Volume * vol) {
 			SSEFlexibleFitter * fitter = new SSEFlexibleFitter(vol);
+
+			const double discretizationStep = 0.01;
+
+
 			for(unsigned int i = 0; i < helices.size(); i++) {					
 				if(helices[i]->GetSelected()) {
-					fitter->FitHelix(helices[i], 0.005, 1.0/360.0, 0.01, 200);
+					fitter->FitHelix(helices[i], 0.005, 1.0/360.0, discretizationStep, 200);
 				}
 			}
+
+			/*if(sheetMesh != NULL) {
+				for(unsigned int i = 0; i <= sheetCount; i++) {
+					if(selectedSheets[i]) {
+						fitter->FitSheet(i, sheetMesh, 0.005, 1.0/360.0, 0.1, 200);
+					}
+				}
+			} */
+
 			delete fitter;
 			UpdateBoundingBox();
 		}
