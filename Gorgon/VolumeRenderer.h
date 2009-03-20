@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.45  2009/03/16 16:17:34  ssa1
+//   Fitting SSEs into the Density
+//
 //   Revision 1.44  2009/03/02 16:31:47  ssa1
 //   Adding in Point Clouds and Structure Tensor Fields
 //
@@ -155,7 +158,8 @@ namespace wustl_mm {
 			bool CalculateCuttingSurface();
 			bool CalculateSolidRendering();
 			bool CalculateDisplay();
-			void Load3DTexture();
+			void Load3DTextureSolidRendering();
+			void Load3DTextureCrossSection();
 			void InitializeOctree();
 			void InitializeOctreeTag(VolumeRendererOctreeNodeType * node);
 			void CalculateOctreeNode(VolumeRendererOctreeNodeType * node);
@@ -298,8 +302,10 @@ namespace wustl_mm {
 		}
 		void VolumeRenderer::SetViewingType(const int type) {
 			viewingType = type;
-			if((viewingType == VIEWING_TYPE_SOLID) || (viewingType == VIEWING_TYPE_CROSS_SECTION)) {
-				Load3DTexture();
+			if(viewingType == VIEWING_TYPE_SOLID) {
+				Load3DTextureSolidRendering();
+			} else if  (viewingType == VIEWING_TYPE_CROSS_SECTION) {
+				Load3DTextureCrossSection();
 			}
 			CalculateDisplay();
 		}
@@ -650,7 +656,7 @@ namespace wustl_mm {
 
 		}
 
-		void VolumeRenderer::Load3DTexture() {
+		void VolumeRenderer::Load3DTextureSolidRendering() {
 			if(textureLoaded) {
 				glDeleteTextures(1, &textureName);
 				textureLoaded = false;
@@ -688,6 +694,54 @@ namespace wustl_mm {
 				glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_REPEAT);
 				try {
 					glTexImage3D(GL_TEXTURE_3D, 0, GL_ALPHA, textureSizeX, textureSizeY, textureSizeZ, 0, GL_ALPHA, GL_UNSIGNED_BYTE, texels);
+					textureLoaded = true;
+				}   catch (int) {
+					textureLoaded = false;
+				}
+				delete [] texels;
+
+			}
+
+		}
+
+		void VolumeRenderer::Load3DTextureCrossSection() {
+			if(textureLoaded) {
+				glDeleteTextures(1, &textureName);
+				textureLoaded = false;
+			}
+
+			if(dataVolume != NULL) {
+				textureSizeX = Smallest2ndPower(dataVolume->getSizeX());
+				textureSizeY = Smallest2ndPower(dataVolume->getSizeY());
+				textureSizeZ = Smallest2ndPower(dataVolume->getSizeZ());
+				double maxVal = dataVolume->getMax();
+				double minVal = surfaceValue;
+				unsigned char val;
+
+				unsigned char * texels = new unsigned char[textureSizeX * textureSizeY * textureSizeZ];
+				unsigned int pos = 0;
+				for(int z = 0; z < textureSizeZ; z++) {
+					for(int y = 0; y < textureSizeY; y++) {
+						for(int x = 0; x < textureSizeX; x++) {
+							if((x < dataVolume->getSizeX()) && (y < dataVolume->getSizeY()) && (z < dataVolume->getSizeZ())) {
+								val = (unsigned char)round((max(dataVolume->getDataAt(x, y, z), minVal) - minVal) * 255.0 / (maxVal - minVal));
+							} else {
+								val = 0;
+							}
+							texels[pos] = val;
+							pos++;
+						}
+					}
+				}
+				glGenTextures(1, &textureName);
+				glBindTexture(GL_TEXTURE_3D, textureName);
+				glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+				glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+				glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+				glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+				glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_REPEAT);
+				try {
+					glTexImage3D(GL_TEXTURE_3D, 0, GL_LUMINANCE, textureSizeX, textureSizeY, textureSizeZ, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, texels);
 					textureLoaded = true;
 				}   catch (int) {
 					textureLoaded = false;
@@ -884,10 +938,10 @@ namespace wustl_mm {
 					CalculateSurface();
 					break;
 				case VIEWING_TYPE_CROSS_SECTION:
-					Load3DTexture();
+					Load3DTextureCrossSection();
 					break;
 				case VIEWING_TYPE_SOLID:
-					Load3DTexture();
+					Load3DTextureSolidRendering();
 					break;
 			}
 		}
