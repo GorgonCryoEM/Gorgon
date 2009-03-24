@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.54  2008/12/03 21:58:25  ssa1
+#   Selection rotations for atoms and helices.
+#
 #   Revision 1.53  2008/12/02 03:27:05  ssa1
 #   putting glpushattrib and glpopattrib when setting colors
 #
@@ -177,6 +180,15 @@ class BaseViewer(QtOpenGL.QGLWidget):
         scale = [self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ()]
         
         return [(worldCoords[0] - origin[0]) / scale[0], (worldCoords[1] - origin[1]) / scale[1], (worldCoords[2] - origin[2]) / scale[2]]
+
+    def objectVectorToWorldCoordinates(self, objectCoords):
+        #Need to apply rotations
+        scale = [self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ()]
+        return [objectCoords[0] * scale[0],  objectCoords[1] * scale[1], objectCoords[2] * scale[2]]
+    
+    def worldVectorToObjectCoordinates(self, worldCoords):
+        scale = [self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ()]       
+        return [worldCoords[0] / scale[0], worldCoords[1] / scale[1], worldCoords[2] / scale[2]]
         
     def objectToWorldCoordinatesVector(self, objectCoords):
         coords = self.objectToWorldCoordinates([objectCoords.x(), objectCoords.y(), objectCoords.z()])
