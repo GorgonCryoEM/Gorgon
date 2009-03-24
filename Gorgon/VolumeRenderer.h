@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.47  2009/03/24 15:18:15  ssa1
+//   Better cross section & Solid Rendering viewing
+//
 //   Revision 1.46  2009/03/20 15:49:27  ssa1
 //   Better cross section viewing
 //
@@ -723,6 +726,14 @@ namespace wustl_mm {
 				double maxVal = maxSurfaceValue;
 				double minVal = surfaceValue;
 				unsigned char val;
+
+				// Approximations to avoid division by zero
+				if(isZero(minVal - maxVal, 0.000000000001)) {
+					maxVal = minVal + (dataVolume->getMax() - dataVolume->getMin()) / 1000.0;
+				}
+				if(isZero(minVal - maxVal, 0.000000000001)) {
+					maxVal = minVal + 0.0001;
+				}
 
 				unsigned char * texels = new unsigned char[textureSizeX * textureSizeY * textureSizeZ];
 				unsigned int pos = 0;
