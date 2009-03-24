@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.27  2008/12/02 03:27:05  ssa1
+#   putting glpushattrib and glpopattrib when setting colors
+#
 #   Revision 1.26  2008/12/01 23:16:31  ssa1
 #   Restructuring interactive skeleton drawing, and fixing it for scale space changes.
 #
@@ -249,7 +252,7 @@ class VolumeManualSkeletonizationForm(QtGui.QWidget):
         return hits
                     
     def processClickRay(self, rayWorld, rayWidth, eyeWorld, event):
-        ray = self.viewer.worldToObjectCoordinates(rayWorld)        
+        ray = self.viewer.worldVectorToObjectCoordinates(rayWorld)        
         eye = self.viewer.worldToObjectCoordinates(eyeWorld)
         divisor =  float(self.getMedialness()) + float(self.getSmoothness());
 
@@ -269,7 +272,7 @@ class VolumeManualSkeletonizationForm(QtGui.QWidget):
                 self.skeletonViewer.emitModelChanged()
                     
     def processMouseOverRay(self, rayWorld, rayWidth, eyeWorld, event):
-        ray = self.viewer.worldToObjectCoordinates(rayWorld)        
+        ray = self.viewer.worldVectorToObjectCoordinates(rayWorld)        
         eye = self.viewer.worldToObjectCoordinates(eyeWorld)
         if(self.started and event.modifiers() & QtCore.Qt.CTRL ):
             self.engine.browseStartSeedRay(ray[0], ray[1], ray[2], eye[0], eye[1], eye[2], rayWidth)
