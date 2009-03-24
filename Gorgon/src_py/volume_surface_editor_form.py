@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.17  2009/03/24 15:18:15  ssa1
+#   Better cross section & Solid Rendering viewing
+#
 #   Revision 1.16  2008/12/02 05:34:16  ssa1
 #   editable iso level
 #
@@ -125,14 +128,17 @@ class VolumeSurfaceEditorForm(QtGui.QWidget):
         minDensity = self.viewer.renderer.getMinDensity()
         self.ui.horizontalSliderIsoLevel.setMinimum(int(minDensity*100))
         self.ui.horizontalSliderIsoLevel.setMaximum(int(maxDensity*100))
-        self.ui.doubleSpinBoxDensity.setMinimum(minDensity)
-        self.ui.doubleSpinBoxDensity.setMaximum(maxDensity)        
-        defaultDensity = (int(minDensity*100) + int(maxDensity*100.0)) / 2
-        self.ui.horizontalSliderIsoLevel.setValue(defaultDensity)
         self.ui.horizontalSliderIsoLevelMax.setMinimum(int(minDensity*100))
         self.ui.horizontalSliderIsoLevelMax.setMaximum(int(maxDensity*100))
+        self.ui.doubleSpinBoxDensity.setMinimum(minDensity)
+        self.ui.doubleSpinBoxDensity.setMaximum(maxDensity)        
         self.ui.doubleSpinBoxDensityMax.setMinimum(minDensity)
         self.ui.doubleSpinBoxDensityMax.setMaximum(maxDensity)
+        if(self.ui.radioButtonIsoSurface.isChecked()):
+            defaultDensity = (int(minDensity*100) + int(maxDensity*100.0)) / 2
+        else:
+            defaultDensity = int(minDensity*100)
+        self.ui.horizontalSliderIsoLevel.setValue(defaultDensity)
         self.ui.horizontalSliderIsoLevelMax.setValue(int(maxDensity*100.0))         
         maxRadius = int(max(self.viewer.renderer.getMax(0)/2, self.viewer.renderer.getMax(1)/2, self.viewer.renderer.getMax(2)/2));        
         self.ui.horizontalSliderDisplayRadius.setMaximum(maxRadius)
