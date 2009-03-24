@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.46  2009/03/20 15:49:27  ssa1
+//   Better cross section viewing
+//
 //   Revision 1.45  2009/03/16 16:17:34  ssa1
 //   Fitting SSEs into the Density
 //
@@ -131,6 +134,7 @@ namespace wustl_mm {
 			void SetViewingType(const int type);
 			void SetSampleInterval(const int size);
 			void SetSurfaceValue(const float value);
+			void SetMaxSurfaceValue(const float value);
 			bool SetCuttingPlane(float position, float vecX, float vecY, float vecZ);
 			void UpdateBoundingBox() ;
 			void Unload();
@@ -173,6 +177,7 @@ namespace wustl_mm {
 			int textureSizeX, textureSizeY, textureSizeZ;
 			GLuint textureName;
 			float surfaceValue;
+			float maxSurfaceValue;
 			int sampleInterval;
 			int displayRadius;
 			int viewingType;			
@@ -666,9 +671,10 @@ namespace wustl_mm {
 				textureSizeX = Smallest2ndPower(dataVolume->getSizeX());
 				textureSizeY = Smallest2ndPower(dataVolume->getSizeY());
 				textureSizeZ = Smallest2ndPower(dataVolume->getSizeZ());
-				double maxVal = dataVolume->getMax();
+				double maxVal = maxSurfaceValue;
 				double minVal = surfaceValue;
 				unsigned char val;
+				float data;
 
 				unsigned char * texels = new unsigned char[textureSizeX * textureSizeY * textureSizeZ];
 				unsigned int pos = 0;
@@ -676,7 +682,7 @@ namespace wustl_mm {
 					for(int y = 0; y < textureSizeY; y++) {
 						for(int x = 0; x < textureSizeX; x++) {
 							if((x < dataVolume->getSizeX()) && (y < dataVolume->getSizeY()) && (z < dataVolume->getSizeZ())) {
-								val = (unsigned char)round((max(dataVolume->getDataAt(x, y, z), minVal) - minVal) * 255.0 / (maxVal - minVal));
+								val = (unsigned char)round((min(max(dataVolume->getDataAt(x, y, z), minVal), maxVal) - minVal) * 255.0 / (maxVal - minVal));
 							} else {
 								val = 0;
 							}
@@ -714,7 +720,7 @@ namespace wustl_mm {
 				textureSizeX = Smallest2ndPower(dataVolume->getSizeX());
 				textureSizeY = Smallest2ndPower(dataVolume->getSizeY());
 				textureSizeZ = Smallest2ndPower(dataVolume->getSizeZ());
-				double maxVal = dataVolume->getMax();
+				double maxVal = maxSurfaceValue;
 				double minVal = surfaceValue;
 				unsigned char val;
 
@@ -724,7 +730,7 @@ namespace wustl_mm {
 					for(int y = 0; y < textureSizeY; y++) {
 						for(int x = 0; x < textureSizeX; x++) {
 							if((x < dataVolume->getSizeX()) && (y < dataVolume->getSizeY()) && (z < dataVolume->getSizeZ())) {
-								val = (unsigned char)round((max(dataVolume->getDataAt(x, y, z), minVal) - minVal) * 255.0 / (maxVal - minVal));
+								val = (unsigned char)round((min(max(dataVolume->getDataAt(x, y, z), minVal), maxVal) - minVal) * 255.0 / (maxVal - minVal));
 							} else {
 								val = 0;
 							}
@@ -945,6 +951,23 @@ namespace wustl_mm {
 					break;
 			}
 		}
+
+		void VolumeRenderer::SetMaxSurfaceValue(const float value) {
+			maxSurfaceValue = value;
+			switch(viewingType) {
+				case VIEWING_TYPE_ISO_SURFACE:
+					break;
+				case VIEWING_TYPE_CROSS_SECTION:
+					Load3DTextureCrossSection();
+					break;
+				case VIEWING_TYPE_SOLID:
+					Load3DTextureSolidRendering();
+					break;
+			}
+		}
+
+
+
 
 
 		void VolumeRenderer::SetDisplayRadius(const int radius) {

@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.47  2009/03/16 16:17:34  ssa1
+//   Fitting SSEs into the Density
+//
 //   Revision 1.46  2009/01/01 18:00:50  colemanr
 //   If GL_GLEXT_PROTOTYPES is not defined and the platform is Linux, it is defined.
 //
@@ -241,6 +244,7 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("getSurfaceValue", &VolumeRenderer::GetSurfaceValue)
 		.def("get3DCoordinates", &VolumeRenderer::Get3DCoordinates)
 		.def("setSurfaceValue", &VolumeRenderer::SetSurfaceValue)		
+		.def("setMaxSurfaceValue", &VolumeRenderer::SetMaxSurfaceValue)		
 		.def("setSampleInterval", &VolumeRenderer::SetSampleInterval)
 		.def("setDisplayRadius", &VolumeRenderer::SetDisplayRadius)
 		.def("setCuttingPlane", &VolumeRenderer::SetCuttingPlane)
