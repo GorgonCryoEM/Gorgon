@@ -1,0 +1,23 @@
+Version 1.0.2b
+  Support for loading Point clouds as volumes (PTS format)
+  Support for saving volumes as structure tensor fields (TNS format)
+  Support for saving volumes as a mathamatica list (NB format)
+  Better visualization of cross sections of volumes
+  Better control of density to be visualized in cross sections and for solid rendering
+  Rigid body alignment of helices to the density
+
+Version 1.0.1
+  Support for loading CCP4 and RAW volumes
+
+Version 1.0.0
+  Support for loading MRC volumes
+  Support for loading MRC and OFF skeletons
+  Support for loading VRML secondary structure annotations
+  Support for loading PDB C-Alpha atom positions
+  Binary Skeletonization [Ju CAD 2007]
+  Grayscale Skeletonization [Abeysinghe SMI 2008]
+  Interactive Skeletonization [Abeysinghe TVC 2009]
+  Laplacian smoothing of skeletons
+  Correspondence between observed and predicted secondary structure elements [Abeysinghe CAD 2008]
+  Semi-automatic creation of a C-Alpha Backbone
+  Manual creation of a C-Alpha Backbone
