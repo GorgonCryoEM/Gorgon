@@ -403,7 +403,6 @@ and predicted residue indices of helices and strands.
     self.font.setBold(False)
     painter.setFont(self.font)
 
-
   def mouseReleaseEvent(self, mouseEvent):
     self.updateCursor(mouseEvent)
 
