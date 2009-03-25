@@ -110,12 +110,19 @@ Given a residue number (often referred to as residue index), this
 returns the Helix or Strand that contains it or a single-residue Coil
 if it is not a part of a Helix or Strand.
         """
+        lastSecelEnd = self.chain.getFirstResidueIndex()-1
+        nextSecelStart = self.chain.getLastResidueIndex()+1
+        
         for key in self.secelDict.keys():
             secel = self.secelDict[key]
             if secel.startIndex <= index and index <= secel.stopIndex:
                 return secel
-                
-        return Coil(self.chain, 0, 'no-label', index, index)
+            if secel.stopIndex < index and secel.stopIndex > lastSecelEnd:
+                lastSecelEnd = secel.stopIndex
+            if secel.startIndex > index and secel.startIndex < nextSecelStart:
+                nextSecelStart = secel.startIndex
+                                
+        return Coil(self.chain, 0, 'no-label', lastSecelEnd + 1, nextSecelStart - 1)
         
     def setSecelSelection(self, secel):
         if not secel in self.secelDict.values():

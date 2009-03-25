@@ -652,6 +652,17 @@ object where each element is an index in the Chain.
     '''
     return self.selectedResidues
 
+  def getFirstResidueIndex(self):
+    keys=self.residueList.keys()
+    keys.sort()
+    return keys[0]
+
+  def getLastResidueIndex(self):
+    keys=self.residueList.keys()
+    keys.sort()
+    return keys[len(keys)-1]
+
+
   def removeSecel(self, secel):
     '''
 This removes a Secel from the Chain.
