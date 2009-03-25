@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.28  2009/03/24 19:25:54  ssa1
+#   Fixing scaling bug in interactive skeletonization
+#
 #   Revision 1.27  2008/12/02 03:27:05  ssa1
 #   putting glpushattrib and glpopattrib when setting colors
 #
@@ -122,7 +125,7 @@ class VolumeManualSkeletonizationForm(QtGui.QWidget):
         self.skeletonizeAct.setChecked(False)
         self.skeletonizeAct.setEnabled(False)
         self.connect(self.skeletonizeAct, QtCore.SIGNAL("triggered()"), self.loadWidget)
-        self.app.actions.addAction("perform_VolumeManualVisualization", self.skeletonizeAct)
+        self.app.actions.addAction("perform_VolumeManualSkeletonization", self.skeletonizeAct)
   
     def createMenus(self):
         self.app.menus.addAction("actions-volume-skeletonization-manual", self.skeletonizeAct, "actions-volume-skeletonization")                                   

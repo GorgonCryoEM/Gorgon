@@ -24,17 +24,7 @@ position editor, etc.
         self.possibleAtomsList = []
         self.previouslySelectedPossibleAtom = None
         self.undoStack = QtGui.QUndoStack(self)
-        
-        #These go on the left hand side
-        self.undoButton = QtGui.QPushButton('Undo')
-        self.redoButton = QtGui.QPushButton('Redo')
-        self.CAdoubleSpinBox = QtGui.QDoubleSpinBox()
-        self.CAdoubleSpinBox.setValue(3.8)
-        self.CAlabel = QtGui.QLabel('C-Alplha Interval')
-        self.mockSidechainsCheckBox = QtGui.QCheckBox('Mock Sidechains')
-        self.acceptButton = QtGui.QPushButton('Accept')
-        self.removeButton = QtGui.QPushButton('Remove')
-                
+                       
         self.setupUi()
         self.enableDisable()
         
@@ -784,20 +774,16 @@ be the current residue for the atomic editor.
         radioLayout = QtGui.QHBoxLayout()
         radioLayout.addWidget(self.helixModifyRadioButton)
         radioLayout.addWidget(self.helixNewRadioButtion)
-        radioLayout.addStretch()
         
-        NtermLayout = QtGui.QHBoxLayout()
-        NtermLayout.addWidget(NterminusLabel)
-        NtermLayout.addWidget(self.helixNtermResNameLabel)
-        NtermLayout.addWidget(self.helixNtermSpinBox)
-        NtermLayout.addStretch()        
+        termLayout = QtGui.QGridLayout()
+        termLayout.addWidget(NterminusLabel, 0, 0, 1, 1)
+        termLayout.addWidget(self.helixNtermResNameLabel, 0, 1, 1, 1)
+        termLayout.addWidget(self.helixNtermSpinBox, 0, 2, 1, 1)
         
-        CtermLayout = QtGui.QHBoxLayout()
-        CtermLayout.addWidget(CterminusLabel)
-        CtermLayout.addWidget(self.helixCtermResNameLabel)
-        CtermLayout.addWidget(self.helixCtermSpinBox)
-        CtermLayout.addStretch()
-        
+        termLayout.addWidget(CterminusLabel, 1, 0, 1, 1)
+        termLayout.addWidget(self.helixCtermResNameLabel, 1, 1, 1, 1)
+        termLayout.addWidget(self.helixCtermSpinBox, 1, 2, 1, 1)
+                
         positionLayout = QtGui.QHBoxLayout()
         positionLayout.addWidget(self.helixDecreasePositionButton)
         positionLayout.addWidget(positionLabel)
@@ -810,8 +796,7 @@ be the current residue for the atomic editor.
                 
         helixLayout  = QtGui.QVBoxLayout()
         helixLayout.addLayout(radioLayout)
-        helixLayout.addLayout(NtermLayout)
-        helixLayout.addLayout(CtermLayout)
+        helixLayout.addLayout(termLayout)
         helixLayout.addLayout(positionLayout)
         helixLayout.addLayout(flipLayout)
         self.helixTab.setLayout(helixLayout)
@@ -855,15 +840,15 @@ be the current residue for the atomic editor.
         self.loopStopSpinBox.setEnabled(False)
     
     def setupPositionTab(self):
-        self.posTranslateLabel = QtGui.QLabel('Translate')
-        self.posRotateLabel = QtGui.QLabel('Rotate')
+        self.posTranslateGroup = QtGui.QGroupBox('Translate:')
+        self.posRotateGroup = QtGui.QGroupBox('Rotate:')
         self.posMoveLabelsDict = {
-                              'x': QtGui.QLabel('x'), 
-                              'y': QtGui.QLabel('y'), 
-                              'z': QtGui.QLabel('z'), 
-                              'roll': QtGui.QLabel('roll'), 
-                              'pitch': QtGui.QLabel('pitch'), 
-                              'yaw': QtGui.QLabel('yaw')
+                              'x': QtGui.QLabel('X:'), 
+                              'y': QtGui.QLabel('Y:'), 
+                              'z': QtGui.QLabel('Z:'), 
+                              'roll': QtGui.QLabel('Roll:'), 
+                              'pitch': QtGui.QLabel('Pitch:'), 
+                              'yaw': QtGui.QLabel('Yaw:')
                               }
                               
         self.posMoveDict = {
@@ -909,23 +894,27 @@ be the current residue for the atomic editor.
                               'yaw': QtGui.QHBoxLayout()
                               }
         
-        for key in posSpinLabelLayoutDict.keys():
-            curLayout = posSpinLabelLayoutDict[key]
-            curLayout.addWidget(self.posMoveLabelsDict[key])
-            curLayout.addWidget(self.posDecreaseButtonDict[key])
-            curLayout.addWidget(self.posMoveDict[key])
-            curLayout.addWidget(self.posIncreaseButtonDict[key])
-            curLayout.addStretch()
-                
-        positionLayout = QtGui.QGridLayout()
-        positionLayout.addWidget(self.posTranslateLabel, 0, 0)
-        positionLayout.addLayout(posSpinLabelLayoutDict['x'], 1, 0)
-        positionLayout.addLayout(posSpinLabelLayoutDict['y'], 2,  0)
-        positionLayout.addLayout(posSpinLabelLayoutDict['z'], 3, 0)
-        positionLayout.addWidget(self.posRotateLabel, 4, 0)
-        positionLayout.addLayout(posSpinLabelLayoutDict['roll'], 5, 0)
-        positionLayout.addLayout(posSpinLabelLayoutDict['pitch'], 6, 0)
-        positionLayout.addLayout(posSpinLabelLayoutDict['yaw'], 7, 0)
+        def addElement(key, row, layout):
+            layout.addWidget(self.posMoveLabelsDict[key], row, 0, 1, 1)
+            layout.addWidget(self.posDecreaseButtonDict[key], row, 1, 1, 1)
+            layout.addWidget(self.posMoveDict[key], row, 2, 1, 1)
+            layout.addWidget(self.posIncreaseButtonDict[key], row, 3, 1, 1)
+         
+        translateLayout = QtGui.QGridLayout() 
+        addElement('x', 0, translateLayout)
+        addElement('y', 1, translateLayout)
+        addElement('z', 2, translateLayout)
+        self.posTranslateGroup.setLayout(translateLayout)
+        
+        rotateLayout = QtGui.QGridLayout() 
+        addElement('roll', 0, rotateLayout)
+        addElement('pitch', 1, rotateLayout)
+        addElement('yaw', 2, rotateLayout)    
+        self.posRotateGroup.setLayout(rotateLayout)
+                            
+        positionLayout = QtGui.QVBoxLayout()
+        positionLayout.addWidget(self.posTranslateGroup)
+        positionLayout.addWidget(self.posRotateGroup)
         self.positionTab.setLayout(positionLayout)
         
         self.connect(self.posDecreaseButtonDict['x'], QtCore.SIGNAL('clicked()'), self.posXDecr)
@@ -947,6 +936,16 @@ be the current residue for the atomic editor.
         
         
     def setupUi(self):
+        #These go on the left hand side
+        self.undoButton = QtGui.QPushButton('Undo')
+        self.redoButton = QtGui.QPushButton('Redo')
+        self.CAdoubleSpinBox = QtGui.QDoubleSpinBox()
+        self.CAdoubleSpinBox.setValue(3.8)
+        self.CAlabel = QtGui.QLabel('C-Alpha Interval')
+        self.mockSidechainsCheckBox = QtGui.QCheckBox('Mock Sidechains')
+        self.acceptButton = QtGui.QPushButton('Accept')
+        self.removeButton = QtGui.QPushButton('Remove')        
+        
         self.tabWidget = QtGui.QTabWidget()
         self.helixTab = QtGui.QWidget()
         self.atomicTab = QtGui.QWidget()
@@ -958,32 +957,17 @@ be the current residue for the atomic editor.
         resIndexFont = QtGui.QFont(self.font())
         resIndexFont.setPointSize(13)
         
-        layout = QtGui.QHBoxLayout()
+        layout = QtGui.QVBoxLayout()
         
-        leftLayout = QtGui.QVBoxLayout()
-        leftLayout.addStretch()
-        
-        undoRedoLayout = QtGui.QHBoxLayout()
-        undoRedoLayout.addWidget(self.undoButton)
-        undoRedoLayout.addWidget(self.redoButton)
-        undoRedoLayout.addStretch()
-        
-        leftLayout.addLayout(undoRedoLayout)
-        leftLayout.addWidget(self.mockSidechainsCheckBox)
-        
-        CAIntervalLayout = QtGui.QHBoxLayout()
-        CAIntervalLayout.addWidget(self.CAdoubleSpinBox)
-        CAIntervalLayout.addWidget(self.CAlabel)
-        
-        buttonLayout = QtGui.QHBoxLayout()
-        buttonLayout.addStretch()
-        buttonLayout.addWidget(self.acceptButton)
-        buttonLayout.addWidget(self.removeButton)
-        buttonLayout.addStretch()
-        
-        leftLayout.addLayout(CAIntervalLayout)        
-        leftLayout.addLayout(buttonLayout)
-        leftLayout.addStretch()
+        bottomLayout = QtGui.QGridLayout()
+                
+        bottomLayout.addWidget(self.undoButton, 0, 0, 1, 1)
+        bottomLayout.addWidget(self.redoButton, 0, 1, 1, 1)        
+        bottomLayout.addWidget(self.mockSidechainsCheckBox, 1, 0, 1, 2)
+        bottomLayout.addWidget(self.CAlabel, 2, 0, 1, 1)
+        bottomLayout.addWidget(self.CAdoubleSpinBox, 2, 1, 1, 1)
+        bottomLayout.addWidget(self.acceptButton, 3, 1)
+        bottomLayout.addWidget(self.removeButton, 3, 2)
         
         self.tabWidget.addTab(self.helixTab, self.tr('Helix Editor'))
         self.tabWidget.addTab(self.atomicTab, self.tr('Atomic Editor'))
@@ -995,8 +979,8 @@ be the current residue for the atomic editor.
         self.setupLoopTab()
         self.setupPositionTab()
 
-        layout.addLayout(leftLayout)
         layout.addWidget(self.tabWidget)
+        layout.addLayout(bottomLayout)
         self.setLayout(layout)
     
     def updateCurrentMatch(self):
