@@ -5,6 +5,7 @@
 
 from PyQt4 import QtGui, QtCore
 from libpyGORGON import PDBAtom, PDBBond, Vector3DFloat
+from correspondence.interactive_loop_builder import InteractiveLoopBuilder
 from seq_model.findHelixCalphas import helixEndpointsToCAlphaPositions
 from seq_model.Helix import Helix
 import math
@@ -18,6 +19,9 @@ position editor, etc.
     """
     def __init__(self, currentChainModel, parent=None):
         super(StructureEditor, self).__init__(parent)
+        
+        if self.parentWidget().parentWidget().app:
+            self.app = self.parentWidget().parentWidget().app        
         
         self.currentChainModel = currentChainModel
         self.atomJustAdded = None
@@ -41,9 +45,8 @@ position editor, etc.
         self.connect(self.currentChainModel, QtCore.SIGNAL('selection updated'), self.updateSelectedResidues)
         self.connect(self.tabWidget, QtCore.SIGNAL('currentChanged(int)'), self.enableDisable)
         if self.parentWidget().parentWidget().app:
-            self.app = self.parentWidget().parentWidget().app
             self.updateCurrentMatch() #In case an observed helix is already selected
-            self.CAlphaViewer = self.app.viewers['calpha']            
+            self.CAlphaViewer = self.app.viewers['calpha']                       
             self.connect(self.app.viewers['sse'], QtCore.SIGNAL("SSE selected"), self.updateCurrentMatch)
             self.connect(self.app.viewers["calpha"], QtCore.SIGNAL("elementSelected (int, int, int, int, int, int, QMouseEvent)"), self.posUpdateValues)
             self.connect(self.posMoveDict['x'], QtCore.SIGNAL('valueChanged(double)'), self.posMoveCM_x)
@@ -53,6 +56,8 @@ position editor, etc.
             self.connect(self.posMoveDict['pitch'], QtCore.SIGNAL('valueChanged(int)'), self.posRotateCM_pitch)
             self.connect(self.posMoveDict['yaw'], QtCore.SIGNAL('valueChanged(int)'), self.posRotateCM_yaw)
             self.connect(self.removeButton, QtCore.SIGNAL('clicked()'), self.removeSelectedAtoms)
+            self.connect(self.app.viewers['volume'], QtCore.SIGNAL("modelLoaded()"), self.updateLoopEditorEnables)
+            self.connect(self.app.viewers['volume'], QtCore.SIGNAL("modelUnloaded()"), self.updateLoopEditorEnables)
       
     def acceptButtonPress(self):
         """
@@ -691,6 +696,46 @@ be the current residue for the atomic editor.
                 self.atomicResNumbers[i].setText('')
         self.atomFindPositionPossibilities()
         
+    def setLoopEditorValues(self, newSelection):
+        if(newSelection):
+            self.loopStartSpinBox.setValue(newSelection[0])
+            self.loopStopSpinBox.setValue(newSelection[-1])
+            if(self.builder):
+                self.builder.setLoopAtomCount(self.getLoopLength())
+        else :
+            self.loopStartSpinBox.setValue(0)
+            self.loopStopSpinBox.setValue(0)            
+    
+    def updateLoopEditorEnables(self):
+        print "in updateLoopEditorEnables"
+        volumeViewer = self.app.viewers['volume']
+        
+        self.loopVolumeLoadButton.setVisible(not volumeViewer.loaded)        
+        self.loopVolumeLoadedLabel.setVisible(not volumeViewer.loaded)
+
+        self.loopStartEndBuildingButton.setEnabled(volumeViewer.loaded)
+        self.loopStartLabel.setEnabled(volumeViewer.loaded)
+        self.loopStartSpinBox.setEnabled(volumeViewer.loaded)
+        self.loopStopLabel.setEnabled(volumeViewer.loaded)
+        self.loopStopSpinBox.setEnabled(volumeViewer.loaded)
+            
+    def startEndLoopBuilding(self):
+        self.loopBuildingStarted = not self.loopBuildingStarted
+        
+        if(self.loopBuildingStarted):
+            self.loopStartEndBuildingButton.setText('End Loop Placement')
+            self.setCursor(QtCore.Qt.BusyCursor)
+            self.builder = InteractiveLoopBuilder(self.app)
+            self.builder.setLoopAtomCount(self.getLoopLength())
+            self.setCursor(QtCore.Qt.ArrowCursor)                       
+        else:
+            self.loopStartEndBuildingButton.setText('Start Loop Placement')
+            del self.builder
+            
+    def getLoopLength(self):
+        return self.loopStopSpinBox.value() - self.loopStartSpinBox.value()
+            
+    
     def setupAtomicTab(self):
         #These go in the atomic tab
         self.atomicPossibilityNumSpinBox = QtGui.QSpinBox()
@@ -804,41 +849,35 @@ be the current residue for the atomic editor.
         #Disabling widgets that are not yet implemented
         self.helixModifyRadioButton.setEnabled(False)
         self.helixNewRadioButtion.setEnabled(False)
+    
+   
+    def setupLoopTab(self):    
+        self.loopBuildingStarted = False    
+
+        self.loopVolumeLoadedLabel = QtGui.QLabel('Volume not loaded.  Please load a volume to place loops.')
+        self.loopVolumeLoadButton = QtGui.QPushButton('Load Volume')
+        self.loopStartEndBuildingButton = QtGui.QPushButton('Start Loop Placement')
         
-    def setupLoopTab(self):
-        self.loopStartLabel = QtGui.QLabel('Start Residue')
+        self.loopStartLabel = QtGui.QLabel('Start Residue:')
         self.loopStartSpinBox = QtGui.QSpinBox()
-        self.loopStopLabel = QtGui.QLabel('Stop Residue')
+        self.loopStopLabel = QtGui.QLabel('Stop Residue:')
         self.loopStopSpinBox = QtGui.QSpinBox()
-        self.loopIDLabel = QtGui.QLabel('Loop ID & Score')
-        self.loopFindButton = QtGui.QPushButton('Find Loops')
-        self.loopComboBox = QtGui.QComboBox()
-        self.loopAcceptButton = QtGui.QPushButton('Accept Loop')
-        self.loopRejectButton = QtGui.QPushButton('Reject Loop')
-        
+                
         loopLayout = QtGui.QGridLayout()
-        loopLayout.addWidget(self.loopStartLabel, 0, 0)
-        loopLayout.addWidget(self.loopStartSpinBox, 0, 1)
-        loopLayout.addWidget(self.loopStopLabel, 1, 0)
-        loopLayout.addWidget(self.loopStopSpinBox, 1, 1)
-        loopLayout.addWidget(self.loopIDLabel, 2, 1)
-        loopLayout.addWidget(self.loopFindButton, 3, 0)
-        loopLayout.addWidget(self.loopComboBox, 3, 1)
-        loopLayout.addWidget(self.loopAcceptButton, 4, 0)
-        loopLayout.addWidget(self.loopRejectButton, 4, 1)
+        loopLayout.addWidget(self.loopVolumeLoadedLabel, 0, 0, 1, 2)
+        loopLayout.addWidget(self.loopVolumeLoadButton, 1, 0, 1, 1)
+        loopLayout.addWidget(self.loopStartEndBuildingButton, 2, 0, 1, 1)
+        loopLayout.addWidget(self.loopStartLabel, 3, 0, 1, 1)
+        loopLayout.addWidget(self.loopStartSpinBox, 3, 1, 1, 1)
+        loopLayout.addWidget(self.loopStopLabel, 4, 0, 1, 1)
+        loopLayout.addWidget(self.loopStopSpinBox, 4, 1, 1, 1)
         self.loopTab.setLayout(loopLayout)
         
-        #Disabling widgets that are not yet implemented
-        self.loopAcceptButton.setEnabled(False)
-        self.loopComboBox.setEnabled(False)
-        self.loopFindButton.setEnabled(False)
-        self.loopIDLabel.setEnabled(False)
-        self.loopRejectButton.setEnabled(False)
-        self.loopStartLabel.setEnabled(False)
-        self.loopStartSpinBox.setEnabled(False)
-        self.loopStopLabel.setEnabled(False)
-        self.loopStopSpinBox.setEnabled(False)
-    
+        self.connect(self.loopVolumeLoadButton, QtCore.SIGNAL('clicked()'), self.app.viewers['volume'].loadData)
+        self.connect(self.loopStartEndBuildingButton, QtCore.SIGNAL('clicked()'), self.startEndLoopBuilding)
+        
+        self.updateLoopEditorEnables()
+        
     def setupPositionTab(self):
         self.posTranslateGroup = QtGui.QGroupBox('Translate:')
         self.posRotateGroup = QtGui.QGroupBox('Rotate:')
@@ -933,8 +972,7 @@ be the current residue for the atomic editor.
         self.roll = 0
         self.pitch = 0
         self.yaw = 0
-        
-        
+                
     def setupUi(self):
         #These go on the left hand side
         self.undoButton = QtGui.QPushButton('Undo')
@@ -1029,7 +1067,9 @@ residue in the atomic editor. It also updates the positions in the
 position editor.
         """
         print '\nIn updateSelectedResidues'
-        self.setResidues(self.currentChainModel.getSelection())
+        selection = self.currentChainModel.getSelection()
+        self.setLoopEditorValues(selection)
+        self.setResidues(selection)
         self.posUpdateValues()
         
 class CommandAcceptAtomPlacement(QtGui.QUndoCommand):

@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.48  2009/03/24 15:18:15  ssa1
+//   Better cross section & Solid Rendering viewing
+//
 //   Revision 1.47  2009/03/16 16:17:34  ssa1
 //   Fitting SSEs into the Density
 //
@@ -107,6 +110,7 @@
 #include <Gorgon/SSERenderer.h>
 #include <Gorgon/Renderer.h>
 #include <Gorgon/InteractiveSkeletonEngine.h>
+#include <Gorgon/InteractiveLoopBuilderEngine.h>
 #include <Gorgon/CAlphaRenderer.h>
 #include <MathTools/Vector3D.h>
 #include <GraphMatch/PDBAtom.h>
@@ -364,6 +368,31 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 	;
 
 	class_<InteractiveSkeletonEngine>("InteractiveSkeletonEngine", init<Volume *, NonManifoldMesh_Annotated *, float, int, int, int, unsigned int>())		
+		.def("startEndPolyLineMode", &InteractiveSkeletonEngine::StartEndPolyLineMode)
+		.def("startEndSingleRootMode", &InteractiveSkeletonEngine::StartEndSingleRootMode)
+		.def("browseStartSeedRay", &InteractiveSkeletonEngine::BrowseStartSeedRay)
+		.def("selectStartSeedRay", &InteractiveSkeletonEngine::SelectStartSeedRay)
+		.def("selectEndSeed", &InteractiveSkeletonEngine::SelectEndSeed)
+		.def("selectRootRay", &InteractiveSkeletonEngine::SelectRootRay)
+		.def("analyzePathRay", &InteractiveSkeletonEngine::AnalyzePathRay)
+		.def("setIsoValue", &InteractiveSkeletonEngine::SetIsoValue)		
+		.def("clearSkeleton", &InteractiveSkeletonEngine::ClearSkeleton)		
+		.def("clearCurrentPath", &InteractiveSkeletonEngine::ClearCurrentPath)		
+		.def("finalizeSkeleton", &InteractiveSkeletonEngine::FinalizeSkeleton)		
+		.def("draw", &InteractiveSkeletonEngine::Draw)		
+		.def("clearSketch2D", &InteractiveSkeletonEngine::ClearSketch2D)		
+		.def("setSketch2D", &InteractiveSkeletonEngine::SetSketch2D)		
+		.def("setSketchRay", &InteractiveSkeletonEngine::SetSketchRay)		
+		.def("clearSketchRay", &InteractiveSkeletonEngine::ClearSketchRay)
+		.def("endSketchRay", &InteractiveSkeletonEngine::EndSketchRay)
+		.def("addSelectionPoint", &InteractiveSkeletonEngine::AddSelectionPoint)
+		.def("selectSelection", &InteractiveSkeletonEngine::SelectSelection)
+		.def("deleteSelection", &InteractiveSkeletonEngine::DeleteSelection)
+		.def("cancelSelection", &InteractiveSkeletonEngine::CancelSelection)
+		.def("setLineThickness", &InteractiveSkeletonEngine::SetLineThickness)
+	;
+
+	class_<InteractiveLoopBuilderEngine>("InteractiveLoopBuilderEngine", init<Volume *, NonManifoldMesh_Annotated *, float, int, int, int, unsigned int>())		
 		.def("startEndPolyLineMode", &InteractiveSkeletonEngine::StartEndPolyLineMode)
 		.def("startEndSingleRootMode", &InteractiveSkeletonEngine::StartEndSingleRootMode)
 		.def("browseStartSeedRay", &InteractiveSkeletonEngine::BrowseStartSeedRay)

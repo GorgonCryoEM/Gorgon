@@ -179,6 +179,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\InteractiveLoopBuilderEngine.h"
+				>
+			</File>
+			<File
 				RelativePath=".\InteractiveSkeletonEngine.h"
 				>
 			</File>
