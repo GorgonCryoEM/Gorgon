@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.29  2009/03/25 16:52:10  ssa1
+#   Fixing UI issues on semi-automatic atom placement
+#
 #   Revision 1.28  2009/03/24 19:25:54  ssa1
 #   Fixing scaling bug in interactive skeletonization
 #
@@ -284,7 +287,7 @@ class VolumeManualSkeletonizationForm(QtGui.QWidget):
         elif(self.started and event.modifiers() & QtCore.Qt.ALT ):
             self.engine.analyzePathRay(ray[0], ray[1], ray[2], eye[0], eye[1], eye[2], rayWidth)
             self.skeletonViewer.emitModelChanged()
-        elif(event.modifiers() & QtCore.Qt.SHIFT):
+        elif(self.started and event.modifiers() & QtCore.Qt.SHIFT):
             self.engine.setSketch2D(self.app.mainCamera.width(), self.app.mainCamera.height(), event.x(), event.y())
             self.engine.setSketchRay(ray[0], ray[1], ray[2], eye[0], eye[1], eye[2], rayWidth)               
             self.skeletonViewer.emitModelChanged()
