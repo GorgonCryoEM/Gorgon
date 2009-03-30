@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.32  2008/12/07 07:11:36  ssa1
+//   Coloring bonds with red and blue if they exceed maximum or minimum length restrictions
+//
 //   Revision 1.31  2008/12/03 21:58:25  ssa1
 //   Selection rotations for atoms and helices.
 //
@@ -147,7 +150,7 @@ namespace wustl_mm {
 					glPushName(0);
 				}
 				for(AtomMapType::iterator i = atoms.begin(); i != atoms.end(); i++) {
-					glPushAttrib(GL_LIGHTING_BIT);
+					glPushAttrib(GL_LIGHTING_BIT);					
 					if(i->second.GetSelected()) {
 						glMaterialfv(GL_FRONT, GL_EMISSION, emissionColor);
 						glMaterialfv(GL_BACK, GL_EMISSION, emissionColor);
@@ -158,7 +161,10 @@ namespace wustl_mm {
 					if(selectEnabled){
 						glLoadName((long)&(i->second));
 					}
-					DrawSphere(i->second.GetPosition(), i->second.GetAtomRadius() * 0.3);
+					if(i->second.GetVisible()) {
+						DrawSphere(i->second.GetPosition(), i->second.GetAtomRadius() * 0.3);
+					}
+					
 					glPopAttrib();
 
 				}
@@ -189,9 +195,10 @@ namespace wustl_mm {
 					if(length < 3.3) {
 						SetColor(0, 0, 1.0, 1.0);
 					}
-
-
-					DrawCylinder(atoms[bonds[i].GetAtom0Ix()].GetPosition(), atoms[bonds[i].GetAtom1Ix()].GetPosition(), 0.1);
+			
+					if(atoms[bonds[i].GetAtom0Ix()].GetVisible() && atoms[bonds[i].GetAtom1Ix()].GetVisible()) {
+						DrawCylinder(atoms[bonds[i].GetAtom0Ix()].GetPosition(), atoms[bonds[i].GetAtom1Ix()].GetPosition(), 0.1);
+					}
 					glPopAttrib();
 				}
 				if(selectEnabled) {

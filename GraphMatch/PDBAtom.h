@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.8  2008/09/29 19:05:37  ssa1
+//   Fixing String Utils.h linking errors
+//
 //   Revision 1.7  2008/09/29 16:19:30  ssa1
 //   Adding in CVS meta information
 //
@@ -63,6 +66,7 @@ namespace wustl_mm {
 			float			GetColorB();
 			float			GetAtomRadius();
 			bool			GetSelected();
+			bool			GetVisible();
 			unsigned long long	GetHashKey();
 			int				GetFlag();		// Purely for implementation purposes
 			static unsigned long long ConstructHashKey(string pdbId, char chainId, unsigned int resSeq, string name);
@@ -83,6 +87,7 @@ namespace wustl_mm {
 			void SetAtomRadius(float radius);
 			void SetSelected(bool selected);
 			void SetFlag(int flag);
+			void SetVisible(bool visible);
 		private:
 			static unsigned long long GetCharIndex(char c);
 			static unsigned long long GetPDBIdIndex(string pdbId);
@@ -109,6 +114,7 @@ namespace wustl_mm {
 			float			colorB;
 			float			colorA;
 			bool			selected;
+			bool			visible;
 			int				flag;
 		};
 
@@ -132,6 +138,7 @@ namespace wustl_mm {
 			colorB = 0.0f;
 			colorA = 1.0f;
 			selected = false;
+			visible = true;
 		}
 
 		PDBAtom::PDBAtom(string pdbId, char chainId, unsigned int resSeq, string name) {
@@ -309,6 +316,10 @@ namespace wustl_mm {
 			return ConstructHashKey(pdbId, chainId, resSeq, name);
 		}
 
+		bool PDBAtom::GetVisible() {
+			return visible;
+		}
+
 		unsigned long long PDBAtom::ConstructHashKey(string pdbId, char chainId, unsigned int resSeq, string name) {
 			unsigned long long chainIDCount = 37;
 			unsigned long long residueNumCount = 10000;
@@ -386,7 +397,12 @@ namespace wustl_mm {
 		void PDBAtom::SetFlag(int flag) {
 			this->flag = flag;
 		}
+
+		void PDBAtom::SetVisible(bool visible) {
+			this->visible = visible;
+		}
 	}
+
 }
 
 #endif

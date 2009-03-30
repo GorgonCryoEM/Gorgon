@@ -24,6 +24,7 @@ position editor, etc.
             self.app = self.parentWidget().parentWidget().app        
         
         self.currentChainModel = currentChainModel
+        self.builder = False
         self.atomJustAdded = None
         self.possibleAtomsList = []
         self.previouslySelectedPossibleAtom = None
@@ -701,7 +702,7 @@ be the current residue for the atomic editor.
             self.loopStartSpinBox.setValue(newSelection[0])
             self.loopStopSpinBox.setValue(newSelection[-1])
             if(self.builder):
-                self.builder.setLoopAtomCount(self.getLoopLength())
+                self.builder.setLoopAtoms(newSelection[0], newSelection[-1])
         else :
             self.loopStartSpinBox.setValue(0)
             self.loopStopSpinBox.setValue(0)            
@@ -725,12 +726,13 @@ be the current residue for the atomic editor.
         if(self.loopBuildingStarted):
             self.loopStartEndBuildingButton.setText('End Loop Placement')
             self.setCursor(QtCore.Qt.BusyCursor)
-            self.builder = InteractiveLoopBuilder(self.app)
-            self.builder.setLoopAtomCount(self.getLoopLength())
+            self.builder = InteractiveLoopBuilder(self.app, self.currentChainModel)
+            self.builder.setLoopAtoms(self.loopStartSpinBox.value(), self.loopStopSpinBox.value())
             self.setCursor(QtCore.Qt.ArrowCursor)                       
         else:
             self.loopStartEndBuildingButton.setText('Start Loop Placement')
             del self.builder
+            self.builder = False
             
     def getLoopLength(self):
         return self.loopStopSpinBox.value() - self.loopStartSpinBox.value()
@@ -860,8 +862,10 @@ be the current residue for the atomic editor.
         
         self.loopStartLabel = QtGui.QLabel('Start Residue:')
         self.loopStartSpinBox = QtGui.QSpinBox()
+        self.loopStartSpinBox.setMaximum(10000)
         self.loopStopLabel = QtGui.QLabel('Stop Residue:')
         self.loopStopSpinBox = QtGui.QSpinBox()
+        self.loopStopSpinBox.setMaximum(10000)
                 
         loopLayout = QtGui.QGridLayout()
         loopLayout.addWidget(self.loopVolumeLoadedLabel, 0, 0, 1, 2)
