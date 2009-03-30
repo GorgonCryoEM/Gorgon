@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.49  2009/03/26 19:33:52  ssa1
+//   Adding in an Interactive Loop Builder
+//
 //   Revision 1.48  2009/03/24 15:18:15  ssa1
 //   Better cross section & Solid Rendering viewing
 //
@@ -162,6 +165,7 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("getColorB", &PDBAtom::GetColorB)
 		.def("getSelected", &PDBAtom::GetSelected)
 		.def("getHashKey", &PDBAtom::GetHashKey)
+		.def("getVisible", &PDBAtom::GetVisible)
 		.def("constructHashKey", &PDBAtom::ConstructHashKey)
 		.def("setSerial", &PDBAtom::SetSerial)
 		.def("setName", &PDBAtom::SetName)
@@ -178,6 +182,7 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("setAtomRadius", &PDBAtom::SetAtomRadius)
 		.def("setColor", &PDBAtom::SetColor)
 		.def("setSelected", &PDBAtom::SetSelected)
+		.def("setVisible", &PDBAtom::SetVisible)
 	;
 
 	class_<PDBBond>("PDBBond", init<>())
@@ -392,29 +397,36 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("setLineThickness", &InteractiveSkeletonEngine::SetLineThickness)
 	;
 
-	class_<InteractiveLoopBuilderEngine>("InteractiveLoopBuilderEngine", init<Volume *, NonManifoldMesh_Annotated *, float, int, int, int, unsigned int>())		
-		.def("startEndPolyLineMode", &InteractiveSkeletonEngine::StartEndPolyLineMode)
-		.def("startEndSingleRootMode", &InteractiveSkeletonEngine::StartEndSingleRootMode)
-		.def("browseStartSeedRay", &InteractiveSkeletonEngine::BrowseStartSeedRay)
-		.def("selectStartSeedRay", &InteractiveSkeletonEngine::SelectStartSeedRay)
-		.def("selectEndSeed", &InteractiveSkeletonEngine::SelectEndSeed)
-		.def("selectRootRay", &InteractiveSkeletonEngine::SelectRootRay)
-		.def("analyzePathRay", &InteractiveSkeletonEngine::AnalyzePathRay)
-		.def("setIsoValue", &InteractiveSkeletonEngine::SetIsoValue)		
-		.def("clearSkeleton", &InteractiveSkeletonEngine::ClearSkeleton)		
-		.def("clearCurrentPath", &InteractiveSkeletonEngine::ClearCurrentPath)		
-		.def("finalizeSkeleton", &InteractiveSkeletonEngine::FinalizeSkeleton)		
-		.def("draw", &InteractiveSkeletonEngine::Draw)		
-		.def("clearSketch2D", &InteractiveSkeletonEngine::ClearSketch2D)		
-		.def("setSketch2D", &InteractiveSkeletonEngine::SetSketch2D)		
-		.def("setSketchRay", &InteractiveSkeletonEngine::SetSketchRay)		
-		.def("clearSketchRay", &InteractiveSkeletonEngine::ClearSketchRay)
-		.def("endSketchRay", &InteractiveSkeletonEngine::EndSketchRay)
-		.def("addSelectionPoint", &InteractiveSkeletonEngine::AddSelectionPoint)
-		.def("selectSelection", &InteractiveSkeletonEngine::SelectSelection)
-		.def("deleteSelection", &InteractiveSkeletonEngine::DeleteSelection)
-		.def("cancelSelection", &InteractiveSkeletonEngine::CancelSelection)
-		.def("setLineThickness", &InteractiveSkeletonEngine::SetLineThickness)
+	class_<InteractiveLoopBuilderEngine>("InteractiveLoopBuilderEngine", init<Volume *, NonManifoldMesh_Annotated *, CAlphaRenderer *, float, int, int, int, unsigned int>())		
+		.def("startEndPolyLineMode", &InteractiveLoopBuilderEngine::StartEndPolyLineMode)
+		.def("startEndSingleRootMode", &InteractiveLoopBuilderEngine::StartEndSingleRootMode)
+		.def("browseStartSeedRay", &InteractiveLoopBuilderEngine::BrowseStartSeedRay)
+		.def("selectStartSeedRay", &InteractiveLoopBuilderEngine::SelectStartSeedRay)
+		.def("selectEndSeed", &InteractiveLoopBuilderEngine::SelectEndSeed)
+		.def("selectRootRay", &InteractiveLoopBuilderEngine::SelectRootRay)
+		.def("analyzePathRay", &InteractiveLoopBuilderEngine::AnalyzePathRay)
+		.def("setIsoValue", &InteractiveLoopBuilderEngine::SetIsoValue)		
+		.def("clearSkeleton", &InteractiveLoopBuilderEngine::ClearSkeleton)		
+		.def("clearCurrentPath", &InteractiveLoopBuilderEngine::ClearCurrentPath)		
+		.def("finalizeSkeleton", &InteractiveLoopBuilderEngine::FinalizeSkeleton)		
+		.def("draw", &InteractiveLoopBuilderEngine::Draw)		
+		.def("clearSketch2D", &InteractiveLoopBuilderEngine::ClearSketch2D)		
+		.def("setSketch2D", &InteractiveLoopBuilderEngine::SetSketch2D)		
+		.def("setSketchRay", &InteractiveLoopBuilderEngine::SetSketchRay)		
+		.def("clearSketchRay", &InteractiveLoopBuilderEngine::ClearSketchRay)
+		.def("endSketchRay", &InteractiveLoopBuilderEngine::EndSketchRay)
+		.def("addSelectionPoint", &InteractiveLoopBuilderEngine::AddSelectionPoint)
+		.def("selectSelection", &InteractiveLoopBuilderEngine::SelectSelection)
+		.def("deleteSelection", &InteractiveLoopBuilderEngine::DeleteSelection)
+		.def("cancelSelection", &InteractiveLoopBuilderEngine::CancelSelection)
+		.def("setLineThickness", &InteractiveLoopBuilderEngine::SetLineThickness)
+		.def("addAtom", &InteractiveLoopBuilderEngine::AddAtom)
+		.def("commitAtomList", &InteractiveLoopBuilderEngine::CommitAtomList)
+		.def("clearAtomList", &InteractiveLoopBuilderEngine::ClearAtomList)
+		.def("setTranslation", &InteractiveLoopBuilderEngine::SetTranslation)
+		.def("setScaling", &InteractiveLoopBuilderEngine::SetScaling)
+		.def("finishLoopBuilding", &InteractiveLoopBuilderEngine::FinishLoopBuilding)
+		
 	;
 
 	class_<SSECorrespondenceResult>("SSECorrespondenceResult", init<>())

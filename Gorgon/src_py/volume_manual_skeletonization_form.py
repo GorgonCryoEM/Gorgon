@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.30  2009/03/26 19:33:52  ssa1
+#   Adding in an Interactive Loop Builder
+#
 #   Revision 1.29  2009/03/25 16:52:10  ssa1
 #   Fixing UI issues on semi-automatic atom placement
 #
@@ -155,6 +158,9 @@ class VolumeManualSkeletonizationForm(QtGui.QWidget):
     def endSkeletonization(self):
         self.startEndSkeletonization(False)
         self.dock.close()
+
+    def initializeEngine(self, medialnessScoringFunction):
+        self.engine = InteractiveSkeletonEngine(self.volume, self.mesh, self.getStartingDensity(), self.getStepCount(), self.getCurveRadius(), self.getMinCurveLength(), medialnessScoringFunction)
                
     def startEndSkeletonization(self, start):        
         if(start):            
@@ -173,7 +179,7 @@ class VolumeManualSkeletonizationForm(QtGui.QWidget):
             else :
                 medialnessScoringFunction = self.MedialnessScoringFunctionLocalRank 
                        
-            self.engine = InteractiveSkeletonEngine(self.volume, self.mesh, self.getStartingDensity(), self.getStepCount(), self.getCurveRadius(), self.getMinCurveLength(), medialnessScoringFunction)
+            self.initializeEngine(medialnessScoringFunction)
             self.engine.setIsoValue(self.viewer.renderer.getSurfaceValue())
             self.connect(self.app.viewers["skeleton"], QtCore.SIGNAL("elementSelected (int, int, int, int, int, int, QMouseEvent)"), self.skeletonClicked)
             self.connect(self.app.mainCamera, QtCore.SIGNAL("cameraChanged()"), self.processCameraChanged)

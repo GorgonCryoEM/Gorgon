@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.28  2008/12/01 23:16:31  ssa1
+//   Restructuring interactive skeleton drawing, and fixing it for scale space changes.
+//
 //   Revision 1.27  2008/11/06 20:34:23  ssa1
 //   Proper lighting for bounding boxes
 //
@@ -75,7 +78,7 @@ namespace wustl_mm {
 		typedef map<unsigned long long, bool> SketchMapType;
 		class InteractiveSkeletonEngine {
 		public:
-			InteractiveSkeletonEngine(Volume * volume, NonManifoldMesh_Annotated * skeleton, float minGray, int stepCount, int curveRadius, int minCurveSize, unsigned int medialnessScoringFunction);
+			InteractiveSkeletonEngine(Volume * volume, NonManifoldMesh_Annotated * skeleton, float minGray, int stepCount, int curveRadius, int minCurveSize, unsigned int medialnessScoringFunction);			
 			~InteractiveSkeletonEngine();			
 			void AnalyzePathRay(float rayX, float rayY, float rayZ, float eyeX, float eyeY, float eyeZ, float rayWidth);
 			bool ClearSketch2D();
@@ -84,10 +87,10 @@ namespace wustl_mm {
 			bool SetSketchRay(float rayX, float rayY, float rayZ, float eyeX, float eyeY, float eyeZ, float rayWidth);
 			void EndSketchRay(float medialnessRatio, float smoothnessRatio, float minSketchRatio, float maxSketchRatio);
 
-			void Draw(int subscene);
+			virtual void Draw(int subscene);
 			void FinalizeSkeleton();
 			void ClearSkeleton();
-			void ClearCurrentPath();
+			virtual void ClearCurrentPath();
 			void SelectEndSeed(float medialnessRatio, float smoothnessRatio);
 			void StartEndPolyLineMode(bool start);
 			void StartEndSingleRootMode(bool start);
@@ -102,9 +105,10 @@ namespace wustl_mm {
 			void DeleteSelection();
 			void CancelSelection();
 
-		private:
+		protected:
+			InteractiveSkeletonEngine();
 			void SelectStartSeed(vector<Vector3DInt> & startPts, float medialnessRatio, float smoothnessRatio);
-			void AnalyzePath(vector<Vector3DInt> & endPts);
+			virtual void AnalyzePath(vector<Vector3DInt> & endPts);
 			Volume * volume;
 			NonManifoldMesh_Annotated * skeleton;
 			InteractiveSkeletonizer * skeletonizer;
@@ -154,6 +158,9 @@ namespace wustl_mm {
 			startSeedIsolated = false;
 			quadricSphere = gluNewQuadric();	
 			clickCount = 0;
+		}
+
+		InteractiveSkeletonEngine::InteractiveSkeletonEngine() {
 		}
 
 		InteractiveSkeletonEngine::~InteractiveSkeletonEngine() {

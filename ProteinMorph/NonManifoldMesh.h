@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.34  2009/03/17 20:00:17  ssa1
+//   Removing Sheets from fiting process
+//
 //   Revision 1.33  2008/12/01 01:38:03  ssa1
 //   Fixing resetting of scale and location when performing laplacian smoothing
 //
@@ -111,6 +114,7 @@ namespace wustl_mm {
 			int GetVertexIndex(int vertexId);
 			int GetFaceIndex(int faceId);
 			int GetEdgeIndex(int edgeId);
+			int GetEdgeIndex(int vertexId1, int vertexId2);
 			void AddEdge(int vertexId1, int vertexId2, TEdge tag = NULL);
 			void AddQuad(int vertexId1, int vertexId2, int vertexId3, int vertexId4, TEdge newEdgeTag = NULL, TFace faceTag = NULL);
 			void AddTriangle(int vertexId1, int vertexId2, int vertexId3, TEdge newEdgeTag = NULL, TFace faceTag = NULL);
@@ -148,6 +152,7 @@ namespace wustl_mm {
 			HashMapType vertexHashMap;
 			bool fromVolume;
 			int volSizeX, volSizeY, volSizeZ;
+			bool drawingDisabled;
 		};
 
 
@@ -158,6 +163,7 @@ namespace wustl_mm {
 			fromVolume = false;
 			SetOrigin(0,0,0);
 			SetScale(1,1,1);
+			drawingDisabled = false;
 			
 		}
 
@@ -175,10 +181,12 @@ namespace wustl_mm {
 			}
 			SetOrigin(srcMesh->origin[0],srcMesh->origin[1],srcMesh->origin[2]);
 			SetScale(srcMesh->scale[0], srcMesh->scale[1], srcMesh->scale[2]);
+			drawingDisabled = srcMesh->drawingDisabled;
 		}
 
 		template <class TVertex, class TEdge, class TFace> NonManifoldMesh<TVertex, TEdge, TFace>::NonManifoldMesh(Volume * sourceVol) {
 			Clear();
+			drawingDisabled = false;
 
 			int x, y, z, i, j, index, index2;
 			int * vertexLocations = new int[sourceVol->getSizeX() * sourceVol->getSizeY() * sourceVol->getSizeZ()];
@@ -323,6 +331,17 @@ namespace wustl_mm {
 			return edgeId;
 		}
 
+		template <class TVertex, class TEdge, class TFace>int NonManifoldMesh<TVertex, TEdge, TFace>::GetEdgeIndex(int vertexId1, int vertexId2) {
+			int edgeId = -1;
+			for(int i = 0; i < vertices[vertexId1].edgeIds.size(); i++) {
+				if((edges[vertices[vertexId1].edgeIds[i]].vertexIds[0] == vertexId2) || 
+					(edges[vertices[vertexId1].edgeIds[i]].vertexIds[1] == vertexId2)) {
+					edgeId = vertices[vertexId1].edgeIds[i];
+				}
+			}
+			return edgeId;
+		}
+
 		template <class TVertex, class TEdge, class TFace> void NonManifoldMesh<TVertex, TEdge, TFace>::AddEdge(int vertexId1, int vertexId2, TEdge tag){
 			NonManifoldMeshEdge<TEdge> edge;
 			edge.tag = tag;
@@ -389,98 +408,100 @@ namespace wustl_mm {
 		}
 
 		template <class TVertex, class TEdge, class TFace> void NonManifoldMesh<TVertex, TEdge, TFace>::Draw(bool drawSurfaces, bool drawLines, bool drawPoints, bool annotateSurfaces, bool annotateLines, bool annotatePoints, bool disableSurfaceLighting, bool disableCurveLighting, bool disablePointLighting, int lineThickness) {
-			int k;
-			glPushAttrib(GL_LIGHTING_BIT | GL_LINE_BIT | GL_ENABLE_BIT | GL_HINT_BIT | GL_POINT_BIT);			
+			if (!drawingDisabled) {
+				int k;
+				glPushAttrib(GL_LIGHTING_BIT | GL_LINE_BIT | GL_ENABLE_BIT | GL_HINT_BIT | GL_POINT_BIT);			
 
-			if(drawSurfaces) {
-				if(disableSurfaceLighting) {
-					glDisable(GL_LIGHTING);
-				}
-				if(annotateSurfaces) {
-					glPushName(0);
-					glPushName(0);
-				}
-				for(unsigned int i = 0; i < faces.size(); i++) {
+				if(drawSurfaces) {
+					if(disableSurfaceLighting) {
+						glDisable(GL_LIGHTING);
+					}
 					if(annotateSurfaces) {
-						glLoadName(i);
+						glPushName(0);
+						glPushName(0);
 					}
-					glBegin(GL_POLYGON);
-					Vector3DFloat normal;
-					for(unsigned int j = 0; j < faces[i].vertexIds.size(); j++) {
-						normal = GetVertexNormal(faces[i].vertexIds[j]);
-						k = GetVertexIndex(faces[i].vertexIds[j]);
-						glNormal3f(normal.X(), normal.Y(), normal.Z());
-						glVertex3fv(vertices[k].position.values);
-					}
-					glEnd();
-				}
-				if(annotateSurfaces) {
-					glPopName();
-					glPopName();
-				}
-			}			
-			
-			if(drawLines) {		
-				if(disableCurveLighting) {
-					glDisable(GL_LIGHTING);
-				}
-				if(annotateLines) {
-					glPushName(1);
-					glPushName(0);
-				}
-				glLineWidth(lineThickness);
-				glEnable(GL_LINE_SMOOTH);
-				glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);				
-				for(unsigned int i = 0; i < edges.size(); i++) {					
-					if(edges[i].faceIds.size() == 0) {
-						if(annotateLines) {
+					for(unsigned int i = 0; i < faces.size(); i++) {
+						if(annotateSurfaces) {
 							glLoadName(i);
 						}
-						glBegin(GL_LINES);
-						k = GetVertexIndex(edges[i].vertexIds[0]);
-						glVertex3f(vertices[k].position.X(), vertices[k].position.Y(), vertices[k].position.Z());
-						k = GetVertexIndex(edges[i].vertexIds[1]);
-						glVertex3f(vertices[k].position.X(), vertices[k].position.Y(), vertices[k].position.Z());			
-						glEnd();
-					}
-				}	
-				if(annotateLines) {
-					glPopName();
-					glPopName();
-				}
-			}			
-			
-			if(drawPoints) {
-				if(disablePointLighting) {
-					glDisable(GL_LIGHTING);
-				}
-
-
-				if(annotatePoints) {
-					glPushName(2);
-					glPushName(0);
-				}
-				glPointSize(2);
-				glEnable(GL_POINT_SMOOTH);
-				glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);								
-				for(unsigned int i = 0; i < vertices.size(); i++) {										
-					if(vertices[i].edgeIds.size() == 0) {
-						if(annotatePoints) {
-							glLoadName(i);
+						glBegin(GL_POLYGON);
+						Vector3DFloat normal;
+						for(unsigned int j = 0; j < faces[i].vertexIds.size(); j++) {
+							normal = GetVertexNormal(faces[i].vertexIds[j]);
+							k = GetVertexIndex(faces[i].vertexIds[j]);
+							glNormal3f(normal.X(), normal.Y(), normal.Z());
+							glVertex3fv(vertices[k].position.values);
 						}
-						glBegin(GL_POINTS);
-						glVertex3f(vertices[i].position.X(), vertices[i].position.Y(), vertices[i].position.Z());
 						glEnd();
 					}
-				}		
-				if(annotatePoints) {
-					glPopName();
-					glPopName();
-				}
-			}			
-			glPopAttrib();
+					if(annotateSurfaces) {
+						glPopName();
+						glPopName();
+					}
+				}			
+				
+				if(drawLines) {		
+					if(disableCurveLighting) {
+						glDisable(GL_LIGHTING);
+					}
+					if(annotateLines) {
+						glPushName(1);
+						glPushName(0);
+					}
+					glLineWidth(lineThickness);
+					glEnable(GL_LINE_SMOOTH);
+					glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);				
+					for(unsigned int i = 0; i < edges.size(); i++) {					
+						if(edges[i].faceIds.size() == 0) {
+							if(annotateLines) {
+								glLoadName(i);
+							}
+							glBegin(GL_LINES);
+							k = GetVertexIndex(edges[i].vertexIds[0]);
+							glVertex3f(vertices[k].position.X(), vertices[k].position.Y(), vertices[k].position.Z());
+							k = GetVertexIndex(edges[i].vertexIds[1]);
+							glVertex3f(vertices[k].position.X(), vertices[k].position.Y(), vertices[k].position.Z());			
+							glEnd();
+						}
+					}	
+					if(annotateLines) {
+						glPopName();
+						glPopName();
+					}
+				}			
+				
+				if(drawPoints) {
+					if(disablePointLighting) {
+						glDisable(GL_LIGHTING);
+					}
 
-			glFlush();
+
+					if(annotatePoints) {
+						glPushName(2);
+						glPushName(0);
+					}
+					glPointSize(2);
+					glEnable(GL_POINT_SMOOTH);
+					glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);								
+					for(unsigned int i = 0; i < vertices.size(); i++) {										
+						if(vertices[i].edgeIds.size() == 0) {
+							if(annotatePoints) {
+								glLoadName(i);
+							}
+							glBegin(GL_POINTS);
+							glVertex3f(vertices[i].position.X(), vertices[i].position.Y(), vertices[i].position.Z());
+							glEnd();
+						}
+					}		
+					if(annotatePoints) {
+						glPopName();
+						glPopName();
+					}
+				}			
+				glPopAttrib();
+
+				glFlush();
+			}
 		}
 		template <class TVertex, class TEdge, class TFace> void NonManifoldMesh<TVertex, TEdge, TFace>::MarkFixedVertices() {
 			bool sheetFound;
