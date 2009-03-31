@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.30  2009/03/31 20:08:45  ssa1
+#   Refactoring: Renaming and moving ChooseChainModel to CAlphaChooseChainModel
+#
 #   Revision 1.29  2009/01/01 22:48:28  colemanr
 #   added docstrings
 #
@@ -45,10 +48,10 @@
 #
 #   Revision 1.19  2008/11/17 19:41:13  colemanr
 #   bug-fix: if self.main_chain is empty, set it to self.structPred.chain before
-#   changing visibility of SequenceDock
+#   changing visibility of CAlphaSequenceDock
 #
 #   Revision 1.18  2008/11/14 22:39:53  colemanr
-#   Before changing the visibility of SequenceView.py, set self.main_chain
+#   Before changing the visibility of CAlphaSequenceView.py, set self.main_chain
 #   to self.structPred.chain if self.main_chain is empty -- and other
 #   changes involving main_chain and structPred
 #
@@ -57,7 +60,7 @@
 #
 #   Revision 1.16  2008/11/11 21:44:35  colemanr
 #   Loads *.seq files using the reader in StructurePrediction.py rather than
-#   the one in Chain.py, because SequenceView now uses a StructurePrediction
+#   the one in Chain.py, because CAlphaSequenceView now uses a StructurePrediction
 #   object.
 #
 #   Revision 1.15  2008/11/10 19:36:11  colemanr
@@ -70,7 +73,7 @@
 #   Revision 1.13  2008/11/04 16:13:21  colemanr
 #   Loading a sequence with SSE predictions from a *.seq file is now
 #   seperate from loading a model.  Also, two chain objects are now passed
-#   to the SequenceDock - one for the sequence & SSE predictions and the
+#   to the CAlphaSequenceDock - one for the sequence & SSE predictions and the
 #   other for the current model.
 #
 #   Revision 1.12  2008/10/30 21:19:06  colemanr
@@ -91,7 +94,7 @@
 #   Chain.load or Chain.loadAllChains.
 #
 #   Revision 1.7  2008/10/03 00:29:09  colemanr
-#   Chain.py now has an addCAlphaBonds instance method.  calpha_viewer.py now adds the sequence viewer to the Actions:C-Alpha menu.  SequenceView.py now has a dock widget class that contains a SequenceWidget object.
+#   Chain.py now has an addCAlphaBonds instance method.  calpha_viewer.py now adds the sequence viewer to the Actions:C-Alpha menu.  CAlphaSequenceView.py now has a dock widget class that contains a CAlphaSequenceWidget object.
 #
 #   Revision 1.6  2008/07/28 16:19:22  ssa1
 #   Adding in correspondance data repository
@@ -107,7 +110,7 @@ from PyQt4 import QtGui, QtCore, QtOpenGL
 from libpyGORGON import CAlphaRenderer
 from base_viewer import BaseViewer
 from calpha_atom_placer_form import CAlphaAtomPlacerForm
-from seq_model.SequenceView import SequenceDock
+from calpha_sequence_dock import CAlphaSequenceDock
 from seq_model.Chain import Chain
 from model_visualization_form import ModelVisualizationForm
 from correspondence.StructurePrediction import StructurePrediction
@@ -232,7 +235,7 @@ This centers the CAMERA on the last selected atom.
                 self.loadSeq()
             if self.structPred and not self.main_chain:
                 self.main_chain = self.structPred.chain
-            SequenceDock.changeDockVisibility(self.app, self, self.structPred, self.main_chain)
+            CAlphaSequenceDock.changeDockVisibility(self.app, self, self.structPred, self.main_chain)
         self.connect(seqDockAct, QtCore.SIGNAL("triggered()"), showDock)
         self.app.actions.addAction("seqDock", seqDockAct)
         

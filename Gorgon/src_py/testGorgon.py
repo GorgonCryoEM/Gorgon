@@ -8,7 +8,7 @@ from PyQt4 import QtGui
 from main_window_form import MainWindowForm
 from about_form import AboutForm
 import seq_model.Chain as Chain
-import seq_model.SequenceView as SequenceView
+import calpha_sequence_view as CAlphaSequenceView
 
 if __name__ == '__main__':
     
@@ -26,7 +26,7 @@ if __name__ == '__main__':
     mychain.addCalphaBonds()
     renderer = mychain.getViewer().renderer
     
-    SequenceView.renderMockSidechains(mychain)
+    CAlphaSequenceView.renderMockSidechains(mychain)
     atoms = []
     for i in mychain.residueRange():
         atom = mychain[i].getAtom('CA')
@@ -43,7 +43,7 @@ if __name__ == '__main__':
         viewer.emitViewerSetCenter()
     
     print "The mock sidechains should now be visible."    
-    SequenceView.clearMockSidechains(mychain)
+    CAlphaSequenceView.clearMockSidechains(mychain)
     
     #Note: the line below doesn't cause the change (no mock sidechains) to be displayed
     viewer.emitModelChanged()
