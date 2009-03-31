@@ -5,7 +5,7 @@
 
 from PyQt4 import QtGui, QtCore
 from libpyGORGON import PDBAtom, PDBBond, Vector3DFloat
-from correspondence.interactive_loop_builder import InteractiveLoopBuilder
+from calpha_interactive_loop_builder import CAlphaInteractiveLoopBuilder
 from seq_model.findHelixCalphas import helixEndpointsToCAlphaPositions
 from seq_model.Helix import Helix
 import math
@@ -726,7 +726,7 @@ be the current residue for the atomic editor.
         if(self.loopBuildingStarted):
             self.loopStartEndBuildingButton.setText('End Loop Placement')
             self.setCursor(QtCore.Qt.BusyCursor)
-            self.builder = InteractiveLoopBuilder(self.app, self.currentChainModel)
+            self.builder = CAlphaInteractiveLoopBuilder(self.app, self.currentChainModel)
             self.builder.setLoopAtoms(self.loopStartSpinBox.value(), self.loopStopSpinBox.value())
             self.setCursor(QtCore.Qt.ArrowCursor)                       
         else:
