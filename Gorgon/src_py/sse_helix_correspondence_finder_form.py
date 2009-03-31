@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.34  2009/01/01 22:31:59  colemanr
+#   added a few comments
+#
 #   Revision 1.33  2008/12/02 21:11:32  colemanr
 #   Set Alt+h to launch this form.
 #
@@ -65,7 +68,7 @@
 #
 #   Revision 1.16  2008/11/14 22:42:45  colemanr
 #   temporary hack to set the chain object in the structure prediction; set
-#   CAlphaViewer.structPred to the structure prediction, so SequenceView.py
+#   CAlphaViewer.structPred to the structure prediction, so CAlphaSequenceView.py
 #   will get the correct object
 #
 #   Revision 1.15  2008/11/13 00:30:32  colemanr
@@ -78,7 +81,7 @@
 #   allows either SEQ or PDB files to define the sequence
 #
 #   Revision 1.12  2008/08/27 15:26:52  marshm
-#   Updates to SequenceView.  Updated coloring scheme for correspondence matches.
+#   Updates to CAlphaSequenceView.  Updated coloring scheme for correspondence matches.
 #
 #   Revision 1.11  2008/08/06 06:21:37  ssa1
 #   Tracing protein path, for SSE Correspondance matching

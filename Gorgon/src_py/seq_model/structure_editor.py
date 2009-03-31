@@ -13,7 +13,7 @@ from vector_lib import *
 
 class StructureEditor(QtGui.QWidget):
     """
-An instance of this class is a member of a SequenceWidget. It is used
+An instance of this class is a member of a CAlphaSequenceWidget. It is used
 for editing the chain model--atomic editor, helix editor, loop editor, 
 position editor, etc.  
     """
@@ -97,7 +97,7 @@ atom of the selected residue.
         """
     	print 'atomFindPositionPossibilities'
         self.possibleAtomsList = []
-        #self.parentWidget()=>SequenceWidget, self.parentWidget().parentWidget() => SequenceDock
+        #self.parentWidget()=>CAlphaSequenceWidget, self.parentWidget().parentWidget() => CAlphaSequenceDock
         skeletonViewer = self.parentWidget().parentWidget().app.viewers['skeleton']
         meshRenderer = skeletonViewer.renderer
         radius = float( self.CAdoubleSpinBox.value() )
@@ -216,7 +216,7 @@ This moves to the next residue and updates the selected residue.
     def atomPlaceCAatom(self):
             possibilityNum = self.atomicPossibilityNumSpinBox.value()
             chosenAtom = self.possibleAtomsList[possibilityNum-1]
-            #self.parentWidget()=>SequenceWidget, self.parentWidget().parentWidget() => SequenceDock
+            #self.parentWidget()=>CAlphaSequenceWidget, self.parentWidget().parentWidget() => CAlphaSequenceDock
             viewer = self.parentWidget().parentWidget().viewer
             for atom in self.possibleAtomsList:
                 if atom is chosenAtom:
@@ -237,7 +237,7 @@ This moves to the next residue and updates the selected residue.
 This moves to the previous residue and updates the selected residue.
         """
     	print 'atomPrevButtonPress'
-        #self.parentWidget() returns a SequenceWidget object
+        #self.parentWidget() returns a CAlphaSequenceWidget object
         currentChainModel = self.parentWidget().currentChainModel
         if currentChainModel.getSelection():
             newSelection = [ currentChainModel.getSelection()[-1] - 1 ]
@@ -674,7 +674,7 @@ be the current residue for the atomic editor.
         if not newSelection:
             print 'In sequence_view.StructureEdit.setResidues().  The new selection is empty!'
             return
-        #self.parentWidget() is SequenceWidget & self.parentWidget().parentWidget() is SequenceDock
+        #self.parentWidget() is CAlphaSequenceWidget & self.parentWidget().parentWidget() is CAlphaSequenceDock
         viewer = self.parentWidget().parentWidget().viewer
         for atom in self.possibleAtomsList:
             if atom is self.atomJustAdded: 

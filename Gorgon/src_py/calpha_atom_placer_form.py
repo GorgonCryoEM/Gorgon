@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.15  2008/12/02 01:08:44  colemanr
+#   Opens on the right.
+#
 #   Revision 1.14  2008/11/20 21:52:10  ssa1
 #   Fixing manual placement form coordinate space bug
 #
@@ -34,7 +37,7 @@
 #   common options by default
 #
 #   Revision 1.8  2008/08/27 15:26:52  marshm
-#   Updates to SequenceView.  Updated coloring scheme for correspondence matches.
+#   Updates to CAlphaSequenceView.  Updated coloring scheme for correspondence matches.
 #
 #   Revision 1.7  2008/07/28 16:19:22  ssa1
 #   Adding in correspondance data repository

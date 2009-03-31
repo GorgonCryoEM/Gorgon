@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.55  2009/03/24 19:25:54  ssa1
+#   Fixing scaling bug in interactive skeletonization
+#
 #   Revision 1.54  2008/12/03 21:58:25  ssa1
 #   Selection rotations for atoms and helices.
 #
@@ -86,7 +89,7 @@
 #   Maximizing performance of volume visualization by minimizing method call count
 #
 #   Revision 1.31  2008/08/27 15:26:52  marshm
-#   Updates to SequenceView.  Updated coloring scheme for correspondence matches.
+#   Updates to CAlphaSequenceView.  Updated coloring scheme for correspondence matches.
 #
 #   Revision 1.30  2008/07/07 14:45:06  ssa1
 #   Changing the interactive skeletonization to go from OpenGL Hitstack to RayTracing
