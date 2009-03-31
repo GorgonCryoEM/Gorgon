@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.2  2009/03/30 21:36:12  ssa1
+#   Interactive loop building
+#
 #   Revision 1.1  2009/03/26 19:33:52  ssa1
 #   Adding in an Interactive Loop Builder
 #
@@ -25,7 +28,7 @@ from OpenGL.GL import *
 from OpenGL.GLU import *
 from OpenGL.GLUT import *
 
-class InteractiveLoopBuilder(VolumeManualSkeletonizationForm):
+class CAlphaInteractiveLoopBuilder(VolumeManualSkeletonizationForm):
     
     def __init__(self, main, chain, parent=None):
         QtGui.QWidget.__init__(self, parent)
