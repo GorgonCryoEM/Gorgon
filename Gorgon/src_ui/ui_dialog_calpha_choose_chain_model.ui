@@ -1,0 +1,79 @@
+<ui version="4.0" >
+ <class>DialogCAlphaChooseChainModel</class>
+ <widget class="QWidget" name="DialogCAlphaChooseChainModel" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>275</width>
+    <height>312</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Choose Chain Model</string>
+  </property>
+  <layout class="QGridLayout" >
+   <item row="0" column="0" >
+    <layout class="QVBoxLayout" >
+     <item>
+      <widget class="QLabel" name="chainModelsLabel" >
+       <property name="text" >
+        <string>Chain Models</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QListWidget" name="chainModelsListWidget" />
+     </item>
+     <item>
+      <widget class="QLabel" name="sequenceBrowserLabel" >
+       <property name="text" >
+        <string>Sequence</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QTextEdit" name="sequenceTextEdit" >
+       <property name="readOnly" >
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" >
+       <item>
+        <widget class="QPushButton" name="refreshPushButton" >
+         <property name="text" >
+          <string>Refresh</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="acceptPushButton" >
+         <property name="text" >
+          <string>Accept</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" >
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

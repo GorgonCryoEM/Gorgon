@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.29  2009/01/01 22:48:28  colemanr
+#   added docstrings
+#
 #   Revision 1.28  2008/12/16 23:48:56  colemanr
 #   Adding a dock widget to choose between different working models of a structure (different chain objects).
 #
@@ -108,7 +111,7 @@ from seq_model.SequenceView import SequenceDock
 from seq_model.Chain import Chain
 from model_visualization_form import ModelVisualizationForm
 from correspondence.StructurePrediction import StructurePrediction
-from seq_model.choose_chain_model import ChooseChainModel
+from calpha_choose_chain_model import CAlphaChooseChainModel
 
 from OpenGL.GL import *
 from OpenGL.GLU import *
@@ -190,7 +193,7 @@ This centers the CAMERA on the last selected atom.
                   
     def createChildWindows(self):
         self.manualAtomPlacer = CAlphaAtomPlacerForm(self.app, self, self.main_chain, self.structPred)
-        self.chooseChainModel = ChooseChainModel(self.app)
+        self.chooseChainModel = CAlphaChooseChainModel(self.app)
         
     def createActions(self):
         openAct = QtGui.QAction(self.tr("C-&Alpha Atoms..."), self)
