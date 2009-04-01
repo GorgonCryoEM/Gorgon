@@ -1,6 +1,5 @@
 # Copyright (C) 2005-2008 Washington University in St Louis, Baylor College of Medicine.  All rights reserved
 # Author:        Ross A. Coleman (racolema@bcm.edu)
-# Class: StructureEditor
 # Class Description: Widget for placing atoms and secondary strucutre elements as well as for optimizing placement.
 
 from PyQt4 import QtGui, QtCore
@@ -10,15 +9,17 @@ from seq_model.findHelixCalphas import helixEndpointsToCAlphaPositions
 from seq_model.Helix import Helix
 import math
 from vector_lib import *
+from calpha_structure_editor_command_place_helix import CAlphaStructureEditorCommandPlaceHelix
+from calpha_structure_editor_command_atom_placement import CAlphaStructureEditorCommandAtomPlacement
 
-class StructureEditor(QtGui.QWidget):
+class CAlphaStructureEditor(QtGui.QWidget):
     """
 An instance of this class is a member of a CAlphaSequenceWidget. It is used
 for editing the chain model--atomic editor, helix editor, loop editor, 
 position editor, etc.  
     """
     def __init__(self, currentChainModel, parent=None):
-        super(StructureEditor, self).__init__(parent)
+        super(CAlphaStructureEditor, self).__init__(parent)
         
         if self.parentWidget().parentWidget().app:
             self.app = self.parentWidget().parentWidget().app        
@@ -77,7 +78,7 @@ on which tab is active.
 This function highlights one of the possible atoms which will be chosen
 if the user clicks accept.
         """
-    	print 'atomChoosePossibleAtom'
+        print 'atomChoosePossibleAtom'
         if choiceNum == 0:
             return
         viewer = self.parentWidget().parentWidget().viewer
@@ -95,7 +96,7 @@ This function places atoms at intersections with the skeleton that are
 the indicated distance (self.CAdoubleSpinBox) from the C-alpha
 atom of the selected residue.
         """
-    	print 'atomFindPositionPossibilities'
+        print 'atomFindPositionPossibilities'
         self.possibleAtomsList = []
         #self.parentWidget()=>CAlphaSequenceWidget, self.parentWidget().parentWidget() => CAlphaSequenceDock
         skeletonViewer = self.parentWidget().parentWidget().app.viewers['skeleton']
@@ -188,7 +189,7 @@ atom of the selected residue.
 This reponds to whether the atomic editor should be moving forward 
 through the chain or backward.
         """
-    	print 'atomForwardBackwardChange'
+        print 'atomForwardBackwardChange'
         if self.atomicForwardRadioButton.isChecked():
             self.atomicResNumbers[1].setStyleSheet("QLabel {color: green; font-size: 12pt}")
             self.atomicResNames[1].setStyleSheet("QLabel {color: green; font-size: 40pt}")
@@ -204,7 +205,7 @@ through the chain or backward.
         """
 This moves to the next residue and updates the selected residue.
         """
-    	print 'atomNextButtonPress'
+        print 'atomNextButtonPress'
         currentChainModel = self.parentWidget().currentChainModel
         if currentChainModel.getSelection():
             newSelection = [ currentChainModel.getSelection()[-1] + 1 ]
@@ -228,7 +229,7 @@ This moves to the next residue and updates the selected residue.
                 resSeqNum = int(self.atomicResNumbers[-1].text())
             elif self.atomicForwardRadioButton.isChecked():
                 resSeqNum = int(self.atomicResNumbers[1].text())
-            command = CommandAcceptAtomPlacement( self.currentChainModel, self, resSeqNum, chosenCoordinates, viewer,  
+            command = CAlphaStructureEditorCommandAtomPlacement( self.currentChainModel, self, resSeqNum, chosenCoordinates, viewer,  
                                 description = "Accept Location of C-alpha atom for residue #%s" % resSeqNum )
             self.undoStack.push(command)
             
@@ -236,7 +237,7 @@ This moves to the next residue and updates the selected residue.
         """
 This moves to the previous residue and updates the selected residue.
         """
-    	print 'atomPrevButtonPress'
+        print 'atomPrevButtonPress'
         #self.parentWidget() returns a CAlphaSequenceWidget object
         currentChainModel = self.parentWidget().currentChainModel
         if currentChainModel.getSelection():
@@ -326,7 +327,7 @@ given by self.helixNtermSpinBox and self.helixCtermSpinBox.
             coord1 = vectorAdd(structPredCoord1, endMoveVector)
             coord2 = vectorAdd(structPredCoord2, startMoveVector)
                 
-        command = CommandPlaceHelix(self.currentChainModel, predHelix, startIndex, stopIndex, coord1, coord2, self, description = "Create C-alpha helix")
+        command = CAlphaStructureEditorCommandPlaceHelix(self.currentChainModel, predHelix, startIndex, stopIndex, coord1, coord2, self, description = "Create C-alpha helix")
         self.undoStack.push(command)        
 
     def helixDecreaseButtonPress(self):
@@ -361,7 +362,7 @@ This flips the direction of a C-alpha helix. Bonds from the ends of the
 helix to atoms outside the helix are removed during the flip, and new 
 bonds are created only if the length of the new bond would be <= 4.2 A.
         """
-    	print 'helixFlipButtonPress'
+        print 'helixFlipButtonPress'
         helices = self.helixFindSelectedCAHelices()
         chain = self.currentChainModel
         viewer = self.CAlphaViewer
@@ -395,7 +396,7 @@ bonds are created only if the length of the new bond would be <= 4.2 A.
             atomStart0 = chain[helix.startIndex-1].getAtom('CA')
             atomStart1 = chain[helix.startIndex].getAtom('CA')
             if atomStart0 and atomStart1:
-            	disp = atomStart1.getPosition() - atomStart0.getPosition()
+                disp = atomStart1.getPosition() - atomStart0.getPosition()
                 distance = vectorSize( (disp.x(), disp.y(), disp.z()) )
                 if distance <= 4.2:
                     startBond = PDBBond()
@@ -1076,212 +1077,3 @@ position editor.
         self.setResidues(selection)
         self.posUpdateValues()
         
-class CommandAcceptAtomPlacement(QtGui.QUndoCommand):
-    """
-This class creates the QUndoCommand objects for the undo/redo stack.
-    """
-    def __init__(self, currentChainModel, structureEditor, resSeqNum, chosenCoordinates, viewer, description=None):
-        super(CommandAcceptAtomPlacement, self).__init__(description)
-        self.currentChainModel = currentChainModel
-        self.structureEditor = structureEditor
-        self.resSeqNum = resSeqNum
-        self.chosenCoordinates = chosenCoordinates
-        self.viewer = viewer
-    def redo(self):
-        """
-In addition to being called to redo an action, this is called the first
-time the action occurs.
-        """
-        print self.chosenCoordinates
-        raw = PDBAtom(self.currentChainModel.getPdbID(), self.currentChainModel.getChainID(), self.resSeqNum, 'CA')
-        raw.setPosition(self.chosenCoordinates)
-        atom = self.viewer.renderer.addAtom(raw) 
-        print atom
-        self.currentChainModel[self.resSeqNum].addAtomObject(atom)
-        self.currentChainModel[self.resSeqNum].setCAlphaColorToDefault() 
-        bondBefore = None
-        bondAfter = None
-        if self.resSeqNum - 1 in self.currentChainModel.residueRange():
-            prevCAlpha = self.currentChainModel[self.resSeqNum - 1].getAtom('CA')
-            if prevCAlpha:
-                print "adding a bond before"
-                bondBefore=PDBBond()
-                bondBefore.setAtom0Ix(prevCAlpha.getHashKey())
-                bondBefore.setAtom1Ix(atom.getHashKey())
-        if self.resSeqNum + 1 in self.currentChainModel.residueRange():
-            nextCAlpha = self.currentChainModel[self.resSeqNum + 1].getAtom('CA')
-            if nextCAlpha:
-                print "adding a bond after"
-                bondAfter = PDBBond()
-                bondAfter.setAtom0Ix(nextCAlpha.getHashKey())
-                bondAfter.setAtom1Ix(atom.getHashKey())
-        
-        if bondBefore:
-            self.viewer.renderer.addBond(bondBefore)
-        if bondAfter:
-            self.viewer.renderer.addBond(bondAfter)
-        
-        self.viewer.emitModelChanged()
-        self.structureEditor.atomJustAdded = atom
-        
-        if self.structureEditor.atomicBackwardRadioButton.isChecked():
-            self.structureEditor.atomPrevButtonPress()
-        elif self.structureEditor.atomicForwardRadioButton.isChecked():
-            self.structureEditor.atomNextButtonPress()
-        
-    def undo(self):
-        print self.structureEditor.atomJustAdded
-        atom = self.currentChainModel[self.resSeqNum].getAtom('CA')
-        
-        try:
-            atomBefore = self.currentChainModel[self.resSeqNum-1].getAtom('CA')
-        except (IndexError, AttributeError, KeyError):
-            atomBefore = None
-        try:
-            atomAfter = self.currentChainModel[self.resSeqNum+1].getAtom('CA')
-        except (IndexError, AttributeError, KeyError):
-            atomAfter = None
-        
-        if atomBefore:
-            bondBeforeIx = self.viewer.renderer.getBondIndex(atomBefore.getHashKey(), atom.getHashKey())
-            self.viewer.renderer.deleteBond(bondBeforeIx)
-            pass
-        if atomAfter:
-            bondAfterIx = self.viewer.renderer.getBondIndex(atomAfter.getHashKey(), atom.getHashKey())
-            self.viewer.renderer.deleteBond(bondAfterIx)
-            pass
-            
-        self.currentChainModel[self.resSeqNum].clearAtom('CA')
-        self.viewer.renderer.deleteAtom(atom.getHashKey())
-        
-        self.viewer.emitModelChanged()
-        
-        if self.structureEditor.atomicBackwardRadioButton.isChecked():
-            self.structureEditor.atomNextButtonPress()
-        elif self.structureEditor.atomicForwardRadioButton.isChecked():
-            self.structureEditor.atomPrevButtonPress()
-#command = CommandPlaceHelix(currentChainModel, predHelix, startIndex, stopIndex, coord1, coord2, self, description = "Create C-alpha helix")
-class CommandPlaceHelix(QtGui.QUndoCommand):
-    """
-This class creates the QUndoCommand objects for the undo/redo stack.
-    """
-    def __init__(self, currentChainModel, predHelix, startIndex, stopIndex, coord1, coord2, structureEditor, description=None):
-        super(CommandPlaceHelix, self).__init__(description)
-        self.currentChainModel = currentChainModel
-        self.predHelix = predHelix
-        self.startIndex = startIndex
-        self.stopIndex = stopIndex
-        self.coord1 = coord1
-        self.coord2 = coord2
-        self.structureEditor = structureEditor
-        self.CAlphaViewer = self.structureEditor.CAlphaViewer
-    
-    def redo(self):
-        self.helix = Helix(self.currentChainModel, self.predHelix.serialNo, self.predHelix.label, self.startIndex, self.stopIndex)
-        self.currentChainModel.addHelix(self.predHelix.serialNo, self.helix)
-        self.helix.setAxisPoints(self.coord1, self.coord2)
-        
-        helixCoordList = helixEndpointsToCAlphaPositions(self.coord1, self.coord2)
-        print helixCoordList                
-        
-        '''
-        #To see the ends of the helical axis as green and red atoms
-        startAtom = PDBAtom('AAAA', 'A', 100000, 'CA')
-        startAtom.setPosition(Vector3DFloat(*coord1))
-        startAtom.setColor(0, 1, 0, 1)
-        startAtom = self.CAlphaViewer.renderer.addAtom(startAtom)
-        stopAtom = startAtom = PDBAtom('AAAA', 'A', 100001, 'CA')
-        stopAtom.setPosition(Vector3DFloat(*coord2))
-        stopAtom.setColor(1, 0, 0, 1)        
-        stopAtom = self.CAlphaViewer.renderer.addAtom(stopAtom)
-        '''
-        
-        for i in range(len(helixCoordList)):
-            pos = helixCoordList[i]
-            residue = self.currentChainModel[self.startIndex+i]
-            rawAtom = residue.addAtom('CA', pos[0], pos[1], pos[2], 'C')
-            atom = self.CAlphaViewer.renderer.addAtom(rawAtom)
-            residue.addAtomObject(atom)
-            atom.setSelected(True)
-            try:
-                prevAtom = self.currentChainModel[self.startIndex+i-1].getAtom('CA')
-                bond = PDBBond()
-                bond.setAtom0Ix(prevAtom.getHashKey())
-                bond.setAtom1Ix(atom.getHashKey())
-                self.CAlphaViewer.renderer.addBond(bond)
-            except (KeyError, IndexError, AttributeError):
-                continue
-
-        try:
-            nextAtom = self.currentChainModel[self.startIndex+len(helixCoordList)]
-            bond = PDBBond()
-            bond.setAtom0Ix(atom.getHashKey())
-            bond.setAtom1Ix(nextAtom.getHashKey())
-            self.CAlphaViewer.renderer.addBond(bond)
-        except (KeyError, IndexError, AttributeError):
-            pass
-        
-        self.currentChainModel.setSelection(newSelection = range(self.startIndex, 1+self.stopIndex))
-        print self.helix
-        
-        if not self.CAlphaViewer.loaded:
-            self.CAlphaViewer.loaded = True
-            self.CAlphaViewer.emitModelLoaded()
-        else:
-            self.CAlphaViewer.emitModelChanged()
-        
-    def undo(self):
-        for resNum in range(self.startIndex, 1+self.stopIndex):
-            print 'first helix undo for loop'
-            
-            try:
-                atom = self.currentChainModel[resNum].getAtom('CA')
-            except (KeyError, IndexError, AttributeError):
-                atom = None
-            if atom:
-                
-                try:
-                    atomBefore = self.currentChainModel[resNum-1].getAtom('CA')
-                except (KeyError, IndexError, AttributeError):
-                    atomBefore = None
-                if atomBefore:
-                    bondBeforeIx = self.CAlphaViewer.renderer.getBondIndex(atomBefore.getHashKey(), atom.getHashKey())
-                    if bondBeforeIx != -1:
-                        self.CAlphaViewer.renderer.deleteBond(bondBeforeIx)
-                
-                try:
-                    atomAfter = self.currentChainModel[resNum+1].getAtom('CA')
-                except (KeyError, IndexError, AttributeError):
-                    atomAfter = None
-                if atomAfter:
-                    bondAfterIx = self.CAlphaViewer.renderer.getBondIndex(atomAfter.getHashKey(), atom.getHashKey())
-                    if bondAfterIx != -1:
-                        self.CAlphaViewer.renderer.deleteBond(bondAfterIx)
-        
-        for resNum in range(self.startIndex, 1+self.stopIndex):
-            print 'second helix undo for loop'
-            try:
-                atom = self.currentChainModel[resNum].getAtom('CA')
-            except (IndexError, AttributeError, KeyError):
-                continue
-            self.CAlphaViewer.renderer.deleteAtom(atom.getHashKey())                
-            self.currentChainModel[resNum].clearAtom('CA')
-        
-        print 'finished both helix undo for loops'
-        self.currentChainModel.removeSecel(self.helix)
-        
-        if not self.CAlphaViewer.loaded:
-            self.CAlphaViewer.loaded = True
-            self.CAlphaViewer.emitModelLoaded()
-        else:
-            self.CAlphaViewer.emitModelChanged()
-        print 'finished helix undo'
-
-if __name__ == '__main__':
-    from seq_model.Chain import Chain
-    import sys
-    app = QtGui.QApplication(sys.argv)
-    chain = Chain('', app)
-    window = StructureEditor(chain)
-    window.show()
-    sys.exit(app.exec_())

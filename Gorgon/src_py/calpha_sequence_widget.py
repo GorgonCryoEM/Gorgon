@@ -13,9 +13,12 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.1  2009/03/31 21:40:13  ssa1
+#   Refactoring: Splitting seq_model\SequenceView.py into subclasses
+#
 
 from PyQt4 import Qt,QtGui,QtCore
-from seq_model.structure_editor import StructureEditor
+from calpha_structure_editor import CAlphaStructureEditor
 from calpha_scrollable_sequence_view import CAlphaScrollableSequenceView
 from calpha_global_sequence_view import CAlphaGlobalSequenceView
 
@@ -26,7 +29,7 @@ class CAlphaSequenceWidget(QtGui.QWidget):
         self.currentChainModel = currentChainModel
         self.scrollable = CAlphaScrollableSequenceView(structurePrediction, currentChainModel, self)
         self.scrollable.setMinimumSize(300, 180)
-        self.structureEditor = StructureEditor(currentChainModel, self)
+        self.structureEditor = CAlphaStructureEditor(currentChainModel, self)
         
         self.globalView=CAlphaGlobalSequenceView(structurePrediction, self)
         self.globalView.setLocalView(self.scrollable.seqView)
