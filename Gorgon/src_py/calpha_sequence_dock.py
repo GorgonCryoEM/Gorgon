@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.1  2009/03/31 21:40:13  ssa1
+#   Refactoring: Splitting seq_model\SequenceView.py into subclasses
+#
 
 from PyQt4 import Qt,QtGui,QtCore
 from calpha_sequence_widget import CAlphaSequenceWidget
@@ -81,9 +84,12 @@ class CAlphaSequenceDock(QtGui.QDockWidget):
                 dock.show()
                 dock.show()
             else:
-                if not main: print 'Sequence Dock Error: no main app'
-                if not viewer: print 'Sequence Dock Error: no viewer'
-                if not currentChainModel: print 'Sequence Dock: no chain to load'
+                if not main: 
+                    print 'Sequence Dock Error: no main app'
+                if not viewer: 
+                    print 'Sequence Dock Error: no viewer'
+                if not currentChainModel: 
+                    print 'Sequence Dock: no chain to load'
     
     @classmethod
     def checkPredictionVsModel(cls, structurePrediction, currentChainModel):
