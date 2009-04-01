@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.1  2009/04/01 16:01:38  ssa1
+#   Refactoring: Splitting structure_editor into subclasses
+#
 
 from PyQt4 import QtGui, QtCore
 from libpyGORGON import PDBAtom, PDBBond, Vector3DFloat
@@ -38,7 +41,6 @@ class CAlphaStructureEditorCommandPlaceHelix(QtGui.QUndoCommand):
         self.helix.setAxisPoints(self.coord1, self.coord2)
         
         helixCoordList = helixEndpointsToCAlphaPositions(self.coord1, self.coord2)
-        print helixCoordList                
         
         '''
         #To see the ends of the helical axis as green and red atoms
@@ -78,7 +80,6 @@ class CAlphaStructureEditorCommandPlaceHelix(QtGui.QUndoCommand):
             pass
         
         self.currentChainModel.setSelection(newSelection = range(self.startIndex, 1+self.stopIndex))
-        print self.helix
         
         if not self.CAlphaViewer.loaded:
             self.CAlphaViewer.loaded = True
@@ -88,7 +89,6 @@ class CAlphaStructureEditorCommandPlaceHelix(QtGui.QUndoCommand):
         
     def undo(self):
         for resNum in range(self.startIndex, 1+self.stopIndex):
-            print 'first helix undo for loop'
             
             try:
                 atom = self.currentChainModel[resNum].getAtom('CA')
@@ -115,7 +115,6 @@ class CAlphaStructureEditorCommandPlaceHelix(QtGui.QUndoCommand):
                         self.CAlphaViewer.renderer.deleteBond(bondAfterIx)
         
         for resNum in range(self.startIndex, 1+self.stopIndex):
-            print 'second helix undo for loop'
             try:
                 atom = self.currentChainModel[resNum].getAtom('CA')
             except (IndexError, AttributeError, KeyError):
@@ -123,7 +122,6 @@ class CAlphaStructureEditorCommandPlaceHelix(QtGui.QUndoCommand):
             self.CAlphaViewer.renderer.deleteAtom(atom.getHashKey())                
             self.currentChainModel[resNum].clearAtom('CA')
         
-        print 'finished both helix undo for loops'
         self.currentChainModel.removeSecel(self.helix)
         
         if not self.CAlphaViewer.loaded:
@@ -131,4 +129,3 @@ class CAlphaStructureEditorCommandPlaceHelix(QtGui.QUndoCommand):
             self.CAlphaViewer.emitModelLoaded()
         else:
             self.CAlphaViewer.emitModelChanged()
-        print 'finished helix undo'

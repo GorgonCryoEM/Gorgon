@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.1  2009/04/01 16:01:38  ssa1
+#   Refactoring: Splitting structure_editor into subclasses
+#
 
 from PyQt4 import QtGui, QtCore
 from libpyGORGON import PDBAtom, PDBBond, Vector3DFloat
@@ -34,11 +37,9 @@ class CAlphaStructureEditorCommandAtomPlacement(QtGui.QUndoCommand):
 In addition to being called to redo an action, this is called the first
 time the action occurs.
         """
-        print self.chosenCoordinates
         raw = PDBAtom(self.currentChainModel.getPdbID(), self.currentChainModel.getChainID(), self.resSeqNum, 'CA')
         raw.setPosition(self.chosenCoordinates)
         atom = self.viewer.renderer.addAtom(raw) 
-        print atom
         self.currentChainModel[self.resSeqNum].addAtomObject(atom)
         self.currentChainModel[self.resSeqNum].setCAlphaColorToDefault() 
         bondBefore = None
@@ -46,14 +47,12 @@ time the action occurs.
         if self.resSeqNum - 1 in self.currentChainModel.residueRange():
             prevCAlpha = self.currentChainModel[self.resSeqNum - 1].getAtom('CA')
             if prevCAlpha:
-                print "adding a bond before"
                 bondBefore=PDBBond()
                 bondBefore.setAtom0Ix(prevCAlpha.getHashKey())
                 bondBefore.setAtom1Ix(atom.getHashKey())
         if self.resSeqNum + 1 in self.currentChainModel.residueRange():
             nextCAlpha = self.currentChainModel[self.resSeqNum + 1].getAtom('CA')
             if nextCAlpha:
-                print "adding a bond after"
                 bondAfter = PDBBond()
                 bondAfter.setAtom0Ix(nextCAlpha.getHashKey())
                 bondAfter.setAtom1Ix(atom.getHashKey())
@@ -72,7 +71,6 @@ time the action occurs.
             self.structureEditor.atomNextButtonPress()
         
     def undo(self):
-        print self.structureEditor.atomJustAdded
         atom = self.currentChainModel[self.resSeqNum].getAtom('CA')
         
         try:

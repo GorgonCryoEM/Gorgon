@@ -74,7 +74,6 @@ class Residue:
         try:
             return self.__atoms[atomName]
         except KeyError:
-            print "Residue.getAtom()--no %s atom." % atomName,
             return False
     
     def addAtom(self, atomName, x, y, z, element=None, serialNo=None, occupancy=None, tempFactor=None ):
