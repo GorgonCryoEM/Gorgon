@@ -11,13 +11,16 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.2  2009/04/01 23:00:32  ssa1
+#   Refactor: Redesigning semi-automatic atom placement window.  Fixing bugs, and more consistant layout
+#
 #   Revision 1.1  2009/03/31 21:40:13  ssa1
 #   Refactoring: Splitting seq_model\SequenceView.py into subclasses
 #
 
 from PyQt4 import Qt,QtGui,QtCore
 from calpha_sequence_widget import CAlphaSequenceWidget
-
+from calpha_sequence_error import CAlphaSequenceError
 
 
 class CAlphaSequenceDock(QtGui.QDockWidget):
@@ -31,6 +34,7 @@ class CAlphaSequenceDock(QtGui.QDockWidget):
         self.app = main
         self.viewer=viewer
         self.skeletonViewer = self.app.viewers["skeleton"]
+        self.sseViewer = self.app.viewers["sse"]
         self.seqWidget = CAlphaSequenceWidget( structurePrediction, currentChainModel, self)
         self.setWidget(self.seqWidget)
         self.createActions()
@@ -39,6 +43,7 @@ class CAlphaSequenceDock(QtGui.QDockWidget):
         self.connect(self.seqWidget.structureEditor.mockSidechainsCheckBox,  QtCore.SIGNAL('stateChanged(int)'),  self.toggleMockSideChains)
         if main:
             self.connect(self.app.viewers["calpha"], QtCore.SIGNAL("elementSelected (int, int, int, int, int, int, QMouseEvent)"), self.updateFromViewerSelection)
+            self.connect(self.app.viewers["sse"], QtCore.SIGNAL("SSE selected"), self.updateFromSSESelection)
     
     @classmethod
     def changeDockVisibility(cls, main, viewer, structurePrediction, currentChainModel):
@@ -58,7 +63,7 @@ class CAlphaSequenceDock(QtGui.QDockWidget):
             if cls.__dock.app.actions.getAction("seqDock").isChecked():
                 try:
                     CAlphaSequenceDock.checkPredictionVsModel(structurePrediction, currentChainModel)
-                except SequenceError:
+                except CAlphaSequenceError:
                     QtGui.QMessageBox.warning(main, "Chain model does not match the sequence",  
                     "The sequence of the current chain model (from PDB file) does not match the \
                     sequence of the structure prediction (from SEQ file)" )
@@ -73,7 +78,7 @@ class CAlphaSequenceDock(QtGui.QDockWidget):
             if main and viewer:
                 try:
                     CAlphaSequenceDock.checkPredictionVsModel(structurePrediction, currentChainModel)
-                except SequenceError:
+                except CAlphaSequenceError:
                     QtGui.QMessageBox.warning(main, "Chain model does not match the sequence",  
                     "The sequence of the current chain model (from PDB file) does not match the \
                     sequence of the structure prediction (from SEQ file)" )
@@ -115,7 +120,7 @@ If the chain model's sequence is not a subset of the structure
                     predResName = structurePrediction.chain[resNum].symbol3
                     if modelResName != predResName: #If the residue names aren't the same, it isn't a subset
                         print resNum, ':', modelResName, 'vs', predResName
-                        raise SequenceError
+                        raise CAlphaSequenceError
                         break
                 for resNum in modelIsMissing:
                     #If the model is missing some residues that are in the prediction, add them to the model
@@ -123,7 +128,7 @@ If the chain model's sequence is not a subset of the structure
                     currentChainModel[resNum] = Residue(resName, currentChainModel)                        
             else: #If the model has some residue numbers that the structure prediction doesn't, it must be a model of something else
                 print "Model sequence is not a subset of the structure prediction sequence!"
-                raise SequenceError
+                raise CAlphaSequenceError
     
     def createActions(self):
         seqDockAct = QtGui.QAction(self.tr("Partly &Automated Atom Placement"), self)
@@ -165,6 +170,10 @@ sequence and predicted residue indices for helices and strands.
 This responds to a new selection of atoms in the viewer.
         '''
         self.seqWidget.scrollable.seqView.updateSequenceSelection()
+    
+    def updateFromSSESelection(self):
+        self.currentChainModel.setSelection(newSelection=range(self.sseViewer.currentMatch.predicted.startIndex, self.sseViewer.currentMatch.predicted.stopIndex+1))
+        self.seqWidget.scrollable.seqView.updateSequenceSelection()        
     
     def toggleMockSideChains(self):
         '''

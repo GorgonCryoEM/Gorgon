@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.1  2009/03/31 19:49:06  ssa1
+#   Moving interactive loop builder to root
+#
 #   Revision 1.2  2009/03/30 21:36:12  ssa1
 #   Interactive loop building
 #
@@ -68,7 +71,11 @@ class CAlphaInteractiveLoopBuilder(VolumeManualSkeletonizationForm):
         
     def __del__(self):
         self.engine.finishLoopBuilding()
+        self.skeletonViewer.unloadData()
         self.endSkeletonization()
+        
+    def endSkeletonization(self):
+        self.startEndSkeletonization(False)            
         
     def createUI(self):
         self.ui = Ui_DialogVolumeManualSkeletonization()

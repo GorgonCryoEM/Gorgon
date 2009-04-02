@@ -13,6 +13,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.2  2009/04/01 16:01:38  ssa1
+#   Refactoring: Splitting structure_editor into subclasses
+#
 #   Revision 1.1  2009/03/31 21:40:13  ssa1
 #   Refactoring: Splitting seq_model\SequenceView.py into subclasses
 #
@@ -33,7 +36,6 @@ class CAlphaSequenceWidget(QtGui.QWidget):
         
         self.globalView=CAlphaGlobalSequenceView(structurePrediction, self)
         self.globalView.setLocalView(self.scrollable.seqView)
-        self.globalView.updateViewportRange()        
 
         self.connect(self.scrollable.seqView.scrollbar, QtCore.SIGNAL('actionTriggered(int)'), self.globalView.updateViewportRange)
         self.connect(self.scrollable.seqView.scrollbar, QtCore.SIGNAL('valueChanged(int)'), self.globalView.updateViewportRange)
@@ -47,6 +49,11 @@ class CAlphaSequenceWidget(QtGui.QWidget):
         layout.addStretch()
         self.setLayout(layout)
         self.setWindowTitle('Sequence Widget')
-        self.setMinimumHeight(400)
-        self.setMinimumWidth(self.globalView.width()+10)
+        self.setMinimumHeight(600)
+        self.setMinimumWidth(310)
         #self.setMaximumWidth(self.globalView.width())
+        
+        self.globalView.updateViewportRange()      
+        
+        
+        

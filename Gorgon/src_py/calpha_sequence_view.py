@@ -13,6 +13,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.1  2009/03/31 21:40:13  ssa1
+#   Refactoring: Splitting seq_model\SequenceView.py into subclasses
+#
 
 from PyQt4 import Qt,QtGui,QtCore
 
@@ -21,8 +24,10 @@ class CAlphaSequenceView(QtGui.QWidget):
     super(CAlphaSequenceView,self).__init__(parent)
     # Initialize font
     self.fontName='Arial'
-    self.fontSize=30
+    self.fontSize=20
     self.font=QtGui.QFont(self.fontName,self.fontSize)
+    
+
 
     # Initialize sequence
     #self.structurePrediction = structurePrediction
@@ -249,7 +254,7 @@ residues is selected.
       return
 
     # LEFT MOUSE PRESS
-    if mouseEvent.button() == QtCore.Qt.LeftButton:
+    if mouseEvent.button() == QtCore.Qt.LeftButton and mouseEvent.y() < 2 * self.cellHeight():
       additionalResidue=self.getResidueIndexByMousePosition(mouseEvent.x(),mouseEvent.y())
       self.parentWidget().parentWidget().parentWidget().structureEditor.setResidues([additionalResidue])
       

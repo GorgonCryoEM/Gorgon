@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.31  2009/03/31 21:40:13  ssa1
+#   Refactoring: Splitting seq_model\SequenceView.py into subclasses
+#
 #   Revision 1.30  2009/03/31 20:08:45  ssa1
 #   Refactoring: Renaming and moving ChooseChainModel to CAlphaChooseChainModel
 #
@@ -141,15 +144,12 @@ class CAlphaViewer(BaseViewer):
         self.visualizationOptions.ui.checkBoxModel2Visible.setVisible(True)
         self.visualizationOptions.ui.pushButtonModel2Color.setVisible(True) 
         
-        self.connect(self, QtCore.SIGNAL("elementSelected (int, int, int, int, int, int, QMouseEvent)"), self.centerOnSelectedAtoms)
+        #self.connect(self, QtCore.SIGNAL("elementSelected (int, int, int, int, int, int, QMouseEvent)"), self.centerOnSelectedAtoms)
         self.connect(self, QtCore.SIGNAL("elementClicked (int, int, int, int, int, int, QMouseEvent)"), self.processElementClick)
       
 
     def centerOnSelectedAtoms(self, *argv):
-        """
-This centers the CAMERA on the last selected atom.
-        """
-                
+        # This centers the CAMERA on the last selected atom.                
         if not argv:
             chain = self.main_chain
             resIndices = chain.getSelection()
@@ -175,11 +175,9 @@ This centers the CAMERA on the last selected atom.
             try:
                 atom = CAlphaRenderer.getAtomFromHitStack(self.renderer, argv[0], True, *argv[1:-1])
             except:
-                print 'CAlphaViewer: could not get atom'
                 return
             pos = atom.getPosition()
         if not pos:
-            print 'CAlphaViewer: could not get pos'
             return
         #print viewer.renderer.getSpacingX(), viewer.renderer.getSpacingY(), viewer.renderer.getSpacingZ()
         x = pos.x()*self.renderer.getSpacingX() + self.renderer.getOriginX()
@@ -307,32 +305,7 @@ This function loads a SEQ file and creates a StructurePrediction object.
         self.app.menus.addAction("file-close-calpha", self.app.actions.getAction("unload_CAlpha"), "file-close")
         self.app.menus.addMenu("actions-calpha", self.tr("C-&Alpha Atoms"), "actions")
         self.app.menus.addAction("showSeqDock", self.app.actions.getAction("seqDock"), "actions-calpha")           
-    '''
-    def processMouseClick(self, hitStack, event, forceTrue):
-        super(CAlphaViewer, self).processMouseClick(hitStack, event, forceTrue)
-        hits = [-1,-1,-1,-1,-1]
-        if self.selectEnabled:
-            for i in range(5):
-                if(len(hitStack) > i+1):
-                    hits[i] = int(hitStack[i+1]) #On a 64 bit system, some of these are type numpy.int32 rather than int
-            if len(hitStack) == 0:
-                hitStack.append(-1)
-            if(len(hitStack) <= 6):
-                atom = CAlphaRenderer.getAtomFromHitStack(self.renderer, int(hitStack[0]), forceTrue, hits[0], hits[1], hits[2], hits[3], hits[4])
-                #On a 64 bit system, hitStack[0] is of type numpy.int32 rather than int (which is 64 bit)
-                if atom:
-                    if not forceTrue:
-                        #Multiple selection mode
-                        print 'CAlphaViewer: adding a residue to the selection'
-                        self.main_chain.setSelection(addOne=atom.getResSeq())
-                        print self.main_chain.getSelection()
-                    else:
-                        print 'CAlphaViewer: changing the selection to a residue'
-                        self.main_chain.setSelection([atom.getResSeq()])
-                        print self.main_chain.getSelection()
-            else:
-                raise Exception("Unable to call renderer.select method due as there are too many levels in the hit stack")
-    '''
+
     def processElementClick(self, *argv):
         """
 In response to a click on a C-alpha element, this updates the selected
@@ -346,17 +319,17 @@ residues in the Chain object.
             if event.modifiers() & QtCore.Qt.CTRL: #Multiple selection mode
                 atom = CAlphaRenderer.getAtomFromHitStack(self.renderer, hits[0], False, *hits[1:])
                 if atom.getResSeq() in self.main_chain.getSelection():
-                    print 'CAlphaViewer: removing a residue from the selection'
                     self.main_chain.setSelection(removeOne=atom.getResSeq())
                 else:
-                    print 'CAlphaViewer: adding a residue to the selection'
                     self.main_chain.setSelection(addOne=atom.getResSeq())
                 print self.main_chain.getSelection()
             else:
                 atom = CAlphaRenderer.getAtomFromHitStack(self.renderer, hits[0], True, *hits[1:])
-                print 'CAlphaViewer: changing the selection to a residue'
                 self.main_chain.setSelection([atom.getResSeq()])
-                print self.main_chain.getSelection()
+                
+        if event.button() == QtCore.Qt.RightButton:
+            self.centerOnSelectedAtoms(argv[0], argv[1], argv[2], argv[3], argv[4], argv[5], argv[6])
+            
     
     def exportData(self):
         """
