@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.23  2009/03/17 20:00:17  ssa1
+#   Removing Sheets from fiting process
+#
 #   Revision 1.22  2009/03/16 17:15:24  ssa1
 #   setting busy state when fitting
 #
@@ -167,29 +170,23 @@ class SSEViewer(BaseViewer):
         self.app.actions.getAction("fit_SSE_Helix").setEnabled(self.loaded and self.app.viewers["volume"].loaded)
     
     def updateCurrentMatch(self, sseType, sseIndex):
-        """
-When an element is selected in this viewer, if that item is a helix, 
-this sets self.currentMatch to the observed, predicted match for that
-helix. It then emits an 'SSE selected' signal. 
-        """
+        # When an element is selected in this viewer, if that item is a helix,
+        # this sets self.currentMatch to the observed, predicted match for that
+        # helix. It then emits an 'SSE selected' signal. 
         self.currentMatch = None
         if sseType == 0:
-            print 'helix'
             try:
                 self.correspondenceLibrary
             except AttributeError:
                 return
             corrLib = self.correspondenceLibrary
             currCorrIndex = corrLib.getCurrentCorrespondenceIndex()
-            print 'currCorrIndex:',  currCorrIndex
             matchList = corrLib.correspondenceList[currCorrIndex].matchList
             for match in matchList:
                 if match.observed.label == sseIndex: 
                     self.currentMatch = match
                     self.emit(QtCore.SIGNAL("SSE selected"))
-                    print self.currentMatch.predicted, self.currentMatch.observed
                     break
-        print 'Index:', sseIndex
 
     def fitSelectedSSEs(self):
         self.app.mainCamera.setCursor(QtCore.Qt.BusyCursor)        

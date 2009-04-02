@@ -14,6 +14,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.1  2009/03/31 21:40:13  ssa1
+#   Refactoring: Splitting seq_model\SequenceView.py into subclasses
+#
 
 
 from PyQt4 import Qt,QtGui,QtCore
@@ -23,10 +26,10 @@ class CAlphaGlobalSequenceView(QtGui.QWidget):
     super(CAlphaGlobalSequenceView, self).__init__(parent)
 
     # Set up Geometry
-    self.nCols=100
-    self.widgetWidth=600
-    self.cellHeight=40
-    self.cellWidth=self.widgetWidth/self.nCols
+    self.nCols= min(200, len(structurePrediction.chain.residueRange()))
+    self.widgetWidth = self.width()
+    self.cellHeight= 40
+    self.cellWidth=float(self.widgetWidth)/float(self.nCols)
 
     self.setStructurePrediction(structurePrediction)    
 
@@ -34,7 +37,7 @@ class CAlphaGlobalSequenceView(QtGui.QWidget):
     self.connect(self, QtCore.SIGNAL('SequencePanelUpdate'), self.repaint)
     self.setWindowModality(QtCore.Qt.NonModal)
     self.setWindowTitle(QtCore.QString('Global View'))
-
+    
   def setStructurePrediction(self, newStructurePrediction):
     """
 This sets the structure prediction used by the CAlphaGlobalSequenceView, and
@@ -78,10 +81,11 @@ updates its size based on the length of the sequence.
 
   def paintEvent(self, event):
     painter=QtGui.QPainter(self)
+    self.widgetWidth = self.width()
+    self.cellWidth=float(self.widgetWidth)/float(self.nCols)     
     self.__paintSecels(painter, self.cellWidth, self.cellHeight/2)
 
-  def __paintSecels(self, painter, cellWidth, cellHeight):
-
+  def __paintSecels(self, painter, cellWidth, cellHeight):     
     indexRange=self.structurePrediction.chain.residueRange()
     markerRange=range( len(indexRange) )
     for index,marker in zip(indexRange,markerRange):

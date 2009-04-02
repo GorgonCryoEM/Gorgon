@@ -13,6 +13,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.2  2009/04/01 23:00:32  ssa1
+#   Refactor: Redesigning semi-automatic atom placement window.  Fixing bugs, and more consistant layout
+#
 #   Revision 1.1  2009/04/01 16:01:38  ssa1
 #   Refactoring: Splitting structure_editor into subclasses
 #
@@ -82,14 +85,18 @@ if the user clicks accept.
             return
         viewer = self.parentWidget().parentWidget().viewer
         if self.previouslySelectedPossibleAtom:
-            self.previouslySelectedPossibleAtom.setColor(0, 1, 0, 1)
+            self.previouslySelectedPossibleAtom.setColor(0.2, 0.2, 0.2, 1)
             
         atomToDisplay = self.possibleAtomsList[choiceNum-1]
         atomToDisplay.setColor(0, 1, 1, 1)
         viewer.emitModelChanged()
         self.previouslySelectedPossibleAtom = atomToDisplay
+
+    def atomEnableTabElements(self, enable):
+        self.atomicAcceptButton.setEnabled(enable)
         
     def atomFindPositionPossibilities(self):        
+        self.atomEnableTabElements(False)
         self.possibleAtomsList = []
         #self.parentWidget()=>CAlphaSequenceWidget, self.parentWidget().parentWidget() => CAlphaSequenceDock
         skeletonViewer = self.parentWidget().parentWidget().app.viewers['skeleton']
@@ -101,10 +108,15 @@ if the user clicks accept.
         if not atom:
             self.atomicPossibilityNumSpinBox.setRange(0, 0)
             self.atomicNumPossibilities.setText('of ?')
+            self.atomEnableTabElements(False)
             return
-        if self.currentChainModel[resNum-1].getAtomNames() and self.currentChainModel[resNum+1].getAtomNames():
+        try:
+            self.currentChainModel[resNum-1].getAtomNames()
+            self.currentChainModel[resNum+1].getAtomNames()
+        except:
             self.atomicNumPossibilities.setText('of 0')
             self.atomicPossibilityNumSpinBox.setRange(0, 0)
+            self.atomEnableTabElements(False)
             return
         atomPos = atom.getPosition()
         atomPosMeshCoords =  skeletonViewer.worldToObjectCoordinates(self.CAlphaViewer.objectToWorldCoordinates([atomPos.x(), atomPos.y(), atomPos.z()]))
@@ -119,6 +131,7 @@ if the user clicks accept.
             if numIntersections == 0:
                 self.atomicNumPossibilities.setText('of 0')
                 self.atomicPossibilityNumSpinBox.setRange(0, 0)
+                self.atomEnableTabElements(False)
                 return
             possiblePositionsList = []
             for i in range(numIntersections):
@@ -163,7 +176,7 @@ if the user clicks accept.
             
             for index in range( len(self.possibleAtomsList) ):
                 atom = self.possibleAtomsList[index]
-                atom.setColor(0, 1, 0, 1)
+                atom.setColor(0.2, 0.2, 0.2, 1)
                 self.possibleAtomsList.pop(index)
                 atom = self.parentWidget().parentWidget().viewer.renderer.addAtom(atom)
                 self.possibleAtomsList.insert(index, atom)
@@ -172,6 +185,8 @@ if the user clicks accept.
                     atom.setColor(0, 1, 1, 1)
                     self.previouslySelectedPossibleAtom = atom #We change this atom's colors when we select a different possibility
                     
+                atom.setVisible(self.tabWidget.currentWidget() is self.atomicTab)
+            self.atomEnableTabElements(True)        
             self.parentWidget().parentWidget().viewer.emitModelChanged()
     
     def atomForwardBackwardChange(self):
@@ -249,24 +264,23 @@ This changes the atoms' properties back to default.
         """
 Depending on which tab is active, this enables and disables widtets.
 This is used for not-yet-implemented and non-applicable widgets.
-        """
+        """              
         currentTab = self.tabWidget.currentWidget()
-        if currentTab is self.atomicTab:
-            self.removeButton.setEnabled(True)
-            self.redoButton.setEnabled(True)
-            self.undoButton.setEnabled(True)
-        elif currentTab is self.helixTab:
-            self.removeButton.setEnabled(True)
-            self.redoButton.setEnabled(True)
-            self.undoButton.setEnabled(True)
-        elif currentTab is self.loopTab:
-            self.removeButton.setEnabled(True)
-            self.redoButton.setEnabled(False)
-            self.undoButton.setEnabled(False)
-        elif currentTab is self.positionTab:
-            self.removeButton.setEnabled(True)
-            self.redoButton.setEnabled(False)
-            self.undoButton.setEnabled(False)            
+        isHelixTab = currentTab is self.helixTab
+        isAtomicTab = currentTab is self.atomicTab
+        isLoopTab = currentTab is self.loopTab 
+        isPositionTab = currentTab is self.positionTab
+        
+        for index in range( len(self.possibleAtomsList) ):
+            atom = self.possibleAtomsList[index]
+            atom.setVisible(isAtomicTab)
+            
+        if(len(self.possibleAtomsList) > 0):
+            self.CAlphaViewer.emitModelChanged()
+        
+        
+        self.undoButton.setEnabled(isAtomicTab and isHelixTab)
+        self.redoButton.setEnabled(isAtomicTab and isHelixTab)                  
     
     def helixCreateCAhelix(self):
         print "Helix Create"
@@ -721,6 +735,7 @@ be the current residue for the atomic editor.
         self.atomicDirectionlabel2 = QtGui.QLabel('/')
         self.atomicChoiceLabel = QtGui.QLabel('Use Choice:')
         self.atomicAcceptButton = QtGui.QPushButton("Accept")
+        self.atomicAcceptButton.setEnabled(False)
 
                 
         for i in self.atomicResNames.keys():
@@ -1031,29 +1046,9 @@ Cterm spin boxes in the helix editor.
         self.helixNtermSpinBox.setValue(startIx)
         self.helixCtermSpinBox.setValue(stopIx)
         self.helixNtermResNameLabel.setText(self.currentChainModel[startIx].symbol3)
-        self.helixCtermResNameLabel.setText(self.currentChainModel[stopIx].symbol3)
-    '''
-    #This is the old version of this function
-    def updateCurrentMatch(self, sseType, sseIndex):
-        if sseType == 0:
-            print 'helix'
-            corrLib = sseViewer.correspondenceLibrary
-            currCorrIndex = corrLib.getCurrentCorrespondenceIndex()
-            print 'currCorrIndex:',  currCorrIndex
-            matchList = corrLib.correspondenceList[currCorrIndex].matchList
-            for match in matchList:
-                if match.observed.label == sseIndex: 
-                    self.currentMatch = match
-                    print self.currentMatch.predicted, self.currentMatch.observed
-                    startIx = self.currentMatch.predicted.startIndex
-                    stopIx = self.currentMatch.predicted.stopIndex
-                    self.helixNtermSpinBox.setValue(startIx)
-                    self.helixCtermSpinBox.setValue(stopIx)
-                    self.helixNtermResNameLabel.setText(self.currentChainModel[startIx].symbol3)
-                    self.helixCtermResNameLabel.setText(self.currentChainModel[stopIx].symbol3)
-                    break            
-        print 'Index:', sseIndex
-    '''
+        self.helixCtermResNameLabel.setText(self.currentChainModel[stopIx].symbol3)       
+        
+
     def updateSelectedResidues(self):
         """
 This gets the selected residues from the current chain model, and sends
