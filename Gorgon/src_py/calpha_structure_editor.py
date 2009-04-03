@@ -13,6 +13,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.4  2009/04/03 19:44:37  ssa1
+#   CAlpha bug fixes
+#
 #   Revision 1.3  2009/04/02 19:00:20  ssa1
 #   CAlpha Viewer bug fixes and smoother uniform functionality
 #
@@ -32,6 +35,7 @@ import math
 from vector_lib import *
 from calpha_structure_editor_command_place_helix import CAlphaStructureEditorCommandPlaceHelix
 from calpha_structure_editor_command_atom_placement import CAlphaStructureEditorCommandAtomPlacement
+from calpha_structure_editor_command_change_position import CAlphaStructureEditorCommandChangePosition
 
 class CAlphaStructureEditor(QtGui.QWidget):
     def __init__(self, currentChainModel, parent=None):
@@ -46,6 +50,7 @@ class CAlphaStructureEditor(QtGui.QWidget):
         self.possibleAtomsList = []
         self.previouslySelectedPossibleAtom = None
         self.undoStack = QtGui.QUndoStack(self)
+        self.undoInProgress = False
                        
         self.setupUi()
         self.enableDisable()
@@ -282,8 +287,8 @@ This is used for not-yet-implemented and non-applicable widgets.
             self.CAlphaViewer.emitModelChanged()
         
         
-        self.undoButton.setEnabled(isAtomicTab or isHelixTab)
-        self.redoButton.setEnabled(isAtomicTab or isHelixTab)                  
+        self.undoButton.setEnabled(isAtomicTab or isHelixTab or isPositionTab)
+        self.redoButton.setEnabled(isAtomicTab or isHelixTab or isPositionTab)                  
     
     def helixCreateCAhelix(self):
         print "Helix Create"
@@ -434,35 +439,40 @@ This increases the start and stop residue numbers by one.
         """
 This translates the selection on the x-axis.
         """
-        oldX = self.x
-        newX = self.posMoveDict['x'].value()
-        moveX =  newX - oldX
-        self.x = newX
-        translateVector = Vector3DFloat(moveX, 0, 0)
-        self.CAlphaViewer.renderer.selectionMove(translateVector)
-        self.CAlphaViewer.emitModelChanged()
+        if(not self.undoInProgress):        
+            oldX = self.x
+            newX = self.posMoveDict['x'].value()
+            moveX =  newX - oldX
+            self.x = newX
+            translateVector = Vector3DFloat(moveX, 0, 0)
+            command = CAlphaStructureEditorCommandChangePosition(self.CAlphaViewer, self, True, translateVector, False, None, None, oldX, newX, 'x')
+            self.undoStack.push(command)  
+
     def posMoveCM_y(self):
         """
 This translates the selection on the y-axis.
         """
-        oldY = self.y
-        newY = self.posMoveDict['y'].value()
-        moveY =  newY - oldY
-        self.y = newY
-        translateVector = Vector3DFloat(0, moveY, 0)
-        self.CAlphaViewer.renderer.selectionMove(translateVector)
-        self.CAlphaViewer.emitModelChanged()
+        if(not self.undoInProgress):
+            oldY = self.y
+            newY = self.posMoveDict['y'].value()
+            moveY =  newY - oldY
+            self.y = newY
+            translateVector = Vector3DFloat(0, moveY, 0)
+            command = CAlphaStructureEditorCommandChangePosition(self.CAlphaViewer, self, True, translateVector, False, None, None, oldY, newY, 'y')
+            self.undoStack.push(command)
+          
     def posMoveCM_z(self):
         """
 This translates the selection on the z-axis.
         """
-        oldZ = self.z
-        newZ = self.posMoveDict['z'].value()
-        moveZ = newZ - oldZ
-        self.z = newZ
-        translateVector = Vector3DFloat(0, 0, moveZ)
-        self.CAlphaViewer.renderer.selectionMove(translateVector)
-        self.CAlphaViewer.emitModelChanged()
+        if(not self.undoInProgress):
+            oldZ = self.z
+            newZ = self.posMoveDict['z'].value()
+            moveZ = newZ - oldZ
+            self.z = newZ
+            translateVector = Vector3DFloat(0, 0, moveZ)        
+            command = CAlphaStructureEditorCommandChangePosition(self.CAlphaViewer, self, True, translateVector, False, None, None, oldZ, newZ, 'z')
+            self.undoStack.push(command)  
        
     def posRotateCM_roll(self, angle):
         """
@@ -470,51 +480,52 @@ This rotates the selection around its 'center of mass' (actually
 geometric center) in a clockwise direction around a normal line to the
 screen.
         """
-        axis = self.CAlphaViewer.worldToObjectCoordinates(self.app.mainCamera.look)
-        oldAngle = self.roll        
+        if(not self.undoInProgress):
+            axis = self.CAlphaViewer.worldToObjectCoordinates(self.app.mainCamera.look)
+            oldAngle = self.roll        
+            
+            axis = Vector3DFloat(axis[0], axis[1], axis[2])
+            
+            cm = self.CAlphaViewer.renderer.selectionCenterOfMass()
+            newAngle = math.pi*angle/180
+             
+            command = CAlphaStructureEditorCommandChangePosition(self.CAlphaViewer, self, False, None, True, cm, axis, oldAngle, angle, 'roll')
+            self.undoStack.push(command)  
         
-        axis = Vector3DFloat(axis[0], axis[1], axis[2])
-        
-        cm = self.CAlphaViewer.renderer.selectionCenterOfMass()
-        newAngle = math.pi*angle/180
-        self.CAlphaViewer.renderer.selectionRotate(cm, axis, newAngle-oldAngle)
-        self.CAlphaViewer.emitModelChanged()
-        
-        self.roll = newAngle
     def posRotateCM_pitch(self, angle):
         """
 This rotates the selection around its 'center of mass' (actually 
 geometric center) around a line parallel to a horizontal line on the
 screen.
         """
-        axis = self.CAlphaViewer.worldToObjectCoordinates(self.app.mainCamera.right)
-        oldAngle = self.pitch
+        if(not self.undoInProgress):        
+            axis = self.CAlphaViewer.worldToObjectCoordinates(self.app.mainCamera.right)
+            oldAngle = self.pitch
+            
+            axis = Vector3DFloat(axis[0], axis[1], axis[2])
+            
+            cm = self.CAlphaViewer.renderer.selectionCenterOfMass()
+            newAngle = math.pi*angle/180
         
-        axis = Vector3DFloat(axis[0], axis[1], axis[2])
-        
-        cm = self.CAlphaViewer.renderer.selectionCenterOfMass()
-        newAngle = math.pi*angle/180
-        self.CAlphaViewer.renderer.selectionRotate(cm, axis, newAngle-oldAngle)
-        self.CAlphaViewer.emitModelChanged()
-        
-        self.pitch = newAngle
+            command = CAlphaStructureEditorCommandChangePosition(self.CAlphaViewer, self, False, None, True, cm, axis, oldAngle, angle, 'pitch')
+            self.undoStack.push(command)  
+
     def posRotateCM_yaw(self, angle):
         """
 This rotates the selection around its 'center of mass' (actually
 geometric center) around a line parallel to a vertical line on the
 screen.
         """
-        axis = self.CAlphaViewer.worldToObjectCoordinates(self.app.mainCamera.up)
-        axis = (-1*axis[0], -1*axis[1], -1*axis[2])
-        oldAngle = self.yaw
-        
-        axis = Vector3DFloat(axis[0], axis[1], axis[2])
-        cm = self.CAlphaViewer.renderer.selectionCenterOfMass()
-        newAngle = math.pi*angle/180
-        self.CAlphaViewer.renderer.selectionRotate(cm, axis, newAngle-oldAngle)
-        self.CAlphaViewer.emitModelChanged()
-        
-        self.yaw = newAngle
+        if(not self.undoInProgress):
+            axis = self.CAlphaViewer.worldToObjectCoordinates(self.app.mainCamera.up)
+            axis = (-1*axis[0], -1*axis[1], -1*axis[2])
+            oldAngle = self.yaw
+            
+            axis = Vector3DFloat(axis[0], axis[1], axis[2])
+            cm = self.CAlphaViewer.renderer.selectionCenterOfMass()
+            newAngle = math.pi*angle/180            
+            command = CAlphaStructureEditorCommandChangePosition(self.CAlphaViewer, self, False, None, True, cm, axis, oldAngle, angle, 'yaw')
+            self.undoStack.push(command)  
 
     def posUpdateValues(self):
         """
