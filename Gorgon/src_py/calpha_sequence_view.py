@@ -13,6 +13,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.2  2009/04/02 19:00:20  ssa1
+#   CAlpha Viewer bug fixes and smoother uniform functionality
+#
 #   Revision 1.1  2009/03/31 21:40:13  ssa1
 #   Refactoring: Splitting seq_model\SequenceView.py into subclasses
 #
@@ -337,8 +340,6 @@ residue from the selection, adding a residue to the selection, or
 adding a list of residues to the selection.
     '''
     dock = self.parentWidget().parentWidget().parentWidget().parentWidget()
-    #self.parentWidget() => QWidget, self.parentWidget().parentWidget() => CAlphaScrollableSequenceView
-    #self.parentWidget().parentWidget().parentWidget() => CAlphaSequenceDock
     viewer = dock.viewer
     renderer = viewer.renderer
     app = dock.app

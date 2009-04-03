@@ -13,6 +13,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.3  2009/04/02 19:00:20  ssa1
+#   CAlpha Viewer bug fixes and smoother uniform functionality
+#
 #   Revision 1.2  2009/04/01 23:00:32  ssa1
 #   Refactor: Redesigning semi-automatic atom placement window.  Fixing bugs, and more consistant layout
 #
@@ -279,8 +282,8 @@ This is used for not-yet-implemented and non-applicable widgets.
             self.CAlphaViewer.emitModelChanged()
         
         
-        self.undoButton.setEnabled(isAtomicTab and isHelixTab)
-        self.redoButton.setEnabled(isAtomicTab and isHelixTab)                  
+        self.undoButton.setEnabled(isAtomicTab or isHelixTab)
+        self.redoButton.setEnabled(isAtomicTab or isHelixTab)                  
     
     def helixCreateCAhelix(self):
         print "Helix Create"
@@ -314,7 +317,7 @@ given by self.helixNtermSpinBox and self.helixCtermSpinBox.
             coord1 = vectorAdd(structPredCoord1, endMoveVector)
             coord2 = vectorAdd(structPredCoord2, startMoveVector)
                 
-        command = CAlphaStructureEditorCommandPlaceHelix(self.currentChainModel, predHelix, startIndex, stopIndex, coord1, coord2, self, description = "Create C-alpha helix")
+        command = CAlphaStructureEditorCommandPlaceHelix(self.currentChainModel, predHelix, startIndex, stopIndex, coord1, coord2, self, self.app.viewers['sse'].currentMatch.predicted, description = "Create C-alpha helix")
         self.undoStack.push(command)        
 
     def helixDecreaseButtonPress(self):
@@ -589,10 +592,8 @@ This increases the position editor's yaw spin box by 3.
         self.posMoveDict['yaw'].setValue(self.posMoveDict['yaw'].value()+3)
     
     def removeSelectedAtoms(self):
-        """
-This deletes the selected atoms and the attached bonds. It also removes
-any secels that contain those atoms from the chain.
-        """
+        #This deletes the selected atoms and the attached bonds. It also removes
+        #any secels that contain those atoms from the chain.
         for resIndex in self.currentChainModel.getSelection():
             res = self.currentChainModel[resIndex]
             atom = res.getAtom('CA')
@@ -603,23 +604,21 @@ any secels that contain those atoms from the chain.
                 secel = self.currentChainModel.getSecelByIndex(resIndex)
                 if secel.label != 'no-label':
                     self.currentChainModel.removeSecel(secel)
-                prevAtom = self.currentChainModel[resIndex-1].getAtom('CA')
-                nextAtom = self.currentChainModel[resIndex+1].getAtom('CA')
-                if prevAtom:
-                    #print 'There is a previous atom'
-                    bondIndex = self.CAlphaViewer.renderer.getBondIndex(atom.getHashKey(), prevAtom.getHashKey())
-                    if bondIndex:
-                        #print 'removing bond before'
-                        self.CAlphaViewer.renderer.deleteBond(bondIndex)
-                if nextAtom:
-                    #print 'There is a next atom'
-                    bondIndex = self.CAlphaViewer.renderer.getBondIndex(atom.getHashKey(), nextAtom.getHashKey())
-                    if bondIndex:
-                        #print 'removing bond after'
-                        self.CAlphaViewer.renderer.deleteBond(bondIndex)
+                
+                if resIndex-1 in self.currentChainModel.residueRange():
+                    prevAtom = self.currentChainModel[resIndex-1].getAtom('CA')
+                    if prevAtom:
+                        bondIndex = self.CAlphaViewer.renderer.getBondIndex(atom.getHashKey(), prevAtom.getHashKey())
+                        if bondIndex:
+                            self.CAlphaViewer.renderer.deleteBond(bondIndex)
+                
+                if resIndex+1 in self.currentChainModel.residueRange():
+                    nextAtom = self.currentChainModel[resIndex+1].getAtom('CA')
+                    if nextAtom:
+                        bondIndex = self.CAlphaViewer.renderer.getBondIndex(atom.getHashKey(), nextAtom.getHashKey())
+                        if bondIndex:
+                            self.CAlphaViewer.renderer.deleteBond(bondIndex)
                 res.clearAtom('CA')
-                #print res.getAtomNames()
-                #print 'removing atom w/ resNum of:', atom.getResSeq()
                 self.CAlphaViewer.renderer.deleteAtom(atom.getHashKey())
                 del atom
         self.CAlphaViewer.emitModelChanged()

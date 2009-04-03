@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.9  2009/03/30 21:36:13  ssa1
+//   Interactive loop building
+//
 //   Revision 1.8  2008/09/29 19:05:37  ssa1
 //   Fixing String Utils.h linking errors
 //
@@ -161,6 +164,7 @@ namespace wustl_mm {
 			colorB = 0.0f;
 			colorA = 1.0f;
 			selected = false;
+			visible = true;
 		}
 
 		PDBAtom::PDBAtom(string PDBLine) {
@@ -187,6 +191,7 @@ namespace wustl_mm {
 			colorB = 0.0f;
 			colorA = 1.0f;
 			selected = false;
+			visible = true;
 		}
 
 		void PDBAtom::Print() {
