@@ -13,6 +13,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.5  2009/04/03 21:22:06  ssa1
+#   Undo redo for position
+#
 #   Revision 1.4  2009/04/03 19:44:37  ssa1
 #   CAlpha bug fixes
 #
@@ -61,6 +64,8 @@ class CAlphaStructureEditor(QtGui.QWidget):
         self.connect(self.atomicForwardRadioButton,  QtCore.SIGNAL('toggled(bool)'), self.atomForwardBackwardChange)
         self.connect(self.undoButton, QtCore.SIGNAL('clicked()'), self.undoStack.undo)
         self.connect(self.redoButton, QtCore.SIGNAL('clicked()'), self.undoStack.redo)
+        self.connect(self.undoStack, QtCore.SIGNAL('canRedoChanged(bool)'), self.redoButton.setEnabled)
+        self.connect(self.undoStack, QtCore.SIGNAL('canUndoChanged (bool)'), self.undoButton.setEnabled)
         self.connect(self.helixDecreasePositionButton, QtCore.SIGNAL('clicked()'), self.helixDecreaseButtonPress)
         self.connect(self.helixIncreasePositionButton, QtCore.SIGNAL('clicked()'), self.helixIncreaseButtonPress)
         self.connect(self.helixFlipButton, QtCore.SIGNAL('clicked()'), self.helixFlipButtonPress)
@@ -287,8 +292,8 @@ This is used for not-yet-implemented and non-applicable widgets.
             self.CAlphaViewer.emitModelChanged()
         
         
-        self.undoButton.setEnabled(isAtomicTab or isHelixTab or isPositionTab)
-        self.redoButton.setEnabled(isAtomicTab or isHelixTab or isPositionTab)                  
+        #self.undoButton.setEnabled(isAtomicTab or isHelixTab or isPositionTab)
+        #self.redoButton.setEnabled(isAtomicTab or isHelixTab or isPositionTab)                  
     
     def helixCreateCAhelix(self):
         print "Helix Create"
@@ -1002,7 +1007,9 @@ be the current residue for the atomic editor.
     def setupUi(self):
         #These go on the left hand side
         self.undoButton = QtGui.QPushButton('Undo')
+        self.undoButton.setEnabled(self.undoStack.canUndo())
         self.redoButton = QtGui.QPushButton('Redo')
+        self.redoButton.setEnabled(self.undoStack.canRedo())
         self.mockSidechainsCheckBox = QtGui.QCheckBox('Mock Sidechains')        
         self.removeButton = QtGui.QPushButton('Remove Selected Atoms')        
         
