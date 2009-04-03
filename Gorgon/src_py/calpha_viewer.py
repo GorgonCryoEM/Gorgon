@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.32  2009/04/02 19:00:20  ssa1
+#   CAlpha Viewer bug fixes and smoother uniform functionality
+#
 #   Revision 1.31  2009/03/31 21:40:13  ssa1
 #   Refactoring: Splitting seq_model\SequenceView.py into subclasses
 #
@@ -112,6 +115,7 @@
 from PyQt4 import QtGui, QtCore, QtOpenGL
 from libpyGORGON import CAlphaRenderer
 from base_viewer import BaseViewer
+from calpha_choose_chain_to_load_form import CAlphaChooseChainToLoadForm
 from calpha_atom_placer_form import CAlphaAtomPlacerForm
 from calpha_sequence_dock import CAlphaSequenceDock
 from seq_model.Chain import Chain
@@ -142,7 +146,8 @@ class CAlphaViewer(BaseViewer):
         self.visualizationOptions.ui.checkBoxModelVisible.setText("Show atoms colored:")
         self.visualizationOptions.ui.checkBoxModel2Visible.setText("Show backbone colored:")
         self.visualizationOptions.ui.checkBoxModel2Visible.setVisible(True)
-        self.visualizationOptions.ui.pushButtonModel2Color.setVisible(True) 
+        self.visualizationOptions.ui.pushButtonModel2Color.setVisible(True)
+        self.loadedChains = [] 
         
         #self.connect(self, QtCore.SIGNAL("elementSelected (int, int, int, int, int, int, QMouseEvent)"), self.centerOnSelectedAtoms)
         self.connect(self, QtCore.SIGNAL("elementClicked (int, int, int, int, int, int, QMouseEvent)"), self.processElementClick)
@@ -229,33 +234,21 @@ class CAlphaViewer(BaseViewer):
         seqDockAct.setCheckable(True)
         seqDockAct.setChecked(False)
         def showDock():
+            loaded = True
             if not self.structPred:
-                self.loadSeq()
+                loaded = self.loadSeq()
             if self.structPred and not self.main_chain:
                 self.main_chain = self.structPred.chain
-            CAlphaSequenceDock.changeDockVisibility(self.app, self, self.structPred, self.main_chain)
+            if loaded:
+                CAlphaSequenceDock.changeDockVisibility(self.app, self, self.structPred, self.main_chain)
         self.connect(seqDockAct, QtCore.SIGNAL("triggered()"), showDock)
         self.app.actions.addAction("seqDock", seqDockAct)
         
     def loadData(self):
-        """
-This overwrites the function inherited from BaseViewer. It prompts the
-user for which chain to load. It creates a Chain object and shows any
-atoms in the CAlphaViewer.
-        """
-        #Overwriting the function in BaseViewer
-        self.loaded = False #We want to load a chain to the screen each time
-        self.fileName = QtGui.QFileDialog.getOpenFileName(self, self.tr("Open Data"), "", 
-                            self.tr('Atom Positions (*.pdb)\nFASTA (*.fas *.fa *.fasta)'))
-        self.whichChainID = None
-        filename = unicode(self.fileName)
-        if filename.split('.')[-1].lower() == 'pdb':
-            dlg = WhichChainToLoad(unicode(self.fileName))
-            if dlg.exec_():
-                self.whichChainID = dlg.whichChainID
-        
-        def setupChain(mychain):
+        #Overwriting the function in BaseViewer        
+        def setupChain(mychain):            
             self.main_chain = mychain
+            self.loadedChains.append(mychain)
             mychain.setViewer(self)
             #Chain.setSelectedChainKey(mychain.getIDs())
             mychain.addCalphaBonds()
@@ -266,26 +259,44 @@ atoms in the CAlphaViewer.
                     continue
                 atom = renderer.addAtom(atom)
                 mychain[i].addAtomObject(atom)
+               
+        self.fileName = QtGui.QFileDialog.getOpenFileName(self, self.tr("Open Data"), "", 
+                            self.tr('Atom Positions (*.pdb)\nFASTA (*.fas *.fa *.fasta)'))
+        fileNameTemp = self.fileName
+        self.whichChainID = None
+        filename = unicode(self.fileName)
+        if filename.split('.')[-1].lower() == 'pdb':
+            dlg = CAlphaChooseChainToLoadForm(unicode(self.fileName))
+            if dlg.exec_():
+                self.whichChainID = dlg.whichChainID
+                if not self.fileName.isEmpty():
+                    if(self.loaded):
+                        self.unloadData()
+                        
+                    self.fileName = fileNameTemp
+                    
+                    if self.whichChainID == 'ALL':
+                        mychainKeys = Chain.loadAllChains(str(self.fileName), qparent=self.app)
+                        for chainKey in mychainKeys:
+                            setupChain(Chain.getChain(chainKey))
+                    else:
+                        mychain = Chain.load(str(self.fileName), qparent=self.app, whichChainID = self.whichChainID)
+                        setupChain(mychain)
         
-        if not self.fileName.isEmpty():
-            self.setCursor(QtCore.Qt.WaitCursor)
-            print self.whichChainID
-            if self.whichChainID == 'ALL':
-                mychainKeys = Chain.loadAllChains(str(self.fileName), qparent=self.app)
-                print mychainKeys
-                for chainKey in mychainKeys:
-                    setupChain(Chain.getChain(chainKey))
-            else:
-                mychain = Chain.load(str(self.fileName), qparent=self.app, whichChainID = self.whichChainID)
-                print Chain.getChainKeys()
-                setupChain(mychain)
-
-            if not self.loaded:
-                self.dirty = False
-                self.loaded = True
-                self.emitModelLoadedPreDraw()
-                self.emitModelLoaded()
-                self.emitViewerSetCenter()
+                    if not self.loaded:
+                        self.dirty = False
+                        self.loaded = True
+                        self.emitModelLoadedPreDraw()
+                        self.emitModelLoaded()
+                        self.emitViewerSetCenter()
+    
+    def unloadData(self):
+        #overwriting the function in base viewer
+        for chain in self.loadedChains:
+            del chain
+            chain = None
+            
+        BaseViewer.unloadData(self)
     
     def loadSeq(self):
         """
@@ -296,6 +307,9 @@ This function loads a SEQ file and creates a StructurePrediction object.
         fileName = str(fileName)
         if fileName:
             self.structPred = StructurePrediction.load(fileName, self.app)
+            return True
+        else : 
+            return False
     
     def createMenus(self):
         self.app.menus.addAction("file-open-calpha", self.app.actions.getAction("load_CAlpha"), "file-open")
@@ -371,32 +385,3 @@ If a C-alpha model is loaded, this enables relevent actions.
         """
         self.app.actions.getAction("save_CAlpha").setEnabled(self.loaded)
         self.app.actions.getAction("unload_CAlpha").setEnabled(self.loaded)
-
-
-class WhichChainToLoad(QtGui.QDialog):
-    """
-This dialog prompts the user for which chain to load.
-    """
-    def __init__(self, fileName, parent=None):
-        super(WhichChainToLoad, self).__init__(parent)
-        message = QtGui.QLabel('Which chain do you want to load?')
-        self.setWindowTitle('Which Chain?')
-        chainIDs = Chain.getChainIDsFromPDB(fileName)
-        self.chainIDList = QtGui.QListWidget()
-        self.chainIDList.addItems(chainIDs)
-        self.chainIDList.addItem('ALL')
-        buttonBox = QtGui.QDialogButtonBox(QtGui.QDialogButtonBox.Ok|QtGui.QDialogButtonBox.Cancel)
-        layout = QtGui.QVBoxLayout()
-        layout.addWidget(message)
-        layout.addWidget(self.chainIDList)
-        layout.addWidget(buttonBox)
-        self.setLayout(layout)
-        
-        self.connect(buttonBox, QtCore.SIGNAL('accepted()'), self, QtCore.SLOT('accept()'))
-        self.connect(buttonBox, QtCore.SIGNAL('rejected()'), self, QtCore.SLOT('reject()'))
-    def accept(self):
-        """
-This function loads the selected chain(s).
-        """
-        self.whichChainID = str( self.chainIDList.currentItem().text() )
-        QtGui.QDialog.accept(self)

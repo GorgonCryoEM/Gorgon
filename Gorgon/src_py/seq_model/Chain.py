@@ -525,6 +525,7 @@ a gap in the sequence of residues, this will not place a C-alpha
 bond.setAtom0Ix--one doesn't want a bond between the 97th and 103rd 
 residue.
     '''
+    cnt = 0
     try: 
         viewer = Chain.getViewer()
     except:
@@ -542,6 +543,8 @@ residue.
             bond.setAtom0Ix(atom0.getHashKey())
             bond.setAtom1Ix(atom1.getHashKey())
             viewer.renderer.addBond(bond)
+            cnt = cnt + 1
+    
 
   def addSecel(self, secel):
     '''
@@ -716,6 +719,13 @@ The selection is a list object of indices in the Chain
   ADD A RANGE OF RESIDUES to the existing selection: use 'addRange' 
   parameter
     '''
+    selectionToClear = self.getSelection()
+    for i in selectionToClear:
+        if(i in self.residueRange()):
+            atom = self[i].getAtom('CA')
+            if atom:
+                atom.setSelected(False)    
+                
     if newSelection is not None:
       self.selectedResidues=newSelection
 
@@ -729,6 +739,13 @@ The selection is a list object of indices in the Chain
 
     elif addRange is not None:
       self.selectedResidues.extend(addRange)
+
+    selectionToAdd = self.getSelection()
+    for i in selectionToAdd:
+        if(i in self.residueRange()):
+            atom = self[i].getAtom('CA')
+            if atom:
+                atom.setSelected(True)
 
     if qtEnabled:
       self.emit( QtCore.SIGNAL('selection updated'))

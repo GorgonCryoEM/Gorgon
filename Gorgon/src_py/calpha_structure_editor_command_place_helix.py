@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.2  2009/04/01 23:00:32  ssa1
+#   Refactor: Redesigning semi-automatic atom placement window.  Fixing bugs, and more consistant layout
+#
 #   Revision 1.1  2009/04/01 16:01:38  ssa1
 #   Refactoring: Splitting structure_editor into subclasses
 #
@@ -24,7 +27,7 @@ import math
 from vector_lib import *
 
 class CAlphaStructureEditorCommandPlaceHelix(QtGui.QUndoCommand):
-    def __init__(self, currentChainModel, predHelix, startIndex, stopIndex, coord1, coord2, structureEditor, description=None):
+    def __init__(self, currentChainModel, predHelix, startIndex, stopIndex, coord1, coord2, structureEditor, structurePrediction, description=None):
         super(CAlphaStructureEditorCommandPlaceHelix, self).__init__(description)
         self.currentChainModel = currentChainModel
         self.predHelix = predHelix
@@ -33,9 +36,11 @@ class CAlphaStructureEditorCommandPlaceHelix(QtGui.QUndoCommand):
         self.coord1 = coord1
         self.coord2 = coord2
         self.structureEditor = structureEditor
+        self.structurePrediction = structurePrediction
         self.CAlphaViewer = self.structureEditor.CAlphaViewer
     
     def redo(self):
+                        
         self.helix = Helix(self.currentChainModel, self.predHelix.serialNo, self.predHelix.label, self.startIndex, self.stopIndex)
         self.currentChainModel.addHelix(self.predHelix.serialNo, self.helix)
         self.helix.setAxisPoints(self.coord1, self.coord2)
@@ -78,6 +83,7 @@ class CAlphaStructureEditorCommandPlaceHelix(QtGui.QUndoCommand):
             self.CAlphaViewer.renderer.addBond(bond)
         except (KeyError, IndexError, AttributeError):
             pass
+          
         
         self.currentChainModel.setSelection(newSelection = range(self.startIndex, 1+self.stopIndex))
         
