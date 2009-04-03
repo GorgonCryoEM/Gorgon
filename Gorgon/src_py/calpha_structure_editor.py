@@ -13,6 +13,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.6  2009/04/03 21:33:55  ssa1
+#   Enabling Undo Redo properly
+#
 #   Revision 1.5  2009/04/03 21:22:06  ssa1
 #   Undo redo for position
 #
@@ -378,14 +381,19 @@ bonds are created only if the length of the new bond would be <= 4.2 A.
             
             #We have to re-make the starting and ending bonds after a helix flip
             #Deleting the old starting and ending bonds
-            atomStart0 = chain[helix.startIndex-1].getAtom('CA')
-            atomStart1 = chain[helix.startIndex].getAtom('CA')
+            atomStart0, atomStart1, atomStop0, atomStop1 = None, None, None, None
+            if(helix.startIndex-1 in chain.residueRange()):
+                atomStart0 = chain[helix.startIndex-1].getAtom('CA')
+            if(helix.startIndex in chain.residueRange()):            
+                atomStart1 = chain[helix.startIndex].getAtom('CA')
             if atomStart0 and atomStart1:
                 startBondIndex = renderer.getBondIndex(atomStart0.getHashKey(), atomStart1.getHashKey())
                 renderer.deleteBond(startBondIndex)
             #Must delete before we find the next index because all the indices after startBondIndex decrease by 1
-            atomStop0 = chain[helix.stopIndex].getAtom('CA')
-            atomStop1 = chain[helix.stopIndex+1].getAtom('CA')
+            if(helix.stopIndex in chain.residueRange()):
+                atomStop0 = chain[helix.stopIndex].getAtom('CA')
+            if(helix.stopIndex+1 in chain.residueRange()):
+                atomStop1 = chain[helix.stopIndex+1].getAtom('CA')
             if atomStop0 and atomStop1:
                 stopBondIndex = renderer.getBondIndex(atomStop0.getHashKey(), atomStop1.getHashKey())
                 renderer.deleteBond(stopBondIndex)
@@ -397,8 +405,10 @@ bonds are created only if the length of the new bond would be <= 4.2 A.
             #We now have to make new starting and ending bonds
  
             #We must re-assign these variables because the helix has been flipped
-            atomStart0 = chain[helix.startIndex-1].getAtom('CA')
-            atomStart1 = chain[helix.startIndex].getAtom('CA')
+            if(helix.startIndex-1 in chain.residueRange()):
+                atomStart0 = chain[helix.startIndex-1].getAtom('CA')
+            if(helix.startIndex in chain.residueRange()):
+                atomStart1 = chain[helix.startIndex].getAtom('CA')
             if atomStart0 and atomStart1:
                 disp = atomStart1.getPosition() - atomStart0.getPosition()
                 distance = vectorSize( (disp.x(), disp.y(), disp.z()) )
@@ -408,8 +418,10 @@ bonds are created only if the length of the new bond would be <= 4.2 A.
                     stopBond.setAtom0Ix(atomStart1.getHashKey())
                     renderer.addBond(startBond)
  
-            atomStop0 = chain[helix.stopIndex].getAtom('CA')
-            atomStop1 = chain[helix.stopIndex+1].getAtom('CA')
+            if(helix.stopIndex in chain.residueRange()):
+                atomStop0 = chain[helix.stopIndex].getAtom('CA')
+            if(helix.stopIndex+1 in chain.residueRange()):
+                atomStop1 = chain[helix.stopIndex+1].getAtom('CA')
             if atomStop0 and atomStop1:
                 disp = atomStop0.getPosition() - atomStop1.getPosition()
                 distance = vectorSize( (disp.x(), disp.y(), disp.z()) )
