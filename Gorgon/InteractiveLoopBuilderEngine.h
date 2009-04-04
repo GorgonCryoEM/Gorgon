@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.2  2009/03/30 21:36:12  ssa1
+//   Interactive loop building
+//
 //   Revision 1.1  2009/03/26 19:33:52  ssa1
 //   Adding in an Interactive Loop Builder
 //
@@ -127,13 +130,13 @@ namespace wustl_mm {
 					if(started) {
 						glPushMatrix();
 						glTranslatef(startPos.X(), startPos.Y(), startPos.Z());
-						gluSphere(quadricSphere, 2.0, 10, 10);  
+						gluSphere(quadricSphere, 1.0, 10, 10);  
 						glPopMatrix();
 					}
 					if(polyLineMode) {
 						glPushMatrix();
 						glTranslatef(browseStartPos.X(), browseStartPos.Y(), browseStartPos.Z());
-						gluSphere(quadricSphere, 2.0, 10, 10);  
+						gluSphere(quadricSphere, 1.0, 10, 10);  
 						glPopMatrix();
 					}
 					break;
@@ -141,7 +144,7 @@ namespace wustl_mm {
 					if(analyzed && started && (singleRootMode || !polyLineMode)) {
 						glPushMatrix();
 						glTranslatef(currentPos.X(), currentPos.Y(), currentPos.Z());
-						gluSphere(quadricSphere, 2.0, 10, 10);  
+						gluSphere(quadricSphere, 1.0, 10, 10);  
 						glPopMatrix();
 					}
 					break;

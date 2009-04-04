@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.2  2009/04/02 19:00:20  ssa1
+#   CAlpha Viewer bug fixes and smoother uniform functionality
+#
 #   Revision 1.1  2009/03/31 19:49:06  ssa1
 #   Moving interactive loop builder to root
 #
@@ -123,6 +126,7 @@ class CAlphaInteractiveLoopBuilder(VolumeManualSkeletonizationForm):
     def setLoopAtoms(self, startIndex, endIndex):
         
         self.engine.clearAtomList()
+        self.engine.clearCurrentPath()
                 
         for i in range(startIndex, endIndex+1):
             atom = self.chain[i].getAtom('CA')

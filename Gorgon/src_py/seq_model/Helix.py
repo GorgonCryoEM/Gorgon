@@ -49,22 +49,39 @@ to the chain.
         the atom at the second residue is now at the second from the last residue, etc.  
         The "modelChanged()" signal must be emitted elsewhere.
         '''
+#        self.axisPoint1, self.axisPoint2 = self.axisPoint2, self.axisPoint1
+#        atomList = []
+#        for resNum in range(self.startIndex, 1+self.stopIndex):
+#            CAatom = self.chain[resNum].getAtom('CA')
+#            if CAatom:
+#                atomList.append(CAatom)
+#            else:
+#                atomList.append(None)
+#            self.chain[resNum].clearAtoms()
+#        i = 0
+#        assert len(atomList) == 1+self.stopIndex-self.startIndex
+#        for CAatom in atomList[::-1]:
+#            if CAatom:
+#                CAatom.setResSeq(self.startIndex+i)
+#                self.chain[self.startIndex+i].addAtomObject(CAatom)
+#            i += 1
         self.axisPoint1, self.axisPoint2 = self.axisPoint2, self.axisPoint1
         atomList = []
+        positionList = []
         for resNum in range(self.startIndex, 1+self.stopIndex):
             CAatom = self.chain[resNum].getAtom('CA')
             if CAatom:
                 atomList.append(CAatom)
+                positionList.append(CAatom.getPosition())
             else:
-                atomList.append(None)
-            self.chain[resNum].clearAtoms()
-        i = 0
-        assert len(atomList) == 1+self.stopIndex-self.startIndex
-        for CAatom in atomList[::-1]:
-            if CAatom:
-                CAatom.setResSeq(self.startIndex+i)
-                self.chain[self.startIndex+i].addAtomObject(CAatom)
-            i += 1
+                raise Exception('Cannot flip helices which dont have all atoms present')
+                
+        cnt = len(atomList)
+        for i in range(cnt):
+            if(atomList[i]):
+                atomList[i].setPosition(positionList[cnt-i-1])                              
+            
+    
     
     def getAxisPoints(self):
         """
