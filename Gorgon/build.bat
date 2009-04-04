@@ -1,5 +1,5 @@
 @echo off
-set version=1.0.1
+set version=1.0.2b
 md ..\..\bin\gorgon
 md ..\..\bin\gorgon\gorgon_%version%_win32
 

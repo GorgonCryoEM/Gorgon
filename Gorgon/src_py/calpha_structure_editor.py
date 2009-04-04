@@ -13,6 +13,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.7  2009/04/03 22:05:28  ssa1
+#   Fixing helix flip bug
+#
 #   Revision 1.6  2009/04/03 21:33:55  ssa1
 #   Enabling Undo Redo properly
 #
@@ -718,8 +721,16 @@ be the current residue for the atomic editor.
     def updateLoopEditorEnables(self):
         volumeViewer = self.app.viewers['volume']
         
-        self.loopVolumeLoadButton.setVisible(not volumeViewer.loaded)        
-        self.loopVolumeLoadedLabel.setVisible(not volumeViewer.loaded)
+        self.loopVolumeLoadButton.setVisible(not volumeViewer.loaded)
+        if(volumeViewer.loaded):                
+            if(self.loopBuildingStarted):
+                self.loopVolumeLoadedLabel.setVisible(True)
+                self.loopVolumeLoadedLabel.setText(self.tr('Place starting point: \tCtrl/Apple + Click \nPlace loop atoms: \tAlt + Mouse Move \nSketch intended loop: \tShift + Mouse Move \nCancel current loop: \tEsc'))
+            else:
+                self.loopVolumeLoadedLabel.setVisible(False)
+        else:
+            self.loopVolumeLoadedLabel.setVisible(True)
+            self.loopVolumeLoadedLabel.setText(self.tr('Volume not loaded.  Please load a volume to place loops.'))
 
         self.loopStartEndBuildingButton.setEnabled(volumeViewer.loaded)
         self.loopStartLabel.setEnabled(volumeViewer.loaded)
@@ -729,6 +740,7 @@ be the current residue for the atomic editor.
             
     def startEndLoopBuilding(self):
         self.loopBuildingStarted = not self.loopBuildingStarted
+        self.updateLoopEditorEnables()
         
         if(self.loopBuildingStarted):
             self.loopStartEndBuildingButton.setText('End Loop Placement')
