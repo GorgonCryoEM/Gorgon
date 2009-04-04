@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.35  2009/03/31 21:40:13  ssa1
+#   Refactoring: Splitting seq_model\SequenceView.py into subclasses
+#
 #   Revision 1.34  2009/01/01 22:31:59  colemanr
 #   added a few comments
 #
@@ -233,6 +236,7 @@ This loads a SEQ file or, for testing purposes, a PDB file.
             
     def dockVisibilityChanged(self, visible):
         self.app.actions.getAction("perform_SSEFindHelixCorrespondences").setChecked(visible)
+        self.app.viewers['skeleton'].emitModelChanged()
     
     def modelChanged(self):
         if(not self.viewer.loaded) and self.app.actions.getAction("perform_SSEFindHelixCorrespondences").isChecked():
@@ -243,6 +247,7 @@ This loads a SEQ file or, for testing purposes, a PDB file.
         corrAct.setStatusTip(self.tr("Find Alpha-Helix Correspondences"))
         corrAct.setCheckable(True)
         corrAct.setChecked(False)
+        self.corrAct = corrAct
         self.connect(corrAct, QtCore.SIGNAL("triggered()"), self.loadWidget)
         self.app.actions.addAction("perform_SSEFindHelixCorrespondences", corrAct)
   
@@ -520,7 +525,7 @@ This loads a SEQ file or, for testing purposes, a PDB file.
         self.loadingCorrespondance = False
         
     def drawOverlay(self):
-        if self.executed:
+        if self.executed and self.corrAct.isChecked():
             glPushAttrib(GL_LIGHTING_BIT)
             self.viewer.setMaterials(self.app.themes.getColor("CorrespondenceFinder:BackboneTrace"))            
             self.viewer.correspondenceEngine.draw(0)
