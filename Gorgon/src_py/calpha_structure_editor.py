@@ -13,6 +13,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.8  2009/04/04 21:33:23  ssa1
+#   More structure approach for placing cAlpha loops, and helix flip bug fix
+#
 #   Revision 1.7  2009/04/03 22:05:28  ssa1
 #   Fixing helix flip bug
 #
@@ -418,7 +421,7 @@ bonds are created only if the length of the new bond would be <= 4.2 A.
                 if distance <= 4.2:
                     startBond = PDBBond()
                     startBond.setAtom0Ix(atomStart0.getHashKey())
-                    stopBond.setAtom0Ix(atomStart1.getHashKey())
+                    startBond.setAtom1Ix(atomStart1.getHashKey())
                     renderer.addBond(startBond)
  
             if(helix.stopIndex in chain.residueRange()):

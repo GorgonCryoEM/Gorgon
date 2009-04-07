@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.3  2009/04/04 21:33:23  ssa1
+#   More structure approach for placing cAlpha loops, and helix flip bug fix
+#
 #   Revision 1.2  2009/04/02 19:00:20  ssa1
 #   CAlpha Viewer bug fixes and smoother uniform functionality
 #
@@ -129,38 +132,39 @@ class CAlphaInteractiveLoopBuilder(VolumeManualSkeletonizationForm):
         self.engine.clearCurrentPath()
                 
         for i in range(startIndex, endIndex+1):
-            atom = self.chain[i].getAtom('CA')
-            if(not atom):
-                raw = PDBAtom(self.chain.getPdbID(), self.chain.getChainID(), i, 'CA')
-                raw.setPosition(Vector3DFloat(0,0,0))
-                atom = self.calphaViewer.renderer.addAtom(raw)
-                atom.setVisible(False)                 
-                print atom
-                self.chain[i].addAtomObject(atom)
-                self.chain[i].setCAlphaColorToDefault() 
-                bondBefore = None
-                bondAfter = None
-                if i - 1 in self.chain.residueRange():
-                    prevCAlpha = self.chain[i - 1].getAtom('CA')
-                    if prevCAlpha:
-                        print "adding a bond before"
-                        bondBefore=PDBBond()
-                        bondBefore.setAtom0Ix(prevCAlpha.getHashKey())
-                        bondBefore.setAtom1Ix(atom.getHashKey())
-                if i + 1 in self.chain.residueRange():
-                    nextCAlpha = self.chain[i + 1].getAtom('CA')
-                    if nextCAlpha:
-                        print "adding a bond after"
-                        bondAfter = PDBBond()
-                        bondAfter.setAtom0Ix(nextCAlpha.getHashKey())
-                        bondAfter.setAtom1Ix(atom.getHashKey())
-                
-                if bondBefore:
-                    self.calphaViewer.renderer.addBond(bondBefore)
-                if bondAfter:
-                    self.calphaViewer.renderer.addBond(bondAfter)
+            if(i in self.chain.residueRange()) :
+                atom = self.chain[i].getAtom('CA')
+                if(not atom):
+                    raw = PDBAtom(self.chain.getPdbID(), self.chain.getChainID(), i, 'CA')
+                    raw.setPosition(Vector3DFloat(0,0,0))
+                    atom = self.calphaViewer.renderer.addAtom(raw)
+                    atom.setVisible(False)                 
+                    print atom
+                    self.chain[i].addAtomObject(atom)
+                    self.chain[i].setCAlphaColorToDefault() 
+                    bondBefore = None
+                    bondAfter = None
+                    if i - 1 in self.chain.residueRange():
+                        prevCAlpha = self.chain[i - 1].getAtom('CA')
+                        if prevCAlpha:
+                            print "adding a bond before"
+                            bondBefore=PDBBond()
+                            bondBefore.setAtom0Ix(prevCAlpha.getHashKey())
+                            bondBefore.setAtom1Ix(atom.getHashKey())
+                    if i + 1 in self.chain.residueRange():
+                        nextCAlpha = self.chain[i + 1].getAtom('CA')
+                        if nextCAlpha:
+                            print "adding a bond after"
+                            bondAfter = PDBBond()
+                            bondAfter.setAtom0Ix(nextCAlpha.getHashKey())
+                            bondAfter.setAtom1Ix(atom.getHashKey())
                     
-            self.engine.addAtom(atom.getHashKey())             
+                    if bondBefore:
+                        self.calphaViewer.renderer.addBond(bondBefore)
+                    if bondAfter:
+                        self.calphaViewer.renderer.addBond(bondAfter)
+                        
+                self.engine.addAtom(atom.getHashKey())             
             
         if not self.calphaViewer.loaded:
             self.calphaViewer.loaded = True

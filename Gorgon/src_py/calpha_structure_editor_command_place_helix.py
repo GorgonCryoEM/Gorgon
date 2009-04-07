@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.3  2009/04/03 19:44:37  ssa1
+#   CAlpha bug fixes
+#
 #   Revision 1.2  2009/04/01 23:00:32  ssa1
 #   Refactor: Redesigning semi-automatic atom placement window.  Fixing bugs, and more consistant layout
 #
@@ -59,7 +62,7 @@ class CAlphaStructureEditorCommandPlaceHelix(QtGui.QUndoCommand):
         stopAtom = self.CAlphaViewer.renderer.addAtom(stopAtom)
         '''
         
-        for i in range(len(helixCoordList)):
+        for i in range(min(len(helixCoordList), self.stopIndex - self.startIndex + 1)):
             pos = helixCoordList[i]
             residue = self.currentChainModel[self.startIndex+i]
             rawAtom = residue.addAtom('CA', pos[0], pos[1], pos[2], 'C')
