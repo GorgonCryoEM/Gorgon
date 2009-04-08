@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.14  2008/12/17 16:00:04  ssa1
+#   Changing Version information for next public release
+#
 #   Revision 1.13  2008/12/03 20:27:05  ssa1
 #   adding in bug tracker
 #
@@ -57,6 +60,7 @@ class MainWindowForm(QtGui.QMainWindow):
         self.createActions()
         self.createMenus()
         self.themes = ThemeManager(self)
+        self.plugins = {}
         self.setContextMenuPolicy(QtCore.Qt.NoContextMenu)
         self.dockWidgets = []
                 

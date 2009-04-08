@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.10  2008/12/18 15:19:31  ssa1
+#   Moving About Form functionality into HelpMenus
+#
 #   Revision 1.9  2008/06/18 18:15:41  ssa1
 #   Adding in CVS meta data
 #
@@ -18,8 +21,8 @@
 from PyQt4 import QtGui, QtCore
 from help_menus import HelpMenus
 from camera import Camera
-from volume_viewer import VolumeViewer;
-from skeleton_viewer import SkeletonViewer;
+from volume_viewer import VolumeViewer
+from skeleton_viewer import SkeletonViewer
 from sse_viewer import SSEViewer
 from calpha_viewer import CAlphaViewer
 
