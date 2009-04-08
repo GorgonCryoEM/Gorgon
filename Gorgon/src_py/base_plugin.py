@@ -11,12 +11,15 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.1  2009/04/08 19:54:59  ssa1
+#   Adding in plugin functionality
+#
 
 
 class BasePlugin(object):
     
-    def __init__(self, app, parent=None):
-        self.app = app
+    def __init__(self, application, parent=None):
+        raise NotImplementedError, "Plugins must implement the __init__(self, application, parent=None) method"
     
     def getId(self):
         raise NotImplementedError, "Plugins must implement the getId(self) method"
