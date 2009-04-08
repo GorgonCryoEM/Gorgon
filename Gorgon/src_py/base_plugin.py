@@ -1,6 +1,6 @@
 # Copyright (C) 2005-2008 Washington University in St Louis, Baylor College of Medicine.  All rights reserved
 # Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
-# Description:   A widget that manages all the windows of the main form. 
+# Description:   The base plugin.  All plugins must be derived from this class for gorgon to load them in runtime
 
 # CVS Meta Information: 
 #   $Source$
@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.2  2009/04/08 20:06:31  ssa1
+#   Adding in plugin functionality
+#
 #   Revision 1.1  2009/04/08 19:54:59  ssa1
 #   Adding in plugin functionality
 #
