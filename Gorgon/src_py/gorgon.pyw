@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.15  2008/12/18 15:19:31  ssa1
+#   Moving About Form functionality into HelpMenus
+#
 #   Revision 1.14  2008/12/17 16:00:04  ssa1
 #   Changing Version information for next public release
 #
@@ -38,6 +41,7 @@
 import sys, os
 pathname = os.path.abspath(os.path.dirname(sys.argv[0]))
 if(sys.platform == 'win32'):
+    sys.path.append(pathname)
     sys.path.append(pathname + "\\setuptools-0.6c9-py2.5.egg")
     sys.path.append(pathname + "\\pyopengl-3.0.0b4-py2.5.egg")
 elif(sys.platform == 'darwin'):
@@ -49,6 +53,7 @@ elif(sys.platform == 'darwin'):
 from window_manager import WindowManager
 from PyQt4 import QtGui, QtCore
 from main_window_form import MainWindowForm
+from plugin_manager import PluginManager
 import time
 
 
@@ -63,6 +68,7 @@ if __name__ == '__main__':
     
     window = MainWindowForm(gorgonVersion)
     window.addModule(WindowManager(window))
+    window.addModule(PluginManager(window))
     window.showMaximized()
     splash.finish(window)
     sys.exit(app.exec_())

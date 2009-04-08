@@ -11,13 +11,16 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.4  2008/06/18 18:15:41  ssa1
+#   Adding in CVS meta data
+#
 
 from PyQt4 import QtCore, QtGui
 from ui_dialog_color_picker import Ui_DialogColorPicker
 
 class ColorPickerForm(QtGui.QDialog):
     def __init__(self, parent=None):
-        QtGui.QWidget.__init__(self, parent)
+        QtGui.QDialog.__init__(self, parent)
         self.createUI()
         
     def createUI(self):

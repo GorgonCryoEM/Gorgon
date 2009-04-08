@@ -15,7 +15,9 @@ setup(
                         'gorgon.ico',
                         'msvcr80.dll',
                         'msvcp80.dll']), 
-                  ('themes', ['..\\resources\\Dark.thm', '..\\resources\\Light.thm'] )],
+                  ('themes', ['..\\resources\\Dark.thm', '..\\resources\\Light.thm'] ),
+                  ('plugins', ['.\\plugins\__init__.py'])                  
+                  ],
       options={
                "py2exe":{
                          "includes" : ["sip", "PyQt4._qt", "ctypes", "distutils.util", "logging", "ctypes.util", "weakref"],
