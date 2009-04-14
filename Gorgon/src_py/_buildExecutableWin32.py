@@ -25,7 +25,3 @@ setup(
                          }
                }
       )
-
-
-#  For PyOpengl 3.0.0b6
-#"includes" : ["sip", "PyQt4._qt", "ctypes", "logging", "ctypes.util", "weakref"], 

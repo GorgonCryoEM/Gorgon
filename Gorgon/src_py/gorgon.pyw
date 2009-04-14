@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.17  2009/04/14 18:46:20  ssa1
+#   Changing how the WindowManager and PluginManager are loaded
+#
 #   Revision 1.16  2009/04/08 19:54:59  ssa1
 #   Adding in plugin functionality
 #
@@ -45,8 +48,6 @@ import sys, os
 pathname = os.path.abspath(os.path.dirname(sys.argv[0]))
 if(sys.platform == 'win32'):
     sys.path.append(pathname)
-    sys.path.append(pathname + "\\setuptools-0.6c9-py2.5.egg")
-    sys.path.append(pathname + "\\pyopengl-3.0.0b4-py2.5.egg")
 elif(sys.platform == 'darwin'):
     if os.environ.has_key('RESOURCEPATH') :
         sys.path = [os.path.join(os.environ['RESOURCEPATH'], 'lib', 'python2.5', 'lib-dynload')] + sys.path
