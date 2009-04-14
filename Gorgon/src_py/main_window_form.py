@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.15  2009/04/08 19:54:59  ssa1
+#   Adding in plugin functionality
+#
 #   Revision 1.14  2008/12/17 16:00:04  ssa1
 #   Changing Version information for next public release
 #
@@ -46,6 +49,8 @@ from PyQt4 import QtCore, QtGui
 from menu_manager import MenuManager
 from action_manager import ActionManager
 from theme_manager import ThemeManager
+from window_manager import WindowManager
+from plugin_manager import PluginManager
 import sys, os
 
 class MainWindowForm(QtGui.QMainWindow):
@@ -63,6 +68,8 @@ class MainWindowForm(QtGui.QMainWindow):
         self.plugins = {}
         self.setContextMenuPolicy(QtCore.Qt.NoContextMenu)
         self.dockWidgets = []
+        self.windowManager = WindowManager(self)
+        self.pluginManager = PluginManager(self)
                 
         self.statusBar().showMessage(self.tr("Gorgon: Protein Visualization Suite"))
         self.setWindowTitle(self.tr("Gorgon - v" + self.version))
