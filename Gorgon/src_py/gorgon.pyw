@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.16  2009/04/08 19:54:59  ssa1
+#   Adding in plugin functionality
+#
 #   Revision 1.15  2008/12/18 15:19:31  ssa1
 #   Moving About Form functionality into HelpMenus
 #
@@ -50,10 +53,9 @@ elif(sys.platform == 'darwin'):
 ###########################################################################################################
 
 
-from window_manager import WindowManager
 from PyQt4 import QtGui, QtCore
 from main_window_form import MainWindowForm
-from plugin_manager import PluginManager
+
 import time
 
 
@@ -67,8 +69,6 @@ if __name__ == '__main__':
     app.processEvents()
     
     window = MainWindowForm(gorgonVersion)
-    window.addModule(WindowManager(window))
-    window.addModule(PluginManager(window))
     window.showMaximized()
     splash.finish(window)
     sys.exit(app.exec_())
