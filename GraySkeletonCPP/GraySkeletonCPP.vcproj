@@ -56,7 +56,7 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="libeng.lib libfixedpoint.lib libmat.lib libmex.lib libmwservices.lib libmx.lib libut.lib glut32.lib"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="C:\_WUSTL\sasakthi\research\source\ExternalLibraries\GL;C:\MATLAB701\extern\lib\win32\microsoft\msvc71"
+				AdditionalLibraryDirectories="$(SolutionDir)\ExternalLibraries\GL;C:\MATLAB701\extern\lib\win32\microsoft\msvc71"
 				GenerateDebugInformation="true"
 				AssemblyDebug="1"
 			/>
@@ -123,7 +123,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="libeng.lib libfixedpoint.lib libmat.lib libmex.lib libmwservices.lib libmx.lib libut.lib glut32.lib"
-				AdditionalLibraryDirectories="C:\_WUSTL\sasakthi\research\source\ExternalLibraries\GL;C:\MATLAB701\extern\lib\win32\microsoft\msvc71"
+				AdditionalLibraryDirectories="$(SolutionDir)\ExternalLibraries\GL;C:\MATLAB701\extern\lib\win32\microsoft\msvc71"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -176,7 +176,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="$(SolutionDir);C:\_WashU\ssa1\source\ExternalLibraries\mpatrol\include;C:\MATLAB701\extern\include;$(SolutionDir)\ExternalLibraries;$(SolutionDir)\ExternalLibraries\GL;"
+				AdditionalIncludeDirectories="$(SolutionDir);$(SolutionDir)\ExternalLibraries\mpatrol\include;C:\MATLAB701\extern\include;$(SolutionDir)\ExternalLibraries;$(SolutionDir)\ExternalLibraries\GL;"
 				WarningLevel="3"
 				DebugInformationFormat="4"
 			/>
@@ -194,7 +194,7 @@
 				AdditionalOptions="/FORCE:MULTIPLE"
 				AdditionalDependencies="mpatrol.lib libeng.lib libfixedpoint.lib libmat.lib libmex.lib libmwservices.lib libmx.lib libut.lib"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="C:\_WashU\ssa1\source\ExternalLibraries\mpatrol\bin;C:\MATLAB701\extern\lib\win32\microsoft\msvc71"
+				AdditionalLibraryDirectories="$(SolutionDir)\ExternalLibraries\mpatrol\bin;C:\MATLAB701\extern\lib\win32\microsoft\msvc71"
 				GenerateDebugInformation="true"
 				AssemblyDebug="1"
 			/>
