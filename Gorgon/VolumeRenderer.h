@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.48  2009/03/24 16:22:27  ssa1
+//   Better cross section & Solid Rendering viewing
+//
 //   Revision 1.47  2009/03/24 15:18:15  ssa1
 //   Better cross section & Solid Rendering viewing
 //
@@ -293,7 +296,7 @@ namespace wustl_mm {
 			return power;
 		}
 		string VolumeRenderer::GetSupportedLoadFileFormats() {
-			return "Volumes (*.mrc *.ccp4 *.raw);;Point Cloud (*.pts)";
+			return "All Files (*.mrc *.ccp4 *.raw *.pts);; Volumes (*.mrc *.ccp4 *.raw);;Point Cloud (*.pts)";
 		}
 
 		string VolumeRenderer::GetSupportedSaveFileFormats() {

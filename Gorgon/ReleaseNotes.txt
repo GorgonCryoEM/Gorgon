@@ -8,6 +8,7 @@ Version 1.0.2b
   Interactive placement of CAlpha loops
   Plugin functionality
   Using PyOpenGL 3.0.0
+  CTRL+ALT and drag mouse to rotate scene for 10 seconds
 
 Version 1.0.1
   Support for loading CCP4 and RAW volumes
