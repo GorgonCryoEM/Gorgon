@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.52  2008/12/03 21:58:25  ssa1
+#   Selection rotations for atoms and helices.
+#
 #   Revision 1.51  2008/12/02 21:02:54  ssa1
 #   Saving screen real-estate
 #
@@ -98,7 +101,7 @@
 #   Adding in CVS meta data
 #
 
-import sys, os
+import sys, os, time
 from PyQt4 import QtOpenGL, QtCore, QtGui
 from vector_lib import *
 from scene_editor_form import SceneEditorForm
@@ -507,8 +510,19 @@ class Camera(QtOpenGL.QGLWidget):
     def mouseReleaseEvent(self, event):
         self.mouseUpPoint = QtCore.QPoint(event.pos())
         #Enter selection mode only if we didnt move the mouse much.. (If the mouse was moved, then we assume a camera motion instead of a selection
+        dx = self.mouseUpPoint.x() - self.mouseDownPoint.x()
+        dy = self.mouseUpPoint.y() - self.mouseDownPoint.y()
+                
         if (pow(self.mouseDownPoint.x() - self.mouseUpPoint.x(), 2) + pow(self.mouseDownPoint.y() - self.mouseUpPoint.y(), 2) <= 2): 
             self.processMouseClick(self.pickObject(self.mouseUpPoint.x(), self.mouseUpPoint.y()), event, self.mouseLeftPressed, self.mouseMidPressed, self.mouseRightPressed)
+        
+        # auto rotate if ctrl + alt pressed
+        if(self.mouseLeftPressed) and (event.modifiers() & QtCore.Qt.CTRL) and (event.modifiers() & QtCore.Qt.ALT):
+            for i in range(1000):
+                self.setEyeRotation(-dx/10.0, dy/10.0, 0)
+                self.updateGL()
+                time.sleep(0.01)
+            
             
         if(self.mouseTrackingEnabledRay):
             ray = self.getMouseRay(event.x(), event.y())            
@@ -533,7 +547,7 @@ class Camera(QtOpenGL.QGLWidget):
         if (event.buttons() & QtCore.Qt.LeftButton):
             if (event.buttons() & QtCore.Qt.RightButton):           # Rolling the scene
                 self.setEyeRotation(0, 0, dx)
-            else:
+            else:                   
                 if (event.modifiers() & QtCore.Qt.CTRL) :           # Rotating the selection
                     self.rotateSelectedScene(dx, dy)
                 else:                                               # Rotating the scene

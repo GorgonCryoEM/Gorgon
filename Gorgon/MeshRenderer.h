@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.31  2008/12/12 21:42:31  ssa1
+//   Fixing bug: Cant move a skeleton in te z axis by using the position tab
+//
 //   Revision 1.30  2008/12/01 01:38:03  ssa1
 //   Fixing resetting of scale and location when performing laplacian smoothing
 //
@@ -301,7 +304,7 @@ namespace wustl_mm {
 		}
 
 		string MeshRenderer::GetSupportedLoadFileFormats() {
-			return "Volumes (*.mrc *.atom);;Meshes (*.off);;All Files (*.off *.mrc *.atom)";
+			return "All Files (*.off *.mrc *.atom);;Volumes (*.mrc *.atom);;Meshes (*.off)";
 		}
 		string MeshRenderer::GetSupportedSaveFileFormats() {
 			return "Meshes (*.off);;Volumes (*.mrc)";
