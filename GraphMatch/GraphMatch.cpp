@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.29  2008/09/29 16:22:17  ssa1
+//   Removing compiler warnings
+//
 //   Revision 1.28  2008/09/29 16:19:30  ssa1
 //   Adding in CVS meta information
 //
@@ -150,12 +153,16 @@ int main( int args, char * argv[] ) {
 		//delete(baseGraph);
 		// Had to change BackEndInterface for python interface
 		//
+		std::cout << "---" << std::endl << "loading sequence graph" << std::endl << "---" << std::endl;
 		i.LoadSequenceGraph();
+		std::cout << "---" << std::endl << "loading skeleton graph" << std::endl << "---" << std::endl;
 		i.LoadSkeletonGraph();
+		std::cout << "---" << std::endl << "executing query" << std::endl << "---" << std::endl;
 		i.ExecuteQuery();
+		std::cout << "---" << std::endl << "cleaning up memory" << std::endl << "---" << std::endl;
 		// -------------
-
 		i.CleanupMemory();
+		std::cout << "---" << std::endl << "done" << std::endl << "---" << std::endl;
 	} else if((args == 3) && (strcmp(argv[1], "Mathematica") == 0)) {
 		Volume * vol = (MRCReaderPicker::pick(argv[2]))->getVolume();
 		vol->toMathematicaFile("myVolume.nb");
