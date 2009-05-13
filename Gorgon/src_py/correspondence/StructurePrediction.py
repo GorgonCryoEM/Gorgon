@@ -65,6 +65,7 @@ handled in C++.
         comments=None
         
         if filename.split('.')[-1].lower() == 'seq':
+            # data is a c++ SEQReader object
             data = SeqReader.loadFile(filename)
             startIndex = data.getStartResNo()
             sequence = data.getSequenceString()
@@ -79,16 +80,20 @@ handled in C++.
 
             numSSEs = data.getNumberOfStructures()
             for sseIx in range(numSSEs):
+                # cppSse is a c++ SecondaryStructure object
                 cppSse = data.getStructure(sseIx)
                 if cppSse.isHelix(): 
+                    # create python Helix object using info from c++ SecondaryStructure object
                     pyHelix = Helix(chain, sseIx, str(cppSse.getSecondaryStructureID()), cppSse.getStartPosition(), cppSse.getEndPosition())
                     secelDict[sseIx] = pyHelix                                
                 elif cppSse.isSheet():
                     #TODO: Add Sheet support
                     secelDict[sseIx] = None
                     pass
+            # create new python StructurePrediction object and return it
             return StructurePrediction(secelDict, chain, params, comments, qparent)
         elif filename.split('.')[-1].lower() == 'pdb':
+            # create python chain object using the python pdb file loader method
             chain = Chain.load(filename, qparent)
             i = 0
             for helixKey in chain.helices.keys():
@@ -101,6 +106,7 @@ handled in C++.
             chain.atoms = {}
             for resIndex in chain.residueRange():
                 chain[resIndex].clearAtoms()
+            # create new python StructurePrediction object and return it
             return StructurePrediction(secelDict, chain, params, comments, qparent)
         
         
