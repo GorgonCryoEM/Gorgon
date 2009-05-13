@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.36  2009/04/04 22:10:15  ssa1
+#   Hiding selected path when correspondance finder is not in focus
+#
 #   Revision 1.35  2009/03/31 21:40:13  ssa1
 #   Refactoring: Splitting seq_model\SequenceView.py into subclasses
 #
@@ -109,7 +112,8 @@
 #
 
 from PyQt4 import QtCore, QtGui
-from ui_dialog_sse_helix_correspondence_finder import Ui_DialogSSEHelixCorrespondenceFinder
+from ui_dialog_sse_helix_correspondence_finder_new import Ui_DialogSSEHelixCorrespondenceFinder
+#from ui_dialog_sse_helix_correspondence_finder import Ui_DialogSSEHelixCorrespondenceFinder
 from libpyGORGON import SSECorrespondenceEngine, SSECorrespondenceResult
 from correspondence.CorrespondenceLibrary import CorrespondenceLibrary
 from correspondence.Correspondence import Correspondence
@@ -151,20 +155,25 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
         self.connect(self.dock, QtCore.SIGNAL("visibilityChanged (bool)"), self.dockVisibilityChanged)
         self.connect(self.ui.pushButtonGetHelixLengthFile, QtCore.SIGNAL("pressed ()"), self.getHelixLengthFile)
         self.connect(self.ui.pushButtonGetHelixLocationFile, QtCore.SIGNAL("pressed ()"), self.getHelixLocationFile)
+        self.connect(self.ui.pushButtonGetSheetLocationFile, QtCore.SIGNAL("pressed ()"), self.getSheetLocationFile)
         self.connect(self.ui.pushButtonGetSkeletonFile, QtCore.SIGNAL("pressed ()"), self.getSkeletonFile)
         self.connect(self.ui.pushButtonGetSequenceFile, QtCore.SIGNAL("pressed ()"), self.getSequenceFile)
         self.connect(self.ui.pushButtonReset, QtCore.SIGNAL("pressed ()"), self.loadDefaults)
         self.connect(self.ui.pushButtonCancel, QtCore.SIGNAL("pressed ()"), self.reject)
         self.connect(self.ui.pushButtonOk, QtCore.SIGNAL("pressed ()"), self.accept)
         self.connect(self.ui.comboBoxCorrespondences, QtCore.SIGNAL("currentIndexChanged (int)"), self.selectCorrespondence)
+        # adding new checkbox
+        self.connect(self.ui.checkBoxShowAllPaths, QtCore.SIGNAL("toggled (bool)"), self.fullGraphVisibilityChanged)
         self.connect(self.app.viewers["skeleton"], QtCore.SIGNAL("modelDrawing()"), self.drawOverlay)
         self.ui.tableWidgetCorrespondenceList.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         self.connect(self.ui.tableWidgetCorrespondenceList, QtCore.SIGNAL("customContextMenuRequested (const QPoint&)"), self.customMenuRequested)
         self.connect(self.viewer, QtCore.SIGNAL("elementClicked (int, int, int, int, int, int, QMouseEvent)"), self.sseClicked)
-            
+          
+    # populate parameter boxes with default values for correspondence search        
     def loadDefaults(self):
         self.ui.lineEditHelixLengthFile.setText("")
         self.ui.lineEditHelixLocationFile.setText(self.viewer.helixFileName)
+        self.ui.lineEditSheetLocationFile.setText(self.viewer.sheetFileName)
         self.ui.lineEditSkeletonFile.setText(self.app.viewers["skeleton"].fileName)
         self.ui.lineEditSequenceFile.setText(self.app.viewers["calpha"].fileName)        
 
@@ -173,6 +182,8 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
         self.ui.radioButtonQuadraticError.setChecked(False)
         self.ui.doubleSpinBoxEuclideanDistance.setValue(0.0)
         self.ui.checkBoxMissingHelices.setChecked(False)
+        # adding new checkbox
+        self.ui.checkBoxShowAllPaths.setChecked(False)
         self.ui.spinBoxMissingHelixCount.setValue(0)
         
         self.ui.doubleSpinBoxHelixMissingPenalty.setValue(5.0)
@@ -201,6 +212,11 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
         self.ui.lineEditHelixLocationFile.setText(self.viewer.helixFileName)
         self.checkOk()               
 
+    def getSheetLocationFile(self):
+        self.viewer.loadSheetData()
+        self.ui.lineEditSheetLocationFile.setText(self.viewer.sheetFileName)
+        self.checkOk()               
+
     def getSkeletonFile(self):
         self.app.viewers["skeleton"].loadData()
         self.ui.lineEditSkeletonFile.setText(self.app.viewers["skeleton"].fileName)
@@ -214,6 +230,10 @@ This loads a SEQ file or, for testing purposes, a PDB file.
         self.checkOk()
     
     def checkOk(self):
+        """
+        This checks if all files necessary for the correspondence search have been loaded. If so, the
+        correspondence search parameter tabs are enabled and a basic correspondence is created.   
+        """
         self.dataLoaded = not(self.ui.lineEditHelixLengthFile.text().isEmpty() or self.ui.lineEditHelixLocationFile.text().isEmpty()
                            or self.ui.lineEditSkeletonFile.text().isEmpty() or self.ui.lineEditSequenceFile.text().isEmpty())
         self.ui.pushButtonOk.setEnabled(self.dataLoaded)
@@ -237,6 +257,11 @@ This loads a SEQ file or, for testing purposes, a PDB file.
     def dockVisibilityChanged(self, visible):
         self.app.actions.getAction("perform_SSEFindHelixCorrespondences").setChecked(visible)
         self.app.viewers['skeleton'].emitModelChanged()
+
+    def fullGraphVisibilityChanged(self, visible):
+        """Called when the visibility checkbox is checked."""
+        # to render again
+        self.viewer.emitModelChanged()
     
     def modelChanged(self):
         if(not self.viewer.loaded) and self.app.actions.getAction("perform_SSEFindHelixCorrespondences").isChecked():
@@ -258,6 +283,7 @@ This loads a SEQ file or, for testing purposes, a PDB file.
         #Tab 1
         self.viewer.correspondenceEngine.setConstant("SSE_FILE_NAME", str(self.ui.lineEditHelixLengthFile.text()))
         self.viewer.correspondenceEngine.setConstant("VRML_HELIX_FILE_NAME", str(self.ui.lineEditHelixLocationFile.text()))
+        self.viewer.correspondenceEngine.setConstant("VRML_SHEET_FILE_NAME", str(self.ui.lineEditSheetLocationFile.text()))
         self.viewer.correspondenceEngine.setConstant("MRC_FILE_NAME", str(self.ui.lineEditSkeletonFile.text()))
         self.sequenceFileName = str(self.ui.lineEditSequenceFile.text())
         self.viewer.correspondenceEngine.setConstant("SEQUENCE_FILE_NAME", self.sequenceFileName)
@@ -309,9 +335,13 @@ This loads a SEQ file or, for testing purposes, a PDB file.
                         self.viewer.correspondenceEngine.setHelixConstraint(match.predicted.serialNo + 1, -1)
 
     def populateEmptyResults(self, library):
+        """ add empty result before correspondence search is started """
+
+        # create one empty result
         corrList = []
         matchList = []            
         
+        # build an empty correspondence result by creating an empty match for each secondary structure element.
         for i in range(len(library.structurePrediction.secelDict)):                                   
             observed = None
             predicted = library.structurePrediction.secelDict[i]
@@ -319,18 +349,31 @@ This loads a SEQ file or, for testing purposes, a PDB file.
             currentMatch.constrained = False     
             matchList.append(currentMatch)                                              
             corr = Correspondence(library=library, matchList=matchList, score=0)            
-            
+
+        # add the empty correspondence to the list
         corrList.append(corr)
         return corrList
+            
+
     
     def populateResults(self, library):
         self.ui.tabWidget.setCurrentIndex(3)
+        # clear the correspondence list
         corrList = []
+        
+        # iterate over all results from correspondence algorithm
         for i in range(self.resultCount):                                
+            # create a Correspondence object and add it to the list
+
+            # start from correspondenceEngine result
             result = self.viewer.correspondenceEngine.getResult(i+1)
-                                    
-            matchList = []            
+            
+            matchList = [] # matchList holds the matches
+            
+            # iterate over all nodes in the matching from correspondenceEngine
             for j in range(result.getNodeCount()/2):
+                # j is a helix node in the sequence graph
+                # n1 and n2 are skeleton graph nodes for entry and exit points of the helix
                 n1 = result.getSkeletonNode(j*2)
                 n2 = result.getSkeletonNode(j*2+1)
                 if n1 < n2:
@@ -338,39 +381,60 @@ This loads a SEQ file or, for testing purposes, a PDB file.
                 else:
                     direction = Match.REVERSE
                 
+                # lookup which helix from skeleton graph these nodes refer to
                 observedNo = result.nodeToHelix(n1)
                 if observedNo >= 0:
+                    # helix in skeleton graph
                     observed = library.structureObservation.helixDict[observedNo]
                 else:
                     observed = None
                     
+                # helix in sequence graph
                 predicted = library.structurePrediction.secelDict[j]
+                
+                # create Match object holding the observed and predicted helices, and the match direction
                 currentMatch = Match(observed, predicted, direction)
+                
+                # if this helix has a constraint, store the constraint in the Match object
                 if(self.userConstraints.has_key(j)):
                     currentMatch.constrained = self.userConstraints[j]
                 else :                      
                     currentMatch.constrained = False     
+                # append this match to the list of matches for this result
                 matchList.append(currentMatch)         
-                                      
+
+            # now matchList holds all the helix correspondences for a single match result
+
+            # create Correspondence object for this correspondence
             corr = Correspondence(library=library, matchList=matchList, score=result.getCost())
             
-            
+            # add to list of correspondences
             corrList.append(corr)
+            
+        # corrList now holds all correspondences between the sequence and the graph,
+        # as determined by the graphMatch algorithm
         return corrList
             
     def populateComboBox(self, library):
         self.ui.comboBoxCorrespondences.clear()
+        # add all correspondence to pulldown menu
         for i in range(len(library.correspondenceList)):
-            corr = library.correspondenceList[i]                                
+            corr = library.correspondenceList[i]                               
             self.ui.comboBoxCorrespondences.addItem("Correspondence " + str(i+1) + " - [Cost: " + str(corr.score) + "]")
                    
                    
     def createBasicCorrespondence(self):
+        """Writes search parameters to correspondence object, loads predicted structure and observed structure, and creates correspondence library"""
+        print("\ncreating basic correspondence\n")
         self.setCursor(QtCore.Qt.BusyCursor)
+
+        # put user-entered match parameters from UI into the correspondence object
         self.setConstants()          
         
         
         #Loading Predicted SSEs                     
+        print("\nloading predicted SSEs\n")
+        # call to c++ method QueryEngine::LoadSequenceGraph()
         self.viewer.correspondenceEngine.loadSequenceGraph()
 
         structPred = StructurePrediction.load(self.sequenceFileName, self.app)
@@ -382,13 +446,19 @@ This loads a SEQ file or, for testing purposes, a PDB file.
             return (v3df.x(), v3df.y(), v3df.z())
         
         #Loading Observed SSEs
+        print("\nloading observed SSEs\n")
+        # call to c++ method QueryEngine::LoadSkeletonGraph()
         self.viewer.correspondenceEngine.loadSkeletonGraph()
         observedHelices = {}
         helixCount = 0
         observedSheets = {}
         sheetCount = 0
+        # call to c++ method QueryEngine::getSkeletonSSECount()
         sseCount = self.viewer.correspondenceEngine.getSkeletonSSECount()
+
+        print("\nadding helices to list of observed helices\n")
         for sseIx in range(sseCount):
+            # call to c++ method QueryEngine::getSkeletonSSE(), which returns a c++ GeometricShape object
             cppSse = self.viewer.correspondenceEngine.getSkeletonSSE(sseIx)
             
             #TODO: check whether these should be getCornerCell3(...
@@ -401,6 +471,7 @@ This loads a SEQ file or, for testing purposes, a PDB file.
                                     vectorAdd(p1, vectorScalarMultiply(-1, q2))): #to get proper orientation
                 q1, q2 = q2, q1 #python trick for exchanging values
             
+            # create list of observed helices for this correspondence result
             if cppSse.isHelix():            
                 pyHelix = ObservedHelix(sseIx, q1, q2)
                 observedHelices[helixCount] = pyHelix
@@ -411,16 +482,24 @@ This loads a SEQ file or, for testing purposes, a PDB file.
         
         #TODO: Mike this raises an error!;
         structObserv = StructureObservation(helixDict = observedHelices, sheetDict = observedSheets)
+        print("\nwriting to correspondenceLibrary\n")
+
+        # create a new python CorrespondenceLibrary object 
         self.viewer.correspondenceLibrary = CorrespondenceLibrary(sp = structPred, so = structObserv)          
                 
         self.setCursor(QtCore.Qt.ArrowCursor)
         
+        print("\nfinished creating basic correspondences\n")
         
     def accept(self):
+        # read user parameters, read skeleton and sequence files, create correspondence library
         self.createBasicCorrespondence()          
                 
+        # execute correspondence query and do cleanup
         self.resultCount = self.viewer.correspondenceEngine.executeQuery()
-        self.viewer.correspondenceEngine.cleanupMemory()        
+        self.viewer.correspondenceEngine.cleanupMemory()
+        
+        # populate the list of found correspondences        
         self.viewer.correspondenceLibrary.correspondenceList = self.populateResults(self.viewer.correspondenceLibrary)
         
         self.populateComboBox(self.viewer.correspondenceLibrary)       
@@ -527,9 +606,17 @@ This loads a SEQ file or, for testing purposes, a PDB file.
     def drawOverlay(self):
         if self.executed and self.corrAct.isChecked():
             glPushAttrib(GL_LIGHTING_BIT)
-            self.viewer.setMaterials(self.app.themes.getColor("CorrespondenceFinder:BackboneTrace"))            
+            self.viewer.setMaterials(self.app.themes.getColor("CorrespondenceFinder:BackboneTrace"))  
+            # calls Draw method of c++ SSECorrespondenceEngine object          
             self.viewer.correspondenceEngine.draw(0)
             glPopAttrib()
+        if self.corrAct.isChecked() and self.dataLoaded and self.ui.checkBoxShowAllPaths.isChecked() :
+            glPushAttrib(GL_LIGHTING_BIT)
+            self.viewer.setMaterials(self.app.themes.getColor("CorrespondenceFinder:BackboneTrace"))  
+            # calls DrawAllPaths method of c++ SSECorrespondenceEngine object          
+            self.viewer.correspondenceEngine.drawAllPaths(0)
+            glPopAttrib()
+            
 
     def constraintAdded(self, state):
         if(not self.loadingCorrespondance):
