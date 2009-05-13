@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.7  2008/12/01 23:42:55  ssa1
+//   Setting theming support for backbone trace
+//
 //   Revision 1.6  2008/11/07 21:22:25  ssa1
 //   Fixing memory corruption errors when python garbage collects c++ objects
 //
@@ -25,6 +28,7 @@
 #include <GraphMatch/BackEndInterface.h>
 #include <vector>
 #include <glut.h>
+#include "Renderer.h" // to include DrawSphere function
 
 using namespace wustl_mm::GraphMatch;
 using namespace std;
@@ -49,6 +53,7 @@ namespace wustl_mm {
 			int GetSequenceSSECount();
 			void SetVisibleCorrespondence(int correspondenceIndex);
 			void Draw(int sceneIndex);
+			void DrawAllPaths(int sceneIndex);
 			
 		private:
 			vector<SSECorrespondenceResult> correspondence;		
@@ -179,6 +184,7 @@ namespace wustl_mm {
 		}
 
 		void SSECorrespondenceEngine::Draw(int sceneIndex) {
+			//std::cout << "SSECorrespondenceEngine::Draw called" << std::endl;
 			int n1, n2;
 			vector<Vector3DInt> path;
 			if(correspondenceIndex >= 0) {
@@ -208,6 +214,68 @@ namespace wustl_mm {
 				}
 				glPopAttrib();
 			}
+		}	
+		
+		// Draw all possible paths through the skeleton
+		void SSECorrespondenceEngine::DrawAllPaths(int sceneIndex) {
+			//std::cout << "SSECorrespondenceEngine::DrawAllPaths called" << std::endl;
+			int n1, n2;
+			vector<Vector3DInt> path;
+			glPushAttrib(GL_LIGHTING_BIT | GL_LINE_BIT | GL_ENABLE_BIT | GL_HINT_BIT);
+			glDisable(GL_LIGHTING);
+			glLineWidth(5);
+			glEnable(GL_LINE_SMOOTH);
+			glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);	
+
+			for(int i = 0; i < skeleton->GetNodeCount(); i++) {
+				for(int j = i; j < skeleton->GetNodeCount(); j++) {
+					n1 = i;
+					n2 = j;
+					if((n1 >= 0)  && (n2 >= 0)) {
+						path = skeleton->paths[n1][n2];
+						if(path.size() == 0) {
+							path = skeleton->paths[n2][n1];
+						}
+						glBegin(GL_LINE_STRIP);
+						for(unsigned int j = 0; j < path.size(); j++) {
+							glVertex3d(path[j].X(), path[j].Y(), path[j].Z());
+						}
+						glEnd();
+						// draw start and end of paths (corner nodes)
+						//Renderer::DrawSphere(Vector3DFloat(path[0].X(), path[0].Y(), path[0].Z()), 1.0);
+					}
+				}
+			}
+			glPopAttrib();
+			// add code here to find corner cells and render them!
+			// also add code to draw interior paths between corners in a different color!
+			// use DrawSphere( ??? )
+
+			// draw start and end of paths (subset of corner nodes)
+			/*
+			for(int i = 0; i < skeleton->GetNodeCount(); i++) {
+				for(int j = i; j < skeleton->GetNodeCount(); j++) {
+					n1 = i;
+					n2 = j;
+					if((n1 >= 0)  && (n2 >= 0)) {
+						path = skeleton->paths[n1][n2];
+						if(path.size() > 0) {
+							Renderer::DrawSphere(Vector3DFloat(path[0].X(), path[0].Y(), path[0].Z()), 1.0);
+							Renderer::DrawSphere(Vector3DFloat(path[path.size()-1].X(), path[path.size()-1].Y(), path[path.size()-1].Z()), 1.0);
+						}
+					}
+				}
+			}
+			*/
+
+			// draw corner nodes
+			glPushAttrib(GL_LIGHTING_BIT | GL_LINE_BIT | GL_ENABLE_BIT | GL_HINT_BIT);
+			for(int i = 0; i < skeleton->skeletonHelixes.size(); i++) {
+				for(int j = 0; j < skeleton->skeletonHelixes[i]->cornerCells.size(); j++) {
+					Renderer::DrawSphere(Vector3DFloat(skeleton->skeletonHelixes[i]->cornerCells[j].x, skeleton->skeletonHelixes[i]->cornerCells[j].y, skeleton->skeletonHelixes[i]->cornerCells[j].z), 1.0);
+				}
+			}
+			glPopAttrib();
 		}
 	}
 }
