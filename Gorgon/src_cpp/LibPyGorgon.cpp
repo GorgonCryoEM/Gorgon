@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.50  2009/03/30 21:36:12  ssa1
+//   Interactive loop building
+//
 //   Revision 1.49  2009/03/26 19:33:52  ssa1
 //   Adding in an Interactive Loop Builder
 //
@@ -484,6 +487,7 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("getSequenceSSECount", &SSECorrespondenceEngine::GetSequenceSSECount)
 		.def("setVisibleCorrespondence", &SSECorrespondenceEngine::SetVisibleCorrespondence)
 		.def("draw", &SSECorrespondenceEngine::Draw)
+		.def("drawAllPaths", &SSECorrespondenceEngine::DrawAllPaths)
 	;
 
 	class_<SEQFileData>("SeqFileData", init<>())
