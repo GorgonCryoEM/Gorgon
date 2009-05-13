@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.15  2009/03/16 16:17:34  ssa1
+//   Fitting SSEs into the Density
+//
 //   Revision 1.14  2008/11/24 18:32:28  ssa1
 //   Giving helix end points
 //
@@ -250,8 +253,11 @@ namespace wustl_mm {
 		void GeometricShape::AddInternalCell(Point3Int point) {
 			internalCells.push_back(point);
 		}
-
+		
+		// Search through all voxels inside a helix to find the two corners, which have only one neighbor in the helix.
 		void GeometricShape::FindCornerCellsInHelix() {
+
+			// array to help iterate over 6 neighbor voxels
 			int d[6][3];
 			d[0][0] = 0;		d[0][1] = 0;		d[0][2] = -1;
 			d[1][0] = 0;		d[1][1] = 0;		d[1][2] = 1;
@@ -259,18 +265,26 @@ namespace wustl_mm {
 			d[3][0] = 0;		d[3][1] = 1;		d[3][2] = 0;
 			d[4][0] = -1;		d[4][1] = 0;		d[4][2] = 0;
 			d[5][0] = 1;		d[5][1] = 0;		d[5][2] = 0;
+			
+			// counter of number of neighbor cells are inside the helix
 			int insideCounter;
+
+			// for each cell inside the helix
 			for(unsigned int i = 0; i < internalCells.size(); i++) {
 				insideCounter = 0;
+				// count the number of neighbor cells inside the helix
 				for(int j = 0; j < 6; j++) {
 					if(GetLocationInVector(internalCells, Point3Int(internalCells[i].x + d[j][0], internalCells[i].y + d[j][1], internalCells[i].z + d[j][2], 0)) >= 0) {
 						insideCounter++;
 					}
 				}
+				// if only one neighbor inside the helix, this is a corner cell. add it to the list.
 				if(insideCounter == 1) {
 					cornerCells.push_back(internalCells[i]);
 				}
 			}
+
+			// abort if more than two corner cells were found
 			assert(cornerCells.size() >= 2);
 
 			double maxDistance = -1;
