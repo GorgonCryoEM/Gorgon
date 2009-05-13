@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.32  2008/12/12 21:43:38  ssa1
+//   Fixing bug: Application crashing when loading skeletons via the sse correspondence finder
+//
 //   Revision 1.31  2008/11/25 03:30:12  ssa1
 //   User constraints on finding correspondences (v2)
 //
@@ -32,9 +35,9 @@
 #ifndef GLOBALCONSTANTS_H
 #define GLOBALCONSTANTS_H
 
-//#define INCLUDE_SHEETS
+#define INCLUDE_SHEETS // uncomment ss 5/11/09
 //#define GET_STATS
-//#define VERBOSE
+#define VERBOSE // uncomment ss 
 //#define MAKE_FINAL_MRC
 #define GET_AMINO_SEQUENCE
 
