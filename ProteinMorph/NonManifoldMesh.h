@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.35  2009/03/30 21:36:13  ssa1
+//   Interactive loop building
+//
 //   Revision 1.34  2009/03/17 20:00:17  ssa1
 //   Removing Sheets from fiting process
 //
@@ -751,7 +754,7 @@ namespace wustl_mm {
 				maxPos[0] = volSizeX-1;
 				maxPos[1] = volSizeY-1;
 				maxPos[2] = volSizeZ-1;
-			}
+			} 
 			for(unsigned int i = 0; i < vertices.size(); i++) {
 				for(unsigned int j = 0; j < 3; j++) {
 					minPos[j] = min(minPos[j], (double)vertices[i].position.values[j]);
@@ -775,13 +778,16 @@ namespace wustl_mm {
 				v1 = vertices[GetVertexIndex(edges[i].vertexIds[0])];
 				v2 = vertices[GetVertexIndex(edges[i].vertexIds[1])];
 				vector<Vector3DInt> positions = Rasterizer::ScanConvertLine(v1.position.XInt(), v1.position.YInt(), v1.position.ZInt(), v2.position.XInt(), v2.position.YInt(), v2.position.ZInt());
+				positions.push_back(Vector3DInt(v1.position.XInt(), v1.position.YInt(), v1.position.ZInt()));
+				positions.push_back(Vector3DInt(v2.position.XInt(), v2.position.YInt(), v2.position.ZInt()));
 				for(unsigned int j = 0; j < positions.size(); j++) {
 					for(unsigned int k = 0; k < 3; k++) {
-						pos[k] = positions[j].values[k] - minPosInt[j];
+						pos[k] = positions[j].values[k] - minPosInt[k];
 					}
 					vol->setDataAt(pos[0], pos[1], pos[2], 1.0);
 				}				
 			}
+
 			vol->setOrigin(origin[0], origin[1], origin[2]);
 			vol->setSpacing(scale[0], scale[1], scale[2]);
 			return vol;
