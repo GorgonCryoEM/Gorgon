@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.49  2009/05/08 20:45:49  ssa1
+//   auto rotate of camera when user clicks CTRL + ALT and left move
+//
 //   Revision 1.48  2009/03/24 16:22:27  ssa1
 //   Better cross section & Solid Rendering viewing
 //
@@ -296,11 +299,11 @@ namespace wustl_mm {
 			return power;
 		}
 		string VolumeRenderer::GetSupportedLoadFileFormats() {
-			return "All Files (*.mrc *.ccp4 *.raw *.pts);; Volumes (*.mrc *.ccp4 *.raw);;Point Cloud (*.pts)";
+			return "All Files (*.mrc *.ccp4 *.map *.raw *.pts);; Volumes (*.mrc *.ccp4 *.map *.raw);;Point Cloud (*.pts)";
 		}
 
 		string VolumeRenderer::GetSupportedSaveFileFormats() {
-			return "Volumes (*.mrc *.ccp4 *.raw);;Mathematica List (*.nb);;Bitmap Image set (*.bmp);;Structure Tensor Field (*.tns)";
+			return "Volumes (*.mrc *.ccp4 *.map *.raw);;Mathematica List (*.nb);;Bitmap Image set (*.bmp);;Structure Tensor Field (*.tns)";
 		}
 
 		void VolumeRenderer::EnableDraw(bool enable) {			
