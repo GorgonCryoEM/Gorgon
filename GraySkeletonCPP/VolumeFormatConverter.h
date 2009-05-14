@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.21  2009/03/02 16:31:47  ssa1
+//   Adding in Point Clouds and Structure Tensor Fields
+//
 //   Revision 1.20  2008/12/15 22:38:31  ssa1
 //   Adding in support to load RAW volumes
 //
@@ -58,6 +61,8 @@ namespace wustl_mm {
 				vol = MRCReaderPicker::pick((char *)inputFile.c_str())->getVolume();
 			} else if(strcmp(inputFormat.c_str(), "CCP4") == 0) {
 				vol = MRCReaderPicker::pick((char *)inputFile.c_str())->getVolume();
+			} else if(strcmp(inputFormat.c_str(), "MAP") == 0) {
+				vol = MRCReaderPicker::pick((char *)inputFile.c_str())->getVolume();
 			} else if(strcmp(inputFormat.c_str(), "PTS") == 0) {
 				vol = VolumeReaderPTS::LoadVolume(inputFile);
 			} else if(strcmp(inputFormat.c_str(), "RAW") == 0) {
@@ -90,6 +95,8 @@ namespace wustl_mm {
 				vol = MRCReaderPicker::pick((char *)inputFile.c_str())->getVolume();
 			} else if(strcmp(inputFormat.c_str(), "CCP4") == 0) {
 				vol = MRCReaderPicker::pick((char *)inputFile.c_str())->getVolume();
+			} else if(strcmp(inputFormat.c_str(), "MAP") == 0) {
+				vol = MRCReaderPicker::pick((char *)inputFile.c_str())->getVolume();
 			} else if(strcmp(inputFormat.c_str(), "PTS") == 0) {
 				vol = VolumeReaderPTS::LoadVolume(inputFile);
 			} else if (strcmp(inputFormat.c_str(), "RAW8") == 0) {		
@@ -112,6 +119,8 @@ namespace wustl_mm {
 			if(strcmp(outputFormat.c_str(), "MRC") == 0) {
 				vol->toMRCFile((char *)outputFile.c_str());
 			} else if(strcmp(outputFormat.c_str(), "CCP4") == 0) {
+				vol->toMRCFile((char *)outputFile.c_str());
+			} else if(strcmp(outputFormat.c_str(), "MAP") == 0) {
 				vol->toMRCFile((char *)outputFile.c_str());
 			} else if(strcmp(outputFormat.c_str(), "BMP") == 0) {
 				ImageReaderBMP::SaveVolumeAsImageSet(vol, outputFile);
