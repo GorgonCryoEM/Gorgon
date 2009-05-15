@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.15.2.2  2009/05/15 15:42:13  schuhs
+//   Adding a method to return the minimum distance between a polygon (set of triangles) and a point.
+//
 //   Revision 1.15.2.1  2009/05/13 20:26:47  schuhs
 //   Adding comments to FindCornerCellsInHelix method
 //
@@ -161,11 +164,15 @@ namespace wustl_mm {
 			double A,B,C,D,E,F,G,H,I;
 			for(unsigned int i = 0; i < polygons.size(); i++) {
 				poly = (Polygon)polygons[i];
-				a = (Point3)polygonPoints[poly.pointIndex1];
-				b = (Point3)polygonPoints[poly.pointIndex2];
+				// read triangle vertices
+				a = (Point3)polygonPoints[poly.pointIndex1]; 
+				b = (Point3)polygonPoints[poly.pointIndex2]; 
 				c = (Point3)polygonPoints[poly.pointIndex3];
+				// find surface normal
 				n = ((b-a)^(c-a)) / ((b-a)^(c-a)).length();
+				// measure distance from point p to triangle
 				d = n * (p - a);
+				// find projection of p onto triangle
 				q = p + n*d;
 
 				A = a[0]-c[0];
