@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.19.2.2  2009/05/15 15:44:54  schuhs
+//   Modifying SkeletonReader method to build sheets from points on skeleton that are near or inside a sheet rather than only points inside a sheet.
+//
 //   Revision 1.19.2.1  2009/05/13 20:49:13  schuhs
 //   Adding comments to code and console messages to indicate progress of skeleton creation. Adding test to fix bug that appears when INCLUDE_SHEETS flag is set.
 //
@@ -39,9 +42,13 @@
 #include "GeometricShape.h"
 #include <vector>
 #include <queue>
+#include <list>
 #include "GlobalConstants.h"
+#include <GraySkeletonCPP/GlobalDefinitions.h>
+#include <GraySkeletonCPP/VolumeSkeletonizer.h>
 
 using namespace std;
+using namespace wustl_mm::GraySkeletonCPP;
 
 namespace wustl_mm {
 	namespace GraphMatch {
@@ -54,6 +61,7 @@ namespace wustl_mm {
 			static int GetGraphIndex(vector<GeometricShape*> & helixes, int helixNum, int cornerNum);
 			static int GetGraphIndex(vector<GeometricShape*> & helixes, int helixNum, Point3Int * point);
 			static StandardGraph * ReadFile(char * volumeFile, char * helixFile, char * sseFile, char * sheetFile);
+			static Volume* getSheetsNoThreshold( Volume * vol, int minSize );
 			static void ReadSheetFile(char * sheetFile, vector<GeometricShape*> & helixes);
 			static void ReadHelixFile(char * helixFile, char * sseFile, vector<GeometricShape*> & helixes);
 			static void FindSizes(int startHelix, int startCell, vector<GeometricShape*> & helixList, Volume * vol, Volume * coloredVol, StandardGraph * graph);
@@ -155,6 +163,12 @@ namespace wustl_mm {
 									helixes[i]->AddInternalCell(Point3Int(x, y, z, 0));
 								}
 							}
+						}
+					}
+				}
+			}
+
+							/* commenting out code that assigns skeleton plates to helices according to distance
 							// if voxel is a sheet voxel, check to see if it's near a skeleton plate
 							if (!inHelix && vol->isSheet(x,y,z)) {
 								int nearestSheet = -1; // sheet nearest this point
@@ -170,7 +184,7 @@ namespace wustl_mm {
 										} else {
 											dist = helixes[i]->PolygonsDistanceToPoint(point);
 										}
-										cout << "distance to sheet " << i << " = " << dist << ", nearest sheet = " << nearestSheet << ", distance = " << distNearestSheet << endl;
+										//cout << "distance to sheet " << i << " = " << dist << ", nearest sheet = " << nearestSheet << ", distance = " << distNearestSheet << endl;
 										if(dist < distNearestSheet) {
 											nearestSheet = i;
 											distNearestSheet = dist;
@@ -187,14 +201,93 @@ namespace wustl_mm {
 									helixes[nearestSheet]->AddInternalCell(Point3Int(x, y, z, 0));
 								}
 							}
-						}						
+							*/
+
+			Volume* sheetClusters = getSheetsNoThreshold(vol, 1); // TODO: make the argument user-specified
+
+			// make the offset and scale of sheetClusters volume match the vol volume
+			sheetClusters->setOrigin(vol->getOriginX(), vol->getOriginY(), vol->getOriginZ() );
+			sheetClusters->setSpacing(vol->getSpacingX(), vol->getSpacingY(), vol->getSpacingZ() );
+
+			int numSkeletonSheets = (int) sheetClusters->getMax();
+
+			//int numSSESheets = 0;
+			//for(int i = 0; i < (int)helixes.size(); i++) {
+			//	if(helixes[i]->geometricShapeType == GRAPHEDGE_SHEET) {
+			//		numSSESheets++;
+			//	}
+			//}
+
+			cout << "num skeleton sheets = " << numSkeletonSheets << ", num SSEs = " << (int)helixes.size() << endl;
+
+			vector<vector<double>> sheetDistance(numSkeletonSheets+1, vector<double> ((int)helixes.size()) );
+
+			// for each sheet
+			for (int i = 1; i <= numSkeletonSheets; i++) { 
+				// for each point (x,y,z)
+				int count = 0;
+				for(int x = 0; x < sheetClusters->getSizeX(); x++) {
+					point[0] = sheetClusters->getOriginX() + x * sheetClusters->getSpacingX();
+					for(int y = 0; y < sheetClusters->getSizeY(); y++) {
+						point[1] = sheetClusters->getOriginY() + y * sheetClusters->getSpacingY();
+						for(int z = 0; z < sheetClusters->getSizeZ(); z++) {
+							point[2] = sheetClusters->getOriginZ() + z * sheetClusters->getSpacingZ();
+							// if this voxel nonzero
+							if(sheetClusters->getDataAt(x, y, z) == i) {
+								count++;
+
+								// measure distance to every SSE sheet, add to running total
+								for(int j = 0; j < (int)helixes.size(); j++) {
+									// new code to find plates on skeleton that are associated with sheets
+									if(helixes[j]->geometricShapeType == GRAPHEDGE_SHEET) {
+										if (helixes[j]->IsInsideShape(point)) {
+											sheetDistance[i][j] += 0.0;
+										} else {
+											sheetDistance[i][j] += helixes[j]->PolygonsDistanceToPoint(point);
+										}
+									}
+								}
+							}
+						}
 					}
 				}
-			}			
+				cout << "num voxels on sheet " << i << " = " << count << endl;
+				// divide running total by number of sheet voxels to give average shortest distance
+				for(int j = 0; j < (int)helixes.size(); j++) {
+					sheetDistance[i][j] /= (double) count;
+				}
+			}
+
+			cout << "min distance matrix: " << endl;
+			for (int i = 1; i <= numSkeletonSheets; i++) { 
+				cout << "volume sheet " << i << ": ";
+				for(int j = 0; j < (int)helixes.size(); j++) {
+					cout << sheetDistance[i][j] << " - ";
+				}
+				cout << endl;
+			}
+			//for sheetCluster->
 
 			#ifdef VERBOSE
-				printf("Finished finding points inside helices and sheets.\n");
+			printf("Finished finding points inside helices and sheets.\n");
 			#endif // VERBOSE
+
+			// prune skeleton to eliminate sheets that were not matched to the sheet file above
+			//VolumeSkeletonizer::GetJuThinning(
+			//VolumeSkeletonizer::GetJuSurfaceSkeleton
+			VolumeSkeletonizer * skeletonizer = new VolumeSkeletonizer(0,0,0,DEFAULT_SKELETON_DIRECTION_RADIUS);
+			//Volume * outputVol = skeletonizer->PerformImmersionSkeletonizationAndPruning(dataVolume, startDensity, dataVolume->getMax(), stepSize, 0, 0, minCurveSize, minSurfaceSize, 0, 0, "", true, 1.0, DEFAULT_PRUNE_THRESHOLD, DEFAULT_PRUNE_THRESHOLD);
+			Volume * outputVol = skeletonizer->GetJuSurfaceSkeleton(vol, paintedVol, 9999);
+			delete skeletonizer;
+
+			//VolumeSkeletonizer volSkel;
+			//volSkel->
+			//Volume * surfaceVol;
+
+			// Skeletonizing while preserving surface features curve features and topology
+			//surfaceVol = GetJuSurfaceSkeleton(vol, paintedVol, 9999);
+			
+
 
 
 
@@ -300,6 +393,106 @@ namespace wustl_mm {
 
 			return graph;
 		}
+
+
+
+
+
+
+
+		Volume* SkeletonReader::getSheetsNoThreshold( Volume * vol, int minSize ) {
+			int i, j, k ;
+
+			//Initialize volume
+			printf("Initialize volume at %d %d %d\n",  vol->getSizeX(), vol->getSizeY(), vol->getSizeZ() ) ;
+			Volume* svol = new Volume( vol->getSizeX(), vol->getSizeY(), vol->getSizeZ() ) ;
+			
+			//Initialize cluster counters
+			int sheets[MAX_SHEETS] ;
+			for ( i = 0 ; i < MAX_SHEETS ; i ++ )
+			{
+				sheets[ i ] = 0 ;
+			}
+			int totSheets = 1 ;
+
+			//Start clustering
+			printf("Start clustering...\n" ) ;
+			int ox, oy, oz ;
+			for ( i = 0 ; i < vol->getSizeX() ; i ++ )
+				for ( j = 0 ; j < vol->getSizeY() ; j ++ )
+					for ( k = 0 ; k < vol->getSizeZ() ; k ++ )
+					{
+						if ( vol->getDataAt(i,j,k) <= 0 || svol->getDataAt(i,j,k) != 0 )
+						{
+							// Not a data point or has been visited
+							continue ;
+						}
+						if ( ! vol->isSheet( i, j, k ) )
+						{
+							// Not a sheet point
+							continue ;
+						}
+
+						//Initialize queue
+						int numNodes = 1 ;
+						svol->setDataAt( i, j, k, totSheets ) ;
+						GridQueue* queue = new GridQueue() ;
+						queue->pushQueue( i, j, k ) ;
+						while ( queue->popQueue(ox, oy, oz) )
+						{
+							// Test if neighbors satisfy sheet condition
+							if ( vol->isSheet( ox, oy, oz ) )
+							{
+								for ( int m = 0 ; m < 6 ; m ++ )
+								{
+									int nx = ox + neighbor6[m][0] ;
+									int ny = oy + neighbor6[m][1] ;
+									int nz = oz + neighbor6[m][2] ;
+
+									if ( vol->getDataAt(nx,ny,nz) > 0 && svol->getDataAt(nx,ny,nz) == 0 )
+									{
+										svol->setDataAt(nx,ny,nz,totSheets);
+										queue->pushQueue(nx,ny,nz) ;
+										numNodes ++ ;
+									}
+								}
+							}
+						}
+
+						delete queue ;
+						if ( numNodes > 0 )
+						{
+						//	printf("Sheet %d contain %d nodes.\n", totSheets, numNodes) ;
+							sheets[ totSheets ] = numNodes ;
+							totSheets ++ ;
+						}
+					}
+
+			// Removing clusters less than minSize
+			printf("Removing small clusters.\n") ;
+			for ( i = 0 ; i < vol->getSizeX() ; i ++ )
+				for ( j = 0 ; j < vol->getSizeY() ; j ++ )
+					for ( k = 0 ; k < vol->getSizeZ() ; k ++ )
+					{
+						int cnt = (int) svol->getDataAt(i,j,k) ;
+						if ( cnt > 0 && sheets[ cnt ] < minSize )
+						{
+							svol->setDataAt(i,j,k,-1) ;
+						}
+					}
+
+			// Finally, clean up
+			#ifdef VERBOSE
+			printf("Thresholding the volume to 0/1...\n") ;
+			#endif
+			//svol->threshold( 0.1, 0, 1 ) ;
+
+			return svol ;
+		}
+
+
+
+
 
 		// finds all the corner cells in a sheet
 		// corner cells are cells that are inside the sheet but have more than one neighbor on the skeleton that lies outside the sheet
