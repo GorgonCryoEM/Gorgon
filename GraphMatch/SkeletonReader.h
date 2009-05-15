@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.19.2.3  2009/05/15 21:34:45  schuhs
+//   Clustering skeleton sheets and matching those clusters to SSEHunter sheets.
+//
 //   Revision 1.19.2.2  2009/05/15 15:44:54  schuhs
 //   Modifying SkeletonReader method to build sheets from points on skeleton that are near or inside a sheet rather than only points inside a sheet.
 //
@@ -260,14 +263,51 @@ namespace wustl_mm {
 
 			cout << "min distance matrix: " << endl;
 			for (int i = 1; i <= numSkeletonSheets; i++) { 
-				cout << "volume sheet " << i << ": ";
+				cout << "skeleton sheet " << i << ": ";
 				for(int j = 0; j < (int)helixes.size(); j++) {
 					cout << sheetDistance[i][j] << " - ";
 				}
 				cout << endl;
 			}
-			//for sheetCluster->
 
+
+			vector<int> sseSheetMapping(numSkeletonSheets+1, -1);
+			//vector<vector<double>> sheetDistance(numSkeletonSheets+1, vector<double> ((int)helixes.size()) );
+			cout << "sheet correspondences: " << endl;
+			for (int i = 1; i <= numSkeletonSheets; i++) { 
+				double minDist = 5.0; // TODO - make this a user entered parameter
+				for (int j = 0; j < (int)helixes.size(); j++) { 
+					if (helixes[j]->geometricShapeType == GRAPHEDGE_SHEET && sheetDistance[i][j] < minDist) {
+						minDist = sheetDistance[i][j];
+						sseSheetMapping[i] = j;
+					}
+				}
+				cout << "skeleton sheet " << i << " maps to SSEHunter sheet " << sseSheetMapping[i] << endl;
+			}
+
+			// Add all points in each sheet to the helixes data structure
+			// for each point (x,y,z)
+			for(int x = 0; x < sheetClusters->getSizeX(); x++) {
+				point[0] = sheetClusters->getOriginX() + x * sheetClusters->getSpacingX();
+				for(int y = 0; y < sheetClusters->getSizeY(); y++) {
+					point[1] = sheetClusters->getOriginY() + y * sheetClusters->getSpacingY();
+					for(int z = 0; z < sheetClusters->getSizeZ(); z++) {
+						point[2] = sheetClusters->getOriginZ() + z * sheetClusters->getSpacingZ();
+						// check which sheet is associated with this voxel
+						int skeletonSheetNum = sheetClusters->getDataAt(x, y, z);
+						int sseSheetNum = sseSheetMapping[skeletonSheetNum];
+						if (sseSheetNum != -1) {
+							// associate this voxel with this sheet
+							paintedVol->setDataAt(x, y, z, sseSheetNum+1);
+							// add this point as as internal cell of the helix
+							helixes[sseSheetNum]->AddInternalCell(Point3Int(x, y, z, 0));
+						}
+					}
+				}
+			}
+
+			// TODO: When rendering, draw sheets in helixes data structure
+			
 			#ifdef VERBOSE
 			printf("Finished finding points inside helices and sheets.\n");
 			#endif // VERBOSE
