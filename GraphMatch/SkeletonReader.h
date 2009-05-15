@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.19.2.1  2009/05/13 20:49:13  schuhs
+//   Adding comments to code and console messages to indicate progress of skeleton creation. Adding test to fix bug that appears when INCLUDE_SHEETS flag is set.
+//
 //   Revision 1.19  2008/12/12 21:43:38  ssa1
 //   Fixing bug: Application crashing when loading skeletons via the sse correspondence finder
 //
@@ -140,13 +143,48 @@ namespace wustl_mm {
 						// if this voxel nonzero
 						if(vol->getDataAt(x, y, z) > 0) {
 							// check all helices to see if it's inside one
+							bool inHelix = false;
 							for(int i = 0; i < (int)helixes.size(); i++) {
-								// if point is inside helix i
-								if(helixes[i]->IsInsideShape(point)) {
+								// if i is a helix and if point is inside helix i
+								if(helixes[i]->geometricShapeType == GRAPHEDGE_HELIX && helixes[i]->IsInsideShape(point)) {
+								//if(helixes[i]->IsInsideShape(point)) {
 									// store helix number for this point in the volume
 									paintedVol->setDataAt(x, y, z, i+1);
 									// add this point as as internal cell of the helix
+									inHelix = true;
 									helixes[i]->AddInternalCell(Point3Int(x, y, z, 0));
+								}
+							}
+							// if voxel is a sheet voxel, check to see if it's near a skeleton plate
+							if (!inHelix && vol->isSheet(x,y,z)) {
+								int nearestSheet = -1; // sheet nearest this point
+								double distNearestSheet = 999; // arbitrary large distance -- FIXME
+								double dist;
+
+								// check all helices to see if it's inside one
+								for(int i = 0; i < (int)helixes.size(); i++) {
+									// new code to find plates on skeleton that are associated with sheets
+									if(helixes[i]->geometricShapeType == GRAPHEDGE_SHEET) {
+										if (helixes[i]->IsInsideShape(point)) {
+											dist = 0.0;
+										} else {
+											dist = helixes[i]->PolygonsDistanceToPoint(point);
+										}
+										cout << "distance to sheet " << i << " = " << dist << ", nearest sheet = " << nearestSheet << ", distance = " << distNearestSheet << endl;
+										if(dist < distNearestSheet) {
+											nearestSheet = i;
+											distNearestSheet = dist;
+										}
+									}
+								}
+								if (nearestSheet != -1 && distNearestSheet < 5) {
+									#ifdef VERBOSE
+										cout << "adding point to sheet " << nearestSheet << ". distance = " << distNearestSheet << endl;
+									#endif // VERBOSE
+									// store helix number for this point in the volume
+									paintedVol->setDataAt(x, y, z, nearestSheet+1);
+									// add this point as as internal cell of the helix
+									helixes[nearestSheet]->AddInternalCell(Point3Int(x, y, z, 0));
 								}
 							}
 						}						
@@ -182,7 +220,8 @@ namespace wustl_mm {
 
 			StandardGraph * graph = new StandardGraph(2*helixes.size());
 
-			// for each helix or sheet
+			// create a graph with one node per helix end point and with edges connecting nodes that
+			// are connected along the volume.
 			for(unsigned int i = 0; i < helixes.size(); i++) {
 				if(helixes[i]->geometricShapeType == GRAPHEDGE_HELIX) {
 					// find the two corner cells in this helix
@@ -213,8 +252,7 @@ namespace wustl_mm {
 				printf("Finished creating connectivity graph.\n");
 			#endif // VERBOSE
 
-
-			// for every helix/sheet
+			// find the costs of all other paths along the volume, from any helix end to any other helix end
 			for(int i = 0; i < (int)helixes.size(); i++) {
 				// for every entry and exit point of that helix/sheet
 				for(int j = 0; j < (int)helixes[i]->cornerCells.size(); j++) {
@@ -312,7 +350,7 @@ namespace wustl_mm {
 			#ifdef VERBOSE
 				cout << "Done finding corner cells for sheet " << sheetId << ". " << helixes[sheetId]->cornerCells.size() << " corner cells.  " << helixes[sheetId]->internalCells.size() << " internal cells." << endl;
 			#endif // VERBOSE
-			assert(helixes[sheetId]->cornerCells.size() >= 2);
+			//assert(helixes[sheetId]->cornerCells.size() >= 2);
 			helixes[sheetId]->length = helixes[sheetId]->internalCells.size();
 		}
 
@@ -416,7 +454,7 @@ namespace wustl_mm {
 
 			fclose(fin);
 			
-			// if seeFile was provided as an argument, parse it to get lengths of helices.
+			// if sseFile was provided as an argument, parse it to get lengths of helices.
 			// store the helix lengths in this file with the helices in helixes
 			// assume that the lengths in this file are provided in the same order as the helices were stored above.
 			if(sseFile != NULL) {
