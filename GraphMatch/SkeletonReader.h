@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.19.2.4  2009/05/15 22:16:54  schuhs
+//   Clustering skeleton sheet elements and associating them with the nearest SSEHunter sheet, provided that the average distance is above a threshold.
+//
 //   Revision 1.19.2.3  2009/05/15 21:34:45  schuhs
 //   Clustering skeleton sheets and matching those clusters to SSEHunter sheets.
 //
@@ -306,6 +309,7 @@ namespace wustl_mm {
 				}
 			}
 
+
 			// TODO: When rendering, draw sheets in helixes data structure
 			
 			#ifdef VERBOSE
@@ -313,21 +317,9 @@ namespace wustl_mm {
 			#endif // VERBOSE
 
 			// prune skeleton to eliminate sheets that were not matched to the sheet file above
-			//VolumeSkeletonizer::GetJuThinning(
-			//VolumeSkeletonizer::GetJuSurfaceSkeleton
 			VolumeSkeletonizer * skeletonizer = new VolumeSkeletonizer(0,0,0,DEFAULT_SKELETON_DIRECTION_RADIUS);
-			//Volume * outputVol = skeletonizer->PerformImmersionSkeletonizationAndPruning(dataVolume, startDensity, dataVolume->getMax(), stepSize, 0, 0, minCurveSize, minSurfaceSize, 0, 0, "", true, 1.0, DEFAULT_PRUNE_THRESHOLD, DEFAULT_PRUNE_THRESHOLD);
 			Volume * outputVol = skeletonizer->GetJuSurfaceSkeleton(vol, paintedVol, 9999);
 			delete skeletonizer;
-
-			//VolumeSkeletonizer volSkel;
-			//volSkel->
-			//Volume * surfaceVol;
-
-			// Skeletonizing while preserving surface features curve features and topology
-			//surfaceVol = GetJuSurfaceSkeleton(vol, paintedVol, 9999);
-			
-
 
 
 
@@ -411,6 +403,9 @@ namespace wustl_mm {
 			// save results to graph->skeletonVolume
 			graph->skeletonVolume = vol;
 			delete paintedVol;
+
+			// save skeleton sheet volume to graph->skeletonSheetVolume
+			graph->skeletonSheetVolume = sheetClusters;
 
 			#ifdef VERBOSE
 				printf("Graph saved to object.\n");
