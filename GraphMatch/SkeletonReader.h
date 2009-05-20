@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.19.2.5  2009/05/20 14:53:10  schuhs
+//   Rendering clustered sheets in different colors in DrawAllPaths method
+//
 //   Revision 1.19.2.4  2009/05/15 22:16:54  schuhs
 //   Clustering skeleton sheet elements and associating them with the nearest SSEHunter sheet, provided that the average distance is above a threshold.
 //
@@ -310,16 +313,38 @@ namespace wustl_mm {
 			}
 
 
-			// TODO: When rendering, draw sheets in helixes data structure
+
+			// Save separate sheets in helixes data structure
+
+			
+			
+
+			int numSheets = sheetClusters->getMax();
+
+			// vector to hold all the sheet volumes
+			vector<Volume*> skeletonSheets;
+			skeletonSheets.push_back(sheetClusters);
+			for (int i = 1; i <= numSheets; i++) {
+				Volume* singleSheet = new Volume(sheetClusters->getSizeX(), sheetClusters->getSizeY(), sheetClusters->getSizeZ());
+				singleSheet->fill(1.0);
+				singleSheet->applyMask(sheetClusters,i,true);
+				singleSheet->threshold( 0.1, 0, 1 ) ;
+				int thisSheetSize = singleSheet->getNonZeroVoxelCount();
+				cout << "created sheet " << i << " with " << thisSheetSize << " voxels" << endl;
+				skeletonSheets.push_back(singleSheet);
+			}
+			
+			// end
+
 			
 			#ifdef VERBOSE
 			printf("Finished finding points inside helices and sheets.\n");
 			#endif // VERBOSE
 
 			// prune skeleton to eliminate sheets that were not matched to the sheet file above
-			VolumeSkeletonizer * skeletonizer = new VolumeSkeletonizer(0,0,0,DEFAULT_SKELETON_DIRECTION_RADIUS);
-			Volume * outputVol = skeletonizer->GetJuSurfaceSkeleton(vol, paintedVol, 9999);
-			delete skeletonizer;
+			//VolumeSkeletonizer * skeletonizer = new VolumeSkeletonizer(0,0,0,DEFAULT_SKELETON_DIRECTION_RADIUS);
+			//Volume * outputVol = skeletonizer->GetJuSurfaceSkeleton(vol, paintedVol, 9999);
+			//delete skeletonizer;
 
 
 
@@ -406,6 +431,9 @@ namespace wustl_mm {
 
 			// save skeleton sheet volume to graph->skeletonSheetVolume
 			graph->skeletonSheetVolume = sheetClusters;
+
+			// save skeleton sheet volume vector to graph->skeletonSheets
+			graph->skeletonSheets = skeletonSheets;
 
 			#ifdef VERBOSE
 				printf("Graph saved to object.\n");
