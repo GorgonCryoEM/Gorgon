@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.13  2008/11/18 18:10:24  ssa1
+//   Changing the scaling functions when doing graph matching to find correspondences
+//
 //   Revision 1.12  2008/09/29 16:19:30  ssa1
 //   Adding in CVS meta information
 //
@@ -60,6 +63,7 @@ namespace wustl_mm {
 			vector<SecondaryStructure*> pdbStructures;
 			vector<GeometricShape*> skeletonHelixes;
 			Volume * skeletonVolume;
+			Volume * skeletonSheetVolume;
 		private:
 		};
 
@@ -79,10 +83,15 @@ namespace wustl_mm {
 			if(skeletonVolume != NULL) {
 				delete skeletonVolume;
 			}
+
+			if(skeletonSheetVolume != NULL) {
+				delete skeletonSheetVolume;
+			}
 		}
 
 		StandardGraph::StandardGraph(int nodeCount){
 			skeletonVolume = NULL;
+			skeletonSheetVolume = NULL;
 			this->nodeCount = nodeCount;
 			for(int i = 0; i < nodeCount; i++) {
 				for(int j = 0; j < nodeCount; j++) {
@@ -95,6 +104,7 @@ namespace wustl_mm {
 
 		StandardGraph::StandardGraph(char* fname) {
 			skeletonVolume = NULL;
+			skeletonSheetVolume = NULL;
 			FILE* fin = fopen(fname, "rt");
 			if (fin == NULL)
 			{
