@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.13.2.1  2009/05/20 14:51:40  schuhs
+//   Adding extra volume containing indexed skeleton sheets
+//
 //   Revision 1.13  2008/11/18 18:10:24  ssa1
 //   Changing the scaling functions when doing graph matching to find correspondences
 //
@@ -63,6 +66,7 @@ namespace wustl_mm {
 			vector<SecondaryStructure*> pdbStructures;
 			vector<GeometricShape*> skeletonHelixes;
 			Volume * skeletonVolume;
+			vector<Volume*> skeletonSheets;
 			Volume * skeletonSheetVolume;
 		private:
 		};
@@ -79,6 +83,12 @@ namespace wustl_mm {
 			}
 
 			skeletonHelixes.clear();
+
+			for(i = 0; i < (int)skeletonSheets.size(); i++) {
+				delete skeletonSheets[i];
+			}
+
+			skeletonSheets.clear();
 
 			if(skeletonVolume != NULL) {
 				delete skeletonVolume;
