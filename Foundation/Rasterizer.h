@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.2  2008/10/15 19:41:29  ssa1
+//   Esc to cancel path, Clear Button and Tracking of start seed point
+//
 //   Revision 1.1  2008/10/10 14:25:55  ssa1
 //   Setting the cost functions to scale with the edge length
 //
@@ -28,10 +31,38 @@ namespace wustl_mm {
 	namespace Foundation {
 		class Rasterizer {
 		public:
+			static vector<Vector3DInt> ScanConvertLineC8(int x1, int y1, int z1, int x2, int y2, int z2);
 			static vector<Vector3DInt> ScanConvertLine(int x1, int y1, int z1, int x2, int y2, int z2);
 			static vector<Vector3DInt> ScanConvertLine(Vector3DInt p1, Vector3DInt p2);
 		};
 
+		vector<Vector3DInt> Rasterizer::ScanConvertLineC8(int x1, int y1, int z1, int x2, int y2, int z2) {
+			vector<Vector3DInt> points = ScanConvertLine(x1, y1, z1, x2, y2, z2);
+			vector<Vector3DInt> newPoints;
+			for(unsigned int i = 0; i < points.size()-1; i++) {
+				newPoints.push_back(points[i]);
+				
+				if( (points[i].XInt() != points[i+1].XInt()) && 
+					(points[i].YInt() != points[i+1].YInt()) &&
+					(points[i].ZInt() != points[i+1].ZInt())) {
+					newPoints.push_back(Vector3DInt(points[i+1].XInt(), points[i].YInt(), points[i].ZInt()));
+					newPoints.push_back(Vector3DInt(points[i+1].XInt(), points[i+1].YInt(), points[i].ZInt()));
+				} else if ( (points[i].XInt() != points[i+1].XInt()) && 
+					(points[i].YInt() != points[i+1].YInt())) {
+					newPoints.push_back(Vector3DInt(points[i+1].XInt(), points[i].YInt(), points[i].ZInt()));
+				} else if ( (points[i].XInt() != points[i+1].XInt()) && 
+					(points[i].ZInt() != points[i+1].ZInt())) {
+					newPoints.push_back(Vector3DInt(points[i+1].XInt(), points[i].YInt(), points[i].ZInt()));
+				} else if ( (points[i].YInt() != points[i+1].YInt()) && 
+					(points[i].ZInt() != points[i+1].ZInt())) {
+					newPoints.push_back(Vector3DInt(points[i].XInt(), points[i+1].YInt(), points[i].ZInt()));
+				}
+			}
+			newPoints.push_back(points[points.size()-1]);
+			return newPoints;
+		}
+
+		// Scan converts to 26 connectivity
 		vector<Vector3DInt> Rasterizer::ScanConvertLine(int x1, int y1, int z1, int x2, int y2, int z2) {
 			vector<Vector3DInt> pseudoVertices;
 
