@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.36  2009/05/14 19:50:26  ssa1
+//   fixing crash when saving a mesh as a volume
+//
 //   Revision 1.35  2009/03/30 21:36:13  ssa1
 //   Interactive loop building
 //
@@ -777,9 +780,7 @@ namespace wustl_mm {
 			for(unsigned int i = 0;  i < edges.size(); i++) {
 				v1 = vertices[GetVertexIndex(edges[i].vertexIds[0])];
 				v2 = vertices[GetVertexIndex(edges[i].vertexIds[1])];
-				vector<Vector3DInt> positions = Rasterizer::ScanConvertLine(v1.position.XInt(), v1.position.YInt(), v1.position.ZInt(), v2.position.XInt(), v2.position.YInt(), v2.position.ZInt());
-				positions.push_back(Vector3DInt(v1.position.XInt(), v1.position.YInt(), v1.position.ZInt()));
-				positions.push_back(Vector3DInt(v2.position.XInt(), v2.position.YInt(), v2.position.ZInt()));
+				vector<Vector3DInt> positions = Rasterizer::ScanConvertLineC8(v1.position.XInt(), v1.position.YInt(), v1.position.ZInt(), v2.position.XInt(), v2.position.YInt(), v2.position.ZInt());
 				for(unsigned int j = 0; j < positions.size(); j++) {
 					for(unsigned int k = 0; k < 3; k++) {
 						pos[k] = positions[j].values[k] - minPosInt[k];
@@ -787,7 +788,6 @@ namespace wustl_mm {
 					vol->setDataAt(pos[0], pos[1], pos[2], 1.0);
 				}				
 			}
-
 			vol->setOrigin(origin[0], origin[1], origin[2]);
 			vol->setSpacing(scale[0], scale[1], scale[2]);
 			return vol;
