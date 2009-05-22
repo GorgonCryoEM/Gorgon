@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.7.2.1  2009/05/13 20:52:52  schuhs
+//   Adding method to draw all skeleton paths used by correspondence algorithm
+//
 //   Revision 1.7  2008/12/01 23:42:55  ssa1
 //   Setting theming support for backbone trace
 //
@@ -29,6 +32,7 @@
 #include <vector>
 #include <glut.h>
 #include "Renderer.h" // to include DrawSphere function
+#include "MeshRenderer.h" // to include Draw function
 
 using namespace wustl_mm::GraphMatch;
 using namespace std;
@@ -51,9 +55,12 @@ namespace wustl_mm {
 			SecondaryStructure * GetSequenceSSE(int sseId);
 			int GetSkeletonSSECount();
 			int GetSequenceSSECount();
+			void SetSSEColor(int index, float r, float g, float b, float a);
 			void SetVisibleCorrespondence(int correspondenceIndex);
 			void Draw(int sceneIndex);
-			void DrawAllPaths(int sceneIndex);
+			//void DrawAllPaths(int sceneIndex);
+			void DrawAllPaths(int sceneIndex, bool showPaths, bool showHelixCorners, bool showSheetCorners, bool showSheetColors);
+
 			
 		private:
 			vector<SSECorrespondenceResult> correspondence;		
@@ -179,6 +186,11 @@ namespace wustl_mm {
 			return sequence->pdbStructures.size();
 		}
 
+		// set the color of an SSE.
+		void SSECorrespondenceEngine::SetSSEColor(int index, float r, float g, float b, float a) {
+			skeleton->skeletonHelixes[index]->SetColor(r, g, b, a);
+		}
+
 		void SSECorrespondenceEngine::SetVisibleCorrespondence(int correspondenceIndex) {
 			this->correspondenceIndex = correspondenceIndex;
 		}
@@ -217,39 +229,39 @@ namespace wustl_mm {
 		}	
 		
 		// Draw all possible paths through the skeleton
-		void SSECorrespondenceEngine::DrawAllPaths(int sceneIndex) {
+		void SSECorrespondenceEngine::DrawAllPaths(int sceneIndex, bool showPaths, bool showHelixCorners, bool showSheetCorners, bool showSheetColors) {
 			//std::cout << "SSECorrespondenceEngine::DrawAllPaths called" << std::endl;
 			int n1, n2;
 			vector<Vector3DInt> path;
-			glPushAttrib(GL_LIGHTING_BIT | GL_LINE_BIT | GL_ENABLE_BIT | GL_HINT_BIT);
-			glDisable(GL_LIGHTING);
-			glLineWidth(5);
-			glEnable(GL_LINE_SMOOTH);
-			glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);	
+			if (showPaths) {
+				glPushAttrib(GL_LIGHTING_BIT | GL_LINE_BIT | GL_ENABLE_BIT | GL_HINT_BIT);
+				//glDisable(GL_LIGHTING);
+				glLineWidth(5);
+				glEnable(GL_LINE_SMOOTH);
+				glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);	
 
-			for(int i = 0; i < skeleton->GetNodeCount(); i++) {
-				for(int j = i; j < skeleton->GetNodeCount(); j++) {
-					n1 = i;
-					n2 = j;
-					if((n1 >= 0)  && (n2 >= 0)) {
-						path = skeleton->paths[n1][n2];
-						if(path.size() == 0) {
-							path = skeleton->paths[n2][n1];
+				
+				for(int i = 0; i < skeleton->GetNodeCount(); i++) {
+					for(int j = i; j < skeleton->GetNodeCount(); j++) {
+						n1 = i;
+						n2 = j;
+						if((n1 >= 0)  && (n2 >= 0)) {
+							path = skeleton->paths[n1][n2];
+							if(path.size() == 0) {
+								path = skeleton->paths[n2][n1];
+							}
+							glBegin(GL_LINE_STRIP);
+							for(unsigned int j = 0; j < path.size(); j++) {
+								glVertex3d(path[j].X(), path[j].Y(), path[j].Z());
+							}
+							glEnd();
+							// draw start and end of paths (corner nodes)
+							//Renderer::DrawSphere(Vector3DFloat(path[0].X(), path[0].Y(), path[0].Z()), 1.0);
 						}
-						glBegin(GL_LINE_STRIP);
-						for(unsigned int j = 0; j < path.size(); j++) {
-							glVertex3d(path[j].X(), path[j].Y(), path[j].Z());
-						}
-						glEnd();
-						// draw start and end of paths (corner nodes)
-						//Renderer::DrawSphere(Vector3DFloat(path[0].X(), path[0].Y(), path[0].Z()), 1.0);
 					}
-				}
+				} 
+				glPopAttrib();
 			}
-			glPopAttrib();
-			// add code here to find corner cells and render them!
-			// also add code to draw interior paths between corners in a different color!
-			// use DrawSphere( ??? )
 
 			// draw start and end of paths (subset of corner nodes)
 			/*
@@ -268,14 +280,75 @@ namespace wustl_mm {
 			}
 			*/
 
-			// draw corner nodes
-			glPushAttrib(GL_LIGHTING_BIT | GL_LINE_BIT | GL_ENABLE_BIT | GL_HINT_BIT);
-			for(int i = 0; i < skeleton->skeletonHelixes.size(); i++) {
-				for(int j = 0; j < skeleton->skeletonHelixes[i]->cornerCells.size(); j++) {
-					Renderer::DrawSphere(Vector3DFloat(skeleton->skeletonHelixes[i]->cornerCells[j].x, skeleton->skeletonHelixes[i]->cornerCells[j].y, skeleton->skeletonHelixes[i]->cornerCells[j].z), 1.0);
+			// draw corner nodes (helices)
+			if (showHelixCorners) {
+				glPushAttrib(GL_LIGHTING_BIT | GL_LINE_BIT | GL_ENABLE_BIT | GL_HINT_BIT);
+				for(int i = 0; i < skeleton->skeletonHelixes.size(); i++) {
+					if (skeleton->skeletonHelixes[i]->geometricShapeType == GRAPHEDGE_HELIX) {
+						for(int j = 0; j < skeleton->skeletonHelixes[i]->cornerCells.size(); j++) {
+							Renderer::DrawSphere(Vector3DFloat(skeleton->skeletonHelixes[i]->cornerCells[j].x, skeleton->skeletonHelixes[i]->cornerCells[j].y, skeleton->skeletonHelixes[i]->cornerCells[j].z), 0.25);
+						}
+					}
+				}
+				glPopAttrib();
+			}			
+
+			// draw corner nodes (sheets)
+			if (showSheetCorners) {
+				glPushAttrib(GL_LIGHTING_BIT | GL_LINE_BIT | GL_ENABLE_BIT | GL_HINT_BIT);
+				for(int i = 0; i < skeleton->skeletonHelixes.size(); i++) {
+					if (skeleton->skeletonHelixes[i]->geometricShapeType == GRAPHEDGE_SHEET) {
+						for(int j = 0; j < skeleton->skeletonHelixes[i]->cornerCells.size(); j++) {
+							Renderer::DrawSphere(Vector3DFloat(skeleton->skeletonHelixes[i]->cornerCells[j].x, skeleton->skeletonHelixes[i]->cornerCells[j].y, skeleton->skeletonHelixes[i]->cornerCells[j].z), 0.25);
+						}
+					}
+				}
+				glPopAttrib();
+			}			
+
+
+			MeshRenderer * sheetMeshRenderer = new MeshRenderer();
+
+			// render each skeleton sheet
+			if (showSheetColors) {
+				for (int i = 1; i < skeleton->skeletonSheets.size(); i++) {
+					int correspondingSheet = skeleton->skeletonSheetCorrespondence[i];
+					if (correspondingSheet != -1) {
+						sheetMeshRenderer->LoadVolume(skeleton->skeletonSheets[i]);
+						float colorR, colorG, colorB, colorA;
+						skeleton->skeletonHelixes[correspondingSheet]->GetColor(colorR, colorG, colorB, colorA);	
+						//cout << "this sheet matches SSE result " << correspondingSheet << ", which has colors " << colorR << "," << colorG << "," << colorB << "," << colorA << endl;
+						/*
+						float color = 0.3 * (float)i;
+						colorR = color;
+						colorG = color;
+						colorB = 1.0;
+						colorA = 1.0;
+						cout << "chosen colors for this sheet are " << colorR << "," << colorG << "," << colorB << "," << colorA << endl;
+						*/
+						glColor4f(colorR, colorG, colorB, colorA);
+						GLfloat diffuseMaterial[4] = {colorR, colorG, colorB, colorA};
+						GLfloat ambientMaterial[4] = {colorR*0.2, colorG*0.2, colorB*0.2, colorA};
+						GLfloat specularMaterial[4] = {1.0, 1.0, 1.0, 1.0};
+
+						glMaterialfv(GL_BACK, GL_AMBIENT,   ambientMaterial);
+						glMaterialfv(GL_BACK, GL_DIFFUSE,   diffuseMaterial) ;
+						glMaterialfv(GL_BACK, GL_SPECULAR,  specularMaterial) ;
+						glMaterialf(GL_BACK, GL_SHININESS, 0.1);
+						glMaterialfv(GL_FRONT, GL_AMBIENT,   ambientMaterial) ;
+						glMaterialfv(GL_FRONT, GL_DIFFUSE,   diffuseMaterial) ;
+						glMaterialfv(GL_FRONT, GL_SPECULAR,  specularMaterial) ;
+						glMaterialf(GL_FRONT, GL_SHININESS, 0.1);
+
+						glPushAttrib(GL_LIGHTING_BIT | GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+
+						sheetMeshRenderer->Draw(0, false);
+
+						glPopAttrib();
+					}
 				}
 			}
-			glPopAttrib();
+			delete sheetMeshRenderer;
 		}
 	}
 }
