@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.36.2.1  2009/05/13 20:56:00  schuhs
+#   Adding checkbox to draw all possible paths along skeleton, and adding input for sheet filename
+#
 #   Revision 1.36  2009/04/04 22:10:15  ssa1
 #   Hiding selected path when correspondance finder is not in focus
 #
@@ -161,9 +164,13 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
         self.connect(self.ui.pushButtonReset, QtCore.SIGNAL("pressed ()"), self.loadDefaults)
         self.connect(self.ui.pushButtonCancel, QtCore.SIGNAL("pressed ()"), self.reject)
         self.connect(self.ui.pushButtonOk, QtCore.SIGNAL("pressed ()"), self.accept)
+        self.connect(self.ui.pushButtonRebuildGraph, QtCore.SIGNAL("pressed ()"), self.createBasicCorrespondence)
         self.connect(self.ui.comboBoxCorrespondences, QtCore.SIGNAL("currentIndexChanged (int)"), self.selectCorrespondence)
         # adding new checkbox
         self.connect(self.ui.checkBoxShowAllPaths, QtCore.SIGNAL("toggled (bool)"), self.fullGraphVisibilityChanged)
+        self.connect(self.ui.checkBoxShowSheetCorners, QtCore.SIGNAL("toggled (bool)"), self.fullGraphVisibilityChanged)
+        self.connect(self.ui.checkBoxShowHelixCorners, QtCore.SIGNAL("toggled (bool)"), self.fullGraphVisibilityChanged)
+        self.connect(self.ui.checkBoxShowSheetColors, QtCore.SIGNAL("toggled (bool)"), self.fullGraphVisibilityChanged)
         self.connect(self.app.viewers["skeleton"], QtCore.SIGNAL("modelDrawing()"), self.drawOverlay)
         self.ui.tableWidgetCorrespondenceList.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         self.connect(self.ui.tableWidgetCorrespondenceList, QtCore.SIGNAL("customContextMenuRequested (const QPoint&)"), self.customMenuRequested)
@@ -292,6 +299,11 @@ This loads a SEQ file or, for testing purposes, a PDB file.
         elif self.sequenceFileName.split('.')[-1].lower() == 'seq':
             self.viewer.correspondenceEngine.setConstant("SEQUENCE_FILE_TYPE", "SEQ")
         
+        #Tab Graph Settings
+        self.viewer.correspondenceEngine.setConstant("MAXIMUM_DISTANCE_SHEET_SKELETON", self.ui.spinBoxMaxSheetDistance.value())
+        self.viewer.correspondenceEngine.setConstant("MINIMUM_SHEET_SIZE", self.ui.doubleSpinBoxMinSheetSize.value())
+                                                      
+
         #Tab 2
         if(self.ui.radioButtonAbsoluteDifference.isChecked()):
             self.viewer.correspondenceEngine.setConstantInt("COST_FUNCTION", 1)
@@ -610,11 +622,22 @@ This loads a SEQ file or, for testing purposes, a PDB file.
             # calls Draw method of c++ SSECorrespondenceEngine object          
             self.viewer.correspondenceEngine.draw(0)
             glPopAttrib()
-        if self.corrAct.isChecked() and self.dataLoaded and self.ui.checkBoxShowAllPaths.isChecked() :
+        if self.corrAct.isChecked() and self.dataLoaded and (self.ui.checkBoxShowAllPaths.isChecked() or self.ui.checkBoxShowHelixCorners.isChecked() or self.ui.checkBoxShowSheetCorners.isChecked() or self.ui.checkBoxShowSheetColors.isChecked() ) :
+            # probably not the best place for this code
+            # set colors of all SSEs
+            # need to learn how for loops work!
+            #print "preparing to set colors"
+
+            for i in range(self.viewer.correspondenceEngine.getSkeletonSSECount()) :
+                #print "setting color for helix "
+                #print i
+                color = self.getIndexedColor(i, self.viewer.correspondenceEngine.getSkeletonSSECount())
+                self.viewer.renderer.setSSEColor(i, color.redF(), color.greenF(), color.blueF(), color.alphaF())
+                self.viewer.correspondenceEngine.setSSEColor(i, color.redF(), color.greenF(), color.blueF(), color.alphaF())
             glPushAttrib(GL_LIGHTING_BIT)
             self.viewer.setMaterials(self.app.themes.getColor("CorrespondenceFinder:BackboneTrace"))  
             # calls DrawAllPaths method of c++ SSECorrespondenceEngine object          
-            self.viewer.correspondenceEngine.drawAllPaths(0)
+            self.viewer.correspondenceEngine.drawAllPaths(0,self.ui.checkBoxShowAllPaths.isChecked(),self.ui.checkBoxShowHelixCorners.isChecked(),self.ui.checkBoxShowSheetCorners.isChecked(),self.ui.checkBoxShowSheetColors.isChecked())
             glPopAttrib()
             
 
