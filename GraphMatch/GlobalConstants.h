@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.32.2.1  2009/05/13 20:31:09  schuhs
+//   Setting the INCLUDE_SHEETS and VERBOSE flags
+//
 //   Revision 1.32  2008/12/12 21:43:38  ssa1
 //   Fixing bug: Application crashing when loading skeletons via the sse correspondence finder
 //
@@ -119,6 +122,8 @@ namespace wustl_mm {
 		char SEQUENCE_FILE_NAME[100];
 		char SEQUENCE_FILE_TYPE[100];
 		char MRC_FILE_NAME[100];
+		double MAXIMUM_DISTANCE_SHEET_SKELETON = 5.0;
+		int MINIMUM_SHEET_SIZE = 10;
 		double EUCLIDEAN_DISTANCE_THRESHOLD = 15;
 		int BORDER_MARGIN_THRESHOLD = 3;
 		bool NORMALIZE_GRAPHS = true;
