@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.13.2.2  2009/05/20 15:44:46  schuhs
+//   Adding vector of volumes to store the individual skeleton sheets
+//
 //   Revision 1.13.2.1  2009/05/20 14:51:40  schuhs
 //   Adding extra volume containing indexed skeleton sheets
 //
@@ -67,6 +70,7 @@ namespace wustl_mm {
 			vector<GeometricShape*> skeletonHelixes;
 			Volume * skeletonVolume;
 			vector<Volume*> skeletonSheets;
+			int skeletonSheetCorrespondence[MAX_NODES];
 			Volume * skeletonSheetVolume;
 		private:
 		};
