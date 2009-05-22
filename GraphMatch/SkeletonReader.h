@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.19.2.6  2009/05/20 15:49:20  schuhs
+//   Changing drawAllSheets method to load sheet clusters from skeleton object rather than building them.
+//
 //   Revision 1.19.2.5  2009/05/20 14:53:10  schuhs
 //   Rendering clustered sheets in different colors in DrawAllPaths method
 //
@@ -77,6 +80,8 @@ namespace wustl_mm {
 			static void FindPaths(StandardGraph * graph);
 			static void FindPath(int startIx, int endIx, vector<Vector3DInt> endPoints, Volume * maskVol, StandardGraph * graph, bool eraseMask);
 			static void FindCornerCellsInSheet(Volume * vol, Volume * paintedVol, vector<GeometricShape*> & helixes, int sheetId);
+			static int isSkeletonSheet(Volume * vol, int ox, int oy, int oz );
+
 		};
 
 		int SkeletonReader::GetGraphIndex(vector<GeometricShape*> & helixes, int helixNum, int cornerNum) {
@@ -212,7 +217,7 @@ namespace wustl_mm {
 							}
 							*/
 
-			Volume* sheetClusters = getSheetsNoThreshold(vol, 1); // TODO: make the argument user-specified
+			Volume* sheetClusters = getSheetsNoThreshold(vol, MINIMUM_SHEET_SIZE);
 
 			// make the offset and scale of sheetClusters volume match the vol volume
 			sheetClusters->setOrigin(vol->getOriginX(), vol->getOriginY(), vol->getOriginZ() );
@@ -281,7 +286,7 @@ namespace wustl_mm {
 			//vector<vector<double>> sheetDistance(numSkeletonSheets+1, vector<double> ((int)helixes.size()) );
 			cout << "sheet correspondences: " << endl;
 			for (int i = 1; i <= numSkeletonSheets; i++) { 
-				double minDist = 5.0; // TODO - make this a user entered parameter
+				double minDist = MAXIMUM_DISTANCE_SHEET_SKELETON;
 				for (int j = 0; j < (int)helixes.size(); j++) { 
 					if (helixes[j]->geometricShapeType == GRAPHEDGE_SHEET && sheetDistance[i][j] < minDist) {
 						minDist = sheetDistance[i][j];
@@ -301,12 +306,15 @@ namespace wustl_mm {
 						point[2] = sheetClusters->getOriginZ() + z * sheetClusters->getSpacingZ();
 						// check which sheet is associated with this voxel
 						int skeletonSheetNum = sheetClusters->getDataAt(x, y, z);
-						int sseSheetNum = sseSheetMapping[skeletonSheetNum];
-						if (sseSheetNum != -1) {
-							// associate this voxel with this sheet
-							paintedVol->setDataAt(x, y, z, sseSheetNum+1);
-							// add this point as as internal cell of the helix
-							helixes[sseSheetNum]->AddInternalCell(Point3Int(x, y, z, 0));
+						// for voxels that are assigned to some sheet
+						if (skeletonSheetNum > 0) {
+							int sseSheetNum = sseSheetMapping[skeletonSheetNum];
+							if (sseSheetNum != -1) {
+								// associate this voxel with this sheet
+								paintedVol->setDataAt(x, y, z, sseSheetNum+1);
+								// add this point as as internal cell of the helix
+								helixes[sseSheetNum]->AddInternalCell(Point3Int(x, y, z, 0));
+							}
 						}
 					}
 				}
@@ -315,10 +323,6 @@ namespace wustl_mm {
 
 
 			// Save separate sheets in helixes data structure
-
-			
-			
-
 			int numSheets = sheetClusters->getMax();
 
 			// vector to hold all the sheet volumes
@@ -344,6 +348,7 @@ namespace wustl_mm {
 			// prune skeleton to eliminate sheets that were not matched to the sheet file above
 			//VolumeSkeletonizer * skeletonizer = new VolumeSkeletonizer(0,0,0,DEFAULT_SKELETON_DIRECTION_RADIUS);
 			//Volume * outputVol = skeletonizer->GetJuSurfaceSkeleton(vol, paintedVol, 9999);
+			//vol = outputVol;
 			//delete skeletonizer;
 
 
@@ -353,10 +358,8 @@ namespace wustl_mm {
 			//	
 			//	for(point[1] = -yOffset; point[1] < vol->getSizeY() - yOffset; point[1]++) {
 			//		pointScaled[1] = point[1] * vol->getSpacingY();
-
 			//		for(point[2] = -zOffset; point[2] < vol->getSizeY() - zOffset; point[2]++) {
 			//			pointScaled[2] = point[2] * vol->getSpacingZ();
-
 			//			for(int i = 0; i < (int)helixes.size(); i++) {
 			//				
 			//				if((vol->getDataAt((int)(point[0]+xOffset), (int)(point[1]+yOffset), (int)(point[2]+zOffset)) > 0) && helixes[i]->IsInsideShape(pointScaled)) {						
@@ -372,7 +375,7 @@ namespace wustl_mm {
 
 			// create a graph with one node per helix end point and with edges connecting nodes that
 			// are connected along the volume.
-			for(unsigned int i = 0; i < helixes.size(); i++) {
+			for(unsigned int i = 0; i < (int)helixes.size(); i++) {
 				if(helixes[i]->geometricShapeType == GRAPHEDGE_HELIX) {
 					// find the two corner cells in this helix
 					helixes[i]->FindCornerCellsInHelix();
@@ -435,6 +438,11 @@ namespace wustl_mm {
 			// save skeleton sheet volume vector to graph->skeletonSheets
 			graph->skeletonSheets = skeletonSheets;
 
+			// save correspondences between skeleton sheets and SSE sheets to graph->skeletonSheetCorrespondence
+			for (int i = 0; i < (int)sseSheetMapping.size(); i++) {
+				graph->skeletonSheetCorrespondence[i] = sseSheetMapping[i];
+			}
+
 			#ifdef VERBOSE
 				printf("Graph saved to object.\n");
 			#endif // VERBOSE
@@ -490,7 +498,7 @@ namespace wustl_mm {
 							// Not a data point or has been visited
 							continue ;
 						}
-						if ( ! vol->isSheet( i, j, k ) )
+						if ( ! isSkeletonSheet( vol, i, j, k ) )
 						{
 							// Not a sheet point
 							continue ;
@@ -504,7 +512,7 @@ namespace wustl_mm {
 						while ( queue->popQueue(ox, oy, oz) )
 						{
 							// Test if neighbors satisfy sheet condition
-							if ( vol->isSheet( ox, oy, oz ) )
+							if ( isSkeletonSheet(vol, ox, oy, oz ) )
 							{
 								for ( int m = 0 ; m < 6 ; m ++ )
 								{
@@ -512,7 +520,8 @@ namespace wustl_mm {
 									int ny = oy + neighbor6[m][1] ;
 									int nz = oz + neighbor6[m][2] ;
 
-									if ( vol->getDataAt(nx,ny,nz) > 0 && svol->getDataAt(nx,ny,nz) == 0 )
+									//if ( vol->getDataAt(nx,ny,nz) > 0 && svol->getDataAt(nx,ny,nz) == 0 )
+									if ( vol->getDataAt(nx,ny,nz) > 0 && svol->getDataAt(nx,ny,nz) == 0 && isSkeletonSheet(vol,nx,ny,nz) )
 									{
 										svol->setDataAt(nx,ny,nz,totSheets);
 										queue->pushQueue(nx,ny,nz) ;
@@ -553,6 +562,31 @@ namespace wustl_mm {
 			return svol ;
 		}
 
+
+		int SkeletonReader::isSkeletonSheet(Volume * vol, int ox, int oy, int oz )
+		{
+			int cn = 12 ;
+			int nx, ny, nz ;
+
+			for ( int i = 0 ; i < 12 ; i ++ )
+			{	
+				for ( int j = 0 ; j < 4 ; j ++ )
+				{
+					nx = ox + sheetNeighbor[i][j][0] ;
+					ny = oy + sheetNeighbor[i][j][1] ;
+					nz = oz + sheetNeighbor[i][j][2] ;
+
+					if ( vol->getDataAt( nx, ny, nz ) <= 0 )
+					{
+						cn -- ;
+						break ;
+					}
+				}
+			}
+
+			//return ( cn >= 3 ) ;
+			return ( cn >= 1 ) ;
+		}
 
 
 
