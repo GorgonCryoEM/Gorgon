@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.24  2009/03/17 20:00:17  ssa1
+//   Removing Sheets from fiting process
+//
 //   Revision 1.23  2009/03/16 17:08:46  ssa1
 //   Fixing bug when densities have negative values
 //
@@ -60,6 +63,8 @@ namespace wustl_mm {
 			void LoadSheetFile(string fileName);			
 			void Unload();
 			void SetHelixColor(int index, float r, float g, float b, float a);
+			void SetSheetColor(int index, float r, float g, float b, float a);
+			void SetSSEColor(int index, float r, float g, float b, float a);
 			bool SelectionRotate(Vector3DFloat centerOfMass, Vector3DFloat rotationAxis, float angle);
 			int SelectionObjectCount();
 			Vector3DFloat SelectionCenterOfMass();
@@ -73,6 +78,7 @@ namespace wustl_mm {
 		private:
 			void UpdateBoundingBox();
 			vector<GeometricShape*> helices;
+			vector<GeometricShape*> sheets;
 			NonManifoldMesh_SheetIds * sheetMesh;
 			int sheetCount;
 			bool selectedSheets[256];
@@ -137,6 +143,14 @@ namespace wustl_mm {
 				if(selectEnabled) {
 					glPushName(0);
 				}
+				// for color code
+				int prevSheet = -1;
+				int thisSheet;
+				float colorR, colorG, colorB, colorA, color;
+				GLfloat diffuseMaterial[4];
+				GLfloat ambientMaterial[4];
+				GLfloat specularMaterial[4];
+				// end color code
 				for(unsigned int i = 0; i < sheetMesh->faces.size(); i++) {
 					glPushAttrib(GL_LIGHTING_BIT);
 					if(sheetMesh->faces[i].tag.selected) {
@@ -146,6 +160,52 @@ namespace wustl_mm {
 					if(selectEnabled) {
 						glLoadName(sheetMesh->faces[i].tag.id);
 					}
+					// color code
+					if(sheetMesh->faces[i].tag.id != prevSheet) {
+						thisSheet = (int) (sheetMesh->faces[i].tag.id);
+						//skeleton->skeletonHelixes[correspondingSheet]->GetColor(colorR, colorG, colorB, colorA);	
+						//cout << "choosing new color for sheet " << faces[i].tag.id << endl;
+						//cout << "choosing new color for sheet " << thisSheet << endl;
+						sheets[thisSheet-1]->GetColor(colorR, colorG, colorB, colorA);
+						//cout << "stored colors for this sheet are " << colorR << "," << colorG << "," << colorB << "," << colorA << endl;
+						/*
+						color = 0.3 * (float)thisSheet;
+						colorR = color;
+						colorG = color;
+						colorB = 1.0;
+						colorA = 1.0;
+						cout << "chosen colors for this sheet are " << colorR << "," << colorG << "," << colorB << "," << colorA << endl;
+						*/
+						prevSheet = thisSheet;
+						diffuseMaterial[0] = colorR;
+						diffuseMaterial[1] = colorG;
+						diffuseMaterial[2] = colorB;
+						diffuseMaterial[3] = colorA;
+						ambientMaterial[0] = colorR*0.2;
+						ambientMaterial[1] = colorG*0.2;
+						ambientMaterial[2] = colorB*0.2;
+						ambientMaterial[3] = colorA;
+						specularMaterial[0] = 1.0;
+						specularMaterial[1] = 1.0; 
+						specularMaterial[2] = 1.0;
+						specularMaterial[3] = 1.0;
+					}
+					glColor4f(colorR, colorG, colorB, colorA);
+					//diffuseMaterial = {colorR, colorG, colorB, colorA};
+					//ambientMaterial = {colorR*0.2, colorG*0.2, colorB*0.2, colorA};
+					//specularMaterial = {1.0, 1.0, 1.0, 1.0};
+				
+					glMaterialfv(GL_BACK, GL_AMBIENT,   ambientMaterial);
+					glMaterialfv(GL_BACK, GL_DIFFUSE,   diffuseMaterial) ;
+					glMaterialfv(GL_BACK, GL_SPECULAR,  specularMaterial) ;
+					glMaterialf(GL_BACK, GL_SHININESS, 0.1);
+					glMaterialfv(GL_FRONT, GL_AMBIENT,   ambientMaterial) ;
+					glMaterialfv(GL_FRONT, GL_DIFFUSE,   diffuseMaterial) ;
+					glMaterialfv(GL_FRONT, GL_SPECULAR,  specularMaterial) ;
+					glMaterialf(GL_FRONT, GL_SHININESS, 0.1);
+
+					glPushAttrib(GL_LIGHTING_BIT | GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+					// end color code
 					glBegin(GL_POLYGON);
 					Vector3DFloat normal;
 					for(unsigned int j = 0; j < sheetMesh->faces[i].vertexIds.size(); j++) {
@@ -156,7 +216,7 @@ namespace wustl_mm {
 					}
 					glEnd();
 					glPopAttrib();
-					
+					glPopAttrib(); // for color code
 				}
 				if(selectEnabled) {
 					glPopName();
@@ -181,7 +241,7 @@ namespace wustl_mm {
 			if(helices.size() == 0) {
 				Renderer::LoadFile(fileName);
 			}
-			vector<GeometricShape *> sheets;
+			//vector<GeometricShape *> sheets;
 			sheets.clear();
 			if(sheetMesh != NULL) {
 				delete sheetMesh;
@@ -210,9 +270,9 @@ namespace wustl_mm {
 					sheetMesh->AddTriangle(indices[sheets[i]->polygons[j].pointIndex1], indices[sheets[i]->polygons[j].pointIndex2], indices[sheets[i]->polygons[j].pointIndex3], NULL, faceTag);					
 				}				
 			}
-			for(unsigned int i = 0; i < sheets.size(); i++) { 
-				delete sheets[i];
-			}
+			//for(unsigned int i = 0; i < sheets.size(); i++) { 
+			//	delete sheets[i];
+			//}
 			indices.clear();
 			UpdateBoundingBox();			
 		}
@@ -276,6 +336,20 @@ namespace wustl_mm {
 
 		void SSERenderer::SetHelixColor(int index, float r, float g, float b, float a) {
 			helices[index]->SetColor(r, g, b, a);
+		}
+
+		void SSERenderer::SetSheetColor(int index, float r, float g, float b, float a) {
+			sheets[index]->SetColor(r, g, b, a);
+		}
+
+		// set the color of an SSE. assumes that SSEs are indexed with helices first and sheets second.
+		void SSERenderer::SetSSEColor(int index, float r, float g, float b, float a) {
+			int numHelices = helices.size();
+			if (index < numHelices) {
+				helices[index]->SetColor(r, g, b, a);
+			} else {
+				sheets[index - numHelices]->SetColor(r, g, b, a);
+			}
 		}
 
 		bool SSERenderer::SelectionRotate(Vector3DFloat centerOfMass, Vector3DFloat rotationAxis, float angle) {
