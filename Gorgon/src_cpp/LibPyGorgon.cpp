@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.50.2.1  2009/05/13 20:51:31  schuhs
+//   Adding binding for DrawAllPaths method, which draws all paths used by the SSECorrespondenceFinder action.
+//
 //   Revision 1.50  2009/03/30 21:36:12  ssa1
 //   Interactive loop building
 //
@@ -327,6 +330,8 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("getMax", &SSERenderer::GetMax)
 		.def("get3DCoordinates", &SSERenderer::Get3DCoordinates)
 		.def("setHelixColor", &SSERenderer::SetHelixColor)		
+		.def("setSheetColor", &SSERenderer::SetSheetColor)		
+		.def("setSSEColor", &SSERenderer::SetSSEColor)		
 		.def("setSpacing", &SSERenderer::SetSpacing)
 		.def("getSpacingX", &SSERenderer::GetSpacingX)
 		.def("getSpacingY", &SSERenderer::GetSpacingY)
@@ -470,6 +475,7 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("setConstantBool", SetConstant4)
 		.def("clearAllConstraints", &SSECorrespondenceEngine::ClearAllConstraints)			
 		.def("setHelixConstraint", &SSECorrespondenceEngine::SetHelixConstraint)			
+		.def("setSSEColor", &SSECorrespondenceEngine::SetSSEColor)			
         .def("setConstantsFromFile", &SSECorrespondenceEngine::SetConstantsFromFile)		
 		.def("saveCorrespondenceToFile", &SSECorrespondenceEngine::SaveCorrespondenceToFile)
 		.def("loadSkeletonGraph", &SSECorrespondenceEngine::LoadSkeletonGraph)
