@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.19.2.7  2009/05/22 19:26:50  schuhs
+//   Clustering sheets and associating with SSEBuilder output by measuring average shortest path between cluster and SSE sheet. Uses parameters from GlobalConstants class.
+//
 //   Revision 1.19.2.6  2009/05/20 15:49:20  schuhs
 //   Changing drawAllSheets method to load sheet clusters from skeleton object rather than building them.
 //
@@ -232,7 +235,7 @@ namespace wustl_mm {
 			//	}
 			//}
 
-			cout << "num skeleton sheets = " << numSkeletonSheets << ", num SSEs = " << (int)helixes.size() << endl;
+			cout << "min sheet size = " << MINIMUM_SHEET_SIZE << ", num skeleton sheets = " << numSkeletonSheets << ", num SSEs = " << (int)helixes.size() << endl;
 
 			vector<vector<double>> sheetDistance(numSkeletonSheets+1, vector<double> ((int)helixes.size()) );
 
@@ -285,6 +288,8 @@ namespace wustl_mm {
 			vector<int> sseSheetMapping(numSkeletonSheets+1, -1);
 			//vector<vector<double>> sheetDistance(numSkeletonSheets+1, vector<double> ((int)helixes.size()) );
 			cout << "sheet correspondences: " << endl;
+			cout << "max distance from sheet to skeleton = " << MAXIMUM_DISTANCE_SHEET_SKELETON << endl;
+
 			for (int i = 1; i <= numSkeletonSheets; i++) { 
 				double minDist = MAXIMUM_DISTANCE_SHEET_SKELETON;
 				for (int j = 0; j < (int)helixes.size(); j++) { 
@@ -305,7 +310,7 @@ namespace wustl_mm {
 					for(int z = 0; z < sheetClusters->getSizeZ(); z++) {
 						point[2] = sheetClusters->getOriginZ() + z * sheetClusters->getSpacingZ();
 						// check which sheet is associated with this voxel
-						int skeletonSheetNum = sheetClusters->getDataAt(x, y, z);
+						int skeletonSheetNum = (int)sheetClusters->getDataAt(x, y, z);
 						// for voxels that are assigned to some sheet
 						if (skeletonSheetNum > 0) {
 							int sseSheetNum = sseSheetMapping[skeletonSheetNum];
@@ -323,23 +328,20 @@ namespace wustl_mm {
 
 
 			// Save separate sheets in helixes data structure
-			int numSheets = sheetClusters->getMax();
+			int numSheets = (int) sheetClusters->getMax();
 
 			// vector to hold all the sheet volumes
 			vector<Volume*> skeletonSheets;
 			skeletonSheets.push_back(sheetClusters);
+
 			for (int i = 1; i <= numSheets; i++) {
-				Volume* singleSheet = new Volume(sheetClusters->getSizeX(), sheetClusters->getSizeY(), sheetClusters->getSizeZ());
-				singleSheet->fill(1.0);
+				Volume* singleSheet = new Volume(sheetClusters->getSizeX(), sheetClusters->getSizeY(), sheetClusters->getSizeZ(), 1.0); // trying something new
 				singleSheet->applyMask(sheetClusters,i,true);
 				singleSheet->threshold( 0.1, 0, 1 ) ;
 				int thisSheetSize = singleSheet->getNonZeroVoxelCount();
 				cout << "created sheet " << i << " with " << thisSheetSize << " voxels" << endl;
 				skeletonSheets.push_back(singleSheet);
 			}
-			
-			// end
-
 			
 			#ifdef VERBOSE
 			printf("Finished finding points inside helices and sheets.\n");
@@ -436,7 +438,9 @@ namespace wustl_mm {
 			graph->skeletonSheetVolume = sheetClusters;
 
 			// save skeleton sheet volume vector to graph->skeletonSheets
-			graph->skeletonSheets = skeletonSheets;
+			for(int i = 0; i < (int)skeletonSheets.size(); i++) {
+				graph->skeletonSheets.push_back(skeletonSheets[i]);
+			}
 
 			// save correspondences between skeleton sheets and SSE sheets to graph->skeletonSheetCorrespondence
 			for (int i = 0; i < (int)sseSheetMapping.size(); i++) {
@@ -641,7 +645,7 @@ namespace wustl_mm {
 				cout << "Done finding corner cells for sheet " << sheetId << ". " << helixes[sheetId]->cornerCells.size() << " corner cells.  " << helixes[sheetId]->internalCells.size() << " internal cells." << endl;
 			#endif // VERBOSE
 			//assert(helixes[sheetId]->cornerCells.size() >= 2);
-			helixes[sheetId]->length = helixes[sheetId]->internalCells.size();
+			helixes[sheetId]->length = (float)helixes[sheetId]->internalCells.size();
 		}
 
 		// Parses sheetFile, a .wrl file containing a list of polygons that form a sheet.
