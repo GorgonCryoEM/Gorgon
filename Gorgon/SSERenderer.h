@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.24.2.1  2009/05/22 19:18:54  schuhs
+//   Storing colors for each sheet and rendering each sheet in its stored color
+//
 //   Revision 1.24  2009/03/17 20:00:17  ssa1
 //   Removing Sheets from fiting process
 //
@@ -146,7 +149,7 @@ namespace wustl_mm {
 				// for color code
 				int prevSheet = -1;
 				int thisSheet;
-				float colorR, colorG, colorB, colorA, color;
+				float colorR, colorG, colorB, colorA;
 				GLfloat diffuseMaterial[4];
 				GLfloat ambientMaterial[4];
 				GLfloat specularMaterial[4];
@@ -163,19 +166,7 @@ namespace wustl_mm {
 					// color code
 					if(sheetMesh->faces[i].tag.id != prevSheet) {
 						thisSheet = (int) (sheetMesh->faces[i].tag.id);
-						//skeleton->skeletonHelixes[correspondingSheet]->GetColor(colorR, colorG, colorB, colorA);	
-						//cout << "choosing new color for sheet " << faces[i].tag.id << endl;
-						//cout << "choosing new color for sheet " << thisSheet << endl;
 						sheets[thisSheet-1]->GetColor(colorR, colorG, colorB, colorA);
-						//cout << "stored colors for this sheet are " << colorR << "," << colorG << "," << colorB << "," << colorA << endl;
-						/*
-						color = 0.3 * (float)thisSheet;
-						colorR = color;
-						colorG = color;
-						colorB = 1.0;
-						colorA = 1.0;
-						cout << "chosen colors for this sheet are " << colorR << "," << colorG << "," << colorB << "," << colorA << endl;
-						*/
 						prevSheet = thisSheet;
 						diffuseMaterial[0] = colorR;
 						diffuseMaterial[1] = colorG;
@@ -191,9 +182,6 @@ namespace wustl_mm {
 						specularMaterial[3] = 1.0;
 					}
 					glColor4f(colorR, colorG, colorB, colorA);
-					//diffuseMaterial = {colorR, colorG, colorB, colorA};
-					//ambientMaterial = {colorR*0.2, colorG*0.2, colorB*0.2, colorA};
-					//specularMaterial = {1.0, 1.0, 1.0, 1.0};
 				
 					glMaterialfv(GL_BACK, GL_AMBIENT,   ambientMaterial);
 					glMaterialfv(GL_BACK, GL_DIFFUSE,   diffuseMaterial) ;
