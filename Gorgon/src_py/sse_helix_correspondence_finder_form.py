@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.36.2.2  2009/05/22 19:22:15  schuhs
+#   Adding new tab to SSE correspondence form to set and change graph parameters and control graph visualization
+#
 #   Revision 1.36.2.1  2009/05/13 20:56:00  schuhs
 #   Adding checkbox to draw all possible paths along skeleton, and adding input for sheet filename
 #
@@ -164,7 +167,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
         self.connect(self.ui.pushButtonReset, QtCore.SIGNAL("pressed ()"), self.loadDefaults)
         self.connect(self.ui.pushButtonCancel, QtCore.SIGNAL("pressed ()"), self.reject)
         self.connect(self.ui.pushButtonOk, QtCore.SIGNAL("pressed ()"), self.accept)
-        self.connect(self.ui.pushButtonRebuildGraph, QtCore.SIGNAL("pressed ()"), self.createBasicCorrespondence)
+        self.connect(self.ui.pushButtonRebuildGraph, QtCore.SIGNAL("pressed ()"), self.rebuildGraph)
         self.connect(self.ui.comboBoxCorrespondences, QtCore.SIGNAL("currentIndexChanged (int)"), self.selectCorrespondence)
         # adding new checkbox
         self.connect(self.ui.checkBoxShowAllPaths, QtCore.SIGNAL("toggled (bool)"), self.fullGraphVisibilityChanged)
@@ -241,7 +244,12 @@ This loads a SEQ file or, for testing purposes, a PDB file.
         This checks if all files necessary for the correspondence search have been loaded. If so, the
         correspondence search parameter tabs are enabled and a basic correspondence is created.   
         """
+        print "begin checkOk"
+        print "correspondence index at beginning is "
+        print self.ui.comboBoxCorrespondences.currentIndex()
+
         self.dataLoaded = not(self.ui.lineEditHelixLengthFile.text().isEmpty() or self.ui.lineEditHelixLocationFile.text().isEmpty()
+                           or self.ui.lineEditSheetLocationFile.text().isEmpty()
                            or self.ui.lineEditSkeletonFile.text().isEmpty() or self.ui.lineEditSequenceFile.text().isEmpty())
         self.ui.pushButtonOk.setEnabled(self.dataLoaded)
         
@@ -252,6 +260,9 @@ This loads a SEQ file or, for testing purposes, a PDB file.
             self.createBasicCorrespondence()            
             self.viewer.correspondenceLibrary.correspondenceList = self.populateEmptyResults(self.viewer.correspondenceLibrary)
             self.populateComboBox(self.viewer.correspondenceLibrary)            
+        print "correspondence index at end is "
+        print self.ui.comboBoxCorrespondences.currentIndex()
+        print "end checkOk"
     
     def loadWidget(self):
         if(self.app.actions.getAction("perform_SSEFindHelixCorrespondences").isChecked()) :
@@ -300,9 +311,8 @@ This loads a SEQ file or, for testing purposes, a PDB file.
             self.viewer.correspondenceEngine.setConstant("SEQUENCE_FILE_TYPE", "SEQ")
         
         #Tab Graph Settings
-        self.viewer.correspondenceEngine.setConstant("MAXIMUM_DISTANCE_SHEET_SKELETON", self.ui.spinBoxMaxSheetDistance.value())
-        self.viewer.correspondenceEngine.setConstant("MINIMUM_SHEET_SIZE", self.ui.doubleSpinBoxMinSheetSize.value())
-                                                      
+        self.viewer.correspondenceEngine.setConstant("MAXIMUM_DISTANCE_SHEET_SKELETON", self.ui.doubleSpinBoxMaxSheetDistance.value())
+        self.viewer.correspondenceEngine.setConstantInt("MINIMUM_SHEET_SIZE", self.ui.spinBoxMinSheetSize.value())
 
         #Tab 2
         if(self.ui.radioButtonAbsoluteDifference.isChecked()):
@@ -362,8 +372,9 @@ This loads a SEQ file or, for testing purposes, a PDB file.
             matchList.append(currentMatch)                                              
             corr = Correspondence(library=library, matchList=matchList, score=0)            
 
-        # add the empty correspondence to the list
-        corrList.append(corr)
+            # add the empty correspondence to the list
+            # ss 5/28 indenting next line to see if fixes bug?
+            corrList.append(corr)
         return corrList
             
 
@@ -459,7 +470,7 @@ This loads a SEQ file or, for testing purposes, a PDB file.
         
         #Loading Observed SSEs
         print("\nloading observed SSEs\n")
-        # call to c++ method QueryEngine::LoadSkeletonGraph()
+        # call to c++ method SSECorrespondenceEngine::LoadSkeletonGraph()
         self.viewer.correspondenceEngine.loadSkeletonGraph()
         observedHelices = {}
         helixCount = 0
@@ -640,7 +651,19 @@ This loads a SEQ file or, for testing purposes, a PDB file.
             self.viewer.correspondenceEngine.drawAllPaths(0,self.ui.checkBoxShowAllPaths.isChecked(),self.ui.checkBoxShowHelixCorners.isChecked(),self.ui.checkBoxShowSheetCorners.isChecked(),self.ui.checkBoxShowSheetColors.isChecked())
             glPopAttrib()
             
-
+            
+    def rebuildGraph(self):
+        print "correspondence index before rebuilding is "
+        print self.ui.comboBoxCorrespondences.currentIndex()
+        self.ui.comboBoxCorrespondences.setCurrentIndex(-1)
+        print "correspondence index after setting to -1 is "
+        print self.ui.comboBoxCorrespondences.currentIndex()
+        self.setConstants()
+        self.checkOk()
+        self.viewer.emitModelChanged()
+        print "correspondence index after rebuilding is "
+        print self.ui.comboBoxCorrespondences.currentIndex()
+        
     def constraintAdded(self, state):
         if(not self.loadingCorrespondance):
             correspondenceIndex = self.ui.comboBoxCorrespondences.currentIndex()
