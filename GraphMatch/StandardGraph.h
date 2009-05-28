@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.13.2.3  2009/05/22 19:29:00  schuhs
+//   Adding array to store correspondences between SSEBuilder sheets and sheets in graph
+//
 //   Revision 1.13.2.2  2009/05/20 15:44:46  schuhs
 //   Adding vector of volumes to store the individual skeleton sheets
 //
@@ -88,7 +91,7 @@ namespace wustl_mm {
 
 			skeletonHelixes.clear();
 
-			for(i = 0; i < (int)skeletonSheets.size(); i++) {
+			for(i = 1; i < (int)skeletonSheets.size(); i++) { // start at index 1 since 0 is same as skeletonSheetVolume
 				delete skeletonSheets[i];
 			}
 
