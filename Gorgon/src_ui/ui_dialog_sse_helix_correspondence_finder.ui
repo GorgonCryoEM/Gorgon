@@ -250,7 +250,7 @@
        <property name="title" >
         <string>Graph Construction</string>
        </property>
-       <widget class="QWidget" name="" >
+       <widget class="QWidget" name="layoutWidget" >
         <property name="geometry" >
          <rect>
           <x>13</x>
@@ -276,10 +276,10 @@
              <string>The maximum euclidean distance between possibly connected helices even if they are not connected in the skeleton</string>
             </property>
             <property name="text" >
-             <string>Maximum Sheet Distance</string>
+             <string>Minimum Sheet Size</string>
             </property>
            </widget>
-           <widget class="QSpinBox" name="spinBoxMaxSheetDistance" />
+           <widget class="QSpinBox" name="spinBoxMinSheetSize" />
           </widget>
          </item>
          <item>
@@ -298,10 +298,10 @@
              <string>The maximum euclidean distance between possibly connected helices even if they are not connected in the skeleton</string>
             </property>
             <property name="text" >
-             <string>Minimum Sheet Size</string>
+             <string>Maximum Sheet Distance</string>
             </property>
            </widget>
-           <widget class="QDoubleSpinBox" name="doubleSpinBoxMinSheetSize" >
+           <widget class="QDoubleSpinBox" name="doubleSpinBoxMaxSheetDistance" >
             <property name="text" stdset="0" >
              <string>0.0000</string>
             </property>
@@ -355,6 +355,10 @@
           </widget>
          </item>
         </layout>
+        <zorder>splitter_4</zorder>
+        <zorder>checkBoxPruneSkeleton</zorder>
+        <zorder>splitter_2</zorder>
+        <zorder>splitter_3</zorder>
        </widget>
       </widget>
       <widget class="QGroupBox" name="groupBox_4" >
@@ -367,7 +371,7 @@
        <property name="title" >
         <string>Graph Visualization</string>
        </property>
-       <widget class="QWidget" name="" >
+       <widget class="QWidget" name="layoutWidget" >
         <property name="geometry" >
          <rect>
           <x>10</x>
@@ -899,7 +903,7 @@
       <string>Reset</string>
      </property>
     </widget>
-    <widget class="QWidget" name="" >
+    <widget class="QWidget" name="layoutWidget" >
      <layout class="QGridLayout" >
       <property name="spacing" >
        <number>0</number>
