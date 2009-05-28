@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.32.2.2  2009/05/22 19:24:06  schuhs
+//   Adding parameters for graph creation from skeleton sheets and SSEHunter output
+//
 //   Revision 1.32.2.1  2009/05/13 20:31:09  schuhs
 //   Setting the INCLUDE_SHEETS and VERBOSE flags
 //
@@ -88,6 +91,8 @@ namespace wustl_mm {
 		const char * TOKEN_SEQUENCE_FILE_TYPE = "SEQUENCE_FILE_TYPE";
 		const char * TOKEN_PDB_FILE_NAME = "PDB_FILE_NAME";
 		const char * TOKEN_MRC_FILE_NAME = "MRC_FILE_NAME";
+		const char * TOKEN_MAXIMUM_DISTANCE_SHEET_SKELETON = "MAXIMUM_DISTANCE_SHEET_SKELETON";
+		const char * TOKEN_MINIMUM_SHEET_SIZE = "MINIMUM_SHEET_SIZE";
 		const char * TOKEN_EUCLIDEAN_DISTANCE_THRESHOLD = "EUCLIDEAN_DISTANCE_THRESHOLD";
 		const char * TOKEN_BORDER_MARGIN_THRESHOLD = "BORDER_MARGIN_THRESHOLD";
 		const char * TOKEN_NORMALIZE_GRAPHS = "NORMALIZE_GRAPHS";
@@ -241,6 +246,10 @@ namespace wustl_mm {
 				strcpy(SEQUENCE_FILE_TYPE, stringValue);
 			} else if(strcmp(token, TOKEN_MRC_FILE_NAME) == 0) {
 				strcpy(MRC_FILE_NAME, stringValue);
+			} else if(strcmp(token, TOKEN_MAXIMUM_DISTANCE_SHEET_SKELETON) == 0) {
+				MAXIMUM_DISTANCE_SHEET_SKELETON = doubleValue;
+			} else if(strcmp(token, TOKEN_MINIMUM_SHEET_SIZE) == 0) {
+				MINIMUM_SHEET_SIZE = intValue;
 			} else if(strcmp(token, TOKEN_EUCLIDEAN_DISTANCE_THRESHOLD) == 0) {
 				EUCLIDEAN_DISTANCE_THRESHOLD = doubleValue;
 			} else if(strcmp(token, TOKEN_BORDER_MARGIN_THRESHOLD) == 0) {
@@ -370,6 +379,8 @@ namespace wustl_mm {
 		{
 		#ifdef VERBOSE
 			printf("Constants...\n");
+			printf("\tMAXIMUM_DISTANCE_SHEET_SKELETON  = %lf\n", MAXIMUM_DISTANCE_SHEET_SKELETON);
+			printf("\tMINIMUM_SHEET_SIZE               = %ld\n", MINIMUM_SHEET_SIZE);
 			printf("\tEUCLIDEAN_DISTANCE_THRESHOLD     = %lf\n", EUCLIDEAN_DISTANCE_THRESHOLD);
 			printf("\tBORDER_MARGIN_THRESHOLD          = %ld\n", BORDER_MARGIN_THRESHOLD);
 			printf("\tNORMALIZE_GRAPHS                 = %ld\n", NORMALIZE_GRAPHS);
