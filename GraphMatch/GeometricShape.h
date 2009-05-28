@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.15.2.3  2009/05/15 21:34:00  schuhs
+//   Adding comments to method that determines if a point is inside a polygon
+//
 //   Revision 1.15.2.2  2009/05/15 15:42:13  schuhs
 //   Adding a method to return the minimum distance between a polygon (set of triangles) and a point.
 //
@@ -201,7 +204,7 @@ namespace wustl_mm {
 			Point3 A,B,C;
 			Vector3 D, E0, E1;
 			Vector3 n;
-			double a, b, c, d, e, f, det, invDet, numer, denom, s, t, delta, tmp0, tmp1;
+			double a, b, c, d, e, f, det, invDet, numer, denom, s, t, tmp0, tmp1;
 			int region;
 			double dmin = 9999; // initialize to be large number -- need to fix this
 	
