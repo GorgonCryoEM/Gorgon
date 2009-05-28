@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.7.2.2  2009/05/22 19:21:18  schuhs
+//   Adding parameters to DrawAllPaths method to enable or disable rendering of corners, paths, and colored sheets.
+//
 //   Revision 1.7.2.1  2009/05/13 20:52:52  schuhs
 //   Adding method to draw all skeleton paths used by correspondence algorithm
 //
@@ -283,9 +286,9 @@ namespace wustl_mm {
 			// draw corner nodes (helices)
 			if (showHelixCorners) {
 				glPushAttrib(GL_LIGHTING_BIT | GL_LINE_BIT | GL_ENABLE_BIT | GL_HINT_BIT);
-				for(int i = 0; i < skeleton->skeletonHelixes.size(); i++) {
+				for(int i = 0; i < (int)skeleton->skeletonHelixes.size(); i++) {
 					if (skeleton->skeletonHelixes[i]->geometricShapeType == GRAPHEDGE_HELIX) {
-						for(int j = 0; j < skeleton->skeletonHelixes[i]->cornerCells.size(); j++) {
+						for(int j = 0; j < (int)skeleton->skeletonHelixes[i]->cornerCells.size(); j++) {
 							Renderer::DrawSphere(Vector3DFloat(skeleton->skeletonHelixes[i]->cornerCells[j].x, skeleton->skeletonHelixes[i]->cornerCells[j].y, skeleton->skeletonHelixes[i]->cornerCells[j].z), 0.25);
 						}
 					}
@@ -296,9 +299,9 @@ namespace wustl_mm {
 			// draw corner nodes (sheets)
 			if (showSheetCorners) {
 				glPushAttrib(GL_LIGHTING_BIT | GL_LINE_BIT | GL_ENABLE_BIT | GL_HINT_BIT);
-				for(int i = 0; i < skeleton->skeletonHelixes.size(); i++) {
+				for(int i = 0; i < (int)skeleton->skeletonHelixes.size(); i++) {
 					if (skeleton->skeletonHelixes[i]->geometricShapeType == GRAPHEDGE_SHEET) {
-						for(int j = 0; j < skeleton->skeletonHelixes[i]->cornerCells.size(); j++) {
+						for(int j = 0; j < (int)skeleton->skeletonHelixes[i]->cornerCells.size(); j++) {
 							Renderer::DrawSphere(Vector3DFloat(skeleton->skeletonHelixes[i]->cornerCells[j].x, skeleton->skeletonHelixes[i]->cornerCells[j].y, skeleton->skeletonHelixes[i]->cornerCells[j].z), 0.25);
 						}
 					}
@@ -311,7 +314,7 @@ namespace wustl_mm {
 
 			// render each skeleton sheet
 			if (showSheetColors) {
-				for (int i = 1; i < skeleton->skeletonSheets.size(); i++) {
+				for (int i = 1; i < (int)skeleton->skeletonSheets.size(); i++) {
 					int correspondingSheet = skeleton->skeletonSheetCorrespondence[i];
 					if (correspondingSheet != -1) {
 						sheetMeshRenderer->LoadVolume(skeleton->skeletonSheets[i]);
