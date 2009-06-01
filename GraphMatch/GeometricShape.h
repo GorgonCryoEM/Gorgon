@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.15.2.4  2009/05/28 17:03:43  schuhs
+//   Removing unused variable declaration
+//
 //   Revision 1.15.2.3  2009/05/15 21:34:00  schuhs
 //   Adding comments to method that determines if a point is inside a polygon
 //
@@ -206,7 +209,7 @@ namespace wustl_mm {
 			Vector3 n;
 			double a, b, c, d, e, f, det, invDet, numer, denom, s, t, tmp0, tmp1;
 			int region;
-			double dmin = 9999; // initialize to be large number -- need to fix this
+			double dmin = MAXDOUBLE; 
 	
 			// find min distance from point p to any triangle in the polygon
 			for(unsigned int i = 0; i < polygons.size(); i++) {
