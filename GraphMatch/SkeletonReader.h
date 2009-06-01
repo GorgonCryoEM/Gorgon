@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.19.2.8  2009/05/28 17:21:06  schuhs
+//   Adding casts to eliminate compiler warnings, adding console messages
+//
 //   Revision 1.19.2.7  2009/05/22 19:26:50  schuhs
 //   Clustering sheets and associating with SSEBuilder output by measuring average shortest path between cluster and SSE sheet. Uses parameters from GlobalConstants class.
 //
@@ -81,7 +84,7 @@ namespace wustl_mm {
 			static void ReadHelixFile(char * helixFile, char * sseFile, vector<GeometricShape*> & helixes);
 			static void FindSizes(int startHelix, int startCell, vector<GeometricShape*> & helixList, Volume * vol, Volume * coloredVol, StandardGraph * graph);
 			static void FindPaths(StandardGraph * graph);
-			static void FindPath(int startIx, int endIx, vector<Vector3DInt> endPoints, Volume * maskVol, StandardGraph * graph, bool eraseMask);
+			static void FindPath(int startIx, int endIx, vector<vector<Vector3DInt> > nodes, Volume * maskVol, StandardGraph * graph, bool eraseMask);
 			static void FindCornerCellsInSheet(Volume * vol, Volume * paintedVol, vector<GeometricShape*> & helixes, int sheetId);
 			static int isSkeletonSheet(Volume * vol, int ox, int oy, int oz );
 
@@ -189,7 +192,7 @@ namespace wustl_mm {
 							// if voxel is a sheet voxel, check to see if it's near a skeleton plate
 							if (!inHelix && vol->isSheet(x,y,z)) {
 								int nearestSheet = -1; // sheet nearest this point
-								double distNearestSheet = 999; // arbitrary large distance -- FIXME
+								double distNearestSheet = MAXINT; 
 								double dist;
 
 								// check all helices to see if it's inside one
@@ -349,7 +352,7 @@ namespace wustl_mm {
 
 			// prune skeleton to eliminate sheets that were not matched to the sheet file above
 			//VolumeSkeletonizer * skeletonizer = new VolumeSkeletonizer(0,0,0,DEFAULT_SKELETON_DIRECTION_RADIUS);
-			//Volume * outputVol = skeletonizer->GetJuSurfaceSkeleton(vol, paintedVol, 9999);
+			//Volume * outputVol = skeletonizer->GetJuSurfaceSkeleton(vol, paintedVol, MAXINT);
 			//vol = outputVol;
 			//delete skeletonizer;
 
@@ -636,7 +639,7 @@ namespace wustl_mm {
 						helixes[sheetId]->cornerCells.push_back(helixes[sheetId]->internalCells[i]);	
 						helixes[sheetId]->cornerCells[helixes[sheetId]->cornerCells.size()-1].node = 1;
 						#ifdef VERBOSE
-							cout << "Sheet corner cell found at sheet " << sheetId << " node " << i << ", outsideCounter = " << outsideCounter << endl;
+							cout << "Sheet corner cell found at sheet " << sheetId << " node " << i << ", coordinates (" << helixes[sheetId]->internalCells[i].x << "," << helixes[sheetId]->internalCells[i].y << "," << helixes[sheetId]->internalCells[i].z << "), outsideCounter = " << outsideCounter << endl;
 						#endif // VERBOSE
 					}
 				}
@@ -901,20 +904,36 @@ namespace wustl_mm {
 		// Find all paths in a graph
 		void SkeletonReader::FindPaths(StandardGraph * graph) {
 			vector<Vector3DInt> endPoints;
+			vector< vector<Vector3DInt> > nodes;
 			Point3Int pt = Point3Int(0,0,0,0);
+			vector<Vector3DInt> node;
 
 			#ifdef VERBOSE
 				printf("Storing helix endpoints.\n");
 			#endif // VERBOSE
 			
-			// store all helix endpoints in endPoints vector
-			// 2 pts per helix: even are helix start, odd are helix end
+			// find all graph nodes
 			for(unsigned int i = 0; i < graph->skeletonHelixes.size(); i++) {
-				for(unsigned int j = 1; j <= 2; j++) {
-					pt = graph->skeletonHelixes[i]->GetCornerCell(j);
-					if (graph->skeletonHelixes[i]->IsHelix()) {
+				// store all helix endpoints in nodes vector
+				// 2 pts per helix: even are helix start, odd are helix end
+				if (graph->skeletonHelixes[i]->IsHelix()) {
+					for(unsigned int j = 1; j <= 2; j++) {
+						pt = graph->skeletonHelixes[i]->GetCornerCell(j);
+						node = vector<Vector3DInt>();
 						endPoints.push_back(Vector3DInt(pt.x, pt.y, pt.z));
+						node.push_back(Vector3DInt(pt.x, pt.y, pt.z));
+						nodes.push_back(node);
 					}
+				}
+
+				// store all sheet corners in nodes vector
+				if (graph->skeletonHelixes[i]->IsSheet()) {
+					node = vector<Vector3DInt>();
+					for(unsigned int j = 0; j < graph->skeletonHelixes[i]->cornerCells.size(); j++) {
+						pt = graph->skeletonHelixes[i]->cornerCells[j];
+						node.push_back(Vector3DInt(pt.x, pt.y, pt.z));
+					}
+					nodes.push_back(node);
 				}
 			}
 
@@ -925,138 +944,161 @@ namespace wustl_mm {
 			#endif // VERBOSE
 			
 			// add all paths through helices, from (odd) start index to (even) end index
-			for(unsigned int i = 0; i < endPoints.size(); i+=2) {
-				FindPath(i, i+1, endPoints, maskVol, graph, true); // eraseMask=true means don't render?
+			for(unsigned int i = 0; i < nodes.size(); i+=2) {
+				if (graph->skeletonHelixes[i/2]->IsHelix()) {
+					FindPath(i, i+1, nodes, maskVol, graph, true); // eraseMask=true means don't render?
+				}
 			}
 
 			#ifdef VERBOSE
 				printf("Finding all paths between helices.\n");
 			#endif // VERBOSE
-			
-			// for every pair of endpoints i!=j, add a path if such a path exists, according to paths[][]
-			for(unsigned int i = 0; i < endPoints.size()-1; i++) {
-				for(unsigned int j = i+1; j < endPoints.size(); j++) {
+			// for every pair of endpoints i!=j, add a path, if this path is not already defined
+			for(unsigned int i = 0; i < nodes.size()-1; i++) {
+				for(unsigned int j = i+1; j < nodes.size(); j++) {
 					if(graph->paths[i][j].size() == 0) {
-						FindPath(i, j, endPoints, maskVol, graph, false);						
+						FindPath(i, j, nodes, maskVol, graph, false);						
 					}
 				}
 			}
+
+			cout << "after adding all paths, maskVol has " << maskVol->getNonZeroVoxelCount() << " nonzero voxels" << endl;
 
 			#ifdef VERBOSE
 				printf("Done finding all paths between helices.\n");
 			#endif // VERBOSE
 
 			delete maskVol;
-
 		}
 
 		// Find path from endpoints[startIx] to endpoints[endIx] in a graph.
 		// The path grows outward from start point to end point along voxels in the maskVol with values > 0.5.
 		// The path is stored in graph->paths[startIx][endIx] and also painted in maskVol.
 		// If eraseMask is set, maskVol voxels inside the startIx and endIx helices are not painted.
-		void SkeletonReader::FindPath(int startIx, int endIx, vector<Vector3DInt> endPoints, Volume * maskVol, StandardGraph * graph, bool eraseMask) {
-
+		void SkeletonReader::FindPath(int startIx, int endIx, vector<vector<Vector3DInt> > nodes, Volume * maskVol, StandardGraph * graph, bool eraseMask) {
 			// erase any old path
 			graph->paths[startIx][endIx] = vector<Vector3DInt>();
 
 			// positions will store the path
 			queue<Vector3DInt> positions;
 
-			// create a few vectors to store positions
-			Vector3DInt currentPos = endPoints[startIx], newPos, endPos = endPoints[endIx];			
-			// put current position on queue
-			positions.push(currentPos);
+			int shortestPathLength = MAXINT;
+			vector<Vector3DInt> shortestPath;
 
-			// create arrays to store paint color (paintVol) and a path direction indicator (backVol) for each voxel in maskVol
-			int * paintVol = new int[maskVol->getSizeX() * maskVol->getSizeY() * maskVol->getSizeZ()];
-			int * backVol = new int[maskVol->getSizeX() * maskVol->getSizeY() * maskVol->getSizeZ()];
-			// initialize to -1
-			for(int i = 0; i < maskVol->getSizeX() * maskVol->getSizeY() * maskVol->getSizeZ(); i++) {
-				paintVol[i] = -1;
-				backVol[i] = -1;
-			}
-			// paint start point
-			paintVol[maskVol->getIndex(currentPos.X(), currentPos.Y(), currentPos.Z())] = 0;
+			for (int s = 0; s < nodes[startIx].size(); s++) {
+				for (int t = 0; t < nodes[endIx].size(); t++) {
 
-			// local vars for while loop
-			bool found = false;
-			int currVal, newIx;
-			
-			// grows outward repeatedly from the start point to each of 26 neighbors until the end point is found
-			// only paints voxels with maskVol > 0.5
-			// stops the first time the end point is found, or when all paths have already been explored and no path found
-			while(!found && !positions.empty()) {
-				// get current voxel position from queue
-				currentPos = positions.front(); 
-				positions.pop();
-				// look up paint color of current voxel
-				currVal = paintVol[maskVol->getIndex(currentPos.X(), currentPos.Y(), currentPos.Z())];
-				// check if current voxel is the end voxel
-				found = (currentPos == endPos);
-				
-				// if not already at the end voxel
-				if(!found) {
-					// for each of the 26 neighboring voxels
-					for(int i = 0; i < 26; i++) {
-						// set newPos to the neighbor voxel location
-						newPos = currentPos + Vector3DInt(D26[i][0], D26[i][1], D26[i][2]);
-						// find the maskVol index number corresponding to this voxel
-						newIx = maskVol->getIndex(newPos.X(), newPos.Y(), newPos.Z());
-						// two cases:
-						//   maskVol > 0.5 and unpainted
-						//   already painted brighter than previous (neighbor) voxel
-						if((maskVol->getDataAt(newIx) > 0.5) && ((paintVol[newIx] < 0) || (paintVol[newIx] > currVal + 1))) {
-							// add to queue
-							positions.push(newPos);
-							// paint the volume 1 unit brighter
-							paintVol[newIx] = currVal + 1;
-							// store a number in backVol to describe this path
-							backVol[newIx] = BACK26[i];
+					// start with empty queue
+					positions = queue<Vector3DInt>();
+
+					Vector3DInt currentPos = nodes[startIx][s], newPos, endPos = nodes[endIx][t];			
+
+					positions.push(currentPos);
+
+					// create arrays to store paint color (paintVol) and a path direction indicator (backVol) for each voxel in maskVol
+					int * paintVol = new int[maskVol->getSizeX() * maskVol->getSizeY() * maskVol->getSizeZ()];
+					int * backVol = new int[maskVol->getSizeX() * maskVol->getSizeY() * maskVol->getSizeZ()];
+					// initialize to -1
+					for(int i = 0; i < maskVol->getSizeX() * maskVol->getSizeY() * maskVol->getSizeZ(); i++) {
+						paintVol[i] = -1;
+						backVol[i] = -1;
+					}
+					// paint start point
+					paintVol[maskVol->getIndex(currentPos.X(), currentPos.Y(), currentPos.Z())] = 0;
+
+					// local vars for while loop
+					bool found = false;
+					int currVal, newIx;
+					int currentPathLength = 0;
+					vector<Vector3DInt> currentPath;
+
+					// grows outward repeatedly from the start point to each of 26 neighbors until the end point is found
+					// only paints voxels with maskVol > 0.5
+					// stops the first time the end point is found, or when all paths have already been explored and no path found
+					while(!found && !positions.empty()) {
+						// get current voxel position from queue
+						currentPos = positions.front(); 
+						positions.pop();
+						// look up paint color of current voxel
+						currVal = paintVol[maskVol->getIndex(currentPos.X(), currentPos.Y(), currentPos.Z())];
+						// check if current voxel is the end voxel
+						found = (currentPos == endPos);
+						
+						// if not already at the end voxel
+						if(!found) {
+							// for each of the 26 neighboring voxels
+							for(int i = 0; i < 26; i++) {
+								// set newPos to the neighbor voxel location
+								newPos = currentPos + Vector3DInt(D26[i][0], D26[i][1], D26[i][2]);
+								// find the maskVol index number corresponding to this voxel
+								newIx = maskVol->getIndex(newPos.X(), newPos.Y(), newPos.Z());
+								// two cases:
+								//   maskVol > 0.5 and unpainted
+								//   already painted brighter than previous (neighbor) voxel
+								if((maskVol->getDataAt(newIx) > 0.5) && ((paintVol[newIx] < 0) || (paintVol[newIx] > currVal + 1))) {
+									// add to queue
+									positions.push(newPos);
+									// paint the volume 1 unit brighter
+									paintVol[newIx] = currVal + 1;
+									// store a number in backVol to describe this path
+									backVol[newIx] = BACK26[i];
+								}
+							}
 						}
 					}
-				}
-			}
-			
-			
+					
+					
 
-			bool backFound = false;
+					bool backFound = false;
 
-			// if a path was found above, retrace it using info from backVol and store the path in graph->paths
-			if(found) {	
-				// set currentPos to the end of the path
-				currentPos = Vector3DInt(endPos.X(), endPos.Y(), endPos.Z());
-				// store endPosition to path vector
-				graph->paths[startIx][endIx].push_back(currentPos);
-				while(!backFound) {
-					newIx = maskVol->getIndex(currentPos.X(), currentPos.Y(), currentPos.Z());
-					backFound = (backVol[newIx] < 0);
-					if(!backFound) {
-						// move in the direction indicated by backVol for this point, to retrace path found above
-						currentPos = currentPos + Vector3DInt(D26[backVol[newIx]][0], D26[backVol[newIx]][1], D26[backVol[newIx]][2]);
-						// add the next point to the path
+					// if a path was found above, retrace it using info from backVol and store the path in graph->paths
+					if(found) {	
+						// set currentPos to the end of the path
+						currentPos = Vector3DInt(endPos.X(), endPos.Y(), endPos.Z());
+						// store endPosition to path vector
 						graph->paths[startIx][endIx].push_back(currentPos);
+						while(!backFound) {
+							newIx = maskVol->getIndex(currentPos.X(), currentPos.Y(), currentPos.Z());
+							backFound = (backVol[newIx] < 0);
+							if(!backFound) {
+								// move in the direction indicated by backVol for this point, to retrace path found above
+								currentPos = currentPos + Vector3DInt(D26[backVol[newIx]][0], D26[backVol[newIx]][1], D26[backVol[newIx]][2]);
+								// add the next point to the path
+								currentPath.push_back(currentPos);
+								currentPathLength++;
+							}
+						}
+					}
+					/* comment out this section for now, TODO: fix later
+					if(eraseMask) {
+						// for each voxel along the path found above
+						for(int i = 1; i < (int)graph->paths[startIx][endIx].size()-1; i++) {
+							currentPos = graph->paths[startIx][endIx][i];
+							Point3 pt = Point3(currentPos.X(), currentPos.Y(), currentPos.Z());
+							// if this voxel is inside either the start helix or the end helix for this path
+							if(graph->skeletonHelixes[(int)startIx/2]->IsInsideShape(pt) || 
+									graph->skeletonHelixes[(int)endIx/2]->IsInsideShape(pt)) {
+								// erase the voxel from maskVol
+								cout << " - setting to zero point (" << currentPos.X() << "," << currentPos.Y() << "," << currentPos.Y() << "), formerly = " << maskVol->getDataAt(currentPos.X(), currentPos.Y(), currentPos.Z() ) << endl;
+								maskVol->setDataAt(currentPos.X(), currentPos.Y(), currentPos.Z(), 0.0);
+
+							}
+						}
+					}
+					*/
+					
+					delete [] paintVol;
+					delete [] backVol;
+
+					if (found && currentPathLength < shortestPathLength) {
+						shortestPathLength = currentPathLength;
+						shortestPath = currentPath;
 					}
 				}
 			}
-
-			if(eraseMask) {
-				// for each voxel along the path found above
-				for(int i = 1; i < (int)graph->paths[startIx][endIx].size()-1; i++) {
-					currentPos = graph->paths[startIx][endIx][i];
-					Point3 pt = Point3(currentPos.X(), currentPos.Y(), currentPos.Z());
-					// if this voxel is inside either the start helix or the end helix for this path
-					if(graph->skeletonHelixes[(int)startIx/2]->IsInsideShape(pt) || 
-							graph->skeletonHelixes[(int)endIx/2]->IsInsideShape(pt)) {
-						// erase the voxel from maskVol
-						maskVol->setDataAt(currentPos.X(), currentPos.Y(), currentPos.Z(), 0.0);
-					}
-				}
+			if (shortestPathLength < MAXINT) { 
+				graph->paths[startIx][endIx] = shortestPath;
 			}
-
-			delete [] paintVol;
-			delete [] backVol;
-
-
 		}
 
 
