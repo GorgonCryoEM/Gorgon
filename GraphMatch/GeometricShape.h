@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.15.2.5  2009/06/01 20:27:34  schuhs
+//   Replacing 9999.0 with MAXDOUBLE constant
+//
 //   Revision 1.15.2.4  2009/05/28 17:03:43  schuhs
 //   Removing unused variable declaration
 //
@@ -65,7 +68,7 @@ namespace wustl_mm {
 			bool IsHelix();
 			bool IsSheet();
 			bool IsInsideShape(Point3 p);
-			double PolygonsDistanceToPoint(Point3 p);
+			double MinimumDistanceToPoint(Point3 P);
 			double GetHeight();
 			double GetRadius();
 			double GetCornerCellsMaxLength();
@@ -199,116 +202,17 @@ namespace wustl_mm {
 			return isInside;
 		}
 
-		// returns the minimum distance between a point p and a triangle
-		// uses algorithm from http://www.geometrictools.com/Documentation/DistancePoint3Triangle3.pdf
-		// also read for reference http://geant4.cern.ch/support/source/geant4/source/geometry/solids/specific/src/G4TriangularFacet.cc
-		double GeometricShape::PolygonsDistanceToPoint(Point3 P) {
-			Polygon tri;
-			Point3 A,B,C;
-			Vector3 D, E0, E1;
-			Vector3 n;
-			double a, b, c, d, e, f, det, invDet, numer, denom, s, t, tmp0, tmp1;
-			int region;
-			double dmin = MAXDOUBLE; 
+		// returns the minimum distance between a point p and a GeometricShape
+		double GeometricShape::MinimumDistanceToPoint(Point3 P) {
+			Point3 pt;
+			double d;
+			double dmin = MAXDOUBLE;
 	
 			// find min distance from point p to any triangle in the polygon
-			for(unsigned int i = 0; i < polygons.size(); i++) {
-				tri = (Polygon)polygons[i];
-				A = (Point3)polygonPoints[tri.pointIndex1];
-				B = (Point3)polygonPoints[tri.pointIndex2];
-				C = (Point3)polygonPoints[tri.pointIndex3];
-				D = B - P;
-				E0 = C - B;
-				E1 = A - B;
-				a = E0 * E0;
-				b = E0 * E1;
-				c = E1 * E1;
-				d = E0 * D;
-				e = E1 * D;
-				f = D * D;
-				det = a * c - b * b;
-				s = b * e - c * d; 
-				t = b * d - a * e;
-				if (s+t <= det){
-					if ( s < 0 ) { if ( t < 0 ) { region=4; } else { region=3; } }
-					else if ( t < 0 ) { region=5; }
-					else { region=0; }
-				} else {
-					if ( s < 0 ) { region=2; }
-					else if ( t < 0 ) { region=6; }
-					else { region=1; }
-				}
-				switch (region) {
-				case 0:
-					invDet = 1.0/det;
-					s *= invDet;
-					t *= invDet;
-					break;
-				case 1:
-					if ( numer <= 0.0 ) {
-						s = 0.0;
-					} else {
-						denom = a-2.0*b+c; // positive quantity
-						s = ( numer >= denom ? 1 : numer/denom );
-					}
-					t = 1.0-s;
-					break;
-				case 2:
-					tmp0 = b+d;
-					tmp1 = c+e;
-					if ( tmp1 > tmp0 ) {// minimum on edge s+t=1
-						numer = tmp1 - tmp0;
-						denom = a-2.0*b+c;
-						s = ( numer >= denom ? 1.0 : numer/denom );
-						t = 1.0-s;
-					} else { // minimum on edge s=0
-						s = 0.0;
-						t = ( tmp1 <= 0.0 ? 1.0 : ( e >= 0.0 ? 0.0 : -e/c ) );
-					}
-					break;
-				case 3:
-					s = 0.0;
-					t = ( e >= 0.0 ? 0.0 : ( -e >= c ? 1.0 : -e/c ) );
-					break;
-				case 4:
-					// fixed?
-					if (d < 0.0) {
-						  t = 0.0;
-						  s = ( -d >= a ? 1.0 : -d/a );
-					} else {
-						  s = 0.0;
-						  t = ( e >= 0.0 ? 0.0 : (-e >= c ? 1.0 : -e/c) );
-					}
-					break;
-				case 5:
-					s = ( d >= 0.0 ? 0.0 : ( -d >= a ? 1.0 : -d/a ) );
-					t = 0.0;
-					break;
-				case 6:
-					// fixed?
-					tmp0 = b+e;
-					tmp1 = a+d;
-					if ( tmp1 > tmp0 ) {// minimum on edge s+t=1
-						numer = tmp1 - tmp0;
-						denom = a-2.0*b+c;
-						t = ( numer >= denom ? 1.0 : numer/denom );
-						s = 1.0-t;
-					} else { // minimum on edge s=0
-						t = 0.0;
-						s = ( tmp1 <= 0.0 ? 1.0 : ( d >= 0.0 ? 0.0 : -d/a ) );
-					}
-					break;
-				default:
-					break;
-
-				}
-				Point3 closePt;
-				closePt = B + E0*s + E1*t;
-				//closePt += B;
-				//closePt += Point3(E0*=s);
-				//closePt += Point3(E1*=t);
-				double dist = closePt.distanceTo(P);
-				dmin = min(dist, dmin);
+			for(unsigned int i = 0; i < polygonPoints.size(); i++) {
+				pt = (Point3)polygonPoints[i];
+				d = pt.distanceTo(P);
+				dmin = min(d, dmin);
 			}
 			return dmin;
 		}
