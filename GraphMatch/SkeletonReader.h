@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.19.2.9  2009/06/01 20:32:52  schuhs
+//   Adding paths from sheets to other sheets and helices
+//
 //   Revision 1.19.2.8  2009/05/28 17:21:06  schuhs
 //   Adding casts to eliminate compiler warnings, adding console messages
 //
@@ -258,13 +261,9 @@ namespace wustl_mm {
 
 								// measure distance to every SSE sheet, add to running total
 								for(int j = 0; j < (int)helixes.size(); j++) {
-									// new code to find plates on skeleton that are associated with sheets
+									// find plates on skeleton that are associated with sheets
 									if(helixes[j]->geometricShapeType == GRAPHEDGE_SHEET) {
-										if (helixes[j]->IsInsideShape(point)) {
-											sheetDistance[i][j] += 0.0;
-										} else {
-											sheetDistance[i][j] += helixes[j]->PolygonsDistanceToPoint(point);
-										}
+										sheetDistance[i][j] += helixes[j]->MinimumDistanceToPoint(point);
 									}
 								}
 							}
