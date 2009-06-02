@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.13.2.4  2009/05/28 17:22:50  schuhs
+//   Fixing bug in destructor that caused the same volume object to be deleted twice
+//
 //   Revision 1.13.2.3  2009/05/22 19:29:00  schuhs
 //   Adding array to store correspondences between SSEBuilder sheets and sheets in graph
 //
@@ -246,23 +249,81 @@ namespace wustl_mm {
 			return helixes;
 		}
 
+		// measures Euclidian distance between all pairs of nodes, stores the distances in euclidianMatrix, and adds
+		// graph edges (stored in adjacencyMatrix) where the Euclidian distance is below EUCLIDEAN_DISTANCE_THRESHOLD
 		void StandardGraph::GenerateEuclidianMatrix(Volume * vol) {
 			double xSpacing = vol->getSpacingX();
 			double ySpacing = vol->getSpacingY();
 			double zSpacing = vol->getSpacingZ();
-			GeometricShape * helix1;
-			GeometricShape * helix2; 
+			GeometricShape * iSse;
+			GeometricShape * jSse; 
+			Point3Int iLoc(0,0,0,0);
+			int iCorners;
+			Point3Int jLoc(0,0,0,0);
+			int jCorners;
+
+			// count number of helices
+			int numH = 0;
+			for (unsigned int i = 0; i < (int)skeletonHelixes.size(); i++) {
+				if(skeletonHelixes[i]->geometricShapeType == GRAPHEDGE_HELIX) {
+					numH++;
+				}
+			}
+
+			// for each graph node i
 			for(int i = 0; i < nodeCount; i++) {
-				helix1 = skeletonHelixes[i/2];
-				Point3Int loc1 = helix1->GetCornerCell(1);
-				if(helix1->geometricShapeType == GRAPHEDGE_HELIX) {
-					loc1 = helix1->GetCornerCell(i%2 + 1);
+				// if i is a helix node
+				if (i < 2 * numH) {
+					iSse = skeletonHelixes[i/2];
+					iCorners = 1;
+				} else { // if i is a sheet node
+					iSse = skeletonHelixes[i - numH];
+					iCorners = iSse->cornerCells.size();
 				}
 
+				// for every other graph node j
 				for(int j = 0; j < nodeCount; j++) {
-					helix2 = skeletonHelixes[j/2];
-					Point3Int loc2 = helix2->GetCornerCell(j%2 + 1);				
-					euclideanMatrix[i][j] = sqrt(pow(xSpacing * (double)(loc1.x - loc2.x), 2) + pow(ySpacing *(double)(loc1.y - loc2.y), 2) + pow(zSpacing *(double)(loc1.z - loc2.z), 2));
+					// if j is a helix node
+					if (j < 2 * numH) {
+						jSse = skeletonHelixes[j/2];
+						jCorners = 1;
+					} else { // if j is a sheet node
+						jSse = skeletonHelixes[j - numH];
+						jCorners = jSse->cornerCells.size();
+					}
+
+					double minDist = MAXDOUBLE;
+					double dist;
+
+					// for every corner s of node i
+					for (int s = 1; s <= iCorners; s++) {
+						if (i < 2 * numH) {		// i is a helix node
+							iLoc = iSse->GetCornerCell(i%2 + 1);
+						} else {				 // i is a sheet node
+							iLoc = iSse->GetCornerCell(s);
+						}
+
+						// for every corner t of node j
+						for (int t = 1; t <= jCorners; t++) {
+							if (j < 2 * numH) {		// j is a helix node
+								jLoc = jSse->GetCornerCell(j%2 + 1);
+							} else {				// j is a sheet node 
+								jLoc = jSse->GetCornerCell(t);
+							}
+							
+							// measure distance between corner s of node i and corner t of node j
+							dist = sqrt(pow(xSpacing * (double)(iLoc.x - jLoc.x), 2) + pow(ySpacing *(double)(iLoc.y - jLoc.y), 2) + pow(zSpacing *(double)(iLoc.z - jLoc.z), 2));
+							// if this distance is closer than the smallest found previously, save it
+							if (dist < minDist) {
+								minDist = dist;
+							}
+							//cout << "distance. i=" << i << ",j=" << j << ",s=" << s << ",t=" << t << ", dist= " << dist << ", minDist=" << minDist << endl;
+						}
+					}
+					// store the distance between the points corresponding to nodes i and j in euclidianMatrix
+					euclideanMatrix[i][j] = minDist;
+
+					// if the distance is less than EUCLIDEAN_DISTANCE_THRESHOLD, store this in the graph as a Euclidian loop edge
 					if((adjacencyMatrix[i][j][1] == MAXINT) && (euclideanMatrix[i][j] <= EUCLIDEAN_DISTANCE_THRESHOLD))
 					{
 						adjacencyMatrix[i][j][1] = euclideanMatrix[i][j];
