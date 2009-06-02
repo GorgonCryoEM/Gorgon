@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.19.2.10  2009/06/01 21:04:29  schuhs
+//   Matching skeleton sheets to SSEBuilder sheets based on distance from skeleton points to pseudoatoms rather than distance from skeleton points to traingles.
+//
 //   Revision 1.19.2.9  2009/06/01 20:32:52  schuhs
 //   Adding paths from sheets to other sheets and helices
 //
@@ -93,10 +96,24 @@ namespace wustl_mm {
 
 		};
 
+		// returns the graph node index for corner cornerNum of helix/sheet helixNum
 		int SkeletonReader::GetGraphIndex(vector<GeometricShape*> & helixes, int helixNum, int cornerNum) {
-			return helixNum*2 + helixes[helixNum]->cornerCells[cornerNum].node;
+			int numH = 0;
+			for (unsigned int i = 0; i < (int)helixes.size(); i++) {
+				if(helixes[i]->geometricShapeType == GRAPHEDGE_HELIX) {
+					numH++;
+				}
+			}
+			if (helixNum < numH) {
+				// if this is a helix, index is 2*helixNum + cornerNum
+				return helixNum*2 + helixes[helixNum]->cornerCells[cornerNum].node;
+			} else {
+				// if this is a sheet, index is # helices + helixNum
+				return helixNum+numH;
+			}
 		}
 
+		// returns the graph node index for the corner of helix/sheet helixNum nearest to point point.
 		int SkeletonReader::GetGraphIndex(vector<GeometricShape*> & helixes, int helixNum, Point3Int * point) {
 			int node = 1;
 			double minDistance = MAXINT;
@@ -108,12 +125,22 @@ namespace wustl_mm {
 					minDistance = dist;
 				}
 			}
+
+			int numH = 0;
+			for (unsigned int i = 0; i < (int)helixes.size(); i++) {
+				if(helixes[i]->geometricShapeType == GRAPHEDGE_HELIX) {
+					numH++;
+				}
+			}
 			if(minDistance <= BORDER_MARGIN_THRESHOLD) {
-				return helixNum*2 + node;
+				if (helixNum < numH) {
+					return helixNum*2 + node;
+				} else {
+					return helixNum+numH;
+				}
 			} else {
 				return -1;
 			}
-			
 		}
 
 		StandardGraph * SkeletonReader::ReadFile(char * volumeFile, char * helixFile, char * sseFile, char * sheetFile) {
@@ -178,7 +205,6 @@ namespace wustl_mm {
 							for(int i = 0; i < (int)helixes.size(); i++) {
 								// if i is a helix and if point is inside helix i
 								if(helixes[i]->geometricShapeType == GRAPHEDGE_HELIX && helixes[i]->IsInsideShape(point)) {
-								//if(helixes[i]->IsInsideShape(point)) {
 									// store helix number for this point in the volume
 									paintedVol->setDataAt(x, y, z, i+1);
 									// add this point as as internal cell of the helix
@@ -191,41 +217,6 @@ namespace wustl_mm {
 				}
 			}
 
-							/* commenting out code that assigns skeleton plates to helices according to distance
-							// if voxel is a sheet voxel, check to see if it's near a skeleton plate
-							if (!inHelix && vol->isSheet(x,y,z)) {
-								int nearestSheet = -1; // sheet nearest this point
-								double distNearestSheet = MAXINT; 
-								double dist;
-
-								// check all helices to see if it's inside one
-								for(int i = 0; i < (int)helixes.size(); i++) {
-									// new code to find plates on skeleton that are associated with sheets
-									if(helixes[i]->geometricShapeType == GRAPHEDGE_SHEET) {
-										if (helixes[i]->IsInsideShape(point)) {
-											dist = 0.0;
-										} else {
-											dist = helixes[i]->PolygonsDistanceToPoint(point);
-										}
-										//cout << "distance to sheet " << i << " = " << dist << ", nearest sheet = " << nearestSheet << ", distance = " << distNearestSheet << endl;
-										if(dist < distNearestSheet) {
-											nearestSheet = i;
-											distNearestSheet = dist;
-										}
-									}
-								}
-								if (nearestSheet != -1 && distNearestSheet < 5) {
-									#ifdef VERBOSE
-										cout << "adding point to sheet " << nearestSheet << ". distance = " << distNearestSheet << endl;
-									#endif // VERBOSE
-									// store helix number for this point in the volume
-									paintedVol->setDataAt(x, y, z, nearestSheet+1);
-									// add this point as as internal cell of the helix
-									helixes[nearestSheet]->AddInternalCell(Point3Int(x, y, z, 0));
-								}
-							}
-							*/
-
 			Volume* sheetClusters = getSheetsNoThreshold(vol, MINIMUM_SHEET_SIZE);
 
 			// make the offset and scale of sheetClusters volume match the vol volume
@@ -233,13 +224,6 @@ namespace wustl_mm {
 			sheetClusters->setSpacing(vol->getSpacingX(), vol->getSpacingY(), vol->getSpacingZ() );
 
 			int numSkeletonSheets = (int) sheetClusters->getMax();
-
-			//int numSSESheets = 0;
-			//for(int i = 0; i < (int)helixes.size(); i++) {
-			//	if(helixes[i]->geometricShapeType == GRAPHEDGE_SHEET) {
-			//		numSSESheets++;
-			//	}
-			//}
 
 			cout << "min sheet size = " << MINIMUM_SHEET_SIZE << ", num skeleton sheets = " << numSkeletonSheets << ", num SSEs = " << (int)helixes.size() << endl;
 
@@ -288,7 +272,6 @@ namespace wustl_mm {
 
 
 			vector<int> sseSheetMapping(numSkeletonSheets+1, -1);
-			//vector<vector<double>> sheetDistance(numSkeletonSheets+1, vector<double> ((int)helixes.size()) );
 			cout << "sheet correspondences: " << endl;
 			cout << "max distance from sheet to skeleton = " << MAXIMUM_DISTANCE_SHEET_SKELETON << endl;
 
@@ -355,54 +338,56 @@ namespace wustl_mm {
 			//vol = outputVol;
 			//delete skeletonizer;
 
+			int numH = 0;
+			int numS = 0;
+			for (unsigned int i = 0; i < (int)helixes.size(); i++) {
+				if(helixes[i]->geometricShapeType == GRAPHEDGE_HELIX) {
+					numH++;
+				}
+				if(helixes[i]->geometricShapeType == GRAPHEDGE_SHEET) {
+					numS++;
+				}
+			}
 
-
-			//for(point[0] = -xOffset; point[0] < vol->getSizeX() - xOffset; point[0]++) {
-			//	pointScaled[0] = point[0] * vol->getSpacingX();
-			//	
-			//	for(point[1] = -yOffset; point[1] < vol->getSizeY() - yOffset; point[1]++) {
-			//		pointScaled[1] = point[1] * vol->getSpacingY();
-			//		for(point[2] = -zOffset; point[2] < vol->getSizeY() - zOffset; point[2]++) {
-			//			pointScaled[2] = point[2] * vol->getSpacingZ();
-			//			for(int i = 0; i < (int)helixes.size(); i++) {
-			//				
-			//				if((vol->getDataAt((int)(point[0]+xOffset), (int)(point[1]+yOffset), (int)(point[2]+zOffset)) > 0) && helixes[i]->IsInsideShape(pointScaled)) {						
-			//					paintedVol->setDataAt((int)(point[0]+xOffset), (int)(point[1]+yOffset), (int)(point[2]+zOffset), i + 1);
-			//					helixes[i]->AddInternalCell(Point3Int((int)(point[0]+xOffset), (int)(point[1]+yOffset), (int)(point[2]+zOffset), 0));
-			//				}
-			//			}
-			//		}
-			//	}
-			//}
-
-			StandardGraph * graph = new StandardGraph(2*helixes.size());
+			StandardGraph * graph = new StandardGraph(2 * numH + numS);
 
 			// create a graph with one node per helix end point and with edges connecting nodes that
 			// are connected along the volume.
 			for(unsigned int i = 0; i < (int)helixes.size(); i++) {
 				if(helixes[i]->geometricShapeType == GRAPHEDGE_HELIX) {
+					// assign node numbers for helix ends
+					int node1 = (i*2)+1;
+					int node2 = (i*2)+2;
+
 					// find the two corner cells in this helix
 					helixes[i]->FindCornerCellsInHelix();
+
+					// length of this helix
+					float length = helixes[i]->length;
+
+					// populate adjacency matrix
+					// no cost to go from a helix end back to itself
+					graph->SetCost(node1, node1, 0);
+					graph->SetCost(node2, node2, 0);
+					// cost of traversing a helix is the helix length
+					graph->SetCost(node1, node2, length);
+					// mark this edge type as helix or sheet, determined by helixes graph
+					graph->SetType(node1, node2, helixes[i]->geometricShapeType);
+					// same for reverse direction
+					graph->SetCost(node2, node1, length);
+					graph->SetType(node2, node1, helixes[i]->geometricShapeType);
 				} else if (helixes[i]->geometricShapeType == GRAPHEDGE_SHEET) {
-					// find the (#?) corner cells in this sheet
+					// assign node number this sheet
+					int sheetNode = numH + i; // each helix takes two nodes
+
+					// find all the corner cells in this sheet
 					FindCornerCellsInSheet(vol, paintedVol, helixes, i);
+					// no cost to go from a sheet node back to itself
+					graph->SetCost(sheetNode, sheetNode, 0);
+					//graph->SetType(numH, numH, helixes[i]->geometricShapeType);
 				}
 
-				// length of this helix
-				float length = helixes[i]->length;
-				//float length = helixes[i]->internalCells.size(); //Old Method
 
-				// populate adjacency matrix
-				// no cost to go from a helix/sheet end back to itself
-				graph->SetCost((i*2)+1, (i*2)+1, 0);
-				graph->SetCost((i*2)+2, (i*2)+2, 0);
-				// cost of traversing a helix is the helix length
-				graph->SetCost((i*2)+1, (i*2)+2, length);
-				// mark this edge type as helix or sheet, determined by helixes graph
-				graph->SetType((i*2)+1, (i*2)+2, helixes[i]->geometricShapeType);
-				// same for reverse direction
-				graph->SetCost((i*2)+2, (i*2)+1, length);
-				graph->SetType((i*2)+2, (i*2)+1, helixes[i]->geometricShapeType);
 			}
 			
 			#ifdef VERBOSE
@@ -423,13 +408,13 @@ namespace wustl_mm {
 				printf("Finished running FindSizes.\n");
 			#endif // VERBOSE
 
-			// populate graph->skeletonHelixes with list of helices
+			// populate graph->skeletonHelixes with list of helices and sheets
 			for(int i = 0; i < (int)helixes.size(); i++) {
 				graph->skeletonHelixes.push_back(helixes[i]);
 			}
 
 			#ifdef VERBOSE
-				printf("Finished creating a list of helices (and sheets?).\n");
+				printf("Finished creating a list of helices and sheets.\n");
 			#endif // VERBOSE
 
 			// save results to graph->skeletonVolume
@@ -453,7 +438,8 @@ namespace wustl_mm {
 				printf("Graph saved to object.\n");
 			#endif // VERBOSE
 
-
+			// measure Euclidian distance between all pairs of nodes and add edges between those nodes that are
+			// closer than EUCLIDIAN_DISTANCE_THRESHOLD
 			graph->GenerateEuclidianMatrix(vol);
 
 			#ifdef VERBOSE
@@ -636,9 +622,10 @@ namespace wustl_mm {
 					// if this voxel has not already been labeled as a corner cell, do so now
 					if(!found) {
 						helixes[sheetId]->cornerCells.push_back(helixes[sheetId]->internalCells[i]);	
-						helixes[sheetId]->cornerCells[helixes[sheetId]->cornerCells.size()-1].node = 1;
+						//helixes[sheetId]->cornerCells[helixes[sheetId]->cornerCells.size()-1].node = 1;
+						helixes[sheetId]->cornerCells[helixes[sheetId]->cornerCells.size()-1].node = helixes[sheetId]->cornerCells.size();
 						#ifdef VERBOSE
-							cout << "Sheet corner cell found at sheet " << sheetId << " node " << i << ", coordinates (" << helixes[sheetId]->internalCells[i].x << "," << helixes[sheetId]->internalCells[i].y << "," << helixes[sheetId]->internalCells[i].z << "), outsideCounter = " << outsideCounter << endl;
+							cout << "Sheet corner cell found at sheet " << sheetId << " node " << i << ", corner " << helixes[sheetId]->cornerCells.size() << ", coordinates (" << helixes[sheetId]->internalCells[i].x << "," << helixes[sheetId]->internalCells[i].y << "," << helixes[sheetId]->internalCells[i].z << "), outsideCounter = " << outsideCounter << endl;
 						#endif // VERBOSE
 					}
 				}
@@ -851,6 +838,7 @@ namespace wustl_mm {
 						n1 = GetGraphIndex(helixList, startHelix, startCell);
 						n2 = GetGraphIndex(helixList, currentHelix, currentPoint);
 						if((n1 >= 0) && (n2 >= 0)) {
+							// TODO modify for sheets (might not be necessary)
 							// store the distance to the currentPoint as the cost of going from the start helix to the currentPoint helix
 							graph->SetCost(n1, n2, currentPoint->distance);
 							// this is a loop type
@@ -928,8 +916,8 @@ namespace wustl_mm {
 				// store all sheet corners in nodes vector
 				if (graph->skeletonHelixes[i]->IsSheet()) {
 					node = vector<Vector3DInt>();
-					for(unsigned int j = 0; j < graph->skeletonHelixes[i]->cornerCells.size(); j++) {
-						pt = graph->skeletonHelixes[i]->cornerCells[j];
+					for(unsigned int j = 1; j <= graph->skeletonHelixes[i]->cornerCells.size(); j++) {
+						pt = graph->skeletonHelixes[i]->GetCornerCell(j);
 						node.push_back(Vector3DInt(pt.x, pt.y, pt.z));
 					}
 					nodes.push_back(node);
@@ -1098,6 +1086,24 @@ namespace wustl_mm {
 			if (shortestPathLength < MAXINT) { 
 				graph->paths[startIx][endIx] = shortestPath;
 			}
+
+			if(eraseMask) {
+				// for each voxel along the path found above
+				for(int i = 1; i < (int)graph->paths[startIx][endIx].size()-1; i++) {
+					Vector3DInt currentPos = graph->paths[startIx][endIx][i];
+					Point3 pt = Point3(currentPos.X(), currentPos.Y(), currentPos.Z());
+					// if this voxel is inside either the start helix or the end helix for this path
+					if(graph->skeletonHelixes[(int)startIx/2]->IsInsideShape(pt) || 
+							graph->skeletonHelixes[(int)endIx/2]->IsInsideShape(pt)) {
+						// erase the voxel from maskVol
+						//cout << " - setting to zero point (" << currentPos.X() << "," << currentPos.Y() << "," << currentPos.Y() << "), formerly = " << maskVol->getDataAt(currentPos.X(), currentPos.Y(), currentPos.Z() ) << endl;
+						maskVol->setDataAt(currentPos.X(), currentPos.Y(), currentPos.Z(), 0.0);
+
+					}
+				}
+			}
+
+
 		}
 
 
