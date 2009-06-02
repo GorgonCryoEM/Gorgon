@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.19.2.11  2009/06/02 17:38:53  schuhs
+//   Fixing GetGraphIndex methods and modifying graph building code to handle sheets.
+//
 //   Revision 1.19.2.10  2009/06/01 21:04:29  schuhs
 //   Matching skeleton sheets to SSEBuilder sheets based on distance from skeleton points to pseudoatoms rather than distance from skeleton points to traingles.
 //
@@ -395,11 +398,12 @@ namespace wustl_mm {
 			#endif // VERBOSE
 
 			// find the costs of all other paths along the volume, from any helix end to any other helix end
+			// store the results as edges in the graph
 			for(int i = 0; i < (int)helixes.size(); i++) {
 				// for every entry and exit point of that helix/sheet
 				for(int j = 0; j < (int)helixes[i]->cornerCells.size(); j++) {
 					// find all the paths from the entry/exit point to every other helix.
-					// results are stored in vol and paintedVol.
+					// results are stored in vol and paintedVol and as graph edges.
 					FindSizes(i, j, helixes, vol, paintedVol, graph);
 				}
 			}
@@ -446,7 +450,8 @@ namespace wustl_mm {
 				printf("Euclidian matrix generated.\n");
 			#endif // VERBOSE
 			
-			// traverse the volume to find the shortest paths from each helix corner to every other helix
+			// traverse the volume to find paths from each helix corner to every other helix along the volume
+			// result is used for visualization only -- does not affect the graph topology
 			FindPaths(graph);
 
 			#ifdef VERBOSE
@@ -763,8 +768,9 @@ namespace wustl_mm {
 			}
 		}
 
-		// finds the loops from the helix end given by helixList[startHelix]->cornerCells[startCell] to all other helices
-		// and stores them in the graph object using graph->SetCost and graph->SetType
+		// finds the loops from the helix/sheet corner given by helixList[startHelix]->cornerCells[startCell] to 
+		// all other helices/sheets by flooding outward along the skeleton volume
+		// stores the resulting loops in the graph object using graph->SetCost and graph->SetType
 		void SkeletonReader::FindSizes(int startHelix, int startCell, vector<GeometricShape*> & helixList, Volume * vol, Volume * coloredVol, StandardGraph * graph) {
 			vector<Point3Int *> oldStack;
 			vector<Point3Int *> newStack;
@@ -830,16 +836,16 @@ namespace wustl_mm {
 					// mark this point as visited
 					visited->setDataAt(xx, yy, zz, 1);
 
-					// if the current point is inside some helix other than the start helix
+					// if the current point is inside some helix/sheet other than the start helix/sheet
 					if((currentHelix >= 0) && (currentHelix != startHelix)) {
 						int n1, n2;
-						// n1 is the graph index of start helix in helixList. 
-						// n2 is the graph index of currentPoint, which is some other helix.
+						// n1 is the graph index of start helix/sheet in helixList. 
+						// n2 is the graph index of currentPoint, which is some other helix/sheet.
 						n1 = GetGraphIndex(helixList, startHelix, startCell);
 						n2 = GetGraphIndex(helixList, currentHelix, currentPoint);
-						if((n1 >= 0) && (n2 >= 0)) {
-							// TODO modify for sheets (might not be necessary)
-							// store the distance to the currentPoint as the cost of going from the start helix to the currentPoint helix
+						if( (n1 >= 0) && (n2 >= 0) && (currentPoint->distance < graph->GetCost(n1, n2)) ) {
+							// store the distance to the currentPoint as the cost of going from the start helix/sheet to the currentPoint helix/sheet
+							//cout << "cost from " << n1 << "(sse" << startHelix << "cnr" << startCell <<") to " << n2 << "(sse" << currentHelix << ") = " << graph->GetCost(n1, n2) << ". changing to " << currentPoint->distance << endl;
 							graph->SetCost(n1, n2, currentPoint->distance);
 							// this is a loop type
 							graph->SetType(n1, n2, GRAPHEDGE_LOOP);
@@ -847,11 +853,11 @@ namespace wustl_mm {
 							graph->SetCost(n2, n1, currentPoint->distance);
 							graph->SetType(n2, n1, GRAPHEDGE_LOOP);
 						}
-						// stop expanding, since some other helix has been found
+						// stop expanding, since some other helix/sheet has been found
 						expand = false;
 					}
 
-					// if no other helix has been found yet, keep expanding
+					// if no other helix/sheet has been found yet, keep expanding
 					if(expand) {
 						// for each of 26 neighbors
 						for(int j = 0; j < 26; j++) {
@@ -867,7 +873,7 @@ namespace wustl_mm {
 								// if all these conditions met:
 								//    this point not yet visited
 								//    volume at this point has value at least 0.001
-								//    this point is not inside the start helix 
+								//    this point is not inside the start helix or on the start sheet
 								if((visited->getDataAt(x, y, z) <= 0.001) && (vol->getDataAt(x, y, z) > 0.001) &&
 									(Round(coloredVol->getDataAt(x, y, z)) - 1 != startHelix)) {
 									// add this point to newStack with distance = | cPt - nPt |
@@ -1088,6 +1094,7 @@ namespace wustl_mm {
 			}
 
 			if(eraseMask) {
+				// TODO: Fix for sheets
 				// for each voxel along the path found above
 				for(int i = 1; i < (int)graph->paths[startIx][endIx].size()-1; i++) {
 					Vector3DInt currentPos = graph->paths[startIx][endIx][i];
