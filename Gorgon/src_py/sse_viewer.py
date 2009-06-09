@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.24  2009/04/02 19:00:20  ssa1
+#   CAlpha Viewer bug fixes and smoother uniform functionality
+#
 #   Revision 1.23  2009/03/17 20:00:17  ssa1
 #   Removing Sheets from fiting process
 #
@@ -108,9 +111,13 @@ class SSEViewer(BaseViewer):
         self.helixCorrespondanceFinder = SSEHelixCorrespondenceFinderForm(self.app, self)
     
     def loadHelixData(self):
-        self.helixFileName = QtGui.QFileDialog.getOpenFileName(self, self.tr("Open Data"), "", self.tr(self.renderer.getSupportedLoadFileFormats()))
-        self.fileName = self.helixFileName;
-        if not self.helixFileName.isEmpty():  
+        helixFileName = str(QtGui.QFileDialog.getOpenFileName(self, self.tr("Open Data"), "", self.tr(self.renderer.getSupportedLoadFileFormats())))
+        self.loadHelixDataFile(helixFileName)
+               
+    def loadHelixDataFile(self, fileName):
+        self.helixFileName = fileName
+        self.fileName = self.helixFileName
+        if not self.helixFileName == "":  
             self.setCursor(QtCore.Qt.WaitCursor)
             self.renderer.loadHelixFile(str(self.helixFileName))
             self.loaded = True
@@ -119,9 +126,13 @@ class SSEViewer(BaseViewer):
             self.emitViewerSetCenter()        
                
     def loadSheetData(self):
-        self.sheetFileName = QtGui.QFileDialog.getOpenFileName(self, self.tr("Open Data"), "", self.tr(self.renderer.getSupportedLoadFileFormats()))
-        self.fileName = self.sheetFileName;
-        if not self.sheetFileName.isEmpty():  
+        sheetFileName = QtGui.QFileDialog.getOpenFileName(self, self.tr("Open Data"), "", self.tr(self.renderer.getSupportedLoadFileFormats()))
+        self.loadSheetDataFile(sheetFileName)
+                                          
+    def loadSheetDataFile(self, fileName):
+        self.sheetFileName = fileName
+        self.fileName = self.sheetFileName
+        if not self.sheetFileName == "":  
             self.setCursor(QtCore.Qt.WaitCursor)
             self.renderer.loadSheetFile(str(self.sheetFileName))
             self.loaded = True
