@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.16.2.1  2009/06/09 16:28:19  schuhs
+//   Adding methods to get global constants
+//
 //   Revision 1.16  2008/11/25 03:30:12  ssa1
 //   User constraints on finding correspondences (v2)
 //
@@ -115,7 +118,6 @@ namespace wustl_mm {
 		}
 
 		bool BackEndInterface::GetConstant(char * token, char * value) {
-			char * sVal;
 			int iVal;
 			double dVal;
 			bool bVal;
@@ -123,13 +125,11 @@ namespace wustl_mm {
 		}
 
 		string BackEndInterface::GetConstantString(char * token) {
-			//char * sVal[100];
-			char * sVal;
+			char sVal[100];
 			int iVal;
 			double dVal;
 			bool bVal;
 			GetConstantFromToken(token, sVal, dVal, iVal, bVal);
-			
 			return sVal;
 		}
 
