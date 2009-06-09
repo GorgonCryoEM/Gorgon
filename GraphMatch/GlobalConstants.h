@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.32.2.3  2009/05/28 17:06:08  schuhs
+//   Adding constants for creating sheets from skeleton
+//
 //   Revision 1.32.2.2  2009/05/22 19:24:06  schuhs
 //   Adding parameters for graph creation from skeleton sheets and SSEHunter output
 //
@@ -282,6 +285,62 @@ namespace wustl_mm {
 				MISSING_SHEET_COUNT = intValue;
 			} else if(strcmp(token, TOKEN_EUCLIDEAN_VOXEL_TO_PDB_RATIO) == 0) {
 				EUCLIDEAN_VOXEL_TO_PDB_RATIO = doubleValue;
+			} else {
+				return false;
+			}
+			return true;
+		}
+
+
+		bool GetConstantFromToken(char * token, char * stringValue, double &doubleValue, int &intValue, bool &boolValue) {
+			if(strcmp(token, TOKEN_SSE_FILE_NAME) == 0) {
+				strcpy(stringValue, SSE_FILE_NAME);
+			} else if(strcmp(token, TOKEN_VRML_HELIX_FILE_NAME) == 0) {
+				strcpy(stringValue, VRML_HELIX_FILE_NAME);
+			} else if(strcmp(token, TOKEN_VRML_SHEET_FILE_NAME) == 0) {
+				strcpy(stringValue, VRML_SHEET_FILE_NAME);
+			} else if(strcmp(token, TOKEN_SEQUENCE_FILE_NAME) == 0) {
+				strcpy(stringValue, SEQUENCE_FILE_NAME);
+			} else if(strcmp(token, TOKEN_SEQUENCE_FILE_TYPE) == 0) {
+				strcpy(stringValue, SEQUENCE_FILE_TYPE);
+			} else if(strcmp(token, TOKEN_MRC_FILE_NAME) == 0) {
+				strcpy(stringValue, MRC_FILE_NAME);
+			} else if(strcmp(token, TOKEN_MAXIMUM_DISTANCE_SHEET_SKELETON) == 0) {
+				doubleValue = MAXIMUM_DISTANCE_SHEET_SKELETON;
+			} else if(strcmp(token, TOKEN_MINIMUM_SHEET_SIZE) == 0) {
+				intValue = MINIMUM_SHEET_SIZE;
+			} else if(strcmp(token, TOKEN_EUCLIDEAN_DISTANCE_THRESHOLD) == 0) {
+				doubleValue = EUCLIDEAN_DISTANCE_THRESHOLD;
+			} else if(strcmp(token, TOKEN_BORDER_MARGIN_THRESHOLD) == 0) {
+				intValue = BORDER_MARGIN_THRESHOLD;
+			} else if(strcmp(token, TOKEN_NORMALIZE_GRAPHS) == 0) {
+				boolValue = NORMALIZE_GRAPHS;
+			} else if(strcmp(token, TOKEN_MISSING_HELIX_PENALTY) == 0) {
+				doubleValue = MISSING_HELIX_PENALTY;
+			} else if(strcmp(token, TOKEN_EUCLIDEAN_LOOP_PENALTY) == 0) {
+				doubleValue = EUCLIDEAN_LOOP_PENALTY;
+			} else if(strcmp(token, TOKEN_START_END_MISSING_HELIX_PENALTY) == 0) {
+				doubleValue = START_END_MISSING_HELIX_PENALTY;
+			} else if(strcmp(token, TOKEN_HELIX_WEIGHT_COEFFICIENT) == 0) {
+				doubleValue = HELIX_WEIGHT_COEFFICIENT;
+			} else if(strcmp(token, TOKEN_LOOP_WEIGHT_COEFFICIENT) == 0) {
+				doubleValue = LOOP_WEIGHT_COEFFICIENT;
+			} else if(strcmp(token, TOKEN_MISSING_HELIX_LENGTH) == 0) {
+				doubleValue = MISSING_HELIX_LENGTH;
+			} else if(strcmp(token, TOKEN_SHEET_WEIGHT_COEFFICIENT) == 0) {
+				doubleValue = SHEET_WEIGHT_COEFFICIENT;
+			} else if(strcmp(token, TOKEN_COST_FUNCTION) == 0) {
+				intValue = COST_FUNCTION;
+			} else if(strcmp(token, TOKEN_VOXEL_SIZE) == 0) {
+				doubleValue = VOXEL_SIZE;
+			} else if(strcmp(token, TOKEN_TRANSLATE_VOLUMETRIC_COORDINATES) == 0) {
+				boolValue = TRANSLATE_VOLUMETRIC_COORDINATES;
+			} else if(strcmp(token, TOKEN_MISSING_HELIX_COUNT) == 0) {
+				intValue = MISSING_HELIX_COUNT;
+			} else if(strcmp(token, TOKEN_MISSING_SHEET_COUNT) == 0) {
+				intValue = MISSING_SHEET_COUNT;
+			} else if(strcmp(token, TOKEN_EUCLIDEAN_VOXEL_TO_PDB_RATIO) == 0) {
+				doubleValue = EUCLIDEAN_VOXEL_TO_PDB_RATIO;
 			} else {
 				return false;
 			}
