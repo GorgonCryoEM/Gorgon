@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.56  2009/03/31 21:40:13  ssa1
+#   Refactoring: Splitting seq_model\SequenceView.py into subclasses
+#
 #   Revision 1.55  2009/03/24 19:25:54  ssa1
 #   Fixing scaling bug in interactive skeletonization
 #
@@ -363,8 +366,12 @@ class BaseViewer(QtOpenGL.QGLWidget):
             
           
     def loadData(self):
-        self.fileName = QtGui.QFileDialog.getOpenFileName(self, self.tr("Open Data"), "", self.tr(self.renderer.getSupportedLoadFileFormats()))
-        if not self.fileName.isEmpty():  
+        fileName = str(QtGui.QFileDialog.getOpenFileName(self, self.tr("Open Data"), "", self.tr(self.renderer.getSupportedLoadFileFormats())))
+        self.loadDataFile(fileName)
+
+    def loadDataFile(self, fileName):
+        self.fileName = fileName
+        if not self.fileName == "":  
             self.setCursor(QtCore.Qt.WaitCursor)
             self.renderer.loadFile(str(self.fileName))
             self.setScaleNoEmit(self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ())       
