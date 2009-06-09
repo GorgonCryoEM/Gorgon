@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.20  2008/12/15 22:38:31  ssa1
+#   Adding in support to load RAW volumes
+#
 #   Revision 1.19  2008/11/28 04:36:17  ssa1
 #   Removing error message if pyopengl does not exist.  (To make executable building easier to debug)
 #
@@ -138,9 +141,13 @@ class VolumeViewer(BaseViewer):
         pass 
     
     def loadData(self):
-        self.fileName = QtGui.QFileDialog.getOpenFileName(self, self.tr("Open Data"), "", self.tr(self.renderer.getSupportedLoadFileFormats()))
+        fileName = str(QtGui.QFileDialog.getOpenFileName(self, self.tr("Open Data"), "", self.tr(self.renderer.getSupportedLoadFileFormats())))
+        self.loadDataFile(fileName)
+
+    def loadDataFile(self, fileName):
+        self.fileName = fileName
                 
-        if not self.fileName.isEmpty():  
+        if not self.fileName == "":  
             self.setCursor(QtCore.Qt.WaitCursor)
             
             tokens = split(str(self.fileName), '.')            
