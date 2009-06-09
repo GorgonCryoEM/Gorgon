@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.50.2.2  2009/05/22 19:16:25  schuhs
+//   Adding methods to CorrespondenceEngine and SSERenderer to change colors of helices and sheets
+//
 //   Revision 1.50.2.1  2009/05/13 20:51:31  schuhs
 //   Adding binding for DrawAllPaths method, which draws all paths used by the SSECorrespondenceFinder action.
 //
@@ -473,10 +476,15 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("setConstant", SetConstant2)
 		.def("setConstantInt", SetConstant3)
 		.def("setConstantBool", SetConstant4)
+		.def("getConstant", &SSECorrespondenceEngine::GetConstant)
+		.def("getConstantString", &SSECorrespondenceEngine::GetConstantString)
+		.def("getConstantDouble", &SSECorrespondenceEngine::GetConstantDouble)
+		.def("getConstantInt", &SSECorrespondenceEngine::GetConstantInt)
+		.def("getConstantBool", &SSECorrespondenceEngine::GetConstantBool)
 		.def("clearAllConstraints", &SSECorrespondenceEngine::ClearAllConstraints)			
 		.def("setHelixConstraint", &SSECorrespondenceEngine::SetHelixConstraint)			
 		.def("setSSEColor", &SSECorrespondenceEngine::SetSSEColor)			
-        .def("setConstantsFromFile", &SSECorrespondenceEngine::SetConstantsFromFile)		
+        	.def("setConstantsFromFile", &SSECorrespondenceEngine::SetConstantsFromFile)		
 		.def("saveCorrespondenceToFile", &SSECorrespondenceEngine::SaveCorrespondenceToFile)
 		.def("loadSkeletonGraph", &SSECorrespondenceEngine::LoadSkeletonGraph)
 		.def("loadSequenceGraph", &SSECorrespondenceEngine::LoadSequenceGraph)
