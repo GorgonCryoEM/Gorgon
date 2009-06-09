@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.16  2008/11/25 03:30:12  ssa1
+//   User constraints on finding correspondences (v2)
+//
 //   Revision 1.15  2008/11/24 20:02:53  ssa1
 //   User constraints on finding correspondences (v1)
 //
@@ -54,6 +57,11 @@ namespace wustl_mm {
 			bool SetConstant(char * token, double value);
 			bool SetConstant(char * token, int value);
 			bool SetConstant(char * token, bool value);
+			bool GetConstant(char * token, char * value);
+			string GetConstantString(char * token);
+			double GetConstantDouble(char * token);
+			int GetConstantInt(char * token);
+			bool GetConstantBool(char * token);
 			void ClearAllConstraints();
 			void SetHelixConstraint(int sequenceHelix, int skeletonHelix);
 			// Graph Loading
@@ -104,6 +112,49 @@ namespace wustl_mm {
 
 		bool BackEndInterface::SetConstant(char *token, bool value) {
 			return SetConstantFromToken(token, NULL, 0.0, 0, value);
+		}
+
+		bool BackEndInterface::GetConstant(char * token, char * value) {
+			char * sVal;
+			int iVal;
+			double dVal;
+			bool bVal;
+			return GetConstantFromToken(token, value, dVal, iVal, bVal);
+		}
+
+		string BackEndInterface::GetConstantString(char * token) {
+			//char * sVal[100];
+			char * sVal;
+			int iVal;
+			double dVal;
+			bool bVal;
+			GetConstantFromToken(token, sVal, dVal, iVal, bVal);
+			
+			return sVal;
+		}
+
+		double BackEndInterface::GetConstantDouble(char *token) {
+			int iVal;
+			double dVal;
+			bool bVal;
+			GetConstantFromToken(token, NULL, dVal, iVal, bVal);
+			return dVal;
+		}
+
+		int BackEndInterface::GetConstantInt(char *token) {
+			int iVal;
+			double dVal;
+			bool bVal;
+			GetConstantFromToken(token, NULL, dVal, iVal, bVal);
+			return iVal;
+		}
+
+		bool BackEndInterface::GetConstantBool(char *token) {
+			int iVal;
+			double dVal;
+			bool bVal;
+			GetConstantFromToken(token, NULL, dVal, iVal, bVal);
+			return bVal;
 		}
 
 		void BackEndInterface::ClearAllConstraints() {
