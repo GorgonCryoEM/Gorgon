@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.36.2.3  2009/05/28 17:00:27  schuhs
+#   Sheet skeleton parameters can be set from the UI now
+#
 #   Revision 1.36.2.2  2009/05/22 19:22:15  schuhs
 #   Adding new tab to SSE correspondence form to set and change graph parameters and control graph visualization
 #
@@ -164,6 +167,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
         self.connect(self.ui.pushButtonGetSheetLocationFile, QtCore.SIGNAL("pressed ()"), self.getSheetLocationFile)
         self.connect(self.ui.pushButtonGetSkeletonFile, QtCore.SIGNAL("pressed ()"), self.getSkeletonFile)
         self.connect(self.ui.pushButtonGetSequenceFile, QtCore.SIGNAL("pressed ()"), self.getSequenceFile)
+        self.connect(self.ui.pushButtonGetSettingsFile, QtCore.SIGNAL("pressed ()"), self.getSettingsFile)
         self.connect(self.ui.pushButtonReset, QtCore.SIGNAL("pressed ()"), self.loadDefaults)
         self.connect(self.ui.pushButtonCancel, QtCore.SIGNAL("pressed ()"), self.reject)
         self.connect(self.ui.pushButtonOk, QtCore.SIGNAL("pressed ()"), self.accept)
@@ -234,10 +238,17 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
         
     def getSequenceFile(self):
         """
-This loads a SEQ file or, for testing purposes, a PDB file.
+        This loads a SEQ file or, for testing purposes, a PDB file.
         """
-        self.ui.lineEditSequenceFile.setText(self.openFile("Load Helix Length File", "Sequence with SSE predictions (*.seq)\nPDB Helix Annotations (*.pdb)"))
+        self.ui.lineEditSequenceFile.setText(self.openFile("Load Sequence File", "Sequence with SSE predictions (*.seq)\nPDB Helix Annotations (*.pdb)"))
         self.checkOk()
+    
+    def getSettingsFile(self):
+        """
+        This loads a settings file, which contains filenames and search parameters.
+        """
+        self.ui.lineEditSettingsFile.setText(self.openFile("Load Settings File", "Settings File (*.txt)"))
+        self.loadSettings()
     
     def checkOk(self):
         """
@@ -297,6 +308,82 @@ This loads a SEQ file or, for testing purposes, a PDB file.
     def createMenus(self):
         self.app.menus.addAction("actions-sse-findhelixcorrespondences", self.app.actions.getAction("perform_SSEFindHelixCorrespondences"), "actions-sse")        
     
+    def loadSettings(self):
+        print "loading settings file"
+        self.setCursor(QtCore.Qt.BusyCursor)
+               
+        print "calling setConstantsFromFile" 
+        self.viewer.correspondenceEngine.setConstantsFromFile(str(self.ui.lineEditSettingsFile.text()))
+
+        print "copying constants from file to GUI" 
+        self.getConstants()
+
+        print "getting settings filename"
+        settingsFilename = str(self.ui.lineEditSettingsFile.text())
+        
+        print "reading other filenames for parsing"
+        sseFilename = self.viewer.correspondenceEngine.getConstantString("SSE_FILE_NAME")
+        print "sse filename is " + sseFilename
+        helixFilename = self.viewer.correspondenceEngine.getConstantString("VRML_HELIX_FILE_NAME")
+        print "helix filename is " + helixFilename
+        sheetFilename = self.viewer.correspondenceEngine.getConstantString("VRML_SHEET_FILE_NAME")
+        print "sheet filename is " + sheetFilename
+        sequenceFilename = self.viewer.correspondenceEngine.getConstantString("SEQUENCE_FILE_NAME")
+        print "sequence filename is " + sequenceFilename
+        skeletonFilename = self.viewer.correspondenceEngine.getConstantString("MRC_FILE_NAME")
+        print "skeleton filename is " + skeletonFilename
+        
+        import os
+        path,settingsFile = os.path.split(settingsFilename)
+        ssePath,sseFile = os.path.split(sseFilename)
+        helixPath,helixFile = os.path.split(helixFilename)
+        sheetPath,sheetFile = os.path.split(sheetFilename)
+        skeletonPath,skeletonFile = os.path.split(skeletonFilename)
+        seqPath,seqFile = os.path.split(sequenceFilename)
+
+        print "The path (raw) is " + path
+        path = path.replace('/', os.sep)  # replace forward slash with separator for this OS
+        path = path.replace('\\', os.sep) # replace backslash with separator for this OS
+        print "The path (fixed) is " + path
+
+        settingsFilePath = path + os.sep + settingsFile
+        sseFilePath = path + os.sep + sseFile
+        helixFilePath = path + os.sep + helixFile
+        sheetFilePath = path + os.sep + sheetFile
+        skeletonFilePath = path + os.sep + skeletonFile
+        seqFilePath = path + os.sep + seqFile
+
+        print "The settings file is " + settingsFilePath
+        print "The sse file is " + sseFilePath
+        print "The helix file is " + helixFilePath
+        print "The sheet file is " + sheetFilePath
+        print "The skeleton file is " + skeletonFilePath
+        print "The seq file is " + seqFilePath
+        
+        # store sequence filename
+        self.ui.lineEditSequenceFile.setText(seqFilePath)
+        
+        # load helix file and store the filename
+        self.viewer.loadHelixDataFile(helixFilePath)
+        self.ui.lineEditHelixLocationFile.setText(helixFilePath)
+
+        # load sheet file and store the filename
+        self.viewer.loadSheetDataFile(sheetFilePath)
+        self.ui.lineEditSheetLocationFile.setText(sheetFilePath)
+
+        # load skeleton file and store the filename
+        self.app.viewers["skeleton"].loadDataFile(skeletonFilePath)
+        self.ui.lineEditSkeletonFile.setText(skeletonFilePath)
+
+        # store helix length filename
+        self.ui.lineEditHelixLengthFile.setText(sseFilePath)
+
+        self.checkOk()
+
+        self.setCursor(QtCore.Qt.ArrowCursor)
+        
+        print("done loading settings file\n")
+        
     def setConstants(self):
         #Tab 1
         self.viewer.correspondenceEngine.setConstant("SSE_FILE_NAME", str(self.ui.lineEditHelixLengthFile.text()))
@@ -329,6 +416,11 @@ This loads a SEQ file or, for testing purposes, a PDB file.
         else:
             self.viewer.correspondenceEngine.setConstantInt("MISSING_HELIX_COUNT", -1)            
         
+        if(self.ui.checkBoxMissingSheets.isChecked()):
+            self.viewer.correspondenceEngine.setConstantInt("MISSING_SHEET_COUNT", self.ui.spinBoxMissingSheetCount.value())
+        else:
+            self.viewer.correspondenceEngine.setConstantInt("MISSING_SHEET_COUNT", -1)            
+        
         
         #Tab 3
         self.viewer.correspondenceEngine.setConstant("MISSING_HELIX_PENALTY", self.ui.doubleSpinBoxHelixMissingPenalty.value())
@@ -340,6 +432,10 @@ This loads a SEQ file or, for testing purposes, a PDB file.
         self.viewer.correspondenceEngine.setConstant("EUCLIDEAN_VOXEL_TO_PDB_RATIO", self.ui.doubleSpinBoxEuclideanToPDBRatio.value())
         self.viewer.correspondenceEngine.setConstantInt("BORDER_MARGIN_THRESHOLD", self.ui.spinBoxBorderMarginThreshold.value())
         self.viewer.correspondenceEngine.setConstantBool("NORMALIZE_GRAPHS", True)        
+
+        self.viewer.correspondenceEngine.setConstant("MISSING_SHEET_LENGTH", self.ui.doubleSpinBoxAverageMissingSheetLength.value())    
+        self.viewer.correspondenceEngine.setConstant("SHEET_WEIGHT_COEFFICIENT", self.ui.doubleSpinBoxSheetImportance.value())
+        self.viewer.correspondenceEngine.setConstant("MISSING_SHEET_PENALTY", self.ui.doubleSpinBoxSheetMissingPenalty.value())
     
     
         #Tab 4 User Constraints
@@ -356,6 +452,68 @@ This loads a SEQ file or, for testing purposes, a PDB file.
                     else:      
                         self.viewer.correspondenceEngine.setHelixConstraint(match.predicted.serialNo + 1, -1)
 
+    def getConstants(self):
+
+        #Tab 1
+        #self.viewer.correspondenceEngine.getConstant("SSE_FILE_NAME", str(self.ui.lineEditHelixLengthFile.text()))
+        #self.viewer.correspondenceEngine.getConstant("VRML_HELIX_FILE_NAME", str(self.ui.lineEditHelixLocationFile.text()))
+        #self.viewer.correspondenceEngine.getConstant("VRML_SHEET_FILE_NAME", str(self.ui.lineEditSheetLocationFile.text()))
+        #self.viewer.correspondenceEngine.getConstant("MRC_FILE_NAME", str(self.ui.lineEditSkeletonFile.text()))
+        #self.sequenceFileName = str(self.ui.lineEditSequenceFile.text())
+        #self.viewer.correspondenceEngine.setConstant("SEQUENCE_FILE_NAME", self.sequenceFileName)
+        #if self.sequenceFileName.split('.')[-1].lower() == 'pdb':
+        #    self.viewer.correspondenceEngine.setConstant("SEQUENCE_FILE_TYPE", "PDB")
+        #elif self.sequenceFileName.split('.')[-1].lower() == 'seq':
+        #    self.viewer.correspondenceEngine.setConstant("SEQUENCE_FILE_TYPE", "SEQ")
+        
+        #Tab Graph Settings
+        self.ui.doubleSpinBoxMaxSheetDistance.setValue(self.viewer.correspondenceEngine.getConstantDouble("MAXIMUM_DISTANCE_SHEET_SKELETON"))
+        self.ui.spinBoxMinSheetSize.setValue(self.viewer.correspondenceEngine.getConstantInt("MINIMUM_SHEET_SIZE"))
+
+        #Tab 2
+        if(self.viewer.correspondenceEngine.getConstantInt("COST_FUNCTION") == 1):
+            self.ui.radioButtonAbsoluteDifference.setChecked(True)
+            self.ui.radioButtonNormalizedDifference.setChecked(False)
+            self.ui.radioButtonQuadraticError.setChecked(False)
+        elif (self.viewer.correspondenceEngine.getConstantInt("COST_FUNCTION") == 2):
+            self.ui.radioButtonAbsoluteDifference.setChecked(False)
+            self.ui.radioButtonNormalizedDifference.setChecked(True)
+            self.ui.radioButtonQuadraticError.setChecked(False)
+        elif (self.viewer.correspondenceEngine.getConstantInt("COST_FUNCTION") == 3):
+            self.ui.radioButtonAbsoluteDifference.setChecked(False)
+            self.ui.radioButtonNormalizedDifference.setChecked(False)
+            self.ui.radioButtonQuadraticError.setChecked(True)
+
+        self.ui.doubleSpinBoxEuclideanDistance.setValue(self.viewer.correspondenceEngine.getConstantDouble("EUCLIDEAN_DISTANCE_THRESHOLD"))
+                                                      
+        if (self.viewer.correspondenceEngine.getConstantInt("MISSING_HELIX_COUNT") == -1):
+            self.ui.checkBoxMissingHelices.setChecked(False)
+        else:
+            self.ui.checkBoxMissingHelices.setChecked(True)
+            self.ui.spinBoxMissingHelixCount.setValue(self.viewer.correspondenceEngine.getConstantInt("MISSING_HELIX_COUNT"))
+        
+        if (self.viewer.correspondenceEngine.getConstantInt("MISSING_SHEET_COUNT") == -1):
+            self.ui.checkBoxMissingSheets.setChecked(False)
+        else:
+            self.ui.checkBoxMissingSheets.setChecked(True)
+            self.ui.spinBoxMissingSheetCount.setValue(self.viewer.correspondenceEngine.getConstantInt("MISSING_SHEET_COUNT"))
+        
+        #Tab 3
+        self.ui.doubleSpinBoxHelixMissingPenalty.setValue(self.viewer.correspondenceEngine.getConstantDouble("MISSING_HELIX_PENALTY"))
+        self.ui.doubleSpinBoxEndHelixMissingPenalty.setValue(self.viewer.correspondenceEngine.getConstantDouble("START_END_MISSING_HELIX_PENALTY"))
+        self.ui.doubleSpinBoxEuclideanLoopUsedPenalty.setValue(self.viewer.correspondenceEngine.getConstantDouble("EUCLIDEAN_LOOP_PENALTY"))
+        self.ui.doubleSpinBoxHelixImportance.setValue(self.viewer.correspondenceEngine.getConstantDouble("HELIX_WEIGHT_COEFFICIENT"))
+        self.ui.doubleSpinBoxLoopImportance.setValue(self.viewer.correspondenceEngine.getConstantDouble("LOOP_WEIGHT_COEFFICIENT"))
+        self.ui.doubleSpinBoxAverageMissingHelixLength.setValue(self.viewer.correspondenceEngine.getConstantDouble("MISSING_HELIX_LENGTH"))
+        self.ui.doubleSpinBoxEuclideanToPDBRatio.setValue(self.viewer.correspondenceEngine.getConstantDouble("EUCLIDEAN_VOXEL_TO_PDB_RATIO"))
+        self.ui.spinBoxBorderMarginThreshold.setValue(self.viewer.correspondenceEngine.getConstantInt("BORDER_MARGIN_THRESHOLD"))
+
+        self.ui.doubleSpinBoxAverageMissingSheetLength.setValue(self.viewer.correspondenceEngine.getConstantDouble("MISSING_SHEET_LENGTH"))    
+        self.ui.doubleSpinBoxSheetImportance.setValue(self.viewer.correspondenceEngine.getConstantDouble("SHEET_WEIGHT_COEFFICIENT")) 
+        self.ui.doubleSpinBoxSheetMissingPenalty.setValue(self.viewer.correspondenceEngine.getConstantDouble("MISSING_SHEET_PENALTY")) 
+    
+
+        
     def populateEmptyResults(self, library):
         """ add empty result before correspondence search is started """
 
@@ -380,11 +538,14 @@ This loads a SEQ file or, for testing purposes, a PDB file.
 
     
     def populateResults(self, library):
-        self.ui.tabWidget.setCurrentIndex(3)
+
+        print("\nStarting to populate results.\n")
+        self.ui.tabWidget.setCurrentIndex(4)
         # clear the correspondence list
         corrList = []
         
         # iterate over all results from correspondence algorithm
+        print("\nIterating over results.\n")
         for i in range(self.resultCount):                                
             # create a Correspondence object and add it to the list
 
@@ -394,6 +555,7 @@ This loads a SEQ file or, for testing purposes, a PDB file.
             matchList = [] # matchList holds the matches
             
             # iterate over all nodes in the matching from correspondenceEngine
+            print("\nIterating over nodes of this result.\n")
             for j in range(result.getNodeCount()/2):
                 # j is a helix node in the sequence graph
                 # n1 and n2 are skeleton graph nodes for entry and exit points of the helix
@@ -429,13 +591,16 @@ This loads a SEQ file or, for testing purposes, a PDB file.
             # now matchList holds all the helix correspondences for a single match result
 
             # create Correspondence object for this correspondence
+            print("\nCreating correspondence object for this correspondence.\n")
             corr = Correspondence(library=library, matchList=matchList, score=result.getCost())
             
             # add to list of correspondences
+            print("\nAppending this correspondence object to list.\n")
             corrList.append(corr)
             
         # corrList now holds all correspondences between the sequence and the graph,
         # as determined by the graphMatch algorithm
+        print("\nFinished populating results.\n")
         return corrList
             
     def populateComboBox(self, library):
@@ -484,32 +649,48 @@ This loads a SEQ file or, for testing purposes, a PDB file.
             # call to c++ method QueryEngine::getSkeletonSSE(), which returns a c++ GeometricShape object
             cppSse = self.viewer.correspondenceEngine.getSkeletonSSE(sseIx)
             
-            #TODO: check whether these should be getCornerCell3(...
-            p1 = cAlphaViewer.worldToObjectCoordinates(skeletonViewer.objectToWorldCoordinates(vector3DFloatToTuple(cppSse.getCornerCell2(1))))
-            p2 = cAlphaViewer.worldToObjectCoordinates(skeletonViewer.objectToWorldCoordinates(vector3DFloatToTuple(cppSse.getCornerCell2(2))))
-            
-            q1 = cAlphaViewer.worldToObjectCoordinates(sseViewer.objectToWorldCoordinates(vector3DFloatToTuple(cppSse.getCornerCell3(1))))
-            q2 = cAlphaViewer.worldToObjectCoordinates(sseViewer.objectToWorldCoordinates(vector3DFloatToTuple(cppSse.getCornerCell3(2))))
-            if vectorSize(vectorAdd(p1, vectorScalarMultiply(-1, q1))) > vectorSize(
-                                    vectorAdd(p1, vectorScalarMultiply(-1, q2))): #to get proper orientation
-                q1, q2 = q2, q1 #python trick for exchanging values
-            
             # create list of observed helices for this correspondence result
             if cppSse.isHelix():            
+                #TODO: check whether these should be getCornerCell3(...
+                p1 = cAlphaViewer.worldToObjectCoordinates(skeletonViewer.objectToWorldCoordinates(vector3DFloatToTuple(cppSse.getCornerCell2(1))))
+                p2 = cAlphaViewer.worldToObjectCoordinates(skeletonViewer.objectToWorldCoordinates(vector3DFloatToTuple(cppSse.getCornerCell2(2))))
+                
+                q1 = cAlphaViewer.worldToObjectCoordinates(sseViewer.objectToWorldCoordinates(vector3DFloatToTuple(cppSse.getCornerCell3(1))))
+                q2 = cAlphaViewer.worldToObjectCoordinates(sseViewer.objectToWorldCoordinates(vector3DFloatToTuple(cppSse.getCornerCell3(2))))
+                if vectorSize(vectorAdd(p1, vectorScalarMultiply(-1, q1))) > vectorSize(
+                                        vectorAdd(p1, vectorScalarMultiply(-1, q2))): #to get proper orientation
+                    q1, q2 = q2, q1 #python trick for exchanging values
+            
                 pyHelix = ObservedHelix(sseIx, q1, q2)
                 observedHelices[helixCount] = pyHelix
                 helixCount = helixCount + 1
+
             elif cppSse.isSheet():
-                pass
+                cornerList = {}
+                cornerNum = 1
+                while True:
+                    corner = vector3DFloatToTuple(cppSse.getCornerCell2(cornerNum))
+                    lastSheet = ( corner == (0,0,0) )
+                    p1 = cAlphaViewer.worldToObjectCoordinates(skeletonViewer.objectToWorldCoordinates(corner))
+                    if lastSheet:
+                        break
+                    cornerList[corner] = p1
+                    print "adding sheet corner " + str(cornerNum) + " with coordinates (" + str(p1[0]) + "," + str(p1[1]) + "," + str(p1[2]) + ")"
+                    cornerNum = cornerNum + 1
+                print "done adding sheet corners."
+                pySheet = ObservedSheet(sseIx, cornerList)
+                sheetCount = sheetCount + 1
+                #pass
                 #TODO: Add Sheet support
         
         #TODO: Mike this raises an error!;
+        print "found " + str(helixCount) + " helices and " + str(sheetCount) + " sheets"
         structObserv = StructureObservation(helixDict = observedHelices, sheetDict = observedSheets)
-        print("\nwriting to correspondenceLibrary\n")
+        print("writing to correspondenceLibrary")
 
         # create a new python CorrespondenceLibrary object 
         self.viewer.correspondenceLibrary = CorrespondenceLibrary(sp = structPred, so = structObserv)          
-                
+               
         self.setCursor(QtCore.Qt.ArrowCursor)
         
         print("\nfinished creating basic correspondences\n")
@@ -519,16 +700,22 @@ This loads a SEQ file or, for testing purposes, a PDB file.
         self.createBasicCorrespondence()          
                 
         # execute correspondence query and do cleanup
+        print("\nexecuting query\n")
         self.resultCount = self.viewer.correspondenceEngine.executeQuery()
         self.viewer.correspondenceEngine.cleanupMemory()
         
         # populate the list of found correspondences        
+        print("\npopulating result list\n")
         self.viewer.correspondenceLibrary.correspondenceList = self.populateResults(self.viewer.correspondenceLibrary)
         
+        print("\npopulating result pulldown\n")
         self.populateComboBox(self.viewer.correspondenceLibrary)       
         
         self.executed = True 
+        print("\nemitting model changed signal\n")
         self.viewer.emitModelChanged()
+
+        print("\ndone\n")
                 
     def reject(self):  
         self.executed = False
