@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.32.2.4  2009/06/09 16:28:50  schuhs
+//   Adding method to get global constants
+//
 //   Revision 1.32.2.3  2009/05/28 17:06:08  schuhs
 //   Adding constants for creating sheets from skeleton
 //
@@ -76,6 +79,8 @@ namespace wustl_mm {
 		const int GRAPHEDGE_SHEET = 2;
 		const int GRAPHEDGE_OTHER = 3;
 		const int GRAPHEDGE_LOOP_EUCLIDEAN = 4;
+		const int GRAPHNODE_HELIX = 5;
+		const int GRAPHNODE_SHEET = 6;
 		const char * TOKEN_PDB_HELIX = "HELIX";
 		const char * TOKEN_PDB_ATOM = "ATOM";
 		const char * TOKEN_PDB_SHEET = "SHEET";
