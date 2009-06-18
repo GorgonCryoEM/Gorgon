@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.19.2.12  2009/06/02 21:08:44  schuhs
+//   Changing FindSizes method to work for sheets with multiple corners
+//
 //   Revision 1.19.2.11  2009/06/02 17:38:53  schuhs
 //   Fixing GetGraphIndex methods and modifying graph building code to handle sheets.
 //
@@ -112,7 +115,7 @@ namespace wustl_mm {
 				return helixNum*2 + helixes[helixNum]->cornerCells[cornerNum].node;
 			} else {
 				// if this is a sheet, index is # helices + helixNum
-				return helixNum+numH;
+				return helixNum + numH + 1;
 			}
 		}
 
@@ -139,7 +142,7 @@ namespace wustl_mm {
 				if (helixNum < numH) {
 					return helixNum*2 + node;
 				} else {
-					return helixNum+numH;
+					return helixNum + numH + 1;
 				}
 			} else {
 				return -1;
@@ -371,7 +374,9 @@ namespace wustl_mm {
 					// populate adjacency matrix
 					// no cost to go from a helix end back to itself
 					graph->SetCost(node1, node1, 0);
+					graph->SetType(node1, node1, GRAPHNODE_HELIX); 
 					graph->SetCost(node2, node2, 0);
+					graph->SetType(node2, node2, GRAPHNODE_HELIX); 
 					// cost of traversing a helix is the helix length
 					graph->SetCost(node1, node2, length);
 					// mark this edge type as helix or sheet, determined by helixes graph
@@ -381,12 +386,13 @@ namespace wustl_mm {
 					graph->SetType(node2, node1, helixes[i]->geometricShapeType);
 				} else if (helixes[i]->geometricShapeType == GRAPHEDGE_SHEET) {
 					// assign node number this sheet
-					int sheetNode = numH + i; // each helix takes two nodes
+					int sheetNode = numH + i + 1; // each helix takes two nodes
 
 					// find all the corner cells in this sheet
 					FindCornerCellsInSheet(vol, paintedVol, helixes, i);
 					// no cost to go from a sheet node back to itself
 					graph->SetCost(sheetNode, sheetNode, 0);
+					graph->SetType(sheetNode, sheetNode, GRAPHNODE_SHEET); 
 					//graph->SetType(numH, numH, helixes[i]->geometricShapeType);
 				}
 
@@ -703,8 +709,8 @@ namespace wustl_mm {
 				printf("Error reading input file %s.\n", helixFile) ;
 				exit(0) ;
 			}
-
 			
+
 			GeometricShape * shape = new GeometricShape();
 			shape->geometricShapeType = GRAPHEDGE_HELIX;
 
@@ -741,7 +747,7 @@ namespace wustl_mm {
 			delete shape;
 
 			fclose(fin);
-			
+
 			// if sseFile was provided as an argument, parse it to get lengths of helices.
 			// store the helix lengths in this file with the helices in helixes
 			// assume that the lengths in this file are provided in the same order as the helices were stored above.
@@ -758,7 +764,7 @@ namespace wustl_mm {
 
 				while (!feof(fin)) {
 					fscanf(fin, "%s", token);
-					if(strcmp(token, TOKEN_SSE_ALPHA) == 0) {
+					if(strcmp(token, TOKEN_SSE_ALPHA) == 0 && count < helixes.size() ) { // size check prevents crash when lengths file has more entries than helices loaded above
 						fscanf(fin, "%s %s %s %d", t1, t2, t3, &length);
 						helixes[count]->length = (float)length * HELIX_C_ALPHA_TO_ANGSTROMS;
 						count++;
@@ -772,6 +778,7 @@ namespace wustl_mm {
 		// all other helices/sheets by flooding outward along the skeleton volume
 		// stores the resulting loops in the graph object using graph->SetCost and graph->SetType
 		void SkeletonReader::FindSizes(int startHelix, int startCell, vector<GeometricShape*> & helixList, Volume * vol, Volume * coloredVol, StandardGraph * graph) {
+			//cout << "-- FindSizes called on corner " << startCell << " of helix/sheet " << startHelix << " of " << helixList.size() << endl;
 			vector<Point3Int *> oldStack;
 			vector<Point3Int *> newStack;
 			int currentHelix;
@@ -843,9 +850,11 @@ namespace wustl_mm {
 						// n2 is the graph index of currentPoint, which is some other helix/sheet.
 						n1 = GetGraphIndex(helixList, startHelix, startCell);
 						n2 = GetGraphIndex(helixList, currentHelix, currentPoint);
+						//cout << "found edge of length " << currentPoint->distance << " between nodes " << n1 << " and " << n2 << endl;
 						if( (n1 >= 0) && (n2 >= 0) && (currentPoint->distance < graph->GetCost(n1, n2)) ) {
 							// store the distance to the currentPoint as the cost of going from the start helix/sheet to the currentPoint helix/sheet
 							//cout << "cost from " << n1 << "(sse" << startHelix << "cnr" << startCell <<") to " << n2 << "(sse" << currentHelix << ") = " << graph->GetCost(n1, n2) << ". changing to " << currentPoint->distance << endl;
+							//cout << " adding edge of length " << currentPoint->distance << " between nodes " << n1 << " and " << n2 << endl;
 							graph->SetCost(n1, n2, currentPoint->distance);
 							// this is a loop type
 							graph->SetType(n1, n2, GRAPHEDGE_LOOP);
