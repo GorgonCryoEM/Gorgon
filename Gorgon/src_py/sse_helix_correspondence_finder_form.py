@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.36.2.4  2009/06/09 16:44:14  schuhs
+#   Adding UI boxes for sheet parameters, adding UI button to load all settings from text file, and modifying skeleton parsing code to work with sheets.
+#
 #   Revision 1.36.2.3  2009/05/28 17:00:27  schuhs
 #   Sheet skeleton parameters can be set from the UI now
 #
@@ -321,9 +324,8 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
         print "getting settings filename"
         settingsFilename = str(self.ui.lineEditSettingsFile.text())
         
+        #self.viewer.correspondenceEngine.printConstants
         print "reading other filenames for parsing"
-        sseFilename = self.viewer.correspondenceEngine.getConstantString("SSE_FILE_NAME")
-        print "sse filename is " + sseFilename
         helixFilename = self.viewer.correspondenceEngine.getConstantString("VRML_HELIX_FILE_NAME")
         print "helix filename is " + helixFilename
         sheetFilename = self.viewer.correspondenceEngine.getConstantString("VRML_SHEET_FILE_NAME")
@@ -332,6 +334,8 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
         print "sequence filename is " + sequenceFilename
         skeletonFilename = self.viewer.correspondenceEngine.getConstantString("MRC_FILE_NAME")
         print "skeleton filename is " + skeletonFilename
+        sseFilename = self.viewer.correspondenceEngine.getConstantString("SSE_FILE_NAME")
+        print "sse filename is " + sseFilename
         
         import os
         path,settingsFile = os.path.split(settingsFilename)
@@ -382,7 +386,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
 
         self.setCursor(QtCore.Qt.ArrowCursor)
         
-        print("done loading settings file\n")
+        print "done loading settings file"
         
     def setConstants(self):
         #Tab 1
@@ -539,13 +543,14 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
     
     def populateResults(self, library):
 
-        print("\nStarting to populate results.\n")
+        print "Starting to populate results. Found " + str(self.resultCount) + " results."
+
         self.ui.tabWidget.setCurrentIndex(4)
         # clear the correspondence list
         corrList = []
         
         # iterate over all results from correspondence algorithm
-        print("\nIterating over results.\n")
+        print "Iterating over results."
         for i in range(self.resultCount):                                
             # create a Correspondence object and add it to the list
 
@@ -555,7 +560,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
             matchList = [] # matchList holds the matches
             
             # iterate over all nodes in the matching from correspondenceEngine
-            print("\nIterating over nodes of this result.\n")
+            print "Iterating over nodes of this result."
             for j in range(result.getNodeCount()/2):
                 # j is a helix node in the sequence graph
                 # n1 and n2 are skeleton graph nodes for entry and exit points of the helix
@@ -591,16 +596,16 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
             # now matchList holds all the helix correspondences for a single match result
 
             # create Correspondence object for this correspondence
-            print("\nCreating correspondence object for this correspondence.\n")
+            print "Creating correspondence object for this correspondence."
             corr = Correspondence(library=library, matchList=matchList, score=result.getCost())
             
             # add to list of correspondences
-            print("\nAppending this correspondence object to list.\n")
+            print "Appending this correspondence object to list."
             corrList.append(corr)
             
         # corrList now holds all correspondences between the sequence and the graph,
         # as determined by the graphMatch algorithm
-        print("\nFinished populating results.\n")
+        print "Finished populating results."
         return corrList
             
     def populateComboBox(self, library):
@@ -613,7 +618,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
                    
     def createBasicCorrespondence(self):
         """Writes search parameters to correspondence object, loads predicted structure and observed structure, and creates correspondence library"""
-        print("\ncreating basic correspondence\n")
+        print "creating basic correspondence"
         self.setCursor(QtCore.Qt.BusyCursor)
 
         # put user-entered match parameters from UI into the correspondence object
@@ -621,7 +626,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
         
         
         #Loading Predicted SSEs                     
-        print("\nloading predicted SSEs\n")
+        print "loading predicted SSEs"
         # call to c++ method QueryEngine::LoadSequenceGraph()
         self.viewer.correspondenceEngine.loadSequenceGraph()
 
@@ -634,7 +639,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
             return (v3df.x(), v3df.y(), v3df.z())
         
         #Loading Observed SSEs
-        print("\nloading observed SSEs\n")
+        print "loading observed SSEs"
         # call to c++ method SSECorrespondenceEngine::LoadSkeletonGraph()
         self.viewer.correspondenceEngine.loadSkeletonGraph()
         observedHelices = {}
@@ -644,7 +649,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
         # call to c++ method QueryEngine::getSkeletonSSECount()
         sseCount = self.viewer.correspondenceEngine.getSkeletonSSECount()
 
-        print("\nadding helices to list of observed helices\n")
+        print "adding helices to list of observed helices"
         for sseIx in range(sseCount):
             # call to c++ method QueryEngine::getSkeletonSSE(), which returns a c++ GeometricShape object
             cppSse = self.viewer.correspondenceEngine.getSkeletonSSE(sseIx)
@@ -686,36 +691,39 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
         #TODO: Mike this raises an error!;
         print "found " + str(helixCount) + " helices and " + str(sheetCount) + " sheets"
         structObserv = StructureObservation(helixDict = observedHelices, sheetDict = observedSheets)
-        print("writing to correspondenceLibrary")
+        print "writing to correspondenceLibrary"
 
         # create a new python CorrespondenceLibrary object 
         self.viewer.correspondenceLibrary = CorrespondenceLibrary(sp = structPred, so = structObserv)          
                
         self.setCursor(QtCore.Qt.ArrowCursor)
         
-        print("\nfinished creating basic correspondences\n")
+        print "finished creating basic correspondences" 
         
     def accept(self):
         # read user parameters, read skeleton and sequence files, create correspondence library
         self.createBasicCorrespondence()          
                 
         # execute correspondence query and do cleanup
-        print("\nexecuting query\n")
+        print "executing query"
         self.resultCount = self.viewer.correspondenceEngine.executeQuery()
+        print "found " + str(self.resultCount) + " results. cleaning up memory."
         self.viewer.correspondenceEngine.cleanupMemory()
+
         
         # populate the list of found correspondences        
-        print("\npopulating result list\n")
+        print "populating result list"
+        #print "found " + size(self.viewer.correspondenceLibrary.correspondenceList) + " results. populating result list"
         self.viewer.correspondenceLibrary.correspondenceList = self.populateResults(self.viewer.correspondenceLibrary)
         
-        print("\npopulating result pulldown\n")
+        print "populating result pulldown"
         self.populateComboBox(self.viewer.correspondenceLibrary)       
         
         self.executed = True 
-        print("\nemitting model changed signal\n")
+        print "emitting model changed signal"
         self.viewer.emitModelChanged()
 
-        print("\ndone\n")
+        print "done"
                 
     def reject(self):  
         self.executed = False
