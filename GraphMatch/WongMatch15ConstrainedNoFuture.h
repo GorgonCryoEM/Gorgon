@@ -15,6 +15,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.15  2008/11/20 20:49:09  ssa1
+//   Fixing bug with loading in more VRML helices than there are in the SEQ... Also using scale directly from volume instead of a user-parameter
+//
 //   Revision 1.14  2008/11/18 18:10:24  ssa1
 //   Changing the scaling functions when doing graph matching to find correspondences
 //
@@ -121,11 +124,58 @@ namespace wustl_mm {
 			expandCount = 0;
 
 			// TODO: Make this more accurate
+			// old method of counting missing sheets and helices
+			
 			missingHelixCount = (patternGraph->GetNodeCount() - baseGraph->GetNodeCount()) / 2;
 			if(missingHelixCount < 0)  {
 				missingHelixCount = 0;
 			}
 			missingSheetCount = 0;
+			
+
+			// new method of counting missing sheets and helices
+			
+			// count helix nodes in base graph
+			int baseHelixNodes = 0;
+			int baseSheetNodes = 0;
+			int patternHelixNodes = 0;
+			int patternSheetNodes = 0;
+
+			cout << "calculating the number of missing sheets and helices" << endl;
+
+			for (int i = 0; i < baseGraph->GetNodeCount(); i++) {
+				cout << "base graph node " << i << " has type " << (int)(baseGraph->adjacencyMatrix[i][i][0]) << endl;
+				switch((int)(baseGraph->adjacencyMatrix[i][i][0] + 0.01)) {
+					case(GRAPHNODE_HELIX) : 
+						baseHelixNodes++;
+						break;
+					case(GRAPHNODE_SHEET):
+						baseSheetNodes++;
+						break;
+					default:
+						break;
+				}
+			}
+			cout << "base graph has " << baseHelixNodes << " helix nodes and " << baseSheetNodes << " sheet nodes." << endl;
+
+			for (int i = 0; i < patternGraph->GetNodeCount(); i++) {
+				cout << "pattern graph node " << i << " has type " << (int)(patternGraph->adjacencyMatrix[i][i][0]) << endl;
+				switch((int)(patternGraph->adjacencyMatrix[i][i][0] + 0.01)) {
+					case(GRAPHNODE_HELIX) : 
+						patternHelixNodes++;
+						break;
+					case(GRAPHNODE_SHEET):
+						patternSheetNodes++;
+						break;
+					default:
+						break;
+				}
+			}
+			cout << "pattern graph has " << patternHelixNodes << " helix nodes and " << patternSheetNodes << " sheet nodes." << endl;
+
+
+			missingHelixCount = (patternHelixNodes - baseHelixNodes) / 2;
+			missingSheetCount = patternSheetNodes - baseSheetNodes;
 
 			//if(!PERFORMANCE_COMPARISON_MODE) {
 			//	NormalizeGraphs();
@@ -153,6 +203,7 @@ namespace wustl_mm {
 
 
 		int WongMatch15ConstrainedNoFuture::RunMatching(clock_t startTime) {
+			cout << "Start WongMatch15ConstrainedNoFuture::RunMatching: " << endl;
 			bool continueLoop = true;
 			clock_t finishTime;
 			while(continueLoop)
@@ -163,7 +214,9 @@ namespace wustl_mm {
 				}
 				//currentNode->PrintNodeConcise(foundCount, false);
 				//printf("\n");
+				//cout << " current node has depth " << (int)currentNode->depth << ", max depth is " << patternGraph->nodeCount << endl;
 				if(currentNode->depth == patternGraph->nodeCount) {
+					cout << " current node at max depth (" << (int)currentNode->depth << ")" << endl;
 					finishTime = clock();
 					foundCount++;
 					currentNode->PrintNodeConcise(foundCount, false);
@@ -176,6 +229,7 @@ namespace wustl_mm {
 						pathGenerator->GenerateGraph(currentNode, fileName);
 					#endif
 				} else {
+					//cout << " current node not at max depth" << endl;
 					LinkedNodeStub * currentStub = new LinkedNodeStub(currentNode);
 					if(ExpandNode(currentStub)) {
 						usedNodes.push_back(currentStub);
@@ -200,6 +254,8 @@ namespace wustl_mm {
 				queue->remove(tempNode, tempKey);
 				delete tempNode;
 			}
+
+			cout << "at end of WongMatch15ConstrainedNoFuture::RunMatching. results found = " << foundCount << endl;
 
 			return foundCount;
 		}
@@ -311,7 +367,8 @@ namespace wustl_mm {
 				weight = euclideanEstimate? weight * EUCLIDEAN_LOOP_PENALTY: weight;
 			}
 
-
+			// TODO: Figure out why this method (getCost) is preventing complete searches on graphs with sheets. 
+			//       I think it's in the next two blocks.
 			if(m == 1) {		
 				if((qj!= -1) && ((int)(patternGraph->adjacencyMatrix[d-1][d][0] + 0.01) != (int)(baseGraph->adjacencyMatrix[qj-1][qp-1][0] + 0.01)) &&
 					!(((int)(patternGraph->adjacencyMatrix[d-1][d][0] + 0.01) == GRAPHEDGE_LOOP) && ((int)(baseGraph->adjacencyMatrix[qj-1][qp-1][0] +0.01) == GRAPHEDGE_LOOP_EUCLIDEAN))) 	{
@@ -368,6 +425,7 @@ namespace wustl_mm {
 			if(longestMatch < currentNode->depth) {
 				longestMatch = currentNode->depth;
 				printf(" %d elements matched! (%f kB Memory Used)\n", longestMatch, (queue->getLength() * sizeof(LinkedNode) + usedNodes.size() * sizeof(LinkedNodeStub)) / 1024.0);
+				cout << "WongMatch15ConstrainedNoFuture::ExpandNode: " << longestMatch << " elements expanded (" << ((queue->getLength() * sizeof(LinkedNode) + usedNodes.size() * sizeof(LinkedNodeStub)) / 1024.0) << " kB memory used)" << endl;
 			}
 		#endif //VERBOSE
 			
@@ -376,10 +434,19 @@ namespace wustl_mm {
 			//currentNode->PrintNodeConcise(0, true, true);
 
 			// Expanding nodes with a real terminal node
-			for(int i = 1; i <= baseGraph->nodeCount; i++) {		
+			// for every node i in baseGraph
+			for(int i = 1; i <= baseGraph->nodeCount; i++) {
+				// if: 
+				//   currentNode is at level 0 of tree
+				//   or 
+				//   i is in the currentNode bitmap, and there is an edge in baseGraph between currentNode and node i
 				if((currentNode->depth == 0) || 
 					(LinkedNode::IsNodeInBitmap(currentNode->m2Bitmap, i) && (baseGraph->EdgeExists(currentNode->n2Node-1, i-1)))) {						
-					for(int j = 0; j <= min(missingHelixCount * 2 - currentNode->missingNodesUsed + 1, currentM1Top); j += 2) {  // Stepping by two since we jump every 2 loops
+					// TODO: the following line assumes every other SSE is a helix
+					//       j is number of helices to jump 
+					//       think i've partially fixed it. need to test.
+					for(int j = 0; j <= min(missingHelixCount * 2 + missingSheetCount - currentNode->missingNodesUsed + 1, currentM1Top); j += 1) {  // Stepping by one for sheets; helix code adds an extra step at end
+					//for(int j = 0; j <= min(missingHelixCount * 2 - currentNode->missingNodesUsed + 1, currentM1Top); j += 2) {  // Stepping by two since we jump every 2 loops
 						notConstrained = true;
 
 						for(int k = currentNode->n1Node + 1; k <= currentNode->n1Node + j; k++) {
@@ -395,7 +462,7 @@ namespace wustl_mm {
 							if(((temp->depth == 0) && (j > 0)) || 
 								((patternGraph->nodeCount - currentNode->depth == 0) && (currentNode->n2Node == -1))) {
 								currentNode->costGStar += START_END_MISSING_HELIX_PENALTY;
-							}
+							}	
 
 
 							if(temp->depth == 0) {
@@ -403,6 +470,7 @@ namespace wustl_mm {
 							} else {								
 								edgeCost = GetCost(temp->n1Node, j+1, temp->n2Node, currentNode->n2Node);
 								//printf("%i %i %i %i %lf\n", temp->n1Node, j+1, temp->n2Node, currentNode->n2Node, edgeCost);
+								//if (edgeCost < 0) {cout << "edge cost (" << (int)temp->n1Node << "," << (int)j+1 << "," << (int)temp->n2Node << "," << (int)currentNode->n2Node << ") is " << edgeCost << endl;}
 							}
 							
 
@@ -416,6 +484,10 @@ namespace wustl_mm {
 								delete currentNode;
 							}
 							currentNode = temp;	
+						}
+						// if this node is a helix, increment j by one more to prepare for the next iteration
+						if ( (int)(baseGraph->adjacencyMatrix[j][j][0] + 0.01) == GRAPHNODE_HELIX ) {
+							j++;
 						}
 					}
 				}
