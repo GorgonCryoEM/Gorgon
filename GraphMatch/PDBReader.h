@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.14  2008/11/18 18:10:24  ssa1
+//   Changing the scaling functions when doing graph matching to find correspondences
+//
 //   Revision 1.13  2008/09/29 16:19:30  ssa1
 //   Adding in CVS meta information
 //
@@ -203,26 +206,65 @@ namespace wustl_mm {
 				return NULL;
 			}
 
-			StandardGraph * graph = new StandardGraph(2 * structures.size());
+			// count number of helices
+			int numHelices = 0;
+			int numSheets = 0;
+			vector<string> strandLabels;
+			for(int i = 0; i < (int)structures.size(); i++) {
+				currentStructure = structures[i];
+				if (currentStructure->secondaryStructureType == GRAPHEDGE_HELIX) {
+					numHelices++;
+				} else	if (currentStructure->secondaryStructureType == GRAPHEDGE_SHEET) {
+					numSheets++;
+				}
+			}
+			cout << "creating new graph for " << numHelices << " helices and " << numSheets << " strands." << endl;
+
+			//StandardGraph * graph = new StandardGraph(2 * structures.size());
+			StandardGraph * graph = new StandardGraph(2 * numHelices + numSheets);
 
 			// Adding the rest of the structures into the graph
+			int node = 0;
 			for(i = 0; i < (int)structures.size(); i++) {
-				graph->SetCost(i*2+1, i*2+1, 0); // First helix node.
-				graph->SetCost(i*2+2, i*2+2, 0); // Second helix node.
+				if (structures[i]->secondaryStructureType == GRAPHEDGE_HELIX) {
+					cout << "adding helix " << i << endl;
+					graph->SetCost(node+1, node+1, 0); // First helix node.
+					graph->SetType(node+1, node+1, GRAPHNODE_HELIX); 
+					graph->SetCost(node+2, node+2, 0); // Second helix node.
+					graph->SetType(node+2, node+2, GRAPHNODE_HELIX); 
 
-				// An edge for the helix
-				graph->SetCost(i*2+1, i*2+2, structures[i]->GetLengthAngstroms()); 
-				graph->SetType(i*2+1, i*2+2, structures[i]->secondaryStructureType); 
-				graph->SetCost(i*2+2, i*2+1, structures[i]->GetLengthAngstroms()); 
-				graph->SetType(i*2+2, i*2+1, structures[i]->secondaryStructureType); 
+					// An edge for the helix
+					graph->SetCost(node+1, node+2, structures[i]->GetLengthAngstroms()); 
+					graph->SetType(node+1, node+2, structures[i]->secondaryStructureType); 
+					graph->SetCost(node+2, node+1, structures[i]->GetLengthAngstroms()); 
+					graph->SetType(node+2, node+1, structures[i]->secondaryStructureType); 
 
-				if(i != 0) {
-					// An edge for the loop before the helix
-					graph->SetCost(i*2, i*2+1, (structures[i]->startPosition - structures[i-1]->endPosition) * LOOP_C_ALPHA_TO_ANGSTROMS);
-					graph->SetType(i*2, i*2+1, GRAPHEDGE_LOOP);
-					graph->SetCost(i*2+1, i*2, (structures[i]->startPosition - structures[i-1]->endPosition) * LOOP_C_ALPHA_TO_ANGSTROMS);
-					graph->SetType(i*2+1, i*2, GRAPHEDGE_LOOP);
+					if(i != 0) {
+						// An edge for the loop before the helix
+						graph->SetCost(node, node+1, (structures[i]->startPosition - structures[i-1]->endPosition) * LOOP_C_ALPHA_TO_ANGSTROMS);
+						graph->SetType(node, node+1, GRAPHEDGE_LOOP);
+						graph->SetCost(node+1, node, (structures[i]->startPosition - structures[i-1]->endPosition) * LOOP_C_ALPHA_TO_ANGSTROMS);
+						graph->SetType(node+1, node, GRAPHEDGE_LOOP);
+					}
+					node += 2;
 				}
+				if (structures[i]->secondaryStructureType == GRAPHEDGE_SHEET) {
+					cout << "adding strand " << i << " with ID " << structures[i]->secondaryStructureID << endl;
+					// TODO: Add some cost for the node itself?
+					graph->SetCost(node+1, node+1, 0); // Strand node.
+					graph->SetType(node+1, node+1, GRAPHNODE_SHEET); 
+
+					if(i != 0) {
+						// An edge for the loop before the strand
+						// TODO: fix length calculation -- do startPosition and endPosition hold the right values for strands?
+						graph->SetCost(node, node+1, (structures[i]->startPosition - structures[i-1]->endPosition) * LOOP_C_ALPHA_TO_ANGSTROMS);
+						graph->SetType(node, node+1, GRAPHEDGE_LOOP);
+						graph->SetCost(node+1, node, (structures[i]->startPosition - structures[i-1]->endPosition) * LOOP_C_ALPHA_TO_ANGSTROMS);
+						graph->SetType(node+1, node, GRAPHEDGE_LOOP);
+					}
+					node += 1;
+				}
+
 			}
 
 			for(i = 0; i < (int)structures.size(); i++) {
