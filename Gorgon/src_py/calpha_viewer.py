@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.33  2009/04/03 19:44:37  ssa1
+#   CAlpha bug fixes
+#
 #   Revision 1.32  2009/04/02 19:00:20  ssa1
 #   CAlpha Viewer bug fixes and smoother uniform functionality
 #
@@ -255,10 +258,9 @@ class CAlphaViewer(BaseViewer):
             renderer = self.renderer
             for i in mychain.residueRange():
                 atom = mychain[i].getAtom('CA')
-                if atom == None:
-                    continue
-                atom = renderer.addAtom(atom)
-                mychain[i].addAtomObject(atom)
+                if atom:
+                    atom = renderer.addAtom(atom)
+                    mychain[i].addAtomObject(atom)
                
         self.fileName = QtGui.QFileDialog.getOpenFileName(self, self.tr("Open Data"), "", 
                             self.tr('Atom Positions (*.pdb)\nFASTA (*.fas *.fa *.fasta)'))
