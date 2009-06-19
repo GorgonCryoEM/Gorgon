@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.34  2009/06/19 15:01:15  ssa1
+#   Fixing Bug 50: Loading of saved PDB Files.
+#
 #   Revision 1.33  2009/04/03 19:44:37  ssa1
 #   CAlpha bug fixes
 #
@@ -138,6 +141,7 @@ class CAlphaViewer(BaseViewer):
         self.app.themes.addDefaultRGB("C-Alpha:Model:1", 120, 120, 170, 255)
         self.app.themes.addDefaultRGB("C-Alpha:BoundingBox", 255, 255, 255, 255)         
         self.isClosedMesh = False
+        self.centerOnRMB = True
         self.selectEnabled = True
         self.renderer = CAlphaRenderer()          
         self.main_chain = Chain('', self.app)
@@ -246,6 +250,19 @@ class CAlphaViewer(BaseViewer):
                 CAlphaSequenceDock.changeDockVisibility(self.app, self, self.structPred, self.main_chain)
         self.connect(seqDockAct, QtCore.SIGNAL("triggered()"), showDock)
         self.app.actions.addAction("seqDock", seqDockAct)
+    
+    def loadSSEHunterData(self, fileName):
+        if(self.loaded):
+            self.unloadData()        
+        self.fileName = fileName
+        self.renderer.loadSSEHunterFile(str(fileName))
+        
+        self.dirty = False
+        self.loaded = True
+        self.emitModelLoadedPreDraw()
+        self.emitModelLoaded()
+        self.emitViewerSetCenter()        
+        
         
     def loadData(self):
         #Overwriting the function in BaseViewer        
@@ -343,7 +360,7 @@ residues in the Chain object.
                 atom = CAlphaRenderer.getAtomFromHitStack(self.renderer, hits[0], True, *hits[1:])
                 self.main_chain.setSelection([atom.getResSeq()])
                 
-        if event.button() == QtCore.Qt.RightButton:
+        if event.button() == QtCore.Qt.RightButton and self.centerOnRMB:
             self.centerOnSelectedAtoms(argv[0], argv[1], argv[2], argv[3], argv[4], argv[5], argv[6])
             
     

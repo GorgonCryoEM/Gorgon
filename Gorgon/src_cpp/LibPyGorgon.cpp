@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.50  2009/03/30 21:36:12  ssa1
+//   Interactive loop building
+//
 //   Revision 1.49  2009/03/26 19:33:52  ssa1
 //   Adding in an Interactive Loop Builder
 //
@@ -339,6 +342,7 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("draw", &CAlphaRenderer::Draw)
 		.def("drawBoundingBox", &CAlphaRenderer::DrawBoundingBox)
 		.def("loadFile", &CAlphaRenderer::LoadFile)
+		.def("loadSSEHunterFile", &CAlphaRenderer::LoadSSEHunterFile)
 		.def("saveFile", &CAlphaRenderer::SaveFile)
 		.def("unload", &CAlphaRenderer::Unload)
 		.def("selectionRotate", &CAlphaRenderer::SelectionRotate)

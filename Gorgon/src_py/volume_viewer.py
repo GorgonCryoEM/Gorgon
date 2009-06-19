@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.20  2008/12/15 22:38:31  ssa1
+#   Adding in support to load RAW volumes
+#
 #   Revision 1.19  2008/11/28 04:36:17  ssa1
 #   Removing error message if pyopengl does not exist.  (To make executable building easier to debug)
 #
@@ -100,6 +103,10 @@ class VolumeViewer(BaseViewer):
         self.connect(downsampleAct, QtCore.SIGNAL("triggered()"), self.downsampleVolume)
         self.app.actions.addAction("downsample_Volume", downsampleAct)     
         
+        detectSSEAct = QtGui.QAction(self.tr("Identify &SSEs"), self)
+        detectSSEAct.setStatusTip(self.tr("Identify secondary structure elements"))
+        self.connect(detectSSEAct, QtCore.SIGNAL("triggered()"), self.detectSSEs)
+        self.app.actions.addAction("detectSSE_Volume", detectSSEAct)     
  
                                                
     def createMenus(self):
@@ -110,6 +117,7 @@ class VolumeViewer(BaseViewer):
         self.app.menus.addAction("actions-volume-normalize", self.app.actions.getAction("normalize_Volume"), "actions-volume");
         self.app.menus.addAction("actions-volume-downsample", self.app.actions.getAction("downsample_Volume"), "actions-volume");
         self.app.menus.addMenu("actions-volume-skeletonization", self.tr("S&keletonization"), "actions-volume");               
+        self.app.menus.addAction("actions-volume-detectSSE", self.app.actions.getAction("detectSSE_Volume"), "actions-volume");
     
     def createChildWindows(self):
         self.surfaceEditor = VolumeSurfaceEditorForm(self.app, self)
@@ -168,5 +176,16 @@ class VolumeViewer(BaseViewer):
             
             self.surfaceEditor.ui.horizontalSliderIsoLevel.setValue(self.surfaceEditor.ui.horizontalSliderIsoLevel.value() - delta)
             
+
+    def detectSSEs(self):
+        pdbFile = QtGui.QFileDialog.getOpenFileName(self, self.tr("Open SSEHunter Results"), "", self.tr("PDB Files (*.pdb)"))
+        if not pdbFile.isEmpty():
+            calphaViewer = self.app.viewers["calpha"]
+            sseViewer = self.app.viewers["sse"]
+            calphaViewer.loadSSEHunterData(pdbFile)
+            calphaViewer.centerOnRMB = False
+            sseViewer.unloadData()            
+            
+        
                           
       

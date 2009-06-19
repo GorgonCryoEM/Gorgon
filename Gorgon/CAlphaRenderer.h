@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.33  2009/03/30 21:36:12  ssa1
+//   Interactive loop building
+//
 //   Revision 1.32  2008/12/07 07:11:36  ssa1
 //   Coloring bonds with red and blue if they exceed maximum or minimum length restrictions
 //
@@ -87,6 +90,7 @@ namespace wustl_mm {
 
 			void Draw(int subSceneIndex, bool selectEnabled);
 			void LoadFile(string fileName);
+			void LoadSSEHunterFile(string fileName);
 			int SelectionObjectCount();
 			Vector3DFloat SelectionCenterOfMass();
 			bool SelectionRotate(Vector3DFloat centerOfMass, Vector3DFloat rotationAxis, float angle);
@@ -259,6 +263,33 @@ namespace wustl_mm {
 				oldAtom = i;
 			}
 			sortedSerials.clear();
+			UpdateBoundingBox();
+			
+		}
+
+		void CAlphaRenderer::LoadSSEHunterFile(string fileName) {
+			Renderer::LoadFile(fileName);
+			atoms.clear();
+			bonds.clear();
+			atoms = PDBReader::ReadAtomPositions(fileName);			
+			float tempFactor;
+			float r, g, b;
+
+			for(AtomMapType::iterator i = atoms.begin(); i != atoms.end(); i++) {
+				i->second.SetAtomRadius(3.0);
+				tempFactor = i->second.GetTempFactor();
+				if(tempFactor < 0) {
+					r = 1.0f + tempFactor;
+					g = 1.0f + tempFactor;
+					b = 1.0f;
+				} else {
+					r = 1.0f;
+					g = 1 - tempFactor;
+					b = 1 - tempFactor;
+				}
+					
+				i->second.SetColor(r, g, b, 1.0f);
+			}
 			UpdateBoundingBox();
 			
 		}
