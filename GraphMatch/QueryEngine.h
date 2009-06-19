@@ -10,6 +10,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.10  2008/11/10 21:09:27  colemanr
+//   QueryEngine::LoadSequenceGraph choses between PDBReader and SEQReader
+//
 //   Revision 1.9  2008/09/29 16:19:30  ssa1
 //   Adding in CVS meta information
 //
@@ -95,6 +98,7 @@ namespace wustl_mm {
 
 
 		int QueryEngine::DoGraphMatching(StandardGraph * sequenceGraph, StandardGraph * skeletonGraph) {
+			cout << "QueryEngine::DoGraphMatching" << endl;
 			clock_t start;
 
 			PERFORMANCE_COMPARISON_MODE = false;
@@ -102,14 +106,19 @@ namespace wustl_mm {
 			// Match Graphs
 			// Constrained no future
 			if(MISSING_HELIX_COUNT == -1) {
+				cout << "initializing WongMatch15ConstrainedNoFuture without missing helices" << endl;
 				matcherConstrainedNoFuture = new WongMatch15ConstrainedNoFuture(sequenceGraph, skeletonGraph);
 			} else {
+				cout << "initializing WongMatch15ConstrainedNoFuture with missing helices" << endl;
 				matcherConstrainedNoFuture = new WongMatch15ConstrainedNoFuture(sequenceGraph, skeletonGraph, MISSING_HELIX_COUNT, MISSING_SHEET_COUNT);
 			}
 			start = clock();
+			cout << "running matching" << endl;
 			int matchCount = matcherConstrainedNoFuture->RunMatching(start);
+			cout << matchCount << " results found. saving results." << endl;
 			matcherConstrainedNoFuture->SaveResults();
 
+			cout << "End of QueryEngine::DoGraphMatching." << endl;
 			return matchCount;
 		}
 

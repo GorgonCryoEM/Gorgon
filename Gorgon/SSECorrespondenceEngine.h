@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.7.2.3  2009/05/28 16:54:48  schuhs
+//   Adding integer casts to loop variables eliminate compiler warnings
+//
 //   Revision 1.7.2.2  2009/05/22 19:21:18  schuhs
 //   Adding parameters to DrawAllPaths method to enable or disable rendering of corners, paths, and colored sheets.
 //
@@ -81,14 +84,19 @@ namespace wustl_mm {
 		}
 
 		int SSECorrespondenceEngine::ExecuteQuery() {
+			cout << "Begin SSECorrespondenceEngine::ExecuteQuery" << endl;
 			if(skeleton != NULL && sequence != NULL) {
+				cout << "Starting matching" << endl;
 				int resultCount = queryEngine->DoGraphMatching(sequence, skeleton);
+				cout << "Matching complete. Found " << resultCount << " results" << endl;
 				correspondence.clear();
 				for(int i = 1; i <= resultCount; i++) {
 					correspondence.push_back(queryEngine->GetSolution(i));
 				}
+				cout << correspondence.size() << " results stored in correspondence" << endl;
 				return resultCount;
 			} else {
+				cout << "skeleton or sequence is not defined." << endl;
 				return 0;
 			}
 		}
