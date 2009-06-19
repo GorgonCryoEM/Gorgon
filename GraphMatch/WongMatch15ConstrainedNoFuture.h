@@ -15,6 +15,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.15.2.1  2009/06/18 20:43:55  schuhs
+//   Starting to modify to work with sheets.
+//
 //   Revision 1.15  2008/11/20 20:49:09  ssa1
 //   Fixing bug with loading in more VRML helices than there are in the SEQ... Also using scale directly from volume instead of a user-parameter
 //
@@ -117,15 +120,21 @@ namespace wustl_mm {
 			delete pathGenerator;
 		}
 		void WongMatch15ConstrainedNoFuture::Init(StandardGraph * patternGraph, StandardGraph * baseGraph) {	
+			cout << "WongMatch15ConstrainedNoFuture::Init" << endl;
 			usedNodes.clear();
+			cout << "WongMatch15ConstrainedNoFuture::Init 1" << endl;
 			queue = new PriorityQueue<LinkedNode, double> (PRIORITYQUEUESIZE);
+			cout << "WongMatch15ConstrainedNoFuture::Init 1.1" << endl;
 			this->patternGraph = patternGraph;
+			cout << "WongMatch15ConstrainedNoFuture::Init 1.2" << endl;
 			this->baseGraph = baseGraph;
+			cout << "WongMatch15ConstrainedNoFuture::Init 1.3" << endl;
 			expandCount = 0;
 
 			// TODO: Make this more accurate
 			// old method of counting missing sheets and helices
 			
+			cout << "WongMatch15ConstrainedNoFuture::Init 2" << endl;
 			missingHelixCount = (patternGraph->GetNodeCount() - baseGraph->GetNodeCount()) / 2;
 			if(missingHelixCount < 0)  {
 				missingHelixCount = 0;
@@ -135,6 +144,7 @@ namespace wustl_mm {
 
 			// new method of counting missing sheets and helices
 			
+			cout << "WongMatch15ConstrainedNoFuture::Init 3" << endl;
 			// count helix nodes in base graph
 			int baseHelixNodes = 0;
 			int baseSheetNodes = 0;
@@ -308,6 +318,13 @@ namespace wustl_mm {
 				typeCost = 1000;
 			}
 
+			// case where a sheet is revisited by two consecutive strands
+			if( (int)(patternGraph->adjacencyMatrix[j-1][p-1][0] + 0.01) == GRAPHEDGE_LOOP && 
+				(int)(baseGraph->adjacencyMatrix[qj-1][qp-1][0] + 0.01) == GRAPHNODE_SHEET) {
+				cout << "----> revisiting sheet" << endl;
+				typeCost = 0;
+			}
+			cout << "cost of pattern " << patternGraph->adjacencyMatrix[j-1][p-1][0] << " and base " << baseGraph->adjacencyMatrix[qj-1][qp-1][0] << " is " << fabs(jpCost - qjqpCost) + typeCost << endl;
 			return fabs(jpCost - qjqpCost) + typeCost;
 		}
 
@@ -330,6 +347,8 @@ namespace wustl_mm {
 				}
 				patternLength += patternGraph->adjacencyMatrix[d+i-1][d+i][1];		
 			}
+			bool lastIsSheetSheet = ( (int)(baseGraph->adjacencyMatrix[qj-1][qp-1][0] + 0.01) == GRAPHNODE_SHEET );
+			
 
 
 			bool euclideanEstimate = false;
@@ -363,15 +382,24 @@ namespace wustl_mm {
 					case(GRAPHEDGE_SHEET):
 						weight = SHEET_WEIGHT_COEFFICIENT;
 						break;
+					case(GRAPHNODE_SHEET): // two strands in a row match to the same sheet
+						cout << "---> sheet to sheet case" << endl;
+						weight = 0;
+						break;
 				}
 				weight = euclideanEstimate? weight * EUCLIDEAN_LOOP_PENALTY: weight;
 			}
+
+
+
+			// TODO: Add some conditions below to handle the lastIsSheetSheet case, which seems to be returning -1 right now.
 
 			// TODO: Figure out why this method (getCost) is preventing complete searches on graphs with sheets. 
 			//       I think it's in the next two blocks.
 			if(m == 1) {		
 				if((qj!= -1) && ((int)(patternGraph->adjacencyMatrix[d-1][d][0] + 0.01) != (int)(baseGraph->adjacencyMatrix[qj-1][qp-1][0] + 0.01)) &&
 					!(((int)(patternGraph->adjacencyMatrix[d-1][d][0] + 0.01) == GRAPHEDGE_LOOP) && ((int)(baseGraph->adjacencyMatrix[qj-1][qp-1][0] +0.01) == GRAPHEDGE_LOOP_EUCLIDEAN))) 	{
+					cout << "first case returning -1" << endl;
 					return -1;
 				}		
 				//// TODO: Figure out why I had put in the following code!!!!
@@ -381,6 +409,7 @@ namespace wustl_mm {
 				//}
 			} else {
 				if(!firstIsLoop || !lastIsLoop) {
+					cout << "second case returning -1" << endl;
 					return -1;
 				}
 			}
@@ -389,12 +418,15 @@ namespace wustl_mm {
 			switch(COST_FUNCTION)
 			{
 			case(1):
+				cout << "first case returning weight" << endl;
 				return weight * fabs(patternLength - baseLength);
 				break;
 			case(2):
+				cout << "second case returning weight" << endl;
 				return weight * fabs(patternLength - baseLength) / (patternLength + baseLength);
 				break;
 			case(3):
+				cout << "third case returning weight" << endl;
 				return weight * pow((patternLength - baseLength),2);
 				break;
 			}
@@ -416,6 +448,11 @@ namespace wustl_mm {
 		#endif
 		}
 
+		// expand a node.
+		// checks the base graph for edges between this node and every other.
+		// if an edge is found, match the pattern graph to that edge and add the match to the queue.
+		// also match edges that include skip edges in the pattern graph
+		// costs of matches are determined by the GetC method
 		bool WongMatch15ConstrainedNoFuture::ExpandNode(LinkedNodeStub * currentStub) {
 			bool expanded = false;
 			expandCount++;
@@ -444,7 +481,7 @@ namespace wustl_mm {
 					(LinkedNode::IsNodeInBitmap(currentNode->m2Bitmap, i) && (baseGraph->EdgeExists(currentNode->n2Node-1, i-1)))) {						
 					// TODO: the following line assumes every other SSE is a helix
 					//       j is number of helices to jump 
-					//       think i've partially fixed it. need to test.
+					//       think i've fixed it. need to test.
 					for(int j = 0; j <= min(missingHelixCount * 2 + missingSheetCount - currentNode->missingNodesUsed + 1, currentM1Top); j += 1) {  // Stepping by one for sheets; helix code adds an extra step at end
 					//for(int j = 0; j <= min(missingHelixCount * 2 - currentNode->missingNodesUsed + 1, currentM1Top); j += 2) {  // Stepping by two since we jump every 2 loops
 						notConstrained = true;
@@ -454,17 +491,25 @@ namespace wustl_mm {
 						}
 						notConstrained = notConstrained && IsNodeAssignmentAllowed(currentNode->n1Node + j + 1, i);
 
-						if(notConstrained) {							
-							temp = currentNode;
-							currentNode = new LinkedNode(currentNode, currentStub, i, j);
+						if(notConstrained) {	
+							// store the current node as temp
+							temp = currentNode; 
+							// create new current node. i is the index of the new node(?), j is the number of skipped nodes.
+
+							//currentNode = new LinkedNode(currentNode, currentStub, i, j);
+							bool revisitable = ( (int)(baseGraph->adjacencyMatrix[i-1][i-1][0] + 0.01) == GRAPHNODE_SHEET );
+							currentNode = new LinkedNode(currentNode, currentStub, i, j, revisitable);
+
+
 							currentNode->costGStar = 0;
 
+							// if previous node was at top of tree and it was skipped
 							if(((temp->depth == 0) && (j > 0)) || 
 								((patternGraph->nodeCount - currentNode->depth == 0) && (currentNode->n2Node == -1))) {
 								currentNode->costGStar += START_END_MISSING_HELIX_PENALTY;
 							}	
 
-
+							// if previous node was at top of tree
 							if(temp->depth == 0) {
 								edgeCost = 0;
 							} else {								
@@ -473,16 +518,18 @@ namespace wustl_mm {
 								//if (edgeCost < 0) {cout << "edge cost (" << (int)temp->n1Node << "," << (int)j+1 << "," << (int)temp->n2Node << "," << (int)currentNode->n2Node << ") is " << edgeCost << endl;}
 							}
 							
-
+							// TODO: Look below here for edge and node costs.
+							// if this is an allowed match:
 							if(edgeCost >= 0) {
 								currentNode->costGStar += temp->costGStar + edgeCost +	MISSING_HELIX_PENALTY * (j/2.0) + GetC(currentNode->n1Node, currentNode->n2Node);
 								currentNode->cost = GetF();			
 								//currentNode->PrintNodeConcise(-1, true, true);
 								queue->add(currentNode, currentNode->cost);
 								expanded = true;
-							} else {
+							} else { // not an allowed match
 								delete currentNode;
 							}
+							// set currentNode pointer back to the current node
 							currentNode = temp;	
 						}
 						// if this node is a helix, increment j by one more to prepare for the next iteration
