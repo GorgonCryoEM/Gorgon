@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.24  2009/03/17 20:00:17  ssa1
+//   Removing Sheets from fiting process
+//
 //   Revision 1.23  2009/03/16 17:08:46  ssa1
 //   Fixing bug when densities have negative values
 //
@@ -55,6 +58,7 @@ namespace wustl_mm {
 			SSERenderer();
 			~SSERenderer();
 
+			void AddHelix(Vector3DFloat p1, Vector3DFloat p2);
 			void Draw(int subSceneIndex, bool selectEnabled);
 			void LoadHelixFile(string fileName);			
 			void LoadSheetFile(string fileName);			
@@ -91,6 +95,25 @@ namespace wustl_mm {
 			if(sheetMesh != NULL) {
 				delete sheetMesh;
 			}
+		}
+
+		void SSERenderer::AddHelix(Vector3DFloat p1, Vector3DFloat p2) {
+			GeometricShape * newHelix = new GeometricShape();
+			newHelix->geometricShapeType = GRAPHEDGE_HELIX;
+			Vector3DFloat center = (p1+p2) * 0.5;
+			Vector3DFloat dir = p1-p2;
+			Vector3DFloat yaxis = Vector3DFloat(0, 1, 0);
+
+			newHelix->SetCenter(Point3(center.X(), center.Y(), center.Z()));
+			newHelix->SetRadius(2.5);
+			newHelix->SetHeight(dir.Length());
+			Vector3DFloat axis = dir^yaxis;
+
+			dir.Normalize();
+			double angle = acos(dir * yaxis);
+			newHelix->Rotate(Vector3(axis.X(), axis.Y(), axis.Z()), -angle);
+
+			helices.push_back(newHelix);
 		}
 
 		void SSERenderer::Draw(int subSceneIndex, bool selectEnabled) {
