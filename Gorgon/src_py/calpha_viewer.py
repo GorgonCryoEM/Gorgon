@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.35  2009/06/19 18:51:05  ssa1
+#   Adding in SSEBuilder Functionality
+#
 #   Revision 1.34  2009/06/19 15:01:15  ssa1
 #   Fixing Bug 50: Loading of saved PDB Files.
 #
@@ -339,6 +342,11 @@ This function loads a SEQ file and creates a StructurePrediction object.
         self.app.menus.addMenu("actions-calpha", self.tr("C-&Alpha Atoms"), "actions")
         self.app.menus.addAction("showSeqDock", self.app.actions.getAction("seqDock"), "actions-calpha")           
 
+    def clearSelection(self):
+        BaseViewer.clearSelection(self)
+        self.main_chain.setSelection([], None, None, None)
+        self.emitAtomSelectionUpdated(self.main_chain.getSelection())      
+
     def processElementClick(self, *argv):
         """
 In response to a click on a C-alpha element, this updates the selected
@@ -359,6 +367,7 @@ residues in the Chain object.
             else:
                 atom = CAlphaRenderer.getAtomFromHitStack(self.renderer, hits[0], True, *hits[1:])
                 self.main_chain.setSelection([atom.getResSeq()])
+            self.emitAtomSelectionUpdated(self.main_chain.getSelection())
                 
         if event.button() == QtCore.Qt.RightButton and self.centerOnRMB:
             self.centerOnSelectedAtoms(argv[0], argv[1], argv[2], argv[3], argv[4], argv[5], argv[6])
@@ -404,3 +413,6 @@ If a C-alpha model is loaded, this enables relevent actions.
         """
         self.app.actions.getAction("save_CAlpha").setEnabled(self.loaded)
         self.app.actions.getAction("unload_CAlpha").setEnabled(self.loaded)
+        
+    def emitAtomSelectionUpdated(self, selection):
+        self.emit(QtCore.SIGNAL("atomSelectionUpdated(PyQt_PyObject)"), selection)

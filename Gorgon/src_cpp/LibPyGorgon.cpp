@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.51  2009/06/19 18:51:05  ssa1
+//   Adding in SSEBuilder Functionality
+//
 //   Revision 1.50  2009/03/30 21:36:12  ssa1
 //   Interactive loop building
 //
@@ -136,6 +139,7 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("x", &Vector3DFloat::X)
 		.def("y", &Vector3DFloat::Y)
 		.def("z", &Vector3DFloat::Z)
+		.def("length", &Vector3DFloat::Length)
 		.def(self * double())
 		.def(self + self)
 		.def(self - self)
@@ -336,6 +340,7 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("getOriginY", &SSERenderer::GetOriginY)
 		.def("getOriginZ", &SSERenderer::GetOriginZ)
 		.def("fitSelectedSSEs", &SSERenderer::FitSelectedSSEs)
+		.def("addHelix", &SSERenderer::AddHelix)
 	;
 
 	class_< CAlphaRenderer, bases<Renderer> >("CAlphaRenderer", init<>())
@@ -347,6 +352,7 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("unload", &CAlphaRenderer::Unload)
 		.def("selectionRotate", &CAlphaRenderer::SelectionRotate)
 		.def("selectionObjectCount", &CAlphaRenderer::SelectionObjectCount)
+		.def("selectionAtomCount", &CAlphaRenderer::SelectionAtomCount)
 		.def("selectionCenterOfMass", &CAlphaRenderer::SelectionCenterOfMass)
 		.def("selectionMove", &CAlphaRenderer::SelectionMove)
 		.def("selectionClear", &CAlphaRenderer::SelectionClear)		
@@ -359,6 +365,7 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("get3DCoordinates", &CAlphaRenderer::Get3DCoordinates)
 		.def("addAtom", &CAlphaRenderer::AddAtom, return_value_policy<reference_existing_object>())
 		.def("getAtom", &CAlphaRenderer::GetAtom, return_value_policy<reference_existing_object>())
+		.def("getSelectedAtom", &CAlphaRenderer::GetSelectedAtom, return_value_policy<reference_existing_object>())
 		.def("getAtomCount", &CAlphaRenderer::GetAtomCount)
 		.def("deleteAtom", &CAlphaRenderer::DeleteAtom)		
 		.def("addBond", &CAlphaRenderer::AddBond)

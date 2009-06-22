@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.21  2009/06/19 18:51:05  ssa1
+#   Adding in SSEBuilder Functionality
+#
 #   Revision 1.20  2008/12/15 22:38:31  ssa1
 #   Adding in support to load RAW volumes
 #
@@ -49,6 +52,7 @@ from volume_manual_skeletonization_form import VolumeManualSkeletonizationForm
 from model_visualization_form import ModelVisualizationForm
 from volume_crop_form import VolumeCropForm
 from volume_raw_loader_form import VolumeRawLoaderForm
+from volume_sse_builder_form import VolumeSSEBuilderForm
 from string import split, upper
 
 from OpenGL.GL import *
@@ -102,11 +106,7 @@ class VolumeViewer(BaseViewer):
         downsampleAct.setStatusTip(self.tr("Downsample the loaded volume"))
         self.connect(downsampleAct, QtCore.SIGNAL("triggered()"), self.downsampleVolume)
         self.app.actions.addAction("downsample_Volume", downsampleAct)     
-        
-        detectSSEAct = QtGui.QAction(self.tr("Identify &SSEs"), self)
-        detectSSEAct.setStatusTip(self.tr("Identify secondary structure elements"))
-        self.connect(detectSSEAct, QtCore.SIGNAL("triggered()"), self.detectSSEs)
-        self.app.actions.addAction("detectSSE_Volume", detectSSEAct)     
+         
  
                                                
     def createMenus(self):
@@ -117,13 +117,13 @@ class VolumeViewer(BaseViewer):
         self.app.menus.addAction("actions-volume-normalize", self.app.actions.getAction("normalize_Volume"), "actions-volume");
         self.app.menus.addAction("actions-volume-downsample", self.app.actions.getAction("downsample_Volume"), "actions-volume");
         self.app.menus.addMenu("actions-volume-skeletonization", self.tr("S&keletonization"), "actions-volume");               
-        self.app.menus.addAction("actions-volume-detectSSE", self.app.actions.getAction("detectSSE_Volume"), "actions-volume");
     
     def createChildWindows(self):
         self.surfaceEditor = VolumeSurfaceEditorForm(self.app, self)
         self.manualSkeletonizer = VolumeManualSkeletonizationForm(self.app, self)
         self.binarySkeletonizer = VolumeBinarySkeletonizationForm(self.app, self)
         self.grayscaleSkeletonizer = VolumeGrayscaleSkeletonizationForm(self.app, self)
+        self.sseBuilder = VolumeSSEBuilderForm(self.app, self)
         self.cropper = VolumeCropForm(self.app, self)
         self.rawLoader = VolumeRawLoaderForm(self.app, self)
     
@@ -175,16 +175,7 @@ class VolumeViewer(BaseViewer):
             delta = round(range * amount / 100.0)
             
             self.surfaceEditor.ui.horizontalSliderIsoLevel.setValue(self.surfaceEditor.ui.horizontalSliderIsoLevel.value() - delta)
-            
-
-    def detectSSEs(self):
-        pdbFile = QtGui.QFileDialog.getOpenFileName(self, self.tr("Open SSEHunter Results"), "", self.tr("PDB Files (*.pdb)"))
-        if not pdbFile.isEmpty():
-            calphaViewer = self.app.viewers["calpha"]
-            sseViewer = self.app.viewers["sse"]
-            calphaViewer.loadSSEHunterData(pdbFile)
-            calphaViewer.centerOnRMB = False
-            sseViewer.unloadData()            
+                
             
         
                           

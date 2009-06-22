@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.34  2009/06/19 18:51:05  ssa1
+//   Adding in SSEBuilder Functionality
+//
 //   Revision 1.33  2009/03/30 21:36:12  ssa1
 //   Interactive loop building
 //
@@ -92,6 +95,7 @@ namespace wustl_mm {
 			void LoadFile(string fileName);
 			void LoadSSEHunterFile(string fileName);
 			int SelectionObjectCount();
+			int SelectionAtomCount();
 			Vector3DFloat SelectionCenterOfMass();
 			bool SelectionRotate(Vector3DFloat centerOfMass, Vector3DFloat rotationAxis, float angle);
 			bool SelectionMove(Vector3DFloat moveDirection);
@@ -106,6 +110,7 @@ namespace wustl_mm {
 			PDBAtom * AddAtom(PDBAtom atom);
 			PDBAtom * GetAtom(unsigned long long index);
 			PDBAtom * GetAtomFromHitStack(int subsceneIndex, bool forceTrue, int ix0, int ix1, int ix2, int ix3, int ix4);
+			PDBAtom * GetSelectedAtom(unsigned int selectionId);
 			void DeleteAtom(unsigned long long index);
 			int GetAtomCount();
 			
@@ -295,13 +300,7 @@ namespace wustl_mm {
 		}
 
 		int CAlphaRenderer::SelectionObjectCount(){
-			int count = 0;
-			for(AtomMapType::iterator i = atoms.begin(); i != atoms.end(); i++) {					
-				if(i->second.GetSelected()) {
-					count++;
-				}
-			}
-
+			int count = SelectionAtomCount();
 			for(unsigned int i = 0; i < bonds.size(); i++) {
 				if(bonds[i].GetSelected()) {
 					count++;
@@ -309,6 +308,17 @@ namespace wustl_mm {
 			}
 			return count;
 		}
+
+		int CAlphaRenderer::SelectionAtomCount(){
+			int count = 0;
+			for(AtomMapType::iterator i = atoms.begin(); i != atoms.end(); i++) {					
+				if(i->second.GetSelected()) {
+					count++;
+				}
+			}
+			return count;
+		}
+
 
 		Vector3DFloat CAlphaRenderer::SelectionCenterOfMass() {
 			int count = 0;
@@ -453,6 +463,19 @@ namespace wustl_mm {
 
 		PDBBond * CAlphaRenderer::GetBond(int index) {
 			return &bonds[index];
+		}
+
+		PDBAtom * CAlphaRenderer::GetSelectedAtom(unsigned int selectionId) {
+			int count = 0;
+			for(AtomMapType::iterator i = atoms.begin(); i != atoms.end(); i++) {					
+				if(i->second.GetSelected()) {
+					if(count == selectionId) {
+						return &i->second;
+					}
+					count++;
+				}
+			}
+			return NULL;
 		}
 
 		int CAlphaRenderer::GetBondIndex(unsigned long long atom0, unsigned long long atom1) {
