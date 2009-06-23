@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.52  2009/06/22 20:17:27  ssa1
+//   Adding in SSEBuilder Functionality: Selection to Helix functionality
+//
 //   Revision 1.51  2009/06/19 18:51:05  ssa1
 //   Adding in SSEBuilder Functionality
 //
@@ -318,6 +321,7 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("drawBoundingBox", &SSERenderer::DrawBoundingBox)
 		.def("loadHelixFile", &SSERenderer::LoadHelixFile)
 		.def("loadSheetFile", &SSERenderer::LoadSheetFile)
+		.def("saveHelixFile", &SSERenderer::SaveHelixFile)
 		.def("unload", &SSERenderer::Unload)
 		.def("selectionRotate", &SSERenderer::SelectionRotate)
 		.def("selectionObjectCount", &SSERenderer::SelectionObjectCount)

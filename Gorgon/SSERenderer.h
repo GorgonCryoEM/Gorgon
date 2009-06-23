@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.25  2009/06/22 20:17:27  ssa1
+//   Adding in SSEBuilder Functionality: Selection to Helix functionality
+//
 //   Revision 1.24  2009/03/17 20:00:17  ssa1
 //   Removing Sheets from fiting process
 //
@@ -53,6 +56,8 @@ using namespace std;
 namespace wustl_mm {
 	namespace Visualization {	
 
+		const float HELIX_LENGTH_TO_RESIDUE_RATIO = 1.54;
+
 		class SSERenderer : public Renderer{
 		public:
 			SSERenderer();
@@ -70,11 +75,16 @@ namespace wustl_mm {
 			bool SelectionMove(Vector3DFloat moveDirection);
 			bool SelectionClear();
 			void SelectionToggle(int subsceneIndex, bool forceTrue, int ix0, int ix1 = -1, int ix2 = -1, int ix3 = -1, int ix4 = -1);
+			void SaveHelixFile(string fileName);
 			string GetSupportedLoadFileFormats();
 			string GetSupportedSaveFileFormats();
 			Vector3DFloat Get3DCoordinates(int subsceneIndex, int ix0, int ix1 = -1, int ix2 = -1, int ix3 = -1, int ix4 = -1);
 			void FitSelectedSSEs(Volume * vol);
 		private:
+			void LoadHelixFileSSE(string fileName);
+			void LoadHelixFileVRML(string fileName);
+			void SaveHelixFileSSE(FILE* fout);
+			void SaveHelixFileVRML(FILE* fout);
 			void UpdateBoundingBox();
 			vector<GeometricShape*> helices;
 			NonManifoldMesh_SheetIds * sheetMesh;
@@ -188,7 +198,49 @@ namespace wustl_mm {
 			glPopName();
 		}
 
+
+		void SSERenderer::LoadHelixFileSSE(string fileName) {
+
+			// NEED to FIX THIS FUNCTION.. DOES NOT WORK PROPER.
+			FILE* fin = fopen((char*)fileName.c_str(), "rt");
+
+			char line[1000];
+			char t1[1000], t2[1000], t3[1000];
+			string lineStr;
+			string token;
+			int length;
+			float x1, y1, z1, x2, y2, z2;
+			printf("in the beginning\n");;flushall();
+			while(!feof(fin))
+			{		
+				fscanf(fin, "%s", line);
+				lineStr = line;
+
+				if(lineStr.compare("ALPHA") == 0) {
+					printf("Alpha |%s|\n", line);;flushall();
+					
+					fscanf(fin, " %s %s %s %d %f %f %f %f %f %f", t1, t2, t3, &length, &x1, &y1, &z1, &x2, &y2, &z2);
+					
+					printf("%s %s %s %d %f %f %f %f %f %f\n", t1, t2, t3, length, x1, y1, z1, x2, y2, z2);;flushall();
+					AddHelix(Vector3DFloat(x1, y1, z1), Vector3DFloat(x2, y2, z2));
+				} else {
+					printf("Not alpha |%s|\n", line);flushall();
+					fscanf(fin, "%s\n", line);
+					
+					printf("{%s}\n", line);flushall();
+					
+				}
+			}
+
+			fclose(fin);
+		}
+
+		void SSERenderer::LoadHelixFileVRML(string fileName) {
+			SkeletonReader::ReadHelixFile((char *)fileName.c_str(), NULL, helices);
+		}
+
 		void SSERenderer::LoadHelixFile(string fileName) {
+
 			if(sheetMesh == NULL) {
 				Renderer::LoadFile(fileName);
 			}
@@ -196,7 +248,18 @@ namespace wustl_mm {
 				delete helices[i];
 			}
 			helices.clear();
-			SkeletonReader::ReadHelixFile((char *)fileName.c_str(), NULL, helices);
+
+			int pos = fileName.rfind(".") + 1;
+			string extension = fileName.substr(pos, fileName.length()-pos);			
+			extension = StringUtils::StringToUpper(extension);			
+			if(strcmp(extension.c_str(), "WRL") == 0) {
+				LoadHelixFileVRML(fileName);
+			} else if(strcmp(extension.c_str(), "VRML") == 0) {
+				LoadHelixFileVRML(fileName);
+			} else if(strcmp(extension.c_str(), "SSE") == 0) {
+				LoadHelixFileSSE(fileName);
+			} 
+			
 			UpdateBoundingBox();			
 		}
 
@@ -490,11 +553,65 @@ namespace wustl_mm {
 			}
 		}
 
+		void SSERenderer::SaveHelixFileVRML(FILE* fout) {
+			Point3 center;
+			Vector3DFloat start, end, axis;
+			double angle;
+			float helixLength;
+			fprintf(fout, "#VRML V2.0 utf8\n");
+
+			for(unsigned int i = 0; i < helices.size(); i++) {
+				center = helices[i]->GetCenter();
+				start = helices[i]->GetCornerCell3(1);
+				end = helices[i]->GetCornerCell3(2);
+				helixLength = (start-end).Length();
+				helices[i]->GetRotationAxisAndAngle(axis, angle);
+
+				fprintf(fout, "Group {\n children [\n Transform {\n  translation %f %f %f\n", center[0], center[1], center[2]);
+				fprintf(fout, "  rotation %f %f %f %f\n", axis.X(), axis.Y(), axis.Z(), angle);
+				fprintf(fout, "  children [\n   Shape {\n    appearance \n     Appearance {\n      material Material {\n       emissiveColor 0 0.5 0\n       }\n     }\n");
+				fprintf(fout, "    geometry\n     Cylinder {\n      height %f \n      radius 2.5 \n     }\n   }\n  ]\n }\n ]\n}", helixLength);
+			}
+		}
+
+		void SSERenderer::SaveHelixFileSSE(FILE* fout) {
+			Vector3DFloat start, end;
+			float helixLength;
+			int intLength;
+
+			for(unsigned int i = 0; i < helices.size(); i++) {
+				end = helices[i]->GetCornerCell3(1);
+				start = helices[i]->GetCornerCell3(2);				
+				helixLength = (start-end).Length();
+				intLength = (int)ceil(helixLength / HELIX_LENGTH_TO_RESIDUE_RATIO);
+								
+				fprintf(fout, "ALPHA 'A%d' '%d' '%d' %d %f %f %f %f %f %f\n", i, i*100,i*100+(intLength-1), intLength, start.X(), start.Y(), start.Z(), end.X(), end.Y(), end.Z());
+			}
+		}
+
+		void SSERenderer::SaveHelixFile(string fileName) {
+			FILE* fout = fopen((char*)fileName.c_str(), "wt");
+			int pos = fileName.rfind(".") + 1;
+			string extension = fileName.substr(pos, fileName.length()-pos);
+			
+			extension = StringUtils::StringToUpper(extension);
+			
+			if(strcmp(extension.c_str(), "WRL") == 0) {
+				SaveHelixFileVRML(fout);
+			} else if(strcmp(extension.c_str(), "VRML") == 0) {
+				SaveHelixFileVRML(fout);
+			} else if(strcmp(extension.c_str(), "SSE") == 0) {
+				SaveHelixFileSSE(fout);
+			} 
+			fclose(fout);
+		}
+
 		string SSERenderer::GetSupportedLoadFileFormats() {
 			return "VRML models (*.vrml *.wrl)";
 		}
+
 		string SSERenderer::GetSupportedSaveFileFormats() {
-			return "VRML models (*.vrml, *.wrl)";
+			return "All Supported Formats(*.vrml *.wrl *.sse);; VRML models (*.vrml *.wrl);; SSEHunter annotations (*.sse)";
 		}
 
 		Vector3DFloat SSERenderer::Get3DCoordinates(int subsceneIndex, int ix0, int ix1, int ix2, int ix3, int ix4) {
