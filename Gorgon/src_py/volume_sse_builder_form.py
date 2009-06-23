@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.1  2009/06/22 20:17:27  ssa1
+#   Adding in SSEBuilder Functionality: Selection to Helix functionality
+#
 
 from PyQt4 import QtCore, QtGui
 from ui_dialog_volume_sse_builder import Ui_DialogVolumeSSEBuilder
@@ -123,6 +126,7 @@ class VolumeSSEBuilderForm(QtGui.QWidget, Ui_DialogVolumeSSEBuilder):
             
         [p1, p2] = self.getHelixEnds(atoms)
         self.sseViewer.loaded = True
+        self.sseViewer.dirty = True
         self.sseViewer.renderer.addHelix(p1, p2)
         self.sseViewer.emitModelChanged()
         

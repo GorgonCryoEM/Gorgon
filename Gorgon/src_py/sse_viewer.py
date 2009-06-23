@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.24  2009/04/02 19:00:20  ssa1
+#   CAlpha Viewer bug fixes and smoother uniform functionality
+#
 #   Revision 1.23  2009/03/17 20:00:17  ssa1
 #   Removing Sheets from fiting process
 #
@@ -108,7 +111,7 @@ class SSEViewer(BaseViewer):
         self.helixCorrespondanceFinder = SSEHelixCorrespondenceFinderForm(self.app, self)
     
     def loadHelixData(self):
-        self.helixFileName = QtGui.QFileDialog.getOpenFileName(self, self.tr("Open Data"), "", self.tr(self.renderer.getSupportedLoadFileFormats()))
+        self.helixFileName = QtGui.QFileDialog.getOpenFileName(self, self.tr("Open Helix Annotations"), "", self.tr(self.renderer.getSupportedLoadFileFormats()))
         self.fileName = self.helixFileName;
         if not self.helixFileName.isEmpty():  
             self.setCursor(QtCore.Qt.WaitCursor)
@@ -119,7 +122,7 @@ class SSEViewer(BaseViewer):
             self.emitViewerSetCenter()        
                
     def loadSheetData(self):
-        self.sheetFileName = QtGui.QFileDialog.getOpenFileName(self, self.tr("Open Data"), "", self.tr(self.renderer.getSupportedLoadFileFormats()))
+        self.sheetFileName = QtGui.QFileDialog.getOpenFileName(self, self.tr("Open Sheet Annotations"), "", self.tr(self.renderer.getSupportedLoadFileFormats()))
         self.fileName = self.sheetFileName;
         if not self.sheetFileName.isEmpty():  
             self.setCursor(QtCore.Qt.WaitCursor)
@@ -128,7 +131,15 @@ class SSEViewer(BaseViewer):
             self.setCursor(QtCore.Qt.ArrowCursor)
             self.emitModelLoaded()
             self.emitViewerSetCenter()
-                                          
+
+    def saveHelixData(self):
+        self.fileName = QtGui.QFileDialog.getSaveFileName(self, self.tr("Save Helix Annotations"), "", self.tr(self.renderer.getSupportedSaveFileFormats()))
+        if not self.fileName.isEmpty():  
+            self.setCursor(QtCore.Qt.WaitCursor)
+            self.renderer.saveHelixFile(str(self.fileName))
+            self.dirty = False
+            self.setCursor(QtCore.Qt.ArrowCursor)
+                                                      
     def unloadData(self):
         self.helixFileName = ""
         self.sheetFileName = ""
@@ -146,7 +157,12 @@ class SSEViewer(BaseViewer):
         openSheetAct.setStatusTip(self.tr("Load a sheet file"))
         self.connect(openSheetAct, QtCore.SIGNAL("triggered()"), self.loadSheetData)
         self.app.actions.addAction("load_SSE_Sheet", openSheetAct)
-               
+
+        saveHelixAct = QtGui.QAction(self.tr("&Helix Annotations..."), self)
+        saveHelixAct.setStatusTip(self.tr("Save helix annotations"))
+        self.connect(saveHelixAct, QtCore.SIGNAL("triggered()"), self.saveHelixData)
+        self.app.actions.addAction("save_SSE_Helix", saveHelixAct)        
+                       
         closeAct = QtGui.QAction(self.tr("SSE Annotations"), self)
         closeAct.setStatusTip(self.tr("Close the loaded secondary structure element file"))
         self.connect(closeAct, QtCore.SIGNAL("triggered()"), self.unloadData)
@@ -160,7 +176,8 @@ class SSEViewer(BaseViewer):
                         
     def createMenus(self):
         self.app.menus.addAction("file-open-helix", self.app.actions.getAction("load_SSE_Helix"), "file-open")    
-        self.app.menus.addAction("file-open-sheet", self.app.actions.getAction("load_SSE_Sheet"), "file-open")        
+        self.app.menus.addAction("file-open-sheet", self.app.actions.getAction("load_SSE_Sheet"), "file-open")
+        self.app.menus.addAction("file-save-helix", self.app.actions.getAction("save_SSE_Helix"), "file-save");        
         self.app.menus.addAction("file-close-sse", self.app.actions.getAction("unload_SSE"), "file-close");
         self.app.menus.addMenu("actions-sse", self.tr("Secondary Structure &Element"), "actions");
         self.app.menus.addAction("actions-sse-fit-helix", self.app.actions.getAction("fit_SSE_Helix"), "actions-sse");
