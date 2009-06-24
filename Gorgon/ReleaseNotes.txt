@@ -10,6 +10,8 @@ Version 1.0.2b
   Using PyOpenGL 3.0.0
   CTRL+ALT and drag mouse to rotate scene for 10 seconds
   Support for loading MAP volumes
+  SSE Builder functionality for creating Secondary Structure annotations from SSEHunter results
+  Saving Secondary structure annotations as VRML (VRML / WRL format) as well as DeJaVu (SSE format)
 
 Version 1.0.1
   Support for loading CCP4 and RAW volumes

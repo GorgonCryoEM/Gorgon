@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.56  2009/03/31 21:40:13  ssa1
+#   Refactoring: Splitting seq_model\SequenceView.py into subclasses
+#
 #   Revision 1.55  2009/03/24 19:25:54  ssa1
 #   Fixing scaling bug in interactive skeletonization
 #
@@ -284,6 +287,19 @@ class BaseViewer(QtOpenGL.QGLWidget):
     def setViewerAutonomy(self, value):
         self.viewerAutonomous = value;
         self.updateViewerAutonomy(value)
+    
+    def getBoundingBox(self):
+        scale = [self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ()]
+        location = [self.renderer.getOriginX(), self.renderer.getOriginY(), self.renderer.getOriginZ()]
+        minPos = [(self.renderer.getMin(0)*scale[0] + location[0]), 
+                  (self.renderer.getMin(1)*scale[1] + location[1]), 
+                  (self.renderer.getMin(2)*scale[2] + location[2])]
+        maxPos = [(self.renderer.getMax(0)*scale[0] + location[0]),
+                  (self.renderer.getMax(1)*scale[1] + location[1]), 
+                  (self.renderer.getMax(2)*scale[2] + location[2])]
+        return (minPos, maxPos)        
+        
+        
 
     def getCenterAndDistance(self):
         scale = [self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ()]
@@ -542,6 +558,10 @@ class BaseViewer(QtOpenGL.QGLWidget):
     
     def emitDrawingModel(self):
         self.emit(QtCore.SIGNAL("modelDrawing()"))
+
+    def emitViewerSetCenterLocal(self):
+        (center, distance) = self.getCenterAndDistance()
+        self.emit(QtCore.SIGNAL("viewerSetCenterLocal(float, float, float, float)"), center[0], center[1], center[2], distance)
     
     def emitViewerSetCenter(self):
         (center, distance) = self.getCenterAndDistance()

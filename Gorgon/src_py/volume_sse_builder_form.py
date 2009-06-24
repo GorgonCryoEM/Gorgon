@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.2  2009/06/23 16:50:34  ssa1
+#   Adding in SSEBuilder Functionality: Saving helix as WRL and SSE files
+#
 #   Revision 1.1  2009/06/22 20:17:27  ssa1
 #   Adding in SSEBuilder Functionality: Selection to Helix functionality
 #
@@ -40,6 +43,7 @@ class VolumeSSEBuilderForm(QtGui.QWidget, Ui_DialogVolumeSSEBuilder):
         self.connect(self.dock, QtCore.SIGNAL("visibilityChanged (bool)"), self.dockVisibilityChanged)
         self.connect(self.pushButtonBrowseAtomScore, QtCore.SIGNAL("clicked (bool)"), self.browseAtomScoreFile)
         self.connect(self.pushButtonSelectionToHelix, QtCore.SIGNAL("clicked (bool)"), self.selectionToHelix)
+        self.connect(self.pushButtonSelectionToSheet, QtCore.SIGNAL("clicked (bool)"), self.selectionToSheet)
                                                                 
                                     
     def createActions(self):    
@@ -125,10 +129,41 @@ class VolumeSSEBuilderForm(QtGui.QWidget, Ui_DialogVolumeSSEBuilder):
             atoms.append(atom)
             
         [p1, p2] = self.getHelixEnds(atoms)
-        self.sseViewer.loaded = True
-        self.sseViewer.dirty = True
         self.sseViewer.renderer.addHelix(p1, p2)
-        self.sseViewer.emitModelChanged()
+        
+        if(self.sseViewer.loaded):
+            self.sseViewer.helixLoaded = True
+            self.sseViewer.dirty = True           
+            self.sseViewer.emitModelChanged()
+        else :
+            self.sseViewer.loaded = True
+            self.sseViewer.sheetLoaded = True
+            self.sseViewer.dirty = True
+            self.sseViewer.emitModelLoadedPreDraw()
+            self.sseViewer.emitModelLoaded()            
+        
+    def selectionToSheet(self, result):
+        atomCnt = self.calphaViewer.renderer.selectionAtomCount()
+        
+        self.sseViewer.renderer.startNewSheet();
+        
+        for i in range(atomCnt):
+            atom = self.calphaViewer.renderer.getSelectedAtom(i)
+            position = atom.getPosition()
+            self.sseViewer.renderer.addSheetPoint(position)
+            
+        self.sseViewer.renderer.finalizeSheet()
+        
+        if(self.sseViewer.loaded):
+            self.sseViewer.sheetLoaded = True
+            self.sseViewer.dirty = True           
+            self.sseViewer.emitModelChanged()
+        else :
+            self.sseViewer.loaded = True
+            self.sseViewer.sheetLoaded = True
+            self.sseViewer.dirty = True
+            self.sseViewer.emitModelLoadedPreDraw()
+            self.sseViewer.emitModelLoaded()                
         
         
             

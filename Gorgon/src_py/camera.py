@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.53  2009/05/08 20:45:49  ssa1
+#   auto rotate of camera when user clicks CTRL + ALT and left move
+#
 #   Revision 1.52  2008/12/03 21:58:25  ssa1
 #   Selection rotations for atoms and helices.
 #
@@ -165,6 +168,7 @@ class Camera(QtOpenGL.QGLWidget):
             self.scene[i].sceneIndex = i;     
 
         for s in self.scene:
+            self.connect(s, QtCore.SIGNAL("viewerSetCenterLocal(float, float, float, float)"), self.sceneSetCenterLocal)
             self.connect(s, QtCore.SIGNAL("viewerSetCenter(float, float, float, float)"), self.sceneSetCenter)
             self.connect(s, QtCore.SIGNAL("modelChanged()"), self.modelChanged)
             self.connect(s, QtCore.SIGNAL("modelLoaded()"), self.modelChanged)
@@ -244,8 +248,36 @@ class Camera(QtOpenGL.QGLWidget):
         for s in self.scene:
             if(s.renderer.setCuttingPlane(self.cuttingPlane, self.look[0], self.look[1], self.look[2])) :
                 s.emitModelChanged()  
+ 
+    def sceneSetCenter(self, cX, cY, cZ, d):
+        
+        sceneMin = [cX, cY, cZ]
+        sceneMax = [cX, cY, cZ]
+        for s in self.scene: 
+            if s.loaded:
+                (minPos, maxPos) = s.getBoundingBox()
+                for i in range(3):
+                    if minPos[i] < sceneMin[i]:
+                        sceneMin[i] = minPos[i]
+                    if maxPos[i] > sceneMax[i]:
+                        sceneMax[i] = maxPos[i]
+        
+        distance = vectorDistance(sceneMin, sceneMax)
+        [centerX, centerY, centerZ] = vectorScalarMultiply(0.5, vectorAdd(sceneMin, sceneMax))         
+                     
+        
+        
+        self.setCenter(centerX, centerY, centerZ)
+        self.setEye(self.center[0] , self.center[1], self.center[2] - distance)
+        self.setUp(0, -1, 0)
+        centerDistance = vectorDistance(self.eye, self.center)
+        self.setCuttingPlane(0.0)
+        self.modelChanged()
+         
+        self.updateGL()
     
-    def sceneSetCenter(self, centerX, centerY, centerZ, distance):
+    def sceneSetCenterLocal(self, centerX, centerY, centerZ, distance):
+        
         self.setCenter(centerX, centerY, centerZ)
         self.setEye(self.center[0] , self.center[1], self.center[2] - distance)
         self.setUp(0, -1, 0)
