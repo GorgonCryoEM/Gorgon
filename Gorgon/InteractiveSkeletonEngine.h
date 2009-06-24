@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.29  2009/03/30 21:36:12  ssa1
+//   Interactive loop building
+//
 //   Revision 1.28  2008/12/01 23:16:31  ssa1
 //   Restructuring interactive skeleton drawing, and fixing it for scale space changes.
 //
@@ -79,7 +82,7 @@ namespace wustl_mm {
 		class InteractiveSkeletonEngine {
 		public:
 			InteractiveSkeletonEngine(Volume * volume, NonManifoldMesh_Annotated * skeleton, float minGray, int stepCount, int curveRadius, int minCurveSize, unsigned int medialnessScoringFunction);			
-			~InteractiveSkeletonEngine();			
+			virtual ~InteractiveSkeletonEngine();			
 			void AnalyzePathRay(float rayX, float rayY, float rayZ, float eyeX, float eyeY, float eyeZ, float rayWidth);
 			bool ClearSketch2D();
 			void ClearSketchRay();

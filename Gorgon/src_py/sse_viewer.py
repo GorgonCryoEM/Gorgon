@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.25  2009/06/23 16:50:34  ssa1
+#   Adding in SSEBuilder Functionality: Saving helix as WRL and SSE files
+#
 #   Revision 1.24  2009/04/02 19:00:20  ssa1
 #   CAlpha Viewer bug fixes and smoother uniform functionality
 #
@@ -80,11 +83,13 @@ class SSEViewer(BaseViewer):
         self.sheetFileName = ""
         self.currentMatch = None
         self.showBox = False;
+        self.helixLoaded = False
+        self.sheetLoaded = False        
         self.renderer = SSERenderer()
         self.correspondenceEngine = SSECorrespondenceEngine()
         self.createUI()
         self.selectEnabled = True
-        self.app.viewers["sse"] = self;
+        self.app.viewers["sse"] = self
         self.model2Visible = True
         self.initVisualizationOptions(ModelVisualizationForm(self.app, self))
         self.visualizationOptions.ui.checkBoxModelVisible.setText("Show helices colored:")
@@ -117,6 +122,7 @@ class SSEViewer(BaseViewer):
             self.setCursor(QtCore.Qt.WaitCursor)
             self.renderer.loadHelixFile(str(self.helixFileName))
             self.loaded = True
+            self.helixLoaded = True
             self.setCursor(QtCore.Qt.ArrowCursor)
             self.emitModelLoaded()
             self.emitViewerSetCenter()        
@@ -128,6 +134,7 @@ class SSEViewer(BaseViewer):
             self.setCursor(QtCore.Qt.WaitCursor)
             self.renderer.loadSheetFile(str(self.sheetFileName))
             self.loaded = True
+            self.sheetLoaded = True
             self.setCursor(QtCore.Qt.ArrowCursor)
             self.emitModelLoaded()
             self.emitViewerSetCenter()
@@ -141,6 +148,8 @@ class SSEViewer(BaseViewer):
             self.setCursor(QtCore.Qt.ArrowCursor)
                                                       
     def unloadData(self):
+        self.helixLoaded = False
+        self.sheetLoaded = False
         self.helixFileName = ""
         self.sheetFileName = ""
         BaseViewer.unloadData(self)
@@ -184,6 +193,7 @@ class SSEViewer(BaseViewer):
                    
     def updateActionsAndMenus(self):
         self.app.actions.getAction("unload_SSE").setEnabled(self.loaded)
+        self.app.actions.getAction("save_SSE_Helix").setEnabled(self.helixLoaded)
         self.app.actions.getAction("fit_SSE_Helix").setEnabled(self.loaded and self.app.viewers["volume"].loaded)
     
     def updateCurrentMatch(self, sseType, sseIndex):
