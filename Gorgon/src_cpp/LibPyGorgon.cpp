@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.53  2009/06/23 16:50:34  ssa1
+//   Adding in SSEBuilder Functionality: Saving helix as WRL and SSE files
+//
 //   Revision 1.52  2009/06/22 20:17:27  ssa1
 //   Adding in SSEBuilder Functionality: Selection to Helix functionality
 //
@@ -322,6 +325,7 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("loadHelixFile", &SSERenderer::LoadHelixFile)
 		.def("loadSheetFile", &SSERenderer::LoadSheetFile)
 		.def("saveHelixFile", &SSERenderer::SaveHelixFile)
+		.def("saveSheetFile", &SSERenderer::SaveSheetFile)
 		.def("unload", &SSERenderer::Unload)
 		.def("selectionRotate", &SSERenderer::SelectionRotate)
 		.def("selectionObjectCount", &SSERenderer::SelectionObjectCount)
@@ -329,8 +333,10 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("selectionMove", &SSERenderer::SelectionMove)
 		.def("selectionClear", &SSERenderer::SelectionClear)		
 		.def("selectionToggle", &SSERenderer::SelectionToggle)	
-		.def("getSupportedLoadFileFormats", &SSERenderer::GetSupportedLoadFileFormats)
-		.def("getSupportedSaveFileFormats", &SSERenderer::GetSupportedSaveFileFormats)
+		.def("getSupportedHelixLoadFileFormats", &SSERenderer::GetSupportedHelixLoadFileFormats)
+		.def("getSupportedHelixSaveFileFormats", &SSERenderer::GetSupportedHelixSaveFileFormats)
+		.def("getSupportedSheetLoadFileFormats", &SSERenderer::GetSupportedSheetLoadFileFormats)
+		.def("getSupportedSheetSaveFileFormats", &SSERenderer::GetSupportedSheetSaveFileFormats)
 		.def("getMin", &SSERenderer::GetMin)
 		.def("getMax", &SSERenderer::GetMax)
 		.def("get3DCoordinates", &SSERenderer::Get3DCoordinates)
@@ -345,6 +351,9 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("getOriginZ", &SSERenderer::GetOriginZ)
 		.def("fitSelectedSSEs", &SSERenderer::FitSelectedSSEs)
 		.def("addHelix", &SSERenderer::AddHelix)
+		.def("startNewSheet", &SSERenderer::StartNewSheet)
+		.def("addSheetPoint", &SSERenderer::AddSheetPoint)
+		.def("finalizeSheet", &SSERenderer::FinalizeSheet)
 	;
 
 	class_< CAlphaRenderer, bases<Renderer> >("CAlphaRenderer", init<>())
