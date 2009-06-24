@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.26  2009/06/23 16:50:34  ssa1
+//   Adding in SSEBuilder Functionality: Saving helix as WRL and SSE files
+//
 //   Revision 1.25  2009/06/22 20:17:27  ssa1
 //   Adding in SSEBuilder Functionality: Selection to Helix functionality
 //
@@ -210,25 +213,16 @@ namespace wustl_mm {
 			string token;
 			int length;
 			float x1, y1, z1, x2, y2, z2;
-			printf("in the beginning\n");;flushall();
 			while(!feof(fin))
 			{		
 				fscanf(fin, "%s", line);
 				lineStr = line;
 
 				if(lineStr.compare("ALPHA") == 0) {
-					printf("Alpha |%s|\n", line);;flushall();
-					
 					fscanf(fin, " %s %s %s %d %f %f %f %f %f %f", t1, t2, t3, &length, &x1, &y1, &z1, &x2, &y2, &z2);
-					
-					printf("%s %s %s %d %f %f %f %f %f %f\n", t1, t2, t3, length, x1, y1, z1, x2, y2, z2);;flushall();
 					AddHelix(Vector3DFloat(x1, y1, z1), Vector3DFloat(x2, y2, z2));
 				} else {
-					printf("Not alpha |%s|\n", line);flushall();
-					fscanf(fin, "%s\n", line);
-					
-					printf("{%s}\n", line);flushall();
-					
+					fscanf(fin, "%s\n", line);					
 				}
 			}
 
