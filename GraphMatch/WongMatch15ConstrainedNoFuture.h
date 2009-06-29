@@ -15,6 +15,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.15.2.2  2009/06/19 17:46:01  schuhs
+//   Continuing to modify to work with sheets.
+//
 //   Revision 1.15.2.1  2009/06/18 20:43:55  schuhs
 //   Starting to modify to work with sheets.
 //
@@ -226,7 +229,7 @@ namespace wustl_mm {
 				//printf("\n");
 				//cout << " current node has depth " << (int)currentNode->depth << ", max depth is " << patternGraph->nodeCount << endl;
 				if(currentNode->depth == patternGraph->nodeCount) {
-					cout << " current node at max depth (" << (int)currentNode->depth << ")" << endl;
+					//cout << " current node at max depth (" << (int)currentNode->depth << ")" << endl;
 					finishTime = clock();
 					foundCount++;
 					currentNode->PrintNodeConcise(foundCount, false);
@@ -296,6 +299,8 @@ namespace wustl_mm {
 			return GetC(p, p, qp, qp);
 		}
 
+		// GetC(currentNode->n1Node, currentNode->n2Node)
+
 		double WongMatch15ConstrainedNoFuture::GetC(int j, int p, int qj, int qp) {
 
 			double jpCost;
@@ -321,13 +326,21 @@ namespace wustl_mm {
 			// case where a sheet is revisited by two consecutive strands
 			if( (int)(patternGraph->adjacencyMatrix[j-1][p-1][0] + 0.01) == GRAPHEDGE_LOOP && 
 				(int)(baseGraph->adjacencyMatrix[qj-1][qp-1][0] + 0.01) == GRAPHNODE_SHEET) {
-				cout << "----> revisiting sheet" << endl;
+				//cout << "----> revisiting sheet " << qj-1 << ". type cost 0, total cost " << fabs(jpCost - qjqpCost) << endl;
 				typeCost = 0;
 			}
-			cout << "cost of pattern " << patternGraph->adjacencyMatrix[j-1][p-1][0] << " and base " << baseGraph->adjacencyMatrix[qj-1][qp-1][0] << " is " << fabs(jpCost - qjqpCost) + typeCost << endl;
+
+			// TODO: Think I need to add an extra case here for the type check done by the simpler GetC(i, j) method above
+
+			//cout << "cost of pattern " << patternGraph->adjacencyMatrix[j-1][p-1][0] << " and base " << baseGraph->adjacencyMatrix[qj-1][qp-1][0] << " is " << fabs(jpCost - qjqpCost) + typeCost << endl;
 			return fabs(jpCost - qjqpCost) + typeCost;
 		}
 
+		// returns the cost of matching a loop from the pattern graph (with missing helices) to a loop in the base graph.
+		// d is the start match in the pattern graph
+		// m is the number of missing helices or sheets in the pattern graph
+		// qj is the start node in the base graph
+		// qp is the end node in the base graph
 		double WongMatch15ConstrainedNoFuture::GetCost(int d, int m, int qj, int qp) {
 			double patternLength = 0;
 			double baseLength;
@@ -338,21 +351,22 @@ namespace wustl_mm {
 			}
 
 			// Adding the length of the edges
+			// Check that first and last edges are both loops, a requirement for all edges in the pattern graph
 			bool firstIsLoop = false;
 			bool lastIsLoop = false;
 			for(int i = 0; i < m; i++) {
-				lastIsLoop = (((int)(patternGraph->adjacencyMatrix[d+i-1][d+i][0] + 0.01) == GRAPHEDGE_LOOP) || ((int)(patternGraph->adjacencyMatrix[d+i-1][d+i][0] + 0.01) == GRAPHEDGE_LOOP_EUCLIDEAN));
+				//lastIsLoop = (((int)(patternGraph->adjacencyMatrix[d+i-1][d+i][0] + 0.01) == GRAPHEDGE_LOOP) || ((int)(patternGraph->adjacencyMatrix[d+i-1][d+i][0] + 0.01) == GRAPHEDGE_LOOP_EUCLIDEAN));
+				lastIsLoop = (((int)(patternGraph->adjacencyMatrix[d+i-1][d+i][0] + 0.01) == GRAPHEDGE_LOOP) || ((int)(patternGraph->adjacencyMatrix[d+i-1][d+i][0] + 0.01) == GRAPHEDGE_LOOP_EUCLIDEAN) || ((int)(patternGraph->adjacencyMatrix[d+i-1][d+i][0] + 0.01) == GRAPHNODE_SHEET));
 				if(i==0) {
 					firstIsLoop = lastIsLoop;
 				}
 				patternLength += patternGraph->adjacencyMatrix[d+i-1][d+i][1];		
 			}
-			bool lastIsSheetSheet = ( (int)(baseGraph->adjacencyMatrix[qj-1][qp-1][0] + 0.01) == GRAPHNODE_SHEET );
-			
-
 
 			bool euclideanEstimate = false;
 			double weight = 1.0;
+
+			bool sheetSheet = false; // for debugging
 
 			if(qj == -1) { // special handling for missing helixes at the ends
 				baseLength = 0;
@@ -383,8 +397,10 @@ namespace wustl_mm {
 						weight = SHEET_WEIGHT_COEFFICIENT;
 						break;
 					case(GRAPHNODE_SHEET): // two strands in a row match to the same sheet
-						cout << "---> sheet to sheet case" << endl;
-						weight = 0;
+						//cout << "---> sheet to sheet case. parameters: " << d << "," << m << "," << qj << "," << qp << endl;
+						sheetSheet = true;
+						weight = LOOP_WEIGHT_COEFFICIENT;
+						//weight = 0;
 						break;
 				}
 				weight = euclideanEstimate? weight * EUCLIDEAN_LOOP_PENALTY: weight;
@@ -398,8 +414,12 @@ namespace wustl_mm {
 			//       I think it's in the next two blocks.
 			if(m == 1) {		
 				if((qj!= -1) && ((int)(patternGraph->adjacencyMatrix[d-1][d][0] + 0.01) != (int)(baseGraph->adjacencyMatrix[qj-1][qp-1][0] + 0.01)) &&
-					!(((int)(patternGraph->adjacencyMatrix[d-1][d][0] + 0.01) == GRAPHEDGE_LOOP) && ((int)(baseGraph->adjacencyMatrix[qj-1][qp-1][0] +0.01) == GRAPHEDGE_LOOP_EUCLIDEAN))) 	{
-					cout << "first case returning -1" << endl;
+					//!(((int)(patternGraph->adjacencyMatrix[d-1][d][0] + 0.01) == GRAPHEDGE_LOOP) && ((int)(baseGraph->adjacencyMatrix[qj-1][qp-1][0] +0.01) == GRAPHEDGE_LOOP_EUCLIDEAN))) 	{
+					!(((int)(patternGraph->adjacencyMatrix[d-1][d][0] + 0.01) == GRAPHEDGE_LOOP) && ((int)(baseGraph->adjacencyMatrix[qj-1][qp-1][0] +0.01) == GRAPHEDGE_LOOP_EUCLIDEAN)) &&
+					!(((int)(patternGraph->adjacencyMatrix[d-1][d][0] + 0.01) == GRAPHEDGE_LOOP) && ((int)(baseGraph->adjacencyMatrix[qj-1][qp-1][0] +0.01) == GRAPHNODE_SHEET))) 	{
+					if (sheetSheet) {
+						//cout << "first case returning -1" << endl;
+					}
 					return -1;
 				}		
 				//// TODO: Figure out why I had put in the following code!!!!
@@ -407,28 +427,43 @@ namespace wustl_mm {
 				////	printf("%lf %lf %lf %lf \n", baseGraph->euclideanMatrix[qj-1][qp-1], patternGraph->adjacencyMatrix[d-1][d][1], patternGraph->adjacencyMatrix[d-1][d][1], EUCLIDEAN_VOXEL_TO_PDB_RATIO);
 				//	return -1;
 				//}
+
+			// commenting out loop requirement s.schuh 6/29 
 			} else {
 				if(!firstIsLoop || !lastIsLoop) {
-					cout << "second case returning -1" << endl;
+					if (sheetSheet) {
+						//cout << "second case returning -1 (first and last are not loops)" << endl;
+					}	
 					return -1;
 				}
+			//
+
 			}
 
 
 			switch(COST_FUNCTION)
 			{
 			case(1):
-				cout << "first case returning weight" << endl;
+				if (sheetSheet) {
+					//cout << "first case (absolute cost) returning weight of " << weight * fabs(patternLength - baseLength) << endl;
+				}
 				return weight * fabs(patternLength - baseLength);
 				break;
 			case(2):
-				cout << "second case returning weight" << endl;
+				if (sheetSheet) {
+					//cout << "second case (normalized cost) returning weight of " << weight * fabs(patternLength - baseLength) / (patternLength + baseLength) << endl;
+				}
 				return weight * fabs(patternLength - baseLength) / (patternLength + baseLength);
 				break;
 			case(3):
-				cout << "third case returning weight" << endl;
+				if (sheetSheet) {
+					//cout << "third case (squared cost) returning weight of " << weight * pow((patternLength - baseLength),2) << endl;
+				}
 				return weight * pow((patternLength - baseLength),2);
 				break;
+			}
+			if (sheetSheet) {
+				//cout << "returning zero (impossible case)" << endl;
 			}
 			return 0;
 		}
@@ -479,11 +514,15 @@ namespace wustl_mm {
 				//   i is in the currentNode bitmap, and there is an edge in baseGraph between currentNode and node i
 				if((currentNode->depth == 0) || 
 					(LinkedNode::IsNodeInBitmap(currentNode->m2Bitmap, i) && (baseGraph->EdgeExists(currentNode->n2Node-1, i-1)))) {						
-					// TODO: the following line assumes every other SSE is a helix
+					// TODO: the following line used to assume that every other SSE was a helix
 					//       j is number of helices to jump 
 					//       think i've fixed it. need to test.
 					for(int j = 0; j <= min(missingHelixCount * 2 + missingSheetCount - currentNode->missingNodesUsed + 1, currentM1Top); j += 1) {  // Stepping by one for sheets; helix code adds an extra step at end
 					//for(int j = 0; j <= min(missingHelixCount * 2 - currentNode->missingNodesUsed + 1, currentM1Top); j += 2) {  // Stepping by two since we jump every 2 loops
+
+						// i is the node from baseGraph being matched to currentNode
+						// j is the number of missing helices or sheets from patternGraph to be skipped for this match
+
 						notConstrained = true;
 
 						for(int k = currentNode->n1Node + 1; k <= currentNode->n1Node + j; k++) {
@@ -496,10 +535,27 @@ namespace wustl_mm {
 							temp = currentNode; 
 							// create new current node. i is the index of the new node(?), j is the number of skipped nodes.
 
-							//currentNode = new LinkedNode(currentNode, currentStub, i, j);
-							bool revisitable = ( (int)(baseGraph->adjacencyMatrix[i-1][i-1][0] + 0.01) == GRAPHNODE_SHEET );
-							currentNode = new LinkedNode(currentNode, currentStub, i, j, revisitable);
 
+							// check whether i is a revisitable node (a sheet)
+							bool revisitable = ( (int)(baseGraph->adjacencyMatrix[i-1][i-1][0] + 0.01) == GRAPHNODE_SHEET );
+							/*
+							if (revisitable) {
+								currentNode->PrintNodeConcise(0, true, true);
+								cout << "searching from node " << (int)(currentNode->n2Node) << " to    revisitable node i=" << i << ", type=" << (int)(baseGraph->adjacencyMatrix[i-1][i-1][0] + 0.01) << ", j=" << j << endl;
+							} else {
+								currentNode->PrintNodeConcise(0, true, true);
+								cout << "searching from node " << (int)(currentNode->n2Node) << " to nonrevisitable node i=" << i << ", type=" << (int)(baseGraph->adjacencyMatrix[i-1][i-1][0] + 0.01) << ", j=" << j << endl;
+							}
+							*/
+
+							// generate a current node, marking it as revisitable or not depending on result from test
+							// the constructor marches forward along the sequence, skipping j nodes
+							currentNode = new LinkedNode(currentNode, currentStub, i, j, revisitable);
+							//currentNode = new LinkedNode(currentNode, currentStub, i, j);
+
+							//if (currentNode->n2Node == temp->n2Node) {
+							//	cout << "============== progress! picked two nodes that are the same! node is " << (int)(currentNode->n2Node+0.01) << ", cost is " << currentNode->cost << endl;
+							//}
 
 							currentNode->costGStar = 0;
 
@@ -518,14 +574,42 @@ namespace wustl_mm {
 								//if (edgeCost < 0) {cout << "edge cost (" << (int)temp->n1Node << "," << (int)j+1 << "," << (int)temp->n2Node << "," << (int)currentNode->n2Node << ") is " << edgeCost << endl;}
 							}
 							
-							// TODO: Look below here for edge and node costs.
+							// TODO: Look below here for edge and node costs. 
+							// TODO: Fix assumption that all nodes are helices!
 							// if this is an allowed match:
 							if(edgeCost >= 0) {
+								/*
+								if (currentNode->n2Node == temp->n2Node) {
+									cout << "============== progress! starting to match a node to itself! node is " << (int)(currentNode->n2Node+0.01) << endl;
+									cout << "               BEFORE:" << endl;
+									cout << "               edge cost is " << edgeCost << endl;
+									cout << "               current n1 node type is " << (int)(baseGraph->adjacencyMatrix[currentNode->n1Node-1][currentNode->n1Node-1][0] + 0.01) << endl;
+									cout << "               temp n1 node type is " << (int)(baseGraph->adjacencyMatrix[temp->n1Node-1][temp->n1Node-1][0] + 0.01) << endl;
+									cout << "               current n2 node type is " << (int)(baseGraph->adjacencyMatrix[currentNode->n2Node-1][currentNode->n2Node-1][0] + 0.01) << endl;
+									cout << "               temp n2 node type is " << (int)(baseGraph->adjacencyMatrix[temp->n2Node-1][temp->n2Node-1][0] + 0.01) << endl;
+									cout << "               current n1 is " << (int)currentNode->n1Node << endl;
+									cout << "               temp n1 is " << (int)temp->n1Node << endl;
+									cout << "               current n2 is " << (int)currentNode->n2Node << endl;
+									cout << "               temp n2 is " << (int)temp->n2Node << endl;
+									cout << "               costGStar is " << currentNode->costGStar << endl;
+
+								}
+								*/
 								currentNode->costGStar += temp->costGStar + edgeCost +	MISSING_HELIX_PENALTY * (j/2.0) + GetC(currentNode->n1Node, currentNode->n2Node);
 								currentNode->cost = GetF();			
 								//currentNode->PrintNodeConcise(-1, true, true);
 								queue->add(currentNode, currentNode->cost);
 								expanded = true;
+								/*
+								if (currentNode->n2Node == temp->n2Node) {
+									cout << "               AFTER:" << endl;
+									cout << "               GetC returns " << GetC(currentNode->n1Node, currentNode->n2Node) << endl;
+									cout << "               edge cost is " << edgeCost << endl;
+									cout << "               costGStar is " << currentNode->costGStar << endl;
+									cout << "               cost is " << currentNode->cost << endl;
+									cout << "============== " << endl;
+								}
+								*/
 							} else { // not an allowed match
 								delete currentNode;
 							}
@@ -533,7 +617,10 @@ namespace wustl_mm {
 							currentNode = temp;	
 						}
 						// if this node is a helix, increment j by one more to prepare for the next iteration
-						if ( (int)(baseGraph->adjacencyMatrix[j][j][0] + 0.01) == GRAPHNODE_HELIX ) {
+						// TODO: Fix the indexing of the test here. Not right.
+						//if ( (int)(baseGraph->adjacencyMatrix[j][j][0] + 0.01) == GRAPHNODE_HELIX ) {
+						//if ( (int)(baseGraph->adjacencyMatrix[currentNode->n1Node + j + 1][currentNode->n1Node + j + 1][0] + 0.01) == GRAPHNODE_HELIX ) {
+						if ( (int)(baseGraph->adjacencyMatrix[currentNode->n1Node + j + 1][currentNode->n1Node + j + 2][0] + 0.01) == GRAPHEDGE_HELIX ) {
 							j++;
 						}
 					}
