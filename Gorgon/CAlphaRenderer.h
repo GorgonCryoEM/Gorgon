@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.35  2009/06/22 20:17:27  ssa1
+//   Adding in SSEBuilder Functionality: Selection to Helix functionality
+//
 //   Revision 1.34  2009/06/19 18:51:05  ssa1
 //   Adding in SSEBuilder Functionality
 //
@@ -277,20 +280,34 @@ namespace wustl_mm {
 			atoms.clear();
 			bonds.clear();
 			atoms = PDBReader::ReadAtomPositions(fileName);			
+
+			float maxTempFactor = -10000.0f, minTempFactor = 10000.0f;
 			float tempFactor;
+
+			for(AtomMapType::iterator i = atoms.begin(); i != atoms.end(); i++) {
+				tempFactor = i->second.GetTempFactor();
+				if(tempFactor > maxTempFactor) {
+					maxTempFactor = tempFactor;
+				}
+				if(tempFactor < minTempFactor) {
+					minTempFactor = tempFactor;
+				}
+			}
 			float r, g, b;
 
 			for(AtomMapType::iterator i = atoms.begin(); i != atoms.end(); i++) {
 				i->second.SetAtomRadius(3.0);
 				tempFactor = i->second.GetTempFactor();
 				if(tempFactor < 0) {
-					r = 1.0f + tempFactor;
-					g = 1.0f + tempFactor;
+					tempFactor = (tempFactor / minTempFactor);
+					r = 1.0f - tempFactor;
+					g = 1.0f - tempFactor;
 					b = 1.0f;
 				} else {
+					tempFactor = (tempFactor / maxTempFactor);
 					r = 1.0f;
-					g = 1 - tempFactor;
-					b = 1 - tempFactor;
+					g = 1.0f - tempFactor;
+					b = 1.0f - tempFactor;
 				}
 					
 				i->second.SetColor(r, g, b, 1.0f);
