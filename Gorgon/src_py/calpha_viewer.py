@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.36  2009/06/22 20:17:27  ssa1
+#   Adding in SSEBuilder Functionality: Selection to Helix functionality
+#
 #   Revision 1.35  2009/06/19 18:51:05  ssa1
 #   Adding in SSEBuilder Functionality
 #
@@ -199,6 +202,14 @@ class CAlphaViewer(BaseViewer):
         y = pos.y()*self.renderer.getSpacingY() + self.renderer.getOriginY()
         z = pos.z()*self.renderer.getSpacingZ() + self.renderer.getOriginZ()
         self.app.mainCamera.setCenter( x, y, z )
+        
+        #setting the volume viewer center
+        volumeViewer = self.app.viewers["volume"]
+        if(volumeViewer):
+            [xx, yy, zz] = volumeViewer.worldToObjectCoordinates( [x, y, z] )
+            volumeViewer.renderer.setDisplayRadiusOrigin(xx, yy, zz)
+            volumeViewer.emitModelChanged()
+        
         self.emitModelChanged()
     
     def createUI(self):

@@ -230,6 +230,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\OpenGLUtils.h"
+				>
+			</File>
+			<File
 				RelativePath=".\Rasterizer.h"
 				>
 			</File>

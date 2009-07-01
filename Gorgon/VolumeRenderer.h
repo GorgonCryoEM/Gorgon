@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.50  2009/05/14 19:48:51  ssa1
+//   Enabling the .map format
+//
 //   Revision 1.49  2009/05/08 20:45:49  ssa1
 //   auto rotate of camera when user clicks CTRL + ALT and left move
 //
@@ -140,6 +143,7 @@ namespace wustl_mm {
 			void LoadFileRAW(string fileName, int bitsPerCell, int sizeX, int sizeY, int sizeZ);
 			void SaveFile(string fileName);
 			void SetDisplayRadius(const int radius);
+			void SetDisplayRadiusOrigin(float radiusOriginX, float radiusOriginY, float radiusOriginZ);
 			void SetViewingType(const int type);
 			void SetSampleInterval(const int size);
 			void SetSurfaceValue(const float value);
@@ -157,7 +161,7 @@ namespace wustl_mm {
 			float GetSpacingX();
 			float GetSpacingY();
 			float GetSpacingZ();
-			void SetOrigin(float orgX, float orgY, float orgZ);
+			void SetOrigin(float orgX, float orgY, float orgZ);			
 			float GetOriginX();
 			float GetOriginY();
 			float GetOriginZ();
@@ -192,6 +196,7 @@ namespace wustl_mm {
 			int viewingType;			
 			Volume * dataVolume;
 			Volume * cuttingVolume;
+			Vector3DFloat radiusOrigin;
 			
 			VolumeSurfaceMeshType * surfaceMesh;
 			NonManifoldMesh_NoTags * cuttingMesh;
@@ -303,7 +308,7 @@ namespace wustl_mm {
 		}
 
 		string VolumeRenderer::GetSupportedSaveFileFormats() {
-			return "Volumes (*.mrc *.ccp4 *.map *.raw);;Mathematica List (*.nb);;Bitmap Image set (*.bmp);;Structure Tensor Field (*.tns)";
+			return "Volumes (*.mrc *.ccp4 *.map *.raw);;Mathematica List (*.nb);;Bitmap Image set (*.bmp);;Structure Tensor Field (*.tns);;Surface Mesh(*.off)";
 		}
 
 		void VolumeRenderer::EnableDraw(bool enable) {			
@@ -440,7 +445,7 @@ namespace wustl_mm {
 		void VolumeRenderer::Draw(int subSceneIndex, bool selectEnabled) {
 			if(subSceneIndex == 0) {
 				if((viewingType == VIEWING_TYPE_ISO_SURFACE) && (surfaceMesh != NULL)) {
-					surfaceMesh->Draw(true, selectEnabled);
+					surfaceMesh->Draw(true, selectEnabled, true, displayRadius, radiusOrigin);
 				} else if((viewingType == VIEWING_TYPE_CROSS_SECTION) || (viewingType == VIEWING_TYPE_SOLID)) {
 					glPushAttrib(GL_LIGHTING_BIT | GL_ENABLE_BIT);
 					glDisable(GL_LIGHTING);
@@ -531,13 +536,20 @@ namespace wustl_mm {
 					int maxX = dataVolume->getSizeX();
 					int maxY = dataVolume->getSizeY();
 					int maxZ = dataVolume->getSizeZ();
-					for(iX = max(maxX/2 - displayRadius, 0); iX < min(maxX, maxX/2 + displayRadius); iX+=sampleInterval) {
-						for(iY = max(maxY/2 - displayRadius, 0); iY < min(maxY, maxY/2 + displayRadius); iY+=sampleInterval) {
-							for(iZ = max(maxZ/2 - displayRadius, 0); iZ < min(maxZ, maxZ/2 + displayRadius); iZ+=sampleInterval) {
+					for(iX = 0; iX < maxX; iX+=sampleInterval) {
+						for(iY = 0; iY < maxY; iY+=sampleInterval) {
+							for(iZ = 0; iZ < maxZ; iZ+=sampleInterval) {
 								MarchingCube(dataVolume, surfaceMesh, surfaceValue, iX, iY, iZ, sampleInterval);
 							}
 						}
 					}
+					/*for(iX = max(radiusOrigin.X() - displayRadius, 0); iX < min(maxX, radiusOrigin.X() + displayRadius); iX+=sampleInterval) {
+						for(iY = max(radiusOrigin.Y() - displayRadius, 0); iY < min(maxY, radiusOrigin.Y() + displayRadius); iY+=sampleInterval) {
+							for(iZ = max(radiusOrigin.Z() - displayRadius, 0); iZ < min(maxZ, radiusOrigin.Z() + displayRadius); iZ+=sampleInterval) {
+								MarchingCube(dataVolume, surfaceMesh, surfaceValue, iX, iY, iZ, sampleInterval);
+							}
+						}
+					}*/
 				}
 				//appTimeManager.PopAndDisplayTime("Meshing: %f seconds |");
 			#else 
@@ -653,6 +665,7 @@ namespace wustl_mm {
 				glTexImage3D = (PFNGLTEXIMAGE3DPROC) wglGetProcAddress("glTexImage3D");
 			#endif
 
+			SetDisplayRadiusOrigin(dataVolume->getSizeX()/2, dataVolume->getSizeY()/2, dataVolume->getSizeZ()/2);
 		}
 
 		void VolumeRenderer::LoadFileRAW(string fileName, int bitsPerCell, int sizeX, int sizeY, int sizeZ) {
@@ -668,6 +681,7 @@ namespace wustl_mm {
 				glTexImage3D = (PFNGLTEXIMAGE3DPROC) wglGetProcAddress("glTexImage3D");
 			#endif
 
+			SetDisplayRadiusOrigin(dataVolume->getSizeX()/2, dataVolume->getSizeY()/2, dataVolume->getSizeZ()/2);
 		}
 
 		void VolumeRenderer::Load3DTextureSolidRendering() {
@@ -794,6 +808,8 @@ namespace wustl_mm {
 					VolumeReaderTNS::SaveVolume(dataVolume, fileName);
 				} else if(strcmp(extension.c_str(), "BMP") == 0) {
 					ImageReaderBMP::SaveVolumeAsImageSet(dataVolume, fileName);
+				} else if(strcmp(extension.c_str(), "OFF") == 0) {
+					surfaceMesh->SaveFile(fileName);
 				} else {
 					printf("Input format %s not supported!\n", extension.c_str());
 				}
@@ -989,11 +1005,9 @@ namespace wustl_mm {
 
 		void VolumeRenderer::SetDisplayRadius(const int radius) {
 			displayRadius = radius;
-			switch(viewingType) {
-				case VIEWING_TYPE_ISO_SURFACE:
-					CalculateSurface();
-					break;
-			}
+		}
+		void VolumeRenderer::SetDisplayRadiusOrigin(float radiusOriginX, float radiusOriginY, float radiusOriginZ) {
+			radiusOrigin = Vector3DFloat(radiusOriginX, radiusOriginY, radiusOriginZ);
 		}
 		void VolumeRenderer::Unload() {
 			Renderer::Unload();

@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.2  2009/03/16 16:17:34  ssa1
+//   Fitting SSEs into the Density
+//
 
 
 #ifndef PROTEINMORPH_TRIANGLE_MESH_H
@@ -18,10 +21,14 @@
 
 #include <map>
 #include <vector>
+#include <string>
+#include <Foundation/OpenGLUtils.h>
 #include "TriangleMeshFace.h"
 #include "TriangleMeshVertex.h"
 
+
 using namespace std;
+using namespace wustl_mm::Foundation;
 
 namespace wustl_mm {
 	namespace Protein_Morph {
@@ -38,7 +45,8 @@ namespace wustl_mm {
 
 			Vector3DFloat GetVertexNormal(unsigned long long vertexHash);
 			Vector3DFloat GetFaceNormal(unsigned long long faceHash);
-			void Draw(bool drawSurfaces, bool annotateSurfaces);
+			void Draw(bool drawSurfaces, bool annotateSurfaces, bool fadeExtreme, int radius, Vector3DFloat center);
+			void SaveFile(string fileName);
 
 
 		private:
@@ -105,24 +113,35 @@ namespace wustl_mm {
 		}
 
 
-		template <class TVertex, class TFace> void TriangleMesh<TVertex, TFace>::Draw(bool drawSurfaces, bool annotateSurfaces) {
+		template <class TVertex, class TFace> void TriangleMesh<TVertex, TFace>::Draw(bool drawSurfaces, bool annotateSurfaces, bool fadeExtreme, int radius, Vector3DFloat center) {
 			int k;
 			if(drawSurfaces) {
 				if(annotateSurfaces) {
 					glPushName(0);
 					glPushName(0);
 				}
+				float r,g,b,a;
+				OpenGLUtils::GetColor(r,g,b,a);
 				for(int i = 0; i < faces.size(); i++) {					
 					if(annotateSurfaces) {
 						glLoadName(i);
 					}
 					glBegin(GL_POLYGON);
 					Vector3DFloat normal;
-					for(unsigned int j = 0; j < 3; j++) {
-						k = faces[i].vertexHashes[j];
-						normal = GetVertexNormal(k);						
-						glNormal3f(normal.X(), normal.Y(), normal.Z());
-						glVertex3fv(vertices[k].position.values);
+					bool drawTriangle = true;
+					if(fadeExtreme) {
+						for(unsigned int j = 0; j < 3; j++) {
+							k = faces[i].vertexHashes[j];
+							drawTriangle = drawTriangle && ((vertices[k].position - center).Length() <= radius);
+						}
+					}
+					if(drawTriangle) {
+						for(unsigned int j = 0; j < 3; j++) {
+							k = faces[i].vertexHashes[j];
+							normal = GetVertexNormal(k);			
+							glNormal3f(normal.X(), normal.Y(), normal.Z());
+							glVertex3fv(vertices[k].position.values);
+						}
 					}
 					glEnd();
 				}
@@ -132,6 +151,31 @@ namespace wustl_mm {
 				}
 			}								
 			glFlush();
+		}
+
+		template <class TVertex, class TFace> void TriangleMesh<TVertex, TFace>::SaveFile(string fileName) {
+			FILE * outFile = fopen(fileName.c_str(), "wt");
+			fprintf(outFile, "OFF\n");
+			fprintf(outFile, "%d %d %d\n", (int)vertices.size(), faces.size(), 0);
+
+			map<unsigned long long, int> indexedVertices;
+			vector<Vector3DFloat> vertexList;
+
+			int index = 0;
+			for(map<unsigned long long, TriangleMeshVertex<TVertex> >::iterator i = vertices.begin(); i != vertices.end(); i++) {
+				vertexList.push_back(i->second.position);
+				indexedVertices[i->first] = index;
+				index++;
+			}
+
+			for(int i = 0; i < index; i++) {
+				fprintf(outFile, "%f %f %f \n", vertexList[i].X(), vertexList[i].Y(), vertexList[i].Z());
+			}
+
+			for(int i = 0; i < faces.size(); i++) {					
+				fprintf(outFile, "3 %d %d %d\n", indexedVertices[faces[i].vertexHashes[2]], indexedVertices[faces[i].vertexHashes[1]], indexedVertices[faces[i].vertexHashes[0]]); 
+			}
+			fclose(outFile);
 		}
 	}
 }

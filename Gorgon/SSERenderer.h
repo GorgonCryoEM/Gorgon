@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.28  2009/06/24 21:33:48  ssa1
+//   SSE Builder Functionality: Sheet building and better camera functionality when loading new data.
+//
 //   Revision 1.27  2009/06/24 13:06:51  ssa1
 //   Fixing compilation issues on MacOS
 //
@@ -218,7 +221,7 @@ namespace wustl_mm {
 				for(int i = 0; i < (int)helices.size(); i++) {
 					glPushAttrib(GL_LIGHTING_BIT);
 					helices[i]->GetColor(colorR, colorG, colorB, colorA);	
-					SetColor(colorR, colorG, colorB, colorA);
+					OpenGLUtils::SetColor(colorR, colorG, colorB, colorA);
 
 					if(helices[i]->GetSelected()) {
 						glMaterialfv(GL_FRONT, GL_EMISSION, emissionColor);

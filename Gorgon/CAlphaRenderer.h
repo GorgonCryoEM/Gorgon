@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.36  2009/06/30 21:23:24  ssa1
+//   SSEHunter results have range between -3 and 3, not -1 and 1
+//
 //   Revision 1.35  2009/06/22 20:17:27  ssa1
 //   Adding in SSEBuilder Functionality: Selection to Helix functionality
 //
@@ -167,7 +170,7 @@ namespace wustl_mm {
 						glMaterialfv(GL_FRONT, GL_EMISSION, emissionColor);
 						glMaterialfv(GL_BACK, GL_EMISSION, emissionColor);
 					} else {
-						SetColor(i->second.GetColorR(), i->second.GetColorG(), i->second.GetColorB(), i->second.GetColorA());
+						OpenGLUtils::SetColor(i->second.GetColorR(), i->second.GetColorG(), i->second.GetColorB(), i->second.GetColorA());
 					}					
 
 					if(selectEnabled){
@@ -201,11 +204,11 @@ namespace wustl_mm {
 					}
 					float length = (atoms[bonds[i].GetAtom0Ix()].GetPosition() - atoms[bonds[i].GetAtom1Ix()].GetPosition()).Length();
 					if(length > 4.2) {
-						SetColor(1.0, 0, 0, 1.0);
+						OpenGLUtils::SetColor(1.0, 0, 0, 1.0);
 					}
 
 					if(length < 3.3) {
-						SetColor(0, 0, 1.0, 1.0);
+						OpenGLUtils::SetColor(0, 0, 1.0, 1.0);
 					}
 			
 					if(atoms[bonds[i].GetAtom0Ix()].GetVisible() && atoms[bonds[i].GetAtom1Ix()].GetVisible()) {
