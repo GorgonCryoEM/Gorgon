@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.18  2009/03/24 16:22:27  ssa1
+#   Better cross section & Solid Rendering viewing
+#
 #   Revision 1.17  2009/03/24 15:18:15  ssa1
 #   Better cross section & Solid Rendering viewing
 #
@@ -87,6 +90,7 @@ class VolumeSurfaceEditorForm(QtGui.QWidget):
         self.connect(self.ui.radioButtonSolid, QtCore.SIGNAL("toggled(bool)"), self.setViewingType)
         self.connect(self.ui.doubleSpinBoxDensity, QtCore.SIGNAL("editingFinished ()"), self.manualValueChanged)
         self.connect(self.ui.doubleSpinBoxDensityMax, QtCore.SIGNAL("editingFinished ()"), self.manualValueMaxChanged)
+        self.connect(self.ui.checkBoxUseRadius, QtCore.SIGNAL("toggled(bool)"), self.displayRadiusEnabled)
         
             
     def loadWidget(self):
@@ -236,5 +240,9 @@ class VolumeSurfaceEditorForm(QtGui.QWidget):
         
     def displayRadiusChanged(self, newRadius):
         self.viewer.renderer.setDisplayRadius(newRadius)
+        self.viewer.emitModelChanged()
+        
+    def displayRadiusEnabled(self, enabled):
+        self.viewer.renderer.useDisplayRadius(enabled)
         self.viewer.emitModelChanged()
         

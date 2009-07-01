@@ -165,7 +165,7 @@
     </widget>
    </item>
    <item row="4" column="0" >
-    <widget class="QLabel" name="labelDisplayRadius" >
+    <widget class="QCheckBox" name="checkBoxUseRadius" >
      <property name="text" >
       <string>Display Radius:</string>
      </property>
@@ -173,6 +173,9 @@
    </item>
    <item row="4" column="1" >
     <widget class="QSlider" name="horizontalSliderDisplayRadius" >
+     <property name="enabled" >
+      <bool>false</bool>
+     </property>
      <property name="minimum" >
       <number>1</number>
      </property>
@@ -198,6 +201,9 @@
    </item>
    <item row="4" column="2" >
     <widget class="QLabel" name="labelDisplayRadiusDisplay" >
+     <property name="enabled" >
+      <bool>false</bool>
+     </property>
      <property name="text" >
       <string>255</string>
      </property>
@@ -241,8 +247,8 @@
    <slot>setVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>80</x>
-     <y>28</y>
+     <x>90</x>
+     <y>27</y>
     </hint>
     <hint type="destinationlabel" >
      <x>288</x>
@@ -257,8 +263,8 @@
    <slot>setVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>70</x>
-     <y>28</y>
+     <x>80</x>
+     <y>27</y>
     </hint>
     <hint type="destinationlabel" >
      <x>73</x>
@@ -273,8 +279,8 @@
    <slot>setVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>104</x>
-     <y>28</y>
+     <x>111</x>
+     <y>27</y>
     </hint>
     <hint type="destinationlabel" >
      <x>389</x>
@@ -290,26 +296,10 @@
    <hints>
     <hint type="sourcelabel" >
      <x>306</x>
-     <y>130</y>
+     <y>128</y>
     </hint>
     <hint type="destinationlabel" >
      <x>389</x>
-     <y>130</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>radioButtonIsoSurface</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>labelDisplayRadius</receiver>
-   <slot>setVisible(bool)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>48</x>
-     <y>28</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>49</x>
      <y>130</y>
     </hint>
    </hints>
@@ -322,11 +312,11 @@
    <hints>
     <hint type="sourcelabel" >
      <x>111</x>
-     <y>28</y>
+     <y>27</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>227</x>
-     <y>130</y>
+     <x>306</x>
+     <y>128</y>
     </hint>
    </hints>
   </connection>
@@ -337,8 +327,8 @@
    <slot>setVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>44</x>
-     <y>28</y>
+     <x>54</x>
+     <y>27</y>
     </hint>
     <hint type="destinationlabel" >
      <x>389</x>
@@ -391,6 +381,38 @@
     <hint type="destinationlabel" >
      <x>346</x>
      <y>69</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkBoxUseRadius</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>horizontalSliderDisplayRadius</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>44</x>
+     <y>123</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>133</x>
+     <y>121</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkBoxUseRadius</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>labelDisplayRadiusDisplay</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>30</x>
+     <y>124</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>333</x>
+     <y>123</y>
     </hint>
    </hints>
   </connection>

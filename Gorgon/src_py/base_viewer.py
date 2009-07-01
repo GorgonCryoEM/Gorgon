@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.57  2009/06/24 21:33:48  ssa1
+#   SSE Builder Functionality: Sheet building and better camera functionality when loading new data.
+#
 #   Revision 1.56  2009/03/31 21:40:13  ssa1
 #   Refactoring: Splitting seq_model\SequenceView.py into subclasses
 #
@@ -506,6 +509,9 @@ class BaseViewer(QtOpenGL.QGLWidget):
         
     def processMouseMoveRay(self, ray, rayWidth, eye, event):
         self.emitMouseOverRay(ray, rayWidth, eye, event)
+
+    def setCenter(self, center):
+        return False
         
     def emitThicknessChanged(self, value):
         self.emit(QtCore.SIGNAL("thicknessChanged(int)"), value);

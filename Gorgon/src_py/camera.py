@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.54  2009/06/24 21:33:48  ssa1
+#   SSE Builder Functionality: Sheet building and better camera functionality when loading new data.
+#
 #   Revision 1.53  2009/05/08 20:45:49  ssa1
 #   auto rotate of camera when user clicks CTRL + ALT and left move
 #
@@ -200,6 +203,7 @@ class Camera(QtOpenGL.QGLWidget):
                 self.look = [0,1,0]
                 self.right = [1,0,0]
             self.setRendererCuttingPlanes()
+            self.setRendererCenter()            
             self.emitCameraChanged()
         
     def setUp(self, x, y, z):
@@ -247,10 +251,14 @@ class Camera(QtOpenGL.QGLWidget):
     def setRendererCuttingPlanes(self):
         for s in self.scene:
             if(s.renderer.setCuttingPlane(self.cuttingPlane, self.look[0], self.look[1], self.look[2])) :
-                s.emitModelChanged()  
- 
-    def sceneSetCenter(self, cX, cY, cZ, d):
-        
+                s.emitModelChanged()
+                
+    def setRendererCenter(self):
+        for s in self.scene:
+            if(s.setCenter(self.center)):
+                s.emitModelChanged()
+                 
+    def sceneSetCenter(self, cX, cY, cZ, d):        
         sceneMin = [cX, cY, cZ]
         sceneMax = [cX, cY, cZ]
         for s in self.scene: 
