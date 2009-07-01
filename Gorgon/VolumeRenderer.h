@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.51  2009/07/01 21:25:13  ssa1
+//   Centering the volume cropped using a radius around the point selected by the atom selection tool.
+//
 //   Revision 1.50  2009/05/14 19:48:51  ssa1
 //   Enabling the .map format
 //
@@ -144,6 +147,7 @@ namespace wustl_mm {
 			void SaveFile(string fileName);
 			void SetDisplayRadius(const int radius);
 			void SetDisplayRadiusOrigin(float radiusOriginX, float radiusOriginY, float radiusOriginZ);
+			void UseDisplayRadius(bool useRadius);
 			void SetViewingType(const int type);
 			void SetSampleInterval(const int size);
 			void SetSurfaceValue(const float value);
@@ -197,6 +201,7 @@ namespace wustl_mm {
 			Volume * dataVolume;
 			Volume * cuttingVolume;
 			Vector3DFloat radiusOrigin;
+			bool useDisplayRadius;
 			
 			VolumeSurfaceMeshType * surfaceMesh;
 			NonManifoldMesh_NoTags * cuttingMesh;
@@ -208,6 +213,7 @@ namespace wustl_mm {
 
 		VolumeRenderer::VolumeRenderer() {
 			textureLoaded = false;
+			useDisplayRadius = false;
 			viewingType = VIEWING_TYPE_ISO_SURFACE;
 			surfaceMesh = new VolumeSurfaceMeshType();
 			dataVolume = NULL;
@@ -445,7 +451,7 @@ namespace wustl_mm {
 		void VolumeRenderer::Draw(int subSceneIndex, bool selectEnabled) {
 			if(subSceneIndex == 0) {
 				if((viewingType == VIEWING_TYPE_ISO_SURFACE) && (surfaceMesh != NULL)) {
-					surfaceMesh->Draw(true, selectEnabled, true, displayRadius, radiusOrigin);
+					surfaceMesh->Draw(true, selectEnabled, useDisplayRadius, displayRadius, radiusOrigin);
 				} else if((viewingType == VIEWING_TYPE_CROSS_SECTION) || (viewingType == VIEWING_TYPE_SOLID)) {
 					glPushAttrib(GL_LIGHTING_BIT | GL_ENABLE_BIT);
 					glDisable(GL_LIGHTING);
@@ -1009,6 +1015,11 @@ namespace wustl_mm {
 		void VolumeRenderer::SetDisplayRadiusOrigin(float radiusOriginX, float radiusOriginY, float radiusOriginZ) {
 			radiusOrigin = Vector3DFloat(radiusOriginX, radiusOriginY, radiusOriginZ);
 		}
+
+		void VolumeRenderer::UseDisplayRadius(bool useRadius) {
+			useDisplayRadius = useRadius;
+		}
+
 		void VolumeRenderer::Unload() {
 			Renderer::Unload();
 			if(dataVolume != NULL) {

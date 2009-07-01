@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.22  2009/06/22 20:17:27  ssa1
+#   Adding in SSEBuilder Functionality: Selection to Helix functionality
+#
 #   Revision 1.21  2009/06/19 18:51:05  ssa1
 #   Adding in SSEBuilder Functionality
 #
@@ -175,7 +178,11 @@ class VolumeViewer(BaseViewer):
             delta = round(range * amount / 100.0)
             
             self.surfaceEditor.ui.horizontalSliderIsoLevel.setValue(self.surfaceEditor.ui.horizontalSliderIsoLevel.value() - delta)
-                
+    
+    def setCenter(self, center):
+        [xx, yy, zz] = self.worldToObjectCoordinates(center)
+        self.renderer.setDisplayRadiusOrigin(xx, yy, zz)
+        return True      
             
         
                           

@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.55  2009/07/01 21:25:14  ssa1
+//   Centering the volume cropped using a radius around the point selected by the atom selection tool.
+//
 //   Revision 1.54  2009/06/24 21:33:48  ssa1
 //   SSE Builder Functionality: Sheet building and better camera functionality when loading new data.
 //
@@ -288,6 +291,7 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("getOriginX", &VolumeRenderer::GetOriginX)
 		.def("getOriginY", &VolumeRenderer::GetOriginY)
 		.def("getOriginZ", &VolumeRenderer::GetOriginZ)
+		.def("useDisplayRadius", &VolumeRenderer::UseDisplayRadius)
 	;
 
 	class_< MeshRenderer, bases<Renderer> >("MeshRenderer", init<>())

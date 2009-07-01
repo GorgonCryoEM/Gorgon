@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.37  2009/07/01 21:25:14  ssa1
+#   Centering the volume cropped using a radius around the point selected by the atom selection tool.
+#
 #   Revision 1.36  2009/06/22 20:17:27  ssa1
 #   Adding in SSEBuilder Functionality: Selection to Helix functionality
 #
@@ -201,15 +204,7 @@ class CAlphaViewer(BaseViewer):
         x = pos.x()*self.renderer.getSpacingX() + self.renderer.getOriginX()
         y = pos.y()*self.renderer.getSpacingY() + self.renderer.getOriginY()
         z = pos.z()*self.renderer.getSpacingZ() + self.renderer.getOriginZ()
-        self.app.mainCamera.setCenter( x, y, z )
-        
-        #setting the volume viewer center
-        volumeViewer = self.app.viewers["volume"]
-        if(volumeViewer):
-            [xx, yy, zz] = volumeViewer.worldToObjectCoordinates( [x, y, z] )
-            volumeViewer.renderer.setDisplayRadiusOrigin(xx, yy, zz)
-            volumeViewer.emitModelChanged()
-        
+        self.app.mainCamera.setCenter( x, y, z )                
         self.emitModelChanged()
     
     def createUI(self):

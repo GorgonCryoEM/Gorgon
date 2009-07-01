@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_dialog_volume_surface_editor.ui'
 #
-# Created: Fri Mar 20 14:47:28 2009
+# Created: Wed Jul 01 16:48:39 2009
 #      by: PyQt4 UI code generator 4.3.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -94,11 +94,12 @@ class Ui_DialogVolumeSurfaceEditor(object):
         self.labelSamplingDisplay.setObjectName("labelSamplingDisplay")
         self.gridlayout.addWidget(self.labelSamplingDisplay,3,2,1,1)
 
-        self.labelDisplayRadius = QtGui.QLabel(DialogVolumeSurfaceEditor)
-        self.labelDisplayRadius.setObjectName("labelDisplayRadius")
-        self.gridlayout.addWidget(self.labelDisplayRadius,4,0,1,1)
+        self.checkBoxUseRadius = QtGui.QCheckBox(DialogVolumeSurfaceEditor)
+        self.checkBoxUseRadius.setObjectName("checkBoxUseRadius")
+        self.gridlayout.addWidget(self.checkBoxUseRadius,4,0,1,1)
 
         self.horizontalSliderDisplayRadius = QtGui.QSlider(DialogVolumeSurfaceEditor)
+        self.horizontalSliderDisplayRadius.setEnabled(False)
         self.horizontalSliderDisplayRadius.setMinimum(1)
         self.horizontalSliderDisplayRadius.setMaximum(255)
         self.horizontalSliderDisplayRadius.setPageStep(1)
@@ -110,6 +111,7 @@ class Ui_DialogVolumeSurfaceEditor(object):
         self.gridlayout.addWidget(self.horizontalSliderDisplayRadius,4,1,1,1)
 
         self.labelDisplayRadiusDisplay = QtGui.QLabel(DialogVolumeSurfaceEditor)
+        self.labelDisplayRadiusDisplay.setEnabled(False)
         self.labelDisplayRadiusDisplay.setObjectName("labelDisplayRadiusDisplay")
         self.gridlayout.addWidget(self.labelDisplayRadiusDisplay,4,2,1,1)
 
@@ -119,12 +121,13 @@ class Ui_DialogVolumeSurfaceEditor(object):
         QtCore.QObject.connect(self.radioButtonIsoSurface,QtCore.SIGNAL("toggled(bool)"),self.labelSamplingInterval.setVisible)
         QtCore.QObject.connect(self.radioButtonIsoSurface,QtCore.SIGNAL("toggled(bool)"),self.labelSamplingDisplay.setVisible)
         QtCore.QObject.connect(self.horizontalSliderDisplayRadius,QtCore.SIGNAL("valueChanged(int)"),self.labelDisplayRadiusDisplay.setNum)
-        QtCore.QObject.connect(self.radioButtonIsoSurface,QtCore.SIGNAL("toggled(bool)"),self.labelDisplayRadius.setVisible)
         QtCore.QObject.connect(self.radioButtonIsoSurface,QtCore.SIGNAL("toggled(bool)"),self.horizontalSliderDisplayRadius.setVisible)
         QtCore.QObject.connect(self.radioButtonIsoSurface,QtCore.SIGNAL("toggled(bool)"),self.labelDisplayRadiusDisplay.setVisible)
         QtCore.QObject.connect(self.radioButtonIsoSurface,QtCore.SIGNAL("toggled(bool)"),self.labelIsoLevelMax.setHidden)
         QtCore.QObject.connect(self.radioButtonIsoSurface,QtCore.SIGNAL("toggled(bool)"),self.horizontalSliderIsoLevelMax.setHidden)
         QtCore.QObject.connect(self.radioButtonIsoSurface,QtCore.SIGNAL("toggled(bool)"),self.doubleSpinBoxDensityMax.setHidden)
+        QtCore.QObject.connect(self.checkBoxUseRadius,QtCore.SIGNAL("toggled(bool)"),self.horizontalSliderDisplayRadius.setEnabled)
+        QtCore.QObject.connect(self.checkBoxUseRadius,QtCore.SIGNAL("toggled(bool)"),self.labelDisplayRadiusDisplay.setEnabled)
         QtCore.QMetaObject.connectSlotsByName(DialogVolumeSurfaceEditor)
         DialogVolumeSurfaceEditor.setTabOrder(self.radioButtonIsoSurface,self.radioButtonCrossSection)
         DialogVolumeSurfaceEditor.setTabOrder(self.radioButtonCrossSection,self.radioButtonSolid)
@@ -144,6 +147,6 @@ class Ui_DialogVolumeSurfaceEditor(object):
         self.labelIsoLevelMax.setText(QtGui.QApplication.translate("DialogVolumeSurfaceEditor", "Maximum Density:", None, QtGui.QApplication.UnicodeUTF8))
         self.labelSamplingInterval.setText(QtGui.QApplication.translate("DialogVolumeSurfaceEditor", "Sampling Interval:", None, QtGui.QApplication.UnicodeUTF8))
         self.labelSamplingDisplay.setText(QtGui.QApplication.translate("DialogVolumeSurfaceEditor", "1", None, QtGui.QApplication.UnicodeUTF8))
-        self.labelDisplayRadius.setText(QtGui.QApplication.translate("DialogVolumeSurfaceEditor", "Display Radius:", None, QtGui.QApplication.UnicodeUTF8))
+        self.checkBoxUseRadius.setText(QtGui.QApplication.translate("DialogVolumeSurfaceEditor", "Display Radius:", None, QtGui.QApplication.UnicodeUTF8))
         self.labelDisplayRadiusDisplay.setText(QtGui.QApplication.translate("DialogVolumeSurfaceEditor", "255", None, QtGui.QApplication.UnicodeUTF8))
 
