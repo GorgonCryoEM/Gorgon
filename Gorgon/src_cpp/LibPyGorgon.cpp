@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.54  2009/06/24 21:33:48  ssa1
+//   SSE Builder Functionality: Sheet building and better camera functionality when loading new data.
+//
 //   Revision 1.53  2009/06/23 16:50:34  ssa1
 //   Adding in SSEBuilder Functionality: Saving helix as WRL and SSE files
 //
@@ -269,6 +272,7 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("setMaxSurfaceValue", &VolumeRenderer::SetMaxSurfaceValue)		
 		.def("setSampleInterval", &VolumeRenderer::SetSampleInterval)
 		.def("setDisplayRadius", &VolumeRenderer::SetDisplayRadius)
+		.def("setDisplayRadiusOrigin", &VolumeRenderer::SetDisplayRadiusOrigin)		
 		.def("setCuttingPlane", &VolumeRenderer::SetCuttingPlane)
 		.def("setViewingType", &VolumeRenderer::SetViewingType)
 		.def("normalizeVolume", &VolumeRenderer::NormalizeVolume)

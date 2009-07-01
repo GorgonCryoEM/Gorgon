@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.28  2008/11/20 18:33:00  ssa1
+//   Using the origin of the MRC volume
+//
 //   Revision 1.27  2008/11/13 20:54:40  ssa1
 //   Using the correct scale when loading volumes
 //
@@ -35,11 +38,13 @@
 
 #include <string>
 #include <glut.h>
+#include <Foundation/OpenGLUtils.h>
 #include <MathTools/Vector3D.h>
 #include <MathTools/MathLib.h>
 
 using namespace std;
 using namespace wustl_mm::MathTools;
+using namespace wustl_mm::Foundation;
 
 namespace wustl_mm {
 	namespace Visualization {	
@@ -64,7 +69,6 @@ namespace wustl_mm {
 			bool SetCuttingPlane(float position, float vecX, float vecY, float vecZ);
 			void static DrawSphere(Vector3DFloat center, float radius);
 			void static DrawCylinder(Vector3DFloat pt1, Vector3DFloat pt2, float radius);
-			void SetColor(float colorR, float colorG, float colorB, float colorA);
 			virtual void SetSpacing(float spX, float spY, float spZ);
 			virtual float GetSpacingX();
 			virtual float GetSpacingY();
@@ -223,20 +227,6 @@ namespace wustl_mm {
 			gluDeleteQuadric(quadricCylinder);
 
 			glPopMatrix();
-		}
-		void Renderer::SetColor(float colorR, float colorG, float colorB, float colorA)  {
-			glColor4f(colorR, colorG, colorB, colorA);
-			GLfloat diffuse[4] = {colorR, colorG, colorB, colorA};
-			GLfloat ambient[4] = {colorR*0.2, colorG*0.2, colorB*0.2, colorA};
-			GLfloat specular[4] = {1.0, 1.0, 1.0, 1.0};
-			glMaterialfv(GL_BACK, GL_AMBIENT,   ambient);
-			glMaterialfv(GL_BACK, GL_DIFFUSE,   diffuse); 
-			glMaterialfv(GL_BACK, GL_SPECULAR,  specular); 
-			glMaterialf(GL_BACK, GL_SHININESS, 0.1);
-			glMaterialfv(GL_FRONT, GL_AMBIENT,   ambient);
-			glMaterialfv(GL_FRONT, GL_DIFFUSE,   diffuse); 
-			glMaterialfv(GL_FRONT, GL_SPECULAR,  specular); 
-			glMaterialf(GL_FRONT, GL_SHININESS, 0.1);
 		}
 
 		void Renderer::SetSpacing(float spX, float spY, float spZ) {	
