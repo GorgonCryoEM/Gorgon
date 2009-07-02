@@ -220,6 +220,7 @@
   <tabstop>horizontalSliderIsoLevelMax</tabstop>
   <tabstop>doubleSpinBoxDensityMax</tabstop>
   <tabstop>horizontalSliderSampling</tabstop>
+  <tabstop>checkBoxUseRadius</tabstop>
   <tabstop>horizontalSliderDisplayRadius</tabstop>
  </tabstops>
  <resources/>
@@ -413,6 +414,22 @@
     <hint type="destinationlabel" >
      <x>333</x>
      <y>123</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>radioButtonIsoSurface</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>checkBoxUseRadius</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>34</x>
+     <y>17</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>38</x>
+     <y>126</y>
     </hint>
    </hints>
   </connection>
