@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_dialog_volume_surface_editor.ui'
 #
-# Created: Wed Jul 01 16:48:39 2009
+# Created: Wed Jul 01 17:32:26 2009
 #      by: PyQt4 UI code generator 4.3.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -128,6 +128,7 @@ class Ui_DialogVolumeSurfaceEditor(object):
         QtCore.QObject.connect(self.radioButtonIsoSurface,QtCore.SIGNAL("toggled(bool)"),self.doubleSpinBoxDensityMax.setHidden)
         QtCore.QObject.connect(self.checkBoxUseRadius,QtCore.SIGNAL("toggled(bool)"),self.horizontalSliderDisplayRadius.setEnabled)
         QtCore.QObject.connect(self.checkBoxUseRadius,QtCore.SIGNAL("toggled(bool)"),self.labelDisplayRadiusDisplay.setEnabled)
+        QtCore.QObject.connect(self.radioButtonIsoSurface,QtCore.SIGNAL("toggled(bool)"),self.checkBoxUseRadius.setVisible)
         QtCore.QMetaObject.connectSlotsByName(DialogVolumeSurfaceEditor)
         DialogVolumeSurfaceEditor.setTabOrder(self.radioButtonIsoSurface,self.radioButtonCrossSection)
         DialogVolumeSurfaceEditor.setTabOrder(self.radioButtonCrossSection,self.radioButtonSolid)
@@ -136,7 +137,8 @@ class Ui_DialogVolumeSurfaceEditor(object):
         DialogVolumeSurfaceEditor.setTabOrder(self.doubleSpinBoxDensity,self.horizontalSliderIsoLevelMax)
         DialogVolumeSurfaceEditor.setTabOrder(self.horizontalSliderIsoLevelMax,self.doubleSpinBoxDensityMax)
         DialogVolumeSurfaceEditor.setTabOrder(self.doubleSpinBoxDensityMax,self.horizontalSliderSampling)
-        DialogVolumeSurfaceEditor.setTabOrder(self.horizontalSliderSampling,self.horizontalSliderDisplayRadius)
+        DialogVolumeSurfaceEditor.setTabOrder(self.horizontalSliderSampling,self.checkBoxUseRadius)
+        DialogVolumeSurfaceEditor.setTabOrder(self.checkBoxUseRadius,self.horizontalSliderDisplayRadius)
 
     def retranslateUi(self, DialogVolumeSurfaceEditor):
         DialogVolumeSurfaceEditor.setWindowTitle(QtGui.QApplication.translate("DialogVolumeSurfaceEditor", "Volume - Surface Editor", None, QtGui.QApplication.UnicodeUTF8))
