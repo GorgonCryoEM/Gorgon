@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.19.2.13  2009/06/18 20:42:06  schuhs
+//   Adding graph edge types for helix nodes and sheet nodes, and fixing bug in GetGraphIndex methods.
+//
 //   Revision 1.19.2.12  2009/06/02 21:08:44  schuhs
 //   Changing FindSizes method to work for sheets with multiple corners
 //
@@ -359,6 +362,7 @@ namespace wustl_mm {
 
 			// create a graph with one node per helix end point and with edges connecting nodes that
 			// are connected along the volume.
+			cout << "adding " << (int)helixes.size() << " helices and sheets to adjacency matrix" << endl;
 			for(unsigned int i = 0; i < (int)helixes.size(); i++) {
 				if(helixes[i]->geometricShapeType == GRAPHEDGE_HELIX) {
 					// assign node numbers for helix ends
@@ -390,15 +394,29 @@ namespace wustl_mm {
 
 					// find all the corner cells in this sheet
 					FindCornerCellsInSheet(vol, paintedVol, helixes, i);
-					// no cost to go from a sheet node back to itself
-					graph->SetCost(sheetNode, sheetNode, 0);
+
+					// cost is length of self-loops
+					graph->SetCost(sheetNode, sheetNode, SHEET_SELF_LOOP_LENGTH); // nonzero so it shows up as edge in StandardGraph::EdgeExists
 					graph->SetType(sheetNode, sheetNode, GRAPHNODE_SHEET); 
-					//graph->SetType(numH, numH, helixes[i]->geometricShapeType);
 				}
 
-
+			}	
+			cout << "adding sheet sizes as sheet node costs" << endl;
+			for (int s = 0; s < skeletonSheets.size(); s++) {
+				int sseSheetNum = sseSheetMapping[s];
+				cout << "node " << s << " corresponds to sheet " << sseSheetMapping[s] << endl;
+				if (sseSheetNum != -1) {
+					int sheetSize = skeletonSheets[s]->getNonZeroVoxelCount();
+					int sheetNode = numH + sseSheetNum + 1; // each helix takes two nodes
+					// TODO: Scale the sheet size by the geometric scale factor to make units match
+					graph->SetCost(sheetNode, sheetSize); // nonzero so it shows up as edge in StandardGraph::EdgeExists
+					cout << "adding sheet " << sseSheetNum << "(s=" << s << ") with size " << sheetSize << " as node " << sheetNode << endl;
+				}
 			}
-			
+			for (int i = 0; i < graph->GetNodeCount(); i++) {
+				cout << "cost of node " << i << " is " << graph->nodeWeights[i] << endl;
+			}
+
 			#ifdef VERBOSE
 				printf("Finished creating connectivity graph.\n");
 			#endif // VERBOSE
