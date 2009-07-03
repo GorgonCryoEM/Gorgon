@@ -15,6 +15,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.15.2.3  2009/06/29 21:45:29  schuhs
+//   Helix and sheet matching works. Jump edge code needs some work.
+//
 //   Revision 1.15.2.2  2009/06/19 17:46:01  schuhs
 //   Continuing to modify to work with sheets.
 //
@@ -82,6 +85,7 @@ namespace wustl_mm {
 			void Init(StandardGraph * patternGraph, StandardGraph * baseGraph);
 			double GetC(int p, int qp);
 			double GetC(int j, int p, int qj, int qp);
+			double GetC(int p, int qp, LinkedNodeStub * currentNode);
 			double GetCost(int d, int m, int qj, int qp);
 			double GetCPrime(int a, int b, int c, int d);
 			double GetK(int p, int qp);
@@ -142,7 +146,9 @@ namespace wustl_mm {
 			if(missingHelixCount < 0)  {
 				missingHelixCount = 0;
 			}
-			missingSheetCount = 0;
+			if(missingSheetCount < 0)  {
+				missingSheetCount = 0;
+			}
 			
 
 			// new method of counting missing sheets and helices
@@ -188,7 +194,12 @@ namespace wustl_mm {
 
 
 			missingHelixCount = (patternHelixNodes - baseHelixNodes) / 2;
-			missingSheetCount = patternSheetNodes - baseSheetNodes;
+			//missingSheetCount = patternSheetNodes - baseSheetNodes;
+			missingSheetCount = patternSheetNodes;
+
+			cout << "missing helix count is " << missingHelixCount << ", missing sheet count is " << missingSheetCount << endl;
+
+			cout << "missing helix penalty is " << MISSING_HELIX_PENALTY << ", missing sheet penalty is " << MISSING_SHEET_PENALTY << endl;
 
 			//if(!PERFORMANCE_COMPARISON_MODE) {
 			//	NormalizeGraphs();
@@ -295,30 +306,84 @@ namespace wustl_mm {
 
 		}
 
+		// returns the cost of matching node p in the pattern graph to node qp in the base graph
 		double WongMatch15ConstrainedNoFuture::GetC(int p, int qp) {
 			return GetC(p, p, qp, qp);
 		}
 
+		// returns the cost of matching node p in the pattern graph to node qp in the base graph
+		double WongMatch15ConstrainedNoFuture::GetC(int p, int qp, LinkedNodeStub * currentNode) {
+			double cost = GetC(p, p, qp, qp);
+			
+			// if sheet-to-strand match,
+			if( (int)(patternGraph->adjacencyMatrix[p-1][p-1][0] + 0.01) == GRAPHNODE_SHEET && 
+				(int)(baseGraph->adjacencyMatrix[qp-1][qp-1][0] + 0.01) == GRAPHNODE_SHEET ) {
+				cost = 0;
+				//cout << " ... original cost = " << cost << endl;
+
+				double capacity = baseGraph->nodeWeights[qp-1];
+				//cout << " ... original capacity = " << capacity << endl;
+				bool continueLoop = true;
+				// walk up tree finding nodes where this sheet was matched to another strand, decreasing
+				// sheet capacity each time a match is found.
+				while(continueLoop) {
+					if(currentNode->parentNode == NULL) {
+						 break;
+					}
+					if (qp == currentNode->n2Node) {
+						int matchedNode = currentNode->n1Node;
+						capacity -= patternGraph->nodeWeights[matchedNode-1];
+						//cout << " ... one match at node qp = " << qp << ", p = " << matchedNode << " ... new capacity = " << capacity << endl;
+					}
+					currentNode = currentNode->parentNode;		
+				}
+				//cout << " ... unused capacity = " << capacity << endl;
+
+				// if capacity has all been used, penalize this match
+				if (capacity < 0) {
+					cost -= capacity;
+					//cout << " ... negative capacity. cost should be nonzero now." << endl;
+				}
+				if (cost > 0) {
+					cout << " ... match cost for base graph node " << qp << " = " << cost << endl;
+				}
+			}
+
+			return cost;
+
+		}
+
 		// GetC(currentNode->n1Node, currentNode->n2Node)
 
+		// returns the cost of matching edge j,p in the pattern graph to edge qj,qp in the base graph.
+		// when j=p and qj=qp, returns the cost of matching node j to node qj.
+		// three cases:
+		//   j == p and qj == qp -- node match cost
+		//   j != p and qj == qp -- edge match cost, special case where same sheet revisited by two consecutive nodes
+		//   j != p and qj != qp -- edge match cost
 		double WongMatch15ConstrainedNoFuture::GetC(int j, int p, int qj, int qp) {
 
 			double jpCost;
 			double qjqpCost;
 			double typeCost = 0;
 
+			// if no edge exists between j and p
 			if(patternGraph->adjacencyMatrix[j-1][p-1][1] == MAXINT) {
 				jpCost = 1000;
 			} else {
+				// if edge exists or if j == p
 				jpCost = patternGraph->adjacencyMatrix[j-1][p-1][1];
 			}
 
+			// if no edge exists between qj and qp
 			if(baseGraph->adjacencyMatrix[qj-1][qp-1][1] == MAXINT) {
 				qjqpCost = 1000;
 			} else {
+				// if edge exists between qj and qp or if qj == qp
 				qjqpCost = baseGraph->adjacencyMatrix[qj-1][qp-1][1];
 			}
 
+			// if edge types or node types do not match. cost decided here may be recomputed in next block.
 			if(patternGraph->adjacencyMatrix[j-1][p-1][0] != baseGraph->adjacencyMatrix[qj-1][qp-1][0]) {
 				typeCost = 1000;
 			}
@@ -329,6 +394,27 @@ namespace wustl_mm {
 				//cout << "----> revisiting sheet " << qj-1 << ". type cost 0, total cost " << fabs(jpCost - qjqpCost) << endl;
 				typeCost = 0;
 			}
+			
+			// add extra cost for node to node match. maybe this should be somewhere else?
+			/*
+			if ( (qj==qp) ) {
+				//if ( ((int)(patternGraph->adjacencyMatrix[j-1][j-1][0]) == GRAPHNODE_SHEET) && ((int)(baseGraph->adjacencyMatrix[qj-1][qj-1][0]) == GRAPHNODE_SHEET) ) {
+				if ((int)(baseGraph->adjacencyMatrix[qj-1][qj-1][0]) == GRAPHNODE_SHEET) {
+					//typeCost += 0;
+					qjqpCost = SHEET_SELF_LOOP_LENGTH;
+				}
+			}
+			*/
+
+			/*
+			if ( (j==p) && (qj == qp) ) {
+				if ( ((int)(patternGraph->adjacencyMatrix[j-1][j-1][0]) == GRAPHNODE_SHEET) && ((int)(baseGraph->adjacencyMatrix[qj-1][qj-1][0]) == GRAPHNODE_SHEET) ) {
+					//typeCost += 0;
+					qjqpCost = 0;
+					jpCost = 0;
+				}
+			}
+			*/
 
 			// TODO: Think I need to add an extra case here for the type check done by the simpler GetC(i, j) method above
 
@@ -342,6 +428,7 @@ namespace wustl_mm {
 		// qj is the start node in the base graph
 		// qp is the end node in the base graph
 		double WongMatch15ConstrainedNoFuture::GetCost(int d, int m, int qj, int qp) {
+			// TODO: Fix patthernLength and baseLength for sheet-to-sheet case.
 			double patternLength = 0;
 			double baseLength;
 
@@ -406,12 +493,6 @@ namespace wustl_mm {
 				weight = euclideanEstimate? weight * EUCLIDEAN_LOOP_PENALTY: weight;
 			}
 
-
-
-			// TODO: Add some conditions below to handle the lastIsSheetSheet case, which seems to be returning -1 right now.
-
-			// TODO: Figure out why this method (getCost) is preventing complete searches on graphs with sheets. 
-			//       I think it's in the next two blocks.
 			if(m == 1) {		
 				if((qj!= -1) && ((int)(patternGraph->adjacencyMatrix[d-1][d][0] + 0.01) != (int)(baseGraph->adjacencyMatrix[qj-1][qp-1][0] + 0.01)) &&
 					//!(((int)(patternGraph->adjacencyMatrix[d-1][d][0] + 0.01) == GRAPHEDGE_LOOP) && ((int)(baseGraph->adjacencyMatrix[qj-1][qp-1][0] +0.01) == GRAPHEDGE_LOOP_EUCLIDEAN))) 	{
@@ -428,7 +509,6 @@ namespace wustl_mm {
 				//	return -1;
 				//}
 
-			// commenting out loop requirement s.schuh 6/29 
 			} else {
 				if(!firstIsLoop || !lastIsLoop) {
 					if (sheetSheet) {
@@ -436,7 +516,6 @@ namespace wustl_mm {
 					}	
 					return -1;
 				}
-			//
 
 			}
 
@@ -491,6 +570,7 @@ namespace wustl_mm {
 		bool WongMatch15ConstrainedNoFuture::ExpandNode(LinkedNodeStub * currentStub) {
 			bool expanded = false;
 			expandCount++;
+
 			LinkedNode * temp;
 			double edgeCost;
 		#ifdef VERBOSE
@@ -517,7 +597,10 @@ namespace wustl_mm {
 					// TODO: the following line used to assume that every other SSE was a helix
 					//       j is number of helices to jump 
 					//       think i've fixed it. need to test.
-					for(int j = 0; j <= min(missingHelixCount * 2 + missingSheetCount - currentNode->missingNodesUsed + 1, currentM1Top); j += 1) {  // Stepping by one for sheets; helix code adds an extra step at end
+					//for(int j = 0; j <= min(missingHelixCount * 2 + missingSheetCount - currentNode->missingNodesUsed + 1, currentM1Top); j += 1) {  // Stepping by one for sheets; helix code adds an extra step at end
+					int skippedHelixNodes = 0;
+					int skippedSheetNodes = 0;
+					for (int j = 0; (j <= currentM1Top) && (skippedHelixNodes <= missingHelixCount * 2) && (skippedSheetNodes <= missingSheetCount); ) {
 					//for(int j = 0; j <= min(missingHelixCount * 2 - currentNode->missingNodesUsed + 1, currentM1Top); j += 2) {  // Stepping by two since we jump every 2 loops
 
 						// i is the node from baseGraph being matched to currentNode
@@ -550,7 +633,8 @@ namespace wustl_mm {
 
 							// generate a current node, marking it as revisitable or not depending on result from test
 							// the constructor marches forward along the sequence, skipping j nodes
-							currentNode = new LinkedNode(currentNode, currentStub, i, j, revisitable);
+							currentNode = new LinkedNode(currentNode, currentStub, i, skippedHelixNodes, skippedSheetNodes, revisitable);
+							//currentNode = new LinkedNode(currentNode, currentStub, i, j, revisitable);
 							//currentNode = new LinkedNode(currentNode, currentStub, i, j);
 
 							//if (currentNode->n2Node == temp->n2Node) {
@@ -560,6 +644,7 @@ namespace wustl_mm {
 							currentNode->costGStar = 0;
 
 							// if previous node was at top of tree and it was skipped
+							// TODO: make up for this later by incrementing j by 2?
 							if(((temp->depth == 0) && (j > 0)) || 
 								((patternGraph->nodeCount - currentNode->depth == 0) && (currentNode->n2Node == -1))) {
 								currentNode->costGStar += START_END_MISSING_HELIX_PENALTY;
@@ -595,7 +680,9 @@ namespace wustl_mm {
 
 								}
 								*/
-								currentNode->costGStar += temp->costGStar + edgeCost +	MISSING_HELIX_PENALTY * (j/2.0) + GetC(currentNode->n1Node, currentNode->n2Node);
+								//currentNode->costGStar += temp->costGStar + edgeCost +	MISSING_HELIX_PENALTY * (j/2.0) + GetC(currentNode->n1Node, currentNode->n2Node);
+								//currentNode->costGStar += temp->costGStar + edgeCost +	MISSING_HELIX_PENALTY * (skippedHelixNodes/2.0) + MISSING_SHEET_PENALTY * (skippedSheetNodes) + GetC(currentNode->n1Node, currentNode->n2Node);
+								currentNode->costGStar += temp->costGStar + edgeCost +	MISSING_HELIX_PENALTY * (skippedHelixNodes/2.0) + MISSING_SHEET_PENALTY * (skippedSheetNodes) + GetC(currentNode->n1Node, currentNode->n2Node, currentNode);
 								currentNode->cost = GetF();			
 								//currentNode->PrintNodeConcise(-1, true, true);
 								queue->add(currentNode, currentNode->cost);
@@ -620,9 +707,19 @@ namespace wustl_mm {
 						// TODO: Fix the indexing of the test here. Not right.
 						//if ( (int)(baseGraph->adjacencyMatrix[j][j][0] + 0.01) == GRAPHNODE_HELIX ) {
 						//if ( (int)(baseGraph->adjacencyMatrix[currentNode->n1Node + j + 1][currentNode->n1Node + j + 1][0] + 0.01) == GRAPHNODE_HELIX ) {
-						if ( (int)(baseGraph->adjacencyMatrix[currentNode->n1Node + j + 1][currentNode->n1Node + j + 2][0] + 0.01) == GRAPHEDGE_HELIX ) {
-							j++;
+						switch ( (int)(baseGraph->adjacencyMatrix[currentNode->n1Node + j + 1][currentNode->n1Node + j + 2][0] + 0.01)) {
+							case GRAPHEDGE_HELIX:
+								skippedHelixNodes += 2;
+								j+=2;
+								break;
+							default:
+								skippedSheetNodes += 1;
+								j++;
+								break;
 						}
+						//if ( (int)(baseGraph->adjacencyMatrix[currentNode->n1Node + j + 1][currentNode->n1Node + j + 2][0] + 0.01) == GRAPHEDGE_HELIX ) {
+						//	j++;
+						//}
 					}
 				}
 			}
@@ -657,7 +754,7 @@ namespace wustl_mm {
 			double ratio = 0;
 
 			for(int i = 0; i < (int)baseGraph->skeletonHelixes.size(); i++) {
-				ratio += (double)baseGraph->skeletonHelixes[i]->length / (double)baseGraph->adjacencyMatrix[i*2][i*2+1][1];
+				ratio += (double)baseGraph->skeletonHelixes[i]->length  / (double)baseGraph->adjacencyMatrix[i*2][i*2+1][1];
 			}
 			ratio = ratio / (double)baseGraph->skeletonHelixes.size();
 
