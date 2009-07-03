@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.13.2.5  2009/06/02 17:33:29  schuhs
+//   Changing GenerateEuclidianMatrix method to work for sheet nodes and helix nodes
+//
 //   Revision 1.13.2.4  2009/05/28 17:22:50  schuhs
 //   Fixing bug in destructor that caused the same volume object to be deleted twice
 //
@@ -63,6 +66,7 @@ namespace wustl_mm {
 			int GetNodeCount(); // Returns the number of nodes
 			void SetType(int i, int j, int type); // The type of the edge (index starting from 1)
 			void SetCost(int i, int j, double cost); // The cost based on the graph labels (index starting from 1)
+			void SetCost(int i, double cost); // The cost of a node
 			void SetNodeCount(int nodeCount); // Sets the number of nodes
 			void PrintGraph();
 			void GenerateEuclidianMatrix(Volume * vol);
@@ -70,6 +74,7 @@ namespace wustl_mm {
 			bool EdgeExists(int n, int m);
 		public:
 			double adjacencyMatrix[MAX_NODES][MAX_NODES][2]; // 0th dimension edge type... 1st dimension distance
+			double nodeWeights[MAX_NODES];
 			double euclideanMatrix[MAX_NODES][MAX_NODES];
 			vector<Vector3DInt> paths[MAX_NODES][MAX_NODES];
 			vector<SecondaryStructure*> pdbStructures;
@@ -170,6 +175,11 @@ namespace wustl_mm {
 		void StandardGraph::SetCost(int i, int j, double cost) {
 			assert(((i >= 1) && (i <= nodeCount) && (j >= 1) && (j <= nodeCount)));
 			adjacencyMatrix[i-1][j-1][1] = cost;
+		}
+
+		void StandardGraph::SetCost(int i, double cost) {
+			assert((i >= 1) && (i <= nodeCount));
+			nodeWeights[i-1] = cost;
 		}
 
 		void StandardGraph::SetNodeCount(int nodeCount) {
