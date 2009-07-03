@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.32.2.5  2009/06/18 20:34:56  schuhs
+//   Adding graph edge types for helix nodes and sheet nodes
+//
 //   Revision 1.32.2.4  2009/06/09 16:28:50  schuhs
 //   Adding method to get global constants
 //
@@ -105,11 +108,14 @@ namespace wustl_mm {
 		const char * TOKEN_BORDER_MARGIN_THRESHOLD = "BORDER_MARGIN_THRESHOLD";
 		const char * TOKEN_NORMALIZE_GRAPHS = "NORMALIZE_GRAPHS";
 		const char * TOKEN_MISSING_HELIX_PENALTY = "MISSING_HELIX_PENALTY";
+		const char * TOKEN_MISSING_SHEET_PENALTY = "MISSING_SHEET_PENALTY";
 		const char * TOKEN_EUCLIDEAN_LOOP_PENALTY = "EUCLIDEAN_LOOP_PENALTY";
 		const char * TOKEN_START_END_MISSING_HELIX_PENALTY = "START_END_MISSING_HELIX_PENALTY";
 		const char * TOKEN_HELIX_WEIGHT_COEFFICIENT = "HELIX_WEIGHT_COEFFICIENT";
 		const char * TOKEN_LOOP_WEIGHT_COEFFICIENT = "LOOP_WEIGHT_COEFFICIENT";
 		const char * TOKEN_MISSING_HELIX_LENGTH = "MISSING_HELIX_LENGTH";
+		const char * TOKEN_MISSING_SHEET_LENGTH = "MISSING_SHEET_LENGTH";
+		const char * TOKEN_SHEET_SELF_LOOP_LENGTH = "SHEET_SELF_LOOP_LENGTH";
 		const char * TOKEN_SHEET_WEIGHT_COEFFICIENT = "SHEET_WEIGHT_COEFFICIENT";
 		const char * TOKEN_COST_FUNCTION = "COST_FUNCTION";
 		const char * TOKEN_VOXEL_SIZE = "VOXEL_SIZE";
@@ -142,11 +148,14 @@ namespace wustl_mm {
 		bool NORMALIZE_GRAPHS = true;
 		double EUCLIDEAN_VOXEL_TO_PDB_RATIO = 2.0;
 		double MISSING_HELIX_PENALTY = 2;
+		double MISSING_SHEET_PENALTY = 2;
 		double EUCLIDEAN_LOOP_PENALTY = 5;
 		double START_END_MISSING_HELIX_PENALTY = 5;
 		double HELIX_WEIGHT_COEFFICIENT = 1.0;
 		double LOOP_WEIGHT_COEFFICIENT = 0.25;
 		double MISSING_HELIX_LENGTH = 8;
+		double MISSING_SHEET_LENGTH = 8;
+		double SHEET_SELF_LOOP_LENGTH = 0.02;
 		double SHEET_WEIGHT_COEFFICIENT = 1.0;
 		int COST_FUNCTION = 1;   // 1 : |a-b|		2 : |a-b|/(a+b)		3:|a-b|^2
 		double VOXEL_SIZE = 1;
@@ -266,6 +275,8 @@ namespace wustl_mm {
 				NORMALIZE_GRAPHS = boolValue;
 			} else if(strcmp(token, TOKEN_MISSING_HELIX_PENALTY) == 0) {
 				MISSING_HELIX_PENALTY = doubleValue;
+			} else if(strcmp(token, TOKEN_MISSING_SHEET_PENALTY) == 0) {
+				MISSING_SHEET_PENALTY = doubleValue;
 			} else if(strcmp(token, TOKEN_EUCLIDEAN_LOOP_PENALTY) == 0) {
 				EUCLIDEAN_LOOP_PENALTY = doubleValue;
 			} else if(strcmp(token, TOKEN_START_END_MISSING_HELIX_PENALTY) == 0) {
@@ -276,6 +287,10 @@ namespace wustl_mm {
 				LOOP_WEIGHT_COEFFICIENT = doubleValue;
 			} else if(strcmp(token, TOKEN_MISSING_HELIX_LENGTH) == 0) {
 				MISSING_HELIX_LENGTH = doubleValue;
+			} else if(strcmp(token, TOKEN_MISSING_SHEET_LENGTH) == 0) {
+				MISSING_SHEET_LENGTH = doubleValue;
+			} else if(strcmp(token, TOKEN_SHEET_SELF_LOOP_LENGTH) == 0) {
+				SHEET_SELF_LOOP_LENGTH = doubleValue;
 			} else if(strcmp(token, TOKEN_SHEET_WEIGHT_COEFFICIENT) == 0) {
 				SHEET_WEIGHT_COEFFICIENT = doubleValue;
 			} else if(strcmp(token, TOKEN_COST_FUNCTION) == 0) {
@@ -322,6 +337,8 @@ namespace wustl_mm {
 				boolValue = NORMALIZE_GRAPHS;
 			} else if(strcmp(token, TOKEN_MISSING_HELIX_PENALTY) == 0) {
 				doubleValue = MISSING_HELIX_PENALTY;
+			} else if(strcmp(token, TOKEN_MISSING_SHEET_PENALTY) == 0) {
+				doubleValue = MISSING_SHEET_PENALTY;
 			} else if(strcmp(token, TOKEN_EUCLIDEAN_LOOP_PENALTY) == 0) {
 				doubleValue = EUCLIDEAN_LOOP_PENALTY;
 			} else if(strcmp(token, TOKEN_START_END_MISSING_HELIX_PENALTY) == 0) {
@@ -332,6 +349,10 @@ namespace wustl_mm {
 				doubleValue = LOOP_WEIGHT_COEFFICIENT;
 			} else if(strcmp(token, TOKEN_MISSING_HELIX_LENGTH) == 0) {
 				doubleValue = MISSING_HELIX_LENGTH;
+			} else if(strcmp(token, TOKEN_MISSING_SHEET_LENGTH) == 0) {
+				doubleValue = MISSING_SHEET_LENGTH;
+			} else if(strcmp(token, TOKEN_SHEET_SELF_LOOP_LENGTH) == 0) {
+				doubleValue = SHEET_SELF_LOOP_LENGTH;
 			} else if(strcmp(token, TOKEN_SHEET_WEIGHT_COEFFICIENT) == 0) {
 				doubleValue = SHEET_WEIGHT_COEFFICIENT;
 			} else if(strcmp(token, TOKEN_COST_FUNCTION) == 0) {
@@ -394,6 +415,8 @@ namespace wustl_mm {
 					fscanf(fin, "%d", &NORMALIZE_GRAPHS);
 				} else if(strcmp(token, TOKEN_MISSING_HELIX_PENALTY) == 0) {
 					fscanf(fin, "%lf", &MISSING_HELIX_PENALTY);
+				} else if(strcmp(token, TOKEN_MISSING_SHEET_PENALTY) == 0) {
+					fscanf(fin, "%lf", &MISSING_SHEET_PENALTY);
 				} else if(strcmp(token, TOKEN_EUCLIDEAN_LOOP_PENALTY) == 0) {
 					fscanf(fin, "%lf", &EUCLIDEAN_LOOP_PENALTY);
 				} else if(strcmp(token, TOKEN_START_END_MISSING_HELIX_PENALTY) == 0) {
@@ -404,6 +427,10 @@ namespace wustl_mm {
 					fscanf(fin, "%lf", &LOOP_WEIGHT_COEFFICIENT);
 				} else if(strcmp(token, TOKEN_MISSING_HELIX_LENGTH) == 0) {
 					fscanf(fin, "%lf", &MISSING_HELIX_LENGTH);
+				} else if(strcmp(token, TOKEN_MISSING_SHEET_LENGTH) == 0) {
+					fscanf(fin, "%lf", &MISSING_SHEET_LENGTH);
+				} else if(strcmp(token, TOKEN_SHEET_SELF_LOOP_LENGTH) == 0) {
+					fscanf(fin, "%lf", &SHEET_SELF_LOOP_LENGTH);
 				} else if(strcmp(token, TOKEN_SHEET_WEIGHT_COEFFICIENT) == 0) {
 					fscanf(fin, "%lf", &SHEET_WEIGHT_COEFFICIENT);
 				} else if(strcmp(token, TOKEN_COST_FUNCTION) == 0) {
@@ -450,12 +477,15 @@ namespace wustl_mm {
 			printf("\tNORMALIZE_GRAPHS                 = %ld\n", NORMALIZE_GRAPHS);
 			printf("\tTRANSLATE_VOLUMETRIC_COORDINATES = %ld\n", TRANSLATE_VOLUMETRIC_COORDINATES);
 			printf("\tMISSING_HELIX_PENALTY            = %lf\n", MISSING_HELIX_PENALTY);
+			printf("\tMISSING_SHEET_PENALTY            = %lf\n", MISSING_SHEET_PENALTY);
 			printf("\tEUCLIDEAN_LOOP_PENALTY           = %lf\n", EUCLIDEAN_LOOP_PENALTY);
 			printf("\tSTART_END_MISSING_HELIX_PENALTY  = %lf\n", START_END_MISSING_HELIX_PENALTY);
 			printf("\tHELIX_WEIGHT_COEFFICIENT         = %lf\n", HELIX_WEIGHT_COEFFICIENT);
 			printf("\tLOOP_WEIGHT_COEFFICIENT          = %lf\n", LOOP_WEIGHT_COEFFICIENT);
 			printf("\tSHEET_WEIGHT_COEFFICIENT         = %lf\n", SHEET_WEIGHT_COEFFICIENT);
 			printf("\tMISSING_HELIX_LENGTH             = %lf\n", MISSING_HELIX_LENGTH);
+			printf("\tMISSING_SHEET_LENGTH             = %lf\n", MISSING_SHEET_LENGTH);
+			printf("\tSHEET_SELF_LOOP_LENGTH           = %lf\n", SHEET_SELF_LOOP_LENGTH);
 			printf("\tCOST_FUNCTION                    = %ld -- 1 : |a-b|       2 : |a-b|/(a+b)      3:|a-b|^2\n", COST_FUNCTION);
 			printf("\tVOXEL_SIZE                       = %lf\n", VOXEL_SIZE);
 			printf("\tMISSING_HELIX_COUNT              = %ld\n", MISSING_HELIX_COUNT);
