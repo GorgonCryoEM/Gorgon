@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.14.2.1  2009/06/18 20:36:16  schuhs
+//   Adding sheets to sequence graph
+//
 //   Revision 1.14  2008/11/18 18:10:24  ssa1
 //   Changing the scaling functions when doing graph matching to find correspondences
 //
@@ -250,7 +253,9 @@ namespace wustl_mm {
 				}
 				if (structures[i]->secondaryStructureType == GRAPHEDGE_SHEET) {
 					cout << "adding strand " << i << " with ID " << structures[i]->secondaryStructureID << endl;
-					// TODO: Add some cost for the node itself?
+					// TODO: Add some cost for the node itself
+					graph->SetCost(node+1, (structures[i]->endPosition - structures[i]->startPosition) * LOOP_C_ALPHA_TO_ANGSTROMS);
+					cout << "adding strand " << i << " at node " << node << " with length " << (structures[i]->endPosition - structures[i]->startPosition) * LOOP_C_ALPHA_TO_ANGSTROMS << endl;
 					graph->SetCost(node+1, node+1, 0); // Strand node.
 					graph->SetType(node+1, node+1, GRAPHNODE_SHEET); 
 
