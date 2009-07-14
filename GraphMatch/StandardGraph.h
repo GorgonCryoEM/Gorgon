@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.13.2.6  2009/07/03 16:32:22  schuhs
+//   Adding an array to storage node costs
+//
 //   Revision 1.13.2.5  2009/06/02 17:33:29  schuhs
 //   Changing GenerateEuclidianMatrix method to work for sheet nodes and helix nodes
 //
@@ -64,6 +67,8 @@ namespace wustl_mm {
 			int GetType(int i, int j); // The type of the edge (index starting from 1)
 			double GetCost(int i, int j); // The cost based on the graph labels (index starting from 1)
 			int GetNodeCount(); // Returns the number of nodes
+			int GetHelixCount(); // Returns the number of helices
+			int GetSheetCount(); // Returns the number of sheets
 			void SetType(int i, int j, int type); // The type of the edge (index starting from 1)
 			void SetCost(int i, int j, double cost); // The cost based on the graph labels (index starting from 1)
 			void SetCost(int i, double cost); // The cost of a node
@@ -165,6 +170,28 @@ namespace wustl_mm {
 		}
 		int StandardGraph::GetNodeCount() {
 			return nodeCount;
+		}
+
+		int StandardGraph::GetHelixCount() {
+			int count = 0;
+			for (int i = 0; i < nodeCount; i++) {
+				if (adjacencyMatrix[i][i][0] == GRAPHNODE_HELIX) {
+					count++;
+				}
+			}
+			return (count/2);
+			//return helixCount;
+		}
+
+		int StandardGraph::GetSheetCount() {
+			int count = 0;
+			for (int i = 0; i < nodeCount; i++) {
+				if (adjacencyMatrix[i][i][0] == GRAPHNODE_SHEET) {
+					count++;
+				}
+			}
+			return count;
+			//return sheetCount;
 		}
 
 		void StandardGraph::SetType(int i, int j, int type) {
