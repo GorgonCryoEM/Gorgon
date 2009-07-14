@@ -15,6 +15,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.15.2.4  2009/07/03 16:34:03  schuhs
+//   Sheet matching with node costs is working
+//
 //   Revision 1.15.2.3  2009/06/29 21:45:29  schuhs
 //   Helix and sheet matching works. Jump edge code needs some work.
 //
@@ -127,6 +130,8 @@ namespace wustl_mm {
 			delete pathGenerator;
 		}
 		void WongMatch15ConstrainedNoFuture::Init(StandardGraph * patternGraph, StandardGraph * baseGraph) {	
+			cout << "Base graph has " << baseGraph->GetHelixCount() << " helices and " << baseGraph->GetSheetCount() << " sheets." << endl;
+			cout << "Pattern graph has " << patternGraph->GetHelixCount() << " helices and " << patternGraph->GetSheetCount() << " sheets." << endl;
 			cout << "WongMatch15ConstrainedNoFuture::Init" << endl;
 			usedNodes.clear();
 			cout << "WongMatch15ConstrainedNoFuture::Init 1" << endl;
@@ -245,7 +250,8 @@ namespace wustl_mm {
 					foundCount++;
 					currentNode->PrintNodeConcise(foundCount, false);
 					printf(": (%d expanded) (%f seconds) (%fkB Memory) (%d queue size) (%d parent size)\n", expandCount, (double) (finishTime - startTime) / (double) CLOCKS_PER_SEC, (queue->getLength() * sizeof(LinkedNode) + usedNodes.size() * sizeof(LinkedNodeStub)) / 1024.0, queue->getLength(), (int)usedNodes.size());
-					solutions.push_back(SSECorrespondenceResult(currentNode));
+					int numHelices = baseGraph->GetHelixCount();
+					solutions.push_back(SSECorrespondenceResult(currentNode, numHelices));
 
 					#ifdef MAKE_FINAL_MRC
 						char fileName[80];
@@ -285,11 +291,11 @@ namespace wustl_mm {
 		}
 
 		SSECorrespondenceResult WongMatch15ConstrainedNoFuture::GetResult(int rank) {
-			if(rank <= (int)solutions.size() && (rank >= 1)) {
+			//if(rank <= (int)solutions.size() && (rank >= 1)) {
 				return solutions[rank-1];
-			} else {
-				return NULL;
-			}
+			//} else {
+			//	return NULL;
+			//}
 		}
 		void WongMatch15ConstrainedNoFuture::SaveResults(){
 			//printf("\t");
