@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.50.2.3  2009/06/09 16:30:50  schuhs
+//   Adding methods to read global constants
+//
 //   Revision 1.50.2.2  2009/05/22 19:16:25  schuhs
 //   Adding methods to CorrespondenceEngine and SSERenderer to change colors of helices and sheets
 //
@@ -444,6 +447,8 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("getNodeString", &SSECorrespondenceResult::GetNodeString)
 		.def("getCost", &SSECorrespondenceResult::GetCost)
 		.def("getNodeCount", &SSECorrespondenceResult::GetNodeCount)
+		.def("getHelixCount", &SSECorrespondenceResult::GetHelixCount)
+		.def("getSheetCount", &SSECorrespondenceResult::GetSheetCount)
 		.def("getSkeletonNode", &SSECorrespondenceResult::GetSkeletonNode)
 		.def("nodeToHelix", &SSECorrespondenceResult::NodeToHelix)		
 	;
