@@ -111,6 +111,9 @@ This creates a Chain object from a FASTA file.
 This loads the specified chain ID from a PDF file and returns a Chain 
 object. If no chain ID is specified, it loads the first chain.
     '''
+    # trying to fix problem where chain can't be read twice
+    #secelList={}
+
     #print Chain.getChainKeys()
     if qparent and qtEnabled:
         result = Chain('', qparent=qparent)
@@ -136,18 +139,28 @@ object. If no chain ID is specified, it loads the first chain.
                 continue
             if not firstChain:	#Sets the value of the first and only chain we will store
                 firstChain = chainID
+                """
                 ####if the chain key already exists, point to that chain object
                 ####perhaps this should be modified
                 if not (pdbID, firstChain) in cls.getChainKeys():
                     result.setIDs(pdbID, firstChain)
                 else:
                     result = cls.getChain( (pdbID, firstChain) )
+                    print "breaking out of loop! (01)"
                     break
+                """
+                # modified above code to always create a new chain
+                # TODO: try to change this back, if desired, and look for impact on memory.
+                result.setIDs(pdbID, firstChain)
+                
             if firstChain and chainID != firstChain:		#If we've gone past the only chain we want to store, we will break out of the for loop
+                print "breaking out of loop! (02)"
                 break
             
             residueIndex = int( line[22:26] )
+            #print "residueRange is " + str(result.residueRange) + ""
             if residueIndex not in result.residueRange():
+                #print "residue " + str(residueIndex) + " not in residueRange (" + str(result.residueRange) + ")"
                 residue = Residue( line[17:20].strip(), result ) 
                 result[residueIndex] = residue
             
@@ -157,21 +170,26 @@ object. If no chain ID is specified, it loads the first chain.
             try:
                 tempFactor  = float( line[60:66].strip() )
             except ValueError:
+                print "breaking out of loop! (03)"
                 tempFactor = None
             try:
                 occupancy   = float( line[54:60].strip() )
             except ValueError:
                 occupancy = None
+                print "breaking out of loop! (04)"
             try: 
                 x = float( line[30:38] )
                 y = float( line[38:46] )
                 z = float( line[46:54] )
                 
+                #print "adding atom"
                 atom = residue.addAtom(atomName, x,y,z, element, serialNo, occupancy, tempFactor)
+                #print "atom added"
                 #residue.atoms[atomName]=atom            
                 result.atoms[serialNo]=atom
                 #Chain.chainsDict[result.key] = result
             except ValueError:
+                print "breaking out of loop! (05)"
                 print 'Chain.__loadFromPDB--no coordinates', 
 
         elif line[0:6].strip()=='HELIX':
@@ -551,6 +569,7 @@ residue.
 This adds a secel object to the chain.
     '''
     for index in range(secel.startIndex, secel.stopIndex+1):
+      print "adding a secel at index " + str(index) + ". secelList has size " + str(len(self.secelList))
       self.secelList[index]=secel
 
   def addHelix(self, serialNo, helix):
@@ -569,6 +588,7 @@ This adds a strand object to the chain.
     else:
       self.sheets[sheetID].strandList[strandNo]=strand
     self.addSecel(strand)
+    print "strand added: " + str(strandNo)
 
   def addSheet(self, sheetID, sheet):
     '''
@@ -576,6 +596,7 @@ This adds a sheet object to the chain.
     '''    
     if not self.sheets.has_key(sheetID):
       self.sheets[sheetID]=sheet
+    #self.addSecel(sheet)
 
   def append(self,residue):
     '''

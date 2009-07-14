@@ -34,6 +34,9 @@ adds it to the chain.
             #chain.sheets[sheetID]=Sheet(strand)
             sheet=Sheet(strand)
             chain.addSheet(sheetID, sheet)
+            # ss adding this:
+            chain.addStrand(strand, strandNo, sheetID)
+
         else:
             #chain.sheets[sheetID].strandList[strandNo] = strand
             chain.addStrand(strand, strandNo, sheetID)

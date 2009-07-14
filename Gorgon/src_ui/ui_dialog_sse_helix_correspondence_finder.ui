@@ -5,7 +5,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>342</width>
+    <width>333</width>
     <height>567</height>
    </rect>
   </property>
@@ -65,7 +65,7 @@
        <enum>QTabWidget::Rounded</enum>
       </property>
       <property name="currentIndex" >
-       <number>0</number>
+       <number>4</number>
       </property>
       <widget class="QWidget" name="tabDataSources" >
        <attribute name="title" >
@@ -818,7 +818,7 @@
           </layout>
          </widget>
         </item>
-        <item row="1" column="0" colspan="2" >
+        <item rowspan="0" row="1" column="0" colspan="2" >
          <widget class="QGroupBox" name="groupBox_2" >
           <property name="title" >
            <string>Coefficients:</string>
@@ -956,91 +956,127 @@
           <property name="title" >
            <string>Sheet Parameters</string>
           </property>
-          <layout class="QGridLayout" name="gridLayout_4" >
-           <item row="0" column="0" >
-            <layout class="QFormLayout" name="formLayout_3" >
-             <item row="0" column="0" >
-              <widget class="QLabel" name="label_17" >
-               <property name="text" >
-                <string>Average Missing Sheet Length:</string>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="1" >
-              <widget class="QDoubleSpinBox" name="doubleSpinBoxAverageMissingSheetLength" >
-               <property name="sizePolicy" >
-                <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="decimals" >
-                <number>4</number>
-               </property>
-               <property name="maximum" >
-                <double>10000000000.000000000000000</double>
-               </property>
-               <property name="value" >
-                <double>5.000000000000000</double>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="0" >
-              <widget class="QLabel" name="label_18" >
-               <property name="text" >
-                <string>Sheet Importance:</string>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="1" >
-              <widget class="QDoubleSpinBox" name="doubleSpinBoxSheetImportance" >
-               <property name="sizePolicy" >
-                <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="text" stdset="0" >
-                <string>1.0000</string>
-               </property>
-               <property name="decimals" >
-                <number>4</number>
-               </property>
-               <property name="maximum" >
-                <double>1.000000000000000</double>
-               </property>
-               <property name="value" >
-                <double>1.000000000000000</double>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="0" >
-              <widget class="QLabel" name="label_19" >
-               <property name="text" >
-                <string>"Sheet is missing" Penalty:</string>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="1" >
-              <widget class="QDoubleSpinBox" name="doubleSpinBoxSheetMissingPenalty" >
-               <property name="sizePolicy" >
-                <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="decimals" >
-                <number>4</number>
-               </property>
-               <property name="maximum" >
-                <double>999999999.999899983406067</double>
-               </property>
-               <property name="value" >
-                <double>5.000000000000000</double>
-               </property>
-              </widget>
-             </item>
-            </layout>
+          <layout class="QVBoxLayout" name="verticalLayout_9" >
+           <item>
+            <widget class="QSplitter" name="splitter_4" >
+             <property name="orientation" >
+              <enum>Qt::Vertical</enum>
+             </property>
+             <widget class="QWidget" name="" >
+              <layout class="QGridLayout" name="gridLayout_2" >
+               <item row="0" column="0" >
+                <widget class="QLabel" name="label_17" >
+                 <property name="text" >
+                  <string>Average Missing Sheet Length:</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="1" >
+                <widget class="QDoubleSpinBox" name="doubleSpinBoxAverageMissingSheetLength" >
+                 <property name="sizePolicy" >
+                  <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="decimals" >
+                  <number>4</number>
+                 </property>
+                 <property name="maximum" >
+                  <double>10000000000.000000000000000</double>
+                 </property>
+                 <property name="value" >
+                  <double>5.000000000000000</double>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="0" >
+                <widget class="QLabel" name="label_18" >
+                 <property name="text" >
+                  <string>Sheet Importance:</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="1" >
+                <widget class="QDoubleSpinBox" name="doubleSpinBoxSheetImportance" >
+                 <property name="sizePolicy" >
+                  <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="text" stdset="0" >
+                  <string>1.0000</string>
+                 </property>
+                 <property name="decimals" >
+                  <number>4</number>
+                 </property>
+                 <property name="maximum" >
+                  <double>1.000000000000000</double>
+                 </property>
+                 <property name="value" >
+                  <double>1.000000000000000</double>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="0" >
+                <widget class="QLabel" name="label_19" >
+                 <property name="text" >
+                  <string>"Sheet is missing" Penalty:</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="1" >
+                <widget class="QDoubleSpinBox" name="doubleSpinBoxSheetMissingPenalty" >
+                 <property name="sizePolicy" >
+                  <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="decimals" >
+                  <number>4</number>
+                 </property>
+                 <property name="maximum" >
+                  <double>999999999.999899983406067</double>
+                 </property>
+                 <property name="value" >
+                  <double>5.000000000000000</double>
+                 </property>
+                </widget>
+               </item>
+               <item row="3" column="0" >
+                <widget class="QLabel" name="label_21" >
+                 <property name="text" >
+                  <string>Sheet self loop length</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="3" column="1" >
+                <widget class="QDoubleSpinBox" name="doubleSpinBoxSheetSelfLoopLength" >
+                 <property name="sizePolicy" >
+                  <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="text" stdset="0" >
+                  <string>5.0000</string>
+                 </property>
+                 <property name="decimals" >
+                  <number>4</number>
+                 </property>
+                 <property name="maximum" >
+                  <double>999999999.999899983406067</double>
+                 </property>
+                 <property name="value" >
+                  <double>5.000000000000000</double>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </widget>
            </item>
           </layout>
          </widget>
@@ -1078,6 +1114,18 @@
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
+             </property>
+             <property name="minimumSize" >
+              <size>
+               <width>100</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="maximumSize" >
+              <size>
+               <width>100</width>
+               <height>16777215</height>
+              </size>
              </property>
              <property name="text" >
               <string>Correspondence:</string>

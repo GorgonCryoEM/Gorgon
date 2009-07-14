@@ -14,6 +14,7 @@ class ObservedSheet:
     """Note that the label is currently an integer, not a string."""
     self.cornerList = cornerList
     self.label = label #Note: currently an integer, not a string
+    self.sseType = 'sheet'
 
 
 

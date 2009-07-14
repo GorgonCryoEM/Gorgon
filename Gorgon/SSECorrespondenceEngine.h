@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.7.2.4  2009/06/19 17:42:56  schuhs
+//   Adding console messages to help debug memory error
+//
 //   Revision 1.7.2.3  2009/05/28 16:54:48  schuhs
 //   Adding integer casts to loop variables eliminate compiler warnings
 //
@@ -129,7 +132,8 @@ namespace wustl_mm {
 					nodes.push_back(skeletonNode);
 				}
 				fscanf(fin, "%lf\n", &cost);
-				correspondence.push_back(SSECorrespondenceResult(nodes, cost));
+				// TODO: Fix! 0 not acceptable!
+				correspondence.push_back(SSECorrespondenceResult(nodes, cost, 0));
 			}
 
 			fclose(fin);
@@ -138,11 +142,12 @@ namespace wustl_mm {
 		}
 
 		SSECorrespondenceResult SSECorrespondenceEngine::GetResult(int rank) {
-			if(rank <= (int)correspondence.size() && (rank >= 1)) {
+			// TODO: Fix!
+			//if(rank <= (int)correspondence.size() && (rank >= 1)) {
 				return correspondence[rank-1];
-			} else {
-				return NULL;
-			}
+			//} else {
+			//	return NULL;
+			//}
 		}
 
 		string SSECorrespondenceEngine::GetSupportedLoadFileFormats() {
@@ -220,10 +225,12 @@ namespace wustl_mm {
 				glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);	
 
 
-				for(int i = 2; i < result.GetNodeCount(); i += 2) {
+				//for(int i = 2; i < result.GetNodeCount(); i += 2) {
+				for(int i = 2; i < result.GetNodeCount(); i += 1) {
 					n1 = result.GetSkeletonNode(i-1);
 					n2 = result.GetSkeletonNode(i);
-					if((n1 >= 0)  && (n2 >= 0)) {
+					//if((n1 >= 0)  && (n2 >= 0)) {
+					if((n1 >= 0)  && (n2 >= 0) && (skeleton->adjacencyMatrix[n1][n2][0] != GRAPHEDGE_HELIX)) {
 						path = skeleton->paths[n1][n2];
 						if(path.size() == 0) {
 							path = skeleton->paths[n2][n1];

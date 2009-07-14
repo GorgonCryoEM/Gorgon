@@ -26,7 +26,7 @@ class StructurePrediction(baseClass):  #results of secondary-structure predictio
 This class contains the sequence of a chain and the residue numbers 
 where SSEs are predicted to be based on the sequence.
     """
-    def __init__(self, secelDict, chain, params=None, comments=None, qparent=None):
+    def __init__(self, secelDict, chain, params=None, comments=None, qparent=None, secelType=None):
         if qparent and qtEnabled:
             super(QtCore.QObject,self).__init__(qparent)
         self.secelDict=secelDict
@@ -35,6 +35,8 @@ where SSEs are predicted to be based on the sequence.
         self.params=params
         self.comments=comments
         self.app = qparent
+        # list of types of secels
+        self.secelType = secelType
 
 
     @classmethod
@@ -59,8 +61,11 @@ are interpreted as sequence, and the second half are treated as
 structure predictions. The actual file reading and interpreting is 
 handled in C++.
         '''
+        print "StructurePrediction.load called. cls = " + str(cls) + ", filename = " + str(filename) + "qparent = " + str(qparent)
+
         #secelIndex=0
         secelDict={}
+        secelType={}
         params=None
         comments=None
         
@@ -94,11 +99,66 @@ handled in C++.
             return StructurePrediction(secelDict, chain, params, comments, qparent)
         elif filename.split('.')[-1].lower() == 'pdb':
             # create python chain object using the python pdb file loader method
+            print "creating structure prediction object from pdb file"
+            #chain = Chain.__init__(chain)
             chain = Chain.load(filename, qparent)
+            print "chain has length " + str(len(chain))
+            print "chain secelList has length " + str(len(chain.secelList))
             i = 0
+            """
             for helixKey in chain.helices.keys():
+                print "helixKey " + str(helixKey)
                 secelDict[i] = chain.helices[helixKey]
                 i += 1
+            print "done adding helices. i=" + str(i)
+            
+            for sheetKey in chain.sheets.keys():
+                print "sheetKey " + str(sheetKey)
+                for strandKey in chain.sheets[sheetKey].strandList.keys():
+                    print "strandKey " + str(strandKey)
+                    secelDict[i] = chain.sheets[sheetKey].strandList[strandKey]
+                    # self.sheets[sheetID].strandList[strandNo]=strand
+                    #secelDict[i] = chain.sheets[sheetKey]
+                    i += 1
+            print "done adding sheets. i=" + str(i)
+            """
+            
+            # create secelDict from chain
+            #for index in chain.residueRange()[::-1]:
+            #    if chain.residueList[index] is inputRes:
+            #        return index
+
+            lastSecel = -1;
+
+            #iterate over all secels. sort is needed because chain.secelList is a dict
+            for index in sorted(chain.secelList):
+                print "index = " + str(index)
+                #if chain.secelList[index].type == 'helix':
+                #    print "helix at index " + str(index)
+                #if chain.secelList[index].type == 'sheet':
+                #    print "sheet at index " + str(index)
+                #if chain.secelList[index].type == 'strand':
+                #    print "strand at index " + str(index)
+                if chain.secelList[index] == lastSecel:
+                    pass
+                    #print "same as last secel at " + str(index) + " (" + str(chain.secelList[index]) + ")" 
+                else:
+                    print "found new secel " + str(index) + " (" + str(chain.secelList[index]) + ")"
+                    if chain.secelList[index].type == 'helix':
+                        print "helix at index " + str(index)
+                        secelDict[i] = chain.secelList[index]
+                        secelType[i] = 'helix'
+                    if chain.secelList[index].type == 'strand':
+                        print "strand at index " + str(index)
+                        secelDict[i] = chain.secelList[index]
+                        secelType[i] = 'strand'
+                    lastSecel = chain.secelList[index]
+                    i += 1
+                    print "secelDict[" + str(i) + "] is (to be added later)" 
+            print "done adding helices and strands. i=" + str(i)
+           
+
+            
             chain.helices = {}
             chain.sheets = {}
             chain.secelList = {}
@@ -106,8 +166,9 @@ handled in C++.
             chain.atoms = {}
             for resIndex in chain.residueRange():
                 chain[resIndex].clearAtoms()
+            print "created structure prediction object with secelDict of size " + str(len(secelDict)) + "(i=" + str(i) + ")"
             # create new python StructurePrediction object and return it
-            return StructurePrediction(secelDict, chain, params, comments, qparent)
+            return StructurePrediction(secelDict, chain, params, comments, qparent, secelType)
         
         
     def getSecelByIndex(self, index):

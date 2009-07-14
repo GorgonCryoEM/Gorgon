@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.36.2.5  2009/06/18 20:33:53  schuhs
+#   Removing linefeeds from print statements
+#
 #   Revision 1.36.2.4  2009/06/09 16:44:14  schuhs
 #   Adding UI boxes for sheet parameters, adding UI button to load all settings from text file, and modifying skeleton parsing code to work with sheets.
 #
@@ -271,11 +274,16 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
         self.ui.tabWidget.setTabEnabled(2, self.dataLoaded)
         self.ui.tabWidget.setTabEnabled(3, self.dataLoaded)
         if(self.dataLoaded):
-            self.createBasicCorrespondence()            
+            self.createBasicCorrespondence()
+            print "after creating basic correspondence (1), secelDict has length " + str(len(self.viewer.correspondenceLibrary.structurePrediction.secelDict))   
+            self.createBasicCorrespondence()
+            print "after creating basic correspondence (2), secelDict has length " + str(len(self.viewer.correspondenceLibrary.structurePrediction.secelDict))   
             self.viewer.correspondenceLibrary.correspondenceList = self.populateEmptyResults(self.viewer.correspondenceLibrary)
-            self.populateComboBox(self.viewer.correspondenceLibrary)            
-        print "correspondence index at end is "
-        print self.ui.comboBoxCorrespondences.currentIndex()
+            print "correspondenceList has length " + str(len(self.viewer.correspondenceLibrary.correspondenceList))
+            self.populateComboBox(self.viewer.correspondenceLibrary)
+        else:
+            print "data not loaded"                        
+        print "correspondence index at end is " + str(self.ui.comboBoxCorrespondences.currentIndex())
         print "end checkOk"
     
     def loadWidget(self):
@@ -440,6 +448,8 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
         self.viewer.correspondenceEngine.setConstant("MISSING_SHEET_LENGTH", self.ui.doubleSpinBoxAverageMissingSheetLength.value())    
         self.viewer.correspondenceEngine.setConstant("SHEET_WEIGHT_COEFFICIENT", self.ui.doubleSpinBoxSheetImportance.value())
         self.viewer.correspondenceEngine.setConstant("MISSING_SHEET_PENALTY", self.ui.doubleSpinBoxSheetMissingPenalty.value())
+        self.viewer.correspondenceEngine.setConstant("SHEET_SELF_LOOP_LENGTH", self.ui.doubleSpinBoxSheetSelfLoopLength.value())
+        
     
     
         #Tab 4 User Constraints
@@ -515,6 +525,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
         self.ui.doubleSpinBoxAverageMissingSheetLength.setValue(self.viewer.correspondenceEngine.getConstantDouble("MISSING_SHEET_LENGTH"))    
         self.ui.doubleSpinBoxSheetImportance.setValue(self.viewer.correspondenceEngine.getConstantDouble("SHEET_WEIGHT_COEFFICIENT")) 
         self.ui.doubleSpinBoxSheetMissingPenalty.setValue(self.viewer.correspondenceEngine.getConstantDouble("MISSING_SHEET_PENALTY")) 
+        self.ui.doubleSpinBoxSheetSelfLoopLength.setValue(self.viewer.correspondenceEngine.getConstantDouble("SHEET_SELF_LOOP_LENGTH")) 
     
 
         
@@ -554,44 +565,107 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
         for i in range(self.resultCount):                                
             # create a Correspondence object and add it to the list
 
+            print "-------------- RESULT " + str(i) + " --------------"
+
             # start from correspondenceEngine result
             result = self.viewer.correspondenceEngine.getResult(i+1)
             
             matchList = [] # matchList holds the matches
             
             # iterate over all nodes in the matching from correspondenceEngine
-            print "Iterating over nodes of this result."
-            for j in range(result.getNodeCount()/2):
-                # j is a helix node in the sequence graph
-                # n1 and n2 are skeleton graph nodes for entry and exit points of the helix
-                n1 = result.getSkeletonNode(j*2)
-                n2 = result.getSkeletonNode(j*2+1)
-                if n1 < n2:
+            print "Iterating over " + str(result.getNodeCount()) + " nodes of this result."
+            isSecondHelixNode = False
+            helicesPassed = 0
+            #for j in range(result.getNodeCount()/2):
+            
+            # TODO: Fix code so it handles missing helices correctly. Test on 3LCK data.
+
+            for k in range(len(library.structurePrediction.secelType)):
+                print "secelType says element " + str(k) + " is a " + str(library.structurePrediction.secelType[k])
+
+            
+            for j in range(result.getNodeCount()):
+                print "iterating. j = " + str(j)
+                if isSecondHelixNode == False:
+
+                    print "j = " + str(j)
                     direction = Match.FORWARD
-                else:
-                    direction = Match.REVERSE
-                
-                # lookup which helix from skeleton graph these nodes refer to
-                observedNo = result.nodeToHelix(n1)
-                if observedNo >= 0:
-                    # helix in skeleton graph
-                    observed = library.structureObservation.helixDict[observedNo]
-                else:
-                    observed = None
+
+                    # predicted helix or strand in sequence graph
+                    #predicted = library.structurePrediction.secelDict[j]
+                    print "predicted is element " + str(j - helicesPassed) + " from secelDict, which has " + str(len(library.structurePrediction.secelDict)) + " entries" 
+                    print "secelType says element " + str(j - helicesPassed) + " is a " + str(library.structurePrediction.secelType[j - helicesPassed])
+                    predicted = library.structurePrediction.secelDict[j - helicesPassed]
+                    predictedType = library.structurePrediction.secelType[j - helicesPassed] # 'helix' or 'strand'
+                    if predictedType == 'helix':
+                        isSecondHelixNode = True
+
+
+                    # observed helix or sheet in skeleton graph
+                    print "secelDict has size " + str(len(library.structurePrediction.secelDict))
+                    # j is a helix node in the sequence graph
+                    # n1 and n2 are skeleton graph nodes for entry and exit points of the helix
+                    n1 = result.getSkeletonNode(j)
+                    print "n1 is " + str(n1)
+                    print "result says the number of helices is " + str(result.getHelixCount())
+                    if (n1 < 2 * result.getHelixCount() and n1 >= 0):
+                        observedType = 'helix'
+                    elif n1 >= 2 * result.getHelixCount():
+                        observedType = 'sheet'
+                    else:
+                        observedType = 'none'
+                        print "error!!!"
+                    print "the observed type is " + str(observedType)
+                        
+                    isHelix = (n1 < 2 * result.getHelixCount())
+                    #isSheet = !(isHelix)
+                    #if (isHelix):
+                    if observedType == 'helix':
+                        print "node " + str(n1) + " is a helix"
+                        isSecondHelixNode = True
+                        n2 = result.getSkeletonNode(j+1)
+                        if n1 < n2:
+                            print "forward match, nodes are " + str(n1) + " and " + str(n2)
+                            direction = Match.FORWARD
+                        else:
+                            print "reverse match, nodes are " + str(n1) + " and " + str(n2)
+                            direction = Match.REVERSE
+                    elif observedType == 'sheet':
+                        print "node " + str(n1) + " is a sheet"
+                        direction = Match.FORWARD
+                    elif observedType == 'none':
+                        print "node " + str(n1) + " is not a sheet or a helix"
+                                            
+                    # lookup which helix from skeleton graph these nodes refer to
+                    observedNo = result.nodeToHelix(n1)
+                    print "graph index " + str(n1) + " corresponds to skeleton SSE " + str(observedNo)
+                    print "observed is element " + str(observedNo) + " from helixDict, which has " + str(len(library.structureObservation.helixDict)) + " entries" 
+                    print "sheetDict has " + str(len(library.structureObservation.sheetDict)) + " entries" 
+                    if observedNo >= 0:
+                        if isHelix:
+                            # helix in skeleton graph
+                            observed = library.structureObservation.helixDict[observedNo]
+                        else: # sheet 
+                            observed = library.structureObservation.sheetDict[observedNo - result.getHelixCount()]
+                            #observed = None # for now, no code for sheets 
+                    else:
+                        observed = None
+                        
                     
-                # helix in sequence graph
-                predicted = library.structurePrediction.secelDict[j]
-                
-                # create Match object holding the observed and predicted helices, and the match direction
-                currentMatch = Match(observed, predicted, direction)
-                
-                # if this helix has a constraint, store the constraint in the Match object
-                if(self.userConstraints.has_key(j)):
-                    currentMatch.constrained = self.userConstraints[j]
-                else :                      
-                    currentMatch.constrained = False     
-                # append this match to the list of matches for this result
-                matchList.append(currentMatch)         
+                    # create Match object holding the observed and predicted helices, and the match direction
+                    currentMatch = Match(observed, predicted, direction)
+                    
+                    # if this helix has a constraint, store the constraint in the Match object
+                    if(self.userConstraints.has_key(j - helicesPassed)):
+                        currentMatch.constrained = self.userConstraints[j - helicesPassed]
+                    else :                      
+                        currentMatch.constrained = False     
+                    # append this match to the list of matches for this result
+                    matchList.append(currentMatch)
+                             
+                else: # isSecondHelixNode is true
+                    isSecondHelixNode = False
+                    helicesPassed += 1
 
             # now matchList holds all the helix correspondences for a single match result
 
@@ -629,8 +703,12 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
         print "loading predicted SSEs"
         # call to c++ method QueryEngine::LoadSequenceGraph()
         self.viewer.correspondenceEngine.loadSequenceGraph()
-
+        
+        print "before calling StructurePrediction.load"
+        print "sequenceFileName is " + str(self.sequenceFileName)
+        print "app is " + str(self.app)
         structPred = StructurePrediction.load(self.sequenceFileName, self.app)
+        print "after calling StructurePrediction.load"
         cAlphaViewer = self.app.viewers['calpha']
         sseViewer = self.app.viewers['sse']
         skeletonViewer = self.app.viewers['skeleton']
@@ -684,6 +762,10 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
                     cornerNum = cornerNum + 1
                 print "done adding sheet corners."
                 pySheet = ObservedSheet(sseIx, cornerList)
+                # adding sheets to list of observedHelices
+                #observedHelices[helixCount + sheetCount + 1] = pySheet
+                observedSheets[sheetCount] = pySheet
+                print "added a sheet to observedSheets. total number of sheets is now " + str(len(observedSheets))
                 sheetCount = sheetCount + 1
                 #pass
                 #TODO: Add Sheet support
@@ -701,8 +783,11 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
         print "finished creating basic correspondences" 
         
     def accept(self):
+        print "ok button pushed"
         # read user parameters, read skeleton and sequence files, create correspondence library
-        self.createBasicCorrespondence()          
+        self.createBasicCorrespondence()   
+        # TODO: At this point, the secelDict is not defined. Why didn't it work?    
+        print "after creating basic correspondence, secelDict has length " + str(len(self.viewer.correspondenceLibrary.structurePrediction.secelDict))   
                 
         # execute correspondence query and do cleanup
         print "executing query"
@@ -715,7 +800,8 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
         print "populating result list"
         #print "found " + size(self.viewer.correspondenceLibrary.correspondenceList) + " results. populating result list"
         self.viewer.correspondenceLibrary.correspondenceList = self.populateResults(self.viewer.correspondenceLibrary)
-        
+        print "correspondenceList has length " + str(len(self.viewer.correspondenceLibrary.correspondenceList))
+
         print "populating result pulldown"
         self.populateComboBox(self.viewer.correspondenceLibrary)       
         
@@ -792,12 +878,26 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
                     cellItemPredicted.setBackgroundColor(color)
                     self.ui.tableWidgetCorrespondenceList.setItem(i, 0, cellItemPredicted)
                 if(match.observed):
-                    cellItemObserved =  QtGui.QTableWidgetItem("helix " + str(match.observed.label + 1) +
-                                                               "\n  " + str(round(match.observed.getLength(), 2)) + "A length" +
-                                                               "\n  " )
+                    # TODO: Clean up this code. Made quick fixes to support sheets.
+                    if match.observed.sseType == 'helix':
+                        cellItemObserved =  QtGui.QTableWidgetItem("helix " + str(match.observed.label + 1) +
+                                                                   "\n  " + str(round(match.observed.getLength(), 2)) + "A length" +
+                                                                   "\n  " )
+                    if match.observed.sseType == 'sheet':
+                        cellItemObserved =  QtGui.QTableWidgetItem("sheet " + str(match.observed.label + 1) +
+                                                                   #"\n  " + str(round(match.observed.getLength(), 2)) + "A length" +
+                                                                   "\n  " )
                     cellItemObserved.setBackgroundColor(color)
                     self.ui.tableWidgetCorrespondenceList.setItem(i, 1, cellItemObserved)
-                    self.viewer.renderer.setHelixColor(match.observed.label, color.redF(), color.greenF(), color.blueF(), color.alphaF())
+                    if match.observed.sseType == 'helix':
+                        self.viewer.renderer.setHelixColor(match.observed.label, color.redF(), color.greenF(), color.blueF(), color.alphaF())
+                    # TODO: add support to renderer for colored sheets
+                    if match.observed.sseType == 'sheet':
+                    # TODO: Fix here. This does not color the correct sheet, and it may break if there are no sheets!
+                    #    print "type is helix; setting color"
+                    #    self.viewer.renderer.setSheetColor(match.observed.label, color.redF(), color.greenF(), color.blueF(), color.alphaF())
+                        self.viewer.renderer.setSheetColor(2, color.redF(), color.greenF(), color.blueF(), color.alphaF())
+
                     notMissing[match.observed.label] = True                                                     
             
                 checkBox = QtGui.QCheckBox()
