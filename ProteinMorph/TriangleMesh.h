@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.3  2009/07/01 21:25:13  ssa1
+//   Centering the volume cropped using a radius around the point selected by the atom selection tool.
+//
 //   Revision 1.2  2009/03/16 16:17:34  ssa1
 //   Fitting SSEs into the Density
 //
@@ -32,6 +35,7 @@ using namespace wustl_mm::Foundation;
 
 namespace wustl_mm {
 	namespace Protein_Morph {
+	
 		template <class TVertex, class TFace> class TriangleMesh{
 		public:
 			TriangleMesh();
@@ -50,7 +54,9 @@ namespace wustl_mm {
 
 
 		private:
-			map<unsigned long long, TriangleMeshVertex<TVertex> > vertices;
+			typedef map< unsigned long long, TriangleMeshVertex< TVertex > > TriangleMeshVertexType;
+			
+			TriangleMeshVertexType vertices;
 			vector<TriangleMeshFace<TFace> > faces;
 		};
 
@@ -162,7 +168,7 @@ namespace wustl_mm {
 			vector<Vector3DFloat> vertexList;
 
 			int index = 0;
-			for(map<unsigned long long, TriangleMeshVertex<TVertex> >::iterator i = vertices.begin(); i != vertices.end(); i++) {
+			for(typename TriangleMeshVertexType::iterator i = vertices.begin(); i != vertices.end(); i++) {
 				vertexList.push_back(i->second.position);
 				indexedVertices[i->first] = index;
 				index++;
