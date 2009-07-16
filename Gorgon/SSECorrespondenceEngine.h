@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.7.2.5  2009/07/14 19:58:29  schuhs
+//   Adding support for correspondences that contain sheet-strand matches
+//
 //   Revision 1.7.2.4  2009/06/19 17:42:56  schuhs
 //   Adding console messages to help debug memory error
 //
@@ -259,8 +262,8 @@ namespace wustl_mm {
 				glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);	
 
 				
-				for(int i = 0; i < skeleton->GetNodeCount(); i++) {
-					for(int j = i; j < skeleton->GetNodeCount(); j++) {
+				for(int i = 1; i <= skeleton->GetNodeCount(); i++) {
+					for(int j = i+1; j <= skeleton->GetNodeCount(); j++) {
 						n1 = i;
 						n2 = j;
 						if((n1 >= 0)  && (n2 >= 0)) {
