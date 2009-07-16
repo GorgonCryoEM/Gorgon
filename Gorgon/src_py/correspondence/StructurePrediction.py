@@ -143,7 +143,7 @@ handled in C++.
                     pass
                     #print "same as last secel at " + str(index) + " (" + str(chain.secelList[index]) + ")" 
                 else:
-                    print "found new secel " + str(index) + " (" + str(chain.secelList[index]) + ")"
+                    print "found new secel " + str(index) #+ " (" + str(chain.secelList[index]) + ")"
                     if chain.secelList[index].type == 'helix':
                         print "helix at index " + str(index)
                         secelDict[i] = chain.secelList[index]
