@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.36.2.6  2009/07/14 19:58:30  schuhs
+#   Adding support for correspondences that contain sheet-strand matches
+#
 #   Revision 1.36.2.5  2009/06/18 20:33:53  schuhs
 #   Removing linefeeds from print statements
 #
@@ -143,6 +146,8 @@ from vector_lib import *
 from OpenGL.GL import *
 from OpenGL.GLU import *
 from OpenGL.GLUT import *
+
+import math
 
 class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):   
     def __init__(self, main, viewer, parent=None):
@@ -815,6 +820,24 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
         self.executed = False
         self.app.actions.getAction("perform_SSEFindHelixCorrespondences").trigger()
             
+    def getIndexedSheetColor(self, index, size):
+        """returns a color for sheet 'index' out of 'size' sheets. colors will be orange or red."""
+        # start and end are between 0 and 1
+        start = float(0.77)
+        end = float(1.0)
+        delta = (end - start) / float(size)
+        i = start + delta * float(index)
+        return self.getIndexedColor(i, 1.0)
+            
+    def getIndexedHelixColor(self, index, size):
+        """returns a color for helix 'index' out of 'size' helices. colors will be blue, green, or yellow."""
+        # start and end are between 0 and 1
+        start = float(0.0)
+        end = float(0.75)
+        delta = (end - start) / float(size)
+        i = start + delta * float(index)
+        return self.getIndexedColor(i, 1.0)
+            
     def getIndexedColor(self, index, size):
         a = 1.0
         i = float(index)
@@ -867,7 +890,8 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
             notMissing = {}
             for i in range(len(corr.matchList)):
                 match = corr.matchList[i]
-                color = self.getIndexedColor(i, len(corr.matchList))
+                #color = self.getIndexedColor(i, len(corr.matchList))
+                color = self.getIndexedHelixColor(i, len(corr.matchList))
                 match.predicted.setColor(color)
                 if(match.predicted):
                     #print match.predicted, match.predicted.type, match.predicted.serialNo, match.predicted.label
@@ -937,7 +961,8 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
             for i in range(self.viewer.correspondenceEngine.getSkeletonSSECount()) :
                 #print "setting color for helix "
                 #print i
-                color = self.getIndexedColor(i, self.viewer.correspondenceEngine.getSkeletonSSECount())
+                color = self.getIndexedHelixColor(i, self.viewer.correspondenceEngine.getSkeletonSSECount())
+                #color = self.getIndexedColor(i, self.viewer.correspondenceEngine.getSkeletonSSECount())
                 self.viewer.renderer.setSSEColor(i, color.redF(), color.greenF(), color.blueF(), color.alphaF())
                 self.viewer.correspondenceEngine.setSSEColor(i, color.redF(), color.greenF(), color.blueF(), color.alphaF())
             glPushAttrib(GL_LIGHTING_BIT)
