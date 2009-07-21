@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.7.2.6  2009/07/16 21:04:57  schuhs
+//   Fixing indexing bug so that all paths are drawn with DrawAllPaths method
+//
 //   Revision 1.7.2.5  2009/07/14 19:58:29  schuhs
 //   Adding support for correspondences that contain sheet-strand matches
 //
@@ -227,24 +230,100 @@ namespace wustl_mm {
 				glEnable(GL_LINE_SMOOTH);
 				glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);	
 
+				n1 = -1;
+				n2 = -1;
+				for(int i = 0; i < result.GetNodeCount()-1; ) {
+					for(n1 = -1; n1 < 0; ) {
+						n1 = result.GetSkeletonNode(i);
+						i++;
+					}
+					for(n2 = -1; n2 < 0l; ) {
+						n2 = result.GetSkeletonNode(i);
+						i++;
+					}
+					i--;
+					path = skeleton->paths[n1][n2];
+					//cout << "path sizes. fwd:" << skeleton->paths[n1][n2].size() << ", rev:" << skeleton->paths[n2][n1].size() << endl;
+					if(path.size() == 0) {
+						path = skeleton->paths[n2][n1];
+						int n1old = n1;
+						n1 = n2;
+						n2 = n1old;
+					}
 
-				//for(int i = 2; i < result.GetNodeCount(); i += 2) {
-				for(int i = 2; i < result.GetNodeCount(); i += 1) {
-					n1 = result.GetSkeletonNode(i-1);
-					n2 = result.GetSkeletonNode(i);
+					// color code
+
+					// get colors of beginning and ending SSEs
+					int numHelices = skeleton->GetHelixCount();
+
+					// start SSE color
+					int startSSENumber;
+					float startColorR, startColorG, startColorB, startColorA;
+					if(skeleton->adjacencyMatrix[n2][n2][0] == GRAPHNODE_SHEET){
+						startSSENumber = n2 - numHelices;
+					} else {
+						startSSENumber = n2/2;
+					}
+					skeleton->skeletonHelixes[startSSENumber]->GetColor(startColorR, startColorG, startColorB, startColorA);
+
+					// end SSE color
+					int endSSENumber;
+					float endColorR, endColorG, endColorB, endColorA;
+					if(skeleton->adjacencyMatrix[n1][n1][0] == GRAPHNODE_SHEET){
+						endSSENumber = n1 - numHelices;
+					} else {
+						endSSENumber = n1/2;
+					}
+					skeleton->skeletonHelixes[endSSENumber]->GetColor(endColorR, endColorG, endColorB, endColorA);
+
+					glBegin(GL_LINE_STRIP);
+					int pathSize = path.size(); // for color
+					float stepColorR = (endColorR - startColorR) / (pathSize-1);
+					float stepColorG = (endColorG - startColorG) / (pathSize-1);
+					float stepColorB = (endColorB - startColorB) / (pathSize-1);
+					for(int j = 0; j < pathSize; j++) {
+						//cout << "adding path from " << n1 << " to " << n2 << ", point " << path[j].X() << "," << path[j].Y() << "," << path[j].Z() << endl;
+						glColor3f(startColorR + stepColorR * j, startColorG + stepColorG * j, startColorB + stepColorB * j);
+						glVertex3d(path[j].X(), path[j].Y(), path[j].Z());
+					}
+					glEnd();
+
+
+					// end color code
+
+					/* works fine, before coloring code added
+					glBegin(GL_LINE_STRIP);
+					//cout << "draw " << i << " to " << i+1 << " returns nodes " << n1+1 << " and " << n2+1 << ", which has length " << skeleton->paths[n1+1][n2+1].size() << endl;
+					for(unsigned int j = 0; j < path.size(); j++) {
+						glVertex3d(path[j].X(), path[j].Y(), path[j].Z());
+					}
+					glEnd();
+					*/
+
+					//n1 = -1;
+					//n2 = -1;
+				}
+				/* old code, worked
+				for(int i = 0; i < result.GetNodeCount()-1; i++) {
+					n1 = result.GetSkeletonNode(i);
+					n2 = result.GetSkeletonNode(i+1);
+					cout << "i=" << i << ", n1 = " << n1 << ", n2 = " << n2 << endl;
 					//if((n1 >= 0)  && (n2 >= 0)) {
-					if((n1 >= 0)  && (n2 >= 0) && (skeleton->adjacencyMatrix[n1][n2][0] != GRAPHEDGE_HELIX)) {
+					cout << "draw " << i << " to " << i+1 << " returns nodes " << n1 << " and " << n2 << ", which has length " << skeleton->paths[n1][n2].size() << endl;
+					//if((n1+1 >= 0)  && (n2+1 >= 0) && (skeleton->adjacencyMatrix[n1+1][n2+1][0] != GRAPHEDGE_HELIX)) {
+					if((n1 >= 0)  && (n2 >= 0)){ // && (skeleton->adjacencyMatrix[n1+1][n2+1][0] != GRAPHEDGE_HELIX)) {
 						path = skeleton->paths[n1][n2];
 						if(path.size() == 0) {
 							path = skeleton->paths[n2][n1];
 						}
 						glBegin(GL_LINE_STRIP);
+						cout << "draw " << i << " to " << i+1 << " returns nodes " << n1+1 << " and " << n2+1 << ", which has length " << skeleton->paths[n1+1][n2+1].size() << endl;
 						for(unsigned int j = 0; j < path.size(); j++) {
 							glVertex3d(path[j].X(), path[j].Y(), path[j].Z());
 						}
 						glEnd();
 					}
-				}
+				}*/
 				glPopAttrib();
 			}
 		}	
@@ -261,20 +340,68 @@ namespace wustl_mm {
 				glEnable(GL_LINE_SMOOTH);
 				glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);	
 
-				
-				for(int i = 1; i <= skeleton->GetNodeCount(); i++) {
-					for(int j = i+1; j <= skeleton->GetNodeCount(); j++) {
+				int nodeCount = skeleton->GetNodeCount();
+				for(int i = 0; i < nodeCount; i++) {
+					for(int j = i+1; j < nodeCount; j++) {
+						//cout << "adding path from " << i << " to " << j << endl;
 						n1 = i;
 						n2 = j;
 						if((n1 >= 0)  && (n2 >= 0)) {
 							path = skeleton->paths[n1][n2];
 							if(path.size() == 0) {
 								path = skeleton->paths[n2][n1];
+								int n1old = n1;
+								n1 = n2;
+								n2 = n1old;
 							}
+							//cout << "adding path from " << n1 << " to " << n2 << ", which has length " << path.size() << endl;
+
+							// get colors of beginning and ending SSEs
+							int numHelices = skeleton->GetHelixCount();
+
+							// start SSE color
+							int startSSENumber;
+							float startColorR, startColorG, startColorB, startColorA;
+							if(skeleton->adjacencyMatrix[n2][n2][0] == GRAPHNODE_SHEET){
+								startSSENumber = n2 - numHelices;
+							} else {
+								startSSENumber = n2/2;
+							}
+							skeleton->skeletonHelixes[startSSENumber]->GetColor(startColorR, startColorG, startColorB, startColorA);
+
+							// end SSE color
+							int endSSENumber;
+							float endColorR, endColorG, endColorB, endColorA;
+							if(skeleton->adjacencyMatrix[n1][n1][0] == GRAPHNODE_SHEET){
+								endSSENumber = n1 - numHelices;
+							} else {
+								endSSENumber = n1/2;
+							}
+							skeleton->skeletonHelixes[endSSENumber]->GetColor(endColorR, endColorG, endColorB, endColorA);
+
+							/*
+							if(skeleton->adjacencyMatrix[n2][n2][0] == GRAPHNODE_SHEET){
+								int correspondingSheet = skeleton->skeletonSheetCorrespondence[n2];
+								skeleton->skeletonHelixes[correspondingSheet]->GetColor(endColorR, endColorG, endColorB, endColorA);	
+							} else {
+								skeleton->skeletonHelixes[n2/2]->GetColor(endColorR, endColorG, endColorB, endColorA);
+							}*/
+
 							glBegin(GL_LINE_STRIP);
-							for(unsigned int j = 0; j < path.size(); j++) {
-								glVertex3d(path[j].X(), path[j].Y(), path[j].Z());
+							int pathSize = path.size(); // for color
+							float stepColorR = (endColorR - startColorR) / (pathSize-1);
+							float stepColorG = (endColorG - startColorG) / (pathSize-1);
+							float stepColorB = (endColorB - startColorB) / (pathSize-1);
+							for(int k = 0; k < pathSize; k++) {
+								//cout << "adding path from " << n1 << " to " << n2 << ", point " << path[j].X() << "," << path[j].Y() << "," << path[j].Z() << endl;
+								glColor3f(startColorR + stepColorR * k, startColorG + stepColorG * k, startColorB + stepColorB * k);
+								glVertex3d(path[k].X(), path[k].Y(), path[k].Z());
 							}
+							/* before colors
+							for(unsigned int j = 0; j < path.size(); j++) {
+								//cout << "adding path from " << n1 << " to " << n2 << ", point " << path[j].X() << "," << path[j].Y() << "," << path[j].Z() << endl;
+								glVertex3d(path[j].X(), path[j].Y(), path[j].Z());
+							} */
 							glEnd();
 							// draw start and end of paths (corner nodes)
 							//Renderer::DrawSphere(Vector3DFloat(path[0].X(), path[0].Y(), path[0].Z()), 1.0);
