@@ -133,6 +133,7 @@ handled in C++.
             #iterate over all secels. sort is needed because chain.secelList is a dict
             for index in sorted(chain.secelList):
                 print "index = " + str(index)
+                print "serialNo = " + str(chain.secelList[index].serialNo)
                 #if chain.secelList[index].type == 'helix':
                 #    print "helix at index " + str(index)
                 #if chain.secelList[index].type == 'sheet':
@@ -154,7 +155,10 @@ handled in C++.
                         secelType[i] = 'strand'
                     lastSecel = chain.secelList[index]
                     i += 1
-                    print "secelDict[" + str(i) + "] is (to be added later)" 
+                    print "secelDict[" + str(i) + "] is (to be added later)"
+                
+                print "serialNo = " + str(chain.secelList[index].serialNo)
+                 
             print "done adding helices and strands. i=" + str(i)
            
 
