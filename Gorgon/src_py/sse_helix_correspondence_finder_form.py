@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.36.2.7  2009/07/17 21:06:27  schuhs
+#   Starting to assign different colors to sheets and helices
+#
 #   Revision 1.36.2.6  2009/07/14 19:58:30  schuhs
 #   Adding support for correspondences that contain sheet-strand matches
 #
@@ -824,6 +827,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
         """returns a color for sheet 'index' out of 'size' sheets. colors will be orange or red."""
         # start and end are between 0 and 1
         start = float(0.77)
+        #start = float(0.0)
         end = float(1.0)
         delta = (end - start) / float(size)
         i = start + delta * float(index)
@@ -888,11 +892,51 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
             corr = self.viewer.correspondenceLibrary.correspondenceList[correspondenceIndex]
             self.ui.tableWidgetCorrespondenceList.setRowCount(len(corr.matchList))   
             notMissing = {}
+            
+            # count number of helices and sheets in this correspondence
+            helixCount = 0
+            sheetCount = 0
+            for i in range(len(corr.matchList)):
+                match = corr.matchList[i]
+                '''
+                print "object has type " + str(type(match.observed))
+                while match.observed is not None:
+                    if match.observed.sseType == 'sheet':
+                        print "found sheet"
+                        sheetCount += 1
+                    elif match.observed.sseType == 'helix':
+                        print "found helix"
+                        helixCount += 1
+                '''
+                print "object has type " + str(type(match.predicted))
+                if match.predicted is not None:
+                    if match.predicted.type == 'strand':
+                        # TODO: only count strands that are different. every sheet must be the same color!
+                        print "found strand"
+                        sheetCount += 1
+                    elif match.predicted.type == 'helix':
+                        print "found helix"
+                        helixCount += 1
+
+           
+            helixIndex = 0
+            sheetIndex = 0
+
             for i in range(len(corr.matchList)):
                 match = corr.matchList[i]
                 #color = self.getIndexedColor(i, len(corr.matchList))
-                color = self.getIndexedHelixColor(i, len(corr.matchList))
-                match.predicted.setColor(color)
+                if match.predicted is not None:
+                    if match.predicted.type == 'strand':
+                        if(match.observed):
+                            color = self.getIndexedSheetColor(match.observed.label - sheetCount, sheetCount)
+                        else:
+                            color = self.getIndexedColor(0,100)
+                        #color = self.getIndexedSheetColor(sheetIndex, sheetCount)
+                        sheetIndex += 1
+                    elif match.predicted.type == 'helix':
+                        color = self.getIndexedHelixColor(helixIndex, helixCount)
+                        helixIndex += 1
+                    match.predicted.setColor(color)
                 if(match.predicted):
                     #print match.predicted, match.predicted.type, match.predicted.serialNo, match.predicted.label
                     cellItemPredicted =  QtGui.QTableWidgetItem(match.predicted.type + " " + str(match.predicted.serialNo + 1) + " : " + str(match.predicted.label) +
@@ -914,13 +958,20 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
                     cellItemObserved.setBackgroundColor(color)
                     self.ui.tableWidgetCorrespondenceList.setItem(i, 1, cellItemObserved)
                     if match.observed.sseType == 'helix':
+                        # color is stored in two places: the renderer and the correspondence engine. update both.
                         self.viewer.renderer.setHelixColor(match.observed.label, color.redF(), color.greenF(), color.blueF(), color.alphaF())
+                        self.viewer.correspondenceEngine.setSSEColor(match.observed.label, color.redF(), color.greenF(), color.blueF(), color.alphaF())
+
                     # TODO: add support to renderer for colored sheets
                     if match.observed.sseType == 'sheet':
                     # TODO: Fix here. This does not color the correct sheet, and it may break if there are no sheets!
                     #    print "type is helix; setting color"
                     #    self.viewer.renderer.setSheetColor(match.observed.label, color.redF(), color.greenF(), color.blueF(), color.alphaF())
-                        self.viewer.renderer.setSheetColor(2, color.redF(), color.greenF(), color.blueF(), color.alphaF())
+                        # color is stored in two places: the renderer and the correspondence engine. update both.
+                        #self.viewer.renderer.setSheetColor(2, color.redF(), color.greenF(), color.blueF(), color.alphaF())
+                        #self.viewer.renderer.setSheetColor(match.observed.label - helixCount, color.redF(), color.greenF(), color.blueF(), color.alphaF())
+                        self.viewer.renderer.setSSEColor(match.observed.label, color.redF(), color.greenF(), color.blueF(), color.alphaF())
+                        self.viewer.correspondenceEngine.setSSEColor(match.observed.label, color.redF(), color.greenF(), color.blueF(), color.alphaF())
 
                     notMissing[match.observed.label] = True                                                     
             
@@ -950,7 +1001,8 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
             glPushAttrib(GL_LIGHTING_BIT)
             self.viewer.setMaterials(self.app.themes.getColor("CorrespondenceFinder:BackboneTrace"))  
             # calls Draw method of c++ SSECorrespondenceEngine object          
-            self.viewer.correspondenceEngine.draw(0)
+            #self.viewer.correspondenceEngine.draw(0)
+            self.viewer.correspondenceEngine.draw(match)
             glPopAttrib()
         if self.corrAct.isChecked() and self.dataLoaded and (self.ui.checkBoxShowAllPaths.isChecked() or self.ui.checkBoxShowHelixCorners.isChecked() or self.ui.checkBoxShowSheetCorners.isChecked() or self.ui.checkBoxShowSheetColors.isChecked() ) :
             # probably not the best place for this code
@@ -958,6 +1010,8 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
             # need to learn how for loops work!
             #print "preparing to set colors"
 
+            # TODO: Move this color changing code somewhere else
+            # Probably should use the setColor calls in previous sections.
             for i in range(self.viewer.correspondenceEngine.getSkeletonSSECount()) :
                 #print "setting color for helix "
                 #print i
@@ -1075,24 +1129,34 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
         return constrainPredictedHelix_po
     
     def sseClicked(self, hit0, hit1, hit2, hit3, hit4, hit5, event):
+        # TODO: Fix the code here. Off by one error, or if I fix that, can't select zeroth element.
         if(self.isVisible() and self.dataLoaded and (hit0 == 0) and (hit1 >= 0)):
             observedHelix = hit1
             constrained = {}
             match = None            
+            #correspondenceIndex = self.ui.comboBoxCorrespondences.currentIndex()            
             correspondenceIndex = self.ui.comboBoxCorrespondences.currentIndex()            
+            print "correspondenceIndex is " + str(correspondenceIndex)
             if(correspondenceIndex >= 0):
                 corr = self.viewer.correspondenceLibrary.correspondenceList[correspondenceIndex]  
                 for i in range(len(corr.matchList)):
+                    # add check here to make sure it's a helix?
+                    print "i is " + str(i)
                     m = corr.matchList[i]
                     if(m.constrained) :
                         constrained[m.predicted.serialNo] = True
-                    if(m.observed):
+                    #if(m.observed):
+                    if m.observed and m.observed.sseType == 'helix':
                         if(m.observed.label == observedHelix):
+                        #if(m.observed.label == observedHelix - 1):
+                            print "match found at m with label=" + str(m.observed.label)
                             match = m
             
             if(match):
+                #self.ui.tableWidgetCorrespondenceList.setRangeSelected(QtGui.QTableWidgetSelectionRange(0, 0, self.ui.tableWidgetCorrespondenceList.rowCount()-1, 2), False)                    
                 self.ui.tableWidgetCorrespondenceList.setRangeSelected(QtGui.QTableWidgetSelectionRange(0, 0, self.ui.tableWidgetCorrespondenceList.rowCount()-1, 2), False)                    
-                self.ui.tableWidgetCorrespondenceList.setRangeSelected(QtGui.QTableWidgetSelectionRange(match.predicted.serialNo, 0, match.predicted.serialNo, 2),True)
+                #self.ui.tableWidgetCorrespondenceList.setRangeSelected(QtGui.QTableWidgetSelectionRange(match.predicted.serialNo, 0, match.predicted.serialNo, 2),True)
+                self.ui.tableWidgetCorrespondenceList.setRangeSelected(QtGui.QTableWidgetSelectionRange(match.predicted.serialNo-1, 0, match.predicted.serialNo-1, 2),True)
                     
             if(self.app.mainCamera.mouseRightPressed):                
                 predictedSecels = self.viewer.correspondenceLibrary.structurePrediction.secelDict                            
