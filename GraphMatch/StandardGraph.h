@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.13.2.7  2009/07/14 19:51:43  schuhs
+//   Adding methods to count the number of helices and sheets in the graph
+//
 //   Revision 1.13.2.6  2009/07/03 16:32:22  schuhs
 //   Adding an array to storage node costs
 //
@@ -323,7 +326,8 @@ namespace wustl_mm {
 					// if j is a helix node
 					if (j < 2 * numH) {
 						jSse = skeletonHelixes[j/2];
-						jCorners = 1;
+						//jCorners = 1;
+						jCorners = skeletonHelixes[j/2]->cornerCells.size();
 					} else { // if j is a sheet node
 						jSse = skeletonHelixes[j - numH];
 						jCorners = jSse->cornerCells.size();
@@ -335,7 +339,9 @@ namespace wustl_mm {
 					// for every corner s of node i
 					for (int s = 1; s <= iCorners; s++) {
 						if (i < 2 * numH) {		// i is a helix node
+							// TODO: looks like the following line just returns a single corner for the helix
 							iLoc = iSse->GetCornerCell(i%2 + 1);
+							//iLoc = iSse->GetCornerCell(s);
 						} else {				 // i is a sheet node
 							iLoc = iSse->GetCornerCell(s);
 						}
@@ -343,6 +349,7 @@ namespace wustl_mm {
 						// for every corner t of node j
 						for (int t = 1; t <= jCorners; t++) {
 							if (j < 2 * numH) {		// j is a helix node
+								// TODO: looks like the following line just returns a single corner for the helix
 								jLoc = jSse->GetCornerCell(j%2 + 1);
 							} else {				// j is a sheet node 
 								jLoc = jSse->GetCornerCell(t);
@@ -365,6 +372,19 @@ namespace wustl_mm {
 					{
 						adjacencyMatrix[i][j][1] = euclideanMatrix[i][j];
 						adjacencyMatrix[i][j][0] = GRAPHEDGE_LOOP_EUCLIDEAN;
+						adjacencyMatrix[j][i][1] = euclideanMatrix[i][j];
+						adjacencyMatrix[j][i][0] = GRAPHEDGE_LOOP_EUCLIDEAN;
+
+						Vector3DInt iVec = Vector3DInt(iLoc.x, iLoc.y, iLoc.z);
+						Vector3DInt jVec = Vector3DInt(jLoc.x, jLoc.y, jLoc.z);
+						paths[i][j].clear();
+						paths[j][i].clear();
+						paths[i][j].push_back(jVec);
+						paths[i][j].push_back(iVec);
+						//paths[j][i].push_back(iVec);
+						//paths[j][i].push_back(jVec);
+						//cout << "after adding Euclidian path from " << i << " to " << j << ", paths vector has size " << paths[i][j].size() << endl;
+						//cout << "after adding Euclidian path from " << j << " to " << j << ", paths vector has size " << paths[j][i].size() << endl;
 					}
 					//printf("%f \t", euclideanMatrix[i][j]);
 				}
