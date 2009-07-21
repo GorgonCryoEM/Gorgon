@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.24.2.1  2009/06/09 16:47:36  schuhs
+#   Allow filename to be passed as an argument or selected from the file dialog
+#
 #   Revision 1.24  2009/04/02 19:00:20  ssa1
 #   CAlpha Viewer bug fixes and smoother uniform functionality
 #
@@ -186,6 +189,7 @@ class SSEViewer(BaseViewer):
         # helix. It then emits an 'SSE selected' signal. 
         self.currentMatch = None
         if sseType == 0:
+            print "sseType is " + str(sseType) + " and sseIndex is " + str(sseIndex)
             try:
                 self.correspondenceLibrary
             except AttributeError:
@@ -194,7 +198,12 @@ class SSEViewer(BaseViewer):
             currCorrIndex = corrLib.getCurrentCorrespondenceIndex()
             matchList = corrLib.correspondenceList[currCorrIndex].matchList
             for match in matchList:
-                if match.observed.label == sseIndex: 
+                #print "checking match " + str(match) 
+                if match.observed is not None:
+                    print "checking match with label " + str(match.observed.label) 
+                if match.observed is not None and match.observed.label == sseIndex: 
+                #if match.observed.label == sseIndex: 
+                    print "match found at label " + str(match.observed.label) + " and sseIndex " + str(sseIndex)
                     self.currentMatch = match
                     self.emit(QtCore.SIGNAL("SSE selected"))
                     break
