@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.36.2.8  2009/07/21 14:58:57  schuhs
+#   Storing helix and sheet colors in the CorrespondenceEngine and the SSERenderer classes
+#
 #   Revision 1.36.2.7  2009/07/17 21:06:27  schuhs
 #   Starting to assign different colors to sheets and helices
 #
@@ -1001,8 +1004,8 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
             glPushAttrib(GL_LIGHTING_BIT)
             self.viewer.setMaterials(self.app.themes.getColor("CorrespondenceFinder:BackboneTrace"))  
             # calls Draw method of c++ SSECorrespondenceEngine object          
-            #self.viewer.correspondenceEngine.draw(0)
-            self.viewer.correspondenceEngine.draw(match)
+            self.viewer.correspondenceEngine.draw(0)
+            #self.viewer.correspondenceEngine.draw(match)
             glPopAttrib()
         if self.corrAct.isChecked() and self.dataLoaded and (self.ui.checkBoxShowAllPaths.isChecked() or self.ui.checkBoxShowHelixCorners.isChecked() or self.ui.checkBoxShowSheetCorners.isChecked() or self.ui.checkBoxShowSheetColors.isChecked() ) :
             # probably not the best place for this code
