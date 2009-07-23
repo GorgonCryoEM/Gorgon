@@ -15,6 +15,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.15.2.5  2009/07/14 19:52:49  schuhs
+//   Storing the number of helices with each correspondence result
+//
 //   Revision 1.15.2.4  2009/07/03 16:34:03  schuhs
 //   Sheet matching with node costs is working
 //
@@ -351,7 +354,7 @@ namespace wustl_mm {
 					//cout << " ... negative capacity. cost should be nonzero now." << endl;
 				}
 				if (cost > 0) {
-					cout << " ... match cost for base graph node " << qp << " = " << cost << endl;
+					//cout << " ... match cost for base graph node " << qp << " = " << cost << endl;
 				}
 			}
 
