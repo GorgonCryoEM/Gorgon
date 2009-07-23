@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.19.2.16  2009/07/23 15:08:48  schuhs
+//   Allowing paths to pass through sheets
+//
 //   Revision 1.19.2.15  2009/07/21 14:54:03  schuhs
 //   Creating paths for visualization at the same time that the adjacency matrix edge costs are computed.
 //
@@ -192,8 +195,8 @@ namespace wustl_mm {
 
 				vector<GeometricShape*> sheets;
 
-				ReadSheetFile(sheetFile, helixes);
-				//ReadSheetFile(sheetFile, sheets);
+				//ReadSheetFile(sheetFile, helixes);
+				ReadSheetFile(sheetFile, sheets);
 
 				#ifdef VERBOSE
 					printf("Finished reading sheet file.\n");
@@ -245,9 +248,11 @@ namespace wustl_mm {
 
 			int numSkeletonSheets = (int) sheetClusters->getMax();
 
-			cout << "min sheet size = " << MINIMUM_SHEET_SIZE << ", num skeleton sheets = " << numSkeletonSheets << ", num SSEs = " << (int)helixes.size() << endl;
+			cout << "min sheet size = " << MINIMUM_SHEET_SIZE << ", num skeleton sheets = " << numSkeletonSheets << ", num SSEs = " << (int)helixes.size() + (int)sheets.size() << endl;
+			//cout << "min sheet size = " << MINIMUM_SHEET_SIZE << ", num skeleton sheets = " << numSkeletonSheets << ", num SSEs = " << (int)helixes.size() << endl;
 
-			vector<vector<double>> sheetDistance(numSkeletonSheets+1, vector<double> ((int)helixes.size()) );
+			vector<vector<double>> sheetDistance(numSkeletonSheets+1, vector<double> ((int)sheets.size()) );
+			//vector<vector<double>> sheetDistance(numSkeletonSheets+1, vector<double> ((int)helixes.size()) );
 
 			// for each sheet
 			for (int i = 1; i <= numSkeletonSheets; i++) { 
@@ -264,10 +269,13 @@ namespace wustl_mm {
 								count++;
 
 								// measure distance to every SSE sheet, add to running total
-								for(int j = 0; j < (int)helixes.size(); j++) {
+								for(int j = 0; j < (int)sheets.size(); j++) {
+								//for(int j = 0; j < (int)helixes.size(); j++) {
 									// find plates on skeleton that are associated with sheets
-									if(helixes[j]->geometricShapeType == GRAPHEDGE_SHEET) {
-										sheetDistance[i][j] += helixes[j]->MinimumDistanceToPoint(point);
+									if(sheets[j]->geometricShapeType == GRAPHEDGE_SHEET) {
+									//if(helixes[j]->geometricShapeType == GRAPHEDGE_SHEET) {
+										sheetDistance[i][j] += sheets[j]->MinimumDistanceToPoint(point);
+										//sheetDistance[i][j] += helixes[j]->MinimumDistanceToPoint(point);
 									}
 								}
 							}
@@ -276,7 +284,8 @@ namespace wustl_mm {
 				}
 				cout << "num voxels on sheet " << i << " = " << count << endl;
 				// divide running total by number of sheet voxels to give average shortest distance
-				for(int j = 0; j < (int)helixes.size(); j++) {
+				for(int j = 0; j < (int)sheets.size(); j++) {
+				//for(int j = 0; j < (int)helixes.size(); j++) {
 					sheetDistance[i][j] /= (double) count;
 				}
 			}
@@ -284,7 +293,8 @@ namespace wustl_mm {
 			cout << "min distance matrix: " << endl;
 			for (int i = 1; i <= numSkeletonSheets; i++) { 
 				cout << "skeleton sheet " << i << ": ";
-				for(int j = 0; j < (int)helixes.size(); j++) {
+				for(int j = 0; j < (int)sheets.size(); j++) {
+				//for(int j = 0; j < (int)helixes.size(); j++) {
 					cout << sheetDistance[i][j] << " - ";
 				}
 				cout << endl;
@@ -292,19 +302,44 @@ namespace wustl_mm {
 
 
 			vector<int> sseSheetMapping(numSkeletonSheets+1, -1);
+			vector<int> helixesMapping(numSkeletonSheets+1, -1);
 			cout << "sheet correspondences: " << endl;
 			cout << "max distance from sheet to skeleton = " << MAXIMUM_DISTANCE_SHEET_SKELETON << endl;
 
 			for (int i = 1; i <= numSkeletonSheets; i++) { 
 				double minDist = MAXIMUM_DISTANCE_SHEET_SKELETON;
-				for (int j = 0; j < (int)helixes.size(); j++) { 
-					if (helixes[j]->geometricShapeType == GRAPHEDGE_SHEET && sheetDistance[i][j] < minDist) {
+				for (int j = 0; j < (int)sheets.size(); j++) { 
+				//for (int j = 0; j < (int)helixes.size(); j++) { 
+					if (sheets[j]->geometricShapeType == GRAPHEDGE_SHEET && sheetDistance[i][j] < minDist) {
+					//if (helixes[j]->geometricShapeType == GRAPHEDGE_SHEET && sheetDistance[i][j] < minDist) {
 						minDist = sheetDistance[i][j];
 						sseSheetMapping[i] = j;
 					}
 				}
 				cout << "skeleton sheet " << i << " maps to SSEHunter sheet " << sseSheetMapping[i] << endl;
 			}
+
+
+
+
+
+			// Add all sheets from sheet data structures to helixes list
+			for (int i = 1; i <= numSkeletonSheets; i++) { 
+			//for (int i = 0; i < (int)sheets.size(); i++) {
+				cout << "checking sheet " << i << " which maps to " << sseSheetMapping[i] << endl;
+				if (sseSheetMapping[i] != -1) {
+					//int nextHelixElement = (int)helixes.size();
+					//helixes[nextHelixElement] = sheets[sseSheetMapping[i]];
+					helixes.push_back(sheets[sseSheetMapping[i]]);
+					cout << "added sheet " << i << " as element " << helixes.size()-1 << " of helixes vector" << endl;
+					helixesMapping[i] = helixes.size() - 1;
+				}
+			}
+
+
+
+
+
 
 			// Add all points in each sheet to the helixes data structure
 			// for each point (x,y,z)
@@ -318,19 +353,21 @@ namespace wustl_mm {
 						int skeletonSheetNum = (int)sheetClusters->getDataAt(x, y, z);
 						// for voxels that are assigned to some sheet
 						if (skeletonSheetNum > 0) {
-							int sseSheetNum = sseSheetMapping[skeletonSheetNum];
+							int sseSheetNum = helixesMapping[skeletonSheetNum];
+							//int sseSheetNum = sseSheetMapping[skeletonSheetNum];
+							cout << "skeletonSheetNum is " << skeletonSheetNum << ", sseSheetNum is " << sseSheetNum << endl;
 							if (sseSheetNum != -1) {
 								// associate this voxel with this sheet
 								paintedVol->setDataAt(x, y, z, sseSheetNum+1);
+								cout << " setting value of thsi point to " << sseSheetNum+1 << endl;
 								// add this point as as internal cell of the helix
+								//sheets[sseSheetNum]->AddInternalCell(Point3Int(x, y, z, 0));
 								helixes[sseSheetNum]->AddInternalCell(Point3Int(x, y, z, 0));
 							}
 						}
 					}
 				}
 			}
-
-
 
 			// Save separate sheets in helixes data structure
 			int numSheets = (int) sheetClusters->getMax();
@@ -347,7 +384,33 @@ namespace wustl_mm {
 				cout << "created sheet " << i << " with " << thisSheetSize << " voxels" << endl;
 				skeletonSheets.push_back(singleSheet);
 			}
-			
+
+
+
+
+			/*
+			// Add all sheets from sheet data structures to helixes list
+			for (int i = 1; i <= numSkeletonSheets; i++) { 
+			//for (int i = 0; i < (int)sheets.size(); i++) {
+				cout << "checking sheet " << i << " which maps to " << sseSheetMapping[i] << endl;
+				if (sseSheetMapping[i] != -1) {
+					//int nextHelixElement = (int)helixes.size();
+					//helixes[nextHelixElement] = sheets[sseSheetMapping[i]];
+					helixes.push_back(sheets[sseSheetMapping[i]]);
+					cout << "added sheet " << i << " as element " << helixes.size()-1 << " of helixes vector" << endl;
+					helixesMapping[i] = helixes.size() - 1;
+				}
+			}
+			*/
+
+
+
+
+
+
+
+
+
 			#ifdef VERBOSE
 			printf("Finished finding points inside helices and sheets.\n");
 			#endif // VERBOSE
@@ -418,8 +481,10 @@ namespace wustl_mm {
 			}	
 			cout << "adding sheet sizes as sheet node costs" << endl;
 			for (int s = 0; s < skeletonSheets.size(); s++) {
-				int sseSheetNum = sseSheetMapping[s];
-				cout << "node " << s << " corresponds to sheet " << sseSheetMapping[s] << endl;
+				int sseSheetNum = helixesMapping[s];
+				//int sseSheetNum = sseSheetMapping[s];
+				cout << "node " << s << " corresponds to sheet " << helixesMapping[s] << endl;
+				//cout << "node " << s << " corresponds to sheet " << sseSheetMapping[s] << endl;
 				if (sseSheetNum != -1) {
 					int sheetSize = skeletonSheets[s]->getNonZeroVoxelCount();
 					int sheetNode = numH + sseSheetNum + 1; // each helix takes two nodes
@@ -436,6 +501,11 @@ namespace wustl_mm {
 				printf("Finished creating connectivity graph.\n");
 			#endif // VERBOSE
 
+			// populate graph->skeletonHelixes with list of helices and sheets
+			for(int i = 0; i < (int)helixes.size(); i++) {
+				graph->skeletonHelixes.push_back(helixes[i]);
+			}
+
 			// find the costs of all other paths along the volume, from any helix end to any other helix end
 			// store the results as edges in the graph
 			for(int i = 0; i < (int)helixes.size(); i++) {
@@ -451,11 +521,6 @@ namespace wustl_mm {
 			#ifdef VERBOSE
 				printf("Finished running FindSizes2.\n");
 			#endif // VERBOSE
-
-			// populate graph->skeletonHelixes with list of helices and sheets
-			for(int i = 0; i < (int)helixes.size(); i++) {
-				graph->skeletonHelixes.push_back(helixes[i]);
-			}
 
 			#ifdef VERBOSE
 				printf("Finished creating a list of helices and sheets.\n");
@@ -474,8 +539,10 @@ namespace wustl_mm {
 			}
 
 			// save correspondences between skeleton sheets and SSE sheets to graph->skeletonSheetCorrespondence
-			for (int i = 0; i < (int)sseSheetMapping.size(); i++) {
-				graph->skeletonSheetCorrespondence[i] = sseSheetMapping[i];
+			for (int i = 0; i < (int)helixesMapping.size(); i++) {
+			//for (int i = 0; i < (int)sseSheetMapping.size(); i++) {
+				graph->skeletonSheetCorrespondence[i] = helixesMapping[i];
+				//graph->skeletonSheetCorrespondence[i] = sseSheetMapping[i];
 			}
 
 			#ifdef VERBOSE
@@ -1217,6 +1284,7 @@ namespace wustl_mm {
 			// for every pair of endpoints i!=j, add a path, if this path is not already defined
 			for(unsigned int i = 0; i < nodes.size()-1; i++) {
 				for(unsigned int j = i+1; j < nodes.size(); j++) {
+					cout << "finding path between nodes " << i << " and " << j << endl;
 					if(graph->paths[i][j].size() == 0) {
 						FindPath(i, j, nodes, maskVol, graph, false);						
 					}
