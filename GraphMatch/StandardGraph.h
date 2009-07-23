@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.13.2.8  2009/07/21 14:55:46  schuhs
+//   Adding paths for visualization when the Euclidian matrix is built
+//
 //   Revision 1.13.2.7  2009/07/14 19:51:43  schuhs
 //   Adding methods to count the number of helices and sheets in the graph
 //
@@ -298,8 +301,10 @@ namespace wustl_mm {
 			GeometricShape * iSse;
 			GeometricShape * jSse; 
 			Point3Int iLoc(0,0,0,0);
+			Point3Int iBestLoc(0,0,0,0);
 			int iCorners;
 			Point3Int jLoc(0,0,0,0);
+			Point3Int jBestLoc(0,0,0,0);
 			int jCorners;
 
 			// count number of helices
@@ -343,7 +348,8 @@ namespace wustl_mm {
 							iLoc = iSse->GetCornerCell(i%2 + 1);
 							//iLoc = iSse->GetCornerCell(s);
 						} else {				 // i is a sheet node
-							iLoc = iSse->GetCornerCell(s);
+							//iLoc = iSse->GetCornerCell(s);
+							iLoc = iSse->cornerCells[s-1];
 						}
 
 						// for every corner t of node j
@@ -352,7 +358,8 @@ namespace wustl_mm {
 								// TODO: looks like the following line just returns a single corner for the helix
 								jLoc = jSse->GetCornerCell(j%2 + 1);
 							} else {				// j is a sheet node 
-								jLoc = jSse->GetCornerCell(t);
+								//jLoc = jSse->GetCornerCell(t);
+								jLoc = jSse->cornerCells[t-1];
 							}
 							
 							// measure distance between corner s of node i and corner t of node j
@@ -360,6 +367,8 @@ namespace wustl_mm {
 							// if this distance is closer than the smallest found previously, save it
 							if (dist < minDist) {
 								minDist = dist;
+								iBestLoc = iLoc;
+								jBestLoc = jLoc;
 							}
 							//cout << "distance. i=" << i << ",j=" << j << ",s=" << s << ",t=" << t << ", dist= " << dist << ", minDist=" << minDist << endl;
 						}
@@ -375,8 +384,10 @@ namespace wustl_mm {
 						adjacencyMatrix[j][i][1] = euclideanMatrix[i][j];
 						adjacencyMatrix[j][i][0] = GRAPHEDGE_LOOP_EUCLIDEAN;
 
-						Vector3DInt iVec = Vector3DInt(iLoc.x, iLoc.y, iLoc.z);
-						Vector3DInt jVec = Vector3DInt(jLoc.x, jLoc.y, jLoc.z);
+						Vector3DInt iVec = Vector3DInt(iBestLoc.x, iBestLoc.y, iBestLoc.z);
+						Vector3DInt jVec = Vector3DInt(jBestLoc.x, jBestLoc.y, jBestLoc.z);
+						//Vector3DInt iVec = Vector3DInt(iLoc.x, iLoc.y, iLoc.z);
+						//Vector3DInt jVec = Vector3DInt(jLoc.x, jLoc.y, jLoc.z);
 						paths[i][j].clear();
 						paths[j][i].clear();
 						paths[i][j].push_back(jVec);
