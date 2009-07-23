@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.19.2.15  2009/07/21 14:54:03  schuhs
+//   Creating paths for visualization at the same time that the adjacency matrix edge costs are computed.
+//
 //   Revision 1.19.2.14  2009/07/03 16:26:56  schuhs
 //   Storing sheet size to use in sheet matching cost function
 //
@@ -1001,6 +1004,9 @@ namespace wustl_mm {
 			// mark all voxels as unvisited
 			Volume * visited = new Volume(vol->getSizeX(), vol->getSizeY(), vol->getSizeZ());
 
+			int helixCount = graph->GetHelixCount();
+			cout << "helix count is " << helixCount << endl;
+
 			bool expand;
 
 			// while the previous iteration ended with more voxels to expand
@@ -1018,6 +1024,8 @@ namespace wustl_mm {
 					currentHelix = Round(coloredVol->getDataAt(xx,yy,zz)) - 1;
 					// mark this point as visited
 					visited->setDataAt(xx, yy, zz, 1);
+
+
 
 					// if the current point is inside some helix/sheet other than the start helix/sheet,
 					// save the cost in the adjacency matrix and expand no further from this point
@@ -1041,8 +1049,20 @@ namespace wustl_mm {
 							graph->SetType(n2, n1, GRAPHEDGE_LOOP);
 							found = true;
 						}
+
 						// stop expanding, since some other helix/sheet has been found
+						//expand = false;
+
+						// if the found SSE is a helix, stop expanding. this prevents paths from passing through helices.
+						//cout << "before checking if node " << n2 << " is a helix" << endl;
+						//if(n2 > 0 && graph->adjacencyMatrix[n2-1][n2-1][0] + 0.01 == GRAPHNODE_HELIX) {
+						//if(n2 > 0 && graph->adjacencyMatrix[n2-1][n2-1][0] + 0.01 != GRAPHNODE_SHEET) {
 						expand = false;
+
+						if(n2 > 2 * helixCount) {
+							//cout << "no further expansion from node " << n2 << endl;
+							expand = true;
+						}
 
 						// retrace the path
 						bool backFound = false;
