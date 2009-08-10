@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.37  2009/07/01 21:25:13  ssa1
+//   Centering the volume cropped using a radius around the point selected by the atom selection tool.
+//
 //   Revision 1.36  2009/06/30 21:23:24  ssa1
 //   SSEHunter results have range between -3 and 3, not -1 and 1
 //
@@ -65,6 +68,8 @@
 #include <cstdlib>
 #include <cstdio>
 #include <ProteinMorph/NonManifoldMesh.h>
+#include <ProteinMorph/SSEHunter.h>
+#include <SkeletonMaker/volume.h>
 #include <GraphMatch/PDBReader.h>
 #include <GraphMatch/PDBAtom.h>
 #include <GraphMatch/PDBBond.h>
@@ -100,6 +105,7 @@ namespace wustl_mm {
 			void Draw(int subSceneIndex, bool selectEnabled);
 			void LoadFile(string fileName);
 			void LoadSSEHunterFile(string fileName);
+			void GetSSEHunterAtoms(Volume * vol, NonManifoldMesh_Annotated * skeleton, float resolution, float threshold);
 			int SelectionObjectCount();
 			int SelectionAtomCount();
 			Vector3DFloat SelectionCenterOfMass();
@@ -317,6 +323,50 @@ namespace wustl_mm {
 			}
 			UpdateBoundingBox();
 			
+		}
+		
+		void CAlphaRenderer::GetSSEHunterAtoms(Volume * vol, NonManifoldMesh_Annotated * skeleton, float resolution, float threshold) {
+			Renderer::LoadFile("");
+			atoms.clear();
+			bonds.clear();
+			
+			SSEHunter * hunter = new SSEHunter();
+			atoms = hunter->GetScoredAtoms(vol, skeleton, resolution, threshold);
+			delete hunter;
+			
+			float maxTempFactor = -10000.0f, minTempFactor = 10000.0f;
+			float tempFactor;
+
+			for(AtomMapType::iterator i = atoms.begin(); i != atoms.end(); i++) {
+				tempFactor = i->second.GetTempFactor();
+				if(tempFactor > maxTempFactor) {
+					maxTempFactor = tempFactor;
+				}
+				if(tempFactor < minTempFactor) {
+					minTempFactor = tempFactor;
+				}
+			}
+			float r, g, b;
+
+			for(AtomMapType::iterator i = atoms.begin(); i != atoms.end(); i++) {
+				i->second.SetAtomRadius(3.0);
+				tempFactor = i->second.GetTempFactor();
+				if(tempFactor < 0) {
+					tempFactor = (tempFactor / minTempFactor);
+					r = 1.0f - tempFactor;
+					g = 1.0f - tempFactor;
+					b = 1.0f;
+				} else {
+					tempFactor = (tempFactor / maxTempFactor);
+					r = 1.0f;
+					g = 1.0f - tempFactor;
+					b = 1.0f - tempFactor;
+				}
+					
+				i->second.SetColor(r, g, b, 1.0f);
+			}
+			
+			UpdateBoundingBox();
 		}
 
 		int CAlphaRenderer::SelectionObjectCount(){

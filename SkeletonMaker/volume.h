@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.29  2009/03/02 16:31:47  ssa1
+//   Adding in Point Clouds and Structure Tensor Fields
+//
 //   Revision 1.28  2008/11/23 19:56:09  ssa1
 //   Setting volume origin to be center of mass instead of bottom left...
 //
@@ -1013,6 +1016,25 @@ public:
 			}
 		}
 		return rvalue ;
+	}
+	
+	double getMaxValuePosition(int& maxX, int& maxY, int& maxZ) {
+		double maxVal = getDataAt(0,0,0);
+		maxX = 0; maxY = 0; maxZ = 0;
+		double data;
+		
+		for(int x = 0; x < sizex; x++) {
+			for(int y = 0; y < sizey; y++) {
+				for(int z = 0; z < sizez; z++) {
+					data = getDataAt(x, y, z);
+					if(data > maxVal) {
+						maxVal = data;
+						maxX = x; maxY = y; maxZ = z;
+					}					
+				}
+			}
+		}
+		return maxVal;
 	}
 
 	double getLocalMax(int x, int y, int z, int radius) {
