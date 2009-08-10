@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.38  2009/08/10 13:54:38  ssa1
+//   Adding initial ssehunter program
+//
 //   Revision 1.37  2009/07/01 21:25:13  ssa1
 //   Centering the volume cropped using a radius around the point selected by the atom selection tool.
 //
@@ -105,7 +108,7 @@ namespace wustl_mm {
 			void Draw(int subSceneIndex, bool selectEnabled);
 			void LoadFile(string fileName);
 			void LoadSSEHunterFile(string fileName);
-			void GetSSEHunterAtoms(Volume * vol, NonManifoldMesh_Annotated * skeleton, float resolution, float threshold);
+			void GetSSEHunterAtoms(Volume * vol, NonManifoldMesh_Annotated * skeleton, float resolution, float threshold, float skeletonCoeff, float correlationCoeff, float geometryCoeff);
 			int SelectionObjectCount();
 			int SelectionAtomCount();
 			Vector3DFloat SelectionCenterOfMass();
@@ -325,13 +328,13 @@ namespace wustl_mm {
 			
 		}
 		
-		void CAlphaRenderer::GetSSEHunterAtoms(Volume * vol, NonManifoldMesh_Annotated * skeleton, float resolution, float threshold) {
+		void CAlphaRenderer::GetSSEHunterAtoms(Volume * vol, NonManifoldMesh_Annotated * skeleton, float resolution, float threshold, float skeletonCoeff, float correlationCoeff, float geometryCoeff) {
 			Renderer::LoadFile("");
 			atoms.clear();
 			bonds.clear();
 			
 			SSEHunter * hunter = new SSEHunter();
-			atoms = hunter->GetScoredAtoms(vol, skeleton, resolution, threshold);
+			atoms = hunter->GetScoredAtoms(vol, skeleton, resolution, threshold, skeletonCoeff, correlationCoeff, geometryCoeff);
 			delete hunter;
 			
 			float maxTempFactor = -10000.0f, minTempFactor = 10000.0f;

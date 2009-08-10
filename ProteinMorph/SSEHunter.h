@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.1  2009/08/10 13:54:38  ssa1
+//   Adding initial ssehunter program
+//
 
 #ifndef PROTEINMORPH_SSE_HUNTER_H
 #define PROTEINMORPH_SSE_HUNTER_H
@@ -35,7 +38,7 @@ namespace wustl_mm {
 			SSEHunter();
 			~SSEHunter();
 			
-			map<unsigned long long, PDBAtom> GetScoredAtoms(Volume * vol, NonManifoldMesh_Annotated * skeleton, float resolution, float threshold);
+			map<unsigned long long, PDBAtom> GetScoredAtoms(Volume * vol, NonManifoldMesh_Annotated * skeleton, float resolution, float threshold, float skeletonCoeff, float correlationCoeff, float geometryCoeff);
 		private:
 			vector<PDBAtom> GetPseudoAtoms(vector<Vector3DInt> & atomVolumePositions, Volume * vol, float resolution, float threshold);
 			void UpdateMap(Volume * vol, Vector3DInt loc, float rangeminX, float rangeminY, float rangeminZ, float rangemaxX, float rangemaxY, float rangemaxZ);
@@ -55,11 +58,11 @@ namespace wustl_mm {
 		SSEHunter::~SSEHunter() {
 		}
 		
-		map<unsigned long long, PDBAtom> SSEHunter::GetScoredAtoms(Volume * vol, NonManifoldMesh_Annotated * skeleton, float resolution, float threshold) {
+		map<unsigned long long, PDBAtom> SSEHunter::GetScoredAtoms(Volume * vol, NonManifoldMesh_Annotated * skeleton, float resolution, float threshold, float skeletonCoeff, float correlationCoeff, float geometryCoeff) {
 			vector<Vector3DInt>  atomVolumePositions;
 			vector<PDBAtom> patoms = GetPseudoAtoms(atomVolumePositions, vol, resolution, threshold);
-			AddSkeletonWeights(patoms, vol, skeleton, resolution, 1.0f);
-			AddGeometryWeights(patoms, atomVolumePositions, vol, resolution, threshold, 1.0f);
+			AddSkeletonWeights(patoms, vol, skeleton, resolution, skeletonCoeff);
+			AddGeometryWeights(patoms, atomVolumePositions, vol, resolution, threshold, geometryCoeff);
 			
 			map<unsigned long long, PDBAtom> atomMap;
 			atomMap.clear();
@@ -121,7 +124,7 @@ namespace wustl_mm {
 				for(int y = rMinY; y <= rMaxY; y++) {
 					for(int z = rMinZ; z <= rMaxZ; z++) {
 						tempVal = vol->getDataAt(loc.X() + x, loc.Y() + y, loc.Z() + z);
-						distance = sqrt(x*x + y*y + z*z);
+						distance = sqrt((float)(x*x + y*y + z*z));
 						if((x==0) && (y==0) && (z==0)) {
 							value = 0;
 						} else {
