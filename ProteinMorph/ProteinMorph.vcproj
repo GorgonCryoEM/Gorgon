@@ -251,6 +251,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\SSEHunter.h"
+				>
+			</File>
+			<File
 				RelativePath=".\TriangleMesh.h"
 				>
 			</File>

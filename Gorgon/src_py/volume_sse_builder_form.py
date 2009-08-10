@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.3  2009/06/24 21:33:48  ssa1
+#   SSE Builder Functionality: Sheet building and better camera functionality when loading new data.
+#
 #   Revision 1.2  2009/06/23 16:50:34  ssa1
 #   Adding in SSEBuilder Functionality: Saving helix as WRL and SSE files
 #
@@ -44,6 +47,7 @@ class VolumeSSEBuilderForm(QtGui.QWidget, Ui_DialogVolumeSSEBuilder):
         self.connect(self.pushButtonBrowseAtomScore, QtCore.SIGNAL("clicked (bool)"), self.browseAtomScoreFile)
         self.connect(self.pushButtonSelectionToHelix, QtCore.SIGNAL("clicked (bool)"), self.selectionToHelix)
         self.connect(self.pushButtonSelectionToSheet, QtCore.SIGNAL("clicked (bool)"), self.selectionToSheet)
+        self.connect(self.pushButtonSSEHunter, QtCore.SIGNAL("clicked (bool)"), self.runSSEHunter)
                                                                 
                                     
     def createActions(self):    
@@ -90,9 +94,12 @@ class VolumeSSEBuilderForm(QtGui.QWidget, Ui_DialogVolumeSSEBuilder):
         pdbFile = QtGui.QFileDialog.getOpenFileName(self, self.tr("Load SSEHunter Results"), "", self.tr("PDB Files (*.pdb)"))
         if not pdbFile.isEmpty():
             self.calphaViewer = self.app.viewers["calpha"]
-            self.sseViewer = self.app.viewers["sse"]
             self.calphaViewer.loadSSEHunterData(pdbFile)
             self.lineEditAtomScore.setText(pdbFile)
+            
+    def runSSEHunter(self, result):
+            self.calphaViewer = self.app.viewers["calpha"]
+            self.calphaViewer.runSSEHunter(self.doubleSpinBoxThreshold.value(), self.doubleSpinBoxResolution.value(), self.doubleSpinBoxSkeleton.value(), self.doubleSpinBoxCorrelation.value(), self.doubleSpinBoxGeometry.value())
             
     def atomSelectionChanged(self, selection):
         self.tableWidgetSelection.clearContents()
