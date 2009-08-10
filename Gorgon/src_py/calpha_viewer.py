@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.38  2009/07/01 22:00:27  ssa1
+#   Centering the volume cropped using a radius around the point selected by the atom selection tool.
+#
 #   Revision 1.37  2009/07/01 21:25:14  ssa1
 #   Centering the volume cropped using a radius around the point selected by the atom selection tool.
 #
@@ -264,7 +267,11 @@ class CAlphaViewer(BaseViewer):
         if(self.loaded):
             self.unloadData()        
         self.fileName = fileName
-        self.renderer.loadSSEHunterFile(str(fileName))
+        #self.renderer.loadSSEHunterFile(str(fileName))
+        volumeViewer = self.app.viewers["volume"]
+        skeletonViewer = self.app.viewers["skeleton"]        
+        self.renderer.getSSEHunterAtoms(volumeViewer.renderer.getVolume(), skeletonViewer.renderer.getMesh(), 8, 0.38)
+
         
         self.dirty = False
         self.loaded = True

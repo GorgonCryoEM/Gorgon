@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.37  2009/05/21 16:55:15  ssa1
+//   when saving a skeleton as an MRC, we now use 8 connectivity
+//
 //   Revision 1.36  2009/05/14 19:50:26  ssa1
 //   fixing crash when saving a mesh as a volume
 //
@@ -112,6 +115,7 @@ namespace wustl_mm {
 			NonManifoldMesh(Volume * sourceVol);
 			~NonManifoldMesh();
 			bool IsEdgePresent(int vertexId1, int vertexId2);
+			bool IsSurfaceVertex(int ix);
 			int AddVertex(NonManifoldMeshVertex<TVertex> vertex);
 			int AddVertex(Vector3DFloat location, TVertex tag = NULL);
 			int AddHashedVertex(Vector3DFloat location, int hashKey, TVertex tag = NULL);
@@ -121,6 +125,10 @@ namespace wustl_mm {
 			int GetFaceIndex(int faceId);
 			int GetEdgeIndex(int edgeId);
 			int GetEdgeIndex(int vertexId1, int vertexId2);
+			float GetOriginX();
+			float GetOriginY();
+			float GetOriginZ();
+			int GetClosestVertexIndex(Vector3DFloat pos);
 			void AddEdge(int vertexId1, int vertexId2, TEdge tag = NULL);
 			void AddQuad(int vertexId1, int vertexId2, int vertexId3, int vertexId4, TEdge newEdgeTag = NULL, TFace faceTag = NULL);
 			void AddTriangle(int vertexId1, int vertexId2, int vertexId3, TEdge newEdgeTag = NULL, TFace faceTag = NULL);
@@ -1023,6 +1031,47 @@ namespace wustl_mm {
 
 		template <class TVertex, class TEdge, class TFace> void NonManifoldMesh<TVertex, TEdge, TFace>::TranslateVertex(int vertexIx, Vector3DFloat translateVector) {
 			vertices[vertexIx].position = vertices[vertexIx].position + translateVector;
+		}
+		
+		template <class TVertex, class TEdge, class TFace> int NonManifoldMesh<TVertex, TEdge, TFace>::GetClosestVertexIndex(Vector3DFloat pos) {
+			if(vertices.size() == 0) {
+				return -1;
+			}
+			
+			double distance, minDistance = (pos - vertices[0].position).Length();
+			int minIx = 0;
+			for(int i = 0; i < vertices.size(); i++) {
+				distance = (pos - vertices[i].position).Length();
+				if(distance < minDistance) {
+					minDistance = distance;
+					minIx = i;
+				}
+					
+			}
+			return minIx;
+		}
+	
+		template <class TVertex, class TEdge, class TFace> bool NonManifoldMesh<TVertex, TEdge, TFace>::IsSurfaceVertex(int ix) {
+			bool isSurface = false;
+			NonManifoldMeshEdge<TEdge> edge;
+			
+			for(int i = 0; i < vertices[ix].edgeIds.size(); i++) {
+				edge = edges[GetEdgeIndex(vertices[ix].edgeIds[i])];
+				isSurface = isSurface || (edge.faceIds.size() > 0);				
+			}
+			return isSurface;
+		}
+		
+		template <class TVertex, class TEdge, class TFace> float NonManifoldMesh<TVertex, TEdge, TFace>::GetOriginX() {
+			return origin[0];
+		}
+		
+		template <class TVertex, class TEdge, class TFace> float NonManifoldMesh<TVertex, TEdge, TFace>::GetOriginY() {
+			return origin[1];
+		}
+		
+		template <class TVertex, class TEdge, class TFace> float NonManifoldMesh<TVertex, TEdge, TFace>::GetOriginZ() {
+			return origin[2];
 		}
 
 	}

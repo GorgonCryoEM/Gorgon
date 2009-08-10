@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.56  2009/07/01 22:00:27  ssa1
+//   Centering the volume cropped using a radius around the point selected by the atom selection tool.
+//
 //   Revision 1.55  2009/07/01 21:25:14  ssa1
 //   Centering the volume cropped using a radius around the point selected by the atom selection tool.
 //
@@ -369,6 +372,7 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("drawBoundingBox", &CAlphaRenderer::DrawBoundingBox)
 		.def("loadFile", &CAlphaRenderer::LoadFile)
 		.def("loadSSEHunterFile", &CAlphaRenderer::LoadSSEHunterFile)
+		.def("getSSEHunterAtoms", &CAlphaRenderer::GetSSEHunterAtoms)		
 		.def("saveFile", &CAlphaRenderer::SaveFile)
 		.def("unload", &CAlphaRenderer::Unload)
 		.def("selectionRotate", &CAlphaRenderer::SelectionRotate)
