@@ -15,6 +15,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.15.2.6  2009/07/23 15:11:55  schuhs
+//   Removing console message that slowed down search
+//
 //   Revision 1.15.2.5  2009/07/14 19:52:49  schuhs
 //   Storing the number of helices with each correspondence result
 //
@@ -622,6 +625,9 @@ namespace wustl_mm {
 						}
 						notConstrained = notConstrained && IsNodeAssignmentAllowed(currentNode->n1Node + j + 1, i);
 
+						// used later for case where first helix is missing
+						bool firstMissing = false;
+
 						if(notConstrained) {	
 							// store the current node as temp
 							temp = currentNode; 
@@ -640,6 +646,17 @@ namespace wustl_mm {
 							}
 							*/
 
+							//if((temp->depth == 0) && (j > 0) && (currentNode->n2Node == -1))  {
+							//if ((patternGraph->nodeCount - currentNode->depth == 0) && (currentNode->n2Node == -1)) {
+							if(((temp->depth == 0) && (j > 0)) || 
+								((patternGraph->nodeCount - currentNode->depth == 0) && (currentNode->n2Node == -1))) {
+									if (skippedHelixNodes == 0) {
+										skippedHelixNodes = 1;
+										cout << "node skipped. adding two to skippedHelixNodes. result is " << skippedHelixNodes << endl;
+									}
+								cout << "node skipped. done fixing." << endl;
+							}
+
 							// generate a current node, marking it as revisitable or not depending on result from test
 							// the constructor marches forward along the sequence, skipping j nodes
 							currentNode = new LinkedNode(currentNode, currentStub, i, skippedHelixNodes, skippedSheetNodes, revisitable);
@@ -657,6 +674,8 @@ namespace wustl_mm {
 							if(((temp->depth == 0) && (j > 0)) || 
 								((patternGraph->nodeCount - currentNode->depth == 0) && (currentNode->n2Node == -1))) {
 								currentNode->costGStar += START_END_MISSING_HELIX_PENALTY;
+								cout << "first helix is missing." << endl;
+								firstMissing = true;
 							}	
 
 							// if previous node was at top of tree
@@ -718,6 +737,9 @@ namespace wustl_mm {
 						//if ( (int)(baseGraph->adjacencyMatrix[currentNode->n1Node + j + 1][currentNode->n1Node + j + 1][0] + 0.01) == GRAPHNODE_HELIX ) {
 						switch ( (int)(baseGraph->adjacencyMatrix[currentNode->n1Node + j + 1][currentNode->n1Node + j + 2][0] + 0.01)) {
 							case GRAPHEDGE_HELIX:
+								if (firstMissing) {
+									cout << "GRAPHEDGE_HELIX case AND firstMissing!" << endl;
+								}
 								skippedHelixNodes += 2;
 								j+=2;
 								break;
