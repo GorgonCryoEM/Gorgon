@@ -15,6 +15,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.15.2.7  2009/08/11 20:52:29  schuhs
+//   Fixing bug that allowed only one helix node to be matched at beginning of sequence
+//
 //   Revision 1.15.2.6  2009/07/23 15:11:55  schuhs
 //   Removing console message that slowed down search
 //
@@ -650,9 +653,9 @@ namespace wustl_mm {
 							//if ((patternGraph->nodeCount - currentNode->depth == 0) && (currentNode->n2Node == -1)) {
 							if(((temp->depth == 0) && (j > 0)) || 
 								((patternGraph->nodeCount - currentNode->depth == 0) && (currentNode->n2Node == -1))) {
-									if (skippedHelixNodes == 0) {
+									if (skippedHelixNodes == 0 && patternGraph->adjacencyMatrix[0][0][0] == GRAPHNODE_HELIX) {
 										skippedHelixNodes = 1;
-										cout << "node skipped. adding two to skippedHelixNodes. result is " << skippedHelixNodes << endl;
+										cout << "node skipped. adding one to skippedHelixNodes. result is " << skippedHelixNodes << endl;
 									}
 								cout << "node skipped. done fixing." << endl;
 							}
