@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.7.2.7  2009/07/21 14:57:12  schuhs
+//   Coloring paths between helices and sheets with color gradient to demonstrate the connectivity more clearly
+//
 //   Revision 1.7.2.6  2009/07/16 21:04:57  schuhs
 //   Fixing indexing bug so that all paths are drawn with DrawAllPaths method
 //
@@ -434,6 +437,9 @@ namespace wustl_mm {
 				for(int i = 0; i < (int)skeleton->skeletonHelixes.size(); i++) {
 					if (skeleton->skeletonHelixes[i]->geometricShapeType == GRAPHEDGE_HELIX) {
 						for(int j = 0; j < (int)skeleton->skeletonHelixes[i]->cornerCells.size(); j++) {
+							// Color first helix corner white, second corner gray
+							GLfloat col = 1.0 - 0.6 * (skeleton->skeletonHelixes[i]->cornerCells[j].node - 1);
+							glColor3f(col, col, col);
 							Renderer::DrawSphere(Vector3DFloat(skeleton->skeletonHelixes[i]->cornerCells[j].x, skeleton->skeletonHelixes[i]->cornerCells[j].y, skeleton->skeletonHelixes[i]->cornerCells[j].z), 0.25);
 						}
 					}
