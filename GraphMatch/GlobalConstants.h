@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.32.2.7  2009/08/13 17:28:41  schuhs
+//   Reading in min sheet size and max sheet distance from Settings file
+//
 //   Revision 1.32.2.6  2009/07/03 16:30:55  schuhs
 //   Adding constants for sheet matching
 //
@@ -116,6 +119,7 @@ namespace wustl_mm {
 		const char * TOKEN_START_END_MISSING_HELIX_PENALTY = "START_END_MISSING_HELIX_PENALTY";
 		const char * TOKEN_HELIX_WEIGHT_COEFFICIENT = "HELIX_WEIGHT_COEFFICIENT";
 		const char * TOKEN_LOOP_WEIGHT_COEFFICIENT = "LOOP_WEIGHT_COEFFICIENT";
+		const char * TOKEN_SHEET_CAPACITY_COEFFICIENT = "SHEET_CAPACITY_COEFFICIENT";
 		const char * TOKEN_MISSING_HELIX_LENGTH = "MISSING_HELIX_LENGTH";
 		const char * TOKEN_MISSING_SHEET_LENGTH = "MISSING_SHEET_LENGTH";
 		const char * TOKEN_SHEET_SELF_LOOP_LENGTH = "SHEET_SELF_LOOP_LENGTH";
@@ -156,6 +160,7 @@ namespace wustl_mm {
 		double START_END_MISSING_HELIX_PENALTY = 5;
 		double HELIX_WEIGHT_COEFFICIENT = 1.0;
 		double LOOP_WEIGHT_COEFFICIENT = 0.25;
+		double SHEET_CAPACITY_COEFFICIENT = 1.0;
 		double MISSING_HELIX_LENGTH = 8;
 		double MISSING_SHEET_LENGTH = 8;
 		double SHEET_SELF_LOOP_LENGTH = 0.02;
@@ -288,6 +293,8 @@ namespace wustl_mm {
 				HELIX_WEIGHT_COEFFICIENT = doubleValue;
 			} else if(strcmp(token, TOKEN_LOOP_WEIGHT_COEFFICIENT) == 0) {
 				LOOP_WEIGHT_COEFFICIENT = doubleValue;
+			} else if(strcmp(token, TOKEN_SHEET_CAPACITY_COEFFICIENT) == 0) {
+				SHEET_CAPACITY_COEFFICIENT = doubleValue;
 			} else if(strcmp(token, TOKEN_MISSING_HELIX_LENGTH) == 0) {
 				MISSING_HELIX_LENGTH = doubleValue;
 			} else if(strcmp(token, TOKEN_MISSING_SHEET_LENGTH) == 0) {
@@ -350,6 +357,8 @@ namespace wustl_mm {
 				doubleValue = HELIX_WEIGHT_COEFFICIENT;
 			} else if(strcmp(token, TOKEN_LOOP_WEIGHT_COEFFICIENT) == 0) {
 				doubleValue = LOOP_WEIGHT_COEFFICIENT;
+			} else if(strcmp(token, TOKEN_SHEET_CAPACITY_COEFFICIENT) == 0) {
+				doubleValue = SHEET_CAPACITY_COEFFICIENT;
 			} else if(strcmp(token, TOKEN_MISSING_HELIX_LENGTH) == 0) {
 				doubleValue = MISSING_HELIX_LENGTH;
 			} else if(strcmp(token, TOKEN_MISSING_SHEET_LENGTH) == 0) {
@@ -432,6 +441,8 @@ namespace wustl_mm {
 					fscanf(fin, "%lf", &HELIX_WEIGHT_COEFFICIENT);
 				} else if(strcmp(token, TOKEN_LOOP_WEIGHT_COEFFICIENT) == 0) {
 					fscanf(fin, "%lf", &LOOP_WEIGHT_COEFFICIENT);
+				} else if(strcmp(token, TOKEN_SHEET_CAPACITY_COEFFICIENT) == 0) {
+					fscanf(fin, "%lf", &SHEET_CAPACITY_COEFFICIENT);
 				} else if(strcmp(token, TOKEN_MISSING_HELIX_LENGTH) == 0) {
 					fscanf(fin, "%lf", &MISSING_HELIX_LENGTH);
 				} else if(strcmp(token, TOKEN_MISSING_SHEET_LENGTH) == 0) {
@@ -490,6 +501,7 @@ namespace wustl_mm {
 			printf("\tHELIX_WEIGHT_COEFFICIENT         = %lf\n", HELIX_WEIGHT_COEFFICIENT);
 			printf("\tLOOP_WEIGHT_COEFFICIENT          = %lf\n", LOOP_WEIGHT_COEFFICIENT);
 			printf("\tSHEET_WEIGHT_COEFFICIENT         = %lf\n", SHEET_WEIGHT_COEFFICIENT);
+			printf("\tSHEET_CAPACITY_COEFFICIENT       = %lf\n", SHEET_CAPACITY_COEFFICIENT);
 			printf("\tMISSING_HELIX_LENGTH             = %lf\n", MISSING_HELIX_LENGTH);
 			printf("\tMISSING_SHEET_LENGTH             = %lf\n", MISSING_SHEET_LENGTH);
 			printf("\tSHEET_SELF_LOOP_LENGTH           = %lf\n", SHEET_SELF_LOOP_LENGTH);
