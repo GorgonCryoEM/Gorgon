@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.32.2.6  2009/07/03 16:30:55  schuhs
+//   Adding constants for sheet matching
+//
 //   Revision 1.32.2.5  2009/06/18 20:34:56  schuhs
 //   Adding graph edge types for helix nodes and sheet nodes
 //
@@ -407,6 +410,10 @@ namespace wustl_mm {
 					fscanf(fin, "%s", &SEQUENCE_FILE_TYPE);
 				} else if(strcmp(token, TOKEN_MRC_FILE_NAME) == 0) {
 					fscanf(fin, "%s", &MRC_FILE_NAME);
+				} else if(strcmp(token, TOKEN_MAXIMUM_DISTANCE_SHEET_SKELETON) == 0) {
+					fscanf(fin, "%lf", &MAXIMUM_DISTANCE_SHEET_SKELETON);
+				} else if(strcmp(token, TOKEN_MINIMUM_SHEET_SIZE) == 0) {
+					fscanf(fin, "%d", &MINIMUM_SHEET_SIZE);
 				} else if(strcmp(token, TOKEN_EUCLIDEAN_DISTANCE_THRESHOLD) == 0) {
 					fscanf(fin, "%lf", &EUCLIDEAN_DISTANCE_THRESHOLD);
 				} else if(strcmp(token, TOKEN_BORDER_MARGIN_THRESHOLD) == 0) {
