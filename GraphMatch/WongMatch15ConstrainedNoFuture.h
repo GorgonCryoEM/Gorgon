@@ -15,6 +15,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.15.2.8  2009/08/11 21:00:51  schuhs
+//   Minor bug fix for sequences starting with strands
+//
 //   Revision 1.15.2.7  2009/08/11 20:52:29  schuhs
 //   Fixing bug that allowed only one helix node to be matched at beginning of sequence
 //
@@ -105,6 +108,7 @@ namespace wustl_mm {
 			double GetF();
 			void PopBestNode(); // Gets the best (first) node from the active nodes list.
 			bool ExpandNode(LinkedNodeStub * currentStub);  // Expands all the children of the current node.
+			void ComputeSolutionCost();
 			void NormalizeGraphs();
 			unsigned long long EncodeNode(unsigned long long bitmap, int node);
 
@@ -296,6 +300,8 @@ namespace wustl_mm {
 
 			cout << "at end of WongMatch15ConstrainedNoFuture::RunMatching. results found = " << foundCount << endl;
 
+			ComputeSolutionCost();
+
 			return foundCount;
 		}
 
@@ -336,7 +342,7 @@ namespace wustl_mm {
 				cost = 0;
 				//cout << " ... original cost = " << cost << endl;
 
-				double capacity = baseGraph->nodeWeights[qp-1];
+				double capacity = baseGraph->nodeWeights[qp-1] * SHEET_CAPACITY_COEFFICIENT;
 				//cout << " ... original capacity = " << capacity << endl;
 				bool continueLoop = true;
 				// walk up tree finding nodes where this sheet was matched to another strand, decreasing
@@ -738,8 +744,10 @@ namespace wustl_mm {
 						// TODO: Fix the indexing of the test here. Not right.
 						//if ( (int)(baseGraph->adjacencyMatrix[j][j][0] + 0.01) == GRAPHNODE_HELIX ) {
 						//if ( (int)(baseGraph->adjacencyMatrix[currentNode->n1Node + j + 1][currentNode->n1Node + j + 1][0] + 0.01) == GRAPHNODE_HELIX ) {
-						switch ( (int)(baseGraph->adjacencyMatrix[currentNode->n1Node + j + 1][currentNode->n1Node + j + 2][0] + 0.01)) {
-							case GRAPHEDGE_HELIX:
+						//switch ( (int)(baseGraph->adjacencyMatrix[currentNode->n1Node + j + 1][currentNode->n1Node + j + 2][0] + 0.01)) {
+						switch ( (int)(patternGraph->adjacencyMatrix[currentNode->n1Node + j][currentNode->n1Node + j][0] + 0.01)) {
+							//case GRAPHEDGE_HELIX:
+							case GRAPHNODE_HELIX:
 								if (firstMissing) {
 									cout << "GRAPHEDGE_HELIX case AND firstMissing!" << endl;
 								}
@@ -777,6 +785,81 @@ namespace wustl_mm {
 				}
 			}
 			return expanded;
+		}
+
+		// Compute the cost of the ground truth solution which is submitted by the user.
+		void WongMatch15ConstrainedNoFuture::ComputeSolutionCost() {
+			cout << "starting ComputeSolutionCost" << endl;
+			int n1=0, n2=1, pn1=-1, pn2=-1;
+			double edgeCost = 0.0;
+			double nodeCost = 0.0;
+			int skippedHelixNodes = 0;
+			int skippedSheetNodes = 0;
+
+			// create new node
+			//LinkedNode currentNode = new LinkedNode();
+			// iterate over all correspondences, adding each to the previous solution
+			while (n2 < 23) { // TODO: repl 23 with variable representing the number of nodes
+
+				// find the end of the current correspondence
+				cout << "begin while block. n1 = " << n1 << ", n2 = " << n2 << endl;
+				while (SOLUTION[n2] == -1) {
+					cout << "skipped node found at " << n2-1 << " with adj matrix value " << patternGraph->adjacencyMatrix[n2][n2][0] << endl;
+					if (patternGraph->adjacencyMatrix[n2][n2][0] == GRAPHNODE_HELIX) {
+						skippedHelixNodes++;
+					}
+					if (patternGraph->adjacencyMatrix[n2][n2][0] == GRAPHNODE_SHEET) {
+						skippedSheetNodes++;
+					}
+					n2++;
+				}
+				cout << "after advancing n2, n1 = " << n1 << ", n2 = " << n2 << ", skippedHN = " << skippedHelixNodes << ", skippedSN = " << skippedSheetNodes << endl;
+
+				// add edge cost
+				cout << "adding (" << n1+1 << "," << n2+1 << "," << SOLUTION[n1] << "," << SOLUTION[n2] << ")" << endl;
+				double singleEdgeCost = 1000;
+				// TODO: FIX THIS CODE!
+				/*
+				if (baseGraph->adjacencyMatrix[SOLUTION[n1]][SOLUTION[n2]][0] > 0) {
+					singleEdgeCost = GetCost(n1+1, n2-n1, SOLUTION[n1], SOLUTION[n2]);
+				} else {
+					cout << "EDGE NOT FOUND IN BASE GRAPH! THIS SOLUTION NOT POSSIBLE!" << endl;
+				}
+				*/
+				singleEdgeCost = GetCost(n1+1, n2-n1, SOLUTION[n1], SOLUTION[n2]);
+
+				if (n1 == 0 && singleEdgeCost == -1){
+					singleEdgeCost = START_END_MISSING_HELIX_PENALTY;
+					cout << "first helix or sheet is unmatched. adding penalty of " << singleEdgeCost << endl;
+				} else {
+					cout << "cost of this addition is " << singleEdgeCost << endl;
+				}
+
+				// add node cost
+				double singleNodeCost = GetC(n2+1, SOLUTION[n2]);
+				cout << "node cost for nodes " << n2+1 << " and " << SOLUTION[n2] << " is " << singleNodeCost << endl;
+
+				// add the costs from this iteration to the running totals
+				edgeCost += singleEdgeCost;
+				nodeCost += singleNodeCost;
+
+				// prepare for next iteration
+				n1 = n2;
+				n2++;
+			}
+
+			cout << "total edge cost is " << edgeCost << endl;
+			cout << "total node cost is " << nodeCost << endl;
+
+			double helixPenalty = (skippedHelixNodes+1)/2 * MISSING_HELIX_PENALTY; // add 1 due to bug where first node isn't counted
+			double sheetPenalty = skippedSheetNodes * MISSING_SHEET_PENALTY;
+
+			cout << "missing helices: " << (skippedHelixNodes+1)/2 << " contribute cost of " << helixPenalty << endl;
+			cout << "missing sheets:  " << skippedSheetNodes << " contribute cost of " << sheetPenalty << endl;
+
+			double cost = edgeCost + nodeCost + helixPenalty + sheetPenalty;
+
+			cout << "total cost is " << cost << endl;
 		}
 
 		void WongMatch15ConstrainedNoFuture::NormalizeGraphs() {
