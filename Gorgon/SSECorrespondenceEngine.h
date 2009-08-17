@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.7.2.8  2009/08/11 20:50:21  schuhs
+//   Paint helix corner 0 white and corner 1 gray.
+//
 //   Revision 1.7.2.7  2009/07/21 14:57:12  schuhs
 //   Coloring paths between helices and sheets with color gradient to demonstrate the connectivity more clearly
 //
@@ -235,14 +238,23 @@ namespace wustl_mm {
 
 				n1 = -1;
 				n2 = -1;
+				// the following code iterates over the correspondence, finding a valid edge at each iteration.
+				// start at node 0 of this result, continue until i is at last node
 				for(int i = 0; i < result.GetNodeCount()-1; ) {
+					// set n1 to be the ith result. if the result is -1, increment i and repeat.
 					for(n1 = -1; n1 < 0; ) {
 						n1 = result.GetSkeletonNode(i);
 						i++;
 					}
-					for(n2 = -1; n2 < 0l; ) {
+					// set n2 to be the ith result. if the result is -1, increment i and repeat
+					//for(n2 = -1; n2 < 0l; ) {
+					for(n2 = -1; n2 < 0; ) {
 						n2 = result.GetSkeletonNode(i);
 						i++;
+						if (i >= result.GetNodeCount()) {
+							//cout << "found skip edge at end of correspondence. breaking out of loop." << endl;
+							break;
+						}
 					}
 					i--;
 					path = skeleton->paths[n1][n2];
