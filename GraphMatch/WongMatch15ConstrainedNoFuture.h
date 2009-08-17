@@ -15,6 +15,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.15.2.10  2009/08/17 17:21:51  schuhs
+//   Fixing ground truth cost calculation so it can handle impossible solutions
+//
 //   Revision 1.15.2.9  2009/08/13 22:58:51  schuhs
 //   Add coefficient to scale sheet capacity, add routine to calculate the cost of the user-specified solution, and fix bug causing missing sheets to be penalized as missing helices
 //
@@ -682,12 +685,14 @@ namespace wustl_mm {
 							currentNode->costGStar = 0;
 
 							// if previous node was at top of tree and it was skipped
-							// TODO: make up for this later by incrementing j by 2?
+							// TODO: Fix code below so that it doesn't assume that the first skipped SSE is a helix.
 							if(((temp->depth == 0) && (j > 0)) || 
 								((patternGraph->nodeCount - currentNode->depth == 0) && (currentNode->n2Node == -1))) {
-								currentNode->costGStar += START_END_MISSING_HELIX_PENALTY;
-								cout << "first helix is missing." << endl;
-								firstMissing = true;
+								if (skippedHelixNodes > 0) {
+									currentNode->costGStar += START_END_MISSING_HELIX_PENALTY;
+									cout << "first helix is missing." << endl;
+									firstMissing = true;
+								}
 							}	
 
 							// if previous node was at top of tree
@@ -770,9 +775,26 @@ namespace wustl_mm {
 			}
 
 
-			// Expanding nodes with a dummy terminal node
-			// because skipped helices now extend beyond the end of the sequence
-			if(2*missingHelixCount - currentNode->missingNodesUsed >= currentM1Top) {
+			// Expanding nodes with a dummy terminal node:
+			// Count the number of sheets and helices remaining in the helix, and then try to make
+			// a long skip edge to pass over all of them.
+			
+			// count the number of helix and sheet nodes that are not yet matched
+			int remainingSheetNodes = 0;
+			int remainingHelixNodes = 0;
+			for (int l = currentNode->n1Node + 1; l <= patternGraph->nodeCount; l++) {
+				if (patternGraph->adjacencyMatrix[l-1][l-1][0] == GRAPHNODE_HELIX) {
+					remainingHelixNodes++;
+				} else if (patternGraph->adjacencyMatrix[l-1][l-1][0] == GRAPHNODE_SHEET) {
+					remainingSheetNodes++;
+				}
+			}
+
+			// if possible, create an edge to jump to the end of the sequence
+			//if(2*missingHelixCount - currentNode->missingNodesUsed >= currentM1Top) {
+			//if(missingSheetCount + 2*missingHelixCount - currentNode->missingNodesUsed >= currentM1Top) { // not right yet but better than before
+			//if( max(0,missingSheetCount - currentNode->missingSheetNodesUsed) + max(0,2*missingHelixCount - currentNode->missingHelixNodesUsed) >= currentM1Top) ) { // not right yet but better than before
+			if(2*missingHelixCount - currentNode->missingHelixNodesUsed >= remainingHelixNodes && 2*missingSheetCount - currentNode->missingSheetNodesUsed >= remainingSheetNodes) {
 				notConstrained = true;
 				for(int k = currentNode->n1Node + 1; k <= patternGraph->nodeCount; k++) {
 					notConstrained = notConstrained && IsNodeAssignmentAllowed(k, -1);
@@ -782,16 +804,17 @@ namespace wustl_mm {
 					temp = currentNode;
 					currentNode = new LinkedNode(temp);
 					currentNode->depth = (char)patternGraph->nodeCount;
-					currentNode->costGStar = temp->costGStar + MISSING_HELIX_PENALTY * (patternGraph->nodeCount - temp->depth) / 2.0 + START_END_MISSING_HELIX_PENALTY;
+					//currentNode->costGStar = temp->costGStar + MISSING_HELIX_PENALTY * (patternGraph->nodeCount - temp->depth) / 2.0 + START_END_MISSING_HELIX_PENALTY;
+					currentNode->costGStar = temp->costGStar + MISSING_HELIX_PENALTY * remainingHelixNodes / 2.0 + MISSING_SHEET_PENALTY * remainingSheetNodes;
+					// add the start/end penalty only if a helix was skipped
+					if (remainingHelixNodes > 0) {
+						currentNode->costGStar += START_END_MISSING_HELIX_PENALTY;
+					}
 					currentNode->cost = currentNode->costGStar;
 					queue->add(currentNode, currentNode->cost);
 					currentNode = temp;
 				}
 			}
-
-			// TODO: Add more cases for initial missing sheets and/or helices.
-			// TODO: Add START_END penalty for helices that are preceded by skipped strands.
-
 			return expanded;
 		}
 
@@ -824,7 +847,7 @@ namespace wustl_mm {
 
 				// find the end of the current correspondence
 				cout << "begin while block. n1 = " << n1 << ", n2 = " << n2 << endl;
-				while (SOLUTION[n2] == -1) {
+				while (SOLUTION[n2] == -1 && n2 < numNodes) {
 					cout << "skipped node found at " << n2+1 << " with adj matrix value " << patternGraph->adjacencyMatrix[n2][n2][0] << endl;
 					if (patternGraph->adjacencyMatrix[n2][n2][0] == GRAPHNODE_HELIX) {
 						skippedHelixNodes++;
@@ -841,7 +864,10 @@ namespace wustl_mm {
 				cout << "adding (" << n1+1 << "," << n2+1 << "," << SOLUTION[n1] << "," << SOLUTION[n2] << ")" << endl;
 				double singleEdgeCost = 1000;
 				// if edge exists in base graph, find the cost of this correspondence.
-				if (baseGraph->EdgeExists(SOLUTION[n1]-1, SOLUTION[n2]-1)) {
+				if (SOLUTION[n1] == -1) {
+					singleEdgeCost = 0;
+					cout << "No cost for initial skip edge" << endl;
+				} else if (baseGraph->EdgeExists(SOLUTION[n1]-1, SOLUTION[n2]-1)) {
 					singleEdgeCost = GetCost(n1+1, n2-n1, SOLUTION[n1], SOLUTION[n2]);
 				} else {
 					cout << "BASE GRAPH DOES NOT HAVE AN EDGE FROM NODE " << SOLUTION[n1] << " TO NODE " << SOLUTION[n2] << ". THIS SOLUTION NOT POSSIBLE!" << endl;
