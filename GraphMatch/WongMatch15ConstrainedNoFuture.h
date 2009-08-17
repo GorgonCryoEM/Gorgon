@@ -15,6 +15,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.15.2.9  2009/08/13 22:58:51  schuhs
+//   Add coefficient to scale sheet capacity, add routine to calculate the cost of the user-specified solution, and fix bug causing missing sheets to be penalized as missing helices
+//
 //   Revision 1.15.2.8  2009/08/11 21:00:51  schuhs
 //   Minor bug fix for sequences starting with strands
 //
@@ -602,7 +605,7 @@ namespace wustl_mm {
 			}
 		#endif //VERBOSE
 			
-			int currentM1Top = patternGraph->nodeCount - currentNode->depth;
+			int currentM1Top = patternGraph->nodeCount - currentNode->depth; // remaining unmatched nodes in sequence
 			bool notConstrained;
 			//currentNode->PrintNodeConcise(0, true, true);
 
@@ -768,6 +771,7 @@ namespace wustl_mm {
 
 
 			// Expanding nodes with a dummy terminal node
+			// because skipped helices now extend beyond the end of the sequence
 			if(2*missingHelixCount - currentNode->missingNodesUsed >= currentM1Top) {
 				notConstrained = true;
 				for(int k = currentNode->n1Node + 1; k <= patternGraph->nodeCount; k++) {
@@ -784,6 +788,10 @@ namespace wustl_mm {
 					currentNode = temp;
 				}
 			}
+
+			// TODO: Add more cases for initial missing sheets and/or helices.
+			// TODO: Add START_END penalty for helices that are preceded by skipped strands.
+
 			return expanded;
 		}
 
@@ -796,15 +804,28 @@ namespace wustl_mm {
 			int skippedHelixNodes = 0;
 			int skippedSheetNodes = 0;
 
+			int numNodes = patternGraph->GetNodeCount();
+
 			// create new node
 			//LinkedNode currentNode = new LinkedNode();
 			// iterate over all correspondences, adding each to the previous solution
-			while (n2 < 23) { // TODO: repl 23 with variable representing the number of nodes
+			while (n2 < numNodes) { // TODO: repl 23 with variable representing the number of nodes
+
+				// check if first node is skipped helix or sheet
+				if (SOLUTION[n1] == -1) {
+					cout << "skipped node found at " << n1+1 << " with adj matrix value " << patternGraph->adjacencyMatrix[n1][n1][0] << endl;
+					if (patternGraph->adjacencyMatrix[n1][n1][0] == GRAPHNODE_HELIX) {
+						skippedHelixNodes++;
+					}
+					if (patternGraph->adjacencyMatrix[n1][n1][0] == GRAPHNODE_SHEET) {
+						skippedSheetNodes++;
+					}
+				}
 
 				// find the end of the current correspondence
 				cout << "begin while block. n1 = " << n1 << ", n2 = " << n2 << endl;
 				while (SOLUTION[n2] == -1) {
-					cout << "skipped node found at " << n2-1 << " with adj matrix value " << patternGraph->adjacencyMatrix[n2][n2][0] << endl;
+					cout << "skipped node found at " << n2+1 << " with adj matrix value " << patternGraph->adjacencyMatrix[n2][n2][0] << endl;
 					if (patternGraph->adjacencyMatrix[n2][n2][0] == GRAPHNODE_HELIX) {
 						skippedHelixNodes++;
 					}
@@ -813,22 +834,21 @@ namespace wustl_mm {
 					}
 					n2++;
 				}
+	
 				cout << "after advancing n2, n1 = " << n1 << ", n2 = " << n2 << ", skippedHN = " << skippedHelixNodes << ", skippedSN = " << skippedSheetNodes << endl;
 
 				// add edge cost
 				cout << "adding (" << n1+1 << "," << n2+1 << "," << SOLUTION[n1] << "," << SOLUTION[n2] << ")" << endl;
 				double singleEdgeCost = 1000;
-				// TODO: FIX THIS CODE!
-				/*
-				if (baseGraph->adjacencyMatrix[SOLUTION[n1]][SOLUTION[n2]][0] > 0) {
+				// if edge exists in base graph, find the cost of this correspondence.
+				if (baseGraph->EdgeExists(SOLUTION[n1]-1, SOLUTION[n2]-1)) {
 					singleEdgeCost = GetCost(n1+1, n2-n1, SOLUTION[n1], SOLUTION[n2]);
 				} else {
-					cout << "EDGE NOT FOUND IN BASE GRAPH! THIS SOLUTION NOT POSSIBLE!" << endl;
+					cout << "BASE GRAPH DOES NOT HAVE AN EDGE FROM NODE " << SOLUTION[n1] << " TO NODE " << SOLUTION[n2] << ". THIS SOLUTION NOT POSSIBLE!" << endl;
 				}
-				*/
-				singleEdgeCost = GetCost(n1+1, n2-n1, SOLUTION[n1], SOLUTION[n2]);
 
-				if (n1 == 0 && singleEdgeCost == -1){
+				// check if first or last helix is unmatched
+				if ((n1 == 0 && singleEdgeCost == -1) || (n2 == numNodes && singleEdgeCost == -1)){
 					singleEdgeCost = START_END_MISSING_HELIX_PENALTY;
 					cout << "first helix or sheet is unmatched. adding penalty of " << singleEdgeCost << endl;
 				} else {
@@ -851,10 +871,10 @@ namespace wustl_mm {
 			cout << "total edge cost is " << edgeCost << endl;
 			cout << "total node cost is " << nodeCost << endl;
 
-			double helixPenalty = (skippedHelixNodes+1)/2 * MISSING_HELIX_PENALTY; // add 1 due to bug where first node isn't counted
+			double helixPenalty = skippedHelixNodes/2 * MISSING_HELIX_PENALTY; 
 			double sheetPenalty = skippedSheetNodes * MISSING_SHEET_PENALTY;
 
-			cout << "missing helices: " << (skippedHelixNodes+1)/2 << " contribute cost of " << helixPenalty << endl;
+			cout << "missing helices: " << skippedHelixNodes/2 << " contribute cost of " << helixPenalty << endl;
 			cout << "missing sheets:  " << skippedSheetNodes << " contribute cost of " << sheetPenalty << endl;
 
 			double cost = edgeCost + nodeCost + helixPenalty + sheetPenalty;
