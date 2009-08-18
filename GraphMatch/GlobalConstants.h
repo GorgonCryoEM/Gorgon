@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.32.2.8  2009/08/13 22:57:12  schuhs
+//   Adding variable to scale the sheet capacity
+//
 //   Revision 1.32.2.7  2009/08/13 17:28:41  schuhs
 //   Reading in min sheet size and max sheet distance from Settings file
 //
@@ -125,6 +128,7 @@ namespace wustl_mm {
 		const char * TOKEN_SHEET_SELF_LOOP_LENGTH = "SHEET_SELF_LOOP_LENGTH";
 		const char * TOKEN_SHEET_WEIGHT_COEFFICIENT = "SHEET_WEIGHT_COEFFICIENT";
 		const char * TOKEN_COST_FUNCTION = "COST_FUNCTION";
+		const char * TOKEN_INCLUDE_STRANDS = "INCLUDE_STRANDS";
 		const char * TOKEN_VOXEL_SIZE = "VOXEL_SIZE";
 		const char * TOKEN_TRANSLATE_VOLUMETRIC_COORDINATES = "TRANSLATE_VOLUMETRIC_COORDINATES";
 		const char * TOKEN_MISSING_HELIX_COUNT = "MISSING_HELIX_COUNT";
@@ -166,6 +170,7 @@ namespace wustl_mm {
 		double SHEET_SELF_LOOP_LENGTH = 0.02;
 		double SHEET_WEIGHT_COEFFICIENT = 1.0;
 		int COST_FUNCTION = 1;   // 1 : |a-b|		2 : |a-b|/(a+b)		3:|a-b|^2
+		int INCLUDE_STRANDS = 0;   // 0 : no		1 : yes
 		double VOXEL_SIZE = 1;
 		bool TRANSLATE_VOLUMETRIC_COORDINATES = false;
 		int MISSING_HELIX_COUNT = -1;
@@ -305,6 +310,8 @@ namespace wustl_mm {
 				SHEET_WEIGHT_COEFFICIENT = doubleValue;
 			} else if(strcmp(token, TOKEN_COST_FUNCTION) == 0) {
 				COST_FUNCTION = intValue;
+			} else if(strcmp(token, TOKEN_INCLUDE_STRANDS) == 0) {
+				INCLUDE_STRANDS = intValue;
 			} else if(strcmp(token, TOKEN_VOXEL_SIZE) == 0) {
 				VOXEL_SIZE = doubleValue;
 			} else if(strcmp(token, TOKEN_TRANSLATE_VOLUMETRIC_COORDINATES) == 0) {
@@ -369,6 +376,8 @@ namespace wustl_mm {
 				doubleValue = SHEET_WEIGHT_COEFFICIENT;
 			} else if(strcmp(token, TOKEN_COST_FUNCTION) == 0) {
 				intValue = COST_FUNCTION;
+			} else if(strcmp(token, TOKEN_INCLUDE_STRANDS) == 0) {
+				intValue = INCLUDE_STRANDS;
 			} else if(strcmp(token, TOKEN_VOXEL_SIZE) == 0) {
 				doubleValue = VOXEL_SIZE;
 			} else if(strcmp(token, TOKEN_TRANSLATE_VOLUMETRIC_COORDINATES) == 0) {
@@ -453,6 +462,8 @@ namespace wustl_mm {
 					fscanf(fin, "%lf", &SHEET_WEIGHT_COEFFICIENT);
 				} else if(strcmp(token, TOKEN_COST_FUNCTION) == 0) {
 					fscanf(fin, "%d", &COST_FUNCTION);
+				} else if(strcmp(token, TOKEN_INCLUDE_STRANDS) == 0) {
+					fscanf(fin, "%d", &INCLUDE_STRANDS);
 				} else if(strcmp(token, TOKEN_VOXEL_SIZE) == 0) {
 					fscanf(fin, "%lf", &VOXEL_SIZE);
 				} else if(strcmp(token, TOKEN_TRANSLATE_VOLUMETRIC_COORDINATES) == 0) {
@@ -506,6 +517,7 @@ namespace wustl_mm {
 			printf("\tMISSING_SHEET_LENGTH             = %lf\n", MISSING_SHEET_LENGTH);
 			printf("\tSHEET_SELF_LOOP_LENGTH           = %lf\n", SHEET_SELF_LOOP_LENGTH);
 			printf("\tCOST_FUNCTION                    = %ld -- 1 : |a-b|       2 : |a-b|/(a+b)      3:|a-b|^2\n", COST_FUNCTION);
+			printf("\tINCLUDE_STRANDS                  = %ld -- 0 : no       1 : yes\n", INCLUDE_STRANDS);
 			printf("\tVOXEL_SIZE                       = %lf\n", VOXEL_SIZE);
 			printf("\tMISSING_HELIX_COUNT              = %ld\n", MISSING_HELIX_COUNT);
 			printf("\tMISSING_SHEET_COUNT              = %ld\n", MISSING_SHEET_COUNT);
