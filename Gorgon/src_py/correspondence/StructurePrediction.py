@@ -40,7 +40,7 @@ where SSEs are predicted to be based on the sequence.
 
 
     @classmethod
-    def load(cls, filename, qparent=None):
+    def load(cls, filename, qparent=None, withStrands=0):
         '''
 Sequence files are a file type we defined. The first line gives the 
 one-letter abbreviations for the sequence. The line below it shows the 
@@ -149,12 +149,14 @@ handled in C++.
                         print "helix at index " + str(index)
                         secelDict[i] = chain.secelList[index]
                         secelType[i] = 'helix'
-                    if chain.secelList[index].type == 'strand':
+                        lastSecel = chain.secelList[index]
+                        i += 1
+                    if chain.secelList[index].type == 'strand' and withStrands == 1:
                         print "strand at index " + str(index)
                         secelDict[i] = chain.secelList[index]
                         secelType[i] = 'strand'
-                    lastSecel = chain.secelList[index]
-                    i += 1
+                        lastSecel = chain.secelList[index]
+                        i += 1
                     print "secelDict[" + str(i) + "] is (to be added later)"
                 
                 print "serialNo = " + str(chain.secelList[index].serialNo)
