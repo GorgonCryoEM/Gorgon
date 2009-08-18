@@ -226,6 +226,18 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
+				RelativePath=".\GraphBase.h"
+				>
+			</File>
+			<File
+				RelativePath=".\GraphEdgeBase.h"
+				>
+			</File>
+			<File
+				RelativePath=".\GraphVertexBase.h"
+				>
+			</File>
+			<File
 				RelativePath=".\Octree.h"
 				>
 			</File>
