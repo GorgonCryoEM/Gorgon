@@ -15,6 +15,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.15.2.11  2009/08/17 21:47:32  schuhs
+//   Modifying cost function to correctly penalize skipped helices and strands at the end of the sequence. Fixing some bugs that cause crashes when the end of the correspondence is a jump edge.
+//
 //   Revision 1.15.2.10  2009/08/17 17:21:51  schuhs
 //   Fixing ground truth cost calculation so it can handle impossible solutions
 //
@@ -474,7 +477,12 @@ namespace wustl_mm {
 				if(i==0) {
 					firstIsLoop = lastIsLoop;
 				}
-				patternLength += patternGraph->adjacencyMatrix[d+i-1][d+i][1];		
+				patternLength += patternGraph->adjacencyMatrix[d+i-1][d+i][1];	
+
+				// add lengths of strands skipped by this edge
+				if (i > 0 && patternGraph->adjacencyMatrix[d+i-1][d+i-1][0] == GRAPHNODE_SHEET) {
+					patternLength += patternGraph->nodeWeights[d+i-1];
+				}
 			}
 
 			bool euclideanEstimate = false;
@@ -914,6 +922,7 @@ namespace wustl_mm {
 		#ifdef VERBOSE
 			printf("\tNormalizing the base graph based on helix length ratio\nNormalized Graph:\n");
 		#endif
+			// TODO: Also normalize the sheet capacity here?
 			double ratio = 0;
 
 			for(int i = 0; i < (int)baseGraph->skeletonHelixes.size(); i++) {
