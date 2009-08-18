@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.36.2.9  2009/07/23 15:07:05  schuhs
+#   Fixing typo that caused a crash when rendering paths
+#
 #   Revision 1.36.2.8  2009/07/21 14:58:57  schuhs
 #   Storing helix and sheet colors in the CorrespondenceEngine and the SSERenderer classes
 #
@@ -718,7 +721,8 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
         print "before calling StructurePrediction.load"
         print "sequenceFileName is " + str(self.sequenceFileName)
         print "app is " + str(self.app)
-        structPred = StructurePrediction.load(self.sequenceFileName, self.app)
+        includeStrands = self.viewer.correspondenceEngine.getConstantInt("INCLUDE_STRANDS")
+        structPred = StructurePrediction.load(self.sequenceFileName, self.app, includeStrands)
         print "after calling StructurePrediction.load"
         cAlphaViewer = self.app.viewers['calpha']
         sseViewer = self.app.viewers['sse']

@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.14.2.2  2009/07/03 16:31:43  schuhs
+//   Storing strand length as node cost
+//
 //   Revision 1.14.2.1  2009/06/18 20:36:16  schuhs
 //   Adding sheets to sequence graph
 //
@@ -163,7 +166,7 @@ namespace wustl_mm {
 					oldIndex = index;
 				#endif
 				#ifdef INCLUDE_SHEETS
-				} else if (strcmp(token, TOKEN_PDB_SHEET)== 0) {
+				} else if (strcmp(token, TOKEN_PDB_SHEET)== 0 && INCLUDE_STRANDS == 1) {
 					currentStructure = new SecondaryStructure();
 					currentStructure->serialNumber = GetInt(line, 7, 3);
 					currentStructure->secondaryStructureID = GetString(line, 11, 3);
