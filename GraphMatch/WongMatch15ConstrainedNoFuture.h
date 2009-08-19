@@ -15,6 +15,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.15.2.12  2009/08/18 17:54:22  schuhs
+//   Adding strand lengths to skip edge length calculation
+//
 //   Revision 1.15.2.11  2009/08/17 21:47:32  schuhs
 //   Modifying cost function to correctly penalize skipped helices and strands at the end of the sequence. Fixing some bugs that cause crashes when the end of the correspondence is a jump edge.
 //
@@ -239,6 +242,7 @@ namespace wustl_mm {
 			timeInQueue = 0;
 		#endif
 
+			// create and set up a new node to start the search
 			currentNode = new LinkedNode();
 			for(int j = 1; j <= patternGraph->nodeCount; j++) {
 				LinkedNode::AddNodeToBitmap(currentNode->m1Bitmap, j);
@@ -252,11 +256,12 @@ namespace wustl_mm {
 
 
 
-
+		// searches for correspondences between the pattern graph and base graph.
 		int WongMatch15ConstrainedNoFuture::RunMatching(clock_t startTime) {
 			cout << "Start WongMatch15ConstrainedNoFuture::RunMatching: " << endl;
 			bool continueLoop = true;
 			clock_t finishTime;
+			// repeat the following loop until all results are found
 			while(continueLoop)
 			{
 				PopBestNode();		
@@ -266,6 +271,8 @@ namespace wustl_mm {
 				//currentNode->PrintNodeConcise(foundCount, false);
 				//printf("\n");
 				//cout << " current node has depth " << (int)currentNode->depth << ", max depth is " << patternGraph->nodeCount << endl;
+
+				// if currentNode contains a complete sequence match, add it to the solutions list
 				if(currentNode->depth == patternGraph->nodeCount) {
 					//cout << " current node at max depth (" << (int)currentNode->depth << ")" << endl;
 					finishTime = clock();
@@ -280,6 +287,7 @@ namespace wustl_mm {
 						sprintf(fileName, "Solution%d.mrc", foundCount);
 						pathGenerator->GenerateGraph(currentNode, fileName);
 					#endif
+				// otherwise, expand currentNode and adds its children to usedNodes
 				} else {
 					//cout << " current node not at max depth" << endl;
 					LinkedNodeStub * currentStub = new LinkedNodeStub(currentNode);
@@ -290,6 +298,7 @@ namespace wustl_mm {
 					}
 					delete currentNode;
 				}		
+				// continue until desired number of results are found
 				continueLoop = (foundCount < RESULT_COUNT);
 			}
 
@@ -314,6 +323,7 @@ namespace wustl_mm {
 			return foundCount;
 		}
 
+		// returns one of the results of a correspondence search
 		SSECorrespondenceResult WongMatch15ConstrainedNoFuture::GetResult(int rank) {
 			//if(rank <= (int)solutions.size() && (rank >= 1)) {
 				return solutions[rank-1];
@@ -321,6 +331,8 @@ namespace wustl_mm {
 			//	return NULL;
 			//}
 		}
+
+		// prints correspondence search results
 		void WongMatch15ConstrainedNoFuture::SaveResults(){
 			//printf("\t");
 			//for(int i = 0; i < currentNode->n1Top; i++) {
@@ -337,43 +349,51 @@ namespace wustl_mm {
 		}
 
 		// returns the cost of matching node p in the pattern graph to node qp in the base graph
+		// this method does not include any cost for matching strands to sheets.
 		double WongMatch15ConstrainedNoFuture::GetC(int p, int qp) {
 			return GetC(p, p, qp, qp);
 		}
 
 		// returns the cost of matching node p in the pattern graph to node qp in the base graph
+		// this method includes the cost of matching strands to sheets.
 		double WongMatch15ConstrainedNoFuture::GetC(int p, int qp, LinkedNodeStub * currentNode) {
 			double cost = GetC(p, p, qp, qp);
 			
-			// if sheet-to-strand match,
+			// if sheet-to-strand match, compute the cost of the match based on the unused sheet capacity and the strand length
 			if( (int)(patternGraph->adjacencyMatrix[p-1][p-1][0] + 0.01) == GRAPHNODE_SHEET && 
 				(int)(baseGraph->adjacencyMatrix[qp-1][qp-1][0] + 0.01) == GRAPHNODE_SHEET ) {
 				cost = 0;
 				//cout << " ... original cost = " << cost << endl;
 
+				// scale the original capacity by the a user-specified parameter
 				double capacity = baseGraph->nodeWeights[qp-1] * SHEET_CAPACITY_COEFFICIENT;
 				//cout << " ... original capacity = " << capacity << endl;
-				bool continueLoop = true;
+
 				// walk up tree finding nodes where this sheet was matched to another strand, decreasing
-				// sheet capacity each time a match is found.
+				// the sheet capacity by the strand length each time a match is found.
+				bool continueLoop = true;
 				while(continueLoop) {
+					// stop if at top of tree
 					if(currentNode->parentNode == NULL) {
 						 break;
 					}
+					// if the current node ended with a match to this sheet, subtract the strand length from the capacity
 					if (qp == currentNode->n2Node) {
 						int matchedNode = currentNode->n1Node;
 						capacity -= patternGraph->nodeWeights[matchedNode-1];
 						//cout << " ... one match at node qp = " << qp << ", p = " << matchedNode << " ... new capacity = " << capacity << endl;
 					}
+					// move one level up the tree
 					currentNode = currentNode->parentNode;		
 				}
 				//cout << " ... unused capacity = " << capacity << endl;
 
-				// if capacity has all been used, penalize this match
+				// if capacity has all been used, penalize this match by the capacity
 				if (capacity < 0) {
-					cost -= capacity;
+					cost -= capacity; // capacity is negative, so cost will be positive
 					//cout << " ... negative capacity. cost should be nonzero now." << endl;
 				}
+				// if unused capacity remains, add no penalty
 				if (cost > 0) {
 					//cout << " ... match cost for base graph node " << qp << " = " << cost << endl;
 				}
@@ -383,14 +403,13 @@ namespace wustl_mm {
 
 		}
 
-		// GetC(currentNode->n1Node, currentNode->n2Node)
-
 		// returns the cost of matching edge j,p in the pattern graph to edge qj,qp in the base graph.
 		// when j=p and qj=qp, returns the cost of matching node j to node qj.
-		// three cases:
+		// three possible cases:
 		//   j == p and qj == qp -- node match cost
 		//   j != p and qj == qp -- edge match cost, special case where same sheet revisited by two consecutive nodes
 		//   j != p and qj != qp -- edge match cost
+		// note: only the first case is ever used, as all calls to this method have j=p and qj=qp.
 		double WongMatch15ConstrainedNoFuture::GetC(int j, int p, int qj, int qp) {
 
 			double jpCost;
@@ -409,11 +428,11 @@ namespace wustl_mm {
 			if(baseGraph->adjacencyMatrix[qj-1][qp-1][1] == MAXINT) {
 				qjqpCost = 1000;
 			} else {
-				// if edge exists between qj and qp or if qj == qp
+				// if edge exists or if qj == qp
 				qjqpCost = baseGraph->adjacencyMatrix[qj-1][qp-1][1];
 			}
 
-			// if edge types or node types do not match. cost decided here may be recomputed in next block.
+			// if edge types or node types do not match. cost set here may be recomputed in next block.
 			if(patternGraph->adjacencyMatrix[j-1][p-1][0] != baseGraph->adjacencyMatrix[qj-1][qp-1][0]) {
 				typeCost = 1000;
 			}
