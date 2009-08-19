@@ -13,6 +13,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.9  2009/04/07 19:16:43  ssa1
+#   Bug fixes when starting loop builder without selecting atoms, flipping a helix, adding ca atoms to a helix
+#
 #   Revision 1.8  2009/04/04 21:33:23  ssa1
 #   More structure approach for placing cAlpha loops, and helix flip bug fix
 #
@@ -117,7 +120,7 @@ if the user clicks accept.
     def atomEnableTabElements(self, enable):
         self.atomicAcceptButton.setEnabled(enable)
         
-    def atomFindPositionPossibilities(self):        
+    def atomFindPositionPossibilities(self):
         self.atomEnableTabElements(False)
         self.possibleAtomsList = []
         #self.parentWidget()=>CAlphaSequenceWidget, self.parentWidget().parentWidget() => CAlphaSequenceDock
@@ -134,12 +137,16 @@ if the user clicks accept.
             return
         try:
             self.currentChainModel[resNum-1].getAtomNames()
+        except:
+            pass
+        try:
             self.currentChainModel[resNum+1].getAtomNames()
         except:
-            self.atomicNumPossibilities.setText('of 0')
-            self.atomicPossibilityNumSpinBox.setRange(0, 0)
-            self.atomEnableTabElements(False)
-            return
+            pass
+            #self.atomicNumPossibilities.setText('of 0')
+            #self.atomicPossibilityNumSpinBox.setRange(0, 0)
+            #self.atomEnableTabElements(False)
+            #return
         atomPos = atom.getPosition()
         atomPosMeshCoords =  skeletonViewer.worldToObjectCoordinates(self.CAlphaViewer.objectToWorldCoordinates([atomPos.x(), atomPos.y(), atomPos.z()]))
         atomPosMeshCoords = Vector3DFloat(atomPosMeshCoords[0], atomPosMeshCoords[1], atomPosMeshCoords[2])
