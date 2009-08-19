@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.16  2009/03/31 21:40:13  ssa1
+#   Refactoring: Splitting seq_model\SequenceView.py into subclasses
+#
 #   Revision 1.15  2008/12/02 01:08:44  colemanr
 #   Opens on the right.
 #
@@ -165,7 +168,7 @@ class CAlphaAtomPlacerForm(QtGui.QWidget):
     def loadWidget(self):
         self.structPred = self.viewer.structPred
         if(self.app.actions.getAction("perform_CAlphaManualAtomPlacement").isChecked()) :
-            if self.structPred.chain:
+            if self.structPred and self.structPred.chain:
                 self.resSeqNumSpinBox.setRange( min(self.structPred.chain.residueRange()), max(self.structPred.chain.residueRange()) )
             else:
                 return            
