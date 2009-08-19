@@ -13,6 +13,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.10  2009/08/19 14:59:52  ssa1
+#   Correcting bug: possible residues do not appear when performing semi-automatic placement, when the atom being clicked is the first or last in the sequence
+#
 #   Revision 1.9  2009/04/07 19:16:43  ssa1
 #   Bug fixes when starting loop builder without selecting atoms, flipping a helix, adding ca atoms to a helix
 #
@@ -197,11 +200,15 @@ if the user clicks accept.
                     pass
                 else:
                     self.possibleAtomsList.append(rawAtom)
-                
+            
+                                    
             self.atomicNumPossibilities.setText('of ' + str(len(self.possibleAtomsList)))
             #Note that a valueChanged signal might be emitted in either or both of the following two lines.
             self.atomicPossibilityNumSpinBox.setRange(1, len(self.possibleAtomsList))
             self.atomicPossibilityNumSpinBox.setValue(1)
+            if(len(self.possibleAtomsList) == 0):
+                self.atomEnableTabElements(False)
+                return            
             
             for index in range( len(self.possibleAtomsList) ):
                 atom = self.possibleAtomsList[index]
