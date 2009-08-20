@@ -15,6 +15,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.15.2.14  2009/08/20 19:30:02  schuhs
+//   Adding more comments
+//
 //   Revision 1.15.2.13  2009/08/19 17:36:52  schuhs
 //   Adding comments
 //
@@ -662,7 +665,8 @@ namespace wustl_mm {
 					//for(int j = 0; j <= min(missingHelixCount * 2 + missingSheetCount - currentNode->missingNodesUsed + 1, currentM1Top); j += 1) {  // Stepping by one for sheets; helix code adds an extra step at end
 					int skippedHelixNodes = 0;
 					int skippedSheetNodes = 0;
-					for (int j = 0; (j <= currentM1Top) && (skippedHelixNodes <= missingHelixCount * 2) && (skippedSheetNodes <= missingSheetCount); ) {
+					for (int j = 0; (j <= currentM1Top) && (skippedHelixNodes + currentNode->missingHelixNodesUsed <= missingHelixCount * 2) && (skippedSheetNodes + currentNode->missingSheetNodesUsed <= missingSheetCount); ) {
+					//for (int j = 0; (j <= currentM1Top) && (skippedHelixNodes <= missingHelixCount * 2) && (skippedSheetNodes <= missingSheetCount); ) {
 					//for(int j = 0; j <= min(missingHelixCount * 2 - currentNode->missingNodesUsed + 1, currentM1Top); j += 2) {  // Stepping by two since we jump every 2 loops
 
 						// i is the node from baseGraph being matched to currentNode
