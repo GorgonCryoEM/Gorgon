@@ -15,6 +15,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.15.2.13  2009/08/19 17:36:52  schuhs
+//   Adding comments
+//
 //   Revision 1.15.2.12  2009/08/18 17:54:22  schuhs
 //   Adding strand lengths to skip edge length calculation
 //
@@ -492,6 +495,8 @@ namespace wustl_mm {
 			bool lastIsLoop = false;
 			for(int i = 0; i < m; i++) {
 				//lastIsLoop = (((int)(patternGraph->adjacencyMatrix[d+i-1][d+i][0] + 0.01) == GRAPHEDGE_LOOP) || ((int)(patternGraph->adjacencyMatrix[d+i-1][d+i][0] + 0.01) == GRAPHEDGE_LOOP_EUCLIDEAN));
+				// TODO: test following line
+				// lastIsLoop = ((int)(patternGraph->adjacencyMatrix[d+i-1][d+i][0] + 0.01) == GRAPHEDGE_LOOP) ;
 				lastIsLoop = (((int)(patternGraph->adjacencyMatrix[d+i-1][d+i][0] + 0.01) == GRAPHEDGE_LOOP) || ((int)(patternGraph->adjacencyMatrix[d+i-1][d+i][0] + 0.01) == GRAPHEDGE_LOOP_EUCLIDEAN) || ((int)(patternGraph->adjacencyMatrix[d+i-1][d+i][0] + 0.01) == GRAPHNODE_SHEET));
 				if(i==0) {
 					firstIsLoop = lastIsLoop;
@@ -499,6 +504,7 @@ namespace wustl_mm {
 				patternLength += patternGraph->adjacencyMatrix[d+i-1][d+i][1];	
 
 				// add lengths of strands skipped by this edge
+				// TODO: Move this block up to "adding length of skipped sheets" area above
 				if (i > 0 && patternGraph->adjacencyMatrix[d+i-1][d+i-1][0] == GRAPHNODE_SHEET) {
 					patternLength += patternGraph->nodeWeights[d+i-1];
 				}
@@ -509,6 +515,8 @@ namespace wustl_mm {
 
 			bool sheetSheet = false; // for debugging
 
+			// if edge begins with an unmatched node in the base graph
+			// TODO: I think this will always be LOOP_WEIGHT_COEFFICIENT, right?
 			if(qj == -1) { // special handling for missing helixes at the ends
 				baseLength = 0;
 				switch((int)(patternGraph->adjacencyMatrix[d-1][d][0] + 0.01)) {
