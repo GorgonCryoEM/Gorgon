@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.32.2.9  2009/08/18 16:21:26  schuhs
+//   Adding flag to control whether strands are included in the sequence graph
+//
 //   Revision 1.32.2.8  2009/08/13 22:57:12  schuhs
 //   Adding variable to scale the sheet capacity
 //
@@ -152,7 +155,7 @@ namespace wustl_mm {
 		char SEQUENCE_FILE_NAME[100];
 		char SEQUENCE_FILE_TYPE[100];
 		char MRC_FILE_NAME[100];
-		double MAXIMUM_DISTANCE_SHEET_SKELETON = 5.0;
+		double MAXIMUM_DISTANCE_SHEET_SKELETON = 0.0;
 		int MINIMUM_SHEET_SIZE = 10;
 		double EUCLIDEAN_DISTANCE_THRESHOLD = 15;
 		int BORDER_MARGIN_THRESHOLD = 3;
