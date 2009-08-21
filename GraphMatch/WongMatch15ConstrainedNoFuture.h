@@ -15,6 +15,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.15.2.15  2009/08/20 21:36:57  schuhs
+//   Fixing bug that allowed too many skipped nodes. Helix match results now match results from version 1.15.
+//
 //   Revision 1.15.2.14  2009/08/20 19:30:02  schuhs
 //   Adding more comments
 //
@@ -545,9 +548,13 @@ namespace wustl_mm {
 					case(GRAPHEDGE_LOOP):
 						weight = LOOP_WEIGHT_COEFFICIENT;
 						break;
-					case(GRAPHEDGE_SHEET):
-						weight = SHEET_WEIGHT_COEFFICIENT;
-						break;
+					// the following line changes the behavior:
+					//case(GRAPHEDGE_LOOP_EUCLIDEAN):
+					//	weight = LOOP_WEIGHT_COEFFICIENT;
+					//	break;
+					//case(GRAPHEDGE_SHEET):
+					//	weight = SHEET_WEIGHT_COEFFICIENT;
+					//	/break;
 					case(GRAPHNODE_SHEET): // two strands in a row match to the same sheet
 						//cout << "---> sheet to sheet case. parameters: " << d << "," << m << "," << qj << "," << qp << endl;
 						sheetSheet = true;
@@ -558,27 +565,20 @@ namespace wustl_mm {
 				weight = euclideanEstimate? weight * EUCLIDEAN_LOOP_PENALTY: weight;
 			}
 
-			if(m == 1) {		
-				if((qj!= -1) && ((int)(patternGraph->adjacencyMatrix[d-1][d][0] + 0.01) != (int)(baseGraph->adjacencyMatrix[qj-1][qp-1][0] + 0.01)) &&
-					//!(((int)(patternGraph->adjacencyMatrix[d-1][d][0] + 0.01) == GRAPHEDGE_LOOP) && ((int)(baseGraph->adjacencyMatrix[qj-1][qp-1][0] +0.01) == GRAPHEDGE_LOOP_EUCLIDEAN))) 	{
-					!(((int)(patternGraph->adjacencyMatrix[d-1][d][0] + 0.01) == GRAPHEDGE_LOOP) && ((int)(baseGraph->adjacencyMatrix[qj-1][qp-1][0] +0.01) == GRAPHEDGE_LOOP_EUCLIDEAN)) &&
-					!(((int)(patternGraph->adjacencyMatrix[d-1][d][0] + 0.01) == GRAPHEDGE_LOOP) && ((int)(baseGraph->adjacencyMatrix[qj-1][qp-1][0] +0.01) == GRAPHNODE_SHEET))) 	{
-					if (sheetSheet) {
-						//cout << "first case returning -1" << endl;
-					}
+			if(m == 1) { // not a skip edge
+				if( (qj != -1) && // first node in pattern graph is matched
+					!( ((int)(patternGraph->adjacencyMatrix[d-1][d][0] + 0.01) == (int)(baseGraph->adjacencyMatrix[qj-1][qp-1][0] + 0.01)) ) && // types don't match exactly
+					!( ((int)(patternGraph->adjacencyMatrix[d-1][d][0] + 0.01) == GRAPHEDGE_LOOP) && ((int)(baseGraph->adjacencyMatrix[qj-1][qp-1][0] +0.01) == GRAPHEDGE_LOOP_EUCLIDEAN)) && // not a loop-Euclidianloop match
+					!( ((int)(patternGraph->adjacencyMatrix[d-1][d][0] + 0.01) == GRAPHEDGE_LOOP) && ((int)(baseGraph->adjacencyMatrix[qj-1][qp-1][0] +0.01) == GRAPHNODE_SHEET)) ) 	{ // not a loop-sheet match
 					return -1;
 				}		
-				//// TODO: Figure out why I had put in the following code!!!!
-				//if((qj != -1) && (baseGraph->euclideanMatrix[qj-1][qp-1] > patternGraph->adjacencyMatrix[d-1][d][1])){
-				////	printf("%lf %lf %lf %lf \n", baseGraph->euclideanMatrix[qj-1][qp-1], patternGraph->adjacencyMatrix[d-1][d][1], patternGraph->adjacencyMatrix[d-1][d][1], EUCLIDEAN_VOXEL_TO_PDB_RATIO);
-				//	return -1;
-				//}
 
-			} else {
-				if(!firstIsLoop || !lastIsLoop) {
-					if (sheetSheet) {
-						//cout << "second case returning -1 (first and last are not loops)" << endl;
-					}	
+			} else { // a skip edge
+				// not sure if these checks really help or if they just waste time
+				if( !(firstIsLoop && lastIsLoop) || // pattern graph edge doesn't start and end with loops OR 
+					( ( ((int)(baseGraph->adjacencyMatrix[qj-1][qp-1][0] +0.01) != GRAPHEDGE_LOOP)) &&			// (base graph edge not a loop AND
+					( ((int)(baseGraph->adjacencyMatrix[qj-1][qp-1][0] +0.01) != GRAPHEDGE_LOOP_EUCLIDEAN)) &&	// base graph edge not a Euclidian loop AND
+					( ((int)(baseGraph->adjacencyMatrix[qj-1][qp-1][0] +0.01) != GRAPHNODE_SHEET)) ) ) {		// base graph edge not a sheet)
 					return -1;
 				}
 
@@ -588,27 +588,16 @@ namespace wustl_mm {
 			switch(COST_FUNCTION)
 			{
 			case(1):
-				if (sheetSheet) {
-					//cout << "first case (absolute cost) returning weight of " << weight * fabs(patternLength - baseLength) << endl;
-				}
 				return weight * fabs(patternLength - baseLength);
 				break;
 			case(2):
-				if (sheetSheet) {
-					//cout << "second case (normalized cost) returning weight of " << weight * fabs(patternLength - baseLength) / (patternLength + baseLength) << endl;
-				}
 				return weight * fabs(patternLength - baseLength) / (patternLength + baseLength);
 				break;
 			case(3):
-				if (sheetSheet) {
-					//cout << "third case (squared cost) returning weight of " << weight * pow((patternLength - baseLength),2) << endl;
-				}
 				return weight * pow((patternLength - baseLength),2);
 				break;
 			}
-			if (sheetSheet) {
-				//cout << "returning zero (impossible case)" << endl;
-			}
+			// this line should be unreachable
 			return 0;
 		}
 
@@ -728,7 +717,7 @@ namespace wustl_mm {
 							if(((temp->depth == 0) && (j > 0)) || 
 								((patternGraph->nodeCount - currentNode->depth == 0) && (currentNode->n2Node == -1))) {
 								if (skippedHelixNodes > 0) {
-									currentNode->costGStar += START_END_MISSING_HELIX_PENALTY;
+									//currentNode->costGStar += START_END_MISSING_HELIX_PENALTY;
 									cout << "first helix is missing." << endl;
 									firstMissing = true;
 								}
@@ -766,7 +755,55 @@ namespace wustl_mm {
 								*/
 								//currentNode->costGStar += temp->costGStar + edgeCost +	MISSING_HELIX_PENALTY * (j/2.0) + GetC(currentNode->n1Node, currentNode->n2Node);
 								//currentNode->costGStar += temp->costGStar + edgeCost +	MISSING_HELIX_PENALTY * (skippedHelixNodes/2.0) + MISSING_SHEET_PENALTY * (skippedSheetNodes) + GetC(currentNode->n1Node, currentNode->n2Node);
-								currentNode->costGStar += temp->costGStar + edgeCost +	MISSING_HELIX_PENALTY * (skippedHelixNodes/2.0) + MISSING_SHEET_PENALTY * (skippedSheetNodes) + GetC(currentNode->n1Node, currentNode->n2Node, currentNode);
+								
+								// the following line worked:
+								//currentNode->costGStar += temp->costGStar + edgeCost +	MISSING_HELIX_PENALTY * (skippedHelixNodes/2.0) + MISSING_SHEET_PENALTY * (skippedSheetNodes) + GetC(currentNode->n1Node, currentNode->n2Node, currentNode);
+								currentNode->costGStar += temp->costGStar + edgeCost + GetC(currentNode->n1Node, currentNode->n2Node, currentNode);
+								
+								// add in penalties for skipped helices and sheets
+
+								int lastPatternNode = patternGraph->GetNodeCount();
+								bool startAtBeginning = ( temp->n1Node == 0 );
+								bool finishAtEnd = ( temp->n1Node + j == lastPatternNode );
+								bool pastFirst = false;
+								bool firstHelixFound = false;
+								for(int k = temp->n1Node; k < temp->n1Node + j; k++) {
+								//for(int k = temp->n1Node+1; k < temp->n1Node + j + 1; k++) {
+									if((int)(patternGraph->adjacencyMatrix[k][k+1][0] + 0.01) == GRAPHEDGE_HELIX) {
+										currentNode->costGStar += MISSING_HELIX_PENALTY;
+										currentNode->costGStar += patternGraph->adjacencyMatrix[k][k+1][1] * MISSING_HELIX_PENALTY_SCALED;
+										if (startAtBeginning && !firstHelixFound) {
+											currentNode->costGStar += START_END_MISSING_HELIX_PENALTY;
+										}
+										if (finishAtEnd && !firstHelixFound) {
+											currentNode->costGStar += START_END_MISSING_HELIX_PENALTY;
+										}
+										firstHelixFound = true;
+									}
+									else if( (startAtBeginning || pastFirst) && ((int)(patternGraph->adjacencyMatrix[k][k][0] + 0.01) == GRAPHNODE_SHEET) ) {
+										currentNode->costGStar += MISSING_SHEET_PENALTY;
+										currentNode->costGStar += patternGraph->nodeWeights[k] * MISSING_SHEET_PENALTY_SCALED;
+									}
+									pastFirst = true;
+								}
+								
+								if (finishAtEnd && patternGraph->adjacencyMatrix[lastPatternNode-1][lastPatternNode-1][0] + 0.01 == GRAPHNODE_SHEET){
+										currentNode->costGStar += MISSING_SHEET_PENALTY;
+										currentNode->costGStar += patternGraph->nodeWeights[lastPatternNode-1] * MISSING_SHEET_PENALTY_SCALED;
+								}
+								/*
+								// if this is a skip edge at the beginning of the sequence
+								if (temp->n1Node == 0) {
+									if ((int)(patternGraph->adjacencyMatrix[k][k][0] + 0.01) == GRAPHNODE_SHEET) {
+										currentNode->costGStar += MISSING_SHEET_PENALTY;
+										currentNode->costGStar += patternGraph->nodeWeights[k] * MISSING_SHEET_PENALTY_SCALED;
+								*/
+
+
+
+								
+								
+								
 								currentNode->cost = GetF();			
 								//currentNode->PrintNodeConcise(-1, true, true);
 								queue->add(currentNode, currentNode->cost);
@@ -914,7 +951,7 @@ namespace wustl_mm {
 
 				// check if first or last helix is unmatched
 				if ((n1 == 0 && singleEdgeCost == -1) || (n2 == numNodes && singleEdgeCost == -1)){
-					singleEdgeCost = START_END_MISSING_HELIX_PENALTY;
+					//singleEdgeCost = START_END_MISSING_HELIX_PENALTY;
 					cout << "first helix or sheet is unmatched. adding penalty of " << singleEdgeCost << endl;
 				} else {
 					cout << "cost of this addition is " << singleEdgeCost << endl;
