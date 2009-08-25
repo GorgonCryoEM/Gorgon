@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.14.2.2  2009/07/03 16:29:48  schuhs
+//   Keeping track of the number of skipped helices and sheets
+//
 //   Revision 1.14.2.1  2009/06/19 17:44:09  schuhs
 //   Adding new constructor that does not remove current node from the base graph bitmap
 //
@@ -245,7 +248,7 @@ namespace wustl_mm {
 			}
 			printf("\t");
 			for(int i = 0; i < top; i++) {
-				printf("%d ", n2[i]);
+				printf("%2d ", n2[i]);
 			}
 			if(printCostBreakdown) {
 				printf(" - %f = %f + %f", cost, costGStar, cost - costGStar);
