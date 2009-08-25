@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.32.2.10  2009/08/20 21:37:22  schuhs
+//   Disabling sheets by default
+//
 //   Revision 1.32.2.9  2009/08/18 16:21:26  schuhs
 //   Adding flag to control whether strands are included in the sequence graph
 //
@@ -162,7 +165,9 @@ namespace wustl_mm {
 		bool NORMALIZE_GRAPHS = true;
 		double EUCLIDEAN_VOXEL_TO_PDB_RATIO = 2.0;
 		double MISSING_HELIX_PENALTY = 2;
-		double MISSING_SHEET_PENALTY = 2;
+		double MISSING_SHEET_PENALTY = 0;
+		double MISSING_HELIX_PENALTY_SCALED = 0;
+		double MISSING_SHEET_PENALTY_SCALED = 0;
 		double EUCLIDEAN_LOOP_PENALTY = 5;
 		double START_END_MISSING_HELIX_PENALTY = 5;
 		double HELIX_WEIGHT_COEFFICIENT = 1.0;
