@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.6  2008/10/08 16:43:19  ssa1
+//   Interactive skeletonization changes
+//
 //   Revision 1.5  2008/09/29 16:43:15  ssa1
 //   Adding in CVS meta information
 //
@@ -42,6 +45,10 @@ namespace wustl_mm {
 
 			bool operator!=(Vector3DTemplate<T> &d);
 			bool operator==(Vector3DTemplate<T> &d);	
+			bool operator>(Vector3DTemplate<T> &d);
+			bool operator<(Vector3DTemplate<T> &d);
+			bool operator>=(Vector3DTemplate<T> &d);
+			bool operator<=(Vector3DTemplate<T> &d);
 
 			Vector3DTemplate<T> operator+(const Vector3DTemplate<T> &d);
 			Vector3DTemplate<T> operator-();
@@ -55,6 +62,7 @@ namespace wustl_mm {
 			Vector3DTemplate<T> Rotate(Vector3DTemplate<T> axis, double angle);			
 			void Normalize();
 			bool IsBadNormal();
+			void Print();
 
 			static Vector3DTemplate<T> Normalize(Vector3DTemplate<T> d);
 			static Vector3DTemplate<T> Project3Dto2D(Vector3DTemplate<T> point, Vector3DTemplate<T> planePt, Vector3DTemplate<T> planeVec1, Vector3DTemplate<T> planeVec2);
@@ -90,6 +98,24 @@ namespace wustl_mm {
 
 		template <class T> bool Vector3DTemplate<T>::operator==(Vector3DTemplate<T> &d) {
 			return (X() == d.X()) && (Y() == d.Y()) && (Z() == d.Z());
+		}
+
+		template <class T> bool Vector3DTemplate<T>::operator>(Vector3DTemplate<T> &d) {
+			return (X() > d.X()) || 
+				((X() == d.X()) && (Y() > d.Y())) ||
+				((X() == d.X()) && (Y() == d.Y()) && (Z() > d.Y()));
+		}
+
+		template <class T> bool Vector3DTemplate<T>::operator<(Vector3DTemplate<T> &d) {
+			return d > *this;
+		}
+
+		template <class T> bool Vector3DTemplate<T>::operator>=(Vector3DTemplate<T> &d) {
+			return (*this > d) || (*this == d)
+		}
+
+		template <class T> bool Vector3DTemplate<T>::operator<=(Vector3DTemplate<T> &d) {
+			return (*this < d) || (*this == d)
 		}
 
 		template <class T> T Vector3DTemplate<T>::X() const {
@@ -169,26 +195,22 @@ namespace wustl_mm {
 		}
 
 		template <class T> void Vector3DTemplate<T>::Normalize() {
-			double base = 0;
-			for(int i = 0; i < 3; i++) {
-				base += (values[i] * values[i]);
-			}
+			double base = Length();
 			if(base == 0) {
 				values[0] = 0;
 				values[1] = 0;
 				values[2] = 0;
 			} else {				
-				base = sqrt(base);
-				values[0] = (T)(values[0]/base);
-				values[1] = (T)(values[1]/base);
-				values[2] = (T)(values[2]/base);
+				values[0] = (T)((double)values[0]/base);
+				values[1] = (T)((double)values[1]/base);
+				values[2] = (T)((double)values[2]/base);
 			}
 		}
 
 		template <class T> Vector3DTemplate<T> Vector3DTemplate<T>::Normalize(Vector3DTemplate<T> d) {
 			Vector3DTemplate<T> ret = d;
-			d.Normalize();
-			return ret;
+			ret.Normalize();
+			return ret;  
 		}
 
 		template <class T> Vector3DTemplate<T> Vector3DTemplate<T>::GetOrthogonal() {
@@ -236,6 +258,10 @@ namespace wustl_mm {
 			return Vector3DTemplate<T>(ray * planeVec1, ray * planeVec2, 0);
 			//return Vector3DTemplate<T>(point * planeVec1, point * planeVec2, 0);
 			
+		}
+
+		template <class T> void Vector3DTemplate<T>::Print() {
+			printf("{%f, %f, %f} \n", X(), Y(), Z());
 		}
 	}
 }

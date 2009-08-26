@@ -11,12 +11,9 @@
 //
 // History Log: 
 //   $Log$
-//   Revision 1.9  2008/10/28 18:46:52  ssa1
-//   Fixing octree neighbor search, and changing the structure tensor cost function
-//
-//   Revision 1.8  2008/09/29 15:42:54  ssa1
-//   Adding in CVS meta information
-//
+//   Revision 1.1  2009/08/18 19:55:06  ssa1
+//   Adding A base graph class for finding maximal cliques, and connected components
+
 
 #ifndef FOUNDATION_GRAPH_BASE_H
 #define FOUNDATION_GRAPH_BASE_H
@@ -38,6 +35,7 @@ namespace wustl_mm {
 			unsigned long long AddVertex(float weight, TVertexTag tag);
 			unsigned long long AddVertex(GraphVertexBase<TVertexTag> vertex);
 			GraphVertexBase<TVertexTag> GetVertex(unsigned long long vertexIx);
+			unsigned long long GetVertexCount();
 			bool IsEdge(unsigned long long vertexIx1, unsigned long long vertexIx2);			
 			void AddEdge(unsigned long long vertexIx1, unsigned long long vertexIx2, float weight, TEdgeTag tag);
 			void AddEdge(unsigned long long vertexIx1, unsigned long long vertexIx2, GraphEdgeBase<TEdgeTag> edge);
@@ -48,14 +46,16 @@ namespace wustl_mm {
 			vector< set<unsigned long long> > GetAllConnectedComponents();
 			vector< set<unsigned long long> > GetAllCliques();
 			vector< set<unsigned long long> > GetAllMaximalCliques();
+			vector< set<unsigned long long> > GetLargestMaximalCliques();
 			void PrintAllCliques(vector< set<unsigned long long> > allCliques);
+
+			static vector<unsigned long long> VertexSetToVector(set<unsigned long long> vertexSet);
+			static set<unsigned long long> VertexVectorToSet(vector<unsigned long long> vertexVector);				
+			static set<unsigned long long> SetUnion(set<unsigned long long> set1, set<unsigned long long> set2);
+			static bool IsSubset(set<unsigned long long> set1, set<unsigned long long> set2); 
 
 		private:
 			void PrintClique(set<unsigned long long> vertexSet);
-			vector<unsigned long long> VertexSetToVector(set<unsigned long long> vertexSet);
-			set<unsigned long long> VertexVectorToSet(vector<unsigned long long> vertexVector);				
-			set<unsigned long long> SetUnion(set<unsigned long long> set1, set<unsigned long long> set2);
-			bool IsSubset(set<unsigned long long> set1, set<unsigned long long> set2); 
 			unsigned long long GetEdgeHash(unsigned long long vertexIx1, unsigned long long vertexIx2);
 		private:
 			vector< GraphVertexBase<TVertexTag> > vertices;
@@ -82,6 +82,10 @@ namespace wustl_mm {
 
 		template <class TVertexTag, class TEdgeTag> GraphVertexBase<TVertexTag> GraphBase<TVertexTag, TEdgeTag>::GetVertex(unsigned long long vertexIx) {
 			return vertices[vertexIx];
+		}
+
+		template <class TVertexTag, class TEdgeTag> unsigned long long GraphBase<TVertexTag, TEdgeTag>::GetVertexCount() {
+			return vertices.size();
 		}
 
 		template <class TVertexTag, class TEdgeTag> bool GraphBase<TVertexTag, TEdgeTag>::IsEdge(unsigned long long vertexIx1, unsigned long long vertexIx2) {
@@ -250,6 +254,63 @@ namespace wustl_mm {
 			}
 			return maximalCliques;
 
+		}
+
+		template <class TVertexTag, class TEdgeTag> vector< set<unsigned long long> > GraphBase<TVertexTag, TEdgeTag>::GetLargestMaximalCliques() {
+			vector< set<unsigned long long> > maximalCliques;
+			set< set<unsigned long long> > duplicateCheck;
+			set< set<unsigned long long> > duplicateQueueCheck;
+			vector< vector<unsigned long long> > queue;
+			set<unsigned long long> currSet, childSet;
+			
+			vector<unsigned long long> curr, child;
+
+			vector< set<unsigned long long> > connectedComponents = GetAllConnectedComponents();
+
+			for(unsigned long long i = 0; i < connectedComponents.size(); i++) {
+				queue.push_back(VertexSetToVector(connectedComponents[i]));
+				duplicateQueueCheck.insert(connectedComponents[i]);
+			}			
+
+			int maximalCliqueSize = 0;
+
+			while(queue.size() > 0) {
+				curr = queue[0];
+				queue.erase(queue.begin());
+				if(curr.size() < maximalCliqueSize) {
+					// disregard this node.
+				} else if(IsClique(curr)) {
+					currSet = VertexVectorToSet(curr);
+					if(curr.size() > maximalCliqueSize) {
+						maximalCliqueSize = curr.size();
+						maximalCliques.clear();
+						maximalCliques.push_back(currSet);
+						duplicateCheck.clear();
+						duplicateCheck.insert(currSet);
+					} else if(duplicateCheck.find(currSet) == duplicateCheck.end()) {						
+						bool notSubset = true;
+						for(unsigned int j = 0; notSubset && (j < maximalCliques.size()); j++) {
+							notSubset = notSubset && !IsSubset(maximalCliques[j], currSet);
+						}
+						if(notSubset) {
+							maximalCliques.push_back(currSet);
+							duplicateCheck.insert(currSet);
+						}
+					}
+				} else {
+					for(unsigned long long i = 0; i < curr.size(); i++) {
+						child = curr;
+						child.erase(child.begin() + i);
+						childSet = VertexVectorToSet(child);
+						if((child.size() >= maximalCliqueSize) && (duplicateQueueCheck.find(childSet) == duplicateQueueCheck.end())) {
+							queue.push_back(child);
+							duplicateQueueCheck.insert(childSet);
+						}
+					}
+				}
+			}
+			return maximalCliques;
+	
 		}
 
 		template <class TVertexTag, class TEdgeTag> vector< set<unsigned long long> > GraphBase<TVertexTag, TEdgeTag>::GetAllConnectedComponents() {

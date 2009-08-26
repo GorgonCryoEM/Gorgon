@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.14  2008/11/18 18:10:24  ssa1
+//   Changing the scaling functions when doing graph matching to find correspondences
+//
 //   Revision 1.13  2008/09/29 16:19:30  ssa1
 //   Adding in CVS meta information
 //
@@ -27,6 +30,7 @@
 #include <string>
 #include <MathTools/Vector3D.h>
 #include "PDBAtom.h"
+#include "PDBHelix.h"
 #include "StandardGraph.h"
 
 using namespace std;
@@ -41,6 +45,7 @@ namespace wustl_mm {
 		public:
 			static StandardGraph * ReadFile(char * fname);
 			static map<unsigned long long, PDBAtom> ReadAtomPositions(string fileName);
+			static vector<PDBHelix> ReadHelixPositions(string fileName);
 			static char * TrimString(char * string);
 			static int ToInt(char * string);
 		private:
@@ -272,10 +277,43 @@ namespace wustl_mm {
 					atomPositions[atom.GetHashKey()] = atom;
 				}
 			}
+			fclose(fin);
 
 			return atomPositions;
 		}
 
+		vector<PDBHelix> PDBReader::ReadHelixPositions(string fileName) {
+			map<unsigned long long, PDBAtom> atomPositions = ReadAtomPositions(fileName);
+			vector<PDBHelix> helices;
+
+			FILE* fin = fopen((char *)fileName.c_str(), "rt");
+			if (fin == NULL)
+			{
+				printf("Error reading input file %s.\n", fileName.c_str()) ;
+				exit(0) ;
+			}
+
+			char line[100];
+			string lineStr;
+			string token;
+			while(!feof(fin))
+			{
+				fgets(line, 100, fin);
+				lineStr = line;
+				token = lineStr.substr(0, 6);
+
+				if(token.compare("HELIX ") == 0) {
+					PDBHelix helix = PDBHelix(lineStr);
+					PDBAtom a1 = atomPositions[PDBAtom::ConstructHashKey("----", helix.GetInitialResidueChainId(), helix.GetInitialResidueSeqNo(), "CA")];
+					PDBAtom a2 = atomPositions[PDBAtom::ConstructHashKey("----", helix.GetEndResidueChainId(), helix.GetEndResidueSeqNo(), "CA")];
+					helix.SetEndPositions(a1.GetPosition(), a2.GetPosition());
+					helices.push_back(helix);
+				}
+			}
+			atomPositions.clear();
+			fclose(fin);
+			return helices;
+		}
 
 		char * PDBReader::TrimString(char * string) {
 			int startPos = 0;

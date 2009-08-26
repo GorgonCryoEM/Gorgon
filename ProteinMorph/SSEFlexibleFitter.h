@@ -11,8 +11,11 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.1  2009/03/17 20:00:17  ssa1
+//   Removing Sheets from fiting process
+//
 
-#include <SkeletonMaker/Volume.h>
+#include <SkeletonMaker/volume.h>
 #include <MathTools/Vector3D.h>
 #include <GraphMatch/GeometricShape.h>
 

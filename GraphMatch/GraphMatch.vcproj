@@ -478,6 +478,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\PDBHelix.h"
+				>
+			</File>
+			<File
 				RelativePath=".\PDBReader.h"
 				>
 			</File>

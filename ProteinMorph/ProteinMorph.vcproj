@@ -247,6 +247,22 @@
 				>
 			</File>
 			<File
+				RelativePath=".\SSECorrespondenceFeature.h"
+				>
+			</File>
+			<File
+				RelativePath=".\SSECorrespondenceFinder.h"
+				>
+			</File>
+			<File
+				RelativePath=".\SSECorrespondenceNode.h"
+				>
+			</File>
+			<File
+				RelativePath=".\SSECorrespondenceSearchNode.h"
+				>
+			</File>
+			<File
 				RelativePath=".\SSEFlexibleFitter.h"
 				>
 			</File>

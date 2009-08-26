@@ -1,5 +1,5 @@
 // Copyright (C) 2005-2008 Washington University in St Louis, Baylor College of Medicine.  All rights reserved
-// Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
+// Author:        Originally written in python by Matthew Baker (mlbaker@gmail.com).. Rewritten in C++ by Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 // Description:   C++ Implementation of SSEHunter
 
 // CVS Meta Information: 
@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.2  2009/08/10 20:03:40  ssa1
+//   SSEHunter interfaced into Gorgon
+//
 //   Revision 1.1  2009/08/10 13:54:38  ssa1
 //   Adding initial ssehunter program
 //
@@ -18,13 +21,15 @@
 #ifndef PROTEINMORPH_SSE_HUNTER_H
 #define PROTEINMORPH_SSE_HUNTER_H
 
-#include <SkeletonMaker/Volume.h>
+#include <SkeletonMaker/volume.h>
 #include "NonManifoldMesh.h"
 #include <vector>
 #include <map>
 #include <MathTools/Vector3D.h>
+#include <MathTools/MathLib.h>
 #include <GraphMatch/PDBAtom.h>
 #include <GraySkeletonCPP/VolumeSkeletonizer.h>
+#include <math.h>
 
 using namespace wustl_mm::GraphMatch;
 using namespace wustl_mm::MathTools;
@@ -47,17 +52,18 @@ namespace wustl_mm {
 			vector< vector<float> > GetAtomDistances(vector<PDBAtom> patoms);
 			vector< vector<Vector3DInt> > GetNeighborhoodVoxels(vector<PDBAtom> patoms, vector<Vector3DInt> atomVolumePositions, Volume * vol, float threshold);
 			vector<float> GetLocalDirectionalityScores(vector<PDBAtom> patoms, vector<Vector3DInt> atomVolumePositions, Volume * vol);
+			Volume * GetTemplateHelix(double length, float apix, float resolution, float mapSize);
+
 			
 		};
-		
 		
 		SSEHunter::SSEHunter() {
 		
 		}
-		
+
 		SSEHunter::~SSEHunter() {
-		}
-		
+		}		
+
 		map<unsigned long long, PDBAtom> SSEHunter::GetScoredAtoms(Volume * vol, NonManifoldMesh_Annotated * skeleton, float resolution, float threshold, float skeletonCoeff, float correlationCoeff, float geometryCoeff) {
 			vector<Vector3DInt>  atomVolumePositions;
 			vector<PDBAtom> patoms = GetPseudoAtoms(atomVolumePositions, vol, resolution, threshold);
@@ -71,8 +77,8 @@ namespace wustl_mm {
 			}
 			return atomMap;
 			
-		}
-		
+		}		
+
 		vector<PDBAtom> SSEHunter::GetPseudoAtoms(vector<Vector3DInt> & atomVolumePositions, Volume * vol, float resolution, float threshold) {
 			Volume * tempVol = new Volume(vol->getSizeX(), vol->getSizeY(), vol->getSizeZ(), 0, 0, 0, vol);
 			vector<PDBAtom> patoms;
@@ -106,8 +112,8 @@ namespace wustl_mm {
 				i++;
 			}
 			return patoms;		
-		}
-		
+		}		
+
 		void SSEHunter::UpdateMap(Volume * vol, Vector3DInt loc, float rangeminX, float rangeminY, float rangeminZ, float rangemaxX, float rangemaxY, float rangemaxZ) {
 			int rMinX = (int)Round(rangeminX/2.0);
 			int rMaxX = (int)(Round(rangemaxX/2.0) + 1);
@@ -134,8 +140,8 @@ namespace wustl_mm {
 					}
 				}
 			}
-		}
-	
+		}	
+
 		void SSEHunter::AddSkeletonWeights(vector<PDBAtom> & patoms, Volume * vol, NonManifoldMesh_Annotated * skeleton, float resolution, float influence) {
 			int vertexIx;
 			float distance, maxDistance = resolution;  // TODO: Max distance is hardcoded as 5 Angstroms
@@ -161,8 +167,7 @@ namespace wustl_mm {
 				patoms[i].SetTempFactor(patoms[i].GetTempFactor() + influence * typeCost * (1.0 - min(maxDistance, distance) / maxDistance));
 			}
 		}
-		
-		
+
 		vector< vector<float> > SSEHunter::GetAtomDistances(vector<PDBAtom> patoms) {
 			vector< vector<float> > distances;
 			vector<float> atomDistances;
@@ -174,8 +179,8 @@ namespace wustl_mm {
 				distances.push_back(atomDistances);
 			}
 			return distances;
-		}
-		
+		}	
+
 		vector< vector<Vector3DInt> > SSEHunter::GetNeighborhoodVoxels(vector<PDBAtom> patoms, vector<Vector3DInt> atomVolumePositions, Volume * vol, float threshold) {
 			int kernelWidthX = (int)round(5.0/vol->getSpacingX());
 			int kernelWidthY = (int)round(5.0/vol->getSpacingY());
@@ -201,8 +206,8 @@ namespace wustl_mm {
 				voxels.push_back(voxelCoords);
 			}
 			return voxels;		
-		}
-		
+		}		
+
 		vector<float> SSEHunter::GetLocalDirectionalityScores(vector<PDBAtom> patoms, vector<Vector3DInt> atomVolumePositions, Volume * vol) {
 			Volume * tempVol = new Volume(vol->getSizeX(), vol->getSizeY(), vol->getSizeZ(), 0, 0, 0, vol);
 			double minVal = tempVol->getMin();
@@ -257,8 +262,8 @@ namespace wustl_mm {
 			delete maskVol;			
 			delete tempVol;	
 			return aspectRatios;
-		}
-		
+		}	
+
 		void SSEHunter::AddGeometryWeights(vector<PDBAtom> & patoms, vector<Vector3DInt> atomVolumePositions, Volume * vol, float resolution, float threshold, float influence) {
 			vector< vector<float> > distances = GetAtomDistances(patoms);
 			//vector< vector<Vector3DInt> > neighbors = GetNeighborhoodVoxels(patoms, atomVolumePositions, vol, threshold);
@@ -274,6 +279,66 @@ namespace wustl_mm {
 				patoms[i].SetTempFactor(patoms[i].GetTempFactor() + influence * geometryScore[i]);
 			}			
 			
+		}
+
+		Volume * SSEHunter::GetTemplateHelix(double length, float apix, float resolution, float mapSize) {
+			vector<float> eValues;
+			vector<Vector3DFloat> positions;
+
+			double j=0;
+			Vector3DFloat nPos, caPos, cPos, oPos;
+
+			// Generating PDB Atoms
+			while (j <= round(length/1.54)) {
+				nPos =  Vector3DFloat(cos((100.0 * j * PI)/180.0)*1.6, sin((100.0 * j * PI)/180.0)*1.6, j * 1.52);
+				caPos = Vector3DFloat(cos(((28.0 + (100.0 * j)) * PI)/180.0) * 2.3, sin(((28.0 + (100.0 * j)) * PI)/180.0) * 2.3, (j * 1.54)+ 0.83);
+				cPos =  Vector3DFloat(cos(((61.0 + (100.0 * j)) * PI)/180.0) * 2.0, sin(((61.0 + (100.0 * j)) * PI)/180.0) * 2.0, (j * 1.54) + 1.7);
+				oPos =  Vector3DFloat(cos(((61.0 + (100.0 * j)) * PI)/180.0) * 2.0, sin(((61.0 + (100.0 * j)) * PI)/180.0) * 2.0, (j * 1.54) + 3.09);
+				j = j + 1.0;
+				positions.push_back(nPos);
+				eValues.push_back(7.0);
+				positions.push_back(caPos);
+				eValues.push_back(6.0);
+				positions.push_back(cPos);
+				eValues.push_back(6.0);
+				positions.push_back(oPos);
+				eValues.push_back(8.0);
+			}
+
+
+			//Generating volume
+			//mrcHelix=EMData()
+//#	mrcHelix=points.pdb2mrc_by_summation(box,apix,res)
+//#	mrcHelix.process_inplace("normalize.edgemean")
+//#	mrcHelix.process_inplace("xform.centerofmass")
+//#	aout=mrcHelix.copy()
+//#	aout.to_zero()
+//#	mrcHelix.process_inplace("filter.highpass.gauss",{"apix":apix,"cutoff_freq":100})
+//
+//#	for i in range(box):
+//#		r = Region(0,0,i,box,box,1)
+//#		slice1 = mrcHelix.get_clip(r)
+//#		thresh = slice1.process("threshold.binary", {"value":10})
+//#		neg = thresh.process("mask.addshells",{"nshells":2})
+//#		real_neg = neg-thresh
+//#		real_neg.mult(-10)
+//#		pos = neg.process("mask.addshells",{"nshells":1})
+//#		real_pos = pos-neg
+//#		real_pos.mult(10)
+//#		solution = slice1.copy()
+//#		solution.mult(thresh)
+//#		solution += real_neg
+//#		solution += real_pos
+//#		aout.insert_clip(solution,[0,0,i])
+//#	aout.write_image("helix.mrc")
+//#	return aout
+//#	mrcHelix.write_image("helix.mrc")
+
+
+
+
+
+			return new Volume(1,1,1);
 		}
 	}
 }
