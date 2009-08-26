@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.32.2.11  2009/08/25 21:43:55  schuhs
+//   Adding scaled missing helix penalty.
+//
 //   Revision 1.32.2.10  2009/08/20 21:37:22  schuhs
 //   Disabling sheets by default
 //
@@ -184,6 +187,7 @@ namespace wustl_mm {
 		int MISSING_HELIX_COUNT = -1;
 		int MISSING_SHEET_COUNT = -1;
 		bool PERFORMANCE_COMPARISON_MODE = false;
+		int SMIPAPER_MODE = 1;
 		int SOLUTION[MAX_NODES];
 		int D26[26][3] = {	
 			{-1,-1,-1}, {-1, -1, 0}, {-1, -1, 1},

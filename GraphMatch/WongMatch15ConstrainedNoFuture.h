@@ -15,6 +15,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.15.2.18  2009/08/21 21:22:33  schuhs
+//   Removing commented out code and unhelpful comments.
+//
 //   Revision 1.15.2.17  2009/08/21 19:58:46  schuhs
 //   Adding a new method to compute cost of skipping helices and sheets. Removing code that is old and commented out.
 //
@@ -247,9 +250,11 @@ namespace wustl_mm {
 
 			cout << "missing helix penalty is " << MISSING_HELIX_PENALTY << ", missing sheet penalty is " << MISSING_SHEET_PENALTY << endl;
 
-			//if(!PERFORMANCE_COMPARISON_MODE) {
-			//	NormalizeGraphs();
-			//}
+			if(!PERFORMANCE_COMPARISON_MODE) {
+				if (SMIPAPER_MODE == 1) {
+					NormalizeGraphs();
+				}
+			}
 			foundCount = 0;
 			longestMatch = 0;
 		#ifdef VERBOSE
@@ -541,7 +546,12 @@ namespace wustl_mm {
 					!( ((int)(patternGraph->adjacencyMatrix[d-1][d][0] + 0.01) == GRAPHEDGE_LOOP) && ((int)(baseGraph->adjacencyMatrix[qj-1][qp-1][0] +0.01) == GRAPHNODE_SHEET)) ) 	{ // not a loop-sheet match
 					return -1;
 				}		
-
+				if (SMIPAPER_MODE == 1) {
+					// TODO: Confirm that this code makes sense!
+					if((qj != -1) && (baseGraph->euclideanMatrix[qj-1][qp-1] > (patternGraph->adjacencyMatrix[d-1][d][1] * EUCLIDEAN_VOXEL_TO_PDB_RATIO ))){
+						return -1;
+					}
+				}
 			} else { // a skip edge
 				// not sure if these checks really help or if they just waste time
 				if( !(firstIsLoop && lastIsLoop) || // pattern graph edge doesn't start and end with loops OR 
@@ -898,9 +908,19 @@ namespace wustl_mm {
 			double ratio = 0;
 
 			for(int i = 0; i < (int)baseGraph->skeletonHelixes.size(); i++) {
-				ratio += (double)baseGraph->skeletonHelixes[i]->length  / (double)baseGraph->adjacencyMatrix[i*2][i*2+1][1];
+				if (SMIPAPER_MODE == 1) {
+					ratio += (double)baseGraph->skeletonHelixes[i]->length / HELIX_C_ALPHA_TO_ANGSTROMS / (double)baseGraph->adjacencyMatrix[i*2][i*2+1][1];
+					printf("\tRatio for helix %i of length %f is %f\n", i, (double)baseGraph->skeletonHelixes[i]->length / HELIX_C_ALPHA_TO_ANGSTROMS, (double)baseGraph->skeletonHelixes[i]->length / (double)baseGraph->adjacencyMatrix[i*2][i*2+1][1]);
+				} else {
+					ratio += (double)baseGraph->skeletonHelixes[i]->length / (double)baseGraph->adjacencyMatrix[i*2][i*2+1][1];
+				}
 			}
 			ratio = ratio / (double)baseGraph->skeletonHelixes.size();
+
+		#ifdef VERBOSE
+			printf("\tRatio is %f\n", ratio);
+		#endif
+
 
 			for(int i = 0; i < baseGraph->nodeCount; i++) {
 				for(int j = 0; j < baseGraph->nodeCount; j++) {

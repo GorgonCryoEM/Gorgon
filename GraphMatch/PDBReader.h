@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.14.2.3  2009/08/18 17:55:11  schuhs
+//   Adding ability to ignore strands when building the sequence graph
+//
 //   Revision 1.14.2.2  2009/07/03 16:31:43  schuhs
 //   Storing strand length as node cost
 //
@@ -241,15 +244,27 @@ namespace wustl_mm {
 
 					// An edge for the helix
 					graph->SetCost(node+1, node+2, structures[i]->GetLengthAngstroms()); 
+					if (SMIPAPER_MODE == 1) {
+						graph->SetCost(node+1, node+2, structures[i]->GetLengthResidues()); 
+					}
 					graph->SetType(node+1, node+2, structures[i]->secondaryStructureType); 
 					graph->SetCost(node+2, node+1, structures[i]->GetLengthAngstroms()); 
+					if (SMIPAPER_MODE == 1) {
+						graph->SetCost(node+2, node+1, structures[i]->GetLengthResidues()); 
+					}
 					graph->SetType(node+2, node+1, structures[i]->secondaryStructureType); 
 
 					if(i != 0) {
 						// An edge for the loop before the helix
 						graph->SetCost(node, node+1, (structures[i]->startPosition - structures[i-1]->endPosition) * LOOP_C_ALPHA_TO_ANGSTROMS);
+						if (SMIPAPER_MODE == 1) {
+							graph->SetCost(node, node+1, (structures[i]->startPosition - structures[i-1]->endPosition));
+						}
 						graph->SetType(node, node+1, GRAPHEDGE_LOOP);
 						graph->SetCost(node+1, node, (structures[i]->startPosition - structures[i-1]->endPosition) * LOOP_C_ALPHA_TO_ANGSTROMS);
+						if (SMIPAPER_MODE == 1) {
+							graph->SetCost(node+1, node, (structures[i]->startPosition - structures[i-1]->endPosition));
+						}
 						graph->SetType(node+1, node, GRAPHEDGE_LOOP);
 					}
 					node += 2;

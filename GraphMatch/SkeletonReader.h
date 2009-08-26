@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.19.2.17  2009/07/23 19:31:06  schuhs
+//   Removing empty sheets from adjacency matrix and other data structures. More changes may be necessary to finish the job.
+//
 //   Revision 1.19.2.16  2009/07/23 15:08:48  schuhs
 //   Allowing paths to pass through sheets
 //
@@ -452,6 +455,11 @@ namespace wustl_mm {
 
 					// length of this helix
 					float length = helixes[i]->length;
+					//float length = helixes[i]->internalCells.size(); //Old Method
+					if (SMIPAPER_MODE == 1) {
+						cout << "SMI mode: setting length to be the number of internal cells." << endl;
+						length = helixes[i]->internalCells.size(); //Old Method
+					}
 
 					// populate adjacency matrix
 					// no cost to go from a helix end back to itself
@@ -992,9 +1000,17 @@ namespace wustl_mm {
 									(Round(coloredVol->getDataAt(x, y, z)) - 1 != startHelix)) {
 									// add this point to newStack with distance = | cPt - nPt |
 									// the distance is the length of the vector from the cPt voxel to this neighbor nPt
-									newStack.push_back(new Point3Int(x, y, z, currentPoint->distance + (cPt - nPt).length()));
+									//newStack.push_back(new Point3Int(x, y, z, currentPoint->distance + (cPt - nPt).length()));
+									if (SMIPAPER_MODE == 1) {
+										// length is simply the number of voxels
+										newStack.push_back(new Point3Int(x, y, z, currentPoint->distance + 1));
+									} else {
+										// length is the actual distance traveled along the path
+										newStack.push_back(new Point3Int(x, y, z, currentPoint->distance + (cPt - nPt).length()));
+									}
 									// mark this point as visited
 									visited->setDataAt(x, y, z, 1.0);
+
 								}
 							}
 						}
@@ -1190,7 +1206,14 @@ namespace wustl_mm {
 									(Round(coloredVol->getDataAt(x, y, z)) - 1 != startHelix)) {
 									// add this point to newStack with distance = | cPt - nPt |
 									// the distance is the length of the vector from the cPt voxel to this neighbor nPt
-									newStack.push_back(new Point3Int(x, y, z, currentPoint->distance + (cPt - nPt).length()));
+									//newStack.push_back(new Point3Int(x, y, z, currentPoint->distance + (cPt - nPt).length()));
+									if (SMIPAPER_MODE == 1) {
+										// length is simply the number of voxels
+										newStack.push_back(new Point3Int(x, y, z, currentPoint->distance + 1));
+									} else {
+										// length is the actual distance traveled along the path
+										newStack.push_back(new Point3Int(x, y, z, currentPoint->distance + (cPt - nPt).length()));
+									}
 									// mark this point as visited
 									visited->setDataAt(x, y, z, 1.0);
 

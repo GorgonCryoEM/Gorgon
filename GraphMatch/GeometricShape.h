@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.15.2.6  2009/06/01 21:03:21  schuhs
+//   Removing method to calculate distance from a point to a triangle, and replacing with a method to calculate the minimum distance between a point and a set of points.
+//
 //   Revision 1.15.2.5  2009/06/01 20:27:34  schuhs
 //   Replacing 9999.0 with MAXDOUBLE constant
 //
@@ -219,6 +222,11 @@ namespace wustl_mm {
 
 		bool GeometricShape::IsInsideCylinder(Point3 point) {
 			point = objectToWorld * point;
+			if (SMIPAPER_MODE == 1) {
+				//cout << "SMI mode: inside cylinder query" << endl;
+				//return ((point[0]*point[0] + point[2]*point[2] <= 1) && (abs(point[1]) <= 0.5)); // the old code
+				return ((point[0]*point[0] + point[2]*point[2] <= .25) && (abs(point[1]) <= 0.5)); // 0.25 = 0.5^2, code below likely a bug?
+			}
 			return ((point[0]*point[0] + point[2]*point[2] <= 0.5) && (abs(point[1]) <= 0.5));
 		}
 
