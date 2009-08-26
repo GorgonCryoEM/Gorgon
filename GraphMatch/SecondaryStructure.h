@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.5  2008/11/18 18:10:24  ssa1
+//   Changing the scaling functions when doing graph matching to find correspondences
+//
 //   Revision 1.4  2008/09/29 16:19:30  ssa1
 //   Adding in CVS meta information
 //
@@ -19,6 +22,7 @@
 #define SECONDARYSTRUCTURE_H
 
 #include <string>
+#include "GlobalConstants.h"
 
 using namespace std;
 

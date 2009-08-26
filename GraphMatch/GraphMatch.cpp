@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.29  2008/09/29 16:22:17  ssa1
+//   Removing compiler warnings
+//
 //   Revision 1.28  2008/09/29 16:19:30  ssa1
 //   Adding in CVS meta information
 //
@@ -30,6 +33,7 @@
 #include "GlobalConstants.h"
 #include "GraphGenerator.h"
 #include "BackEndInterface.h"
+#include "PDBHelix.h"
 #include <ctime>
 
 #define DllExport   __declspec( dllexport )

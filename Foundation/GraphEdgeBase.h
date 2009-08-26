@@ -11,12 +11,9 @@
 //
 // History Log: 
 //   $Log$
-//   Revision 1.9  2008/10/28 18:46:52  ssa1
-//   Fixing octree neighbor search, and changing the structure tensor cost function
-//
-//   Revision 1.8  2008/09/29 15:42:54  ssa1
-//   Adding in CVS meta information
-//
+//   Revision 1.1  2009/08/18 19:55:06  ssa1
+//   Adding A base graph class for finding maximal cliques, and connected components
+
 
 #ifndef FOUNDATION_GRAPH_EDGE_BASE_H
 #define FOUNDATION_GRAPH_EDGE_BASE_H
