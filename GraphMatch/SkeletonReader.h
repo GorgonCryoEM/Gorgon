@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.19.2.18  2009/08/26 20:50:38  schuhs
+//   Add code to reproduce results from SMI paper when SMIPAPER_MODE flag is set.
+//
 //   Revision 1.19.2.17  2009/07/23 19:31:06  schuhs
 //   Removing empty sheets from adjacency matrix and other data structures. More changes may be necessary to finish the job.
 //
@@ -1055,34 +1058,39 @@ namespace wustl_mm {
 			Point3 cPt, nPt;
 			int x, y, z, xx, yy, zz;
 
-			// helper array for finding one of 26 neighbors of a voxel
+			// helper array for finding one of 26 neighbors of a voxel.
+			// number on right is index in d that moves in the opposite direction. stored as back[] below and used for retracing paths.
 			int d[26][3];
-			d[0][0] = 0;		d[0][1] = 0;		d[0][2] = -1;
-			d[1][0] = 0;		d[1][1] = 0;		d[1][2] = 1;
-			d[2][0] = 0;		d[2][1] = -1;		d[2][2] = 0;
-			d[3][0] = 0;		d[3][1] = -1;		d[3][2] = -1;
-			d[4][0] = 0;		d[4][1] = -1;		d[4][2] = 1;
-			d[5][0] = 0;		d[5][1] = 1;		d[5][2] = 0;
-			d[6][0] = 0;		d[6][1] = 1;		d[6][2] = -1;
-			d[7][0] = 0;		d[7][1] = 1;		d[7][2] = 1;
-			d[8][0] = -1;		d[8][1] = 0;		d[8][2] = 0;
-			d[9][0] = -1;		d[9][1] = 0;		d[9][2] = -1;
-			d[10][0] = -1;		d[10][1] = 0;		d[10][2] = 1;
-			d[11][0] = -1;		d[11][1] = -1;		d[11][2] = 0;
-			d[12][0] = -1;		d[12][1] = -1;		d[12][2] = -1;
-			d[13][0] = -1;		d[13][1] = -1;		d[13][2] = 1;
-			d[14][0] = -1;		d[14][1] = 1;		d[14][2] = 0;
-			d[15][0] = -1;		d[15][1] = 1;		d[15][2] = -1;
-			d[16][0] = -1;		d[16][1] = 1;		d[16][2] = 1;
-			d[17][0] = 1;		d[17][1] = 0;		d[17][2] = 0;
-			d[18][0] = 1;		d[18][1] = 0;		d[18][2] = -1;
-			d[19][0] = 1;		d[19][1] = 0;		d[19][2] = 1;
-			d[20][0] = 1;		d[20][1] = -1;		d[20][2] = 0;
-			d[21][0] = 1;		d[21][1] = -1;		d[21][2] = -1;
-			d[22][0] = 1;		d[22][1] = -1;		d[22][2] = 1;
-			d[23][0] = 1;		d[23][1] = 1;		d[23][2] = 0;
-			d[24][0] = 1;		d[24][1] = 1;		d[24][2] = -1;
-			d[25][0] = 1;		d[25][1] = 1;		d[25][2] = 1;
+			d[0][0] = 0;		d[0][1] = 0;		d[0][2] = -1; // 1
+			d[1][0] = 0;		d[1][1] = 0;		d[1][2] = 1;  // 0
+			d[2][0] = 0;		d[2][1] = -1;		d[2][2] = 0;  // 5
+			d[3][0] = 0;		d[3][1] = -1;		d[3][2] = -1; // 7
+			d[4][0] = 0;		d[4][1] = -1;		d[4][2] = 1;  // 6
+			d[5][0] = 0;		d[5][1] = 1;		d[5][2] = 0;  // 2
+			d[6][0] = 0;		d[6][1] = 1;		d[6][2] = -1; // 4
+			d[7][0] = 0;		d[7][1] = 1;		d[7][2] = 1;  // 3
+			d[8][0] = -1;		d[8][1] = 0;		d[8][2] = 0;  // 17
+			d[9][0] = -1;		d[9][1] = 0;		d[9][2] = -1; // 19
+			d[10][0] = -1;		d[10][1] = 0;		d[10][2] = 1; // 18
+			d[11][0] = -1;		d[11][1] = -1;		d[11][2] = 0; // 23
+			d[12][0] = -1;		d[12][1] = -1;		d[12][2] = -1;// 25
+			d[13][0] = -1;		d[13][1] = -1;		d[13][2] = 1; // 24
+			d[14][0] = -1;		d[14][1] = 1;		d[14][2] = 0; // 20
+			d[15][0] = -1;		d[15][1] = 1;		d[15][2] = -1;// 22
+			d[16][0] = -1;		d[16][1] = 1;		d[16][2] = 1; // 21
+			d[17][0] = 1;		d[17][1] = 0;		d[17][2] = 0; // 8
+			d[18][0] = 1;		d[18][1] = 0;		d[18][2] = -1;// 10
+			d[19][0] = 1;		d[19][1] = 0;		d[19][2] = 1; // 9
+			d[20][0] = 1;		d[20][1] = -1;		d[20][2] = 0; // 14
+			d[21][0] = 1;		d[21][1] = -1;		d[21][2] = -1;// 16
+			d[22][0] = 1;		d[22][1] = -1;		d[22][2] = 1; // 15
+			d[23][0] = 1;		d[23][1] = 1;		d[23][2] = 0; // 11
+			d[24][0] = 1;		d[24][1] = 1;		d[24][2] = -1;// 13
+			d[25][0] = 1;		d[25][1] = 1;		d[25][2] = 1; // 12
+
+			int back[26] = {1, 0, 5, 7, 6, 2, 4, 3, 17, 19, 18, 23, 25, 24, 20, 22, 21, 8, 10, 9, 14, 16, 15, 11, 13, 12};    
+
+
 
 			// mark all voxels as unvisited
 			Volume * visited = new Volume(vol->getSizeX(), vol->getSizeY(), vol->getSizeZ());
@@ -1120,17 +1128,28 @@ namespace wustl_mm {
 						n2 = GetGraphIndex(helixList, currentHelix, currentPoint);
 						bool found = false;
 						//cout << "found edge of length " << currentPoint->distance << " between nodes " << n1 << " and " << n2 << endl;
-						if( (n1 >= 0) && (n2 >= 0) && (currentPoint->distance < graph->GetCost(n1, n2)) ) {
-							// store the distance to the currentPoint as the cost of going from the start helix/sheet to the currentPoint helix/sheet
-							//cout << "cost from " << n1 << "(sse" << startHelix << "cnr" << startCell <<") to " << n2 << "(sse" << currentHelix << ") = " << graph->GetCost(n1, n2) << ". changing to " << currentPoint->distance << endl;
-							//cout << " adding edge of length " << currentPoint->distance << " between nodes " << n1 << " and " << n2 << endl;
-							graph->SetCost(n1, n2, currentPoint->distance);
-							// this is a loop type
-							graph->SetType(n1, n2, GRAPHEDGE_LOOP);
-							// save the same info for the reverse direction
-							graph->SetCost(n2, n1, currentPoint->distance);
-							graph->SetType(n2, n1, GRAPHEDGE_LOOP);
-							found = true;
+						if (SMIPAPER_MODE == 1) {
+							if( (n1 >= 0) && (n2 >= 0) ) { 
+								// store the distance to the currentPoint as the cost of going from the start helix/sheet to the currentPoint helix/sheet
+								graph->SetCost(n1, n2, currentPoint->distance);
+								// this is a loop type
+								graph->SetType(n1, n2, GRAPHEDGE_LOOP);
+								// save the same info for the reverse direction
+								graph->SetCost(n2, n1, currentPoint->distance);
+								graph->SetType(n2, n1, GRAPHEDGE_LOOP);
+								found = true;
+							}
+						} else {
+							if( (n1 >= 0) && (n2 >= 0) && (currentPoint->distance < graph->GetCost(n1, n2)) ) { // includes check for previously found shorter path
+								// store the distance to the currentPoint as the cost of going from the start helix/sheet to the currentPoint helix/sheet
+								graph->SetCost(n1, n2, currentPoint->distance);
+								// this is a loop type
+								graph->SetType(n1, n2, GRAPHEDGE_LOOP);
+								// save the same info for the reverse direction
+								graph->SetCost(n2, n1, currentPoint->distance);
+								graph->SetType(n2, n1, GRAPHEDGE_LOOP);
+								found = true;
+							}
 						}
 
 						// stop expanding, since some other helix/sheet has been found
@@ -1169,7 +1188,8 @@ namespace wustl_mm {
 								if(!backFound) {
 									// move in the direction indicated by backVol for this point, to retrace path found above
 									//cout << "origin not found yet. moving by " << D26[backVol[newIx]][0] << "," << D26[backVol[newIx]][1] << "," << D26[backVol[newIx]][2] << endl;
-									currentPos = currentPos + Vector3DInt(D26[backVol[newIx]][0], D26[backVol[newIx]][1], D26[backVol[newIx]][2]);
+									//currentPos = currentPos + Vector3DInt(D26[backVol[newIx]][0], D26[backVol[newIx]][1], D26[backVol[newIx]][2]); // worked
+									currentPos = currentPos + Vector3DInt(d[backVol[newIx]][0], d[backVol[newIx]][1], d[backVol[newIx]][2]);
 									//currentPos = currentPos - Vector3DInt(D26[backVol[newIx]][0], D26[backVol[newIx]][1], D26[backVol[newIx]][2]);
 									// add the next point to the path
 									graph->paths[n1-1][n2-1].push_back(currentPos);
@@ -1186,9 +1206,12 @@ namespace wustl_mm {
 						for(int j = 0; j < 26; j++) {
 							// get coords of this neighbor point
 							
-							x = currentPoint->x+D26[j][0];	
-							y = currentPoint->y+D26[j][1];	
-							z = currentPoint->z+D26[j][2];
+							//x = currentPoint->x+D26[j][0]; // worked
+							//y = currentPoint->y+D26[j][1]; // worked
+							//z = currentPoint->z+D26[j][2]; // worked
+							x = currentPoint->x+d[j][0];	
+							y = currentPoint->y+d[j][1];	
+							z = currentPoint->z+d[j][2];
 							//x = currentPoint->x+d[j][0];	
 							//y = currentPoint->y+d[j][1];	
 							//z = currentPoint->z+d[j][2];
@@ -1219,7 +1242,8 @@ namespace wustl_mm {
 
 									// Look up array index in backVol
 									newIx = coloredVol->getIndex(x,y,z);
-									backVol[newIx] = BACK26[j];
+									//backVol[newIx] = BACK26[j];
+									backVol[newIx] = back[j];
 									//cout << "coloredVol size: " << coloredVol->getSizeX() << "x" << coloredVol->getSizeY() << "x" << coloredVol->getSizeZ() << endl;
 									//cout << "coords are " << x << "," << y << "," << z << ". setting backVol[" << newIx << "] to " << BACK26[j] << endl;
 
