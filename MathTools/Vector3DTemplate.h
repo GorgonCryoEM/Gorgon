@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.7  2009/08/26 14:58:55  ssa1
+//   Adding in Flexible fitting clique search
+//
 //   Revision 1.6  2008/10/08 16:43:19  ssa1
 //   Interactive skeletonization changes
 //
@@ -111,11 +114,11 @@ namespace wustl_mm {
 		}
 
 		template <class T> bool Vector3DTemplate<T>::operator>=(Vector3DTemplate<T> &d) {
-			return (*this > d) || (*this == d)
+			return (*this > d) || (*this == d);
 		}
 
 		template <class T> bool Vector3DTemplate<T>::operator<=(Vector3DTemplate<T> &d) {
-			return (*this < d) || (*this == d)
+			return (*this < d) || (*this == d);
 		}
 
 		template <class T> T Vector3DTemplate<T>::X() const {
@@ -267,3 +270,4 @@ namespace wustl_mm {
 }
 
 #endif
+
