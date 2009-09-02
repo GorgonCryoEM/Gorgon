@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.27  2009/06/24 21:33:48  ssa1
+#   SSE Builder Functionality: Sheet building and better camera functionality when loading new data.
+#
 #   Revision 1.26  2009/06/24 13:06:51  ssa1
 #   Fixing compilation issues on MacOS
 #
@@ -68,6 +71,7 @@ from sse_sequence_predictor_form import SSESequencePredictorForm
 from sse_helix_correspondence_finder_form import SSEHelixCorrespondenceFinderForm
 from model_visualization_form import ModelVisualizationForm
 from libpyGORGON import SSECorrespondenceEngine, SSECorrespondenceResult
+from volume_sse_builder_form import VolumeSSEBuilderForm
 
 from OpenGL.GL import *
 from OpenGL.GLU import *
@@ -115,8 +119,10 @@ class SSEViewer(BaseViewer):
         self.updateActionsAndMenus()
                   
     def createChildWindows(self):
+        self.sseBuilder = VolumeSSEBuilderForm(self.app, self)
         self.sequencePredictor = SSESequencePredictorForm(self.app, self)
         self.helixCorrespondanceFinder = SSEHelixCorrespondenceFinderForm(self.app, self)
+        
     
     def loadHelixData(self):
         self.helixFileName = QtGui.QFileDialog.getOpenFileName(self, self.tr("Open Helix Annotations"), "", self.tr(self.renderer.getSupportedHelixLoadFileFormats()))

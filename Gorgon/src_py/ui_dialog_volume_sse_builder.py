@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_dialog_volume_sse_builder.ui'
 #
-# Created: Mon Aug 10 14:40:35 2009
+# Created: Wed Sep 02 12:45:47 2009
 #      by: PyQt4 UI code generator 4.3.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,7 +12,7 @@ from PyQt4 import QtCore, QtGui
 class Ui_DialogVolumeSSEBuilder(object):
     def setupUi(self, DialogVolumeSSEBuilder):
         DialogVolumeSSEBuilder.setObjectName("DialogVolumeSSEBuilder")
-        DialogVolumeSSEBuilder.resize(QtCore.QSize(QtCore.QRect(0,0,265,506).size()).expandedTo(DialogVolumeSSEBuilder.minimumSizeHint()))
+        DialogVolumeSSEBuilder.resize(QtCore.QSize(QtCore.QRect(0,0,242,564).size()).expandedTo(DialogVolumeSSEBuilder.minimumSizeHint()))
 
         self.gridlayout = QtGui.QGridLayout(DialogVolumeSSEBuilder)
         self.gridlayout.setObjectName("gridlayout")
@@ -36,60 +36,83 @@ class Ui_DialogVolumeSSEBuilder(object):
         self.gridlayout1 = QtGui.QGridLayout(self.tab)
         self.gridlayout1.setObjectName("gridlayout1")
 
+        self.hboxlayout = QtGui.QHBoxLayout()
+        self.hboxlayout.setObjectName("hboxlayout")
+
+        self.pushButtonLoadVolume = QtGui.QPushButton(self.tab)
+        self.pushButtonLoadVolume.setObjectName("pushButtonLoadVolume")
+        self.hboxlayout.addWidget(self.pushButtonLoadVolume)
+
+        self.pushButtonLoadSkeleton = QtGui.QPushButton(self.tab)
+        self.pushButtonLoadSkeleton.setObjectName("pushButtonLoadSkeleton")
+        self.hboxlayout.addWidget(self.pushButtonLoadSkeleton)
+        self.gridlayout1.addLayout(self.hboxlayout,0,0,1,2)
+
         self.labelThreshold = QtGui.QLabel(self.tab)
+        self.labelThreshold.setEnabled(False)
         self.labelThreshold.setObjectName("labelThreshold")
-        self.gridlayout1.addWidget(self.labelThreshold,0,0,1,1)
+        self.gridlayout1.addWidget(self.labelThreshold,1,0,1,1)
 
         self.doubleSpinBoxThreshold = QtGui.QDoubleSpinBox(self.tab)
+        self.doubleSpinBoxThreshold.setEnabled(False)
         self.doubleSpinBoxThreshold.setMinimum(-100.0)
         self.doubleSpinBoxThreshold.setMaximum(100.0)
         self.doubleSpinBoxThreshold.setProperty("value",QtCore.QVariant(0.38))
         self.doubleSpinBoxThreshold.setObjectName("doubleSpinBoxThreshold")
-        self.gridlayout1.addWidget(self.doubleSpinBoxThreshold,0,1,1,1)
+        self.gridlayout1.addWidget(self.doubleSpinBoxThreshold,1,1,1,1)
 
-        self.labelSkeletonScore_3 = QtGui.QLabel(self.tab)
-        self.labelSkeletonScore_3.setObjectName("labelSkeletonScore_3")
-        self.gridlayout1.addWidget(self.labelSkeletonScore_3,1,0,1,1)
+        self.labelVolumeResolution = QtGui.QLabel(self.tab)
+        self.labelVolumeResolution.setEnabled(False)
+        self.labelVolumeResolution.setObjectName("labelVolumeResolution")
+        self.gridlayout1.addWidget(self.labelVolumeResolution,2,0,1,1)
 
         self.doubleSpinBoxResolution = QtGui.QDoubleSpinBox(self.tab)
+        self.doubleSpinBoxResolution.setEnabled(False)
         self.doubleSpinBoxResolution.setMaximum(1000.0)
         self.doubleSpinBoxResolution.setProperty("value",QtCore.QVariant(8.0))
         self.doubleSpinBoxResolution.setObjectName("doubleSpinBoxResolution")
-        self.gridlayout1.addWidget(self.doubleSpinBoxResolution,1,1,1,1)
+        self.gridlayout1.addWidget(self.doubleSpinBoxResolution,2,1,1,1)
 
         self.labelSkeletonScore = QtGui.QLabel(self.tab)
+        self.labelSkeletonScore.setEnabled(False)
         self.labelSkeletonScore.setObjectName("labelSkeletonScore")
-        self.gridlayout1.addWidget(self.labelSkeletonScore,2,0,1,1)
+        self.gridlayout1.addWidget(self.labelSkeletonScore,3,0,1,1)
 
         self.doubleSpinBoxSkeleton = QtGui.QDoubleSpinBox(self.tab)
+        self.doubleSpinBoxSkeleton.setEnabled(False)
         self.doubleSpinBoxSkeleton.setMaximum(1.0)
         self.doubleSpinBoxSkeleton.setProperty("value",QtCore.QVariant(1.0))
         self.doubleSpinBoxSkeleton.setObjectName("doubleSpinBoxSkeleton")
-        self.gridlayout1.addWidget(self.doubleSpinBoxSkeleton,2,1,1,1)
+        self.gridlayout1.addWidget(self.doubleSpinBoxSkeleton,3,1,1,1)
 
         self.labelCrossCorrelationScore = QtGui.QLabel(self.tab)
+        self.labelCrossCorrelationScore.setEnabled(False)
         self.labelCrossCorrelationScore.setObjectName("labelCrossCorrelationScore")
-        self.gridlayout1.addWidget(self.labelCrossCorrelationScore,3,0,1,1)
+        self.gridlayout1.addWidget(self.labelCrossCorrelationScore,4,0,1,1)
 
         self.doubleSpinBoxCorrelation = QtGui.QDoubleSpinBox(self.tab)
+        self.doubleSpinBoxCorrelation.setEnabled(False)
         self.doubleSpinBoxCorrelation.setMaximum(1.0)
         self.doubleSpinBoxCorrelation.setProperty("value",QtCore.QVariant(1.0))
         self.doubleSpinBoxCorrelation.setObjectName("doubleSpinBoxCorrelation")
-        self.gridlayout1.addWidget(self.doubleSpinBoxCorrelation,3,1,1,1)
+        self.gridlayout1.addWidget(self.doubleSpinBoxCorrelation,4,1,1,1)
 
         self.labelGeometricScore = QtGui.QLabel(self.tab)
+        self.labelGeometricScore.setEnabled(False)
         self.labelGeometricScore.setObjectName("labelGeometricScore")
-        self.gridlayout1.addWidget(self.labelGeometricScore,4,0,1,1)
+        self.gridlayout1.addWidget(self.labelGeometricScore,5,0,1,1)
 
         self.doubleSpinBoxGeometry = QtGui.QDoubleSpinBox(self.tab)
+        self.doubleSpinBoxGeometry.setEnabled(False)
         self.doubleSpinBoxGeometry.setMaximum(1.0)
         self.doubleSpinBoxGeometry.setProperty("value",QtCore.QVariant(1.0))
         self.doubleSpinBoxGeometry.setObjectName("doubleSpinBoxGeometry")
-        self.gridlayout1.addWidget(self.doubleSpinBoxGeometry,4,1,1,1)
+        self.gridlayout1.addWidget(self.doubleSpinBoxGeometry,5,1,1,1)
 
         self.pushButtonSSEHunter = QtGui.QPushButton(self.tab)
+        self.pushButtonSSEHunter.setEnabled(False)
         self.pushButtonSSEHunter.setObjectName("pushButtonSSEHunter")
-        self.gridlayout1.addWidget(self.pushButtonSSEHunter,5,0,1,2)
+        self.gridlayout1.addWidget(self.pushButtonSSEHunter,6,0,1,2)
         self.tabWidgetScoredAtoms.addTab(self.tab,"")
 
         self.tab_2 = QtGui.QWidget()
@@ -153,7 +176,9 @@ class Ui_DialogVolumeSSEBuilder(object):
         self.retranslateUi(DialogVolumeSSEBuilder)
         self.tabWidgetScoredAtoms.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(DialogVolumeSSEBuilder)
-        DialogVolumeSSEBuilder.setTabOrder(self.tabWidgetScoredAtoms,self.doubleSpinBoxThreshold)
+        DialogVolumeSSEBuilder.setTabOrder(self.tabWidgetScoredAtoms,self.pushButtonLoadVolume)
+        DialogVolumeSSEBuilder.setTabOrder(self.pushButtonLoadVolume,self.pushButtonLoadSkeleton)
+        DialogVolumeSSEBuilder.setTabOrder(self.pushButtonLoadSkeleton,self.doubleSpinBoxThreshold)
         DialogVolumeSSEBuilder.setTabOrder(self.doubleSpinBoxThreshold,self.doubleSpinBoxResolution)
         DialogVolumeSSEBuilder.setTabOrder(self.doubleSpinBoxResolution,self.doubleSpinBoxSkeleton)
         DialogVolumeSSEBuilder.setTabOrder(self.doubleSpinBoxSkeleton,self.doubleSpinBoxCorrelation)
@@ -168,8 +193,10 @@ class Ui_DialogVolumeSSEBuilder(object):
     def retranslateUi(self, DialogVolumeSSEBuilder):
         DialogVolumeSSEBuilder.setWindowTitle(QtGui.QApplication.translate("DialogVolumeSSEBuilder", "SSE Builder", None, QtGui.QApplication.UnicodeUTF8))
         self.labelAtomScore.setText(QtGui.QApplication.translate("DialogVolumeSSEBuilder", "Scored Pseudoatoms:", None, QtGui.QApplication.UnicodeUTF8))
+        self.pushButtonLoadVolume.setText(QtGui.QApplication.translate("DialogVolumeSSEBuilder", "Load Volume", None, QtGui.QApplication.UnicodeUTF8))
+        self.pushButtonLoadSkeleton.setText(QtGui.QApplication.translate("DialogVolumeSSEBuilder", "Load Skeleton", None, QtGui.QApplication.UnicodeUTF8))
         self.labelThreshold.setText(QtGui.QApplication.translate("DialogVolumeSSEBuilder", "Threshold:", None, QtGui.QApplication.UnicodeUTF8))
-        self.labelSkeletonScore_3.setText(QtGui.QApplication.translate("DialogVolumeSSEBuilder", "Volume Resolution (A):", None, QtGui.QApplication.UnicodeUTF8))
+        self.labelVolumeResolution.setText(QtGui.QApplication.translate("DialogVolumeSSEBuilder", "Volume Resolution (A):", None, QtGui.QApplication.UnicodeUTF8))
         self.labelSkeletonScore.setText(QtGui.QApplication.translate("DialogVolumeSSEBuilder", "Skeleton Influence:", None, QtGui.QApplication.UnicodeUTF8))
         self.labelCrossCorrelationScore.setText(QtGui.QApplication.translate("DialogVolumeSSEBuilder", "Helix Correlation Influence:", None, QtGui.QApplication.UnicodeUTF8))
         self.labelGeometricScore.setText(QtGui.QApplication.translate("DialogVolumeSSEBuilder", "Geometric Influence:", None, QtGui.QApplication.UnicodeUTF8))

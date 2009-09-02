@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.5  2009/09/02 17:38:44  ssa1
+#   BugFix: Exception when clicking add helix / add sheet
+#
 #   Revision 1.4  2009/08/10 20:03:40  ssa1
 #   SSEHunter interfaced into Gorgon
 #
@@ -51,6 +54,12 @@ class VolumeSSEBuilderForm(QtGui.QWidget, Ui_DialogVolumeSSEBuilder):
         self.connect(self.pushButtonSelectionToHelix, QtCore.SIGNAL("clicked (bool)"), self.selectionToHelix)
         self.connect(self.pushButtonSelectionToSheet, QtCore.SIGNAL("clicked (bool)"), self.selectionToSheet)
         self.connect(self.pushButtonSSEHunter, QtCore.SIGNAL("clicked (bool)"), self.runSSEHunter)
+        self.connect(self.pushButtonLoadVolume, QtCore.SIGNAL("clicked (bool)"), self.app.actions.getAction("load_Volume").trigger)
+        self.connect(self.pushButtonLoadSkeleton, QtCore.SIGNAL("clicked (bool)"), self.app.actions.getAction("load_Skeleton").trigger)
+        self.connect(self.app.viewers["volume"], QtCore.SIGNAL("modelLoaded()"), self.enableDisableSSEHunter)
+        self.connect(self.app.viewers["skeleton"], QtCore.SIGNAL("modelLoaded()"), self.enableDisableSSEHunter)
+        self.connect(self.app.viewers["volume"], QtCore.SIGNAL("modelUnloaded()"), self.enableDisableSSEHunter)
+        self.connect(self.app.viewers["skeleton"], QtCore.SIGNAL("modelUnloaded()"), self.enableDisableSSEHunter)
                                                                 
                                     
     def createActions(self):    
@@ -62,7 +71,7 @@ class VolumeSSEBuilderForm(QtGui.QWidget, Ui_DialogVolumeSSEBuilder):
         self.app.actions.addAction("detectSSE_Volume", self.detectSSEAct)    
          
     def createMenus(self):
-        self.app.menus.addAction("actions-volume-detectSSE", self.detectSSEAct, "actions-volume");
+        self.app.menus.addAction("actions-sse-detectSSE", self.detectSSEAct, "actions-sse");
                 
     def loadWidget(self):
         if(self.detectSSEAct.isChecked()) :
@@ -108,7 +117,7 @@ class VolumeSSEBuilderForm(QtGui.QWidget, Ui_DialogVolumeSSEBuilder):
             
     def atomSelectionChanged(self, selection):
         self.tableWidgetSelection.clearContents()
-        
+        self.calphaViewer = self.app.viewers["calpha"]
         atomCnt = self.calphaViewer.renderer.selectionAtomCount()
         self.tableWidgetSelection.setRowCount(atomCnt)
         
@@ -177,6 +186,25 @@ class VolumeSSEBuilderForm(QtGui.QWidget, Ui_DialogVolumeSSEBuilder):
             self.sseViewer.emitModelLoadedPreDraw()
             self.sseViewer.emitModelLoaded()                
         
+    def enableDisableSSEHunter(self):
+        volumeViewer =  self.app.viewers["volume"]
+        skeletonViewer = self.app.viewers["skeleton"]
+        enabled = (volumeViewer.loaded and skeletonViewer.loaded)
+        self.labelThreshold.setEnabled(enabled)
+        self.labelVolumeResolution.setEnabled(enabled)
+        self.labelSkeletonScore.setEnabled(enabled)
+        self.labelCrossCorrelationScore.setEnabled(enabled)
+        self.labelGeometricScore.setEnabled(enabled)
+        self.doubleSpinBoxThreshold.setEnabled(enabled)
+        self.doubleSpinBoxResolution.setEnabled(enabled)
+        self.doubleSpinBoxSkeleton.setEnabled(enabled)
+        self.doubleSpinBoxCorrelation.setEnabled(enabled)
+        self.doubleSpinBoxGeometry.setEnabled(enabled)
+        self.pushButtonSSEHunter.setEnabled(enabled)
+        self.pushButtonLoadVolume.setVisible(not volumeViewer.loaded)
+        self.pushButtonLoadSkeleton.setVisible(not skeletonViewer.loaded)
+        
+            
         
             
                                  
