@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.4  2009/08/10 20:03:40  ssa1
+#   SSEHunter interfaced into Gorgon
+#
 #   Revision 1.3  2009/06/24 21:33:48  ssa1
 #   SSE Builder Functionality: Sheet building and better camera functionality when loading new data.
 #
@@ -95,10 +98,12 @@ class VolumeSSEBuilderForm(QtGui.QWidget, Ui_DialogVolumeSSEBuilder):
         if not pdbFile.isEmpty():
             self.calphaViewer = self.app.viewers["calpha"]
             self.calphaViewer.loadSSEHunterData(pdbFile)
+            self.sseViewer = self.app.viewers["sse"]
             self.lineEditAtomScore.setText(pdbFile)
             
     def runSSEHunter(self, result):
             self.calphaViewer = self.app.viewers["calpha"]
+            self.sseViewer = self.app.viewers["sse"]
             self.calphaViewer.runSSEHunter(self.doubleSpinBoxThreshold.value(), self.doubleSpinBoxResolution.value(), self.doubleSpinBoxSkeleton.value(), self.doubleSpinBoxCorrelation.value(), self.doubleSpinBoxGeometry.value())
             
     def atomSelectionChanged(self, selection):
