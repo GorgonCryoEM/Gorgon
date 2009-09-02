@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.3  2008/06/18 18:15:41  ssa1
+#   Adding in CVS meta data
+#
 
 from PyQt4 import QtCore, QtGui
 from ui_dialog_volume_binary_skeletonization import Ui_DialogVolumeBinarySkeletonization
@@ -37,7 +40,7 @@ class VolumeBinarySkeletonizationForm(QtGui.QDialog):
     def createActions(self):               
         binarySkeletonizeAct = QtGui.QAction(self.tr("&Binary Skeletonization"), self)
         binarySkeletonizeAct.setStatusTip(self.tr("Apply binary skeletonization on the volume"))
-        self.connect(binarySkeletonizeAct, QtCore.SIGNAL("triggered()"), self.show)
+        self.connect(binarySkeletonizeAct, QtCore.SIGNAL("triggered()"), self.loadSelf)
         self.app.actions.addAction("perform_VolumeBinarySkeletonization", binarySkeletonizeAct)
   
     def createMenus(self):
@@ -81,7 +84,10 @@ class VolumeBinarySkeletonizationForm(QtGui.QDialog):
         else:
             QtGui.QMessageBox.critical(None, "Source volume unloaded", "A volume must be loaded to perform skeletonization", QtGui.QMessageBox.Ok, QtGui.QMessageBox.NoButton)
 
-    
+    def loadSelf(self):
+        self.ui.horizontalSliderIsoLevel.setValue(int(self.viewer.getIsoValue()*100))
+        self.show()
+        
     def getCitationHtml(self, title, author, journal):
         return "<b>" + title + "</b><br>" + author + "<br><i>" + journal + "</i>"
                   
