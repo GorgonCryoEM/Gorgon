@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.23  2009/07/01 22:00:27  ssa1
+#   Centering the volume cropped using a radius around the point selected by the atom selection tool.
+#
 #   Revision 1.22  2009/06/22 20:17:27  ssa1
 #   Adding in SSEBuilder Functionality: Selection to Helix functionality
 #
@@ -55,7 +58,6 @@ from volume_manual_skeletonization_form import VolumeManualSkeletonizationForm
 from model_visualization_form import ModelVisualizationForm
 from volume_crop_form import VolumeCropForm
 from volume_raw_loader_form import VolumeRawLoaderForm
-from volume_sse_builder_form import VolumeSSEBuilderForm
 from string import split, upper
 
 from OpenGL.GL import *
@@ -126,7 +128,6 @@ class VolumeViewer(BaseViewer):
         self.manualSkeletonizer = VolumeManualSkeletonizationForm(self.app, self)
         self.binarySkeletonizer = VolumeBinarySkeletonizationForm(self.app, self)
         self.grayscaleSkeletonizer = VolumeGrayscaleSkeletonizationForm(self.app, self)
-        self.sseBuilder = VolumeSSEBuilderForm(self.app, self)
         self.cropper = VolumeCropForm(self.app, self)
         self.rawLoader = VolumeRawLoaderForm(self.app, self)
     
