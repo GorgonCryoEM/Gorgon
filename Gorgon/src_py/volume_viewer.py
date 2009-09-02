@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.24  2009/09/02 18:02:39  ssa1
+#   Moving SSEHunter to the SSEViewer menu, and adding checks for loading up volumes and skeletons
+#
 #   Revision 1.23  2009/07/01 22:00:27  ssa1
 #   Centering the volume cropped using a radius around the point selected by the atom selection tool.
 #
@@ -184,7 +187,8 @@ class VolumeViewer(BaseViewer):
         [xx, yy, zz] = self.worldToObjectCoordinates(center)
         self.renderer.setDisplayRadiusOrigin(xx, yy, zz)
         return True      
-            
-        
+    
+    def getIsoValue(self):
+        return self.renderer.getSurfaceValue()
                           
       
