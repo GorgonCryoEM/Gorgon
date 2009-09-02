@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.10  2009/08/18 19:55:06  ssa1
+//   Adding A base graph class for finding maximal cliques, and connected components
+//
 //   Revision 1.9  2008/09/29 15:45:09  ssa1
 //   Adding in CVS meta information
 //
@@ -105,16 +108,16 @@ int main( int args, char * argv[] ) {
 
 
 	TimeManager m;
-	for(int i = 1; i <= 20; i++) {
+	for(int i = 1; i <= 30; i++) {
 		GraphBase<bool, bool> g;
 		for(int j = 0; j < i; j++) {
 			g.AddVertex(0, false);
 		}
 
-		m.PushCurrentTime();
-		g.GetAllMaximalCliques();
+		/*m.PushCurrentTime();
+		g.GetLargestMaximalCliques2();
 		printf("%d ", i);
-		m.PopAndDisplayTime(" nodes (empty graph): time = %f \n");
+		m.PopAndDisplayTime(" nodes (empty graph): time = %f \n");*/
 
 		for(int j = 0; j < i; j++) {
 			for(int k = 0; k < i; k++) {
@@ -122,10 +125,10 @@ int main( int args, char * argv[] ) {
 			}
 		}
 
-		//m.PushCurrentTime();
-		//g.GetAllMaximalCliques();
-		//printf("%d ", i);
-		//m.PopAndDisplayTime(" nodes (full graph): time = %f \n");
+		m.PushCurrentTime();
+		g.GetLargestMaximalCliques2();
+		printf("%d ", i);
+		m.PopAndDisplayTime(" nodes (full graph): time = %f \n");
 	}
 
 	return 0;

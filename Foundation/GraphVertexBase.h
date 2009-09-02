@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.2  2009/08/26 14:58:55  ssa1
+//   Adding in Flexible fitting clique search
+//
 //   Revision 1.1  2009/08/18 19:55:06  ssa1
 //   Adding A base graph class for finding maximal cliques, and connected components
 
@@ -27,10 +30,13 @@ namespace wustl_mm {
 			unsigned long long GetIndex();
 			float GetWeight();
 			TTag GetTag();
+			unsigned long long GetValence();
 			void SetIndex(unsigned long long index);
 			void SetWeight(float weight);
 			void SetTag(TTag tag);
+			void AddEdge(unsigned long long edgeHash);
 		private:
+			unsigned long long edgeCount;
 			unsigned long long index;
 			float weight;
 			TTag tag;
@@ -40,6 +46,7 @@ namespace wustl_mm {
 			this->index = index;
 			this->weight = weight;
 			this->tag = tag;
+			this->edgeCount = 0;
 		}
 
 		template <class TTag> unsigned long long GraphVertexBase<TTag>::GetIndex() {
@@ -54,6 +61,10 @@ namespace wustl_mm {
 			return tag;
 		}
 
+		template <class TTag> unsigned long long GraphVertexBase<TTag>::GetValence() {
+			return edgeCount;
+		}
+
 		template <class TTag> void GraphVertexBase<TTag>::SetIndex(unsigned long long index) {
 			this->index = index;
 		}
@@ -65,6 +76,12 @@ namespace wustl_mm {
 		template <class TTag> void GraphVertexBase<TTag>::SetTag(TTag tag) {
 			this->tag = tag;
 		}
+
+		template <class TTag> void GraphVertexBase<TTag>::AddEdge(unsigned long long edgeHash) {
+			edgeCount++;
+		}
+
+
 
 	}
 }
