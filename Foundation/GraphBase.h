@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.2  2009/08/26 14:58:55  ssa1
+//   Adding in Flexible fitting clique search
+//
 //   Revision 1.1  2009/08/18 19:55:06  ssa1
 //   Adding A base graph class for finding maximal cliques, and connected components
 
@@ -35,6 +38,7 @@ namespace wustl_mm {
 			unsigned long long AddVertex(float weight, TVertexTag tag);
 			unsigned long long AddVertex(GraphVertexBase<TVertexTag> vertex);
 			GraphVertexBase<TVertexTag> GetVertex(unsigned long long vertexIx);
+			unsigned long long GetHighestValenceVertexIx();
 			unsigned long long GetVertexCount();
 			bool IsEdge(unsigned long long vertexIx1, unsigned long long vertexIx2);			
 			void AddEdge(unsigned long long vertexIx1, unsigned long long vertexIx2, float weight, TEdgeTag tag);
@@ -43,10 +47,17 @@ namespace wustl_mm {
 			// Graph functions
 			bool IsClique(set<unsigned long long> vertexSet);
 			bool IsClique(vector<unsigned long long> vertexIndices);
+			float GetCliqueEdgeCost(vector<unsigned long long> vertexIndices);
 			vector< set<unsigned long long> > GetAllConnectedComponents();
+			vector< set<unsigned long long> > GetAllConnectedComponents(vector<unsigned long long> vertexSet);
 			vector< set<unsigned long long> > GetAllCliques();
 			vector< set<unsigned long long> > GetAllMaximalCliques();
 			vector< set<unsigned long long> > GetLargestMaximalCliques();
+			vector< set<unsigned long long> > GetLargestMaximalCliques2();
+			vector< set<unsigned long long> > GetLargestMaximalCliques(vector<unsigned long long> vertexSet);
+			vector< set<unsigned long long> > GetLargestMaximalCliques2(vector<unsigned long long> vertexSet);
+			set<unsigned long long> GetLowestCostCliqueInOneRing(unsigned long long vertexIx);
+			vector<unsigned long long> GetOneRingNeighbors(unsigned long long vertexIx);
 			void PrintAllCliques(vector< set<unsigned long long> > allCliques);
 
 			static vector<unsigned long long> VertexSetToVector(set<unsigned long long> vertexSet);
@@ -99,8 +110,10 @@ namespace wustl_mm {
 		}
 
 		template <class TVertexTag, class TEdgeTag> void GraphBase<TVertexTag, TEdgeTag>::AddEdge(unsigned long long vertexIx1, unsigned long long vertexIx2, GraphEdgeBase<TEdgeTag> edge) {
-			unsigned long long hash = GetEdgeHash(vertexIx1, vertexIx2);
+			unsigned long long hash = GetEdgeHash(vertexIx1, vertexIx2);			
 			edges[hash] = edge;
+			vertices[vertexIx1].AddEdge(hash);
+			vertices[vertexIx2].AddEdge(hash);
 		}
 
 
@@ -134,6 +147,16 @@ namespace wustl_mm {
 				}
 			}
 			return isClique;
+		}
+
+		template <class TVertexTag, class TEdgeTag> float GraphBase<TVertexTag, TEdgeTag>::GetCliqueEdgeCost(vector<unsigned long long> vertexIndices) {
+			float cliqueEdgeCost = 0.0f;
+			for(unsigned int i = 0; i < vertexIndices.size()-1; i++) {
+				for(unsigned int j = i+1; j < vertexIndices.size(); j++) {
+					cliqueEdgeCost += GetEdge(vertexIndices[i], vertexIndices[j]).GetWeight();
+				}
+			}
+			return cliqueEdgeCost;
 		}
 
 		template <class TVertexTag, class TEdgeTag> vector<unsigned long long> GraphBase<TVertexTag, TEdgeTag>::VertexSetToVector(set<unsigned long long> vertexSet) {
@@ -257,6 +280,16 @@ namespace wustl_mm {
 		}
 
 		template <class TVertexTag, class TEdgeTag> vector< set<unsigned long long> > GraphBase<TVertexTag, TEdgeTag>::GetLargestMaximalCliques() {
+			vector<unsigned long long> vertexSet;
+			for(unsigned long long i = 0; i < vertices.size(); i++) {
+				vertexSet.push_back(i);
+			}
+
+			return GetLargestMaximalCliques(vertexSet);
+	
+		}
+
+		template <class TVertexTag, class TEdgeTag> vector< set<unsigned long long> > GraphBase<TVertexTag, TEdgeTag>::GetLargestMaximalCliques(vector<unsigned long long> vertexSet) {
 			vector< set<unsigned long long> > maximalCliques;
 			set< set<unsigned long long> > duplicateCheck;
 			set< set<unsigned long long> > duplicateQueueCheck;
@@ -265,7 +298,7 @@ namespace wustl_mm {
 			
 			vector<unsigned long long> curr, child;
 
-			vector< set<unsigned long long> > connectedComponents = GetAllConnectedComponents();
+			vector< set<unsigned long long> > connectedComponents = GetAllConnectedComponents(vertexSet);
 
 			for(unsigned long long i = 0; i < connectedComponents.size(); i++) {
 				queue.push_back(VertexSetToVector(connectedComponents[i]));
@@ -313,11 +346,83 @@ namespace wustl_mm {
 	
 		}
 
+		template <class TVertexTag, class TEdgeTag> vector< set<unsigned long long> > GraphBase<TVertexTag, TEdgeTag>::GetLargestMaximalCliques2() {
+			vector<unsigned long long> vertexSet;
+			for(unsigned long long i = 0; i < vertices.size(); i++) {
+				vertexSet.push_back(i);
+			}
+
+			return GetLargestMaximalCliques2(vertexSet);
+	
+		}
+
+		template <class TVertexTag, class TEdgeTag> vector< set<unsigned long long> > GraphBase<TVertexTag, TEdgeTag>::GetLargestMaximalCliques2(vector<unsigned long long> vertexSet) {
+			unsigned int maximalSize = 1;
+			vector< set<unsigned long long> > maximalCliques;
+			vector< vector<unsigned long long> > queue;
+			vector<unsigned long long> curr, child;
+			for(unsigned int i = 0; i < vertexSet.size(); i++) {
+				curr.clear();
+				curr.push_back(vertexSet[i]);
+				queue.push_back(curr);
+				maximalCliques.push_back(VertexVectorToSet(curr));
+			}
+
+			map< unsigned long long, vector<unsigned long long> > forwardNodes;
+			
+			curr.clear();
+			for(int i = (int)(vertexSet.size())-1; i >= 0; i--) {
+				forwardNodes[vertexSet[i]] = curr;
+				curr.insert(curr.begin(), vertexSet[i]);
+			}
+
+
+			vector<unsigned long long> fnodes;
+
+			while(queue.size() > 0) {
+				curr = queue[0];
+				queue.erase(queue.begin());
+				fnodes = forwardNodes[curr[curr.size()-1]];
+
+				for(unsigned int i = 0; i < fnodes.size(); i++) {
+					child = curr;
+					child.push_back(fnodes[i]);
+					if(IsClique(child)) {
+						queue.push_back(child);
+						if(child.size() > maximalSize) {
+							maximalSize = child.size();
+							maximalCliques.clear();
+							maximalCliques.push_back(VertexVectorToSet(child));
+						} else if (child.size() == maximalSize) {
+							maximalCliques.push_back(VertexVectorToSet(child));
+						}
+					}
+				}
+			}
+
+			return maximalCliques;
+	
+		}
+
 		template <class TVertexTag, class TEdgeTag> vector< set<unsigned long long> > GraphBase<TVertexTag, TEdgeTag>::GetAllConnectedComponents() {
+			vector<unsigned long long> vertexSet;
+			for(unsigned long long i = 0; i < vertices.size(); i++) {
+				vertexSet.push_back(i);
+			}
+
+			return GetAllConnectedComponents(vertexSet);
+		}
+
+		template <class TVertexTag, class TEdgeTag> vector< set<unsigned long long> > GraphBase<TVertexTag, TEdgeTag>::GetAllConnectedComponents(vector<unsigned long long> vertexSet) {
 			vector< set<unsigned long long> > components;
 			vector<bool> added;
+
 			for(unsigned long long i = 0; i < vertices.size(); i++) {
-				added.push_back(false);
+				added.push_back(true);
+			}
+
+			for(unsigned int i = 0; i < vertexSet.size(); i++) {
+				added[vertexSet[i]] = false;
 			}
 
 			vector<unsigned long long> queue;
@@ -353,6 +458,53 @@ namespace wustl_mm {
 				isSubset = isSubset && (set1.find(*i) != set1.end());
 			}
 			return isSubset;
+		}
+
+		template <class TVertexTag, class TEdgeTag> unsigned long long GraphBase<TVertexTag, TEdgeTag>::GetHighestValenceVertexIx() {
+			int maxValence = -1;
+			int maxValenceIx = -1;
+			for(unsigned long long i = 0; i < vertices.size(); i++) {
+				if((int)vertices[i].GetValence() > maxValence) {
+					maxValence = vertices[i].GetValence();
+					maxValenceIx = i;
+				}
+			}
+			return maxValenceIx;
+		}
+
+		template <class TVertexTag, class TEdgeTag> vector<unsigned long long> GraphBase<TVertexTag, TEdgeTag>::GetOneRingNeighbors(unsigned long long vertexIx) {
+			vector<unsigned long long> neighbors;
+			for(unsigned int i = 0; i < vertices.size(); i++) {
+				if((i != vertexIx) && IsEdge(vertexIx, i)) {
+					neighbors.push_back(i);
+				}
+			}
+			return neighbors;
+		}
+
+		template <class TVertexTag, class TEdgeTag> set<unsigned long long> GraphBase<TVertexTag, TEdgeTag>::GetLowestCostCliqueInOneRing(unsigned long long vertexIx) {
+			vector<unsigned long long> vertexSet = GetOneRingNeighbors(vertexIx);
+			vertexSet.push_back(vertexIx);
+			vector<set <unsigned long long> > cliques = GetLargestMaximalCliques2(vertexSet);
+			float cost, minCost = MAX_FLOAT;
+			int cliqueIx = -1;
+
+			for(unsigned int i = 0; i < cliques.size(); i++) {
+				if(cliques[i].find(vertexIx) != cliques[i].end()) {
+					cost = GetCliqueEdgeCost(VertexSetToVector(cliques[i]));
+					if(cost < minCost) {
+						minCost = cost;
+						cliqueIx = i;
+					}
+				}
+			}
+			if(cliqueIx == -1) {
+				set <unsigned long long> singleton;
+				singleton.insert(vertexIx);
+				return singleton;
+			} else {
+				return cliques[cliqueIx];
+			}
 		}
 	}
 }

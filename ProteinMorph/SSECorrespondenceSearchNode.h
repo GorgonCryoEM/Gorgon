@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.1  2009/08/26 14:58:55  ssa1
+//   Adding in Flexible fitting clique search
+//
 
 #ifndef PROTEINMORPH_SSE_CORRESPONDENCE_SEARCH_NODE_H
 #define PROTEINMORPH_SSE_CORRESPONDENCE_SEARCH_NODE_H
@@ -32,8 +35,8 @@ namespace wustl_mm {
 			float GetCost();
 			vector<SSECorrespondenceSearchNode *> GetChildNodes(vector<SSECorrespondenceNode> & allNodes, vector< vector<float> > & pairCompatibility, float featureChangeCoeff, float rigidComponentCoeff, float intraComponentCoeff);
 			void PrintSolution(vector<SSECorrespondenceNode> & allNodes);
-		private:
 			GraphBase<unsigned int, bool> GetChildGraph(vector<SSECorrespondenceNode> & allNodes, vector<unsigned long long> clique);
+		private:
 			float GetCliqueCost(vector<unsigned long long> & clique, float featureChangeCoeff, float rigidComponentCoeff);
 			float GetIntraCliqueCost(vector<unsigned int> & nodeList, vector<unsigned int> & parentNodeList, vector< vector<float> > & pairCompatibility, float intraComponentCoeff);
 
@@ -64,7 +67,7 @@ namespace wustl_mm {
 		vector<SSECorrespondenceSearchNode *> SSECorrespondenceSearchNode::GetChildNodes(vector<SSECorrespondenceNode> & allNodes, vector< vector<float> > & pairCompatibility, float featureChangeCoeff, float rigidComponentCoeff, float intraComponentCoeff) {
 			vector<SSECorrespondenceSearchNode *> childNodes;
 			if(graph.GetVertexCount() > 0) {
-				vector< set<unsigned long long> > cliques = graph.GetLargestMaximalCliques();
+				vector< set<unsigned long long> > cliques = graph.GetLargestMaximalCliques2();
 				
 				vector<unsigned int> childSolutionElement;
 				vector< vector<unsigned int> > childSolution;
@@ -147,18 +150,25 @@ namespace wustl_mm {
 
 		void SSECorrespondenceSearchNode::PrintSolution(vector<SSECorrespondenceNode> & allNodes) {
 			vector<unsigned int> nodes;
-			printf("Cost: %f, Corr: ", cost);
+			printf("corr= {\n");
 			for(unsigned int i = 0; i < solution.size(); i++) {
 				nodes = solution[i];
-				printf("{");
-				for(unsigned int j = 0; j < nodes.size(); j++) {
-					printf("{%d, %d} ", allNodes[nodes[j]].GetPIndex(), allNodes[nodes[j]].GetQIndex());
-					//printf("%d ", nodes[j]);
-
+				if(i != 0) {
+					printf(",\n");
 				}
-				printf("} ");
+				printf("\t{");
+				for(unsigned int j = 0; j < nodes.size(); j++) {
+					if(j != 0) {
+						printf(",");
+					}
+					printf("{%d, %d}", allNodes[nodes[j]].GetPIndex(), allNodes[nodes[j]].GetQIndex());
+				}
+				printf("}");
 			}
-			printf("\n");
+			printf("};\n\n");
+			printf("Print[\"Cost = \", %f];\n", cost);
+			printf("PrintCorrespondence[corr, fl1, fl2]\n");
+			printf("PrintCorrespondenceLines[corr, fl1, fl2]\n\n");
 		}
 	}
 }
