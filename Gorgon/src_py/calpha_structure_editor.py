@@ -13,6 +13,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.11  2009/08/19 15:23:35  ssa1
+#   Bug Fix: Disabling accept button when no options are available for semi-automatic atom placement
+#
 #   Revision 1.10  2009/08/19 14:59:52  ssa1
 #   Correcting bug: possible residues do not appear when performing semi-automatic placement, when the atom being clicked is the first or last in the sequence
 #
@@ -173,7 +176,7 @@ if the user clicks accept.
                 possiblePositionsList.append(pos)
             for i in range(len(possiblePositionsList)):
                 pos = possiblePositionsList[i]
-                rawAtom=PDBAtom(self.currentChainModel.getPdbID(), self.currentChainModel.getChainID() , i+1, 'CA')
+                rawAtom=PDBAtom('TEMP', self.currentChainModel.getChainID() , i+1, 'CA')
                 rawAtom.setPosition(pos)
                 rawAtom.setElement('C')
                 rawAtom.setColor(0, 1, 0, 1)
@@ -710,7 +713,7 @@ be the current residue for the atomic editor.
                 continue
             else:
                 viewer.renderer.deleteAtom(atom.getHashKey())
-                viewer.emitModelChanged()
+        viewer.emitModelChanged()
         self.possbileAtomsList = []
         self.atomJustAdded = None
         self.previouslySelectedPossibleAtom = None
