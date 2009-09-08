@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.14.2.4  2009/08/26 20:50:15  schuhs
+//   Add code to reproduce results from SMI paper when SMIPAPER_MODE flag is set.
+//
 //   Revision 1.14.2.3  2009/08/18 17:55:11  schuhs
 //   Adding ability to ignore strands when building the sequence graph
 //
@@ -273,6 +276,9 @@ namespace wustl_mm {
 					cout << "adding strand " << i << " with ID " << structures[i]->secondaryStructureID << endl;
 					// TODO: Add some cost for the node itself
 					graph->SetCost(node+1, (structures[i]->endPosition - structures[i]->startPosition) * LOOP_C_ALPHA_TO_ANGSTROMS);
+					if (SMIPAPER_MODE == 1) {
+						graph->SetCost(node+1, (structures[i]->endPosition - structures[i]->startPosition) );
+					}
 					cout << "adding strand " << i << " at node " << node << " with length " << (structures[i]->endPosition - structures[i]->startPosition) * LOOP_C_ALPHA_TO_ANGSTROMS << endl;
 					graph->SetCost(node+1, node+1, 0); // Strand node.
 					graph->SetType(node+1, node+1, GRAPHNODE_SHEET); 
@@ -281,8 +287,14 @@ namespace wustl_mm {
 						// An edge for the loop before the strand
 						// TODO: fix length calculation -- do startPosition and endPosition hold the right values for strands?
 						graph->SetCost(node, node+1, (structures[i]->startPosition - structures[i-1]->endPosition) * LOOP_C_ALPHA_TO_ANGSTROMS);
+						if (SMIPAPER_MODE == 1) {
+							graph->SetCost(node, node+1, (structures[i]->startPosition - structures[i-1]->endPosition) );
+						}
 						graph->SetType(node, node+1, GRAPHEDGE_LOOP);
 						graph->SetCost(node+1, node, (structures[i]->startPosition - structures[i-1]->endPosition) * LOOP_C_ALPHA_TO_ANGSTROMS);
+						if (SMIPAPER_MODE == 1) {
+							graph->SetCost(node+1, node, (structures[i]->startPosition - structures[i-1]->endPosition) );
+						}
 						graph->SetType(node+1, node, GRAPHEDGE_LOOP);
 					}
 					node += 1;
