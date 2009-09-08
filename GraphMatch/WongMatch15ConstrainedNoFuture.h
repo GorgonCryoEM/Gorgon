@@ -15,6 +15,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.15.2.19  2009/08/26 20:51:21  schuhs
+//   Add code to reproduce results from SMI paper when SMIPAPER_MODE flag is set.
+//
 //   Revision 1.15.2.18  2009/08/21 21:22:33  schuhs
 //   Removing commented out code and unhelpful comments.
 //
@@ -474,11 +477,19 @@ namespace wustl_mm {
 			double patternLength = 0;
 			double baseLength;
 
+			// Count number of skipped helices and sheets
+			int skippedHelices = 0;
+			int skippedSheets = 0;
+
 			// Adding the length of the skipped helixes
+			// TODO: Test and verify that this is doing the correct thing. I think it might be missing loops.
 			for(int i = 1; i < m; i++) {
 				patternLength += patternGraph->adjacencyMatrix[d+i-1][d+i-1][1];
 				if (patternGraph->adjacencyMatrix[d+i-1][d+i-1][0] == GRAPHNODE_SHEET) {
 					patternLength += patternGraph->nodeWeights[d+i-1];
+					skippedSheets++;
+				} else {
+					skippedHelices++;
 				}
 			}
 
@@ -493,6 +504,9 @@ namespace wustl_mm {
 				}
 				patternLength += patternGraph->adjacencyMatrix[d+i-1][d+i][1];	
 			}
+			// TODO: Fix, has bug. But getting closer.
+			skippedHelices = skippedHelices / 2;
+			//cout << "d=" << d << ", m=" << m << ", skipH=" << skippedHelices << ", skipS=" << skippedSheets << endl;
 
 			bool euclideanEstimate = false;
 			double weight = 1.0;
@@ -548,9 +562,30 @@ namespace wustl_mm {
 				}		
 				if (SMIPAPER_MODE == 1) {
 					// TODO: Confirm that this code makes sense!
+
+					//if(qj != -1){
+						//cout << "euclidian dist is " << baseGraph->euclideanMatrix[qj-1][qp-1] << ", graph dist is " << (patternGraph->adjacencyMatrix[d-1][d][1] * EUCLIDEAN_VOXEL_TO_PDB_RATIO ) << endl;
+						//cout << "euclidian dist alt is " << baseGraph->euclideanMatrix[qj-1][qp-1] << ", graph dist is " << (patternLength * EUCLIDEAN_VOXEL_TO_PDB_RATIO ) << endl;
+					//}
 					if((qj != -1) && (baseGraph->euclideanMatrix[qj-1][qp-1] > (patternGraph->adjacencyMatrix[d-1][d][1] * EUCLIDEAN_VOXEL_TO_PDB_RATIO ))){
 						return -1;
 					}
+				} else {
+					//Adding fudge factor to make sure we dont eliminate short loops, and also avoiding checking helices
+					if((qj != -1) && 
+						((int)(patternGraph->adjacencyMatrix[d-1][d][0] + 0.01) != GRAPHEDGE_HELIX) && 
+					//	//(baseGraph->euclideanMatrix[qj-1][qp-1] * 0.9 > patternGraph->adjacencyMatrix[d-1][d][1])){
+					//	//(baseGraph->euclideanMatrix[qj-1][qp-1] * EUCLIDEAN_VOXEL_TO_PDB_RATIO > patternGraph->adjacencyMatrix[d-1][d][1])){
+						(baseGraph->euclideanMatrix[qj-1][qp-1] * EUCLIDEAN_VOXEL_TO_PDB_RATIO > patternLength) ){
+						//cout << "qj=" << qj << ", qp=" << qp << ", d=" << d << endl;
+						return -1;
+					}
+					// applies even to helices!
+					//if((qj != -1) && 
+					//	//(baseGraph->euclideanMatrix[qj-1][qp-1] * EUCLIDEAN_VOXEL_TO_PDB_RATIO/2.0 > patternLength) ){
+					//	(baseGraph->euclideanMatrix[qj-1][qp-1] * 0.5 > patternLength) ){
+					//	return -1;
+					//}
 				}
 			} else { // a skip edge
 				// not sure if these checks really help or if they just waste time
@@ -559,6 +594,21 @@ namespace wustl_mm {
 					( ((int)(baseGraph->adjacencyMatrix[qj-1][qp-1][0] +0.01) != GRAPHEDGE_LOOP_EUCLIDEAN)) &&	// base graph edge not a Euclidian loop AND
 					( ((int)(baseGraph->adjacencyMatrix[qj-1][qp-1][0] +0.01) != GRAPHNODE_SHEET)) ) ) {		// base graph edge not a sheet)
 					return -1;
+				}
+				// check here to sum up the parts of the skip edge and compare to the euclidian distance, if it's a euclidian edge in the base graph
+				if(SMIPAPER_MODE == 1) {
+					if( (qj != -1) && (baseGraph->euclideanMatrix[qj-1][qp-1] > (patternLength * EUCLIDEAN_VOXEL_TO_PDB_RATIO) ) ){
+						return -1;
+					}
+				} else {
+					if((qj != -1) && 
+					((int)(patternGraph->adjacencyMatrix[d-1][d][0] + 0.01) != GRAPHEDGE_HELIX) && 
+				//	//(baseGraph->euclideanMatrix[qj-1][qp-1] * 0.9 > patternGraph->adjacencyMatrix[d-1][d][1])){
+				//	//(baseGraph->euclideanMatrix[qj-1][qp-1] * EUCLIDEAN_VOXEL_TO_PDB_RATIO > patternGraph->adjacencyMatrix[d-1][d][1])){
+					(baseGraph->euclideanMatrix[qj-1][qp-1] * EUCLIDEAN_VOXEL_TO_PDB_RATIO > patternLength) ){
+					//cout << "qj=" << qj << ", qp=" << qp << ", d=" << d << endl;
+						return -1;
+					}
 				}
 
 			}
@@ -815,6 +865,7 @@ namespace wustl_mm {
 			cout << "starting ComputeSolutionCost" << endl;
 			int n1=0, n2=1, pn1=-1, pn2=-1;
 			double edgeCost = 0.0;
+			double edgePenaltyCost = 0.0;
 			double nodeCost = 0.0;
 			int skippedHelixNodes = 0;
 			int skippedSheetNodes = 0;
@@ -853,12 +904,14 @@ namespace wustl_mm {
 				// add edge cost
 				cout << "adding (" << n1+1 << "," << n2+1 << "," << SOLUTION[n1] << "," << SOLUTION[n2] << ")" << endl;
 				double singleEdgeCost = 1000;
+				double singleEdgePenaltyCost = 0;
 				// if edge exists in base graph, find the cost of this correspondence.
 				if (SOLUTION[n1] == -1) {
 					singleEdgeCost = 0;
 					cout << "No cost for initial skip edge" << endl;
 				} else if (baseGraph->EdgeExists(SOLUTION[n1]-1, SOLUTION[n2]-1)) {
 					singleEdgeCost = GetCost(n1+1, n2-n1, SOLUTION[n1], SOLUTION[n2]);
+					singleEdgePenaltyCost = GetPenaltyCost(n1+1, n2-n1);
 				} else {
 					cout << "BASE GRAPH DOES NOT HAVE AN EDGE FROM NODE " << SOLUTION[n1] << " TO NODE " << SOLUTION[n2] << ". THIS SOLUTION NOT POSSIBLE!" << endl;
 				}
@@ -869,6 +922,7 @@ namespace wustl_mm {
 					cout << "first helix or sheet is unmatched. adding penalty of " << singleEdgeCost << endl;
 				} else {
 					cout << "cost of this addition is " << singleEdgeCost << endl;
+					cout << "penalty cost of this addition is " << singleEdgePenaltyCost << endl;
 				}
 
 				// add node cost
@@ -877,6 +931,7 @@ namespace wustl_mm {
 
 				// add the costs from this iteration to the running totals
 				edgeCost += singleEdgeCost;
+				edgePenaltyCost += singleEdgePenaltyCost;
 				nodeCost += singleNodeCost;
 
 				// prepare for next iteration
@@ -885,6 +940,7 @@ namespace wustl_mm {
 			}
 
 			cout << "total edge cost is " << edgeCost << endl;
+			cout << "total edge penalty cost is " << edgePenaltyCost << endl;
 			cout << "total node cost is " << nodeCost << endl;
 
 			double helixPenalty = skippedHelixNodes/2 * MISSING_HELIX_PENALTY; 
@@ -892,6 +948,9 @@ namespace wustl_mm {
 
 			cout << "missing helices: " << skippedHelixNodes/2 << " contribute cost of " << helixPenalty << endl;
 			cout << "missing sheets:  " << skippedSheetNodes << " contribute cost of " << sheetPenalty << endl;
+			cout << "together, missing helices and sheets contribute cost of " << sheetPenalty + helixPenalty << endl;
+			cout << "algorithm thinks missing helices and sheets should contribute cost of " << edgePenaltyCost << endl;
+
 
 			double cost = edgeCost + nodeCost + helixPenalty + sheetPenalty;
 
@@ -929,6 +988,13 @@ namespace wustl_mm {
 					}
 				}
 			}	
+			/*
+			for(int i = 0; i < patternGraph->nodeCount; i++) {
+				if(patternGraph->nodeWeights[i] != MAXINT) {
+					patternGraph->nodeWeights[i] *= ratio;
+				}
+			}
+			*/
 		#ifdef VERBOSE
 			baseGraph->PrintGraph();
 		#endif
