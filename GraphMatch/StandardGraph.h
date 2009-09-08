@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.13.2.9  2009/07/23 15:10:49  schuhs
+//   Fixing bug that assigned longer-than-necessary Euclidian loops to sheets
+//
 //   Revision 1.13.2.8  2009/07/21 14:55:46  schuhs
 //   Adding paths for visualization when the Euclidian matrix is built
 //
@@ -276,6 +279,31 @@ namespace wustl_mm {
 				}
 				printf("\n");
 			}
+			
+			// print out the node weights
+			bool hasWeightedNodes = false;
+			for(int i = 0; i < nodeCount; i++) {
+				hasWeightedNodes = hasWeightedNodes || (nodeWeights[i] > 0);
+			}
+			if(hasWeightedNodes) {
+				printf("\n  Node weights:\n");
+				for(int i = 0; i < nodeCount; i++) {
+					printf("   %d\t", i+1);
+					if(adjacencyMatrix[i][i][0] == GRAPHNODE_SHEET) {
+						temp = 'S';
+						used++;
+					} else {
+						temp = ' ';
+					}
+					if(nodeWeights[i] == MAXINT) {
+						printf(" %c         \t|", temp);
+					} else {
+						printf(" %c %f\t|", temp, nodeWeights[i]);
+					}
+					printf("\n");
+				}
+			}
+			// 
 			printf("Graph Density %f%%,   (With Euclidean edges %f%%)\n", used * 100 / (nodeCount * nodeCount), (used + euclideanUsed) * 100 / (nodeCount * nodeCount));
 		}
 
@@ -363,7 +391,13 @@ namespace wustl_mm {
 							}
 							
 							// measure distance between corner s of node i and corner t of node j
-							dist = sqrt(pow(xSpacing * (double)(iLoc.x - jLoc.x), 2) + pow(ySpacing *(double)(iLoc.y - jLoc.y), 2) + pow(zSpacing *(double)(iLoc.z - jLoc.z), 2));
+							if (SMIPAPER_MODE == 1) {
+								dist = sqrt(pow( (double)(iLoc.x - jLoc.x), 2) + pow( (double)(iLoc.y - jLoc.y), 2) + pow( (double)(iLoc.z - jLoc.z), 2));
+							} else {
+								dist = sqrt(pow(xSpacing * (double)(iLoc.x - jLoc.x), 2) + pow(ySpacing *(double)(iLoc.y - jLoc.y), 2) + pow(zSpacing *(double)(iLoc.z - jLoc.z), 2));
+							}
+							//dist = sqrt(pow(xSpacing * (double)(iLoc.x - jLoc.x), 2) + pow(ySpacing *(double)(iLoc.y - jLoc.y), 2) + pow(zSpacing *(double)(iLoc.z - jLoc.z), 2));
+
 							// if this distance is closer than the smallest found previously, save it
 							if (dist < minDist) {
 								minDist = dist;
