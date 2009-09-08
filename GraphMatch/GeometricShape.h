@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.15.2.7  2009/08/26 20:49:35  schuhs
+//   Add code to reproduce results from SMI paper when SMIPAPER_MODE flag is set.
+//
 //   Revision 1.15.2.6  2009/06/01 21:03:21  schuhs
 //   Removing method to calculate distance from a point to a triangle, and replacing with a method to calculate the minimum distance between a point and a set of points.
 //
@@ -227,7 +230,8 @@ namespace wustl_mm {
 				//return ((point[0]*point[0] + point[2]*point[2] <= 1) && (abs(point[1]) <= 0.5)); // the old code
 				return ((point[0]*point[0] + point[2]*point[2] <= .25) && (abs(point[1]) <= 0.5)); // 0.25 = 0.5^2, code below likely a bug?
 			}
-			return ((point[0]*point[0] + point[2]*point[2] <= 0.5) && (abs(point[1]) <= 0.5));
+			//return ((point[0]*point[0] + point[2]*point[2] <= 0.5) && (abs(point[1]) <= 0.5));
+			return ((point[0]*point[0] + point[2]*point[2] <= 0.25) && (abs(point[1]) <= 0.5));
 		}
 
 		double GeometricShape::GetHeight() {
