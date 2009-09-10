@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.32.2.12  2009/08/26 20:49:52  schuhs
+//   Add code to reproduce results from SMI paper when SMIPAPER_MODE flag is set.
+//
 //   Revision 1.32.2.11  2009/08/25 21:43:55  schuhs
 //   Adding scaled missing helix penalty.
 //
@@ -153,7 +156,8 @@ namespace wustl_mm {
 		const int WONG_HASH_TABLE_SIZE = 1024;
 
 		const float HELIX_C_ALPHA_TO_ANGSTROMS = 1.5f;
-		const float LOOP_C_ALPHA_TO_ANGSTROMS = 3.8f;
+		//const float LOOP_C_ALPHA_TO_ANGSTROMS = 3.8f;
+		const float LOOP_C_ALPHA_TO_ANGSTROMS = 3.8f/1.17f;
 
 		char SSE_FILE_NAME[100];
 		char VRML_HELIX_FILE_NAME[100];
@@ -187,7 +191,7 @@ namespace wustl_mm {
 		int MISSING_HELIX_COUNT = -1;
 		int MISSING_SHEET_COUNT = -1;
 		bool PERFORMANCE_COMPARISON_MODE = false;
-		int SMIPAPER_MODE = 1;
+		int SMIPAPER_MODE = 0;
 		int SOLUTION[MAX_NODES];
 		int D26[26][3] = {	
 			{-1,-1,-1}, {-1, -1, 0}, {-1, -1, 1},
