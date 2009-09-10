@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.34  2008/09/29 16:30:15  ssa1
+//   Adding in CVS meta information
+//
 
 #ifndef GRAY_SKELETON_CPP_CPP
 #define GRAY_SKELETON_CPP_CPP
@@ -346,7 +349,7 @@ namespace wustl_mm {
 					VolumeSkeletonizer * skeletonizer3D = new VolumeSkeletonizer(0,0,0,DEFAULT_SKELETON_DIRECTION_RADIUS);
 					skeletonizer3D->NormalizeVolume(sourceVol);
 					skeletonizer3D->CleanupVolume(sourceVol, minGray, maxGray);
-					Volume * outputVol = skeletonizer3D->PerformImmersionSkeletonizationAndPruning(sourceVol, minGray, maxGray, stepSize, smoothingIterations, smoothingRadius, minCurveSize, minSurfaceSize, 0.0, 0.0, outPath, false, 1.0, 1.0, 1.0);
+					Volume * outputVol = skeletonizer3D->PerformImmersionSkeletonizationAndPruning(sourceVol, NULL, minGray, maxGray, stepSize, smoothingIterations, smoothingRadius, minCurveSize, minSurfaceSize, 0.0, 0.0, outPath, false, 1.0, 1.0, 1.0);
 					outputVol->toOFFCells2((char *)(outPath + ".off").c_str());
 					outputVol->toMRCFile((char *)(outPath + ".mrc").c_str());
 					delete outputVol;
@@ -375,7 +378,7 @@ namespace wustl_mm {
 					VolumeSkeletonizer * skeletonizer3D = new VolumeSkeletonizer(pointRadius, curveRadius, surfaceRadius, skeletonDirectionRadius);
 					skeletonizer3D->NormalizeVolume(sourceVol);
 					skeletonizer3D->CleanupVolume(sourceVol, minGray, maxGray);
-					Volume * outputVol = skeletonizer3D->PerformImmersionSkeletonizationAndPruning(sourceVol, minGray, maxGray, stepSize, smoothingIterations, smoothingRadius, minCurveSize, minSurfaceSize, maxCurveHole, maxSurfaceHole, outPath, true, pointThreshold, curveThreshold, surfaceThreshold);
+					Volume * outputVol = skeletonizer3D->PerformImmersionSkeletonizationAndPruning(sourceVol, NULL, minGray, maxGray, stepSize, smoothingIterations, smoothingRadius, minCurveSize, minSurfaceSize, maxCurveHole, maxSurfaceHole, outPath, true, pointThreshold, curveThreshold, surfaceThreshold);
 					delete sourceVol;
 					delete skeletonizer3D;
 					outputVol->toMRCFile((char *)outFile.c_str());		

@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.39  2009/03/02 16:31:47  ssa1
+//   Adding in Point Clouds and Structure Tensor Fields
+//
 //   Revision 1.38  2008/10/29 19:26:26  ssa1
 //   Reducing memory footprint, Increasing performance and adding volume normalization
 //
@@ -58,7 +61,7 @@ namespace wustl_mm {
 			VolumeSkeletonizer(int pointRadius, int curveRadius, int surfaceRadius, int skeletonDirectionRadius);
 			~VolumeSkeletonizer();
 			Volume * CleanImmersionSkeleton(Volume * skeleton, string outputPath);
-			Volume * PerformImmersionSkeletonizationAndPruning(Volume * sourceVol, double startGray, double endGray, double stepSize, int smoothingIterations, int smoothingRadius, int minCurveSize, int minSurfaceSize, int maxCurveHole, int maxSurfaceHole, string outputPath, bool doPruning, double pointThreshold, double curveThreshold, double surfaceThreshold);
+			Volume * PerformImmersionSkeletonizationAndPruning(Volume * sourceVol, Volume * preserveVol, double startGray, double endGray, double stepSize, int smoothingIterations, int smoothingRadius, int minCurveSize, int minSurfaceSize, int maxCurveHole, int maxSurfaceHole, string outputPath, bool doPruning, double pointThreshold, double curveThreshold, double surfaceThreshold);
 			Volume * PerformSkeletonizationAndPruning(Volume * imageVol, string outputPath);
 			Volume * PerformImmersionSkeletonization(Volume * imageVol, string outputPath);
 			Volume * PerformJuSkeletonization(Volume * imageVol, string outputPath, int minGray, int maxGray, int stepSize);
@@ -71,7 +74,7 @@ namespace wustl_mm {
 			void NormalizeVolume(Volume * sourceVolume);			
 			void PruneCurves(Volume * sourceVolume, int pruneLength);
 			void PruneSurfaces(Volume * sourceVolume, int pruneLength);
-			void PruneUsingStructureTensor(Volume * skeleton, Volume * sourceVolume, Vector3DFloat * volumeGradient, EigenResults3D * volumeEigens, ProbabilityDistribution3D & filter, double threshold, char pruningClass, string outputPath);
+			void PruneUsingStructureTensor(Volume * skeleton, Volume * sourceVolume, Volume * preserveVol, Vector3DFloat * volumeGradient, EigenResults3D * volumeEigens, ProbabilityDistribution3D & filter, double threshold, char pruningClass, string outputPath);
 			void SmoothenVolume(Volume * &sourceVolume, double minGrayscale, double maxGrayscale, int stRadius);
 			void ThresholdGrayValueRange(Volume * sourceVolume, double minGrayValue, double maxGrayValue);
 			void VoxelBinarySubtract(Volume * sourceAndDestVolume1, Volume * sourceVolume2);
@@ -887,7 +890,7 @@ namespace wustl_mm {
 		void VolumeSkeletonizer::PruneSurfaces(Volume * sourceVolume, int pruneLength) {
 			sourceVolume->erodeSheet(pruneLength);
 		}		
-		void VolumeSkeletonizer::PruneUsingStructureTensor(Volume * skeleton, Volume * sourceVolume, Vector3DFloat * volumeGradient, EigenResults3D * volumeEigens, ProbabilityDistribution3D & filter, double threshold, char pruningClass, string outputPath) {									
+		void VolumeSkeletonizer::PruneUsingStructureTensor(Volume * skeleton, Volume * sourceVolume, Volume * preserveVol, Vector3DFloat * volumeGradient, EigenResults3D * volumeEigens, ProbabilityDistribution3D & filter, double threshold, char pruningClass, string outputPath) {									
 			Volume * tempSkel = new Volume(skeleton->getSizeX(), skeleton->getSizeY(), skeleton->getSizeZ(), 0, 0, 0, skeleton);
 			Volume * costVol = new Volume(skeleton->getSizeX(), skeleton->getSizeY(), skeleton->getSizeZ()); 
 			Vector3DFloat * skeletonDirections = GetSkeletonDirection(skeleton, pruningClass);
@@ -899,7 +902,7 @@ namespace wustl_mm {
 				for(int y = 0; y < skeleton->getSizeY(); y++) {
 					for(int z = 0; z < skeleton->getSizeZ(); z++) {						
 						index = skeleton->getIndex(x, y, z);						
-						if(tempSkel->getDataAt(index) > 0) {
+						if(((preserveVol == NULL) || ((preserveVol != NULL) && preserveVol->getDataAt(index) < 0.5)) && (tempSkel->getDataAt(index) > 0)) {
 							if(volumeEigens == NULL) {
 								GetEigenResult(eigen, volumeGradient, filter, x, y, z, skeleton->getSizeX(), skeleton->getSizeY(), skeleton->getSizeZ(), filter.radius, false);
 							} else {
@@ -1093,10 +1096,12 @@ namespace wustl_mm {
 		}
 
 		void VolumeSkeletonizer::VoxelOr(Volume * sourceAndDestVolume1, Volume * sourceVolume2){
-			for(int x = 0; x < sourceAndDestVolume1->getSizeX(); x++) {
-				for(int y = 0; y < sourceAndDestVolume1->getSizeY(); y++) {
-					for(int z = 0; z < sourceAndDestVolume1->getSizeZ(); z++) {
-						sourceAndDestVolume1->setDataAt(x, y, z, max(sourceAndDestVolume1->getDataAt(x, y, z), sourceVolume2->getDataAt(x, y, z)));
+			if(sourceVolume2 != NULL) {
+				for(int x = 0; x < sourceAndDestVolume1->getSizeX(); x++) {
+					for(int y = 0; y < sourceAndDestVolume1->getSizeY(); y++) {
+						for(int z = 0; z < sourceAndDestVolume1->getSizeZ(); z++) {
+							sourceAndDestVolume1->setDataAt(x, y, z, max(sourceAndDestVolume1->getDataAt(x, y, z), sourceVolume2->getDataAt(x, y, z)));
+						}
 					}
 				}
 			}
@@ -1611,7 +1616,7 @@ namespace wustl_mm {
 
 
 
-		Volume * VolumeSkeletonizer::PerformImmersionSkeletonizationAndPruning(Volume * sourceVol, double startGray, double endGray, double stepSize, int smoothingIterations, int smoothingRadius, int minCurveSize, int minSurfaceSize, int maxCurveHole, int maxSurfaceHole, string outputPath, bool doPruning, double pointThreshold, double curveThreshold, double surfaceThreshold) {
+		Volume * VolumeSkeletonizer::PerformImmersionSkeletonizationAndPruning(Volume * sourceVol, Volume * preserveVol, double startGray, double endGray, double stepSize, int smoothingIterations, int smoothingRadius, int minCurveSize, int minSurfaceSize, int maxCurveHole, int maxSurfaceHole, string outputPath, bool doPruning, double pointThreshold, double curveThreshold, double surfaceThreshold) {
 			appTimeManager.PushCurrentTime();
 			for(int i = 0; i < smoothingIterations; i++) {
 				SmoothenVolume(sourceVol, startGray, endGray, smoothingRadius);
@@ -1620,6 +1625,9 @@ namespace wustl_mm {
 			Vector3DFloat * volumeGradient = NULL;
 			EigenResults3D * volumeEigens;
 			sourceVol->pad(MAX_GAUSSIAN_FILTER_RADIUS, 0);
+			if(preserveVol != NULL) {
+				preserveVol->pad(MAX_GAUSSIAN_FILTER_RADIUS, 0);
+			}
 
 			if(doPruning) {
 				volumeGradient = GetVolumeGradient(sourceVol);			
@@ -1627,7 +1635,7 @@ namespace wustl_mm {
 
 			Volume * nullVol = new Volume(sourceVol->getSizeX(), sourceVol->getSizeY(), sourceVol->getSizeZ());
 			appTimeManager.PushCurrentTime();
-			Volume * surfaceVol = GetImmersionThinning(sourceVol, NULL, startGray, endGray, stepSize, THINNING_CLASS_SURFACE_PRESERVATION);			
+			Volume * surfaceVol = GetImmersionThinning(sourceVol, preserveVol, startGray, endGray, stepSize, THINNING_CLASS_SURFACE_PRESERVATION);			
 			appTimeManager.PopAndDisplayTime("Surface Thinning : %f seconds!\n");
 			
 			#ifdef SAVE_INTERMEDIATE_RESULTS
@@ -1652,7 +1660,7 @@ namespace wustl_mm {
 
 
 				appTimeManager.PushCurrentTime();
-				PruneUsingStructureTensor(prunedSurfaceVol, sourceVol, volumeGradient, volumeEigens, gaussianFilterSurfaceRadius, surfaceThreshold, PRUNING_CLASS_PRUNE_SURFACES, outputPath + "-S");
+				PruneUsingStructureTensor(prunedSurfaceVol, sourceVol, preserveVol, volumeGradient, volumeEigens, gaussianFilterSurfaceRadius, surfaceThreshold, PRUNING_CLASS_PRUNE_SURFACES, outputPath + "-S");
 				appTimeManager.PopAndDisplayTime("  Pruning: %f seconds!\n");
 
 				appTimeManager.PushCurrentTime();
@@ -1682,8 +1690,10 @@ namespace wustl_mm {
 
 			delete surfaceVol;
 			surfaceVol = cleanedSurfaceVol;
+			VoxelOr(surfaceVol, preserveVol);
 
 			appTimeManager.PushCurrentTime();
+
 			Volume * curveVol = GetImmersionThinning(sourceVol, surfaceVol, startGray, endGray, stepSize, THINNING_CLASS_CURVE_PRESERVATION);
 			appTimeManager.PopAndDisplayTime("Curve Thinning   : %f seconds!\n");
 
@@ -1702,7 +1712,7 @@ namespace wustl_mm {
 
 				volumeEigens = GetEigenResults(curveVol, volumeGradient, gaussianFilterCurveRadius, curveRadius, true);
 				Volume * prunedCurveVol = new Volume(curveVol->getSizeX(), curveVol->getSizeY(), curveVol->getSizeZ(), 0, 0, 0, curveVol);
-				PruneUsingStructureTensor(prunedCurveVol, sourceVol, volumeGradient, volumeEigens, gaussianFilterCurveRadius, curveThreshold, PRUNING_CLASS_PRUNE_CURVES, outputPath + "-C");
+				PruneUsingStructureTensor(prunedCurveVol, sourceVol, preserveVol, volumeGradient, volumeEigens, gaussianFilterCurveRadius, curveThreshold, PRUNING_CLASS_PRUNE_CURVES, outputPath + "-C");
 				delete [] volumeEigens;
 				#ifdef SAVE_INTERMEDIATE_RESULTS
 					prunedCurveVol->toMRCFile((char *)(outputPath + "-C-Post-Prune.mrc").c_str());

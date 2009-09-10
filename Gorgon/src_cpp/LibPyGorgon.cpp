@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.57  2009/08/10 13:54:39  ssa1
+//   Adding initial ssehunter program
+//
 //   Revision 1.56  2009/07/01 22:00:27  ssa1
 //   Centering the volume cropped using a radius around the point selected by the atom selection tool.
 //
@@ -286,6 +289,7 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("cropVolume", &VolumeRenderer::CropVolume)
 		.def("performBinarySkeletonizationJu2007", &VolumeRenderer::PerformBinarySkeletonizationJu2007, return_value_policy<reference_existing_object>())		
 		.def("performGrayscaleSkeletonizationAbeysinghe2008", &VolumeRenderer::PerformGrayscaleSkeletonizationAbeysinghe2008, return_value_policy<reference_existing_object>())		
+		.def("performPreservingGrayscaleSkeletonizationAbeysinghe2008", &VolumeRenderer::PerformPreservingGrayscaleSkeletonizationAbeysinghe2008, return_value_policy<reference_existing_object>())		
 		.def("setSpacing", &VolumeRenderer::SetSpacing)
 		.def("getSpacingX", &VolumeRenderer::GetSpacingX)
 		.def("getSpacingY", &VolumeRenderer::GetSpacingY)

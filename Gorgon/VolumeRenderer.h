@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.52  2009/07/01 22:00:27  ssa1
+//   Centering the volume cropped using a radius around the point selected by the atom selection tool.
+//
 //   Revision 1.51  2009/07/01 21:25:13  ssa1
 //   Centering the volume cropped using a radius around the point selected by the atom selection tool.
 //
@@ -99,6 +102,7 @@
 #include <GraphMatch/VectorMath.h>
 #include "Renderer.h"
 #include "GlobalConstants.h"
+#include "MeshRenderer.h"
 #include <SkeletonMaker/volume.h>
 #include <GraySkeletonCPP/GlobalDefinitions.h>
 #include <GraySkeletonCPP/VolumeSkeletonizer.h>
@@ -161,6 +165,7 @@ namespace wustl_mm {
 			Volume * GetVolume();
 			Volume * PerformBinarySkeletonizationJu2007(double threshold, int minCurveSize, int minSurfaceSize);
 			Volume * PerformGrayscaleSkeletonizationAbeysinghe2008(double startDensity, int stepCount, int minCurveSize, int minSurfaceSize, int curveRadius, int surfaceRadius, int skeletonSmoothenRadius);
+			Volume * PerformPreservingGrayscaleSkeletonizationAbeysinghe2008(NonManifoldMesh_Annotated * preserveMesh, double startDensity, int stepCount, int minCurveSize, int minSurfaceSize, int curveRadius, int surfaceRadius, int skeletonSmoothenRadius);
 			void SetSpacing(float spX, float spY, float spZ);
 			float GetSpacingX();
 			float GetSpacingY();
@@ -1065,13 +1070,29 @@ namespace wustl_mm {
 			double stepSize = (dataVolume->getMax() - startDensity) / stepCount;
 			if(!isZero(stepSize)) {
 				VolumeSkeletonizer * skeletonizer = new VolumeSkeletonizer(0, curveRadius, surfaceRadius, skeletonRadius);
-				Volume * outputVol = skeletonizer->PerformImmersionSkeletonizationAndPruning(dataVolume, startDensity, dataVolume->getMax(), stepSize, 0, 0, minCurveSize, minSurfaceSize, 0, 0, "", true, 1.0, DEFAULT_PRUNE_THRESHOLD, DEFAULT_PRUNE_THRESHOLD);
+				Volume * outputVol = skeletonizer->PerformImmersionSkeletonizationAndPruning(dataVolume, NULL, startDensity, dataVolume->getMax(), stepSize, 0, 0, minCurveSize, minSurfaceSize, 0, 0, "", true, 1.0, DEFAULT_PRUNE_THRESHOLD, DEFAULT_PRUNE_THRESHOLD);
 				delete skeletonizer;
 				return outputVol;
 			} else {
 				return NULL;
 			}
 		}
+
+		Volume * VolumeRenderer::PerformPreservingGrayscaleSkeletonizationAbeysinghe2008(NonManifoldMesh_Annotated * preserveMesh, double startDensity, int stepCount, int minCurveSize, int minSurfaceSize, int curveRadius, int surfaceRadius, int skeletonRadius) {
+			double stepSize = (dataVolume->getMax() - startDensity) / stepCount;
+			if(!isZero(stepSize)) {
+				VolumeSkeletonizer * skeletonizer = new VolumeSkeletonizer(0, curveRadius, surfaceRadius, skeletonRadius);
+				Volume * preserveVol = preserveMesh->ToVolume();
+				printf("volume sizes %d %d %d, %d %d %d\n", dataVolume->getSizeX(), dataVolume->getSizeY(), dataVolume->getSizeZ(), preserveVol->getSizeX(), preserveVol->getSizeY(), preserveVol->getSizeZ());
+				Volume * outputVol = skeletonizer->PerformImmersionSkeletonizationAndPruning(dataVolume, preserveVol, startDensity, dataVolume->getMax(), stepSize, 0, 0, minCurveSize, minSurfaceSize, 0, 0, "", true, 1.0, DEFAULT_PRUNE_THRESHOLD, DEFAULT_PRUNE_THRESHOLD);				
+				delete skeletonizer;
+				delete preserveVol;
+				return outputVol;
+			} else {
+				return NULL;
+			}
+		}
+
 		Volume * VolumeRenderer::GetVolume() {
 			return dataVolume;
 		}

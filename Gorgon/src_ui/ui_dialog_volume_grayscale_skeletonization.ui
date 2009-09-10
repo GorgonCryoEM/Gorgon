@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>481</width>
-    <height>311</height>
+    <width>334</width>
+    <height>337</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -76,9 +76,15 @@
    </item>
    <item row="2" column="2" >
     <widget class="QLabel" name="labelStartingDensityDisplay" >
+     <property name="sizePolicy" >
+      <sizepolicy vsizetype="Minimum" hsizetype="Minimum" >
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="minimumSize" >
       <size>
-       <width>60</width>
+       <width>10</width>
        <height>0</height>
       </size>
      </property>
@@ -130,9 +136,15 @@
    </item>
    <item row="3" column="2" >
     <widget class="QLabel" name="labelStepSizeDisplay" >
+     <property name="sizePolicy" >
+      <sizepolicy vsizetype="Minimum" hsizetype="Minimum" >
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="minimumSize" >
       <size>
-       <width>60</width>
+       <width>10</width>
        <height>0</height>
       </size>
      </property>
@@ -244,7 +256,17 @@
      </property>
     </widget>
    </item>
-   <item row="9" column="1" colspan="2" >
+   <item row="9" column="0" colspan="2" >
+    <widget class="QCheckBox" name="checkBoxPreserveSkeleton" >
+     <property name="enabled" >
+      <bool>false</bool>
+     </property>
+     <property name="text" >
+      <string>Use current skeleton as base</string>
+     </property>
+    </widget>
+   </item>
+   <item row="10" column="1" colspan="2" >
     <widget class="QDialogButtonBox" name="buttonBox" >
      <property name="orientation" >
       <enum>Qt::Horizontal</enum>
@@ -266,6 +288,7 @@
   <tabstop>spinBoxCurveRadius</tabstop>
   <tabstop>spinBoxSurfaceRadius</tabstop>
   <tabstop>spinBoxSkeletonRadius</tabstop>
+  <tabstop>checkBoxPreserveSkeleton</tabstop>
   <tabstop>buttonBox</tabstop>
  </tabstops>
  <resources/>
