@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_dialog_volume_grayscale_skeletonization.ui'
 #
-# Created: Sun Apr 06 21:13:16 2008
+# Created: Thu Sep 10 13:21:30 2009
 #      by: PyQt4 UI code generator 4.3.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,7 +12,7 @@ from PyQt4 import QtCore, QtGui
 class Ui_DialogVolumeGrayscaleSkeletonization(object):
     def setupUi(self, DialogVolumeGrayscaleSkeletonization):
         DialogVolumeGrayscaleSkeletonization.setObjectName("DialogVolumeGrayscaleSkeletonization")
-        DialogVolumeGrayscaleSkeletonization.resize(QtCore.QSize(QtCore.QRect(0,0,481,311).size()).expandedTo(DialogVolumeGrayscaleSkeletonization.minimumSizeHint()))
+        DialogVolumeGrayscaleSkeletonization.resize(QtCore.QSize(QtCore.QRect(0,0,334,337).size()).expandedTo(DialogVolumeGrayscaleSkeletonization.minimumSizeHint()))
 
         self.gridlayout = QtGui.QGridLayout(DialogVolumeGrayscaleSkeletonization)
         self.gridlayout.setObjectName("gridlayout")
@@ -45,7 +45,13 @@ class Ui_DialogVolumeGrayscaleSkeletonization(object):
         self.gridlayout.addWidget(self.horizontalSliderStartingDensity,2,1,1,1)
 
         self.labelStartingDensityDisplay = QtGui.QLabel(DialogVolumeGrayscaleSkeletonization)
-        self.labelStartingDensityDisplay.setMinimumSize(QtCore.QSize(60,0))
+
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Minimum,QtGui.QSizePolicy.Minimum)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.labelStartingDensityDisplay.sizePolicy().hasHeightForWidth())
+        self.labelStartingDensityDisplay.setSizePolicy(sizePolicy)
+        self.labelStartingDensityDisplay.setMinimumSize(QtCore.QSize(10,0))
         self.labelStartingDensityDisplay.setMaximumSize(QtCore.QSize(60,16777215))
         self.labelStartingDensityDisplay.setLayoutDirection(QtCore.Qt.RightToLeft)
         self.labelStartingDensityDisplay.setObjectName("labelStartingDensityDisplay")
@@ -66,7 +72,13 @@ class Ui_DialogVolumeGrayscaleSkeletonization(object):
         self.gridlayout.addWidget(self.horizontalSliderStepCount,3,1,1,1)
 
         self.labelStepSizeDisplay = QtGui.QLabel(DialogVolumeGrayscaleSkeletonization)
-        self.labelStepSizeDisplay.setMinimumSize(QtCore.QSize(60,0))
+
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Minimum,QtGui.QSizePolicy.Minimum)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.labelStepSizeDisplay.sizePolicy().hasHeightForWidth())
+        self.labelStepSizeDisplay.setSizePolicy(sizePolicy)
+        self.labelStepSizeDisplay.setMinimumSize(QtCore.QSize(10,0))
         self.labelStepSizeDisplay.setMaximumSize(QtCore.QSize(60,16777215))
         self.labelStepSizeDisplay.setLayoutDirection(QtCore.Qt.RightToLeft)
         self.labelStepSizeDisplay.setObjectName("labelStepSizeDisplay")
@@ -122,11 +134,16 @@ class Ui_DialogVolumeGrayscaleSkeletonization(object):
         self.spinBoxSkeletonRadius.setObjectName("spinBoxSkeletonRadius")
         self.gridlayout.addWidget(self.spinBoxSkeletonRadius,8,1,1,2)
 
+        self.checkBoxPreserveSkeleton = QtGui.QCheckBox(DialogVolumeGrayscaleSkeletonization)
+        self.checkBoxPreserveSkeleton.setEnabled(False)
+        self.checkBoxPreserveSkeleton.setObjectName("checkBoxPreserveSkeleton")
+        self.gridlayout.addWidget(self.checkBoxPreserveSkeleton,9,0,1,2)
+
         self.buttonBox = QtGui.QDialogButtonBox(DialogVolumeGrayscaleSkeletonization)
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
         self.buttonBox.setStandardButtons(QtGui.QDialogButtonBox.Cancel|QtGui.QDialogButtonBox.NoButton|QtGui.QDialogButtonBox.Ok)
         self.buttonBox.setObjectName("buttonBox")
-        self.gridlayout.addWidget(self.buttonBox,9,1,1,2)
+        self.gridlayout.addWidget(self.buttonBox,10,1,1,2)
 
         self.retranslateUi(DialogVolumeGrayscaleSkeletonization)
         QtCore.QObject.connect(self.buttonBox,QtCore.SIGNAL("accepted()"),DialogVolumeGrayscaleSkeletonization.accept)
@@ -141,7 +158,8 @@ class Ui_DialogVolumeGrayscaleSkeletonization(object):
         DialogVolumeGrayscaleSkeletonization.setTabOrder(self.spinBoxMinSurface,self.spinBoxCurveRadius)
         DialogVolumeGrayscaleSkeletonization.setTabOrder(self.spinBoxCurveRadius,self.spinBoxSurfaceRadius)
         DialogVolumeGrayscaleSkeletonization.setTabOrder(self.spinBoxSurfaceRadius,self.spinBoxSkeletonRadius)
-        DialogVolumeGrayscaleSkeletonization.setTabOrder(self.spinBoxSkeletonRadius,self.buttonBox)
+        DialogVolumeGrayscaleSkeletonization.setTabOrder(self.spinBoxSkeletonRadius,self.checkBoxPreserveSkeleton)
+        DialogVolumeGrayscaleSkeletonization.setTabOrder(self.checkBoxPreserveSkeleton,self.buttonBox)
 
     def retranslateUi(self, DialogVolumeGrayscaleSkeletonization):
         DialogVolumeGrayscaleSkeletonization.setWindowTitle(QtGui.QApplication.translate("DialogVolumeGrayscaleSkeletonization", "Volume - Grayscale Skeletonization", None, QtGui.QApplication.UnicodeUTF8))
@@ -163,4 +181,5 @@ class Ui_DialogVolumeGrayscaleSkeletonization(object):
         self.labelCurveRadius_2.setText(QtGui.QApplication.translate("DialogVolumeGrayscaleSkeletonization", "Surface Radius:", None, QtGui.QApplication.UnicodeUTF8))
         self.labelCurveRadius_3.setWhatsThis(QtGui.QApplication.translate("DialogVolumeGrayscaleSkeletonization", "The Radius to use when obtaining the direction of a skeletal element... The larger the radius, the more global information is used", None, QtGui.QApplication.UnicodeUTF8))
         self.labelCurveRadius_3.setText(QtGui.QApplication.translate("DialogVolumeGrayscaleSkeletonization", "Skeleton Radius:", None, QtGui.QApplication.UnicodeUTF8))
+        self.checkBoxPreserveSkeleton.setText(QtGui.QApplication.translate("DialogVolumeGrayscaleSkeletonization", "Use current skeleton as base", None, QtGui.QApplication.UnicodeUTF8))
 

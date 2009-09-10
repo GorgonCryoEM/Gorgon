@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.3  2008/06/18 18:15:41  ssa1
+#   Adding in CVS meta data
+#
 
 from PyQt4 import QtCore, QtGui
 from ui_dialog_volume_grayscale_skeletonization import Ui_DialogVolumeGrayscaleSkeletonization
@@ -39,7 +42,7 @@ class VolumeGrayscaleSkeletonizationForm(QtGui.QDialog):
     def createActions(self):               
         graySkeletonizeAct = QtGui.QAction(self.tr("&Grayscale Skeletonization"), self)
         graySkeletonizeAct.setStatusTip(self.tr("Apply grayscale skeletonization on the volume"))
-        self.connect(graySkeletonizeAct, QtCore.SIGNAL("triggered()"), self.show)
+        self.connect(graySkeletonizeAct, QtCore.SIGNAL("triggered()"), self.loadAndShow)        
         self.app.actions.addAction("perform_VolumeGrayscaleSkeletonization", graySkeletonizeAct)
   
     def createMenus(self):
@@ -88,7 +91,11 @@ class VolumeGrayscaleSkeletonizationForm(QtGui.QDialog):
             self.setCursor(QtCore.Qt.BusyCursor)
             method = self.getSkeletonizationMethod()
             if(method == 0):
-                skeleton = self.viewer.renderer.performGrayscaleSkeletonizationAbeysinghe2008(self.getStartingDensity(), self.getStepCount(), self.getMinCurveLength(), self.getMinSurfaceSize(), self.getCurveRadius(), self.getSurfaceRadius(), self.getSkeletonRadius())
+                if(self.app.viewers["skeleton"].loaded and self.ui.checkBoxPreserveSkeleton.isChecked()):
+                    skeletonRenderer = self.app.viewers["skeleton"].renderer
+                    skeleton = self.viewer.renderer.performPreservingGrayscaleSkeletonizationAbeysinghe2008(skeletonRenderer.getMesh(), self.getStartingDensity(), self.getStepCount(), self.getMinCurveLength(), self.getMinSurfaceSize(), self.getCurveRadius(), self.getSurfaceRadius(), self.getSkeletonRadius())
+                else:
+                    skeleton = self.viewer.renderer.performGrayscaleSkeletonizationAbeysinghe2008(self.getStartingDensity(), self.getStepCount(), self.getMinCurveLength(), self.getMinSurfaceSize(), self.getCurveRadius(), self.getSurfaceRadius(), self.getSkeletonRadius())
                 self.app.viewers["skeleton"].loadVolume(skeleton)
             self.setCursor(QtCore.Qt.ArrowCursor)
             self.close()
@@ -99,6 +106,10 @@ class VolumeGrayscaleSkeletonizationForm(QtGui.QDialog):
     def getCitationHtml(self, title, author, journal):
         return "<b>" + title + "</b><br>" + author + "<br><i>" + journal + "</i>"
                   
+    def loadAndShow(self):
+        self.ui.checkBoxPreserveSkeleton.setEnabled(self.app.viewers["skeleton"].loaded)
+        self.show()
+        
     def methodChanged(self, id):
         if(id == 0):
             self.ui.textCitation.setHtml(self.getCitationHtml("Segmentation-free skeletonization of grayscale volumes for shape understanding", "Sasakthi Abeysinghe, Matthew Baker, Wah Chiu and Tao Ju", "IEEE International Conference on Shape Modeling and Applications, 2008 (Accepted)"))
