@@ -15,6 +15,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.15.2.20  2009/09/08 15:02:55  schuhs
+//   Adding explicity penalty calculations to the code that computes the cost of the ground truth answer. Adding some code to count the number of skipped helices and sheets in a jump edge.
+//
 //   Revision 1.15.2.19  2009/08/26 20:51:21  schuhs
 //   Add code to reproduce results from SMI paper when SMIPAPER_MODE flag is set.
 //
@@ -254,9 +257,9 @@ namespace wustl_mm {
 			cout << "missing helix penalty is " << MISSING_HELIX_PENALTY << ", missing sheet penalty is " << MISSING_SHEET_PENALTY << endl;
 
 			if(!PERFORMANCE_COMPARISON_MODE) {
-				if (SMIPAPER_MODE == 1) {
+				//if (SMIPAPER_MODE == 1) {
 					NormalizeGraphs();
-				}
+				//}
 			}
 			foundCount = 0;
 			longestMatch = 0;
@@ -571,6 +574,16 @@ namespace wustl_mm {
 						return -1;
 					}
 				} else {
+
+					if((qj != -1) && (baseGraph->euclideanMatrix[qj-1][qp-1] > (patternLength * EUCLIDEAN_VOXEL_TO_PDB_RATIO ))){
+						return -1;
+					}
+
+
+
+
+
+					/*
 					//Adding fudge factor to make sure we dont eliminate short loops, and also avoiding checking helices
 					if((qj != -1) && 
 						((int)(patternGraph->adjacencyMatrix[d-1][d][0] + 0.01) != GRAPHEDGE_HELIX) && 
@@ -580,6 +593,7 @@ namespace wustl_mm {
 						//cout << "qj=" << qj << ", qp=" << qp << ", d=" << d << endl;
 						return -1;
 					}
+					*/
 					// applies even to helices!
 					//if((qj != -1) && 
 					//	//(baseGraph->euclideanMatrix[qj-1][qp-1] * EUCLIDEAN_VOXEL_TO_PDB_RATIO/2.0 > patternLength) ){
@@ -601,6 +615,13 @@ namespace wustl_mm {
 						return -1;
 					}
 				} else {
+
+					if((qj != -1) && (baseGraph->euclideanMatrix[qj-1][qp-1] > (patternLength * EUCLIDEAN_VOXEL_TO_PDB_RATIO ))){
+						return -1;
+					}
+
+
+					/*
 					if((qj != -1) && 
 					((int)(patternGraph->adjacencyMatrix[d-1][d][0] + 0.01) != GRAPHEDGE_HELIX) && 
 				//	//(baseGraph->euclideanMatrix[qj-1][qp-1] * 0.9 > patternGraph->adjacencyMatrix[d-1][d][1])){
@@ -609,6 +630,7 @@ namespace wustl_mm {
 					//cout << "qj=" << qj << ", qp=" << qp << ", d=" << d << endl;
 						return -1;
 					}
+					*/
 				}
 
 			}
@@ -959,42 +981,61 @@ namespace wustl_mm {
 
 		void WongMatch15ConstrainedNoFuture::NormalizeGraphs() {
 			printf("Normalizing Graphs\n");
+			if (SMIPAPER_MODE == 1) {
 
-		#ifdef VERBOSE
-			printf("\tNormalizing the base graph based on helix length ratio\nNormalized Graph:\n");
-		#endif
-			// TODO: Also normalize the sheet capacity here?
-			double ratio = 0;
+			#ifdef VERBOSE
+				printf("\tNormalizing the base graph based on helix length ratio\nNormalized Graph:\n");
+			#endif
+				// TODO: Also normalize the sheet capacity here?
+				double ratio = 0;
 
-			for(int i = 0; i < (int)baseGraph->skeletonHelixes.size(); i++) {
-				if (SMIPAPER_MODE == 1) {
-					ratio += (double)baseGraph->skeletonHelixes[i]->length / HELIX_C_ALPHA_TO_ANGSTROMS / (double)baseGraph->adjacencyMatrix[i*2][i*2+1][1];
-					printf("\tRatio for helix %i of length %f is %f\n", i, (double)baseGraph->skeletonHelixes[i]->length / HELIX_C_ALPHA_TO_ANGSTROMS, (double)baseGraph->skeletonHelixes[i]->length / (double)baseGraph->adjacencyMatrix[i*2][i*2+1][1]);
-				} else {
-					ratio += (double)baseGraph->skeletonHelixes[i]->length / (double)baseGraph->adjacencyMatrix[i*2][i*2+1][1];
-				}
-			}
-			ratio = ratio / (double)baseGraph->skeletonHelixes.size();
-
-		#ifdef VERBOSE
-			printf("\tRatio is %f\n", ratio);
-		#endif
-
-
-			for(int i = 0; i < baseGraph->nodeCount; i++) {
-				for(int j = 0; j < baseGraph->nodeCount; j++) {
-					if(baseGraph->adjacencyMatrix[i][j][1] != MAXINT) {
-						baseGraph->SetCost(i+1,j+1, baseGraph->adjacencyMatrix[i][j][1] * ratio);
+				for(int i = 0; i < (int)baseGraph->skeletonHelixes.size(); i++) {
+					if (SMIPAPER_MODE == 1) {
+						ratio += (double)baseGraph->skeletonHelixes[i]->length / HELIX_C_ALPHA_TO_ANGSTROMS / (double)baseGraph->adjacencyMatrix[i*2][i*2+1][1];
+						printf("\tRatio for helix %i of length %f is %f\n", i, (double)baseGraph->skeletonHelixes[i]->length / HELIX_C_ALPHA_TO_ANGSTROMS, (double)baseGraph->skeletonHelixes[i]->length / (double)baseGraph->adjacencyMatrix[i*2][i*2+1][1]);
+					} else {
+						ratio += (double)baseGraph->skeletonHelixes[i]->length / (double)baseGraph->adjacencyMatrix[i*2][i*2+1][1];
 					}
 				}
-			}	
-			/*
-			for(int i = 0; i < patternGraph->nodeCount; i++) {
-				if(patternGraph->nodeWeights[i] != MAXINT) {
-					patternGraph->nodeWeights[i] *= ratio;
+				ratio = ratio / (double)baseGraph->skeletonHelixes.size();
+
+			#ifdef VERBOSE
+				printf("\tRatio is %f\n", ratio);
+			#endif
+
+
+				for(int i = 0; i < baseGraph->nodeCount; i++) {
+					for(int j = 0; j < baseGraph->nodeCount; j++) {
+						if(baseGraph->adjacencyMatrix[i][j][1] != MAXINT) {
+							baseGraph->SetCost(i+1,j+1, baseGraph->adjacencyMatrix[i][j][1] * ratio);
+						}
+					}
+				}	
+				/*
+				for(int i = 0; i < patternGraph->nodeCount; i++) {
+					if(patternGraph->nodeWeights[i] != MAXINT) {
+						patternGraph->nodeWeights[i] *= ratio;
+					}
 				}
+				*/
+			} else {
+
+
+			#ifdef VERBOSE
+				printf("\tNormalizing the base graph from Angstroms to amino acids\nNormalized Graph:\n");
+			#endif
+				for(int i = 0; i < baseGraph->nodeCount; i++) {
+					for(int j = 0; j < baseGraph->nodeCount; j++) {
+						if(baseGraph->adjacencyMatrix[i][j][1] != MAXINT && baseGraph->adjacencyMatrix[i][j][0] == GRAPHEDGE_HELIX) {
+							baseGraph->SetCost(i+1,j+1, baseGraph->adjacencyMatrix[i][j][1] / HELIX_C_ALPHA_TO_ANGSTROMS);
+						} else if(baseGraph->adjacencyMatrix[i][j][1] != MAXINT) {
+							baseGraph->SetCost(i+1,j+1, baseGraph->adjacencyMatrix[i][j][1] / LOOP_C_ALPHA_TO_ANGSTROMS);
+						}
+					}
+				}	
 			}
-			*/
+
+
 		#ifdef VERBOSE
 			baseGraph->PrintGraph();
 		#endif
