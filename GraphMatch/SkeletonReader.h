@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.19.2.19  2009/08/27 17:32:51  schuhs
+//   Add code to reproduce results from SMI paper when SMIPAPER_MODE flag is set.
+//
 //   Revision 1.19.2.18  2009/08/26 20:50:38  schuhs
 //   Add code to reproduce results from SMI paper when SMIPAPER_MODE flag is set.
 //
@@ -1096,7 +1099,7 @@ namespace wustl_mm {
 			Volume * visited = new Volume(vol->getSizeX(), vol->getSizeY(), vol->getSizeZ());
 
 			int helixCount = graph->GetHelixCount();
-			cout << "helix count is " << helixCount << endl;
+			//cout << "helix count is " << helixCount << endl;
 
 			bool expand;
 
@@ -1152,17 +1155,15 @@ namespace wustl_mm {
 							}
 						}
 
-						// stop expanding, since some other helix/sheet has been found
-						//expand = false;
-
-						// if the found SSE is a helix, stop expanding. this prevents paths from passing through helices.
-						//cout << "before checking if node " << n2 << " is a helix" << endl;
-						//if(n2 > 0 && graph->adjacencyMatrix[n2-1][n2-1][0] + 0.01 == GRAPHNODE_HELIX) {
-						//if(n2 > 0 && graph->adjacencyMatrix[n2-1][n2-1][0] + 0.01 != GRAPHNODE_SHEET) {
-						expand = false;
-
-						if(n2 > 2 * helixCount) {
-							//cout << "no further expansion from node " << n2 << endl;
+						// if the found SSE is a helix, stop expanding. if a sheet, keep expanding. this prevents paths from passing through helices
+						// and allows them to cross sheets.
+						if( (currentHelix < helixCount) ) {
+							// stop expanding, since some other helix has been found
+							//cout << "NO MORE expansion from node " << n2 << " (started at " << n1 << "). At (" << xx << "," << yy << "," << zz << ")" << endl;
+							expand = false;
+						} else {
+							// keep expanding, since a sheet was found, and paths are allowed to cross sheets
+							//cout << "allowing further expansion from node " << n2 << " (started at " << n1 << "). At (" << xx << "," << yy << "," << zz << ")" << endl;
 							expand = true;
 						}
 
