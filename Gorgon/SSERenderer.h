@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.29  2009/07/01 21:25:13  ssa1
+//   Centering the volume cropped using a radius around the point selected by the atom selection tool.
+//
 //   Revision 1.28  2009/06/24 21:33:48  ssa1
 //   SSE Builder Functionality: Sheet building and better camera functionality when loading new data.
 //
@@ -126,20 +129,22 @@ namespace wustl_mm {
 		}
 
 		void SSERenderer::AddHelix(Vector3DFloat p1, Vector3DFloat p2) {
-			GeometricShape * newHelix = new GeometricShape();
-			newHelix->geometricShapeType = GRAPHEDGE_HELIX;
-			Vector3DFloat center = (p1+p2) * 0.5;
-			Vector3DFloat dir = p1-p2;
-			Vector3DFloat yaxis = Vector3DFloat(0, 1, 0);
+			//GeometricShape * newHelix = new GeometricShape();
+			//newHelix->geometricShapeType = GRAPHEDGE_HELIX;
+			//Vector3DFloat center = (p1+p2) * 0.5;
+			//Vector3DFloat dir = p1-p2;
+			//Vector3DFloat yaxis = Vector3DFloat(0, 1, 0);
 
-			newHelix->SetCenter(Point3(center.X(), center.Y(), center.Z()));
-			newHelix->SetRadius(2.5);
-			newHelix->SetHeight(dir.Length());
-			Vector3DFloat axis = dir^yaxis;
+			//newHelix->SetCenter(Point3(center.X(), center.Y(), center.Z()));
+			//newHelix->SetRadius(2.5);
+			//newHelix->SetHeight(dir.Length());
+			//Vector3DFloat axis = dir^yaxis;
 
-			dir.Normalize();
-			double angle = acos(dir * yaxis);
-			newHelix->Rotate(Vector3(axis.X(), axis.Y(), axis.Z()), -angle);
+			//dir.Normalize();
+			//double angle = acos(dir * yaxis);
+			//newHelix->Rotate(Vector3(axis.X(), axis.Y(), axis.Z()), -angle);
+
+			GeometricShape * newHelix = GeometricShape::CreateHelix(p1, p2, 2.5);
 
 			helices.push_back(newHelix);
 			UpdateBoundingBox();

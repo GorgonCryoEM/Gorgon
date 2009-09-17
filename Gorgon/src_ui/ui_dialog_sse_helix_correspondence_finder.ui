@@ -532,6 +532,13 @@
          </column>
         </widget>
        </item>
+       <item row="2" column="1" >
+        <widget class="QPushButton" name="pushButtonExportToRosetta" >
+         <property name="text" >
+          <string>Export Correspondences to Rosetta</string>
+         </property>
+        </widget>
+       </item>
       </layout>
      </widget>
     </widget>
@@ -631,6 +638,9 @@
   <tabstop>doubleSpinBoxAverageMissingHelixLength</tabstop>
   <tabstop>doubleSpinBoxEuclideanToPDBRatio</tabstop>
   <tabstop>spinBoxBorderMarginThreshold</tabstop>
+  <tabstop>comboBoxCorrespondences</tabstop>
+  <tabstop>tableWidgetCorrespondenceList</tabstop>
+  <tabstop>pushButtonExportToRosetta</tabstop>
   <tabstop>pushButtonReset</tabstop>
   <tabstop>pushButtonOk</tabstop>
   <tabstop>pushButtonCancel</tabstop>

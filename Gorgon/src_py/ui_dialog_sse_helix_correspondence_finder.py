@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_dialog_sse_helix_correspondence_finder.ui'
 #
-# Created: Tue Dec 02 15:14:14 2008
+# Created: Mon Sep 14 11:48:02 2009
 #      by: PyQt4 UI code generator 4.3.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -347,6 +347,10 @@ class Ui_DialogSSEHelixCorrespondenceFinder(object):
         self.tableWidgetCorrespondenceList = QtGui.QTableWidget(self.tab)
         self.tableWidgetCorrespondenceList.setObjectName("tableWidgetCorrespondenceList")
         self.gridlayout8.addWidget(self.tableWidgetCorrespondenceList,1,0,1,2)
+
+        self.pushButtonExportToRosetta = QtGui.QPushButton(self.tab)
+        self.pushButtonExportToRosetta.setObjectName("pushButtonExportToRosetta")
+        self.gridlayout8.addWidget(self.pushButtonExportToRosetta,2,1,1,1)
         self.tabWidget.addTab(self.tab,"")
         self.gridlayout.addWidget(self.tabWidget,0,0,1,1)
 
@@ -404,7 +408,10 @@ class Ui_DialogSSEHelixCorrespondenceFinder(object):
         DialogSSEHelixCorrespondenceFinder.setTabOrder(self.doubleSpinBoxLoopImportance,self.doubleSpinBoxAverageMissingHelixLength)
         DialogSSEHelixCorrespondenceFinder.setTabOrder(self.doubleSpinBoxAverageMissingHelixLength,self.doubleSpinBoxEuclideanToPDBRatio)
         DialogSSEHelixCorrespondenceFinder.setTabOrder(self.doubleSpinBoxEuclideanToPDBRatio,self.spinBoxBorderMarginThreshold)
-        DialogSSEHelixCorrespondenceFinder.setTabOrder(self.spinBoxBorderMarginThreshold,self.pushButtonReset)
+        DialogSSEHelixCorrespondenceFinder.setTabOrder(self.spinBoxBorderMarginThreshold,self.comboBoxCorrespondences)
+        DialogSSEHelixCorrespondenceFinder.setTabOrder(self.comboBoxCorrespondences,self.tableWidgetCorrespondenceList)
+        DialogSSEHelixCorrespondenceFinder.setTabOrder(self.tableWidgetCorrespondenceList,self.pushButtonExportToRosetta)
+        DialogSSEHelixCorrespondenceFinder.setTabOrder(self.pushButtonExportToRosetta,self.pushButtonReset)
         DialogSSEHelixCorrespondenceFinder.setTabOrder(self.pushButtonReset,self.pushButtonOk)
         DialogSSEHelixCorrespondenceFinder.setTabOrder(self.pushButtonOk,self.pushButtonCancel)
 
@@ -456,6 +463,7 @@ class Ui_DialogSSEHelixCorrespondenceFinder(object):
         headerItem2 = QtGui.QTableWidgetItem()
         headerItem2.setText(QtGui.QApplication.translate("DialogSSEHelixCorrespondenceFinder", "Constrained", None, QtGui.QApplication.UnicodeUTF8))
         self.tableWidgetCorrespondenceList.setHorizontalHeaderItem(2,headerItem2)
+        self.pushButtonExportToRosetta.setText(QtGui.QApplication.translate("DialogSSEHelixCorrespondenceFinder", "Export Correspondences to Rosetta", None, QtGui.QApplication.UnicodeUTF8))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), QtGui.QApplication.translate("DialogSSEHelixCorrespondenceFinder", "Results", None, QtGui.QApplication.UnicodeUTF8))
         self.pushButtonReset.setText(QtGui.QApplication.translate("DialogSSEHelixCorrespondenceFinder", "Reset", None, QtGui.QApplication.UnicodeUTF8))
         self.pushButtonOk.setText(QtGui.QApplication.translate("DialogSSEHelixCorrespondenceFinder", "OK", None, QtGui.QApplication.UnicodeUTF8))

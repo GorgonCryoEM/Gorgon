@@ -901,7 +901,10 @@ This returns a string in the format of an SEQ file for the Chain.
             structure.append('E')
     lines.append( ''.join(structure) )
     return '\n'.join(lines)
-    
+
+  def getSequence(self):
+    startIndex = min(self.residueRange())
+    return repr(self).lstrip('.')      
 
 if __name__ == '__main__':
     mychain = Chain.load('1KPO.pdb')
