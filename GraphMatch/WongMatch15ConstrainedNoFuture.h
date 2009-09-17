@@ -15,6 +15,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.15.2.21  2009/09/10 16:26:34  schuhs
+//   Use Normalize routine to change units of skeleton adjacency matrix from angstroms to residues.
+//
 //   Revision 1.15.2.20  2009/09/08 15:02:55  schuhs
 //   Adding explicity penalty calculations to the code that computes the cost of the ground truth answer. Adding some code to count the number of skipped helices and sheets in a jump edge.
 //
@@ -694,7 +697,14 @@ namespace wustl_mm {
 				}
 				pastFirst = true;
 			}
-			
+
+			// add penalty if a single strand node is skipped
+			if( (startAtBeginning || pastFirst) && ((int)(patternGraph->adjacencyMatrix[d][d][0] + 0.01) == GRAPHNODE_SHEET) ) {
+					cost += MISSING_SHEET_PENALTY;
+					cost += patternGraph->nodeWeights[d] * MISSING_SHEET_PENALTY_SCALED;
+			}
+
+
 			if (finishAtEnd && patternGraph->adjacencyMatrix[lastPatternNode-1][lastPatternNode-1][0] + 0.01 == GRAPHNODE_SHEET){
 					cost += MISSING_SHEET_PENALTY;
 					cost += patternGraph->nodeWeights[lastPatternNode-1] * MISSING_SHEET_PENALTY_SCALED;
