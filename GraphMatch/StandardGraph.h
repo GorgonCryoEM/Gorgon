@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.13.2.10  2009/09/08 14:58:16  schuhs
+//   When SMIPAPER_MODE flag is set, removing scaling from path distance algorithm. Adding code to print node weights whenever the adjacency matrix is printed.
+//
 //   Revision 1.13.2.9  2009/07/23 15:10:49  schuhs
 //   Fixing bug that assigned longer-than-necessary Euclidian loops to sheets
 //
@@ -225,19 +228,25 @@ namespace wustl_mm {
 
 		void StandardGraph::PrintGraph() {
 			char temp;
+			int seqNode = 1;
 			for(int i = 0; i < (int)pdbStructures.size(); i++) {
 				if(pdbStructures[i]->secondaryStructureType == GRAPHEDGE_HELIX) {
-					printf("\tHelix %d \t\t( %d, %d )\t Length: %f \t Start Pos: %d \t End Pos: %d\n", pdbStructures[i]->serialNumber, i*2+1, i*2+2, pdbStructures[i]->GetLengthAngstroms(), pdbStructures[i]->startPosition, pdbStructures[i]->endPosition);
+					printf("\tHelix %d \t\t(%2d,%2d)\t Length: %f \t Start Pos: %d \t End Pos: %d\n", pdbStructures[i]->serialNumber, seqNode, seqNode+1, pdbStructures[i]->GetLengthAngstroms(), pdbStructures[i]->startPosition, pdbStructures[i]->endPosition);
+					seqNode += 2;
 				} else {
-					printf("\tSheet Strand %s-%d \t( %d, %d )\t Length: %f \t Start Pos: %d \t End Pos: %d\n", pdbStructures[i]->secondaryStructureID, pdbStructures[i]->serialNumber, i*2+1, i*2+2, pdbStructures[i]->GetLengthAngstroms(), pdbStructures[i]->startPosition, pdbStructures[i]->endPosition);
+					printf("\tSheet Strand %s-%d \t(%2d)   \t Length: %f \t Start Pos: %d \t End Pos: %d\n", pdbStructures[i]->secondaryStructureID, pdbStructures[i]->serialNumber, seqNode, pdbStructures[i]->GetLengthAngstroms(), pdbStructures[i]->startPosition, pdbStructures[i]->endPosition);
+					seqNode += 1;
 				}
 			}
 
+			int skelNode = 1;
 			for(int i = 0; i < (int)skeletonHelixes.size(); i++) {
 				if(skeletonHelixes[i]->geometricShapeType == GRAPHEDGE_HELIX) {
-					printf("\tHelix #%d \t( %d, %d )\t Length: %f\n", i+1, i*2+1, i*2+2, skeletonHelixes[i]->length);
+					printf("\tHelix #%d \t(%2d,%2d)\t Length: %f\n", i+1, skelNode, skelNode+1, skeletonHelixes[i]->length);
+					skelNode += 2;
 				} else if(skeletonHelixes[i]->geometricShapeType == GRAPHEDGE_SHEET) {
-					printf("\tSheet #%d \t( %d, %d )\t Length: %f\n", i+1, i*2+1, i*2+2, skeletonHelixes[i]->length);
+					printf("\tSheet #%d \t(%2d)   \t Length: %f\n", i+1, skelNode, skeletonHelixes[i]->length);
+					skelNode += 1;
 				}
 			}
 
