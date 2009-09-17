@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.53  2009/09/10 23:44:56  ssa1
+//   Allowing the option of preserving the earlier skeleton when performing grayscale skeletonization.. (Leads to better skeletons)
+//
 //   Revision 1.52  2009/07/01 22:00:27  ssa1
 //   Centering the volume cropped using a radius around the point selected by the atom selection tool.
 //
@@ -1083,7 +1086,6 @@ namespace wustl_mm {
 			if(!isZero(stepSize)) {
 				VolumeSkeletonizer * skeletonizer = new VolumeSkeletonizer(0, curveRadius, surfaceRadius, skeletonRadius);
 				Volume * preserveVol = preserveMesh->ToVolume();
-				printf("volume sizes %d %d %d, %d %d %d\n", dataVolume->getSizeX(), dataVolume->getSizeY(), dataVolume->getSizeZ(), preserveVol->getSizeX(), preserveVol->getSizeY(), preserveVol->getSizeZ());
 				Volume * outputVol = skeletonizer->PerformImmersionSkeletonizationAndPruning(dataVolume, preserveVol, startDensity, dataVolume->getMax(), stepSize, 0, 0, minCurveSize, minSurfaceSize, 0, 0, "", true, 1.0, DEFAULT_PRUNE_THRESHOLD, DEFAULT_PRUNE_THRESHOLD);				
 				delete skeletonizer;
 				delete preserveVol;

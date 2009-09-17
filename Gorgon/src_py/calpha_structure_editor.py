@@ -13,6 +13,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.12  2009/09/03 14:42:27  ssa1
+#   BugFix: Fixing bug that causes unpredictable behavior during semi-automatic atom placement when the start=1 (or any low number) in the .seq file
+#
 #   Revision 1.11  2009/08/19 15:23:35  ssa1
 #   Bug Fix: Disabling accept button when no options are available for semi-automatic atom placement
 #
@@ -117,8 +120,12 @@ if the user clicks accept.
         viewer = self.parentWidget().parentWidget().viewer
         if self.previouslySelectedPossibleAtom:
             self.previouslySelectedPossibleAtom.setColor(0.2, 0.2, 0.2, 1)
+        
+        try:    
+            atomToDisplay = self.possibleAtomsList[choiceNum-1]
+        except:
+            return
             
-        atomToDisplay = self.possibleAtomsList[choiceNum-1]
         atomToDisplay.setColor(0, 1, 1, 1)
         viewer.emitModelChanged()
         self.previouslySelectedPossibleAtom = atomToDisplay

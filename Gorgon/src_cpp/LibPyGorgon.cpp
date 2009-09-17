@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.58  2009/09/10 23:44:56  ssa1
+//   Allowing the option of preserving the earlier skeleton when performing grayscale skeletonization.. (Leads to better skeletons)
+//
 //   Revision 1.57  2009/08/10 13:54:39  ssa1
 //   Adding initial ssehunter program
 //
@@ -524,6 +527,15 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("getSequenceSSECount", &SSECorrespondenceEngine::GetSequenceSSECount)
 		.def("setVisibleCorrespondence", &SSECorrespondenceEngine::SetVisibleCorrespondence)
 		.def("draw", &SSECorrespondenceEngine::Draw)
+		.def("initializePathFinder", &SSECorrespondenceEngine::InitializePathFinder)
+		.def("initializePathHelix", &SSECorrespondenceEngine::InitializePathHelix)
+		.def("getPathSpace", &SSECorrespondenceEngine::GetPathSpace)
+		.def("clearPathSpace", &SSECorrespondenceEngine::ClearPathSpace)
+		.def("getPathVertexCount", &SSECorrespondenceEngine::GetPathVertexCount)
+		.def("getPathVertex", &SSECorrespondenceEngine::GetPathVertex)
+		.def("getPathEdgeCount", &SSECorrespondenceEngine::GetPathEdgeCount)
+		.def("getEdgeVertexIndex", &SSECorrespondenceEngine::GetEdgeVertexIndex)
+		.def("clearPathFinder", &SSECorrespondenceEngine::ClearPathFinder)
 	;
 
 	class_<SEQFileData>("SeqFileData", init<>())

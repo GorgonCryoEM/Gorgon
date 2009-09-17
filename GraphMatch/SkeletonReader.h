@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.19  2008/12/12 21:43:38  ssa1
+//   Fixing bug: Application crashing when loading skeletons via the sse correspondence finder
+//
 //   Revision 1.18  2008/12/02 04:11:33  ssa1
 //   Fixing bug when tracing the backbone of a sequence
 //
@@ -102,15 +105,14 @@ namespace wustl_mm {
 			#ifdef INCLUDE_SHEETS
 				ReadSheetFile(sheetFile, helixes);
 			#endif
+
 				
 			Point3 point, pointScaled;
 
-
-			//if(TRANSLATE_VOLUMETRIC_COORDINATES) {
-			//	xOffset = vol->getSizeX() / 2.0;
-			//	yOffset = vol->getSizeY() / 2.0;
-			//	zOffset = vol->getSizeZ() / 2.0;
-			//}
+			for(unsigned int i = 0; i < helixes.size(); i++) {
+				helixes[i]->internalToRealScale = Vector3DFloat(vol->getSpacingX(), vol->getSpacingY(), vol->getSpacingZ());
+				helixes[i]->internalToRealOrigin = Vector3DFloat(vol->getOriginX(), vol->getOriginY(), vol->getOriginZ());
+			}
 
 			// Finding all points inside of the helixes.
 

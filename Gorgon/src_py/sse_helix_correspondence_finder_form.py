@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.36  2009/04/04 22:10:15  ssa1
+#   Hiding selected path when correspondance finder is not in focus
+#
 #   Revision 1.35  2009/03/31 21:40:13  ssa1
 #   Refactoring: Splitting seq_model\SequenceView.py into subclasses
 #
@@ -110,7 +113,7 @@
 
 from PyQt4 import QtCore, QtGui
 from ui_dialog_sse_helix_correspondence_finder import Ui_DialogSSEHelixCorrespondenceFinder
-from libpyGORGON import SSECorrespondenceEngine, SSECorrespondenceResult
+from libpyGORGON import SSECorrespondenceEngine, SSECorrespondenceResult, Vector3DFloat
 from correspondence.CorrespondenceLibrary import CorrespondenceLibrary
 from correspondence.Correspondence import Correspondence
 from correspondence.Match import Match
@@ -120,6 +123,7 @@ from correspondence.StructureObservation import StructureObservation
 from correspondence.StructurePrediction import StructurePrediction
 from seq_model.Helix import Helix
 from vector_lib import *
+import xml.dom.minidom
 
 from OpenGL.GL import *
 from OpenGL.GLU import *
@@ -157,6 +161,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
         self.connect(self.ui.pushButtonCancel, QtCore.SIGNAL("pressed ()"), self.reject)
         self.connect(self.ui.pushButtonOk, QtCore.SIGNAL("pressed ()"), self.accept)
         self.connect(self.ui.comboBoxCorrespondences, QtCore.SIGNAL("currentIndexChanged (int)"), self.selectCorrespondence)
+        self.connect(self.ui.pushButtonExportToRosetta, QtCore.SIGNAL("pressed ()"), self.exportToRosetta)
         self.connect(self.app.viewers["skeleton"], QtCore.SIGNAL("modelDrawing()"), self.drawOverlay)
         self.ui.tableWidgetCorrespondenceList.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         self.connect(self.ui.tableWidgetCorrespondenceList, QtCore.SIGNAL("customContextMenuRequested (const QPoint&)"), self.customMenuRequested)
@@ -390,16 +395,9 @@ This loads a SEQ file or, for testing purposes, a PDB file.
         sseCount = self.viewer.correspondenceEngine.getSkeletonSSECount()
         for sseIx in range(sseCount):
             cppSse = self.viewer.correspondenceEngine.getSkeletonSSE(sseIx)
-            
-            #TODO: check whether these should be getCornerCell3(...
-            p1 = cAlphaViewer.worldToObjectCoordinates(skeletonViewer.objectToWorldCoordinates(vector3DFloatToTuple(cppSse.getCornerCell2(1))))
-            p2 = cAlphaViewer.worldToObjectCoordinates(skeletonViewer.objectToWorldCoordinates(vector3DFloatToTuple(cppSse.getCornerCell2(2))))
-            
+                       
             q1 = cAlphaViewer.worldToObjectCoordinates(sseViewer.objectToWorldCoordinates(vector3DFloatToTuple(cppSse.getCornerCell3(1))))
             q2 = cAlphaViewer.worldToObjectCoordinates(sseViewer.objectToWorldCoordinates(vector3DFloatToTuple(cppSse.getCornerCell3(2))))
-            if vectorSize(vectorAdd(p1, vectorScalarMultiply(-1, q1))) > vectorSize(
-                                    vectorAdd(p1, vectorScalarMultiply(-1, q2))): #to get proper orientation
-                q1, q2 = q2, q1 #python trick for exchanging values
             
             if cppSse.isHelix():            
                 pyHelix = ObservedHelix(sseIx, q1, q2)
@@ -414,8 +412,7 @@ This loads a SEQ file or, for testing purposes, a PDB file.
         self.viewer.correspondenceLibrary = CorrespondenceLibrary(sp = structPred, so = structObserv)          
                 
         self.setCursor(QtCore.Qt.ArrowCursor)
-        
-        
+                
     def accept(self):
         self.createBasicCorrespondence()          
                 
@@ -659,3 +656,140 @@ This loads a SEQ file or, for testing purposes, a PDB file.
                 
                 menu.exec_(self.app.mainCamera.mapToGlobal(self.app.mainCamera.mouseDownPoint))
                 self.app.mainCamera.updateGL()
+
+    def exportToRosettaFile(self, fileName):
+        
+        library = self.viewer.correspondenceLibrary
+        engine = self.viewer.correspondenceEngine
+        skeletonViewer = self.app.viewers["skeleton"]
+        calphaViewer = self.app.viewers["calpha"]
+
+        def tupleToVector3DFloat(pt):
+            return Vector3DFloat(pt[0], pt[1], pt[2])
+
+        def vector3DFloatToTuple(pt):
+            return [pt.x(), pt.y(), pt.z()]
+
+        def cAlphaToSkeleton(pt):
+            return skeletonViewer.worldToObjectCoordinates(calphaViewer.objectToWorldCoordinates(pt))
+        
+        def skeletonToCAlpha(pt):
+            return calphaViewer.worldToObjectCoordinates(skeletonViewer.objectToWorldCoordinates(pt))
+            
+        
+        
+        doc = xml.dom.minidom.Document()
+        gorgonModelListElement = doc.createElement("GORGON_MODEL_LIST")        
+        
+        sequenceElement = doc.createElement("SEQUENCE")        
+        sequenceElement.setAttribute("FIRST_RESIDUE_NO", str(library.structurePrediction.chain.getFirstResidueIndex()))                
+        residueList = doc.createTextNode(library.structurePrediction.chain.getSequence())
+        sequenceElement.appendChild(residueList)           
+        gorgonModelListElement.appendChild(sequenceElement) 
+        
+        correspondenceListElement = doc.createElement("CORRESPONDENCE_LIST")
+        
+        for i in range(len(library.correspondenceList)):
+            corr = library.correspondenceList[i]
+            
+            correspondenceElement = doc.createElement("CORRESPONDENCE")
+            correspondenceElement.setAttribute("RANK", str(i+1))
+            correspondenceElement.setIdAttribute("RANK")
+            correspondenceElement.setAttribute("GORGON_SCORE", str(corr.score))
+
+            engine.initializePathFinder(self.app.viewers["skeleton"].renderer.getMesh())
+            
+            helixRadius = vectorDistance(cAlphaToSkeleton([2.5, 0,0]), cAlphaToSkeleton([0,0,0])) # Finding the size of 2.5 Angstroms in skeleton space
+            
+                        
+            for i in range(len(corr.matchList)):
+                match = corr.matchList[i]
+                sseElement = doc.createElement("SECONDARY_STRUCTURE")
+                
+                startTag = "START_COORDINATE"
+                endTag = "END_COORDINATE"                
+                if(match.direction != Match.FORWARD):
+                    startTag, endTag = endTag, startTag
+                
+                startCoordinateElement = doc.createElement(startTag)
+                startCoordinateElement.setAttribute("X", str(match.observed.beginningCoord[0]))
+                startCoordinateElement.setAttribute("Y", str(match.observed.beginningCoord[1]))
+                startCoordinateElement.setAttribute("Z", str(match.observed.beginningCoord[2]))
+                sseElement.appendChild(startCoordinateElement)
+                
+                endCoordinateElement = doc.createElement(endTag)
+                endCoordinateElement.setAttribute("X", str(match.observed.endCoord[0]))
+                endCoordinateElement.setAttribute("Y", str(match.observed.endCoord[1]))
+                endCoordinateElement.setAttribute("Z", str(match.observed.endCoord[2]))
+                sseElement.appendChild(endCoordinateElement)
+                
+                sseElement.setAttribute("SSE_TYPE", "ALPHA_HELIX")
+                sseElement.setAttribute("START_RESIDUE", str(match.predicted.startIndex))
+                sseElement.setAttribute("END_RESIDUE", str(match.predicted.stopIndex))
+                                                                                            
+                correspondenceElement.appendChild(sseElement)
+                if(match.direction == Match.FORWARD):                            
+                    engine.initializePathHelix(i, tupleToVector3DFloat(cAlphaToSkeleton(match.observed.endCoord)), tupleToVector3DFloat(cAlphaToSkeleton(match.observed.beginningCoord)), helixRadius)
+                else:
+                    engine.initializePathHelix(i, tupleToVector3DFloat(cAlphaToSkeleton(match.observed.beginningCoord)), tupleToVector3DFloat(cAlphaToSkeleton(match.observed.endCoord)), helixRadius)
+                                                                                            
+         
+            
+            for i in range(1, len(corr.matchList)):
+                if (corr.matchList[i-1].predicted.stopIndex+1 <= corr.matchList[i].predicted.startIndex-1):
+                    sseElement = doc.createElement("SECONDARY_STRUCTURE")
+                    sseElement.setAttribute("SSE_TYPE", "LOOP")
+                    sseElement.setAttribute("START_RESIDUE", str(corr.matchList[i-1].predicted.stopIndex+1))
+                    sseElement.setAttribute("END_RESIDUE", str(corr.matchList[i].predicted.startIndex-1))
+                    
+                    engine.getPathSpace(i-1, False, i, True)
+                    vertexListElement = doc.createElement("VERTEX_LIST")
+                    
+                    for j in range(engine.getPathVertexCount()):
+                        vertex = skeletonToCAlpha(vector3DFloatToTuple(engine.getPathVertex(j)))
+                        vertexElement = doc.createElement("VERTEX")
+                        vertexElement.setAttribute("ID", str(j))
+                        vertexElement.setIdAttribute("ID")
+                        vertexElement.setAttribute("X", str(vertex[0]))
+                        vertexElement.setAttribute("Y", str(vertex[1]))
+                        vertexElement.setAttribute("Z", str(vertex[2]))                                                                        
+                        vertexListElement.appendChild(vertexElement)                    
+                                        
+                    sseElement.appendChild(vertexListElement)                    
+                    
+                    edgeListElement = doc.createElement("EDGE_LIST")
+                    for j in range(engine.getPathEdgeCount()) :
+                        ix0 = engine.getEdgeVertexIndex(j, 0)
+                        ix1 = engine.getEdgeVertexIndex(j, 1)
+                        edgeElement = doc.createElement("EDGE")
+                        edgeElement.setAttribute("VERTEX_1_INDEX", str(ix0))
+                        edgeElement.setAttribute("VERTEX_2_INDEX", str(ix1))
+                        edgeListElement.appendChild(edgeElement)                       
+                    
+                    engine.clearPathSpace()
+                    sseElement.appendChild(edgeListElement)                   
+                    
+                    correspondenceElement.appendChild(sseElement)               
+         
+            engine.clearPathFinder()
+           
+                                
+            
+            correspondenceListElement.appendChild(correspondenceElement)                                                                 
+        
+        
+        gorgonModelListElement.appendChild(correspondenceListElement)               
+        doc.appendChild(gorgonModelListElement)             
+                
+                                
+        outFile = open(fileName, "w")
+        outFile.writelines(doc.toprettyxml())           
+        outFile.close()
+        
+        
+    def exportToRosetta(self):
+        rosettaFile = QtGui.QFileDialog.getSaveFileName(self, self.tr("Export to Rosetta"), "", "Correspondence Export Files (*.xml)")
+        if not rosettaFile.isEmpty():  
+            self.setCursor(QtCore.Qt.WaitCursor)
+            self.exportToRosettaFile(rosettaFile)
+            self.setCursor(QtCore.Qt.ArrowCursor)

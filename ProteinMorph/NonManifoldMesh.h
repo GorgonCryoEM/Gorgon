@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.38  2009/08/10 13:54:38  ssa1
+//   Adding initial ssehunter program
+//
 //   Revision 1.37  2009/05/21 16:55:15  ssa1
 //   when saving a skeleton as an MRC, we now use 8 connectivity
 //
@@ -146,6 +149,7 @@ namespace wustl_mm {
 			void SetScale(float x, float y, float z);
 			void TranslateVertex(int vertexIx, Vector3DFloat translateVector);
 			vector<unsigned int> GetPath(unsigned int edge0Ix, unsigned int edge1Ix);
+			vector<unsigned int> GetNeighboringVertexIndices(unsigned int vertexIx);
 			vector<Vector3DFloat> SampleTriangle(int faceId, double discretizationStep);
 			Volume * ToVolume();
 			Vector3DFloat GetVertexNormal(int vertexId);
@@ -1072,6 +1076,18 @@ namespace wustl_mm {
 		
 		template <class TVertex, class TEdge, class TFace> float NonManifoldMesh<TVertex, TEdge, TFace>::GetOriginZ() {
 			return origin[2];
+		}
+
+		template <class TVertex, class TEdge, class TFace> vector<unsigned int> NonManifoldMesh<TVertex, TEdge, TFace>::GetNeighboringVertexIndices(unsigned int vertexIx) {
+			vector<unsigned int> neighbors;
+			for(unsigned int i = 0; i < vertices[vertexIx].edgeIds.size(); i++) {
+				if(edges[vertices[vertexIx].edgeIds[i]].vertexIds[0] == vertexIx) {
+					neighbors.push_back(edges[vertices[vertexIx].edgeIds[i]].vertexIds[1]);
+				} else {
+					neighbors.push_back(edges[vertices[vertexIx].edgeIds[i]].vertexIds[0]);
+				}
+			}
+			return neighbors;
 		}
 
 	}
