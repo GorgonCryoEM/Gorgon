@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.59  2009/09/17 20:00:24  ssa1
+//   Steps towards exporting to Rosetta
+//
 //   Revision 1.58  2009/09/10 23:44:56  ssa1
 //   Allowing the option of preserving the earlier skeleton when performing grayscale skeletonization.. (Leads to better skeletons)
 //
@@ -367,11 +370,12 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("getOriginX", &SSERenderer::GetOriginX)
 		.def("getOriginY", &SSERenderer::GetOriginY)
 		.def("getOriginZ", &SSERenderer::GetOriginZ)
-		.def("fitSelectedSSEs", &SSERenderer::FitSelectedSSEs)
-		.def("addHelix", &SSERenderer::AddHelix)
-		.def("startNewSheet", &SSERenderer::StartNewSheet)
-		.def("addSheetPoint", &SSERenderer::AddSheetPoint)
+		.def("fitSelectedSSEs", &SSERenderer::FitSelectedSSEs)		
+		.def("startNewSSE", &SSERenderer::StartNewSSE)
+		.def("addSSEPoint", &SSERenderer::AddSSEPoint)
 		.def("finalizeSheet", &SSERenderer::FinalizeSheet)
+		.def("finalizeHelix", &SSERenderer::FinalizeHelix)
+		.def("addHelix", &SSERenderer::AddHelix)
 	;
 
 	class_< CAlphaRenderer, bases<Renderer> >("CAlphaRenderer", init<>())

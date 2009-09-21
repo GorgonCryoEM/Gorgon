@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.15  2009/08/26 14:58:55  ssa1
+//   Adding in Flexible fitting clique search
+//
 //   Revision 1.14  2008/11/18 18:10:24  ssa1
 //   Changing the scaling functions when doing graph matching to find correspondences
 //
@@ -32,6 +35,7 @@
 #include "PDBAtom.h"
 #include "PDBHelix.h"
 #include "StandardGraph.h"
+#include <MathTools/LinearSolver.h>
 
 using namespace std;
 using namespace wustl_mm::MathTools;
@@ -302,11 +306,18 @@ namespace wustl_mm {
 				lineStr = line;
 				token = lineStr.substr(0, 6);
 
+				vector<Vector3DFloat> helixAtomLocs;
 				if(token.compare("HELIX ") == 0) {
 					PDBHelix helix = PDBHelix(lineStr);
-					PDBAtom a1 = atomPositions[PDBAtom::ConstructHashKey("----", helix.GetInitialResidueChainId(), helix.GetInitialResidueSeqNo(), "CA")];
-					PDBAtom a2 = atomPositions[PDBAtom::ConstructHashKey("----", helix.GetEndResidueChainId(), helix.GetEndResidueSeqNo(), "CA")];
-					helix.SetEndPositions(a1.GetPosition(), a2.GetPosition());
+					helixAtomLocs.clear();
+					for(int i = helix.GetInitialResidueSeqNo(); i <= helix.GetEndResidueSeqNo(); i++) {
+						helixAtomLocs.push_back(atomPositions[PDBAtom::ConstructHashKey("----", helix.GetInitialResidueChainId(), i, "CA")].GetPosition());
+					}
+
+					Vector3DFloat pt1, pt2;
+					LinearSolver::FindBestFitLine(pt1, pt2, helixAtomLocs);
+
+					helix.SetEndPositions(pt1, pt2);
 					helices.push_back(helix);
 				}
 			}
