@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.30  2009/09/17 20:00:24  ssa1
+//   Steps towards exporting to Rosetta
+//
 //   Revision 1.29  2009/07/01 21:25:13  ssa1
 //   Centering the volume cropped using a radius around the point selected by the atom selection tool.
 //
@@ -57,6 +60,7 @@
 #include <GraphMatch/SkeletonReader.h>
 #include <GraphMatch/GeometricShape.h>
 #include <GraphMatch/VectorMath.h>
+#include <MathTools/LinearSolver.h>
 #include <ProteinMorph/SSEFlexibleFitter.h>
 #include <vector>
 #include <map>
@@ -64,6 +68,7 @@
 using namespace wustl_mm::Protein_Morph;
 using namespace wustl_mm::GraySkeletonCPP;
 using namespace wustl_mm::GraphMatch;
+using namespace wustl_mm::MathTools;
 using namespace std;
 
 namespace wustl_mm {
@@ -77,9 +82,10 @@ namespace wustl_mm {
 			~SSERenderer();
 
 			void AddHelix(Vector3DFloat p1, Vector3DFloat p2);
-			void StartNewSheet();
-			void AddSheetPoint(Vector3DFloat p);
+			void StartNewSSE();
+			void AddSSEPoint(Vector3DFloat p);
 			void FinalizeSheet();
+			void FinalizeHelix();
 			void Draw(int subSceneIndex, bool selectEnabled);
 			void LoadHelixFile(string fileName);			
 			void LoadSheetFile(string fileName);			
@@ -110,7 +116,7 @@ namespace wustl_mm {
 			NonManifoldMesh_SheetIds * sheetMesh;
 			int sheetCount;
 			bool selectedSheets[256];
-			vector<Vector3DFloat> tempSheetPoints;
+			vector<Vector3DFloat> tempSSEPoints;
 		};
 
 
@@ -129,46 +135,38 @@ namespace wustl_mm {
 		}
 
 		void SSERenderer::AddHelix(Vector3DFloat p1, Vector3DFloat p2) {
-			//GeometricShape * newHelix = new GeometricShape();
-			//newHelix->geometricShapeType = GRAPHEDGE_HELIX;
-			//Vector3DFloat center = (p1+p2) * 0.5;
-			//Vector3DFloat dir = p1-p2;
-			//Vector3DFloat yaxis = Vector3DFloat(0, 1, 0);
-
-			//newHelix->SetCenter(Point3(center.X(), center.Y(), center.Z()));
-			//newHelix->SetRadius(2.5);
-			//newHelix->SetHeight(dir.Length());
-			//Vector3DFloat axis = dir^yaxis;
-
-			//dir.Normalize();
-			//double angle = acos(dir * yaxis);
-			//newHelix->Rotate(Vector3(axis.X(), axis.Y(), axis.Z()), -angle);
 
 			GeometricShape * newHelix = GeometricShape::CreateHelix(p1, p2, 2.5);
 
 			helices.push_back(newHelix);
 			UpdateBoundingBox();
 		}
+
+		void SSERenderer::FinalizeHelix() {
+			Vector3DFloat p1, p2;
+			LinearSolver::FindBestFitLine(p1, p2, tempSSEPoints);
+			AddHelix(p1, p2);
+		}
 		
-		void SSERenderer::StartNewSheet() {
-			tempSheetPoints.clear();
+		void SSERenderer::StartNewSSE() {
+			tempSSEPoints.clear();
 		}		
 		
-		void SSERenderer::AddSheetPoint(Vector3DFloat p) {
-			tempSheetPoints.push_back(p);
+		void SSERenderer::AddSSEPoint(Vector3DFloat p) {
+			tempSSEPoints.push_back(p);
 		}
 		
 		void SSERenderer::FinalizeSheet() {
 			Vector3DFloat origin = Vector3DFloat(0,0,0);
-			for(unsigned int i = 0; i < tempSheetPoints.size(); i++) {
-				origin = origin + tempSheetPoints[i];
+			for(unsigned int i = 0; i < tempSSEPoints.size(); i++) {
+				origin = origin + tempSSEPoints[i];
 			}
-			origin = origin * (1.0f/(float)tempSheetPoints.size());
+			origin = origin * (1.0f/(float)tempSSEPoints.size());
 			
 			double maxDistance = 0;
 			double distance;
-			for(unsigned int i = 0; i < tempSheetPoints.size(); i++) {
-				distance = (origin - tempSheetPoints[i]).Length();
+			for(unsigned int i = 0; i < tempSSEPoints.size(); i++) {
+				distance = (origin - tempSSEPoints[i]).Length();
 				if(distance > maxDistance) {
 					maxDistance = distance;
 				}
@@ -183,8 +181,8 @@ namespace wustl_mm {
 			
 			vector<int> vertexIxs;
 			
-			for(unsigned int i = 0; i < tempSheetPoints.size(); i++) {
-				vertexIxs.push_back(sheetMesh->AddVertex(tempSheetPoints[i], false));
+			for(unsigned int i = 0; i < tempSSEPoints.size(); i++) {
+				vertexIxs.push_back(sheetMesh->AddVertex(tempSSEPoints[i], false));
 			}
 			
 			sheetCount++;	
@@ -194,10 +192,10 @@ namespace wustl_mm {
 			sheetTag.selected = false;
 			
 			double distanceCheck;
-			for(unsigned int i = 0; i < tempSheetPoints.size(); i++) {
-				for(unsigned int j = 0; j < tempSheetPoints.size(); j++) {
+			for(unsigned int i = 0; i < tempSSEPoints.size(); i++) {
+				for(unsigned int j = 0; j < tempSSEPoints.size(); j++) {
 					if(i != j) {
-						distanceCheck = (tempSheetPoints[i] - tempSheetPoints[j]).Length();
+						distanceCheck = (tempSSEPoints[i] - tempSSEPoints[j]).Length();
 						if(distanceCheck <= maxDistance) {
 							sheetMesh->AddTriangle(originIndex, vertexIxs[i], vertexIxs[j], NULL, sheetTag);
 						}
@@ -207,7 +205,7 @@ namespace wustl_mm {
 				}
 			}	
 					
-			tempSheetPoints.clear();
+			tempSSEPoints.clear();
 			UpdateBoundingBox();
 			
 		}

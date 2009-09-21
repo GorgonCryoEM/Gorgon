@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.6  2009/09/02 18:02:39  ssa1
+#   Moving SSEHunter to the SSEViewer menu, and adding checks for loading up volumes and skeletons
+#
 #   Revision 1.5  2009/09/02 17:38:44  ssa1
 #   BugFix: Exception when clicking add helix / add sheet
 #
@@ -142,18 +145,12 @@ class VolumeSSEBuilderForm(QtGui.QWidget, Ui_DialogVolumeSSEBuilder):
                 
     
     def selectionToHelix(self, result):
-        atomCnt = self.calphaViewer.renderer.selectionAtomCount()
-        atoms = []
-        
-        for i in range(atomCnt):
-            atom = self.calphaViewer.renderer.getSelectedAtom(i)
-            atoms.append(atom)
+        self.pushAtomsToEngine()
             
-        [p1, p2] = self.getHelixEnds(atoms)
-        self.sseViewer.renderer.addHelix(p1, p2)
+        self.sseViewer.renderer.finalizeHelix()
         
         if(self.sseViewer.loaded):
-            self.sseViewer.helixLoaded = True
+            self.sseViewer.sheetLoaded = True
             self.sseViewer.dirty = True           
             self.sseViewer.emitModelChanged()
         else :
@@ -161,17 +158,20 @@ class VolumeSSEBuilderForm(QtGui.QWidget, Ui_DialogVolumeSSEBuilder):
             self.sseViewer.sheetLoaded = True
             self.sseViewer.dirty = True
             self.sseViewer.emitModelLoadedPreDraw()
-            self.sseViewer.emitModelLoaded()            
-        
-    def selectionToSheet(self, result):
+            self.sseViewer.emitModelLoaded()           
+    
+    def pushAtomsToEngine(self):
         atomCnt = self.calphaViewer.renderer.selectionAtomCount()
         
-        self.sseViewer.renderer.startNewSheet();
+        self.sseViewer.renderer.startNewSSE();
         
         for i in range(atomCnt):
             atom = self.calphaViewer.renderer.getSelectedAtom(i)
             position = atom.getPosition()
-            self.sseViewer.renderer.addSheetPoint(position)
+            self.sseViewer.renderer.addSSEPoint(position)
+        
+    def selectionToSheet(self, result):
+        self.pushAtomsToEngine()
             
         self.sseViewer.renderer.finalizeSheet()
         
