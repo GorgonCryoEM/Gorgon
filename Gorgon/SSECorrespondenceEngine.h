@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.8  2009/09/17 20:00:24  ssa1
+//   Steps towards exporting to Rosetta
+//
 //   Revision 1.7  2008/12/01 23:42:55  ssa1
 //   Setting theming support for backbone trace
 //
@@ -303,52 +306,50 @@ namespace wustl_mm {
 				mesh->vertices[pathVertices[i]].tag = false;
 			}
 
-			vector<unsigned int> endPoints;
+			//vector<unsigned int> endPoints;
 
-			vector<unsigned int> neighbors, n2;
-			for(unsigned int i=0; i < pathVertices.size(); i++) {
-				neighbors = mesh->GetNeighboringVertexIndices(pathVertices[i]);
-				int neighborCount = 0;
-				for(unsigned int j = 0; j < neighbors.size(); j++) {
-					if(!mesh->vertices[neighbors[j]].tag) {
-						neighborCount++;
-					}
-				}
-				if(neighborCount < 2) {
-					endPoints.push_back(pathVertices[i]);
-				}
-			}
+			//vector<unsigned int> neighbors, n2;
+			//for(unsigned int i=0; i < pathVertices.size(); i++) {
+			//	neighbors = mesh->GetNeighboringVertexIndices(pathVertices[i]);
+			//	int neighborCount = 0;
+			//	for(unsigned int j = 0; j < neighbors.size(); j++) {
+			//		if(!mesh->vertices[neighbors[j]].tag) {
+			//			neighborCount++;
+			//		}
+			//	}
+			//	if(neighborCount < 2) {
+			//		endPoints.push_back(pathVertices[i]);
+			//	}
+			//}
 
-			int currIx;
-			while(endPoints.size() > 0) {
-				currIx = endPoints[0];
-				endPoints.erase(endPoints.begin());
-				printf("Can I prune: %d", currIx);
-				if(!mesh->vertices[currIx].tag && (preserve.find(currIx) == preserve.end())) {
-					printf(" Yes!");
-					mesh->vertices[currIx].tag = true;
-					neighbors = mesh->GetNeighboringVertexIndices(currIx);
+			//int currIx;
+			//while(endPoints.size() > 0) {
+			//	currIx = endPoints[0];
+			//	endPoints.erase(endPoints.begin());
+			//	printf("Can I prune: %d", currIx);
+			//	if(!mesh->vertices[currIx].tag && (preserve.find(currIx) == preserve.end())) {
+			//		printf(" Yes!");
+			//		mesh->vertices[currIx].tag = true;
+			//		neighbors = mesh->GetNeighboringVertexIndices(currIx);
 
-					for(unsigned int j = 0; j < neighbors.size(); j++) {
-						if((!mesh->vertices[neighbors[j]].tag) && (preserve.find(neighbors[j]) == preserve.end())) {
-							int neighborCount = 0;
-							n2 = mesh->GetNeighboringVertexIndices(neighbors[j]);
-							for(unsigned int k = 0; k < n2.size(); k++) {
-								if(!mesh->vertices[n2[k]].tag) {
-									neighborCount++;
-								}
-							}
+			//		for(unsigned int j = 0; j < neighbors.size(); j++) {
+			//			if((!mesh->vertices[neighbors[j]].tag) && (preserve.find(neighbors[j]) == preserve.end())) {
+			//				int neighborCount = 0;
+			//				n2 = mesh->GetNeighboringVertexIndices(neighbors[j]);
+			//				for(unsigned int k = 0; k < n2.size(); k++) {
+			//					if(!mesh->vertices[n2[k]].tag) {
+			//						neighborCount++;
+			//					}
+			//				}
 
-							if(neighborCount < 2) {
-								endPoints.push_back(neighbors[j]);
-							}
-						}
-					}
-				}
-				printf("\n");
-			}
-		
-
+			//				if(neighborCount < 2) {
+			//					endPoints.push_back(neighbors[j]);
+			//				}
+			//			}
+			//		}
+			//	}
+			//	printf("\n");
+			//}	
 		}
 
 		void SSECorrespondenceEngine::GetPathSpace(int helix1Ix, bool helix1Start, int helix2Ix, bool helix2Start) {			
@@ -400,24 +401,11 @@ namespace wustl_mm {
 				}
 			}
 
-
-			//for(unsigned int i = 0; i < helixStartPoints[helix1Ix].size(); i++) {
-			//	preserve.insert(helixStartPoints[helix1Ix][i]);
+			//printf("Preserving:");
+			//for(set<unsigned int>::iterator i = preserve.begin(); i != preserve.end(); i++) {
+			//	printf("%d ", *i);
 			//}
-			//for(unsigned int i = 0; i < helixEndPoints[helix1Ix].size(); i++) {
-			//	preserve.insert(helixEndPoints[helix1Ix][i]);
-			//}
-			//for(unsigned int i = 0; i < helixStartPoints[helix2Ix].size(); i++) {
-			//	preserve.insert(helixStartPoints[helix2Ix][i]);
-			//}
-			//for(unsigned int i = 0; i < helixEndPoints[helix2Ix].size(); i++) {
-			//	preserve.insert(helixEndPoints[helix2Ix][i]);
-			//}
-			printf("Preserving:");
-			for(set<unsigned int>::iterator i = preserve.begin(); i != preserve.end(); i++) {
-				printf("%d ", *i);
-			}
-			printf("\n");
+			//printf("\n");
 
 			PrunePathMesh(mesh, pathVertices, preserve);		
 
@@ -438,7 +426,7 @@ namespace wustl_mm {
 
 			char filename[100];
 			sprintf(filename, "C:\\path_%d_%d.off", pathCount, helix1Ix);
-			printf("vertex count: %d, edgeCount: %d, faceCount: %d\n", singlePathMesh->vertices.size(), singlePathMesh->edges.size(), singlePathMesh->faces.size()); flushall();
+			//printf("vertex count: %d, edgeCount: %d, faceCount: %d\n", singlePathMesh->vertices.size(), singlePathMesh->edges.size(), singlePathMesh->faces.size()); flushall();
 			singlePathMesh->ToOffCells(filename);
 
 			vertexMap.clear();
