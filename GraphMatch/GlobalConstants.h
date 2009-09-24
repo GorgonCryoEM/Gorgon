@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.32.2.13  2009/09/10 16:22:56  schuhs
+//   Adjust voxel to PDB ratio and turn off SMI mode. Now getting results close to SMI paper with the latest code.
+//
 //   Revision 1.32.2.12  2009/08/26 20:49:52  schuhs
 //   Add code to reproduce results from SMI paper when SMIPAPER_MODE flag is set.
 //
@@ -172,17 +175,17 @@ namespace wustl_mm {
 		bool NORMALIZE_GRAPHS = true;
 		double EUCLIDEAN_VOXEL_TO_PDB_RATIO = 2.0;
 		double MISSING_HELIX_PENALTY = 2;
-		double MISSING_SHEET_PENALTY = 0;
+		double MISSING_SHEET_PENALTY = 2;
 		double MISSING_HELIX_PENALTY_SCALED = 0;
 		double MISSING_SHEET_PENALTY_SCALED = 0;
 		double EUCLIDEAN_LOOP_PENALTY = 5;
 		double START_END_MISSING_HELIX_PENALTY = 5;
 		double HELIX_WEIGHT_COEFFICIENT = 1.0;
 		double LOOP_WEIGHT_COEFFICIENT = 0.25;
-		double SHEET_CAPACITY_COEFFICIENT = 1.0;
+		double SHEET_CAPACITY_COEFFICIENT = 10000000.0;
 		double MISSING_HELIX_LENGTH = 8;
 		double MISSING_SHEET_LENGTH = 8;
-		double SHEET_SELF_LOOP_LENGTH = 0.02;
+		double SHEET_SELF_LOOP_LENGTH = 4.0 * LOOP_C_ALPHA_TO_ANGSTROMS;
 		double SHEET_WEIGHT_COEFFICIENT = 1.0;
 		int COST_FUNCTION = 1;   // 1 : |a-b|		2 : |a-b|/(a+b)		3:|a-b|^2
 		int INCLUDE_STRANDS = 0;   // 0 : no		1 : yes
