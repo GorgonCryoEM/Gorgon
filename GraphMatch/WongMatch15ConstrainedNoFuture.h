@@ -15,6 +15,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.15.2.22  2009/09/17 17:27:55  schuhs
+//   Fixing bug that caused a skip over a single strand to incur no penalty
+//
 //   Revision 1.15.2.21  2009/09/10 16:26:34  schuhs
 //   Use Normalize routine to change units of skeleton adjacency matrix from angstroms to residues.
 //
@@ -509,6 +512,16 @@ namespace wustl_mm {
 					firstIsLoop = lastIsLoop;
 				}
 				patternLength += patternGraph->adjacencyMatrix[d+i-1][d+i][1];	
+				
+				/*
+				// rescale helices if they are skipped
+				if ((int)(patternGraph->adjacencyMatrix[d+i-1][d+i][0] + 0.01) == GRAPHEDGE_HELIX) {
+					patternLength += (HELIX_C_ALPHA_TO_ANGSTROMS / LOOP_C_ALPHA_TO_ANGSTROMS)*(patternGraph->adjacencyMatrix[d+i-1][d+i][1]);	
+					//patternLength += (LOOP_C_ALPHA_TO_ANGSTROMS / HELIX_C_ALPHA_TO_ANGSTROMS)*(patternGraph->adjacencyMatrix[d+i-1][d+i][1]);	
+				} else {
+					patternLength += patternGraph->adjacencyMatrix[d+i-1][d+i][1];	
+				}
+				*/
 			}
 			// TODO: Fix, has bug. But getting closer.
 			skippedHelices = skippedHelices / 2;
@@ -672,15 +685,19 @@ namespace wustl_mm {
 
 
 		// add in penalties for skipped helices and sheets
+		// m is the number of nodes involved in the match. m=1 is no skipped helices or sheets.
 		double WongMatch15ConstrainedNoFuture::GetPenaltyCost(int d, int m) {
 			double cost = 0.0;
 			int lastPatternNode = patternGraph->GetNodeCount() - 1;
 			bool startAtBeginning = ( d == 0 );
 			bool finishAtEnd = ( d + m-1 == lastPatternNode );
-			bool pastFirst = false;
+			bool pastFirst = true;
 			bool firstHelixFound = false;
 			for(int k = d; k < d + m-1; k++) {
+				//cout << "  GetPenaltyCost(" << d << "," << m << "). k=" << k << ". " << endl;
+				// add penalties for all skipped helices
 				if((int)(patternGraph->adjacencyMatrix[k][k+1][0] + 0.01) == GRAPHEDGE_HELIX) {
+					//cout << "    GetPenaltyCost(" << d << "," << m << "). SKIP HELIX. k=" << k << endl;
 					cost += MISSING_HELIX_PENALTY;
 					cost += patternGraph->adjacencyMatrix[k][k+1][1] * MISSING_HELIX_PENALTY_SCALED;
 					if (startAtBeginning && !firstHelixFound) {
@@ -691,19 +708,16 @@ namespace wustl_mm {
 					}
 					firstHelixFound = true;
 				}
+				// add penalties for skipped strands, unless the strand falls at the beginning of the sequence and is not the first node
 				else if( (startAtBeginning || pastFirst) && ((int)(patternGraph->adjacencyMatrix[k][k][0] + 0.01) == GRAPHNODE_SHEET) ) {
 					cost += MISSING_SHEET_PENALTY;
 					cost += patternGraph->nodeWeights[k] * MISSING_SHEET_PENALTY_SCALED;
+					//cout << "    GetPenaltyCost(" << d << "," << m << "). SKIP sheet. k=" << k << endl;
+					//cout << "SKIP SHEET. k=" << k;
 				}
+				//cout << endl;
 				pastFirst = true;
 			}
-
-			// add penalty if a single strand node is skipped
-			if( (startAtBeginning || pastFirst) && ((int)(patternGraph->adjacencyMatrix[d][d][0] + 0.01) == GRAPHNODE_SHEET) ) {
-					cost += MISSING_SHEET_PENALTY;
-					cost += patternGraph->nodeWeights[d] * MISSING_SHEET_PENALTY_SCALED;
-			}
-
 
 			if (finishAtEnd && patternGraph->adjacencyMatrix[lastPatternNode-1][lastPatternNode-1][0] + 0.01 == GRAPHNODE_SHEET){
 					cost += MISSING_SHEET_PENALTY;
@@ -749,7 +763,7 @@ namespace wustl_mm {
 					int skippedSheetNodes = 0;
 					for (int j = 0; (j <= currentM1Top) && (skippedHelixNodes + currentNode->missingHelixNodesUsed <= missingHelixCount * 2) && (skippedSheetNodes + currentNode->missingSheetNodesUsed <= missingSheetCount); ) {
 						// i is the node from baseGraph being matched to currentNode
-						// j is the number of missing helices or sheets from patternGraph to be skipped for this match
+						// j is the number of missing helix or sheet nodes from patternGraph to be skipped for this match
 
 						notConstrained = true;
 
@@ -940,10 +954,19 @@ namespace wustl_mm {
 				// if edge exists in base graph, find the cost of this correspondence.
 				if (SOLUTION[n1] == -1) {
 					singleEdgeCost = 0;
-					cout << "No cost for initial skip edge" << endl;
+					singleEdgePenaltyCost = GetPenaltyCost(n1+1, n2-n1);
+					//singleEdgePenaltyCost = GetPenaltyCost(n1, n2-n1);
+					cout << "  GetPenaltyCost("<<n1+1<<","<<n2-n1<<")="<<singleEdgePenaltyCost<<endl;
+					cout << "No edge cost for initial skip edge" << endl;
+					if (patternGraph->adjacencyMatrix[n1][n1][0] == GRAPHNODE_SHEET) {
+						singleEdgePenaltyCost = MISSING_SHEET_PENALTY;
+					}
 				} else if (baseGraph->EdgeExists(SOLUTION[n1]-1, SOLUTION[n2]-1)) {
 					singleEdgeCost = GetCost(n1+1, n2-n1, SOLUTION[n1], SOLUTION[n2]);
 					singleEdgePenaltyCost = GetPenaltyCost(n1+1, n2-n1);
+					//singleEdgePenaltyCost = GetPenaltyCost(n1, n2-n1);
+					cout << "  GetPenaltyCost("<<n1+1<<","<<n2-n1<<")="<<singleEdgePenaltyCost<<endl;
+					//cout << "  PenaltyCost(" << n1 << "," << n2-n1 << ") = " << singleEdgePenaltyCost << endl;
 				} else {
 					cout << "BASE GRAPH DOES NOT HAVE AN EDGE FROM NODE " << SOLUTION[n1] << " TO NODE " << SOLUTION[n2] << ". THIS SOLUTION NOT POSSIBLE!" << endl;
 				}
@@ -954,7 +977,6 @@ namespace wustl_mm {
 					cout << "first helix or sheet is unmatched. adding penalty of " << singleEdgeCost << endl;
 				} else {
 					cout << "cost of this addition is " << singleEdgeCost << endl;
-					cout << "penalty cost of this addition is " << singleEdgePenaltyCost << endl;
 				}
 
 				// add node cost
@@ -987,6 +1009,16 @@ namespace wustl_mm {
 			double cost = edgeCost + nodeCost + helixPenalty + sheetPenalty;
 
 			cout << "total cost is " << cost << endl;
+
+			/*
+			for (int i = 0; i <= numNodes; i++) {
+				for (int j = 1; j <= numNodes-i; j++) {
+					double currPenalty = GetPenaltyCost(i,j);
+					cout << "  GetPenaltyCost(" << i << "," << j << ") = " << currPenalty << endl;
+				}
+			}
+			*/
+
 		}
 
 		void WongMatch15ConstrainedNoFuture::NormalizeGraphs() {
