@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.14.2.3  2009/08/25 21:44:38  schuhs
+//   Aligning results when printed to screen
+//
 //   Revision 1.14.2.2  2009/07/03 16:29:48  schuhs
 //   Keeping track of the number of skipped helices and sheets
 //
@@ -64,6 +67,7 @@ namespace wustl_mm {
 			unsigned long long GetN2Bitmap();
 			bool operator==(LinkedNode &other);
 			bool IsUserSpecifiedSolution();
+			bool IsUserSpecifiedSolutionHelixOnly();
 			static void AddNodeToBitmap(unsigned long long & bitmap, int node);
 			static void RemoveNodeFromBitmap(unsigned long long & bitmap, int node);
 			static bool IsNodeInBitmap(unsigned long long bitmap, int node);
@@ -238,9 +242,11 @@ namespace wustl_mm {
 			}
 
 			if(IsUserSpecifiedSolution()) {
-				printf("*");
+				printf("**");
+			//} else if(IsUserSpecifiedSolutionHelixOnly()) {
+			//	printf("h ");
 			} else {
-				printf(" ");
+				printf("  ");
 			}
 
 			if(rank != -1) {
@@ -323,6 +329,65 @@ namespace wustl_mm {
 
 		double LinkedNode::GetCost() {
 			return cost;
+		}
+
+		bool LinkedNode::IsUserSpecifiedSolutionHelixOnly() {
+			bool used[MAX_NODES];
+			int n1[MAX_NODES];
+			int n2[MAX_NODES];
+			int n2type[MAX_NODES];
+			int top = 0;
+			for(int i = 0; i < MAX_NODES; i++) {
+				used[i] = false;
+			}
+
+			LinkedNodeStub * currentNode = this;
+			bool continueLoop = true;
+			while(continueLoop) {
+				if(currentNode->parentNode == NULL) {
+					 break;
+				}
+				n1[top] = currentNode->n1Node;
+				n2[top] = currentNode->n2Node;
+				// store the node type, or just a 1 if helix 0 otherwise?
+				//n2type[top] = currentNode->
+				used[(int)currentNode->n1Node] = true;
+				top++;
+				currentNode = currentNode->parentNode;		
+			}
+
+			for(int i = 1; i <= this->depth; i++) {
+				if(!used[i]) {
+					n1[top] = i;
+					n2[top] = -1;
+					top++;
+				}
+			}
+
+			int minIndex;
+			int temp;
+			for(int i = 0; i < top - 1; i++) {
+				minIndex = i;
+				for(int j = i+1; j < top; j++) {
+					if(n1[minIndex] > n1[j]) {
+						minIndex = j;
+					}
+				}
+				temp = n1[minIndex];
+				n1[minIndex] = n1[i];
+				n1[i] = temp;
+
+				temp = n2[minIndex];
+				n2[minIndex] = n2[i];
+				n2[i] = temp;
+			}
+
+			bool isSolution = true;
+			for(int i = 0; i < top; i++) {
+				//isSolution = (isSolution && (n2[i] == SOLUTION[i]));
+				isSolution = (isSolution && ( (n2[i] == SOLUTION[i]) || (n2[i] ) ) );
+			}
+			return isSolution;
 		}
 
 		bool LinkedNode::IsUserSpecifiedSolution() {
