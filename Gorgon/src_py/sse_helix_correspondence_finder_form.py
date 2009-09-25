@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.36.2.10  2009/08/18 17:57:27  schuhs
+#   Adding ability to ignore strands when building the sequence graph
+#
 #   Revision 1.36.2.9  2009/07/23 15:07:05  schuhs
 #   Fixing typo that caused a crash when rendering paths
 #
@@ -467,7 +470,8 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
     
     
         #Tab 4 User Constraints
-        self.viewer.correspondenceEngine.clearAllConstraints()
+        # comment out the constraint clearing so that constraints can be loaded from settings files
+        #self.viewer.correspondenceEngine.clearAllConstraints()
         correspondenceIndex = self.ui.comboBoxCorrespondences.currentIndex()
         if(correspondenceIndex >= 0):
             corr = self.viewer.correspondenceLibrary.correspondenceList[correspondenceIndex]            
