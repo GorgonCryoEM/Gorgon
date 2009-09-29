@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.9  2009/09/21 14:54:18  ssa1
+//   Steps towards exporting to Rosetta
+//
 //   Revision 1.8  2009/09/17 20:00:24  ssa1
 //   Steps towards exporting to Rosetta
 //
@@ -425,9 +428,9 @@ namespace wustl_mm {
 
 
 			char filename[100];
-			sprintf(filename, "C:\\path_%d_%d.off", pathCount, helix1Ix);
+			//sprintf(filename, "C:\\path_%d_%d.off", pathCount, helix1Ix);
 			//printf("vertex count: %d, edgeCount: %d, faceCount: %d\n", singlePathMesh->vertices.size(), singlePathMesh->edges.size(), singlePathMesh->faces.size()); flushall();
-			singlePathMesh->ToOffCells(filename);
+			//singlePathMesh->ToOffCells(filename);
 
 			vertexMap.clear();
 			pathVertices.clear();

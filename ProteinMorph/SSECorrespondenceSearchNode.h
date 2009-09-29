@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.2  2009/09/02 19:06:13  ssa1
+//   Working towards flexible fitting
+//
 //   Revision 1.1  2009/08/26 14:58:55  ssa1
 //   Adding in Flexible fitting clique search
 //
@@ -150,9 +153,13 @@ namespace wustl_mm {
 
 		void SSECorrespondenceSearchNode::PrintSolution(vector<SSECorrespondenceNode> & allNodes) {
 			vector<unsigned int> nodes;
+			int firstCorr = -1;
 			printf("corr= {\n");
 			for(unsigned int i = 0; i < solution.size(); i++) {
 				nodes = solution[i];
+				if((firstCorr == -1) && (nodes.size() > 0)) {
+					firstCorr = i+1;
+				}
 				if(i != 0) {
 					printf(",\n");
 				}
@@ -167,8 +174,7 @@ namespace wustl_mm {
 			}
 			printf("};\n\n");
 			printf("Print[\"Cost = \", %f];\n", cost);
-			printf("PrintCorrespondence[corr, fl1, fl2]\n");
-			printf("PrintCorrespondenceLines[corr, fl1, fl2]\n\n");
+			printf("printFeatures[performSemiRigidDeformation[{fl1, fl2}, corr[[%d]]], fl2]\n", firstCorr);
 		}
 	}
 }

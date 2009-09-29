@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.2  2009/09/02 19:06:13  ssa1
+//   Working towards flexible fitting
+//
 //   Revision 1.1  2009/08/26 14:58:55  ssa1
 //   Adding in Flexible fitting clique search
 //
@@ -302,20 +305,6 @@ namespace wustl_mm {
 
 		void SSECorrespondenceFinder::PrintFeatureListsMathematica() {
 			Vector3DFloat pt0, pt1;
-			printf("Clear[GetColor];\n");
-			printf("GetColor[i_, count_] := Apply[RGBColor, (1 - i/count) {1, 0, 0} + i/count {0, 0, 1}];\n\n");
-			printf("Clear[PrintFeatures];\n");
-			printf("PrintFeatures[fl1_, fl2_] := Graphics3D[{Red, Map[Cylinder[#] &, fl1], Blue,  Map[Cylinder[#] &, fl2]}];\n\n");
-			printf("Clear[PrintCorrespondence];\n");
-			printf("PrintCorrespondence[corr_, fl1_, fl2_] := Graphics3D[{Flatten[Table[{\n");
-			printf("	GetColor[i - 1, Length[corr] - 1], Map[{Cylinder[fl1[[#[[1]] + 1]]], Cylinder[fl2[[#[[2]] + 1]]]} &, corr[[i]]]}\n");
-			printf(",{i, 1, Length[corr]}]]}];\n\n");
-			printf("Clear[GetCentroid];\n");
-			printf("GetCentroid[f_] := 0.5*(f[[1]] + f[[2]]);\n\n");
-			printf("Clear[PrintCorrespondenceLines];\n");
-			printf("PrintCorrespondenceLines[corr_, fl1_, fl2_] := Show[{PrintCorrespondence[corr, fl1, fl2] ,\n");
-			printf("		Graphics3D[{Dashed, Map[Line[{GetCentroid[fl1[[#[[1]] + 1]]], \n");
-			printf("		GetCentroid[fl2[[#[[2]] + 1]]]}] &, Flatten[corr, 1]]}]}];\n\n");
 			printf("fl1 = {\n");
 			for(unsigned int i = 0; i < featureList1.size(); i++) {
 				pt0 = featureList1[i].GetEndPoint(0);
@@ -337,7 +326,7 @@ namespace wustl_mm {
 				printf("\t{{%f, %f, %f}, {%f, %f, %f}}", pt0.X(), pt0.Y(), pt0.Z(), pt1.X(), pt1.Y(), pt1.Z());
 			}
 			printf("};\n\n");
-			printf("PrintFeatures[fl1, fl2]\n");
+			printf("printFeatures[fl1, fl2]\n");
 		}
 	}
 }

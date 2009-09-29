@@ -412,22 +412,26 @@ tuples, and strings. mychain[-1] returns the last residue of the chain.
       stop=i.stop
       if i.start is None: 
         start=1
-      elif i.start < 0:
-        #start=len(self)+i.start+1
-        start=self.__convertNegativeIndex(i.start)
+      #Sasakthi: Removed reverse indexing functionality as residues can have negative indices.
+      #elif i.start < 0:
+      #  #start=len(self)+i.start+1
+      #  start=self.__convertNegativeIndex(i.start)
 
       if i.stop is None: 
         stop=len(self)
-      elif i.stop < 0:
-        #stop=len(self)+i.stop+1
-        stop=self.__convertNegativeIndex(i.stop)
+      
+      #Sasakthi: Removed reverse indexing functionality as residues can have negative indices.
+      #elif i.stop < 0:
+      #  #stop=len(self)+i.stop+1
+      #  stop=self.__convertNegativeIndex(i.stop)
       return self.__slicehelper(start,stop)
 
     # branch for non-slices
     else:
-      if i<0:
-        i=self.__convertNegativeIndex(i)
-      #rint 'getitem(%i)' %i
+      #Sasakthi: Removed reverse indexing functionality as residues can have negative indices.
+      #if i<0:
+      #  i=self.__convertNegativeIndex(i)
+      ##rint 'getitem(%i)' %i
       return self.residueList[i]
 
   def __iter__(self):
