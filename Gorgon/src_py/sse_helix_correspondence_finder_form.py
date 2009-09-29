@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.37  2009/09/17 20:00:24  ssa1
+#   Steps towards exporting to Rosetta
+#
 #   Revision 1.36  2009/04/04 22:10:15  ssa1
 #   Hiding selected path when correspondance finder is not in focus
 #
@@ -331,7 +334,7 @@ This loads a SEQ file or, for testing purposes, a PDB file.
     def populateResults(self, library):
         self.ui.tabWidget.setCurrentIndex(3)
         corrList = []
-        for i in range(self.resultCount):                                
+        for i in range(self.resultCount):      
             result = self.viewer.correspondenceEngine.getResult(i+1)
                                     
             matchList = []            
@@ -414,7 +417,7 @@ This loads a SEQ file or, for testing purposes, a PDB file.
         self.setCursor(QtCore.Qt.ArrowCursor)
                 
     def accept(self):
-        self.createBasicCorrespondence()          
+        #self.createBasicCorrespondence()          
                 
         self.resultCount = self.viewer.correspondenceEngine.executeQuery()
         self.viewer.correspondenceEngine.cleanupMemory()        
@@ -704,39 +707,42 @@ This loads a SEQ file or, for testing purposes, a PDB file.
                         
             for i in range(len(corr.matchList)):
                 match = corr.matchList[i]
-                sseElement = doc.createElement("SECONDARY_STRUCTURE")
-                
-                startTag = "START_COORDINATE"
-                endTag = "END_COORDINATE"                
-                if(match.direction != Match.FORWARD):
-                    startTag, endTag = endTag, startTag
-                
-                startCoordinateElement = doc.createElement(startTag)
-                startCoordinateElement.setAttribute("X", str(match.observed.beginningCoord[0]))
-                startCoordinateElement.setAttribute("Y", str(match.observed.beginningCoord[1]))
-                startCoordinateElement.setAttribute("Z", str(match.observed.beginningCoord[2]))
-                sseElement.appendChild(startCoordinateElement)
-                
-                endCoordinateElement = doc.createElement(endTag)
-                endCoordinateElement.setAttribute("X", str(match.observed.endCoord[0]))
-                endCoordinateElement.setAttribute("Y", str(match.observed.endCoord[1]))
-                endCoordinateElement.setAttribute("Z", str(match.observed.endCoord[2]))
-                sseElement.appendChild(endCoordinateElement)
-                
-                sseElement.setAttribute("SSE_TYPE", "ALPHA_HELIX")
-                sseElement.setAttribute("START_RESIDUE", str(match.predicted.startIndex))
-                sseElement.setAttribute("END_RESIDUE", str(match.predicted.stopIndex))
-                                                                                            
-                correspondenceElement.appendChild(sseElement)
-                if(match.direction == Match.FORWARD):                            
-                    engine.initializePathHelix(i, tupleToVector3DFloat(cAlphaToSkeleton(match.observed.endCoord)), tupleToVector3DFloat(cAlphaToSkeleton(match.observed.beginningCoord)), helixRadius)
-                else:
-                    engine.initializePathHelix(i, tupleToVector3DFloat(cAlphaToSkeleton(match.observed.beginningCoord)), tupleToVector3DFloat(cAlphaToSkeleton(match.observed.endCoord)), helixRadius)
-                                                                                            
+                if(match.observed):
+                    sseElement = doc.createElement("SECONDARY_STRUCTURE")
+                    
+                    startTag = "START_COORDINATE"
+                    endTag = "END_COORDINATE"                
+                    if(match.direction != Match.FORWARD):
+                        startTag, endTag = endTag, startTag
+                    
+                    startCoordinateElement = doc.createElement(startTag)
+                    startCoordinateElement.setAttribute("X", str(match.observed.beginningCoord[0]))
+                    startCoordinateElement.setAttribute("Y", str(match.observed.beginningCoord[1]))
+                    startCoordinateElement.setAttribute("Z", str(match.observed.beginningCoord[2]))
+                    sseElement.appendChild(startCoordinateElement)
+                    
+                    endCoordinateElement = doc.createElement(endTag)
+                    endCoordinateElement.setAttribute("X", str(match.observed.endCoord[0]))
+                    endCoordinateElement.setAttribute("Y", str(match.observed.endCoord[1]))
+                    endCoordinateElement.setAttribute("Z", str(match.observed.endCoord[2]))
+                    sseElement.appendChild(endCoordinateElement)
+                    
+                    sseElement.setAttribute("SSE_TYPE", "ALPHA_HELIX")
+                    sseElement.setAttribute("START_RESIDUE", str(match.predicted.startIndex))
+                    sseElement.setAttribute("END_RESIDUE", str(match.predicted.stopIndex))
+                                                                                                
+                    correspondenceElement.appendChild(sseElement)
+                    if(match.direction == Match.FORWARD):                            
+                        engine.initializePathHelix(i, tupleToVector3DFloat(cAlphaToSkeleton(match.observed.endCoord)), tupleToVector3DFloat(cAlphaToSkeleton(match.observed.beginningCoord)), helixRadius)
+                    else:
+                        engine.initializePathHelix(i, tupleToVector3DFloat(cAlphaToSkeleton(match.observed.beginningCoord)), tupleToVector3DFloat(cAlphaToSkeleton(match.observed.endCoord)), helixRadius)
+                                                                                                
          
             
             for i in range(1, len(corr.matchList)):
-                if (corr.matchList[i-1].predicted.stopIndex+1 <= corr.matchList[i].predicted.startIndex-1):
+                if ((corr.matchList[i-1].observed) and 
+                    (corr.matchList[i].observed) and 
+                    (corr.matchList[i-1].predicted.stopIndex+1 <= corr.matchList[i].predicted.startIndex-1)):
                     sseElement = doc.createElement("SECONDARY_STRUCTURE")
                     sseElement.setAttribute("SSE_TYPE", "LOOP")
                     sseElement.setAttribute("START_RESIDUE", str(corr.matchList[i-1].predicted.stopIndex+1))
