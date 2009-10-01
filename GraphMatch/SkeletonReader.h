@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.19.2.20  2009/09/11 18:42:53  schuhs
+//   Fixing bug in code that allows paths to cross sheets but not helices. Before fix, sometimes paths through sheets were prohibited.
+//
 //   Revision 1.19.2.19  2009/08/27 17:32:51  schuhs
 //   Add code to reproduce results from SMI paper when SMIPAPER_MODE flag is set.
 //
@@ -97,9 +100,11 @@
 #include "GlobalConstants.h"
 #include <GraySkeletonCPP/GlobalDefinitions.h>
 #include <GraySkeletonCPP/VolumeSkeletonizer.h>
+#include <ProteinMorph/NonManifoldMesh.h>
 
 using namespace std;
 using namespace wustl_mm::GraySkeletonCPP;
+using namespace wustl_mm::Protein_Morph;
 
 namespace wustl_mm {
 	namespace GraphMatch {
@@ -547,10 +552,28 @@ namespace wustl_mm {
 			// save skeleton sheet volume to graph->skeletonSheetVolume
 			graph->skeletonSheetVolume = sheetClusters;
 
+			printf("Before saving\n");
 			// save skeleton sheet volume vector to graph->skeletonSheets
 			for(int i = 0; i < (int)skeletonSheets.size(); i++) {
 				graph->skeletonSheets.push_back(skeletonSheets[i]);
 			}
+			printf("After saving\n");
+
+			cout << "Before creating mesh from sheet." << endl;
+			for(int i = 0; i < (int)skeletonSheets.size(); i++) {
+				NonManifoldMesh_NoTags * tempMesh = new NonManifoldMesh_NoTags(skeletonSheets[i]);
+				graph->skeletonSheetMeshes.push_back(tempMesh);
+			}
+			cout << "After creating meshes from sheets and storing them to graph->skeletonSheetMeshes." << endl;
+
+			cout << "!_!_!_!_!_!_!_!_!_! Before deleting sheets, skeletonSheets has size " << skeletonSheets.size() << " !_!_!_!_!_!_!_!_!_!_!_!_!" << endl;
+			// save skeleton sheet volume vector to graph->skeletonSheets
+			while ((int)skeletonSheets.size() > 1) {
+				delete skeletonSheets[1];
+				skeletonSheets.erase(skeletonSheets.begin() + 1);
+				graph->skeletonSheets.erase(graph->skeletonSheets.begin() + 1);
+			}
+			cout << "!_!_!_!_!_!_!_!_!_! After deleting sheets, skeletonSheets has size " << skeletonSheets.size() << " !_!_!_!_!_!_!_!_!_!_!_!_!" << endl;
 
 			// save correspondences between skeleton sheets and SSE sheets to graph->skeletonSheetCorrespondence
 			for (int i = 0; i < (int)helixesMapping.size(); i++) {

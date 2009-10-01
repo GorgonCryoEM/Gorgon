@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.13.2.11  2009/09/17 17:13:16  schuhs
+//   After creating graph, print correct node numbers for sheets and helices
+//
 //   Revision 1.13.2.10  2009/09/08 14:58:16  schuhs
 //   When SMIPAPER_MODE flag is set, removing scaling from path distance algorithm. Adding code to print node weights whenever the adjacency matrix is printed.
 //
@@ -61,7 +64,9 @@
 #include <SkeletonMaker/volume.h>
 #include <MathTools/Vector3D.h>
 #include <SkeletonMaker/volume.h>
+#include <ProteinMorph/NonManifoldMesh.h>
 using namespace std;
+using namespace wustl_mm::Protein_Morph;
 
 namespace wustl_mm {
 	namespace GraphMatch {
@@ -98,6 +103,7 @@ namespace wustl_mm {
 			vector<GeometricShape*> skeletonHelixes;
 			Volume * skeletonVolume;
 			vector<Volume*> skeletonSheets;
+			vector<NonManifoldMesh_NoTags*> skeletonSheetMeshes;
 			int skeletonSheetCorrespondence[MAX_NODES];
 			Volume * skeletonSheetVolume;
 		private:
@@ -116,11 +122,23 @@ namespace wustl_mm {
 
 			skeletonHelixes.clear();
 
+			cout << "~StandardGraph starting to delete " << (int)skeletonSheets.size() << " sheets "  << endl;
 			for(i = 1; i < (int)skeletonSheets.size(); i++) { // start at index 1 since 0 is same as skeletonSheetVolume
+				cout << "~StandardGraph deleting sheet " << i << endl;
 				delete skeletonSheets[i];
 			}
+			cout << "~StandardGraph done deleting sheets" << endl;
 
 			skeletonSheets.clear();
+
+			cout << "~StandardGraph starting to delete " << (int)skeletonSheetMeshes.size() << " sheet meshes"  << endl;
+			for(i = 0; i < (int)skeletonSheetMeshes.size(); i++) { 
+				cout << "~StandardGraph deleting sheet " << i << endl;
+				delete skeletonSheetMeshes[i];
+			}
+			cout << "~StandardGraph done deleting sheet meshes" << endl;
+
+			skeletonSheetMeshes.clear();
 
 			if(skeletonVolume != NULL) {
 				delete skeletonVolume;
