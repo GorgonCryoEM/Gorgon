@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.25  2009/09/02 18:43:05  ssa1
+#   Setting the binary skeletonization threshold to be the one that is being visualized by default
+#
 #   Revision 1.24  2009/09/02 18:02:39  ssa1
 #   Moving SSEHunter to the SSEViewer menu, and adding checks for loading up volumes and skeletons
 #
@@ -71,7 +74,8 @@ from OpenGL.GLUT import *
 class VolumeViewer(BaseViewer):
     def __init__(self, main, parent=None):
         BaseViewer.__init__(self, main, parent)
-        self.title = "Volume"          
+        self.title = "Volume"    
+        self.shortTitle = "VOL"      
         self.app.themes.addDefaultRGB("Volume:Model:0", 180, 180, 180, 255)
         self.app.themes.addDefaultRGB("Volume:Model:1", 180, 180, 180, 255)
         self.app.themes.addDefaultRGB("Volume:BoundingBox", 255, 255, 255, 255)                         
@@ -191,4 +195,42 @@ class VolumeViewer(BaseViewer):
     def getIsoValue(self):
         return self.renderer.getSurfaceValue()
                           
-      
+                          
+    def getSessionInfo(self, sessionManager):
+        info = BaseViewer.getSessionInfo(self, sessionManager)  
+        info.extend(sessionManager.getRemarkLines(self.shortTitle, "ISO_LEVEL", self.surfaceEditor.ui.horizontalSliderIsoLevel.value()))
+        info.extend(sessionManager.getRemarkLines(self.shortTitle, "MAX_ISO_LEVEL", self.surfaceEditor.ui.horizontalSliderIsoLevelMax.value()))
+        info.extend(sessionManager.getRemarkLines(self.shortTitle, "SAMPLING_INTERVAL", self.surfaceEditor.ui.horizontalSliderSampling.value()))
+        info.extend(sessionManager.getRemarkLines(self.shortTitle, "DISPLAY_RADIUS", self.surfaceEditor.ui.horizontalSliderDisplayRadius.value()))
+        info.extend(sessionManager.getRemarkLines(self.shortTitle, "VIEWING_TYPE_SURFACE", self.surfaceEditor.ui.radioButtonIsoSurface.isChecked()))
+        info.extend(sessionManager.getRemarkLines(self.shortTitle, "VIEWING_TYPE_SOLID", self.surfaceEditor.ui.radioButtonSolid.isChecked()))
+        info.extend(sessionManager.getRemarkLines(self.shortTitle, "VIEWING_TYPE_CROSS_SECTION", self.surfaceEditor.ui.radioButtonCrossSection.isChecked()))
+        info.extend(sessionManager.getRemarkLines(self.shortTitle, "USE_DISPLAY_RADIUS", self.surfaceEditor.ui.checkBoxUseRadius.checkState()))        
+        return info
+                       
+    def loadSessionInfo(self, sessionManager, sessionProperties):
+        BaseViewer.loadSessionInfo(self, sessionManager, sessionProperties)
+               
+        isoLevel = sessionManager.getProperty(sessionProperties, self.shortTitle, "ISO_LEVEL")
+        self.surfaceEditor.ui.horizontalSliderIsoLevel.setValue(isoLevel)
+        
+        maxIsoLevel = sessionManager.getProperty(sessionProperties, self.shortTitle, "MAX_ISO_LEVEL")
+        self.surfaceEditor.ui.horizontalSliderIsoLevelMax.setValue(maxIsoLevel)
+        
+        samplingInterval = sessionManager.getProperty(sessionProperties, self.shortTitle, "SAMPLING_INTERVAL")
+        self.surfaceEditor.ui.horizontalSliderSampling.setValue(samplingInterval)
+                
+        useDisplayRadius = sessionManager.getProperty(sessionProperties, self.shortTitle, "USE_DISPLAY_RADIUS")
+        self.surfaceEditor.ui.checkBoxUseRadius.setCheckState(useDisplayRadius)
+                
+        displayRadius = sessionManager.getProperty(sessionProperties, self.shortTitle, "DISPLAY_RADIUS")
+        self.surfaceEditor.ui.horizontalSliderDisplayRadius.setValue(displayRadius)
+        
+        surfaceViewing = sessionManager.getProperty(sessionProperties, self.shortTitle, "VIEWING_TYPE_SURFACE")
+        solidViewing = sessionManager.getProperty(sessionProperties, self.shortTitle, "VIEWING_TYPE_SOLID")
+        crossSectionViewing = sessionManager.getProperty(sessionProperties, self.shortTitle, "VIEWING_TYPE_CROSS_SECTION")
+        
+        self.surfaceEditor.ui.radioButtonIsoSurface.setChecked(surfaceViewing)
+        self.surfaceEditor.ui.radioButtonSolid.setChecked(solidViewing)
+        self.surfaceEditor.ui.radioButtonCrossSection.setChecked(crossSectionViewing)
+     

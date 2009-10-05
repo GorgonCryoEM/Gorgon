@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.58  2009/07/01 22:00:27  ssa1
+#   Centering the volume cropped using a radius around the point selected by the atom selection tool.
+#
 #   Revision 1.57  2009/06/24 21:33:48  ssa1
 #   SSE Builder Functionality: Sheet building and better camera functionality when loading new data.
 #
@@ -107,6 +110,7 @@
 from PyQt4 import QtGui, QtCore, QtOpenGL
 from libpyGORGON import VolumeRenderer, Vector3DFloat
 from vector_lib import *
+from session_lib import *
 
 from OpenGL.GL import *
 from OpenGL.GLU import *
@@ -120,6 +124,7 @@ class BaseViewer(QtOpenGL.QGLWidget):
         QtOpenGL.QGLWidget.__init__(self, parent)        
         self.app = main      
         self.title = "Untitled"
+        self.shortTitle = "UNT"
         self.fileName = "";
         self.sceneIndex = -1;
         self.loaded = False
@@ -380,19 +385,22 @@ class BaseViewer(QtOpenGL.QGLWidget):
         glPopAttrib()
         glPopMatrix()
             
+    def loadDataFromFile(self, fileName):
+        self.setCursor(QtCore.Qt.WaitCursor)
+        self.renderer.loadFile(str(fileName))
+        self.setScaleNoEmit(self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ())       
+        self.loaded = True
+        self.dirty = False
+        self.emitModelLoadedPreDraw()
+        self.emitModelLoaded()            
+        self.emitViewerSetCenter()
+        self.setCursor(QtCore.Qt.ArrowCursor)
+        
           
     def loadData(self):
         self.fileName = QtGui.QFileDialog.getOpenFileName(self, self.tr("Open Data"), "", self.tr(self.renderer.getSupportedLoadFileFormats()))
         if not self.fileName.isEmpty():  
-            self.setCursor(QtCore.Qt.WaitCursor)
-            self.renderer.loadFile(str(self.fileName))
-            self.setScaleNoEmit(self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ())       
-            self.loaded = True
-            self.dirty = False
-            self.setCursor(QtCore.Qt.ArrowCursor)
-            self.emitModelLoadedPreDraw()
-            self.emitModelLoaded()            
-            self.emitViewerSetCenter()
+            self.loadDataFromFile(self.fileName)
             
     def saveData(self):
         self.fileName = QtGui.QFileDialog.getSaveFileName(self, self.tr("Save Data"), "", self.tr(self.renderer.getSupportedSaveFileFormats()))
@@ -512,6 +520,44 @@ class BaseViewer(QtOpenGL.QGLWidget):
 
     def setCenter(self, center):
         return False
+    
+    def getSessionInfo(self, sessionManager):
+        info = []
+        info.extend(sessionManager.getRemarkLines(self.shortTitle, "FILE", self.fileName))
+        info.extend(sessionManager.getRemarkLines(self.shortTitle, "LOADED", self.loaded))
+        #info.extend(sessionManager.getRemarkLines(self.shortTitle, "SELECT_ENABLED", self.selectEnabled))
+        #info.extend(sessionManager.getRemarkLines(self.shortTitle, "MOUSE_MOVE_ENABLED", self.mouseMoveEnabled))
+        #info.extend(sessionManager.getRemarkLines(self.shortTitle, "MOUSE_MOVE_ENABLED_RAY", self.mouseMoveEnabledRay))
+        #info.extend(sessionManager.getRemarkLines(self.shortTitle, "IS_CLOSED_MESH", self.isClosedMesh))
+        #info.extend(sessionManager.getRemarkLines(self.shortTitle, "VIEWER_AUTONOMOUS", self.viewerAutonomous))        
+        info.extend(sessionManager.getRemarkLines(self.shortTitle, "DISPLAY_STYLE", self.displayStyle))
+        info.extend(sessionManager.getRemarkLines(self.shortTitle, "MODEL_VISIBLE", self.modelVisible))            
+        info.extend(sessionManager.getRemarkLines(self.shortTitle, "MODEL_2_VISIBLE", self.model2Visible))
+        info.extend(sessionManager.getRemarkLines(self.shortTitle, "ROTATION", self.rotation))
+        info.extend(sessionManager.getRemarkLines(self.shortTitle, "SHOW_BOX", self.showBox))        
+        info.extend(sessionManager.getRemarkLines(self.shortTitle, "SCALE", [self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ()]))
+        info.extend(sessionManager.getRemarkLines(self.shortTitle, "LOCATION", [self.renderer.getOriginX(), self.renderer.getOriginY(), self.renderer.getOriginZ()]))
+                            
+        return info                    
+        
+    def loadSessionInfo(self, sessionManager, sessionProperties):        
+        self.loaded = sessionManager.getProperty(sessionProperties, self.shortTitle, "LOADED")
+        if self.loaded:
+            self.fileName = sessionManager.getProperty(sessionProperties, self.shortTitle, "FILE")
+            self.loadDataFromFile(self.fileName)
+        self.displayStyle = sessionManager.getProperty(sessionProperties, self.shortTitle, "DISPLAY_STYLE")
+        self.modelVisible = sessionManager.getProperty(sessionProperties, self.shortTitle, "MODEL_VISIBLE")
+        self.model2Visible = sessionManager.getProperty(sessionProperties, self.shortTitle, "MODEL_2_VISIBLE")
+        self.rotation = sessionManager.getProperty(sessionProperties, self.shortTitle, "ROTATION")
+        self.showBox = sessionManager.getProperty(sessionProperties, self.shortTitle, "SHOW_BOX")
+        scale = sessionManager.getProperty(sessionProperties, self.shortTitle, "SCALE")
+        self.setScaleNoEmit(scale[0], scale[1], scale[2])
+        location = sessionManager.getProperty(sessionProperties, self.shortTitle, "LOCATION")
+        self.setLocation(location[0], location[1], location[2])
+
+        self.emitModelVisualizationChanged()
+        self.emitModelChanged()
+                
         
     def emitThicknessChanged(self, value):
         self.emit(QtCore.SIGNAL("thicknessChanged(int)"), value);

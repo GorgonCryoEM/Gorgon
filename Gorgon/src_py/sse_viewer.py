@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.28  2009/09/02 18:02:39  ssa1
+#   Moving SSEHunter to the SSEViewer menu, and adding checks for loading up volumes and skeletons
+#
 #   Revision 1.27  2009/06/24 21:33:48  ssa1
 #   SSE Builder Functionality: Sheet building and better camera functionality when loading new data.
 #
@@ -82,6 +85,7 @@ class SSEViewer(BaseViewer):
     def __init__(self, main, parent=None):
         BaseViewer.__init__(self, main, parent)
         self.title = "Secondary Structure Element"
+        self.shortTitle = "SSE"              
         self.app.themes.addDefaultRGB("Secondary Structure Element:Model:0", 0, 180, 0, 255)
         self.app.themes.addDefaultRGB("Secondary Structure Element:Model:1", 120, 185, 255, 255)
         self.app.themes.addDefaultRGB("Secondary Structure Element:BoundingBox", 255, 255, 255, 255)          
@@ -123,30 +127,36 @@ class SSEViewer(BaseViewer):
         self.sequencePredictor = SSESequencePredictorForm(self.app, self)
         self.helixCorrespondanceFinder = SSEHelixCorrespondenceFinderForm(self.app, self)
         
+    def loadHelixDataFromFile(self, fileName):
+        self.setCursor(QtCore.Qt.WaitCursor)
+        self.renderer.loadHelixFile(str(fileName))
+        self.loaded = True
+        self.helixLoaded = True
+        self.setCursor(QtCore.Qt.ArrowCursor)
+        self.emitModelLoaded()
+        self.emitViewerSetCenter()        
     
     def loadHelixData(self):
         self.helixFileName = QtGui.QFileDialog.getOpenFileName(self, self.tr("Open Helix Annotations"), "", self.tr(self.renderer.getSupportedHelixLoadFileFormats()))
         self.fileName = self.helixFileName;
         if not self.helixFileName.isEmpty():  
-            self.setCursor(QtCore.Qt.WaitCursor)
-            self.renderer.loadHelixFile(str(self.helixFileName))
-            self.loaded = True
-            self.helixLoaded = True
-            self.setCursor(QtCore.Qt.ArrowCursor)
-            self.emitModelLoaded()
-            self.emitViewerSetCenter()        
-               
+            self.loadHelixDataFromFile(self.helixFileName)
+                    
+    
+    def loadSheetDataFromFile(self, fileName):
+        self.setCursor(QtCore.Qt.WaitCursor)
+        self.renderer.loadSheetFile(str(fileName))
+        self.loaded = True
+        self.sheetLoaded = True
+        self.setCursor(QtCore.Qt.ArrowCursor)
+        self.emitModelLoaded()
+        self.emitViewerSetCenter()        
+    
     def loadSheetData(self):
         self.sheetFileName = QtGui.QFileDialog.getOpenFileName(self, self.tr("Open Sheet Annotations"), "", self.tr(self.renderer.getSupportedSheetLoadFileFormats()))
         self.fileName = self.sheetFileName;
         if not self.sheetFileName.isEmpty():  
-            self.setCursor(QtCore.Qt.WaitCursor)
-            self.renderer.loadSheetFile(str(self.sheetFileName))
-            self.loaded = True
-            self.sheetLoaded = True
-            self.setCursor(QtCore.Qt.ArrowCursor)
-            self.emitModelLoaded()
-            self.emitViewerSetCenter()
+            self.loadSheetDataFromFile(self.sheetFileName)
             
     def saveHelixData(self):
         self.fileName = QtGui.QFileDialog.getSaveFileName(self, self.tr("Save Helix Annotations"), "", self.tr(self.renderer.getSupportedHelixSaveFileFormats()))
@@ -163,9 +173,29 @@ class SSEViewer(BaseViewer):
             self.renderer.saveSheetFile(str(self.fileName))
             self.dirty = False
             self.setCursor(QtCore.Qt.ArrowCursor)
-                                                      
+
+    def getSessionInfo(self, sessionManager):
+        info = BaseViewer.getSessionInfo(self, sessionManager)  
+        info.extend(sessionManager.getRemarkLines(self.shortTitle, "HELIX_LOADED", self.helixLoaded))
+        info.extend(sessionManager.getRemarkLines(self.shortTitle, "HELIX_FILE", self.helixFileName))        
+        info.extend(sessionManager.getRemarkLines(self.shortTitle, "SHEET_LOADED", self.sheetLoaded))
+        info.extend(sessionManager.getRemarkLines(self.shortTitle, "SHEET_FILE", self.sheetFileName))
+        return info
+                       
+    def loadSessionInfo(self, sessionManager, sessionProperties):
+        BaseViewer.loadSessionInfo(self, sessionManager, sessionProperties)        
+        self.helixLoaded = sessionManager.getProperty(sessionProperties, self.shortTitle, "HELIX_LOADED")
+        if self.helixLoaded:
+            self.helixFileName = sessionManager.getProperty(sessionProperties, self.shortTitle, "HELIX_FILE")
+            self.loadHelixDataFromFile(self.helixFileName)
+        self.sheetLoaded = sessionManager.getProperty(sessionProperties, self.shortTitle, "SHEET_LOADED")
+        if self.sheetLoaded:
+            self.sheetFileName = sessionManager.getProperty(sessionProperties, self.shortTitle, "SHEET_FILE")
+            self.loadSheetDataFromFile(self.sheetFileName)
+
+                                                    
     def unloadData(self):
-        self.loaed = False
+        self.loaded = False
         self.helixLoaded = False
         self.sheetLoaded = False
         self.helixFileName = ""
