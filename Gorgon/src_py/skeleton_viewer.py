@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.18  2008/12/01 23:16:31  ssa1
+#   Restructuring interactive skeleton drawing, and fixing it for scale space changes.
+#
 #   Revision 1.17  2008/11/28 04:36:17  ssa1
 #   Removing error message if pyopengl does not exist.  (To make executable building easier to debug)
 #
@@ -40,6 +43,7 @@ class SkeletonViewer(BaseViewer):
     def __init__(self, main, parent=None):
         BaseViewer.__init__(self, main, parent)
         self.title = "Skeleton"
+        self.shortTitle = "SKE"              
         self.app.themes.addDefaultRGB("Skeleton:Model:0", 180, 0, 0, 255)
         self.app.themes.addDefaultRGB("Skeleton:Model:1", 180, 0, 0, 255)
         self.app.themes.addDefaultRGB("Skeleton:BoundingBox", 255, 255, 255, 255)              

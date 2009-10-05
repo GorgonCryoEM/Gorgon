@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.40  2009/08/10 20:03:40  ssa1
+#   SSEHunter interfaced into Gorgon
+#
 #   Revision 1.39  2009/08/10 13:54:39  ssa1
 #   Adding initial ssehunter program
 #
@@ -152,6 +155,7 @@ class CAlphaViewer(BaseViewer):
     def __init__(self, main, parent=None):
         BaseViewer.__init__(self, main, parent)
         self.title = "C-Alpha"
+        self.shortTitle = "CAL"              
         self.app.themes.addDefaultRGB("C-Alpha:Model:0", 170, 170, 0, 255)
         self.app.themes.addDefaultRGB("C-Alpha:Model:1", 120, 120, 170, 255)
         self.app.themes.addDefaultRGB("C-Alpha:BoundingBox", 255, 255, 255, 255)         
