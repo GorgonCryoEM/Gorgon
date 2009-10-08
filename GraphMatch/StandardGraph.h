@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.13.2.12  2009/10/01 22:13:25  schuhs
+//   Storing individual sheets as meshes rather than volumes.
+//
 //   Revision 1.13.2.11  2009/09/17 17:13:16  schuhs
 //   After creating graph, print correct node numbers for sheets and helices
 //
@@ -94,18 +97,25 @@ namespace wustl_mm {
 			void GenerateEuclidianMatrix(Volume * vol);
 			vector<Matcher2Helix> GetHelixLengths();
 			bool EdgeExists(int n, int m);
+			void MergeSheets(double maxDist); // Merge all sheets separated by maxDist or less
 		public:
+			// indexed by graph nodes:
 			double adjacencyMatrix[MAX_NODES][MAX_NODES][2]; // 0th dimension edge type... 1st dimension distance
 			double nodeWeights[MAX_NODES];
 			double euclideanMatrix[MAX_NODES][MAX_NODES];
 			vector<Vector3DInt> paths[MAX_NODES][MAX_NODES];
+			// sequence graph only. indexed by structure number along the sequence.
 			vector<SecondaryStructure*> pdbStructures;
-			vector<GeometricShape*> skeletonHelixes;
+			// no indexing
 			Volume * skeletonVolume;
-			vector<Volume*> skeletonSheets;
-			vector<NonManifoldMesh_NoTags*> skeletonSheetMeshes;
-			int skeletonSheetCorrespondence[MAX_NODES];
 			Volume * skeletonSheetVolume;
+			// skeleton graph only. indexed by structure; helices first, then sheets.
+			vector<GeometricShape*> skeletonHelixes;
+			// skeleton graph only. indexed by structure. sheets only.
+			//vector<Volume*> skeletonSheets;
+			//vector<NonManifoldMesh_NoTags*> skeletonSheetMeshes;
+			// skeleton graph only. indexing: skeletonSheetCorrespondence[i] = j. i is 
+			//int skeletonSheetCorrespondence[MAX_NODES];
 		private:
 		};
 
@@ -122,23 +132,25 @@ namespace wustl_mm {
 
 			skeletonHelixes.clear();
 
+			/*
 			cout << "~StandardGraph starting to delete " << (int)skeletonSheets.size() << " sheets "  << endl;
 			for(i = 1; i < (int)skeletonSheets.size(); i++) { // start at index 1 since 0 is same as skeletonSheetVolume
 				cout << "~StandardGraph deleting sheet " << i << endl;
 				delete skeletonSheets[i];
 			}
 			cout << "~StandardGraph done deleting sheets" << endl;
-
 			skeletonSheets.clear();
+			*/
 
+			/*
 			cout << "~StandardGraph starting to delete " << (int)skeletonSheetMeshes.size() << " sheet meshes"  << endl;
 			for(i = 0; i < (int)skeletonSheetMeshes.size(); i++) { 
 				cout << "~StandardGraph deleting sheet " << i << endl;
 				delete skeletonSheetMeshes[i];
 			}
 			cout << "~StandardGraph done deleting sheet meshes" << endl;
-
 			skeletonSheetMeshes.clear();
+			*/
 
 			if(skeletonVolume != NULL) {
 				delete skeletonVolume;
@@ -295,6 +307,27 @@ namespace wustl_mm {
 
 					} else {
 						temp = ' ';
+						/*
+						if (adjacencyMatrix[i][j][0] == -1) {
+							temp = '-';
+						} else if (adjacencyMatrix[i][j][0] == 0) {
+							temp = '0';
+						} else if (adjacencyMatrix[i][j][0] == 1) {
+							temp = '1';
+						} else if (adjacencyMatrix[i][j][0] == 2) {
+							temp = '2';
+						} else if (adjacencyMatrix[i][j][0] == 3) {
+							temp = '3';
+						} else if (adjacencyMatrix[i][j][0] == 4) {
+							temp = '4';
+						} else if (adjacencyMatrix[i][j][0] == 5) {
+							temp = '5';
+						} else if (adjacencyMatrix[i][j][0] == 6) {
+							temp = '6';
+						} else if (adjacencyMatrix[i][j][0] == 7) {
+							temp = '7';
+						}
+						*/
 					}
 
 					if(adjacencyMatrix[i][j][1] == MAXINT) {
@@ -462,6 +495,205 @@ namespace wustl_mm {
 				}
 				//printf("\n");
 			}
+		}
+
+		// Merge all sheets separated by maxDist or less
+		void StandardGraph::MergeSheets(double maxDist) { 
+			cout << "=== graph before merging sheets ===" << endl;
+			PrintGraph();
+			cout << "=== ===" << endl;
+			int firstSheet = GetHelixCount();
+			int numSheets = GetSheetCount();
+			cout << "beginning merge with " << firstSheet << " helices and " << numSheets << " sheets. maxDist = " << maxDist << ". size of helixes vector is " << skeletonHelixes.size() << endl;
+			bool repeat = true;
+			while (repeat) {
+				repeat = false;
+				for (int i = firstSheet; i < skeletonHelixes.size(); i++) {
+					for (int j = skeletonHelixes.size()-1; j > i; j--) {
+						int nodei = i + firstSheet;
+						int nodej = j + firstSheet;
+						cout << "starting iteration with " << numSheets << " sheets." << endl;
+						cout << "dist between sheets " << i << " and " << j << " is " << adjacencyMatrix[nodei][nodej][1] << endl;
+						if ( (adjacencyMatrix[nodei][nodej][1] < maxDist) || (skeletonHelixes[i] == skeletonHelixes[j]) ) {
+							cout << "merging sheet " << j << " (node " << nodej << ") into sheet " << i << " (node " << nodei << ")" << endl;
+
+							// modify skeletonHelixes vector
+							if (skeletonHelixes[i] != skeletonHelixes[j]) {
+								//cout << "not the same sheet structure. merging two structures." << endl;
+								// internal cells
+								//cout << "before: sheet " << i << " has " << skeletonHelixes[i]->internalCells.size() << " internal cells." << endl;
+								//cout << "before: sheet " << j << " has " << skeletonHelixes[j]->internalCells.size() << " internal cells." << endl;
+								int internalCellCount = (int)skeletonHelixes[j]->internalCells.size();
+								for (int k = 0; k < internalCellCount; k++){
+									//skeletonHelixes[i]->AddInternalCell(skeletonHelixes[j]->internalCells[k]);
+									skeletonHelixes[i]->internalCells.push_back(skeletonHelixes[j]->internalCells[k]);
+								}
+								//cout << "after: sheet " << i << " has " << skeletonHelixes[i]->internalCells.size() << " internal cells." << endl;
+								
+								// cornerCells
+								//cout << "before: sheet " << i << " has " << skeletonHelixes[i]->cornerCells.size() << " corner cells." << endl;
+								//cout << "before: sheet " << j << " has " << skeletonHelixes[j]->cornerCells.size() << " corner cells." << endl;
+								for (int k = 0; k < skeletonHelixes[j]->cornerCells.size(); k++){
+									skeletonHelixes[i]->cornerCells.push_back(skeletonHelixes[j]->cornerCells[k]);
+								}
+								//cout << "after: sheet " << i << " has " << skeletonHelixes[i]->cornerCells.size() << " corner cells." << endl;
+								
+								// polygonPoints
+								//cout << "before: sheet " << i << " has " << skeletonHelixes[i]->polygonPoints.size() << " polygon points." << endl;
+								//cout << "before: sheet " << j << " has " << skeletonHelixes[j]->polygonPoints.size() << " polygon points." << endl;
+								for (int k = 0; k < skeletonHelixes[j]->polygonPoints.size(); k++){
+									skeletonHelixes[i]->polygonPoints.push_back(skeletonHelixes[j]->polygonPoints[k]);
+								}
+								//cout << "after: sheet " << i << " has " << skeletonHelixes[i]->polygonPoints.size() << " polygon points." << endl;
+								
+								// polygons
+								//cout << "before: sheet " << i << " has " << skeletonHelixes[i]->polygons.size() << " polygons." << endl;
+								//cout << "before: sheet " << j << " has " << skeletonHelixes[j]->polygons.size() << " polygons." << endl;
+								for (int k = 0; k < skeletonHelixes[j]->polygons.size(); k++){
+									skeletonHelixes[i]->polygons.push_back(skeletonHelixes[j]->polygons[k]);
+								}
+								//cout << "after: sheet " << i << " has " << skeletonHelixes[i]->polygons.size() << " polygons." << endl;
+
+								// length
+								//cout << "before: sheet " << i << " has length " << skeletonHelixes[i]->length << endl;
+								//cout << "before: sheet " << j << " has length " << skeletonHelixes[j]->length << endl;
+								skeletonHelixes[i]->length += skeletonHelixes[j]->length;
+								//cout << "after: sheet " << i << " has length " << skeletonHelixes[i]->length << endl;
+
+								// cleanup
+								//cout << "deleting element " << j << " of skeletonHelixes" << endl;
+								delete skeletonHelixes[j];
+							} else {
+								//cout << "both point to exactly the same sheet structure. not modifying that structure." << endl;
+							}
+
+							//cout << "before cleanup, skeletonHelixes has size " << skeletonHelixes.size() << endl;
+							//for (int k = j; k < numSheets-1; k++) {
+							//cout << "j=" << j << ", firstSheet+numSheets=" << firstSheet + numSheets << endl;
+							for (int k = j; k < firstSheet + numSheets - 1; k++) {
+								skeletonHelixes[k] = skeletonHelixes[k+1];
+								//cout << "moving skeletonHelixes[" << k+1 << "] to [" << k << "]" << endl;
+							}
+							skeletonHelixes.pop_back();
+							//cout << "after cleanup, skeletonHelixes has size " << skeletonHelixes.size() << endl;
+
+
+							// adjacency matrix
+
+							// merge rows and columns i and j:
+							int lastRowColumn = firstSheet * 2 + numSheets - 1;
+
+							//cout << "merging rows " << nodei << " and " << nodej << endl;
+							for (int k = 0; k <= lastRowColumn; k++){
+								int itype = adjacencyMatrix[k][nodei][0];
+								int jtype = adjacencyMatrix[k][nodej][0];
+								int ilength = adjacencyMatrix[k][nodei][1];
+								int jlength = adjacencyMatrix[k][nodej][1];
+								// i same type and j shorter than i, overwrite i
+								if ( (itype == jtype) && (jlength < ilength) ) {
+									adjacencyMatrix[k][nodei][1] = adjacencyMatrix[k][nodej][1];
+									adjacencyMatrix[nodei][k][1] = adjacencyMatrix[k][nodej][1];
+									// modify paths vectors
+									paths[k][nodei] = paths[k][nodej];
+									paths[nodei][k] = paths[nodej][k];
+									//paths[nodei][k] = paths[k][nodej];
+								}
+								// if no edge at i and loop or euclidean loop at j, overwrite i
+								if ( (itype == GRAPHEDGE_OTHER) && ( ( jtype == GRAPHEDGE_LOOP) || (jtype == GRAPHEDGE_LOOP_EUCLIDEAN) ) ) {
+									adjacencyMatrix[k][nodei][0] = adjacencyMatrix[k][nodej][0];
+									adjacencyMatrix[nodei][k][0] = adjacencyMatrix[k][nodej][0];
+									adjacencyMatrix[k][nodei][1] = adjacencyMatrix[k][nodej][1];
+									adjacencyMatrix[nodei][k][1] = adjacencyMatrix[k][nodej][1];
+									paths[k][nodei] = paths[k][nodej];
+									paths[nodei][k] = paths[nodej][k];
+								}
+								// if euclidean loop at i and loop at j, overwrite i
+								if ( (itype == GRAPHEDGE_LOOP_EUCLIDEAN) && (jtype == GRAPHEDGE_LOOP) ) {
+									adjacencyMatrix[k][nodei][0] = adjacencyMatrix[k][nodej][0];
+									adjacencyMatrix[nodei][k][0] = adjacencyMatrix[k][nodej][0];
+									adjacencyMatrix[k][nodei][1] = adjacencyMatrix[k][nodej][1];
+									adjacencyMatrix[nodei][k][1] = adjacencyMatrix[k][nodej][1];
+									paths[k][nodei] = paths[k][nodej];
+									// TODO fix path indexing: problem with the order
+									paths[nodei][k] = paths[nodej][k];
+								}
+
+							}
+
+							// merge rows in Euclidean matrix
+							//cout << "Euclidean matrix: merging rows " << nodei << " and " << nodej << endl;
+							for (int k = 0; k <= lastRowColumn; k++){
+								int ilength = euclideanMatrix[k][nodei];
+								int jlength = euclideanMatrix[k][nodej];
+								// i same type and j shorter than i, overwrite i
+								if (jlength < ilength) {
+									euclideanMatrix[k][nodei] = euclideanMatrix[k][nodej];
+									euclideanMatrix[nodei][k] = euclideanMatrix[k][nodej];
+								}
+							}
+
+
+							// shift all rows > j up, then shift all columns > nodej to the left
+							//cout << "shifting rows > " << nodej << " up" << endl;
+							for (int k = nodej; k <= lastRowColumn; k++) {
+								//cout << "column k=" << k << endl;
+								for (int m = 0; m <= lastRowColumn; m++) {
+									adjacencyMatrix[k][m][0] = adjacencyMatrix[k+1][m][0];
+									adjacencyMatrix[k][m][1] = adjacencyMatrix[k+1][m][1];
+									adjacencyMatrix[k][m][2] = adjacencyMatrix[k+1][m][2];
+									euclideanMatrix[k][m] = euclideanMatrix[k+1][m];
+									paths[k][m] = paths[k+1][m];
+									//cout << "replacing adjacencyMatrix[" << k << "][" << m << "][1] with ["  << k+1 << "][" << m << "][1]." << endl;
+								}
+							}
+							
+							//cout << "shifting columns > " << nodej << " to the left" << endl;
+							for (int k = nodej; k <= lastRowColumn; k++) {
+								//cout << "row k=" << k << endl;
+								for (int m = 0; m < firstSheet*2 + numSheets + 1; m++) {
+									adjacencyMatrix[m][k][0] = adjacencyMatrix[m][k+1][0];
+									adjacencyMatrix[m][k][1] = adjacencyMatrix[m][k+1][1];
+									adjacencyMatrix[m][k][2] = adjacencyMatrix[m][k+1][2];
+									euclideanMatrix[m][k] = euclideanMatrix[m][k+1];
+									paths[m][k] = paths[m][k+1];
+									//cout << "replacing adjacencyMatrix[" << m << "][" << k << "][1] with ["  << m << "][" << k+1 << "][1]." << endl;
+								}
+							}
+							//cout << "removing last row (" << lastRowColumn << ")" << endl;
+							for (int m = 0; m <= lastRowColumn; m++) {
+								adjacencyMatrix[lastRowColumn][m][0] = 3;
+								adjacencyMatrix[lastRowColumn][m][1] = MAXINT;
+								adjacencyMatrix[lastRowColumn][m][2] = 0;
+								euclideanMatrix[lastRowColumn][m] = 0;
+								//paths[lastRowColumn][m] = ? ; how to clear a path?
+							}
+							//cout << "removing last column (" << lastRowColumn << ")" << endl;
+							for (int m = 0; m <= lastRowColumn; m++) {
+								adjacencyMatrix[m][lastRowColumn][0] = 3;
+								adjacencyMatrix[m][lastRowColumn][1] = MAXINT;
+								adjacencyMatrix[m][lastRowColumn][2] = 0;
+								euclideanMatrix[m][lastRowColumn] = 0;
+								//paths[m][lastRowColumn] = ?; how to clear a path?
+							}
+
+							// modify nodeWeights vector
+							nodeWeights[nodei] = nodeWeights[nodei] + nodeWeights[nodej];
+							for (int k = nodej; k <= lastRowColumn; k++) {
+								nodeWeights[k] = nodeWeights[k+1];
+							}
+							nodeWeights[lastRowColumn] = 0;
+
+							
+							numSheets--; // local to this loop
+							nodeCount--; // for the class
+						}
+					}
+				}
+			}
+			cout << "=== graph after merging sheets ===" << endl;
+			PrintGraph();
+			cout << "=== ===" << endl;
+
 		}
 	}
 }
