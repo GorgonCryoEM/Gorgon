@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.36.2.11  2009/09/25 15:26:56  schuhs
+#   Comment out code that clears all constraints. This preserves the constraints loaded from the settings file.
+#
 #   Revision 1.36.2.10  2009/08/18 17:57:27  schuhs
 #   Adding ability to ignore strands when building the sequence graph
 #
@@ -971,7 +974,9 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
                     if match.observed.sseType == 'helix':
                         # color is stored in two places: the renderer and the correspondence engine. update both.
                         self.viewer.renderer.setHelixColor(match.observed.label, color.redF(), color.greenF(), color.blueF(), color.alphaF())
+                        print "before setSSEColor"
                         self.viewer.correspondenceEngine.setSSEColor(match.observed.label, color.redF(), color.greenF(), color.blueF(), color.alphaF())
+                        print "after setSSEColor"
 
                     # TODO: add support to renderer for colored sheets
                     if match.observed.sseType == 'sheet':
@@ -1028,8 +1033,8 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
                 #print i
                 color = self.getIndexedHelixColor(i, self.viewer.correspondenceEngine.getSkeletonSSECount())
                 #color = self.getIndexedColor(i, self.viewer.correspondenceEngine.getSkeletonSSECount())
-                self.viewer.renderer.setSSEColor(i, color.redF(), color.greenF(), color.blueF(), color.alphaF())
-                self.viewer.correspondenceEngine.setSSEColor(i, color.redF(), color.greenF(), color.blueF(), color.alphaF())
+                ####self.viewer.renderer.setSSEColor(i, color.redF(), color.greenF(), color.blueF(), color.alphaF())
+                ####self.viewer.correspondenceEngine.setSSEColor(i, color.redF(), color.greenF(), color.blueF(), color.alphaF())
             glPushAttrib(GL_LIGHTING_BIT)
             self.viewer.setMaterials(self.app.themes.getColor("CorrespondenceFinder:BackboneTrace"))  
             # calls DrawAllPaths method of c++ SSECorrespondenceEngine object          
