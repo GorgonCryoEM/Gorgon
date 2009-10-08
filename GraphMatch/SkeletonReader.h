@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.19.2.21  2009/10/01 22:12:53  schuhs
+//   Storing individual sheets as meshes rather than volumes.
+//
 //   Revision 1.19.2.20  2009/09/11 18:42:53  schuhs
 //   Fixing bug in code that allows paths to cross sheets but not helices. Before fix, sometimes paths through sheets were prohibited.
 //
@@ -333,10 +336,6 @@ namespace wustl_mm {
 				cout << "skeleton sheet " << i << " maps to SSEHunter sheet " << sseSheetMapping[i] << endl;
 			}
 
-
-
-
-
 			// Add all sheets from sheet data structures to helixes list
 			for (int i = 1; i <= numSkeletonSheets; i++) { 
 			//for (int i = 0; i < (int)sheets.size(); i++) {
@@ -349,11 +348,6 @@ namespace wustl_mm {
 					helixesMapping[i] = helixes.size() - 1;
 				}
 			}
-
-
-
-
-
 
 			// Add all points in each sheet to the helixes data structure
 			// for each point (x,y,z)
@@ -369,11 +363,11 @@ namespace wustl_mm {
 						if (skeletonSheetNum > 0) {
 							int sseSheetNum = helixesMapping[skeletonSheetNum];
 							//int sseSheetNum = sseSheetMapping[skeletonSheetNum];
-							cout << "skeletonSheetNum is " << skeletonSheetNum << ", sseSheetNum is " << sseSheetNum << endl;
+							//cout << "skeletonSheetNum is " << skeletonSheetNum << ", sseSheetNum is " << sseSheetNum << endl;
 							if (sseSheetNum != -1) {
 								// associate this voxel with this sheet
 								paintedVol->setDataAt(x, y, z, sseSheetNum+1);
-								cout << " setting value of thsi point to " << sseSheetNum+1 << endl;
+								//cout << " setting value of thsi point to " << sseSheetNum+1 << endl;
 								// add this point as as internal cell of the helix
 								//sheets[sseSheetNum]->AddInternalCell(Point3Int(x, y, z, 0));
 								helixes[sseSheetNum]->AddInternalCell(Point3Int(x, y, z, 0));
@@ -390,6 +384,7 @@ namespace wustl_mm {
 			vector<Volume*> skeletonSheets;
 			skeletonSheets.push_back(sheetClusters);
 
+			// create an individual volume for each sheet from the sheetClusters volume
 			for (int i = 1; i <= numSheets; i++) {
 				Volume* singleSheet = new Volume(sheetClusters->getSizeX(), sheetClusters->getSizeY(), sheetClusters->getSizeZ(), 1.0); // trying something new
 				singleSheet->applyMask(sheetClusters,i,true);
@@ -398,32 +393,6 @@ namespace wustl_mm {
 				cout << "created sheet " << i << " with " << thisSheetSize << " voxels" << endl;
 				skeletonSheets.push_back(singleSheet);
 			}
-
-
-
-
-			/*
-			// Add all sheets from sheet data structures to helixes list
-			for (int i = 1; i <= numSkeletonSheets; i++) { 
-			//for (int i = 0; i < (int)sheets.size(); i++) {
-				cout << "checking sheet " << i << " which maps to " << sseSheetMapping[i] << endl;
-				if (sseSheetMapping[i] != -1) {
-					//int nextHelixElement = (int)helixes.size();
-					//helixes[nextHelixElement] = sheets[sseSheetMapping[i]];
-					helixes.push_back(sheets[sseSheetMapping[i]]);
-					cout << "added sheet " << i << " as element " << helixes.size()-1 << " of helixes vector" << endl;
-					helixesMapping[i] = helixes.size() - 1;
-				}
-			}
-			*/
-
-
-
-
-
-
-
-
 
 			#ifdef VERBOSE
 			printf("Finished finding points inside helices and sheets.\n");
@@ -552,6 +521,8 @@ namespace wustl_mm {
 			// save skeleton sheet volume to graph->skeletonSheetVolume
 			graph->skeletonSheetVolume = sheetClusters;
 
+			/*
+
 			printf("Before saving\n");
 			// save skeleton sheet volume vector to graph->skeletonSheets
 			for(int i = 0; i < (int)skeletonSheets.size(); i++) {
@@ -574,13 +545,23 @@ namespace wustl_mm {
 				graph->skeletonSheets.erase(graph->skeletonSheets.begin() + 1);
 			}
 			cout << "!_!_!_!_!_!_!_!_!_! After deleting sheets, skeletonSheets has size " << skeletonSheets.size() << " !_!_!_!_!_!_!_!_!_!_!_!_!" << endl;
+			*/
+			// save skeleton sheet volume vector to graph->skeletonSheets
 
+			// erase extra volumes
+			while ((int)skeletonSheets.size() > 1) {
+				delete skeletonSheets[1];
+				skeletonSheets.erase(skeletonSheets.begin() + 1);
+			}
+
+			/*
 			// save correspondences between skeleton sheets and SSE sheets to graph->skeletonSheetCorrespondence
 			for (int i = 0; i < (int)helixesMapping.size(); i++) {
 			//for (int i = 0; i < (int)sseSheetMapping.size(); i++) {
 				graph->skeletonSheetCorrespondence[i] = helixesMapping[i];
 				//graph->skeletonSheetCorrespondence[i] = sseSheetMapping[i];
 			}
+			*/
 
 			#ifdef VERBOSE
 				printf("Graph saved to object.\n");
@@ -604,6 +585,16 @@ namespace wustl_mm {
 
 			#ifdef VERBOSE
 				printf("Finished finding paths from each helix corner to every other helix. Done.\n");
+			#endif // VERBOSE
+
+			#ifdef VERBOSE
+				printf("Merging pairs of sheets that are close to each other.\n");
+			#endif // VERBOSE
+
+				graph->MergeSheets(3.0);
+
+			#ifdef VERBOSE
+				printf("Done merging pairs of sheets.\n");
 			#endif // VERBOSE
 
 
