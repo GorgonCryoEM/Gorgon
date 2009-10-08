@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.13.2.13  2009/10/08 19:13:59  schuhs
+//   Removing data structures that are unnecessary and that require a lot of memory. Adding method to merge nearby sheets.
+//
 //   Revision 1.13.2.12  2009/10/01 22:13:25  schuhs
 //   Storing individual sheets as meshes rather than volumes.
 //
@@ -484,8 +487,11 @@ namespace wustl_mm {
 						//Vector3DInt jVec = Vector3DInt(jLoc.x, jLoc.y, jLoc.z);
 						paths[i][j].clear();
 						paths[j][i].clear();
-						paths[i][j].push_back(jVec);
+						paths[j][i].push_back(jVec);
+						paths[j][i].push_back(iVec);
+						// add reverse direction path
 						paths[i][j].push_back(iVec);
+						paths[i][j].push_back(jVec);
 						//paths[j][i].push_back(iVec);
 						//paths[j][i].push_back(jVec);
 						//cout << "after adding Euclidian path from " << i << " to " << j << ", paths vector has size " << paths[i][j].size() << endl;
@@ -567,7 +573,7 @@ namespace wustl_mm {
 								//cout << "both point to exactly the same sheet structure. not modifying that structure." << endl;
 							}
 
-							//cout << "before cleanup, skeletonHelixes has size " << skeletonHelixes.size() << endl;
+							cout << "before cleanup, skeletonHelixes has size " << skeletonHelixes.size() << endl;
 							//for (int k = j; k < numSheets-1; k++) {
 							//cout << "j=" << j << ", firstSheet+numSheets=" << firstSheet + numSheets << endl;
 							for (int k = j; k < firstSheet + numSheets - 1; k++) {
@@ -575,7 +581,7 @@ namespace wustl_mm {
 								//cout << "moving skeletonHelixes[" << k+1 << "] to [" << k << "]" << endl;
 							}
 							skeletonHelixes.pop_back();
-							//cout << "after cleanup, skeletonHelixes has size " << skeletonHelixes.size() << endl;
+							cout << "after cleanup, skeletonHelixes has size " << skeletonHelixes.size() << endl;
 
 
 							// adjacency matrix

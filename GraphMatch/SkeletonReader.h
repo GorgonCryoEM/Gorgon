@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.19.2.22  2009/10/08 19:15:26  schuhs
+//   Fixing memory leak and adding call to method that merges nearby sheets
+//
 //   Revision 1.19.2.21  2009/10/01 22:12:53  schuhs
 //   Storing individual sheets as meshes rather than volumes.
 //
@@ -1189,9 +1192,11 @@ namespace wustl_mm {
 						if(found) {	
 							//cout << "path found. length=" << currentPoint->distance << ". retracing path from node " << n1 << " to node " << n2 << "." << endl;
 							// store endPosition to path vector
-							graph->paths[n1-1][n2-1].clear();
-							graph->paths[n1-1][n2-1].push_back(currentPos);
 							graph->paths[n2-1][n1-1].clear();
+							graph->paths[n2-1][n1-1].push_back(currentPos);
+							graph->paths[n1-1][n2-1].clear();
+							// store opposite direction path
+							graph->paths[n1-1][n2-1].insert(graph->paths[n1-1][n2-1].begin(),currentPos);
 							//graph->paths[n2-1][n1-1].push_back(currentPos);
 							while(!backFound) {
 								//newIx == xx * 96 * 96 + yy * 96 + zz;
@@ -1207,8 +1212,11 @@ namespace wustl_mm {
 									currentPos = currentPos + Vector3DInt(d[backVol[newIx]][0], d[backVol[newIx]][1], d[backVol[newIx]][2]);
 									//currentPos = currentPos - Vector3DInt(D26[backVol[newIx]][0], D26[backVol[newIx]][1], D26[backVol[newIx]][2]);
 									// add the next point to the path
-									graph->paths[n1-1][n2-1].push_back(currentPos);
+									graph->paths[n2-1][n1-1].push_back(currentPos);
 									//graph->paths[n2-1][n1-1].push_back(currentPos);
+									// store in opposite direction path as well
+									graph->paths[n1-1][n2-1].insert(graph->paths[n1-1][n2-1].begin(),currentPos);
+
 								}
 							}
 						}
