@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.32.2.14  2009/09/24 20:42:50  schuhs
+//   Adjusting default sheet matching parameters to get good sheet matches.
+//
 //   Revision 1.32.2.13  2009/09/10 16:22:56  schuhs
 //   Adjust voxel to PDB ratio and turn off SMI mode. Now getting results close to SMI paper with the latest code.
 //
@@ -248,15 +251,19 @@ namespace wustl_mm {
 		}
 
 		void AddHelixConstraint(int patternHelix, int baseHelix) {
-			int patternNode1 = patternHelix*2 - 1;
-			int patternNode2 = patternHelix*2;
+			//int patternNode1 = patternHelix*2 - 1;
+			//int patternNode2 = patternHelix*2;
+			int patternNode1 = patternHelix;
+			int patternNode2 = patternHelix+1;
 
 			if(baseHelix == -1) {
 				allowedConstraintCollection[patternNode1-1][allowedConstraintCount[patternNode1-1]] = -1;		allowedConstraintCount[patternNode1-1]++;
 				allowedConstraintCollection[patternNode2-1][allowedConstraintCount[patternNode2-1]] = -1;		allowedConstraintCount[patternNode2-1]++;
 			} else {
-				int baseNode1 = baseHelix*2 - 1;
-				int baseNode2 = baseHelix*2;
+				//int baseNode1 = baseHelix*2 - 1;
+				//int baseNode2 = baseHelix*2;
+				int baseNode1 = baseHelix;
+				int baseNode2 = baseHelix+1;
 				allowedConstraintCollection[patternNode1-1][allowedConstraintCount[patternNode1-1]] = baseNode1;		allowedConstraintCount[patternNode1-1]++;
 				allowedConstraintCollection[patternNode1-1][allowedConstraintCount[patternNode1-1]] = baseNode2;		allowedConstraintCount[patternNode1-1]++;
 				allowedConstraintCollection[patternNode2-1][allowedConstraintCount[patternNode2-1]] = baseNode1;		allowedConstraintCount[patternNode2-1]++;
