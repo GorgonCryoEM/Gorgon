@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.3  2009/08/26 14:58:55  ssa1
+//   Adding in Flexible fitting clique search
+//
 //   Revision 1.2  2009/08/10 20:03:40  ssa1
 //   SSEHunter interfaced into Gorgon
 //
@@ -37,7 +40,8 @@ using namespace wustl_mm::GraySkeletonCPP;
 
 namespace wustl_mm {
 	namespace Protein_Morph {
-	
+
+	enum RadialProfileType {GAUSSIAN, GAUSSIAN_DIP, POLYNOMIAL};
 		class SSEHunter{
 		public:
 			SSEHunter();
@@ -52,8 +56,17 @@ namespace wustl_mm {
 			vector< vector<float> > GetAtomDistances(vector<PDBAtom> patoms);
 			vector< vector<Vector3DInt> > GetNeighborhoodVoxels(vector<PDBAtom> patoms, vector<Vector3DInt> atomVolumePositions, Volume * vol, float threshold);
 			vector<float> GetLocalDirectionalityScores(vector<PDBAtom> patoms, vector<Vector3DInt> atomVolumePositions, Volume * vol);
-			Volume * GetTemplateHelix(double length, float apix, float resolution, float mapSize);
 
+			//Ross Coleman: modified from EMAN1 Cylinder.C by Wen Jiang
+			float GetRadialProfile(float r, RadialProfileType type); //r in angstroms
+			float GetRadialProfileGaussian(float r); // r in angstroms
+			float GetRadialProfileGaussianDip(float r);// r in angstroms
+			float GetRadialProfilePolynomial(float r);// r in angstroms
+			Volume* GetTemplateCylinder(int xsize, int ysize, int zsize,
+					RadialProfileType type = POLYNOMIAL, float len = 10.8,
+					int x0 = -1, int y0 = -1, int z0 = -1,
+					float apix_x = 1, float apix_y = 1, float apix_z = 1);
+			Volume * GetTemplateHelix(double length, float apix, float resolution, float mapSize);
 			
 		};
 		
@@ -281,6 +294,110 @@ namespace wustl_mm {
 			
 		}
 
+		float SSEHunter::GetRadialProfile(float r, RadialProfileType type) // r in angstroms
+		{
+			if (type == GAUSSIAN)
+				return GetRadialProfileGaussian(r);
+			else if (type == GAUSSIAN_DIP)
+				return GetRadialProfileGaussianDip(r);
+			else if (type == POLYNOMIAL)
+				return GetRadialProfilePolynomial(r);
+		}
+
+		float SSEHunter::GetRadialProfileGaussian(float r) // r in angstroms
+		{
+			r /= 2;
+			return exp(-r * r);
+		}
+
+		float SSEHunter::GetRadialProfileGaussianDip(float r) //r in angstroms
+		{
+			// pure Gaussian falloff + negative dip, so mean is 0
+			r /= 2;
+			return (1 - r * r / 4) * exp(-r * r / 4);
+		}
+
+		// polynomial fitting to the radial profile of real helix density
+		float SSEHunter::GetRadialProfilePolynomial(float r) //r in angstroms
+		{
+			//iterations ==> rounding is problematic with float types if
+			// 15 < r < 20 and really bad if 20 < r < 30, so use double
+			double ret; 
+
+			// polynomial fitting to the radial profile of real helix density
+			// f=a0*x^n+a1+x^(n-1)+ ... +a[n-1]*x+an
+			//float an[11]={2.847024584977009e-10,-3.063997224364090e-08,1.418801040660860e-06,-3.678676414383996e-05,5.804871622801710e-04,-5.640340018430164e-03,3.208802421493864e-02,-9.068475313823952e-02,7.097329559749284e-02,-9.993347339658298e-02,1.000000000000000e+00};
+
+			// now the fitting to the original profile
+			if (r >= 20)
+				return 0; //We don't want that part of the polynomial --> goes way below zero
+			static float an[15] = { -3.9185246832229140e-16,
+					3.3957205298900993e-14, 2.0343351971222658e-12,
+					-4.4935965816879751e-10, 3.0668169835080933e-08,
+					-1.1904544689091790e-06, 2.9753088549414953e-05,
+					-4.9802112876220150e-04, 5.5900917825309360e-03,
+					-4.0823714462925299e-02, 1.8021733669148599e-01,
+					-4.0992557296268717e-01, 3.3980328566901458e-01,
+					-3.6062024812411908e-01, 1.0000000000000000e+00 };
+
+			ret = an[0];
+			for (int i = 1; i < 15; i++) {
+				ret = ret * r + an[i];
+			}
+			return ret;
+		}
+
+		// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		// TODO: Test this function
+		// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		//Ross Coleman: modified from EMAN1 Cylinder.C by Wen Jiang
+		//synthesize cylinder that resembles the density seen from an alpha helix
+		//The cylindrical axis is parallel to the z axis.
+		//len is Angstrom, default to 2 turns
+		//x0, y0, z0 will be the centroid of the cylinder in voxels
+		Volume* SSEHunter::GetTemplateCylinder(int xsize, int ysize, int zsize,
+							RadialProfileType type, float len, int x0, int y0, int z0,
+							float apix_x, float apix_y, float apix_z)
+		{
+			//If x0, y0, or z0 is out of the volume set it to the midpoint
+			//Default value of -1 --> midpoint
+			if (x0 < 0 || x0 >= xsize)
+				x0 = xsize / 2;
+			if (y0 < 0 || y0 >= ysize)
+				y0 = ysize / 2;
+			if (z0 < 0 || z0 >= zsize)
+				z0 = zsize / 2;
+
+			Volume * cyl = new Volume(xsize, ysize, zsize);
+			cyl->setSpacing(apix_x, apix_y, apix_z);
+			cyl->setOrigin(x0,y0,z0);
+			
+			int cyl_voxel_len = (int) (len / apix_z);
+			int cyl_k_min = z0 - cyl_voxel_len / 2;
+			int cyl_k_max = z0 + cyl_voxel_len / 2;
+
+			int x, y;
+			float radius;
+			float value;
+			for (int i = 0; i < xsize; i++) {
+				for (int j = 0; j < ysize; j++) {
+					for (int k = 0; k < zsize; k++)
+					{
+						x = i - x0;//coordinate sys centered on cylinder
+						y = j - y0;//coordinate sys centered on cylinder
+						radius = sqrt( x*x*apix_x*apix_x + y*y*apix_y*apix_y );
+						if ((k > cyl_k_min) && (k < cyl_k_max))
+						{
+							value = cyl->getDataAt(i,j,k);
+							value += GetRadialProfile(radius, type);
+							cyl->setDataAt(i,j,k,value);
+						}
+					}
+				}
+			}
+			return cyl;
+		}
+
 		Volume * SSEHunter::GetTemplateHelix(double length, float apix, float resolution, float mapSize) {
 			vector<float> eValues;
 			vector<Vector3DFloat> positions;
@@ -290,7 +407,7 @@ namespace wustl_mm {
 
 			// Generating PDB Atoms
 			while (j <= round(length/1.54)) {
-				nPos =  Vector3DFloat(cos((100.0 * j * PI)/180.0)*1.6, sin((100.0 * j * PI)/180.0)*1.6, j * 1.52);
+				nPos =  Vector3DFloat(cos((100.0 * j * PI)/180.0)*1.6, sin((100.0 * j * PI)/180.0)*1.6, j * 1.54);
 				caPos = Vector3DFloat(cos(((28.0 + (100.0 * j)) * PI)/180.0) * 2.3, sin(((28.0 + (100.0 * j)) * PI)/180.0) * 2.3, (j * 1.54)+ 0.83);
 				cPos =  Vector3DFloat(cos(((61.0 + (100.0 * j)) * PI)/180.0) * 2.0, sin(((61.0 + (100.0 * j)) * PI)/180.0) * 2.0, (j * 1.54) + 1.7);
 				oPos =  Vector3DFloat(cos(((61.0 + (100.0 * j)) * PI)/180.0) * 2.0, sin(((61.0 + (100.0 * j)) * PI)/180.0) * 2.0, (j * 1.54) + 3.09);
