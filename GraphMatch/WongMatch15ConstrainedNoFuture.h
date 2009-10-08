@@ -15,6 +15,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.15.2.23  2009/09/24 20:49:44  schuhs
+//   Fixing bugs in the skip edge penalty cost calculation method. Sheet matching working well now.
+//
 //   Revision 1.15.2.22  2009/09/17 17:27:55  schuhs
 //   Fixing bug that caused a skip over a single strand to incur no penalty
 //
@@ -292,6 +295,7 @@ namespace wustl_mm {
 		// searches for correspondences between the pattern graph and base graph.
 		int WongMatch15ConstrainedNoFuture::RunMatching(clock_t startTime) {
 			cout << "Start WongMatch15ConstrainedNoFuture::RunMatching: " << endl;
+			DisplayConstants();
 			bool continueLoop = true;
 			clock_t finishTime;
 			// repeat the following loop until all results are found
