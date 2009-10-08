@@ -15,6 +15,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.15.2.24  2009/10/08 19:15:57  schuhs
+//   Displaying constants at beginning of match algorithm
+//
 //   Revision 1.15.2.23  2009/09/24 20:49:44  schuhs
 //   Fixing bugs in the skip edge penalty cost calculation method. Sheet matching working well now.
 //
@@ -227,7 +230,7 @@ namespace wustl_mm {
 			cout << "calculating the number of missing sheets and helices" << endl;
 
 			for (int i = 0; i < baseGraph->GetNodeCount(); i++) {
-				cout << "base graph node " << i << " has type " << (int)(baseGraph->adjacencyMatrix[i][i][0]) << endl;
+				//cout << "base graph node " << i << " has type " << (int)(baseGraph->adjacencyMatrix[i][i][0]) << endl;
 				switch((int)(baseGraph->adjacencyMatrix[i][i][0] + 0.01)) {
 					case(GRAPHNODE_HELIX) : 
 						baseHelixNodes++;
@@ -242,7 +245,7 @@ namespace wustl_mm {
 			cout << "base graph has " << baseHelixNodes << " helix nodes and " << baseSheetNodes << " sheet nodes." << endl;
 
 			for (int i = 0; i < patternGraph->GetNodeCount(); i++) {
-				cout << "pattern graph node " << i << " has type " << (int)(patternGraph->adjacencyMatrix[i][i][0]) << endl;
+				//cout << "pattern graph node " << i << " has type " << (int)(patternGraph->adjacencyMatrix[i][i][0]) << endl;
 				switch((int)(patternGraph->adjacencyMatrix[i][i][0] + 0.01)) {
 					case(GRAPHNODE_HELIX) : 
 						patternHelixNodes++;
@@ -794,7 +797,7 @@ namespace wustl_mm {
 										skippedHelixNodes = 1;
 										cout << "node skipped. adding one to skippedHelixNodes. result is " << skippedHelixNodes << endl;
 									}
-								cout << "node skipped. done fixing." << endl;
+								//cout << "node skipped. done fixing." << endl;
 							}
 
 							// generate a current node, marking it as revisitable or not depending on result from test
@@ -807,7 +810,7 @@ namespace wustl_mm {
 							if(((temp->depth == 0) && (j > 0)) || 
 								((patternGraph->nodeCount - currentNode->depth == 0) && (currentNode->n2Node == -1))) {
 								if (skippedHelixNodes > 0) {
-									cout << "first helix is missing." << endl;
+									//cout << "first helix is missing." << endl;
 									firstMissing = true;
 								}
 							}	
@@ -859,7 +862,7 @@ namespace wustl_mm {
 						switch ( (int)(patternGraph->adjacencyMatrix[currentNode->n1Node + j][currentNode->n1Node + j][0] + 0.01)) {
 							case GRAPHNODE_HELIX:
 								if (firstMissing) {
-									cout << "GRAPHEDGE_HELIX case AND firstMissing!" << endl;
+									//cout << "GRAPHEDGE_HELIX case AND firstMissing!" << endl;
 								}
 								skippedHelixNodes += 2;
 								j+=2;
@@ -937,9 +940,9 @@ namespace wustl_mm {
 				}
 
 				// find the end of the current correspondence
-				cout << "begin while block. n1 = " << n1 << ", n2 = " << n2 << endl;
+				//cout << "begin while block. n1 = " << n1 << ", n2 = " << n2 << endl;
 				while (SOLUTION[n2] == -1 && n2 < numNodes) {
-					cout << "skipped node found at " << n2+1 << " with adj matrix value " << patternGraph->adjacencyMatrix[n2][n2][0] << endl;
+					//cout << "skipped node found at " << n2+1 << " with adj matrix value " << patternGraph->adjacencyMatrix[n2][n2][0] << endl;
 					if (patternGraph->adjacencyMatrix[n2][n2][0] == GRAPHNODE_HELIX) {
 						skippedHelixNodes++;
 					}
@@ -949,7 +952,7 @@ namespace wustl_mm {
 					n2++;
 				}
 	
-				cout << "after advancing n2, n1 = " << n1 << ", n2 = " << n2 << ", skippedHN = " << skippedHelixNodes << ", skippedSN = " << skippedSheetNodes << endl;
+				//cout << "after advancing n2, n1 = " << n1 << ", n2 = " << n2 << ", skippedHN = " << skippedHelixNodes << ", skippedSN = " << skippedSheetNodes << endl;
 
 				// add edge cost
 				cout << "adding (" << n1+1 << "," << n2+1 << "," << SOLUTION[n1] << "," << SOLUTION[n2] << ")" << endl;
