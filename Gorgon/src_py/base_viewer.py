@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.59  2009/10/05 17:57:37  ssa1
+#   Initial session saving functionality (Request ID:52)
+#
 #   Revision 1.58  2009/07/01 22:00:27  ssa1
 #   Centering the volume cropped using a radius around the point selected by the atom selection tool.
 #
@@ -110,7 +113,7 @@
 from PyQt4 import QtGui, QtCore, QtOpenGL
 from libpyGORGON import VolumeRenderer, Vector3DFloat
 from vector_lib import *
-from session_lib import *
+from session_manager import SessionManager
 
 from OpenGL.GL import *
 from OpenGL.GLU import *
