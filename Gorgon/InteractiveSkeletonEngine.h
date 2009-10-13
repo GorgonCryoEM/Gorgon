@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.30  2009/06/24 13:06:51  ssa1
+//   Fixing compilation issues on MacOS
+//
 //   Revision 1.29  2009/03/30 21:36:12  ssa1
 //   Interactive loop building
 //
@@ -74,6 +77,7 @@
 using namespace wustl_mm::Protein_Morph;
 using namespace wustl_mm::GraySkeletonCPP;
 using namespace std;
+using namespace wustl_mm::SkeletonMaker;
 
 
 namespace wustl_mm {

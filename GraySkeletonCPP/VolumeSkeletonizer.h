@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.40  2009/09/10 23:44:56  ssa1
+//   Allowing the option of preserving the earlier skeleton when performing grayscale skeletonization.. (Leads to better skeletons)
+//
 //   Revision 1.39  2009/03/02 16:31:47  ssa1
 //   Adding in Point Clouds and Structure Tensor Fields
 //
@@ -46,6 +49,7 @@
 using namespace wustl_mm::MathTools;
 using namespace wustl_mm::Foundation;
 using namespace std;
+using namespace wustl_mm::SkeletonMaker;
 
 namespace wustl_mm {
 	namespace GraySkeletonCPP {

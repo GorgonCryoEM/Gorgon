@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.26  2008/11/06 05:29:04  ssa1
+//   CGI submission milestone for Interactive Skeletonization, and theme support, and fixing (hopefully) mac-os flicker bug
+//
 //   Revision 1.25  2008/10/29 19:26:26  ssa1
 //   Reducing memory footprint, Increasing performance and adding volume normalization
 //
@@ -45,6 +48,7 @@
 
 using namespace wustl_mm::Protein_Morph;
 using namespace wustl_mm::Foundation;
+using namespace wustl_mm::SkeletonMaker;
 
 namespace wustl_mm {
 	namespace GraySkeletonCPP {

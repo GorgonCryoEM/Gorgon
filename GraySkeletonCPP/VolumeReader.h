@@ -11,11 +11,16 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.7  2008/09/29 16:30:15  ssa1
+//   Adding in CVS meta information
+//
 
 #ifndef GRAYSKELETONCPP_VOLUME_READER_H
 #define GRAYSKELETONCPP_VOLUME_READER_H
 
 #include <SkeletonMaker/volume.h>
+
+using namespace wustl_mm::SkeletonMaker;
 
 namespace wustl_mm {
 	namespace GraySkeletonCPP {

@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.8  2008/12/15 22:38:31  ssa1
+//   Adding in support to load RAW volumes
+//
 //   Revision 1.7  2008/09/29 16:30:15  ssa1
 //   Adding in CVS meta information
 //
@@ -20,6 +23,8 @@
 
 #include "VolumeReader.h"
 #include <sys/stat.h>
+
+using namespace wustl_mm::SkeletonMaker;
 
 namespace wustl_mm {
 	namespace GraySkeletonCPP {

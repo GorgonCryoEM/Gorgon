@@ -13,6 +13,8 @@ Version 1.0.2b
   Support for loading MAP volumes
   SSE Builder functionality for creating Secondary Structure annotations from SSEHunter results
   Saving Secondary structure annotations as VRML (VRML / WRL format) as well as DeJaVu (SSE format)
+  Support for saving, loading and closing gorgon session
+  Export of predicted correspondences so that it can be analyzed by Rosetta
 
 Version 1.0.1
   Support for loading CCP4 and RAW volumes

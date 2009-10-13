@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.13  2008/11/18 18:10:24  ssa1
+//   Changing the scaling functions when doing graph matching to find correspondences
+//
 //   Revision 1.12  2008/09/29 16:19:30  ssa1
 //   Adding in CVS meta information
 //
@@ -29,6 +32,7 @@
 #include <MathTools/Vector3D.h>
 #include <SkeletonMaker/volume.h>
 using namespace std;
+using namespace wustl_mm::SkeletonMaker;
 
 namespace wustl_mm {
 	namespace GraphMatch {

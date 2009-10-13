@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.3  2008/09/29 16:30:15  ssa1
+//   Adding in CVS meta information
+//
 
 #ifndef GRAYSKELETONCPP_TREE_SKELETONIZER_H
 #define GRAYSKELETONCPP_TREE_SKELETONIZER_H
@@ -19,6 +22,7 @@
 #include <ProteinMorph/NonManifoldMesh.h>
 
 using namespace wustl_mm::Protein_Morph;
+using namespace wustl_mm::SkeletonMaker;
 
 namespace wustl_mm {
 	namespace GraySkeletonCPP {

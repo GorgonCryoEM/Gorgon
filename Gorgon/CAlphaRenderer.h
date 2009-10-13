@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.39  2009/08/10 20:03:40  ssa1
+//   SSEHunter interfaced into Gorgon
+//
 //   Revision 1.38  2009/08/10 13:54:38  ssa1
 //   Adding initial ssehunter program
 //
@@ -84,6 +87,7 @@
 using namespace std;
 using namespace wustl_mm::Protein_Morph;
 using namespace wustl_mm::GraphMatch;
+using namespace wustl_mm::SkeletonMaker;
 
 namespace wustl_mm {
 	namespace Visualization {	

@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.3  2009/09/29 19:23:39  ssa1
+//   Fixing indexing bugs when performing sse correspondence search.
+//
 //   Revision 1.2  2009/09/02 19:06:13  ssa1
 //   Working towards flexible fitting
 //
@@ -326,7 +329,6 @@ namespace wustl_mm {
 				printf("\t{{%f, %f, %f}, {%f, %f, %f}}", pt0.X(), pt0.Y(), pt0.Z(), pt1.X(), pt1.Y(), pt1.Z());
 			}
 			printf("};\n\n");
-			printf("printFeatures[fl1, fl2]\n");
 		}
 	}
 }

@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.6  2008/09/29 16:30:15  ssa1
+//   Adding in CVS meta information
+//
 
 #ifndef GRAYSKELETONCPP_NORMAL_FINDER_H
 #define GRAYSKELETONCPP_NORMAL_FINDER_H
@@ -18,6 +21,7 @@
 #include <MathTools/Vector3D.h>
 
 using namespace wustl_mm::MathTools;
+using namespace wustl_mm::SkeletonMaker;
 using namespace std;
 
 namespace wustl_mm {

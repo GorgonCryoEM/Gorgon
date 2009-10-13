@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.35  2009/09/10 23:44:56  ssa1
+//   Allowing the option of preserving the earlier skeleton when performing grayscale skeletonization.. (Leads to better skeletons)
+//
 //   Revision 1.34  2008/09/29 16:30:15  ssa1
 //   Adding in CVS meta information
 //
@@ -37,6 +40,7 @@
 
 using namespace wustl_mm::GraySkeletonCPP;
 using namespace wustl_mm::Foundation;
+using namespace wustl_mm::SkeletonMaker;
 using namespace std;
 
 namespace wustl_mm {

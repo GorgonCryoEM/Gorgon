@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.22  2009/05/14 19:49:57  ssa1
+//   Enabling the .map format
+//
 //   Revision 1.21  2009/03/02 16:31:47  ssa1
 //   Adding in Point Clouds and Structure Tensor Fields
 //
@@ -41,7 +44,7 @@
 
 using namespace std;
 using namespace wustl_mm::Foundation;
-
+using namespace wustl_mm::SkeletonMaker;
 
 namespace wustl_mm {
 	namespace GraySkeletonCPP {

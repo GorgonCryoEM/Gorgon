@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.9  2008/09/29 16:43:15  ssa1
+//   Adding in CVS meta information
+//
 
 
 #define _CRT_SECURE_NO_DEPRECATE 1
@@ -24,7 +27,7 @@
 #include "reader.h"
 #include <string>
 
-
+using namespace wustl_mm::SkeletonMaker;
 
 /* Definition of global constants */
 

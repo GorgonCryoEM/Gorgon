@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.9  2009/09/02 19:06:13  ssa1
+//   Working towards flexible fitting
+//
 //   Revision 1.8  2009/08/26 14:58:55  ssa1
 //   Adding in Flexible fitting clique search
 //
@@ -44,6 +47,7 @@ using namespace wustl_mm::GraySkeletonCPP;
 using namespace wustl_mm::Protein_Morph;
 using namespace wustl_mm::Foundation;
 using namespace wustl_mm::MathTools;
+using namespace wustl_mm::SkeletonMaker;
 
 namespace wustl_mm {
 	namespace Protein_Morph {

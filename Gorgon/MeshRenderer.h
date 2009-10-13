@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.32  2009/05/08 20:45:49  ssa1
+//   auto rotate of camera when user clicks CTRL + ALT and left move
+//
 //   Revision 1.31  2008/12/12 21:42:31  ssa1
 //   Fixing bug: Cant move a skeleton in te z axis by using the position tab
 //
@@ -63,6 +66,7 @@
 using namespace wustl_mm::Protein_Morph;
 using namespace wustl_mm::GraySkeletonCPP;
 using namespace wustl_mm::Foundation;
+using namespace wustl_mm::SkeletonMaker;
 
 namespace wustl_mm {
 	namespace Visualization {	

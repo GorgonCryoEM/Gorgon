@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.54  2009/09/17 20:00:24  ssa1
+//   Steps towards exporting to Rosetta
+//
 //   Revision 1.53  2009/09/10 23:44:56  ssa1
 //   Allowing the option of preserving the earlier skeleton when performing grayscale skeletonization.. (Leads to better skeletons)
 //
@@ -122,6 +125,7 @@ using namespace wustl_mm::GraySkeletonCPP;
 using namespace wustl_mm::Protein_Morph;
 using namespace wustl_mm::MathTools;
 using namespace wustl_mm::GraphMatch;
+using namespace wustl_mm::SkeletonMaker;
 
 namespace wustl_mm {
 	namespace Visualization {

@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.39  2009/09/17 20:00:24  ssa1
+//   Steps towards exporting to Rosetta
+//
 //   Revision 1.38  2009/08/10 13:54:38  ssa1
 //   Adding initial ssehunter program
 //
@@ -76,6 +79,7 @@
 using namespace std;
 using namespace wustl_mm::MathTools;
 using namespace wustl_mm::Foundation;
+using namespace wustl_mm::SkeletonMaker;
 
 
 namespace wustl_mm {

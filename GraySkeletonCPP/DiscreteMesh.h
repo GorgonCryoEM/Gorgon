@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.15  2008/09/29 16:30:15  ssa1
+//   Adding in CVS meta information
+//
 
 #ifndef GRAYSKELETONCPP_DISCRETE_MESH_H
 #define GRAYSKELETONCPP_DISCRETE_MESH_H
@@ -24,6 +27,7 @@
 
 using namespace std;
 using namespace wustl_mm::MathTools;
+using namespace wustl_mm::SkeletonMaker;
 
 namespace wustl_mm {
 	namespace GraySkeletonCPP {		
