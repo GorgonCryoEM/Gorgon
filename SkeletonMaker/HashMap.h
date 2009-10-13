@@ -11,111 +11,118 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.3  2008/09/29 16:43:15  ssa1
+//   Adding in CVS meta information
+//
 
-#ifndef HASHMAP_H
-#define HASHMAP_H
+#ifndef SKELETON_MAKER_HASH_MAP_H
+#define SKELETON_MAKER_HASH_MAP_H
 
 #include <iostream>
 #include <cstdio>
 #include <windows.h>
 
-/* A hash table hashed by three int integers
- *
- */
+namespace wustl_mm {
+	namespace SkeletonMaker {
 
-const int  MAX_HASH = 1<<15;
-const int HASH_LENGTH = 15;
-const int HASH_BIT_1 = 5;
-const int HASH_BIT_2 = 5;
-const int HASH_BIT_3 = 5;
+		/* A hash table hashed by three int integers
+		 *
+		 */
 
-struct HashElement
-{
-/// Key of hash element
-	int key[3];
-/// Actually content of hash element
-	int index ;
-/// Link when collision
-	HashElement  *nextHash;
-};
+		const int  MAX_HASH = 1<<15;
+		const int HASH_LENGTH = 15;
+		const int HASH_BIT_1 = 5;
+		const int HASH_BIT_2 = 5;
+		const int HASH_BIT_3 = 5;
 
-class HashMap
-{
-	/// Hash table
-	HashElement *table[MAX_HASH];
+		struct HashElement
+		{
+		/// Key of hash element
+			int key[3];
+		/// Actually content of hash element
+			int index ;
+		/// Link when collision
+			HashElement  *nextHash;
+		};
 
-	/// Create hash key
-	int createKey( int k1, int k2, in k3 )
-	{
-		int ind = ((((( k1 & ( (1<<HASH_BIT_1) - 1 )) << ( HASH_BIT_2  )) |
-					( k2 & ( (1<<HASH_BIT_2) - 1)) ) << ( HASH_BIT_3  )) |
-					( k3 & ( (1<<HASH_BIT_3) - 1)))	& ((1<<HASH_LENGTH) - 1);
+		class HashMap
+		{
+			/// Hash table
+			HashElement *table[MAX_HASH];
 
-		return ind;
+			/// Create hash key
+			int createKey( int k1, int k2, in k3 )
+			{
+				int ind = ((((( k1 & ( (1<<HASH_BIT_1) - 1 )) << ( HASH_BIT_2  )) |
+							( k2 & ( (1<<HASH_BIT_2) - 1)) ) << ( HASH_BIT_3  )) |
+							( k3 & ( (1<<HASH_BIT_3) - 1)))	& ((1<<HASH_LENGTH) - 1);
+
+				return ind;
+			}
+
+		public:
+
+			/// Constructor
+			HashMap ( )
+			{
+				for (int i = 0; i < MAX_HASH; i ++)
+				{
+					table[i] = NULL;
+				}
+			};
+
+			/// Lookup Method
+			int findInsert( int k1, int k2, int k3, int index )
+			{
+				/// Create hash key
+				int ind = createKey ( k1, k2, k3 );
+
+				/// Find it in the table
+				HashElement *p = table[ind];
+				while (p)
+				{
+					if ((p->key[0] == k1) && (p->key[1] == k2) && (p->key[2] == k3) )
+					{
+						return p->index ;
+					}
+					p = p->nextHash;
+				}
+
+				// Not found
+				p = new HashElement ;
+				p->key[0] = k1;
+				p->key[1] = k2;
+				p->key[2] = k3;
+				p->index = index ;
+				p->nextHash = table[ind];
+				table[ind] = p;
+
+				return index ;
+			};
+
+
+			// Destruction method
+			~HashMap()
+			{
+				HashElement *p, *pp;
+
+				for (int i = 0; i < MAX_HASH; i ++)
+				{
+					p = table[i];
+
+					while (p)
+					{
+						pp = p->nextHash;
+						delete p;
+						p = pp;
+					}
+
+				}
+
+			};
+
+		};
 	}
-
-public:
-
-	/// Constructor
-	HashMap ( )
-	{
-		for (int i = 0; i < MAX_HASH; i ++)
-		{
-			table[i] = NULL;
-		}
-	};
-
-	/// Lookup Method
-	int findInsert( int k1, int k2, int k3, int index )
-	{
-		/// Create hash key
-		int ind = createKey ( k1, k2, k3 );
-
-		/// Find it in the table
-		HashElement *p = table[ind];
-		while (p)
-		{
-			if ((p->key[0] == k1) && (p->key[1] == k2) && (p->key[2] == k3) )
-			{
-				return p->index ;
-			}
-			p = p->nextHash;
-		}
-
-		// Not found
-		p = new HashElement ;
-		p->key[0] = k1;
-		p->key[1] = k2;
-		p->key[2] = k3;
-		p->index = index ;
-		p->nextHash = table[ind];
-		table[ind] = p;
-
-		return index ;
-	};
-
-
-	// Destruction method
-	~HashMap()
-	{
-		HashElement *p, *pp;
-
-		for (int i = 0; i < MAX_HASH; i ++)
-		{
-			p = table[i];
-
-			while (p)
-			{
-				pp = p->nextHash;
-				delete p;
-				p = pp;
-			}
-
-		}
-
-	};
-
-};
-
+}
 
 #endif

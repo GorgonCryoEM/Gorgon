@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.9  2008/09/29 16:19:30  ssa1
+//   Adding in CVS meta information
+//
 
 #ifndef PATHGENERATOR_H
 #define PATHGENERATOR_H
@@ -23,6 +26,7 @@
 #include <vector>
 
 using namespace std;
+using namespace wustl_mm::SkeletonMaker;
 
 namespace wustl_mm {
 	namespace GraphMatch {

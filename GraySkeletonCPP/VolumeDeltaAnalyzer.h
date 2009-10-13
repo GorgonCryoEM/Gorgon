@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.8  2008/09/29 16:30:15  ssa1
+//   Adding in CVS meta information
+//
 
 #ifndef GRAYSKELETONCPP_VOLUME_DELTA_ANALYZER_H
 #define GRAYSKELETONCPP_VOLUME_DELTA_ANALYZER_H
@@ -25,6 +28,7 @@
 
 using namespace std;
 using namespace wustl_mm::MathTools;
+using namespace wustl_mm::SkeletonMaker;
 
 namespace wustl_mm {
 	namespace GraySkeletonCPP {

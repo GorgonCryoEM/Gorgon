@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.31  2009/09/21 19:03:22  ssa1
+//   Linear least squares fit implementation, and using it in helix positioning of SSE Builder
+//
 //   Revision 1.30  2009/09/17 20:00:24  ssa1
 //   Steps towards exporting to Rosetta
 //
@@ -69,6 +72,7 @@ using namespace wustl_mm::Protein_Morph;
 using namespace wustl_mm::GraySkeletonCPP;
 using namespace wustl_mm::GraphMatch;
 using namespace wustl_mm::MathTools;
+using namespace wustl_mm::SkeletonMaker;
 using namespace std;
 
 namespace wustl_mm {

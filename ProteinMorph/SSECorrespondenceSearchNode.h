@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.3  2009/09/29 19:23:39  ssa1
+//   Fixing indexing bugs when performing sse correspondence search.
+//
 //   Revision 1.2  2009/09/02 19:06:13  ssa1
 //   Working towards flexible fitting
 //
@@ -174,7 +177,7 @@ namespace wustl_mm {
 			}
 			printf("};\n\n");
 			printf("Print[\"Cost = \", %f];\n", cost);
-			printf("printFeatures[performSemiRigidDeformation[{fl1, fl2}, corr[[%d]]], fl2]\n", firstCorr);
+			printf("printFinalOutput[corr, fl1, fl2, %d]\n", firstCorr);
 		}
 	}
 }

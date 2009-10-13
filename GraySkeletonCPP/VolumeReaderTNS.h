@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.2  2009/03/03 22:33:11  ssa1
+//   Point clouds are little gaussians.. (no longer bins)
+//
 //   Revision 1.1  2009/03/02 16:31:47  ssa1
 //   Adding in Point Clouds and Structure Tensor Fields
 
@@ -27,6 +30,8 @@
 
 
 using namespace std;
+
+using namespace wustl_mm::SkeletonMaker;
 
 namespace wustl_mm {
 	namespace GraySkeletonCPP {

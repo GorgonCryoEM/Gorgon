@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.18  2008/09/29 16:30:15  ssa1
+//   Adding in CVS meta information
+//
 
 #ifndef GRAYSKELETONCPP_GRAY_IMAGE_SKELETONIZER_H
 #define GRAYSKELETONCPP_GRAY_IMAGE_SKELETONIZER_H
@@ -28,6 +31,7 @@
 #include <string>
 
 using namespace wustl_mm::MathTools;
+using namespace wustl_mm::SkeletonMaker;
 
 namespace wustl_mm {
 	namespace GraySkeletonCPP {

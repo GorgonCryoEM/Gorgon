@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.10  2008/09/29 16:30:15  ssa1
+//   Adding in CVS meta information
+//
 
 #ifndef GRAYSKELETONCPP_IMAGE_READER_BMP_H
 #define GRAYSKELETONCPP_IMAGE_READER_BMP_H
@@ -25,6 +28,7 @@
 
 using namespace std;
 using namespace wustl_mm::Foundation;
+using namespace wustl_mm::SkeletonMaker;
 
 namespace wustl_mm {
 	namespace GraySkeletonCPP {

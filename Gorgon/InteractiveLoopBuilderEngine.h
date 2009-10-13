@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.3  2009/04/04 21:33:23  ssa1
+//   More structure approach for placing cAlpha loops, and helix flip bug fix
+//
 //   Revision 1.2  2009/03/30 21:36:12  ssa1
 //   Interactive loop building
 //
@@ -32,6 +35,7 @@
 using namespace wustl_mm::GraphMatch;
 using namespace wustl_mm::MathTools;
 using namespace std;
+using namespace wustl_mm::SkeletonMaker;
 
 namespace wustl_mm {
 	namespace Visualization {	

@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.30  2009/08/26 14:58:55  ssa1
+//   Adding in Flexible fitting clique search
+//
 //   Revision 1.29  2008/09/29 16:22:17  ssa1
 //   Removing compiler warnings
 //
@@ -41,6 +44,7 @@
 
 
 using namespace wustl_mm::GraphMatch;
+using namespace wustl_mm::SkeletonMaker;
 
 void DisplayInputFormat()
 {

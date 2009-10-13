@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.2  2009/08/26 14:58:55  ssa1
+//   Adding in Flexible fitting clique search
+//
 //   Revision 1.1  2009/03/17 20:00:17  ssa1
 //   Removing Sheets from fiting process
 //
@@ -25,6 +28,7 @@
 using namespace wustl_mm::GraphMatch;
 using namespace wustl_mm::MathTools;
 using namespace wustl_mm::Visualization;
+using namespace wustl_mm::SkeletonMaker;
 
 
 namespace wustl_mm {

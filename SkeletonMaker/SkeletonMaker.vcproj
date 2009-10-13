@@ -390,6 +390,14 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
+				RelativePath=".\GridQueue.h"
+				>
+			</File>
+			<File
+				RelativePath=".\GridQueue2.h"
+				>
+			</File>
+			<File
 				RelativePath=".\HashMap.h"
 				>
 			</File>
@@ -402,7 +410,15 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ThinningTemplate.h"
+				>
+			</File>
+			<File
 				RelativePath=".\volume.h"
+				>
+			</File>
+			<File
+				RelativePath=".\VolumeData.h"
 				>
 			</File>
 		</Filter>

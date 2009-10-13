@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.20  2009/09/17 20:00:24  ssa1
+//   Steps towards exporting to Rosetta
+//
 //   Revision 1.19  2008/12/12 21:43:38  ssa1
 //   Fixing bug: Application crashing when loading skeletons via the sse correspondence finder
 //
@@ -39,6 +42,7 @@
 #include "GlobalConstants.h"
 
 using namespace std;
+using namespace wustl_mm::SkeletonMaker;
 
 namespace wustl_mm {
 	namespace GraphMatch {

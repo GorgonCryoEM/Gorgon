@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.3  2009/03/03 22:33:11  ssa1
+//   Point clouds are little gaussians.. (no longer bins)
+//
 //   Revision 1.2  2009/03/02 17:21:40  ssa1
 //   Point clouds are little gaussians.. (no longer bins)
 //
@@ -26,6 +29,8 @@
 #include <MathTools/Vector3D.h>
 
 using namespace std;
+
+using namespace wustl_mm::SkeletonMaker;
 
 namespace wustl_mm {
 	namespace GraySkeletonCPP {

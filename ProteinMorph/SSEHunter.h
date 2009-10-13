@@ -11,6 +11,10 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.4  2009/10/08 23:29:10  colemanr
+//   I added functions that will create a cylinder Volume with density resembling
+//   that of an alpha helix.
+//
 //   Revision 1.3  2009/08/26 14:58:55  ssa1
 //   Adding in Flexible fitting clique search
 //
@@ -37,6 +41,7 @@
 using namespace wustl_mm::GraphMatch;
 using namespace wustl_mm::MathTools;
 using namespace wustl_mm::GraySkeletonCPP;
+using namespace wustl_mm::SkeletonMaker;
 
 namespace wustl_mm {
 	namespace Protein_Morph {
