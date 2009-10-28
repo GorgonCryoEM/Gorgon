@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.5  2009/10/13 18:09:34  ssa1
+//   Refactoring Volume.h
+//
 //   Revision 1.4  2009/10/08 23:29:10  colemanr
 //   I added functions that will create a cylinder Volume with density resembling
 //   that of an alpha helix.
@@ -31,6 +34,7 @@
 #include <SkeletonMaker/volume.h>
 #include "NonManifoldMesh.h"
 #include <vector>
+#include <algorithm>
 #include <map>
 #include <MathTools/Vector3D.h>
 #include <MathTools/MathLib.h>
@@ -46,11 +50,38 @@ using namespace wustl_mm::SkeletonMaker;
 namespace wustl_mm {
 	namespace Protein_Morph {
 
-	enum RadialProfileType {GAUSSIAN, GAUSSIAN_DIP, POLYNOMIAL};
+		class AtomCoordinatesAndSize
+		{
+		public:
+			float x;
+			float y;
+			float z;
+			short size;
+			AtomCoordinatesAndSize() { x = y = z = size = 0; }
+			AtomCoordinatesAndSize(float x, float y, float z, short size) {
+				this->x = x;
+				this->y = y;
+				this->z = z;
+				this->size = size;
+			}
+		};
+
+		bool compare_z(AtomCoordinatesAndSize left, AtomCoordinatesAndSize right)
+		{
+			return (left.z < right.z);
+		}
+
+		enum RadialProfileType {GAUSSIAN, GAUSSIAN_DIP, POLYNOMIAL};
+		
 		class SSEHunter{
 		public:
 			SSEHunter();
 			~SSEHunter();
+			
+			Volume* GetCylinder(int xsize, int ysize, int zsize, int type = 2, float len = 10.8,
+						int x0 = -1, int y0 = -1, int z0 = -1, float apix_x = 1, float apix_y = 1, float apix_z = 1)
+			{	return GetTemplateCylinder(xsize, ysize, zsize, static_cast<RadialProfileType>(type), len, x0, y0, z0, apix_x, apix_y, apix_z);
+			}
 			
 			map<unsigned long long, PDBAtom> GetScoredAtoms(Volume * vol, NonManifoldMesh_Annotated * skeleton, float resolution, float threshold, float skeletonCoeff, float correlationCoeff, float geometryCoeff);
 		private:
@@ -73,6 +104,9 @@ namespace wustl_mm {
 					float apix_x = 1, float apix_y = 1, float apix_z = 1);
 			Volume * GetTemplateHelix(double length, float apix, float resolution, float mapSize);
 			
+			//Ross Coleman: modified from EMAN2 PointArray::pdb2mrc_by_summation by Wen Jian
+			Volume * AtomsToVolumeBySummation(int map_size, float apix, float res, vector< AtomCoordinatesAndSize > atoms);
+
 		};
 		
 		SSEHunter::SSEHunter() {
@@ -352,9 +386,6 @@ namespace wustl_mm {
 			return ret;
 		}
 
-		// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-		// TODO: Test this function
-		// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 		//Ross Coleman: modified from EMAN1 Cylinder.C by Wen Jiang
 		//synthesize cylinder that resembles the density seen from an alpha helix
 		//The cylindrical axis is parallel to the z axis.
@@ -403,30 +434,27 @@ namespace wustl_mm {
 			return cyl;
 		}
 
-		Volume * SSEHunter::GetTemplateHelix(double length, float apix, float resolution, float mapSize) {
-			vector<float> eValues;
-			vector<Vector3DFloat> positions;
+		Volume * SSEHunter::GetTemplateHelix(double length, float apix, float resolution, float mapSize)
+		{
+			vector< AtomCoordinatesAndSize > atoms;
 
 			double j=0;
-			Vector3DFloat nPos, caPos, cPos, oPos;
-
+			AtomCoordinatesAndSize nitrogen, c_alpha, carbon, oxygen;
 			// Generating PDB Atoms
 			while (j <= round(length/1.54)) {
-				nPos =  Vector3DFloat(cos((100.0 * j * PI)/180.0)*1.6, sin((100.0 * j * PI)/180.0)*1.6, j * 1.54);
-				caPos = Vector3DFloat(cos(((28.0 + (100.0 * j)) * PI)/180.0) * 2.3, sin(((28.0 + (100.0 * j)) * PI)/180.0) * 2.3, (j * 1.54)+ 0.83);
-				cPos =  Vector3DFloat(cos(((61.0 + (100.0 * j)) * PI)/180.0) * 2.0, sin(((61.0 + (100.0 * j)) * PI)/180.0) * 2.0, (j * 1.54) + 1.7);
-				oPos =  Vector3DFloat(cos(((61.0 + (100.0 * j)) * PI)/180.0) * 2.0, sin(((61.0 + (100.0 * j)) * PI)/180.0) * 2.0, (j * 1.54) + 3.09);
+				nitrogen = AtomCoordinatesAndSize( cos((100.0 * j * PI)/180.0)*1.6,              sin((100.0 * j * PI)/180.0)*1.6,               j * 1.54,         7.0 );
+				c_alpha  = AtomCoordinatesAndSize( cos(((28.0 + (100.0 * j)) * PI)/180.0) * 2.3, sin(((28.0 + (100.0 * j)) * PI)/180.0) * 2.3, (j * 1.54) + 0.83, 6.0 );
+				carbon   = AtomCoordinatesAndSize( cos(((61.0 + (100.0 * j)) * PI)/180.0) * 2.0, sin(((61.0 + (100.0 * j)) * PI)/180.0) * 2.0, (j * 1.54) + 1.7,  6.0 );
+				oxygen   = AtomCoordinatesAndSize( cos(((61.0 + (100.0 * j)) * PI)/180.0) * 2.0, sin(((61.0 + (100.0 * j)) * PI)/180.0) * 2.0, (j * 1.54) + 3.09, 8.0 );
 				j = j + 1.0;
-				positions.push_back(nPos);
-				eValues.push_back(7.0);
-				positions.push_back(caPos);
-				eValues.push_back(6.0);
-				positions.push_back(cPos);
-				eValues.push_back(6.0);
-				positions.push_back(oPos);
-				eValues.push_back(8.0);
+				atoms.push_back(nitrogen);
+				atoms.push_back(c_alpha);
+				atoms.push_back(carbon);
+				atoms.push_back(oxygen);
 			}
 
+			// TODO: check if the cast for mapSize is the way to go
+			Volume* helixVolume = AtomsToVolumeBySummation(static_cast<int>(mapSize), apix, resolution, atoms);
 
 			//Generating volume
 			//mrcHelix=EMData()
@@ -462,8 +490,106 @@ namespace wustl_mm {
 
 			return new Volume(1,1,1);
 		}
+		
+
+		//************************************************************************
+		// pdb2vol_by_summation
+		// TODO: Test this function!!!!
+		//************************************************************************
+		Volume * SSEHunter::AtomsToVolumeBySummation(int map_size, float apix, float res, vector< AtomCoordinatesAndSize > atoms)
+		{
+		#ifdef DEBUG
+			printf("SSEHunter::pdb2vol_by_summation(): %d points\tmapsize = %4d\tapix = %g\tres = %g\n",positions.size(),map_size, apix, res);
+		#endif
+			double gauss_real_width = res / (M_PI);	// in Angstrom, res is in Angstrom
+			//if ( gauss_real_width < apix) LOGERR("PointArray::projection_by_summation(): apix(%g) is too large for resolution (%g Angstrom in Fourier space) with %g pixels of 1/e half width", apix, res, gauss_real_width);
+
+			double min_table_val = 1e-7;
+			double max_table_x = sqrt(-log(min_table_val));	// for exp(-x*x)
+
+			double table_step_size = 0.001;	// number of steps for each pixel
+			double inv_table_step_size = 1.0 / table_step_size;
+			int table_size = int (max_table_x * gauss_real_width / (apix * table_step_size) * 1.25);
+			vector<double> table;
+			table.resize(table_size);
+			//double *table = (double *) malloc(sizeof(double) * table_size);
+			for (int i = 0; i < table_size; i++) {
+				double x = -i * table_step_size * apix / gauss_real_width;
+				table[i] = exp(-x * x);
+			}
+
+			int gbox = int (max_table_x * gauss_real_width / apix);	// local box half size in pixels to consider for each point
+			if (gbox <= 0)
+				gbox = 1;
+
+
+
+		//	sort_by_axis(2);			// sort by Z-axis
+			sort(atoms.begin(), atoms.end(), compare_z);
+
+
+
+			Volume *map = new Volume(map_size, map_size, map_size);
+			map->fill(0);
+		//	float *pd = map->get_data();
+			for ( size_t s = 0; s < atoms.size(); ++s) {
+				double xc = atoms[s].x / apix + map_size / 2;
+				double yc = atoms[s].y / apix + map_size / 2;
+				double zc = atoms[s].z / apix + map_size / 2;
+				double fval = atoms[s].size;
+				int imin = int (xc) - gbox, imax = int (xc) + gbox;
+				int jmin = int (yc) - gbox, jmax = int (yc) + gbox;
+				int kmin = int (zc) - gbox, kmax = int (zc) + gbox;
+				if (imin < 0)
+					imin = 0;
+				if (jmin < 0)
+					jmin = 0;
+				if (kmin < 0)
+					kmin = 0;
+				if (imax > map_size)
+					imax = map_size;
+				if (jmax > map_size)
+					jmax = map_size;
+				if (kmax > map_size)
+					kmax = map_size;
+
+				for (int k = kmin; k < kmax; k++) {
+					size_t table_index_z = size_t (fabs(k - zc) * inv_table_step_size);
+					if ( table_index_z >= table.size() ) continue;
+					double zval = table[table_index_z];
+		//			size_t pd_index_z = k * map_size * map_size;
+					for (int j = jmin; j < jmax; j++) {
+						size_t table_index_y = size_t (fabs(j - yc) * inv_table_step_size);
+						if ( table_index_y >= table.size() ) continue;
+						double yval = table[table_index_y];
+		//				size_t pd_index = pd_index_z + j * map_size + imin;
+						for (int i = imin; i < imax; i++) // , pd_index++)
+						{
+							size_t table_index_x = size_t (fabs(i - xc) * inv_table_step_size);
+							if ( table_index_x >= table.size() ) continue;
+							double xval = table[table_index_x];
+		//					pd[pd_index] += (float) (fval * zval * yval * xval);
+							double val = fval * zval * yval * xval;
+							map->setDataAt(i,j,k, val);
+						}
+					}
+				}
+			}
+			//for(int i=0; i<map_size*map_size; i++) pd[i]/=sqrt(M_PI);
+		//	map->update();
+			map->setSpacing(apix,apix,apix);
+			map->setOrigin( -map_size/2*apix, -map_size/2*apix, -map_size/2*apix );
+
+			return map;
+		}
+
+
+
 	}
 }
+
+
+
 
 
 #endif
