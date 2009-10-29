@@ -15,6 +15,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.15.2.25  2009/10/08 21:50:21  schuhs
+//   Removing unnecessary console messages
+//
 //   Revision 1.15.2.24  2009/10/08 19:15:57  schuhs
 //   Displaying constants at beginning of match algorithm
 //
@@ -964,7 +967,7 @@ namespace wustl_mm {
 					singleEdgePenaltyCost = GetPenaltyCost(n1+1, n2-n1);
 					//singleEdgePenaltyCost = GetPenaltyCost(n1, n2-n1);
 					cout << "  GetPenaltyCost("<<n1+1<<","<<n2-n1<<")="<<singleEdgePenaltyCost<<endl;
-					cout << "No edge cost for initial skip edge" << endl;
+					cout << "  No edge cost for initial skip edge" << endl;
 					if (patternGraph->adjacencyMatrix[n1][n1][0] == GRAPHNODE_SHEET) {
 						singleEdgePenaltyCost = MISSING_SHEET_PENALTY;
 					}
@@ -972,23 +975,24 @@ namespace wustl_mm {
 					singleEdgeCost = GetCost(n1+1, n2-n1, SOLUTION[n1], SOLUTION[n2]);
 					singleEdgePenaltyCost = GetPenaltyCost(n1+1, n2-n1);
 					//singleEdgePenaltyCost = GetPenaltyCost(n1, n2-n1);
+					cout << "  GetCost("<<n1+1<<","<<n2-n1<<","<<SOLUTION[n1]<<","<<SOLUTION[n2]<<")="<<singleEdgeCost<<endl;
 					cout << "  GetPenaltyCost("<<n1+1<<","<<n2-n1<<")="<<singleEdgePenaltyCost<<endl;
 					//cout << "  PenaltyCost(" << n1 << "," << n2-n1 << ") = " << singleEdgePenaltyCost << endl;
 				} else {
-					cout << "BASE GRAPH DOES NOT HAVE AN EDGE FROM NODE " << SOLUTION[n1] << " TO NODE " << SOLUTION[n2] << ". THIS SOLUTION NOT POSSIBLE!" << endl;
+					cout << "  BASE GRAPH DOES NOT HAVE AN EDGE FROM NODE " << SOLUTION[n1] << " TO NODE " << SOLUTION[n2] << ". THIS SOLUTION NOT POSSIBLE!" << endl;
 				}
 
 				// check if first or last helix is unmatched
 				if ((n1 == 0 && singleEdgeCost == -1) || (n2 == numNodes && singleEdgeCost == -1)){
 					//singleEdgeCost = START_END_MISSING_HELIX_PENALTY;
-					cout << "first helix or sheet is unmatched. adding penalty of " << singleEdgeCost << endl;
+					cout << "  first helix or sheet is unmatched. adding penalty of " << singleEdgeCost << endl;
 				} else {
-					cout << "cost of this addition is " << singleEdgeCost << endl;
+					cout << "  cost of this addition is " << singleEdgeCost << endl;
 				}
 
 				// add node cost
 				double singleNodeCost = GetC(n2+1, SOLUTION[n2]);
-				cout << "node cost for nodes " << n2+1 << " and " << SOLUTION[n2] << " is " << singleNodeCost << endl;
+				cout << "  node cost for nodes " << n2+1 << " and " << SOLUTION[n2] << " is " << singleNodeCost << endl;
 
 				// add the costs from this iteration to the running totals
 				edgeCost += singleEdgeCost;
