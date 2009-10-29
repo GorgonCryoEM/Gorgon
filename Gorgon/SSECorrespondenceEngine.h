@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.7.2.10  2009/10/08 21:52:21  schuhs
+//   Rendering sheets by drawing colored spheres rather than a colored volume. Eliminates the need for multiple stored volumes.
+//
 //   Revision 1.7.2.9  2009/08/17 21:48:38  schuhs
 //   Fixing a bug that caused a crash when drawing a correspondence that ends with skip edges.
 //
@@ -244,6 +247,7 @@ namespace wustl_mm {
 				n2 = -1;
 				// the following code iterates over the correspondence, finding a valid edge at each iteration.
 				// start at node 0 of this result, continue until i is at last node
+				int numNodes = result.GetNodeCount();
 				for(int i = 0; i < result.GetNodeCount()-1; ) {
 					// set n1 to be the ith result. if the result is -1, increment i and repeat.
 					for(n1 = -1; n1 < 0; ) {
@@ -306,7 +310,8 @@ namespace wustl_mm {
 					for(int j = 0; j < pathSize; j++) {
 						//cout << "adding path from " << n1 << " to " << n2 << ", point " << path[j].X() << "," << path[j].Y() << "," << path[j].Z() << endl;
 						glColor3f(startColorR + stepColorR * j, startColorG + stepColorG * j, startColorB + stepColorB * j);
-						glVertex3d(path[j].X(), path[j].Y(), path[j].Z());
+						double offset = 0.8*(-0.5 + (double)i / (double)numNodes );
+						glVertex3d(path[j].X()+offset, path[j].Y()+offset, path[j].Z()+offset);
 					}
 					// test!!! glEnd();
 
@@ -353,7 +358,7 @@ namespace wustl_mm {
 		
 		// Draw all possible paths through the skeleton
 		void SSECorrespondenceEngine::DrawAllPaths(int sceneIndex, bool showPaths, bool showHelixCorners, bool showSheetCorners, bool showSheetColors) {
-			std::cout << "SSECorrespondenceEngine::DrawAllPaths called" << std::endl;
+			//std::cout << "SSECorrespondenceEngine::DrawAllPaths called" << std::endl;
 			int n1, n2;
 			vector<Vector3DInt> path;
 			if (showPaths) {
@@ -402,14 +407,6 @@ namespace wustl_mm {
 							}
 							skeleton->skeletonHelixes[endSSENumber]->GetColor(endColorR, endColorG, endColorB, endColorA);
 
-							/*
-							if(skeleton->adjacencyMatrix[n2][n2][0] == GRAPHNODE_SHEET){
-								int correspondingSheet = skeleton->skeletonSheetCorrespondence[n2];
-								skeleton->skeletonHelixes[correspondingSheet]->GetColor(endColorR, endColorG, endColorB, endColorA);	
-							} else {
-								skeleton->skeletonHelixes[n2/2]->GetColor(endColorR, endColorG, endColorB, endColorA);
-							}*/
-
 							glBegin(GL_LINE_STRIP);
 							int pathSize = path.size(); // for color
 							float stepColorR = (endColorR - startColorR) / (pathSize-1);
@@ -420,14 +417,7 @@ namespace wustl_mm {
 								glColor3f(startColorR + stepColorR * k, startColorG + stepColorG * k, startColorB + stepColorB * k);
 								glVertex3d(path[k].X(), path[k].Y(), path[k].Z());
 							}
-							/* before colors
-							for(unsigned int j = 0; j < path.size(); j++) {
-								//cout << "adding path from " << n1 << " to " << n2 << ", point " << path[j].X() << "," << path[j].Y() << "," << path[j].Z() << endl;
-								glVertex3d(path[j].X(), path[j].Y(), path[j].Z());
-							} */
 							glEnd();
-							// draw start and end of paths (corner nodes)
-							//Renderer::DrawSphere(Vector3DFloat(path[0].X(), path[0].Y(), path[0].Z()), 1.0);
 						}
 					}
 				} 
@@ -460,7 +450,25 @@ namespace wustl_mm {
 							// Color first helix corner white, second corner gray
 							GLfloat col = 1.0 - 0.6 * (skeleton->skeletonHelixes[i]->cornerCells[j].node - 1);
 							glColor3f(col, col, col);
-							Renderer::DrawSphere(Vector3DFloat(skeleton->skeletonHelixes[i]->cornerCells[j].x, skeleton->skeletonHelixes[i]->cornerCells[j].y, skeleton->skeletonHelixes[i]->cornerCells[j].z), 0.25);
+							double sphereRadius = 0.25;
+							Renderer::DrawSphere(Vector3DFloat(skeleton->skeletonHelixes[i]->cornerCells[j].x, skeleton->skeletonHelixes[i]->cornerCells[j].y, skeleton->skeletonHelixes[i]->cornerCells[j].z), sphereRadius);
+
+
+							// Label the points with their graph node numbers
+							glColor3f(1.0, 1.0, 1.0);
+
+							glRasterPos3d(skeleton->skeletonHelixes[i]->cornerCells[j].x, skeleton->skeletonHelixes[i]->cornerCells[j].y, skeleton->skeletonHelixes[i]->cornerCells[j].z);
+							int cornerNum = skeleton->skeletonHelixes[i]->cornerCells[j].node; // 0 or 1
+							int labelInt = 2 * i + cornerNum;
+							std::ostringstream tmpStream;
+							tmpStream << labelInt;
+							string labelStr = tmpStream.str();
+							glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, ' ');
+							glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, ' ');
+							for (int i = 0; i < labelStr.length(); i++) {
+								//glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, labelStr[i]);
+								glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, labelStr[i]);
+							}
 						}
 					}
 				}
@@ -470,10 +478,30 @@ namespace wustl_mm {
 			// draw corner nodes (sheets)
 			if (showSheetCorners) {
 				glPushAttrib(GL_LIGHTING_BIT | GL_LINE_BIT | GL_ENABLE_BIT | GL_HINT_BIT);
+				int lastHelix = 0;
 				for(int i = 0; i < (int)skeleton->skeletonHelixes.size(); i++) {
+					if (skeleton->skeletonHelixes[i]->geometricShapeType == GRAPHEDGE_HELIX) {
+						lastHelix=i;
+					}
 					if (skeleton->skeletonHelixes[i]->geometricShapeType == GRAPHEDGE_SHEET) {
 						for(int j = 0; j < (int)skeleton->skeletonHelixes[i]->cornerCells.size(); j++) {
+							glColor3f(1.0, 1.0, 1.0);
 							Renderer::DrawSphere(Vector3DFloat(skeleton->skeletonHelixes[i]->cornerCells[j].x, skeleton->skeletonHelixes[i]->cornerCells[j].y, skeleton->skeletonHelixes[i]->cornerCells[j].z), 0.25);
+
+							// Label the points with their graph node numbers
+							glRasterPos3d(skeleton->skeletonHelixes[i]->cornerCells[j].x, skeleton->skeletonHelixes[i]->cornerCells[j].y, skeleton->skeletonHelixes[i]->cornerCells[j].z);
+							int labelInt = i + lastHelix + 2;
+							std::ostringstream tmpStream;
+							tmpStream << labelInt;
+							string labelStr = tmpStream.str();
+							glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, ' ');
+							glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, ' ');
+							for (int i = 0; i < labelStr.length(); i++) {
+								glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, labelStr[i]);
+								//glutBitmapCharacter(GLUT_BITMAP_9_BY_15, labelStr[i]);
+								//glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, labelStr[i]);
+							}
+
 						}
 					}
 				}
