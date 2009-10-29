@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.19.2.23  2009/10/08 21:49:21  schuhs
+//   Storing paths in both directions
+//
 //   Revision 1.19.2.22  2009/10/08 19:15:26  schuhs
 //   Fixing memory leak and adding call to method that merges nearby sheets
 //
@@ -1208,14 +1211,19 @@ namespace wustl_mm {
 								if(!backFound) {
 									// move in the direction indicated by backVol for this point, to retrace path found above
 									//cout << "origin not found yet. moving by " << D26[backVol[newIx]][0] << "," << D26[backVol[newIx]][1] << "," << D26[backVol[newIx]][2] << endl;
-									//currentPos = currentPos + Vector3DInt(D26[backVol[newIx]][0], D26[backVol[newIx]][1], D26[backVol[newIx]][2]); // worked
 									currentPos = currentPos + Vector3DInt(d[backVol[newIx]][0], d[backVol[newIx]][1], d[backVol[newIx]][2]);
-									//currentPos = currentPos - Vector3DInt(D26[backVol[newIx]][0], D26[backVol[newIx]][1], D26[backVol[newIx]][2]);
+		
+									// add random offset to x,y,z coords for display purposes
+									//double offsetMax = 0.1;
+									//double offset = offsetMax/2.0 - ((double)rand() * offsetMax) / (double)RAND_MAX;
+									//Vector3DInt currentPosPerturbed = Vector3DInt(currentPos.X() + offset, currentPos.Y() + offset, currentPos.Z() + offset); // update the current position 
+
 									// add the next point to the path
 									graph->paths[n2-1][n1-1].push_back(currentPos);
-									//graph->paths[n2-1][n1-1].push_back(currentPos);
+									//graph->paths[n2-1][n1-1].push_back(currentPosPerturbed);
 									// store in opposite direction path as well
 									graph->paths[n1-1][n2-1].insert(graph->paths[n1-1][n2-1].begin(),currentPos);
+									//graph->paths[n1-1][n2-1].insert(graph->paths[n1-1][n2-1].begin(),currentPosPerturbed);
 
 								}
 							}
