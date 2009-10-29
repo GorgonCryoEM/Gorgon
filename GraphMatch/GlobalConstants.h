@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.32.2.15  2009/10/08 21:48:37  schuhs
+//   Making helix constraints work (with new indices)
+//
 //   Revision 1.32.2.14  2009/09/24 20:42:50  schuhs
 //   Adjusting default sheet matching parameters to get good sheet matches.
 //
@@ -100,7 +103,7 @@ namespace wustl_mm {
 
 		const int PRIORITYQUEUESIZE = 50000000;
 		const int RESULT_COUNT = 35;
-		const int MAX_NODES = 50;
+		const int MAX_NODES = 60;
 		const int MAXINT = 2147483647;
 		const unsigned int MAXUNSIGNEDINT = 4294967295;
 		const double MAXDOUBLE = 1.7E308;
