@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.6  2009/10/28 21:23:49  colemanr
+//   added AtomsToVolumeBySummation based on EMAN2's PointArray::pdb2mrc_by_summation
+//
 //   Revision 1.5  2009/10/13 18:09:34  ssa1
 //   Refactoring Volume.h
 //
@@ -107,6 +110,9 @@ namespace wustl_mm {
 			//Ross Coleman: modified from EMAN2 PointArray::pdb2mrc_by_summation by Wen Jian
 			Volume * AtomsToVolumeBySummation(int map_size, float apix, float res, vector< AtomCoordinatesAndSize > atoms);
 
+			void NormalizeEdgeMean(Volume* vol);
+			void ApplyPolynomialProfileToHelix(Volume * in, float lengthAngstroms, int z0=-1);
+
 		};
 		
 		SSEHunter::SSEHunter() {
@@ -124,7 +130,7 @@ namespace wustl_mm {
 			
 			map<unsigned long long, PDBAtom> atomMap;
 			atomMap.clear();
-			for(int i = 0; i < patoms.size();  i++) {
+			for(unsigned int i = 0; i < patoms.size();  i++) {
 				atomMap[patoms[i].GetHashKey()] = patoms[i];
 			}
 			return atomMap;
@@ -200,7 +206,7 @@ namespace wustl_mm {
 			Vector3DFloat skeletonOrigin = Vector3DFloat(skeleton->GetOriginX(), skeleton->GetOriginY(), skeleton->GetOriginZ());
 			Vector3DFloat atomInSkeleton;
 			Vector3DFloat skeletonInAtom;
-			for(int i = 0; i < patoms.size(); i++) {
+			for(unsigned int i = 0; i < patoms.size(); i++) {
 				atomInSkeleton = patoms[i].GetPosition() - skeletonOrigin;
 				atomInSkeleton = Vector3DFloat(atomInSkeleton.X()/skeleton->scale[0], atomInSkeleton.Y()/skeleton->scale[1], atomInSkeleton.Z()/skeleton->scale[2]);
 				
@@ -223,9 +229,9 @@ namespace wustl_mm {
 		vector< vector<float> > SSEHunter::GetAtomDistances(vector<PDBAtom> patoms) {
 			vector< vector<float> > distances;
 			vector<float> atomDistances;
-			for(int i = 0; i < patoms.size(); i++) {
+			for(unsigned int i = 0; i < patoms.size(); i++) {
 				atomDistances.clear();
-				for(int j = 0; j < patoms.size(); j++) {
+				for(unsigned int j = 0; j < patoms.size(); j++) {
 					atomDistances.push_back( (patoms[i].GetPosition() - patoms[j].GetPosition()).Length() );
 				}
 				distances.push_back(atomDistances);
@@ -242,7 +248,7 @@ namespace wustl_mm {
 			vector<Vector3DInt> voxelCoords;
 			Vector3DInt voxel;
 			
-			for(int i = 0; i < atomVolumePositions.size(); i++) {
+			for(unsigned int i = 0; i < atomVolumePositions.size(); i++) {
 				voxelCoords.clear();
 				
 				for(int addX = -kernelWidthX; addX < kernelWidthX; addX++) {
@@ -341,6 +347,8 @@ namespace wustl_mm {
 				return GetRadialProfileGaussianDip(r);
 			else if (type == POLYNOMIAL)
 				return GetRadialProfilePolynomial(r);
+			else //TODO: raise proper exception
+				return GetRadialProfilePolynomial(r);
 		}
 
 		float SSEHunter::GetRadialProfileGaussian(float r) // r in angstroms
@@ -434,6 +442,7 @@ namespace wustl_mm {
 			return cyl;
 		}
 
+		//TODO: TEST
 		Volume * SSEHunter::GetTemplateHelix(double length, float apix, float resolution, float mapSize)
 		{
 			vector< AtomCoordinatesAndSize > atoms;
@@ -455,6 +464,11 @@ namespace wustl_mm {
 
 			// TODO: check if the cast for mapSize is the way to go
 			Volume* helixVolume = AtomsToVolumeBySummation(static_cast<int>(mapSize), apix, resolution, atoms);
+			NormalizeEdgeMean(helixVolume);
+			Vector3DFloat cm = helixVolume->getCenterOfMass();
+			helixVolume->setOrigin(cm.X(), cm.Y(), cm.Z());
+			ApplyPolynomialProfileToHelix(helixVolume, length);
+			return helixVolume;
 
 			//Generating volume
 			//mrcHelix=EMData()
@@ -484,11 +498,6 @@ namespace wustl_mm {
 //#	return aout
 //#	mrcHelix.write_image("helix.mrc")
 
-
-
-
-
-			return new Volume(1,1,1);
 		}
 		
 
@@ -583,6 +592,92 @@ namespace wustl_mm {
 			return map;
 		}
 
+		//TODO: test
+		void SSEHunter::NormalizeEdgeMean(Volume* vol)
+		{
+			int nx = vol->getSizeX();
+			int ny = vol->getSizeY();
+			int nz = vol->getSizeZ();
+			int N = nx*ny*nz;
+
+			float edge_mean = vol->getEdgeMean();
+			float std_dev = vol->getStdDev();
+			float val;
+
+			for (int i = 0; i < N; i++)
+			{
+				val = (vol->getDataAt(i)- edge_mean) / std_dev;
+				vol->setDataAt(i, val);
+			}
+		}
+
+		//TODO: TEST
+		void SSEHunter::ApplyPolynomialProfileToHelix(Volume * in, float lengthAngstroms, int z0)
+		{
+			Volume* vol = in;
+			int nx = vol->getSizeX();
+			int ny = vol->getSizeY();
+			int nz = vol->getSizeZ();
+			float apix_x = vol->getSpacingX(); //TODO: Ask Matt if I correctly handled cases where apix_x != apix_y or apix_x != apix_z
+			float apix_y = vol->getSpacingY();
+			float apix_z = vol->getSpacingZ();
+
+			if (z0 < 0 || z0 >= nz)
+				z0 = nz / 2;
+
+			int z_start = floor( ( z0 - 0.5*lengthAngstroms/apix_z ) + 0.5);
+			int z_stop = floor( ( z0 + 0.5*lengthAngstroms/apix_z ) + 0.5);
+
+			double rho_x_sum, rho_y_sum, rho_sum;
+			double x_cm, y_cm;
+			double radius;
+			float val;
+
+			for (int k = 0; k < nz; k++) //taking slices along z axis
+			{
+				rho_x_sum = rho_y_sum = rho_sum = 0; //Set to zero for a new slice
+
+				if (k >= z_start && k <= z_stop)
+				//Apply the radial profile only between z_start and z_stop on the z axis
+				{
+					//Calculating CM for the slice...
+					for (int j = 0; j < ny; j++)
+					{
+						for (int i = 0; i < nx; i++)
+						{
+							val = vol->getDataAt(i,j,k);
+							rho_x_sum += val*i;
+							rho_y_sum += val*j;
+							rho_sum += val;
+						}
+					}
+					if (rho_sum != 0) //If there was net mass was zero, we can't find the CM, so we'll just leave the slice as is
+					{
+						x_cm = rho_x_sum/rho_sum;
+						y_cm = rho_y_sum/rho_sum;
+
+						//Applying radial profile...
+						for (int j=0; j<ny;j++)
+						{
+							for (int i=0;i<nx;i++)
+							{
+								radius = hypot( (i-x_cm)*apix_x, (j-y_cm)*apix_y );
+								vol->setDataAt(i,j,k, GetRadialProfilePolynomial((float)radius) );
+							}
+						}
+					}
+				}
+				else //k < z_start || k > z_stop
+				//Clear the map, setting the density to zero everywhere else.
+				{
+					for (int j=0; j<ny; j++)
+						for(int i=0; i<nx; i++)
+						{
+							vol->setDataAt(i,j,k, 0);
+						}
+				}
+			}
+		}
 
 
 	}
