@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.31  2009/10/13 18:09:34  ssa1
+//   Refactoring Volume.h
+//
 //   Revision 1.30  2009/08/10 13:54:38  ssa1
 //   Adding initial ssehunter program
 //
@@ -122,7 +125,6 @@ namespace wustl_mm {
 			void setDataAt( int x, int y, int z, double d );
 			void setDataAt( int index, double d );
 
-
 			Volume * getPseudoDensity();
 			Volume * getDistanceField(int rad, float randf);
 			int getNonZeroVoxelCount();
@@ -135,6 +137,12 @@ namespace wustl_mm {
 			double getMaxValuePosition(int& maxX, int& maxY, int& maxZ);
 			double getLocalMax(int x, int y, int z, int radius);
 			double getLocalMin(int x, int y, int z, int radius);
+
+			float getMean();
+			float getEdgeMean();
+			float getStdDev();
+			Vector3DFloat getCenterOfMass();
+
 			void fill(double val);
 			int isBertrandBorder(int ox, int oy, int oz, int dir);
 			int isBertrandEndPoint(int ox, int oy, int oz);
@@ -11198,6 +11206,89 @@ namespace wustl_mm {
 					}
 
 			fclose( fout ) ;
+		}
+		//TODO: TEST
+		float Volume::getMean()
+		{
+			int N = volData->GetMaxIndex();
+			double mass = 0;
+			for (int i = 0; i < N; i++)
+				mass += getDataAt(i);
+			float mean = (float) mass/N;
+			return mean;
+		}
+		//TODO: TEST
+		float Volume::getEdgeMean()
+		{
+			int nx = getSizeX();
+			int ny = getSizeY();
+			int nz = getSizeZ();
+			int N = nx*ny*nz;
+
+			//Calculate the edge mean -- the average value of all the voxels on the surfaces (1 voxel) of the image
+			int x;
+			int y;
+			int z;
+			double edge_sum = 0; //The sum of the values on the outer surfaces (1 voxel) of the image
+
+			//sum the values of each voxel on the surfaces of the rectangular prism
+			for (y = 0; y < ny; y++)
+				for (z = 0; z < nz; z++)
+					edge_sum += getDataAt(0, y, z) + getDataAt(nx-1, y, z); //surfaces x == 0 and x == nx-1
+			for (x = 0; x < nx; x++)
+				for (z = 0; z < nz; z++)
+					edge_sum += getDataAt(x, 0, z) + getDataAt(x, ny-1, z); //surfaces y == 0 and y == ny-1
+				for (y = 0; y < ny; y++)
+					edge_sum += getDataAt(x, y, 0) + getDataAt(x, y, nz-1); //surfaces z == 0 and z == nz-1
+
+			float edge_mean = (float) edge_sum / N;
+			return edge_mean;
+		}
+		//TODO: TEST
+		float Volume::getStdDev()
+		{
+			int N = volData->GetMaxIndex();
+
+			//Calculate the standard deviation of all the voxels in the image
+			double voxel_sum = 0;
+			double voxel_squared_sum = 0;
+			float val;
+
+			for (int i = 0; i < N; i++)
+			{
+				val = getDataAt(i);
+				voxel_sum += val;
+				voxel_squared_sum += val*val;
+			}
+			float std_dev = (float) sqrt( (voxel_squared_sum - voxel_sum*voxel_sum/N) / N );
+			return std_dev;
+		}
+		//TODO: TEST
+		Vector3DFloat Volume::getCenterOfMass()
+		{
+			int nx = getSizeX();
+			int ny = getSizeY();
+			int nz = getSizeZ();
+
+			float mass = 0;
+			float xmoment = 0;
+			float ymoment = 0;
+			float zmoment = 0;
+			float val;
+
+			for (int i=0; i<nx; i++)
+				for (int j=0; j<ny; j++)
+					for (int k=0; k<nz; k++)
+					{
+						val = getDataAt(i,j,k);
+						mass += val;
+						xmoment += i*val;
+						ymoment += j*val;
+						zmoment += k*val;
+					}
+
+			Vector3DFloat centerOfMass( xmoment/mass, ymoment/mass, zmoment/mass );
+			return centerOfMass;
 		}
 
 	}
