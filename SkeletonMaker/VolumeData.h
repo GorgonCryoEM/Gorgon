@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.1  2009/10/13 18:09:34  ssa1
+//   Refactoring Volume.h
+//
 
 
 
@@ -90,7 +93,7 @@ namespace wustl_mm {
 			int maxIndex = GetMaxIndex();
 			data = new float [maxIndex];
 			if(initializeData) {
-				for(unsigned int i=0; i < maxIndex; i++) {
+				for (int i=0; i < maxIndex; i++) {
 					data[i] = val;
 				}
 			}
