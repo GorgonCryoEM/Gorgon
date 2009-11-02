@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.7  2009/10/30 06:12:37  colemanr
+//   added functions used to calculate a template helix
+//
 //   Revision 1.6  2009/10/28 21:23:49  colemanr
 //   added AtomsToVolumeBySummation based on EMAN2's PointArray::pdb2mrc_by_summation
 //
@@ -43,12 +46,14 @@
 #include <MathTools/MathLib.h>
 #include <GraphMatch/PDBAtom.h>
 #include <GraySkeletonCPP/VolumeSkeletonizer.h>
+#include <Gorgon/MeshRenderer.h>
 #include <math.h>
 
 using namespace wustl_mm::GraphMatch;
 using namespace wustl_mm::MathTools;
 using namespace wustl_mm::GraySkeletonCPP;
 using namespace wustl_mm::SkeletonMaker;
+using wustl_mm::Visualization::NonManifoldMesh_Annotated;
 
 namespace wustl_mm {
 	namespace Protein_Morph {
@@ -173,12 +178,12 @@ namespace wustl_mm {
 		}		
 
 		void SSEHunter::UpdateMap(Volume * vol, Vector3DInt loc, float rangeminX, float rangeminY, float rangeminZ, float rangemaxX, float rangemaxY, float rangemaxZ) {
-			int rMinX = (int)Round(rangeminX/2.0);
-			int rMaxX = (int)(Round(rangemaxX/2.0) + 1);
-			int rMinY = (int)Round(rangeminY/2.0);
-			int rMaxY = (int)(Round(rangemaxY/2.0) + 1);
-			int rMinZ = (int)Round(rangeminZ/2.0);
-			int rMaxZ = (int)(Round(rangemaxZ/2.0) + 1);		
+			int rMinX = (int)round(rangeminX/2.0);
+			int rMaxX = (int)(round(rangemaxX/2.0) + 1);
+			int rMinY = (int)round(rangeminY/2.0);
+			int rMaxY = (int)(round(rangemaxY/2.0) + 1);
+			int rMinZ = (int)round(rangeminZ/2.0);
+			int rMaxZ = (int)(round(rangemaxZ/2.0) + 1);
 			float maxDistance = sqrt(3.0f * pow((float)max(max(abs(rMinX), abs(rMinY)), abs(rMinZ)), 2));
 			
 			float tempVal, value;
