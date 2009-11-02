@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.32  2009/10/30 06:09:27  colemanr
+//   added functions to calculate the mean, standard deviation, and center of mass, as well as one that calculates the mean of the outer 1 pixel surfaces
+//
 //   Revision 1.31  2009/10/13 18:09:34  ssa1
 //   Refactoring Volume.h
 //
@@ -45,6 +48,7 @@
 #include <cmath>
 #include "PriorityQueue.h"
 #include <vector>
+#include <MathTools/Vector3D.h>
 
 #ifndef SKELETON_MAKER_VOLUME_H
 #define SKELETON_MAKER_VOLUME_H
@@ -54,6 +58,7 @@
 #define MAX_ERODE 1000
 
 using namespace std;
+using namespace wustl_mm::MathTools;
 
 namespace wustl_mm {
 	namespace SkeletonMaker {
