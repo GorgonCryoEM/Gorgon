@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.16  2009/10/13 18:09:34  ssa1
+//   Refactoring Volume.h
+//
 //   Revision 1.15  2008/11/23 19:56:09  ssa1
 //   Setting volume origin to be center of mass instead of bottom left...
 //
@@ -35,7 +38,13 @@
 
 #include <cstdio>
 #include <cstdlib>
-#include <string>
+
+#ifdef _MSC_VER
+	#include <string>
+#else
+	#include <cstring>
+#endif
+
 #include "volume.h"
 
 namespace wustl_mm {
