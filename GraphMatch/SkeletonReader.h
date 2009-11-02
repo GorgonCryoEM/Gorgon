@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.21  2009/10/13 18:09:34  ssa1
+//   Refactoring Volume.h
+//
 //   Revision 1.20  2009/09/17 20:00:24  ssa1
 //   Steps towards exporting to Rosetta
 //
@@ -36,6 +39,7 @@
 
 #include <SkeletonMaker/reader.h>
 #include <SkeletonMaker/volume.h>
+#include <MathTools/BasicDefines.h>
 #include "GeometricShape.h"
 #include <vector>
 #include <queue>
@@ -47,8 +51,6 @@ using namespace wustl_mm::SkeletonMaker;
 namespace wustl_mm {
 	namespace GraphMatch {
 
-
-		int Round(double number);
 
 		class SkeletonReader {
 		public:
@@ -396,7 +398,7 @@ namespace wustl_mm {
 					xx = currentPoint->x;	
 					yy = currentPoint->y;	
 					zz = currentPoint->z;
-					currentHelix = Round(coloredVol->getDataAt(xx,yy,zz)) - 1;
+					currentHelix = round(coloredVol->getDataAt(xx,yy,zz)) - 1;
 					visited->setDataAt(xx, yy, zz, 1);
 
 					if((currentHelix >= 0) && (currentHelix != startHelix)) {
@@ -421,7 +423,7 @@ namespace wustl_mm {
 
 							if((x >= 0) && (x < vol->getSizeX()) && (y >=0) && (y < vol->getSizeY()) && (z >= 0) && (z < vol->getSizeZ())) {
 								if((visited->getDataAt(x, y, z) <= 0.001) && (vol->getDataAt(x, y, z) > 0.001) &&
-									(Round(coloredVol->getDataAt(x, y, z)) - 1 != startHelix)) {
+									(round(coloredVol->getDataAt(x, y, z)) - 1 != startHelix)) {
 									newStack.push_back(new Point3Int(x, y, z, currentPoint->distance + (cPt - nPt).length()));
 									visited->setDataAt(x, y, z, 1.0);
 								}
@@ -539,10 +541,6 @@ namespace wustl_mm {
 
 		}
 
-
-		inline int Round(double number) {
-			return (int)(number + 0.5);
-		}
 	}
 }
 
