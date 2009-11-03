@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.8  2009/11/02 19:48:07  colemanr
+//   using round() rather than Round() and added an include to get NonManifoldMesh_Annotated
+//
 //   Revision 1.7  2009/10/30 06:12:37  colemanr
 //   added functions used to calculate a template helix
 //
@@ -47,8 +50,9 @@
 #include <GraphMatch/PDBAtom.h>
 #include <GraySkeletonCPP/VolumeSkeletonizer.h>
 #include <Gorgon/MeshRenderer.h>
-#include <math.h>
+#include <cmath>
 
+using namespace std;
 using namespace wustl_mm::GraphMatch;
 using namespace wustl_mm::MathTools;
 using namespace wustl_mm::GraySkeletonCPP;
@@ -86,11 +90,6 @@ namespace wustl_mm {
 			SSEHunter();
 			~SSEHunter();
 			
-			Volume* GetCylinder(int xsize, int ysize, int zsize, int type = 2, float len = 10.8,
-						int x0 = -1, int y0 = -1, int z0 = -1, float apix_x = 1, float apix_y = 1, float apix_z = 1)
-			{	return GetTemplateCylinder(xsize, ysize, zsize, static_cast<RadialProfileType>(type), len, x0, y0, z0, apix_x, apix_y, apix_z);
-			}
-			
 			map<unsigned long long, PDBAtom> GetScoredAtoms(Volume * vol, NonManifoldMesh_Annotated * skeleton, float resolution, float threshold, float skeletonCoeff, float correlationCoeff, float geometryCoeff);
 		private:
 			vector<PDBAtom> GetPseudoAtoms(vector<Vector3DInt> & atomVolumePositions, Volume * vol, float resolution, float threshold);
@@ -102,21 +101,22 @@ namespace wustl_mm {
 			vector<float> GetLocalDirectionalityScores(vector<PDBAtom> patoms, vector<Vector3DInt> atomVolumePositions, Volume * vol);
 
 			//Ross Coleman: modified from EMAN1 Cylinder.C by Wen Jiang
-			float GetRadialProfile(float r, RadialProfileType type); //r in angstroms
-			float GetRadialProfileGaussian(float r); // r in angstroms
-			float GetRadialProfileGaussianDip(float r);// r in angstroms
-			float GetRadialProfilePolynomial(float r);// r in angstroms
+			float RadialProfile(float r, RadialProfileType type); //r in angstroms
+			float RadialProfileGaussian(float r); // r in angstroms
+			float RadialProfileGaussianDip(float r);// r in angstroms
+			float RadialProfilePolynomial(float r);// r in angstroms
 			Volume* GetTemplateCylinder(int xsize, int ysize, int zsize,
 					RadialProfileType type = POLYNOMIAL, float len = 10.8,
 					int x0 = -1, int y0 = -1, int z0 = -1,
 					float apix_x = 1, float apix_y = 1, float apix_z = 1);
-			Volume * GetTemplateHelix(double length, float apix, float resolution, float mapSize);
-			
+
+			Volume * GetTemplateHelix(double length, float apix, float resolution, int mapSize);
+			void NormalizeEdgeMean(Volume* vol);
+			void ApplyPolynomialProfileToHelix(Volume * in, float lengthAngstroms, int z0=-1);
+
 			//Ross Coleman: modified from EMAN2 PointArray::pdb2mrc_by_summation by Wen Jian
 			Volume * AtomsToVolumeBySummation(int map_size, float apix, float res, vector< AtomCoordinatesAndSize > atoms);
 
-			void NormalizeEdgeMean(Volume* vol);
-			void ApplyPolynomialProfileToHelix(Volume * in, float lengthAngstroms, int z0=-1);
 
 		};
 		
@@ -344,25 +344,25 @@ namespace wustl_mm {
 			
 		}
 
-		float SSEHunter::GetRadialProfile(float r, RadialProfileType type) // r in angstroms
+		float SSEHunter::RadialProfile(float r, RadialProfileType type) // r in angstroms
 		{
 			if (type == GAUSSIAN)
-				return GetRadialProfileGaussian(r);
+				return RadialProfileGaussian(r);
 			else if (type == GAUSSIAN_DIP)
-				return GetRadialProfileGaussianDip(r);
+				return RadialProfileGaussianDip(r);
 			else if (type == POLYNOMIAL)
-				return GetRadialProfilePolynomial(r);
+				return RadialProfilePolynomial(r);
 			else //TODO: raise proper exception
-				return GetRadialProfilePolynomial(r);
+				return RadialProfilePolynomial(r);
 		}
 
-		float SSEHunter::GetRadialProfileGaussian(float r) // r in angstroms
+		float SSEHunter::RadialProfileGaussian(float r) // r in angstroms
 		{
 			r /= 2;
 			return exp(-r * r);
 		}
 
-		float SSEHunter::GetRadialProfileGaussianDip(float r) //r in angstroms
+		float SSEHunter::RadialProfileGaussianDip(float r) //r in angstroms
 		{
 			// pure Gaussian falloff + negative dip, so mean is 0
 			r /= 2;
@@ -370,7 +370,7 @@ namespace wustl_mm {
 		}
 
 		// polynomial fitting to the radial profile of real helix density
-		float SSEHunter::GetRadialProfilePolynomial(float r) //r in angstroms
+		float SSEHunter::RadialProfilePolynomial(float r) //r in angstroms
 		{
 			//iterations ==> rounding is problematic with float types if
 			// 15 < r < 20 and really bad if 20 < r < 30, so use double
@@ -438,7 +438,7 @@ namespace wustl_mm {
 						if ((k > cyl_k_min) && (k < cyl_k_max))
 						{
 							value = cyl->getDataAt(i,j,k);
-							value += GetRadialProfile(radius, type);
+							value += RadialProfile(radius, type);
 							cyl->setDataAt(i,j,k,value);
 						}
 					}
@@ -448,19 +448,18 @@ namespace wustl_mm {
 		}
 
 		//TODO: TEST
-		Volume * SSEHunter::GetTemplateHelix(double length, float apix, float resolution, float mapSize)
+		Volume * SSEHunter::GetTemplateHelix(double length, float apix, float resolution, int mapSize)
 		{
 			vector< AtomCoordinatesAndSize > atoms;
 
-			double j=0;
 			AtomCoordinatesAndSize nitrogen, c_alpha, carbon, oxygen;
 			// Generating PDB Atoms
-			while (j <= round(length/1.54)) {
-				nitrogen = AtomCoordinatesAndSize( cos((100.0 * j * PI)/180.0)*1.6,              sin((100.0 * j * PI)/180.0)*1.6,               j * 1.54,         7.0 );
-				c_alpha  = AtomCoordinatesAndSize( cos(((28.0 + (100.0 * j)) * PI)/180.0) * 2.3, sin(((28.0 + (100.0 * j)) * PI)/180.0) * 2.3, (j * 1.54) + 0.83, 6.0 );
-				carbon   = AtomCoordinatesAndSize( cos(((61.0 + (100.0 * j)) * PI)/180.0) * 2.0, sin(((61.0 + (100.0 * j)) * PI)/180.0) * 2.0, (j * 1.54) + 1.7,  6.0 );
-				oxygen   = AtomCoordinatesAndSize( cos(((61.0 + (100.0 * j)) * PI)/180.0) * 2.0, sin(((61.0 + (100.0 * j)) * PI)/180.0) * 2.0, (j * 1.54) + 3.09, 8.0 );
-				j = j + 1.0;
+			for (int j=0; j <= round(length/1.54); j++)
+			{
+				nitrogen = AtomCoordinatesAndSize( 1.6*cos( (0  + 100*j) * PI/180.0), 1.6*sin( (0  + 100*j) * PI/180.0), 1.54*j + 0.00, 7.0 );
+				c_alpha  = AtomCoordinatesAndSize( 2.3*cos( (28 + 100*j) * PI/180.0), 2.3*sin( (28 + 100*j) * PI/180.0), 1.54*j + 0.83, 6.0 );
+				carbon   = AtomCoordinatesAndSize( 2.0*cos( (61 + 100*j) * PI/180.0), 2.0*sin( (61 + 100*j) * PI/180.0), 1.54*j + 1.70, 6.0 );
+				oxygen   = AtomCoordinatesAndSize( 2.0*cos( (61 + 100*j) * PI/180.0), 2.0*sin( (61 + 100*j) * PI/180.0), 1.54*j + 3.09, 8.0 );
 				atoms.push_back(nitrogen);
 				atoms.push_back(c_alpha);
 				atoms.push_back(carbon);
@@ -506,16 +505,13 @@ namespace wustl_mm {
 		}
 		
 
-		//************************************************************************
-		// pdb2vol_by_summation
 		// TODO: Test this function!!!!
-		//************************************************************************
 		Volume * SSEHunter::AtomsToVolumeBySummation(int map_size, float apix, float res, vector< AtomCoordinatesAndSize > atoms)
 		{
 		#ifdef DEBUG
-			printf("SSEHunter::pdb2vol_by_summation(): %d points\tmapsize = %4d\tapix = %g\tres = %g\n",positions.size(),map_size, apix, res);
+			printf("SSEHunter::AtomsToVolumeBySummation(): %d points\tmapsize = %4d\tapix = %g\tres = %g\n",atoms.size(),map_size, apix, res);
 		#endif
-			double gauss_real_width = res / (M_PI);	// in Angstrom, res is in Angstrom
+			double gauss_real_width = res / (PI);	// in Angstrom, res is in Angstrom
 			//if ( gauss_real_width < apix) LOGERR("PointArray::projection_by_summation(): apix(%g) is too large for resolution (%g Angstrom in Fourier space) with %g pixels of 1/e half width", apix, res, gauss_real_width);
 
 			double min_table_val = 1e-7;
@@ -583,13 +579,13 @@ namespace wustl_mm {
 							if ( table_index_x >= table.size() ) continue;
 							double xval = table[table_index_x];
 		//					pd[pd_index] += (float) (fval * zval * yval * xval);
-							double val = fval * zval * yval * xval;
+							double val = (fval * zval * yval * xval) + map->getDataAt(i,j,k);
 							map->setDataAt(i,j,k, val);
 						}
 					}
 				}
 			}
-			//for(int i=0; i<map_size*map_size; i++) pd[i]/=sqrt(M_PI);
+			//for(int i=0; i<map_size*map_size; i++) pd[i]/=sqrt(PI);
 		//	map->update();
 			map->setSpacing(apix,apix,apix);
 			map->setOrigin( -map_size/2*apix, -map_size/2*apix, -map_size/2*apix );
@@ -597,7 +593,7 @@ namespace wustl_mm {
 			return map;
 		}
 
-		//TODO: test
+		//TODO: TEST
 		void SSEHunter::NormalizeEdgeMean(Volume* vol)
 		{
 			int nx = vol->getSizeX();
@@ -667,7 +663,7 @@ namespace wustl_mm {
 							for (int i=0;i<nx;i++)
 							{
 								radius = hypot( (i-x_cm)*apix_x, (j-y_cm)*apix_y );
-								vol->setDataAt(i,j,k, GetRadialProfilePolynomial((float)radius) );
+								vol->setDataAt(i,j,k, RadialProfilePolynomial((float)radius) );
 							}
 						}
 					}
