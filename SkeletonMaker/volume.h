@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.33  2009/11/02 19:50:22  colemanr
+//   added include for MathTools/Vector3D.h
+//
 //   Revision 1.32  2009/10/30 06:09:27  colemanr
 //   added functions to calculate the mean, standard deviation, and center of mass, as well as one that calculates the mean of the outer 1 pixel surfaces
 //
@@ -39,6 +42,13 @@
 //   Adding in CVS meta information
 //
 
+#ifndef SKELETON_MAKER_VOLUME_H
+#define SKELETON_MAKER_VOLUME_H
+
+#define MAX_SHEETS 100000
+#define MAX_QUEUELEN 5000000
+#define MAX_ERODE 1000
+
 #include "VolumeData.h"
 #include "ThinningTemplate.h"
 #include "GridQueue.h"
@@ -49,13 +59,6 @@
 #include "PriorityQueue.h"
 #include <vector>
 #include <MathTools/Vector3D.h>
-
-#ifndef SKELETON_MAKER_VOLUME_H
-#define SKELETON_MAKER_VOLUME_H
-
-#define MAX_SHEETS 100000
-#define MAX_QUEUELEN 5000000
-#define MAX_ERODE 1000
 
 using namespace std;
 using namespace wustl_mm::MathTools;
@@ -143,10 +146,10 @@ namespace wustl_mm {
 			double getLocalMax(int x, int y, int z, int radius);
 			double getLocalMin(int x, int y, int z, int radius);
 
-			float getMean();
-			float getEdgeMean();
-			float getStdDev();
-			Vector3DFloat getCenterOfMass();
+			float getMean(); // Returns the mean value of all the voxels
+			float getEdgeMean(); // Returns the mean value of all the surface voxels but no interior voxels
+			float getStdDev(); // Returns the population standard deviation of the values at all the voxels
+			Vector3DFloat getCenterOfMass(); // Returns the center of mass of the image in pixels (not angstroms)
 
 			void fill(double val);
 			int isBertrandBorder(int ox, int oy, int oz, int dir);
@@ -11212,7 +11215,8 @@ namespace wustl_mm {
 
 			fclose( fout ) ;
 		}
-		//TODO: TEST
+
+		// Returns the mean value of all the voxels
 		float Volume::getMean()
 		{
 			int N = volData->GetMaxIndex();
@@ -11222,34 +11226,35 @@ namespace wustl_mm {
 			float mean = (float) mass/N;
 			return mean;
 		}
-		//TODO: TEST
+
+		// Returns the mean value of all the surface voxels but no interior voxels
 		float Volume::getEdgeMean()
 		{
 			int nx = getSizeX();
 			int ny = getSizeY();
 			int nz = getSizeZ();
-			int N = nx*ny*nz;
 
 			//Calculate the edge mean -- the average value of all the voxels on the surfaces (1 voxel) of the image
-			int x;
-			int y;
-			int z;
 			double edge_sum = 0; //The sum of the values on the outer surfaces (1 voxel) of the image
+			int num_voxels = 0;
 
 			//sum the values of each voxel on the surfaces of the rectangular prism
-			for (y = 0; y < ny; y++)
-				for (z = 0; z < nz; z++)
-					edge_sum += getDataAt(0, y, z) + getDataAt(nx-1, y, z); //surfaces x == 0 and x == nx-1
-			for (x = 0; x < nx; x++)
-				for (z = 0; z < nz; z++)
-					edge_sum += getDataAt(x, 0, z) + getDataAt(x, ny-1, z); //surfaces y == 0 and y == ny-1
-				for (y = 0; y < ny; y++)
-					edge_sum += getDataAt(x, y, 0) + getDataAt(x, y, nz-1); //surfaces z == 0 and z == nz-1
+			for (int i = 0; i < nx; i++)
+				for (int j=0; j<ny; j++)
+					for (int k=0; k<nz; k++)
+					{
+						if (i==0 || i==nx-1 || j==0 || j==ny-1 || k==0 || k==nz-1)
+						{
+							edge_sum += getDataAt(i,j,k);
+							num_voxels++;
+						}
+					}
 
-			float edge_mean = (float) edge_sum / N;
+			float edge_mean = (float) edge_sum / num_voxels;
 			return edge_mean;
 		}
-		//TODO: TEST
+
+		// Returns the population standard deviation of the values at all the voxels
 		float Volume::getStdDev()
 		{
 			int N = volData->GetMaxIndex();
@@ -11268,7 +11273,7 @@ namespace wustl_mm {
 			float std_dev = (float) sqrt( (voxel_squared_sum - voxel_sum*voxel_sum/N) / N );
 			return std_dev;
 		}
-		//TODO: TEST
+		// Returns the center of mass of the image in pixels (not angstroms)
 		Vector3DFloat Volume::getCenterOfMass()
 		{
 			int nx = getSizeX();
