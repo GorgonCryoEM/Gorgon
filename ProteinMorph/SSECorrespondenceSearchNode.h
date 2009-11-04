@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.4  2009/10/13 18:09:34  ssa1
+//   Refactoring Volume.h
+//
 //   Revision 1.3  2009/09/29 19:23:39  ssa1
 //   Fixing indexing bugs when performing sse correspondence search.
 //
@@ -38,6 +41,8 @@ namespace wustl_mm {
 			SSECorrespondenceSearchNode(GraphBase<unsigned int, bool> graph, vector< vector<unsigned int> > solution, float cost);
 			GraphBase<unsigned int, bool> GetGraph();
 			vector< vector<unsigned int> > GetSolution();
+			vector< vector<SSECorrespondenceNode> > GetSolution(vector<SSECorrespondenceNode> & allNodes);
+
 			float GetCost();
 			vector<SSECorrespondenceSearchNode *> GetChildNodes(vector<SSECorrespondenceNode> & allNodes, vector< vector<float> > & pairCompatibility, float featureChangeCoeff, float rigidComponentCoeff, float intraComponentCoeff);
 			void PrintSolution(vector<SSECorrespondenceNode> & allNodes);
@@ -119,8 +124,8 @@ namespace wustl_mm {
 				}				
 			}
 
-			for(unsigned int i = 0; i < childGraph.GetVertexCount(); i++) {
-				for(unsigned int j = 0; j < childGraph.GetVertexCount(); j++) {
+			for(int i = 0; i < (int)childGraph.GetVertexCount()-1; i++) {
+				for(int j = i+1; j < (int)childGraph.GetVertexCount(); j++) {
 					if(graph.IsEdge(vertexIndices[i], vertexIndices[j])) {
 						childGraph.AddEdge(i, j, graph.GetEdge(vertexIndices[i], vertexIndices[j]));
 					}
@@ -152,6 +157,24 @@ namespace wustl_mm {
 				}
 			}
 			return intraCliqueCost;
+		}
+
+		vector< vector<SSECorrespondenceNode> > SSECorrespondenceSearchNode::GetSolution(vector<SSECorrespondenceNode> & allNodes) {
+			vector< vector<SSECorrespondenceNode> > corr;
+			vector<SSECorrespondenceNode> corrItem;
+
+			vector<unsigned int> nodes;
+			for(unsigned int i = 0; i < solution.size(); i++) {
+				nodes = solution[i];
+				corrItem.clear();
+				if(nodes.size() > 0) {
+					for(unsigned int j = 0; j < nodes.size(); j++) {
+						corrItem.push_back(allNodes[nodes[j]]);
+					}
+					corr.push_back(corrItem);
+				}
+			}
+			return corr;
 		}
 
 		void SSECorrespondenceSearchNode::PrintSolution(vector<SSECorrespondenceNode> & allNodes) {

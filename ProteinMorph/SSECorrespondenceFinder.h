@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.4  2009/10/13 18:09:34  ssa1
+//   Refactoring Volume.h
+//
 //   Revision 1.3  2009/09/29 19:23:39  ssa1
 //   Fixing indexing bugs when performing sse correspondence search.
 //
@@ -49,9 +52,14 @@ namespace wustl_mm {
 			SSECorrespondenceFinder();
 			void InitializeFeatures(vector<SSECorrespondenceFeature> featureList1, vector<SSECorrespondenceFeature> featureList2);
 			void InitializeFeaturesFromPDBFiles(string file1, string file2);
-			void InitializeConstants(float rigidityThreshold, float featureChangeThreshold, float rigidityAngleCoeff, float rigidityCentroidDistanceCoeff, float rigidityFeatureChangeCoeff, float rigidComponentCoeff, float intraComponentCoeff, unsigned int maxSolutionCount);		
+			void InitializeConstants(float rigidityThreshold, float featureChangeThreshold, float rigidityAngleCoeff, 
+				float rigidityCentroidDistanceCoeff, float rigidityFeatureChangeCoeff, float rigidComponentCoeff, float intraComponentCoeff, 
+				float jointAngleThreshold, float dihedralAngleThreshold, float centroidDistanceThreshold, 
+				unsigned int maxSolutionCount);		
 			vector< vector < vector<SSECorrespondenceNode> > > GetCliqueBasedFeatureCorrespondence();
-			vector< vector < vector<SSECorrespondenceNode> > > GetValenceBasedFeatureCorrespondence();
+			vector < vector<SSECorrespondenceNode> > GetValenceBasedFeatureCorrespondence(bool printOutput = true);
+			vector < vector<SSECorrespondenceNode> > GetValenceTriangleBasedFeatureCorrespondence();
+			vector < vector<SSECorrespondenceNode> > GetValenceBasedFeatureCorrespondenceSet();
 			void PrintFeatureListsMathematica();
 		private:
 			float GetFeatureCompatibilityScore(SSECorrespondenceFeature feature1, SSECorrespondenceFeature feature2);
@@ -59,13 +67,16 @@ namespace wustl_mm {
 			void GetFeatureAngles(float & joint1, float & joint2, float & dihedral, SSECorrespondenceFeature feature1, SSECorrespondenceFeature feature2);
 			vector< vector<float> > GetAllFeatureCompatibilityScores();
 			vector<SSECorrespondenceNode> GetAllNodes(vector< vector<float> > & featureCompatibilityScores);
-			vector< vector<float> > GetAllNodePairCompatibilityScores(vector<SSECorrespondenceNode> & nodes);			
+			vector< vector<float> > GetAllNodePairCompatibilityScores(vector<SSECorrespondenceNode> & nodes);
+			bool IsFeaturePairRigid(SSECorrespondenceNode n1, SSECorrespondenceNode n2);	
+			bool IsFeaturePairRigid(SSECorrespondenceFeature p1, SSECorrespondenceFeature q1, SSECorrespondenceFeature p2, SSECorrespondenceFeature q2);
 			void AnalyzeCorrespondence(vector<unsigned int> pFeatures, vector<unsigned int> qFeatures);
 			GraphBase<unsigned int, bool> RemoveCliqueAndRelatedNodes(GraphBase<unsigned int, bool> parentGraph, vector<unsigned long long> clique);
 		private:
 			vector<SSECorrespondenceFeature> featureList1;
 			vector<SSECorrespondenceFeature> featureList2;
-			float rigidityThreshold, featureChangeThreshold, rigidityAngleCoeff, rigidityCentroidDistanceCoeff, featureChangeCoeff, rigidComponentCoeff, intraComponentCoeff;			
+			float rigidityThreshold, featureChangeThreshold, rigidityAngleCoeff, rigidityCentroidDistanceCoeff, featureChangeCoeff, rigidComponentCoeff, intraComponentCoeff;
+			float jointAngleThreshold, dihedralAngleThreshold, centroidDistanceThreshold;
 			unsigned int maxSolutionCount;
 		};
 
@@ -101,7 +112,7 @@ namespace wustl_mm {
 			helices2.clear();
 		}
 
-		void SSECorrespondenceFinder::InitializeConstants(float rigidityThreshold, float featureChangeThreshold, float rigidityAngleCoeff, float rigidityCentroidDistanceCoeff, float rigidityFeatureChangeCoeff, float rigidComponentCoeff, float intraComponentCoeff, unsigned int maxSolutionCount) {
+		void SSECorrespondenceFinder::InitializeConstants(float rigidityThreshold, float featureChangeThreshold, float rigidityAngleCoeff, float rigidityCentroidDistanceCoeff, float rigidityFeatureChangeCoeff, float rigidComponentCoeff, float intraComponentCoeff, float jointAngleThreshold, float dihedralAngleThreshold, float centroidDistanceThreshold, unsigned int maxSolutionCount) {
 			this->rigidityThreshold = rigidityThreshold;
 			this->featureChangeThreshold = featureChangeThreshold;
 			this->rigidityAngleCoeff = rigidityAngleCoeff;
@@ -109,6 +120,9 @@ namespace wustl_mm {
 			this->featureChangeCoeff = featureChangeCoeff;
 			this->rigidComponentCoeff = rigidComponentCoeff;
 			this->intraComponentCoeff = intraComponentCoeff;
+			this->jointAngleThreshold = jointAngleThreshold;
+			this->dihedralAngleThreshold = dihedralAngleThreshold;
+			this->centroidDistanceThreshold = centroidDistanceThreshold;
 			this->maxSolutionCount = maxSolutionCount;
 		}
 
@@ -199,6 +213,27 @@ namespace wustl_mm {
 			return scores;			
 		}
 
+		bool SSECorrespondenceFinder::IsFeaturePairRigid(SSECorrespondenceNode n1, SSECorrespondenceNode n2) {
+			return IsFeaturePairRigid(featureList1[n1.GetPIndex()], featureList2[n1.GetQIndex()], featureList1[n2.GetPIndex()], featureList2[n2.GetQIndex()]);			
+		}
+
+		bool SSECorrespondenceFinder::IsFeaturePairRigid(SSECorrespondenceFeature p1, SSECorrespondenceFeature q1, SSECorrespondenceFeature p2, SSECorrespondenceFeature q2) {
+			float pJoint1, pJoint2, pDihedral, qJoint1, qJoint2, qDihedral;
+			bool retVal = true;
+			GetFeatureAngles(pJoint1, pJoint2, pDihedral, p1, p2);
+			GetFeatureAngles(qJoint1, qJoint2, qDihedral, q1, q2);
+
+			retVal = retVal && (abs(pJoint1 - qJoint1) <= jointAngleThreshold);
+			retVal = retVal && (abs(pJoint2 - qJoint2) <= jointAngleThreshold);
+			retVal = retVal && (abs(pDihedral - qDihedral) <= dihedralAngleThreshold);
+
+			float centroidDistance = abs((p1.GetCentroid() - p2.GetCentroid()).Length() - (q1.GetCentroid() - q2.GetCentroid()).Length());
+
+			retVal = retVal && (centroidDistance <= centroidDistanceThreshold);
+
+			return retVal;
+		}
+
 		vector< vector < vector<SSECorrespondenceNode> > > SSECorrespondenceFinder::GetCliqueBasedFeatureCorrespondence() {
 			vector< vector < vector<SSECorrespondenceNode> > > correspondence;
 			vector< vector<float> > featureCompatibilityScores = GetAllFeatureCompatibilityScores();
@@ -211,8 +246,8 @@ namespace wustl_mm {
 				parentGraph.AddVertex(featureCompatibilityScores[nodes[i].GetPIndex()][nodes[i].GetQIndex()], i);
 			}
 
-			for(unsigned int i = 0; i < nodes.size(); i++) {
-				for(unsigned int j = 0; j < nodes.size(); j++) {
+			for(int i = 0; i < (int)nodes.size()-1; i++) {
+				for(int j = i+1; j < (int)nodes.size(); j++) {
 					if((nodes[i].GetPIndex() != nodes[j].GetPIndex()) && 
 						(nodes[i].GetQIndex() != nodes[j].GetQIndex()) &&
 						(i != j) && (pairCompatibility[i][j] <= rigidityThreshold)) {
@@ -262,8 +297,7 @@ namespace wustl_mm {
 			return correspondence;
 		}
 
-		vector< vector < vector<SSECorrespondenceNode> > > SSECorrespondenceFinder::GetValenceBasedFeatureCorrespondence() {
-			vector< vector < vector<SSECorrespondenceNode> > > correspondence;
+		vector < vector<SSECorrespondenceNode> > SSECorrespondenceFinder::GetValenceBasedFeatureCorrespondence(bool printOutput) {
 			vector< vector<float> > featureCompatibilityScores = GetAllFeatureCompatibilityScores();
 			vector<SSECorrespondenceNode> nodes = GetAllNodes(featureCompatibilityScores);
 			vector< vector<float> > pairCompatibility = GetAllNodePairCompatibilityScores(nodes);
@@ -274,11 +308,11 @@ namespace wustl_mm {
 				graph.AddVertex(featureCompatibilityScores[nodes[i].GetPIndex()][nodes[i].GetQIndex()], i);
 			}
 
-			for(unsigned int i = 0; i < nodes.size(); i++) {
-				for(unsigned int j = 0; j < nodes.size(); j++) {
+			for(int i = 0; i < (int)nodes.size()-1; i++) {
+				for(int j = i+1; j < (int)nodes.size(); j++) {
 					if((nodes[i].GetPIndex() != nodes[j].GetPIndex()) && 
 						(nodes[i].GetQIndex() != nodes[j].GetQIndex()) &&
-						(i != j) && (pairCompatibility[i][j] <= rigidityThreshold)) {
+						IsFeaturePairRigid(nodes[i], nodes[j])) {						
 						graph.AddEdge(i, j, pairCompatibility[i][j], false);
 					}
 				}
@@ -298,12 +332,129 @@ namespace wustl_mm {
 				}
 				vector< vector<unsigned int> > sol = node.GetSolution();
 				sol.push_back(cliqueSol);
-				
 				node = SSECorrespondenceSearchNode(node.GetChildGraph(nodes, clique), sol, 0);
 				graph = node.GetGraph();
 			}
+			if(printOutput) {
+				node.PrintSolution(nodes);
+			}
+			return node.GetSolution(nodes);
+		}
+
+		vector < vector<SSECorrespondenceNode> > SSECorrespondenceFinder::GetValenceTriangleBasedFeatureCorrespondence() {
+			TimeManager m;
+			m.PushCurrentTime();
+			m.PushCurrentTime();
+			vector< vector<float> > featureCompatibilityScores = GetAllFeatureCompatibilityScores();
+			vector<SSECorrespondenceNode> nodes = GetAllNodes(featureCompatibilityScores);
+			m.PopAndDisplayTime("(*Created Nodes :%f s*)\n");
+			m.PushCurrentTime();
+			vector< vector<float> > pairCompatibility = GetAllNodePairCompatibilityScores(nodes);
+			m.PopAndDisplayTime("(*Got edge compatibility:%f s*)\n");
+
+			m.PushCurrentTime();
+			GraphBase<unsigned int, bool> graph;
+
+			for(unsigned int i = 0; i < nodes.size(); i++) {
+				graph.AddVertex(featureCompatibilityScores[nodes[i].GetPIndex()][nodes[i].GetQIndex()], i);
+			}
+
+			for(int i = 0; i < (int)nodes.size()-1; i++) {
+				for(int j = i+1; j < (int)nodes.size(); j++) {
+					if((nodes[i].GetPIndex() != nodes[j].GetPIndex()) && 
+						(nodes[i].GetQIndex() != nodes[j].GetQIndex()) &&
+						IsFeaturePairRigid(nodes[i], nodes[j])) {						
+						graph.AddEdge(i, j, pairCompatibility[i][j], false);
+					}
+				}
+			}
+			m.PopAndDisplayTime("(*Create base graph:%f s*)\n");
+
+			vector< vector<unsigned int> > sol2;
+			SSECorrespondenceSearchNode node = SSECorrespondenceSearchNode(graph, sol2, 0.0f);
+
+			vector<unsigned long long> neighbors;
+			while(graph.GetVertexCount() > 0) {				
+				m.PushCurrentTime();
+				vector<unsigned long long> clique = graph.VertexSetToVector(graph.GetLowestCostCliqueTriangleMethod());
+				m.PopAndDisplayTime("  (*Got clique%f s*)\n");
+
+				vector<unsigned int> cliqueSol;
+				for(unsigned int i = 0; i < clique.size(); i++) {
+					cliqueSol.push_back(graph.GetVertex(clique[i]).GetTag());
+				}
+				vector< vector<unsigned int> > sol = node.GetSolution();
+				sol.push_back(cliqueSol);
+				node = SSECorrespondenceSearchNode(node.GetChildGraph(nodes, clique), sol, 0);
+				graph = node.GetGraph();
+			}			
 			node.PrintSolution(nodes);
-			return correspondence;
+			m.PopAndDisplayTime("(*Done!:%f s*)\n");
+			return node.GetSolution(nodes);
+		}
+
+		vector < vector<SSECorrespondenceNode> > SSECorrespondenceFinder::GetValenceBasedFeatureCorrespondenceSet() {
+			maxSolutionCount = 1;
+			vector < vector<SSECorrespondenceNode> > corr, corrItem;
+			vector<SSECorrespondenceNode> corrItemItem;
+			bool found = true;
+
+			vector<unsigned int> featureList2Indices;
+			for(unsigned int i = 0; i < featureList2.size(); i++) {
+				featureList2Indices.push_back(i);
+			}
+
+			while (found) {
+				found = false;
+				if(featureList2.size() > 0) {
+					corrItem = GetValenceBasedFeatureCorrespondence(false);
+					found = (corrItem.size() > 0);
+					if(found) {
+
+						for(unsigned int i = 0; i < corrItem.size(); i++) {
+							corrItemItem.clear();
+							for(unsigned int j = 0; j < corrItem[i].size(); j++) {
+								corrItemItem.push_back(SSECorrespondenceNode(corrItem[i][j].GetPIndex(), featureList2Indices[corrItem[i][j].GetQIndex()]));
+							}
+							corr.push_back(corrItemItem);
+						}
+
+						bool remove;
+						for(int i = (int)featureList2.size()-1;  i >= 0; i--) {
+							remove = false;
+							for(unsigned int j = 0; !remove && (j < corrItem.size()); j++) {
+								for(unsigned int k = 0; !remove && (k < corrItem[j].size()); k++) {
+									remove = remove || (corrItem[j][k].GetQIndex() == i);
+								}
+							}
+							if(remove) {
+								featureList2.erase(featureList2.begin() + i);
+								featureList2Indices.erase(featureList2Indices.begin() + i);	
+							}
+						}
+					}
+				}
+			}
+
+
+			printf("corr = {\n");
+			for(unsigned int i = 0; i < corr.size(); i++) {
+				if(i != 0) {
+					printf(",\n");
+				}
+				printf("\t{");
+				for(unsigned int j = 0; j < corr[i].size(); j++) {
+					if(j != 0) {
+						printf(", ");
+					}
+					printf("{%d, %d}", corr[i][j].GetPIndex(), corr[i][j].GetQIndex());
+				}
+				printf("}");
+			}
+			printf("};\n");
+			printf("printFinalOutput[corr, fl1, fl2, 1]\n");
+
+			return corr;
 		}
 
 		void SSECorrespondenceFinder::PrintFeatureListsMathematica() {

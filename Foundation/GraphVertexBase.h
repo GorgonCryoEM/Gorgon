@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.3  2009/09/02 19:06:13  ssa1
+//   Working towards flexible fitting
+//
 //   Revision 1.2  2009/08/26 14:58:55  ssa1
 //   Adding in Flexible fitting clique search
 //
@@ -31,12 +34,13 @@ namespace wustl_mm {
 			float GetWeight();
 			TTag GetTag();
 			unsigned long long GetValence();
+			unsigned long long GetEdge(unsigned int edgeIndex);
 			void SetIndex(unsigned long long index);
 			void SetWeight(float weight);
 			void SetTag(TTag tag);
 			void AddEdge(unsigned long long edgeHash);
 		private:
-			unsigned long long edgeCount;
+			vector<unsigned long long> edges;
 			unsigned long long index;
 			float weight;
 			TTag tag;
@@ -46,7 +50,7 @@ namespace wustl_mm {
 			this->index = index;
 			this->weight = weight;
 			this->tag = tag;
-			this->edgeCount = 0;
+			edges.clear();
 		}
 
 		template <class TTag> unsigned long long GraphVertexBase<TTag>::GetIndex() {
@@ -62,7 +66,7 @@ namespace wustl_mm {
 		}
 
 		template <class TTag> unsigned long long GraphVertexBase<TTag>::GetValence() {
-			return edgeCount;
+			return edges.size();
 		}
 
 		template <class TTag> void GraphVertexBase<TTag>::SetIndex(unsigned long long index) {
@@ -78,7 +82,11 @@ namespace wustl_mm {
 		}
 
 		template <class TTag> void GraphVertexBase<TTag>::AddEdge(unsigned long long edgeHash) {
-			edgeCount++;
+			edges.push_back(edgeHash);
+		}
+
+		template <class TTag> unsigned long long GraphVertexBase<TTag>::GetEdge(unsigned int edgeIndex) {
+			return edges[edgeIndex];
 		}
 
 

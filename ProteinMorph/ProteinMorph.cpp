@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.10  2009/10/13 18:09:34  ssa1
+//   Refactoring Volume.h
+//
 //   Revision 1.9  2009/09/02 19:06:13  ssa1
 //   Working towards flexible fitting
 //
@@ -149,9 +152,9 @@ int main( int args, char * argv[] ) {
 */
 	SSECorrespondenceFinder finder;
 	//finder.InitializeFeatures(fl1, fl2);
-	if(args != 12) {
-		printf("ProteinMorph [method] [pdb1] [pdb2] [rigidityThreshold] [featureChangeThreshold] [rigidityAngleCoeff] [rigidityCentroidDistanceCoeff] [rigidityFeatureChangeCoeff] [rigidComponentCoeff] [intraComponentCoeff] [maxSolutionCount]\n");
-		printf("\t[method] : The algorithm to use, 1 : Clique, 2: Greedy Valence \n");
+	if(args != 15) {
+		printf("ProteinMorph [method] [pdb1] [pdb2] [rigidityThreshold] [featureChangeThreshold] [rigidityAngleCoeff] [rigidityCentroidDistanceCoeff] [rigidityFeatureChangeCoeff] [rigidComponentCoeff] [intraComponentCoeff] [jointAngleThreshold] [dihedralAngleThreshold] [centroidDistanceThreshold] [maxSolutionCount]\n");
+		printf("\t[method] : The algorithm to use, 1 : Clique, 2: Greedy Valence, 3: Greedy Valence Triangle based Clique \n");
 	} else {	
 		finder.InitializeFeaturesFromPDBFiles(argv[2], argv[3]);
 		finder.InitializeConstants(
@@ -162,16 +165,26 @@ int main( int args, char * argv[] ) {
 			StringUtils::StringToDouble(argv[8]),
 			StringUtils::StringToDouble(argv[9]), 
 			StringUtils::StringToDouble(argv[10]), 
-			StringUtils::StringToInt(argv[11]));
+			StringUtils::StringToDouble(argv[11]), 
+			StringUtils::StringToDouble(argv[12]), 
+			StringUtils::StringToDouble(argv[13]), 
+			StringUtils::StringToInt(argv[14]));
 
 		finder.PrintFeatureListsMathematica();
 		vector< vector < vector<SSECorrespondenceNode> > > corr;
+		vector < vector<SSECorrespondenceNode> > corr2;
 		switch(StringUtils::StringToInt(argv[1])) {
 			case 1:
 				corr = finder.GetCliqueBasedFeatureCorrespondence();
 				break;
 			case 2:
-				corr = finder.GetValenceBasedFeatureCorrespondence();
+				corr2 = finder.GetValenceBasedFeatureCorrespondence();
+				break;
+			case 3:
+				corr2 = finder.GetValenceTriangleBasedFeatureCorrespondence();
+				break;
+			case 4:
+				corr2 = finder.GetValenceBasedFeatureCorrespondenceSet();
 				break;
 			default:
 				printf("Unknown method\n");
