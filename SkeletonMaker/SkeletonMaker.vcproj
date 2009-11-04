@@ -117,6 +117,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				AdditionalIncludeDirectories="$(SolutionDir);$(SolutionDir)\ExternalLibraries"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"

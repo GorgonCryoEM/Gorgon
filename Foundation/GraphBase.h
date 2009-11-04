@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.3  2009/09/02 19:06:13  ssa1
+//   Working towards flexible fitting
+//
 //   Revision 1.2  2009/08/26 14:58:55  ssa1
 //   Adding in Flexible fitting clique search
 //
@@ -26,6 +29,7 @@
 #include <vector>
 #include <map>
 #include <set>
+#include <algorithm>
 
 using namespace std;
 
@@ -57,6 +61,7 @@ namespace wustl_mm {
 			vector< set<unsigned long long> > GetLargestMaximalCliques(vector<unsigned long long> vertexSet);
 			vector< set<unsigned long long> > GetLargestMaximalCliques2(vector<unsigned long long> vertexSet);
 			set<unsigned long long> GetLowestCostCliqueInOneRing(unsigned long long vertexIx);
+			set<unsigned long long> GetLowestCostCliqueTriangleMethod();
 			vector<unsigned long long> GetOneRingNeighbors(unsigned long long vertexIx);
 			void PrintAllCliques(vector< set<unsigned long long> > allCliques);
 
@@ -68,6 +73,9 @@ namespace wustl_mm {
 		private:
 			void PrintClique(set<unsigned long long> vertexSet);
 			unsigned long long GetEdgeHash(unsigned long long vertexIx1, unsigned long long vertexIx2);
+			void GetEdgeVertices(unsigned long long & vertexIx1, unsigned long long & vertexIx2, unsigned long long hash);
+			map<unsigned long long, unsigned long long> GetAllEdgeTriangleCount();
+			set<unsigned long long> GetEdgeTriangles(unsigned long long edgeHash);
 		private:
 			vector< GraphVertexBase<TVertexTag> > vertices;
 			map< unsigned long long, GraphEdgeBase<TEdgeTag> > edges;
@@ -474,11 +482,19 @@ namespace wustl_mm {
 
 		template <class TVertexTag, class TEdgeTag> vector<unsigned long long> GraphBase<TVertexTag, TEdgeTag>::GetOneRingNeighbors(unsigned long long vertexIx) {
 			vector<unsigned long long> neighbors;
-			for(unsigned int i = 0; i < vertices.size(); i++) {
-				if((i != vertexIx) && IsEdge(vertexIx, i)) {
-					neighbors.push_back(i);
+			unsigned int valence = vertices[vertexIx].GetValence();
+			unsigned long long edgeHash, v1, v2;
+			for(unsigned int i = 0; i < valence; i++) {
+				edgeHash = vertices[vertexIx].GetEdge(i);
+				GetEdgeVertices(v1, v2, edgeHash);
+				if(v1 != vertexIx) {
+					neighbors.push_back(v1);
+				}
+				if(v2 != vertexIx) {
+					neighbors.push_back(v2);
 				}
 			}
+
 			return neighbors;
 		}
 
@@ -505,6 +521,117 @@ namespace wustl_mm {
 			} else {
 				return cliques[cliqueIx];
 			}
+		}
+
+		template <class TVertexTag, class TEdgeTag> set<unsigned long long> GraphBase<TVertexTag, TEdgeTag>::GetLowestCostCliqueTriangleMethod() {
+			set<unsigned long long> clique;
+
+			// Inputvalidation: Returns lowest cost vertex if no edges exist
+			if(edges.size() == 0) { 
+				if(vertices.size() == 0) {
+					return clique;
+				}
+				int minVertexIx = 0;
+				float minVertexWeight = vertices[minVertexIx].GetWeight();
+				
+
+				for(unsigned int i = 0; i < vertices.size(); i++) {
+					if(vertices[i].GetWeight() < minVertexWeight) {
+						minVertexWeight = vertices[i].GetWeight();
+						minVertexIx = i;
+					}
+				}
+				clique.insert(minVertexIx);
+				return clique;
+			}
+
+			map<unsigned long long, unsigned long long> edgeTriangleCount = GetAllEdgeTriangleCount();
+			
+			unsigned long long v1, v2, hash, maxEdgeHash = edges.begin()->first;
+			float maxEdgeWeight = edges[maxEdgeHash].GetWeight();
+			int maxEdgeValence = edgeTriangleCount[maxEdgeHash];
+
+			for(map< unsigned long long, GraphEdgeBase<TEdgeTag> >::iterator i = edges.begin(); i != edges.end(); i++) {
+				hash = i->first;
+				if (((edgeTriangleCount[hash] > maxEdgeValence)) || ((edgeTriangleCount[hash] == maxEdgeValence) && (edges[hash].GetWeight() < maxEdgeWeight))) {
+					maxEdgeHash = hash;
+					maxEdgeValence = edgeTriangleCount[hash];
+					maxEdgeWeight = edges[hash].GetWeight();
+				}
+			}
+
+
+			// Inputvalidation: Returns lowest cost edge if no triangles exist
+			if(maxEdgeValence == 0) { 
+				unsigned long long minEdgeHash = edges.begin()->first;
+				float minEdgeWeight = edges[minEdgeHash].GetWeight();
+				for(map< unsigned long long, GraphEdgeBase<TEdgeTag> >::iterator i = edges.begin(); i != edges.end(); i++) {
+					hash = i->first;
+					if(edges[hash].GetWeight() < minEdgeWeight) {
+						minEdgeWeight = edges[hash].GetWeight();
+						minEdgeHash = hash;
+					}					
+				}
+				GetEdgeVertices(v1, v2, minEdgeHash);
+				clique.insert(v1);
+				clique.insert(v2);
+				return clique;
+			}
+
+			vector<unsigned long long> triangleVertices = VertexSetToVector(GetEdgeTriangles(maxEdgeHash));
+			edgeTriangleCount.clear();
+			GetEdgeVertices(v1, v2, maxEdgeHash);
+			
+			vector<unsigned long long> currClique;
+			currClique.push_back(v1);
+			currClique.push_back(v2);
+
+			float triangleCost;
+			while(triangleVertices.size() > 0) {
+				float minCost = MAX_FLOAT;
+				int minIx = 0;
+				for(unsigned int i = 0; i < triangleVertices.size(); i++) {
+					triangleCost = GetEdge(v1, triangleVertices[i]).GetWeight() + GetEdge(v2, triangleVertices[i]).GetWeight();
+					if(triangleCost < minCost) {
+						minCost = triangleCost;
+						minIx = i;
+					}					
+				}
+				currClique.push_back(triangleVertices[minIx]);
+				triangleVertices.erase(triangleVertices.begin() + minIx);
+				if(!IsClique(currClique)) {
+					currClique.erase(currClique.end()-1);
+				}
+			}
+			
+			return VertexVectorToSet(currClique);			
+		}
+
+
+		template <class TVertexTag, class TEdgeTag> set<unsigned long long> GraphBase<TVertexTag, TEdgeTag>::GetEdgeTriangles(unsigned long long edgeHash) {
+			set<unsigned long long> triangles, v1Neighbors, v2Neighbors;
+			unsigned long long v1, v2;
+
+			GetEdgeVertices(v1, v2, edgeHash);
+			v1Neighbors = VertexVectorToSet(GetOneRingNeighbors(v1));
+			v2Neighbors = VertexVectorToSet(GetOneRingNeighbors(v2));
+			set_intersection(v1Neighbors.begin(), v1Neighbors.end(), v2Neighbors.begin(), v2Neighbors.end(), inserter(triangles, triangles.begin()));
+			
+			return triangles;
+		}
+
+
+		template <class TVertexTag, class TEdgeTag> map<unsigned long long, unsigned long long> GraphBase<TVertexTag, TEdgeTag>::GetAllEdgeTriangleCount() {
+			map< unsigned long long, unsigned long long> edgeTriangleCount;
+			for(map< unsigned long long, GraphEdgeBase<TEdgeTag> >::iterator i = edges.begin(); i != edges.end(); i++) {
+				edgeTriangleCount[i->first] = GetEdgeTriangles(i->first).size();
+			}
+			return edgeTriangleCount;
+		}
+
+		template <class TVertexTag, class TEdgeTag> void GraphBase<TVertexTag, TEdgeTag>::GetEdgeVertices(unsigned long long & vertexIx1, unsigned long long & vertexIx2, unsigned long long hash) {
+			vertexIx1 = hash / MAX_VERTEX_COUNT;
+			vertexIx2 = hash % MAX_VERTEX_COUNT;
 		}
 	}
 }
