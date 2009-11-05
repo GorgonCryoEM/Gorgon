@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.5  2008/11/18 18:10:24  ssa1
+//   Changing the scaling functions when doing graph matching to find correspondences
+//
 //   Revision 1.4  2008/09/29 16:19:30  ssa1
 //   Adding in CVS meta information
 //
@@ -39,6 +42,7 @@ namespace wustl_mm {
 			bool IsHelix();
 			bool IsSheet();
 			int GetLengthResidues();
+			int GetLengthBonds();
 			float GetLengthAngstroms();
 			int GetSerialNumber();
 			int GetStartPosition();
@@ -66,6 +70,10 @@ namespace wustl_mm {
 
 		int SecondaryStructure::GetLengthResidues() {
 			return (endPosition - startPosition + 1);
+		}
+
+		int SecondaryStructure::GetLengthBonds() {
+			return (endPosition - startPosition);
 		}
 
 		float SecondaryStructure::GetLengthAngstroms() {
