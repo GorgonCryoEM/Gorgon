@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.32.2.16  2009/10/29 16:34:09  schuhs
+//   Increase max number of graph nodes
+//
 //   Revision 1.32.2.15  2009/10/08 21:48:37  schuhs
 //   Making helix constraints work (with new indices)
 //
@@ -183,7 +186,7 @@ namespace wustl_mm {
 		double MISSING_HELIX_PENALTY = 2;
 		double MISSING_SHEET_PENALTY = 2;
 		double MISSING_HELIX_PENALTY_SCALED = 0;
-		double MISSING_SHEET_PENALTY_SCALED = 0;
+		double MISSING_SHEET_PENALTY_SCALED = 1;
 		double EUCLIDEAN_LOOP_PENALTY = 5;
 		double START_END_MISSING_HELIX_PENALTY = 5;
 		double HELIX_WEIGHT_COEFFICIENT = 1.0;
