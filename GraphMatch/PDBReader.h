@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.14.2.6  2009/09/10 16:25:00  schuhs
+//   Set graph weights in units of residues instead of Angstroms, as was done in the SMI paper code.
+//
 //   Revision 1.14.2.5  2009/09/08 14:54:14  schuhs
 //   More changes to reproduce results from SMI paper when SMIPAPER_MODE flag is set.
 //
@@ -254,6 +257,8 @@ namespace wustl_mm {
 					} else {
 						//graph->SetCost(node+1, node+2, structures[i]->GetLengthAngstroms()); 
 						graph->SetCost(node+1, node+2, structures[i]->GetLengthResidues()); 
+						// should be shorter by 1 since # bonds = # residues - 1
+						//graph->SetCost(node+1, node+2, structures[i]->GetLengthBonds()); 
 					}
 					graph->SetType(node+1, node+2, structures[i]->secondaryStructureType); 
 
@@ -262,6 +267,8 @@ namespace wustl_mm {
 					} else {
 						//graph->SetCost(node+2, node+1, structures[i]->GetLengthAngstroms()); 
 						graph->SetCost(node+2, node+1, structures[i]->GetLengthResidues()); 
+						// should be shorter by 1 since # bonds = # residues - 1
+						//graph->SetCost(node+2, node+1, structures[i]->GetLengthBonds()); 
 					}
 					graph->SetType(node+2, node+1, structures[i]->secondaryStructureType); 
 
