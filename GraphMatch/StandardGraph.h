@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.13.2.14  2009/10/08 21:49:51  schuhs
+//   Storing paths in both directions
+//
 //   Revision 1.13.2.13  2009/10/08 19:13:59  schuhs
 //   Removing data structures that are unnecessary and that require a lot of memory. Adding method to merge nearby sheets.
 //
@@ -264,10 +267,14 @@ namespace wustl_mm {
 			int seqNode = 1;
 			for(int i = 0; i < (int)pdbStructures.size(); i++) {
 				if(pdbStructures[i]->secondaryStructureType == GRAPHEDGE_HELIX) {
-					printf("\tHelix %d \t\t(%2d,%2d)\t Length: %f \t Start Pos: %d \t End Pos: %d\n", pdbStructures[i]->serialNumber, seqNode, seqNode+1, pdbStructures[i]->GetLengthAngstroms(), pdbStructures[i]->startPosition, pdbStructures[i]->endPosition);
+					printf("\tHelix %d \t\t(%2d,%2d)\t Length: %d \t Start Pos: %d \t End Pos: %d\n", pdbStructures[i]->serialNumber, seqNode, seqNode+1, pdbStructures[i]->GetLengthResidues(), pdbStructures[i]->startPosition, pdbStructures[i]->endPosition);
+					//printf("\tHelix %d \t\t(%2d,%2d)\t Length: %d \t Start Pos: %d \t End Pos: %d\n", pdbStructures[i]->serialNumber, seqNode, seqNode+1, pdbStructures[i]->GetLengthBonds(), pdbStructures[i]->startPosition, pdbStructures[i]->endPosition);
+					//printf("\tHelix %d \t\t(%2d,%2d)\t Length: %f \t Start Pos: %d \t End Pos: %d\n", pdbStructures[i]->serialNumber, seqNode, seqNode+1, pdbStructures[i]->GetLengthAngstroms(), pdbStructures[i]->startPosition, pdbStructures[i]->endPosition);
 					seqNode += 2;
 				} else {
-					printf("\tSheet Strand %s-%d \t(%2d)   \t Length: %f \t Start Pos: %d \t End Pos: %d\n", pdbStructures[i]->secondaryStructureID, pdbStructures[i]->serialNumber, seqNode, pdbStructures[i]->GetLengthAngstroms(), pdbStructures[i]->startPosition, pdbStructures[i]->endPosition);
+					printf("\tSheet Strand %s-%d \t(%2d)   \t Length: %d \t Start Pos: %d \t End Pos: %d\n", pdbStructures[i]->secondaryStructureID, pdbStructures[i]->serialNumber, seqNode, pdbStructures[i]->GetLengthResidues(), pdbStructures[i]->startPosition, pdbStructures[i]->endPosition);
+					//printf("\tSheet Strand %s-%d \t(%2d)   \t Length: %d \t Start Pos: %d \t End Pos: %d\n", pdbStructures[i]->secondaryStructureID, pdbStructures[i]->serialNumber, seqNode, pdbStructures[i]->GetLengthBonds(), pdbStructures[i]->startPosition, pdbStructures[i]->endPosition);
+					//printf("\tSheet Strand %s-%d \t(%2d)   \t Length: %f \t Start Pos: %d \t End Pos: %d\n", pdbStructures[i]->secondaryStructureID, pdbStructures[i]->serialNumber, seqNode, pdbStructures[i]->GetLengthAngstroms(), pdbStructures[i]->startPosition, pdbStructures[i]->endPosition);
 					seqNode += 1;
 				}
 			}
@@ -343,6 +350,23 @@ namespace wustl_mm {
 				printf("\n");
 			}
 			
+			// print out the euclidean matrix
+			printf("\n  Euclidean distances:\n");
+			for(int i = 0; i < nodeCount; i++) {
+				printf("   %d\t", i+1);
+				for(int j = 0; j < nodeCount; j++) {
+					temp = 'E';
+					if(euclideanMatrix[i][j] == MAXINT) {
+						printf(" %c         \t|", temp);
+					} else {
+						printf(" %c %f\t|", temp, euclideanMatrix[i][j]);
+					}
+				}
+				printf("\n");
+			}
+
+
+
 			// print out the node weights
 			bool hasWeightedNodes = false;
 			for(int i = 0; i < nodeCount; i++) {
