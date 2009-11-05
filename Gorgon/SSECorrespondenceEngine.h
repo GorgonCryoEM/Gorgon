@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.7.2.11  2009/10/29 16:32:26  schuhs
+//   Add text labels of node numbers to sheet and helix corners
+//
 //   Revision 1.7.2.10  2009/10/08 21:52:21  schuhs
 //   Rendering sheets by drawing colored spheres rather than a colored volume. Eliminates the need for multiple stored volumes.
 //
@@ -515,15 +518,15 @@ namespace wustl_mm {
 			if (showSheetColors) {
 
 				
-				cout << "debug 1" << endl;
+				//cout << "debug 1" << endl;
 				// draw internal nodes of sheets
-				cout << "debug 2" << endl;
+				//cout << "debug 2" << endl;
 				float colorR, colorG, colorB, colorA;
-				cout << "debug 3" << endl;
+				//cout << "debug 3" << endl;
 				for(int i = 0; i < (int)skeleton->skeletonHelixes.size(); i++) {
-				cout << "debug 4" << endl;
+				//cout << "debug 4" << endl;
 					if (skeleton->skeletonHelixes[i]->geometricShapeType == GRAPHEDGE_SHEET) {
-						cout << "debug 5" << endl;
+						//cout << "debug 5" << endl;
 						skeleton->skeletonHelixes[i]->GetColor(colorR, colorG, colorB, colorA);	
 						glColor4f(colorR, colorG, colorB, colorA);
 						GLfloat diffuseMaterial[4] = {colorR, colorG, colorB, colorA};
@@ -539,16 +542,16 @@ namespace wustl_mm {
 						glMaterialfv(GL_FRONT, GL_SPECULAR,  specularMaterial) ;
 						glMaterialf(GL_FRONT, GL_SHININESS, 0.1);
 
-						cout << "debug 6" << endl;
+						//cout << "debug 6" << endl;
 						glPushAttrib(GL_LIGHTING_BIT | GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
-						cout << "debug 7" << endl;
+						//cout << "debug 7" << endl;
 
 						for(int j = 0; j < (int)skeleton->skeletonHelixes[i]->internalCells.size(); j++) {
 							Renderer::DrawSphere(Vector3DFloat(skeleton->skeletonHelixes[i]->internalCells[j].x, skeleton->skeletonHelixes[i]->internalCells[j].y, skeleton->skeletonHelixes[i]->internalCells[j].z), 0.25);
 						}
-						cout << "debug 8" << endl;
+						//cout << "debug 8" << endl;
 						glPopAttrib();
-						cout << "debug 9" << endl;
+						//cout << "debug 9" << endl;
 					}
 				}
 

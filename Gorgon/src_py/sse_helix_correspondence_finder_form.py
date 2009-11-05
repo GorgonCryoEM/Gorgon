@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.36.2.12  2009/10/08 21:47:34  schuhs
+#   no longer setting colors of structures when rendering paths
+#
 #   Revision 1.36.2.11  2009/09/25 15:26:56  schuhs
 #   Comment out code that clears all constraints. This preserves the constraints loaded from the settings file.
 #
@@ -606,16 +609,16 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
 
             
             for j in range(result.getNodeCount()):
-                print "iterating. j = " + str(j)
+                # print "iterating. j = " + str(j)
                 if isSecondHelixNode == False:
 
-                    print "j = " + str(j)
+                    # print "j = " + str(j)
                     direction = Match.FORWARD
 
                     # predicted helix or strand in sequence graph
                     #predicted = library.structurePrediction.secelDict[j]
-                    print "predicted is element " + str(j - helicesPassed) + " from secelDict, which has " + str(len(library.structurePrediction.secelDict)) + " entries" 
-                    print "secelType says element " + str(j - helicesPassed) + " is a " + str(library.structurePrediction.secelType[j - helicesPassed])
+                    # print "predicted is element " + str(j - helicesPassed) + " from secelDict, which has " + str(len(library.structurePrediction.secelDict)) + " entries" 
+                    # print "secelType says element " + str(j - helicesPassed) + " is a " + str(library.structurePrediction.secelType[j - helicesPassed])
                     predicted = library.structurePrediction.secelDict[j - helicesPassed]
                     predictedType = library.structurePrediction.secelType[j - helicesPassed] # 'helix' or 'strand'
                     if predictedType == 'helix':
@@ -623,12 +626,12 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
 
 
                     # observed helix or sheet in skeleton graph
-                    print "secelDict has size " + str(len(library.structurePrediction.secelDict))
+                    # print "secelDict has size " + str(len(library.structurePrediction.secelDict))
                     # j is a helix node in the sequence graph
                     # n1 and n2 are skeleton graph nodes for entry and exit points of the helix
                     n1 = result.getSkeletonNode(j)
-                    print "n1 is " + str(n1)
-                    print "result says the number of helices is " + str(result.getHelixCount())
+                    # print "n1 is " + str(n1)
+                    # print "result says the number of helices is " + str(result.getHelixCount())
                     if (n1 < 2 * result.getHelixCount() and n1 >= 0):
                         observedType = 'helix'
                     elif n1 >= 2 * result.getHelixCount():
@@ -636,32 +639,32 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
                     else:
                         observedType = 'none'
                         print "error!!!"
-                    print "the observed type is " + str(observedType)
+                    # print "the observed type is " + str(observedType)
                         
                     isHelix = (n1 < 2 * result.getHelixCount())
                     #isSheet = !(isHelix)
                     #if (isHelix):
                     if observedType == 'helix':
-                        print "node " + str(n1) + " is a helix"
+                        # print "node " + str(n1) + " is a helix"
                         isSecondHelixNode = True
                         n2 = result.getSkeletonNode(j+1)
                         if n1 < n2:
-                            print "forward match, nodes are " + str(n1) + " and " + str(n2)
+                            # print "forward match, nodes are " + str(n1) + " and " + str(n2)
                             direction = Match.FORWARD
                         else:
-                            print "reverse match, nodes are " + str(n1) + " and " + str(n2)
+                            # print "reverse match, nodes are " + str(n1) + " and " + str(n2)
                             direction = Match.REVERSE
                     elif observedType == 'sheet':
-                        print "node " + str(n1) + " is a sheet"
+                        # print "node " + str(n1) + " is a sheet"
                         direction = Match.FORWARD
-                    elif observedType == 'none':
-                        print "node " + str(n1) + " is not a sheet or a helix"
+                    #elif observedType == 'none':
+                        # print "node " + str(n1) + " is not a sheet or a helix"
                                             
                     # lookup which helix from skeleton graph these nodes refer to
                     observedNo = result.nodeToHelix(n1)
-                    print "graph index " + str(n1) + " corresponds to skeleton SSE " + str(observedNo)
-                    print "observed is element " + str(observedNo) + " from helixDict, which has " + str(len(library.structureObservation.helixDict)) + " entries" 
-                    print "sheetDict has " + str(len(library.structureObservation.sheetDict)) + " entries" 
+                    # print "graph index " + str(n1) + " corresponds to skeleton SSE " + str(observedNo)
+                    # print "observed is element " + str(observedNo) + " from helixDict, which has " + str(len(library.structureObservation.helixDict)) + " entries" 
+                    # print "sheetDict has " + str(len(library.structureObservation.sheetDict)) + " entries" 
                     if observedNo >= 0:
                         if isHelix:
                             # helix in skeleton graph
@@ -691,11 +694,11 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
             # now matchList holds all the helix correspondences for a single match result
 
             # create Correspondence object for this correspondence
-            print "Creating correspondence object for this correspondence."
+            # print "Creating correspondence object for this correspondence."
             corr = Correspondence(library=library, matchList=matchList, score=result.getCost())
             
             # add to list of correspondences
-            print "Appending this correspondence object to list."
+            #print "Appending this correspondence object to list."
             corrList.append(corr)
             
         # corrList now holds all correspondences between the sequence and the graph,
