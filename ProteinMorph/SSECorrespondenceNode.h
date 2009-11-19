@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.1  2009/08/26 14:58:55  ssa1
+//   Adding in Flexible fitting clique search
+//
 
 
 #ifndef PROTEINMORPH_SSE_CORRESPONDENCE_NODE_H
@@ -25,17 +28,20 @@ namespace wustl_mm {
 	namespace Protein_Morph {
 		class SSECorrespondenceNode {
 		public:
-			SSECorrespondenceNode(unsigned int pIndex, unsigned int qIndex);
+			SSECorrespondenceNode(unsigned int pIndex, unsigned int qIndex, bool isForward);
 			unsigned int GetPIndex();
 			unsigned int GetQIndex();
+			bool IsForward(); // Specifies whether q is aligned in the same direction as p, or whether q has swapped directions.
 		private:
 			unsigned int pIndex;
 			unsigned int qIndex;
+			bool directionForward;
 		};
 
-		SSECorrespondenceNode::SSECorrespondenceNode(unsigned int pIndex, unsigned int qIndex) {
+		SSECorrespondenceNode::SSECorrespondenceNode(unsigned int pIndex, unsigned int qIndex, bool isForward) {
 			this->pIndex = pIndex;
 			this->qIndex = qIndex;
+			directionForward = isForward;
 		}
 
 		unsigned int SSECorrespondenceNode::GetPIndex() {
@@ -44,6 +50,10 @@ namespace wustl_mm {
 
 		unsigned int SSECorrespondenceNode::GetQIndex(){ 
 			return qIndex;
+		}
+
+		bool SSECorrespondenceNode::IsForward() {
+			return directionForward;
 		}
 
 	}
