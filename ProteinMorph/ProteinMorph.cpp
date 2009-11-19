@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.11  2009/11/04 20:29:38  ssa1
+//   Implementing Triangle based clique search and chain based flexible fitting.
+//
 //   Revision 1.10  2009/10/13 18:09:34  ssa1
 //   Refactoring Volume.h
 //
@@ -152,39 +155,53 @@ int main( int args, char * argv[] ) {
 */
 	SSECorrespondenceFinder finder;
 	//finder.InitializeFeatures(fl1, fl2);
-	if(args != 15) {
-		printf("ProteinMorph [method] [pdb1] [pdb2] [rigidityThreshold] [featureChangeThreshold] [rigidityAngleCoeff] [rigidityCentroidDistanceCoeff] [rigidityFeatureChangeCoeff] [rigidComponentCoeff] [intraComponentCoeff] [jointAngleThreshold] [dihedralAngleThreshold] [centroidDistanceThreshold] [maxSolutionCount]\n");
+	if(args != 17) {
+		printf("ProteinMorph [method] [splitNodes] [multipleSearch] [pdb1(highres)] [pdb2(volume)] [rigidityThreshold] [featureChangeThreshold] [rigidityAngleCoeff] [rigidityCentroidDistanceCoeff] [rigidityFeatureChangeCoeff] [rigidComponentCoeff] [intraComponentCoeff] [jointAngleThreshold] [dihedralAngleThreshold] [centroidDistanceThreshold] [maxSolutionCount]\n");
 		printf("\t[method] : The algorithm to use, 1 : Clique, 2: Greedy Valence, 3: Greedy Valence Triangle based Clique \n");
+		printf("\t[splitNodes] : 0: dont split, 1: split based on direction \n");
+		printf("\t[multipleSearch] : 0: Single Search, 1: Search for multiple instances of pdb1 in pdb2\n");
 	} else {	
-		finder.InitializeFeaturesFromPDBFiles(argv[2], argv[3]);
+		finder.InitializeFeaturesFromPDBFiles(argv[4], argv[5]);
 		finder.InitializeConstants(
-			StringUtils::StringToDouble(argv[4]), 
-			StringUtils::StringToDouble(argv[5]), 
 			StringUtils::StringToDouble(argv[6]), 
 			StringUtils::StringToDouble(argv[7]), 
-			StringUtils::StringToDouble(argv[8]),
+			StringUtils::StringToDouble(argv[8]), 
 			StringUtils::StringToDouble(argv[9]), 
-			StringUtils::StringToDouble(argv[10]), 
+			StringUtils::StringToDouble(argv[10]),
 			StringUtils::StringToDouble(argv[11]), 
 			StringUtils::StringToDouble(argv[12]), 
 			StringUtils::StringToDouble(argv[13]), 
-			StringUtils::StringToInt(argv[14]));
+			StringUtils::StringToDouble(argv[14]), 
+			StringUtils::StringToDouble(argv[15]), 
+			StringUtils::StringToInt(argv[16]));
 
 		finder.PrintFeatureListsMathematica();
 		vector< vector < vector<SSECorrespondenceNode> > > corr;
 		vector < vector<SSECorrespondenceNode> > corr2;
+		bool useDirection = (StringUtils::StringToInt(argv[2]) == 1);
+		bool multipleSearch = (StringUtils::StringToInt(argv[3]) == 1);
+
 		switch(StringUtils::StringToInt(argv[1])) {
 			case 1:
-				corr = finder.GetCliqueBasedFeatureCorrespondence();
+				if(multipleSearch) {
+					printf("Multiple search not implemented for this method \n");
+				} else {
+					corr = finder.GetAStarCliqueBasedFeatureCorrespondence(true, useDirection);
+				}
 				break;
 			case 2:
-				corr2 = finder.GetValenceBasedFeatureCorrespondence();
+				if(multipleSearch) {
+					corr2 = finder.GetValenceBasedFeatureCorrespondenceSet(false, useDirection);
+				} else {
+					corr2 = finder.GetValenceBasedFeatureCorrespondence(true, useDirection);
+				}
 				break;
 			case 3:
-				corr2 = finder.GetValenceTriangleBasedFeatureCorrespondence();
-				break;
-			case 4:
-				corr2 = finder.GetValenceBasedFeatureCorrespondenceSet();
+				if(multipleSearch) {
+					corr2 = finder.GetValenceBasedFeatureCorrespondenceSet(true, useDirection);
+				} else {
+					corr2 = finder.GetValenceTriangleBasedFeatureCorrespondence(true, useDirection);
+				}
 				break;
 			default:
 				printf("Unknown method\n");

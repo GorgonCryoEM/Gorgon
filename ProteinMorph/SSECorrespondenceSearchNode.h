@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.5  2009/11/04 20:29:38  ssa1
+//   Implementing Triangle based clique search and chain based flexible fitting.
+//
 //   Revision 1.4  2009/10/13 18:09:34  ssa1
 //   Refactoring Volume.h
 //
@@ -45,7 +48,7 @@ namespace wustl_mm {
 
 			float GetCost();
 			vector<SSECorrespondenceSearchNode *> GetChildNodes(vector<SSECorrespondenceNode> & allNodes, vector< vector<float> > & pairCompatibility, float featureChangeCoeff, float rigidComponentCoeff, float intraComponentCoeff);
-			void PrintSolution(vector<SSECorrespondenceNode> & allNodes);
+			void PrintSolution(vector<SSECorrespondenceNode> & allNodes, bool useDirection);
 			GraphBase<unsigned int, bool> GetChildGraph(vector<SSECorrespondenceNode> & allNodes, vector<unsigned long long> clique);
 		private:
 			float GetCliqueCost(vector<unsigned long long> & clique, float featureChangeCoeff, float rigidComponentCoeff);
@@ -177,7 +180,7 @@ namespace wustl_mm {
 			return corr;
 		}
 
-		void SSECorrespondenceSearchNode::PrintSolution(vector<SSECorrespondenceNode> & allNodes) {
+		void SSECorrespondenceSearchNode::PrintSolution(vector<SSECorrespondenceNode> & allNodes, bool useDirection) {
 			vector<unsigned int> nodes;
 			int firstCorr = -1;
 			printf("corr= {\n");
@@ -194,12 +197,21 @@ namespace wustl_mm {
 					if(j != 0) {
 						printf(",");
 					}
-					printf("{%d, %d}", allNodes[nodes[j]].GetPIndex(), allNodes[nodes[j]].GetQIndex());
+					if(useDirection) {
+						if(allNodes[nodes[j]].IsForward()) {
+							printf("{{%d, %d}, {%d, %d}}", allNodes[nodes[j]].GetPIndex(), 0, allNodes[nodes[j]].GetQIndex(), 0);
+						} else {
+							printf("{{%d, %d}, {%d, %d}}", allNodes[nodes[j]].GetPIndex(), 0, allNodes[nodes[j]].GetQIndex(), 1);
+						}
+					}
+					else {
+						printf("{%d, %d}", allNodes[nodes[j]].GetPIndex(), allNodes[nodes[j]].GetQIndex());
+					}
 				}
 				printf("}");
 			}
 			printf("};\n\n");
-			printf("Print[\"Cost = \", %f];\n", cost);
+			printf("corr = Sort[corr, Length[#1] > Length[#2] &];\n");
 			printf("printFinalOutput[corr, fl1, fl2, %d]\n", firstCorr);
 		}
 	}
