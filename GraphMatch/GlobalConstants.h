@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.32.2.17  2009/11/05 17:39:41  schuhs
+//   Enable the length-dependent strand-sheet cost
+//
 //   Revision 1.32.2.16  2009/10/29 16:34:09  schuhs
 //   Increase max number of graph nodes
 //
@@ -169,7 +172,13 @@ namespace wustl_mm {
 
 		const float HELIX_C_ALPHA_TO_ANGSTROMS = 1.5f;
 		//const float LOOP_C_ALPHA_TO_ANGSTROMS = 3.8f;
-		const float LOOP_C_ALPHA_TO_ANGSTROMS = 3.8f/1.17f;
+		//const float LOOP_C_ALPHA_TO_ANGSTROMS = 3.8f/1.17f; // ~3.25
+		//const float LOOP_C_ALPHA_TO_ANGSTROMS = 2.0f;
+		//const float LOOP_C_ALPHA_TO_ANGSTROMS = 1.5f;
+		//const float LOOP_C_ALPHA_TO_ANGSTROMS = 2.2f;
+		//const float LOOP_C_ALPHA_TO_ANGSTROMS = 3.8f / 1.5f; // ~2.5
+		const float LOOP_SCALE_FACTOR = 0.6667f;
+		const float LOOP_C_ALPHA_TO_ANGSTROMS = 3.8f * LOOP_SCALE_FACTOR;
 
 		char SSE_FILE_NAME[100];
 		char VRML_HELIX_FILE_NAME[100];
