@@ -15,6 +15,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.15.2.28  2009/11/24 22:49:55  schuhs
+//   Changed cutoff function to handle loops and strands differently
+//
 //   Revision 1.15.2.27  2009/11/05 17:39:14  schuhs
 //   Several changes in attempt to improve sheet matching: Comment out sheet capacity code and replace with comparison of strand length to expected sheet strand length; Change sheet costs from num of voxels to expected strand length (sqrt of normalized sheet size); Add debug console messages to cost computing methods; Rescale the Euclidean matrix from units of Angstroms to residues (but realize now that the helix edges are actually not in residue units, they're scaled by the wrong amount)
 //
@@ -631,7 +634,8 @@ namespace wustl_mm {
 					} else 
 					//if((qj != -1) && ((int)(patternGraph->adjacencyMatrix[d-1][d][0] + 0.01) == GRAPHEDGE_LOOP) && (baseGraph->euclideanMatrix[qj-1][qp-1] - 3.0 > (patternLength))){
 					if((qj != -1) && ((int)(patternGraph->adjacencyMatrix[d-1][d][0] + 0.01) == GRAPHEDGE_LOOP)) {
-						if (((int)(patternGraph->adjacencyMatrix[d-1][d-1][0] + 0.01) == GRAPHNODE_SHEET || (int)(patternGraph->adjacencyMatrix[d][d][0] + 0.01) == GRAPHNODE_SHEET) && (baseGraph->euclideanMatrix[qj-1][qp-1] > (patternLength * 1.5 * EUCLIDEAN_VOXEL_TO_PDB_RATIO / LOOP_C_ALPHA_TO_ANGSTROMS )) ){					
+						//TEMPif (((int)(patternGraph->adjacencyMatrix[d-1][d-1][0] + 0.01) == GRAPHNODE_SHEET || (int)(patternGraph->adjacencyMatrix[d][d][0] + 0.01) == GRAPHNODE_SHEET) && (baseGraph->euclideanMatrix[qj-1][qp-1] > (patternLength * 1.5 * EUCLIDEAN_VOXEL_TO_PDB_RATIO / LOOP_C_ALPHA_TO_ANGSTROMS )) ){					
+						if (((int)(patternGraph->adjacencyMatrix[d-1][d-1][0] + 0.01) == GRAPHNODE_SHEET || (int)(patternGraph->adjacencyMatrix[d][d][0] + 0.01) == GRAPHNODE_SHEET) && (baseGraph->euclideanMatrix[qj-1][qp-1] > (patternLength * 1.0 * EUCLIDEAN_VOXEL_TO_PDB_RATIO / LOOP_C_ALPHA_TO_ANGSTROMS )) ){					
 							if (debugMsg) { cout << "  -- -- -- NOT ALLOWED (LOOP WITH STRAND) -- -- -- " << endl; }		
 							return -1;
 						}
