@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.32.2.18  2009/11/24 22:38:38  schuhs
+//   Change scale factor applied to loops from 1.17 to 1.5, add new parameter to set this factor.
+//
 //   Revision 1.32.2.17  2009/11/05 17:39:41  schuhs
 //   Enable the length-dependent strand-sheet cost
 //
@@ -171,14 +174,7 @@ namespace wustl_mm {
 		const int WONG_HASH_TABLE_SIZE = 1024;
 
 		const float HELIX_C_ALPHA_TO_ANGSTROMS = 1.5f;
-		//const float LOOP_C_ALPHA_TO_ANGSTROMS = 3.8f;
-		//const float LOOP_C_ALPHA_TO_ANGSTROMS = 3.8f/1.17f; // ~3.25
-		//const float LOOP_C_ALPHA_TO_ANGSTROMS = 2.0f;
-		//const float LOOP_C_ALPHA_TO_ANGSTROMS = 1.5f;
-		//const float LOOP_C_ALPHA_TO_ANGSTROMS = 2.2f;
-		//const float LOOP_C_ALPHA_TO_ANGSTROMS = 3.8f / 1.5f; // ~2.5
-		const float LOOP_SCALE_FACTOR = 0.6667f;
-		const float LOOP_C_ALPHA_TO_ANGSTROMS = 3.8f * LOOP_SCALE_FACTOR;
+		const float LOOP_C_ALPHA_TO_ANGSTROMS = 3.8f / 1.5f; // 1.5 works well on test data
 
 		char SSE_FILE_NAME[100];
 		char VRML_HELIX_FILE_NAME[100];
