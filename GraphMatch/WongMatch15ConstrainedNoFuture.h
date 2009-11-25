@@ -15,6 +15,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.15.2.29  2009/11/25 17:59:20  schuhs
+//   Change cutoff function so that it applies uniformly to all loops. Match results look better now.
+//
 //   Revision 1.15.2.28  2009/11/24 22:49:55  schuhs
 //   Changed cutoff function to handle loops and strands differently
 //
@@ -413,49 +416,9 @@ namespace wustl_mm {
 				(int)(baseGraph->adjacencyMatrix[qp-1][qp-1][0] + 0.01) == GRAPHNODE_SHEET ) {
 				cost = 0;
 				//cout << " ... original cost = " << cost << endl;
-
-
 				cost = abs(patternGraph->nodeWeights[p-1] - baseGraph->nodeWeights[qp-1]);
 				//cout << " ... cost to match strand " << p << " to sheet " << qp << " is " << cost << endl;
-
-
-				/* comment out capacity code
-				// scale the original capacity by the a user-specified parameter
-				double capacity = baseGraph->nodeWeights[qp-1] * SHEET_CAPACITY_COEFFICIENT;
-				//cout << " ... original capacity = " << capacity << endl;
-
-				// walk up tree finding nodes where this sheet was matched to another strand, decreasing
-				// the sheet capacity by the strand length each time a match is found.
-				bool continueLoop = true;
-				while(continueLoop) {
-					// stop if at top of tree
-					if(currentNode->parentNode == NULL) {
-						 break;
-					}
-					// if the current node ended with a match to this sheet, subtract the strand length from the capacity
-					if (qp == currentNode->n2Node) {
-						int matchedNode = currentNode->n1Node;
-						capacity -= patternGraph->nodeWeights[matchedNode-1];
-						//cout << " ... one match at node qp = " << qp << ", p = " << matchedNode << " ... new capacity = " << capacity << endl;
-					}
-					// move one level up the tree
-					currentNode = currentNode->parentNode;		
-				}
-				//cout << " ... unused capacity = " << capacity << endl;
-
-				// if capacity has all been used, penalize this match by the capacity
-				if (capacity < 0) {
-					cost -= capacity; // capacity is negative, so cost will be positive
-					//cout << " ... negative capacity. cost should be nonzero now." << endl;
-				}
-				// if unused capacity remains, add no penalty
-				if (cost > 0) {
-					//cout << " ... match cost for base graph node " << qp << " = " << cost << endl;
-				}
-				*/ 
-				//end comment out capacity code
 			}
-
 			return cost;
 
 		}
@@ -520,7 +483,6 @@ namespace wustl_mm {
 			int skippedSheets = 0;
 
 			// Adding the length of the skipped helixes
-			// TODO: Test and verify that this is doing the correct thing. I think it might be missing loops.
 			for(int i = 1; i < m; i++) {
 				patternLength += patternGraph->adjacencyMatrix[d+i-1][d+i-1][1];
 				if (patternGraph->adjacencyMatrix[d+i-1][d+i-1][0] == GRAPHNODE_SHEET) {
@@ -560,10 +522,7 @@ namespace wustl_mm {
 			bool euclideanEstimate = false;
 			double weight = 1.0;
 
-			bool sheetSheet = false; // for debugging
-
 			// if edge begins with an unmatched node in the base graph
-			// TODO: I think this will always be LOOP_WEIGHT_COEFFICIENT, right?
 			if(qj == -1) { // special handling for missing helixes at the ends
 				baseLength = 0;
 				switch((int)(patternGraph->adjacencyMatrix[d-1][d][0] + 0.01)) {
@@ -589,13 +548,8 @@ namespace wustl_mm {
 					case(GRAPHEDGE_LOOP):
 						weight = LOOP_WEIGHT_COEFFICIENT;
 						break;
-					// the following line changes the behavior:
-					//case(GRAPHEDGE_LOOP_EUCLIDEAN):
-					//	weight = LOOP_WEIGHT_COEFFICIENT;
-					//	break;
 					case(GRAPHNODE_SHEET): // two strands in a row match to the same sheet
 						//cout << "---> sheet to sheet case. parameters: " << d << "," << m << "," << qj << "," << qp << endl;
-						sheetSheet = true;
 						weight = LOOP_WEIGHT_COEFFICIENT;
 						break;
 				}
@@ -610,12 +564,6 @@ namespace wustl_mm {
 					return -1;
 				}		
 				if (SMIPAPER_MODE == 1) {
-					// TODO: Confirm that this code makes sense!
-
-					//if(qj != -1){
-						//cout << "euclidian dist is " << baseGraph->euclideanMatrix[qj-1][qp-1] << ", graph dist is " << (patternGraph->adjacencyMatrix[d-1][d][1] * EUCLIDEAN_VOXEL_TO_PDB_RATIO ) << endl;
-						//cout << "euclidian dist alt is " << baseGraph->euclideanMatrix[qj-1][qp-1] << ", graph dist is " << (patternLength * EUCLIDEAN_VOXEL_TO_PDB_RATIO ) << endl;
-					//}
 					if((qj != -1) && (baseGraph->euclideanMatrix[qj-1][qp-1] > (patternGraph->adjacencyMatrix[d-1][d][1] * EUCLIDEAN_VOXEL_TO_PDB_RATIO ))){
 						return -1;
 					}
@@ -623,18 +571,11 @@ namespace wustl_mm {
 					if (debugMsg) { cout << "  -- euclidean dist = " << baseGraph->euclideanMatrix[qj-1][qp-1] << ", patternLength = " << patternLength << ", loop fudge factor = " << EUCLIDEAN_VOXEL_TO_PDB_RATIO / LOOP_C_ALPHA_TO_ANGSTROMS << ", helix fudge factor = " << EUCLIDEAN_VOXEL_TO_PDB_RATIO / HELIX_C_ALPHA_TO_ANGSTROMS << endl; }
 					if (debugMsg) { cout << "  -- scalar ratio required = " << baseGraph->euclideanMatrix[qj-1][qp-1] / patternLength << ", additive headroom = " << baseGraph->euclideanMatrix[qj-1][qp-1] - patternLength << endl; }
 
-					//if((qj != -1) && (baseGraph->euclideanMatrix[qj-1][qp-1] > (patternLength * EUCLIDEAN_VOXEL_TO_PDB_RATIO ))){
-					//if((qj != -1) && (baseGraph->euclideanMatrix[qj-1][qp-1] > (patternLength))){
-					//befif((qj != -1) && (baseGraph->euclideanMatrix[qj-1][qp-1] > (patternLength * EUCLIDEAN_VOXEL_TO_PDB_RATIO / LOOP_C_ALPHA_TO_ANGSTROMS ))){
 					if((qj != -1) && ((int)(patternGraph->adjacencyMatrix[d-1][d][0] + 0.01) == GRAPHEDGE_HELIX) && (baseGraph->euclideanMatrix[qj-1][qp-1] > (patternLength * EUCLIDEAN_VOXEL_TO_PDB_RATIO / HELIX_C_ALPHA_TO_ANGSTROMS )) ){					
-					//if((qj != -1) && ((int)(patternGraph->adjacencyMatrix[d-1][d][0] + 0.01) == GRAPHEDGE_HELIX) && (baseGraph->euclideanMatrix[qj-1][qp-1] > (patternLength * 2.5 )) ){					
-					//if((qj != -1) && ((int)(patternGraph->adjacencyMatrix[d-1][d][0] + 0.01) == GRAPHEDGE_HELIX) && (baseGraph->euclideanMatrix[qj-1][qp-1] - 2.0 > (patternLength))){
 						if (debugMsg) { cout << "  -- -- -- NOT ALLOWED (HELIX) -- -- -- " << endl; }
 						return -1;
 					} else 
-					//if((qj != -1) && ((int)(patternGraph->adjacencyMatrix[d-1][d][0] + 0.01) == GRAPHEDGE_LOOP) && (baseGraph->euclideanMatrix[qj-1][qp-1] - 3.0 > (patternLength))){
 					if((qj != -1) && ((int)(patternGraph->adjacencyMatrix[d-1][d][0] + 0.01) == GRAPHEDGE_LOOP)) {
-						//TEMPif (((int)(patternGraph->adjacencyMatrix[d-1][d-1][0] + 0.01) == GRAPHNODE_SHEET || (int)(patternGraph->adjacencyMatrix[d][d][0] + 0.01) == GRAPHNODE_SHEET) && (baseGraph->euclideanMatrix[qj-1][qp-1] > (patternLength * 1.5 * EUCLIDEAN_VOXEL_TO_PDB_RATIO / LOOP_C_ALPHA_TO_ANGSTROMS )) ){					
 						if (((int)(patternGraph->adjacencyMatrix[d-1][d-1][0] + 0.01) == GRAPHNODE_SHEET || (int)(patternGraph->adjacencyMatrix[d][d][0] + 0.01) == GRAPHNODE_SHEET) && (baseGraph->euclideanMatrix[qj-1][qp-1] > (patternLength * 1.0 * EUCLIDEAN_VOXEL_TO_PDB_RATIO / LOOP_C_ALPHA_TO_ANGSTROMS )) ){					
 							if (debugMsg) { cout << "  -- -- -- NOT ALLOWED (LOOP WITH STRAND) -- -- -- " << endl; }		
 							return -1;
@@ -644,34 +585,6 @@ namespace wustl_mm {
 							return -1;
 						}
 					}
-
-					/* old way of cutting off loops
-					else if((qj != -1) && ((int)(patternGraph->adjacencyMatrix[d-1][d][0] + 0.01) == GRAPHEDGE_LOOP) && (baseGraph->euclideanMatrix[qj-1][qp-1] > (patternLength * EUCLIDEAN_VOXEL_TO_PDB_RATIO / LOOP_C_ALPHA_TO_ANGSTROMS )) ){					
-						if (debugMsg) { cout << "  -- -- -- NOT ALLOWED (LOOP) -- -- -- " << endl; }		
-						return -1;
-					}
-					*/
-
-
-
-
-					/*
-					//Adding fudge factor to make sure we dont eliminate short loops, and also avoiding checking helices
-					if((qj != -1) && 
-						((int)(patternGraph->adjacencyMatrix[d-1][d][0] + 0.01) != GRAPHEDGE_HELIX) && 
-					//	//(baseGraph->euclideanMatrix[qj-1][qp-1] * 0.9 > patternGraph->adjacencyMatrix[d-1][d][1])){
-					//	//(baseGraph->euclideanMatrix[qj-1][qp-1] * EUCLIDEAN_VOXEL_TO_PDB_RATIO > patternGraph->adjacencyMatrix[d-1][d][1])){
-						(baseGraph->euclideanMatrix[qj-1][qp-1] * EUCLIDEAN_VOXEL_TO_PDB_RATIO > patternLength) ){
-						//cout << "qj=" << qj << ", qp=" << qp << ", d=" << d << endl;
-						return -1;
-					}
-					*/
-					// applies even to helices!
-					//if((qj != -1) && 
-					//	//(baseGraph->euclideanMatrix[qj-1][qp-1] * EUCLIDEAN_VOXEL_TO_PDB_RATIO/2.0 > patternLength) ){
-					//	(baseGraph->euclideanMatrix[qj-1][qp-1] * 0.5 > patternLength) ){
-					//	return -1;
-					//}
 				}
 			} else { // a skip edge
 				// not sure if these checks really help or if they just waste time
@@ -687,24 +600,10 @@ namespace wustl_mm {
 						return -1;
 					}
 				} else {
-
 					if((qj != -1) && (baseGraph->euclideanMatrix[qj-1][qp-1] > (patternLength * EUCLIDEAN_VOXEL_TO_PDB_RATIO ))){
 						return -1;
 					}
-
-
-					/*
-					if((qj != -1) && 
-					((int)(patternGraph->adjacencyMatrix[d-1][d][0] + 0.01) != GRAPHEDGE_HELIX) && 
-				//	//(baseGraph->euclideanMatrix[qj-1][qp-1] * 0.9 > patternGraph->adjacencyMatrix[d-1][d][1])){
-				//	//(baseGraph->euclideanMatrix[qj-1][qp-1] * EUCLIDEAN_VOXEL_TO_PDB_RATIO > patternGraph->adjacencyMatrix[d-1][d][1])){
-					(baseGraph->euclideanMatrix[qj-1][qp-1] * EUCLIDEAN_VOXEL_TO_PDB_RATIO > patternLength) ){
-					//cout << "qj=" << qj << ", qp=" << qp << ", d=" << d << endl;
-						return -1;
-					}
-					*/
 				}
-
 			}
 
 
