@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.36.2.15  2009/11/29 19:03:13  schuhs
+#   Added code to turn helix and sheet and skeleton rendering on and off
+#
 #   Revision 1.36.2.14  2009/11/25 21:49:44  schuhs
 #   Fixing some bugs that cause crashes when setting up a correspondence
 #
@@ -216,6 +219,9 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
         self.connect(self.ui.checkBoxShowSkeleton, QtCore.SIGNAL("toggled (bool)"), self.skeletonVisibilityChanged)
         self.connect(self.ui.checkBoxShowSheets, QtCore.SIGNAL("toggled (bool)"), self.sheetVisibilityChanged)
         self.connect(self.ui.checkBoxShowHelices, QtCore.SIGNAL("toggled (bool)"), self.helixVisibilityChanged)
+        self.connect(self.ui.checkBoxIncludeSheets, QtCore.SIGNAL("toggled (bool)"), self.sheetIncludeChanged)
+        self.connect(self.ui.checkBoxMissingSheets, QtCore.SIGNAL("toggled (bool)"), self.missingSheetChanged)
+        self.connect(self.ui.checkBoxMissingHelices, QtCore.SIGNAL("toggled (bool)"), self.missingHelixChanged)
         self.connect(self.app.viewers["skeleton"], QtCore.SIGNAL("modelDrawing()"), self.drawOverlay)
         self.ui.tableWidgetCorrespondenceList.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         self.connect(self.ui.tableWidgetCorrespondenceList, QtCore.SIGNAL("customContextMenuRequested (const QPoint&)"), self.customMenuRequested)
@@ -232,26 +238,48 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
         self.loadDefaultParams()
 
     def loadDefaultParams(self):
+        # Graph Settings tab
+        self.ui.spinBoxBorderMarginThreshold.setValue(5)
+        self.ui.doubleSpinBoxEuclideanDistance.setValue(0.0)
+        self.ui.checkBoxIncludeSheets.setChecked(True)
+        #min sheet size
+        #max sheet distance
+        #sheet self-loop length
+
+        self.ui.checkBoxShowSkeleton.setChecked(self.app.viewers['skeleton'].visualizationOptions.ui.checkBoxModelVisible.isChecked())
+        self.ui.checkBoxShowHelices.setChecked(self.app.viewers['sse'].visualizationOptions.ui.checkBoxModelVisible.isChecked())
+        self.ui.checkBoxShowHelixCorners.setChecked(False)
+        self.ui.checkBoxShowSheets.setChecked(self.app.viewers['sse'].visualizationOptions.ui.checkBoxModel2Visible.isChecked())
+        self.ui.checkBoxShowSheetColors.setChecked(False)
+        self.ui.checkBoxShowSheetCorners.setChecked(False)
+        self.ui.checkBoxShowAllPaths.setChecked(False)
+
+
+        # Matching Settings tab
+        self.ui.doubleSpinBoxEuclideanToPDBRatio.setValue(10.0)
         self.ui.radioButtonAbsoluteDifference.setChecked(True)
         self.ui.radioButtonNormalizedDifference.setChecked(False)
         self.ui.radioButtonQuadraticError.setChecked(False)
-        self.ui.doubleSpinBoxEuclideanDistance.setValue(0.0)
-        self.ui.checkBoxMissingHelices.setChecked(False)
-        # adding new checkbox
-        self.ui.checkBoxShowAllPaths.setChecked(False)
-        self.ui.spinBoxMissingHelixCount.setValue(0)
-        
-        self.ui.doubleSpinBoxHelixMissingPenalty.setValue(5.0)
-        self.ui.doubleSpinBoxEndHelixMissingPenalty.setValue(5.0)
-        self.ui.doubleSpinBoxEuclideanLoopUsedPenalty.setValue(5.0)
-        self.ui.doubleSpinBoxHelixImportance.setValue(1.0)
+
         self.ui.doubleSpinBoxLoopImportance.setValue(0.2)
-        #self.ui.doubleSpinBoxAverageMissingHelixLength.setValue(5.0)
-        self.ui.doubleSpinBoxEuclideanToPDBRatio.setValue(10.0)
-        self.ui.spinBoxBorderMarginThreshold.setValue(5)
+        self.ui.doubleSpinBoxEuclideanLoopUsedPenalty.setValue(5.0)
+        
+        self.ui.doubleSpinBoxHelixImportance.setValue(1.0)
+        self.ui.checkBoxMissingHelices.setChecked(False)
+        self.ui.spinBoxMissingHelixCount.setValue(0)
+        self.ui.doubleSpinBoxHelixMissingPenalty.setValue(5.0)
+        self.ui.doubleSpinBoxHelixMissingPenaltyScaled.setValue(0.0)
+        self.ui.doubleSpinBoxEndHelixMissingPenalty.setValue(5.0)
+
+        self.ui.doubleSpinBoxSheetImportance.setValue(1.0)
+        self.ui.checkBoxMissingSheets.setChecked(False)
+        self.ui.spinBoxMissingSheetCount.setValue(0)
+        self.ui.doubleSpinBoxSheetMissingPenalty.setValue(5.0)
+        self.ui.doubleSpinBoxSheetMissingPenaltyScaled.setValue(0.0)
+
+        # Results tab
         self.ui.tableWidgetCorrespondenceList.clearContents()
         self.ui.tabWidget.setCurrentIndex(0)         
-
         self.ui.comboBoxCorrespondences.setCurrentIndex(-1)
 
         self.checkOk()
@@ -352,7 +380,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
         self.app.viewers['sse'].visualizationOptions.ui.checkBoxModel2Visible.setChecked(visible)
         # to render again
         self.viewer.emitModelChanged()
-            
+
     def helixVisibilityChanged(self, visible):
         """Called when the show helix checkbox is checked."""
         #self.visualizationOptions.ui.checkBoxModel2Visible.setChecked(visible)
@@ -360,6 +388,26 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
         # to render again
         self.viewer.emitModelChanged()
             
+    def sheetIncludeChanged(self, include):
+        """Called when the include sheets checkbox is checked."""
+        #if (include == True):
+        #    self.viewer.correspondenceEngine.setConstantInt("INCLUDE_STRANDS", 1)
+        #else:
+        #    self.viewer.correspondenceEngine.setConstantInt("INCLUDE_STRANDS", 0)
+        self.ui.spinBoxMinSheetSize.setEnabled(include)
+        self.ui.doubleSpinBoxMaxSheetDistance.setEnabled(include)
+        self.ui.doubleSpinBoxSheetSelfLoopLength.setEnabled(include)
+
+    def missingHelixChanged(self, checked):
+        """Called when the missing helices checkbox is checked."""
+        self.ui.spinBoxMissingHelixCount.setEnabled(checked)
+
+    def missingSheetChanged(self, checked):
+        """Called when the missing helices checkbox is checked."""
+        self.ui.spinBoxMissingSheetCount.setEnabled(checked)
+
+            
+
     def modelChanged(self):
         if(not self.viewer.loaded) and self.app.actions.getAction("perform_SSEFindHelixCorrespondences").isChecked():
             self.app.actions.getAction("perform_SSEFindHelixCorrespondences").trigger()        
@@ -460,7 +508,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
             print "done loading settings file"
         
     def setConstants(self):
-        #Tab 1
+        #Data Sources tab
         self.viewer.correspondenceEngine.setConstant("SSE_FILE_NAME", str(self.ui.lineEditHelixLengthFile.text()))
         self.viewer.correspondenceEngine.setConstant("VRML_HELIX_FILE_NAME", str(self.ui.lineEditHelixLocationFile.text()))
         self.viewer.correspondenceEngine.setConstant("VRML_SHEET_FILE_NAME", str(self.ui.lineEditSheetLocationFile.text()))
@@ -472,11 +520,21 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
         elif self.sequenceFileName.split('.')[-1].lower() == 'seq':
             self.viewer.correspondenceEngine.setConstant("SEQUENCE_FILE_TYPE", "SEQ")
         
-        #Tab Graph Settings
-        self.viewer.correspondenceEngine.setConstant("MAXIMUM_DISTANCE_SHEET_SKELETON", self.ui.doubleSpinBoxMaxSheetDistance.value())
-        self.viewer.correspondenceEngine.setConstantInt("MINIMUM_SHEET_SIZE", self.ui.spinBoxMinSheetSize.value())
+        #Graph Settings tab
+        self.viewer.correspondenceEngine.setConstantInt("BORDER_MARGIN_THRESHOLD", self.ui.spinBoxBorderMarginThreshold.value())
+        self.viewer.correspondenceEngine.setConstant("EUCLIDEAN_DISTANCE_THRESHOLD", self.ui.doubleSpinBoxEuclideanDistance.value())
+        if (self.ui.checkBoxIncludeSheets == False):
+            self.viewer.correspondenceEngine.setConstantInt("INCLUDE_STRANDS", 0)
+            self.viewer.correspondenceEngine.setConstant("MAXIMUM_DISTANCE_SHEET_SKELETON", 0.0)
+        else:
+            self.viewer.correspondenceEngine.setConstantInt("INCLUDE_STRANDS", 1)
+            self.viewer.correspondenceEngine.setConstant("MAXIMUM_DISTANCE_SHEET_SKELETON", self.ui.doubleSpinBoxMaxSheetDistance.value())
+            self.viewer.correspondenceEngine.setConstantInt("MINIMUM_SHEET_SIZE", self.ui.spinBoxMinSheetSize.value())
+            self.viewer.correspondenceEngine.setConstant("SHEET_SELF_LOOP_LENGTH", self.ui.doubleSpinBoxSheetSelfLoopLength.value())
 
-        #Tab 2
+
+        #Matching Settings tab
+        self.viewer.correspondenceEngine.setConstant("EUCLIDEAN_VOXEL_TO_PDB_RATIO", self.ui.doubleSpinBoxEuclideanToPDBRatio.value())
         if(self.ui.radioButtonAbsoluteDifference.isChecked()):
             self.viewer.correspondenceEngine.setConstantInt("COST_FUNCTION", 1)
         elif (self.ui.radioButtonNormalizedDifference.isChecked()):
@@ -484,34 +542,29 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
         else :
             self.viewer.correspondenceEngine.setConstantInt("COST_FUNCTION", 3)
 
-        self.viewer.correspondenceEngine.setConstant("EUCLIDEAN_DISTANCE_THRESHOLD", self.ui.doubleSpinBoxEuclideanDistance.value())
-                                                      
+        self.viewer.correspondenceEngine.setConstant("LOOP_WEIGHT_COEFFICIENT", self.ui.doubleSpinBoxLoopImportance.value())
+        self.viewer.correspondenceEngine.setConstant("EUCLIDEAN_LOOP_PENALTY", self.ui.doubleSpinBoxEuclideanLoopUsedPenalty.value())
+
+        self.viewer.correspondenceEngine.setConstant("HELIX_WEIGHT_COEFFICIENT", self.ui.doubleSpinBoxHelixImportance.value())
         if(self.ui.checkBoxMissingHelices.isChecked()):
             self.viewer.correspondenceEngine.setConstantInt("MISSING_HELIX_COUNT", self.ui.spinBoxMissingHelixCount.value())
         else:
             self.viewer.correspondenceEngine.setConstantInt("MISSING_HELIX_COUNT", -1)            
+        self.viewer.correspondenceEngine.setConstant("MISSING_HELIX_PENALTY", self.ui.doubleSpinBoxHelixMissingPenalty.value())
+        self.viewer.correspondenceEngine.setConstant("MISSING_HELIX_PENALTY_SCALED", self.ui.doubleSpinBoxHelixMissingPenaltyScaled.value())
+        self.viewer.correspondenceEngine.setConstant("START_END_MISSING_HELIX_PENALTY", self.ui.doubleSpinBoxEndHelixMissingPenalty.value())
         
+        self.viewer.correspondenceEngine.setConstant("SHEET_WEIGHT_COEFFICIENT", self.ui.doubleSpinBoxSheetImportance.value())
         if(self.ui.checkBoxMissingSheets.isChecked()):
             self.viewer.correspondenceEngine.setConstantInt("MISSING_SHEET_COUNT", self.ui.spinBoxMissingSheetCount.value())
         else:
             self.viewer.correspondenceEngine.setConstantInt("MISSING_SHEET_COUNT", -1)            
+        self.viewer.correspondenceEngine.setConstant("MISSING_SHEET_PENALTY", self.ui.doubleSpinBoxSheetMissingPenalty.value())
+        self.viewer.correspondenceEngine.setConstant("MISSING_SHEET_PENALTY_SCALED", self.ui.doubleSpinBoxSheetMissingPenaltyScaled.value())
         
-        
-        #Tab 3
-        self.viewer.correspondenceEngine.setConstant("MISSING_HELIX_PENALTY", self.ui.doubleSpinBoxHelixMissingPenalty.value())
-        self.viewer.correspondenceEngine.setConstant("START_END_MISSING_HELIX_PENALTY", self.ui.doubleSpinBoxEndHelixMissingPenalty.value())
-        self.viewer.correspondenceEngine.setConstant("EUCLIDEAN_LOOP_PENALTY", self.ui.doubleSpinBoxEuclideanLoopUsedPenalty.value())
-        self.viewer.correspondenceEngine.setConstant("HELIX_WEIGHT_COEFFICIENT", self.ui.doubleSpinBoxHelixImportance.value())
-        self.viewer.correspondenceEngine.setConstant("LOOP_WEIGHT_COEFFICIENT", self.ui.doubleSpinBoxLoopImportance.value())
-        #self.viewer.correspondenceEngine.setConstant("MISSING_HELIX_LENGTH", self.ui.doubleSpinBoxAverageMissingHelixLength.value())    
-        self.viewer.correspondenceEngine.setConstant("EUCLIDEAN_VOXEL_TO_PDB_RATIO", self.ui.doubleSpinBoxEuclideanToPDBRatio.value())
-        self.viewer.correspondenceEngine.setConstantInt("BORDER_MARGIN_THRESHOLD", self.ui.spinBoxBorderMarginThreshold.value())
+        # no longer needed?
         self.viewer.correspondenceEngine.setConstantBool("NORMALIZE_GRAPHS", True)        
 
-        #self.viewer.correspondenceEngine.setConstant("MISSING_SHEET_LENGTH", self.ui.doubleSpinBoxAverageMissingSheetLength.value())    
-        self.viewer.correspondenceEngine.setConstant("SHEET_WEIGHT_COEFFICIENT", self.ui.doubleSpinBoxSheetImportance.value())
-        self.viewer.correspondenceEngine.setConstant("MISSING_SHEET_PENALTY", self.ui.doubleSpinBoxSheetMissingPenalty.value())
-        self.viewer.correspondenceEngine.setConstant("SHEET_SELF_LOOP_LENGTH", self.ui.doubleSpinBoxSheetSelfLoopLength.value())
         
     
     
@@ -531,24 +584,26 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
                         self.viewer.correspondenceEngine.setHelixConstraint(match.predicted.serialNo + 1, -1)
 
     def getConstants(self):
-
-        #Tab 1
-        #self.viewer.correspondenceEngine.getConstant("SSE_FILE_NAME", str(self.ui.lineEditHelixLengthFile.text()))
-        #self.viewer.correspondenceEngine.getConstant("VRML_HELIX_FILE_NAME", str(self.ui.lineEditHelixLocationFile.text()))
-        #self.viewer.correspondenceEngine.getConstant("VRML_SHEET_FILE_NAME", str(self.ui.lineEditSheetLocationFile.text()))
-        #self.viewer.correspondenceEngine.getConstant("MRC_FILE_NAME", str(self.ui.lineEditSkeletonFile.text()))
-        #self.sequenceFileName = str(self.ui.lineEditSequenceFile.text())
-        #self.viewer.correspondenceEngine.setConstant("SEQUENCE_FILE_NAME", self.sequenceFileName)
-        #if self.sequenceFileName.split('.')[-1].lower() == 'pdb':
-        #    self.viewer.correspondenceEngine.setConstant("SEQUENCE_FILE_TYPE", "PDB")
-        #elif self.sequenceFileName.split('.')[-1].lower() == 'seq':
-        #    self.viewer.correspondenceEngine.setConstant("SEQUENCE_FILE_TYPE", "SEQ")
         
-        #Tab Graph Settings
-        self.ui.doubleSpinBoxMaxSheetDistance.setValue(self.viewer.correspondenceEngine.getConstantDouble("MAXIMUM_DISTANCE_SHEET_SKELETON"))
+        #Graph Settings tab
+        self.ui.spinBoxBorderMarginThreshold.setValue(self.viewer.correspondenceEngine.getConstantInt("BORDER_MARGIN_THRESHOLD"))
+        self.ui.doubleSpinBoxEuclideanDistance.setValue(self.viewer.correspondenceEngine.getConstantDouble("EUCLIDEAN_DISTANCE_THRESHOLD"))
+        if(self.viewer.correspondenceEngine.getConstantInt("INCLUDE_STRANDS") == 1):
+            self.ui.checkBoxIncludeSheets.setChecked(True)
+            self.ui.spinBoxMinSheetSize.setEnabled(True)
+            self.ui.doubleSpinBoxMaxSheetDistance.setEnabled(True)
+            self.ui.doubleSpinBoxSheetSelfLoopLength.setEnabled(True)
+        else:
+            self.ui.checkBoxIncludeSheets.setChecked(False)
+            self.ui.spinBoxMinSheetSize.setEnabled(False)
+            self.ui.doubleSpinBoxMaxSheetDistance.setEnabled(False)
+            self.ui.doubleSpinBoxSheetSelfLoopLength.setEnabled(False)
         self.ui.spinBoxMinSheetSize.setValue(self.viewer.correspondenceEngine.getConstantInt("MINIMUM_SHEET_SIZE"))
+        self.ui.doubleSpinBoxMaxSheetDistance.setValue(self.viewer.correspondenceEngine.getConstantDouble("MAXIMUM_DISTANCE_SHEET_SKELETON"))
+        self.ui.doubleSpinBoxSheetSelfLoopLength.setValue(self.viewer.correspondenceEngine.getConstantDouble("SHEET_SELF_LOOP_LENGTH")) 
 
-        #Tab 2
+        #Matching settings tab
+        self.ui.doubleSpinBoxEuclideanToPDBRatio.setValue(self.viewer.correspondenceEngine.getConstantDouble("EUCLIDEAN_VOXEL_TO_PDB_RATIO"))
         if(self.viewer.correspondenceEngine.getConstantInt("COST_FUNCTION") == 1):
             self.ui.radioButtonAbsoluteDifference.setChecked(True)
             self.ui.radioButtonNormalizedDifference.setChecked(False)
@@ -562,35 +617,27 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
             self.ui.radioButtonNormalizedDifference.setChecked(False)
             self.ui.radioButtonQuadraticError.setChecked(True)
 
-        self.ui.doubleSpinBoxEuclideanDistance.setValue(self.viewer.correspondenceEngine.getConstantDouble("EUCLIDEAN_DISTANCE_THRESHOLD"))
-                                                      
+        self.ui.doubleSpinBoxLoopImportance.setValue(self.viewer.correspondenceEngine.getConstantDouble("LOOP_WEIGHT_COEFFICIENT"))
+        self.ui.doubleSpinBoxEuclideanLoopUsedPenalty.setValue(self.viewer.correspondenceEngine.getConstantDouble("EUCLIDEAN_LOOP_PENALTY"))
+
+        self.ui.doubleSpinBoxHelixImportance.setValue(self.viewer.correspondenceEngine.getConstantDouble("HELIX_WEIGHT_COEFFICIENT"))
         if (self.viewer.correspondenceEngine.getConstantInt("MISSING_HELIX_COUNT") == -1):
             self.ui.checkBoxMissingHelices.setChecked(False)
         else:
             self.ui.checkBoxMissingHelices.setChecked(True)
             self.ui.spinBoxMissingHelixCount.setValue(self.viewer.correspondenceEngine.getConstantInt("MISSING_HELIX_COUNT"))
+        self.ui.doubleSpinBoxHelixMissingPenalty.setValue(self.viewer.correspondenceEngine.getConstantDouble("MISSING_HELIX_PENALTY"))
+        self.ui.doubleSpinBoxHelixMissingPenaltyScaled.setValue(self.viewer.correspondenceEngine.getConstantDouble("MISSING_HELIX_PENALTY_SCALED"))
+        self.ui.doubleSpinBoxEndHelixMissingPenalty.setValue(self.viewer.correspondenceEngine.getConstantDouble("START_END_MISSING_HELIX_PENALTY"))
         
+        self.ui.doubleSpinBoxSheetImportance.setValue(self.viewer.correspondenceEngine.getConstantDouble("SHEET_WEIGHT_COEFFICIENT")) 
         if (self.viewer.correspondenceEngine.getConstantInt("MISSING_SHEET_COUNT") == -1):
             self.ui.checkBoxMissingSheets.setChecked(False)
         else:
             self.ui.checkBoxMissingSheets.setChecked(True)
             self.ui.spinBoxMissingSheetCount.setValue(self.viewer.correspondenceEngine.getConstantInt("MISSING_SHEET_COUNT"))
-        
-        #Tab 3
-        self.ui.doubleSpinBoxHelixMissingPenalty.setValue(self.viewer.correspondenceEngine.getConstantDouble("MISSING_HELIX_PENALTY"))
-        self.ui.doubleSpinBoxEndHelixMissingPenalty.setValue(self.viewer.correspondenceEngine.getConstantDouble("START_END_MISSING_HELIX_PENALTY"))
-        self.ui.doubleSpinBoxEuclideanLoopUsedPenalty.setValue(self.viewer.correspondenceEngine.getConstantDouble("EUCLIDEAN_LOOP_PENALTY"))
-        self.ui.doubleSpinBoxHelixImportance.setValue(self.viewer.correspondenceEngine.getConstantDouble("HELIX_WEIGHT_COEFFICIENT"))
-        self.ui.doubleSpinBoxLoopImportance.setValue(self.viewer.correspondenceEngine.getConstantDouble("LOOP_WEIGHT_COEFFICIENT"))
-        #self.ui.doubleSpinBoxAverageMissingHelixLength.setValue(self.viewer.correspondenceEngine.getConstantDouble("MISSING_HELIX_LENGTH"))
-        self.ui.doubleSpinBoxEuclideanToPDBRatio.setValue(self.viewer.correspondenceEngine.getConstantDouble("EUCLIDEAN_VOXEL_TO_PDB_RATIO"))
-        self.ui.spinBoxBorderMarginThreshold.setValue(self.viewer.correspondenceEngine.getConstantInt("BORDER_MARGIN_THRESHOLD"))
-
-        #self.ui.doubleSpinBoxAverageMissingSheetLength.setValue(self.viewer.correspondenceEngine.getConstantDouble("MISSING_SHEET_LENGTH"))    
-        self.ui.doubleSpinBoxSheetImportance.setValue(self.viewer.correspondenceEngine.getConstantDouble("SHEET_WEIGHT_COEFFICIENT")) 
         self.ui.doubleSpinBoxSheetMissingPenalty.setValue(self.viewer.correspondenceEngine.getConstantDouble("MISSING_SHEET_PENALTY")) 
-        self.ui.doubleSpinBoxSheetSelfLoopLength.setValue(self.viewer.correspondenceEngine.getConstantDouble("SHEET_SELF_LOOP_LENGTH")) 
-    
+        self.ui.doubleSpinBoxSheetMissingPenaltyScaled.setValue(self.viewer.correspondenceEngine.getConstantDouble("MISSING_SHEET_PENALTY_SCALED"))
 
         
     def populateEmptyResults(self, library):
