@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.36.2.16  2009/11/29 20:55:09  schuhs
+#   Adding code to handle "include sheets" checkbox. Still not done.
+#
 #   Revision 1.36.2.15  2009/11/29 19:03:13  schuhs
 #   Added code to turn helix and sheet and skeleton rendering on and off
 #
@@ -523,7 +526,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
         #Graph Settings tab
         self.viewer.correspondenceEngine.setConstantInt("BORDER_MARGIN_THRESHOLD", self.ui.spinBoxBorderMarginThreshold.value())
         self.viewer.correspondenceEngine.setConstant("EUCLIDEAN_DISTANCE_THRESHOLD", self.ui.doubleSpinBoxEuclideanDistance.value())
-        if (self.ui.checkBoxIncludeSheets == False):
+        if (self.ui.checkBoxIncludeSheets.isChecked() == False):
             self.viewer.correspondenceEngine.setConstantInt("INCLUDE_STRANDS", 0)
             self.viewer.correspondenceEngine.setConstant("MAXIMUM_DISTANCE_SHEET_SKELETON", 0.0)
         else:
