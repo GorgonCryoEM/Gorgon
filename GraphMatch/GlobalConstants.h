@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.32.2.19  2009/11/25 18:21:45  schuhs
+//   Remove extra scale factor parameter for converting loop length from angstroms to residues
+//
 //   Revision 1.32.2.18  2009/11/24 22:38:38  schuhs
 //   Change scale factor applied to loops from 1.17 to 1.5, add new parameter to set this factor.
 //
@@ -148,6 +151,8 @@ namespace wustl_mm {
 		const char * TOKEN_NORMALIZE_GRAPHS = "NORMALIZE_GRAPHS";
 		const char * TOKEN_MISSING_HELIX_PENALTY = "MISSING_HELIX_PENALTY";
 		const char * TOKEN_MISSING_SHEET_PENALTY = "MISSING_SHEET_PENALTY";
+		const char * TOKEN_MISSING_HELIX_PENALTY_SCALED = "MISSING_HELIX_PENALTY_SCALED";
+		const char * TOKEN_MISSING_SHEET_PENALTY_SCALED = "MISSING_SHEET_PENALTY_SCALED";
 		const char * TOKEN_EUCLIDEAN_LOOP_PENALTY = "EUCLIDEAN_LOOP_PENALTY";
 		const char * TOKEN_START_END_MISSING_HELIX_PENALTY = "START_END_MISSING_HELIX_PENALTY";
 		const char * TOKEN_HELIX_WEIGHT_COEFFICIENT = "HELIX_WEIGHT_COEFFICIENT";
@@ -327,6 +332,10 @@ namespace wustl_mm {
 				MISSING_HELIX_PENALTY = doubleValue;
 			} else if(strcmp(token, TOKEN_MISSING_SHEET_PENALTY) == 0) {
 				MISSING_SHEET_PENALTY = doubleValue;
+			} else if(strcmp(token, TOKEN_MISSING_HELIX_PENALTY_SCALED) == 0) {
+				MISSING_HELIX_PENALTY_SCALED = doubleValue;
+			} else if(strcmp(token, TOKEN_MISSING_SHEET_PENALTY_SCALED) == 0) {
+				MISSING_SHEET_PENALTY_SCALED = doubleValue;
 			} else if(strcmp(token, TOKEN_EUCLIDEAN_LOOP_PENALTY) == 0) {
 				EUCLIDEAN_LOOP_PENALTY = doubleValue;
 			} else if(strcmp(token, TOKEN_START_END_MISSING_HELIX_PENALTY) == 0) {
@@ -393,6 +402,10 @@ namespace wustl_mm {
 				doubleValue = MISSING_HELIX_PENALTY;
 			} else if(strcmp(token, TOKEN_MISSING_SHEET_PENALTY) == 0) {
 				doubleValue = MISSING_SHEET_PENALTY;
+			} else if(strcmp(token, TOKEN_MISSING_HELIX_PENALTY_SCALED) == 0) {
+				doubleValue = MISSING_HELIX_PENALTY_SCALED;
+			} else if(strcmp(token, TOKEN_MISSING_SHEET_PENALTY_SCALED) == 0) {
+				doubleValue = MISSING_SHEET_PENALTY_SCALED;
 			} else if(strcmp(token, TOKEN_EUCLIDEAN_LOOP_PENALTY) == 0) {
 				doubleValue = EUCLIDEAN_LOOP_PENALTY;
 			} else if(strcmp(token, TOKEN_START_END_MISSING_HELIX_PENALTY) == 0) {
@@ -479,6 +492,10 @@ namespace wustl_mm {
 					fscanf(fin, "%lf", &MISSING_HELIX_PENALTY);
 				} else if(strcmp(token, TOKEN_MISSING_SHEET_PENALTY) == 0) {
 					fscanf(fin, "%lf", &MISSING_SHEET_PENALTY);
+				} else if(strcmp(token, TOKEN_MISSING_HELIX_PENALTY_SCALED) == 0) {
+					fscanf(fin, "%lf", &MISSING_HELIX_PENALTY_SCALED);
+				} else if(strcmp(token, TOKEN_MISSING_SHEET_PENALTY_SCALED) == 0) {
+					fscanf(fin, "%lf", &MISSING_SHEET_PENALTY_SCALED);
 				} else if(strcmp(token, TOKEN_EUCLIDEAN_LOOP_PENALTY) == 0) {
 					fscanf(fin, "%lf", &EUCLIDEAN_LOOP_PENALTY);
 				} else if(strcmp(token, TOKEN_START_END_MISSING_HELIX_PENALTY) == 0) {
@@ -544,6 +561,8 @@ namespace wustl_mm {
 			printf("\tTRANSLATE_VOLUMETRIC_COORDINATES = %ld\n", TRANSLATE_VOLUMETRIC_COORDINATES);
 			printf("\tMISSING_HELIX_PENALTY            = %lf\n", MISSING_HELIX_PENALTY);
 			printf("\tMISSING_SHEET_PENALTY            = %lf\n", MISSING_SHEET_PENALTY);
+			printf("\tMISSING_HELIX_PENALTY_SCALED     = %lf\n", MISSING_HELIX_PENALTY_SCALED);
+			printf("\tMISSING_SHEET_PENALTY_SCALED     = %lf\n", MISSING_SHEET_PENALTY_SCALED);
 			printf("\tEUCLIDEAN_LOOP_PENALTY           = %lf\n", EUCLIDEAN_LOOP_PENALTY);
 			printf("\tSTART_END_MISSING_HELIX_PENALTY  = %lf\n", START_END_MISSING_HELIX_PENALTY);
 			printf("\tHELIX_WEIGHT_COEFFICIENT         = %lf\n", HELIX_WEIGHT_COEFFICIENT);
