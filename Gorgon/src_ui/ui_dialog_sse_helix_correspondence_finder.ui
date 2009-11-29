@@ -28,7 +28,7 @@
    </size>
   </property>
   <property name="windowTitle" >
-   <string>Helix Correspondence Finder</string>
+   <string>Helix and Sheet Correspondence Finder</string>
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout_2" >
    <item>
