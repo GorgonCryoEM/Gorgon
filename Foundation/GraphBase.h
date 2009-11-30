@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.4  2009/11/04 20:29:38  ssa1
+//   Implementing Triangle based clique search and chain based flexible fitting.
+//
 //   Revision 1.3  2009/09/02 19:06:13  ssa1
 //   Working towards flexible fitting
 //
@@ -39,6 +42,7 @@ namespace wustl_mm {
 		template <class TVertexTag, class TEdgeTag> class GraphBase {
 		public:
 			GraphBase();
+			GraphBase(GraphBase<TVertexTag,TEdgeTag> & graph);
 			unsigned long long AddVertex(float weight, TVertexTag tag);
 			unsigned long long AddVertex(GraphVertexBase<TVertexTag> vertex);
 			GraphVertexBase<TVertexTag> GetVertex(unsigned long long vertexIx);
@@ -61,7 +65,7 @@ namespace wustl_mm {
 			vector< set<unsigned long long> > GetLargestMaximalCliques(vector<unsigned long long> vertexSet);
 			vector< set<unsigned long long> > GetLargestMaximalCliques2(vector<unsigned long long> vertexSet);
 			set<unsigned long long> GetLowestCostCliqueInOneRing(unsigned long long vertexIx);
-			set<unsigned long long> GetLowestCostCliqueTriangleMethod();
+			set<unsigned long long> GetLowestCostCliqueTriangleApprox();
 			vector<unsigned long long> GetOneRingNeighbors(unsigned long long vertexIx);
 			void PrintAllCliques(vector< set<unsigned long long> > allCliques);
 
@@ -85,6 +89,22 @@ namespace wustl_mm {
 		template <class TVertexTag, class TEdgeTag> GraphBase<TVertexTag, TEdgeTag>::GraphBase() {
 			vertices.clear();
 			edges.clear();
+		}
+
+		template <class TVertexTag, class TEdgeTag> GraphBase<TVertexTag, TEdgeTag>::GraphBase(GraphBase<TVertexTag,TEdgeTag> & graph) {
+			vertices.clear();
+			edges.clear();
+			for(unsigned int i = 0; i < graph.GetVertexCount(); i++) {
+				AddVertex(graph.GetVertex(i).GetWeight(), graph.GetVertex(i).GetTag());
+			}
+
+			for(int i = 0; i < (int)GetVertexCount()-1; i++) {
+				for(int j = i+1; j < (int)GetVertexCount(); j++) {
+					if(graph.IsEdge(i, j)) {
+						AddEdge(i, j, graph.GetEdge(i, j));
+					}
+				}
+			}
 		}
 
 		template <class TVertexTag, class TEdgeTag> unsigned long long GraphBase<TVertexTag, TEdgeTag>::AddVertex(float weight, TVertexTag tag) {
@@ -523,7 +543,7 @@ namespace wustl_mm {
 			}
 		}
 
-		template <class TVertexTag, class TEdgeTag> set<unsigned long long> GraphBase<TVertexTag, TEdgeTag>::GetLowestCostCliqueTriangleMethod() {
+		template <class TVertexTag, class TEdgeTag> set<unsigned long long> GraphBase<TVertexTag, TEdgeTag>::GetLowestCostCliqueTriangleApprox() {
 			set<unsigned long long> clique;
 
 			// Inputvalidation: Returns lowest cost vertex if no edges exist
