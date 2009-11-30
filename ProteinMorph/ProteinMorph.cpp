@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.12  2009/11/19 18:19:24  ssa1
+//   Improved flexible fitting.. (Split nodes to guarantee direction)
+//
 //   Revision 1.11  2009/11/04 20:29:38  ssa1
 //   Implementing Triangle based clique search and chain based flexible fitting.
 //
@@ -201,6 +204,13 @@ int main( int args, char * argv[] ) {
 					corr2 = finder.GetValenceBasedFeatureCorrespondenceSet(true, useDirection);
 				} else {
 					corr2 = finder.GetValenceTriangleBasedFeatureCorrespondence(true, useDirection);
+				}
+				break;
+			case 4:
+				if(multipleSearch) {
+					printf("Multiple search not implemented for this method \n");
+				} else {
+					corr = finder.GetAStarTriangleBasedFeatureCorrespondence(true, useDirection);
 				}
 				break;
 			default:

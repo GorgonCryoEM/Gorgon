@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.6  2009/11/19 18:19:25  ssa1
+//   Improved flexible fitting.. (Split nodes to guarantee direction)
+//
 //   Revision 1.5  2009/11/04 20:29:38  ssa1
 //   Implementing Triangle based clique search and chain based flexible fitting.
 //
@@ -44,20 +47,29 @@ namespace wustl_mm {
 			SSECorrespondenceSearchNode(GraphBase<unsigned int, bool> graph, vector< vector<unsigned int> > solution, float cost);
 			GraphBase<unsigned int, bool> GetGraph();
 			vector< vector<unsigned int> > GetSolution();
-			vector< vector<SSECorrespondenceNode> > GetSolution(vector<SSECorrespondenceNode> & allNodes);
+			vector< vector<SSECorrespondenceNode> > GetSolution(vector<SSECorrespondenceNode> & allNodes);			
 
 			float GetCost();
 			vector<SSECorrespondenceSearchNode *> GetChildNodes(vector<SSECorrespondenceNode> & allNodes, vector< vector<float> > & pairCompatibility, float featureChangeCoeff, float rigidComponentCoeff, float intraComponentCoeff);
+			vector<SSECorrespondenceSearchNode *> GetChildNodesTriangleApprox(vector<SSECorrespondenceNode> & allNodes, vector<SSECorrespondenceFeature> featureList1, vector<SSECorrespondenceFeature> featureList2);
 			void PrintSolution(vector<SSECorrespondenceNode> & allNodes, bool useDirection);
 			GraphBase<unsigned int, bool> GetChildGraph(vector<SSECorrespondenceNode> & allNodes, vector<unsigned long long> clique);
+			GraphBase<unsigned int, bool> GetOnlySymmetriesGraph(vector<SSECorrespondenceNode> & allNodes, set<unsigned long long> clique, GraphBase<unsigned int, bool> & parentGraph, map<unsigned int, unsigned int> & parentVertexIndices);
 		private:
+			vector< set<unsigned long long> > GetSymmetricCliquesTriangleApprox(int maxSizeDifference, vector<SSECorrespondenceNode> & allNodes);
+
 			float GetCliqueCost(vector<unsigned long long> & clique, float featureChangeCoeff, float rigidComponentCoeff);
 			float GetIntraCliqueCost(vector<unsigned int> & nodeList, vector<unsigned int> & parentNodeList, vector< vector<float> > & pairCompatibility, float intraComponentCoeff);
+			float GetIntraCliqueCost2(vector<unsigned int> & nodeList, vector<SSECorrespondenceNode> & allNodes, vector<SSECorrespondenceFeature> featureList1, vector<SSECorrespondenceFeature> featureList2);
+
+			Vector3DFloat GetFeature1Centroid(vector<unsigned int> & nodeList, vector<SSECorrespondenceNode> & allNodes, vector<SSECorrespondenceFeature> featureList1);
+			Vector3DFloat GetFeature2Centroid(vector<unsigned int> & nodeList, vector<SSECorrespondenceNode> & allNodes, vector<SSECorrespondenceFeature> featureList2);
 
 		private:
 			GraphBase<unsigned int, bool> graph;
 			vector< vector<unsigned int> > solution;
 			float cost;
+			
 		};
 
 		SSECorrespondenceSearchNode::SSECorrespondenceSearchNode(GraphBase<unsigned int, bool> graph, vector< vector<unsigned int> > solution, float cost) {
@@ -76,6 +88,41 @@ namespace wustl_mm {
 
 		float SSECorrespondenceSearchNode::GetCost() {
 			return cost;
+		}
+
+		vector< set<unsigned long long> > SSECorrespondenceSearchNode::GetSymmetricCliquesTriangleApprox(int maxSizeDifference, vector<SSECorrespondenceNode> & allNodes) {
+			vector< set<unsigned long long> > cliques;
+
+			GraphBase<unsigned int, bool> tempGraph(graph);
+
+			set<unsigned long long> currClique = tempGraph.GetLowestCostCliqueTriangleApprox();
+			cliques.push_back(currClique);
+
+			int minSize = max(1, (int)currClique.size() - maxSizeDifference);
+
+			GraphBase<unsigned int, bool> prunedGraph;
+			
+			map<unsigned int, unsigned int> parentVertexIndices;
+
+			for(unsigned int i = 0; i < tempGraph.GetVertexCount(); i++) {
+				parentVertexIndices[i] = i;
+			}
+
+			vector<unsigned long long> relativeClique, absoluteClique;
+			while(currClique.size() >= minSize) {
+				prunedGraph = GetOnlySymmetriesGraph(allNodes, currClique, tempGraph, parentVertexIndices);
+				currClique = prunedGraph.GetLowestCostCliqueTriangleApprox();
+				if(currClique.size() >= minSize) {
+					relativeClique = prunedGraph.VertexSetToVector(currClique);
+					absoluteClique.clear();
+					for(unsigned int i = 0; i < relativeClique.size(); i++) {
+						absoluteClique.push_back(parentVertexIndices[relativeClique[i]]);
+					}
+					cliques.push_back(prunedGraph.VertexVectorToSet(absoluteClique));
+				}
+				tempGraph = prunedGraph;
+			}		
+			return cliques;
 		}
 
 		vector<SSECorrespondenceSearchNode *> SSECorrespondenceSearchNode::GetChildNodes(vector<SSECorrespondenceNode> & allNodes, vector< vector<float> > & pairCompatibility, float featureChangeCoeff, float rigidComponentCoeff, float intraComponentCoeff) {
@@ -106,10 +153,38 @@ namespace wustl_mm {
 			return childNodes;
 		}
 
+
+		vector<SSECorrespondenceSearchNode *> SSECorrespondenceSearchNode::GetChildNodesTriangleApprox(vector<SSECorrespondenceNode> & allNodes, vector<SSECorrespondenceFeature> featureList1, vector<SSECorrespondenceFeature> featureList2) {
+			vector<SSECorrespondenceSearchNode *> childNodes;
+			if(graph.GetVertexCount() > 0) {
+				vector< set<unsigned long long> > cliques = GetSymmetricCliquesTriangleApprox(2, allNodes);
+				
+				vector<unsigned int> childSolutionElement;
+				vector< vector<unsigned int> > childSolution;
+				vector<unsigned long long> clique;			
+				GraphBase<unsigned int, bool> childGraph;
+				float childCost;
+
+				for(unsigned int i = 0; i < cliques.size(); i++) {				
+					clique = graph.VertexSetToVector(cliques[i]);
+					childSolutionElement.clear();
+					for(unsigned int j = 0; j < clique.size(); j++) {
+						childSolutionElement.push_back(graph.GetVertex(clique[j]).GetTag());
+					}
+					childSolution = solution;
+					childSolution.push_back(childSolutionElement);
+					childGraph = GetChildGraph(allNodes, clique);
+					childCost = cost + GetIntraCliqueCost2(childSolutionElement, allNodes, featureList1, featureList2);
+
+					childNodes.push_back(new SSECorrespondenceSearchNode(childGraph, childSolution, childCost));				
+				}
+			}
+			return childNodes;
+		}
+
 		GraphBase<unsigned int, bool> SSECorrespondenceSearchNode::GetChildGraph(vector<SSECorrespondenceNode> & allNodes, vector<unsigned long long> clique) {
 			set<unsigned int> pNodes;
 			set<unsigned int> qNodes;
-			map<unsigned int, unsigned int> nodeIndices;
 			map<unsigned int, unsigned int> vertexIndices;
 			GraphBase<unsigned int, bool> childGraph;
 
@@ -118,12 +193,13 @@ namespace wustl_mm {
 				qNodes.insert(allNodes[graph.GetVertex(clique[i]).GetTag()].GetQIndex());
 			}
 
-			unsigned int vertexNode;			
+			unsigned int vertexNode;
+			unsigned int childIndex;
 			for(unsigned int i = 0; i < graph.GetVertexCount(); i++) {
 				vertexNode = graph.GetVertex(i).GetTag();
 				if((pNodes.find(allNodes[vertexNode].GetPIndex()) == pNodes.end()) && (qNodes.find(allNodes[vertexNode].GetQIndex()) == qNodes.end())) {
-					nodeIndices[vertexNode] = childGraph.AddVertex(graph.GetVertex(i).GetWeight(), vertexNode);
-					vertexIndices[nodeIndices[vertexNode]] = i;					
+					childIndex = childGraph.AddVertex(graph.GetVertex(i).GetWeight(), vertexNode);
+					vertexIndices[childIndex] = i;					
 				}				
 			}
 
@@ -137,6 +213,41 @@ namespace wustl_mm {
 
 			return childGraph;
 		}
+
+		GraphBase<unsigned int, bool> SSECorrespondenceSearchNode::GetOnlySymmetriesGraph(vector<SSECorrespondenceNode> & allNodes, set<unsigned long long> cliqueSet, GraphBase<unsigned int, bool> & parentGraph, map<unsigned int, unsigned int> & parentVertexIndices) {
+			set<unsigned int> pNodes;
+			set<unsigned int> qNodes;			
+			GraphBase<unsigned int, bool> childGraph;
+			vector<unsigned long long> clique = parentGraph.VertexSetToVector(cliqueSet);
+
+			for(unsigned int i = 0; i < clique.size(); i++) {
+				pNodes.insert(allNodes[parentGraph.GetVertex(clique[i]).GetTag()].GetPIndex());
+				qNodes.insert(allNodes[parentGraph.GetVertex(clique[i]).GetTag()].GetQIndex());
+			}
+
+			unsigned int vertexNode;
+			unsigned int childIndex;
+			for(unsigned int i = 0; i < parentGraph.GetVertexCount(); i++) {
+				vertexNode = parentGraph.GetVertex(i).GetTag();
+				// Add only if PNode was part of clique, and not a node which was in original clique
+				if((pNodes.find(allNodes[vertexNode].GetPIndex()) != pNodes.end()) && (cliqueSet.find(i) == cliqueSet.end())) {
+					childIndex = childGraph.AddVertex(parentGraph.GetVertex(i).GetWeight(), vertexNode);
+					parentVertexIndices[childIndex] = parentVertexIndices[i];					
+				}				
+			}
+
+			for(int i = 0; i < (int)childGraph.GetVertexCount()-1; i++) {
+				for(int j = i+1; j < (int)childGraph.GetVertexCount(); j++) {
+					if(parentGraph.IsEdge(parentVertexIndices[i], parentVertexIndices[j])) {
+						childGraph.AddEdge(i, j, parentGraph.GetEdge(parentVertexIndices[i], parentVertexIndices[j]));
+					}
+				}
+			}
+
+			return childGraph;
+		}
+
+
 
 		float SSECorrespondenceSearchNode::GetCliqueCost(vector<unsigned long long> & clique, float featureChangeCoeff, float rigidComponentCoeff) {
 			float cliqueCost = 0.0f;
@@ -160,6 +271,64 @@ namespace wustl_mm {
 				}
 			}
 			return intraCliqueCost;
+		}
+
+
+		Vector3DFloat SSECorrespondenceSearchNode::GetFeature1Centroid(vector<unsigned int> & nodeList, vector<SSECorrespondenceNode> & allNodes, vector<SSECorrespondenceFeature> featureList1) {
+			Vector3DFloat centroid;
+			if(nodeList.size() > 0) {
+				vector<unsigned int> features;
+				for(unsigned int i = 0; i < nodeList.size(); i++) {
+					features.push_back(allNodes[nodeList[i]].GetPIndex());
+				}
+
+				for(unsigned int i = 0; i < features.size(); i++) {
+					centroid += featureList1[features[i]].GetCentroid();
+				}
+				centroid = centroid * (1.0 / (float)features.size());
+			}
+			return centroid;
+		}
+
+		Vector3DFloat SSECorrespondenceSearchNode::GetFeature2Centroid(vector<unsigned int> & nodeList, vector<SSECorrespondenceNode> & allNodes, vector<SSECorrespondenceFeature> featureList2) {
+			Vector3DFloat centroid;
+			if(nodeList.size() > 0) {
+				vector<unsigned int> features;
+				for(unsigned int i = 0; i < nodeList.size(); i++) {
+					features.push_back(allNodes[nodeList[i]].GetQIndex());
+				}
+
+				for(unsigned int i = 0; i < features.size(); i++) {
+					centroid += featureList2[features[i]].GetCentroid();
+				}
+				centroid = centroid * (1.0 / (float)features.size());
+			}
+			return centroid;
+		}
+
+
+		float SSECorrespondenceSearchNode::GetIntraCliqueCost2(vector<unsigned int> & nodeList, vector<SSECorrespondenceNode> & allNodes, vector<SSECorrespondenceFeature> featureList1, vector<SSECorrespondenceFeature> featureList2) {
+			Vector3DFloat c1, c2, p1, p2;
+			c1 = GetFeature1Centroid(nodeList, allNodes, featureList1);
+			c2 = GetFeature2Centroid(nodeList, allNodes, featureList2);
+
+			float cost = 0;
+			float d1, d2;
+			//float minD = MAX_FLOAT;
+			for(unsigned int i = 0; i < solution.size(); i++) {
+				if(solution[i].size() > 0) {
+					p1 = GetFeature1Centroid(solution[i], allNodes, featureList1);
+					p2 = GetFeature2Centroid(solution[i], allNodes, featureList2);
+					d1 = (c1 - p1).Length();
+					d2 = (c2 - p2).Length();
+
+					cost += abs(d1 - d2);
+				}
+			}
+			//cost = minD;
+
+			return cost;
+			
 		}
 
 		vector< vector<SSECorrespondenceNode> > SSECorrespondenceSearchNode::GetSolution(vector<SSECorrespondenceNode> & allNodes) {
@@ -211,7 +380,9 @@ namespace wustl_mm {
 				printf("}");
 			}
 			printf("};\n\n");
+			printf("cost = %f;\n", this->GetCost());
 			printf("corr = Sort[corr, Length[#1] > Length[#2] &];\n");
+			firstCorr = 1;
 			printf("printFinalOutput[corr, fl1, fl2, %d]\n", firstCorr);
 		}
 	}
