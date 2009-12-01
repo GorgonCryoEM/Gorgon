@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.36.2.17  2009/11/29 22:18:36  schuhs
+#   "Include sheets" checkbox works now.
+#
 #   Revision 1.36.2.16  2009/11/29 20:55:09  schuhs
 #   Adding code to handle "include sheets" checkbox. Still not done.
 #
@@ -713,8 +716,10 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
                     predictedType = library.structurePrediction.secelType[j - helicesPassed] # 'helix' or 'strand'
                     if predictedType == 'helix':
                         isSecondHelixNode = True
-
-
+                        print "predicted helix. node=" + str(j)
+                    else:
+                        print "predicted strand. node=" + str(j)
+                        
                     # observed helix or sheet in skeleton graph
                     # print "secelDict has size " + str(len(library.structurePrediction.secelDict))
                     # j is a helix node in the sequence graph
@@ -728,7 +733,8 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
                         observedType = 'sheet'
                     else:
                         observedType = 'none'
-                        print "error!!!"
+                        #print "error!!!"
+                        print "type none found at node " + str(j)
                     # print "the observed type is " + str(observedType)
                         
                     isHelix = (n1 < 2 * result.getHelixCount())
@@ -759,8 +765,10 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
                         if isHelix:
                             # helix in skeleton graph
                             observed = library.structureObservation.helixDict[observedNo]
+                            print "observed helix. node=" + str(j) + ", observeNo=" + str(observedNo) + ", observed=" + str(observed)
                         else: # sheet 
                             observed = library.structureObservation.sheetDict[observedNo - result.getHelixCount()]
+                            print "observed sheet. node=" + str(j) + ", observeNo=" + str(observedNo) + ", observed=" + str(observed)
                             #observed = None # for now, no code for sheets 
                     else:
                         observed = None
@@ -1047,7 +1055,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
                     match.predicted.setColor(color)
                 if(match.predicted):
                     #print match.predicted, match.predicted.type, match.predicted.serialNo, match.predicted.label
-                    cellItemPredicted =  QtGui.QTableWidgetItem(match.predicted.type + " " + str(match.predicted.serialNo + 1) + " : " + str(match.predicted.label) +
+                    cellItemPredicted =  QtGui.QTableWidgetItem(match.predicted.type + " " + str(match.predicted.serialNo) + " : " + str(match.predicted.label) +
                                                                 "\n  "  + str(round(match.predicted.getLengthInAngstroms(),2)) + "A length"
                                                                 "\n  "  + str(match.predicted.getResidueCount()) + " residues")
                                                                  
@@ -1056,11 +1064,11 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
                 if(match.observed):
                     # TODO: Clean up this code. Made quick fixes to support sheets.
                     if match.observed.sseType == 'helix':
-                        cellItemObserved =  QtGui.QTableWidgetItem("helix " + str(match.observed.label + 1) +
+                        cellItemObserved =  QtGui.QTableWidgetItem("helix " + str(match.observed.label) +
                                                                    "\n  " + str(round(match.observed.getLength(), 2)) + "A length" +
                                                                    "\n  " )
                     if match.observed.sseType == 'sheet':
-                        cellItemObserved =  QtGui.QTableWidgetItem("sheet " + str(match.observed.label + 1) +
+                        cellItemObserved =  QtGui.QTableWidgetItem("sheet " + str(match.observed.label) +
                                                                    #"\n  " + str(round(match.observed.getLength(), 2)) + "A length" +
                                                                    "\n  " )
                     cellItemObserved.setBackgroundColor(color)
@@ -1068,9 +1076,9 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
                     if match.observed.sseType == 'helix':
                         # color is stored in two places: the renderer and the correspondence engine. update both.
                         self.viewer.renderer.setHelixColor(match.observed.label, color.redF(), color.greenF(), color.blueF(), color.alphaF())
-                        print "before setSSEColor"
+                        #print "before setSSEColor"
                         self.viewer.correspondenceEngine.setSSEColor(match.observed.label, color.redF(), color.greenF(), color.blueF(), color.alphaF())
-                        print "after setSSEColor"
+                        #print "after setSSEColor"
 
                     # TODO: add support to renderer for colored sheets
                     if match.observed.sseType == 'sheet':
@@ -1239,11 +1247,13 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
         return constrainPredictedHelix_po
     
     def sseClicked(self, hit0, hit1, hit2, hit3, hit4, hit5, event):
+        print "sseClicked. visible=" + str(self.isVisible()) + ", loaded=" +str(self.dataLoaded)+", hit0=" + str(hit0) + ", hit1=" + str(hit1)
         # TODO: Fix the code here. Off by one error, or if I fix that, can't select zeroth element.
-        if(self.isVisible() and self.dataLoaded and (hit0 == 0) and (hit1 >= 0)):
+        if(self.isVisible() and self.dataLoaded and ((hit0 == 0) or (hit0 == 1)) and (hit1 >= 0)):
             observedHelix = hit1
             constrained = {}
-            match = None            
+            match = None        
+            matchKey = 0    
             #correspondenceIndex = self.ui.comboBoxCorrespondences.currentIndex()            
             correspondenceIndex = self.ui.comboBoxCorrespondences.currentIndex()            
             print "correspondenceIndex is " + str(correspondenceIndex)
@@ -1256,17 +1266,26 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
                     if(m.constrained) :
                         constrained[m.predicted.serialNo] = True
                     #if(m.observed):
-                    if m.observed and m.observed.sseType == 'helix':
+                    if hit0==0 and m.observed and m.observed.sseType == 'helix':
                         if(m.observed.label == observedHelix):
                         #if(m.observed.label == observedHelix - 1):
-                            print "match found at m with label=" + str(m.observed.label)
+                            print "helix match found at m (i=" +str(i)+") with label=" + str(m.observed.label)
                             match = m
+                            matchKey = i
+                    if hit0==1 and m.observed and m.observed.sseType == 'sheet':
+                        #print "searching for sheet match. i=" + str(i)
+                        if(m.observed.label == observedHelix):
+                        #if(m.observed.label == observedHelix - 1):
+                            print "sheet match found at m (i=" +str(i)+") with label=" + str(m.observed.label)
+                            match = m
+                            matchKey = i
             
             if(match):
                 #self.ui.tableWidgetCorrespondenceList.setRangeSelected(QtGui.QTableWidgetSelectionRange(0, 0, self.ui.tableWidgetCorrespondenceList.rowCount()-1, 2), False)                    
                 self.ui.tableWidgetCorrespondenceList.setRangeSelected(QtGui.QTableWidgetSelectionRange(0, 0, self.ui.tableWidgetCorrespondenceList.rowCount()-1, 2), False)                    
                 #self.ui.tableWidgetCorrespondenceList.setRangeSelected(QtGui.QTableWidgetSelectionRange(match.predicted.serialNo, 0, match.predicted.serialNo, 2),True)
-                self.ui.tableWidgetCorrespondenceList.setRangeSelected(QtGui.QTableWidgetSelectionRange(match.predicted.serialNo-1, 0, match.predicted.serialNo-1, 2),True)
+                #self.ui.tableWidgetCorrespondenceList.setRangeSelected(QtGui.QTableWidgetSelectionRange(match.predicted.serialNo-1, 0, match.predicted.serialNo-1, 2),True)
+                self.ui.tableWidgetCorrespondenceList.setRangeSelected(QtGui.QTableWidgetSelectionRange(matchKey, 0, matchKey, 2),True)
                     
             if(self.app.mainCamera.mouseRightPressed):                
                 predictedSecels = self.viewer.correspondenceLibrary.structurePrediction.secelDict                            
@@ -1274,15 +1293,29 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
                 menu = QtGui.QMenu(self.tr("Constrain observed helix " + str(hit1+1)))
                 
                 for i in range(len(predictedSecels)):
-                    constrainAction = QtGui.QAction(self.tr("Predicted helix " + str(predictedSecels[i].serialNo + 1)), self)
-                    constrainAction.setCheckable(True)
-                    if(match and match.observed):
-                        constrainAction.setChecked(match.predicted.serialNo == i)
-                    else:
-                        constrainAction.setChecked(False)
-                    constrainAction.setEnabled(not constrained.has_key(predictedSecels[i].serialNo))
-                    self.connect(constrainAction, QtCore.SIGNAL("triggered()"), self.constrainPredictedHelix(predictedSecels[i].serialNo, observedHelix))       
-                    menu.addAction(constrainAction)           
+                    print "object .type is " + str(predictedSecels[i].type)
+                    if hit0==0 and predictedSecels[i].type == 'helix': #.secelType: #and predictedSecels[i].secelType == 'helix':
+                        constrainAction = QtGui.QAction(self.tr("Predicted helix " + str(predictedSecels[i].serialNo)), self)
+                        constrainAction.setCheckable(True)
+                        if(match and match.observed):
+                            constrainAction.setChecked(match.predicted.serialNo == i)
+                        else:
+                            constrainAction.setChecked(False)
+                        constrainAction.setEnabled(not constrained.has_key(predictedSecels[i].serialNo))
+                        self.connect(constrainAction, QtCore.SIGNAL("triggered()"), self.constrainPredictedHelix(predictedSecels[i].serialNo, observedHelix))       
+                        menu.addAction(constrainAction)           
+                
+                    if hit0==1 and predictedSecels[i].type == 'strand': #.secelType: #and predictedSecels[i].secelType == 'helix':
+                        print "strand!"
+                        constrainAction = QtGui.QAction(self.tr("Predicted strand " + str(predictedSecels[i].serialNo)), self)
+                        constrainAction.setCheckable(True)
+                        if(match and match.observed):
+                            constrainAction.setChecked(match.predicted.serialNo == i)
+                        else:
+                            constrainAction.setChecked(False)
+                        constrainAction.setEnabled(not constrained.has_key(predictedSecels[i].serialNo))
+                        self.connect(constrainAction, QtCore.SIGNAL("triggered()"), self.constrainPredictedHelix(predictedSecels[i].serialNo, observedHelix))       
+                        menu.addAction(constrainAction)           
                 
                 menu.exec_(self.app.mainCamera.mapToGlobal(self.app.mainCamera.mouseDownPoint))
                 self.app.mainCamera.updateGL()
