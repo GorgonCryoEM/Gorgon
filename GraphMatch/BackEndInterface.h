@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.16.2.2  2009/06/09 18:44:23  schuhs
+//   Fixing bug in GetConstantString method
+//
 //   Revision 1.16.2.1  2009/06/09 16:28:19  schuhs
 //   Adding methods to get global constants
 //
@@ -67,6 +70,7 @@ namespace wustl_mm {
 			bool GetConstantBool(char * token);
 			void ClearAllConstraints();
 			void SetHelixConstraint(int sequenceHelix, int skeletonHelix);
+			void SetNodeConstraint(int sequenceNode, int skeletonNode);
 			// Graph Loading
 			void LoadSequenceGraph();
 			void LoadSkeletonGraph();
@@ -164,6 +168,10 @@ namespace wustl_mm {
 
 		void BackEndInterface::SetHelixConstraint(int sequenceHelix, int skeletonHelix) {
 			AddHelixConstraint(sequenceHelix, skeletonHelix);
+		}
+
+		void BackEndInterface::SetNodeConstraint(int sequenceNode, int skeletonNode) {
+			AddNodeConstraint(sequenceNode, skeletonNode);
 		}
 
 		void BackEndInterface::LoadSequenceGraph() {

@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.50.2.4  2009/07/14 19:53:31  schuhs
+//   Adding methods to get and set the number of helices in a correspondence result
+//
 //   Revision 1.50.2.3  2009/06/09 16:30:50  schuhs
 //   Adding methods to read global constants
 //
@@ -488,6 +491,7 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("getConstantBool", &SSECorrespondenceEngine::GetConstantBool)
 		.def("clearAllConstraints", &SSECorrespondenceEngine::ClearAllConstraints)			
 		.def("setHelixConstraint", &SSECorrespondenceEngine::SetHelixConstraint)			
+		.def("setNodeConstraint", &SSECorrespondenceEngine::SetNodeConstraint)			
 		.def("setSSEColor", &SSECorrespondenceEngine::SetSSEColor)			
         	.def("setConstantsFromFile", &SSECorrespondenceEngine::SetConstantsFromFile)		
 		.def("saveCorrespondenceToFile", &SSECorrespondenceEngine::SaveCorrespondenceToFile)
