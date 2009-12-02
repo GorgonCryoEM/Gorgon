@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.36.2.18  2009/12/01 23:44:31  schuhs
+#   Some progress selecting helices and sheets for constraints.
+#
 #   Revision 1.36.2.17  2009/11/29 22:18:36  schuhs
 #   "Include sheets" checkbox works now.
 #
@@ -1014,16 +1017,6 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
             sheetCount = 0
             for i in range(len(corr.matchList)):
                 match = corr.matchList[i]
-                '''
-                print "object has type " + str(type(match.observed))
-                while match.observed is not None:
-                    if match.observed.sseType == 'sheet':
-                        print "found sheet"
-                        sheetCount += 1
-                    elif match.observed.sseType == 'helix':
-                        print "found helix"
-                        helixCount += 1
-                '''
                 print "object has type " + str(type(match.predicted))
                 if match.predicted is not None:
                     if match.predicted.type == 'strand':
@@ -1064,11 +1057,11 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
                 if(match.observed):
                     # TODO: Clean up this code. Made quick fixes to support sheets.
                     if match.observed.sseType == 'helix':
-                        cellItemObserved =  QtGui.QTableWidgetItem("helix " + str(match.observed.label) +
+                        cellItemObserved =  QtGui.QTableWidgetItem("helix " + str(match.observed.label+1) +
                                                                    "\n  " + str(round(match.observed.getLength(), 2)) + "A length" +
                                                                    "\n  " )
                     if match.observed.sseType == 'sheet':
-                        cellItemObserved =  QtGui.QTableWidgetItem("sheet " + str(match.observed.label) +
+                        cellItemObserved =  QtGui.QTableWidgetItem("sheet " + str(match.observed.label+1) +
                                                                    #"\n  " + str(round(match.observed.getLength(), 2)) + "A length" +
                                                                    "\n  " )
                     cellItemObserved.setBackgroundColor(color)
@@ -1239,83 +1232,77 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
                     match = corr.matchList[j]
                     if(match and match.observed and (match.observed.label == observed)) :
                         match.observed = None
-                
-                match = corr.matchList[predicted]
+                        match.constrained = False
+                    if(match and match.predicted and match.predicted.type == 'helix' and match.predicted.serialNo == predicted):
+                        newMatch = match
+                match = newMatch
                 match.constrained = True
                 match.observed = self.viewer.correspondenceLibrary.structureObservation.helixDict[observed]
             self.selectCorrespondence(correspondenceIndex)                
         return constrainPredictedHelix_po
     
     def sseClicked(self, hit0, hit1, hit2, hit3, hit4, hit5, event):
-        print "sseClicked. visible=" + str(self.isVisible()) + ", loaded=" +str(self.dataLoaded)+", hit0=" + str(hit0) + ", hit1=" + str(hit1)
-        # TODO: Fix the code here. Off by one error, or if I fix that, can't select zeroth element.
+        #print "sseClicked. visible=" + str(self.isVisible()) + ", loaded=" +str(self.dataLoaded)+", hit0=" + str(hit0) + ", hit1=" + str(hit1)
         if(self.isVisible() and self.dataLoaded and ((hit0 == 0) or (hit0 == 1)) and (hit1 >= 0)):
-            observedHelix = hit1
+            observedType = hit0
+            observedSSE = hit1
             constrained = {}
             match = None        
             matchKey = 0    
-            #correspondenceIndex = self.ui.comboBoxCorrespondences.currentIndex()            
             correspondenceIndex = self.ui.comboBoxCorrespondences.currentIndex()            
-            print "correspondenceIndex is " + str(correspondenceIndex)
             if(correspondenceIndex >= 0):
                 corr = self.viewer.correspondenceLibrary.correspondenceList[correspondenceIndex]  
                 for i in range(len(corr.matchList)):
-                    # add check here to make sure it's a helix?
-                    print "i is " + str(i)
                     m = corr.matchList[i]
                     if(m.constrained) :
                         constrained[m.predicted.serialNo] = True
-                    #if(m.observed):
-                    if hit0==0 and m.observed and m.observed.sseType == 'helix':
-                        if(m.observed.label == observedHelix):
-                        #if(m.observed.label == observedHelix - 1):
-                            print "helix match found at m (i=" +str(i)+") with label=" + str(m.observed.label)
+
+                    # find the index of the selected helix in the correspondence list
+                    if observedType==0 and m.observed and m.observed.sseType == 'helix':
+                        if(m.observed.label == observedSSE):
+                            #print "helix match found at m (i=" +str(i)+") with label=" + str(m.observed.label)
                             match = m
                             matchKey = i
-                    if hit0==1 and m.observed and m.observed.sseType == 'sheet':
-                        #print "searching for sheet match. i=" + str(i)
-                        if(m.observed.label == observedHelix):
-                        #if(m.observed.label == observedHelix - 1):
-                            print "sheet match found at m (i=" +str(i)+") with label=" + str(m.observed.label)
-                            match = m
-                            matchKey = i
-            
+                    
+                    # find the index of the selected sheet in the correspondence list
+                    #if observedType==1 and m.observed and m.observed.sseType == 'sheet':
+                    #    if(m.observed.label == observedHelix):
+                    #        #print "sheet match found at m (i=" +str(i)+") with label=" + str(m.observed.label)
+                    #        match = m
+                    #        matchKey = i
+                    
+            self.ui.tableWidgetCorrespondenceList.setRangeSelected(QtGui.QTableWidgetSelectionRange(0, 0, self.ui.tableWidgetCorrespondenceList.rowCount()-1, 2), False)                    
             if(match):
-                #self.ui.tableWidgetCorrespondenceList.setRangeSelected(QtGui.QTableWidgetSelectionRange(0, 0, self.ui.tableWidgetCorrespondenceList.rowCount()-1, 2), False)                    
                 self.ui.tableWidgetCorrespondenceList.setRangeSelected(QtGui.QTableWidgetSelectionRange(0, 0, self.ui.tableWidgetCorrespondenceList.rowCount()-1, 2), False)                    
-                #self.ui.tableWidgetCorrespondenceList.setRangeSelected(QtGui.QTableWidgetSelectionRange(match.predicted.serialNo, 0, match.predicted.serialNo, 2),True)
-                #self.ui.tableWidgetCorrespondenceList.setRangeSelected(QtGui.QTableWidgetSelectionRange(match.predicted.serialNo-1, 0, match.predicted.serialNo-1, 2),True)
                 self.ui.tableWidgetCorrespondenceList.setRangeSelected(QtGui.QTableWidgetSelectionRange(matchKey, 0, matchKey, 2),True)
                     
             if(self.app.mainCamera.mouseRightPressed):                
-                predictedSecels = self.viewer.correspondenceLibrary.structurePrediction.secelDict                            
-                            
-                menu = QtGui.QMenu(self.tr("Constrain observed helix " + str(hit1+1)))
+                predictedHelices = self.viewer.correspondenceLibrary.structurePrediction.helixDict                            
+                #predictedStrands = self.viewer.correspondenceLibrary.structurePrediction.strandDict                            
+                menu = QtGui.QMenu(self.tr("Constrain observed SSE " + str(observedSSE+1)))
                 
-                for i in range(len(predictedSecels)):
-                    print "object .type is " + str(predictedSecels[i].type)
-                    if hit0==0 and predictedSecels[i].type == 'helix': #.secelType: #and predictedSecels[i].secelType == 'helix':
-                        constrainAction = QtGui.QAction(self.tr("Predicted helix " + str(predictedSecels[i].serialNo)), self)
+                for i in range(len(predictedHelices)):
+                    if observedType==0 and predictedHelices[i].type == 'helix': 
+                        constrainAction = QtGui.QAction(self.tr("Predicted helix " + str(predictedHelices[i].serialNo)), self)
                         constrainAction.setCheckable(True)
                         if(match and match.observed):
-                            constrainAction.setChecked(match.predicted.serialNo == i)
+                            constrainAction.setChecked(match.predicted.serialNo-1 == i)
                         else:
                             constrainAction.setChecked(False)
-                        constrainAction.setEnabled(not constrained.has_key(predictedSecels[i].serialNo))
-                        self.connect(constrainAction, QtCore.SIGNAL("triggered()"), self.constrainPredictedHelix(predictedSecels[i].serialNo, observedHelix))       
+                        constrainAction.setEnabled(not constrained.has_key(predictedHelices[i].serialNo))
+                        self.connect(constrainAction, QtCore.SIGNAL("triggered()"), self.constrainPredictedHelix(predictedHelices[i].serialNo, observedSSE))       
                         menu.addAction(constrainAction)           
                 
-                    if hit0==1 and predictedSecels[i].type == 'strand': #.secelType: #and predictedSecels[i].secelType == 'helix':
-                        print "strand!"
-                        constrainAction = QtGui.QAction(self.tr("Predicted strand " + str(predictedSecels[i].serialNo)), self)
-                        constrainAction.setCheckable(True)
-                        if(match and match.observed):
-                            constrainAction.setChecked(match.predicted.serialNo == i)
-                        else:
-                            constrainAction.setChecked(False)
-                        constrainAction.setEnabled(not constrained.has_key(predictedSecels[i].serialNo))
-                        self.connect(constrainAction, QtCore.SIGNAL("triggered()"), self.constrainPredictedHelix(predictedSecels[i].serialNo, observedHelix))       
-                        menu.addAction(constrainAction)           
+                    #if observedType==1 and predictedStrands[i].type == 'strand':
+                    #    constrainAction = QtGui.QAction(self.tr("Predicted strand " + str(predictedSecels[i].serialNo)), self)
+                    #    constrainAction.setCheckable(True)
+                    #    if(match and match.observed):
+                    #        constrainAction.setChecked(match.predicted.serialNo == i)
+                    #    else:
+                    #        constrainAction.setChecked(False)
+                    #    constrainAction.setEnabled(not constrained.has_key(predictedSecels[i].serialNo))
+                    #    self.connect(constrainAction, QtCore.SIGNAL("triggered()"), self.constrainPredictedHelix(predictedSecels[i].serialNo, observedHelix))       
+                    #    menu.addAction(constrainAction)           
                 
                 menu.exec_(self.app.mainCamera.mapToGlobal(self.app.mainCamera.mouseDownPoint))
                 self.app.mainCamera.updateGL()
