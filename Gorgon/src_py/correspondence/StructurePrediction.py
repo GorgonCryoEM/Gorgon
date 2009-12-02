@@ -30,6 +30,9 @@ where SSEs are predicted to be based on the sequence.
         if qparent and qtEnabled:
             super(QtCore.QObject,self).__init__(qparent)
         self.secelDict=secelDict
+        self.helixDict = {}
+        self.strandDict = {}
+        self.__updateDicts()
         self.selectedSecel = None
         self.chain=chain
         self.params=params
@@ -37,6 +40,21 @@ where SSEs are predicted to be based on the sequence.
         self.app = qparent
         # list of types of secels
         self.secelType = secelType
+
+    def __updateDicts(self):
+        self.strandDict = {}
+        self.helixDict = {}
+        iH = 0
+        iS = 0
+        for i in range(len(self.secelDict)):
+            if self.secelDict[i].type == 'helix':
+                self.helixDict[iH] = self.secelDict[i]
+                iH += 1
+            if self.secelDict[i].type == 'strand':
+                self.strandDict[iS] = self.secelDict[i]
+                iS += 1
+        return
+    
 
 
     @classmethod
