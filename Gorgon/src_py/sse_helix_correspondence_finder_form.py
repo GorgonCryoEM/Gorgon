@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.36.2.19  2009/12/02 19:28:28  schuhs
+#   Fixed the GUI code for setting and changing helix constraints
+#
 #   Revision 1.36.2.18  2009/12/01 23:44:31  schuhs
 #   Some progress selecting helices and sheets for constraints.
 #
@@ -681,11 +684,11 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
         corrList = []
         
         # iterate over all results from correspondence algorithm
-        print "Iterating over results."
+        #print "Iterating over results."
         for i in range(self.resultCount):                                
             # create a Correspondence object and add it to the list
 
-            print "-------------- RESULT " + str(i) + " --------------"
+            #print "-------------- RESULT " + str(i) + " --------------"
 
             # start from correspondenceEngine result
             result = self.viewer.correspondenceEngine.getResult(i+1)
@@ -693,15 +696,15 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
             matchList = [] # matchList holds the matches
             
             # iterate over all nodes in the matching from correspondenceEngine
-            print "Iterating over " + str(result.getNodeCount()) + " nodes of this result."
+            #print "Iterating over " + str(result.getNodeCount()) + " nodes of this result."
             isSecondHelixNode = False
             helicesPassed = 0
             #for j in range(result.getNodeCount()/2):
             
             # TODO: Fix code so it handles missing helices correctly. Test on 3LCK data.
 
-            for k in range(len(library.structurePrediction.secelType)):
-                print "secelType says element " + str(k) + " is a " + str(library.structurePrediction.secelType[k])
+            #for k in range(len(library.structurePrediction.secelType)):
+                #print "secelType says element " + str(k) + " is a " + str(library.structurePrediction.secelType[k])
 
             
             for j in range(result.getNodeCount()):
@@ -719,9 +722,9 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
                     predictedType = library.structurePrediction.secelType[j - helicesPassed] # 'helix' or 'strand'
                     if predictedType == 'helix':
                         isSecondHelixNode = True
-                        print "predicted helix. node=" + str(j)
-                    else:
-                        print "predicted strand. node=" + str(j)
+                        #print "predicted helix. node=" + str(j)
+                    #else:
+                        #print "predicted strand. node=" + str(j)
                         
                     # observed helix or sheet in skeleton graph
                     # print "secelDict has size " + str(len(library.structurePrediction.secelDict))
@@ -737,7 +740,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
                     else:
                         observedType = 'none'
                         #print "error!!!"
-                        print "type none found at node " + str(j)
+                        #print "type none found at node " + str(j)
                     # print "the observed type is " + str(observedType)
                         
                     isHelix = (n1 < 2 * result.getHelixCount())
@@ -768,10 +771,10 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
                         if isHelix:
                             # helix in skeleton graph
                             observed = library.structureObservation.helixDict[observedNo]
-                            print "observed helix. node=" + str(j) + ", observeNo=" + str(observedNo) + ", observed=" + str(observed)
+                            #print "observed helix. node=" + str(j) + ", observeNo=" + str(observedNo) + ", observed=" + str(observed)
                         else: # sheet 
                             observed = library.structureObservation.sheetDict[observedNo - result.getHelixCount()]
-                            print "observed sheet. node=" + str(j) + ", observeNo=" + str(observedNo) + ", observed=" + str(observed)
+                            #print "observed sheet. node=" + str(j) + ", observeNo=" + str(observedNo) + ", observed=" + str(observed)
                             #observed = None # for now, no code for sheets 
                     else:
                         observed = None
@@ -927,13 +930,13 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
         print "populating result list"
         #print "found " + size(self.viewer.correspondenceLibrary.correspondenceList) + " results. populating result list"
         self.viewer.correspondenceLibrary.correspondenceList = self.populateResults(self.viewer.correspondenceLibrary)
-        print "correspondenceList has length " + str(len(self.viewer.correspondenceLibrary.correspondenceList))
+        #print "correspondenceList has length " + str(len(self.viewer.correspondenceLibrary.correspondenceList))
 
-        print "populating result pulldown"
+        #print "populating result pulldown"
         self.populateComboBox(self.viewer.correspondenceLibrary)       
         
         self.executed = True 
-        print "emitting model changed signal"
+        #print "emitting model changed signal"
         self.viewer.emitModelChanged()
 
         print "done"
@@ -1017,14 +1020,14 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
             sheetCount = 0
             for i in range(len(corr.matchList)):
                 match = corr.matchList[i]
-                print "object has type " + str(type(match.predicted))
+                #print "object has type " + str(type(match.predicted))
                 if match.predicted is not None:
                     if match.predicted.type == 'strand':
                         # TODO: only count strands that are different. every sheet must be the same color!
-                        print "found strand"
+                        #print "found strand"
                         sheetCount += 1
                     elif match.predicted.type == 'helix':
-                        print "found helix"
+                        #print "found helix"
                         helixCount += 1
 
            

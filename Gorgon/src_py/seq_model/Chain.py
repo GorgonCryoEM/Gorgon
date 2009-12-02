@@ -569,7 +569,7 @@ residue.
 This adds a secel object to the chain.
     '''
     for index in range(secel.startIndex, secel.stopIndex+1):
-      print "adding a secel at index " + str(index) + ". secelList has size " + str(len(self.secelList))
+      #print "adding a secel at index " + str(index) + ". secelList has size " + str(len(self.secelList))
       self.secelList[index]=secel
 
   def addHelix(self, serialNo, helix):
@@ -588,7 +588,7 @@ This adds a strand object to the chain.
     else:
       self.sheets[sheetID].strandList[strandNo]=strand
     self.addSecel(strand)
-    print "strand added: " + str(strandNo)
+    #print "strand added: " + str(strandNo)
 
   def addSheet(self, sheetID, sheet):
     '''
