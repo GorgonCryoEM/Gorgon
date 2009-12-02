@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.36.2.20  2009/12/02 20:27:39  schuhs
+#   Comment out unnecessary console messages
+#
 #   Revision 1.36.2.19  2009/12/02 19:28:28  schuhs
 #   Fixed the GUI code for setting and changing helix constraints
 #
@@ -585,15 +588,27 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
         #self.viewer.correspondenceEngine.clearAllConstraints()
         correspondenceIndex = self.ui.comboBoxCorrespondences.currentIndex()
         if(correspondenceIndex >= 0):
-            corr = self.viewer.correspondenceLibrary.correspondenceList[correspondenceIndex]            
+            corr = self.viewer.correspondenceLibrary.correspondenceList[correspondenceIndex]
+            predictedGraphNode = 1            
+            nObservedHelices = len(self.viewer.correspondenceLibrary.structureObservation.helixDict)
             for i in range(len(corr.matchList)):
                 match = corr.matchList[i]                
                 self.userConstraints[i] = match.constrained
                 if(match.constrained):
-                    if(match.observed):
-                        self.viewer.correspondenceEngine.setHelixConstraint(match.predicted.serialNo + 1, match.observed.label + 1)
-                    else:      
-                        self.viewer.correspondenceEngine.setHelixConstraint(match.predicted.serialNo + 1, -1)
+                    if match.predicted.type == 'helix':
+                        if(match.observed):
+                            self.viewer.correspondenceEngine.setHelixConstraint(predictedGraphNode, 2*match.observed.label + 1)
+                        else:      
+                            self.viewer.correspondenceEngine.setHelixConstraint(predictedGraphNode, -1)
+                    if match.predicted.type == 'strand':
+                        if(match.observed):
+                            self.viewer.correspondenceEngine.setNodeConstraint(predictedGraphNode, match.observed.label + nObservedHelices + 1)
+                        else:      
+                            self.viewer.correspondenceEngine.setNodeConstraint(predictedGraphNode, -1)
+                if (match.predicted.type) == 'strand':
+                    predictedGraphNode += 1
+                if (match.predicted.type) == 'helix':
+                    predictedGraphNode += 2
 
     def getConstants(self):
         
@@ -1289,7 +1304,8 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
                         constrainAction = QtGui.QAction(self.tr("Predicted helix " + str(predictedHelices[i].serialNo)), self)
                         constrainAction.setCheckable(True)
                         if(match and match.observed):
-                            constrainAction.setChecked(match.predicted.serialNo-1 == i)
+                            constrainAction.setChecked(match.predicted.serialNo == predictedHelices[i].serialNo)
+                            #constrainAction.setChecked(match.predicted.serialNo-1 == i)
                         else:
                             constrainAction.setChecked(False)
                         constrainAction.setEnabled(not constrained.has_key(predictedHelices[i].serialNo))
