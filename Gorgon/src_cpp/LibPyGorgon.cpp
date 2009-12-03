@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.50.2.5  2009/12/02 21:37:58  schuhs
+//   Allow node constraints for correspondence search to be set from Gorgon
+//
 //   Revision 1.50.2.4  2009/07/14 19:53:31  schuhs
 //   Adding methods to get and set the number of helices in a correspondence result
 //
@@ -491,6 +494,9 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("getConstantBool", &SSECorrespondenceEngine::GetConstantBool)
 		.def("clearAllConstraints", &SSECorrespondenceEngine::ClearAllConstraints)			
 		.def("setHelixConstraint", &SSECorrespondenceEngine::SetHelixConstraint)			
+		.def("getHelixConstraintFwd", &SSECorrespondenceEngine::GetHelixConstraintFwd)			
+		.def("getHelixConstraintRev", &SSECorrespondenceEngine::GetHelixConstraintRev)			
+		.def("getHelixConstraintUnk", &SSECorrespondenceEngine::GetHelixConstraintUnk)
 		.def("setNodeConstraint", &SSECorrespondenceEngine::SetNodeConstraint)			
 		.def("setSSEColor", &SSECorrespondenceEngine::SetSSEColor)			
         	.def("setConstantsFromFile", &SSECorrespondenceEngine::SetConstantsFromFile)		
