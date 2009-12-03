@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.16.2.4  2009/12/03 03:06:23  schuhs
+//   Add methods to read constraints from Gorgon
+//
 //   Revision 1.16.2.3  2009/12/02 21:39:57  schuhs
 //   Allow node constraints for correspondence search to be set from Gorgon
 //
@@ -182,7 +185,7 @@ namespace wustl_mm {
 			AddNodeConstraint(sequenceNode, skeletonNode);
 		}
 
-		int BackEndInterface::GetStrandConstraint(int sequenceNode, int constraintNum) {
+		int BackEndInterface::GetStrandConstraint(int sequenceNode, int constraintNum=0) {
 			// get # of helices
 			// check that seqNode > numH
 			// return first constraint, or zero if none
@@ -196,6 +199,11 @@ namespace wustl_mm {
 			int c1 = GetNodeConstraint(firstHelixNode, 0);
 			int c2 = GetNodeConstraint(firstHelixNode+1, 0);
 			//cout << "c1=" << c1 << ", c2=" << c2 << endl;
+
+			// constrained as missing
+			if (c1==-1 || c2==-1) {
+				return -1;
+			}
 
 			// three cases for forward match:
 			// c1 odd and c2 == c1+1
@@ -221,6 +229,11 @@ namespace wustl_mm {
 			int c1 = GetNodeConstraint(firstHelixNode, 0);
 			int c2 = GetNodeConstraint(firstHelixNode+1, 0);
 			//cout << "c1=" << c1 << ", c2=" << c2 << endl;
+
+			// constrained as missing
+			if (c1==-1 || c2==-1) {
+				return -1;
+			}
 
 			// three cases for reverse match:
 			// c1 even and c2 == c1-1
@@ -248,6 +261,11 @@ namespace wustl_mm {
 			int c21 = GetNodeConstraint(firstHelixNode+1, 0);
 			int c22 = GetNodeConstraint(firstHelixNode+1, 1);
 			//cout << "c1=" << c1 << ", c2=" << c2 << endl;
+
+			// constrained as missing
+			if (c11==-1 || c12==-1 || c21==-1 || c22==-1) {
+				return -1;
+			}
 
 			// for unknown match, both nodes must store both numbers
 			if (c11<=0 || c12<=0 || c21<=0 || c22<=0) {
