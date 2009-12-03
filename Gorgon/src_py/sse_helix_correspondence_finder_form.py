@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.36.2.21  2009/12/02 21:31:36  schuhs
+#   Constraints set in Gorgon are correctly sent to the correspondence engine. Still need to allow constraints to be loaded from a file and preserve constraints when the graph structure is changed.
+#
 #   Revision 1.36.2.20  2009/12/02 20:27:39  schuhs
 #   Comment out unnecessary console messages
 #
@@ -520,6 +523,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
             
             self.checkOk()
     
+            self.getConstraints()
             print "done loading settings file"
         
     def setConstants(self):
@@ -666,6 +670,14 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
         self.ui.doubleSpinBoxSheetMissingPenalty.setValue(self.viewer.correspondenceEngine.getConstantDouble("MISSING_SHEET_PENALTY")) 
         self.ui.doubleSpinBoxSheetMissingPenaltyScaled.setValue(self.viewer.correspondenceEngine.getConstantDouble("MISSING_SHEET_PENALTY_SCALED"))
 
+    def getConstraints(self):
+        #Constraints
+        print "starting to check constraints"
+        for i in range(1,20):
+            print "i=" + str(i)
+            print "does node have a fwd constraint? " + str(self.viewer.correspondenceEngine.getHelixConstraintFwd(i))
+            print "does node have a rev constraint? " + str(self.viewer.correspondenceEngine.getHelixConstraintRev(i))
+            print "does node have a unk constraint? " + str(self.viewer.correspondenceEngine.getHelixConstraintUnk(i))
         
     def populateEmptyResults(self, library):
         """ add empty result before correspondence search is started """
