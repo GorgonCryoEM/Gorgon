@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.36.2.22  2009/12/03 03:10:07  schuhs
+#   Reading constraints from Gorgon
+#
 #   Revision 1.36.2.21  2009/12/02 21:31:36  schuhs
 #   Constraints set in Gorgon are correctly sent to the correspondence engine. Still need to allow constraints to be loaded from a file and preserve constraints when the graph structure is changed.
 #
@@ -1194,6 +1197,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
             self.ui.tableWidgetCorrespondenceList.removeAction(act)        
         if(col == 1):
             observedHelices = self.viewer.correspondenceLibrary.structureObservation.helixDict
+            observedSheets = self.viewer.correspondenceLibrary.structureObservation.sheetDict
             constrained = {}
             
             correspondenceIndex = self.ui.comboBoxCorrespondences.currentIndex()
@@ -1207,17 +1211,30 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
                 
             else:
                 match = False
-            
-            for i in range(len(observedHelices)):                
-                constrainAction = QtGui.QAction(self.tr("Observed helix " + str(i+1) + " (Length: " + str(round(observedHelices[i].getLength(), 2)) + "A)"), self)
-                constrainAction.setCheckable(True)
-                if(match and match.observed):
-                    constrainAction.setChecked(match.observed.label == i)
-                else:
-                    constrainAction.setChecked(False)
-                constrainAction.setEnabled(not constrained.has_key(i))
-                self.connect(constrainAction, QtCore.SIGNAL("triggered()"), self.constrainObservedHelix(i))       
-                self.ui.tableWidgetCorrespondenceList.addAction(constrainAction)
+            if match.predicted.type == 'helix':
+                for i in range(len(observedHelices)):                
+                    constrainAction = QtGui.QAction(self.tr("Observed helix " + str(i+1) + " (Length: " + str(round(observedHelices[i].getLength(), 2)) + "A)"), self)
+                    constrainAction.setCheckable(True)
+                    if(match and match.observed):
+                        constrainAction.setChecked(match.observed.label == i)
+                    else:
+                        constrainAction.setChecked(False)
+                    constrainAction.setEnabled(not constrained.has_key(i))
+                    self.connect(constrainAction, QtCore.SIGNAL("triggered()"), self.constrainObservedHelix(i))       
+                    self.ui.tableWidgetCorrespondenceList.addAction(constrainAction)
+            if match.predicted.type == 'strand':
+                numH = len(observedHelices)
+                for i in range(len(observedSheets)):                
+                    constrainAction = QtGui.QAction(self.tr("Observed sheet " + str(i+numH+1)), self)
+                    #constrainAction = QtGui.QAction(self.tr("Observed sheet " + str(i+numH+1) + " (Area: " + str(round(observedSheets[i].getSize(), 2)) + " voxels)"), self)
+                    constrainAction.setCheckable(True)
+                    if(match and match.observed):
+                        constrainAction.setChecked(match.observed.label == i)
+                    else:
+                        constrainAction.setChecked(False)
+                    constrainAction.setEnabled(True)
+                    self.connect(constrainAction, QtCore.SIGNAL("triggered()"), self.constrainObservedSheet(i))       
+                    self.ui.tableWidgetCorrespondenceList.addAction(constrainAction)
                 
             constrainAction = QtGui.QAction(self.tr("Not observed"), self)
             constrainAction.setCheckable(True)
@@ -1252,6 +1269,21 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
                     match.observed = self.viewer.correspondenceLibrary.structureObservation.helixDict[i]
             self.selectCorrespondence(correspondenceIndex)
         return constrainObservedHelix_i
+
+    def constrainObservedSheet(self, i):
+        def constrainObservedSheet_i():
+            numH = len(self.viewer.correspondenceLibrary.structureObservation.helixDict)
+            correspondenceIndex = self.ui.comboBoxCorrespondences.currentIndex()
+            if(correspondenceIndex >= 0):
+                corr = self.viewer.correspondenceLibrary.correspondenceList[correspondenceIndex]
+                match = corr.matchList[self.selectedRow]
+                match.constrained = True
+                if(i == -1):
+                    match.observed = None
+                else:
+                    match.observed = self.viewer.correspondenceLibrary.structureObservation.sheetDict[i]
+            self.selectCorrespondence(correspondenceIndex)
+        return constrainObservedSheet_i
 
     def constrainPredictedHelix(self, predicted, observed):
         def constrainPredictedHelix_po():
