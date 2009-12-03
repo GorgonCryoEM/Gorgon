@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.32.2.20  2009/11/29 22:20:34  schuhs
+//   Support scaled penalties for missing sheets and helices
+//
 //   Revision 1.32.2.19  2009/11/25 18:21:45  schuhs
 //   Remove extra scale factor parameter for converting loop length from angstroms to residues
 //
@@ -259,6 +262,14 @@ namespace wustl_mm {
 		void AddNodeConstraint(int patternNode, int baseNode) {
 			allowedConstraintCollection[patternNode-1][allowedConstraintCount[patternNode-1]] = baseNode;
 			allowedConstraintCount[patternNode-1]++;
+		}
+
+		int GetNodeConstraint(int patternNode, int constraintNum) {
+			if (constraintNum < 0 || constraintNum >= allowedConstraintCount[patternNode-1]) {
+				return 0;
+			} else {
+				return allowedConstraintCollection[patternNode-1][constraintNum];
+			}
 		}
 
 		void AddNodeMismatch(int patternNode, int baseNode) {

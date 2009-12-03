@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.16.2.3  2009/12/02 21:39:57  schuhs
+//   Allow node constraints for correspondence search to be set from Gorgon
+//
 //   Revision 1.16.2.2  2009/06/09 18:44:23  schuhs
 //   Fixing bug in GetConstantString method
 //
@@ -71,6 +74,11 @@ namespace wustl_mm {
 			void ClearAllConstraints();
 			void SetHelixConstraint(int sequenceHelix, int skeletonHelix);
 			void SetNodeConstraint(int sequenceNode, int skeletonNode);
+			int GetStrandConstraint(int sequenceNode, int constraintNum);
+			int GetHelixConstraintFwd(int sequenceNode);
+			int GetHelixConstraintRev(int sequenceNode);
+			int GetHelixConstraintUnk(int sequenceNode);
+
 			// Graph Loading
 			void LoadSequenceGraph();
 			void LoadSkeletonGraph();
@@ -172,6 +180,88 @@ namespace wustl_mm {
 
 		void BackEndInterface::SetNodeConstraint(int sequenceNode, int skeletonNode) {
 			AddNodeConstraint(sequenceNode, skeletonNode);
+		}
+
+		int BackEndInterface::GetStrandConstraint(int sequenceNode, int constraintNum) {
+			// get # of helices
+			// check that seqNode > numH
+			// return first constraint, or zero if none
+			return GetNodeConstraint(sequenceNode, constraintNum);
+		}
+
+		int BackEndInterface::GetHelixConstraintFwd(int firstHelixNode) {
+			if (GetNodeConstraint(firstHelixNode, 1) != 0 || GetNodeConstraint(firstHelixNode+1, 1) != 0) {
+				return 0; // more than one constraint per node
+			}
+			int c1 = GetNodeConstraint(firstHelixNode, 0);
+			int c2 = GetNodeConstraint(firstHelixNode+1, 0);
+			//cout << "c1=" << c1 << ", c2=" << c2 << endl;
+
+			// three cases for forward match:
+			// c1 odd and c2 == c1+1
+			if (c1>0 && c1%2==1 && c2==c1+1) {
+				return c1;
+			}
+			// c1 odd and c2 zero
+			if (c1>0 && c1%2==1 && c2==0) {
+				return c1;
+			}
+			// c1 zero and c2 even
+			if (c1==0 && c2>0 && c2%2==0) {
+				return c2-1;
+			}
+			// not a forward helix constraint
+			return 0;
+		}
+
+		int BackEndInterface::GetHelixConstraintRev(int firstHelixNode) {
+			if (GetNodeConstraint(firstHelixNode, 1) != 0 || GetNodeConstraint(firstHelixNode+1, 1) != 0) {
+				return 0; // more than one constraint per node
+			}
+			int c1 = GetNodeConstraint(firstHelixNode, 0);
+			int c2 = GetNodeConstraint(firstHelixNode+1, 0);
+			//cout << "c1=" << c1 << ", c2=" << c2 << endl;
+
+			// three cases for reverse match:
+			// c1 even and c2 == c1-1
+			if (c1>0 && c1%2==0 && c2==c1-1) {
+				return c1;
+			}
+			// c1 even and c2 zero
+			if (c1>0 && c1%2==0 && c2==0) {
+				return c1;
+			}
+			// c1 zero and c2 odd
+			if (c1==0 && c2>0 && c2%2==1) {
+				return c2+1;
+			}
+			// not a reverse helix constraint
+			return 0;
+		}
+
+		int BackEndInterface::GetHelixConstraintUnk(int firstHelixNode) {
+			if (GetNodeConstraint(firstHelixNode, 2) != 0 || GetNodeConstraint(firstHelixNode+1, 2) != 0) {
+				return 0; // more than two constraints per node
+			}
+			int c11 = GetNodeConstraint(firstHelixNode, 0);
+			int c12 = GetNodeConstraint(firstHelixNode, 1);
+			int c21 = GetNodeConstraint(firstHelixNode+1, 0);
+			int c22 = GetNodeConstraint(firstHelixNode+1, 1);
+			//cout << "c1=" << c1 << ", c2=" << c2 << endl;
+
+			// for unknown match, both nodes must store both numbers
+			if (c11<=0 || c12<=0 || c21<=0 || c22<=0) {
+				return 0;
+			}
+			if ((c11==c21 && c12==c22) || (c11==c22 && c12==c21)) {
+				if (c11<c12) {
+					return c11;
+				} else {
+					return c12;
+				}
+			}
+			// not a reverse helix constraint
+			return 0;
 		}
 
 		void BackEndInterface::LoadSequenceGraph() {
