@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.36.2.23  2009/12/03 15:39:25  schuhs
+#   More fixes to make sheet constraints work in GUI
+#
 #   Revision 1.36.2.22  2009/12/03 03:10:07  schuhs
 #   Reading constraints from Gorgon
 #
@@ -675,13 +678,68 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
 
     def getConstraints(self):
         #Constraints
-        print "starting to check constraints"
-        for i in range(1,20):
-            print "i=" + str(i)
-            print "does node have a fwd constraint? " + str(self.viewer.correspondenceEngine.getHelixConstraintFwd(i))
-            print "does node have a rev constraint? " + str(self.viewer.correspondenceEngine.getHelixConstraintRev(i))
-            print "does node have a unk constraint? " + str(self.viewer.correspondenceEngine.getHelixConstraintUnk(i))
-        
+        print "reading constraints from c++ to gorgon"
+
+        corr = self.viewer.correspondenceLibrary.correspondenceList[0]
+        numH = len(self.viewer.correspondenceLibrary.structureObservation.helixDict)
+
+        # count number of helices and sheets in this correspondence
+        hIx = 1
+        sIx = 1
+        graphIx = 1
+        for i in range(len(corr.matchList)):
+            match = corr.matchList[i]
+            #print "object has type " + str(type(match.predicted))
+            if match.predicted is not None:
+                if match.predicted.type == 'strand':
+                    print "reading constraints for strand " + str(sIx) + " (graph node " + str(graphIx) + ")"
+                    obsSheet = self.viewer.correspondenceEngine.getStrandConstraint(graphIx,0)
+                    constrained = (obsSheet != 0)
+                    if (obsSheet == -1):
+                        sheetNum = -1
+                    elif (obsSheet > 0):
+                        sheetNum = obsSheet - 2 * numH
+                    if constrained:
+                        print "  constrained to sheet " + str(sheetNum) + " (graph node " + str(obsSheet) + ")"
+                        self.constrainSSE(i, sheetNum, 0)
+                                                                            
+                    
+                    sIx += 1
+                    graphIx += 1
+                elif match.predicted.type == 'helix':
+                    print "reading constraints for helix " + str(hIx) + " (graph node " + str(graphIx) + ")"
+                    obsHelixFwd = self.viewer.correspondenceEngine.getHelixConstraintFwd(graphIx)
+                    obsHelixRev = self.viewer.correspondenceEngine.getHelixConstraintRev(graphIx)
+                    obsHelixUnk = self.viewer.correspondenceEngine.getHelixConstraintUnk(graphIx)
+                    print "  fwd constraint = " + str(obsHelixFwd)
+                    print "  rev constraint = " + str(obsHelixRev)
+                    print "  unk constraint = " + str(obsHelixUnk)
+                    if (obsHelixFwd == -1 or obsHelixRev==-1 or obsHelixUnk==-1):
+                        constrained = True
+                        helixNum = -1
+                    elif (obsHelixFwd != 0):
+                        constrained = True
+                        helixNum = (obsHelixFwd+1)/2
+                        helixDir = 1
+                    elif (obsHelixRev != 0):
+                        constrained = True
+                        helixNum = obsHelixRev/2
+                        helixDir = -1
+                    elif (obsHelixUnk != 0):
+                        constrained = True
+                        helixNum = (obsHelixUnk+1)/2
+                        helixDir = 0
+                    
+                    if (constrained):
+                        print "  constrained to helix " + str(helixNum) + " in direction " + str(helixDir)
+                        self.constrainSSE(i, helixNum, helixDir)
+                        
+                    hIx += 1
+                    graphIx += 2
+        # now that constraints are stored, clear from c++ class
+        self.viewer.correspondenceEngine.clearAllConstraints()
+
+
     def populateEmptyResults(self, library):
         """ add empty result before correspondence search is started """
 
@@ -954,6 +1012,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
         self.resultCount = self.viewer.correspondenceEngine.executeQuery()
         print "found " + str(self.resultCount) + " results. cleaning up memory."
         self.viewer.correspondenceEngine.cleanupMemory()
+        self.viewer.correspondenceEngine.clearAllConstraints()
 
         
         # populate the list of found correspondences        
@@ -1092,7 +1151,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
                     if match.observed.sseType == 'helix':
                         cellItemObserved =  QtGui.QTableWidgetItem("helix " + str(match.observed.label+1) +
                                                                    "\n  " + str(round(match.observed.getLength(), 2)) + "A length" +
-                                                                   "\n  " )
+                                                                   "\n  " + str(match.direction) )
                     if match.observed.sseType == 'sheet':
                         cellItemObserved =  QtGui.QTableWidgetItem("sheet " + str(match.observed.label+1) +
                                                                    #"\n  " + str(round(match.observed.getLength(), 2)) + "A length" +
@@ -1250,12 +1309,39 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
             for act in self.ui.tableWidgetCorrespondenceList.actions()[:]:
                 menu.addAction(act)
             menu.exec_(self.ui.tableWidgetCorrespondenceList.mapToGlobal(point), self.ui.tableWidgetCorrespondenceList.actions()[0])
-                    
+
+    def constrainSSE(self, pred, obs, dir):
+        correspondenceIndex = self.ui.comboBoxCorrespondences.currentIndex()
+        if(correspondenceIndex >= 0):
+            corr = self.viewer.correspondenceLibrary.correspondenceList[correspondenceIndex]
+            match = corr.matchList[pred]
+            match.constrained = True
+            if(obs == -1):
+                match.observed = None
+            else:
+                if match.predicted.type == 'helix':
+                    match.observed = self.viewer.correspondenceLibrary.structureObservation.helixDict[obs-1]
+                    if (dir == 1): 
+                        match.directionConstrained = True
+                        match.direction = Match.FORWARD
+                    elif (dir == -1):
+                        match.directionConstrained = True
+                        match.direction = Match.REVERSE
+                    else:
+                        match.directionConstrained = False
+                            
+                if match.predicted.type == 'strand':
+                    match.observed = self.viewer.correspondenceLibrary.structureObservation.sheetDict[obs-1]
+                
+        self.selectCorrespondence(correspondenceIndex)
+
     def constrainObservedHelix(self, i):
         def constrainObservedHelix_i():
             correspondenceIndex = self.ui.comboBoxCorrespondences.currentIndex()
             if(correspondenceIndex >= 0):
                 corr = self.viewer.correspondenceLibrary.correspondenceList[correspondenceIndex]
+
+                # clear old constraints involving helix i
                 for j in range(len(corr.matchList)):
                     match = corr.matchList[j]
                     if(match and match.observed and (match.observed.label == i)) :
