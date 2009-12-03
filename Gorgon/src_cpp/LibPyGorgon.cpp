@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.50.2.6  2009/12/03 03:08:32  schuhs
+//   Reading correspondence search constraints from Gorgon
+//
 //   Revision 1.50.2.5  2009/12/02 21:37:58  schuhs
 //   Allow node constraints for correspondence search to be set from Gorgon
 //
@@ -497,6 +500,7 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("getHelixConstraintFwd", &SSECorrespondenceEngine::GetHelixConstraintFwd)			
 		.def("getHelixConstraintRev", &SSECorrespondenceEngine::GetHelixConstraintRev)			
 		.def("getHelixConstraintUnk", &SSECorrespondenceEngine::GetHelixConstraintUnk)
+		.def("getStrandConstraint", &SSECorrespondenceEngine::GetStrandConstraint)			
 		.def("setNodeConstraint", &SSECorrespondenceEngine::SetNodeConstraint)			
 		.def("setSSEColor", &SSECorrespondenceEngine::SetSSEColor)			
         	.def("setConstantsFromFile", &SSECorrespondenceEngine::SetConstantsFromFile)		
