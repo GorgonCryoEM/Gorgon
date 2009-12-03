@@ -17,6 +17,7 @@ class Match:
     self.predicted=predicted
     self.direction=direction
     self.constrained = False
+    self.directionConstrained = False
 
   def __repr__(self):
     if self.observed is None:
