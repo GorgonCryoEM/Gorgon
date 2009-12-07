@@ -424,7 +424,6 @@ void rmatrixbd(ap::real_2d_array& a,
     int minmn;
     int maxmn;
     int i;
-    int j;
     double ltau;
 
     

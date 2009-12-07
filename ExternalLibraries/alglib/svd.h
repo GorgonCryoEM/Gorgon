@@ -211,8 +211,6 @@ bool rmatrixsvd(ap::real_2d_array a,
     int ncvt;
     int i;
     int j;
-    int im1;
-    double sm;
 
     result = true;
     if( m==0||n==0 )
@@ -477,8 +475,6 @@ bool svddecomposition(ap::real_2d_array a,
     int ncvt;
     int i;
     int j;
-    int im1;
-    double sm;
 
     result = true;
     if( m==0||n==0 )
