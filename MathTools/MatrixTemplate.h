@@ -11,12 +11,18 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.1  2009/12/07 05:00:52  ssa1
+//   Adding in Matrix functionality for Singular Value Decomposition
+//
 
 #ifndef MATHTOOLS_MATRIX_TEMPLATE_H
 #define MATHTOOLS_MATRIX_TEMPLATE_H
 
 #include <alglib/svd.h>
 #include <alglib/ap.h>
+#include <vector>
+
+using namespace std;
 
 namespace wustl_mm {
 	namespace MathTools {
@@ -41,7 +47,7 @@ namespace wustl_mm {
 			MatrixTemplate<T>& operator-=(MatrixTemplate<T> &m );
 			MatrixTemplate<T> operator*(T s);
 			MatrixTemplate<T> Transpose();
-			MatrixTemplate<T> ConjugateTranspose();
+			MatrixTemplate<T> ConjugateTranspose();			
 
 			void SingularValueDecomposition(MatrixTemplate <T> &u, MatrixTemplate <T> &w, MatrixTemplate <T> &v);
 
@@ -51,6 +57,8 @@ namespace wustl_mm {
 			static MatrixTemplate<T> AllZero(int rowCount, int colCount);
 			static MatrixTemplate<T> AllOne(int rowCount, int colCount);
 			static MatrixTemplate<T> Random(int rowCount, int colCount);
+			static MatrixTemplate<T> Covariance(MatrixTemplate<T> m1, MatrixTemplate<T> m2);
+			static T Covariance(vector<T> v1, vector<T> v2);
 			void Print(bool isInt);
 
 		private:
@@ -59,30 +67,29 @@ namespace wustl_mm {
 		private:
 			unsigned int rowCount;
 			unsigned int colCount;	
-			T * values;
+			vector<T> values;
 		};
 
 		template <class T>
 		MatrixTemplate<T>::MatrixTemplate() {
 			rowCount = 0;
 			colCount = 0;
-			values = NULL;
+			values.clear();
 		}
 
 		template <class T>
 		MatrixTemplate<T>::MatrixTemplate(unsigned int rowCount, unsigned int colCount) {
 			this->rowCount = rowCount;
 			this->colCount = colCount;
-			this->values = new T[rowCount * colCount];
+			values.clear();
 			for(unsigned int i = 0; i < rowCount * colCount; i++) {
-				values[i] = (T)0;
+				values.push_back((T)0);
 			}
 		}
 
 		template <class T>
 		MatrixTemplate<T>::~MatrixTemplate() {
-			delete [] values;
-			values = NULL;
+			values.clear();
 		}
 
 		template <class T>
@@ -277,6 +284,7 @@ namespace wustl_mm {
 
 		template <class T>
 		void MatrixTemplate<T>::Print(bool isInt) {
+			printf("\n");
 			for(unsigned int i = 0; i < rowCount; i++) {
 				for(unsigned int j = 0; j < colCount; j++) {
 					if(isInt) {
@@ -293,7 +301,7 @@ namespace wustl_mm {
 		template <class T>
 		MatrixTemplate<T> MatrixTemplate<T>::Identity(int size){
 			MatrixTemplate<T> retVal = MatrixTemplate<T>(size, size);
-			for(unsigned int i = 0; i < size; i++) {
+			for(int i = 0; i < size; i++) {
 				retVal.SetValue((T)1, i, i);
 			}
 			return retVal;
@@ -326,7 +334,6 @@ namespace wustl_mm {
 			}
 			return retVal;
 		}
-
 	
 		template <class T>
 		void MatrixTemplate<T>::SingularValueDecomposition(MatrixTemplate <T> &u, MatrixTemplate <T> &w, MatrixTemplate <T> &v) {
@@ -346,20 +353,85 @@ namespace wustl_mm {
 
 			for(unsigned int i = 0; i < rowCount; i++) {
 				for(unsigned int j = 0; j < rowCount; j++) {
-					u.SetValue(retU(i, j), i, j);
+					u.SetValue((T)retU(i, j), i, j);
 				}
 			}
 
 			for(unsigned int i = 0; i < rowCount; i++) {
-				w.SetValue(retW(i), i, i);
+				w.SetValue((T)retW(i), i, i);
 			}
 
 			for(unsigned int i = 0; i < colCount; i++) {
 				for(unsigned int j = 0; j < colCount; j++) {
-					v.SetValue(retVT(i, j), i, j);
+					v.SetValue((T)retVT(i, j), j, i);
 				}
 			}
-			v = v.Transpose();
+		}
+
+		template <class T>
+		MatrixTemplate<T> MatrixTemplate<T>::Covariance(MatrixTemplate<T> m1, MatrixTemplate<T> m2) {
+			if(m1.GetRowCount() != m2.GetRowCount()) {
+				printf("Error! Unable to get covariance of two matrices with incompatible row counts\n");
+				exit(0);
+			}
+
+			MatrixTemplate<T> retVal = MatrixTemplate<T>(m1.GetColCount(), m2.GetColCount());
+			vector<T> c1, c2;
+
+			for(unsigned int i = 0; i < m1.GetColCount(); i++) {
+				c1.clear();
+				for(unsigned int k = 0; k < m1.GetRowCount(); k++) {
+					c1.push_back(m1.GetValue(k, i));
+				}
+				for(unsigned int j = 0; j < m2.GetColCount(); j++) {				
+					c2.clear();
+					for(unsigned int k = 0; k < m2.GetRowCount(); k++) {
+						c2.push_back(m2.GetValue(k, j));
+					}
+					retVal.SetValue(Covariance(c1, c2), i, j);
+				}
+			}
+			return retVal.Transpose();
+		}
+
+		template <class T>
+		T MatrixTemplate<T>::Covariance(vector<T> v1, vector<T> v2) {
+			if(v1.size() != v2.size()) {
+				printf("Error! Covariance can be found of only vectors of same size.\n");
+				exit(0);
+			}
+
+			double covar = 0;
+			double multiplier;
+			unsigned int n = v1.size();
+			switch(n) {
+				case 0: 
+					covar = 0;
+					break;
+				case 1:
+					covar = 0;
+					break;
+				case 2:
+					covar = (double)(v1[0] - v1[1]) * (double)(v2[0] - v2[1]) * 0.5;
+					break;
+				default:					
+					for(unsigned int i = 0; i < n; i++) {
+						multiplier = 0;
+						for(unsigned int j = 0; j < n; j++) {
+							if(i == j) {
+								multiplier += (double)n * (double)v1[j];
+							} else {
+								multiplier -= (double)v1[j];
+							}
+						}
+						covar += multiplier * (double)v2[i];
+					}
+					covar = covar / (double)(n * n-1);
+					break;
+			}								
+
+			return (T)covar;	
+			
 		}
 	}
 }

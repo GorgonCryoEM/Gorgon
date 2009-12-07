@@ -101,8 +101,9 @@
 			IntermediateDirectory="$(SolutionDir)\..\temp\$(ConfigurationName)\$(ProjectName)"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
+			UseOfMFC="1"
 			CharacterSet="2"
-			ManagedExtensions="4"
+			ManagedExtensions="0"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -121,13 +122,8 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				Optimization="2"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)&quot;;&quot;$(SolutionDir)\ExternalLibraries&quot;;$(SolutionDir)\ExternalLibraries\GL;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)&quot;;&quot;$(SolutionDir)\ExternalLibraries&quot;;&quot;$(SolutionDir)\ExternalLibraries\GL&quot;"
 				PreprocessorDefinitions="_RELEASE;WIN32"
-				MinimalRebuild="false"
-				RuntimeLibrary="2"
-				WarningLevel="4"
-				DebugInformationFormat="0"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -140,11 +136,8 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				ShowProgress="2"
-				OutputFile="$(OutDir)\$(ProjectName).exe"
-				LinkIncremental="2"
 				AdditionalLibraryDirectories="&quot;$(SolutionDir)\ExternalLibraries\GL&quot;"
-				GenerateDebugInformation="true"
+				DelayLoadDLLs="$(NOINHERIT)"
 			/>
 			<Tool
 				Name="VCALinkTool"

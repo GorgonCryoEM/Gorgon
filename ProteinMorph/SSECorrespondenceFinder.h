@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.7  2009/11/30 04:23:44  ssa1
+//   Triangle based A* search for flexible fitting
+//
 //   Revision 1.6  2009/11/19 18:19:25  ssa1
 //   Improved flexible fitting.. (Split nodes to guarantee direction)
 //
@@ -417,7 +420,7 @@ namespace wustl_mm {
 					if(printOutput) {
 						currentNode->PrintSolution(nodes, useDirection);							
 					}
-					
+				
 					solutionCount++;
 				} else {
 					//printf("Child Nodes: \n");

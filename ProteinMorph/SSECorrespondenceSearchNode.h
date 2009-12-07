@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.8  2009/12/07 05:00:52  ssa1
+//   Adding in Matrix functionality for Singular Value Decomposition
+//
 //   Revision 1.7  2009/11/30 04:23:44  ssa1
 //   Triangle based A* search for flexible fitting
 //
@@ -36,11 +39,13 @@
 #ifndef PROTEINMORPH_SSE_CORRESPONDENCE_SEARCH_NODE_H
 #define PROTEINMORPH_SSE_CORRESPONDENCE_SEARCH_NODE_H
 
-#include<Foundation/GraphBase.h>
-#include<vector>
-#include<set>
+#include <Foundation/GraphBase.h>
+#include <vector>
+#include <set>
+#include <MathTools/LinearSolver.h>
 
 using namespace wustl_mm::Foundation;
+using namespace wustl_mm::MathTools;
 using namespace std;
 
 namespace wustl_mm {
@@ -58,6 +63,7 @@ namespace wustl_mm {
 			void PrintSolution(vector<SSECorrespondenceNode> & allNodes, bool useDirection);
 			GraphBase<unsigned int, bool> GetChildGraph(vector<SSECorrespondenceNode> & allNodes, vector<unsigned long long> clique);
 			GraphBase<unsigned int, bool> GetOnlySymmetriesGraph(vector<SSECorrespondenceNode> & allNodes, set<unsigned long long> clique, GraphBase<unsigned int, bool> & parentGraph, map<unsigned int, unsigned int> & parentVertexIndices);
+			MatrixFloat GetTransform(vector<SSECorrespondenceFeature> & featureList1, vector<SSECorrespondenceFeature> & featureList2, vector<unsigned int> & nodeList, vector<SSECorrespondenceNode> & allNodes, int sampleCount);
 		private:
 			vector< set<unsigned long long> > GetSymmetricCliquesTriangleApprox(int maxSizeDifference, vector<SSECorrespondenceNode> & allNodes);
 
@@ -385,6 +391,34 @@ namespace wustl_mm {
 			printf("corr = Sort[corr, Length[#1] > Length[#2] &];\n");
 			firstCorr = 1;
 			printf("printFinalOutput[corr, fl1, fl2, %d]\n", firstCorr);
+		}
+
+		MatrixFloat SSECorrespondenceSearchNode::GetTransform(vector<SSECorrespondenceFeature> & featureList1, vector<SSECorrespondenceFeature> & featureList2, vector<unsigned int> & nodeList, vector<SSECorrespondenceNode> & allNodes, int sampleCount) {
+			vector<Vector3DFloat> fl1, fl2;
+			fl1.clear();
+			fl2.clear();
+			Vector3DFloat p1, p2, q1, q2;
+			Vector3DFloat sp, sq;
+
+			for(unsigned int i = 0; i < nodeList.size(); i++) {
+				p1 = featureList1[allNodes[nodeList[i]].GetPIndex()].GetEndPoint(0);
+				p2 = featureList1[allNodes[nodeList[i]].GetPIndex()].GetEndPoint(1);
+				
+				q1 = featureList2[allNodes[nodeList[i]].GetQIndex()].GetEndPoint(allNodes[nodeList[i]].IsForward()?0:1);
+				q2 = featureList2[allNodes[nodeList[i]].GetQIndex()].GetEndPoint(allNodes[nodeList[i]].IsForward()?1:0);
+
+				float offset;
+				for(unsigned int j = 0; j < sampleCount; j++) {
+					offset = (float)j / (float)(sampleCount - 1);
+
+					sp = p1*(1.0f - offset) + p2 * offset;
+					sq = q1*(1.0f - offset) + q2 * offset;
+					fl1.push_back(sp);
+					fl2.push_back(sq);					
+				}
+			}
+
+			return LinearSolver::FindRotationTranslation(fl1, fl2);
 		}
 	}
 }

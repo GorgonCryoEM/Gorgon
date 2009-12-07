@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.17  2009/09/17 20:00:24  ssa1
+//   Steps towards exporting to Rosetta
+//
 //   Revision 1.16  2009/06/23 16:50:34  ssa1
 //   Adding in SSEBuilder Functionality: Saving helix as WRL and SSE files
 //
@@ -468,7 +471,7 @@ namespace wustl_mm {
 						y = yz/z;
 					}
 				}
-				axis = Vector3DFloat(x, y, z);
+				axis = Vector3DFloat((float)x, (float)y, (float)z);
 				return;		
 			}
 			// as we have reached here there are no singularities so we can handle normally
@@ -482,7 +485,7 @@ namespace wustl_mm {
 			x = (m(2,1) - m(1,2))/s;
 			y = (m(0,2) - m(2,0))/s;
 			z = (m(1,0) - m(0,1))/s;
-			axis = Vector3DFloat(x, y, z);
+			axis = Vector3DFloat((float)x, (float)y, (float)z);
 			return;
 		}
 		GeometricShape * GeometricShape::CreateHelix(Vector3DFloat p1, Vector3DFloat p2, float radius) {

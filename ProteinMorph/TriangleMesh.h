@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.4  2009/07/15 15:34:21  ssa1
+//   Fixing Macos Compilation issue for template based types used as iterators
+//
 //   Revision 1.3  2009/07/01 21:25:13  ssa1
 //   Centering the volume cropped using a radius around the point selected by the atom selection tool.
 //
@@ -128,7 +131,7 @@ namespace wustl_mm {
 				}
 				float r,g,b,a;
 				OpenGLUtils::GetColor(r,g,b,a);
-				for(int i = 0; i < faces.size(); i++) {					
+				for(unsigned int i = 0; i < faces.size(); i++) {					
 					if(annotateSurfaces) {
 						glLoadName(i);
 					}
@@ -178,7 +181,7 @@ namespace wustl_mm {
 				fprintf(outFile, "%f %f %f \n", vertexList[i].X(), vertexList[i].Y(), vertexList[i].Z());
 			}
 
-			for(int i = 0; i < faces.size(); i++) {					
+			for(unsigned int i = 0; i < faces.size(); i++) {					
 				fprintf(outFile, "3 %d %d %d\n", indexedVertices[faces[i].vertexHashes[2]], indexedVertices[faces[i].vertexHashes[1]], indexedVertices[faces[i].vertexHashes[0]]); 
 			}
 			fclose(outFile);
