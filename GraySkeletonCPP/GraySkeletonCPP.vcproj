@@ -39,7 +39,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="$(SolutionDir);C:\MATLAB701\extern\include;$(SolutionDir)\ExternalLibraries;$(SolutionDir)\ExternalLibraries\GL;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)&quot;;C:\MATLAB701\extern\include;&quot;$(SolutionDir)\ExternalLibraries&quot;;&quot;$(SolutionDir)\ExternalLibraries\GL&quot;"
 				WarningLevel="3"
 				DebugInformationFormat="4"
 			/>

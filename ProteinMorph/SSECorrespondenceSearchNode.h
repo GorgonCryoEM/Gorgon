@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.9  2009/12/07 21:34:36  ssa1
+//   Finding Rotation using SVD, and removing compiler warnings
+//
 //   Revision 1.8  2009/12/07 05:00:52  ssa1
 //   Adding in Matrix functionality for Singular Value Decomposition
 //
@@ -65,11 +68,13 @@ namespace wustl_mm {
 			GraphBase<unsigned int, bool> GetOnlySymmetriesGraph(vector<SSECorrespondenceNode> & allNodes, set<unsigned long long> clique, GraphBase<unsigned int, bool> & parentGraph, map<unsigned int, unsigned int> & parentVertexIndices);
 			MatrixFloat GetTransform(vector<SSECorrespondenceFeature> & featureList1, vector<SSECorrespondenceFeature> & featureList2, vector<unsigned int> & nodeList, vector<SSECorrespondenceNode> & allNodes, int sampleCount);
 		private:
+			float GetAverageError(vector<SSECorrespondenceFeature> & featureList1, vector<SSECorrespondenceFeature> & featureList2, MatrixFloat transform, vector<unsigned int> & nodeList, vector<SSECorrespondenceNode> & allNodes, int sampleCount);			
 			vector< set<unsigned long long> > GetSymmetricCliquesTriangleApprox(int maxSizeDifference, vector<SSECorrespondenceNode> & allNodes);
 
 			float GetCliqueCost(vector<unsigned long long> & clique, float featureChangeCoeff, float rigidComponentCoeff);
 			float GetIntraCliqueCost(vector<unsigned int> & nodeList, vector<unsigned int> & parentNodeList, vector< vector<float> > & pairCompatibility, float intraComponentCoeff);
 			float GetIntraCliqueCost2(vector<unsigned int> & nodeList, vector<SSECorrespondenceNode> & allNodes, vector<SSECorrespondenceFeature> featureList1, vector<SSECorrespondenceFeature> featureList2);
+			float GetIntraCliqueCost3(vector<unsigned int> & nodeList, vector<SSECorrespondenceNode> & allNodes, vector<SSECorrespondenceFeature> featureList1, vector<SSECorrespondenceFeature> featureList2);
 
 			Vector3DFloat GetFeature1Centroid(vector<unsigned int> & nodeList, vector<SSECorrespondenceNode> & allNodes, vector<SSECorrespondenceFeature> featureList1);
 			Vector3DFloat GetFeature2Centroid(vector<unsigned int> & nodeList, vector<SSECorrespondenceNode> & allNodes, vector<SSECorrespondenceFeature> featureList2);
@@ -78,6 +83,7 @@ namespace wustl_mm {
 			GraphBase<unsigned int, bool> graph;
 			vector< vector<unsigned int> > solution;
 			float cost;
+			static const int SAMPLE_COUNT = 10;
 			
 		};
 
@@ -124,7 +130,7 @@ namespace wustl_mm {
 				if(currClique.size() >= minSize) {
 					relativeClique = prunedGraph.VertexSetToVector(currClique);
 					absoluteClique.clear();
-					for(unsigned int i = 0; i < relativeClique.size(); i++) {
+					for(int i = 0; i < (int)relativeClique.size(); i++) {
 						absoluteClique.push_back(parentVertexIndices[relativeClique[i]]);
 					}
 					cliques.push_back(prunedGraph.VertexVectorToSet(absoluteClique));
@@ -183,7 +189,7 @@ namespace wustl_mm {
 					childSolution = solution;
 					childSolution.push_back(childSolutionElement);
 					childGraph = GetChildGraph(allNodes, clique);
-					childCost = cost + GetIntraCliqueCost2(childSolutionElement, allNodes, featureList1, featureList2);
+					childCost = cost + GetIntraCliqueCost3(childSolutionElement, allNodes, featureList1, featureList2);
 
 					childNodes.push_back(new SSECorrespondenceSearchNode(childGraph, childSolution, childCost));				
 				}
@@ -338,6 +344,18 @@ namespace wustl_mm {
 			
 		}
 
+		float SSECorrespondenceSearchNode::GetIntraCliqueCost3(vector<unsigned int> & nodeList, vector<SSECorrespondenceNode> & allNodes, vector<SSECorrespondenceFeature> featureList1, vector<SSECorrespondenceFeature> featureList2) {
+			MatrixFloat transform = MatrixFloat(4,4);
+			float cost = 0;
+			for(unsigned int i = 0; i < solution.size(); i++) {
+				if(solution[i].size() > 0) {
+					transform = GetTransform(featureList1, featureList2, solution[i], allNodes, SAMPLE_COUNT);
+					cost += GetAverageError(featureList1, featureList2, transform, nodeList, allNodes, SAMPLE_COUNT);	
+				}
+			}
+			return cost;
+		}
+
 		vector< vector<SSECorrespondenceNode> > SSECorrespondenceSearchNode::GetSolution(vector<SSECorrespondenceNode> & allNodes) {
 			vector< vector<SSECorrespondenceNode> > corr;
 			vector<SSECorrespondenceNode> corrItem;
@@ -419,6 +437,31 @@ namespace wustl_mm {
 			}
 
 			return LinearSolver::FindRotationTranslation(fl1, fl2);
+		}
+
+		float SSECorrespondenceSearchNode::GetAverageError(vector<SSECorrespondenceFeature> & featureList1, vector<SSECorrespondenceFeature> & featureList2, MatrixFloat transform, vector<unsigned int> & nodeList, vector<SSECorrespondenceNode> & allNodes, int sampleCount) {
+			Vector3DFloat p1, p2, q1, q2, sp, sq;
+			float totalError = 0, nodeError, offset;				
+
+			for(unsigned int i = 0; i < nodeList.size(); i++) {
+				p1 = featureList1[allNodes[nodeList[i]].GetPIndex()].GetEndPoint(0).Transform(transform);
+				p2 = featureList1[allNodes[nodeList[i]].GetPIndex()].GetEndPoint(1).Transform(transform);
+				
+				q1 = featureList2[allNodes[nodeList[i]].GetQIndex()].GetEndPoint(allNodes[nodeList[i]].IsForward()?0:1);
+				q2 = featureList2[allNodes[nodeList[i]].GetQIndex()].GetEndPoint(allNodes[nodeList[i]].IsForward()?1:0);
+
+				for(unsigned int j = 0; j < sampleCount; j++) {
+					nodeError = 0;
+					offset = (float)j / (float)(sampleCount - 1);
+
+					sp = p1*(1.0f - offset) + p2 * offset;
+					sq = q1*(1.0f - offset) + q2 * offset;
+
+					nodeError += (sp - sq).Length() / (float)sampleCount;
+				}
+				totalError += nodeError / (float)nodeList.size();
+			}
+			return totalError;
 		}
 	}
 }
