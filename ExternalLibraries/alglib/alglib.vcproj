@@ -204,46 +204,6 @@
 			Filter="cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx"
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
-			<File
-				RelativePath=".\ap.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\bdsvd.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\bidiagonal.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\blas.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\ialglib.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\lq.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\qr.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\reflections.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\rotations.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\svd.cpp"
-				>
-			</File>
 		</Filter>
 	</Files>
 	<Globals>
