@@ -5,6 +5,7 @@
 	Name="MathTools"
 	ProjectGUID="{EC8F7758-80CF-436B-978B-717297945FAB}"
 	RootNamespace="MatlabInterface"
+	AssemblyReferenceSearchPaths="&quot;..\ExternalLibraries\alglib\Release&quot;"
 	>
 	<Platforms>
 		<Platform
@@ -38,7 +39,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="$(SolutionDir);C:\MATLAB701\extern\include"
+				AdditionalIncludeDirectories="C:\_WashU\ssa1\source\ExternalLibraries;&quot;$(SolutionDir)&quot;;C:\MATLAB701\extern\include"
 				PreprocessorDefinitions="USE_MATLAB"
 				DebugInformationFormat="4"
 			/>
@@ -53,8 +54,8 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="libeng.lib libfixedpoint.lib libmat.lib libmex.lib libmwservices.lib libmx.lib libut.lib"
-				AdditionalLibraryDirectories="C:\MATLAB701\extern\lib\win32\microsoft\msvc71"
+				AdditionalDependencies="libeng.lib libfixedpoint.lib libmat.lib libmex.lib libmwservices.lib libmx.lib libut.lib alglib.lib"
+				AdditionalLibraryDirectories="C:\_WashU\ssa1\source\ExternalLibraries\alglib\Release;C:\MATLAB701\extern\lib\win32\microsoft\msvc71"
 				GenerateDebugInformation="true"
 				GenerateMapFile="false"
 			/>
@@ -106,7 +107,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="$(SolutionDir);C:\MATLAB701\extern\include"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)&quot;;C:\MATLAB701\extern\include;C:\_WashU\ssa1\source\ExternalLibraries"
 				PreprocessorDefinitions="USE_MATLAB"
 			/>
 			<Tool
@@ -120,8 +121,8 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="libeng.lib libfixedpoint.lib libmat.lib libmex.lib libmwservices.lib libmx.lib libut.lib"
-				AdditionalLibraryDirectories="C:\MATLAB701\extern\lib\win32\microsoft\msvc71"
+				AdditionalDependencies="libeng.lib libfixedpoint.lib libmat.lib libmex.lib libmwservices.lib libmx.lib libut.lib alglib.lib"
+				AdditionalLibraryDirectories="C:\_WashU\ssa1\source\ExternalLibraries\alglib\Release;C:\MATLAB701\extern\lib\win32\microsoft\msvc71"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -172,7 +173,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="$(SolutionDir);C:\_WashU\ssa1\source\ExternalLibraries\mpatrol\include;C:\MATLAB701\extern\include"
+				AdditionalIncludeDirectories="C:\_WashU\ssa1\source\ExternalLibraries;&quot;$(SolutionDir)&quot;;C:\_WashU\ssa1\source\ExternalLibraries\mpatrol\include;C:\MATLAB701\extern\include"
 				PreprocessorDefinitions="USE_MATLAB"
 				DebugInformationFormat="4"
 			/>
@@ -240,7 +241,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="$(SolutionDir)"
+				AdditionalIncludeDirectories="$(SolutionDir);C:\_WashU\ssa1\source\ExternalLibraries"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -303,7 +304,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="$(SolutionDir);C:\MATLAB701\extern\include"
+				AdditionalIncludeDirectories="$(SolutionDir);C:\MATLAB701\extern\include;C:\_WashU\ssa1\source\ExternalLibraries"
 				PreprocessorDefinitions="USE_MATLAB"
 			/>
 			<Tool
@@ -385,14 +386,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Eigen.h"
-				>
-			</File>
-			<File
-				RelativePath=".\GeoCommon.h"
-				>
-			</File>
-			<File
 				RelativePath=".\LinearSolver.h"
 				>
 			</File>
@@ -402,6 +395,14 @@
 			</File>
 			<File
 				RelativePath=".\MatlabWrapper.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Matrix.h"
+				>
+			</File>
+			<File
+				RelativePath=".\MatrixTemplate.h"
 				>
 			</File>
 			<File

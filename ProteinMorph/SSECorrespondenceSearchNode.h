@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.7  2009/11/30 04:23:44  ssa1
+//   Triangle based A* search for flexible fitting
+//
 //   Revision 1.6  2009/11/19 18:19:25  ssa1
 //   Improved flexible fitting.. (Split nodes to guarantee direction)
 //
@@ -109,7 +112,7 @@ namespace wustl_mm {
 			}
 
 			vector<unsigned long long> relativeClique, absoluteClique;
-			while(currClique.size() >= minSize) {
+			while(prunedGraph.GetVertexCount() > 0) {
 				prunedGraph = GetOnlySymmetriesGraph(allNodes, currClique, tempGraph, parentVertexIndices);
 				currClique = prunedGraph.GetLowestCostCliqueTriangleApprox();
 				if(currClique.size() >= minSize) {
@@ -314,7 +317,6 @@ namespace wustl_mm {
 
 			float cost = 0;
 			float d1, d2;
-			//float minD = MAX_FLOAT;
 			for(unsigned int i = 0; i < solution.size(); i++) {
 				if(solution[i].size() > 0) {
 					p1 = GetFeature1Centroid(solution[i], allNodes, featureList1);
@@ -322,10 +324,9 @@ namespace wustl_mm {
 					d1 = (c1 - p1).Length();
 					d2 = (c2 - p2).Length();
 
-					cost += abs(d1 - d2);
+					cost += abs(d1-d2) * exp(-max(d1, d2)/4.0);
 				}
 			}
-			//cost = minD;
 
 			return cost;
 			

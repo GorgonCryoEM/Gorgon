@@ -11,13 +11,16 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.7  2008/10/14 14:59:33  ssa1
+//   Adding in sketching mode for interactive skeletonization
+//
 //   Revision 1.6  2008/09/29 16:43:15  ssa1
 //   Adding in CVS meta information
 //
 
 
-#ifndef VECTOR3D_H
-#define VECTOR3D_H
+#ifndef MATHTOOLS_VECTOR3D_H
+#define MATHTOOLS_VECTOR3D_H
 
 #include "Vector3DTemplate.h"
 

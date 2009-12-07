@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.8  2009/08/27 21:19:39  colemanr
+//   Missing semicolons added.
+//
 //   Revision 1.7  2009/08/26 14:58:55  ssa1
 //   Adding in Flexible fitting clique search
 //
@@ -21,8 +24,8 @@
 //   Adding in CVS meta information
 //
 
-#ifndef VECTORT3DTEMPLATE_H
-#define VECTORT3DTEMPLATE_H
+#ifndef MATHTOOLS_VECTORT3DTEMPLATE_H
+#define MATHTOOLS_VECTORT3DTEMPLATE_H
 
 #include <cstdio>
 #include <cmath>
