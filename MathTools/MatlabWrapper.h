@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.7  2008/09/29 16:43:15  ssa1
+//   Adding in CVS meta information
+//
 
 #ifndef MATLAB_WRAPPER_H
 #define MATLAB_WRAPPER_H
@@ -21,7 +24,7 @@
 #include "DataStructures.h"
 #include "Vector3D.h"
 #include "ComplexNumber.h"
-#include "Eigen.h"
+#include <schaefer_eigen/Eigen.h>
 #include <cmath>
 #ifdef USE_MATLAB
 #include "engine.h"
