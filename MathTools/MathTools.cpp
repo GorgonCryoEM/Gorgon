@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.6  2009/12/07 05:00:52  ssa1
+//   Adding in Matrix functionality for Singular Value Decomposition
+//
 //   Revision 1.5  2008/09/29 16:43:15  ssa1
 //   Adding in CVS meta information
 //
@@ -44,12 +47,26 @@ int main()
 	m.SetValue(8,1,3);
 	m.Print(false); printf("\n");
 
+	MatrixDouble n = MatrixDouble(2, 4);
+	n.SetValue(1,0,0);
+	n.SetValue(5,0,1);
+	n.SetValue(6,0,2);
+	n.SetValue(4,0,3);
+	n.SetValue(2,1,0);
+	n.SetValue(8,1,1);
+	n.SetValue(6,1,2);
+	n.SetValue(3,1,3);
+	n.Print(false); printf("\n");
+
+	MatrixDouble::Covariance(m, n).Print(false);
+
 	MatrixDouble u = MatrixDouble(2, 2);
 	MatrixDouble w = MatrixDouble(2, 4);
 	MatrixDouble v = MatrixDouble(4, 4);
 
 
 	m.SingularValueDecomposition(u, w, v);
+	
 
 	u.Print(false); printf("\n");
 	w.Print(false); printf("\n");

@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.10  2009/09/29 19:23:39  ssa1
+//   Fixing indexing bugs when performing sse correspondence search.
+//
 //   Revision 1.9  2009/09/21 14:54:18  ssa1
 //   Steps towards exporting to Rosetta
 //
@@ -427,7 +430,7 @@ namespace wustl_mm {
 			}
 
 
-			char filename[100];
+			//char filename[100];
 			//sprintf(filename, "C:\\path_%d_%d.off", pathCount, helix1Ix);
 			//printf("vertex count: %d, edgeCount: %d, faceCount: %d\n", singlePathMesh->vertices.size(), singlePathMesh->edges.size(), singlePathMesh->faces.size()); flushall();
 			//singlePathMesh->ToOffCells(filename);

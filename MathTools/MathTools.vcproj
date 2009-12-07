@@ -54,8 +54,8 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="libeng.lib libfixedpoint.lib libmat.lib libmex.lib libmwservices.lib libmx.lib libut.lib alglib.lib"
-				AdditionalLibraryDirectories="C:\_WashU\ssa1\source\ExternalLibraries\alglib\Release;C:\MATLAB701\extern\lib\win32\microsoft\msvc71"
+				AdditionalDependencies="libeng.lib libfixedpoint.lib libmat.lib libmex.lib libmwservices.lib libmx.lib libut.lib"
+				AdditionalLibraryDirectories="C:\MATLAB701\extern\lib\win32\microsoft\msvc71"
 				GenerateDebugInformation="true"
 				GenerateMapFile="false"
 			/>
@@ -121,8 +121,8 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="libeng.lib libfixedpoint.lib libmat.lib libmex.lib libmwservices.lib libmx.lib libut.lib alglib.lib"
-				AdditionalLibraryDirectories="C:\_WashU\ssa1\source\ExternalLibraries\alglib\Release;C:\MATLAB701\extern\lib\win32\microsoft\msvc71"
+				AdditionalDependencies="libeng.lib libfixedpoint.lib libmat.lib libmex.lib libmwservices.lib libmx.lib libut.lib"
+				AdditionalLibraryDirectories="C:\MATLAB701\extern\lib\win32\microsoft\msvc71"
 			/>
 			<Tool
 				Name="VCALinkTool"

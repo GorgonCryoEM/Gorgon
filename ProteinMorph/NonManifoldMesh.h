@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.40  2009/10/13 18:09:34  ssa1
+//   Refactoring Volume.h
+//
 //   Revision 1.39  2009/09/17 20:00:24  ssa1
 //   Steps towards exporting to Rosetta
 //
@@ -1048,7 +1051,7 @@ namespace wustl_mm {
 			
 			double distance, minDistance = (pos - vertices[0].position).Length();
 			int minIx = 0;
-			for(int i = 0; i < vertices.size(); i++) {
+			for(unsigned int i = 0; i < vertices.size(); i++) {
 				distance = (pos - vertices[i].position).Length();
 				if(distance < minDistance) {
 					minDistance = distance;
@@ -1063,7 +1066,7 @@ namespace wustl_mm {
 			bool isSurface = false;
 			NonManifoldMeshEdge<TEdge> edge;
 			
-			for(int i = 0; i < vertices[ix].edgeIds.size(); i++) {
+			for(unsigned int i = 0; i < vertices[ix].edgeIds.size(); i++) {
 				edge = edges[GetEdgeIndex(vertices[ix].edgeIds[i])];
 				isSurface = isSurface || (edge.faceIds.size() > 0);				
 			}

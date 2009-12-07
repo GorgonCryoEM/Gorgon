@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.1  2009/09/21 19:03:22  ssa1
+//   Linear least squares fit implementation, and using it in helix positioning of SSE Builder
+//
 
 #ifndef MATH_TOOLS_LINEAR_SOLVER_H
 #define MATH_TOOLS_LINEAR_SOLVER_H
@@ -18,6 +21,7 @@
 #include "Vector3D.h"
 #include <vector>
 #include "MatlabWrapper.h"
+#include "Matrix.h"
 
 using namespace std;
 
@@ -26,7 +30,8 @@ namespace wustl_mm {
 
 		class LinearSolver{
 		public:
-			static void FindBestFitLine(Vector3DFloat & pt1, Vector3DFloat & pt2, vector<Vector3DFloat> pts);	
+			static void FindBestFitLine(Vector3DFloat & pt1, Vector3DFloat & pt2, vector<Vector3DFloat> pts);
+			static MatrixFloat FindRotationTranslation(vector<Vector3DFloat> l1, vector<Vector3DFloat> l2);
 		};
 
 		void LinearSolver::FindBestFitLine(Vector3DFloat & pt1, Vector3DFloat & pt2, vector<Vector3DFloat> pts) {
@@ -77,6 +82,70 @@ namespace wustl_mm {
 			pt1 = avg + n * minT;
 			pt2 = avg + n * maxT;
 
+		}
+		MatrixFloat LinearSolver::FindRotationTranslation(vector<Vector3DFloat> l1, vector<Vector3DFloat> l2) {
+			if(l1.size() != l2.size()) {
+				printf("Error! Cannot find rotation and translation for point lists with different sizes\n");
+				exit(0);
+			}
+
+			Vector3DFloat c1 = Vector3DFloat(0,0,0);
+			Vector3DFloat c2 = Vector3DFloat(0,0,0);
+
+			unsigned int n = l1.size();
+
+			for(unsigned int i = 0; i < n; i++) {
+				c1 += l1[i];
+				c2 += l2[i];
+			}
+			c1 = c1 * (1.0f / (float)n);
+			c2 = c2 * (1.0f / (float)n);
+
+			MatrixFloat m1 = MatrixFloat(n, 3);
+			MatrixFloat m2 = MatrixFloat(n, 3);
+
+			Vector3DFloat v1, v2;
+			for(unsigned int i = 0; i < n; i++) {
+				v1 = l1[i] - c1;
+				m1.SetValue(v1.X(), i, 0);
+				m1.SetValue(v1.Y(), i, 1);
+				m1.SetValue(v1.Z(), i, 2);
+
+				v2 = l2[i] - c2;
+				m2.SetValue(v2.X(), i, 0);
+				m2.SetValue(v2.Y(), i, 1);
+				m2.SetValue(v2.Z(), i, 2);		
+			}
+
+			MatrixFloat covar = MatrixFloat::Covariance(m1, m2);
+			MatrixFloat u = MatrixFloat(3,3);
+			MatrixFloat v = MatrixFloat(3,3);
+			MatrixFloat w = MatrixFloat(3,3);
+
+			covar.SingularValueDecomposition(u, w, v);
+
+			MatrixFloat rot = u * v.Transpose();
+
+			MatrixFloat rot4 = MatrixFloat(4,4);
+			for(unsigned int i = 0; i < 3; i++) {
+				for(unsigned int j = 0; j < 3; j++) {
+					rot4.SetValue(rot.GetValue(i, j), i, j);
+				}
+			}
+			rot4.SetValue(1.0f, 3,3);
+
+			MatrixFloat t1 = MatrixFloat::Identity(4);
+			MatrixFloat t2 = MatrixFloat::Identity(4);
+			MatrixFloat t3 = MatrixFloat::Identity(4);
+			for(unsigned int i = 0; i < 3; i++) {
+				t1.SetValue(-c1.values[i], i, 3);
+				t2.SetValue(c1.values[i], i, 3);
+				t3.SetValue(c2.values[i] - c1.values[i], i, 3);
+			}
+
+			MatrixFloat transform = t3 * t2 * rot4 * t1;
+
+			return transform;					
 		}
 	}
 }

@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.8  2009/12/07 05:00:52  ssa1
+//   Adding in Matrix functionality for Singular Value Decomposition
+//
 //   Revision 1.7  2008/09/29 16:43:15  ssa1
 //   Adding in CVS meta information
 //
@@ -86,12 +89,12 @@ namespace wustl_mm {
 			v1.Normalize();
 			v2.Normalize();
 
-			eigenInformation.eigenValues[0] = x1;
-			eigenInformation.eigenValues[1] = x2;
-			eigenInformation.eigenVectors[0][0] = v1.values[0];
-			eigenInformation.eigenVectors[0][1] = v1.values[1];
-			eigenInformation.eigenVectors[1][0] = v2.values[0];
-			eigenInformation.eigenVectors[1][1] = v2.values[1];
+			eigenInformation.eigenValues[0] = (float)x1;
+			eigenInformation.eigenValues[1] = (float)x2;
+			eigenInformation.eigenVectors[0][0] = (float)v1.values[0];
+			eigenInformation.eigenVectors[0][1] = (float)v1.values[1];
+			eigenInformation.eigenVectors[1][0] = (float)v2.values[0];
+			eigenInformation.eigenVectors[1][1] = (float)v2.values[1];
 		}
 
 		void MatlabWrapper::EigenAnalysis(EigenVectorsAndValues3D & eigenInformation) {

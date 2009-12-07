@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.32  2009/10/13 18:09:34  ssa1
+//   Refactoring Volume.h
+//
 //   Revision 1.31  2009/09/21 19:03:22  ssa1
 //   Linear least squares fit implementation, and using it in helix positioning of SSE Builder
 //
@@ -360,7 +363,7 @@ namespace wustl_mm {
 			faceTag.selected = false;
 
 			sheetCount = sheets.size();
-			for(unsigned int i = 0; i <= sheetCount; i++) {
+			for(int i = 0; i <= sheetCount; i++) {
 				selectedSheets[i] = false;
 			}
 
@@ -495,7 +498,7 @@ namespace wustl_mm {
 			}
 
 			if(sheetMesh != NULL) {
-				for(unsigned int i = 0; i <= sheetCount; i++) {
+				for(int i = 0; i <= sheetCount; i++) {
 					if(selectedSheets[i]) {
 						count++;
 					}
@@ -530,7 +533,7 @@ namespace wustl_mm {
 
 				int currentSheetFaceCount;
 
-				for(unsigned int j = 0; j <= this->sheetCount; j++) {
+				for(int j = 0; j <= this->sheetCount; j++) {
 					if(selectedSheets[j]) {
 						currentSheetCenterOfMass = Vector3DFloat(0,0,0);
 						currentSheetFaceCount = 0;
@@ -606,7 +609,7 @@ namespace wustl_mm {
 					for(unsigned int i = 0; i < sheetMesh->faces.size(); i++) {
 						sheetMesh->faces[i].tag.selected = false;
 					}
-					for(unsigned int i = 0; i <= sheetCount; i++) {
+					for(int i = 0; i <= sheetCount; i++) {
 						selectedSheets[i] = false;
 					}
 				}
@@ -698,7 +701,7 @@ namespace wustl_mm {
 			
 			fprintf(fout, "#VRML V2.0 utf8\n");
 			
-			for(unsigned int i = 0; i < sheetCount; i++) {
+			for(int i = 0; i < sheetCount; i++) {
 				vertexIxs.clear();
 				vertices.clear();
 				

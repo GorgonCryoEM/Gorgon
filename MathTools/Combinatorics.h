@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.3  2008/09/29 16:43:15  ssa1
+//   Adding in CVS meta information
+//
 
 #ifndef COMBINATORICS_H
 #define COMBINATORICS_H
@@ -58,14 +61,14 @@ namespace wustl_mm {
 			double total = 0;
 
 			for(int x = -distributionInfo.radius; x <= distributionInfo.radius; x++) {
-				distributionInfo.values[index] = (double)Combinations(2 * distributionInfo.radius, x+distributionInfo.radius);
+				distributionInfo.values[index] = (float)Combinations(2 * distributionInfo.radius, x+distributionInfo.radius);
 				total += distributionInfo.values[index];
 				index++;
 			}
 
 			index = 0;
 			for(int x = -distributionInfo.radius; x <= distributionInfo.radius; x++) {
-				distributionInfo.values[index] = distributionInfo.values[index] / total;
+				distributionInfo.values[index] = (float)(distributionInfo.values[index] / total);
 				index++;
 			}
 		}
@@ -99,7 +102,7 @@ namespace wustl_mm {
 			for(int x = 0; x < distributionInfo.radius * 2 +1; x++) {
 				for(int y = 0; y < distributionInfo.radius * 2 +1; y++) {
 					for(int z = 0; z < distributionInfo.radius * 2 +1; z++) {
-						distributionInfo.values[x][y][z] = probability;
+						distributionInfo.values[x][y][z] = (float)probability;
 					}
 				}
 			}

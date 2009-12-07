@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.55  2009/10/13 18:09:34  ssa1
+//   Refactoring Volume.h
+//
 //   Revision 1.54  2009/09/17 20:00:24  ssa1
 //   Steps towards exporting to Rosetta
 //
@@ -522,7 +525,7 @@ namespace wustl_mm {
 				node = q.front();
 				q.pop();
 				if((node->tag.minVal <= surfaceValue) && (node->tag.maxVal >= surfaceValue)) {
-					if(node->cellSize <= sampleInterval + sampleInterval) {
+					if((int)node->cellSize <= sampleInterval + sampleInterval) {
 						for(int i = 0; i < 8; i++) {
 							if(node->children[i] != NULL) {
 								MarchingCube(dataVolume, surfaceMesh, surfaceValue, node->children[i]->pos[0], node->children[i]->pos[1], node->children[i]->pos[2], sampleInterval);
@@ -715,7 +718,6 @@ namespace wustl_mm {
 				double maxVal = maxSurfaceValue;
 				double minVal = surfaceValue;
 				unsigned char val;
-				float data;
 
 				unsigned char * texels = new unsigned char[textureSizeX * textureSizeY * textureSizeZ];
 				unsigned int pos = 0;

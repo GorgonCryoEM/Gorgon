@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.34  2009/11/03 04:44:07  colemanr
+//   fixed the algorithm for getEdgeMean() and added function descriptions
+//
 //   Revision 1.33  2009/11/02 19:50:22  colemanr
 //   added include for MathTools/Vector3D.h
 //
@@ -11266,7 +11269,7 @@ namespace wustl_mm {
 
 			for (int i = 0; i < N; i++)
 			{
-				val = getDataAt(i);
+				val = (float)getDataAt(i);
 				voxel_sum += val;
 				voxel_squared_sum += val*val;
 			}
@@ -11290,7 +11293,7 @@ namespace wustl_mm {
 				for (int j=0; j<ny; j++)
 					for (int k=0; k<nz; k++)
 					{
-						val = getDataAt(i,j,k);
+						val = (float)getDataAt(i,j,k);
 						mass += val;
 						xmoment += i*val;
 						ymoment += j*val;
