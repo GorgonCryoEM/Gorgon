@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.9  2009/12/07 05:00:52  ssa1
+//   Adding in Matrix functionality for Singular Value Decomposition
+//
 //   Revision 1.8  2009/08/27 21:19:39  colemanr
 //   Missing semicolons added.
 //
@@ -30,6 +33,7 @@
 #include <cstdio>
 #include <cmath>
 #include "BasicDefines.h"
+#include "Matrix.h"
 
 namespace wustl_mm {
 	namespace MathTools {
@@ -66,6 +70,7 @@ namespace wustl_mm {
 			Vector3DTemplate<T>& operator-=(const Vector3DTemplate<T>& d);
 			Vector3DTemplate<T> GetOrthogonal();
 			Vector3DTemplate<T> Rotate(Vector3DTemplate<T> axis, double angle);			
+			Vector3DTemplate<T> Transform(MatrixTemplate<T> transformation);
 			void Normalize();
 			bool IsBadNormal();
 			void Print();
@@ -268,6 +273,17 @@ namespace wustl_mm {
 
 		template <class T> void Vector3DTemplate<T>::Print() {
 			printf("{%f, %f, %f} \n", X(), Y(), Z());
+		}
+
+		template <class T> Vector3DTemplate<T> Vector3DTemplate<T>::Transform(MatrixTemplate<T> transformation) {
+			MatrixTemplate<T> p = MatrixTemplate<T>(4, 1);
+			p.SetValue(values[0], 0, 0);
+			p.SetValue(values[1], 1, 0);
+			p.SetValue(values[2], 2, 0);
+			p.SetValue((T)1, 3, 0);
+			
+			p = transformation * p;
+			return Vector3DTemplate<T>(p.GetValue(0,0), p.GetValue(1,0), p.GetValue(2,0));
 		}
 	}
 }

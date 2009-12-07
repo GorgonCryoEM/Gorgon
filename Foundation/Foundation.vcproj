@@ -38,7 +38,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="$(SolutionDir);"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)\ExternalLibraries&quot;;&quot;$(SolutionDir)&quot;"
 				WarningLevel="1"
 				DebugInformationFormat="4"
 			/>
@@ -106,7 +106,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="$(SolutionDir);"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)\ExternalLibraries&quot;;&quot;$(SolutionDir)&quot;"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"

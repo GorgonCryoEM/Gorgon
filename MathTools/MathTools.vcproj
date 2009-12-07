@@ -39,7 +39,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="C:\_WashU\ssa1\source\ExternalLibraries;&quot;$(SolutionDir)&quot;;C:\MATLAB701\extern\include"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)\ExternalLibraries&quot;;&quot;$(SolutionDir)&quot;;C:\MATLAB701\extern\include"
 				PreprocessorDefinitions="USE_MATLAB"
 				DebugInformationFormat="4"
 			/>
@@ -107,7 +107,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)&quot;;C:\MATLAB701\extern\include;C:\_WashU\ssa1\source\ExternalLibraries"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)&quot;;C:\MATLAB701\extern\include;&quot;$(SolutionDir)\ExternalLibraries&quot;"
 				PreprocessorDefinitions="USE_MATLAB"
 			/>
 			<Tool

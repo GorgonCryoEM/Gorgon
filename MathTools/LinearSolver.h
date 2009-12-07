@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.2  2009/12/07 21:34:36  ssa1
+//   Finding Rotation using SVD, and removing compiler warnings
+//
 //   Revision 1.1  2009/09/21 19:03:22  ssa1
 //   Linear least squares fit implementation, and using it in helix positioning of SSE Builder
 //
@@ -83,6 +86,7 @@ namespace wustl_mm {
 			pt2 = avg + n * maxT;
 
 		}
+
 		MatrixFloat LinearSolver::FindRotationTranslation(vector<Vector3DFloat> l1, vector<Vector3DFloat> l2) {
 			if(l1.size() != l2.size()) {
 				printf("Error! Cannot find rotation and translation for point lists with different sizes\n");
