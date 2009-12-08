@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.3  2009/12/08 21:17:45  ssa1
+//   Fixing Switch/Case syntax
+//
 //   Revision 1.2  2009/12/07 21:34:36  ssa1
 //   Finding Rotation using SVD, and removing compiler warnings
 //
@@ -36,19 +39,19 @@ namespace wustl_mm {
 			MatrixTemplate(unsigned int rowCount, unsigned int colCount);
 			~MatrixTemplate();
 
-			unsigned int GetRowCount();
-			unsigned int GetColCount();
+			unsigned int GetRowCount() const;
+			unsigned int GetColCount() const;
 			
-			T GetValue(int row, int col);
+			T GetValue(int row, int col) const;
 			void SetValue(T value, int row, int col);
 
-			MatrixTemplate<T> operator+(MatrixTemplate<T> &m );
-			MatrixTemplate<T> operator-(MatrixTemplate<T> &m );
-			MatrixTemplate<T> operator*(MatrixTemplate<T> &m );
-			MatrixTemplate<T>& operator=(MatrixTemplate<T>& m );
-			MatrixTemplate<T>& operator+=(MatrixTemplate<T> &m );
-			MatrixTemplate<T>& operator-=(MatrixTemplate<T> &m );
-			MatrixTemplate<T> operator*(T s);
+			MatrixTemplate<T> operator+(const MatrixTemplate<T> &m );
+			MatrixTemplate<T> operator-(const MatrixTemplate<T> &m );
+			MatrixTemplate<T> operator*(const MatrixTemplate<T> & m );
+			MatrixTemplate<T>& operator=(const MatrixTemplate<T> &m );
+			MatrixTemplate<T>& operator+=(const MatrixTemplate<T> &m );
+			MatrixTemplate<T>& operator-=(const MatrixTemplate<T> &m );
+			MatrixTemplate<T> operator*(const T &s);
 			MatrixTemplate<T> Transpose();
 			MatrixTemplate<T> ConjugateTranspose();			
 
@@ -65,7 +68,7 @@ namespace wustl_mm {
 			void Print(bool isInt);
 
 		private:
-			unsigned int GetIndex(int row, int col);
+			unsigned int GetIndex(int row, int col) const;
 
 		private:
 			unsigned int rowCount;
@@ -96,7 +99,7 @@ namespace wustl_mm {
 		}
 
 		template <class T>
-		T MatrixTemplate<T>::GetValue(int row, int col) {
+		T MatrixTemplate<T>::GetValue(int row, int col) const {
 			return values[GetIndex(row, col)];
 		}
 
@@ -107,7 +110,7 @@ namespace wustl_mm {
 
 
 		template <class T>
-		MatrixTemplate<T> &MatrixTemplate<T>::operator=(MatrixTemplate<T>& m) {
+		MatrixTemplate<T> &MatrixTemplate<T>::operator=(const MatrixTemplate<T>& m) {
 			if((rowCount != m.GetRowCount()) || (colCount != m.GetColCount())) {
 				printf("Error! Assigning matrices of incompatible dimensions!\n");
 				exit(0);
@@ -122,7 +125,7 @@ namespace wustl_mm {
 		}
 
 		template <class T>
-		MatrixTemplate<T> MatrixTemplate<T>::operator+(MatrixTemplate<T> &m ) {
+		MatrixTemplate<T> MatrixTemplate<T>::operator+(const MatrixTemplate<T> &m ) {
 			if((rowCount != m.GetRowCount()) || (colCount != m.GetColCount())) {
 				printf("Error! Adding matrices of incompatible dimensions!\n");
 				exit(0);
@@ -138,7 +141,7 @@ namespace wustl_mm {
 			return retVal;
 		}			
 		template <class T>
-		MatrixTemplate<T> MatrixTemplate<T>::operator*(MatrixTemplate<T> &m ) {
+		MatrixTemplate<T> MatrixTemplate<T>::operator*(const MatrixTemplate<T> & m ) {
 			if(colCount != m.GetRowCount()) {
 				printf("Error! Multiplying matrices of incompatible dimensions!\n");
 				exit(0);
@@ -160,7 +163,7 @@ namespace wustl_mm {
 		}
 
 		template <class T>
-		MatrixTemplate<T> MatrixTemplate<T>::operator-(MatrixTemplate<T> &m ) {
+		MatrixTemplate<T> MatrixTemplate<T>::operator-(const MatrixTemplate<T> &m ) {
 			if((rowCount != m.GetRowCount()) || (colCount != m.GetColCount())) {
 				printf("Error! Adding matrices of incompatible dimensions!\n");
 				exit(0);
@@ -177,7 +180,7 @@ namespace wustl_mm {
 		}
 
 		template <class T>
-		MatrixTemplate<T>& MatrixTemplate<T>::operator+=(MatrixTemplate<T> &m ) {
+		MatrixTemplate<T>& MatrixTemplate<T>::operator+=(const MatrixTemplate<T> &m ) {
 			if((rowCount != m.GetRowCount()) || (colCount != m.GetColCount())) {
 				printf("Error! Adding matrices of incompatible dimensions!\n");
 				exit(0);
@@ -192,7 +195,7 @@ namespace wustl_mm {
 		}
 
 		template <class T>
-		MatrixTemplate<T>& MatrixTemplate<T>::operator-=(MatrixTemplate<T> &m ) {
+		MatrixTemplate<T>& MatrixTemplate<T>::operator-=(const MatrixTemplate<T> &m ) {
 			if((rowCount != m.GetRowCount()) || (colCount != m.GetColCount())) {
 				printf("Error! Adding matrices of incompatible dimensions!\n");
 				exit(0);
@@ -207,7 +210,7 @@ namespace wustl_mm {
 		}
 
 		template <class T>
-		MatrixTemplate<T> MatrixTemplate<T>::operator*(T s) {
+		MatrixTemplate<T> MatrixTemplate<T>::operator*(const T &s) {
 			MatrixTemplate<T> retVal = MatrixTemplate(rowCount, colCount);
 			for(unsigned int i = 0; i < rowCount; i++) {
 				for(unsigned int j = 0; j < colCount; j++) {
@@ -236,17 +239,17 @@ namespace wustl_mm {
 
 
 		template <class T>
-		unsigned int MatrixTemplate<T>::GetRowCount() {
+		unsigned int MatrixTemplate<T>::GetRowCount() const  {
 			return rowCount;
 		}
 
 		template <class T>
-		unsigned int MatrixTemplate<T>::GetColCount() {
+		unsigned int MatrixTemplate<T>::GetColCount() const {
 			return colCount;
 		}
 
 		template <class T>
-		unsigned int MatrixTemplate<T>::GetIndex(int row, int col) {
+		unsigned int MatrixTemplate<T>::GetIndex(int row, int col) const  {
 			return row*colCount + col;
 		}
 
