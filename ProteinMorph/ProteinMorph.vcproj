@@ -247,6 +247,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\SheetGenerator.h"
+				>
+			</File>
+			<File
 				RelativePath=".\SSECorrespondenceFeature.h"
 				>
 			</File>

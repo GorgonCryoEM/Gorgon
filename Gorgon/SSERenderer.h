@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.34  2009/12/08 20:06:06  abramsa
+//   Some algorithms and implementation for better sheet generation, given an initial set of points.  For use in the SSEHunter.
+//
 //   Revision 1.33  2009/12/07 21:34:36  ssa1
 //   Finding Rotation using SVD, and removing compiler warnings
 //
@@ -65,13 +68,13 @@
 
 #include "Renderer.h"
 #include "MeshRenderer.h"
+#include <ProteinMorph/SheetGenerator.h>
 #include <GraphMatch/StandardGraph.h>
 #include <GraphMatch/SkeletonReader.h>
 #include <GraphMatch/GeometricShape.h>
 #include <GraphMatch/VectorMath.h>
 #include <MathTools/LinearSolver.h>
 #include <ProteinMorph/SSEFlexibleFitter.h>
-#include <ProteinMorph/SheetGenerator.h>
 #include <vector>
 #include <map>
 
@@ -80,7 +83,6 @@ using namespace wustl_mm::GraySkeletonCPP;
 using namespace wustl_mm::GraphMatch;
 using namespace wustl_mm::MathTools;
 using namespace wustl_mm::SkeletonMaker;
-using namespace wustl_mm::SheetGeometry;
 using namespace std;
 
 namespace wustl_mm {
@@ -185,9 +187,10 @@ namespace wustl_mm {
 			sheetTag.id = sheetCount;
 			sheetTag.selected = false;
 			
-			vector<SheetGeometry::Triangle> newTriangles = sheetGenerator(tempSSEPoints, vertexIxs);
-			for (vector<SheetGeometry::Triangle>::iterator it = newTriangles.begin(); it != newTriangles.end(); it++){
-				sheetMesh->AddTriangle(it->a, it->b, it->c, NULL, sheetTag);
+
+			vector<SheetGeneratorTriangle> newTriangles = SheetGenerator::sheetGenerator(tempSSEPoints, vertexIxs);
+			for(unsigned int i = 0; i < newTriangles.size(); i++) {
+				sheetMesh->AddTriangle(newTriangles[i].a, newTriangles[i].b, newTriangles[i].c, NULL, sheetTag);
 			}
 					
 			tempSSEPoints.clear();
