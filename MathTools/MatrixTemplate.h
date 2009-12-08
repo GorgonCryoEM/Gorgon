@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.2  2009/12/07 21:34:36  ssa1
+//   Finding Rotation using SVD, and removing compiler warnings
+//
 //   Revision 1.1  2009/12/07 05:00:52  ssa1
 //   Adding in Matrix functionality for Singular Value Decomposition
 //
@@ -256,18 +259,18 @@ namespace wustl_mm {
 
 			T a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p;
 			switch(rowCount) {
-				1:
+				case 1:
 					return GetValue(0,0);
-				2: 
+				case 2: 
 					a = GetValue(0,0);	b = GetValue(0,1);
 					c = GetValue(1,0);	d = GetValue(1,1);
 					return a*d - b*c;
-				3: 
+				case 3: 
 					a = GetValue(0,0);	b = GetValue(0,1);	c = GetValue(0,2);
 					d = GetValue(1,0);	e = GetValue(1,1);	f = GetValue(1,2);
 					g = GetValue(2,0);	h = GetValue(2,1);	i = GetValue(2,2);
 					return a*e*i - a*f*h + b*f*g - b*d*i + c*d*h - c*e*g;
-				4:
+				case 4:
 					a = GetValue(0,0);	b = GetValue(0,1);	c = GetValue(0,2);	d = GetValue(0,3);
 					e = GetValue(1,0);	f = GetValue(1,1);	g = GetValue(1,2);	h = GetValue(1,3);
 					i = GetValue(2,0);	j = GetValue(2,1);	k = GetValue(2,2);	l = GetValue(2,3);
