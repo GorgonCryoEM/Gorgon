@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.24.2.2  2009/05/28 16:59:31  schuhs
+//   Removing commented out code and unneeded variable declarations
+//
 //   Revision 1.24.2.1  2009/05/22 19:18:54  schuhs
 //   Storing colors for each sheet and rendering each sheet in its stored color
 //
@@ -65,6 +68,8 @@ namespace wustl_mm {
 			void LoadHelixFile(string fileName);			
 			void LoadSheetFile(string fileName);			
 			void Unload();
+			void LoadGraphSSE(int index, GeometricShape* sse);
+			void UnloadGraphSSEs();
 			void SetHelixColor(int index, float r, float g, float b, float a);
 			void SetSheetColor(int index, float r, float g, float b, float a);
 			void SetSSEColor(int index, float r, float g, float b, float a);
@@ -83,6 +88,8 @@ namespace wustl_mm {
 			vector<GeometricShape*> helices;
 			vector<GeometricShape*> sheets;
 			NonManifoldMesh_SheetIds * sheetMesh;
+			//NonManifoldMesh_SheetIds * graphSheetMesh;
+			NonManifoldMesh_Annotated * graphSheetMesh;
 			int sheetCount;
 			bool selectedSheets[256];
 		};
@@ -91,6 +98,7 @@ namespace wustl_mm {
 		SSERenderer::SSERenderer() {
 			helices.clear();
 			sheetMesh = NULL;
+			graphSheetMesh = NULL;
 		}
 
 		SSERenderer::~SSERenderer() {
@@ -206,6 +214,66 @@ namespace wustl_mm {
 					glPopAttrib();
 					glPopAttrib(); // for color code
 				}
+
+				// rendering code for graph-type sheets. TODO: clean up!!!
+				if (graphSheetMesh != NULL) {
+					for(unsigned int i = 0; i < graphSheetMesh->faces.size(); i++) {
+						glPushAttrib(GL_LIGHTING_BIT);
+						//if(graphSheetMesh->faces[i].tag.selected) {
+						//	glMaterialfv(GL_FRONT, GL_EMISSION, emissionColor);
+						//	glMaterialfv(GL_BACK, GL_EMISSION, emissionColor);
+						//}
+						//if(selectEnabled) {
+						//	glLoadName(graphSheetMesh->faces[i].tag.id);
+						//}
+						/*
+						// color code
+						if(graphSheetMesh->faces[i].tag.id != prevSheet) {
+							thisSheet = (int) (graphSheetMesh->faces[i].tag.id);
+							//sheets[thisSheet-1]->GetColor(colorR, colorG, colorB, colorA);
+							prevSheet = thisSheet;
+							diffuseMaterial[0] = colorR;
+							diffuseMaterial[1] = colorG;
+							diffuseMaterial[2] = colorB;
+							diffuseMaterial[3] = colorA;
+							ambientMaterial[0] = colorR*0.2;
+							ambientMaterial[1] = colorG*0.2;
+							ambientMaterial[2] = colorB*0.2;
+							ambientMaterial[3] = colorA;
+							specularMaterial[0] = 1.0;
+							specularMaterial[1] = 1.0; 
+							specularMaterial[2] = 1.0;
+							specularMaterial[3] = 1.0;
+						}
+						*/
+						glColor4f(colorR, colorG, colorB, colorA);
+					
+						glMaterialfv(GL_BACK, GL_AMBIENT,   ambientMaterial);
+						glMaterialfv(GL_BACK, GL_DIFFUSE,   diffuseMaterial) ;
+						glMaterialfv(GL_BACK, GL_SPECULAR,  specularMaterial) ;
+						glMaterialf(GL_BACK, GL_SHININESS, 0.1);
+						glMaterialfv(GL_FRONT, GL_AMBIENT,   ambientMaterial) ;
+						glMaterialfv(GL_FRONT, GL_DIFFUSE,   diffuseMaterial) ;
+						glMaterialfv(GL_FRONT, GL_SPECULAR,  specularMaterial) ;
+						glMaterialf(GL_FRONT, GL_SHININESS, 0.1);
+
+						glPushAttrib(GL_LIGHTING_BIT | GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+						// end color code
+						glBegin(GL_POLYGON);
+						Vector3DFloat normal;
+						for(unsigned int j = 0; j < graphSheetMesh->faces[i].vertexIds.size(); j++) {
+							normal = graphSheetMesh->GetVertexNormal(graphSheetMesh->faces[i].vertexIds[j]);
+							k = graphSheetMesh->GetVertexIndex(graphSheetMesh->faces[i].vertexIds[j]);
+							glNormal3f(normal.X(), normal.Y(), normal.Z());
+							glVertex3fv(graphSheetMesh->vertices[k].position.values);
+						}
+						glEnd();
+						glPopAttrib();
+						glPopAttrib(); // for color code
+					}
+				}
+				// end graph-type sheet rendering code
+
 				if(selectEnabled) {
 					glPopName();
 				}
@@ -276,6 +344,86 @@ namespace wustl_mm {
 			}
 			sheetMesh = NULL;
 			UpdateBoundingBox();
+		}
+
+		void SSERenderer::LoadGraphSSE(int index, GeometricShape* sse) {
+			cout << "sse load command received for index " << index << endl;
+			cout << "shape stats: " << endl;
+			cout << "   type = " << sse->geometricShapeType << endl;
+			cout << "   # internal cells = " << sse->internalCells.size() << endl;
+			cout << "   # corner cells = " << sse->cornerCells.size() << endl;
+			cout << "   # polygon points = " << sse->polygonPoints.size() << endl;
+			cout << "   # polygons = " << sse->polygons.size() << endl;
+
+			// make a volume from the internal cells
+			int xmin=MAXINT, xmax=-MAXINT, ymin=MAXINT, ymax=-MAXINT, zmin=MAXINT, zmax=-MAXINT;
+			for (int i = 0; i < sse->internalCells.size(); i++) {
+				if (sse->internalCells[i].x < xmin) {xmin = sse->internalCells[i].x;}
+				if (sse->internalCells[i].x > xmax) {xmax = sse->internalCells[i].x;}
+				if (sse->internalCells[i].y < ymin) {ymin = sse->internalCells[i].y;}
+				if (sse->internalCells[i].y > ymax) {ymax = sse->internalCells[i].y;}
+				if (sse->internalCells[i].z < zmin) {zmin = sse->internalCells[i].z;}
+				if (sse->internalCells[i].z > zmax) {zmax = sse->internalCells[i].z;}
+			}
+			int dimx = xmax-xmin+1;
+			int dimy = ymax-ymin+1;
+			int dimz = zmax-zmin+1;
+			Volume* vol = new Volume( dimx, dimy, dimz) ;
+			vol->setOrigin(xmin, ymin, zmin);
+			for (int i = 0; i < sse->internalCells.size(); i++) {
+				vol->setDataAt( sse->internalCells[i].x-xmin, sse->internalCells[i].y-ymin, sse->internalCells[i].z-zmin, 1.0 ) ;
+			}
+
+			// make a mesh from the volume
+			//NonManifoldMesh_SheetIds graphSheetMesh = NonManifoldMesh_SheetIds(vol); // doesn't work, so use Annotated type instead
+			NonManifoldMesh_Annotated * thisSheetMesh = new NonManifoldMesh_Annotated(vol);
+			delete vol;
+			// add offset to all points in new mesh
+			for (int i = 0; i < thisSheetMesh->vertices.size(); i++) {
+				thisSheetMesh->vertices[i].position = thisSheetMesh->vertices[i].position + Vector3DFloat(xmin, ymin, zmin);
+			}
+			cout << "sheet mesh created with " << thisSheetMesh->faceCount << " faces" << endl;
+
+			// merge this mesh with the mesh containing other sheets
+			if(graphSheetMesh == NULL) {
+				graphSheetMesh = new NonManifoldMesh_Annotated();
+			}
+			if (thisSheetMesh->faceCount > 0) {
+				// mesh merging code. not using code NonManifoldMesh::mergeMesh because I want to set the tags
+				vector<int> indices;
+				indices.clear();
+				for(unsigned int i = 0; i < thisSheetMesh->vertices.size(); i++) {
+					indices.push_back(graphSheetMesh->AddVertex(thisSheetMesh->vertices[i]));
+				}
+				for(unsigned int i = 0; i < thisSheetMesh->edges.size(); i++) {
+					graphSheetMesh->AddEdge(indices[thisSheetMesh->edges[i].vertexIds[0]], indices[thisSheetMesh->edges[i].vertexIds[1]], thisSheetMesh->edges[i].tag);
+				}
+				for(unsigned int i = 0; i < thisSheetMesh->faces.size(); i++) {
+					if(thisSheetMesh->faces[i].vertexIds.size() == 3) {
+						graphSheetMesh->AddTriangle(indices[thisSheetMesh->faces[i].vertexIds[0]], indices[thisSheetMesh->faces[i].vertexIds[1]], indices[thisSheetMesh->faces[i].vertexIds[2]], NULL, thisSheetMesh->faces[i].tag);
+					}
+				}
+				// end mesh merging
+
+
+
+
+
+
+
+
+
+
+
+
+				cout << "after merge, graph sheet mesh has " << graphSheetMesh->faceCount << " faces" << endl;
+			}
+
+			delete thisSheetMesh;
+		}
+
+		void SSERenderer::UnloadGraphSSEs() {
+			cout << "unloading graph SSEs." << endl;
 		}
 
 		void SSERenderer::UpdateBoundingBox() {
