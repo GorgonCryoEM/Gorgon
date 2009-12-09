@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.24.2.2  2009/07/21 14:59:58  schuhs
+#   Adding a test to prevent exception faults when selecting helix that is not part of a correspondence
+#
 #   Revision 1.24.2.1  2009/06/09 16:47:36  schuhs
 #   Allow filename to be passed as an argument or selected from the file dialog
 #
@@ -147,6 +150,16 @@ class SSEViewer(BaseViewer):
         self.helixFileName = ""
         self.sheetFileName = ""
         BaseViewer.unloadData(self)
+          
+          
+    def makeSheetSurfaces(self):
+        # rebuild the set of sheets to render
+        numHelicesSheets = self.correspondenceEngine.getSkeletonSSECount()
+        print "making sheet surfaces. skeleton has " +str(numHelicesSheets) + " helices and sheets."
+        self.renderer.unloadGraphSSEs()
+        for i in range(numHelicesSheets):
+            self.renderer.loadGraphSSE(i, self.correspondenceEngine.getSkeletonSSE(i))
+
                
     def createActions(self):
         openHelixAct = QtGui.QAction(self.tr("&Helix Annotations"), self)

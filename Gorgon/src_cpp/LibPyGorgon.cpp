@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.50.2.7  2009/12/03 22:50:29  schuhs
+//   Allow strand constraints to be read into Gorgon
+//
 //   Revision 1.50.2.6  2009/12/03 03:08:32  schuhs
 //   Reading correspondence search constraints from Gorgon
 //
@@ -332,6 +335,8 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("drawBoundingBox", &SSERenderer::DrawBoundingBox)
 		.def("loadHelixFile", &SSERenderer::LoadHelixFile)
 		.def("loadSheetFile", &SSERenderer::LoadSheetFile)
+		.def("loadGraphSSE", &SSERenderer::LoadGraphSSE)
+		.def("unloadGraphSSEs", &SSERenderer::UnloadGraphSSEs)
 		.def("unload", &SSERenderer::Unload)
 		.def("selectionRotate", &SSERenderer::SelectionRotate)
 		.def("selectionObjectCount", &SSERenderer::SelectionObjectCount)
