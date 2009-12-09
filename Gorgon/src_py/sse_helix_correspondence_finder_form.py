@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.36.2.26  2009/12/09 04:04:05  schuhs
+#   Add support for rendering a third model
+#
 #   Revision 1.36.2.25  2009/12/09 01:42:35  schuhs
 #   When graph is rebuilt, load new graph sheets into SSE viewer class
 #
@@ -245,7 +248,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
         self.connect(self.ui.checkBoxShowAllPaths, QtCore.SIGNAL("toggled (bool)"), self.fullGraphVisibilityChanged)
         self.connect(self.ui.checkBoxShowSheetCorners, QtCore.SIGNAL("toggled (bool)"), self.fullGraphVisibilityChanged)
         self.connect(self.ui.checkBoxShowHelixCorners, QtCore.SIGNAL("toggled (bool)"), self.fullGraphVisibilityChanged)
-        self.connect(self.ui.checkBoxShowSheetColors, QtCore.SIGNAL("toggled (bool)"), self.fullGraphVisibilityChanged)
+        self.connect(self.ui.checkBoxShowSheetColors, QtCore.SIGNAL("toggled (bool)"), self.graphSheetVisibilityChanged)
         self.connect(self.ui.checkBoxShowSkeleton, QtCore.SIGNAL("toggled (bool)"), self.skeletonVisibilityChanged)
         self.connect(self.ui.checkBoxShowSheets, QtCore.SIGNAL("toggled (bool)"), self.sheetVisibilityChanged)
         self.connect(self.ui.checkBoxShowHelices, QtCore.SIGNAL("toggled (bool)"), self.helixVisibilityChanged)
@@ -280,7 +283,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
         self.ui.checkBoxShowHelices.setChecked(self.app.viewers['sse'].visualizationOptions.ui.checkBoxModelVisible.isChecked())
         self.ui.checkBoxShowHelixCorners.setChecked(False)
         self.ui.checkBoxShowSheets.setChecked(self.app.viewers['sse'].visualizationOptions.ui.checkBoxModel2Visible.isChecked())
-        self.ui.checkBoxShowSheetColors.setChecked(False)
+        self.ui.checkBoxShowSheetColors.setChecked(self.app.viewers['sse'].visualizationOptions.ui.checkBoxModel3Visible.isChecked())
         self.ui.checkBoxShowSheetCorners.setChecked(False)
         self.ui.checkBoxShowAllPaths.setChecked(False)
 
@@ -408,6 +411,12 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
         """Called when the show sheet checkbox is checked."""
         #self.visualizationOptions.ui.checkBoxModel2Visible.setChecked(visible)
         self.app.viewers['sse'].visualizationOptions.ui.checkBoxModel2Visible.setChecked(visible)
+        # to render again
+        self.viewer.emitModelChanged()
+
+    def graphSheetVisibilityChanged(self, visible):
+        """Called when the show graph sheet checkbox is checked."""
+        self.app.viewers['sse'].visualizationOptions.ui.checkBoxModel3Visible.setChecked(visible)
         # to render again
         self.viewer.emitModelChanged()
 
@@ -1231,7 +1240,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
             glPushAttrib(GL_LIGHTING_BIT)
             self.viewer.setMaterials(self.app.themes.getColor("CorrespondenceFinder:BackboneTrace"))  
             # calls DrawAllPaths method of c++ SSECorrespondenceEngine object          
-            self.viewer.correspondenceEngine.drawAllPaths(0,self.ui.checkBoxShowAllPaths.isChecked(),self.ui.checkBoxShowHelixCorners.isChecked(),self.ui.checkBoxShowSheetCorners.isChecked(),self.ui.checkBoxShowSheetColors.isChecked())
+            self.viewer.correspondenceEngine.drawAllPaths(0,self.ui.checkBoxShowAllPaths.isChecked(),self.ui.checkBoxShowHelixCorners.isChecked(),self.ui.checkBoxShowSheetCorners.isChecked(),False)
             glPopAttrib()
             
             
@@ -1396,6 +1405,24 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
             self.selectCorrespondence(correspondenceIndex)                
         return constrainPredictedHelix_po
     
+    def constrainPredictedStrand(self, predicted, observed):
+        def constrainPredictedStrand_po():
+            correspondenceIndex = self.ui.comboBoxCorrespondences.currentIndex()
+            if(correspondenceIndex >= 0):
+                corr = self.viewer.correspondenceLibrary.correspondenceList[correspondenceIndex]
+                for j in range(len(corr.matchList)):
+                    match = corr.matchList[j]
+                    if(match and match.observed and (match.observed.label == observed)) :
+                        match.observed = None
+                        match.constrained = False
+                    if(match and match.predicted and match.predicted.type == 'strand' and match.predicted.serialNo == predicted):
+                        newMatch = match
+                match = newMatch
+                match.constrained = True
+                match.observed = self.viewer.correspondenceLibrary.structureObservation.sheetDict[observed]
+            self.selectCorrespondence(correspondenceIndex)                
+        return constrainPredictedStrand_po
+    
     def sseClicked(self, hit0, hit1, hit2, hit3, hit4, hit5, event):
         #print "sseClicked. visible=" + str(self.isVisible()) + ", loaded=" +str(self.dataLoaded)+", hit0=" + str(hit0) + ", hit1=" + str(hit1)
         if(self.isVisible() and self.dataLoaded and ((hit0 == 0) or (hit0 == 1) or (hit0 == 2)) and (hit1 >= 0)):
@@ -1404,7 +1431,9 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
             constrained = {}
             match = None        
             matchKey = 0    
-            correspondenceIndex = self.ui.comboBoxCorrespondences.currentIndex()            
+            matchKeys = []    
+            correspondenceIndex = self.ui.comboBoxCorrespondences.currentIndex()
+            numH = len(self.viewer.correspondenceLibrary.structureObservation.helixDict)
             if(correspondenceIndex >= 0):
                 corr = self.viewer.correspondenceLibrary.correspondenceList[correspondenceIndex]  
                 for i in range(len(corr.matchList)):
@@ -1418,6 +1447,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
                             #print "helix match found at m (i=" +str(i)+") with label=" + str(m.observed.label)
                             match = m
                             matchKey = i
+                            matchKeys.append(i)
                     
                     # find the index of the selected sheet in the correspondence list
                     #if observedType==1 and m.observed and m.observed.sseType == 'sheet':
@@ -1426,14 +1456,25 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
                     #        match = m
                     #        matchKey = i
                     
+                    # find the index of the selected sheet in the correspondence list
+                    if observedType==2 and m.observed and m.observed.sseType == 'sheet':
+                        print "graph sheet clicked (i=" +str(i)+") with label=" + str(m.observed.label) + ". observedSSE=" + str(observedSSE) 
+                        if(m.observed.label-numH+1 == observedSSE):
+                            print "sheet match found at m (i=" +str(i)+") with label=" + str(m.observed.label)
+                            match = m
+                            matchKey = i
+                            matchKeys.append(i)
+                    
             self.ui.tableWidgetCorrespondenceList.setRangeSelected(QtGui.QTableWidgetSelectionRange(0, 0, self.ui.tableWidgetCorrespondenceList.rowCount()-1, 2), False)                    
             if(match):
                 self.ui.tableWidgetCorrespondenceList.setRangeSelected(QtGui.QTableWidgetSelectionRange(0, 0, self.ui.tableWidgetCorrespondenceList.rowCount()-1, 2), False)                    
                 self.ui.tableWidgetCorrespondenceList.setRangeSelected(QtGui.QTableWidgetSelectionRange(matchKey, 0, matchKey, 2),True)
+                for matchItem in matchKeys:
+                    self.ui.tableWidgetCorrespondenceList.setRangeSelected(QtGui.QTableWidgetSelectionRange(matchItem, 0, matchItem, 2),True)
                     
             if(self.app.mainCamera.mouseRightPressed):                
                 predictedHelices = self.viewer.correspondenceLibrary.structurePrediction.helixDict                            
-                #predictedStrands = self.viewer.correspondenceLibrary.structurePrediction.strandDict                            
+                predictedStrands = self.viewer.correspondenceLibrary.structurePrediction.strandDict                            
                 menu = QtGui.QMenu(self.tr("Constrain observed SSE " + str(observedSSE+1)))
                 
                 for i in range(len(predictedHelices)):
@@ -1459,6 +1500,17 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
                     #    constrainAction.setEnabled(not constrained.has_key(predictedSecels[i].serialNo))
                     #    self.connect(constrainAction, QtCore.SIGNAL("triggered()"), self.constrainPredictedHelix(predictedSecels[i].serialNo, observedHelix))       
                     #    menu.addAction(constrainAction)           
+                
+                    if observedType==2 and predictedStrands[i].type == 'strand':
+                        constrainAction = QtGui.QAction(self.tr("Predicted strand " + str(predictedStrands[i].serialNo)), self)
+                        constrainAction.setCheckable(True)
+                        if(match and match.observed):
+                            constrainAction.setChecked(match.predicted.serialNo == i)
+                        else:
+                            constrainAction.setChecked(False)
+                        constrainAction.setEnabled(not constrained.has_key(predictedStrands[i].serialNo))
+                        self.connect(constrainAction, QtCore.SIGNAL("triggered()"), self.constrainPredictedStrand(predictedStrands[i].serialNo, observedSSE))       
+                        menu.addAction(constrainAction)           
                 
                 menu.exec_(self.app.mainCamera.mapToGlobal(self.app.mainCamera.mouseDownPoint))
                 self.app.mainCamera.updateGL()
