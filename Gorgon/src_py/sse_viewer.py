@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.24.2.4  2009/12/09 04:04:05  schuhs
+#   Add support for rendering a third model
+#
 #   Revision 1.24.2.3  2009/12/09 01:41:56  schuhs
 #   Add methods to add new sheets to SSERenderer class
 #
@@ -83,6 +86,7 @@ class SSEViewer(BaseViewer):
         self.title = "Secondary Structure Element"
         self.app.themes.addDefaultRGB("Secondary Structure Element:Model:0", 0, 180, 0, 255)
         self.app.themes.addDefaultRGB("Secondary Structure Element:Model:1", 120, 185, 255, 255)
+        self.app.themes.addDefaultRGB("Secondary Structure Element:Model:2", 120, 185, 255, 255)
         self.app.themes.addDefaultRGB("Secondary Structure Element:BoundingBox", 255, 255, 255, 255)          
         self.isClosedMesh = False
         self.helixFileName = ""

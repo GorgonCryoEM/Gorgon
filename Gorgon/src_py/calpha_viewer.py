@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.33  2009/04/03 19:44:37  ssa1
+#   CAlpha bug fixes
+#
 #   Revision 1.32  2009/04/02 19:00:20  ssa1
 #   CAlpha Viewer bug fixes and smoother uniform functionality
 #
@@ -133,6 +136,7 @@ class CAlphaViewer(BaseViewer):
         self.title = "C-Alpha"
         self.app.themes.addDefaultRGB("C-Alpha:Model:0", 170, 170, 0, 255)
         self.app.themes.addDefaultRGB("C-Alpha:Model:1", 120, 120, 170, 255)
+        self.app.themes.addDefaultRGB("C-Alpha:Model:2", 120, 120, 170, 255)
         self.app.themes.addDefaultRGB("C-Alpha:BoundingBox", 255, 255, 255, 255)         
         self.isClosedMesh = False
         self.selectEnabled = True
