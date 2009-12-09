@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.24.2.5  2009/12/09 04:55:03  schuhs
+#   Add support for rendering a third model
+#
 #   Revision 1.24.2.4  2009/12/09 04:04:05  schuhs
 #   Add support for rendering a third model
 #
@@ -213,7 +216,6 @@ class SSEViewer(BaseViewer):
         # helix. It then emits an 'SSE selected' signal. 
         self.currentMatch = None
         if sseType == 0:
-            print "sseType is " + str(sseType) + " and sseIndex is " + str(sseIndex)
             try:
                 self.correspondenceLibrary
             except AttributeError:
@@ -222,12 +224,7 @@ class SSEViewer(BaseViewer):
             currCorrIndex = corrLib.getCurrentCorrespondenceIndex()
             matchList = corrLib.correspondenceList[currCorrIndex].matchList
             for match in matchList:
-                #print "checking match " + str(match) 
-                if match.observed is not None:
-                    print "checking match with label " + str(match.observed.label) 
                 if match.observed is not None and match.observed.label == sseIndex: 
-                #if match.observed.label == sseIndex: 
-                    print "match found at label " + str(match.observed.label) + " and sseIndex " + str(sseIndex)
                     self.currentMatch = match
                     self.emit(QtCore.SIGNAL("SSE selected"))
                     break
