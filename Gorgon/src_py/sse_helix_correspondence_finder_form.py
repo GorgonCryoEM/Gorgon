@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.36.2.28  2009/12/09 20:12:37  schuhs
+#   Fix and simplify setting and removing constraints by right-clicking structures
+#
 #   Revision 1.36.2.27  2009/12/09 04:54:16  schuhs
 #   Fixed UI controls for graph sheet rendering. Fixed left-click select on sheets. Started to fix right-click constraint selection but not quite finished yet.
 #
@@ -1459,11 +1462,21 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
                 for i in range(len(predictedSSEs)):
                     if observedType==0 and predictedSSEs[i].type == 'helix':
                         constrainAction = QtGui.QAction(self.tr("Sequence #" + str(i+1) + ": Predicted helix " + str(predictedHelices[i_h].serialNo)), self)
+
+                        # bold if already selected
+                        if corr.matchList[i].observed and corr.matchList[i].observed.label == observedSSE:
+                            font=constrainAction.font()
+                            font.setBold(True)
+                            constrainAction.setFont(font)
+                        
+                        # checked if already constrained
                         constrainAction.setCheckable(True)
                         if(match and match.observed):
                             constrainAction.setChecked(corr.matchList[i].constrained and corr.matchList[i].observed.label == observedSSE)
                         else:
                             constrainAction.setChecked(False)
+
+                        # checkable if not constrained to another helix
                         constrainAction.setEnabled( (not corr.matchList[i].constrained) or (corr.matchList[i].observed.label == observedSSE) )
                         self.connect(constrainAction, QtCore.SIGNAL("triggered()"), self.constrainPredictedHelix(predictedHelices[i_h].serialNo, observedSSE, not constrainAction.isChecked()))       
                         menu.addAction(constrainAction)           
@@ -1471,11 +1484,22 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
                 
                     if observedType==2 and predictedSSEs[i].type == 'strand':
                         constrainAction = QtGui.QAction(self.tr("Sequence #" + str(i+1) + ": Predicted strand " + str(predictedStrands[i_s].serialNo)), self)
+
+                        # bold if already selected
+                        if corr.matchList[i].observed and corr.matchList[i].observed.label-numH == observedSSE-1:
+                            font=constrainAction.font()
+                            font.setBold(True)
+                            constrainAction.setFont(font)
+                        
+
+                        # checked if already constrained
                         constrainAction.setCheckable(True)
                         if(match and match.observed):
                             constrainAction.setChecked(corr.matchList[i].constrained and corr.matchList[i].observed.label-numH == observedSSE-1)
                         else:
                             constrainAction.setChecked(False)
+
+                        # checkable if not constrained to another sheet
                         constrainAction.setEnabled( (not corr.matchList[i].constrained) or (corr.matchList[i].observed.label-numH == observedSSE-1) )
                         self.connect(constrainAction, QtCore.SIGNAL("triggered()"), self.constrainPredictedStrand(i, observedSSE-1, not constrainAction.isChecked()))
                         menu.addAction(constrainAction)           
