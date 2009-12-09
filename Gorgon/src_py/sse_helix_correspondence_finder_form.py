@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.36.2.29  2009/12/09 20:29:35  schuhs
+#   more constraint UI changes.
+#
 #   Revision 1.36.2.28  2009/12/09 20:12:37  schuhs
 #   Fix and simplify setting and removing constraints by right-clicking structures
 #
@@ -428,7 +431,6 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
 
     def helixVisibilityChanged(self, visible):
         """Called when the show helix checkbox is checked."""
-        #self.visualizationOptions.ui.checkBoxModel2Visible.setChecked(visible)
         self.app.viewers['sse'].visualizationOptions.ui.checkBoxModelVisible.setChecked(visible)
         # to render again
         self.viewer.emitModelChanged()
@@ -778,7 +780,6 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
             corr = Correspondence(library=library, matchList=matchList, score=0)            
 
             # add the empty correspondence to the list
-            # ss 5/28 indenting next line to see if fixes bug?
             corrList.append(corr)
         return corrList
             
@@ -796,99 +797,55 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
         #print "Iterating over results."
         for i in range(self.resultCount):                                
             # create a Correspondence object and add it to the list
-
-            #print "-------------- RESULT " + str(i) + " --------------"
-
             # start from correspondenceEngine result
             result = self.viewer.correspondenceEngine.getResult(i+1)
-            
             matchList = [] # matchList holds the matches
             
             # iterate over all nodes in the matching from correspondenceEngine
-            #print "Iterating over " + str(result.getNodeCount()) + " nodes of this result."
             isSecondHelixNode = False
             helicesPassed = 0
-            #for j in range(result.getNodeCount()/2):
-            
-            # TODO: Fix code so it handles missing helices correctly. Test on 3LCK data.
-
-            #for k in range(len(library.structurePrediction.secelType)):
-                #print "secelType says element " + str(k) + " is a " + str(library.structurePrediction.secelType[k])
-
-            
             for j in range(result.getNodeCount()):
-                # print "iterating. j = " + str(j)
                 if isSecondHelixNode == False:
-
-                    # print "j = " + str(j)
                     direction = Match.FORWARD
 
                     # predicted helix or strand in sequence graph
-                    #predicted = library.structurePrediction.secelDict[j]
-                    # print "predicted is element " + str(j - helicesPassed) + " from secelDict, which has " + str(len(library.structurePrediction.secelDict)) + " entries" 
-                    # print "secelType says element " + str(j - helicesPassed) + " is a " + str(library.structurePrediction.secelType[j - helicesPassed])
                     predicted = library.structurePrediction.secelDict[j - helicesPassed]
                     predictedType = library.structurePrediction.secelType[j - helicesPassed] # 'helix' or 'strand'
                     if predictedType == 'helix':
                         isSecondHelixNode = True
-                        #print "predicted helix. node=" + str(j)
-                    #else:
-                        #print "predicted strand. node=" + str(j)
-                        
+
                     # observed helix or sheet in skeleton graph
-                    # print "secelDict has size " + str(len(library.structurePrediction.secelDict))
                     # j is a helix node in the sequence graph
                     # n1 and n2 are skeleton graph nodes for entry and exit points of the helix
                     n1 = result.getSkeletonNode(j)
-                    # print "n1 is " + str(n1)
-                    # print "result says the number of helices is " + str(result.getHelixCount())
                     if (n1 < 2 * result.getHelixCount() and n1 >= 0):
                         observedType = 'helix'
                     elif n1 >= 2 * result.getHelixCount():
                         observedType = 'sheet'
                     else:
                         observedType = 'none'
-                        #print "error!!!"
-                        #print "type none found at node " + str(j)
-                    # print "the observed type is " + str(observedType)
-                        
                     isHelix = (n1 < 2 * result.getHelixCount())
-                    #isSheet = !(isHelix)
-                    #if (isHelix):
                     if observedType == 'helix':
-                        # print "node " + str(n1) + " is a helix"
                         isSecondHelixNode = True
                         n2 = result.getSkeletonNode(j+1)
                         if n1 < n2:
-                            # print "forward match, nodes are " + str(n1) + " and " + str(n2)
                             direction = Match.FORWARD
                         else:
-                            # print "reverse match, nodes are " + str(n1) + " and " + str(n2)
                             direction = Match.REVERSE
                     elif observedType == 'sheet':
-                        # print "node " + str(n1) + " is a sheet"
                         direction = Match.FORWARD
-                    #elif observedType == 'none':
-                        # print "node " + str(n1) + " is not a sheet or a helix"
                                             
                     # lookup which helix from skeleton graph these nodes refer to
                     observedNo = result.nodeToHelix(n1)
-                    # print "graph index " + str(n1) + " corresponds to skeleton SSE " + str(observedNo)
-                    # print "observed is element " + str(observedNo) + " from helixDict, which has " + str(len(library.structureObservation.helixDict)) + " entries" 
-                    # print "sheetDict has " + str(len(library.structureObservation.sheetDict)) + " entries" 
                     if observedNo >= 0:
                         if isHelix:
                             # helix in skeleton graph
                             observed = library.structureObservation.helixDict[observedNo]
-                            #print "observed helix. node=" + str(j) + ", observeNo=" + str(observedNo) + ", observed=" + str(observed)
                         else: # sheet 
                             observed = library.structureObservation.sheetDict[observedNo - result.getHelixCount()]
-                            #print "observed sheet. node=" + str(j) + ", observeNo=" + str(observedNo) + ", observed=" + str(observed)
-                            #observed = None # for now, no code for sheets 
                     else:
                         observed = None
                         
-                    
                     # create Match object holding the observed and predicted helices, and the match direction
                     currentMatch = Match(observed, predicted, direction)
                     
@@ -907,11 +864,9 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
             # now matchList holds all the helix correspondences for a single match result
 
             # create Correspondence object for this correspondence
-            # print "Creating correspondence object for this correspondence."
             corr = Correspondence(library=library, matchList=matchList, score=result.getCost())
             
             # add to list of correspondences
-            #print "Appending this correspondence object to list."
             corrList.append(corr)
             
         # corrList now holds all correspondences between the sequence and the graph,
@@ -939,7 +894,6 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
         
         #Loading Predicted SSEs                     
         print "loading predicted SSEs"
-        # call to c++ method QueryEngine::LoadSequenceGraph()
         self.viewer.correspondenceEngine.loadSequenceGraph()
         
         print "before calling StructurePrediction.load"
@@ -957,13 +911,11 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
         
         #Loading Observed SSEs
         print "loading observed SSEs"
-        # call to c++ method SSECorrespondenceEngine::LoadSkeletonGraph()
         self.viewer.correspondenceEngine.loadSkeletonGraph()
         observedHelices = {}
         helixCount = 0
         observedSheets = {}
         sheetCount = 0
-        # call to c++ method QueryEngine::getSkeletonSSECount()
         sseCount = self.viewer.correspondenceEngine.getSkeletonSSECount()
 
         print "adding helices to list of observed helices"
@@ -973,7 +925,6 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
             
             # create list of observed helices for this correspondence result
             if cppSse.isHelix():            
-                #TODO: check whether these should be getCornerCell3(...
                 p1 = cAlphaViewer.worldToObjectCoordinates(skeletonViewer.objectToWorldCoordinates(vector3DFloatToTuple(cppSse.getCornerCell2(1))))
                 p2 = cAlphaViewer.worldToObjectCoordinates(skeletonViewer.objectToWorldCoordinates(vector3DFloatToTuple(cppSse.getCornerCell2(2))))
                 
@@ -1002,12 +953,9 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
                 print "done adding sheet corners."
                 pySheet = ObservedSheet(sseIx, cornerList)
                 # adding sheets to list of observedHelices
-                #observedHelices[helixCount + sheetCount + 1] = pySheet
                 observedSheets[sheetCount] = pySheet
                 print "added a sheet to observedSheets. total number of sheets is now " + str(len(observedSheets))
                 sheetCount = sheetCount + 1
-                #pass
-                #TODO: Add Sheet support
         
         #TODO: Mike this raises an error!;
         print "found " + str(helixCount) + " helices and " + str(sheetCount) + " sheets"
@@ -1025,7 +973,6 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
         print "ok button pushed"
         # read user parameters, read skeleton and sequence files, create correspondence library
         self.createBasicCorrespondence()   
-        # TODO: At this point, the secelDict is not defined. Why didn't it work?    
         print "after creating basic correspondence, secelDict has length " + str(len(self.viewer.correspondenceLibrary.structurePrediction.secelDict))   
                 
         # execute correspondence query and do cleanup
@@ -1038,17 +985,10 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
         
         # populate the list of found correspondences        
         print "populating result list"
-        #print "found " + size(self.viewer.correspondenceLibrary.correspondenceList) + " results. populating result list"
         self.viewer.correspondenceLibrary.correspondenceList = self.populateResults(self.viewer.correspondenceLibrary)
-        #print "correspondenceList has length " + str(len(self.viewer.correspondenceLibrary.correspondenceList))
-
-        #print "populating result pulldown"
         self.populateComboBox(self.viewer.correspondenceLibrary)       
-        
         self.executed = True 
-        #print "emitting model changed signal"
         self.viewer.emitModelChanged()
-
         print "done"
                 
     def reject(self):  
@@ -1059,7 +999,6 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
         """returns a color for sheet 'index' out of 'size' sheets. colors will be orange or red."""
         # start and end are between 0 and 1
         start = float(0.77)
-        #start = float(0.0)
         end = float(1.0)
         delta = (end - start) / float(size)
         i = start + delta * float(index)
@@ -1153,14 +1092,12 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
                             color = self.getIndexedSheetColor(match.observed.label - sheetCount, sheetCount)
                         else:
                             color = self.getIndexedColor(0,100)
-                        #color = self.getIndexedSheetColor(sheetIndex, sheetCount)
                         sheetIndex += 1
                     elif match.predicted.type == 'helix':
                         color = self.getIndexedHelixColor(helixIndex, helixCount)
                         helixIndex += 1
                     match.predicted.setColor(color)
                 if(match.predicted):
-                    #print match.predicted, match.predicted.type, match.predicted.serialNo, match.predicted.label
                     cellItemPredicted =  QtGui.QTableWidgetItem(match.predicted.type + " " + str(match.predicted.serialNo) + " : " + str(match.predicted.label) +
                                                                 "\n  "  + str(round(match.predicted.getLengthInAngstroms(),2)) + "A length"
                                                                 "\n  "  + str(match.predicted.getResidueCount()) + " residues")
@@ -1168,7 +1105,6 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
                     cellItemPredicted.setBackgroundColor(color)
                     self.ui.tableWidgetCorrespondenceList.setItem(i, 0, cellItemPredicted)
                 if(match.observed):
-                    # TODO: Clean up this code. Made quick fixes to support sheets.
                     if match.observed.sseType == 'helix':
                         cellItemObserved =  QtGui.QTableWidgetItem("helix " + str(match.observed.label+1) +
                                                                    "\n  " + str(round(match.observed.getLength(), 2)) + "A length" +
@@ -1182,18 +1118,9 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
                     if match.observed.sseType == 'helix':
                         # color is stored in two places: the renderer and the correspondence engine. update both.
                         self.viewer.renderer.setHelixColor(match.observed.label, color.redF(), color.greenF(), color.blueF(), color.alphaF())
-                        #print "before setSSEColor"
                         self.viewer.correspondenceEngine.setSSEColor(match.observed.label, color.redF(), color.greenF(), color.blueF(), color.alphaF())
-                        #print "after setSSEColor"
 
-                    # TODO: add support to renderer for colored sheets
                     if match.observed.sseType == 'sheet':
-                    # TODO: Fix here. This does not color the correct sheet, and it may break if there are no sheets!
-                    #    print "type is helix; setting color"
-                    #    self.viewer.renderer.setSheetColor(match.observed.label, color.redF(), color.greenF(), color.blueF(), color.alphaF())
-                        # color is stored in two places: the renderer and the correspondence engine. update both.
-                        #self.viewer.renderer.setSheetColor(2, color.redF(), color.greenF(), color.blueF(), color.alphaF())
-                        #self.viewer.renderer.setSheetColor(match.observed.label - helixCount, color.redF(), color.greenF(), color.blueF(), color.alphaF())
                         self.viewer.renderer.setSSEColor(match.observed.label, color.redF(), color.greenF(), color.blueF(), color.alphaF())
                         self.viewer.correspondenceEngine.setSSEColor(match.observed.label, color.redF(), color.greenF(), color.blueF(), color.alphaF())
 
@@ -1232,7 +1159,6 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
             # set colors of all SSEs
             # Probably should use the setColor calls in previous sections.
             for i in range(self.viewer.correspondenceEngine.getSkeletonSSECount()) :
-                #print "setting color for helix "
                 color = self.getIndexedHelixColor(i, self.viewer.correspondenceEngine.getSkeletonSSECount())
             glPushAttrib(GL_LIGHTING_BIT)
             self.viewer.setMaterials(self.app.themes.getColor("CorrespondenceFinder:BackboneTrace"))  
@@ -1279,7 +1205,6 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
                     if(match.constrained and match.observed) :
                         constrained[match.observed.label] = True
                 match = corr.matchList[row]
-                
             else:
                 match = False
             if match.predicted.type == 'helix':
@@ -1403,7 +1328,6 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
     
     def constrainPredictedStrand(self, predicted, observed, constrain):
         def constrainPredictedStrand_po():
-            print "pred=" + str(predicted) + ", obs=" + str(observed) + ", con=" + str(constrain)
             correspondenceIndex = self.ui.comboBoxCorrespondences.currentIndex()
             if(correspondenceIndex >= 0):
                 corr = self.viewer.correspondenceLibrary.correspondenceList[correspondenceIndex]
@@ -1429,18 +1353,15 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
                     m = corr.matchList[i]
                     if(m.constrained) :
                         constrained[m.predicted.serialNo] = True
-                        print "setting constrained[" + str(m.predicted.serialNo) + "] to True"
                     # find the index of the selected helix in the correspondence list
                     if observedType==0 and m.observed and m.observed.sseType == 'helix':
                         if(m.observed.label == observedSSE):
-                            print "helix match found at m (i=" +str(i)+") with label=" + str(m.observed.label)
                             match = m
                             matchKey = i
                             matchKeys.append(i)
                     # find the index of the selected sheet in the correspondence list
                     if observedType==2 and m.observed and m.observed.sseType == 'sheet':
                         if(m.observed.label-numH+1 == observedSSE):
-                            print "sheet match found at m (i=" +str(i)+") with label=" + str(m.observed.label)
                             match = m
                             matchKey = i
                             matchKeys.append(i)
