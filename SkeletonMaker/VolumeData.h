@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.2  2009/10/30 06:11:26  colemanr
+//   fixed compiler warning for comparison between signed and unsigned integers
+//
 //   Revision 1.1  2009/10/13 18:09:34  ssa1
 //   Refactoring Volume.h
 //
@@ -19,6 +22,9 @@
 
 #ifndef SKELETON_MAKER_VOLUME_DATA_H
 #define SKELETON_MAKER_VOLUME_DATA_H
+
+#include <cstdlib>
+using std::malloc;
 
 namespace wustl_mm {
 	namespace SkeletonMaker {
@@ -45,7 +51,8 @@ namespace wustl_mm {
 			float GetDataAt(int index);
 			int GetIndex(int x, int y, int z);
 			int GetMaxIndex();
-
+			float* GetArrayCopy(int padX=0, int padY=0, int padZ=0, float padValue=0); //uses malloc as required by FFT libraries
+			
 			void SetSpacing(float spacingX, float spacingY, float spacingZ);
 			void SetOrigin(float originX, float originY, float originZ);
 			void SetDataAt(int x, int y, int z, float value);
@@ -220,8 +227,30 @@ namespace wustl_mm {
 			SetSize(newSizeX, newSizeY, newSizeZ);
 
 		}
+		
+		
+		float* VolumeData::GetArrayCopy(int padX, int padY, int padZ, float padValue) {
+			int xSize = GetSizeX()+padX;
+			int ySize = GetSizeY()+padY;
+			int zSize = GetSizeZ()+padZ;
+			float* copy = (float*) malloc(sizeof(float)*xSize*ySize*zSize);
+			
+			for (int i=0; i < xSize; i++)
+				for (int j=0; j < ySize; j++)
+					for (int k=0; k < zSize; k++) {
+						if ( i<GetSizeX() && j<GetSizeY() && k<GetSizeZ() ) {
+							copy[k+(j+i*ySize)*zSize] = GetDataAt(i, j, k);
+						} else {
+							copy[k+(j+i*ySize)*zSize] = padValue;
+						}
+
+					}
+			
+			return copy;
+		}
 	}
 }
+
 
 
 #endif
