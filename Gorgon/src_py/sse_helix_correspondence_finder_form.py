@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.36.2.25  2009/12/09 01:42:35  schuhs
+#   When graph is rebuilt, load new graph sheets into SSE viewer class
+#
 #   Revision 1.36.2.24  2009/12/03 22:53:52  schuhs
 #   Read constraints from c++ into python and then erase from c++. For now direction of helix constraint is ignored, so constraints are weaker in Gorgon than in the console app.
 #
@@ -1395,7 +1398,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
     
     def sseClicked(self, hit0, hit1, hit2, hit3, hit4, hit5, event):
         #print "sseClicked. visible=" + str(self.isVisible()) + ", loaded=" +str(self.dataLoaded)+", hit0=" + str(hit0) + ", hit1=" + str(hit1)
-        if(self.isVisible() and self.dataLoaded and ((hit0 == 0) or (hit0 == 1)) and (hit1 >= 0)):
+        if(self.isVisible() and self.dataLoaded and ((hit0 == 0) or (hit0 == 1) or (hit0 == 2)) and (hit1 >= 0)):
             observedType = hit0
             observedSSE = hit1
             constrained = {}

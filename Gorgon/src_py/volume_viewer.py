@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.20.2.1  2009/06/09 16:35:00  schuhs
+#   Allow volume filename to be passed as an argument or selected from the file dialog
+#
 #   Revision 1.20  2008/12/15 22:38:31  ssa1
 #   Adding in support to load RAW volumes
 #
@@ -62,6 +65,7 @@ class VolumeViewer(BaseViewer):
         self.title = "Volume"          
         self.app.themes.addDefaultRGB("Volume:Model:0", 180, 180, 180, 255)
         self.app.themes.addDefaultRGB("Volume:Model:1", 180, 180, 180, 255)
+        self.app.themes.addDefaultRGB("Volume:Model:2", 180, 180, 180, 255)
         self.app.themes.addDefaultRGB("Volume:BoundingBox", 255, 255, 255, 255)                         
         self.renderer = VolumeRenderer()          
         self.loaded = False

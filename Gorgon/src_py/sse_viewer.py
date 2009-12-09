@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.24.2.3  2009/12/09 01:41:56  schuhs
+#   Add methods to add new sheets to SSERenderer class
+#
 #   Revision 1.24.2.2  2009/07/21 14:59:58  schuhs
 #   Adding a test to prevent exception faults when selecting helix that is not part of a correspondence
 #
@@ -92,11 +95,15 @@ class SSEViewer(BaseViewer):
         self.selectEnabled = True
         self.app.viewers["sse"] = self;
         self.model2Visible = True
+        self.model3Visible = True
         self.initVisualizationOptions(ModelVisualizationForm(self.app, self))
         self.visualizationOptions.ui.checkBoxModelVisible.setText("Show helices colored:")
         self.visualizationOptions.ui.checkBoxModel2Visible.setText("Show sheets colored:")
         self.visualizationOptions.ui.checkBoxModel2Visible.setVisible(True)
         self.visualizationOptions.ui.pushButtonModel2Color.setVisible(True)
+        self.visualizationOptions.ui.checkBoxModel3Visible.setText("Show graph sheets colored:")
+        self.visualizationOptions.ui.checkBoxModel3Visible.setVisible(True)
+        self.visualizationOptions.ui.pushButtonModel3Color.setVisible(True)
         
         self.connect(self, QtCore.SIGNAL('elementSelected (int, int, int, int, int, int, QMouseEvent)'), self.updateCurrentMatch)
         
