@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.36.2.27  2009/12/09 04:54:16  schuhs
+#   Fixed UI controls for graph sheet rendering. Fixed left-click select on sheets. Started to fix right-click constraint selection but not quite finished yet.
+#
 #   Revision 1.36.2.26  2009/12/09 04:04:05  schuhs
 #   Add support for rendering a third model
 #
@@ -1220,26 +1223,16 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
             self.viewer.setMaterials(self.app.themes.getColor("CorrespondenceFinder:BackboneTrace"))  
             # calls Draw method of c++ SSECorrespondenceEngine object          
             self.viewer.correspondenceEngine.draw(0)
-            #self.viewer.correspondenceEngine.draw(match)
             glPopAttrib()
         if self.corrAct.isChecked() and self.dataLoaded and (self.ui.checkBoxShowAllPaths.isChecked() or self.ui.checkBoxShowHelixCorners.isChecked() or self.ui.checkBoxShowSheetCorners.isChecked() or self.ui.checkBoxShowSheetColors.isChecked() ) :
-            # probably not the best place for this code
-            # set colors of all SSEs
-            # need to learn how for loops work!
-            #print "preparing to set colors"
-
             # TODO: Move this color changing code somewhere else
+            # set colors of all SSEs
             # Probably should use the setColor calls in previous sections.
             for i in range(self.viewer.correspondenceEngine.getSkeletonSSECount()) :
                 #print "setting color for helix "
-                #print i
                 color = self.getIndexedHelixColor(i, self.viewer.correspondenceEngine.getSkeletonSSECount())
-                #color = self.getIndexedColor(i, self.viewer.correspondenceEngine.getSkeletonSSECount())
-                ####self.viewer.renderer.setSSEColor(i, color.redF(), color.greenF(), color.blueF(), color.alphaF())
-                ####self.viewer.correspondenceEngine.setSSEColor(i, color.redF(), color.greenF(), color.blueF(), color.alphaF())
             glPushAttrib(GL_LIGHTING_BIT)
             self.viewer.setMaterials(self.app.themes.getColor("CorrespondenceFinder:BackboneTrace"))  
-            # calls DrawAllPaths method of c++ SSECorrespondenceEngine object          
             self.viewer.correspondenceEngine.drawAllPaths(0,self.ui.checkBoxShowAllPaths.isChecked(),self.ui.checkBoxShowHelixCorners.isChecked(),self.ui.checkBoxShowSheetCorners.isChecked(),False)
             glPopAttrib()
             
@@ -1387,7 +1380,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
             self.selectCorrespondence(correspondenceIndex)
         return constrainObservedSheet_i
 
-    def constrainPredictedHelix(self, predicted, observed):
+    def constrainPredictedHelix(self, predicted, observed, constrain):
         def constrainPredictedHelix_po():
             correspondenceIndex = self.ui.comboBoxCorrespondences.currentIndex()
             if(correspondenceIndex >= 0):
@@ -1400,31 +1393,24 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
                     if(match and match.predicted and match.predicted.type == 'helix' and match.predicted.serialNo == predicted):
                         newMatch = match
                 match = newMatch
-                match.constrained = True
+                match.constrained = constrain
                 match.observed = self.viewer.correspondenceLibrary.structureObservation.helixDict[observed]
             self.selectCorrespondence(correspondenceIndex)                
         return constrainPredictedHelix_po
     
-    def constrainPredictedStrand(self, predicted, observed):
+    def constrainPredictedStrand(self, predicted, observed, constrain):
         def constrainPredictedStrand_po():
+            print "pred=" + str(predicted) + ", obs=" + str(observed) + ", con=" + str(constrain)
             correspondenceIndex = self.ui.comboBoxCorrespondences.currentIndex()
             if(correspondenceIndex >= 0):
                 corr = self.viewer.correspondenceLibrary.correspondenceList[correspondenceIndex]
-                for j in range(len(corr.matchList)):
-                    match = corr.matchList[j]
-                    if(match and match.observed and (match.observed.label == observed)) :
-                        match.observed = None
-                        match.constrained = False
-                    if(match and match.predicted and match.predicted.type == 'strand' and match.predicted.serialNo == predicted):
-                        newMatch = match
-                match = newMatch
-                match.constrained = True
+                match = corr.matchList[predicted]
                 match.observed = self.viewer.correspondenceLibrary.structureObservation.sheetDict[observed]
+                match.constrained = constrain # add or remove constraint
             self.selectCorrespondence(correspondenceIndex)                
         return constrainPredictedStrand_po
     
     def sseClicked(self, hit0, hit1, hit2, hit3, hit4, hit5, event):
-        #print "sseClicked. visible=" + str(self.isVisible()) + ", loaded=" +str(self.dataLoaded)+", hit0=" + str(hit0) + ", hit1=" + str(hit1)
         if(self.isVisible() and self.dataLoaded and ((hit0 == 0) or (hit0 == 1) or (hit0 == 2)) and (hit1 >= 0)):
             observedType = hit0
             observedSSE = hit1
@@ -1440,25 +1426,16 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
                     m = corr.matchList[i]
                     if(m.constrained) :
                         constrained[m.predicted.serialNo] = True
-
+                        print "setting constrained[" + str(m.predicted.serialNo) + "] to True"
                     # find the index of the selected helix in the correspondence list
                     if observedType==0 and m.observed and m.observed.sseType == 'helix':
                         if(m.observed.label == observedSSE):
-                            #print "helix match found at m (i=" +str(i)+") with label=" + str(m.observed.label)
+                            print "helix match found at m (i=" +str(i)+") with label=" + str(m.observed.label)
                             match = m
                             matchKey = i
                             matchKeys.append(i)
-                    
-                    # find the index of the selected sheet in the correspondence list
-                    #if observedType==1 and m.observed and m.observed.sseType == 'sheet':
-                    #    if(m.observed.label == observedHelix):
-                    #        #print "sheet match found at m (i=" +str(i)+") with label=" + str(m.observed.label)
-                    #        match = m
-                    #        matchKey = i
-                    
                     # find the index of the selected sheet in the correspondence list
                     if observedType==2 and m.observed and m.observed.sseType == 'sheet':
-                        print "graph sheet clicked (i=" +str(i)+") with label=" + str(m.observed.label) + ". observedSSE=" + str(observedSSE) 
                         if(m.observed.label-numH+1 == observedSSE):
                             print "sheet match found at m (i=" +str(i)+") with label=" + str(m.observed.label)
                             match = m
@@ -1475,42 +1452,34 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
             if(self.app.mainCamera.mouseRightPressed):                
                 predictedHelices = self.viewer.correspondenceLibrary.structurePrediction.helixDict                            
                 predictedStrands = self.viewer.correspondenceLibrary.structurePrediction.strandDict                            
+                predictedSSEs = self.viewer.correspondenceLibrary.structurePrediction.secelDict                            
                 menu = QtGui.QMenu(self.tr("Constrain observed SSE " + str(observedSSE+1)))
-                
-                for i in range(len(predictedHelices)):
-                    if observedType==0 and predictedHelices[i].type == 'helix': 
-                        constrainAction = QtGui.QAction(self.tr("Predicted helix " + str(predictedHelices[i].serialNo)), self)
+                i_h = 0
+                i_s = 0
+                for i in range(len(predictedSSEs)):
+                    if observedType==0 and predictedSSEs[i].type == 'helix':
+                        constrainAction = QtGui.QAction(self.tr("Sequence #" + str(i+1) + ": Predicted helix " + str(predictedHelices[i_h].serialNo)), self)
                         constrainAction.setCheckable(True)
                         if(match and match.observed):
-                            constrainAction.setChecked(match.predicted.serialNo == predictedHelices[i].serialNo)
-                            #constrainAction.setChecked(match.predicted.serialNo-1 == i)
+                            constrainAction.setChecked(corr.matchList[i].constrained and corr.matchList[i].observed.label == observedSSE)
                         else:
                             constrainAction.setChecked(False)
-                        constrainAction.setEnabled(not constrained.has_key(predictedHelices[i].serialNo))
-                        self.connect(constrainAction, QtCore.SIGNAL("triggered()"), self.constrainPredictedHelix(predictedHelices[i].serialNo, observedSSE))       
+                        constrainAction.setEnabled( (not corr.matchList[i].constrained) or (corr.matchList[i].observed.label == observedSSE) )
+                        self.connect(constrainAction, QtCore.SIGNAL("triggered()"), self.constrainPredictedHelix(predictedHelices[i_h].serialNo, observedSSE, not constrainAction.isChecked()))       
                         menu.addAction(constrainAction)           
+                        i_h += 1  
                 
-                    #if observedType==1 and predictedStrands[i].type == 'strand':
-                    #    constrainAction = QtGui.QAction(self.tr("Predicted strand " + str(predictedSecels[i].serialNo)), self)
-                    #    constrainAction.setCheckable(True)
-                    #    if(match and match.observed):
-                    #        constrainAction.setChecked(match.predicted.serialNo == i)
-                    #    else:
-                    #        constrainAction.setChecked(False)
-                    #    constrainAction.setEnabled(not constrained.has_key(predictedSecels[i].serialNo))
-                    #    self.connect(constrainAction, QtCore.SIGNAL("triggered()"), self.constrainPredictedHelix(predictedSecels[i].serialNo, observedHelix))       
-                    #    menu.addAction(constrainAction)           
-                
-                    if observedType==2 and predictedStrands[i].type == 'strand':
-                        constrainAction = QtGui.QAction(self.tr("Predicted strand " + str(predictedStrands[i].serialNo)), self)
+                    if observedType==2 and predictedSSEs[i].type == 'strand':
+                        constrainAction = QtGui.QAction(self.tr("Sequence #" + str(i+1) + ": Predicted strand " + str(predictedStrands[i_s].serialNo)), self)
                         constrainAction.setCheckable(True)
                         if(match and match.observed):
-                            constrainAction.setChecked(match.predicted.serialNo == i)
+                            constrainAction.setChecked(corr.matchList[i].constrained and corr.matchList[i].observed.label-numH == observedSSE-1)
                         else:
                             constrainAction.setChecked(False)
-                        constrainAction.setEnabled(not constrained.has_key(predictedStrands[i].serialNo))
-                        self.connect(constrainAction, QtCore.SIGNAL("triggered()"), self.constrainPredictedStrand(predictedStrands[i].serialNo, observedSSE))       
+                        constrainAction.setEnabled( (not corr.matchList[i].constrained) or (corr.matchList[i].observed.label-numH == observedSSE-1) )
+                        self.connect(constrainAction, QtCore.SIGNAL("triggered()"), self.constrainPredictedStrand(i, observedSSE-1, not constrainAction.isChecked()))
                         menu.addAction(constrainAction)           
+                        i_s += 1  
                 
                 menu.exec_(self.app.mainCamera.mapToGlobal(self.app.mainCamera.mouseDownPoint))
                 self.app.mainCamera.updateGL()
