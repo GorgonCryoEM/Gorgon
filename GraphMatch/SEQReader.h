@@ -11,6 +11,11 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.11  2008/11/20 16:02:21  colemanr
+//   Fixed the logic on whether there is a START or start line at the
+//   beginning, and implemented handling of NULL pointers in error
+//   conditions.
+//
 //   Revision 1.10  2008/11/18 18:10:24  ssa1
 //   Changing the scaling functions when doing graph matching to find correspondences
 //
@@ -175,10 +180,10 @@ namespace wustl_mm {
 		
 			
 			//Interpreting strings or sequence and predicted SSEs
-			const char coilChar = '-';
+			//const char coilChar = '-';
 			const char helixChar = 'H';
 			const unsigned short minHelixLength = 6;
-			const char strandChar = 'E';
+			//const char strandChar = 'E';
 			char currentChar = predictedSSEs[0];
 			unsigned int startCharNum = 0;
 			unsigned int stopCharNum = 0;
