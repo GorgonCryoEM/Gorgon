@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.9  2009/11/03 18:05:10  colemanr
+//   bug-fix for AtomsToVolumeBySummation; changed names for radial profile functions
+//
 //   Revision 1.8  2009/11/02 19:48:07  colemanr
 //   using round() rather than Round() and added an include to get NonManifoldMesh_Annotated
 //
@@ -47,6 +50,7 @@
 #include <map>
 #include <MathTools/Vector3D.h>
 #include <MathTools/MathLib.h>
+#include <MathTools/CrossCorrelation.h>
 #include <GraphMatch/PDBAtom.h>
 #include <GraySkeletonCPP/VolumeSkeletonizer.h>
 #include <Gorgon/MeshRenderer.h>
@@ -105,12 +109,15 @@ namespace wustl_mm {
 			float RadialProfileGaussian(float r); // r in angstroms
 			float RadialProfileGaussianDip(float r);// r in angstroms
 			float RadialProfilePolynomial(float r);// r in angstroms
-			Volume* GetTemplateCylinder(int xsize, int ysize, int zsize,
-					RadialProfileType type = POLYNOMIAL, float len = 10.8,
-					int x0 = -1, int y0 = -1, int z0 = -1,
-					float apix_x = 1, float apix_y = 1, float apix_z = 1);
+		public:
+			Volume* GetTemplateCylinder(int xsize, int ysize, int zsize, RadialProfileType type = POLYNOMIAL, float len = 10.8,
+												float apix_x = 1, float apix_y = 1, float apix_z = 1,
+												double axis_vector_x=0, double axis_vector_y=1, double axis_vector_z=0);
 
 			Volume * GetTemplateHelix(double length, float apix, float resolution, int mapSize);
+			Volume * HelixCorrelation(Volume* map_vol, RadialProfileType type = POLYNOMIAL, float length = 10.8, 
+									  float deltaAngleRadians = 5*PI/180, Volume* az_vol = NULL, Volume* alt_vol = NULL); 
+		private:
 			void NormalizeEdgeMean(Volume* vol);
 			void ApplyPolynomialProfileToHelix(Volume * in, float lengthAngstroms, int z0=-1);
 
@@ -140,7 +147,7 @@ namespace wustl_mm {
 			}
 			return atomMap;
 			
-		}		
+		}
 
 		vector<PDBAtom> SSEHunter::GetPseudoAtoms(vector<Vector3DInt> & atomVolumePositions, Volume * vol, float resolution, float threshold) {
 			Volume * tempVol = new Volume(vol->getSizeX(), vol->getSizeY(), vol->getSizeZ(), 0, 0, 0, vol);
@@ -401,50 +408,51 @@ namespace wustl_mm {
 
 		//Ross Coleman: modified from EMAN1 Cylinder.C by Wen Jiang
 		//synthesize cylinder that resembles the density seen from an alpha helix
-		//The cylindrical axis is parallel to the z axis.
 		//len is Angstrom, default to 2 turns
-		//x0, y0, z0 will be the centroid of the cylinder in voxels
-		Volume* SSEHunter::GetTemplateCylinder(int xsize, int ysize, int zsize,
-							RadialProfileType type, float len, int x0, int y0, int z0,
-							float apix_x, float apix_y, float apix_z)
-		{
-			//If x0, y0, or z0 is out of the volume set it to the midpoint
-			//Default value of -1 --> midpoint
-			if (x0 < 0 || x0 >= xsize)
-				x0 = xsize / 2;
-			if (y0 < 0 || y0 >= ysize)
-				y0 = ysize / 2;
-			if (z0 < 0 || z0 >= zsize)
-				z0 = zsize / 2;
-
+		//The cylinder will be centered in the Volume
+		Volume* SSEHunter::GetTemplateCylinder(int xsize, int ysize, int zsize, RadialProfileType type, float len, 
+											float apix_x, float apix_y, float apix_z,
+											double axis_vector_x, double axis_vector_y, double axis_vector_z) {
+			// The centroid of the Cylinder is at the center of the map.
+			float x0 = apix_x * xsize / 2.0;
+			float y0 = apix_y * ysize / 2.0;
+			float z0 = apix_y * zsize / 2.0;
+			
 			Volume * cyl = new Volume(xsize, ysize, zsize);
 			cyl->setSpacing(apix_x, apix_y, apix_z);
-			cyl->setOrigin(x0,y0,z0);
 			
-			int cyl_voxel_len = (int) (len / apix_z);
-			int cyl_k_min = z0 - cyl_voxel_len / 2;
-			int cyl_k_max = z0 + cyl_voxel_len / 2;
-
-			int x, y;
+			//Find the unit vector that points along the desired axis for the cylinder
+			double axis_vect_length = sqrt( axis_vector_x*axis_vector_x + axis_vector_y*axis_vector_y + axis_vector_z*axis_vector_z );
+			double axis_x = axis_vector_x/axis_vect_length;
+			double axis_y = axis_vector_y/axis_vect_length;
+			double axis_z = axis_vector_z/axis_vect_length;
+			
 			float radius;
+			double x, y, z;
+			double projection;
 			float value;
 			for (int i = 0; i < xsize; i++) {
 				for (int j = 0; j < ysize; j++) {
-					for (int k = 0; k < zsize; k++)
-					{
-						x = i - x0;//coordinate sys centered on cylinder
-						y = j - y0;//coordinate sys centered on cylinder
-						radius = sqrt( x*x*apix_x*apix_x + y*y*apix_y*apix_y );
-						if ((k > cyl_k_min) && (k < cyl_k_max))
-						{
+					for (int k = 0; k < zsize; k++) {
+						x = i*apix_x - x0;
+						y = j*apix_y - y0;
+						z = k*apix_z - z0;
+						
+						// The cross product gives the perpendicular distance to the cylinder's axis vector
+						double cross_prod[3] = { y*axis_z-z*axis_y, z*axis_x-x*axis_z, x*axis_y-y*axis_x };
+						radius = (float) sqrt( cross_prod[0]*cross_prod[0] + cross_prod[1]*cross_prod[1] + cross_prod[2]*cross_prod[2] );
+						projection = x*axis_x + y*axis_y + z*axis_z;
+						
+						if ((projection > -len/2.0 ) && (projection < len/2.0 )) {
 							value = cyl->getDataAt(i,j,k);
 							value += RadialProfile(radius, type);
-							cyl->setDataAt(i,j,k,value);
+							cyl->setDataAt(i,j,k,value);			
 						}
 					}
 				}
 			}
 			return cyl;
+			
 		}
 
 		//TODO: TEST
@@ -681,6 +689,81 @@ namespace wustl_mm {
 		}
 
 
+		Volume * SSEHunter::HelixCorrelation(Volume* map_vol, RadialProfileType type, float length, 
+										 float deltaAngleRadians, Volume* az_vol, Volume* alt_vol) {
+			// TODO: Make it work with helices
+			int nx = map_vol->getSizeX();
+			int ny = map_vol->getSizeY();
+			int nz = map_vol->getSizeZ();
+			Volume * coeff = new Volume(nx, ny, nz); // This is the returned volume
+			
+			int fftPaddingFastIx = nz % 2 ? 1 : 2;
+			
+			int ARRAY_SIZE = nx*ny*(nz+fftPaddingFastIx);
+			
+			float* map_array = map_vol->getArrayCopy(0, 0, fftPaddingFastIx, 0);
+			fftInPlace(map_array, nz, ny, nx);
+			
+			//Finding the complex conjugate
+			for (int i = 1; i < nx*ny*(nz+fftPaddingFastIx); i+=2) {
+				map_array[i] *= -1;
+			}
+			
+			// Rotating the cylinder to all possible orientations
+			double axis_vect[3] = {0,0,1};
+			Volume* cyl = new Volume(nx, ny, nz+fftPaddingFastIx);
+			
+			float* cyl_data;
+			float val;
+			// Using spherical coordinates
+			for (float az = 0; az < 2*PI; az += deltaAngleRadians) { // Angle from x axis to projection on xy plane
+				for (float alt = 0; alt < PI; alt += deltaAngleRadians) { // Angle from the z axis
+					// Unit vector along helix or cylinder axis
+					axis_vect[0] = sin(az);
+					axis_vect[1] = cos(alt)*cos(az);
+					axis_vect[2] = -sin(alt)*cos(az);
+					
+					cyl = GetTemplateCylinder(nx, ny, nz, POLYNOMIAL, 10.8, 1, 1, 1, axis_vect[0], axis_vect[1], axis_vect[2]);
+					cyl_data = cyl->getArrayCopy(0,0,fftPaddingFastIx);
+					fftInPlace(cyl_data, nz, ny, nx);
+					for (int i=0; i<ARRAY_SIZE; i++) {
+						cyl_data[i] *= map_array[i]; // map_array is the complex conjugate of FFT(map)
+					}
+					iftInPlace(cyl_data, nz, ny, nx); // cyl_data will now hold the CCF values
+					
+					int i2, j2, k2;
+					
+					for (int i=0; i<nx; i++) {
+						for (int j=0; j<ny; j++) {
+							for (int k=0; k<nz+fftPaddingFastIx; k++) {
+
+								// shifting the data to center it.
+								i2 = (i+nx/2) % nx;
+								j2 = (j+ny/2) % ny;
+								k2 = (k+nz/2) % nz;
+
+								val = cyl_data[k+(j+i*ny)*(nz+fftPaddingFastIx)];
+								if ( val > coeff->getDataAt(i2,j2,k2) ) {
+									coeff->setDataAt(i2,j2,k2, val);
+									if (az_vol)
+										az_vol->setDataAt(i2,j2,k2, az);
+									if (alt_vol)
+										alt_vol->setDataAt(i2,j2,k2, alt);
+								}
+							}
+						}
+					}
+				}
+			}
+			
+			return coeff;
+
+		}
+		
+		
+		
+		
+		
 	}
 }
 
