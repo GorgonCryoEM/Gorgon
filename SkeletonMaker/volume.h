@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.35  2009/12/07 21:34:36  ssa1
+//   Finding Rotation using SVD, and removing compiler warnings
+//
 //   Revision 1.34  2009/11/03 04:44:07  colemanr
 //   fixed the algorithm for getEdgeMean() and added function descriptions
 //
@@ -153,6 +156,7 @@ namespace wustl_mm {
 			float getEdgeMean(); // Returns the mean value of all the surface voxels but no interior voxels
 			float getStdDev(); // Returns the population standard deviation of the values at all the voxels
 			Vector3DFloat getCenterOfMass(); // Returns the center of mass of the image in pixels (not angstroms)
+			float* getArrayCopy(int padX=0, int padY=0, int padZ=0, float padValue=0);
 
 			void fill(double val);
 			int isBertrandBorder(int ox, int oy, int oz, int dir);
@@ -11302,6 +11306,10 @@ namespace wustl_mm {
 
 			Vector3DFloat centerOfMass( xmoment/mass, ymoment/mass, zmoment/mass );
 			return centerOfMass;
+		}
+		
+		float* Volume::getArrayCopy(int padX, int padY, int padZ, float padValue) {
+			return getVolumeData()->GetArrayCopy(padX, padY, padZ, padValue);
 		}
 
 	}
