@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.36.2.24  2009/12/03 22:53:52  schuhs
+#   Read constraints from c++ into python and then erase from c++. For now direction of helix constraint is ignored, so constraints are weaker in Gorgon than in the console app.
+#
 #   Revision 1.36.2.23  2009/12/03 15:39:25  schuhs
 #   More fixes to make sheet constraints work in GUI
 #
@@ -1237,6 +1240,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
         print self.ui.comboBoxCorrespondences.currentIndex()
         self.setConstants()
         self.checkOk()
+        self.viewer.makeSheetSurfaces()
         self.viewer.emitModelChanged()
         print "correspondence index after rebuilding is "
         print self.ui.comboBoxCorrespondences.currentIndex()
