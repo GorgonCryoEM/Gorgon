@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.36.2.30  2009/12/09 20:55:18  schuhs
+#   Removing many old comments and console messages.
+#
 #   Revision 1.36.2.29  2009/12/09 20:29:35  schuhs
 #   more constraint UI changes.
 #
@@ -1393,12 +1396,12 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
                         # checked if already constrained
                         constrainAction.setCheckable(True)
                         if(match and match.observed):
-                            constrainAction.setChecked(corr.matchList[i].constrained and corr.matchList[i].observed.label == observedSSE)
+                            constrainAction.setChecked(corr.matchList[i].constrained and corr.matchList[i].observed!=None and corr.matchList[i].observed.label == observedSSE)
                         else:
                             constrainAction.setChecked(False)
 
                         # checkable if not constrained to another helix
-                        constrainAction.setEnabled( (not corr.matchList[i].constrained) or (corr.matchList[i].observed.label == observedSSE) )
+                        constrainAction.setEnabled( (not corr.matchList[i].constrained) or (corr.matchList[i].observed!=None and corr.matchList[i].observed.label == observedSSE) )
                         self.connect(constrainAction, QtCore.SIGNAL("triggered()"), self.constrainPredictedHelix(predictedHelices[i_h].serialNo, observedSSE, not constrainAction.isChecked()))       
                         menu.addAction(constrainAction)           
                         i_h += 1  
@@ -1416,12 +1419,12 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
                         # checked if already constrained
                         constrainAction.setCheckable(True)
                         if(match and match.observed):
-                            constrainAction.setChecked(corr.matchList[i].constrained and corr.matchList[i].observed.label-numH == observedSSE-1)
+                            constrainAction.setChecked(corr.matchList[i].constrained and corr.matchList[i].observed!=None and corr.matchList[i].observed.label-numH == observedSSE-1)
                         else:
                             constrainAction.setChecked(False)
 
                         # checkable if not constrained to another sheet
-                        constrainAction.setEnabled( (not corr.matchList[i].constrained) or (corr.matchList[i].observed.label-numH == observedSSE-1) )
+                        constrainAction.setEnabled( (not corr.matchList[i].constrained) or (corr.matchList[i].observed!=None and corr.matchList[i].observed.label-numH == observedSSE-1) )
                         self.connect(constrainAction, QtCore.SIGNAL("triggered()"), self.constrainPredictedStrand(i, observedSSE-1, not constrainAction.isChecked()))
                         menu.addAction(constrainAction)           
                         i_s += 1  
