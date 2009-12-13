@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.1  2009/12/13 19:38:37  ssa1
+//   Adding in abstract data structures
+//
 
 #ifndef FOUNDATION_GORGONBINARYTREE_H
 #define FOUNDATION_GORGONBINARYTREE_H
@@ -29,11 +32,15 @@ namespace wustl_mm {
 		public:
 			GorgonBinaryTree();
 			~GorgonBinaryTree();
-
+			
+			bool IsEmpty();
 			virtual void AddValue(T value);
+			virtual void Print();
+			
 
 		private:
-			void DeleteSubtree(GorgonBinaryTreeNode<T> * & root);
+			void Print(GorgonBinaryTreeNode<T> * node);
+			void DeleteSubtree(GorgonBinaryTreeNode<T> * root);
 
 		protected:
 			GorgonBinaryTreeNode<T> * root;
@@ -46,18 +53,17 @@ namespace wustl_mm {
 
 		template <class T>
 		GorgonBinaryTree<T>::~GorgonBinaryTree() {
-			DeleteSubTree(root);
-
+			DeleteSubtree(root);
+			root = NULL;
 		}
 
 		template <class T>
-		void GorgonBinaryTree<T>::DeleteSubtree(GorgonBinaryTreeNode<T> * & root) {
+		void GorgonBinaryTree<T>::DeleteSubtree(GorgonBinaryTreeNode<T> * root) {
 			if(root != NULL) {
-				DeleteSubTree(root->GetChild(GORGON_BINARY_TREE_LEFT_CHILD));
-				DeleteSubTree(root->GetChild(GORGON_BINARY_TREE_RIGHT_CHILD));
+				DeleteSubtree(root->GetChild(GORGON_BINARY_TREE_LEFT_CHILD));
+				DeleteSubtree(root->GetChild(GORGON_BINARY_TREE_RIGHT_CHILD));
 				delete root;
 			}
-			root = NULL;
 		}		
 
 		template <class T>
@@ -65,6 +71,25 @@ namespace wustl_mm {
 			printf("Not implemented.  Please override \n");
 		}
 
+		template <class T>
+		void GorgonBinaryTree<T>::Print() {
+			Print(root);
+			printf("\n");
+		}
+
+		template <class T>
+		void GorgonBinaryTree<T>::Print(GorgonBinaryTreeNode<T> * node) {
+			if(node != NULL) {
+				Print(node->GetChild(GORGON_BINARY_TREE_LEFT_CHILD));
+				printf("%d ", (int)node->GetValue());
+				Print(node->GetChild(GORGON_BINARY_TREE_RIGHT_CHILD));
+			}			
+		}
+
+		template <class T>
+		bool GorgonBinaryTree<T>::IsEmpty() {
+			return (root == NULL);
+		}
 	}
 }
 

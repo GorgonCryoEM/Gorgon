@@ -228,6 +228,10 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
+				RelativePath=".\GorgonBinarySearchTree.h"
+				>
+			</File>
+			<File
 				RelativePath=".\GorgonBinaryTree.h"
 				>
 			</File>
@@ -248,6 +252,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\GorgonMergeSort.h"
+				>
+			</File>
+			<File
 				RelativePath=".\GorgonPriorityQueue.h"
 				>
 			</File>
@@ -257,6 +265,10 @@
 			</File>
 			<File
 				RelativePath=".\GorgonQueue.h"
+				>
+			</File>
+			<File
+				RelativePath=".\GorgonQuickSort.h"
 				>
 			</File>
 			<File

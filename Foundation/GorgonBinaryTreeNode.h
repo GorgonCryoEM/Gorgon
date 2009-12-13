@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.1  2009/12/13 19:38:37  ssa1
+//   Adding in abstract data structures
+//
 
 #ifndef FOUNDATION_GORGONBINARYTREENODE_H
 #define FOUNDATION_GORGONBINARYTREENODE_H
@@ -21,31 +24,37 @@ namespace wustl_mm {
 
 		class GorgonBinaryTreeNode {
 		public:
-			GorgonBinaryTreeNode(T value);
-			GorgonBinaryTreeNode(T value, GorgonBinaryTreeNode<T> * lChild, GorgonBinaryTreeNode<T> * rChild);
+			GorgonBinaryTreeNode(T value, GorgonBinaryTreeNode<T> * parent);
+			GorgonBinaryTreeNode(T value, GorgonBinaryTreeNode<T> * parent, GorgonBinaryTreeNode<T> * lChild, GorgonBinaryTreeNode<T> * rChild);
 			~GorgonBinaryTreeNode();
 
 			T GetValue();
 			GorgonBinaryTreeNode<T> * GetChild(int childIndex);
+			GorgonBinaryTreeNode<T> * GetParent();
 			bool HasChild(int childIndex);
 			void AddChild(int childIndex, T childValue);
-			void AddChild(int childIndex, GorgonBinaryTreeNode<T> * child);
+			void SetChild(int childIndex, GorgonBinaryTreeNode<T> * child);
+			void SetParent(GorgonBinaryTreeNode<T> * parent);
+			void SetValue(T value);
 
 		private:
 			T value;
 			GorgonBinaryTreeNode<T> * children[2];
+			GorgonBinaryTreeNode<T> * parent;
 		};
 
 		template <class T>
-		GorgonBinaryTreeNode<T>::GorgonBinaryTreeNode(T value) {
+		GorgonBinaryTreeNode<T>::GorgonBinaryTreeNode(T value, GorgonBinaryTreeNode<T> * parent) {
 			this->value = value;
+			this->parent = parent;
 			this->children[0] = NULL;
 			this->children[1] = NULL;
 		}
 
 		template <class T>
-		GorgonBinaryTreeNode<T>::GorgonBinaryTreeNode(T value, GorgonBinaryTreeNode<T> * lChild, GorgonBinaryTreeNode<T> * rChild) {
+		GorgonBinaryTreeNode<T>::GorgonBinaryTreeNode(T value, GorgonBinaryTreeNode<T> * parent, GorgonBinaryTreeNode<T> * lChild, GorgonBinaryTreeNode<T> * rChild) {
 			this->value = value;
+			this->parent = parent;
 			this->children[0] = lChild;
 			this->children[1] = rChild;
 		}
@@ -74,13 +83,28 @@ namespace wustl_mm {
 
 		template <class T>
 		void GorgonBinaryTreeNode<T>::AddChild(int childIndex, T childValue) {
-			GorgonBinaryTreeNode<T> * child = new GorgonBinaryTreeNode<T>(childValue);
+			GorgonBinaryTreeNode<T> * child = new GorgonBinaryTreeNode<T>(childValue, this);
 			children[childIndex] = child;
 		}
 
 		template <class T>
-		void GorgonBinaryTreeNode<T>::AddChild(int childIndex, GorgonBinaryTreeNode<T> * child) {
-			children[childIndex] child;
+		void GorgonBinaryTreeNode<T>::SetChild(int childIndex, GorgonBinaryTreeNode<T> * child) {
+			children[childIndex] = child;
+		}
+
+		template <class T>
+		GorgonBinaryTreeNode<T> * GorgonBinaryTreeNode<T>::GetParent() {
+			return parent;
+		}
+
+		template <class T>
+		void GorgonBinaryTreeNode<T>::SetParent(GorgonBinaryTreeNode<T> * parent) {
+			this->parent = parent;
+		}
+
+		template <class T>
+		void GorgonBinaryTreeNode<T>::SetValue(T value) {
+			this->value = value;
 		}
 
 	}
