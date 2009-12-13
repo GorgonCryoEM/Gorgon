@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.12  2009/12/13 19:38:37  ssa1
+//   Adding in abstract data structures
+//
 //   Revision 1.11  2009/09/02 19:06:13  ssa1
 //   Working towards flexible fitting
 //
@@ -35,46 +38,110 @@
 #include <vector>
 #include <set>
 #include "GorgonPriorityQueue.h"
+#include "GorgonMergeSort.h"
+#include "GorgonBubbleSort.h"
 #include "GorgonHeapSort.h"
+#include "GorgonQuickSort.h"
+#include "GorgonBinarySearchTree.h"
 
 using namespace wustl_mm::Foundation;
 
 int main( int args, char * argv[] ) {
 
-	vector<int> a;
-	a.push_back(1);
-	a.push_back(3);
-	a.push_back(4);
-	a.push_back(3);
-	a.push_back(5);
-	a.push_back(1);
-	a.push_back(-1);
+	//int size = 1000000;
+	//bool print = false;
 
-	GorgonHeapSort<int>::Sort(a, true);
-	for(unsigned int i =0; i < a.size(); i++) {
-		printf("%d \n", a[i]);
-	}
+	//vector<int> a;
+	//srand(0);
+	//for(unsigned int i = 0; i < size; i++) {
+	//	a.push_back(rand());
+	//}
+
+	//TimeManager m;
+
+	//m.PushCurrentTime();
+	////GorgonBubbleSort<int>::Sort(a, true);
+	//m.PopAndDisplayTime("\nBubble Sort : %f\n");
+	//if(print) {
+	//	for(unsigned int i =0; i < a.size(); i++) {
+	//		printf("%d ", a[i]);
+	//	}
+	//	printf("\n");
+	//}
+
+
+	//a.clear();
+	//srand(0);
+	//for(unsigned int i = 0; i < size; i++) {
+	//	a.push_back(rand());
+	//}
+
+	//m.PushCurrentTime();
+	//GorgonHeapSort<int>::Sort(a, true);
+	//m.PopAndDisplayTime("\nHeap Sort : %f\n");
+	//if(print) {
+	//	for(unsigned int i =0; i < a.size(); i++) {
+	//		printf("%d ", a[i]);
+	//	}
+	//	printf("\n");
+	//}
+
+
+	//a.clear();
+	//srand(0);
+	//for(unsigned int i = 0; i < size; i++) {
+	//	a.push_back(rand());
+	//}
+
+	//m.PushCurrentTime();
+	//GorgonMergeSort<int>::Sort(a, true);
+	//m.PopAndDisplayTime("\nMerge Sort : %f\n");
+	//if(print) {
+	//	for(unsigned int i =0; i < a.size(); i++) {
+	//		printf("%d ", a[i]);
+	//	}
+	//	printf("\n");
+	//}
+
+
+	//a.clear();
+	//srand(0);
+	//for(unsigned int i = 0; i < size; i++) {
+	//	a.push_back(rand());
+	//}
+
+	//m.PushCurrentTime();
+	//GorgonQuickSort<int>::Sort(a, true);
+	//m.PopAndDisplayTime("\nQuick Sort : %f\n");
+	//if(print) {
+	//	for(unsigned int i =0; i < a.size(); i++) {
+	//		printf("%d ", a[i]);
+	//	}
+	//	printf("\n");
+	//}
 
 
 
-	//GorgonHeap<int> s = GorgonHeap<int>(true);
-	//s.AddValue(2);	s.Print();
-	//s.AddValue(4);	s.Print();
-	//s.AddValue(6);	s.Print();
-	//s.AddValue(5);	s.Print();
-	//s.AddValue(3);	s.Print();
-	//s.AddValue(1);	s.Print();
 
-	//printf("Pop %d\n", s.PopRoot()); s.Print();
-	//printf("First %d\n", s.Root()); s.Print();
-	//printf("Is Empty %d\n", (int)s.IsEmpty()); s.Print();
-	//printf("Pop %d\n", s.PopRoot()); s.Print();
-	//printf("Pop %d\n", s.PopRoot()); s.Print();
-	//printf("Pop %d\n", s.PopRoot()); s.Print();
-	//printf("Pop %d\n", s.PopRoot()); s.Print();
-	//printf("Pop %d\n", s.PopRoot()); s.Print();
-	//printf("Is Empty %d \n", (int)s.IsEmpty()); s.Print();
 
+	GorgonBinarySearchTree<int> s;
+	s.AddValue(2);	s.Print();
+	s.AddValue(4);	s.Print();
+	s.AddValue(6);	s.Print();
+	s.AddValue(3);	s.Print();
+	s.AddValue(5);	s.Print();
+	s.AddValue(3);	s.Print();
+	s.AddValue(1);	s.Print();
+
+	printf("Finding %d \n", s.GetElement(3));
+
+	s.RemoveValue(5); printf("removed 5 :"); s.Print();	
+	s.RemoveValue(1); printf("removed 1 :"); s.Print();
+	s.RemoveValue(2); printf("removed 2 :"); s.Print();
+	s.RemoveValue(4); printf("removed 4 :"); s.Print();
+	s.RemoveValue(6); printf("removed 6 :"); s.Print();
+	s.RemoveValue(3); printf("removed 3 :"); s.Print();
+	s.RemoveValue(3); printf("removed 3 :"); s.Print();
 	
 	
 
