@@ -228,6 +228,46 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
+				RelativePath=".\GorgonBinaryTree.h"
+				>
+			</File>
+			<File
+				RelativePath=".\GorgonBinaryTreeNode.h"
+				>
+			</File>
+			<File
+				RelativePath=".\GorgonBubbleSort.h"
+				>
+			</File>
+			<File
+				RelativePath=".\GorgonHeap.h"
+				>
+			</File>
+			<File
+				RelativePath=".\GorgonHeapSort.h"
+				>
+			</File>
+			<File
+				RelativePath=".\GorgonPriorityQueue.h"
+				>
+			</File>
+			<File
+				RelativePath=".\GorgonPriorityQueueElement.h"
+				>
+			</File>
+			<File
+				RelativePath=".\GorgonQueue.h"
+				>
+			</File>
+			<File
+				RelativePath=".\GorgonSort.h"
+				>
+			</File>
+			<File
+				RelativePath=".\GorgonStack.h"
+				>
+			</File>
+			<File
 				RelativePath=".\GraphBase.h"
 				>
 			</File>
