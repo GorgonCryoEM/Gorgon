@@ -10,9 +10,12 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.1  2009/12/13 19:38:37  ssa1
+//   Adding in abstract data structures
+//
 
-#ifndef FOUNDATION_GORGONBUBBLESORT_H
-#define FOUNDATION_GORGONBUBBLESORT_H
+#ifndef FOUNDATION_GORGONHEAPSORT_H
+#define FOUNDATION_GORGONHEAPSORT_H
 
 
 #include <vector>
