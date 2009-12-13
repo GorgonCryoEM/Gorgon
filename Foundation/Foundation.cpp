@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.11  2009/09/02 19:06:13  ssa1
+//   Working towards flexible fitting
+//
 //   Revision 1.10  2009/08/18 19:55:06  ssa1
 //   Adding A base graph class for finding maximal cliques, and connected components
 //
@@ -31,11 +34,53 @@
 #include "GraphBase.h"
 #include <vector>
 #include <set>
-
+#include "GorgonPriorityQueue.h"
+#include "GorgonHeapSort.h"
 
 using namespace wustl_mm::Foundation;
 
 int main( int args, char * argv[] ) {
+
+	vector<int> a;
+	a.push_back(1);
+	a.push_back(3);
+	a.push_back(4);
+	a.push_back(3);
+	a.push_back(5);
+	a.push_back(1);
+	a.push_back(-1);
+
+	GorgonHeapSort<int>::Sort(a, true);
+	for(unsigned int i =0; i < a.size(); i++) {
+		printf("%d \n", a[i]);
+	}
+
+
+
+	//GorgonHeap<int> s = GorgonHeap<int>(true);
+	//s.AddValue(2);	s.Print();
+	//s.AddValue(4);	s.Print();
+	//s.AddValue(6);	s.Print();
+	//s.AddValue(5);	s.Print();
+	//s.AddValue(3);	s.Print();
+	//s.AddValue(1);	s.Print();
+
+	//printf("Pop %d\n", s.PopRoot()); s.Print();
+	//printf("First %d\n", s.Root()); s.Print();
+	//printf("Is Empty %d\n", (int)s.IsEmpty()); s.Print();
+	//printf("Pop %d\n", s.PopRoot()); s.Print();
+	//printf("Pop %d\n", s.PopRoot()); s.Print();
+	//printf("Pop %d\n", s.PopRoot()); s.Print();
+	//printf("Pop %d\n", s.PopRoot()); s.Print();
+	//printf("Pop %d\n", s.PopRoot()); s.Print();
+	//printf("Is Empty %d \n", (int)s.IsEmpty()); s.Print();
+
+	
+	
+
+
+
+
 	/*Octree<bool> * tree = new Octree<bool>(8, 8, 8);
 	tree->PrintStructure();
 	tree->AddNewLeaf(4, 0, 0, 1);z
@@ -48,88 +93,88 @@ int main( int args, char * argv[] ) {
 	}
 	return 0; */
 
-	GraphBase<bool, bool> graph;
-	vector<unsigned long long> vertices;
+	//GraphBase<bool, bool> graph;
+	//vector<unsigned long long> vertices;
 
-	for(unsigned int i = 0; i < 10; i++) {		
-		vertices.push_back(graph.AddVertex(3, false));
-	}
-	printf("Try1 \n");
-	graph.PrintAllCliques(graph.GetAllMaximalCliques());
+	//for(unsigned int i = 0; i < 10; i++) {		
+	//	vertices.push_back(graph.AddVertex(3, false));
+	//}
+	//printf("Try1 \n");
+	//graph.PrintAllCliques(graph.GetAllMaximalCliques());
 
-	if(graph.IsClique(vertices)) {
-		printf("clique \n");
-	} else {
-		printf("not clique \n");
-	}
+	//if(graph.IsClique(vertices)) {
+	//	printf("clique \n");
+	//} else {
+	//	printf("not clique \n");
+	//}
 
-	for(unsigned int i = 0; i < 5; i++) {
-		for(unsigned int j = 0; j < 5; j++) {
-			graph.AddEdge(i, j, 1.0f, false);
-		}
-	}
+	//for(unsigned int i = 0; i < 5; i++) {
+	//	for(unsigned int j = 0; j < 5; j++) {
+	//		graph.AddEdge(i, j, 1.0f, false);
+	//	}
+	//}
 
-	printf("Try2 \n");
-	graph.PrintAllCliques(graph.GetAllMaximalCliques());
+	//printf("Try2 \n");
+	//graph.PrintAllCliques(graph.GetAllMaximalCliques());
 
-	graph.AddEdge(6, 8, 1.0f, false);
-	graph.AddEdge(2, 5, 1.0f, false);
-	printf("ConnComponents\n");
-	graph.PrintAllCliques(graph.GetAllConnectedComponents());
+	//graph.AddEdge(6, 8, 1.0f, false);
+	//graph.AddEdge(2, 5, 1.0f, false);
+	//printf("ConnComponents\n");
+	//graph.PrintAllCliques(graph.GetAllConnectedComponents());
 
-	printf("Try3 \n");
-	graph.PrintAllCliques(graph.GetAllMaximalCliques());
+	//printf("Try3 \n");
+	//graph.PrintAllCliques(graph.GetAllMaximalCliques());
 
-	if(graph.IsClique(vertices)) {
-		printf("clique \n");
-	} else {
-		printf("not clique \n");
-	}
+	//if(graph.IsClique(vertices)) {
+	//	printf("clique \n");
+	//} else {
+	//	printf("not clique \n");
+	//}
 
-	set<unsigned long long> vert;
-	vert.insert(10);
-	vert.insert(2);
-	vert.insert(15);
-	vert.insert(11);
-
-
-	set<unsigned long long> vert2;
-	vert2.insert(10);
-	vert2.insert(2);
-	vert2.insert(11);
-	vert2.insert(15);
-	
-
-	if(vert == vert2) {
-		printf("Same\n");
-	} else {
-		printf("not same\n");
-	}
+	//set<unsigned long long> vert;
+	//vert.insert(10);
+	//vert.insert(2);
+	//vert.insert(15);
+	//vert.insert(11);
 
 
-	TimeManager m;
-	for(int i = 1; i <= 30; i++) {
-		GraphBase<bool, bool> g;
-		for(int j = 0; j < i; j++) {
-			g.AddVertex(0, false);
-		}
+	//set<unsigned long long> vert2;
+	//vert2.insert(10);
+	//vert2.insert(2);
+	//vert2.insert(11);
+	//vert2.insert(15);
+	//
 
-		/*m.PushCurrentTime();
-		g.GetLargestMaximalCliques2();
-		printf("%d ", i);
-		m.PopAndDisplayTime(" nodes (empty graph): time = %f \n");*/
+	//if(vert == vert2) {
+	//	printf("Same\n");
+	//} else {
+	//	printf("not same\n");
+	//}
 
-		for(int j = 0; j < i; j++) {
-			for(int k = 0; k < i; k++) {
-				g.AddEdge(j, k, 0, false);
-			}
-		}
 
-		m.PushCurrentTime();
-		g.GetLargestMaximalCliques2();
-		printf("%d ", i);
-		m.PopAndDisplayTime(" nodes (full graph): time = %f \n");
-	}
+	//TimeManager m;
+	//for(int i = 1; i <= 30; i++) {
+	//	GraphBase<bool, bool> g;
+	//	for(int j = 0; j < i; j++) {
+	//		g.AddVertex(0, false);
+	//	}
+
+	//	/*m.PushCurrentTime();
+	//	g.GetLargestMaximalCliques2();
+	//	printf("%d ", i);
+	//	m.PopAndDisplayTime(" nodes (empty graph): time = %f \n");*/
+
+	//	for(int j = 0; j < i; j++) {
+	//		for(int k = 0; k < i; k++) {
+	//			g.AddEdge(j, k, 0, false);
+	//		}
+	//	}
+
+	//	m.PushCurrentTime();
+	//	g.GetLargestMaximalCliques2();
+	//	printf("%d ", i);
+	//	m.PopAndDisplayTime(" nodes (full graph): time = %f \n");
+	//}
 
 	return 0;
 }
