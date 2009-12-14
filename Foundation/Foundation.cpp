@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.13  2009/12/13 23:35:51  ssa1
+//   Adding in abstract data structures
+//
 //   Revision 1.12  2009/12/13 19:38:37  ssa1
 //   Adding in abstract data structures
 //
@@ -48,83 +51,99 @@ using namespace wustl_mm::Foundation;
 
 int main( int args, char * argv[] ) {
 
-	//int size = 1000000;
-	//bool print = false;
+	int temp[10][20];
 
-	//vector<int> a;
-	//srand(0);
-	//for(unsigned int i = 0; i < size; i++) {
-	//	a.push_back(rand());
-	//}
+	for (int i = 0; i < 10; i++) {
+		for(int j = 0; j < 20; j++) {
+			temp[i][j] = i*j;
+		}
+	}
 
-	//TimeManager m;
+	
+	for (int i = 0; i < 10; i++) {
+		for(int j = 0; j < 20; j++) {
+			printf("%d ", temp[i][j]);
+		}
+		printf("\n");
+	}
 
-	//m.PushCurrentTime();
-	////GorgonBubbleSort<int>::Sort(a, true);
-	//m.PopAndDisplayTime("\nBubble Sort : %f\n");
-	//if(print) {
-	//	for(unsigned int i =0; i < a.size(); i++) {
-	//		printf("%d ", a[i]);
-	//	}
-	//	printf("\n");
-	//}
+	int size = 10;
+	bool print = false;
 
+	vector<int> a;
+	srand(0);
+	for(unsigned int i = 0; i < size; i++) {
+		a.push_back(rand());
+	}
 
-	//a.clear();
-	//srand(0);
-	//for(unsigned int i = 0; i < size; i++) {
-	//	a.push_back(rand());
-	//}
+	TimeManager m;
 
-	//m.PushCurrentTime();
-	//GorgonHeapSort<int>::Sort(a, true);
-	//m.PopAndDisplayTime("\nHeap Sort : %f\n");
-	//if(print) {
-	//	for(unsigned int i =0; i < a.size(); i++) {
-	//		printf("%d ", a[i]);
-	//	}
-	//	printf("\n");
-	//}
-
-
-	//a.clear();
-	//srand(0);
-	//for(unsigned int i = 0; i < size; i++) {
-	//	a.push_back(rand());
-	//}
-
-	//m.PushCurrentTime();
-	//GorgonMergeSort<int>::Sort(a, true);
-	//m.PopAndDisplayTime("\nMerge Sort : %f\n");
-	//if(print) {
-	//	for(unsigned int i =0; i < a.size(); i++) {
-	//		printf("%d ", a[i]);
-	//	}
-	//	printf("\n");
-	//}
+	m.PushCurrentTime();
+	//GorgonBubbleSort<int>::Sort(a, true);
+	m.PopAndDisplayTime("\nBubble Sort : %f\n");
+	if(print) {
+		for(unsigned int i =0; i < a.size(); i++) {
+			printf("%d ", a[i]);
+		}
+		printf("\n");
+	}
 
 
-	//a.clear();
-	//srand(0);
-	//for(unsigned int i = 0; i < size; i++) {
-	//	a.push_back(rand());
-	//}
+	a.clear();
+	srand(0);
+	for(unsigned int i = 0; i < size; i++) {
+		a.push_back(rand());
+	}
 
-	//m.PushCurrentTime();
-	//GorgonQuickSort<int>::Sort(a, true);
-	//m.PopAndDisplayTime("\nQuick Sort : %f\n");
-	//if(print) {
-	//	for(unsigned int i =0; i < a.size(); i++) {
-	//		printf("%d ", a[i]);
-	//	}
-	//	printf("\n");
-	//}
-
-
+	m.PushCurrentTime();
+	GorgonHeapSort<int>::Sort(a, true);
+	m.PopAndDisplayTime("\nHeap Sort : %f\n");
+	if(print) {
+		for(unsigned int i =0; i < a.size(); i++) {
+			printf("%d ", a[i]);
+		}
+		printf("\n");
+	}
 
 
+	a.clear();
+	srand(0);
+	for(unsigned int i = 0; i < size; i++) {
+		a.push_back(rand());
+	}
 
-	GorgonBinarySearchTree<int> s;
+	m.PushCurrentTime();
+	GorgonMergeSort<int>::Sort(a, true);
+	m.PopAndDisplayTime("\nMerge Sort : %f\n");
+	if(print) {
+		for(unsigned int i =0; i < a.size(); i++) {
+			printf("%d ", a[i]);
+		}
+		printf("\n");
+	}
+
+
+	a.clear();
+	srand(0);
+	for(unsigned int i = 0; i < size; i++) {
+		a.push_back(rand());
+	}
+
+	m.PushCurrentTime();
+	GorgonQuickSort<int>::Sort(a, true);
+	m.PopAndDisplayTime("\nQuick Sort : %f\n");
+	if(print) {
+		for(unsigned int i =0; i < a.size(); i++) {
+			printf("%d ", a[i]);
+		}
+		printf("\n");
+	}
+
+
+
+
+
+	/*GorgonBinarySearchTree<int> s;
 	s.AddValue(2);	s.Print();
 	s.AddValue(4);	s.Print();
 	s.AddValue(6);	s.Print();
@@ -141,7 +160,7 @@ int main( int args, char * argv[] ) {
 	s.RemoveValue(4); printf("removed 4 :"); s.Print();
 	s.RemoveValue(6); printf("removed 6 :"); s.Print();
 	s.RemoveValue(3); printf("removed 3 :"); s.Print();
-	s.RemoveValue(3); printf("removed 3 :"); s.Print();
+	s.RemoveValue(3); printf("removed 3 :"); s.Print();*/
 	
 	
 
