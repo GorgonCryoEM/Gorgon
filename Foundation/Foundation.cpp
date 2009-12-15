@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.14  2009/12/14 22:11:21  ssa1
+//   Adding in abstract data structures
+//
 //   Revision 1.13  2009/12/13 23:35:51  ssa1
 //   Adding in abstract data structures
 //
@@ -46,27 +49,51 @@
 #include "GorgonHeapSort.h"
 #include "GorgonQuickSort.h"
 #include "GorgonBinarySearchTree.h"
+#include <SkeletonMaker/PriorityQueue.h>
 
 using namespace wustl_mm::Foundation;
 
+using namespace wustl_mm::SkeletonMaker;
+
 int main( int args, char * argv[] ) {
+	TimeManager myT;
 
-	int temp[10][20];
-
-	for (int i = 0; i < 10; i++) {
-		for(int j = 0; j < 20; j++) {
-			temp[i][j] = i*j;
+	int qCount = 100000;
+	{
+		myT.PushCurrentTime();
+		PriorityQueue<int, int> t = PriorityQueue<int, int>(qCount);
+		srand(0);
+		int * v = NULL;
+		int k;
+		for(unsigned int i = 0; i < qCount; i++) {
+			k = rand(); 
+			t.add(v, k);
 		}
+
+		for(unsigned int i = 0; i < qCount; i++) {
+			t.remove(v, k);
+		}
+		myT.PopAndDisplayTime("Taos %f\n");
+	}
+
+	{
+		myT.PushCurrentTime();
+		GorgonPriorityQueue<int, int *> t = GorgonPriorityQueue<int, int *>(false);
+		srand(0);
+		int * v = NULL;
+		int k;
+		for(unsigned int i = 0; i < qCount; i++) {
+			k = rand(); 
+			t.Add(k, v);
+		}
+
+		for(unsigned int i = 0; i < qCount; i++) {
+			v = t.PopFirst();
+		}
+		myT.PopAndDisplayTime("Mine %f\n");
 	}
 
 	
-	for (int i = 0; i < 10; i++) {
-		for(int j = 0; j < 20; j++) {
-			printf("%d ", temp[i][j]);
-		}
-		printf("\n");
-	}
-
 	int size = 10;
 	bool print = false;
 

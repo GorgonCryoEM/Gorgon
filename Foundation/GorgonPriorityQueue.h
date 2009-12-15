@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.1  2009/12/13 19:38:37  ssa1
+//   Adding in abstract data structures
+//
 
 #ifndef FOUNDATION_GORGONPRIORITYQUEUE_H
 #define FOUNDATION_GORGONPRIORITYQUEUE_H
@@ -29,6 +32,7 @@ namespace wustl_mm {
 
 			void Add(TKey key, TValue value);
 			TValue PopFirst();
+			void PopFirst(TKey & key, TValue & value);
 			TValue First();
 
 			bool IsEmpty();
@@ -55,6 +59,13 @@ namespace wustl_mm {
 		template <class TKey, class TValue>
 		TValue GorgonPriorityQueue<TKey, TValue>::PopFirst() {
 			return heap.PopRoot().GetValue();
+		}
+
+		template <class TKey, class TValue>
+		void GorgonPriorityQueue<TKey, TValue>::PopFirst(TKey & key, TValue & value) {
+			GorgonPriorityQueueElement<TKey, TValue> e = heap.PopRoot();
+			key = e.GetKey();
+			value = e.GetValue();
 		}
 		
 

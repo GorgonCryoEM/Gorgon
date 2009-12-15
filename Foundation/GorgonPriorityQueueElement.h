@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.1  2009/12/13 19:38:37  ssa1
+//   Adding in abstract data structures
+//
 
 #ifndef FOUNDATION_GORGONPRIORITYQUEUEELEMENT_H
 #define FOUNDATION_GORGONPRIORITYQUEUEELEMENT_H
@@ -30,6 +33,7 @@ namespace wustl_mm {
 			bool operator<=(const GorgonPriorityQueueElement<TKey, TValue> &other) const;
 
 			TValue GetValue();
+			TKey GetKey();
 		private:
 			TKey key;
 			TValue value;
@@ -42,39 +46,45 @@ namespace wustl_mm {
 		}
 
 		template <class TKey, class TValue>
-		bool GorgonPriorityQueueElement<TKey, TValue>::operator==(const GorgonPriorityQueueElement<TKey, TValue> &other) const {
+		inline bool GorgonPriorityQueueElement<TKey, TValue>::operator==(const GorgonPriorityQueueElement<TKey, TValue> &other) const {
 			return (this->key == other.key);
 		}
 
 		template <class TKey, class TValue>
-		bool GorgonPriorityQueueElement<TKey, TValue>::operator!=(const GorgonPriorityQueueElement<TKey, TValue> &other) const {
+		inline bool GorgonPriorityQueueElement<TKey, TValue>::operator!=(const GorgonPriorityQueueElement<TKey, TValue> &other) const {
 			return (this->key != other.key);
 		}
 
 		template <class TKey, class TValue>
-		bool GorgonPriorityQueueElement<TKey, TValue>::operator>(const GorgonPriorityQueueElement<TKey, TValue> &other) const {
+		inline bool GorgonPriorityQueueElement<TKey, TValue>::operator>(const GorgonPriorityQueueElement<TKey, TValue> &other) const {
 			return (this->key > other.key);
 		}
 
 		template <class TKey, class TValue>
-		bool GorgonPriorityQueueElement<TKey, TValue>::operator<(const GorgonPriorityQueueElement<TKey, TValue> &other) const {
+		inline bool GorgonPriorityQueueElement<TKey, TValue>::operator<(const GorgonPriorityQueueElement<TKey, TValue> &other) const {
 			return (this->key < other.key);
 		}
 
 		template <class TKey, class TValue>
-		bool GorgonPriorityQueueElement<TKey, TValue>::operator>=(const GorgonPriorityQueueElement<TKey, TValue> &other) const {
+		inline bool GorgonPriorityQueueElement<TKey, TValue>::operator>=(const GorgonPriorityQueueElement<TKey, TValue> &other) const {
 			return (this->key >= other.key);
 		}
 
 		template <class TKey, class TValue>
-		bool GorgonPriorityQueueElement<TKey, TValue>::operator<=(const GorgonPriorityQueueElement<TKey, TValue> &other) const {
+		inline bool GorgonPriorityQueueElement<TKey, TValue>::operator<=(const GorgonPriorityQueueElement<TKey, TValue> &other) const {
 			return (this->key <= other.key);
 		}
 
 		template <class TKey, class TValue>
-		TValue GorgonPriorityQueueElement<TKey, TValue>::GetValue() {
+		inline TValue GorgonPriorityQueueElement<TKey, TValue>::GetValue() {
 			return value;
 		}
+
+		template <class TKey, class TValue>
+		inline TKey GorgonPriorityQueueElement<TKey, TValue>::GetKey() {
+			return key;
+		}
+
 	}
 }
 
