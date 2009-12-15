@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.7.2.12  2009/11/05 17:25:30  schuhs
+//   Comment out console messages used for debugging
+//
 //   Revision 1.7.2.11  2009/10/29 16:32:26  schuhs
 //   Add text labels of node numbers to sheet and helix corners
 //
@@ -234,7 +237,7 @@ namespace wustl_mm {
 
 		void SSECorrespondenceEngine::Draw(int sceneIndex) {
 			//std::cout << "SSECorrespondenceEngine::Draw called" << std::endl;
-			int n1, n2;
+			int n1, n2, sse1, sse2;
 			vector<Vector3DInt> path;
 			if(correspondenceIndex >= 0) {
 				SSECorrespondenceResult result = GetResult(correspondenceIndex + 1);
@@ -248,33 +251,53 @@ namespace wustl_mm {
 
 				n1 = -1;
 				n2 = -1;
+				sse1 = -1;
+				sse2 = -1;
+
+				int seqNumber = 0;
+				int seqIndex = 0;
+				int strandsPassed = 0;
+
 				// the following code iterates over the correspondence, finding a valid edge at each iteration.
 				// start at node 0 of this result, continue until i is at last node
 				int numNodes = result.GetNodeCount();
 				for(int i = 0; i < result.GetNodeCount()-1; ) {
+
 					// set n1 to be the ith result. if the result is -1, increment i and repeat.
 					for(n1 = -1; n1 < 0; ) {
 						n1 = result.GetSkeletonNode(i);
+						sse1 = result.NodeToHelix(n1);
 						i++;
+						// update the seqIndex 
+						if (sequence->adjacencyMatrix[i][i][0] == GRAPHNODE_SHEET) {
+							strandsPassed ++;
+						}
 					}
 					// set n2 to be the ith result. if the result is -1, increment i and repeat
 					//for(n2 = -1; n2 < 0l; ) {
 					for(n2 = -1; n2 < 0; ) {
 						n2 = result.GetSkeletonNode(i);
+						sse2 = result.NodeToHelix(n2);
 						i++;
+						// update the seqIndex 
+						if (sequence->adjacencyMatrix[i][i][0] == GRAPHNODE_SHEET) {
+							strandsPassed ++;
+						}
 						if (i >= result.GetNodeCount()) {
 							//cout << "found skip edge at end of correspondence. breaking out of loop." << endl;
 							break;
 						}
 					}
+					if (sequence->adjacencyMatrix[i][i][0] == GRAPHNODE_SHEET) {
+						strandsPassed --;
+					}
 					i--;
+					seqIndex = (i + strandsPassed + 1)/2 + 1;
+
 					path = skeleton->paths[n1][n2];
 					//cout << "path sizes. fwd:" << skeleton->paths[n1][n2].size() << ", rev:" << skeleton->paths[n2][n1].size() << endl;
 					if(path.size() == 0) {
 						path = skeleton->paths[n2][n1];
-						if(path.size() != 0) {
-							cout << "CODE SHOULD NEVER GET HERE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << endl;
-						}
 						int n1old = n1;
 						n1 = n2;
 						n2 = n1old;
@@ -305,7 +328,42 @@ namespace wustl_mm {
 					}
 					skeleton->skeletonHelixes[endSSENumber]->GetColor(endColorR, endColorG, endColorB, endColorA);
 
-					// test!!! glBegin(GL_LINE_STRIP);
+					if(startSSENumber == endSSENumber && startSSENumber < numHelices){
+						seqNumber += 0; // internal helix loop
+					} else {
+						seqNumber += 1;
+					}
+
+
+					if (path.size() != 0) {
+						glEnd(); // test!!! 
+						// draw labeled sphere at beginning of path
+						//GLfloat col = 1.0;
+						//glColor3f(col, col, col);
+						double sphereRadius = 0.5;
+						Renderer::DrawSphere(Vector3DFloat(path[0].X(), path[0].Y(), path[0].Z()), sphereRadius);
+						/*
+						// Label the points with their graph node numbers
+						glColor3f(1.0, 1.0, 1.0);
+
+						glRasterPos3d(path[0].X(), path[0].Y(), path[0].Z());
+						//int labelInt = seqNumber;
+						int labelInt = seqIndex;
+						//int labelInt = sse1;
+						std::ostringstream tmpStream;
+						tmpStream << labelInt;
+						string labelStr = tmpStream.str();
+						glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, ' ');
+						glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, ' ');
+						for (int i = 0; i < labelStr.length(); i++) {
+							//glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, labelStr[i]);
+							glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, labelStr[i]);
+						}
+						*/
+						// labeled sphere code
+						glBegin(GL_LINE_STRIP);
+					}
+
 					int pathSize = path.size(); // for color
 					float stepColorR = (endColorR - startColorR) / (pathSize-1);
 					float stepColorG = (endColorG - startColorG) / (pathSize-1);
@@ -316,45 +374,41 @@ namespace wustl_mm {
 						double offset = 0.8*(-0.5 + (double)i / (double)numNodes );
 						glVertex3d(path[j].X()+offset, path[j].Y()+offset, path[j].Z()+offset);
 					}
-					// test!!! glEnd();
 
+					if (path.size() != 0) {
+						glEnd(); 
+						// draw labeled sphere at end of path
+						//GLfloat col = 1.0;
+						//glColor3f(col, col, col);
+						double sphereRadius = 0.5;
+						Renderer::DrawSphere(Vector3DFloat(path[pathSize-1].X(), path[pathSize-1].Y(), path[pathSize-1].Z()), sphereRadius);
 
-					// end color code
+						// Label the points with their graph node numbers
+						glColor3f(1.0, 1.0, 1.0);
 
-					/* works fine, before coloring code added
-					glBegin(GL_LINE_STRIP);
-					//cout << "draw " << i << " to " << i+1 << " returns nodes " << n1+1 << " and " << n2+1 << ", which has length " << skeleton->paths[n1+1][n2+1].size() << endl;
-					for(unsigned int j = 0; j < path.size(); j++) {
-						glVertex3d(path[j].X(), path[j].Y(), path[j].Z());
-					}
-					glEnd();
-					*/
-
-					//n1 = -1;
-					//n2 = -1;
-				}
-				/* old code, worked
-				for(int i = 0; i < result.GetNodeCount()-1; i++) {
-					n1 = result.GetSkeletonNode(i);
-					n2 = result.GetSkeletonNode(i+1);
-					cout << "i=" << i << ", n1 = " << n1 << ", n2 = " << n2 << endl;
-					//if((n1 >= 0)  && (n2 >= 0)) {
-					cout << "draw " << i << " to " << i+1 << " returns nodes " << n1 << " and " << n2 << ", which has length " << skeleton->paths[n1][n2].size() << endl;
-					//if((n1+1 >= 0)  && (n2+1 >= 0) && (skeleton->adjacencyMatrix[n1+1][n2+1][0] != GRAPHEDGE_HELIX)) {
-					if((n1 >= 0)  && (n2 >= 0)){ // && (skeleton->adjacencyMatrix[n1+1][n2+1][0] != GRAPHEDGE_HELIX)) {
-						path = skeleton->paths[n1][n2];
-						if(path.size() == 0) {
-							path = skeleton->paths[n2][n1];
+						glRasterPos3d(path[pathSize-1].X(), path[pathSize-1].Y(), path[pathSize-1].Z());
+						//int labelInt = seqNumber + 1;
+						int labelInt = seqIndex;
+						//int labelInt = sse2;
+						std::ostringstream tmpStream;
+						tmpStream << labelInt;
+						string labelStr = tmpStream.str();
+						glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, ' ');
+						glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, ' ');
+						for (int i = 0; i < labelStr.length(); i++) {
+							//glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, labelStr[i]);
+							glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, labelStr[i]);
 						}
+						// labeled sphere code
 						glBegin(GL_LINE_STRIP);
-						cout << "draw " << i << " to " << i+1 << " returns nodes " << n1+1 << " and " << n2+1 << ", which has length " << skeleton->paths[n1+1][n2+1].size() << endl;
-						for(unsigned int j = 0; j < path.size(); j++) {
-							glVertex3d(path[j].X(), path[j].Y(), path[j].Z());
-						}
-						glEnd();
 					}
-				}*/
-				glEnd(); // test!!! 
+
+
+
+
+
+				}
+				glEnd();
 				glPopAttrib();
 			}
 		}	
