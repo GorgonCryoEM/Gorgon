@@ -65,7 +65,7 @@
        <enum>QTabWidget::Rounded</enum>
       </property>
       <property name="currentIndex" >
-       <number>2</number>
+       <number>3</number>
       </property>
       <widget class="QWidget" name="tabDataSources" >
        <attribute name="title" >
@@ -1298,14 +1298,17 @@
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
+            <property name="cornerButtonEnabled" >
+             <bool>false</bool>
+            </property>
             <column>
              <property name="text" >
-              <string>Predicted Helix</string>
+              <string>Predicted SSE</string>
              </property>
             </column>
             <column>
              <property name="text" >
-              <string>Observed Helix</string>
+              <string>Observed SSE</string>
              </property>
             </column>
             <column>
