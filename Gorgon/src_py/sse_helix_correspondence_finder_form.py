@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.36.2.31  2009/12/10 20:25:03  schuhs
+#   Bug fixes to handle missing node constraints
+#
 #   Revision 1.36.2.30  2009/12/09 20:55:18  schuhs
 #   Removing many old comments and console messages.
 #
@@ -440,13 +443,11 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
             
     def sheetIncludeChanged(self, include):
         """Called when the include sheets checkbox is checked."""
-        #if (include == True):
-        #    self.viewer.correspondenceEngine.setConstantInt("INCLUDE_STRANDS", 1)
-        #else:
-        #    self.viewer.correspondenceEngine.setConstantInt("INCLUDE_STRANDS", 0)
-        self.ui.spinBoxMinSheetSize.setEnabled(include)
-        self.ui.doubleSpinBoxMaxSheetDistance.setEnabled(include)
-        self.ui.doubleSpinBoxSheetSelfLoopLength.setEnabled(include)
+        self.ui.doubleSpinBoxSheetImportance.setEnabled(include)
+        self.ui.doubleSpinBoxSheetMissingPenalty.setEnabled(include)
+        self.ui.doubleSpinBoxSheetMissingPenaltyScaled.setEnabled(include)
+        self.ui.checkBoxMissingSheets.setEnabled(include)
+        self.ui.spinBoxMissingSheetCount.setEnabled(include and self.ui.checkBoxMissingSheets.isChecked())
 
     def missingHelixChanged(self, checked):
         """Called when the missing helices checkbox is checked."""
@@ -574,14 +575,14 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
         #Graph Settings tab
         self.viewer.correspondenceEngine.setConstantInt("BORDER_MARGIN_THRESHOLD", self.ui.spinBoxBorderMarginThreshold.value())
         self.viewer.correspondenceEngine.setConstant("EUCLIDEAN_DISTANCE_THRESHOLD", self.ui.doubleSpinBoxEuclideanDistance.value())
-        if (self.ui.checkBoxIncludeSheets.isChecked() == False):
-            self.viewer.correspondenceEngine.setConstantInt("INCLUDE_STRANDS", 0)
-            self.viewer.correspondenceEngine.setConstant("MAXIMUM_DISTANCE_SHEET_SKELETON", 0.0)
-        else:
+        self.viewer.correspondenceEngine.setConstant("MAXIMUM_DISTANCE_SHEET_SKELETON", self.ui.doubleSpinBoxMaxSheetDistance.value())
+        self.viewer.correspondenceEngine.setConstantInt("MINIMUM_SHEET_SIZE", self.ui.spinBoxMinSheetSize.value())
+        self.viewer.correspondenceEngine.setConstant("SHEET_SELF_LOOP_LENGTH", self.ui.doubleSpinBoxSheetSelfLoopLength.value())
+        self.viewer.correspondenceEngine.setConstant("SHEET_MERGE_THRESHOLD", self.ui.doubleSpinBoxSheetMergeThreshold.value())
+        if (self.ui.checkBoxIncludeStrands.isChecked()):
             self.viewer.correspondenceEngine.setConstantInt("INCLUDE_STRANDS", 1)
-            self.viewer.correspondenceEngine.setConstant("MAXIMUM_DISTANCE_SHEET_SKELETON", self.ui.doubleSpinBoxMaxSheetDistance.value())
-            self.viewer.correspondenceEngine.setConstantInt("MINIMUM_SHEET_SIZE", self.ui.spinBoxMinSheetSize.value())
-            self.viewer.correspondenceEngine.setConstant("SHEET_SELF_LOOP_LENGTH", self.ui.doubleSpinBoxSheetSelfLoopLength.value())
+        else:
+            self.viewer.correspondenceEngine.setConstantInt("INCLUDE_STRANDS", 0)
 
 
         #Matching Settings tab
@@ -630,13 +631,18 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
             for i in range(len(corr.matchList)):
                 match = corr.matchList[i]                
                 self.userConstraints[i] = match.constrained
-                if(match.constrained):
-                    if match.predicted.type == 'helix':
+                if match.predicted.type == 'helix':
+                    if match.constrained: 
                         if(match.observed):
                             self.viewer.correspondenceEngine.setHelixConstraint(predictedGraphNode, 2*match.observed.label + 1)
                         else:      
                             self.viewer.correspondenceEngine.setHelixConstraint(predictedGraphNode, -1)
-                    if match.predicted.type == 'strand':
+                if match.predicted.type == 'strand':
+                    if(not self.ui.checkBoxIncludeSheets.isChecked()):
+                        self.userConstraints[i]=False # clear all strand constraints
+                        match.constrained = False     # clear all strand constraints
+                        self.viewer.correspondenceEngine.setNodeConstraint(predictedGraphNode, -1)
+                    elif(match.constrained):
                         if(match.observed):
                             self.viewer.correspondenceEngine.setNodeConstraint(predictedGraphNode, match.observed.label + nObservedHelices + 1)
                         else:      
@@ -651,19 +657,14 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
         #Graph Settings tab
         self.ui.spinBoxBorderMarginThreshold.setValue(self.viewer.correspondenceEngine.getConstantInt("BORDER_MARGIN_THRESHOLD"))
         self.ui.doubleSpinBoxEuclideanDistance.setValue(self.viewer.correspondenceEngine.getConstantDouble("EUCLIDEAN_DISTANCE_THRESHOLD"))
-        if(self.viewer.correspondenceEngine.getConstantInt("INCLUDE_STRANDS") == 1):
-            self.ui.checkBoxIncludeSheets.setChecked(True)
-            self.ui.spinBoxMinSheetSize.setEnabled(True)
-            self.ui.doubleSpinBoxMaxSheetDistance.setEnabled(True)
-            self.ui.doubleSpinBoxSheetSelfLoopLength.setEnabled(True)
-        else:
-            self.ui.checkBoxIncludeSheets.setChecked(False)
-            self.ui.spinBoxMinSheetSize.setEnabled(False)
-            self.ui.doubleSpinBoxMaxSheetDistance.setEnabled(False)
-            self.ui.doubleSpinBoxSheetSelfLoopLength.setEnabled(False)
         self.ui.spinBoxMinSheetSize.setValue(self.viewer.correspondenceEngine.getConstantInt("MINIMUM_SHEET_SIZE"))
         self.ui.doubleSpinBoxMaxSheetDistance.setValue(self.viewer.correspondenceEngine.getConstantDouble("MAXIMUM_DISTANCE_SHEET_SKELETON"))
         self.ui.doubleSpinBoxSheetSelfLoopLength.setValue(self.viewer.correspondenceEngine.getConstantDouble("SHEET_SELF_LOOP_LENGTH")) 
+        self.ui.doubleSpinBoxSheetMergeThreshold.setValue(self.viewer.correspondenceEngine.getConstantDouble("SHEET_MERGE_THRESHOLD")) 
+        if(self.viewer.correspondenceEngine.getConstantInt("INCLUDE_STRANDS") == 1):
+            self.ui.checkBoxIncludeStrands.setChecked(True)
+        else:
+            self.ui.checkBoxIncludeStrands.setChecked(False)
 
         #Matching settings tab
         self.ui.doubleSpinBoxEuclideanToPDBRatio.setValue(self.viewer.correspondenceEngine.getConstantDouble("EUCLIDEAN_VOXEL_TO_PDB_RATIO"))
@@ -693,13 +694,18 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
         self.ui.doubleSpinBoxHelixMissingPenaltyScaled.setValue(self.viewer.correspondenceEngine.getConstantDouble("MISSING_HELIX_PENALTY_SCALED"))
         self.ui.doubleSpinBoxEndHelixMissingPenalty.setValue(self.viewer.correspondenceEngine.getConstantDouble("START_END_MISSING_HELIX_PENALTY"))
         
+        self.ui.checkBoxIncludeSheets.setChecked(True)
+        self.ui.doubleSpinBoxSheetImportance.setEnabled(True)
         self.ui.doubleSpinBoxSheetImportance.setValue(self.viewer.correspondenceEngine.getConstantDouble("SHEET_WEIGHT_COEFFICIENT")) 
+        self.ui.checkBoxMissingSheets.setEnabled(True)
         if (self.viewer.correspondenceEngine.getConstantInt("MISSING_SHEET_COUNT") == -1):
             self.ui.checkBoxMissingSheets.setChecked(False)
         else:
             self.ui.checkBoxMissingSheets.setChecked(True)
             self.ui.spinBoxMissingSheetCount.setValue(self.viewer.correspondenceEngine.getConstantInt("MISSING_SHEET_COUNT"))
+        self.ui.doubleSpinBoxSheetMissingPenalty.setEnabled(True) 
         self.ui.doubleSpinBoxSheetMissingPenalty.setValue(self.viewer.correspondenceEngine.getConstantDouble("MISSING_SHEET_PENALTY")) 
+        self.ui.doubleSpinBoxSheetMissingPenaltyScaled.setEnabled(True)
         self.ui.doubleSpinBoxSheetMissingPenaltyScaled.setValue(self.viewer.correspondenceEngine.getConstantDouble("MISSING_SHEET_PENALTY_SCALED"))
 
     def getConstraints(self):
@@ -1221,7 +1227,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
                     constrainAction.setEnabled(not constrained.has_key(i))
                     self.connect(constrainAction, QtCore.SIGNAL("triggered()"), self.constrainObservedHelix(i))       
                     self.ui.tableWidgetCorrespondenceList.addAction(constrainAction)
-            if match.predicted.type == 'strand':
+            if match.predicted.type == 'strand' and self.ui.checkBoxIncludeSheets.isChecked():
                 numH = len(observedHelices)
                 for i in range(len(observedSheets)):                
                     constrainAction = QtGui.QAction(self.tr("Observed sheet " + str(i+numH+1)), self)
@@ -1406,7 +1412,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
                         menu.addAction(constrainAction)           
                         i_h += 1  
                 
-                    if observedType==2 and predictedSSEs[i].type == 'strand':
+                    if observedType==2 and predictedSSEs[i].type == 'strand' and self.ui.checkBoxIncludeSheets.isChecked():
                         constrainAction = QtGui.QAction(self.tr("Sequence #" + str(i+1) + ": Predicted strand " + str(predictedStrands[i_s].serialNo)), self)
 
                         # bold if already selected
