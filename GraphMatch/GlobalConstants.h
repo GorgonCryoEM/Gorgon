@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.32.2.21  2009/12/03 03:06:23  schuhs
+//   Add methods to read constraints from Gorgon
+//
 //   Revision 1.32.2.20  2009/11/29 22:20:34  schuhs
 //   Support scaled penalties for missing sheets and helices
 //
@@ -161,6 +164,7 @@ namespace wustl_mm {
 		const char * TOKEN_HELIX_WEIGHT_COEFFICIENT = "HELIX_WEIGHT_COEFFICIENT";
 		const char * TOKEN_LOOP_WEIGHT_COEFFICIENT = "LOOP_WEIGHT_COEFFICIENT";
 		const char * TOKEN_SHEET_CAPACITY_COEFFICIENT = "SHEET_CAPACITY_COEFFICIENT";
+		const char * TOKEN_SHEET_MERGE_THRESHOLD = "SHEET_MERGE_THRESHOLD";
 		const char * TOKEN_MISSING_HELIX_LENGTH = "MISSING_HELIX_LENGTH";
 		const char * TOKEN_MISSING_SHEET_LENGTH = "MISSING_SHEET_LENGTH";
 		const char * TOKEN_SHEET_SELF_LOOP_LENGTH = "SHEET_SELF_LOOP_LENGTH";
@@ -205,6 +209,7 @@ namespace wustl_mm {
 		double HELIX_WEIGHT_COEFFICIENT = 1.0;
 		double LOOP_WEIGHT_COEFFICIENT = 0.25;
 		double SHEET_CAPACITY_COEFFICIENT = 10000000.0;
+		double SHEET_MERGE_THRESHOLD = 3.0;
 		double MISSING_HELIX_LENGTH = 8;
 		double MISSING_SHEET_LENGTH = 8;
 		double SHEET_SELF_LOOP_LENGTH = 4.0 * LOOP_C_ALPHA_TO_ANGSTROMS;
@@ -357,6 +362,8 @@ namespace wustl_mm {
 				LOOP_WEIGHT_COEFFICIENT = doubleValue;
 			} else if(strcmp(token, TOKEN_SHEET_CAPACITY_COEFFICIENT) == 0) {
 				SHEET_CAPACITY_COEFFICIENT = doubleValue;
+			} else if(strcmp(token, TOKEN_SHEET_MERGE_THRESHOLD) == 0) {
+				SHEET_MERGE_THRESHOLD = doubleValue;
 			} else if(strcmp(token, TOKEN_MISSING_HELIX_LENGTH) == 0) {
 				MISSING_HELIX_LENGTH = doubleValue;
 			} else if(strcmp(token, TOKEN_MISSING_SHEET_LENGTH) == 0) {
@@ -427,6 +434,8 @@ namespace wustl_mm {
 				doubleValue = LOOP_WEIGHT_COEFFICIENT;
 			} else if(strcmp(token, TOKEN_SHEET_CAPACITY_COEFFICIENT) == 0) {
 				doubleValue = SHEET_CAPACITY_COEFFICIENT;
+			} else if(strcmp(token, TOKEN_SHEET_MERGE_THRESHOLD) == 0) {
+				doubleValue = SHEET_MERGE_THRESHOLD;
 			} else if(strcmp(token, TOKEN_MISSING_HELIX_LENGTH) == 0) {
 				doubleValue = MISSING_HELIX_LENGTH;
 			} else if(strcmp(token, TOKEN_MISSING_SHEET_LENGTH) == 0) {
@@ -517,6 +526,8 @@ namespace wustl_mm {
 					fscanf(fin, "%lf", &LOOP_WEIGHT_COEFFICIENT);
 				} else if(strcmp(token, TOKEN_SHEET_CAPACITY_COEFFICIENT) == 0) {
 					fscanf(fin, "%lf", &SHEET_CAPACITY_COEFFICIENT);
+				} else if(strcmp(token, TOKEN_SHEET_MERGE_THRESHOLD) == 0) {
+					fscanf(fin, "%lf", &SHEET_MERGE_THRESHOLD);
 				} else if(strcmp(token, TOKEN_MISSING_HELIX_LENGTH) == 0) {
 					fscanf(fin, "%lf", &MISSING_HELIX_LENGTH);
 				} else if(strcmp(token, TOKEN_MISSING_SHEET_LENGTH) == 0) {
@@ -580,6 +591,7 @@ namespace wustl_mm {
 			printf("\tLOOP_WEIGHT_COEFFICIENT          = %lf\n", LOOP_WEIGHT_COEFFICIENT);
 			printf("\tSHEET_WEIGHT_COEFFICIENT         = %lf\n", SHEET_WEIGHT_COEFFICIENT);
 			printf("\tSHEET_CAPACITY_COEFFICIENT       = %lf\n", SHEET_CAPACITY_COEFFICIENT);
+			printf("\tSHEET_MERGE_THRESHOLD            = %lf\n", SHEET_MERGE_THRESHOLD);
 			printf("\tMISSING_HELIX_LENGTH             = %lf\n", MISSING_HELIX_LENGTH);
 			printf("\tMISSING_SHEET_LENGTH             = %lf\n", MISSING_SHEET_LENGTH);
 			printf("\tSHEET_SELF_LOOP_LENGTH           = %lf\n", SHEET_SELF_LOOP_LENGTH);

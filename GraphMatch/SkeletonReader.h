@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.19.2.24  2009/10/29 16:40:19  schuhs
+//   Add code (commented out now) to add random offset to path nodes to prevent overlap when rendering
+//
 //   Revision 1.19.2.23  2009/10/08 21:49:21  schuhs
 //   Storing paths in both directions
 //
@@ -597,7 +600,7 @@ namespace wustl_mm {
 				printf("Merging pairs of sheets that are close to each other.\n");
 			#endif // VERBOSE
 
-				graph->MergeSheets(3.0);
+				graph->MergeSheets(SHEET_MERGE_THRESHOLD);
 
 			#ifdef VERBOSE
 				printf("Done merging pairs of sheets.\n");
