@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.8  2009/12/07 21:34:36  ssa1
+//   Finding Rotation using SVD, and removing compiler warnings
+//
 //   Revision 1.7  2009/11/30 04:23:44  ssa1
 //   Triangle based A* search for flexible fitting
 //
@@ -40,7 +43,7 @@
 #include <MathTools/Vector3D.h>
 #include <MathTools/MathLib.h>
 #include <vector>
-#include <SkeletonMaker/PriorityQueue.h>
+#include <Foundation/GorgonPriorityQueue.h>
 #include "SSECorrespondenceFeature.h"
 #include "SSECorrespondenceNode.h"
 #include "SSECorrespondenceSearchNode.h"
@@ -338,15 +341,15 @@ namespace wustl_mm {
 
 			SSECorrespondenceSearchNode * parentNode = new SSECorrespondenceSearchNode(parentGraph, parentSolution, 0.0f);			
 
-			PriorityQueue<SSECorrespondenceSearchNode, float> nodeQueue = PriorityQueue<SSECorrespondenceSearchNode, float>(100000);
-			nodeQueue.add(parentNode, parentNode->GetCost());
+			GorgonPriorityQueue<float, SSECorrespondenceSearchNode *> nodeQueue = GorgonPriorityQueue<float, SSECorrespondenceSearchNode *>(true);
+			nodeQueue.Add(parentNode->GetCost(), parentNode);
 
 			unsigned int solutionCount = 0;
 			SSECorrespondenceSearchNode * currentNode;
 			vector<SSECorrespondenceSearchNode *> childNodes;
 			float currentCost;
-			while((solutionCount < maxSolutionCount) && !nodeQueue.isEmpty()) {
-				nodeQueue.remove(currentNode, currentCost);				
+			while((solutionCount < maxSolutionCount) && !nodeQueue.IsEmpty()) {
+				nodeQueue.PopFirst(currentCost, currentNode);
 				//currentNode->PrintSolution(nodes);	
 				childNodes = currentNode->GetChildNodes(nodes, pairCompatibility, featureChangeCoeff, rigidComponentCoeff, intraComponentCoeff);
 				if(childNodes.size() == 0) {
@@ -359,7 +362,7 @@ namespace wustl_mm {
 				} else {
 					//printf("Child Nodes: \n");
 					for(unsigned int i = 0; i < childNodes.size(); i++) {
-						nodeQueue.add(childNodes[i], childNodes[i]->GetCost());						
+						nodeQueue.Add(childNodes[i]->GetCost(), childNodes[i]);					
 						//printf("\t");
 						//childNodes[i]->PrintSolution(nodes);
 					}
@@ -368,8 +371,8 @@ namespace wustl_mm {
 			}
 
 
-			while(!nodeQueue.isEmpty()) {
-				nodeQueue.remove(currentNode, currentCost);
+			while(!nodeQueue.IsEmpty()) {
+				nodeQueue.PopFirst(currentCost, currentNode);
 				delete currentNode;
 			}					
 			
@@ -404,15 +407,15 @@ namespace wustl_mm {
 
 			SSECorrespondenceSearchNode * parentNode = new SSECorrespondenceSearchNode(parentGraph, parentSolution, 0.0f);			
 
-			PriorityQueue<SSECorrespondenceSearchNode, float> nodeQueue = PriorityQueue<SSECorrespondenceSearchNode, float>(100000);
-			nodeQueue.add(parentNode, parentNode->GetCost());
+			GorgonPriorityQueue<float, SSECorrespondenceSearchNode *> nodeQueue = GorgonPriorityQueue<float, SSECorrespondenceSearchNode *>(true);
+			nodeQueue.Add(parentNode->GetCost(), parentNode);
 
 			unsigned int solutionCount = 0;
 			SSECorrespondenceSearchNode * currentNode;
 			vector<SSECorrespondenceSearchNode *> childNodes;
 			float currentCost;
-			while((solutionCount < maxSolutionCount) && !nodeQueue.isEmpty()) {
-				nodeQueue.remove(currentNode, currentCost);				
+			while((solutionCount < maxSolutionCount) && !nodeQueue.IsEmpty()) {
+				nodeQueue.PopFirst(currentCost, currentNode);				
 				//currentNode->PrintSolution(nodes);	
 				childNodes = currentNode->GetChildNodesTriangleApprox(nodes, featureList1, featureList2);
 				if(childNodes.size() == 0) {
@@ -425,7 +428,7 @@ namespace wustl_mm {
 				} else {
 					//printf("Child Nodes: \n");
 					for(unsigned int i = 0; i < childNodes.size(); i++) {
-						nodeQueue.add(childNodes[i], childNodes[i]->GetCost());						
+						nodeQueue.Add(childNodes[i]->GetCost(), childNodes[i]);						
 						//printf("\t");
 						//childNodes[i]->PrintSolution(nodes);
 					}
@@ -434,8 +437,8 @@ namespace wustl_mm {
 			}
 
 
-			while(!nodeQueue.isEmpty()) {
-				nodeQueue.remove(currentNode, currentCost);
+			while(!nodeQueue.IsEmpty()) {
+				nodeQueue.PopFirst(currentCost, currentNode);
 				delete currentNode;
 			}					
 			
