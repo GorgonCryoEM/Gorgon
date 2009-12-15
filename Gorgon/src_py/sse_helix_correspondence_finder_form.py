@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.36.2.32  2009/12/15 20:37:20  schuhs
+#   Changed method of excluding sheets from search: now just constrain to be missing in results.
+#
 #   Revision 1.36.2.31  2009/12/10 20:25:03  schuhs
 #   Bug fixes to handle missing node constraints
 #
@@ -394,6 +397,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
             self.viewer.correspondenceLibrary.correspondenceList = self.populateEmptyResults(self.viewer.correspondenceLibrary)
             print "correspondenceList has length " + str(len(self.viewer.correspondenceLibrary.correspondenceList))
             self.populateComboBox(self.viewer.correspondenceLibrary)
+            self.viewer.makeSheetSurfaces()
         else:
             print "data not loaded"                        
         print "correspondence index at end is " + str(self.ui.comboBoxCorrespondences.currentIndex())
@@ -1070,7 +1074,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
         self.ui.tableWidgetCorrespondenceList.clearContents()
         if(correspondenceIndex >= 0):
             corr = self.viewer.correspondenceLibrary.correspondenceList[correspondenceIndex]
-            self.ui.tableWidgetCorrespondenceList.setRowCount(len(corr.matchList))   
+            self.ui.tableWidgetCorrespondenceList.setRowCount(2*len(corr.matchList)-1)   
             notMissing = {}
             
             # count number of helices and sheets in this correspondence
@@ -1093,6 +1097,8 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
             sheetIndex = 0
 
             for i in range(len(corr.matchList)):
+                sseRow = 2*i
+                loopRow = 2*i+1
                 match = corr.matchList[i]
                 #color = self.getIndexedColor(i, len(corr.matchList))
                 if match.predicted is not None:
@@ -1112,7 +1118,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
                                                                 "\n  "  + str(match.predicted.getResidueCount()) + " residues")
                                                                  
                     cellItemPredicted.setBackgroundColor(color)
-                    self.ui.tableWidgetCorrespondenceList.setItem(i, 0, cellItemPredicted)
+                    self.ui.tableWidgetCorrespondenceList.setItem(sseRow, 0, cellItemPredicted)
                 if(match.observed):
                     if match.observed.sseType == 'helix':
                         cellItemObserved =  QtGui.QTableWidgetItem("helix " + str(match.observed.label+1) +
@@ -1123,7 +1129,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
                                                                    #"\n  " + str(round(match.observed.getLength(), 2)) + "A length" +
                                                                    "\n  " )
                     cellItemObserved.setBackgroundColor(color)
-                    self.ui.tableWidgetCorrespondenceList.setItem(i, 1, cellItemObserved)
+                    self.ui.tableWidgetCorrespondenceList.setItem(sseRow, 1, cellItemObserved)
                     if match.observed.sseType == 'helix':
                         # color is stored in two places: the renderer and the correspondence engine. update both.
                         self.viewer.renderer.setHelixColor(match.observed.label, color.redF(), color.greenF(), color.blueF(), color.alphaF())
@@ -1136,15 +1142,33 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
                     notMissing[match.observed.label] = True                                                     
             
                 checkBox = QtGui.QCheckBox()
-                self.ui.tableWidgetCorrespondenceList.setCellWidget(i, 2, checkBox)
+                self.ui.tableWidgetCorrespondenceList.setCellWidget(sseRow, 2, checkBox)
                 self.connect(checkBox, QtCore.SIGNAL("stateChanged (int)"), self.constraintAdded)
                 if(match.constrained):
-                    self.ui.tableWidgetCorrespondenceList.cellWidget(i, 2).setCheckState(QtCore.Qt.Checked)
+                    self.ui.tableWidgetCorrespondenceList.cellWidget(sseRow, 2).setCheckState(QtCore.Qt.Checked)
                 else :
-                    self.ui.tableWidgetCorrespondenceList.cellWidget(i, 2).setCheckState(QtCore.Qt.Unchecked)
+                    print "i=" + str(i)
+                    self.ui.tableWidgetCorrespondenceList.cellWidget(sseRow, 2).setCheckState(QtCore.Qt.Unchecked)
                     
-                self.ui.tableWidgetCorrespondenceList.resizeRowToContents(i)
-                
+                self.ui.tableWidgetCorrespondenceList.resizeRowToContents(sseRow)
+
+                # add row with loop info
+                if (i < len(corr.matchList)-1 ):
+                    resCount = corr.matchList[i+1].predicted.startIndex - corr.matchList[i].predicted.stopIndex
+                    cellItemLoop =  QtGui.QTableWidgetItem("loop: " + str(resCount) + " residues")           
+                    self.ui.tableWidgetCorrespondenceList.setItem(loopRow, 0, cellItemLoop)
+                    self.ui.tableWidgetCorrespondenceList.resizeRowToContents(loopRow)
+     
+            
+            # relabel rows of table
+            rowLabels = []
+            for i in range(len(corr.matchList)):
+                rowLabels.append(str(i+1))
+                if i < len(corr.matchList)-1:
+                    rowLabels.append(" ")
+            print "rowLabels string has " + str(len(rowLabels)) + " elements."
+            self.ui.tableWidgetCorrespondenceList.setVerticalHeaderLabels(rowLabels)
+            
             observedHelices = self.viewer.correspondenceLibrary.structureObservation.helixDict
             for i in range(len(observedHelices)):
                 if(not notMissing.has_key(i)):
@@ -1198,10 +1222,10 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
                     match.constrained = (self.ui.tableWidgetCorrespondenceList.cellWidget(i, 2).checkState() == QtCore.Qt.Checked)
                     
     def createActionsForCell(self, row, col):
-        self.selectedRow = row
+        self.selectedRow = row/2
         for act in self.ui.tableWidgetCorrespondenceList.actions()[:]:
             self.ui.tableWidgetCorrespondenceList.removeAction(act)        
-        if(col == 1):
+        if(col == 1 and row%2==0):
             observedHelices = self.viewer.correspondenceLibrary.structureObservation.helixDict
             observedSheets = self.viewer.correspondenceLibrary.structureObservation.sheetDict
             constrained = {}
@@ -1213,7 +1237,8 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
                     match = corr.matchList[i]
                     if(match.constrained and match.observed) :
                         constrained[match.observed.label] = True
-                match = corr.matchList[row]
+                match = corr.matchList[row/2]
+                print "match at row=" + str(row)
             else:
                 match = False
             if match.predicted.type == 'helix':
@@ -1378,9 +1403,9 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
             self.ui.tableWidgetCorrespondenceList.setRangeSelected(QtGui.QTableWidgetSelectionRange(0, 0, self.ui.tableWidgetCorrespondenceList.rowCount()-1, 2), False)                    
             if(match):
                 self.ui.tableWidgetCorrespondenceList.setRangeSelected(QtGui.QTableWidgetSelectionRange(0, 0, self.ui.tableWidgetCorrespondenceList.rowCount()-1, 2), False)                    
-                self.ui.tableWidgetCorrespondenceList.setRangeSelected(QtGui.QTableWidgetSelectionRange(matchKey, 0, matchKey, 2),True)
+                self.ui.tableWidgetCorrespondenceList.setRangeSelected(QtGui.QTableWidgetSelectionRange(matchKey*2, 0, matchKey*2, 2),True)
                 for matchItem in matchKeys:
-                    self.ui.tableWidgetCorrespondenceList.setRangeSelected(QtGui.QTableWidgetSelectionRange(matchItem, 0, matchItem, 2),True)
+                    self.ui.tableWidgetCorrespondenceList.setRangeSelected(QtGui.QTableWidgetSelectionRange(matchItem*2, 0, matchItem*2, 2),True)
                     
             if(self.app.mainCamera.mouseRightPressed):                
                 predictedHelices = self.viewer.correspondenceLibrary.structurePrediction.helixDict                            
