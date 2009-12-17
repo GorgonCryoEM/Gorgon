@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.36.2.34  2009/12/17 02:56:23  schuhs
+#   Pass offsets to method that renders the sheet meshes
+#
 #   Revision 1.36.2.33  2009/12/15 22:55:30  schuhs
 #   Adding extra rows to table to show loop lengths
 #
@@ -1117,20 +1120,28 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
                     match.predicted.setColor(color)
                 if(match.predicted):
                     cellItemPredicted =  QtGui.QTableWidgetItem(match.predicted.type + " " + str(match.predicted.serialNo) + " : " + str(match.predicted.label) +
-                                                                "\n  "  + str(round(match.predicted.getLengthInAngstroms(),2)) + "A length"
+                                                                "\n  "  + str(round(match.predicted.getLengthInAngstroms(),2)) + "A length" +
                                                                 "\n  "  + str(match.predicted.getResidueCount()) + " residues")
                                                                  
                     cellItemPredicted.setBackgroundColor(color)
                     self.ui.tableWidgetCorrespondenceList.setItem(sseRow, 0, cellItemPredicted)
                 if(match.observed):
+                    # compute the percentage of results that have the same match
+                    matchPercentage = 0.0
+                    for corresp in self.viewer.correspondenceLibrary.correspondenceList:
+                        if corresp.matchList[i].observed == match.observed:
+                            matchPercentage += 1
+                    matchPercentage /= len(self.viewer.correspondenceLibrary.correspondenceList)
+                    matchPercentage *= 100.0
+                    
                     if match.observed.sseType == 'helix':
                         cellItemObserved =  QtGui.QTableWidgetItem("helix " + str(match.observed.label+1) +
                                                                    "\n  " + str(round(match.observed.getLength(), 2)) + "A length" +
-                                                                   "\n  " + str(match.direction) )
+                                                                   "\n   (" + str(int(matchPercentage)) + "%) " + str(match.direction) )
                     if match.observed.sseType == 'sheet':
                         cellItemObserved =  QtGui.QTableWidgetItem("sheet " + str(match.observed.label+1) +
                                                                    #"\n  " + str(round(match.observed.getLength(), 2)) + "A length" +
-                                                                   "\n  " )
+                                                                   "\n   (" + str(int(matchPercentage)) + "%)"  )
                     cellItemObserved.setBackgroundColor(color)
                     self.ui.tableWidgetCorrespondenceList.setItem(sseRow, 1, cellItemObserved)
                     if match.observed.sseType == 'helix':
@@ -1150,7 +1161,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
                 if(match.constrained):
                     self.ui.tableWidgetCorrespondenceList.cellWidget(sseRow, 2).setCheckState(QtCore.Qt.Checked)
                 else :
-                    print "i=" + str(i)
+                    #print "i=" + str(i)
                     self.ui.tableWidgetCorrespondenceList.cellWidget(sseRow, 2).setCheckState(QtCore.Qt.Unchecked)
                     
                 self.ui.tableWidgetCorrespondenceList.resizeRowToContents(sseRow)
@@ -1169,7 +1180,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
                 rowLabels.append(str(i+1))
                 if i < len(corr.matchList)-1:
                     rowLabels.append(" ")
-            print "rowLabels string has " + str(len(rowLabels)) + " elements."
+            #print "rowLabels string has " + str(len(rowLabels)) + " elements."
             self.ui.tableWidgetCorrespondenceList.setVerticalHeaderLabels(rowLabels)
             
             observedHelices = self.viewer.correspondenceLibrary.structureObservation.helixDict
