@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.24.2.6  2009/12/09 20:55:50  schuhs
+#   Removing old console messages and comments.
+#
 #   Revision 1.24.2.5  2009/12/09 04:55:03  schuhs
 #   Add support for rendering a third model
 #
@@ -166,13 +169,13 @@ class SSEViewer(BaseViewer):
         BaseViewer.unloadData(self)
           
           
-    def makeSheetSurfaces(self):
+    def makeSheetSurfaces(self, offsetx, offsety, offsetz):
         # rebuild the set of sheets to render
         numHelicesSheets = self.correspondenceEngine.getSkeletonSSECount()
-        print "making sheet surfaces. skeleton has " +str(numHelicesSheets) + " helices and sheets."
         self.renderer.unloadGraphSSEs()
         for i in range(numHelicesSheets):
-            self.renderer.loadGraphSSE(i, self.correspondenceEngine.getSkeletonSSE(i))
+            if self.correspondenceEngine.getSkeletonSSE(i).isSheet():
+                self.renderer.loadGraphSSE(i, self.correspondenceEngine.getSkeletonSSE(i), offsetx, offsety, offsetz)
 
                
     def createActions(self):
