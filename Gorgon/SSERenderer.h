@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.24.2.4  2009/12/09 03:58:10  schuhs
+//   Full support for rendering and selecting sheets created by graph matching algorithm
+//
 //   Revision 1.24.2.3  2009/12/09 01:58:31  schuhs
 //   Sheets from graph now render as meshes. Color doesn't work and would like to store as a different type of mesh to be consistent with the SSEHunter mesh storage.
 //
@@ -71,7 +74,7 @@ namespace wustl_mm {
 			void LoadHelixFile(string fileName);			
 			void LoadSheetFile(string fileName);			
 			void Unload();
-			void LoadGraphSSE(int index, GeometricShape* sse);
+			void LoadGraphSSE(int index, GeometricShape* sse, float offsetx, float offsety, float offsetz);
 			void UnloadGraphSSEs();
 			void SetHelixColor(int index, float r, float g, float b, float a);
 			void SetSheetColor(int index, float r, float g, float b, float a);
@@ -370,7 +373,8 @@ namespace wustl_mm {
 			UpdateBoundingBox();
 		}
 
-		void SSERenderer::LoadGraphSSE(int index, GeometricShape* sse) {
+		void SSERenderer::LoadGraphSSE(int index, GeometricShape* sse, float offsetx, float offsety, float offsetz) {
+			cout << "offsets are " << offsetx << ", " << offsety << ", " << offsetz << endl;
 			/*
 			cout << "sse load command received for index " << index << endl;
 			cout << "shape stats: " << endl;
@@ -405,7 +409,7 @@ namespace wustl_mm {
 			delete vol;
 			// add offset to all points in new mesh
 			for (int i = 0; i < thisSheetMesh->vertices.size(); i++) {
-				thisSheetMesh->vertices[i].position = thisSheetMesh->vertices[i].position + Vector3DFloat(xmin, ymin, zmin);
+				thisSheetMesh->vertices[i].position = thisSheetMesh->vertices[i].position + Vector3DFloat(xmin, ymin, zmin) + Vector3DFloat(offsetx, offsety, offsetz);
 			}
 
 			// merge this mesh with the mesh containing other sheets
@@ -436,6 +440,7 @@ namespace wustl_mm {
 			}
 
 			delete thisSheetMesh;
+			return;
 		}
 
 		void SSERenderer::UnloadGraphSSEs() {
