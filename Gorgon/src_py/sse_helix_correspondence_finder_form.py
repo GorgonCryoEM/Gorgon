@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.36.2.33  2009/12/15 22:55:30  schuhs
+#   Adding extra rows to table to show loop lengths
+#
 #   Revision 1.36.2.32  2009/12/15 20:37:20  schuhs
 #   Changed method of excluding sheets from search: now just constrain to be missing in results.
 #
@@ -397,7 +400,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
             self.viewer.correspondenceLibrary.correspondenceList = self.populateEmptyResults(self.viewer.correspondenceLibrary)
             print "correspondenceList has length " + str(len(self.viewer.correspondenceLibrary.correspondenceList))
             self.populateComboBox(self.viewer.correspondenceLibrary)
-            self.viewer.makeSheetSurfaces()
+            self.viewer.makeSheetSurfaces(self.app.viewers['skeleton'].renderer.getOriginX(), self.app.viewers['skeleton'].renderer.getOriginY(), self.app.viewers['skeleton'].renderer.getOriginZ()) 
         else:
             print "data not loaded"                        
         print "correspondence index at end is " + str(self.ui.comboBoxCorrespondences.currentIndex())
