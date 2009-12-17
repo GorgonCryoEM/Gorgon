@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.36.2.36  2009/12/17 16:58:11  schuhs
+#   Fix index error that caused constraints to stop working
+#
 #   Revision 1.36.2.35  2009/12/17 03:55:23  schuhs
 #   Added percentages to correspondence list
 #
@@ -406,7 +409,8 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
             self.viewer.correspondenceLibrary.correspondenceList = self.populateEmptyResults(self.viewer.correspondenceLibrary)
             print "correspondenceList has length " + str(len(self.viewer.correspondenceLibrary.correspondenceList))
             self.populateComboBox(self.viewer.correspondenceLibrary)
-            self.viewer.makeSheetSurfaces(self.app.viewers['skeleton'].renderer.getOriginX(), self.app.viewers['skeleton'].renderer.getOriginY(), self.app.viewers['skeleton'].renderer.getOriginZ()) 
+            self.viewer.makeSheetSurfaces(self.app.viewers['skeleton'].renderer.getOriginX(), self.app.viewers['skeleton'].renderer.getOriginY(), self.app.viewers['skeleton'].renderer.getOriginZ())
+            self.ui.tabWidget.setCurrentIndex(1)         
         else:
             print "data not loaded"                        
         print "correspondence index at end is " + str(self.ui.comboBoxCorrespondences.currentIndex())
@@ -993,6 +997,16 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
         
     def accept(self):
         print "ok button pushed"
+        
+        """
+        # save user settings in case this search fails
+        if len(self.viewer.correspondenceLibrary.correspondenceList) > 0:
+            print "saving set of constraints in case undo is needed"
+            lastCorrespondenceIndex = self.ui.comboBoxCorrespondences.currentIndex()
+            lastCorrespondence = self.viewer.correspondenceLibrary.correspondenceList[lastCorrespondenceIndex]
+            #self.viewer.correspondenceLibrary.correspondenceList = self.populateEmptyResults(self.viewer.correspondenceLibrary)
+        """
+        
         # read user parameters, read skeleton and sequence files, create correspondence library
         self.createBasicCorrespondence()   
         print "after creating basic correspondence, secelDict has length " + str(len(self.viewer.correspondenceLibrary.structurePrediction.secelDict))   
@@ -1002,15 +1016,66 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
         self.resultCount = self.viewer.correspondenceEngine.executeQuery()
         print "found " + str(self.resultCount) + " results. cleaning up memory."
         self.viewer.correspondenceEngine.cleanupMemory()
+        
         self.viewer.correspondenceEngine.clearAllConstraints()
-
         
         # populate the list of found correspondences        
         print "populating result list"
         self.viewer.correspondenceLibrary.correspondenceList = self.populateResults(self.viewer.correspondenceLibrary)
-        self.populateComboBox(self.viewer.correspondenceLibrary)       
+        self.populateComboBox(self.viewer.correspondenceLibrary)     
+
+
+        
+        """
+        if self.resultCount > 0:
+            self.viewer.correspondenceEngine.clearAllConstraints()
+            
+            # populate the list of found correspondences        
+            print "populating result list"
+            self.viewer.correspondenceLibrary.correspondenceList = self.populateResults(self.viewer.correspondenceLibrary)
+            self.populateComboBox(self.viewer.correspondenceLibrary)     
+        else:
+            print "debug a"
+            self.viewer.correspondenceLibrary.correspondenceList = []
+            print "debug b, list has length " + str(len(self.viewer.correspondenceLibrary.correspondenceList))
+            self.viewer.correspondenceLibrary.correspondenceList.append(lastCorrespondence)
+            print "debug c, list has length " + str(len(self.viewer.correspondenceLibrary.correspondenceList))
+            #self.viewer.correspondenceLibrary.correspondenceList = self.populateResults(self.viewer.correspondenceLibrary)
+            #self.populateComboBox(self.viewer.correspondenceLibrary)     
+            print "no results found."
+            #self.viewer.correspondenceLibrary.correspondenceList = self.populateResults(self.viewer.correspondenceLibrary)
+            print "debug 1"
+            #self.populateComboBox(self.viewer.correspondenceLibrary)     
+            print "debug 1"
+            #self.ui.tableWidgetCorrespondenceList.clearContents()
+            print "debug 1"
+            #self.ui.tabWidget.setCurrentIndex(0)         
+            print "debug 1"
+            self.ui.comboBoxCorrespondences.setCurrentIndex(-1)
+            print "debug 1"
+            #self.ui.comboBoxCorrespondences.setCurrentIndex(0)
+
+            ##self.createBasicCorrespondence()  
+            ##self.createBasicCorrespondence()  
+            print "debug 1"
+            #self.viewer.correspondenceLibrary.correspondenceList = self.populateEmptyResults(self.viewer.correspondenceLibrary)
+            print "debug 1"
+            #self.populateComboBox(self.viewer.correspondenceLibrary)     
+            self.ui.comboBoxCorrespondences.clear()
+            print "debug 1a"
+            self.ui.comboBoxCorrespondences.addItem("last successful correspondence")
+            print "debug 1b"
+            # add all correspondence to pulldown menu
+            #self.getConstraints()
+
+            self.viewer.correspondenceEngine.clearAllConstraints()
+            print "debug 1c"
+        """
+         
         self.executed = True 
         self.viewer.emitModelChanged()
+        self.ui.tabWidget.setCurrentIndex(3)         
+
         print "done"
                 
     def reject(self):  
