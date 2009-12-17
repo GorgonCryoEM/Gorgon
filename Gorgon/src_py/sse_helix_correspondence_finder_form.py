@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.36.2.35  2009/12/17 03:55:23  schuhs
+#   Added percentages to correspondence list
+#
 #   Revision 1.36.2.34  2009/12/17 02:56:23  schuhs
 #   Pass offsets to method that renders the sheet meshes
 #
@@ -1233,7 +1236,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
                 corr = self.viewer.correspondenceLibrary.correspondenceList[correspondenceIndex]            
                 for i in range(len(corr.matchList)):
                     match = corr.matchList[i]
-                    match.constrained = (self.ui.tableWidgetCorrespondenceList.cellWidget(i, 2).checkState() == QtCore.Qt.Checked)
+                    match.constrained = (self.ui.tableWidgetCorrespondenceList.cellWidget(2*i, 2).checkState() == QtCore.Qt.Checked)
                     
     def createActionsForCell(self, row, col):
         self.selectedRow = row/2
