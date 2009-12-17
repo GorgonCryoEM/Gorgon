@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.10  2009/12/09 21:17:06  colemanr
+//   Cylinder's can be generated with any orientation, now. Added helix correlation using cylinders to represent alpha-helix density.
+//
 //   Revision 1.9  2009/11/03 18:05:10  colemanr
 //   bug-fix for AtomsToVolumeBySummation; changed names for radial profile functions
 //
@@ -753,6 +756,10 @@ namespace wustl_mm {
 							}
 						}
 					}
+					delete cyl;
+					cyl = NULL;
+					delete [] cyl_data;
+					cyl_data = NULL;
 				}
 			}
 			
