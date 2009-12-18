@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.36.2.37  2009/12/17 19:10:08  schuhs
+#   Changing what the user sees if a search fails
+#
 #   Revision 1.36.2.36  2009/12/17 16:58:11  schuhs
 #   Fix index error that caused constraints to stop working
 #
@@ -815,7 +818,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
 
         print "Starting to populate results. Found " + str(self.resultCount) + " results."
 
-        self.ui.tabWidget.setCurrentIndex(4)
+        self.ui.tabWidget.setCurrentIndex(3)
         # clear the correspondence list
         corrList = []
         
@@ -831,7 +834,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
             isSecondHelixNode = False
             helicesPassed = 0
             for j in range(result.getNodeCount()):
-                if isSecondHelixNode == False:
+                if not isSecondHelixNode:
                     direction = Match.FORWARD
 
                     # predicted helix or strand in sequence graph
@@ -1013,19 +1016,34 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
                 
         # execute correspondence query and do cleanup
         print "executing query"
-        self.resultCount = self.viewer.correspondenceEngine.executeQuery()
-        print "found " + str(self.resultCount) + " results. cleaning up memory."
+        try:
+            self.resultCount = self.viewer.correspondenceEngine.executeQuery()
+        except MemoryError:
+            print "memory error"
+            self.resultCount=0
         self.viewer.correspondenceEngine.cleanupMemory()
-        
-        self.viewer.correspondenceEngine.clearAllConstraints()
-        
-        # populate the list of found correspondences        
-        print "populating result list"
-        self.viewer.correspondenceLibrary.correspondenceList = self.populateResults(self.viewer.correspondenceLibrary)
-        self.populateComboBox(self.viewer.correspondenceLibrary)     
+        print "found " + str(self.resultCount) + " results. cleaning up memory."
 
-
+        if self.resultCount > 0:
         
+            self.viewer.correspondenceEngine.clearAllConstraints()
+            
+            # populate the list of found correspondences        
+            print "populating result list"
+            self.viewer.correspondenceLibrary.correspondenceList = self.populateResults(self.viewer.correspondenceLibrary)
+            self.populateComboBox(self.viewer.correspondenceLibrary)     
+
+        else:
+            print "no results found"
+            #self.resultCount=0
+            # code to handle failed search
+            #self.viewer.correspondenceEngine.cleanupMemory()
+            #self.viewer.correspondenceLibrary.correspondenceList = self.populateEmptyResults(self.viewer.correspondenceLibrary)
+            #self.populateComboBox(self.viewer.correspondenceLibrary)     
+            self.viewer.correspondenceLibrary.correspondenceList = self.populateEmptyResults(self.viewer.correspondenceLibrary)
+            self.populateComboBox(self.viewer.correspondenceLibrary)     
+
+            
         """
         if self.resultCount > 0:
             self.viewer.correspondenceEngine.clearAllConstraints()
@@ -1289,7 +1307,8 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
         print self.ui.comboBoxCorrespondences.currentIndex()
         self.setConstants()
         self.checkOk()
-        self.viewer.makeSheetSurfaces()
+        #self.viewer.makeSheetSurfaces()
+        self.viewer.makeSheetSurfaces(self.app.viewers['skeleton'].renderer.getOriginX(), self.app.viewers['skeleton'].renderer.getOriginY(), self.app.viewers['skeleton'].renderer.getOriginZ())
         self.viewer.emitModelChanged()
         print "correspondence index after rebuilding is "
         print self.ui.comboBoxCorrespondences.currentIndex()
