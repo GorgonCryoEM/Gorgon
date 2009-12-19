@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.36.2.40  2009/12/19 22:09:55  schuhs
+#   Spawn message windows on memory errors and when no possible correspondences. Also fix bugs in mouse cursor changing code.
+#
 #   Revision 1.36.2.39  2009/12/18 22:06:01  schuhs
 #   handle failed correspondence searches caused by memory error or too many constraints
 #
@@ -1008,30 +1011,26 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
         print "finished creating basic correspondences" 
         
     def accept(self):
-        print "ok button pushed"
+        print "beginning search"
         oldCursor = self.cursor()
         self.setCursor(QtCore.Qt.BusyCursor)
 
 
         # save the settings used to generate the last result, in case this search fails
         if self.executed:
-            print "saving the currently selected correspondence, with constraints, in case undo is needed"
             lastCorrespondenceIndex = self.ui.comboBoxCorrespondences.currentIndex()
             self.lastCorrespondence = self.viewer.correspondenceLibrary.correspondenceList[lastCorrespondenceIndex]
         
         
         # read user parameters, read skeleton and sequence files, create correspondence library
         self.createBasicCorrespondence()   
-        print "after creating basic correspondence, secelDict has length " + str(len(self.viewer.correspondenceLibrary.structurePrediction.secelDict))   
                 
         # execute correspondence query and do cleanup
-        print "executing query"
         memErr = False
         try:
             self.resultCount = self.viewer.correspondenceEngine.executeQuery()
         except MemoryError:
             print "memory error"
-            # TODO: add popup with message about memory error
             self.resultCount=0
             memErr = True
         self.viewer.correspondenceEngine.cleanupMemory()
@@ -1047,10 +1046,9 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
             self.viewer.correspondenceLibrary.correspondenceList = self.populateResults(self.viewer.correspondenceLibrary)
 
         else:
-            # TODO: add popup with message about memory error or overconstraint problem
             self.executed = False 
             if memErr:
-                QtGui.QMessageBox.warning(self.app, "Insufficient Memory", "There is not enough memory available to complete the search. Try adding more constraints.")
+                QtGui.QMessageBox.warning(self.app, "Insufficient Memory", "There is not enough memory available to complete the search. Try adding or removing constraints.")
             else:
                 QtGui.QMessageBox.warning(self.app, "No results found", "The correspondence search returned no results. Try removing constraints.")
             print "no results found. loading the most recent successful correspondence"
