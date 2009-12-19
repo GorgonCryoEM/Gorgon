@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.5.2.1  2009/11/05 17:28:33  schuhs
+//   Add a method to return the number of bonds in a structure
+//
 //   Revision 1.5  2008/11/18 18:10:24  ssa1
 //   Changing the scaling functions when doing graph matching to find correspondences
 //
@@ -22,6 +25,7 @@
 #define SECONDARYSTRUCTURE_H
 
 #include <string>
+#include "GlobalConstants.h"
 
 using namespace std;
 
