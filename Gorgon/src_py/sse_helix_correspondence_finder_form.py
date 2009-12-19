@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.36.2.39  2009/12/18 22:06:01  schuhs
+#   handle failed correspondence searches caused by memory error or too many constraints
+#
 #   Revision 1.36.2.38  2009/12/18 19:31:01  schuhs
 #   Successfully catching memory exceptions on search. Getting errors when the search completes but no results found.
 #
@@ -408,6 +411,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
         self.ui.tabWidget.setTabEnabled(2, self.dataLoaded)
         self.ui.tabWidget.setTabEnabled(3, self.dataLoaded)
         if(self.dataLoaded):
+            self.executed = False
             self.createBasicCorrespondence()
             print "after creating basic correspondence (1), secelDict has length " + str(len(self.viewer.correspondenceLibrary.structurePrediction.secelDict))   
             self.createBasicCorrespondence()
@@ -506,6 +510,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
             self.loadDefaultParams()
         
             print "loading settings file"
+            oldCursor = self.cursor()
             self.setCursor(QtCore.Qt.BusyCursor)
                    
             print "calling setConstantsFromFile" 
@@ -575,7 +580,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
             # store helix length filename
             self.ui.lineEditHelixLengthFile.setText(sseFilePath)
     
-            self.setCursor(QtCore.Qt.ArrowCursor)
+            self.setCursor(oldCursor)
             
             self.checkOk()
     
@@ -917,6 +922,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
     def createBasicCorrespondence(self):
         """Writes search parameters to correspondence object, loads predicted structure and observed structure, and creates correspondence library"""
         print "creating basic correspondence"
+        oldCursor = self.cursor()
         self.setCursor(QtCore.Qt.BusyCursor)
 
         # put user-entered match parameters from UI into the correspondence object
@@ -997,13 +1003,16 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
         # create a new python CorrespondenceLibrary object 
         self.viewer.correspondenceLibrary = CorrespondenceLibrary(sp = structPred, so = structObserv)          
                
-        self.setCursor(QtCore.Qt.ArrowCursor)
+        self.setCursor(oldCursor)
         
         print "finished creating basic correspondences" 
         
     def accept(self):
         print "ok button pushed"
-        
+        oldCursor = self.cursor()
+        self.setCursor(QtCore.Qt.BusyCursor)
+
+
         # save the settings used to generate the last result, in case this search fails
         if self.executed:
             print "saving the currently selected correspondence, with constraints, in case undo is needed"
@@ -1017,16 +1026,19 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
                 
         # execute correspondence query and do cleanup
         print "executing query"
+        memErr = False
         try:
             self.resultCount = self.viewer.correspondenceEngine.executeQuery()
         except MemoryError:
             print "memory error"
             # TODO: add popup with message about memory error
             self.resultCount=0
+            memErr = True
         self.viewer.correspondenceEngine.cleanupMemory()
         self.viewer.correspondenceEngine.clearAllConstraints()
 
         print "found " + str(self.resultCount) + " results. cleaning up memory."
+        self.setCursor(oldCursor)
 
         if self.resultCount > 0:
             self.executed = True 
@@ -1037,7 +1049,12 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
         else:
             # TODO: add popup with message about memory error or overconstraint problem
             self.executed = False 
+            if memErr:
+                QtGui.QMessageBox.warning(self.app, "Insufficient Memory", "There is not enough memory available to complete the search. Try adding more constraints.")
+            else:
+                QtGui.QMessageBox.warning(self.app, "No results found", "The correspondence search returned no results. Try removing constraints.")
             print "no results found. loading the most recent successful correspondence"
+
             self.viewer.correspondenceLibrary.correspondenceList = []
             self.viewer.correspondenceLibrary.correspondenceList.append(self.lastCorrespondence)
 
