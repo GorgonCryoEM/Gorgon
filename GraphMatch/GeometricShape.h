@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.15.2.8  2009/09/08 14:55:21  schuhs
+//   Fixing bug in code that checks whether a point is inside a helix
+//
 //   Revision 1.15.2.7  2009/08/26 20:49:35  schuhs
 //   Add code to reproduce results from SMI paper when SMIPAPER_MODE flag is set.
 //
@@ -52,6 +55,7 @@
 #include "VectorMath.h"
 #include <vector>
 #include <MathTools/Vector3D.h>
+#include <MathTools/MathLib.h>
 
 using namespace std;
 using namespace wustl_mm::MathTools;
@@ -74,6 +78,7 @@ namespace wustl_mm {
 			bool IsHelix();
 			bool IsSheet();
 			bool IsInsideShape(Point3 p);
+			bool IsInsideShape(Vector3DFloat p);
 			double MinimumDistanceToPoint(Point3 P);
 			double GetHeight();
 			double GetRadius();
@@ -93,6 +98,8 @@ namespace wustl_mm {
 			void SetRadius(double radius);
 			void GetColor(float & r, float & g, float & b, float & a);
 			void SetSelected(bool selected);
+			void GetRotationAxisAndAngle(Vector3DFloat &axis, double &angle);
+			static GeometricShape * CreateHelix(Vector3DFloat p1, Vector3DFloat p2, float radius);
 
 
 			Point3 GetWorldCoordinates(Point3 point);
@@ -112,6 +119,9 @@ namespace wustl_mm {
 			vector<Point3Int> cornerCells;
 			vector<Point3> polygonPoints;
 			vector<Polygon> polygons;
+			Vector3DFloat internalToRealScale;
+			Vector3DFloat internalToRealOrigin;
+
 		private:
 			Matrix4 worldToObject;
 			Matrix4 objectToWorld;
@@ -167,6 +177,10 @@ namespace wustl_mm {
 			} else {
 				return IsInsidePolygon(newPoint);
 			}
+		}
+
+		bool GeometricShape::IsInsideShape(Vector3DFloat p) {
+			return IsInsideShape(Point3(p.X(), p.Y(), p.Z()));
 		}
 
 		bool GeometricShape::IsInsidePolygon(Point3 p) {
@@ -276,6 +290,7 @@ namespace wustl_mm {
 					return cornerCells[i];
 				}
 			}
+			printf("Error <GeometricShape, GetCornerCell>: Corner cell %d not found\n", node);
 			return Point3Int(0,0,0,0);
 		}
 
@@ -286,14 +301,14 @@ namespace wustl_mm {
 
 		Vector3DFloat GeometricShape::GetCornerCell3(int node) {
 			Point3 pt;
-			if(node == 1) {
-				pt = Point3(0, 0.5, 0);
-			} else {
-				pt = Point3(0, -0.5, 0);
-			}
-			pt = GetWorldCoordinates(pt);
 
+			if(node == 1) {
+				pt = GetWorldCoordinates(Point3(0, -0.5, 0));
+			} else {
+				pt = GetWorldCoordinates(Point3(0, 0.5, 0));
+			}
 			return Vector3DFloat((float)pt[0], (float)pt[1], (float)pt[2]);
+
 		}
 
 
@@ -350,6 +365,27 @@ namespace wustl_mm {
 				}
 			}
 
+			Vector3DFloat actualCorner1 = GetCornerCell3(1);
+			Vector3DFloat actualCorner2 = GetCornerCell3(2);
+
+			Vector3DFloat c1, c2;
+			
+
+			c1 = Vector3DFloat(
+				internalToRealOrigin.X() + (float)cornerCells[corner1].x * internalToRealScale.X(),
+				internalToRealOrigin.Y() + (float)cornerCells[corner1].y * internalToRealScale.Y(),
+				internalToRealOrigin.Z() + (float)cornerCells[corner1].z * internalToRealScale.Z());
+			c2 = Vector3DFloat(
+				internalToRealOrigin.X() + (float)cornerCells[corner2].x * internalToRealScale.X(),
+				internalToRealOrigin.Y() + (float)cornerCells[corner2].y * internalToRealScale.Y(),
+				internalToRealOrigin.Z() + (float)cornerCells[corner2].z * internalToRealScale.Z());			
+			
+			if((actualCorner1-c1).Length() > (actualCorner1-c2).Length()) {
+				int temp = corner1;
+				corner1 = corner2;
+				corner2 = temp;
+			}
+
 			cornerCells[corner1].node = 1;
 			cornerCells[corner2].node = 2;
 
@@ -370,6 +406,10 @@ namespace wustl_mm {
 					cornerCells.erase(cornerCells.begin() + i);
 				}
 			}
+			if(cornerCells.size() < 2) {
+				printf("Error <GeometricShape, FindCornerCellsInHelix>: 2 corner cells not found\n");
+			}
+
 			assert(cornerCells.size() >= 2);
 		}
 
@@ -429,6 +469,97 @@ namespace wustl_mm {
 		}
 		void GeometricShape::SetSelected(bool selected) {
 			this->selected = selected;
+		}
+
+		void GeometricShape::GetRotationAxisAndAngle(Vector3DFloat &axis, double &angle) {
+			double x,y,z; 
+			double epsilon = 0.01; 
+			double epsilon2 = 0.1; 
+
+			Matrix4 m = rotationMatrix;			
+			if ((abs(m(0, 1)-m(1,0))< epsilon) && (abs(m(0,2)-m(2,0))< epsilon) && (abs(m(1,2)-m(2,1))< epsilon)) {
+				// singularity found
+				// first check for identity matrix which must have +1 for all terms
+				//  in leading diagonaland zero in other terms
+				if ((abs(m(0,1)+m(1,0)) < epsilon2) && (abs(m(0,2)+m(2,0)) < epsilon2) 
+					&& (abs(m(1,2)+m(2,1)) < epsilon2) && (abs(m(0,0)+m(1,1)+m(2,2)-3) < epsilon2)) {
+					// this singularity is identity matrix so angle = 0
+					axis = Vector3DFloat(1,0,0);
+					angle = 0;
+					return;
+				}
+				// otherwise this singularity is angle = 180
+				angle = PI;
+				double xx = (m(0,0)+1.0)/2.0;
+				double yy = (m(1,1)+1.0)/2.0;
+				double zz = (m(2,2)+1.0)/2.0;
+				double xy = (m(0,1)+m(1,0))/4.0;
+				double xz = (m(0,2)+m(2,0))/4.0;
+				double yz = (m(1,2)+m(2,1))/4.0;
+				if ((xx > yy) && (xx > zz)) { // m[0][0] is the largest diagonal term
+					if (xx< epsilon) {
+						x = 0;
+						y = 0.7071;
+						z = 0.7071;
+					} else {
+						x = sqrt(xx);
+						y = xy/x;
+						z = xz/x;
+					}
+				} else if (yy > zz) { // m[1][1] is the largest diagonal term
+					if (yy< epsilon) {
+						x = 0.7071;
+						y = 0;
+						z = 0.7071;
+					} else {
+						y = sqrt(yy);
+						x = xy/y;
+						z = yz/y;
+					}	
+				} else { // m[2][2] is the largest diagonal term so base result on this
+					if (zz< epsilon) {
+						x = 0.7071;
+						y = 0.7071;
+						z = 0;
+					} else {
+						z = sqrt(zz);
+						x = xz/z;
+						y = yz/z;
+					}
+				}
+				axis = Vector3DFloat((float)x, (float)y, (float)z);
+				return;		
+			}
+			// as we have reached here there are no singularities so we can handle normally
+			double s = sqrt((m(2,1) - m(1,2))*(m(2,1) - m(1,2)) +(m(0,2) - m(2,0))*(m(0,2) - m(2,0)) + (m(1,0) - m(0,1))*(m(1,0) - m(0,1))); // used to normalise
+			if (abs(s) < 0.001) {
+				s = 1; 
+				// prevent divide by zero, should not happen if matrix is orthogonal and should be
+				// caught by singularity test above, but I've left it in just in case
+			}
+			angle = acos(( m(0,0) + m(1,1) + m(2,2) - 1.0)/2.0);
+			x = (m(2,1) - m(1,2))/s;
+			y = (m(0,2) - m(2,0))/s;
+			z = (m(1,0) - m(0,1))/s;
+			axis = Vector3DFloat((float)x, (float)y, (float)z);
+			return;
+		}
+		GeometricShape * GeometricShape::CreateHelix(Vector3DFloat p1, Vector3DFloat p2, float radius) {
+			GeometricShape * newHelix = new GeometricShape();
+			newHelix->geometricShapeType = GRAPHEDGE_HELIX;
+			Vector3DFloat center = (p1+p2) * 0.5;
+			Vector3DFloat dir = p1-p2;
+			Vector3DFloat yaxis = Vector3DFloat(0, 1, 0);
+
+			newHelix->SetCenter(Point3(center.X(), center.Y(), center.Z()));
+			newHelix->SetRadius(radius);
+			newHelix->SetHeight(dir.Length());
+			Vector3DFloat axis = dir^yaxis;
+
+			dir.Normalize();
+			double angle = acos(dir * yaxis);
+			newHelix->Rotate(Vector3(axis.X(), axis.Y(), axis.Z()), -angle);
+			return newHelix;
 		}
 	}
 }
