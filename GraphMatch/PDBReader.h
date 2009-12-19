@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.14.2.7  2009/11/05 17:28:04  schuhs
+//   Added code (commented out now) to set helix length as number of bonds and not the number of residues
+//
 //   Revision 1.14.2.6  2009/09/10 16:25:00  schuhs
 //   Set graph weights in units of residues instead of Angstroms, as was done in the SMI paper code.
 //
@@ -48,7 +51,9 @@
 #include <string>
 #include <MathTools/Vector3D.h>
 #include "PDBAtom.h"
+#include "PDBHelix.h"
 #include "StandardGraph.h"
+#include <MathTools/LinearSolver.h>
 
 using namespace std;
 using namespace wustl_mm::MathTools;
@@ -62,6 +67,7 @@ namespace wustl_mm {
 		public:
 			static StandardGraph * ReadFile(char * fname);
 			static map<unsigned long long, PDBAtom> ReadAtomPositions(string fileName);
+			static vector<PDBHelix> ReadHelixPositions(string fileName);
 			static char * TrimString(char * string);
 			static int ToInt(char * string);
 		private:
@@ -378,10 +384,50 @@ namespace wustl_mm {
 					atomPositions[atom.GetHashKey()] = atom;
 				}
 			}
+			fclose(fin);
 
 			return atomPositions;
 		}
 
+		vector<PDBHelix> PDBReader::ReadHelixPositions(string fileName) {
+			map<unsigned long long, PDBAtom> atomPositions = ReadAtomPositions(fileName);
+			vector<PDBHelix> helices;
+
+			FILE* fin = fopen((char *)fileName.c_str(), "rt");
+			if (fin == NULL)
+			{
+				printf("Error reading input file %s.\n", fileName.c_str()) ;
+				exit(0) ;
+			}
+
+			char line[100];
+			string lineStr;
+			string token;
+			while(!feof(fin))
+			{
+				fgets(line, 100, fin);
+				lineStr = line;
+				token = lineStr.substr(0, 6);
+
+				vector<Vector3DFloat> helixAtomLocs;
+				if(token.compare("HELIX ") == 0) {
+					PDBHelix helix = PDBHelix(lineStr);
+					helixAtomLocs.clear();
+					for(int i = helix.GetInitialResidueSeqNo(); i <= helix.GetEndResidueSeqNo(); i++) {
+						helixAtomLocs.push_back(atomPositions[PDBAtom::ConstructHashKey("----", helix.GetInitialResidueChainId(), i, "CA")].GetPosition());
+					}
+
+					Vector3DFloat pt1, pt2;
+					LinearSolver::FindBestFitLine(pt1, pt2, helixAtomLocs);
+
+					helix.SetEndPositions(pt1, pt2);
+					helices.push_back(helix);
+				}
+			}
+			atomPositions.clear();
+			fclose(fin);
+			return helices;
+		}
 
 		char * PDBReader::TrimString(char * string) {
 			int startPos = 0;
