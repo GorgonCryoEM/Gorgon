@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.7.2.13  2009/12/15 22:54:34  schuhs
+//   Labeling path with node numbers at entry points of sheets and helices.
+//
 //   Revision 1.7.2.12  2009/11/05 17:25:30  schuhs
 //   Comment out console messages used for debugging
 //
@@ -91,7 +94,6 @@ namespace wustl_mm {
 			void SetSSEColor(int index, float r, float g, float b, float a);
 			void SetVisibleCorrespondence(int correspondenceIndex);
 			void Draw(int sceneIndex);
-			//void DrawAllPaths(int sceneIndex);
 			void DrawAllPaths(int sceneIndex, bool showPaths, bool showHelixCorners, bool showSheetCorners, bool showSheetColors);
 
 			
@@ -564,93 +566,6 @@ namespace wustl_mm {
 				}
 				glPopAttrib();
 			}			
-
-
-			MeshRenderer * sheetMeshRenderer = new MeshRenderer();
-
-			// render each skeleton sheet
-			if (showSheetColors) {
-
-				
-				//cout << "debug 1" << endl;
-				// draw internal nodes of sheets
-				//cout << "debug 2" << endl;
-				float colorR, colorG, colorB, colorA;
-				//cout << "debug 3" << endl;
-				for(int i = 0; i < (int)skeleton->skeletonHelixes.size(); i++) {
-				//cout << "debug 4" << endl;
-					if (skeleton->skeletonHelixes[i]->geometricShapeType == GRAPHEDGE_SHEET) {
-						//cout << "debug 5" << endl;
-						skeleton->skeletonHelixes[i]->GetColor(colorR, colorG, colorB, colorA);	
-						glColor4f(colorR, colorG, colorB, colorA);
-						GLfloat diffuseMaterial[4] = {colorR, colorG, colorB, colorA};
-						GLfloat ambientMaterial[4] = {colorR*0.2, colorG*0.2, colorB*0.2, colorA};
-						GLfloat specularMaterial[4] = {1.0, 1.0, 1.0, 1.0};
-
-						glMaterialfv(GL_BACK, GL_AMBIENT,   ambientMaterial);
-						glMaterialfv(GL_BACK, GL_DIFFUSE,   diffuseMaterial) ;
-						glMaterialfv(GL_BACK, GL_SPECULAR,  specularMaterial) ;
-						glMaterialf(GL_BACK, GL_SHININESS, 0.1);
-						glMaterialfv(GL_FRONT, GL_AMBIENT,   ambientMaterial) ;
-						glMaterialfv(GL_FRONT, GL_DIFFUSE,   diffuseMaterial) ;
-						glMaterialfv(GL_FRONT, GL_SPECULAR,  specularMaterial) ;
-						glMaterialf(GL_FRONT, GL_SHININESS, 0.1);
-
-						//cout << "debug 6" << endl;
-						glPushAttrib(GL_LIGHTING_BIT | GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
-						//cout << "debug 7" << endl;
-
-						for(int j = 0; j < (int)skeleton->skeletonHelixes[i]->internalCells.size(); j++) {
-							Renderer::DrawSphere(Vector3DFloat(skeleton->skeletonHelixes[i]->internalCells[j].x, skeleton->skeletonHelixes[i]->internalCells[j].y, skeleton->skeletonHelixes[i]->internalCells[j].z), 0.25);
-						}
-						//cout << "debug 8" << endl;
-						glPopAttrib();
-						//cout << "debug 9" << endl;
-					}
-				}
-
-			}
-
-			/* old method for rendering sheets: render each from stored volumes 
-
-			MeshRenderer * sheetMeshRenderer = new MeshRenderer();
-			// render each skeleton sheet
-			if (showSheetColors) {
-
-				for (int i = 1; i < (int)skeleton->skeletonSheets.size(); i++) {
-					int correspondingSheet = skeleton->skeletonSheetCorrespondence[i];
-					if (correspondingSheet != -1) {
-						// when sheets stored as volumes:
-						//sheetMeshRenderer->LoadVolume(skeleton->skeletonSheets[i]);
-						// when sheets stored as meshes:
-						sheetMeshRenderer->LoadVolume(skeleton->skeletonSheets[i]);
-						float colorR, colorG, colorB, colorA;
-						skeleton->skeletonHelixes[correspondingSheet]->GetColor(colorR, colorG, colorB, colorA);	
-						//cout << "this sheet matches SSE result " << correspondingSheet << ", which has colors " << colorR << "," << colorG << "," << colorB << "," << colorA << endl;
-						glColor4f(colorR, colorG, colorB, colorA);
-						GLfloat diffuseMaterial[4] = {colorR, colorG, colorB, colorA};
-						GLfloat ambientMaterial[4] = {colorR*0.2, colorG*0.2, colorB*0.2, colorA};
-						GLfloat specularMaterial[4] = {1.0, 1.0, 1.0, 1.0};
-
-						glMaterialfv(GL_BACK, GL_AMBIENT,   ambientMaterial);
-						glMaterialfv(GL_BACK, GL_DIFFUSE,   diffuseMaterial) ;
-						glMaterialfv(GL_BACK, GL_SPECULAR,  specularMaterial) ;
-						glMaterialf(GL_BACK, GL_SHININESS, 0.1);
-						glMaterialfv(GL_FRONT, GL_AMBIENT,   ambientMaterial) ;
-						glMaterialfv(GL_FRONT, GL_DIFFUSE,   diffuseMaterial) ;
-						glMaterialfv(GL_FRONT, GL_SPECULAR,  specularMaterial) ;
-						glMaterialf(GL_FRONT, GL_SHININESS, 0.1);
-
-						glPushAttrib(GL_LIGHTING_BIT | GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
-
-						sheetMeshRenderer->Draw(0, false);
-
-						glPopAttrib();
-					}
-				}
-			}
-			delete sheetMeshRenderer;
-			*/
 		}
 	}
 }
