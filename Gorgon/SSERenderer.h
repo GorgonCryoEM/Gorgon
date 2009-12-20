@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.24.2.7  2009/12/20 20:09:01  schuhs
+//   Fixing memory leak
+//
 //   Revision 1.24.2.6  2009/12/20 20:01:40  schuhs
 //   Preparing to merge with trunk: copied in changes from trunk
 //
@@ -455,7 +458,7 @@ namespace wustl_mm {
 			faceTag.selected = false;
 
 			sheetCount = sheets.size();
-			for(unsigned int i = 0; i <= sheetCount; i++) {
+			for(int i = 0; i <= sheetCount; i++) {
 				selectedSheets[i] = false;
 			}
 
@@ -502,7 +505,7 @@ namespace wustl_mm {
 		void SSERenderer::LoadGraphSSE(int index, GeometricShape* sse, float offsetx, float offsety, float offsetz) {
 			// make a volume from the internal cells
 			int xmin=MAXINT, xmax=-MAXINT, ymin=MAXINT, ymax=-MAXINT, zmin=MAXINT, zmax=-MAXINT;
-			for (int i = 0; i < sse->internalCells.size(); i++) {
+			for (unsigned int i = 0; i < sse->internalCells.size(); i++) {
 				if (sse->internalCells[i].x < xmin) {xmin = sse->internalCells[i].x;}
 				if (sse->internalCells[i].x > xmax) {xmax = sse->internalCells[i].x;}
 				if (sse->internalCells[i].y < ymin) {ymin = sse->internalCells[i].y;}
@@ -515,7 +518,7 @@ namespace wustl_mm {
 			int dimz = zmax-zmin+1;
 			Volume* vol = new Volume( dimx, dimy, dimz) ;
 			vol->setOrigin(xmin, ymin, zmin);
-			for (int i = 0; i < sse->internalCells.size(); i++) {
+			for (unsigned int i = 0; i < sse->internalCells.size(); i++) {
 				vol->setDataAt( sse->internalCells[i].x-xmin, sse->internalCells[i].y-ymin, sse->internalCells[i].z-zmin, 1.0 ) ;
 			}
 
@@ -523,7 +526,7 @@ namespace wustl_mm {
 			NonManifoldMesh_Annotated * thisSheetMesh = new NonManifoldMesh_Annotated(vol);
 			delete vol;
 			// add offset to all points in new mesh
-			for (int i = 0; i < thisSheetMesh->vertices.size(); i++) {
+			for (unsigned int i = 0; i < thisSheetMesh->vertices.size(); i++) {
 				thisSheetMesh->vertices[i].position = thisSheetMesh->vertices[i].position + Vector3DFloat(xmin, ymin, zmin) + Vector3DFloat(offsetx, offsety, offsetz);
 			}
 
@@ -680,7 +683,7 @@ namespace wustl_mm {
 			}
 
 			if(sheetMesh != NULL) {
-				for(unsigned int i = 0; i <= sheetCount; i++) {
+				for(int i = 0; i <= sheetCount; i++) {
 					if(selectedSheets[i]) {
 						count++;
 					}
@@ -688,7 +691,7 @@ namespace wustl_mm {
 			}
 
 			if(graphSheetMesh != NULL) {
-				for(unsigned int i = 0; i <= graphSheetCount; i++) {
+				for(int i = 0; i <= graphSheetCount; i++) {
 					if(selectedGraphSheets[i]) {
 						count++;
 					}
@@ -723,7 +726,7 @@ namespace wustl_mm {
 
 				int currentSheetFaceCount;
 			
-				for(unsigned int j = 0; j <= this->sheetCount; j++) {
+				for(int j = 0; j <= this->sheetCount; j++) {
 					if(selectedSheets[j]) {
 						currentSheetCenterOfMass = Vector3DFloat(0,0,0);
 						currentSheetFaceCount = 0;
@@ -799,7 +802,7 @@ namespace wustl_mm {
 					for(unsigned int i = 0; i < sheetMesh->faces.size(); i++) {
 						sheetMesh->faces[i].tag.selected = false;
 					}
-					for(unsigned int i = 0; i <= sheetCount; i++) {
+					for(int i = 0; i <= sheetCount; i++) {
 						selectedSheets[i] = false;
 					}
 				}
@@ -808,7 +811,7 @@ namespace wustl_mm {
 					for(unsigned int i = 0; i < graphSheetMesh->faces.size(); i++) {
 						graphSheetMesh->faces[i].tag.selected = false;
 					}
-					for(unsigned int i = 0; i <= graphSheetCount; i++) {
+					for(int i = 0; i <= graphSheetCount; i++) {
 						selectedGraphSheets[i] = false;
 					}
 				}

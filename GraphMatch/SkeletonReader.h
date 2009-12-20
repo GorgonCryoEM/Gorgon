@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.19.2.28  2009/12/20 19:35:23  schuhs
+//   Preparing to merge with trunk: copied in changes from trunk
+//
 //   Revision 1.19.2.27  2009/12/20 19:25:55  schuhs
 //   Adding comments, reducing the number of console messages, and making messages print only if VERBOSE is set
 //
@@ -381,8 +384,6 @@ namespace wustl_mm {
 				Volume* singleSheet = new Volume(sheetClusters->getSizeX(), sheetClusters->getSizeY(), sheetClusters->getSizeZ(), 1.0); // trying something new
 				singleSheet->applyMask(sheetClusters,i,true);
 				singleSheet->threshold( 0.1, 0, 1 ) ;
-				int thisSheetSize = singleSheet->getNonZeroVoxelCount();
-				//cout << "created sheet " << i << " with " << thisSheetSize << " voxels" << endl;
 				skeletonSheets.push_back(singleSheet);
 			}
 
@@ -415,7 +416,7 @@ namespace wustl_mm {
 					// find the two corner cells in this helix
 					helixes[i]->FindCornerCellsInHelix();
 					//cout << "helix " << i << " has " << helixes[i]->cornerCells.size() << " corners." << endl;
-					for (int j = 0; j < helixes[i]->cornerCells.size(); j++) {
+					for (unsigned int j = 0; j < helixes[i]->cornerCells.size(); j++) {
 						//cout << "corner " << j << " is associated with node " << helixes[i]->cornerCells[j].node << endl;
 					}
 
@@ -449,7 +450,7 @@ namespace wustl_mm {
 
 			}	
 			//cout << "adding sheet sizes as sheet node costs" << endl;
-			for (int s = 0; s < skeletonSheets.size(); s++) {
+			for (unsigned int s = 0; s < skeletonSheets.size(); s++) {
 				int sseSheetNum = helixesMapping[s];
 				//cout << "node " << s << " corresponds to sheet " << helixesMapping[s] << endl;
 				if (sseSheetNum != -1) {
@@ -817,7 +818,7 @@ namespace wustl_mm {
 
 				char t1[80], t2[80], t3[80];
 				int length; 
-				int count = 0;
+				unsigned int count = 0;
 
 				while (!feof(fin)) {
 					fscanf(fin, "%s", token);
@@ -996,7 +997,7 @@ namespace wustl_mm {
 									(Round(coloredVol->getDataAt(x, y, z)) - 1 != startHelix)) {
 									// add this point to newStack with distance = | cPt - nPt |
 									// the distance is the length of the vector from the cPt voxel to this neighbor nPt
-									newStack.push_back(new Point3Int(x, y, z, currentPoint->distance + (cPt - nPt).length()));
+									newStack.push_back(new Point3Int(x, y, z, currentPoint->distance + (float)(cPt - nPt).length()));
 									// mark this point as visited
 									visited->setDataAt(x, y, z, 1.0);
 									// Look up array index in backVol
@@ -1102,8 +1103,8 @@ namespace wustl_mm {
 			int shortestPathLength = MAXINT;
 			vector<Vector3DInt> shortestPath;
 
-			for (int s = 0; s < nodes[startIx].size(); s++) {
-				for (int t = 0; t < nodes[endIx].size(); t++) {
+			for (unsigned int s = 0; s < nodes[startIx].size(); s++) {
+				for (unsigned int t = 0; t < nodes[endIx].size(); t++) {
 					// start with empty queue
 					positions = queue<Vector3DInt>();
 					Vector3DInt currentPos = nodes[startIx][s], newPos, endPos = nodes[endIx][t];			

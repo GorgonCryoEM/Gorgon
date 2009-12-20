@@ -15,6 +15,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.15.2.30  2009/11/25 18:09:58  schuhs
+//   Remove old comments
+//
 //   Revision 1.15.2.29  2009/11/25 17:59:20  schuhs
 //   Change cutoff function so that it applies uniformly to all loops. Match results look better now.
 //
@@ -869,7 +872,7 @@ namespace wustl_mm {
 		// Compute the cost of the ground truth solution which is submitted by the user.
 		void WongMatch15ConstrainedNoFuture::ComputeSolutionCost() {
 			cout << "starting ComputeSolutionCost" << endl;
-			int n1=0, n2=1, pn1=-1, pn2=-1;
+			int n1=0, n2=1;
 			double edgeCost = 0.0;
 			double edgePenaltyCost = 0.0;
 			double nodeCost = 0.0;

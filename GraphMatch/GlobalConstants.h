@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.32.2.22  2009/12/15 20:39:08  schuhs
+//   Add parameter to determine when nearby sheets are merged
+//
 //   Revision 1.32.2.21  2009/12/03 03:06:23  schuhs
 //   Add methods to read constraints from Gorgon
 //
@@ -270,7 +273,7 @@ namespace wustl_mm {
 		}
 
 		int GetNodeConstraint(int patternNode, int constraintNum) {
-			if (constraintNum < 0 || constraintNum >= allowedConstraintCount[patternNode-1]) {
+			if (constraintNum < 0 || constraintNum >= (int)allowedConstraintCount[patternNode-1]) {
 				return 0;
 			} else {
 				return allowedConstraintCollection[patternNode-1][constraintNum];

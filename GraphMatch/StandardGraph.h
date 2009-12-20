@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.13.2.18  2009/12/20 18:36:34  schuhs
+//   Preparing to merge with trunk: copied in changes from trunk
+//
 //   Revision 1.13.2.17  2009/12/20 18:24:39  schuhs
 //   Removing old, commented out code
 //
@@ -481,8 +484,8 @@ namespace wustl_mm {
 			bool repeat = true;
 			while (repeat) {
 				repeat = false;
-				for (int i = firstSheet; i < skeletonHelixes.size(); i++) {
-					for (int j = skeletonHelixes.size()-1; j > i; j--) {
+				for (unsigned int i = firstSheet; i < skeletonHelixes.size(); i++) {
+					for (unsigned int j = skeletonHelixes.size()-1; j > i; j--) {
 						int nodei = i + firstSheet;
 						int nodej = j + firstSheet;
 #ifdef VERBOSE
@@ -502,17 +505,17 @@ namespace wustl_mm {
 									skeletonHelixes[i]->internalCells.push_back(skeletonHelixes[j]->internalCells[k]);
 								}
 								
-								for (int k = 0; k < skeletonHelixes[j]->cornerCells.size(); k++){
+								for (unsigned int k = 0; k < skeletonHelixes[j]->cornerCells.size(); k++){
 									skeletonHelixes[i]->cornerCells.push_back(skeletonHelixes[j]->cornerCells[k]);
 								}
 								
 								// polygonPoints
-								for (int k = 0; k < skeletonHelixes[j]->polygonPoints.size(); k++){
+								for (unsigned int k = 0; k < skeletonHelixes[j]->polygonPoints.size(); k++){
 									skeletonHelixes[i]->polygonPoints.push_back(skeletonHelixes[j]->polygonPoints[k]);
 								}
 								
 								// polygons
-								for (int k = 0; k < skeletonHelixes[j]->polygons.size(); k++){
+								for (unsigned int k = 0; k < skeletonHelixes[j]->polygons.size(); k++){
 									skeletonHelixes[i]->polygons.push_back(skeletonHelixes[j]->polygons[k]);
 								}
 
@@ -536,8 +539,8 @@ namespace wustl_mm {
 
 							//cout << "merging rows " << nodei << " and " << nodej << endl;
 							for (int k = 0; k <= lastRowColumn; k++){
-								int itype = adjacencyMatrix[k][nodei][0];
-								int jtype = adjacencyMatrix[k][nodej][0];
+								int itype = (int)adjacencyMatrix[k][nodei][0];
+								int jtype = (int)adjacencyMatrix[k][nodej][0];
 								int ilength = adjacencyMatrix[k][nodei][1];
 								int jlength = adjacencyMatrix[k][nodej][1];
 								// i same type and j shorter than i, overwrite i

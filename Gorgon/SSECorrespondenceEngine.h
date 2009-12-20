@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.7.2.15  2009/12/20 20:25:53  schuhs
+//   Preparing to merge with trunk: copied in changes from trunk
+//
 //   Revision 1.7.2.14  2009/12/20 20:17:36  schuhs
 //   Removing old, unused sheet rendering code
 //
@@ -419,7 +422,7 @@ namespace wustl_mm {
 						string labelStr = tmpStream.str();
 						glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, ' ');
 						glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, ' ');
-						for (int i = 0; i < labelStr.length(); i++) {
+						for (unsigned int i = 0; i < labelStr.length(); i++) {
 							//glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, labelStr[i]);
 							glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, labelStr[i]);
 						}
@@ -546,7 +549,7 @@ namespace wustl_mm {
 							string labelStr = tmpStream.str();
 							glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, ' ');
 							glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, ' ');
-							for (int i = 0; i < labelStr.length(); i++) {
+							for (unsigned int i = 0; i < labelStr.length(); i++) {
 								//glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, labelStr[i]);
 								glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, labelStr[i]);
 							}
@@ -577,7 +580,7 @@ namespace wustl_mm {
 							string labelStr = tmpStream.str();
 							glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, ' ');
 							glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, ' ');
-							for (int i = 0; i < labelStr.length(); i++) {
+							for (unsigned int i = 0; i < labelStr.length(); i++) {
 								glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, labelStr[i]);
 								//glutBitmapCharacter(GLUT_BITMAP_9_BY_15, labelStr[i]);
 								//glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, labelStr[i]);
