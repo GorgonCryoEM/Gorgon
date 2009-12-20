@@ -15,6 +15,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.15.2.32  2009/12/20 22:30:03  schuhs
+//   Removing references to SMIPAPER_MODE
+//
 //   Revision 1.15.2.31  2009/12/20 22:15:22  schuhs
 //   Reduce compiler warnings
 //
@@ -214,23 +217,29 @@ namespace wustl_mm {
 			delete pathGenerator;
 		}
 		void WongMatch15ConstrainedNoFuture::Init(StandardGraph * patternGraph, StandardGraph * baseGraph) {	
+#ifdef VERBOSE
+			cout << "Initializing search" << endl;
 			cout << "Base graph has " << baseGraph->GetHelixCount() << " helices and " << baseGraph->GetSheetCount() << " sheets." << endl;
 			cout << "Pattern graph has " << patternGraph->GetHelixCount() << " helices and " << patternGraph->GetSheetCount() << " sheets." << endl;
-			cout << "WongMatch15ConstrainedNoFuture::Init" << endl;
+#endif // VERBOSE
 			usedNodes.clear();
-			cout << "WongMatch15ConstrainedNoFuture::Init 1" << endl;
+#ifdef VERBOSE
+			cout << "Creating priority queue" << endl;
+#endif // VERBOSE
 			queue = new PriorityQueue<LinkedNode, double> (PRIORITYQUEUESIZE);
-			cout << "WongMatch15ConstrainedNoFuture::Init 1.1" << endl;
+#ifdef VERBOSE
+			cout << "Loading pattern graph" << endl;
+#endif // VERBOSE
 			this->patternGraph = patternGraph;
-			cout << "WongMatch15ConstrainedNoFuture::Init 1.2" << endl;
+#ifdef VERBOSE
+			cout << "Loading base graph" << endl;
+#endif // VERBOSE
 			this->baseGraph = baseGraph;
-			cout << "WongMatch15ConstrainedNoFuture::Init 1.3" << endl;
 			expandCount = 0;
 
-			// TODO: Make this more accurate
-			// old method of counting missing sheets and helices
-			
-			cout << "WongMatch15ConstrainedNoFuture::Init 2" << endl;
+#ifdef VERBOSE
+			cout << "Finding the number of missing helices and sheets" << endl;
+#endif // VERBOSE
 			missingHelixCount = (patternGraph->GetNodeCount() - baseGraph->GetNodeCount()) / 2;
 			if(missingHelixCount < 0)  {
 				missingHelixCount = 0;
@@ -241,15 +250,11 @@ namespace wustl_mm {
 			
 
 			// new method of counting missing sheets and helices
-			
-			cout << "WongMatch15ConstrainedNoFuture::Init 3" << endl;
 			// count helix nodes in base graph
 			int baseHelixNodes = 0;
 			int baseSheetNodes = 0;
 			int patternHelixNodes = 0;
 			int patternSheetNodes = 0;
-
-			cout << "calculating the number of missing sheets and helices" << endl;
 
 			for (int i = 0; i < baseGraph->GetNodeCount(); i++) {
 				//cout << "base graph node " << i << " has type " << (int)(baseGraph->adjacencyMatrix[i][i][0]) << endl;
@@ -264,7 +269,9 @@ namespace wustl_mm {
 						break;
 				}
 			}
+#ifdef VERBOSE
 			cout << "base graph has " << baseHelixNodes << " helix nodes and " << baseSheetNodes << " sheet nodes." << endl;
+#endif // VERBOSE
 
 			for (int i = 0; i < patternGraph->GetNodeCount(); i++) {
 				//cout << "pattern graph node " << i << " has type " << (int)(patternGraph->adjacencyMatrix[i][i][0]) << endl;
@@ -279,16 +286,21 @@ namespace wustl_mm {
 						break;
 				}
 			}
+#ifdef VERBOSE
 			cout << "pattern graph has " << patternHelixNodes << " helix nodes and " << patternSheetNodes << " sheet nodes." << endl;
+#endif // VERBOSE
 
 
 			missingHelixCount = (patternHelixNodes - baseHelixNodes) / 2;
+
+			// allow all strands to be missing
 			//missingSheetCount = patternSheetNodes - baseSheetNodes;
 			missingSheetCount = patternSheetNodes;
 
+#ifdef VERBOSE
 			cout << "missing helix count is " << missingHelixCount << ", missing sheet count is " << missingSheetCount << endl;
-
 			cout << "missing helix penalty is " << MISSING_HELIX_PENALTY << ", missing sheet penalty is " << MISSING_SHEET_PENALTY << endl;
+#endif // VERBOSE
 
 			if(!PERFORMANCE_COMPARISON_MODE) {
 				NormalizeGraphs();
@@ -296,11 +308,11 @@ namespace wustl_mm {
 			}
 			foundCount = 0;
 			longestMatch = 0;
-		#ifdef VERBOSE
+#ifdef VERBOSE
 			timeInGetA = 0;
 			timeInGetB = 0;
 			timeInQueue = 0;
-		#endif
+#endif
 
 			// create and set up a new node to start the search
 			currentNode = new LinkedNode();
@@ -318,7 +330,9 @@ namespace wustl_mm {
 
 		// searches for correspondences between the pattern graph and base graph.
 		int WongMatch15ConstrainedNoFuture::RunMatching(clock_t startTime) {
-			cout << "Start WongMatch15ConstrainedNoFuture::RunMatching: " << endl;
+#ifdef VERBOSE
+			cout << "Starting to search for correspondences." << endl;
+#endif // VERBOSE
 			DisplayConstants();
 			bool continueLoop = true;
 			clock_t finishTime;
@@ -339,11 +353,11 @@ namespace wustl_mm {
 					int numHelices = baseGraph->GetHelixCount();
 					solutions.push_back(SSECorrespondenceResult(currentNode, numHelices));
 
-					#ifdef MAKE_FINAL_MRC
-						char fileName[80];
-						sprintf(fileName, "Solution%d.mrc", foundCount);
-						pathGenerator->GenerateGraph(currentNode, fileName);
-					#endif
+#ifdef MAKE_FINAL_MRC
+					char fileName[80];
+					sprintf(fileName, "Solution%d.mrc", foundCount);
+					pathGenerator->GenerateGraph(currentNode, fileName);
+#endif
 				// otherwise, expand currentNode and adds its children to usedNodes
 				} else {
 					LinkedNodeStub * currentStub = new LinkedNodeStub(currentNode);
@@ -372,7 +386,9 @@ namespace wustl_mm {
 				delete tempNode;
 			}
 
-			cout << "at end of WongMatch15ConstrainedNoFuture::RunMatching. results found = " << foundCount << endl;
+#ifdef VERBOSE
+			cout << "Finished the correspondence search. Found " << foundCount << " results." << endl;
+#endif // VERBOSE
 
 			ComputeSolutionCost();
 
@@ -396,11 +412,11 @@ namespace wustl_mm {
 			//}
 			//printf(" - %f : (%d expanded)\n", currentNode->cost, expandCount);
 			//printf("%d\t\t", expandCount);	
-			#ifdef VERBOSE
-				printf("Time taken in GetA %f\n", timeInGetA / (double)CLOCKS_PER_SEC);
-				printf("Time taken in GetB %f\n", timeInGetB / (double)CLOCKS_PER_SEC);
-				printf("Time taken in Queue %f\n", timeInQueue / (double)CLOCKS_PER_SEC);
-			#endif
+#ifdef VERBOSE
+			printf("Time taken in GetA %f\n", timeInGetA / (double)CLOCKS_PER_SEC);
+			printf("Time taken in GetB %f\n", timeInGetB / (double)CLOCKS_PER_SEC);
+			printf("Time taken in Queue %f\n", timeInQueue / (double)CLOCKS_PER_SEC);
+#endif
 
 		}
 
@@ -492,7 +508,9 @@ namespace wustl_mm {
 				if (patternGraph->adjacencyMatrix[d+i-1][d+i-1][0] == GRAPHNODE_SHEET) {
 					patternLength += patternGraph->nodeWeights[d+i-1];
 					skippedSheets++;
+#ifdef VERBOSE
 					if (debugMsg) { cout << "  -- found strand " << d+i << ", adding " << patternGraph->nodeWeights[d+i-1] << " to patternLength" << endl; }
+#endif // VERBOSE
 				} else {
 					skippedHelices++;
 				}
@@ -567,20 +585,28 @@ namespace wustl_mm {
 					!( ((int)(patternGraph->adjacencyMatrix[d-1][d][0] + 0.01) == GRAPHEDGE_LOOP) && ((int)(baseGraph->adjacencyMatrix[qj-1][qp-1][0] +0.01) == GRAPHNODE_SHEET)) ) 	{ // not a loop-sheet match
 					return -1;
 				}		
+#ifdef VERBOSE
 				if (debugMsg) { cout << "  -- euclidean dist = " << baseGraph->euclideanMatrix[qj-1][qp-1] << ", patternLength = " << patternLength << ", loop fudge factor = " << EUCLIDEAN_VOXEL_TO_PDB_RATIO / LOOP_C_ALPHA_TO_ANGSTROMS << ", helix fudge factor = " << EUCLIDEAN_VOXEL_TO_PDB_RATIO / HELIX_C_ALPHA_TO_ANGSTROMS << endl; }
 				if (debugMsg) { cout << "  -- scalar ratio required = " << baseGraph->euclideanMatrix[qj-1][qp-1] / patternLength << ", additive headroom = " << baseGraph->euclideanMatrix[qj-1][qp-1] - patternLength << endl; }
+#endif // VERBOSE
 
 				if((qj != -1) && ((int)(patternGraph->adjacencyMatrix[d-1][d][0] + 0.01) == GRAPHEDGE_HELIX) && (baseGraph->euclideanMatrix[qj-1][qp-1] > (patternLength * EUCLIDEAN_VOXEL_TO_PDB_RATIO / HELIX_C_ALPHA_TO_ANGSTROMS )) ){					
+#ifdef VERBOSE
 					if (debugMsg) { cout << "  -- -- -- NOT ALLOWED (HELIX) -- -- -- " << endl; }
+#endif // VERBOSE
 					return -1;
 				} else 
 				if((qj != -1) && ((int)(patternGraph->adjacencyMatrix[d-1][d][0] + 0.01) == GRAPHEDGE_LOOP)) {
 					if (((int)(patternGraph->adjacencyMatrix[d-1][d-1][0] + 0.01) == GRAPHNODE_SHEET || (int)(patternGraph->adjacencyMatrix[d][d][0] + 0.01) == GRAPHNODE_SHEET) && (baseGraph->euclideanMatrix[qj-1][qp-1] > (patternLength * 1.0 * EUCLIDEAN_VOXEL_TO_PDB_RATIO / LOOP_C_ALPHA_TO_ANGSTROMS )) ){					
+#ifdef VERBOSE
 						if (debugMsg) { cout << "  -- -- -- NOT ALLOWED (LOOP WITH STRAND) -- -- -- " << endl; }		
+#endif // VERBOSE
 						return -1;
 					}
 					if (((int)(patternGraph->adjacencyMatrix[d-1][d-1][0] + 0.01) != GRAPHNODE_SHEET && (int)(patternGraph->adjacencyMatrix[d][d][0] + 0.01) != GRAPHNODE_SHEET) && (baseGraph->euclideanMatrix[qj-1][qp-1] > (patternLength * EUCLIDEAN_VOXEL_TO_PDB_RATIO / LOOP_C_ALPHA_TO_ANGSTROMS )) ){					
+#ifdef VERBOSE
 						if (debugMsg) { cout << "  -- -- -- NOT ALLOWED (LOOP) -- -- -- " << endl; }		
+#endif // VERBOSE
 						return -1;
 					}
 				}
@@ -647,15 +673,21 @@ namespace wustl_mm {
 					//cout << "    GetPenaltyCost(" << d << "," << m << "). SKIP HELIX. k=" << k << endl;
 					cost += MISSING_HELIX_PENALTY;
 					cost += patternGraph->adjacencyMatrix[k][k+1][1] * MISSING_HELIX_PENALTY_SCALED;
+#ifdef VERBOSE
 					if (debugMsg) { cout << "  -- adding missing helix penalties: fixed=" << MISSING_HELIX_PENALTY << ", scaled=" << patternGraph->nodeWeights[k] * MISSING_HELIX_PENALTY_SCALED << endl; }
+#endif // VERBOSE
 
 					if (startAtBeginning && !firstHelixFound) {
 						cost += START_END_MISSING_HELIX_PENALTY;
+#ifdef VERBOSE
 						if (debugMsg) { cout << "  -- adding start_end_miss_helix_pen" << endl; }
+#endif // VERBOSE
 					}
 					if (finishAtEnd && !firstHelixFound) {
 						cost += START_END_MISSING_HELIX_PENALTY;
+#ifdef VERBOSE
 						if (debugMsg) { cout << "  -- adding start_end_miss_helix_pen" << endl; }
+#endif // VERBOSE
 					}
 					firstHelixFound = true;
 				}
@@ -663,11 +695,10 @@ namespace wustl_mm {
 				else if( (startAtBeginning || pastFirst) && ((int)(patternGraph->adjacencyMatrix[k][k][0] + 0.01) == GRAPHNODE_SHEET) ) {
 					cost += MISSING_SHEET_PENALTY;
 					cost += patternGraph->nodeWeights[k] * MISSING_SHEET_PENALTY_SCALED;
+#ifdef VERBOSE
 					if (debugMsg) { cout << "  -- adding missing sheet penalties: fixed=" << MISSING_SHEET_PENALTY << ", scaled=" << patternGraph->nodeWeights[k] * MISSING_SHEET_PENALTY_SCALED << endl; }
-					//cout << "    GetPenaltyCost(" << d << "," << m << "). SKIP sheet. k=" << k << endl;
-					//cout << "SKIP SHEET. k=" << k;
+#endif // VERBOSE
 				}
-				//cout << endl;
 				pastFirst = true;
 			}
 
@@ -690,13 +721,13 @@ namespace wustl_mm {
 
 			LinkedNode * temp;
 			double edgeCost;
-		#ifdef VERBOSE
+#ifdef VERBOSE
 			if(longestMatch < currentNode->depth) {
 				longestMatch = currentNode->depth;
 				printf(" %d elements matched! (%f kB Memory Used)\n", longestMatch, (queue->getLength() * sizeof(LinkedNode) + usedNodes.size() * sizeof(LinkedNodeStub)) / 1024.0);
 				cout << "WongMatch15ConstrainedNoFuture::ExpandNode: " << longestMatch << " elements expanded (" << ((queue->getLength() * sizeof(LinkedNode) + usedNodes.size() * sizeof(LinkedNodeStub)) / 1024.0) << " kB memory used)" << endl;
 			}
-		#endif //VERBOSE
+#endif //VERBOSE
 			
 			int currentM1Top = patternGraph->nodeCount - currentNode->depth; // remaining unmatched nodes in sequence
 			bool notConstrained;
@@ -740,9 +771,10 @@ namespace wustl_mm {
 								((patternGraph->nodeCount - currentNode->depth == 0) && (currentNode->n2Node == -1))) {
 									if (skippedHelixNodes == 0 && patternGraph->adjacencyMatrix[0][0][0] == GRAPHNODE_HELIX) {
 										skippedHelixNodes = 1;
+#ifdef VERBOSE
 										cout << "node skipped. adding one to skippedHelixNodes. result is " << skippedHelixNodes << endl;
+#endif // VERBOSE
 									}
-								//cout << "node skipped. done fixing." << endl;
 							}
 
 							// generate a current node, marking it as revisitable or not depending on result from test
@@ -765,30 +797,10 @@ namespace wustl_mm {
 								edgeCost = 0;
 							} else {								
 								edgeCost = GetCost(temp->n1Node, j+1, temp->n2Node, currentNode->n2Node, false);
-								//printf("%i %i %i %i %lf\n", temp->n1Node, j+1, temp->n2Node, currentNode->n2Node, edgeCost);
-								//if (edgeCost < 0) {cout << "edge cost (" << (int)temp->n1Node << "," << (int)j+1 << "," << (int)temp->n2Node << "," << (int)currentNode->n2Node << ") is " << edgeCost << endl;}
 							}
 							
 							// if this is an allowed match:
 							if(edgeCost >= 0) {
-								/*
-								if (currentNode->n2Node == temp->n2Node) {
-									cout << "============== progress! starting to match a node to itself! node is " << (int)(currentNode->n2Node+0.01) << endl;
-									cout << "               BEFORE:" << endl;
-									cout << "               edge cost is " << edgeCost << endl;
-									cout << "               current n1 node type is " << (int)(baseGraph->adjacencyMatrix[currentNode->n1Node-1][currentNode->n1Node-1][0] + 0.01) << endl;
-									cout << "               temp n1 node type is " << (int)(baseGraph->adjacencyMatrix[temp->n1Node-1][temp->n1Node-1][0] + 0.01) << endl;
-									cout << "               current n2 node type is " << (int)(baseGraph->adjacencyMatrix[currentNode->n2Node-1][currentNode->n2Node-1][0] + 0.01) << endl;
-									cout << "               temp n2 node type is " << (int)(baseGraph->adjacencyMatrix[temp->n2Node-1][temp->n2Node-1][0] + 0.01) << endl;
-									cout << "               current n1 is " << (int)currentNode->n1Node << endl;
-									cout << "               temp n1 is " << (int)temp->n1Node << endl;
-									cout << "               current n2 is " << (int)currentNode->n2Node << endl;
-									cout << "               temp n2 is " << (int)temp->n2Node << endl;
-									cout << "               costGStar is " << currentNode->costGStar << endl;
-
-								}
-								*/
-
 								currentNode->costGStar += temp->costGStar + edgeCost + GetC(currentNode->n1Node, currentNode->n2Node, currentNode);
 								// add costs for skipped helices and sheets
 								currentNode->costGStar += GetPenaltyCost(temp->n1Node, j+1, false);
@@ -806,9 +818,6 @@ namespace wustl_mm {
 						// if this node is a helix, increment j by one more to prepare for the next iteration
 						switch ( (int)(patternGraph->adjacencyMatrix[currentNode->n1Node + j][currentNode->n1Node + j][0] + 0.01)) {
 							case GRAPHNODE_HELIX:
-								if (firstMissing) {
-									//cout << "GRAPHEDGE_HELIX case AND firstMissing!" << endl;
-								}
 								skippedHelixNodes += 2;
 								j+=2;
 								break;
@@ -860,7 +869,9 @@ namespace wustl_mm {
 
 		// Compute the cost of the ground truth solution which is submitted by the user.
 		void WongMatch15ConstrainedNoFuture::ComputeSolutionCost() {
+#ifdef VERBOSE
 			cout << "starting ComputeSolutionCost" << endl;
+#endif // VERBOSE
 			int n1=0, n2=1;
 			double edgeCost = 0.0;
 			double edgePenaltyCost = 0.0;
@@ -875,7 +886,9 @@ namespace wustl_mm {
 
 				// check if first node is skipped helix or sheet
 				if (SOLUTION[n1] == -1) {
+#ifdef VERBOSE
 					cout << "skipped node found at " << n1+1 << " with adj matrix value " << patternGraph->adjacencyMatrix[n1][n1][0] << endl;
+#endif // VERBOSE
 					if (patternGraph->adjacencyMatrix[n1][n1][0] == GRAPHNODE_HELIX) {
 						skippedHelixNodes++;
 					}
@@ -900,41 +913,51 @@ namespace wustl_mm {
 				//cout << "after advancing n2, n1 = " << n1 << ", n2 = " << n2 << ", skippedHN = " << skippedHelixNodes << ", skippedSN = " << skippedSheetNodes << endl;
 
 				// add edge cost
+#ifdef VERBOSE
 				cout << "adding (" << n1+1 << "," << n2+1 << "," << SOLUTION[n1] << "," << SOLUTION[n2] << ")" << endl;
+#endif // VERBOSE
 				double singleEdgeCost = 1000;
 				double singleEdgePenaltyCost = 0;
 				// if edge exists in base graph, find the cost of this correspondence.
 				if (SOLUTION[n1] == -1) {
 					singleEdgeCost = 0;
 					singleEdgePenaltyCost = GetPenaltyCost(n1+1, n2-n1, true);
-					//singleEdgePenaltyCost = GetPenaltyCost(n1, n2-n1);
+#ifdef VERBOSE
 					cout << "  GetPenaltyCost("<<n1+1<<","<<n2-n1<<")="<<singleEdgePenaltyCost<<endl;
 					cout << "  No edge cost for initial skip edge" << endl;
+#endif // VERBOSE
 					if (patternGraph->adjacencyMatrix[n1][n1][0] == GRAPHNODE_SHEET) {
 						singleEdgePenaltyCost = MISSING_SHEET_PENALTY;
 					}
 				} else if (baseGraph->EdgeExists(SOLUTION[n1]-1, SOLUTION[n2]-1)) {
 					singleEdgeCost = GetCost(n1+1, n2-n1, SOLUTION[n1], SOLUTION[n2], true);
 					singleEdgePenaltyCost = GetPenaltyCost(n1+1, n2-n1, true);
-					//singleEdgePenaltyCost = GetPenaltyCost(n1, n2-n1);
+#ifdef VERBOSE
 					cout << "  GetCost("<<n1+1<<","<<n2-n1<<","<<SOLUTION[n1]<<","<<SOLUTION[n2]<<")="<<singleEdgeCost<<endl;
 					cout << "  GetPenaltyCost("<<n1+1<<","<<n2-n1<<")="<<singleEdgePenaltyCost<<endl;
-					//cout << "  PenaltyCost(" << n1 << "," << n2-n1 << ") = " << singleEdgePenaltyCost << endl;
+#endif // VERBOSE
 				} else {
+#ifdef VERBOSE
 					cout << "  BASE GRAPH DOES NOT HAVE AN EDGE FROM NODE " << SOLUTION[n1] << " TO NODE " << SOLUTION[n2] << ". THIS SOLUTION NOT POSSIBLE!" << endl;
+#endif // VERBOSE
 				}
 
 				// check if first or last helix is unmatched
 				if ((n1 == 0 && singleEdgeCost == -1) || (n2 == numNodes && singleEdgeCost == -1)){
-					//singleEdgeCost = START_END_MISSING_HELIX_PENALTY;
+#ifdef VERBOSE
 					cout << "  first helix or sheet is unmatched. adding penalty of " << singleEdgeCost << endl;
+#endif // VERBOSE
 				} else {
+#ifdef VERBOSE
 					cout << "  cost of this addition is " << singleEdgeCost << endl;
+#endif // VERBOSE
 				}
 
 				// add node cost
 				double singleNodeCost = GetC(n2+1, SOLUTION[n2]);
+#ifdef VERBOSE
 				cout << "  node cost for nodes " << n2+1 << " and " << SOLUTION[n2] << " is " << singleNodeCost << endl;
+#endif // VERBOSE
 
 				// add the costs from this iteration to the running totals
 				edgeCost += singleEdgeCost;
@@ -946,41 +969,40 @@ namespace wustl_mm {
 				n2++;
 			}
 
+#ifdef VERBOSE
 			cout << "total edge cost is " << edgeCost << endl;
 			cout << "total edge penalty cost is " << edgePenaltyCost << endl;
 			cout << "total node cost is " << nodeCost << endl;
+#endif // VERBOSE
 
 			double helixPenalty = skippedHelixNodes/2 * MISSING_HELIX_PENALTY; 
 			double sheetPenalty = skippedSheetNodes * MISSING_SHEET_PENALTY;
 
+#ifdef VERBOSE
 			cout << "missing helices: " << skippedHelixNodes/2 << " contribute cost of " << helixPenalty << endl;
 			cout << "missing sheets:  " << skippedSheetNodes << " contribute cost of " << sheetPenalty << endl;
 			cout << "together, missing helices and sheets contribute cost of " << sheetPenalty + helixPenalty << endl;
 			cout << "algorithm thinks missing helices and sheets should contribute cost of " << edgePenaltyCost << endl;
+#endif // VERBOSE
 
 
 			double cost = edgeCost + nodeCost + helixPenalty + sheetPenalty;
 
+#ifdef VERBOSE
 			cout << "total cost is " << cost << endl;
-
-			/*
-			for (int i = 0; i <= numNodes; i++) {
-				for (int j = 1; j <= numNodes-i; j++) {
-					double currPenalty = GetPenaltyCost(i,j);
-					cout << "  GetPenaltyCost(" << i << "," << j << ") = " << currPenalty << endl;
-				}
-			}
-			*/
+#endif // VERBOSE
 
 		}
 
 		void WongMatch15ConstrainedNoFuture::NormalizeGraphs() {
+#ifdef VERBOSE
 			printf("Normalizing Graphs\n");
+#endif // VERBOSE
 
 
 #ifdef VERBOSE
 			printf("\tNormalizing the base graph from Angstroms to amino acids\nNormalized Graph:\n");
-#endif
+#endif // VERBOSE
 			for(int i = 0; i < baseGraph->nodeCount; i++) {
 				for(int j = 0; j < baseGraph->nodeCount; j++) {
 					// base graph
@@ -1001,18 +1023,16 @@ namespace wustl_mm {
 
 #ifdef VERBOSE
 			baseGraph->PrintGraph();
-#endif
+#endif // VERBOSE
 		}
 
 
 
 
 		void WongMatch15ConstrainedNoFuture::NormalizeSheets() {
-			printf("Normalizing Sheets\n");
-
-			#ifdef VERBOSE
-				printf("\tNormalizing the sheet nodes in the base graph based on sheet ratio\nNormalized Graph:\n");
-			#endif
+#ifdef VERBOSE
+			printf("\tNormalizing the sheet nodes in the base graph based on sheet ratio\nNormalized Graph:\n");
+#endif // VERBOSE
 			// TODO: Also normalize the sheet capacity here?
 			double totalSheetSize = 0;
 			double totalStrandLength = 0;
@@ -1020,7 +1040,9 @@ namespace wustl_mm {
 			for(int i = 0; i < (int)baseGraph->skeletonHelixes.size(); i++) {
 				if (baseGraph->skeletonHelixes[i]->geometricShapeType == GRAPHEDGE_SHEET) {
 					totalSheetSize += (double)baseGraph->skeletonHelixes[i]->length;
+#ifdef VERBOSE
 					cout << "after sheet " << i << ", total sheet size is now " << totalSheetSize << endl;
+#endif // VERBOSE
 				}
 			}
 
@@ -1029,18 +1051,22 @@ namespace wustl_mm {
 				if(patternGraph->pdbStructures[i]->secondaryStructureType == GRAPHEDGE_SHEET) {
 					totalStrandLength += patternGraph->pdbStructures[i]->GetLengthResidues();
 					//totalStrandLength += patternGraph->pdbStructures[i]->GetLengthAngstroms();
+#ifdef VERBOSE
 					cout << "After adding strand " << i << " with length " << patternGraph->pdbStructures[i]->GetLengthResidues() << ", total strand length is now " << totalStrandLength << endl;
+#endif // VERBOSE
 				}
 			}
 
 			// scale the sheet sizes so that the units are in amino acids
 			double ratio = totalStrandLength / totalSheetSize;
+#ifdef VERBOSE
 			cout << "sheet sizes must be scaled by a factor of " << ratio << endl;
+#endif // VERBOSE
 
 
-			#ifdef VERBOSE
-				printf("\tNormalizing the base graph sheets from voxels to scaled voxels\nNormalized Graph:\n");
-			#endif
+#ifdef VERBOSE
+			printf("\tNormalizing the base graph sheets from voxels to scaled voxels\nNormalized Graph:\n");
+#endif // VERBOSE
 			for(int i = 0; i < baseGraph->nodeCount; i++) {
 				if(baseGraph->adjacencyMatrix[i][i][1] != MAXINT && baseGraph->adjacencyMatrix[i][i][0] == GRAPHNODE_SHEET) {
 					// scale the sheet weight to the # of amino acids
@@ -1051,9 +1077,9 @@ namespace wustl_mm {
 			}	
 			
 			
-			#ifdef VERBOSE
-				baseGraph->PrintGraph();
-			#endif
+#ifdef VERBOSE
+			baseGraph->PrintGraph();
+#endif // VERBOSE
 		}
 
 
