@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.19.2.25  2009/12/15 20:39:25  schuhs
+//   Add parameter to determine when nearby sheets are merged
+//
 //   Revision 1.19.2.24  2009/10/29 16:40:19  schuhs
 //   Add code (commented out now) to add random offset to path nodes to prevent overlap when rendering
 //
@@ -133,7 +136,6 @@ namespace wustl_mm {
 			static void ReadSheetFile(char * sheetFile, vector<GeometricShape*> & helixes);
 			static void ReadHelixFile(char * helixFile, char * sseFile, vector<GeometricShape*> & helixes);
 			static void FindSizes(int startHelix, int startCell, vector<GeometricShape*> & helixList, Volume * vol, Volume * coloredVol, StandardGraph * graph);
-			static void FindSizes2(int startHelix, int startCell, vector<GeometricShape*> & helixList, Volume * vol, Volume * coloredVol, StandardGraph * graph);
 			static void FindPaths(StandardGraph * graph);
 			static void FindPath(int startIx, int endIx, vector<vector<Vector3DInt> > nodes, Volume * maskVol, StandardGraph * graph, bool eraseMask);
 			static void FindCornerCellsInSheet(Volume * vol, Volume * paintedVol, vector<GeometricShape*> & helixes, int sheetId);
@@ -214,33 +216,28 @@ namespace wustl_mm {
 
 
 
-			#ifdef INCLUDE_SHEETS
-				#ifdef VERBOSE
-					printf("Finished reading helix file, now moving on to sheets...\n");
-				#endif // VERBOSE
+#ifdef INCLUDE_SHEETS
 
-				vector<GeometricShape*> sheets;
+#ifdef VERBOSE
+			printf("Finished reading helix file, now moving on to sheets...\n");
+#endif // VERBOSE
 
-				//ReadSheetFile(sheetFile, helixes);
-				ReadSheetFile(sheetFile, sheets);
+			vector<GeometricShape*> sheets;
 
-				#ifdef VERBOSE
-					printf("Finished reading sheet file.\n");
-				#endif // VERBOSE
+			//ReadSheetFile(sheetFile, helixes);
+			ReadSheetFile(sheetFile, sheets);
 
-			#endif // INCLUDE_SHEETS
+#ifdef VERBOSE
+			printf("Finished reading sheet file.\n");
+#endif // VERBOSE
+
+#endif // INCLUDE_SHEETS
 				
 			Point3 point, pointScaled;
 
 
-			//if(TRANSLATE_VOLUMETRIC_COORDINATES) {
-			//	xOffset = vol->getSizeX() / 2.0;
-			//	yOffset = vol->getSizeY() / 2.0;
-			//	zOffset = vol->getSizeZ() / 2.0;
-			//}
 
 			// Finding all points inside of the helixes.
-
 			for(int x = 0; x < vol->getSizeX(); x++) {
 				point[0] = vol->getOriginX() + x * vol->getSpacingX();
 				for(int y = 0; y < vol->getSizeY(); y++) {
@@ -278,7 +275,6 @@ namespace wustl_mm {
 			//cout << "min sheet size = " << MINIMUM_SHEET_SIZE << ", num skeleton sheets = " << numSkeletonSheets << ", num SSEs = " << (int)helixes.size() << endl;
 
 			vector<vector<double>> sheetDistance(numSkeletonSheets+1, vector<double> ((int)sheets.size()) );
-			//vector<vector<double>> sheetDistance(numSkeletonSheets+1, vector<double> ((int)helixes.size()) );
 
 			// for each sheet
 			for (int i = 1; i <= numSkeletonSheets; i++) { 
@@ -296,12 +292,9 @@ namespace wustl_mm {
 
 								// measure distance to every SSE sheet, add to running total
 								for(int j = 0; j < (int)sheets.size(); j++) {
-								//for(int j = 0; j < (int)helixes.size(); j++) {
 									// find plates on skeleton that are associated with sheets
 									if(sheets[j]->geometricShapeType == GRAPHEDGE_SHEET) {
-									//if(helixes[j]->geometricShapeType == GRAPHEDGE_SHEET) {
 										sheetDistance[i][j] += sheets[j]->MinimumDistanceToPoint(point);
-										//sheetDistance[i][j] += helixes[j]->MinimumDistanceToPoint(point);
 									}
 								}
 							}
@@ -311,7 +304,6 @@ namespace wustl_mm {
 				cout << "num voxels on sheet " << i << " = " << count << endl;
 				// divide running total by number of sheet voxels to give average shortest distance
 				for(int j = 0; j < (int)sheets.size(); j++) {
-				//for(int j = 0; j < (int)helixes.size(); j++) {
 					sheetDistance[i][j] /= (double) count;
 				}
 			}
@@ -320,7 +312,6 @@ namespace wustl_mm {
 			for (int i = 1; i <= numSkeletonSheets; i++) { 
 				cout << "skeleton sheet " << i << ": ";
 				for(int j = 0; j < (int)sheets.size(); j++) {
-				//for(int j = 0; j < (int)helixes.size(); j++) {
 					cout << sheetDistance[i][j] << " - ";
 				}
 				cout << endl;
@@ -335,9 +326,7 @@ namespace wustl_mm {
 			for (int i = 1; i <= numSkeletonSheets; i++) { 
 				double minDist = MAXIMUM_DISTANCE_SHEET_SKELETON;
 				for (int j = 0; j < (int)sheets.size(); j++) { 
-				//for (int j = 0; j < (int)helixes.size(); j++) { 
 					if (sheets[j]->geometricShapeType == GRAPHEDGE_SHEET && sheetDistance[i][j] < minDist) {
-					//if (helixes[j]->geometricShapeType == GRAPHEDGE_SHEET && sheetDistance[i][j] < minDist) {
 						minDist = sheetDistance[i][j];
 						sseSheetMapping[i] = j;
 					}
@@ -347,11 +336,8 @@ namespace wustl_mm {
 
 			// Add all sheets from sheet data structures to helixes list
 			for (int i = 1; i <= numSkeletonSheets; i++) { 
-			//for (int i = 0; i < (int)sheets.size(); i++) {
 				cout << "checking sheet " << i << " which maps to " << sseSheetMapping[i] << endl;
 				if (sseSheetMapping[i] != -1) {
-					//int nextHelixElement = (int)helixes.size();
-					//helixes[nextHelixElement] = sheets[sseSheetMapping[i]];
 					helixes.push_back(sheets[sseSheetMapping[i]]);
 					cout << "added sheet " << i << " as element " << helixes.size()-1 << " of helixes vector" << endl;
 					helixesMapping[i] = helixes.size() - 1;
@@ -371,14 +357,10 @@ namespace wustl_mm {
 						// for voxels that are assigned to some sheet
 						if (skeletonSheetNum > 0) {
 							int sseSheetNum = helixesMapping[skeletonSheetNum];
-							//int sseSheetNum = sseSheetMapping[skeletonSheetNum];
-							//cout << "skeletonSheetNum is " << skeletonSheetNum << ", sseSheetNum is " << sseSheetNum << endl;
 							if (sseSheetNum != -1) {
 								// associate this voxel with this sheet
 								paintedVol->setDataAt(x, y, z, sseSheetNum+1);
-								//cout << " setting value of thsi point to " << sseSheetNum+1 << endl;
 								// add this point as as internal cell of the helix
-								//sheets[sseSheetNum]->AddInternalCell(Point3Int(x, y, z, 0));
 								helixes[sseSheetNum]->AddInternalCell(Point3Int(x, y, z, 0));
 							}
 						}
@@ -403,15 +385,9 @@ namespace wustl_mm {
 				skeletonSheets.push_back(singleSheet);
 			}
 
-			#ifdef VERBOSE
+#ifdef VERBOSE
 			printf("Finished finding points inside helices and sheets.\n");
-			#endif // VERBOSE
-
-			// prune skeleton to eliminate sheets that were not matched to the sheet file above
-			//VolumeSkeletonizer * skeletonizer = new VolumeSkeletonizer(0,0,0,DEFAULT_SKELETON_DIRECTION_RADIUS);
-			//Volume * outputVol = skeletonizer->GetJuSurfaceSkeleton(vol, paintedVol, MAXINT);
-			//vol = outputVol;
-			//delete skeletonizer;
+#endif // VERBOSE
 
 			int numH = 0;
 			int numS = 0;
@@ -444,11 +420,6 @@ namespace wustl_mm {
 
 					// length of this helix
 					float length = helixes[i]->length;
-					//float length = helixes[i]->internalCells.size(); //Old Method
-					if (SMIPAPER_MODE == 1) {
-						cout << "SMI mode: setting length to be the number of internal cells." << endl;
-						length = helixes[i]->internalCells.size(); //Old Method
-					}
 
 					// populate adjacency matrix
 					// no cost to go from a helix end back to itself
@@ -479,9 +450,7 @@ namespace wustl_mm {
 			cout << "adding sheet sizes as sheet node costs" << endl;
 			for (int s = 0; s < skeletonSheets.size(); s++) {
 				int sseSheetNum = helixesMapping[s];
-				//int sseSheetNum = sseSheetMapping[s];
 				cout << "node " << s << " corresponds to sheet " << helixesMapping[s] << endl;
-				//cout << "node " << s << " corresponds to sheet " << sseSheetMapping[s] << endl;
 				if (sseSheetNum != -1) {
 					int sheetSize = skeletonSheets[s]->getNonZeroVoxelCount();
 					int sheetNode = numH + sseSheetNum + 1; // each helix takes two nodes
@@ -494,9 +463,9 @@ namespace wustl_mm {
 				cout << "cost of node " << i << " is " << graph->nodeWeights[i] << endl;
 			}
 
-			#ifdef VERBOSE
-				printf("Finished creating connectivity graph.\n");
-			#endif // VERBOSE
+#ifdef VERBOSE
+			printf("Finished creating connectivity graph.\n");
+#endif // VERBOSE
 
 			// populate graph->skeletonHelixes with list of helices and sheets
 			for(int i = 0; i < (int)helixes.size(); i++) {
@@ -508,20 +477,19 @@ namespace wustl_mm {
 			for(int i = 0; i < (int)helixes.size(); i++) {
 				// for every entry and exit point of that helix/sheet
 				for(int j = 0; j < (int)helixes[i]->cornerCells.size(); j++) {
-					//cout << "Finding paths starting from sheet or helix " << i << " corner " << j << endl;
 					// find all the paths from the entry/exit point to every other helix.
 					// results are stored in vol and paintedVol and as graph edges.
-					FindSizes2(i, j, helixes, vol, paintedVol, graph);
+					FindSizes(i, j, helixes, vol, paintedVol, graph);
 				}
 			}
 			
-			#ifdef VERBOSE
-				printf("Finished running FindSizes2.\n");
-			#endif // VERBOSE
+#ifdef VERBOSE
+			printf("Finished running FindSizes2.\n");
+#endif // VERBOSE
 
-			#ifdef VERBOSE
-				printf("Finished creating a list of helices and sheets.\n");
-			#endif // VERBOSE
+#ifdef VERBOSE
+			printf("Finished creating a list of helices and sheets.\n");
+#endif // VERBOSE
 
 			// save results to graph->skeletonVolume
 			graph->skeletonVolume = vol;
@@ -530,91 +498,37 @@ namespace wustl_mm {
 			// save skeleton sheet volume to graph->skeletonSheetVolume
 			graph->skeletonSheetVolume = sheetClusters;
 
-			/*
-
-			printf("Before saving\n");
-			// save skeleton sheet volume vector to graph->skeletonSheets
-			for(int i = 0; i < (int)skeletonSheets.size(); i++) {
-				graph->skeletonSheets.push_back(skeletonSheets[i]);
-			}
-			printf("After saving\n");
-
-			cout << "Before creating mesh from sheet." << endl;
-			for(int i = 0; i < (int)skeletonSheets.size(); i++) {
-				NonManifoldMesh_NoTags * tempMesh = new NonManifoldMesh_NoTags(skeletonSheets[i]);
-				graph->skeletonSheetMeshes.push_back(tempMesh);
-			}
-			cout << "After creating meshes from sheets and storing them to graph->skeletonSheetMeshes." << endl;
-
-			cout << "!_!_!_!_!_!_!_!_!_! Before deleting sheets, skeletonSheets has size " << skeletonSheets.size() << " !_!_!_!_!_!_!_!_!_!_!_!_!" << endl;
-			// save skeleton sheet volume vector to graph->skeletonSheets
-			while ((int)skeletonSheets.size() > 1) {
-				delete skeletonSheets[1];
-				skeletonSheets.erase(skeletonSheets.begin() + 1);
-				graph->skeletonSheets.erase(graph->skeletonSheets.begin() + 1);
-			}
-			cout << "!_!_!_!_!_!_!_!_!_! After deleting sheets, skeletonSheets has size " << skeletonSheets.size() << " !_!_!_!_!_!_!_!_!_!_!_!_!" << endl;
-			*/
-			// save skeleton sheet volume vector to graph->skeletonSheets
-
 			// erase extra volumes
 			while ((int)skeletonSheets.size() > 1) {
 				delete skeletonSheets[1];
 				skeletonSheets.erase(skeletonSheets.begin() + 1);
 			}
 
-			/*
-			// save correspondences between skeleton sheets and SSE sheets to graph->skeletonSheetCorrespondence
-			for (int i = 0; i < (int)helixesMapping.size(); i++) {
-			//for (int i = 0; i < (int)sseSheetMapping.size(); i++) {
-				graph->skeletonSheetCorrespondence[i] = helixesMapping[i];
-				//graph->skeletonSheetCorrespondence[i] = sseSheetMapping[i];
-			}
-			*/
-
-			#ifdef VERBOSE
-				printf("Graph saved to object.\n");
-			#endif // VERBOSE
+#ifdef VERBOSE
+			printf("Graph saved to object.\n");
+#endif // VERBOSE
 
 			// measure Euclidian distance between all pairs of nodes and add edges between those nodes that are
 			// closer than EUCLIDIAN_DISTANCE_THRESHOLD
 			graph->GenerateEuclidianMatrix(vol);
-			// TODO: Add Euclidian paths to graph
 
-
-
-			#ifdef VERBOSE
-				printf("Euclidian matrix generated.\n");
-			#endif // VERBOSE
+#ifdef VERBOSE
+			printf("Euclidian matrix generated.\n");
+#endif // VERBOSE
 			
-			// traverse the volume to find paths from each helix corner to every other helix along the volume
-			// result is used for visualization only -- does not affect the graph topology
-			// no longer necessary -- paths are added as part of FindSizes2 method
-			//FindPaths(graph);
+#ifdef VERBOSE
+			printf("Merging pairs of sheets that are close to each other.\n");
+#endif // VERBOSE
 
-			#ifdef VERBOSE
-				printf("Finished finding paths from each helix corner to every other helix. Done.\n");
-			#endif // VERBOSE
+			graph->MergeSheets(SHEET_MERGE_THRESHOLD);
 
-			#ifdef VERBOSE
-				printf("Merging pairs of sheets that are close to each other.\n");
-			#endif // VERBOSE
-
-				graph->MergeSheets(SHEET_MERGE_THRESHOLD);
-
-			#ifdef VERBOSE
-				printf("Done merging pairs of sheets.\n");
-			#endif // VERBOSE
+#ifdef VERBOSE
+			printf("Done merging pairs of sheets.\n");
+#endif // VERBOSE
 
 
 			return graph;
 		}
-
-
-
-
-
-
 
 		Volume* SkeletonReader::getSheetsNoThreshold( Volume * vol, int minSize ) {
 			int i, j, k ;
@@ -729,12 +643,8 @@ namespace wustl_mm {
 				}
 			}
 
-			//return ( cn >= 3 ) ;
 			return ( cn >= 1 ) ;
 		}
-
-
-
 
 		// finds all the corner cells in a sheet
 		// corner cells are cells that are inside the sheet but have more than one neighbor on the skeleton that lies outside the sheet
@@ -777,15 +687,15 @@ namespace wustl_mm {
 						helixes[sheetId]->cornerCells.push_back(helixes[sheetId]->internalCells[i]);	
 						//helixes[sheetId]->cornerCells[helixes[sheetId]->cornerCells.size()-1].node = 1;
 						helixes[sheetId]->cornerCells[helixes[sheetId]->cornerCells.size()-1].node = helixes[sheetId]->cornerCells.size();
-						#ifdef VERBOSE
-							cout << "Sheet corner cell found at sheet " << sheetId << " node " << i << ", corner " << helixes[sheetId]->cornerCells.size() << ", coordinates (" << helixes[sheetId]->internalCells[i].x << "," << helixes[sheetId]->internalCells[i].y << "," << helixes[sheetId]->internalCells[i].z << "), outsideCounter = " << outsideCounter << endl;
-						#endif // VERBOSE
+#ifdef VERBOSE
+						cout << "Sheet corner cell found at sheet " << sheetId << " node " << i << ", corner " << helixes[sheetId]->cornerCells.size() << ", coordinates (" << helixes[sheetId]->internalCells[i].x << "," << helixes[sheetId]->internalCells[i].y << "," << helixes[sheetId]->internalCells[i].z << "), outsideCounter = " << outsideCounter << endl;
+#endif // VERBOSE
 					}
 				}
 			}
-			#ifdef VERBOSE
-				cout << "Done finding corner cells for sheet " << sheetId << ". " << helixes[sheetId]->cornerCells.size() << " corner cells.  " << helixes[sheetId]->internalCells.size() << " internal cells." << endl;
-			#endif // VERBOSE
+#ifdef VERBOSE
+			cout << "Done finding corner cells for sheet " << sheetId << ". " << helixes[sheetId]->cornerCells.size() << " corner cells.  " << helixes[sheetId]->internalCells.size() << " internal cells." << endl;
+#endif // VERBOSE
 			//assert(helixes[sheetId]->cornerCells.size() >= 2);
 			helixes[sheetId]->length = (float)helixes[sheetId]->internalCells.size();
 		}
@@ -920,156 +830,14 @@ namespace wustl_mm {
 		// all other helices/sheets by flooding outward along the skeleton volume
 		// stores the resulting loops in the graph object using graph->SetCost and graph->SetType
 		void SkeletonReader::FindSizes(int startHelix, int startCell, vector<GeometricShape*> & helixList, Volume * vol, Volume * coloredVol, StandardGraph * graph) {
-			//cout << "-- FindSizes called on corner " << startCell << " of helix/sheet " << startHelix << " of " << helixList.size() << endl;
-			vector<Point3Int *> oldStack;
-			vector<Point3Int *> newStack;
-			int currentHelix;
-
-			// calculate starting point, in unscaled voxel coords
-			Point3Int * startPoint = new Point3Int(helixList[startHelix]->cornerCells[startCell].x, helixList[startHelix]->cornerCells[startCell].y, helixList[startHelix]->cornerCells[startCell].z, 0);
-
-			// add to list of voxels to be explored
-			oldStack.push_back(startPoint);
-
-			Point3Int * currentPoint; //CurrentPoint
-			Point3 cPt, nPt;
-			int x, y, z, xx, yy, zz;
-
-			// helper array for finding one of 26 neighbors of a voxel
-			int d[26][3];
-			d[0][0] = 0;		d[0][1] = 0;		d[0][2] = -1;
-			d[1][0] = 0;		d[1][1] = 0;		d[1][2] = 1;
-			d[2][0] = 0;		d[2][1] = -1;		d[2][2] = 0;
-			d[3][0] = 0;		d[3][1] = -1;		d[3][2] = -1;
-			d[4][0] = 0;		d[4][1] = -1;		d[4][2] = 1;
-			d[5][0] = 0;		d[5][1] = 1;		d[5][2] = 0;
-			d[6][0] = 0;		d[6][1] = 1;		d[6][2] = -1;
-			d[7][0] = 0;		d[7][1] = 1;		d[7][2] = 1;
-			d[8][0] = -1;		d[8][1] = 0;		d[8][2] = 0;
-			d[9][0] = -1;		d[9][1] = 0;		d[9][2] = -1;
-			d[10][0] = -1;		d[10][1] = 0;		d[10][2] = 1;
-			d[11][0] = -1;		d[11][1] = -1;		d[11][2] = 0;
-			d[12][0] = -1;		d[12][1] = -1;		d[12][2] = -1;
-			d[13][0] = -1;		d[13][1] = -1;		d[13][2] = 1;
-			d[14][0] = -1;		d[14][1] = 1;		d[14][2] = 0;
-			d[15][0] = -1;		d[15][1] = 1;		d[15][2] = -1;
-			d[16][0] = -1;		d[16][1] = 1;		d[16][2] = 1;
-			d[17][0] = 1;		d[17][1] = 0;		d[17][2] = 0;
-			d[18][0] = 1;		d[18][1] = 0;		d[18][2] = -1;
-			d[19][0] = 1;		d[19][1] = 0;		d[19][2] = 1;
-			d[20][0] = 1;		d[20][1] = -1;		d[20][2] = 0;
-			d[21][0] = 1;		d[21][1] = -1;		d[21][2] = -1;
-			d[22][0] = 1;		d[22][1] = -1;		d[22][2] = 1;
-			d[23][0] = 1;		d[23][1] = 1;		d[23][2] = 0;
-			d[24][0] = 1;		d[24][1] = 1;		d[24][2] = -1;
-			d[25][0] = 1;		d[25][1] = 1;		d[25][2] = 1;
-
-			// mark all voxels as unvisited
-			Volume * visited = new Volume(vol->getSizeX(), vol->getSizeY(), vol->getSizeZ());
-
-			bool expand;
-
-			// while the previous iteration ended with more voxels to expand
-			while(oldStack.size() > 0) {
-				// oldStack is list of points from previous iteration
-				// newStack is list of points found so far in this iteration
-				newStack.clear();
-				for(int i = 0; i < (int)oldStack.size(); i++) {
-					currentPoint = oldStack[i];
-					cPt = Point3(currentPoint->x * vol->getSpacingX(), currentPoint->y * vol->getSpacingY(), currentPoint->z * vol->getSpacingZ());
-					expand = true;
-					xx = currentPoint->x;	
-					yy = currentPoint->y;	
-					zz = currentPoint->z;
-					currentHelix = Round(coloredVol->getDataAt(xx,yy,zz)) - 1;
-					// mark this point as visited
-					visited->setDataAt(xx, yy, zz, 1);
-
-					// if the current point is inside some helix/sheet other than the start helix/sheet
-					if((currentHelix >= 0) && (currentHelix != startHelix)) {
-						int n1, n2;
-						// n1 is the graph index of start helix/sheet in helixList. 
-						// n2 is the graph index of currentPoint, which is some other helix/sheet.
-						n1 = GetGraphIndex(helixList, startHelix, startCell);
-						n2 = GetGraphIndex(helixList, currentHelix, currentPoint);
-						cout << "found edge of length " << currentPoint->distance << " between nodes " << n1 << " and " << n2 << endl;
-						if( (n1 >= 0) && (n2 >= 0) && (currentPoint->distance < graph->GetCost(n1, n2)) ) {
-							// store the distance to the currentPoint as the cost of going from the start helix/sheet to the currentPoint helix/sheet
-							//cout << "cost from " << n1 << "(sse" << startHelix << "cnr" << startCell <<") to " << n2 << "(sse" << currentHelix << ") = " << graph->GetCost(n1, n2) << ". changing to " << currentPoint->distance << endl;
-							//cout << " adding edge of length " << currentPoint->distance << " between nodes " << n1 << " and " << n2 << endl;
-							graph->SetCost(n1, n2, currentPoint->distance);
-							// this is a loop type
-							graph->SetType(n1, n2, GRAPHEDGE_LOOP);
-							// save the same info for the reverse direction
-							graph->SetCost(n2, n1, currentPoint->distance);
-							graph->SetType(n2, n1, GRAPHEDGE_LOOP);
-						}
-						// stop expanding, since some other helix/sheet has been found
-						expand = false;
-					}
-
-					// if no other helix/sheet has been found yet, keep expanding
-					if(expand) {
-						// for each of 26 neighbors
-						for(int j = 0; j < 26; j++) {
-							// get coords of this neighbor point
-							x = currentPoint->x+d[j][0];	
-							y = currentPoint->y+d[j][1];	
-							z = currentPoint->z+d[j][2];
-							// scale coords to volume space 
-							nPt = Point3(x * vol->getSpacingX(), y * vol->getSpacingY(), z * vol->getSpacingZ());
-
-							// if neighbor point is inside the volume
-							if((x >= 0) && (x < vol->getSizeX()) && (y >=0) && (y < vol->getSizeY()) && (z >= 0) && (z < vol->getSizeZ())) {
-								// if all these conditions met:
-								//    this point not yet visited
-								//    volume at this point has value at least 0.001
-								//    this point is not inside the start helix or on the start sheet
-								if((visited->getDataAt(x, y, z) <= 0.001) && (vol->getDataAt(x, y, z) > 0.001) &&
-									(Round(coloredVol->getDataAt(x, y, z)) - 1 != startHelix)) {
-									// add this point to newStack with distance = | cPt - nPt |
-									// the distance is the length of the vector from the cPt voxel to this neighbor nPt
-									//newStack.push_back(new Point3Int(x, y, z, currentPoint->distance + (cPt - nPt).length()));
-									if (SMIPAPER_MODE == 1) {
-										// length is simply the number of voxels
-										newStack.push_back(new Point3Int(x, y, z, currentPoint->distance + 1));
-									} else {
-										// length is the actual distance traveled along the path
-										newStack.push_back(new Point3Int(x, y, z, currentPoint->distance + (cPt - nPt).length()));
-									}
-									// mark this point as visited
-									visited->setDataAt(x, y, z, 1.0);
-
-								}
-							}
-						}
-					}
-					delete currentPoint;
-				}
-				oldStack.clear();
-				oldStack = newStack;
-				newStack.clear();
-			}
-			delete visited;
-		}
-
-
-		// finds the loops from the helix/sheet corner given by helixList[startHelix]->cornerCells[startCell] to 
-		// all other helices/sheets by flooding outward along the skeleton volume
-		// stores the resulting loops in the graph object using graph->SetCost and graph->SetType
-		// stores the resulting paths in ???
-		void SkeletonReader::FindSizes2(int startHelix, int startCell, vector<GeometricShape*> & helixList, Volume * vol, Volume * coloredVol, StandardGraph * graph) {
-			//cout << "-- FindSizes2 called on corner " << startCell << " of helix/sheet " << startHelix << " of " << helixList.size() << endl;
 			vector<Point3Int *> oldStack;
 			vector<Point3Int *> newStack;
 			int currentHelix;
 
 			// create arrays to store paint color (paintVol) and a path direction indicator (backVol) for each voxel in maskVol
-			//int * paintVol = new int[coloredVol->getSizeX() * coloredVol->getSizeY() * coloredVol->getSizeZ()];
 			int * backVol = new int[coloredVol->getSizeX() * coloredVol->getSizeY() * coloredVol->getSizeZ()];
 			// initialize to -1
 			for(int i = 0; i < coloredVol->getSizeX() * coloredVol->getSizeY() * coloredVol->getSizeZ(); i++) {
-			//	paintVol[i] = -1;
 				backVol[i] = -1;
 			}
 			int newIx;
@@ -1122,7 +890,6 @@ namespace wustl_mm {
 			Volume * visited = new Volume(vol->getSizeX(), vol->getSizeY(), vol->getSizeZ());
 
 			int helixCount = graph->GetHelixCount();
-			//cout << "helix count is " << helixCount << endl;
 
 			bool expand;
 
@@ -1153,7 +920,6 @@ namespace wustl_mm {
 						n1 = GetGraphIndex(helixList, startHelix, startCell);
 						n2 = GetGraphIndex(helixList, currentHelix, currentPoint);
 						bool found = false;
-						//cout << "found edge of length " << currentPoint->distance << " between nodes " << n1 << " and " << n2 << endl;
 						if (SMIPAPER_MODE == 1) {
 							if( (n1 >= 0) && (n2 >= 0) ) { 
 								// store the distance to the currentPoint as the cost of going from the start helix/sheet to the currentPoint helix/sheet
@@ -1182,11 +948,9 @@ namespace wustl_mm {
 						// and allows them to cross sheets.
 						if( (currentHelix < helixCount) ) {
 							// stop expanding, since some other helix has been found
-							//cout << "NO MORE expansion from node " << n2 << " (started at " << n1 << "). At (" << xx << "," << yy << "," << zz << ")" << endl;
 							expand = false;
 						} else {
 							// keep expanding, since a sheet was found, and paths are allowed to cross sheets
-							//cout << "allowing further expansion from node " << n2 << " (started at " << n1 << "). At (" << xx << "," << yy << "," << zz << ")" << endl;
 							expand = true;
 						}
 
@@ -1196,38 +960,22 @@ namespace wustl_mm {
 						// if a path was found above, retrace it using info from backVol and store the path in graph->paths
 						Vector3DInt currentPos = Vector3DInt(xx, yy, zz); // update the current position 
 						if(found) {	
-							//cout << "path found. length=" << currentPoint->distance << ". retracing path from node " << n1 << " to node " << n2 << "." << endl;
 							// store endPosition to path vector
 							graph->paths[n2-1][n1-1].clear();
 							graph->paths[n2-1][n1-1].push_back(currentPos);
 							graph->paths[n1-1][n2-1].clear();
 							// store opposite direction path
 							graph->paths[n1-1][n2-1].insert(graph->paths[n1-1][n2-1].begin(),currentPos);
-							//graph->paths[n2-1][n1-1].push_back(currentPos);
 							while(!backFound) {
-								//newIx == xx * 96 * 96 + yy * 96 + zz;
-								//newIx = currentPos.XInt() * 96 * 96 + currentPos.YInt() * 96 + currentPos.ZInt();
 								newIx = coloredVol->getIndex(currentPos.XInt(), currentPos.YInt(), currentPos.ZInt());
-								//newIx = coloredVol->getIndex(xx, yy, xx);
-								//cout << "coloredVol size: " << coloredVol->getSizeX() << "x" << coloredVol->getSizeY() << "x" << coloredVol->getSizeZ() << ". coords are " << currentPos.XInt() << "," << currentPos.YInt() << "," << currentPos.ZInt() << ", newIx is " << newIx << ", and backVol here is " << backVol[newIx] << endl;
 								backFound = (backVol[newIx] < 0);
 								if(!backFound) {
 									// move in the direction indicated by backVol for this point, to retrace path found above
-									//cout << "origin not found yet. moving by " << D26[backVol[newIx]][0] << "," << D26[backVol[newIx]][1] << "," << D26[backVol[newIx]][2] << endl;
 									currentPos = currentPos + Vector3DInt(d[backVol[newIx]][0], d[backVol[newIx]][1], d[backVol[newIx]][2]);
-		
-									// add random offset to x,y,z coords for display purposes
-									//double offsetMax = 0.1;
-									//double offset = offsetMax/2.0 - ((double)rand() * offsetMax) / (double)RAND_MAX;
-									//Vector3DInt currentPosPerturbed = Vector3DInt(currentPos.X() + offset, currentPos.Y() + offset, currentPos.Z() + offset); // update the current position 
-
 									// add the next point to the path
 									graph->paths[n2-1][n1-1].push_back(currentPos);
-									//graph->paths[n2-1][n1-1].push_back(currentPosPerturbed);
 									// store in opposite direction path as well
 									graph->paths[n1-1][n2-1].insert(graph->paths[n1-1][n2-1].begin(),currentPos);
-									//graph->paths[n1-1][n2-1].insert(graph->paths[n1-1][n2-1].begin(),currentPosPerturbed);
-
 								}
 							}
 						}
@@ -1239,16 +987,9 @@ namespace wustl_mm {
 						// for each of 26 neighbors
 						for(int j = 0; j < 26; j++) {
 							// get coords of this neighbor point
-							
-							//x = currentPoint->x+D26[j][0]; // worked
-							//y = currentPoint->y+D26[j][1]; // worked
-							//z = currentPoint->z+D26[j][2]; // worked
 							x = currentPoint->x+d[j][0];	
 							y = currentPoint->y+d[j][1];	
 							z = currentPoint->z+d[j][2];
-							//x = currentPoint->x+d[j][0];	
-							//y = currentPoint->y+d[j][1];	
-							//z = currentPoint->z+d[j][2];
 							// scale coords to volume space 
 							nPt = Point3(x * vol->getSpacingX(), y * vol->getSpacingY(), z * vol->getSpacingZ());
 
@@ -1263,25 +1004,12 @@ namespace wustl_mm {
 									(Round(coloredVol->getDataAt(x, y, z)) - 1 != startHelix)) {
 									// add this point to newStack with distance = | cPt - nPt |
 									// the distance is the length of the vector from the cPt voxel to this neighbor nPt
-									//newStack.push_back(new Point3Int(x, y, z, currentPoint->distance + (cPt - nPt).length()));
-									if (SMIPAPER_MODE == 1) {
-										// length is simply the number of voxels
-										newStack.push_back(new Point3Int(x, y, z, currentPoint->distance + 1));
-									} else {
-										// length is the actual distance traveled along the path
-										newStack.push_back(new Point3Int(x, y, z, currentPoint->distance + (cPt - nPt).length()));
-									}
+									newStack.push_back(new Point3Int(x, y, z, currentPoint->distance + (cPt - nPt).length()));
 									// mark this point as visited
 									visited->setDataAt(x, y, z, 1.0);
-
 									// Look up array index in backVol
 									newIx = coloredVol->getIndex(x,y,z);
-									//backVol[newIx] = BACK26[j];
 									backVol[newIx] = back[j];
-									//cout << "coloredVol size: " << coloredVol->getSizeX() << "x" << coloredVol->getSizeY() << "x" << coloredVol->getSizeZ() << endl;
-									//cout << "coords are " << x << "," << y << "," << z << ". setting backVol[" << newIx << "] to " << BACK26[j] << endl;
-
-
 								}
 							}
 						}
@@ -1292,19 +1020,6 @@ namespace wustl_mm {
 				oldStack = newStack;
 				newStack.clear();
 			}
-
-			/*cout << "listing all paths:" << endl;
-			for (int s = 1; s <= graph->GetNodeCount(); s++) {
-				for (int t = 1; t <= graph->GetNodeCount(); t++) {
-					if (graph->paths[s][t].size() > 0) {
-						cout << "Found path between node " << s << " and node " << t << ". length = " << graph->paths[s][t].size() << endl;
-					}
-				}
-			}*/
-
-
-
-
 			delete visited;
 			delete backVol;
 		}
@@ -1317,9 +1032,9 @@ namespace wustl_mm {
 			Point3Int pt = Point3Int(0,0,0,0);
 			vector<Vector3DInt> node;
 
-			#ifdef VERBOSE
-				printf("Storing helix endpoints.\n");
-			#endif // VERBOSE
+#ifdef VERBOSE
+			printf("Storing helix endpoints.\n");
+#endif // VERBOSE
 			
 			// find all graph nodes
 			for(unsigned int i = 0; i < graph->skeletonHelixes.size(); i++) {
@@ -1348,9 +1063,9 @@ namespace wustl_mm {
 
 			Volume * maskVol = new Volume(graph->skeletonVolume->getSizeX(), graph->skeletonVolume->getSizeY(), graph->skeletonVolume->getSizeZ(), 0, 0, 0, graph->skeletonVolume);
 
-			#ifdef VERBOSE
-				printf("Finding all paths through helices.\n");
-			#endif // VERBOSE
+#ifdef VERBOSE
+			printf("Finding all paths through helices.\n");
+#endif // VERBOSE
 			
 			// add all paths through helices, from (odd) start index to (even) end index
 			for(unsigned int i = 0; i < nodes.size(); i+=2) {
@@ -1359,9 +1074,9 @@ namespace wustl_mm {
 				}
 			}
 
-			#ifdef VERBOSE
-				printf("Finding all paths between helices.\n");
-			#endif // VERBOSE
+#ifdef VERBOSE
+			printf("Finding all paths between helices.\n");
+#endif // VERBOSE
 			// for every pair of endpoints i!=j, add a path, if this path is not already defined
 			for(unsigned int i = 0; i < nodes.size()-1; i++) {
 				for(unsigned int j = i+1; j < nodes.size(); j++) {
@@ -1374,9 +1089,9 @@ namespace wustl_mm {
 
 			cout << "after adding all paths, maskVol has " << maskVol->getNonZeroVoxelCount() << " nonzero voxels" << endl;
 
-			#ifdef VERBOSE
-				printf("Done finding all paths between helices.\n");
-			#endif // VERBOSE
+#ifdef VERBOSE
+			printf("Done finding all paths between helices.\n");
+#endif // VERBOSE
 
 			delete maskVol;
 		}
@@ -1397,14 +1112,10 @@ namespace wustl_mm {
 
 			for (int s = 0; s < nodes[startIx].size(); s++) {
 				for (int t = 0; t < nodes[endIx].size(); t++) {
-
 					// start with empty queue
 					positions = queue<Vector3DInt>();
-
 					Vector3DInt currentPos = nodes[startIx][s], newPos, endPos = nodes[endIx][t];			
-
 					positions.push(currentPos);
-
 					// create arrays to store paint color (paintVol) and a path direction indicator (backVol) for each voxel in maskVol
 					int * paintVol = new int[maskVol->getSizeX() * maskVol->getSizeY() * maskVol->getSizeZ()];
 					int * backVol = new int[maskVol->getSizeX() * maskVol->getSizeY() * maskVol->getSizeZ()];
@@ -1415,7 +1126,6 @@ namespace wustl_mm {
 					}
 					// paint start point
 					paintVol[maskVol->getIndex(currentPos.X(), currentPos.Y(), currentPos.Z())] = 0;
-
 					// local vars for while loop
 					bool found = false;
 					int currVal, newIx;
@@ -1480,24 +1190,6 @@ namespace wustl_mm {
 							}
 						}
 					}
-					/* comment out this section for now, TODO: fix later
-					if(eraseMask) {
-						// for each voxel along the path found above
-						for(int i = 1; i < (int)graph->paths[startIx][endIx].size()-1; i++) {
-							currentPos = graph->paths[startIx][endIx][i];
-							Point3 pt = Point3(currentPos.X(), currentPos.Y(), currentPos.Z());
-							// if this voxel is inside either the start helix or the end helix for this path
-							if(graph->skeletonHelixes[(int)startIx/2]->IsInsideShape(pt) || 
-									graph->skeletonHelixes[(int)endIx/2]->IsInsideShape(pt)) {
-								// erase the voxel from maskVol
-								cout << " - setting to zero point (" << currentPos.X() << "," << currentPos.Y() << "," << currentPos.Y() << "), formerly = " << maskVol->getDataAt(currentPos.X(), currentPos.Y(), currentPos.Z() ) << endl;
-								maskVol->setDataAt(currentPos.X(), currentPos.Y(), currentPos.Z(), 0.0);
-
-							}
-						}
-					}
-					*/
-					
 					delete [] paintVol;
 					delete [] backVol;
 
@@ -1512,7 +1204,6 @@ namespace wustl_mm {
 			}
 
 			if(eraseMask) {
-				// TODO: Fix for sheets
 				// for each voxel along the path found above
 				for(int i = 1; i < (int)graph->paths[startIx][endIx].size()-1; i++) {
 					Vector3DInt currentPos = graph->paths[startIx][endIx][i];
@@ -1521,17 +1212,11 @@ namespace wustl_mm {
 					if(graph->skeletonHelixes[(int)startIx/2]->IsInsideShape(pt) || 
 							graph->skeletonHelixes[(int)endIx/2]->IsInsideShape(pt)) {
 						// erase the voxel from maskVol
-						//cout << " - setting to zero point (" << currentPos.X() << "," << currentPos.Y() << "," << currentPos.Y() << "), formerly = " << maskVol->getDataAt(currentPos.X(), currentPos.Y(), currentPos.Z() ) << endl;
 						maskVol->setDataAt(currentPos.X(), currentPos.Y(), currentPos.Z(), 0.0);
-
 					}
 				}
 			}
-
-
 		}
-
-
 		inline int Round(double number) {
 			return (int)(number + 0.5);
 		}
