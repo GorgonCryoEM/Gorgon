@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.13.2.17  2009/12/20 18:24:39  schuhs
+//   Removing old, commented out code
+//
 //   Revision 1.13.2.16  2009/12/20 18:20:30  schuhs
 //   Removing old commented out code and surrounding console messages with ifdef VERBOSE blocks
 //
@@ -79,9 +82,8 @@
 #include <SkeletonMaker/volume.h>
 #include <MathTools/Vector3D.h>
 #include <SkeletonMaker/volume.h>
-#include <ProteinMorph/NonManifoldMesh.h>
 using namespace std;
-using namespace wustl_mm::Protein_Morph;
+using namespace wustl_mm::SkeletonMaker;
 
 namespace wustl_mm {
 	namespace GraphMatch {
@@ -111,7 +113,6 @@ namespace wustl_mm {
 			bool EdgeExists(int n, int m);
 			void MergeSheets(double maxDist); // Merge all sheets separated by maxDist or less
 		public:
-			// indexed by graph nodes:
 			double adjacencyMatrix[MAX_NODES][MAX_NODES][2]; // 0th dimension edge type... 1st dimension distance
 			double nodeWeights[MAX_NODES];
 			double euclideanMatrix[MAX_NODES][MAX_NODES];
@@ -294,12 +295,14 @@ namespace wustl_mm {
 					if(adjacencyMatrix[i][j][1] == MAXINT) {
 						printf(" %c         \t|", temp);
 					} else {
+						//printf(" %c %d\t|", temp, (int)(adjacencyMatrix[i][j][1] + 0.5));
 						printf(" %c %f\t|", temp, adjacencyMatrix[i][j][1]);
 					}
 				}
 				printf("\n");
 			}
-			
+
+#ifdef VERBOSE
 			// print out the euclidean matrix
 			printf("\n  Euclidean distances:\n");
 			for(int i = 0; i < nodeCount; i++) {
@@ -314,9 +317,9 @@ namespace wustl_mm {
 				}
 				printf("\n");
 			}
+#endif
 
-
-
+#ifdef VERBOSE
 			// print out the node weights
 			bool hasWeightedNodes = false;
 			for(int i = 0; i < nodeCount; i++) {
@@ -340,6 +343,7 @@ namespace wustl_mm {
 					printf("\n");
 				}
 			}
+#endif
 			printf("Graph Density %f%%,   (With Euclidean edges %f%%)\n", used * 100 / (nodeCount * nodeCount), (used + euclideanUsed) * 100 / (nodeCount * nodeCount));
 		}
 
