@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.13.2.15  2009/11/05 17:33:12  schuhs
+//   Print out Euclidian matrix along with the adjacency matrix, and report the structure lenghts as a number of residues, not in angstroms
+//
 //   Revision 1.13.2.14  2009/10/08 21:49:51  schuhs
 //   Storing paths in both directions
 //
@@ -138,26 +141,6 @@ namespace wustl_mm {
 
 			skeletonHelixes.clear();
 
-			/*
-			cout << "~StandardGraph starting to delete " << (int)skeletonSheets.size() << " sheets "  << endl;
-			for(i = 1; i < (int)skeletonSheets.size(); i++) { // start at index 1 since 0 is same as skeletonSheetVolume
-				cout << "~StandardGraph deleting sheet " << i << endl;
-				delete skeletonSheets[i];
-			}
-			cout << "~StandardGraph done deleting sheets" << endl;
-			skeletonSheets.clear();
-			*/
-
-			/*
-			cout << "~StandardGraph starting to delete " << (int)skeletonSheetMeshes.size() << " sheet meshes"  << endl;
-			for(i = 0; i < (int)skeletonSheetMeshes.size(); i++) { 
-				cout << "~StandardGraph deleting sheet " << i << endl;
-				delete skeletonSheetMeshes[i];
-			}
-			cout << "~StandardGraph done deleting sheet meshes" << endl;
-			skeletonSheetMeshes.clear();
-			*/
-
 			if(skeletonVolume != NULL) {
 				delete skeletonVolume;
 			}
@@ -228,7 +211,6 @@ namespace wustl_mm {
 				}
 			}
 			return (count/2);
-			//return helixCount;
 		}
 
 		int StandardGraph::GetSheetCount() {
@@ -239,7 +221,6 @@ namespace wustl_mm {
 				}
 			}
 			return count;
-			//return sheetCount;
 		}
 
 		void StandardGraph::SetType(int i, int j, int type) {
@@ -268,13 +249,9 @@ namespace wustl_mm {
 			for(int i = 0; i < (int)pdbStructures.size(); i++) {
 				if(pdbStructures[i]->secondaryStructureType == GRAPHEDGE_HELIX) {
 					printf("\tHelix %d \t\t(%2d,%2d)\t Length: %d \t Start Pos: %d \t End Pos: %d\n", pdbStructures[i]->serialNumber, seqNode, seqNode+1, pdbStructures[i]->GetLengthResidues(), pdbStructures[i]->startPosition, pdbStructures[i]->endPosition);
-					//printf("\tHelix %d \t\t(%2d,%2d)\t Length: %d \t Start Pos: %d \t End Pos: %d\n", pdbStructures[i]->serialNumber, seqNode, seqNode+1, pdbStructures[i]->GetLengthBonds(), pdbStructures[i]->startPosition, pdbStructures[i]->endPosition);
-					//printf("\tHelix %d \t\t(%2d,%2d)\t Length: %f \t Start Pos: %d \t End Pos: %d\n", pdbStructures[i]->serialNumber, seqNode, seqNode+1, pdbStructures[i]->GetLengthAngstroms(), pdbStructures[i]->startPosition, pdbStructures[i]->endPosition);
 					seqNode += 2;
 				} else {
 					printf("\tSheet Strand %s-%d \t(%2d)   \t Length: %d \t Start Pos: %d \t End Pos: %d\n", pdbStructures[i]->secondaryStructureID, pdbStructures[i]->serialNumber, seqNode, pdbStructures[i]->GetLengthResidues(), pdbStructures[i]->startPosition, pdbStructures[i]->endPosition);
-					//printf("\tSheet Strand %s-%d \t(%2d)   \t Length: %d \t Start Pos: %d \t End Pos: %d\n", pdbStructures[i]->secondaryStructureID, pdbStructures[i]->serialNumber, seqNode, pdbStructures[i]->GetLengthBonds(), pdbStructures[i]->startPosition, pdbStructures[i]->endPosition);
-					//printf("\tSheet Strand %s-%d \t(%2d)   \t Length: %f \t Start Pos: %d \t End Pos: %d\n", pdbStructures[i]->secondaryStructureID, pdbStructures[i]->serialNumber, seqNode, pdbStructures[i]->GetLengthAngstroms(), pdbStructures[i]->startPosition, pdbStructures[i]->endPosition);
 					seqNode += 1;
 				}
 			}
@@ -317,33 +294,11 @@ namespace wustl_mm {
 
 					} else {
 						temp = ' ';
-						/*
-						if (adjacencyMatrix[i][j][0] == -1) {
-							temp = '-';
-						} else if (adjacencyMatrix[i][j][0] == 0) {
-							temp = '0';
-						} else if (adjacencyMatrix[i][j][0] == 1) {
-							temp = '1';
-						} else if (adjacencyMatrix[i][j][0] == 2) {
-							temp = '2';
-						} else if (adjacencyMatrix[i][j][0] == 3) {
-							temp = '3';
-						} else if (adjacencyMatrix[i][j][0] == 4) {
-							temp = '4';
-						} else if (adjacencyMatrix[i][j][0] == 5) {
-							temp = '5';
-						} else if (adjacencyMatrix[i][j][0] == 6) {
-							temp = '6';
-						} else if (adjacencyMatrix[i][j][0] == 7) {
-							temp = '7';
-						}
-						*/
 					}
 
 					if(adjacencyMatrix[i][j][1] == MAXINT) {
 						printf(" %c         \t|", temp);
 					} else {
-						//printf(" %c %d\t|", temp, (int)(adjacencyMatrix[i][j][1] + 0.5));
 						printf(" %c %f\t|", temp, adjacencyMatrix[i][j][1]);
 					}
 				}
@@ -390,7 +345,6 @@ namespace wustl_mm {
 					printf("\n");
 				}
 			}
-			// 
 			printf("Graph Density %f%%,   (With Euclidean edges %f%%)\n", used * 100 / (nodeCount * nodeCount), (used + euclideanUsed) * 100 / (nodeCount * nodeCount));
 		}
 
@@ -478,12 +432,7 @@ namespace wustl_mm {
 							}
 							
 							// measure distance between corner s of node i and corner t of node j
-							if (SMIPAPER_MODE == 1) {
-								dist = sqrt(pow( (double)(iLoc.x - jLoc.x), 2) + pow( (double)(iLoc.y - jLoc.y), 2) + pow( (double)(iLoc.z - jLoc.z), 2));
-							} else {
-								dist = sqrt(pow(xSpacing * (double)(iLoc.x - jLoc.x), 2) + pow(ySpacing *(double)(iLoc.y - jLoc.y), 2) + pow(zSpacing *(double)(iLoc.z - jLoc.z), 2));
-							}
-							//dist = sqrt(pow(xSpacing * (double)(iLoc.x - jLoc.x), 2) + pow(ySpacing *(double)(iLoc.y - jLoc.y), 2) + pow(zSpacing *(double)(iLoc.z - jLoc.z), 2));
+							dist = sqrt(pow(xSpacing * (double)(iLoc.x - jLoc.x), 2) + pow(ySpacing *(double)(iLoc.y - jLoc.y), 2) + pow(zSpacing *(double)(iLoc.z - jLoc.z), 2));
 
 							// if this distance is closer than the smallest found previously, save it
 							if (dist < minDist) {
@@ -491,7 +440,6 @@ namespace wustl_mm {
 								iBestLoc = iLoc;
 								jBestLoc = jLoc;
 							}
-							//cout << "distance. i=" << i << ",j=" << j << ",s=" << s << ",t=" << t << ", dist= " << dist << ", minDist=" << minDist << endl;
 						}
 					}
 					// store the distance between the points corresponding to nodes i and j in euclidianMatrix
@@ -507,8 +455,6 @@ namespace wustl_mm {
 
 						Vector3DInt iVec = Vector3DInt(iBestLoc.x, iBestLoc.y, iBestLoc.z);
 						Vector3DInt jVec = Vector3DInt(jBestLoc.x, jBestLoc.y, jBestLoc.z);
-						//Vector3DInt iVec = Vector3DInt(iLoc.x, iLoc.y, iLoc.z);
-						//Vector3DInt jVec = Vector3DInt(jLoc.x, jLoc.y, jLoc.z);
 						paths[i][j].clear();
 						paths[j][i].clear();
 						paths[j][i].push_back(jVec);
@@ -516,25 +462,23 @@ namespace wustl_mm {
 						// add reverse direction path
 						paths[i][j].push_back(iVec);
 						paths[i][j].push_back(jVec);
-						//paths[j][i].push_back(iVec);
-						//paths[j][i].push_back(jVec);
-						//cout << "after adding Euclidian path from " << i << " to " << j << ", paths vector has size " << paths[i][j].size() << endl;
-						//cout << "after adding Euclidian path from " << j << " to " << j << ", paths vector has size " << paths[j][i].size() << endl;
 					}
-					//printf("%f \t", euclideanMatrix[i][j]);
 				}
-				//printf("\n");
 			}
 		}
 
 		// Merge all sheets separated by maxDist or less
 		void StandardGraph::MergeSheets(double maxDist) { 
+#ifdef VERBOSE
 			cout << "=== graph before merging sheets ===" << endl;
 			PrintGraph();
 			cout << "=== ===" << endl;
+#endif
 			int firstSheet = GetHelixCount();
 			int numSheets = GetSheetCount();
+#ifdef VERBOSE
 			cout << "beginning merge with " << firstSheet << " helices and " << numSheets << " sheets. maxDist = " << maxDist << ". size of helixes vector is " << skeletonHelixes.size() << endl;
+#endif
 			bool repeat = true;
 			while (repeat) {
 				repeat = false;
@@ -542,70 +486,48 @@ namespace wustl_mm {
 					for (int j = skeletonHelixes.size()-1; j > i; j--) {
 						int nodei = i + firstSheet;
 						int nodej = j + firstSheet;
+#ifdef VERBOSE
 						cout << "starting iteration with " << numSheets << " sheets." << endl;
 						cout << "dist between sheets " << i << " and " << j << " is " << adjacencyMatrix[nodei][nodej][1] << endl;
+#endif
 						if ( (adjacencyMatrix[nodei][nodej][1] < maxDist) || (skeletonHelixes[i] == skeletonHelixes[j]) ) {
+#ifdef VERBOSE
 							cout << "merging sheet " << j << " (node " << nodej << ") into sheet " << i << " (node " << nodei << ")" << endl;
+#endif
 
 							// modify skeletonHelixes vector
 							if (skeletonHelixes[i] != skeletonHelixes[j]) {
-								//cout << "not the same sheet structure. merging two structures." << endl;
 								// internal cells
-								//cout << "before: sheet " << i << " has " << skeletonHelixes[i]->internalCells.size() << " internal cells." << endl;
-								//cout << "before: sheet " << j << " has " << skeletonHelixes[j]->internalCells.size() << " internal cells." << endl;
 								int internalCellCount = (int)skeletonHelixes[j]->internalCells.size();
 								for (int k = 0; k < internalCellCount; k++){
-									//skeletonHelixes[i]->AddInternalCell(skeletonHelixes[j]->internalCells[k]);
 									skeletonHelixes[i]->internalCells.push_back(skeletonHelixes[j]->internalCells[k]);
 								}
-								//cout << "after: sheet " << i << " has " << skeletonHelixes[i]->internalCells.size() << " internal cells." << endl;
 								
-								// cornerCells
-								//cout << "before: sheet " << i << " has " << skeletonHelixes[i]->cornerCells.size() << " corner cells." << endl;
-								//cout << "before: sheet " << j << " has " << skeletonHelixes[j]->cornerCells.size() << " corner cells." << endl;
 								for (int k = 0; k < skeletonHelixes[j]->cornerCells.size(); k++){
 									skeletonHelixes[i]->cornerCells.push_back(skeletonHelixes[j]->cornerCells[k]);
 								}
-								//cout << "after: sheet " << i << " has " << skeletonHelixes[i]->cornerCells.size() << " corner cells." << endl;
 								
 								// polygonPoints
-								//cout << "before: sheet " << i << " has " << skeletonHelixes[i]->polygonPoints.size() << " polygon points." << endl;
-								//cout << "before: sheet " << j << " has " << skeletonHelixes[j]->polygonPoints.size() << " polygon points." << endl;
 								for (int k = 0; k < skeletonHelixes[j]->polygonPoints.size(); k++){
 									skeletonHelixes[i]->polygonPoints.push_back(skeletonHelixes[j]->polygonPoints[k]);
 								}
-								//cout << "after: sheet " << i << " has " << skeletonHelixes[i]->polygonPoints.size() << " polygon points." << endl;
 								
 								// polygons
-								//cout << "before: sheet " << i << " has " << skeletonHelixes[i]->polygons.size() << " polygons." << endl;
-								//cout << "before: sheet " << j << " has " << skeletonHelixes[j]->polygons.size() << " polygons." << endl;
 								for (int k = 0; k < skeletonHelixes[j]->polygons.size(); k++){
 									skeletonHelixes[i]->polygons.push_back(skeletonHelixes[j]->polygons[k]);
 								}
-								//cout << "after: sheet " << i << " has " << skeletonHelixes[i]->polygons.size() << " polygons." << endl;
 
 								// length
-								//cout << "before: sheet " << i << " has length " << skeletonHelixes[i]->length << endl;
-								//cout << "before: sheet " << j << " has length " << skeletonHelixes[j]->length << endl;
 								skeletonHelixes[i]->length += skeletonHelixes[j]->length;
-								//cout << "after: sheet " << i << " has length " << skeletonHelixes[i]->length << endl;
 
 								// cleanup
-								//cout << "deleting element " << j << " of skeletonHelixes" << endl;
 								delete skeletonHelixes[j];
-							} else {
-								//cout << "both point to exactly the same sheet structure. not modifying that structure." << endl;
 							}
 
-							cout << "before cleanup, skeletonHelixes has size " << skeletonHelixes.size() << endl;
-							//for (int k = j; k < numSheets-1; k++) {
-							//cout << "j=" << j << ", firstSheet+numSheets=" << firstSheet + numSheets << endl;
 							for (int k = j; k < firstSheet + numSheets - 1; k++) {
 								skeletonHelixes[k] = skeletonHelixes[k+1];
-								//cout << "moving skeletonHelixes[" << k+1 << "] to [" << k << "]" << endl;
 							}
 							skeletonHelixes.pop_back();
-							cout << "after cleanup, skeletonHelixes has size " << skeletonHelixes.size() << endl;
 
 
 							// adjacency matrix
@@ -626,7 +548,6 @@ namespace wustl_mm {
 									// modify paths vectors
 									paths[k][nodei] = paths[k][nodej];
 									paths[nodei][k] = paths[nodej][k];
-									//paths[nodei][k] = paths[k][nodej];
 								}
 								// if no edge at i and loop or euclidean loop at j, overwrite i
 								if ( (itype == GRAPHEDGE_OTHER) && ( ( jtype == GRAPHEDGE_LOOP) || (jtype == GRAPHEDGE_LOOP_EUCLIDEAN) ) ) {
@@ -644,7 +565,6 @@ namespace wustl_mm {
 									adjacencyMatrix[k][nodei][1] = adjacencyMatrix[k][nodej][1];
 									adjacencyMatrix[nodei][k][1] = adjacencyMatrix[k][nodej][1];
 									paths[k][nodei] = paths[k][nodej];
-									// TODO fix path indexing: problem with the order
 									paths[nodei][k] = paths[nodej][k];
 								}
 
@@ -664,46 +584,38 @@ namespace wustl_mm {
 
 
 							// shift all rows > j up, then shift all columns > nodej to the left
-							//cout << "shifting rows > " << nodej << " up" << endl;
 							for (int k = nodej; k <= lastRowColumn; k++) {
-								//cout << "column k=" << k << endl;
 								for (int m = 0; m <= lastRowColumn; m++) {
 									adjacencyMatrix[k][m][0] = adjacencyMatrix[k+1][m][0];
 									adjacencyMatrix[k][m][1] = adjacencyMatrix[k+1][m][1];
 									adjacencyMatrix[k][m][2] = adjacencyMatrix[k+1][m][2];
 									euclideanMatrix[k][m] = euclideanMatrix[k+1][m];
 									paths[k][m] = paths[k+1][m];
-									//cout << "replacing adjacencyMatrix[" << k << "][" << m << "][1] with ["  << k+1 << "][" << m << "][1]." << endl;
 								}
 							}
 							
-							//cout << "shifting columns > " << nodej << " to the left" << endl;
 							for (int k = nodej; k <= lastRowColumn; k++) {
-								//cout << "row k=" << k << endl;
 								for (int m = 0; m < firstSheet*2 + numSheets + 1; m++) {
 									adjacencyMatrix[m][k][0] = adjacencyMatrix[m][k+1][0];
 									adjacencyMatrix[m][k][1] = adjacencyMatrix[m][k+1][1];
 									adjacencyMatrix[m][k][2] = adjacencyMatrix[m][k+1][2];
 									euclideanMatrix[m][k] = euclideanMatrix[m][k+1];
 									paths[m][k] = paths[m][k+1];
-									//cout << "replacing adjacencyMatrix[" << m << "][" << k << "][1] with ["  << m << "][" << k+1 << "][1]." << endl;
 								}
 							}
-							//cout << "removing last row (" << lastRowColumn << ")" << endl;
+							// remove last row
 							for (int m = 0; m <= lastRowColumn; m++) {
 								adjacencyMatrix[lastRowColumn][m][0] = 3;
 								adjacencyMatrix[lastRowColumn][m][1] = MAXINT;
 								adjacencyMatrix[lastRowColumn][m][2] = 0;
 								euclideanMatrix[lastRowColumn][m] = 0;
-								//paths[lastRowColumn][m] = ? ; how to clear a path?
 							}
-							//cout << "removing last column (" << lastRowColumn << ")" << endl;
+							// remove last column 
 							for (int m = 0; m <= lastRowColumn; m++) {
 								adjacencyMatrix[m][lastRowColumn][0] = 3;
 								adjacencyMatrix[m][lastRowColumn][1] = MAXINT;
 								adjacencyMatrix[m][lastRowColumn][2] = 0;
 								euclideanMatrix[m][lastRowColumn] = 0;
-								//paths[m][lastRowColumn] = ?; how to clear a path?
 							}
 
 							// modify nodeWeights vector
@@ -720,10 +632,11 @@ namespace wustl_mm {
 					}
 				}
 			}
+#ifdef VERBOSE
 			cout << "=== graph after merging sheets ===" << endl;
 			PrintGraph();
 			cout << "=== ===" << endl;
-
+#endif
 		}
 	}
 }
