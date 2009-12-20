@@ -15,6 +15,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.15.2.31  2009/12/20 22:15:22  schuhs
+//   Reduce compiler warnings
+//
 //   Revision 1.15.2.30  2009/11/25 18:09:58  schuhs
 //   Remove old comments
 //
@@ -288,10 +291,8 @@ namespace wustl_mm {
 			cout << "missing helix penalty is " << MISSING_HELIX_PENALTY << ", missing sheet penalty is " << MISSING_SHEET_PENALTY << endl;
 
 			if(!PERFORMANCE_COMPARISON_MODE) {
-				//if (SMIPAPER_MODE == 1) {
-					NormalizeGraphs();
-					NormalizeSheets();
-				//}
+				NormalizeGraphs();
+				NormalizeSheets();
 			}
 			foundCount = 0;
 			longestMatch = 0;
@@ -566,27 +567,21 @@ namespace wustl_mm {
 					!( ((int)(patternGraph->adjacencyMatrix[d-1][d][0] + 0.01) == GRAPHEDGE_LOOP) && ((int)(baseGraph->adjacencyMatrix[qj-1][qp-1][0] +0.01) == GRAPHNODE_SHEET)) ) 	{ // not a loop-sheet match
 					return -1;
 				}		
-				if (SMIPAPER_MODE == 1) {
-					if((qj != -1) && (baseGraph->euclideanMatrix[qj-1][qp-1] > (patternGraph->adjacencyMatrix[d-1][d][1] * EUCLIDEAN_VOXEL_TO_PDB_RATIO ))){
+				if (debugMsg) { cout << "  -- euclidean dist = " << baseGraph->euclideanMatrix[qj-1][qp-1] << ", patternLength = " << patternLength << ", loop fudge factor = " << EUCLIDEAN_VOXEL_TO_PDB_RATIO / LOOP_C_ALPHA_TO_ANGSTROMS << ", helix fudge factor = " << EUCLIDEAN_VOXEL_TO_PDB_RATIO / HELIX_C_ALPHA_TO_ANGSTROMS << endl; }
+				if (debugMsg) { cout << "  -- scalar ratio required = " << baseGraph->euclideanMatrix[qj-1][qp-1] / patternLength << ", additive headroom = " << baseGraph->euclideanMatrix[qj-1][qp-1] - patternLength << endl; }
+
+				if((qj != -1) && ((int)(patternGraph->adjacencyMatrix[d-1][d][0] + 0.01) == GRAPHEDGE_HELIX) && (baseGraph->euclideanMatrix[qj-1][qp-1] > (patternLength * EUCLIDEAN_VOXEL_TO_PDB_RATIO / HELIX_C_ALPHA_TO_ANGSTROMS )) ){					
+					if (debugMsg) { cout << "  -- -- -- NOT ALLOWED (HELIX) -- -- -- " << endl; }
+					return -1;
+				} else 
+				if((qj != -1) && ((int)(patternGraph->adjacencyMatrix[d-1][d][0] + 0.01) == GRAPHEDGE_LOOP)) {
+					if (((int)(patternGraph->adjacencyMatrix[d-1][d-1][0] + 0.01) == GRAPHNODE_SHEET || (int)(patternGraph->adjacencyMatrix[d][d][0] + 0.01) == GRAPHNODE_SHEET) && (baseGraph->euclideanMatrix[qj-1][qp-1] > (patternLength * 1.0 * EUCLIDEAN_VOXEL_TO_PDB_RATIO / LOOP_C_ALPHA_TO_ANGSTROMS )) ){					
+						if (debugMsg) { cout << "  -- -- -- NOT ALLOWED (LOOP WITH STRAND) -- -- -- " << endl; }		
 						return -1;
 					}
-				} else {
-					if (debugMsg) { cout << "  -- euclidean dist = " << baseGraph->euclideanMatrix[qj-1][qp-1] << ", patternLength = " << patternLength << ", loop fudge factor = " << EUCLIDEAN_VOXEL_TO_PDB_RATIO / LOOP_C_ALPHA_TO_ANGSTROMS << ", helix fudge factor = " << EUCLIDEAN_VOXEL_TO_PDB_RATIO / HELIX_C_ALPHA_TO_ANGSTROMS << endl; }
-					if (debugMsg) { cout << "  -- scalar ratio required = " << baseGraph->euclideanMatrix[qj-1][qp-1] / patternLength << ", additive headroom = " << baseGraph->euclideanMatrix[qj-1][qp-1] - patternLength << endl; }
-
-					if((qj != -1) && ((int)(patternGraph->adjacencyMatrix[d-1][d][0] + 0.01) == GRAPHEDGE_HELIX) && (baseGraph->euclideanMatrix[qj-1][qp-1] > (patternLength * EUCLIDEAN_VOXEL_TO_PDB_RATIO / HELIX_C_ALPHA_TO_ANGSTROMS )) ){					
-						if (debugMsg) { cout << "  -- -- -- NOT ALLOWED (HELIX) -- -- -- " << endl; }
+					if (((int)(patternGraph->adjacencyMatrix[d-1][d-1][0] + 0.01) != GRAPHNODE_SHEET && (int)(patternGraph->adjacencyMatrix[d][d][0] + 0.01) != GRAPHNODE_SHEET) && (baseGraph->euclideanMatrix[qj-1][qp-1] > (patternLength * EUCLIDEAN_VOXEL_TO_PDB_RATIO / LOOP_C_ALPHA_TO_ANGSTROMS )) ){					
+						if (debugMsg) { cout << "  -- -- -- NOT ALLOWED (LOOP) -- -- -- " << endl; }		
 						return -1;
-					} else 
-					if((qj != -1) && ((int)(patternGraph->adjacencyMatrix[d-1][d][0] + 0.01) == GRAPHEDGE_LOOP)) {
-						if (((int)(patternGraph->adjacencyMatrix[d-1][d-1][0] + 0.01) == GRAPHNODE_SHEET || (int)(patternGraph->adjacencyMatrix[d][d][0] + 0.01) == GRAPHNODE_SHEET) && (baseGraph->euclideanMatrix[qj-1][qp-1] > (patternLength * 1.0 * EUCLIDEAN_VOXEL_TO_PDB_RATIO / LOOP_C_ALPHA_TO_ANGSTROMS )) ){					
-							if (debugMsg) { cout << "  -- -- -- NOT ALLOWED (LOOP WITH STRAND) -- -- -- " << endl; }		
-							return -1;
-						}
-						if (((int)(patternGraph->adjacencyMatrix[d-1][d-1][0] + 0.01) != GRAPHNODE_SHEET && (int)(patternGraph->adjacencyMatrix[d][d][0] + 0.01) != GRAPHNODE_SHEET) && (baseGraph->euclideanMatrix[qj-1][qp-1] > (patternLength * EUCLIDEAN_VOXEL_TO_PDB_RATIO / LOOP_C_ALPHA_TO_ANGSTROMS )) ){					
-							if (debugMsg) { cout << "  -- -- -- NOT ALLOWED (LOOP) -- -- -- " << endl; }		
-							return -1;
-						}
 					}
 				}
 			} else { // a skip edge
@@ -598,14 +593,8 @@ namespace wustl_mm {
 					return -1;
 				}
 				// check here to sum up the parts of the skip edge and compare to the euclidian distance, if it's a euclidian edge in the base graph
-				if(SMIPAPER_MODE == 1) {
-					if( (qj != -1) && (baseGraph->euclideanMatrix[qj-1][qp-1] > (patternLength * EUCLIDEAN_VOXEL_TO_PDB_RATIO) ) ){
-						return -1;
-					}
-				} else {
-					if((qj != -1) && (baseGraph->euclideanMatrix[qj-1][qp-1] > (patternLength * EUCLIDEAN_VOXEL_TO_PDB_RATIO ))){
-						return -1;
-					}
+				if((qj != -1) && (baseGraph->euclideanMatrix[qj-1][qp-1] > (patternLength * EUCLIDEAN_VOXEL_TO_PDB_RATIO ))){
+					return -1;
 				}
 			}
 
@@ -987,71 +976,32 @@ namespace wustl_mm {
 
 		void WongMatch15ConstrainedNoFuture::NormalizeGraphs() {
 			printf("Normalizing Graphs\n");
-			if (SMIPAPER_MODE == 1) {
 
-			#ifdef VERBOSE
-				printf("\tNormalizing the base graph based on helix length ratio\nNormalized Graph:\n");
-			#endif
-				// TODO: Also normalize the sheet capacity here?
-				double ratio = 0;
 
-				for(int i = 0; i < (int)baseGraph->skeletonHelixes.size(); i++) {
-					if (SMIPAPER_MODE == 1) {
-						ratio += (double)baseGraph->skeletonHelixes[i]->length / HELIX_C_ALPHA_TO_ANGSTROMS / (double)baseGraph->adjacencyMatrix[i*2][i*2+1][1];
-						printf("\tRatio for helix %i of length %f is %f\n", i, (double)baseGraph->skeletonHelixes[i]->length / HELIX_C_ALPHA_TO_ANGSTROMS, (double)baseGraph->skeletonHelixes[i]->length / (double)baseGraph->adjacencyMatrix[i*2][i*2+1][1]);
+#ifdef VERBOSE
+			printf("\tNormalizing the base graph from Angstroms to amino acids\nNormalized Graph:\n");
+#endif
+			for(int i = 0; i < baseGraph->nodeCount; i++) {
+				for(int j = 0; j < baseGraph->nodeCount; j++) {
+					// base graph
+					if(baseGraph->adjacencyMatrix[i][j][1] != MAXINT && baseGraph->adjacencyMatrix[i][j][0] == GRAPHEDGE_HELIX) {
+						baseGraph->SetCost(i+1,j+1, baseGraph->adjacencyMatrix[i][j][1] / HELIX_C_ALPHA_TO_ANGSTROMS);
+					} else if(baseGraph->adjacencyMatrix[i][j][1] != MAXINT) {
+						baseGraph->SetCost(i+1,j+1, baseGraph->adjacencyMatrix[i][j][1] / LOOP_C_ALPHA_TO_ANGSTROMS);
+					}
+					// euclidean distance matrix
+					if(baseGraph->adjacencyMatrix[i][j][0] == GRAPHEDGE_HELIX) {
+						baseGraph->euclideanMatrix[i][j] = baseGraph->euclideanMatrix[i][j] / HELIX_C_ALPHA_TO_ANGSTROMS;
 					} else {
-						ratio += (double)baseGraph->skeletonHelixes[i]->length / (double)baseGraph->adjacencyMatrix[i*2][i*2+1][1];
+						baseGraph->euclideanMatrix[i][j] = baseGraph->euclideanMatrix[i][j] / LOOP_C_ALPHA_TO_ANGSTROMS;
 					}
 				}
-				ratio = ratio / (double)baseGraph->skeletonHelixes.size();
-
-			#ifdef VERBOSE
-				printf("\tRatio is %f\n", ratio);
-			#endif
+			}	
 
 
-				for(int i = 0; i < baseGraph->nodeCount; i++) {
-					for(int j = 0; j < baseGraph->nodeCount; j++) {
-						if(baseGraph->adjacencyMatrix[i][j][1] != MAXINT) {
-							baseGraph->SetCost(i+1,j+1, baseGraph->adjacencyMatrix[i][j][1] * ratio);
-						}
-					}
-				}	
-				/*
-				for(int i = 0; i < patternGraph->nodeCount; i++) {
-					if(patternGraph->nodeWeights[i] != MAXINT) {
-						patternGraph->nodeWeights[i] *= ratio;
-					}
-				}
-				*/
-			} else {
-
-
-			#ifdef VERBOSE
-				printf("\tNormalizing the base graph from Angstroms to amino acids\nNormalized Graph:\n");
-			#endif
-				for(int i = 0; i < baseGraph->nodeCount; i++) {
-					for(int j = 0; j < baseGraph->nodeCount; j++) {
-						// base graph
-						if(baseGraph->adjacencyMatrix[i][j][1] != MAXINT && baseGraph->adjacencyMatrix[i][j][0] == GRAPHEDGE_HELIX) {
-							baseGraph->SetCost(i+1,j+1, baseGraph->adjacencyMatrix[i][j][1] / HELIX_C_ALPHA_TO_ANGSTROMS);
-						} else if(baseGraph->adjacencyMatrix[i][j][1] != MAXINT) {
-							baseGraph->SetCost(i+1,j+1, baseGraph->adjacencyMatrix[i][j][1] / LOOP_C_ALPHA_TO_ANGSTROMS);
-						}
-						// euclidean distance matrix
-						if(baseGraph->adjacencyMatrix[i][j][0] == GRAPHEDGE_HELIX) {
-							baseGraph->euclideanMatrix[i][j] = baseGraph->euclideanMatrix[i][j] / HELIX_C_ALPHA_TO_ANGSTROMS;
-						} else {
-							baseGraph->euclideanMatrix[i][j] = baseGraph->euclideanMatrix[i][j] / LOOP_C_ALPHA_TO_ANGSTROMS;
-						}
-					}
-				}	
-			}
-
-
-		#ifdef VERBOSE
+#ifdef VERBOSE
 			baseGraph->PrintGraph();
-		#endif
+#endif
 		}
 
 
