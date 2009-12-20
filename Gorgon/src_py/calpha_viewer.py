@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.33.2.1  2009/12/09 04:54:37  schuhs
+#   Add support for rendering a third model
+#
 #   Revision 1.33  2009/04/03 19:44:37  ssa1
 #   CAlpha bug fixes
 #
@@ -134,11 +137,13 @@ class CAlphaViewer(BaseViewer):
     def __init__(self, main, parent=None):
         BaseViewer.__init__(self, main, parent)
         self.title = "C-Alpha"
+        self.shortTitle = "CAL"              
         self.app.themes.addDefaultRGB("C-Alpha:Model:0", 170, 170, 0, 255)
         self.app.themes.addDefaultRGB("C-Alpha:Model:1", 120, 120, 170, 255)
         self.app.themes.addDefaultRGB("C-Alpha:Model:2", 120, 120, 170, 255)
         self.app.themes.addDefaultRGB("C-Alpha:BoundingBox", 255, 255, 255, 255)         
         self.isClosedMesh = False
+        self.centerOnRMB = True
         self.selectEnabled = True
         self.renderer = CAlphaRenderer()          
         self.main_chain = Chain('', self.app)
@@ -192,7 +197,7 @@ class CAlphaViewer(BaseViewer):
         x = pos.x()*self.renderer.getSpacingX() + self.renderer.getOriginX()
         y = pos.y()*self.renderer.getSpacingY() + self.renderer.getOriginY()
         z = pos.z()*self.renderer.getSpacingZ() + self.renderer.getOriginZ()
-        self.app.mainCamera.setCenter( x, y, z )
+        self.app.mainCamera.setCenter( x, y, z )                
         self.emitModelChanged()
     
     def createUI(self):
@@ -247,6 +252,38 @@ class CAlphaViewer(BaseViewer):
                 CAlphaSequenceDock.changeDockVisibility(self.app, self, self.structPred, self.main_chain)
         self.connect(seqDockAct, QtCore.SIGNAL("triggered()"), showDock)
         self.app.actions.addAction("seqDock", seqDockAct)
+    
+    def loadSSEHunterData(self, fileName):
+        if(self.loaded):
+            self.unloadData()        
+        self.fileName = fileName
+        self.renderer.loadSSEHunterFile(str(fileName))
+        volumeViewer = self.app.viewers["volume"]
+        skeletonViewer = self.app.viewers["skeleton"]        
+        
+        self.dirty = False
+        self.loaded = True
+        self.emitModelLoadedPreDraw()
+        self.emitModelLoaded()
+        self.emitViewerSetCenter()        
+        
+    def runSSEHunter(self, threshold, resolution, skeletonCoefficient, correlationCoefficient, geometryCoefficient):
+        if(self.loaded):
+            self.unloadData()  
+        self.fileName = ""      
+        
+        volumeViewer = self.app.viewers["volume"]
+        skeletonViewer = self.app.viewers["skeleton"]        
+        self.renderer.getSSEHunterAtoms(volumeViewer.renderer.getVolume(), skeletonViewer.renderer.getMesh(), resolution, threshold, skeletonCoefficient, correlationCoefficient, geometryCoefficient)
+
+        
+        self.dirty = False
+        self.loaded = True
+        self.emitModelLoadedPreDraw()
+        self.emitModelLoaded()
+        self.emitViewerSetCenter()        
+       
+        
         
     def loadData(self):
         #Overwriting the function in BaseViewer        
@@ -259,10 +296,9 @@ class CAlphaViewer(BaseViewer):
             renderer = self.renderer
             for i in mychain.residueRange():
                 atom = mychain[i].getAtom('CA')
-                if atom == None:
-                    continue
-                atom = renderer.addAtom(atom)
-                mychain[i].addAtomObject(atom)
+                if atom:
+                    atom = renderer.addAtom(atom)
+                    mychain[i].addAtomObject(atom)
                
         self.fileName = QtGui.QFileDialog.getOpenFileName(self, self.tr("Open Data"), "", 
                             self.tr('Atom Positions (*.pdb)\nFASTA (*.fas *.fa *.fasta)'))
@@ -324,6 +360,11 @@ This function loads a SEQ file and creates a StructurePrediction object.
         self.app.menus.addMenu("actions-calpha", self.tr("C-&Alpha Atoms"), "actions")
         self.app.menus.addAction("showSeqDock", self.app.actions.getAction("seqDock"), "actions-calpha")           
 
+    def clearSelection(self):
+        BaseViewer.clearSelection(self)
+        self.main_chain.setSelection([], None, None, None)
+        self.emitAtomSelectionUpdated(self.main_chain.getSelection())      
+
     def processElementClick(self, *argv):
         """
 In response to a click on a C-alpha element, this updates the selected
@@ -344,8 +385,9 @@ residues in the Chain object.
             else:
                 atom = CAlphaRenderer.getAtomFromHitStack(self.renderer, hits[0], True, *hits[1:])
                 self.main_chain.setSelection([atom.getResSeq()])
+            self.emitAtomSelectionUpdated(self.main_chain.getSelection())
                 
-        if event.button() == QtCore.Qt.RightButton:
+        if event.button() == QtCore.Qt.RightButton and self.centerOnRMB:
             self.centerOnSelectedAtoms(argv[0], argv[1], argv[2], argv[3], argv[4], argv[5], argv[6])
             
     
@@ -389,3 +431,6 @@ If a C-alpha model is loaded, this enables relevent actions.
         """
         self.app.actions.getAction("save_CAlpha").setEnabled(self.loaded)
         self.app.actions.getAction("unload_CAlpha").setEnabled(self.loaded)
+        
+    def emitAtomSelectionUpdated(self, selection):
+        self.emit(QtCore.SIGNAL("atomSelectionUpdated(PyQt_PyObject)"), selection)
