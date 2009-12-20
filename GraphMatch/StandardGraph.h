@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.13.2.16  2009/12/20 18:20:30  schuhs
+//   Removing old commented out code and surrounding console messages with ifdef VERBOSE blocks
+//
 //   Revision 1.13.2.15  2009/11/05 17:33:12  schuhs
 //   Print out Euclidian matrix along with the adjacency matrix, and report the structure lenghts as a number of residues, not in angstroms
 //
@@ -113,18 +116,10 @@ namespace wustl_mm {
 			double nodeWeights[MAX_NODES];
 			double euclideanMatrix[MAX_NODES][MAX_NODES];
 			vector<Vector3DInt> paths[MAX_NODES][MAX_NODES];
-			// sequence graph only. indexed by structure number along the sequence.
-			vector<SecondaryStructure*> pdbStructures;
-			// no indexing
+			vector<SecondaryStructure*> pdbStructures; // indexed by structure number along the sequence.
 			Volume * skeletonVolume;
 			Volume * skeletonSheetVolume;
-			// skeleton graph only. indexed by structure; helices first, then sheets.
-			vector<GeometricShape*> skeletonHelixes;
-			// skeleton graph only. indexed by structure. sheets only.
-			//vector<Volume*> skeletonSheets;
-			//vector<NonManifoldMesh_NoTags*> skeletonSheetMeshes;
-			// skeleton graph only. indexing: skeletonSheetCorrespondence[i] = j. i is 
-			//int skeletonSheetCorrespondence[MAX_NODES];
+			vector<GeometricShape*> skeletonHelixes; // helices first, then sheets.
 		private:
 		};
 
