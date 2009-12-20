@@ -111,9 +111,6 @@ This creates a Chain object from a FASTA file.
 This loads the specified chain ID from a PDF file and returns a Chain 
 object. If no chain ID is specified, it loads the first chain.
     '''
-    # trying to fix problem where chain can't be read twice
-    #secelList={}
-
     #print Chain.getChainKeys()
     if qparent and qtEnabled:
         result = Chain('', qparent=qparent)
@@ -154,13 +151,10 @@ object. If no chain ID is specified, it loads the first chain.
                 result.setIDs(pdbID, firstChain)
                 
             if firstChain and chainID != firstChain:		#If we've gone past the only chain we want to store, we will break out of the for loop
-                print "breaking out of loop! (02)"
                 break
             
             residueIndex = int( line[22:26] )
-            #print "residueRange is " + str(result.residueRange) + ""
             if residueIndex not in result.residueRange():
-                #print "residue " + str(residueIndex) + " not in residueRange (" + str(result.residueRange) + ")"
                 residue = Residue( line[17:20].strip(), result ) 
                 result[residueIndex] = residue
             
@@ -170,26 +164,21 @@ object. If no chain ID is specified, it loads the first chain.
             try:
                 tempFactor  = float( line[60:66].strip() )
             except ValueError:
-                print "breaking out of loop! (03)"
                 tempFactor = None
             try:
                 occupancy   = float( line[54:60].strip() )
             except ValueError:
                 occupancy = None
-                print "breaking out of loop! (04)"
             try: 
                 x = float( line[30:38] )
                 y = float( line[38:46] )
                 z = float( line[46:54] )
                 
-                #print "adding atom"
                 atom = residue.addAtom(atomName, x,y,z, element, serialNo, occupancy, tempFactor)
-                #print "atom added"
                 #residue.atoms[atomName]=atom            
                 result.atoms[serialNo]=atom
                 #Chain.chainsDict[result.key] = result
             except ValueError:
-                print "breaking out of loop! (05)"
                 print 'Chain.__loadFromPDB--no coordinates', 
 
         elif line[0:6].strip()=='HELIX':
@@ -430,22 +419,26 @@ tuples, and strings. mychain[-1] returns the last residue of the chain.
       stop=i.stop
       if i.start is None: 
         start=1
-      elif i.start < 0:
-        #start=len(self)+i.start+1
-        start=self.__convertNegativeIndex(i.start)
+      #Sasakthi: Removed reverse indexing functionality as residues can have negative indices.
+      #elif i.start < 0:
+      #  #start=len(self)+i.start+1
+      #  start=self.__convertNegativeIndex(i.start)
 
       if i.stop is None: 
         stop=len(self)
-      elif i.stop < 0:
-        #stop=len(self)+i.stop+1
-        stop=self.__convertNegativeIndex(i.stop)
+      
+      #Sasakthi: Removed reverse indexing functionality as residues can have negative indices.
+      #elif i.stop < 0:
+      #  #stop=len(self)+i.stop+1
+      #  stop=self.__convertNegativeIndex(i.stop)
       return self.__slicehelper(start,stop)
 
     # branch for non-slices
     else:
-      if i<0:
-        i=self.__convertNegativeIndex(i)
-      #rint 'getitem(%i)' %i
+      #Sasakthi: Removed reverse indexing functionality as residues can have negative indices.
+      #if i<0:
+      #  i=self.__convertNegativeIndex(i)
+      ##rint 'getitem(%i)' %i
       return self.residueList[i]
 
   def __iter__(self):
@@ -569,7 +562,6 @@ residue.
 This adds a secel object to the chain.
     '''
     for index in range(secel.startIndex, secel.stopIndex+1):
-      #print "adding a secel at index " + str(index) + ". secelList has size " + str(len(self.secelList))
       self.secelList[index]=secel
 
   def addHelix(self, serialNo, helix):
@@ -588,7 +580,6 @@ This adds a strand object to the chain.
     else:
       self.sheets[sheetID].strandList[strandNo]=strand
     self.addSecel(strand)
-    #print "strand added: " + str(strandNo)
 
   def addSheet(self, sheetID, sheet):
     '''
@@ -596,7 +587,6 @@ This adds a sheet object to the chain.
     '''    
     if not self.sheets.has_key(sheetID):
       self.sheets[sheetID]=sheet
-    #self.addSecel(sheet)
 
   def append(self,residue):
     '''
@@ -922,7 +912,10 @@ This returns a string in the format of an SEQ file for the Chain.
             structure.append('E')
     lines.append( ''.join(structure) )
     return '\n'.join(lines)
-    
+
+  def getSequence(self):
+    startIndex = min(self.residueRange())
+    return repr(self).lstrip('.')      
 
 if __name__ == '__main__':
     mychain = Chain.load('1KPO.pdb')
