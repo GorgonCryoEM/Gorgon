@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.56.2.2  2009/12/09 04:01:08  schuhs
+#   Add support for rendering a third model
+#
 #   Revision 1.56.2.1  2009/06/09 16:35:35  schuhs
 #   Allow filename to be passed as an argument or selected from the file dialog
 #
@@ -107,6 +110,7 @@
 from PyQt4 import QtGui, QtCore, QtOpenGL
 from libpyGORGON import VolumeRenderer, Vector3DFloat
 from vector_lib import *
+from session_manager import SessionManager
 
 from OpenGL.GL import *
 from OpenGL.GLU import *
@@ -120,6 +124,7 @@ class BaseViewer(QtOpenGL.QGLWidget):
         QtOpenGL.QGLWidget.__init__(self, parent)        
         self.app = main      
         self.title = "Untitled"
+        self.shortTitle = "UNT"
         self.fileName = "";
         self.sceneIndex = -1;
         self.loaded = False
@@ -302,6 +307,19 @@ class BaseViewer(QtOpenGL.QGLWidget):
     def setViewerAutonomy(self, value):
         self.viewerAutonomous = value;
         self.updateViewerAutonomy(value)
+    
+    def getBoundingBox(self):
+        scale = [self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ()]
+        location = [self.renderer.getOriginX(), self.renderer.getOriginY(), self.renderer.getOriginZ()]
+        minPos = [(self.renderer.getMin(0)*scale[0] + location[0]), 
+                  (self.renderer.getMin(1)*scale[1] + location[1]), 
+                  (self.renderer.getMin(2)*scale[2] + location[2])]
+        maxPos = [(self.renderer.getMax(0)*scale[0] + location[0]),
+                  (self.renderer.getMax(1)*scale[1] + location[1]), 
+                  (self.renderer.getMax(2)*scale[2] + location[2])]
+        return (minPos, maxPos)        
+        
+        
 
     def getCenterAndDistance(self):
         scale = [self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ()]
@@ -379,23 +397,22 @@ class BaseViewer(QtOpenGL.QGLWidget):
         glPopAttrib()
         glPopMatrix()
             
+    def loadDataFromFile(self, fileName):
+        self.setCursor(QtCore.Qt.WaitCursor)
+        self.renderer.loadFile(str(fileName))
+        self.setScaleNoEmit(self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ())       
+        self.loaded = True
+        self.dirty = False
+        self.emitModelLoadedPreDraw()
+        self.emitModelLoaded()            
+        self.emitViewerSetCenter()
+        self.setCursor(QtCore.Qt.ArrowCursor)
+        
           
     def loadData(self):
-        fileName = str(QtGui.QFileDialog.getOpenFileName(self, self.tr("Open Data"), "", self.tr(self.renderer.getSupportedLoadFileFormats())))
-        self.loadDataFile(fileName)
-
-    def loadDataFile(self, fileName):
-        self.fileName = fileName
-        if not self.fileName == "":  
-            self.setCursor(QtCore.Qt.WaitCursor)
-            self.renderer.loadFile(str(self.fileName))
-            self.setScaleNoEmit(self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ())       
-            self.loaded = True
-            self.dirty = False
-            self.setCursor(QtCore.Qt.ArrowCursor)
-            self.emitModelLoadedPreDraw()
-            self.emitModelLoaded()            
-            self.emitViewerSetCenter()
+        self.fileName = QtGui.QFileDialog.getOpenFileName(self, self.tr("Open Data"), "", self.tr(self.renderer.getSupportedLoadFileFormats()))
+        if not self.fileName.isEmpty():  
+            self.loadDataFromFile(self.fileName)
             
     def saveData(self):
         self.fileName = QtGui.QFileDialog.getSaveFileName(self, self.tr("Save Data"), "", self.tr(self.renderer.getSupportedSaveFileFormats()))
@@ -513,6 +530,47 @@ class BaseViewer(QtOpenGL.QGLWidget):
         
     def processMouseMoveRay(self, ray, rayWidth, eye, event):
         self.emitMouseOverRay(ray, rayWidth, eye, event)
+
+    def setCenter(self, center):
+        return False
+    
+    def getSessionInfo(self, sessionManager):
+        info = []
+        info.extend(sessionManager.getRemarkLines(self.shortTitle, "FILE", self.fileName))
+        info.extend(sessionManager.getRemarkLines(self.shortTitle, "LOADED", self.loaded))
+        #info.extend(sessionManager.getRemarkLines(self.shortTitle, "SELECT_ENABLED", self.selectEnabled))
+        #info.extend(sessionManager.getRemarkLines(self.shortTitle, "MOUSE_MOVE_ENABLED", self.mouseMoveEnabled))
+        #info.extend(sessionManager.getRemarkLines(self.shortTitle, "MOUSE_MOVE_ENABLED_RAY", self.mouseMoveEnabledRay))
+        #info.extend(sessionManager.getRemarkLines(self.shortTitle, "IS_CLOSED_MESH", self.isClosedMesh))
+        #info.extend(sessionManager.getRemarkLines(self.shortTitle, "VIEWER_AUTONOMOUS", self.viewerAutonomous))        
+        info.extend(sessionManager.getRemarkLines(self.shortTitle, "DISPLAY_STYLE", self.displayStyle))
+        info.extend(sessionManager.getRemarkLines(self.shortTitle, "MODEL_VISIBLE", self.modelVisible))            
+        info.extend(sessionManager.getRemarkLines(self.shortTitle, "MODEL_2_VISIBLE", self.model2Visible))
+        info.extend(sessionManager.getRemarkLines(self.shortTitle, "ROTATION", self.rotation))
+        info.extend(sessionManager.getRemarkLines(self.shortTitle, "SHOW_BOX", self.showBox))        
+        info.extend(sessionManager.getRemarkLines(self.shortTitle, "SCALE", [self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ()]))
+        info.extend(sessionManager.getRemarkLines(self.shortTitle, "LOCATION", [self.renderer.getOriginX(), self.renderer.getOriginY(), self.renderer.getOriginZ()]))
+                            
+        return info                    
+        
+    def loadSessionInfo(self, sessionManager, sessionProperties):        
+        self.loaded = sessionManager.getProperty(sessionProperties, self.shortTitle, "LOADED")
+        if self.loaded:
+            self.fileName = sessionManager.getProperty(sessionProperties, self.shortTitle, "FILE")
+            self.loadDataFromFile(self.fileName)
+        self.displayStyle = sessionManager.getProperty(sessionProperties, self.shortTitle, "DISPLAY_STYLE")
+        self.modelVisible = sessionManager.getProperty(sessionProperties, self.shortTitle, "MODEL_VISIBLE")
+        self.model2Visible = sessionManager.getProperty(sessionProperties, self.shortTitle, "MODEL_2_VISIBLE")
+        self.rotation = sessionManager.getProperty(sessionProperties, self.shortTitle, "ROTATION")
+        self.showBox = sessionManager.getProperty(sessionProperties, self.shortTitle, "SHOW_BOX")
+        scale = sessionManager.getProperty(sessionProperties, self.shortTitle, "SCALE")
+        self.setScaleNoEmit(scale[0], scale[1], scale[2])
+        location = sessionManager.getProperty(sessionProperties, self.shortTitle, "LOCATION")
+        self.setLocation(location[0], location[1], location[2])
+
+        self.emitModelVisualizationChanged()
+        self.emitModelChanged()
+                
         
     def emitThicknessChanged(self, value):
         self.emit(QtCore.SIGNAL("thicknessChanged(int)"), value);
@@ -565,6 +623,10 @@ class BaseViewer(QtOpenGL.QGLWidget):
     
     def emitDrawingModel(self):
         self.emit(QtCore.SIGNAL("modelDrawing()"))
+
+    def emitViewerSetCenterLocal(self):
+        (center, distance) = self.getCenterAndDistance()
+        self.emit(QtCore.SIGNAL("viewerSetCenterLocal(float, float, float, float)"), center[0], center[1], center[2], distance)
     
     def emitViewerSetCenter(self):
         (center, distance) = self.getCenterAndDistance()
