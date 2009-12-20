@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.19.2.26  2009/12/20 19:06:45  schuhs
+//   Removing old, commented out code
+//
 //   Revision 1.19.2.25  2009/12/15 20:39:25  schuhs
 //   Add parameter to determine when nearby sheets are merged
 //
@@ -199,15 +202,15 @@ namespace wustl_mm {
 			// Read the volume file and load volume data structure
 			Volume * vol = (MRCReaderPicker::pick(volumeFile))->getVolume();
 			//vol->toMathematicaFile("myVolume.nb");
-			#ifdef VERBOSE
-				printf("Constructing 'paintedVol'...\n");
-			#endif
+#ifdef VERBOSE
+			printf("Constructing 'paintedVol'...\n");
+#endif
 				
 			Volume * paintedVol = new Volume(vol->getSizeX(), vol->getSizeY(), vol->getSizeZ());
 
-			#ifdef VERBOSE
-				printf("Finished reading volume file, now moving on to helixes...\n");
-			#endif
+#ifdef VERBOSE
+			printf("Finished reading volume file, now moving on to helixes...\n");
+#endif
 
 			// Read the helix file
 			vector<GeometricShape*> helixes;
@@ -271,8 +274,7 @@ namespace wustl_mm {
 
 			int numSkeletonSheets = (int) sheetClusters->getMax();
 
-			cout << "min sheet size = " << MINIMUM_SHEET_SIZE << ", num skeleton sheets = " << numSkeletonSheets << ", num SSEs = " << (int)helixes.size() + (int)sheets.size() << endl;
-			//cout << "min sheet size = " << MINIMUM_SHEET_SIZE << ", num skeleton sheets = " << numSkeletonSheets << ", num SSEs = " << (int)helixes.size() << endl;
+			//cout << "min sheet size = " << MINIMUM_SHEET_SIZE << ", num skeleton sheets = " << numSkeletonSheets << ", num SSEs = " << (int)helixes.size() + (int)sheets.size() << endl;
 
 			vector<vector<double>> sheetDistance(numSkeletonSheets+1, vector<double> ((int)sheets.size()) );
 
@@ -301,13 +303,13 @@ namespace wustl_mm {
 						}
 					}
 				}
-				cout << "num voxels on sheet " << i << " = " << count << endl;
 				// divide running total by number of sheet voxels to give average shortest distance
 				for(int j = 0; j < (int)sheets.size(); j++) {
 					sheetDistance[i][j] /= (double) count;
 				}
 			}
 
+#ifdef VERBOSE
 			cout << "min distance matrix: " << endl;
 			for (int i = 1; i <= numSkeletonSheets; i++) { 
 				cout << "skeleton sheet " << i << ": ";
@@ -316,13 +318,10 @@ namespace wustl_mm {
 				}
 				cout << endl;
 			}
-
+#endif // VERBOSE
 
 			vector<int> sseSheetMapping(numSkeletonSheets+1, -1);
 			vector<int> helixesMapping(numSkeletonSheets+1, -1);
-			cout << "sheet correspondences: " << endl;
-			cout << "max distance from sheet to skeleton = " << MAXIMUM_DISTANCE_SHEET_SKELETON << endl;
-
 			for (int i = 1; i <= numSkeletonSheets; i++) { 
 				double minDist = MAXIMUM_DISTANCE_SHEET_SKELETON;
 				for (int j = 0; j < (int)sheets.size(); j++) { 
@@ -331,15 +330,17 @@ namespace wustl_mm {
 						sseSheetMapping[i] = j;
 					}
 				}
+#ifdef VERBOSE
 				cout << "skeleton sheet " << i << " maps to SSEHunter sheet " << sseSheetMapping[i] << endl;
+#endif // VERBOSE
 			}
 
 			// Add all sheets from sheet data structures to helixes list
 			for (int i = 1; i <= numSkeletonSheets; i++) { 
-				cout << "checking sheet " << i << " which maps to " << sseSheetMapping[i] << endl;
+				//cout << "checking sheet " << i << " which maps to " << sseSheetMapping[i] << endl;
 				if (sseSheetMapping[i] != -1) {
 					helixes.push_back(sheets[sseSheetMapping[i]]);
-					cout << "added sheet " << i << " as element " << helixes.size()-1 << " of helixes vector" << endl;
+					//cout << "added sheet " << i << " as element " << helixes.size()-1 << " of helixes vector" << endl;
 					helixesMapping[i] = helixes.size() - 1;
 				}
 			}
@@ -381,7 +382,7 @@ namespace wustl_mm {
 				singleSheet->applyMask(sheetClusters,i,true);
 				singleSheet->threshold( 0.1, 0, 1 ) ;
 				int thisSheetSize = singleSheet->getNonZeroVoxelCount();
-				cout << "created sheet " << i << " with " << thisSheetSize << " voxels" << endl;
+				//cout << "created sheet " << i << " with " << thisSheetSize << " voxels" << endl;
 				skeletonSheets.push_back(singleSheet);
 			}
 
@@ -404,7 +405,7 @@ namespace wustl_mm {
 
 			// create a graph with one node per helix end point and with edges connecting nodes that
 			// are connected along the volume.
-			cout << "adding " << (int)helixes.size() << " helices and sheets to adjacency matrix" << endl;
+			//cout << "adding " << (int)helixes.size() << " helices and sheets to adjacency matrix" << endl;
 			for(unsigned int i = 0; i < (int)helixes.size(); i++) {
 				if(helixes[i]->geometricShapeType == GRAPHEDGE_HELIX) {
 					// assign node numbers for helix ends
@@ -413,9 +414,9 @@ namespace wustl_mm {
 
 					// find the two corner cells in this helix
 					helixes[i]->FindCornerCellsInHelix();
-					cout << "helix " << i << " has " << helixes[i]->cornerCells.size() << " corners." << endl;
+					//cout << "helix " << i << " has " << helixes[i]->cornerCells.size() << " corners." << endl;
 					for (int j = 0; j < helixes[i]->cornerCells.size(); j++) {
-						cout << "corner " << j << " is associated with node " << helixes[i]->cornerCells[j].node << endl;
+						//cout << "corner " << j << " is associated with node " << helixes[i]->cornerCells[j].node << endl;
 					}
 
 					// length of this helix
@@ -447,21 +448,23 @@ namespace wustl_mm {
 				}
 
 			}	
-			cout << "adding sheet sizes as sheet node costs" << endl;
+			//cout << "adding sheet sizes as sheet node costs" << endl;
 			for (int s = 0; s < skeletonSheets.size(); s++) {
 				int sseSheetNum = helixesMapping[s];
-				cout << "node " << s << " corresponds to sheet " << helixesMapping[s] << endl;
+				//cout << "node " << s << " corresponds to sheet " << helixesMapping[s] << endl;
 				if (sseSheetNum != -1) {
 					int sheetSize = skeletonSheets[s]->getNonZeroVoxelCount();
 					int sheetNode = numH + sseSheetNum + 1; // each helix takes two nodes
 					// TODO: Scale the sheet size by the geometric scale factor to make units match
 					graph->SetCost(sheetNode, sheetSize); // nonzero so it shows up as edge in StandardGraph::EdgeExists
-					cout << "adding sheet " << sseSheetNum << "(s=" << s << ") with size " << sheetSize << " as node " << sheetNode << endl;
+					//cout << "adding sheet " << sseSheetNum << "(s=" << s << ") with size " << sheetSize << " as node " << sheetNode << endl;
 				}
 			}
+#ifdef VERBOSE
 			for (int i = 0; i < graph->GetNodeCount(); i++) {
 				cout << "cost of node " << i << " is " << graph->nodeWeights[i] << endl;
 			}
+#endif // VERBOSE
 
 #ifdef VERBOSE
 			printf("Finished creating connectivity graph.\n");
@@ -530,11 +533,15 @@ namespace wustl_mm {
 			return graph;
 		}
 
+		// Returns a collection of individual sheets with minimum size minSize, created from input volume vol
+		// This is a copy of getSheets from volume.h, with the final thresholding step removed.
 		Volume* SkeletonReader::getSheetsNoThreshold( Volume * vol, int minSize ) {
 			int i, j, k ;
 
 			//Initialize volume
+#ifdef VERBOSE
 			printf("Initialize volume at %d %d %d\n",  vol->getSizeX(), vol->getSizeY(), vol->getSizeZ() ) ;
+#endif // VERBOSE
 			Volume* svol = new Volume( vol->getSizeX(), vol->getSizeY(), vol->getSizeZ() ) ;
 			
 			//Initialize cluster counters
@@ -546,7 +553,9 @@ namespace wustl_mm {
 			int totSheets = 1 ;
 
 			//Start clustering
+#ifdef VERBOSE
 			printf("Start clustering...\n" ) ;
+#endif // VERBOSE
 			int ox, oy, oz ;
 			for ( i = 0 ; i < vol->getSizeX() ; i ++ )
 				for ( j = 0 ; j < vol->getSizeY() ; j ++ )
@@ -600,7 +609,9 @@ namespace wustl_mm {
 					}
 
 			// Removing clusters less than minSize
+#ifdef VERBOSE
 			printf("Removing small clusters.\n") ;
+#endif // VERBOSE
 			for ( i = 0 ; i < vol->getSizeX() ; i ++ )
 				for ( j = 0 ; j < vol->getSizeY() ; j ++ )
 					for ( k = 0 ; k < vol->getSizeZ() ; k ++ )
@@ -611,17 +622,11 @@ namespace wustl_mm {
 							svol->setDataAt(i,j,k,-1) ;
 						}
 					}
-
-			// Finally, clean up
-			#ifdef VERBOSE
-			printf("Thresholding the volume to 0/1...\n") ;
-			#endif
-			//svol->threshold( 0.1, 0, 1 ) ;
-
 			return svol ;
 		}
 
-
+		// Returns a collection of individual sheets with minimum size minSize, created from input volume vol
+		// This is a copy of isSheet from volume.h, with the minimum number of corner nodes changed from 3 to 1.
 		int SkeletonReader::isSkeletonSheet(Volume * vol, int ox, int oy, int oz )
 		{
 			int cn = 12 ;
@@ -643,7 +648,7 @@ namespace wustl_mm {
 				}
 			}
 
-			return ( cn >= 1 ) ;
+			return ( cn >= 1 ) ; // isSheet has (ch >= 3) here
 		}
 
 		// finds all the corner cells in a sheet
