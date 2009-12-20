@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.24.2.6  2009/12/20 20:01:40  schuhs
+//   Preparing to merge with trunk: copied in changes from trunk
+//
 //   Revision 1.24.2.5  2009/12/17 03:02:31  schuhs
 //   Take offset as input when generating new sheet meshes
 //
@@ -136,6 +139,9 @@ namespace wustl_mm {
 		SSERenderer::~SSERenderer() {
 			for(unsigned int i = 0; i < helices.size(); i++) {
 				delete helices[i];				
+			}
+			for(unsigned int i = 0; i < sheets.size(); i++) {
+				delete sheets[i];				
 			}
 			if(sheetMesh != NULL) {
 				delete sheetMesh;
@@ -478,6 +484,10 @@ namespace wustl_mm {
 				delete helices[i];
 			}
 			helices.clear();
+			for(unsigned int i = 0; i < sheets.size(); i++) {
+				delete sheets[i];
+			}
+			sheets.clear();
 			if(sheetMesh != NULL) {
 				delete sheetMesh;
 			}
@@ -490,17 +500,6 @@ namespace wustl_mm {
 		}
 
 		void SSERenderer::LoadGraphSSE(int index, GeometricShape* sse, float offsetx, float offsety, float offsetz) {
-			cout << "offsets are " << offsetx << ", " << offsety << ", " << offsetz << endl;
-			/*
-			cout << "sse load command received for index " << index << endl;
-			cout << "shape stats: " << endl;
-			cout << "   type = " << sse->geometricShapeType << endl;
-			cout << "   # internal cells = " << sse->internalCells.size() << endl;
-			cout << "   # corner cells = " << sse->cornerCells.size() << endl;
-			cout << "   # polygon points = " << sse->polygonPoints.size() << endl;
-			cout << "   # polygons = " << sse->polygons.size() << endl;
-			*/
-
 			// make a volume from the internal cells
 			int xmin=MAXINT, xmax=-MAXINT, ymin=MAXINT, ymax=-MAXINT, zmin=MAXINT, zmax=-MAXINT;
 			for (int i = 0; i < sse->internalCells.size(); i++) {
