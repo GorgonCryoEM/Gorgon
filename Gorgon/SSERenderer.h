@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.24.2.5  2009/12/17 03:02:31  schuhs
+//   Take offset as input when generating new sheet meshes
+//
 //   Revision 1.24.2.4  2009/12/09 03:58:10  schuhs
 //   Full support for rendering and selecting sheets created by graph matching algorithm
 //
@@ -50,26 +53,38 @@
 
 #include "Renderer.h"
 #include "MeshRenderer.h"
+#include <ProteinMorph/SheetGenerator.h>
 #include <GraphMatch/StandardGraph.h>
 #include <GraphMatch/SkeletonReader.h>
 #include <GraphMatch/GeometricShape.h>
 #include <GraphMatch/VectorMath.h>
+#include <MathTools/LinearSolver.h>
 #include <ProteinMorph/SSEFlexibleFitter.h>
 #include <vector>
+#include <map>
 
 using namespace wustl_mm::Protein_Morph;
 using namespace wustl_mm::GraySkeletonCPP;
 using namespace wustl_mm::GraphMatch;
+using namespace wustl_mm::MathTools;
+using namespace wustl_mm::SkeletonMaker;
 using namespace std;
 
 namespace wustl_mm {
 	namespace Visualization {	
+
+		const float HELIX_LENGTH_TO_RESIDUE_RATIO = 1.54;
 
 		class SSERenderer : public Renderer{
 		public:
 			SSERenderer();
 			~SSERenderer();
 
+			void AddHelix(Vector3DFloat p1, Vector3DFloat p2);
+			void StartNewSSE();
+			void AddSSEPoint(Vector3DFloat p);
+			void FinalizeSheet();
+			void FinalizeHelix();
 			void Draw(int subSceneIndex, bool selectEnabled);
 			void LoadHelixFile(string fileName);			
 			void LoadSheetFile(string fileName);			
@@ -85,21 +100,30 @@ namespace wustl_mm {
 			bool SelectionMove(Vector3DFloat moveDirection);
 			bool SelectionClear();
 			void SelectionToggle(int subsceneIndex, bool forceTrue, int ix0, int ix1 = -1, int ix2 = -1, int ix3 = -1, int ix4 = -1);
-			string GetSupportedLoadFileFormats();
-			string GetSupportedSaveFileFormats();
+			void SaveHelixFile(string fileName);
+			void SaveSheetFile(string fileName);
+			string GetSupportedHelixLoadFileFormats();
+			string GetSupportedHelixSaveFileFormats();
+			string GetSupportedSheetLoadFileFormats();
+			string GetSupportedSheetSaveFileFormats();
 			Vector3DFloat Get3DCoordinates(int subsceneIndex, int ix0, int ix1 = -1, int ix2 = -1, int ix3 = -1, int ix4 = -1);
 			void FitSelectedSSEs(Volume * vol);
 		private:
+			void LoadHelixFileSSE(string fileName);
+			void LoadHelixFileVRML(string fileName);
+			void SaveHelixFileSSE(FILE* fout);
+			void SaveHelixFileVRML(FILE* fout);
+			void SaveSheetFileVRML(FILE* fout);
 			void UpdateBoundingBox();
 			vector<GeometricShape*> helices;
 			vector<GeometricShape*> sheets;
 			NonManifoldMesh_SheetIds * sheetMesh;
 			NonManifoldMesh_SheetIds * graphSheetMesh;
-			//NonManifoldMesh_Annotated * graphSheetMesh;
 			int sheetCount;
 			int graphSheetCount;
 			bool selectedSheets[256];
 			bool selectedGraphSheets[256];
+			vector<Vector3DFloat> tempSSEPoints;
 		};
 
 
@@ -118,6 +142,55 @@ namespace wustl_mm {
 			}
 		}
 
+		void SSERenderer::AddHelix(Vector3DFloat p1, Vector3DFloat p2) {
+
+			GeometricShape * newHelix = GeometricShape::CreateHelix(p1, p2, 2.5);
+
+			helices.push_back(newHelix);
+			UpdateBoundingBox();
+		}
+
+		void SSERenderer::FinalizeHelix() {
+			Vector3DFloat p1, p2;
+			LinearSolver::FindBestFitLine(p1, p2, tempSSEPoints);
+			AddHelix(p1, p2);
+		}
+		
+		void SSERenderer::StartNewSSE() {
+			tempSSEPoints.clear();
+		}		
+		
+		void SSERenderer::AddSSEPoint(Vector3DFloat p) {
+			tempSSEPoints.push_back(p);
+		}
+		
+		void SSERenderer::FinalizeSheet() {
+			if(sheetMesh == NULL) {
+				sheetMesh = new NonManifoldMesh_SheetIds();
+			}
+			
+			vector<int> vertexIxs;
+			
+			for(unsigned int i = 0; i < tempSSEPoints.size(); i++) {
+				vertexIxs.push_back(sheetMesh->AddVertex(tempSSEPoints[i], false));
+			}
+			
+			sheetCount++;	
+			
+			SheetIdsAndSelect sheetTag;
+			sheetTag.id = sheetCount;
+			sheetTag.selected = false;
+			
+
+			vector<SheetGeneratorTriangle> newTriangles = SheetGenerator::sheetGenerator(tempSSEPoints, vertexIxs);
+			for(unsigned int i = 0; i < newTriangles.size(); i++) {
+				sheetMesh->AddTriangle(newTriangles[i].a, newTriangles[i].b, newTriangles[i].c, NULL, sheetTag);
+			}
+					
+			tempSSEPoints.clear();
+			UpdateBoundingBox();
+		}
+
 		void SSERenderer::Draw(int subSceneIndex, bool selectEnabled) {
 			GLfloat emissionColor[4] = {1.0, 1.0, 1.0, 1.0};
 
@@ -132,7 +205,7 @@ namespace wustl_mm {
 				for(int i = 0; i < (int)helices.size(); i++) {
 					glPushAttrib(GL_LIGHTING_BIT);
 					helices[i]->GetColor(colorR, colorG, colorB, colorA);	
-					SetColor(colorR, colorG, colorB, colorA);
+					OpenGLUtils::SetColor(colorR, colorG, colorB, colorA);
 
 					if(helices[i]->GetSelected()) {
 						glMaterialfv(GL_FRONT, GL_EMISSION, emissionColor);
@@ -222,7 +295,6 @@ namespace wustl_mm {
 					glPopAttrib();
 					glPopAttrib(); // for color code
 				}
-
 				if(selectEnabled) {
 					glPopName();
 				}
@@ -304,7 +376,40 @@ namespace wustl_mm {
 			glPopName();
 		}
 
+		void SSERenderer::LoadHelixFileSSE(string fileName) {
+
+			FILE* fin = fopen((char*)fileName.c_str(), "rt");
+			
+			char line[1000];
+			string lineStr;
+			float x1, x2, y1, y2, z1, z2;
+			while(!feof(fin)) {
+				fscanf(fin, "%s", line);
+				lineStr = string(line);
+				if(lineStr.compare("ALPHA") == 0) {
+					fscanf(fin, "%s", line);
+					fscanf(fin, "%s", line);
+					fscanf(fin, "%s", line);
+					fscanf(fin, "%s", line);
+					fscanf(fin, "%f", &x1);
+					fscanf(fin, "%f", &y1);
+					fscanf(fin, "%f", &z1);
+					fscanf(fin, "%f", &x2);
+					fscanf(fin, "%f", &y2);
+					fscanf(fin, "%f", &z2);
+					AddHelix(Vector3DFloat(x1, y1, z2), Vector3DFloat(x2, y2, z2));
+				} 
+			}
+
+			fclose(fin);
+		}
+
+		void SSERenderer::LoadHelixFileVRML(string fileName) {
+			SkeletonReader::ReadHelixFile((char *)fileName.c_str(), NULL, helices);
+		}
+
 		void SSERenderer::LoadHelixFile(string fileName) {
+
 			if(sheetMesh == NULL) {
 				Renderer::LoadFile(fileName);
 			}
@@ -312,7 +417,18 @@ namespace wustl_mm {
 				delete helices[i];
 			}
 			helices.clear();
-			SkeletonReader::ReadHelixFile((char *)fileName.c_str(), NULL, helices);
+
+			int pos = fileName.rfind(".") + 1;
+			string extension = fileName.substr(pos, fileName.length()-pos);			
+			extension = StringUtils::StringToUpper(extension);			
+			if(strcmp(extension.c_str(), "WRL") == 0) {
+				LoadHelixFileVRML(fileName);
+			} else if(strcmp(extension.c_str(), "VRML") == 0) {
+				LoadHelixFileVRML(fileName);
+			} else if(strcmp(extension.c_str(), "SSE") == 0) {
+				LoadHelixFileSSE(fileName);
+			} 
+			
 			UpdateBoundingBox();			
 		}
 
@@ -605,7 +721,7 @@ namespace wustl_mm {
 
 			if((sheetCount > 0) && (sheetMesh != NULL)) {
 
-				// TODO: Add support for graph sheet center of mass
+
 				int currentSheetFaceCount;
 			
 				for(unsigned int j = 0; j <= this->sheetCount; j++) {
@@ -729,13 +845,177 @@ namespace wustl_mm {
 			}
 		}
 
-		string SSERenderer::GetSupportedLoadFileFormats() {
-			return "VRML models (*.vrml *.wrl)";
-		}
-		string SSERenderer::GetSupportedSaveFileFormats() {
-			return "VRML models (*.vrml, *.wrl)";
+
+		void SSERenderer::SaveHelixFileVRML(FILE* fout) {
+			Point3 center;
+			Vector3DFloat start, end, axis;
+			double angle;
+			float helixLength;
+			fprintf(fout, "#VRML V2.0 utf8\n");
+
+			for(unsigned int i = 0; i < helices.size(); i++) {
+				center = helices[i]->GetCenter();
+				start = helices[i]->GetCornerCell3(1);
+				end = helices[i]->GetCornerCell3(2);
+				helixLength = (start-end).Length();
+				helices[i]->GetRotationAxisAndAngle(axis, angle);
+
+				fprintf(fout, "Group {\n children [\n Transform {\n  translation %f %f %f\n", center[0], center[1], center[2]);
+				fprintf(fout, "  rotation %f %f %f %f\n", axis.X(), axis.Y(), axis.Z(), angle);
+				fprintf(fout, "  children [\n   Shape {\n    appearance \n     Appearance {\n      material Material {\n       emissiveColor 0 0.5 0\n       }\n     }\n");
+				fprintf(fout, "    geometry\n     Cylinder {\n      height %f \n      radius 2.5 \n     }\n   }\n  ]\n }\n ]\n}", helixLength);
+			}
 		}
 
+		void SSERenderer::SaveHelixFileSSE(FILE* fout) {
+			Vector3DFloat start, end;
+			float helixLength;
+			int intLength;
+
+			for(unsigned int i = 0; i < helices.size(); i++) {
+				end = helices[i]->GetCornerCell3(1);
+				start = helices[i]->GetCornerCell3(2);				
+				helixLength = (start-end).Length();
+				intLength = (int)ceil(helixLength / HELIX_LENGTH_TO_RESIDUE_RATIO);
+								
+				fprintf(fout, "ALPHA 'A%d' '%d' '%d' %d %f %f %f %f %f %f\n", i, i*100,i*100+(intLength-1), intLength, start.X(), start.Y(), start.Z(), end.X(), end.Y(), end.Z());
+			}
+		}
+
+		void SSERenderer::SaveHelixFile(string fileName) {
+			FILE* fout = fopen((char*)fileName.c_str(), "wt");
+			int pos = fileName.rfind(".") + 1;
+			string extension = fileName.substr(pos, fileName.length()-pos);
+			
+			extension = StringUtils::StringToUpper(extension);
+			
+			if(strcmp(extension.c_str(), "WRL") == 0) {
+				SaveHelixFileVRML(fout);
+			} else if(strcmp(extension.c_str(), "VRML") == 0) {
+				SaveHelixFileVRML(fout);
+			} else if(strcmp(extension.c_str(), "SSE") == 0) {
+				SaveHelixFileSSE(fout);
+			} 
+			fclose(fout);
+		}
+		
+		void SSERenderer::SaveSheetFileVRML(FILE* fout) {
+			
+			map<int, int> vertexIxs;
+			vector<Vector3DFloat> vertices;
+			bool addVertex;
+			
+			NonManifoldMeshVertex<bool> tempVertex;
+			NonManifoldMeshEdge<bool> tempEdge;
+			NonManifoldMeshFace<SheetIdsAndSelect> tempFace;
+			
+			fprintf(fout, "#VRML V2.0 utf8\n");
+			
+			for(int i = 0; i < sheetCount; i++) {
+				vertexIxs.clear();
+				vertices.clear();
+				
+				for(unsigned int j = 0; j < sheetMesh->vertices.size(); j++) {
+					tempVertex = sheetMesh->vertices[j];
+					addVertex = false;
+					
+					for(unsigned int k = 0; k < tempVertex.edgeIds.size(); k++) {
+						tempEdge = sheetMesh->edges[sheetMesh->GetEdgeIndex(tempVertex.edgeIds[k])];
+						
+						for(unsigned int l = 0; l < tempEdge.faceIds.size(); l++) {
+							tempFace = sheetMesh->faces[sheetMesh->GetFaceIndex(tempEdge.faceIds[l])];
+							if(tempFace.tag.id == i+1) {
+								addVertex = true;
+							}
+						}
+						
+					}
+					
+					if(addVertex) {
+						vertexIxs[j] = vertices.size();
+						vertices.push_back(tempVertex.position);
+					}					
+				}
+								
+				fprintf(fout, "Shape {\n");
+				fprintf(fout, "    appearance Appearance {\n");
+				fprintf(fout, "        material Material {\n");
+				fprintf(fout, "            emissiveColor 0.0 0.0 0.5\n");
+				fprintf(fout, "        }\n");
+				fprintf(fout, "    }\n");
+				fprintf(fout, "    geometry IndexedFaceSet {\n");
+				fprintf(fout, "       coord Coordinate {\n");
+				fprintf(fout, "            point [\n");
+				
+				for(unsigned int j = 0; j < vertices.size(); j++) {
+					fprintf(fout, "                 %f %f %f,\n", vertices[j].X(), vertices[j].Y(), vertices[j].Z());
+				}
+				
+				fprintf(fout, "            ]\n");
+				fprintf(fout, "        }\n");
+				fprintf(fout, "        coordIndex [\n");
+				
+				int vertexIx, startVertexIx;;
+				for(unsigned int j = 0; j < sheetMesh->faces.size(); j++) {
+					tempFace = sheetMesh->faces[j];
+					if(tempFace.tag.id == i+1) {
+						fprintf(fout, "            ");
+						
+						for(unsigned int k = 0; k < tempFace.vertexIds.size(); k++) {
+							vertexIx = sheetMesh->GetVertexIndex(tempFace.vertexIds[k]);
+							if(k == 0) {
+								startVertexIx = vertexIx;
+							}
+							fprintf(fout, "%d,", vertexIxs[vertexIx]);				
+						}
+						
+						if(tempFace.vertexIds.size() > 0) {
+							fprintf(fout, "%d\n", vertexIxs[startVertexIx]);
+						} else {
+							fprintf(fout, "\n");
+						}				
+					}
+					
+				}
+				
+				fprintf(fout, "        ]\n");
+				fprintf(fout, "    }\n");
+				fprintf(fout, "}\n");
+			}
+			
+		}		
+		
+		void SSERenderer::SaveSheetFile(string fileName) {
+			FILE* fout = fopen((char*)fileName.c_str(), "wt");
+			int pos = fileName.rfind(".") + 1;
+			string extension = fileName.substr(pos, fileName.length()-pos);
+			
+			extension = StringUtils::StringToUpper(extension);
+			
+			if(strcmp(extension.c_str(), "WRL") == 0) {
+				SaveSheetFileVRML(fout);
+			} else if(strcmp(extension.c_str(), "VRML") == 0) {
+				SaveSheetFileVRML(fout);
+			} 
+			fclose(fout);
+		}		
+
+		string SSERenderer::GetSupportedHelixLoadFileFormats() {
+			return "All Supported Formats(*.vrml *.wrl *.sse);; VRML models (*.vrml *.wrl);; SSEHunter annotations (*.sse)";
+		}
+
+		string SSERenderer::GetSupportedSheetLoadFileFormats() {
+			return "VRML models (*.vrml *.wrl)";
+		}
+		
+		string SSERenderer::GetSupportedHelixSaveFileFormats() {
+			return "All Supported Formats(*.vrml *.wrl *.sse);; VRML models (*.vrml *.wrl);; SSEHunter annotations (*.sse)";
+		}
+
+		string SSERenderer::GetSupportedSheetSaveFileFormats() {
+			return "All Supported Formats(*.vrml *.wrl);; VRML models (*.vrml *.wrl)";
+		}
+		
 		Vector3DFloat SSERenderer::Get3DCoordinates(int subsceneIndex, int ix0, int ix1, int ix2, int ix3, int ix4) {
 			Vector3DFloat position;
 			switch(subsceneIndex) {
