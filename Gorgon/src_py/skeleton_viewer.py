@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.18.2.1  2009/12/09 04:04:05  schuhs
+#   Add support for rendering a third model
+#
 #   Revision 1.18  2008/12/01 23:16:31  ssa1
 #   Restructuring interactive skeleton drawing, and fixing it for scale space changes.
 #
@@ -43,6 +46,7 @@ class SkeletonViewer(BaseViewer):
     def __init__(self, main, parent=None):
         BaseViewer.__init__(self, main, parent)
         self.title = "Skeleton"
+        self.shortTitle = "SKE"              
         self.app.themes.addDefaultRGB("Skeleton:Model:0", 180, 0, 0, 255)
         self.app.themes.addDefaultRGB("Skeleton:Model:1", 180, 0, 0, 255)
         self.app.themes.addDefaultRGB("Skeleton:Model:2", 180, 0, 0, 255)
