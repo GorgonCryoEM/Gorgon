@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.19.2.27  2009/12/20 19:25:55  schuhs
+//   Adding comments, reducing the number of console messages, and making messages print only if VERBOSE is set
+//
 //   Revision 1.19.2.26  2009/12/20 19:06:45  schuhs
 //   Removing old, commented out code
 //
@@ -111,18 +114,15 @@
 
 #include <SkeletonMaker/reader.h>
 #include <SkeletonMaker/volume.h>
+#include <MathTools/BasicDefines.h>
 #include "GeometricShape.h"
 #include <vector>
 #include <queue>
 #include <list>
 #include "GlobalConstants.h"
-#include <GraySkeletonCPP/GlobalDefinitions.h>
-#include <GraySkeletonCPP/VolumeSkeletonizer.h>
-#include <ProteinMorph/NonManifoldMesh.h>
 
 using namespace std;
-using namespace wustl_mm::GraySkeletonCPP;
-using namespace wustl_mm::Protein_Morph;
+using namespace wustl_mm::SkeletonMaker;
 
 namespace wustl_mm {
 	namespace GraphMatch {
@@ -925,28 +925,15 @@ namespace wustl_mm {
 						n1 = GetGraphIndex(helixList, startHelix, startCell);
 						n2 = GetGraphIndex(helixList, currentHelix, currentPoint);
 						bool found = false;
-						if (SMIPAPER_MODE == 1) {
-							if( (n1 >= 0) && (n2 >= 0) ) { 
-								// store the distance to the currentPoint as the cost of going from the start helix/sheet to the currentPoint helix/sheet
-								graph->SetCost(n1, n2, currentPoint->distance);
-								// this is a loop type
-								graph->SetType(n1, n2, GRAPHEDGE_LOOP);
-								// save the same info for the reverse direction
-								graph->SetCost(n2, n1, currentPoint->distance);
-								graph->SetType(n2, n1, GRAPHEDGE_LOOP);
-								found = true;
-							}
-						} else {
-							if( (n1 >= 0) && (n2 >= 0) && (currentPoint->distance < graph->GetCost(n1, n2)) ) { // includes check for previously found shorter path
-								// store the distance to the currentPoint as the cost of going from the start helix/sheet to the currentPoint helix/sheet
-								graph->SetCost(n1, n2, currentPoint->distance);
-								// this is a loop type
-								graph->SetType(n1, n2, GRAPHEDGE_LOOP);
-								// save the same info for the reverse direction
-								graph->SetCost(n2, n1, currentPoint->distance);
-								graph->SetType(n2, n1, GRAPHEDGE_LOOP);
-								found = true;
-							}
+						if( (n1 >= 0) && (n2 >= 0) && (currentPoint->distance < graph->GetCost(n1, n2)) ) { // includes check for previously found shorter path
+							// store the distance to the currentPoint as the cost of going from the start helix/sheet to the currentPoint helix/sheet
+							graph->SetCost(n1, n2, currentPoint->distance);
+							// this is a loop type
+							graph->SetType(n1, n2, GRAPHEDGE_LOOP);
+							// save the same info for the reverse direction
+							graph->SetCost(n2, n1, currentPoint->distance);
+							graph->SetType(n2, n1, GRAPHEDGE_LOOP);
+							found = true;
 						}
 
 						// if the found SSE is a helix, stop expanding. if a sheet, keep expanding. this prevents paths from passing through helices
