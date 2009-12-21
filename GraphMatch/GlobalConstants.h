@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.32.2.23  2009/12/20 22:14:26  schuhs
+//   Reduce compiler warnings
+//
 //   Revision 1.32.2.22  2009/12/15 20:39:08  schuhs
 //   Add parameter to determine when nearby sheets are merged
 //
@@ -224,7 +227,6 @@ namespace wustl_mm {
 		int MISSING_HELIX_COUNT = -1;
 		int MISSING_SHEET_COUNT = -1;
 		bool PERFORMANCE_COMPARISON_MODE = false;
-		int SMIPAPER_MODE = 0;
 		int SOLUTION[MAX_NODES];
 		int D26[26][3] = {	
 			{-1,-1,-1}, {-1, -1, 0}, {-1, -1, 1},
