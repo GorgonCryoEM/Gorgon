@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.36.2.43  2009/12/21 00:49:12  schuhs
+#   Merged in ExportToRosetta methods from trunk
+#
 #   Revision 1.36.2.42  2009/12/21 00:32:27  schuhs
 #   Use new load methods in viewer classes, change name of SSE correspondence dialog, and change filename of compiled UI widget
 #
@@ -746,8 +749,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
         self.ui.doubleSpinBoxSheetMissingPenaltyScaled.setValue(self.viewer.correspondenceEngine.getConstantDouble("MISSING_SHEET_PENALTY_SCALED"))
 
     def getConstraints(self):
-        #Constraints
-        print "reading constraints from c++ to gorgon"
+        print "Reading constraints from c++ layer to python layer"
 
         corr = self.viewer.correspondenceLibrary.correspondenceList[0]
         numH = len(self.viewer.correspondenceLibrary.structureObservation.helixDict)
@@ -761,7 +763,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
             #print "object has type " + str(type(match.predicted))
             if match.predicted is not None:
                 if match.predicted.type == 'strand':
-                    print "reading constraints for strand " + str(sIx) + " (graph node " + str(graphIx) + ")"
+                    #print "reading constraints for strand " + str(sIx) + " (graph node " + str(graphIx) + ")"
                     obsSheet = self.viewer.correspondenceEngine.getStrandConstraint(graphIx,0)
                     constrained = (obsSheet != 0)
                     if (obsSheet == -1):
@@ -769,20 +771,19 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
                     elif (obsSheet > 0):
                         sheetNum = obsSheet - 2 * numH
                     if constrained:
-                        print "  constrained to sheet " + str(sheetNum) + " (graph node " + str(obsSheet) + ")"
+                        print "strand " + str(sIx) + " (graph node " + str(graphIx) + ") is constrained to sheet " + str(sheetNum) + " (graph node " + str(obsSheet) + ")"
                         self.constrainSSE(i, sheetNum, 0)
-                                                                            
-                    
                     sIx += 1
                     graphIx += 1
                 elif match.predicted.type == 'helix':
-                    print "reading constraints for helix " + str(hIx) + " (graph node " + str(graphIx) + ")"
+                    #print "reading constraints for helix " + str(hIx) + " (graph node " + str(graphIx) + ")"
                     obsHelixFwd = self.viewer.correspondenceEngine.getHelixConstraintFwd(graphIx)
                     obsHelixRev = self.viewer.correspondenceEngine.getHelixConstraintRev(graphIx)
                     obsHelixUnk = self.viewer.correspondenceEngine.getHelixConstraintUnk(graphIx)
-                    print "  fwd constraint = " + str(obsHelixFwd)
-                    print "  rev constraint = " + str(obsHelixRev)
-                    print "  unk constraint = " + str(obsHelixUnk)
+                    #print "  fwd constraint = " + str(obsHelixFwd)
+                    #print "  rev constraint = " + str(obsHelixRev)
+                    #print "  unk constraint = " + str(obsHelixUnk)
+                    constrained = False
                     if (obsHelixFwd == -1 or obsHelixRev==-1 or obsHelixUnk==-1):
                         constrained = True
                         helixNum = -1
@@ -800,7 +801,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
                         helixDir = 0
                     
                     if (constrained):
-                        print "  constrained to helix " + str(helixNum) + " in direction " + str(helixDir)
+                        print "Helix " + str(hIx) + " (graph node " + str(graphIx) + ") is constrained to helix " + str(helixNum) + " in direction " + str(helixDir)
                         self.constrainSSE(i, helixNum, helixDir)
                         
                     hIx += 1
