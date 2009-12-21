@@ -4,6 +4,8 @@
 #ifndef MATHTOOLS_CROSS_CORRELATION_H
 #define MATHTOOLS_CROSS_CORRELATION_H
 
+#ifdef FFTW3
+
 #include <complex>
 #include <cstdlib>
 #include "FFT.h"
@@ -175,7 +177,7 @@ namespace wustl_mm {
 						int medSize, int slowSize, bool center) {
 			
 			// ******************************************************
-			// TODO: I think that a SIGABORT error (gdb on Mac) is happening somewhere in this function
+			// FIXME: I think that a SIGABORT error (gdb on Mac) is happening somewhere in this function
 			// ******************************************************
 			
 			int fastIxPadding = (fastSize % 2 ? 1 : 2);
@@ -205,5 +207,7 @@ namespace wustl_mm {
 
 	}
 }
+
+#endif //FFTW3
 
 #endif
