@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.36.2.41  2009/12/19 23:34:34  schuhs
+#   Removing extra console messages and modifying error message sent to user when out of memory
+#
 #   Revision 1.36.2.40  2009/12/19 22:09:55  schuhs
 #   Spawn message windows on memory errors and when no possible correspondences. Also fix bugs in mouse cursor changing code.
 #
@@ -232,7 +235,7 @@
 #
 
 from PyQt4 import QtCore, QtGui
-from ui_dialog_sse_helix_correspondence_finder_new import Ui_DialogSSEHelixCorrespondenceFinder
+from ui_dialog_sse_helix_correspondence_finder import Ui_DialogSSEHelixCorrespondenceFinder
 #from ui_dialog_sse_helix_correspondence_finder import Ui_DialogSSEHelixCorrespondenceFinder
 from libpyGORGON import SSECorrespondenceEngine, SSECorrespondenceResult
 from correspondence.CorrespondenceLibrary import CorrespondenceLibrary
@@ -270,7 +273,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
     def createUI(self):
         self.ui = Ui_DialogSSEHelixCorrespondenceFinder()
         self.ui.setupUi(self)       
-        self.dock = QtGui.QDockWidget(self.tr("SSE - Helix Correspondence Finder"), self.app)
+        self.dock = QtGui.QDockWidget(self.tr("SSE Correspondence Finder"), self.app)
         self.dock.setAllowedAreas(QtCore.Qt.LeftDockWidgetArea | QtCore.Qt.RightDockWidgetArea | QtCore.Qt.BottomDockWidgetArea)
         self.dock.setWidget(self)
         self.dock.close()        
@@ -569,15 +572,15 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
             self.ui.lineEditSequenceFile.setText(seqFilePath)
             
             # load helix file and store the filename
-            self.viewer.loadHelixDataFile(helixFilePath)
+            self.viewer.loadHelixDataFromFile(helixFilePath)
             self.ui.lineEditHelixLocationFile.setText(helixFilePath)
     
             # load sheet file and store the filename
-            self.viewer.loadSheetDataFile(sheetFilePath)
+            self.viewer.loadSheetDataFromFile(sheetFilePath)
             self.ui.lineEditSheetLocationFile.setText(sheetFilePath)
     
             # load skeleton file and store the filename
-            self.app.viewers["skeleton"].loadDataFile(skeletonFilePath)
+            self.app.viewers["skeleton"].loadDataFromFile(skeletonFilePath)
             self.ui.lineEditSkeletonFile.setText(skeletonFilePath)
     
             # store helix length filename
