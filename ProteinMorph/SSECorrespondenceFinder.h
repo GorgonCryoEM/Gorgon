@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.9  2009/12/15 04:26:15  ssa1
+//   Using GorgonPriorityQueue instead of PriorityQueue
+//
 //   Revision 1.8  2009/12/07 21:34:36  ssa1
 //   Finding Rotation using SVD, and removing compiler warnings
 //
@@ -69,11 +72,11 @@ namespace wustl_mm {
 				float jointAngleThreshold, float dihedralAngleThreshold, float centroidDistanceThreshold, 
 				unsigned int maxSolutionCount);		
 			vector< vector < vector<SSECorrespondenceNode> > > GetAStarCliqueBasedFeatureCorrespondence(bool printOutput, bool useDirection);
-			vector< vector < vector<SSECorrespondenceNode> > > GetAStarTriangleBasedFeatureCorrespondence(bool printOutput, bool useDirection);			
+			vector< vector < vector<SSECorrespondenceNode> > > GetAStarTriangleBasedFeatureCorrespondence(bool printOutput, bool useDirection, bool getSmallCliques);			
 			vector < vector<SSECorrespondenceNode> > GetValenceBasedFeatureCorrespondence(bool printOutput, bool useDirection);
 			vector < vector<SSECorrespondenceNode> > GetValenceBasedFeatureCorrespondence2(bool printOutput, bool useDirection);
-			vector < vector<SSECorrespondenceNode> > GetValenceTriangleBasedFeatureCorrespondence(bool printOutput, bool useDirection);
-			vector < vector<SSECorrespondenceNode> > GetValenceBasedFeatureCorrespondenceSet(bool useTriangleClique, bool useDirection);
+			vector < vector<SSECorrespondenceNode> > GetValenceTriangleBasedFeatureCorrespondence(bool printOutput, bool useDirection, bool getSmallCliques);
+			vector < vector<SSECorrespondenceNode> > GetValenceBasedFeatureCorrespondenceSet(bool useTriangleClique, bool useDirection, bool getSmallCliques);
 			void PrintFeatureListsMathematica();
 		private:
 			float GetFeatureCompatibilityScore(SSECorrespondenceFeature feature1, SSECorrespondenceFeature feature2);
@@ -341,7 +344,7 @@ namespace wustl_mm {
 
 			SSECorrespondenceSearchNode * parentNode = new SSECorrespondenceSearchNode(parentGraph, parentSolution, 0.0f);			
 
-			GorgonPriorityQueue<float, SSECorrespondenceSearchNode *> nodeQueue = GorgonPriorityQueue<float, SSECorrespondenceSearchNode *>(true);
+			GorgonPriorityQueue<float, SSECorrespondenceSearchNode *> nodeQueue = GorgonPriorityQueue<float, SSECorrespondenceSearchNode *>(false);
 			nodeQueue.Add(parentNode->GetCost(), parentNode);
 
 			unsigned int solutionCount = 0;
@@ -379,7 +382,7 @@ namespace wustl_mm {
 			return correspondence;
 		}
 
-		vector< vector < vector<SSECorrespondenceNode> > > SSECorrespondenceFinder::GetAStarTriangleBasedFeatureCorrespondence(bool printOutput, bool useDirection) {
+		vector< vector < vector<SSECorrespondenceNode> > > SSECorrespondenceFinder::GetAStarTriangleBasedFeatureCorrespondence(bool printOutput, bool useDirection, bool getSmallCliques) {
 			vector< vector < vector<SSECorrespondenceNode> > > correspondence;
 			vector< vector<float> > featureCompatibilityScores = GetAllFeatureCompatibilityScores();
 			vector<SSECorrespondenceNode> nodes = GetAllNodes(featureCompatibilityScores, useDirection);
@@ -407,17 +410,19 @@ namespace wustl_mm {
 
 			SSECorrespondenceSearchNode * parentNode = new SSECorrespondenceSearchNode(parentGraph, parentSolution, 0.0f);			
 
-			GorgonPriorityQueue<float, SSECorrespondenceSearchNode *> nodeQueue = GorgonPriorityQueue<float, SSECorrespondenceSearchNode *>(true);
+			GorgonPriorityQueue<float, SSECorrespondenceSearchNode *> nodeQueue = GorgonPriorityQueue<float, SSECorrespondenceSearchNode *>(false);
 			nodeQueue.Add(parentNode->GetCost(), parentNode);
 
 			unsigned int solutionCount = 0;
 			SSECorrespondenceSearchNode * currentNode;
 			vector<SSECorrespondenceSearchNode *> childNodes;
 			float currentCost;
+			//TimeManager tm;
 			while((solutionCount < maxSolutionCount) && !nodeQueue.IsEmpty()) {
+				//tm.PushCurrentTime();
 				nodeQueue.PopFirst(currentCost, currentNode);				
-				//currentNode->PrintSolution(nodes);	
-				childNodes = currentNode->GetChildNodesTriangleApprox(nodes, featureList1, featureList2);
+				//currentNode->PrintSolution(nodes, true, true);	
+				childNodes = currentNode->GetChildNodesTriangleApprox(nodes, featureList1, featureList2, getSmallCliques);
 				if(childNodes.size() == 0) {
 					//printf("Solution found: \t");
 					if(printOutput) {
@@ -433,6 +438,7 @@ namespace wustl_mm {
 						//childNodes[i]->PrintSolution(nodes);
 					}
 				}
+				//tm.PopAndDisplayTime("Time spent at node: %f \n");
 				delete currentNode;
 			}
 
@@ -489,7 +495,7 @@ namespace wustl_mm {
 			return node.GetSolution(nodes);
 		}
 
-		vector < vector<SSECorrespondenceNode> > SSECorrespondenceFinder::GetValenceTriangleBasedFeatureCorrespondence(bool printOutput, bool useDirection) {
+		vector < vector<SSECorrespondenceNode> > SSECorrespondenceFinder::GetValenceTriangleBasedFeatureCorrespondence(bool printOutput, bool useDirection, bool getSmallCliques) {
 			TimeManager m;
 			m.PushCurrentTime();
 			m.PushCurrentTime();
@@ -524,7 +530,7 @@ namespace wustl_mm {
 			vector<unsigned long long> neighbors;
 			while(graph.GetVertexCount() > 0) {				
 				m.PushCurrentTime();
-				vector<unsigned long long> clique = graph.VertexSetToVector(graph.GetLowestCostCliqueTriangleApprox());
+				vector<unsigned long long> clique = graph.VertexSetToVector(graph.GetLowestCostCliqueTriangleApprox(getSmallCliques, getSmallCliques));
 				m.PopAndDisplayTime("  (*Got clique%f s*)\n");
 
 				vector<unsigned int> cliqueSol;
@@ -543,7 +549,7 @@ namespace wustl_mm {
 			return node.GetSolution(nodes);
 		}
 
-		vector < vector<SSECorrespondenceNode> > SSECorrespondenceFinder::GetValenceBasedFeatureCorrespondenceSet(bool useTriangleClique, bool useDirection) {
+		vector < vector<SSECorrespondenceNode> > SSECorrespondenceFinder::GetValenceBasedFeatureCorrespondenceSet(bool useTriangleClique, bool useDirection, bool getSmallCliques) {
 			maxSolutionCount = 1;
 			vector < vector<SSECorrespondenceNode> > corr, corrItem;
 			vector<SSECorrespondenceNode> corrItemItem;
@@ -558,7 +564,7 @@ namespace wustl_mm {
 				found = false;
 				if(featureList2.size() > 0) {
 					if(useTriangleClique) {
-						corrItem = GetValenceTriangleBasedFeatureCorrespondence(false, useDirection);
+						corrItem = GetValenceTriangleBasedFeatureCorrespondence(false, useDirection, getSmallCliques);
 					} else {
 						corrItem = GetValenceBasedFeatureCorrespondence(false, useDirection);
 					} 

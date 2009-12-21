@@ -14,7 +14,10 @@ setup(
                         'splash.png', 
                         'gorgon.ico',
                         'msvcr80.dll',
-                        'msvcp80.dll']), 
+                        'msvcp80.dll',
+                        'libfftw3-3.dll',
+                        'libfftw3f-3.dll',
+                        'libfftw3l-3.dll' ]), 
                   ('themes', ['..\\resources\\Dark.thm', '..\\resources\\Light.thm'] ),
                   ('plugins', ['.\\plugins\__init__.py'])                  
                   ],

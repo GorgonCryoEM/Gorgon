@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.5  2009/11/30 04:23:44  ssa1
+//   Triangle based A* search for flexible fitting
+//
 //   Revision 1.4  2009/11/04 20:29:38  ssa1
 //   Implementing Triangle based clique search and chain based flexible fitting.
 //
@@ -33,6 +36,7 @@
 #include <map>
 #include <set>
 #include <algorithm>
+#include "GorgonPriorityQueue.h"
 
 using namespace std;
 
@@ -65,20 +69,24 @@ namespace wustl_mm {
 			vector< set<unsigned long long> > GetLargestMaximalCliques(vector<unsigned long long> vertexSet);
 			vector< set<unsigned long long> > GetLargestMaximalCliques2(vector<unsigned long long> vertexSet);
 			set<unsigned long long> GetLowestCostCliqueInOneRing(unsigned long long vertexIx);
-			set<unsigned long long> GetLowestCostCliqueTriangleApprox();
+			set<unsigned long long> GetLowestCostCliqueTriangleApprox(bool get1NodeCliques, bool get2NodeCliques);
 			vector<unsigned long long> GetOneRingNeighbors(unsigned long long vertexIx);
+			vector< GraphEdgeBase<TEdgeTag> * > GetEdgeReferences();
 			void PrintAllCliques(vector< set<unsigned long long> > allCliques);
+			void PrintMathematicaLists();
+			GraphBase<TVertexTag, TEdgeTag> GetSubgraph(vector<unsigned long long> & vertexIxs);
 
 			static vector<unsigned long long> VertexSetToVector(set<unsigned long long> vertexSet);
 			static set<unsigned long long> VertexVectorToSet(vector<unsigned long long> vertexVector);				
 			static set<unsigned long long> SetUnion(set<unsigned long long> set1, set<unsigned long long> set2);
 			static bool IsSubset(set<unsigned long long> set1, set<unsigned long long> set2); 
+			
 
 		private:
 			void PrintClique(set<unsigned long long> vertexSet);
-			unsigned long long GetEdgeHash(unsigned long long vertexIx1, unsigned long long vertexIx2);
+			unsigned long long GetEdgeHash(unsigned long long vertexIx1, unsigned long long vertexIx2);			
 			void GetEdgeVertices(unsigned long long & vertexIx1, unsigned long long & vertexIx2, unsigned long long hash);
-			map<unsigned long long, unsigned long long> GetAllEdgeTriangleCount();
+			map<unsigned long long, unsigned long long> GetAllEdgeTriangleCount();			
 			set<unsigned long long> GetEdgeTriangles(unsigned long long edgeHash);
 		private:
 			vector< GraphVertexBase<TVertexTag> > vertices;
@@ -491,9 +499,9 @@ namespace wustl_mm {
 		template <class TVertexTag, class TEdgeTag> unsigned long long GraphBase<TVertexTag, TEdgeTag>::GetHighestValenceVertexIx() {
 			int maxValence = -1;
 			int maxValenceIx = -1;
-			for(unsigned long long i = 0; i < vertices.size(); i++) {
+			for(int i = 0; i < (int)vertices.size(); i++) {
 				if((int)vertices[i].GetValence() > maxValence) {
-					maxValence = vertices[i].GetValence();
+					maxValence = (int)vertices[i].GetValence();
 					maxValenceIx = i;
 				}
 			}
@@ -543,25 +551,27 @@ namespace wustl_mm {
 			}
 		}
 
-		template <class TVertexTag, class TEdgeTag> set<unsigned long long> GraphBase<TVertexTag, TEdgeTag>::GetLowestCostCliqueTriangleApprox() {
+		template <class TVertexTag, class TEdgeTag> set<unsigned long long> GraphBase<TVertexTag, TEdgeTag>::GetLowestCostCliqueTriangleApprox(bool get1NodeCliques, bool get2NodeCliques) {
 			set<unsigned long long> clique;
 
 			// Inputvalidation: Returns lowest cost vertex if no edges exist
 			if(edges.size() == 0) { 
-				if(vertices.size() == 0) {
-					return clique;
-				}
-				int minVertexIx = 0;
-				float minVertexWeight = vertices[minVertexIx].GetWeight();
-				
-
-				for(unsigned int i = 0; i < vertices.size(); i++) {
-					if(vertices[i].GetWeight() < minVertexWeight) {
-						minVertexWeight = vertices[i].GetWeight();
-						minVertexIx = i;
+				if(get1NodeCliques) {
+					if(vertices.size() == 0) {
+						return clique;
 					}
+					int minVertexIx = 0;
+					float minVertexWeight = vertices[minVertexIx].GetWeight();
+					
+
+					for(unsigned int i = 0; i < vertices.size(); i++) {
+						if(vertices[i].GetWeight() < minVertexWeight) {
+							minVertexWeight = vertices[i].GetWeight();
+							minVertexIx = i;
+						}
+					}
+					clique.insert(minVertexIx);
 				}
-				clique.insert(minVertexIx);
 				return clique;
 			}
 
@@ -575,7 +585,7 @@ namespace wustl_mm {
 				hash = i->first;
 				if (((edgeTriangleCount[hash] > maxEdgeValence)) || ((edgeTriangleCount[hash] == maxEdgeValence) && (edges[hash].GetWeight() < maxEdgeWeight))) {
 					maxEdgeHash = hash;
-					maxEdgeValence = edgeTriangleCount[hash];
+					maxEdgeValence = (int)edgeTriangleCount[hash];
 					maxEdgeWeight = edges[hash].GetWeight();
 				}
 			}
@@ -583,42 +593,43 @@ namespace wustl_mm {
 
 			// Inputvalidation: Returns lowest cost edge if no triangles exist
 			if(maxEdgeValence == 0) { 
-				unsigned long long minEdgeHash = edges.begin()->first;
-				float minEdgeWeight = edges[minEdgeHash].GetWeight();
-				for(map< unsigned long long, GraphEdgeBase<TEdgeTag> >::iterator i = edges.begin(); i != edges.end(); i++) {
-					hash = i->first;
-					if(edges[hash].GetWeight() < minEdgeWeight) {
-						minEdgeWeight = edges[hash].GetWeight();
-						minEdgeHash = hash;
-					}					
+				if(get2NodeCliques) {
+					unsigned long long minEdgeHash = edges.begin()->first;
+					float minEdgeWeight = edges[minEdgeHash].GetWeight();
+					for(map< unsigned long long, GraphEdgeBase<TEdgeTag> >::iterator i = edges.begin(); i != edges.end(); i++) {
+						hash = i->first;
+						if(edges[hash].GetWeight() < minEdgeWeight) {
+							minEdgeWeight = edges[hash].GetWeight();
+							minEdgeHash = hash;
+						}					
+					}
+					GetEdgeVertices(v1, v2, minEdgeHash);
+					clique.insert(v1);
+					clique.insert(v2);
 				}
-				GetEdgeVertices(v1, v2, minEdgeHash);
-				clique.insert(v1);
-				clique.insert(v2);
 				return clique;
 			}
 
 			vector<unsigned long long> triangleVertices = VertexSetToVector(GetEdgeTriangles(maxEdgeHash));
-			edgeTriangleCount.clear();
 			GetEdgeVertices(v1, v2, maxEdgeHash);
+
+			GorgonPriorityQueue<float, unsigned int> triangleOrdering = GorgonPriorityQueue<float, unsigned int>(false);
+			float triangleCost;
+			for(unsigned int i = 0; i < triangleVertices.size(); i++) {
+				triangleCost = GetEdge(v1, triangleVertices[i]).GetWeight() + GetEdge(v2, triangleVertices[i]).GetWeight();
+				triangleOrdering.Add(triangleCost, i);
+			}
+
+			edgeTriangleCount.clear();
 			
 			vector<unsigned long long> currClique;
 			currClique.push_back(v1);
 			currClique.push_back(v2);
 
-			float triangleCost;
-			while(triangleVertices.size() > 0) {
-				float minCost = MAX_FLOAT;
-				int minIx = 0;
-				for(unsigned int i = 0; i < triangleVertices.size(); i++) {
-					triangleCost = GetEdge(v1, triangleVertices[i]).GetWeight() + GetEdge(v2, triangleVertices[i]).GetWeight();
-					if(triangleCost < minCost) {
-						minCost = triangleCost;
-						minIx = i;
-					}					
-				}
+			int minIx;
+			while(!triangleOrdering.IsEmpty()) {
+				minIx = triangleOrdering.PopFirst();				
 				currClique.push_back(triangleVertices[minIx]);
-				triangleVertices.erase(triangleVertices.begin() + minIx);
 				if(!IsClique(currClique)) {
 					currClique.erase(currClique.end()-1);
 				}
@@ -652,6 +663,57 @@ namespace wustl_mm {
 		template <class TVertexTag, class TEdgeTag> void GraphBase<TVertexTag, TEdgeTag>::GetEdgeVertices(unsigned long long & vertexIx1, unsigned long long & vertexIx2, unsigned long long hash) {
 			vertexIx1 = hash / MAX_VERTEX_COUNT;
 			vertexIx2 = hash % MAX_VERTEX_COUNT;
+		}
+
+		template <class TVertexTag, class TEdgeTag> void GraphBase<TVertexTag, TEdgeTag>::PrintMathematicaLists() {
+			printf("v = {");
+			for(unsigned int i = 0; i < vertices.size(); i++) {
+				if(i != 0) {
+					printf(", ");
+				}
+				printf("%d", i);
+			}
+			printf("};\n");
+
+			bool first = true;
+			printf("e = {");
+			for(int i = 0; i < (int)vertices.size()-1; i++) {
+				for(int j = i+1; j < (int)vertices.size(); j++) {				
+					if(IsEdge(i, j)) {				
+						if(!first) {
+							printf(", "); 						
+						}
+						first = false;
+						printf("{%d, %d}", i+1, j+1);
+					}
+				}
+			}
+			printf("};\n");
+		}
+
+		template <class TVertexTag, class TEdgeTag> GraphBase<TVertexTag, TEdgeTag> GraphBase<TVertexTag, TEdgeTag>::GetSubgraph(vector<unsigned long long> & childVertices) {
+			GraphBase<TVertexTag, TEdgeTag> child;
+
+			map<unsigned int, unsigned int> vertexIndices;
+
+			unsigned int childIndex;
+
+			for(unsigned int i = 0; i < childVertices.size(); i++) {
+				childIndex = child.AddVertex(GetVertex(childVertices[i]).GetWeight(), GetVertex(childVertices[i]).GetTag());
+				vertexIndices[childVertices[i]]  = childIndex;
+			}	
+
+			unsigned long long v1, v2;			
+
+			for(map< unsigned long long, GraphEdgeBase<TEdgeTag> >::iterator i = edges.begin(); i != edges.end(); i++) {
+				this->GetEdgeVertices(v1, v2, i->first);
+				if((vertexIndices.find(v1) != vertexIndices.end()) && (vertexIndices.find(v2) != vertexIndices.end())) {
+					child.AddEdge(vertexIndices[v1], vertexIndices[v2], i->second);
+				}
+			}
+
+			return child;
+
 		}
 	}
 }

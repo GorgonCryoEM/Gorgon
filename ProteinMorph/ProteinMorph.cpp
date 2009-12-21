@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.13  2009/11/30 04:23:44  ssa1
+//   Triangle based A* search for flexible fitting
+//
 //   Revision 1.12  2009/11/19 18:19:24  ssa1
 //   Improved flexible fitting.. (Split nodes to guarantee direction)
 //
@@ -131,22 +134,21 @@ int main( int args, char * argv[] ) {
 	//	DisplayInputFormat(function);
 	//}
 
-	vector<SSECorrespondenceFeature> fl1, fl2;
+	/*vector<SSECorrespondenceFeature> fl1, fl2;
 
 
-	fl1.push_back(SSECorrespondenceFeature(Vector3DFloat(1,1,0), Vector3DFloat(4,5,0)));
-	fl1.push_back(SSECorrespondenceFeature(Vector3DFloat(5,6,0), Vector3DFloat(10,7,0)));
-	fl1.push_back(SSECorrespondenceFeature(Vector3DFloat(12,7,0), Vector3DFloat(17,7,0)));
-	fl1.push_back(SSECorrespondenceFeature(Vector3DFloat(19,7,0), Vector3DFloat(24,6,0)));
-	fl1.push_back(SSECorrespondenceFeature(Vector3DFloat(25,5,0), Vector3DFloat(28,1,0)));
+	fl1.push_back(SSECorrespondenceFeature(Vector3DFloat(1,0,0), Vector3DFloat(4,0,0)));
+	fl1.push_back(SSECorrespondenceFeature(Vector3DFloat(0,1,0), Vector3DFloat(0,4,0)));
+	fl1.push_back(SSECorrespondenceFeature(Vector3DFloat(1,5,0), Vector3DFloat(4,5,0)));
+	fl1.push_back(SSECorrespondenceFeature(Vector3DFloat(5,1,0), Vector3DFloat(5,4,0)));
+
 		
-	fl2.push_back(SSECorrespondenceFeature(Vector3DFloat(0,5,0), Vector3DFloat(5,6,0)));
-	fl2.push_back(SSECorrespondenceFeature(Vector3DFloat(6,7,0), Vector3DFloat(11,8,0)));
-	fl2.push_back(SSECorrespondenceFeature(Vector3DFloat(13,8,0), Vector3DFloat(18,8,0)));
-	fl2.push_back(SSECorrespondenceFeature(Vector3DFloat(20,8,0), Vector3DFloat(25,7,0)));
-	fl2.push_back(SSECorrespondenceFeature(Vector3DFloat(26,6,0), Vector3DFloat(31,5,0))); 
+	fl2.push_back(SSECorrespondenceFeature(Vector3DFloat(1,0,1), Vector3DFloat(4,0,1)));
+	fl2.push_back(SSECorrespondenceFeature(Vector3DFloat(0,1,1), Vector3DFloat(0,4,1)));
+	fl2.push_back(SSECorrespondenceFeature(Vector3DFloat(1,5,1), Vector3DFloat(4,5,1)));
+	fl2.push_back(SSECorrespondenceFeature(Vector3DFloat(5,1,1), Vector3DFloat(5,4,1)));
 
-/*	fl1.push_back(SSECorrespondenceFeature(Vector3DFloat(-2.36, -4.82, -14.82), Vector3DFloat(8.02, 5.66, -13.65)));
+	fl1.push_back(SSECorrespondenceFeature(Vector3DFloat(-2.36, -4.82, -14.82), Vector3DFloat(8.02, 5.66, -13.65)));
 	fl1.push_back(SSECorrespondenceFeature(Vector3DFloat(8.14, -2.94, -7.86), Vector3DFloat(-4.29, -6.07, 0.87)));
 	fl1.push_back(SSECorrespondenceFeature(Vector3DFloat(-0.47, 9.74, -4.92), Vector3DFloat(11.38, 4.39, 5.46)));
 	fl1.push_back(SSECorrespondenceFeature(Vector3DFloat(0.56, -8.16, 6.86), Vector3DFloat(2.45, -13.67, 4.68)));
@@ -155,15 +157,33 @@ int main( int args, char * argv[] ) {
 	fl2.push_back(SSECorrespondenceFeature(Vector3DFloat(3.26, -5.05, -12.20), Vector3DFloat(-4.07, -5.65, 1.44)));
 	fl2.push_back(SSECorrespondenceFeature(Vector3DFloat(-0.26, 10.16, -4.35), Vector3DFloat(11.59, 4.81, 6.03)));
 	fl2.push_back(SSECorrespondenceFeature(Vector3DFloat(0.77, -7.74, 7.43), Vector3DFloat(2.67, -13.25, 5.25)));
-*/
+
 	SSECorrespondenceFinder finder;
-	//finder.InitializeFeatures(fl1, fl2);
+	finder.InitializeFeatures(fl1, fl2);
+	finder.InitializeConstants(
+		StringUtils::StringToDouble(argv[6]), 
+		StringUtils::StringToDouble(argv[7]), 
+		StringUtils::StringToDouble(argv[8]), 
+		StringUtils::StringToDouble(argv[9]), 
+		StringUtils::StringToDouble(argv[10]),
+		StringUtils::StringToDouble(argv[11]), 
+		StringUtils::StringToDouble(argv[12]), 
+		StringUtils::StringToDouble(argv[13]), 
+		StringUtils::StringToDouble(argv[14]), 
+		StringUtils::StringToDouble(argv[15]), 
+		StringUtils::StringToInt(argv[16]));
+	finder.GetAStarTriangleBasedFeatureCorrespondence(true, true);
+	return 0;*/
+
+	SSECorrespondenceFinder finder;
 	if(args != 17) {
 		printf("ProteinMorph [method] [splitNodes] [multipleSearch] [pdb1(highres)] [pdb2(volume)] [rigidityThreshold] [featureChangeThreshold] [rigidityAngleCoeff] [rigidityCentroidDistanceCoeff] [rigidityFeatureChangeCoeff] [rigidComponentCoeff] [intraComponentCoeff] [jointAngleThreshold] [dihedralAngleThreshold] [centroidDistanceThreshold] [maxSolutionCount]\n");
 		printf("\t[method] : The algorithm to use, 1 : Clique, 2: Greedy Valence, 3: Greedy Valence Triangle based Clique \n");
 		printf("\t[splitNodes] : 0: dont split, 1: split based on direction \n");
 		printf("\t[multipleSearch] : 0: Single Search, 1: Search for multiple instances of pdb1 in pdb2\n");
 	} else {	
+		TimeManager tm;
+		tm.PushCurrentTime();
 		finder.InitializeFeaturesFromPDBFiles(argv[4], argv[5]);
 		finder.InitializeConstants(
 			StringUtils::StringToDouble(argv[6]), 
@@ -194,29 +214,30 @@ int main( int args, char * argv[] ) {
 				break;
 			case 2:
 				if(multipleSearch) {
-					corr2 = finder.GetValenceBasedFeatureCorrespondenceSet(false, useDirection);
+					corr2 = finder.GetValenceBasedFeatureCorrespondenceSet(false, useDirection, false);
 				} else {
 					corr2 = finder.GetValenceBasedFeatureCorrespondence(true, useDirection);
 				}
 				break;
 			case 3:
 				if(multipleSearch) {
-					corr2 = finder.GetValenceBasedFeatureCorrespondenceSet(true, useDirection);
+					corr2 = finder.GetValenceBasedFeatureCorrespondenceSet(true, useDirection, false);
 				} else {
-					corr2 = finder.GetValenceTriangleBasedFeatureCorrespondence(true, useDirection);
+					corr2 = finder.GetValenceTriangleBasedFeatureCorrespondence(true, useDirection, false);
 				}
 				break;
 			case 4:
 				if(multipleSearch) {
 					printf("Multiple search not implemented for this method \n");
 				} else {
-					corr = finder.GetAStarTriangleBasedFeatureCorrespondence(true, useDirection);
+					corr = finder.GetAStarTriangleBasedFeatureCorrespondence(true, useDirection, false);
 				}
 				break;
 			default:
 				printf("Unknown method\n");
 				break;
 		}		
+		tm.PopAndDisplayTime("Executed in %f seconds!\n");
 	}	
 
 	//float j1, j2, d;

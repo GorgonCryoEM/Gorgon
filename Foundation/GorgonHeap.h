@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.1  2009/12/13 19:38:37  ssa1
+//   Adding in abstract data structures
+//
 
 #ifndef FOUNDATION_GORGONHEAP_H
 #define FOUNDATION_GORGONHEAP_H
@@ -83,7 +86,7 @@ namespace wustl_mm {
 
 		template <class T>
 		void GorgonHeap<T>::Heapify(int rootIndex) {
-			unsigned int size = values.size();			
+			int size = values.size();			
 
 			if(rootIndex < size) {
 				unsigned int left = GetLeft(rootIndex);

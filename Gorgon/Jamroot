@@ -24,8 +24,11 @@ import python ;
 python-extension libpyGORGON : src_cpp/LibPyGorgon.cpp
 	: <include>../. 
         <include>../ExternalLibraries 
-	<include>../ExternalLibraries/GL
-	: <library>../ExternalLibraries/GL/glut32.lib ;
+	  <include>../ExternalLibraries/GL
+	: <library>../ExternalLibraries/GL/glut32.lib 
+	  <library>../ExternalLibraries/FFTW/Win32/libfftw3-3.lib
+	  <library>../ExternalLibraries/FFTW/Win32/libfftw3f-3.lib
+	  <library>../ExternalLibraries/FFTW/Win32/libfftw3l-3.lib ;
 
 #python-extension TopologyHunter : src_cpp/TopologyHunter.cpp
 #	: <include>../. 
