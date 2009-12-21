@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.14.2.8  2009/12/19 22:34:30  schuhs
+//   Preparing to merge: adding ReadHelixPositions method from trunk
+//
 //   Revision 1.14.2.7  2009/11/05 17:28:04  schuhs
 //   Added code (commented out now) to set helix length as number of bonds and not the number of residues
 //
@@ -242,94 +245,56 @@ namespace wustl_mm {
 					numSheets++;
 				}
 			}
+#ifdef VERBOSE
 			cout << "creating new graph for " << numHelices << " helices and " << numSheets << " strands." << endl;
+#endif // VERBOSE
 
-			//StandardGraph * graph = new StandardGraph(2 * structures.size());
 			StandardGraph * graph = new StandardGraph(2 * numHelices + numSheets);
 
 			// Adding the rest of the structures into the graph
 			int node = 0;
 			for(i = 0; i < (int)structures.size(); i++) {
 				if (structures[i]->secondaryStructureType == GRAPHEDGE_HELIX) {
+#ifdef VERBOSE
 					cout << "adding helix " << i << endl;
+#endif // VERBOSE
 					graph->SetCost(node+1, node+1, 0); // First helix node.
 					graph->SetType(node+1, node+1, GRAPHNODE_HELIX); 
 					graph->SetCost(node+2, node+2, 0); // Second helix node.
 					graph->SetType(node+2, node+2, GRAPHNODE_HELIX); 
 
 					// An edge for the helix
-					if (SMIPAPER_MODE == 1) {
-						graph->SetCost(node+1, node+2, structures[i]->GetLengthResidues()); 
-					} else {
-						//graph->SetCost(node+1, node+2, structures[i]->GetLengthAngstroms()); 
-						graph->SetCost(node+1, node+2, structures[i]->GetLengthResidues()); 
-						// should be shorter by 1 since # bonds = # residues - 1
-						//graph->SetCost(node+1, node+2, structures[i]->GetLengthBonds()); 
-					}
+					graph->SetCost(node+1, node+2, structures[i]->GetLengthResidues()); 
 					graph->SetType(node+1, node+2, structures[i]->secondaryStructureType); 
-
-					if (SMIPAPER_MODE == 1) {
-						graph->SetCost(node+2, node+1, structures[i]->GetLengthResidues()); 
-					} else {
-						//graph->SetCost(node+2, node+1, structures[i]->GetLengthAngstroms()); 
-						graph->SetCost(node+2, node+1, structures[i]->GetLengthResidues()); 
-						// should be shorter by 1 since # bonds = # residues - 1
-						//graph->SetCost(node+2, node+1, structures[i]->GetLengthBonds()); 
-					}
+					graph->SetCost(node+2, node+1, structures[i]->GetLengthResidues()); 
 					graph->SetType(node+2, node+1, structures[i]->secondaryStructureType); 
 
 					if(i != 0) {
 						// An edge for the loop before the helix
-						if (SMIPAPER_MODE == 1) {
-							graph->SetCost(node, node+1, (structures[i]->startPosition - structures[i-1]->endPosition));
-						} else {
-							//graph->SetCost(node, node+1, (structures[i]->startPosition - structures[i-1]->endPosition) * LOOP_C_ALPHA_TO_ANGSTROMS);
-							graph->SetCost(node, node+1, (structures[i]->startPosition - structures[i-1]->endPosition));
-						}
+						graph->SetCost(node, node+1, (structures[i]->startPosition - structures[i-1]->endPosition));
 						graph->SetType(node, node+1, GRAPHEDGE_LOOP);
-
-						if (SMIPAPER_MODE == 1) {
-							graph->SetCost(node+1, node, (structures[i]->startPosition - structures[i-1]->endPosition));
-						} else {
-							//graph->SetCost(node+1, node, (structures[i]->startPosition - structures[i-1]->endPosition) * LOOP_C_ALPHA_TO_ANGSTROMS);
-							graph->SetCost(node+1, node, (structures[i]->startPosition - structures[i-1]->endPosition));
-						}
+						graph->SetCost(node+1, node, (structures[i]->startPosition - structures[i-1]->endPosition));
 						graph->SetType(node+1, node, GRAPHEDGE_LOOP);
 					}
 					node += 2;
 				}
 
 				if (structures[i]->secondaryStructureType == GRAPHEDGE_SHEET) {
+#ifdef VERBOSE
 					cout << "adding strand " << i << " with ID " << structures[i]->secondaryStructureID << endl;
-					// TODO: Add some cost for the node itself
-					if (SMIPAPER_MODE == 1) {
-						graph->SetCost(node+1, (structures[i]->endPosition - structures[i]->startPosition) );
-					} else {
-						//graph->SetCost(node+1, (structures[i]->endPosition - structures[i]->startPosition) * LOOP_C_ALPHA_TO_ANGSTROMS);
-						graph->SetCost(node+1, (structures[i]->endPosition - structures[i]->startPosition) );
-					}
+#endif // VERBOSE
+					graph->SetCost(node+1, (structures[i]->endPosition - structures[i]->startPosition) );
+#ifdef VERBOSE
 					cout << "adding strand " << i << " at node " << node << " with length " << (structures[i]->endPosition - structures[i]->startPosition) * LOOP_C_ALPHA_TO_ANGSTROMS << endl;
+#endif // VERBOSE
 					graph->SetCost(node+1, node+1, 0); // Strand node.
 					graph->SetType(node+1, node+1, GRAPHNODE_SHEET); 
 
 					if(i != 0) {
 						// An edge for the loop before the strand
-						// TODO: fix length calculation -- do startPosition and endPosition hold the right values for strands?
-						if (SMIPAPER_MODE == 1) {
-							graph->SetCost(node, node+1, (structures[i]->startPosition - structures[i-1]->endPosition) );
-						} else {
-							//graph->SetCost(node, node+1, (structures[i]->startPosition - structures[i-1]->endPosition) * LOOP_C_ALPHA_TO_ANGSTROMS);
-							graph->SetCost(node, node+1, (structures[i]->startPosition - structures[i-1]->endPosition) );
-						}
+						graph->SetCost(node, node+1, (structures[i]->startPosition - structures[i-1]->endPosition) );
 						graph->SetType(node, node+1, GRAPHEDGE_LOOP);
-
-						if (SMIPAPER_MODE == 1) {
-							graph->SetCost(node+1, node, (structures[i]->startPosition - structures[i-1]->endPosition) );
-						} else {
-							//graph->SetCost(node+1, node, (structures[i]->startPosition - structures[i-1]->endPosition) * LOOP_C_ALPHA_TO_ANGSTROMS);
-							graph->SetCost(node+1, node, (structures[i]->startPosition - structures[i-1]->endPosition) );
-						}
-
+						graph->SetCost(node+1, node, (structures[i]->startPosition - structures[i-1]->endPosition) );
 						graph->SetType(node+1, node, GRAPHEDGE_LOOP);
 					}
 					node += 1;
