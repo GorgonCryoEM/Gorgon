@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.20.2.2  2009/12/09 04:04:05  schuhs
+#   Add support for rendering a third model
+#
 #   Revision 1.20.2.1  2009/06/09 16:35:00  schuhs
 #   Allow volume filename to be passed as an argument or selected from the file dialog
 #
@@ -62,7 +65,8 @@ from OpenGL.GLUT import *
 class VolumeViewer(BaseViewer):
     def __init__(self, main, parent=None):
         BaseViewer.__init__(self, main, parent)
-        self.title = "Volume"          
+        self.title = "Volume"    
+        self.shortTitle = "VOL"      
         self.app.themes.addDefaultRGB("Volume:Model:0", 180, 180, 180, 255)
         self.app.themes.addDefaultRGB("Volume:Model:1", 180, 180, 180, 255)
         self.app.themes.addDefaultRGB("Volume:Model:2", 180, 180, 180, 255)
@@ -106,7 +110,7 @@ class VolumeViewer(BaseViewer):
         downsampleAct.setStatusTip(self.tr("Downsample the loaded volume"))
         self.connect(downsampleAct, QtCore.SIGNAL("triggered()"), self.downsampleVolume)
         self.app.actions.addAction("downsample_Volume", downsampleAct)     
-        
+         
  
                                                
     def createMenus(self):
@@ -145,13 +149,13 @@ class VolumeViewer(BaseViewer):
         pass 
     
     def loadData(self):
-        fileName = str(QtGui.QFileDialog.getOpenFileName(self, self.tr("Open Data"), "", self.tr(self.renderer.getSupportedLoadFileFormats())))
-        self.loadDataFile(fileName)
+        fileName = str(QtGui.QFileDialog.getOpenFileName(self, self.tr("Open Volume"), "", self.tr(self.renderer.getSupportedLoadFileFormats())))
+        self.loadDataFromFile(fileName)
 
-    def loadDataFile(self, fileName):
+    def loadDataFromFile(self, fileName):
         self.fileName = fileName
                 
-        if not self.fileName == "":  
+        if not self.fileName=="":  
             self.setCursor(QtCore.Qt.WaitCursor)
             
             tokens = split(str(self.fileName), '.')            
@@ -178,6 +182,51 @@ class VolumeViewer(BaseViewer):
             delta = round(range * amount / 100.0)
             
             self.surfaceEditor.ui.horizontalSliderIsoLevel.setValue(self.surfaceEditor.ui.horizontalSliderIsoLevel.value() - delta)
-            
+    
+    def setCenter(self, center):
+        [xx, yy, zz] = self.worldToObjectCoordinates(center)
+        self.renderer.setDisplayRadiusOrigin(xx, yy, zz)
+        return True      
+    
+    def getIsoValue(self):
+        return self.renderer.getSurfaceValue()
                           
-      
+                          
+    def getSessionInfo(self, sessionManager):
+        info = BaseViewer.getSessionInfo(self, sessionManager)  
+        info.extend(sessionManager.getRemarkLines(self.shortTitle, "ISO_LEVEL", self.surfaceEditor.ui.horizontalSliderIsoLevel.value()))
+        info.extend(sessionManager.getRemarkLines(self.shortTitle, "MAX_ISO_LEVEL", self.surfaceEditor.ui.horizontalSliderIsoLevelMax.value()))
+        info.extend(sessionManager.getRemarkLines(self.shortTitle, "SAMPLING_INTERVAL", self.surfaceEditor.ui.horizontalSliderSampling.value()))
+        info.extend(sessionManager.getRemarkLines(self.shortTitle, "DISPLAY_RADIUS", self.surfaceEditor.ui.horizontalSliderDisplayRadius.value()))
+        info.extend(sessionManager.getRemarkLines(self.shortTitle, "VIEWING_TYPE_SURFACE", self.surfaceEditor.ui.radioButtonIsoSurface.isChecked()))
+        info.extend(sessionManager.getRemarkLines(self.shortTitle, "VIEWING_TYPE_SOLID", self.surfaceEditor.ui.radioButtonSolid.isChecked()))
+        info.extend(sessionManager.getRemarkLines(self.shortTitle, "VIEWING_TYPE_CROSS_SECTION", self.surfaceEditor.ui.radioButtonCrossSection.isChecked()))
+        info.extend(sessionManager.getRemarkLines(self.shortTitle, "USE_DISPLAY_RADIUS", self.surfaceEditor.ui.checkBoxUseRadius.checkState()))        
+        return info
+                       
+    def loadSessionInfo(self, sessionManager, sessionProperties):
+        BaseViewer.loadSessionInfo(self, sessionManager, sessionProperties)
+               
+        isoLevel = sessionManager.getProperty(sessionProperties, self.shortTitle, "ISO_LEVEL")
+        self.surfaceEditor.ui.horizontalSliderIsoLevel.setValue(isoLevel)
+        
+        maxIsoLevel = sessionManager.getProperty(sessionProperties, self.shortTitle, "MAX_ISO_LEVEL")
+        self.surfaceEditor.ui.horizontalSliderIsoLevelMax.setValue(maxIsoLevel)
+        
+        samplingInterval = sessionManager.getProperty(sessionProperties, self.shortTitle, "SAMPLING_INTERVAL")
+        self.surfaceEditor.ui.horizontalSliderSampling.setValue(samplingInterval)
+                
+        useDisplayRadius = sessionManager.getProperty(sessionProperties, self.shortTitle, "USE_DISPLAY_RADIUS")
+        self.surfaceEditor.ui.checkBoxUseRadius.setCheckState(useDisplayRadius)
+                
+        displayRadius = sessionManager.getProperty(sessionProperties, self.shortTitle, "DISPLAY_RADIUS")
+        self.surfaceEditor.ui.horizontalSliderDisplayRadius.setValue(displayRadius)
+        
+        surfaceViewing = sessionManager.getProperty(sessionProperties, self.shortTitle, "VIEWING_TYPE_SURFACE")
+        solidViewing = sessionManager.getProperty(sessionProperties, self.shortTitle, "VIEWING_TYPE_SOLID")
+        crossSectionViewing = sessionManager.getProperty(sessionProperties, self.shortTitle, "VIEWING_TYPE_CROSS_SECTION")
+        
+        self.surfaceEditor.ui.radioButtonIsoSurface.setChecked(surfaceViewing)
+        self.surfaceEditor.ui.radioButtonSolid.setChecked(solidViewing)
+        self.surfaceEditor.ui.radioButtonCrossSection.setChecked(crossSectionViewing)
+     
