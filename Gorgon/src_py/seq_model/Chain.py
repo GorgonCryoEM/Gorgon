@@ -136,20 +136,13 @@ object. If no chain ID is specified, it loads the first chain.
                 continue
             if not firstChain:	#Sets the value of the first and only chain we will store
                 firstChain = chainID
-                """
                 ####if the chain key already exists, point to that chain object
                 ####perhaps this should be modified
                 if not (pdbID, firstChain) in cls.getChainKeys():
                     result.setIDs(pdbID, firstChain)
                 else:
                     result = cls.getChain( (pdbID, firstChain) )
-                    print "breaking out of loop! (01)"
                     break
-                """
-                # modified above code to always create a new chain
-                # TODO: try to change this back, if desired, and look for impact on memory.
-                result.setIDs(pdbID, firstChain)
-                
             if firstChain and chainID != firstChain:		#If we've gone past the only chain we want to store, we will break out of the for loop
                 break
             
@@ -157,6 +150,8 @@ object. If no chain ID is specified, it loads the first chain.
             if residueIndex not in result.residueRange():
                 residue = Residue( line[17:20].strip(), result ) 
                 result[residueIndex] = residue
+            else:
+                residue = result[residueIndex]
             
             serialNo    = int( line[6:11].strip() )
             atomName    = line[12:16].strip()
