@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.36.2.44  2009/12/21 01:03:07  schuhs
+#   Fix minor bug in constraint reading code, and reduce the number of console messages when reading constraints
+#
 #   Revision 1.36.2.43  2009/12/21 00:49:12  schuhs
 #   Merged in ExportToRosetta methods from trunk
 #
@@ -426,7 +429,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
             self.executed = False
             self.createBasicCorrespondence()
             print "after creating basic correspondence (1), secelDict has length " + str(len(self.viewer.correspondenceLibrary.structurePrediction.secelDict))   
-            self.createBasicCorrespondence()
+            #self.createBasicCorrespondence()
             print "after creating basic correspondence (2), secelDict has length " + str(len(self.viewer.correspondenceLibrary.structurePrediction.secelDict))   
             self.viewer.correspondenceLibrary.correspondenceList = self.populateEmptyResults(self.viewer.correspondenceLibrary)
             print "correspondenceList has length " + str(len(self.viewer.correspondenceLibrary.correspondenceList))
@@ -973,17 +976,8 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
             
             # create list of observed helices for this correspondence result
             if cppSse.isHelix():            
-                # TODO: DECIDE WHETHER TO REMOVE THE FOLLOWING CODE, AS SASAKTHI DID
-                p1 = cAlphaViewer.worldToObjectCoordinates(skeletonViewer.objectToWorldCoordinates(vector3DFloatToTuple(cppSse.getCornerCell2(1))))
-                p2 = cAlphaViewer.worldToObjectCoordinates(skeletonViewer.objectToWorldCoordinates(vector3DFloatToTuple(cppSse.getCornerCell2(2))))
-                # END TODO
                 q1 = cAlphaViewer.worldToObjectCoordinates(sseViewer.objectToWorldCoordinates(vector3DFloatToTuple(cppSse.getCornerCell3(1))))
                 q2 = cAlphaViewer.worldToObjectCoordinates(sseViewer.objectToWorldCoordinates(vector3DFloatToTuple(cppSse.getCornerCell3(2))))
-                # TODO: DECIDE WHETHER TO REMOVE THE FOLLOWING CODE, AS SASAKTHI DID
-                if vectorSize(vectorAdd(p1, vectorScalarMultiply(-1, q1))) > vectorSize(
-                                        vectorAdd(p1, vectorScalarMultiply(-1, q2))): #to get proper orientation
-                    q1, q2 = q2, q1 #python trick for exchanging values
-                # END TODO
             
                 pyHelix = ObservedHelix(sseIx, q1, q2)
                 observedHelices[helixCount] = pyHelix
