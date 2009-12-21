@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.15.2.9  2009/12/19 23:06:26  schuhs
+//   Preparing to merge with trunk: copied in changes from trunk
+//
 //   Revision 1.15.2.8  2009/09/08 14:55:21  schuhs
 //   Fixing bug in code that checks whether a point is inside a helix
 //
@@ -239,12 +242,6 @@ namespace wustl_mm {
 
 		bool GeometricShape::IsInsideCylinder(Point3 point) {
 			point = objectToWorld * point;
-			if (SMIPAPER_MODE == 1) {
-				//cout << "SMI mode: inside cylinder query" << endl;
-				//return ((point[0]*point[0] + point[2]*point[2] <= 1) && (abs(point[1]) <= 0.5)); // the old code
-				return ((point[0]*point[0] + point[2]*point[2] <= .25) && (abs(point[1]) <= 0.5)); // 0.25 = 0.5^2, code below likely a bug?
-			}
-			//return ((point[0]*point[0] + point[2]*point[2] <= 0.5) && (abs(point[1]) <= 0.5));
 			return ((point[0]*point[0] + point[2]*point[2] <= 0.25) && (abs(point[1]) <= 0.5));
 		}
 
@@ -421,8 +418,7 @@ namespace wustl_mm {
 				}
 			}
 			return length;
-		}
-		
+		}		
 		void GeometricShape::Rotate(Vector3 axis, double angle){
 			rotationMatrix = Matrix4::rotation(axis, angle) * rotationMatrix;
 			inverseRotationMatrix = inverseRotationMatrix * Matrix4::rotation(axis, -angle);
