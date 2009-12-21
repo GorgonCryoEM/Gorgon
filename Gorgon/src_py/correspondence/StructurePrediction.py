@@ -163,11 +163,11 @@ handled in C++.
                         i += 1
                 
                  
-            chain.helices = {}
-            chain.sheets = {}
-            chain.secelList = {}
-            chain.orphanStrands = {}
-            chain.atoms = {}
+            #chain.helices = {}
+            #chain.sheets = {}
+            #chain.secelList = {}
+            #chain.orphanStrands = {}
+            #chain.atoms = {}
             for resIndex in chain.residueRange():
                 chain[resIndex].clearAtoms()
             # create new python StructurePrediction object and return it
