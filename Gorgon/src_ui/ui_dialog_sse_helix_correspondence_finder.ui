@@ -1256,8 +1256,8 @@
        <attribute name="title" >
         <string>Results</string>
        </attribute>
-       <layout class="QHBoxLayout" name="horizontalLayout_6" >
-        <item>
+       <layout class="QGridLayout" name="gridLayout_15" >
+        <item row="0" column="0" >
          <layout class="QVBoxLayout" name="verticalLayout_7" >
           <item>
            <widget class="QSplitter" name="splitter" >
@@ -1316,6 +1316,13 @@
               <string>Constrained</string>
              </property>
             </column>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="pushButtonExportToRosetta" >
+            <property name="text" >
+             <string>Export Correspondences to Rosetta</string>
+            </property>
            </widget>
           </item>
          </layout>
@@ -1396,6 +1403,7 @@
     </widget>
    </item>
   </layout>
+  <zorder>splitter_7</zorder>
  </widget>
  <tabstops>
   <tabstop>tabWidget</tabstop>
