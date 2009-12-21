@@ -116,8 +116,8 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="glut32.lib"
-				AdditionalLibraryDirectories="&quot;$(SolutionDir)\ExternalLibraries\GL&quot;"
+				AdditionalDependencies="glut32.lib libfftw3-3.lib libfftw3f-3.lib libfftw3l-3.lib"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)\ExternalLibraries\FFTW\Win32&quot;;&quot;$(SolutionDir)\ExternalLibraries\GL&quot;"
 			/>
 			<Tool
 				Name="VCALinkTool"

@@ -36,12 +36,15 @@
 #ifndef eman_emfft_h__
 #define eman_emfft_h__
 
+#define FFTW3
+
 #include <string>
 using std::string;
 #include <sstream>
 using std::stringstream;
 //#include "log.h" //EMAN2 specific
 #include <iostream>
+
 using std::cout; //Used to replace log.h stuff
 using std::endl;
 
@@ -156,7 +159,11 @@ namespace EMAN {
 
 #ifdef FFTW3
 
-#include <fftw3.h>
+#ifdef _WIN32
+	#include <FFTW\Win32\fftw3.h>
+#else 
+	#include <fftw3.h>
+#endif
 
 namespace EMAN
 {

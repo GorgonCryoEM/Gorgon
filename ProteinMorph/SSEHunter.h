@@ -11,6 +11,11 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.13  2009/12/21 20:38:42  colemanr
+//   HelixCorrelation() normalizes the output map to values between zero and one, now.
+//   Added AddHelixCorrelationWeights()
+//   Added FFTW3 conditional compilation
+//
 //   Revision 1.12  2009/12/19 05:49:55  colemanr
 //   SSEHunter::HelixCorrelation() now uses float arrays not volumes to hold the template cylinder.
 //   Added SSEHunter::ApplyTemplateHelix(float map[], ...).
@@ -61,9 +66,7 @@
 #include <map>
 #include <MathTools/Vector3D.h>
 #include <MathTools/MathLib.h>
-#ifdef FFTW3
-	#include <MathTools/CrossCorrelation.h>
-#endif //FFTW3
+#include <MathTools/CrossCorrelation.h>
 #include <GraphMatch/PDBAtom.h>
 #include <GraySkeletonCPP/VolumeSkeletonizer.h>
 #include <Gorgon/MeshRenderer.h>
@@ -112,9 +115,7 @@ namespace wustl_mm {
 			vector<PDBAtom> GetPseudoAtoms(vector<Vector3DInt> & atomVolumePositions, Volume * vol, float resolution, float threshold);
 			void UpdateMap(Volume * vol, Vector3DInt loc, float rangeminX, float rangeminY, float rangeminZ, float rangemaxX, float rangemaxY, float rangemaxZ);
 			void AddSkeletonWeights(vector<PDBAtom> & patoms, Volume * vol, NonManifoldMesh_Annotated * skeleton, float resolution, float influence);
-#ifdef FFTW3
 			void AddHelixCorrelationWeights(vector<PDBAtom>& patoms, Volume * vol, RadialProfileType type, float resolution, float influence);
-#endif //FFTW3
 			void AddGeometryWeights(vector<PDBAtom> & patoms, vector<Vector3DInt> atomVolumePositions, Volume * vol, float resolution, float threshold, float influence);
 			vector< vector<float> > GetAtomDistances(vector<PDBAtom> patoms);
 			vector< vector<Vector3DInt> > GetNeighborhoodVoxels(vector<PDBAtom> patoms, vector<Vector3DInt> atomVolumePositions, Volume * vol, float threshold);
@@ -133,10 +134,8 @@ namespace wustl_mm {
 										RadialProfileType type = POLYNOMIAL, float len=16.2, float apix_x=1, float apix_y=1, float apix_z=1,
 										double axis_vector_x=0, double axis_vector_y=1, double axis_vector_z=0);
 			Volume * GetTemplateHelix(double length, float apix, float resolution, int mapSize);
-#ifdef FFTW3
 			Volume * HelixCorrelation(Volume* map_vol, RadialProfileType type = POLYNOMIAL, float length = 16.2,
 									  float deltaAngleRadians = 5*PI/180, Volume* az_vol = NULL, Volume* alt_vol = NULL);
-#endif //FFTW3
 		private:
 			void NormalizeEdgeMean(Volume* vol);
 			void ApplyPolynomialProfileToHelix(Volume * in, float lengthAngstroms, int z0=-1);
@@ -159,9 +158,7 @@ namespace wustl_mm {
 			vector<PDBAtom> patoms = GetPseudoAtoms(atomVolumePositions, vol, resolution, threshold);
 			AddSkeletonWeights(patoms, vol, skeleton, resolution, skeletonCoeff);
 			AddGeometryWeights(patoms, atomVolumePositions, vol, resolution, threshold, geometryCoeff);
-#ifdef FFTW3
 			AddHelixCorrelationWeights(patoms, vol, type, resolution, correlationCoeff);
-#endif //FFTW3
 			map<unsigned long long, PDBAtom> atomMap;
 			atomMap.clear();
 			for(unsigned int i = 0; i < patoms.size();  i++) {
@@ -761,7 +758,6 @@ namespace wustl_mm {
 			}
 		}
 
-#ifdef FFTW3
 		Volume * SSEHunter::HelixCorrelation(Volume* density_vol, RadialProfileType type, float length,
 												 float deltaAngleRadians, Volume* az_vol, Volume* alt_vol) {
 			// TODO: Make it work with helices
@@ -914,7 +910,6 @@ namespace wustl_mm {
 				patoms[i].SetTempFactor(patoms[i].GetTempFactor() + influence * helixScores[i]);
 			}
 		}
-#endif //FFTW3
 		
 	}
 }

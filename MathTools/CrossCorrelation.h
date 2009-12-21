@@ -1,14 +1,24 @@
-// Copyright (C) 2005-2009 Washington University in St Louis, Baylor College of Medicine.  All rights reserved
-// Author: Ross Coleman (racolema@bcm.edu)
+// Copyright (C) 2005-2008 Washington University in St Louis, Baylor College of Medicine.  All rights reserved
+// Author:        Ross Coleman (racolema@bcm.edu)
+// Description:   C++ Implementation of SSEHunter
+
+// CVS Meta Information: 
+//   $Source$
+//   $Revision$
+//   $Date$
+//   $Author$
+//   $State$
+//
+// History Log: 
+//   $Log$
 
 #ifndef MATHTOOLS_CROSS_CORRELATION_H
 #define MATHTOOLS_CROSS_CORRELATION_H
 
-#ifdef FFTW3
-
 #include <complex>
 #include <cstdlib>
-#include "FFT.h"
+#include <eman/FFT.h>
+
 using namespace EMAN;
 
 namespace wustl_mm {
@@ -207,7 +217,5 @@ namespace wustl_mm {
 
 	}
 }
-
-#endif //FFTW3
 
 #endif
