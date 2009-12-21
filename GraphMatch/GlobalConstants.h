@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.32.2.24  2009/12/21 20:32:35  schuhs
+//   Removing SMIPAPER_MODE flag used during algorithm development
+//
 //   Revision 1.32.2.23  2009/12/20 22:14:26  schuhs
 //   Reduce compiler warnings
 //
@@ -288,8 +291,6 @@ namespace wustl_mm {
 		}
 
 		void AddHelixConstraint(int patternHelix, int baseHelix) {
-			//int patternNode1 = patternHelix*2 - 1;
-			//int patternNode2 = patternHelix*2;
 			int patternNode1 = patternHelix;
 			int patternNode2 = patternHelix+1;
 
@@ -297,8 +298,6 @@ namespace wustl_mm {
 				allowedConstraintCollection[patternNode1-1][allowedConstraintCount[patternNode1-1]] = -1;		allowedConstraintCount[patternNode1-1]++;
 				allowedConstraintCollection[patternNode2-1][allowedConstraintCount[patternNode2-1]] = -1;		allowedConstraintCount[patternNode2-1]++;
 			} else {
-				//int baseNode1 = baseHelix*2 - 1;
-				//int baseNode2 = baseHelix*2;
 				int baseNode1 = baseHelix;
 				int baseNode2 = baseHelix+1;
 				allowedConstraintCollection[patternNode1-1][allowedConstraintCount[patternNode1-1]] = baseNode1;		allowedConstraintCount[patternNode1-1]++;
