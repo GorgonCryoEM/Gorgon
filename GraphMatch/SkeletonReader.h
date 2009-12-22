@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.23  2009/12/22 01:03:06  schuhs
+//   Adding support for beta sheets to the SSE correspondence search algorithm
+//
 //   Revision 1.22  2009/11/02 19:45:36  colemanr
 //   now using round() from MathTools/BasicDefines.h instead of Round()
 //
@@ -202,7 +205,7 @@ namespace wustl_mm {
 
 			//cout << "min sheet size = " << MINIMUM_SHEET_SIZE << ", num skeleton sheets = " << numSkeletonSheets << ", num SSEs = " << (int)helixes.size() + (int)sheets.size() << endl;
 
-			vector<vector<double>> sheetDistance(numSkeletonSheets+1, vector<double> ((int)sheets.size()) );
+			vector<vector<double> > sheetDistance(numSkeletonSheets+1, vector<double> ((int)sheets.size()) );
 
 			// for each sheet
 			for (int i = 1; i <= numSkeletonSheets; i++) { 
