@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.60  2009/10/09 21:50:15  ssa1
+#   Removing obsolete reference to session_lib
+#
 #   Revision 1.59  2009/10/05 17:57:37  ssa1
 #   Initial session saving functionality (Request ID:52)
 #
@@ -139,6 +142,7 @@ class BaseViewer(QtOpenGL.QGLWidget):
         self.displayStyle = self.DisplayStyleSmooth;
         self.modelVisible = True
         self.model2Visible = False
+        self.model3Visible = False
         self.rotation = self.identityMatrix()
         self.connect(self, QtCore.SIGNAL("modelChanged()"), self.modelChanged) 
         self.connect(self, QtCore.SIGNAL("modelLoaded()"), self.modelChanged) 
@@ -240,11 +244,18 @@ class BaseViewer(QtOpenGL.QGLWidget):
         self.model2Visible = visible
         self.emitModelChanged()
         
+    def setModel3Visibility(self, visible):
+        self.model3Visible = visible
+        self.emitModelChanged()
+        
     def getModelColor(self):
         return self.app.themes.getColor(self.title + ":" + "Model:0" )
 
     def getModel2Color(self):
         return self.app.themes.getColor(self.title + ":" + "Model:1" )
+    
+    def getModel3Color(self):
+        return self.app.themes.getColor(self.title + ":" + "Model:2" )
     
     def setModelColor(self, color):
         self.app.themes.addColor(self.title + ":" + "Model:0", color)
@@ -252,6 +263,10 @@ class BaseViewer(QtOpenGL.QGLWidget):
 
     def setModel2Color(self, color):
         self.app.themes.addColor(self.title + ":" + "Model:1", color)
+        self.emitModelChanged()
+
+    def setModel3Color(self, color):
+        self.app.themes.addColor(self.title + ":" + "Model:2", color)
         self.emitModelChanged()
 
     def setMaterials(self, color):
@@ -433,14 +448,14 @@ class BaseViewer(QtOpenGL.QGLWidget):
             
         self.gllist = glGenLists(1)
         glNewList(self.gllist, GL_COMPILE)
-        visibility = [self.modelVisible, self.model2Visible]
-        colors = [self.getModelColor(),  self.getModel2Color()]
+        visibility = [self.modelVisible, self.model2Visible, self.model3Visible]
+        colors = [self.getModelColor(),  self.getModel2Color(), self.getModel3Color()]
         
         glPushAttrib(GL_LIGHTING_BIT | GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT)
                          
         self.extraDrawingRoutines()
         
-        for i in range(2):
+        for i in range(3):
             if(self.loaded and visibility[i]):
                 self.setMaterials(colors[i])
                 if(colors[i].alpha() < 255):
@@ -514,6 +529,7 @@ class BaseViewer(QtOpenGL.QGLWidget):
     def themeChanged(self):
         self.visualizationOptions.ui.pushButtonModelColor.setColor(self.getModelColor())
         self.visualizationOptions.ui.pushButtonModel2Color.setColor(self.getModel2Color())
+        self.visualizationOptions.ui.pushButtonModel3Color.setColor(self.getModel3Color())
         self.visualizationOptions.ui.pushButtonBoundingBoxColor.setColor(self.getBoundingBoxColor())  
         self.emitModelChanged()          
        

@@ -150,6 +150,8 @@ object. If no chain ID is specified, it loads the first chain.
             if residueIndex not in result.residueRange():
                 residue = Residue( line[17:20].strip(), result ) 
                 result[residueIndex] = residue
+            else:
+                residue = result[residueIndex]
             
             serialNo    = int( line[6:11].strip() )
             atomName    = line[12:16].strip()

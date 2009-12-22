@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.41  2009/10/05 17:57:37  ssa1
+#   Initial session saving functionality (Request ID:52)
+#
 #   Revision 1.40  2009/08/10 20:03:40  ssa1
 #   SSEHunter interfaced into Gorgon
 #
@@ -158,6 +161,7 @@ class CAlphaViewer(BaseViewer):
         self.shortTitle = "CAL"              
         self.app.themes.addDefaultRGB("C-Alpha:Model:0", 170, 170, 0, 255)
         self.app.themes.addDefaultRGB("C-Alpha:Model:1", 120, 120, 170, 255)
+        self.app.themes.addDefaultRGB("C-Alpha:Model:2", 120, 120, 170, 255)
         self.app.themes.addDefaultRGB("C-Alpha:BoundingBox", 255, 255, 255, 255)         
         self.isClosedMesh = False
         self.centerOnRMB = True

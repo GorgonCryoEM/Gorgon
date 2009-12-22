@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.19  2009/10/05 17:57:37  ssa1
+#   Initial session saving functionality (Request ID:52)
+#
 #   Revision 1.18  2008/12/01 23:16:31  ssa1
 #   Restructuring interactive skeleton drawing, and fixing it for scale space changes.
 #
@@ -46,6 +49,7 @@ class SkeletonViewer(BaseViewer):
         self.shortTitle = "SKE"              
         self.app.themes.addDefaultRGB("Skeleton:Model:0", 180, 0, 0, 255)
         self.app.themes.addDefaultRGB("Skeleton:Model:1", 180, 0, 0, 255)
+        self.app.themes.addDefaultRGB("Skeleton:Model:2", 180, 0, 0, 255)
         self.app.themes.addDefaultRGB("Skeleton:BoundingBox", 255, 255, 255, 255)              
         self.isClosedMesh = False
         self.lineThickness = 3

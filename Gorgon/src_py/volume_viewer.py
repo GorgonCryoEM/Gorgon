@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.26  2009/10/05 17:57:37  ssa1
+#   Initial session saving functionality (Request ID:52)
+#
 #   Revision 1.25  2009/09/02 18:43:05  ssa1
 #   Setting the binary skeletonization threshold to be the one that is being visualized by default
 #
@@ -78,6 +81,7 @@ class VolumeViewer(BaseViewer):
         self.shortTitle = "VOL"      
         self.app.themes.addDefaultRGB("Volume:Model:0", 180, 180, 180, 255)
         self.app.themes.addDefaultRGB("Volume:Model:1", 180, 180, 180, 255)
+        self.app.themes.addDefaultRGB("Volume:Model:2", 180, 180, 180, 255)
         self.app.themes.addDefaultRGB("Volume:BoundingBox", 255, 255, 255, 255)                         
         self.renderer = VolumeRenderer()          
         self.loaded = False
@@ -157,9 +161,13 @@ class VolumeViewer(BaseViewer):
         pass 
     
     def loadData(self):
-        self.fileName = QtGui.QFileDialog.getOpenFileName(self, self.tr("Open Data"), "", self.tr(self.renderer.getSupportedLoadFileFormats()))
+        fileName = str(QtGui.QFileDialog.getOpenFileName(self, self.tr("Open Volume"), "", self.tr(self.renderer.getSupportedLoadFileFormats())))
+        self.loadDataFromFile(fileName)
+
+    def loadDataFromFile(self, fileName):
+        self.fileName = fileName
                 
-        if not self.fileName.isEmpty():  
+        if not self.fileName=="":  
             self.setCursor(QtCore.Qt.WaitCursor)
             
             tokens = split(str(self.fileName), '.')            
