@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.15  2009/12/22 01:03:06  schuhs
+//   Adding support for beta sheets to the SSE correspondence search algorithm
+//
 //   Revision 1.14  2008/09/29 16:30:27  ssa1
 //   Removing compiler warnings
 //
@@ -47,8 +50,8 @@ namespace wustl_mm {
 			LinkedNode(LinkedNode * olderNode, LinkedNodeStub * olderStub, int n2Node, int dummyHelixCount);
 			LinkedNode(LinkedNode * olderNode, LinkedNodeStub * olderStub, int n1Node, int n2Node, int dummyHelixCount);
 			LinkedNode(LinkedNode * olderNode, LinkedNodeStub * olderStub, int n1Node, int n2Node, int dummyHelixCount, int dummySheetCount);
-			LinkedNode::LinkedNode(LinkedNode * olderNode, LinkedNodeStub * olderStub, int n2Node, int dummyHelixCount, bool allowRevisit);
-			LinkedNode::LinkedNode(LinkedNode * olderNode, LinkedNodeStub * olderStub, int n2Node, int dummyHelixCount, int dummySheetCount, bool allowRevisit);
+			LinkedNode(LinkedNode * olderNode, LinkedNodeStub * olderStub, int n2Node, int dummyHelixCount, bool allowRevisit);
+			LinkedNode(LinkedNode * olderNode, LinkedNodeStub * olderStub, int n2Node, int dummyHelixCount, int dummySheetCount, bool allowRevisit);
 
 			~LinkedNode();
 			void PrintNodeConcise(int rank, bool endOfLine = true, bool printCostBreakdown = false);
