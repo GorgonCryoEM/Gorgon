@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.16  2008/11/25 03:30:12  ssa1
+//   User constraints on finding correspondences (v2)
+//
 //   Revision 1.15  2008/11/24 20:02:53  ssa1
 //   User constraints on finding correspondences (v1)
 //
@@ -54,8 +57,19 @@ namespace wustl_mm {
 			bool SetConstant(char * token, double value);
 			bool SetConstant(char * token, int value);
 			bool SetConstant(char * token, bool value);
+			bool GetConstant(char * token, char * value);
+			string GetConstantString(char * token);
+			double GetConstantDouble(char * token);
+			int GetConstantInt(char * token);
+			bool GetConstantBool(char * token);
 			void ClearAllConstraints();
 			void SetHelixConstraint(int sequenceHelix, int skeletonHelix);
+			void SetNodeConstraint(int sequenceNode, int skeletonNode);
+			int GetStrandConstraint(int sequenceNode, int constraintNum);
+			int GetHelixConstraintFwd(int sequenceNode);
+			int GetHelixConstraintRev(int sequenceNode);
+			int GetHelixConstraintUnk(int sequenceNode);
+
 			// Graph Loading
 			void LoadSequenceGraph();
 			void LoadSkeletonGraph();
@@ -106,6 +120,46 @@ namespace wustl_mm {
 			return SetConstantFromToken(token, NULL, 0.0, 0, value);
 		}
 
+		bool BackEndInterface::GetConstant(char * token, char * value) {
+			int iVal;
+			double dVal;
+			bool bVal;
+			return GetConstantFromToken(token, value, dVal, iVal, bVal);
+		}
+
+		string BackEndInterface::GetConstantString(char * token) {
+			char sVal[100];
+			int iVal;
+			double dVal;
+			bool bVal;
+			GetConstantFromToken(token, sVal, dVal, iVal, bVal);
+			return sVal;
+		}
+
+		double BackEndInterface::GetConstantDouble(char *token) {
+			int iVal;
+			double dVal;
+			bool bVal;
+			GetConstantFromToken(token, NULL, dVal, iVal, bVal);
+			return dVal;
+		}
+
+		int BackEndInterface::GetConstantInt(char *token) {
+			int iVal;
+			double dVal;
+			bool bVal;
+			GetConstantFromToken(token, NULL, dVal, iVal, bVal);
+			return iVal;
+		}
+
+		bool BackEndInterface::GetConstantBool(char *token) {
+			int iVal;
+			double dVal;
+			bool bVal;
+			GetConstantFromToken(token, NULL, dVal, iVal, bVal);
+			return bVal;
+		}
+
 		void BackEndInterface::ClearAllConstraints() {
 			ClearAllowedConstraints();
 			ClearNotAllowedConstraints();
@@ -113,6 +167,107 @@ namespace wustl_mm {
 
 		void BackEndInterface::SetHelixConstraint(int sequenceHelix, int skeletonHelix) {
 			AddHelixConstraint(sequenceHelix, skeletonHelix);
+		}
+
+		void BackEndInterface::SetNodeConstraint(int sequenceNode, int skeletonNode) {
+			AddNodeConstraint(sequenceNode, skeletonNode);
+		}
+
+		int BackEndInterface::GetStrandConstraint(int sequenceNode, int constraintNum=0) {
+			// get # of helices
+			// check that seqNode > numH
+			// return first constraint, or zero if none
+			return GetNodeConstraint(sequenceNode, constraintNum);
+		}
+
+		int BackEndInterface::GetHelixConstraintFwd(int firstHelixNode) {
+			if (GetNodeConstraint(firstHelixNode, 1) != 0 || GetNodeConstraint(firstHelixNode+1, 1) != 0) {
+				return 0; // more than one constraint per node
+			}
+			int c1 = GetNodeConstraint(firstHelixNode, 0);
+			int c2 = GetNodeConstraint(firstHelixNode+1, 0);
+			//cout << "c1=" << c1 << ", c2=" << c2 << endl;
+
+			// constrained as missing
+			if (c1==-1 || c2==-1) {
+				return -1;
+			}
+
+			// three cases for forward match:
+			// c1 odd and c2 == c1+1
+			if (c1>0 && c1%2==1 && c2==c1+1) {
+				return c1;
+			}
+			// c1 odd and c2 zero
+			if (c1>0 && c1%2==1 && c2==0) {
+				return c1;
+			}
+			// c1 zero and c2 even
+			if (c1==0 && c2>0 && c2%2==0) {
+				return c2-1;
+			}
+			// not a forward helix constraint
+			return 0;
+		}
+
+		int BackEndInterface::GetHelixConstraintRev(int firstHelixNode) {
+			if (GetNodeConstraint(firstHelixNode, 1) != 0 || GetNodeConstraint(firstHelixNode+1, 1) != 0) {
+				return 0; // more than one constraint per node
+			}
+			int c1 = GetNodeConstraint(firstHelixNode, 0);
+			int c2 = GetNodeConstraint(firstHelixNode+1, 0);
+			//cout << "c1=" << c1 << ", c2=" << c2 << endl;
+
+			// constrained as missing
+			if (c1==-1 || c2==-1) {
+				return -1;
+			}
+
+			// three cases for reverse match:
+			// c1 even and c2 == c1-1
+			if (c1>0 && c1%2==0 && c2==c1-1) {
+				return c1;
+			}
+			// c1 even and c2 zero
+			if (c1>0 && c1%2==0 && c2==0) {
+				return c1;
+			}
+			// c1 zero and c2 odd
+			if (c1==0 && c2>0 && c2%2==1) {
+				return c2+1;
+			}
+			// not a reverse helix constraint
+			return 0;
+		}
+
+		int BackEndInterface::GetHelixConstraintUnk(int firstHelixNode) {
+			if (GetNodeConstraint(firstHelixNode, 2) != 0 || GetNodeConstraint(firstHelixNode+1, 2) != 0) {
+				return 0; // more than two constraints per node
+			}
+			int c11 = GetNodeConstraint(firstHelixNode, 0);
+			int c12 = GetNodeConstraint(firstHelixNode, 1);
+			int c21 = GetNodeConstraint(firstHelixNode+1, 0);
+			int c22 = GetNodeConstraint(firstHelixNode+1, 1);
+			//cout << "c1=" << c1 << ", c2=" << c2 << endl;
+
+			// constrained as missing
+			if (c11==-1 || c12==-1 || c21==-1 || c22==-1) {
+				return -1;
+			}
+
+			// for unknown match, both nodes must store both numbers
+			if (c11<=0 || c12<=0 || c21<=0 || c22<=0) {
+				return 0;
+			}
+			if ((c11==c21 && c12==c22) || (c11==c22 && c12==c21)) {
+				if (c11<c12) {
+					return c11;
+				} else {
+					return c12;
+				}
+			}
+			// not a reverse helix constraint
+			return 0;
 		}
 
 		void BackEndInterface::LoadSequenceGraph() {

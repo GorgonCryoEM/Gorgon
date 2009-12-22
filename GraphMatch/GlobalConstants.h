@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.32  2008/12/12 21:43:38  ssa1
+//   Fixing bug: Application crashing when loading skeletons via the sse correspondence finder
+//
 //   Revision 1.31  2008/11/25 03:30:12  ssa1
 //   User constraints on finding correspondences (v2)
 //
@@ -32,9 +35,9 @@
 #ifndef GLOBALCONSTANTS_H
 #define GLOBALCONSTANTS_H
 
-//#define INCLUDE_SHEETS
+#define INCLUDE_SHEETS 
 //#define GET_STATS
-//#define VERBOSE
+#define VERBOSE 
 //#define MAKE_FINAL_MRC
 #define GET_AMINO_SEQUENCE
 
@@ -55,7 +58,7 @@ namespace wustl_mm {
 
 		const int PRIORITYQUEUESIZE = 50000000;
 		const int RESULT_COUNT = 35;
-		const int MAX_NODES = 50;
+		const int MAX_NODES = 60;
 		const int MAXINT = 2147483647;
 		const unsigned int MAXUNSIGNEDINT = 4294967295;
 		const double MAXDOUBLE = 1.7E308;
@@ -64,6 +67,8 @@ namespace wustl_mm {
 		const int GRAPHEDGE_SHEET = 2;
 		const int GRAPHEDGE_OTHER = 3;
 		const int GRAPHEDGE_LOOP_EUCLIDEAN = 4;
+		const int GRAPHNODE_HELIX = 5;
+		const int GRAPHNODE_SHEET = 6;
 		const char * TOKEN_PDB_HELIX = "HELIX";
 		const char * TOKEN_PDB_ATOM = "ATOM";
 		const char * TOKEN_PDB_SHEET = "SHEET";
@@ -82,17 +87,27 @@ namespace wustl_mm {
 		const char * TOKEN_SEQUENCE_FILE_TYPE = "SEQUENCE_FILE_TYPE";
 		const char * TOKEN_PDB_FILE_NAME = "PDB_FILE_NAME";
 		const char * TOKEN_MRC_FILE_NAME = "MRC_FILE_NAME";
+		const char * TOKEN_MAXIMUM_DISTANCE_SHEET_SKELETON = "MAXIMUM_DISTANCE_SHEET_SKELETON";
+		const char * TOKEN_MINIMUM_SHEET_SIZE = "MINIMUM_SHEET_SIZE";
 		const char * TOKEN_EUCLIDEAN_DISTANCE_THRESHOLD = "EUCLIDEAN_DISTANCE_THRESHOLD";
 		const char * TOKEN_BORDER_MARGIN_THRESHOLD = "BORDER_MARGIN_THRESHOLD";
 		const char * TOKEN_NORMALIZE_GRAPHS = "NORMALIZE_GRAPHS";
 		const char * TOKEN_MISSING_HELIX_PENALTY = "MISSING_HELIX_PENALTY";
+		const char * TOKEN_MISSING_SHEET_PENALTY = "MISSING_SHEET_PENALTY";
+		const char * TOKEN_MISSING_HELIX_PENALTY_SCALED = "MISSING_HELIX_PENALTY_SCALED";
+		const char * TOKEN_MISSING_SHEET_PENALTY_SCALED = "MISSING_SHEET_PENALTY_SCALED";
 		const char * TOKEN_EUCLIDEAN_LOOP_PENALTY = "EUCLIDEAN_LOOP_PENALTY";
 		const char * TOKEN_START_END_MISSING_HELIX_PENALTY = "START_END_MISSING_HELIX_PENALTY";
 		const char * TOKEN_HELIX_WEIGHT_COEFFICIENT = "HELIX_WEIGHT_COEFFICIENT";
 		const char * TOKEN_LOOP_WEIGHT_COEFFICIENT = "LOOP_WEIGHT_COEFFICIENT";
+		const char * TOKEN_SHEET_CAPACITY_COEFFICIENT = "SHEET_CAPACITY_COEFFICIENT";
+		const char * TOKEN_SHEET_MERGE_THRESHOLD = "SHEET_MERGE_THRESHOLD";
 		const char * TOKEN_MISSING_HELIX_LENGTH = "MISSING_HELIX_LENGTH";
+		const char * TOKEN_MISSING_SHEET_LENGTH = "MISSING_SHEET_LENGTH";
+		const char * TOKEN_SHEET_SELF_LOOP_LENGTH = "SHEET_SELF_LOOP_LENGTH";
 		const char * TOKEN_SHEET_WEIGHT_COEFFICIENT = "SHEET_WEIGHT_COEFFICIENT";
 		const char * TOKEN_COST_FUNCTION = "COST_FUNCTION";
+		const char * TOKEN_INCLUDE_STRANDS = "INCLUDE_STRANDS";
 		const char * TOKEN_VOXEL_SIZE = "VOXEL_SIZE";
 		const char * TOKEN_TRANSLATE_VOLUMETRIC_COORDINATES = "TRANSLATE_VOLUMETRIC_COORDINATES";
 		const char * TOKEN_MISSING_HELIX_COUNT = "MISSING_HELIX_COUNT";
@@ -108,7 +123,7 @@ namespace wustl_mm {
 		const int WONG_HASH_TABLE_SIZE = 1024;
 
 		const float HELIX_C_ALPHA_TO_ANGSTROMS = 1.5f;
-		const float LOOP_C_ALPHA_TO_ANGSTROMS = 3.8f;
+		const float LOOP_C_ALPHA_TO_ANGSTROMS = 3.8f / 1.5f; // 1.5 works well on test data
 
 		char SSE_FILE_NAME[100];
 		char VRML_HELIX_FILE_NAME[100];
@@ -116,18 +131,28 @@ namespace wustl_mm {
 		char SEQUENCE_FILE_NAME[100];
 		char SEQUENCE_FILE_TYPE[100];
 		char MRC_FILE_NAME[100];
+		double MAXIMUM_DISTANCE_SHEET_SKELETON = 0.0;
+		int MINIMUM_SHEET_SIZE = 10;
 		double EUCLIDEAN_DISTANCE_THRESHOLD = 15;
 		int BORDER_MARGIN_THRESHOLD = 3;
 		bool NORMALIZE_GRAPHS = true;
 		double EUCLIDEAN_VOXEL_TO_PDB_RATIO = 2.0;
 		double MISSING_HELIX_PENALTY = 2;
+		double MISSING_SHEET_PENALTY = 2;
+		double MISSING_HELIX_PENALTY_SCALED = 0;
+		double MISSING_SHEET_PENALTY_SCALED = 1;
 		double EUCLIDEAN_LOOP_PENALTY = 5;
 		double START_END_MISSING_HELIX_PENALTY = 5;
 		double HELIX_WEIGHT_COEFFICIENT = 1.0;
 		double LOOP_WEIGHT_COEFFICIENT = 0.25;
+		double SHEET_CAPACITY_COEFFICIENT = 10000000.0;
+		double SHEET_MERGE_THRESHOLD = 3.0;
 		double MISSING_HELIX_LENGTH = 8;
+		double MISSING_SHEET_LENGTH = 8;
+		double SHEET_SELF_LOOP_LENGTH = 4.0 * LOOP_C_ALPHA_TO_ANGSTROMS;
 		double SHEET_WEIGHT_COEFFICIENT = 1.0;
 		int COST_FUNCTION = 1;   // 1 : |a-b|		2 : |a-b|/(a+b)		3:|a-b|^2
+		int INCLUDE_STRANDS = 0;   // 0 : no		1 : yes
 		double VOXEL_SIZE = 1;
 		bool TRANSLATE_VOLUMETRIC_COORDINATES = false;
 		int MISSING_HELIX_COUNT = -1;
@@ -180,21 +205,29 @@ namespace wustl_mm {
 			allowedConstraintCount[patternNode-1]++;
 		}
 
+		int GetNodeConstraint(int patternNode, int constraintNum) {
+			if (constraintNum < 0 || constraintNum >= (int)allowedConstraintCount[patternNode-1]) {
+				return 0;
+			} else {
+				return allowedConstraintCollection[patternNode-1][constraintNum];
+			}
+		}
+
 		void AddNodeMismatch(int patternNode, int baseNode) {
 			notAllowedConstraintCollection[patternNode-1][notAllowedConstraintCount[patternNode-1]] = baseNode;
 			notAllowedConstraintCount[patternNode-1]++;
 		}
 
 		void AddHelixConstraint(int patternHelix, int baseHelix) {
-			int patternNode1 = patternHelix*2 - 1;
-			int patternNode2 = patternHelix*2;
+			int patternNode1 = patternHelix;
+			int patternNode2 = patternHelix+1;
 
 			if(baseHelix == -1) {
 				allowedConstraintCollection[patternNode1-1][allowedConstraintCount[patternNode1-1]] = -1;		allowedConstraintCount[patternNode1-1]++;
 				allowedConstraintCollection[patternNode2-1][allowedConstraintCount[patternNode2-1]] = -1;		allowedConstraintCount[patternNode2-1]++;
 			} else {
-				int baseNode1 = baseHelix*2 - 1;
-				int baseNode2 = baseHelix*2;
+				int baseNode1 = baseHelix;
+				int baseNode2 = baseHelix+1;
 				allowedConstraintCollection[patternNode1-1][allowedConstraintCount[patternNode1-1]] = baseNode1;		allowedConstraintCount[patternNode1-1]++;
 				allowedConstraintCollection[patternNode1-1][allowedConstraintCount[patternNode1-1]] = baseNode2;		allowedConstraintCount[patternNode1-1]++;
 				allowedConstraintCollection[patternNode2-1][allowedConstraintCount[patternNode2-1]] = baseNode1;		allowedConstraintCount[patternNode2-1]++;
@@ -233,6 +266,10 @@ namespace wustl_mm {
 				strcpy(SEQUENCE_FILE_TYPE, stringValue);
 			} else if(strcmp(token, TOKEN_MRC_FILE_NAME) == 0) {
 				strcpy(MRC_FILE_NAME, stringValue);
+			} else if(strcmp(token, TOKEN_MAXIMUM_DISTANCE_SHEET_SKELETON) == 0) {
+				MAXIMUM_DISTANCE_SHEET_SKELETON = doubleValue;
+			} else if(strcmp(token, TOKEN_MINIMUM_SHEET_SIZE) == 0) {
+				MINIMUM_SHEET_SIZE = intValue;
 			} else if(strcmp(token, TOKEN_EUCLIDEAN_DISTANCE_THRESHOLD) == 0) {
 				EUCLIDEAN_DISTANCE_THRESHOLD = doubleValue;
 			} else if(strcmp(token, TOKEN_BORDER_MARGIN_THRESHOLD) == 0) {
@@ -241,6 +278,12 @@ namespace wustl_mm {
 				NORMALIZE_GRAPHS = boolValue;
 			} else if(strcmp(token, TOKEN_MISSING_HELIX_PENALTY) == 0) {
 				MISSING_HELIX_PENALTY = doubleValue;
+			} else if(strcmp(token, TOKEN_MISSING_SHEET_PENALTY) == 0) {
+				MISSING_SHEET_PENALTY = doubleValue;
+			} else if(strcmp(token, TOKEN_MISSING_HELIX_PENALTY_SCALED) == 0) {
+				MISSING_HELIX_PENALTY_SCALED = doubleValue;
+			} else if(strcmp(token, TOKEN_MISSING_SHEET_PENALTY_SCALED) == 0) {
+				MISSING_SHEET_PENALTY_SCALED = doubleValue;
 			} else if(strcmp(token, TOKEN_EUCLIDEAN_LOOP_PENALTY) == 0) {
 				EUCLIDEAN_LOOP_PENALTY = doubleValue;
 			} else if(strcmp(token, TOKEN_START_END_MISSING_HELIX_PENALTY) == 0) {
@@ -249,12 +292,22 @@ namespace wustl_mm {
 				HELIX_WEIGHT_COEFFICIENT = doubleValue;
 			} else if(strcmp(token, TOKEN_LOOP_WEIGHT_COEFFICIENT) == 0) {
 				LOOP_WEIGHT_COEFFICIENT = doubleValue;
+			} else if(strcmp(token, TOKEN_SHEET_CAPACITY_COEFFICIENT) == 0) {
+				SHEET_CAPACITY_COEFFICIENT = doubleValue;
+			} else if(strcmp(token, TOKEN_SHEET_MERGE_THRESHOLD) == 0) {
+				SHEET_MERGE_THRESHOLD = doubleValue;
 			} else if(strcmp(token, TOKEN_MISSING_HELIX_LENGTH) == 0) {
 				MISSING_HELIX_LENGTH = doubleValue;
+			} else if(strcmp(token, TOKEN_MISSING_SHEET_LENGTH) == 0) {
+				MISSING_SHEET_LENGTH = doubleValue;
+			} else if(strcmp(token, TOKEN_SHEET_SELF_LOOP_LENGTH) == 0) {
+				SHEET_SELF_LOOP_LENGTH = doubleValue;
 			} else if(strcmp(token, TOKEN_SHEET_WEIGHT_COEFFICIENT) == 0) {
 				SHEET_WEIGHT_COEFFICIENT = doubleValue;
 			} else if(strcmp(token, TOKEN_COST_FUNCTION) == 0) {
 				COST_FUNCTION = intValue;
+			} else if(strcmp(token, TOKEN_INCLUDE_STRANDS) == 0) {
+				INCLUDE_STRANDS = intValue;
 			} else if(strcmp(token, TOKEN_VOXEL_SIZE) == 0) {
 				VOXEL_SIZE = doubleValue;
 			} else if(strcmp(token, TOKEN_TRANSLATE_VOLUMETRIC_COORDINATES) == 0) {
@@ -265,6 +318,78 @@ namespace wustl_mm {
 				MISSING_SHEET_COUNT = intValue;
 			} else if(strcmp(token, TOKEN_EUCLIDEAN_VOXEL_TO_PDB_RATIO) == 0) {
 				EUCLIDEAN_VOXEL_TO_PDB_RATIO = doubleValue;
+			} else {
+				return false;
+			}
+			return true;
+		}
+
+
+		bool GetConstantFromToken(char * token, char * stringValue, double &doubleValue, int &intValue, bool &boolValue) {
+			if(strcmp(token, TOKEN_SSE_FILE_NAME) == 0) {
+				strcpy(stringValue, SSE_FILE_NAME);
+			} else if(strcmp(token, TOKEN_VRML_HELIX_FILE_NAME) == 0) {
+				strcpy(stringValue, VRML_HELIX_FILE_NAME);
+			} else if(strcmp(token, TOKEN_VRML_SHEET_FILE_NAME) == 0) {
+				strcpy(stringValue, VRML_SHEET_FILE_NAME);
+			} else if(strcmp(token, TOKEN_SEQUENCE_FILE_NAME) == 0) {
+				strcpy(stringValue, SEQUENCE_FILE_NAME);
+			} else if(strcmp(token, TOKEN_SEQUENCE_FILE_TYPE) == 0) {
+				strcpy(stringValue, SEQUENCE_FILE_TYPE);
+			} else if(strcmp(token, TOKEN_MRC_FILE_NAME) == 0) {
+				strcpy(stringValue, MRC_FILE_NAME);
+			} else if(strcmp(token, TOKEN_MAXIMUM_DISTANCE_SHEET_SKELETON) == 0) {
+				doubleValue = MAXIMUM_DISTANCE_SHEET_SKELETON;
+			} else if(strcmp(token, TOKEN_MINIMUM_SHEET_SIZE) == 0) {
+				intValue = MINIMUM_SHEET_SIZE;
+			} else if(strcmp(token, TOKEN_EUCLIDEAN_DISTANCE_THRESHOLD) == 0) {
+				doubleValue = EUCLIDEAN_DISTANCE_THRESHOLD;
+			} else if(strcmp(token, TOKEN_BORDER_MARGIN_THRESHOLD) == 0) {
+				intValue = BORDER_MARGIN_THRESHOLD;
+			} else if(strcmp(token, TOKEN_NORMALIZE_GRAPHS) == 0) {
+				boolValue = NORMALIZE_GRAPHS;
+			} else if(strcmp(token, TOKEN_MISSING_HELIX_PENALTY) == 0) {
+				doubleValue = MISSING_HELIX_PENALTY;
+			} else if(strcmp(token, TOKEN_MISSING_SHEET_PENALTY) == 0) {
+				doubleValue = MISSING_SHEET_PENALTY;
+			} else if(strcmp(token, TOKEN_MISSING_HELIX_PENALTY_SCALED) == 0) {
+				doubleValue = MISSING_HELIX_PENALTY_SCALED;
+			} else if(strcmp(token, TOKEN_MISSING_SHEET_PENALTY_SCALED) == 0) {
+				doubleValue = MISSING_SHEET_PENALTY_SCALED;
+			} else if(strcmp(token, TOKEN_EUCLIDEAN_LOOP_PENALTY) == 0) {
+				doubleValue = EUCLIDEAN_LOOP_PENALTY;
+			} else if(strcmp(token, TOKEN_START_END_MISSING_HELIX_PENALTY) == 0) {
+				doubleValue = START_END_MISSING_HELIX_PENALTY;
+			} else if(strcmp(token, TOKEN_HELIX_WEIGHT_COEFFICIENT) == 0) {
+				doubleValue = HELIX_WEIGHT_COEFFICIENT;
+			} else if(strcmp(token, TOKEN_LOOP_WEIGHT_COEFFICIENT) == 0) {
+				doubleValue = LOOP_WEIGHT_COEFFICIENT;
+			} else if(strcmp(token, TOKEN_SHEET_CAPACITY_COEFFICIENT) == 0) {
+				doubleValue = SHEET_CAPACITY_COEFFICIENT;
+			} else if(strcmp(token, TOKEN_SHEET_MERGE_THRESHOLD) == 0) {
+				doubleValue = SHEET_MERGE_THRESHOLD;
+			} else if(strcmp(token, TOKEN_MISSING_HELIX_LENGTH) == 0) {
+				doubleValue = MISSING_HELIX_LENGTH;
+			} else if(strcmp(token, TOKEN_MISSING_SHEET_LENGTH) == 0) {
+				doubleValue = MISSING_SHEET_LENGTH;
+			} else if(strcmp(token, TOKEN_SHEET_SELF_LOOP_LENGTH) == 0) {
+				doubleValue = SHEET_SELF_LOOP_LENGTH;
+			} else if(strcmp(token, TOKEN_SHEET_WEIGHT_COEFFICIENT) == 0) {
+				doubleValue = SHEET_WEIGHT_COEFFICIENT;
+			} else if(strcmp(token, TOKEN_COST_FUNCTION) == 0) {
+				intValue = COST_FUNCTION;
+			} else if(strcmp(token, TOKEN_INCLUDE_STRANDS) == 0) {
+				intValue = INCLUDE_STRANDS;
+			} else if(strcmp(token, TOKEN_VOXEL_SIZE) == 0) {
+				doubleValue = VOXEL_SIZE;
+			} else if(strcmp(token, TOKEN_TRANSLATE_VOLUMETRIC_COORDINATES) == 0) {
+				boolValue = TRANSLATE_VOLUMETRIC_COORDINATES;
+			} else if(strcmp(token, TOKEN_MISSING_HELIX_COUNT) == 0) {
+				intValue = MISSING_HELIX_COUNT;
+			} else if(strcmp(token, TOKEN_MISSING_SHEET_COUNT) == 0) {
+				intValue = MISSING_SHEET_COUNT;
+			} else if(strcmp(token, TOKEN_EUCLIDEAN_VOXEL_TO_PDB_RATIO) == 0) {
+				doubleValue = EUCLIDEAN_VOXEL_TO_PDB_RATIO;
 			} else {
 				return false;
 			}
@@ -305,6 +430,10 @@ namespace wustl_mm {
 					fscanf(fin, "%s", &SEQUENCE_FILE_TYPE);
 				} else if(strcmp(token, TOKEN_MRC_FILE_NAME) == 0) {
 					fscanf(fin, "%s", &MRC_FILE_NAME);
+				} else if(strcmp(token, TOKEN_MAXIMUM_DISTANCE_SHEET_SKELETON) == 0) {
+					fscanf(fin, "%lf", &MAXIMUM_DISTANCE_SHEET_SKELETON);
+				} else if(strcmp(token, TOKEN_MINIMUM_SHEET_SIZE) == 0) {
+					fscanf(fin, "%d", &MINIMUM_SHEET_SIZE);
 				} else if(strcmp(token, TOKEN_EUCLIDEAN_DISTANCE_THRESHOLD) == 0) {
 					fscanf(fin, "%lf", &EUCLIDEAN_DISTANCE_THRESHOLD);
 				} else if(strcmp(token, TOKEN_BORDER_MARGIN_THRESHOLD) == 0) {
@@ -313,6 +442,12 @@ namespace wustl_mm {
 					fscanf(fin, "%d", &NORMALIZE_GRAPHS);
 				} else if(strcmp(token, TOKEN_MISSING_HELIX_PENALTY) == 0) {
 					fscanf(fin, "%lf", &MISSING_HELIX_PENALTY);
+				} else if(strcmp(token, TOKEN_MISSING_SHEET_PENALTY) == 0) {
+					fscanf(fin, "%lf", &MISSING_SHEET_PENALTY);
+				} else if(strcmp(token, TOKEN_MISSING_HELIX_PENALTY_SCALED) == 0) {
+					fscanf(fin, "%lf", &MISSING_HELIX_PENALTY_SCALED);
+				} else if(strcmp(token, TOKEN_MISSING_SHEET_PENALTY_SCALED) == 0) {
+					fscanf(fin, "%lf", &MISSING_SHEET_PENALTY_SCALED);
 				} else if(strcmp(token, TOKEN_EUCLIDEAN_LOOP_PENALTY) == 0) {
 					fscanf(fin, "%lf", &EUCLIDEAN_LOOP_PENALTY);
 				} else if(strcmp(token, TOKEN_START_END_MISSING_HELIX_PENALTY) == 0) {
@@ -321,12 +456,22 @@ namespace wustl_mm {
 					fscanf(fin, "%lf", &HELIX_WEIGHT_COEFFICIENT);
 				} else if(strcmp(token, TOKEN_LOOP_WEIGHT_COEFFICIENT) == 0) {
 					fscanf(fin, "%lf", &LOOP_WEIGHT_COEFFICIENT);
+				} else if(strcmp(token, TOKEN_SHEET_CAPACITY_COEFFICIENT) == 0) {
+					fscanf(fin, "%lf", &SHEET_CAPACITY_COEFFICIENT);
+				} else if(strcmp(token, TOKEN_SHEET_MERGE_THRESHOLD) == 0) {
+					fscanf(fin, "%lf", &SHEET_MERGE_THRESHOLD);
 				} else if(strcmp(token, TOKEN_MISSING_HELIX_LENGTH) == 0) {
 					fscanf(fin, "%lf", &MISSING_HELIX_LENGTH);
+				} else if(strcmp(token, TOKEN_MISSING_SHEET_LENGTH) == 0) {
+					fscanf(fin, "%lf", &MISSING_SHEET_LENGTH);
+				} else if(strcmp(token, TOKEN_SHEET_SELF_LOOP_LENGTH) == 0) {
+					fscanf(fin, "%lf", &SHEET_SELF_LOOP_LENGTH);
 				} else if(strcmp(token, TOKEN_SHEET_WEIGHT_COEFFICIENT) == 0) {
 					fscanf(fin, "%lf", &SHEET_WEIGHT_COEFFICIENT);
 				} else if(strcmp(token, TOKEN_COST_FUNCTION) == 0) {
 					fscanf(fin, "%d", &COST_FUNCTION);
+				} else if(strcmp(token, TOKEN_INCLUDE_STRANDS) == 0) {
+					fscanf(fin, "%d", &INCLUDE_STRANDS);
 				} else if(strcmp(token, TOKEN_VOXEL_SIZE) == 0) {
 					fscanf(fin, "%lf", &VOXEL_SIZE);
 				} else if(strcmp(token, TOKEN_TRANSLATE_VOLUMETRIC_COORDINATES) == 0) {
@@ -362,18 +507,28 @@ namespace wustl_mm {
 		{
 		#ifdef VERBOSE
 			printf("Constants...\n");
+			printf("\tMAXIMUM_DISTANCE_SHEET_SKELETON  = %lf\n", MAXIMUM_DISTANCE_SHEET_SKELETON);
+			printf("\tMINIMUM_SHEET_SIZE               = %ld\n", MINIMUM_SHEET_SIZE);
 			printf("\tEUCLIDEAN_DISTANCE_THRESHOLD     = %lf\n", EUCLIDEAN_DISTANCE_THRESHOLD);
 			printf("\tBORDER_MARGIN_THRESHOLD          = %ld\n", BORDER_MARGIN_THRESHOLD);
 			printf("\tNORMALIZE_GRAPHS                 = %ld\n", NORMALIZE_GRAPHS);
 			printf("\tTRANSLATE_VOLUMETRIC_COORDINATES = %ld\n", TRANSLATE_VOLUMETRIC_COORDINATES);
 			printf("\tMISSING_HELIX_PENALTY            = %lf\n", MISSING_HELIX_PENALTY);
+			printf("\tMISSING_SHEET_PENALTY            = %lf\n", MISSING_SHEET_PENALTY);
+			printf("\tMISSING_HELIX_PENALTY_SCALED     = %lf\n", MISSING_HELIX_PENALTY_SCALED);
+			printf("\tMISSING_SHEET_PENALTY_SCALED     = %lf\n", MISSING_SHEET_PENALTY_SCALED);
 			printf("\tEUCLIDEAN_LOOP_PENALTY           = %lf\n", EUCLIDEAN_LOOP_PENALTY);
 			printf("\tSTART_END_MISSING_HELIX_PENALTY  = %lf\n", START_END_MISSING_HELIX_PENALTY);
 			printf("\tHELIX_WEIGHT_COEFFICIENT         = %lf\n", HELIX_WEIGHT_COEFFICIENT);
 			printf("\tLOOP_WEIGHT_COEFFICIENT          = %lf\n", LOOP_WEIGHT_COEFFICIENT);
 			printf("\tSHEET_WEIGHT_COEFFICIENT         = %lf\n", SHEET_WEIGHT_COEFFICIENT);
+			printf("\tSHEET_CAPACITY_COEFFICIENT       = %lf\n", SHEET_CAPACITY_COEFFICIENT);
+			printf("\tSHEET_MERGE_THRESHOLD            = %lf\n", SHEET_MERGE_THRESHOLD);
 			printf("\tMISSING_HELIX_LENGTH             = %lf\n", MISSING_HELIX_LENGTH);
+			printf("\tMISSING_SHEET_LENGTH             = %lf\n", MISSING_SHEET_LENGTH);
+			printf("\tSHEET_SELF_LOOP_LENGTH           = %lf\n", SHEET_SELF_LOOP_LENGTH);
 			printf("\tCOST_FUNCTION                    = %ld -- 1 : |a-b|       2 : |a-b|/(a+b)      3:|a-b|^2\n", COST_FUNCTION);
+			printf("\tINCLUDE_STRANDS                  = %ld -- 0 : no       1 : yes\n", INCLUDE_STRANDS);
 			printf("\tVOXEL_SIZE                       = %lf\n", VOXEL_SIZE);
 			printf("\tMISSING_HELIX_COUNT              = %ld\n", MISSING_HELIX_COUNT);
 			printf("\tMISSING_SHEET_COUNT              = %ld\n", MISSING_SHEET_COUNT);

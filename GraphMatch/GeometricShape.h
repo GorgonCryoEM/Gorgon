@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.18  2009/12/07 21:34:36  ssa1
+//   Finding Rotation using SVD, and removing compiler warnings
+//
 //   Revision 1.17  2009/09/17 20:00:24  ssa1
 //   Steps towards exporting to Rosetta
 //
@@ -61,6 +64,7 @@ namespace wustl_mm {
 			bool IsSheet();
 			bool IsInsideShape(Point3 p);
 			bool IsInsideShape(Vector3DFloat p);
+			double MinimumDistanceToPoint(Point3 P);
 			double GetHeight();
 			double GetRadius();
 			double GetCornerCellsMaxLength();
@@ -174,11 +178,15 @@ namespace wustl_mm {
 			double A,B,C,D,E,F,G,H,I;
 			for(unsigned int i = 0; i < polygons.size(); i++) {
 				poly = (Polygon)polygons[i];
-				a = (Point3)polygonPoints[poly.pointIndex1];
-				b = (Point3)polygonPoints[poly.pointIndex2];
+				// read triangle vertices
+				a = (Point3)polygonPoints[poly.pointIndex1]; 
+				b = (Point3)polygonPoints[poly.pointIndex2]; 
 				c = (Point3)polygonPoints[poly.pointIndex3];
+				// find surface normal
 				n = ((b-a)^(c-a)) / ((b-a)^(c-a)).length();
+				// measure distance from point p to triangle
 				d = n * (p - a);
+				// find projection of p onto triangle
 				q = p + n*d;
 
 				A = a[0]-c[0];
@@ -199,9 +207,24 @@ namespace wustl_mm {
 			return isInside;
 		}
 
+		// returns the minimum distance between a point p and a GeometricShape
+		double GeometricShape::MinimumDistanceToPoint(Point3 P) {
+			Point3 pt;
+			double d;
+			double dmin = MAXDOUBLE;
+	
+			// find min distance from point p to any triangle in the polygon
+			for(unsigned int i = 0; i < polygonPoints.size(); i++) {
+				pt = (Point3)polygonPoints[i];
+				d = pt.distanceTo(P);
+				dmin = min(d, dmin);
+			}
+			return dmin;
+		}
+
 		bool GeometricShape::IsInsideCylinder(Point3 point) {
 			point = objectToWorld * point;
-			return ((point[0]*point[0] + point[2]*point[2] <= 0.5) && (abs(point[1]) <= 0.5));
+			return ((point[0]*point[0] + point[2]*point[2] <= 0.25) && (abs(point[1]) <= 0.5));
 		}
 
 		double GeometricShape::GetHeight() {
@@ -271,8 +294,11 @@ namespace wustl_mm {
 		void GeometricShape::AddInternalCell(Point3Int point) {
 			internalCells.push_back(point);
 		}
-
+		
+		// Search through all voxels inside a helix to find the two corners, which have only one neighbor in the helix.
 		void GeometricShape::FindCornerCellsInHelix() {
+
+			// array to help iterate over 6 neighbor voxels
 			int d[6][3];
 			d[0][0] = 0;		d[0][1] = 0;		d[0][2] = -1;
 			d[1][0] = 0;		d[1][1] = 0;		d[1][2] = 1;
@@ -280,18 +306,26 @@ namespace wustl_mm {
 			d[3][0] = 0;		d[3][1] = 1;		d[3][2] = 0;
 			d[4][0] = -1;		d[4][1] = 0;		d[4][2] = 0;
 			d[5][0] = 1;		d[5][1] = 0;		d[5][2] = 0;
+			
+			// counter of number of neighbor cells are inside the helix
 			int insideCounter;
+
+			// for each cell inside the helix
 			for(unsigned int i = 0; i < internalCells.size(); i++) {
 				insideCounter = 0;
+				// count the number of neighbor cells inside the helix
 				for(int j = 0; j < 6; j++) {
 					if(GetLocationInVector(internalCells, Point3Int(internalCells[i].x + d[j][0], internalCells[i].y + d[j][1], internalCells[i].z + d[j][2], 0)) >= 0) {
 						insideCounter++;
 					}
 				}
+				// if only one neighbor inside the helix, this is a corner cell. add it to the list.
 				if(insideCounter == 1) {
 					cornerCells.push_back(internalCells[i]);
 				}
 			}
+
+			// abort if more than two corner cells were found
 			assert(cornerCells.size() >= 2);
 
 			double maxDistance = -1;
