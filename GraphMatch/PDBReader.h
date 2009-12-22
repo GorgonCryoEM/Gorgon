@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.16  2009/09/21 19:03:22  ssa1
+//   Linear least squares fit implementation, and using it in helix positioning of SSE Builder
+//
 //   Revision 1.15  2009/08/26 14:58:55  ssa1
 //   Adding in Flexible fitting clique search
 //
@@ -166,7 +169,7 @@ namespace wustl_mm {
 					oldIndex = index;
 				#endif
 				#ifdef INCLUDE_SHEETS
-				} else if (strcmp(token, TOKEN_PDB_SHEET)== 0) {
+				} else if (strcmp(token, TOKEN_PDB_SHEET)== 0 && INCLUDE_STRANDS == 1) {
 					currentStructure = new SecondaryStructure();
 					currentStructure->serialNumber = GetInt(line, 7, 3);
 					currentStructure->secondaryStructureID = GetString(line, 11, 3);
@@ -212,26 +215,73 @@ namespace wustl_mm {
 				return NULL;
 			}
 
-			StandardGraph * graph = new StandardGraph(2 * structures.size());
+			// count number of helices
+			int numHelices = 0;
+			int numSheets = 0;
+			vector<string> strandLabels;
+			for(int i = 0; i < (int)structures.size(); i++) {
+				currentStructure = structures[i];
+				if (currentStructure->secondaryStructureType == GRAPHEDGE_HELIX) {
+					numHelices++;
+				} else	if (currentStructure->secondaryStructureType == GRAPHEDGE_SHEET) {
+					numSheets++;
+				}
+			}
+#ifdef VERBOSE
+			cout << "creating new graph for " << numHelices << " helices and " << numSheets << " strands." << endl;
+#endif // VERBOSE
+
+			StandardGraph * graph = new StandardGraph(2 * numHelices + numSheets);
 
 			// Adding the rest of the structures into the graph
+			int node = 0;
 			for(i = 0; i < (int)structures.size(); i++) {
-				graph->SetCost(i*2+1, i*2+1, 0); // First helix node.
-				graph->SetCost(i*2+2, i*2+2, 0); // Second helix node.
+				if (structures[i]->secondaryStructureType == GRAPHEDGE_HELIX) {
+#ifdef VERBOSE
+					cout << "adding helix " << i << endl;
+#endif // VERBOSE
+					graph->SetCost(node+1, node+1, 0); // First helix node.
+					graph->SetType(node+1, node+1, GRAPHNODE_HELIX); 
+					graph->SetCost(node+2, node+2, 0); // Second helix node.
+					graph->SetType(node+2, node+2, GRAPHNODE_HELIX); 
 
-				// An edge for the helix
-				graph->SetCost(i*2+1, i*2+2, structures[i]->GetLengthAngstroms()); 
-				graph->SetType(i*2+1, i*2+2, structures[i]->secondaryStructureType); 
-				graph->SetCost(i*2+2, i*2+1, structures[i]->GetLengthAngstroms()); 
-				graph->SetType(i*2+2, i*2+1, structures[i]->secondaryStructureType); 
+					// An edge for the helix
+					graph->SetCost(node+1, node+2, structures[i]->GetLengthResidues()); 
+					graph->SetType(node+1, node+2, structures[i]->secondaryStructureType); 
+					graph->SetCost(node+2, node+1, structures[i]->GetLengthResidues()); 
+					graph->SetType(node+2, node+1, structures[i]->secondaryStructureType); 
 
-				if(i != 0) {
-					// An edge for the loop before the helix
-					graph->SetCost(i*2, i*2+1, (structures[i]->startPosition - structures[i-1]->endPosition) * LOOP_C_ALPHA_TO_ANGSTROMS);
-					graph->SetType(i*2, i*2+1, GRAPHEDGE_LOOP);
-					graph->SetCost(i*2+1, i*2, (structures[i]->startPosition - structures[i-1]->endPosition) * LOOP_C_ALPHA_TO_ANGSTROMS);
-					graph->SetType(i*2+1, i*2, GRAPHEDGE_LOOP);
+					if(i != 0) {
+						// An edge for the loop before the helix
+						graph->SetCost(node, node+1, (structures[i]->startPosition - structures[i-1]->endPosition));
+						graph->SetType(node, node+1, GRAPHEDGE_LOOP);
+						graph->SetCost(node+1, node, (structures[i]->startPosition - structures[i-1]->endPosition));
+						graph->SetType(node+1, node, GRAPHEDGE_LOOP);
+					}
+					node += 2;
 				}
+
+				if (structures[i]->secondaryStructureType == GRAPHEDGE_SHEET) {
+#ifdef VERBOSE
+					cout << "adding strand " << i << " with ID " << structures[i]->secondaryStructureID << endl;
+#endif // VERBOSE
+					graph->SetCost(node+1, (structures[i]->endPosition - structures[i]->startPosition) );
+#ifdef VERBOSE
+					cout << "adding strand " << i << " at node " << node << " with length " << (structures[i]->endPosition - structures[i]->startPosition) * LOOP_C_ALPHA_TO_ANGSTROMS << endl;
+#endif // VERBOSE
+					graph->SetCost(node+1, node+1, 0); // Strand node.
+					graph->SetType(node+1, node+1, GRAPHNODE_SHEET); 
+
+					if(i != 0) {
+						// An edge for the loop before the strand
+						graph->SetCost(node, node+1, (structures[i]->startPosition - structures[i-1]->endPosition) );
+						graph->SetType(node, node+1, GRAPHEDGE_LOOP);
+						graph->SetCost(node+1, node, (structures[i]->startPosition - structures[i-1]->endPosition) );
+						graph->SetType(node+1, node, GRAPHEDGE_LOOP);
+					}
+					node += 1;
+				}
+
 			}
 
 			for(i = 0; i < (int)structures.size(); i++) {

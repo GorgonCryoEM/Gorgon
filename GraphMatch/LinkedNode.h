@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.14  2008/09/29 16:30:27  ssa1
+//   Removing compiler warnings
+//
 //   Revision 1.13  2008/09/29 16:19:30  ssa1
 //   Adding in CVS meta information
 //
@@ -33,6 +36,8 @@ namespace wustl_mm {
 			unsigned long long m1Bitmap;
 			unsigned long long m2Bitmap;
 			char missingNodesUsed;
+			char missingHelixNodesUsed;
+			char missingSheetNodesUsed;
 			char depth;
 			double cost;
 			double costGStar;
@@ -41,6 +46,10 @@ namespace wustl_mm {
 			LinkedNode();
 			LinkedNode(LinkedNode * olderNode, LinkedNodeStub * olderStub, int n2Node, int dummyHelixCount);
 			LinkedNode(LinkedNode * olderNode, LinkedNodeStub * olderStub, int n1Node, int n2Node, int dummyHelixCount);
+			LinkedNode(LinkedNode * olderNode, LinkedNodeStub * olderStub, int n1Node, int n2Node, int dummyHelixCount, int dummySheetCount);
+			LinkedNode::LinkedNode(LinkedNode * olderNode, LinkedNodeStub * olderStub, int n2Node, int dummyHelixCount, bool allowRevisit);
+			LinkedNode::LinkedNode(LinkedNode * olderNode, LinkedNodeStub * olderStub, int n2Node, int dummyHelixCount, int dummySheetCount, bool allowRevisit);
+
 			~LinkedNode();
 			void PrintNodeConcise(int rank, bool endOfLine = true, bool printCostBreakdown = false);
 			vector<int> GetNodeCorrespondence();
@@ -65,6 +74,8 @@ namespace wustl_mm {
 			parentNode = NULL;
 			costGStar = 0;
 			missingNodesUsed = 0;
+			missingHelixNodesUsed = 0;
+			missingSheetNodesUsed = 0;
 			m1Bitmap = 0;
 			m2Bitmap = 0;
 			depth = 0;
@@ -79,6 +90,8 @@ namespace wustl_mm {
 			cost = olderNode->cost;
 			costGStar = olderNode->costGStar;
 			missingNodesUsed = olderNode->missingNodesUsed;
+			missingHelixNodesUsed = olderNode->missingHelixNodesUsed;
+			missingSheetNodesUsed = olderNode->missingSheetNodesUsed;
 			depth = olderNode->depth;
 		}
 
@@ -90,11 +103,53 @@ namespace wustl_mm {
 			this->parentNode = olderStub;
 			this->m1Bitmap = olderNode->m1Bitmap;
 			this->m2Bitmap = olderNode->m2Bitmap;
+			// remove all recently matched sequence graph nodes from bitmap
 			for(int i = olderNode->n1Node + 1; i <= this->n1Node; i++) {
 				LinkedNode::RemoveNodeFromBitmap(this->m1Bitmap, i);
 			}
+			// remove the recently matched pattern graph node from bitmap
 			LinkedNode::RemoveNodeFromBitmap(this->m2Bitmap, this->n2Node);
 			this->missingNodesUsed = olderNode->missingNodesUsed + (char)dummyHelixCount;
+		}
+
+		LinkedNode::LinkedNode(LinkedNode * olderNode, LinkedNodeStub * olderStub, int n2Node, int dummyHelixCount, int dummySheetCount, bool allowRevisit) {
+			this->n1Node = olderNode->n1Node + (char)dummyHelixCount + (char)dummySheetCount + 1;
+			this->n2Node = (char)n2Node;
+			this->depth = olderNode->depth + (char)dummyHelixCount + (char)dummySheetCount + 1;
+			this->parentNode = olderStub;
+			this->m1Bitmap = olderNode->m1Bitmap;
+			this->m2Bitmap = olderNode->m2Bitmap;
+			// remove all recently matched sequence graph nodes from bitmap
+			for(int i = olderNode->n1Node + 1; i <= this->n1Node; i++) {
+				LinkedNode::RemoveNodeFromBitmap(this->m1Bitmap, i);
+			}
+			if (!allowRevisit) {
+				// remove the recently matched pattern graph node from bitmap
+				LinkedNode::RemoveNodeFromBitmap(this->m2Bitmap, this->n2Node);
+			}
+			this->missingNodesUsed = olderNode->missingNodesUsed + (char)dummyHelixCount + (char)dummySheetCount;
+			this->missingHelixNodesUsed = olderNode->missingHelixNodesUsed + (char)dummyHelixCount;
+			this->missingSheetNodesUsed = olderNode->missingSheetNodesUsed + (char)dummySheetCount;
+			//cout << "missing nodes=" << (int)this->missingNodesUsed << ", missing helices=" << (int)this->missingHelixNodesUsed << ", missing sheets=" << (int)this->missingSheetNodesUsed << endl;
+		}
+
+		LinkedNode::LinkedNode(LinkedNode * olderNode, LinkedNodeStub * olderStub, int n2Node, int dummyHelixCount, bool allowRevisit) {
+			this->n1Node = olderNode->n1Node + (char)dummyHelixCount + 1;
+			this->n2Node = (char)n2Node;
+			this->depth = olderNode->depth + (char)dummyHelixCount + 1;
+			this->parentNode = olderStub;
+			this->m1Bitmap = olderNode->m1Bitmap;
+			this->m2Bitmap = olderNode->m2Bitmap;
+			// remove all recently matched sequence graph nodes from bitmap
+			for(int i = olderNode->n1Node + 1; i <= this->n1Node; i++) {
+				LinkedNode::RemoveNodeFromBitmap(this->m1Bitmap, i);
+			}
+			if (!allowRevisit) {
+				// remove the recently matched pattern graph node from bitmap
+				LinkedNode::RemoveNodeFromBitmap(this->m2Bitmap, this->n2Node);
+			}
+			this->missingNodesUsed = olderNode->missingNodesUsed + (char)dummyHelixCount;
+			this->missingHelixNodesUsed = olderNode->missingHelixNodesUsed + (char)dummyHelixCount;
 		}
 
 		LinkedNode::LinkedNode(LinkedNode * olderNode, LinkedNodeStub * olderStub, int n1Node, int n2Node, int dummyHelixCount) {
@@ -109,6 +164,22 @@ namespace wustl_mm {
 			}
 			LinkedNode::RemoveNodeFromBitmap(this->m2Bitmap, this->n2Node);
 			this->missingNodesUsed = olderNode->missingNodesUsed + (char)dummyHelixCount;
+		}
+
+		LinkedNode::LinkedNode(LinkedNode * olderNode, LinkedNodeStub * olderStub, int n1Node, int n2Node, int dummyHelixCount, int dummySheetCount) {
+			this->n1Node = (char)n1Node + (char)dummyHelixCount + 1;
+			this->n2Node = (char)n2Node;
+			this->depth = olderNode->depth + (char)dummyHelixCount + 1;
+			this->parentNode = olderStub;
+			this->m1Bitmap = olderNode->m1Bitmap;
+			this->m2Bitmap = olderNode->m2Bitmap;
+			for(int i = olderNode->n1Node + 1; i <= this->n1Node; i++) {
+				LinkedNode::RemoveNodeFromBitmap(this->m1Bitmap, i);
+			}
+			LinkedNode::RemoveNodeFromBitmap(this->m2Bitmap, this->n2Node);
+			this->missingNodesUsed = olderNode->missingNodesUsed + (char)dummyHelixCount;
+			this->missingHelixNodesUsed = olderNode->missingHelixNodesUsed + (char)dummyHelixCount;
+			this->missingSheetNodesUsed = olderNode->missingSheetNodesUsed + (char)dummySheetCount;
 		}
 
 
@@ -161,9 +232,9 @@ namespace wustl_mm {
 			}
 
 			if(IsUserSpecifiedSolution()) {
-				printf("*");
+				printf("**");
 			} else {
-				printf(" ");
+				printf("  ");
 			}
 
 			if(rank != -1) {
@@ -171,7 +242,7 @@ namespace wustl_mm {
 			}
 			printf("\t");
 			for(int i = 0; i < top; i++) {
-				printf("%d ", n2[i]);
+				printf("%2d ", n2[i]);
 			}
 			if(printCostBreakdown) {
 				printf(" - %f = %f + %f", cost, costGStar, cost - costGStar);

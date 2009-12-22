@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.6  2009/08/26 14:58:55  ssa1
+//   Adding in Flexible fitting clique search
+//
 //   Revision 1.5  2008/11/18 18:10:24  ssa1
 //   Changing the scaling functions when doing graph matching to find correspondences
 //
@@ -43,6 +46,7 @@ namespace wustl_mm {
 			bool IsHelix();
 			bool IsSheet();
 			int GetLengthResidues();
+			int GetLengthBonds();
 			float GetLengthAngstroms();
 			int GetSerialNumber();
 			int GetStartPosition();
@@ -70,6 +74,10 @@ namespace wustl_mm {
 
 		int SecondaryStructure::GetLengthResidues() {
 			return (endPosition - startPosition + 1);
+		}
+
+		int SecondaryStructure::GetLengthBonds() {
+			return (endPosition - startPosition);
 		}
 
 		float SecondaryStructure::GetLengthAngstroms() {
