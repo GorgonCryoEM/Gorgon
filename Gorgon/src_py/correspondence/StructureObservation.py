@@ -53,7 +53,7 @@ class StructureObservation:  #SSEBuilderResults
       self.otherAttribs['comments']=comments
       self.helixDict = helixDict
       self.sheetDict = sheetDict
-      self.sheetDict = strandDict
+      #self.strandDict = strandDict
       #self.__loadHelices()
       #self.__loadSheets()
       #self.__loadStrands()

@@ -16,6 +16,7 @@ Note that the label is currently an integer, not a string.
         self.beginningCoord = beginningCoord
         self.endCoord = endCoord
         self.label = label #Note: currently an integer, not a string
+        self.sseType = 'helix'
 
     def __parseHelix(self, inputString):
         """

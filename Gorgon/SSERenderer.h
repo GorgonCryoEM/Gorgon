@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.35  2009/12/08 22:08:29  ssa1
+//   Fixing SheetGenerator syntax issues (and instead of &&, etc..)
+//
 //   Revision 1.34  2009/12/08 20:06:06  abramsa
 //   Some algorithms and implementation for better sheet generation, given an initial set of points.  For use in the SSEHunter.
 //
@@ -104,7 +107,11 @@ namespace wustl_mm {
 			void LoadHelixFile(string fileName);			
 			void LoadSheetFile(string fileName);			
 			void Unload();
+			void LoadGraphSSE(int index, GeometricShape* sse, float offsetx, float offsety, float offsetz);
+			void UnloadGraphSSEs();
 			void SetHelixColor(int index, float r, float g, float b, float a);
+			void SetSheetColor(int index, float r, float g, float b, float a);
+			void SetSSEColor(int index, float r, float g, float b, float a);
 			bool SelectionRotate(Vector3DFloat centerOfMass, Vector3DFloat rotationAxis, float angle);
 			int SelectionObjectCount();
 			Vector3DFloat SelectionCenterOfMass();
@@ -127,9 +134,13 @@ namespace wustl_mm {
 			void SaveSheetFileVRML(FILE* fout);
 			void UpdateBoundingBox();
 			vector<GeometricShape*> helices;
+			vector<GeometricShape*> sheets;
 			NonManifoldMesh_SheetIds * sheetMesh;
+			NonManifoldMesh_SheetIds * graphSheetMesh;
 			int sheetCount;
+			int graphSheetCount;
 			bool selectedSheets[256];
+			bool selectedGraphSheets[256];
 			vector<Vector3DFloat> tempSSEPoints;
 		};
 
@@ -137,11 +148,15 @@ namespace wustl_mm {
 		SSERenderer::SSERenderer() {
 			helices.clear();
 			sheetMesh = NULL;
+			graphSheetMesh = NULL;
 		}
 
 		SSERenderer::~SSERenderer() {
 			for(unsigned int i = 0; i < helices.size(); i++) {
 				delete helices[i];				
+			}
+			for(unsigned int i = 0; i < sheets.size(); i++) {
+				delete sheets[i];				
 			}
 			if(sheetMesh != NULL) {
 				delete sheetMesh;
@@ -241,6 +256,14 @@ namespace wustl_mm {
 				if(selectEnabled) {
 					glPushName(0);
 				}
+				// for color code
+				int prevSheet = -1;
+				int thisSheet;
+				float colorR, colorG, colorB, colorA;
+				GLfloat diffuseMaterial[4];
+				GLfloat ambientMaterial[4];
+				GLfloat specularMaterial[4];
+				// end color code
 				for(unsigned int i = 0; i < sheetMesh->faces.size(); i++) {
 					glPushAttrib(GL_LIGHTING_BIT);
 					if(sheetMesh->faces[i].tag.selected) {
@@ -250,6 +273,37 @@ namespace wustl_mm {
 					if(selectEnabled) {
 						glLoadName(sheetMesh->faces[i].tag.id);
 					}
+					// color code
+					if(sheetMesh->faces[i].tag.id != prevSheet) {
+						thisSheet = (int) (sheetMesh->faces[i].tag.id);
+						sheets[thisSheet-1]->GetColor(colorR, colorG, colorB, colorA);
+						prevSheet = thisSheet;
+						diffuseMaterial[0] = colorR;
+						diffuseMaterial[1] = colorG;
+						diffuseMaterial[2] = colorB;
+						diffuseMaterial[3] = colorA;
+						ambientMaterial[0] = colorR*0.2;
+						ambientMaterial[1] = colorG*0.2;
+						ambientMaterial[2] = colorB*0.2;
+						ambientMaterial[3] = colorA;
+						specularMaterial[0] = 1.0;
+						specularMaterial[1] = 1.0; 
+						specularMaterial[2] = 1.0;
+						specularMaterial[3] = 1.0;
+					}
+					glColor4f(colorR, colorG, colorB, colorA);
+				
+					glMaterialfv(GL_BACK, GL_AMBIENT,   ambientMaterial);
+					glMaterialfv(GL_BACK, GL_DIFFUSE,   diffuseMaterial) ;
+					glMaterialfv(GL_BACK, GL_SPECULAR,  specularMaterial) ;
+					glMaterialf(GL_BACK, GL_SHININESS, 0.1);
+					glMaterialfv(GL_FRONT, GL_AMBIENT,   ambientMaterial) ;
+					glMaterialfv(GL_FRONT, GL_DIFFUSE,   diffuseMaterial) ;
+					glMaterialfv(GL_FRONT, GL_SPECULAR,  specularMaterial) ;
+					glMaterialf(GL_FRONT, GL_SHININESS, 0.1);
+
+					glPushAttrib(GL_LIGHTING_BIT | GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+					// end color code
 					glBegin(GL_POLYGON);
 					Vector3DFloat normal;
 					for(unsigned int j = 0; j < sheetMesh->faces[i].vertexIds.size(); j++) {
@@ -260,8 +314,82 @@ namespace wustl_mm {
 					}
 					glEnd();
 					glPopAttrib();
-					
+					glPopAttrib(); // for color code
 				}
+				if(selectEnabled) {
+					glPopName();
+				}
+			}
+			else if((subSceneIndex == 2) && (graphSheetMesh != NULL)) {
+				int k;
+				if(selectEnabled) {
+					glPushName(0);
+				}
+				// for color code
+				int prevSheet = -1;
+				int thisSheet;
+				float colorR, colorG, colorB, colorA;
+				GLfloat diffuseMaterial[4];
+				GLfloat ambientMaterial[4];
+				GLfloat specularMaterial[4];
+				// end color code
+				for(unsigned int i = 0; i < graphSheetMesh->faces.size(); i++) {
+					glPushAttrib(GL_LIGHTING_BIT);
+					if(graphSheetMesh->faces[i].tag.selected) {
+						glMaterialfv(GL_FRONT, GL_EMISSION, emissionColor);
+						glMaterialfv(GL_BACK, GL_EMISSION, emissionColor);
+					}
+					if(selectEnabled) {
+						glLoadName(graphSheetMesh->faces[i].tag.id);
+					}
+					
+					// color code
+					if(graphSheetMesh->faces[i].tag.id != prevSheet) {
+						//cout << "picking graph sheet color. i=" << i << ", id=" << (int) (graphSheetMesh->faces[i].tag.id) << endl;
+						thisSheet = (int) (graphSheetMesh->faces[i].tag.id);
+						sheets[thisSheet-1]->GetColor(colorR, colorG, colorB, colorA); // probably gets the wrong color.
+						prevSheet = thisSheet;
+						diffuseMaterial[0] = colorR;
+						diffuseMaterial[1] = colorG;
+						diffuseMaterial[2] = colorB;
+						diffuseMaterial[3] = colorA;
+						ambientMaterial[0] = colorR*0.2;
+						ambientMaterial[1] = colorG*0.2;
+						ambientMaterial[2] = colorB*0.2;
+						ambientMaterial[3] = colorA;
+						specularMaterial[0] = 1.0;
+						specularMaterial[1] = 1.0; 
+						specularMaterial[2] = 1.0;
+						specularMaterial[3] = 1.0;
+					}
+					
+					glColor4f(colorR, colorG, colorB, colorA);
+				
+					glMaterialfv(GL_BACK, GL_AMBIENT,   ambientMaterial);
+					glMaterialfv(GL_BACK, GL_DIFFUSE,   diffuseMaterial) ;
+					glMaterialfv(GL_BACK, GL_SPECULAR,  specularMaterial) ;
+					glMaterialf(GL_BACK, GL_SHININESS, 0.1);
+					glMaterialfv(GL_FRONT, GL_AMBIENT,   ambientMaterial) ;
+					glMaterialfv(GL_FRONT, GL_DIFFUSE,   diffuseMaterial) ;
+					glMaterialfv(GL_FRONT, GL_SPECULAR,  specularMaterial) ;
+					glMaterialf(GL_FRONT, GL_SHININESS, 0.1);
+
+					glPushAttrib(GL_LIGHTING_BIT | GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+					// end color code
+					glBegin(GL_POLYGON);
+					Vector3DFloat normal;
+					for(unsigned int j = 0; j < graphSheetMesh->faces[i].vertexIds.size(); j++) {
+						normal = graphSheetMesh->GetVertexNormal(graphSheetMesh->faces[i].vertexIds[j]);
+						k = graphSheetMesh->GetVertexIndex(graphSheetMesh->faces[i].vertexIds[j]);
+						glNormal3f(normal.X(), normal.Y(), normal.Z());
+						glVertex3fv(graphSheetMesh->vertices[k].position.values);
+					}
+					glEnd();
+					glPopAttrib();
+					glPopAttrib(); // for color code
+				}
+				// end graph-type sheet rendering code
+
 				if(selectEnabled) {
 					glPopName();
 				}
@@ -330,7 +458,7 @@ namespace wustl_mm {
 			if(helices.size() == 0) {
 				Renderer::LoadFile(fileName);
 			}
-			vector<GeometricShape *> sheets;
+			//vector<GeometricShape *> sheets;
 			sheets.clear();
 			if(sheetMesh != NULL) {
 				delete sheetMesh;
@@ -359,9 +487,9 @@ namespace wustl_mm {
 					sheetMesh->AddTriangle(indices[sheets[i]->polygons[j].pointIndex1], indices[sheets[i]->polygons[j].pointIndex2], indices[sheets[i]->polygons[j].pointIndex3], NULL, faceTag);					
 				}				
 			}
-			for(unsigned int i = 0; i < sheets.size(); i++) { 
-				delete sheets[i];
-			}
+			//for(unsigned int i = 0; i < sheets.size(); i++) { 
+			//	delete sheets[i];
+			//}
 			indices.clear();
 			UpdateBoundingBox();			
 		}
@@ -372,11 +500,87 @@ namespace wustl_mm {
 				delete helices[i];
 			}
 			helices.clear();
+			for(unsigned int i = 0; i < sheets.size(); i++) {
+				delete sheets[i];
+			}
+			sheets.clear();
 			if(sheetMesh != NULL) {
 				delete sheetMesh;
 			}
 			sheetMesh = NULL;
+			if(graphSheetMesh != NULL) {
+				delete graphSheetMesh;
+			}
+			graphSheetMesh = NULL;
 			UpdateBoundingBox();
+		}
+
+		void SSERenderer::LoadGraphSSE(int index, GeometricShape* sse, float offsetx, float offsety, float offsetz) {
+			// make a volume from the internal cells
+			int xmin=MAXINT, xmax=-MAXINT, ymin=MAXINT, ymax=-MAXINT, zmin=MAXINT, zmax=-MAXINT;
+			for (unsigned int i = 0; i < sse->internalCells.size(); i++) {
+				if (sse->internalCells[i].x < xmin) {xmin = sse->internalCells[i].x;}
+				if (sse->internalCells[i].x > xmax) {xmax = sse->internalCells[i].x;}
+				if (sse->internalCells[i].y < ymin) {ymin = sse->internalCells[i].y;}
+				if (sse->internalCells[i].y > ymax) {ymax = sse->internalCells[i].y;}
+				if (sse->internalCells[i].z < zmin) {zmin = sse->internalCells[i].z;}
+				if (sse->internalCells[i].z > zmax) {zmax = sse->internalCells[i].z;}
+			}
+			int dimx = xmax-xmin+1;
+			int dimy = ymax-ymin+1;
+			int dimz = zmax-zmin+1;
+			Volume* vol = new Volume( dimx, dimy, dimz) ;
+			vol->setOrigin(xmin, ymin, zmin);
+			for (unsigned int i = 0; i < sse->internalCells.size(); i++) {
+				vol->setDataAt( sse->internalCells[i].x-xmin, sse->internalCells[i].y-ymin, sse->internalCells[i].z-zmin, 1.0 ) ;
+			}
+
+			// make a mesh from the volume
+			NonManifoldMesh_Annotated * thisSheetMesh = new NonManifoldMesh_Annotated(vol);
+			delete vol;
+			// add offset to all points in new mesh
+			for (unsigned int i = 0; i < thisSheetMesh->vertices.size(); i++) {
+				thisSheetMesh->vertices[i].position = thisSheetMesh->vertices[i].position + Vector3DFloat(xmin, ymin, zmin) + Vector3DFloat(offsetx, offsety, offsetz);
+			}
+
+			// merge this mesh with the mesh containing other sheets
+			if(graphSheetMesh == NULL) {
+				graphSheetMesh = new NonManifoldMesh_SheetIds();
+			}
+			if (thisSheetMesh->faceCount > 0) {
+				// mesh merging code. not using code NonManifoldMesh::mergeMesh because it doesn't allow setting of tags
+				graphSheetCount++;
+				SheetIdsAndSelect faceTag = SheetIdsAndSelect();
+				faceTag.id = graphSheetCount;
+				selectedGraphSheets[index - helices.size() + 1] = false;
+				faceTag.selected = false;
+				vector<int> indices;
+				indices.clear();
+				for(unsigned int i = 0; i < thisSheetMesh->vertices.size(); i++) {
+					indices.push_back(graphSheetMesh->AddVertex(thisSheetMesh->vertices[i]));
+				}
+				for(unsigned int i = 0; i < thisSheetMesh->edges.size(); i++) {
+					graphSheetMesh->AddEdge(indices[thisSheetMesh->edges[i].vertexIds[0]], indices[thisSheetMesh->edges[i].vertexIds[1]], thisSheetMesh->edges[i].tag);
+				}
+				for(unsigned int i = 0; i < thisSheetMesh->faces.size(); i++) {
+					if(thisSheetMesh->faces[i].vertexIds.size() == 3) {
+						graphSheetMesh->AddTriangle(indices[thisSheetMesh->faces[i].vertexIds[0]], indices[thisSheetMesh->faces[i].vertexIds[1]], indices[thisSheetMesh->faces[i].vertexIds[2]], NULL, faceTag);
+					}
+				}
+				// end mesh merging
+			}
+
+			delete thisSheetMesh;
+			return;
+		}
+
+		void SSERenderer::UnloadGraphSSEs() {
+			graphSheetCount = 0;
+			if(graphSheetMesh != NULL) {
+				delete graphSheetMesh;
+			}
+			graphSheetMesh = NULL;
+
 		}
 
 		void SSERenderer::UpdateBoundingBox() {
@@ -425,6 +629,20 @@ namespace wustl_mm {
 
 		void SSERenderer::SetHelixColor(int index, float r, float g, float b, float a) {
 			helices[index]->SetColor(r, g, b, a);
+		}
+
+		void SSERenderer::SetSheetColor(int index, float r, float g, float b, float a) {
+			sheets[index]->SetColor(r, g, b, a);
+		}
+
+		// set the color of an SSE. assumes that SSEs are indexed with helices first and sheets second.
+		void SSERenderer::SetSSEColor(int index, float r, float g, float b, float a) {
+			int numHelices = helices.size();
+			if (index < numHelices) {
+				helices[index]->SetColor(r, g, b, a);
+			} else {
+				sheets[index - numHelices]->SetColor(r, g, b, a);
+			}
 		}
 
 		bool SSERenderer::SelectionRotate(Vector3DFloat centerOfMass, Vector3DFloat rotationAxis, float angle) {
@@ -480,6 +698,14 @@ namespace wustl_mm {
 			if(sheetMesh != NULL) {
 				for(int i = 0; i <= sheetCount; i++) {
 					if(selectedSheets[i]) {
+						count++;
+					}
+				}
+			}
+
+			if(graphSheetMesh != NULL) {
+				for(int i = 0; i <= graphSheetCount; i++) {
+					if(selectedGraphSheets[i]) {
 						count++;
 					}
 				}
@@ -594,6 +820,15 @@ namespace wustl_mm {
 					}
 				}
 
+				if(graphSheetMesh != NULL) {
+					for(unsigned int i = 0; i < graphSheetMesh->faces.size(); i++) {
+						graphSheetMesh->faces[i].tag.selected = false;
+					}
+					for(int i = 0; i <= graphSheetCount; i++) {
+						selectedGraphSheets[i] = false;
+					}
+				}
+
 				return true;
 			}
 			return false;
@@ -614,7 +849,17 @@ namespace wustl_mm {
 
 				selectedSheets[ix0] = forceTrue || !selectedSheets[ix0];
 			}
+			if((subsceneIndex == 2)) {
+				for(unsigned int i = 0; i < graphSheetMesh->faces.size(); i++) {
+					if(graphSheetMesh->faces[i].tag.id == ix0) {
+						graphSheetMesh->faces[i].tag.selected = forceTrue || !graphSheetMesh->faces[i].tag.selected;
+					}
+				}
+
+				selectedGraphSheets[ix0] = forceTrue || !selectedGraphSheets[ix0];
+			}
 		}
+
 
 		void SSERenderer::SaveHelixFileVRML(FILE* fout) {
 			Point3 center;

@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.13  2009/06/24 21:33:48  ssa1
+#   SSE Builder Functionality: Sheet building and better camera functionality when loading new data.
+#
 #   Revision 1.12  2008/12/02 04:50:38  ssa1
 #   saving screen realestate
 #
@@ -51,6 +54,8 @@ class ModelVisualizationForm(QtGui.QWidget):
         self.ui.setupUi(self)    
         self.ui.checkBoxModel2Visible.setVisible(False)
         self.ui.pushButtonModel2Color.setVisible(False)
+        self.ui.checkBoxModel3Visible.setVisible(False)
+        self.ui.pushButtonModel3Color.setVisible(False)
         self.ui.spinBoxThickness.setVisible(False)
         self.ui.labelThickness.setVisible(False)
         self.dock = QtGui.QDockWidget(self.tr(self.title), self.app)
@@ -64,9 +69,11 @@ class ModelVisualizationForm(QtGui.QWidget):
         self.connect(self.ui.checkBoxBoundingBox, QtCore.SIGNAL("toggled (bool)"), self.viewer.setBoundingBox)
         self.connect(self.ui.checkBoxModelVisible, QtCore.SIGNAL("toggled (bool)"), self.viewer.setModelVisibility)
         self.connect(self.ui.checkBoxModel2Visible, QtCore.SIGNAL("toggled (bool)"), self.viewer.setModel2Visibility)
+        self.connect(self.ui.checkBoxModel3Visible, QtCore.SIGNAL("toggled (bool)"), self.viewer.setModel3Visibility)
         self.connect(self.ui.pushButtonBoundingBoxColor, QtCore.SIGNAL("colorChanged ()"), self.setBoundingBoxColor)        
         self.connect(self.ui.pushButtonModelColor, QtCore.SIGNAL("colorChanged ()"), self.setModelColor)  
         self.connect(self.ui.pushButtonModel2Color, QtCore.SIGNAL("colorChanged ()"), self.setModel2Color)  
+        self.connect(self.ui.pushButtonModel3Color, QtCore.SIGNAL("colorChanged ()"), self.setModel3Color)  
         self.connect(self.ui.pushButtonCenter, QtCore.SIGNAL("pressed ()"), self.viewer.emitViewerSetCenterLocal)
         self.connect(self.ui.pushButtonClose, QtCore.SIGNAL("pressed ()"), self.viewer.unloadData)
         self.connect(self.ui.doubleSpinBoxSizeX, QtCore.SIGNAL("editingFinished ()"), self.scaleChanged)
@@ -81,10 +88,12 @@ class ModelVisualizationForm(QtGui.QWidget):
     def updateFromViewer(self):
         self.ui.pushButtonModelColor.setColor(self.viewer.getModelColor())
         self.ui.pushButtonModel2Color.setColor(self.viewer.getModel2Color())
+        self.ui.pushButtonModel3Color.setColor(self.viewer.getModel3Color())
         self.ui.pushButtonBoundingBoxColor.setColor(self.viewer.getBoundingBoxColor())            
         self.ui.checkBoxBoundingBox.setChecked(self.viewer.showBox)    
         self.ui.checkBoxModelVisible.setChecked(self.viewer.modelVisible)
         self.ui.checkBoxModel2Visible.setChecked(self.viewer.model2Visible)
+        self.ui.checkBoxModel3Visible.setChecked(self.viewer.model3Visible)
          
         if(self.viewer.displayStyle == self.viewer.DisplayStyleWireframe):
             self.ui.radioButtonWireframe.setChecked(True) 
@@ -159,6 +168,9 @@ class ModelVisualizationForm(QtGui.QWidget):
 
     def setModel2Color(self):
         self.viewer.setModel2Color(self.ui.pushButtonModel2Color.color())
+    
+    def setModel3Color(self):
+        self.viewer.setModel3Color(self.ui.pushButtonModel3Color.color())
     
     def setDisplayStyle(self, dummy):
         if(self.ui.radioButtonWireframe.isChecked()) :

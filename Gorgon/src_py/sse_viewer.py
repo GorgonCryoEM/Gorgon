@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.29  2009/10/05 17:57:37  ssa1
+#   Initial session saving functionality (Request ID:52)
+#
 #   Revision 1.28  2009/09/02 18:02:39  ssa1
 #   Moving SSEHunter to the SSEViewer menu, and adding checks for loading up volumes and skeletons
 #
@@ -88,6 +91,7 @@ class SSEViewer(BaseViewer):
         self.shortTitle = "SSE"              
         self.app.themes.addDefaultRGB("Secondary Structure Element:Model:0", 0, 180, 0, 255)
         self.app.themes.addDefaultRGB("Secondary Structure Element:Model:1", 120, 185, 255, 255)
+        self.app.themes.addDefaultRGB("Secondary Structure Element:Model:2", 120, 185, 255, 255)
         self.app.themes.addDefaultRGB("Secondary Structure Element:BoundingBox", 255, 255, 255, 255)          
         self.isClosedMesh = False
         self.helixFileName = ""
@@ -102,11 +106,15 @@ class SSEViewer(BaseViewer):
         self.selectEnabled = True
         self.app.viewers["sse"] = self
         self.model2Visible = True
+        self.model3Visible = True
         self.initVisualizationOptions(ModelVisualizationForm(self.app, self))
         self.visualizationOptions.ui.checkBoxModelVisible.setText("Show helices colored:")
         self.visualizationOptions.ui.checkBoxModel2Visible.setText("Show sheets colored:")
         self.visualizationOptions.ui.checkBoxModel2Visible.setVisible(True)
         self.visualizationOptions.ui.pushButtonModel2Color.setVisible(True)
+        self.visualizationOptions.ui.checkBoxModel3Visible.setText("Show graph sheets colored:")
+        self.visualizationOptions.ui.checkBoxModel3Visible.setVisible(True)
+        self.visualizationOptions.ui.pushButtonModel3Color.setVisible(True)
         
         self.connect(self, QtCore.SIGNAL('elementSelected (int, int, int, int, int, int, QMouseEvent)'), self.updateCurrentMatch)
         
@@ -201,6 +209,16 @@ class SSEViewer(BaseViewer):
         self.helixFileName = ""
         self.sheetFileName = ""
         BaseViewer.unloadData(self)
+          
+          
+    def makeSheetSurfaces(self, offsetx, offsety, offsetz):
+        # rebuild the set of sheets to render
+        numHelicesSheets = self.correspondenceEngine.getSkeletonSSECount()
+        self.renderer.unloadGraphSSEs()
+        for i in range(numHelicesSheets):
+            if self.correspondenceEngine.getSkeletonSSE(i).isSheet():
+                self.renderer.loadGraphSSE(i, self.correspondenceEngine.getSkeletonSSE(i), offsetx, offsety, offsetz)
+
                
     def createActions(self):
         openHelixAct = QtGui.QAction(self.tr("&Helix Annotations"), self)
@@ -265,7 +283,7 @@ class SSEViewer(BaseViewer):
             currCorrIndex = corrLib.getCurrentCorrespondenceIndex()
             matchList = corrLib.correspondenceList[currCorrIndex].matchList
             for match in matchList:
-                if match.observed.label == sseIndex: 
+                if match.observed is not None and match.observed.label == sseIndex: 
                     self.currentMatch = match
                     self.emit(QtCore.SIGNAL("SSE selected"))
                     break
