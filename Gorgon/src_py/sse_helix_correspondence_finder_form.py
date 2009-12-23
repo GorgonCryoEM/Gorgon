@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.39  2009/12/22 01:02:24  schuhs
+#   Adding support for beta sheet matching to the SSE correspondence search algorithm
+#
 #   Revision 1.38  2009/09/29 19:23:39  ssa1
 #   Fixing indexing bugs when performing sse correspondence search.
 #
@@ -299,6 +302,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
         self.ui.tabWidget.setTabEnabled(1, self.dataLoaded)
         self.ui.tabWidget.setTabEnabled(2, self.dataLoaded)
         self.ui.tabWidget.setTabEnabled(3, self.dataLoaded)
+        self.ui.tabWidget.setTabEnabled(4, self.dataLoaded)
         if(self.dataLoaded):
             self.executed = False
             self.createBasicCorrespondence()
@@ -380,8 +384,8 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
             self.app.actions.getAction("perform_SSEFindHelixCorrespondences").trigger()        
         
     def createActions(self):               
-        corrAct = QtGui.QAction(self.tr("Find Alpha-&Helix Correspondences"), self)
-        corrAct.setStatusTip(self.tr("Find Alpha-Helix Correspondences"))
+        corrAct = QtGui.QAction(self.tr("Find SSE Correspondences"), self)
+        corrAct.setStatusTip(self.tr("Find SSE Correspondences"))
         corrAct.setCheckable(True)
         corrAct.setChecked(False)
         self.corrAct = corrAct
@@ -713,7 +717,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
 
         print "Starting to populate results. Found " + str(self.resultCount) + " results."
 
-        self.ui.tabWidget.setCurrentIndex(3)
+        self.ui.tabWidget.setCurrentIndex(4)
         # clear the correspondence list
         corrList = []
         
@@ -926,7 +930,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
         else:
             self.executed = False 
             if memErr:
-                QtGui.QMessageBox.warning(self.app, "Insufficient Memory", "There is not enough memory available to complete the search. Try adding or removing constraints.")
+                QtGui.QMessageBox.warning(self.app, "Insufficient Memory", "Insufficient memory to complete the search. Try adding or removing constraints.")
             else:
                 QtGui.QMessageBox.warning(self.app, "No results found", "The correspondence search returned no results. Try removing constraints.")
             print "no results found. loading the most recent successful correspondence"
@@ -936,7 +940,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
 
         self.populateComboBox(self.viewer.correspondenceLibrary)     
         self.viewer.emitModelChanged()
-        self.ui.tabWidget.setCurrentIndex(3)         
+        self.ui.tabWidget.setCurrentIndex(4)         
         print "done with search"
                 
     def reject(self):  
