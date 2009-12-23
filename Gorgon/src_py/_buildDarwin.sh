@@ -10,8 +10,7 @@ rm -R build
 python _buildExecutableDarwin.py py2app
 cp libpyGORGON.dylib dist/gorgon.app/Contents/Frameworks
 cp libboost_python-mt-1_35.dylib dist/gorgon.app/Contents/Resources/ 
-mkdir dist/gorgon.app/Contents/Resources/lib/extlib
-cp libfftw3f.dylib dist/gorgon.app/Contents/Resources/lib/extlib/
+cp libfftw3f.dylib dist/gorgon.app/Contents/Resources/
 
 
 cd dist/gorgon.app/Contents/Resources/lib/python2.5/lib-dynload/
