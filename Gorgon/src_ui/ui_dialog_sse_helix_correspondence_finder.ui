@@ -65,7 +65,7 @@
        <enum>QTabWidget::Rounded</enum>
       </property>
       <property name="currentIndex" >
-       <number>3</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="tabDataSources" >
        <attribute name="title" >
@@ -262,539 +262,192 @@
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="tabGraphSettings" >
+      <widget class="QWidget" name="tab_2" >
        <attribute name="title" >
-        <string>Graph Settings</string>
+        <string>Visualization</string>
        </attribute>
-       <layout class="QVBoxLayout" name="verticalLayout_2" >
-        <item>
-         <widget class="QSplitter" name="splitter_9" >
-          <property name="orientation" >
-           <enum>Qt::Vertical</enum>
+       <layout class="QGridLayout" name="gridLayout_16" >
+        <item row="0" column="0" >
+         <widget class="QGroupBox" name="groupBox_4" >
+          <property name="sizePolicy" >
+           <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
           </property>
-          <widget class="QGroupBox" name="groupBox_3" >
-           <property name="sizePolicy" >
-            <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="minimumSize" >
-            <size>
-             <width>151</width>
-             <height>161</height>
-            </size>
-           </property>
-           <property name="maximumSize" >
-            <size>
-             <width>16777215</width>
-             <height>16777215</height>
-            </size>
-           </property>
-           <property name="title" >
-            <string>Graph Settings</string>
-           </property>
-           <layout class="QGridLayout" name="gridLayout_4" >
-            <item row="0" column="0" >
-             <layout class="QGridLayout" name="gridLayout_3" >
-              <item row="0" column="0" >
-               <widget class="QLabel" name="label_14" >
-                <property name="text" >
-                 <string>Border Margin Threshold:</string>
-                </property>
-               </widget>
-              </item>
-              <item row="0" column="1" >
-               <widget class="QSpinBox" name="spinBoxBorderMarginThreshold" >
-                <property name="sizePolicy" >
-                 <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="value" >
-                 <number>3</number>
-                </property>
-               </widget>
-              </item>
-              <item row="1" column="0" colspan="2" >
-               <widget class="Line" name="line_5" >
-                <property name="orientation" >
-                 <enum>Qt::Horizontal</enum>
-                </property>
-               </widget>
-              </item>
-              <item row="2" column="0" >
-               <widget class="QLabel" name="label_6" >
-                <property name="toolTip" >
-                 <string>The maximum euclidean distance between possibly connected helices even if they are not connected in the skeleton</string>
-                </property>
-                <property name="statusTip" >
-                 <string>The maximum euclidean distance between possibly connected helices even if they are not connected in the skeleton</string>
-                </property>
-                <property name="whatsThis" >
-                 <string>The maximum euclidean distance between possibly connected helices even if they are not connected in the skeleton</string>
-                </property>
-                <property name="text" >
-                 <string>Max Euclidean Loop Distance:</string>
-                </property>
-               </widget>
-              </item>
-              <item row="2" column="1" >
-               <widget class="QDoubleSpinBox" name="doubleSpinBoxEuclideanDistance" >
-                <property name="decimals" >
-                 <number>4</number>
-                </property>
-                <property name="maximum" >
-                 <double>999999999.999899983406067</double>
-                </property>
-                <property name="value" >
-                 <double>0.000000000000000</double>
-                </property>
-               </widget>
-              </item>
-              <item row="4" column="0" colspan="2" >
-               <widget class="Line" name="line_4" >
-                <property name="orientation" >
-                 <enum>Qt::Horizontal</enum>
-                </property>
-               </widget>
-              </item>
-              <item row="5" column="1" >
-               <widget class="QSpinBox" name="spinBoxMinSheetSize" >
-                <property name="sizePolicy" >
-                 <sizepolicy vsizetype="Fixed" hsizetype="MinimumExpanding" >
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="minimumSize" >
-                 <size>
-                  <width>51</width>
-                  <height>0</height>
-                 </size>
-                </property>
-                <property name="layoutDirection" >
-                 <enum>Qt::LeftToRight</enum>
-                </property>
-                <property name="maximum" >
-                 <number>99999</number>
-                </property>
-                <property name="value" >
-                 <number>10</number>
-                </property>
-               </widget>
-              </item>
-              <item row="6" column="0" >
-               <widget class="QSplitter" name="splitter_5" >
-                <property name="orientation" >
-                 <enum>Qt::Horizontal</enum>
-                </property>
-                <widget class="QLabel" name="label_16" >
-                 <property name="sizePolicy" >
-                  <sizepolicy vsizetype="Preferred" hsizetype="MinimumExpanding" >
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="minimumSize" >
-                  <size>
-                   <width>120</width>
-                   <height>0</height>
-                  </size>
-                 </property>
-                 <property name="toolTip" >
-                  <string>The maximum euclidean distance between possibly connected helices even if they are not connected in the skeleton</string>
-                 </property>
-                 <property name="statusTip" >
-                  <string>The maximum euclidean distance between possibly connected helices even if they are not connected in the skeleton</string>
-                 </property>
-                 <property name="whatsThis" >
-                  <string>The maximum euclidean distance between possibly connected helices even if they are not connected in the skeleton</string>
-                 </property>
-                 <property name="text" >
-                  <string>Maximum Sheet Distance:</string>
-                 </property>
-                </widget>
-               </widget>
-              </item>
-              <item row="6" column="1" >
-               <widget class="QDoubleSpinBox" name="doubleSpinBoxMaxSheetDistance" >
-                <property name="sizePolicy" >
-                 <sizepolicy vsizetype="Fixed" hsizetype="MinimumExpanding" >
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="minimumSize" >
-                 <size>
-                  <width>0</width>
-                  <height>0</height>
-                 </size>
-                </property>
-                <property name="text" stdset="0" >
-                 <string>5.0000</string>
-                </property>
-                <property name="prefix" >
-                 <string/>
-                </property>
-                <property name="decimals" >
-                 <number>4</number>
-                </property>
-                <property name="maximum" >
-                 <double>1000000000.000000000000000</double>
-                </property>
-                <property name="value" >
-                 <double>5.000000000000000</double>
-                </property>
-               </widget>
-              </item>
-              <item row="7" column="0" >
-               <widget class="QSplitter" name="splitter_8" >
-                <property name="orientation" >
-                 <enum>Qt::Horizontal</enum>
-                </property>
-                <widget class="QLabel" name="label_21" >
-                 <property name="sizePolicy" >
-                  <sizepolicy vsizetype="Preferred" hsizetype="MinimumExpanding" >
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="minimumSize" >
-                  <size>
-                   <width>120</width>
-                   <height>0</height>
-                  </size>
-                 </property>
-                 <property name="text" >
-                  <string>Sheet Self-Loop Length:</string>
-                 </property>
-                </widget>
-               </widget>
-              </item>
-              <item row="7" column="1" >
-               <widget class="QDoubleSpinBox" name="doubleSpinBoxSheetSelfLoopLength" >
-                <property name="sizePolicy" >
-                 <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="text" stdset="0" >
-                 <string>5.0000</string>
-                </property>
-                <property name="decimals" >
-                 <number>4</number>
-                </property>
-                <property name="maximum" >
-                 <double>999999999.999899983406067</double>
-                </property>
-                <property name="value" >
-                 <double>5.000000000000000</double>
-                </property>
-               </widget>
-              </item>
-              <item row="10" column="0" colspan="2" >
-               <widget class="Line" name="line_6" >
-                <property name="orientation" >
-                 <enum>Qt::Horizontal</enum>
-                </property>
-               </widget>
-              </item>
-              <item row="11" column="0" colspan="2" >
-               <layout class="QHBoxLayout" name="horizontalLayout" >
-                <item>
-                 <spacer name="horizontalSpacer" >
-                  <property name="orientation" >
-                   <enum>Qt::Horizontal</enum>
-                  </property>
-                  <property name="sizeType" >
-                   <enum>QSizePolicy::MinimumExpanding</enum>
-                  </property>
-                  <property name="sizeHint" stdset="0" >
-                   <size>
-                    <width>187</width>
-                    <height>20</height>
-                   </size>
-                  </property>
-                 </spacer>
-                </item>
-                <item>
-                 <widget class="QPushButton" name="pushButtonRebuildGraph" >
-                  <property name="enabled" >
-                   <bool>true</bool>
-                  </property>
-                  <property name="sizePolicy" >
-                   <sizepolicy vsizetype="Fixed" hsizetype="Minimum" >
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="minimumSize" >
-                   <size>
-                    <width>0</width>
-                    <height>23</height>
-                   </size>
-                  </property>
-                  <property name="maximumSize" >
-                   <size>
-                    <width>75</width>
-                    <height>16777215</height>
-                   </size>
-                  </property>
-                  <property name="text" >
-                   <string>Rebuild Graph</string>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </item>
-              <item row="8" column="0" >
-               <widget class="QLabel" name="label_17" >
-                <property name="text" >
-                 <string>Sheet Merging Threshold</string>
-                </property>
-               </widget>
-              </item>
-              <item row="8" column="1" >
-               <widget class="QDoubleSpinBox" name="doubleSpinBoxSheetMergeThreshold" >
-                <property name="decimals" >
-                 <number>4</number>
-                </property>
-                <property name="maximum" >
-                 <double>10000.000000000000000</double>
-                </property>
-                <property name="value" >
-                 <double>3.000000000000000</double>
-                </property>
-               </widget>
-              </item>
-              <item row="5" column="0" >
-               <widget class="QSplitter" name="splitter_3" >
-                <property name="orientation" >
-                 <enum>Qt::Horizontal</enum>
-                </property>
-                <widget class="QLabel" name="label_15" >
-                 <property name="sizePolicy" >
-                  <sizepolicy vsizetype="Preferred" hsizetype="MinimumExpanding" >
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="minimumSize" >
-                  <size>
-                   <width>120</width>
-                   <height>0</height>
-                  </size>
-                 </property>
-                 <property name="toolTip" >
-                  <string>The maximum euclidean distance between possibly connected helices even if they are not connected in the skeleton</string>
-                 </property>
-                 <property name="statusTip" >
-                  <string>The maximum euclidean distance between possibly connected helices even if they are not connected in the skeleton</string>
-                 </property>
-                 <property name="whatsThis" >
-                  <string>The maximum euclidean distance between possibly connected helices even if they are not connected in the skeleton</string>
-                 </property>
-                 <property name="text" >
-                  <string>Minimum Sheet Size:</string>
-                 </property>
-                </widget>
-               </widget>
-              </item>
-              <item row="9" column="0" colspan="2" >
-               <widget class="QCheckBox" name="checkBoxIncludeStrands" >
-                <property name="text" >
-                 <string>Include Strands</string>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-           </layout>
-          </widget>
-          <widget class="QGroupBox" name="groupBox_4" >
-           <property name="sizePolicy" >
-            <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="minimumSize" >
-            <size>
-             <width>151</width>
-             <height>131</height>
-            </size>
-           </property>
-           <property name="title" >
-            <string>Graph Visualization</string>
-           </property>
-           <layout class="QGridLayout" name="gridLayout_5" >
-            <item row="0" column="0" >
-             <widget class="QCheckBox" name="checkBoxShowSkeleton" >
-              <property name="sizePolicy" >
-               <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="text" >
-               <string>Show Skeleton</string>
-              </property>
-              <property name="tristate" >
-               <bool>false</bool>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="0" >
-             <widget class="Line" name="line" >
-              <property name="orientation" >
-               <enum>Qt::Horizontal</enum>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="0" >
-             <widget class="QCheckBox" name="checkBoxShowHelices" >
-              <property name="sizePolicy" >
-               <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="text" >
-               <string>Show Helices</string>
-              </property>
-              <property name="tristate" >
-               <bool>false</bool>
-              </property>
-             </widget>
-            </item>
-            <item row="3" column="0" >
-             <widget class="QCheckBox" name="checkBoxShowHelixCorners" >
-              <property name="sizePolicy" >
-               <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="text" >
-               <string>Show Helix Corners</string>
-              </property>
-              <property name="tristate" >
-               <bool>false</bool>
-              </property>
-             </widget>
-            </item>
-            <item row="4" column="0" >
-             <widget class="Line" name="line_2" >
-              <property name="orientation" >
-               <enum>Qt::Horizontal</enum>
-              </property>
-             </widget>
-            </item>
-            <item row="5" column="0" >
-             <widget class="QCheckBox" name="checkBoxShowSheets" >
-              <property name="sizePolicy" >
-               <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="text" >
-               <string>Show Sheets (from sheet location file)</string>
-              </property>
-              <property name="tristate" >
-               <bool>false</bool>
-              </property>
-             </widget>
-            </item>
-            <item row="6" column="0" >
-             <widget class="QCheckBox" name="checkBoxShowSheetColors" >
-              <property name="sizePolicy" >
-               <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="text" >
-               <string>Show Sheets (from graph)</string>
-              </property>
-              <property name="tristate" >
-               <bool>false</bool>
-              </property>
-             </widget>
-            </item>
-            <item row="7" column="0" >
-             <widget class="QCheckBox" name="checkBoxShowSheetCorners" >
-              <property name="sizePolicy" >
-               <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="text" >
-               <string>Show Sheet Corners</string>
-              </property>
-              <property name="tristate" >
-               <bool>false</bool>
-              </property>
-             </widget>
-            </item>
-            <item row="8" column="0" >
-             <widget class="Line" name="line_3" >
-              <property name="orientation" >
-               <enum>Qt::Horizontal</enum>
-              </property>
-             </widget>
-            </item>
-            <item row="9" column="0" >
-             <widget class="QCheckBox" name="checkBoxShowAllPaths" >
-              <property name="sizePolicy" >
-               <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize" >
-               <size>
-                <width>119</width>
-                <height>0</height>
-               </size>
-              </property>
-              <property name="text" >
-               <string>Show All Loops</string>
-              </property>
-              <property name="tristate" >
-               <bool>false</bool>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </widget>
+          <property name="minimumSize" >
+           <size>
+            <width>151</width>
+            <height>131</height>
+           </size>
+          </property>
+          <property name="title" >
+           <string>Visualization</string>
+          </property>
+          <layout class="QGridLayout" name="gridLayout_5" >
+           <item row="0" column="0" >
+            <widget class="QCheckBox" name="checkBoxShowSkeleton" >
+             <property name="sizePolicy" >
+              <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text" >
+              <string>Show Skeleton</string>
+             </property>
+             <property name="tristate" >
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0" >
+            <widget class="Line" name="line" >
+             <property name="orientation" >
+              <enum>Qt::Horizontal</enum>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="0" >
+            <widget class="QCheckBox" name="checkBoxShowHelices" >
+             <property name="sizePolicy" >
+              <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text" >
+              <string>Show Helices</string>
+             </property>
+             <property name="tristate" >
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="0" >
+            <widget class="QCheckBox" name="checkBoxShowHelixCorners" >
+             <property name="sizePolicy" >
+              <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text" >
+              <string>Show Helix Corners</string>
+             </property>
+             <property name="tristate" >
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="0" >
+            <widget class="Line" name="line_2" >
+             <property name="orientation" >
+              <enum>Qt::Horizontal</enum>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="0" >
+            <widget class="QCheckBox" name="checkBoxShowSheets" >
+             <property name="sizePolicy" >
+              <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text" >
+              <string>Show SSEHunter Sheets</string>
+             </property>
+             <property name="tristate" >
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="0" >
+            <widget class="QCheckBox" name="checkBoxShowSheetColors" >
+             <property name="sizePolicy" >
+              <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text" >
+              <string>Show Skeleton Sheets</string>
+             </property>
+             <property name="tristate" >
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="7" column="0" >
+            <widget class="QCheckBox" name="checkBoxShowSheetCorners" >
+             <property name="sizePolicy" >
+              <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text" >
+              <string>Show Sheet Corners</string>
+             </property>
+             <property name="tristate" >
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="8" column="0" >
+            <widget class="Line" name="line_3" >
+             <property name="orientation" >
+              <enum>Qt::Horizontal</enum>
+             </property>
+            </widget>
+           </item>
+           <item row="9" column="0" >
+            <widget class="QCheckBox" name="checkBoxShowAllPaths" >
+             <property name="sizePolicy" >
+              <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="minimumSize" >
+              <size>
+               <width>119</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="text" >
+              <string>Show All Loops</string>
+             </property>
+             <property name="tristate" >
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+          </layout>
          </widget>
         </item>
-        <item>
-         <spacer name="verticalSpacer" >
+        <item row="1" column="0" >
+         <spacer name="verticalSpacer_4" >
           <property name="orientation" >
            <enum>Qt::Vertical</enum>
           </property>
           <property name="sizeHint" stdset="0" >
            <size>
             <width>20</width>
-            <height>40</height>
+            <height>291</height>
            </size>
           </property>
          </spacer>
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="tabAdvancedSettings" >
+      <widget class="QWidget" name="tabGraphSettings" >
        <attribute name="title" >
-        <string>Matching Settings</string>
+        <string>Settings</string>
        </attribute>
-       <layout class="QVBoxLayout" name="verticalLayout_4" >
-        <item>
+       <layout class="QGridLayout" name="gridLayout_21" >
+        <item row="0" column="0" >
          <widget class="QGroupBox" name="groupBox_6" >
           <property name="title" >
            <string>Global</string>
@@ -890,7 +543,7 @@
           </layout>
          </widget>
         </item>
-        <item>
+        <item row="1" column="0" >
          <widget class="QGroupBox" name="groupBox_2" >
           <property name="title" >
            <string>Loops</string>
@@ -958,7 +611,7 @@
           </layout>
          </widget>
         </item>
-        <item>
+        <item row="2" column="0" >
          <widget class="QGroupBox" name="groupBox" >
           <property name="sizePolicy" >
            <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
@@ -975,11 +628,11 @@
           <property name="checkable" >
            <bool>false</bool>
           </property>
-          <layout class="QGridLayout" name="gridLayout_11" >
+          <layout class="QGridLayout" name="gridLayout_19" >
            <item row="0" column="0" >
-            <layout class="QGridLayout" name="gridLayout_7" >
+            <layout class="QGridLayout" name="gridLayout_20" >
              <item row="0" column="0" >
-              <widget class="QLabel" name="label_10" >
+              <widget class="QLabel" name="label_28" >
                <property name="text" >
                 <string>Helix Importance</string>
                </property>
@@ -1008,27 +661,13 @@
               </widget>
              </item>
              <item row="1" column="0" >
-              <widget class="QCheckBox" name="checkBoxMissingHelices" >
-               <property name="text" >
-                <string>Number of Missing Helices:</string>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="1" >
-              <widget class="QSpinBox" name="spinBoxMissingHelixCount" >
-               <property name="enabled" >
-                <bool>false</bool>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="0" >
-              <widget class="QLabel" name="label_7" >
+              <widget class="QLabel" name="label_29" >
                <property name="text" >
                 <string>Missing Helix Penalty, Fixed:</string>
                </property>
               </widget>
              </item>
-             <item row="2" column="1" >
+             <item row="1" column="1" >
               <widget class="QDoubleSpinBox" name="doubleSpinBoxHelixMissingPenalty" >
                <property name="sizePolicy" >
                 <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
@@ -1050,14 +689,14 @@
                </property>
               </widget>
              </item>
-             <item row="3" column="0" >
-              <widget class="QLabel" name="label_12" >
+             <item row="2" column="0" >
+              <widget class="QLabel" name="label_30" >
                <property name="text" >
                 <string>Missing Helix Penalty, Scaled:</string>
                </property>
               </widget>
              </item>
-             <item row="3" column="1" >
+             <item row="2" column="1" >
               <widget class="QDoubleSpinBox" name="doubleSpinBoxHelixMissingPenaltyScaled" >
                <property name="sizePolicy" >
                 <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
@@ -1082,14 +721,14 @@
                </property>
               </widget>
              </item>
-             <item row="4" column="0" >
-              <widget class="QLabel" name="label_8" >
+             <item row="3" column="0" >
+              <widget class="QLabel" name="label_31" >
                <property name="text" >
                 <string>Start or End Missing Helix Penalty:</string>
                </property>
               </widget>
              </item>
-             <item row="4" column="1" >
+             <item row="3" column="1" >
               <widget class="QDoubleSpinBox" name="doubleSpinBoxEndHelixMissingPenalty" >
                <property name="sizePolicy" >
                 <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
@@ -1116,7 +755,7 @@
           </layout>
          </widget>
         </item>
-        <item>
+        <item row="3" column="0" >
          <widget class="QGroupBox" name="groupBox_5" >
           <property name="title" >
            <string>Sheets</string>
@@ -1157,27 +796,13 @@
               </widget>
              </item>
              <item row="2" column="0" >
-              <widget class="QCheckBox" name="checkBoxMissingSheets" >
-               <property name="text" >
-                <string>Number of Missing Sheets:</string>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="1" >
-              <widget class="QSpinBox" name="spinBoxMissingSheetCount" >
-               <property name="enabled" >
-                <bool>false</bool>
-               </property>
-              </widget>
-             </item>
-             <item row="3" column="0" >
               <widget class="QLabel" name="label_19" >
                <property name="text" >
                 <string>Missing Sheet Penalty, Fixed:</string>
                </property>
               </widget>
              </item>
-             <item row="3" column="1" >
+             <item row="2" column="1" >
               <widget class="QDoubleSpinBox" name="doubleSpinBoxSheetMissingPenalty" >
                <property name="sizePolicy" >
                 <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
@@ -1196,14 +821,14 @@
                </property>
               </widget>
              </item>
-             <item row="4" column="0" >
+             <item row="3" column="0" >
               <widget class="QLabel" name="label_23" >
                <property name="text" >
                 <string>Missing Sheet Penalty, Scaled:</string>
                </property>
               </widget>
              </item>
-             <item row="4" column="1" >
+             <item row="3" column="1" >
               <widget class="QDoubleSpinBox" name="doubleSpinBoxSheetMissingPenaltyScaled" >
                <property name="sizePolicy" >
                 <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
@@ -1229,6 +854,402 @@
               <widget class="QCheckBox" name="checkBoxIncludeSheets" >
                <property name="text" >
                 <string>Include Sheets</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item row="4" column="0" >
+         <spacer name="verticalSpacer" >
+          <property name="orientation" >
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0" >
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="tabAdvancedSettings" >
+       <attribute name="title" >
+        <string>Advanced Settings</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout_2" >
+        <item>
+         <widget class="QGroupBox" name="groupBox_9" >
+          <property name="title" >
+           <string>Global</string>
+          </property>
+          <layout class="QFormLayout" name="formLayout" >
+           <item row="0" column="0" >
+            <widget class="QLabel" name="label_14" >
+             <property name="text" >
+              <string>Border Margin Threshold:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1" >
+            <widget class="QSpinBox" name="spinBoxBorderMarginThreshold" >
+             <property name="sizePolicy" >
+              <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="value" >
+              <number>3</number>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0" >
+            <widget class="QLabel" name="label_6" >
+             <property name="toolTip" >
+              <string>The maximum euclidean distance between possibly connected helices even if they are not connected in the skeleton</string>
+             </property>
+             <property name="statusTip" >
+              <string>The maximum euclidean distance between possibly connected helices even if they are not connected in the skeleton</string>
+             </property>
+             <property name="whatsThis" >
+              <string>The maximum euclidean distance between possibly connected helices even if they are not connected in the skeleton</string>
+             </property>
+             <property name="text" >
+              <string>Max Euclidean Loop Distance:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1" >
+            <widget class="QDoubleSpinBox" name="doubleSpinBoxEuclideanDistance" >
+             <property name="decimals" >
+              <number>4</number>
+             </property>
+             <property name="maximum" >
+              <double>999999999.999899983406067</double>
+             </property>
+             <property name="value" >
+              <double>0.000000000000000</double>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QGroupBox" name="groupBox_10" >
+          <property name="title" >
+           <string>Helices</string>
+          </property>
+          <layout class="QGridLayout" name="gridLayout_7" >
+           <item row="0" column="0" >
+            <widget class="QCheckBox" name="checkBoxMissingHelices" >
+             <property name="text" >
+              <string>Number of Missing Helices:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1" >
+            <widget class="QSpinBox" name="spinBoxMissingHelixCount" >
+             <property name="enabled" >
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QGroupBox" name="groupBox_3" >
+          <property name="sizePolicy" >
+           <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize" >
+           <size>
+            <width>151</width>
+            <height>161</height>
+           </size>
+          </property>
+          <property name="maximumSize" >
+           <size>
+            <width>16777215</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="title" >
+           <string>Sheets</string>
+          </property>
+          <layout class="QGridLayout" name="gridLayout_4" >
+           <item row="0" column="0" >
+            <layout class="QGridLayout" name="gridLayout_3" >
+             <item row="0" column="1" >
+              <widget class="QSpinBox" name="spinBoxMinSheetSize" >
+               <property name="sizePolicy" >
+                <sizepolicy vsizetype="Fixed" hsizetype="MinimumExpanding" >
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimumSize" >
+                <size>
+                 <width>51</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="layoutDirection" >
+                <enum>Qt::LeftToRight</enum>
+               </property>
+               <property name="maximum" >
+                <number>99999</number>
+               </property>
+               <property name="value" >
+                <number>10</number>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="0" >
+              <widget class="QSplitter" name="splitter_5" >
+               <property name="orientation" >
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <widget class="QLabel" name="label_16" >
+                <property name="sizePolicy" >
+                 <sizepolicy vsizetype="Preferred" hsizetype="MinimumExpanding" >
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="minimumSize" >
+                 <size>
+                  <width>120</width>
+                  <height>0</height>
+                 </size>
+                </property>
+                <property name="toolTip" >
+                 <string>The maximum euclidean distance between possibly connected helices even if they are not connected in the skeleton</string>
+                </property>
+                <property name="statusTip" >
+                 <string>The maximum euclidean distance between possibly connected helices even if they are not connected in the skeleton</string>
+                </property>
+                <property name="whatsThis" >
+                 <string>The maximum euclidean distance between possibly connected helices even if they are not connected in the skeleton</string>
+                </property>
+                <property name="text" >
+                 <string>Maximum Sheet Distance:</string>
+                </property>
+               </widget>
+              </widget>
+             </item>
+             <item row="1" column="1" >
+              <widget class="QDoubleSpinBox" name="doubleSpinBoxMaxSheetDistance" >
+               <property name="sizePolicy" >
+                <sizepolicy vsizetype="Fixed" hsizetype="MinimumExpanding" >
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimumSize" >
+                <size>
+                 <width>0</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="text" stdset="0" >
+                <string>5.0000</string>
+               </property>
+               <property name="prefix" >
+                <string/>
+               </property>
+               <property name="decimals" >
+                <number>4</number>
+               </property>
+               <property name="maximum" >
+                <double>1000000000.000000000000000</double>
+               </property>
+               <property name="value" >
+                <double>5.000000000000000</double>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="0" >
+              <widget class="QSplitter" name="splitter_8" >
+               <property name="orientation" >
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <widget class="QLabel" name="label_21" >
+                <property name="sizePolicy" >
+                 <sizepolicy vsizetype="Preferred" hsizetype="MinimumExpanding" >
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="minimumSize" >
+                 <size>
+                  <width>120</width>
+                  <height>0</height>
+                 </size>
+                </property>
+                <property name="text" >
+                 <string>Sheet Self-Loop Length:</string>
+                </property>
+               </widget>
+              </widget>
+             </item>
+             <item row="2" column="1" >
+              <widget class="QDoubleSpinBox" name="doubleSpinBoxSheetSelfLoopLength" >
+               <property name="sizePolicy" >
+                <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text" stdset="0" >
+                <string>5.0000</string>
+               </property>
+               <property name="decimals" >
+                <number>4</number>
+               </property>
+               <property name="maximum" >
+                <double>999999999.999899983406067</double>
+               </property>
+               <property name="value" >
+                <double>5.000000000000000</double>
+               </property>
+              </widget>
+             </item>
+             <item row="6" column="0" colspan="2" >
+              <widget class="Line" name="line_6" >
+               <property name="orientation" >
+                <enum>Qt::Horizontal</enum>
+               </property>
+              </widget>
+             </item>
+             <item row="7" column="0" colspan="2" >
+              <layout class="QHBoxLayout" name="horizontalLayout" >
+               <item>
+                <spacer name="horizontalSpacer" >
+                 <property name="orientation" >
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeType" >
+                  <enum>QSizePolicy::MinimumExpanding</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0" >
+                  <size>
+                   <width>187</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+               <item>
+                <widget class="QPushButton" name="pushButtonRebuildGraph" >
+                 <property name="enabled" >
+                  <bool>true</bool>
+                 </property>
+                 <property name="sizePolicy" >
+                  <sizepolicy vsizetype="Fixed" hsizetype="Minimum" >
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="minimumSize" >
+                  <size>
+                   <width>150</width>
+                   <height>23</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize" >
+                  <size>
+                   <width>150</width>
+                   <height>16777215</height>
+                  </size>
+                 </property>
+                 <property name="text" >
+                  <string>Rebuild Graph</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item row="3" column="0" >
+              <widget class="QLabel" name="label_17" >
+               <property name="text" >
+                <string>Sheet Merging Threshold</string>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="1" >
+              <widget class="QDoubleSpinBox" name="doubleSpinBoxSheetMergeThreshold" >
+               <property name="decimals" >
+                <number>4</number>
+               </property>
+               <property name="maximum" >
+                <double>10000.000000000000000</double>
+               </property>
+               <property name="value" >
+                <double>3.000000000000000</double>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="0" >
+              <widget class="QSplitter" name="splitter_3" >
+               <property name="orientation" >
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <widget class="QLabel" name="label_15" >
+                <property name="sizePolicy" >
+                 <sizepolicy vsizetype="Preferred" hsizetype="MinimumExpanding" >
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="minimumSize" >
+                 <size>
+                  <width>120</width>
+                  <height>0</height>
+                 </size>
+                </property>
+                <property name="toolTip" >
+                 <string>The maximum euclidean distance between possibly connected helices even if they are not connected in the skeleton</string>
+                </property>
+                <property name="statusTip" >
+                 <string>The maximum euclidean distance between possibly connected helices even if they are not connected in the skeleton</string>
+                </property>
+                <property name="whatsThis" >
+                 <string>The maximum euclidean distance between possibly connected helices even if they are not connected in the skeleton</string>
+                </property>
+                <property name="text" >
+                 <string>Minimum Sheet Size:</string>
+                </property>
+               </widget>
+              </widget>
+             </item>
+             <item row="5" column="0" colspan="2" >
+              <widget class="QCheckBox" name="checkBoxIncludeStrands" >
+               <property name="text" >
+                <string>Include Strands</string>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="0" >
+              <widget class="QCheckBox" name="checkBoxMissingSheets" >
+               <property name="text" >
+                <string>Number of Missing Sheets:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="1" >
+              <widget class="QSpinBox" name="spinBoxMissingSheetCount" >
+               <property name="enabled" >
+                <bool>false</bool>
                </property>
               </widget>
              </item>
@@ -1403,7 +1424,6 @@
     </widget>
    </item>
   </layout>
-  <zorder>splitter_7</zorder>
  </widget>
  <tabstops>
   <tabstop>tabWidget</tabstop>
@@ -1411,10 +1431,6 @@
   <tabstop>pushButtonGetHelixLengthFile</tabstop>
   <tabstop>lineEditHelixLocationFile</tabstop>
   <tabstop>pushButtonGetHelixLocationFile</tabstop>
-  <tabstop>doubleSpinBoxHelixMissingPenalty</tabstop>
-  <tabstop>doubleSpinBoxEndHelixMissingPenalty</tabstop>
-  <tabstop>doubleSpinBoxEuclideanToPDBRatio</tabstop>
-  <tabstop>spinBoxBorderMarginThreshold</tabstop>
   <tabstop>comboBoxCorrespondences</tabstop>
   <tabstop>tableWidgetCorrespondenceList</tabstop>
   <tabstop>pushButtonExportToRosetta</tabstop>
