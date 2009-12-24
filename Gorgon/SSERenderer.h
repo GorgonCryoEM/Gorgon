@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.36  2009/12/22 01:02:24  schuhs
+//   Adding support for beta sheet matching to the SSE correspondence search algorithm
+//
 //   Revision 1.35  2009/12/08 22:08:29  ssa1
 //   Fixing SheetGenerator syntax issues (and instead of &&, etc..)
 //
@@ -126,6 +129,7 @@ namespace wustl_mm {
 			string GetSupportedSheetSaveFileFormats();
 			Vector3DFloat Get3DCoordinates(int subsceneIndex, int ix0, int ix1 = -1, int ix2 = -1, int ix3 = -1, int ix4 = -1);
 			void FitSelectedSSEs(Volume * vol);
+			void SetSSESpecificColoring(bool isSSESpecific);
 		private:
 			void LoadHelixFileSSE(string fileName);
 			void LoadHelixFileVRML(string fileName);
@@ -142,6 +146,7 @@ namespace wustl_mm {
 			bool selectedSheets[256];
 			bool selectedGraphSheets[256];
 			vector<Vector3DFloat> tempSSEPoints;
+			bool isSSESpecificColoring;
 		};
 
 
@@ -149,6 +154,7 @@ namespace wustl_mm {
 			helices.clear();
 			sheetMesh = NULL;
 			graphSheetMesh = NULL;
+			isSSESpecificColoring = false;
 		}
 
 		SSERenderer::~SSERenderer() {
@@ -161,6 +167,10 @@ namespace wustl_mm {
 			if(sheetMesh != NULL) {
 				delete sheetMesh;
 			}
+		}
+		
+		void SSERenderer::SetSSESpecificColoring(bool isSSESpecific) {
+			isSSESpecificColoring = isSSESpecific;
 		}
 
 		void SSERenderer::AddHelix(Vector3DFloat p1, Vector3DFloat p2) {
@@ -225,8 +235,10 @@ namespace wustl_mm {
 				Point3 pt;
 				for(int i = 0; i < (int)helices.size(); i++) {
 					glPushAttrib(GL_LIGHTING_BIT);
-					helices[i]->GetColor(colorR, colorG, colorB, colorA);	
-					OpenGLUtils::SetColor(colorR, colorG, colorB, colorA);
+					if(isSSESpecificColoring) {
+						helices[i]->GetColor(colorR, colorG, colorB, colorA);	
+						OpenGLUtils::SetColor(colorR, colorG, colorB, colorA);
+					}
 
 					if(helices[i]->GetSelected()) {
 						glMaterialfv(GL_FRONT, GL_EMISSION, emissionColor);
@@ -291,16 +303,18 @@ namespace wustl_mm {
 						specularMaterial[2] = 1.0;
 						specularMaterial[3] = 1.0;
 					}
-					glColor4f(colorR, colorG, colorB, colorA);
-				
-					glMaterialfv(GL_BACK, GL_AMBIENT,   ambientMaterial);
-					glMaterialfv(GL_BACK, GL_DIFFUSE,   diffuseMaterial) ;
-					glMaterialfv(GL_BACK, GL_SPECULAR,  specularMaterial) ;
-					glMaterialf(GL_BACK, GL_SHININESS, 0.1);
-					glMaterialfv(GL_FRONT, GL_AMBIENT,   ambientMaterial) ;
-					glMaterialfv(GL_FRONT, GL_DIFFUSE,   diffuseMaterial) ;
-					glMaterialfv(GL_FRONT, GL_SPECULAR,  specularMaterial) ;
-					glMaterialf(GL_FRONT, GL_SHININESS, 0.1);
+					if(isSSESpecificColoring) {
+						glColor4f(colorR, colorG, colorB, colorA);
+					
+						glMaterialfv(GL_BACK, GL_AMBIENT,   ambientMaterial);
+						glMaterialfv(GL_BACK, GL_DIFFUSE,   diffuseMaterial) ;
+						glMaterialfv(GL_BACK, GL_SPECULAR,  specularMaterial) ;
+						glMaterialf(GL_BACK, GL_SHININESS, 0.1);
+						glMaterialfv(GL_FRONT, GL_AMBIENT,   ambientMaterial) ;
+						glMaterialfv(GL_FRONT, GL_DIFFUSE,   diffuseMaterial) ;
+						glMaterialfv(GL_FRONT, GL_SPECULAR,  specularMaterial) ;
+						glMaterialf(GL_FRONT, GL_SHININESS, 0.1);
+					}
 
 					glPushAttrib(GL_LIGHTING_BIT | GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 					// end color code
@@ -363,16 +377,18 @@ namespace wustl_mm {
 						specularMaterial[3] = 1.0;
 					}
 					
-					glColor4f(colorR, colorG, colorB, colorA);
-				
-					glMaterialfv(GL_BACK, GL_AMBIENT,   ambientMaterial);
-					glMaterialfv(GL_BACK, GL_DIFFUSE,   diffuseMaterial) ;
-					glMaterialfv(GL_BACK, GL_SPECULAR,  specularMaterial) ;
-					glMaterialf(GL_BACK, GL_SHININESS, 0.1);
-					glMaterialfv(GL_FRONT, GL_AMBIENT,   ambientMaterial) ;
-					glMaterialfv(GL_FRONT, GL_DIFFUSE,   diffuseMaterial) ;
-					glMaterialfv(GL_FRONT, GL_SPECULAR,  specularMaterial) ;
-					glMaterialf(GL_FRONT, GL_SHININESS, 0.1);
+					if(isSSESpecificColoring) {
+						glColor4f(colorR, colorG, colorB, colorA);
+					
+						glMaterialfv(GL_BACK, GL_AMBIENT,   ambientMaterial);
+						glMaterialfv(GL_BACK, GL_DIFFUSE,   diffuseMaterial) ;
+						glMaterialfv(GL_BACK, GL_SPECULAR,  specularMaterial) ;
+						glMaterialf(GL_BACK, GL_SHININESS, 0.1);
+						glMaterialfv(GL_FRONT, GL_AMBIENT,   ambientMaterial) ;
+						glMaterialfv(GL_FRONT, GL_DIFFUSE,   diffuseMaterial) ;
+						glMaterialfv(GL_FRONT, GL_SPECULAR,  specularMaterial) ;
+						glMaterialf(GL_FRONT, GL_SHININESS, 0.1);
+					}
 
 					glPushAttrib(GL_LIGHTING_BIT | GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 					// end color code
