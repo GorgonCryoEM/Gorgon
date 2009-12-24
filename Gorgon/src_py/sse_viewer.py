@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.30  2009/12/22 01:02:24  schuhs
+#   Adding support for beta sheet matching to the SSE correspondence search algorithm
+#
 #   Revision 1.29  2009/10/05 17:57:37  ssa1
 #   Initial session saving functionality (Request ID:52)
 #
@@ -131,9 +134,9 @@ class SSEViewer(BaseViewer):
         self.updateActionsAndMenus()
                   
     def createChildWindows(self):
-        self.sseBuilder = VolumeSSEBuilderForm(self.app, self)
-        self.sequencePredictor = SSESequencePredictorForm(self.app, self)
-        self.helixCorrespondanceFinder = SSEHelixCorrespondenceFinderForm(self.app, self)
+        self.sseBuilder = VolumeSSEBuilderForm(self.app, self, self)
+        self.sequencePredictor = SSESequencePredictorForm(self.app, self, self)
+        self.helixCorrespondanceFinder = SSEHelixCorrespondenceFinderForm(self.app, self, self)
         
     def loadHelixDataFromFile(self, fileName):
         self.setCursor(QtCore.Qt.WaitCursor)

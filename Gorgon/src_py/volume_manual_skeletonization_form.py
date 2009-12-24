@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.31  2009/03/30 21:36:12  ssa1
+#   Interactive loop building
+#
 #   Revision 1.30  2009/03/26 19:33:52  ssa1
 #   Adding in an Interactive Loop Builder
 #
@@ -81,16 +84,26 @@
 from PyQt4 import QtCore, QtGui
 from ui_dialog_volume_manual_skeletonization import Ui_DialogVolumeManualSkeletonization
 from libpyGORGON import InteractiveSkeletonEngine
+from base_dock_widget import BaseDockWidget
 
 from OpenGL.GL import *
 from OpenGL.GLU import *
 from OpenGL.GLUT import *
 
-class VolumeManualSkeletonizationForm(QtGui.QWidget):
+class VolumeManualSkeletonizationForm(BaseDockWidget):
     MedialnessScoringFunctionBinary, MedialnessScoringFunctionGlobalRank, MedialnessScoringFunctionLocalRank = range(3)
     
     def __init__(self, main, viewer, parent=None):
-        QtGui.QWidget.__init__(self, parent)
+        BaseDockWidget.__init__(self, 
+                                main, 
+                                "&Interactive Skeletonization", 
+                                "Perform interactive skeletonization", 
+                                "perform_VolumeManualSkeletonization", 
+                                "actions-volume-skeletonization-manual",
+                                "actions-volume-skeletonization", 
+                                QtCore.Qt.LeftDockWidgetArea | QtCore.Qt.RightDockWidgetArea | QtCore.Qt.BottomDockWidgetArea,
+                                QtCore.Qt.BottomDockWidgetArea,
+                                parent)
         self.app = main
         self.app.themes.addDefaultRGB("InteractiveSkeletonizer:StartingPoint", 0, 0, 255, 255)
         self.app.themes.addDefaultRGB("InteractiveSkeletonizer:EndingPoint", 0, 255, 0, 255)         
@@ -107,16 +120,10 @@ class VolumeManualSkeletonizationForm(QtGui.QWidget):
         self.isSkeletonClicked = False;
         self.createUI()
         self.createActions()
-        self.createMenus()        
 
     def createUI(self):
         self.ui = Ui_DialogVolumeManualSkeletonization()
         self.ui.setupUi(self)    
-        self.dock = QtGui.QDockWidget(self.tr("Interactive Skeletonization Mode"), self.app)
-        self.dock.setAllowedAreas(QtCore.Qt.LeftDockWidgetArea | QtCore.Qt.RightDockWidgetArea | QtCore.Qt.BottomDockWidgetArea)
-        self.dock.setWidget(self)
-        self.dock.close()          
-        self.connect(self.dock, QtCore.SIGNAL("visibilityChanged (bool)"), self.dockVisibilityChanged)
         self.connect(self.ui.horizontalSliderStartingDensity,QtCore.SIGNAL("valueChanged(int)"),self.startingDensityChanged)     
         self.connect(self.ui.pushButtonStart,QtCore.SIGNAL("pressed ()"),self.startSkeletonization)
         self.connect(self.ui.pushButtonClose, QtCore.SIGNAL("pressed ()"), self.endSkeletonization)   
@@ -125,29 +132,12 @@ class VolumeManualSkeletonizationForm(QtGui.QWidget):
         self.connect(self.app, QtCore.SIGNAL("keyPressed(QKeyEvent)"), self.keyPressed)
                                             
     def createActions(self):
-        self.skeletonizeAct = QtGui.QAction(self.tr("&Interactive Skeletonization"), self)
-        self.skeletonizeAct.setStatusTip(self.tr("Perform interactive skeletonization"))
-        self.skeletonizeAct.setCheckable(True)
-        self.skeletonizeAct.setChecked(False)
+        self.skeletonizeAct = self.displayAct
         self.skeletonizeAct.setEnabled(False)
-        self.connect(self.skeletonizeAct, QtCore.SIGNAL("triggered()"), self.loadWidget)
-        self.app.actions.addAction("perform_VolumeManualSkeletonization", self.skeletonizeAct)
-  
-    def createMenus(self):
-        self.app.menus.addAction("actions-volume-skeletonization-manual", self.skeletonizeAct, "actions-volume-skeletonization")                                   
-                
-    def loadWidget(self):
-        if(self.skeletonizeAct.isChecked()) :
-            self.showWidget(True)
-        else:
-            self.showWidget(False)
 
     def showWidget(self, show):
-        if(show):
-            self.app.addDockWidget(QtCore.Qt.BottomDockWidgetArea, self.dock)
-            self.dock.show()          
-        else:
-            self.app.removeDockWidget(self.dock)
+        BaseDockWidget.showWidget(self, show)
+        if(not show):
             self.setSkeletonViewerProperties(False)  
             self.ui.pushButtonStart.setEnabled(True)
             self.ui.pushButtonClose.setEnabled(False)               
@@ -316,7 +306,6 @@ class VolumeManualSkeletonizationForm(QtGui.QWidget):
         self.connect(self.skeletonViewer, QtCore.SIGNAL("mouseClickRay(PyQt_PyObject, float, PyQt_PyObject, QMouseEvent)"), self.processClickRay)    
         self.connect(self.skeletonViewer, QtCore.SIGNAL("mouseOverRay(PyQt_PyObject, float, PyQt_PyObject, QMouseEvent)"), self.processMouseOverRay)  
         
-        self.skeletonizeAct.setChecked(False)
         self.skeletonizeAct.setEnabled(True)
         self.showWidget(False)
         maxDensity = self.viewer.renderer.getMaxDensity()
@@ -329,7 +318,6 @@ class VolumeManualSkeletonizationForm(QtGui.QWidget):
             self.engine.setIsoValue(self.viewer.renderer.getSurfaceValue())   
                    
     def modelUnloaded(self):
-        self.skeletonizeAct.setChecked(False)
         self.skeletonizeAct.setEnabled(False)
         self.showWidget(False)
             
@@ -338,9 +326,6 @@ class VolumeManualSkeletonizationForm(QtGui.QWidget):
             self.engine.setIsoValue(self.viewer.renderer.getSurfaceValue())
             self.skeletonViewer.emitModelChanged()           
                     
-    def dockVisibilityChanged(self, visible):
-        self.skeletonizeAct.setChecked(visible)
-        self.showWidget(visible)
     
     def clearSkeleton(self):
         self.engine.clearSkeleton()

@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.42  2009/12/24 03:24:52  ssa1
+#   Fixing visualization order when loading dock widgets
+#
 #   Revision 1.41  2009/12/24 01:38:53  ssa1
 #   Fixing bug in macos where color dialogs automatically change when camera changes.  Bug ID 4
 #
@@ -139,6 +142,7 @@ from correspondence.StructurePrediction import StructurePrediction
 from seq_model.Helix import Helix
 from vector_lib import *
 import xml.dom.minidom
+from base_dock_widget import BaseDockWidget
 
 from OpenGL.GL import *
 from OpenGL.GLU import *
@@ -146,16 +150,24 @@ from OpenGL.GLUT import *
 
 import math
 
-class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):   
+class SSEHelixCorrespondenceFinderForm(BaseDockWidget):   
     def __init__(self, main, viewer, parent=None):
-        QtGui.QWidget.__init__(self, parent)
+        BaseDockWidget.__init__(self, 
+                               main, 
+                               "Find SSE Correspondences", 
+                               "Find the correspondence between observed and predicted SSEs", 
+                               "perform_SSEFindHelixCorrespondences", 
+                               "actions-sse-findhelixcorrespondences", 
+                               "actions-sse", 
+                               QtCore.Qt.LeftDockWidgetArea | QtCore.Qt.RightDockWidgetArea | QtCore.Qt.BottomDockWidgetArea, 
+                               QtCore.Qt.RightDockWidgetArea, 
+                               parent)
         self.executed = False
         self.app = main
         self.app.themes.addDefaultRGB("CorrespondenceFinder:BackboneTrace", 255, 255, 255, 255)
         self.viewer = viewer        
         self.createUI()
         self.createActions()
-        self.createMenus()
         self.loadingCorrespondance = False
         self.userConstraints = {}
         self.constraintActions = {}
@@ -298,9 +310,6 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
         self.loadSettings()
         self.bringToFront()
         
-    def bringToFront(self):
-        self.dock.raise_()
-        
     
     def checkOk(self):
         """
@@ -337,16 +346,12 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
         print "end checkOk"
     
     def loadWidget(self):
+        BaseDockWidget.loadWidget(self)
         if(self.app.actions.getAction("perform_SSEFindHelixCorrespondences").isChecked()) :
-            self.app.addDockWidget(QtCore.Qt.RightDockWidgetArea, self.dock)
             self.loadDefaults()
-            self.dock.show()
-            self.dock.raise_()
-        else:
-            self.app.removeDockWidget(self.dock)
             
     def dockVisibilityChanged(self, visible):
-        self.app.actions.getAction("perform_SSEFindHelixCorrespondences").setChecked(visible)
+        BaseDockWidget.dockVisibilityChanged(self, visible)
         self.app.viewers['skeleton'].emitModelChanged()
 
     def fullGraphVisibilityChanged(self, visible):
@@ -402,17 +407,8 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
             self.app.actions.getAction("perform_SSEFindHelixCorrespondences").trigger()        
         
     def createActions(self):               
-        corrAct = QtGui.QAction(self.tr("Find SSE Correspondences"), self)
-        corrAct.setStatusTip(self.tr("Find SSE Correspondences"))
-        corrAct.setCheckable(True)
-        corrAct.setChecked(False)
-        self.corrAct = corrAct
-        self.connect(corrAct, QtCore.SIGNAL("triggered()"), self.loadWidget)
-        self.app.actions.addAction("perform_SSEFindHelixCorrespondences", corrAct)
-  
-    def createMenus(self):
-        self.app.menus.addAction("actions-sse-findhelixcorrespondences", self.app.actions.getAction("perform_SSEFindHelixCorrespondences"), "actions-sse")        
-    
+        self.corrAct = self.displayAct
+      
     def loadSettings(self):
         
         if (not(self.ui.lineEditSettingsFile.text().isEmpty())):

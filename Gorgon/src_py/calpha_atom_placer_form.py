@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.17  2009/08/19 15:24:08  ssa1
+#   Bug Fix: Removing error when loading manual atom placement form without loading a calpha sequence
+#
 #   Revision 1.16  2009/03/31 21:40:13  ssa1
 #   Refactoring: Splitting seq_model\SequenceView.py into subclasses
 #
@@ -55,10 +58,20 @@
 from PyQt4 import QtCore, QtGui
 from libpyGORGON import PDBAtom, Vector3DFloat
 from seq_model.Residue import Residue
+from base_dock_widget import BaseDockWidget
 
-class CAlphaAtomPlacerForm(QtGui.QWidget):
+class CAlphaAtomPlacerForm(BaseDockWidget):
     def __init__(self, main, viewer, main_chain, structPred, parent=None):
-        QtGui.QWidget.__init__(self, parent)
+        BaseDockWidget.__init__(self, 
+                                main, 
+                                "&Manual C-Alpha Atom Placement", 
+                                "Perform Manual C-Alpha atom placement", 
+                                "perform_CAlphaManualAtomPlacement", 
+                                "actions-calpha-manualAtomPlacement", 
+                                "actions-calpha", 
+                                QtCore.Qt.LeftDockWidgetArea | QtCore.Qt.RightDockWidgetArea | QtCore.Qt.BottomDockWidgetArea, 
+                                QtCore.Qt.RightDockWidgetArea, 
+                                parent)
         self.app = main
         self.viewer = viewer
         self.skeletonViewer = self.app.viewers["skeleton"]
@@ -66,18 +79,10 @@ class CAlphaAtomPlacerForm(QtGui.QWidget):
         self.main_chain=main_chain
         self.structPred = structPred
         self.createUI()
-        self.createActions()
-        self.createMenus()
-        self.connect(self.dock, QtCore.SIGNAL("visibilityChanged (bool)"), self.dockVisibilityChanged)
         self.connect(self.addAtomPushButton, QtCore.SIGNAL("pressed()"), self.addAtom)
         self.connect(self.resSeqNumSpinBox,  QtCore.SIGNAL('valueChanged(int)'), self.updateResName)
 
-    def createUI(self):   
-        self.dock = QtGui.QDockWidget(self.tr("C-Alpha - Atom Placer"), self.app)
-        self.dock.setAllowedAreas(QtCore.Qt.LeftDockWidgetArea | QtCore.Qt.RightDockWidgetArea | QtCore.Qt.BottomDockWidgetArea)
-        self.dock.setWidget(self)
-        self.dock.close()
-        
+    def createUI(self):           
         serialLabel = QtGui.QLabel('Serial:')
         atomNameLabel = QtGui.QLabel('Atom Name:')
         altLocLabel = QtGui.QLabel('Alternate Location:')
@@ -172,7 +177,6 @@ class CAlphaAtomPlacerForm(QtGui.QWidget):
                 self.resSeqNumSpinBox.setRange( min(self.structPred.chain.residueRange()), max(self.structPred.chain.residueRange()) )
             else:
                 return            
-            self.app.addDockWidget(QtCore.Qt.RightDockWidgetArea, self.dock)
             self.skeletonViewer.setSelectEnabled(True)
             if not self.viewer.main_chain:
                 self.viewer.main_chain = self.viewer.structPred.chain
@@ -180,14 +184,10 @@ class CAlphaAtomPlacerForm(QtGui.QWidget):
             residue = self.structPred.chain[self.resSeqNumSpinBox.value()]
             self.resNameLabel.setText(residue.symbol3)
             self.identifierLabel.setText( self.main_chain.getPdbID() + ' chain ' + self.main_chain.getChainID() )
-            self.dock.show()
         else:
             self.skeletonViewer.setSelectEnabled(False)
-            self.app.removeDockWidget(self.dock)
-            
-    def dockVisibilityChanged(self, visible):
-        self.app.actions.getAction("perform_CAlphaManualAtomPlacement").setChecked(visible)
-        
+        BaseDockWidget.loadWidget(self)
+                    
     def skeletonSelected(self, h0, h1, h2, h3, h4, h5, event):
         position = self.skeletonViewer.renderer.get3DCoordinates(h0, h1, h2, h3, h4, h5)
         skeletonCoordinates = [position.x(), position.y(), position.z()]
@@ -220,18 +220,8 @@ class CAlphaAtomPlacerForm(QtGui.QWidget):
                 viewer.emitModelLoaded()
             else:
                 viewer.emitModelChanged()
-    
-    def createActions(self):
-        placeAct = QtGui.QAction(self.tr("&Manual C-Alpha Atom Placement"), self)
-        placeAct.setStatusTip(self.tr("Perform Manual C-Alpha atom placement"))
-        placeAct.setCheckable(True)
-        placeAct.setChecked(False)
-        self.connect(placeAct, QtCore.SIGNAL("triggered()"), self.loadWidget)
-        self.app.actions.addAction("perform_CAlphaManualAtomPlacement", placeAct)
-  
-    def createMenus(self):
-        self.app.menus.addAction("actions-calpha-manualAtomPlacement", self.app.actions.getAction("perform_CAlphaManualAtomPlacement"), "actions-calpha")
-    
+        self.bringToFront()
+        
     def updateResName(self, index):
         print 'in updateResName'
         self.resNameLabel.setText(self.structPred.chain[index].symbol3)

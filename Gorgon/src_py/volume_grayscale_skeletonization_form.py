@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.4  2009/09/10 23:44:56  ssa1
+#   Allowing the option of preserving the earlier skeleton when performing grayscale skeletonization.. (Leads to better skeletons)
+#
 #   Revision 1.3  2008/06/18 18:15:41  ssa1
 #   Adding in CVS meta data
 #
@@ -18,19 +21,27 @@
 from PyQt4 import QtCore, QtGui
 from ui_dialog_volume_grayscale_skeletonization import Ui_DialogVolumeGrayscaleSkeletonization
 from delayed_filter import DelayedFilter
+from base_dialog_widget import BaseDialogWidget
 import threading
 
 
-class VolumeGrayscaleSkeletonizationForm(QtGui.QDialog):
+class VolumeGrayscaleSkeletonizationForm(BaseDialogWidget):
     def __init__(self, main, volumeViewer, parent=None):
-        QtGui.QWidget.__init__(self, parent)
+        BaseDialogWidget.__init__(self, 
+                                  main, 
+                                  "&Grayscale Skeletonization", 
+                                  "Apply grayscale skeletonization on the volume", 
+                                  "perform_VolumeGrayscaleSkeletonization", 
+                                  "actions-volume-skeletonization-grayscale", 
+                                  "actions-volume-skeletonization", 
+                                  False,
+                                  parent)
         self.app = main
         self.viewer = volumeViewer
         self.connect(self.viewer, QtCore.SIGNAL("modelLoaded()"), self.modelLoaded)
         self.connect(self.viewer, QtCore.SIGNAL("modelUnloaded()"), self.modelUnloaded)
         self.createUI()
         self.createActions()
-        self.createMenus()
 
     def createUI(self):
         self.ui = Ui_DialogVolumeGrayscaleSkeletonization()
@@ -39,11 +50,9 @@ class VolumeGrayscaleSkeletonizationForm(QtGui.QDialog):
         self.connect(self.ui.comboBoxMethod, QtCore.SIGNAL("currentIndexChanged (int)"), self.methodChanged)                                            
         self.methodChanged(0)
         
-    def createActions(self):               
-        graySkeletonizeAct = QtGui.QAction(self.tr("&Grayscale Skeletonization"), self)
-        graySkeletonizeAct.setStatusTip(self.tr("Apply grayscale skeletonization on the volume"))
-        self.connect(graySkeletonizeAct, QtCore.SIGNAL("triggered()"), self.loadAndShow)        
-        self.app.actions.addAction("perform_VolumeGrayscaleSkeletonization", graySkeletonizeAct)
+    def createActions(self):       
+        self.displayAct.setEnabled(False)        
+        self.connect(self.displayAct, QtCore.SIGNAL("triggered()"), self.loadAndShow)        
   
     def createMenus(self):
         self.app.menus.addAction("actions-volume-skeletonization-grayscale", self.app.actions.getAction("perform_VolumeGrayscaleSkeletonization"), "actions-volume-skeletonization")        
@@ -55,8 +64,11 @@ class VolumeGrayscaleSkeletonizationForm(QtGui.QDialog):
         self.ui.horizontalSliderStartingDensity.setMaximum(int(maxDensity*100))
         defaultDensity = (int(minDensity*100) + int(maxDensity*100.0)) / 2
         self.ui.horizontalSliderStartingDensity.setValue(defaultDensity)
+        self.displayAct.setEnabled(True)        
+        
     
     def modelUnloaded(self):
+        self.displayAct.setEnabled(False)                
         self.close()
 
     def startingDensityChanged(self, newLevel):
@@ -101,14 +113,13 @@ class VolumeGrayscaleSkeletonizationForm(QtGui.QDialog):
             self.close()
         else:
             QtGui.QMessageBox.critical(None, "Source volume unloaded", "A volume must be loaded to perform skeletonization", QtGui.QMessageBox.Ok, QtGui.QMessageBox.NoButton)
-        
+        BaseDialogWidget.accept(self)
     
     def getCitationHtml(self, title, author, journal):
         return "<b>" + title + "</b><br>" + author + "<br><i>" + journal + "</i>"
                   
     def loadAndShow(self):
         self.ui.checkBoxPreserveSkeleton.setEnabled(self.app.viewers["skeleton"].loaded)
-        self.show()
         
     def methodChanged(self, id):
         if(id == 0):

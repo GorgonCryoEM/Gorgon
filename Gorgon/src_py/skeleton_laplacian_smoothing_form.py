@@ -11,50 +11,44 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.7  2008/06/18 18:15:41  ssa1
+#   Adding in CVS meta data
+#
 
 from PyQt4 import QtCore, QtGui
 from ui_dialog_skeleton_laplacian_smoothing import Ui_DialogSkeletonLaplacianSmoothing
+from base_dock_widget import BaseDockWidget
 
-class SkeletonLaplacianSmoothingForm(QtGui.QWidget):
+class SkeletonLaplacianSmoothingForm(BaseDockWidget):
     def __init__(self, main, skeletonViewer, parent=None):
-        QtGui.QWidget.__init__(self, parent)
+        BaseDockWidget.__init__(self, 
+                               main, 
+                               "&Laplacian Smoothing", 
+                               "Perform laplacian smoothing", 
+                               "perform_SkeletonLaplacianSmoothing", 
+                               "actions-skeleton-laplacianSmoothing", 
+                               "actions-skeleton", 
+                               QtCore.Qt.LeftDockWidgetArea | QtCore.Qt.RightDockWidgetArea | QtCore.Qt.BottomDockWidgetArea, 
+                               QtCore.Qt.RightDockWidgetArea, 
+                               parent)
         self.app = main
         self.viewer = skeletonViewer
+        self.connect(self.viewer, QtCore.SIGNAL("modelLoaded()"), self.modelLoaded)
+        self.connect(self.viewer, QtCore.SIGNAL("modelUnloaded()"), self.modelUnloaded)
         self.connect(self.viewer, QtCore.SIGNAL("modelChanged()"), self.modelChanged)
         self.createUI()
         self.createActions()
-        self.createMenus()
 
     def createUI(self):
         self.ui = Ui_DialogSkeletonLaplacianSmoothing()
         self.ui.setupUi(self)       
-        self.dock = QtGui.QDockWidget(self.tr("Skeleton - Laplacian Smoothing"), self.app)
-        self.dock.setAllowedAreas(QtCore.Qt.LeftDockWidgetArea | QtCore.Qt.RightDockWidgetArea | QtCore.Qt.BottomDockWidgetArea)
-        self.dock.setWidget(self)
-        self.dock.close()
-        self.connect(self.dock, QtCore.SIGNAL("visibilityChanged (bool)"), self.dockVisibilityChanged)
-        
-    def loadWidget(self):
-        if(self.app.actions.getAction("perform_SkeletonLaplacianSmoothing").isChecked()) :
-            self.app.addDockWidget(QtCore.Qt.RightDockWidgetArea, self.dock)
-            self.dock.show()
-        else:
-            self.app.removeDockWidget(self.dock)
             
-    def dockVisibilityChanged(self, visible):
-        self.app.actions.getAction("perform_SkeletonLaplacianSmoothing").setChecked(visible)
-    
     def modelChanged(self):
         if(not self.viewer.loaded) and self.app.actions.getAction("perform_SkeletonLaplacianSmoothing").isChecked():
             self.app.actions.getAction("perform_SkeletonLaplacianSmoothing").trigger()        
         
-    def createActions(self):               
-        smoothingAct = QtGui.QAction(self.tr("&Laplacian Smoothing"), self)
-        smoothingAct.setStatusTip(self.tr("Perform laplacian smoothing"))
-        smoothingAct.setCheckable(True)
-        smoothingAct.setChecked(False)
-        self.connect(smoothingAct, QtCore.SIGNAL("triggered()"), self.loadWidget)
-        self.app.actions.addAction("perform_SkeletonLaplacianSmoothing", smoothingAct)
+    def createActions(self):   
+        self.displayAct.setEnabled(False)            
   
     def createMenus(self):
         self.app.menus.addAction("actions-skeleton-laplacianSmoothing", self.app.actions.getAction("perform_SkeletonLaplacianSmoothing"), "actions-skeleton")        
@@ -67,4 +61,10 @@ class SkeletonLaplacianSmoothingForm(QtGui.QWidget):
         
     def reject(self):
         self.app.actions.getAction("perform_SkeletonLaplacianSmoothing").trigger()
+        
+    def modelLoaded(self):
+        self.displayAct.setEnabled(True)
+    
+    def modelUnloaded(self):
+        self.displayAct.setEnabled(False)
         

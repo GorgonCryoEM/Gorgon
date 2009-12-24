@@ -11,17 +11,20 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.1  2009/12/24 05:09:30  ssa1
+#   Refactoring child window behavior.. Using base classes to encapsulate common behavior
+#
 
 from PyQt4 import QtCore, QtGui
 
 class BaseDockWidget(QtGui.QWidget):
-    def __init__(self, main, title, hint, actionName, windowName, parentWindowName, allowedAreas, defaultArea, parent=None):
+    def __init__(self, main, title, hint, actionName, menuName, parentMenuName, allowedAreas, defaultArea, parent=None):
         QtGui.QWidget.__init__(self, parent)
         self.app = main
         self.defaultArea = defaultArea        
         self.createDock(title, allowedAreas)
         self.createDisplayAction(title, hint, actionName)
-        self.createDisplayMenu(windowName, parentWindowName)
+        self.createDisplayMenu(menuName, parentMenuName)
 
     def createDock(self, title, allowedAreas):
         self.dock = QtGui.QDockWidget(self.tr(title), self.app)
@@ -31,15 +34,15 @@ class BaseDockWidget(QtGui.QWidget):
         self.connect(self.dock, QtCore.SIGNAL("visibilityChanged (bool)"), self.dockVisibilityChanged)
     
     def createDisplayAction(self, title, hint, actionName):               
-        self.displayAct = QtGui.QAction(self.tr(title), self)
+        self.displayAct = QtGui.QAction(self.tr(title + "..."), self)
         self.displayAct.setStatusTip(self.tr(hint))
         self.displayAct.setCheckable(True)
         self.displayAct.setChecked(False)
         self.connect(self.displayAct, QtCore.SIGNAL("triggered()"), self.loadWidget)
         self.app.actions.addAction(actionName,  self.displayAct)
   
-    def createDisplayMenu(self, windowName, parentWindowName):
-        self.app.menus.addAction(windowName, self.displayAct, parentWindowName)                                   
+    def createDisplayMenu(self, menuName, parentMenuName):
+        self.app.menus.addAction(menuName, self.displayAct, parentMenuName)                                   
                 
     def loadWidget(self):
         if(self.displayAct.isChecked()) :
@@ -52,15 +55,18 @@ class BaseDockWidget(QtGui.QWidget):
             self.displayAct.setChecked(True)
             self.app.addDockWidget(self.defaultArea, self.dock)
             self.dock.show()
-            self.dock.raise_()
+            self.bringToFront()
+            
         else:
             self.displayAct.setChecked(False)
             self.app.removeDockWidget(self.dock)  
+            
+    def bringToFront(self):
+        self.dock.raise_()
 
     def dockVisibilityChanged(self, visible):
         self.displayAct.setChecked(visible)
         
-    
     
     
     
