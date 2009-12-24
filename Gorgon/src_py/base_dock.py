@@ -11,7 +11,9 @@
 #
 # History Log: 
 #   $Log$
-#   Revision 1.2  2009/12/24 07:25:07  ssa1
+#   Revision 1.1  2009/12/24 19:37:36  ssa1
+#   Refactoring child window behavior.. Using base classes to encapsulate common behavior
+
 
 
 from PyQt4 import QtCore, QtGui

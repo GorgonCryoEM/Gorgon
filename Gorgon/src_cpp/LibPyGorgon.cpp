@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.62  2009/12/22 01:02:24  schuhs
+//   Adding support for beta sheet matching to the SSE correspondence search algorithm
+//
 //   Revision 1.61  2009/10/13 18:09:34  ssa1
 //   Refactoring Volume.h
 //
@@ -387,6 +390,7 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("finalizeSheet", &SSERenderer::FinalizeSheet)
 		.def("finalizeHelix", &SSERenderer::FinalizeHelix)
 		.def("addHelix", &SSERenderer::AddHelix)
+		.def("setSSESpecificColoring", &SSERenderer::SetSSESpecificColoring)
 	;
 
 	class_< CAlphaRenderer, bases<Renderer> >("CAlphaRenderer", init<>())

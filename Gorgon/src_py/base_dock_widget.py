@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.3  2009/12/24 19:37:36  ssa1
+#   Refactoring child window behavior.. Using base classes to encapsulate common behavior
+#
 #   Revision 1.2  2009/12/24 07:25:07  ssa1
 #   Refactoring child window behavior.. Using base classes to encapsulate common behavior
 #
@@ -35,7 +38,8 @@ class BaseDockWidget(QtGui.QWidget):
         self.dock.setAllowedAreas(allowedAreas)
         self.dock.setWidget(self)
         self.dock.close()  
-    
+        self.connect(self.dock, QtCore.SIGNAL("visibilityChanged (bool)"), self.dockVisibilityChanged)
+   
     def createDisplayAction(self, title, hint, actionName):               
         self.displayAct = QtGui.QAction(self.tr(title + "..."), self)
         self.displayAct.setStatusTip(self.tr(hint))
@@ -63,7 +67,10 @@ class BaseDockWidget(QtGui.QWidget):
         else:
             self.displayAct.setChecked(False)
             self.app.removeDockWidget(self.dock)  
-            
+    
+    def dockVisibilityChanged(self, visible):
+        pass
+        
     def bringToFront(self):
         self.dock.raise_()
     

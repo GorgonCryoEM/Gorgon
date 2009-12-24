@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.43  2009/12/24 07:25:07  ssa1
+#   Refactoring child window behavior.. Using base classes to encapsulate common behavior
+#
 #   Revision 1.42  2009/12/24 03:24:52  ssa1
 #   Fixing visualization order when loading dock widgets
 #
@@ -177,11 +180,6 @@ class SSEHelixCorrespondenceFinderForm(BaseDockWidget):
     def createUI(self):
         self.ui = Ui_DialogSSEHelixCorrespondenceFinder()
         self.ui.setupUi(self)       
-        self.dock = QtGui.QDockWidget(self.tr("SSE Correspondence Finder"), self.app)
-        self.dock.setAllowedAreas(QtCore.Qt.LeftDockWidgetArea | QtCore.Qt.RightDockWidgetArea | QtCore.Qt.BottomDockWidgetArea)
-        self.dock.setWidget(self)
-        self.dock.close()        
-        self.connect(self.dock, QtCore.SIGNAL("visibilityChanged (bool)"), self.dockVisibilityChanged)
         self.connect(self.ui.pushButtonGetHelixLengthFile, QtCore.SIGNAL("pressed ()"), self.getHelixLengthFile)
         self.connect(self.ui.pushButtonGetHelixLocationFile, QtCore.SIGNAL("pressed ()"), self.getHelixLocationFile)
         self.connect(self.ui.pushButtonGetSheetLocationFile, QtCore.SIGNAL("pressed ()"), self.getSheetLocationFile)
@@ -408,6 +406,19 @@ class SSEHelixCorrespondenceFinderForm(BaseDockWidget):
         
     def createActions(self):               
         self.corrAct = self.displayAct
+        self.connect(self.displayAct, QtCore.SIGNAL("toggled (bool)"), self.visibilityChanged)
+    
+    def visibilityChanged(self, visible):
+        self.viewer.renderer.setSSESpecificColoring(visible)
+        if(not visible):
+            self.viewer.visualizationOptions.ui.checkBoxModel3Visible.setChecked(False)
+            self.viewer.visualizationOptions.ui.checkBoxModel3Visible.setVisible(False)
+            self.viewer.visualizationOptions.ui.pushButtonModel3Color.setVisible(False)
+        else:
+            self.viewer.visualizationOptions.ui.pushButtonModel3Color.setVisible(True)
+            self.viewer.visualizationOptions.ui.checkBoxModel3Visible.setVisible(True)
+            self.viewer.visualizationOptions.ui.checkBoxModel3Visible.setChecked(checkBoxShowSheetColors.isChecked())
+        self.viewer.emitModelChanged()
       
     def loadSettings(self):
         

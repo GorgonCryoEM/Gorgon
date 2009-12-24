@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.31  2009/12/24 07:25:07  ssa1
+#   Refactoring child window behavior.. Using base classes to encapsulate common behavior
+#
 #   Revision 1.30  2009/12/22 01:02:24  schuhs
 #   Adding support for beta sheet matching to the SSE correspondence search algorithm
 #
@@ -109,15 +112,15 @@ class SSEViewer(BaseViewer):
         self.selectEnabled = True
         self.app.viewers["sse"] = self
         self.model2Visible = True
-        self.model3Visible = True
+        self.model3Visible = False
         self.initVisualizationOptions(ModelVisualizationForm(self.app, self))
         self.visualizationOptions.ui.checkBoxModelVisible.setText("Show helices colored:")
         self.visualizationOptions.ui.checkBoxModel2Visible.setText("Show sheets colored:")
         self.visualizationOptions.ui.checkBoxModel2Visible.setVisible(True)
         self.visualizationOptions.ui.pushButtonModel2Color.setVisible(True)
-        self.visualizationOptions.ui.checkBoxModel3Visible.setText("Show graph sheets colored:")
-        self.visualizationOptions.ui.checkBoxModel3Visible.setVisible(True)
-        self.visualizationOptions.ui.pushButtonModel3Color.setVisible(True)
+        self.visualizationOptions.ui.checkBoxModel3Visible.setText("Show skeleton sheets colored:")
+        self.visualizationOptions.ui.checkBoxModel3Visible.setVisible(False)
+        self.visualizationOptions.ui.pushButtonModel3Color.setVisible(False)
         
         self.connect(self, QtCore.SIGNAL('elementSelected (int, int, int, int, int, int, QMouseEvent)'), self.updateCurrentMatch)
         
