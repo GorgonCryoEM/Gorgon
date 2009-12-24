@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.14  2009/12/22 01:02:24  schuhs
+#   Adding support for beta sheet matching to the SSE correspondence search algorithm
+#
 #   Revision 1.13  2009/06/24 21:33:48  ssa1
 #   SSE Builder Functionality: Sheet building and better camera functionality when loading new data.
 #
@@ -144,6 +147,7 @@ class ModelVisualizationForm(QtGui.QWidget):
         if(show):
             self.app.addDockWidget(QtCore.Qt.RightDockWidgetArea, self.dock)
             self.dock.show()
+            self.dock.raise_()
         else:
              self.app.removeDockWidget(self.dock)         
              
