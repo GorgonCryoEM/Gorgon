@@ -13,6 +13,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.13  2009/09/17 20:00:24  ssa1
+#   Steps towards exporting to Rosetta
+#
 #   Revision 1.12  2009/09/03 14:42:27  ssa1
 #   BugFix: Fixing bug that causes unpredictable behavior during semi-automatic atom placement when the start=1 (or any low number) in the .seq file
 #
@@ -62,9 +65,9 @@ from calpha_structure_editor_command_atom_placement import CAlphaStructureEditor
 from calpha_structure_editor_command_change_position import CAlphaStructureEditorCommandChangePosition
 
 class CAlphaStructureEditor(QtGui.QWidget):
-    def __init__(self, currentChainModel, parent=None):
+    def __init__(self, currentChainModel, dock, parent=None):
         super(CAlphaStructureEditor, self).__init__(parent)
-        
+        self.dock = dock
         if self.parentWidget().parentWidget().app:
             self.app = self.parentWidget().parentWidget().app        
         
@@ -282,6 +285,7 @@ This moves to the next residue and updates the selected residue.
             command = CAlphaStructureEditorCommandAtomPlacement( self.currentChainModel, self, resSeqNum, chosenCoordinates, viewer,  
                                 description = "Accept Location of C-alpha atom for residue #%s" % resSeqNum )
             self.undoStack.push(command)
+            self.bringToFront()
             
     def atomPrevButtonPress(self):
         """
@@ -361,7 +365,11 @@ given by self.helixNtermSpinBox and self.helixCtermSpinBox.
             coord2 = vectorAdd(structPredCoord2, startMoveVector)
                 
         command = CAlphaStructureEditorCommandPlaceHelix(self.currentChainModel, predHelix, startIndex, stopIndex, coord1, coord2, self, self.app.viewers['sse'].currentMatch.predicted, description = "Create C-alpha helix")
-        self.undoStack.push(command)        
+        self.undoStack.push(command)     
+        self.bringToFront()
+        
+    def bringToFront(self):
+        self.dock.raise_()   
 
     def helixDecreaseButtonPress(self):
         """
