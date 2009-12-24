@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.40  2009/12/23 22:05:45  schuhs
+#   Simplify form layout and rename menu item from Find Alpha-Helix Correspondences to Find SSE Correspondences.
+#
 #   Revision 1.39  2009/12/22 01:02:24  schuhs
 #   Adding support for beta sheet matching to the SSE correspondence search algorithm
 #
@@ -202,6 +205,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
         self.loadDefaultParams()
 
     def loadDefaultParams(self):
+        self.ui.pushButtonExportToRosetta.setVisible(False)
         # Graph Settings tab
         self.ui.spinBoxBorderMarginThreshold.setValue(5)
         self.ui.doubleSpinBoxEuclideanDistance.setValue(0.0)
@@ -1459,35 +1463,38 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
             for i in range(len(corr.matchList)):
                 match = corr.matchList[i]
                 if(match.observed):
-                    sseElement = doc.createElement("SECONDARY_STRUCTURE")
-                    
-                    startTag = "START_COORDINATE"
-                    endTag = "END_COORDINATE"                
-                    if(match.direction != Match.FORWARD):
-                        startTag, endTag = endTag, startTag
-                    
-                    startCoordinateElement = doc.createElement(startTag)
-                    startCoordinateElement.setAttribute("X", str(match.observed.beginningCoord[0]))
-                    startCoordinateElement.setAttribute("Y", str(match.observed.beginningCoord[1]))
-                    startCoordinateElement.setAttribute("Z", str(match.observed.beginningCoord[2]))
-                    sseElement.appendChild(startCoordinateElement)
-                    
-                    endCoordinateElement = doc.createElement(endTag)
-                    endCoordinateElement.setAttribute("X", str(match.observed.endCoord[0]))
-                    endCoordinateElement.setAttribute("Y", str(match.observed.endCoord[1]))
-                    endCoordinateElement.setAttribute("Z", str(match.observed.endCoord[2]))
-                    sseElement.appendChild(endCoordinateElement)
-                    
-                    sseElement.setAttribute("SSE_TYPE", "ALPHA_HELIX")
-                    sseElement.setAttribute("START_RESIDUE", str(match.predicted.startIndex))
-                    sseElement.setAttribute("END_RESIDUE", str(match.predicted.stopIndex))
-                                                                                                
-                    correspondenceElement.appendChild(sseElement)
-                    if(match.direction == Match.FORWARD):                            
-                        engine.initializePathHelix(i, tupleToVector3DFloat(cAlphaToSkeleton(match.observed.endCoord)), tupleToVector3DFloat(cAlphaToSkeleton(match.observed.beginningCoord)), helixRadius)
-                    else:
-                        engine.initializePathHelix(i, tupleToVector3DFloat(cAlphaToSkeleton(match.observed.beginningCoord)), tupleToVector3DFloat(cAlphaToSkeleton(match.observed.endCoord)), helixRadius)
-                                                                                                
+                    if(match.observed.sseType == 'helix'):
+                        sseElement = doc.createElement("SECONDARY_STRUCTURE")
+                        
+                        startTag = "START_COORDINATE"
+                        endTag = "END_COORDINATE"                
+                        if(match.direction != Match.FORWARD):
+                            startTag, endTag = endTag, startTag
+                        
+                        startCoordinateElement = doc.createElement(startTag)
+                        startCoordinateElement.setAttribute("X", str(match.observed.beginningCoord[0]))
+                        startCoordinateElement.setAttribute("Y", str(match.observed.beginningCoord[1]))
+                        startCoordinateElement.setAttribute("Z", str(match.observed.beginningCoord[2]))
+                        sseElement.appendChild(startCoordinateElement)
+                        
+                        endCoordinateElement = doc.createElement(endTag)
+                        endCoordinateElement.setAttribute("X", str(match.observed.endCoord[0]))
+                        endCoordinateElement.setAttribute("Y", str(match.observed.endCoord[1]))
+                        endCoordinateElement.setAttribute("Z", str(match.observed.endCoord[2]))
+                        sseElement.appendChild(endCoordinateElement)
+                        
+                        sseElement.setAttribute("SSE_TYPE", "ALPHA_HELIX")
+                        sseElement.setAttribute("START_RESIDUE", str(match.predicted.startIndex))
+                        sseElement.setAttribute("END_RESIDUE", str(match.predicted.stopIndex))
+                                                                                                    
+                        correspondenceElement.appendChild(sseElement)
+                        if(match.direction == Match.FORWARD):                            
+                            engine.initializePathHelix(i, tupleToVector3DFloat(cAlphaToSkeleton(match.observed.endCoord)), tupleToVector3DFloat(cAlphaToSkeleton(match.observed.beginningCoord)), helixRadius)
+                        else:
+                            engine.initializePathHelix(i, tupleToVector3DFloat(cAlphaToSkeleton(match.observed.beginningCoord)), tupleToVector3DFloat(cAlphaToSkeleton(match.observed.endCoord)), helixRadius)
+                                
+                    elif (match.observed.sseType == 'sheet'):
+                        pass;                                                                 
          
             
             for i in range(1, len(corr.matchList)):

@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.18  2009/04/14 20:17:35  ssa1
+#   Changing scripts for PyOpenGL 3.0.0
+#
 #   Revision 1.17  2009/04/14 18:46:20  ssa1
 #   Changing how the WindowManager and PluginManager are loaded
 #
@@ -61,7 +64,7 @@ import time
 
 
 if __name__ == '__main__':
-    gorgonVersion = '1.0.1'
+    gorgonVersion = '2.0.0'
     app = QtGui.QApplication(sys.argv)    
     pixmap = QtGui.QPixmap(pathname + "/splash.png")
     splash = QtGui.QSplashScreen(pixmap, QtCore.Qt.WindowStaysOnTopHint)

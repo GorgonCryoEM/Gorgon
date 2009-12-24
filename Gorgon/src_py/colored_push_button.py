@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.4  2008/06/18 18:15:41  ssa1
+#   Adding in CVS meta data
+#
 
 from PyQt4 import QtCore, QtGui
 from color_picker_form import ColorPickerForm
@@ -33,8 +36,9 @@ class ColoredPushButton(QtGui.QPushButton):
         painter.end()
     
     def setColor(self, color):
-        self.brush.setColor(color)
-        self.update()
+        if (self.brush.color() != color):
+            self.brush.setColor(color)
+            self.update()
     
     def color(self):
         return self.brush.color()
