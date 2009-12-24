@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.3  2009/04/02 19:00:20  ssa1
+#   CAlpha Viewer bug fixes and smoother uniform functionality
+#
 #   Revision 1.2  2009/04/01 23:00:32  ssa1
 #   Refactor: Redesigning semi-automatic atom placement window.  Fixing bugs, and more consistant layout
 #
@@ -35,7 +38,7 @@ class CAlphaSequenceDock(QtGui.QDockWidget):
         self.viewer=viewer
         self.skeletonViewer = self.app.viewers["skeleton"]
         self.sseViewer = self.app.viewers["sse"]
-        self.seqWidget = CAlphaSequenceWidget( structurePrediction, currentChainModel, self)
+        self.seqWidget = CAlphaSequenceWidget( structurePrediction, currentChainModel, self, self)
         self.setWidget(self.seqWidget)
         self.createActions()
         CAlphaSequenceDock.__dock = self
@@ -87,7 +90,7 @@ class CAlphaSequenceDock(QtGui.QDockWidget):
                 dock = CAlphaSequenceDock(main, viewer, structurePrediction, currentChainModel)
                 main.addDockWidget(QtCore.Qt.RightDockWidgetArea, dock)
                 dock.show()
-                dock.show()
+                dock.raise_()
             else:
                 if not main: 
                     print 'Sequence Dock Error: no main app'

@@ -13,6 +13,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.3  2009/04/02 19:00:20  ssa1
+#   CAlpha Viewer bug fixes and smoother uniform functionality
+#
 #   Revision 1.2  2009/04/01 16:01:38  ssa1
 #   Refactoring: Splitting structure_editor into subclasses
 #
@@ -27,12 +30,13 @@ from calpha_global_sequence_view import CAlphaGlobalSequenceView
 
 
 class CAlphaSequenceWidget(QtGui.QWidget):
-    def __init__(self, structurePrediction, currentChainModel, parent=None):
+    def __init__(self, structurePrediction, currentChainModel, dock, parent=None):
         super(CAlphaSequenceWidget, self).__init__(parent)
+        self.dock = dock
         self.currentChainModel = currentChainModel
         self.scrollable = CAlphaScrollableSequenceView(structurePrediction, currentChainModel, self)
         self.scrollable.setMinimumSize(300, 180)
-        self.structureEditor = CAlphaStructureEditor(currentChainModel, self)
+        self.structureEditor = CAlphaStructureEditor(currentChainModel, dock, self)
         
         self.globalView=CAlphaGlobalSequenceView(structurePrediction, self)
         self.globalView.setLocalView(self.scrollable.seqView)
