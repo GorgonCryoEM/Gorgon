@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.1  2008/11/06 05:29:04  ssa1
+#   CGI submission milestone for Interactive Skeletonization, and theme support, and fixing (hopefully) mac-os flicker bug
+#
 
 from PyQt4 import QtGui, QtCore
 import pickle
@@ -65,14 +68,15 @@ class ThemeManager(QtGui.QWidget):
         if(not(tag in self.colorList)) :            
             self.addRGB(tag, 255, 255, 255, 255)
             print("Color " +  tag + " not found, returning default black!")
-                        
+                                
         return self.colorList[tag]
         
-    def addColor(self, tag, color):                   
-        self.colorList[tag] = color
+    def addColor(self, tag, color):    
+        if(not(tag in self.colorList) or (self.colorList[tag] != color)):               
+           self.colorList[tag] = color
         
-    def addRGB(self, tag, r, g, b, a):                   
-        self.colorList[tag] = QtGui.QColor.fromRgb(r, g, b, a)        
+    def addRGB(self, tag, r, g, b, a):
+        self.addColor(tag, QtGui.QColor.fromRgb(r, g, b, a))    
         
     def addDefaultRGB(self, tag, r, g, b, a):       
         if(not(tag in self.colorList)) :            
