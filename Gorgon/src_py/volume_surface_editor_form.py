@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.19  2009/07/01 22:00:27  ssa1
+#   Centering the volume cropped using a radius around the point selected by the atom selection tool.
+#
 #   Revision 1.18  2009/03/24 16:22:27  ssa1
 #   Better cross section & Solid Rendering viewing
 #
@@ -42,13 +45,23 @@
 from PyQt4 import QtCore, QtGui
 from ui_dialog_volume_surface_editor import Ui_DialogVolumeSurfaceEditor
 from delayed_filter import DelayedFilter
+from base_dock_widget import BaseDockWidget
 import threading
 
-class VolumeSurfaceEditorForm(QtGui.QWidget):
+class VolumeSurfaceEditorForm(BaseDockWidget):
     ViewingTypeIsoSurface, ViewingTypeCrossSection, ViewingTypeSolid = range(3)
     
     def __init__(self, main, volumeViewer, parent=None):
-        QtGui.QWidget.__init__(self, parent)
+        BaseDockWidget.__init__(self, 
+                                main, 
+                                "&Volume - Surface Editor", 
+                                "Modify the volume surface", 
+                                "show_VolumeSurfaceEditor", 
+                                "window-VolumeSurfaceEditor", 
+                                "window", 
+                                QtCore.Qt.LeftDockWidgetArea | QtCore.Qt.RightDockWidgetArea | QtCore.Qt.BottomDockWidgetArea, 
+                                QtCore.Qt.BottomDockWidgetArea,
+                                parent)
         self.app = main
         self.viewer = volumeViewer
         self.connect(self.viewer, QtCore.SIGNAL("modelLoadedPreDraw()"), self.modelLoadedPreDraw)
@@ -60,11 +73,6 @@ class VolumeSurfaceEditorForm(QtGui.QWidget):
     def createUI(self):
         self.ui = Ui_DialogVolumeSurfaceEditor()
         self.ui.setupUi(self)       
-        self.dock = QtGui.QDockWidget(self.tr("Volume - Surface Editor"), self.app)
-        self.dock.setAllowedAreas(QtCore.Qt.LeftDockWidgetArea | QtCore.Qt.RightDockWidgetArea | QtCore.Qt.BottomDockWidgetArea)
-        self.dock.setWidget(self)
-        self.dock.close()
-        self.connect(self.dock, QtCore.SIGNAL("visibilityChanged (bool)"), self.dockVisibilityChanged)
         self.connect(self.ui.horizontalSliderIsoLevel,QtCore.SIGNAL("valueChanged(int)"),self.isoValueIndicatorChanged)
         self.connect(self.ui.horizontalSliderIsoLevelMax,QtCore.SIGNAL("valueChanged(int)"),self.isoValueMaxIndicatorChanged)
         self.filterIsoValue = DelayedFilter(self.thread())
@@ -92,22 +100,6 @@ class VolumeSurfaceEditorForm(QtGui.QWidget):
         self.connect(self.ui.doubleSpinBoxDensityMax, QtCore.SIGNAL("editingFinished ()"), self.manualValueMaxChanged)
         self.connect(self.ui.checkBoxUseRadius, QtCore.SIGNAL("toggled(bool)"), self.displayRadiusEnabled)
         
-            
-    def loadWidget(self):
-        if(self.app.actions.getAction("show_VolumeSurfaceEditor").isChecked()) :
-            self.showWidget(True)
-        else:
-            self.showWidget(False)
-
-    def showWidget(self, show):
-        if(show):
-            self.app.addDockWidget(QtCore.Qt.BottomDockWidgetArea, self.dock)
-            self.dock.show()
-        else:
-             self.app.removeDockWidget(self.dock)                       
-                    
-    def dockVisibilityChanged(self, visible):
-        self.app.actions.getAction("show_VolumeSurfaceEditor").setChecked(visible)
     
     def setViewingType(self, toggled):
         if(toggled):
@@ -165,17 +157,11 @@ class VolumeSurfaceEditorForm(QtGui.QWidget):
         self.showWidget(False)            
         
     def createActions(self):               
-        volumeEditorAct = QtGui.QAction(self.tr("&Volume Surface Editor"), self)
-        volumeEditorAct.setStatusTip(self.tr("Modify the volume surface"))
-        volumeEditorAct.setCheckable(True)
-        volumeEditorAct.setChecked(True)
-        volumeEditorAct.setEnabled(False)
-        self.connect(volumeEditorAct, QtCore.SIGNAL("triggered()"), self.loadWidget)
-        self.app.actions.addAction("show_VolumeSurfaceEditor", volumeEditorAct)
+        self.displayAct.setEnabled(False)
   
     def createMenus(self):
-        self.app.menus.addAction("window-VolumeSurfaceEditor", self.app.actions.getAction("show_VolumeSurfaceEditor"), "window")        
-
+        pass
+    
     def isoValueIndicatorChanged(self, newLevel):
         newValue = newLevel/100.0
         self.ui.doubleSpinBoxDensity.setValue(float(newValue))

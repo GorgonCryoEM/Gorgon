@@ -11,42 +11,28 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.1  2009/04/08 19:54:59  ssa1
+#   Adding in plugin functionality
+#
 
 from PyQt4 import QtCore, QtGui
 from ui_dialog_plugin_browser import Ui_DialogPluginBrowser
+from base_dialog_widget import BaseDialogWidget
 
-class PluginBrowserForm(QtGui.QDialog, Ui_DialogPluginBrowser):
+class PluginBrowserForm(BaseDialogWidget, Ui_DialogPluginBrowser):
     def __init__(self, main, parent=None):
-        QtGui.QDialog.__init__(self, parent)
+        BaseDialogWidget.__init__(self, 
+                                  main, 
+                                  "&Plugin Browser", 
+                                  "View Loaded Plugins", 
+                                  "show_PluginBrowser", 
+                                  "window-PluginBrowser", 
+                                  "window", 
+                                  True,
+                                  parent)
         self.app = main
         self.setupUi(self)
-        self.createActions()
-        self.createMenus()
         
-    def createActions(self):
-        self.loadPluginsAct = QtGui.QAction(self.tr("&Plugin Browser"), self)        
-        self.loadPluginsAct.setStatusTip(self.tr("View Loaded Plugins"))
-        self.loadPluginsAct.setCheckable(True)
-        self.loadPluginsAct.setChecked(False)   
-        self.connect(self.loadPluginsAct, QtCore.SIGNAL("triggered()"), self.toggleVisibility)
-        self.app.actions.addAction("show_PluginBrowser", self.loadPluginsAct)
-        
-    def createMenus(self):
-        self.app.menus.addAction("window-PluginBrowser", self.app.actions.getAction("show_PluginBrowser"), "window")
-        
-    def toggleVisibility(self):
-        if(self.isVisible()):
-            self.close()
-        else:
-            self.show()        
-        
-    def show(self):
-        QtGui.QDialog.show(self)
-        self.loadPluginsAct.setChecked(self.isVisible())
-        
-    def closeEvent(self, event):
-        QtGui.QDialog.closeEvent(self, event)
-        self.loadPluginsAct.setChecked(self.isVisible())
         
     def addLoadedPlugin(self, id, name, description):
         rownum = self.tableWidgetLoadedPlugins.rowCount()
@@ -73,5 +59,6 @@ class PluginBrowserForm(QtGui.QDialog, Ui_DialogPluginBrowser):
         
     def accept(self):
         self.close()
+        BaseDialogWidget.accept(self)
             
             

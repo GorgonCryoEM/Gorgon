@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.15  2009/12/24 03:24:52  ssa1
+#   Fixing visualization order when loading dock widgets
+#
 #   Revision 1.14  2009/12/22 01:02:24  schuhs
 #   Adding support for beta sheet matching to the SSE correspondence search algorithm
 #
@@ -35,13 +38,25 @@
 
 from PyQt4 import QtCore, QtGui
 from ui_dialog_model_visualization import Ui_DialogModelVisualization
+from base_dock_widget import BaseDockWidget
 
-class ModelVisualizationForm(QtGui.QWidget):
+class ModelVisualizationForm(BaseDockWidget):
     def __init__(self, main, viewer, parent=None):
-        QtGui.QWidget.__init__(self, parent)
         self.app = main
         self.viewer = viewer
         self.title = viewer.title + " Visualization Options"
+        
+        BaseDockWidget.__init__(self, 
+                                main, 
+                                self.title, 
+                                "Load the " + self.viewer.title + " visualization options", 
+                                "show_" + self.viewer.title + "Visualization",
+                                "window-" + self.viewer.title + "VisualizationOptions", 
+                                "window", 
+                                QtCore.Qt.LeftDockWidgetArea | QtCore.Qt.RightDockWidgetArea | QtCore.Qt.BottomDockWidgetArea, 
+                                QtCore.Qt.RightDockWidgetArea,
+                                parent)
+
         self.connect(self.viewer, QtCore.SIGNAL("modelLoaded()"), self.modelLoaded)
         self.connect(self.viewer, QtCore.SIGNAL("modelChanged()"), self.modelChanged)
         self.connect(self.viewer, QtCore.SIGNAL("modelUnloaded()"), self.modelUnloaded)   
@@ -61,11 +76,6 @@ class ModelVisualizationForm(QtGui.QWidget):
         self.ui.pushButtonModel3Color.setVisible(False)
         self.ui.spinBoxThickness.setVisible(False)
         self.ui.labelThickness.setVisible(False)
-        self.dock = QtGui.QDockWidget(self.tr(self.title), self.app)
-        self.dock.setAllowedAreas(QtCore.Qt.LeftDockWidgetArea | QtCore.Qt.RightDockWidgetArea | QtCore.Qt.BottomDockWidgetArea)
-        self.dock.setWidget(self)
-        self.dock.close()  
-        self.connect(self.dock, QtCore.SIGNAL("visibilityChanged (bool)"), self.dockVisibilityChanged)
         self.connect(self.ui.radioButtonWireframe, QtCore.SIGNAL("toggled (bool)"), self.setDisplayStyle)
         self.connect(self.ui.radioButtonFlat, QtCore.SIGNAL("toggled (bool)"), self.setDisplayStyle)
         self.connect(self.ui.radioButtonSmooth, QtCore.SIGNAL("toggled (bool)"), self.setDisplayStyle)
@@ -126,33 +136,13 @@ class ModelVisualizationForm(QtGui.QWidget):
             
                                     
     def createActions(self):               
-        self.visualizerAct = QtGui.QAction(self.tr(self.title), self)
-        self.visualizerAct.setStatusTip(self.tr("Load the " + self.viewer.title + " visualization options"))
-        self.visualizerAct.setCheckable(True)
-        self.visualizerAct.setChecked(True)
+        self.visualizerAct = self.displayAct
         self.visualizerAct.setEnabled(False)
-        self.connect(self.visualizerAct, QtCore.SIGNAL("triggered()"), self.loadWidget)
-        self.app.actions.addAction("show_" + self.viewer.title + "Visualization", self.visualizerAct)
   
     def createMenus(self):
-        self.app.menus.addAction("window-" + self.viewer.title + "VisualizationOptions", self.visualizerAct, "window")                                   
-                
-    def loadWidget(self):
-        if(self.visualizerAct.isChecked()) :
-            self.showWidget(True)
-        else:
-            self.showWidget(False)
-
-    def showWidget(self, show):
-        if(show):
-            self.app.addDockWidget(QtCore.Qt.RightDockWidgetArea, self.dock)
-            self.dock.show()
-            self.dock.raise_()
-        else:
-             self.app.removeDockWidget(self.dock)         
+        pass     
              
     def modelLoaded(self):
-        self.visualizerAct.setChecked(True)
         self.visualizerAct.setEnabled(True)
         self.updateFromViewer()        
         self.showWidget(True)
@@ -184,10 +174,7 @@ class ModelVisualizationForm(QtGui.QWidget):
         elif(self.ui.radioButtonSmooth.isChecked()) :
             displayStyle = self.viewer.DisplayStyleSmooth
         self.viewer.setDisplayStyle(displayStyle)
-                    
-    def dockVisibilityChanged(self, visible):
-        self.visualizerAct.setChecked(visible)
-                                 
+                                                  
     def scaleChanged(self):
         self.viewer.setScale(self.ui.doubleSpinBoxSizeX.value(), self.ui.doubleSpinBoxSizeY.value(), self.ui.doubleSpinBoxSizeZ.value())        
     

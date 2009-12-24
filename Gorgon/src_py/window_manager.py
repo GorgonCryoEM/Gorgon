@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.12  2009/10/05 17:57:37  ssa1
+#   Initial session saving functionality (Request ID:52)
+#
 #   Revision 1.11  2009/04/08 19:54:59  ssa1
 #   Adding in plugin functionality
 #
@@ -44,12 +47,12 @@ class WindowManager(QtGui.QWidget):
         self.createChildWindows()        
         
     def createChildWindows(self):
-        self.helpMenus = HelpMenus(self.app)
-        self.volumeViewer = VolumeViewer(self.app)
-        self.skeletonViewer = SkeletonViewer(self.app)
-        self.sseViewer = SSEViewer(self.app)
-        self.calphaViewer = CAlphaViewer(self.app)
-        self.mainCamera = Camera([self.calphaViewer, self.sseViewer, self.skeletonViewer, self.volumeViewer], self.app)
+        self.helpMenus = HelpMenus(self.app, self.app)
+        self.volumeViewer = VolumeViewer(self.app, self.app)
+        self.skeletonViewer = SkeletonViewer(self.app, self.app)
+        self.sseViewer = SSEViewer(self.app, self.app)
+        self.calphaViewer = CAlphaViewer(self.app, self.app)
+        self.mainCamera = Camera([self.calphaViewer, self.sseViewer, self.skeletonViewer, self.volumeViewer], self.app, self.app)
         self.app.mainCamera = self.mainCamera   
         self.app.setCentralWidget(self.mainCamera)
         
