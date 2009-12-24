@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.41  2009/12/24 01:38:53  ssa1
+#   Fixing bug in macos where color dialogs automatically change when camera changes.  Bug ID 4
+#
 #   Revision 1.40  2009/12/23 22:05:45  schuhs
 #   Simplify form layout and rename menu item from Find Alpha-Helix Correspondences to Find SSE Correspondences.
 #
@@ -259,21 +262,25 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
     def getHelixLengthFile(self):
         self.ui.lineEditHelixLengthFile.setText(self.openFile("Load Helix Length File", "SSE Hunter results (*.sse)"))
         self.checkOk()
+        self.bringToFront()
 
     def getHelixLocationFile(self):
         self.viewer.loadHelixData()
         self.ui.lineEditHelixLocationFile.setText(self.viewer.helixFileName)
-        self.checkOk()               
+        self.checkOk()  
+        self.bringToFront()   
 
     def getSheetLocationFile(self):
         self.viewer.loadSheetData()
         self.ui.lineEditSheetLocationFile.setText(self.viewer.sheetFileName)
-        self.checkOk()               
+        self.checkOk()  
+        self.bringToFront()  
 
     def getSkeletonFile(self):
         self.app.viewers["skeleton"].loadData()
         self.ui.lineEditSkeletonFile.setText(self.app.viewers["skeleton"].fileName)
         self.checkOk()
+        self.bringToFront()
         
     def getSequenceFile(self):
         """
@@ -281,13 +288,19 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
         """
         self.ui.lineEditSequenceFile.setText(self.openFile("Load Sequence File", "Sequence with SSE predictions (*.seq)\nPDB Helix Annotations (*.pdb)"))
         self.checkOk()
-    
+        self.bringToFront()
+
     def getSettingsFile(self):
         """
         This loads a settings file, which contains filenames and search parameters.
         """
         self.ui.lineEditSettingsFile.setText(self.openFile("Load Settings File", "Settings File (*.txt)"))
         self.loadSettings()
+        self.bringToFront()
+        
+    def bringToFront(self):
+        self.dock.raise_()
+        
     
     def checkOk(self):
         """
@@ -328,6 +341,7 @@ class SSEHelixCorrespondenceFinderForm(QtGui.QWidget):
             self.app.addDockWidget(QtCore.Qt.RightDockWidgetArea, self.dock)
             self.loadDefaults()
             self.dock.show()
+            self.dock.raise_()
         else:
             self.app.removeDockWidget(self.dock)
             
