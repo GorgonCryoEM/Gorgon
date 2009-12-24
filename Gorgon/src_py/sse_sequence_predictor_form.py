@@ -11,27 +11,33 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.1  2008/12/18 20:15:23  ssa1
+#   Adding sequence predictor
+#
 
 from PyQt4 import QtCore, QtGui
 from ui_dialog_sse_sequence_predictor import Ui_DialogSSESequencePredictor
+from base_dock_widget import BaseDockWidget
 import webbrowser
 
-class SSESequencePredictorForm(QtGui.QWidget, Ui_DialogSSESequencePredictor):
-    def __init__(self, main, sseViewer, parent=None):
-        QtGui.QWidget.__init__(self, parent)
+class SSESequencePredictorForm(BaseDockWidget, Ui_DialogSSESequencePredictor):
+    def __init__(self, main, sseViewer, parent=None):    
+        BaseDockWidget.__init__(self, 
+                                main,
+                                "&Predict SSE from Sequence", 
+                                "Prediction of secondary structure elements from the sequence", 
+                                "perform_SSESequencePrediction", 
+                                "actions-sse-sequenceprediction", 
+                                "actions-sse", 
+                                QtCore.Qt.LeftDockWidgetArea | QtCore.Qt.RightDockWidgetArea | QtCore.Qt.BottomDockWidgetArea, 
+                                QtCore.Qt.RightDockWidgetArea, 
+                                parent)
         self.setupUi(self)
         self.app = main
         self.viewer = sseViewer
-        self.createActions()
         self.createUI()
-        self.createMenus()
-
+    
     def createUI(self):        
-        self.dock = QtGui.QDockWidget(self.tr("SSE - Sequence Prediction"), self.app)
-        self.dock.setAllowedAreas(QtCore.Qt.LeftDockWidgetArea | QtCore.Qt.RightDockWidgetArea | QtCore.Qt.BottomDockWidgetArea)
-        self.dock.setWidget(self)
-        self.dock.close()
-        self.connect(self.dock, QtCore.SIGNAL("visibilityChanged (bool)"), self.dockVisibilityChanged)
         self.connect(self.pushButtonClose, QtCore.SIGNAL("pressed ()"), self.closeWindow)
         self.connect(self.pushButtonSave, QtCore.SIGNAL("pressed ()"), self.savePrediction)
         self.connect(self.pushButtonPredict, QtCore.SIGNAL("pressed ()"), self.makePrediction)
@@ -40,29 +46,8 @@ class SSESequencePredictorForm(QtGui.QWidget, Ui_DialogSSESequencePredictor):
         self.connect(self.checkBoxJpred, QtCore.SIGNAL("toggled (bool)"), self.enableButtons2)
         self.connect(self.checkBoxPsipred, QtCore.SIGNAL("toggled (bool)"), self.enableButtons2)
         self.connect(self.checkBoxScratch, QtCore.SIGNAL("toggled (bool)"), self.enableButtons2)
-        
-    def loadWidget(self):
-        if(self.app.actions.getAction("perform_SSESequencePrediction").isChecked()) :
-            self.app.addDockWidget(QtCore.Qt.RightDockWidgetArea, self.dock)
-            self.dock.show()
-        else:
-            self.app.removeDockWidget(self.dock)
             
-    def dockVisibilityChanged(self, visible):
-        self.app.actions.getAction("perform_SSESequencePrediction").setChecked(visible)
-    
-        
-    def createActions(self):               
-        predAct = QtGui.QAction(self.tr("&Predict SSE from Sequence"), self)
-        predAct.setStatusTip(self.tr("Prediction of Secondary Structure Elements from the Sequence"))
-        predAct.setCheckable(True)
-        predAct.setChecked(False)
-        self.connect(predAct, QtCore.SIGNAL("triggered()"), self.loadWidget)
-        self.app.actions.addAction("perform_SSESequencePrediction", predAct)
-  
-    def createMenus(self):
-        self.app.menus.addAction("actions-sse-sequenceprediction", self.app.actions.getAction("perform_SSESequencePrediction"), "actions-sse")        
-    
+           
     def enableButtons(self):
         self.pushButtonPredict.setEnabled(
                                           (len(str(self.textEditSequence.toPlainText())) > 0) and

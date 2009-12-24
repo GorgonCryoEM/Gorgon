@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.42  2009/12/22 01:02:24  schuhs
+#   Adding support for beta sheet matching to the SSE correspondence search algorithm
+#
 #   Revision 1.41  2009/10/05 17:57:37  ssa1
 #   Initial session saving functionality (Request ID:52)
 #
@@ -228,8 +231,8 @@ class CAlphaViewer(BaseViewer):
         self.updateActionsAndMenus()
                   
     def createChildWindows(self):
-        self.manualAtomPlacer = CAlphaAtomPlacerForm(self.app, self, self.main_chain, self.structPred)
-        self.chooseChainModel = CAlphaChooseChainModel(self.app)
+        self.manualAtomPlacer = CAlphaAtomPlacerForm(self.app, self, self.main_chain, self.structPred, self)
+        self.chooseChainModel = CAlphaChooseChainModel(self.app, self)
         
     def createActions(self):
         openAct = QtGui.QAction(self.tr("C-&Alpha Atoms..."), self)
@@ -259,7 +262,7 @@ class CAlphaViewer(BaseViewer):
         self.connect(closeAct, QtCore.SIGNAL("triggered()"), self.unloadData)
         self.app.actions.addAction("unload_CAlpha", closeAct)
         
-        seqDockAct = QtGui.QAction(self.tr("Semi-&automatic Atom Placement"), self)
+        seqDockAct = QtGui.QAction(self.tr("Semi-&automatic Atom Placement..."), self)
         seqDockAct.setStatusTip(self.tr("Perform partly automated atom placement"))
         seqDockAct.setCheckable(True)
         seqDockAct.setChecked(False)

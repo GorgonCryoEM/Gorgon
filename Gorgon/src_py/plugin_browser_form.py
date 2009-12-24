@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.2  2009/12/24 05:09:30  ssa1
+#   Refactoring child window behavior.. Using base classes to encapsulate common behavior
+#
 #   Revision 1.1  2009/04/08 19:54:59  ssa1
 #   Adding in plugin functionality
 #
@@ -24,7 +27,7 @@ class PluginBrowserForm(BaseDialogWidget, Ui_DialogPluginBrowser):
         BaseDialogWidget.__init__(self, 
                                   main, 
                                   "&Plugin Browser", 
-                                  "View Loaded Plugins", 
+                                  "View loaded plugins", 
                                   "show_PluginBrowser", 
                                   "window-PluginBrowser", 
                                   "window", 

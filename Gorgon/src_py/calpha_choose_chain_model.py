@@ -11,60 +11,47 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.1  2009/03/31 20:08:45  ssa1
+#   Refactoring: Renaming and moving ChooseChainModel to CAlphaChooseChainModel
+#
 
 import sys
 from PyQt4 import QtCore, QtGui
 from ui_dialog_calpha_choose_chain_model import Ui_DialogCAlphaChooseChainModel
 from seq_model.Chain import Chain
+from base_dock_widget import BaseDockWidget
 
-class CAlphaChooseChainModel(QtGui.QWidget):
-    def __init__(self, parent=None):
-        super(CAlphaChooseChainModel, self).__init__(parent)
-        self.app = parent
+class CAlphaChooseChainModel(BaseDockWidget):
+    def __init__(self, main, parent=None):
+        BaseDockWidget.__init__(self, 
+                                main, 
+                                "&Choose Chain Model", 
+                                "Choose a chain model", 
+                                "perform_chooseModel", 
+                                "actions-calpha-chooseModel", 
+                                "actions-calpha", 
+                                QtCore.Qt.LeftDockWidgetArea | QtCore.Qt.RightDockWidgetArea | QtCore.Qt.BottomDockWidgetArea, 
+                                QtCore.Qt.RightDockWidgetArea, 
+                                parent)
+        self.app = main
         self.createUi()
-        self.createActions()
-        self.createMenus()
-        
         self.connect(self.ui.refreshPushButton, QtCore.SIGNAL("clicked()"), self.refresh)
         self.connect(self.ui.chainModelsListWidget, QtCore.SIGNAL("currentTextChanged (const QString&)"), self.modelHighlighted)
     
     def acceptButtonPress(self):
         pass
-        
-    def createActions(self):
-        chooseModelAct = QtGui.QAction(self.tr("&Choose Chain Model"), self)
-        chooseModelAct.setStatusTip(self.tr("Choose Chain Model"))
-        chooseModelAct.setCheckable(True)
-        chooseModelAct.setChecked(False)
-        self.connect(chooseModelAct, QtCore.SIGNAL("triggered()"), self.loadWidget)
-        self.connect(self.dock, QtCore.SIGNAL("visibilityChanged (bool)"), self.dockVisibilityChanged)
-        self.app.actions.addAction("perform_chooseModel", chooseModelAct)
-
-    def createMenus(self):
-        self.app.menus.addAction("actions-calpha-chooseModel", self.app.actions.getAction("perform_chooseModel"), "actions-calpha")
-    
+           
     def createUi(self):
         self.ui = Ui_DialogCAlphaChooseChainModel()
         self.ui.setupUi(self)
-        self.ui.sequenceTextEdit.setReadOnly(True)
-        self.dock = QtGui.QDockWidget(self.tr("Choose Chain Model"), self.app)
-        self.dock.setAllowedAreas(QtCore.Qt.LeftDockWidgetArea | QtCore.Qt.RightDockWidgetArea | QtCore.Qt.BottomDockWidgetArea)
-        self.dock.setWidget(self)
-        self.dock.close()
-        
+        self.ui.sequenceTextEdit.setReadOnly(True)        
         self.ui.acceptPushButton.setEnabled(False)
-    
-    def dockVisibilityChanged(self, visible):
-        self.app.actions.getAction("perform_chooseModel").setChecked(visible)
-    
+        
     def loadWidget(self):
+        BaseDockWidget.loadWidget(self)
         if self.app.actions.getAction("perform_chooseModel").isChecked():
-            self.app.addDockWidget(QtCore.Qt.RightDockWidgetArea, self.dock)
             self.refresh()
-            self.dock.show()
-        else:
-            self.app.removeDockWidget(self.dock)
-    
+
     def modelHighlighted(self, chainQString):
         currText = str(chainQString)
         currChainKey = tuple( currText.split(' - ') )

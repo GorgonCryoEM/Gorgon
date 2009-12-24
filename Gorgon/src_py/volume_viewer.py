@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.27  2009/12/22 01:02:24  schuhs
+#   Adding support for beta sheet matching to the SSE correspondence search algorithm
+#
 #   Revision 1.26  2009/10/05 17:57:37  ssa1
 #   Initial session saving functionality (Request ID:52)
 #
@@ -135,18 +138,21 @@ class VolumeViewer(BaseViewer):
         self.app.menus.addMenu("actions-volume-skeletonization", self.tr("S&keletonization"), "actions-volume");               
     
     def createChildWindows(self):
-        self.surfaceEditor = VolumeSurfaceEditorForm(self.app, self)
-        self.manualSkeletonizer = VolumeManualSkeletonizationForm(self.app, self)
-        self.binarySkeletonizer = VolumeBinarySkeletonizationForm(self.app, self)
-        self.grayscaleSkeletonizer = VolumeGrayscaleSkeletonizationForm(self.app, self)
-        self.cropper = VolumeCropForm(self.app, self)
-        self.rawLoader = VolumeRawLoaderForm(self.app, self)
+        self.surfaceEditor = VolumeSurfaceEditorForm(self.app, self, self)
+        self.manualSkeletonizer = VolumeManualSkeletonizationForm(self.app, self, self)
+        self.binarySkeletonizer = VolumeBinarySkeletonizationForm(self.app, self, self)
+        self.grayscaleSkeletonizer = VolumeGrayscaleSkeletonizationForm(self.app, self, self)
+        self.cropper = VolumeCropForm(self.app, self, self)
+        self.rawLoader = VolumeRawLoaderForm(self.app, self, self)
     
     def updateActionsAndMenus(self):
         self.app.actions.getAction("save_Volume").setEnabled(self.loaded)
         self.app.actions.getAction("unload_Volume").setEnabled(self.loaded)
         self.app.actions.getAction("normalize_Volume").setEnabled(self.loaded)
-        self.app.menus.getMenu("actions-volume").setEnabled(self.loaded)       
+        self.app.menus.getMenu("actions-volume").setEnabled(True)
+        self.app.actions.getAction("normalize_Volume").setEnabled(self.loaded)
+        self.app.actions.getAction("downsample_Volume").setEnabled(self.loaded)
+        self.app.menus.getMenu("actions-volume-skeletonization").setEnabled(self.loaded)
     
     def normalizeVolume(self):
         self.renderer.normalizeVolume()

@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.16  2009/04/14 18:46:20  ssa1
+#   Changing how the WindowManager and PluginManager are loaded
+#
 #   Revision 1.15  2009/04/08 19:54:59  ssa1
 #   Adding in plugin functionality
 #
@@ -120,6 +123,12 @@ class MainWindowForm(QtGui.QMainWindow):
         if(dockwidget in self.dockWidgets):
             self.dockWidgets.remove(dockwidget)
             self.disconnect(dockwidget, QtCore.SIGNAL("dockLocationChanged ( Qt::DockWidgetArea )"), self.dockLocationChanged(dockwidget))
+    
+    def isDockWidget(self, dockWidget):
+        isWidget = False
+        for widget in self.dockWidgets:
+            isWidget = isWidget or (widget == dockWidget)
+        return isWidget
     
     def dockLocationChanged(self, widget):
         def dockLocationChanged_widget(area):

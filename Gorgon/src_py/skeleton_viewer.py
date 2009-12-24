@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.20  2009/12/22 01:02:24  schuhs
+#   Adding support for beta sheet matching to the SSE correspondence search algorithm
+#
 #   Revision 1.19  2009/10/05 17:57:37  ssa1
 #   Initial session saving functionality (Request ID:52)
 #
@@ -70,7 +73,7 @@ class SkeletonViewer(BaseViewer):
         self.updateActionsAndMenus()
                   
     def createChildWindows(self):
-        self.optionsWindow = SkeletonLaplacianSmoothingForm(self.app, self)
+        self.optionsWindow = SkeletonLaplacianSmoothingForm(self.app, self, self)
         
     def createActions(self):
         openAct = QtGui.QAction(self.tr("S&keleton..."), self)
@@ -100,7 +103,7 @@ class SkeletonViewer(BaseViewer):
             self.app.actions.getAction("load_Skeleton").setEnabled(True)
             self.app.actions.getAction("save_Skeleton").setEnabled(self.loaded)
             self.app.actions.getAction("unload_Skeleton").setEnabled(self.loaded)
-            self.app.menus.getMenu("actions-skeleton").setEnabled(self.loaded)
+            self.app.menus.getMenu("actions-skeleton").setEnabled(True)
         
     def updateViewerAutonomy(self, autonomous): 
         if(not autonomous):

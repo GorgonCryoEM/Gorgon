@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.7  2009/09/21 19:03:22  ssa1
+#   Linear least squares fit implementation, and using it in helix positioning of SSE Builder
+#
 #   Revision 1.6  2009/09/02 18:02:39  ssa1
 #   Moving SSEHunter to the SSEViewer menu, and adding checks for loading up volumes and skeletons
 #
@@ -32,11 +35,21 @@
 
 from PyQt4 import QtCore, QtGui
 from ui_dialog_volume_sse_builder import Ui_DialogVolumeSSEBuilder
+from base_dock_widget import BaseDockWidget
 
-class VolumeSSEBuilderForm(QtGui.QWidget, Ui_DialogVolumeSSEBuilder):
+class VolumeSSEBuilderForm(BaseDockWidget, Ui_DialogVolumeSSEBuilder):
         
     def __init__(self, main, viewer, parent=None):
-        QtGui.QWidget.__init__(self, parent)
+        BaseDockWidget.__init__(self, 
+                                main, 
+                                "Identify &SSEs", 
+                                "Identify secondary structure elements", 
+                                "detectSSE_Volume", 
+                                "actions-sse-detectSSE", 
+                                "actions-sse", 
+                                QtCore.Qt.LeftDockWidgetArea | QtCore.Qt.RightDockWidgetArea | QtCore.Qt.BottomDockWidgetArea, 
+                                QtCore.Qt.RightDockWidgetArea, 
+                                parent)
         self.app = main
         self.viewer = viewer
         self.connect(self.viewer, QtCore.SIGNAL("modelLoaded()"), self.modelLoaded)
@@ -44,51 +57,32 @@ class VolumeSSEBuilderForm(QtGui.QWidget, Ui_DialogVolumeSSEBuilder):
         
         self.createUI()
         self.createActions()
-        self.createMenus()
 
     def createUI(self):
         self.setupUi(self)    
-        self.dock = QtGui.QDockWidget(self.tr(str(self.windowTitle())), self.app)
-        self.dock.setAllowedAreas(QtCore.Qt.LeftDockWidgetArea | QtCore.Qt.RightDockWidgetArea | QtCore.Qt.BottomDockWidgetArea)
-        self.dock.setWidget(self)
-        self.dock.close()  
-        self.connect(self.dock, QtCore.SIGNAL("visibilityChanged (bool)"), self.dockVisibilityChanged)
         self.connect(self.pushButtonBrowseAtomScore, QtCore.SIGNAL("clicked (bool)"), self.browseAtomScoreFile)
         self.connect(self.pushButtonSelectionToHelix, QtCore.SIGNAL("clicked (bool)"), self.selectionToHelix)
         self.connect(self.pushButtonSelectionToSheet, QtCore.SIGNAL("clicked (bool)"), self.selectionToSheet)
         self.connect(self.pushButtonSSEHunter, QtCore.SIGNAL("clicked (bool)"), self.runSSEHunter)
-        self.connect(self.pushButtonLoadVolume, QtCore.SIGNAL("clicked (bool)"), self.app.actions.getAction("load_Volume").trigger)
-        self.connect(self.pushButtonLoadSkeleton, QtCore.SIGNAL("clicked (bool)"), self.app.actions.getAction("load_Skeleton").trigger)
+        self.connect(self.pushButtonLoadVolume, QtCore.SIGNAL("clicked (bool)"), self.loadVolume)
+        self.connect(self.pushButtonLoadSkeleton, QtCore.SIGNAL("clicked (bool)"), self.loadSkeleton)
         self.connect(self.app.viewers["volume"], QtCore.SIGNAL("modelLoaded()"), self.enableDisableSSEHunter)
         self.connect(self.app.viewers["skeleton"], QtCore.SIGNAL("modelLoaded()"), self.enableDisableSSEHunter)
         self.connect(self.app.viewers["volume"], QtCore.SIGNAL("modelUnloaded()"), self.enableDisableSSEHunter)
         self.connect(self.app.viewers["skeleton"], QtCore.SIGNAL("modelUnloaded()"), self.enableDisableSSEHunter)
-                                                                
+                             
+                             
+    def loadVolume(self, temp):
+        self.app.actions.getAction("load_Volume").trigger()
+        self.bringToFront()
+        
+    def loadSkeleton(self, temp):
+        self.app.actions.getAction("load_Skeleton").trigger()
+        self.bringToFront()
                                     
     def createActions(self):    
-        self.detectSSEAct = QtGui.QAction(self.tr("Identify &SSEs"), self)
-        self.detectSSEAct.setStatusTip(self.tr("Identify secondary structure elements"))
-        self.detectSSEAct.setCheckable(True)
-        self.detectSSEAct.setChecked(False)
-        self.connect(self.detectSSEAct, QtCore.SIGNAL("triggered()"), self.loadWidget)
-        self.app.actions.addAction("detectSSE_Volume", self.detectSSEAct)    
-         
-    def createMenus(self):
-        self.app.menus.addAction("actions-sse-detectSSE", self.detectSSEAct, "actions-sse");
-                
-    def loadWidget(self):
-        if(self.detectSSEAct.isChecked()) :
-            self.showWidget(True)
-        else:
-            self.showWidget(False)
-
-    def showWidget(self, show):
-        if(show):
-            self.app.addDockWidget(QtCore.Qt.RightDockWidgetArea, self.dock)
-            self.dock.show()
-        else:
-             self.app.removeDockWidget(self.dock)         
-             
+        self.detectSSEAct = self.displayAct
+                                  
     def modelLoaded(self):
         self.detectSSEAct.setEnabled(True)
        
@@ -97,7 +91,7 @@ class VolumeSSEBuilderForm(QtGui.QWidget, Ui_DialogVolumeSSEBuilder):
         self.showWidget(False)    
                     
     def dockVisibilityChanged(self, visible):
-        self.detectSSEAct.setChecked(visible)
+        BaseDockWidget.dockVisibilityChanged(self, visible)
         self.app.viewers["calpha"].centerOnRMB = not visible
         if(visible):
             self.connect(self.app.viewers["calpha"], QtCore.SIGNAL("atomSelectionUpdated(PyQt_PyObject)"), self.atomSelectionChanged)
@@ -112,6 +106,7 @@ class VolumeSSEBuilderForm(QtGui.QWidget, Ui_DialogVolumeSSEBuilder):
             self.calphaViewer.loadSSEHunterData(pdbFile)
             self.sseViewer = self.app.viewers["sse"]
             self.lineEditAtomScore.setText(pdbFile)
+        self.bringToFront()
             
     def runSSEHunter(self, result):
             self.calphaViewer = self.app.viewers["calpha"]
@@ -158,7 +153,8 @@ class VolumeSSEBuilderForm(QtGui.QWidget, Ui_DialogVolumeSSEBuilder):
             self.sseViewer.sheetLoaded = True
             self.sseViewer.dirty = True
             self.sseViewer.emitModelLoadedPreDraw()
-            self.sseViewer.emitModelLoaded()           
+            self.sseViewer.emitModelLoaded()     
+        self.bringToFront()      
     
     def pushAtomsToEngine(self):
         atomCnt = self.calphaViewer.renderer.selectionAtomCount()
@@ -184,7 +180,8 @@ class VolumeSSEBuilderForm(QtGui.QWidget, Ui_DialogVolumeSSEBuilder):
             self.sseViewer.sheetLoaded = True
             self.sseViewer.dirty = True
             self.sseViewer.emitModelLoadedPreDraw()
-            self.sseViewer.emitModelLoaded()                
+            self.sseViewer.emitModelLoaded()    
+        self.bringToFront()            
         
     def enableDisableSSEHunter(self):
         volumeViewer =  self.app.viewers["volume"]

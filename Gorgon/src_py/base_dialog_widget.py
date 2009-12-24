@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.1  2009/12/24 05:09:30  ssa1
+#   Refactoring child window behavior.. Using base classes to encapsulate common behavior
+#
 
 
 from PyQt4 import QtCore, QtGui
@@ -24,7 +27,7 @@ class BaseDialogWidget(QtGui.QDialog):
         self.createDisplayMenu(windowName, parentWindowName)
         
     def createDisplayAction(self, title, hint, actionName):
-        self.displayAct = QtGui.QAction(self.tr(title), self)        
+        self.displayAct = QtGui.QAction(self.tr(title + "..."), self)        
         self.displayAct.setStatusTip(self.tr(hint))
         self.displayAct.setCheckable(True)
         self.displayAct.setChecked(False)   

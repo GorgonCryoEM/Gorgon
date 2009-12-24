@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.4  2009/09/02 18:43:05  ssa1
+#   Setting the binary skeletonization threshold to be the one that is being visualized by default
+#
 #   Revision 1.3  2008/06/18 18:15:41  ssa1
 #   Adding in CVS meta data
 #
@@ -18,17 +21,23 @@
 from PyQt4 import QtCore, QtGui
 from ui_dialog_volume_binary_skeletonization import Ui_DialogVolumeBinarySkeletonization
 from delayed_filter import DelayedFilter
+from base_dialog_widget import BaseDialogWidget
 
-class VolumeBinarySkeletonizationForm(QtGui.QDialog):
+class VolumeBinarySkeletonizationForm(BaseDialogWidget):
     def __init__(self, main, volumeViewer, parent=None):
-        QtGui.QWidget.__init__(self, parent)
+        BaseDialogWidget.__init__(self, main, 
+                                  "&Binary Skeletonization", 
+                                  "Apply binary skeletonization on the volume", 
+                                  "perform_VolumeBinarySkeletonization", 
+                                  "actions-volume-skeletonization-binary", 
+                                  "actions-volume-skeletonization", 
+                                  False, parent)
         self.app = main
         self.viewer = volumeViewer
         self.connect(self.viewer, QtCore.SIGNAL("modelLoaded()"), self.modelLoaded)
         self.connect(self.viewer, QtCore.SIGNAL("modelUnloaded()"), self.modelUnloaded)
         self.createUI()
         self.createActions()
-        self.createMenus()
 
     def createUI(self):
         self.ui = Ui_DialogVolumeBinarySkeletonization()
@@ -38,14 +47,9 @@ class VolumeBinarySkeletonizationForm(QtGui.QDialog):
         self.methodChanged(0)
         
     def createActions(self):               
-        binarySkeletonizeAct = QtGui.QAction(self.tr("&Binary Skeletonization"), self)
-        binarySkeletonizeAct.setStatusTip(self.tr("Apply binary skeletonization on the volume"))
-        self.connect(binarySkeletonizeAct, QtCore.SIGNAL("triggered()"), self.loadSelf)
-        self.app.actions.addAction("perform_VolumeBinarySkeletonization", binarySkeletonizeAct)
-  
-    def createMenus(self):
-        self.app.menus.addAction("actions-volume-skeletonization-binary", self.app.actions.getAction("perform_VolumeBinarySkeletonization"), "actions-volume-skeletonization")        
-
+        self.displayAct.setEnabled(False)  
+        self.connect(self.displayAct, QtCore.SIGNAL("triggered()"), self.loadSelf)  
+        
     def modelLoaded(self):
         maxDensity = self.viewer.renderer.getMaxDensity()
         minDensity = self.viewer.renderer.getMinDensity()
@@ -53,8 +57,10 @@ class VolumeBinarySkeletonizationForm(QtGui.QDialog):
         self.ui.horizontalSliderIsoLevel.setMaximum(int(maxDensity*100))
         defaultDensity = (int(minDensity*100) + int(maxDensity*100.0)) / 2
         self.ui.horizontalSliderIsoLevel.setValue(defaultDensity)
+        self.displayAct.setEnabled(True)  
     
     def modelUnloaded(self):
+        self.displayAct.setEnabled(False)  
         self.close()
 
     def isoValueChanged(self, newLevel):
@@ -83,10 +89,10 @@ class VolumeBinarySkeletonizationForm(QtGui.QDialog):
             self.close() 
         else:
             QtGui.QMessageBox.critical(None, "Source volume unloaded", "A volume must be loaded to perform skeletonization", QtGui.QMessageBox.Ok, QtGui.QMessageBox.NoButton)
+        BaseDialogWidget.accept(self)
 
     def loadSelf(self):
         self.ui.horizontalSliderIsoLevel.setValue(int(self.viewer.getIsoValue()*100))
-        self.show()
         
     def getCitationHtml(self, title, author, journal):
         return "<b>" + title + "</b><br>" + author + "<br><i>" + journal + "</i>"
