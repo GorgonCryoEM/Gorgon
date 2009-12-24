@@ -11,27 +11,30 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.2  2009/12/24 07:25:07  ssa1
+#   Refactoring child window behavior.. Using base classes to encapsulate common behavior
+#
 #   Revision 1.1  2009/12/24 05:09:30  ssa1
 #   Refactoring child window behavior.. Using base classes to encapsulate common behavior
 #
 
 from PyQt4 import QtCore, QtGui
+from base_dock import BaseDock
 
 class BaseDockWidget(QtGui.QWidget):
     def __init__(self, main, title, hint, actionName, menuName, parentMenuName, allowedAreas, defaultArea, parent=None):
         QtGui.QWidget.__init__(self, parent)
         self.app = main
         self.defaultArea = defaultArea        
-        self.createDock(title, allowedAreas)
         self.createDisplayAction(title, hint, actionName)
         self.createDisplayMenu(menuName, parentMenuName)
+        self.createDock(title, allowedAreas)        
 
     def createDock(self, title, allowedAreas):
-        self.dock = QtGui.QDockWidget(self.tr(title), self.app)
+        self.dock = BaseDock(self.tr(title), self.displayAct, self.app)
         self.dock.setAllowedAreas(allowedAreas)
         self.dock.setWidget(self)
         self.dock.close()  
-        self.connect(self.dock, QtCore.SIGNAL("visibilityChanged (bool)"), self.dockVisibilityChanged)
     
     def createDisplayAction(self, title, hint, actionName):               
         self.displayAct = QtGui.QAction(self.tr(title + "..."), self)
@@ -63,9 +66,14 @@ class BaseDockWidget(QtGui.QWidget):
             
     def bringToFront(self):
         self.dock.raise_()
-
-    def dockVisibilityChanged(self, visible):
-        self.displayAct.setChecked(visible)
+    
+    def closeEvent(self, event):
+        QtGui.QWidget.closeEvent(self, event)
+        self.displayAct.setChecked(False)
+        
+    def show(self):
+        QtGui.QWidget.show(self)
+        self.displayAct.setChecked(True)
         
     
     
