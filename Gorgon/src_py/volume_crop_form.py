@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.2  2008/11/28 04:36:17  ssa1
+#   Removing error message if pyopengl does not exist.  (To make executable building easier to debug)
+#
 #   Revision 1.1  2008/11/19 17:53:43  ssa1
 #   Removing printfs, and adding cropping
 #
@@ -20,18 +23,19 @@ from ui_dialog_volume_crop import Ui_DialogVolumeCrop
 from OpenGL.GL import *
 from OpenGL.GLU import *
 from OpenGL.GLUT import *
+from base_dialog_widget import BaseDialogWidget
 
     
-class VolumeCropForm(QtGui.QWidget, Ui_DialogVolumeCrop):
+class VolumeCropForm(BaseDialogWidget, Ui_DialogVolumeCrop):
     
     def __init__(self, main, volumeViewer, parent=None):
-        QtGui.QWidget.__init__(self, parent)
+        BaseDialogWidget.__init__(self, main, "&Crop", "Crop the volume", "crop_Volume", 
+                                  "actions-volume-crop", "actions-volume", False, parent)
         self.app = main
         self.setupUi(self)
         self.viewer = volumeViewer
         self.connectSignals()
         self.createActions()
-        self.createMenus()
         
     def connectSignals(self):
         self.connect(self.viewer, QtCore.SIGNAL("modelLoaded()"), self.modelLoaded)
@@ -46,14 +50,8 @@ class VolumeCropForm(QtGui.QWidget, Ui_DialogVolumeCrop):
         
         
     def createActions(self):               
-        cropAct = QtGui.QAction(self.tr("&Crop"), self)
-        cropAct.setStatusTip(self.tr("Crop the volume"))
-        self.connect(cropAct, QtCore.SIGNAL("triggered()"), self.show)
-        self.app.actions.addAction("crop_Volume", cropAct)   
+        self.displayAct.setEnabled(False)
   
-    def createMenus(self):
-        self.app.menus.addAction("actions-volume-crop", self.app.actions.getAction("crop_Volume"), "actions-volume");        
-
     def modelLoaded(self):
         self.spinBoxTopLeftX.setValue(0)
         self.spinBoxTopLeftY.setValue(0)
@@ -73,7 +71,8 @@ class VolumeCropForm(QtGui.QWidget, Ui_DialogVolumeCrop):
         self.spinBoxBottomRightZ.setMinimum(0)
         self.spinBoxBottomRightX.setMaximum(self.viewer.renderer.getMax(0))
         self.spinBoxBottomRightY.setMaximum(self.viewer.renderer.getMax(1))
-        self.spinBoxBottomRightZ.setMaximum(self.viewer.renderer.getMax(2))        
+        self.spinBoxBottomRightZ.setMaximum(self.viewer.renderer.getMax(2)) 
+        self.displayAct.setEnabled(True)               
     
     def modelUnloaded(self):
         self.close()
@@ -102,11 +101,13 @@ class VolumeCropForm(QtGui.QWidget, Ui_DialogVolumeCrop):
             minPts = [self.spinBoxTopLeftX.value(), self.spinBoxTopLeftY.value(), self.spinBoxTopLeftZ.value()]
             maxPts = [self.spinBoxBottomRightX.value(), self.spinBoxBottomRightY.value(), self.spinBoxBottomRightZ.value()]
             self.viewer.renderer.cropVolume(minPts[0], minPts[1], minPts[2], maxPts[0], maxPts[1], maxPts[2])
-            self.close();     
             self.viewer.surfaceEditor.modelLoadedPreDraw()
             self.viewer.emitModelChanged();      
         else:
             QtGui.QMessageBox.critical(None, "Source volume unloaded", "A volume must be loaded to perform skeletonization", QtGui.QMessageBox.Ok, QtGui.QMessageBox.NoButton)
+        self.close();     
+        BaseDialogWidget.accept(self)
     
     def reject(self):
         self.close()
+        BaseDialogWidget.reject(self)

@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.4  2008/11/06 05:29:04  ssa1
+#   CGI submission milestone for Interactive Skeletonization, and theme support, and fixing (hopefully) mac-os flicker bug
+#
 #   Revision 1.3  2008/09/12 20:57:44  ssa1
 #   Adding an Eye light source
 #
@@ -21,26 +24,29 @@
 from PyQt4 import QtCore, QtGui
 from ui_dialog_scene_editor import Ui_DialogSceneEditor
 from color_picker_form import ColorPickerForm
+from base_dock_widget import BaseDockWidget
 
-class SceneEditorForm(QtGui.QWidget):
+class SceneEditorForm(BaseDockWidget):
     def __init__(self, main, camera, parent=None):
-        QtGui.QWidget.__init__(self, parent)
+        BaseDockWidget.__init__(self, 
+                                main, 
+                                "Scene Options", 
+                                "Load the scene settings", 
+                                "show_SceneEditor", 
+                                "window-sceneeditor", 
+                                "window", 
+                                QtCore.Qt.LeftDockWidgetArea | QtCore.Qt.RightDockWidgetArea | QtCore.Qt.BottomDockWidgetArea, 
+                                QtCore.Qt.RightDockWidgetArea, 
+                                parent)
         self.app = main
         self.camera = camera             
         self.createUI()
-        self.createActions()
-        self.createMenus()
         self.updateFromCamera()
 
     def createUI(self):
         self.ui = Ui_DialogSceneEditor()
         self.ui.setupUi(self)    
         self.colorPicker = ColorPickerForm();
-        self.dock = QtGui.QDockWidget(self.tr("Scene Options"), self.app)
-        self.dock.setAllowedAreas(QtCore.Qt.LeftDockWidgetArea | QtCore.Qt.RightDockWidgetArea | QtCore.Qt.BottomDockWidgetArea)
-        self.dock.setWidget(self)
-        self.dock.close()  
-        self.connect(self.dock, QtCore.SIGNAL("visibilityChanged (bool)"), self.dockVisibilityChanged)
         self.connect(self.camera, QtCore.SIGNAL("cameraChanged ()"), self.updateFromCamera)
         self.connect(self.ui.doubleSpinBoxEyeX, QtCore.SIGNAL("editingFinished ()"), self.eyePositionChanged)
         self.connect(self.ui.doubleSpinBoxEyeY, QtCore.SIGNAL("editingFinished ()"), self.eyePositionChanged)
@@ -95,34 +101,7 @@ class SceneEditorForm(QtGui.QWidget):
         self.ui.checkBoxFogEnabled.setChecked(self.camera.fogEnabled)
         self.ui.doubleSpinBoxFogDensity.setValue(self.camera.fogDensity)
         self.ui.pushButtonFogColor.setColor(self.app.themes.getColor("Camera:Fog"))
-            
-    def createActions(self):
-        self.visualizerAct = QtGui.QAction(self.tr("Scene Options"), self)
-        self.visualizerAct.setStatusTip(self.tr("Load the scene settings"))
-        self.visualizerAct.setCheckable(True)
-        self.visualizerAct.setChecked(False)
-        self.visualizerAct.setEnabled(True)
-        self.connect(self.visualizerAct, QtCore.SIGNAL("triggered()"), self.loadWidget)
-        self.app.actions.addAction("show_SceneEditor", self.visualizerAct)
-  
-    def createMenus(self):
-        self.app.menus.addAction("window-sceneeditor", self.visualizerAct, "window")                                   
                 
-    def loadWidget(self):
-        if(self.visualizerAct.isChecked()) :
-            self.showWidget(True)
-        else:
-            self.showWidget(False)
-
-    def showWidget(self, show):
-        if(show):
-            self.app.addDockWidget(QtCore.Qt.RightDockWidgetArea, self.dock)
-            self.dock.show()
-        else:
-             self.app.removeDockWidget(self.dock)         
-                    
-    def dockVisibilityChanged(self, visible):
-        self.visualizerAct.setChecked(visible)
 
     def eyePositionChanged(self):
         self.camera.setEye(self.ui.doubleSpinBoxEyeX.value(), self.ui.doubleSpinBoxEyeY.value(), self.ui.doubleSpinBoxEyeZ.value())
