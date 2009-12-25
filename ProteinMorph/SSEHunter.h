@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.14  2009/12/21 22:03:16  ssa1
+//   Checking in FFTW windows binaries
+//
 //   Revision 1.13  2009/12/21 20:38:42  colemanr
 //   HelixCorrelation() normalizes the output map to values between zero and one, now.
 //   Added AddHelixCorrelationWeights()
@@ -110,19 +113,22 @@ namespace wustl_mm {
 			SSEHunter();
 			~SSEHunter();
 			
-			map<unsigned long long, PDBAtom> GetScoredAtoms(Volume * vol, NonManifoldMesh_Annotated * skeleton, float resolution, float threshold, float skeletonCoeff, float correlationCoeff, float geometryCoeff, RadialProfileType type = GAUSSIAN_DIP);
+			map<unsigned long long, PDBAtom> GetScoredAtoms(Volume * vol, NonManifoldMesh_Annotated * skeleton, float resolution, float threshold, 
+															float skeletonCoeff, float correlationCoeff, float geometryCoeff,
+															RadialProfileType type = GAUSSIAN_DIP, float deltaAngleRadians=5*PI/180);
 		private:
 			vector<PDBAtom> GetPseudoAtoms(vector<Vector3DInt> & atomVolumePositions, Volume * vol, float resolution, float threshold);
 			void UpdateMap(Volume * vol, Vector3DInt loc, float rangeminX, float rangeminY, float rangeminZ, float rangemaxX, float rangemaxY, float rangemaxZ);
 			void AddSkeletonWeights(vector<PDBAtom> & patoms, Volume * vol, NonManifoldMesh_Annotated * skeleton, float resolution, float influence);
-			void AddHelixCorrelationWeights(vector<PDBAtom>& patoms, Volume * vol, RadialProfileType type, float resolution, float influence);
+			void AddHelixCorrelationWeights(vector<PDBAtom>& patoms, Volume * vol, RadialProfileType type, float resolution, float influence, float deltaAngleRadians);
 			void AddGeometryWeights(vector<PDBAtom> & patoms, vector<Vector3DInt> atomVolumePositions, Volume * vol, float resolution, float threshold, float influence);
 			vector< vector<float> > GetAtomDistances(vector<PDBAtom> patoms);
 			vector< vector<Vector3DInt> > GetNeighborhoodVoxels(vector<PDBAtom> patoms, vector<Vector3DInt> atomVolumePositions, Volume * vol, float threshold);
 			vector<float> GetLocalDirectionalityScores(vector<PDBAtom> patoms, vector<Vector3DInt> atomVolumePositions, Volume * vol);
-
+		public:
 			//Ross Coleman: modified from EMAN1 Cylinder.C by Wen Jiang
 			float RadialProfile(float r, RadialProfileType type); //r in angstroms
+		private:
 			float RadialProfileGaussian(float r); // r in angstroms
 			float RadialProfileGaussianDip(float r);// r in angstroms
 			float RadialProfilePolynomial(float r);// r in angstroms
@@ -153,12 +159,15 @@ namespace wustl_mm {
 		SSEHunter::~SSEHunter() {
 		}		
 
-		map<unsigned long long, PDBAtom> SSEHunter::GetScoredAtoms(Volume * vol, NonManifoldMesh_Annotated * skeleton, float resolution, float threshold, float skeletonCoeff, float correlationCoeff, float geometryCoeff, RadialProfileType type) {
+		map<unsigned long long, PDBAtom> SSEHunter::GetScoredAtoms(Volume * vol, NonManifoldMesh_Annotated * skeleton, float resolution, float threshold, 
+																   float skeletonCoeff, float correlationCoeff, float geometryCoeff, 
+																   RadialProfileType type, float deltaAngleRadians) {
+			cout << "GetScoredAtoms()\n";
 			vector<Vector3DInt>  atomVolumePositions;
 			vector<PDBAtom> patoms = GetPseudoAtoms(atomVolumePositions, vol, resolution, threshold);
 			AddSkeletonWeights(patoms, vol, skeleton, resolution, skeletonCoeff);
 			AddGeometryWeights(patoms, atomVolumePositions, vol, resolution, threshold, geometryCoeff);
-			AddHelixCorrelationWeights(patoms, vol, type, resolution, correlationCoeff);
+			AddHelixCorrelationWeights(patoms, vol, type, resolution, correlationCoeff, deltaAngleRadians);
 			map<unsigned long long, PDBAtom> atomMap;
 			atomMap.clear();
 			for(unsigned int i = 0; i < patoms.size();  i++) {
@@ -374,14 +383,22 @@ namespace wustl_mm {
 
 		float SSEHunter::RadialProfile(float r, RadialProfileType type) // r in angstroms
 		{
-			if (type == GAUSSIAN)
-				return RadialProfileGaussian(r);
-			else if (type == GAUSSIAN_DIP)
-				return RadialProfileGaussianDip(r);
-			else if (type == POLYNOMIAL)
-				return RadialProfilePolynomial(r);
-			else //TODO: raise proper exception
-				return RadialProfilePolynomial(r);
+			float ret;
+			switch (type) {
+				case GAUSSIAN:
+					ret = RadialProfileGaussian(r);
+					break;
+				case GAUSSIAN_DIP:
+					ret = RadialProfileGaussianDip(r);
+					break;
+				case POLYNOMIAL:
+					ret = RadialProfilePolynomial(r);
+					break;
+				default:
+					//TODO: throw an exception
+					ret = RadialProfilePolynomial(r);
+			}
+			return ret;
 		}
 
 		float SSEHunter::RadialProfileGaussian(float r) // r in angstroms
@@ -393,8 +410,8 @@ namespace wustl_mm {
 		float SSEHunter::RadialProfileGaussianDip(float r) //r in angstroms
 		{
 			// pure Gaussian falloff + negative dip, so mean is 0
-			r /= 2;
-			return (1 - r * r / 4) * exp(-r * r / 4);
+			r /= 4;
+			return (1 - r * r) * exp(-r * r);
 		}
 
 		// polynomial fitting to the radial profile of real helix density
@@ -760,10 +777,12 @@ namespace wustl_mm {
 
 		Volume * SSEHunter::HelixCorrelation(Volume* density_vol, RadialProfileType type, float length,
 												 float deltaAngleRadians, Volume* az_vol, Volume* alt_vol) {
+			cout << "HelixCorrelation()\n";
 			// TODO: Make it work with helices
 			int nx = density_vol->getSizeX();
 			int ny = density_vol->getSizeY();
 			int nz = density_vol->getSizeZ();
+			
 			Volume * bestCCF = new Volume(nx, ny, nz); // This is the returned volume
 			float orig_x = density_vol->getOriginX();
 			float orig_y = density_vol->getOriginY();
@@ -771,15 +790,17 @@ namespace wustl_mm {
 			float apix_x = density_vol->getSpacingX();
 			float apix_y = density_vol->getSpacingY();
 			float apix_z = density_vol->getSpacingZ();
+			
 			bestCCF->setOrigin(orig_x, orig_y, orig_z);
 			bestCCF->setSpacing(apix_x, apix_y, apix_z);
-			if (az_vol)
+			if (az_vol) {
 				az_vol->setOrigin(orig_x, orig_y, orig_z);
 				az_vol->setSpacing(apix_x, apix_y, apix_z);
-			if (alt_vol)
+			}
+			if (alt_vol) {
 				alt_vol->setOrigin(orig_x, orig_y, orig_z);
 				alt_vol->setSpacing(apix_x, apix_y, apix_z);
-
+			}
 			int fftPaddingFastIx = nz % 2 ? 1 : 2;
 
 			int array_size = nx*ny*(nz+fftPaddingFastIx);
@@ -795,7 +816,7 @@ namespace wustl_mm {
 			float c1, c2, d1, d2;
 
 			for (float az = 0; az < 2*PI; az += deltaAngleRadians) { // Angle from x axis to projection on xy plane
-				cout << "Helix Correlation: az == " << az << "\n";
+				cout << 50*az/PI << "%\t" << flush;
 				for (float alt = 0; alt < PI; alt += deltaAngleRadians) { // Angle from the z axis
 
 					// Unit vector along cylinder's axis
@@ -844,6 +865,7 @@ namespace wustl_mm {
 					}
 				}
 			}
+			cout << "\nFinished with all cylinder orientations.\n";
 			free(density);
 			free(cyl);
 
@@ -874,23 +896,22 @@ namespace wustl_mm {
 			return bestCCF;
 		}
 		
-		void SSEHunter::AddHelixCorrelationWeights(vector<PDBAtom>& patoms, Volume * vol, RadialProfileType type, float resolution, float influence) {
+		void SSEHunter::AddHelixCorrelationWeights(vector<PDBAtom>& patoms, Volume * vol, RadialProfileType type, float resolution, float influence, float deltaAngleRadians) {
 			cout << "AddHelixCorrelationWeights()\n";
-			float apix[3] = { vol->getSpacingX(), vol->getSpacingY(), vol->getSpacingZ() };
-			Volume* bestCCF = HelixCorrelation(vol, type);
-			float mean = bestCCF->getMean();
+			float cylinderLength = 16.2;
+			Volume* bestCCF = HelixCorrelation(vol, type, cylinderLength, deltaAngleRadians);
 			PDBAtom patom;
 			vector<float> helixScores;
 			Vector3DFloat position;
-			int pos[3] = {0,0,0};
 			float value;
 			float totVal = 0;
 			float maxVal = 0;
 
-			for (int i = 0; i < patoms.size(); i++) {
+			for (unsigned int i = 0; i < patoms.size(); i++) {
 				patom = patoms[i];
 				position = patom.GetPosition();
-				value = vol->getInterpDataAt(position.X(), position.Y(), position.Z());
+				//TODO: get value at just the single closest voxel
+				value = bestCCF->getInterpDataAt(position.X(), position.Y(), position.Z()); 
 				helixScores.push_back(value);
 				totVal += value;
 				if (value > maxVal) {
@@ -899,7 +920,7 @@ namespace wustl_mm {
 			}
 			float avgVal = maxVal / helixScores.size();
 
-			for (int i = 0; i < patoms.size(); i++) {
+			for (unsigned int i = 0; i < patoms.size(); i++) {
 				value = helixScores[i];
 				if ( value >= 0.9*avgVal) {
 					value /= maxVal;
@@ -909,6 +930,7 @@ namespace wustl_mm {
 				helixScores[i] = value;
 				patoms[i].SetTempFactor(patoms[i].GetTempFactor() + influence * helixScores[i]);
 			}
+			delete bestCCF;
 		}
 		
 	}
