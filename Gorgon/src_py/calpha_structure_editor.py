@@ -13,6 +13,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.14  2009/12/24 23:38:37  ssa1
+#   Making Sequence dock behave similar to the other docked windows
+#
 #   Revision 1.13  2009/09/17 20:00:24  ssa1
 #   Steps towards exporting to Rosetta
 #
@@ -782,7 +785,8 @@ be the current residue for the atomic editor.
             self.setCursor(QtCore.Qt.BusyCursor)
             self.builder = CAlphaInteractiveLoopBuilder(self.app, self.currentChainModel)
             self.builder.setLoopAtoms(self.loopStartSpinBox.value(), self.loopStopSpinBox.value())
-            self.setCursor(QtCore.Qt.ArrowCursor)                       
+            self.setCursor(QtCore.Qt.ArrowCursor)   
+            self.bringToFront()                    
         else:
             self.loopStartEndBuildingButton.setText('Start Loop Placement')
             del self.builder
@@ -946,10 +950,14 @@ be the current residue for the atomic editor.
         loopLayout.addWidget(self.loopStopSpinBox, 4, 1, 1, 1)
         self.loopTab.setLayout(loopLayout)
         
-        self.connect(self.loopVolumeLoadButton, QtCore.SIGNAL('clicked()'), self.app.viewers['volume'].loadData)
+        self.connect(self.loopVolumeLoadButton, QtCore.SIGNAL('clicked()'), self.loadLoopVolume)
         self.connect(self.loopStartEndBuildingButton, QtCore.SIGNAL('clicked()'), self.startEndLoopBuilding)
         
         self.updateLoopEditorEnables()
+        
+    def loadLoopVolume(self):
+        self.app.viewers['volume'].loadData()
+        self.bringToFront()
         
     def setupPositionTab(self):
         self.posTranslateGroup = QtGui.QGroupBox('Translate:')

@@ -13,6 +13,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.3  2009/04/03 19:44:37  ssa1
+#   CAlpha bug fixes
+#
 #   Revision 1.2  2009/04/02 19:00:20  ssa1
 #   CAlpha Viewer bug fixes and smoother uniform functionality
 #
@@ -186,6 +189,12 @@ and predicted residue indices of helices and strands.
         self.font.setBold(False)
         painter.setPen(QtCore.Qt.gray)
         painter.setFont(self.font)
+        
+      # residues which are hidden are NOT BOLD and GRAY
+      elif (self.currentChainModel[index].getAtom("CA") and not self.currentChainModel[index].getAtom("CA").getVisible()) :
+        self.font.setBold(False)
+        painter.setPen(QtCore.Qt.gray)
+        painter.setFont(self.font)        
 
       # residues with coordinates are BOLD and BLACK
       else:
