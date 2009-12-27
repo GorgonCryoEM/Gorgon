@@ -36,7 +36,9 @@
 #ifndef eman_emfft_h__
 #define eman_emfft_h__
 
-#define FFTW3
+#ifdef _WIN32
+	#define FFTW3
+#endif
 
 #include <string>
 using std::string;
