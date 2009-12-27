@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.4  2009/10/13 18:09:34  ssa1
+//   Refactoring Volume.h
+//
 //   Revision 1.3  2009/04/04 21:33:23  ssa1
 //   More structure approach for placing cAlpha loops, and helix flip bug fix
 //
@@ -229,18 +232,23 @@ namespace wustl_mm {
 						residualDistance = atomGap;
 					}
 
-					segmentLength = (pathPositions[i] - pathPositions[i+1]).Length();
-					if(segmentLength < residualDistance) {
-						residualDistance -= segmentLength;
-					} else {
-						param = residualDistance/segmentLength;
-						atoms[atomCtr]->SetPosition(pathPositions[i] * (1.0 - param) + pathPositions[i+1] * param);
-						atoms[atomCtr]->SetVisible(true);
-						atomCtr--;
-						residualDistance = atomGap - (segmentLength - residualDistance);
-					}				
-				}
+					Vector3DFloat p0 = pathPositions[i];
+					Vector3DFloat p1 = pathPositions[i+1];
 
+					segmentLength = (p0-p1).Length();
+					while ((atomCtr >= 0) && (segmentLength >= residualDistance)) {
+						printf("Segment Length %f, Residual Distance %f\n", segmentLength, residualDistance);flushall();
+						param = residualDistance/segmentLength;
+						printf("param %f\n", param);flushall();
+						atoms[atomCtr]->SetPosition(p0 * (1.0 - param) + p1 * param);
+						atoms[atomCtr]->SetVisible(true);
+						p0 = atoms[atomCtr]->GetPosition();
+						atomCtr--;
+						segmentLength = (p0-p1).Length();
+						residualDistance = atomGap;
+					}			
+					residualDistance -= segmentLength;
+				}
 			}
 		}
 
