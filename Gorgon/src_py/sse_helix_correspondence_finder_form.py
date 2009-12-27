@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.44  2009/12/24 21:53:49  ssa1
+#   Giving back color control to the SSE Visualization options form when SSE Correspondence engine is not running (Bug ID: 58)
+#
 #   Revision 1.43  2009/12/24 07:25:07  ssa1
 #   Refactoring child window behavior.. Using base classes to encapsulate common behavior
 #
@@ -417,7 +420,7 @@ class SSEHelixCorrespondenceFinderForm(BaseDockWidget):
         else:
             self.viewer.visualizationOptions.ui.pushButtonModel3Color.setVisible(True)
             self.viewer.visualizationOptions.ui.checkBoxModel3Visible.setVisible(True)
-            self.viewer.visualizationOptions.ui.checkBoxModel3Visible.setChecked(checkBoxShowSheetColors.isChecked())
+            self.viewer.visualizationOptions.ui.checkBoxModel3Visible.setChecked(self.ui.checkBoxShowSheetColors.isChecked())
         self.viewer.emitModelChanged()
       
     def loadSettings(self):
