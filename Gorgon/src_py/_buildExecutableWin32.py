@@ -23,7 +23,7 @@ setup(
                   ],
       options={
                "py2exe":{
-                         "includes" : ["sip", "PyQt4._qt", "ctypes", "distutils.util", "logging", "ctypes.util", "weakref"],
+                         "includes" : ["sip", "PyQt4.Qt", "ctypes", "distutils.util", "logging", "ctypes.util", "weakref"],
                          "excludes" : ["OpenGL"]
                          }
                }
