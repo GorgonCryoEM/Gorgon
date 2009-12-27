@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.5  2009/12/27 02:20:30  ssa1
+//   Fixing Interactive loop placement bug where atoms are placed at wrong locations.
+//
 //   Revision 1.4  2009/10/13 18:09:34  ssa1
 //   Refactoring Volume.h
 //
@@ -237,9 +240,7 @@ namespace wustl_mm {
 
 					segmentLength = (p0-p1).Length();
 					while ((atomCtr >= 0) && (segmentLength >= residualDistance)) {
-						printf("Segment Length %f, Residual Distance %f\n", segmentLength, residualDistance);flushall();
 						param = residualDistance/segmentLength;
-						printf("param %f\n", param);flushall();
 						atoms[atomCtr]->SetPosition(p0 * (1.0 - param) + p1 * param);
 						atoms[atomCtr]->SetVisible(true);
 						p0 = atoms[atomCtr]->GetPosition();
