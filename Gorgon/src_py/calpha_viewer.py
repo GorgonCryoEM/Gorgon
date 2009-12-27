@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.43  2009/12/24 07:25:07  ssa1
+#   Refactoring child window behavior.. Using base classes to encapsulate common behavior
+#
 #   Revision 1.42  2009/12/22 01:02:24  schuhs
 #   Adding support for beta sheet matching to the SSE correspondence search algorithm
 #
@@ -218,11 +221,12 @@ class CAlphaViewer(BaseViewer):
         if not pos:
             return
         #print viewer.renderer.getSpacingX(), viewer.renderer.getSpacingY(), viewer.renderer.getSpacingZ()
-        x = pos.x()*self.renderer.getSpacingX() + self.renderer.getOriginX()
-        y = pos.y()*self.renderer.getSpacingY() + self.renderer.getOriginY()
-        z = pos.z()*self.renderer.getSpacingZ() + self.renderer.getOriginZ()
-        self.app.mainCamera.setCenter( x, y, z )                
-        self.emitModelChanged()
+        if atom and atom.getVisible() :
+            x = pos.x()*self.renderer.getSpacingX() + self.renderer.getOriginX()
+            y = pos.y()*self.renderer.getSpacingY() + self.renderer.getOriginY()
+            z = pos.z()*self.renderer.getSpacingZ() + self.renderer.getOriginZ()
+            self.app.mainCamera.setCenter( x, y, z )                
+            self.emitModelChanged()
     
     def createUI(self):
         self.createActions()
