@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.8  2009/12/24 07:25:07  ssa1
+#   Refactoring child window behavior.. Using base classes to encapsulate common behavior
+#
 #   Revision 1.7  2009/09/21 19:03:22  ssa1
 #   Linear least squares fit implementation, and using it in helix positioning of SSE Builder
 #
@@ -84,10 +87,11 @@ class VolumeSSEBuilderForm(BaseDockWidget, Ui_DialogVolumeSSEBuilder):
         self.detectSSEAct = self.displayAct
                                   
     def modelLoaded(self):
-        self.detectSSEAct.setEnabled(True)
+        #self.detectSSEAct.setEnabled(True)
+        pass
        
     def modelUnloaded(self):
-        self.detectSSEAct.setEnabled(False)
+        #self.detectSSEAct.setEnabled(False)
         self.showWidget(False)    
                     
     def dockVisibilityChanged(self, visible):
