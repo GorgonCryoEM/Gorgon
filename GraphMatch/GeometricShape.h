@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.19  2009/12/22 01:03:06  schuhs
+//   Adding support for beta sheets to the SSE correspondence search algorithm
+//
 //   Revision 1.18  2009/12/07 21:34:36  ssa1
 //   Finding Rotation using SVD, and removing compiler warnings
 //
@@ -79,6 +82,7 @@ namespace wustl_mm {
 			void Translate(Vector3 translationVector);
 			void SetColor(float r, float g, float b, float a);
 			void SetCenter(Point3 center);
+			void SetCenter(Vector3DFloat center);
 			void SetHeight(double height);
 			void SetRadius(double radius);
 			void GetColor(float & r, float & g, float & b, float & a);
@@ -423,6 +427,10 @@ namespace wustl_mm {
 		void GeometricShape::SetCenter(Point3 center) {
 			this->centerPoint = center;
 			UpdateWorldToObjectMatrix();
+		}
+
+		void GeometricShape::SetCenter(Vector3DFloat center) {
+			SetCenter(Point3(center.X(), center.Y(), center.Z()));
 		}
 
 		void GeometricShape::SetHeight(double height) {

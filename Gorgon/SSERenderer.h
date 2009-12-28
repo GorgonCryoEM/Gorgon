@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.37  2009/12/24 21:53:49  ssa1
+//   Giving back color control to the SSE Visualization options form when SSE Correspondence engine is not running (Bug ID: 58)
+//
 //   Revision 1.36  2009/12/22 01:02:24  schuhs
 //   Adding support for beta sheet matching to the SSE correspondence search algorithm
 //
@@ -154,6 +157,9 @@ namespace wustl_mm {
 			helices.clear();
 			sheetMesh = NULL;
 			graphSheetMesh = NULL;
+			sheetCount = 0;
+			graphSheetCount = 0;
+
 			isSSESpecificColoring = false;
 		}
 
@@ -198,14 +204,27 @@ namespace wustl_mm {
 		void SSERenderer::FinalizeSheet() {
 			if(sheetMesh == NULL) {
 				sheetMesh = new NonManifoldMesh_SheetIds();
+				sheetCount = 0;
 			}
+
 			
 			vector<int> vertexIxs;
+			Vector3DFloat center = Vector3DFloat(0,0,0);
 			
 			for(unsigned int i = 0; i < tempSSEPoints.size(); i++) {
 				vertexIxs.push_back(sheetMesh->AddVertex(tempSSEPoints[i], false));
+				center+= tempSSEPoints[i];
+			}
+			if(tempSSEPoints.size() > 0) {
+				center = center * (1.0/(double)tempSSEPoints.size());
 			}
 			
+			GeometricShape * sheetShape = new GeometricShape();
+			sheetShape->geometricShapeType = GRAPHEDGE_SHEET;
+			sheetShape->SetCenter(center);
+
+			sheets.push_back(sheetShape);
+
 			sheetCount++;	
 			
 			SheetIdsAndSelect sheetTag;
@@ -264,6 +283,7 @@ namespace wustl_mm {
 
 			}
 			else if((subSceneIndex == 1) && (sheetMesh != NULL)) {
+
 				int k;
 				if(selectEnabled) {
 					glPushName(0);
@@ -277,6 +297,7 @@ namespace wustl_mm {
 				GLfloat specularMaterial[4];
 				// end color code
 				for(unsigned int i = 0; i < sheetMesh->faces.size(); i++) {
+
 					glPushAttrib(GL_LIGHTING_BIT);
 					if(sheetMesh->faces[i].tag.selected) {
 						glMaterialfv(GL_FRONT, GL_EMISSION, emissionColor);
@@ -410,6 +431,7 @@ namespace wustl_mm {
 					glPopName();
 				}
 			}
+
 			glPopName();
 		}
 
@@ -562,6 +584,7 @@ namespace wustl_mm {
 			// merge this mesh with the mesh containing other sheets
 			if(graphSheetMesh == NULL) {
 				graphSheetMesh = new NonManifoldMesh_SheetIds();
+				graphSheetCount = 0;
 			}
 			if (thisSheetMesh->faceCount > 0) {
 				// mesh merging code. not using code NonManifoldMesh::mergeMesh because it doesn't allow setting of tags
