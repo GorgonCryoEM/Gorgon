@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.56  2009/10/05 17:57:37  ssa1
+#   Initial session saving functionality (Request ID:52)
+#
 #   Revision 1.55  2009/07/01 22:00:27  ssa1
 #   Centering the volume cropped using a radius around the point selected by the atom selection tool.
 #
@@ -342,16 +345,16 @@ class Camera(QtOpenGL.QGLWidget):
         light0Color = self.app.themes.getColor("Camera:Light:0")
         light1Color = self.app.themes.getColor("Camera:Light:1")
 
-        lightsColor = [[light0Color.redF(), light0Color.greenF(), light0Color.blueF()],[light1Color.redF(), light1Color.greenF(), light1Color.blueF()]]
+        lightsColor = [[light0Color.redF(), light0Color.greenF(), light0Color.blueF(), 1.0],[light1Color.redF(), light1Color.greenF(), light1Color.blueF(), 1.0]]
         for i in range(2):
             if(self.lightsEnabled[i]):
                 afPropertiesAmbient = [lightsColor[i][0]*0.3, lightsColor[i][1]*0.3, lightsColor[i][2]*0.3, 1.00]
                 afPropertiesDiffuse = lightsColor[i]
                 afPropertiesSpecular = [lightsColor[i][0]*0.1, lightsColor[i][0]*0.1, lightsColor[i][0]*0.1, 1.00]
                 if(self.lightsUseEyePosition[i]):
-                    afLightPosition = [self.eye[0], self.eye[1], self.eye[2], 0] 
+                    afLightPosition = [self.eye[0], self.eye[1], self.eye[2], 1.0] 
                 else:
-                    afLightPosition = [self.lightsPosition[i][0], self.lightsPosition[i][1], self.lightsPosition[i][2], 0]         
+                    afLightPosition = [self.lightsPosition[i][0], self.lightsPosition[i][1], self.lightsPosition[i][2], 1.0]         
                 glLightfv(glLight[i], GL_AMBIENT,  afPropertiesAmbient)
                 glLightfv(glLight[i], GL_DIFFUSE,  afPropertiesDiffuse) 
                 glLightfv(glLight[i], GL_SPECULAR, afPropertiesSpecular) 
