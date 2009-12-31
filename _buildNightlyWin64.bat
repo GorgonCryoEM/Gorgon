@@ -22,7 +22,8 @@ cd ..\..
 xcopy Gorgon\src_py\dist\* ..\bin\gorgon\gorgon_%VERSION%_%PLATFORM%\ /E /Y /Q > NUL
 del ..\bin\gorgon\gorgon_%VERSION%_%PLATFORM%.zip
 cd ..\bin\gorgon\
-zip -r -9 gorgon_%VERSION%_%PLATFORM%.zip gorgon_%VERSION%_%PLATFORM%\*
-cd ..\..\source
 
-copy /Y ..\bin\gorgon\gorgon_%VERSION%_%PLATFORM%.zip Z:\
+%ZIP7_PATH%\7z.exe a gorgon_%VERSION%_%PLATFORM%.zip gorgon_%VERSION%_%PLATFORM%\*
+cd ..\..
+
+ftp -s:ftpUpload.txt
