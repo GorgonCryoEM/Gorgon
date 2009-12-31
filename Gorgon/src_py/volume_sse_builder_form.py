@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.9  2009/12/28 19:22:05  ssa1
+#   Fixing SSE Builder being disabled when model is unloaded.
+#
 #   Revision 1.8  2009/12/24 07:25:07  ssa1
 #   Refactoring child window behavior.. Using base classes to encapsulate common behavior
 #
@@ -149,12 +152,12 @@ class VolumeSSEBuilderForm(BaseDockWidget, Ui_DialogVolumeSSEBuilder):
         self.sseViewer.renderer.finalizeHelix()
         
         if(self.sseViewer.loaded):
-            self.sseViewer.sheetLoaded = True
+            self.sseViewer.helixLoaded = True
             self.sseViewer.dirty = True           
             self.sseViewer.emitModelChanged()
         else :
             self.sseViewer.loaded = True
-            self.sseViewer.sheetLoaded = True
+            self.sseViewer.helixLoaded = True
             self.sseViewer.dirty = True
             self.sseViewer.emitModelLoadedPreDraw()
             self.sseViewer.emitModelLoaded()     
