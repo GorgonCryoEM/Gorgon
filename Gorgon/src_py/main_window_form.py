@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.17  2009/12/24 07:25:07  ssa1
+#   Refactoring child window behavior.. Using base classes to encapsulate common behavior
+#
 #   Revision 1.16  2009/04/14 18:46:20  ssa1
 #   Changing how the WindowManager and PluginManager are loaded
 #
@@ -72,7 +75,6 @@ class MainWindowForm(QtGui.QMainWindow):
         self.setContextMenuPolicy(QtCore.Qt.NoContextMenu)
         self.dockWidgets = []
         self.windowManager = WindowManager(self)
-        self.pluginManager = PluginManager(self)
                 
         self.statusBar().showMessage(self.tr("Gorgon: Protein Visualization Suite"))
         self.setWindowTitle(self.tr("Gorgon - v" + self.version))
@@ -146,4 +148,8 @@ class MainWindowForm(QtGui.QMainWindow):
         self.emit(QtCore.SIGNAL("keyPressed(QKeyEvent)"), event);        
 
     def emitKeyReleased(self, event):
-        self.emit(QtCore.SIGNAL("keyReleased(QKeyEvent)"), event);        
+        self.emit(QtCore.SIGNAL("keyReleased(QKeyEvent)"), event);
+        
+    def loadPlugins(self):
+        self.pluginManager = PluginManager(self)
+
