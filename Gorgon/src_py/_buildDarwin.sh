@@ -12,6 +12,10 @@ cp libpyGORGON.dylib dist/gorgon.app/Contents/Frameworks
 cp libboost_python-mt-1_35.dylib dist/gorgon.app/Contents/Resources/ 
 cp libfftw3f.dylib dist/gorgon.app/Contents/Resources/
 
+cd dist
+mkdir plugins
+cp ../plugins/*.py plugins
+cd ..
 
 cd dist/gorgon.app/Contents/Resources/lib/python2.5/lib-dynload/
 ln -s ../../../../Frameworks/libpyGORGON.dylib libpyGORGON.so
@@ -19,6 +23,9 @@ chmod +rx libpyGORGON.so
 ln -s ../OpenGL OpenGL
 chmod +rx OpenGL
 cd ../../../../../../../
+cd dist/gorgon.app/Contents/Resources
+ln -s ../../../plugins/ plugins
+cd ../../../..
 
 
 ln -s libpyGORGON.dylib libpyGORGON.so
