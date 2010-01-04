@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.33  2009/12/22 01:03:06  schuhs
+//   Adding support for beta sheets to the SSE correspondence search algorithm
+//
 //   Revision 1.32  2008/12/12 21:43:38  ssa1
 //   Fixing bug: Application crashing when loading skeletons via the sse correspondence finder
 //
@@ -416,7 +419,8 @@ namespace wustl_mm {
 			while (!feof(fin)) {
 				fscanf(fin, "%s", token);
 				if(strcmp(token, TOKEN_SSE_FILE_NAME) == 0) {
-					fscanf(fin, "%s", &SSE_FILE_NAME);
+					// Stop the usage of the SSE_FILE_NAME parameter
+					//fscanf(fin, "%s", &SSE_FILE_NAME);
 				} else if(strcmp(token, TOKEN_VRML_HELIX_FILE_NAME) == 0) {
 					fscanf(fin, "%s", &VRML_HELIX_FILE_NAME);
 				} else if(strcmp(token, TOKEN_VRML_SHEET_FILE_NAME) == 0) {

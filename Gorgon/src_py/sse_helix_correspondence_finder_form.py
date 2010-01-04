@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.45  2009/12/27 00:31:04  ssa1
+#   Fixing weird PyOpenGL bug when working with new PyQT4, and parent window set.
+#
 #   Revision 1.44  2009/12/24 21:53:49  ssa1
 #   Giving back color control to the SSE Visualization options form when SSE Correspondence engine is not running (Bug ID: 58)
 #
@@ -209,6 +212,9 @@ class SSEHelixCorrespondenceFinderForm(BaseDockWidget):
         self.ui.tableWidgetCorrespondenceList.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         self.connect(self.ui.tableWidgetCorrespondenceList, QtCore.SIGNAL("customContextMenuRequested (const QPoint&)"), self.customMenuRequested)
         self.connect(self.viewer, QtCore.SIGNAL("elementClicked (int, int, int, int, int, int, QMouseEvent)"), self.sseClicked)
+        self.ui.label.setVisible(False)
+        self.ui.lineEditHelixLengthFile.setVisible(False)
+        self.ui.pushButtonGetHelixLengthFile.setVisible(False)
           
     # populate parameter boxes with default values for correspondence search        
     def loadDefaults(self):
@@ -321,9 +327,15 @@ class SSEHelixCorrespondenceFinderForm(BaseDockWidget):
         print "correspondence index at beginning is "
         print self.ui.comboBoxCorrespondences.currentIndex()
 
-        self.dataLoaded = not(self.ui.lineEditHelixLengthFile.text().isEmpty() or self.ui.lineEditHelixLocationFile.text().isEmpty()
+        allLoaded = not(self.ui.lineEditHelixLocationFile.text().isEmpty()
                            or self.ui.lineEditSheetLocationFile.text().isEmpty()
-                           or self.ui.lineEditSkeletonFile.text().isEmpty() or self.ui.lineEditSequenceFile.text().isEmpty())
+                           or self.ui.lineEditSkeletonFile.text().isEmpty() 
+                           or self.ui.lineEditSequenceFile.text().isEmpty())
+
+        self.dataLoaded = not((self.ui.lineEditHelixLocationFile.text().isEmpty()
+                           and self.ui.lineEditSheetLocationFile.text().isEmpty())
+                           or self.ui.lineEditSkeletonFile.text().isEmpty() 
+                           or self.ui.lineEditSequenceFile.text().isEmpty())
         self.ui.pushButtonOk.setEnabled(self.dataLoaded)
         
         self.ui.tabWidget.setTabEnabled(1, self.dataLoaded)
@@ -340,7 +352,8 @@ class SSEHelixCorrespondenceFinderForm(BaseDockWidget):
             print "correspondenceList has length " + str(len(self.viewer.correspondenceLibrary.correspondenceList))
             self.populateComboBox(self.viewer.correspondenceLibrary)
             self.viewer.makeSheetSurfaces(self.app.viewers['skeleton'].renderer.getOriginX(), self.app.viewers['skeleton'].renderer.getOriginY(), self.app.viewers['skeleton'].renderer.getOriginZ())
-            self.ui.tabWidget.setCurrentIndex(1)         
+            if(allLoaded):
+                self.ui.tabWidget.setCurrentIndex(1)         
         else:
             print "data not loaded"                        
         print "correspondence index at end is " + str(self.ui.comboBoxCorrespondences.currentIndex())
@@ -510,7 +523,7 @@ class SSEHelixCorrespondenceFinderForm(BaseDockWidget):
         
     def setConstants(self):
         #Data Sources tab
-        self.viewer.correspondenceEngine.setConstant("SSE_FILE_NAME", str(self.ui.lineEditHelixLengthFile.text()))
+        #self.viewer.correspondenceEngine.setConstant("SSE_FILE_NAME", str(self.ui.lineEditHelixLengthFile.text()))
         self.viewer.correspondenceEngine.setConstant("VRML_HELIX_FILE_NAME", str(self.ui.lineEditHelixLocationFile.text()))
         self.viewer.correspondenceEngine.setConstant("VRML_SHEET_FILE_NAME", str(self.ui.lineEditSheetLocationFile.text()))
         self.viewer.correspondenceEngine.setConstant("MRC_FILE_NAME", str(self.ui.lineEditSkeletonFile.text()))
