@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.19  2009/12/24 01:38:53  ssa1
+#   Fixing bug in macos where color dialogs automatically change when camera changes.  Bug ID 4
+#
 #   Revision 1.18  2009/04/14 20:17:35  ssa1
 #   Changing scripts for PyOpenGL 3.0.0
 #
@@ -75,5 +78,6 @@ if __name__ == '__main__':
     window = MainWindowForm(gorgonVersion)
     window.showMaximized()
     splash.finish(window)
+    window.loadPlugins()
     sys.exit(app.exec_())
     

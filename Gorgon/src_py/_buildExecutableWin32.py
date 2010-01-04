@@ -19,7 +19,7 @@ setup(
                         'libfftw3f-3.dll',
                         'libfftw3l-3.dll' ]), 
                   ('themes', ['..\\resources\\Dark.thm', '..\\resources\\Light.thm'] ),
-                  ('plugins', ['.\\plugins\__init__.py'])                  
+                  ('plugins', ['.\\plugins\\__init__.py', '.\\plugins\\update_notifier_plugin.py'])                  
                   ],
       options={
                "py2exe":{

@@ -8,7 +8,7 @@ import urllib
 from base_plugin import BasePlugin
 from PyQt4 import QtGui
 
-class UpdateNotifierPlugin(BasePlugin):
+class UpdateNotifierPlugin(BasePlugin):  #Plugins must inherit the BasePlugin class
 
     # Override this method and put in your initializers.
     # Do not call the base class method
@@ -34,11 +34,15 @@ class UpdateNotifierPlugin(BasePlugin):
     
     
     def checkCurrentVersion(self):
-        versionFile = urllib.urlopen("http://www.cse.wustl.edu/~ssa1/gorgon/resources/latestVersion.txt")
-        version = str.strip(versionFile.read())
-        versionFile.close()
+        try:
+            versionFile = urllib.urlopen("http://www.cse.wustl.edu/~ssa1/gorgon/resources/latestVersion.txt")
+            version = str.strip(versionFile.read()).split(" ")           
+            versionFile.close()
+        except:
+            version = ['GORGON', self.app.version]
         
-        if(version!=self.app.version):
+        #Notify for update only if internet connection is present, and user has older Gorgon version
+        if ((version[0] == 'GORGON') and (version[1] != self.app.version)):
             if (QtGui.QMessageBox.information(self.app, "Update Available", "A newer version of Gorgon is available for download.", "Get update...", "Remind me later") == 0):
                 self.app.actions.getAction("show_GetUpdatesForm").trigger()
                 
