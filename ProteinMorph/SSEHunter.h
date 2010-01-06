@@ -11,6 +11,10 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.15  2009/12/25 17:32:21  colemanr
+//   fixed runtime error if alt and az volumes are not used
+//   fixed various compiler warning messages
+//
 //   Revision 1.14  2009/12/21 22:03:16  ssa1
 //   Checking in FFTW windows binaries
 //
@@ -906,19 +910,26 @@ namespace wustl_mm {
 			float value;
 			float totVal = 0;
 			float maxVal = 0;
+			float xorg = bestCCF->getOriginX();
+			float yorg = bestCCF->getOriginY();
+			float zorg = bestCCF->getOriginZ();
+			float apix_x = bestCCF->getSpacingX();
+			float apix_y = bestCCF->getSpacingY();
+			float apix_z = bestCCF->getSpacingZ();
 
-			for (unsigned int i = 0; i < patoms.size(); i++) {
-				patom = patoms[i];
+			for (unsigned int ix = 0; ix < patoms.size(); ix++) {
+				patom = patoms[ix];
 				position = patom.GetPosition();
-				//TODO: get value at just the single closest voxel
-				value = bestCCF->getInterpDataAt(position.X(), position.Y(), position.Z()); 
+				value = bestCCF->getDataAt( round((position.X()-xorg)/apix_x), 
+										   round((position.Y()-yorg)/apix_y), 
+										   round((position.Z()-zorg)/apix_z) ); 
 				helixScores.push_back(value);
 				totVal += value;
 				if (value > maxVal) {
 					maxVal = value;
 				}
 			}
-			float avgVal = maxVal / helixScores.size();
+			float avgVal = totVal / helixScores.size();
 
 			for (unsigned int i = 0; i < patoms.size(); i++) {
 				value = helixScores[i];
