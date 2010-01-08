@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.20  2009/12/28 17:42:27  ssa1
+//   Fixing SSEBuilder bug when adding sheets
+//
 //   Revision 1.19  2009/12/22 01:03:06  schuhs
 //   Adding support for beta sheets to the SSE correspondence search algorithm
 //
@@ -435,6 +438,7 @@ namespace wustl_mm {
 
 		void GeometricShape::SetHeight(double height) {
 			this->height = height;
+			this->length = height;
 			UpdateWorldToObjectMatrix();
 		}
 
