@@ -105,16 +105,22 @@ handled in C++.
             for sseIx in range(numSSEs):
                 # cppSse is a c++ SecondaryStructure object
                 cppSse = data.getStructure(sseIx)
+
                 if cppSse.isHelix(): 
                     # create python Helix object using info from c++ SecondaryStructure object
                     pyHelix = Helix(chain, sseIx, str(cppSse.getSecondaryStructureID()), cppSse.getStartPosition(), cppSse.getEndPosition())
                     secelDict[sseIx] = pyHelix                                
+                    secelType[sseIx] = 'helix'     
+                    print "secelDict[" + str(sseIx) + "] is " + str(pyHelix) + ", type is helix"                   
                 elif cppSse.isSheet():
                     #TODO: Add Sheet support
                     secelDict[sseIx] = None
+                    secelType[sseIx] = 'strand'                                
+                    print "secelDict[" + str(sseIx) + "] is None, type is strand"                   
                     pass
+                
             # create new python StructurePrediction object and return it
-            return StructurePrediction(secelDict, chain, params, comments, qparent)
+            return StructurePrediction(secelDict, chain, params, comments, qparent, secelType)
         elif filename.split('.')[-1].lower() == 'pdb':
             # create python chain object using the python pdb file loader method
             chain = Chain.load(filename, qparent)

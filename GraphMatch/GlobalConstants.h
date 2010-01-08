@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.34  2010/01/04 20:38:52  ssa1
+//   Removing dependancy on SSE files for helix length calculation.
+//
 //   Revision 1.33  2009/12/22 01:03:06  schuhs
 //   Adding support for beta sheets to the SSE correspondence search algorithm
 //
@@ -427,6 +430,7 @@ namespace wustl_mm {
 					fscanf(fin, "%s", &VRML_SHEET_FILE_NAME);
 				} else if(strcmp(token, TOKEN_SEQUENCE_FILE_NAME) == 0) {
 					fscanf(fin, "%s", &SEQUENCE_FILE_NAME);
+					sprintf(SEQUENCE_FILE_TYPE, "SEQ");
 				} else if(strcmp(token, TOKEN_PDB_FILE_NAME) == 0) {
 					fscanf(fin, "%s", &SEQUENCE_FILE_NAME);
 					sprintf(SEQUENCE_FILE_TYPE, "PDB");
