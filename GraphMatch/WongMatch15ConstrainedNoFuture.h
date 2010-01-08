@@ -15,6 +15,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.16  2009/12/22 01:03:06  schuhs
+//   Adding support for beta sheets to the SSE correspondence search algorithm
+//
 //   Revision 1.15  2008/11/20 20:49:09  ssa1
 //   Fixing bug with loading in more VRML helices than there are in the SEQ... Also using scale directly from volume instead of a user-parameter
 //
@@ -36,9 +39,11 @@
 #include "PathGenerator.h"
 #include "Structures.h"
 #include <ctime>
-#include <SkeletonMaker/PriorityQueue.h>
+//#include <SkeletonMaker/PriorityQueue.h>
+#include <Foundation/GorgonPriorityQueue.h>
 #include "SSECorrespondenceResult.h"
 
+using namespace wustl_mm::Foundation;
 namespace wustl_mm {
 	namespace GraphMatch {
 
@@ -62,7 +67,8 @@ namespace wustl_mm {
 			clock_t timeInQueue;
 		#endif
 			LinkedNode * currentNode;
-			PriorityQueue<LinkedNode, double> * queue;
+			//PriorityQueue<LinkedNode, double> * queue;
+			GorgonPriorityQueue<double, LinkedNode *> * queue;
 			vector<LinkedNodeStub*> usedNodes;
 			vector<SSECorrespondenceResult> solutions;
 			int missingHelixCount;
@@ -108,11 +114,16 @@ namespace wustl_mm {
 			}
 			usedNodes.clear();
 			solutions.clear();
-			int queueSize = queue->getLength();
-			double tempKey;
+			//int queueSize = queue->getLength();
+			//double tempKey;
+			//LinkedNode * tempNode;
+			//for(int i = 0; i < queueSize; i++) {		
+			//	queue->remove(tempNode, tempKey);
+			//	delete tempNode;
+			//}
 			LinkedNode * tempNode;
-			for(int i = 0; i < queueSize; i++) {		
-				queue->remove(tempNode, tempKey);
+			while(!queue->IsEmpty()) {
+				tempNode = queue->PopFirst();
 				delete tempNode;
 			}
 
@@ -130,7 +141,8 @@ namespace wustl_mm {
 #ifdef VERBOSE
 			cout << "Creating priority queue" << endl;
 #endif // VERBOSE
-			queue = new PriorityQueue<LinkedNode, double> (PRIORITYQUEUESIZE);
+			//queue = new PriorityQueue<LinkedNode, double> (PRIORITYQUEUESIZE);
+			queue = new GorgonPriorityQueue<double, LinkedNode *>(false);
 #ifdef VERBOSE
 			cout << "Loading pattern graph" << endl;
 #endif // VERBOSE
@@ -226,7 +238,8 @@ namespace wustl_mm {
 			for(int j = 1; j <= baseGraph->nodeCount; j++) {
 				LinkedNode::AddNodeToBitmap(currentNode->m2Bitmap, j);
 			}
-			queue->add(currentNode, currentNode->cost);
+			//queue->add(currentNode, currentNode->cost);
+			queue->Add(currentNode->cost, currentNode);
 			pathGenerator = new PathGenerator(baseGraph);
 		}
 
@@ -253,7 +266,8 @@ namespace wustl_mm {
 					finishTime = clock();
 					foundCount++;
 					currentNode->PrintNodeConcise(foundCount, false);
-					printf(": (%d expanded) (%f seconds) (%fkB Memory) (%d queue size) (%d parent size)\n", expandCount, (double) (finishTime - startTime) / (double) CLOCKS_PER_SEC, (queue->getLength() * sizeof(LinkedNode) + usedNodes.size() * sizeof(LinkedNodeStub)) / 1024.0, queue->getLength(), (int)usedNodes.size());
+					//printf(": (%d expanded) (%f seconds) (%fkB Memory) (%d queue size) (%d parent size)\n", expandCount, (double) (finishTime - startTime) / (double) CLOCKS_PER_SEC, (queue->getLength() * sizeof(LinkedNode) + usedNodes.size() * sizeof(LinkedNodeStub)) / 1024.0, queue->getLength(), (int)usedNodes.size());
+					printf(": (%d expanded) (%f seconds) (%d parent size)\n", expandCount, (double) (finishTime - startTime) / (double) CLOCKS_PER_SEC, (int)usedNodes.size());
 					int numHelices = baseGraph->GetHelixCount();
 					solutions.push_back(SSECorrespondenceResult(currentNode, numHelices));
 
@@ -282,11 +296,16 @@ namespace wustl_mm {
 			}
 			usedNodes.clear();
 
-			int queueSize = queue->getLength();
-			double tempKey;
+			//int queueSize = queue->getLength();
+			//double tempKey;
+			//LinkedNode * tempNode;
+			//for(int i = 0; i < queueSize; i++) {		
+			//	queue->remove(tempNode, tempKey);
+			//	delete tempNode;
+			//}
 			LinkedNode * tempNode;
-			for(int i = 0; i < queueSize; i++) {		
-				queue->remove(tempNode, tempKey);
+			while(!queue->IsEmpty()) {
+				tempNode = queue->PopFirst();
 				delete tempNode;
 			}
 
@@ -554,7 +573,8 @@ namespace wustl_mm {
 			clock_t start = clock();
 		#endif
 			double cost;
-			queue->remove(currentNode, cost);
+			//queue->remove(currentNode, cost);
+			queue->PopFirst(cost, currentNode);
 		#ifdef VERBOSE
 			timeInQueue += clock() - start;
 		#endif
@@ -628,8 +648,9 @@ namespace wustl_mm {
 #ifdef VERBOSE
 			if(longestMatch < currentNode->depth) {
 				longestMatch = currentNode->depth;
-				printf(" %d elements matched! (%f kB Memory Used)\n", longestMatch, (queue->getLength() * sizeof(LinkedNode) + usedNodes.size() * sizeof(LinkedNodeStub)) / 1024.0);
-				cout << "WongMatch15ConstrainedNoFuture::ExpandNode: " << longestMatch << " elements expanded (" << ((queue->getLength() * sizeof(LinkedNode) + usedNodes.size() * sizeof(LinkedNodeStub)) / 1024.0) << " kB memory used)" << endl;
+				//printf(" %d elements matched! (%f kB Memory Used)\n", longestMatch, (queue->getLength() * sizeof(LinkedNode) + usedNodes.size() * sizeof(LinkedNodeStub)) / 1024.0);
+				printf(" %d elements matched!\n", longestMatch);
+				//cout << "WongMatch15ConstrainedNoFuture::ExpandNode: " << longestMatch << " elements expanded (" << ((queue->getLength() * sizeof(LinkedNode) + usedNodes.size() * sizeof(LinkedNodeStub)) / 1024.0) << " kB memory used)" << endl;
 			}
 #endif //VERBOSE
 			
@@ -711,7 +732,8 @@ namespace wustl_mm {
 								
 								currentNode->cost = GetF();			
 								//currentNode->PrintNodeConcise(-1, true, true);
-								queue->add(currentNode, currentNode->cost);
+								//queue->add(currentNode, currentNode->cost);
+								queue->Add(currentNode->cost, currentNode);
 								expanded = true;
 							} else { // not an allowed match
 								delete currentNode;
@@ -764,7 +786,8 @@ namespace wustl_mm {
 					currentNode->costGStar = temp->costGStar;
 					currentNode->costGStar += GetPenaltyCost(temp->n1Node, remainingHelixNodes + remainingSheetNodes, false);
 					currentNode->cost = currentNode->costGStar;
-					queue->add(currentNode, currentNode->cost);
+					//queue->add(currentNode, currentNode->cost);
+					queue->Add(currentNode->cost, currentNode);
 					currentNode = temp;
 				}
 			}

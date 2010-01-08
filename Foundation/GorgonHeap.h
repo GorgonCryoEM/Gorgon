@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.2  2009/12/21 22:03:32  ssa1
+//   Checking in FFTW windows binaries
+//
 //   Revision 1.1  2009/12/13 19:38:37  ssa1
 //   Adding in abstract data structures
 //
@@ -86,7 +89,7 @@ namespace wustl_mm {
 
 		template <class T>
 		void GorgonHeap<T>::Heapify(int rootIndex) {
-			int size = values.size();			
+			unsigned int size = values.size();			
 
 			if(rootIndex < size) {
 				unsigned int left = GetLeft(rootIndex);
