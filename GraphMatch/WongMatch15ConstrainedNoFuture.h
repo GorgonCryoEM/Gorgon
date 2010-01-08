@@ -15,6 +15,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.17  2010/01/08 21:17:45  schuhs
+//   Using GorgonPriorityQueue instead of PriorityQueue
+//
 //   Revision 1.16  2009/12/22 01:03:06  schuhs
 //   Adding support for beta sheets to the SSE correspondence search algorithm
 //
@@ -287,7 +290,7 @@ namespace wustl_mm {
 					delete currentNode;
 				}		
 				// continue until desired number of results are found
-				continueLoop = (foundCount < RESULT_COUNT);
+				continueLoop = (foundCount < RESULT_COUNT) && (!queue->IsEmpty());
 			}
 
 			//Cleaning up memory

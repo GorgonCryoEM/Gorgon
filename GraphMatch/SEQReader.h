@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.12  2009/12/09 21:13:20  colemanr
+//   fixed compiler warnings about unused variables
+//
 //   Revision 1.11  2008/11/20 16:02:21  colemanr
 //   Fixed the logic on whether there is a START or start line at the
 //   beginning, and implemented handling of NULL pointers in error
@@ -319,7 +322,9 @@ namespace wustl_mm {
 			// Adding the rest of the structures into the graph
 			for(i = 0; i < (int)structures.size(); i++) {
 				graph->SetCost(i*2+1, i*2+1, 0); // First helix node.
+				graph->SetType(i*2+1, i*2+1, GRAPHNODE_HELIX); 
 				graph->SetCost(i*2+2, i*2+2, 0); // Second helix node.
+				graph->SetType(i*2+2, i*2+2, GRAPHNODE_HELIX); 
 		
 				// An edge for the helix
 				graph->SetCost(i*2+1, i*2+2, structures[i]->GetLengthAngstroms()); 
