@@ -111,12 +111,11 @@ handled in C++.
                     pyHelix = Helix(chain, sseIx, str(cppSse.getSecondaryStructureID()), cppSse.getStartPosition(), cppSse.getEndPosition())
                     secelDict[sseIx] = pyHelix                                
                     secelType[sseIx] = 'helix'     
-                    print "secelDict[" + str(sseIx) + "] is " + str(pyHelix) + ", type is helix"                   
                 elif cppSse.isSheet():
-                    #TODO: Add Sheet support
-                    secelDict[sseIx] = None
+                    # create python strand object using info from c++ SecondaryStructure object
+                    pyStrand = Strand(chain, sseIx, str(cppSse.getSecondaryStructureID()), cppSse.getStartPosition(), cppSse.getEndPosition())
+                    secelDict[sseIx] = pyStrand
                     secelType[sseIx] = 'strand'                                
-                    print "secelDict[" + str(sseIx) + "] is None, type is strand"                   
                     pass
                 
             # create new python StructurePrediction object and return it
