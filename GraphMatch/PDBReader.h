@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.17  2009/12/22 01:03:06  schuhs
+//   Adding support for beta sheets to the SSE correspondence search algorithm
+//
 //   Revision 1.16  2009/09/21 19:03:22  ssa1
 //   Linear least squares fit implementation, and using it in helix positioning of SSE Builder
 //
@@ -298,6 +301,27 @@ namespace wustl_mm {
 				oldNum = structures[i]->endPosition + 1;
 			}
 			printf("\n%s \n", sequence.c_str());
+
+			oldNum = start;
+			for(unsigned int i = 0; i < structures.size(); i++) {
+				string dashLine = "";
+				string sseLine = "";
+				for(unsigned int j = 0; j <  structures[i]->startPosition - oldNum; j++) {
+					dashLine = dashLine + "-";
+				}
+				for(unsigned int j = 0; j < structures[i]->endPosition - structures[i]->startPosition + 1; j++) {
+					if (structures[i]->secondaryStructureType == GRAPHEDGE_HELIX) {
+						sseLine =  sseLine + "H";					
+					} else if (structures[i]->secondaryStructureType == GRAPHEDGE_SHEET) {
+						sseLine =  sseLine + "E";
+					} else {
+						sseLine = sseLine + "*";
+					}
+				}
+				printf("%s%s", dashLine.c_str(), sseLine.c_str());
+				oldNum = structures[i]->endPosition + 1;
+			}
+			printf("\n");
 			#endif
 
 
