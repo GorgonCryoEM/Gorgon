@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.44  2009/12/27 02:42:10  ssa1
+#   Fixing interactive loop placement bugs
+#
 #   Revision 1.43  2009/12/24 07:25:07  ssa1
 #   Refactoring child window behavior.. Using base classes to encapsulate common behavior
 #
@@ -233,7 +236,7 @@ class CAlphaViewer(BaseViewer):
         self.createMenus()
         self.createChildWindows()
         self.updateActionsAndMenus()
-                  
+
     def createChildWindows(self):
         self.manualAtomPlacer = CAlphaAtomPlacerForm(self.app, self, self.main_chain, self.structPred, self)
         self.chooseChainModel = CAlphaChooseChainModel(self.app, self)
@@ -295,23 +298,25 @@ class CAlphaViewer(BaseViewer):
         self.emitModelLoaded()
         self.emitViewerSetCenter()        
         
-    def runSSEHunter(self, threshold, resolution, skeletonCoefficient, correlationCoefficient, geometryCoefficient):
+    def runSSEHunter(self, threshold, resolution, correlationCoefficient, skeletonCoefficient, geometryCoefficient):
         if(self.loaded):
             self.unloadData()  
         self.fileName = ""      
         
         volumeViewer = self.app.viewers["volume"]
         skeletonViewer = self.app.viewers["skeleton"]        
-        self.renderer.getSSEHunterAtoms(volumeViewer.renderer.getVolume(), skeletonViewer.renderer.getMesh(), resolution, threshold, skeletonCoefficient, correlationCoefficient, geometryCoefficient)
+        self.renderer.getSSEHunterAtoms(volumeViewer.renderer.getVolume(), skeletonViewer.renderer.getMesh(), resolution, threshold, correlationCoefficient, skeletonCoefficient, geometryCoefficient)
 
         
         self.dirty = False
         self.loaded = True
         self.emitModelLoadedPreDraw()
         self.emitModelLoaded()
-        self.emitViewerSetCenter()        
-       
+        self.emitViewerSetCenter()
         
+    def updateTotalScoreSSEHunterAtoms(self, correlationCoefficient, skeletonCoefficient, geometryCoefficient):
+        self.renderer.updateTotalScoreSSEHunterAtoms(correlationCoefficient, skeletonCoefficient, geometryCoefficient)
+        self.emitModelChanged()
         
     def loadData(self):
         #Overwriting the function in BaseViewer        
