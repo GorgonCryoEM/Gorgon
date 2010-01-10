@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.40  2009/10/13 18:09:34  ssa1
+//   Refactoring Volume.h
+//
 //   Revision 1.39  2009/08/10 20:03:40  ssa1
 //   SSEHunter interfaced into Gorgon
 //
@@ -112,7 +115,9 @@ namespace wustl_mm {
 			void Draw(int subSceneIndex, bool selectEnabled);
 			void LoadFile(string fileName);
 			void LoadSSEHunterFile(string fileName);
-			void GetSSEHunterAtoms(Volume * vol, NonManifoldMesh_Annotated * skeleton, float resolution, float threshold, float skeletonCoeff, float correlationCoeff, float geometryCoeff);
+			void GetSSEHunterAtoms(Volume * vol, NonManifoldMesh_Annotated * skeleton, float resolution, float threshold, float correlationCoeff, float skeletonCoeff, float geometryCoeff);
+			void UpdateTotalScoreSSEHunterAtoms(float correlationCoeff, float skeletonCoeff, float geometryCoeff);
+			void ColorSSEHunterAtoms();
 			int SelectionObjectCount();
 			int SelectionAtomCount();
 			Vector3DFloat SelectionCenterOfMass();
@@ -332,18 +337,29 @@ namespace wustl_mm {
 			
 		}
 		
-		void CAlphaRenderer::GetSSEHunterAtoms(Volume * vol, NonManifoldMesh_Annotated * skeleton, float resolution, float threshold, float skeletonCoeff, float correlationCoeff, float geometryCoeff) {
+		void CAlphaRenderer::GetSSEHunterAtoms(Volume * vol, NonManifoldMesh_Annotated * skeleton, float resolution, float threshold, float correlationCoeff, float skeletonCoeff, float geometryCoeff) {
 			Renderer::LoadFile("");
 			atoms.clear();
 			bonds.clear();
 			
 			SSEHunter * hunter = new SSEHunter();
-			atoms = hunter->GetScoredAtoms(vol, skeleton, resolution, threshold, skeletonCoeff, correlationCoeff, geometryCoeff);
+			atoms = hunter->GetScoredAtoms(vol, skeleton, resolution, threshold, correlationCoeff, skeletonCoeff, geometryCoeff);
 			delete hunter;
 			
+			ColorSSEHunterAtoms();
+		}
+		
+		void CAlphaRenderer::UpdateTotalScoreSSEHunterAtoms(float correlationCoeff, float skeletonCoeff, float geometryCoeff) {
+			for(AtomMapType::iterator i = atoms.begin(); i != atoms.end(); i++) {
+				i->second.SetTempFactor( i->second.GetTotalScore(correlationCoeff, skeletonCoeff, geometryCoeff) );
+			}
+			ColorSSEHunterAtoms();
+		}
+
+		void CAlphaRenderer::ColorSSEHunterAtoms() {
 			float maxTempFactor = -10000.0f, minTempFactor = 10000.0f;
 			float tempFactor;
-
+			
 			for(AtomMapType::iterator i = atoms.begin(); i != atoms.end(); i++) {
 				tempFactor = i->second.GetTempFactor();
 				if(tempFactor > maxTempFactor) {
@@ -354,7 +370,7 @@ namespace wustl_mm {
 				}
 			}
 			float r, g, b;
-
+			
 			for(AtomMapType::iterator i = atoms.begin(); i != atoms.end(); i++) {
 				i->second.SetAtomRadius(3.0);
 				tempFactor = i->second.GetTempFactor();
@@ -369,7 +385,7 @@ namespace wustl_mm {
 					g = 1.0f - tempFactor;
 					b = 1.0f - tempFactor;
 				}
-					
+				
 				i->second.SetColor(r, g, b, 1.0f);
 			}
 			

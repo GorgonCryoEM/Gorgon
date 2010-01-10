@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.10  2009/04/03 19:44:37  ssa1
+//   CAlpha bug fixes
+//
 //   Revision 1.9  2009/03/30 21:36:13  ssa1
 //   Interactive loop building
 //
@@ -72,6 +75,10 @@ namespace wustl_mm {
 			bool			GetVisible();
 			unsigned long long	GetHashKey();
 			int				GetFlag();		// Purely for implementation purposes
+			float			GetCorrelationScore();
+			float			GetSkeletonScore();
+			float			GetGeometryScore();
+			float			GetTotalScore(float correlationWeight, float skeletonWeight, float geometryWeight);
 			static unsigned long long ConstructHashKey(string pdbId, char chainId, unsigned int resSeq, string name);
 
 			void SetSerial(unsigned int serial);
@@ -91,6 +98,11 @@ namespace wustl_mm {
 			void SetSelected(bool selected);
 			void SetFlag(int flag);
 			void SetVisible(bool visible);
+			void SetCorrelationScore(float score);
+			void SetSkeletonScore(float score);
+			void SetGeometryScore(float score);
+			
+			
 		private:
 			static unsigned long long GetCharIndex(char c);
 			static unsigned long long GetPDBIdIndex(string pdbId);
@@ -119,6 +131,10 @@ namespace wustl_mm {
 			bool			selected;
 			bool			visible;
 			int				flag;
+
+			float			correlationScore;
+			float			skeletonScore;
+			float			geometryScore;
 		};
 
 		PDBAtom::PDBAtom() {
@@ -324,6 +340,22 @@ namespace wustl_mm {
 		bool PDBAtom::GetVisible() {
 			return visible;
 		}
+		
+		float PDBAtom::GetCorrelationScore() {
+			return correlationScore;
+		}
+		
+		float PDBAtom::GetSkeletonScore() {
+			return skeletonScore;
+		}
+		
+		float PDBAtom::GetGeometryScore() {
+			return geometryScore;
+		}
+		
+		float PDBAtom::GetTotalScore(float correlationWeight, float skeletonWeight, float geometryWeight) {
+			return correlationWeight*correlationScore + skeletonWeight*skeletonScore + geometryWeight*geometryScore;
+		}
 
 		unsigned long long PDBAtom::ConstructHashKey(string pdbId, char chainId, unsigned int resSeq, string name) {
 			unsigned long long chainIDCount = 37;
@@ -405,6 +437,18 @@ namespace wustl_mm {
 
 		void PDBAtom::SetVisible(bool visible) {
 			this->visible = visible;
+		}
+		
+		void PDBAtom::SetCorrelationScore(float score) {
+			correlationScore = score;
+		}
+		
+		void PDBAtom::SetSkeletonScore(float score) {
+			skeletonScore = score;
+		}
+		
+		void PDBAtom::SetGeometryScore(float score) {
+			geometryScore = score;
 		}
 	}
 

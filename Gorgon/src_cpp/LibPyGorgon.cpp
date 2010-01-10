@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.63  2009/12/24 21:53:49  ssa1
+//   Giving back color control to the SSE Visualization options form when SSE Correspondence engine is not running (Bug ID: 58)
+//
 //   Revision 1.62  2009/12/22 01:02:24  schuhs
 //   Adding support for beta sheet matching to the SSE correspondence search algorithm
 //
@@ -398,7 +401,9 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("drawBoundingBox", &CAlphaRenderer::DrawBoundingBox)
 		.def("loadFile", &CAlphaRenderer::LoadFile)
 		.def("loadSSEHunterFile", &CAlphaRenderer::LoadSSEHunterFile)
-		.def("getSSEHunterAtoms", &CAlphaRenderer::GetSSEHunterAtoms)		
+		.def("getSSEHunterAtoms", &CAlphaRenderer::GetSSEHunterAtoms)
+		.def("updateTotalScoreSSEHunterAtoms", &CAlphaRenderer::UpdateTotalScoreSSEHunterAtoms)
+		.def("colorSSEHunterAtoms", &CAlphaRenderer::ColorSSEHunterAtoms)
 		.def("saveFile", &CAlphaRenderer::SaveFile)
 		.def("unload", &CAlphaRenderer::Unload)
 		.def("selectionRotate", &CAlphaRenderer::SelectionRotate)

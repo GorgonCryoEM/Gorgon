@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.10  2009/12/31 06:09:09  ssa1
+#   Fixing bug where Helix save is disabled when helix is created using SSEBuilder
+#
 #   Revision 1.9  2009/12/28 19:22:05  ssa1
 #   Fixing SSE Builder being disabled when model is unloaded.
 #
@@ -72,12 +75,15 @@ class VolumeSSEBuilderForm(BaseDockWidget, Ui_DialogVolumeSSEBuilder):
         self.connect(self.pushButtonSSEHunter, QtCore.SIGNAL("clicked (bool)"), self.runSSEHunter)
         self.connect(self.pushButtonLoadVolume, QtCore.SIGNAL("clicked (bool)"), self.loadVolume)
         self.connect(self.pushButtonLoadSkeleton, QtCore.SIGNAL("clicked (bool)"), self.loadSkeleton)
+        self.connect(self.doubleSpinBoxCorrelation, QtCore.SIGNAL("valueChanged(double)"), self.updateTotalScoreSSEHunterAtoms)
+        self.connect(self.doubleSpinBoxSkeleton, QtCore.SIGNAL("valueChanged(double)"), self.updateTotalScoreSSEHunterAtoms)
+        self.connect(self.doubleSpinBoxGeometry, QtCore.SIGNAL("valueChanged(double)"), self.updateTotalScoreSSEHunterAtoms)
         self.connect(self.app.viewers["volume"], QtCore.SIGNAL("modelLoaded()"), self.enableDisableSSEHunter)
         self.connect(self.app.viewers["skeleton"], QtCore.SIGNAL("modelLoaded()"), self.enableDisableSSEHunter)
         self.connect(self.app.viewers["volume"], QtCore.SIGNAL("modelUnloaded()"), self.enableDisableSSEHunter)
         self.connect(self.app.viewers["skeleton"], QtCore.SIGNAL("modelUnloaded()"), self.enableDisableSSEHunter)
-                             
-                             
+        
+        
     def loadVolume(self, temp):
         self.app.actions.getAction("load_Volume").trigger()
         self.bringToFront()
@@ -85,10 +91,10 @@ class VolumeSSEBuilderForm(BaseDockWidget, Ui_DialogVolumeSSEBuilder):
     def loadSkeleton(self, temp):
         self.app.actions.getAction("load_Skeleton").trigger()
         self.bringToFront()
-                                    
+
     def createActions(self):    
         self.detectSSEAct = self.displayAct
-                                  
+
     def modelLoaded(self):
         #self.detectSSEAct.setEnabled(True)
         pass
@@ -96,7 +102,7 @@ class VolumeSSEBuilderForm(BaseDockWidget, Ui_DialogVolumeSSEBuilder):
     def modelUnloaded(self):
         #self.detectSSEAct.setEnabled(False)
         self.showWidget(False)    
-                    
+
     def dockVisibilityChanged(self, visible):
         BaseDockWidget.dockVisibilityChanged(self, visible)
         self.app.viewers["calpha"].centerOnRMB = not visible
@@ -104,7 +110,7 @@ class VolumeSSEBuilderForm(BaseDockWidget, Ui_DialogVolumeSSEBuilder):
             self.connect(self.app.viewers["calpha"], QtCore.SIGNAL("atomSelectionUpdated(PyQt_PyObject)"), self.atomSelectionChanged)
         else:
             self.disconnect(self.app.viewers["calpha"], QtCore.SIGNAL("atomSelectionUpdated(PyQt_PyObject)"), self.atomSelectionChanged)
-                        
+
 
     def browseAtomScoreFile(self, result):
         pdbFile = QtGui.QFileDialog.getOpenFileName(self, self.tr("Load SSEHunter Results"), "", self.tr("PDB Files (*.pdb)"))
@@ -114,12 +120,17 @@ class VolumeSSEBuilderForm(BaseDockWidget, Ui_DialogVolumeSSEBuilder):
             self.sseViewer = self.app.viewers["sse"]
             self.lineEditAtomScore.setText(pdbFile)
         self.bringToFront()
-            
+
     def runSSEHunter(self, result):
-            self.calphaViewer = self.app.viewers["calpha"]
-            self.sseViewer = self.app.viewers["sse"]
-            self.calphaViewer.runSSEHunter(self.doubleSpinBoxThreshold.value(), self.doubleSpinBoxResolution.value(), self.doubleSpinBoxSkeleton.value(), self.doubleSpinBoxCorrelation.value(), self.doubleSpinBoxGeometry.value())
-            
+        self.calphaViewer = self.app.viewers["calpha"]
+        self.sseViewer = self.app.viewers["sse"]
+        self.calphaViewer.runSSEHunter( self.doubleSpinBoxThreshold.value(), self.doubleSpinBoxResolution.value(), 
+            self.doubleSpinBoxCorrelation.value(), self.doubleSpinBoxSkeleton.value(), self.doubleSpinBoxGeometry.value() )
+    
+    def updateTotalScoreSSEHunterAtoms(self):
+        self.calphaViewer.updateTotalScoreSSEHunterAtoms( self.doubleSpinBoxCorrelation.value(), self.doubleSpinBoxSkeleton.value(), 
+            self.doubleSpinBoxGeometry.value() )
+        
     def atomSelectionChanged(self, selection):
         self.tableWidgetSelection.clearContents()
         self.calphaViewer = self.app.viewers["calpha"]
@@ -188,7 +199,7 @@ class VolumeSSEBuilderForm(BaseDockWidget, Ui_DialogVolumeSSEBuilder):
             self.sseViewer.dirty = True
             self.sseViewer.emitModelLoadedPreDraw()
             self.sseViewer.emitModelLoaded()    
-        self.bringToFront()            
+        self.bringToFront()
         
     def enableDisableSSEHunter(self):
         volumeViewer =  self.app.viewers["volume"]
@@ -207,8 +218,3 @@ class VolumeSSEBuilderForm(BaseDockWidget, Ui_DialogVolumeSSEBuilder):
         self.pushButtonSSEHunter.setEnabled(enabled)
         self.pushButtonLoadVolume.setVisible(not volumeViewer.loaded)
         self.pushButtonLoadSkeleton.setVisible(not skeletonViewer.loaded)
-        
-            
-        
-            
-                                 

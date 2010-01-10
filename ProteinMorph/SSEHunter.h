@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.16  2010/01/06 03:48:13  colemanr
+//   helix correlation score fixes
+//
 //   Revision 1.15  2009/12/25 17:32:21  colemanr
 //   fixed runtime error if alt and az volumes are not used
 //   fixed various compiler warning messages
@@ -118,14 +121,14 @@ namespace wustl_mm {
 			~SSEHunter();
 			
 			map<unsigned long long, PDBAtom> GetScoredAtoms(Volume * vol, NonManifoldMesh_Annotated * skeleton, float resolution, float threshold, 
-															float skeletonCoeff, float correlationCoeff, float geometryCoeff,
+															float correlationCoeff, float skeletonCoeff, float geometryCoeff,
 															RadialProfileType type = GAUSSIAN_DIP, float deltaAngleRadians=5*PI/180);
 		private:
 			vector<PDBAtom> GetPseudoAtoms(vector<Vector3DInt> & atomVolumePositions, Volume * vol, float resolution, float threshold);
 			void UpdateMap(Volume * vol, Vector3DInt loc, float rangeminX, float rangeminY, float rangeminZ, float rangemaxX, float rangemaxY, float rangemaxZ);
-			void AddSkeletonWeights(vector<PDBAtom> & patoms, Volume * vol, NonManifoldMesh_Annotated * skeleton, float resolution, float influence);
-			void AddHelixCorrelationWeights(vector<PDBAtom>& patoms, Volume * vol, RadialProfileType type, float resolution, float influence, float deltaAngleRadians);
-			void AddGeometryWeights(vector<PDBAtom> & patoms, vector<Vector3DInt> atomVolumePositions, Volume * vol, float resolution, float threshold, float influence);
+			void SetCorrelationScores(vector<PDBAtom>& patoms, Volume * vol, RadialProfileType type, float resolution, float deltaAngleRadians);
+			void SetSkeletonScores(vector<PDBAtom> & patoms, Volume * vol, NonManifoldMesh_Annotated * skeleton, float resolution);
+			void SetGeometryScores(vector<PDBAtom> & patoms, vector<Vector3DInt> atomVolumePositions, Volume * vol, float resolution, float threshold);
 			vector< vector<float> > GetAtomDistances(vector<PDBAtom> patoms);
 			vector< vector<Vector3DInt> > GetNeighborhoodVoxels(vector<PDBAtom> patoms, vector<Vector3DInt> atomVolumePositions, Volume * vol, float threshold);
 			vector<float> GetLocalDirectionalityScores(vector<PDBAtom> patoms, vector<Vector3DInt> atomVolumePositions, Volume * vol);
@@ -164,17 +167,18 @@ namespace wustl_mm {
 		}		
 
 		map<unsigned long long, PDBAtom> SSEHunter::GetScoredAtoms(Volume * vol, NonManifoldMesh_Annotated * skeleton, float resolution, float threshold, 
-																   float skeletonCoeff, float correlationCoeff, float geometryCoeff, 
+																   float correlationCoeff, float skeletonCoeff, float geometryCoeff, 
 																   RadialProfileType type, float deltaAngleRadians) {
 			cout << "GetScoredAtoms()\n";
 			vector<Vector3DInt>  atomVolumePositions;
 			vector<PDBAtom> patoms = GetPseudoAtoms(atomVolumePositions, vol, resolution, threshold);
-			AddSkeletonWeights(patoms, vol, skeleton, resolution, skeletonCoeff);
-			AddGeometryWeights(patoms, atomVolumePositions, vol, resolution, threshold, geometryCoeff);
-			AddHelixCorrelationWeights(patoms, vol, type, resolution, correlationCoeff, deltaAngleRadians);
+			SetSkeletonScores(patoms, vol, skeleton, resolution);
+			SetGeometryScores(patoms, atomVolumePositions, vol, resolution, threshold);
+			SetCorrelationScores(patoms, vol, type, resolution, deltaAngleRadians);
 			map<unsigned long long, PDBAtom> atomMap;
 			atomMap.clear();
 			for(unsigned int i = 0; i < patoms.size();  i++) {
+				patoms[i].SetTempFactor( patoms[i].GetTotalScore(correlationCoeff, skeletonCoeff, geometryCoeff) );
 				atomMap[patoms[i].GetHashKey()] = patoms[i];
 			}
 			return atomMap;
@@ -244,7 +248,7 @@ namespace wustl_mm {
 			}
 		}	
 
-		void SSEHunter::AddSkeletonWeights(vector<PDBAtom> & patoms, Volume * vol, NonManifoldMesh_Annotated * skeleton, float resolution, float influence) {
+		void SSEHunter::SetSkeletonScores(vector<PDBAtom> & patoms, Volume * vol, NonManifoldMesh_Annotated * skeleton, float resolution) {
 			cout << "AddSkeletonWeights\n";
 			int vertexIx;
 			float distance, maxDistance = resolution;  // TODO: Max distance is hardcoded as 5 Angstroms
@@ -267,7 +271,7 @@ namespace wustl_mm {
 				} else {
 					typeCost = 1.0;
 				}
-				patoms[i].SetTempFactor(patoms[i].GetTempFactor() + influence * typeCost * (1.0 - min(maxDistance, distance) / maxDistance));
+				patoms[i].SetSkeletonScore(typeCost * (1.0 - min(maxDistance, distance) / maxDistance));
 			}
 		}
 
@@ -367,7 +371,7 @@ namespace wustl_mm {
 			return aspectRatios;
 		}	
 
-		void SSEHunter::AddGeometryWeights(vector<PDBAtom> & patoms, vector<Vector3DInt> atomVolumePositions, Volume * vol, float resolution, float threshold, float influence) {
+		void SSEHunter::SetGeometryScores(vector<PDBAtom> & patoms, vector<Vector3DInt> atomVolumePositions, Volume * vol, float resolution, float threshold) {
 			cout << "AddGeometryWeights()\n";
 			vector< vector<float> > distances = GetAtomDistances(patoms);
 			//vector< vector<Vector3DInt> > neighbors = GetNeighborhoodVoxels(patoms, atomVolumePositions, vol, threshold);
@@ -380,7 +384,7 @@ namespace wustl_mm {
 			
 			
 			for(unsigned int i = 0; i < geometryScore.size(); i++) {
-				patoms[i].SetTempFactor(patoms[i].GetTempFactor() + influence * geometryScore[i]);
+				patoms[i].SetGeometryScore(geometryScore[i]);
 			}			
 			
 		}
@@ -900,7 +904,7 @@ namespace wustl_mm {
 			return bestCCF;
 		}
 		
-		void SSEHunter::AddHelixCorrelationWeights(vector<PDBAtom>& patoms, Volume * vol, RadialProfileType type, float resolution, float influence, float deltaAngleRadians) {
+		void SSEHunter::SetCorrelationScores(vector<PDBAtom>& patoms, Volume * vol, RadialProfileType type, float resolution, float deltaAngleRadians) {
 			cout << "AddHelixCorrelationWeights()\n";
 			float cylinderLength = 16.2;
 			Volume* bestCCF = HelixCorrelation(vol, type, cylinderLength, deltaAngleRadians);
@@ -939,7 +943,7 @@ namespace wustl_mm {
 					value = (value - avgVal)/avgVal;
 				}
 				helixScores[i] = value;
-				patoms[i].SetTempFactor(patoms[i].GetTempFactor() + influence * helixScores[i]);
+				patoms[i].SetCorrelationScore(helixScores[i]);
 			}
 			delete bestCCF;
 		}
