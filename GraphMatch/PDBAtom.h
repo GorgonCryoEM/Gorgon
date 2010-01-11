@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.11  2010/01/10 05:31:43  colemanr
+//   PDBAtoms now store their correlation, skeleton, and geometry scores. Changing the weighting for these three scores in the GUI now changes the total score for each pseudoatom.
+//
 //   Revision 1.10  2009/04/03 19:44:37  ssa1
 //   CAlpha bug fixes
 //
@@ -158,6 +161,10 @@ namespace wustl_mm {
 			colorA = 1.0f;
 			selected = false;
 			visible = true;
+
+			correlationScore = 0;
+			skeletonScore = 0;
+			geometryScore = 0;
 		}
 
 		PDBAtom::PDBAtom(string pdbId, char chainId, unsigned int resSeq, string name) {
@@ -181,6 +188,10 @@ namespace wustl_mm {
 			colorA = 1.0f;
 			selected = false;
 			visible = true;
+
+			correlationScore = 0;
+			skeletonScore = 0;
+			geometryScore = 0;
 		}
 
 		PDBAtom::PDBAtom(string PDBLine) {
@@ -208,6 +219,10 @@ namespace wustl_mm {
 			colorA = 1.0f;
 			selected = false;
 			visible = true;
+
+			correlationScore = 0;
+			skeletonScore = 0;
+			geometryScore = 0;
 		}
 
 		void PDBAtom::Print() {
