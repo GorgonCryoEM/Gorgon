@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.20  2010/01/04 22:14:23  ssa1
+#   Adding update notifier plugin to check for newer versions of gorgon
+#
 #   Revision 1.19  2009/12/24 01:38:53  ssa1
 #   Fixing bug in macos where color dialogs automatically change when camera changes.  Bug ID 4
 #
@@ -76,6 +79,7 @@ if __name__ == '__main__':
     app.processEvents()
     
     window = MainWindowForm(gorgonVersion)
+    window.isNightlyBuild = False
     window.showMaximized()
     splash.finish(window)
     window.loadPlugins()

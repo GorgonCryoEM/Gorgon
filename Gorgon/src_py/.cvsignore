@@ -16,3 +16,8 @@ tree.off
 vessel2-volume.mrc
 build
 dist
+libfftw3l-3.dll
+libfftw3-3.dll
+libfftw3f-3.dll
+msvcr80.dll
+msvcp80.dll
