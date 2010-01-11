@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.21  2010/01/11 16:20:12  ssa1
+#   Not checking for newer versions if this is a nightly build release
+#
 #   Revision 1.20  2010/01/04 22:14:23  ssa1
 #   Adding update notifier plugin to check for newer versions of gorgon
 #
@@ -70,7 +73,7 @@ import time
 
 
 if __name__ == '__main__':
-    gorgonVersion = '2.0.0'
+    gorgonVersion = '2.0.1b'
     app = QtGui.QApplication(sys.argv)    
     pixmap = QtGui.QPixmap(pathname + "/splash.png")
     splash = QtGui.QSplashScreen(pixmap, QtCore.Qt.WindowStaysOnTopHint)
@@ -79,7 +82,7 @@ if __name__ == '__main__':
     app.processEvents()
     
     window = MainWindowForm(gorgonVersion)
-    window.isNightlyBuild = False
+    window.isNightlyBuild = True
     window.showMaximized()
     splash.finish(window)
     window.loadPlugins()
