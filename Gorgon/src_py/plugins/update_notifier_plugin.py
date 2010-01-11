@@ -42,7 +42,7 @@ class UpdateNotifierPlugin(BasePlugin):  #Plugins must inherit the BasePlugin cl
             version = ['GORGON', self.app.version]
         
         #Notify for update only if internet connection is present, and user has older Gorgon version
-        if ((version[0] == 'GORGON') and (version[1] != self.app.version)):
+        if ((not self.app.isNightlyBuild) and (version[0] == 'GORGON') and (version[1] != self.app.version)):
             if (QtGui.QMessageBox.information(self.app, "Update Available", "A newer version of Gorgon is available for download.", "Get update...", "Remind me later") == 0):
                 self.app.actions.getAction("show_GetUpdatesForm").trigger()
                 
