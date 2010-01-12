@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.17  2010/01/10 05:31:43  colemanr
+//   PDBAtoms now store their correlation, skeleton, and geometry scores. Changing the weighting for these three scores in the GUI now changes the total score for each pseudoatom.
+//
 //   Revision 1.16  2010/01/06 03:48:13  colemanr
 //   helix correlation score fixes
 //
@@ -184,7 +187,11 @@ namespace wustl_mm {
 			return atomMap;
 			
 		}
-
+		
+		// SSEHunter::GetPseudoAtoms 
+		// atomVolumePositions: will hold the i, j, k indices that give the voxel position of the pseudoatoms
+		// threshold: the minimum density value that will be represented with a pseudoatom
+		// returns a vector of pseudoatoms
 		vector<PDBAtom> SSEHunter::GetPseudoAtoms(vector<Vector3DInt> & atomVolumePositions, Volume * vol, float resolution, float threshold) {
 			Volume * tempVol = new Volume(vol->getSizeX(), vol->getSizeY(), vol->getSizeZ(), 0, 0, 0, vol);
 			vector<PDBAtom> patoms;
@@ -218,8 +225,10 @@ namespace wustl_mm {
 				i++;
 			}
 			return patoms;		
-		}		
-
+		}
+		
+		// SSEHunter::UpdateMap
+		// called by SSEHunter::GetPseudoAtoms after each pseudoatom is chosen
 		void SSEHunter::UpdateMap(Volume * vol, Vector3DInt loc, float rangeminX, float rangeminY, float rangeminZ, float rangemaxX, float rangemaxY, float rangemaxZ) {
 			int rMinX = (int)round(rangeminX/2.0);
 			int rMaxX = (int)(round(rangemaxX/2.0) + 1);
@@ -274,7 +283,10 @@ namespace wustl_mm {
 				patoms[i].SetSkeletonScore(typeCost * (1.0 - min(maxDistance, distance) / maxDistance));
 			}
 		}
-
+		
+		// SSEHunter::GetAtomDistances
+		// patoms: the vector of pseudoatoms
+		// returns a matrix of distances between pairs of pseudoatoms
 		vector< vector<float> > SSEHunter::GetAtomDistances(vector<PDBAtom> patoms) {
 			vector< vector<float> > distances;
 			vector<float> atomDistances;
@@ -286,8 +298,11 @@ namespace wustl_mm {
 				distances.push_back(atomDistances);
 			}
 			return distances;
-		}	
-
+		}
+		
+		// SSEHunter::GetNeighborhoodVoxels
+		// patoms: pseudoatoms
+		// atomVolumePositions: the i,j,k indices for the location of the pseudoatoms in vol
 		vector< vector<Vector3DInt> > SSEHunter::GetNeighborhoodVoxels(vector<PDBAtom> patoms, vector<Vector3DInt> atomVolumePositions, Volume * vol, float threshold) {
 			int kernelWidthX = (int)round(5.0/vol->getSpacingX());
 			int kernelWidthY = (int)round(5.0/vol->getSpacingY());
@@ -847,13 +862,13 @@ namespace wustl_mm {
 						cyl[i] = c1*d1+c2*d2;
 						cyl[i+1] = c1*d2-c2*d1;
 					}
-					iftInPlace(cyl, nz, ny, nx); // cyl_data will now hold the CCF values
+					iftInPlace(cyl, nz, ny, nx); // cyl will now hold the CCF values
 
 					int i2, j2, k2;
 
 					for (int i=0; i<nx; i++) {
 						for (int j=0; j<ny; j++) {
-							for (int k=0; k<nz+fftPaddingFastIx; k++) {
+							for (int k=0; k<nz; k++) {
 
 								// shifting the data to center it.
 								i2 = (i+nx/2) % nx;
@@ -884,7 +899,7 @@ namespace wustl_mm {
 			if (max > min) { //Don't divide by zero.
 				for (int i=0; i<nx; i++) {
 					for (int j=0; j<ny; j++) {
-						for (int k=0; k<nz+fftPaddingFastIx; k++) {
+						for (int k=0; k<nz; k++) {
 							val = bestCCF->getDataAt(i,j,k);
 							bestCCF->setDataAt(i,j,k, (val-min)/(max-min)); //Make the values fall between zero and one
 						}
@@ -894,13 +909,14 @@ namespace wustl_mm {
 			else { // max == min, so make the map zero everywhere
 				for (int i=0; i<nx; i++) {
 					for (int j=0; j<ny; j++) {
-						for (int k=0; k<nz+fftPaddingFastIx; k++) {
+						for (int k=0; k<nz; k++) {
 							val = bestCCF->getDataAt(i,j,k);
 							bestCCF->setDataAt(i,j,k, val-min); //Make the values fall between zero and one
 						}
 					}
 				}
 			}
+			cout << "HelixCorrelation() returning...\n";
 			return bestCCF;
 		}
 		
