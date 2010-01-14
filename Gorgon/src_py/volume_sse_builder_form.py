@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.11  2010/01/10 05:31:43  colemanr
+#   PDBAtoms now store their correlation, skeleton, and geometry scores. Changing the weighting for these three scores in the GUI now changes the total score for each pseudoatom.
+#
 #   Revision 1.10  2009/12/31 06:09:09  ssa1
 #   Fixing bug where Helix save is disabled when helix is created using SSEBuilder
 #
@@ -72,6 +75,7 @@ class VolumeSSEBuilderForm(BaseDockWidget, Ui_DialogVolumeSSEBuilder):
         self.connect(self.pushButtonBrowseAtomScore, QtCore.SIGNAL("clicked (bool)"), self.browseAtomScoreFile)
         self.connect(self.pushButtonSelectionToHelix, QtCore.SIGNAL("clicked (bool)"), self.selectionToHelix)
         self.connect(self.pushButtonSelectionToSheet, QtCore.SIGNAL("clicked (bool)"), self.selectionToSheet)
+        self.connect(self.pushButtonRemoveSSE, QtCore.SIGNAL("clicked (bool)"), self.removeSSE)        
         self.connect(self.pushButtonSSEHunter, QtCore.SIGNAL("clicked (bool)"), self.runSSEHunter)
         self.connect(self.pushButtonLoadVolume, QtCore.SIGNAL("clicked (bool)"), self.loadVolume)
         self.connect(self.pushButtonLoadSkeleton, QtCore.SIGNAL("clicked (bool)"), self.loadSkeleton)
@@ -91,6 +95,13 @@ class VolumeSSEBuilderForm(BaseDockWidget, Ui_DialogVolumeSSEBuilder):
     def loadSkeleton(self, temp):
         self.app.actions.getAction("load_Skeleton").trigger()
         self.bringToFront()
+
+    def removeSSE(self, temp):
+        if(QtGui.QMessageBox.question(self, "Remove Selected SSEs?", "This will remove the selected SSEs. Are you sure?", "Yes", "Cancel") == 0) :
+            self.viewer.renderer.removeSelectedSSEs()
+            self.viewer.emitModelLoaded() 
+            self.bringToFront()
+                                                                                                                                        
 
     def createActions(self):    
         self.detectSSEAct = self.displayAct
