@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.61  2009/12/22 01:02:24  schuhs
+#   Adding support for beta sheet matching to the SSE correspondence search algorithm
+#
 #   Revision 1.60  2009/10/09 21:50:15  ssa1
 #   Removing obsolete reference to session_lib
 #
@@ -405,13 +408,19 @@ class BaseViewer(QtOpenGL.QGLWidget):
             
     def loadDataFromFile(self, fileName):
         self.setCursor(QtCore.Qt.WaitCursor)
-        self.renderer.loadFile(str(fileName))
-        self.setScaleNoEmit(self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ())       
-        self.loaded = True
-        self.dirty = False
-        self.emitModelLoadedPreDraw()
-        self.emitModelLoaded()            
-        self.emitViewerSetCenter()
+        try:            
+            self.renderer.loadFile(str(fileName))
+            self.setScaleNoEmit(self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ())       
+            self.loaded = True
+            self.dirty = False
+            self.emitModelLoadedPreDraw()
+            self.emitModelLoaded()            
+            self.emitViewerSetCenter()      
+        except:
+            QtGui.QMessageBox.critical(self, "Unable to load data file", "The file might be corrupt, or the format may not be supported.", "Ok")
+
+            self.loaded = False
+        
         self.setCursor(QtCore.Qt.ArrowCursor)
         
           
