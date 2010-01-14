@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.38  2009/12/28 17:42:27  ssa1
+//   Fixing SSEBuilder bug when adding sheets
+//
 //   Revision 1.37  2009/12/24 21:53:49  ssa1
 //   Giving back color control to the SSE Visualization options form when SSE Correspondence engine is not running (Bug ID: 58)
 //
@@ -133,7 +136,9 @@ namespace wustl_mm {
 			Vector3DFloat Get3DCoordinates(int subsceneIndex, int ix0, int ix1 = -1, int ix2 = -1, int ix3 = -1, int ix4 = -1);
 			void FitSelectedSSEs(Volume * vol);
 			void SetSSESpecificColoring(bool isSSESpecific);
+			void RemoveSelectedSSEs();
 		private:
+			void SheetListToMesh(vector<GeometricShape*> & sheets);
 			void LoadHelixFileSSE(string fileName);
 			void LoadHelixFileVRML(string fileName);
 			void SaveHelixFileSSE(FILE* fout);
@@ -501,8 +506,19 @@ namespace wustl_mm {
 			if(sheetMesh != NULL) {
 				delete sheetMesh;
 			}
-			sheetMesh = new NonManifoldMesh_SheetIds();
 			SkeletonReader::ReadSheetFile((char *)fileName.c_str(), sheets);
+			
+			SheetListToMesh(sheets);
+
+			UpdateBoundingBox();			
+		}
+		
+		void SSERenderer::SheetListToMesh(vector<GeometricShape*> & sheets) {
+			if(sheetMesh != NULL) {
+				delete sheetMesh;
+			}
+			sheetMesh = new NonManifoldMesh_SheetIds();
+			
 			Point3 pt;
 			vector<int> indices;
 			SheetIdsAndSelect faceTag;
@@ -525,11 +541,7 @@ namespace wustl_mm {
 					sheetMesh->AddTriangle(indices[sheets[i]->polygons[j].pointIndex1], indices[sheets[i]->polygons[j].pointIndex2], indices[sheets[i]->polygons[j].pointIndex3], NULL, faceTag);					
 				}				
 			}
-			//for(unsigned int i = 0; i < sheets.size(); i++) { 
-			//	delete sheets[i];
-			//}
-			indices.clear();
-			UpdateBoundingBox();			
+			indices.clear();			
 		}
 
 		void SSERenderer::Unload() {
@@ -887,6 +899,7 @@ namespace wustl_mm {
 				}
 
 				selectedSheets[ix0] = forceTrue || !selectedSheets[ix0];
+				sheets[ix0-1]->SetSelected(selectedSheets[ix0]);
 			}
 			if((subsceneIndex == 2)) {
 				for(unsigned int i = 0; i < graphSheetMesh->faces.size(); i++) {
@@ -1118,6 +1131,33 @@ namespace wustl_mm {
 			} */
 
 			delete fitter;
+			UpdateBoundingBox();
+		}
+		
+		void SSERenderer::RemoveSelectedSSEs() {
+			vector<GeometricShape*> newHelices;
+			for(unsigned int i = 0; i < helices.size(); i++) {
+				if(helices[i]->GetSelected()) {
+					delete helices[i];
+				} else {
+					newHelices.push_back(helices[i]);
+				}
+			}
+			helices = newHelices;
+			
+			
+			vector<GeometricShape*> newSheets;
+			for(int i = 0; i < (int)sheets.size(); i++) {
+				if(sheets[i]->GetSelected()) {
+					delete sheets[i];
+				} else {
+					newSheets.push_back(sheets[i]);
+				}
+			}
+			sheets = newSheets;	
+			sheetCount = newSheets.size();
+			
+			SheetListToMesh(sheets);
 			UpdateBoundingBox();
 		}
 	}

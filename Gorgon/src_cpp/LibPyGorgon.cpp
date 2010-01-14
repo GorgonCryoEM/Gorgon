@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.64  2010/01/10 05:31:43  colemanr
+//   PDBAtoms now store their correlation, skeleton, and geometry scores. Changing the weighting for these three scores in the GUI now changes the total score for each pseudoatom.
+//
 //   Revision 1.63  2009/12/24 21:53:49  ssa1
 //   Giving back color control to the SSE Visualization options form when SSE Correspondence engine is not running (Bug ID: 58)
 //
@@ -394,6 +397,7 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("finalizeHelix", &SSERenderer::FinalizeHelix)
 		.def("addHelix", &SSERenderer::AddHelix)
 		.def("setSSESpecificColoring", &SSERenderer::SetSSESpecificColoring)
+		.def("removeSelectedSSEs", &SSERenderer::RemoveSelectedSSEs)
 	;
 
 	class_< CAlphaRenderer, bases<Renderer> >("CAlphaRenderer", init<>())
