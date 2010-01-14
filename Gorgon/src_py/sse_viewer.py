@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.32  2009/12/24 21:53:49  ssa1
+#   Giving back color control to the SSE Visualization options form when SSE Correspondence engine is not running (Bug ID: 58)
+#
 #   Revision 1.31  2009/12/24 07:25:07  ssa1
 #   Refactoring child window behavior.. Using base classes to encapsulate common behavior
 #
@@ -143,12 +146,18 @@ class SSEViewer(BaseViewer):
         
     def loadHelixDataFromFile(self, fileName):
         self.setCursor(QtCore.Qt.WaitCursor)
-        self.renderer.loadHelixFile(str(fileName))
-        self.loaded = True
-        self.helixLoaded = True
-        self.setCursor(QtCore.Qt.ArrowCursor)
-        self.emitModelLoaded()
-        self.emitViewerSetCenter()        
+        try:
+            self.renderer.loadHelixFile(str(fileName))
+            self.loaded = True
+            self.helixLoaded = True
+            self.emitModelLoaded()
+            self.emitViewerSetCenter()    
+        except:
+            QtGui.QMessageBox.critical(self, "Unable to load data file", "The file might be corrupt, or the format may not be supported.", "Ok")
+
+            self.loaded = False
+        self.setCursor(QtCore.Qt.WaitCursor)
+            
     
     def loadHelixData(self):
         self.helixFileName = QtGui.QFileDialog.getOpenFileName(self, self.tr("Open Helix Annotations"), "", self.tr(self.renderer.getSupportedHelixLoadFileFormats()))
@@ -159,12 +168,17 @@ class SSEViewer(BaseViewer):
     
     def loadSheetDataFromFile(self, fileName):
         self.setCursor(QtCore.Qt.WaitCursor)
-        self.renderer.loadSheetFile(str(fileName))
-        self.loaded = True
-        self.sheetLoaded = True
+        try:
+            self.renderer.loadSheetFile(str(fileName))
+            self.loaded = True
+            self.sheetLoaded = True
+            self.emitModelLoaded()
+            self.emitViewerSetCenter()        
+        except:
+            QtGui.QMessageBox.critical(self, "Unable to load data file", "The file might be corrupt, or the format may not be supported.", "Ok")
+            self.loaded = False
         self.setCursor(QtCore.Qt.ArrowCursor)
-        self.emitModelLoaded()
-        self.emitViewerSetCenter()        
+        
     
     def loadSheetData(self):
         self.sheetFileName = QtGui.QFileDialog.getOpenFileName(self, self.tr("Open Sheet Annotations"), "", self.tr(self.renderer.getSupportedSheetLoadFileFormats()))
