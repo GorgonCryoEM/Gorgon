@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.5  2009/12/24 01:38:53  ssa1
+#   Fixing bug in macos where color dialogs automatically change when camera changes.  Bug ID 4
+#
 #   Revision 1.4  2008/06/18 18:15:41  ssa1
 #   Adding in CVS meta data
 #
@@ -22,9 +25,11 @@ class ColoredPushButton(QtGui.QPushButton):
     
     def __init__(self, parent = None):
         QtGui.QWidget.__init__(self, parent)
+        self.actualColor = QtGui.QColor.fromRgba(QtGui.qRgba(128, 128, 128, 255))
         self.brush = QtGui.QBrush()
-        self.brush.setColor(QtGui.QColor.fromRgba(QtGui.qRgba(128, 128, 128, 255)))
+        self.brush.setColor(self.actualColor)
         self.brush.setStyle(QtCore.Qt.SolidPattern)
+        
         self.connect(self, QtCore.SIGNAL("pressed ()"), self.buttonPressed)
         self.colorPicker = ColorPickerForm()
         
@@ -36,15 +41,16 @@ class ColoredPushButton(QtGui.QPushButton):
         painter.end()
     
     def setColor(self, color):
-        if (self.brush.color() != color):
-            self.brush.setColor(color)
+        if (self.actualColor != color):
+            self.actualColor = color;
+            self.brush.setColor(QtGui.QColor.fromRgba(QtGui.qRgba(color.red(), color.green(), color.blue(), 255)))
             self.update()
     
     def color(self):
-        return self.brush.color()
+        return self.actualColor
         
     def buttonPressed(self):
-        self.colorPicker.setColor(self.brush.color())
+        self.colorPicker.setColor(self.actualColor)
         if(self.colorPicker.exec_() == QtGui.QDialog.Accepted) :
             self.setColor(self.colorPicker.getColor())
             self.emitColorChanged()
