@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.18  2010/01/12 17:06:45  colemanr
+//   fixed HelixCorrelation() array bounds errors on bestCCF object
+//
 //   Revision 1.17  2010/01/10 05:31:43  colemanr
 //   PDBAtoms now store their correlation, skeleton, and geometry scores. Changing the weighting for these three scores in the GUI now changes the total score for each pseudoatom.
 //
@@ -126,23 +129,26 @@ namespace wustl_mm {
 			map<unsigned long long, PDBAtom> GetScoredAtoms(Volume * vol, NonManifoldMesh_Annotated * skeleton, float resolution, float threshold, 
 															float correlationCoeff, float skeletonCoeff, float geometryCoeff,
 															RadialProfileType type = GAUSSIAN_DIP, float deltaAngleRadians=5*PI/180);
-		private:
+
+			
+			
 			vector<PDBAtom> GetPseudoAtoms(vector<Vector3DInt> & atomVolumePositions, Volume * vol, float resolution, float threshold);
-			void UpdateMap(Volume * vol, Vector3DInt loc, float rangeminX, float rangeminY, float rangeminZ, float rangemaxX, float rangemaxY, float rangemaxZ);
+			
 			void SetCorrelationScores(vector<PDBAtom>& patoms, Volume * vol, RadialProfileType type, float resolution, float deltaAngleRadians);
 			void SetSkeletonScores(vector<PDBAtom> & patoms, Volume * vol, NonManifoldMesh_Annotated * skeleton, float resolution);
 			void SetGeometryScores(vector<PDBAtom> & patoms, vector<Vector3DInt> atomVolumePositions, Volume * vol, float resolution, float threshold);
 			vector< vector<float> > GetAtomDistances(vector<PDBAtom> patoms);
 			vector< vector<Vector3DInt> > GetNeighborhoodVoxels(vector<PDBAtom> patoms, vector<Vector3DInt> atomVolumePositions, Volume * vol, float threshold);
 			vector<float> GetLocalDirectionalityScores(vector<PDBAtom> patoms, vector<Vector3DInt> atomVolumePositions, Volume * vol);
-		public:
+			
+		private:
+			void UpdateMap(Volume * vol, Vector3DInt loc, float rangeminX, float rangeminY, float rangeminZ, float rangemaxX, float rangemaxY, float rangemaxZ);
+
 			//Ross Coleman: modified from EMAN1 Cylinder.C by Wen Jiang
 			float RadialProfile(float r, RadialProfileType type); //r in angstroms
-		private:
 			float RadialProfileGaussian(float r); // r in angstroms
 			float RadialProfileGaussianDip(float r);// r in angstroms
 			float RadialProfilePolynomial(float r);// r in angstroms
-		public:
 			Volume* GetTemplateCylinder(int xsize, int ysize, int zsize, RadialProfileType type = POLYNOMIAL, float len = 16.2,
 												float apix_x = 1, float apix_y = 1, float apix_z = 1,
 												double axis_vector_x=0, double axis_vector_y=1, double axis_vector_z=0);
@@ -152,7 +158,6 @@ namespace wustl_mm {
 			Volume * GetTemplateHelix(double length, float apix, float resolution, int mapSize);
 			Volume * HelixCorrelation(Volume* map_vol, RadialProfileType type = POLYNOMIAL, float length = 16.2,
 									  float deltaAngleRadians = 5*PI/180, Volume* az_vol = NULL, Volume* alt_vol = NULL);
-		private:
 			void NormalizeEdgeMean(Volume* vol);
 			void ApplyPolynomialProfileToHelix(Volume * in, float lengthAngstroms, int z0=-1);
 
