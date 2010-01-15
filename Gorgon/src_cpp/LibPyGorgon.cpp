@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.65  2010/01/14 23:34:25  ssa1
+//   Allowing the deletion of SSEs from the SSEBuilder window
+//
 //   Revision 1.64  2010/01/10 05:31:43  colemanr
 //   PDBAtoms now store their correlation, skeleton, and geometry scores. Changing the weighting for these three scores in the GUI now changes the total score for each pseudoatom.
 //
@@ -165,13 +168,16 @@
 #include <GraphMatch/LinkedNode.h>
 #include <GraphMatch/PDBBond.h>
 #include <GraphMatch/SEQReader.h>
+#include <ProteinMorph/SSEHunter.h>
 
 #include <boost/python.hpp>
+#include <boost/python/enum.hpp>
 
 using namespace boost::python;
 using namespace wustl_mm::Visualization;
 using namespace wustl_mm::GraphMatch;
 using namespace wustl_mm::SkeletonMaker;
+using namespace wustl_mm::Protein_Morph;
 
 BOOST_PYTHON_MODULE(libpyGORGON)
 {
@@ -592,6 +598,23 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("loadFile", &SEQReader::ReadSeqFileData)
 		.staticmethod("loadFile")
 	;
+
+	enum_<RadialProfileType>("RadialProfileType")
+		.value("gaussian", GAUSSIAN)
+		.value("gaussian dip", GAUSSIAN_DIP)
+		.value("polynomial", POLYNOMIAL)
+		.export_values()
+	;
+	
+	class_<SSEHunter>("SSEHunter")
+		.def("setCorrelationScores", &SSEHunter::SetCorrelationScores)
+		.def("setSkeletonScores", &SSEHunter::SetSkeletonScores)
+		.def("setGeometryScores", &SSEHunter::SetGeometryScores)
+		.def("getAtomDistances", &SSEHunter::GetAtomDistances)
+		.def("getNeighborhoodVoxels", &SSEHunter::GetNeighborhoodVoxels)
+		.def("getLocalDirectionalityScores", &SSEHunter::GetLocalDirectionalityScores)
+	;
+
 }
 
 
