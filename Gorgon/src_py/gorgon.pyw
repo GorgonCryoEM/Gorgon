@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.22  2010/01/11 22:40:45  ssa1
+#   Changing version to 2.0.1b
+#
 #   Revision 1.21  2010/01/11 16:20:12  ssa1
 #   Not checking for newer versions if this is a nightly build release
 #
@@ -75,6 +78,14 @@ import time
 if __name__ == '__main__':
     gorgonVersion = '2.0.1b'
     app = QtGui.QApplication(sys.argv)    
+    #setting different font sizes for different OSs
+    if(sys.platform == 'win32'):
+        pass
+    elif(sys.platform == 'darwin'):
+        app.setStyleSheet("* { font-size: 10px }")
+    else :
+        app.setStyleSheet("* { font-size: 10px }")
+        
     pixmap = QtGui.QPixmap(pathname + "/splash.png")
     splash = QtGui.QSplashScreen(pixmap, QtCore.Qt.WindowStaysOnTopHint)
     splash.setMask(pixmap.mask())
