@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.67  2010/01/16 20:05:16  colemanr
+//   moving the total score calculation of SSEHunter to Python
+//
 //   Revision 1.66  2010/01/15 02:09:50  colemanr
 //   wrapping some SSEHunter functions
 //
@@ -235,6 +238,9 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("getColorG", &PDBAtom::GetColorG)
 		.def("getColorB", &PDBAtom::GetColorB)
 		.def("getSelected", &PDBAtom::GetSelected)
+		.def("getCorrelationScore", &PDBAtom::GetCorrelationScore)
+		.def("getSkeletonScore", &PDBAtom::GetSkeletonScore)
+		.def("getGeometryScore", &PDBAtom::GetGeometryScore)
 		.def("getHashKey", &PDBAtom::GetHashKey)
 		.def("getVisible", &PDBAtom::GetVisible)
 		.def("constructHashKey", &PDBAtom::ConstructHashKey)
@@ -254,6 +260,9 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("setColor", &PDBAtom::SetColor)
 		.def("setSelected", &PDBAtom::SetSelected)
 		.def("setVisible", &PDBAtom::SetVisible)
+		.def("setCorrelationScore", &PDBAtom::SetCorrelationScore)
+		.def("setSkeletonScore", &PDBAtom::SetSkeletonScore)
+		.def("setGeometryScore", &PDBAtom::SetGeometryScore)
 	;
 
 	class_<PDBBond>("PDBBond", init<>())
@@ -625,7 +634,7 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 	;
 	
 	class_<SSEHunter>("SSEHunter")
-		.def("getPseudoAtoms", &SSEHunter::GetPseudoAtoms)
+		.def("createPseudoAtoms", &SSEHunter::CreatePseudoAtoms)
 		.def("getNumberOfPseudoAtoms", &SSEHunter::GetNumberOfPseudoAtoms)
 		.def("getPseudoAtom", &SSEHunter::GetPseudoAtom, return_value_policy<reference_existing_object>())
 		.def("setCorrelationScores", &SSEHunter::SetCorrelationScores)
