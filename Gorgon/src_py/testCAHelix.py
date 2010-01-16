@@ -11,7 +11,7 @@ from seq_model.findHelixCalphas import helixEndpointsToCAlphaPositions
 app = QtGui.QApplication(sys.argv)
 
 # Create Gorgon's main window and get a handle on the CAlpha Viewer
-window = MainWindowForm()
+window = MainWindowForm("2.0")
 window.addModule(WindowManager(window))
 window.showMaximized()
 cAlphaViewer=window.viewers['calpha']
