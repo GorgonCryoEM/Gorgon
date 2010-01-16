@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.13  2010/01/16 20:05:16  colemanr
+#   moving the total score calculation of SSEHunter to Python
+#
 #   Revision 1.12  2010/01/14 23:34:25  ssa1
 #   Allowing the deletion of SSEs from the SSEBuilder window
 #
@@ -51,7 +54,7 @@
 from PyQt4 import QtCore, QtGui
 from ui_dialog_volume_sse_builder import Ui_DialogVolumeSSEBuilder
 from base_dock_widget import BaseDockWidget
-from libpyGORGON import SSEHunter, RadialProfileType
+from sse_hunter_engine import SSEHunterEngine
 from math import pi
 
 class VolumeSSEBuilderForm(BaseDockWidget, Ui_DialogVolumeSSEBuilder):
@@ -138,31 +141,32 @@ class VolumeSSEBuilderForm(BaseDockWidget, Ui_DialogVolumeSSEBuilder):
         self.bringToFront()
 
     def runSSEHunter(self, result):
+        self.calphaViewer = self.app.viewers["calpha"]
+        self.sseViewer = self.app.viewers["sse"]
         threshold = self.doubleSpinBoxThreshold.value()
         resolution = self.doubleSpinBoxResolution.value()
         correlationWeight = self.doubleSpinBoxCorrelation.value()
         skeletonWeight = self.doubleSpinBoxSkeleton.value()
         geometryWeight = self.doubleSpinBoxGeometry.value()
-        vol = self.app.viewers["volume"].renderer.getVolume()
-        self.calphaViewer = self.app.viewers["calpha"]
-        self.sseViewer = self.app.viewers["sse"]
-        skel = self.app.viewers["skeleton"].renderer.getMesh()
-        sseh = SSEHunter()
-        sseh.getPseudoAtoms(vol, resolution, threshold) #kind of slow
-        #self.calphaViewer.runSSEHunter( threshold, resolution, correlationWeight, skeletonWeight, geometryWeight )
-        sseh.setSkeletonScores(vol, skel, resolution) #fast
-        sseh.setGeometryScores(vol, resolution, threshold) #fast
-        sseh.setCorrelationScores(vol, RadialProfileType.gaussianDip, resolution, 5*pi/180) #slow
-        for i in range(sseh.getNumberOfPseudoAtoms()):
-            pseudoatom = sseh.getPseudoAtom(i)
-            self.calphaViewer.renderer.addAtom(pseudoatom)
 
-        self.calphaViewer.updateTotalScoreSSEHunterAtoms(correlationWeight, skeletonWeight, geometryWeight)
+
+        #self.calphaViewer.runSSEHunter( threshold, resolution, correlationWeight, skeletonWeight, geometryWeight )
+
+
+        vol = self.app.viewers["volume"].renderer.getVolume()
+        skel = self.app.viewers["skeleton"].renderer.getMesh()
+        sseh = SSEHunterEngine(vol, skel, resolution, threshold)
+        patoms = sseh.getScoredAtoms(correlationWeight, skeletonWeight, geometryWeight)
+        for pseudoatom in patoms:
+            self.calphaViewer.renderer.addAtom(pseudoatom)
+        
+        self.calphaViewer.renderer.colorSSEHunterAtoms()
         self.calphaViewer.dirty = False
         self.calphaViewer.loaded = True
         self.calphaViewer.emitModelLoadedPreDraw()
         self.calphaViewer.emitModelLoaded()
         self.calphaViewer.emitViewerSetCenter()
+        
 		
     def updateTotalScoreSSEHunterAtoms(self):
         self.calphaViewer.updateTotalScoreSSEHunterAtoms( self.doubleSpinBoxCorrelation.value(), self.doubleSpinBoxSkeleton.value(), 
