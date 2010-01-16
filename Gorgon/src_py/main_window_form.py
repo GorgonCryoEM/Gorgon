@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.18  2010/01/04 22:14:23  ssa1
+#   Adding update notifier plugin to check for newer versions of gorgon
+#
 #   Revision 1.17  2009/12/24 07:25:07  ssa1
 #   Refactoring child window behavior.. Using base classes to encapsulate common behavior
 #
@@ -91,7 +94,7 @@ class MainWindowForm(QtGui.QMainWindow):
         exitAct = QtGui.QAction(self.tr("E&xit"), self)
         exitAct.setShortcut(self.tr("Ctrl+Q"))
         exitAct.setStatusTip(self.tr("Exit the application"))        
-        self.connect(exitAct, QtCore.SIGNAL("triggered()"), QtGui.qApp.closeAllWindows)
+        self.connect(exitAct, QtCore.SIGNAL("triggered()"), self.exitApplication)
         self.actions.addAction("exit_Application", exitAct)
                        
     def createMenus(self):
@@ -131,6 +134,19 @@ class MainWindowForm(QtGui.QMainWindow):
         for widget in self.dockWidgets:
             isWidget = isWidget or (widget == dockWidget)
         return isWidget
+    
+    def exitApplication(self):
+        QtGui.qApp.closeAllWindows()
+            
+    def closeEvent(self, event):
+        exitText = "This will close Gorgon, you will lose all unsaved data.\nAre you sure?"
+        
+        if (QtGui.QMessageBox.warning (self, self.tr("Exit Gorgon?"), self.tr(exitText), QtGui.QMessageBox.Yes | QtGui.QMessageBox.Cancel) == QtGui.QMessageBox.Yes) :
+            event.accept()
+        else :
+            event.ignore()
+
+
     
     def dockLocationChanged(self, widget):
         def dockLocationChanged_widget(area):
