@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.20  2009/12/24 05:09:30  ssa1
+#   Refactoring child window behavior.. Using base classes to encapsulate common behavior
+#
 #   Revision 1.19  2009/07/01 22:00:27  ssa1
 #   Centering the volume cropped using a radius around the point selected by the atom selection tool.
 #
@@ -106,12 +109,24 @@ class VolumeSurfaceEditorForm(BaseDockWidget):
             if(self.ui.radioButtonIsoSurface.isChecked()):
                 self.ui.labelIsoLevel.setText("Density Threshold:");
                 self.viewer.renderer.setViewingType(self.ViewingTypeIsoSurface)
+                self.viewer.visualizationOptions.ui.radioButtonFlat.setEnabled(True)
+                self.viewer.visualizationOptions.ui.radioButtonWireframe.setEnabled(True)
+
             elif self.ui.radioButtonCrossSection.isChecked():
                 self.ui.labelIsoLevel.setText("Minimum Density:");
                 self.viewer.renderer.setViewingType(self.ViewingTypeCrossSection)
+                self.viewer.visualizationOptions.ui.radioButtonFlat.setEnabled(False)
+                self.viewer.visualizationOptions.ui.radioButtonWireframe.setEnabled(False)
+                self.viewer.visualizationOptions.ui.radioButtonSmooth.setChecked(True)
+
             elif self.ui.radioButtonSolid.isChecked():
                 self.ui.labelIsoLevel.setText("Minimum Density:");
                 self.viewer.renderer.setViewingType(self.ViewingTypeSolid)
+                
+                self.viewer.visualizationOptions.ui.radioButtonFlat.setEnabled(False)
+                self.viewer.visualizationOptions.ui.radioButtonWireframe.setEnabled(False)
+                self.viewer.visualizationOptions.ui.radioButtonSmooth.setChecked(True)
+                
             print "setViewingType", QtCore.QThread.currentThreadId()
             self.viewer.emitModelChanged()
     
