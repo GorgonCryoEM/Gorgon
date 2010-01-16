@@ -14,7 +14,7 @@ if __name__ == '__main__':
     
     app = QtGui.QApplication(sys.argv)
     
-    window = MainWindowForm()
+    window = MainWindowForm("2.0")
     window.addModule(WindowManager(window))
     window.showMaximized()
     

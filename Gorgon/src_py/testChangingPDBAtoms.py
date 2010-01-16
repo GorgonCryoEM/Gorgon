@@ -6,7 +6,7 @@ from window_manager import WindowManager
 from main_window_form import MainWindowForm
 
 app = QtGui.QApplication(sys.argv)
-window = MainWindowForm()
+window = MainWindowForm("2.0")
 window.addModule(WindowManager(window))
 window.showMaximized()
 cAlphaViewer=window.viewers['calpha']
