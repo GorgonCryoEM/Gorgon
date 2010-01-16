@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.20  2010/01/16 20:05:15  colemanr
+//   moving the total score calculation of SSEHunter to Python
+//
 //   Revision 1.19  2010/01/15 02:12:57  colemanr
 //   changing public/private for functions that will be wrapped in Python
 //
@@ -129,18 +132,20 @@ namespace wustl_mm {
 			SSEHunter();
 			~SSEHunter();
 			
+			//TODO: Finish coding the geometry score portion of this function
 			map<unsigned long long, PDBAtom> GetScoredAtoms(Volume * vol, NonManifoldMesh_Annotated * skeleton, float resolution, float threshold, 
 															float correlationCoeff, float skeletonCoeff, float geometryCoeff,
 															RadialProfileType type = GAUSSIAN_DIP, float deltaAngleRadians=5*PI/180);
 
 			
 			
-			void GetPseudoAtoms(Volume * vol, float resolution, float threshold);
+			void CreatePseudoAtoms(Volume * vol, float resolution, float threshold);
 			int GetNumberOfPseudoAtoms();
 			PDBAtom& GetPseudoAtom(int i);
 			
 			void SetCorrelationScores(Volume * vol, RadialProfileType type, float resolution, float deltaAngleRadians);
 			void SetSkeletonScores(Volume * vol, NonManifoldMesh_Annotated * skeleton, float resolution);
+			//TODO: Finish coding SetGeometryScores
 			void SetGeometryScores(Volume * vol, float resolution, float threshold);
 			vector< vector<float> > GetAtomDistances();
 			vector< vector<Vector3DInt> > GetNeighborhoodVoxels(Volume * vol, float threshold);
@@ -172,7 +177,7 @@ namespace wustl_mm {
 			
 			
 			vector<Vector3DInt> atomVolumePositions; // holds the i, j, k indices that give the voxel position of the pseudoatoms
-			vector<PDBAtom> patoms;
+			vector<PDBAtom> patoms; // pseudoatoms
 
 		};
 		
@@ -187,7 +192,7 @@ namespace wustl_mm {
 																   float correlationCoeff, float skeletonCoeff, float geometryCoeff, 
 																   RadialProfileType type, float deltaAngleRadians) {
 			cout << "GetScoredAtoms()\n";
-			GetPseudoAtoms(vol, resolution, threshold);
+			CreatePseudoAtoms(vol, resolution, threshold);
 			SetSkeletonScores(vol, skeleton, resolution);
 			SetGeometryScores(vol, resolution, threshold);
 			SetCorrelationScores(vol, type, resolution, deltaAngleRadians);
@@ -202,9 +207,9 @@ namespace wustl_mm {
 		}
 		
 		// SSEHunter::GetPseudoAtoms 
-		
 		// threshold: the minimum density value that will be represented with a pseudoatom
-		void SSEHunter::GetPseudoAtoms(Volume * vol, float resolution, float threshold) {
+		void SSEHunter::CreatePseudoAtoms(Volume * vol, float resolution, float threshold) {
+			cout << "CreatePseudoAtoms()" << endl;
 			Volume * tempVol = new Volume(vol->getSizeX(), vol->getSizeY(), vol->getSizeZ(), 0, 0, 0, vol);
 			patoms.clear();
 			atomVolumePositions.clear();
@@ -234,8 +239,9 @@ namespace wustl_mm {
 				UpdateMap(tempVol, Vector3DInt(mX, mY, mZ), rangeminX, rangeminY, rangeminZ, rangemaxX, rangemaxY, rangemaxZ);
 				maxVal = tempVol->getMaxValuePosition(mX, mY, mZ);
 				i++;
-			}
 				
+			}
+			cout << "CreatePseudoAtoms() is finished" << endl;	
 		}
 		
 		// SSEHunter::UpdateMap
@@ -405,6 +411,7 @@ namespace wustl_mm {
 			return aspectRatios;
 		}	
 
+		//TODO: finish this function
 		void SSEHunter::SetGeometryScores(Volume * vol, float resolution, float threshold) {
 			cout << "AddGeometryWeights()\n";
 			vector< vector<float> > distances = GetAtomDistances();
