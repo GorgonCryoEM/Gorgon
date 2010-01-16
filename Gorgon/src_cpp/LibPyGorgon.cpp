@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.66  2010/01/15 02:09:50  colemanr
+//   wrapping some SSEHunter functions
+//
 //   Revision 1.65  2010/01/14 23:34:25  ssa1
 //   Allowing the deletion of SSEs from the SSEBuilder window
 //
@@ -179,8 +182,10 @@ using namespace wustl_mm::GraphMatch;
 using namespace wustl_mm::SkeletonMaker;
 using namespace wustl_mm::Protein_Morph;
 
+
 BOOST_PYTHON_MODULE(libpyGORGON)
 {
+	
 	class_<Vector3DFloat>("Vector3DFloat", init<float, float, float>())
 		.def("x", &Vector3DFloat::X)
 		.def("y", &Vector3DFloat::Y)
@@ -197,6 +202,19 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 
 	;
 
+	class_<Vector3DInt>("Vector3DInt", init<int, int, int>())
+		.def("x", &Vector3DInt::X)
+		.def("y", &Vector3DInt::Y)
+		.def("z", &Vector3DInt::Z)
+		.def("length", &Vector3DInt::Length)
+		.def(self * double())
+		.def(self + self)
+		.def(self - self)
+		.def(self ^ self)
+		.def(self += self)
+		.def(self -= self)
+	;
+	
 	class_<PDBAtom>("PDBAtom", init<string, char, unsigned int, string>())
 		.def("getPDBId", &PDBAtom::GetPDBId)
 		.def("getSerial", &PDBAtom::GetSerial)
@@ -601,12 +619,15 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 
 	enum_<RadialProfileType>("RadialProfileType")
 		.value("gaussian", GAUSSIAN)
-		.value("gaussian dip", GAUSSIAN_DIP)
+		.value("gaussianDip", GAUSSIAN_DIP)
 		.value("polynomial", POLYNOMIAL)
 		.export_values()
 	;
 	
 	class_<SSEHunter>("SSEHunter")
+		.def("getPseudoAtoms", &SSEHunter::GetPseudoAtoms)
+		.def("getNumberOfPseudoAtoms", &SSEHunter::GetNumberOfPseudoAtoms)
+		.def("getPseudoAtom", &SSEHunter::GetPseudoAtom, return_value_policy<reference_existing_object>())
 		.def("setCorrelationScores", &SSEHunter::SetCorrelationScores)
 		.def("setSkeletonScores", &SSEHunter::SetSkeletonScores)
 		.def("setGeometryScores", &SSEHunter::SetGeometryScores)
@@ -614,7 +635,8 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("getNeighborhoodVoxels", &SSEHunter::GetNeighborhoodVoxels)
 		.def("getLocalDirectionalityScores", &SSEHunter::GetLocalDirectionalityScores)
 	;
-
+	
+	
 }
 
 
