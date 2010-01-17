@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.7  2008/09/03 19:48:19  ssa1
+#   Maximizing performance of volume visualization by minimizing method call count
+#
 #   Revision 1.6  2008/06/18 18:15:41  ssa1
 #   Adding in CVS meta data
 #
@@ -84,4 +87,4 @@ class DelayedFilter(QtGui.QWidget):
         
     def emitValueChanged(self):
         print "emitValueChanged", QtCore.QThread.currentThreadId()
-        self.emit(QtCore.SIGNAL("valueChanged(int)"), self.value)
+        self.emit(QtCore.SIGNAL("valueChanged(float)"), self.value)

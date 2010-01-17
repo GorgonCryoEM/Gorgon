@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.28  2009/12/24 07:25:07  ssa1
+#   Refactoring child window behavior.. Using base classes to encapsulate common behavior
+#
 #   Revision 1.27  2009/12/22 01:02:24  schuhs
 #   Adding support for beta sheet matching to the SSE correspondence search algorithm
 #
@@ -196,10 +199,10 @@ class VolumeViewer(BaseViewer):
     
     def processMouseWheel(self, amount, event):
         if(event.modifiers() & QtCore.Qt.CTRL) :
-            range = self.surfaceEditor.ui.horizontalSliderIsoLevel.maximum() - self.surfaceEditor.ui.horizontalSliderIsoLevel.minimum()
-            delta = round(range * amount / 100.0)
+            range = self.surfaceEditor.ui.histogram.maximumValue() - self.surfaceEditor.ui.histogram.minimumValue()
+            delta = range * amount / 100.0
             
-            self.surfaceEditor.ui.horizontalSliderIsoLevel.setValue(self.surfaceEditor.ui.horizontalSliderIsoLevel.value() - delta)
+            self.surfaceEditor.ui.histogram.setLowerValue(self.surfaceEditor.ui.histogram.lowerValue() - delta)
     
     def setCenter(self, center):
         [xx, yy, zz] = self.worldToObjectCoordinates(center)
@@ -212,8 +215,8 @@ class VolumeViewer(BaseViewer):
                           
     def getSessionInfo(self, sessionManager):
         info = BaseViewer.getSessionInfo(self, sessionManager)  
-        info.extend(sessionManager.getRemarkLines(self.shortTitle, "ISO_LEVEL", self.surfaceEditor.ui.horizontalSliderIsoLevel.value()))
-        info.extend(sessionManager.getRemarkLines(self.shortTitle, "MAX_ISO_LEVEL", self.surfaceEditor.ui.horizontalSliderIsoLevelMax.value()))
+        info.extend(sessionManager.getRemarkLines(self.shortTitle, "ISO_LEVEL", self.surfaceEditor.ui.histogram.lowerValue()))
+        info.extend(sessionManager.getRemarkLines(self.shortTitle, "MAX_ISO_LEVEL", self.surfaceEditor.ui.histogram.higherValue()))
         info.extend(sessionManager.getRemarkLines(self.shortTitle, "SAMPLING_INTERVAL", self.surfaceEditor.ui.horizontalSliderSampling.value()))
         info.extend(sessionManager.getRemarkLines(self.shortTitle, "DISPLAY_RADIUS", self.surfaceEditor.ui.horizontalSliderDisplayRadius.value()))
         info.extend(sessionManager.getRemarkLines(self.shortTitle, "VIEWING_TYPE_SURFACE", self.surfaceEditor.ui.radioButtonIsoSurface.isChecked()))
@@ -226,10 +229,10 @@ class VolumeViewer(BaseViewer):
         BaseViewer.loadSessionInfo(self, sessionManager, sessionProperties)
                
         isoLevel = sessionManager.getProperty(sessionProperties, self.shortTitle, "ISO_LEVEL")
-        self.surfaceEditor.ui.horizontalSliderIsoLevel.setValue(isoLevel)
+        self.surfaceEditor.ui.histogram.setLowerValue(isoLevel)
         
         maxIsoLevel = sessionManager.getProperty(sessionProperties, self.shortTitle, "MAX_ISO_LEVEL")
-        self.surfaceEditor.ui.horizontalSliderIsoLevelMax.setValue(maxIsoLevel)
+        self.surfaceEditor.ui.histogram.setHigherValue(maxIsoLevel)
         
         samplingInterval = sessionManager.getProperty(sessionProperties, self.shortTitle, "SAMPLING_INTERVAL")
         self.surfaceEditor.ui.horizontalSliderSampling.setValue(samplingInterval)
