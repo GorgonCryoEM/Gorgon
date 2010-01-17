@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.33  2010/01/14 23:52:12  ssa1
+#   Gracefully catching exceptions when loading invalid files
+#
 #   Revision 1.32  2009/12/24 21:53:49  ssa1
 #   Giving back color control to the SSE Visualization options form when SSE Correspondence engine is not running (Bug ID: 58)
 #
@@ -231,13 +234,13 @@ class SSEViewer(BaseViewer):
         BaseViewer.unloadData(self)
           
           
-    def makeSheetSurfaces(self, offsetx, offsety, offsetz):
+    def makeSheetSurfaces(self, offsetx, offsety, offsetz, scalex, scaley, scalez):
         # rebuild the set of sheets to render
         numHelicesSheets = self.correspondenceEngine.getSkeletonSSECount()
         self.renderer.unloadGraphSSEs()
         for i in range(numHelicesSheets):
             if self.correspondenceEngine.getSkeletonSSE(i).isSheet():
-                self.renderer.loadGraphSSE(i, self.correspondenceEngine.getSkeletonSSE(i), offsetx, offsety, offsetz)
+                self.renderer.loadGraphSSE(i, self.correspondenceEngine.getSkeletonSSE(i), offsetx, offsety, offsetz, scalex, scaley, scalez)
 
                
     def createActions(self):
