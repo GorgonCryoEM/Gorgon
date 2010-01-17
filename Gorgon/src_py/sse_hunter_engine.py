@@ -13,7 +13,7 @@ class SSEHunterEngine:
 	def getScoredAtoms(self, correlationWeight, skeletonWeight, geometryWeight):
 		self.createPseudoAtoms()
 		self.setSkeletonScores()
-		self.setCorrelationScores(None, 30*pi/180)
+		self.setCorrelationScores()
 		self.setGeometryScores()
 		pseudoatoms = []
 		for i in range(self.getNumberOfPseudoAtoms()):
