@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.68  2010/01/16 22:30:45  colemanr
+//   score accessor functions for PDBAtoms
+//
 //   Revision 1.67  2010/01/16 20:05:16  colemanr
 //   moving the total score calculation of SSEHunter to Python
 //
@@ -274,7 +277,18 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("setSelected", &PDBBond::SetSelected)
 	;
 
+	double (Volume::*getDataAt1)(int, int, int)	= &Volume::getDataAt;
+	
 	class_<Volume>("Volume", init<int,int,int>())
+		.def("getSizeX", &Volume::getSizeX)
+		.def("getSizeY", &Volume::getSizeY)
+		.def("getSizeZ", &Volume::getSizeZ)
+		.def("getMin", &Volume::getMin)
+		.def("getMax", &Volume::getMax)
+		.def("getDataAt", getDataAt1)
+		.def("buildHistogram", &Volume::buildHistogram)
+		.def("getHistogramBinValue", &Volume::getHistogramBinValue)
+
 	;
 
 	class_<NonManifoldMesh_Annotated>("NonManifoldMesh_Annotated", init<>())
