@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.39  2010/01/14 23:34:25  ssa1
+//   Allowing the deletion of SSEs from the SSEBuilder window
+//
 //   Revision 1.38  2009/12/28 17:42:27  ssa1
 //   Fixing SSEBuilder bug when adding sheets
 //
@@ -116,7 +119,7 @@ namespace wustl_mm {
 			void LoadHelixFile(string fileName);			
 			void LoadSheetFile(string fileName);			
 			void Unload();
-			void LoadGraphSSE(int index, GeometricShape* sse, float offsetx, float offsety, float offsetz);
+			void LoadGraphSSE(int index, GeometricShape* sse, float offsetx, float offsety, float offsetz, float scalex, float scaley, float scalez);
 			void UnloadGraphSSEs();
 			void SetHelixColor(int index, float r, float g, float b, float a);
 			void SetSheetColor(int index, float r, float g, float b, float a);
@@ -565,7 +568,7 @@ namespace wustl_mm {
 			UpdateBoundingBox();
 		}
 
-		void SSERenderer::LoadGraphSSE(int index, GeometricShape* sse, float offsetx, float offsety, float offsetz) {
+		void SSERenderer::LoadGraphSSE(int index, GeometricShape* sse, float offsetx, float offsety, float offsetz, float scalex, float scaley, float scalez) {
 			// make a volume from the internal cells
 			int xmin=MAXINT, xmax=-MAXINT, ymin=MAXINT, ymax=-MAXINT, zmin=MAXINT, zmax=-MAXINT;
 			for (unsigned int i = 0; i < sse->internalCells.size(); i++) {
@@ -590,7 +593,11 @@ namespace wustl_mm {
 			delete vol;
 			// add offset to all points in new mesh
 			for (unsigned int i = 0; i < thisSheetMesh->vertices.size(); i++) {
-				thisSheetMesh->vertices[i].position = thisSheetMesh->vertices[i].position + Vector3DFloat(xmin, ymin, zmin) + Vector3DFloat(offsetx, offsety, offsetz);
+				Vector3DFloat newpos = thisSheetMesh->vertices[i].position;
+				newpos.values[0] *= scalex;
+				newpos.values[1] *= scaley;
+				newpos.values[2] *= scalez;
+				thisSheetMesh->vertices[i].position = newpos + Vector3DFloat(xmin * scalex, ymin * scaley, zmin * scalez) + Vector3DFloat(offsetx, offsety, offsetz);
 			}
 
 			// merge this mesh with the mesh containing other sheets

@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.46  2010/01/04 20:38:50  ssa1
+#   Removing dependancy on SSE files for helix length calculation.
+#
 #   Revision 1.45  2009/12/27 00:31:04  ssa1
 #   Fixing weird PyOpenGL bug when working with new PyQT4, and parent window set.
 #
@@ -351,7 +354,7 @@ class SSEHelixCorrespondenceFinderForm(BaseDockWidget):
             self.viewer.correspondenceLibrary.correspondenceList = self.populateEmptyResults(self.viewer.correspondenceLibrary)
             print "correspondenceList has length " + str(len(self.viewer.correspondenceLibrary.correspondenceList))
             self.populateComboBox(self.viewer.correspondenceLibrary)
-            self.viewer.makeSheetSurfaces(self.app.viewers['skeleton'].renderer.getOriginX(), self.app.viewers['skeleton'].renderer.getOriginY(), self.app.viewers['skeleton'].renderer.getOriginZ())
+            self.viewer.makeSheetSurfaces(self.app.viewers['skeleton'].renderer.getOriginX(), self.app.viewers['skeleton'].renderer.getOriginY(), self.app.viewers['skeleton'].renderer.getOriginZ(), self.app.viewers['skeleton'].renderer.getSpacingX(), self.app.viewers['skeleton'].renderer.getSpacingY(), self.app.viewers['skeleton'].renderer.getSpacingZ())
             if(allLoaded):
                 self.ui.tabWidget.setCurrentIndex(1)         
         else:
@@ -1195,8 +1198,7 @@ class SSEHelixCorrespondenceFinderForm(BaseDockWidget):
         print self.ui.comboBoxCorrespondences.currentIndex()
         self.setConstants()
         self.checkOk()
-        #self.viewer.makeSheetSurfaces()
-        self.viewer.makeSheetSurfaces(self.app.viewers['skeleton'].renderer.getOriginX(), self.app.viewers['skeleton'].renderer.getOriginY(), self.app.viewers['skeleton'].renderer.getOriginZ())
+        self.viewer.makeSheetSurfaces(self.app.viewers['skeleton'].renderer.getOriginX(), self.app.viewers['skeleton'].renderer.getOriginY(), self.app.viewers['skeleton'].renderer.getOriginZ(), self.app.viewers['skeleton'].renderer.getSpacingX(), self.app.viewers['skeleton'].renderer.getSpacingY(), self.app.viewers['skeleton'].renderer.getSpacingZ())
         self.viewer.emitModelChanged()
         print "correspondence index after rebuilding is "
         print self.ui.comboBoxCorrespondences.currentIndex()
