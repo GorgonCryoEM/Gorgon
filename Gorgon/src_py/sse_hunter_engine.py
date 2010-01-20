@@ -12,14 +12,14 @@ class SSEHunterEngine:
 		
 	def getScoredAtoms(self, correlationWeight, skeletonWeight, geometryWeight):
 		self.createPseudoAtoms()
+		self.setGeometryScores()
 		self.setSkeletonScores()
 		self.setCorrelationScores()
-		self.setGeometryScores()
 		pseudoatoms = []
 		for i in range(self.getNumberOfPseudoAtoms()):
 			pseudoatom = self.getPseudoAtom(i)
 			score = correlationWeight*pseudoatom.getCorrelationScore()
-			score += skeletonWeight*pseudoatom.getSkeletonScore()
+			score = skeletonWeight*pseudoatom.getSkeletonScore()
 			score += geometryWeight*pseudoatom.getGeometryScore()
 			pseudoatom.setTempFactor(score)
 			pseudoatoms.append(pseudoatom)
@@ -46,7 +46,17 @@ class SSEHunterEngine:
 		self.sseh.setSkeletonScores(self.volume, self.skeleton, self.resolution)
 		
 	def setGeometryScores(self):
-		self.sseh.setGeometryScores(self.volume, self.resolution, self.threshold)
+		#self.sseh.setGeometryScores(self.volume, self.resolution, self.threshold)
+		localDirectionalityScores = self.getLocalDirectionalityScores()
+		numPAtoms = self.getNumberOfPseudoAtoms()
+		assert len(localDirectionalityScores) == numPAtoms
+		for i in range(numPAtoms):
+			pseudoatom = self.getPseudoAtom(i)
+			score = localDirectionalityScores[i]
+			#score += ???
+			#socre += ???
+			pseudoatom.setGeometryScore(score)
+		
 		
 	def getAtomDistances(self):
 		return self.sseh.getAtomDistances()
