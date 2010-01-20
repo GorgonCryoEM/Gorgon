@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.69  2010/01/17 18:34:59  ssa1
+//   Histogram for density visualization
+//
 //   Revision 1.68  2010/01/16 22:30:45  colemanr
 //   score accessor functions for PDBAtoms
 //
@@ -178,9 +181,9 @@
 #include <GraphMatch/PDBBond.h>
 #include <GraphMatch/SEQReader.h>
 #include <ProteinMorph/SSEHunter.h>
-
 #include <boost/python.hpp>
 #include <boost/python/enum.hpp>
+
 
 using namespace boost::python;
 using namespace wustl_mm::Visualization;
@@ -189,9 +192,85 @@ using namespace wustl_mm::SkeletonMaker;
 using namespace wustl_mm::Protein_Morph;
 
 
+// ********************** From EMAN2 typeconverter.h ************************************
+#include <boost/python/to_python_converter.hpp>
+namespace python = boost::python;
+
+
+template <class T>
+struct vector_to_python : python::to_python_converter<vector<T>,
+													  vector_to_python<T> >
+{
+	static PyObject* convert(vector<T> const& v)
+	{
+		python::list result;
+
+		for (size_t i = 0; i < v.size(); i++) {
+			result.append(v[i]);
+		}
+
+		return python::incref(python::list(result).ptr());
+	}
+};
+
+template <class T>
+struct vector_from_python
+{
+	vector_from_python()
+	{
+		python::converter::registry::push_back(&convertible, &construct,
+											   python::type_id<vector<T> >());
+	}
+
+	static void* convertible(PyObject* obj_ptr)
+	{
+		if (!(PyList_Check(obj_ptr) || PyTuple_Check(obj_ptr)
+			  || PyIter_Check(obj_ptr)  || PyRange_Check(obj_ptr))) {
+			return 0;
+		}
+
+		return obj_ptr;
+	}
+
+
+	static void construct(PyObject* obj_ptr,
+						  python::converter::rvalue_from_python_stage1_data* data)
+	{
+		void* storage = ((python::converter::rvalue_from_python_storage<vector<T> >*)
+						 data)->storage.bytes;
+		new (storage) vector<T>();
+
+		data->convertible = storage;
+
+		vector<T>& result = *((vector<T>*) storage);
+
+		python::handle<> obj_iter(PyObject_GetIter(obj_ptr));
+
+		while(1) {
+			python::handle<> py_elem_hdl(python::allow_null(PyIter_Next(obj_iter.get())));
+			if (PyErr_Occurred()) {
+				python::throw_error_already_set();
+			}
+
+			if (!py_elem_hdl.get()) {
+				break;
+			}
+
+			python::object py_elem_obj(py_elem_hdl);
+			python::extract<T> elem_proxy(py_elem_obj);
+			result.push_back(elem_proxy());
+		}
+	}
+};
+
+// **************************************************************************************
+
 BOOST_PYTHON_MODULE(libpyGORGON)
 {
 	
+	vector_to_python<float>();
+	vector_from_python<float>();
+
 	class_<Vector3DFloat>("Vector3DFloat", init<float, float, float>())
 		.def("x", &Vector3DFloat::X)
 		.def("y", &Vector3DFloat::Y)
@@ -221,6 +300,8 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def(self -= self)
 	;
 	
+
+
 	class_<PDBAtom>("PDBAtom", init<string, char, unsigned int, string>())
 		.def("getPDBId", &PDBAtom::GetPDBId)
 		.def("getSerial", &PDBAtom::GetSerial)
