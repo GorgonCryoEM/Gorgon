@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.14  2009/12/21 22:03:32  ssa1
+//   Checking in FFTW windows binaries
+//
 //   Revision 1.13  2009/11/30 04:23:44  ssa1
 //   Triangle based A* search for flexible fitting
 //
@@ -231,6 +234,13 @@ int main( int args, char * argv[] ) {
 					printf("Multiple search not implemented for this method \n");
 				} else {
 					corr = finder.GetAStarTriangleBasedFeatureCorrespondence(true, useDirection, false);
+				}
+				break;
+			case 5:
+				if(multipleSearch) {
+					printf("Multiple search not implemented for this method \n");
+				} else {
+					corr = finder.GetAStarTriangleBasedCliqueDistanceFeatureCorrespondence(true, useDirection, true);
 				}
 				break;
 			default:

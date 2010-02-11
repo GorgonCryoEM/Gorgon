@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.11  2009/12/21 22:03:32  ssa1
+//   Checking in FFTW windows binaries
+//
 //   Revision 1.10  2009/12/07 22:35:32  ssa1
 //   A* triangle search using SVD rotations and translations.
 //
@@ -66,6 +69,7 @@ namespace wustl_mm {
 			float GetCost();
 			vector<SSECorrespondenceSearchNode *> GetChildNodes(vector<SSECorrespondenceNode> & allNodes, vector< vector<float> > & pairCompatibility, float featureChangeCoeff, float rigidComponentCoeff, float intraComponentCoeff);
 			vector<SSECorrespondenceSearchNode *> GetChildNodesTriangleApprox(vector<SSECorrespondenceNode> & allNodes, vector<SSECorrespondenceFeature> featureList1, vector<SSECorrespondenceFeature> featureList2, bool getSmallCliques);
+			vector<SSECorrespondenceSearchNode *> GetChildNodesTriangleApproxCliqueDistance(vector<SSECorrespondenceNode> & allNodes, vector<SSECorrespondenceFeature> featureList1, vector<SSECorrespondenceFeature> featureList2, bool getSmallCliques);
 			void PrintSolution(vector<SSECorrespondenceNode> & allNodes, bool useDirection, bool onlyCorr = false);
 			GraphBase<unsigned int, bool> GetChildGraph(vector<SSECorrespondenceNode> & allNodes, vector<unsigned long long> clique);
 			GraphBase<unsigned int, bool> GetOnlySymmetriesGraph(vector<SSECorrespondenceNode> & allNodes, set<unsigned long long> clique, GraphBase<unsigned int, bool> & parentGraph, GraphBase<unsigned int, bool> & rootGraph, map<unsigned int, unsigned int> & parentVertexIndices);
@@ -75,9 +79,12 @@ namespace wustl_mm {
 			vector< set<unsigned long long> > GetSymmetricCliquesTriangleApprox(int maxSizeDifference, vector<SSECorrespondenceNode> & allNodes, bool getSmallCliques);
 
 			float GetCliqueCost(vector<unsigned long long> & clique, float featureChangeCoeff, float rigidComponentCoeff);
+			void GetCliqueDistances(float & dist1, float & dist2, vector<unsigned int> & nodeList1, vector<unsigned int> & nodeList2, vector<SSECorrespondenceNode> & allNodes, vector<SSECorrespondenceFeature> & featureList1, vector<SSECorrespondenceFeature> & featureList2);
+
 			float GetIntraCliqueCost(vector<unsigned int> & nodeList, vector<unsigned int> & parentNodeList, vector< vector<float> > & pairCompatibility, float intraComponentCoeff);
-			float GetIntraCliqueCost2(vector<unsigned int> & nodeList, vector<SSECorrespondenceNode> & allNodes, vector<SSECorrespondenceFeature> featureList1, vector<SSECorrespondenceFeature> featureList2);
-			float GetIntraCliqueCost3(vector<unsigned int> & nodeList, vector<SSECorrespondenceNode> & allNodes, vector<SSECorrespondenceFeature> featureList1, vector<SSECorrespondenceFeature> featureList2);
+			float GetIntraCliqueCost2(vector<unsigned int> & nodeList, vector<SSECorrespondenceNode> & allNodes, vector<SSECorrespondenceFeature> & featureList1, vector<SSECorrespondenceFeature> & featureList2);			
+			float GetIntraCliqueCost3(vector<unsigned int> & nodeList, vector<SSECorrespondenceNode> & allNodes, vector<SSECorrespondenceFeature> & featureList1, vector<SSECorrespondenceFeature> & featureList2);
+			float GetIntraCliqueCost4(vector<unsigned int> & nodeList, vector<SSECorrespondenceNode> & allNodes, vector<SSECorrespondenceFeature> & featureList1, vector<SSECorrespondenceFeature> & featureList2);
 
 			Vector3DFloat GetFeature1Centroid(vector<unsigned int> & nodeList, vector<SSECorrespondenceNode> & allNodes, vector<SSECorrespondenceFeature> featureList1);
 			Vector3DFloat GetFeature2Centroid(vector<unsigned int> & nodeList, vector<SSECorrespondenceNode> & allNodes, vector<SSECorrespondenceFeature> featureList2);
@@ -203,6 +210,35 @@ namespace wustl_mm {
 			return childNodes;
 		}
 
+		vector<SSECorrespondenceSearchNode *> SSECorrespondenceSearchNode::GetChildNodesTriangleApproxCliqueDistance(vector<SSECorrespondenceNode> & allNodes, vector<SSECorrespondenceFeature> featureList1, vector<SSECorrespondenceFeature> featureList2, bool getSmallCliques) {
+			vector<SSECorrespondenceSearchNode *> childNodes;
+
+			if(graph.GetVertexCount() > 0) {
+				vector< set<unsigned long long> > cliques = GetSymmetricCliquesTriangleApprox(2, allNodes, getSmallCliques);
+			
+				vector<unsigned int> childSolutionElement;
+				vector< vector<unsigned int> > childSolution;
+				vector<unsigned long long> clique;			
+				GraphBase<unsigned int, bool> childGraph;
+				float childCost;
+
+				for(unsigned int i = 0; i < cliques.size(); i++) {				
+					clique = graph.VertexSetToVector(cliques[i]);
+					childSolutionElement.clear();
+					for(unsigned int j = 0; j < clique.size(); j++) {
+						childSolutionElement.push_back(graph.GetVertex(clique[j]).GetTag());
+					}
+					childSolution = solution;
+					childSolution.push_back(childSolutionElement);
+					childGraph = GetChildGraph(allNodes, clique);
+					childCost = cost + GetIntraCliqueCost4(childSolutionElement, allNodes, featureList1, featureList2);
+
+					childNodes.push_back(new SSECorrespondenceSearchNode(childGraph, childSolution, childCost));				
+				}
+			}
+			return childNodes;
+		}
+
 		GraphBase<unsigned int, bool> SSECorrespondenceSearchNode::GetChildGraph(vector<SSECorrespondenceNode> & allNodes, vector<unsigned long long> clique) {
 			set<unsigned int> pNodes;
 			set<unsigned int> qNodes;
@@ -311,7 +347,7 @@ namespace wustl_mm {
 		}
 
 
-		float SSECorrespondenceSearchNode::GetIntraCliqueCost2(vector<unsigned int> & nodeList, vector<SSECorrespondenceNode> & allNodes, vector<SSECorrespondenceFeature> featureList1, vector<SSECorrespondenceFeature> featureList2) {
+		float SSECorrespondenceSearchNode::GetIntraCliqueCost2(vector<unsigned int> & nodeList, vector<SSECorrespondenceNode> & allNodes, vector<SSECorrespondenceFeature> & featureList1, vector<SSECorrespondenceFeature> & featureList2) {
 			Vector3DFloat c1, c2, p1, p2;
 			c1 = GetFeature1Centroid(nodeList, allNodes, featureList1);
 			c2 = GetFeature2Centroid(nodeList, allNodes, featureList2);
@@ -333,7 +369,7 @@ namespace wustl_mm {
 			
 		}
 
-		float SSECorrespondenceSearchNode::GetIntraCliqueCost3(vector<unsigned int> & nodeList, vector<SSECorrespondenceNode> & allNodes, vector<SSECorrespondenceFeature> featureList1, vector<SSECorrespondenceFeature> featureList2) {
+		float SSECorrespondenceSearchNode::GetIntraCliqueCost3(vector<unsigned int> & nodeList, vector<SSECorrespondenceNode> & allNodes, vector<SSECorrespondenceFeature> & featureList1, vector<SSECorrespondenceFeature> & featureList2) {
 			MatrixFloat transform = MatrixFloat(4,4);
 			float cost = 0;
 			for(unsigned int i = 0; i < solution.size(); i++) {
@@ -344,6 +380,49 @@ namespace wustl_mm {
 			}
 			return cost;
 		}
+
+		void SSECorrespondenceSearchNode::GetCliqueDistances(float & dist1, float & dist2, vector<unsigned int> & nodeList1, vector<unsigned int> & nodeList2, vector<SSECorrespondenceNode> & allNodes, vector<SSECorrespondenceFeature> & featureList1, vector<SSECorrespondenceFeature> & featureList2) {
+						
+			if((nodeList1.size() == 0) || (nodeList2.size() == 0)) {
+				dist1 = 0;
+				dist2 = 0;				
+			} else {
+				dist1 = MAX_FLOAT;
+				dist2 = MAX_FLOAT;
+				for(unsigned int i = 0; i < nodeList1.size(); i++) {
+					for(unsigned int j = 0; j < nodeList2.size(); j++) {
+						dist1 = min(dist1, (float)(featureList1[allNodes[nodeList1[i]].GetPIndex()].GetCentroid() - featureList1[allNodes[nodeList2[j]].GetPIndex()].GetCentroid()).Length());
+						dist2 = min(dist2, (float)(featureList2[allNodes[nodeList1[i]].GetQIndex()].GetCentroid() - featureList2[allNodes[nodeList2[j]].GetQIndex()].GetCentroid()).Length());
+					}
+				}
+			}
+		}
+
+		float SSECorrespondenceSearchNode::GetIntraCliqueCost4(vector<unsigned int> & nodeList, vector<SSECorrespondenceNode> & allNodes, vector<SSECorrespondenceFeature> & featureList1, vector<SSECorrespondenceFeature> & featureList2) {
+			if(solution.size() == 0) {
+				return 0;
+			}
+
+			float minCost = MAX_FLOAT;
+			float dist1, dist2, cost;
+			float level = (float)solution.size();
+
+			bool found = false;
+			for(unsigned int i = 0; i < solution.size(); i++) {
+				if(solution[i].size() > 0) {
+					found = true;
+					GetCliqueDistances(dist1, dist2, nodeList, solution[i], allNodes, featureList1, featureList2);
+					cost = pow(abs(dist1-dist2), (float)(1.0/(1.0-exp(-level))));
+					minCost = min(cost, minCost);
+				}
+			}
+			if(found) {
+				return minCost;
+			} else {
+				return 0;
+			}
+		}		
+
 
 		vector< vector<SSECorrespondenceNode> > SSECorrespondenceSearchNode::GetSolution(vector<SSECorrespondenceNode> & allNodes) {
 			vector< vector<SSECorrespondenceNode> > corr;
@@ -398,7 +477,8 @@ namespace wustl_mm {
 				printf("cost = %f;\n", this->GetCost());
 				printf("corr = Sort[corr, Length[#1] > Length[#2] &];\n");
 				firstCorr = 1;
-				printf("printFinalOutput[corr, fl1, fl2, %d]\n", firstCorr);
+				printf("printGroundTruth[groundTruth, fl1, fl2]\n");
+				printf("printFinalOutput[corr, fl1, fl2, %d, groundTruth]\n", firstCorr);
 			}
 		}
 
