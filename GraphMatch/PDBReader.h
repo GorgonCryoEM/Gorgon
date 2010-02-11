@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.18  2010/01/09 00:07:49  schuhs
+//   SSE correspondence search now works with SEQ files
+//
 //   Revision 1.17  2009/12/22 01:03:06  schuhs
 //   Adding support for beta sheets to the SSE correspondence search algorithm
 //
@@ -55,6 +58,7 @@ namespace wustl_mm {
 		public:
 			static StandardGraph * ReadFile(char * fname);
 			static map<unsigned long long, PDBAtom> ReadAtomPositions(string fileName);
+			static bool WriteAtomPositions(map<unsigned long long, PDBAtom> &atoms, string fileName);
 			static vector<PDBHelix> ReadHelixPositions(string fileName);
 			static char * TrimString(char * string);
 			static int ToInt(char * string);
@@ -462,6 +466,21 @@ namespace wustl_mm {
 			delete [] substring;
 			substring = NULL;
 			return value;
+		}
+		bool PDBReader::WriteAtomPositions(map<unsigned long long, PDBAtom> &atoms, string fileName) {
+			FILE* fout = fopen((char *)fileName.c_str(), "wt");
+			if (fout == NULL) {
+				printf("Error reading output file %s.\n", fileName.c_str()) ;
+				return false;
+			} else {
+				fprintf(fout, "%s\n", StringUtils::RightPad("REMARK   5 Gorgon (C) 2005-2010", 70).c_str() );
+				fprintf(fout, "%s\n", StringUtils::RightPad("REMARK   5 Pseudoatom export using SSEHunter", 70).c_str());
+				for(map<unsigned long long, PDBAtom>::iterator i = atoms.begin(); i != atoms.end(); i++) {
+					fprintf(fout, "%s\n", i->second.GetPDBString().c_str() );
+			}
+				fclose(fout);
+			}
+			return true;
 		}
 	}
 }

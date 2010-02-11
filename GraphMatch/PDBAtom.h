@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.12  2010/01/11 18:09:35  colemanr
+//   update constructors to initialize correlationScore, skeletonScore, and geometryScore
+//
 //   Revision 1.11  2010/01/10 05:31:43  colemanr
 //   PDBAtoms now store their correlation, skeleton, and geometry scores. Changing the weighting for these three scores in the GUI now changes the total score for each pseudoatom.
 //
@@ -83,6 +86,7 @@ namespace wustl_mm {
 			float			GetGeometryScore();
 			float			GetTotalScore(float correlationWeight, float skeletonWeight, float geometryWeight);
 			static unsigned long long ConstructHashKey(string pdbId, char chainId, unsigned int resSeq, string name);
+			string          GetPDBString();
 
 			void SetSerial(unsigned int serial);
 			void SetName(string	name);
@@ -464,6 +468,31 @@ namespace wustl_mm {
 		
 		void PDBAtom::SetGeometryScore(float score) {
 			geometryScore = score;
+		}
+
+		string PDBAtom::GetPDBString() {
+			string pdbString;
+			pdbString.append("ATOM  ");
+			pdbString.append(StringUtils::IntToString(this->serial, 4, " "));
+			pdbString.push_back(' ');
+			pdbString.push_back(' ');
+			pdbString.append(StringUtils::RightPad(this->name, 3, " "));
+			pdbString.push_back(this->altLoc);
+			pdbString.append(StringUtils::RightPad(this->resName, 3, " "));
+			pdbString.push_back(' ');
+			pdbString.push_back(this->chainId);
+			pdbString.append(StringUtils::IntToString(this->resSeq, 3, " "));
+			pdbString.push_back(this->iCode);
+			pdbString.append("   ");
+			pdbString.append(StringUtils::DoubleToString(this->position.X(), 7, " ", 8, 3));
+			pdbString.append(StringUtils::DoubleToString(this->position.Y(), 7, " ", 8, 3));
+			pdbString.append(StringUtils::DoubleToString(this->position.Z(), 7, " ", 8, 3));
+			pdbString.append(StringUtils::DoubleToString(this->occupancy, 5, " ", 6, 2));
+			pdbString.append(StringUtils::DoubleToString(this->tempFactor, 5, " ", 6, 2));
+			pdbString.append("          ");
+			pdbString.append(StringUtils::LeftPad(this->element, 2, " "));
+			pdbString.append(StringUtils::RightPad(this->charge, 2, " "));
+			return pdbString;
 		}
 	}
 

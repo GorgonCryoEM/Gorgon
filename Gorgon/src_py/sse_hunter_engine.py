@@ -1,3 +1,18 @@
+# Copyright (C) 2005-2008 Washington University in St Louis, Baylor College of Medicine.  All rights reserved
+# Author:        Ross Coleman
+# Description:   An engine which performs SSE Hunter (Scoring of PDB atoms based on how likely it is that they form Secondary Structure Elements)
+
+# CVS Meta Information: 
+#   $Source$
+#   $Revision$
+#   $Date$
+#   $Author$
+#   $State$
+#
+# History Log: 
+#   $Log$
+
+
 from libpyGORGON import SSEHunter, RadialProfileType
 from math import *
 
@@ -19,7 +34,7 @@ class SSEHunterEngine:
 		for i in range(self.getNumberOfPseudoAtoms()):
 			pseudoatom = self.getPseudoAtom(i)
 			score = correlationWeight*pseudoatom.getCorrelationScore()
-			score = skeletonWeight*pseudoatom.getSkeletonScore()
+			score += skeletonWeight*pseudoatom.getSkeletonScore()
 			score += geometryWeight*pseudoatom.getGeometryScore()
 			pseudoatom.setTempFactor(score)
 			pseudoatoms.append(pseudoatom)

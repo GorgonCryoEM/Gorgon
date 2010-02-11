@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.14  2010/01/16 22:34:29  colemanr
+#   using the new SSEHunterEngine Python class
+#
 #   Revision 1.13  2010/01/16 20:05:16  colemanr
 #   moving the total score calculation of SSEHunter to Python
 #
@@ -86,6 +89,7 @@ class VolumeSSEBuilderForm(BaseDockWidget, Ui_DialogVolumeSSEBuilder):
         self.connect(self.pushButtonRemoveSSE, QtCore.SIGNAL("clicked (bool)"), self.removeSSE)        
         self.connect(self.pushButtonSSEHunter, QtCore.SIGNAL("clicked (bool)"), self.runSSEHunter)
         self.connect(self.pushButtonLoadVolume, QtCore.SIGNAL("clicked (bool)"), self.loadVolume)
+        self.connect(self.pushButtonSavePseudoatoms, QtCore.SIGNAL("clicked (bool)"), self.savePseudoatoms)
         self.connect(self.pushButtonLoadSkeleton, QtCore.SIGNAL("clicked (bool)"), self.loadSkeleton)
         self.connect(self.doubleSpinBoxCorrelation, QtCore.SIGNAL("valueChanged(double)"), self.updateTotalScoreSSEHunterAtoms)
         self.connect(self.doubleSpinBoxSkeleton, QtCore.SIGNAL("valueChanged(double)"), self.updateTotalScoreSSEHunterAtoms)
@@ -95,7 +99,19 @@ class VolumeSSEBuilderForm(BaseDockWidget, Ui_DialogVolumeSSEBuilder):
         self.connect(self.app.viewers["volume"], QtCore.SIGNAL("modelUnloaded()"), self.enableDisableSSEHunter)
         self.connect(self.app.viewers["skeleton"], QtCore.SIGNAL("modelUnloaded()"), self.enableDisableSSEHunter)
         
-        
+    
+    def disableSavePseudoatoms(self):
+        self.pushButtonSavePseudoatoms.setEnabled(False)        
+    
+    def savePseudoatoms(self, temp):
+        fileName = QtGui.QFileDialog.getSaveFileName(self, self.tr("Save Pseudoatoms"), "", self.tr("Protein Data Bank (PDB) Format (*.pdb)"))
+        if not fileName.isEmpty():  
+            self.setCursor(QtCore.Qt.WaitCursor)
+            if not(self.app.viewers["calpha"].renderer.saveSSEHunterFile(str(fileName))):
+                # TODO: Put a error message here telling the user that the save failed
+                pass
+            self.setCursor(QtCore.Qt.ArrowCursor)     
+    
     def loadVolume(self, temp):
         self.app.actions.getAction("load_Volume").trigger()
         self.bringToFront()
@@ -138,6 +154,8 @@ class VolumeSSEBuilderForm(BaseDockWidget, Ui_DialogVolumeSSEBuilder):
             self.calphaViewer.loadSSEHunterData(pdbFile)
             self.sseViewer = self.app.viewers["sse"]
             self.lineEditAtomScore.setText(pdbFile)
+            self.connect(self.app.viewers["calpha"],  QtCore.SIGNAL("modelUnloaded()"), self.disableSavePseudoatoms)                    
+            self.pushButtonSavePseudoatoms.setEnabled(True)
         self.bringToFront()
 
     def runSSEHunter(self, result):
@@ -166,6 +184,9 @@ class VolumeSSEBuilderForm(BaseDockWidget, Ui_DialogVolumeSSEBuilder):
         self.calphaViewer.emitModelLoadedPreDraw()
         self.calphaViewer.emitModelLoaded()
         self.calphaViewer.emitViewerSetCenter()
+        self.connect(self.app.viewers["calpha"],  QtCore.SIGNAL("modelUnloaded()"), self.disableSavePseudoatoms)        
+        self.pushButtonSavePseudoatoms.setEnabled(True)
+        self.bringToFront()
         
 		
     def updateTotalScoreSSEHunterAtoms(self):
