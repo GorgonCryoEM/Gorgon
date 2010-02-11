@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.8  2008/09/29 19:05:37  ssa1
+//   Fixing String Utils.h linking errors
+//
 //   Revision 1.7  2008/09/29 16:22:17  ssa1
 //   Removing compiler warnings
 //
@@ -31,8 +34,8 @@ namespace wustl_mm {
 	namespace Foundation {
 		class StringUtils {
 		public:
-			static string DoubleToString(double number);
-			static string IntToString(int number, int padSize = -1);
+			static string DoubleToString(double number, int padSize = -1, string padChar = "0", int digits = -1, int decimals = -1);
+			static string IntToString(int number, int padSize = -1, string padChar = "0");
 			static string CharToString(char c);
 			static double StringToDouble(string s);
 			static int StringToInt(const string &s);
@@ -40,23 +43,37 @@ namespace wustl_mm {
 			static string StringToLower(string strToConvert);
 			static void RightTrim(string &source, string t);
 			static void LeftTrim(string &source, string t);
+			static string RightPad(string source, int strLength, string padChar = " ");
+			static string LeftPad(string source, int strLength, string padChar = " ");
 		};	
 		
-		string StringUtils::DoubleToString(double number) {
+		string StringUtils::DoubleToString(double number, int padSize, string padChar, int digits, int decimals) {
 			char * x = new char[20];
-			sprintf(x, "%f", number);
+			char * y = new char[20];
+			if((digits > 0) && (decimals > 0) ) {
+				sprintf(y, "%%%d.%df", digits, decimals);
+				sprintf(x, y, number);
+			} else {
+				sprintf(x, "%f", number);
+			}
 			string retVal = x;
+
+			int start = retVal.size();
+			for(int i = start; i <= padSize; i++) {
+				retVal = padChar + retVal;
+			}
+
 			delete [] x;
 			return retVal;
 		}
 
-		string StringUtils::IntToString(int number, int padSize) {
+		string StringUtils::IntToString(int number, int padSize, string padChar) {
 			char * x = new char[20];
 			sprintf(x, "%d", number);
 			string retVal = x;
 			int start = retVal.size();
 			for(int i = start; i <= padSize; i++) {
-				retVal = "0" + retVal;
+				retVal = padChar + retVal;
 			}
 			delete [] x;
 			return retVal;
@@ -107,6 +124,31 @@ namespace wustl_mm {
 		void StringUtils::LeftTrim(string &source, string t) {
 			source.erase(0, source.find_first_not_of(t));
 		}			
+
+		string StringUtils::RightPad(string source, int strLength, string padChar) {
+			string temp = "";
+			int i;
+			for(i = 0; i < min((int)source.size(), strLength); i++) {
+				temp.push_back(source[i]);
+			}
+			for(int j = i; j < strLength; j++) {
+				temp = temp + padChar;
+			}
+			return temp;
+		}
+
+		string StringUtils::LeftPad(string source, int strLength, string padChar) {
+			string temp = "";
+			int i;
+			for(int j = 0; j < strLength - (int)source.size(); j++) {
+				temp = padChar + temp;
+			}
+
+			for(i = 0; i < min((int)source.size(), strLength); i++) {
+				temp.push_back(source[i]);
+			}
+			return temp;
+		}
 	}
 }
 

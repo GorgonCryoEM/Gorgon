@@ -12,7 +12,7 @@
   <property name="windowTitle" >
    <string>SSE Builder</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout" >
+  <layout class="QGridLayout" name="gridLayout_2" >
    <item row="0" column="0" colspan="2" >
     <widget class="QLabel" name="labelAtomScore" >
      <property name="text" >
@@ -35,8 +35,8 @@
       <attribute name="title" >
        <string>Calculate using SSEHunter</string>
       </attribute>
-      <layout class="QGridLayout" >
-       <item row="0" column="0" colspan="2" >
+      <layout class="QGridLayout" name="gridLayout" >
+       <item row="0" column="0" colspan="3" >
         <layout class="QHBoxLayout" >
          <item>
           <widget class="QPushButton" name="pushButtonLoadVolume" >
@@ -54,7 +54,7 @@
          </item>
         </layout>
        </item>
-       <item row="1" column="0" >
+       <item row="1" column="0" colspan="2" >
         <widget class="QLabel" name="labelThreshold" >
          <property name="enabled" >
           <bool>false</bool>
@@ -64,7 +64,7 @@
          </property>
         </widget>
        </item>
-       <item row="1" column="1" >
+       <item row="1" column="2" >
         <widget class="QDoubleSpinBox" name="doubleSpinBoxThreshold" >
          <property name="enabled" >
           <bool>false</bool>
@@ -80,7 +80,7 @@
          </property>
         </widget>
        </item>
-       <item row="2" column="0" >
+       <item row="2" column="0" colspan="2" >
         <widget class="QLabel" name="labelVolumeResolution" >
          <property name="enabled" >
           <bool>false</bool>
@@ -90,7 +90,7 @@
          </property>
         </widget>
        </item>
-       <item row="2" column="1" >
+       <item row="2" column="2" >
         <widget class="QDoubleSpinBox" name="doubleSpinBoxResolution" >
          <property name="enabled" >
           <bool>false</bool>
@@ -103,7 +103,7 @@
          </property>
         </widget>
        </item>
-       <item row="3" column="0" >
+       <item row="3" column="0" colspan="2" >
         <widget class="QLabel" name="labelSkeletonScore" >
          <property name="enabled" >
           <bool>false</bool>
@@ -113,7 +113,7 @@
          </property>
         </widget>
        </item>
-       <item row="3" column="1" >
+       <item row="3" column="2" >
         <widget class="QDoubleSpinBox" name="doubleSpinBoxSkeleton" >
          <property name="enabled" >
           <bool>false</bool>
@@ -126,7 +126,7 @@
          </property>
         </widget>
        </item>
-       <item row="4" column="0" >
+       <item row="4" column="0" colspan="2" >
         <widget class="QLabel" name="labelCrossCorrelationScore" >
          <property name="enabled" >
           <bool>false</bool>
@@ -136,7 +136,7 @@
          </property>
         </widget>
        </item>
-       <item row="4" column="1" >
+       <item row="4" column="2" >
         <widget class="QDoubleSpinBox" name="doubleSpinBoxCorrelation" >
          <property name="enabled" >
           <bool>false</bool>
@@ -149,7 +149,7 @@
          </property>
         </widget>
        </item>
-       <item row="5" column="0" >
+       <item row="5" column="0" colspan="2" >
         <widget class="QLabel" name="labelGeometricScore" >
          <property name="enabled" >
           <bool>false</bool>
@@ -159,7 +159,7 @@
          </property>
         </widget>
        </item>
-       <item row="5" column="1" >
+       <item row="5" column="2" >
         <widget class="QDoubleSpinBox" name="doubleSpinBoxGeometry" >
          <property name="enabled" >
           <bool>false</bool>
@@ -172,13 +172,36 @@
          </property>
         </widget>
        </item>
-       <item row="6" column="0" colspan="2" >
+       <item row="6" column="0" colspan="3" >
         <widget class="QPushButton" name="pushButtonSSEHunter" >
          <property name="enabled" >
           <bool>false</bool>
          </property>
          <property name="text" >
           <string>Find Scored Pseudoatoms (SSEHunter)</string>
+         </property>
+        </widget>
+       </item>
+       <item row="7" column="0" >
+        <spacer name="horizontalSpacer_2" >
+         <property name="orientation" >
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0" >
+          <size>
+           <width>134</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="7" column="1" colspan="2" >
+        <widget class="QPushButton" name="pushButtonSavePseudoatoms" >
+         <property name="enabled" >
+          <bool>false</bool>
+         </property>
+         <property name="text" >
+          <string>Save Pseudoatoms</string>
          </property>
         </widget>
        </item>
@@ -317,12 +340,13 @@
   <tabstop>doubleSpinBoxCorrelation</tabstop>
   <tabstop>doubleSpinBoxGeometry</tabstop>
   <tabstop>pushButtonSSEHunter</tabstop>
-  <tabstop>lineEditAtomScore</tabstop>
-  <tabstop>pushButtonBrowseAtomScore</tabstop>
+  <tabstop>pushButtonSavePseudoatoms</tabstop>
   <tabstop>tableWidgetSelection</tabstop>
   <tabstop>pushButtonRemoveSSE</tabstop>
   <tabstop>pushButtonSelectionToHelix</tabstop>
   <tabstop>pushButtonSelectionToSheet</tabstop>
+  <tabstop>lineEditAtomScore</tabstop>
+  <tabstop>pushButtonBrowseAtomScore</tabstop>
  </tabstops>
  <resources/>
  <connections/>

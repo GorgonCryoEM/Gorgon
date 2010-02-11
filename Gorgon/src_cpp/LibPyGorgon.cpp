@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.70  2010/01/20 05:08:30  colemanr
+//   added conversions from STL vector to Python list or reverse - code from EMAN2
+//
 //   Revision 1.69  2010/01/17 18:34:59  ssa1
 //   Histogram for density visualization
 //
@@ -533,6 +536,7 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("drawBoundingBox", &CAlphaRenderer::DrawBoundingBox)
 		.def("loadFile", &CAlphaRenderer::LoadFile)
 		.def("loadSSEHunterFile", &CAlphaRenderer::LoadSSEHunterFile)
+		.def("saveSSEHunterFile", &CAlphaRenderer::SaveSSEHunterFile)
 		.def("getSSEHunterAtoms", &CAlphaRenderer::GetSSEHunterAtoms)
 		.def("updateTotalScoreSSEHunterAtoms", &CAlphaRenderer::UpdateTotalScoreSSEHunterAtoms)
 		.def("colorSSEHunterAtoms", &CAlphaRenderer::ColorSSEHunterAtoms)

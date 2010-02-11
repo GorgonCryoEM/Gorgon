@@ -1,3 +1,6 @@
+Version 2.0.1b
+  Export of predicted correspondences so that it can be analyzed by Rosetta
+	
 Version 2.0.0
   Support for loading Point clouds as volumes (PTS format)
   Support for saving volumes as structure tensor fields (TNS format)
@@ -14,7 +17,6 @@ Version 2.0.0
   SSE Builder functionality for creating Secondary Structure annotations from SSEHunter results
   Saving Secondary structure annotations as VRML (VRML / WRL format) as well as DeJaVu (SSE format)
   Support for saving, loading and closing gorgon session
-  Export of predicted correspondences so that it can be analyzed by Rosetta
   SSE Hunter integrated to Gorgon
   SSE Correspondence search extended to include Beta Sheets
 

@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.41  2010/01/10 05:31:43  colemanr
+//   PDBAtoms now store their correlation, skeleton, and geometry scores. Changing the weighting for these three scores in the GUI now changes the total score for each pseudoatom.
+//
 //   Revision 1.40  2009/10/13 18:09:34  ssa1
 //   Refactoring Volume.h
 //
@@ -115,6 +118,7 @@ namespace wustl_mm {
 			void Draw(int subSceneIndex, bool selectEnabled);
 			void LoadFile(string fileName);
 			void LoadSSEHunterFile(string fileName);
+			bool SaveSSEHunterFile(string fileName);
 			void GetSSEHunterAtoms(Volume * vol, NonManifoldMesh_Annotated * skeleton, float resolution, float threshold, float correlationCoeff, float skeletonCoeff, float geometryCoeff);
 			void UpdateTotalScoreSSEHunterAtoms(float correlationCoeff, float skeletonCoeff, float geometryCoeff);
 			void ColorSSEHunterAtoms();
@@ -336,7 +340,10 @@ namespace wustl_mm {
 			UpdateBoundingBox();
 			
 		}
-		
+		bool CAlphaRenderer::SaveSSEHunterFile(string fileName) {
+			return PDBReader::WriteAtomPositions(atoms, fileName);			
+		}
+
 		void CAlphaRenderer::GetSSEHunterAtoms(Volume * vol, NonManifoldMesh_Annotated * skeleton, float resolution, float threshold, float correlationCoeff, float skeletonCoeff, float geometryCoeff) {
 			Renderer::LoadFile("");
 			atoms.clear();
