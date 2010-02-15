@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.3  2009/12/21 22:03:02  ssa1
+//   Checking in FFTW windows binaries
+//
 
 #ifndef MATHTOOLS_CROSS_CORRELATION_H
 #define MATHTOOLS_CROSS_CORRELATION_H
@@ -156,27 +159,34 @@ namespace wustl_mm {
 
 			//Now that we are in Fourier space, all indices (including 1 or 2 pixel padding) are used
 			int fastSize = (fastSizeMinusPadding % 2 ? fastSizeMinusPadding+1 : fastSizeMinusPadding+2);
+			int size = fastSize*medSize*slowSize;
 			int fastComplexSize = fastSize/2;
 
-			if (center) {
-				// Placeholder: puts the center of the correlation at the center
-				// of the map instead of (0,0,0)
+			float c1, c2;
+			float d1, d2;
+			for (int i=0; i<size; i+=2) {
+				// conj(c1+c2*i) * (d1+d2*i) = (c1-c2*i) * (d1+d2*i) = (c1*d1+c2*d2) + (c1*d2-c2*d1)*i
+				c1 = f[i];
+				c2 = f[i+1];
+				d1 = g[i];
+				d2 = g[i+1];
+				
+				g[i] = c1*d1+c2*d2;
+				g[i+1] = c1*d2-c2*d1;
 			}
-			else { // center of the correlation is at (0,0,0)
-				for (int k = 0; k < slowSize; k++)
-					for (int j = 0; j < medSize; j++)
-						for (int i=0; i<fastComplexSize; i++) {
-							getComplexDataAt(g, i,j,k, fastSize, medSize, slowSize)
-							*= conj(getComplexDataAt(f, i,j,k, fastSize, medSize, slowSize));
-						}
-			}
+			
 			iftInPlace(g, fastSizeMinusPadding, medSize, slowSize);
 
 			int N = fastSizeMinusPadding*medSize*slowSize;
 
 			//Normalize the data
-			for (int i=0; i < N; i++) {
+			for (int i=0; i < size; i++) {
 				g[i] /= N;
+			}
+			
+			if (center) {
+				// Placeholder: puts the center of the correlation at the center
+				// of the map instead of (0,0,0)
 			}
 		}
 
@@ -185,10 +195,6 @@ namespace wustl_mm {
 		// ****************************************************************************
 		float* ccfOutOfPlace(float* f, float* g, int fastSize,
 						int medSize, int slowSize, bool center) {
-			
-			// ******************************************************
-			// FIXME: I think that a SIGABORT error (gdb on Mac) is happening somewhere in this function
-			// ******************************************************
 			
 			int fastIxPadding = (fastSize % 2 ? 1 : 2);
 			int size = (fastSize+fastIxPadding)*medSize*slowSize;
@@ -200,18 +206,36 @@ namespace wustl_mm {
 			fftOutOfPlace(f, F, fastSize, medSize, slowSize);
 			fftOutOfPlace(g, ret, fastSize, medSize, slowSize);
 			
-			for (int k=0; k<slowSize; k++)
-				for (int j=0; j<medSize; j++)
-					for (int i=0; i<fastSize+fastIxPadding; i++) {
-						getComplexDataAt(ret, i,j,k, fastSize+fastIxPadding, medSize, slowSize) *= 
-							conj( getComplexDataAt(F, i,j,k,fastSize+fastIxPadding, medSize, slowSize ));
-					}
+			float c1, c2;
+			float d1, d2;
+			
+			for (int i=0; i<size; i+=2) {
+				// conj(c1+c2*i) * (d1+d2*i) = (c1-c2*i) * (d1+d2*i) = (c1*d1+c2*d2) + (c1*d2-c2*d1)*i
+				c1 = F[i];
+				c2 = F[i+1];
+				d1 = ret[i];
+				d2 = ret[i+1];
+				
+				ret[i] = c1*d1+c2*d2;
+				ret[i+1] = c1*d2-c2*d1;
+			}
 			
 			// FFTW will destroy the input array even for an out-of-place complex to real IFT
 			// Thus, we might as well do an in-place IFT, which is faster
 			iftInPlace(ret, fastSize, medSize, slowSize);
 			free(F);
 			F = NULL;
+			int N = fastSize*medSize*slowSize;
+			
+			//Normalize the data
+			for (int i=0; i < size; i++) {
+				ret[i] /= N;
+			}
+			
+			if (center) {
+				// Placeholder: puts the center of the correlation at the center
+				// of the map instead of (0,0,0)
+			}
 			return ret;
 		}
 
