@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.21  2010/01/16 22:29:17  colemanr
+//   trivial
+//
 //   Revision 1.20  2010/01/16 20:05:15  colemanr
 //   moving the total score calculation of SSEHunter to Python
 //
@@ -135,7 +138,7 @@ namespace wustl_mm {
 			//TODO: Finish coding the geometry score portion of this function
 			map<unsigned long long, PDBAtom> GetScoredAtoms(Volume * vol, NonManifoldMesh_Annotated * skeleton, float resolution, float threshold, 
 															float correlationCoeff, float skeletonCoeff, float geometryCoeff,
-															RadialProfileType type = GAUSSIAN_DIP, float deltaAngleRadians=5*PI/180);
+															RadialProfileType type = GAUSSIAN_DIP, float deltaAltRadians=5*PI/180);
 
 			
 			
@@ -143,7 +146,7 @@ namespace wustl_mm {
 			int GetNumberOfPseudoAtoms();
 			PDBAtom& GetPseudoAtom(int i);
 			
-			void SetCorrelationScores(Volume * vol, RadialProfileType type, float resolution, float deltaAngleRadians);
+			void SetCorrelationScores(Volume * vol, RadialProfileType type, float resolution, float deltaAltRadians);
 			void SetSkeletonScores(Volume * vol, NonManifoldMesh_Annotated * skeleton, float resolution);
 			//TODO: Finish coding SetGeometryScores
 			void SetGeometryScores(Volume * vol, float resolution, float threshold);
@@ -162,12 +165,14 @@ namespace wustl_mm {
 			Volume* GetTemplateCylinder(int xsize, int ysize, int zsize, RadialProfileType type = POLYNOMIAL, float len = 16.2,
 												float apix_x = 1, float apix_y = 1, float apix_z = 1,
 												double axis_vector_x=0, double axis_vector_y=1, double axis_vector_z=0);
+		public:
 			void ApplyTemplateCylinder(float cylData[], int xsize, int ysize, int zsize, int fastIxFFTPadding,
 										RadialProfileType type = POLYNOMIAL, float len=16.2, float apix_x=1, float apix_y=1, float apix_z=1,
 										double axis_vector_x=0, double axis_vector_y=1, double axis_vector_z=0);
 			Volume * GetTemplateHelix(double length, float apix, float resolution, int mapSize);
 			Volume * HelixCorrelation(Volume* map_vol, RadialProfileType type = POLYNOMIAL, float length = 16.2,
-									  float deltaAngleRadians = 5*PI/180, Volume* az_vol = NULL, Volume* alt_vol = NULL);
+									  float deltaAltRadians = 5*PI/180, Volume* az_vol = NULL, Volume* alt_vol = NULL);
+		private:
 			void NormalizeEdgeMean(Volume* vol);
 			void ApplyPolynomialProfileToHelix(Volume * in, float lengthAngstroms, int z0=-1);
 
@@ -190,12 +195,12 @@ namespace wustl_mm {
 
 		map<unsigned long long, PDBAtom> SSEHunter::GetScoredAtoms(Volume * vol, NonManifoldMesh_Annotated * skeleton, float resolution, float threshold, 
 																   float correlationCoeff, float skeletonCoeff, float geometryCoeff, 
-																   RadialProfileType type, float deltaAngleRadians) {
+																   RadialProfileType type, float deltaAltRadians) {
 			cout << "GetScoredAtoms()\n";
 			CreatePseudoAtoms(vol, resolution, threshold);
 			SetSkeletonScores(vol, skeleton, resolution);
 			SetGeometryScores(vol, resolution, threshold);
-			SetCorrelationScores(vol, type, resolution, deltaAngleRadians);
+			SetCorrelationScores(vol, type, resolution, deltaAltRadians);
 			map<unsigned long long, PDBAtom> atomMap;
 			atomMap.clear();
 			for(unsigned int i = 0; i < patoms.size();  i++) {
@@ -283,7 +288,7 @@ namespace wustl_mm {
 		}
 
 		void SSEHunter::SetSkeletonScores(Volume * vol, NonManifoldMesh_Annotated * skeleton, float resolution) {
-			cout << "AddSkeletonWeights\n";
+			cout << "SetSkeletonScores\n";
 			int vertexIx;
 			float distance, maxDistance = resolution;  // TODO: Max distance is hardcoded as 5 Angstroms
 			Vector3DFloat skeletonOrigin = Vector3DFloat(skeleton->GetOriginX(), skeleton->GetOriginY(), skeleton->GetOriginZ());
@@ -413,7 +418,7 @@ namespace wustl_mm {
 
 		//TODO: finish this function
 		void SSEHunter::SetGeometryScores(Volume * vol, float resolution, float threshold) {
-			cout << "AddGeometryWeights()\n";
+			cout << "SetGeometryScores()\n";
 			vector< vector<float> > distances = GetAtomDistances();
 			//vector< vector<Vector3DInt> > neighbors = GetNeighborhoodVoxels(vol, threshold);
 			vector<float> localDirectionalityScore = GetLocalDirectionalityScores(vol);
@@ -825,7 +830,7 @@ namespace wustl_mm {
 		}
 
 		Volume * SSEHunter::HelixCorrelation(Volume* density_vol, RadialProfileType type, float length,
-												 float deltaAngleRadians, Volume* az_vol, Volume* alt_vol) {
+												 float deltaAltRadians, Volume* az_vol, Volume* alt_vol) {
 			cout << "HelixCorrelation()\n";
 			// TODO: Make it work with helices
 			int nx = density_vol->getSizeX();
@@ -863,21 +868,33 @@ namespace wustl_mm {
 			float* cyl = (float*) malloc( sizeof(float)*nx*ny*(nz+fftPaddingFastIx) );
 			float val;
 			float c1, c2, d1, d2;
-
-			for (float az = 0; az < 2*PI; az += deltaAngleRadians) { // Angle from x axis to projection on xy plane
-				cout << 50*az/PI << "%\t" << flush;
-				for (float alt = 0; alt < PI; alt += deltaAngleRadians) { // Angle from the z axis
-
-					// Unit vector along cylinder's axis
-					axis_vect[0] = -sin(az)*cos(alt);
-					axis_vect[1] = -cos(alt);
-					axis_vect[2] = sin(az)*sin(alt);
+			/* If alt=az=0, make the cylinder's axis be <0,1,0>, the j_hat unit vector
+			 * Then, alt is angle from xy plane to cylinder's axis and az is angle from y axis to projection of axis on xy plane
+			 * Because of lengthwise symmetry, all orientations of a cylinder lie on a hemisphere: alt in [0,pi/2] and az in [0, 2*pi]
+			 * We want delta(surface area) to be constant... for differentials dA = r^2*|cos(alt)|*d(alt)*d(az)
+			 * Since r = 1, delta_A ~= cos(alt)*delta_alt*delta_az
+			 * At alt=pi/4, make delta_az == delta_alt ==> cos(pi/4)*delta_alt*delta_alt = |cos(alt)|*delta_alt*delta_az
+			 * Thus, delta_az = (delta_alt/sqrt(2))/|cos(alt)|;
+			 */
+			deltaAltRadians = abs(deltaAltRadians);
+			float K = deltaAltRadians/sqrt(2);
+			for (float alt = 0; alt < PI/2.0 + deltaAltRadians/2.0; alt += deltaAltRadians) { // the "+ deltaAltRadians/2.0" as in EMAN1
+				float deltaAzRadians = K/abs(cos(alt));
+				for (float az = 0; az < 2*PI + deltaAzRadians/2.0; az += deltaAzRadians) { // the "+ deltaAzRadians/2.0" as in EMAN1
+					/*
+					 *[1      0       0    ] [ cos(az)  sin(az)  0][ 0 ]
+					 *|0   cos(al)  sin(al)] [-sin(az)  cos(az)  0][ 1 ]
+					 *[0  -sin(al)  cos(al)] [    0       0      1][ 0 ]
+					 */
+					axis_vect[0] = sin(az);
+					axis_vect[1] = cos(alt)*cos(az);
+					axis_vect[2] = -sin(alt)*cos(az);
 
 					ApplyTemplateCylinder(cyl, nx, ny, nz, fftPaddingFastIx, type, length,
 										apix_x, apix_y, apix_z, axis_vect[0], axis_vect[1], axis_vect[2]);
 					fftInPlace(cyl, nz, ny, nx);
 
-					//Finding the complex conjugate
+					///Doing CCF: product in Fourier space
 					for (int i=0; i<array_size; i+=2) {
 						// conj(c1+c2*i) * (d1+d2*i) = (c1-c2*i) * (d1+d2*i) = (c1*d1+c2*d2) + (c1*d2-c2*d1)*i
 						c1 = cyl[i];
@@ -888,7 +905,7 @@ namespace wustl_mm {
 						cyl[i] = c1*d1+c2*d2;
 						cyl[i+1] = c1*d2-c2*d1;
 					}
-					iftInPlace(cyl, nz, ny, nx); // cyl will now hold the CCF values
+					iftInPlace(cyl, nz, ny, nx); // cyl holds un-normalized CCF values
 
 					int i2, j2, k2;
 
@@ -913,6 +930,7 @@ namespace wustl_mm {
 						}
 					}
 				}
+				cout << 200*alt/PI << "%\t" << flush;
 			}
 			cout << "\nFinished with all cylinder orientations.\n";
 			free(density);
@@ -946,10 +964,10 @@ namespace wustl_mm {
 			return bestCCF;
 		}
 		
-		void SSEHunter::SetCorrelationScores(Volume * vol, RadialProfileType type, float resolution, float deltaAngleRadians) {
-			cout << "AddHelixCorrelationWeights()\n";
+		void SSEHunter::SetCorrelationScores(Volume * vol, RadialProfileType type, float resolution, float deltaAltRadians) {
+			cout << "SetCorrelationScores()\n";
 			float cylinderLength = 16.2;
-			Volume* bestCCF = HelixCorrelation(vol, type, cylinderLength, deltaAngleRadians);
+			Volume* bestCCF = HelixCorrelation(vol, type, cylinderLength, deltaAltRadians);
 			PDBAtom patom;
 			vector<float> helixScores;
 			Vector3DFloat position;
