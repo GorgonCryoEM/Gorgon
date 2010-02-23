@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.11  2010/02/11 23:20:47  ssa1
+//   Flexible fitting algorithm #5 - Better scoring function which scales based on depth of tree and local distance
+//
 //   Revision 1.10  2009/12/21 22:03:32  ssa1
 //   Checking in FFTW windows binaries
 //
@@ -65,23 +68,30 @@ using namespace std;
 
 namespace wustl_mm {
 	namespace Protein_Morph {
+		const int SSE_CORRESPONDENCE_METHOD_ASTAR_FULL_CLIQUE = 1;
+		const int SSE_CORRESPONDENCE_METHOD_GREEDY_VALENCE_CLIQUE = 2;
+		const int SSE_CORRESPONDENCE_METHOD_GREEDY_TRIANGLE_CLIQUE = 3;
+		const int SSE_CORRESPONDENCE_METHOD_ASTAR_RIGID_COST_TRIANGLE_CLIQUE = 4;
+		const int SSE_CORRESPONDENCE_METHOD_ASTAR_NEIGHBOR_COST_TRIANGLE_CLIQUE = 5;
+
 		class SSECorrespondenceFinder {
 		public:
 			SSECorrespondenceFinder();
 			void InitializeFeatures(vector<SSECorrespondenceFeature> featureList1, vector<SSECorrespondenceFeature> featureList2);
-			void InitializeFeaturesFromPDBFiles(string file1, string file2);
+			void InitializeFeaturesFromPDBFiles(string file1, string file2, bool multipleSearch);
 			void InitializeConstants(float rigidityThreshold, float featureChangeThreshold, float rigidityAngleCoeff, 
 				float rigidityCentroidDistanceCoeff, float rigidityFeatureChangeCoeff, float rigidComponentCoeff, float intraComponentCoeff, 
 				float jointAngleThreshold, float dihedralAngleThreshold, float centroidDistanceThreshold, 
 				unsigned int maxSolutionCount);		
+			void PrintFeatureListsMathematica();
 			vector< vector < vector<SSECorrespondenceNode> > > GetAStarCliqueBasedFeatureCorrespondence(bool printOutput, bool useDirection);
 			vector< vector < vector<SSECorrespondenceNode> > > GetAStarTriangleBasedFeatureCorrespondence(bool printOutput, bool useDirection, bool getSmallCliques);			
 			vector< vector < vector<SSECorrespondenceNode> > > GetAStarTriangleBasedCliqueDistanceFeatureCorrespondence(bool printOutput, bool useDirection, bool getSmallCliques);						
 			vector < vector<SSECorrespondenceNode> > GetValenceBasedFeatureCorrespondence(bool printOutput, bool useDirection);
 			vector < vector<SSECorrespondenceNode> > GetValenceBasedFeatureCorrespondence2(bool printOutput, bool useDirection);
 			vector < vector<SSECorrespondenceNode> > GetValenceTriangleBasedFeatureCorrespondence(bool printOutput, bool useDirection, bool getSmallCliques);
-			vector < vector<SSECorrespondenceNode> > GetValenceBasedFeatureCorrespondenceSet(bool useTriangleClique, bool useDirection, bool getSmallCliques);
-			void PrintFeatureListsMathematica();
+			vector < vector < vector<SSECorrespondenceNode> > > GetMultiCorrespondence(int method, bool useDirection, bool getSmallCliques);
+
 		private:
 			float GetFeatureCompatibilityScore(SSECorrespondenceFeature feature1, SSECorrespondenceFeature feature2);
 			float GetFeaturePairRigidityScore(SSECorrespondenceFeature p1, SSECorrespondenceFeature q1, bool isForward1, SSECorrespondenceFeature p2, SSECorrespondenceFeature q2, bool isForward2, bool useDirection);		
@@ -97,7 +107,7 @@ namespace wustl_mm {
 		private:
 			vector<SSECorrespondenceFeature> featureList1;
 			vector<SSECorrespondenceFeature> featureList2;
-			void PrintGroundTruth(vector<PDBHelix> & h1, vector<PDBHelix> & h2);
+			void PrintGroundTruth(vector<PDBHelix> & h1, vector<PDBHelix> & h2, bool multipleSearch);
 			float rigidityThreshold, featureChangeThreshold, rigidityAngleCoeff, rigidityCentroidDistanceCoeff, featureChangeCoeff, rigidComponentCoeff, intraComponentCoeff;
 			float jointAngleThreshold, dihedralAngleThreshold, centroidDistanceThreshold;
 			unsigned int maxSolutionCount;
@@ -137,12 +147,15 @@ namespace wustl_mm {
 			h1 = hash / 100000;
 		}
 
-		void SSECorrespondenceFinder::PrintGroundTruth(vector<PDBHelix> & h1, vector<PDBHelix> & h2) {
+		void SSECorrespondenceFinder::PrintGroundTruth(vector<PDBHelix> & h1, vector<PDBHelix> & h2, bool multipleSearch) {
 			map<long long, int> h1Map;
 			map<long long, bool> corrMap;
 			char chainId;
 			for(unsigned int i = 0; i < h1.size(); i++) {
 				chainId = h1[i].GetInitialResidueChainId();
+				if(multipleSearch) {
+					chainId = ' ';
+				}
 				for(unsigned int j = h1[i].GetInitialResidueSeqNo(); j <= h1[i].GetEndResidueSeqNo(); j++) {
 					h1Map[AtomToHash(chainId, j)] = i;
 				}				
@@ -150,6 +163,10 @@ namespace wustl_mm {
 			long long hash;
 			for(unsigned int i = 0; i < h2.size(); i++) {
 				chainId = h2[i].GetInitialResidueChainId();
+				if(multipleSearch) {
+					chainId = ' ';
+				}
+
 				for(unsigned int j = h2[i].GetInitialResidueSeqNo(); j <= h2[i].GetEndResidueSeqNo(); j++) {
 					hash = AtomToHash(chainId, j);
 					if(h1Map.find(hash) != h1Map.end()) {
@@ -176,10 +193,10 @@ namespace wustl_mm {
 
 		}
 
-		void SSECorrespondenceFinder::InitializeFeaturesFromPDBFiles(string file1, string file2) {
+		void SSECorrespondenceFinder::InitializeFeaturesFromPDBFiles(string file1, string file2, bool multipleSearch) {
 			vector<PDBHelix> helices1 = PDBReader::ReadHelixPositions(file1);
 			vector<PDBHelix> helices2 = PDBReader::ReadHelixPositions(file2);
-			PrintGroundTruth(helices1, helices2);
+			PrintGroundTruth(helices1, helices2, multipleSearch);
 
 			for(unsigned int i = 0; i < helices1.size(); i++) {
 				featureList1.push_back(SSECorrespondenceFeature(helices1[i].GetEndPosition(0), helices1[i].GetEndPosition(1)));
@@ -421,6 +438,7 @@ namespace wustl_mm {
 					if(printOutput) {
 						currentNode->PrintSolution(nodes, useDirection);							
 					}
+					correspondence.push_back(currentNode->GetSolution(nodes));
 					
 					solutionCount++;
 				} else {
@@ -489,6 +507,7 @@ namespace wustl_mm {
 					if(printOutput) {
 						currentNode->PrintSolution(nodes, useDirection);							
 					}
+					correspondence.push_back(currentNode->GetSolution(nodes));
 				
 					solutionCount++;
 				} else {
@@ -548,16 +567,18 @@ namespace wustl_mm {
 			vector<SSECorrespondenceSearchNode *> childNodes;
 			float currentCost;
 			//TimeManager tm;
+			bool first = true;
 			while((solutionCount < maxSolutionCount) && !nodeQueue.IsEmpty()) {
 				//tm.PushCurrentTime();
 				nodeQueue.PopFirst(currentCost, currentNode);				
 				//currentNode->PrintSolution(nodes, true, true);	
-				childNodes = currentNode->GetChildNodesTriangleApproxCliqueDistance(nodes, featureList1, featureList2, getSmallCliques);
+				childNodes = currentNode->GetChildNodesTriangleApproxCliqueDistance(nodes, featureList1, featureList2, !first && getSmallCliques);
 				if(childNodes.size() == 0) {
 					//printf("Solution found: \t");
 					if(printOutput) {
 						currentNode->PrintSolution(nodes, useDirection);							
 					}
+					correspondence.push_back(currentNode->GetSolution(nodes));
 				
 					solutionCount++;
 				} else {
@@ -565,11 +586,12 @@ namespace wustl_mm {
 					for(unsigned int i = 0; i < childNodes.size(); i++) {
 						nodeQueue.Add(childNodes[i]->GetCost(), childNodes[i]);						
 						//printf("\t");
-						//childNodes[i]->PrintSolution(nodes);
+						//childNodes[i]->PrintSolution(nodes, true, true);
 					}
 				}
 				//tm.PopAndDisplayTime("Time spent at node: %f \n");
 				delete currentNode;
+				first = false;
 			}
 
 
@@ -679,10 +701,11 @@ namespace wustl_mm {
 			return node.GetSolution(nodes);
 		}
 
-		vector < vector<SSECorrespondenceNode> > SSECorrespondenceFinder::GetValenceBasedFeatureCorrespondenceSet(bool useTriangleClique, bool useDirection, bool getSmallCliques) {
+		vector < vector < vector<SSECorrespondenceNode> > > SSECorrespondenceFinder::GetMultiCorrespondence(int method, bool useDirection, bool getSmallCliques) {
 			maxSolutionCount = 1;
-			vector < vector<SSECorrespondenceNode> > corr, corrItem;
 			vector<SSECorrespondenceNode> corrItemItem;
+			vector < vector<SSECorrespondenceNode> > corrItem, newCorrItem;
+			vector< vector < vector<SSECorrespondenceNode> > > corr, corrSet;
 			bool found = true;
 
 			vector<unsigned int> featureList2Indices;
@@ -693,21 +716,28 @@ namespace wustl_mm {
 			while (found) {
 				found = false;
 				if(featureList2.size() > 0) {
-					if(useTriangleClique) {
-						corrItem = GetValenceTriangleBasedFeatureCorrespondence(false, useDirection, getSmallCliques);
-					} else {
-						corrItem = GetValenceBasedFeatureCorrespondence(false, useDirection);
+					switch(method) {
+						case SSE_CORRESPONDENCE_METHOD_GREEDY_TRIANGLE_CLIQUE:
+							corrItem = GetValenceTriangleBasedFeatureCorrespondence(false, useDirection, getSmallCliques);
+						case SSE_CORRESPONDENCE_METHOD_GREEDY_VALENCE_CLIQUE:
+							corrItem = GetValenceBasedFeatureCorrespondence(false, useDirection);					
+						case SSE_CORRESPONDENCE_METHOD_ASTAR_NEIGHBOR_COST_TRIANGLE_CLIQUE:
+							corrSet = GetAStarTriangleBasedCliqueDistanceFeatureCorrespondence(false, useDirection, getSmallCliques);							
+							corrItem = corrSet[0];
+
 					} 
 					found = (corrItem.size() > 0);
 					if(found) {
+						newCorrItem.clear();
 
 						for(unsigned int i = 0; i < corrItem.size(); i++) {
 							corrItemItem.clear();
 							for(unsigned int j = 0; j < corrItem[i].size(); j++) {
 								corrItemItem.push_back(SSECorrespondenceNode(corrItem[i][j].GetPIndex(), featureList2Indices[corrItem[i][j].GetQIndex()], corrItem[i][j].IsForward()));
 							}
-							corr.push_back(corrItemItem);
+							newCorrItem.push_back(corrItemItem);
 						}
+						corr.push_back(newCorrItem);
 
 						bool remove;
 						for(int i = (int)featureList2.size()-1;  i >= 0; i--) {
@@ -727,31 +757,39 @@ namespace wustl_mm {
 			}
 
 
-			printf("corr = {\n");
-			for(unsigned int i = 0; i < corr.size(); i++) {
-				if(i != 0) {
+			printf("corrs = {\n");
+			for(unsigned int k = 0; k < corr.size(); k++) {
+				corrItem = corr[k];
+				if(k != 0) {
 					printf(",\n");
 				}
-				printf("\t{");
-				for(unsigned int j = 0; j < corr[i].size(); j++) {
-					if(j != 0) {
-						printf(", ");
+				printf("\t{\n");
+
+				for(unsigned int i = 0; i < corrItem.size(); i++) {
+					if(i != 0) {
+						printf(",\n");
 					}
-					if(useDirection) {
-						if(corr[i][j].IsForward()) {
-							printf("{{%d, %d}, {%d, %d}}", corr[i][j].GetPIndex(), 0, corr[i][j].GetQIndex(), 0);
-						} else {
-							printf("{{%d, %d}, {%d, %d}}", corr[i][j].GetPIndex(), 0, corr[i][j].GetQIndex(), 1);
+					printf("\t\t{");
+					for(unsigned int j = 0; j < corrItem[i].size(); j++) {
+						if(j != 0) {
+							printf(", ");
 						}
-					} else {
-						printf("{%d, %d}", corr[i][j].GetPIndex(), corr[i][j].GetQIndex());
+						if(useDirection) {
+							if(corrItem[i][j].IsForward()) {
+								printf("{{%d, %d}, {%d, %d}}", corrItem[i][j].GetPIndex(), 0, corrItem[i][j].GetQIndex(), 0);
+							} else {
+								printf("{{%d, %d}, {%d, %d}}", corrItem[i][j].GetPIndex(), 0, corrItem[i][j].GetQIndex(), 1);
+							}
+						} else {
+							printf("{%d, %d}", corrItem[i][j].GetPIndex(), corrItem[i][j].GetQIndex());
+						}
 					}
+					printf("}");
 				}
 				printf("}");
 			}
-			printf("};\n");
-			printf("corr = Sort[corr, Length[#1] > Length[#2] &];\n");
-			printf("printFinalOutput[corr, fl1, fl2, 1]\n");
+			printf("};\n");			
+			printf("printFinalMultiOutput[corrs, fl1, fl2, 1, groundTruth]\n");
 
 			return corr;
 		}

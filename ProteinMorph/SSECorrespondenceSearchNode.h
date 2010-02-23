@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.12  2010/02/11 23:20:47  ssa1
+//   Flexible fitting algorithm #5 - Better scoring function which scales based on depth of tree and local distance
+//
 //   Revision 1.11  2009/12/21 22:03:32  ssa1
 //   Checking in FFTW windows binaries
 //
@@ -74,12 +77,14 @@ namespace wustl_mm {
 			GraphBase<unsigned int, bool> GetChildGraph(vector<SSECorrespondenceNode> & allNodes, vector<unsigned long long> clique);
 			GraphBase<unsigned int, bool> GetOnlySymmetriesGraph(vector<SSECorrespondenceNode> & allNodes, set<unsigned long long> clique, GraphBase<unsigned int, bool> & parentGraph, GraphBase<unsigned int, bool> & rootGraph, map<unsigned int, unsigned int> & parentVertexIndices);
 			MatrixFloat GetTransform(vector<SSECorrespondenceFeature> & featureList1, vector<SSECorrespondenceFeature> & featureList2, vector<unsigned int> & nodeList, vector<SSECorrespondenceNode> & allNodes, int sampleCount);
+			
 		private:
 			float GetAverageError(vector<SSECorrespondenceFeature> & featureList1, vector<SSECorrespondenceFeature> & featureList2, MatrixFloat transform, vector<unsigned int> & nodeList, vector<SSECorrespondenceNode> & allNodes, int sampleCount);			
 			vector< set<unsigned long long> > GetSymmetricCliquesTriangleApprox(int maxSizeDifference, vector<SSECorrespondenceNode> & allNodes, bool getSmallCliques);
 
 			float GetCliqueCost(vector<unsigned long long> & clique, float featureChangeCoeff, float rigidComponentCoeff);
-			void GetCliqueDistances(float & dist1, float & dist2, vector<unsigned int> & nodeList1, vector<unsigned int> & nodeList2, vector<SSECorrespondenceNode> & allNodes, vector<SSECorrespondenceFeature> & featureList1, vector<SSECorrespondenceFeature> & featureList2);
+			float GetCliqueCost2(vector<unsigned long long> & clique);
+			float GetCliqueDistances(vector<unsigned int> & nodeList1, vector<unsigned int> & nodeList2, vector<SSECorrespondenceNode> & allNodes, vector<SSECorrespondenceFeature> & featureList1, vector<SSECorrespondenceFeature> & featureList2);
 
 			float GetIntraCliqueCost(vector<unsigned int> & nodeList, vector<unsigned int> & parentNodeList, vector< vector<float> > & pairCompatibility, float intraComponentCoeff);
 			float GetIntraCliqueCost2(vector<unsigned int> & nodeList, vector<SSECorrespondenceNode> & allNodes, vector<SSECorrespondenceFeature> & featureList1, vector<SSECorrespondenceFeature> & featureList2);			
@@ -231,7 +236,10 @@ namespace wustl_mm {
 					childSolution = solution;
 					childSolution.push_back(childSolutionElement);
 					childGraph = GetChildGraph(allNodes, clique);
-					childCost = cost + GetIntraCliqueCost4(childSolutionElement, allNodes, featureList1, featureList2);
+					childCost = cost + 
+						//GetCliqueCost2(clique) * GetIntraCliqueCost4(childSolutionElement, allNodes, featureList1, featureList2) * 
+						GetIntraCliqueCost4(childSolutionElement, allNodes, featureList1, featureList2) * 
+						(float)(1.0/(1.0-exp(-(float)childSolutionElement.size()/10.0)));
 
 					childNodes.push_back(new SSECorrespondenceSearchNode(childGraph, childSolution, childCost));				
 				}
@@ -301,6 +309,29 @@ namespace wustl_mm {
 				}
 			}
 			return cliqueCost;
+		}
+
+		float SSECorrespondenceSearchNode::GetCliqueCost2(vector<unsigned long long> & clique) {
+			float nodeCost = 0.0f;
+			for(unsigned int i = 0; i < clique.size(); i++) {
+				nodeCost += (graph.GetVertex(clique[i]).GetWeight() / (float)clique.size());
+			}
+
+			float edgeCost = 0.0f;
+			int count = 0;
+			for(unsigned int i = 0; i < clique.size()-1; i++) {
+				for(unsigned int j = i+1; j < clique.size(); j++) {					
+					count++;
+					edgeCost += graph.GetEdge(clique[i], clique[j]).GetWeight();
+				}
+			}
+			if(count > 0) {
+				edgeCost = edgeCost / (float)count;
+			} else {
+				edgeCost = 1.0f;
+			}
+
+			return nodeCost * edgeCost;
 		}
 
 		float SSECorrespondenceSearchNode::GetIntraCliqueCost(vector<unsigned int> & nodeList, vector<unsigned int> & parentNodeList, vector< vector<float> > & pairCompatibility, float intraComponentCoeff) {
@@ -381,21 +412,21 @@ namespace wustl_mm {
 			return cost;
 		}
 
-		void SSECorrespondenceSearchNode::GetCliqueDistances(float & dist1, float & dist2, vector<unsigned int> & nodeList1, vector<unsigned int> & nodeList2, vector<SSECorrespondenceNode> & allNodes, vector<SSECorrespondenceFeature> & featureList1, vector<SSECorrespondenceFeature> & featureList2) {
+		float SSECorrespondenceSearchNode::GetCliqueDistances(vector<unsigned int> & nodeList1, vector<unsigned int> & nodeList2, vector<SSECorrespondenceNode> & allNodes, vector<SSECorrespondenceFeature> & featureList1, vector<SSECorrespondenceFeature> & featureList2) {
+			float dist = MAX_FLOAT, dist1, dist2;
 						
 			if((nodeList1.size() == 0) || (nodeList2.size() == 0)) {
-				dist1 = 0;
-				dist2 = 0;				
+				return 0;
 			} else {
-				dist1 = MAX_FLOAT;
-				dist2 = MAX_FLOAT;
 				for(unsigned int i = 0; i < nodeList1.size(); i++) {
 					for(unsigned int j = 0; j < nodeList2.size(); j++) {
-						dist1 = min(dist1, (float)(featureList1[allNodes[nodeList1[i]].GetPIndex()].GetCentroid() - featureList1[allNodes[nodeList2[j]].GetPIndex()].GetCentroid()).Length());
-						dist2 = min(dist2, (float)(featureList2[allNodes[nodeList1[i]].GetQIndex()].GetCentroid() - featureList2[allNodes[nodeList2[j]].GetQIndex()].GetCentroid()).Length());
+						dist1 = (float)(featureList1[allNodes[nodeList1[i]].GetPIndex()].GetCentroid() - featureList1[allNodes[nodeList2[j]].GetPIndex()].GetCentroid()).Length();
+						dist2 = (float)(featureList2[allNodes[nodeList1[i]].GetQIndex()].GetCentroid() - featureList2[allNodes[nodeList2[j]].GetQIndex()].GetCentroid()).Length();
+						dist = min(dist, abs(dist1-dist2));
 					}
 				}
 			}
+			return dist;
 		}
 
 		float SSECorrespondenceSearchNode::GetIntraCliqueCost4(vector<unsigned int> & nodeList, vector<SSECorrespondenceNode> & allNodes, vector<SSECorrespondenceFeature> & featureList1, vector<SSECorrespondenceFeature> & featureList2) {
@@ -404,15 +435,16 @@ namespace wustl_mm {
 			}
 
 			float minCost = MAX_FLOAT;
-			float dist1, dist2, cost;
+			float dist, cost;
 			float level = (float)solution.size();
 
 			bool found = false;
 			for(unsigned int i = 0; i < solution.size(); i++) {
 				if(solution[i].size() > 0) {
 					found = true;
-					GetCliqueDistances(dist1, dist2, nodeList, solution[i], allNodes, featureList1, featureList2);
-					cost = pow(abs(dist1-dist2), (float)(1.0/(1.0-exp(-level))));
+					dist = GetCliqueDistances(nodeList, solution[i], allNodes, featureList1, featureList2);
+					cost = dist;
+					//cost = pow(dist, (float)(1.0/(1.0-exp(-level))));
 					minCost = min(cost, minCost);
 				}
 			}
@@ -477,8 +509,9 @@ namespace wustl_mm {
 				printf("cost = %f;\n", this->GetCost());
 				printf("corr = Sort[corr, Length[#1] > Length[#2] &];\n");
 				firstCorr = 1;
-				printf("printGroundTruth[groundTruth, fl1, fl2]\n");
 				printf("printFinalOutput[corr, fl1, fl2, %d, groundTruth]\n", firstCorr);
+			} else {
+				printf("\t\tcost = %f;\n", this->GetCost());
 			}
 		}
 
