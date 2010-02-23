@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.15  2010/02/11 23:20:47  ssa1
+//   Flexible fitting algorithm #5 - Better scoring function which scales based on depth of tree and local distance
+//
 //   Revision 1.14  2009/12/21 22:03:32  ssa1
 //   Checking in FFTW windows binaries
 //
@@ -181,13 +184,16 @@ int main( int args, char * argv[] ) {
 	SSECorrespondenceFinder finder;
 	if(args != 17) {
 		printf("ProteinMorph [method] [splitNodes] [multipleSearch] [pdb1(highres)] [pdb2(volume)] [rigidityThreshold] [featureChangeThreshold] [rigidityAngleCoeff] [rigidityCentroidDistanceCoeff] [rigidityFeatureChangeCoeff] [rigidComponentCoeff] [intraComponentCoeff] [jointAngleThreshold] [dihedralAngleThreshold] [centroidDistanceThreshold] [maxSolutionCount]\n");
-		printf("\t[method] : The algorithm to use, 1 : Clique, 2: Greedy Valence, 3: Greedy Valence Triangle based Clique \n");
+		printf("\t[method] : The algorithm to use, 1 : Clique, 2: Greedy Valence, 3: Greedy Valence Triangle based Clique 4: A * (rigidity cost) Triangle based clique 5: A* (distance cost) Triangle based clique\n");
 		printf("\t[splitNodes] : 0: dont split, 1: split based on direction \n");
 		printf("\t[multipleSearch] : 0: Single Search, 1: Search for multiple instances of pdb1 in pdb2\n");
 	} else {	
 		TimeManager tm;
 		tm.PushCurrentTime();
-		finder.InitializeFeaturesFromPDBFiles(argv[4], argv[5]);
+		bool useDirection = (StringUtils::StringToInt(argv[2]) == 1);
+		bool multipleSearch = (StringUtils::StringToInt(argv[3]) == 1);
+
+		finder.InitializeFeaturesFromPDBFiles(argv[4], argv[5], multipleSearch);
 		finder.InitializeConstants(
 			StringUtils::StringToDouble(argv[6]), 
 			StringUtils::StringToDouble(argv[7]), 
@@ -204,41 +210,39 @@ int main( int args, char * argv[] ) {
 		finder.PrintFeatureListsMathematica();
 		vector< vector < vector<SSECorrespondenceNode> > > corr;
 		vector < vector<SSECorrespondenceNode> > corr2;
-		bool useDirection = (StringUtils::StringToInt(argv[2]) == 1);
-		bool multipleSearch = (StringUtils::StringToInt(argv[3]) == 1);
 
 		switch(StringUtils::StringToInt(argv[1])) {
-			case 1:
+			case SSE_CORRESPONDENCE_METHOD_ASTAR_FULL_CLIQUE:
 				if(multipleSearch) {
 					printf("Multiple search not implemented for this method \n");
 				} else {
 					corr = finder.GetAStarCliqueBasedFeatureCorrespondence(true, useDirection);
 				}
 				break;
-			case 2:
+			case SSE_CORRESPONDENCE_METHOD_GREEDY_VALENCE_CLIQUE:
 				if(multipleSearch) {
-					corr2 = finder.GetValenceBasedFeatureCorrespondenceSet(false, useDirection, false);
+					corr = finder.GetMultiCorrespondence(SSE_CORRESPONDENCE_METHOD_GREEDY_VALENCE_CLIQUE, useDirection, false);
 				} else {
 					corr2 = finder.GetValenceBasedFeatureCorrespondence(true, useDirection);
 				}
 				break;
-			case 3:
+			case SSE_CORRESPONDENCE_METHOD_GREEDY_TRIANGLE_CLIQUE:
 				if(multipleSearch) {
-					corr2 = finder.GetValenceBasedFeatureCorrespondenceSet(true, useDirection, false);
+					corr = finder.GetMultiCorrespondence(SSE_CORRESPONDENCE_METHOD_GREEDY_TRIANGLE_CLIQUE, useDirection, false);
 				} else {
 					corr2 = finder.GetValenceTriangleBasedFeatureCorrespondence(true, useDirection, false);
 				}
 				break;
-			case 4:
+			case SSE_CORRESPONDENCE_METHOD_ASTAR_RIGID_COST_TRIANGLE_CLIQUE:
 				if(multipleSearch) {
 					printf("Multiple search not implemented for this method \n");
 				} else {
 					corr = finder.GetAStarTriangleBasedFeatureCorrespondence(true, useDirection, false);
 				}
 				break;
-			case 5:
+			case SSE_CORRESPONDENCE_METHOD_ASTAR_NEIGHBOR_COST_TRIANGLE_CLIQUE:
 				if(multipleSearch) {
-					printf("Multiple search not implemented for this method \n");
+					corr = finder.GetMultiCorrespondence(SSE_CORRESPONDENCE_METHOD_ASTAR_NEIGHBOR_COST_TRIANGLE_CLIQUE, useDirection, true);
 				} else {
 					corr = finder.GetAStarTriangleBasedCliqueDistanceFeatureCorrespondence(true, useDirection, true);
 				}
