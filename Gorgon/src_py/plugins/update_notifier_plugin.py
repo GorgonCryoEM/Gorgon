@@ -35,7 +35,7 @@ class UpdateNotifierPlugin(BasePlugin):  #Plugins must inherit the BasePlugin cl
     
     def checkCurrentVersion(self):
         try:
-            versionFile = urllib.urlopen("http://www.cse.wustl.edu/~ssa1/gorgon/resources/latestVersion.txt")
+            versionFile = urllib.urlopen("http://gorgon.wustl.edu/resources/latestVersion.txt")
             version = str.strip(versionFile.read()).split(" ")           
             versionFile.close()
         except:

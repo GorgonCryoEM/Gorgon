@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.1  2008/12/18 15:19:31  ssa1
+#   Moving About Form functionality into HelpMenus
+#
 #   Revision 1.15  2008/12/17 16:00:04  ssa1
 #   Changing Version information for next public release
 #
@@ -103,19 +106,19 @@ class HelpMenus(QtGui.QWidget):
         
 
     def showAbout(self):
-        self.openPage('http://cse.wustl.edu/~ssa1/gorgon/')
+        self.openPage('http://gorgon.wustl.edu/')
         
     def getUpdates(self):          
-        self.openPage('http://cse.wustl.edu/~ssa1/gorgon/pages/download.php')      
+        self.openPage('http://gorgon.wustl.edu/pages/download.php')      
         
     def userGuide(self):          
-        self.openPage('http://cse.wustl.edu/~ssa1/gorgon/pages/userGuide.php')    
+        self.openPage('http://gorgon.wustl.edu/pages/userGuide.php')    
         
     def publications(self):
-        self.openPage('http://www.cs.wustl.edu/~ssa1/gorgon/pages/publications.php')
+        self.openPage('http://gorgon.wustl.edu/pages/publications.php')
     
     def license(self):
-        self.openPage('http://www.cs.wustl.edu/~ssa1/gorgon/pages/viewLicense.php')
+        self.openPage('http://gorgon.wustl.edu/pages/viewLicense.php')
         
     def bugReport(self):
         systemInfo = "Gorgon Version: " + self.app.version + " | "
@@ -127,5 +130,5 @@ class HelpMenus(QtGui.QWidget):
         systemInfo = systemInfo + "Python Version: " + sys.version + "," + str(sys.version_info) + " | "
         #systemInfo = systemInfo + "Installed Modules: " + str(sys.modules) + " | "
         systemInfo = systemInfo.replace("'", "")
-        self.openPage('http://www.cs.wustl.edu/~ssa1/gorgon/pages/contactUs.php?sysinfo=' + systemInfo)
+        self.openPage('http://gorgon.wustl.edu/pages/contactUs.php?sysinfo=' + systemInfo)
         
