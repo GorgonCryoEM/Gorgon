@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.22  2010/02/20 14:20:08  colemanr
+//   HelixCorrelation() modifications
+//
 //   Revision 1.21  2010/01/16 22:29:17  colemanr
 //   trivial
 //
@@ -162,13 +165,11 @@ namespace wustl_mm {
 			float RadialProfileGaussian(float r); // r in angstroms
 			float RadialProfileGaussianDip(float r);// r in angstroms
 			float RadialProfilePolynomial(float r);// r in angstroms
-			Volume* GetTemplateCylinder(int xsize, int ysize, int zsize, RadialProfileType type = POLYNOMIAL, float len = 16.2,
-												float apix_x = 1, float apix_y = 1, float apix_z = 1,
-												double axis_vector_x=0, double axis_vector_y=1, double axis_vector_z=0);
+			Volume* GetTemplateCylinder(int xsize, int ysize, int zsize, float alt, float az,
+						RadialProfileType type = POLYNOMIAL, float len=16.2, float apix_x=1, float apix_y=-1, float apix_z=-1);
 		public:
-			void ApplyTemplateCylinder(float cylData[], int xsize, int ysize, int zsize, int fastIxFFTPadding,
-										RadialProfileType type = POLYNOMIAL, float len=16.2, float apix_x=1, float apix_y=1, float apix_z=1,
-										double axis_vector_x=0, double axis_vector_y=1, double axis_vector_z=0);
+			void ApplyTemplateCylinder(float cylData[], int xsize, int ysize, int zsize, int fastIxFFTPadding, float alt, float az,
+						RadialProfileType type = POLYNOMIAL, float len=16.2, float apix_x=1, float apix_y=-1, float apix_z=-1);
 			Volume * GetTemplateHelix(double length, float apix, float resolution, int mapSize);
 			Volume * HelixCorrelation(Volume* map_vol, RadialProfileType type = POLYNOMIAL, float length = 16.2,
 									  float deltaAltRadians = 5*PI/180, Volume* az_vol = NULL, Volume* alt_vol = NULL);
@@ -501,51 +502,55 @@ namespace wustl_mm {
 		//synthesize cylinder that resembles the density seen from an alpha helix
 		//len in Angstroms, default to 3 turns
 		//The cylinder will be centered in the Volume
-		Volume* SSEHunter::GetTemplateCylinder(int xsize, int ysize, int zsize, RadialProfileType type, float len, 
-											float apix_x, float apix_y, float apix_z,
-											double axis_vector_x, double axis_vector_y, double axis_vector_z) {
-			// The centroid of the Cylinder is at the center of the map.
-			float x0 = apix_x * xsize / 2.0;
-			float y0 = apix_y * ysize / 2.0;
-			float z0 = apix_z * zsize / 2.0;
-			
+		Volume* SSEHunter::GetTemplateCylinder(int xsize, int ysize, int zsize, float alt, float az,
+				RadialProfileType type, float len, float apix_x, float apix_y, float apix_z) {
+			/*
+			 *[ x' ]     [1      0       0    ] [ cos(az)  sin(az)  0][ x ]
+			 *[ y' ]  =  [0   cos(al)  sin(al)] [-sin(az)  cos(az)  0][ y ]
+			 *[ z' ]     [0  -sin(al)  cos(al)] [    0       0      1][ z ]
+			 */
+			if (apix_x <= 0) {
+				apix_x = abs(apix_x);
+			}
+			if (apix_y <= 0) {
+				apix_y = apix_x;
+			}
+			if (apix_z <=0) {
+				apix_z = apix_x;
+			}
 			Volume * cyl = new Volume(xsize, ysize, zsize);
 			cyl->setSpacing(apix_x, apix_y, apix_z);
 			
-			//Find the unit vector that points along the desired axis for the cylinder
-			double axis_vect_length = sqrt( axis_vector_x*axis_vector_x + axis_vector_y*axis_vector_y + axis_vector_z*axis_vector_z );
-			double axis_x = axis_vector_x/axis_vect_length;
-			double axis_y = axis_vector_y/axis_vect_length;
-			double axis_z = axis_vector_z/axis_vect_length;
-			
+			float half_xsize = xsize/2.0;
+			float half_ysize = ysize/2.0;
+			float half_zsize = zsize/2.0;
+			float cos_alt = cos(alt);
+			float sin_alt = sin(alt);
+			float cos_az = cos(az);
+			float sin_az = sin(az);
 			float radius;
-			double x, y, z;
-			double projection;
-			float value;
-			double cross_prod[3] = {0,0,0};
+			float x, y, z;
+			float xprime, yprime, zprime;
+
 			for (int i = 0; i < xsize; i++) {
 				for (int j = 0; j < ysize; j++) {
 					for (int k = 0; k < zsize; k++) {
-						x = i*apix_x - x0;
-						y = j*apix_y - y0;
-						z = k*apix_z - z0;
-						
-						// The cross product gives the perpendicular distance to the cylinder's axis vector
-						cross_prod[0] = y*axis_z-z*axis_y;
-						cross_prod[1] = z*axis_x-x*axis_z;
-						cross_prod[2] = x*axis_y-y*axis_x;
-						radius = (float) sqrt( cross_prod[0]*cross_prod[0] + cross_prod[1]*cross_prod[1] + cross_prod[2]*cross_prod[2] );
-						projection = x*axis_x + y*axis_y + z*axis_z;
-						
-						if ((projection > -len/2.0 ) && (projection < len/2.0 )) {
-							value = RadialProfile(radius, type);
-							cyl->setDataAt(i,j,k, value);
+						x = apix_x*(i-half_xsize);
+						y = apix_y*(j-half_ysize);
+						z = apix_z*(k-half_zsize);
+						zprime =  (x*sin_az-y*cos_az) * sin_alt + z*cos_alt;
+						if ((2*zprime > -len ) && (2*zprime < len)) {
+							xprime =   x*cos_az+y*sin_az;
+							yprime = (-x*sin_az+y*cos_az) * cos_alt + z*sin_alt;
+							radius = sqrt(xprime*xprime+yprime*yprime);
+							cyl->setDataAt( i, j, k, RadialProfile(radius, type) );
 						} else {
-							cyl->setDataAt(i,j,k, 0);
+							cyl->setDataAt( i, j, k, 0);
 						}
 					}
 				}
 			}
+
 			return cyl;
 			
 		}
@@ -554,39 +559,43 @@ namespace wustl_mm {
 		//len in Angstroms, default to 3 turns
 		//The cylinder will be centered in the float array
 		void SSEHunter::ApplyTemplateCylinder(float* cylData, int xsize, int ysize, int zsize, int fastIxFFTPadding,
-											RadialProfileType type, float len, float apix_x, float apix_y, float apix_z,
-											double axis_vector_x, double axis_vector_y, double axis_vector_z) {
-			// The centroid of the Cylinder is at the center of the map.
-			float x0 = apix_x * xsize / 2.0;
-			float y0 = apix_y * ysize / 2.0;
-			float z0 = apix_z * zsize / 2.0;
-
-			//Find the unit vector that points along the desired axis for the cylinder
-			double axis_vect_length = sqrt( axis_vector_x*axis_vector_x + axis_vector_y*axis_vector_y + axis_vector_z*axis_vector_z );
-			double axis_x = axis_vector_x/axis_vect_length;
-			double axis_y = axis_vector_y/axis_vect_length;
-			double axis_z = axis_vector_z/axis_vect_length;
-
+					float alt, float az, RadialProfileType type, float len, float apix_x, float apix_y, float apix_z) {
+			/*
+			 *[ x' ]     [1      0       0    ] [ cos(az)  sin(az)  0][ x ]
+			 *[ y' ]  =  [0   cos(al)  sin(al)] [-sin(az)  cos(az)  0][ y ]
+			 *[ z' ]     [0  -sin(al)  cos(al)] [    0       0      1][ z ]
+			 */
+			if (apix_x <= 0) {
+				apix_x = abs(apix_x);
+			}
+			if (apix_y <= 0) {
+				apix_y = apix_x;
+			}
+			if (apix_z <=0) {
+				apix_z = apix_x;
+			}
+			float half_xsize = xsize/2.0;
+			float half_ysize = ysize/2.0;
+			float half_zsize = zsize/2.0;
+			float cos_alt = cos(alt);
+			float sin_alt = sin(alt);
+			float cos_az = cos(az);
+			float sin_az = sin(az);
 			float radius;
-			double x, y, z;
-			double projection;
-			float value;
-			double cross_prod[3] = {0,0,0};
+			float x, y, z;
+			float xprime, yprime, zprime;
+
 			for (int i = 0; i < xsize; i++) {
 				for (int j = 0; j < ysize; j++) {
 					for (int k = 0; k < zsize; k++) {
-						x = i*apix_x - x0;
-						y = j*apix_y - y0;
-						z = k*apix_z - z0;
-
-						// The cross product gives the perpendicular distance to the cylinder's axis vector
-						cross_prod[0] = y*axis_z-z*axis_y;
-						cross_prod[1] = z*axis_x-x*axis_z;
-						cross_prod[2] = x*axis_y-y*axis_x;
-						radius = (float) sqrt( cross_prod[0]*cross_prod[0] + cross_prod[1]*cross_prod[1] + cross_prod[2]*cross_prod[2] );
-						projection = x*axis_x + y*axis_y + z*axis_z;
-
-						if ((projection > -len/2.0 ) && (projection < len/2.0 )) {
+						x = apix_x*(i-half_xsize);
+						y = apix_y*(j-half_ysize);
+						z = apix_z*(k-half_zsize);
+						zprime =  (x*sin_az-y*cos_az) * sin_alt + z*cos_alt;
+						if ((2*zprime > -len ) && (2*zprime < len)) {
+							xprime =   x*cos_az+y*sin_az;
+							yprime = (-x*sin_az+y*cos_az) * cos_alt + z*sin_alt;
+							radius = sqrt(xprime*xprime+yprime*yprime);
 							cylData[k + (j + ysize*i)*(zsize+fastIxFFTPadding)] = RadialProfile(radius, type);
 						} else {
 							cylData[k + (j + ysize*i)*(zsize+fastIxFFTPadding)] = 0;
@@ -868,30 +877,24 @@ namespace wustl_mm {
 			float* cyl = (float*) malloc( sizeof(float)*nx*ny*(nz+fftPaddingFastIx) );
 			float val;
 			float c1, c2, d1, d2;
-			/* If alt=az=0, make the cylinder's axis be <0,1,0>, the j_hat unit vector
-			 * Then, alt is angle from xy plane to cylinder's axis and az is angle from y axis to projection of axis on xy plane
+			/* If alt=az=0, make the cylinder's axis be <0,0,1>, the k_hat unit vector
+			 * Then, alt is angle from z axis to cylinder's axis and (az + pi) is angle from x axis to projection of cyl axis on xy plane
 			 * Because of lengthwise symmetry, all orientations of a cylinder lie on a hemisphere: alt in [0,pi/2] and az in [0, 2*pi]
-			 * We want delta(surface area) to be constant... for differentials dA = r^2*|cos(alt)|*d(alt)*d(az)
-			 * Since r = 1, delta_A ~= cos(alt)*delta_alt*delta_az
-			 * At alt=pi/4, make delta_az == delta_alt ==> cos(pi/4)*delta_alt*delta_alt = |cos(alt)|*delta_alt*delta_az
-			 * Thus, delta_az = (delta_alt/sqrt(2))/|cos(alt)|;
+			 * We want delta(surface area) to be constant... for differentials dA = r*d(alt)*r*sin(alt)*d(az)=r^2*sin(alt)*d(alt)*d(az)
+			 * Since r = 1, delta_A ~= sin(alt)*delta_alt*delta_az
+			 * At alt=pi/4, make delta_az == delta_alt ==> sin(pi/4)*delta_alt*delta_alt = sin(alt)*delta_alt*delta_az
+			 * Thus, delta_az = (delta_alt/sqrt(2))/sin(alt);
 			 */
 			deltaAltRadians = abs(deltaAltRadians);
 			float K = deltaAltRadians/sqrt(2);
+			float x,y,z;
+			float cos_alt, sin_alt, cos_az, sin_az;
 			for (float alt = 0; alt < PI/2.0 + deltaAltRadians/2.0; alt += deltaAltRadians) { // the "+ deltaAltRadians/2.0" as in EMAN1
-				float deltaAzRadians = K/abs(cos(alt));
+				cos_alt = cos(alt);
+				sin_alt = sin(alt);
+				float deltaAzRadians = K/sin_alt;
 				for (float az = 0; az < 2*PI + deltaAzRadians/2.0; az += deltaAzRadians) { // the "+ deltaAzRadians/2.0" as in EMAN1
-					/*
-					 *[1      0       0    ] [ cos(az)  sin(az)  0][ 0 ]
-					 *|0   cos(al)  sin(al)] [-sin(az)  cos(az)  0][ 1 ]
-					 *[0  -sin(al)  cos(al)] [    0       0      1][ 0 ]
-					 */
-					axis_vect[0] = sin(az);
-					axis_vect[1] = cos(alt)*cos(az);
-					axis_vect[2] = -sin(alt)*cos(az);
-
-					ApplyTemplateCylinder(cyl, nx, ny, nz, fftPaddingFastIx, type, length,
-										apix_x, apix_y, apix_z, axis_vect[0], axis_vect[1], axis_vect[2]);
+					ApplyTemplateCylinder(cyl, nx, ny, nz, fftPaddingFastIx, alt, az, type, length, apix_x, apix_y, apix_z);
 					fftInPlace(cyl, nz, ny, nx);
 
 					///Doing CCF: product in Fourier space
