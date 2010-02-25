@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.37  2010/01/17 18:34:59  ssa1
+//   Histogram for density visualization
+//
 //   Revision 1.36  2009/12/09 21:08:44  colemanr
 //   added Volume::getArrayCopy()
 //
@@ -123,6 +126,7 @@ namespace wustl_mm {
 			Volume(int x, int y, int z);
 			Volume(int x, int y, int z, float val);
 			Volume(int x, int y, int z, int offx, int offy, int offz, Volume * vol);
+			Volume(const Volume& obj);
 			~Volume( );
 
 			float getSpacingX();
@@ -281,6 +285,10 @@ namespace wustl_mm {
 			VolumeData * volData;
 		};
 
+		Volume::Volume(const Volume& obj) {
+			volData = new VolumeData(*(obj.volData));
+			histogram = obj.histogram;
+		}
 
 		Volume::Volume(int x, int y, int z) {
 			volData = new VolumeData(x, y, z);

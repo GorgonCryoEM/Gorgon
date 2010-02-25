@@ -11,6 +11,10 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.3  2009/12/09 21:08:14  colemanr
+//   added VolumeData::GetArrayCopy()
+//   iCVS: ----------------------------------------------------------------------
+//
 //   Revision 1.2  2009/10/30 06:11:26  colemanr
 //   fixed compiler warning for comparison between signed and unsigned integers
 //
@@ -33,6 +37,7 @@ namespace wustl_mm {
 			VolumeData(int sizeX, int sizeY, int sizeZ);
 			VolumeData(int sizeX, int sizeY, int sizeZ, float val);
 			VolumeData(int sizeX, int sizeY, int sizeZ, int offsetX, int offsetY, int offsetZ, VolumeData * data);
+			VolumeData(VolumeData& obj);
 			~VolumeData();
 			
 			int GetSize(int dimension);
@@ -67,6 +72,19 @@ namespace wustl_mm {
 			float origin[3];
 			float * data;
 		};
+
+		VolumeData::VolumeData(VolumeData& obj) {
+			for (int i = 0; i < 3; i++) {
+				size[i] = obj.size[i];
+				spacing[i] = obj.spacing[i];
+				origin[i] = obj.origin[i];
+			}
+			int N = size[0]*size[1]*size[2];
+			data = new float[N];
+			for (int i = 0; i < N; i++) {
+				data[i] = obj.data[i];
+			}
+		}
 
 		VolumeData::VolumeData(int sizeX, int sizeY, int sizeZ) {
 			InitializeVolumeData(sizeX, sizeY, sizeZ, 1, 1, 1, 0, 0, 0, true, 0);
