@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.23  2010/02/24 19:20:27  colemanr
+//   template cylinders now have axis along the z axis of a coordinate system rotated by alt and az -- runs faster than specifying an axis unit vector and calculating cross products and dot products
+//
 //   Revision 1.22  2010/02/20 14:20:08  colemanr
 //   HelixCorrelation() modifications
 //
@@ -171,6 +174,7 @@ namespace wustl_mm {
 			void ApplyTemplateCylinder(float cylData[], int xsize, int ysize, int zsize, int fastIxFFTPadding, float alt, float az,
 						RadialProfileType type = POLYNOMIAL, float len=16.2, float apix_x=1, float apix_y=-1, float apix_z=-1);
 			Volume * GetTemplateHelix(double length, float apix, float resolution, int mapSize);
+			void NormThresh(Volume& map, float thresh);
 			Volume * HelixCorrelation(Volume* map_vol, RadialProfileType type = POLYNOMIAL, float length = 16.2,
 									  float deltaAltRadians = 5*PI/180, Volume* az_vol = NULL, Volume* alt_vol = NULL);
 		private:
@@ -458,12 +462,16 @@ namespace wustl_mm {
 
 		float SSEHunter::RadialProfileGaussian(float r) // r in angstroms
 		{
+			if (r > 7)
+				return 0; //for speed
 			r /= 2;
 			return exp(-r * r);
 		}
 
 		float SSEHunter::RadialProfileGaussianDip(float r) //r in angstroms
 		{
+			if (r > 14)
+				return 0; //for speed
 			// pure Gaussian falloff + negative dip, so mean is 0
 			r /= 4;
 			return (1 - r * r) * exp(-r * r);
@@ -481,7 +489,7 @@ namespace wustl_mm {
 			//float an[11]={2.847024584977009e-10,-3.063997224364090e-08,1.418801040660860e-06,-3.678676414383996e-05,5.804871622801710e-04,-5.640340018430164e-03,3.208802421493864e-02,-9.068475313823952e-02,7.097329559749284e-02,-9.993347339658298e-02,1.000000000000000e+00};
 
 			// now the fitting to the original profile
-			if (r >= 20)
+			if (r >= 12.2)
 				return 0; //We don't want that part of the polynomial --> goes way below zero
 			static float an[15] = { -3.9185246832229140e-16,
 					3.3957205298900993e-14, 2.0343351971222658e-12,
@@ -838,6 +846,24 @@ namespace wustl_mm {
 			}
 		}
 
+		void SSEHunter::NormThresh(Volume& map, float thresh) {
+			int	nx = map.getSizeX();
+			int ny = map.getSizeY();
+			int nz = map.getSizeZ();
+			float norm = map.getMax()-thresh;
+			float val;
+
+			for (int i = 0; i < nx; i++) {
+				for (int j = 0; j < ny; j++) {
+					for (int k = 0; k < nz; k++) {
+						val = map.getDataAt(i,j,k);
+						val = (val > thresh ? (val - thresh)/norm : 0);
+						map.setDataAt(i,j,k,val);
+					}
+				}
+			}
+		}
+
 		Volume * SSEHunter::HelixCorrelation(Volume* density_vol, RadialProfileType type, float length,
 												 float deltaAltRadians, Volume* az_vol, Volume* alt_vol) {
 			cout << "HelixCorrelation()\n";
@@ -869,7 +895,9 @@ namespace wustl_mm {
 			int array_size = nx*ny*(nz+fftPaddingFastIx);
 			int N = nx*ny*nz;
 
-			float* density = density_vol->getArrayCopy(0, 0, fftPaddingFastIx, 0);
+			Volume model(*density_vol); //get a copy
+			NormThresh( model, model.getMean() + 2*model.getStdDev() );
+			float* density = model.getArrayCopy(0, 0, fftPaddingFastIx, 0);
 			fftInPlace(density, nz, ny, nx);
 
 			// Rotating the cylinder to all possible orientations
@@ -889,7 +917,7 @@ namespace wustl_mm {
 			float K = deltaAltRadians/sqrt(2);
 			float x,y,z;
 			float cos_alt, sin_alt, cos_az, sin_az;
-			for (float alt = 0; alt < PI/2.0 + deltaAltRadians/2.0; alt += deltaAltRadians) { // the "+ deltaAltRadians/2.0" as in EMAN1
+			for (float alt = 1E-9; alt < PI/2.0 + deltaAltRadians/2.0; alt += deltaAltRadians) { // the "+ deltaAltRadians/2.0" as in EMAN1
 				cos_alt = cos(alt);
 				sin_alt = sin(alt);
 				float deltaAzRadians = K/sin_alt;
@@ -935,33 +963,33 @@ namespace wustl_mm {
 				}
 				cout << 200*alt/PI << "%\t" << flush;
 			}
-			cout << "\nFinished with all cylinder orientations.\n";
+			cout << "\nFinished with all cylinder orientations." << endl;
 			free(density);
 			free(cyl);
 
-			//Normalize the bestCCF map to give values from zero to one
-			double min = bestCCF->getMin();
+			//Normalize bestCCF and model
 			double max = bestCCF->getMax();
-
-			if (max > min) { //Don't divide by zero.
-				for (int i=0; i<nx; i++) {
-					for (int j=0; j<ny; j++) {
-						for (int k=0; k<nz; k++) {
-							val = bestCCF->getDataAt(i,j,k);
-							bestCCF->setDataAt(i,j,k, (val-min)/(max-min)); //Make the values fall between zero and one
-						}
-					}
-				}
+			for (int i=0; i < N; i++) {
+				val = bestCCF->getDataAt(i);
+				bestCCF->setDataAt(i, val/max);
 			}
-			else { // max == min, so make the map zero everywhere
-				for (int i=0; i<nx; i++) {
-					for (int j=0; j<ny; j++) {
-						for (int k=0; k<nz; k++) {
-							val = bestCCF->getDataAt(i,j,k);
-							bestCCF->setDataAt(i,j,k, val-min); //Make the values fall between zero and one
-						}
-					}
-				}
+			max = model.getMax();
+			for (int i=0; i < N; i++) {
+				val = model.getDataAt(i);
+				model.setDataAt(i, val/max);
+			}
+			//Weight results to favor areas inside high density regions of the model.
+			for (int i=0; i < N; i++) {
+				val = bestCCF->getDataAt(i);
+				bestCCF->setDataAt(i, val*model.getDataAt(i));
+				// Note: all voxels in model should have non-negative values because of earlier thresholding
+			}
+
+			//Normalize the modified bestCCF map
+			max = bestCCF->getMax();
+			for (int i = 0; i < N; i++) {
+				val = bestCCF->getDataAt(i);
+				bestCCF->setDataAt(i, val/max);
 			}
 			cout << "HelixCorrelation() returning...\n";
 			return bestCCF;
