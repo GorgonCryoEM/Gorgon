@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.4  2010/02/15 17:24:40  colemanr
+//   complex number multiplication without function call while calculating CCF; fixed bounds error in out of place CCF
+//
 //   Revision 1.3  2009/12/21 22:03:02  ssa1
 //   Checking in FFTW windows binaries
 //
@@ -90,30 +93,61 @@ namespace wustl_mm {
 			EMfft::complex_to_real_nd(in, out, fastSize, medSize, slowSize);
 		}
 
+		// *****************************************************************************
+		// cftInPlace
+		// This calculates the Cross Fourier Transform: conj(cx_conj_of_this)*as_is
+		// It stores the CFT in cx_conj_of_this
+		// *****************************************************************************
+		void cftInPlace(float* cx_conj_of_this, const float* as_is, int array_size);
+
+		// *****************************************************************************
+		// cftOutOfPlace
+		// This calculates the Cross Fourier Transform: conj(cx_conj_of_this)*as_is
+		// It returns the CFT in a new float array (using malloc)
+		// *****************************************************************************
+		float* cftOutOfPlace(const float* cx_conj_of_this, const float* as_is, int array_size);
+
+		// *****************************************************************************
+		// mftInPlace
+		// This calculates the Mutual Fourier Transform.
+		// voxel = [conj(cx_conj_of_this)*as_is]
+		// voxel = voxel/sqrt(amplitude(voxel))
+		// It stores the MFT in cx_conj_of_this
+		//
+		// Marin van Heel, Michael Schatz, Elena Orlova, Correlation functions revisited,
+		// Ultramicroscopy, Volume 46, Issues 1-4, October 1992, Pages 307-316,
+		// ISSN 0304-3991, DOI: 10.1016/0304-3991(92)90021-B.
+		// *****************************************************************************
+		void mftInPlace(float* cx_conj_of_this, const float* as_is, int array_size);
 
 		// ****************************************************************************
-		// ccfInPlace
-		// Arrays f and g must have the same dimensions. fastSize is the size of the
-		// array for the fast index, slowSize for the slow index.
-		// This function will perform an in-place Fourier transform on both of them.
-		// At the end of this function, *f = FFT(f) and *g = IFT( conj(FFT(f))*FFT(g) )
-		// Before calling this function, the fast index dimension of the arrays for
+		// corrInPlace: in-place calculation of MCF or CCF
+		// @f: complex conjugate of FT of f will be used; results stored in f
+		// @g: same dimensions as f; will hold FT(g) when the function returns
+		// @fastSizeMinusPadding: the logical size of the fast changing index--does not include fft padding
+		// @medSize: the logical size == memory size of middle index
+		// @slowSize: the logical size == memory size of slow changing index
+		// @useMCF: calculate MCF (Mutual-Correlation Function) or CCF (Cross-Correlation Function)
+		// Note: Before calling this function, the fast index dimension of the arrays for
 		// f and g should be padded by 1 pixel if odd-sized or 2 pixels if even sized.
-		// Don't include the padding in the fastSizeMinusPadding parameter, though.
 		// ****************************************************************************
-		void ccfInPlace(float* f, float* g, int fastSizeMinusPadding, int medSize,
-				int slowSize, bool center = false);
+		void corrInPlace(float* f, float* g, int fastSizeMinusPadding, int medSize,
+				int slowSize, bool useMCF=true, bool center = false);
 
 
 		// ****************************************************************************
-		// ccfOutOfPlace
-		// Arrays f and g must have the same dimensions.
-		// Returns IFT( conj(FFT(f)) * FFT(g) )
-		// This function expects f and g not to have any padding in the fast index 
+		// corrOutOfPlace: out-of-place calculation of MCF or CCF
+		// @f: complex conjugate of FT(f) will be used in calculation
+		// @g: same dimensions as f
+		// @fastSize: size of the fast-changing array index
+		// @medSize: size of the middle array index
+		// @slowSize: size of the slow-changing array index
+		// @return: the MCF or the CCF
+		// Note: This function expects f and g not to have any padding in the fast index
 		// dimension, because it is not needed for out-of-place FFT's.
 		// ****************************************************************************
-		float* ccfOutOfPlace(float* f, float* g, int fastSize,
-				int medSize, int slowSize, bool center = false);
+		float* corrOutOfPlace(float* f, float* g, int fastSize,
+				int medSize, int slowSize, bool useMCF=true, bool center = false);
 
 
 
@@ -148,42 +182,98 @@ namespace wustl_mm {
 			}
 		}
 
+
 		// ****************************************************************************
-		// ccfInPlace
+		// cftInPlace
 		// ****************************************************************************
-		void ccfInPlace(float* f, float* g, int fastSizeMinusPadding,
-								int medSize, int slowSize, bool center) {
+		void cftInPlace(float* cx_conj_of_this, const float* as_is, int array_size) {
+			float re1, im1;
+			float re2, im2;
+			for (int i=0; i<array_size; i+=2) {
+				// conj(re1+im1*i) * (re2+im2*i) = (re1-im1*i) * (re2+im2*i) = (re1*re2+im1*im2) + (re1*im2-re2*im1)*i
+				re1 = cx_conj_of_this[i];
+				im1 = cx_conj_of_this[i+1];
+				re2 = as_is[i];
+				im2 = as_is[i+1];
+
+				cx_conj_of_this[i] = re1*re2+im1*im2; //real
+				cx_conj_of_this[i+1] = re1*im2-re2*im1; //imaginary
+			}
+		}
+
+		// ****************************************************************************
+		// cftOutOfPlace
+		// ****************************************************************************
+		float* cftOutOfPlace(const float* cx_conj_of_this, const float* as_is, int array_size) {
+			float* cft = (float*) malloc(sizeof(float)*array_size);
+			float re1, im1;
+			float re2, im2;
+			for (int i=0; i<array_size; i+=2) {
+				// conj(re1+im1*i) * (re2+im2*i) = (re1-im1*i) * (re2+im2*i) = (re1*re2+im1*im2) + (re1*im2-re2*im1)*i
+				re1 = cx_conj_of_this[i];
+				im1 = cx_conj_of_this[i+1];
+				re2 = as_is[i];
+				im2 = as_is[i+1];
+
+				cft[i] = re1*re2+im1*im2; //real
+				cft[i+1] = re1*im2-re2*im1; //imaginary
+			}
+			return cft;
+		}
+
+		// ****************************************************************************
+		// mftInPlace
+		// ****************************************************************************
+		void mftInPlace(float* cx_conj_of_this, const float* as_is, int array_size) {
+			float re, im;
+			float re1, im1;
+			float re2, im2;
+			float temp;
+			for (int i=0; i<array_size; i+=2) {
+				// conj(re1+im1*i) * (re2+im2*i) = (re1-im1*i) * (re2+im2*i) = (re1*re2+im1*im2) + (re1*im2-re2*im1)*i
+				re1 = cx_conj_of_this[i];
+				im1 = cx_conj_of_this[i+1];
+				re2 = as_is[i];
+				im2 = as_is[i+1];
+
+				re = re1*re2+im1*im2;
+				im = re1*im2-re2*im1;
+
+				temp = re*re+im*im;
+				temp = pow(temp, 0.25f);
+				re = re/temp;
+				im = im/temp;
+
+				cx_conj_of_this[i] = re;
+				cx_conj_of_this[i+1] = im;
+			}
+		}
+
+		// ****************************************************************************
+		// corrInPlace
+		// ****************************************************************************
+		void corrInPlace(float* f, float* g, int fastSizeMinusPadding,
+								int medSize, int slowSize, bool useMCF, bool center) {
 
 			fftInPlace(f, fastSizeMinusPadding, medSize, slowSize);
 			fftInPlace(g, fastSizeMinusPadding, medSize, slowSize);
 
 			//Now that we are in Fourier space, all indices (including 1 or 2 pixel padding) are used
 			int fastSize = (fastSizeMinusPadding % 2 ? fastSizeMinusPadding+1 : fastSizeMinusPadding+2);
-			int size = fastSize*medSize*slowSize;
-			int fastComplexSize = fastSize/2;
-
-			float c1, c2;
-			float d1, d2;
-			for (int i=0; i<size; i+=2) {
-				// conj(c1+c2*i) * (d1+d2*i) = (c1-c2*i) * (d1+d2*i) = (c1*d1+c2*d2) + (c1*d2-c2*d1)*i
-				c1 = f[i];
-				c2 = f[i+1];
-				d1 = g[i];
-				d2 = g[i+1];
-				
-				g[i] = c1*d1+c2*d2;
-				g[i+1] = c1*d2-c2*d1;
-			}
-			
-			iftInPlace(g, fastSizeMinusPadding, medSize, slowSize);
-
+			int array_size = fastSize*medSize*slowSize;
 			int N = fastSizeMinusPadding*medSize*slowSize;
 
+			if (useMCF)
+				mftInPlace(f, g, array_size);
+			else
+				cftInPlace(f, g, array_size);
+			iftInPlace(f, fastSizeMinusPadding, medSize, slowSize);
+
 			//Normalize the data
-			for (int i=0; i < size; i++) {
-				g[i] /= N;
+			for (int i=0; i < array_size; i++) {
+				f[i] /= N;
 			}
-			
+
 			if (center) {
 				// Placeholder: puts the center of the correlation at the center
 				// of the map instead of (0,0,0)
@@ -191,44 +281,35 @@ namespace wustl_mm {
 		}
 
 		// ****************************************************************************
-		// ccfOutOfPlace
+		// corrOutOfPlace
 		// ****************************************************************************
-		float* ccfOutOfPlace(float* f, float* g, int fastSize,
-						int medSize, int slowSize, bool center) {
+		float* corrOutOfPlace(float* f, float* g, int fastSize,
+						int medSize, int slowSize, bool useMCF, bool center) {
 			
 			int fastIxPadding = (fastSize % 2 ? 1 : 2);
-			int size = (fastSize+fastIxPadding)*medSize*slowSize;
+			int array_size = (fastSize+fastIxPadding)*medSize*slowSize;
+			int N = fastSize*medSize*slowSize;
 
 			//FFTW requires arrays to be declared with malloc, not new
-			float* F = (float*) malloc( size * sizeof(float) );
-			float* ret = (float*) malloc( size * sizeof(float) );
+			float* ret = (float*) malloc( array_size * sizeof(float) );
+			float* G = (float*) malloc( array_size * sizeof(float) );
 			
-			fftOutOfPlace(f, F, fastSize, medSize, slowSize);
-			fftOutOfPlace(g, ret, fastSize, medSize, slowSize);
+			fftOutOfPlace(f, ret, fastSize, medSize, slowSize);
+			fftOutOfPlace(g, G, fastSize, medSize, slowSize);
 			
-			float c1, c2;
-			float d1, d2;
-			
-			for (int i=0; i<size; i+=2) {
-				// conj(c1+c2*i) * (d1+d2*i) = (c1-c2*i) * (d1+d2*i) = (c1*d1+c2*d2) + (c1*d2-c2*d1)*i
-				c1 = F[i];
-				c2 = F[i+1];
-				d1 = ret[i];
-				d2 = ret[i+1];
-				
-				ret[i] = c1*d1+c2*d2;
-				ret[i+1] = c1*d2-c2*d1;
-			}
+			if (useMCF)
+				mftInPlace(ret, G, array_size);
+			else
+				cftInPlace(ret, G, array_size);
 			
 			// FFTW will destroy the input array even for an out-of-place complex to real IFT
 			// Thus, we might as well do an in-place IFT, which is faster
 			iftInPlace(ret, fastSize, medSize, slowSize);
-			free(F);
-			F = NULL;
-			int N = fastSize*medSize*slowSize;
+			free(G);
+			G = NULL;
 			
 			//Normalize the data
-			for (int i=0; i < size; i++) {
+			for (int i=0; i < array_size; i++) {
 				ret[i] /= N;
 			}
 			
