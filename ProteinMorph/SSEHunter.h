@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.24  2010/02/25 16:37:27  colemanr
+//   return zero for radial profile functions for radii that would give values < 1E-4 if calculated (for speed); HelixCorrelation() thresholding and normalization steps to match the EMAN1 helixHunter2.C algorithm
+//
 //   Revision 1.23  2010/02/24 19:20:27  colemanr
 //   template cylinders now have axis along the z axis of a coordinate system rotated by alt and az -- runs faster than specifying an axis unit vector and calculating cross products and dot products
 //
@@ -103,6 +106,12 @@
 #include <Gorgon/MeshRenderer.h>
 #include <cmath>
 
+//#define USE_TIME_MANAGER
+#ifdef USE_TIME_MANAGER
+	#include <Foundation/TimeManager.h>
+	using wustl_mm::Foundation::TimeManager;
+#endif
+
 using namespace std;
 using namespace wustl_mm::GraphMatch;
 using namespace wustl_mm::MathTools;
@@ -144,7 +153,7 @@ namespace wustl_mm {
 			//TODO: Finish coding the geometry score portion of this function
 			map<unsigned long long, PDBAtom> GetScoredAtoms(Volume * vol, NonManifoldMesh_Annotated * skeleton, float resolution, float threshold, 
 															float correlationCoeff, float skeletonCoeff, float geometryCoeff,
-															RadialProfileType type = GAUSSIAN_DIP, float deltaAltRadians=5*PI/180);
+															RadialProfileType type = POLYNOMIAL, float deltaAltRadians=5*PI/180);
 
 			
 			
@@ -171,12 +180,12 @@ namespace wustl_mm {
 			Volume* GetTemplateCylinder(int xsize, int ysize, int zsize, float alt, float az,
 						RadialProfileType type = POLYNOMIAL, float len=16.2, float apix_x=1, float apix_y=-1, float apix_z=-1);
 		public:
-			void ApplyTemplateCylinder(float cylData[], int xsize, int ysize, int zsize, int fastIxFFTPadding, float alt, float az,
-						RadialProfileType type = POLYNOMIAL, float len=16.2, float apix_x=1, float apix_y=-1, float apix_z=-1);
+			void ApplyTemplateCylinder(float cylData[], int xsize, int ysize, int zsize, int zFFTPadding, float alt, float az,
+						RadialProfileType type = POLYNOMIAL, float len=16.2, float apix_x=1, bool reset=true, float apix_y=-1, float apix_z=-1);
 			Volume * GetTemplateHelix(double length, float apix, float resolution, int mapSize);
 			void NormThresh(Volume& map, float thresh);
-			Volume * HelixCorrelation(Volume* map_vol, RadialProfileType type = POLYNOMIAL, float length = 16.2,
-									  float deltaAltRadians = 5*PI/180, Volume* az_vol = NULL, Volume* alt_vol = NULL);
+			Volume * HelixCorrelation(Volume* map_vol, RadialProfileType type = POLYNOMIAL, float length = 16.2, float deltaAltRadians = 5*PI/180,
+						bool use_mcf = true, Volume* az_vol = NULL, Volume* alt_vol = NULL);
 		private:
 			void NormalizeEdgeMean(Volume* vol);
 			void ApplyPolynomialProfileToHelix(Volume * in, float lengthAngstroms, int z0=-1);
@@ -188,9 +197,11 @@ namespace wustl_mm {
 			
 			vector<Vector3DInt> atomVolumePositions; // holds the i, j, k indices that give the voxel position of the pseudoatoms
 			vector<PDBAtom> patoms; // pseudoatoms
+			static const float max_radius; //for all r > max_radius, RadialProfile(r, {any type}) ~= 0
 
 		};
 		
+		const float SSEHunter::max_radius = 14.0f;
 		
 		SSEHunter::SSEHunter() {
 		}
@@ -566,8 +577,8 @@ namespace wustl_mm {
 		//cylinder that resembles the density seen from an alpha helix
 		//len in Angstroms, default to 3 turns
 		//The cylinder will be centered in the float array
-		void SSEHunter::ApplyTemplateCylinder(float* cylData, int xsize, int ysize, int zsize, int fastIxFFTPadding,
-					float alt, float az, RadialProfileType type, float len, float apix_x, float apix_y, float apix_z) {
+		void SSEHunter::ApplyTemplateCylinder(float* cylData, int xsize, int ysize, int zsize, int zFFTPadding, float alt, float az,
+											RadialProfileType type, float len, float apix_x, bool reset, float apix_y, float apix_z) {
 			/*
 			 *[ x' ]     [1      0       0    ] [ cos(az)  sin(az)  0][ x ]
 			 *[ y' ]  =  [0   cos(al)  sin(al)] [-sin(az)  cos(az)  0][ y ]
@@ -582,9 +593,26 @@ namespace wustl_mm {
 			if (apix_z <=0) {
 				apix_z = apix_x;
 			}
-			float half_xsize = xsize/2.0;
-			float half_ysize = ysize/2.0;
-			float half_zsize = zsize/2.0;
+
+			if (reset) {
+				for (int i=0; i<xsize*ysize*zsize; i++) {
+					cylData[i]=0;
+				}
+			}
+
+			int array_size = xsize*ysize*(zsize+zFFTPadding);
+			//Voxel in the 3D array that is the center of the cylinder
+			int i0 = xsize/2;
+			int j0 = ysize/2;
+			int k0 = zsize/2;
+
+			//The radial profile of the cylinder ~=0 for r > this->max_radius
+			//Cylinders of all orientations will fit inside a cube determined by cylinder length and max_radius
+			float cube_half_length = (max_radius < len ? len : max_radius);
+			int i_half_len = ceil( cube_half_length / apix_x);
+			int j_half_len = ceil( cube_half_length / apix_y);
+			int k_half_len = ceil( cube_half_length / apix_z);
+
 			float cos_alt = cos(alt);
 			float sin_alt = sin(alt);
 			float cos_az = cos(az);
@@ -592,27 +620,33 @@ namespace wustl_mm {
 			float radius;
 			float x, y, z;
 			float xprime, yprime, zprime;
+			int ix;
 
-			for (int i = 0; i < xsize; i++) {
-				for (int j = 0; j < ysize; j++) {
-					for (int k = 0; k < zsize; k++) {
-						x = apix_x*(i-half_xsize);
-						y = apix_y*(j-half_ysize);
-						z = apix_z*(k-half_zsize);
-						zprime =  (x*sin_az-y*cos_az) * sin_alt + z*cos_alt;
-						if ((2*zprime > -len ) && (2*zprime < len)) {
-							xprime =   x*cos_az+y*sin_az;
-							yprime = (-x*sin_az+y*cos_az) * cos_alt + z*sin_alt;
-							radius = sqrt(xprime*xprime+yprime*yprime);
-							cylData[k + (j + ysize*i)*(zsize+fastIxFFTPadding)] = RadialProfile(radius, type);
-						} else {
-							cylData[k + (j + ysize*i)*(zsize+fastIxFFTPadding)] = 0;
+			for (int i = -i_half_len; i <= i_half_len; i++) {
+				for (int j = -j_half_len; j <= j_half_len; j++) {
+					for (int k = -k_half_len; k <= k_half_len; k++) {
+						ix = (k+k0) + ( (j+j0)+ysize*(i+i0) )*(zsize+zFFTPadding);
+						//The array might be too small to hold the cube (in Angstroms) that contains all cylinder orientations
+						if (ix >=0 && ix < array_size) {
+							x = apix_x*i;
+							y = apix_y*j;
+							z = apix_z*k;
+							zprime =  (x*sin_az-y*cos_az) * sin_alt + z*cos_alt;
+							if ((2*zprime > -len ) && (2*zprime < len)) {
+								xprime =   x*cos_az+y*sin_az;
+								yprime = (-x*sin_az+y*cos_az) * cos_alt + z*sin_alt;
+								radius = sqrt(xprime*xprime+yprime*yprime);
+								cylData[ix] = RadialProfile(radius, type);
+							} else {
+								cylData[ix] = 0;
+							}
 						}
 					}
 				}
 			}
 		}
-
+		
+		
 		//TODO: TEST
 		Volume * SSEHunter::GetTemplateHelix(double length, float apix, float resolution, int mapSize)
 		{
@@ -864,45 +898,82 @@ namespace wustl_mm {
 			}
 		}
 
-		Volume * SSEHunter::HelixCorrelation(Volume* density_vol, RadialProfileType type, float length,
-												 float deltaAltRadians, Volume* az_vol, Volume* alt_vol) {
+		Volume * SSEHunter::HelixCorrelation(Volume* model, RadialProfileType type, float length,
+												 float deltaAltRadians, bool use_mcf, Volume* az_vol, Volume* alt_vol) {
 			cout << "HelixCorrelation()\n";
+
+#ifdef USE_TIME_MANAGER
+			TimeManager timer;
+			int total_timer = timer.StartStopWatch();
+			timer.PauseStopWatch(total_timer);
+			int setup_timer = timer.StartStopWatch();
+			timer.PauseStopWatch(setup_timer);
+			int cylinder_creation_timer = timer.StartStopWatch();
+			timer.PauseStopWatch(cylinder_creation_timer);
+			int ccf_timer = timer.StartStopWatch();
+			timer.PauseStopWatch(ccf_timer);
+			int bestCCF_timer = timer.StartStopWatch();
+			timer.PauseStopWatch(bestCCF_timer);
+			
+			timer.ResumeStopWatch(total_timer);
+			timer.ResumeStopWatch(setup_timer);
+#endif
+			
 			// TODO: Make it work with helices
-			int nx = density_vol->getSizeX();
-			int ny = density_vol->getSizeY();
-			int nz = density_vol->getSizeZ();
+			int nx = model->getSizeX();
+			int ny = model->getSizeY();
+			int nz = model->getSizeZ();
+			int fftPaddingFastIx = nz % 2 ? 1 : 2;
+			int array_size = nx*ny*(nz+fftPaddingFastIx);
+			int N = nx*ny*nz;
 			
+			float* ccf = (float*) malloc( sizeof(float)*nx*ny*(nz+fftPaddingFastIx) );
+			float* best_ccf = (float*) malloc( sizeof(float)*nx*ny*(nz+fftPaddingFastIx) );
+			for (int i=0; i<array_size; i++) {
+				best_ccf[i]=0;
+			}
+
 			Volume * bestCCF = new Volume(nx, ny, nz); // This is the returned volume
-			float orig_x = density_vol->getOriginX();
-			float orig_y = density_vol->getOriginY();
-			float orig_z = density_vol->getOriginZ();
-			float apix_x = density_vol->getSpacingX();
-			float apix_y = density_vol->getSpacingY();
-			float apix_z = density_vol->getSpacingZ();
-			
+			float orig_x = model->getOriginX();
+			float orig_y = model->getOriginY();
+			float orig_z = model->getOriginZ();
+			float apix_x = model->getSpacingX();
+			float apix_y = model->getSpacingY();
+			float apix_z = model->getSpacingZ();
+
 			bestCCF->setOrigin(orig_x, orig_y, orig_z);
 			bestCCF->setSpacing(apix_x, apix_y, apix_z);
+			float* best_alt = NULL;
+			float* best_az = NULL;
+			
 			if (az_vol) {
+				best_alt = (float*) malloc( sizeof(float)*nx*ny*(nz+fftPaddingFastIx) );
+				for (int i=0; i<array_size; i++) {
+					best_alt[i]=0;
+				}
 				az_vol->setOrigin(orig_x, orig_y, orig_z);
 				az_vol->setSpacing(apix_x, apix_y, apix_z);
 			}
 			if (alt_vol) {
+				best_az = (float*) malloc( sizeof(float)*nx*ny*(nz+fftPaddingFastIx) );
+				for (int i=0; i<array_size; i++) {
+					best_az[i] = 0;
+				}
 				alt_vol->setOrigin(orig_x, orig_y, orig_z);
 				alt_vol->setSpacing(apix_x, apix_y, apix_z);
 			}
-			int fftPaddingFastIx = nz % 2 ? 1 : 2;
+			
+			float* cyl = (float*) malloc( sizeof(float)*nx*ny*nz );
+			for (int i=0; i<nx*ny*nz; i++) {
+				cyl[i] = 0;
+			}
 
-			int array_size = nx*ny*(nz+fftPaddingFastIx);
-			int N = nx*ny*nz;
-
-			Volume model(*density_vol); //get a copy
-			NormThresh( model, model.getMean() + 2*model.getStdDev() );
-			float* density = model.getArrayCopy(0, 0, fftPaddingFastIx, 0);
+			Volume model_copy(*model); //get a copy before doing NormThresh()
+			NormThresh( model_copy, model_copy.getMean() + 2*model_copy.getStdDev() );
+			float* density = model_copy.getArrayCopy(0, 0, fftPaddingFastIx, 0);
 			fftInPlace(density, nz, ny, nx);
 
-			// Rotating the cylinder to all possible orientations
-			double axis_vect[3] = {0,0,0};
-			float* cyl = (float*) malloc( sizeof(float)*nx*ny*(nz+fftPaddingFastIx) );
+
 			float val;
 			float c1, c2, d1, d2;
 			/* If alt=az=0, make the cylinder's axis be <0,0,1>, the k_hat unit vector
@@ -915,74 +986,117 @@ namespace wustl_mm {
 			 */
 			deltaAltRadians = abs(deltaAltRadians);
 			float K = deltaAltRadians/sqrt(2);
-			float x,y,z;
-			float cos_alt, sin_alt, cos_az, sin_az;
-			for (float alt = 1E-9; alt < PI/2.0 + deltaAltRadians/2.0; alt += deltaAltRadians) { // the "+ deltaAltRadians/2.0" as in EMAN1
-				cos_alt = cos(alt);
-				sin_alt = sin(alt);
-				float deltaAzRadians = K/sin_alt;
+#ifdef USE_TIME_MANAGER
+			timer.PauseStopWatch(setup_timer);
+#endif
+			cout << "0 <= alt < " << 90+180/PI*deltaAltRadians/2.0 << ": ";
+			for (float alt = 1E-12; alt < PI/2.0 + deltaAltRadians/2.0; alt += deltaAltRadians) { // the "+ deltaAltRadians/2.0" as in EMAN1
+			
+				float deltaAzRadians = K/sin(alt);
+				printf("%5.1f\t", alt*180/PI);
+				cout << flush;
 				for (float az = 0; az < 2*PI + deltaAzRadians/2.0; az += deltaAzRadians) { // the "+ deltaAzRadians/2.0" as in EMAN1
-					ApplyTemplateCylinder(cyl, nx, ny, nz, fftPaddingFastIx, alt, az, type, length, apix_x, apix_y, apix_z);
-					fftInPlace(cyl, nz, ny, nx);
 
-					///Doing CCF: product in Fourier space
-					for (int i=0; i<array_size; i+=2) {
-						// conj(c1+c2*i) * (d1+d2*i) = (c1-c2*i) * (d1+d2*i) = (c1*d1+c2*d2) + (c1*d2-c2*d1)*i
-						c1 = cyl[i];
-						c2 = cyl[i+1];
-						d1 = density[i];
-						d2 = density[i+1];
+#ifdef USE_TIME_MANAGER
+					timer.ResumeStopWatch(cylinder_creation_timer);
+#endif
+					
+					ApplyTemplateCylinder(cyl, nx, ny, nz, 0, alt, az, type, length, apix_x, false, apix_y, apix_z);
 
-						cyl[i] = c1*d1+c2*d2;
-						cyl[i+1] = c1*d2-c2*d1;
+#ifdef USE_TIME_MANAGER
+					timer.PauseStopWatch(cylinder_creation_timer);
+					timer.ResumeStopWatch(ccf_timer);
+#endif
+
+					fftOutOfPlace(cyl, ccf, nz, ny, nx);
+					if (use_mcf) {
+						//Mutual Fourier Transform: product in Fourier space used to calculate MCF (mutual correlation function)
+						mftInPlace(ccf, density, array_size);
 					}
-					iftInPlace(cyl, nz, ny, nx); // cyl holds un-normalized CCF values
+					else {
 
-					int i2, j2, k2;
-
-					for (int i=0; i<nx; i++) {
-						for (int j=0; j<ny; j++) {
-							for (int k=0; k<nz; k++) {
-
-								// shifting the data to center it.
-								i2 = (i+nx/2) % nx;
-								j2 = (j+ny/2) % ny;
-								k2 = (k+nz/2) % nz;
-
-								val = cyl[k+(j+i*ny)*(nz+fftPaddingFastIx)] / N; // normalize by dividing by N = nx*ny*nz
-								if ( val > bestCCF->getDataAt(i2,j2,k2) ) {
-									bestCCF->setDataAt(i2,j2,k2, val);
-									if (az_vol)
-										az_vol->setDataAt(i2,j2,k2, az);
-									if (alt_vol)
-										alt_vol->setDataAt(i2,j2,k2, alt);
-								}
-							}
+						//cross Fourier transform: product in Fourier space used to calculate CCF
+						cftInPlace(ccf, density, array_size);
+					}
+					iftInPlace(ccf, nz, ny, nx); // ccf holds un-normalized CCF values
+					
+#ifdef USE_TIME_MANAGER
+					timer.PauseStopWatch(ccf_timer);
+					timer.ResumeStopWatch(bestCCF_timer);
+#endif
+					
+					for (int i=0; i<array_size; i++) {
+						val = ccf[i] / N; // normalize by dividing by N = nx*ny*nz
+						if( val > best_ccf[i] ) {
+							best_ccf[i] = val;
+							if (best_alt)
+								best_alt[i] = alt;
+							if (best_az)
+								best_az[i] = az;
 						}
 					}
+					
+#ifdef USE_TIME_MANAGER
+					timer.PauseStopWatch(bestCCF_timer);
+#endif
+					
 				}
-				cout << 200*alt/PI << "%\t" << flush;
+
 			}
-			cout << "\nFinished with all cylinder orientations." << endl;
+			cout << endl;
+			//cout << "\nFinished with all cylinder orientations." << endl;
 			free(density);
 			free(cyl);
+			free(ccf);
 
-			//Normalize bestCCF and model
+#ifdef USE_TIME_MANAGER
+			int normalization_timer = timer.StartStopWatch();
+#endif
+			
+			int i2, j2, k2;
+			int ix;
+			for (int i=0; i<nx; i++) {
+				for (int j=0; j<ny; j++) {
+					for (int k=0; k<nz; k++) {
+						ix = k+(j+i*ny)*(nz+fftPaddingFastIx);
+						
+						// shifting the data to center it.
+						i2 = (i+nx/2) % nx;
+						j2 = (j+ny/2) % ny;
+						k2 = (k+nz/2) % nz;
+						
+						val = best_ccf[ix];
+						bestCCF->setDataAt(i2,j2,k2, val);
+						if (az_vol && best_az)
+							az_vol->setDataAt(i2,j2,k2, best_az[ix]);
+						if (alt_vol && best_alt)
+							alt_vol->setDataAt(i2,j2,k2, best_alt[ix]);
+					}
+				}
+			}
+			
+			free(best_ccf);
+			if (best_az)
+				free(best_az);
+			if (best_alt)
+				free(best_alt);
+
+			//Normalize bestCCF and model_copy
 			double max = bestCCF->getMax();
 			for (int i=0; i < N; i++) {
 				val = bestCCF->getDataAt(i);
 				bestCCF->setDataAt(i, val/max);
 			}
-			max = model.getMax();
+			max = model_copy.getMax();
 			for (int i=0; i < N; i++) {
-				val = model.getDataAt(i);
-				model.setDataAt(i, val/max);
+				val = model_copy.getDataAt(i);
+				model_copy.setDataAt(i, val/max);
 			}
-			//Weight results to favor areas inside high density regions of the model.
+			//Weight results to favor areas inside high density regions of model_copy.
 			for (int i=0; i < N; i++) {
 				val = bestCCF->getDataAt(i);
-				bestCCF->setDataAt(i, val*model.getDataAt(i));
-				// Note: all voxels in model should have non-negative values because of earlier thresholding
+				bestCCF->setDataAt(i, val*model_copy.getDataAt(i));
+				// Note: all voxels in model_copy should have non-negative values because of earlier thresholding
 			}
 
 			//Normalize the modified bestCCF map
@@ -991,6 +1105,19 @@ namespace wustl_mm {
 				val = bestCCF->getDataAt(i);
 				bestCCF->setDataAt(i, val/max);
 			}
+			
+#ifdef USE_TIME_MANAGER
+			timer.PauseStopWatch(normalization_timer);
+			
+			timer.PauseStopWatch(total_timer);
+			timer.DisplayStopWatch(setup_timer, "Setup time: %f\n");
+			timer.DisplayStopWatch(cylinder_creation_timer, "Cylinder creation time: %f\n");
+			timer.DisplayStopWatch(ccf_timer, "CCF or MCF time: %f\n");
+			timer.DisplayStopWatch(bestCCF_timer, "bestCCF time: %f\n");
+			timer.DisplayStopWatch(normalization_timer, "Normalization time: %f\n");
+			timer.DisplayStopWatch(total_timer, "Total time: %f\n");
+#endif
+			
 			cout << "HelixCorrelation() returning...\n";
 			return bestCCF;
 		}
