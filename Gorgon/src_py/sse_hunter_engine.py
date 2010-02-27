@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.4  2010/02/11 23:19:13  ssa1
+#   Allowing the ability to save pseudoatoms generated from SSEHunter
+#
 
 
 from libpyGORGON import SSEHunter, RadialProfileType
@@ -52,7 +55,7 @@ class SSEHunterEngine:
 		
 	def setCorrelationScores(self, radialProfileType = None, deltaAngleRadians= None):
 		if not radialProfileType:
-			radialProfileType = RadialProfileType.gaussianDip
+			radialProfileType = RadialProfileType.polynomial
 		if not deltaAngleRadians:
 			deltaAngleRadians = 5*pi/180
 		self.sseh.setCorrelationScores(self.volume, radialProfileType, self.resolution, deltaAngleRadians)
