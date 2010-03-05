@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.25  2010/02/27 05:19:06  colemanr
+//   CCF runs ~2x faster than last commit; added MCF, which takes about twice as long as CCF, but gives better results often
+//
 //   Revision 1.24  2010/02/25 16:37:27  colemanr
 //   return zero for radial profile functions for radii that would give values < 1E-4 if calculated (for speed); HelixCorrelation() thresholding and normalization steps to match the EMAN1 helixHunter2.C algorithm
 //
@@ -985,7 +988,7 @@ namespace wustl_mm {
 			 * Thus, delta_az = (delta_alt/sqrt(2))/sin(alt);
 			 */
 			deltaAltRadians = abs(deltaAltRadians);
-			float K = deltaAltRadians/sqrt(2);
+			float K = deltaAltRadians/sqrt(2.0);
 #ifdef USE_TIME_MANAGER
 			timer.PauseStopWatch(setup_timer);
 #endif

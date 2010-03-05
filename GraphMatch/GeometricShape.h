@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.21  2010/01/08 20:43:23  schuhs
+//   Removing dependancy on SSE files for helix length calculation.
+//
 //   Revision 1.20  2009/12/28 17:42:27  ssa1
 //   Fixing SSEBuilder bug when adding sheets
 //
@@ -92,6 +95,7 @@ namespace wustl_mm {
 			void SetSelected(bool selected);
 			void GetRotationAxisAndAngle(Vector3DFloat &axis, double &angle);
 			static GeometricShape * CreateHelix(Vector3DFloat p1, Vector3DFloat p2, float radius);
+			static void WriteToFile(vector<GeometricShape*> & helices, FILE * fileName);
 
 
 			Point3 GetWorldCoordinates(Point3 point);
@@ -550,6 +554,27 @@ namespace wustl_mm {
 			double angle = acos(dir * yaxis);
 			newHelix->Rotate(Vector3(axis.X(), axis.Y(), axis.Z()), -angle);
 			return newHelix;
+		}
+
+		void GeometricShape::WriteToFile(vector<GeometricShape*> & helices, FILE * fout) {
+			Point3 center;
+			Vector3DFloat start, end, axis;
+			double angle;
+			float helixLength;
+			fprintf(fout, "#VRML V2.0 utf8\n");
+
+			for(unsigned int i = 0; i < helices.size(); i++) {
+				center = helices[i]->GetCenter();
+				start = helices[i]->GetCornerCell3(1);
+				end = helices[i]->GetCornerCell3(2);
+				helixLength = (start-end).Length();
+				helices[i]->GetRotationAxisAndAngle(axis, angle);
+
+				fprintf(fout, "Group {\n children [\n Transform {\n  translation %f %f %f\n", center[0], center[1], center[2]);
+				fprintf(fout, "  rotation %f %f %f %f\n", axis.X(), axis.Y(), axis.Z(), angle);
+				fprintf(fout, "  children [\n   Shape {\n    appearance \n     Appearance {\n      material Material {\n       emissiveColor 0 0.5 0\n       }\n     }\n");
+				fprintf(fout, "    geometry\n     Cylinder {\n      height %f \n      radius 2.5 \n     }\n   }\n  ]\n }\n ]\n}", helixLength);
+			}
 		}
 	}
 }
