@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.40  2010/01/17 05:10:13  schuhs
+//   Fixing bug that created an offset between the skeleton and the SSEHunter sheets in the SSE correspondence code
+//
 //   Revision 1.39  2010/01/14 23:34:25  ssa1
 //   Allowing the deletion of SSEs from the SSEBuilder window
 //
@@ -465,7 +468,7 @@ namespace wustl_mm {
 					fscanf(fin, "%f", &x2);
 					fscanf(fin, "%f", &y2);
 					fscanf(fin, "%f", &z2);
-					AddHelix(Vector3DFloat(x1, y1, z2), Vector3DFloat(x2, y2, z2));
+					AddHelix(Vector3DFloat(x1, y1, z1), Vector3DFloat(x2, y2, z2));
 				} 
 			}
 
@@ -921,24 +924,7 @@ namespace wustl_mm {
 
 
 		void SSERenderer::SaveHelixFileVRML(FILE* fout) {
-			Point3 center;
-			Vector3DFloat start, end, axis;
-			double angle;
-			float helixLength;
-			fprintf(fout, "#VRML V2.0 utf8\n");
-
-			for(unsigned int i = 0; i < helices.size(); i++) {
-				center = helices[i]->GetCenter();
-				start = helices[i]->GetCornerCell3(1);
-				end = helices[i]->GetCornerCell3(2);
-				helixLength = (start-end).Length();
-				helices[i]->GetRotationAxisAndAngle(axis, angle);
-
-				fprintf(fout, "Group {\n children [\n Transform {\n  translation %f %f %f\n", center[0], center[1], center[2]);
-				fprintf(fout, "  rotation %f %f %f %f\n", axis.X(), axis.Y(), axis.Z(), angle);
-				fprintf(fout, "  children [\n   Shape {\n    appearance \n     Appearance {\n      material Material {\n       emissiveColor 0 0.5 0\n       }\n     }\n");
-				fprintf(fout, "    geometry\n     Cylinder {\n      height %f \n      radius 2.5 \n     }\n   }\n  ]\n }\n ]\n}", helixLength);
-			}
+			GeometricShape::WriteToFile(this->helices, fout);
 		}
 
 		void SSERenderer::SaveHelixFileSSE(FILE* fout) {
