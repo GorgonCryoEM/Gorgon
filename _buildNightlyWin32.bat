@@ -27,3 +27,4 @@ cd ..\..\source
 
 copy /Y ..\bin\gorgon\gorgon_%VERSION%_%PLATFORM%.zip C:\wwwroot\HomePage\gorgon\resources\
 copy /Y ..\bin\gorgon\gorgon_%VERSION%_%PLATFORM%.zip Z:\web\gorgon\resources\ 
+copy /Y ..\bin\gorgon\gorgon_%VERSION%_%PLATFORM%.zip W:\engineering\gorgon\resources\
