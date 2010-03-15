@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.29  2010/01/17 18:34:59  ssa1
+#   Histogram for density visualization
+#
 #   Revision 1.28  2009/12/24 07:25:07  ssa1
 #   Refactoring child window behavior.. Using base classes to encapsulate common behavior
 #
@@ -71,6 +74,7 @@ from volume_binary_skeletonization_form import VolumeBinarySkeletonizationForm
 from volume_grayscale_skeletonization_form import VolumeGrayscaleSkeletonizationForm
 from volume_manual_skeletonization_form import VolumeManualSkeletonizationForm
 from model_visualization_form import ModelVisualizationForm
+from volume_laplacian_smoothing_form import VolumeLaplacianSmoothingForm
 from volume_crop_form import VolumeCropForm
 from volume_raw_loader_form import VolumeRawLoaderForm
 from string import split, upper
@@ -147,6 +151,7 @@ class VolumeViewer(BaseViewer):
         self.grayscaleSkeletonizer = VolumeGrayscaleSkeletonizationForm(self.app, self, self)
         self.cropper = VolumeCropForm(self.app, self, self)
         self.rawLoader = VolumeRawLoaderForm(self.app, self, self)
+        self.laplacianSmoother = VolumeLaplacianSmoothingForm(self.app, self, self)
     
     def updateActionsAndMenus(self):
         self.app.actions.getAction("save_Volume").setEnabled(self.loaded)

@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.71  2010/02/11 23:19:13  ssa1
+//   Allowing the ability to save pseudoatoms generated from SSEHunter
+//
 //   Revision 1.70  2010/01/20 05:08:30  colemanr
 //   added conversions from STL vector to Python list or reverse - code from EMAN2
 //
@@ -452,6 +455,7 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("getOriginY", &VolumeRenderer::GetOriginY)
 		.def("getOriginZ", &VolumeRenderer::GetOriginZ)
 		.def("useDisplayRadius", &VolumeRenderer::UseDisplayRadius)
+		.def("performSmoothLaplacian", &VolumeRenderer::PerformSmoothLaplacian)		
 	;
 
 	class_< MeshRenderer, bases<Renderer> >("MeshRenderer", init<>())
