@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.56  2009/12/07 21:34:36  ssa1
+//   Finding Rotation using SVD, and removing compiler warnings
+//
 //   Revision 1.55  2009/10/13 18:09:34  ssa1
 //   Refactoring Volume.h
 //
@@ -172,6 +175,7 @@ namespace wustl_mm {
 			void NormalizeVolume();
 			void DownsampleVolume();
 			void CropVolume(int minX, int minY, int minZ, int maxX, int maxY, int maxZ);
+			void PerformSmoothLaplacian(double convergenceRate, int iterations);
 			Volume * GetVolume();
 			Volume * PerformBinarySkeletonizationJu2007(double threshold, int minCurveSize, int minSurfaceSize);
 			Volume * PerformGrayscaleSkeletonizationAbeysinghe2008(double startDensity, int stepCount, int minCurveSize, int minSurfaceSize, int curveRadius, int surfaceRadius, int skeletonSmoothenRadius);
@@ -1033,6 +1037,17 @@ namespace wustl_mm {
 		void VolumeRenderer::UseDisplayRadius(bool useRadius) {
 			useDisplayRadius = useRadius;
 		}
+
+		void VolumeRenderer::PerformSmoothLaplacian(double convergenceRate, int iterations) {
+			if(dataVolume != NULL) {
+				for(unsigned int i = 0; i < iterations; i++) {
+					this->dataVolume->smooth(convergenceRate);
+				}
+
+				SetSurfaceValue(surfaceValue);
+			}
+		}
+
 
 		void VolumeRenderer::Unload() {
 			Renderer::Unload();
