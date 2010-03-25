@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.19  2010/02/11 23:19:11  ssa1
+//   Allowing the ability to save pseudoatoms generated from SSEHunter
+//
 //   Revision 1.18  2010/01/09 00:07:49  schuhs
 //   SSE correspondence search now works with SEQ files
 //
@@ -306,6 +309,7 @@ namespace wustl_mm {
 			}
 			printf("\n%s \n", sequence.c_str());
 
+			/* block below contains a bug (ex: BTV data set)
 			oldNum = start;
 			for(unsigned int i = 0; i < structures.size(); i++) {
 				string dashLine = "";
@@ -326,6 +330,7 @@ namespace wustl_mm {
 				oldNum = structures[i]->endPosition + 1;
 			}
 			printf("\n");
+			*/
 			#endif
 
 
