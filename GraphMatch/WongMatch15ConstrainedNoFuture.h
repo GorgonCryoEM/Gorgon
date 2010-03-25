@@ -15,6 +15,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.18  2010/01/08 22:27:34  schuhs
+//   Helix-only correspondence works with SEQ file
+//
 //   Revision 1.17  2010/01/08 21:17:45  schuhs
 //   Using GorgonPriorityQueue instead of PriorityQueue
 //
@@ -94,10 +97,13 @@ namespace wustl_mm {
 			double GetF();
 			void PopBestNode(); // Gets the best (first) node from the active nodes list.
 			bool ExpandNode(LinkedNodeStub * currentStub);  // Expands all the children of the current node.
-			void ComputeSolutionCost();
+			void ComputeSolutionCost(int solution[], bool extraMessages);
+			void AnalyzeResults(int results[][MAX_NODES], int groundTruth[]);
 			void NormalizeGraphs();
 			void NormalizeSheets();
 			unsigned long long EncodeNode(unsigned long long bitmap, int node);
+			void PrintNodeConcise(LinkedNode * node, int rank, bool endOfLine, bool printCostBreakdown);
+			int bestMatches[RESULT_COUNT][MAX_NODES];
 
 		};
 
@@ -167,6 +173,11 @@ namespace wustl_mm {
 				missingSheetCount = 0;
 			}
 			
+			// TEMPORARY CODE!
+			//EUCLIDEAN_VOXEL_TO_PDB_RATIO *= 1.5;
+			//EUCLIDEAN_VOXEL_TO_PDB_RATIO = 3.0;
+			//EUCLIDEAN_VOXEL_TO_PDB_RATIO = 1.5 * LOOP_C_ALPHA_TO_ANGSTROMS; // this is what i think it should be.
+			// END TEMPORARY CODE
 
 			// new method of counting missing sheets and helices
 			// count helix nodes in base graph
@@ -268,7 +279,9 @@ namespace wustl_mm {
 				if(currentNode->depth == patternGraph->nodeCount) {
 					finishTime = clock();
 					foundCount++;
-					currentNode->PrintNodeConcise(foundCount, false);
+					//currentNode->PrintNodeConcise(foundCount, false);
+					//printf("\n");
+					PrintNodeConcise(currentNode,foundCount, false, false);
 					//printf(": (%d expanded) (%f seconds) (%fkB Memory) (%d queue size) (%d parent size)\n", expandCount, (double) (finishTime - startTime) / (double) CLOCKS_PER_SEC, (queue->getLength() * sizeof(LinkedNode) + usedNodes.size() * sizeof(LinkedNodeStub)) / 1024.0, queue->getLength(), (int)usedNodes.size());
 					printf(": (%d expanded) (%f seconds) (%d parent size)\n", expandCount, (double) (finishTime - startTime) / (double) CLOCKS_PER_SEC, (int)usedNodes.size());
 					int numHelices = baseGraph->GetHelixCount();
@@ -315,9 +328,21 @@ namespace wustl_mm {
 #ifdef VERBOSE
 			cout << "Finished the correspondence search. Found " << foundCount << " results." << endl;
 #endif // VERBOSE
-
-			ComputeSolutionCost();
-
+			/*vector<int> groundTruth;
+			for (int i = 0; i < patternGraph->GetNodeCount(); i++) {
+				groundTruth[i]=SOLUTION[i];
+			}
+			ComputeSolutionCost(groundTruth);*/
+			cout << "The ground truth solution is" << endl;
+			cout << "**      ";
+			for (int i = 0; i < patternGraph->GetNodeCount(); i++) {
+				cout.width(2);
+				cout << SOLUTION[i] << " ";
+			}
+			//ComputeSolutionCost(SOLUTION, false);
+			ComputeSolutionCost(SOLUTION, false);
+			AnalyzeResults(bestMatches, SOLUTION);
+			cout << endl;
 			return foundCount;
 		}
 
@@ -349,7 +374,20 @@ namespace wustl_mm {
 		// returns the cost of matching node p in the pattern graph to node qp in the base graph
 		// this method does not include any cost for matching strands to sheets.
 		double WongMatch15ConstrainedNoFuture::GetC(int p, int qp) {
-			return GetC(p, p, qp, qp);
+			//return GetC(p, p, qp, qp);
+			double cost = GetC(p, p, qp, qp);
+			
+			// if sheet-to-strand match, compute the cost of the match based on the unused sheet capacity and the strand length
+			if( (int)(patternGraph->adjacencyMatrix[p-1][p-1][0] + 0.01) == GRAPHNODE_SHEET && 
+				(int)(baseGraph->adjacencyMatrix[qp-1][qp-1][0] + 0.01) == GRAPHNODE_SHEET ) {
+				cost = 0;
+				//cout << " ... original cost = " << cost << endl;
+				cost = abs(patternGraph->nodeWeights[p-1] - baseGraph->nodeWeights[qp-1]);
+				//cout << " ... cost to match strand " << p << " to sheet " << qp << " is " << cost << endl;
+			}
+			return cost;
+
+
 		}
 
 		// returns the cost of matching node p in the pattern graph to node qp in the base graph
@@ -553,6 +591,15 @@ namespace wustl_mm {
 
 			switch(COST_FUNCTION)
 			{
+			
+			//case(1):
+			//	if ( (int)(baseGraph->adjacencyMatrix[qj-1][qp-1][0] +0.01) == GRAPHEDGE_HELIX ) {
+			//		return weight * fabs(patternLength - baseLength);
+			//	} else {
+			//		// TODO: Remove this arbitrary weight!
+			//		return 50.0*weight * fabs(patternLength - baseLength) / (patternLength + baseLength);
+			//	}
+			//	break;
 			case(1):
 				return weight * fabs(patternLength - baseLength);
 				break;
@@ -587,6 +634,7 @@ namespace wustl_mm {
 		// add in penalties for skipped helices and sheets
 		// m is the number of nodes involved in the match. m=1 is no skipped helices or sheets.
 		double WongMatch15ConstrainedNoFuture::GetPenaltyCost(int d, int m, bool debugMsg) {
+			//if (d==0) {cout << "d=" << d << ", m=" << m << endl; debugMsg=true;}
 			double cost = 0.0;
 			int lastPatternNode = patternGraph->GetNodeCount() - 1;
 			bool startAtBeginning = ( d == 0 );
@@ -594,6 +642,7 @@ namespace wustl_mm {
 			bool pastFirst = true;
 			bool firstHelixFound = false;
 			for(int k = d; k < d + m-1; k++) {
+				//if (debugMsg) {cout << "+++++++++++++++++++inside loop k=" << k << endl;}
 				//cout << "  GetPenaltyCost(" << d << "," << m << "). k=" << k << ". " << endl;
 				// add penalties for all skipped helices
 				if((int)(patternGraph->adjacencyMatrix[k][k+1][0] + 0.01) == GRAPHEDGE_HELIX) {
@@ -626,6 +675,7 @@ namespace wustl_mm {
 					if (debugMsg) { cout << "  -- adding missing sheet penalties: fixed=" << MISSING_SHEET_PENALTY << ", scaled=" << patternGraph->nodeWeights[k] * MISSING_SHEET_PENALTY_SCALED << endl; }
 #endif // VERBOSE
 				}
+				//if (startAtBeginning && debugMsg) { cout << "STARTATBEGIN" << endl;}
 				pastFirst = true;
 			}
 
@@ -633,6 +683,7 @@ namespace wustl_mm {
 					cost += MISSING_SHEET_PENALTY;
 					cost += patternGraph->nodeWeights[lastPatternNode-1] * MISSING_SHEET_PENALTY_SCALED;
 			}
+			//if (debugMsg) { cout << "  -- returning cost=" << cost << endl; }
 			return cost;
 		}
 
@@ -729,7 +780,9 @@ namespace wustl_mm {
 							
 							// if this is an allowed match:
 							if(edgeCost >= 0) {
-								currentNode->costGStar += temp->costGStar + edgeCost + GetC(currentNode->n1Node, currentNode->n2Node, currentNode);
+								//worked! currentNode->costGStar += temp->costGStar + edgeCost + GetC(currentNode->n1Node, currentNode->n2Node, currentNode);
+								currentNode->costGStar += temp->costGStar + edgeCost + GetC(currentNode->n1Node, currentNode->n2Node);
+
 								// add costs for skipped helices and sheets
 								currentNode->costGStar += GetPenaltyCost(temp->n1Node, j+1, false);
 								
@@ -797,13 +850,258 @@ namespace wustl_mm {
 			return expanded;
 		}
 
+		void WongMatch15ConstrainedNoFuture::AnalyzeResults(int results[][MAX_NODES], int groundTruth[]) {
+
+			int numNodes = patternGraph->GetNodeCount();
+			int nh=0, ns=0;
+			// count the number of helices and sheets
+			for (int i=0; i < numNodes; i++) {
+				if (patternGraph->adjacencyMatrix[i][i][0] == GRAPHNODE_HELIX) {
+					nh++;
+				}
+				else if (patternGraph->adjacencyMatrix[i][i][0] == GRAPHNODE_SHEET) {
+					ns++;
+				}
+			}
+
+			// compute the % of helices and sheets correctly predicted by each result
+			int nCorrectHelices[RESULT_COUNT];
+			int nCorrectHelicesFlipped[RESULT_COUNT];
+			int nCorrectSheets[RESULT_COUNT];
+
+			for (int res = 0; res < RESULT_COUNT; res++) {
+				// Check if all helices or all sheets were correctly matched
+				for (int i=0; i < numNodes; i++) {
+					if (patternGraph->adjacencyMatrix[i][i][0] == GRAPHNODE_HELIX) {
+						if (results[res][i]==SOLUTION[i]) {
+							nCorrectHelices[res]++;
+						}
+						if (results[res][i]==SOLUTION[i] || results[res][i]==SOLUTION[max(0,i-1)] || results[res][i]==SOLUTION[min(numNodes-1,i+1)]) {
+							nCorrectHelicesFlipped[res]++;
+						}
+					}
+					if (patternGraph->adjacencyMatrix[i][i][0] == GRAPHNODE_SHEET) {
+						if (results[res][i]==SOLUTION[i]) {
+							nCorrectSheets[res]++;
+						}
+					}
+				}
+			}
+
+			cout << endl;
+			//for (int i = 0; i < foundCount; i++){
+			//	cout << "Result " << i << " has " << nCorrectHelices[i]/2 << " correct helices (" << nCorrectHelicesFlipped[i]/2 << " if direction is ignored) and " << nCorrectSheets[i] << " correct strands." << endl;
+			//}
+			//for (int i = 0; i < foundCount; i++){
+			//	cout << "Result " << i << " has " << (double)nCorrectHelices[i]/(nh) << " correct helices (" << (double)nCorrectHelicesFlipped[i]/nh << " if direction is ignored) and " << (double)nCorrectSheets[i]/ns << " correct strands." << endl;
+			//}
+
+			// compute the average % of correct helices and sheets over all results
+			
+
+			// count up how many votes each node receives
+			int votes[MAX_NODES][MAX_NODES];
+			for (int i=0; i<foundCount; i++) {
+				for (int j=0; j<numNodes; j++) {
+					int thisVote = results[i][j];
+					thisVote = max(thisVote,0); // store votes for -1 at location 0, which is otherwise unused
+					//cout << "casting vote " << thisVote << " at votes[" << j << "][" << thisVote << "]" << endl;
+					votes[j][thisVote]++;
+				}
+			}
+
+			/*
+			cout << "votes: " << endl;
+			for (int i = 0; i < MAX_NODES; i++) {
+				for (int j = 0; j < numNodes; j++) {
+					cout.width(2);
+					cout << votes[j][i];
+				}
+				cout << endl;
+			}*/
+			
+			// report the % of votes recieved by the ground truth
+			int tots=0, toth=0, tothf=0;
+			for (int i = 0; i < foundCount; i++) {
+				tots += nCorrectSheets[i];
+				toth += nCorrectHelices[i];
+				tothf += nCorrectHelicesFlipped[i];
+			}
+			cout << "Average helix predictions accuracy is " << (double)toth/(foundCount*nh) << " (" << (double)tothf/(foundCount*nh) << " if direction is ignored). Average sheet accuracy is " << (double)tots/(foundCount*ns) << endl;
+
+
+			// compute # of results that had perfect helix and sheets scores
+			int nAllH=0, nAllHf=0, nAllS=0;
+			for (int i=0; i < foundCount; i++) {
+				if (nCorrectSheets[i]==ns) {nAllS++;}
+				if (nCorrectHelices[i]==nh) {nAllH++;}
+				if (nCorrectHelicesFlipped[i]==nh) {nAllHf++;}
+			}
+			cout << "Results with all helices correct: " << nAllH << " (" << nAllHf << " counting flips). Results with all sheets correct: " << nAllS << endl;
+
+			// count # of votes that each ground truth node gets
+			int groundTruthVotes[MAX_NODES];
+			for (int i = 0; i < numNodes; i++) {
+				int truthKey=max(groundTruth[i],0);
+				groundTruthVotes[i]=votes[i][truthKey];
+			}
+			cout << "The ground truth solution gets the following number of votes:" << endl;
+			cout << " seq #  ";
+			for (int i = 0; i < patternGraph->GetNodeCount(); i++) {
+				cout.width(2);
+				cout << i+1 << " ";
+			}
+			cout << endl;
+			cout << " truth  ";
+			for (int i = 0; i < patternGraph->GetNodeCount(); i++) {
+				cout.width(2);
+				cout << groundTruth[i] << " ";
+			}
+			cout << endl;
+			cout << " votes  ";
+			for (int i = 0; i < patternGraph->GetNodeCount(); i++) {
+				cout.width(2);
+				cout << groundTruthVotes[i] << " ";
+			}
+			cout << endl;
+
+			// find which structure gets the most votes for each node
+			int maxVotesIndex[MAX_NODES];
+			int maxVotesCount[MAX_NODES];
+			for (int i = 0; i < numNodes; i++) {
+				int maxCount = -1;
+				int maxCountIndex = -1;
+				for (int j = 0; j < MAX_NODES; j++) {
+					if (votes[i][j]>maxCount) {
+						maxCount = votes[i][j];
+						//cout << "maxcount[" << i << "][" << j << "]=" << maxCount << endl;
+						maxCountIndex=j;
+					}
+				}
+				maxVotesIndex[i]=maxCountIndex;
+				maxVotesCount[i]=maxCount;
+			}
+			cout << "The max vote solution gets the following number of votes:" << endl;
+			cout << " index  ";
+			for (int i = 0; i < numNodes; i++) {
+				cout.width(2);
+				if (maxVotesIndex[i]==0) {
+					cout << -1 << " ";
+				} else {
+					cout << maxVotesIndex[i] << " ";
+				}
+			}
+			cout << endl;
+			cout << " votes  ";
+			for (int i = 0; i < numNodes; i++) {
+				cout.width(2);
+				cout << maxVotesCount[i] << " ";
+			}
+			cout << endl;
+
+			// compute success rate of max vote guess
+			double maxVoteSuccess=0.0;
+			double maxVoteSuccessHelix=0.0;
+			double maxVoteSuccessHelixFlipped=0.0;
+			double maxVoteSuccessSheet=0.0;
+			for (int i = 0; i < numNodes; i++) {
+				if (patternGraph->adjacencyMatrix[i][i][0] == GRAPHNODE_HELIX) {
+					if (maxVotesIndex[i]==0 && groundTruth[i]==-1) {
+						maxVoteSuccess += 1.0;
+						maxVoteSuccessHelix += 1.0;
+						maxVoteSuccessHelixFlipped += 1.0;
+						//cout << " exact match (missing Helix) detected i=" << i << endl;
+					}
+					if (maxVotesIndex[i] == groundTruth[i]) {
+						maxVoteSuccess += 1.0;
+						maxVoteSuccessHelix += 1.0;
+						maxVoteSuccessHelixFlipped += 1.0;
+						//cout << " exact match detected i=" << i << endl;
+					}
+					// first test for a flipped helix
+					if (i>0 && maxVotesIndex[i-1]==groundTruth[i] && maxVotesIndex[i]==groundTruth[i-1]) {
+						// another test to make sure these are really the same helix
+						int mini=min(maxVotesIndex[i],maxVotesIndex[i-1]);
+						int maxi=max(maxVotesIndex[i],maxVotesIndex[i-1]);
+						if (mini%2==1 && maxi==mini+1) {
+							maxVoteSuccessHelixFlipped += 1.0;
+							//cout << " flip1 detected i=" << i << endl;
+						}
+					}
+					// first test for a flipped helix
+					if (i<numNodes-1 && maxVotesIndex[i+1]==groundTruth[i] && maxVotesIndex[i]==groundTruth[i+1]) {
+						// another test to make sure these are really the same helix
+						int mini=min(maxVotesIndex[i],maxVotesIndex[i+1]);
+						int maxi=max(maxVotesIndex[i],maxVotesIndex[i+1]);
+						if (mini%2==1 && maxi==mini+1) {
+							maxVoteSuccessHelixFlipped += 1.0;
+							//cout << " flip2 detected i=" << i << endl;
+						}
+					}
+				} else if (patternGraph->adjacencyMatrix[i][i][0] == GRAPHNODE_SHEET) {
+					if (maxVotesIndex[i] == groundTruth[i]) {
+						maxVoteSuccess += 1.0;
+						maxVoteSuccessSheet += 1.0;
+					}
+				}
+			}
+			maxVoteSuccess /= (double)numNodes;
+			maxVoteSuccessHelix /= (double)nh;
+			maxVoteSuccessHelixFlipped /= (double)nh;
+			maxVoteSuccessSheet /= (double)ns;
+			cout << "The max vote guess success rate is " << maxVoteSuccess << ". Helix: " << maxVoteSuccessHelix << " (" << maxVoteSuccessHelixFlipped << " allowing flips). Sheet: " << maxVoteSuccessSheet << "." << endl;
+
+			// compare the # of votes of ground truth with # of votes received by the most-voted 
+			double voteRatio[MAX_NODES];
+			double averageVoteRatio=0.0;
+			double averageVoteRatioHelix=0.0;
+			double averageVoteRatioSheet=0.0;
+			for (int i = 0; i < numNodes; i++) {
+				voteRatio[i]=(double)groundTruthVotes[i]/(double)maxVotesCount[i];
+				averageVoteRatio+=voteRatio[i];
+				if (patternGraph->adjacencyMatrix[i][i][0] == GRAPHNODE_HELIX) {
+					averageVoteRatioHelix+=voteRatio[i];
+				}
+				if (patternGraph->adjacencyMatrix[i][i][0] == GRAPHNODE_SHEET) {
+					averageVoteRatioSheet+=voteRatio[i];
+				}
+			}
+			averageVoteRatio /= numNodes;
+			averageVoteRatioHelix /= nh;
+			averageVoteRatioSheet /= ns;
+			cout << " % true ";
+			for (int i = 0; i < numNodes; i++) {
+				cout.width(2);
+				cout << voteRatio[i] << " ";
+			}
+			cout << endl;
+			cout << "Average vote ratio is " << averageVoteRatio << ". Helices: " << averageVoteRatioHelix << ". Sheets: " << averageVoteRatioSheet << endl;
+			
+
+
+
+
+			// print the voting rank of the ground truth for each node
+
+
+
+
+		}
+
 		// Compute the cost of the ground truth solution which is submitted by the user.
-		void WongMatch15ConstrainedNoFuture::ComputeSolutionCost() {
-#ifdef VERBOSE
-			cout << "starting ComputeSolutionCost" << endl;
-#endif // VERBOSE
+		void WongMatch15ConstrainedNoFuture::ComputeSolutionCost(int solution[], bool extraMessages) {
+			if (extraMessages) {cout << "starting ComputeSolutionCost" << endl;}
 			int n1=0, n2=1;
 			double edgeCost = 0.0;
+
+			double helixCost = 0.0;
+			double helixPenaltyCost = 0.0;
+			double loopCost = 0.0;
+			double loopPenaltyCost = 0.0;
+			double sheetCost = 0.0;
+			double sheetPenaltyCost = 0.0;
+			double skipPenaltyCost = 0.0;
+
 			double edgePenaltyCost = 0.0;
 			double nodeCost = 0.0;
 			int skippedHelixNodes = 0;
@@ -812,13 +1110,11 @@ namespace wustl_mm {
 			int numNodes = patternGraph->GetNodeCount();
 
 			// iterate over all correspondences, adding each to the previous solution
-			while (n2 < numNodes) { // TODO: repl 23 with variable representing the number of nodes
+			while (n2 < numNodes) { 
 
 				// check if first node is skipped helix or sheet
-				if (SOLUTION[n1] == -1) {
-#ifdef VERBOSE
-					cout << "skipped node found at " << n1+1 << " with adj matrix value " << patternGraph->adjacencyMatrix[n1][n1][0] << endl;
-#endif // VERBOSE
+				if (solution[n1] == -1) {
+					if (extraMessages) {cout << "skipped node found at " << n1+1 << " with adj matrix value " << patternGraph->adjacencyMatrix[n1][n1][0] << endl;}
 					if (patternGraph->adjacencyMatrix[n1][n1][0] == GRAPHNODE_HELIX) {
 						skippedHelixNodes++;
 					}
@@ -829,7 +1125,8 @@ namespace wustl_mm {
 
 				// find the end of the current correspondence
 				//cout << "begin while block. n1 = " << n1 << ", n2 = " << n2 << endl;
-				while (SOLUTION[n2] == -1 && n2 < numNodes) {
+				//while (solution[n2] == -1 && n2 < numNodes) {
+				while (solution[n2] == -1 && n2 < numNodes-1) {
 					//cout << "skipped node found at " << n2+1 << " with adj matrix value " << patternGraph->adjacencyMatrix[n2][n2][0] << endl;
 					if (patternGraph->adjacencyMatrix[n2][n2][0] == GRAPHNODE_HELIX) {
 						skippedHelixNodes++;
@@ -843,51 +1140,69 @@ namespace wustl_mm {
 				//cout << "after advancing n2, n1 = " << n1 << ", n2 = " << n2 << ", skippedHN = " << skippedHelixNodes << ", skippedSN = " << skippedSheetNodes << endl;
 
 				// add edge cost
-#ifdef VERBOSE
-				cout << "adding (" << n1+1 << "," << n2+1 << "," << SOLUTION[n1] << "," << SOLUTION[n2] << ")" << endl;
-#endif // VERBOSE
+				if (extraMessages) {cout << "adding (" << n1+1 << "," << n2+1 << "," << solution[n1] << "," << solution[n2] << ")" << endl;}
 				double singleEdgeCost = 1000;
 				double singleEdgePenaltyCost = 0;
+
 				// if edge exists in base graph, find the cost of this correspondence.
-				if (SOLUTION[n1] == -1) {
+				if (solution[n1] == -1) {
 					singleEdgeCost = 0;
-					singleEdgePenaltyCost = GetPenaltyCost(n1+1, n2-n1, true);
-#ifdef VERBOSE
-					cout << "  GetPenaltyCost("<<n1+1<<","<<n2-n1<<")="<<singleEdgePenaltyCost<<endl;
-					cout << "  No edge cost for initial skip edge" << endl;
-#endif // VERBOSE
-					if (patternGraph->adjacencyMatrix[n1][n1][0] == GRAPHNODE_SHEET) {
+					//singleEdgePenaltyCost = GetPenaltyCost(n1+1, n2-n1, extraMessages);
+					//singleEdgePenaltyCost = GetPenaltyCost(n1, n2-n1+1, extraMessages);
+					singleEdgePenaltyCost = GetPenaltyCost(n1, n2-n1+1, extraMessages);
+					//if (extraMessages) {cout << "  GetPenaltyCost("<<n1<<","<<n2-n1<<")="<<singleEdgePenaltyCost<<endl;}
+					if (extraMessages) {cout << "  GetPenaltyCost("<<n1<<","<<n2-n1+1<<")="<<singleEdgePenaltyCost<<endl;}
+					//if (extraMessages) {cout << "  No edge cost for initial skip edge" << endl;}
+					/*if (patternGraph->adjacencyMatrix[n1][n1][0] == GRAPHNODE_SHEET) {
+						sheetPenaltyCost += singleEdgePenaltyCost;
+						skipPenaltyCost += singleEdgePenaltyCost;
 						singleEdgePenaltyCost = MISSING_SHEET_PENALTY;
+					}*/
+					skipPenaltyCost += singleEdgePenaltyCost;
+				} else if (baseGraph->EdgeExists(solution[n1]-1, solution[n2]-1)) {
+					if (solution[n2] == -1 && n2==numNodes-1) {
+						// last edge is skip edge
+						singleEdgeCost = 0; 
+					} else {
+						singleEdgeCost = GetCost(n1+1, n2-n1, solution[n1], solution[n2], extraMessages);
 					}
-				} else if (baseGraph->EdgeExists(SOLUTION[n1]-1, SOLUTION[n2]-1)) {
-					singleEdgeCost = GetCost(n1+1, n2-n1, SOLUTION[n1], SOLUTION[n2], true);
-					singleEdgePenaltyCost = GetPenaltyCost(n1+1, n2-n1, true);
-#ifdef VERBOSE
-					cout << "  GetCost("<<n1+1<<","<<n2-n1<<","<<SOLUTION[n1]<<","<<SOLUTION[n2]<<")="<<singleEdgeCost<<endl;
-					cout << "  GetPenaltyCost("<<n1+1<<","<<n2-n1<<")="<<singleEdgePenaltyCost<<endl;
-#endif // VERBOSE
+					singleEdgePenaltyCost = GetPenaltyCost(n1+1, n2-n1, extraMessages);
+					//if (patternGraph->adjacencyMatrix[n1][n2][0] == GRAPHEDGE_LOOP) { // misses skip edges
+					if (baseGraph->adjacencyMatrix[solution[n1]-1][solution[n2]-1][0] == GRAPHEDGE_HELIX) {
+						//cout << "[H" << solution[n1] << "-" << solution[n2] << "]";
+						helixCost += singleEdgeCost;
+						helixPenaltyCost += singleEdgePenaltyCost;
+						skipPenaltyCost += singleEdgePenaltyCost;
+					} else {
+						loopCost += singleEdgeCost;
+						skipPenaltyCost += singleEdgePenaltyCost;
+					}
+					if (extraMessages) {cout << "  GetCost("<<n1+1<<","<<n2-n1<<","<<solution[n1]<<","<<solution[n2]<<")="<<singleEdgeCost<<endl;}
+					if (extraMessages) {cout << "  GetPenaltyCost("<<n1+1<<","<<n2-n1<<")="<<singleEdgePenaltyCost<<endl;}
+					if (singleEdgeCost == -1) {cout << "  MATCH FROM NODE " << solution[n1] << " TO NODE " << solution[n2] << " IS NOT ALLOWED (CUTOFF OR TYPE MISMATCH?)" << endl;} 
 				} else {
-#ifdef VERBOSE
-					cout << "  BASE GRAPH DOES NOT HAVE AN EDGE FROM NODE " << SOLUTION[n1] << " TO NODE " << SOLUTION[n2] << ". THIS SOLUTION NOT POSSIBLE!" << endl;
-#endif // VERBOSE
+					cout << "  BASE GRAPH DOES NOT HAVE AN EDGE FROM NODE " << solution[n1] << " TO NODE " << solution[n2] << ". THIS SOLUTION NOT POSSIBLE!" << endl;
 				}
 
 				// check if first or last helix is unmatched
 				if ((n1 == 0 && singleEdgeCost == -1) || (n2 == numNodes && singleEdgeCost == -1)){
-#ifdef VERBOSE
-					cout << "  first helix or sheet is unmatched. adding penalty of " << singleEdgeCost << endl;
-#endif // VERBOSE
+					if (extraMessages) {cout << "  first helix or sheet is unmatched. adding penalty of " << singleEdgeCost << endl;}
 				} else {
-#ifdef VERBOSE
-					cout << "  cost of this addition is " << singleEdgeCost << endl;
-#endif // VERBOSE
+					if (extraMessages) {cout << "  cost of this addition is " << singleEdgeCost << endl;}
 				}
 
 				// add node cost
-				double singleNodeCost = GetC(n2+1, SOLUTION[n2]);
-#ifdef VERBOSE
-				cout << "  node cost for nodes " << n2+1 << " and " << SOLUTION[n2] << " is " << singleNodeCost << endl;
-#endif // VERBOSE
+				double singleNodeCost = GetC(n2+1, solution[n2]);
+				// if at beginning of sequence, check first node
+				if (patternGraph->adjacencyMatrix[n2][n2][0] == GRAPHNODE_SHEET) {
+					sheetCost += singleNodeCost;
+				}
+				if (n1==0 && patternGraph->adjacencyMatrix[n1][n1][0] == GRAPHNODE_SHEET) {
+					double firstNodeCost = GetC(n1+1, solution[n1]);
+					sheetCost += firstNodeCost;
+					singleNodeCost += firstNodeCost;
+				}
+				if (extraMessages) {cout << "  node cost for nodes " << n2+1 << " and " << solution[n2] << " is " << singleNodeCost << endl;}
 
 				// add the costs from this iteration to the running totals
 				edgeCost += singleEdgeCost;
@@ -899,29 +1214,85 @@ namespace wustl_mm {
 				n2++;
 			}
 
-#ifdef VERBOSE
-			cout << "total edge cost is " << edgeCost << endl;
-			cout << "total edge penalty cost is " << edgePenaltyCost << endl;
-			cout << "total node cost is " << nodeCost << endl;
-#endif // VERBOSE
+			// Check if all helices or all sheets were correctly matched
+			bool sheetsCorrect=true;
+			bool helicesCorrect=true;
+			bool helicesCorrectFlipped=true;
+			double ratioCorrectHelices = 0;
+			double ratioCorrectHelicesFlipped = 0;
+			double ratioCorrectSheets = 0;
+			int ns = 0, nh=0;
+			for (int i=0; i < numNodes; i++) {
+				if (patternGraph->adjacencyMatrix[i][i][0] == GRAPHNODE_HELIX) {
+					nh++;
+					if (solution[i]==SOLUTION[i]) {
+						ratioCorrectHelices++;
+					} else {
+						helicesCorrect=false;
+					}
+					if (solution[i]==SOLUTION[i] || solution[i]==SOLUTION[max(0,i-1)] || solution[i]==SOLUTION[min(numNodes-1,i+1)]) {
+						ratioCorrectHelicesFlipped++;
+					} else {
+						helicesCorrectFlipped=false;
+					}
+
+					/*
+					helicesCorrect = helicesCorrect && (solution[i]==SOLUTION[i]);
+					helicesCorrectFlipped = helicesCorrectFlipped && 
+						(solution[i]==SOLUTION[i] || 
+						solution[i]==SOLUTION[max(0,i-1)] ||
+						solution[i]==SOLUTION[min(numNodes-1,i+1)]);
+					*/
+					
+				}
+				if (patternGraph->adjacencyMatrix[i][i][0] == GRAPHNODE_SHEET) {
+					ns++;
+					if (solution[i]==SOLUTION[i]) {
+						ratioCorrectSheets++;
+					} else {
+						sheetsCorrect=false;
+					}
+					//sheetsCorrect = sheetsCorrect && (solution[i]==SOLUTION[i]);
+				}
+			}
+			if (ns>0) {ratioCorrectSheets /= ns;}
+			if (nh>0) {ratioCorrectHelices /= nh;}
+			if (nh>0) {ratioCorrectHelicesFlipped /= nh;}
+
+			char sheetChar;
+			if (sheetsCorrect) {
+				sheetChar='S';
+			} else {
+				sheetChar='-';
+			}
+
+			char helixChar;
+			if (helicesCorrect) {
+				helixChar='H';
+			} else if (helicesCorrectFlipped) {
+				helixChar='h';
+			} else {
+				helixChar='-';
+			}
+
+			if (extraMessages) {cout << "total edge cost is " << edgeCost << endl;}
+			if (extraMessages) {cout << "total edge penalty cost is " << edgePenaltyCost << endl;}
+			if (extraMessages) {cout << "total node cost is " << nodeCost << endl;}
 
 			double helixPenalty = skippedHelixNodes/2 * MISSING_HELIX_PENALTY; 
 			double sheetPenalty = skippedSheetNodes * MISSING_SHEET_PENALTY;
 
-#ifdef VERBOSE
-			cout << "missing helices: " << skippedHelixNodes/2 << " contribute cost of " << helixPenalty << endl;
-			cout << "missing sheets:  " << skippedSheetNodes << " contribute cost of " << sheetPenalty << endl;
-			cout << "together, missing helices and sheets contribute cost of " << sheetPenalty + helixPenalty << endl;
-			cout << "algorithm thinks missing helices and sheets should contribute cost of " << edgePenaltyCost << endl;
-#endif // VERBOSE
+			if (extraMessages) {cout << "missing helices: " << skippedHelixNodes/2 << " contribute cost of " << helixPenalty << endl;}
+			if (extraMessages) {cout << "missing sheets:  " << skippedSheetNodes << " contribute cost of " << sheetPenalty << endl;}
+			if (extraMessages) {cout << "together, missing helices and sheets contribute cost of " << sheetPenalty + helixPenalty << endl;}
+			if (extraMessages) {cout << "algorithm thinks missing helices and sheets should contribute cost of " << edgePenaltyCost << endl;}
 
 
 			double cost = edgeCost + nodeCost + helixPenalty + sheetPenalty;
 
-#ifdef VERBOSE
-			cout << "total cost is " << cost << endl;
-#endif // VERBOSE
-
+			if (extraMessages) {cout << "total cost is " << cost << endl;}
+			cout << "C=" << loopCost+helixCost+sheetCost+skipPenaltyCost << "(" << helixChar << sheetChar << ")(" << ratioCorrectHelices << "," << ratioCorrectHelicesFlipped << "," << ratioCorrectSheets << ")(L=" << loopCost << ",H=" << helixCost << ",S=" << sheetCost << ",P=" << skipPenaltyCost << ")";
+			if (extraMessages) {cout << endl;}
 		}
 
 		void WongMatch15ConstrainedNoFuture::NormalizeGraphs() {
@@ -1021,7 +1392,90 @@ namespace wustl_mm {
 			return (bitmap | ((unsigned long long)1 << node));
 
 		}
-		
+
+		// code copied from LinkedNode::PrintNodeConcise
+		// Adding a breakdown of the cost into loops, nodes, and helices
+		void WongMatch15ConstrainedNoFuture::PrintNodeConcise(LinkedNode * node, int rank, bool endOfLine, bool printCostBreakdown) {
+			bool used[MAX_NODES];
+			int n1[MAX_NODES];
+			int n2[MAX_NODES];
+			int top = 0;
+			for(int i = 0; i < MAX_NODES; i++) {
+				used[i] = false;
+			}
+
+			LinkedNodeStub * currentNode = node;
+			bool continueLoop = true;
+			while(continueLoop) {
+				if(currentNode->parentNode == NULL) {
+					 break;
+				}
+				n1[top] = currentNode->n1Node;
+				n2[top] = currentNode->n2Node;
+				used[(int)currentNode->n1Node] = true;
+				top++;
+				currentNode = currentNode->parentNode;		
+			}
+
+			for(int i = 1; i <= node->depth; i++) {
+				if(!used[i]) {
+					n1[top] = i;
+					n2[top] = -1;
+					top++;
+				}
+			}
+
+			int minIndex;
+			int temp;
+			for(int i = 0; i < top - 1; i++) {
+				minIndex = i;
+				for(int j = i+1; j < top; j++) {
+					if(n1[minIndex] > n1[j]) {
+						minIndex = j;
+					}
+				}
+				temp = n1[minIndex];
+				n1[minIndex] = n1[i];
+				n1[i] = temp;
+
+				temp = n2[minIndex];
+				n2[minIndex] = n2[i];
+				n2[i] = temp;
+			}
+			
+			if(node->IsUserSpecifiedSolution()) {
+				printf("**");
+			} else {
+				printf("  ");
+			}
+			
+
+			if(rank != -1) {
+				printf("%d)", rank);
+			}
+			printf("\t");
+			for(int i = 0; i < top; i++) {
+				printf("%2d ", n2[i]);
+			}
+
+			// print the cost of the current solution
+			ComputeSolutionCost(n2,false);
+			for (int i = 0; i < MAX_NODES; i++){
+				bestMatches[rank-1][i]=n2[i];
+			}
+
+			if(printCostBreakdown) {
+				printf(" - %f = %f + %f", node->cost, node->costGStar, node->cost - node->costGStar);
+			} else {
+				printf(" - %f", node->cost);
+			}
+			if(endOfLine) {
+				printf("\n");
+			}
+		}
+
+
+	
 	}
 }
 #endif
