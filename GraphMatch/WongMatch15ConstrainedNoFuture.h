@@ -15,6 +15,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.19  2010/03/25 18:14:47  schuhs
+//   Add statistics to show how results compare to ground truth
+//
 //   Revision 1.18  2010/01/08 22:27:34  schuhs
 //   Helix-only correspondence works with SEQ file
 //
@@ -901,6 +904,11 @@ namespace wustl_mm {
 
 			// count up how many votes each node receives
 			int votes[MAX_NODES][MAX_NODES];
+			for(int i = 0; i < MAX_NODES; i++) {
+				for(int j = 0; j < MAX_NODES; j++) {
+					votes[i][j] = 0;
+				}
+			}
 			for (int i=0; i<foundCount; i++) {
 				for (int j=0; j<numNodes; j++) {
 					int thisVote = results[i][j];
