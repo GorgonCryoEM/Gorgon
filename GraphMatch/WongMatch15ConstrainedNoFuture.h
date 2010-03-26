@@ -15,6 +15,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.20  2010/03/26 18:50:23  schuhs
+//   Fix array initialization bug in performance stats computation.
+//
 //   Revision 1.19  2010/03/25 18:14:47  schuhs
 //   Add statistics to show how results compare to ground truth
 //
@@ -1263,6 +1266,8 @@ namespace wustl_mm {
 					//sheetsCorrect = sheetsCorrect && (solution[i]==SOLUTION[i]);
 				}
 			}
+			int incorrectHelixCount = (nh - (int)(ratioCorrectHelices+0.1))/2;
+			int incorrectStrandCount = ns - (int)(ratioCorrectSheets+0.1);
 			if (ns>0) {ratioCorrectSheets /= ns;}
 			if (nh>0) {ratioCorrectHelices /= nh;}
 			if (nh>0) {ratioCorrectHelicesFlipped /= nh;}
@@ -1299,7 +1304,7 @@ namespace wustl_mm {
 			double cost = edgeCost + nodeCost + helixPenalty + sheetPenalty;
 
 			if (extraMessages) {cout << "total cost is " << cost << endl;}
-			cout << "C=" << loopCost+helixCost+sheetCost+skipPenaltyCost << "(" << helixChar << sheetChar << ")(" << ratioCorrectHelices << "," << ratioCorrectHelicesFlipped << "," << ratioCorrectSheets << ")(L=" << loopCost << ",H=" << helixCost << ",S=" << sheetCost << ",P=" << skipPenaltyCost << ")";
+			cout << "C=" << loopCost+helixCost+sheetCost+skipPenaltyCost << "(" << helixChar << sheetChar << ")(h" << incorrectHelixCount << ",s" << incorrectStrandCount << ")(" << ratioCorrectHelices << "," << ratioCorrectHelicesFlipped << "," << ratioCorrectSheets << ")(L=" << loopCost << ",H=" << helixCost << ",S=" << sheetCost << ",P=" << skipPenaltyCost << ")";
 			if (extraMessages) {cout << endl;}
 		}
 
