@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.12  2009/12/22 01:02:24  schuhs
+//   Adding support for beta sheet matching to the SSE correspondence search algorithm
+//
 //   Revision 1.11  2009/12/07 21:34:36  ssa1
 //   Finding Rotation using SVD, and removing compiler warnings
 //
@@ -252,6 +255,11 @@ namespace wustl_mm {
 				int seqIndex = 0;
 				int strandsPassed = 0;
 
+
+				double pathx, pathy, pathz;
+				double prevx, prevy, prevz;
+				bool pastFirstStructure = false;
+
 				// the following code iterates over the correspondence, finding a valid edge at each iteration.
 				// start at node 0 of this result, continue until i is at last node
 				int numNodes = result.GetNodeCount();
@@ -365,9 +373,23 @@ namespace wustl_mm {
 					for(int j = 0; j < pathSize; j++) {
 						//cout << "adding path from " << n1 << " to " << n2 << ", point " << path[j].X() << "," << path[j].Y() << "," << path[j].Z() << endl;
 						glColor3f(startColorR + stepColorR * j, startColorG + stepColorG * j, startColorB + stepColorB * j);
+						/* UNCOMMENT THIS BLOCK TO DRAW STRAIGHT LINE PATHS ACROSS SSES
+						if (j==0 && pastFirstStructure) {
+							glVertex3d(prevx, prevy, prevz);
+						} */
 						double offset = 0.8*(-0.5 + (double)i / (double)numNodes );
-						glVertex3d(path[j].X()+offset, path[j].Y()+offset, path[j].Z()+offset);
+						pathx=path[j].X()+offset;
+						pathy=path[j].Y()+offset;
+						pathz=path[j].Z()+offset;
+						glVertex3d(pathx, pathy, pathz);
+						//glVertex3d(path[j].X()+offset, path[j].Y()+offset, path[j].Z()+offset);
 					}
+
+					// to draw paths across sheets
+					pastFirstStructure=true;
+					prevx=pathx;
+					prevy=pathy;
+					prevz=pathz;
 
 					if (path.size() != 0) {
 						glEnd(); 
