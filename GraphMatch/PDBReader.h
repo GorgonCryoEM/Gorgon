@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.20  2010/03/25 18:44:23  schuhs
+//   Comment out some console messages that occasionally cause crash
+//
 //   Revision 1.19  2010/02/11 23:19:11  ssa1
 //   Allowing the ability to save pseudoatoms generated from SSEHunter
 //
@@ -263,9 +266,9 @@ namespace wustl_mm {
 
 					if(i != 0) {
 						// An edge for the loop before the helix
-						graph->SetCost(node, node+1, (structures[i]->startPosition - structures[i-1]->endPosition));
+						graph->SetCost(node, node+1, max(0.5, (double)(structures[i]->startPosition - structures[i-1]->endPosition)));
 						graph->SetType(node, node+1, GRAPHEDGE_LOOP);
-						graph->SetCost(node+1, node, (structures[i]->startPosition - structures[i-1]->endPosition));
+						graph->SetCost(node+1, node, max(0.5, (double)(structures[i]->startPosition - structures[i-1]->endPosition)));
 						graph->SetType(node+1, node, GRAPHEDGE_LOOP);
 					}
 					node += 2;
@@ -284,9 +287,9 @@ namespace wustl_mm {
 
 					if(i != 0) {
 						// An edge for the loop before the strand
-						graph->SetCost(node, node+1, (structures[i]->startPosition - structures[i-1]->endPosition) );
+						graph->SetCost(node, node+1, max(0.5, (double)structures[i]->startPosition - structures[i-1]->endPosition) );
 						graph->SetType(node, node+1, GRAPHEDGE_LOOP);
-						graph->SetCost(node+1, node, (structures[i]->startPosition - structures[i-1]->endPosition) );
+						graph->SetCost(node+1, node, max(0.5, (double)structures[i]->startPosition - structures[i-1]->endPosition) );
 						graph->SetType(node+1, node, GRAPHEDGE_LOOP);
 					}
 					node += 1;

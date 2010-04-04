@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.5  2008/09/29 15:45:09  ssa1
+//   Adding in CVS meta information
+//
 
 #ifndef FOUNDATION_TIME_MANAGER_H
 #define FOUNDATION_TIME_MANAGER_H
@@ -85,6 +88,9 @@ namespace wustl_mm {
 
 		void TimeManager::DisplayStopWatch(int id, string textFormat){			
 			printf(textFormat.c_str(), stopWatches[id].cumulatedTime);
+			#ifdef _WIN32
+				flushall();
+			#endif
 		}
 	}
 }

@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.33  2009/10/13 18:09:34  ssa1
+//   Refactoring Volume.h
+//
 //   Revision 1.32  2009/05/08 20:45:49  ssa1
 //   auto rotate of camera when user clicks CTRL + ALT and left move
 //
@@ -131,46 +134,24 @@ namespace wustl_mm {
 		}
 
 		void MeshRenderer::Draw(int subSceneIndex, bool selectEnabled) {
+			switch(subSceneIndex) {
+				case 0:
+					if(mesh != NULL) {
+						mesh->Draw(false, false, true, false, selectEnabled, selectEnabled, false, false, true, true, lineThickness, false);
+					}
+					break;
+				case 1:
+					if(mesh != NULL) {
+						mesh->Draw(false, true, false, false, selectEnabled, selectEnabled, false, false, true, true, lineThickness, false);
+					}
+					break;
+				case 2:
+					if(mesh != NULL) {
+						mesh->Draw(true, false, false, false, selectEnabled, selectEnabled, false, false, true, true, lineThickness, false);
+					}
+					break;
+			}
 			if(subSceneIndex == 0) {
-				if(mesh != NULL) {
-					mesh->Draw(true, true, false, selectEnabled, selectEnabled, false, true, true, true, lineThickness);
-
-					/*
-
-					if(selectEnabled) {
-						glPushName(1);
-						glPushName(0);
-					}
-					
-					for(unsigned int i = 0; i < mesh->vertices.size(); i++) {
-						mesh->vertices[i].tag = false;
-					}
-
-					for(unsigned int i = 0; i <  mesh->edges.size(); i++) {					
-						if(mesh->edges[i].faceIds.size() == 0) {
-							if(selectEnabled) {
-								glLoadName(i);
-							}
-							NonManifoldMeshVertex<bool> v0 = mesh->vertices[mesh->GetVertexIndex(mesh->edges[i].vertexIds[0])];
-							NonManifoldMeshVertex<bool> v1 = mesh->vertices[mesh->GetVertexIndex(mesh->edges[i].vertexIds[1])];
-							if(!v0.tag) {
-								DrawSphere(v0.position, 0.25);
-								v0.tag = true;
-							}
-							if(!v1.tag) {
-								DrawSphere(v1.position, 0.25);
-								v1.tag = true;
-							}
-
-							DrawCylinder( v0.position, v1.position, 0.25);
-						}
-					}	
-					if(selectEnabled) {
-						glPopName();
-						glPopName();
-					} */
-
-				}
 			}
 		}
 

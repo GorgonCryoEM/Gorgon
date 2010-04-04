@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.41  2010/03/05 20:30:21  ssa1
+//   Fixing loading of helices using .SSE files
+//
 //   Revision 1.40  2010/01/17 05:10:13  schuhs
 //   Fixing bug that created an offset between the skeleton and the SSEHunter sheets in the SSE correspondence code
 //
@@ -317,35 +320,15 @@ namespace wustl_mm {
 					if(selectEnabled) {
 						glLoadName(sheetMesh->faces[i].tag.id);
 					}
+
 					// color code
 					if(sheetMesh->faces[i].tag.id != prevSheet) {
 						thisSheet = (int) (sheetMesh->faces[i].tag.id);
 						sheets[thisSheet-1]->GetColor(colorR, colorG, colorB, colorA);
 						prevSheet = thisSheet;
-						diffuseMaterial[0] = colorR;
-						diffuseMaterial[1] = colorG;
-						diffuseMaterial[2] = colorB;
-						diffuseMaterial[3] = colorA;
-						ambientMaterial[0] = colorR*0.2;
-						ambientMaterial[1] = colorG*0.2;
-						ambientMaterial[2] = colorB*0.2;
-						ambientMaterial[3] = colorA;
-						specularMaterial[0] = 1.0;
-						specularMaterial[1] = 1.0; 
-						specularMaterial[2] = 1.0;
-						specularMaterial[3] = 1.0;
 					}
 					if(isSSESpecificColoring) {
-						glColor4f(colorR, colorG, colorB, colorA);
-					
-						glMaterialfv(GL_BACK, GL_AMBIENT,   ambientMaterial);
-						glMaterialfv(GL_BACK, GL_DIFFUSE,   diffuseMaterial) ;
-						glMaterialfv(GL_BACK, GL_SPECULAR,  specularMaterial) ;
-						glMaterialf(GL_BACK, GL_SHININESS, 0.1);
-						glMaterialfv(GL_FRONT, GL_AMBIENT,   ambientMaterial) ;
-						glMaterialfv(GL_FRONT, GL_DIFFUSE,   diffuseMaterial) ;
-						glMaterialfv(GL_FRONT, GL_SPECULAR,  specularMaterial) ;
-						glMaterialf(GL_FRONT, GL_SHININESS, 0.1);
+						OpenGLUtils::SetColor(colorR, colorG, colorB, colorA);
 					}
 
 					glPushAttrib(GL_LIGHTING_BIT | GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
@@ -375,12 +358,11 @@ namespace wustl_mm {
 				int prevSheet = -1;
 				int thisSheet;
 				float colorR, colorG, colorB, colorA;
-				GLfloat diffuseMaterial[4];
-				GLfloat ambientMaterial[4];
-				GLfloat specularMaterial[4];
 				// end color code
 				for(unsigned int i = 0; i < graphSheetMesh->faces.size(); i++) {
 					glPushAttrib(GL_LIGHTING_BIT);
+					glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
+					//glDisable(GL_LIGHTING);
 					if(graphSheetMesh->faces[i].tag.selected) {
 						glMaterialfv(GL_FRONT, GL_EMISSION, emissionColor);
 						glMaterialfv(GL_BACK, GL_EMISSION, emissionColor);
@@ -395,31 +377,10 @@ namespace wustl_mm {
 						thisSheet = (int) (graphSheetMesh->faces[i].tag.id);
 						sheets[thisSheet-1]->GetColor(colorR, colorG, colorB, colorA); // probably gets the wrong color.
 						prevSheet = thisSheet;
-						diffuseMaterial[0] = colorR;
-						diffuseMaterial[1] = colorG;
-						diffuseMaterial[2] = colorB;
-						diffuseMaterial[3] = colorA;
-						ambientMaterial[0] = colorR*0.2;
-						ambientMaterial[1] = colorG*0.2;
-						ambientMaterial[2] = colorB*0.2;
-						ambientMaterial[3] = colorA;
-						specularMaterial[0] = 1.0;
-						specularMaterial[1] = 1.0; 
-						specularMaterial[2] = 1.0;
-						specularMaterial[3] = 1.0;
 					}
 					
 					if(isSSESpecificColoring) {
-						glColor4f(colorR, colorG, colorB, colorA);
-					
-						glMaterialfv(GL_BACK, GL_AMBIENT,   ambientMaterial);
-						glMaterialfv(GL_BACK, GL_DIFFUSE,   diffuseMaterial) ;
-						glMaterialfv(GL_BACK, GL_SPECULAR,  specularMaterial) ;
-						glMaterialf(GL_BACK, GL_SHININESS, 0.1);
-						glMaterialfv(GL_FRONT, GL_AMBIENT,   ambientMaterial) ;
-						glMaterialfv(GL_FRONT, GL_DIFFUSE,   diffuseMaterial) ;
-						glMaterialfv(GL_FRONT, GL_SPECULAR,  specularMaterial) ;
-						glMaterialf(GL_FRONT, GL_SHININESS, 0.1);
+						OpenGLUtils::SetColor(colorR, colorG, colorB, colorA);
 					}
 
 					glPushAttrib(GL_LIGHTING_BIT | GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
@@ -427,7 +388,7 @@ namespace wustl_mm {
 					glBegin(GL_POLYGON);
 					Vector3DFloat normal;
 					for(unsigned int j = 0; j < graphSheetMesh->faces[i].vertexIds.size(); j++) {
-						normal = graphSheetMesh->GetVertexNormal(graphSheetMesh->faces[i].vertexIds[j]);
+						normal = graphSheetMesh->GetFaceNormal(i);
 						k = graphSheetMesh->GetVertexIndex(graphSheetMesh->faces[i].vertexIds[j]);
 						glNormal3f(normal.X(), normal.Y(), normal.Z());
 						glVertex3fv(graphSheetMesh->vertices[k].position.values);
@@ -436,6 +397,19 @@ namespace wustl_mm {
 					glPopAttrib();
 					glPopAttrib(); // for color code
 				}
+
+				glPushAttrib(GL_LIGHTING_BIT);
+				glDisable(GL_LIGHTING);
+				OpenGLUtils::SetColor(0.0, 0.0, 0.0, 1.0);
+				for(unsigned int i = 0; i < graphSheetMesh->faces.size(); i++) {
+					glBegin(GL_LINE_LOOP);
+					for(unsigned int j = 0; j < graphSheetMesh->faces[i].vertexIds.size(); j++) {
+						k = graphSheetMesh->GetVertexIndex(graphSheetMesh->faces[i].vertexIds[j]);
+						glVertex3fv(graphSheetMesh->vertices[k].position.values);
+					}
+					glEnd();
+				}
+				glPopAttrib(); 
 				// end graph-type sheet rendering code
 
 				if(selectEnabled) {

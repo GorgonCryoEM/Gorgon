@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.41  2009/12/07 21:34:36  ssa1
+//   Finding Rotation using SVD, and removing compiler warnings
+//
 //   Revision 1.40  2009/10/13 18:09:34  ssa1
 //   Refactoring Volume.h
 //
@@ -143,7 +146,7 @@ namespace wustl_mm {
 			void AddQuad(int vertexId1, int vertexId2, int vertexId3, int vertexId4, TEdge newEdgeTag = NULL, TFace faceTag = NULL);
 			void AddTriangle(int vertexId1, int vertexId2, int vertexId3, TEdge newEdgeTag = NULL, TFace faceTag = NULL);
 			void Clear();
-			void Draw(bool drawSurfaces, bool drawLines, bool drawPoints, bool annotateSurfaces, bool annotateLines, bool annotatePoints, bool disableSurfaceLighting, bool disableCurveLighting, bool disablePointLighting, int lineThickness);
+			void Draw(bool drawSurfaceBorders, bool drawSurfaces, bool drawLines, bool drawPoints, bool annotateSurfaces, bool annotateLines, bool annotatePoints, bool disableSurfaceLighting, bool disableCurveLighting, bool disablePointLighting, int lineThickness, bool smoothSurfaceNormals);
 			void MarkFixedVertices();
 			void MergeMesh(NonManifoldMesh<TVertex, TEdge, TFace> * srcMesh);
 			void RemoveFace(int faceId);
@@ -432,10 +435,28 @@ namespace wustl_mm {
 			vertexHashMap.clear();
 		}
 
-		template <class TVertex, class TEdge, class TFace> void NonManifoldMesh<TVertex, TEdge, TFace>::Draw(bool drawSurfaces, bool drawLines, bool drawPoints, bool annotateSurfaces, bool annotateLines, bool annotatePoints, bool disableSurfaceLighting, bool disableCurveLighting, bool disablePointLighting, int lineThickness) {
+		template <class TVertex, class TEdge, class TFace> void NonManifoldMesh<TVertex, TEdge, TFace>::Draw(bool drawSurfaceBorders, bool drawSurfaces, bool drawLines, bool drawPoints, bool annotateSurfaces, bool annotateLines, bool annotatePoints, bool disableSurfaceLighting, bool disableCurveLighting, bool disablePointLighting, int lineThickness, bool smoothSurfaceNormals) {
 			if (!drawingDisabled) {
 				int k;
 				glPushAttrib(GL_LIGHTING_BIT | GL_LINE_BIT | GL_ENABLE_BIT | GL_HINT_BIT | GL_POINT_BIT);			
+
+				if(drawSurfaceBorders) {
+					glLineWidth(1);
+					glEnable(GL_LINE_SMOOTH);
+					glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);			
+
+					if(disableCurveLighting) {
+						glDisable(GL_LIGHTING);
+					}
+					for(unsigned int i = 0; i < faces.size(); i++) {
+						glBegin(GL_LINE_STRIP);
+						for(unsigned int j = 0; j < faces[i].vertexIds.size(); j++) {
+							k = GetVertexIndex(faces[i].vertexIds[j]);
+							glVertex3fv(vertices[k].position.values);
+						}
+						glEnd();
+					}
+				}	
 
 				if(drawSurfaces) {
 					if(disableSurfaceLighting) {
@@ -452,7 +473,11 @@ namespace wustl_mm {
 						glBegin(GL_POLYGON);
 						Vector3DFloat normal;
 						for(unsigned int j = 0; j < faces[i].vertexIds.size(); j++) {
-							normal = GetVertexNormal(faces[i].vertexIds[j]);
+							if(smoothSurfaceNormals) {
+								normal = GetVertexNormal(faces[i].vertexIds[j]);
+							} else {
+								normal = GetFaceNormal(i);
+							}
 							k = GetVertexIndex(faces[i].vertexIds[j]);
 							glNormal3f(normal.X(), normal.Y(), normal.Z());
 							glVertex3fv(vertices[k].position.values);

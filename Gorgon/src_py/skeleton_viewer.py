@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.21  2009/12/24 07:25:07  ssa1
+#   Refactoring child window behavior.. Using base classes to encapsulate common behavior
+#
 #   Revision 1.20  2009/12/22 01:02:24  schuhs
 #   Adding support for beta sheet matching to the SSE correspondence search algorithm
 #
@@ -51,20 +54,32 @@ class SkeletonViewer(BaseViewer):
         self.title = "Skeleton"
         self.shortTitle = "SKE"              
         self.app.themes.addDefaultRGB("Skeleton:Model:0", 180, 0, 0, 255)
-        self.app.themes.addDefaultRGB("Skeleton:Model:1", 180, 0, 0, 255)
-        self.app.themes.addDefaultRGB("Skeleton:Model:2", 180, 0, 0, 255)
+        self.app.themes.addDefaultRGB("Skeleton:Model:1", 200, 150, 0, 255)
+        self.app.themes.addDefaultRGB("Skeleton:Model:2", 0, 0, 0, 255)
         self.app.themes.addDefaultRGB("Skeleton:BoundingBox", 255, 255, 255, 255)              
         self.isClosedMesh = False
+        self.twoWayLighting = True
         self.lineThickness = 3
         self.renderer = MeshRenderer()          
         self.renderer.setLineThickness(self.lineThickness)
         self.createUI()      
         self.app.viewers["skeleton"] = self;
-        self.volumeViewer = self.app.viewers["volume"]        
+        self.volumeViewer = self.app.viewers["volume"]
         self.initVisualizationOptions(ModelVisualizationForm(self.app, self))      
         self.visualizationOptions.ui.spinBoxThickness.setValue(self.lineThickness)
         self.visualizationOptions.ui.spinBoxThickness.setVisible(True)
         self.visualizationOptions.ui.labelThickness.setVisible(True)
+
+        self.model2Visible = True
+        self.model3Visible = True
+        self.visualizationOptions.ui.checkBoxModelVisible.setText("Show curves colored:")
+        self.visualizationOptions.ui.checkBoxModel2Visible.setText("Show surfaces colored:")
+        self.visualizationOptions.ui.checkBoxModel2Visible.setVisible(True)
+        self.visualizationOptions.ui.pushButtonModel2Color.setVisible(True)
+        self.visualizationOptions.ui.checkBoxModel3Visible.setText("Show surface borders:")
+        self.visualizationOptions.ui.checkBoxModel3Visible.setVisible(True)
+        self.visualizationOptions.ui.pushButtonModel3Color.setVisible(True)        
+    
                  
     def createUI(self):
         self.createActions()

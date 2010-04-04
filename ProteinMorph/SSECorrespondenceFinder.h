@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.12  2010/02/23 21:19:08  ssa1
+//   Better correspondence search
+//
 //   Revision 1.11  2010/02/11 23:20:47  ssa1
 //   Flexible fitting algorithm #5 - Better scoring function which scales based on depth of tree and local distance
 //
@@ -531,7 +534,10 @@ namespace wustl_mm {
 			return correspondence;
 		}
 
-		vector< vector < vector<SSECorrespondenceNode> > > SSECorrespondenceFinder::GetAStarTriangleBasedCliqueDistanceFeatureCorrespondence(bool printOutput, bool useDirection, bool getSmallCliques) {
+		vector< vector < vector<SSECorrespondenceNode> > > SSECorrespondenceFinder::GetAStarTriangleBasedCliqueDistanceFeatureCorrespondence(bool printOutput, bool useDirection, bool getSmallCliques) {			
+			TimeManager tm;
+			tm.PushCurrentTime();
+
 			vector< vector < vector<SSECorrespondenceNode> > > correspondence;
 			vector< vector<float> > featureCompatibilityScores = GetAllFeatureCompatibilityScores();
 			vector<SSECorrespondenceNode> nodes = GetAllNodes(featureCompatibilityScores, useDirection);
@@ -552,6 +558,9 @@ namespace wustl_mm {
 					}
 				}
 			}
+
+			tm.PopAndDisplayTime("(*Graph constructed %f seconds!*)\n");
+			tm.PushCurrentTime();
 
 			vector< vector<unsigned int> > parentSolution;
 			vector<unsigned int> parentSolutionElement;
@@ -575,6 +584,7 @@ namespace wustl_mm {
 				childNodes = currentNode->GetChildNodesTriangleApproxCliqueDistance(nodes, featureList1, featureList2, !first && getSmallCliques);
 				if(childNodes.size() == 0) {
 					//printf("Solution found: \t");
+					tm.PopAndDisplayTime("(*Solution found %f seconds!*)\n");
 					if(printOutput) {
 						currentNode->PrintSolution(nodes, useDirection);							
 					}

@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.62  2010/01/14 23:52:12  ssa1
+#   Gracefully catching exceptions when loading invalid files
+#
 #   Revision 1.61  2009/12/22 01:02:24  schuhs
 #   Adding support for beta sheet matching to the SSE correspondence search algorithm
 #
@@ -153,6 +156,7 @@ class BaseViewer(QtOpenGL.QGLWidget):
         self.connect(self.app.themes, QtCore.SIGNAL("themeChanged()"), self.themeChanged)           
         self.gllist = 0
         self.showBox = False
+        self.twoWayLighting = False
         
     def initVisualizationOptions(self, visualizationForm):
         self.visualizationOptions = visualizationForm
@@ -347,10 +351,16 @@ class BaseViewer(QtOpenGL.QGLWidget):
 
     def initializeGLDisplayType(self):
         glPushAttrib(GL_LIGHTING_BIT | GL_ENABLE_BIT)
-        if(self.isClosedMesh):
+        if(self.isClosedMesh):            
             glEnable(GL_CULL_FACE)
-        else:
+        else:                        
             glDisable(GL_CULL_FACE)
+            
+        if(self.twoWayLighting):
+            glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
+        else:
+            glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_FALSE);
+            
                         
         #glDisable(GL_CULL_FACE)
         glEnable(GL_LIGHTING)
