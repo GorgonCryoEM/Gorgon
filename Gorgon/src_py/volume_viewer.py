@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.30  2010/03/15 20:21:38  ssa1
+#   Introducing volume laplacian smoothing
+#
 #   Revision 1.29  2010/01/17 18:34:59  ssa1
 #   Histogram for density visualization
 #
@@ -222,7 +225,7 @@ class VolumeViewer(BaseViewer):
         info = BaseViewer.getSessionInfo(self, sessionManager)  
         info.extend(sessionManager.getRemarkLines(self.shortTitle, "ISO_LEVEL", self.surfaceEditor.ui.histogram.lowerValue()))
         info.extend(sessionManager.getRemarkLines(self.shortTitle, "MAX_ISO_LEVEL", self.surfaceEditor.ui.histogram.higherValue()))
-        info.extend(sessionManager.getRemarkLines(self.shortTitle, "SAMPLING_INTERVAL", self.surfaceEditor.ui.horizontalSliderSampling.value()))
+        info.extend(sessionManager.getRemarkLines(self.shortTitle, "SAMPLING_INTERVAL", self.surfaceEditor.getSamplingValue()))
         info.extend(sessionManager.getRemarkLines(self.shortTitle, "DISPLAY_RADIUS", self.surfaceEditor.ui.horizontalSliderDisplayRadius.value()))
         info.extend(sessionManager.getRemarkLines(self.shortTitle, "VIEWING_TYPE_SURFACE", self.surfaceEditor.ui.radioButtonIsoSurface.isChecked()))
         info.extend(sessionManager.getRemarkLines(self.shortTitle, "VIEWING_TYPE_SOLID", self.surfaceEditor.ui.radioButtonSolid.isChecked()))
@@ -240,7 +243,7 @@ class VolumeViewer(BaseViewer):
         self.surfaceEditor.ui.histogram.setHigherValue(maxIsoLevel)
         
         samplingInterval = sessionManager.getProperty(sessionProperties, self.shortTitle, "SAMPLING_INTERVAL")
-        self.surfaceEditor.ui.horizontalSliderSampling.setValue(samplingInterval)
+        #self.surfaceEditor.ui.horizontalSliderSampling.setValue(samplingInterval)
                 
         useDisplayRadius = sessionManager.getProperty(sessionProperties, self.shortTitle, "USE_DISPLAY_RADIUS")
         self.surfaceEditor.ui.checkBoxUseRadius.setCheckState(useDisplayRadius)

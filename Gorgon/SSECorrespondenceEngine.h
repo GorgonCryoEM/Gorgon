@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.13  2010/03/27 01:08:21  schuhs
+//   Adding code (commented out) to draw straight line paths across sheets and through helices.
+//
 //   Revision 1.12  2009/12/22 01:02:24  schuhs
 //   Adding support for beta sheet matching to the SSE correspondence search algorithm
 //
@@ -341,7 +344,7 @@ namespace wustl_mm {
 						glEnd(); // test!!! 
 						// draw labeled sphere at beginning of path
 						//GLfloat col = 1.0;
-						//glColor3f(col, col, col);
+						glColor3f(startColorR, startColorG, startColorB);
 						double sphereRadius = 0.5;
 						Renderer::DrawSphere(Vector3DFloat(path[0].X(), path[0].Y(), path[0].Z()), sphereRadius);
 						/*

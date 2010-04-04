@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.16  2010/02/23 21:19:08  ssa1
+//   Better correspondence search
+//
 //   Revision 1.15  2010/02/11 23:20:47  ssa1
 //   Flexible fitting algorithm #5 - Better scoring function which scales based on depth of tree and local distance
 //
@@ -242,9 +245,9 @@ int main( int args, char * argv[] ) {
 				break;
 			case SSE_CORRESPONDENCE_METHOD_ASTAR_NEIGHBOR_COST_TRIANGLE_CLIQUE:
 				if(multipleSearch) {
-					corr = finder.GetMultiCorrespondence(SSE_CORRESPONDENCE_METHOD_ASTAR_NEIGHBOR_COST_TRIANGLE_CLIQUE, useDirection, true);
+					corr = finder.GetMultiCorrespondence(SSE_CORRESPONDENCE_METHOD_ASTAR_NEIGHBOR_COST_TRIANGLE_CLIQUE, useDirection, false);
 				} else {
-					corr = finder.GetAStarTriangleBasedCliqueDistanceFeatureCorrespondence(true, useDirection, true);
+					corr = finder.GetAStarTriangleBasedCliqueDistanceFeatureCorrespondence(true, useDirection, false);
 				}
 				break;
 			default:

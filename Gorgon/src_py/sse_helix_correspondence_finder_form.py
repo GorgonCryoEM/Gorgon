@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.47  2010/01/17 05:11:18  schuhs
+#   Fixing bug that created an offset between the skeleton and the SSEHunter sheets in the SSE correspondence code
+#
 #   Revision 1.46  2010/01/04 20:38:50  ssa1
 #   Removing dependancy on SSE files for helix length calculation.
 #
@@ -379,6 +382,8 @@ class SSEHelixCorrespondenceFinderForm(BaseDockWidget):
     def skeletonVisibilityChanged(self, visible):
         """Called when the show skeleton checkbox is checked."""
         self.app.viewers['skeleton'].visualizationOptions.ui.checkBoxModelVisible.setChecked(visible)
+        self.app.viewers['skeleton'].visualizationOptions.ui.checkBoxModel2Visible.setChecked(visible)
+        self.app.viewers['skeleton'].visualizationOptions.ui.checkBoxModel3Visible.setChecked(visible)
         # to render again
         self.viewer.emitModelChanged()
             
@@ -451,6 +456,7 @@ class SSEHelixCorrespondenceFinderForm(BaseDockWidget):
             self.setCursor(QtCore.Qt.BusyCursor)
                    
             print "calling setConstantsFromFile" 
+            self.setConstants()
             self.viewer.correspondenceEngine.setConstantsFromFile(str(self.ui.lineEditSettingsFile.text()))
     
             print "copying constants from file to GUI" 
@@ -1008,6 +1014,22 @@ class SSEHelixCorrespondenceFinderForm(BaseDockWidget):
         delta = (end - start) / float(size)
         i = start + delta * float(index)
         return self.getIndexedColor(i, 1.0)
+    
+    #def getIndexedSheetColor(self, index, size):
+    #    """returns a color for sheet 'index' out of 'size' sheets. colors will be white or black."""
+    #    # start and end are between 0 and 1
+    #    position = float(index)/float(size)                
+    #    return QtGui.QColor.fromRgba(QtGui.qRgba(position*255, position*255, position*255, 1.0*255))                    
+
+            
+    #def getIndexedHelixColor(self, index, size):
+    #    """returns a color for helix 'index' out of 'size' helices. colors will be blue, cyan, green, yellow or red"""
+    #    # start and end are between 0 and 1
+    #    start = float(0.0)
+    #    end = float(1.0)
+    #    delta = (end - start) / float(size)
+    #    i = start + delta * float(index)
+    #    return self.getIndexedColor(i, 1.0)    
             
     def getIndexedColor(self, index, size):
         a = 1.0

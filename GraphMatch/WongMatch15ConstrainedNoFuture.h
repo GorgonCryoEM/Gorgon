@@ -15,6 +15,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.21  2010/03/26 19:00:23  schuhs
+//   Adding to the stats presented with results.
+//
 //   Revision 1.20  2010/03/26 18:50:23  schuhs
 //   Fix array initialization bug in performance stats computation.
 //
@@ -269,8 +272,8 @@ namespace wustl_mm {
 		int WongMatch15ConstrainedNoFuture::RunMatching(clock_t startTime) {
 #ifdef VERBOSE
 			cout << "Starting to search for correspondences." << endl;
-#endif // VERBOSE
 			DisplayConstants();
+#endif // VERBOSE
 			bool continueLoop = true;
 			clock_t finishTime;
 			// repeat the following loop until all results are found
@@ -290,6 +293,9 @@ namespace wustl_mm {
 					PrintNodeConcise(currentNode,foundCount, false, false);
 					//printf(": (%d expanded) (%f seconds) (%fkB Memory) (%d queue size) (%d parent size)\n", expandCount, (double) (finishTime - startTime) / (double) CLOCKS_PER_SEC, (queue->getLength() * sizeof(LinkedNode) + usedNodes.size() * sizeof(LinkedNodeStub)) / 1024.0, queue->getLength(), (int)usedNodes.size());
 					printf(": (%d expanded) (%f seconds) (%d parent size)\n", expandCount, (double) (finishTime - startTime) / (double) CLOCKS_PER_SEC, (int)usedNodes.size());
+#ifdef _WIN32
+					flushall();
+#endif
 					int numHelices = baseGraph->GetHelixCount();
 					solutions.push_back(SSECorrespondenceResult(currentNode, numHelices));
 
@@ -1472,7 +1478,9 @@ namespace wustl_mm {
 			}
 
 			// print the cost of the current solution
-			ComputeSolutionCost(n2,false);
+			if(INCLUDE_STRANDS) {
+				ComputeSolutionCost(n2,false);
+			}
 			for (int i = 0; i < MAX_NODES; i++){
 				bestMatches[rank-1][i]=n2[i];
 			}
