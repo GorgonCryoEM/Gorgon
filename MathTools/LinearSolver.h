@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.3  2009/12/07 22:35:32  ssa1
+//   A* triangle search using SVD rotations and translations.
+//
 //   Revision 1.2  2009/12/07 21:34:36  ssa1
 //   Finding Rotation using SVD, and removing compiler warnings
 //
@@ -34,6 +37,8 @@ namespace wustl_mm {
 		class LinearSolver{
 		public:
 			static void FindBestFitLine(Vector3DFloat & pt1, Vector3DFloat & pt2, vector<Vector3DFloat> pts);
+			// Find the orthogonal distances from points to a line given by pt1 & pt2. Return the sum of the squares of those distance.
+			static double SumDistSqrd(Vector3DFloat pt1, Vector3DFloat pt2, vector<Vector3DFloat> pts);
 			static MatrixFloat FindRotationTranslation(vector<Vector3DFloat> l1, vector<Vector3DFloat> l2);
 		};
 
@@ -86,6 +91,20 @@ namespace wustl_mm {
 			pt2 = avg + n * maxT;
 
 		}
+
+		double LinearSolver::SumDistSqrd(Vector3DFloat pt1, Vector3DFloat pt2, vector<Vector3DFloat> pts) {
+			Vector3DFloat lineDirection = pt2 - pt1;
+			lineDirection = lineDirection * (1/lineDirection.Length());
+			Vector3DFloat vect;
+			double totalDistSqrd = 0;
+			for (unsigned int i=0; i < pts.size(); i++) {
+				vect = pts[i] - pt1;
+				vect = lineDirection^vect; //cross product ==> orthogonal distance vector
+				totalDistSqrd += vect*vect; //dot product
+			}
+			return totalDistSqrd;
+		}
+
 
 		MatrixFloat LinearSolver::FindRotationTranslation(vector<Vector3DFloat> l1, vector<Vector3DFloat> l2) {
 			if(l1.size() != l2.size()) {
