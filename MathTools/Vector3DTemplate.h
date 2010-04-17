@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.10  2009/12/07 22:35:32  ssa1
+//   A* triangle search using SVD rotations and translations.
+//
 //   Revision 1.9  2009/12/07 05:00:52  ssa1
 //   Adding in Matrix functionality for Singular Value Decomposition
 //
@@ -47,6 +50,8 @@ namespace wustl_mm {
 			T X() const;
 			T Y() const;
 			T Z() const;
+			T& operator[](int subscript);
+			T operator[](int subscript) const;
 			double Length();
 			T operator*(const Vector3DTemplate<T> &d ); // Dot Product							
 			int XInt();
@@ -140,7 +145,18 @@ namespace wustl_mm {
 		template <class T> T Vector3DTemplate<T>::Z() const {
 			return values[2];
 		}
-
+		template <class T> T& Vector3DTemplate<T>::operator[](int subscript) {
+			if (subscript < 0 || subscript > 2)
+				throw "Vector3D [] operator BoundsError!\n";
+			else
+				return values[subscript];
+		}
+		template <class T> T Vector3DTemplate<T>::operator[](int subscript) const {
+			if (subscript < 0 || subscript > 2)
+				throw "Vector3D [] operator BoundsError!\n";
+			else
+				return values[subscript];
+		}
 
 		template <class T> double Vector3DTemplate<T>::Length() {
 			return (double)sqrt((double)(values[0] * values[0] + values[1] * values[1] + values[2] * values[2]));
