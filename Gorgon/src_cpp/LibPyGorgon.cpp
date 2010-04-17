@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.72  2010/03/15 20:21:38  ssa1
+//   Introducing volume laplacian smoothing
+//
 //   Revision 1.71  2010/02/11 23:19:13  ssa1
 //   Allowing the ability to save pseudoatoms generated from SSEHunter
 //
@@ -269,6 +272,68 @@ struct vector_from_python
 	}
 };
 
+template<class T, class T2>
+struct tuple3_from_python
+{
+	tuple3_from_python()
+	{
+		python::converter::registry::push_back(&convertible, &construct,
+											   python::type_id<T>());
+	}
+
+	static void* convertible(PyObject* obj_ptr)
+	{
+		if (!(PyList_Check(obj_ptr) || PyTuple_Check(obj_ptr)
+			  || PyIter_Check(obj_ptr)  || PyRange_Check(obj_ptr))) {
+			return 0;
+		}
+
+		return obj_ptr;
+	}
+
+
+	static void construct(PyObject* obj_ptr,
+						  python::converter::rvalue_from_python_stage1_data* data)
+	{
+		void* storage = ((python::converter::rvalue_from_python_storage<T>*)
+						 data)->storage.bytes;
+		new (storage) T();
+
+		data->convertible = storage;
+
+		T& result = *((T*) storage);
+
+		python::handle<> obj_iter(PyObject_GetIter(obj_ptr));
+		int i = 0;
+
+		while(1) {
+			python::handle<> py_elem_hdl(python::allow_null(PyIter_Next(obj_iter.get())));
+			if (PyErr_Occurred()) {
+				python::throw_error_already_set();
+			}
+
+			if (!py_elem_hdl.get()) {
+				break;
+			}
+
+			python::object py_elem_obj(py_elem_hdl);
+			python::extract<T2> elem_proxy(py_elem_obj);
+			result[i] = elem_proxy();
+			i++;
+		}
+	}
+};
+
+template <class T>
+struct tuple3_to_python : python::to_python_converter<T, tuple3_to_python<T> >
+{
+	static PyObject* convert(T const& p)
+	{
+		python::tuple result = python::make_tuple(p[0], p[1], p[2]);
+		return python::incref(python::tuple(result).ptr());
+	}
+};
+
 // **************************************************************************************
 
 BOOST_PYTHON_MODULE(libpyGORGON)
@@ -276,6 +341,13 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 	
 	vector_to_python<float>();
 	vector_from_python<float>();
+	vector_to_python< std::vector<float> >();
+	vector_from_python< std::vector<float> >();
+
+//	tuple3_to_python<Vector3DInt>();
+//	tuple3_to_python<Vector3DFloat>();
+	tuple3_from_python<Vector3DInt, int>();
+	tuple3_from_python<Vector3DFloat, float>();
 
 	class_<Vector3DFloat>("Vector3DFloat", init<float, float, float>())
 		.def("x", &Vector3DFloat::X)
