@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.4  2009/11/04 20:29:38  ssa1
+//   Implementing Triangle based clique search and chain based flexible fitting.
+//
 //   Revision 1.3  2009/09/02 19:06:13  ssa1
 //   Working towards flexible fitting
 //
@@ -29,32 +32,32 @@ namespace wustl_mm {
 
 		template <class TTag> class GraphVertexBase {
 		public:			
-			GraphVertexBase(unsigned long long index, float weight, TTag tag = null);			
-			unsigned long long GetIndex();
+			GraphVertexBase(unsigned long long externalIndex, float weight, TTag tag = null);			
+			unsigned long long GetExternalIndex();
 			float GetWeight();
 			TTag GetTag();
 			unsigned long long GetValence();
 			unsigned long long GetEdge(unsigned int edgeIndex);
-			void SetIndex(unsigned long long index);
+			void SetExternalIndex(unsigned long long externalIndex);
 			void SetWeight(float weight);
 			void SetTag(TTag tag);
 			void AddEdge(unsigned long long edgeHash);
 		private:
 			vector<unsigned long long> edges;
-			unsigned long long index;
+			unsigned long long externalIndex;
 			float weight;
 			TTag tag;
 		};
 
-		template <class TTag> GraphVertexBase<TTag>::GraphVertexBase(unsigned long long index, float weight, TTag tag) {			
-			this->index = index;
+		template <class TTag> GraphVertexBase<TTag>::GraphVertexBase(unsigned long long externalIndex, float weight, TTag tag) {			
+			this->externalIndex = externalIndex;
 			this->weight = weight;
 			this->tag = tag;
 			edges.clear();
 		}
 
-		template <class TTag> unsigned long long GraphVertexBase<TTag>::GetIndex() {
-			return index;
+		template <class TTag> unsigned long long GraphVertexBase<TTag>::GetExternalIndex() {
+			return externalIndex;
 		}
 
 		template <class TTag> float GraphVertexBase<TTag>::GetWeight() {
@@ -69,8 +72,8 @@ namespace wustl_mm {
 			return edges.size();
 		}
 
-		template <class TTag> void GraphVertexBase<TTag>::SetIndex(unsigned long long index) {
-			this->index = index;
+		template <class TTag> void GraphVertexBase<TTag>::SetExternalIndex(unsigned long long externalIndex) {
+			this->externalIndex = externalIndex;
 		}
 
 		template <class TTag> void GraphVertexBase<TTag>::SetWeight(float weight) {

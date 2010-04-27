@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.13  2010/04/04 19:05:51  ssa1
+//   Fixing misc bugs, and redoing sheet visualization mechanism
+//
 //   Revision 1.12  2010/02/23 21:19:08  ssa1
 //   Better correspondence search
 //
@@ -59,6 +62,7 @@
 #include "SSECorrespondenceFeature.h"
 #include "SSECorrespondenceNode.h"
 #include "SSECorrespondenceSearchNode.h"
+#include "SSECorrespondenceSearchNode2.h"
 #include <Foundation/GraphBase.h>
 #include <GraphMatch/PDBReader.h>
 #include <GraphMatch/PDBHelix.h>
@@ -76,6 +80,7 @@ namespace wustl_mm {
 		const int SSE_CORRESPONDENCE_METHOD_GREEDY_TRIANGLE_CLIQUE = 3;
 		const int SSE_CORRESPONDENCE_METHOD_ASTAR_RIGID_COST_TRIANGLE_CLIQUE = 4;
 		const int SSE_CORRESPONDENCE_METHOD_ASTAR_NEIGHBOR_COST_TRIANGLE_CLIQUE = 5;
+		const int SSE_CORRESPONDENCE_METHOD_CLIQUES_FIRST_ASTAR_NEIGHBOR_COST_TRIANGLE_CLIQUE = 6;
 
 		class SSECorrespondenceFinder {
 		public:
@@ -90,10 +95,12 @@ namespace wustl_mm {
 			vector< vector < vector<SSECorrespondenceNode> > > GetAStarCliqueBasedFeatureCorrespondence(bool printOutput, bool useDirection);
 			vector< vector < vector<SSECorrespondenceNode> > > GetAStarTriangleBasedFeatureCorrespondence(bool printOutput, bool useDirection, bool getSmallCliques);			
 			vector< vector < vector<SSECorrespondenceNode> > > GetAStarTriangleBasedCliqueDistanceFeatureCorrespondence(bool printOutput, bool useDirection, bool getSmallCliques);						
+			vector< vector < vector<SSECorrespondenceNode> > > GetCliquesFirstAStarTriangleBasedCliqueDistanceFeatureCorrespondence(bool printOutput, bool useDirection, bool getSmallCliques, int levelSizeTolerence);	
 			vector < vector<SSECorrespondenceNode> > GetValenceBasedFeatureCorrespondence(bool printOutput, bool useDirection);
 			vector < vector<SSECorrespondenceNode> > GetValenceBasedFeatureCorrespondence2(bool printOutput, bool useDirection);
 			vector < vector<SSECorrespondenceNode> > GetValenceTriangleBasedFeatureCorrespondence(bool printOutput, bool useDirection, bool getSmallCliques);
 			vector < vector < vector<SSECorrespondenceNode> > > GetMultiCorrespondence(int method, bool useDirection, bool getSmallCliques);
+			void FindErrorMatrixBasedCorrespondence(vector< vector < vector<SSECorrespondenceNode> > > & correspondence, float maxError, int sampleCount);
 
 		private:
 			float GetFeatureCompatibilityScore(SSECorrespondenceFeature feature1, SSECorrespondenceFeature feature2);
@@ -106,7 +113,9 @@ namespace wustl_mm {
 			bool IsFeaturePairRigid(SSECorrespondenceNode n1, SSECorrespondenceNode n2, bool useDirection);	
 			bool IsFeaturePairRigid(SSECorrespondenceFeature p1, SSECorrespondenceFeature q1, bool isForward1, SSECorrespondenceFeature p2, SSECorrespondenceFeature q2, bool isForward2, bool useDirection);
 			void AnalyzeCorrespondence(vector<unsigned int> pFeatures, vector<unsigned int> qFeatures);
-			GraphBase<unsigned int, bool> RemoveCliqueAndRelatedNodes(GraphBase<unsigned int, bool> parentGraph, vector<unsigned long long> clique);
+			GraphBase<unsigned int, bool> RemoveCliqueAndRelatedNodes(GraphBase<unsigned int, bool> parentGraph, vector<unsigned long long> clique);		
+			GraphBase<unsigned int, bool> CreateGraph(vector< vector<float> > & featureCompatibilityScores, vector<SSECorrespondenceNode> & nodes, vector< vector<float> > & pairCompatibility, bool useDirection);
+			void GetCliqueFeatures(vector< set<unsigned long long> > & cliqueFeaturesP, vector< set<unsigned long long> > & cliqueFeaturesQ, vector< set<unsigned long long> > &allCliques, vector<SSECorrespondenceNode> &nodes);
 		private:
 			vector<SSECorrespondenceFeature> featureList1;
 			vector<SSECorrespondenceFeature> featureList2;
@@ -470,21 +479,7 @@ namespace wustl_mm {
 			vector<SSECorrespondenceNode> nodes = GetAllNodes(featureCompatibilityScores, useDirection);
 			vector< vector<float> > pairCompatibility = GetAllNodePairCompatibilityScores(nodes, useDirection);
 
-			GraphBase<unsigned int, bool> parentGraph;
-
-			for(unsigned int i = 0; i < nodes.size(); i++) {
-				parentGraph.AddVertex(featureCompatibilityScores[nodes[i].GetPIndex()][nodes[i].GetQIndex()], i);
-			}
-
-			for(int i = 0; i < (int)nodes.size()-1; i++) {
-				for(int j = i+1; j < (int)nodes.size(); j++) {
-					if((nodes[i].GetPIndex() != nodes[j].GetPIndex()) && 
-						(nodes[i].GetQIndex() != nodes[j].GetQIndex()) &&
-						IsFeaturePairRigid(nodes[i], nodes[j], useDirection)) {						
-						parentGraph.AddEdge(i, j, pairCompatibility[i][j], false);
-					}
-				}
-			}
+			GraphBase<unsigned int, bool> parentGraph = CreateGraph(featureCompatibilityScores, nodes, pairCompatibility, useDirection);
 
 			vector< vector<unsigned int> > parentSolution;
 			vector<unsigned int> parentSolutionElement;
@@ -543,21 +538,7 @@ namespace wustl_mm {
 			vector<SSECorrespondenceNode> nodes = GetAllNodes(featureCompatibilityScores, useDirection);
 			vector< vector<float> > pairCompatibility = GetAllNodePairCompatibilityScores(nodes, useDirection);
 
-			GraphBase<unsigned int, bool> parentGraph;
-
-			for(unsigned int i = 0; i < nodes.size(); i++) {
-				parentGraph.AddVertex(featureCompatibilityScores[nodes[i].GetPIndex()][nodes[i].GetQIndex()], i);
-			}
-
-			for(int i = 0; i < (int)nodes.size()-1; i++) {
-				for(int j = i+1; j < (int)nodes.size(); j++) {
-					if((nodes[i].GetPIndex() != nodes[j].GetPIndex()) && 
-						(nodes[i].GetQIndex() != nodes[j].GetQIndex()) &&
-						IsFeaturePairRigid(nodes[i], nodes[j], useDirection)) {						
-						parentGraph.AddEdge(i, j, pairCompatibility[i][j], false);
-					}
-				}
-			}
+			GraphBase<unsigned int, bool> parentGraph = CreateGraph(featureCompatibilityScores, nodes, pairCompatibility, useDirection);
 
 			tm.PopAndDisplayTime("(*Graph constructed %f seconds!*)\n");
 			tm.PushCurrentTime();
@@ -610,8 +591,94 @@ namespace wustl_mm {
 				delete currentNode;
 			}					
 			
+			//FindErrorMatrixBasedCorrespondence(correspondence, 100, 10)
+
 			return correspondence;
 		}
+
+		void SSECorrespondenceFinder::FindErrorMatrixBasedCorrespondence(vector< vector < vector<SSECorrespondenceNode> > > & correspondence, float maxError, int sampleCount) {
+			//for(unsigned int i = 0; i < correspondence.size(); i++) {
+			//	for(unsigned 
+			//}
+		}
+
+		void SSECorrespondenceFinder::GetCliqueFeatures(vector< set<unsigned long long> > & cliqueFeaturesP, vector< set<unsigned long long> > &cliqueFeaturesQ, vector< set<unsigned long long> > &allCliques, vector<SSECorrespondenceNode> &nodes) {
+			vector<unsigned long long> clique;
+			set<unsigned long long> featuresP, featuresQ;
+			
+			for(unsigned long long i=0; i < allCliques.size(); i++) {
+				clique = GraphBase<bool, bool>::VertexSetToVector(allCliques[i]);
+				featuresP.clear();
+				featuresQ.clear();
+				for(unsigned long long j=0; j < clique.size(); j++) {
+					featuresP.insert(nodes[clique[j]].GetPIndex());
+					featuresQ.insert(nodes[clique[j]].GetQIndex());
+				}
+				cliqueFeaturesP.push_back(featuresP);
+				cliqueFeaturesQ.push_back(featuresQ);
+			}
+		}
+
+		vector< vector < vector<SSECorrespondenceNode> > > SSECorrespondenceFinder::GetCliquesFirstAStarTriangleBasedCliqueDistanceFeatureCorrespondence(bool printOutput, bool useDirection, bool getSmallCliques, int levelSizeTolerence) {			
+			TimeManager tm;
+			tm.PushCurrentTime();
+
+			vector< vector < vector<SSECorrespondenceNode> > > correspondence;
+			vector< vector<float> > featureCompatibilityScores = GetAllFeatureCompatibilityScores();
+			vector<SSECorrespondenceNode> nodes = GetAllNodes(featureCompatibilityScores, useDirection);
+			vector< vector<float> > pairCompatibility = GetAllNodePairCompatibilityScores(nodes, useDirection);
+
+			GraphBase<unsigned int, bool> parentGraph = CreateGraph(featureCompatibilityScores, nodes, pairCompatibility, useDirection);
+
+			tm.PopAndDisplayTime("(*Graph constructed %f seconds!*)\n");
+			
+			tm.PushCurrentTime();
+			vector< set<unsigned long long> > allCliques = parentGraph.GetAllCliquesTriangleApprox(getSmallCliques, getSmallCliques);
+			printf("(*%d cliques found ", allCliques.size());
+			tm.PopAndDisplayTime("%f seconds!*)\n");
+
+			tm.PushCurrentTime();
+			vector< set<unsigned long long> > cliqueFeaturesP;
+			vector< set<unsigned long long> > cliqueFeaturesQ;
+			GetCliqueFeatures(cliqueFeaturesP, cliqueFeaturesQ, allCliques, nodes);
+
+			GorgonPriorityQueue<float, SSECorrespondenceSearchNode2 *> queue = GorgonPriorityQueue<float, SSECorrespondenceSearchNode2 *>(false);
+
+			SSECorrespondenceSearchNode2 * node = new SSECorrespondenceSearchNode2();
+			queue.Add(0, node);
+
+			float firstCost;
+			vector<SSECorrespondenceSearchNode2 *> childNodes;
+			int solutionCount = 0;
+			while((solutionCount < maxSolutionCount) && !queue.IsEmpty()) {
+				queue.PopFirst(firstCost, node);
+				childNodes = node->GetChildNodes(allCliques, cliqueFeaturesP, cliqueFeaturesQ, levelSizeTolerence);
+				if(childNodes.size() == 0) { // Solution Found!
+					tm.PopAndDisplayTime("(*Solution found %f seconds!*)\n");
+					tm.PushCurrentTime();
+					if(printOutput) {
+						node->PrintSolution(allCliques, nodes, useDirection);							
+						printf("(*cost = %f*)\n", firstCost);
+					}
+					//correspondence.push_back(currentNode->GetSolution(nodes));
+				
+					solutionCount++;					
+
+				}
+
+				for(unsigned int i = 0; i < childNodes.size(); i++) {					
+					queue.Add(childNodes[i]->GetCost(firstCost, allCliques, nodes, featureList1, featureList2), childNodes[i]);
+				}
+
+				delete node;
+			}
+
+			tm.PopAndDisplayTime("(*%f seconds!*)\n");
+
+
+			return correspondence;
+		}
+
 
 		vector < vector<SSECorrespondenceNode> > SSECorrespondenceFinder::GetValenceBasedFeatureCorrespondence(bool printOutput, bool useDirection) {
 			vector< vector<float> > featureCompatibilityScores = GetAllFeatureCompatibilityScores();
@@ -828,6 +895,27 @@ namespace wustl_mm {
 			}
 			printf("};\n\n");
 		}
+
+
+		GraphBase<unsigned int, bool> SSECorrespondenceFinder::CreateGraph(vector< vector<float> > & featureCompatibilityScores, vector<SSECorrespondenceNode> & nodes, vector< vector<float> > & pairCompatibility, bool useDirection) {
+			GraphBase<unsigned int, bool> parentGraph;
+
+			for(unsigned int i = 0; i < nodes.size(); i++) {
+				parentGraph.AddVertex(featureCompatibilityScores[nodes[i].GetPIndex()][nodes[i].GetQIndex()], i);
+			}
+
+			for(int i = 0; i < (int)nodes.size()-1; i++) {
+				for(int j = i+1; j < (int)nodes.size(); j++) {
+					if((nodes[i].GetPIndex() != nodes[j].GetPIndex()) && 
+						(nodes[i].GetQIndex() != nodes[j].GetQIndex()) &&
+						IsFeaturePairRigid(nodes[i], nodes[j], useDirection)) {						
+						parentGraph.AddEdge(i, j, pairCompatibility[i][j], false);
+					}
+				}
+			}
+			return parentGraph;
+		}
+
 	}
 }
 
