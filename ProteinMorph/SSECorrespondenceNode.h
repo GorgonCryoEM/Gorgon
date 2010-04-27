@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.2  2009/11/19 18:19:25  ssa1
+//   Improved flexible fitting.. (Split nodes to guarantee direction)
+//
 //   Revision 1.1  2009/08/26 14:58:55  ssa1
 //   Adding in Flexible fitting clique search
 //
@@ -28,6 +31,7 @@ namespace wustl_mm {
 	namespace Protein_Morph {
 		class SSECorrespondenceNode {
 		public:
+			SSECorrespondenceNode();
 			SSECorrespondenceNode(unsigned int pIndex, unsigned int qIndex, bool isForward);
 			unsigned int GetPIndex();
 			unsigned int GetQIndex();
@@ -37,6 +41,12 @@ namespace wustl_mm {
 			unsigned int qIndex;
 			bool directionForward;
 		};
+
+		SSECorrespondenceNode::SSECorrespondenceNode() {
+			this->pIndex = 0;
+			this->qIndex = 0;
+			directionForward = true;
+		}
 
 		SSECorrespondenceNode::SSECorrespondenceNode(unsigned int pIndex, unsigned int qIndex, bool isForward) {
 			this->pIndex = pIndex;
