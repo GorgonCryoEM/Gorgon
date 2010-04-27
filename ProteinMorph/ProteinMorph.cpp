@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.18  2010/04/27 17:30:54  ssa1
+//   SSE Registration search by first finding all cliques, and then finding the matching.
+//
 //   Revision 1.17  2010/04/04 19:05:51  ssa1
 //   Fixing misc bugs, and redoing sheet visualization mechanism
 //
@@ -188,16 +191,16 @@ int main( int args, char * argv[] ) {
 	return 0;*/
 
 	SSECorrespondenceFinder finder;
-	if(args != 17) {
-		printf("ProteinMorph [method] [splitNodes] [multipleSearch] [pdb1(highres)] [pdb2(volume)] [rigidityThreshold] [featureChangeThreshold] [rigidityAngleCoeff] [rigidityCentroidDistanceCoeff] [rigidityFeatureChangeCoeff] [rigidComponentCoeff] [intraComponentCoeff] [jointAngleThreshold] [dihedralAngleThreshold] [centroidDistanceThreshold] [maxSolutionCount]\n");
+	if(args != 19) {
+		printf("ProteinMorph [method] [splitNodes] [multipleSearch] [pdb1(highres)] [pdb2(volume)] [rigidityThreshold] [featureChangeThreshold] [rigidityAngleCoeff] [rigidityCentroidDistanceCoeff] [rigidityFeatureChangeCoeff] [rigidComponentCoeff] [intraComponentCoeff] [jointAngleThreshold] [dihedralAngleThreshold] [centroidDistanceThreshold] [maxSolutionCount] [maxCostMatrixError] [smallestA*CliqueSize]\n");
 		printf("\t[method] : The algorithm to use, 1 : Clique, 2: Greedy Valence, 3: Greedy Valence Triangle based Clique 4: A * (rigidity cost) Triangle based clique 5: A* (distance cost) Triangle based clique 6: Cliques first, then search like 5\n");
 		printf("\t[splitNodes] : 0: dont split, 1: split based on direction \n");
 		printf("\t[multipleSearch] : 0: Single Search, 1: Search for multiple instances of pdb1 in pdb2\n");
 	} else {	
-		TimeManager tm;
-		tm.PushCurrentTime();
 		bool useDirection = (StringUtils::StringToInt(argv[2]) == 1);
 		bool multipleSearch = (StringUtils::StringToInt(argv[3]) == 1);
+		int smallestAStarCliqueSize = StringUtils::StringToInt(argv[18]);
+		printf("Smallest clique %d\n", smallestAStarCliqueSize);
 
 		finder.InitializeFeaturesFromPDBFiles(argv[4], argv[5], multipleSearch);
 		finder.InitializeConstants(
@@ -211,7 +214,8 @@ int main( int args, char * argv[] ) {
 			StringUtils::StringToDouble(argv[13]), 
 			StringUtils::StringToDouble(argv[14]), 
 			StringUtils::StringToDouble(argv[15]), 
-			StringUtils::StringToInt(argv[16]));
+			StringUtils::StringToInt(argv[16]),
+			StringUtils::StringToDouble(argv[17]));
 
 		finder.PrintFeatureListsMathematica();
 		vector< vector < vector<SSECorrespondenceNode> > > corr;
@@ -227,44 +231,44 @@ int main( int args, char * argv[] ) {
 				break;
 			case SSE_CORRESPONDENCE_METHOD_GREEDY_VALENCE_CLIQUE:
 				if(multipleSearch) {
-					corr = finder.GetMultiCorrespondence(SSE_CORRESPONDENCE_METHOD_GREEDY_VALENCE_CLIQUE, useDirection, false);
+					corr = finder.GetMultiCorrespondence(SSE_CORRESPONDENCE_METHOD_GREEDY_VALENCE_CLIQUE, useDirection, smallestAStarCliqueSize);
 				} else {
 					corr2 = finder.GetValenceBasedFeatureCorrespondence(true, useDirection);
 				}
 				break;
 			case SSE_CORRESPONDENCE_METHOD_GREEDY_TRIANGLE_CLIQUE:
 				if(multipleSearch) {
-					corr = finder.GetMultiCorrespondence(SSE_CORRESPONDENCE_METHOD_GREEDY_TRIANGLE_CLIQUE, useDirection, false);
+					corr = finder.GetMultiCorrespondence(SSE_CORRESPONDENCE_METHOD_GREEDY_TRIANGLE_CLIQUE, useDirection, smallestAStarCliqueSize);
 				} else {
-					corr2 = finder.GetValenceTriangleBasedFeatureCorrespondence(true, useDirection, false);
+					corr2 = finder.GetValenceTriangleBasedFeatureCorrespondence(true, useDirection, smallestAStarCliqueSize);
 				}
 				break;
 			case SSE_CORRESPONDENCE_METHOD_ASTAR_RIGID_COST_TRIANGLE_CLIQUE:
 				if(multipleSearch) {
 					printf("Multiple search not implemented for this method \n");
 				} else {
-					corr = finder.GetAStarTriangleBasedFeatureCorrespondence(true, useDirection, false);
+					corr = finder.GetAStarTriangleBasedFeatureCorrespondence(true, useDirection, smallestAStarCliqueSize);
 				}
 				break;
 			case SSE_CORRESPONDENCE_METHOD_ASTAR_NEIGHBOR_COST_TRIANGLE_CLIQUE:
 				if(multipleSearch) {
-					corr = finder.GetMultiCorrespondence(SSE_CORRESPONDENCE_METHOD_ASTAR_NEIGHBOR_COST_TRIANGLE_CLIQUE, useDirection, false);
+					corr = finder.GetMultiCorrespondence(SSE_CORRESPONDENCE_METHOD_ASTAR_NEIGHBOR_COST_TRIANGLE_CLIQUE, useDirection, smallestAStarCliqueSize);
 				} else {
-					corr = finder.GetAStarTriangleBasedCliqueDistanceFeatureCorrespondence(true, useDirection, false);
+					corr = finder.GetAStarTriangleBasedCliqueDistanceFeatureCorrespondence(true, useDirection, smallestAStarCliqueSize);
 				}
 				break;
 			case SSE_CORRESPONDENCE_METHOD_CLIQUES_FIRST_ASTAR_NEIGHBOR_COST_TRIANGLE_CLIQUE:
 				if(multipleSearch) {
 					printf("Multiple search not implemented for this method \n");
 				} else {
-					corr = finder.GetCliquesFirstAStarTriangleBasedCliqueDistanceFeatureCorrespondence(true, useDirection, false, 2);
+					corr = finder.GetCliquesFirstAStarTriangleBasedCliqueDistanceFeatureCorrespondence(true, useDirection, smallestAStarCliqueSize, 2);
 				}
 				break;
 			default:
 				printf("Unknown method\n");
 				break;
-		}		
-		tm.PopAndDisplayTime("Executed in %f seconds!\n");
+		}
+		finder.PrintTimes();
 	}	
 
 	//float j1, j2, d;

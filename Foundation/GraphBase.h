@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.7  2010/04/27 17:30:54  ssa1
+//   SSE Registration search by first finding all cliques, and then finding the matching.
+//
 //   Revision 1.6  2009/12/21 22:03:32  ssa1
 //   Checking in FFTW windows binaries
 //
@@ -67,14 +70,14 @@ namespace wustl_mm {
 			vector< set<unsigned long long> > GetAllConnectedComponents();
 			vector< set<unsigned long long> > GetAllConnectedComponents(vector<unsigned long long> vertexSet);
 			vector< set<unsigned long long> > GetAllCliques();
-			vector< set<unsigned long long> > GetAllCliquesTriangleApprox(bool get1NodeCliques, bool get2NodeCliques);
+			vector< set<unsigned long long> > GetAllCliquesTriangleApprox(int smallestCliqueSize);
 			vector< set<unsigned long long> > GetAllMaximalCliques();
 			vector< set<unsigned long long> > GetLargestMaximalCliques();
 			vector< set<unsigned long long> > GetLargestMaximalCliques2();
 			vector< set<unsigned long long> > GetLargestMaximalCliques(vector<unsigned long long> vertexSet);
 			vector< set<unsigned long long> > GetLargestMaximalCliques2(vector<unsigned long long> vertexSet);
 			set<unsigned long long> GetLowestCostCliqueInOneRing(unsigned long long vertexIx);
-			set<unsigned long long> GetLowestCostCliqueTriangleApprox(bool get1NodeCliques, bool get2NodeCliques);
+			set<unsigned long long> GetLowestCostCliqueTriangleApprox(int smallestCliqueSize);
 			vector<unsigned long long> GetOneRingNeighbors(unsigned long long vertexIx);
 			vector< GraphEdgeBase<TEdgeTag> * > GetEdgeReferences();
 			void PrintAllCliques(vector< set<unsigned long long> > allCliques);
@@ -561,12 +564,12 @@ namespace wustl_mm {
 			}
 		}
 
-		template <class TVertexTag, class TEdgeTag> set<unsigned long long> GraphBase<TVertexTag, TEdgeTag>::GetLowestCostCliqueTriangleApprox(bool get1NodeCliques, bool get2NodeCliques) {
+		template <class TVertexTag, class TEdgeTag> set<unsigned long long> GraphBase<TVertexTag, TEdgeTag>::GetLowestCostCliqueTriangleApprox(int smallestCliqueSize) {
 			set<unsigned long long> clique;
 
 			// Inputvalidation: Returns lowest cost vertex if no edges exist
 			if(edges.size() == 0) { 
-				if(get1NodeCliques) {
+				if(smallestCliqueSize <= 1) {
 					if(vertices.size() == 0) {
 						return clique;
 					}
@@ -603,7 +606,7 @@ namespace wustl_mm {
 
 			// Inputvalidation: Returns lowest cost edge if no triangles exist
 			if(maxEdgeValence == 0) { 
-				if(get2NodeCliques) {
+				if(smallestCliqueSize <= 2) {
 					unsigned long long minEdgeHash = edges.begin()->first;
 					float minEdgeWeight = edges[minEdgeHash].GetWeight();
 					for(map< unsigned long long, GraphEdgeBase<TEdgeTag> >::iterator i = edges.begin(); i != edges.end(); i++) {
@@ -644,12 +647,15 @@ namespace wustl_mm {
 					currClique.erase(currClique.end()-1);
 				}
 			}
-			
+			if(currClique.size() < smallestCliqueSize) {
+				currClique.clear();
+			}
+
 			return VertexVectorToSet(currClique);			
 		}
 
 
-		template <class TVertexTag, class TEdgeTag> vector< set<unsigned long long> > GraphBase<TVertexTag, TEdgeTag>::GetAllCliquesTriangleApprox(bool get1NodeCliques, bool get2NodeCliques) {
+		template <class TVertexTag, class TEdgeTag> vector< set<unsigned long long> > GraphBase<TVertexTag, TEdgeTag>::GetAllCliquesTriangleApprox(int smallestCliqueSize) {
 			vector< set<unsigned long long> > allCliques;
 			allCliques.clear();
 
@@ -661,13 +667,13 @@ namespace wustl_mm {
 			set<unsigned long long> maxClique;
 			vector<unsigned long long> maxCliqueVector;
 			set<unsigned long long> maxCliqueGlobalIndices;
-			int minSize = min(get2NodeCliques?2:3, get1NodeCliques?1:3);
+			int minSize = smallestCliqueSize;
 			vector<unsigned long long> subGraphVertices;
 
 			bool found = true;
 			while(found && (tempGraph.GetVertexCount() > 0)) {
-				maxClique = tempGraph.GetLowestCostCliqueTriangleApprox(get1NodeCliques, get2NodeCliques);
-				found = maxClique.size() > 0;
+				maxClique = tempGraph.GetLowestCostCliqueTriangleApprox(smallestCliqueSize);
+				found = maxClique.size() >= smallestCliqueSize;
 				if(found) {
 					maxCliqueVector = tempGraph.VertexSetToVector(maxClique);
 					if(maxClique.size() >= minSize) {

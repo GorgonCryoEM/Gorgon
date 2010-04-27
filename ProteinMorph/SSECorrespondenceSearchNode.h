@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.13  2010/02/23 21:19:08  ssa1
+//   Better correspondence search
+//
 //   Revision 1.12  2010/02/11 23:20:47  ssa1
 //   Flexible fitting algorithm #5 - Better scoring function which scales based on depth of tree and local distance
 //
@@ -71,16 +74,18 @@ namespace wustl_mm {
 
 			float GetCost();
 			vector<SSECorrespondenceSearchNode *> GetChildNodes(vector<SSECorrespondenceNode> & allNodes, vector< vector<float> > & pairCompatibility, float featureChangeCoeff, float rigidComponentCoeff, float intraComponentCoeff);
-			vector<SSECorrespondenceSearchNode *> GetChildNodesTriangleApprox(vector<SSECorrespondenceNode> & allNodes, vector<SSECorrespondenceFeature> featureList1, vector<SSECorrespondenceFeature> featureList2, bool getSmallCliques);
-			vector<SSECorrespondenceSearchNode *> GetChildNodesTriangleApproxCliqueDistance(vector<SSECorrespondenceNode> & allNodes, vector<SSECorrespondenceFeature> featureList1, vector<SSECorrespondenceFeature> featureList2, bool getSmallCliques);
+			vector<SSECorrespondenceSearchNode *> GetChildNodesTriangleApprox(vector<SSECorrespondenceNode> & allNodes, vector<SSECorrespondenceFeature> featureList1, vector<SSECorrespondenceFeature> featureList2, int smallestCliqueSize);
+			vector<SSECorrespondenceSearchNode *> GetChildNodesTriangleApproxCliqueDistance(vector<SSECorrespondenceNode> & allNodes, vector<SSECorrespondenceFeature> featureList1, vector<SSECorrespondenceFeature> featureList2, int smallestCliqueSize);
 			void PrintSolution(vector<SSECorrespondenceNode> & allNodes, bool useDirection, bool onlyCorr = false);
 			GraphBase<unsigned int, bool> GetChildGraph(vector<SSECorrespondenceNode> & allNodes, vector<unsigned long long> clique);
 			GraphBase<unsigned int, bool> GetOnlySymmetriesGraph(vector<SSECorrespondenceNode> & allNodes, set<unsigned long long> clique, GraphBase<unsigned int, bool> & parentGraph, GraphBase<unsigned int, bool> & rootGraph, map<unsigned int, unsigned int> & parentVertexIndices);
 			MatrixFloat GetTransform(vector<SSECorrespondenceFeature> & featureList1, vector<SSECorrespondenceFeature> & featureList2, vector<unsigned int> & nodeList, vector<SSECorrespondenceNode> & allNodes, int sampleCount);
+			void FindErrorMatrixBasedCorrespondences(vector<SSECorrespondenceFeature> & featureList1, vector<SSECorrespondenceFeature> & featureList2, vector<SSECorrespondenceNode> & allNodes, float maxError);
 			
 		private:
-			float GetAverageError(vector<SSECorrespondenceFeature> & featureList1, vector<SSECorrespondenceFeature> & featureList2, MatrixFloat transform, vector<unsigned int> & nodeList, vector<SSECorrespondenceNode> & allNodes, int sampleCount);			
-			vector< set<unsigned long long> > GetSymmetricCliquesTriangleApprox(int maxSizeDifference, vector<SSECorrespondenceNode> & allNodes, bool getSmallCliques);
+			float GetAverageError(vector<SSECorrespondenceFeature> & featureList1, vector<SSECorrespondenceFeature> & featureList2, MatrixFloat & transform, SSECorrespondenceNode node, int sampleCount);
+			float GetAverageError(vector<SSECorrespondenceFeature> & featureList1, vector<SSECorrespondenceFeature> & featureList2, MatrixFloat & transform, vector<unsigned int> & nodeList, vector<SSECorrespondenceNode> & allNodes, int sampleCount);			
+			vector< set<unsigned long long> > GetSymmetricCliquesTriangleApprox(int maxSizeDifference, vector<SSECorrespondenceNode> & allNodes, int smallestCliqueSize);
 
 			float GetCliqueCost(vector<unsigned long long> & clique, float featureChangeCoeff, float rigidComponentCoeff);
 			float GetCliqueCost2(vector<unsigned long long> & clique);
@@ -99,6 +104,7 @@ namespace wustl_mm {
 			vector< vector<unsigned int> > solution;
 			float cost;
 			static const int SAMPLE_COUNT = 10;
+			static const int MAX_CLIQUE_SIZE_DIFFERENCE = 2;
 			
 		};
 
@@ -120,15 +126,15 @@ namespace wustl_mm {
 			return cost;
 		}
 
-		vector< set<unsigned long long> > SSECorrespondenceSearchNode::GetSymmetricCliquesTriangleApprox(int maxSizeDifference, vector<SSECorrespondenceNode> & allNodes, bool getSmallCliques) {
+		vector< set<unsigned long long> > SSECorrespondenceSearchNode::GetSymmetricCliquesTriangleApprox(int maxSizeDifference, vector<SSECorrespondenceNode> & allNodes, int smallestCliqueSize) {
 			vector< set<unsigned long long> > cliques;
 
 			GraphBase<unsigned int, bool> tempGraph(graph);
 
-			set<unsigned long long> currClique = tempGraph.GetLowestCostCliqueTriangleApprox(getSmallCliques, getSmallCliques);
+			set<unsigned long long> currClique = tempGraph.GetLowestCostCliqueTriangleApprox(smallestCliqueSize);
 			if(currClique.size() > 0) {
 				cliques.push_back(currClique);
-				int minSize = max(getSmallCliques?1:3, (int)currClique.size() - maxSizeDifference);
+				int minSize = max(smallestCliqueSize, (int)currClique.size() - maxSizeDifference);
 
 				GraphBase<unsigned int, bool> prunedGraph;
 				prunedGraph.AddVertex(0, false);
@@ -142,7 +148,7 @@ namespace wustl_mm {
 				vector<unsigned long long> relativeClique, absoluteClique;
 				while(prunedGraph.GetVertexCount() > 0) {
 					prunedGraph = GetOnlySymmetriesGraph(allNodes, currClique, tempGraph, graph, parentVertexIndices);
-					currClique = prunedGraph.GetLowestCostCliqueTriangleApprox(getSmallCliques, getSmallCliques);
+					currClique = prunedGraph.GetLowestCostCliqueTriangleApprox(smallestCliqueSize);
 					if(currClique.size() >= minSize) {
 						relativeClique = prunedGraph.VertexSetToVector(currClique);
 						absoluteClique.clear();
@@ -186,11 +192,11 @@ namespace wustl_mm {
 		}
 
 
-		vector<SSECorrespondenceSearchNode *> SSECorrespondenceSearchNode::GetChildNodesTriangleApprox(vector<SSECorrespondenceNode> & allNodes, vector<SSECorrespondenceFeature> featureList1, vector<SSECorrespondenceFeature> featureList2, bool getSmallCliques) {
+		vector<SSECorrespondenceSearchNode *> SSECorrespondenceSearchNode::GetChildNodesTriangleApprox(vector<SSECorrespondenceNode> & allNodes, vector<SSECorrespondenceFeature> featureList1, vector<SSECorrespondenceFeature> featureList2, int smallestCliqueSize) {
 			vector<SSECorrespondenceSearchNode *> childNodes;
 
 			if(graph.GetVertexCount() > 0) {
-				vector< set<unsigned long long> > cliques = GetSymmetricCliquesTriangleApprox(2, allNodes, getSmallCliques);
+				vector< set<unsigned long long> > cliques = GetSymmetricCliquesTriangleApprox(2, allNodes, smallestCliqueSize);
 			
 				vector<unsigned int> childSolutionElement;
 				vector< vector<unsigned int> > childSolution;
@@ -215,11 +221,11 @@ namespace wustl_mm {
 			return childNodes;
 		}
 
-		vector<SSECorrespondenceSearchNode *> SSECorrespondenceSearchNode::GetChildNodesTriangleApproxCliqueDistance(vector<SSECorrespondenceNode> & allNodes, vector<SSECorrespondenceFeature> featureList1, vector<SSECorrespondenceFeature> featureList2, bool getSmallCliques) {
+		vector<SSECorrespondenceSearchNode *> SSECorrespondenceSearchNode::GetChildNodesTriangleApproxCliqueDistance(vector<SSECorrespondenceNode> & allNodes, vector<SSECorrespondenceFeature> featureList1, vector<SSECorrespondenceFeature> featureList2, int smallestCliqueSize) {
 			vector<SSECorrespondenceSearchNode *> childNodes;
 
 			if(graph.GetVertexCount() > 0) {
-				vector< set<unsigned long long> > cliques = GetSymmetricCliquesTriangleApprox(2, allNodes, getSmallCliques);
+				vector< set<unsigned long long> > cliques = GetSymmetricCliquesTriangleApprox(MAX_CLIQUE_SIZE_DIFFERENCE, allNodes, smallestCliqueSize);
 			
 				vector<unsigned int> childSolutionElement;
 				vector< vector<unsigned int> > childSolution;
@@ -515,6 +521,67 @@ namespace wustl_mm {
 			}
 		}
 
+
+		void SSECorrespondenceSearchNode::FindErrorMatrixBasedCorrespondences(vector<SSECorrespondenceFeature> & featureList1, vector<SSECorrespondenceFeature> & featureList2, vector<SSECorrespondenceNode> & allNodes, float maxError) {
+			vector<bool> unmappedPFeatures, unmappedQFeatures;
+			for(unsigned int i = 0; i < featureList1.size(); i++) {
+				unmappedPFeatures.push_back(true);
+			}
+
+			for(unsigned int i = 0; i < featureList2.size(); i++) {
+				unmappedQFeatures.push_back(true);
+			}
+
+			for(unsigned int i = 0; i < solution.size(); i++) {
+				for(unsigned int j = 0; j < solution[i].size(); j++) {					
+					unmappedPFeatures[allNodes[solution[i][j]].GetPIndex()] = false;
+					unmappedQFeatures[allNodes[solution[i][j]].GetQIndex()] = false;
+				}
+			}
+
+			GorgonPriorityQueue<float, SSECorrespondenceNode> costMatrix = GorgonPriorityQueue<float, SSECorrespondenceNode>(false);
+
+			MatrixFloat transform = MatrixFloat(4,4);
+			float cost;			
+			SSECorrespondenceNode node;
+
+			for(unsigned int m = 0; m < solution.size(); m++) {
+				if(solution[m].size() > 0) {
+					transform = GetTransform(featureList1, featureList2, solution[m], allNodes, SAMPLE_COUNT);
+
+					for(unsigned int i = 0; i < featureList1.size(); i++) {
+						if(unmappedPFeatures[i]) {
+							for(unsigned int j = 0; j < featureList2.size(); j++) {
+								if(unmappedQFeatures[j]) {
+									for(unsigned int k = 0; k < 2; k++) {
+										node = SSECorrespondenceNode(i, j, (k==0));
+										cost = GetAverageError(featureList1, featureList2, transform, node, SAMPLE_COUNT);
+										costMatrix.Add(cost, node);	
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+
+			bool terminate = false;
+			
+			vector<unsigned int> independentClique;
+			while(!costMatrix.IsEmpty() && (!terminate)) {
+				costMatrix.PopFirst(cost, node);
+				terminate = (cost > maxError);
+				if(!terminate && unmappedPFeatures[node.GetPIndex()] && unmappedQFeatures[node.GetQIndex()]) {					
+					allNodes.push_back(node);
+					independentClique.clear();
+					independentClique.push_back(allNodes.size()-1);
+					solution.push_back(independentClique);		
+					unmappedPFeatures[node.GetPIndex()] = false;
+					unmappedQFeatures[node.GetQIndex()] = false;
+				}			
+			}
+		}
+
 		MatrixFloat SSECorrespondenceSearchNode::GetTransform(vector<SSECorrespondenceFeature> & featureList1, vector<SSECorrespondenceFeature> & featureList2, vector<unsigned int> & nodeList, vector<SSECorrespondenceNode> & allNodes, int sampleCount) {
 			vector<Vector3DFloat> fl1, fl2;
 			fl1.clear();
@@ -543,28 +610,35 @@ namespace wustl_mm {
 			return LinearSolver::FindRotationTranslation(fl1, fl2);
 		}
 
-		float SSECorrespondenceSearchNode::GetAverageError(vector<SSECorrespondenceFeature> & featureList1, vector<SSECorrespondenceFeature> & featureList2, MatrixFloat transform, vector<unsigned int> & nodeList, vector<SSECorrespondenceNode> & allNodes, int sampleCount) {
+		float SSECorrespondenceSearchNode::GetAverageError(vector<SSECorrespondenceFeature> & featureList1, vector<SSECorrespondenceFeature> & featureList2, MatrixFloat & transform, SSECorrespondenceNode node, int sampleCount) {
 			Vector3DFloat p1, p2, q1, q2, sp, sq;
 			float totalError = 0, nodeError, offset;				
 
+			p1 = featureList1[node.GetPIndex()].GetEndPoint(0).Transform(transform);
+			p2 = featureList1[node.GetPIndex()].GetEndPoint(1).Transform(transform);
+			
+			q1 = featureList2[node.GetQIndex()].GetEndPoint(node.IsForward()?0:1);
+			q2 = featureList2[node.GetQIndex()].GetEndPoint(node.IsForward()?1:0);
+
+			nodeError = 0;
+			for(int j = 0; j < sampleCount; j++) {				
+				offset = (float)j / (float)(sampleCount - 1);
+
+				sp = p1*(1.0f - offset) + p2 * offset;
+				sq = q1*(1.0f - offset) + q2 * offset;
+
+				nodeError += (sp - sq).Length() / (float)sampleCount;
+			}
+
+			return nodeError;
+		}
+
+		float SSECorrespondenceSearchNode::GetAverageError(vector<SSECorrespondenceFeature> & featureList1, vector<SSECorrespondenceFeature> & featureList2, MatrixFloat & transform, vector<unsigned int> & nodeList, vector<SSECorrespondenceNode> & allNodes, int sampleCount) {
+			float totalError = 0;
+
 			for(unsigned int i = 0; i < nodeList.size(); i++) {
-				p1 = featureList1[allNodes[nodeList[i]].GetPIndex()].GetEndPoint(0).Transform(transform);
-				p2 = featureList1[allNodes[nodeList[i]].GetPIndex()].GetEndPoint(1).Transform(transform);
-				
-				q1 = featureList2[allNodes[nodeList[i]].GetQIndex()].GetEndPoint(allNodes[nodeList[i]].IsForward()?0:1);
-				q2 = featureList2[allNodes[nodeList[i]].GetQIndex()].GetEndPoint(allNodes[nodeList[i]].IsForward()?1:0);
-
-				for(int j = 0; j < sampleCount; j++) {
-					nodeError = 0;
-					offset = (float)j / (float)(sampleCount - 1);
-
-					sp = p1*(1.0f - offset) + p2 * offset;
-					sq = q1*(1.0f - offset) + q2 * offset;
-
-					nodeError += (sp - sq).Length() / (float)sampleCount;
-				}
-				//totalError += nodeError / (float)nodeList.size();
-				totalError += nodeError;
+				//totalError += GetAverageError(featureList1, featureList2, transform, allNodes[nodeList[i]], sampleCount) / (float)nodeList.size();
+				totalError += GetAverageError(featureList1, featureList2, transform, allNodes[nodeList[i]], sampleCount);
 			}
 			return totalError;
 		}
