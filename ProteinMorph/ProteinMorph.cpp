@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.17  2010/04/04 19:05:51  ssa1
+//   Fixing misc bugs, and redoing sheet visualization mechanism
+//
 //   Revision 1.16  2010/02/23 21:19:08  ssa1
 //   Better correspondence search
 //
@@ -187,7 +190,7 @@ int main( int args, char * argv[] ) {
 	SSECorrespondenceFinder finder;
 	if(args != 17) {
 		printf("ProteinMorph [method] [splitNodes] [multipleSearch] [pdb1(highres)] [pdb2(volume)] [rigidityThreshold] [featureChangeThreshold] [rigidityAngleCoeff] [rigidityCentroidDistanceCoeff] [rigidityFeatureChangeCoeff] [rigidComponentCoeff] [intraComponentCoeff] [jointAngleThreshold] [dihedralAngleThreshold] [centroidDistanceThreshold] [maxSolutionCount]\n");
-		printf("\t[method] : The algorithm to use, 1 : Clique, 2: Greedy Valence, 3: Greedy Valence Triangle based Clique 4: A * (rigidity cost) Triangle based clique 5: A* (distance cost) Triangle based clique\n");
+		printf("\t[method] : The algorithm to use, 1 : Clique, 2: Greedy Valence, 3: Greedy Valence Triangle based Clique 4: A * (rigidity cost) Triangle based clique 5: A* (distance cost) Triangle based clique 6: Cliques first, then search like 5\n");
 		printf("\t[splitNodes] : 0: dont split, 1: split based on direction \n");
 		printf("\t[multipleSearch] : 0: Single Search, 1: Search for multiple instances of pdb1 in pdb2\n");
 	} else {	
@@ -248,6 +251,13 @@ int main( int args, char * argv[] ) {
 					corr = finder.GetMultiCorrespondence(SSE_CORRESPONDENCE_METHOD_ASTAR_NEIGHBOR_COST_TRIANGLE_CLIQUE, useDirection, false);
 				} else {
 					corr = finder.GetAStarTriangleBasedCliqueDistanceFeatureCorrespondence(true, useDirection, false);
+				}
+				break;
+			case SSE_CORRESPONDENCE_METHOD_CLIQUES_FIRST_ASTAR_NEIGHBOR_COST_TRIANGLE_CLIQUE:
+				if(multipleSearch) {
+					printf("Multiple search not implemented for this method \n");
+				} else {
+					corr = finder.GetCliquesFirstAStarTriangleBasedCliqueDistanceFeatureCorrespondence(true, useDirection, false, 2);
 				}
 				break;
 			default:

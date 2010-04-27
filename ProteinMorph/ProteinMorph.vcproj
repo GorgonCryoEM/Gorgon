@@ -267,6 +267,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\SSECorrespondenceSearchNode2.h"
+				>
+			</File>
+			<File
 				RelativePath=".\SSEFlexibleFitter.h"
 				>
 			</File>

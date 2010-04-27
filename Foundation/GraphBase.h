@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.6  2009/12/21 22:03:32  ssa1
+//   Checking in FFTW windows binaries
+//
 //   Revision 1.5  2009/11/30 04:23:44  ssa1
 //   Triangle based A* search for flexible fitting
 //
@@ -48,6 +51,7 @@ namespace wustl_mm {
 			GraphBase();
 			GraphBase(GraphBase<TVertexTag,TEdgeTag> & graph);
 			unsigned long long AddVertex(float weight, TVertexTag tag);
+			unsigned long long AddVertex(unsigned long long externalIndex, float weight, TVertexTag tag);
 			unsigned long long AddVertex(GraphVertexBase<TVertexTag> vertex);
 			GraphVertexBase<TVertexTag> GetVertex(unsigned long long vertexIx);
 			unsigned long long GetHighestValenceVertexIx();
@@ -63,6 +67,7 @@ namespace wustl_mm {
 			vector< set<unsigned long long> > GetAllConnectedComponents();
 			vector< set<unsigned long long> > GetAllConnectedComponents(vector<unsigned long long> vertexSet);
 			vector< set<unsigned long long> > GetAllCliques();
+			vector< set<unsigned long long> > GetAllCliquesTriangleApprox(bool get1NodeCliques, bool get2NodeCliques);
 			vector< set<unsigned long long> > GetAllMaximalCliques();
 			vector< set<unsigned long long> > GetLargestMaximalCliques();
 			vector< set<unsigned long long> > GetLargestMaximalCliques2();
@@ -103,7 +108,7 @@ namespace wustl_mm {
 			vertices.clear();
 			edges.clear();
 			for(unsigned int i = 0; i < graph.GetVertexCount(); i++) {
-				AddVertex(graph.GetVertex(i).GetWeight(), graph.GetVertex(i).GetTag());
+				AddVertex(graph.GetVertex(i).GetExternalIndex(), graph.GetVertex(i).GetWeight(), graph.GetVertex(i).GetTag());
 			}
 
 			for(int i = 0; i < (int)GetVertexCount()-1; i++) {
@@ -120,9 +125,14 @@ namespace wustl_mm {
 			return AddVertex(vertex);
 		}
 
+		template <class TVertexTag, class TEdgeTag> unsigned long long GraphBase<TVertexTag, TEdgeTag>::AddVertex(unsigned long long externalIndex, float weight, TVertexTag tag) {
+			GraphVertexBase<TVertexTag> vertex = GraphVertexBase<TVertexTag>(externalIndex, weight, tag);
+			return AddVertex(vertex);
+		}
+
 		template <class TVertexTag, class TEdgeTag> unsigned long long GraphBase<TVertexTag, TEdgeTag>::AddVertex(GraphVertexBase<TVertexTag> vertex) {
 			unsigned long long ix = vertices.size();
-			vertex.SetIndex(ix);
+			//vertex.SetIndex(ix);
 			vertices.push_back(vertex);
 			return ix;
 		}
@@ -639,6 +649,49 @@ namespace wustl_mm {
 		}
 
 
+		template <class TVertexTag, class TEdgeTag> vector< set<unsigned long long> > GraphBase<TVertexTag, TEdgeTag>::GetAllCliquesTriangleApprox(bool get1NodeCliques, bool get2NodeCliques) {
+			vector< set<unsigned long long> > allCliques;
+			allCliques.clear();
+
+			GraphBase<TVertexTag, TEdgeTag> tempGraph(*this);
+			for(unsigned long long i = 0; i < tempGraph.GetVertexCount(); i++) {
+				tempGraph.vertices[i].SetExternalIndex(i);
+			}
+			
+			set<unsigned long long> maxClique;
+			vector<unsigned long long> maxCliqueVector;
+			set<unsigned long long> maxCliqueGlobalIndices;
+			int minSize = min(get2NodeCliques?2:3, get1NodeCliques?1:3);
+			vector<unsigned long long> subGraphVertices;
+
+			bool found = true;
+			while(found && (tempGraph.GetVertexCount() > 0)) {
+				maxClique = tempGraph.GetLowestCostCliqueTriangleApprox(get1NodeCliques, get2NodeCliques);
+				found = maxClique.size() > 0;
+				if(found) {
+					maxCliqueVector = tempGraph.VertexSetToVector(maxClique);
+					if(maxClique.size() >= minSize) {
+						maxCliqueGlobalIndices.clear();
+						for(unsigned long long i = 0; i < maxCliqueVector.size(); i++) {
+							maxCliqueGlobalIndices.insert(tempGraph.vertices[maxCliqueVector[i]].GetExternalIndex());
+						}
+						allCliques.push_back(maxCliqueGlobalIndices);
+					}
+
+					subGraphVertices.clear();
+					for(unsigned long long i = 0; i < tempGraph.GetVertexCount(); i++) {
+						if(maxClique.find(i) == maxClique.end()) {
+							subGraphVertices.push_back(i);
+						}
+					}
+					tempGraph = tempGraph.GetSubgraph(subGraphVertices);
+				}
+			}
+
+			return allCliques;
+			
+		}
+
 		template <class TVertexTag, class TEdgeTag> set<unsigned long long> GraphBase<TVertexTag, TEdgeTag>::GetEdgeTriangles(unsigned long long edgeHash) {
 			set<unsigned long long> triangles, v1Neighbors, v2Neighbors;
 			unsigned long long v1, v2;
@@ -699,7 +752,7 @@ namespace wustl_mm {
 			unsigned int childIndex;
 
 			for(unsigned int i = 0; i < childVertices.size(); i++) {
-				childIndex = child.AddVertex(GetVertex(childVertices[i]).GetWeight(), GetVertex(childVertices[i]).GetTag());
+				childIndex = child.AddVertex(GetVertex(childVertices[i]).GetExternalIndex(), GetVertex(childVertices[i]).GetWeight(), GetVertex(childVertices[i]).GetTag());
 				vertexIndices[childVertices[i]]  = childIndex;
 			}	
 
@@ -711,6 +764,7 @@ namespace wustl_mm {
 					child.AddEdge(vertexIndices[v1], vertexIndices[v2], i->second);
 				}
 			}
+
 
 			return child;
 
