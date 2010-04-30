@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.15  2010/04/27 21:10:17  ssa1
+//   Implementing Cost-matrix based SSE Registration and performance optimizations on graph construction
+//
 //   Revision 1.14  2010/04/27 17:30:54  ssa1
 //   SSE Registration search by first finding all cliques, and then finding the matching.
 //
@@ -739,44 +742,30 @@ namespace wustl_mm {
 			vector<SSECorrespondenceNode> nodes = GetAllNodes(featureCompatibilityScores, useDirection);
 			m.PopAndDisplayTime("(*Created Nodes :%f s*)\n");
 			m.PushCurrentTime();
-			vector< vector<float> > pairCompatibility = GetAllNodePairCompatibilityScores(nodes, useDirection);
-			m.PopAndDisplayTime("(*Got edge compatibility:%f s*)\n");
-
 			m.PushCurrentTime();
-			GraphBase<unsigned int, bool> graph;
+			GraphBase<unsigned int, bool> graph = CreateGraph(featureCompatibilityScores, nodes, useDirection);
 
-			for(unsigned int i = 0; i < nodes.size(); i++) {
-				graph.AddVertex(featureCompatibilityScores[nodes[i].GetPIndex()][nodes[i].GetQIndex()], i);
-			}
-
-			for(int i = 0; i < (int)nodes.size()-1; i++) {
-				for(int j = i+1; j < (int)nodes.size(); j++) {
-					if((nodes[i].GetPIndex() != nodes[j].GetPIndex()) && 
-						(nodes[i].GetQIndex() != nodes[j].GetQIndex()) &&
-						IsFeaturePairRigid(nodes[i], nodes[j], useDirection)) {						
-						graph.AddEdge(i, j, pairCompatibility[i][j], false);
-					}
-				}
-			}
 			m.PopAndDisplayTime("(*Create base graph:%f s*)\n");
 
 			vector< vector<unsigned int> > sol2;
 			SSECorrespondenceSearchNode node = SSECorrespondenceSearchNode(graph, sol2, 0.0f);
 
 			vector<unsigned long long> neighbors;
-			while(graph.GetVertexCount() > 0) {				
+			bool found = true;
+			while(found && (graph.GetVertexCount() > 0)) {				
 				//m.PushCurrentTime();
 				vector<unsigned long long> clique = graph.VertexSetToVector(graph.GetLowestCostCliqueTriangleApprox(smallestCliqueSize));
-				//m.PopAndDisplayTime("  (*Got clique%f s*)\n");
-
-				vector<unsigned int> cliqueSol;
-				for(unsigned int i = 0; i < clique.size(); i++) {
-					cliqueSol.push_back(graph.GetVertex(clique[i]).GetTag());
+				found = (clique.size() > 0);
+				if(found) {
+					vector<unsigned int> cliqueSol;
+					for(unsigned int i = 0; i < clique.size(); i++) {
+						cliqueSol.push_back(graph.GetVertex(clique[i]).GetTag());
+					}
+					vector< vector<unsigned int> > sol = node.GetSolution();
+					sol.push_back(cliqueSol);
+					node = SSECorrespondenceSearchNode(node.GetChildGraph(nodes, clique), sol, 0);
+					graph = node.GetGraph();
 				}
-				vector< vector<unsigned int> > sol = node.GetSolution();
-				sol.push_back(cliqueSol);
-				node = SSECorrespondenceSearchNode(node.GetChildGraph(nodes, clique), sol, 0);
-				graph = node.GetGraph();
 			}			
 			if(printOutput) {
 				node.PrintSolution(nodes, useDirection);
