@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.31  2010/04/04 19:05:54  ssa1
+#   Fixing misc bugs, and redoing sheet visualization mechanism
+#
 #   Revision 1.30  2010/03/15 20:21:38  ssa1
 #   Introducing volume laplacian smoothing
 #
@@ -215,7 +218,7 @@ class VolumeViewer(BaseViewer):
     def setCenter(self, center):
         [xx, yy, zz] = self.worldToObjectCoordinates(center)
         self.renderer.setDisplayRadiusOrigin(xx, yy, zz)
-        return True      
+        return self.surfaceEditor.ui.checkBoxUseRadius.isChecked()
     
     def getIsoValue(self):
         return self.renderer.getSurfaceValue()

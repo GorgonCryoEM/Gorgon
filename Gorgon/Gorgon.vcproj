@@ -175,6 +175,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\FlexibleFittingEngine.h"
+				>
+			</File>
+			<File
 				RelativePath=".\GlobalConstants.h"
 				>
 			</File>
