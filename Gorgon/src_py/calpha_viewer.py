@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.45  2010/01/10 05:31:43  colemanr
+#   PDBAtoms now store their correlation, skeleton, and geometry scores. Changing the weighting for these three scores in the GUI now changes the total score for each pseudoatom.
+#
 #   Revision 1.44  2009/12/27 02:42:10  ssa1
 #   Fixing interactive loop placement bugs
 #
@@ -158,6 +161,7 @@ from seq_model.Chain import Chain
 from model_visualization_form import ModelVisualizationForm
 from correspondence.StructurePrediction import StructurePrediction
 from calpha_choose_chain_model import CAlphaChooseChainModel
+from calpha_flexible_fitting_form import CAlphaFlexibleFittingForm
 
 from OpenGL.GL import *
 from OpenGL.GLU import *
@@ -240,6 +244,7 @@ class CAlphaViewer(BaseViewer):
     def createChildWindows(self):
         self.manualAtomPlacer = CAlphaAtomPlacerForm(self.app, self, self.main_chain, self.structPred, self)
         self.chooseChainModel = CAlphaChooseChainModel(self.app, self)
+        self.flexibleFitter = CAlphaFlexibleFittingForm(self.app, self)
         
     def createActions(self):
         openAct = QtGui.QAction(self.tr("C-&Alpha Atoms..."), self)
