@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.73  2010/04/17 02:59:12  colemanr
+//   conversion to/from 3D tuples
+//
 //   Revision 1.72  2010/03/15 20:21:38  ssa1
 //   Introducing volume laplacian smoothing
 //
@@ -183,6 +186,7 @@
 #include <Gorgon/Renderer.h>
 #include <Gorgon/InteractiveSkeletonEngine.h>
 #include <Gorgon/InteractiveLoopBuilderEngine.h>
+#include <Gorgon/FlexibleFittingEngine.h>
 #include <Gorgon/CAlphaRenderer.h>
 #include <MathTools/Vector3D.h>
 #include <GraphMatch/PDBAtom.h>
@@ -376,6 +380,11 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def(self ^ self)
 		.def(self += self)
 		.def(self -= self)
+	;
+
+	class_<MatrixFloat>("MatrixFloat", init<int, int>())
+		.def("getValue", &MatrixFloat::GetValue)
+		.def("setValue", &MatrixFloat::SetValue)
 	;
 	
 
@@ -605,6 +614,8 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("addHelix", &SSERenderer::AddHelix)
 		.def("setSSESpecificColoring", &SSERenderer::SetSSESpecificColoring)
 		.def("removeSelectedSSEs", &SSERenderer::RemoveSelectedSSEs)
+		.def("getHelixCount", &SSERenderer::GetHelixCount)
+		.def("getHelixCorner", &SSERenderer::GetHelixCorner)
 	;
 
 	class_< CAlphaRenderer, bases<Renderer> >("CAlphaRenderer", init<>())
@@ -649,6 +660,7 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("getOriginX", &CAlphaRenderer::GetOriginX)
 		.def("getOriginY", &CAlphaRenderer::GetOriginY)
 		.def("getOriginZ", &CAlphaRenderer::GetOriginZ)
+		.def("transformAllAtomLocations", &CAlphaRenderer::TransformAllAtomLocations)		
 	;
 
 	class_<InteractiveSkeletonEngine>("InteractiveSkeletonEngine", init<Volume *, NonManifoldMesh_Annotated *, float, int, int, int, unsigned int>())		
@@ -820,6 +832,14 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("getLocalDirectionalityScores", &SSEHunter::GetLocalDirectionalityScores)
 	;
 	
+	class_<FlexibleFittingEngine>("FlexibleFittingEngine")
+		.def("startPDBHelix", &FlexibleFittingEngine::StartPDBHelix)
+		.def("addPDBAtomLocation", &FlexibleFittingEngine::AddPDBAtomLocation)
+		.def("endPDBHelix", &FlexibleFittingEngine::EndPDBHelix)
+		.def("addSSEHelix", &FlexibleFittingEngine::AddSSEHelix)		
+		.def("startSearch", &FlexibleFittingEngine::StartSearch)		
+		.def("getRigidTransform", &FlexibleFittingEngine::GetRigidTransform)		
+	;
 	
 }
 

@@ -11,10 +11,15 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.1  2010/05/20 19:15:15  ssa1
+#   Flexible fitting interface.
+#
 
 from PyQt4 import QtCore, QtGui
 from ui_dialog_calpha_flexible_fitting import Ui_DialogCAlphaFlexibleFitting
 from base_dock_widget import BaseDockWidget
+from libpyGORGON import FlexibleFittingEngine
+from math import pi
 
 class CAlphaFlexibleFittingForm(BaseDockWidget, Ui_DialogCAlphaFlexibleFitting):
         
@@ -55,7 +60,7 @@ class CAlphaFlexibleFittingForm(BaseDockWidget, Ui_DialogCAlphaFlexibleFitting):
         self.pushButtonLoadCAlpha.setVisible(not self.cAlphaViewer.loaded)
         allLoaded = self.volumeViewer.loaded and self.sseViewer.loaded and self.cAlphaViewer.loaded
         self.groupBoxAdvancedSettings.setEnabled(allLoaded)
-        self.buttonBox.setEnabled(allLoaded)
+        #self.buttonBox.setEnabled(allLoaded)
         self.radioButtonFlexibleFitting.setEnabled(allLoaded)
         self.radioButtonRigidFitting.setEnabled(allLoaded)      
 
@@ -72,7 +77,35 @@ class CAlphaFlexibleFittingForm(BaseDockWidget, Ui_DialogCAlphaFlexibleFitting):
         self.bringToFront()
 
     def accept(self):
-        pass
+        engine = FlexibleFittingEngine()
+        # pushing in PDB Helices to the engine
+        chainHelixMapping = {}
+        cppIndex = 0
+        for chain in self.cAlphaViewer.loadedChains:
+            for helixIx, helix in chain.helices.items():
+                chainHelixMapping[cppIndex] = helixIx
+                engine.startPDBHelix()
+                for i in range(helix.startIndex, helix.stopIndex+1):
+                    engine.addPDBAtomLocation(chain[i].getAtom('CA').getPosition())
+                engine.endPDBHelix()
+                cppIndex = cppIndex + 1
+                
+        # pushing in SSEHunter helices to the engine
+        for i in range(self.sseViewer.renderer.getHelixCount()):
+            pt1 = self.sseViewer.renderer.getHelixCorner(i, 0)
+            pt2 = self.sseViewer.renderer.getHelixCorner(i, 1)
+            engine.addSSEHelix(pt1, pt2)            
+        
+        # starting the engine
+        engine.startSearch(self.spinBoxJointAngleThreshold.value()* pi / 180.0, self.spinBoxDihedralAngleThreshold.value()* pi / 180.0, self.spinBoxHelixLengthThreshold.value(), self.spinBoxHelixCentroidThreshold.value())
+        
+        if(self.radioButtonRigidFitting.isChecked()):
+            self.viewer.renderer.transformAllAtomLocations(engine.getRigidTransform())
+            self.viewer.emitModelChanged()
+        else :
+            pass
+        
+                    
     
     def reject(self):
         self.showWidget(False)

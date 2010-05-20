@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.42  2010/02/11 23:19:11  ssa1
+//   Allowing the ability to save pseudoatoms generated from SSEHunter
+//
 //   Revision 1.41  2010/01/10 05:31:43  colemanr
 //   PDBAtoms now store their correlation, skeleton, and geometry scores. Changing the weighting for these three scores in the GUI now changes the total score for each pseudoatom.
 //
@@ -133,6 +136,7 @@ namespace wustl_mm {
 			string GetSupportedLoadFileFormats();
 			string GetSupportedSaveFileFormats();
 			Vector3DFloat Get3DCoordinates(int subsceneIndex, int ix0, int ix1 = -1, int ix2 = -1, int ix3 = -1, int ix4 = -1);
+			void TransformAllAtomLocations(MatrixFloat transform);
 
 			// Controlling the atom vector
 			PDBAtom * AddAtom(PDBAtom atom);
@@ -622,6 +626,20 @@ namespace wustl_mm {
 					break;
 			}
 			return position;
+		}
+
+		void CAlphaRenderer::TransformAllAtomLocations(MatrixFloat transform) {
+			for(AtomMapType::iterator i = atoms.begin(); i != atoms.end(); i++) {					
+				Vector3DFloat oldPos = i->second.GetPosition();
+				MatrixFloat posMat = MatrixFloat(4, 1);
+				for(unsigned int j = 0; j < 3; j++) {
+					posMat.SetValue(oldPos[j], j, 0);
+				}
+				posMat.SetValue(1, 3, 0);
+				posMat = transform * posMat;
+
+				i->second.SetPosition(Vector3DFloat(posMat.GetValue(0, 0), posMat.GetValue(1, 0), posMat.GetValue(2, 0)));
+			}	
 		}
 	}
 }
