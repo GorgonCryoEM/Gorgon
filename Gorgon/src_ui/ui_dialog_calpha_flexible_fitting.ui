@@ -1,0 +1,294 @@
+<ui version="4.0" >
+ <class>DialogCAlphaFlexibleFitting</class>
+ <widget class="QDialog" name="DialogCAlphaFlexibleFitting" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>270</width>
+    <height>296</height>
+   </rect>
+  </property>
+  <property name="sizePolicy" >
+   <sizepolicy vsizetype="MinimumExpanding" hsizetype="MinimumExpanding" >
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="minimumSize" >
+   <size>
+    <width>270</width>
+    <height>296</height>
+   </size>
+  </property>
+  <property name="windowTitle" >
+   <string>Align backbone to Density</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout" >
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout" >
+     <item>
+      <widget class="QPushButton" name="pushButtonLoadVolume" >
+       <property name="toolTip" >
+        <string>Load the density volume into Gorgon</string>
+       </property>
+       <property name="text" >
+        <string>Load Volume</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButtonLoadHelices" >
+       <property name="toolTip" >
+        <string>Load helix annotations into Gorgon</string>
+       </property>
+       <property name="text" >
+        <string>Load Helices</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButtonLoadCAlpha" >
+       <property name="toolTip" >
+        <string>Load the CAlpha backbone to Gorgon</string>
+       </property>
+       <property name="text" >
+        <string>Load Backbone</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_2" >
+     <item>
+      <widget class="QRadioButton" name="radioButtonRigidFitting" >
+       <property name="toolTip" >
+        <string>Align the backbone to the density without allowing for deformations</string>
+       </property>
+       <property name="text" >
+        <string>Rigid Alignment</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QRadioButton" name="radioButtonFlexibleFitting" >
+       <property name="toolTip" >
+        <string>Align the backbone to the density while allowing for deformations</string>
+       </property>
+       <property name="text" >
+        <string>Flexible Alignment</string>
+       </property>
+       <property name="checked" >
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="groupBoxAdvancedSettings" >
+     <property name="title" >
+      <string>Rigidity Thresholds:</string>
+     </property>
+     <layout class="QFormLayout" name="formLayout" >
+      <item row="0" column="0" >
+       <widget class="QLabel" name="labelJointAngleThreshold" >
+        <property name="toolTip" >
+         <string/>
+        </property>
+        <property name="text" >
+         <string>Joint Angle Difference:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1" >
+       <widget class="QSpinBox" name="spinBoxJointAngleThreshold" >
+        <property name="toolTip" >
+         <string>Maximum joint angle difference between helices that are being aligned</string>
+        </property>
+        <property name="suffix" >
+         <string>°</string>
+        </property>
+        <property name="maximum" >
+         <number>180</number>
+        </property>
+        <property name="value" >
+         <number>15</number>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0" >
+       <widget class="QLabel" name="labelJointAngleThreshold_2" >
+        <property name="toolTip" >
+         <string/>
+        </property>
+        <property name="text" >
+         <string>Dihedral Angle Difference:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1" >
+       <widget class="QSpinBox" name="spinBoxDihedralAngleThreshold" >
+        <property name="toolTip" >
+         <string>Maximum dihedral angle difference between helices that are being aligned</string>
+        </property>
+        <property name="suffix" >
+         <string>°</string>
+        </property>
+        <property name="maximum" >
+         <number>180</number>
+        </property>
+        <property name="value" >
+         <number>15</number>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0" >
+       <widget class="QLabel" name="labelJointAngleThreshold_3" >
+        <property name="toolTip" >
+         <string/>
+        </property>
+        <property name="text" >
+         <string>Helix Length Difference:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1" >
+       <widget class="QSpinBox" name="spinBoxHelixLengthThreshold" >
+        <property name="toolTip" >
+         <string>Maximum difference of lengths of helices that are being aligned</string>
+        </property>
+        <property name="suffix" >
+         <string> Å</string>
+        </property>
+        <property name="maximum" >
+         <number>50</number>
+        </property>
+        <property name="value" >
+         <number>5</number>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0" >
+       <widget class="QLabel" name="labelJointAngleThreshold_4" >
+        <property name="toolTip" >
+         <string>Maximum dihedral angle between helices that are being aligned</string>
+        </property>
+        <property name="text" >
+         <string>Helix Centroid Difference:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1" >
+       <widget class="QSpinBox" name="spinBoxHelixCentroidThreshold" >
+        <property name="toolTip" >
+         <string>Maximum difference between centroids of helices being aligned</string>
+        </property>
+        <property name="suffix" >
+         <string> Å</string>
+        </property>
+        <property name="maximum" >
+         <number>50</number>
+        </property>
+        <property name="value" >
+         <number>5</number>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_3" >
+     <item>
+      <spacer name="horizontalSpacer" >
+       <property name="orientation" >
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0" >
+        <size>
+         <width>358</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QDialogButtonBox" name="buttonBox" >
+       <property name="toolTip" >
+        <string>Perform Fitting</string>
+       </property>
+       <property name="orientation" >
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="standardButtons" >
+        <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <spacer name="verticalSpacer" >
+     <property name="orientation" >
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0" >
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+  </layout>
+ </widget>
+ <tabstops>
+  <tabstop>pushButtonLoadVolume</tabstop>
+  <tabstop>pushButtonLoadHelices</tabstop>
+  <tabstop>pushButtonLoadCAlpha</tabstop>
+  <tabstop>radioButtonRigidFitting</tabstop>
+  <tabstop>radioButtonFlexibleFitting</tabstop>
+  <tabstop>spinBoxJointAngleThreshold</tabstop>
+  <tabstop>spinBoxDihedralAngleThreshold</tabstop>
+  <tabstop>spinBoxHelixLengthThreshold</tabstop>
+  <tabstop>spinBoxHelixCentroidThreshold</tabstop>
+  <tabstop>buttonBox</tabstop>
+ </tabstops>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>DialogCAlphaFlexibleFitting</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>248</x>
+     <y>254</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>157</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>DialogCAlphaFlexibleFitting</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>316</x>
+     <y>260</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>286</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>
