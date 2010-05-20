@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.42  2010/04/04 19:05:51  ssa1
+//   Fixing misc bugs, and redoing sheet visualization mechanism
+//
 //   Revision 1.41  2010/03/05 20:30:21  ssa1
 //   Fixing loading of helices using .SSE files
 //
@@ -146,6 +149,8 @@ namespace wustl_mm {
 			void FitSelectedSSEs(Volume * vol);
 			void SetSSESpecificColoring(bool isSSESpecific);
 			void RemoveSelectedSSEs();
+			int GetHelixCount();
+			Vector3DFloat GetHelixCorner(int helixIx, int cornerIx);
 		private:
 			void SheetListToMesh(vector<GeometricShape*> & sheets);
 			void LoadHelixFileSSE(string fileName);
@@ -1127,6 +1132,15 @@ namespace wustl_mm {
 			SheetListToMesh(sheets);
 			UpdateBoundingBox();
 		}
+
+		int SSERenderer::GetHelixCount() {
+			return helices.size();
+		}
+
+		Vector3DFloat SSERenderer::GetHelixCorner(int helixIx, int cornerIx) {
+			return helices[helixIx]->GetCornerCell3(cornerIx);
+		}
+
 	}
 }
 

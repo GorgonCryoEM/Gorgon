@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.16  2010/04/30 04:56:32  ssa1
+//   Flexible fitting changes.
+//
 //   Revision 1.15  2010/04/27 21:10:17  ssa1
 //   Implementing Cost-matrix based SSE Registration and performance optimizations on graph construction
 //
@@ -108,6 +111,7 @@ namespace wustl_mm {
 			vector < vector < vector<SSECorrespondenceNode> > > GetMultiCorrespondence(int method, bool useDirection, int smallestCliqueSize);
 			void FindErrorMatrixBasedCorrespondence(vector< vector < vector<SSECorrespondenceNode> > > & correspondence, float maxError, int sampleCount);
 			void PrintTimes();
+			MatrixFloat GetTransform(vector<SSECorrespondenceNode> cluster, int sampleCount);
 
 		private:
 			float GetFeatureCompatibilityScore(SSECorrespondenceFeature feature1, SSECorrespondenceFeature feature2);
@@ -919,6 +923,34 @@ namespace wustl_mm {
 			timeManager.DisplayStopWatch(searchWatch, "    %fs A* Search\n");
 			timeManager.DisplayStopWatch(cleaningWatch, "    %fs Cost matrix based cleaning\n");
 			timeManager.DisplayStopWatch(totalWatch, "  %fs Total application execution*)\n");
+		}
+
+		MatrixFloat SSECorrespondenceFinder::GetTransform(vector<SSECorrespondenceNode> cluster, int sampleCount) {
+			vector<Vector3DFloat> fl1, fl2;
+			fl1.clear();
+			fl2.clear();
+			Vector3DFloat p1, p2, q1, q2;
+			Vector3DFloat sp, sq;
+
+			for(unsigned int i = 0; i < cluster.size(); i++) {
+				p1 = featureList1[cluster[i].GetPIndex()].GetEndPoint(0);
+				p2 = featureList1[cluster[i].GetPIndex()].GetEndPoint(1);
+				
+				q1 = featureList2[cluster[i].GetQIndex()].GetEndPoint(cluster[i].IsForward()?0:1);
+				q2 = featureList2[cluster[i].GetQIndex()].GetEndPoint(cluster[i].IsForward()?1:0);
+
+				float offset;
+				for(int j = 0; j < sampleCount; j++) {
+					offset = (float)j / (float)(sampleCount - 1);
+
+					sp = p1*(1.0f - offset) + p2 * offset;
+					sq = q1*(1.0f - offset) + q2 * offset;
+					fl1.push_back(sp);
+					fl2.push_back(sq);					
+				}
+			}
+
+			return LinearSolver::FindRotationTranslation(fl1, fl2);
 		}
 		
 

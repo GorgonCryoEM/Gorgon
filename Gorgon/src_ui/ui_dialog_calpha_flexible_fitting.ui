@@ -5,7 +5,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>270</width>
+    <width>290</width>
     <height>296</height>
    </rect>
   </property>
@@ -53,7 +53,7 @@
         <string>Load the CAlpha backbone to Gorgon</string>
        </property>
        <property name="text" >
-        <string>Load Backbone</string>
+        <string>Load PDB Structure</string>
        </property>
       </widget>
      </item>
