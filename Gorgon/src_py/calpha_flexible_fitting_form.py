@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.2  2010/05/20 21:55:53  ssa1
+#   Rigid body alignment based on largest flexible cluster
+#
 #   Revision 1.1  2010/05/20 19:15:15  ssa1
 #   Flexible fitting interface.
 #
@@ -83,7 +86,7 @@ class CAlphaFlexibleFittingForm(BaseDockWidget, Ui_DialogCAlphaFlexibleFitting):
         cppIndex = 0
         for chain in self.cAlphaViewer.loadedChains:
             for helixIx, helix in chain.helices.items():
-                chainHelixMapping[cppIndex] = helixIx
+                chainHelixMapping[helixIx] = cppIndex
                 engine.startPDBHelix()
                 for i in range(helix.startIndex, helix.stopIndex+1):
                     engine.addPDBAtomLocation(chain[i].getAtom('CA').getPosition())
@@ -100,11 +103,89 @@ class CAlphaFlexibleFittingForm(BaseDockWidget, Ui_DialogCAlphaFlexibleFitting):
         engine.startSearch(self.spinBoxJointAngleThreshold.value()* pi / 180.0, self.spinBoxDihedralAngleThreshold.value()* pi / 180.0, self.spinBoxHelixLengthThreshold.value(), self.spinBoxHelixCentroidThreshold.value())
         
         if(self.radioButtonRigidFitting.isChecked()):
+            # rigid body deformation
             self.viewer.renderer.transformAllAtomLocations(engine.getRigidTransform())
-            self.viewer.emitModelChanged()
         else :
-            pass
+            self.doFlexibleDeformation(engine, chainHelixMapping)
+                                                    
+        self.viewer.emitModelChanged()
+                    
+    def doFlexibleDeformation(self, engine, chainHelixMapping):        
+        # Getting all helix transformations
+        transforms = {}
+        for chain in self.cAlphaViewer.loadedChains:
+            for helixIx, helix in chain.helices.items():
+                transform = engine.getHelixFlexibleTransform(chainHelixMapping[helixIx]) 
+                if(transform.getValue(3,3) > 0.5): # Checking if a transformation was found for this helix
+                    transforms[helixIx] =  transform
+                        
+        # finding what the previous and next helices of each PDB atom is
+        helixStarts = [];
+        helixEnds = [];            
+        prevHelices = {};
+        nextHelices = {};            
+        for chain in self.cAlphaViewer.loadedChains:
+            for i in range(min(chain.residueRange()), max(chain.residueRange())+1):
+                if not (i in prevHelices):
+                    prevHelices[i] = -1
+                    nextHelices[i] = -1            
+            for helixIx, helix in chain.helices.items():                
+                if helixIx in transforms:
+                    helixStarts.append(helix.startIndex)
+                    helixEnds.append(helix.stopIndex)
+                    
+                    #Marking helix sections                
+                    for i in range(helix.startIndex, helix.stopIndex+1):
+                        prevHelices[i] = helixIx
+                        nextHelices[i] = helixIx
+                    #Marking region before current helix
+                    found = False
+                    for i in range(min(chain.residueRange()), helix.startIndex)[::-1]:
+                        found = found or ((prevHelices[i] == nextHelices[i]) and (prevHelices[i] != -1))
+                        if found:
+                            break;
+                        else:
+                            nextHelices[i] = helixIx
+                    #Marking region after current helix
+                    found = False
+                    for i in range(helix.stopIndex+1, max(chain.residueRange())+1):
+                        found = found or ((prevHelices[i] == nextHelices[i]) and (prevHelices[i] != -1))
+                        if found:
+                            break;
+                        else:
+                            prevHelices[i] = helixIx                                                  
         
+        # Building coefficient numbers
+        helixStarts.sort()
+        helixEnds.sort()
+        coeff = {}        
+        for i in range(len(helixStarts)-1):
+            loopLength = helixStarts[i+1] - helixEnds[i] - 2;
+            for j in range(helixEnds[i]+1, helixStarts[i+1]):
+                if loopLength <= 0:
+                    coeff[j] = 0.5
+                else:
+                    coeff[j] =  float(j-helixEnds[i]+1)/float(loopLength)
+                    
+         
+        # Flexible deformation of each atom
+        for chain in self.cAlphaViewer.loadedChains:
+            for i in chain.residueRange():
+                if (prevHelices[i] == -1) and (nextHelices[i] == -1) : #No helices in structure
+                    pass
+                elif (prevHelices[i] == nextHelices[i]) : # We are working with a helix atom
+                    transform = transforms[prevHelices[i]]
+                    chain[i].getAtom('CA').transform(transform)
+                elif (prevHelices[i] == -1): # We are working with the beginning of the sequence
+                    transform = transforms[nextHelices[i]]
+                    chain[i].getAtom('CA').transform(transform)
+                elif (nextHelices[i] == -1): # We are working with the end of the sequence
+                    transform = transforms[prevHelices[i]]
+                    chain[i].getAtom('CA').transform(transform)     
+                else: # We are working with a loop segment between two helices
+                    transform1 = transforms[prevHelices[i]]
+                    transform2 = transforms[nextHelices[i]]
+                    chain[i].getAtom('CA').interpolateTransform(transform1, transform2, coeff[i])     
                     
     
     def reject(self):

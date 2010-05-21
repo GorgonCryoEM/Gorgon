@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.2  2010/05/20 21:55:53  ssa1
+//   Rigid body alignment based on largest flexible cluster
+//
 //   Revision 1.1  2010/05/06 21:50:11  ssa1
 //   Fixing performance bug when moving a volume
 //
@@ -40,7 +43,9 @@ namespace wustl_mm {
 			void AddSSEHelix(Vector3DFloat pt1, Vector3DFloat pt2);
 			void StartSearch(float jointAngleThreshold, float dihedralAngleThreshold, float lengthThreshold, float centroidDistanceThreshold);
 			MatrixFloat GetRigidTransform();
+			MatrixFloat GetHelixFlexibleTransform(int helixIx);
 		private:
+			static const int SAMPLE_COUNT = 10;
 			SSECorrespondenceFinder finder;
 			vector<SSECorrespondenceFeature> featureList1;
 			vector<SSECorrespondenceFeature> featureList2;
@@ -88,10 +93,19 @@ namespace wustl_mm {
 					maxIndex = i;
 				}
 			}
-			return finder.GetTransform(corr[maxIndex], 10);
+			return finder.GetTransform(corr[maxIndex], SAMPLE_COUNT);
 		}
 
-
+		MatrixFloat FlexibleFittingEngine::GetHelixFlexibleTransform(int helixIx) {
+			for(unsigned int i = 0; i < corr.size(); i++) {
+				for(unsigned int j = 0; j < corr[i].size(); j++) {
+					if(corr[i][j].GetPIndex() == helixIx) {
+						return finder.GetTransform(corr[i], SAMPLE_COUNT);
+					}
+				}
+			}
+			return MatrixFloat(4,4);  // Can check this case if the element in the last row last column is not equal to 1 (since this is a homogeneous matrix)
+		}
 
 	}
 }
