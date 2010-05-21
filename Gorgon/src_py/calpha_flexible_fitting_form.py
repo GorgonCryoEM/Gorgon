@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.5  2010/05/21 16:11:45  ssa1
+#   Flexible fitting implemented in Gorgon
+#
 #   Revision 1.4  2010/05/21 15:46:11  ssa1
 #   Flexible fitting implemented in Gorgon
 #
@@ -53,23 +56,19 @@ class CAlphaFlexibleFittingForm(BaseDockWidget, Ui_DialogCAlphaFlexibleFitting):
 
     def createUI(self):
         self.setupUi(self)    
-        self.connect(self.pushButtonLoadVolume, QtCore.SIGNAL("clicked (bool)"), self.loadVolume)
         self.connect(self.pushButtonLoadHelices, QtCore.SIGNAL("clicked (bool)"), self.loadHelices)
         self.connect(self.pushButtonLoadCAlpha, QtCore.SIGNAL("clicked (bool)"), self.loadBackbone)
         self.connect(self.cAlphaViewer, QtCore.SIGNAL("modelLoaded()"), self.enableDisableWindowElements)
         self.connect(self.cAlphaViewer, QtCore.SIGNAL("modelUnloaded()"), self.enableDisableWindowElements)
-        self.connect(self.volumeViewer, QtCore.SIGNAL("modelLoaded()"), self.enableDisableWindowElements)
-        self.connect(self.volumeViewer, QtCore.SIGNAL("modelUnloaded()"), self.enableDisableWindowElements)
         self.connect(self.sseViewer, QtCore.SIGNAL("modelLoaded()"), self.enableDisableWindowElements)
         self.connect(self.sseViewer, QtCore.SIGNAL("modelUnloaded()"), self.enableDisableWindowElements)
             
     def enableDisableWindowElements(self):
-        self.pushButtonLoadVolume.setVisible(not self.volumeViewer.loaded)
         self.pushButtonLoadHelices.setVisible(not self.sseViewer.loaded)
         self.pushButtonLoadCAlpha.setVisible(not self.cAlphaViewer.loaded)
-        allLoaded = self.volumeViewer.loaded and self.sseViewer.loaded and self.cAlphaViewer.loaded
+        allLoaded = self.sseViewer.loaded and self.cAlphaViewer.loaded
         self.groupBoxAdvancedSettings.setEnabled(allLoaded)
-        #self.buttonBox.setEnabled(allLoaded)
+        self.buttonBox.setEnabled(allLoaded)
         self.radioButtonFlexibleFitting.setEnabled(allLoaded)
         self.radioButtonRigidFitting.setEnabled(allLoaded)      
 

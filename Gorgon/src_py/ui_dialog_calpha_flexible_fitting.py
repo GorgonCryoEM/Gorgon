@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_dialog_calpha_flexible_fitting.ui'
 #
-# Created: Thu May 20 14:00:34 2010
+# Created: Fri May 21 11:31:22 2010
 #      by: PyQt4 UI code generator 4.4.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -23,9 +23,6 @@ class Ui_DialogCAlphaFlexibleFitting(object):
         self.verticalLayout.setObjectName("verticalLayout")
         self.horizontalLayout = QtGui.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
-        self.pushButtonLoadVolume = QtGui.QPushButton(DialogCAlphaFlexibleFitting)
-        self.pushButtonLoadVolume.setObjectName("pushButtonLoadVolume")
-        self.horizontalLayout.addWidget(self.pushButtonLoadVolume)
         self.pushButtonLoadHelices = QtGui.QPushButton(DialogCAlphaFlexibleFitting)
         self.pushButtonLoadHelices.setObjectName("pushButtonLoadHelices")
         self.horizontalLayout.addWidget(self.pushButtonLoadHelices)
@@ -97,7 +94,6 @@ class Ui_DialogCAlphaFlexibleFitting(object):
         QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL("accepted()"), DialogCAlphaFlexibleFitting.accept)
         QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL("rejected()"), DialogCAlphaFlexibleFitting.reject)
         QtCore.QMetaObject.connectSlotsByName(DialogCAlphaFlexibleFitting)
-        DialogCAlphaFlexibleFitting.setTabOrder(self.pushButtonLoadVolume, self.pushButtonLoadHelices)
         DialogCAlphaFlexibleFitting.setTabOrder(self.pushButtonLoadHelices, self.pushButtonLoadCAlpha)
         DialogCAlphaFlexibleFitting.setTabOrder(self.pushButtonLoadCAlpha, self.radioButtonRigidFitting)
         DialogCAlphaFlexibleFitting.setTabOrder(self.radioButtonRigidFitting, self.radioButtonFlexibleFitting)
@@ -109,12 +105,10 @@ class Ui_DialogCAlphaFlexibleFitting(object):
 
     def retranslateUi(self, DialogCAlphaFlexibleFitting):
         DialogCAlphaFlexibleFitting.setWindowTitle(QtGui.QApplication.translate("DialogCAlphaFlexibleFitting", "Align backbone to Density", None, QtGui.QApplication.UnicodeUTF8))
-        self.pushButtonLoadVolume.setToolTip(QtGui.QApplication.translate("DialogCAlphaFlexibleFitting", "Load the density volume into Gorgon", None, QtGui.QApplication.UnicodeUTF8))
-        self.pushButtonLoadVolume.setText(QtGui.QApplication.translate("DialogCAlphaFlexibleFitting", "Load Volume", None, QtGui.QApplication.UnicodeUTF8))
         self.pushButtonLoadHelices.setToolTip(QtGui.QApplication.translate("DialogCAlphaFlexibleFitting", "Load helix annotations into Gorgon", None, QtGui.QApplication.UnicodeUTF8))
         self.pushButtonLoadHelices.setText(QtGui.QApplication.translate("DialogCAlphaFlexibleFitting", "Load Helices", None, QtGui.QApplication.UnicodeUTF8))
         self.pushButtonLoadCAlpha.setToolTip(QtGui.QApplication.translate("DialogCAlphaFlexibleFitting", "Load the CAlpha backbone to Gorgon", None, QtGui.QApplication.UnicodeUTF8))
-        self.pushButtonLoadCAlpha.setText(QtGui.QApplication.translate("DialogCAlphaFlexibleFitting", "Load Backbone", None, QtGui.QApplication.UnicodeUTF8))
+        self.pushButtonLoadCAlpha.setText(QtGui.QApplication.translate("DialogCAlphaFlexibleFitting", "Load PDB Structure", None, QtGui.QApplication.UnicodeUTF8))
         self.radioButtonRigidFitting.setToolTip(QtGui.QApplication.translate("DialogCAlphaFlexibleFitting", "Align the backbone to the density without allowing for deformations", None, QtGui.QApplication.UnicodeUTF8))
         self.radioButtonRigidFitting.setText(QtGui.QApplication.translate("DialogCAlphaFlexibleFitting", "Rigid Alignment", None, QtGui.QApplication.UnicodeUTF8))
         self.radioButtonFlexibleFitting.setToolTip(QtGui.QApplication.translate("DialogCAlphaFlexibleFitting", "Align the backbone to the density while allowing for deformations", None, QtGui.QApplication.UnicodeUTF8))
