@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.13  2010/02/11 23:19:11  ssa1
+//   Allowing the ability to save pseudoatoms generated from SSEHunter
+//
 //   Revision 1.12  2010/01/11 18:09:35  colemanr
 //   update constructors to initialize correlationScore, skeletonScore, and geometryScore
 //
@@ -37,6 +40,7 @@
 #include <MathTools/Vector3D.h>
 #include <Foundation/StringUtils.h>
 #include <string>
+#include <MathTools/Matrix.h>
 
 using namespace wustl_mm::MathTools;
 using namespace wustl_mm::Foundation;
@@ -108,6 +112,8 @@ namespace wustl_mm {
 			void SetCorrelationScore(float score);
 			void SetSkeletonScore(float score);
 			void SetGeometryScore(float score);
+			void Transform(MatrixFloat transformMatrix);
+			void InterpolateTransform(MatrixFloat transformMatrix1, MatrixFloat transformMatrix2, float coefficient);
 			
 			
 		private:
@@ -493,6 +499,37 @@ namespace wustl_mm {
 			pdbString.append(StringUtils::LeftPad(this->element, 2, " "));
 			pdbString.append(StringUtils::RightPad(this->charge, 2, " "));
 			return pdbString;
+		}
+
+		void PDBAtom::Transform(MatrixFloat transformMatrix) {
+			MatrixFloat posMat = MatrixFloat(4, 1);
+			for(unsigned int j = 0; j < 3; j++) {
+				posMat.SetValue(position[j], j, 0);
+			}
+			posMat.SetValue(1, 3, 0);
+			posMat = transformMatrix * posMat;
+
+			position = Vector3DFloat(posMat.GetValue(0, 0), posMat.GetValue(1, 0), posMat.GetValue(2, 0));			
+		}
+		
+		void PDBAtom::InterpolateTransform(MatrixFloat transformMatrix1, MatrixFloat transformMatrix2, float coefficient) {
+			MatrixFloat posMat = MatrixFloat(4, 1);
+			for(unsigned int j = 0; j < 3; j++) {
+				posMat.SetValue(position[j], j, 0);
+			}
+			posMat.SetValue(1, 3, 0);
+			posMat = transformMatrix1 * posMat;
+
+			Vector3DFloat position1 = Vector3DFloat(posMat.GetValue(0, 0), posMat.GetValue(1, 0), posMat.GetValue(2, 0));	
+
+			for(unsigned int j = 0; j < 3; j++) {
+				posMat.SetValue(position[j], j, 0);
+			}
+			posMat.SetValue(1, 3, 0);
+			posMat = transformMatrix2 * posMat;
+
+			Vector3DFloat position2 = Vector3DFloat(posMat.GetValue(0, 0), posMat.GetValue(1, 0), posMat.GetValue(2, 0));	
+			position = position1 * (1.0-coefficient) + position2 * coefficient;
 		}
 	}
 
