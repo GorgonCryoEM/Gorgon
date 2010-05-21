@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.74  2010/05/20 21:55:53  ssa1
+//   Rigid body alignment based on largest flexible cluster
+//
 //   Revision 1.73  2010/04/17 02:59:12  colemanr
 //   conversion to/from 3D tuples
 //
@@ -434,7 +437,10 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("setCorrelationScore", &PDBAtom::SetCorrelationScore)
 		.def("setSkeletonScore", &PDBAtom::SetSkeletonScore)
 		.def("setGeometryScore", &PDBAtom::SetGeometryScore)
+		.def("transform", &PDBAtom::Transform)
+		.def("interpolateTransform", &PDBAtom::InterpolateTransform)
 	;
+	
 
 	class_<PDBBond>("PDBBond", init<>())
 		.def("getAtom0Ix", &PDBBond::GetAtom0Ix)
@@ -839,8 +845,8 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("addSSEHelix", &FlexibleFittingEngine::AddSSEHelix)		
 		.def("startSearch", &FlexibleFittingEngine::StartSearch)		
 		.def("getRigidTransform", &FlexibleFittingEngine::GetRigidTransform)		
-	;
-	
+		.def("getHelixFlexibleTransform", &FlexibleFittingEngine::GetHelixFlexibleTransform)		
+	;	
 }
 
 

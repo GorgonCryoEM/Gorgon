@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.43  2010/05/20 21:55:53  ssa1
+//   Rigid body alignment based on largest flexible cluster
+//
 //   Revision 1.42  2010/02/11 23:19:11  ssa1
 //   Allowing the ability to save pseudoatoms generated from SSEHunter
 //
@@ -630,15 +633,7 @@ namespace wustl_mm {
 
 		void CAlphaRenderer::TransformAllAtomLocations(MatrixFloat transform) {
 			for(AtomMapType::iterator i = atoms.begin(); i != atoms.end(); i++) {					
-				Vector3DFloat oldPos = i->second.GetPosition();
-				MatrixFloat posMat = MatrixFloat(4, 1);
-				for(unsigned int j = 0; j < 3; j++) {
-					posMat.SetValue(oldPos[j], j, 0);
-				}
-				posMat.SetValue(1, 3, 0);
-				posMat = transform * posMat;
-
-				i->second.SetPosition(Vector3DFloat(posMat.GetValue(0, 0), posMat.GetValue(1, 0), posMat.GetValue(2, 0)));
+				i->second.Transform(transform);
 			}	
 		}
 	}
