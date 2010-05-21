@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.3  2010/05/21 15:45:16  ssa1
+#   Flexible fitting implemented in Gorgon
+#
 #   Revision 1.2  2010/05/20 21:55:53  ssa1
 #   Rigid body alignment based on largest flexible cluster
 #
@@ -99,11 +102,8 @@ class CAlphaFlexibleFittingForm(BaseDockWidget, Ui_DialogCAlphaFlexibleFitting):
             pt2 = self.sseViewer.renderer.getHelixCorner(i, 1)
             engine.addSSEHelix(pt1, pt2)            
         
-        # starting the engine
-        engine.startSearch(self.spinBoxJointAngleThreshold.value()* pi / 180.0, self.spinBoxDihedralAngleThreshold.value()* pi / 180.0, self.spinBoxHelixLengthThreshold.value(), self.spinBoxHelixCentroidThreshold.value())
-        
+        engine.startSearch(self.spinBoxJointAngleThreshold.value()* pi / 180.0, self.spinBoxDihedralAngleThreshold.value()* pi / 180.0, self.spinBoxHelixLengthThreshold.value(), self.spinBoxHelixCentroidThreshold.value())       
         if(self.radioButtonRigidFitting.isChecked()):
-            # rigid body deformation
             self.viewer.renderer.transformAllAtomLocations(engine.getRigidTransform())
         else :
             self.doFlexibleDeformation(engine, chainHelixMapping)
