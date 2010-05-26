@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.29  2009/07/01 21:25:13  ssa1
+//   Centering the volume cropped using a radius around the point selected by the atom selection tool.
+//
 //   Revision 1.28  2008/11/20 18:33:00  ssa1
 //   Using the origin of the MRC volume
 //
@@ -77,6 +80,7 @@ namespace wustl_mm {
 			virtual float GetOriginX();
 			virtual float GetOriginY();
 			virtual float GetOriginZ();
+			virtual void SetDisplayStyle(int style);
 
 			float GetMin(int dimension);
 			float GetMax(int dimension);
@@ -92,6 +96,7 @@ namespace wustl_mm {
 			Vector3DFloat cuttingPlaneDirection;
 			GLUquadric * quadricSphere;
 			GLUquadric * quadricCylinder;
+			int displayStyle;
 		};
 
 		Renderer::Renderer() {
@@ -264,6 +269,10 @@ namespace wustl_mm {
 
 		float Renderer::GetOriginZ() {
 			return origin[2];
+		}
+
+		void Renderer::SetDisplayStyle(int style) {
+			this->displayStyle = style;
 		}
 
 

@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.46  2010/05/20 19:15:15  ssa1
+#   Flexible fitting interface.
+#
 #   Revision 1.45  2010/01/10 05:31:43  colemanr
 #   PDBAtoms now store their correlation, skeleton, and geometry scores. Changing the weighting for these three scores in the GUI now changes the total score for each pseudoatom.
 #
@@ -158,7 +161,7 @@ from calpha_choose_chain_to_load_form import CAlphaChooseChainToLoadForm
 from calpha_atom_placer_form import CAlphaAtomPlacerForm
 from calpha_sequence_dock import CAlphaSequenceDock
 from seq_model.Chain import Chain
-from model_visualization_form import ModelVisualizationForm
+from atom_visualization_form import AtomVisualizationForm
 from correspondence.StructurePrediction import StructurePrediction
 from calpha_choose_chain_model import CAlphaChooseChainModel
 from calpha_flexible_fitting_form import CAlphaFlexibleFittingForm
@@ -168,6 +171,10 @@ from OpenGL.GLU import *
 from OpenGL.GLUT import *
 
 class CAlphaViewer(BaseViewer):
+    DisplayStyleBackbone = 3
+    DisplayStyleRibbon = 4
+    DisplayStyleSideChain = 5
+    
     def __init__(self, main, parent=None):
         BaseViewer.__init__(self, main, parent)
         self.title = "C-Alpha"
@@ -180,12 +187,17 @@ class CAlphaViewer(BaseViewer):
         self.centerOnRMB = True
         self.selectEnabled = True
         self.renderer = CAlphaRenderer()          
+        self.displayStyle = self.DisplayStyleBackbone
+        self.renderer.setDisplayStyle(self.DisplayStyleBackbone)  
         self.main_chain = Chain('', self.app)
         self.structPred = None
         self.createUI()      
         self.app.viewers["calpha"] = self;
         self.model2Visible = True
-        self.initVisualizationOptions(ModelVisualizationForm(self.app, self))
+        self.helicesVisible = True
+        self.strandsVisible = True
+        self.loopsVisible = True      
+        self.initVisualizationOptions(AtomVisualizationForm(self.app, self))
         self.visualizationOptions.ui.checkBoxModelVisible.setText("Show atoms colored:")
         self.visualizationOptions.ui.checkBoxModel2Visible.setText("Show backbone colored:")
         self.visualizationOptions.ui.checkBoxModel2Visible.setVisible(True)
@@ -195,7 +207,70 @@ class CAlphaViewer(BaseViewer):
         #self.connect(self, QtCore.SIGNAL("elementSelected (int, int, int, int, int, int, QMouseEvent)"), self.centerOnSelectedAtoms)
         self.connect(self, QtCore.SIGNAL("elementClicked (int, int, int, int, int, int, QMouseEvent)"), self.processElementClick)
       
+   # Overridden
+    def initializeGLDisplayType(self):
+        glPushAttrib(GL_LIGHTING_BIT | GL_ENABLE_BIT)
+        if(self.isClosedMesh):            
+            glEnable(GL_CULL_FACE)
+        else:                        
+            glDisable(GL_CULL_FACE)
+            
+        if(self.twoWayLighting):
+            glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
+        else:
+            glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_FALSE);
+            
+                        
+        #glDisable(GL_CULL_FACE)
+        glEnable(GL_LIGHTING)
+        
+        glEnable (GL_BLEND); 
+        glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        
+        
+        glPolygonMode(GL_FRONT, GL_FILL)
+        glPolygonMode(GL_BACK, GL_FILL)
+        glShadeModel(GL_SMOOTH)
 
+    # Overridden
+    def setDisplayStyle(self, style):
+        if style != self.displayStyle:
+            self.displayStyle = style
+            self.renderer.setDisplayStyle(style)
+            self.setAtomVisibility(style)
+            self.emitModelChanged()
+
+    def setAtomVisibility(self, displayStyle):
+        if displayStyle == self.DisplayStyleBackbone:
+            for chain in self.loadedChains:
+                for i in chain.residueRange():
+                    for atomName in chain[i].getAtomNames():
+                        atom = chain[i].getAtom(atomName)
+                        if atom:
+                            atom.setVisible(atomName == 'CA')
+        elif displayStyle == self.DisplayStyleRibbon:
+            #Pass into c++ layer all data needed to draw ribbon diagram here!
+            pass
+        elif displayStyle == self.DisplayStyleSideChain:
+            for chain in self.loadedChains:
+                for i in chain.residueRange():
+                    for atomName in chain[i].getAtomNames():
+                        atom = chain[i].getAtom(atomName)
+                        if atom:
+                            atom.setVisible(True)
+        else:
+            pass 
+        
+        
+    def setHelixVisibility(self):
+        setAtomVisibility(self.displayStyle)
+    
+    def setLoopVisibility(self):
+        setAtomVisibility(self.displayStyle)
+    
+    def setStrandVisibility(self):
+        setAtomVisibility(self.displayStyle)
+    
     def centerOnSelectedAtoms(self, *argv):
         # This centers the CAMERA on the last selected atom.                
         if not argv:
@@ -333,10 +408,11 @@ class CAlphaViewer(BaseViewer):
             mychain.addCalphaBonds()
             renderer = self.renderer
             for i in mychain.residueRange():
-                atom = mychain[i].getAtom('CA')
-                if atom:
-                    atom = renderer.addAtom(atom)
-                    mychain[i].addAtomObject(atom)
+                for atomName in mychain[i].getAtomNames():
+                    atom = mychain[i].getAtom(atomName)
+                    if atom:
+                        atom = renderer.addAtom(atom)
+                        mychain[i].addAtomObject(atom)
                
         self.fileName = QtGui.QFileDialog.getOpenFileName(self, self.tr("Open Data"), "", 
                             self.tr('Atom Positions (*.pdb)\nFASTA (*.fas *.fa *.fasta)'))
