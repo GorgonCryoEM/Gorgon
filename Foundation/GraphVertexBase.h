@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.5  2010/04/27 17:30:54  ssa1
+//   SSE Registration search by first finding all cliques, and then finding the matching.
+//
 //   Revision 1.4  2009/11/04 20:29:38  ssa1
 //   Implementing Triangle based clique search and chain based flexible fitting.
 //
@@ -32,7 +35,7 @@ namespace wustl_mm {
 
 		template <class TTag> class GraphVertexBase {
 		public:			
-			GraphVertexBase(unsigned long long externalIndex, float weight, TTag tag = null);			
+			GraphVertexBase(unsigned long long externalIndex, float weight, TTag tag = NULL);			
 			unsigned long long GetExternalIndex();
 			float GetWeight();
 			TTag GetTag();
