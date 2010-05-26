@@ -50,6 +50,7 @@ of Residue objects
 
     self.helices = {}
     self.sheets = {}
+    self.coils = {}
     self.orphanStrands = {}
     if (pdbID, chainID) in Chain.getChainKeys():  #What to do if the key already exists
         self = Chain.getChain( (pdbID, chainID) )
@@ -180,8 +181,31 @@ object. If no chain ID is specified, it loads the first chain.
             Helix.parsePDB(line,result)
         elif line[0:6].strip()=='SHEET':
             Sheet.parsePDB(line,result)
+            
+    #Setting up coils
+    startList = []
+    endList = []
+    for secelIx, secel in result.secelList.items():
+        startList.append(secel.startIndex)
+        endList.append(secel.stopIndex)
+    startList.sort()
+    endList.sort()
+    
+    startPt = min(result.residueRange())
+    coilIx = 1
+    for i in range(len(startList)):
+        if startPt < startList[i] :
+            result.addCoil(coilIx, Coil(result, coilIx, 'L' + str(coilIx), startPt, startList[i]-1))
+            coilIx = coilIx + 1
+        startPt = endList[i] + 1
+    
+    if startPt < max(result.residueRange()):
+        result.addCoil(coilIx, Coil(result, coilIx, 'L' + str(coilIx), startPt, max(result.residueRange())))        
+        
+            
     Chain.chainsDict[result.key] = result
     #Chain.setSelectedChainKey(result.getIDs())
+        
     return result
 
   @classmethod
@@ -558,6 +582,10 @@ This adds a secel object to the chain.
     '''
     for index in range(secel.startIndex, secel.stopIndex+1):
       self.secelList[index]=secel
+
+  def addCoil(self, coilNo, coil):
+      self.coils[coilNo]=coil
+      self.addSecel(coil)
 
   def addHelix(self, serialNo, helix):
     '''
