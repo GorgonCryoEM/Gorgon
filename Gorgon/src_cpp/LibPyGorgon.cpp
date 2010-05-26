@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.75  2010/05/21 15:45:16  ssa1
+//   Flexible fitting implemented in Gorgon
+//
 //   Revision 1.74  2010/05/20 21:55:53  ssa1
 //   Rigid body alignment based on largest flexible cluster
 //
@@ -494,6 +497,7 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("getOriginX", &Renderer::GetOriginX)
 		.def("getOriginY", &Renderer::GetOriginY)
 		.def("getOriginZ", &Renderer::GetOriginZ)
+		.def("setDisplayStyle", &Renderer::SetDisplayStyle)
 	;
 	
 	
@@ -543,6 +547,7 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("getOriginZ", &VolumeRenderer::GetOriginZ)
 		.def("useDisplayRadius", &VolumeRenderer::UseDisplayRadius)
 		.def("performSmoothLaplacian", &VolumeRenderer::PerformSmoothLaplacian)		
+		.def("setDisplayStyle", &VolumeRenderer::SetDisplayStyle)
 	;
 
 	class_< MeshRenderer, bases<Renderer> >("MeshRenderer", init<>())
@@ -576,6 +581,7 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("getOriginX", &MeshRenderer::GetOriginX)
 		.def("getOriginY", &MeshRenderer::GetOriginY)
 		.def("getOriginZ", &MeshRenderer::GetOriginZ)
+		.def("setDisplayStyle", &MeshRenderer::SetDisplayStyle)
 	;
 
 	class_< SSERenderer, bases<Renderer> >("SSERenderer", init<>())
@@ -622,6 +628,7 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("removeSelectedSSEs", &SSERenderer::RemoveSelectedSSEs)
 		.def("getHelixCount", &SSERenderer::GetHelixCount)
 		.def("getHelixCorner", &SSERenderer::GetHelixCorner)
+		.def("setDisplayStyle", &SSERenderer::SetDisplayStyle)
 	;
 
 	class_< CAlphaRenderer, bases<Renderer> >("CAlphaRenderer", init<>())
@@ -667,6 +674,7 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("getOriginY", &CAlphaRenderer::GetOriginY)
 		.def("getOriginZ", &CAlphaRenderer::GetOriginZ)
 		.def("transformAllAtomLocations", &CAlphaRenderer::TransformAllAtomLocations)		
+		.def("setDisplayStyle", &CAlphaRenderer::SetDisplayStyle)
 	;
 
 	class_<InteractiveSkeletonEngine>("InteractiveSkeletonEngine", init<Volume *, NonManifoldMesh_Annotated *, float, int, int, int, unsigned int>())		

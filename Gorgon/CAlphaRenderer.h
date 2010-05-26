@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.44  2010/05/21 15:45:16  ssa1
+//   Flexible fitting implemented in Gorgon
+//
 //   Revision 1.43  2010/05/20 21:55:53  ssa1
 //   Rigid body alignment based on largest flexible cluster
 //
@@ -158,6 +161,8 @@ namespace wustl_mm {
 
 		private:
 			void UpdateBoundingBox();
+			void DrawBallStickModel(int subSceneIndex, bool selectEnabled);
+			void DrawRibbonModel(int subSceneIndex, bool selectEnabled);
 		private:
 			AtomMapType atoms;
 			vector<PDBBond> bonds;
@@ -184,11 +189,10 @@ namespace wustl_mm {
 			bonds.push_back(bond);
 		}
 
-		void CAlphaRenderer::Draw(int subSceneIndex, bool selectEnabled) {
-
+		void CAlphaRenderer::DrawBallStickModel(int subSceneIndex, bool selectEnabled) {
 			GLfloat emissionColor[4] = {1.0, 1.0, 1.0, 1.0};
 
-			if(subSceneIndex == 0) {				
+			if(subSceneIndex == 0) { // Drawing Atoms				
 				if(selectEnabled) {
 					glPushName(0);
 					glPushName(0);
@@ -216,7 +220,7 @@ namespace wustl_mm {
 					glPopName();
 					glPopName();
 				}
-			} else if(subSceneIndex == 1) {
+			} else if(subSceneIndex == 1) { // Drawing Bonds
 				if(selectEnabled) {
 					glPushName(1);
 					glPushName(0);
@@ -249,6 +253,24 @@ namespace wustl_mm {
 					glPopName();
 					glPopName();
 				}
+			}
+		}
+
+		void CAlphaRenderer::DrawRibbonModel(int subSceneIndex, bool selectEnabled) {
+			printf("Ribbon mode not implemented yet!\n"); 
+		}
+
+		void CAlphaRenderer::Draw(int subSceneIndex, bool selectEnabled) {
+			switch(displayStyle) {
+				case 3: // Backbone only
+					DrawBallStickModel(subSceneIndex, selectEnabled);
+					break;
+				case 4: // Ribbon mode
+					DrawRibbonModel(subSceneIndex, selectEnabled);
+					break;
+				case 5: // Side chains
+					DrawBallStickModel(subSceneIndex, selectEnabled);
+					break;
 			}
 		}
 

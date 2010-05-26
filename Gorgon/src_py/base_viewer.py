@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.63  2010/04/04 19:05:54  ssa1
+#   Fixing misc bugs, and redoing sheet visualization mechanism
+#
 #   Revision 1.62  2010/01/14 23:52:12  ssa1
 #   Gracefully catching exceptions when loading invalid files
 #
@@ -241,6 +244,7 @@ class BaseViewer(QtOpenGL.QGLWidget):
 
     def setDisplayStyle(self, style):
         self.displayStyle = style
+        self.renderer.setDisplayStyle(style)
         self.emitModelVisualizationChanged()
 
     def setModelVisibility(self, visible):
