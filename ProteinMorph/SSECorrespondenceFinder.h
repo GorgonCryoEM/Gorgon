@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.17  2010/05/20 21:55:53  ssa1
+//   Rigid body alignment based on largest flexible cluster
+//
 //   Revision 1.16  2010/04/30 04:56:32  ssa1
 //   Flexible fitting changes.
 //
@@ -209,14 +212,14 @@ namespace wustl_mm {
 
 			printf("\n\ngroundTruth = {");
 			bool first = true;
-			int h1, h2;
+			int ha1, ha2;
 			for(map<long long, bool>::iterator i = corrMap.begin(); i != corrMap.end(); i++) {
-				HashToCorrespondence(i->first, h1, h2);
+				HashToCorrespondence(i->first, ha1, ha2);
 				if(!first) {
 					printf(", ");
 				}
 				first = false;
-				printf("{%d, %d}", h1, h2);
+				printf("{%d, %d}", ha1, ha2);
 			}
 
 			printf("};\n");

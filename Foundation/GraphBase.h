@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.8  2010/04/27 21:10:17  ssa1
+//   Implementing Cost-matrix based SSE Registration and performance optimizations on graph construction
+//
 //   Revision 1.7  2010/04/27 17:30:54  ssa1
 //   SSE Registration search by first finding all cliques, and then finding the matching.
 //
@@ -52,7 +55,7 @@ namespace wustl_mm {
 		template <class TVertexTag, class TEdgeTag> class GraphBase {
 		public:
 			GraphBase();
-			GraphBase(GraphBase<TVertexTag,TEdgeTag> & graph);
+			//GraphBase(GraphBase<TVertexTag,TEdgeTag> & graph);
 			unsigned long long AddVertex(float weight, TVertexTag tag);
 			unsigned long long AddVertex(unsigned long long externalIndex, float weight, TVertexTag tag);
 			unsigned long long AddVertex(GraphVertexBase<TVertexTag> vertex);
@@ -107,21 +110,21 @@ namespace wustl_mm {
 			edges.clear();
 		}
 
-		template <class TVertexTag, class TEdgeTag> GraphBase<TVertexTag, TEdgeTag>::GraphBase(GraphBase<TVertexTag,TEdgeTag> & graph) {
-			vertices.clear();
-			edges.clear();
-			for(unsigned int i = 0; i < graph.GetVertexCount(); i++) {
-				AddVertex(graph.GetVertex(i).GetExternalIndex(), graph.GetVertex(i).GetWeight(), graph.GetVertex(i).GetTag());
-			}
+		//template <class TVertexTag, class TEdgeTag> GraphBase<TVertexTag, TEdgeTag>::GraphBase(GraphBase<TVertexTag,TEdgeTag> & graph) {
+		//	vertices.clear();
+		//	edges.clear();
+		//	for(unsigned int i = 0; i < graph.GetVertexCount(); i++) {
+		//		AddVertex(graph.GetVertex(i).GetExternalIndex(), graph.GetVertex(i).GetWeight(), graph.GetVertex(i).GetTag());
+		//	}
 
-			for(int i = 0; i < (int)GetVertexCount()-1; i++) {
-				for(int j = i+1; j < (int)GetVertexCount(); j++) {
-					if(graph.IsEdge(i, j)) {
-						AddEdge(i, j, graph.GetEdge(i, j));
-					}
-				}
-			}
-		}
+		//	for(int i = 0; i < (int)GetVertexCount()-1; i++) {
+		//		for(int j = i+1; j < (int)GetVertexCount(); j++) {
+		//			if(graph.IsEdge(i, j)) {
+		//				AddEdge(i, j, graph.GetEdge(i, j));
+		//			}
+		//		}
+		//	}
+		//}
 
 		template <class TVertexTag, class TEdgeTag> unsigned long long GraphBase<TVertexTag, TEdgeTag>::AddVertex(float weight, TVertexTag tag) {
 			GraphVertexBase<TVertexTag> vertex = GraphVertexBase<TVertexTag>(0, weight, tag);
@@ -594,7 +597,7 @@ namespace wustl_mm {
 			float maxEdgeWeight = edges[maxEdgeHash].GetWeight();
 			int maxEdgeValence = edgeTriangleCount[maxEdgeHash];
 
-			for(map< unsigned long long, GraphEdgeBase<TEdgeTag> >::iterator i = edges.begin(); i != edges.end(); i++) {
+			for(typename map< unsigned long long, GraphEdgeBase<TEdgeTag> >::iterator i = edges.begin(); i != edges.end(); i++) {
 				hash = i->first;
 				if (((edgeTriangleCount[hash] > maxEdgeValence)) || ((edgeTriangleCount[hash] == maxEdgeValence) && (edges[hash].GetWeight() < maxEdgeWeight))) {
 					maxEdgeHash = hash;
@@ -609,7 +612,7 @@ namespace wustl_mm {
 				if(smallestCliqueSize <= 2) {
 					unsigned long long minEdgeHash = edges.begin()->first;
 					float minEdgeWeight = edges[minEdgeHash].GetWeight();
-					for(map< unsigned long long, GraphEdgeBase<TEdgeTag> >::iterator i = edges.begin(); i != edges.end(); i++) {
+					for(typename map< unsigned long long, GraphEdgeBase<TEdgeTag> >::iterator i = edges.begin(); i != edges.end(); i++) {
 						hash = i->first;
 						if(edges[hash].GetWeight() < minEdgeWeight) {
 							minEdgeWeight = edges[hash].GetWeight();
@@ -713,7 +716,7 @@ namespace wustl_mm {
 
 		template <class TVertexTag, class TEdgeTag> map<unsigned long long, unsigned long long> GraphBase<TVertexTag, TEdgeTag>::GetAllEdgeTriangleCount() {
 			map< unsigned long long, unsigned long long> edgeTriangleCount;
-			for(map< unsigned long long, GraphEdgeBase<TEdgeTag> >::iterator i = edges.begin(); i != edges.end(); i++) {
+			for(typename map< unsigned long long, GraphEdgeBase<TEdgeTag> >::iterator i = edges.begin(); i != edges.end(); i++) {
 				edgeTriangleCount[i->first] = GetEdgeTriangles(i->first).size();
 			}
 			return edgeTriangleCount;
@@ -764,7 +767,7 @@ namespace wustl_mm {
 
 			unsigned long long v1, v2;			
 
-			for(map< unsigned long long, GraphEdgeBase<TEdgeTag> >::iterator i = edges.begin(); i != edges.end(); i++) {
+			for(typename map< unsigned long long, GraphEdgeBase<TEdgeTag> >::iterator i = edges.begin(); i != edges.end(); i++) {
 				this->GetEdgeVertices(v1, v2, i->first);
 				if((vertexIndices.find(v1) != vertexIndices.end()) && (vertexIndices.find(v2) != vertexIndices.end())) {
 					child.AddEdge(vertexIndices[v1], vertexIndices[v2], i->second);
