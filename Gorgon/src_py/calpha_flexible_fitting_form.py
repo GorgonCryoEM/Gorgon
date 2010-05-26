@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.6  2010/05/21 16:33:21  ssa1
+#   Flexible fitting implemented in Gorgon
+#
 #   Revision 1.5  2010/05/21 16:11:45  ssa1
 #   Flexible fitting implemented in Gorgon
 #
@@ -112,7 +115,9 @@ class CAlphaFlexibleFittingForm(BaseDockWidget, Ui_DialogCAlphaFlexibleFitting):
                                                     
         self.viewer.emitModelChanged()
                     
-    def doFlexibleDeformation(self, engine, chainHelixMapping):        
+                    
+    def doFlexibleDeformation(self, engine, chainHelixMapping):
+        # TODO: This method can be refactored using the chain.secels dictionary... this would stop the need to search for previous and next helices..        
         # Getting all helix transformations
         transforms = {}
         for chain in self.cAlphaViewer.loadedChains:

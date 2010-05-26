@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.47  2010/05/26 20:17:35  ssa1
+#   Adding in display styles for atom rendering.
+#
 #   Revision 1.46  2010/05/20 19:15:15  ssa1
 #   Flexible fitting interface.
 #
@@ -188,7 +191,7 @@ class CAlphaViewer(BaseViewer):
         self.selectEnabled = True
         self.renderer = CAlphaRenderer()          
         self.displayStyle = self.DisplayStyleBackbone
-        self.renderer.setDisplayStyle(self.DisplayStyleBackbone)  
+        self.renderer.setDisplayStyle(self.displayStyle)  
         self.main_chain = Chain('', self.app)
         self.structPred = None
         self.createUI()      
@@ -240,7 +243,7 @@ class CAlphaViewer(BaseViewer):
             self.setAtomVisibility(style)
             self.emitModelChanged()
 
-    def setAtomVisibility(self, displayStyle):
+    def setAtomVisibility(self, displayStyle):        
         if displayStyle == self.DisplayStyleBackbone:
             for chain in self.loadedChains:
                 for i in chain.residueRange():
@@ -260,16 +263,34 @@ class CAlphaViewer(BaseViewer):
                             atom.setVisible(True)
         else:
             pass 
+                
+        for chain in self.loadedChains:
+            #Setting visibility of SSE atoms 
+            for i, secel in chain.secelList.items():
+                for atomName in chain[i].getAtomNames():
+                    atom = chain[i].getAtom(atomName)
+                    if atom:
+                        atom.setVisible(atom.getVisible() and 
+                                        ((secel.type == "helix" and self.helicesVisible) or (secel.type == "strand" and self.strandsVisible)
+                                        or (secel.type == "loop" and self.loopsVisible)))
+                
+            
         
         
-    def setHelixVisibility(self):
-        setAtomVisibility(self.displayStyle)
+    def setHelixVisibility(self, visible):
+        self.helicesVisible = visible
+        self.setAtomVisibility(self.displayStyle)
+        self.emitModelChanged()
     
-    def setLoopVisibility(self):
-        setAtomVisibility(self.displayStyle)
+    def setLoopVisibility(self, visible):
+        self.loopsVisible = visible
+        self.setAtomVisibility(self.displayStyle)
+        self.emitModelChanged()
     
-    def setStrandVisibility(self):
-        setAtomVisibility(self.displayStyle)
+    def setStrandVisibility(self, visible):
+        self.strandsVisible = visible
+        self.setAtomVisibility(self.displayStyle)
+        self.emitModelChanged()
     
     def centerOnSelectedAtoms(self, *argv):
         # This centers the CAMERA on the last selected atom.                
@@ -440,6 +461,7 @@ class CAlphaViewer(BaseViewer):
                     if not self.loaded:
                         self.dirty = False
                         self.loaded = True
+                        self.setAtomVisibility(self.displayStyle)                        
                         self.emitModelLoadedPreDraw()
                         self.emitModelLoaded()
                         self.emitViewerSetCenter()
