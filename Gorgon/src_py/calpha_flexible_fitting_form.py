@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.7  2010/05/26 21:53:21  ssa1
+#   Adding in display styles for atom rendering.
+#
 #   Revision 1.6  2010/05/21 16:33:21  ssa1
 #   Flexible fitting implemented in Gorgon
 #
@@ -178,22 +181,23 @@ class CAlphaFlexibleFittingForm(BaseDockWidget, Ui_DialogCAlphaFlexibleFitting):
         # Flexible deformation of each atom
         for chain in self.cAlphaViewer.loadedChains:
             for i in chain.residueRange():
-                if i in chain.residueList and chain[i].getAtom('CA'):
-                    if (prevHelices[i] == -1) and (nextHelices[i] == -1) : #No helices in structure
-                        pass
-                    elif (prevHelices[i] == nextHelices[i]) : # We are working with a helix atom
-                        transform = transforms[prevHelices[i]]
-                        chain[i].getAtom('CA').transform(transform)
-                    elif (prevHelices[i] == -1): # We are working with the beginning of the sequence
-                        transform = transforms[nextHelices[i]]
-                        chain[i].getAtom('CA').transform(transform)
-                    elif (nextHelices[i] == -1): # We are working with the end of the sequence
-                        transform = transforms[prevHelices[i]]
-                        chain[i].getAtom('CA').transform(transform)     
-                    else: # We are working with a loop segment between two helices                    
-                        transform1 = transforms[prevHelices[i]]
-                        transform2 = transforms[nextHelices[i]]
-                        chain[i].getAtom('CA').interpolateTransform(transform1, transform2, coeff[i])     
+                if i in chain.residueList:
+                    for atomName in chain[i].getAtomNames():
+                        if (prevHelices[i] == -1) and (nextHelices[i] == -1) : #No helices in structure
+                            pass
+                        elif (prevHelices[i] == nextHelices[i]) : # We are working with a helix atom
+                            transform = transforms[prevHelices[i]]
+                            chain[i].getAtom(atomName).transform(transform)
+                        elif (prevHelices[i] == -1): # We are working with the beginning of the sequence
+                            transform = transforms[nextHelices[i]]
+                            chain[i].getAtom(atomName).transform(transform)
+                        elif (nextHelices[i] == -1): # We are working with the end of the sequence
+                            transform = transforms[prevHelices[i]]
+                            chain[i].getAtom(atomName).transform(transform)     
+                        else: # We are working with a loop segment between two helices                    
+                            transform1 = transforms[prevHelices[i]]
+                            transform2 = transforms[nextHelices[i]]
+                            chain[i].getAtom(atomName).interpolateTransform(transform1, transform2, coeff[i])     
                     
     
     def reject(self):
