@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.48  2010/05/27 17:10:18  ssa1
+//   Better color control for all atom visualization
+//
 //   Revision 1.47  2010/05/27 05:08:49  ssa1
 //   Side chain visualization on Gorgon
 //
@@ -284,6 +287,12 @@ namespace wustl_mm {
 					glPopName();
 					glPopName();
 				}
+			} else if(subSceneIndex == 2) { // Drawing spheres to cover up the cylinder edges				
+				for(AtomMapType::iterator i = atoms.begin(); i != atoms.end(); i++) {
+					if(i->second.GetName() == "CA") {
+						DrawSphere(i->second.GetPosition(), 0.1);
+					}
+				}
 			}
 		}
 
@@ -358,10 +367,17 @@ namespace wustl_mm {
 					}
 					glPopAttrib();
 				}
-;
 				if(selectEnabled) {
 					glPopName();
 					glPopName();
+				}
+			} else if(subSceneIndex == 2) { // Drawing spheres to cover up the cylinder edges					
+				for(AtomMapType::iterator i = atoms.begin(); i != atoms.end(); i++) {
+					glPushAttrib(GL_LIGHTING_BIT);					
+					i->second.GetColor(r, g, b, a);
+					OpenGLUtils::SetColor(r,g,b,a);
+					DrawSphere(i->second.GetPosition(), 0.1);										
+					glPopAttrib();
 				}
 			}
 		}

@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.54  2010/05/27 17:10:19  ssa1
+#   Better color control for all atom visualization
+#
 #   Revision 1.53  2010/05/27 05:36:07  ssa1
 #   Side chain visualization on Gorgon
 #
@@ -273,14 +276,14 @@ class CAlphaViewer(BaseViewer):
         self.gllist = glGenLists(1)
         glNewList(self.gllist, GL_COMPILE)
         if(self.displayStyle == self.DisplayStyleBackbone):
-            visibility = [self.atomsVisible, self.bondsVisible, False]
-            colors = [self.getAtomColor(),  self.getBondColor(), None]
+            visibility = [self.atomsVisible, self.bondsVisible, not self.atomsVisible]
+            colors = [self.getAtomColor(),  self.getBondColor(), self.getBondColor()]
         elif (self.displayStyle == self.DisplayStyleRibbon):
             visibility = [self.helicesVisible, self.strandsVisible, self.loopsVisible]
             colors = [self.getHelixColor(),  self.getStrandColor(), self.getLoopColor()]
         elif (self.displayStyle == self.DisplayStyleSideChain):
-            visibility = [self.atomsVisible, self.bondsVisible, False]
-            colors = [self.getAtomColor(),  self.getBondColor(), None]
+            visibility = [self.atomsVisible, self.bondsVisible, not self.atomsVisible]
+            colors = [self.getAtomColor(),  self.getBondColor(), self.getAtomColor()]
         else:
             visibility = [False, False, False]
             colors = [None, None, None]
