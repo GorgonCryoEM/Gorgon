@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.45  2010/05/26 20:17:35  ssa1
+//   Adding in display styles for atom rendering.
+//
 //   Revision 1.44  2010/05/21 15:45:16  ssa1
 //   Flexible fitting implemented in Gorgon
 //
@@ -159,13 +162,22 @@ namespace wustl_mm {
 			void DeleteBond(int index);
 			int GetBondCount();
 
+			//Controlling the bond vector
+			void AddSideChainBond(PDBBond bond);
+			PDBBond * GetSideChainBond(int index);
+			int GetSideChainBondIndex(unsigned long long atom0, unsigned long long atom1);
+			void DeleteSideChainBond(int index);
+			int GetSideChainBondCount();
+
 		private:
 			void UpdateBoundingBox();
-			void DrawBallStickModel(int subSceneIndex, bool selectEnabled);
+			void DrawBackboneModel(int subSceneIndex, bool selectEnabled);
 			void DrawRibbonModel(int subSceneIndex, bool selectEnabled);
+			void DrawSideChainModel(int subSceneIndex, bool selectEnabled);
 		private:
 			AtomMapType atoms;
 			vector<PDBBond> bonds;
+			vector<PDBBond> sidechainBonds;
 		};
 
 
@@ -189,7 +201,11 @@ namespace wustl_mm {
 			bonds.push_back(bond);
 		}
 
-		void CAlphaRenderer::DrawBallStickModel(int subSceneIndex, bool selectEnabled) {
+		void CAlphaRenderer::AddSideChainBond(PDBBond bond) {
+			sidechainBonds.push_back(bond);
+		}
+
+		void CAlphaRenderer::DrawBackboneModel(int subSceneIndex, bool selectEnabled) {
 			GLfloat emissionColor[4] = {1.0, 1.0, 1.0, 1.0};
 
 			if(subSceneIndex == 0) { // Drawing Atoms				
@@ -260,16 +276,81 @@ namespace wustl_mm {
 			printf("Ribbon mode not implemented yet!\n"); 
 		}
 
+		void CAlphaRenderer::DrawSideChainModel(int subSceneIndex, bool selectEnabled) {
+			GLfloat emissionColor[4] = {1.0, 1.0, 1.0, 1.0};
+			float r,g,b,a;
+
+			if(subSceneIndex == 0) { // Drawing Atoms				
+				if(selectEnabled) {
+					glPushName(0);
+					glPushName(0);
+				}
+				for(AtomMapType::iterator i = atoms.begin(); i != atoms.end(); i++) {
+					glPushAttrib(GL_LIGHTING_BIT);					
+					if(i->second.GetSelected()) {
+						glMaterialfv(GL_FRONT, GL_EMISSION, emissionColor);
+						glMaterialfv(GL_BACK, GL_EMISSION, emissionColor);
+					} else {
+						i->second.GetColorFromAtomName(r, g, b, a);
+						OpenGLUtils::SetColor(r,g,b,a);
+					}					
+
+					if(selectEnabled){
+						glLoadName((long)&(i->second));
+					}
+					if(i->second.GetVisible()) {
+						DrawSphere(i->second.GetPosition(), i->second.GetAtomRadius() * 0.3);
+					}
+					
+					glPopAttrib();
+
+				}
+				if(selectEnabled) {
+					glPopName();
+					glPopName();
+				}
+			} else if(subSceneIndex == 1) { // Drawing Bonds
+				if(selectEnabled) {
+					glPushName(1);
+					glPushName(0);
+				}
+
+
+				for(int i=0; i < (int)sidechainBonds.size(); i++) {
+					glPushAttrib(GL_LIGHTING_BIT);
+					if(sidechainBonds[i].GetSelected()) {
+						glMaterialfv(GL_FRONT, GL_EMISSION, emissionColor);
+						glMaterialfv(GL_BACK, GL_EMISSION, emissionColor);
+					}
+
+					if(selectEnabled){
+						glLoadName(i);
+					}
+					OpenGLUtils::SetColor(0.7, 0.7, 0.7, 1.0);
+			
+					if(atoms[sidechainBonds[i].GetAtom0Ix()].GetVisible() && atoms[sidechainBonds[i].GetAtom1Ix()].GetVisible()) {
+						DrawCylinder(atoms[sidechainBonds[i].GetAtom0Ix()].GetPosition(), atoms[sidechainBonds[i].GetAtom1Ix()].GetPosition(), 0.1);
+					}
+					glPopAttrib();
+				}
+;
+				if(selectEnabled) {
+					glPopName();
+					glPopName();
+				}
+			}
+		}
+
 		void CAlphaRenderer::Draw(int subSceneIndex, bool selectEnabled) {
 			switch(displayStyle) {
 				case 3: // Backbone only
-					DrawBallStickModel(subSceneIndex, selectEnabled);
+					DrawBackboneModel(subSceneIndex, selectEnabled);
 					break;
 				case 4: // Ribbon mode
 					DrawRibbonModel(subSceneIndex, selectEnabled);
 					break;
 				case 5: // Side chains
-					DrawBallStickModel(subSceneIndex, selectEnabled);
+					DrawSideChainModel(subSceneIndex, selectEnabled);
 					break;
 			}
 		}
@@ -594,6 +675,10 @@ namespace wustl_mm {
 			return &bonds[index];
 		}
 
+		PDBBond * CAlphaRenderer::GetSideChainBond(int index) {
+			return &sidechainBonds[index];
+		}
+
 		PDBAtom * CAlphaRenderer::GetSelectedAtom(unsigned int selectionId) {
 			int count = 0;
 			for(AtomMapType::iterator i = atoms.begin(); i != atoms.end(); i++) {					
@@ -616,6 +701,17 @@ namespace wustl_mm {
 			}
 			return -1;
 		}
+
+		int CAlphaRenderer::GetSideChainBondIndex(unsigned long long atom0, unsigned long long atom1) {
+			for(unsigned int i = 0; i < sidechainBonds.size(); i++) {
+				if(((sidechainBonds[i].GetAtom0Ix() == atom0) && (sidechainBonds[i].GetAtom1Ix() == atom1)) ||
+							((sidechainBonds[i].GetAtom0Ix() == atom1) && (sidechainBonds[i].GetAtom1Ix() == atom0))) {
+					return i;
+				}
+			}
+			return -1;
+		}
+
 		int CAlphaRenderer::GetAtomCount() {
 			return atoms.size();
 		}
@@ -624,12 +720,20 @@ namespace wustl_mm {
 			return bonds.size();
 		}
 
+		int CAlphaRenderer::GetSideChainBondCount() {
+			return sidechainBonds.size();
+		}
+
 		void CAlphaRenderer::DeleteAtom(unsigned long long index) {
 			atoms.erase(atoms.find(index));
 		}
 
 		void CAlphaRenderer::DeleteBond(int index) {
 			bonds.erase(bonds.begin() + index);
+		}
+
+		void CAlphaRenderer::DeleteSideChainBond(int index) {
+			sidechainBonds.erase(sidechainBonds.begin() + index);
 		}
 
 		Vector3DFloat CAlphaRenderer::Get3DCoordinates(int subsceneIndex, int ix0, int ix1, int ix2, int ix3, int ix4) {

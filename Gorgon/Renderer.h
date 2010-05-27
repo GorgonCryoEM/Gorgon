@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.30  2010/05/26 20:17:35  ssa1
+//   Adding in display styles for atom rendering.
+//
 //   Revision 1.29  2009/07/01 21:25:13  ssa1
 //   Centering the volume cropped using a radius around the point selected by the atom selection tool.
 //
@@ -72,6 +75,7 @@ namespace wustl_mm {
 			bool SetCuttingPlane(float position, float vecX, float vecY, float vecZ);
 			void static DrawSphere(Vector3DFloat center, float radius);
 			void static DrawCylinder(Vector3DFloat pt1, Vector3DFloat pt2, float radius);
+			void static DrawLine(Vector3DFloat pt1, Vector3DFloat pt2);
 			virtual void SetSpacing(float spX, float spY, float spZ);
 			virtual float GetSpacingX();
 			virtual float GetSpacingY();
@@ -232,6 +236,13 @@ namespace wustl_mm {
 			gluDeleteQuadric(quadricCylinder);
 
 			glPopMatrix();
+		}
+
+		void Renderer::DrawLine(Vector3DFloat pt1, Vector3DFloat pt2) {
+			glBegin(GL_LINES);			
+			glVertex3f(pt1.X(), pt1.Y(), pt1.Z());
+			glVertex3f(pt2.X(), pt2.Y(), pt2.Z());
+			glEnd();
 		}
 
 		void Renderer::SetSpacing(float spX, float spY, float spZ) {	

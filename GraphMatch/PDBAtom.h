@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.14  2010/05/21 15:45:16  ssa1
+//   Flexible fitting implemented in Gorgon
+//
 //   Revision 1.13  2010/02/11 23:19:11  ssa1
 //   Allowing the ability to save pseudoatoms generated from SSEHunter
 //
@@ -105,6 +108,7 @@ namespace wustl_mm {
 			void SetElement(string element);
 			void SetCharge(string charge);
 			void SetColor(float r, float g, float b, float a);
+			void GetColorFromAtomName(float & r, float & g, float & b, float & a);
 			void SetAtomRadius(float radius);
 			void SetSelected(bool selected);
 			void SetFlag(int flag);
@@ -530,6 +534,32 @@ namespace wustl_mm {
 
 			Vector3DFloat position2 = Vector3DFloat(posMat.GetValue(0, 0), posMat.GetValue(1, 0), posMat.GetValue(2, 0));	
 			position = position1 * (1.0-coefficient) + position2 * coefficient;
+		}
+
+		void PDBAtom::GetColorFromAtomName(float & r, float & g, float & b, float & a) {
+			r = 0.0;
+			g = 0.0;
+			b = 0.0;
+			a = 1.0;
+
+			switch(name[0]) {
+				case 'N' :
+					b = 1.0;
+					break;
+				case 'O' :
+					r = 1.0;
+					break;
+				case 'S' :
+					r = 1.0;
+					g = 1.0;
+					break;
+				default:
+					r = 0.8;
+					g = 0.8;
+					b = 0.8;
+					break;
+			}
+
 		}
 	}
 

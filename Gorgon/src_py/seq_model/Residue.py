@@ -30,6 +30,7 @@ class Residue:
     residueTypes['polar'] = residueTypes['polarNoSulfur'] + ('CYS', )
     residueTypes['neutral'] = residueTypes['nonpolar'] + residueTypes['polar']
     residueTypes['charged'] = residueTypes['negative'] + residueTypes['positive']
+    
 
     size = {
             'GLY':1, 'PRO':1,  
