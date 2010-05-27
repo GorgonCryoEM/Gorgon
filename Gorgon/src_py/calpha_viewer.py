@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.53  2010/05/27 05:36:07  ssa1
+#   Side chain visualization on Gorgon
+#
 #   Revision 1.52  2010/05/27 05:27:49  ssa1
 #   Side chain visualization on Gorgon
 #
@@ -197,9 +200,15 @@ class CAlphaViewer(BaseViewer):
         BaseViewer.__init__(self, main, parent)
         self.title = "C-Alpha"
         self.shortTitle = "CAL"              
-        self.app.themes.addDefaultRGB("C-Alpha:Model:0", 170, 170, 0, 255)
-        self.app.themes.addDefaultRGB("C-Alpha:Model:1", 120, 120, 170, 255)
-        self.app.themes.addDefaultRGB("C-Alpha:Model:2", 120, 120, 170, 255)
+        self.app.themes.addDefaultRGB("C-Alpha:Atom", 170, 170, 0, 255)
+        self.app.themes.addDefaultRGB("C-Alpha:Bond", 120, 120, 170, 255)
+        self.app.themes.addDefaultRGB("C-Alpha:Helix", 0, 255, 0, 255)
+        self.app.themes.addDefaultRGB("C-Alpha:Strand", 128, 255, 255, 255)
+        self.app.themes.addDefaultRGB("C-Alpha:Loop", 255, 128, 0, 255)
+        self.app.themes.addDefaultRGB("C-Alpha:Carbon", 200, 200, 200, 255)
+        self.app.themes.addDefaultRGB("C-Alpha:Nitrogen", 0, 0, 255, 255)
+        self.app.themes.addDefaultRGB("C-Alpha:Oxygen", 255, 0, 0, 255)
+        self.app.themes.addDefaultRGB("C-Alpha:Sulphur", 255, 255, 0, 255)
         self.app.themes.addDefaultRGB("C-Alpha:BoundingBox", 255, 255, 255, 255)         
         self.isClosedMesh = False
         self.centerOnRMB = True
@@ -211,15 +220,12 @@ class CAlphaViewer(BaseViewer):
         self.structPred = None
         self.createUI()      
         self.app.viewers["calpha"] = self;
-        self.model2Visible = True
+        self.atomsVisible = True
+        self.bondsVisible = True
         self.helicesVisible = True
         self.strandsVisible = True
         self.loopsVisible = True      
         self.initVisualizationOptions(AtomVisualizationForm(self.app, self))
-        self.visualizationOptions.ui.checkBoxModelVisible.setText("Show atoms colored:")
-        self.visualizationOptions.ui.checkBoxModel2Visible.setText("Show backbone colored:")
-        self.visualizationOptions.ui.checkBoxModel2Visible.setVisible(True)
-        self.visualizationOptions.ui.pushButtonModel2Color.setVisible(True)
         self.loadedChains = [] 
         
         #self.connect(self, QtCore.SIGNAL("elementSelected (int, int, int, int, int, int, QMouseEvent)"), self.centerOnSelectedAtoms)
@@ -254,30 +260,55 @@ class CAlphaViewer(BaseViewer):
     def setDisplayStyle(self, style):
         if style != self.displayStyle:
             self.displayStyle = style
-            self.renderer.setDisplayStyle(style)
-            self.setAtomVisibility(style)
+            self.renderer.setDisplayStyle(self.displayStyle)
+            self.setAtomColorsAndVisibility(self.displayStyle)
             self.emitModelChanged()
 
-    def setAtomVisibility(self, displayStyle):        
+    # Overridden
+    def modelChanged(self):
+        self.updateActionsAndMenus()
+        if self.gllist != 0:
+            glDeleteLists(self.gllist,1)
+            
+        self.gllist = glGenLists(1)
+        glNewList(self.gllist, GL_COMPILE)
+        if(self.displayStyle == self.DisplayStyleBackbone):
+            visibility = [self.atomsVisible, self.bondsVisible, False]
+            colors = [self.getAtomColor(),  self.getBondColor(), None]
+        elif (self.displayStyle == self.DisplayStyleRibbon):
+            visibility = [self.helicesVisible, self.strandsVisible, self.loopsVisible]
+            colors = [self.getHelixColor(),  self.getStrandColor(), self.getLoopColor()]
+        elif (self.displayStyle == self.DisplayStyleSideChain):
+            visibility = [self.atomsVisible, self.bondsVisible, False]
+            colors = [self.getAtomColor(),  self.getBondColor(), None]
+        else:
+            visibility = [False, False, False]
+            colors = [None, None, None]
+                                
+        glPushAttrib(GL_LIGHTING_BIT | GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT)
+                         
+        self.extraDrawingRoutines()
+        
+        for i in range(3):
+            if(self.loaded and visibility[i]):
+                self.setMaterials(colors[i])
+                self.renderer.draw(i, self.selectEnabled or self.mouseMoveEnabled)                                                        
+
+        glPopAttrib()
+
+        glEndList()             
+
+    def setAtomColorsAndVisibility(self, displayStyle):        
         if displayStyle == self.DisplayStyleBackbone:
-            for chain in self.loadedChains:
-                for i in chain.residueRange():
-                    if i in chain.residueList:
-                        for atomName in chain[i].getAtomNames():
-                            atom = chain[i].getAtom(atomName)
-                            if atom:
-                                atom.setVisible(atomName == 'CA')
+            self.setAllAtomColor(self.getAtomColor())            
         elif displayStyle == self.DisplayStyleRibbon:
             #Pass into c++ layer all data needed to draw ribbon diagram here!
             pass
         elif displayStyle == self.DisplayStyleSideChain:
-            for chain in self.loadedChains:
-                for i in chain.residueRange():
-                    if i in chain.residueList:                    
-                        for atomName in chain[i].getAtomNames():
-                            atom = chain[i].getAtom(atomName)
-                            if atom:
-                                atom.setVisible(True)
+            self.setSpecificAtomColor('C', self.getCarbonColor())
+            self.setSpecificAtomColor('N', self.getNitrogenColor())
+            self.setSpecificAtomColor('O', self.getOxygenColor())
+            self.setSpecificAtomColor('S', self.getSulphurColor())
         else:
             pass 
                 
@@ -288,26 +319,116 @@ class CAlphaViewer(BaseViewer):
                     for atomName in chain[i].getAtomNames():
                         atom = chain[i].getAtom(atomName)
                         if atom:
-                            atom.setVisible(atom.getVisible() and 
-                                            ((secel.type == "helix" and self.helicesVisible) or (secel.type == "strand" and self.strandsVisible)
-                                            or (secel.type == "loop" and self.loopsVisible)))
+                            atom.setVisible((secel.type == "helix" and self.helicesVisible) or (secel.type == "strand" and self.strandsVisible)
+                                            or (secel.type == "loop" and self.loopsVisible))
+                            
+    def setAllAtomColor(self, color):
+        for chain in self.loadedChains:
+            for i in chain.residueRange():
+                if i in chain.residueList:
+                    for atomName in chain[i].getAtomNames():
+                        atom = chain[i].getAtom(atomName)
+                        if atom:
+                            atom.setColor(color.redF(), color.greenF(), color.blueF(), color.alphaF())       
+
+    def setSpecificAtomColor(self, molecule, color):
+        for chain in self.loadedChains:
+            for i in chain.residueRange():
+                if i in chain.residueList:
+                    for atomName in chain[i].getAtomNames():
+                        atom = chain[i].getAtom(atomName)
+                        if atomName[0] == molecule[0]:
+                            atom.setColor(color.redF(), color.greenF(), color.blueF(), color.alphaF())        
                 
-            
+    def setAtomColor(self, color):
+        self.app.themes.addColor(self.title + ":" + "Atom", color)
+        self.setAllAtomColor(color)
+        self.emitModelChanged()
         
+    def setBondColor(self, color):
+        self.app.themes.addColor(self.title + ":" + "Bond", color)
+        self.emitModelChanged()
+        
+    def setHelixColor(self, color):
+        self.app.themes.addColor(self.title + ":" + "Helix", color)
+        self.emitModelChanged()
+        
+    def setStrandColor(self, color):
+        self.app.themes.addColor(self.title + ":" + "Strand", color)
+        self.emitModelChanged()
+        
+    def setLoopColor(self, color):
+        self.app.themes.addColor(self.title + ":" + "Loop", color)
+        self.emitModelChanged()
+        
+    def setCarbonColor(self, color):
+        self.app.themes.addColor(self.title + ":" + "Carbon", color)
+        self.setSpecificAtomColor('C', color)
+        self.emitModelChanged()
+        
+    def setNitrogenColor(self, color):
+        self.app.themes.addColor(self.title + ":" + "Nitrogen", color)
+        self.setSpecificAtomColor('N', color)
+        self.emitModelChanged()
+        
+    def setOxygenColor(self, color):
+        self.app.themes.addColor(self.title + ":" + "Oxygen", color)
+        self.setSpecificAtomColor('O', color)
+        self.emitModelChanged()
+        
+    def setSulphurColor(self, color):
+        self.app.themes.addColor(self.title + ":" + "Sulphur", color)
+        self.setSpecificAtomColor('S', color)
+        self.emitModelChanged()
+        
+    def getAtomColor(self):
+        return self.app.themes.getColor(self.title + ":" + "Atom" )
+        
+    def getBondColor(self):
+        return self.app.themes.getColor(self.title + ":" + "Bond" )
+        
+    def getHelixColor(self):
+        return self.app.themes.getColor(self.title + ":" + "Helix" )
+        
+    def getStrandColor(self):
+        return self.app.themes.getColor(self.title + ":" + "Strand" )
+        
+    def getLoopColor(self):
+        return self.app.themes.getColor(self.title + ":" + "Loop" )
+        
+    def getCarbonColor(self):
+        return self.app.themes.getColor(self.title + ":" + "Carbon" )
+        
+    def getNitrogenColor(self):
+        return self.app.themes.getColor(self.title + ":" + "Nitrogen" )
+        
+    def getOxygenColor(self):
+        return self.app.themes.getColor(self.title + ":" + "Oxygen" )
+        
+    def getSulphurColor(self):
+        return self.app.themes.getColor(self.title + ":" + "Sulphur" )        
+            
+    def setAtomVisibility(self, visible):
+        self.atomsVisible = visible
+        self.emitModelChanged()
+    
+    def setBondVisibility(self, visible):
+        self.bondsVisible = visible
+        self.emitModelChanged()
         
     def setHelixVisibility(self, visible):
         self.helicesVisible = visible
-        self.setAtomVisibility(self.displayStyle)
+        self.setAtomColorsAndVisibility(self.displayStyle)
         self.emitModelChanged()
     
     def setLoopVisibility(self, visible):
         self.loopsVisible = visible
-        self.setAtomVisibility(self.displayStyle)
+        self.setAtomColorsAndVisibility(self.displayStyle)
         self.emitModelChanged()
     
     def setStrandVisibility(self, visible):
         self.strandsVisible = visible
-        self.setAtomVisibility(self.displayStyle)
+        self.setAtomColorsAndVisibility(self.displayStyle)
         self.emitModelChanged()
     
     def centerOnSelectedAtoms(self, *argv):
@@ -480,7 +601,7 @@ class CAlphaViewer(BaseViewer):
                     if not self.loaded:
                         self.dirty = False
                         self.loaded = True
-                        self.setAtomVisibility(self.displayStyle)                        
+                        self.setAtomColorsAndVisibility(self.displayStyle)                        
                         self.emitModelLoadedPreDraw()
                         self.emitModelLoaded()
                         self.emitViewerSetCenter()

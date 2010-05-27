@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.47  2010/05/27 05:08:49  ssa1
+//   Side chain visualization on Gorgon
+//
 //   Revision 1.46  2010/05/27 04:41:54  ssa1
 //   Side chain visualization on Gorgon
 //
@@ -125,6 +128,11 @@ namespace wustl_mm {
 			}
 		};
 
+		const int CALPHA_DISPLAY_STYLE_BACKBONE = 3;
+		const int CALPHA_DISPLAY_STYLE_RIBBON = 4;
+		const int CALPHA_DISPLAY_STYLE_SIDE_CHAIN = 5;
+
+
 		class CAlphaRenderer : public Renderer{
 		public:
 			CAlphaRenderer();
@@ -219,22 +227,24 @@ namespace wustl_mm {
 					glPushName(0);
 				}
 				for(AtomMapType::iterator i = atoms.begin(); i != atoms.end(); i++) {
-					glPushAttrib(GL_LIGHTING_BIT);					
-					if(i->second.GetSelected()) {
-						glMaterialfv(GL_FRONT, GL_EMISSION, emissionColor);
-						glMaterialfv(GL_BACK, GL_EMISSION, emissionColor);
-					} else {
-						OpenGLUtils::SetColor(i->second.GetColorR(), i->second.GetColorG(), i->second.GetColorB(), i->second.GetColorA());
-					}					
+					if(i->second.GetName() == "CA") {
+						glPushAttrib(GL_LIGHTING_BIT);					
+						if(i->second.GetSelected()) {
+							glMaterialfv(GL_FRONT, GL_EMISSION, emissionColor);
+							glMaterialfv(GL_BACK, GL_EMISSION, emissionColor);
+						} else {
+							OpenGLUtils::SetColor(i->second.GetColorR(), i->second.GetColorG(), i->second.GetColorB(), i->second.GetColorA());
+						}					
 
-					if(selectEnabled){
-						glLoadName((long)&(i->second));
+						if(selectEnabled){
+							glLoadName((long)&(i->second));
+						}
+						if(i->second.GetVisible()) {
+							DrawSphere(i->second.GetPosition(), i->second.GetAtomRadius() * 0.3);
+						}
+						
+						glPopAttrib();
 					}
-					if(i->second.GetVisible()) {
-						DrawSphere(i->second.GetPosition(), i->second.GetAtomRadius() * 0.3);
-					}
-					
-					glPopAttrib();
 
 				}
 				if(selectEnabled) {
@@ -266,7 +276,7 @@ namespace wustl_mm {
 					}
 			
 					if(atoms[bonds[i].GetAtom0Ix()].GetVisible() && atoms[bonds[i].GetAtom1Ix()].GetVisible()) {
-						DrawCylinder(atoms[bonds[i].GetAtom0Ix()].GetPosition(), atoms[bonds[i].GetAtom1Ix()].GetPosition(), 0.1);
+						DrawCylinder(atoms[bonds[i].GetAtom0Ix()].GetPosition(), atoms[bonds[i].GetAtom1Ix()].GetPosition(), 0.1, 10, 2);
 					}
 					glPopAttrib();
 				}
@@ -278,6 +288,7 @@ namespace wustl_mm {
 		}
 
 		void CAlphaRenderer::DrawRibbonModel(int subSceneIndex, bool selectEnabled) {
+			// subSceneIndex will be 0 for Helices, 1 for Strands and 2 for loops/coils
 			printf("Ribbon mode not implemented yet!\n"); 
 		}
 
@@ -296,7 +307,7 @@ namespace wustl_mm {
 						glMaterialfv(GL_FRONT, GL_EMISSION, emissionColor);
 						glMaterialfv(GL_BACK, GL_EMISSION, emissionColor);
 					} else {
-						i->second.GetColorFromAtomName(r, g, b, a);
+						i->second.GetColor(r, g, b, a);
 						OpenGLUtils::SetColor(r,g,b,a);
 					}					
 
@@ -319,22 +330,31 @@ namespace wustl_mm {
 					glPushName(1);
 					glPushName(0);
 				}
+				Vector3DFloat v1, vc, v2;
 
 
 				for(int i=0; i < (int)sidechainBonds.size(); i++) {
 					glPushAttrib(GL_LIGHTING_BIT);
-					if(sidechainBonds[i].GetSelected()) {
-						glMaterialfv(GL_FRONT, GL_EMISSION, emissionColor);
-						glMaterialfv(GL_BACK, GL_EMISSION, emissionColor);
-					}
-
 					if(selectEnabled){
 						glLoadName(i);
 					}
-					OpenGLUtils::SetColor(0.7, 0.7, 0.7, 1.0);
 			
 					if(atoms[sidechainBonds[i].GetAtom0Ix()].GetVisible() && atoms[sidechainBonds[i].GetAtom1Ix()].GetVisible()) {
-						DrawCylinder(atoms[sidechainBonds[i].GetAtom0Ix()].GetPosition(), atoms[sidechainBonds[i].GetAtom1Ix()].GetPosition(), 0.1);
+						v1 = atoms[sidechainBonds[i].GetAtom0Ix()].GetPosition();
+						v2 = atoms[sidechainBonds[i].GetAtom1Ix()].GetPosition();
+						if(sidechainBonds[i].GetSelected()) {
+							glMaterialfv(GL_FRONT, GL_EMISSION, emissionColor);
+							glMaterialfv(GL_BACK, GL_EMISSION, emissionColor);
+							DrawCylinder(v1, v2, 0.1, 6, 2);
+						} else {						
+							vc = (v1 + v2) * 0.5;
+							atoms[sidechainBonds[i].GetAtom0Ix()].GetColor(r, g, b, a);
+							OpenGLUtils::SetColor(r,g,b,a);
+							DrawCylinder(v1, vc, 0.1, 6, 2);
+							atoms[sidechainBonds[i].GetAtom1Ix()].GetColor(r, g, b, a);
+							OpenGLUtils::SetColor(r,g,b,a);
+							DrawCylinder(vc, v2, 0.1, 6, 2);
+						}
 					}
 					glPopAttrib();
 				}
@@ -348,13 +368,13 @@ namespace wustl_mm {
 
 		void CAlphaRenderer::Draw(int subSceneIndex, bool selectEnabled) {
 			switch(displayStyle) {
-				case 3: // Backbone only
+				case CALPHA_DISPLAY_STYLE_BACKBONE: // Backbone only
 					DrawBackboneModel(subSceneIndex, selectEnabled);
 					break;
-				case 4: // Ribbon mode
+				case CALPHA_DISPLAY_STYLE_RIBBON: // Ribbon mode
 					DrawRibbonModel(subSceneIndex, selectEnabled);
 					break;
-				case 5: // Side chains
+				case CALPHA_DISPLAY_STYLE_SIDE_CHAIN: // Side chains
 					DrawSideChainModel(subSceneIndex, selectEnabled);
 					break;
 			}
@@ -633,7 +653,16 @@ namespace wustl_mm {
 				PDBAtom * a = (PDBAtom*)ix0;
 				a->SetSelected(forceTrue || !a->GetSelected());
 			} else if((subsceneIndex == 1) && (ix0 >= 0) && (ix0 <= (int)bonds.size())) {
-				bonds[ix0].SetSelected(forceTrue || !bonds[ix0].GetSelected());
+				switch(displayStyle) {
+					case CALPHA_DISPLAY_STYLE_BACKBONE:
+						bonds[ix0].SetSelected(forceTrue || !bonds[ix0].GetSelected());
+						break;
+					case CALPHA_DISPLAY_STYLE_RIBBON:
+						break;
+					case CALPHA_DISPLAY_STYLE_SIDE_CHAIN:
+						sidechainBonds[ix0].SetSelected(forceTrue || !sidechainBonds[ix0].GetSelected());
+						break;
+				} 
 			}			
 		}
 
