@@ -215,20 +215,21 @@ object. If no chain ID is specified, it loads the first chain.
     startList.sort()
     endList.sort()
     
-    startPt = min(result.residueRange())
-    coilIx = 1
-    for i in range(len(startList)):
-        if startPt < startList[i] :
-            result.addCoil(coilIx, Coil(result, coilIx, 'L' + str(coilIx), startPt, startList[i]-1))
-            coilIx = coilIx + 1
-        startPt = endList[i] + 1
-    
-    if startPt < max(result.residueRange()):
-        result.addCoil(coilIx, Coil(result, coilIx, 'L' + str(coilIx), startPt, max(result.residueRange())))        
+    if result.residueRange():
+        startPt = min(result.residueRange())
+        coilIx = 1
+        for i in range(len(startList)):
+            if startPt < startList[i] :
+                result.addCoil(coilIx, Coil(result, coilIx, 'L' + str(coilIx), startPt, startList[i]-1))
+                coilIx = coilIx + 1
+            startPt = endList[i] + 1
         
+        if startPt < max(result.residueRange()):
+            result.addCoil(coilIx, Coil(result, coilIx, 'L' + str(coilIx), startPt, max(result.residueRange())))        
             
-    Chain.chainsDict[result.key] = result
-    #Chain.setSelectedChainKey(result.getIDs())
+                
+        Chain.chainsDict[result.key] = result
+        #Chain.setSelectedChainKey(result.getIDs())
         
     return result
 
