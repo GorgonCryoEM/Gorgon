@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.52  2010/05/27 05:27:49  ssa1
+#   Side chain visualization on Gorgon
+#
 #   Revision 1.51  2010/05/27 05:14:08  ssa1
 #   Side chain visualization on Gorgon
 #
@@ -259,20 +262,22 @@ class CAlphaViewer(BaseViewer):
         if displayStyle == self.DisplayStyleBackbone:
             for chain in self.loadedChains:
                 for i in chain.residueRange():
-                    for atomName in chain[i].getAtomNames():
-                        atom = chain[i].getAtom(atomName)
-                        if atom:
-                            atom.setVisible(atomName == 'CA')
+                    if i in chain.residueList:
+                        for atomName in chain[i].getAtomNames():
+                            atom = chain[i].getAtom(atomName)
+                            if atom:
+                                atom.setVisible(atomName == 'CA')
         elif displayStyle == self.DisplayStyleRibbon:
             #Pass into c++ layer all data needed to draw ribbon diagram here!
             pass
         elif displayStyle == self.DisplayStyleSideChain:
             for chain in self.loadedChains:
                 for i in chain.residueRange():
-                    for atomName in chain[i].getAtomNames():
-                        atom = chain[i].getAtom(atomName)
-                        if atom:
-                            atom.setVisible(True)
+                    if i in chain.residueList:                    
+                        for atomName in chain[i].getAtomNames():
+                            atom = chain[i].getAtom(atomName)
+                            if atom:
+                                atom.setVisible(True)
         else:
             pass 
                 
