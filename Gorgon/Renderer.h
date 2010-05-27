@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.31  2010/05/27 04:41:54  ssa1
+//   Side chain visualization on Gorgon
+//
 //   Revision 1.30  2010/05/26 20:17:35  ssa1
 //   Adding in display styles for atom rendering.
 //
@@ -74,7 +77,7 @@ namespace wustl_mm {
 			virtual Vector3DFloat Get3DCoordinates(int subsceneIndex, int ix0, int ix1 = -1, int ix2 = -1, int ix3 = -1, int ix4 = -1);
 			bool SetCuttingPlane(float position, float vecX, float vecY, float vecZ);
 			void static DrawSphere(Vector3DFloat center, float radius);
-			void static DrawCylinder(Vector3DFloat pt1, Vector3DFloat pt2, float radius);
+			void static DrawCylinder(Vector3DFloat pt1, Vector3DFloat pt2, float radius, int slices = 10, int stacks = 10);
 			void static DrawLine(Vector3DFloat pt1, Vector3DFloat pt2);
 			virtual void SetSpacing(float spX, float spY, float spZ);
 			virtual float GetSpacingX();
@@ -219,7 +222,7 @@ namespace wustl_mm {
 			glPopMatrix();
 		}
 
-		void Renderer::DrawCylinder(Vector3DFloat pt1, Vector3DFloat pt2, float radius) {
+		void Renderer::DrawCylinder(Vector3DFloat pt1, Vector3DFloat pt2, float radius, int slices, int stacks) {
 			Vector3DFloat qmp = pt1-pt2;
 			float length = qmp.Length();
 			qmp.Normalize();			
@@ -232,7 +235,7 @@ namespace wustl_mm {
 			glRotatef(angle, axis.X(), axis.Y(), axis.Z());
 
 			GLUquadric * quadricCylinder = gluNewQuadric();
-			gluCylinder(quadricCylinder, radius, radius, length, 10, 10);
+			gluCylinder(quadricCylinder, radius, radius, length, slices, stacks);
 			gluDeleteQuadric(quadricCylinder);
 
 			glPopMatrix();

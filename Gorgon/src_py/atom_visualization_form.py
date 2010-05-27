@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.1  2010/05/26 20:58:10  ssa1
+#   Adding in display styles for atom rendering.
+#
 
 
 from PyQt4 import QtCore, QtGui
@@ -30,11 +33,11 @@ class AtomVisualizationForm(ModelVisualizationForm):
         self.connect(self.ui.radioButtonRibbon, QtCore.SIGNAL("toggled (bool)"), self.setDisplayStyle)
         self.connect(self.ui.radioButtonSideChain, QtCore.SIGNAL("toggled (bool)"), self.setDisplayStyle)
         self.connect(self.ui.checkBoxBoundingBox, QtCore.SIGNAL("toggled (bool)"), self.viewer.setBoundingBox)
-        self.connect(self.ui.checkBoxModelVisible, QtCore.SIGNAL("toggled (bool)"), self.viewer.setModelVisibility)
-        self.connect(self.ui.checkBoxModel2Visible, QtCore.SIGNAL("toggled (bool)"), self.viewer.setModel2Visibility)
         self.connect(self.ui.pushButtonBoundingBoxColor, QtCore.SIGNAL("colorChanged ()"), self.setBoundingBoxColor)        
-        self.connect(self.ui.pushButtonModelColor, QtCore.SIGNAL("colorChanged ()"), self.setModelColor)  
-        self.connect(self.ui.pushButtonModel2Color, QtCore.SIGNAL("colorChanged ()"), self.setModel2Color)  
+        self.connect(self.ui.pushButtonColor1, QtCore.SIGNAL("colorChanged ()"), self.setColor1)  
+        self.connect(self.ui.pushButtonColor2, QtCore.SIGNAL("colorChanged ()"), self.setColor2)  
+        self.connect(self.ui.pushButtonColor3, QtCore.SIGNAL("colorChanged ()"), self.setColor3)  
+        self.connect(self.ui.pushButtonColor4, QtCore.SIGNAL("colorChanged ()"), self.setColor4)  
         self.connect(self.ui.pushButtonCenter, QtCore.SIGNAL("pressed ()"), self.viewer.emitViewerSetCenterLocal)
         self.connect(self.ui.pushButtonClose, QtCore.SIGNAL("pressed ()"), self.viewer.unloadData)
         self.connect(self.ui.doubleSpinBoxSizeX, QtCore.SIGNAL("editingFinished ()"), self.scaleChanged)
@@ -43,18 +46,18 @@ class AtomVisualizationForm(ModelVisualizationForm):
         self.connect(self.ui.doubleSpinBoxLocationX, QtCore.SIGNAL("editingFinished ()"), self.locationChanged)
         self.connect(self.ui.doubleSpinBoxLocationY, QtCore.SIGNAL("editingFinished ()"), self.locationChanged)
         self.connect(self.ui.doubleSpinBoxLocationZ, QtCore.SIGNAL("editingFinished ()"), self.locationChanged)
+        self.connect(self.ui.checkBoxShowAtoms, QtCore.SIGNAL("toggled (bool)"), self.viewer.setAtomVisibility)
+        self.connect(self.ui.checkBoxShowBonds, QtCore.SIGNAL("toggled (bool)"), self.viewer.setBondVisibility)
         self.connect(self.ui.checkBoxShowHelices, QtCore.SIGNAL("toggled (bool)"), self.viewer.setHelixVisibility)
         self.connect(self.ui.checkBoxShowStrands, QtCore.SIGNAL("toggled (bool)"), self.viewer.setStrandVisibility)
         self.connect(self.ui.checkBoxShowLoops, QtCore.SIGNAL("toggled (bool)"), self.viewer.setLoopVisibility)
                                                  
         
     def updateFromViewer(self):
-        self.ui.pushButtonModelColor.setColor(self.viewer.getModelColor())
-        self.ui.pushButtonModel2Color.setColor(self.viewer.getModel2Color())
         self.ui.pushButtonBoundingBoxColor.setColor(self.viewer.getBoundingBoxColor())            
         self.ui.checkBoxBoundingBox.setChecked(self.viewer.showBox)    
-        self.ui.checkBoxModelVisible.setChecked(self.viewer.modelVisible)
-        self.ui.checkBoxModel2Visible.setChecked(self.viewer.model2Visible)
+        self.ui.checkBoxShowAtoms.setChecked(self.viewer.atomsVisible)
+        self.ui.checkBoxShowBonds.setChecked(self.viewer.bondsVisible)
         self.ui.checkBoxShowHelices.setChecked(self.viewer.helicesVisible)
         self.ui.checkBoxShowStrands.setChecked(self.viewer.strandsVisible)
         self.ui.checkBoxShowLoops.setChecked(self.viewer.loopsVisible)
@@ -65,6 +68,8 @@ class AtomVisualizationForm(ModelVisualizationForm):
             self.ui.radioButtonRibbon.setChecked(True)   
         else :
             self.ui.radioButtonSideChain.setChecked(True)   
+            
+        self.setDisplayStyle(None)
             
         self.ui.doubleSpinBoxSizeX.setValue(self.viewer.renderer.getSpacingX())   
         self.ui.doubleSpinBoxSizeY.setValue(self.viewer.renderer.getSpacingY())
@@ -88,10 +93,96 @@ class AtomVisualizationForm(ModelVisualizationForm):
        
     def setDisplayStyle(self, dummy):
         if(self.ui.radioButtonBackbone.isChecked()) :
-            displayStyle = self.viewer.DisplayStyleBackbone      
+            displayStyle = self.viewer.DisplayStyleBackbone            
+            self.ui.labelColor1.setText(self.tr('Atom color:'))
+            self.ui.labelColor2.setText(self.tr('Bond color:'))
+            self.ui.pushButtonColor1.setColor(self.viewer.getAtomColor())
+            self.ui.pushButtonColor2.setColor(self.viewer.getBondColor())            
+            self.ui.labelColor1.setVisible(True)
+            self.ui.labelColor2.setVisible(True)
+            self.ui.labelColor3.setVisible(False)
+            self.ui.labelColor4.setVisible(False)
+            self.ui.pushButtonColor1.setVisible(True)
+            self.ui.pushButtonColor2.setVisible(True)
+            self.ui.pushButtonColor3.setVisible(False)
+            self.ui.pushButtonColor4.setVisible(False)
+            self.ui.checkBoxShowAtoms.setVisible(True)
+            self.ui.checkBoxShowBonds.setVisible(True)
+                  
         elif(self.ui.radioButtonRibbon.isChecked()) :
-            displayStyle = self.viewer.DisplayStyleRibbon    
+            displayStyle = self.viewer.DisplayStyleRibbon
+            self.ui.labelColor1.setText(self.tr('Helix color:'))
+            self.ui.labelColor2.setText(self.tr('Strand color:'))
+            self.ui.labelColor3.setText(self.tr('Loop color:'))
+            self.ui.pushButtonColor1.setColor(self.viewer.getHelixColor())
+            self.ui.pushButtonColor2.setColor(self.viewer.getStrandColor())
+            self.ui.pushButtonColor3.setColor(self.viewer.getLoopColor())            
+            self.ui.labelColor1.setVisible(True)
+            self.ui.labelColor2.setVisible(True)
+            self.ui.labelColor3.setVisible(True)
+            self.ui.labelColor4.setVisible(False)
+            self.ui.pushButtonColor1.setVisible(True)
+            self.ui.pushButtonColor2.setVisible(True)
+            self.ui.pushButtonColor3.setVisible(True)
+            self.ui.pushButtonColor4.setVisible(False)
+            self.ui.checkBoxShowAtoms.setVisible(False)
+            self.ui.checkBoxShowBonds.setVisible(False)
+                
         elif(self.ui.radioButtonSideChain.isChecked()) :
             displayStyle = self.viewer.DisplayStyleSideChain
-        self.viewer.setDisplayStyle(displayStyle)
-                                                  
+
+            self.ui.labelColor1.setText(self.tr('Carbon color:'))
+            self.ui.labelColor2.setText(self.tr('Nitrogen color:'))
+            self.ui.labelColor3.setText(self.tr('Oxygen color:'))
+            self.ui.labelColor4.setText(self.tr('Sulphur color:'))
+            self.ui.pushButtonColor1.setColor(self.viewer.getCarbonColor())
+            self.ui.pushButtonColor2.setColor(self.viewer.getNitrogenColor())
+            self.ui.pushButtonColor3.setColor(self.viewer.getOxygenColor())                        
+            self.ui.pushButtonColor4.setColor(self.viewer.getSulphurColor())                        
+            self.ui.labelColor1.setVisible(True)
+            self.ui.labelColor2.setVisible(True)
+            self.ui.labelColor3.setVisible(True)
+            self.ui.labelColor4.setVisible(True)
+            self.ui.pushButtonColor1.setVisible(True)
+            self.ui.pushButtonColor2.setVisible(True)
+            self.ui.pushButtonColor3.setVisible(True)
+            self.ui.pushButtonColor4.setVisible(True)            
+            self.ui.checkBoxShowAtoms.setVisible(True)
+            self.ui.checkBoxShowBonds.setVisible(True)
+           
+        self.viewer.setDisplayStyle(displayStyle)        
+        
+        
+    def setColor1(self):
+        if(self.ui.radioButtonBackbone.isChecked()) :
+            self.viewer.setAtomColor(self.ui.pushButtonColor1.color())                              
+        elif(self.ui.radioButtonRibbon.isChecked()) :
+            self.viewer.setHelixColor(self.ui.pushButtonColor1.color())                
+        elif(self.ui.radioButtonSideChain.isChecked()) :
+            self.viewer.setCarbonColor(self.ui.pushButtonColor1.color())                                       
+
+    def setColor2(self):
+        if(self.ui.radioButtonBackbone.isChecked()) :
+            self.viewer.setBondColor(self.ui.pushButtonColor2.color())                              
+        elif(self.ui.radioButtonRibbon.isChecked()) :
+            self.viewer.setStrandColor(self.ui.pushButtonColor2.color())                
+        elif(self.ui.radioButtonSideChain.isChecked()) :
+            self.viewer.setNitrogenColor(self.ui.pushButtonColor2.color()) 
+                   
+    def setColor3(self):
+        if(self.ui.radioButtonBackbone.isChecked()) :
+            pass                              
+        elif(self.ui.radioButtonRibbon.isChecked()) :
+            self.viewer.setLoopColor(self.ui.pushButtonColor3.color())                
+        elif(self.ui.radioButtonSideChain.isChecked()) :
+            self.viewer.setOxygenColor(self.ui.pushButtonColor3.color()) 
+            
+    def setColor4(self):
+        if(self.ui.radioButtonBackbone.isChecked()) :
+            pass                              
+        elif(self.ui.radioButtonRibbon.isChecked()) :
+            pass                
+        elif(self.ui.radioButtonSideChain.isChecked()) :
+            self.viewer.setSulphurColor(self.ui.pushButtonColor4.color()) 
+
+                                                                                                                                                      

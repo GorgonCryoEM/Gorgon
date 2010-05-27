@@ -6,7 +6,7 @@
     <x>0</x>
     <y>0</y>
     <width>277</width>
-    <height>314</height>
+    <height>399</height>
    </rect>
   </property>
   <property name="sizePolicy" >
@@ -78,7 +78,7 @@
         </widget>
        </item>
        <item>
-        <layout class="QFormLayout" name="formLayout" >
+        <layout class="QGridLayout" name="gridLayout_2" >
          <item row="0" column="0" >
           <widget class="QCheckBox" name="checkBoxBoundingBox" >
            <property name="sizePolicy" >
@@ -109,23 +109,14 @@
           </widget>
          </item>
          <item row="1" column="0" >
-          <widget class="QCheckBox" name="checkBoxModelVisible" >
-           <property name="sizePolicy" >
-            <sizepolicy vsizetype="Fixed" hsizetype="Maximum" >
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
+          <widget class="QLabel" name="labelColor1" >
            <property name="text" >
-            <string>Show model colored:</string>
-           </property>
-           <property name="checked" >
-            <bool>true</bool>
+            <string>Color 1:</string>
            </property>
           </widget>
          </item>
          <item row="1" column="1" >
-          <widget class="ColoredPushButton" name="pushButtonModelColor" >
+          <widget class="ColoredPushButton" name="pushButtonColor1" >
            <property name="sizePolicy" >
             <sizepolicy vsizetype="Minimum" hsizetype="Minimum" >
              <horstretch>0</horstretch>
@@ -138,23 +129,54 @@
           </widget>
          </item>
          <item row="2" column="0" >
-          <widget class="QCheckBox" name="checkBoxModel2Visible" >
+          <widget class="QLabel" name="labelColor2" >
+           <property name="text" >
+            <string>Color 2:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1" >
+          <widget class="ColoredPushButton" name="pushButtonColor2" >
            <property name="sizePolicy" >
-            <sizepolicy vsizetype="Fixed" hsizetype="Maximum" >
+            <sizepolicy vsizetype="Minimum" hsizetype="Minimum" >
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
            <property name="text" >
-            <string>Show 2nd model colored:</string>
-           </property>
-           <property name="checked" >
-            <bool>true</bool>
+            <string/>
            </property>
           </widget>
          </item>
-         <item row="2" column="1" >
-          <widget class="ColoredPushButton" name="pushButtonModel2Color" >
+         <item row="3" column="0" >
+          <widget class="QLabel" name="labelColor3" >
+           <property name="text" >
+            <string>Color 3:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="1" >
+          <widget class="ColoredPushButton" name="pushButtonColor3" >
+           <property name="sizePolicy" >
+            <sizepolicy vsizetype="Minimum" hsizetype="Minimum" >
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text" >
+            <string/>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="0" >
+          <widget class="QLabel" name="labelColor4" >
+           <property name="text" >
+            <string>Color 4:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="1" >
+          <widget class="ColoredPushButton" name="pushButtonColor4" >
            <property name="sizePolicy" >
             <sizepolicy vsizetype="Minimum" hsizetype="Minimum" >
              <horstretch>0</horstretch>
@@ -179,8 +201,28 @@
          <property name="title" >
           <string>Show:</string>
          </property>
-         <layout class="QHBoxLayout" name="horizontalLayout" >
-          <item>
+         <layout class="QGridLayout" name="gridLayout" >
+          <item row="0" column="0" >
+           <widget class="QCheckBox" name="checkBoxShowAtoms" >
+            <property name="text" >
+             <string>Atoms</string>
+            </property>
+            <property name="checked" >
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1" >
+           <widget class="QCheckBox" name="checkBoxShowBonds" >
+            <property name="text" >
+             <string>Bonds</string>
+            </property>
+            <property name="checked" >
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0" >
            <widget class="QCheckBox" name="checkBoxShowHelices" >
             <property name="text" >
              <string>α-helices</string>
@@ -190,7 +232,7 @@
             </property>
            </widget>
           </item>
-          <item>
+          <item row="1" column="1" >
            <widget class="QCheckBox" name="checkBoxShowStrands" >
             <property name="text" >
              <string>β-strands</string>
@@ -200,7 +242,7 @@
             </property>
            </widget>
           </item>
-          <item>
+          <item row="1" column="2" >
            <widget class="QCheckBox" name="checkBoxShowLoops" >
             <property name="text" >
              <string>Loops</string>
@@ -542,10 +584,12 @@
   <tabstop>radioButtonSideChain</tabstop>
   <tabstop>checkBoxBoundingBox</tabstop>
   <tabstop>pushButtonBoundingBoxColor</tabstop>
-  <tabstop>checkBoxModelVisible</tabstop>
-  <tabstop>pushButtonModelColor</tabstop>
-  <tabstop>checkBoxModel2Visible</tabstop>
-  <tabstop>pushButtonModel2Color</tabstop>
+  <tabstop>pushButtonColor1</tabstop>
+  <tabstop>pushButtonColor2</tabstop>
+  <tabstop>pushButtonColor3</tabstop>
+  <tabstop>pushButtonColor4</tabstop>
+  <tabstop>checkBoxShowAtoms</tabstop>
+  <tabstop>checkBoxShowBonds</tabstop>
   <tabstop>checkBoxShowHelices</tabstop>
   <tabstop>checkBoxShowStrands</tabstop>
   <tabstop>checkBoxShowLoops</tabstop>
