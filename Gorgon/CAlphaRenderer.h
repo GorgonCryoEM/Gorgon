@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.46  2010/05/27 04:41:54  ssa1
+//   Side chain visualization on Gorgon
+//
 //   Revision 1.45  2010/05/26 20:17:35  ssa1
 //   Adding in display styles for atom rendering.
 //
@@ -184,11 +187,13 @@ namespace wustl_mm {
 		CAlphaRenderer::CAlphaRenderer() {
 			atoms.clear();
 			bonds.clear();
+			sidechainBonds.clear();
 		}
 
 		CAlphaRenderer::~CAlphaRenderer() {
 			atoms.clear();
 			bonds.clear();
+			sidechainBonds.clear();
 		}
 
 		PDBAtom * CAlphaRenderer::AddAtom(PDBAtom atom) {
@@ -635,6 +640,7 @@ namespace wustl_mm {
 		void CAlphaRenderer::Unload() {
 			atoms.clear();
 			bonds.clear();
+			sidechainBonds.clear();
 			UpdateBoundingBox();
 		}
 

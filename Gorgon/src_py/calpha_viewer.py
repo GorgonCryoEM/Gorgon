@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.49  2010/05/27 04:41:54  ssa1
+#   Side chain visualization on Gorgon
+#
 #   Revision 1.48  2010/05/26 21:53:21  ssa1
 #   Adding in display styles for atom rendering.
 #
@@ -270,12 +273,13 @@ class CAlphaViewer(BaseViewer):
         for chain in self.loadedChains:
             #Setting visibility of SSE atoms 
             for i, secel in chain.secelList.items():
-                for atomName in chain[i].getAtomNames():
-                    atom = chain[i].getAtom(atomName)
-                    if atom:
-                        atom.setVisible(atom.getVisible() and 
-                                        ((secel.type == "helix" and self.helicesVisible) or (secel.type == "strand" and self.strandsVisible)
-                                        or (secel.type == "loop" and self.loopsVisible)))
+                if i in chain:
+                    for atomName in chain[i].getAtomNames():
+                        atom = chain[i].getAtom(atomName)
+                        if atom:
+                            atom.setVisible(atom.getVisible() and 
+                                            ((secel.type == "helix" and self.helicesVisible) or (secel.type == "strand" and self.strandsVisible)
+                                            or (secel.type == "loop" and self.loopsVisible)))
                 
             
         
@@ -475,7 +479,6 @@ class CAlphaViewer(BaseViewer):
         for chain in self.loadedChains:
             del chain
             chain = None
-            
         BaseViewer.unloadData(self)
     
     def loadSeq(self):
