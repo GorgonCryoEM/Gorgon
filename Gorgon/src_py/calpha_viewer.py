@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.51  2010/05/27 05:14:08  ssa1
+#   Side chain visualization on Gorgon
+#
 #   Revision 1.50  2010/05/27 05:08:49  ssa1
 #   Side chain visualization on Gorgon
 #
@@ -276,7 +279,7 @@ class CAlphaViewer(BaseViewer):
         for chain in self.loadedChains:
             #Setting visibility of SSE atoms 
             for i, secel in chain.secelList.items():
-                if i in chain:
+                if i in chain.residueList: 
                     for atomName in chain[i].getAtomNames():
                         atom = chain[i].getAtom(atomName)
                         if atom:
