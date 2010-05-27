@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.48  2010/05/26 21:53:21  ssa1
+#   Adding in display styles for atom rendering.
+#
 #   Revision 1.47  2010/05/26 20:17:35  ssa1
 #   Adding in display styles for atom rendering.
 #
@@ -427,6 +430,7 @@ class CAlphaViewer(BaseViewer):
             mychain.setViewer(self)
             #Chain.setSelectedChainKey(mychain.getIDs())
             mychain.addCalphaBonds()
+            mychain.addSideChainBonds()
             renderer = self.renderer
             for i in mychain.residueRange():
                 for atomName in mychain[i].getAtomNames():

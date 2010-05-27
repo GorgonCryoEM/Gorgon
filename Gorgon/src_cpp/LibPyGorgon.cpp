@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.76  2010/05/26 20:17:35  ssa1
+//   Adding in display styles for atom rendering.
+//
 //   Revision 1.75  2010/05/21 15:45:16  ssa1
 //   Flexible fitting implemented in Gorgon
 //
@@ -665,6 +668,11 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("getBondIndex", &CAlphaRenderer::GetBondIndex)		
 		.def("getBondCount", &CAlphaRenderer::GetBondCount)
 		.def("deleteBond", &CAlphaRenderer::DeleteBond)		
+		.def("addSideChainBond", &CAlphaRenderer::AddSideChainBond)
+		.def("getSideChainBond", &CAlphaRenderer::GetSideChainBond, return_value_policy<reference_existing_object>())
+		.def("getSideChainBondIndex", &CAlphaRenderer::GetSideChainBondIndex)		
+		.def("getSideChainBondCount", &CAlphaRenderer::GetSideChainBondCount)
+		.def("deleteSideChainBond", &CAlphaRenderer::DeleteSideChainBond)		
 		.def("setSpacing", &CAlphaRenderer::SetSpacing)
 		.def("getSpacingX", &CAlphaRenderer::GetSpacingX)
 		.def("getSpacingY", &CAlphaRenderer::GetSpacingY)

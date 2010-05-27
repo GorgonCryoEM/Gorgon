@@ -26,6 +26,30 @@ class Chain(baseClass):
 Chain objects represent single polypeptide chains, which are sequences
 of Residue objects
   '''
+  
+  sideChainConnectivity = {
+        'ALA':[['N','CA'], ['CA','C'], ['C','O'], ['CA', 'CB']],
+        'ARG':[['N','CA'], ['CA','C'], ['C','O'], ['CA', 'CB'], ['CB', 'CG'], ['CG', 'CD'], ['CD', 'NE'], ['NE', 'CZ'], ['CZ', 'NH1'], ['CZ', 'NH2']],
+        'ASP':[['N','CA'], ['CA','C'], ['C','O'], ['CA', 'CB'], ['CB', 'CG'], ['CG', 'OD1'], ['CG', 'OD2']],
+        'ASN':[['N','CA'], ['CA','C'], ['C','O'], ['CA', 'CB'], ['CB', 'CG'], ['CG', 'OD1'], ['CG', 'ND2']],
+        'CYS':[['N','CA'], ['CA','C'], ['C','O'], ['CA', 'CB'], ['CB', 'SG']],
+        'GLY':[['N','CA'], ['CA','C'], ['C','O']],
+        'GLN':[['N','CA'], ['CA','C'], ['C','O'], ['CA', 'CB'], ['CB', 'CG'], ['CG', 'CD'], ['CD', 'NE2'], ['CD', 'OE1']],
+        'GLU':[['N','CA'], ['CA','C'], ['C','O'], ['CA', 'CB'], ['CB', 'CG'], ['CG', 'CD'], ['CD', 'OE1'], ['CD', 'OE2']],
+        'HIS':[['N','CA'], ['CA','C'], ['C','O'], ['CA', 'CB'], ['CB', 'CG'], ['CG', 'CD2'], ['CD2', 'NE2'], ['NE2', 'CE1'], ['CG','ND1'], ['ND1','CE1']],
+        'ILE':[['N','CA'], ['CA','C'], ['C','O'], ['CA', 'CB'], ['CB', 'CG1'], ['CG1', 'CD1'], ['CB', 'CG2']],
+        'LEU':[['N','CA'], ['CA','C'], ['C','O'], ['CA', 'CB'], ['CB', 'CG'], ['CG', 'CD1'], ['CG', 'CD2']],
+        'LYS':[['N','CA'], ['CA','C'], ['C','O'], ['CA', 'CB'], ['CB', 'CG'], ['CG', 'CD'], ['CD', 'CE'], ['CE', 'NZ']],
+        'MET':[['N','CA'], ['CA','C'], ['C','O'], ['CA', 'CB'], ['CB', 'CG'], ['CG', 'SD'], ['SD', 'CE']],
+        'PHE':[['N','CA'], ['CA','C'], ['C','O'], ['CA', 'CB'], ['CB', 'CG'], ['CG', 'CD1'], ['CG', 'CD2'], ['CD1', 'CE1'], ['CD2', 'CE2'], ['CE1', 'CZ'], ['CE2', 'CZ']],
+        'PRO':[['N','CA'], ['CA','C'], ['C','O'], ['CA', 'CB'], ['CB', 'CG'], ['CG', 'CD'], ['CD', 'N']],
+        'SER':[['N','CA'], ['CA','C'], ['C','O'], ['CA', 'CB'], ['CB', 'OG']],
+        'THR':[['N','CA'], ['CA','C'], ['C','O'], ['CA', 'CB'], ['CB', 'OG1'], ['CB', 'CG2']],
+        'TRP':[['N','CA'], ['CA','C'], ['C','O'], ['CA', 'CB'], ['CB', 'CG'], ['CG', 'CD1'], ['CG', 'CD2'], ['CD1', 'NE1'], ['NE1', 'CE2'], ['CD2', 'CE2'], ['CD2', 'CE3'], ['CE3', 'CZ3'], ['CZ3', 'CH2'], ['CH2', 'CZ2'], ['CE2', 'CZ2']],
+        'TYR':[['N','CA'], ['CA','C'], ['C','O'], ['CA', 'CB'], ['CB', 'CG'], ['CG', 'CD1'], ['CG', 'CD2'], ['CD1', 'CE1'], ['CD2', 'CE2'], ['CE1', 'CZ'], ['CE2', 'CZ'], ['CZ', 'OH']],
+        'VAL':[['N','CA'], ['CA','C'], ['C','O'], ['CA', 'CB'], ['CB', 'CG1'], ['CB', 'CG2']]
+        }
+      
   chainsDict = {}
   __lastAuto_pdbID = 0
   #__selectedChainKey = None
@@ -574,6 +598,35 @@ residue.
             bond.setAtom1Ix(atom1.getHashKey())
             viewer.renderer.addBond(bond)
             cnt = cnt + 1
+            
+  def addSideChainBonds(self):
+    cnt = 0
+    try: 
+        viewer = Chain.getViewer()
+    except:
+        print 'Error: No viewer is set for Chain!'
+        return
+    for i in self.residueRange():
+        if self[i].symbol3 in self.sideChainConnectivity:
+            for j in range(len(self.sideChainConnectivity[self[i].symbol3])):
+                atom0 = self[i].getAtom(self.sideChainConnectivity[self[i].symbol3][j][0])
+                atom1 = self[i].getAtom(self.sideChainConnectivity[self[i].symbol3][j][1])
+                if atom0 and atom1 :
+                    bond = PDBBond()
+                    bond.setAtom0Ix(atom0.getHashKey())
+                    bond.setAtom1Ix(atom1.getHashKey())
+                    viewer.renderer.addSideChainBond(bond)
+        # Connecting the C of this residue to the N of the next residue
+        if i+1 in self.residueRange():
+            atom0 = self[i].getAtom('C')
+            atom1 = self[i+1].getAtom('N')
+            if atom0 and atom1 :
+                bond = PDBBond()
+                bond.setAtom0Ix(atom0.getHashKey())
+                bond.setAtom1Ix(atom1.getHashKey())
+                viewer.renderer.addSideChainBond(bond)
+            
+                                  
     
 
   def addSecel(self, secel):
