@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.50  2010/05/27 05:08:49  ssa1
+#   Side chain visualization on Gorgon
+#
 #   Revision 1.49  2010/05/27 04:41:54  ssa1
 #   Side chain visualization on Gorgon
 #
@@ -479,6 +482,7 @@ class CAlphaViewer(BaseViewer):
         for chain in self.loadedChains:
             del chain
             chain = None
+        self.loadedChains = []
         BaseViewer.unloadData(self)
     
     def loadSeq(self):
