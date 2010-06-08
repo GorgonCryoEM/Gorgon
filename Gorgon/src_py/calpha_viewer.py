@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.58  2010/06/08 22:00:03  ssa1
+#   Fixing performance issue where changing color took time.
+#
 #   Revision 1.57  2010/06/08 19:41:42  ssa1
 #   Fixing bug where the bond joints are visible even when bonds are not
 #
@@ -578,7 +581,7 @@ class CAlphaViewer(BaseViewer):
                     if atom:
                         atom = renderer.addAtom(atom)
                         mychain[i].addAtomObject(atom)
-               
+                                       
         self.fileName = QtGui.QFileDialog.getOpenFileName(self, self.tr("Open Data"), "", 
                             self.tr('Atom Positions (*.pdb)\nFASTA (*.fas *.fa *.fasta)'))
         fileNameTemp = self.fileName

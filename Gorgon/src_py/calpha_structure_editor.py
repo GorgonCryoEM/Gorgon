@@ -13,6 +13,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.15  2009/12/27 02:42:10  ssa1
+#   Fixing interactive loop placement bugs
+#
 #   Revision 1.14  2009/12/24 23:38:37  ssa1
 #   Making Sequence dock behave similar to the other docked windows
 #
@@ -755,6 +758,14 @@ be the current residue for the atomic editor.
         else :
             self.loopStartSpinBox.setValue(0)
             self.loopStopSpinBox.setValue(0)            
+
+    def setHelixEditorValues(self, newSelection):
+        if(newSelection):
+            self.helixNtermSpinBox.setValue(newSelection[0])
+            self.helixCtermSpinBox.setValue(newSelection[-1])
+        else :
+            self.helixNtermSpinBox.setValue(0)
+            self.helixCtermSpinBox.setValue(0)
     
     def updateLoopEditorEnables(self):
         volumeViewer = self.app.viewers['volume']
@@ -1142,6 +1153,7 @@ position editor.
         """
         selection = self.currentChainModel.getSelection()
         self.setLoopEditorValues(selection)
+        self.setHelixEditorValues(selection)
         self.setResidues(selection)
         self.posUpdateValues()
         
