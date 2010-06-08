@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.64  2010/05/26 20:17:35  ssa1
+#   Adding in display styles for atom rendering.
+#
 #   Revision 1.63  2010/04/04 19:05:54  ssa1
 #   Fixing misc bugs, and redoing sheet visualization mechanism
 #
@@ -157,7 +160,7 @@ class BaseViewer(QtOpenGL.QGLWidget):
         self.connect(self, QtCore.SIGNAL("modelLoaded()"), self.modelChanged) 
         self.connect(self, QtCore.SIGNAL("modelUnloaded()"), self.modelChanged) 
         self.connect(self.app.themes, QtCore.SIGNAL("themeChanged()"), self.themeChanged)           
-        self.gllist = 0
+        self.glLists = []
         self.showBox = False
         self.twoWayLighting = False
         
@@ -237,10 +240,20 @@ class BaseViewer(QtOpenGL.QGLWidget):
     def getBoundingBoxColor(self):
         return self.app.themes.getColor(self.title + ":" + "BoundingBox" )
 
-    def setBoundingBoxColor(self, color):
-        self.app.themes.addColor(self.title + ":" + "BoundingBox", color)
+    def repaintCamera2(self, oldColor, newColor):
+        if((oldColor.alpha() == 255 and newColor.alpha() != 255) or (oldColor.alpha() != 255 and newColor.alpha() == 255)):
+            self.emitModelChanged()
+        else:        
+            self.repaintCamera()
+                
+    def repaintCamera(self):
         if(hasattr(self.app, "mainCamera")) :
             self.app.mainCamera.updateGL()
+        
+
+    def setBoundingBoxColor(self, color):
+        self.app.themes.addColor(self.title + ":" + "BoundingBox", color)
+        self.repaintCamera()
 
     def setDisplayStyle(self, style):
         self.displayStyle = style
@@ -249,18 +262,18 @@ class BaseViewer(QtOpenGL.QGLWidget):
 
     def setModelVisibility(self, visible):
         self.modelVisible = visible
-        self.emitModelChanged()
+        self.repaintCamera()
 
     def setModel2Visibility(self, visible):
         self.model2Visible = visible
-        self.emitModelChanged()
+        self.repaintCamera()
         
     def setModel3Visibility(self, visible):
         self.model3Visible = visible
-        self.emitModelChanged()
+        self.repaintCamera()
         
     def getModelColor(self):
-        return self.app.themes.getColor(self.title + ":" + "Model:0" )
+        return self.app.themes.getColor(self.title + ":" + "Model:0" )    
 
     def getModel2Color(self):
         return self.app.themes.getColor(self.title + ":" + "Model:1" )
@@ -269,16 +282,19 @@ class BaseViewer(QtOpenGL.QGLWidget):
         return self.app.themes.getColor(self.title + ":" + "Model:2" )
     
     def setModelColor(self, color):
+        oldColor = self.getModelColor()            
         self.app.themes.addColor(self.title + ":" + "Model:0", color)
-        self.emitModelChanged()
+        self.repaintCamera2(oldColor, color)
 
     def setModel2Color(self, color):
+        oldColor = self.getModel2Color()            
         self.app.themes.addColor(self.title + ":" + "Model:1", color)
-        self.emitModelChanged()
+        self.repaintCamera2(oldColor, color)
 
     def setModel3Color(self, color):
+        oldColor = self.getModel3Color()                    
         self.app.themes.addColor(self.title + ":" + "Model:2", color)
-        self.emitModelChanged()
+        self.repaintCamera2(oldColor, color)
 
     def setMaterials(self, color):
         glColor4f(color.redF(), color.greenF(), color.blueF(), color.alphaF())
@@ -412,13 +428,19 @@ class BaseViewer(QtOpenGL.QGLWidget):
         
         self.emitDrawingModel()                
         
-        if (self.gllist != 0):          
-            self.initializeGLDisplayType()            
-            glCallList(self.gllist)
-            self.unInitializeGLDisplayType();
+        visibility = self.getDrawVisibility()
+        colors = self.getDrawColors()
+                
+        for i in range(len(self.glLists)):
+            if(self.loaded and visibility[i]):
+                self.setMaterials(colors[i])
+                self.initializeGLDisplayType()            
+                glCallList(self.glLists[i])
+                self.unInitializeGLDisplayType();
 
         glPopAttrib()
         glPopMatrix()
+        
             
     def loadDataFromFile(self, fileName):
         self.setCursor(QtCore.Qt.WaitCursor)
@@ -463,24 +485,33 @@ class BaseViewer(QtOpenGL.QGLWidget):
         
     def extraDrawingRoutines(self):
         pass
+    
+    def getDrawColors(self):
+        return [self.getModelColor(),  self.getModel2Color(), self.getModel3Color()]
+    
+    def getDrawVisibility(self):
+        return [self.modelVisible, self.model2Visible, self.model3Visible]
         
+
     def modelChanged(self):
         self.updateActionsAndMenus()
-        if self.gllist != 0:
-            glDeleteLists(self.gllist,1)
+        for list in self.glLists:
+            glDeleteLists(list,1)
+        self.glLists = []
             
-        self.gllist = glGenLists(1)
-        glNewList(self.gllist, GL_COMPILE)
-        visibility = [self.modelVisible, self.model2Visible, self.model3Visible]
-        colors = [self.getModelColor(),  self.getModel2Color(), self.getModel3Color()]
+        visibility = self.getDrawVisibility()
+        colors = self.getDrawColors()
         
         glPushAttrib(GL_LIGHTING_BIT | GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT)
                          
         self.extraDrawingRoutines()
         
-        for i in range(3):
-            if(self.loaded and visibility[i]):
-                self.setMaterials(colors[i])
+        if(self.loaded):
+            for i in range(3):
+                list = glGenLists(1)
+                glNewList(list, GL_COMPILE)
+                self.glLists.append(list)
+
                 if(colors[i].alpha() < 255):
                     glDepthFunc(GL_LESS)        
                     glColorMask(False, False, False, False)
@@ -490,12 +521,42 @@ class BaseViewer(QtOpenGL.QGLWidget):
                     self.renderer.draw(i, self.selectEnabled or self.mouseMoveEnabled)
                 else:
                     self.renderer.draw(i, self.selectEnabled or self.mouseMoveEnabled)                    
-                            
-        
-
+                glEndList()         
+                                    
         glPopAttrib()
 
-        glEndList() 
+#    def modelChanged(self):
+#        self.updateActionsAndMenus()
+#        if self.gllist != 0:
+#            glDeleteLists(self.gllist,1)
+#            
+#        self.gllist = glGenLists(1)
+#        glNewList(self.gllist, GL_COMPILE)
+#        visibility = [self.modelVisible, self.model2Visible, self.model3Visible]
+#        colors = [self.getModelColor(),  self.getModel2Color(), self.getModel3Color()]
+#        
+#        glPushAttrib(GL_LIGHTING_BIT | GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT)
+#                         
+#        self.extraDrawingRoutines()
+#        
+#        for i in range(3):
+#            if(self.loaded and visibility[i]):
+#                self.setMaterials(colors[i])
+#                if(colors[i].alpha() < 255):
+#                    glDepthFunc(GL_LESS)        
+#                    glColorMask(False, False, False, False)
+#                    self.renderer.draw(i, False)
+#                    glDepthFunc(GL_LEQUAL)
+#                    glColorMask(True, True, True, True) 
+#                    self.renderer.draw(i, self.selectEnabled or self.mouseMoveEnabled)
+#                else:
+#                    self.renderer.draw(i, self.selectEnabled or self.mouseMoveEnabled)                    
+#                            
+#        
+#
+#        glPopAttrib()
+#
+#        glEndList() 
         
     def getClickCoordinates(self, hitStack):
         hits = [-1,-1,-1,-1,-1]
