@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.18  2010/05/26 20:44:19  ssa1
+//   Fixing macos build errors
+//
 //   Revision 1.17  2010/05/20 21:55:53  ssa1
 //   Rigid body alignment based on largest flexible cluster
 //
@@ -590,7 +593,10 @@ namespace wustl_mm {
 					timeManager.PauseStopWatch(cleaningWatch);
 					if(printOutput) {
 						//printf("(*After cleaning*)\n");
-						currentNode->PrintSolution(nodes, useDirection);							
+						currentNode->PrintSolution(nodes, useDirection);		
+						#ifdef _WIN32
+							flushall();
+						#endif
 					}					
 					
 					correspondence.push_back(currentNode->GetSolution(nodes));				

@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.57  2010/06/08 19:41:42  ssa1
+#   Fixing bug where the bond joints are visible even when bonds are not
+#
 #   Revision 1.55  2010/05/27 18:28:46  ssa1
 #   Better color control for all atom visualization
 #
@@ -270,39 +273,30 @@ class CAlphaViewer(BaseViewer):
             self.setAtomColorsAndVisibility(self.displayStyle)
             self.emitModelChanged()
 
-    # Overridden
-    def modelChanged(self):
-        self.updateActionsAndMenus()
-        if self.gllist != 0:
-            glDeleteLists(self.gllist,1)
-            
-        self.gllist = glGenLists(1)
-        glNewList(self.gllist, GL_COMPILE)
+    #Overridden
+    def getDrawColors(self):
         if(self.displayStyle == self.DisplayStyleBackbone):
-            visibility = [self.atomsVisible, self.bondsVisible, not self.atomsVisible]
             colors = [self.getAtomColor(),  self.getBondColor(), self.getBondColor()]
         elif (self.displayStyle == self.DisplayStyleRibbon):
-            visibility = [self.helicesVisible, self.strandsVisible, self.loopsVisible]
             colors = [self.getHelixColor(),  self.getStrandColor(), self.getLoopColor()]
         elif (self.displayStyle == self.DisplayStyleSideChain):
-            visibility = [self.atomsVisible, self.bondsVisible, self.bondsVisible and (not self.atomsVisible)]
             colors = [self.getAtomColor(),  self.getBondColor(), self.getAtomColor()]
         else:
-            visibility = [False, False, False]
             colors = [None, None, None]
-                                
-        glPushAttrib(GL_LIGHTING_BIT | GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT)
-                         
-        self.extraDrawingRoutines()
-        
-        for i in range(3):
-            if(self.loaded and visibility[i]):
-                self.setMaterials(colors[i])
-                self.renderer.draw(i, self.selectEnabled or self.mouseMoveEnabled)                                                        
-
-        glPopAttrib()
-
-        glEndList()             
+        return colors
+    
+    # Overridden
+    def getDrawVisibility(self):
+        if(self.displayStyle == self.DisplayStyleBackbone):
+            visibility = [self.atomsVisible, self.bondsVisible, self.bondsVisible and (not self.atomsVisible)]
+        elif (self.displayStyle == self.DisplayStyleRibbon):
+            visibility = [self.helicesVisible, self.strandsVisible, self.loopsVisible]
+        elif (self.displayStyle == self.DisplayStyleSideChain):
+            visibility = [self.atomsVisible, self.bondsVisible, self.bondsVisible and (not self.atomsVisible)]
+        else:
+            visibility = [False, False, False]        
+        return visibility
+          
 
     def setAtomColorsAndVisibility(self, displayStyle):        
         if displayStyle == self.DisplayStyleBackbone:
@@ -352,21 +346,25 @@ class CAlphaViewer(BaseViewer):
         self.emitModelChanged()
         
     def setBondColor(self, color):
+        oldColor = self.getBondColor()
         self.app.themes.addColor(self.title + ":" + "Bond", color)
-        self.emitModelChanged()
-        
+        self.repaintCamera2(oldColor, color)
+                
     def setHelixColor(self, color):
+        oldColor = self.getHelixColor()
         self.app.themes.addColor(self.title + ":" + "Helix", color)
-        self.emitModelChanged()
-        
+        self.repaintCamera2(oldColor, color)
+                
     def setStrandColor(self, color):
+        oldColor = self.getStrandColor()
         self.app.themes.addColor(self.title + ":" + "Strand", color)
-        self.emitModelChanged()
-        
+        self.repaintCamera2(oldColor, color)
+                
     def setLoopColor(self, color):
+        oldColor = self.getLoopColor()
         self.app.themes.addColor(self.title + ":" + "Loop", color)
-        self.emitModelChanged()
-        
+        self.repaintCamera2(oldColor, color)
+                
     def setCarbonColor(self, color):
         self.app.themes.addColor(self.title + ":" + "Carbon", color)
         self.setSpecificAtomColor('C', color)
@@ -416,11 +414,11 @@ class CAlphaViewer(BaseViewer):
             
     def setAtomVisibility(self, visible):
         self.atomsVisible = visible
-        self.emitModelChanged()
+        self.repaintCamera()
     
     def setBondVisibility(self, visible):
         self.bondsVisible = visible
-        self.emitModelChanged()
+        self.repaintCamera()
         
     def setHelixVisibility(self, visible):
         self.helicesVisible = visible

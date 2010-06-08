@@ -106,7 +106,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="$(SolutionDir);$(SolutionDir)\ExternalLibraries;$(SolutionDir)\ExternalLibraries\GL;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)&quot;;&quot;$(SolutionDir)\ExternalLibraries&quot;;&quot;$(SolutionDir)\ExternalLibraries\GL&quot;;C:\_WashU\ssa1\source\ExternalLibraries\boost_1_34_1"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"

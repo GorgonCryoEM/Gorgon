@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.19  2010/04/27 21:10:17  ssa1
+//   Implementing Cost-matrix based SSE Registration and performance optimizations on graph construction
+//
 //   Revision 1.18  2010/04/27 17:30:54  ssa1
 //   SSE Registration search by first finding all cliques, and then finding the matching.
 //
@@ -81,6 +84,7 @@ namespace wustl_mm {
 
 		const int DO_NOTHING = -1;
 		const int DO_SIMPLIFY = 1;
+
 
 
 		void DisplayInputFormat(int function) {
