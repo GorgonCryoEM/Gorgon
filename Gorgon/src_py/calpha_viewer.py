@@ -285,7 +285,7 @@ class CAlphaViewer(BaseViewer):
             visibility = [self.helicesVisible, self.strandsVisible, self.loopsVisible]
             colors = [self.getHelixColor(),  self.getStrandColor(), self.getLoopColor()]
         elif (self.displayStyle == self.DisplayStyleSideChain):
-            visibility = [self.atomsVisible, self.bondsVisible, (not self.atomsVisible) and self.bondsVisible]
+            visibility = [self.atomsVisible, self.bondsVisible, self.bondsVisible and (not self.atomsVisible)]
             colors = [self.getAtomColor(),  self.getBondColor(), self.getAtomColor()]
         else:
             visibility = [False, False, False]
@@ -309,47 +309,7 @@ class CAlphaViewer(BaseViewer):
             self.setAllAtomColor(self.getAtomColor())            
         elif displayStyle == self.DisplayStyleRibbon:
             #Pass into c++ layer all data needed to draw ribbon diagram here!
-            print "loaded chains:", len(self.loadedChains)
-            self.renderer.cleanSecondaryStructures() #makes sure we don't have multiple structures loaded, or multiple copies of the same structure
-            for chain in self.loadedChains:
-                print "helices in chain: ", len(filter(lambda x: x.type == "helix", chain.secelList.values()))
-                print "strands in chain: ", len(filter(lambda x: x.type == "strand", chain.secelList.values()))
-                print "loops in chain: ", len(filter(lambda x: x.type == "loop", chain.secelList.values()))
-                lastType = ""  #attempt to make contiguous types be stored as one large secel
-                secelix = 0
-                helColor = self.getHelixColor()
-                strandColor = self.getStrandColor()
-                loopColor = self.getLoopColor()
-                for i, secel in chain.secelList.items():
-                    #print len(chain.secelList.items())
-                    #print i
-                    #print secel
-                    #print secel.type
-                    if secel.type == "helix" and lastType != "helix":
-                        secelix = self.renderer.startHelix()
-                        lastType = "helix"
-                    elif secel.type == "strand" and lastType != "strand":
-                        secelix = self.renderer.startStrand()
-                        lastType = "strand"
-                    elif secel.type == "loop" and lastType != "loop":
-                        secelix = self.renderer.startLoop()
-                        lastType = "loop"
-                    if i in chain.residueList: 
-                        #print "atoms in residue list: ", len(chain[i].getAtomNames())
-                        for atomName in chain[i].getAtomNames():
-                            if atomName == "CA":
-                                atom = chain[i].getAtom(atomName)
-                                if atom:
-                                    if secel.type == "helix":
-                                        atom.setColor(helColor.redF(), helColor.greenF(), helColor.blueF(), helColor.alphaF())
-                                        self.renderer.addHelixElement(secelix, atom.getHashKey())
-                                    if secel.type == "strand":
-                                        atom.setColor(strandColor.redF(), strandColor.greenF(), strandColor.blueF(), strandColor.alphaF()) 
-                                        self.renderer.addStrandElement(secelix, atom.getHashKey())
-                                    if secel.type == "loop":
-                                        atom.setColor(loopColor.redF(), loopColor.greenF(), loopColor.blueF(), loopColor.alphaF()) 
-                                        self.renderer.addLoopElement(secelix, atom.getHashKey())
-
+            pass
         elif displayStyle == self.DisplayStyleSideChain:
             self.setSpecificAtomColor('C', self.getCarbonColor())
             self.setSpecificAtomColor('N', self.getNitrogenColor())
