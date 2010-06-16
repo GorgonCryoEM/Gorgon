@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_dialog_calpha_flexible_fitting.ui'
 #
-# Created: Fri May 21 11:31:22 2010
+# Created: Wed Jun 16 10:52:20 2010
 #      by: PyQt4 UI code generator 4.4.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -49,7 +49,7 @@ class Ui_DialogCAlphaFlexibleFitting(object):
         self.formLayout.setWidget(0, QtGui.QFormLayout.LabelRole, self.labelJointAngleThreshold)
         self.spinBoxJointAngleThreshold = QtGui.QSpinBox(self.groupBoxAdvancedSettings)
         self.spinBoxJointAngleThreshold.setMaximum(180)
-        self.spinBoxJointAngleThreshold.setProperty("value", QtCore.QVariant(15))
+        self.spinBoxJointAngleThreshold.setProperty("value", QtCore.QVariant(30))
         self.spinBoxJointAngleThreshold.setObjectName("spinBoxJointAngleThreshold")
         self.formLayout.setWidget(0, QtGui.QFormLayout.FieldRole, self.spinBoxJointAngleThreshold)
         self.labelJointAngleThreshold_2 = QtGui.QLabel(self.groupBoxAdvancedSettings)
@@ -57,7 +57,7 @@ class Ui_DialogCAlphaFlexibleFitting(object):
         self.formLayout.setWidget(1, QtGui.QFormLayout.LabelRole, self.labelJointAngleThreshold_2)
         self.spinBoxDihedralAngleThreshold = QtGui.QSpinBox(self.groupBoxAdvancedSettings)
         self.spinBoxDihedralAngleThreshold.setMaximum(180)
-        self.spinBoxDihedralAngleThreshold.setProperty("value", QtCore.QVariant(15))
+        self.spinBoxDihedralAngleThreshold.setProperty("value", QtCore.QVariant(30))
         self.spinBoxDihedralAngleThreshold.setObjectName("spinBoxDihedralAngleThreshold")
         self.formLayout.setWidget(1, QtGui.QFormLayout.FieldRole, self.spinBoxDihedralAngleThreshold)
         self.labelJointAngleThreshold_3 = QtGui.QLabel(self.groupBoxAdvancedSettings)
@@ -65,7 +65,7 @@ class Ui_DialogCAlphaFlexibleFitting(object):
         self.formLayout.setWidget(2, QtGui.QFormLayout.LabelRole, self.labelJointAngleThreshold_3)
         self.spinBoxHelixLengthThreshold = QtGui.QSpinBox(self.groupBoxAdvancedSettings)
         self.spinBoxHelixLengthThreshold.setMaximum(50)
-        self.spinBoxHelixLengthThreshold.setProperty("value", QtCore.QVariant(5))
+        self.spinBoxHelixLengthThreshold.setProperty("value", QtCore.QVariant(10))
         self.spinBoxHelixLengthThreshold.setObjectName("spinBoxHelixLengthThreshold")
         self.formLayout.setWidget(2, QtGui.QFormLayout.FieldRole, self.spinBoxHelixLengthThreshold)
         self.labelJointAngleThreshold_4 = QtGui.QLabel(self.groupBoxAdvancedSettings)
