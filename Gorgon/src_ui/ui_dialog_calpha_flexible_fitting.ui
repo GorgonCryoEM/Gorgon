@@ -104,7 +104,7 @@
          <number>180</number>
         </property>
         <property name="value" >
-         <number>15</number>
+         <number>30</number>
         </property>
        </widget>
       </item>
@@ -130,7 +130,7 @@
          <number>180</number>
         </property>
         <property name="value" >
-         <number>15</number>
+         <number>30</number>
         </property>
        </widget>
       </item>
@@ -156,7 +156,7 @@
          <number>50</number>
         </property>
         <property name="value" >
-         <number>5</number>
+         <number>10</number>
         </property>
        </widget>
       </item>
