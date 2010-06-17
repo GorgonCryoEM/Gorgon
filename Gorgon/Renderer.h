@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.32  2010/05/27 17:10:19  ssa1
+//   Better color control for all atom visualization
+//
 //   Revision 1.31  2010/05/27 04:41:54  ssa1
 //   Side chain visualization on Gorgon
 //
@@ -88,6 +91,7 @@ namespace wustl_mm {
 			virtual float GetOriginY();
 			virtual float GetOriginZ();
 			virtual void SetDisplayStyle(int style);
+			virtual void SetObjectSpecificColoring(bool objectSpecific);
 
 			float GetMin(int dimension);
 			float GetMax(int dimension);
@@ -104,6 +108,7 @@ namespace wustl_mm {
 			GLUquadric * quadricSphere;
 			GLUquadric * quadricCylinder;
 			int displayStyle;
+			bool isObjectSpecificColoring;
 		};
 
 		Renderer::Renderer() {
@@ -112,6 +117,7 @@ namespace wustl_mm {
 			selected = false;
 			quadricSphere = gluNewQuadric();
 			quadricCylinder = gluNewQuadric();
+			isObjectSpecificColoring = false;
 
 		}
 
@@ -129,6 +135,10 @@ namespace wustl_mm {
 		}
 
 		void Renderer::Draw(int subSceneIndex, bool selectEnabled) { 
+		}
+
+		void Renderer::SetObjectSpecificColoring(bool objectSpecific) {
+			isObjectSpecificColoring = objectSpecific;
 		}
 
 		void Renderer::DrawBoundingBox() {

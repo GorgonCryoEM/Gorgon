@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.43  2010/05/20 21:55:53  ssa1
+//   Rigid body alignment based on largest flexible cluster
+//
 //   Revision 1.42  2010/04/04 19:05:51  ssa1
 //   Fixing misc bugs, and redoing sheet visualization mechanism
 //
@@ -147,7 +150,6 @@ namespace wustl_mm {
 			string GetSupportedSheetSaveFileFormats();
 			Vector3DFloat Get3DCoordinates(int subsceneIndex, int ix0, int ix1 = -1, int ix2 = -1, int ix3 = -1, int ix4 = -1);
 			void FitSelectedSSEs(Volume * vol);
-			void SetSSESpecificColoring(bool isSSESpecific);
 			void RemoveSelectedSSEs();
 			int GetHelixCount();
 			Vector3DFloat GetHelixCorner(int helixIx, int cornerIx);
@@ -168,7 +170,6 @@ namespace wustl_mm {
 			bool selectedSheets[256];
 			bool selectedGraphSheets[256];
 			vector<Vector3DFloat> tempSSEPoints;
-			bool isSSESpecificColoring;
 		};
 
 
@@ -178,8 +179,6 @@ namespace wustl_mm {
 			graphSheetMesh = NULL;
 			sheetCount = 0;
 			graphSheetCount = 0;
-
-			isSSESpecificColoring = false;
 		}
 
 		SSERenderer::~SSERenderer() {
@@ -194,10 +193,6 @@ namespace wustl_mm {
 			}
 		}
 		
-		void SSERenderer::SetSSESpecificColoring(bool isSSESpecific) {
-			isSSESpecificColoring = isSSESpecific;
-		}
-
 		void SSERenderer::AddHelix(Vector3DFloat p1, Vector3DFloat p2) {
 
 			GeometricShape * newHelix = GeometricShape::CreateHelix(p1, p2, 2.5);
@@ -273,7 +268,7 @@ namespace wustl_mm {
 				Point3 pt;
 				for(int i = 0; i < (int)helices.size(); i++) {
 					glPushAttrib(GL_LIGHTING_BIT);
-					if(isSSESpecificColoring) {
+					if(isObjectSpecificColoring) {
 						helices[i]->GetColor(colorR, colorG, colorB, colorA);	
 						OpenGLUtils::SetColor(colorR, colorG, colorB, colorA);
 					}
@@ -332,7 +327,7 @@ namespace wustl_mm {
 						sheets[thisSheet-1]->GetColor(colorR, colorG, colorB, colorA);
 						prevSheet = thisSheet;
 					}
-					if(isSSESpecificColoring) {
+					if(isObjectSpecificColoring) {
 						OpenGLUtils::SetColor(colorR, colorG, colorB, colorA);
 					}
 
@@ -384,7 +379,7 @@ namespace wustl_mm {
 						prevSheet = thisSheet;
 					}
 					
-					if(isSSESpecificColoring) {
+					if(isObjectSpecificColoring) {
 						OpenGLUtils::SetColor(colorR, colorG, colorB, colorA);
 					}
 

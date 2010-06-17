@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.48  2010/04/04 19:05:54  ssa1
+#   Fixing misc bugs, and redoing sheet visualization mechanism
+#
 #   Revision 1.47  2010/01/17 05:11:18  schuhs
 #   Fixing bug that created an offset between the skeleton and the SSEHunter sheets in the SSE correspondence code
 #
@@ -433,7 +436,7 @@ class SSEHelixCorrespondenceFinderForm(BaseDockWidget):
         self.connect(self.displayAct, QtCore.SIGNAL("toggled (bool)"), self.visibilityChanged)
     
     def visibilityChanged(self, visible):
-        self.viewer.renderer.setSSESpecificColoring(visible)
+        self.viewer.renderer.setObjectSpecificColoring(visible)
         if(not visible):
             self.viewer.visualizationOptions.ui.checkBoxModel3Visible.setChecked(False)
             self.viewer.visualizationOptions.ui.checkBoxModel3Visible.setVisible(False)
