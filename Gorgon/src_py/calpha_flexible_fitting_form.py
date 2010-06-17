@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.9  2010/06/17 19:31:47  ssa1
+#   Visually displaying flexible fitting clusters.
+#
 #   Revision 1.8  2010/05/27 05:19:31  ssa1
 #   Moving all atoms when performing fitting instead of a single atom.
 #
@@ -82,7 +85,8 @@ class CAlphaFlexibleFittingForm(BaseDockWidget, Ui_DialogCAlphaFlexibleFitting):
         self.connect(self.displayAct, QtCore.SIGNAL("toggled (bool)"), self.visibilityChanged)        
             
     def visibilityChanged(self, visible):
-        self.sseViewer.renderer.setSSESpecificColoring(visible)
+        self.sseViewer.renderer.setObjectSpecificColoring(visible)
+        self.sseViewer.emitModelChanged()
                     
     def enableDisableWindowElements(self):
         self.pushButtonLoadHelices.setVisible(not self.sseViewer.loaded)

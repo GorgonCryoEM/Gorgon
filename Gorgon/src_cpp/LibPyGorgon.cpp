@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.78  2010/06/17 19:31:47  ssa1
+//   Visually displaying flexible fitting clusters.
+//
 //   Revision 1.77  2010/05/27 04:41:54  ssa1
 //   Side chain visualization on Gorgon
 //
@@ -523,6 +526,7 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("useDisplayRadius", &VolumeRenderer::UseDisplayRadius)
 		.def("performSmoothLaplacian", &VolumeRenderer::PerformSmoothLaplacian)		
 		.def("setDisplayStyle", &VolumeRenderer::SetDisplayStyle)
+		.def("setObjectSpecificColoring", &VolumeRenderer::SetObjectSpecificColoring)
 	;
 
 	class_< MeshRenderer, bases<Renderer> >("MeshRenderer", init<>())
@@ -557,6 +561,7 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("getOriginY", &MeshRenderer::GetOriginY)
 		.def("getOriginZ", &MeshRenderer::GetOriginZ)
 		.def("setDisplayStyle", &MeshRenderer::SetDisplayStyle)
+		.def("setObjectSpecificColoring", &MeshRenderer::SetObjectSpecificColoring)
 	;
 
 	class_< SSERenderer, bases<Renderer> >("SSERenderer", init<>())
@@ -599,7 +604,7 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("finalizeSheet", &SSERenderer::FinalizeSheet)
 		.def("finalizeHelix", &SSERenderer::FinalizeHelix)
 		.def("addHelix", &SSERenderer::AddHelix)
-		.def("setSSESpecificColoring", &SSERenderer::SetSSESpecificColoring)
+		.def("setObjectSpecificColoring", &SSERenderer::SetObjectSpecificColoring)
 		.def("removeSelectedSSEs", &SSERenderer::RemoveSelectedSSEs)
 		.def("getHelixCount", &SSERenderer::GetHelixCount)
 		.def("getHelixCorner", &SSERenderer::GetHelixCorner)
@@ -655,6 +660,7 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("getOriginZ", &CAlphaRenderer::GetOriginZ)
 		.def("transformAllAtomLocations", &CAlphaRenderer::TransformAllAtomLocations)		
 		.def("setDisplayStyle", &CAlphaRenderer::SetDisplayStyle)
+		.def("setObjectSpecificColoring", &CAlphaRenderer::SetObjectSpecificColoring)
 	;
 
 	class_<InteractiveSkeletonEngine>("InteractiveSkeletonEngine", init<Volume *, NonManifoldMesh_Annotated *, float, int, int, int, unsigned int>())		
