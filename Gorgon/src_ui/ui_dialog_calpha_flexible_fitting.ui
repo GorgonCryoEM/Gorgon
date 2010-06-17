@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>270</width>
-    <height>296</height>
+    <width>282</width>
+    <height>343</height>
    </rect>
   </property>
   <property name="sizePolicy" >
@@ -24,7 +24,7 @@
   <property name="windowTitle" >
    <string>Align backbone to Density</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout" >
+  <layout class="QVBoxLayout" name="verticalLayout_3" >
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout" >
      <item>
@@ -50,143 +50,230 @@
     </layout>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_2" >
-     <item>
-      <widget class="QRadioButton" name="radioButtonRigidFitting" >
-       <property name="toolTip" >
-        <string>Align the backbone to the density without allowing for deformations</string>
-       </property>
-       <property name="text" >
-        <string>Rigid Alignment</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QRadioButton" name="radioButtonFlexibleFitting" >
-       <property name="toolTip" >
-        <string>Align the backbone to the density while allowing for deformations</string>
-       </property>
-       <property name="text" >
-        <string>Flexible Alignment</string>
-       </property>
-       <property name="checked" >
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item>
-    <widget class="QGroupBox" name="groupBoxAdvancedSettings" >
-     <property name="title" >
-      <string>Rigidity Thresholds:</string>
+    <widget class="QTabWidget" name="tabWidget" >
+     <property name="currentIndex" >
+      <number>0</number>
      </property>
-     <layout class="QFormLayout" name="formLayout" >
-      <item row="0" column="0" >
-       <widget class="QLabel" name="labelJointAngleThreshold" >
-        <property name="toolTip" >
-         <string/>
-        </property>
-        <property name="text" >
-         <string>Joint Angle Difference:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1" >
-       <widget class="QSpinBox" name="spinBoxJointAngleThreshold" >
-        <property name="toolTip" >
-         <string>Maximum joint angle difference between helices that are being aligned</string>
-        </property>
-        <property name="suffix" >
-         <string>°</string>
-        </property>
-        <property name="maximum" >
-         <number>180</number>
-        </property>
-        <property name="value" >
-         <number>30</number>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="0" >
-       <widget class="QLabel" name="labelJointAngleThreshold_2" >
-        <property name="toolTip" >
-         <string/>
-        </property>
-        <property name="text" >
-         <string>Dihedral Angle Difference:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1" >
-       <widget class="QSpinBox" name="spinBoxDihedralAngleThreshold" >
-        <property name="toolTip" >
-         <string>Maximum dihedral angle difference between helices that are being aligned</string>
-        </property>
-        <property name="suffix" >
-         <string>°</string>
-        </property>
-        <property name="maximum" >
-         <number>180</number>
-        </property>
-        <property name="value" >
-         <number>30</number>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="0" >
-       <widget class="QLabel" name="labelJointAngleThreshold_3" >
-        <property name="toolTip" >
-         <string/>
-        </property>
-        <property name="text" >
-         <string>Helix Length Difference:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="1" >
-       <widget class="QSpinBox" name="spinBoxHelixLengthThreshold" >
-        <property name="toolTip" >
-         <string>Maximum difference of lengths of helices that are being aligned</string>
-        </property>
-        <property name="suffix" >
-         <string> Å</string>
-        </property>
-        <property name="maximum" >
-         <number>50</number>
-        </property>
-        <property name="value" >
-         <number>10</number>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="0" >
-       <widget class="QLabel" name="labelJointAngleThreshold_4" >
-        <property name="toolTip" >
-         <string>Maximum dihedral angle between helices that are being aligned</string>
-        </property>
-        <property name="text" >
-         <string>Helix Centroid Difference:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="1" >
-       <widget class="QSpinBox" name="spinBoxHelixCentroidThreshold" >
-        <property name="toolTip" >
-         <string>Maximum difference between centroids of helices being aligned</string>
-        </property>
-        <property name="suffix" >
-         <string> Å</string>
-        </property>
-        <property name="maximum" >
-         <number>50</number>
-        </property>
-        <property name="value" >
-         <number>5</number>
-        </property>
-       </widget>
-      </item>
-     </layout>
+     <widget class="QWidget" name="tabSettings" >
+      <attribute name="title" >
+       <string>Settings</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout" >
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_2" >
+         <item>
+          <widget class="QRadioButton" name="radioButtonRigidFitting" >
+           <property name="toolTip" >
+            <string>Align the backbone to the density without allowing for deformations</string>
+           </property>
+           <property name="text" >
+            <string>Rigid Alignment</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QRadioButton" name="radioButtonFlexibleFitting" >
+           <property name="toolTip" >
+            <string>Align the backbone to the density while allowing for deformations</string>
+           </property>
+           <property name="text" >
+            <string>Flexible Alignment</string>
+           </property>
+           <property name="checked" >
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_4" >
+         <item>
+          <widget class="QLabel" name="labelCandidateCount" >
+           <property name="toolTip" >
+            <string>Maximum dihedral angle between helices that are being aligned</string>
+           </property>
+           <property name="text" >
+            <string>Max alignments:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QSpinBox" name="spinBoxMaxAlignments" >
+           <property name="toolTip" >
+            <string>Maximum difference between centroids of helices being aligned</string>
+           </property>
+           <property name="suffix" >
+            <string/>
+           </property>
+           <property name="minimum" >
+            <number>1</number>
+           </property>
+           <property name="maximum" >
+            <number>100</number>
+           </property>
+           <property name="value" >
+            <number>5</number>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="groupBoxAdvancedSettings" >
+         <property name="title" >
+          <string>Rigidity Thresholds:</string>
+         </property>
+         <layout class="QFormLayout" name="formLayout" >
+          <item row="0" column="0" >
+           <widget class="QLabel" name="labelJointAngleThreshold" >
+            <property name="toolTip" >
+             <string/>
+            </property>
+            <property name="text" >
+             <string>Joint Angle Difference:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1" >
+           <widget class="QSpinBox" name="spinBoxJointAngleThreshold" >
+            <property name="toolTip" >
+             <string>Maximum joint angle difference between helices that are being aligned</string>
+            </property>
+            <property name="suffix" >
+             <string>°</string>
+            </property>
+            <property name="maximum" >
+             <number>180</number>
+            </property>
+            <property name="value" >
+             <number>30</number>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0" >
+           <widget class="QLabel" name="labelJointAngleThreshold_2" >
+            <property name="toolTip" >
+             <string/>
+            </property>
+            <property name="text" >
+             <string>Dihedral Angle Difference:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1" >
+           <widget class="QSpinBox" name="spinBoxDihedralAngleThreshold" >
+            <property name="toolTip" >
+             <string>Maximum dihedral angle difference between helices that are being aligned</string>
+            </property>
+            <property name="suffix" >
+             <string>°</string>
+            </property>
+            <property name="maximum" >
+             <number>180</number>
+            </property>
+            <property name="value" >
+             <number>30</number>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0" >
+           <widget class="QLabel" name="labelJointAngleThreshold_3" >
+            <property name="toolTip" >
+             <string/>
+            </property>
+            <property name="text" >
+             <string>Helix Length Difference:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1" >
+           <widget class="QSpinBox" name="spinBoxHelixLengthThreshold" >
+            <property name="toolTip" >
+             <string>Maximum difference of lengths of helices that are being aligned</string>
+            </property>
+            <property name="suffix" >
+             <string> Å</string>
+            </property>
+            <property name="maximum" >
+             <number>50</number>
+            </property>
+            <property name="value" >
+             <number>10</number>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0" >
+           <widget class="QLabel" name="labelJointAngleThreshold_4" >
+            <property name="toolTip" >
+             <string>Maximum dihedral angle between helices that are being aligned</string>
+            </property>
+            <property name="text" >
+             <string>Helix Centroid Difference:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1" >
+           <widget class="QSpinBox" name="spinBoxHelixCentroidThreshold" >
+            <property name="toolTip" >
+             <string>Maximum difference between centroids of helices being aligned</string>
+            </property>
+            <property name="suffix" >
+             <string> Å</string>
+            </property>
+            <property name="maximum" >
+             <number>50</number>
+            </property>
+            <property name="value" >
+             <number>5</number>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tabAlignments" >
+      <attribute name="title" >
+       <string>Alignments</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_2" >
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_5" >
+         <item>
+          <widget class="QLabel" name="labelAlignment" >
+           <property name="text" >
+            <string>Alignment:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QComboBox" name="comboBoxAlignment" />
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QTableWidget" name="tableWidget" >
+         <column>
+          <property name="text" >
+           <string>Cluster</string>
+          </property>
+         </column>
+         <column>
+          <property name="text" >
+           <string>SSE Helix</string>
+          </property>
+         </column>
+         <column>
+          <property name="text" >
+           <string>PDB Helix</string>
+          </property>
+         </column>
+        </widget>
+       </item>
+      </layout>
+     </widget>
     </widget>
    </item>
    <item>
@@ -227,23 +314,32 @@
      <property name="sizeHint" stdset="0" >
       <size>
        <width>20</width>
-       <height>40</height>
+       <height>6</height>
       </size>
      </property>
     </spacer>
    </item>
   </layout>
+  <zorder>verticalSpacer</zorder>
+  <zorder>tabWidget</zorder>
+  <zorder>buttonBox</zorder>
+  <zorder>horizontalSpacer</zorder>
+  <zorder></zorder>
  </widget>
  <tabstops>
   <tabstop>pushButtonLoadHelices</tabstop>
   <tabstop>pushButtonLoadCAlpha</tabstop>
+  <tabstop>tabWidget</tabstop>
   <tabstop>radioButtonRigidFitting</tabstop>
   <tabstop>radioButtonFlexibleFitting</tabstop>
+  <tabstop>spinBoxMaxAlignments</tabstop>
   <tabstop>spinBoxJointAngleThreshold</tabstop>
   <tabstop>spinBoxDihedralAngleThreshold</tabstop>
   <tabstop>spinBoxHelixLengthThreshold</tabstop>
   <tabstop>spinBoxHelixCentroidThreshold</tabstop>
   <tabstop>buttonBox</tabstop>
+  <tabstop>comboBoxAlignment</tabstop>
+  <tabstop>tableWidget</tabstop>
  </tabstops>
  <resources/>
  <connections>
@@ -254,8 +350,8 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>248</x>
-     <y>254</y>
+     <x>269</x>
+     <y>316</y>
     </hint>
     <hint type="destinationlabel" >
      <x>157</x>
@@ -270,11 +366,11 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>316</x>
-     <y>260</y>
+     <x>269</x>
+     <y>316</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>286</x>
+     <x>270</x>
      <y>274</y>
     </hint>
    </hints>

@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.8  2010/05/27 05:19:31  ssa1
+#   Moving all atoms when performing fitting instead of a single atom.
+#
 #   Revision 1.7  2010/05/26 21:53:21  ssa1
 #   Adding in display styles for atom rendering.
 #
@@ -36,7 +39,7 @@
 from PyQt4 import QtCore, QtGui
 from ui_dialog_calpha_flexible_fitting import Ui_DialogCAlphaFlexibleFitting
 from base_dock_widget import BaseDockWidget
-from libpyGORGON import FlexibleFittingEngine
+from libpyGORGON import FlexibleFittingEngine, SSECorrespondenceNode
 from math import pi
 
 class CAlphaFlexibleFittingForm(BaseDockWidget, Ui_DialogCAlphaFlexibleFitting):
@@ -59,6 +62,10 @@ class CAlphaFlexibleFittingForm(BaseDockWidget, Ui_DialogCAlphaFlexibleFitting):
         self.sseViewer = self.app.viewers["sse"]        
         self.createUI()
         self.enableDisableWindowElements()
+        self.engine = FlexibleFittingEngine()
+        self.chainHelixMapping = {}
+        self.invChainHelixMapping = {}
+        
 
     def createUI(self):
         self.setupUi(self)    
@@ -68,15 +75,21 @@ class CAlphaFlexibleFittingForm(BaseDockWidget, Ui_DialogCAlphaFlexibleFitting):
         self.connect(self.cAlphaViewer, QtCore.SIGNAL("modelUnloaded()"), self.enableDisableWindowElements)
         self.connect(self.sseViewer, QtCore.SIGNAL("modelLoaded()"), self.enableDisableWindowElements)
         self.connect(self.sseViewer, QtCore.SIGNAL("modelUnloaded()"), self.enableDisableWindowElements)
+        self.connect(self.comboBoxAlignment, QtCore.SIGNAL("currentIndexChanged (int)"), self.loadAlignment)
+        self.tableWidget.setColumnWidth(0,80)
+        self.tableWidget.setColumnWidth(1,80)
+        self.tableWidget.setColumnWidth(2,80)
+        self.connect(self.displayAct, QtCore.SIGNAL("toggled (bool)"), self.visibilityChanged)        
             
+    def visibilityChanged(self, visible):
+        self.sseViewer.renderer.setSSESpecificColoring(visible)
+                    
     def enableDisableWindowElements(self):
         self.pushButtonLoadHelices.setVisible(not self.sseViewer.loaded)
         self.pushButtonLoadCAlpha.setVisible(not self.cAlphaViewer.loaded)
         allLoaded = self.sseViewer.loaded and self.cAlphaViewer.loaded
-        self.groupBoxAdvancedSettings.setEnabled(allLoaded)
+        self.tabWidget.setEnabled(allLoaded)
         self.buttonBox.setEnabled(allLoaded)
-        self.radioButtonFlexibleFitting.setEnabled(allLoaded)
-        self.radioButtonRigidFitting.setEnabled(allLoaded)      
 
     def loadVolume(self, temp):
         self.app.actions.getAction("load_Volume").trigger()
@@ -89,43 +102,113 @@ class CAlphaFlexibleFittingForm(BaseDockWidget, Ui_DialogCAlphaFlexibleFitting):
     def loadBackbone(self, temp):
         self.app.actions.getAction("load_CAlpha").trigger()
         self.bringToFront()
+        
+    def getColor(self, clusterIx, clusterCount):
+        seed = clusterIx % 6
+        loc =  float(clusterIx/6)/float(max(1,clusterCount/6))
+        r = 0
+        g = 0
+        b = 0
+        if(seed == 0):
+            r = 1
+            g = loc
+        elif(seed == 1):
+            r = 1.0 - loc
+            g = 1
+        elif(seed == 2):
+            g = 1
+            b = loc
+        elif(seed == 3):
+            g = 1.0 - loc
+            b = 1
+        elif(seed == 4):
+            r = loc
+            b = 1
+        elif(seed == 5):
+            r = 1
+            b = 1.0 - loc;            
+        
+        return QtGui.QColor.fromRgba(QtGui.qRgba(r*255, g*255, b*255, 255))
 
+    def loadAlignment(self, alignmentIx):
+        self.tableWidget.clearContents ()
+        if(self.comboBoxAlignment.count() > 0):
+            for i in range(self.sseViewer.renderer.getHelixCount()):
+                self.sseViewer.renderer.setHelixColor(i, 0.3, 0.3, 0.3, 1.0)
+            
+            clusterCount = self.engine.getClusterCount(alignmentIx)
+            self.tableWidget.setRowCount(0)            
+            for clusterIx in range(clusterCount):
+                clusterColor = self.getColor(clusterIx, clusterCount)
+                firstRow = True
+                for helixIx in range(self.engine.getHelixCount(alignmentIx, clusterIx)):
+                    rowIx = self.tableWidget.rowCount()
+                    corr = self.engine.getCorrespondenceNode(alignmentIx, clusterIx, helixIx)
+                    self.tableWidget.insertRow(rowIx)
+                    self.tableWidget.setRowHeight(rowIx, 20)
+                    if(firstRow):
+                        self.tableWidget.setItem(rowIx, 0, QtGui.QTableWidgetItem(str(clusterIx+1)))
+                    else:
+                        self.tableWidget.setItem(rowIx, 0, QtGui.QTableWidgetItem(" "))
+                    self.tableWidget.setItem(rowIx, 1, QtGui.QTableWidgetItem(str(self.invChainHelixMapping[corr.getPIndex()])))
+                    self.tableWidget.setItem(rowIx, 2, QtGui.QTableWidgetItem(str(corr.getQIndex())))                    
+                    self.tableWidget.item(rowIx, 0).setBackgroundColor(clusterColor)
+                    self.tableWidget.item(rowIx, 1).setBackgroundColor(clusterColor)
+                    self.tableWidget.item(rowIx, 2).setBackgroundColor(clusterColor)
+                    self.sseViewer.renderer.setHelixColor(corr.getQIndex(), clusterColor.redF(), clusterColor.greenF(), clusterColor.blueF(), clusterColor.alphaF())
+                    firstRow = False
+                
+            if(self.radioButtonRigidFitting.isChecked()):
+                self.viewer.renderer.transformAllAtomLocations(self.engine.getRigidTransform(alignmentIx))
+            else :
+                self.doFlexibleDeformation(alignmentIx)
+            self.sseViewer.emitModelChanged()
+        
     def accept(self):
-        engine = FlexibleFittingEngine()
+        self.engine.resetEngine()
         # pushing in PDB Helices to the engine
-        chainHelixMapping = {}
+        self.chainHelixMapping = {}
+        self.invChainHelixMapping = {}
         cppIndex = 0
         for chain in self.cAlphaViewer.loadedChains:
             for helixIx, helix in chain.helices.items():
-                chainHelixMapping[helixIx] = cppIndex
-                engine.startPDBHelix()
+                self.chainHelixMapping[helixIx] = cppIndex
+                self.invChainHelixMapping[cppIndex] = helixIx
+                self.engine.startPDBHelix()
                 for i in range(helix.startIndex, helix.stopIndex+1):
-                    engine.addPDBAtomLocation(chain[i].getAtom('CA').getPosition())
-                engine.endPDBHelix()
+                    self.engine.addPDBAtomLocation(chain[i].getAtom('CA').getPosition())
+                self.engine.endPDBHelix()
                 cppIndex = cppIndex + 1
                 
         # pushing in SSEHunter helices to the engine
         for i in range(self.sseViewer.renderer.getHelixCount()):
             pt1 = self.sseViewer.renderer.getHelixCorner(i, 0)
             pt2 = self.sseViewer.renderer.getHelixCorner(i, 1)
-            engine.addSSEHelix(pt1, pt2)            
-        
-        engine.startSearch(self.spinBoxJointAngleThreshold.value()* pi / 180.0, self.spinBoxDihedralAngleThreshold.value()* pi / 180.0, self.spinBoxHelixLengthThreshold.value(), self.spinBoxHelixCentroidThreshold.value())       
-        if(self.radioButtonRigidFitting.isChecked()):
-            self.viewer.renderer.transformAllAtomLocations(engine.getRigidTransform())
-        else :
-            self.doFlexibleDeformation(engine, chainHelixMapping)
+            self.engine.addSSEHelix(pt1, pt2)
+                    
+        self.engine.startSearch(self.spinBoxJointAngleThreshold.value()* pi / 180.0, self.spinBoxDihedralAngleThreshold.value()* pi / 180.0, self.spinBoxHelixLengthThreshold.value(), self.spinBoxHelixCentroidThreshold.value(), self.spinBoxMaxAlignments.value())
+        corrCount = self.engine.getCorrespondenceCount()
+        self.comboBoxAlignment.clear()           
+        if(corrCount > 0):
+            self.tabAlignments.setEnabled(True)
+            for i in range(corrCount):
+                self.comboBoxAlignment.addItem(str(i+1))
+            self.comboBoxAlignment.setCurrentIndex(0)
+            self.tabWidget.setCurrentIndex(1)
+        else:
+            self.tabAlignments.setEnabled(False)
+            print "No alignments found :( "
                                                     
         self.viewer.emitModelChanged()
                     
                     
-    def doFlexibleDeformation(self, engine, chainHelixMapping):
+    def doFlexibleDeformation(self, alignmentIx):
         # TODO: This method can be refactored using the chain.secels dictionary... this would stop the need to search for previous and next helices..        
         # Getting all helix transformations
         transforms = {}
         for chain in self.cAlphaViewer.loadedChains:
             for helixIx, helix in chain.helices.items():
-                transform = engine.getHelixFlexibleTransform(chainHelixMapping[helixIx]) 
+                transform = self.engine.getHelixFlexibleTransform(alignmentIx, self.chainHelixMapping[helixIx]) 
                 if(transform.getValue(3,3) > 0.5): # Checking if a transformation was found for this helix
                     transforms[helixIx] =  transform
                         
