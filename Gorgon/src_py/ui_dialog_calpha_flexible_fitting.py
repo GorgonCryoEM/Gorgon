@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_dialog_calpha_flexible_fitting.ui'
 #
-# Created: Thu Jun 17 13:42:08 2010
+# Created: Wed Jun 23 07:57:10 2010
 #      by: PyQt4 UI code generator 4.4.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,7 +12,7 @@ from PyQt4 import QtCore, QtGui
 class Ui_DialogCAlphaFlexibleFitting(object):
     def setupUi(self, DialogCAlphaFlexibleFitting):
         DialogCAlphaFlexibleFitting.setObjectName("DialogCAlphaFlexibleFitting")
-        DialogCAlphaFlexibleFitting.resize(282, 343)
+        DialogCAlphaFlexibleFitting.resize(282, 328)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.MinimumExpanding, QtGui.QSizePolicy.MinimumExpanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -124,21 +124,22 @@ class Ui_DialogCAlphaFlexibleFitting(object):
         self.verticalLayout_3.addWidget(self.tabWidget)
         self.horizontalLayout_3 = QtGui.QHBoxLayout()
         self.horizontalLayout_3.setObjectName("horizontalLayout_3")
-        spacerItem = QtGui.QSpacerItem(358, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        spacerItem = QtGui.QSpacerItem(78, 17, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_3.addItem(spacerItem)
-        self.buttonBox = QtGui.QDialogButtonBox(DialogCAlphaFlexibleFitting)
-        self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
-        self.buttonBox.setStandardButtons(QtGui.QDialogButtonBox.Cancel|QtGui.QDialogButtonBox.Ok)
-        self.buttonBox.setObjectName("buttonBox")
-        self.horizontalLayout_3.addWidget(self.buttonBox)
+        self.pushButtonReset = QtGui.QPushButton(DialogCAlphaFlexibleFitting)
+        self.pushButtonReset.setObjectName("pushButtonReset")
+        self.horizontalLayout_3.addWidget(self.pushButtonReset)
+        self.pushButtonOk = QtGui.QPushButton(DialogCAlphaFlexibleFitting)
+        self.pushButtonOk.setObjectName("pushButtonOk")
+        self.horizontalLayout_3.addWidget(self.pushButtonOk)
         self.verticalLayout_3.addLayout(self.horizontalLayout_3)
         spacerItem1 = QtGui.QSpacerItem(20, 6, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
         self.verticalLayout_3.addItem(spacerItem1)
 
         self.retranslateUi(DialogCAlphaFlexibleFitting)
         self.tabWidget.setCurrentIndex(0)
-        QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL("accepted()"), DialogCAlphaFlexibleFitting.accept)
-        QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL("rejected()"), DialogCAlphaFlexibleFitting.reject)
+        QtCore.QObject.connect(self.pushButtonOk, QtCore.SIGNAL("clicked()"), DialogCAlphaFlexibleFitting.accept)
+        QtCore.QObject.connect(self.pushButtonReset, QtCore.SIGNAL("clicked()"), DialogCAlphaFlexibleFitting.reject)
         QtCore.QMetaObject.connectSlotsByName(DialogCAlphaFlexibleFitting)
         DialogCAlphaFlexibleFitting.setTabOrder(self.pushButtonLoadHelices, self.pushButtonLoadCAlpha)
         DialogCAlphaFlexibleFitting.setTabOrder(self.pushButtonLoadCAlpha, self.tabWidget)
@@ -149,8 +150,9 @@ class Ui_DialogCAlphaFlexibleFitting(object):
         DialogCAlphaFlexibleFitting.setTabOrder(self.spinBoxJointAngleThreshold, self.spinBoxDihedralAngleThreshold)
         DialogCAlphaFlexibleFitting.setTabOrder(self.spinBoxDihedralAngleThreshold, self.spinBoxHelixLengthThreshold)
         DialogCAlphaFlexibleFitting.setTabOrder(self.spinBoxHelixLengthThreshold, self.spinBoxHelixCentroidThreshold)
-        DialogCAlphaFlexibleFitting.setTabOrder(self.spinBoxHelixCentroidThreshold, self.buttonBox)
-        DialogCAlphaFlexibleFitting.setTabOrder(self.buttonBox, self.comboBoxAlignment)
+        DialogCAlphaFlexibleFitting.setTabOrder(self.spinBoxHelixCentroidThreshold, self.pushButtonOk)
+        DialogCAlphaFlexibleFitting.setTabOrder(self.pushButtonOk, self.pushButtonReset)
+        DialogCAlphaFlexibleFitting.setTabOrder(self.pushButtonReset, self.comboBoxAlignment)
         DialogCAlphaFlexibleFitting.setTabOrder(self.comboBoxAlignment, self.tableWidget)
 
     def retranslateUi(self, DialogCAlphaFlexibleFitting):
@@ -186,5 +188,6 @@ class Ui_DialogCAlphaFlexibleFitting(object):
         self.tableWidget.horizontalHeaderItem(1).setText(QtGui.QApplication.translate("DialogCAlphaFlexibleFitting", "SSE Helix", None, QtGui.QApplication.UnicodeUTF8))
         self.tableWidget.horizontalHeaderItem(2).setText(QtGui.QApplication.translate("DialogCAlphaFlexibleFitting", "PDB Helix", None, QtGui.QApplication.UnicodeUTF8))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabAlignments), QtGui.QApplication.translate("DialogCAlphaFlexibleFitting", "Alignments", None, QtGui.QApplication.UnicodeUTF8))
-        self.buttonBox.setToolTip(QtGui.QApplication.translate("DialogCAlphaFlexibleFitting", "Perform Fitting", None, QtGui.QApplication.UnicodeUTF8))
+        self.pushButtonReset.setText(QtGui.QApplication.translate("DialogCAlphaFlexibleFitting", "Reset", None, QtGui.QApplication.UnicodeUTF8))
+        self.pushButtonOk.setText(QtGui.QApplication.translate("DialogCAlphaFlexibleFitting", "OK", None, QtGui.QApplication.UnicodeUTF8))
 

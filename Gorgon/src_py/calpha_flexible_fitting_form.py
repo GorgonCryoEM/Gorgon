@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.10  2010/06/17 19:42:38  ssa1
+#   Generic method for setting object specific coloring
+#
 #   Revision 1.9  2010/06/17 19:31:47  ssa1
 #   Visually displaying flexible fitting clusters.
 #
@@ -68,6 +71,7 @@ class CAlphaFlexibleFittingForm(BaseDockWidget, Ui_DialogCAlphaFlexibleFitting):
         self.engine = FlexibleFittingEngine()
         self.chainHelixMapping = {}
         self.invChainHelixMapping = {}
+        self.backupPositions = {}
         
 
     def createUI(self):
@@ -86,6 +90,8 @@ class CAlphaFlexibleFittingForm(BaseDockWidget, Ui_DialogCAlphaFlexibleFitting):
             
     def visibilityChanged(self, visible):
         self.sseViewer.renderer.setObjectSpecificColoring(visible)
+        if(visible):
+            self.getBackupCopy()
         self.sseViewer.emitModelChanged()
                     
     def enableDisableWindowElements(self):
@@ -93,7 +99,8 @@ class CAlphaFlexibleFittingForm(BaseDockWidget, Ui_DialogCAlphaFlexibleFitting):
         self.pushButtonLoadCAlpha.setVisible(not self.cAlphaViewer.loaded)
         allLoaded = self.sseViewer.loaded and self.cAlphaViewer.loaded
         self.tabWidget.setEnabled(allLoaded)
-        self.buttonBox.setEnabled(allLoaded)
+        self.pushButtonOk.setEnabled(allLoaded)
+        self.pushButtonReset.setEnabled(allLoaded)
 
     def loadVolume(self, temp):
         self.app.actions.getAction("load_Volume").trigger()
@@ -106,6 +113,7 @@ class CAlphaFlexibleFittingForm(BaseDockWidget, Ui_DialogCAlphaFlexibleFitting):
     def loadBackbone(self, temp):
         self.app.actions.getAction("load_CAlpha").trigger()
         self.bringToFront()
+        self.getBackupCopy()
         
     def getColor(self, clusterIx, clusterCount):
         seed = clusterIx % 6
@@ -133,6 +141,22 @@ class CAlphaFlexibleFittingForm(BaseDockWidget, Ui_DialogCAlphaFlexibleFitting):
             b = 1.0 - loc;            
         
         return QtGui.QColor.fromRgba(QtGui.qRgba(r*255, g*255, b*255, 255))
+    
+    def getBackupCopy(self):
+        self.backupPositions = {}
+        for chain in self.cAlphaViewer.loadedChains:           
+            for i in chain.residueRange():
+                if i in chain.residueList:
+                    for atomName in chain[i].getAtomNames():
+                        atom = chain[i].getAtom(atomName)
+                        self.backupPositions[atom.getHashKey()] = atom.getPosition()
+                        
+    def revertToBackupCopy(self):
+        for hash, position in self.backupPositions.items():
+            self.cAlphaViewer.renderer.getAtom(hash).setPosition(position)
+        self.cAlphaViewer.renderer.updateBoundingBox()
+        self.cAlphaViewer.emitModelChanged()        
+        
 
     def loadAlignment(self, alignmentIx):
         self.tableWidget.clearContents ()
@@ -166,6 +190,7 @@ class CAlphaFlexibleFittingForm(BaseDockWidget, Ui_DialogCAlphaFlexibleFitting):
                 self.viewer.renderer.transformAllAtomLocations(self.engine.getRigidTransform(alignmentIx))
             else :
                 self.doFlexibleDeformation(alignmentIx)
+            self.cAlphaViewer.renderer.updateBoundingBox()
             self.sseViewer.emitModelChanged()
         
     def accept(self):
@@ -288,4 +313,17 @@ class CAlphaFlexibleFittingForm(BaseDockWidget, Ui_DialogCAlphaFlexibleFitting):
                     
     
     def reject(self):
-        self.showWidget(False)
+        self.engine.resetEngine()
+        self.chainHelixMapping = {}
+        self.invChainHelixMapping = {}
+
+        self.comboBoxAlignment.clear()           
+        self.tabWidget.setCurrentIndex(0)
+        self.tableWidget.clearContents()
+        
+        helixColor = self.sseViewer.getModelColor()
+        for helixIx in range(self.sseViewer.renderer.getHelixCount()):
+            self.sseViewer.renderer.setHelixColor(helixIx, helixColor.redF(), helixColor.greenF(), helixColor.blueF(), helixColor.alphaF())
+        self.sseViewer.emitModelChanged()
+                
+        self.revertToBackupCopy()

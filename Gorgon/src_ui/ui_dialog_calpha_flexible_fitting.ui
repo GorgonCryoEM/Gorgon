@@ -6,7 +6,7 @@
     <x>0</x>
     <y>0</y>
     <width>282</width>
-    <height>343</height>
+    <height>328</height>
    </rect>
   </property>
   <property name="sizePolicy" >
@@ -285,22 +285,23 @@
        </property>
        <property name="sizeHint" stdset="0" >
         <size>
-         <width>358</width>
-         <height>20</height>
+         <width>78</width>
+         <height>17</height>
         </size>
        </property>
       </spacer>
      </item>
      <item>
-      <widget class="QDialogButtonBox" name="buttonBox" >
-       <property name="toolTip" >
-        <string>Perform Fitting</string>
+      <widget class="QPushButton" name="pushButtonReset" >
+       <property name="text" >
+        <string>Reset</string>
        </property>
-       <property name="orientation" >
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="standardButtons" >
-        <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButtonOk" >
+       <property name="text" >
+        <string>OK</string>
        </property>
       </widget>
      </item>
@@ -320,11 +321,6 @@
     </spacer>
    </item>
   </layout>
-  <zorder>verticalSpacer</zorder>
-  <zorder>tabWidget</zorder>
-  <zorder>buttonBox</zorder>
-  <zorder>horizontalSpacer</zorder>
-  <zorder></zorder>
  </widget>
  <tabstops>
   <tabstop>pushButtonLoadHelices</tabstop>
@@ -337,41 +333,42 @@
   <tabstop>spinBoxDihedralAngleThreshold</tabstop>
   <tabstop>spinBoxHelixLengthThreshold</tabstop>
   <tabstop>spinBoxHelixCentroidThreshold</tabstop>
-  <tabstop>buttonBox</tabstop>
+  <tabstop>pushButtonOk</tabstop>
+  <tabstop>pushButtonReset</tabstop>
   <tabstop>comboBoxAlignment</tabstop>
   <tabstop>tableWidget</tabstop>
  </tabstops>
  <resources/>
  <connections>
   <connection>
-   <sender>buttonBox</sender>
-   <signal>accepted()</signal>
+   <sender>pushButtonOk</sender>
+   <signal>clicked()</signal>
    <receiver>DialogCAlphaFlexibleFitting</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>269</x>
-     <y>316</y>
+     <x>243</x>
+     <y>297</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>157</x>
-     <y>274</y>
+     <x>259</x>
+     <y>319</y>
     </hint>
    </hints>
   </connection>
   <connection>
-   <sender>buttonBox</sender>
-   <signal>rejected()</signal>
+   <sender>pushButtonReset</sender>
+   <signal>clicked()</signal>
    <receiver>DialogCAlphaFlexibleFitting</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>269</x>
-     <y>316</y>
+     <x>161</x>
+     <y>299</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>270</x>
-     <y>274</y>
+     <x>181</x>
+     <y>322</y>
     </hint>
    </hints>
   </connection>

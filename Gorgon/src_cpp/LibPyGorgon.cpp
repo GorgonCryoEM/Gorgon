@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.79  2010/06/17 19:42:38  ssa1
+//   Generic method for setting object specific coloring
+//
 //   Revision 1.78  2010/06/17 19:31:47  ssa1
 //   Visually displaying flexible fitting clusters.
 //
@@ -476,6 +479,8 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("getOriginY", &Renderer::GetOriginY)
 		.def("getOriginZ", &Renderer::GetOriginZ)
 		.def("setDisplayStyle", &Renderer::SetDisplayStyle)
+		.def("setObjectSpecificColoring", &Renderer::SetObjectSpecificColoring)
+		.def("updateBoundingBox", &Renderer::UpdateBoundingBox)
 	;
 	
 	
@@ -527,6 +532,7 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("performSmoothLaplacian", &VolumeRenderer::PerformSmoothLaplacian)		
 		.def("setDisplayStyle", &VolumeRenderer::SetDisplayStyle)
 		.def("setObjectSpecificColoring", &VolumeRenderer::SetObjectSpecificColoring)
+		.def("updateBoundingBox", &VolumeRenderer::UpdateBoundingBox)
 	;
 
 	class_< MeshRenderer, bases<Renderer> >("MeshRenderer", init<>())
@@ -562,6 +568,7 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("getOriginZ", &MeshRenderer::GetOriginZ)
 		.def("setDisplayStyle", &MeshRenderer::SetDisplayStyle)
 		.def("setObjectSpecificColoring", &MeshRenderer::SetObjectSpecificColoring)
+		.def("updateBoundingBox", &MeshRenderer::UpdateBoundingBox)
 	;
 
 	class_< SSERenderer, bases<Renderer> >("SSERenderer", init<>())
@@ -609,6 +616,7 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("getHelixCount", &SSERenderer::GetHelixCount)
 		.def("getHelixCorner", &SSERenderer::GetHelixCorner)
 		.def("setDisplayStyle", &SSERenderer::SetDisplayStyle)
+		.def("updateBoundingBox", &SSERenderer::UpdateBoundingBox)
 	;
 
 	class_< CAlphaRenderer, bases<Renderer> >("CAlphaRenderer", init<>())
@@ -661,6 +669,7 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("transformAllAtomLocations", &CAlphaRenderer::TransformAllAtomLocations)		
 		.def("setDisplayStyle", &CAlphaRenderer::SetDisplayStyle)
 		.def("setObjectSpecificColoring", &CAlphaRenderer::SetObjectSpecificColoring)
+		.def("updateBoundingBox", &CAlphaRenderer::UpdateBoundingBox)
 	;
 
 	class_<InteractiveSkeletonEngine>("InteractiveSkeletonEngine", init<Volume *, NonManifoldMesh_Annotated *, float, int, int, int, unsigned int>())		

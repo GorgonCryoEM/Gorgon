@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.44  2010/06/17 19:42:38  ssa1
+//   Generic method for setting object specific coloring
+//
 //   Revision 1.43  2010/05/20 21:55:53  ssa1
 //   Rigid body alignment based on largest flexible cluster
 //
@@ -153,6 +156,7 @@ namespace wustl_mm {
 			void RemoveSelectedSSEs();
 			int GetHelixCount();
 			Vector3DFloat GetHelixCorner(int helixIx, int cornerIx);
+			void UpdateBoundingBox();
 		private:
 			void SheetListToMesh(vector<GeometricShape*> & sheets);
 			void LoadHelixFileSSE(string fileName);
@@ -160,7 +164,6 @@ namespace wustl_mm {
 			void SaveHelixFileSSE(FILE* fout);
 			void SaveHelixFileVRML(FILE* fout);
 			void SaveSheetFileVRML(FILE* fout);
-			void UpdateBoundingBox();
 			vector<GeometricShape*> helices;
 			vector<GeometricShape*> sheets;
 			NonManifoldMesh_SheetIds * sheetMesh;

@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.34  2010/04/04 19:05:51  ssa1
+//   Fixing misc bugs, and redoing sheet visualization mechanism
+//
 //   Revision 1.33  2009/10/13 18:09:34  ssa1
 //   Refactoring Volume.h
 //
@@ -100,8 +103,8 @@ namespace wustl_mm {
 			float GetOriginX();
 			float GetOriginY();
 			float GetOriginZ();
-		private:
 			void UpdateBoundingBox();
+		private:
 			NonManifoldMesh_Annotated * mesh;
 			vector<Vector3DFloat> intersectionPoints;
 			int lineThickness;
