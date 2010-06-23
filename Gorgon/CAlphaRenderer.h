@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.49  2010/05/27 18:28:46  ssa1
+//   Better color control for all atom visualization
+//
 //   Revision 1.48  2010/05/27 17:10:18  ssa1
 //   Better color control for all atom visualization
 //
@@ -160,6 +163,7 @@ namespace wustl_mm {
 			string GetSupportedSaveFileFormats();
 			Vector3DFloat Get3DCoordinates(int subsceneIndex, int ix0, int ix1 = -1, int ix2 = -1, int ix3 = -1, int ix4 = -1);
 			void TransformAllAtomLocations(MatrixFloat transform);
+			void UpdateBoundingBox();
 
 			// Controlling the atom vector
 			PDBAtom * AddAtom(PDBAtom atom);
@@ -184,7 +188,6 @@ namespace wustl_mm {
 			int GetSideChainBondCount();
 
 		private:
-			void UpdateBoundingBox();
 			void DrawBackboneModel(int subSceneIndex, bool selectEnabled);
 			void DrawRibbonModel(int subSceneIndex, bool selectEnabled);
 			void DrawSideChainModel(int subSceneIndex, bool selectEnabled);

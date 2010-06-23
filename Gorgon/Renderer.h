@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.33  2010/06/17 19:42:38  ssa1
+//   Generic method for setting object specific coloring
+//
 //   Revision 1.32  2010/05/27 17:10:19  ssa1
 //   Better color control for all atom visualization
 //
@@ -92,12 +95,12 @@ namespace wustl_mm {
 			virtual float GetOriginZ();
 			virtual void SetDisplayStyle(int style);
 			virtual void SetObjectSpecificColoring(bool objectSpecific);
+			virtual void UpdateBoundingBox();			
 
 			float GetMin(int dimension);
 			float GetMax(int dimension);
 
 		protected:
-			virtual void UpdateBoundingBox();			
 			float minPts[3];
 			float maxPts[3];
 			float spacing[3];
