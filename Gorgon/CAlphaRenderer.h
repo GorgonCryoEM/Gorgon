@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.50  2010/06/23 13:02:56  ssa1
+//   Allowing users to reset a flexible fitting if need be.
+//
 //   Revision 1.49  2010/05/27 18:28:46  ssa1
 //   Better color control for all atom visualization
 //
@@ -141,6 +144,10 @@ namespace wustl_mm {
 
 		class CAlphaRenderer : public Renderer{
 		public:
+			struct Secel{
+				vector<unsigned long long> atomHashes;
+			};
+
 			CAlphaRenderer();
 			~CAlphaRenderer();
 
@@ -187,6 +194,20 @@ namespace wustl_mm {
 			void DeleteSideChainBond(int index);
 			int GetSideChainBondCount();
 
+			int StartHelix(); //StartHelix creates a new helix element in aHelices and returns its index
+			void AddHelixElement(int, unsigned long long); //adds a helix element to the helix indexed at param 1
+
+			int StartStrand(); //StartStrand creates a new strand element in bStrands and returns its index
+			void AddStrandElement(int, unsigned long long); //adds a strand element to the strand indexed at param 1
+
+			int StartLoop(); //StartLoop creates a new strand element in loops and returns its index
+			void AddLoopElement(int, unsigned long long); //adds a loop element to the loop indexed at param 1
+
+			bool CleanSecondaryStructures(); //empties the aHelices, bStrands and loops variables
+											//what should really happen is that the code should check if it is
+											//trying to reload the same one, and then if it did return false
+
+
 		private:
 			void DrawBackboneModel(int subSceneIndex, bool selectEnabled);
 			void DrawRibbonModel(int subSceneIndex, bool selectEnabled);
@@ -195,6 +216,10 @@ namespace wustl_mm {
 			AtomMapType atoms;
 			vector<PDBBond> bonds;
 			vector<PDBBond> sidechainBonds;
+
+			vector<Secel> aHelices;
+			vector<Secel> bStrands;
+			vector<Secel> loops;
 		};
 
 
@@ -300,8 +325,48 @@ namespace wustl_mm {
 		}
 
 		void CAlphaRenderer::DrawRibbonModel(int subSceneIndex, bool selectEnabled) {
-			// subSceneIndex will be 0 for Helices, 1 for Strands and 2 for loops/coils
-			printf("Ribbon mode not implemented yet!\n"); 
+			if(selectEnabled) {
+				glPushName(subSceneIndex);
+				glPushName(0);
+			}
+
+			switch(subSceneIndex) {
+				case 0: // Helices		
+					for(int i = 0; i < aHelices.size(); i++) {
+						if(selectEnabled){
+							glLoadName(i);
+						}
+						for(int j = 0; j < aHelices[i].atomHashes.size()-1; j++) {
+							DrawCylinder(atoms[aHelices[i].atomHashes[j]].GetPosition(), atoms[aHelices[i].atomHashes[j+1]].GetPosition(), 0.1, 10, 2);
+						}
+					}
+					break;
+				case 1: // Strands
+					for(int i = 0; i < bStrands.size(); i++) {
+						if(selectEnabled){
+							glLoadName(i);
+						}
+						for(int j = 0; j < bStrands[i].atomHashes.size()-1; j++) {
+							DrawCylinder(atoms[bStrands[i].atomHashes[j]].GetPosition(), atoms[bStrands[i].atomHashes[j+1]].GetPosition(), 0.1, 10, 2);
+						}
+					}
+					break;
+				case 2: // Loops
+					for(int i = 0; i < loops.size(); i++) {
+						if(selectEnabled){
+							glLoadName(i);
+						}
+						for(int j = 0; j < loops[i].atomHashes.size()-1; j++) {
+							DrawCylinder(atoms[loops[i].atomHashes[j]].GetPosition(), atoms[loops[i].atomHashes[j+1]].GetPosition(), 0.1, 10, 2);
+						}
+					}
+					break;					
+			}
+
+			if(selectEnabled) {
+				glPopName();
+				glPopName();
+			}
 		}
 
 		void CAlphaRenderer::DrawSideChainModel(int subSceneIndex, bool selectEnabled) {
@@ -668,9 +733,20 @@ namespace wustl_mm {
 
 		void CAlphaRenderer::SelectionToggle(int subsceneIndex, bool forceTrue, int ix0, int ix1, int ix2, int ix3, int ix4) {
 			Renderer::SelectionToggle(subsceneIndex, forceTrue, ix0, ix1, ix2, ix3, ix4);
+			PDBAtom * a;
 			if((subsceneIndex == 0) && (ix0 != NULL)) {
-				PDBAtom * a = (PDBAtom*)ix0;
-				a->SetSelected(forceTrue || !a->GetSelected());
+				switch(displayStyle) {
+					case CALPHA_DISPLAY_STYLE_BACKBONE:
+						a = (PDBAtom*)ix0;
+						a->SetSelected(forceTrue || !a->GetSelected());
+						break;
+					case CALPHA_DISPLAY_STYLE_RIBBON:
+						break;
+					case CALPHA_DISPLAY_STYLE_SIDE_CHAIN:
+						a = (PDBAtom*)ix0;
+						a->SetSelected(forceTrue || !a->GetSelected());
+						break;
+				} 
 			} else if((subsceneIndex == 1) && (ix0 >= 0) && (ix0 <= (int)bonds.size())) {
 				switch(displayStyle) {
 					case CALPHA_DISPLAY_STYLE_BACKBONE:
@@ -682,7 +758,16 @@ namespace wustl_mm {
 						sidechainBonds[ix0].SetSelected(forceTrue || !sidechainBonds[ix0].GetSelected());
 						break;
 				} 
-			}			
+			} else if((subsceneIndex == 2) && (ix0 != NULL)) {			
+				switch(displayStyle) {
+					case CALPHA_DISPLAY_STYLE_BACKBONE:
+						break;
+					case CALPHA_DISPLAY_STYLE_RIBBON:
+						break;
+					case CALPHA_DISPLAY_STYLE_SIDE_CHAIN:
+						break;
+				} 			
+			}
 		}
 
 		void CAlphaRenderer::Unload() {
@@ -816,6 +901,43 @@ namespace wustl_mm {
 				i->second.Transform(transform);
 			}	
 		}
+
+		//the following code is used to render ribbon diagrams
+		int CAlphaRenderer::StartHelix() {
+			aHelices.push_back(Secel());
+			return aHelices.size() - 1;
+		}
+
+		void CAlphaRenderer::AddHelixElement(int index, unsigned long long hashKey){
+			aHelices[index].atomHashes.push_back(hashKey);
+		}
+
+		int CAlphaRenderer::StartStrand() {
+			bStrands.push_back(Secel());
+			return bStrands.size() - 1;
+		}
+
+		void CAlphaRenderer::AddStrandElement(int index, unsigned long long hashKey){
+			bStrands[index].atomHashes.push_back(hashKey);
+		}
+		
+		int CAlphaRenderer::StartLoop() {
+			loops.push_back(Secel());
+			return loops.size() - 1;
+		}
+
+		void CAlphaRenderer::AddLoopElement(int index, unsigned long long hashKey){
+			loops[index].atomHashes.push_back(hashKey);
+		}
+
+		bool CAlphaRenderer::CleanSecondaryStructures(){
+			aHelices.clear();
+			bStrands.clear();
+			loops.clear();
+			return true;
+		}
+
+		//end ribbon diagram code
 	}
 }
 

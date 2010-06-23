@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.80  2010/06/23 13:02:56  ssa1
+//   Allowing users to reset a flexible fitting if need be.
+//
 //   Revision 1.79  2010/06/17 19:42:38  ssa1
 //   Generic method for setting object specific coloring
 //
@@ -670,6 +673,13 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("setDisplayStyle", &CAlphaRenderer::SetDisplayStyle)
 		.def("setObjectSpecificColoring", &CAlphaRenderer::SetObjectSpecificColoring)
 		.def("updateBoundingBox", &CAlphaRenderer::UpdateBoundingBox)
+		.def("startHelix", &CAlphaRenderer::StartHelix)
+		.def("addHelixElement", &CAlphaRenderer::AddHelixElement)
+		.def("startStrand", &CAlphaRenderer::StartStrand)
+		.def("addStrandElement", &CAlphaRenderer::AddStrandElement)
+		.def("startLoop", &CAlphaRenderer::StartLoop)
+		.def("addLoopElement", &CAlphaRenderer::AddLoopElement)
+		.def("cleanSecondaryStructures", &CAlphaRenderer::CleanSecondaryStructures)
 	;
 
 	class_<InteractiveSkeletonEngine>("InteractiveSkeletonEngine", init<Volume *, NonManifoldMesh_Annotated *, float, int, int, int, unsigned int>())		
