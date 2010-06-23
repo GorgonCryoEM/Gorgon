@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.59  2010/06/08 22:27:19  ssa1
+#   Fixing bug where clicking on a helix in the structure editor pane didnt update the spin boxes in the helix editor.
+#
 #   Revision 1.58  2010/06/08 22:00:03  ssa1
 #   Fixing performance issue where changing color took time.
 #
@@ -238,7 +241,11 @@ class CAlphaViewer(BaseViewer):
         self.strandsVisible = True
         self.loopsVisible = True      
         self.initVisualizationOptions(AtomVisualizationForm(self.app, self))
-        self.loadedChains = [] 
+        self.loadedChains = []
+        self.ribbonMouseMapping = {} 
+        self.ribbonMouseMapping[0] = {}   
+        self.ribbonMouseMapping[1] = {}
+        self.ribbonMouseMapping[2] = {}
         
         #self.connect(self, QtCore.SIGNAL("elementSelected (int, int, int, int, int, int, QMouseEvent)"), self.centerOnSelectedAtoms)
         self.connect(self, QtCore.SIGNAL("elementClicked (int, int, int, int, int, int, QMouseEvent)"), self.processElementClick)
@@ -300,13 +307,78 @@ class CAlphaViewer(BaseViewer):
             visibility = [False, False, False]        
         return visibility
           
+    # Overridden
+    def emitElementClicked(self, hitStack, event):        
+        if (self.displayStyle == self.DisplayStyleRibbon):
+            sseData = self.formatRibbonHitstack(hitStack)
+            self.emit(QtCore.SIGNAL("ribbonClicked (int, PyQt_PyObject, PyQt_PyObject, QMouseEvent)"), sseData[0], sseData[1], sseData[2], event)
+        else:
+            BaseViewer.emitElementClicked(self, hitStack, event)
+
+    # Overridden
+    def emitElementSelected(self, hitStack, event):
+        if (self.displayStyle == self.DisplayStyleRibbon):
+            sseData = self.formatRibbonHitstack(hitStack)
+            self.emit(QtCore.SIGNAL("ribbonSelected (int, PyQt_PyObject, PyQt_PyObject, QMouseEvent)"), sseData[0], sseData[1], sseData[2], event)
+        else:
+            BaseViewer.emitElementSelected(self, hitStack, event)
+        
+    # Overridden        
+    def emitElementMouseOver(self, hitStack, event):  
+        if (self.displayStyle == self.DisplayStyleRibbon):
+            sseData = self.formatRibbonHitstack(hitStack)
+            self.emit(QtCore.SIGNAL("ribbonMouseOver (int, PyQt_PyObject, PyQt_PyObject, QMouseEvent)"), sseData[0], sseData[1], sseData[2], event)
+        else:
+            BaseViewer.emitElementMouseOver(self, hitStack, event)
+
+    def formatRibbonHitstack(self, hitStack):
+        sseData = [-1, " "," "]
+        if(len(hitStack) <= 2):
+            subsceneIx = hitStack[0]
+            sseData[0] = subsceneIx
+            if(subsceneIx == 0):
+                sseData[1] = self.ribbonMouseMapping[0][hitStack[1]]
+            if (subsceneIx == 1):
+                sseData[1] = self.ribbonMouseMapping[1][hitStack[1]][0]
+                sseData[2] = self.ribbonMouseMapping[1][hitStack[1]][1]
+            elif (subsceneIx == 2):
+                sseData[1] = self.ribbonMouseMapping[2][hitStack[1]]
+        return sseData
+                   
 
     def setAtomColorsAndVisibility(self, displayStyle):        
         if displayStyle == self.DisplayStyleBackbone:
             self.setAllAtomColor(self.getAtomColor())            
         elif displayStyle == self.DisplayStyleRibbon:
-            #Pass into c++ layer all data needed to draw ribbon diagram here!
-            pass
+            self.renderer.cleanSecondaryStructures()
+            self.ribbonMouseMapping = {}
+            self.ribbonMouseMapping[0] = {}   
+            self.ribbonMouseMapping[1] = {}
+            self.ribbonMouseMapping[2] = {}
+            
+            for chain in self.loadedChains:
+                for helixIx, helix in chain.helices.items():                    
+                    ix = self.renderer.startHelix()
+                    self.ribbonMouseMapping[0][ix] = helixIx
+                    for i in range(helix.startIndex, helix.stopIndex + 1):
+                        if (i in chain.residueList) and ("CA" in chain[i].getAtomNames()):
+                            self.renderer.addHelixElement(ix, chain[i].getAtom("CA").getHashKey())
+                            
+                for sheetIx, sheet in chain.sheets.items():                    
+                    for strandIx, strand in sheet.strandList.items():
+                        ix = self.renderer.startStrand()             
+                        self.ribbonMouseMapping[1][ix] = [sheetIx, strandIx]           
+                        for i in range(strand.startIndex, strand.stopIndex + 1):
+                            if (i in chain.residueList) and ("CA" in chain[i].getAtomNames()):
+                                self.renderer.addStrandElement(ix, chain[i].getAtom("CA").getHashKey())
+                        
+                for loopIx, loop in chain.coils.items():
+                    ix = self.renderer.startLoop()
+                    self.ribbonMouseMapping[2][ix] = loopIx
+                    for i in range(loop.startIndex-1, loop.stopIndex + 2):
+                        if (i in chain.residueList) and ("CA" in chain[i].getAtomNames()):
+                            self.renderer.addLoopElement(ix, chain[i].getAtom("CA").getHashKey())                        
+
         elif displayStyle == self.DisplayStyleSideChain:
             self.setSpecificAtomColor('C', self.getCarbonColor())
             self.setSpecificAtomColor('N', self.getNitrogenColor())

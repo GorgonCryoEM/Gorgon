@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.11  2010/06/23 13:02:56  ssa1
+#   Allowing users to reset a flexible fitting if need be.
+#
 #   Revision 1.10  2010/06/17 19:42:38  ssa1
 #   Generic method for setting object specific coloring
 #
@@ -83,6 +86,7 @@ class CAlphaFlexibleFittingForm(BaseDockWidget, Ui_DialogCAlphaFlexibleFitting):
         self.connect(self.sseViewer, QtCore.SIGNAL("modelLoaded()"), self.enableDisableWindowElements)
         self.connect(self.sseViewer, QtCore.SIGNAL("modelUnloaded()"), self.enableDisableWindowElements)
         self.connect(self.comboBoxAlignment, QtCore.SIGNAL("currentIndexChanged (int)"), self.loadAlignment)
+        self.connect(self.cAlphaViewer, QtCore.SIGNAL("ribbonClicked (int, PyQt_PyObject, PyQt_PyObject, QMouseEvent)"), self.ribbonClicked)
         self.tableWidget.setColumnWidth(0,80)
         self.tableWidget.setColumnWidth(1,80)
         self.tableWidget.setColumnWidth(2,80)
@@ -327,3 +331,7 @@ class CAlphaFlexibleFittingForm(BaseDockWidget, Ui_DialogCAlphaFlexibleFitting):
         self.sseViewer.emitModelChanged()
                 
         self.revertToBackupCopy()
+        
+        
+    def ribbonClicked(self, subsceneIx, sseIx, subSseIx, event):
+        print "Ribbon", subsceneIx, sseIx, subSseIx
