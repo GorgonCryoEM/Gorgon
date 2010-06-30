@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.81  2010/06/23 19:11:51  ssa1
+//   Adding simple ribbon rendering and associated events for flexible fitting
+//
 //   Revision 1.80  2010/06/23 13:02:56  ssa1
 //   Allowing users to reset a flexible fitting if need be.
 //
@@ -210,6 +213,7 @@
 #include <Gorgon/FlexibleFittingEngine.h>
 #include <Gorgon/CAlphaRenderer.h>
 #include <MathTools/Vector3D.h>
+#include <MathTools/LinearSolver.h>
 #include <GraphMatch/PDBAtom.h>
 #include <GraphMatch/LinkedNode.h>
 #include <GraphMatch/PDBBond.h>
@@ -225,6 +229,7 @@ using namespace wustl_mm::Visualization;
 using namespace wustl_mm::GraphMatch;
 using namespace wustl_mm::SkeletonMaker;
 using namespace wustl_mm::Protein_Morph;
+using wustl_mm::MathTools::LinearSolver;
 
 
 // ********************** From EMAN2 typeconverter.h ************************************
@@ -338,12 +343,16 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 	vector_to_python< std::vector<float> >();
 	vector_from_python< std::vector<float> >();
 
+	vector_to_python<Vector3DFloat>();
+	vector_from_python<Vector3DFloat>();
+
 //	tuple3_to_python<Vector3DInt>();
 //	tuple3_to_python<Vector3DFloat>();
 	tuple3_from_python<Vector3DInt, int>();
 	tuple3_from_python<Vector3DFloat, float>();
 
 	class_<Vector3DFloat>("Vector3DFloat", init<float, float, float>())
+		.def(init< vector<float> >())
 		.def("x", &Vector3DFloat::X)
 		.def("y", &Vector3DFloat::Y)
 		.def("z", &Vector3DFloat::Z)
@@ -377,9 +386,15 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("setValue", &MatrixFloat::SetValue)
 	;
 	
-
+	class_<LinearSolver>("LinearSolver")
+		.def("findBestFitLine", &LinearSolver::FindBestFitLine)
+		.staticmethod("findBestFitLine")
+		.def("sumDistSqrd", &LinearSolver::SumDistSqrd)
+		.staticmethod("sumDistSqrd")
+	;
 
 	class_<PDBAtom>("PDBAtom", init<string, char, unsigned int, string>())
+		.def(init<string>())
 		.def("getPDBId", &PDBAtom::GetPDBId)
 		.def("getSerial", &PDBAtom::GetSerial)
 		.def("getName", &PDBAtom::GetName)
@@ -858,7 +873,7 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("addSSEHelix", &FlexibleFittingEngine::AddSSEHelix)		
 		.def("startSearch", &FlexibleFittingEngine::StartSearch)		
 		.def("getRigidTransform", &FlexibleFittingEngine::GetRigidTransform)		
-		.def("getHelixFlexibleTransform", &FlexibleFittingEngine::GetHelixFlexibleTransform)		
+		.def("getHelixFlexibleTransform", &FlexibleFittingEngine::GetHelixFlexibleTransform)
 		.def("getCorrespondenceCount", &FlexibleFittingEngine::GetCorrespondenceCount)		
 		.def("getClusterCount", &FlexibleFittingEngine::GetClusterCount)		
 		.def("getHelixCount", &FlexibleFittingEngine::GetHelixCount)		
@@ -872,7 +887,5 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("isForward", &SSECorrespondenceNode::IsForward)
 	;
 }
-
-
 
 #endif
