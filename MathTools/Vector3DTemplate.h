@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.11  2010/04/17 02:57:08  colemanr
+//   subscript operator
+//
 //   Revision 1.10  2009/12/07 22:35:32  ssa1
 //   A* triangle search using SVD rotations and translations.
 //
@@ -44,7 +47,8 @@ namespace wustl_mm {
 		public:
 			Vector3DTemplate();
 			Vector3DTemplate(T x, T y, T z);
-			Vector3DTemplate(const Vector3DTemplate<T>& rhs);			
+			Vector3DTemplate(const vector<T>& vec);
+			Vector3DTemplate(const Vector3DTemplate<T>& rhs);
 			~Vector3DTemplate();
 
 			T X() const;
@@ -98,6 +102,12 @@ namespace wustl_mm {
 			values[2] = z;
 		}
 		
+		template <class T> Vector3DTemplate<T>::Vector3DTemplate(const vector<T>& vec) {
+			values[0] = vec[0];
+			values[1] = vec[1];
+			values[2] = vec[2];
+		}
+
 		template <class T> Vector3DTemplate<T>::Vector3DTemplate(const Vector3DTemplate<T>& rhs) {
 			values[0] = rhs.values[0];
 			values[1] = rhs.values[1];
