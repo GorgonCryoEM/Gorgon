@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.12  2010/06/30 16:35:30  coleman.r
+//   STL vector convert constructor
+//
 //   Revision 1.11  2010/04/17 02:57:08  colemanr
 //   subscript operator
 //
@@ -80,6 +83,9 @@ namespace wustl_mm {
 			Vector3DTemplate<T> GetOrthogonal();
 			Vector3DTemplate<T> Rotate(Vector3DTemplate<T> axis, double angle);			
 			Vector3DTemplate<T> Transform(MatrixTemplate<T> transformation);
+			T * begin();
+			T * end();
+
 			void Normalize();
 			bool IsBadNormal();
 			void Print();
@@ -229,6 +235,24 @@ namespace wustl_mm {
 				values[i] = d.values[i];
 			}
 			return *this;
+		}
+
+		/** Add this function to make it iterable in Python,
+		 * so we can call list() or tuple() to convert Vec3f in python to a list or tuple.
+		 *
+		 * @return the iterator (here is the pointer) of the first element
+		 * */
+		template <class T> T * Vector3DTemplate<T>::begin() {
+			return &values[0];
+		}
+
+		/** Add this function to make it iterable in Python,
+		 * so we can call list() or tuple() to convert Vec3f in python to a list or tuple.
+		 *
+		 * @return the iterator (here is the pointer) of the one beyond the last element.
+		 * */
+		template <class T> T * Vector3DTemplate<T>::end() {
+			return &values[2];
 		}
 
 		template <class T> void Vector3DTemplate<T>::Normalize() {
