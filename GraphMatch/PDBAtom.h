@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.16  2010/05/27 17:10:19  ssa1
+//   Better color control for all atom visualization
+//
 //   Revision 1.15  2010/05/27 04:41:54  ssa1
 //   Side chain visualization on Gorgon
 //
@@ -90,6 +93,8 @@ namespace wustl_mm {
 			bool			GetSelected();
 			bool			GetVisible();
 			unsigned long long	GetHashKey();
+			unsigned long long  GetPrevCAHash(); // getting the Next and Previous hashes added
+			unsigned long long  GetNextCAHash(); // for rendering purposes
 			int				GetFlag();		// Purely for implementation purposes
 			float			GetCorrelationScore();
 			float			GetSkeletonScore();
@@ -121,7 +126,9 @@ namespace wustl_mm {
 			void SetGeometryScore(float score);
 			void Transform(MatrixFloat transformMatrix);
 			void InterpolateTransform(MatrixFloat transformMatrix1, MatrixFloat transformMatrix2, float coefficient);
-			
+			void SetPrevCAHash(unsigned long long prevHash);  // previous and next CAs identifiable for rendering purposes
+			void SetNextCAHash(unsigned long long nextHash);  // these are implemented naively rather than using a function
+															  // to generate a hash code			
 			
 		private:
 			static unsigned long long GetCharIndex(char c);
@@ -151,6 +158,10 @@ namespace wustl_mm {
 			bool			selected;
 			bool			visible;
 			int				flag;
+			unsigned long long prevCAHash;
+			unsigned long long nextCAHash;
+			bool			prevWasSet;
+			bool			nextWasSet;
 
 			float			correlationScore;
 			float			skeletonScore;
@@ -179,6 +190,9 @@ namespace wustl_mm {
 			selected = false;
 			visible = true;
 
+			prevWasSet = false;
+			nextWasSet = false;
+
 			correlationScore = 0;
 			skeletonScore = 0;
 			geometryScore = 0;
@@ -205,6 +219,9 @@ namespace wustl_mm {
 			colorA = 1.0f;
 			selected = false;
 			visible = true;
+
+			prevWasSet = false;
+			nextWasSet = false;
 
 			correlationScore = 0;
 			skeletonScore = 0;
@@ -236,6 +253,9 @@ namespace wustl_mm {
 			colorA = 1.0f;
 			selected = false;
 			visible = true;
+
+			prevWasSet = false;
+			nextWasSet = false;
 
 			correlationScore = 0;
 			skeletonScore = 0;
@@ -369,6 +389,22 @@ namespace wustl_mm {
 			return ConstructHashKey(pdbId, chainId, resSeq, name);
 		}
 
+		unsigned long long PDBAtom::GetPrevCAHash() {
+			if (prevWasSet) {
+				return prevCAHash;
+			} else {  // if a previous CA atom is not set, it returns itself as its previous
+				return GetHashKey();
+			}
+		}
+
+		unsigned long long PDBAtom::GetNextCAHash() {
+			if (nextWasSet) {
+				return nextCAHash;
+			} else { // if a next CA atom is not set, returns self as previous
+				return GetHashKey();
+			}
+		}
+
 		bool PDBAtom::GetVisible() {
 			return visible;
 		}
@@ -481,6 +517,16 @@ namespace wustl_mm {
 		
 		void PDBAtom::SetGeometryScore(float score) {
 			geometryScore = score;
+		}
+
+		void PDBAtom::SetPrevCAHash(unsigned long long prevHash){
+			prevCAHash = prevHash;
+			prevWasSet = true;
+		}
+
+		void PDBAtom::SetNextCAHash(unsigned long long nextHash){
+			nextCAHash = nextHash;
+			nextWasSet = true;
 		}
 
 		string PDBAtom::GetPDBString() {

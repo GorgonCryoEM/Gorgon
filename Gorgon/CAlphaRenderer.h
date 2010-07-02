@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.51  2010/06/23 19:11:51  ssa1
+//   Adding simple ribbon rendering and associated events for flexible fitting
+//
 //   Revision 1.50  2010/06/23 13:02:56  ssa1
 //   Allowing users to reset a flexible fitting if need be.
 //
@@ -137,10 +140,64 @@ namespace wustl_mm {
 			}
 		};
 
+		/**
+		 Begin Hermite Curve code, to be moved into another file after testing
+		 -this code based on molscript's hermite_curve.c file, and produced with the help
+		  of wikipedia's article on the cubic hermite spline
+		 */
+		class HermiteCurve{
+		public:
+			Vector3DFloat p0, p1, m0, m1;
+
+			void setCurve(Vector3DFloat pstart, Vector3DFloat pend, Vector3DFloat tstart, Vector3DFloat tend);
+			Vector3DFloat getPos(double t);
+			Vector3DFloat getTangent(double t);
+		};
+
+		void HermiteCurve::setCurve(Vector3DFloat pstart, Vector3DFloat pend, Vector3DFloat tstart, Vector3DFloat tend){
+			p0 = pstart;
+			p1 = pend;
+			m0 = tstart;
+			m1 = tend;
+		}
+
+		Vector3DFloat HermiteCurve::getPos(double t){
+			double tsquared = t*t;
+			double tcubed = tsquared * t;
+
+			double cp0 = 2*tcubed - 3*tsquared + 1;
+			double cm0 = tcubed - 2*tsquared + t;
+			double cp1 = (cp0 - 1)*(-1);
+			double cm1 = tcubed - tsquared;
+
+			double xt = cp0*p0.X() + cm0*m0.X() + cp1*p1.X() + cm1*m1.X();
+			double yt = cp0*p0.Y() + cm0*m0.Y() + cp1*p1.Y() + cm1*m1.Y();
+			double zt = cp0*p0.Z() + cm0*m0.Z() + cp1*p1.Z() + cm1*m1.Z();
+
+			return Vector3DFloat(xt, yt, zt);
+		}
+
+		// I don't know how this method works, but it is a part of the entirely functional
+		// molscript code - BC
+		Vector3DFloat HermiteCurve::getTangent(double t){
+			double t2 = t * t;
+			double cp0 = 6.0 * (t2 - t);
+			double cp1 = 6.0 * (-t2 + t);
+			double cm0 = 3.0 * t2 - 4.0 * t + 1.0;
+			double cm1 = 3.0 * t2 - 2.0 * t;
+			double vxt = p0.X()*cp0 + p1.X() * cp1 + m0.X() * cm0 + m1.X() * cm1;
+			double vyt = p0.Y()*cp0 + p1.Y() * cp1 + m0.Y() * cm0 + m1.Y() * cm1;
+			double vzt = p0.Z()*cp0 + p1.Z() * cp1 + m0.Z() * cm0 + m1.Z() * cm1;
+
+			return Vector3DFloat(vxt, vyt, vzt);
+		}
+		/**
+		 End Hermite Curve code
+		 */
+
 		const int CALPHA_DISPLAY_STYLE_BACKBONE = 3;
 		const int CALPHA_DISPLAY_STYLE_RIBBON = 4;
 		const int CALPHA_DISPLAY_STYLE_SIDE_CHAIN = 5;
-
 
 		class CAlphaRenderer : public Renderer{
 		public:
@@ -206,6 +263,11 @@ namespace wustl_mm {
 			bool CleanSecondaryStructures(); //empties the aHelices, bStrands and loops variables
 											//what should really happen is that the code should check if it is
 											//trying to reload the same one, and then if it did return false
+
+			vector<Vector3DFloat> CreatePointVector(PDBAtom first, PDBAtom last); // functionality mirrored in previously implemented method,
+																				  // will try to refactor
+			vector<Vector3DFloat> LaplacianSmoothing(vector<Vector3DFloat> points, int steps); // applies Laplacian smoothing to a vector of
+																							   // Vector3DFloats
 
 
 		private:
@@ -325,48 +387,324 @@ namespace wustl_mm {
 		}
 
 		void CAlphaRenderer::DrawRibbonModel(int subSceneIndex, bool selectEnabled) {
+			// subSceneIndex will be 0 for Helices, 1 for Strands and 2 for loops/coils
+			GLfloat emissionColor[4] = {1.0, 1.0, 1.0, 1.0};
+			int MAX_BOND_LENGTH = 4;
+
 			if(selectEnabled) {
 				glPushName(subSceneIndex);
 				glPushName(0);
 			}
 
-			switch(subSceneIndex) {
-				case 0: // Helices		
-					for(int i = 0; i < aHelices.size(); i++) {
-						if(selectEnabled){
-							glLoadName(i);
-						}
-						for(int j = 0; j < aHelices[i].atomHashes.size()-1; j++) {
-							DrawCylinder(atoms[aHelices[i].atomHashes[j]].GetPosition(), atoms[aHelices[i].atomHashes[j+1]].GetPosition(), 0.1, 10, 2);
-						}
-					}
-					break;
-				case 1: // Strands
-					for(int i = 0; i < bStrands.size(); i++) {
-						if(selectEnabled){
-							glLoadName(i);
-						}
-						for(int j = 0; j < bStrands[i].atomHashes.size()-1; j++) {
-							DrawCylinder(atoms[bStrands[i].atomHashes[j]].GetPosition(), atoms[bStrands[i].atomHashes[j+1]].GetPosition(), 0.1, 10, 2);
-						}
-					}
-					break;
-				case 2: // Loops
-					for(int i = 0; i < loops.size(); i++) {
-						if(selectEnabled){
-							glLoadName(i);
-						}
-						for(int j = 0; j < loops[i].atomHashes.size()-1; j++) {
-							DrawCylinder(atoms[loops[i].atomHashes[j]].GetPosition(), atoms[loops[i].atomHashes[j+1]].GetPosition(), 0.1, 10, 2);
-						}
-					}
-					break;					
-			}
+			if(subSceneIndex == 0) { // Drawing Helices
+				int atom_counter = 0;
+				PDBAtom lastEnd;
 
-			if(selectEnabled) {
-				glPopName();
-				glPopName();
+				// Hermite Curve test code
+				float HELIX_HERMITE_FACTOR = 4.7;
+				float HELIX_ALPHA = 32.0; //in degrees, not radians
+				float HELIX_BETA = -11.0; //in degrees, not radians - these three constants taken from molscript code
+				HermiteCurve curve;
+				Vector3DFloat m0, m1;
+
+				for (unsigned int i = 0; i < aHelices.size(); ++i){
+					if(selectEnabled){
+						glLoadName(i);
+					}
+
+					glPushAttrib(GL_LIGHTING_BIT);
+
+					Secel currentSecel = aHelices[i];
+
+					if(currentSecel.atomHashes.size() > 0){
+
+						PDBAtom firstAtom = atoms.find(currentSecel.atomHashes[0])->second;
+						PDBAtom lastAtom = atoms.find(currentSecel.atomHashes[currentSecel.atomHashes.size()-1])->second;
+						Vector3DFloat preSecelAtomPos = atoms.find(firstAtom.GetPrevCAHash())->second.GetPosition();
+						Vector3DFloat postSecelAtomPos = atoms.find(lastAtom.GetNextCAHash())->second.GetPosition();
+
+						vector<Vector3DFloat> points = CreatePointVector(firstAtom, lastAtom);
+
+						for(unsigned int i = 0; i < points.size()-1; ++i){
+							if(i == 0){
+								m0 = points[i+1] - preSecelAtomPos;
+							} else {
+								m0 = points[i+1] - points[i-1];
+							}
+
+							if(i + 2 > points.size() - 1){
+								m1 = postSecelAtomPos - points[i];
+							} else {
+								m1 = points[i+2] - points[i];
+							}
+
+							curve.setCurve(points[i], points[i+1], m0, m1);
+
+							DrawSphere(points[i], .3);
+							//DrawCylinder(firstatm.GetPosition() - m0*.5, firstatm.GetPosition() + m0*.5, .1, 10, 10);
+							DrawSphere(points[i+1], .3);
+							//DrawCylinder(secondatm.GetPosition() - m1*.5, secondatm.GetPosition() + m1*.5, .1, 10, 10);
+
+							Vector3DFloat lastPos = points[i];
+							int NUM_SECTIONS = 10;
+							for (int sect = 1; sect <= NUM_SECTIONS; ++sect){
+								double tsect = ((double)sect)/((double)NUM_SECTIONS);
+								Vector3DFloat nextPos = curve.getPos(tsect);
+								DrawSphere(nextPos, .19);
+								DrawCylinder(lastPos, nextPos, .19, 10, 2);
+								lastPos = nextPos;
+							}
+						}
+					}
+
+					glPopAttrib();
+				}
+
+				//for(unsigned int i = 0; i < aHelices.size(); ++i){
+				//	if(selectEnabled){
+				//		glLoadName(i);
+				//	}
+
+				//	Secel currentSecel = aHelices[i];
+
+				//	glPushAttrib(GL_LIGHTING_BIT);
+				//	PDBAtom firstatm = atoms.find(currentSecel.atomHashes[0])->second;
+				//	PDBAtom secondatm = atoms.find(firstatm.GetNextCAHash())->second;
+
+				//	if(currentSecel.atomHashes.size() > 0){	
+				//		//OpenGLUtils::SetColor(firstatm.GetColorR(), firstatm.GetColorG(), firstatm.GetColorB(), firstatm.GetColorA());
+
+				//		for (unsigned int i =0; i < currentSecel.atomHashes.size(); ++i) {
+				//		//while (firstatm.GetHashKey() != currentSecel.atomHashes[currentSecel.atomHashes.size()-1
+				//			m0 = atoms.find(firstatm.GetNextCAHash())->second.GetPosition() - 
+				//				atoms.find(firstatm.GetPrevCAHash())->second.GetPosition();
+
+				//			m1 = atoms.find(secondatm.GetNextCAHash())->second.GetPosition() - 
+				//				atoms.find(secondatm.GetPrevCAHash())->second.GetPosition();
+
+				//			curve.setCurve(firstatm.GetPosition(), secondatm.GetPosition(), m0, m1);
+
+				//			DrawSphere(firstatm.GetPosition(), .3);
+				//			//DrawCylinder(firstatm.GetPosition() - m0*.5, firstatm.GetPosition() + m0*.5, .1, 10, 10);
+				//			DrawSphere(secondatm.GetPosition(), .3);
+				//			//DrawCylinder(secondatm.GetPosition() - m1*.5, secondatm.GetPosition() + m1*.5, .1, 10, 10);
+
+				//			Vector3DFloat lastPos = firstatm.GetPosition();
+				//			int NUM_SECTIONS = 15;
+				//			for (int sect = 1; sect <= NUM_SECTIONS; ++sect){
+				//				double tsect = ((double)sect)/((double)NUM_SECTIONS);
+				//				Vector3DFloat nextPos = curve.getPos(tsect);
+				//				//DrawSphere(curve.getPos(tsect), .19);
+				//				DrawCylinder(lastPos, nextPos, .19, 10, 10);
+				//				lastPos = nextPos;
+				//			}
+
+				//			firstatm = secondatm;
+				//			secondatm = atoms.find(secondatm.GetNextCAHash())->second;
+				//		//}
+				//		}
+				//	}
+				//	glPopAttrib();	
+				//}
+
+				if(selectEnabled) {
+					glPopName();
+					glPopName();
+				}
+
+			} else if(subSceneIndex == 1) { // Drawing Strands
+				int atom_counter = 0;
+				PDBAtom lastEnd;
+
+				HermiteCurve curve;
+				Vector3DFloat m0, m1;
+				double STRAND_HERMITE_FACTOR = 0.5;
+
+				for (unsigned int i = 0; i < bStrands.size(); ++i){
+					if(selectEnabled){
+						glLoadName(i);
+					}
+
+					glPushAttrib(GL_LIGHTING_BIT);
+
+					Secel currentSecel = bStrands[i];
+
+					if(currentSecel.atomHashes.size() > 0){
+
+						PDBAtom firstAtom = atoms.find(currentSecel.atomHashes[0])->second;
+						PDBAtom lastAtom = atoms.find(currentSecel.atomHashes[currentSecel.atomHashes.size()-1])->second;
+						Vector3DFloat preSecelAtomPos = atoms.find(firstAtom.GetPrevCAHash())->second.GetPosition();
+						Vector3DFloat postSecelAtomPos = atoms.find(lastAtom.GetNextCAHash())->second.GetPosition();
+
+						vector<Vector3DFloat> points = CreatePointVector(firstAtom, lastAtom);
+
+						bool LAPLACIAN_SMOOTHING = true;
+						int SMOOTHING_STEPS = 1;
+						if(LAPLACIAN_SMOOTHING){
+							points = LaplacianSmoothing(points, SMOOTHING_STEPS);
+						}
+
+						for(unsigned int i = 0; i < points.size()-1; ++i){
+							if(i == 0){
+								m0 = points[i+1] - preSecelAtomPos;
+							} else {
+								m0 = points[i+1] - points[i-1];
+							}
+
+							if(i + 2 > points.size() - 1){
+								m1 = postSecelAtomPos - points[i];
+							} else {
+								m1 = points[i+2] - points[i];
+							}
+
+							m0 = m0*STRAND_HERMITE_FACTOR;
+							m1 = m1*STRAND_HERMITE_FACTOR;
+
+							curve.setCurve(points[i], points[i+1], m0, m1);
+
+							DrawSphere(points[i], .3);
+							//DrawCylinder(firstatm.GetPosition() - m0*.5, firstatm.GetPosition() + m0*.5, .1, 10, 10);
+							DrawSphere(points[i+1], .3);
+							//DrawCylinder(secondatm.GetPosition() - m1*.5, secondatm.GetPosition() + m1*.5, .1, 10, 10);
+
+							Vector3DFloat lastPos = points[i];
+							int NUM_SECTIONS = 10;
+							for (int sect = 1; sect <= NUM_SECTIONS; ++sect){
+								double tsect = ((double)sect)/((double)NUM_SECTIONS);
+								Vector3DFloat nextPos = curve.getPos(tsect);
+								DrawSphere(nextPos, .19);
+								DrawCylinder(lastPos, nextPos, .19, 10, 2);
+								lastPos = nextPos;
+							}
+						}
+					}
+
+					glPopAttrib();
+				}
+
+				if(selectEnabled) {
+					glPopName();
+					glPopName();
+				}
+
+			} else if(subSceneIndex == 2) { // Drawing Loops
+				GLfloat emissionColor[4] = {1.0, 1.0, 1.0, 1.0};
+
+				int atom_counter = 0;
+				PDBAtom lastEnd;
+
+				HermiteCurve curve;
+				Vector3DFloat m0, m1;
+
+				double HERMITE_FACTOR = 0.5;
+
+				for (unsigned int i = 0; i < loops.size(); ++i){
+					if(selectEnabled){
+						glLoadName(i);
+					}
+					glPushAttrib(GL_LIGHTING_BIT);
+
+					Secel currentSecel = loops[i];
+
+					if(currentSecel.atomHashes.size() > 0){
+
+						PDBAtom firstAtom = atoms.find(currentSecel.atomHashes[0])->second;
+						PDBAtom lastAtom = atoms.find(currentSecel.atomHashes[currentSecel.atomHashes.size()-1])->second;
+						Vector3DFloat preSecelAtomPos = atoms.find(firstAtom.GetPrevCAHash())->second.GetPosition();
+						Vector3DFloat postSecelAtomPos = atoms.find(lastAtom.GetNextCAHash())->second.GetPosition();
+
+						vector<Vector3DFloat> points = CreatePointVector(firstAtom, lastAtom);
+
+						bool LAPLACIAN_SMOOTHING = true;
+						int SMOOTHING_STEPS = 1;
+						if(LAPLACIAN_SMOOTHING){
+							points = LaplacianSmoothing(points, SMOOTHING_STEPS);
+						}
+
+						for(unsigned int i = 0; i < points.size()-1; ++i){
+							if(i == 0){
+								m0 = points[i+1] - preSecelAtomPos;
+							} else {
+								m0 = points[i+1] - points[i-1];
+								m0 = m0*HERMITE_FACTOR;
+							}
+
+							if(i + 2 > points.size() - 1){
+								m1 = postSecelAtomPos - points[i];
+							} else {
+								m1 = points[i+2] - points[i];
+								m1 = m1*HERMITE_FACTOR;
+							}
+
+							curve.setCurve(points[i], points[i+1], m0, m1);
+
+							DrawSphere(points[i], .3);
+							//DrawCylinder(firstatm.GetPosition() - m0*.5, firstatm.GetPosition() + m0*.5, .1, 10, 10);
+							DrawSphere(points[i+1], .3);
+							//DrawCylinder(secondatm.GetPosition() - m1*.5, secondatm.GetPosition() + m1*.5, .1, 10, 10);
+
+							Vector3DFloat lastPos = points[i];
+							int NUM_SECTIONS = 10;
+							for (int sect = 1; sect <= NUM_SECTIONS; ++sect){
+								double tsect = ((double)sect)/((double)NUM_SECTIONS);
+								Vector3DFloat nextPos = curve.getPos(tsect);
+								DrawSphere(nextPos, .19);
+								DrawCylinder(lastPos, nextPos, .19, 10, 2);
+								lastPos = nextPos;
+							}
+						}
+					}
+
+					glPopAttrib();
+				}
+
+				if(selectEnabled) {
+					glPopName();
+					glPopName();
+				}
 			}
+			//if(selectEnabled) {
+			//	glPushName(subSceneIndex);
+			//	glPushName(0);
+			//}
+
+			//switch(subSceneIndex) {
+			//	case 0: // Helices		
+			//		for(int i = 0; i < aHelices.size(); i++) {
+			//			if(selectEnabled){
+			//				glLoadName(i);
+			//			}
+			//			for(int j = 0; j < aHelices[i].atomHashes.size()-1; j++) {
+			//				DrawCylinder(atoms[aHelices[i].atomHashes[j]].GetPosition(), atoms[aHelices[i].atomHashes[j+1]].GetPosition(), 0.1, 10, 2);
+			//			}
+			//		}
+			//		break;
+			//	case 1: // Strands
+			//		for(int i = 0; i < bStrands.size(); i++) {
+			//			if(selectEnabled){
+			//				glLoadName(i);
+			//			}
+			//			for(int j = 0; j < bStrands[i].atomHashes.size()-1; j++) {
+			//				DrawCylinder(atoms[bStrands[i].atomHashes[j]].GetPosition(), atoms[bStrands[i].atomHashes[j+1]].GetPosition(), 0.1, 10, 2);
+			//			}
+			//		}
+			//		break;
+			//	case 2: // Loops
+			//		for(int i = 0; i < loops.size(); i++) {
+			//			if(selectEnabled){
+			//				glLoadName(i);
+			//			}
+			//			for(int j = 0; j < loops[i].atomHashes.size()-1; j++) {
+			//				DrawCylinder(atoms[loops[i].atomHashes[j]].GetPosition(), atoms[loops[i].atomHashes[j+1]].GetPosition(), 0.1, 10, 2);
+			//			}
+			//		}
+			//		break;					
+			//}
+
+			//if(selectEnabled) {
+			//	glPopName();
+			//	glPopName();
+			//}
 		}
 
 		void CAlphaRenderer::DrawSideChainModel(int subSceneIndex, bool selectEnabled) {
@@ -938,6 +1276,43 @@ namespace wustl_mm {
 		}
 
 		//end ribbon diagram code
+
+		// creates a vector of Vector3DFloats that represents the locations of all the PDBAtoms
+		// starting with start and ending with end; it does not error check, so incorrectly
+		// ordered points will break this method.  there are more efficient ways to handle this
+		// functionality, but this seems simple and flexible enough to allow
+		vector<Vector3DFloat> CAlphaRenderer::CreatePointVector(PDBAtom start, PDBAtom end){
+			vector<Vector3DFloat> points;
+
+			PDBAtom current = start;
+			while(current.GetHashKey() != end.GetHashKey()){
+				points.push_back(current.GetPosition());
+				if(current.GetHashKey() == current.GetNextCAHash()){
+					break;
+				}
+				current = atoms.find(current.GetNextCAHash())->second;
+			}
+
+			points.push_back(end.GetPosition());
+			return points;
+		}
+
+		// implementation of Laplacian smoothing for a vector of Vector3DFloats (treats them like points)
+		// creating copies of "points" twice seems unnecessary, but I am unsure about the performance cost,
+		// so I am leaving it for simplicity of implementation
+		vector<Vector3DFloat> CAlphaRenderer::LaplacianSmoothing(vector<Vector3DFloat> points, int steps){
+			vector<Vector3DFloat> pointsTemp(points);
+			vector<Vector3DFloat> smoothedPoints(points);
+
+			for(int i = 0; i < steps; ++i){
+				for(int j = 1; j < points.size()-1; ++j){
+					smoothedPoints[j] = (pointsTemp[j-1] + pointsTemp[j+1])*.5;
+					smoothedPoints[j] = (smoothedPoints[j] + pointsTemp[j])*.5;
+				}
+				pointsTemp = smoothedPoints;
+			}
+			return pointsTemp;
+		}
 	}
 }
 

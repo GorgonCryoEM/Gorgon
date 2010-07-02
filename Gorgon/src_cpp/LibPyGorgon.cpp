@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.82  2010/06/30 16:37:44  coleman.r
+//   LinearSolver class, more Vector3DFloat conversions
+//
 //   Revision 1.81  2010/06/23 19:11:51  ssa1
 //   Adding simple ribbon rendering and associated events for flexible fitting
 //
@@ -441,6 +444,8 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("setGeometryScore", &PDBAtom::SetGeometryScore)
 		.def("transform", &PDBAtom::Transform)
 		.def("interpolateTransform", &PDBAtom::InterpolateTransform)
+		.def("setPrevCAHash", &PDBAtom::SetPrevCAHash)
+		.def("setNextCAHash", &PDBAtom::SetNextCAHash)
 	;
 	
 
