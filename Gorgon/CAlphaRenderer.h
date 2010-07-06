@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.52  2010/07/02 22:46:20  chenb
+//   Added code for each PDBAtom to know its previous and next neighbors, and to render ribbon diagrams as strings of cylinders
+//
 //   Revision 1.51  2010/06/23 19:11:51  ssa1
 //   Adding simple ribbon rendering and associated events for flexible fitting
 //
@@ -268,6 +271,11 @@ namespace wustl_mm {
 																				  // will try to refactor
 			vector<Vector3DFloat> LaplacianSmoothing(vector<Vector3DFloat> points, int steps); // applies Laplacian smoothing to a vector of
 																							   // Vector3DFloats
+			vector<Vector3DFloat> CreateStrandNormals(vector<Vector3DFloat> points); // create line segment normals to be used in drawing Beta
+																					 // strands
+			void DrawOpenBox(vector<Vector3DFloat> points, vector<Vector3DFloat> normals); // takes a vector of 8 points and draws a rectangular prism with two of its six sides not
+															// filled in; the first 4 points are from the beggining edge of the box, with the second four
+															// forming the end
 
 
 		private:
@@ -517,7 +525,7 @@ namespace wustl_mm {
 				PDBAtom lastEnd;
 
 				HermiteCurve curve;
-				Vector3DFloat m0, m1;
+				Vector3DFloat m0, m1, dir1, dir2;
 				double STRAND_HERMITE_FACTOR = 0.5;
 
 				for (unsigned int i = 0; i < bStrands.size(); ++i){
@@ -537,6 +545,7 @@ namespace wustl_mm {
 						Vector3DFloat postSecelAtomPos = atoms.find(lastAtom.GetNextCAHash())->second.GetPosition();
 
 						vector<Vector3DFloat> points = CreatePointVector(firstAtom, lastAtom);
+						vector<Vector3DFloat> normals = CreateStrandNormals(points);
 
 						bool LAPLACIAN_SMOOTHING = true;
 						int SMOOTHING_STEPS = 1;
@@ -544,37 +553,78 @@ namespace wustl_mm {
 							points = LaplacianSmoothing(points, SMOOTHING_STEPS);
 						}
 
-						for(unsigned int i = 0; i < points.size()-1; ++i){
+						for(unsigned int i = 0; i < points.size()-2; ++i){
 							if(i == 0){
-								m0 = points[i+1] - preSecelAtomPos;
+								m0 = points[i+1] - points[i];
 							} else {
-								m0 = points[i+1] - points[i-1];
+								if(i + 2 < points.size()){
+									m0 = points[i+2] - points[i];
+								} else {
+									m0 = preSecelAtomPos - points[i];
+								}
 							}
 
-							if(i + 2 > points.size() - 1){
+							if(i + 3 > points.size() - 1){
 								m1 = postSecelAtomPos - points[i];
 							} else {
-								m1 = points[i+2] - points[i];
+								m1 = points[i+3] - points[i+1];
 							}
 
 							m0 = m0*STRAND_HERMITE_FACTOR;
 							m1 = m1*STRAND_HERMITE_FACTOR;
 
+							if(i == 0){
+								dir2 = points[1] - points[0];
+								dir2.Normalize();
+							}
+
+							dir1 = dir2;
+							dir2 = points[i+2] - points[i];
+
+							dir2.Normalize();
+
 							curve.setCurve(points[i], points[i+1], m0, m1);
 
-							DrawSphere(points[i], .3);
+							//DrawSphere(points[i], .3);
 							//DrawCylinder(firstatm.GetPosition() - m0*.5, firstatm.GetPosition() + m0*.5, .1, 10, 10);
-							DrawSphere(points[i+1], .3);
+							//DrawSphere(points[i+1], .3);
 							//DrawCylinder(secondatm.GetPosition() - m1*.5, secondatm.GetPosition() + m1*.5, .1, 10, 10);
 
+							float WIDTH = .9;
+							float THICKNESS = .175;
+							vector<Vector3DFloat> boxpositions(8);
 							Vector3DFloat lastPos = points[i];
+							Vector3DFloat direction = dir1;
+							Vector3DFloat currentNormal = normals[i];
+							Vector3DFloat side = currentNormal^direction;
+							side.Normalize();
+							boxpositions[0] = lastPos - side*WIDTH + currentNormal*THICKNESS; 
+							boxpositions[2] = lastPos + side*WIDTH + currentNormal*THICKNESS; 
+							boxpositions[4] = lastPos + side*WIDTH - currentNormal*THICKNESS; 
+							boxpositions[6] = lastPos - side*WIDTH - currentNormal*THICKNESS; 
 							int NUM_SECTIONS = 10;
+
 							for (int sect = 1; sect <= NUM_SECTIONS; ++sect){
 								double tsect = ((double)sect)/((double)NUM_SECTIONS);
+								direction = dir1*(1.0 - tsect) + dir2*tsect;
+								currentNormal = normals[i]*(1.0 - tsect) + normals[i+1]*(tsect);
+								side = currentNormal^direction;
+								side.Normalize();
 								Vector3DFloat nextPos = curve.getPos(tsect);
-								DrawSphere(nextPos, .19);
-								DrawCylinder(lastPos, nextPos, .19, 10, 2);
+
+								boxpositions[1] = nextPos - side*WIDTH + currentNormal*THICKNESS; 
+								boxpositions[3] = nextPos + side*WIDTH + currentNormal*THICKNESS;
+								boxpositions[5] = nextPos + side*WIDTH - currentNormal*THICKNESS;
+								boxpositions[7] = nextPos - side*WIDTH - currentNormal*THICKNESS;
+
+								DrawOpenBox(boxpositions, vector<Vector3DFloat>());
+								
+								//DrawSphere(nextPos, .19);
+								//DrawCylinder(lastPos, nextPos, .4, 4, 2);
 								lastPos = nextPos;
+								for(int i = 0; i < 4; ++i){
+									boxpositions[2*i] = boxpositions[2*i+1];
+								}
 							}
 						}
 					}
@@ -638,9 +688,9 @@ namespace wustl_mm {
 
 							curve.setCurve(points[i], points[i+1], m0, m1);
 
-							DrawSphere(points[i], .3);
+							//DrawSphere(points[i], .3);
 							//DrawCylinder(firstatm.GetPosition() - m0*.5, firstatm.GetPosition() + m0*.5, .1, 10, 10);
-							DrawSphere(points[i+1], .3);
+							//DrawSphere(points[i+1], .3);
 							//DrawCylinder(secondatm.GetPosition() - m1*.5, secondatm.GetPosition() + m1*.5, .1, 10, 10);
 
 							Vector3DFloat lastPos = points[i];
@@ -1313,8 +1363,79 @@ namespace wustl_mm {
 			}
 			return pointsTemp;
 		}
+
+		// unsure of what behavior should be if points.size() < 3; in molscript the strand is skipped in this case
+		vector<Vector3DFloat> CAlphaRenderer::CreateStrandNormals(vector<Vector3DFloat> points){
+			vector<Vector3DFloat> normals(points);
+			int ptsSize = points.size();
+
+			for(int i = 1, length = ptsSize - 1; i < length; ++i){
+				Vector3DFloat newPos = (points[i-1] + points[i+1])*.5;
+				normals[i] = points[i] - newPos;
+				normals[i].Normalize();
+			}
+
+			normals[0] = normals[1];
+			normals[ptsSize - 1] = normals[ptsSize - 2];
+
+			// "normals must point the same way" - molscript/graphics.c
+			for(int j = 0, size = ptsSize - 1; j < size; ++j){
+				if(normals[j]*normals[j+1] < 0){
+					normals[j+1] = normals[j+1]*-1;
+				}
+			}
+
+			// "smooth normals, one iteration" - molscript/graphics.c
+			vector<Vector3DFloat> smoothedNormals(normals);
+			
+			for(int k = 1, size = ptsSize - 1; k < size; ++k){
+				smoothedNormals[k] = normals[k-1] + normals[k] + normals[k+1];
+				smoothedNormals[k].Normalize();
+			}
+
+			// "normals exactly perpendicular to strand" - molscript/graphics.c
+			Vector3DFloat direction = points[1] - points[0];
+			Vector3DFloat side = direction^smoothedNormals[0];
+			smoothedNormals[0] = side ^ direction;
+			smoothedNormals[0].Normalize();
+
+			for(int i = 1, size = ptsSize - 1; i < size; ++i){
+				direction = points[i+1] - points[i-1];
+				side = direction^smoothedNormals[i];
+				smoothedNormals[i] = side^direction;
+				smoothedNormals[i].Normalize();
+			}
+
+			direction = points[ptsSize - 1] - points[ptsSize - 2];
+			side = direction^smoothedNormals[ptsSize - 1];
+			smoothedNormals[ptsSize - 1] = side^direction;
+			smoothedNormals[ptsSize - 1].Normalize();
+
+			return smoothedNormals;
+		}
+	}
+
+	// method works like drawing the side of a cylinder with only one stack and 4 slices
+	void CAlphaRenderer::DrawOpenBox(std::vector<Vector3DFloat> points, std::vector<Vector3DFloat> normals){
+		cout << "got into box drawing method" << endl;
+		glBegin(GL_TRIANGLE_STRIP);
+		Vector3DFloat lastDirVector = points[0] - points[1];
+
+		for (int j = 0, runlength = points.size() + 2; j < runlength; ++j){
+			if(j > 1){
+				Vector3DFloat currentDirVector = points[j%points.size()] - points[(j-1)%points.size()];
+				Vector3DFloat newNormal = currentDirVector^lastDirVector;
+				if(j % 2 != 0){
+					newNormal = newNormal*-1;
+				}
+				lastDirVector = currentDirVector*-1;
+				glNormal3f(newNormal.X(), newNormal.Y(), newNormal.Z());
+			}
+			glVertex3f(points[j%points.size()].X(), points[j%points.size()].Y(), points[j%points.size()].Z());
+		}
+
+		glEnd();
 	}
 }
-
 
 #endif
