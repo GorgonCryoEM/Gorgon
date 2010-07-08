@@ -77,15 +77,22 @@ class Residue:
         except KeyError:
             return False
     
-    def addAtom(self, atomName, x, y, z, element=None, serialNo=None, occupancy=None, tempFactor=None ):
+    def addAtom(self, atomName, x, y, z, element="", serialNo=None, occupancy=None, tempFactor=None, charge="" ):
         '''Adds a new PDBAtom to the residue.'''
         residueIndex=self.chain.findIndexForRes(self)
         rawAtom=PDBAtom(self.chain.getPdbID(), self.chain.getChainID() , residueIndex, atomName)
         rawAtom.setPosition(Vector3DFloat(x,y,z))
+        if not element:
+            element = atomName[0]
         rawAtom.setElement(element)
-        #rawAtom.setOccupancy(occupancy)
-        #rawAtom.setTempFactor(temp_factor)
-        #rawAtom.setCharge('')
+        if serialNo != None:
+            rawAtom.setSerial(serialNo)
+        if occupancy != None:
+            rawAtom.setOccupancy(occupancy)
+        if tempFactor != None:
+            rawAtom.setTempFactor(temp_factor)
+        if charge:
+            rawAtom.setCharge(charge)
         self.__atoms[atomName]=rawAtom
         #print "%s PDBAtom added to %s Residue"  %(atomName,self)
         '''
