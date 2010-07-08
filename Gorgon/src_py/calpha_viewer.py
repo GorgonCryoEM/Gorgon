@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.61  2010/07/02 22:46:20  chenb
+#   Added code for each PDBAtom to know its previous and next neighbors, and to render ribbon diagrams as strings of cylinders
+#
 #   Revision 1.60  2010/06/23 19:11:51  ssa1
 #   Adding simple ribbon rendering and associated events for flexible fitting
 #
@@ -368,7 +371,7 @@ class CAlphaViewer(BaseViewer):
                             CAatom = chain[i].getAtom("CA")
                             self.renderer.addHelixElement(ix, chain[i].getAtom("CA").getHashKey())
                             resNumTemp = i - 1
-                            if resNumTemp > 0:
+                            if resNumTemp > 0 and resNumTemp in chain.residueList:
                                 prevCAAtom = chain.residueList[resNumTemp].getAtom('CA')
                                 while not prevCAAtom and resNumTemp >= 0:
                                     prevCAAtom = helix.chain[resNumTemp].getAtom('CA')
@@ -378,7 +381,7 @@ class CAlphaViewer(BaseViewer):
                                 else:
                                     CAatom.setPrevCAHash(CAatom.getHashKey())
                                 resNumTemp = i + 1
-                                if resNumTemp <= chain.getLastResidueIndex():
+                                if resNumTemp <= chain.getLastResidueIndex() and resNumTemp in chain.residueList:
                                     nextCAAtom = chain.residueList[resNumTemp].getAtom('CA')
                                     while not nextCAAtom and resNumTemp <= chain.getLastResidueIndex():
                                         nextCAAtom = chain.residueList[resNumTemp].getAtom('CA')
@@ -426,7 +429,7 @@ class CAlphaViewer(BaseViewer):
                             self.renderer.addLoopElement(ix, chain[i].getAtom("CA").getHashKey())                        
                             # set the atom's "previous" CA atom
                             resNumTemp = i - 1
-                            if resNumTemp > 0:
+                            if resNumTemp > 0 and resNumTemp in chain.residueList:
                                 prevCAAtom = chain.residueList[resNumTemp].getAtom('CA')
                                 while not prevCAAtom and resNumTemp >= 0:
                                     prevCAAtom = chain.residueList[resNumTemp].getAtom('CA')
@@ -437,7 +440,7 @@ class CAlphaViewer(BaseViewer):
                                 CAatom.setPrevCAHash(CAatom.getHashKey())
                             #set the atom's "next" CA atom
                             resNumTemp = i + 1
-                            if resNumTemp <= chain.getLastResidueIndex():
+                            if resNumTemp <= chain.getLastResidueIndex() and resNumTemp in chain.residueList:
                                 nextCAAtom = chain.residueList[resNumTemp].getAtom('CA')
                                 while not nextCAAtom and resNumTemp <= chain.getLastResidueIndex():
                                     nextCAAtom = chain.residueList[resNumTemp].getAtom('CA')
