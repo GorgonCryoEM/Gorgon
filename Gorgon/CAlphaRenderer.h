@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.53  2010/07/06 23:20:54  chenb
+//   Added code to do a rough rendering of Beta sheets
+//
 //   Revision 1.52  2010/07/02 22:46:20  chenb
 //   Added code for each PDBAtom to know its previous and next neighbors, and to render ribbon diagrams as strings of cylinders
 //
@@ -273,6 +276,8 @@ namespace wustl_mm {
 																							   // Vector3DFloats
 			vector<Vector3DFloat> CreateStrandNormals(vector<Vector3DFloat> points); // create line segment normals to be used in drawing Beta
 																					 // strands
+			void CreateHelixAxesAndTangents(vector<Vector3DFloat>& tangents, vector<Vector3DFloat>& axes,vector<Vector3DFloat> points, 
+				Vector3DFloat previous, Vector3DFloat next, double HELIX_ALPHA, double HELIX_BETA, double HELIX_HERMITE_FACTOR);
 			void DrawOpenBox(vector<Vector3DFloat> points, vector<Vector3DFloat> normals); // takes a vector of 8 points and draws a rectangular prism with two of its six sides not
 															// filled in; the first 4 points are from the beggining edge of the box, with the second four
 															// forming the end
@@ -404,25 +409,29 @@ namespace wustl_mm {
 				glPushName(0);
 			}
 
+			float LOOP_RADIUS = .19;
+			float HELIX_WIDTH = 1.5;
+			//float 
+
 			if(subSceneIndex == 0) { // Drawing Helices
 				int atom_counter = 0;
 				PDBAtom lastEnd;
 
 				// Hermite Curve test code
 				float HELIX_HERMITE_FACTOR = 4.7;
-				float HELIX_ALPHA = 32.0; //in degrees, not radians
-				float HELIX_BETA = -11.0; //in degrees, not radians - these three constants taken from molscript code
+				float HELIX_ALPHA = 32.0 * PI/180.0; 
+				float HELIX_BETA = -11.0 * PI/180.0; // these three constants taken from molscript code
 				HermiteCurve curve;
 				Vector3DFloat m0, m1;
 
-				for (unsigned int i = 0; i < aHelices.size(); ++i){
+				for (unsigned int j = 0; j < aHelices.size(); ++j){
 					if(selectEnabled){
-						glLoadName(i);
+						glLoadName(j);
 					}
 
 					glPushAttrib(GL_LIGHTING_BIT);
 
-					Secel currentSecel = aHelices[i];
+					Secel currentSecel = aHelices[j];
 
 					if(currentSecel.atomHashes.size() > 0){
 
@@ -432,9 +441,14 @@ namespace wustl_mm {
 						Vector3DFloat postSecelAtomPos = atoms.find(lastAtom.GetNextCAHash())->second.GetPosition();
 
 						vector<Vector3DFloat> points = CreatePointVector(firstAtom, lastAtom);
+						vector<Vector3DFloat>& tangents = vector<Vector3DFloat>(points);
+						vector<Vector3DFloat>& axes = vector<Vector3DFloat>(points);
 
+						CreateHelixAxesAndTangents(tangents, axes, points, preSecelAtomPos, postSecelAtomPos, HELIX_ALPHA, HELIX_BETA, HELIX_HERMITE_FACTOR);
+
+						//for(unsigned int i = 0; i < points.size()-1; ++i){
 						for(unsigned int i = 0; i < points.size()-1; ++i){
-							if(i == 0){
+							/*if(i == 0){
 								m0 = points[i+1] - preSecelAtomPos;
 							} else {
 								m0 = points[i+1] - points[i-1];
@@ -444,76 +458,60 @@ namespace wustl_mm {
 								m1 = postSecelAtomPos - points[i];
 							} else {
 								m1 = points[i+2] - points[i];
-							}
+							}*/
+
+							m0 = tangents[i];
+							m1 = tangents[i+1];
 
 							curve.setCurve(points[i], points[i+1], m0, m1);
 
-							DrawSphere(points[i], .3);
+							//DrawSphere(points[i], .3);
 							//DrawCylinder(firstatm.GetPosition() - m0*.5, firstatm.GetPosition() + m0*.5, .1, 10, 10);
-							DrawSphere(points[i+1], .3);
+							//DrawSphere(points[i+1], .3);
 							//DrawCylinder(secondatm.GetPosition() - m1*.5, secondatm.GetPosition() + m1*.5, .1, 10, 10);
 
+							glBegin(GL_TRIANGLE_STRIP);
+
+							float halfwidth = .75;
 							Vector3DFloat lastPos = points[i];
 							int NUM_SECTIONS = 10;
-							for (int sect = 1; sect <= NUM_SECTIONS; ++sect){
+							for (int sect = 0; sect <= NUM_SECTIONS; ++sect){
 								double tsect = ((double)sect)/((double)NUM_SECTIONS);
 								Vector3DFloat nextPos = curve.getPos(tsect);
-								DrawSphere(nextPos, .19);
-								DrawCylinder(lastPos, nextPos, .19, 10, 2);
-								lastPos = nextPos;
+
+								Vector3DFloat currentAxis = axes[i]*(1.0-tsect) + axes[i+1]*tsect;
+								currentAxis.Normalize();
+
+								Vector3DFloat curnormal = curve.getTangent(tsect);
+								curnormal = curnormal^currentAxis;
+								curnormal.Normalize();
+
+								glNormal3f(curnormal.X(), curnormal.Y(), curnormal.Z());
+
+								if(i == 0 || i == points.size() - 2){
+									halfwidth = LOOP_RADIUS + (0.5 * HELIX_WIDTH - LOOP_RADIUS) * 0.5 * (-1*cos(PI*tsect) + 1.0);
+								} else if (i == points.size() - 2){
+									halfwidth = LOOP_RADIUS + (0.5 * HELIX_WIDTH - LOOP_RADIUS) * 0.5 * (cos(PI*tsect) + 1.0);
+								}
+
+								Vector3DFloat p1 = nextPos + currentAxis*halfwidth;
+								Vector3DFloat p2 = nextPos - currentAxis*halfwidth;
+								glVertex3f(p1.X(), p1.Y(), p1.Z());
+								glVertex3f(p2.X(), p2.Y(), p2.Z());
+								//DrawSphere(nextPos, .19);
+								//DrawCylinder(lastPos, nextPos, .19, 10, 2);
+								//lastPos = nextPos;
 							}
+
+							glEnd();
 						}
+
+						//delete tangents;
+						//delete axes;
 					}
 
 					glPopAttrib();
 				}
-
-				//for(unsigned int i = 0; i < aHelices.size(); ++i){
-				//	if(selectEnabled){
-				//		glLoadName(i);
-				//	}
-
-				//	Secel currentSecel = aHelices[i];
-
-				//	glPushAttrib(GL_LIGHTING_BIT);
-				//	PDBAtom firstatm = atoms.find(currentSecel.atomHashes[0])->second;
-				//	PDBAtom secondatm = atoms.find(firstatm.GetNextCAHash())->second;
-
-				//	if(currentSecel.atomHashes.size() > 0){	
-				//		//OpenGLUtils::SetColor(firstatm.GetColorR(), firstatm.GetColorG(), firstatm.GetColorB(), firstatm.GetColorA());
-
-				//		for (unsigned int i =0; i < currentSecel.atomHashes.size(); ++i) {
-				//		//while (firstatm.GetHashKey() != currentSecel.atomHashes[currentSecel.atomHashes.size()-1
-				//			m0 = atoms.find(firstatm.GetNextCAHash())->second.GetPosition() - 
-				//				atoms.find(firstatm.GetPrevCAHash())->second.GetPosition();
-
-				//			m1 = atoms.find(secondatm.GetNextCAHash())->second.GetPosition() - 
-				//				atoms.find(secondatm.GetPrevCAHash())->second.GetPosition();
-
-				//			curve.setCurve(firstatm.GetPosition(), secondatm.GetPosition(), m0, m1);
-
-				//			DrawSphere(firstatm.GetPosition(), .3);
-				//			//DrawCylinder(firstatm.GetPosition() - m0*.5, firstatm.GetPosition() + m0*.5, .1, 10, 10);
-				//			DrawSphere(secondatm.GetPosition(), .3);
-				//			//DrawCylinder(secondatm.GetPosition() - m1*.5, secondatm.GetPosition() + m1*.5, .1, 10, 10);
-
-				//			Vector3DFloat lastPos = firstatm.GetPosition();
-				//			int NUM_SECTIONS = 15;
-				//			for (int sect = 1; sect <= NUM_SECTIONS; ++sect){
-				//				double tsect = ((double)sect)/((double)NUM_SECTIONS);
-				//				Vector3DFloat nextPos = curve.getPos(tsect);
-				//				//DrawSphere(curve.getPos(tsect), .19);
-				//				DrawCylinder(lastPos, nextPos, .19, 10, 10);
-				//				lastPos = nextPos;
-				//			}
-
-				//			firstatm = secondatm;
-				//			secondatm = atoms.find(secondatm.GetNextCAHash())->second;
-				//		//}
-				//		}
-				//	}
-				//	glPopAttrib();	
-				//}
 
 				if(selectEnabled) {
 					glPopName();
@@ -546,6 +544,8 @@ namespace wustl_mm {
 
 						vector<Vector3DFloat> points = CreatePointVector(firstAtom, lastAtom);
 						vector<Vector3DFloat> normals = CreateStrandNormals(points);
+						double arrowhead_factor = 1.0;
+						vector<Vector3DFloat> boxpositions(8);
 
 						bool LAPLACIAN_SMOOTHING = true;
 						int SMOOTHING_STEPS = 1;
@@ -553,18 +553,18 @@ namespace wustl_mm {
 							points = LaplacianSmoothing(points, SMOOTHING_STEPS);
 						}
 
-						for(unsigned int i = 0; i < points.size()-2; ++i){
+						for(unsigned int i = 0; i < points.size()-1; ++i){
 							if(i == 0){
 								m0 = points[i+1] - points[i];
 							} else {
 								if(i + 2 < points.size()){
 									m0 = points[i+2] - points[i];
 								} else {
-									m0 = preSecelAtomPos - points[i];
+									m0 = postSecelAtomPos - points[i];
 								}
 							}
 
-							if(i + 3 > points.size() - 1){
+							if(i + 3 >= points.size()){
 								m1 = postSecelAtomPos - points[i];
 							} else {
 								m1 = points[i+3] - points[i+1];
@@ -579,43 +579,44 @@ namespace wustl_mm {
 							}
 
 							dir1 = dir2;
-							dir2 = points[i+2] - points[i];
+							if(i + 2 < points.size()){
+								dir2 = points[i+2] - points[i];
+							} else {
+								dir2 = postSecelAtomPos - points[i];
+							}
 
 							dir2.Normalize();
 
 							curve.setCurve(points[i], points[i+1], m0, m1);
 
-							//DrawSphere(points[i], .3);
-							//DrawCylinder(firstatm.GetPosition() - m0*.5, firstatm.GetPosition() + m0*.5, .1, 10, 10);
-							//DrawSphere(points[i+1], .3);
-							//DrawCylinder(secondatm.GetPosition() - m1*.5, secondatm.GetPosition() + m1*.5, .1, 10, 10);
-
-							float WIDTH = .9;
-							float THICKNESS = .175;
-							vector<Vector3DFloat> boxpositions(8);
+							float WIDTH = 1.3;
+							float THICKNESS = .26;
 							Vector3DFloat lastPos = points[i];
 							Vector3DFloat direction = dir1;
 							Vector3DFloat currentNormal = normals[i];
 							Vector3DFloat side = currentNormal^direction;
 							side.Normalize();
-							boxpositions[0] = lastPos - side*WIDTH + currentNormal*THICKNESS; 
-							boxpositions[2] = lastPos + side*WIDTH + currentNormal*THICKNESS; 
-							boxpositions[4] = lastPos + side*WIDTH - currentNormal*THICKNESS; 
-							boxpositions[6] = lastPos - side*WIDTH - currentNormal*THICKNESS; 
+							boxpositions[0] = lastPos - side*0.5*WIDTH*arrowhead_factor + currentNormal*0.5*THICKNESS; 
+							boxpositions[2] = lastPos + side*0.5*WIDTH*arrowhead_factor + currentNormal*0.5*THICKNESS; 
+							boxpositions[4] = lastPos + side*0.5*WIDTH*arrowhead_factor - currentNormal*0.5*THICKNESS; 
+							boxpositions[6] = lastPos - side*0.5*WIDTH*arrowhead_factor - currentNormal*0.5*THICKNESS; 
+							
 							int NUM_SECTIONS = 10;
-
 							for (int sect = 1; sect <= NUM_SECTIONS; ++sect){
 								double tsect = ((double)sect)/((double)NUM_SECTIONS);
+								if(i > points.size() - 3){
+									arrowhead_factor = 1.5*(1-tsect);
+								}
 								direction = dir1*(1.0 - tsect) + dir2*tsect;
 								currentNormal = normals[i]*(1.0 - tsect) + normals[i+1]*(tsect);
 								side = currentNormal^direction;
 								side.Normalize();
 								Vector3DFloat nextPos = curve.getPos(tsect);
 
-								boxpositions[1] = nextPos - side*WIDTH + currentNormal*THICKNESS; 
-								boxpositions[3] = nextPos + side*WIDTH + currentNormal*THICKNESS;
-								boxpositions[5] = nextPos + side*WIDTH - currentNormal*THICKNESS;
-								boxpositions[7] = nextPos - side*WIDTH - currentNormal*THICKNESS;
+								boxpositions[1] = nextPos - side*0.5*WIDTH*arrowhead_factor + currentNormal*0.5*THICKNESS; 
+								boxpositions[3] = nextPos + side*0.5*WIDTH*arrowhead_factor + currentNormal*0.5*THICKNESS;
+								boxpositions[5] = nextPos + side*0.5*WIDTH*arrowhead_factor - currentNormal*0.5*THICKNESS;
+								boxpositions[7] = nextPos - side*0.5*WIDTH*arrowhead_factor - currentNormal*0.5*THICKNESS;
 
 								DrawOpenBox(boxpositions, vector<Vector3DFloat>());
 								
@@ -626,7 +627,14 @@ namespace wustl_mm {
 									boxpositions[2*i] = boxpositions[2*i+1];
 								}
 							}
+
+							if (i == points.size() - 3){
+								arrowhead_factor = 1.5;
+								//boxpositions
+							}
 						}
+
+						
 					}
 
 					glPopAttrib();
@@ -688,18 +696,13 @@ namespace wustl_mm {
 
 							curve.setCurve(points[i], points[i+1], m0, m1);
 
-							//DrawSphere(points[i], .3);
-							//DrawCylinder(firstatm.GetPosition() - m0*.5, firstatm.GetPosition() + m0*.5, .1, 10, 10);
-							//DrawSphere(points[i+1], .3);
-							//DrawCylinder(secondatm.GetPosition() - m1*.5, secondatm.GetPosition() + m1*.5, .1, 10, 10);
-
 							Vector3DFloat lastPos = points[i];
 							int NUM_SECTIONS = 10;
 							for (int sect = 1; sect <= NUM_SECTIONS; ++sect){
 								double tsect = ((double)sect)/((double)NUM_SECTIONS);
 								Vector3DFloat nextPos = curve.getPos(tsect);
 								DrawSphere(nextPos, .19);
-								DrawCylinder(lastPos, nextPos, .19, 10, 2);
+								DrawCylinder(lastPos, nextPos, LOOP_RADIUS, 10, 2);
 								lastPos = nextPos;
 							}
 						}
@@ -1415,9 +1418,33 @@ namespace wustl_mm {
 		}
 	}
 
+	void CAlphaRenderer::CreateHelixAxesAndTangents(vector<Vector3DFloat>& tangents, vector<Vector3DFloat>& axes, std::vector<Vector3DFloat> points, Vector3DFloat previous, Vector3DFloat next, double HELIX_ALPHA, double HELIX_BETA, double HELIX_HERMITE_FACTOR){
+		if(points.size() > 2){
+			for(int i = 1; i < points.size() - 1; ++i){
+				Vector3DFloat cvec = points[i+1] - points[i-1];
+				cvec.Normalize();
+	
+				Vector3DFloat rvec = (points[i]-points[i-1])^(points[i+1]-points[i]);
+				rvec.Normalize();
+	
+				axes[i] = rvec*sin(HELIX_ALPHA) + cvec*cos(HELIX_ALPHA);
+				tangents[i] = rvec*sin(HELIX_BETA) + cvec*cos(HELIX_BETA);
+				tangents[i] = tangents[i]*HELIX_HERMITE_FACTOR;
+			}
+			axes[0] = axes[1];
+			axes[axes.size()-1] = axes[axes.size()-2];
+
+			tangents[0] = previous - points[1];
+			tangents[0].Normalize();
+			tangents[0] = tangents[0]*HELIX_HERMITE_FACTOR;
+			tangents[tangents.size()-1] = next - points[points.size()-2];
+			tangents[tangents.size()-1].Normalize();
+			tangents[tangents.size()-1] = tangents[tangents.size()-1]*HELIX_HERMITE_FACTOR;
+		}
+	}
+
 	// method works like drawing the side of a cylinder with only one stack and 4 slices
 	void CAlphaRenderer::DrawOpenBox(std::vector<Vector3DFloat> points, std::vector<Vector3DFloat> normals){
-		cout << "got into box drawing method" << endl;
 		glBegin(GL_TRIANGLE_STRIP);
 		Vector3DFloat lastDirVector = points[0] - points[1];
 
@@ -1428,6 +1455,7 @@ namespace wustl_mm {
 				if(j % 2 != 0){
 					newNormal = newNormal*-1;
 				}
+				newNormal.Normalize();
 				lastDirVector = currentDirVector*-1;
 				glNormal3f(newNormal.X(), newNormal.Y(), newNormal.Z());
 			}
