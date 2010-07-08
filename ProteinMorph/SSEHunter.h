@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.26  2010/03/05 20:30:22  ssa1
+//   Fixing loading of helices using .SSE files
+//
 //   Revision 1.25  2010/02/27 05:19:06  colemanr
 //   CCF runs ~2x faster than last commit; added MCF, which takes about twice as long as CCF, but gives better results often
 //
@@ -249,7 +252,7 @@ namespace wustl_mm {
 			PDBAtom atom;
 			while (maxVal >= threshold) {
 				atom.SetSerial(i);
-				atom.SetName("C");
+				atom.SetName("CA");
 				atom.SetResName("GLY");
 				atom.SetChainId('A');
 				atom.SetResSeq(i);
