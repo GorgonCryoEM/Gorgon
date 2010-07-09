@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.9  2010/05/26 20:44:19  ssa1
+//   Fixing macos build errors
+//
 //   Revision 1.8  2010/04/27 21:10:17  ssa1
 //   Implementing Cost-matrix based SSE Registration and performance optimizations on graph construction
 //
@@ -102,7 +105,7 @@ namespace wustl_mm {
 		private:
 			vector< GraphVertexBase<TVertexTag> > vertices;
 			map< unsigned long long, GraphEdgeBase<TEdgeTag> > edges;
-			static const unsigned long long MAX_VERTEX_COUNT = 4294967296;
+			static const unsigned long long MAX_VERTEX_COUNT = 4294967295;
 		};
 
 		template <class TVertexTag, class TEdgeTag> GraphBase<TVertexTag, TEdgeTag>::GraphBase() {
