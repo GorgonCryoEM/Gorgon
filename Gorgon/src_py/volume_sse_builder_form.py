@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.15  2010/02/11 23:19:13  ssa1
+#   Allowing the ability to save pseudoatoms generated from SSEHunter
+#
 #   Revision 1.14  2010/01/16 22:34:29  colemanr
 #   using the new SSEHunterEngine Python class
 #
@@ -58,7 +61,7 @@ from PyQt4 import QtCore, QtGui
 from ui_dialog_volume_sse_builder import Ui_DialogVolumeSSEBuilder
 from base_dock_widget import BaseDockWidget
 from sse_hunter_engine import SSEHunterEngine
-from math import pi
+from auto_helix_builder_engine import AutoHelixBuilderEngine
 
 class VolumeSSEBuilderForm(BaseDockWidget, Ui_DialogVolumeSSEBuilder):
         
@@ -76,13 +79,17 @@ class VolumeSSEBuilderForm(BaseDockWidget, Ui_DialogVolumeSSEBuilder):
         self.app = main
         self.viewer = viewer
         self.connect(self.viewer, QtCore.SIGNAL("modelLoaded()"), self.modelLoaded)
-        self.connect(self.viewer, QtCore.SIGNAL("modelUnloaded()"), self.modelUnloaded)   
+        self.connect(self.viewer, QtCore.SIGNAL("modelUnloaded()"), self.modelUnloaded)
+
         
         self.createUI()
         self.createActions()
 
     def createUI(self):
-        self.setupUi(self)    
+        self.setupUi(self)
+        
+        self.pushButtonRemoveHelices.setEnabled(False)
+        
         self.connect(self.pushButtonBrowseAtomScore, QtCore.SIGNAL("clicked (bool)"), self.browseAtomScoreFile)
         self.connect(self.pushButtonSelectionToHelix, QtCore.SIGNAL("clicked (bool)"), self.selectionToHelix)
         self.connect(self.pushButtonSelectionToSheet, QtCore.SIGNAL("clicked (bool)"), self.selectionToSheet)
@@ -91,6 +98,7 @@ class VolumeSSEBuilderForm(BaseDockWidget, Ui_DialogVolumeSSEBuilder):
         self.connect(self.pushButtonLoadVolume, QtCore.SIGNAL("clicked (bool)"), self.loadVolume)
         self.connect(self.pushButtonSavePseudoatoms, QtCore.SIGNAL("clicked (bool)"), self.savePseudoatoms)
         self.connect(self.pushButtonLoadSkeleton, QtCore.SIGNAL("clicked (bool)"), self.loadSkeleton)
+        self.connect(self.pushButtonAddHelices, QtCore.SIGNAL("clicked (bool)"), self.autoBuildHelices)
         self.connect(self.doubleSpinBoxCorrelation, QtCore.SIGNAL("valueChanged(double)"), self.updateTotalScoreSSEHunterAtoms)
         self.connect(self.doubleSpinBoxSkeleton, QtCore.SIGNAL("valueChanged(double)"), self.updateTotalScoreSSEHunterAtoms)
         self.connect(self.doubleSpinBoxGeometry, QtCore.SIGNAL("valueChanged(double)"), self.updateTotalScoreSSEHunterAtoms)
@@ -157,6 +165,25 @@ class VolumeSSEBuilderForm(BaseDockWidget, Ui_DialogVolumeSSEBuilder):
             self.connect(self.app.viewers["calpha"],  QtCore.SIGNAL("modelUnloaded()"), self.disableSavePseudoatoms)                    
             self.pushButtonSavePseudoatoms.setEnabled(True)
         self.bringToFront()
+        
+    def autoBuildHelices(self):
+        print "VolumeSSEBuilderForm.autoBuildHelices()"
+        self.calphaViewer = self.app.viewers["calpha"]
+        patom_hashkeys = self.calphaViewer.renderer.getAtomHashes();
+        patoms = [self.calphaViewer.renderer.getAtom(hashkey) for hashkey in patom_hashkeys]
+        
+        score_thresh = self.doubleSpinBoxScoreThresh.value()
+        pt_line_dist_thresh = self.horizontalSliderLinearityThresh.value()
+        auto_helix_builder = AutoHelixBuilderEngine(patoms, score_thresh, pt_line_dist_thresh)
+        helix_list = auto_helix_builder.get_helix_list()
+        print helix_list
+        for helix in helix_list:
+            for atom in helix:
+                atom.setSelected(True)
+            self.selectionToHelix(None)
+            for atom in helix:
+                atom.setSelected(False)
+        
 
     def runSSEHunter(self, result):
         self.calphaViewer = self.app.viewers["calpha"]
@@ -175,6 +202,7 @@ class VolumeSSEBuilderForm(BaseDockWidget, Ui_DialogVolumeSSEBuilder):
         skel = self.app.viewers["skeleton"].renderer.getMesh()
         sseh = SSEHunterEngine(vol, skel, resolution, threshold)
         patoms = sseh.getScoredAtoms(correlationWeight, skeletonWeight, geometryWeight)
+        
         for pseudoatom in patoms:
             self.calphaViewer.renderer.addAtom(pseudoatom)
         
