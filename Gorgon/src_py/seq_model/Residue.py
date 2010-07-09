@@ -90,7 +90,7 @@ class Residue:
         if occupancy != None:
             rawAtom.setOccupancy(occupancy)
         if tempFactor != None:
-            rawAtom.setTempFactor(temp_factor)
+            rawAtom.setTempFactor(tempFactor)
         if charge:
             rawAtom.setCharge(charge)
         self.__atoms[atomName]=rawAtom
