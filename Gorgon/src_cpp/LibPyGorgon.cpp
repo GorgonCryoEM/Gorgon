@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.84  2010/07/09 03:30:20  coleman.r
+//   auto helix building
+//
 //   Revision 1.83  2010/07/02 22:46:20  chenb
 //   Added code for each PDBAtom to know its previous and next neighbors, and to render ribbon diagrams as strings of cylinders
 //
@@ -642,6 +645,8 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("finalizeHelix", &SSERenderer::FinalizeHelix)
 		.def("addHelix", &SSERenderer::AddHelix)
 		.def("setObjectSpecificColoring", &SSERenderer::SetObjectSpecificColoring)
+		.def("removeHelices", &SSERenderer::RemoveHelices)
+		.def("removeSheets", &SSERenderer::RemoveSheets)
 		.def("removeSelectedSSEs", &SSERenderer::RemoveSelectedSSEs)
 		.def("getHelixCount", &SSERenderer::GetHelixCount)
 		.def("getHelixCorner", &SSERenderer::GetHelixCorner)

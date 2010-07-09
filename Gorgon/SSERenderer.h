@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.45  2010/06/23 13:02:56  ssa1
+//   Allowing users to reset a flexible fitting if need be.
+//
 //   Revision 1.44  2010/06/17 19:42:38  ssa1
 //   Generic method for setting object specific coloring
 //
@@ -153,6 +156,8 @@ namespace wustl_mm {
 			string GetSupportedSheetSaveFileFormats();
 			Vector3DFloat Get3DCoordinates(int subsceneIndex, int ix0, int ix1 = -1, int ix2 = -1, int ix3 = -1, int ix4 = -1);
 			void FitSelectedSSEs(Volume * vol);
+			void RemoveHelices();
+			void RemoveSheets();
 			void RemoveSelectedSSEs();
 			int GetHelixCount();
 			Vector3DFloat GetHelixCorner(int helixIx, int cornerIx);
@@ -1104,6 +1109,14 @@ namespace wustl_mm {
 			UpdateBoundingBox();
 		}
 		
+		void SSERenderer::RemoveHelices() {
+					helices.clear();
+		}
+
+		void SSERenderer::RemoveSheets() {
+			sheets.clear();
+		}
+
 		void SSERenderer::RemoveSelectedSSEs() {
 			vector<GeometricShape*> newHelices;
 			for(unsigned int i = 0; i < helices.size(); i++) {
