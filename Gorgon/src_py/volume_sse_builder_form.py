@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.16  2010/07/09 03:30:20  coleman.r
+#   auto helix building
+#
 #   Revision 1.15  2010/02/11 23:19:13  ssa1
 #   Allowing the ability to save pseudoatoms generated from SSEHunter
 #
@@ -88,8 +91,6 @@ class VolumeSSEBuilderForm(BaseDockWidget, Ui_DialogVolumeSSEBuilder):
     def createUI(self):
         self.setupUi(self)
         
-        self.pushButtonRemoveHelices.setEnabled(False)
-        
         self.connect(self.pushButtonBrowseAtomScore, QtCore.SIGNAL("clicked (bool)"), self.browseAtomScoreFile)
         self.connect(self.pushButtonSelectionToHelix, QtCore.SIGNAL("clicked (bool)"), self.selectionToHelix)
         self.connect(self.pushButtonSelectionToSheet, QtCore.SIGNAL("clicked (bool)"), self.selectionToSheet)
@@ -99,6 +100,7 @@ class VolumeSSEBuilderForm(BaseDockWidget, Ui_DialogVolumeSSEBuilder):
         self.connect(self.pushButtonSavePseudoatoms, QtCore.SIGNAL("clicked (bool)"), self.savePseudoatoms)
         self.connect(self.pushButtonLoadSkeleton, QtCore.SIGNAL("clicked (bool)"), self.loadSkeleton)
         self.connect(self.pushButtonAddHelices, QtCore.SIGNAL("clicked (bool)"), self.autoBuildHelices)
+        self.connect(self.pushButtonRemoveHelices, QtCore.SIGNAL("clicked (bool)"), self.removeHelices)
         self.connect(self.doubleSpinBoxCorrelation, QtCore.SIGNAL("valueChanged(double)"), self.updateTotalScoreSSEHunterAtoms)
         self.connect(self.doubleSpinBoxSkeleton, QtCore.SIGNAL("valueChanged(double)"), self.updateTotalScoreSSEHunterAtoms)
         self.connect(self.doubleSpinBoxGeometry, QtCore.SIGNAL("valueChanged(double)"), self.updateTotalScoreSSEHunterAtoms)
@@ -128,6 +130,14 @@ class VolumeSSEBuilderForm(BaseDockWidget, Ui_DialogVolumeSSEBuilder):
         self.app.actions.getAction("load_Skeleton").trigger()
         self.bringToFront()
 
+    def removeHelices(self):
+        self.viewer.renderer.removeHelices()
+        self.viewer.emitModelChanged()
+        
+    def removeSheets(self):
+        self.viewer.renderer.removeSheets()
+        self.viewer.emitModelChanged()
+        
     def removeSSE(self, temp):
         if(QtGui.QMessageBox.question(self, "Remove Selected SSEs?", "This will remove the selected SSEs. Are you sure?", "Yes", "Cancel") == 0) :
             self.viewer.renderer.removeSelectedSSEs()
@@ -173,7 +183,7 @@ class VolumeSSEBuilderForm(BaseDockWidget, Ui_DialogVolumeSSEBuilder):
         patoms = [self.calphaViewer.renderer.getAtom(hashkey) for hashkey in patom_hashkeys]
         
         score_thresh = self.doubleSpinBoxScoreThresh.value()
-        pt_line_dist_thresh = self.horizontalSliderLinearityThresh.value()
+        pt_line_dist_thresh = self.horizontalSliderLinearityThresh.value() / 4.0
         auto_helix_builder = AutoHelixBuilderEngine(patoms, score_thresh, pt_line_dist_thresh)
         helix_list = auto_helix_builder.get_helix_list()
         print helix_list
