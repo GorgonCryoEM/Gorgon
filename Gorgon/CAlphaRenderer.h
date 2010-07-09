@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.54  2010/07/08 22:15:42  chenb
+//   helices now rendered more smoothly and as a flat ribbon rather than a string of cylinders
+//
 //   Revision 1.53  2010/07/06 23:20:54  chenb
 //   Added code to do a rough rendering of Beta sheets
 //
@@ -238,6 +241,9 @@ namespace wustl_mm {
 			// Controlling the atom vector
 			PDBAtom * AddAtom(PDBAtom atom);
 			PDBAtom * GetAtom(unsigned long long index);
+			vector< PDBAtom* > GetAtomsVector();
+
+			vector< unsigned long long > GetAtomHashes();
 			PDBAtom * GetAtomFromHitStack(int subsceneIndex, bool forceTrue, int ix0, int ix1, int ix2, int ix3, int ix4);
 			PDBAtom * GetSelectedAtom(unsigned int selectionId);
 			void DeleteAtom(unsigned long long index);
@@ -441,8 +447,8 @@ namespace wustl_mm {
 						Vector3DFloat postSecelAtomPos = atoms.find(lastAtom.GetNextCAHash())->second.GetPosition();
 
 						vector<Vector3DFloat> points = CreatePointVector(firstAtom, lastAtom);
-						vector<Vector3DFloat>& tangents = vector<Vector3DFloat>(points);
-						vector<Vector3DFloat>& axes = vector<Vector3DFloat>(points);
+						vector<Vector3DFloat> tangents = vector<Vector3DFloat>(points);
+						vector<Vector3DFloat> axes = vector<Vector3DFloat>(points);
 
 						CreateHelixAxesAndTangents(tangents, axes, points, preSecelAtomPos, postSecelAtomPos, HELIX_ALPHA, HELIX_BETA, HELIX_HERMITE_FACTOR);
 
@@ -1200,7 +1206,20 @@ namespace wustl_mm {
 		PDBAtom * CAlphaRenderer::GetAtom(unsigned long long index) {
 			return &atoms[index];
 		}
-
+		vector< unsigned long long > CAlphaRenderer::GetAtomHashes() {
+			vector< unsigned long long > atom_hashes;
+			for ( AtomMapType::iterator it = atoms.begin(); it != atoms.end(); it++) {
+				atom_hashes.push_back( it->first );
+			}
+			return atom_hashes;
+		}
+		vector< PDBAtom* > CAlphaRenderer::GetAtomsVector() {
+			vector< PDBAtom* > atoms_vector;
+			for ( AtomMapType::iterator it = atoms.begin(); it != atoms.end(); it++) {
+				atoms_vector.push_back( &(it->second) );
+			}
+			return atoms_vector;
+		}
 		PDBBond * CAlphaRenderer::GetBond(int index) {
 			return &bonds[index];
 		}

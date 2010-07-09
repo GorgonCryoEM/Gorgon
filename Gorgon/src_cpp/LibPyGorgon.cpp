@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.83  2010/07/02 22:46:20  chenb
+//   Added code for each PDBAtom to know its previous and next neighbors, and to render ribbon diagrams as strings of cylinders
+//
 //   Revision 1.82  2010/06/30 16:37:44  coleman.r
 //   LinearSolver class, more Vector3DFloat conversions
 //
@@ -345,9 +348,13 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 	vector_from_python<float>();
 	vector_to_python< std::vector<float> >();
 	vector_from_python< std::vector<float> >();
+	vector_to_python<unsigned long long>();
+	vector_from_python<unsigned long long>();
 
 	vector_to_python<Vector3DFloat>();
 	vector_from_python<Vector3DFloat>();
+	vector_to_python< std::vector< PDBAtom* > >();
+	vector_from_python< std::vector< PDBAtom* > >();
 
 //	tuple3_to_python<Vector3DInt>();
 //	tuple3_to_python<Vector3DFloat>();
@@ -668,6 +675,8 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("get3DCoordinates", &CAlphaRenderer::Get3DCoordinates)
 		.def("addAtom", &CAlphaRenderer::AddAtom, return_value_policy<reference_existing_object>())
 		.def("getAtom", &CAlphaRenderer::GetAtom, return_value_policy<reference_existing_object>())
+//		.def("getAtomsVector", &CAlphaRenderer::GetAtomsVector) //TODO: get return type std::vector<PDBAtom*> converted to Python list properly
+		.def("getAtomHashes", &CAlphaRenderer::GetAtomHashes)
 		.def("getSelectedAtom", &CAlphaRenderer::GetSelectedAtom, return_value_policy<reference_existing_object>())
 		.def("getAtomCount", &CAlphaRenderer::GetAtomCount)
 		.def("deleteAtom", &CAlphaRenderer::DeleteAtom)		
