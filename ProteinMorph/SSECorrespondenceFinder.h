@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.19  2010/06/08 22:00:05  ssa1
+//   Fixing performance issue where changing color took time.
+//
 //   Revision 1.18  2010/05/26 20:44:19  ssa1
 //   Fixing macos build errors
 //
@@ -168,6 +171,8 @@ namespace wustl_mm {
 		}
 
 		void SSECorrespondenceFinder::InitializeFeatures(vector<SSECorrespondenceFeature> featureList1, vector<SSECorrespondenceFeature> featureList2) {
+			this->featureList1.clear();
+			this->featureList2.clear();
 			this->featureList1 = featureList1;
 			this->featureList2 = featureList2;
 		}
@@ -565,6 +570,11 @@ namespace wustl_mm {
 			vector<unsigned int> parentSolutionElement;
 			parentSolution.push_back(parentSolutionElement);
 
+			// Add constraints into this parent node, so that we dont search for those results.
+			// when adding these constraints we must:
+			// 1. Remove the corresponding vertices from the parentGraph
+			// 2. Add the solution elements based on the constraints to the parentSolution
+
 			SSECorrespondenceSearchNode * parentNode = new SSECorrespondenceSearchNode(parentGraph, parentSolution, 0.0f);			
 
 			GorgonPriorityQueue<float, SSECorrespondenceSearchNode *> nodeQueue = GorgonPriorityQueue<float, SSECorrespondenceSearchNode *>(false);
@@ -668,6 +678,7 @@ namespace wustl_mm {
 			GorgonPriorityQueue<float, SSECorrespondenceSearchNode2 *> queue = GorgonPriorityQueue<float, SSECorrespondenceSearchNode2 *>(false);
 
 			SSECorrespondenceSearchNode2 * node = new SSECorrespondenceSearchNode2();
+			// Add constraints into this search node.
 			queue.Add(0, node);
 
 			float firstCost;
@@ -935,6 +946,9 @@ namespace wustl_mm {
 		}
 
 		MatrixFloat SSECorrespondenceFinder::GetTransform(vector<SSECorrespondenceNode> cluster, int sampleCount) {
+			if(cluster.size() <= 1) {
+				return MatrixFloat(4,4);
+			}
 			vector<Vector3DFloat> fl1, fl2;
 			fl1.clear();
 			fl2.clear();
@@ -948,6 +962,8 @@ namespace wustl_mm {
 				q1 = featureList2[cluster[i].GetQIndex()].GetEndPoint(cluster[i].IsForward()?0:1);
 				q2 = featureList2[cluster[i].GetQIndex()].GetEndPoint(cluster[i].IsForward()?1:0);
 
+				//printf("Transforming to SSE index %d with corner #1 [%f, %f, %f] and #2 [%f, %f, %f]\n", cluster[i].GetQIndex(), q1.X(), q1.Y(), q1.Z(), q2.X(), q2.Y(), q2.Z());
+
 				float offset;
 				for(int j = 0; j < sampleCount; j++) {
 					offset = (float)j / (float)(sampleCount - 1);
@@ -957,9 +973,30 @@ namespace wustl_mm {
 					fl1.push_back(sp);
 					fl2.push_back(sq);					
 				}
+
+				
 			}
 
-			return LinearSolver::FindRotationTranslation(fl1, fl2);
+			MatrixFloat result = LinearSolver::FindRotationTranslation(fl1, fl2);
+			
+			for(unsigned int i = 0; i < cluster.size(); i++) {
+				p1 = featureList1[cluster[i].GetPIndex()].GetEndPoint(0);
+				p2 = featureList1[cluster[i].GetPIndex()].GetEndPoint(1);
+
+				Vector3DFloat p1trans = p1.Transform(result);
+				Vector3DFloat p2trans = p2.Transform(result);
+
+				//printf("Transforming PDB Helix to SSE index %d with end #1 [%f, %f, %f] and #2 [%f, %f, %f]\n", cluster[i].GetQIndex(), p1trans.X(), p1trans.Y(), p1trans.Z(), p2trans.X(), p2trans.Y(), p2trans.Z());
+			}
+
+				
+
+
+
+			return result;
+
+			// IF the cluster.size() == 1, then we need to find the rotation translation which is a mirror of what we just got, and then pick the one with the
+			// lowest error based on oriented angle differences.
 		}
 		
 

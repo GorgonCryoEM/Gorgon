@@ -1,9 +1,5 @@
 Microsoft Visual Studio Solution File, Format Version 9.00
 # Visual Studio 2005
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Foundation", "Foundation\Foundation.vcproj", "{5B1E0736-9D9C-43BF-A60D-210292DCB7FC}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MathTools", "MathTools\MathTools.vcproj", "{EC8F7758-80CF-436B-978B-717297945FAB}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Gorgon", "Gorgon\Gorgon.vcproj", "{CB638ABC-F441-4AFC-8768-1A9A9031B408}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GraySkeletonCPP", "GraySkeletonCPP\GraySkeletonCPP.vcproj", "{E3B1B536-8C7A-45E8-9BAA-5FE4F7B9FE13}"
@@ -33,61 +29,10 @@ Global
 		SansMatlab|Win32 = SansMatlab|Win32
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{5B1E0736-9D9C-43BF-A60D-210292DCB7FC}.Debug|Any CPU.ActiveCfg = Debug|Win32
-		{5B1E0736-9D9C-43BF-A60D-210292DCB7FC}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
-		{5B1E0736-9D9C-43BF-A60D-210292DCB7FC}.Debug|Mixed Platforms.Build.0 = Debug|Win32
-		{5B1E0736-9D9C-43BF-A60D-210292DCB7FC}.Debug|Win32.ActiveCfg = Debug|Win32
-		{5B1E0736-9D9C-43BF-A60D-210292DCB7FC}.Debug|Win32.Build.0 = Debug|Win32
-		{5B1E0736-9D9C-43BF-A60D-210292DCB7FC}.MemLeak|Any CPU.ActiveCfg = Release|Win32
-		{5B1E0736-9D9C-43BF-A60D-210292DCB7FC}.MemLeak|Mixed Platforms.ActiveCfg = Release|Win32
-		{5B1E0736-9D9C-43BF-A60D-210292DCB7FC}.MemLeak|Mixed Platforms.Build.0 = Release|Win32
-		{5B1E0736-9D9C-43BF-A60D-210292DCB7FC}.MemLeak|Win32.ActiveCfg = Release|Win32
-		{5B1E0736-9D9C-43BF-A60D-210292DCB7FC}.MemLeak|Win32.Build.0 = Release|Win32
-		{5B1E0736-9D9C-43BF-A60D-210292DCB7FC}.Python|Any CPU.ActiveCfg = Python|Win32
-		{5B1E0736-9D9C-43BF-A60D-210292DCB7FC}.Python|Mixed Platforms.ActiveCfg = Python|Win32
-		{5B1E0736-9D9C-43BF-A60D-210292DCB7FC}.Python|Mixed Platforms.Build.0 = Python|Win32
-		{5B1E0736-9D9C-43BF-A60D-210292DCB7FC}.Python|Win32.ActiveCfg = Python|Win32
-		{5B1E0736-9D9C-43BF-A60D-210292DCB7FC}.Python|Win32.Build.0 = Python|Win32
-		{5B1E0736-9D9C-43BF-A60D-210292DCB7FC}.Release|Any CPU.ActiveCfg = Release|Win32
-		{5B1E0736-9D9C-43BF-A60D-210292DCB7FC}.Release|Mixed Platforms.ActiveCfg = Release|Win32
-		{5B1E0736-9D9C-43BF-A60D-210292DCB7FC}.Release|Mixed Platforms.Build.0 = Release|Win32
-		{5B1E0736-9D9C-43BF-A60D-210292DCB7FC}.Release|Win32.ActiveCfg = Release|Win32
-		{5B1E0736-9D9C-43BF-A60D-210292DCB7FC}.Release|Win32.Build.0 = Release|Win32
-		{5B1E0736-9D9C-43BF-A60D-210292DCB7FC}.SansMatlab|Any CPU.ActiveCfg = Release|Win32
-		{5B1E0736-9D9C-43BF-A60D-210292DCB7FC}.SansMatlab|Mixed Platforms.ActiveCfg = Release|Win32
-		{5B1E0736-9D9C-43BF-A60D-210292DCB7FC}.SansMatlab|Mixed Platforms.Build.0 = Release|Win32
-		{5B1E0736-9D9C-43BF-A60D-210292DCB7FC}.SansMatlab|Win32.ActiveCfg = Release|Win32
-		{5B1E0736-9D9C-43BF-A60D-210292DCB7FC}.SansMatlab|Win32.Build.0 = Release|Win32
-		{EC8F7758-80CF-436B-978B-717297945FAB}.Debug|Any CPU.ActiveCfg = Debug|Win32
-		{EC8F7758-80CF-436B-978B-717297945FAB}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
-		{EC8F7758-80CF-436B-978B-717297945FAB}.Debug|Mixed Platforms.Build.0 = Debug|Win32
-		{EC8F7758-80CF-436B-978B-717297945FAB}.Debug|Win32.ActiveCfg = Debug|Win32
-		{EC8F7758-80CF-436B-978B-717297945FAB}.Debug|Win32.Build.0 = Debug|Win32
-		{EC8F7758-80CF-436B-978B-717297945FAB}.MemLeak|Any CPU.ActiveCfg = MemLeak|Win32
-		{EC8F7758-80CF-436B-978B-717297945FAB}.MemLeak|Mixed Platforms.ActiveCfg = MemLeak|Win32
-		{EC8F7758-80CF-436B-978B-717297945FAB}.MemLeak|Mixed Platforms.Build.0 = MemLeak|Win32
-		{EC8F7758-80CF-436B-978B-717297945FAB}.MemLeak|Win32.ActiveCfg = MemLeak|Win32
-		{EC8F7758-80CF-436B-978B-717297945FAB}.MemLeak|Win32.Build.0 = MemLeak|Win32
-		{EC8F7758-80CF-436B-978B-717297945FAB}.Python|Any CPU.ActiveCfg = Python|Win32
-		{EC8F7758-80CF-436B-978B-717297945FAB}.Python|Mixed Platforms.ActiveCfg = Python|Win32
-		{EC8F7758-80CF-436B-978B-717297945FAB}.Python|Mixed Platforms.Build.0 = Python|Win32
-		{EC8F7758-80CF-436B-978B-717297945FAB}.Python|Win32.ActiveCfg = Python|Win32
-		{EC8F7758-80CF-436B-978B-717297945FAB}.Python|Win32.Build.0 = Python|Win32
-		{EC8F7758-80CF-436B-978B-717297945FAB}.Release|Any CPU.ActiveCfg = Release|Win32
-		{EC8F7758-80CF-436B-978B-717297945FAB}.Release|Mixed Platforms.ActiveCfg = Release|Win32
-		{EC8F7758-80CF-436B-978B-717297945FAB}.Release|Mixed Platforms.Build.0 = Release|Win32
-		{EC8F7758-80CF-436B-978B-717297945FAB}.Release|Win32.ActiveCfg = Release|Win32
-		{EC8F7758-80CF-436B-978B-717297945FAB}.Release|Win32.Build.0 = Release|Win32
-		{EC8F7758-80CF-436B-978B-717297945FAB}.SansMatlab|Any CPU.ActiveCfg = SansMatlab|Win32
-		{EC8F7758-80CF-436B-978B-717297945FAB}.SansMatlab|Mixed Platforms.ActiveCfg = SansMatlab|Win32
-		{EC8F7758-80CF-436B-978B-717297945FAB}.SansMatlab|Mixed Platforms.Build.0 = SansMatlab|Win32
-		{EC8F7758-80CF-436B-978B-717297945FAB}.SansMatlab|Win32.ActiveCfg = SansMatlab|Win32
-		{EC8F7758-80CF-436B-978B-717297945FAB}.SansMatlab|Win32.Build.0 = SansMatlab|Win32
 		{CB638ABC-F441-4AFC-8768-1A9A9031B408}.Debug|Any CPU.ActiveCfg = Debug|Win32
 		{CB638ABC-F441-4AFC-8768-1A9A9031B408}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
 		{CB638ABC-F441-4AFC-8768-1A9A9031B408}.Debug|Mixed Platforms.Build.0 = Debug|Win32
 		{CB638ABC-F441-4AFC-8768-1A9A9031B408}.Debug|Win32.ActiveCfg = Debug|Win32
-		{CB638ABC-F441-4AFC-8768-1A9A9031B408}.Debug|Win32.Build.0 = Debug|Win32
 		{CB638ABC-F441-4AFC-8768-1A9A9031B408}.MemLeak|Any CPU.ActiveCfg = Release|Win32
 		{CB638ABC-F441-4AFC-8768-1A9A9031B408}.MemLeak|Mixed Platforms.ActiveCfg = Release|Win32
 		{CB638ABC-F441-4AFC-8768-1A9A9031B408}.MemLeak|Mixed Platforms.Build.0 = Release|Win32

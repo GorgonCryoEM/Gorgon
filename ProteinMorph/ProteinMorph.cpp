@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.20  2010/06/08 22:00:05  ssa1
+//   Fixing performance issue where changing color took time.
+//
 //   Revision 1.19  2010/04/27 21:10:17  ssa1
 //   Implementing Cost-matrix based SSE Registration and performance optimizations on graph construction
 //
@@ -71,6 +74,12 @@
 #include "NonManifoldMesh2.h"
 #include <MathTools/MathLib.h>
 #include <SkeletonMaker/PriorityQueue.h>
+#include "CurveDeformer.h"
+#include <math.h>
+
+#define PI 3.14159265
+
+
 
 using namespace std;
 using namespace wustl_mm::GraySkeletonCPP;
@@ -130,6 +139,18 @@ namespace wustl_mm {
 			delete sheetVol;
 		}
 	}
+}
+
+vector<Vector3DFloat> genSpring(int numPoints, int numPeriods, int magnitude)
+{
+	vector<Vector3DFloat> points(numPoints);
+	for(int i = 1; i <= numPoints; ++i)
+	{
+		float x = magnitude*sin(2*PI*((float)i/((float)numPoints/(float)numPeriods)));
+		float y = magnitude*cos(2*PI*((float)i/((float)numPoints/(float)numPeriods)));
+		points[i-1] = Vector3DFloat(x, y, i);
+	}
+	return points;
 }
 
 int main( int args, char * argv[] ) {
@@ -194,7 +215,7 @@ int main( int args, char * argv[] ) {
 	finder.GetAStarTriangleBasedFeatureCorrespondence(true, true);
 	return 0;*/
 
-	SSECorrespondenceFinder finder;
+	/*SSECorrespondenceFinder finder;
 	if(args != 19) {
 		printf("ProteinMorph [method] [splitNodes] [multipleSearch] [pdb1(highres)] [pdb2(volume)] [rigidityThreshold] [featureChangeThreshold] [rigidityAngleCoeff] [rigidityCentroidDistanceCoeff] [rigidityFeatureChangeCoeff] [rigidComponentCoeff] [intraComponentCoeff] [jointAngleThreshold] [dihedralAngleThreshold] [centroidDistanceThreshold] [maxSolutionCount] [maxCostMatrixError] [smallestA*CliqueSize]\n");
 		printf("\t[method] : The algorithm to use, 1 : Clique, 2: Greedy Valence, 3: Greedy Valence Triangle based Clique 4: A * (rigidity cost) Triangle based clique 5: A* (distance cost) Triangle based clique 6: Cliques first, then search like 5\n");
@@ -277,8 +298,28 @@ int main( int args, char * argv[] ) {
 
 	//float j1, j2, d;
 	//f.GetFeatureAngles(j1, j2, d, f1, f2);
-	//printf("%f %f %f\n", j1*180.0/PI, j2*180.0/PI, d*180.0/PI);
+	//printf("%f %f %f\n", j1*180.0/PI, j2*180.0/PI, d*180.0/PI);*/
 
+	CurveDeformer cd = CurveDeformer();
+	vector<Vector3DFloat> points = genSpring(6, 1, 3);
+	vector<Vector3DFloat> handles(points.size());
+	for(int i = 0; i < handles.size(); ++i)
+	{
+		if(i == 0 || i == 1)
+			handles[i] = points[i];
+		else
+			handles[i] = Vector3DFloat();
+		if(i == handles.size()-2 || i == handles.size() -1)
+			handles[i] = Vector3DFloat(points[i][0], points[i][1], points[i][2]);
+	}
+	vector<int> v1;
+	v1.push_back(3);
+	vector<int> v2;
+	v2.push_back(5);
+	cd.addHelices(v1, v2);
+
+	cd.Deform(points, handles, handles, 2);
+	
 	return 0;
 }
 

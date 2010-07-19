@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.22  2010/03/05 20:30:21  ssa1
+//   Fixing loading of helices using .SSE files
+//
 //   Revision 1.21  2010/01/08 20:43:23  schuhs
 //   Removing dependancy on SSE files for helix length calculation.
 //
@@ -77,6 +80,7 @@ namespace wustl_mm {
 			double GetHeight();
 			double GetRadius();
 			double GetCornerCellsMaxLength();
+			vector<Point3> GetMaxLengthCorners();
 			int GetLocationInVector(vector<Point3Int> v, Point3Int point);
 			int GetGeometricShapeType();
 			Matrix4 GetRotationMatrix();
@@ -411,7 +415,27 @@ namespace wustl_mm {
 				}
 			}
 			return length;
-		}		
+		}	
+
+		vector<Point3> GeometricShape::GetMaxLengthCorners() {
+			cout << "getting max length corners " <<  (int)polygonPoints.size() << endl;
+			double length = 0.0;
+			vector<Point3> result;
+			for(int i = 0; i < (int)polygonPoints.size() - 1; i++) {
+				cout << "in first loop" << endl;
+				for(int j = i+1; j < (int)polygonPoints.size(); j++) {
+					cout << "in second loop" << endl;
+					if(polygonPoints[i].distanceTo(polygonPoints[j]) > length){
+						length = polygonPoints[i].distanceTo(polygonPoints[j]);
+						result.clear();
+						result.push_back(polygonPoints[i]);
+						result.push_back(polygonPoints[i]);
+						cout << "puttin in corners" << endl;
+					}
+				}
+			}
+			return result;
+		}
 		void GeometricShape::Rotate(Vector3 axis, double angle){
 			rotationMatrix = Matrix4::rotation(axis, angle) * rotationMatrix;
 			inverseRotationMatrix = inverseRotationMatrix * Matrix4::rotation(axis, -angle);
