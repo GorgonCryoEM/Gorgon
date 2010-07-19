@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.3  2010/04/27 21:10:17  ssa1
+//   Implementing Cost-matrix based SSE Registration and performance optimizations on graph construction
+//
 //   Revision 1.2  2009/11/19 18:19:25  ssa1
 //   Improved flexible fitting.. (Split nodes to guarantee direction)
 //
@@ -36,6 +39,7 @@ namespace wustl_mm {
 			unsigned int GetPIndex();
 			unsigned int GetQIndex();
 			bool IsForward(); // Specifies whether q is aligned in the same direction as p, or whether q has swapped directions.
+			void SetForward(bool in);
 		private:
 			unsigned int pIndex;
 			unsigned int qIndex;
@@ -64,6 +68,10 @@ namespace wustl_mm {
 
 		bool SSECorrespondenceNode::IsForward() {
 			return directionForward;
+		}
+
+		void SSECorrespondenceNode::SetForward(bool in){
+			directionForward = in;
 		}
 
 	}

@@ -4,6 +4,7 @@
 	Version="8.00"
 	Name="ProteinMorph"
 	ProjectGUID="{9868724F-D44A-4315-A809-C3F5ECA9110E}"
+	RootNamespace="ProteinMorph"
 	>
 	<Platforms>
 		<Platform
@@ -37,7 +38,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="$(SolutionDir);$(SolutionDir)\ExternalLibraries;$(SolutionDir)\ExternalLibraries\GL;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)\ExternalLibraries\boost_1_34_1&quot;;&quot;$(SolutionDir)&quot;;&quot;$(SolutionDir)\ExternalLibraries&quot;;&quot;$(SolutionDir)\ExternalLibraries\GL&quot;"
 				WarningLevel="3"
 				DebugInformationFormat="4"
 			/>
@@ -106,7 +107,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)&quot;;&quot;$(SolutionDir)\ExternalLibraries&quot;;&quot;$(SolutionDir)\ExternalLibraries\GL&quot;;C:\_WashU\ssa1\source\ExternalLibraries\boost_1_34_1"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)\ExternalLibraries\boost_1_34_1&quot;;&quot;$(SolutionDir)&quot;;&quot;$(SolutionDir)\ExternalLibraries&quot;;&quot;$(SolutionDir)\ExternalLibraries\GL&quot;"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -119,8 +120,8 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="glut32.lib"
-				AdditionalLibraryDirectories="&quot;$(SolutionDir)\ExternalLibraries\GL&quot;"
+				AdditionalDependencies="glut32.lib libfftw3f-3.lib"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)\ExternalLibraries&quot;;&quot;$(SolutionDir)\ExternalLibraries\FFTW\Win32&quot;;&quot;$(SolutionDir)\ExternalLibraries\GL&quot;"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -238,6 +239,10 @@
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
+			<File
+				RelativePath=".\CurveDeformer.h"
+				>
+			</File>
 			<File
 				RelativePath=".\NonManifoldMesh.h"
 				>

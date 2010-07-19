@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.4  2010/04/12 20:17:25  colemanr
+//   LinearSolver::SumDistSqrd()
+//
 //   Revision 1.3  2009/12/07 22:35:32  ssa1
 //   A* triangle search using SVD rotations and translations.
 //
@@ -81,14 +84,18 @@ namespace wustl_mm {
 			float maxT = MIN_FLOAT;
 			float minT = MAX_FLOAT;
 			float t;
+			/*
 			for(unsigned int i = 0; i < pts.size(); i++) {
 				t = (pts[i] - avg) * n;
 				minT = min(minT, t);
 				maxT = max(maxT, t);
 			}
-
 			pt1 = avg + n * minT;
 			pt2 = avg + n * maxT;
+			*/
+
+			pt1 = avg + n * ((pts[0] - avg) * n);
+			pt2 = avg + n * ((pts[pts.size()-1] - avg) * n);
 
 		}
 

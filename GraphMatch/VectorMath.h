@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.7  2008/11/18 18:10:24  ssa1
+//   Changing the scaling functions when doing graph matching to find correspondences
+//
 //   Revision 1.6  2008/09/29 16:19:30  ssa1
 //   Adding in CVS meta information
 //
@@ -23,6 +26,7 @@
 #include <cmath>
 #include <cassert>
 #include <MathTools/BasicDefines.h>
+#include <MathTools/Vector3D.h>
 
 using namespace wustl_mm::MathTools;
 
@@ -346,6 +350,12 @@ namespace wustl_mm {
 				return (double) sqrt((p[0] - x) * (p[0] - x) +
 									 (p[1] - y) * (p[1] - y) +
 									 (p[2] - z) * (p[2] - z));
+			}
+
+			double distanceTo(const Vector3DFloat& v) const {
+				return (double) sqrt((v[0] - x) * (v[0] - x) +
+									 (v[1] - y) * (v[1] - y) +
+									 (v[2] - z) * (v[2] - z));
 			}
 
 			double distanceToSquared(const Point3& p) const {
