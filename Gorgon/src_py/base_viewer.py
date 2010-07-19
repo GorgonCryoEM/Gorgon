@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.65  2010/06/08 22:00:03  ssa1
+#   Fixing performance issue where changing color took time.
+#
 #   Revision 1.64  2010/05/26 20:17:35  ssa1
 #   Adding in display styles for atom rendering.
 #
@@ -163,6 +166,9 @@ class BaseViewer(QtOpenGL.QGLWidget):
         self.glLists = []
         self.showBox = False
         self.twoWayLighting = False
+        
+        
+        self.multipleSelection = False
         
     def initVisualizationOptions(self, visualizationForm):
         self.visualizationOptions = visualizationForm
@@ -588,6 +594,7 @@ class BaseViewer(QtOpenGL.QGLWidget):
     def processMouseClick(self, hitStack, event, forceTrue):
         print self.title, ": ", hitStack
         hits = [-1,-1,-1,-1,-1]
+        self.multipleSelection = not forceTrue
         if(self.selectEnabled):
             for i in range(5):
                 if(len(hitStack) > i+1):

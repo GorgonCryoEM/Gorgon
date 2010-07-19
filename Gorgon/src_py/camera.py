@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.57  2009/12/28 18:53:18  ssa1
+#   Fixing Lights when light0 location is set to follow the eye.
+#
 #   Revision 1.56  2009/10/05 17:57:37  ssa1
 #   Initial session saving functionality (Request ID:52)
 #
@@ -426,8 +429,13 @@ class Camera(QtOpenGL.QGLWidget):
             else:                                           # Single selection mode
                 for i in range(len(self.scene)):
                     self.scene[i].clearSelection()
+                    self.scene[i].renderer.clearOtherHighlights()
+                    self.scene[i].emitModelChanged()
+                
+                for i in range(len(self.scene)): 
                     if (i == sceneId):
                         self.scene[sceneId].processMouseClick(minNames, event, True)
+                        
         elif (rightPressed):                                # Focusing on current point
             if(sceneId >= 0):
                 self.scene[sceneId].emitElementClicked(minNames, event)
@@ -558,7 +566,7 @@ class Camera(QtOpenGL.QGLWidget):
         #Enter selection mode only if we didnt move the mouse much.. (If the mouse was moved, then we assume a camera motion instead of a selection
         dx = self.mouseUpPoint.x() - self.mouseDownPoint.x()
         dy = self.mouseUpPoint.y() - self.mouseDownPoint.y()
-                
+             
         if (pow(self.mouseDownPoint.x() - self.mouseUpPoint.x(), 2) + pow(self.mouseDownPoint.y() - self.mouseUpPoint.y(), 2) <= 2): 
             self.processMouseClick(self.pickObject(self.mouseUpPoint.x(), self.mouseUpPoint.y()), event, self.mouseLeftPressed, self.mouseMidPressed, self.mouseRightPressed)
         

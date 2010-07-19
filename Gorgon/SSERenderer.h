@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.46  2010/07/09 19:53:49  coleman.r
+//   SSERenderer::removeHelices() and removeSheets()
+//
 //   Revision 1.45  2010/06/23 13:02:56  ssa1
 //   Allowing users to reset a flexible fitting if need be.
 //
@@ -108,8 +111,10 @@
 #include <GraphMatch/VectorMath.h>
 #include <MathTools/LinearSolver.h>
 #include <ProteinMorph/SSEFlexibleFitter.h>
+#include <ProteinMorph/SSECorrespondenceNode.h>
 #include <vector>
 #include <map>
+#include <boost/tuple/tuple.hpp>
 
 using namespace wustl_mm::Protein_Morph;
 using namespace wustl_mm::GraySkeletonCPP;
@@ -117,6 +122,7 @@ using namespace wustl_mm::GraphMatch;
 using namespace wustl_mm::MathTools;
 using namespace wustl_mm::SkeletonMaker;
 using namespace std;
+using namespace boost::tuples;
 
 namespace wustl_mm {
 	namespace Visualization {	
@@ -127,6 +133,8 @@ namespace wustl_mm {
 		public:
 			SSERenderer();
 			~SSERenderer();
+
+			vector<GeometricShape*> * GetHelices();
 
 			void AddHelix(Vector3DFloat p1, Vector3DFloat p2);
 			void StartNewSSE();
@@ -142,6 +150,7 @@ namespace wustl_mm {
 			void SetHelixColor(int index, float r, float g, float b, float a);
 			void SetSheetColor(int index, float r, float g, float b, float a);
 			void SetSSEColor(int index, float r, float g, float b, float a);
+			void SetSSEOrientationFlips(vector<bool>);
 			bool SelectionRotate(Vector3DFloat centerOfMass, Vector3DFloat rotationAxis, float angle);
 			int SelectionObjectCount();
 			Vector3DFloat SelectionCenterOfMass();
@@ -162,6 +171,11 @@ namespace wustl_mm {
 			int GetHelixCount();
 			Vector3DFloat GetHelixCorner(int helixIx, int cornerIx);
 			void UpdateBoundingBox();
+			
+			vector<int> GetSelectedHelixIndices();
+			void SetHelixCorrs(  vector < int > flatCorrespondences);
+			void SetSelectedPDBHelices(vector<int> indices);
+			void ClearOtherHighlights();
 		private:
 			void SheetListToMesh(vector<GeometricShape*> & sheets);
 			void LoadHelixFileSSE(string fileName);
@@ -178,6 +192,11 @@ namespace wustl_mm {
 			bool selectedSheets[256];
 			bool selectedGraphSheets[256];
 			vector<Vector3DFloat> tempSSEPoints;
+
+			vector<bool> helixFlips;
+			vector<int> selectedHelices;
+			vector < tuple<int,int> > corrs;
+			vector<int> selectedPDBHelices;
 		};
 
 
@@ -187,6 +206,7 @@ namespace wustl_mm {
 			graphSheetMesh = NULL;
 			sheetCount = 0;
 			graphSheetCount = 0;
+			selectedHelices.clear();
 		}
 
 		SSERenderer::~SSERenderer() {
@@ -199,6 +219,14 @@ namespace wustl_mm {
 			if(sheetMesh != NULL) {
 				delete sheetMesh;
 			}
+		}
+
+		vector<int> SSERenderer::GetSelectedHelixIndices(){
+			return selectedHelices;
+		}
+
+		vector<GeometricShape*> * SSERenderer::GetHelices(){
+			return &helices;
 		}
 		
 		void SSERenderer::AddHelix(Vector3DFloat p1, Vector3DFloat p2) {
@@ -265,12 +293,25 @@ namespace wustl_mm {
 
 		void SSERenderer::Draw(int subSceneIndex, bool selectEnabled) {
 			GLfloat emissionColor[4] = {1.0, 1.0, 1.0, 1.0};
+			GLfloat frontColor[4] = {1.0, 0.0, 0.0, 1.0};
+			GLfloat backColor[4] = {0.0, 0.0, 1.0, 1.0};
 
 			glPushName(subSceneIndex);
 			float colorR, colorG, colorB, colorA;
 			if(subSceneIndex == 0) {
 				if(selectEnabled) {
 					glPushName(0);
+				}
+
+				vector<int> SSEIndices;
+
+				for(unsigned int i = 0; i < corrs.size(); ++i){
+					int SSEIndex = get<0> (corrs[i]);
+					for(unsigned int k = 0; k < selectedPDBHelices.size(); ++k){
+						if(selectedPDBHelices[k] == SSEIndex){
+							SSEIndices.push_back( get<1>( corrs[i]) );
+						}
+					}
 				}
 				
 				Point3 pt;
@@ -279,11 +320,14 @@ namespace wustl_mm {
 					if(isObjectSpecificColoring) {
 						helices[i]->GetColor(colorR, colorG, colorB, colorA);	
 						OpenGLUtils::SetColor(colorR, colorG, colorB, colorA);
+						
 					}
 
 					if(helices[i]->GetSelected()) {
+
 						glMaterialfv(GL_FRONT, GL_EMISSION, emissionColor);
 						glMaterialfv(GL_BACK, GL_EMISSION, emissionColor);
+
 					}
 					glPushMatrix();
 					glMultMatrixd(helices[i]->GetWorldToObjectMatrix().mat);
@@ -298,7 +342,52 @@ namespace wustl_mm {
 					gluDeleteQuadric(quadricCylinder);
 					glPopMatrix();
 					glPopAttrib();
+
+					if(helices[i]->GetSelected()) {
+
+						Vector3DFloat corner1 = GetHelixCorner(i, 0);
+						Vector3DFloat corner2 = GetHelixCorner(i, 1);
+
+						if(helixFlips.size()  > 0){
+							if(!helixFlips[i]){
+				
+								OpenGLUtils::SetColor(1.0, 0.0, 0.0, 1.0);
+								DrawSphere(corner2, 1.0);
+								OpenGLUtils::SetColor(0.0, 0.0, 1.0, 1.0);
+								DrawSphere(corner1, 1.0);
+								fflush(stdout);
+							}else{
+								OpenGLUtils::SetColor(1.0, 0.0, 0.0, 1.0);
+								DrawSphere(corner1, 1.0);
+								OpenGLUtils::SetColor(0.0, 0.0, 1.0, 1.0);
+								DrawSphere(corner2, 1.0);							
+								fflush(stdout);
+							}
+						}
+					}
+
+
+					for(unsigned int j = 0; j < SSEIndices.size(); ++j){
+						if(SSEIndices[j] == i){
+							Vector3DFloat corner1 = GetHelixCorner(i, 0);
+							Vector3DFloat corner2 = GetHelixCorner(i, 1);
+							if(!helixFlips[i]){				
+								OpenGLUtils::SetColor(1.0, 0.0, 0.0, 1.0);
+								DrawSphere(corner2, 1.0);
+								OpenGLUtils::SetColor(0.0, 0.0, 1.0, 1.0);
+								DrawSphere(corner1, 1.0);
+								fflush(stdout);
+							}else{
+								OpenGLUtils::SetColor(1.0, 0.0, 0.0, 1.0);
+								DrawSphere(corner1, 1.0);
+								OpenGLUtils::SetColor(0.0, 0.0, 1.0, 1.0);
+								DrawSphere(corner2, 1.0);							
+								fflush(stdout);
+							}								
+						}
+					}
 				}
+
 				if(selectEnabled) {
 					glPopName();
 				}
@@ -849,7 +938,8 @@ namespace wustl_mm {
 		}
 
 		bool SSERenderer::SelectionClear() {
-			if(Renderer::SelectionClear()) {
+			if(Renderer::SelectionClear()) {	
+				
 				for(unsigned int i = 0; i < helices.size(); i++) {					
 					helices[i]->SetSelected(false);
 				}
@@ -871,16 +961,23 @@ namespace wustl_mm {
 						selectedGraphSheets[i] = false;
 					}
 				}
-
+				selectedHelices.clear();
+				selectedPDBHelices.clear();
 				return true;
 			}
 			return false;
 		}
 
+		void SSERenderer::ClearOtherHighlights(){
+			selectedPDBHelices.clear();
+		}
+
 		void SSERenderer::SelectionToggle(int subsceneIndex, bool forceTrue, int ix0, int ix1, int ix2, int ix3, int ix4) {
 			Renderer::SelectionToggle(subsceneIndex, forceTrue, ix0, ix1, ix2, ix3, ix4);
 			if((subsceneIndex == 0) && (ix0 >= 0) && (ix0 <= (int)helices.size())) {
-				helices[ix0]->SetSelected(forceTrue || !helices[ix0]->GetSelected());			
+				if(forceTrue || !helices[ix0]->GetSelected())
+					selectedHelices.push_back(ix0);
+				helices[ix0]->SetSelected(forceTrue || !helices[ix0]->GetSelected());
 			}
 
 			if((subsceneIndex == 1)) {
@@ -1150,6 +1247,25 @@ namespace wustl_mm {
 
 		Vector3DFloat SSERenderer::GetHelixCorner(int helixIx, int cornerIx) {
 			return helices[helixIx]->GetCornerCell3(cornerIx);
+		}
+
+		void SSERenderer::SetSSEOrientationFlips(vector<bool> in){
+			helixFlips = in;
+		}
+
+
+		void SSERenderer::SetHelixCorrs(  vector < int > flatCorrespondences){
+			if(flatCorrespondences.size() %2 != 0)
+				return;
+			else
+				corrs.clear();
+			for(int i=0; i < flatCorrespondences.size(); i = i+2){
+				corrs.push_back(tuple<int, int>(flatCorrespondences[i], flatCorrespondences[i+1]));
+			}
+		}
+		void SSERenderer::SetSelectedPDBHelices(vector<int> indices){
+			selectedPDBHelices.clear();
+			selectedPDBHelices = indices;
 		}
 
 	}

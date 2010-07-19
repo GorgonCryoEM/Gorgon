@@ -11,18 +11,6 @@
 //
 // History Log: 
 //   $Log$
-//   Revision 1.55  2010/07/09 03:30:20  coleman.r
-//   auto helix building
-//
-//   Revision 1.54  2010/07/08 22:15:42  chenb
-//   helices now rendered more smoothly and as a flat ribbon rather than a string of cylinders
-//
-//   Revision 1.53  2010/07/06 23:20:54  chenb
-//   Added code to do a rough rendering of Beta sheets
-//
-//   Revision 1.52  2010/07/02 22:46:20  chenb
-//   Added code for each PDBAtom to know its previous and next neighbors, and to render ribbon diagrams as strings of cylinders
-//
 //   Revision 1.51  2010/06/23 19:11:51  ssa1
 //   Adding simple ribbon rendering and associated events for flexible fitting
 //
@@ -131,11 +119,13 @@
 #include <map>
 #include <list>
 #include <GraphMatch/VectorMath.h>
+#include <boost/tuple/tuple.hpp>
 
 using namespace std;
 using namespace wustl_mm::Protein_Morph;
 using namespace wustl_mm::GraphMatch;
 using namespace wustl_mm::SkeletonMaker;
+using namespace boost::tuples;
 
 namespace wustl_mm {
 	namespace Visualization {	
@@ -152,69 +142,16 @@ namespace wustl_mm {
 			}
 		};
 
-		/**
-		 Begin Hermite Curve code, to be moved into another file after testing
-		 -this code based on molscript's hermite_curve.c file, and produced with the help
-		  of wikipedia's article on the cubic hermite spline
-		 */
-		class HermiteCurve{
-		public:
-			Vector3DFloat p0, p1, m0, m1;
-
-			void setCurve(Vector3DFloat pstart, Vector3DFloat pend, Vector3DFloat tstart, Vector3DFloat tend);
-			Vector3DFloat getPos(double t);
-			Vector3DFloat getTangent(double t);
-		};
-
-		void HermiteCurve::setCurve(Vector3DFloat pstart, Vector3DFloat pend, Vector3DFloat tstart, Vector3DFloat tend){
-			p0 = pstart;
-			p1 = pend;
-			m0 = tstart;
-			m1 = tend;
-		}
-
-		Vector3DFloat HermiteCurve::getPos(double t){
-			double tsquared = t*t;
-			double tcubed = tsquared * t;
-
-			double cp0 = 2*tcubed - 3*tsquared + 1;
-			double cm0 = tcubed - 2*tsquared + t;
-			double cp1 = (cp0 - 1)*(-1);
-			double cm1 = tcubed - tsquared;
-
-			double xt = cp0*p0.X() + cm0*m0.X() + cp1*p1.X() + cm1*m1.X();
-			double yt = cp0*p0.Y() + cm0*m0.Y() + cp1*p1.Y() + cm1*m1.Y();
-			double zt = cp0*p0.Z() + cm0*m0.Z() + cp1*p1.Z() + cm1*m1.Z();
-
-			return Vector3DFloat(xt, yt, zt);
-		}
-
-		// I don't know how this method works, but it is a part of the entirely functional
-		// molscript code - BC
-		Vector3DFloat HermiteCurve::getTangent(double t){
-			double t2 = t * t;
-			double cp0 = 6.0 * (t2 - t);
-			double cp1 = 6.0 * (-t2 + t);
-			double cm0 = 3.0 * t2 - 4.0 * t + 1.0;
-			double cm1 = 3.0 * t2 - 2.0 * t;
-			double vxt = p0.X()*cp0 + p1.X() * cp1 + m0.X() * cm0 + m1.X() * cm1;
-			double vyt = p0.Y()*cp0 + p1.Y() * cp1 + m0.Y() * cm0 + m1.Y() * cm1;
-			double vzt = p0.Z()*cp0 + p1.Z() * cp1 + m0.Z() * cm0 + m1.Z() * cm1;
-
-			return Vector3DFloat(vxt, vyt, vzt);
-		}
-		/**
-		 End Hermite Curve code
-		 */
-
 		const int CALPHA_DISPLAY_STYLE_BACKBONE = 3;
 		const int CALPHA_DISPLAY_STYLE_RIBBON = 4;
 		const int CALPHA_DISPLAY_STYLE_SIDE_CHAIN = 5;
+
 
 		class CAlphaRenderer : public Renderer{
 		public:
 			struct Secel{
 				vector<unsigned long long> atomHashes;
+				bool selected;
 			};
 
 			CAlphaRenderer();
@@ -244,9 +181,6 @@ namespace wustl_mm {
 			// Controlling the atom vector
 			PDBAtom * AddAtom(PDBAtom atom);
 			PDBAtom * GetAtom(unsigned long long index);
-			vector< PDBAtom* > GetAtomsVector();
-
-			vector< unsigned long long > GetAtomHashes();
 			PDBAtom * GetAtomFromHitStack(int subsceneIndex, bool forceTrue, int ix0, int ix1, int ix2, int ix3, int ix4);
 			PDBAtom * GetSelectedAtom(unsigned int selectionId);
 			void DeleteAtom(unsigned long long index);
@@ -279,21 +213,12 @@ namespace wustl_mm {
 											//what should really happen is that the code should check if it is
 											//trying to reload the same one, and then if it did return false
 
-			vector<Vector3DFloat> CreatePointVector(PDBAtom first, PDBAtom last); // functionality mirrored in previously implemented method,
-																				  // will try to refactor
-			vector<Vector3DFloat> LaplacianSmoothing(vector<Vector3DFloat> points, int steps); // applies Laplacian smoothing to a vector of
-																							   // Vector3DFloats
-			vector<Vector3DFloat> CreateStrandNormals(vector<Vector3DFloat> points); // create line segment normals to be used in drawing Beta
-																					 // strands
-			void CreateHelixAxesAndTangents(vector<Vector3DFloat>& tangents, vector<Vector3DFloat>& axes,vector<Vector3DFloat> points, 
-				Vector3DFloat previous, Vector3DFloat next, double HELIX_ALPHA, double HELIX_BETA, double HELIX_HERMITE_FACTOR);
-			void DrawOpenBox(vector<Vector3DFloat> points, vector<Vector3DFloat> normals); // takes a vector of 8 points and draws a rectangular prism with two of its six sides not
-															// filled in; the first 4 points are from the beggining edge of the box, with the second four
-															// forming the end
-			void DrawTube(vector<Vector3DFloat> points, vector<Vector3DFloat> normals, int stacks, int slices);
-			//vector<Vector3DFloat> CreateInterpolatedPoints(vector<Vector3DFloat> points, Vector3DFloat previous, Vector3DFloat next); // creates interpolated points for loops
 
-
+			vector<int> GetSelectedHelixIndices();
+			void SetHelixCorrs( vector < int > flatCorrespondences);
+			void SetSelectedSSEHelices(vector<int>);
+			void ClearOtherHighlights();
+			void SetFeatureVecs(vector<Vector3DFloat> flatFeatureVecs);
 		private:
 			void DrawBackboneModel(int subSceneIndex, bool selectEnabled);
 			void DrawRibbonModel(int subSceneIndex, bool selectEnabled);
@@ -306,6 +231,11 @@ namespace wustl_mm {
 			vector<Secel> aHelices;
 			vector<Secel> bStrands;
 			vector<Secel> loops;
+			
+			vector<int> selectedHelixIndices;
+			vector < tuple<int, int> > corrs;
+			vector<int> selectedSSEHelices;
+			vector<tuple<Vector3DFloat, Vector3DFloat>> featureVecs;
 		};
 
 
@@ -313,12 +243,20 @@ namespace wustl_mm {
 			atoms.clear();
 			bonds.clear();
 			sidechainBonds.clear();
+			selectedHelixIndices.clear();
+			featureVecs.clear();
 		}
 
 		CAlphaRenderer::~CAlphaRenderer() {
 			atoms.clear();
 			bonds.clear();
 			sidechainBonds.clear();
+			selectedHelixIndices.clear();
+			featureVecs.clear();
+		}
+
+		vector<int> CAlphaRenderer::GetSelectedHelixIndices(){
+			return selectedHelixIndices;
 		}
 
 		PDBAtom * CAlphaRenderer::AddAtom(PDBAtom atom) {
@@ -411,462 +349,108 @@ namespace wustl_mm {
 		}
 
 		void CAlphaRenderer::DrawRibbonModel(int subSceneIndex, bool selectEnabled) {
-			// subSceneIndex will be 0 for Helices, 1 for Strands and 2 for loops/coils
-			GLfloat emissionColor[4] = {1.0, 1.0, 1.0, 1.0};
-			int MAX_BOND_LENGTH = 4;
-
 			if(selectEnabled) {
 				glPushName(subSceneIndex);
 				glPushName(0);
 			}
+			GLfloat emissionColor[4] = {1.0, 1.0, 1.0, 1.0};
+			GLfloat frontColor[4] = {1.0, 0.0, 0.0, 1.0};
+			GLfloat backColor[4] = {0.0, 0.0, 1.0, 1.0};
+			vector<int> PDBIndices;
 
-			float LOOP_RADIUS = .19;
-			float HELIX_WIDTH = 1.82;
-			//float 
-
-			if(subSceneIndex == 0) { // Drawing Helices
-				int atom_counter = 0;
-				PDBAtom lastEnd;
-
-				// Hermite Curve test code
-				float HELIX_HERMITE_FACTOR = 4.7;
-				float HELIX_ALPHA = 32.0 * PI/180.0; 
-				float HELIX_BETA = -11.0 * PI/180.0; // these three constants taken from molscript code
-				HermiteCurve curve;
-				Vector3DFloat m0, m1;
-
-				for (unsigned int j = 0; j < aHelices.size(); ++j){
-					if(selectEnabled){
-						glLoadName(j);
-					}
-
-					glPushAttrib(GL_LIGHTING_BIT);
-
-					Secel currentSecel = aHelices[j];
-
-					if(currentSecel.atomHashes.size() > 0){
-
-						PDBAtom firstAtom = atoms.find(currentSecel.atomHashes[0])->second;
-						PDBAtom lastAtom = atoms.find(currentSecel.atomHashes[currentSecel.atomHashes.size()-1])->second;
-						Vector3DFloat preSecelAtomPos = atoms.find(firstAtom.GetPrevCAHash())->second.GetPosition();
-						Vector3DFloat postSecelAtomPos = atoms.find(lastAtom.GetNextCAHash())->second.GetPosition();
-
-						vector<Vector3DFloat> points = CreatePointVector(firstAtom, lastAtom);
-						vector<Vector3DFloat> tangents = vector<Vector3DFloat>(points);
-						vector<Vector3DFloat> axes = vector<Vector3DFloat>(points);
-
-						CreateHelixAxesAndTangents(tangents, axes, points, preSecelAtomPos, postSecelAtomPos, HELIX_ALPHA, HELIX_BETA, HELIX_HERMITE_FACTOR);
-
-						//for(unsigned int i = 0; i < points.size()-1; ++i){
-						for(unsigned int i = 0; i < points.size()-1; ++i){
-							/*if(i == 0){
-								m0 = points[i+1] - preSecelAtomPos;
-							} else {
-								m0 = points[i+1] - points[i-1];
+			switch(subSceneIndex) {
+				case 0: // Helices
+					
+					for(unsigned int i = 0; i < corrs.size(); ++i){
+						int SSEIndex = get<1> (corrs[i]);
+						for(unsigned int k = 0; k < selectedSSEHelices.size(); ++k){
+							if(selectedSSEHelices[k] == SSEIndex){
+								PDBIndices.push_back( get<0>( corrs[i]) );
 							}
-
-							if(i + 2 > points.size() - 1){
-								m1 = postSecelAtomPos - points[i];
-							} else {
-								m1 = points[i+2] - points[i];
-							}*/
-
-							m0 = tangents[i];
-							m1 = tangents[i+1];
-
-							curve.setCurve(points[i], points[i+1], m0, m1);
-
-							//DrawSphere(points[i], .3);
-							//DrawCylinder(firstatm.GetPosition() - m0*.5, firstatm.GetPosition() + m0*.5, .1, 10, 10);
-							//DrawSphere(points[i+1], .3);
-							//DrawCylinder(secondatm.GetPosition() - m1*.5, secondatm.GetPosition() + m1*.5, .1, 10, 10);
-
-							vector<Vector3DFloat> boxpositions(8);
-							vector<Vector3DFloat> boxnormals(8);
-
-							//glBegin(GL_TRIANGLE_STRIP);
-
-							float halfwidth = HELIX_WIDTH/2.0;
-							float halfthickness = LOOP_RADIUS/2.0;
-							Vector3DFloat lastPos = points[i];
-							int NUM_SECTIONS = 10;
-							for (int sect = 0; sect <= NUM_SECTIONS; ++sect){
-								double tsect = ((double)sect)/((double)NUM_SECTIONS);
-								Vector3DFloat nextPos = curve.getPos(tsect);
-
-								Vector3DFloat currentAxis = axes[i]*(1.0-tsect) + axes[i+1]*tsect;
-								currentAxis.Normalize();
-
-								Vector3DFloat curnormal = curve.getTangent(tsect);
-								curnormal = curnormal^currentAxis;
-								curnormal.Normalize();
-
-								//glNormal3f(curnormal.X(), curnormal.Y(), curnormal.Z());
-
-								if(i == 0){
-									halfwidth = LOOP_RADIUS + (0.5 * HELIX_WIDTH - LOOP_RADIUS) * 0.5 * (-1*cos(PI*tsect) + 1.0);
-								} else if (i == points.size() - 2){
-									halfwidth = LOOP_RADIUS + (0.5 * HELIX_WIDTH - LOOP_RADIUS) * 0.5 * (cos(PI*tsect) + 1.0);
-								}
-
-								/*Vector3DFloat p1 = nextPos + currentAxis*halfwidth - curnormal*halfthickness;
-								Vector3DFloat p2 = nextPos - currentAxis*halfwidth;
-								glVertex3f(p1.X(), p1.Y(), p1.Z());
-								glVertex3f(p2.X(), p2.Y(), p2.Z());*/
-
-								boxpositions[1] = nextPos + currentAxis*halfwidth - curnormal*halfthickness;
-								boxpositions[7] = nextPos + currentAxis*halfwidth + curnormal*halfthickness;
-								boxpositions[5] = nextPos - currentAxis*halfwidth + curnormal*halfthickness;
-								boxpositions[3] = nextPos - currentAxis*halfwidth - curnormal*halfthickness;
-
-								for(int q = 0; q < 4; q++){
-									boxnormals[2*q + 1] = curnormal*pow(-1.0, 1-(((int)q)/2));
-								}
-
-								if(sect > 0){
-									DrawOpenBox(boxpositions, boxnormals);
-								}
-
-								for(int q = 0; q < 4; ++q){
-									boxpositions[2*q] = boxpositions[2*q+1];
-									boxnormals[2*q] = boxnormals[2*q+1];
-								}
-								//DrawSphere(nextPos, .19);
-								//DrawCylinder(lastPos, nextPos, .19, 10, 2);
-								//lastPos = nextPos;
-							}
-
-							//glEnd();
 						}
 					}
 
-					glPopAttrib();
-				}
-
-				if(selectEnabled) {
-					glPopName();
-					glPopName();
-				}
-
-			} else if(subSceneIndex == 1) { // Drawing Strands
-				int atom_counter = 0;
-				PDBAtom lastEnd;
-
-				HermiteCurve curve;
-				Vector3DFloat m0, m1, dir1, dir2;
-				double STRAND_HERMITE_FACTOR = 0.5;
-
-				for (unsigned int i = 0; i < bStrands.size(); ++i){
-					if(selectEnabled){
-						glLoadName(i);
-					}
-
-					glPushAttrib(GL_LIGHTING_BIT);
-
-					Secel currentSecel = bStrands[i];
-
-					if(currentSecel.atomHashes.size() > 0){
-
-						PDBAtom firstAtom = atoms.find(currentSecel.atomHashes[0])->second;
-						PDBAtom lastAtom = atoms.find(currentSecel.atomHashes[currentSecel.atomHashes.size()-1])->second;
-						Vector3DFloat preSecelAtomPos = atoms.find(firstAtom.GetPrevCAHash())->second.GetPosition();
-						Vector3DFloat postSecelAtomPos = atoms.find(lastAtom.GetNextCAHash())->second.GetPosition();
-
-						vector<Vector3DFloat> points = CreatePointVector(firstAtom, lastAtom);
-						vector<Vector3DFloat> normals = CreateStrandNormals(points);
-						double arrowhead_factor = 1.0;
-						vector<Vector3DFloat> boxpositions(8);
-						vector<Vector3DFloat> boxnormals(8);
-
-						bool LAPLACIAN_SMOOTHING = true;
-						int SMOOTHING_STEPS = 1;
-						if(LAPLACIAN_SMOOTHING){
-							points = LaplacianSmoothing(points, SMOOTHING_STEPS);
+					for(int i = 0; i < aHelices.size(); i++) {
+						cout << "Drawing helix # " << i << endl;
+						if(selectEnabled){
+							glLoadName(i);
 						}
+						glPushAttrib(GL_LIGHTING_BIT);
+						if(aHelices[i].selected == true){
+							cout << "This helix is selected" << endl;
+							glMaterialfv(GL_FRONT, GL_EMISSION, emissionColor);
+							glMaterialfv(GL_BACK, GL_EMISSION, emissionColor);
+						}
+						for(int j = 0; j < aHelices[i].atomHashes.size()-1; j++) {
+							DrawCylinder(atoms[aHelices[i].atomHashes[j]].GetPosition(), atoms[aHelices[i].atomHashes[j+1]].GetPosition(), 0.1, 10, 2);
+						}
+						glPopAttrib();
 
-						for(unsigned int i = 0; i < points.size()-1; ++i){
-							if(i == 0){
-								m0 = points[i+1] - points[i];
-							} else {
-								if(i + 2 < points.size()){
-									m0 = points[i+2] - points[i];
-								} else {
-									m0 = postSecelAtomPos - points[i];
-								}
-							}
-
-							if(i + 3 >= points.size()){
-								m1 = postSecelAtomPos - points[i];
-							} else {
-								m1 = points[i+3] - points[i+1];
-							}
-
-							m0 = m0*STRAND_HERMITE_FACTOR;
-							m1 = m1*STRAND_HERMITE_FACTOR;
-
-							if(i == 0){
-								dir2 = points[1] - points[0];
-								dir2.Normalize();
-							}
-
-							dir1 = dir2;
-							if(i + 2 < points.size()){
-								dir2 = points[i+2] - points[i];
-							} else {
-								dir2 = postSecelAtomPos - points[i];
-							}
-
-							dir2.Normalize();
-
-							curve.setCurve(points[i], points[i+1], m0, m1);
-
-							float WIDTH = 1.3;
-							float THICKNESS = .26;
-							Vector3DFloat lastPos = points[i];
-							Vector3DFloat direction = dir1;
-							Vector3DFloat currentNormal = normals[i];
-							Vector3DFloat side = currentNormal^direction;
-							side.Normalize();
-							boxpositions[0] = lastPos - side*(0.5*WIDTH*arrowhead_factor + LOOP_RADIUS/2.0) + currentNormal*0.5*THICKNESS; 
-							boxpositions[2] = lastPos + side*(0.5*WIDTH*arrowhead_factor + LOOP_RADIUS/2.0) + currentNormal*0.5*THICKNESS; 
-							boxpositions[4] = lastPos + side*(0.5*WIDTH*arrowhead_factor + LOOP_RADIUS/2.0) - currentNormal*0.5*THICKNESS; 
-							boxpositions[6] = lastPos - side*(0.5*WIDTH*arrowhead_factor + LOOP_RADIUS/2.0) - currentNormal*0.5*THICKNESS; 
-							boxnormals[0] = currentNormal;
-							boxnormals[2] = currentNormal;
-							boxnormals[4] = currentNormal*-1;
-							boxnormals[6] = currentNormal*-1;
+						if(aHelices[i].selected == true){
+							cout << "About to draw end spheres size of featureVecs: " << featureVecs.size() << endl;
+							glPushAttrib(GL_LIGHTING_BIT);
 							
-							int NUM_SECTIONS = 10;
-							for (int sect = 1; sect <= NUM_SECTIONS; ++sect){
-								double tsect = ((double)sect)/((double)NUM_SECTIONS);
-								if(i > points.size() - 3){
-									arrowhead_factor = 1.65*(1-tsect);
-								}
-								direction = dir1*(1.0 - tsect) + dir2*tsect;
-								currentNormal = normals[i]*(1.0 - tsect) + normals[i+1]*(tsect);
-								side = currentNormal^direction;
-								side.Normalize();
-								Vector3DFloat nextPos = curve.getPos(tsect);
-
-								boxpositions[1] = nextPos - side*(0.5*WIDTH*arrowhead_factor + LOOP_RADIUS/2.0) + currentNormal*0.5*THICKNESS; 
-								boxpositions[3] = nextPos + side*(0.5*WIDTH*arrowhead_factor + LOOP_RADIUS/2.0) + currentNormal*0.5*THICKNESS;
-								boxpositions[5] = nextPos + side*(0.5*WIDTH*arrowhead_factor + LOOP_RADIUS/2.0) - currentNormal*0.5*THICKNESS;
-								boxpositions[7] = nextPos - side*(0.5*WIDTH*arrowhead_factor + LOOP_RADIUS/2.0) - currentNormal*0.5*THICKNESS;
-
-								for(int q = 0; q < 4; ++q){
-									boxnormals[2*q + 1] = currentNormal*pow(-1.0, ((int)q)/2);
-								}
-
-								DrawOpenBox(boxpositions, boxnormals);
-								
-								//DrawSphere(nextPos, .19);
-								//DrawCylinder(lastPos, nextPos, .4, 4, 2);
-								lastPos = nextPos;
-								for(int q = 0; q < 4; ++q){
-									boxpositions[2*q] = boxpositions[2*q+1];
-									boxnormals[2*q] = boxnormals[2*q+1];
-								}
+							if(featureVecs.size() > 0){
+								OpenGLUtils::SetColor(1.0, 0.0, 0.0, 1.0);
+								DrawSphere(featureVecs[i].get<0>(), 1.0);
+								OpenGLUtils::SetColor(0.0, 0.0, 1.0, 1.0);
+								DrawSphere(featureVecs[i].get<1>(), 1.0);
+							}else{
+								OpenGLUtils::SetColor(1.0, 0.0, 0.0, 1.0);
+								DrawSphere(atoms[aHelices[i].atomHashes[0]].GetPosition(), 1.0);
+								OpenGLUtils::SetColor(0.0, 0.0, 1.0, 1.0);
+								DrawSphere(atoms[aHelices[i].atomHashes[aHelices[i].atomHashes.size()-1]].GetPosition(), 1.0);
 							}
-
-							if (i == points.size() - 3){
-								arrowhead_factor = 1.65;
-								//boxpositions
-							}
-						}
-
 						
-					}
-
-					glPopAttrib();
-				}
-
-				if(selectEnabled) {
-					glPopName();
-					glPopName();
-				}
-
-			} else if(subSceneIndex == 2) { // Drawing Loops
-				GLfloat emissionColor[4] = {1.0, 1.0, 1.0, 1.0};
-
-				int atom_counter = 0;
-				PDBAtom lastEnd;
-
-				HermiteCurve curve;
-				Vector3DFloat m0, m1;
-
-				double HERMITE_FACTOR = 0.5;
-				int LOOP_SLICES = 10;
-				int NUM_SECTIONS = 10;
-
-				//for (unsigned int i = 0; i < loops.size(); ++i){
-				//	if(selectEnabled){
-				//		glLoadName(i);
-				//	}
-				//	glPushAttrib(GL_LIGHTING_BIT);
-			
-				//	Secel currentSecel = loops[i];
-
-				//	if(currentSecel.atomHashes.size() > 1){
-				//		PDBAtom firstAtom = atoms.find(currentSecel.atomHashes[0])->second;
-				//		PDBAtom lastAtom = atoms.find(currentSecel.atomHashes[currentSecel.atomHashes.size()-1])->second;
-				//		Vector3DFloat preSecelAtomPos = atoms.find(firstAtom.GetPrevCAHash())->second.GetPosition();
-				//		Vector3DFloat postSecelAtomPos = atoms.find(lastAtom.GetNextCAHash())->second.GetPosition();
-
-				//		vector<Vector3DFloat> points = CreatePointVector(firstAtom, lastAtom);
-				//		int ptsize = points.size();
-				//		vector<Vector3DFloat> renderingPoints((ptsize*NUM_SECTIONS + 1)*LOOP_SLICES);
-				//		vector<Vector3DFloat> renderingNormals((ptsize*NUM_SECTIONS + 1)*LOOP_SLICES);
-
-				//		bool LAPLACIAN_SMOOTHING = true;
-				//		int SMOOTHING_STEPS = 1;
-				//		if(LAPLACIAN_SMOOTHING){
-				//			points = LaplacianSmoothing(points, SMOOTHING_STEPS);
-				//		}
-				//		vector<Vector3DFloat> interpolatedPoints = 
-
-				//		Vector3DFloat curAxis = (points[1]-points[0])^(preSecelAtomPos-points[0]);
-				//		Vector3DFloat curNormal = (points[1]-points[0])^curAxis;
-				//		curNormal.Normalize();
-				//		curNormal = curNormal*LOOP_RADIUS;
-				//		Vector3DFloat curPos = points[0];
-				//		Vector3DFloat direction = points[1]-points[0];
-
-				//		// generate first stack of points
-				//		for(unsigned int j = 0; j < LOOP_SLICES; ++j){
-				//			renderingPoints[i+j*(ptsize+1)] = curPos+curNormal.Rotate(direction, ((double)j*2*PI)/LOOP_SLICES);
-				//			renderingNormals[i+j*(ptsize+1)] = points[i+j*(ptsize+1)]-curPos;
-				//		}
-
-				//		for(unsigned int j = 0; j < ptsize; ++j){
-
-				//			for(int sect = 1; sect <= NUM_SECTIONS; ++sect){
-				//				Vector3DFloat nextVector, previousVector;
-				//				if(j == ptsize - 1){
-				//					nextVector = postSecelAtomPos - points[j];
-				//				} else {
-				//					nextVector = points[j+1]-points[j];
-				//				}
-				//				
-				//				previousVector = points[j-1] - points[j];
-				//				curAxis = nextVector^previousVector;
-				//				float alpha = arcsin(curAxis/(nextVector.Length()*previousVector.Length()));
-				//				curNormal = curNormal.Rotate(curAxis, alpha)*-1;
-				//				curNormal.Normalize();
-
-				//				for(unsigned int k = 0; k < LOOP_SLICES; ++k){
-				//					renderingPoints[j+k*(ptsize+1)] = curPos+curNormal.Rotate(direction, ((double)k*2*PI)/LOOP_SLICES);
-				//					renderingNormals[j+k*(ptsize+1)] = points[j+k*(ptsize+1)]-curPos;
-				//				}
-				//			}
-				//		}
-				//	}
-
-				//	DrawTube()
-				//	glPopAttrib();
-				//}
-
-				for (unsigned int i = 0; i < loops.size(); ++i){
-					if(selectEnabled){
-						glLoadName(i);
-					}
-					glPushAttrib(GL_LIGHTING_BIT);
-
-					Secel currentSecel = loops[i];
-
-					if(currentSecel.atomHashes.size() > 0){
-
-						PDBAtom firstAtom = atoms.find(currentSecel.atomHashes[0])->second;
-						PDBAtom lastAtom = atoms.find(currentSecel.atomHashes[currentSecel.atomHashes.size()-1])->second;
-						Vector3DFloat preSecelAtomPos = atoms.find(firstAtom.GetPrevCAHash())->second.GetPosition();
-						Vector3DFloat postSecelAtomPos = atoms.find(lastAtom.GetNextCAHash())->second.GetPosition();
-
-						vector<Vector3DFloat> points = CreatePointVector(firstAtom, lastAtom);
-
-						bool LAPLACIAN_SMOOTHING = true;
-						int SMOOTHING_STEPS = 1;
-						if(LAPLACIAN_SMOOTHING){
-							points = LaplacianSmoothing(points, SMOOTHING_STEPS);
+							glPopAttrib();
+							Vector3DFloat pos1 = atoms[aHelices[i].atomHashes[0]].GetPosition();
+							Vector3DFloat pos2 = atoms[aHelices[i].atomHashes[aHelices[i].atomHashes.size()-1]].GetPosition();
+							printf("Drawing PDB Spheres at PDB ID %d with end #1 [%f, %f, %f] and #2 [%f, %f, %f]\n", i+1, pos1.X(), pos1.Y(), pos1.Z(), pos2.X(), pos2.Y(), pos2.Z());
+						
+							fflush(stdout);
 						}
 
-						for(unsigned int i = 0; i < points.size()-1; ++i){
-							if(i == 0){
-								m0 = points[i+1] - preSecelAtomPos;
-							} else {
-								m0 = points[i+1] - points[i-1];
-								m0 = m0*HERMITE_FACTOR;
-							}
-
-							if(i + 2 > points.size() - 1){
-								m1 = postSecelAtomPos - points[i];
-							} else {
-								m1 = points[i+2] - points[i];
-								m1 = m1*HERMITE_FACTOR;
-							}
-
-							curve.setCurve(points[i], points[i+1], m0, m1);
-
-							Vector3DFloat lastPos = points[i];
-							int NUM_SECTIONS = 10;
-							for (int sect = 1; sect <= NUM_SECTIONS; ++sect){
-								double tsect = ((double)sect)/((double)NUM_SECTIONS);
-								Vector3DFloat nextPos = curve.getPos(tsect);
-								DrawSphere(nextPos, .19);
-								DrawCylinder(lastPos, nextPos, LOOP_RADIUS, 10, 2);
-								lastPos = nextPos;
+						for(unsigned int j = 0; j < PDBIndices.size(); ++j){
+							if(PDBIndices[j] == i){
+								glPushAttrib(GL_LIGHTING_BIT);
+								OpenGLUtils::SetColor(1.0, 0.0, 0.0, 1.0);
+								DrawSphere(atoms[aHelices[i].atomHashes[0]].GetPosition(), 1.0);
+								OpenGLUtils::SetColor(0.0, 0.0, 1.0, 1.0);
+								DrawSphere(atoms[aHelices[i].atomHashes[aHelices[i].atomHashes.size()-1]].GetPosition(), 1.0);
+								glPopAttrib();								
 							}
 						}
+						
+
+
 					}
-
-					glPopAttrib();
-				}
-
-				if(selectEnabled) {
-					glPopName();
-					glPopName();
-				}
+					break;
+				case 1: // Strands
+					for(int i = 0; i < bStrands.size(); i++) {
+						if(selectEnabled){
+							glLoadName(i);
+						}
+						for(int j = 0; j < bStrands[i].atomHashes.size()-1; j++) {
+							DrawCylinder(atoms[bStrands[i].atomHashes[j]].GetPosition(), atoms[bStrands[i].atomHashes[j+1]].GetPosition(), 0.1, 10, 2);
+						}
+					}
+					break;
+				case 2: // Loops
+					for(int i = 0; i < loops.size(); i++) {
+						if(selectEnabled){
+							glLoadName(i);
+						}
+						for(int j = 0; j < loops[i].atomHashes.size()-1; j++) {
+							DrawCylinder(atoms[loops[i].atomHashes[j]].GetPosition(), atoms[loops[i].atomHashes[j+1]].GetPosition(), 0.1, 10, 2);
+						}
+					}
+					break;					
 			}
-			//if(selectEnabled) {
-			//	glPushName(subSceneIndex);
-			//	glPushName(0);
-			//}
 
-			//switch(subSceneIndex) {
-			//	case 0: // Helices		
-			//		for(int i = 0; i < aHelices.size(); i++) {
-			//			if(selectEnabled){
-			//				glLoadName(i);
-			//			}
-			//			for(int j = 0; j < aHelices[i].atomHashes.size()-1; j++) {
-			//				DrawCylinder(atoms[aHelices[i].atomHashes[j]].GetPosition(), atoms[aHelices[i].atomHashes[j+1]].GetPosition(), 0.1, 10, 2);
-			//			}
-			//		}
-			//		break;
-			//	case 1: // Strands
-			//		for(int i = 0; i < bStrands.size(); i++) {
-			//			if(selectEnabled){
-			//				glLoadName(i);
-			//			}
-			//			for(int j = 0; j < bStrands[i].atomHashes.size()-1; j++) {
-			//				DrawCylinder(atoms[bStrands[i].atomHashes[j]].GetPosition(), atoms[bStrands[i].atomHashes[j+1]].GetPosition(), 0.1, 10, 2);
-			//			}
-			//		}
-			//		break;
-			//	case 2: // Loops
-			//		for(int i = 0; i < loops.size(); i++) {
-			//			if(selectEnabled){
-			//				glLoadName(i);
-			//			}
-			//			for(int j = 0; j < loops[i].atomHashes.size()-1; j++) {
-			//				DrawCylinder(atoms[loops[i].atomHashes[j]].GetPosition(), atoms[loops[i].atomHashes[j+1]].GetPosition(), 0.1, 10, 2);
-			//			}
-			//		}
-			//		break;					
-			//}
-
-			//if(selectEnabled) {
-			//	glPopName();
-			//	glPopName();
-			//}
+			if(selectEnabled) {
+				glPopName();
+				glPopName();
+			}
 		}
 
 		void CAlphaRenderer::DrawSideChainModel(int subSceneIndex, bool selectEnabled) {
@@ -1218,7 +802,7 @@ namespace wustl_mm {
 
 
 		bool CAlphaRenderer::SelectionClear() {
-			if(Renderer::SelectionClear()) {
+			if(Renderer::SelectionClear()) {					
 				for(AtomMapType::iterator i = atoms.begin(); i != atoms.end(); i++) {					
 					i->second.SetSelected(false);
 				}
@@ -1226,25 +810,47 @@ namespace wustl_mm {
 				for(unsigned int i = 0; i < bonds.size(); i++) {
 					bonds[i].SetSelected(false);
 				}
+				for(unsigned int i = 0; i < aHelices.size(); i++) {
+					aHelices[i].selected = false;
+				}
+				selectedHelixIndices.clear();
+				selectedSSEHelices.clear();
 				return true;
 			}
 			return false;
 		}
 
+		void CAlphaRenderer::ClearOtherHighlights(){
+			selectedSSEHelices.clear();
+		}
+
 		void CAlphaRenderer::SelectionToggle(int subsceneIndex, bool forceTrue, int ix0, int ix1, int ix2, int ix3, int ix4) {
 			Renderer::SelectionToggle(subsceneIndex, forceTrue, ix0, ix1, ix2, ix3, ix4);
 			PDBAtom * a;
-			if((subsceneIndex == 0) && (ix0 != NULL)) {
+			if((subsceneIndex == 0)) {
 				switch(displayStyle) {
 					case CALPHA_DISPLAY_STYLE_BACKBONE:
-						a = (PDBAtom*)ix0;
-						a->SetSelected(forceTrue || !a->GetSelected());
+						if(ix0 != NULL){
+							a = (PDBAtom*)ix0;
+							a->SetSelected(forceTrue || !a->GetSelected());
+						}
 						break;
 					case CALPHA_DISPLAY_STYLE_RIBBON:
+						
+						if(aHelices[ix0].selected == true && !forceTrue){
+							aHelices[ix0].selected = false;
+						}
+						else{
+							cout << "Updating selectedHelix" << " ix0=" << ix0 << " forceTrue=" << forceTrue << endl;
+							aHelices[ix0].selected = true;
+							selectedHelixIndices.push_back(ix0);
+						}
 						break;
 					case CALPHA_DISPLAY_STYLE_SIDE_CHAIN:
-						a = (PDBAtom*)ix0;
-						a->SetSelected(forceTrue || !a->GetSelected());
+						if(ix0 != NULL){
+							a = (PDBAtom*)ix0;
+							a->SetSelected(forceTrue || !a->GetSelected());
+						}
 						break;
 				} 
 			} else if((subsceneIndex == 1) && (ix0 >= 0) && (ix0 <= (int)bonds.size())) {
@@ -1253,6 +859,7 @@ namespace wustl_mm {
 						bonds[ix0].SetSelected(forceTrue || !bonds[ix0].GetSelected());
 						break;
 					case CALPHA_DISPLAY_STYLE_RIBBON:
+						cout << "A Ribbon was selected and subscene is 1" << endl;
 						break;
 					case CALPHA_DISPLAY_STYLE_SIDE_CHAIN:
 						sidechainBonds[ix0].SetSelected(forceTrue || !sidechainBonds[ix0].GetSelected());
@@ -1263,11 +870,13 @@ namespace wustl_mm {
 					case CALPHA_DISPLAY_STYLE_BACKBONE:
 						break;
 					case CALPHA_DISPLAY_STYLE_RIBBON:
+						cout << "A Ribbon was selected and subscene is 2" << endl;
 						break;
 					case CALPHA_DISPLAY_STYLE_SIDE_CHAIN:
 						break;
 				} 			
 			}
+			cout << "Finished updating selected calpha helix" << endl;
 		}
 
 		void CAlphaRenderer::Unload() {
@@ -1309,20 +918,7 @@ namespace wustl_mm {
 		PDBAtom * CAlphaRenderer::GetAtom(unsigned long long index) {
 			return &atoms[index];
 		}
-		vector< unsigned long long > CAlphaRenderer::GetAtomHashes() {
-			vector< unsigned long long > atom_hashes;
-			for ( AtomMapType::iterator it = atoms.begin(); it != atoms.end(); it++) {
-				atom_hashes.push_back( it->first );
-			}
-			return atom_hashes;
-		}
-		vector< PDBAtom* > CAlphaRenderer::GetAtomsVector() {
-			vector< PDBAtom* > atoms_vector;
-			for ( AtomMapType::iterator it = atoms.begin(); it != atoms.end(); it++) {
-				atoms_vector.push_back( &(it->second) );
-			}
-			return atoms_vector;
-		}
+
 		PDBBond * CAlphaRenderer::GetBond(int index) {
 			return &bonds[index];
 		}
@@ -1452,169 +1048,35 @@ namespace wustl_mm {
 
 		//end ribbon diagram code
 
-		// creates a vector of Vector3DFloats that represents the locations of all the PDBAtoms
-		// starting with start and ending with end; it does not error check, so incorrectly
-		// ordered points will break this method.  there are more efficient ways to handle this
-		// functionality, but this seems simple and flexible enough to allow
-		vector<Vector3DFloat> CAlphaRenderer::CreatePointVector(PDBAtom start, PDBAtom end){
-			vector<Vector3DFloat> points;
 
-			PDBAtom current = start;
-			while(current.GetHashKey() != end.GetHashKey()){
-				points.push_back(current.GetPosition());
-				if(current.GetHashKey() == current.GetNextCAHash()){
-					break;
-				}
-				current = atoms.find(current.GetNextCAHash())->second;
+		void CAlphaRenderer::SetHelixCorrs(  vector < int > flatCorrespondences){
+			if(flatCorrespondences.size() %2 != 0)
+				return;
+			else
+				corrs.clear();
+			for(int i=0; i < flatCorrespondences.size(); i = i+2){
+				corrs.push_back(tuple<int, int>(flatCorrespondences[i], flatCorrespondences[i+1]));
 			}
-
-			points.push_back(end.GetPosition());
-			return points;
 		}
 
-		// implementation of Laplacian smoothing for a vector of Vector3DFloats (treats them like points)
-		// creating copies of "points" twice seems unnecessary, but I am unsure about the performance cost,
-		// so I am leaving it for simplicity of implementation
-		vector<Vector3DFloat> CAlphaRenderer::LaplacianSmoothing(vector<Vector3DFloat> points, int steps){
-			vector<Vector3DFloat> pointsTemp(points);
-			vector<Vector3DFloat> smoothedPoints(points);
-
-			for(int i = 0; i < steps; ++i){
-				for(int j = 1; j < points.size()-1; ++j){
-					smoothedPoints[j] = (pointsTemp[j-1] + pointsTemp[j+1])*.5;
-					smoothedPoints[j] = (smoothedPoints[j] + pointsTemp[j])*.5;
-				}
-				pointsTemp = smoothedPoints;
+		void CAlphaRenderer::SetFeatureVecs(vector<Vector3DFloat> flatFeatureVecs){
+			if(flatFeatureVecs.size() %2 != 0)
+				return;
+			else
+				featureVecs.clear();
+			for(int i=0; i < flatFeatureVecs.size(); i = i+2){
+				featureVecs.push_back(tuple<Vector3DFloat, Vector3DFloat>(flatFeatureVecs[i], flatFeatureVecs[i+1]));
 			}
-			return pointsTemp;
+
+		}
+		void CAlphaRenderer::SetSelectedSSEHelices(vector<int> indices){
+			selectedSSEHelices.clear();
+			selectedSSEHelices = indices;
 		}
 
-		// unsure of what behavior should be if points.size() < 3; in molscript the strand is skipped in this case
-		vector<Vector3DFloat> CAlphaRenderer::CreateStrandNormals(vector<Vector3DFloat> points){
-			vector<Vector3DFloat> normals(points);
-			int ptsSize = points.size();
-
-			for(int i = 1, length = ptsSize - 1; i < length; ++i){
-				Vector3DFloat newPos = (points[i-1] + points[i+1])*.5;
-				normals[i] = points[i] - newPos;
-				normals[i].Normalize();
-			}
-
-			normals[0] = normals[1];
-			normals[ptsSize - 1] = normals[ptsSize - 2];
-
-			// "normals must point the same way" - molscript/graphics.c
-			for(int j = 0, size = ptsSize - 1; j < size; ++j){
-				if(normals[j]*normals[j+1] < 0){
-					normals[j+1] = normals[j+1]*-1;
-				}
-			}
-
-			// "smooth normals, one iteration" - molscript/graphics.c
-			vector<Vector3DFloat> smoothedNormals(normals);
-			
-			for(int k = 1, size = ptsSize - 1; k < size; ++k){
-				smoothedNormals[k] = normals[k-1] + normals[k] + normals[k+1];
-				smoothedNormals[k].Normalize();
-			}
-
-			// "normals exactly perpendicular to strand" - molscript/graphics.c
-			Vector3DFloat direction = points[1] - points[0];
-			Vector3DFloat side = direction^smoothedNormals[0];
-			smoothedNormals[0] = side ^ direction;
-			smoothedNormals[0].Normalize();
-
-			for(int i = 1, size = ptsSize - 1; i < size; ++i){
-				direction = points[i+1] - points[i-1];
-				side = direction^smoothedNormals[i];
-				smoothedNormals[i] = side^direction;
-				smoothedNormals[i].Normalize();
-			}
-
-			direction = points[ptsSize - 1] - points[ptsSize - 2];
-			side = direction^smoothedNormals[ptsSize - 1];
-			smoothedNormals[ptsSize - 1] = side^direction;
-			smoothedNormals[ptsSize - 1].Normalize();
-
-			return smoothedNormals;
-		}
+		
 	}
-
-	void CAlphaRenderer::CreateHelixAxesAndTangents(vector<Vector3DFloat>& tangents, vector<Vector3DFloat>& axes, std::vector<Vector3DFloat> points, Vector3DFloat previous, Vector3DFloat next, double HELIX_ALPHA, double HELIX_BETA, double HELIX_HERMITE_FACTOR){
-		if(points.size() > 2){
-			for(int i = 1; i < points.size() - 1; ++i){
-				Vector3DFloat cvec = points[i+1] - points[i-1];
-				cvec.Normalize();
-	
-				Vector3DFloat rvec = (points[i]-points[i-1])^(points[i+1]-points[i]);
-				rvec.Normalize();
-	
-				axes[i] = rvec*sin(HELIX_ALPHA) + cvec*cos(HELIX_ALPHA);
-				tangents[i] = rvec*sin(HELIX_BETA) + cvec*cos(HELIX_BETA);
-				tangents[i] = tangents[i]*HELIX_HERMITE_FACTOR;
-			}
-			axes[0] = axes[1];
-			axes[axes.size()-1] = axes[axes.size()-2];
-
-			tangents[0] = previous - points[1];
-			tangents[0].Normalize();
-			tangents[0] = tangents[0]*HELIX_HERMITE_FACTOR;
-			tangents[tangents.size()-1] = next - points[points.size()-2];
-			tangents[tangents.size()-1].Normalize();
-			tangents[tangents.size()-1] = tangents[tangents.size()-1]*HELIX_HERMITE_FACTOR;
-		}
-	}
-
-	// method works like drawing the side of a cylinder with only one stack and 4 slices
-	void CAlphaRenderer::DrawOpenBox(std::vector<Vector3DFloat> points, std::vector<Vector3DFloat> normals){
-		glBegin(GL_TRIANGLE_STRIP);
-		//Vector3DFloat lastDirVector = points[0] - points[1];
-
-		for (int j = 0, runlength = points.size() + 2; j < runlength; ++j){
-			//if(j > 1){
-				//Vector3DFloat currentDirVector = points[j%points.size()] - points[(j-1)%points.size()];
-				//Vector3DFloat newNormal = currentDirVector^lastDirVector;
-				//if(j % 2 != 0){
-				//	newNormal = newNormal*-1;
-				//}
-			//newNormal = normals[j];
-			//newNormal.Normalize();
-				//lastDirVector = currentDirVector*-1;
-			//glNormal3f(newNormal.X(), newNormal.Y(), newNormal.Z());
-			//}
-			glNormal3f(normals[j%normals.size()].X(), normals[j%normals.size()].Y(), normals[j%normals.size()].Z());
-			glVertex3f(points[j%points.size()].X(), points[j%points.size()].Y(), points[j%points.size()].Z());
-		}
-
-		glEnd();
-	}
-
-
-
-	// renders a set of points and normals assuming that they are laid out like the side of a cylinder's points and normals
-	void CAlphaRenderer::DrawTube(std::vector<Vector3DFloat> points, std::vector<Vector3DFloat> normals, int stacks, int slices){
-		for(int i = 0, runlength = points.size(); i < runlength; ++i){
-			if (i%(stacks+1) == 0){
-				glBegin(GL_TRIANGLE_STRIP);
-			}
-
-			int nextSliceIx = (i+stacks+1)%runlength;
-
-			glNormal3f(normals[i].X(), normals[i].Y(), normals[i].Z());
-			glVertex3f(points[i].X(), points[i].Y(), points[i].Z());
-
-			glNormal3f(normals[nextSliceIx].X(), normals[nextSliceIx].Y(), normals[nextSliceIx].Z());
-			glVertex3f(points[nextSliceIx].X(), points[nextSliceIx].Y(), points[nextSliceIx].Z());
-			
-			if((i+1)%(stacks+1) == 0){
-				glEnd();
-			}
-		}
-	}
-
-	//vector<Vector3DFloat> CAlphaRenderer::CreateInterpolatedPoints(std::vector<Vector3DFloat> points, Vector3DFloat previous, Vector3DFloat next){
-	//
-	//	}
 }
+
 
 #endif
