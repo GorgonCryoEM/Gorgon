@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.34  2010/01/17 05:13:36  schuhs
+#   Fixing bug that created an offset between the skeleton and the SSEHunter sheets in the SSE correspondence code
+#
 #   Revision 1.33  2010/01/14 23:52:12  ssa1
 #   Gracefully catching exceptions when loading invalid files
 #
@@ -134,6 +137,9 @@ class SSEViewer(BaseViewer):
         self.connect(self.app.viewers["volume"], QtCore.SIGNAL('modelUnloaded()'), self.updateActionsAndMenus)
         self.connect(self, QtCore.SIGNAL('modelLoaded()'), self.updateActionsAndMenus)
         self.connect(self, QtCore.SIGNAL('modelUnloaded()'), self.updateActionsAndMenus)
+        
+        self.selectedObjects = []
+        self.correspondences = []
     
 
     def createUI(self):
@@ -296,7 +302,17 @@ class SSEViewer(BaseViewer):
         # When an element is selected in this viewer, if that item is a helix,
         # this sets self.currentMatch to the observed, predicted match for that
         # helix. It then emits an 'SSE selected' signal. 
+        print "Helix #: ", sseIndex
+        
         self.currentMatch = None
+        
+        if self.multipleSelection == True:
+            self.selectedObjects.append(sseIndex)
+        else:
+            self.selectedObjects = []
+            self.selectedObjects.append(sseIndex)
+            
+        self.emit(QtCore.SIGNAL("SSE selected"))
         if sseType == 0:
             try:
                 self.correspondenceLibrary
@@ -308,6 +324,7 @@ class SSEViewer(BaseViewer):
             for match in matchList:
                 if match.observed is not None and match.observed.label == sseIndex: 
                     self.currentMatch = match
+                    print self.currentMatch
                     self.emit(QtCore.SIGNAL("SSE selected"))
                     break
 
@@ -316,3 +333,17 @@ class SSEViewer(BaseViewer):
         self.renderer.fitSelectedSSEs(self.app.viewers["volume"].renderer.getVolume())
         self.emitModelChanged()
         self.app.mainCamera.setCursor(QtCore.Qt.ArrowCursor)
+        
+        
+    def updateCorrespondences(self, corrs):
+        self.correspondences  = corrs
+        
+        
+        
+    # Overridden
+    def emitElementClicked(self, hitStack, event):        
+        if (self.app.viewers["calpha"].displayStyle == self.app.viewers["calpha"].DisplayStyleRibbon):
+            if(self.app.mainCamera.mouseRightPressed and hitStack[0] == 0):
+                self.emit(QtCore.SIGNAL("SSERightClicked(PyQt_PyObject, PyQt_PyObject, QMouseEvent)"), hitStack[0], hitStack[1], event)
+        else:
+            BaseViewer.emitElementClicked(self, hitStack, event)

@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.8  2008/09/29 16:09:44  ssa1
+//   Removing GLVisualizer.h
+//
 //   Revision 1.7  2008/09/29 16:01:17  ssa1
 //   Adding in CVS meta information
 //
@@ -27,6 +30,7 @@
 #include "SSERenderer.h"
 #include "InteractiveSkeletonEngine.h"
 #include "CAlphaRenderer.h"
+#include "FlexibleFittingEngine.h"
 
 
 unsigned char neighbors[8][3] = {

@@ -11,15 +11,6 @@
 //
 // History Log: 
 //   $Log$
-//   Revision 1.84  2010/07/09 03:30:20  coleman.r
-//   auto helix building
-//
-//   Revision 1.83  2010/07/02 22:46:20  chenb
-//   Added code for each PDBAtom to know its previous and next neighbors, and to render ribbon diagrams as strings of cylinders
-//
-//   Revision 1.82  2010/06/30 16:37:44  coleman.r
-//   LinearSolver class, more Vector3DFloat conversions
-//
 //   Revision 1.81  2010/06/23 19:11:51  ssa1
 //   Adding simple ribbon rendering and associated events for flexible fitting
 //
@@ -222,7 +213,6 @@
 #include <Gorgon/FlexibleFittingEngine.h>
 #include <Gorgon/CAlphaRenderer.h>
 #include <MathTools/Vector3D.h>
-#include <MathTools/LinearSolver.h>
 #include <GraphMatch/PDBAtom.h>
 #include <GraphMatch/LinkedNode.h>
 #include <GraphMatch/PDBBond.h>
@@ -231,6 +221,8 @@
 #include <ProteinMorph/SSECorrespondenceNode.h>
 #include <boost/python.hpp>
 #include <boost/python/enum.hpp>
+#include <boost/python/tuple.hpp>
+#include <boost/tuple/tuple.hpp>
 
 
 using namespace boost::python;
@@ -238,7 +230,7 @@ using namespace wustl_mm::Visualization;
 using namespace wustl_mm::GraphMatch;
 using namespace wustl_mm::SkeletonMaker;
 using namespace wustl_mm::Protein_Morph;
-using wustl_mm::MathTools::LinearSolver;
+using namespace boost::tuples;
 
 
 // ********************** From EMAN2 typeconverter.h ************************************
@@ -351,13 +343,22 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 	vector_from_python<float>();
 	vector_to_python< std::vector<float> >();
 	vector_from_python< std::vector<float> >();
-	vector_to_python<unsigned long long>();
-	vector_from_python<unsigned long long>();
+
+	vector_to_python<int>();
+	vector_from_python<int>();
+	vector_to_python< std::vector<int> >();
+	vector_from_python< std::vector<int> >();
+
+	vector_to_python<bool>();
+	vector_from_python<bool>();
+	vector_to_python< std::vector<bool> >();
+	vector_from_python< std::vector<bool> >();
 
 	vector_to_python<Vector3DFloat>();
 	vector_from_python<Vector3DFloat>();
-	vector_to_python< std::vector< PDBAtom* > >();
-	vector_from_python< std::vector< PDBAtom* > >();
+	vector_to_python< std::vector<Vector3DFloat> >();
+	vector_from_python< std::vector<Vector3DFloat> >();
+
 
 //	tuple3_to_python<Vector3DInt>();
 //	tuple3_to_python<Vector3DFloat>();
@@ -365,11 +366,12 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 	tuple3_from_python<Vector3DFloat, float>();
 
 	class_<Vector3DFloat>("Vector3DFloat", init<float, float, float>())
-		.def(init< vector<float> >())
 		.def("x", &Vector3DFloat::X)
 		.def("y", &Vector3DFloat::Y)
 		.def("z", &Vector3DFloat::Z)
 		.def("length", &Vector3DFloat::Length)
+		.def("Transform", &Vector3DFloat::Transform)
+		.def("rotate", &Vector3DFloat::Rotate)
 		.def(self * double())
 		.def(self + self)
 		.def(self - self)
@@ -392,22 +394,20 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def(self ^ self)
 		.def(self += self)
 		.def(self -= self)
+		
 	;
 
 	class_<MatrixFloat>("MatrixFloat", init<int, int>())
 		.def("getValue", &MatrixFloat::GetValue)
 		.def("setValue", &MatrixFloat::SetValue)
+		.def(self * float())
+		.def(self * self)
+		.def(self + self)
 	;
 	
-	class_<LinearSolver>("LinearSolver")
-		.def("findBestFitLine", &LinearSolver::FindBestFitLine)
-		.staticmethod("findBestFitLine")
-		.def("sumDistSqrd", &LinearSolver::SumDistSqrd)
-		.staticmethod("sumDistSqrd")
-	;
+
 
 	class_<PDBAtom>("PDBAtom", init<string, char, unsigned int, string>())
-		.def(init<string>())
 		.def("getPDBId", &PDBAtom::GetPDBId)
 		.def("getSerial", &PDBAtom::GetSerial)
 		.def("getName", &PDBAtom::GetName)
@@ -454,8 +454,7 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("setGeometryScore", &PDBAtom::SetGeometryScore)
 		.def("transform", &PDBAtom::Transform)
 		.def("interpolateTransform", &PDBAtom::InterpolateTransform)
-		.def("setPrevCAHash", &PDBAtom::SetPrevCAHash)
-		.def("setNextCAHash", &PDBAtom::SetNextCAHash)
+		.def("getInterpolateTransformLocation", &PDBAtom::GetInterpolateTransformLocation)
 	;
 	
 
@@ -514,6 +513,7 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("setDisplayStyle", &Renderer::SetDisplayStyle)
 		.def("setObjectSpecificColoring", &Renderer::SetObjectSpecificColoring)
 		.def("updateBoundingBox", &Renderer::UpdateBoundingBox)
+		.def("clearOtherHighlights", &Renderer::ClearOtherHighlights)
 	;
 	
 	
@@ -645,14 +645,18 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("finalizeHelix", &SSERenderer::FinalizeHelix)
 		.def("addHelix", &SSERenderer::AddHelix)
 		.def("setObjectSpecificColoring", &SSERenderer::SetObjectSpecificColoring)
-		.def("removeHelices", &SSERenderer::RemoveHelices)
-		.def("removeSheets", &SSERenderer::RemoveSheets)
 		.def("removeSelectedSSEs", &SSERenderer::RemoveSelectedSSEs)
 		.def("getHelixCount", &SSERenderer::GetHelixCount)
 		.def("getHelixCorner", &SSERenderer::GetHelixCorner)
 		.def("setDisplayStyle", &SSERenderer::SetDisplayStyle)
 		.def("updateBoundingBox", &SSERenderer::UpdateBoundingBox)
+		.def("getSelectedHelixIndices", &SSERenderer::GetSelectedHelixIndices)
+		.def("setSSEOrientationFlips", &SSERenderer::SetSSEOrientationFlips)
+		.def("setHelixCorrs", &SSERenderer::SetHelixCorrs)
+		.def("setSelectedPDBHelices", &SSERenderer::SetSelectedPDBHelices)
+		.def("clearOtherHighlights", &SSERenderer::ClearOtherHighlights)
 	;
+
 
 	class_< CAlphaRenderer, bases<Renderer> >("CAlphaRenderer", init<>())
 		.def("draw", &CAlphaRenderer::Draw)
@@ -680,8 +684,6 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("get3DCoordinates", &CAlphaRenderer::Get3DCoordinates)
 		.def("addAtom", &CAlphaRenderer::AddAtom, return_value_policy<reference_existing_object>())
 		.def("getAtom", &CAlphaRenderer::GetAtom, return_value_policy<reference_existing_object>())
-//		.def("getAtomsVector", &CAlphaRenderer::GetAtomsVector) //TODO: get return type std::vector<PDBAtom*> converted to Python list properly
-		.def("getAtomHashes", &CAlphaRenderer::GetAtomHashes)
 		.def("getSelectedAtom", &CAlphaRenderer::GetSelectedAtom, return_value_policy<reference_existing_object>())
 		.def("getAtomCount", &CAlphaRenderer::GetAtomCount)
 		.def("deleteAtom", &CAlphaRenderer::DeleteAtom)		
@@ -714,6 +716,11 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("startLoop", &CAlphaRenderer::StartLoop)
 		.def("addLoopElement", &CAlphaRenderer::AddLoopElement)
 		.def("cleanSecondaryStructures", &CAlphaRenderer::CleanSecondaryStructures)
+		.def("getSelectedHelixIndices", &CAlphaRenderer::GetSelectedHelixIndices)
+		.def("setHelixCorrs", &CAlphaRenderer::SetHelixCorrs)
+		.def("setSelectedSSEHelices", &CAlphaRenderer::SetSelectedSSEHelices)
+		.def("clearOtherHighlights", &CAlphaRenderer::ClearOtherHighlights)
+		.def("setFeatureVecs", &CAlphaRenderer::SetFeatureVecs)
 	;
 
 	class_<InteractiveSkeletonEngine>("InteractiveSkeletonEngine", init<Volume *, NonManifoldMesh_Annotated *, float, int, int, int, unsigned int>())		
@@ -892,13 +899,36 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("addSSEHelix", &FlexibleFittingEngine::AddSSEHelix)		
 		.def("startSearch", &FlexibleFittingEngine::StartSearch)		
 		.def("getRigidTransform", &FlexibleFittingEngine::GetRigidTransform)		
-		.def("getHelixFlexibleTransform", &FlexibleFittingEngine::GetHelixFlexibleTransform)
+		.def("getHelixFlexibleTransform", &FlexibleFittingEngine::GetHelixFlexibleTransform)		
 		.def("getCorrespondenceCount", &FlexibleFittingEngine::GetCorrespondenceCount)		
 		.def("getClusterCount", &FlexibleFittingEngine::GetClusterCount)		
 		.def("getHelixCount", &FlexibleFittingEngine::GetHelixCount)		
-		.def("getCorrespondenceNode", &FlexibleFittingEngine::GetCorrespondenceNode)		
-		.def("resetEngine", &FlexibleFittingEngine::ResetEngine)		
-	;	
+		.def("getCorrespondenceNode", &FlexibleFittingEngine::GetCorrespondenceNode)
+		.def("resetEngine", &FlexibleFittingEngine::ResetEngine)
+		.def("Deform", &FlexibleFittingEngine::Deform)
+		.def("addAtomLocation", &FlexibleFittingEngine::addAtomLocation)
+		.def("addHardHandleLocation", &FlexibleFittingEngine::addHardHandleLocation)
+		.def("addSoftHandleLocation", &FlexibleFittingEngine::addSoftHandleLocation)
+		.def("returnFlattenedLocations", &FlexibleFittingEngine::returnFlattenedLocations)
+		.def("prepareDeform", &FlexibleFittingEngine::prepareDeform)
+		.def("setLaplacainW", &FlexibleFittingEngine::setLaplacainW)
+		.def("setHardHandleW", &FlexibleFittingEngine::setHardHandleW)
+		.def("setSoftHandleW", &FlexibleFittingEngine::setSoftHandleW)
+		.def("addHelix", &FlexibleFittingEngine::addHelix)
+		.def("addCorrespondence", &FlexibleFittingEngine::AddCorrespondence)
+		.def("getCorrespondenceFlips", &FlexibleFittingEngine::GetCorrespondenceFlips)
+		.def("getAllCorrespondencesFlat", &FlexibleFittingEngine::GetAllCorrespondencesFlat)
+		.def("flipCorrespondencePair", &FlexibleFittingEngine::FlipCorrespondencePair)
+		.def("saveCorrs", &FlexibleFittingEngine::SaveCorrs)
+		.def("loadSavedCorrs", &FlexibleFittingEngine::LoadSavedCorrs)
+		.def("getRigidTransform2", &FlexibleFittingEngine::GetRigidTransform2)
+		.def("mergeClusters", &FlexibleFittingEngine::MergeClusters)
+		.def("getAllCAlphaFeatureVecsFlat", &FlexibleFittingEngine::GetAllCAlphaFeatureVecsFlat)	
+		.def("getIsForward", &FlexibleFittingEngine::GetIsForward)	
+	;
+
+
+
 
 	class_<SSECorrespondenceNode>("SSECorrespondenceNode")
 		.def("getPIndex", &SSECorrespondenceNode::GetPIndex)
@@ -906,5 +936,7 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("isForward", &SSECorrespondenceNode::IsForward)
 	;
 }
+
+
 
 #endif

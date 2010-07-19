@@ -1,5 +1,5 @@
 from math import *
-from libpyGORGON import PDBAtom, LinearSolver, Vector3DFloat
+from libpyGORGON import PDBAtom, Vector3DFloat
 
 class AutoHelixBuilderEngine:
     def __init__(self, patoms, score_thresh, pt_line_dist_thresh):
