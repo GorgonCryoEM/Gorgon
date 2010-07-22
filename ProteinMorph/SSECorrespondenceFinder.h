@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.20  2010/07/19 17:38:31  heiderp
+//   Flexible fitting.
+//
 //   Revision 1.19  2010/06/08 22:00:05  ssa1
 //   Fixing performance issue where changing color took time.
 //
@@ -121,6 +124,7 @@ namespace wustl_mm {
 			void FindErrorMatrixBasedCorrespondence(vector< vector < vector<SSECorrespondenceNode> > > & correspondence, float maxError, int sampleCount);
 			void PrintTimes();
 			MatrixFloat GetTransform(vector<SSECorrespondenceNode> cluster, int sampleCount);
+			MatrixFloat GetTransform(Vector3DFloat originalStart, Vector3DFloat originalEnd, Vector3DFloat newStart, Vector3DFloat newEnd, int sampleCount);
 
 		private:
 			float GetFeatureCompatibilityScore(SSECorrespondenceFeature feature1, SSECorrespondenceFeature feature2);
@@ -997,6 +1001,39 @@ namespace wustl_mm {
 
 			// IF the cluster.size() == 1, then we need to find the rotation translation which is a mirror of what we just got, and then pick the one with the
 			// lowest error based on oriented angle differences.
+		}
+
+
+		MatrixFloat SSECorrespondenceFinder::GetTransform(Vector3DFloat originalStart, Vector3DFloat originalEnd, Vector3DFloat newStart, Vector3DFloat newEnd, int sampleCount) {
+
+			vector<Vector3DFloat> fl1, fl2;
+			fl1.clear();
+			fl2.clear();
+			Vector3DFloat p1, p2, q1, q2;
+			Vector3DFloat sp, sq;
+
+			
+			p1 = originalStart;
+			p2 = originalEnd;
+			
+			q1 = newStart;
+			q2 = newEnd;
+
+			//printf("Transforming to SSE index %d with corner #1 [%f, %f, %f] and #2 [%f, %f, %f]\n", cluster[i].GetQIndex(), q1.X(), q1.Y(), q1.Z(), q2.X(), q2.Y(), q2.Z());
+
+			float offset;
+			for(int j = 0; j < sampleCount; j++) {
+				offset = (float)j / (float)(sampleCount - 1);
+				sp = p1*(1.0f - offset) + p2 * offset;
+				sq = q1*(1.0f - offset) + q2 * offset;
+				fl1.push_back(sp);
+				fl2.push_back(sq);				
+			}
+
+			MatrixFloat result = LinearSolver::FindRotationTranslation(fl1, fl2);
+
+			return result;
+
 		}
 		
 

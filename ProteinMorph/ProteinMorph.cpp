@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.21  2010/07/19 17:38:31  heiderp
+//   Flexible fitting.
+//
 //   Revision 1.20  2010/06/08 22:00:05  ssa1
 //   Fixing performance issue where changing color took time.
 //
@@ -316,7 +319,6 @@ int main( int args, char * argv[] ) {
 	v1.push_back(3);
 	vector<int> v2;
 	v2.push_back(5);
-	cd.addHelices(v1, v2);
 
 	cd.Deform(points, handles, handles, 2);
 	

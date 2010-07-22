@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.13  2010/07/19 17:29:02  heiderp
+#   LARGE update.  Added flexible fitting functionality, lots of logic in FlexibleFittingEngine.h
+#
 #   Revision 1.12  2010/06/23 19:11:51  ssa1
 #   Adding simple ribbon rendering and associated events for flexible fitting
 #
@@ -53,6 +56,7 @@ from ui_dialog_calpha_flexible_fitting import Ui_DialogCAlphaFlexibleFitting
 from base_dock_widget import BaseDockWidget
 from libpyGORGON import FlexibleFittingEngine, SSECorrespondenceNode
 from math import pi
+from copy import deepcopy
 
 class CAlphaFlexibleFittingForm(BaseDockWidget, Ui_DialogCAlphaFlexibleFitting):
         
@@ -79,6 +83,7 @@ class CAlphaFlexibleFittingForm(BaseDockWidget, Ui_DialogCAlphaFlexibleFitting):
         self.chainHelixMapping = {}
         self.invChainHelixMapping = {}
         self.backupPositions = {}
+
         
         
 
@@ -214,9 +219,10 @@ class CAlphaFlexibleFittingForm(BaseDockWidget, Ui_DialogCAlphaFlexibleFitting):
                     
                 
             flips = self.engine.getCorrespondenceFlips(alignmentIx)
-            self.sseViewer.renderer.setSSEOrientationFlips(flips)
-                
-
+            self.sseViewer.renderer.setSSEOrientationFlips(flips)           
+            self.cAlphaViewer.setStrandVisibility(False)
+            self.cAlphaViewer.setLoopVisibility(False)
+            self.cAlphaViewer.setDisplayStyle(self.viewer.DisplayStyleRibbon)  
             self.cAlphaViewer.renderer.updateBoundingBox()
             self.sseViewer.emitModelChanged()
         
@@ -295,19 +301,14 @@ class CAlphaFlexibleFittingForm(BaseDockWidget, Ui_DialogCAlphaFlexibleFitting):
         if(self.radioButtonInterpolation.isChecked()):
             self.showInterpolation(alignmentIx)                    
         else :
-            if(self.doRigidInitializationCheckBox.isChecked()):
-                pass
-
             self.doFlexibleDeformationPiecewise(alignmentIx)
         self.cAlphaViewer.renderer.updateBoundingBox()
         self.cAlphaViewer.setStrandVisibility(True)
         self.cAlphaViewer.setLoopVisibility(True)
 
+
         self.sseViewer.renderer.updateBoundingBox()
-        self.sseViewer.emitModelChanged()
-
-
-     
+        self.sseViewer.emitModelChanged()     
         
   
     
@@ -319,10 +320,15 @@ class CAlphaFlexibleFittingForm(BaseDockWidget, Ui_DialogCAlphaFlexibleFitting):
     
     def doFlexibleDeformationPiecewise(self, alignmentIx):
         engine = self.engine
-        # TODO: This method can be refactored using the chain.secels dictionary... this would stop the need to search for previous and next helices..        
         # Getting all helix transformations        
         transforms = {}
-        for chain in self.cAlphaViewer.loadedChains:
+        origChain = []
+        count = 0
+        for chain in self.cAlphaViewer.loadedChains:  
+            origChain.append({})
+            for i in chain.residueRange():
+                origChain[count][i] = chain[i].getAtom('CA').getPosition()
+            count = count +1          
             for helixIx, helix in chain.helices.items():
                 transform = self.engine.getHelixFlexibleTransform(alignmentIx, self.chainHelixMapping[helixIx]) 
                 if(transform.getValue(3,3) > 0.5): # Checking if a transformation was found for this helix
@@ -335,6 +341,8 @@ class CAlphaFlexibleFittingForm(BaseDockWidget, Ui_DialogCAlphaFlexibleFitting):
         if( not self.useSoftHandlesCheckBox.isChecked()):
             for ind in softHandleLocs.keys():
                 softHandleLocs[ind] = [0,0,0]
+                
+        doingRigid = self.doRigidInitializationCheckBox.isChecked()
         
         # START NEW DEFORMATION HERE!
        
@@ -345,9 +353,9 @@ class CAlphaFlexibleFittingForm(BaseDockWidget, Ui_DialogCAlphaFlexibleFitting):
         
         #---Ends---#
         #Ends are done separately from the middle section of the chain.  Each the first and last vertices are given the same
-        #transformation as the closest helix
-        #Front
+        #transformation as the closest helix        
         for chain in self.cAlphaViewer.loadedChains:
+            #Front
             engine.prepareDeform();
             helixIx = min(transforms.keys())
             minIndex = min(chain.residueRange())
@@ -364,15 +372,16 @@ class CAlphaFlexibleFittingForm(BaseDockWidget, Ui_DialogCAlphaFlexibleFitting):
                     newpt = softHandleLocs[i]
                     engine.addSoftHandleLocation(newpt)
                     
-            flatVertices = engine.Deform(self.neighborhoodSizeSpinBox.value())
+            rigidInit = engine.getPairRigidTransform(alignmentIx, helixIx, helixIx)
+            flatVertices = engine.Deform(self.neighborhoodSizeSpinBox.value(), rigidInit, doingRigid)
             finalVertices = [];
-            for j in range(0, len(flatVertices), 3):
-                finalVertices.append(tuple([flatVertices[j], flatVertices[j+1], flatVertices[j+2]]));
+#            for j in range(0, len(flatVertices), 3):
+#                finalVertices.append(tuple([flatVertices[j], flatVertices[j+1], flatVertices[j+2]]));
                 
             count = 0
             for k in range(minIndex, helix.stopIndex+1):
                 if k not in range(helix.startIndex, helix.stopIndex+1):
-                    chain[k].getAtom('CA').setPosition(finalVertices[count])
+                    chain[k].getAtom('CA').setPosition(flatVertices[count])
                 count = count +1
                 
             #back   
@@ -392,19 +401,18 @@ class CAlphaFlexibleFittingForm(BaseDockWidget, Ui_DialogCAlphaFlexibleFitting):
                     newpt = softHandleLocs[i]
                     engine.addSoftHandleLocation(newpt)
                     
-            flatVertices = engine.Deform(self.neighborhoodSizeSpinBox.value())
-            finalVertices = [];
-            for j in range(0, len(flatVertices), 3):
-                finalVertices.append(tuple([flatVertices[j], flatVertices[j+1], flatVertices[j+2]]));
+            rigidInit = engine.getPairRigidTransform(alignmentIx, helixIx, helixIx)
+            flatVertices = engine.Deform(self.neighborhoodSizeSpinBox.value(), rigidInit, doingRigid)
+            finalVertices = []
+#            for j in range(0, len(flatVertices), 3):
+#                finalVertices.append(tuple([flatVertices[j], flatVertices[j+1], flatVertices[j+2]]));
                 
             count = 0
             for k in range(helix.startIndex, maxIndex):
                 if k != maxIndex and k not in range(helix.startIndex, helix.stopIndex+1):
-                    chain[k].getAtom('CA').setPosition(finalVertices[count])
+                    chain[k].getAtom('CA').setPosition(flatVertices[count])
                 count = count +1
             
-            for num, sheet in chain.sheets.items():
-                pass
         
         #All middle Chains
         for chain in self.cAlphaViewer.loadedChains:
@@ -432,19 +440,19 @@ class CAlphaFlexibleFittingForm(BaseDockWidget, Ui_DialogCAlphaFlexibleFitting):
                         engine.addHardHandleLocation([0,0,0])
                         newpt = softHandleLocs[i]
                         engine.addSoftHandleLocation(newpt)        
-                
-                flatVertices = engine.Deform(self.neighborhoodSizeSpinBox.value())
+                rigidInit = engine.getPairRigidTransform(alignmentIx, helixIx, nextHelixIx)
+                flatVertices = engine.Deform(self.neighborhoodSizeSpinBox.value(), rigidInit, doingRigid)
                 finalVertices = [];
-                for j in range(0, len(flatVertices), 3):
-                    zz = tuple([flatVertices[j], flatVertices[j+1], flatVertices[j+2]]);
-                    finalVertices.append(zz);
+#                for j in range(0, len(flatVertices), 3):
+#                    zz = tuple([flatVertices[j], flatVertices[j+1], flatVertices[j+2]]);
+#                    finalVertices.append(zz);
                 
                 #Only change the non-helix locations.  Helices have to stay in original locations in order to accurately
                 #calculate all transforms.  Helices get moved at the end    
                 count = 0
                 for k in range(helix1.startIndex, helix2.stopIndex+1):
                     if k not in range(helix1.startIndex, helix1.stopIndex+1) and k not in range(helix2.startIndex, helix2.stopIndex+1):
-                        chain[k].getAtom('CA').setPosition(finalVertices[count])
+                        chain[k].getAtom('CA').setPosition(flatVertices[count])
                     count = count +1
                     
         #move the handle points
@@ -457,8 +465,38 @@ class CAlphaFlexibleFittingForm(BaseDockWidget, Ui_DialogCAlphaFlexibleFitting):
                     chain[i].getAtom('CA').setPosition(newpt)        
                                   
         self.updateEngineFeatureLists(alignmentIx)
-                    
-                    
+        
+        #transforming side chains
+        scTransforms = {}
+        for chainIx in range(0, len(origChain)):
+            chain1 = origChain[chainIx]
+            chain2 = self.cAlphaViewer.loadedChains[chainIx]
+            locations1 = []
+            locations2 = []
+            chainMin = min(origChain[chainIx].keys())
+            chainMax = max(origChain[chainIx].keys())
+            for i in range(chainMin,chainMax +1):
+                minIndex = i-2
+                maxIndex = i+2
+                if minIndex < chainMin:
+                    minIndex = chainMin
+                if maxIndex > chainMax:
+                    maxIndex = chainMax
+                for j in range(minIndex, maxIndex+1):
+                    locations1.append(chain1[i])
+                    locations2.append(chain2[i].getAtom('CA').getPosition())
+                trans = self.engine.getSideChainTransform(locations1, locations2)
+                scTransforms[i] = trans;
+            for i in range(chainMin,chainMax +1):
+                atomTrans = scTransforms[i]
+                for atomName in self.cAlphaViewer.loadedChains[chainIx][i].getAtomNames():                    
+                    if atomName != 'CA':
+                        chain2[i].getAtom(atomName).transform(atomTrans)                        
+                        pass
+        self.cAlphaViewer.emitModelChanged()
+              
+                            
+                   
     def doInterpolation(self, alignmentIx):                    
          # TODO: This method can be refactored using the chain.secels dictionary... this would stop the need to search for previous and next helices..        
         # Getting all helix transformations
@@ -571,6 +609,8 @@ class CAlphaFlexibleFittingForm(BaseDockWidget, Ui_DialogCAlphaFlexibleFitting):
             crrs = self.engine.getAllCorrespondencesFlat(alignmentIx)
             self.cAlphaViewer.renderer.setHelixCorrs(crrs)
             self.sseViewer.renderer.setHelixCorrs(crrs)
+            self.cAlphaViewer.emitModelChanged()
+            self.sseViewer.emitModelChanged()
             
     def on_pushButtonMergeClusters_clicked(self):
         
@@ -706,10 +746,9 @@ class CAlphaFlexibleFittingForm(BaseDockWidget, Ui_DialogCAlphaFlexibleFitting):
             self.engine.loadSavedCorrs();
             self.viewer.renderer.transformAllAtomLocations(self.engine.getRigidTransform2(alignmentIx, index))
         
-        self.cAlphaViewer.setStrandVisibility(False)
-        self.cAlphaViewer.setLoopVisibility(False)
-        self.cAlphaViewer.setDisplayStyle(self.viewer.DisplayStyleRibbon)     
+   
         self.cAlphaViewer.visualizationOptions.updateFromViewer()
+        self.cAlphaViewer.emitModelChanged()
 
         
     def updateEngineFeatureLists(self, corrIx):
