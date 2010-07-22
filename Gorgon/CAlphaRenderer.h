@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.57  2010/07/19 17:29:02  heiderp
+//   LARGE update.  Added flexible fitting functionality, lots of logic in FlexibleFittingEngine.h
+//
 //   Revision 1.51  2010/06/23 19:11:51  ssa1
 //   Adding simple ribbon rendering and associated events for flexible fitting
 //
@@ -371,13 +374,11 @@ namespace wustl_mm {
 					}
 
 					for(int i = 0; i < aHelices.size(); i++) {
-						cout << "Drawing helix # " << i << endl;
 						if(selectEnabled){
 							glLoadName(i);
 						}
 						glPushAttrib(GL_LIGHTING_BIT);
 						if(aHelices[i].selected == true){
-							cout << "This helix is selected" << endl;
 							glMaterialfv(GL_FRONT, GL_EMISSION, emissionColor);
 							glMaterialfv(GL_BACK, GL_EMISSION, emissionColor);
 						}
@@ -387,7 +388,6 @@ namespace wustl_mm {
 						glPopAttrib();
 
 						if(aHelices[i].selected == true){
-							cout << "About to draw end spheres size of featureVecs: " << featureVecs.size() << endl;
 							glPushAttrib(GL_LIGHTING_BIT);
 							
 							if(featureVecs.size() > 0){

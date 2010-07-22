@@ -35,15 +35,13 @@ using boost::numeric::ublas::mapped_matrix;
 class CurveDeformer
 {
 public:
-	std::vector<Vector3DFloat> Deform(std::vector<Vector3DFloat>&, std::vector<Vector3DFloat>&, std::vector<Vector3DFloat>&, int);
+	vector<Vector3DFloat> Deform(vector<Vector3DFloat>&, vector<Vector3DFloat>&, vector<Vector3DFloat>&, int);
 	CurveDeformer(void);
 	~CurveDeformer(void);
 	void setLaplacainW(float);
 	void setHardHandleW(float);
 	void setSoftHandleW(float);
-	void addHelices(vector<int>, vector<int>);
-	void PrepareSkeletonFit(CAlphaRenderer & , MeshRenderer & , SSERenderer & );
-	void DeformPieceToSkeleton(vector<Vector3DFloat> , int, int, int, int );
+
 private:
 	matrix<float> constructA(std::vector<Vector3DFloat>&, int, int);
 	matrix<float> constructB(std::vector<Vector3DFloat>&, int);
@@ -54,14 +52,10 @@ private:
 	matrix<float> constructSi(vector<Vector3DFloat> &, int);
 	vector<Vector3DFloat> calculateLaplacians(vector<Vector3DFloat>&);
 	matrix<float> generateLaplacianCoefs(vector<Vector3DFloat>&, int);
-	matrix<float> genHelixLaplacianCoefs(int , int);
 	void addHandleConstraints(matrix<float> &, matrix<float> &, vector<Vector3DFloat>&, vector<Vector3DFloat>&);
 	matrix<float> InvertMatrix (const matrix<float>& input);
 	matrix<float> gjinverse(const boost::numeric::ublas::matrix<float> &m, bool &singular);
-	void addHelixShapeConstraints(matrix<float>&, matrix<float>&, int);
 
-
-	void findHelixOnSkeleton(int , int, int, int);
 
 	float laplacianWeight;
 	float hardHandleWeight;
@@ -73,65 +67,6 @@ private:
 	CAlphaRenderer cAlphaRender;
 	NonManifoldMesh_Annotated skeleton;
 };
-
-
-
-void CurveDeformer::PrepareSkeletonFit(CAlphaRenderer & cAlpha, MeshRenderer & mesh, SSERenderer & sse){
-	cAlphaRender = cAlpha;
-	skeleton = mesh.GetMesh();
-	helices = *sse.GetHelices();
-
-}
-void CurveDeformer::DeformPieceToSkeleton(vector<Vector3DFloat> origLocations, int helix1VertCount, int helix2VertCount, int SSEHelix1ID, int SSEHelix2ID){
-		
-}
-
-void CurveDeformer::findHelixOnSkeleton(int helix1VertCount, int helix2VertCount, int SSEHelix1ID, int SSEHelix2ID){
-	unsigned int indexHelix1Start;
-	unsigned int indexHelix1End;
-	unsigned int indexHelix2Start;
-	unsigned int indexHelix2End;
-	float helix1StartDistance = numeric_limits<float>::infinity();
-	float helix1EndDistance = numeric_limits<float>::infinity();
-	float helix2StartDistance = numeric_limits<float>::infinity();
-	float helix2EndDistance = numeric_limits<float>::infinity();
-
-	vector <Point3> corners1 = helices[SSEHelix1ID]->GetMaxLengthCorners();
-	vector <Point3> corners2 = helices[SSEHelix2ID]->GetMaxLengthCorners();
-	Point3 helix1Start = helices[SSEHelix1ID]->GetWorldCoordinates(corners1[0]);
-	Point3 helix1End = helices[SSEHelix1ID]->GetWorldCoordinates(corners1[1]);
-	Point3 helix2Start = helices[SSEHelix2ID]->GetWorldCoordinates(corners2[0]);
-	Point3 helix2End = helices[SSEHelix2ID]->GetWorldCoordinates(corners1[1]);
-
-	for(unsigned int i = 0; i < skeleton.vertices.size(); ++i){
-		Vector3DFloat position = skeleton.vertices[i].position;
-		double dist = helix1Start.distanceTo(position);
-		if(dist < helix1StartDistance){
-			indexHelix1Start = i;
-			helix1StartDistance = dist;
-		}
-		dist = helix1End.distanceTo(position);
-		if(dist < helix1EndDistance){
-			indexHelix1End = i;
-			helix1EndDistance = dist;
-		}
-		dist = helix2Start.distanceTo(position);
-		if(dist < helix2StartDistance){
-			indexHelix2Start = i;
-			helix2StartDistance = dist;
-		}
-		dist = helix2End.distanceTo(position);
-		if(dist < helix2EndDistance){
-			indexHelix2End = i;
-			helix2EndDistance = dist;
-		}
-
-
-		
-	}
-}
-
-
 
 
 
@@ -147,73 +82,36 @@ CurveDeformer::CurveDeformer(void)
 }
 
 
-std::vector<Vector3DFloat> CurveDeformer::Deform(vector<Vector3DFloat>& originalLocations, vector<Vector3DFloat>& hardHandles, vector<Vector3DFloat>& softHandles, int numNeighbors)
+vector<Vector3DFloat> CurveDeformer::Deform(vector<Vector3DFloat>& originalLocations, vector<Vector3DFloat>& hardHandles, vector<Vector3DFloat>& softHandles, int numNeighbors)
 {
 	startLocations = originalLocations;
-	int helixSpacing = 2;
 
-	int numHelixConstraints = 0;
 	int numHandles = 0;
 	for(int i = 0; i < hardHandles.size(); ++i){
 		if(hardHandles[i][0] != 0.0 && hardHandles[i][1] != 0.0 && hardHandles[i][2] != 0.0){
 			++numHandles;
 		}
 	}
-
 	for(int i = 0; i < softHandles.size(); ++i){
 		if(softHandles[i][0] != 0.0 && softHandles[i][1] != 0.0 && softHandles[i][2] != 0.0){
 			++numHandles;
 		}
 	}
-
-	for(int i = 0; i < helixStarts.size(); ++i){
-		numHelixConstraints = numHelixConstraints + helixStops[i] - helixStarts[i] + 1;
-	}
-
-	int extraConstraints = numHandles + numHelixConstraints;
-
+	int extraConstraints = numHandles;
 
 	//Getting the A and B Matrices
 	matrix<float> A = constructA(originalLocations, extraConstraints, numNeighbors);
 	matrix<float> B = constructB(originalLocations, extraConstraints);
-
 	addHandleConstraints(A, B, hardHandles, softHandles);
-	addHelixShapeConstraints(A, B, numHelixConstraints);
 
-	//for(int i = 0; i < A.size1(); ++i){
-	//	for(int j = 0; j < A.size2(); ++j){
-	//		cout << A(i,j) << " ";
-	//	}
-	//	cout << endl;
-	//}
-	//cout << endl;
-
-	//cout <<"a: " << A.size1() << ", " << A.size2() << endl;
-	//cout <<"b: " << B.size1() << ", " << B.size2() << endl;
-
-	
 	//after deformation
 	Matrix<float> flat;
 	//vector<Vector3DFloat> resultCH = solveSystemCholesky(A,B, flat);
 	vector<Vector3DFloat> resultLU = solveSystemLU(A,B, flat);
 	//vector<Vector3DFloat> resultQR = solveSystemQR(A,B, flat);
 
-
-	//cout << "solved" << endl;
-
-	/*//Residue transformed
-	Matrix<float> resid = transpose_mult(((A*flat) - B),((A*flat) - B));
-	cout << "Residue from Solved: " << resid(1,1) << endl;
-	//Residue original
-	Matrix<float> flatOrig(3*originalLocations.size(), 1);
-	for(int i = 0; i < originalLocations.size(); ++i){
-		flatOrig(3*i+1,1) = originalLocations[i][0];
-		flatOrig(3*i+2,1) = originalLocations[i][1];
-		flatOrig(3*i+3,1) = originalLocations[i][2];
-	}
-	resid = transpose_mult(((A*flatOrig) - B),((A*flatOrig) - B));
+	/*resid = transpose_mult(((A*flatOrig) - B),((A*flatOrig) - B));
 	cout << "Residue from Original: " << resid(1,1) << endl;*/
-	
 
 	return resultLU;
 }
@@ -404,107 +302,6 @@ void CurveDeformer::addHandleConstraints(matrix<float> & A, matrix<float> & B, v
 }
 
 
-//----------------------Helix Shape Constraint Stuff------------------//
-void CurveDeformer::addHelices(vector<int> starts, vector<int> stops){
-	helixStarts = starts;
-	helixStops = stops;
-}
-
-
-matrix<float> CurveDeformer::genHelixLaplacianCoefs(int minIndex, int maxIndex)
-{
-	int numPoints = startLocations.size();
-	int totalRows = maxIndex-minIndex+1;
-	double weight = 1.0/((double)(maxIndex-minIndex));
-	
-	//mapped Matrix is sparse
-	mapped_matrix<float> result(3*totalRows, 3*(numPoints));
-
-	//filling in the Matrix element by element
-	for(int i = 0; i < totalRows; ++i)
-	{
-		for(int j = 0; j < 3; ++j)
-		{
-			for(int k = 0; k < numPoints; ++k){
-				if(k >= minIndex && k <= maxIndex){
-					if(k-minIndex == i){
-						result(3*i+j, 3*(k-1)+j) = (1);
-					}else{
-						result(3*i+j, 3*(k-1)+j) = (-weight);
-					}
-				}
-			}	
-		}
-	}
-
-	return result;
-}
-
-
-
-void CurveDeformer::addHelixShapeConstraints(matrix<float> & A, matrix<float> & B, int numConstraints){
-	
-
-	vector<Vector3DFloat> shapeVector;
-	
-	int numNeighbors = 3;
-	int startRow = A.size1() - 3*numConstraints;
-	
-	//for every helix
-	for(int h = 0; h < helixStarts.size(); ++h){
-		
-		int minIndex = helixStarts[h];
-		int maxIndex = helixStops[h];
-		mapped_matrix<float> result(3*(maxIndex-minIndex+1), A.size2());
-		
-		//for each element in helix
-		for(int i = minIndex; i <= maxIndex; ++i){
-			Vector3DFloat centroid(0,0,0);
-			for(int j = minIndex; j <= maxIndex; ++j){
-				if(j !=i)
-					centroid = centroid + startLocations[j];
-			}
-			centroid = centroid *(1/(double)(maxIndex-minIndex));
-			matrix<float> Ai = constructAi(startLocations, i, numNeighbors);
-			shapeVector.clear();
-			shapeVector.push_back(startLocations[i] - centroid);
-			matrix<float> Si = constructSi(shapeVector, 0);
-
-			bool hi =false;
-			matrix<float> almostATerm = prod( Si,( gjinverse(prod(trans(Ai), Ai), hi)));
-			if(hi == true)
-				cout << "bad inverse" << endl;
-
-			matrix<float> aTerm = prod(almostATerm, trans(Ai));	
-			int indent = max(0, 3*(i-numNeighbors));
-			for(int j = 0; j < aTerm.size1(); ++j)		
-			{
-				int x = 3*(i-minIndex)+j;
-				for(int k = 0; k < aTerm.size2(); ++k)
-				{			
-					result(x, indent+k) = laplacianWeight*aTerm(j, k);
-				}
-			}
-			
-		}
-		//get coefs
-		matrix<float> laps = genHelixLaplacianCoefs(minIndex, maxIndex);
-		//subtract and multiply by a weight
-		result = 0.0*(result - laps);
-
-		//copy results into A
-		for(int i = 0; i < result.size1(); ++i){
-			for(int j = 0; j < result.size2(); ++j){
-				//cout << laps(i,j) << " ";
-				A(startRow+i, j) = result(i,j);
-			}
-			//cout << "\n\n";
-		}
-		startRow = startRow+result.size1();
-	}
-
-	
-}
 
 
 void CurveDeformer::setLaplacainW(float in){

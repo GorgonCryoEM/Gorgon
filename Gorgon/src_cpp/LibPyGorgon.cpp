@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.86  2010/07/19 17:29:02  heiderp
+//   LARGE update.  Added flexible fitting functionality, lots of logic in FlexibleFittingEngine.h
+//
 //   Revision 1.81  2010/06/23 19:11:51  ssa1
 //   Adding simple ribbon rendering and associated events for flexible fitting
 //
@@ -372,6 +375,7 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("length", &Vector3DFloat::Length)
 		.def("Transform", &Vector3DFloat::Transform)
 		.def("rotate", &Vector3DFloat::Rotate)
+		.def("Print", &Vector3DFloat::Print)
 		.def(self * double())
 		.def(self + self)
 		.def(self - self)
@@ -914,7 +918,6 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("setLaplacainW", &FlexibleFittingEngine::setLaplacainW)
 		.def("setHardHandleW", &FlexibleFittingEngine::setHardHandleW)
 		.def("setSoftHandleW", &FlexibleFittingEngine::setSoftHandleW)
-		.def("addHelix", &FlexibleFittingEngine::addHelix)
 		.def("addCorrespondence", &FlexibleFittingEngine::AddCorrespondence)
 		.def("getCorrespondenceFlips", &FlexibleFittingEngine::GetCorrespondenceFlips)
 		.def("getAllCorrespondencesFlat", &FlexibleFittingEngine::GetAllCorrespondencesFlat)
@@ -925,6 +928,8 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("mergeClusters", &FlexibleFittingEngine::MergeClusters)
 		.def("getAllCAlphaFeatureVecsFlat", &FlexibleFittingEngine::GetAllCAlphaFeatureVecsFlat)	
 		.def("getIsForward", &FlexibleFittingEngine::GetIsForward)	
+		.def("getPairRigidTransform", &FlexibleFittingEngine::GetPairRigidTransform)
+		.def("getSideChainTransform", &FlexibleFittingEngine::GetSideChainTransform)
 	;
 
 
