@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.21  2010/07/22 21:09:07  heiderp
+//   Minor updates. Mostly commenting and removing extra material from CurveDeformer.h
+//
 //   Revision 1.20  2010/07/19 17:38:31  heiderp
 //   Flexible fitting.
 //
@@ -124,7 +127,7 @@ namespace wustl_mm {
 			void FindErrorMatrixBasedCorrespondence(vector< vector < vector<SSECorrespondenceNode> > > & correspondence, float maxError, int sampleCount);
 			void PrintTimes();
 			MatrixFloat GetTransform(vector<SSECorrespondenceNode> cluster, int sampleCount);
-			MatrixFloat GetTransform(Vector3DFloat originalStart, Vector3DFloat originalEnd, Vector3DFloat newStart, Vector3DFloat newEnd, int sampleCount);
+			MatrixFloat GetTransform(vector<Vector3DFloat>, vector<Vector3DFloat>, int sampleCount);
 
 		private:
 			float GetFeatureCompatibilityScore(SSECorrespondenceFeature feature1, SSECorrespondenceFeature feature2);
@@ -1004,7 +1007,7 @@ namespace wustl_mm {
 		}
 
 
-		MatrixFloat SSECorrespondenceFinder::GetTransform(Vector3DFloat originalStart, Vector3DFloat originalEnd, Vector3DFloat newStart, Vector3DFloat newEnd, int sampleCount) {
+		MatrixFloat SSECorrespondenceFinder::GetTransform(vector<Vector3DFloat> originalLocs, vector<Vector3DFloat> newLocs, int sampleCount) {
 
 			vector<Vector3DFloat> fl1, fl2;
 			fl1.clear();
@@ -1012,22 +1015,20 @@ namespace wustl_mm {
 			Vector3DFloat p1, p2, q1, q2;
 			Vector3DFloat sp, sq;
 
-			
-			p1 = originalStart;
-			p2 = originalEnd;
-			
-			q1 = newStart;
-			q2 = newEnd;
-
 			//printf("Transforming to SSE index %d with corner #1 [%f, %f, %f] and #2 [%f, %f, %f]\n", cluster[i].GetQIndex(), q1.X(), q1.Y(), q1.Z(), q2.X(), q2.Y(), q2.Z());
-
-			float offset;
-			for(int j = 0; j < sampleCount; j++) {
-				offset = (float)j / (float)(sampleCount - 1);
-				sp = p1*(1.0f - offset) + p2 * offset;
-				sq = q1*(1.0f - offset) + q2 * offset;
-				fl1.push_back(sp);
-				fl2.push_back(sq);				
+			for(unsigned int i = 0; i < originalLocs.size()-1; ++i){
+				p1 = originalLocs[i];
+				p2 = originalLocs[i+1];
+				q1 = newLocs[i];
+				q2 = newLocs[i+1];
+				float offset;
+				for(int j = 0; j < sampleCount; j++) {
+					offset = (float)j / (float)(sampleCount - 1);
+					sp = p1*(1.0f - offset) + p2 * offset;
+					sq = q1*(1.0f - offset) + q2 * offset;
+					fl1.push_back(sp);
+					fl2.push_back(sq);				
+				}
 			}
 
 			MatrixFloat result = LinearSolver::FindRotationTranslation(fl1, fl2);

@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.87  2010/07/22 21:09:07  heiderp
+//   Minor updates. Mostly commenting and removing extra material from CurveDeformer.h
+//
 //   Revision 1.86  2010/07/19 17:29:02  heiderp
 //   LARGE update.  Added flexible fitting functionality, lots of logic in FlexibleFittingEngine.h
 //
@@ -725,6 +728,8 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("setSelectedSSEHelices", &CAlphaRenderer::SetSelectedSSEHelices)
 		.def("clearOtherHighlights", &CAlphaRenderer::ClearOtherHighlights)
 		.def("setFeatureVecs", &CAlphaRenderer::SetFeatureVecs)
+		.def("setHelixColor", &CAlphaRenderer::SetHelixColor)
+		
 	;
 
 	class_<InteractiveSkeletonEngine>("InteractiveSkeletonEngine", init<Volume *, NonManifoldMesh_Annotated *, float, int, int, int, unsigned int>())		

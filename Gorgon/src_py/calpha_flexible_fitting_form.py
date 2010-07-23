@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.14  2010/07/22 21:09:07  heiderp
+#   Minor updates. Mostly commenting and removing extra material from CurveDeformer.h
+#
 #   Revision 1.13  2010/07/19 17:29:02  heiderp
 #   LARGE update.  Added flexible fitting functionality, lots of logic in FlexibleFittingEngine.h
 #
@@ -214,6 +217,7 @@ class CAlphaFlexibleFittingForm(BaseDockWidget, Ui_DialogCAlphaFlexibleFitting):
                     self.tableWidget.item(rowIx, 1).setBackgroundColor(clusterColor)
                     self.tableWidget.item(rowIx, 2).setBackgroundColor(clusterColor)
                     self.sseViewer.renderer.setHelixColor(corr.getQIndex(), clusterColor.redF(), clusterColor.greenF(), clusterColor.blueF(), clusterColor.alphaF())
+                    self.cAlphaViewer.renderer.setHelixColor(corr.getPIndex(), clusterColor.redF(), clusterColor.greenF(), clusterColor.blueF())
                     firstRow = False
                     
                     
@@ -372,7 +376,7 @@ class CAlphaFlexibleFittingForm(BaseDockWidget, Ui_DialogCAlphaFlexibleFitting):
                     newpt = softHandleLocs[i]
                     engine.addSoftHandleLocation(newpt)
                     
-            rigidInit = engine.getPairRigidTransform(alignmentIx, helixIx, helixIx)
+            rigidInit = engine.getPairRigidTransform(alignmentIx, self.chainHelixMapping[helixIx], self.chainHelixMapping[helixIx])
             flatVertices = engine.Deform(self.neighborhoodSizeSpinBox.value(), rigidInit, doingRigid)
             finalVertices = [];
 #            for j in range(0, len(flatVertices), 3):
@@ -390,7 +394,7 @@ class CAlphaFlexibleFittingForm(BaseDockWidget, Ui_DialogCAlphaFlexibleFitting):
             maxIndex = max(chain.residueRange())
             trans = transforms[helixIx]
             helix = chain.helices[helixIx]
-            for i in range(helix.startIndex,maxIndex):
+            for i in range(helix.startIndex,maxIndex+1):
                 engine.addAtomLocation(chain[i].getAtom('CA').getPosition())
                 if i == maxIndex or i in range(helix.startIndex, helix.stopIndex+1):
                     newpt = chain[i].getAtom('CA').getPosition().Transform(trans)
@@ -401,15 +405,15 @@ class CAlphaFlexibleFittingForm(BaseDockWidget, Ui_DialogCAlphaFlexibleFitting):
                     newpt = softHandleLocs[i]
                     engine.addSoftHandleLocation(newpt)
                     
-            rigidInit = engine.getPairRigidTransform(alignmentIx, helixIx, helixIx)
+            rigidInit = engine.getPairRigidTransform(alignmentIx, self.chainHelixMapping[helixIx], self.chainHelixMapping[helixIx])
             flatVertices = engine.Deform(self.neighborhoodSizeSpinBox.value(), rigidInit, doingRigid)
             finalVertices = []
 #            for j in range(0, len(flatVertices), 3):
 #                finalVertices.append(tuple([flatVertices[j], flatVertices[j+1], flatVertices[j+2]]));
                 
             count = 0
-            for k in range(helix.startIndex, maxIndex):
-                if k != maxIndex and k not in range(helix.startIndex, helix.stopIndex+1):
+            for k in range(helix.startIndex, maxIndex+1):
+                if k not in range(helix.startIndex, helix.stopIndex+1):
                     chain[k].getAtom('CA').setPosition(flatVertices[count])
                 count = count +1
             
@@ -440,7 +444,7 @@ class CAlphaFlexibleFittingForm(BaseDockWidget, Ui_DialogCAlphaFlexibleFitting):
                         engine.addHardHandleLocation([0,0,0])
                         newpt = softHandleLocs[i]
                         engine.addSoftHandleLocation(newpt)        
-                rigidInit = engine.getPairRigidTransform(alignmentIx, helixIx, nextHelixIx)
+                rigidInit = engine.getPairRigidTransform(alignmentIx, self.chainHelixMapping[helixIx], self.chainHelixMapping[nextHelixIx])
                 flatVertices = engine.Deform(self.neighborhoodSizeSpinBox.value(), rigidInit, doingRigid)
                 finalVertices = [];
 #                for j in range(0, len(flatVertices), 3):
@@ -476,6 +480,8 @@ class CAlphaFlexibleFittingForm(BaseDockWidget, Ui_DialogCAlphaFlexibleFitting):
             chainMin = min(origChain[chainIx].keys())
             chainMax = max(origChain[chainIx].keys())
             for i in range(chainMin,chainMax +1):
+                locations1 = []
+                locations2 = []
                 minIndex = i-2
                 maxIndex = i+2
                 if minIndex < chainMin:
@@ -627,6 +633,7 @@ class CAlphaFlexibleFittingForm(BaseDockWidget, Ui_DialogCAlphaFlexibleFitting):
         self.cAlphaViewer.renderer.setHelixCorrs(crrs)
         self.sseViewer.renderer.setHelixCorrs(crrs)
         self.sseViewer.emitModelChanged()
+        self.cAlphaViewer.emitModelChanged()
 
         
         
@@ -670,6 +677,7 @@ class CAlphaFlexibleFittingForm(BaseDockWidget, Ui_DialogCAlphaFlexibleFitting):
                     self.tableWidget.item(rowIx, 1).setBackgroundColor(clusterColor)
                     self.tableWidget.item(rowIx, 2).setBackgroundColor(clusterColor)
                     self.sseViewer.renderer.setHelixColor(corr.getQIndex(), clusterColor.redF(), clusterColor.greenF(), clusterColor.blueF(), clusterColor.alphaF())
+                    self.cAlphaViewer.renderer.setHelixColor(corr.getPIndex(), clusterColor.redF(), clusterColor.greenF(), clusterColor.blueF())
                     firstRow = False
                     
     def processElementSelected(self):
