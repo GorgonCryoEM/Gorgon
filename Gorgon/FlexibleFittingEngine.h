@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.6  2010/07/22 21:09:07  heiderp
+//   Minor updates. Mostly commenting and removing extra material from CurveDeformer.h
+//
 //   Revision 1.5  2010/07/19 17:29:02  heiderp
 //   LARGE update.  Added flexible fitting functionality, lots of logic in FlexibleFittingEngine.h
 //
@@ -281,7 +284,7 @@ namespace wustl_mm {
 			cout << " and "; origLocations[origLocations.size()-1].Print();
 			cout << "Going to " ; newLocations[0].Print();			
 			cout << " and "; newLocations[newLocations.size()-1].Print(); cout << endl;*/
-			return finder.GetTransform(origLocations[0], origLocations[origLocations.size()-1], newLocations[0], newLocations[newLocations.size()-1], SAMPLE_COUNT);
+			return finder.GetTransform(origLocations, newLocations, SAMPLE_COUNT);
 		}
 
 		//finds a transform to line a PDB helix up exactly with an SSE Helix
@@ -316,10 +319,6 @@ namespace wustl_mm {
 			//if we didnt find cluster or the cluster transform is bad return identity matrix
 			if((corrNum == -1 && clusterTrans.GetValue(3,3) < 0.5) || qIndex == -1){ //doesn't have a correspondence
 				MatrixFloat result = MatrixFloat(4,4);
-				result.SetValue(1,0,0);
-				result.SetValue(1,1,1);
-				result.SetValue(1,2,2);
-				result.SetValue(1,3,3);
 				return result;
 			}
 
@@ -459,6 +458,17 @@ namespace wustl_mm {
 		//gets a transformation matrix to align the PDB rigidly to helixIx1 and helixIx2
 		//used for rigid init
 		MatrixFloat FlexibleFittingEngine::GetPairRigidTransform(int corrIx, int helixIx1, int helixIx2){
+			if(helixIx1 == helixIx2){
+				for(unsigned int i = 0; i < corrs[corrIx].size(); i++) {
+					for(unsigned int j = 0; j < corrs[corrIx][i].size(); j++) {
+						if(corrs[corrIx][i][j].GetPIndex() == helixIx1){
+							cout << "returning cluster transform for cluster" << i << " with helixIx " << helixIx1 << endl;
+							return GetRigidTransform2(corrIx, i);
+						}
+					}
+				}
+				
+			}
 			vector<SSECorrespondenceNode> tempCluster;
 			for(unsigned int i = 0; i < corrs[corrIx].size(); i++) {
 				for(unsigned int j = 0; j < corrs[corrIx][i].size(); j++) {
@@ -468,8 +478,7 @@ namespace wustl_mm {
 					}
 				}
 			}
-			if(helixIx1 == helixIx2)
-				return MatrixFloat(4,4);
+
 			return finder.GetTransform(tempCluster, SAMPLE_COUNT);
 			
 		}
@@ -481,7 +490,10 @@ namespace wustl_mm {
 					origLocations[i] = origLocations[i].Transform(transform);
 				}
 			}
-			return cd.Deform(origLocations, hardHandles, softHandles, numNeighbors);
+			//if(rigidInitialization)
+			//	return origLocations;
+			//else
+				return cd.Deform(origLocations, hardHandles, softHandles, numNeighbors);
 		}
 
 		//flattens a vector of Vector3DFloat into a vector of floats where every 3 represent a point

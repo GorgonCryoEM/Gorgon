@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.58  2010/07/22 21:09:07  heiderp
+//   Minor updates. Mostly commenting and removing extra material from CurveDeformer.h
+//
 //   Revision 1.57  2010/07/19 17:29:02  heiderp
 //   LARGE update.  Added flexible fitting functionality, lots of logic in FlexibleFittingEngine.h
 //
@@ -222,6 +225,7 @@ namespace wustl_mm {
 			void SetSelectedSSEHelices(vector<int>);
 			void ClearOtherHighlights();
 			void SetFeatureVecs(vector<Vector3DFloat> flatFeatureVecs);
+			void SetHelixColor(int helixNum, float r, float g, float b);
 		private:
 			void DrawBackboneModel(int subSceneIndex, bool selectEnabled);
 			void DrawRibbonModel(int subSceneIndex, bool selectEnabled);
@@ -239,6 +243,8 @@ namespace wustl_mm {
 			vector < tuple<int, int> > corrs;
 			vector<int> selectedSSEHelices;
 			vector<tuple<Vector3DFloat, Vector3DFloat>> featureVecs;
+
+			map<int,tuple<float, float, float>> helixColors;
 		};
 
 
@@ -381,6 +387,14 @@ namespace wustl_mm {
 						if(aHelices[i].selected == true){
 							glMaterialfv(GL_FRONT, GL_EMISSION, emissionColor);
 							glMaterialfv(GL_BACK, GL_EMISSION, emissionColor);
+						}
+						map<int, tuple<float,float,float>>::iterator iter = helixColors.begin();
+						iter = helixColors.find(i);
+						if(iter != helixColors.end()){
+
+							OpenGLUtils::SetColor(get<0>(helixColors[i]), get<1>(helixColors[i]), get<2>(helixColors[i]), 1.0);
+						}else{
+							OpenGLUtils::SetColor(0.8,0.8,0.8,1.0);
 						}
 						for(int j = 0; j < aHelices[i].atomHashes.size()-1; j++) {
 							DrawCylinder(atoms[aHelices[i].atomHashes[j]].GetPosition(), atoms[aHelices[i].atomHashes[j+1]].GetPosition(), 0.1, 10, 2);
@@ -1072,6 +1086,12 @@ namespace wustl_mm {
 		void CAlphaRenderer::SetSelectedSSEHelices(vector<int> indices){
 			selectedSSEHelices.clear();
 			selectedSSEHelices = indices;
+		}
+
+		void CAlphaRenderer::SetHelixColor(int helixNum, float r, float g, float b){
+			cout << "setting helix color " << helixNum << " to (" << r << ", " << g << ", " << b << ")" <<endl;
+			helixColors.erase(helixNum);
+			helixColors.insert(pair<int, tuple<float, float, float>>(helixNum, tuple<float, float, float>(r,g,b)));
 		}
 
 		
