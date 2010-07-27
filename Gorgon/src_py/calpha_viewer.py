@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.63  2010/07/19 17:29:02  heiderp
+#   LARGE update.  Added flexible fitting functionality, lots of logic in FlexibleFittingEngine.h
+#
 #   Revision 1.60  2010/06/23 19:11:51  ssa1
 #   Adding simple ribbon rendering and associated events for flexible fitting
 #
@@ -243,6 +246,8 @@ class CAlphaViewer(BaseViewer):
         self.helicesVisible = True
         self.strandsVisible = True
         self.loopsVisible = True      
+        #self.interpSegments = 10 # the number of segments interpolated per calpha atom when rendering ribbon diagrams
+        #self.ribbonSlices = 10 # the number of slices used to render each segment of a ribbon diagram
         self.initVisualizationOptions(AtomVisualizationForm(self.app, self))
         self.loadedChains = []
         self.ribbonMouseMapping = {} 
@@ -365,7 +370,28 @@ class CAlphaViewer(BaseViewer):
                     self.ribbonMouseMapping[0][ix] = helixIx
                     for i in range(helix.startIndex, helix.stopIndex + 1):
                         if (i in chain.residueList) and ("CA" in chain[i].getAtomNames()):
+                            CAatom = chain[i].getAtom("CA")
                             self.renderer.addHelixElement(ix, chain[i].getAtom("CA").getHashKey())
+                            resNumTemp = i - 1
+                            if resNumTemp > 0 and resNumTemp in chain.residueList:
+                                prevCAAtom = chain.residueList[resNumTemp].getAtom('CA')
+                                while not prevCAAtom and resNumTemp >= 0:
+                                    prevCAAtom = helix.chain[resNumTemp].getAtom('CA')
+                                    resNumTemp = resNumTemp - 1
+                                if prevCAAtom:
+                                    CAatom.setPrevCAHash(prevCAAtom.getHashKey())
+                                else:
+                                    CAatom.setPrevCAHash(CAatom.getHashKey())
+                                resNumTemp = i + 1
+                                if resNumTemp <= chain.getLastResidueIndex() and resNumTemp in chain.residueList:
+                                    nextCAAtom = chain.residueList[resNumTemp].getAtom('CA')
+                                    while not nextCAAtom and resNumTemp <= chain.getLastResidueIndex():
+                                        nextCAAtom = chain.residueList[resNumTemp].getAtom('CA')
+                                        resNumTemp = resNumTemp + 1
+                                    if nextCAAtom:
+                                        CAatom.setNextCAHash(nextCAAtom.getHashKey())
+                                    else:
+                                        CAatom.setNextCAHash(CAatom.getHashKey())
                             
                 for sheetIx, sheet in chain.sheets.items():                    
                     for strandIx, strand in sheet.strandList.items():
@@ -373,14 +399,62 @@ class CAlphaViewer(BaseViewer):
                         self.ribbonMouseMapping[1][ix] = [sheetIx, strandIx]           
                         for i in range(strand.startIndex, strand.stopIndex + 1):
                             if (i in chain.residueList) and ("CA" in chain[i].getAtomNames()):
+                                CAatom = chain[i].getAtom("CA")
                                 self.renderer.addStrandElement(ix, chain[i].getAtom("CA").getHashKey())
-                        
+                                resNumTemp = i - 1
+                                if resNumTemp > 0:
+                                    prevCAAtom = chain.residueList[resNumTemp].getAtom('CA')
+                                    while not prevCAAtom and resNumTemp >= 0:
+                                        prevCAAtom = chain.residueList[resNumTemp].getAtom('CA')
+                                        resNumTemp = resNumTemp - 1
+                                    if prevCAAtom:
+                                        CAatom.setPrevCAHash(prevCAAtom.getHashKey())
+                                else: # if CAatom is in the first residue, set it as its own previous (hacky) 
+                                    CAatom.setPrevCAHash(CAatom.getHashKey())
+                                #set the atom's "next" CA atom
+                                resNumTemp = i + 1
+                                if resNumTemp <= chain.getLastResidueIndex():
+                                    nextCAAtom = chain.residueList[resNumTemp].getAtom('CA')
+                                    while not nextCAAtom and resNumTemp <= chain.getLastResidueIndex():
+                                        nextCAAtom = chain.residueList[resNumTemp].getAtom('CA')
+                                        resNumTemp = resNumTemp + 1
+                                    if nextCAAtom:
+                                        CAatom.setNextCAHash(nextCAAtom.getHashKey())
+                                else: # if CAatom is in the last residue, set it as its own next (hacky)
+                                    CAatom.setNextCAHash(CAatom.getHashKey())
                 for loopIx, loop in chain.coils.items():
                     ix = self.renderer.startLoop()
+                    atomcounter = 0
                     self.ribbonMouseMapping[2][ix] = loopIx
                     for i in range(loop.startIndex-1, loop.stopIndex + 2):
                         if (i in chain.residueList) and ("CA" in chain[i].getAtomNames()):
+                            CAatom = chain[i].getAtom("CA")
+                            atomcounter += 1
                             self.renderer.addLoopElement(ix, chain[i].getAtom("CA").getHashKey())                        
+                            # set the atom's "previous" CA atom
+                            resNumTemp = i - 1
+                            if resNumTemp > 0 and resNumTemp in chain.residueList:
+                                prevCAAtom = chain.residueList[resNumTemp].getAtom('CA')
+                                while not prevCAAtom and resNumTemp >= 0:
+                                    prevCAAtom = chain.residueList[resNumTemp].getAtom('CA')
+                                    resNumTemp = resNumTemp - 1
+                                if prevCAAtom:
+                                    CAatom.setPrevCAHash(prevCAAtom.getHashKey())
+                            else: # if CAatom is in the first residue, set it as its own previous (hacky) 
+                                CAatom.setPrevCAHash(CAatom.getHashKey())
+                            #set the atom's "next" CA atom
+                            resNumTemp = i + 1
+                            if resNumTemp <= chain.getLastResidueIndex() and resNumTemp in chain.residueList:
+                                nextCAAtom = chain.residueList[resNumTemp].getAtom('CA')
+                                while not nextCAAtom and resNumTemp <= chain.getLastResidueIndex():
+                                    nextCAAtom = chain.residueList[resNumTemp].getAtom('CA')
+                                    resNumTemp = resNumTemp + 1
+                                if nextCAAtom:
+                                    CAatom.setNextCAHash(nextCAAtom.getHashKey())
+                            else: # if CAatom is in the last residue, set it as its own next (hacky)
+                                CAatom.setNextCAHash(CAatom.getHashKey())
+                    print "in loop", ix, ", added", atomcounter, "atoms"
+                
 
         elif displayStyle == self.DisplayStyleSideChain:
             self.setSpecificAtomColor('C', self.getCarbonColor())
@@ -511,6 +585,14 @@ class CAlphaViewer(BaseViewer):
     def setStrandVisibility(self, visible):
         self.strandsVisible = visible
         self.setAtomColorsAndVisibility(self.displayStyle)
+        self.emitModelChanged()
+    
+    def setSegments(self, num_segments):
+        self.renderer.setNumSegments(num_segments)
+        self.emitModelChanged()
+        
+    def setSlices(self, num_slices):
+        self.renderer.setNumSlices(num_slices)
         self.emitModelChanged()
     
     def centerOnSelectedAtoms(self, *argv):

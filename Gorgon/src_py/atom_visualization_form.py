@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.2  2010/05/27 17:10:19  ssa1
+#   Better color control for all atom visualization
+#
 #   Revision 1.1  2010/05/26 20:58:10  ssa1
 #   Adding in display styles for atom rendering.
 #
@@ -51,6 +54,8 @@ class AtomVisualizationForm(ModelVisualizationForm):
         self.connect(self.ui.checkBoxShowHelices, QtCore.SIGNAL("toggled (bool)"), self.viewer.setHelixVisibility)
         self.connect(self.ui.checkBoxShowStrands, QtCore.SIGNAL("toggled (bool)"), self.viewer.setStrandVisibility)
         self.connect(self.ui.checkBoxShowLoops, QtCore.SIGNAL("toggled (bool)"), self.viewer.setLoopVisibility)
+        self.connect(self.ui.hSliderSmoothness, QtCore.SIGNAL("valueChanged (int)"), self.viewer.setSegments)
+        self.connect(self.ui.hSliderRoundedness, QtCore.SIGNAL("valueChanged (int)"), self.viewer.setSlices)
                                                  
         
     def updateFromViewer(self):

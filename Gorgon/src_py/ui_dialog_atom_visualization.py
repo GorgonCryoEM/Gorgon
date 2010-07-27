@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_dialog_atom_visualization.ui'
 #
-# Created: Thu May 27 10:24:41 2010
+# Created: Fri Jul 23 14:07:29 2010
 #      by: PyQt4 UI code generator 4.4.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,7 +12,7 @@ from PyQt4 import QtCore, QtGui
 class Ui_DialogAtomVisualization(object):
     def setupUi(self, DialogAtomVisualization):
         DialogAtomVisualization.setObjectName("DialogAtomVisualization")
-        DialogAtomVisualization.resize(277, 399)
+        DialogAtomVisualization.resize(277, 479)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Maximum)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -116,6 +116,30 @@ class Ui_DialogAtomVisualization(object):
         self.pushButtonColor4.setObjectName("pushButtonColor4")
         self.gridLayout_2.addWidget(self.pushButtonColor4, 4, 1, 1, 1)
         self.verticalLayout.addLayout(self.gridLayout_2)
+        self.labelSmoothness = QtGui.QLabel(self.tab)
+        self.labelSmoothness.setObjectName("labelSmoothness")
+        self.verticalLayout.addWidget(self.labelSmoothness)
+        self.hSliderSmoothness = QtGui.QSlider(self.tab)
+        self.hSliderSmoothness.setMinimum(2)
+        self.hSliderSmoothness.setMaximum(20)
+        self.hSliderSmoothness.setProperty("value", QtCore.QVariant(10))
+        self.hSliderSmoothness.setOrientation(QtCore.Qt.Horizontal)
+        self.hSliderSmoothness.setTickPosition(QtGui.QSlider.TicksBelow)
+        self.hSliderSmoothness.setTickInterval(5)
+        self.hSliderSmoothness.setObjectName("hSliderSmoothness")
+        self.verticalLayout.addWidget(self.hSliderSmoothness)
+        self.labelRoundedness = QtGui.QLabel(self.tab)
+        self.labelRoundedness.setObjectName("labelRoundedness")
+        self.verticalLayout.addWidget(self.labelRoundedness)
+        self.hSliderRoundedness = QtGui.QSlider(self.tab)
+        self.hSliderRoundedness.setMinimum(3)
+        self.hSliderRoundedness.setMaximum(20)
+        self.hSliderRoundedness.setProperty("value", QtCore.QVariant(10))
+        self.hSliderRoundedness.setOrientation(QtCore.Qt.Horizontal)
+        self.hSliderRoundedness.setTickPosition(QtGui.QSlider.TicksBelow)
+        self.hSliderRoundedness.setTickInterval(3)
+        self.hSliderRoundedness.setObjectName("hSliderRoundedness")
+        self.verticalLayout.addWidget(self.hSliderRoundedness)
         self.groupBoxShow = QtGui.QGroupBox(self.tab)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Maximum)
         sizePolicy.setHorizontalStretch(0)
@@ -334,6 +358,8 @@ class Ui_DialogAtomVisualization(object):
         self.labelColor2.setText(QtGui.QApplication.translate("DialogAtomVisualization", "Color 2:", None, QtGui.QApplication.UnicodeUTF8))
         self.labelColor3.setText(QtGui.QApplication.translate("DialogAtomVisualization", "Color 3:", None, QtGui.QApplication.UnicodeUTF8))
         self.labelColor4.setText(QtGui.QApplication.translate("DialogAtomVisualization", "Color 4:", None, QtGui.QApplication.UnicodeUTF8))
+        self.labelSmoothness.setText(QtGui.QApplication.translate("DialogAtomVisualization", "Smoothness", None, QtGui.QApplication.UnicodeUTF8))
+        self.labelRoundedness.setText(QtGui.QApplication.translate("DialogAtomVisualization", "Roundedness", None, QtGui.QApplication.UnicodeUTF8))
         self.groupBoxShow.setTitle(QtGui.QApplication.translate("DialogAtomVisualization", "Show:", None, QtGui.QApplication.UnicodeUTF8))
         self.checkBoxShowAtoms.setText(QtGui.QApplication.translate("DialogAtomVisualization", "Atoms", None, QtGui.QApplication.UnicodeUTF8))
         self.checkBoxShowBonds.setText(QtGui.QApplication.translate("DialogAtomVisualization", "Bonds", None, QtGui.QApplication.UnicodeUTF8))

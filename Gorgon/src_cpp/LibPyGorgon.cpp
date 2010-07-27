@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.88  2010/07/23 18:18:32  heiderp
+//   Side chains now transform correctly.  PDB helices now color correctly and rigid initialization bug is fixed
+//
 //   Revision 1.87  2010/07/22 21:09:07  heiderp
 //   Minor updates. Mostly commenting and removing extra material from CurveDeformer.h
 //
@@ -462,6 +465,8 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("transform", &PDBAtom::Transform)
 		.def("interpolateTransform", &PDBAtom::InterpolateTransform)
 		.def("getInterpolateTransformLocation", &PDBAtom::GetInterpolateTransformLocation)
+		.def("setPrevCAHash", &PDBAtom::SetPrevCAHash)
+		.def("setNextCAHash", &PDBAtom::SetNextCAHash)
 	;
 	
 
@@ -723,13 +728,23 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("startLoop", &CAlphaRenderer::StartLoop)
 		.def("addLoopElement", &CAlphaRenderer::AddLoopElement)
 		.def("cleanSecondaryStructures", &CAlphaRenderer::CleanSecondaryStructures)
+		.def("setNumSegments", &CAlphaRenderer::SetNumSegments)
+		.def("setNumSlices", &CAlphaRenderer::SetNumSlices)
 		.def("getSelectedHelixIndices", &CAlphaRenderer::GetSelectedHelixIndices)
 		.def("setHelixCorrs", &CAlphaRenderer::SetHelixCorrs)
 		.def("setSelectedSSEHelices", &CAlphaRenderer::SetSelectedSSEHelices)
 		.def("clearOtherHighlights", &CAlphaRenderer::ClearOtherHighlights)
 		.def("setFeatureVecs", &CAlphaRenderer::SetFeatureVecs)
 		.def("setHelixColor", &CAlphaRenderer::SetHelixColor)
-		
+		.def("startHelix", &CAlphaRenderer::StartHelix)
+		.def("addHelixElement", &CAlphaRenderer::AddHelixElement)
+		.def("startStrand", &CAlphaRenderer::StartStrand)
+		.def("addStrandElement", &CAlphaRenderer::AddStrandElement)
+		.def("startLoop", &CAlphaRenderer::StartLoop)
+		.def("addLoopElement", &CAlphaRenderer::AddLoopElement)
+		.def("cleanSecondaryStructures", &CAlphaRenderer::CleanSecondaryStructures)
+		.def("setNumSegments", &CAlphaRenderer::SetNumSegments)
+		.def("setNumSlices", &CAlphaRenderer::SetNumSlices)
 	;
 
 	class_<InteractiveSkeletonEngine>("InteractiveSkeletonEngine", init<Volume *, NonManifoldMesh_Annotated *, float, int, int, int, unsigned int>())		
