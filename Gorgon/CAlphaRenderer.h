@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.60  2010/07/27 23:18:58  chenb
+//   Ribbon diagram code now merged with flexible fitting code
+//
 //   Revision 1.59  2010/07/23 18:18:32  heiderp
 //   Side chains now transform correctly.  PDB helices now color correctly and rigid initialization bug is fixed
 //
@@ -315,9 +318,9 @@ namespace wustl_mm {
 			vector<int> selectedHelixIndices;
 			vector < tuple<int, int> > corrs;
 			vector<int> selectedSSEHelices;
-			vector<tuple<Vector3DFloat, Vector3DFloat>> featureVecs;
+			vector< tuple<Vector3DFloat, Vector3DFloat> > featureVecs;
 
-			map<int,tuple<float, float, float>> helixColors;
+			map<int,tuple<float, float, float> > helixColors;
 
 			int NUM_SEGMENTS;
 			int NUM_SLICES;
@@ -485,7 +488,7 @@ namespace wustl_mm {
 						glMaterialfv(GL_FRONT, GL_EMISSION, emissionColor);
 						glMaterialfv(GL_BACK, GL_EMISSION, emissionColor);
 					}
-					map<int, tuple<float,float,float>>::iterator iter = helixColors.begin();
+					map<int, tuple<float,float,float> >::iterator iter = helixColors.begin();
 					iter = helixColors.find(i);
 					if(iter != helixColors.end()){
 
@@ -1498,7 +1501,7 @@ namespace wustl_mm {
 	void CAlphaRenderer::SetHelixColor(int helixNum, float r, float g, float b){
 		cout << "setting helix color " << helixNum << " to (" << r << ", " << g << ", " << b << ")" <<endl;
 		helixColors.erase(helixNum);
-		helixColors.insert(pair<int, tuple<float, float, float>>(helixNum, tuple<float, float, float>(r,g,b)));
+		helixColors.insert(pair<int, tuple<float, float, float> >(helixNum, tuple<float, float, float>(r,g,b)));
 	}
 
 	// creates a vector of Vector3DFloats that represents the locations of all the PDBAtoms
