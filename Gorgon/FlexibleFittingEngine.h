@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.7  2010/07/23 18:18:32  heiderp
+//   Side chains now transform correctly.  PDB helices now color correctly and rigid initialization bug is fixed
+//
 //   Revision 1.6  2010/07/22 21:09:07  heiderp
 //   Minor updates. Mostly commenting and removing extra material from CurveDeformer.h
 //
@@ -65,7 +68,7 @@ namespace wustl_mm {
 			void setLaplacainW(float);
 			void setHardHandleW(float);
 			void setSoftHandleW(float);
-			void FlexibleFittingEngine::addHelix(int start, int stop);
+			void addHelix(int start, int stop);
 			void ClearPDBPoints();
 			void ResetTransforms();
 			void StartSearch(float jointAngleThreshold, float dihedralAngleThreshold, float lengthThreshold, float centroidDistanceThreshold, int maxSolutionCount);
@@ -105,7 +108,7 @@ namespace wustl_mm {
 			vector<Vector3DFloat> softHandles;
 			CurveDeformer cd;
 			vector < vector < vector<SSECorrespondenceNode> > > corrs;
-			vector<tuple<int, int, int>> helixDistancesSorted;
+			vector<tuple<int, int, int> > helixDistancesSorted;
 
 			vector < vector < vector<SSECorrespondenceNode> > > savedCorrs;
 			vector<SSECorrespondenceFeature> savedFeatureList1;
@@ -254,7 +257,7 @@ namespace wustl_mm {
 				return finder.GetTransform(corrs[corrIx][clusterIx], SAMPLE_COUNT);	
 			}
 			else{
-				vector<tuple<int, int>> PQMatchings;
+				vector<tuple<int, int> > PQMatchings;
 				if(helixDistancesSorted.size() == 0){
 					BuildSortedHelixDistances(corrIx);
 				}			
@@ -399,7 +402,7 @@ namespace wustl_mm {
 		//for each pdb helix finds and stores the 3 closest pdb helices by centroid
 		//stored in helixDistancesSorted
 		void FlexibleFittingEngine::BuildSortedHelixDistances(int corrIx){
-			vector<tuple<int, int>> PQMatchings;
+			vector<tuple<int, int> > PQMatchings;
 			
 			//saving which SSE elements correspond
 			for(unsigned int i = 0; i < corrs[corrIx].size(); i++) {
