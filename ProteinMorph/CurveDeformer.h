@@ -104,6 +104,7 @@ vector<Vector3DFloat> CurveDeformer::Deform(vector<Vector3DFloat>& originalLocat
 	matrix<float> B = constructB(originalLocations, extraConstraints);
 	addHandleConstraints(A, B, hardHandles, softHandles);
 
+	//Solving Ax=B for x
 	//after deformation
 	Matrix<float> flat;
 	//vector<Vector3DFloat> resultCH = solveSystemCholesky(A,B, flat);
@@ -132,7 +133,10 @@ matrix<float> CurveDeformer::constructA(vector<Vector3DFloat>& origPoints, int e
 		matrix<float> Ai = constructAi(origPoints, i, numNeighbors);
 		matrix<float> Si = constructSi(laplacians, i);
 		
-		//Si*((Ai^t*Ai)^-1)*Ai^t
+		//Each point on the curve (except for ends) adds 3 constraints on to the A matrix
+		//The three rows that get added to the matrix come from:
+		//rows = Si*((Ai^t*Ai)^-1)*Ai^t
+		//These terms have to be added to the correct location in the matrix
 		bool hi =false;
 		matrix<float> almostATerm = prod( Si,( gjinverse(prod(trans(Ai), Ai), hi)));
 		if(hi == true)
@@ -217,6 +221,7 @@ matrix<float> CurveDeformer::constructAi(std::vector<Vector3DFloat> & points, in
 	//y -z 0 x 0 1 0
 	//z y -x 0 0 0 1
 	//...
+	//where x y and z are simply the 3d coordinates of that point
 
 	for(int i = mn; i <= mx; ++i){
 		//each block here is one row
@@ -245,6 +250,8 @@ matrix<float> CurveDeformer::constructSi(std::vector<Vector3DFloat> & laplacians
 	//x 0 z -y 0 0 0
 	//y -z 0 x 0 0 0
 	//z y -x 0 0 0 0
+
+	//where x y and z are their respective components of the Laplacian vector for that point
 
 	result(0, 0) = laplacians[index][0];	result(0, 1) = 0;
 	result(0, 2) = laplacians[index][2];	result(0, 3) = -laplacians[index][1];
