@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.61  2010/07/29 20:21:58  coleman.r
+//   gcc compile fix: gcc requires nested templates to end in "> >" not ">>"
+//
 //   Revision 1.60  2010/07/27 23:18:58  chenb
 //   Ribbon diagram code now merged with flexible fitting code
 //
@@ -249,6 +252,7 @@ namespace wustl_mm {
 			PDBAtom * GetAtom(unsigned long long index);
 			PDBAtom * GetAtomFromHitStack(int subsceneIndex, bool forceTrue, int ix0, int ix1, int ix2, int ix3, int ix4);
 			PDBAtom * GetSelectedAtom(unsigned int selectionId);
+            vector<unsigned long long> GetAtomHashes();
 			void DeleteAtom(unsigned long long index);
 			int GetAtomCount();
 
@@ -980,7 +984,13 @@ namespace wustl_mm {
 		}  
 		return NULL;
 	}
-
+    vector<unsigned long long> CAlphaRenderer::GetAtomHashes() {
+        vector<unsigned long long> atomHashes;
+        for (AtomMapType::iterator it = atoms.begin(); it != atoms.end(); it++) {
+            atomHashes.push_back(it->first);
+        }
+        return atomHashes;
+    }
 	void CAlphaRenderer::LoadFile(string fileName) {
 		Renderer::LoadFile(fileName);
 		atoms.clear();

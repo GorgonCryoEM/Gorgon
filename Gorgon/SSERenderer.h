@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.47  2010/07/19 17:29:02  heiderp
+//   LARGE update.  Added flexible fitting functionality, lots of logic in FlexibleFittingEngine.h
+//
 //   Revision 1.46  2010/07/09 19:53:49  coleman.r
 //   SSERenderer::removeHelices() and removeSheets()
 //
@@ -1207,7 +1210,7 @@ namespace wustl_mm {
 		}
 		
 		void SSERenderer::RemoveHelices() {
-					helices.clear();
+			helices.clear();
 		}
 
 		void SSERenderer::RemoveSheets() {
