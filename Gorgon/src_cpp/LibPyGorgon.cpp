@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.89  2010/07/27 23:18:58  chenb
+//   Ribbon diagram code now merged with flexible fitting code
+//
 //   Revision 1.88  2010/07/23 18:18:32  heiderp
 //   Side chains now transform correctly.  PDB helices now color correctly and rigid initialization bug is fixed
 //
@@ -222,6 +225,7 @@
 #include <Gorgon/FlexibleFittingEngine.h>
 #include <Gorgon/CAlphaRenderer.h>
 #include <MathTools/Vector3D.h>
+#include <MathTools/LinearSolver.h>
 #include <GraphMatch/PDBAtom.h>
 #include <GraphMatch/LinkedNode.h>
 #include <GraphMatch/PDBBond.h>
@@ -240,6 +244,8 @@ using namespace wustl_mm::GraphMatch;
 using namespace wustl_mm::SkeletonMaker;
 using namespace wustl_mm::Protein_Morph;
 using namespace boost::tuples;
+using wustl_mm::MathTools::LinearSolver;
+
 
 
 // ********************** From EMAN2 typeconverter.h ************************************
@@ -362,6 +368,9 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 	vector_from_python<bool>();
 	vector_to_python< std::vector<bool> >();
 	vector_from_python< std::vector<bool> >();
+
+    vector_to_python<unsigned long long>();
+    vector_from_python<unsigned long long>();
 
 	vector_to_python<Vector3DFloat>();
 	vector_from_python<Vector3DFloat>();
@@ -658,6 +667,7 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("addHelix", &SSERenderer::AddHelix)
 		.def("setObjectSpecificColoring", &SSERenderer::SetObjectSpecificColoring)
 		.def("removeSelectedSSEs", &SSERenderer::RemoveSelectedSSEs)
+		.def("removeHelices", &SSERenderer::RemoveHelices)
 		.def("getHelixCount", &SSERenderer::GetHelixCount)
 		.def("getHelixCorner", &SSERenderer::GetHelixCorner)
 		.def("setDisplayStyle", &SSERenderer::SetDisplayStyle)
@@ -698,6 +708,7 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("getAtom", &CAlphaRenderer::GetAtom, return_value_policy<reference_existing_object>())
 		.def("getSelectedAtom", &CAlphaRenderer::GetSelectedAtom, return_value_policy<reference_existing_object>())
 		.def("getAtomCount", &CAlphaRenderer::GetAtomCount)
+        .def("getAtomHashes", &CAlphaRenderer::GetAtomHashes)
 		.def("deleteAtom", &CAlphaRenderer::DeleteAtom)		
 		.def("addBond", &CAlphaRenderer::AddBond)
 		.def("getBond", &CAlphaRenderer::GetBond, return_value_policy<reference_existing_object>())
@@ -960,6 +971,13 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("getQIndex", &SSECorrespondenceNode::GetQIndex)
 		.def("isForward", &SSECorrespondenceNode::IsForward)
 	;
+
+    class_<LinearSolver>("LinearSolver")
+        .def("findBestFitLine", &LinearSolver::FindBestFitLine)
+        .staticmethod("findBestFitLine")
+        .def("sumDistSqrd", LinearSolver::SumDistSqrd)
+        .staticmethod("sumDistSqrd")
+    ;
 }
 
 
