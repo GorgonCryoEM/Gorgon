@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.48  2010/08/13 21:20:16  coleman.r
+//   AutoHelixBuilder changes
+//
 //   Revision 1.47  2010/07/19 17:29:02  heiderp
 //   LARGE update.  Added flexible fitting functionality, lots of logic in FlexibleFittingEngine.h
 //
@@ -350,7 +353,7 @@ namespace wustl_mm {
 
 						Vector3DFloat corner1 = GetHelixCorner(i, 0);
 						Vector3DFloat corner2 = GetHelixCorner(i, 1);
-
+						cout << "Drawing selected cylinder. Size of helix flips is " << helixFlips.size() << endl;
 						if(helixFlips.size()  > 0){
 							if(!helixFlips[i]){
 				

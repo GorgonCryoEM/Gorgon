@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.90  2010/08/13 21:20:16  coleman.r
+//   AutoHelixBuilder changes
+//
 //   Revision 1.89  2010/07/27 23:18:58  chenb
 //   Ribbon diagram code now merged with flexible fitting code
 //
@@ -756,6 +759,10 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("cleanSecondaryStructures", &CAlphaRenderer::CleanSecondaryStructures)
 		.def("setNumSegments", &CAlphaRenderer::SetNumSegments)
 		.def("setNumSlices", &CAlphaRenderer::SetNumSlices)
+		.def("setHltRValue", &CAlphaRenderer::SetHltRValue)
+		.def("setHltGValue", &CAlphaRenderer::SetHltGValue)
+		.def("setHltBValue", &CAlphaRenderer::SetHltBValue)
+		.def("setHltAValue", &CAlphaRenderer::SetHltAValue)
 	;
 
 	class_<InteractiveSkeletonEngine>("InteractiveSkeletonEngine", init<Volume *, NonManifoldMesh_Annotated *, float, int, int, int, unsigned int>())		

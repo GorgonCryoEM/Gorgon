@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.3  2010/07/27 23:18:58  chenb
+#   Ribbon diagram code now merged with flexible fitting code
+#
 #   Revision 1.2  2010/05/27 17:10:19  ssa1
 #   Better color control for all atom visualization
 #
@@ -56,6 +59,11 @@ class AtomVisualizationForm(ModelVisualizationForm):
         self.connect(self.ui.checkBoxShowLoops, QtCore.SIGNAL("toggled (bool)"), self.viewer.setLoopVisibility)
         self.connect(self.ui.hSliderSmoothness, QtCore.SIGNAL("valueChanged (int)"), self.viewer.setSegments)
         self.connect(self.ui.hSliderRoundedness, QtCore.SIGNAL("valueChanged (int)"), self.viewer.setSlices)
+        # the following four methods for testing purposes only
+        self.connect(self.ui.rslider, QtCore.SIGNAL("valueChanged (int)"), self.viewer.setHltR)
+        self.connect(self.ui.gslider, QtCore.SIGNAL("valueChanged (int)"), self.viewer.setHltG)
+        self.connect(self.ui.bslider, QtCore.SIGNAL("valueChanged (int)"), self.viewer.setHltB)
+        self.connect(self.ui.aslider, QtCore.SIGNAL("valueChanged (int)"), self.viewer.setHltA)
                                                  
         
     def updateFromViewer(self):

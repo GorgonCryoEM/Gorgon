@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.15  2010/07/23 18:18:33  heiderp
+#   Side chains now transform correctly.  PDB helices now color correctly and rigid initialization bug is fixed
+#
 #   Revision 1.14  2010/07/22 21:09:07  heiderp
 #   Minor updates. Mostly commenting and removing extra material from CurveDeformer.h
 #
@@ -331,7 +334,16 @@ class CAlphaFlexibleFittingForm(BaseDockWidget, Ui_DialogCAlphaFlexibleFitting):
         for chain in self.cAlphaViewer.loadedChains:  
             origChain.append({})
             for i in chain.residueRange():
-                origChain[count][i] = chain[i].getAtom('CA').getPosition()
+                #debug code
+                print "i:", i
+                temp1 = chain[i]
+                print "temp1:", temp1
+                temp2 = temp1.getAtom('CA')
+                print "temp2:", temp2
+                temp3 = temp2.getPosition()
+                print "temp3:", temp3
+                origChain[count][i] = temp3
+                #origChain[count][i] = chain[i].getAtom('CA').getPosition()
             count = count +1          
             for helixIx, helix in chain.helices.items():
                 transform = self.engine.getHelixFlexibleTransform(alignmentIx, self.chainHelixMapping[helixIx]) 

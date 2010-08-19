@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.64  2010/07/27 23:18:58  chenb
+#   Ribbon diagram code now merged with flexible fitting code
+#
 #   Revision 1.63  2010/07/19 17:29:02  heiderp
 #   LARGE update.  Added flexible fitting functionality, lots of logic in FlexibleFittingEngine.h
 #
@@ -354,6 +357,23 @@ class CAlphaViewer(BaseViewer):
         return sseData
                    
 
+    # the following four methods for testing purposes only
+    def setHltR(self, col):
+        self.renderer.setHltRValue(col)
+        self.emitModelChanged()
+
+    def setHltG(self, col):
+        self.renderer.setHltGValue(col)
+        self.emitModelChanged()
+        
+    def setHltB(self, col):
+        self.renderer.setHltBValue(col)
+        self.emitModelChanged()
+        
+    def setHltA(self, col):
+        self.renderer.setHltAValue(col)
+        self.emitModelChanged()
+
     def setAtomColorsAndVisibility(self, displayStyle):        
         if displayStyle == self.DisplayStyleBackbone:
             self.setAllAtomColor(self.getAtomColor())            
@@ -380,6 +400,18 @@ class CAlphaViewer(BaseViewer):
                                     resNumTemp = resNumTemp - 1
                                 if prevCAAtom:
                                     CAatom.setPrevCAHash(prevCAAtom.getHashKey())
+                                    if resNumTemp < helix.startIndex:# and [k for k,v in chain.secelList.items() if v == helix][0] ==
+                                        for sheet in chain.sheets.values():
+                                            for strand in sheet.strandList.values():
+                                                if strand.startIndex <= resNumTemp <= strand.stopIndex:
+                                                    jx = self.renderer.startLoop()
+                                                    self.renderer.addLoopElement(jx, prevCAAtom.getHashKey())
+                                                    self.renderer.addLoopElement(jx, CAatom.getHashKey())
+                                        for temphelix in chain.helices.values():
+                                            if temphelix != helix and temphelix.startIndex <= resNumTemp <= temphelix.stopIndex:
+                                                jx = self.renderer.startLoop()
+                                                self.renderer.addLoopElement(jx, prevCAAtom.getHashKey())
+                                                self.renderer.addLoopElement(jx, CAatom.getHashKey())
                                 else:
                                     CAatom.setPrevCAHash(CAatom.getHashKey())
                                 resNumTemp = i + 1
@@ -392,6 +424,12 @@ class CAlphaViewer(BaseViewer):
                                         CAatom.setNextCAHash(nextCAAtom.getHashKey())
                                     else:
                                         CAatom.setNextCAHash(CAatom.getHashKey())
+                        else:
+                            if (i in chain.residueList) and not ("CA" in chain[i].getAtomNames()):
+                                print "chain[i] did not contain a CA atom"
+                                print "i:", i
+                                print "chain[i]:", chain[i]
+                            
                             
                 for sheetIx, sheet in chain.sheets.items():                    
                     for strandIx, strand in sheet.strandList.items():
@@ -409,6 +447,18 @@ class CAlphaViewer(BaseViewer):
                                         resNumTemp = resNumTemp - 1
                                     if prevCAAtom:
                                         CAatom.setPrevCAHash(prevCAAtom.getHashKey())
+                                        if resNumTemp < strand.startIndex:
+                                            for helix in chain.helices.values():
+                                                if helix.startIndex <= resNumTemp <= helix.stopIndex:
+                                                    jx = self.renderer.startLoop()
+                                                    self.renderer.addLoopElement(jx, prevCAAtom.getHashKey())
+                                                    self.renderer.addLoopElement(jx, CAatom.getHashKey())
+                                            for tempsheet in chain.sheets.values():
+                                                for tempstrand in tempsheet.strandList.values():
+                                                    if tempstrand != strand and tempstrand.startIndex <= resNumTemp <= tempstrand.stopIndex:
+                                                        jx = self.renderer.startLoop()
+                                                        self.renderer.addLoopElement(jx, prevCAAtom.getHashKey())
+                                                        self.renderer.addLoopElement(jx, CAatom.getHashKey())
                                 else: # if CAatom is in the first residue, set it as its own previous (hacky) 
                                     CAatom.setPrevCAHash(CAatom.getHashKey())
                                 #set the atom's "next" CA atom
@@ -422,6 +472,12 @@ class CAlphaViewer(BaseViewer):
                                         CAatom.setNextCAHash(nextCAAtom.getHashKey())
                                 else: # if CAatom is in the last residue, set it as its own next (hacky)
                                     CAatom.setNextCAHash(CAatom.getHashKey())
+                            else:
+                                if (i in chain.residueList) and not ("CA" in chain[i].getAtomNames()):
+                                    
+                                    print "chain[i] did not contain a CA atom"
+                                    print "i:", i
+                                    print "chain[i]:", chain[i]
                 for loopIx, loop in chain.coils.items():
                     ix = self.renderer.startLoop()
                     atomcounter = 0
@@ -453,7 +509,13 @@ class CAlphaViewer(BaseViewer):
                                     CAatom.setNextCAHash(nextCAAtom.getHashKey())
                             else: # if CAatom is in the last residue, set it as its own next (hacky)
                                 CAatom.setNextCAHash(CAatom.getHashKey())
-                    print "in loop", ix, ", added", atomcounter, "atoms"
+                        else:
+                            if (i in chain.residueList) and not ("CA" in chain[i].getAtomNames()):
+                                print "in loops"
+                                print "chain[i] did not contain a CA atom"
+                                print "i:", i
+                                print "chain[i]:", chain[i]
+                    #print "in loop", ix, ", added", atomcounter, "atoms"
                 
 
         elif displayStyle == self.DisplayStyleSideChain:
