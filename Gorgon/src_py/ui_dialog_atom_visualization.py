@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_dialog_atom_visualization.ui'
 #
-# Created: Fri Jul 23 14:07:29 2010
+# Created: Thu Jul 29 17:52:44 2010
 #      by: PyQt4 UI code generator 4.4.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -140,6 +140,35 @@ class Ui_DialogAtomVisualization(object):
         self.hSliderRoundedness.setTickInterval(3)
         self.hSliderRoundedness.setObjectName("hSliderRoundedness")
         self.verticalLayout.addWidget(self.hSliderRoundedness)
+        self.label_3 = QtGui.QLabel(self.tab)
+        self.label_3.setObjectName("label_3")
+        self.verticalLayout.addWidget(self.label_3)
+        self.rslider = QtGui.QSlider(self.tab)
+        self.rslider.setMaximum(100)
+        self.rslider.setPageStep(10)
+        self.rslider.setProperty("value", QtCore.QVariant(50))
+        self.rslider.setOrientation(QtCore.Qt.Horizontal)
+        self.rslider.setObjectName("rslider")
+        self.verticalLayout.addWidget(self.rslider)
+        self.gslider = QtGui.QSlider(self.tab)
+        self.gslider.setMaximum(100)
+        self.gslider.setProperty("value", QtCore.QVariant(50))
+        self.gslider.setOrientation(QtCore.Qt.Horizontal)
+        self.gslider.setObjectName("gslider")
+        self.verticalLayout.addWidget(self.gslider)
+        self.bslider = QtGui.QSlider(self.tab)
+        self.bslider.setMaximum(100)
+        self.bslider.setProperty("value", QtCore.QVariant(50))
+        self.bslider.setOrientation(QtCore.Qt.Horizontal)
+        self.bslider.setObjectName("bslider")
+        self.verticalLayout.addWidget(self.bslider)
+        self.aslider = QtGui.QSlider(self.tab)
+        self.aslider.setMaximum(100)
+        self.aslider.setProperty("value", QtCore.QVariant(50))
+        self.aslider.setSliderPosition(50)
+        self.aslider.setOrientation(QtCore.Qt.Horizontal)
+        self.aslider.setObjectName("aslider")
+        self.verticalLayout.addWidget(self.aslider)
         self.groupBoxShow = QtGui.QGroupBox(self.tab)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Maximum)
         sizePolicy.setHorizontalStretch(0)
@@ -360,6 +389,7 @@ class Ui_DialogAtomVisualization(object):
         self.labelColor4.setText(QtGui.QApplication.translate("DialogAtomVisualization", "Color 4:", None, QtGui.QApplication.UnicodeUTF8))
         self.labelSmoothness.setText(QtGui.QApplication.translate("DialogAtomVisualization", "Smoothness", None, QtGui.QApplication.UnicodeUTF8))
         self.labelRoundedness.setText(QtGui.QApplication.translate("DialogAtomVisualization", "Roundedness", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_3.setText(QtGui.QApplication.translate("DialogAtomVisualization", "r, g, b, a", None, QtGui.QApplication.UnicodeUTF8))
         self.groupBoxShow.setTitle(QtGui.QApplication.translate("DialogAtomVisualization", "Show:", None, QtGui.QApplication.UnicodeUTF8))
         self.checkBoxShowAtoms.setText(QtGui.QApplication.translate("DialogAtomVisualization", "Atoms", None, QtGui.QApplication.UnicodeUTF8))
         self.checkBoxShowBonds.setText(QtGui.QApplication.translate("DialogAtomVisualization", "Bonds", None, QtGui.QApplication.UnicodeUTF8))
