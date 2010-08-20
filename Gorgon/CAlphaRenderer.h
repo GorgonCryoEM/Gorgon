@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.63  2010/08/19 23:05:07  chenb
+//   Cleaned and commented ribbon diagram code
+//
 //   Revision 1.62  2010/08/13 21:20:16  coleman.r
 //   AutoHelixBuilder changes
 //
@@ -1749,7 +1752,7 @@ namespace wustl_mm {
 		void CAlphaRenderer::SetHelixColor(int helixNum, float r, float g, float b){
 			cout << "setting helix color " << helixNum << " to (" << r << ", " << g << ", " << b << ")" <<endl;
 			helixColors.erase(helixNum);
-			helixColors.insert(pair<int, tuple<float, float, float>>(helixNum, tuple<float, float, float>(r,g,b)));
+			helixColors.insert(pair<int, tuple<float, float, float> >(helixNum, tuple<float, float, float>(r,g,b)));
 		}
 
 		// creates a vector of Vector3DFloats that represents the locations of all the PDBAtoms
