@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.64  2010/08/20 13:52:43  coleman.r
+//   gcc compile fix: gcc requires nested templates to end in "> >" not ">>"
+//
 //   Revision 1.63  2010/08/19 23:05:07  chenb
 //   Cleaned and commented ribbon diagram code
 //
@@ -261,6 +264,7 @@ namespace wustl_mm {
             vector<unsigned long long> GetAtomHashes();
 			void DeleteAtom(unsigned long long index);
 			int GetAtomCount();
+			vector<unsigned long long> GetAtomHashes();
 
 			//Controlling the bond vector
 			void AddBond(PDBBond bond);
@@ -1617,6 +1621,14 @@ namespace wustl_mm {
 				}
 			}
 			return NULL;
+		}
+
+		vector<unsigned long long> CAlphaRenderer::GetAtomHashes() {
+			vector<unsigned long long> atomHashes;
+			for (AtomMapType::iterator it = atoms.begin(); it != atoms.end(); it++) {
+				atomHashes.push_back(it->first);
+			}
+			return atomHashes;
 		}
 
 		int CAlphaRenderer::GetBondIndex(unsigned long long atom0, unsigned long long atom1) {
