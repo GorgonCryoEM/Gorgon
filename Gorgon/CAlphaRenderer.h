@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.65  2010/10/11 23:18:49  coleman.r
+//   added GetAtomHashes()
+//
 //   Revision 1.64  2010/08/20 13:52:43  coleman.r
 //   gcc compile fix: gcc requires nested templates to end in "> >" not ">>"
 //
@@ -261,7 +264,6 @@ namespace wustl_mm {
 			PDBAtom * GetAtom(unsigned long long index);
 			PDBAtom * GetAtomFromHitStack(int subsceneIndex, bool forceTrue, int ix0, int ix1, int ix2, int ix3, int ix4);
 			PDBAtom * GetSelectedAtom(unsigned int selectionId);
-            vector<unsigned long long> GetAtomHashes();
 			void DeleteAtom(unsigned long long index);
 			int GetAtomCount();
 			vector<unsigned long long> GetAtomHashes();
@@ -1210,13 +1212,6 @@ namespace wustl_mm {
 			return NULL;
 		}
 
-    		vector<unsigned long long> CAlphaRenderer::GetAtomHashes() {
-       			vector<unsigned long long> atomHashes;
-        		for (AtomMapType::iterator it = atoms.begin(); it != atoms.end(); it++) {
-            			atomHashes.push_back(it->first);
-        		}
-        		return atomHashes;
-    		}
 		void CAlphaRenderer::LoadFile(string fileName) {
 			Renderer::LoadFile(fileName);
 			atoms.clear();
