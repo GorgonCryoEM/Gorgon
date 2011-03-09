@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.23  2010/01/16 16:01:08  ssa1
+#   Setting a smaller font size for Non Win32 systems
+#
 #   Revision 1.22  2010/01/11 22:40:45  ssa1
 #   Changing version to 2.0.1b
 #
@@ -76,7 +79,7 @@ import time
 
 
 if __name__ == '__main__':
-    gorgonVersion = '2.0.1b'
+    gorgonVersion = '2.1.0b'
     app = QtGui.QApplication(sys.argv)    
     #setting different font sizes for different OSs
     if(sys.platform == 'win32'):
