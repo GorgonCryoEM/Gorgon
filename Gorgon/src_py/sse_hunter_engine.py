@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.6  2011/04/01 01:34:37  coleman.r
+#   adding geometry scoring code from EMAN
+#
 #   Revision 1.5  2010/02/27 05:23:31  colemanr
 #   default to polynomial radial profile
 #
@@ -60,17 +63,28 @@ class SSEHunterEngine:
 	def getScoredAtoms(self, correlationWeight, skeletonWeight, geometryWeight):
 		self.createPseudoAtoms()
 		self.setSkeletonScores()
+		numPAtoms = self.getNumberOfPseudoAtoms()
+		pseudoatoms = [self.getPseudoAtom(i) for i in range(numPAtoms)]
+		origin = (self.volume.getOriginX(), self.volume.getOriginY(), self.volume.getOriginZ())
+		apix = (self.volume.getSpacingX(), self.volume.getSpacingY(), self.volume.getSpacingZ())
 		self.setCorrelationScores()
 		numPAtoms = self.getNumberOfPseudoAtoms()
 		pseudoatoms = [self.getPseudoAtom(i) for i in range(numPAtoms)]
 		corrScores = [p.getCorrelationScore() for p in pseudoatoms]
 		self.setGeometryScores(corrScores)
+		i=1
 		for pAtom in pseudoatoms:
+			loc = pAtom.getPosition()
+			loc = [loc.x(), loc.y(), loc.z()]
+			loc[0] -= origin[0] #getting them like in the ssehunter3.py printout of EMAN1
+			loc[1] -= origin[1]
+			loc[2] -= origin[2]
 			score = correlationWeight*pAtom.getCorrelationScore()
 			score += skeletonWeight*pAtom.getSkeletonScore()
 			score += geometryWeight*pAtom.getGeometryScore()
 			pAtom.setTempFactor(score)
-
+			print "%i: (%.2f, %.2f, %.2f)\tCorr: %f\t Skel: %f\t Geom: %f\t Overall:%f" % (i, loc[0], loc[1], loc[2], pAtom.getCorrelationScore(), pAtom.getSkeletonScore(), pAtom.getGeometryScore(), score)
+			i+=1
 		return pseudoatoms
 		
 		
@@ -260,7 +274,7 @@ class SSEHunterEngine:
 		
 	
 			aspectRatioScore=aspectRatioScores[index3]
-			print "%d: axis: %f, neighbor angle: %f, helix angle: %f, sheet angle: %f,  number of neighbors: %d"%(atomNumber[index3], aspectRatioScore, genericAngle, helixAngle, betaAngle, len(cloud))
+			print "%d: axis: %f, neighbor angle: %f, helix angle: %f, sheet angle: %f,  number of neighbors: %d" % (atomNumber[index3], aspectRatioScore, genericAngle, helixAngle, betaAngle, len(cloud))
 			pascore = aspectRatioScore
 			if genericAngle <=40:
 				pascore=pascore+1
