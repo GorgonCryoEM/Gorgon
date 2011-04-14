@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.32  2010/05/06 21:50:11  ssa1
+#   Fixing performance bug when moving a volume
+#
 #   Revision 1.31  2010/04/04 19:05:54  ssa1
 #   Fixing misc bugs, and redoing sheet visualization mechanism
 #
@@ -94,10 +97,10 @@ class VolumeViewer(BaseViewer):
     def __init__(self, main, parent=None):
         BaseViewer.__init__(self, main, parent)
         self.title = "Volume"    
-        self.shortTitle = "VOL"      
-        self.app.themes.addDefaultRGB("Volume:Model:0", 180, 180, 180, 255)
-        self.app.themes.addDefaultRGB("Volume:Model:1", 180, 180, 180, 255)
-        self.app.themes.addDefaultRGB("Volume:Model:2", 180, 180, 180, 255)
+        self.shortTitle = "VOL"
+        self.app.themes.addDefaultRGB("Volume:Model:0", 180, 180, 180, 150) #rgba color: default alpha used to be 255 for opaque
+        self.app.themes.addDefaultRGB("Volume:Model:1", 180, 180, 180, 150)
+        self.app.themes.addDefaultRGB("Volume:Model:2", 180, 180, 180, 150)
         self.app.themes.addDefaultRGB("Volume:BoundingBox", 255, 255, 255, 255)                         
         self.renderer = VolumeRenderer()          
         self.loaded = False
