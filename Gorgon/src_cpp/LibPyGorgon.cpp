@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.91  2010/08/19 23:05:08  chenb
+//   Cleaned and commented ribbon diagram code
+//
 //   Revision 1.90  2010/08/13 21:20:16  coleman.r
 //   AutoHelixBuilder changes
 //
@@ -494,9 +497,15 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 	double (Volume::*getDataAt1)(int, int, int)	= &Volume::getDataAt;
 	
 	class_<Volume>("Volume", init<int,int,int>())
+		.def("getOriginX", &Volume::getOriginX)
+		.def("getOriginY", &Volume::getOriginY)
+		.def("getOriginZ", &Volume::getOriginZ)
 		.def("getSizeX", &Volume::getSizeX)
 		.def("getSizeY", &Volume::getSizeY)
 		.def("getSizeZ", &Volume::getSizeZ)
+		.def("getSpacingX", &Volume::getSpacingX)
+		.def("getSpacingY", &Volume::getSpacingY)
+		.def("getSpacingZ", &Volume::getSpacingZ)
 		.def("getMin", &Volume::getMin)
 		.def("getMax", &Volume::getMax)
 		.def("getDataAt", getDataAt1)
