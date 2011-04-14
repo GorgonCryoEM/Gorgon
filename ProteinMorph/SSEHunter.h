@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.27  2010/07/08 19:38:31  coleman.r
+//   pseudoatoms named "CA" instead of "C", so they display in the CAlphaRenderer
+//
 //   Revision 1.26  2010/03/05 20:30:22  ssa1
 //   Fixing loading of helices using .SSE files
 //
@@ -311,28 +314,56 @@ namespace wustl_mm {
 
 		void SSEHunter::SetSkeletonScores(Volume * vol, NonManifoldMesh_Annotated * skeleton, float resolution) {
 			cout << "SetSkeletonScores\n";
-			int vertexIx;
-			float distance, maxDistance = resolution;  // TODO: Max distance is hardcoded as 5 Angstroms
+//			float maxDistance = 4*sqrt(skeleton->scale[0]+skeleton->scale[1]+skeleton->scale[2]);//resolution;  // TODO: In EMAN1 the maximum distance is sqrt(3*4*4) voxels, we're using Angstroms here
+			const unsigned int SCORE_RANGE = 4;
+			const unsigned int MAX_DISTANCE_SQUARED = 3*SCORE_RANGE*SCORE_RANGE;
 			Vector3DFloat skeletonOrigin = Vector3DFloat(skeleton->GetOriginX(), skeleton->GetOriginY(), skeleton->GetOriginZ());
-			Vector3DFloat atomInSkeleton;
-			Vector3DFloat skeletonInAtom;
+			Vector3DFloat skeletonAtom;
+			Vector3DFloat pAtomPosition;
+			float score = 0;
+			unsigned int count = 0;
+			float maxscore = -1;
+			float minscore = 1;
 			for(unsigned int i = 0; i < patoms.size(); i++) {
-				atomInSkeleton = patoms[i].GetPosition() - skeletonOrigin;
-				atomInSkeleton = Vector3DFloat(atomInSkeleton.X()/skeleton->scale[0], atomInSkeleton.Y()/skeleton->scale[1], atomInSkeleton.Z()/skeleton->scale[2]);
-				
-				vertexIx = skeleton->GetClosestVertexIndex(atomInSkeleton);
-				skeletonInAtom = skeleton->vertices[vertexIx].position;
-				skeletonInAtom = Vector3DFloat(skeletonInAtom.X()*skeleton->scale[0], skeletonInAtom.Y()*skeleton->scale[1], skeletonInAtom.Z()*skeleton->scale[2]);
-				skeletonInAtom = skeletonInAtom + skeletonOrigin;
-				
-				distance = (skeletonInAtom - patoms[i].GetPosition()).Length();
-				double typeCost;
-				if(skeleton->IsSurfaceVertex(vertexIx)) {
-					typeCost = -1.0;
-				} else {
-					typeCost = 1.0;
+				pAtomPosition = patoms[i].GetPosition();
+				pAtomPosition -= skeletonOrigin;
+				for (unsigned int n = 0; n < 3; n++)
+					pAtomPosition[n] = pAtomPosition[n] * (1.0/skeleton->scale[n]);
+				for (unsigned int j = 0; j < skeleton->vertices.size(); j++) {
+					skeletonAtom = skeleton->vertices[j].position;
+					Vector3DFloat d = skeletonAtom - pAtomPosition;
+					float distance_squared = d.X()*d.X() + d.Y()*d.Y() + d.Z()*d.Z();
+					if (abs(d.X()) <= SCORE_RANGE && abs(d.Y()) <= SCORE_RANGE && abs(d.Z()) <= SCORE_RANGE) { // 8x8x8 cubic search area
+						double typeCost; //TODO: If a vertex is part of both the sheet skeleton and the helix skeleton, typeCost = 0;
+						if (skeleton->IsSurfaceVertex(i)) { //TODO: Is this the same as testing if it's in the sheet skeleton
+							typeCost = -1.0;
+						} else { //TODO test whether in the helix skeleton
+							typeCost = 1.0;
+						}
+						score += typeCost * (1.0 - distance_squared / MAX_DISTANCE_SQUARED);
+						count++;
+					}
 				}
-				patoms[i].SetSkeletonScore(typeCost * (1.0 - min(maxDistance, distance) / maxDistance));
+				if (count > 0)
+					score /= count;
+
+				if (score < minscore)
+					minscore = score;
+				if (score > maxscore)
+					maxscore = score;
+
+				patoms[i].SetSkeletonScore(score);
+				score = 0;
+				count = 0;
+			}
+			//Normalization (see main method of skeleton.C (with flag == 6) in EMAN1)
+			for (unsigned int i = 0; i < patoms.size(); i++) {
+				score = patoms[i].GetSkeletonScore();
+				if (score > 0)
+					score /= maxscore;
+				else
+					score /= -minscore;
+				patoms[i].SetSkeletonScore(score);
 			}
 		}
 		
@@ -428,6 +459,7 @@ namespace wustl_mm {
 			
 			for(unsigned int i = 0; i < aspectRatios.size(); i++) {
 				aspectRatios[i] = (2.0f * (aspectRatios[i] - minScore) / (maxScore - minScore)) - 1.0f;
+				printf("%f\n", aspectRatios[i]);
 			}
 			
 			delete [] eigens;
@@ -1132,6 +1164,7 @@ namespace wustl_mm {
 			cout << "SetCorrelationScores()\n";
 			float cylinderLength = 16.2;
 			Volume* bestCCF = HelixCorrelation(vol, type, cylinderLength, deltaAltRadians);
+			cout << "Min: " << bestCCF->getMin() << ", Max: " << bestCCF->getMax() << ", Mean: " << bestCCF->getMean() << ", Sigma: " << bestCCF->getStdDev() << "\n";
 			PDBAtom patom;
 			vector<float> helixScores;
 			Vector3DFloat position;
