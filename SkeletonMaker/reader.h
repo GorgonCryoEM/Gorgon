@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.17  2009/11/02 19:49:06  colemanr
+//   use <string> with Visual Studio and <cstring> otherwise
+//
 //   Revision 1.16  2009/10/13 18:09:34  ssa1
 //   Refactoring Volume.h
 //
@@ -550,10 +553,10 @@ namespace wustl_mm {
 				fclose( fin ) ;
 
 		#ifdef VERBOSE
-				printf("\n\tDimension: %d %d %d\n", dimx, dimy, dimz ) ;
+				printf("\n\tDimension: %d %d %d\n", totx, toty, totz ) ;
 				printf("\tMode: %d\n", mode) ;
 				printf("\tDensity: from %f to %f, mean at %f, rms at %f\n", dmin, dmax, dmean, drms ) ;
-				printf("\tCell size: %f %f %f\n", angsx / (dimx-1), angsy / (dimy-1), angsz / (dimz-1) ) ;
+				printf("\tCell size: %f %f %f\n", angsx / dimx, angsy / dimy, angsz / dimz ) ;
 				printf("\tCell angles: %f %f %f\n", anglex, angley, anglez ) ;
 				printf("\tOrigin location: %f %f %f\n", orgx, orgy, orgz );
 		#endif // VERBOSE
@@ -628,9 +631,9 @@ namespace wustl_mm {
 			/* Get resolution */
 			void getSpacing( float& ax, float& ay, float& az )
 			{
-				ax = angsx / (float)(totx);
-				ay = angsy / (float)(toty) ;
-				az = angsz / (float)(totz) ;
+				ax = angsx / (float)(dimx);
+				ay = angsy / (float)(dimy) ;
+				az = angsz / (float)(dimz) ;
 			}
 
 			void getOffset(float &x, float &y, float &z) 
@@ -705,14 +708,11 @@ namespace wustl_mm {
 				ifread( &drms, sizeof( float ), 1, fin ) ;
 				fclose( fin ) ;
 
-				dimx = totx ;
-				dimy = toty ;
-				dimz = totz ;
 		#ifdef VERBOSE
-				printf("\tDimension: %d %d %d\n", dimx, dimy, dimz ) ;
+				printf("\tDimension: %d %d %d\n", totx, toty, totz ) ;
 				printf("\tMode: %d\n", mode) ;
 				printf("\tDensity: from %f to %f, mean at %f, rms at %f\n", dmin, dmax, dmean, drms ) ;
-				printf("\tCell size: %f %f %f\n", angsx / (dimx-1), angsy / (dimy-1), angsz / (dimz-1) ) ;
+				printf("\tCell size: %f %f %f\n", angsx / dimx, angsy / dimy, angsz / dimz ) ;
 				printf("\tCell angles: %f %f %f\n", anglex, angley, anglez ) ;
 		#endif // VERBOSE
 
@@ -791,9 +791,9 @@ namespace wustl_mm {
 			/* Get resolution */
 			void getSpacing( float& ax, float& ay, float& az )
 			{
-				ax = angsx / (float)(totx);
-				ay = angsy / (float)(toty) ;
-				az = angsz / (float)(totz) ;
+				ax = angsx / (float)(dimx);
+				ay = angsy / (float)(dimy) ;
+				az = angsz / (float)(dimz) ;
 			}
 
 
