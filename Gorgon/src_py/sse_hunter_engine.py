@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.7  2011/04/14 22:39:31  coleman.r
+#   adding score printouts to compare to SSEHunter in EMAN1 and EMAN2
+#
 #   Revision 1.6  2011/04/01 01:34:37  coleman.r
 #   adding geometry scoring code from EMAN
 #
@@ -63,17 +66,16 @@ class SSEHunterEngine:
 	def getScoredAtoms(self, correlationWeight, skeletonWeight, geometryWeight):
 		self.createPseudoAtoms()
 		self.setSkeletonScores()
-		numPAtoms = self.getNumberOfPseudoAtoms()
-		pseudoatoms = [self.getPseudoAtom(i) for i in range(numPAtoms)]
-		origin = (self.volume.getOriginX(), self.volume.getOriginY(), self.volume.getOriginZ())
-		apix = (self.volume.getSpacingX(), self.volume.getSpacingY(), self.volume.getSpacingZ())
 		self.setCorrelationScores()
 		numPAtoms = self.getNumberOfPseudoAtoms()
 		pseudoatoms = [self.getPseudoAtom(i) for i in range(numPAtoms)]
 		corrScores = [p.getCorrelationScore() for p in pseudoatoms]
 		self.setGeometryScores(corrScores)
-		i=1
-		for pAtom in pseudoatoms:
+		
+		origin = (self.volume.getOriginX(), self.volume.getOriginY(), self.volume.getOriginZ())
+		apix = (self.volume.getSpacingX(), self.volume.getSpacingY(), self.volume.getSpacingZ())
+		for i in range(len(pseudoatoms)):
+			pAtom = pseudoatoms[i]
 			loc = pAtom.getPosition()
 			loc = [loc.x(), loc.y(), loc.z()]
 			loc[0] -= origin[0] #getting them like in the ssehunter3.py printout of EMAN1
@@ -83,8 +85,7 @@ class SSEHunterEngine:
 			score += skeletonWeight*pAtom.getSkeletonScore()
 			score += geometryWeight*pAtom.getGeometryScore()
 			pAtom.setTempFactor(score)
-			print "%i: (%.2f, %.2f, %.2f)\tCorr: %f\t Skel: %f\t Geom: %f\t Overall:%f" % (i, loc[0], loc[1], loc[2], pAtom.getCorrelationScore(), pAtom.getSkeletonScore(), pAtom.getGeometryScore(), score)
-			i+=1
+			print "%3i: (%6.2f, %6.2f, %6.2f)\tCorr: %6.3f\tSkel: %6.3f\tGeom: %6.3f\tOverall: %6.3f" % (i+1, loc[0], loc[1], loc[2], pAtom.getCorrelationScore(), pAtom.getSkeletonScore(), pAtom.getGeometryScore(), score)
 		return pseudoatoms
 		
 		
@@ -274,7 +275,7 @@ class SSEHunterEngine:
 		
 	
 			aspectRatioScore=aspectRatioScores[index3]
-			print "%d: axis: %f, neighbor angle: %f, helix angle: %f, sheet angle: %f,  number of neighbors: %d" % (atomNumber[index3], aspectRatioScore, genericAngle, helixAngle, betaAngle, len(cloud))
+			#print "%d: axis: %f, neighbor angle: %f, helix angle: %f, sheet angle: %f,  number of neighbors: %d" % (atomNumber[index3], aspectRatioScore, genericAngle, helixAngle, betaAngle, len(cloud))
 			pascore = aspectRatioScore
 			if genericAngle <=40:
 				pascore=pascore+1
