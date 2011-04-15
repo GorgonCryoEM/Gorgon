@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.28  2011/04/14 22:26:59  coleman.r
+//   getting Skeleton scoring algorithm closer to the algorithm used in EMAN1
+//
 //   Revision 1.27  2010/07/08 19:38:31  coleman.r
 //   pseudoatoms named "CA" instead of "C", so they display in the CAlphaRenderer
 //
@@ -271,7 +274,6 @@ namespace wustl_mm {
 				i++;
 				
 			}
-			cout << "CreatePseudoAtoms() is finished" << endl;	
 		}
 		
 		// SSEHunter::UpdateMap
@@ -288,9 +290,9 @@ namespace wustl_mm {
 			float tempVal, value;
 			float distance;
 			
-			for(int x = rMinX; x <= rMaxX; x++){
-				for(int y = rMinY; y <= rMaxY; y++) {
-					for(int z = rMinZ; z <= rMaxZ; z++) {
+			for(int x = rMinX; x < rMaxX; x++){
+				for(int y = rMinY; y < rMaxY; y++) {
+					for(int z = rMinZ; z < rMaxZ; z++) {
 						tempVal = vol->getDataAt(loc.X() + x, loc.Y() + y, loc.Z() + z);
 						distance = sqrt((float)(x*x + y*y + z*z));
 						if((x==0) && (y==0) && (z==0)) {
@@ -313,7 +315,7 @@ namespace wustl_mm {
 		}
 
 		void SSEHunter::SetSkeletonScores(Volume * vol, NonManifoldMesh_Annotated * skeleton, float resolution) {
-			cout << "SetSkeletonScores\n";
+			cout << "SetSkeletonScores()\n";
 //			float maxDistance = 4*sqrt(skeleton->scale[0]+skeleton->scale[1]+skeleton->scale[2]);//resolution;  // TODO: In EMAN1 the maximum distance is sqrt(3*4*4) voxels, we're using Angstroms here
 			const unsigned int SCORE_RANGE = 4;
 			const unsigned int MAX_DISTANCE_SQUARED = 3*SCORE_RANGE*SCORE_RANGE;
@@ -453,13 +455,13 @@ namespace wustl_mm {
 				score = dx - dy;
 				minScore = min(score, minScore);
 				maxScore = max(score, maxScore);
-				printf("%f, %f, %f, %f, %f\n ", patoms[i].GetTempFactor(), eigens[index].values[0], eigens[index].values[1], eigens[index].values[2], score);
+//				printf("%f, %f, %f, %f, %f\n ", patoms[i].GetTempFactor(), eigens[index].values[0], eigens[index].values[1], eigens[index].values[2], score);
 				aspectRatios.push_back(score);
 			}
 			
 			for(unsigned int i = 0; i < aspectRatios.size(); i++) {
 				aspectRatios[i] = (2.0f * (aspectRatios[i] - minScore) / (maxScore - minScore)) - 1.0f;
-				printf("%f\n", aspectRatios[i]);
+//				printf("%f\n", aspectRatios[i]);
 			}
 			
 			delete [] eigens;
@@ -1181,9 +1183,9 @@ namespace wustl_mm {
 			for (unsigned int ix = 0; ix < patoms.size(); ix++) {
 				patom = patoms[ix];
 				position = patom.GetPosition();
-				value = bestCCF->getDataAt( round((position.X()-xorg)/apix_x), 
-										   round((position.Y()-yorg)/apix_y), 
-										   round((position.Z()-zorg)/apix_z) ); 
+				value = bestCCF->getDataAt( round((position.X()-xorg)/apix_x),
+										   round((position.Y()-yorg)/apix_y),
+										   round((position.Z()-zorg)/apix_z) );
 				helixScores.push_back(value);
 				totVal += value;
 				if (value > maxVal) {
