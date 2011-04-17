@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.29  2011/04/15 23:36:21  coleman.r
+//   got pseudoatom creation to be the same as in EMAN -- < not <= in for loops
+//
 //   Revision 1.28  2011/04/14 22:26:59  coleman.r
 //   getting Skeleton scoring algorithm closer to the algorithm used in EMAN1
 //
@@ -533,7 +536,7 @@ namespace wustl_mm {
 		{
 			//iterations ==> rounding is problematic with float types if
 			// 15 < r < 20 and really bad if 20 < r < 30, so use double
-			double ret; 
+			double ret;
 
 			// polynomial fitting to the radial profile of real helix density
 			// f=a0*x^n+a1+x^(n-1)+ ... +a[n-1]*x+an
@@ -676,6 +679,11 @@ namespace wustl_mm {
 								xprime =   x*cos_az+y*sin_az;
 								yprime = (-x*sin_az+y*cos_az) * cos_alt + z*sin_alt;
 								radius = sqrt(xprime*xprime+yprime*yprime);
+								/* Cylinder.C modelHelix() in EMAN1 only applies the radial profile if radius is less than an integer max radius.
+								 * However, that max radius is in pixels whereas the radius is in Angstroms, so they shouldn't be compared.
+								 * Also, this results in a cylinder that has more of an octagonal outer radius rather than a circular outer radius.
+								 * Instead, we set a max radius inside the RadialProfile functions.
+								 */
 								cylData[ix] = RadialProfile(radius, type);
 							} else {
 								cylData[ix] = 0;
