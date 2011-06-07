@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.66  2010/10/11 23:24:36  coleman.r
+//   Fixing last commit (I had made similar changes to the code on two different computers)
+//
 //   Revision 1.65  2010/10/11 23:18:49  coleman.r
 //   added GetAtomHashes()
 //
@@ -336,6 +339,10 @@ namespace wustl_mm {
 			void DrawSideChainModel(int subSceneIndex, bool selectEnabled);
 		private:
 			AtomMapType atoms;
+
+			//TODO: possibly implement mouse picking using ray intersection
+			vector<unsigned long long> atomHashKeys; //glLoadName(index of this vector)... used for selection
+
 			vector<PDBBond> bonds;
 			vector<PDBBond> sidechainBonds;
 
@@ -431,26 +438,29 @@ namespace wustl_mm {
 		void CAlphaRenderer::DrawBackboneModel(int subSceneIndex, bool selectEnabled) {
 			GLfloat emissionColor[4] = {1.0, 1.0, 1.0, 1.0};
 
-			if(subSceneIndex == 0) { // Drawing Atoms				
+			if(subSceneIndex == 0) { // Drawing Atoms
 				if(selectEnabled) {
+					atomHashKeys.clear();
 					glPushName(0);
 					glPushName(0);
 				}
-				for(AtomMapType::iterator i = atoms.begin(); i != atoms.end(); i++) {
-					if(i->second.GetName() == "CA") {
-						glPushAttrib(GL_LIGHTING_BIT);					
-						if(i->second.GetSelected()) {
+				for (AtomMapType::iterator it = atoms.begin(); it != atoms.end(); it++) {
+					if(it->second.GetName() == "CA") {
+						glPushAttrib(GL_LIGHTING_BIT);
+						if(it->second.GetSelected()) {
 							glMaterialfv(GL_FRONT, GL_EMISSION, emissionColor);
 							glMaterialfv(GL_BACK, GL_EMISSION, emissionColor);
 						} else {
-							OpenGLUtils::SetColor(i->second.GetColorR(), i->second.GetColorG(), i->second.GetColorB(), i->second.GetColorA());
-						}					
+							OpenGLUtils::SetColor(it->second.GetColorR(), it->second.GetColorG(), it->second.GetColorB(), it->second.GetColorA());
+						}
 
 						if(selectEnabled){
-							glLoadName((long)&(i->second));
+							//TODO: possibly implement mouse picking using ray intersection
+							atomHashKeys.push_back(it->first); // adding the atom hash key as an element
+							glLoadName(static_cast<GLuint>( atomHashKeys.size() - 1)); // the index of the element just added
 						}
-						if(i->second.GetVisible()) {
-							DrawSphere(i->second.GetPosition(), i->second.GetAtomRadius() * 0.3);
+						if(it->second.GetVisible()) {
+							DrawSphere(it->second.GetPosition(), it->second.GetAtomRadius() * 0.3);
 						}
 
 						glPopAttrib();
@@ -1115,6 +1125,7 @@ namespace wustl_mm {
 
 			if(subSceneIndex == 0) { // Drawing Atoms				
 				if(selectEnabled) {
+					atomHashKeys.clear();
 					glPushName(0);
 					glPushName(0);
 				}
@@ -1129,7 +1140,9 @@ namespace wustl_mm {
 					}					
 
 					if(selectEnabled){
-						glLoadName((long)&(i->second));
+						//TODO: possibly implement mouse picking using ray intersection
+						atomHashKeys.push_back(i->first); // adding the hash key
+						glLoadName(static_cast<GLuint>(atomHashKeys.size() - 1)); // using the index of the element just added
 					}
 					if(i->second.GetVisible()) {
 						DrawSphere(i->second.GetPosition(), i->second.GetAtomRadius() * 0.3);
@@ -1205,9 +1218,13 @@ namespace wustl_mm {
 		}
 
 		PDBAtom * CAlphaRenderer::GetAtomFromHitStack(int subsceneIndex, bool forceTrue, int ix0, int ix1, int ix2, int ix3, int ix4) {
-			if((subsceneIndex == 0) && (ix0 != NULL)) {
-				PDBAtom * a = (PDBAtom*)ix0;
-				return a;
+			if(subsceneIndex == 0) {
+				//TODO: possibly implement mouse picking using ray intersection
+				AtomMapType::iterator it = atoms.find(atomHashKeys.at(ix0));
+				if (it == atoms.end())
+					return NULL;
+				else
+					return &(it->second);
 			}  
 			return NULL;
 		}
@@ -1489,13 +1506,17 @@ namespace wustl_mm {
 
 		void CAlphaRenderer::SelectionToggle(int subsceneIndex, bool forceTrue, int ix0, int ix1, int ix2, int ix3, int ix4) {
 			Renderer::SelectionToggle(subsceneIndex, forceTrue, ix0, ix1, ix2, ix3, ix4);
+			AtomMapType::iterator it;
 			PDBAtom * a;
-			if((subsceneIndex == 0)) {
+			if (subsceneIndex == 0) {
+				//TODO: possibly implement mouse picking using ray intersection
 				switch(displayStyle) {
 					case CALPHA_DISPLAY_STYLE_BACKBONE:
-						if(ix0 != NULL){
-							a = (PDBAtom*)ix0;
-							a->SetSelected(forceTrue || !a->GetSelected());
+					case CALPHA_DISPLAY_STYLE_SIDE_CHAIN:
+						it = atoms.find(atomHashKeys.at(ix0));
+						if (it != atoms.end()) {
+							a = &(it->second);
+							a->SetSelected( forceTrue || !a->GetSelected() );
 						}
 						break;
 					case CALPHA_DISPLAY_STYLE_RIBBON:
@@ -1507,12 +1528,6 @@ namespace wustl_mm {
 							cout << "Updating selectedHelix" << " ix0=" << ix0 << " forceTrue=" << forceTrue << endl;
 							aHelices[ix0].selected = true;
 							selectedHelixIndices.push_back(ix0);
-						}
-						break;
-					case CALPHA_DISPLAY_STYLE_SIDE_CHAIN:
-						if(ix0 != NULL){
-							a = (PDBAtom*)ix0;
-							a->SetSelected(forceTrue || !a->GetSelected());
 						}
 						break;
 				} 
@@ -1535,7 +1550,7 @@ namespace wustl_mm {
 						sidechainBonds[ix0].SetSelected(forceTrue || !sidechainBonds[ix0].GetSelected());
 						break;
 				} 
-			} else if((subsceneIndex == 2) && (ix0 != NULL)) {			
+			} else if((subsceneIndex == 2) && (ix0 != NULL)) {
 				switch(displayStyle) {
 					case CALPHA_DISPLAY_STYLE_BACKBONE:
 						break;
@@ -1606,16 +1621,12 @@ namespace wustl_mm {
 		}
 
 		PDBAtom * CAlphaRenderer::GetSelectedAtom(unsigned int selectionId) {
-			int count = 0;
-			for(AtomMapType::iterator i = atoms.begin(); i != atoms.end(); i++) {					
-				if(i->second.GetSelected()) {
-					if(count == selectionId) {
-						return &i->second;
-					}
-					count++;
-				}
-			}
-			return NULL;
+			//TODO: possibly implement mouse picking using ray intersection
+			AtomMapType::iterator it = atoms.find(atomHashKeys.at(selectionId));
+			if (it == atoms.end())
+				return NULL;
+			else
+				return &(it->second);
 		}
 
 		vector<unsigned long long> CAlphaRenderer::GetAtomHashes() {
