@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.19  2010/07/27 23:18:58  chenb
+//   Ribbon diagram code now merged with flexible fitting code
+//
 //   Revision 1.18  2010/07/19 17:38:31  heiderp
 //   Flexible fitting.
 //
@@ -70,9 +73,10 @@ namespace wustl_mm {
 
 		class PDBAtom {
 		public:
+
 			PDBAtom();
 			PDBAtom(string pdbId, char chainId, unsigned int resSeq, string name);
-			PDBAtom(string PDBLine);
+			PDBAtom(string PDBLine, string pdbId = "----");
 			void Print();
 
 			string			GetPDBId();
@@ -173,33 +177,7 @@ namespace wustl_mm {
 		};
 
 		PDBAtom::PDBAtom() {
-			this->pdbId = "";
-			this->serial = 0;
-			this->name = "";
-			altLoc = ' ';
-			resName = "   ";
-			this->chainId = '0';
-			this->resSeq = 0;
-			iCode = ' ';
-			position = Vector3DFloat(0,0,0);
-			occupancy = 0;
-			tempFactor = 0;
-			element = "  ";
-			charge = "  ";
-			atomRadius = 1;
-			colorR = 0.66f;
-			colorG = 0.66f;
-			colorB = 0.0f;
-			colorA = 1.0f;
-			selected = false;
-			visible = true;
-
-			prevWasSet = false;
-			nextWasSet = false;
-
-			correlationScore = 0;
-			skeletonScore = 0;
-			geometryScore = 0;
+			PDBAtom("", '0', 0, "");
 		}
 
 		PDBAtom::PDBAtom(string pdbId, char chainId, unsigned int resSeq, string name) {
@@ -232,8 +210,8 @@ namespace wustl_mm {
 			geometryScore = 0;
 		}
 
-		PDBAtom::PDBAtom(string PDBLine) {
-			pdbId = "----";
+		PDBAtom::PDBAtom(string PDBLine, string pdbId) {
+			this->pdbId = pdbId;
 			serial = atoi((char *)PDBLine.substr(6, 5).c_str());
 			name = PDBLine.substr(12, 4);
 			StringUtils::LeftTrim(name, string(" \t\f\v\n\r"));
