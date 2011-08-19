@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.20  2011/06/07 15:52:43  coleman.r
+//   The PDBAtom default constructor now calls 4 parameter constructor to avoid code duplication. The constructor that takes a line from the atom coordinates section of a PDB file, now accepts a PDB ID as an optional argument.
+//
 //   Revision 1.19  2010/07/27 23:18:58  chenb
 //   Ribbon diagram code now merged with flexible fitting code
 //
@@ -177,10 +180,46 @@ namespace wustl_mm {
 		};
 
 		PDBAtom::PDBAtom() {
-			PDBAtom("", '0', 0, "");
+			/*Note: There IS code duplication between this and the 4 argument constructor.
+			 * However, C++ 98 does not have delegating constructors, that is, you can't call another
+			 * constructor of the same class within a constructor. Default arguments won't work because
+			 * we need the constructor that works just from a line of a PDB file. And we can't call the
+			 * 4 parameter constructor from here because C++ 98 doesn't support that.
+			 * --Ross Coleman
+			 */
+			this->pdbId = "";
+			this->serial = 0;
+			this->name = "";
+			altLoc = ' ';
+			resName = "   ";
+			this->chainId = '0';
+			this->resSeq = 0;
+			iCode = ' ';
+			position = Vector3DFloat(0,0,0);
+			occupancy = 0;
+			tempFactor = 0;
+			element = "  ";
+			charge = "  ";
+			atomRadius = 1;
+			colorR = 0.66f;
+			colorG = 0.66f;
+			colorB = 0.0f;
+			colorA = 1.0f;
+			selected = false;
+			visible = true;
+
+			prevWasSet = false;
+			nextWasSet = false;
+
+			correlationScore = 0;
+			skeletonScore = 0;
+			geometryScore = 0;
 		}
 
 		PDBAtom::PDBAtom(string pdbId, char chainId, unsigned int resSeq, string name) {
+			/*
+			 * See note for the default constructor about necessary code duplication because C++ 98 lacks delegating constructors. --Ross
+			 */
 			this->pdbId = pdbId;
 			this->serial = 0;
 			this->name = name;
