@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.67  2011/06/07 16:03:23  coleman.r
+//   We had been using memory addresses for "names" in glLoadName() in GL_SELECT mode. Now, we are storing atom hash keys in a vector (hash keys are 64 bit) and using the indices of these hash keys as "names". (The indices should be 32 bit and can be cast to GLuint safely.) This avoids a bug on 64 bit systems where memory addresses were too large to fit in a GLuint type. Thus, a 64 bit OS segmentation fault (we previously cast int "names" back to pointers with SelectionToggle()) is avoided.
+//
 //   Revision 1.66  2010/10/11 23:24:36  coleman.r
 //   Fixing last commit (I had made similar changes to the code on two different computers)
 //
@@ -1621,12 +1624,17 @@ namespace wustl_mm {
 		}
 
 		PDBAtom * CAlphaRenderer::GetSelectedAtom(unsigned int selectionId) {
-			//TODO: possibly implement mouse picking using ray intersection
-			AtomMapType::iterator it = atoms.find(atomHashKeys.at(selectionId));
-			if (it == atoms.end())
-				return NULL;
-			else
-				return &(it->second);
+			//Python uses this with SelectionAtomCount() to get all the selected atoms
+			int count = 0;
+			for(AtomMapType::iterator it = atoms.begin(); it != atoms.end(); it++) {
+				if(it->second.GetSelected()) {
+					if(count == selectionId) {
+						return &it->second;
+					}
+					count++;
+				}
+			}
+			return NULL;
 		}
 
 		vector<unsigned long long> CAlphaRenderer::GetAtomHashes() {
