@@ -17,6 +17,8 @@ class AutoHelixBuilderEngine:
         possible_helix_atoms.sort(key=PDBAtom.getTempFactor, reverse=True) #sort by decreasing SSEHunter score
         
         while possible_helix_atoms:
+            build_left = False
+            build_right = False
             print "Finding helices..."
             seed_atom = possible_helix_atoms.pop(0)
             atoms_in_cell = self.get_sorted_cell_atoms(seed_atom, possible_helix_atoms)
