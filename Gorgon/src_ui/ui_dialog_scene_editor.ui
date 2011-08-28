@@ -1,277 +1,288 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <class>DialogSceneEditor</class>
- <widget class="QWidget" name="DialogSceneEditor" >
-  <property name="geometry" >
+ <widget class="QWidget" name="DialogSceneEditor">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>259</width>
+    <width>429</width>
     <height>522</height>
    </rect>
   </property>
-  <property name="sizePolicy" >
-   <sizepolicy vsizetype="Maximum" hsizetype="Preferred" >
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
   </property>
-  <property name="windowTitle" >
+  <property name="windowTitle">
    <string>Scene Editor</string>
   </property>
-  <layout class="QGridLayout" >
-   <item row="0" column="0" >
-    <widget class="QTabWidget" name="tabWidget" >
-     <property name="sizePolicy" >
-      <sizepolicy vsizetype="Maximum" hsizetype="Expanding" >
+  <layout class="QGridLayout">
+   <item row="0" column="0">
+    <widget class="QTabWidget" name="tabWidget">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <property name="currentIndex" >
+     <property name="currentIndex">
       <number>0</number>
      </property>
-     <widget class="QWidget" name="tabCamera" >
-      <attribute name="title" >
+     <widget class="QWidget" name="tabCamera">
+      <attribute name="title">
        <string>Camera</string>
       </attribute>
-      <layout class="QGridLayout" >
-       <item row="0" column="0" >
-        <layout class="QGridLayout" >
-         <property name="verticalSpacing" >
+      <layout class="QGridLayout">
+       <item row="0" column="0">
+        <layout class="QGridLayout">
+         <property name="verticalSpacing">
           <number>12</number>
          </property>
-         <item row="0" column="0" >
-          <widget class="QLabel" name="label_3" >
-           <property name="text" >
+         <item row="0" column="0">
+          <widget class="QLabel" name="label_3">
+           <property name="text">
             <string>Eye:</string>
            </property>
           </widget>
          </item>
-         <item row="0" column="1" >
-          <widget class="QDoubleSpinBox" name="doubleSpinBoxEyeX" >
-           <property name="sizePolicy" >
-            <sizepolicy vsizetype="Fixed" hsizetype="Maximum" >
+         <item row="0" column="1">
+          <widget class="QDoubleSpinBox" name="doubleSpinBoxEyeX">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
-           <property name="minimum" >
+           <property name="minimum">
             <double>-9999999999.989999771118164</double>
            </property>
-           <property name="maximum" >
+           <property name="maximum">
             <double>9999999999.989999771118164</double>
            </property>
-           <property name="value" >
+           <property name="value">
             <double>0.000000000000000</double>
            </property>
           </widget>
          </item>
-         <item row="0" column="2" >
-          <widget class="QDoubleSpinBox" name="doubleSpinBoxEyeY" >
-           <property name="sizePolicy" >
-            <sizepolicy vsizetype="Fixed" hsizetype="Maximum" >
+         <item row="0" column="2">
+          <widget class="QDoubleSpinBox" name="doubleSpinBoxEyeY">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
-           <property name="minimum" >
+           <property name="minimum">
             <double>-9999999999.989999771118164</double>
            </property>
-           <property name="maximum" >
+           <property name="maximum">
             <double>9999999999.989999771118164</double>
            </property>
-           <property name="value" >
+           <property name="value">
             <double>0.000000000000000</double>
            </property>
           </widget>
          </item>
-         <item row="0" column="3" >
-          <widget class="QDoubleSpinBox" name="doubleSpinBoxEyeZ" >
-           <property name="sizePolicy" >
-            <sizepolicy vsizetype="Fixed" hsizetype="Maximum" >
+         <item row="0" column="3">
+          <widget class="QDoubleSpinBox" name="doubleSpinBoxEyeZ">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
-           <property name="minimum" >
+           <property name="minimum">
             <double>-9999999999.989999771118164</double>
            </property>
-           <property name="maximum" >
+           <property name="maximum">
             <double>9999999999.989999771118164</double>
            </property>
-           <property name="value" >
+           <property name="value">
             <double>0.000000000000000</double>
            </property>
           </widget>
          </item>
-         <item row="1" column="0" >
-          <widget class="QLabel" name="label_4" >
-           <property name="text" >
+         <item row="1" column="0">
+          <widget class="QLabel" name="label_4">
+           <property name="text">
             <string>Center:</string>
            </property>
           </widget>
          </item>
-         <item row="1" column="1" >
-          <widget class="QDoubleSpinBox" name="doubleSpinBoxCenterX" >
-           <property name="sizePolicy" >
-            <sizepolicy vsizetype="Fixed" hsizetype="Maximum" >
+         <item row="1" column="1">
+          <widget class="QDoubleSpinBox" name="doubleSpinBoxCenterX">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
-           <property name="minimum" >
+           <property name="minimum">
             <double>-9999999999.989999771118164</double>
            </property>
-           <property name="maximum" >
+           <property name="maximum">
             <double>9999999999.989999771118164</double>
            </property>
-           <property name="value" >
+           <property name="value">
             <double>0.000000000000000</double>
            </property>
           </widget>
          </item>
-         <item row="1" column="2" >
-          <widget class="QDoubleSpinBox" name="doubleSpinBoxCenterY" >
-           <property name="sizePolicy" >
-            <sizepolicy vsizetype="Fixed" hsizetype="Maximum" >
+         <item row="1" column="2">
+          <widget class="QDoubleSpinBox" name="doubleSpinBoxCenterY">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
-           <property name="minimum" >
+           <property name="minimum">
             <double>-9999999999.989999771118164</double>
            </property>
-           <property name="maximum" >
+           <property name="maximum">
             <double>9999999999.989999771118164</double>
            </property>
-           <property name="value" >
+           <property name="value">
             <double>0.000000000000000</double>
            </property>
           </widget>
          </item>
-         <item row="1" column="3" >
-          <widget class="QDoubleSpinBox" name="doubleSpinBoxCenterZ" >
-           <property name="sizePolicy" >
-            <sizepolicy vsizetype="Fixed" hsizetype="Maximum" >
+         <item row="1" column="3">
+          <widget class="QDoubleSpinBox" name="doubleSpinBoxCenterZ">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
-           <property name="minimum" >
+           <property name="minimum">
             <double>-9999999999.989999771118164</double>
            </property>
-           <property name="maximum" >
+           <property name="maximum">
             <double>9999999999.989999771118164</double>
            </property>
-           <property name="value" >
+           <property name="value">
             <double>0.000000000000000</double>
            </property>
           </widget>
          </item>
-         <item row="2" column="0" >
-          <widget class="QLabel" name="label_19" >
-           <property name="text" >
+         <item row="2" column="0">
+          <widget class="QLabel" name="label_19">
+           <property name="text">
             <string>Up:</string>
            </property>
           </widget>
          </item>
-         <item row="2" column="1" >
-          <widget class="QDoubleSpinBox" name="doubleSpinBoxUpX" >
-           <property name="sizePolicy" >
-            <sizepolicy vsizetype="Fixed" hsizetype="Maximum" >
+         <item row="2" column="1">
+          <widget class="QDoubleSpinBox" name="doubleSpinBoxUpX">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
-           <property name="minimum" >
+           <property name="minimum">
             <double>-9999999999.989999771118164</double>
            </property>
-           <property name="maximum" >
+           <property name="maximum">
             <double>9999999999.989999771118164</double>
            </property>
-           <property name="value" >
+           <property name="value">
             <double>0.000000000000000</double>
            </property>
           </widget>
          </item>
-         <item row="2" column="2" >
-          <widget class="QDoubleSpinBox" name="doubleSpinBoxUpY" >
-           <property name="sizePolicy" >
-            <sizepolicy vsizetype="Fixed" hsizetype="Maximum" >
+         <item row="2" column="2">
+          <widget class="QDoubleSpinBox" name="doubleSpinBoxUpY">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
-           <property name="minimum" >
+           <property name="minimum">
             <double>-9999999999.989999771118164</double>
            </property>
-           <property name="maximum" >
+           <property name="maximum">
             <double>9999999999.989999771118164</double>
            </property>
-           <property name="value" >
+           <property name="value">
             <double>0.000000000000000</double>
            </property>
           </widget>
          </item>
-         <item row="2" column="3" >
-          <widget class="QDoubleSpinBox" name="doubleSpinBoxUpZ" >
-           <property name="sizePolicy" >
-            <sizepolicy vsizetype="Fixed" hsizetype="Maximum" >
+         <item row="2" column="3">
+          <widget class="QDoubleSpinBox" name="doubleSpinBoxUpZ">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
-           <property name="minimum" >
+           <property name="minimum">
             <double>-9999999999.989999771118164</double>
            </property>
-           <property name="maximum" >
+           <property name="maximum">
             <double>9999999999.989999771118164</double>
            </property>
-           <property name="value" >
+           <property name="value">
             <double>0.000000000000000</double>
            </property>
           </widget>
          </item>
-         <item row="3" column="0" >
-          <widget class="QLabel" name="label_20" >
-           <property name="text" >
+         <item row="3" column="0">
+          <widget class="QLabel" name="label_20">
+           <property name="text">
             <string>Zoom:</string>
            </property>
           </widget>
          </item>
-         <item row="3" column="1" >
-          <widget class="QDoubleSpinBox" name="doubleSpinBoxZoom" >
-           <property name="sizePolicy" >
-            <sizepolicy vsizetype="Fixed" hsizetype="Maximum" >
+         <item row="3" column="1">
+          <widget class="QDoubleSpinBox" name="doubleSpinBoxZoom">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
-           <property name="decimals" >
+           <property name="decimals">
             <number>4</number>
            </property>
-           <property name="minimum" >
+           <property name="minimum">
             <double>0.000100000000000</double>
            </property>
-           <property name="maximum" >
+           <property name="maximum">
             <double>0.999900000000000</double>
            </property>
-           <property name="singleStep" >
+           <property name="singleStep">
             <double>0.100000000000000</double>
            </property>
-           <property name="value" >
+           <property name="value">
             <double>0.250000000000000</double>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="0" colspan="3">
+          <widget class="QCheckBox" name="checkBoxEnableSelectionMovement">
+           <property name="text">
+            <string>Enable Selection Movement</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
            </property>
           </widget>
          </item>
         </layout>
        </item>
-       <item row="1" column="0" >
+       <item row="1" column="0">
         <spacer>
-         <property name="orientation" >
+         <property name="orientation">
           <enum>Qt::Vertical</enum>
          </property>
-         <property name="sizeHint" >
+         <property name="sizeHint" stdset="0">
           <size>
            <width>20</width>
            <height>221</height>
@@ -281,150 +292,150 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tabLighting" >
-      <attribute name="title" >
+     <widget class="QWidget" name="tabLighting">
+      <attribute name="title">
        <string>Lighting</string>
       </attribute>
-      <layout class="QGridLayout" >
-       <item row="0" column="0" >
-        <widget class="QGroupBox" name="groupBox_4" >
-         <property name="sizePolicy" >
-          <sizepolicy vsizetype="Maximum" hsizetype="Expanding" >
+      <layout class="QGridLayout">
+       <item row="0" column="0">
+        <widget class="QGroupBox" name="groupBox_4">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
-         <property name="title" >
+         <property name="title">
           <string>Light 1:</string>
          </property>
-         <layout class="QGridLayout" >
-          <item row="0" column="0" colspan="2" >
-           <widget class="QCheckBox" name="checkBoxLight1Enabled" >
-            <property name="sizePolicy" >
-             <sizepolicy vsizetype="Fixed" hsizetype="Maximum" >
+         <layout class="QGridLayout">
+          <item row="0" column="0" colspan="2">
+           <widget class="QCheckBox" name="checkBoxLight1Enabled">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
-            <property name="text" >
+            <property name="text">
              <string>Enabled</string>
             </property>
-            <property name="checked" >
+            <property name="checked">
              <bool>true</bool>
             </property>
            </widget>
           </item>
-          <item row="1" column="0" colspan="3" >
-           <widget class="QCheckBox" name="checkBoxLight1EyePosition" >
-            <property name="sizePolicy" >
-             <sizepolicy vsizetype="Fixed" hsizetype="Maximum" >
+          <item row="1" column="0" colspan="3">
+           <widget class="QCheckBox" name="checkBoxLight1EyePosition">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
-            <property name="text" >
+            <property name="text">
              <string>Use Eye Position</string>
             </property>
-            <property name="checked" >
+            <property name="checked">
              <bool>true</bool>
             </property>
            </widget>
           </item>
-          <item row="2" column="0" >
-           <widget class="QLabel" name="label_2" >
-            <property name="sizePolicy" >
-             <sizepolicy vsizetype="Preferred" hsizetype="Maximum" >
+          <item row="2" column="0">
+           <widget class="QLabel" name="label_2">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
-            <property name="text" >
+            <property name="text">
              <string>Position:</string>
             </property>
            </widget>
           </item>
-          <item row="2" column="1" >
-           <widget class="QDoubleSpinBox" name="doubleSpinBoxLight1X" >
-            <property name="enabled" >
+          <item row="2" column="1">
+           <widget class="QDoubleSpinBox" name="doubleSpinBoxLight1X">
+            <property name="enabled">
              <bool>false</bool>
             </property>
-            <property name="sizePolicy" >
-             <sizepolicy vsizetype="Fixed" hsizetype="Maximum" >
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
-            <property name="minimum" >
+            <property name="minimum">
              <double>-9999999999.989999771118164</double>
             </property>
-            <property name="maximum" >
+            <property name="maximum">
              <double>9999999999.989999771118164</double>
             </property>
-            <property name="value" >
+            <property name="value">
              <double>0.000000000000000</double>
             </property>
            </widget>
           </item>
-          <item row="2" column="2" >
-           <widget class="QDoubleSpinBox" name="doubleSpinBoxLight1Y" >
-            <property name="enabled" >
+          <item row="2" column="2">
+           <widget class="QDoubleSpinBox" name="doubleSpinBoxLight1Y">
+            <property name="enabled">
              <bool>false</bool>
             </property>
-            <property name="sizePolicy" >
-             <sizepolicy vsizetype="Fixed" hsizetype="Maximum" >
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
-            <property name="minimum" >
+            <property name="minimum">
              <double>-9999999999.989999771118164</double>
             </property>
-            <property name="maximum" >
+            <property name="maximum">
              <double>9999999999.989999771118164</double>
             </property>
-            <property name="value" >
+            <property name="value">
              <double>0.000000000000000</double>
             </property>
            </widget>
           </item>
-          <item row="2" column="3" >
-           <widget class="QDoubleSpinBox" name="doubleSpinBoxLight1Z" >
-            <property name="enabled" >
+          <item row="2" column="3">
+           <widget class="QDoubleSpinBox" name="doubleSpinBoxLight1Z">
+            <property name="enabled">
              <bool>false</bool>
             </property>
-            <property name="sizePolicy" >
-             <sizepolicy vsizetype="Fixed" hsizetype="Maximum" >
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
-            <property name="minimum" >
+            <property name="minimum">
              <double>-9999999999.989999771118164</double>
             </property>
-            <property name="maximum" >
+            <property name="maximum">
              <double>9999999999.989999771118164</double>
             </property>
-            <property name="value" >
+            <property name="value">
              <double>0.000000000000000</double>
             </property>
            </widget>
           </item>
-          <item row="3" column="0" >
-           <widget class="QLabel" name="label" >
-            <property name="sizePolicy" >
-             <sizepolicy vsizetype="Preferred" hsizetype="Maximum" >
+          <item row="3" column="0">
+           <widget class="QLabel" name="label">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
-            <property name="text" >
+            <property name="text">
              <string>Color:</string>
             </property>
            </widget>
           </item>
-          <item row="3" column="2" colspan="2" >
-           <widget class="ColoredPushButton" name="pushButtonLight1Color" >
-            <property name="text" >
+          <item row="3" column="2" colspan="2">
+           <widget class="ColoredPushButton" name="pushButtonLight1Color">
+            <property name="text">
              <string/>
             </property>
            </widget>
@@ -432,129 +443,129 @@
          </layout>
         </widget>
        </item>
-       <item row="1" column="0" >
-        <widget class="QGroupBox" name="groupBox_5" >
-         <property name="sizePolicy" >
-          <sizepolicy vsizetype="Maximum" hsizetype="Expanding" >
+       <item row="1" column="0">
+        <widget class="QGroupBox" name="groupBox_5">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
-         <property name="title" >
+         <property name="title">
           <string>Light 2:</string>
          </property>
-         <layout class="QGridLayout" >
-          <item row="0" column="0" colspan="3" >
-           <widget class="QCheckBox" name="checkBoxLight2Enabled" >
-            <property name="sizePolicy" >
-             <sizepolicy vsizetype="Fixed" hsizetype="Maximum" >
+         <layout class="QGridLayout">
+          <item row="0" column="0" colspan="3">
+           <widget class="QCheckBox" name="checkBoxLight2Enabled">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
-            <property name="text" >
+            <property name="text">
              <string>Enabled</string>
             </property>
            </widget>
           </item>
-          <item row="1" column="0" >
-           <widget class="QLabel" name="label_5" >
-            <property name="sizePolicy" >
-             <sizepolicy vsizetype="Preferred" hsizetype="Maximum" >
+          <item row="1" column="0">
+           <widget class="QLabel" name="label_5">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
-            <property name="text" >
+            <property name="text">
              <string>Position:</string>
             </property>
            </widget>
           </item>
-          <item row="1" column="1" >
-           <widget class="QDoubleSpinBox" name="doubleSpinBoxLight2X" >
-            <property name="enabled" >
+          <item row="1" column="1">
+           <widget class="QDoubleSpinBox" name="doubleSpinBoxLight2X">
+            <property name="enabled">
              <bool>false</bool>
             </property>
-            <property name="sizePolicy" >
-             <sizepolicy vsizetype="Fixed" hsizetype="Maximum" >
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
-            <property name="minimum" >
+            <property name="minimum">
              <double>-9999999999.989999771118164</double>
             </property>
-            <property name="maximum" >
+            <property name="maximum">
              <double>9999999999.989999771118164</double>
             </property>
-            <property name="value" >
+            <property name="value">
              <double>0.000000000000000</double>
             </property>
            </widget>
           </item>
-          <item row="1" column="2" >
-           <widget class="QDoubleSpinBox" name="doubleSpinBoxLight2Y" >
-            <property name="enabled" >
+          <item row="1" column="2">
+           <widget class="QDoubleSpinBox" name="doubleSpinBoxLight2Y">
+            <property name="enabled">
              <bool>false</bool>
             </property>
-            <property name="sizePolicy" >
-             <sizepolicy vsizetype="Fixed" hsizetype="Maximum" >
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
-            <property name="minimum" >
+            <property name="minimum">
              <double>-9999999999.989999771118164</double>
             </property>
-            <property name="maximum" >
+            <property name="maximum">
              <double>9999999999.989999771118164</double>
             </property>
-            <property name="value" >
+            <property name="value">
              <double>0.000000000000000</double>
             </property>
            </widget>
           </item>
-          <item row="1" column="3" >
-           <widget class="QDoubleSpinBox" name="doubleSpinBoxLight2Z" >
-            <property name="enabled" >
+          <item row="1" column="3">
+           <widget class="QDoubleSpinBox" name="doubleSpinBoxLight2Z">
+            <property name="enabled">
              <bool>false</bool>
             </property>
-            <property name="sizePolicy" >
-             <sizepolicy vsizetype="Fixed" hsizetype="Maximum" >
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
-            <property name="minimum" >
+            <property name="minimum">
              <double>-9999999999.989999771118164</double>
             </property>
-            <property name="maximum" >
+            <property name="maximum">
              <double>9999999999.989999771118164</double>
             </property>
-            <property name="value" >
+            <property name="value">
              <double>0.000000000000000</double>
             </property>
            </widget>
           </item>
-          <item row="2" column="0" >
-           <widget class="QLabel" name="label_6" >
-            <property name="sizePolicy" >
-             <sizepolicy vsizetype="Preferred" hsizetype="Maximum" >
+          <item row="2" column="0">
+           <widget class="QLabel" name="label_6">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
-            <property name="text" >
+            <property name="text">
              <string>Color:</string>
             </property>
            </widget>
           </item>
-          <item row="2" column="2" colspan="2" >
-           <widget class="ColoredPushButton" name="pushButtonLight2Color" >
-            <property name="enabled" >
+          <item row="2" column="2" colspan="2">
+           <widget class="ColoredPushButton" name="pushButtonLight2Color">
+            <property name="enabled">
              <bool>false</bool>
             </property>
-            <property name="text" >
+            <property name="text">
              <string/>
             </property>
            </widget>
@@ -562,28 +573,28 @@
          </layout>
         </widget>
        </item>
-       <item row="2" column="0" >
-        <widget class="QGroupBox" name="groupBox_7" >
-         <property name="sizePolicy" >
-          <sizepolicy vsizetype="Maximum" hsizetype="Expanding" >
+       <item row="2" column="0">
+        <widget class="QGroupBox" name="groupBox_7">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
-         <property name="title" >
+         <property name="title">
           <string>Background:</string>
          </property>
-         <layout class="QGridLayout" >
-          <item row="0" column="0" >
-           <widget class="QLabel" name="label_10" >
-            <property name="text" >
+         <layout class="QGridLayout">
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_10">
+            <property name="text">
              <string>Color:</string>
             </property>
            </widget>
           </item>
-          <item row="0" column="1" >
-           <widget class="ColoredPushButton" name="pushButtonBackgroundColor" >
-            <property name="text" >
+          <item row="0" column="1">
+           <widget class="ColoredPushButton" name="pushButtonBackgroundColor">
+            <property name="text">
              <string/>
             </property>
            </widget>
@@ -591,61 +602,61 @@
          </layout>
         </widget>
        </item>
-       <item row="3" column="0" >
-        <widget class="QGroupBox" name="groupBox_6" >
-         <property name="sizePolicy" >
-          <sizepolicy vsizetype="Maximum" hsizetype="Expanding" >
+       <item row="3" column="0">
+        <widget class="QGroupBox" name="groupBox_6">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
-         <property name="title" >
+         <property name="title">
           <string>Fog:</string>
          </property>
-         <layout class="QGridLayout" >
-          <item row="0" column="0" colspan="2" >
-           <widget class="QCheckBox" name="checkBoxFogEnabled" >
-            <property name="text" >
+         <layout class="QGridLayout">
+          <item row="0" column="0" colspan="2">
+           <widget class="QCheckBox" name="checkBoxFogEnabled">
+            <property name="text">
              <string>Enabled</string>
             </property>
            </widget>
           </item>
-          <item row="1" column="0" >
-           <widget class="QLabel" name="label_7" >
-            <property name="text" >
+          <item row="1" column="0">
+           <widget class="QLabel" name="label_7">
+            <property name="text">
              <string>Density:</string>
             </property>
            </widget>
           </item>
-          <item row="1" column="1" >
-           <widget class="QDoubleSpinBox" name="doubleSpinBoxFogDensity" >
-            <property name="decimals" >
+          <item row="1" column="1">
+           <widget class="QDoubleSpinBox" name="doubleSpinBoxFogDensity">
+            <property name="decimals">
              <number>4</number>
             </property>
-            <property name="minimum" >
+            <property name="minimum">
              <double>0.000000000000000</double>
             </property>
-            <property name="maximum" >
+            <property name="maximum">
              <double>1.000000000000000</double>
             </property>
-            <property name="singleStep" >
+            <property name="singleStep">
              <double>0.010000000000000</double>
             </property>
-            <property name="value" >
+            <property name="value">
              <double>0.000000000000000</double>
             </property>
            </widget>
           </item>
-          <item row="2" column="0" >
-           <widget class="QLabel" name="label_8" >
-            <property name="text" >
+          <item row="2" column="0">
+           <widget class="QLabel" name="label_8">
+            <property name="text">
              <string>Color:</string>
             </property>
            </widget>
           </item>
-          <item row="2" column="1" >
-           <widget class="ColoredPushButton" name="pushButtonFogColor" >
-            <property name="text" >
+          <item row="2" column="1">
+           <widget class="ColoredPushButton" name="pushButtonFogColor">
+            <property name="text">
              <string/>
             </property>
            </widget>
@@ -702,11 +713,11 @@
    <receiver>pushButtonLight2Color</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>52</x>
      <y>199</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>159</x>
      <y>253</y>
     </hint>
@@ -718,11 +729,11 @@
    <receiver>doubleSpinBoxLight2Y</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>71</x>
      <y>189</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>243</x>
      <y>215</y>
     </hint>
@@ -734,11 +745,11 @@
    <receiver>doubleSpinBoxLight2X</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>58</x>
      <y>192</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>145</x>
      <y>217</y>
     </hint>
@@ -750,11 +761,11 @@
    <receiver>doubleSpinBoxLight2Z</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>68</x>
      <y>186</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>353</x>
      <y>222</y>
     </hint>
@@ -766,11 +777,11 @@
    <receiver>doubleSpinBoxLight1X</receiver>
    <slot>setDisabled(bool)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>184</x>
      <y>73</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>169</x>
      <y>104</y>
     </hint>
@@ -782,11 +793,11 @@
    <receiver>doubleSpinBoxLight1Y</receiver>
    <slot>setDisabled(bool)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>123</x>
      <y>74</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>280</x>
      <y>100</y>
     </hint>
@@ -798,11 +809,11 @@
    <receiver>doubleSpinBoxLight1Z</receiver>
    <slot>setDisabled(bool)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>185</x>
      <y>71</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>364</x>
      <y>93</y>
     </hint>
@@ -814,11 +825,11 @@
    <receiver>pushButtonLight1Color</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>61</x>
      <y>73</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>123</x>
      <y>126</y>
     </hint>
@@ -830,11 +841,11 @@
    <receiver>checkBoxLight1EyePosition</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>75</x>
      <y>69</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>115</x>
      <y>70</y>
     </hint>
@@ -846,11 +857,11 @@
    <receiver>doubleSpinBoxFogDensity</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>268</x>
      <y>313</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>350</x>
      <y>334</y>
     </hint>
@@ -862,11 +873,11 @@
    <receiver>pushButtonFogColor</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>251</x>
      <y>306</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>424</x>
      <y>376</y>
     </hint>
