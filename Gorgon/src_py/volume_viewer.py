@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.33  2011/04/14 22:34:47  coleman.r
+#   set default alpha transparancy to 150 instead of 255 (opaque) for volumes -- allows skeletons and atoms to be seen inside an isosurface
+#
 #   Revision 1.32  2010/05/06 21:50:11  ssa1
 #   Fixing performance bug when moving a volume
 #
@@ -232,7 +235,7 @@ class VolumeViewer(BaseViewer):
         info.extend(sessionManager.getRemarkLines(self.shortTitle, "ISO_LEVEL", self.surfaceEditor.ui.histogram.lowerValue()))
         info.extend(sessionManager.getRemarkLines(self.shortTitle, "MAX_ISO_LEVEL", self.surfaceEditor.ui.histogram.higherValue()))
         info.extend(sessionManager.getRemarkLines(self.shortTitle, "SAMPLING_INTERVAL", self.surfaceEditor.getSamplingValue()))
-        info.extend(sessionManager.getRemarkLines(self.shortTitle, "DISPLAY_RADIUS", self.surfaceEditor.ui.horizontalSliderDisplayRadius.value()))
+        info.extend(sessionManager.getRemarkLines(self.shortTitle, "DISPLAY_RADIUS", self.surfaceEditor.ui.spinBoxDisplayRadius.value()))
         info.extend(sessionManager.getRemarkLines(self.shortTitle, "VIEWING_TYPE_SURFACE", self.surfaceEditor.ui.radioButtonIsoSurface.isChecked()))
         info.extend(sessionManager.getRemarkLines(self.shortTitle, "VIEWING_TYPE_SOLID", self.surfaceEditor.ui.radioButtonSolid.isChecked()))
         info.extend(sessionManager.getRemarkLines(self.shortTitle, "VIEWING_TYPE_CROSS_SECTION", self.surfaceEditor.ui.radioButtonCrossSection.isChecked()))
@@ -255,7 +258,7 @@ class VolumeViewer(BaseViewer):
         self.surfaceEditor.ui.checkBoxUseRadius.setCheckState(useDisplayRadius)
                 
         displayRadius = sessionManager.getProperty(sessionProperties, self.shortTitle, "DISPLAY_RADIUS")
-        self.surfaceEditor.ui.horizontalSliderDisplayRadius.setValue(displayRadius)
+        self.surfaceEditor.ui.spinBoxDisplayRadius.setValue(displayRadius)
         
         surfaceViewing = sessionManager.getProperty(sessionProperties, self.shortTitle, "VIEWING_TYPE_SURFACE")
         solidViewing = sessionManager.getProperty(sessionProperties, self.shortTitle, "VIEWING_TYPE_SOLID")
