@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.58  2010/07/19 17:29:02  heiderp
+#   LARGE update.  Added flexible fitting functionality, lots of logic in FlexibleFittingEngine.h
+#
 #   Revision 1.57  2009/12/28 18:53:18  ssa1
 #   Fixing Lights when light0 location is set to follow the eye.
 #
@@ -151,8 +154,8 @@ class Camera(QtOpenGL.QGLWidget):
         self.mouseMovePoint = QtCore.QPoint(0,0)
         self.mouseDownPoint = QtCore.QPoint(0,0)     
         self.mouseLeftPressed = False
-        self.mouseMidPressed = False   
-        self.mouseRightPressed = False        
+        self.mouseMidPressed = False
+        self.mouseRightPressed = False
         
         self.fogDensity = 0.01
         self.fogEnabled = False
@@ -602,13 +605,13 @@ class Camera(QtOpenGL.QGLWidget):
             if (event.buttons() & QtCore.Qt.RightButton):           # Rolling the scene
                 self.setEyeRotation(0, 0, dx)
             else:                   
-                if (event.modifiers() & QtCore.Qt.CTRL) :           # Rotating the selection
+                if self.getSelectionMovementEnabled() and (event.modifiers() & QtCore.Qt.CTRL) :           # Rotating the selection
                     self.rotateSelectedScene(dx, dy)
                 else:                                               # Rotating the scene
                     self.setEyeRotation(-dx, dy, 0)
             
         elif (event.buttons() & QtCore.Qt.RightButton):
-            if (event.modifiers() & QtCore.Qt.CTRL):                 # Translating the selection
+            if self.getSelectionMovementEnabled() and (event.modifiers() & QtCore.Qt.CTRL):                 # Translating the selection
                 self.moveSelectedScene(dx, dy)
             else:                                                   # Translating the scene
                 newDx = vectorDistance(self.eye, self.center) * abs(tan(pi * self.eyeZoom)) * dx / float(self.width())
@@ -714,4 +717,9 @@ class Camera(QtOpenGL.QGLWidget):
 
     def emitMouseClickedRaw(self, mouseHits, event):
         self.emit(QtCore.SIGNAL("mouseClickedRAW(PyQt_PyObject, QMouseEvent)"), mouseHits, event)   
-                             
+	
+    def getSelectionMovementEnabled(self):
+        return self.sceneEditor.ui.checkBoxEnableSelectionMovement.isChecked()
+        
+    def setSelectionMovementEnabled(self, enable = True):
+        self.sceneEditor.ui.checkBoxEnableSelectionMovement.setChecked(enable)
