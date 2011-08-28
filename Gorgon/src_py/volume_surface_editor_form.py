@@ -11,6 +11,9 @@
 #
 # History Log: 
 #   $Log$
+#   Revision 1.22  2010/01/17 18:34:59  ssa1
+#   Histogram for density visualization
+#
 #   Revision 1.21  2010/01/16 16:14:23  ssa1
 #   Disabling wireframe and flat shading with solid and cross section rendering modes (BugID: 64)
 #
@@ -96,7 +99,7 @@ class VolumeSurfaceEditorForm(BaseDockWidget):
         self.connect(self.ui.histogram,QtCore.SIGNAL("higherValueChanged(float)"),self.filterIsoValueMax.setValue)
         
         self.connect(self.ui.comboBoxSamplingInterval, QtCore.SIGNAL("currentIndexChanged(int)"), self.samplingChanged)
-        self.connect(self.ui.horizontalSliderDisplayRadius, QtCore.SIGNAL("valueChanged(int)"),self.filterDisplayRadius.setValue)
+        self.connect(self.ui.spinBoxDisplayRadius, QtCore.SIGNAL("valueChanged(int)"),self.filterDisplayRadius.setValue)
         self.connect(self.filterIsoValue, QtCore.SIGNAL("valueChanged(float)"), self.isoValueChanged )
         self.connect(self.filterIsoValueMax, QtCore.SIGNAL("valueChanged(float)"), self.isoValueMaxChanged )
         self.connect(self.filterDisplayRadius, QtCore.SIGNAL("valueChanged(float)"), self.displayRadiusChanged )
@@ -155,8 +158,8 @@ class VolumeSurfaceEditorForm(BaseDockWidget):
         self.ui.histogram.setLowerValue(defaultDensity)
         self.ui.histogram.setHigherValue(maxDensity)
         maxRadius = int(max(self.viewer.renderer.getMax(0)/2, self.viewer.renderer.getMax(1)/2, self.viewer.renderer.getMax(2)/2));        
-        self.ui.horizontalSliderDisplayRadius.setMaximum(maxRadius)
-        self.ui.horizontalSliderDisplayRadius.setValue(maxRadius)
+        self.ui.spinBoxDisplayRadius.setMaximum(maxRadius)
+        self.ui.spinBoxDisplayRadius.setValue(maxRadius)
         self.viewer.renderer.setSampleInterval(self.getSamplingValue())
         self.viewer.renderer.setSurfaceValue(defaultDensity)
         self.viewer.renderer.setDisplayRadius(maxRadius)
