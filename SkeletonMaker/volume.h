@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.38  2010/02/25 16:31:24  colemanr
+//   copy constructors
+//
 //   Revision 1.37  2010/01/17 18:34:59  ssa1
 //   Histogram for density visualization
 //
@@ -11181,7 +11184,11 @@ namespace wustl_mm {
 			fwrite( &mode, sizeof ( int ), 1, fout ) ;
 			
 			int off[3] = {0,0,0} ;
-			int intv[3] = { getSizeX() - 1, getSizeY() - 1, getSizeZ() - 1 } ;
+
+			// Changed: MX == NX instead of MX = NX -1 (similar for Y and Z) because that is how EMAN2 and UCSF Chimera do it
+			//int intv[3] = { getSizeX() - 1, getSizeY() - 1, getSizeZ() - 1 } ;
+			int intv[3] = {getSizeX(), getSizeY(), getSizeZ()};
+
 			fwrite( off, sizeof( int ), 3, fout ) ;
 			fwrite( intv, sizeof( int ), 3, fout ) ;
 
