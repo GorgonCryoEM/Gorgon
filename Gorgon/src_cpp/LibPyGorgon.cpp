@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.92  2011/04/14 22:41:24  coleman.r
+//   wrapping more Volume methods in Python
+//
 //   Revision 1.91  2010/08/19 23:05:08  chenb
 //   Cleaned and commented ribbon diagram code
 //
@@ -698,7 +701,7 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("loadFile", &CAlphaRenderer::LoadFile)
 		.def("loadSSEHunterFile", &CAlphaRenderer::LoadSSEHunterFile)
 		.def("saveSSEHunterFile", &CAlphaRenderer::SaveSSEHunterFile)
-		.def("getSSEHunterAtoms", &CAlphaRenderer::GetSSEHunterAtoms)
+//		.def("getSSEHunterAtoms", &CAlphaRenderer::GetSSEHunterAtoms)
 		.def("updateTotalScoreSSEHunterAtoms", &CAlphaRenderer::UpdateTotalScoreSSEHunterAtoms)
 		.def("colorSSEHunterAtoms", &CAlphaRenderer::ColorSSEHunterAtoms)
 		.def("saveFile", &CAlphaRenderer::SaveFile)
@@ -937,9 +940,9 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("getPseudoAtom", &SSEHunter::GetPseudoAtom, return_value_policy<reference_existing_object>())
 		.def("setCorrelationScores", &SSEHunter::SetCorrelationScores)
 		.def("setSkeletonScores", &SSEHunter::SetSkeletonScores)
-		.def("setGeometryScores", &SSEHunter::SetGeometryScores)
+//		.def("setGeometryScores", &SSEHunter::SetGeometryScores)
 		.def("getAtomDistances", &SSEHunter::GetAtomDistances)
-		.def("getNeighborhoodVoxels", &SSEHunter::GetNeighborhoodVoxels)
+//		.def("getNeighborhoodVoxels", &SSEHunter::GetNeighborhoodVoxels)
 		.def("getLocalDirectionalityScores", &SSEHunter::GetLocalDirectionalityScores)
 	;
 	

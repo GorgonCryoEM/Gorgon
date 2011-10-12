@@ -11,6 +11,9 @@
 //
 // History Log: 
 //   $Log$
+//   Revision 1.68  2011/08/20 20:03:21  coleman.r
+//   Reverting the algorithm for GetSelectedAtom, fixing a logical error I made in my last commit.
+//
 //   Revision 1.67  2011/06/07 16:03:23  coleman.r
 //   We had been using memory addresses for "names" in glLoadName() in GL_SELECT mode. Now, we are storing atom hash keys in a vector (hash keys are 64 bit) and using the indices of these hash keys as "names". (The indices should be 32 bit and can be cast to GLuint safely.) This avoids a bug on 64 bit systems where memory addresses were too large to fit in a GLuint type. Thus, a 64 bit OS segmentation fault (we previously cast int "names" back to pointers with SelectionToggle()) is avoided.
 //
@@ -248,7 +251,7 @@ namespace wustl_mm {
 			void LoadFile(string fileName);
 			void LoadSSEHunterFile(string fileName);
 			bool SaveSSEHunterFile(string fileName);
-			void GetSSEHunterAtoms(Volume * vol, NonManifoldMesh_Annotated * skeleton, float resolution, float threshold, float correlationCoeff, float skeletonCoeff, float geometryCoeff);
+//			void GetSSEHunterAtoms(Volume * vol, NonManifoldMesh_Annotated * skeleton, float resolution, float threshold, float correlationCoeff, float skeletonCoeff, float geometryCoeff);
 			void UpdateTotalScoreSSEHunterAtoms(float correlationCoeff, float skeletonCoeff, float geometryCoeff);
 			void ColorSSEHunterAtoms();
 			int SelectionObjectCount();
@@ -1322,17 +1325,17 @@ namespace wustl_mm {
 			return PDBReader::WriteAtomPositions(atoms, fileName);			
 		}
 
-		void CAlphaRenderer::GetSSEHunterAtoms(Volume * vol, NonManifoldMesh_Annotated * skeleton, float resolution, float threshold, float correlationCoeff, float skeletonCoeff, float geometryCoeff) {
-			Renderer::LoadFile("");
-			atoms.clear();
-			bonds.clear();
-
-			SSEHunter * hunter = new SSEHunter();
-			atoms = hunter->GetScoredAtoms(vol, skeleton, resolution, threshold, correlationCoeff, skeletonCoeff, geometryCoeff);
-			delete hunter;
-
-			ColorSSEHunterAtoms();
-		}
+//		void CAlphaRenderer::GetSSEHunterAtoms(Volume * vol, NonManifoldMesh_Annotated * skeleton, float resolution, float threshold, float correlationCoeff, float skeletonCoeff, float geometryCoeff) {
+//			Renderer::LoadFile("");
+//			atoms.clear();
+//			bonds.clear();
+//
+//			SSEHunter * hunter = new SSEHunter();
+//			atoms = hunter->GetScoredAtoms(vol, skeleton, resolution, threshold, correlationCoeff, skeletonCoeff, geometryCoeff);
+//			delete hunter;
+//
+//			ColorSSEHunterAtoms();
+//		}
 
 		void CAlphaRenderer::UpdateTotalScoreSSEHunterAtoms(float correlationCoeff, float skeletonCoeff, float geometryCoeff) {
 			for(AtomMapType::iterator i = atoms.begin(); i != atoms.end(); i++) {
