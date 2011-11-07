@@ -1,5 +1,13 @@
 #!/bin/bash
 
+# Get new code and build libpyGORGON.so
+cd ..
+cvs update -d
+cmake .
+#make clean
+make
+cd _buildLinux
+
 #Remove old files in build directory, but keep libpyGORGON.so
 mv ~/Gorgon/lib/libpyGORGON.so ~/
 rm -rf ~/Gorgon
@@ -68,3 +76,9 @@ cp -L /usr/local/lib/python2.5/site-packages/PyQt4/QtCore.so ~/Gorgon/lib/python
 cp -L /usr/local/lib/python2.5/site-packages/PyQt4/QtGui.so ~/Gorgon/lib/python2.5/site-packages/PyQt4/
 cp -L /usr/local/lib/python2.5/site-packages/PyQt4/QtOpenGL.so ~/Gorgon/lib/python2.5/site-packages/PyQt4/
 cp -L /usr/local/lib/python2.5/site-packages/sip* ~/Gorgon/lib/python2.5/site-packages/
+
+cd ~
+GORGON_BINARY_FILENAME=gorgon_2.1.1b_linux_32.tar.bz2
+rm $GORGON_BINARY_FILENAME
+tar -cjvf $GORGON_BINARY_FILENAME ~/Gorgon/*
+scp $GORGON_BINARY_FILENAME coleman.r@imbrium.seas.wustl.edu:/research-www/engineering/gorgon/nightlyUpload/
