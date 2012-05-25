@@ -81,4 +81,4 @@ cd ~
 GORGON_BINARY_FILENAME=gorgon_2.1.1b_linux_32.tar.bz2
 rm $GORGON_BINARY_FILENAME
 tar -cjvf $GORGON_BINARY_FILENAME ~/Gorgon/*
-scp $GORGON_BINARY_FILENAME coleman.r@imbrium.seas.wustl.edu:/research-www/engineering/gorgon/nightlyUpload/
+scp $GORGON_BINARY_FILENAME coleman.r@imbrium.seas.wustl.edu:/project/research-www/gorgon/nightlyUpload/
