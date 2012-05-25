@@ -25,6 +25,4 @@ cd ..\bin\gorgon\
 zip -r -9 gorgon_%VERSION%_%PLATFORM%.zip gorgon_%VERSION%_%PLATFORM%\*
 cd ..\..\source
 
-copy /Y ..\bin\gorgon\gorgon_%VERSION%_%PLATFORM%.zip C:\wwwroot\HomePage\gorgon\resources\
-copy /Y ..\bin\gorgon\gorgon_%VERSION%_%PLATFORM%.zip Z:\web\gorgon\resources\ 
-copy /Y ..\bin\gorgon\gorgon_%VERSION%_%PLATFORM%.zip W:\engineering\gorgon\resources\
+copy /Y ..\bin\gorgon\gorgon_%VERSION%_%PLATFORM%.zip W:\gorgon\resources\
