@@ -56,7 +56,7 @@ namespace python = boost::python;
 
 
 template <class T>
-struct vector_to_python : python::to_python_converter<vector<T>, vector_to_python<T> > {
+struct vector_to_python {
 	static PyObject* convert(vector<T> const& v) {
 		python::list result;
 		for (size_t i = 0; i < v.size(); i++) {
