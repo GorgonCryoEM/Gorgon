@@ -7,6 +7,7 @@ How much of the features offered by Bitbucket do we want to use?
 1. Wiki
 1. Issue tracker
 1. Components, versions, milestones
+1. Code review & pull requests
 1. HipChat or email groups or just emails
 
 Some decisions to make:
