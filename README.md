@@ -15,6 +15,8 @@ Some decisions to make:
 1. Administrators & Developers
 1. Git workflow & branching strategy
 1. Versions for OS, compiler, programming languages for Gorgon development
+1. Transfer Bitbucket account ownership
+1. Transfer Google Docs to Bitbucket snippets
 
 ---
 *Original content*
