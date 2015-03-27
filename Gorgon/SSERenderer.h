@@ -99,7 +99,7 @@ namespace wustl_mm {
 
 			vector<bool> helixFlips;
 			vector<int> selectedHelices;
-			vector < tuple<int,int> > corrs;
+			vector < boost::tuple<int,int> > corrs;
 			vector<int> selectedPDBHelices;
 		};
 
@@ -1164,7 +1164,7 @@ namespace wustl_mm {
 			else
 				corrs.clear();
 			for(int i=0; i < flatCorrespondences.size(); i = i+2){
-				corrs.push_back(tuple<int, int>(flatCorrespondences[i], flatCorrespondences[i+1]));
+				corrs.push_back(boost::tuple<int, int>(flatCorrespondences[i], flatCorrespondences[i+1]));
 			}
 		}
 		void SSERenderer::SetSelectedPDBHelices(vector<int> indices){
