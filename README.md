@@ -18,6 +18,8 @@ Some decisions to make:
 1. Transfer Bitbucket account ownership
 1. Transfer Google Docs to Bitbucket snippets
 
+#Windows build#
+**Boost has binaries for Windows... YAY!**
 ---
 *Original content*
 # README #
