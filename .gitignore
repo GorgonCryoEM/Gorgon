@@ -210,7 +210,6 @@ FakesAssemblies/
 *.pydevproject
 .metadata
 .gradle
-bin/
 tmp/
 *.tmp
 *.bak
