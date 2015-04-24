@@ -3,13 +3,16 @@
  * Implementation of the class UllState
  *
  * Author: P. Foggia
- * $Id$
+ * $Id: ull_state.cc,v 1.1 2006/08/21 19:02:21 ssa1 Exp $
  *-----------------------------------------------------------------*/
 
 
 /*-----------------------------------------------------------------
  * REVISION HISTORY
- *   $Log$
+ *   $Log: ull_state.cc,v $
+ *   Revision 1.1  2006/08/21 19:02:21  ssa1
+ *   Initial checkin
+ *
  *   Revision 1.2  1998/12/19 11:37:29  foggia
  *   Minor changes
  *

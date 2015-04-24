@@ -3,14 +3,17 @@
 // Description:   Has basic vector functions
 
 // CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
+//   $Source: /project/mm/cvs/graphics/ssa1/source/GraphMatch/VectorMath.h,v $
+//   $Revision: 1.8 $
+//   $Date: 2010/07/19 17:38:31 $
+//   $Author: heiderp $
+//   $State: Exp $
 //
 // History Log: 
-//   $Log$
+//   $Log: VectorMath.h,v $
+//   Revision 1.8  2010/07/19 17:38:31  heiderp
+//   Flexible fitting.
+//
 //   Revision 1.7  2008/11/18 18:10:24  ssa1
 //   Changing the scaling functions when doing graph matching to find correspondences
 //

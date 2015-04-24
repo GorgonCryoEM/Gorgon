@@ -3,14 +3,17 @@
 // Description:   Data storage and basic functions on primitive geometric shapes
 
 // CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
+//   $Source: /project/mm/cvs/graphics/ssa1/source/GraphMatch/GeometricShape.h,v $
+//   $Revision: 1.23 $
+//   $Date: 2010/07/19 17:38:31 $
+//   $Author: heiderp $
+//   $State: Exp $
 //
 // History Log: 
-//   $Log$
+//   $Log: GeometricShape.h,v $
+//   Revision 1.23  2010/07/19 17:38:31  heiderp
+//   Flexible fitting.
+//
 //   Revision 1.22  2010/03/05 20:30:21  ssa1
 //   Fixing loading of helices using .SSE files
 //

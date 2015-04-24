@@ -3,14 +3,17 @@
 // Description:   C++ Implementation of SSEHunter
 
 // CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
+//   $Source: /project/mm/cvs/graphics/ssa1/source/ProteinMorph/SSEHunter.h,v $
+//   $Revision: 1.31 $
+//   $Date: 2011/10/12 21:08:47 $
+//   $Author: coleman.r $
+//   $State: Exp $
 //
 // History Log: 
-//   $Log$
+//   $Log: SSEHunter.h,v $
+//   Revision 1.31  2011/10/12 21:08:47  coleman.r
+//   commented out SSEHunter C++ code that is not in use. Some of it has been replaced with Python code in Gorgon/src_py/sse_hunter_engine.py.
+//
 //   Revision 1.30  2011/04/17 00:02:32  coleman.r
 //   some code documentation
 //

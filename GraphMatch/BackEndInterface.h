@@ -3,14 +3,17 @@
 // Description:   An interface to start the graph matching engine.
 
 // CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
+//   $Source: /project/mm/cvs/graphics/ssa1/source/GraphMatch/BackEndInterface.h,v $
+//   $Revision: 1.17 $
+//   $Date: 2009/12/22 01:03:06 $
+//   $Author: schuhs $
+//   $State: Exp $
 //
 // History Log: 
-//   $Log$
+//   $Log: BackEndInterface.h,v $
+//   Revision 1.17  2009/12/22 01:03:06  schuhs
+//   Adding support for beta sheets to the SSE correspondence search algorithm
+//
 //   Revision 1.16  2008/11/25 03:30:12  ssa1
 //   User constraints on finding correspondences (v2)
 //

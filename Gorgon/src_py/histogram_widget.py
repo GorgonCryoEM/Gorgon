@@ -3,14 +3,17 @@
 # Description:   A histogram panel to display histogram based data.
 
 # CVS Meta Information: 
-#   $Source$
-#   $Revision$
-#   $Date$
-#   $Author$
-#   $State$
+#   $Source: /project/mm/cvs/graphics/ssa1/source/Gorgon/src_py/histogram_widget.py,v $
+#   $Revision: 1.1 $
+#   $Date: 2010/01/17 18:34:59 $
+#   $Author: ssa1 $
+#   $State: Exp $
 #
 # History Log: 
-#   $Log$
+#   $Log: histogram_widget.py,v $
+#   Revision 1.1  2010/01/17 18:34:59  ssa1
+#   Histogram for density visualization
+#
 
 from PyQt4 import QtCore, QtGui
 from math import log

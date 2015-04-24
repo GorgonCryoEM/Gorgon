@@ -3,14 +3,17 @@
 // Description:   Storage structure for an attributed relational graph
 
 // CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
+//   $Source: /project/mm/cvs/graphics/ssa1/source/GraphMatch/StandardGraph.h,v $
+//   $Revision: 1.15 $
+//   $Date: 2009/12/22 01:03:06 $
+//   $Author: schuhs $
+//   $State: Exp $
 //
 // History Log: 
-//   $Log$
+//   $Log: StandardGraph.h,v $
+//   Revision 1.15  2009/12/22 01:03:06  schuhs
+//   Adding support for beta sheets to the SSE correspondence search algorithm
+//
 //   Revision 1.14  2009/10/13 18:09:34  ssa1
 //   Refactoring Volume.h
 //

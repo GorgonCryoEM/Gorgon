@@ -3,14 +3,17 @@
 # Description:   Shows the help menus
 
 # CVS Meta Information: 
-#   $Source$
-#   $Revision$
-#   $Date$
-#   $Author$
-#   $State$
+#   $Source: /project/mm/cvs/graphics/ssa1/source/Gorgon/src_py/help_menus.py,v $
+#   $Revision: 1.2 $
+#   $Date: 2010/02/23 21:17:31 $
+#   $Author: ssa1 $
+#   $State: Exp $
 #
 # History Log: 
-#   $Log$
+#   $Log: help_menus.py,v $
+#   Revision 1.2  2010/02/23 21:17:31  ssa1
+#   Changing gorgon website.
+#
 #   Revision 1.1  2008/12/18 15:19:31  ssa1
 #   Moving About Form functionality into HelpMenus
 #

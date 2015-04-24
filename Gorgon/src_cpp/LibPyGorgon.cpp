@@ -3,14 +3,17 @@
 // Description:   Boosts the interfaces required for the python GORGON interface.
 
 // CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
+//   $Source: /project/mm/cvs/graphics/ssa1/source/Gorgon/src_cpp/LibPyGorgon.cpp,v $
+//   $Revision: 1.93 $
+//   $Date: 2011/10/12 21:08:47 $
+//   $Author: coleman.r $
+//   $State: Exp $
 //
 // History Log: 
-//   $Log$
+//   $Log: LibPyGorgon.cpp,v $
+//   Revision 1.93  2011/10/12 21:08:47  coleman.r
+//   commented out SSEHunter C++ code that is not in use. Some of it has been replaced with Python code in Gorgon/src_py/sse_hunter_engine.py.
+//
 //   Revision 1.92  2011/04/14 22:41:24  coleman.r
 //   wrapping more Volume methods in Python
 //
@@ -485,6 +488,7 @@ BOOST_PYTHON_MODULE(libpyGORGON)
 		.def("getInterpolateTransformLocation", &PDBAtom::GetInterpolateTransformLocation)
 		.def("setPrevCAHash", &PDBAtom::SetPrevCAHash)
 		.def("setNextCAHash", &PDBAtom::SetNextCAHash)
+		.def("Print", &PDBAtom::Print)
 	;
 	
 

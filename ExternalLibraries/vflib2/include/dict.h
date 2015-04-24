@@ -3,12 +3,15 @@
  * A simple dictionary, not very efficient,
  * implemented with linked lists.
  * Author: P. Foggia
- * $Id$
+ * $Id: dict.h,v 1.1 2006/08/21 19:02:21 ssa1 Exp $
  ----------------------------------------------------*/
 
 /*----------------------------------------------------
  * REVISION HISTORY
- *   $Log$
+ *   $Log: dict.h,v $
+ *   Revision 1.1  2006/08/21 19:02:21  ssa1
+ *   Initial checkin
+ *
  *   Revision 1.2  1998/12/19 11:35:45  foggia
  *   Minor changes
  *

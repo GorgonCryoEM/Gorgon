@@ -3,14 +3,17 @@
 // Description:   A Priority queue implementation
 
 // CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
+//   $Source: /project/mm/cvs/graphics/ssa1/source/SkeletonMaker/PriorityQueue.h,v $
+//   $Revision: 1.6 $
+//   $Date: 2009/10/13 18:09:34 $
+//   $Author: ssa1 $
+//   $State: Exp $
 //
 // History Log: 
-//   $Log$
+//   $Log: PriorityQueue.h,v $
+//   Revision 1.6  2009/10/13 18:09:34  ssa1
+//   Refactoring Volume.h
+//
 //   Revision 1.5  2008/09/29 16:43:15  ssa1
 //   Adding in CVS meta information
 //

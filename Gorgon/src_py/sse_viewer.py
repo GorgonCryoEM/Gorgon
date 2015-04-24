@@ -3,14 +3,17 @@
 # Description:   A viewer for secondary structure elements 
 
 # CVS Meta Information: 
-#   $Source$
-#   $Revision$
-#   $Date$
-#   $Author$
-#   $State$
+#   $Source: /project/mm/cvs/graphics/ssa1/source/Gorgon/src_py/sse_viewer.py,v $
+#   $Revision: 1.35 $
+#   $Date: 2010/07/19 17:29:02 $
+#   $Author: heiderp $
+#   $State: Exp $
 #
 # History Log: 
-#   $Log$
+#   $Log: sse_viewer.py,v $
+#   Revision 1.35  2010/07/19 17:29:02  heiderp
+#   LARGE update.  Added flexible fitting functionality, lots of logic in FlexibleFittingEngine.h
+#
 #   Revision 1.34  2010/01/17 05:13:36  schuhs
 #   Fixing bug that created an offset between the skeleton and the SSEHunter sheets in the SSE correspondence code
 #

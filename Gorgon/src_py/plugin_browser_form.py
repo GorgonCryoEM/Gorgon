@@ -3,14 +3,17 @@
 # Description:   A dialog box which can be used to browse plugins
 
 # CVS Meta Information: 
-#   $Source$
-#   $Revision$
-#   $Date$
-#   $Author$
-#   $State$
+#   $Source: /project/mm/cvs/graphics/ssa1/source/Gorgon/src_py/plugin_browser_form.py,v $
+#   $Revision: 1.3 $
+#   $Date: 2009/12/24 07:25:07 $
+#   $Author: ssa1 $
+#   $State: Exp $
 #
 # History Log: 
-#   $Log$
+#   $Log: plugin_browser_form.py,v $
+#   Revision 1.3  2009/12/24 07:25:07  ssa1
+#   Refactoring child window behavior.. Using base classes to encapsulate common behavior
+#
 #   Revision 1.2  2009/12/24 05:09:30  ssa1
 #   Refactoring child window behavior.. Using base classes to encapsulate common behavior
 #

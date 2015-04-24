@@ -3,14 +3,17 @@
 # Description:   A pushbutton which instead of displaying text, displays a color 
 
 # CVS Meta Information: 
-#   $Source$
-#   $Revision$
-#   $Date$
-#   $Author$
-#   $State$
+#   $Source: /project/mm/cvs/graphics/ssa1/source/Gorgon/src_py/colored_push_button.py,v $
+#   $Revision: 1.6 $
+#   $Date: 2010/01/15 17:25:07 $
+#   $Author: ssa1 $
+#   $State: Exp $
 #
 # History Log: 
-#   $Log$
+#   $Log: colored_push_button.py,v $
+#   Revision 1.6  2010/01/15 17:25:07  ssa1
+#   Making the alpha channel not affect the color of the button
+#
 #   Revision 1.5  2009/12/24 01:38:53  ssa1
 #   Fixing bug in macos where color dialogs automatically change when camera changes.  Bug ID 4
 #

@@ -3,14 +3,17 @@
 // Description:   Reads volumes in the PTS file format.
 
 // CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
+//   $Source: /project/mm/cvs/graphics/ssa1/source/GraySkeletonCPP/VolumeReaderPTS.h,v $
+//   $Revision: 1.4 $
+//   $Date: 2009/10/13 18:09:34 $
+//   $Author: ssa1 $
+//   $State: Exp $
 //
 // History Log: 
-//   $Log$
+//   $Log: VolumeReaderPTS.h,v $
+//   Revision 1.4  2009/10/13 18:09:34  ssa1
+//   Refactoring Volume.h
+//
 //   Revision 1.3  2009/03/03 22:33:11  ssa1
 //   Point clouds are little gaussians.. (no longer bins)
 //

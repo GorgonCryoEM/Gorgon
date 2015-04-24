@@ -3,14 +3,17 @@
 # Description:   A widget to crop the volume 
 
 # CVS Meta Information: 
-#   $Source$
-#   $Revision$
-#   $Date$
-#   $Author$
-#   $State$
+#   $Source: /project/mm/cvs/graphics/ssa1/source/Gorgon/src_py/volume_crop_form.py,v $
+#   $Revision: 1.3 $
+#   $Date: 2009/12/24 05:09:30 $
+#   $Author: ssa1 $
+#   $State: Exp $
 #
 # History Log: 
-#   $Log$
+#   $Log: volume_crop_form.py,v $
+#   Revision 1.3  2009/12/24 05:09:30  ssa1
+#   Refactoring child window behavior.. Using base classes to encapsulate common behavior
+#
 #   Revision 1.2  2008/11/28 04:36:17  ssa1
 #   Removing error message if pyopengl does not exist.  (To make executable building easier to debug)
 #

@@ -1,0 +1,17 @@
+/CurveDeformer.h/1.3/Thu Jul 29 17:08:37 2010//
+/NonManifoldMesh.h/1.43/Mon Jul 19 17:38:31 2010//
+/NonManifoldMesh2.h/1.2/Mon Mar 16 16:17:34 2009//
+/ProteinMesh.h/1.1/Fri Jan 11 20:37:15 2008//
+/ProteinMorph.cpp/1.22/Thu Jul 22 21:09:07 2010//
+/ProteinMorph.vcproj/1.13/Mon Jul 19 17:38:31 2010//
+/SSECorrespondenceFeature.h/1.1/Wed Aug 26 14:58:55 2009//
+/SSECorrespondenceFinder.h/1.22/Fri Jul 23 18:18:33 2010//
+/SSECorrespondenceNode.h/1.4/Mon Jul 19 17:38:31 2010//
+/SSECorrespondenceSearchNode.h/1.14/Tue Apr 27 21:10:17 2010//
+/SSECorrespondenceSearchNode2.h/1.1/Thu May 06 15:36:23 2010//
+/SSEFlexibleFitter.h/1.3/Tue Oct 13 18:09:34 2009//
+/SSEHunter.h/1.31/Wed Oct 12 21:08:47 2011//
+/SheetGenerator.h/1.2/Tue Dec 08 22:08:29 2009//
+/TriangleMesh.h/1.5/Mon Dec 07 21:34:36 2009//
+/TriangleMeshFace.h/1.2/Mon Mar 16 16:17:34 2009//
+/TriangleMeshVertex.h/1.2/Mon Mar 16 16:17:34 2009//

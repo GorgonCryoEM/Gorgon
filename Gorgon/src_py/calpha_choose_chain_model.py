@@ -3,14 +3,17 @@
 # Description:   Widget that lets the user see what chain models are in memory and select the one to work with
 
 # CVS Meta Information: 
-#   $Source$
-#   $Revision$
-#   $Date$
-#   $Author$
-#   $State$
+#   $Source: /project/mm/cvs/graphics/ssa1/source/Gorgon/src_py/calpha_choose_chain_model.py,v $
+#   $Revision: 1.2 $
+#   $Date: 2009/12/24 07:25:07 $
+#   $Author: ssa1 $
+#   $State: Exp $
 #
 # History Log: 
-#   $Log$
+#   $Log: calpha_choose_chain_model.py,v $
+#   Revision 1.2  2009/12/24 07:25:07  ssa1
+#   Refactoring child window behavior.. Using base classes to encapsulate common behavior
+#
 #   Revision 1.1  2009/03/31 20:08:45  ssa1
 #   Refactoring: Renaming and moving ChooseChainModel to CAlphaChooseChainModel
 #

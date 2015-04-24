@@ -3,14 +3,17 @@
 // Description:   Performs skeletonization of grayscale images
 
 // CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
+//   $Source: /project/mm/cvs/graphics/ssa1/source/GraySkeletonCPP/GrayImageSkeletonizer.h,v $
+//   $Revision: 1.19 $
+//   $Date: 2009/10/13 18:09:34 $
+//   $Author: ssa1 $
+//   $State: Exp $
 //
 // History Log: 
-//   $Log$
+//   $Log: GrayImageSkeletonizer.h,v $
+//   Revision 1.19  2009/10/13 18:09:34  ssa1
+//   Refactoring Volume.h
+//
 //   Revision 1.18  2008/09/29 16:30:15  ssa1
 //   Adding in CVS meta information
 //

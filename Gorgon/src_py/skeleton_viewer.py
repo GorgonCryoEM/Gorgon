@@ -3,14 +3,17 @@
 # Description:   A viewer for skeletons 
 
 # CVS Meta Information: 
-#   $Source$
-#   $Revision$
-#   $Date$
-#   $Author$
-#   $State$
+#   $Source: /project/mm/cvs/graphics/ssa1/source/Gorgon/src_py/skeleton_viewer.py,v $
+#   $Revision: 1.22 $
+#   $Date: 2010/04/04 19:05:54 $
+#   $Author: ssa1 $
+#   $State: Exp $
 #
 # History Log: 
-#   $Log$
+#   $Log: skeleton_viewer.py,v $
+#   Revision 1.22  2010/04/04 19:05:54  ssa1
+#   Fixing misc bugs, and redoing sheet visualization mechanism
+#
 #   Revision 1.21  2009/12/24 07:25:07  ssa1
 #   Refactoring child window behavior.. Using base classes to encapsulate common behavior
 #

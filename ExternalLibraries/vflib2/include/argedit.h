@@ -5,13 +5,16 @@
  * See: argraph.h
  *
  * Author: P. Foggia
- * $Id$
+ * $Id: argedit.h,v 1.1 2006/08/21 19:02:21 ssa1 Exp $
  *-----------------------------------------------------------------*/
 
 
 /*-----------------------------------------------------------------
  * REVISION HISTORY
- *   $Log$
+ *   $Log: argedit.h,v $
+ *   Revision 1.1  2006/08/21 19:02:21  ssa1
+ *   Initial checkin
+ *
  *   Revision 1.4  1998/12/12 12:16:49  foggia
  *   Added a new constructor
  *

@@ -3,14 +3,17 @@
 // Description:   Renderer for rendering secondary structure elements.
 
 // CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
+//   $Source: /project/mm/cvs/graphics/ssa1/source/Gorgon/SSERenderer.h,v $
+//   $Revision: 1.49 $
+//   $Date: 2010/08/19 23:05:08 $
+//   $Author: chenb $
+//   $State: Exp $
 //
 // History Log: 
-//   $Log$
+//   $Log: SSERenderer.h,v $
+//   Revision 1.49  2010/08/19 23:05:08  chenb
+//   Cleaned and commented ribbon diagram code
+//
 //   Revision 1.48  2010/08/13 21:20:16  coleman.r
 //   AutoHelixBuilder changes
 //

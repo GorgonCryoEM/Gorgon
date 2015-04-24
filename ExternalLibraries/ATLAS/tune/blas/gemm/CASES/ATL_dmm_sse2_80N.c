@@ -37,7 +37,7 @@ void ATL_USERMM
 
 {
    /*--- program info ---*/
-   /*  $Revision$  */
+   /*  $Revision: 1.1 $  */
    /*  loadfirst = 'a'  */
    /*  nu = 1  */
    /*  k_loop = 'for'  */
@@ -47,7 +47,7 @@ void ATL_USERMM
    /*  n_cleanup = {}  */
    /*  mu = 4  */
    /*  ku = 8  */
-   /*  rev = '$Revision$'  */
+   /*  rev = '$Revision: 1.1 $'  */
    /*  applyfilter = 0  */
    /*  align_jumps = 0  */
    /*  prec = 'double'  */

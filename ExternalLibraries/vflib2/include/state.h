@@ -5,13 +5,16 @@
  * See: argraph.h 
  *
  * Author: P. Foggia
- * $Id$
+ * $Id: state.h,v 1.1 2006/08/21 19:02:21 ssa1 Exp $
  *-----------------------------------------------------------------*/
 
 
 /*-----------------------------------------------------------------
  * REVISION HISTORY
- *   $Log$
+ *   $Log: state.h,v $
+ *   Revision 1.1  2006/08/21 19:02:21  ssa1
+ *   Initial checkin
+ *
  *   Revision 1.3  1998/09/29 09:50:16  foggia
  *   Ora definisce una classe astratta State, da cui discendono
  *   VFState e UllState

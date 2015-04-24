@@ -1,5 +1,5 @@
 /***************************************
-					$Header$
+					$Header: /project/mm/cvs/graphics/ssa1/source/ExternalLibraries/ATLAS/include/contrib/camm_tpipe.h,v 1.1 2008/01/26 05:56:54 ssa1 Exp $
 
 					
 ***************************************/

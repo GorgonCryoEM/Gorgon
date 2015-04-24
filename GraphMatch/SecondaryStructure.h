@@ -3,14 +3,17 @@
 // Description:   Storage element for a Secondary structure element
 
 // CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
+//   $Source: /project/mm/cvs/graphics/ssa1/source/GraphMatch/SecondaryStructure.h,v $
+//   $Revision: 1.7 $
+//   $Date: 2009/12/22 01:03:06 $
+//   $Author: schuhs $
+//   $State: Exp $
 //
 // History Log: 
-//   $Log$
+//   $Log: SecondaryStructure.h,v $
+//   Revision 1.7  2009/12/22 01:03:06  schuhs
+//   Adding support for beta sheets to the SSE correspondence search algorithm
+//
 //   Revision 1.6  2009/08/26 14:58:55  ssa1
 //   Adding in Flexible fitting clique search
 //

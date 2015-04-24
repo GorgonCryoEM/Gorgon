@@ -5,12 +5,15 @@
  * See: argraph.h
  *
  * Author: P. Foggia
- * $Id$
+ * $Id: gene.h,v 1.1 2006/08/21 19:02:21 ssa1 Exp $
  ----------------------------------------------------*/
 
 /*-----------------------------------------------------------------
  * REVISION HISTORY
- *   $Log$
+ *   $Log: gene.h,v $
+ *   Revision 1.1  2006/08/21 19:02:21  ssa1
+ *   Initial checkin
+ *
  *   Revision 1.2  1998/12/08 13:31:01  foggia
  *   Minor changes
  *

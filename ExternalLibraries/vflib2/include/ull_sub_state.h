@@ -4,13 +4,16 @@
  * Definition of the class UllSubState
  *
  * Author: P. Foggia
- * $Id$
+ * $Id: ull_sub_state.h,v 1.1 2006/08/21 19:02:21 ssa1 Exp $
  *-----------------------------------------------------------------*/
 
 
 /*-----------------------------------------------------------------
  * REVISION HISTORY
- *   $Log$
+ *   $Log: ull_sub_state.h,v $
+ *   Revision 1.1  2006/08/21 19:02:21  ssa1
+ *   Initial checkin
+ *
  *   Revision 1.1  1999/01/06 20:04:04  foggia
  *   Initial revision
  *

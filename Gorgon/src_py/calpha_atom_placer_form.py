@@ -3,14 +3,17 @@
 # Description:   A widget can be used to place c-alpha atoms 
 
 # CVS Meta Information: 
-#   $Source$
-#   $Revision$
-#   $Date$
-#   $Author$
-#   $State$
+#   $Source: /project/mm/cvs/graphics/ssa1/source/Gorgon/src_py/calpha_atom_placer_form.py,v $
+#   $Revision: 1.18 $
+#   $Date: 2009/12/24 07:25:07 $
+#   $Author: ssa1 $
+#   $State: Exp $
 #
 # History Log: 
-#   $Log$
+#   $Log: calpha_atom_placer_form.py,v $
+#   Revision 1.18  2009/12/24 07:25:07  ssa1
+#   Refactoring child window behavior.. Using base classes to encapsulate common behavior
+#
 #   Revision 1.17  2009/08/19 15:24:08  ssa1
 #   Bug Fix: Removing error when loading manual atom placement form without loading a calpha sequence
 #

@@ -3,14 +3,17 @@
 // Description:   Volumetric data definition
 
 // CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
+//   $Source: /project/mm/cvs/graphics/ssa1/source/SkeletonMaker/volume.h,v $
+//   $Revision: 1.39 $
+//   $Date: 2011/09/18 21:59:18 $
+//   $Author: coleman.r $
+//   $State: Exp $
 //
 // History Log: 
-//   $Log$
+//   $Log: volume.h,v $
+//   Revision 1.39  2011/09/18 21:59:18  coleman.r
+//   Volume::toMRCFile() changed to work like EMAN2 and UCSF Chimera. Set MX = NX instead of MX = NX - 1.
+//
 //   Revision 1.38  2010/02/25 16:31:24  colemanr
 //   copy constructors
 //
@@ -59,6 +62,8 @@
 
 #ifndef SKELETON_MAKER_VOLUME_H
 #define SKELETON_MAKER_VOLUME_H
+#ifndef BOOST_MATH_TOOLS_SERIES_INCLUDED
+#define BOOST_MATH_TOOLS_SERIES_INCLUDED
 
 #define MAX_SHEETS 100000
 #define MAX_QUEUELEN 5000000
@@ -11361,5 +11366,5 @@ namespace wustl_mm {
 
 	}
 }
-
+#endif
 #endif

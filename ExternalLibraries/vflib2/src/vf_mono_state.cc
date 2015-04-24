@@ -3,13 +3,16 @@
  * Implementation of the class VFMonoState
  *
  * Author: P. Foggia
- * $Id$
+ * $Id: vf_mono_state.cc,v 1.1 2006/08/21 19:02:21 ssa1 Exp $
  *-----------------------------------------------------------------*/
 
 
 /*-----------------------------------------------------------------
  * REVISION HISTORY
- *   $Log$
+ *   $Log: vf_mono_state.cc,v $
+ *   Revision 1.1  2006/08/21 19:02:21  ssa1
+ *   Initial checkin
+ *
  *   Revision 1.1  1999/01/05 10:29:16  foggia
  *   Initial revision
  *

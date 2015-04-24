@@ -3,14 +3,17 @@
 # Description:   This class creates the QUndoCommand objects for the undo/redo stack.
 
 # CVS Meta Information: 
-#   $Source$
-#   $Revision$
-#   $Date$
-#   $Author$
-#   $State$
+#   $Source: /project/mm/cvs/graphics/ssa1/source/Gorgon/src_py/calpha_structure_editor_command_place_helix.py,v $
+#   $Revision: 1.4 $
+#   $Date: 2009/04/07 19:16:43 $
+#   $Author: ssa1 $
+#   $State: Exp $
 #
 # History Log: 
-#   $Log$
+#   $Log: calpha_structure_editor_command_place_helix.py,v $
+#   Revision 1.4  2009/04/07 19:16:43  ssa1
+#   Bug fixes when starting loop builder without selecting atoms, flipping a helix, adding ca atoms to a helix
+#
 #   Revision 1.3  2009/04/03 19:44:37  ssa1
 #   CAlpha bug fixes
 #

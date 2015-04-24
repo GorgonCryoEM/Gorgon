@@ -5,14 +5,17 @@
 #                position editor, etc.  
 
 # CVS Meta Information: 
-#   $Source$
-#   $Revision$
-#   $Date$
-#   $Author$
-#   $State$
+#   $Source: /project/mm/cvs/graphics/ssa1/source/Gorgon/src_py/calpha_structure_editor.py,v $
+#   $Revision: 1.16 $
+#   $Date: 2010/06/08 22:27:19 $
+#   $Author: ssa1 $
+#   $State: Exp $
 #
 # History Log: 
-#   $Log$
+#   $Log: calpha_structure_editor.py,v $
+#   Revision 1.16  2010/06/08 22:27:19  ssa1
+#   Fixing bug where clicking on a helix in the structure editor pane didnt update the spin boxes in the helix editor.
+#
 #   Revision 1.15  2009/12/27 02:42:10  ssa1
 #   Fixing interactive loop placement bugs
 #

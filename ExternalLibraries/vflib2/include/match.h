@@ -4,13 +4,16 @@
  * Declaration of the match function
  *
  * Author: P. Foggia
- * $Id$
+ * $Id: match.h,v 1.1 2006/08/21 19:02:21 ssa1 Exp $
  *-----------------------------------------------------------------*/
 
 
 /*-----------------------------------------------------------------
  * REVISION HISTORY
- *   $Log$
+ *   $Log: match.h,v $
+ *   Revision 1.1  2006/08/21 19:02:21  ssa1
+ *   Initial checkin
+ *
  *   Revision 1.1  1998/09/29 09:49:48  foggia
  *   Initial revision
  *

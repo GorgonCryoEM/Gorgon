@@ -3,14 +3,17 @@
 // Description:   The base renderer.  This has to be extended by all renderer classes.
 
 // CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
+//   $Source: /project/mm/cvs/graphics/ssa1/source/Gorgon/Renderer.h,v $
+//   $Revision: 1.35 $
+//   $Date: 2010/07/19 17:29:02 $
+//   $Author: heiderp $
+//   $State: Exp $
 //
 // History Log: 
-//   $Log$
+//   $Log: Renderer.h,v $
+//   Revision 1.35  2010/07/19 17:29:02  heiderp
+//   LARGE update.  Added flexible fitting functionality, lots of logic in FlexibleFittingEngine.h
+//
 //   Revision 1.34  2010/06/23 13:02:56  ssa1
 //   Allowing users to reset a flexible fitting if need be.
 //

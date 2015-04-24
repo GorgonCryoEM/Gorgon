@@ -3,14 +3,17 @@
 # Description:   A viewer for volume data 
 
 # CVS Meta Information: 
-#   $Source$
-#   $Revision$
-#   $Date$
-#   $Author$
-#   $State$
+#   $Source: /project/mm/cvs/graphics/ssa1/source/Gorgon/src_py/volume_viewer.py,v $
+#   $Revision: 1.34 $
+#   $Date: 2011/08/28 01:46:18 $
+#   $Author: coleman.r $
+#   $State: Exp $
 #
 # History Log: 
-#   $Log$
+#   $Log: volume_viewer.py,v $
+#   Revision 1.34  2011/08/28 01:46:18  coleman.r
+#   changing the display radius from a slider to a spinbox, saving screen space (good for laptops)
+#
 #   Revision 1.33  2011/04/14 22:34:47  coleman.r
 #   set default alpha transparancy to 150 instead of 255 (opaque) for volumes -- allows skeletons and atoms to be seen inside an isosurface
 #

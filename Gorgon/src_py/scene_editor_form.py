@@ -3,14 +3,17 @@
 # Description:   A dialog box which can be used to modify the visualization options of the scene 
 
 # CVS Meta Information: 
-#   $Source$
-#   $Revision$
-#   $Date$
-#   $Author$
-#   $State$
+#   $Source: /project/mm/cvs/graphics/ssa1/source/Gorgon/src_py/scene_editor_form.py,v $
+#   $Revision: 1.5 $
+#   $Date: 2009/12/24 05:09:30 $
+#   $Author: ssa1 $
+#   $State: Exp $
 #
 # History Log: 
-#   $Log$
+#   $Log: scene_editor_form.py,v $
+#   Revision 1.5  2009/12/24 05:09:30  ssa1
+#   Refactoring child window behavior.. Using base classes to encapsulate common behavior
+#
 #   Revision 1.4  2008/11/06 05:29:04  ssa1
 #   CGI submission milestone for Interactive Skeletonization, and theme support, and fixing (hopefully) mac-os flicker bug
 #

@@ -3,14 +3,17 @@
 // Description:   An engine for interactively creating and modifying c-alpha loops
 
 // CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
+//   $Source: /project/mm/cvs/graphics/ssa1/source/Gorgon/InteractiveLoopBuilderEngine.h,v $
+//   $Revision: 1.6 $
+//   $Date: 2009/12/27 02:53:24 $
+//   $Author: ssa1 $
+//   $State: Exp $
 //
 // History Log: 
-//   $Log$
+//   $Log: InteractiveLoopBuilderEngine.h,v $
+//   Revision 1.6  2009/12/27 02:53:24  ssa1
+//   Fixing interactive loop placement bugs
+//
 //   Revision 1.5  2009/12/27 02:20:30  ssa1
 //   Fixing Interactive loop placement bug where atoms are placed at wrong locations.
 //

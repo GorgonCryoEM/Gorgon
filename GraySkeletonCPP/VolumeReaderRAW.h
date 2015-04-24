@@ -3,14 +3,17 @@
 // Description:   Reads volumes in the RAW file format
 
 // CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
+//   $Source: /project/mm/cvs/graphics/ssa1/source/GraySkeletonCPP/VolumeReaderRAW.h,v $
+//   $Revision: 1.9 $
+//   $Date: 2009/10/13 18:09:34 $
+//   $Author: ssa1 $
+//   $State: Exp $
 //
 // History Log: 
-//   $Log$
+//   $Log: VolumeReaderRAW.h,v $
+//   Revision 1.9  2009/10/13 18:09:34  ssa1
+//   Refactoring Volume.h
+//
 //   Revision 1.8  2008/12/15 22:38:31  ssa1
 //   Adding in support to load RAW volumes
 //

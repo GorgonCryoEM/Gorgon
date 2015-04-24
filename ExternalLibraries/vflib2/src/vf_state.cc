@@ -3,7 +3,7 @@
  * Implementation of the class VFState
  *
  * Author: P. Foggia
- * $Id$
+ * $Id: vf_state.cc,v 1.1 2006/08/21 19:02:21 ssa1 Exp $
  *-----------------------------------------------------------------*/
 
 

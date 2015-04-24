@@ -3,14 +3,17 @@
 // Description:   Storage structure for a node in the graph traversal.
 
 // CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
+//   $Source: /project/mm/cvs/graphics/ssa1/source/GraphMatch/LinkedNode.h,v $
+//   $Revision: 1.16 $
+//   $Date: 2009/12/22 19:00:51 $
+//   $Author: colemanr $
+//   $State: Exp $
 //
 // History Log: 
-//   $Log$
+//   $Log: LinkedNode.h,v $
+//   Revision 1.16  2009/12/22 19:00:51  colemanr
+//   removing extra qualification inside class declaration
+//
 //   Revision 1.15  2009/12/22 01:03:06  schuhs
 //   Adding support for beta sheets to the SSE correspondence search algorithm
 //

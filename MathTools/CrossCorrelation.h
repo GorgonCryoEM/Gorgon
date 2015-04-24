@@ -3,14 +3,17 @@
 // Description:   C++ Implementation of SSEHunter
 
 // CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
+//   $Source: /project/mm/cvs/graphics/ssa1/source/MathTools/CrossCorrelation.h,v $
+//   $Revision: 1.5 $
+//   $Date: 2010/02/27 04:37:02 $
+//   $Author: colemanr $
+//   $State: Exp $
 //
 // History Log: 
-//   $Log$
+//   $Log: CrossCorrelation.h,v $
+//   Revision 1.5  2010/02/27 04:37:02  colemanr
+//   added Mutual Correlation Function (MCF), Mutual Fourier Transform
+//
 //   Revision 1.4  2010/02/15 17:24:40  colemanr
 //   complex number multiplication without function call while calculating CCF; fixed bounds error in out of place CCF
 //

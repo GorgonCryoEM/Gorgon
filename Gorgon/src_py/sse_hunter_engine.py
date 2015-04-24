@@ -3,14 +3,17 @@
 # Description:   An engine which performs SSE Hunter (Scoring of PDB atoms based on how likely it is that they form Secondary Structure Elements)
 
 # CVS Meta Information: 
-#   $Source$
-#   $Revision$
-#   $Date$
-#   $Author$
-#   $State$
+#   $Source: /project/mm/cvs/graphics/ssa1/source/Gorgon/src_py/sse_hunter_engine.py,v $
+#   $Revision: 1.8 $
+#   $Date: 2011/04/15 23:38:32 $
+#   $Author: coleman.r $
+#   $State: Exp $
 #
 # History Log: 
-#   $Log$
+#   $Log: sse_hunter_engine.py,v $
+#   Revision 1.8  2011/04/15 23:38:32  coleman.r
+#   updated score printouts
+#
 #   Revision 1.7  2011/04/14 22:39:31  coleman.r
 #   adding score printouts to compare to SSEHunter in EMAN1 and EMAN2
 #

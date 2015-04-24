@@ -3,14 +3,17 @@
 // Description:   Reads SEQ Files
 
 // CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
+//   $Source: /project/mm/cvs/graphics/ssa1/source/GraphMatch/SEQReader.h,v $
+//   $Revision: 1.14 $
+//   $Date: 2010/01/09 00:07:49 $
+//   $Author: schuhs $
+//   $State: Exp $
 //
 // History Log: 
-//   $Log$
+//   $Log: SEQReader.h,v $
+//   Revision 1.14  2010/01/09 00:07:49  schuhs
+//   SSE correspondence search now works with SEQ files
+//
 //   Revision 1.13  2010/01/08 22:27:34  schuhs
 //   Helix-only correspondence works with SEQ file
 //

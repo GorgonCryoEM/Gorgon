@@ -3,14 +3,17 @@
 // Description:   Performs interactive skeletonization of a volume
 
 // CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
+//   $Source: /project/mm/cvs/graphics/ssa1/source/GraySkeletonCPP/InteractiveSkeletonizer.h,v $
+//   $Revision: 1.27 $
+//   $Date: 2009/10/13 18:09:34 $
+//   $Author: ssa1 $
+//   $State: Exp $
 //
 // History Log: 
-//   $Log$
+//   $Log: InteractiveSkeletonizer.h,v $
+//   Revision 1.27  2009/10/13 18:09:34  ssa1
+//   Refactoring Volume.h
+//
 //   Revision 1.26  2008/11/06 05:29:04  ssa1
 //   CGI submission milestone for Interactive Skeletonization, and theme support, and fixing (hopefully) mac-os flicker bug
 //

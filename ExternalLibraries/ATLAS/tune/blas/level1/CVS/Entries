@@ -1,0 +1,48 @@
+D/ASUM////
+D/AXPBY////
+D/AXPY////
+D/COPY////
+D/CPSC////
+D/DOT////
+D/IAMAX////
+D/NRM2////
+D/ROT////
+D/SCAL////
+D/SET////
+D/SWAP////
+/asumsrch.c/1.1/Sat Jan 26 05:58:45 2008//
+/asumtest.c/1.1/Sat Jan 26 05:58:45 2008//
+/asumtime.c/1.1/Sat Jan 26 05:58:45 2008//
+/axpbysrch.c/1.1/Sat Jan 26 05:58:45 2008//
+/axpbytest.c/1.1/Sat Jan 26 05:58:45 2008//
+/axpbytime.c/1.1/Sat Jan 26 05:58:45 2008//
+/axpysrch.c/1.1/Sat Jan 26 05:58:45 2008//
+/axpytest.c/1.1/Sat Jan 26 05:58:45 2008//
+/axpytime.c/1.1/Sat Jan 26 05:58:45 2008//
+/copysrch.c/1.1/Sat Jan 26 05:58:45 2008//
+/copytest.c/1.1/Sat Jan 26 05:58:45 2008//
+/copytime.c/1.1/Sat Jan 26 05:58:45 2008//
+/cpscsrch.c/1.1/Sat Jan 26 05:58:45 2008//
+/cpsctest.c/1.1/Sat Jan 26 05:58:45 2008//
+/cpsctime.c/1.1/Sat Jan 26 05:58:45 2008//
+/dotsrch.c/1.1/Sat Jan 26 05:58:45 2008//
+/dottest.c/1.1/Sat Jan 26 05:58:45 2008//
+/dottime.c/1.1/Sat Jan 26 05:58:45 2008//
+/iamaxsrch.c/1.1/Sat Jan 26 05:58:45 2008//
+/iamaxtest.c/1.1/Sat Jan 26 05:58:45 2008//
+/iamaxtime.c/1.1/Sat Jan 26 05:58:45 2008//
+/nrm2srch.c/1.1/Sat Jan 26 05:58:45 2008//
+/nrm2test.c/1.1/Sat Jan 26 05:58:45 2008//
+/nrm2time.c/1.1/Sat Jan 26 05:58:45 2008//
+/rotsrch.c/1.1/Sat Jan 26 05:58:45 2008//
+/rottest.c/1.1/Sat Jan 26 05:58:45 2008//
+/rottime.c/1.1/Sat Jan 26 05:58:45 2008//
+/scalsrch.c/1.1/Sat Jan 26 05:58:45 2008//
+/scaltest.c/1.1/Sat Jan 26 05:58:45 2008//
+/scaltime.c/1.1/Sat Jan 26 05:58:45 2008//
+/setsrch.c/1.1/Sat Jan 26 05:58:45 2008//
+/settest.c/1.1/Sat Jan 26 05:58:45 2008//
+/settime.c/1.1/Sat Jan 26 05:58:45 2008//
+/swapsrch.c/1.1/Sat Jan 26 05:58:45 2008//
+/swaptest.c/1.1/Sat Jan 26 05:58:45 2008//
+/swaptime.c/1.1/Sat Jan 26 05:58:45 2008//

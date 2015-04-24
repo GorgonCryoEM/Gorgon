@@ -3,14 +3,17 @@
 // Description:   Reads skeleton files and creates graphs from them.
 
 // CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
+//   $Source: /project/mm/cvs/graphics/ssa1/source/GraphMatch/SkeletonReader.h,v $
+//   $Revision: 1.25 $
+//   $Date: 2010/01/04 20:38:52 $
+//   $Author: ssa1 $
+//   $State: Exp $
 //
 // History Log: 
-//   $Log$
+//   $Log: SkeletonReader.h,v $
+//   Revision 1.25  2010/01/04 20:38:52  ssa1
+//   Removing dependancy on SSE files for helix length calculation.
+//
 //   Revision 1.24  2009/12/22 19:02:41  colemanr
 //   gcc marks vector<vector<double>> as a syntax error... using vector<vector<double> >
 //

@@ -3,14 +3,17 @@
 // Description:   A class for a triangle mesh
 
 // CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
+//   $Source: /project/mm/cvs/graphics/ssa1/source/ProteinMorph/TriangleMesh.h,v $
+//   $Revision: 1.5 $
+//   $Date: 2009/12/07 21:34:36 $
+//   $Author: ssa1 $
+//   $State: Exp $
 //
 // History Log: 
-//   $Log$
+//   $Log: TriangleMesh.h,v $
+//   Revision 1.5  2009/12/07 21:34:36  ssa1
+//   Finding Rotation using SVD, and removing compiler warnings
+//
 //   Revision 1.4  2009/07/15 15:34:21  ssa1
 //   Fixing Macos Compilation issue for template based types used as iterators
 //

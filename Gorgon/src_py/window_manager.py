@@ -3,14 +3,17 @@
 # Description:   A widget that manages all the windows of the main form. 
 
 # CVS Meta Information: 
-#   $Source$
-#   $Revision$
-#   $Date$
-#   $Author$
-#   $State$
+#   $Source: /project/mm/cvs/graphics/ssa1/source/Gorgon/src_py/window_manager.py,v $
+#   $Revision: 1.14 $
+#   $Date: 2009/12/27 00:31:04 $
+#   $Author: ssa1 $
+#   $State: Exp $
 #
 # History Log: 
-#   $Log$
+#   $Log: window_manager.py,v $
+#   Revision 1.14  2009/12/27 00:31:04  ssa1
+#   Fixing weird PyOpenGL bug when working with new PyQT4, and parent window set.
+#
 #   Revision 1.13  2009/12/24 05:09:30  ssa1
 #   Refactoring child window behavior.. Using base classes to encapsulate common behavior
 #
@@ -34,6 +37,7 @@ from volume_viewer import VolumeViewer
 from skeleton_viewer import SkeletonViewer
 from sse_viewer import SSEViewer
 from calpha_viewer import CAlphaViewer
+from calpha_reference_viewer import CAlphaReferenceViewer
 import datetime
 from session_manager import SessionManager
 
@@ -55,7 +59,8 @@ class WindowManager(QtGui.QWidget):
         self.skeletonViewer = SkeletonViewer(self.app)
         self.sseViewer = SSEViewer(self.app)
         self.calphaViewer = CAlphaViewer(self.app)
-        self.mainCamera = Camera([self.calphaViewer, self.sseViewer, self.skeletonViewer, self.volumeViewer], self.app)
+        self.calphaReference = CAlphaReferenceViewer(self.app)
+        self.mainCamera = Camera([self.calphaViewer, self.calphaReference, self.sseViewer, self.skeletonViewer, self.volumeViewer], self.app)
         self.app.mainCamera = self.mainCamera   
         self.app.setCentralWidget(self.mainCamera)
         
@@ -101,6 +106,7 @@ class WindowManager(QtGui.QWidget):
         textLines.extend(self.skeletonViewer.getSessionInfo(sessionManager))
         textLines.extend(self.sseViewer.getSessionInfo(sessionManager))
         textLines.extend(self.calphaViewer.getSessionInfo(sessionManager))
+        # textLines.extend(self.calphaReference.getSessionInfo(sessionManager))
         
         file.writelines(textLines)
         file.close()
@@ -122,6 +128,7 @@ class WindowManager(QtGui.QWidget):
         self.skeletonViewer.loadSessionInfo(sessionManager, propertyDict)
         self.sseViewer.loadSessionInfo(sessionManager, propertyDict)
         self.calphaViewer.loadSessionInfo(sessionManager, propertyDict)
+        # self.calphaReference.loadSessionInfo(sessionManager, propertyDict)
                
         self.mainCamera.loadSessionInfo(sessionManager, propertyDict)
         file.close()
@@ -144,3 +151,5 @@ class WindowManager(QtGui.QWidget):
                 self.sseViewer.unloadData()
             if (self.calphaViewer.loaded) :
                 self.calphaViewer.unloadData()
+            if (self.calphaReference.loaded) :
+                self.calphaReference.unloadData()

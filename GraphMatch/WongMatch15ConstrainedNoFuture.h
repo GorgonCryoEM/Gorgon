@@ -7,14 +7,17 @@
 //				  Contains no future function
 
 // CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
+//   $Source: /project/mm/cvs/graphics/ssa1/source/GraphMatch/WongMatch15ConstrainedNoFuture.h,v $
+//   $Revision: 1.22 $
+//   $Date: 2010/04/04 19:05:51 $
+//   $Author: ssa1 $
+//   $State: Exp $
 //
 // History Log: 
-//   $Log$
+//   $Log: WongMatch15ConstrainedNoFuture.h,v $
+//   Revision 1.22  2010/04/04 19:05:51  ssa1
+//   Fixing misc bugs, and redoing sheet visualization mechanism
+//
 //   Revision 1.21  2010/03/26 19:00:23  schuhs
 //   Adding to the stats presented with results.
 //

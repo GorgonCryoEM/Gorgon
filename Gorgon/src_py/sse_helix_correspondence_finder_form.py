@@ -3,14 +3,17 @@
 # Description:   A widget that can be used to find correspondance between helices 
 
 # CVS Meta Information: 
-#   $Source$
-#   $Revision$
-#   $Date$
-#   $Author$
-#   $State$
+#   $Source: /project/mm/cvs/graphics/ssa1/source/Gorgon/src_py/sse_helix_correspondence_finder_form.py,v $
+#   $Revision: 1.49 $
+#   $Date: 2010/06/17 19:42:38 $
+#   $Author: ssa1 $
+#   $State: Exp $
 #
 # History Log: 
-#   $Log$
+#   $Log: sse_helix_correspondence_finder_form.py,v $
+#   Revision 1.49  2010/06/17 19:42:38  ssa1
+#   Generic method for setting object specific coloring
+#
 #   Revision 1.48  2010/04/04 19:05:54  ssa1
 #   Fixing misc bugs, and redoing sheet visualization mechanism
 #

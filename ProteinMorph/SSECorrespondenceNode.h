@@ -3,14 +3,17 @@
 // Description:   A correspondence node
 
 // CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
+//   $Source: /project/mm/cvs/graphics/ssa1/source/ProteinMorph/SSECorrespondenceNode.h,v $
+//   $Revision: 1.4 $
+//   $Date: 2010/07/19 17:38:31 $
+//   $Author: heiderp $
+//   $State: Exp $
 //
 // History Log: 
-//   $Log$
+//   $Log: SSECorrespondenceNode.h,v $
+//   Revision 1.4  2010/07/19 17:38:31  heiderp
+//   Flexible fitting.
+//
 //   Revision 1.3  2010/04/27 21:10:17  ssa1
 //   Implementing Cost-matrix based SSE Registration and performance optimizations on graph construction
 //
