@@ -205,6 +205,14 @@ FakesAssemblies/
 # Visual Studio 6 workspace options file
 *.opt
 
+# https://github.com/github/gitignore/blob/master/Global/Vim.gitignore
+[._]*.s[a-w][a-z]
+[._]s[a-w][a-z]
+*.un~
+Session.vim
+.netrwhist
+*~
+
 # https://github.com/github/gitignore/blob/master/CMake.gitignore
 CMakeCache.txt
 CMakeFiles
