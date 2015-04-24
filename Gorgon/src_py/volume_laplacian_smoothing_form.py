@@ -3,14 +3,17 @@
 # Description:   A widget can be used to perform laplacian smoothing on a volume 
 
 # CVS Meta Information: 
-#   $Source$
-#   $Revision$
-#   $Date$
-#   $Author$
-#   $State$
+#   $Source: /project/mm/cvs/graphics/ssa1/source/Gorgon/src_py/volume_laplacian_smoothing_form.py,v $
+#   $Revision: 1.1 $
+#   $Date: 2010/03/15 20:21:38 $
+#   $Author: ssa1 $
+#   $State: Exp $
 #
 # History Log: 
-#   $Log$
+#   $Log: volume_laplacian_smoothing_form.py,v $
+#   Revision 1.1  2010/03/15 20:21:38  ssa1
+#   Introducing volume laplacian smoothing
+#
 
 
 from PyQt4 import QtCore, QtGui

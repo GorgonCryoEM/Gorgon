@@ -3,14 +3,17 @@
 # Description:   A widget used to perform manual skeletonization of a volume 
 
 # CVS Meta Information: 
-#   $Source$
-#   $Revision$
-#   $Date$
-#   $Author$
-#   $State$
+#   $Source: /project/mm/cvs/graphics/ssa1/source/Gorgon/src_py/calpha_interactive_loop_builder.py,v $
+#   $Revision: 1.4 $
+#   $Date: 2009/04/07 19:16:43 $
+#   $Author: ssa1 $
+#   $State: Exp $
 #
 # History Log: 
-#   $Log$
+#   $Log: calpha_interactive_loop_builder.py,v $
+#   Revision 1.4  2009/04/07 19:16:43  ssa1
+#   Bug fixes when starting loop builder without selecting atoms, flipping a helix, adding ca atoms to a helix
+#
 #   Revision 1.3  2009/04/04 21:33:23  ssa1
 #   More structure approach for placing cAlpha loops, and helix flip bug fix
 #

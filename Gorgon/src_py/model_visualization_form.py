@@ -3,14 +3,17 @@
 # Description:   A dialog box which can be used to modify the visualization options of a loaded model 
 
 # CVS Meta Information: 
-#   $Source$
-#   $Revision$
-#   $Date$
-#   $Author$
-#   $State$
+#   $Source: /project/mm/cvs/graphics/ssa1/source/Gorgon/src_py/model_visualization_form.py,v $
+#   $Revision: 1.16 $
+#   $Date: 2009/12/24 05:09:30 $
+#   $Author: ssa1 $
+#   $State: Exp $
 #
 # History Log: 
-#   $Log$
+#   $Log: model_visualization_form.py,v $
+#   Revision 1.16  2009/12/24 05:09:30  ssa1
+#   Refactoring child window behavior.. Using base classes to encapsulate common behavior
+#
 #   Revision 1.15  2009/12/24 03:24:52  ssa1
 #   Fixing visualization order when loading dock widgets
 #
@@ -45,7 +48,6 @@ class ModelVisualizationForm(BaseDockWidget):
         self.app = main
         self.viewer = viewer
         self.title = viewer.title + " Visualization Options"
-        
         BaseDockWidget.__init__(self, 
                                 main, 
                                 self.title, 

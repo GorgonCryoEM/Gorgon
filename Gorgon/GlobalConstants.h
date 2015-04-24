@@ -3,14 +3,17 @@
 // Description:   A class for storing the global constants for the GORGON module
 
 // CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
+//   $Source: /project/mm/cvs/graphics/ssa1/source/Gorgon/GlobalConstants.h,v $
+//   $Revision: 1.5 $
+//   $Date: 2008/09/29 16:01:17 $
+//   $Author: ssa1 $
+//   $State: Exp $
 //
 // History Log: 
-//   $Log$
+//   $Log: GlobalConstants.h,v $
+//   Revision 1.5  2008/09/29 16:01:17  ssa1
+//   Adding in CVS meta information
+//
 
 
 #ifndef GORGON_GLOBAL_CONSTANTS_H

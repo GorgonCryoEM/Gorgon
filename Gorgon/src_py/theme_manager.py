@@ -3,14 +3,17 @@
 # Description:   A widget that manages the colors of the application 
 
 # CVS Meta Information: 
-#   $Source$
-#   $Revision$
-#   $Date$
-#   $Author$
-#   $State$
+#   $Source: /project/mm/cvs/graphics/ssa1/source/Gorgon/src_py/theme_manager.py,v $
+#   $Revision: 1.2 $
+#   $Date: 2009/12/24 01:38:53 $
+#   $Author: ssa1 $
+#   $State: Exp $
 #
 # History Log: 
-#   $Log$
+#   $Log: theme_manager.py,v $
+#   Revision 1.2  2009/12/24 01:38:53  ssa1
+#   Fixing bug in macos where color dialogs automatically change when camera changes.  Bug ID 4
+#
 #   Revision 1.1  2008/11/06 05:29:04  ssa1
 #   CGI submission milestone for Interactive Skeletonization, and theme support, and fixing (hopefully) mac-os flicker bug
 #
@@ -71,7 +74,7 @@ class ThemeManager(QtGui.QWidget):
                                 
         return self.colorList[tag]
         
-    def addColor(self, tag, color):    
+    def addColor(self, tag, color):
         if(not(tag in self.colorList) or (self.colorList[tag] != color)):               
            self.colorList[tag] = color
         
@@ -83,5 +86,6 @@ class ThemeManager(QtGui.QWidget):
             self.colorList[tag] = QtGui.QColor.fromRgb(r, g, b, a)      
             
     def emitThemeChanged(self):
+        print "emitThemeChanged"
         self.emit(QtCore.SIGNAL("themeChanged()"))         
     

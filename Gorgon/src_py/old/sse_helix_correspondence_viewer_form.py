@@ -3,14 +3,17 @@
 # Description:   A widget that can be used to view correspondence between helices 
 
 # CVS Meta Information: 
-#   $Source$
-#   $Revision$
-#   $Date$
-#   $Author$
-#   $State$
+#   $Source: /project/mm/cvs/graphics/ssa1/source/Gorgon/src_py/old/sse_helix_correspondence_viewer_form.py,v $
+#   $Revision: 1.1 $
+#   $Date: 2009/11/23 16:36:14 $
+#   $Author: ssa1 $
+#   $State: Exp $
 #
 # History Log: 
-#   $Log$
+#   $Log: sse_helix_correspondence_viewer_form.py,v $
+#   Revision 1.1  2009/11/23 16:36:14  ssa1
+#   Adding in design files
+#
 #   Revision 1.4  2008/11/20 20:21:49  colemanr
 #   changed PDB_FILE_NAME to SEQUENCE_FILE_NAME to work with changes allowing SEQ file use
 #

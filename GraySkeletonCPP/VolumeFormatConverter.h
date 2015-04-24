@@ -3,14 +3,17 @@
 // Description:   Converts the volumes from one data type to another
 
 // CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
+//   $Source: /project/mm/cvs/graphics/ssa1/source/GraySkeletonCPP/VolumeFormatConverter.h,v $
+//   $Revision: 1.23 $
+//   $Date: 2009/10/13 18:09:34 $
+//   $Author: ssa1 $
+//   $State: Exp $
 //
 // History Log: 
-//   $Log$
+//   $Log: VolumeFormatConverter.h,v $
+//   Revision 1.23  2009/10/13 18:09:34  ssa1
+//   Refactoring Volume.h
+//
 //   Revision 1.22  2009/05/14 19:49:57  ssa1
 //   Enabling the .map format
 //

@@ -3,14 +3,17 @@
 // Description:   Reads PDB files.
 
 // CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
+//   $Source: /project/mm/cvs/graphics/ssa1/source/GraphMatch/PDBReader.h,v $
+//   $Revision: 1.21 $
+//   $Date: 2010/04/04 19:05:51 $
+//   $Author: ssa1 $
+//   $State: Exp $
 //
 // History Log: 
-//   $Log$
+//   $Log: PDBReader.h,v $
+//   Revision 1.21  2010/04/04 19:05:51  ssa1
+//   Fixing misc bugs, and redoing sheet visualization mechanism
+//
 //   Revision 1.20  2010/03/25 18:44:23  schuhs
 //   Comment out some console messages that occasionally cause crash
 //

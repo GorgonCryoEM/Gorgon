@@ -3,14 +3,17 @@
 // Description:   A clique based fitting tool which attempts to find semi-rigid correspondence between 2 pairs of secondary structure elements
 
 // CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
+//   $Source: /project/mm/cvs/graphics/ssa1/source/ProteinMorph/SSECorrespondenceFinder.h,v $
+//   $Revision: 1.22 $
+//   $Date: 2010/07/23 18:18:33 $
+//   $Author: heiderp $
+//   $State: Exp $
 //
 // History Log: 
-//   $Log$
+//   $Log: SSECorrespondenceFinder.h,v $
+//   Revision 1.22  2010/07/23 18:18:33  heiderp
+//   Side chains now transform correctly.  PDB helices now color correctly and rigid initialization bug is fixed
+//
 //   Revision 1.21  2010/07/22 21:09:07  heiderp
 //   Minor updates. Mostly commenting and removing extra material from CurveDeformer.h
 //

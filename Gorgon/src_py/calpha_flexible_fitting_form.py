@@ -3,14 +3,17 @@
 # Description:   A widget to fit a calpha backbone to the density
 
 # CVS Meta Information: 
-#   $Source$
-#   $Revision$
-#   $Date$
-#   $Author$
-#   $State$
+#   $Source: /project/mm/cvs/graphics/ssa1/source/Gorgon/src_py/calpha_flexible_fitting_form.py,v $
+#   $Revision: 1.16 $
+#   $Date: 2010/08/19 23:05:08 $
+#   $Author: chenb $
+#   $State: Exp $
 #
 # History Log: 
-#   $Log$
+#   $Log: calpha_flexible_fitting_form.py,v $
+#   Revision 1.16  2010/08/19 23:05:08  chenb
+#   Cleaned and commented ribbon diagram code
+#
 #   Revision 1.15  2010/07/23 18:18:33  heiderp
 #   Side chains now transform correctly.  PDB helices now color correctly and rigid initialization bug is fixed
 #
@@ -65,7 +68,7 @@ from math import pi
 from copy import deepcopy
 
 class CAlphaFlexibleFittingForm(BaseDockWidget, Ui_DialogCAlphaFlexibleFitting):
-        
+
     def __init__(self, main, viewer, parent=None):
         BaseDockWidget.__init__(self, 
                                 main, 
@@ -81,7 +84,7 @@ class CAlphaFlexibleFittingForm(BaseDockWidget, Ui_DialogCAlphaFlexibleFitting):
         self.viewer = viewer
         self.cAlphaViewer = viewer
         self.volumeViewer = self.app.viewers["volume"]
-        self.sseViewer = self.app.viewers["sse"]     
+        self.sseViewer = self.app.viewers["sse"]
         self.rigidDone = False   
         self.createUI()
         self.enableDisableWindowElements()
@@ -89,6 +92,8 @@ class CAlphaFlexibleFittingForm(BaseDockWidget, Ui_DialogCAlphaFlexibleFitting):
         self.chainHelixMapping = {}
         self.invChainHelixMapping = {}
         self.backupPositions = {}
+        self.pushButtonClosestColor.setColor(self.viewer.getClosestDistColor())
+        self.pushButtonFarthestColor.setColor(self.viewer.getFarthestDistColor())
 
         
         
@@ -97,6 +102,12 @@ class CAlphaFlexibleFittingForm(BaseDockWidget, Ui_DialogCAlphaFlexibleFitting):
         self.setupUi(self)    
         self.connect(self.pushButtonLoadHelices, QtCore.SIGNAL("clicked (bool)"), self.loadHelices)
         self.connect(self.pushButtonLoadCAlpha, QtCore.SIGNAL("clicked (bool)"), self.loadBackbone)
+        self.connect(self.pushButtonLoadReference, QtCore.SIGNAL("clicked (bool)"), self.loadReference)
+        # self.connect(self.useHueColorsCheckbox, QtCore.SIGNAL("clicked (bool)"), self.validate)
+        self.connect(self.usePerfectMatchingCheckbox, QtCore.SIGNAL("clicked (bool)"), self.validate)
+        self.connect(self.visualizePairwiseDistanceCheckbox, QtCore.SIGNAL("clicked (bool)"), self.visualizePairwiseDist)
+        self.connect(self.pushButtonClosestColor, QtCore.SIGNAL("colorChanged ()"), self.setClosestColor)
+        self.connect(self.pushButtonFarthestColor, QtCore.SIGNAL("colorChanged ()"), self.setFarthestColor)
         self.connect(self.cAlphaViewer, QtCore.SIGNAL("modelLoaded()"), self.enableDisableWindowElements)
         self.connect(self.cAlphaViewer, QtCore.SIGNAL("modelUnloaded()"), self.enableDisableWindowElements)
         self.connect(self.sseViewer, QtCore.SIGNAL("modelLoaded()"), self.enableDisableWindowElements)
@@ -120,26 +131,58 @@ class CAlphaFlexibleFittingForm(BaseDockWidget, Ui_DialogCAlphaFlexibleFitting):
     def enableDisableWindowElements(self):
         self.pushButtonLoadHelices.setVisible(not self.sseViewer.loaded)
         self.pushButtonLoadCAlpha.setVisible(not self.cAlphaViewer.loaded)
+        self.pushButtonLoadReference.setVisible(not self.cAlphaViewer.refLoaded and self.cAlphaViewer.loaded)
         allLoaded = self.sseViewer.loaded and self.cAlphaViewer.loaded
-        self.tabWidget.setEnabled(allLoaded)
+        self.tabWidget.setEnabled(True)
+        self.tabRigid.setEnabled(self.rigidDone)
         self.tabAlignments.setEnabled(self.rigidDone)
         self.tabFlexibleFit.setEnabled(self.rigidDone)
+        self.tabValidation.setEnabled(True)
         self.pushButtonOk.setEnabled(allLoaded)
         self.pushButtonReset.setEnabled(allLoaded)
 
-    def loadVolume(self, temp):
+    def loadVolume(self):
         self.app.actions.getAction("load_Volume").trigger()
         self.bringToFront()
 
-    def loadHelices(self, temp):
+    def loadHelices(self):
         self.app.actions.getAction("load_SSE_Helix").trigger()
         self.bringToFront()
 
-    def loadBackbone(self, temp):
+    def loadBackbone(self):
         self.app.actions.getAction("load_CAlpha").trigger()
         self.bringToFront()
         self.getBackupCopy()
-        
+
+    def loadReference(self):
+        self.app.actions.getAction("load_CAlpha_ref").trigger()
+        self.bringToFront()
+        self.getBackupCopy()
+
+    def validate(self):
+        self.app.actions.getAction("validate").trigger()
+
+    def visualizePairwiseDist(self):
+        self.app.actions.getAction("visualizePairwiseDist").trigger()
+
+    def setClosestColor(self):
+        if(self.visualizePairwiseDistanceCheckbox.isChecked()):
+            self.app.themes.addColor("Validation" + ":" + "Closest", self.pushButtonClosestColor.color())
+            self.pushButtonClosestColor.setColor(self.viewer.getClosestDistColor())
+            self.pushButtonClosestColor.colorPicker.setColor(self.viewer.getClosestDistColor())
+            self.app.actions.getAction("visualizePairwiseDist").trigger()
+
+    def setFarthestColor(self):
+        if(self.visualizePairwiseDistanceCheckbox.isChecked()):
+            self.app.themes.addColor("Validation" + ":" + "Farthest", self.pushButtonFarthestColor.color())
+            self.pushButtonFarthestColor.setColor(self.viewer.getFarthestDistColor())
+            self.pushButtonFarthestColor.colorPicker.setColor(self.viewer.getFarthestDistColor())
+            self.app.actions.getAction("visualizePairwiseDist").trigger()
+
+    def displayValidationResults(self, hausdorff, RMSD):
+        self.showHasudorffNum.setText(QtCore.QString(str(hausdorff)))
+        self.showRMSDNum.setText(QtCore.QString(str(RMSD)))
+
     def getColor(self, clusterIx, clusterCount):
         seed = clusterIx % 6
         loc =  float(clusterIx/6)/float(max(1,clusterCount/6))

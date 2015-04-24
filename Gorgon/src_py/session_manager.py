@@ -3,14 +3,17 @@
 # Description:   A utility module for string parsing when storing a session
 
 # CVS Meta Information: 
-#   $Source$
-#   $Revision$
-#   $Date$
-#   $Author$
-#   $State$
+#   $Source: /project/mm/cvs/graphics/ssa1/source/Gorgon/src_py/session_manager.py,v $
+#   $Revision: 1.1 $
+#   $Date: 2009/10/05 17:57:37 $
+#   $Author: ssa1 $
+#   $State: Exp $
 #
 # History Log: 
-#   $Log$
+#   $Log: session_manager.py,v $
+#   Revision 1.1  2009/10/05 17:57:37  ssa1
+#   Initial session saving functionality (Request ID:52)
+#
 
 import pickle
 

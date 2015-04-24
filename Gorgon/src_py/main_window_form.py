@@ -3,14 +3,17 @@
 # Description:   The main window of the Gorgon application 
 
 # CVS Meta Information: 
-#   $Source$
-#   $Revision$
-#   $Date$
-#   $Author$
-#   $State$
+#   $Source: /project/mm/cvs/graphics/ssa1/source/Gorgon/src_py/main_window_form.py,v $
+#   $Revision: 1.19 $
+#   $Date: 2010/01/16 17:07:03 $
+#   $Author: ssa1 $
+#   $State: Exp $
 #
 # History Log: 
-#   $Log$
+#   $Log: main_window_form.py,v $
+#   Revision 1.19  2010/01/16 17:07:03  ssa1
+#   Putting in exit confirmation
+#
 #   Revision 1.18  2010/01/04 22:14:23  ssa1
 #   Adding update notifier plugin to check for newer versions of gorgon
 #

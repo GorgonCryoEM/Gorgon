@@ -3,14 +3,17 @@
 # Description:   This manages a single camera, and the scenes which are rendered using this camera 
 
 # CVS Meta Information: 
-#   $Source$
-#   $Revision$
-#   $Date$
-#   $Author$
-#   $State$
+#   $Source: /project/mm/cvs/graphics/ssa1/source/Gorgon/src_py/camera.py,v $
+#   $Revision: 1.59 $
+#   $Date: 2011/08/28 03:05:11 $
+#   $Author: coleman.r $
+#   $State: Exp $
 #
 # History Log: 
-#   $Log$
+#   $Log: camera.py,v $
+#   Revision 1.59  2011/08/28 03:05:11  coleman.r
+#   added checkbox to scene editor widget to set whether selected elements can be translated and rotated with the mouse
+#
 #   Revision 1.58  2010/07/19 17:29:02  heiderp
 #   LARGE update.  Added flexible fitting functionality, lots of logic in FlexibleFittingEngine.h
 #

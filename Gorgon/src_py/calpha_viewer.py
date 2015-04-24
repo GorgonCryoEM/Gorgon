@@ -3,14 +3,17 @@
 # Description:   This viewer displays c-alpha atoms 
 
 # CVS Meta Information: 
-#   $Source$
-#   $Revision$
-#   $Date$
-#   $Author$
-#   $State$
+#   $Source: /project/mm/cvs/graphics/ssa1/source/Gorgon/src_py/calpha_viewer.py,v $
+#   $Revision: 1.65 $
+#   $Date: 2010/08/19 23:05:08 $
+#   $Author: chenb $
+#   $State: Exp $
 #
 # History Log: 
-#   $Log$
+#   $Log: calpha_viewer.py,v $
+#   Revision 1.65  2010/08/19 23:05:08  chenb
+#   Cleaned and commented ribbon diagram code
+#
 #   Revision 1.64  2010/07/27 23:18:58  chenb
 #   Ribbon diagram code now merged with flexible fitting code
 #
@@ -233,7 +236,9 @@ class CAlphaViewer(BaseViewer):
         self.app.themes.addDefaultRGB("C-Alpha:Nitrogen", 0, 0, 255, 255)
         self.app.themes.addDefaultRGB("C-Alpha:Oxygen", 255, 0, 0, 255)
         self.app.themes.addDefaultRGB("C-Alpha:Sulphur", 255, 255, 0, 255)
-        self.app.themes.addDefaultRGB("C-Alpha:BoundingBox", 255, 255, 255, 255)         
+        self.app.themes.addDefaultRGB("C-Alpha:BoundingBox", 255, 255, 255, 255)
+        self.app.themes.addDefaultRGB("Validation:Closest", 0, 255, 0, 255)
+        self.app.themes.addDefaultRGB("Validation:Farthest", 255, 0, 0, 255)
         self.isClosedMesh = False
         self.centerOnRMB = True
         self.selectEnabled = True
@@ -242,8 +247,9 @@ class CAlphaViewer(BaseViewer):
         self.renderer.setDisplayStyle(self.displayStyle)  
         self.main_chain = Chain('', self.app)
         self.structPred = None
+        self.refLoaded = False  # Used because flexible fitting form can't access calphareference in self.app.viewers
         self.createUI()      
-        self.app.viewers["calpha"] = self;
+        self.app.viewers["calpha"] = self
         self.atomsVisible = True
         self.bondsVisible = True
         self.helicesVisible = True
@@ -253,6 +259,7 @@ class CAlphaViewer(BaseViewer):
         #self.ribbonSlices = 10 # the number of slices used to render each segment of a ribbon diagram
         self.initVisualizationOptions(AtomVisualizationForm(self.app, self))
         self.loadedChains = []
+        self.loadedAtoms = []
         self.ribbonMouseMapping = {} 
         self.ribbonMouseMapping[0] = {}   
         self.ribbonMouseMapping[1] = {}
@@ -543,7 +550,8 @@ class CAlphaViewer(BaseViewer):
                     for atomName in chain[i].getAtomNames():
                         atom = chain[i].getAtom(atomName)
                         if atom:
-                            atom.setColor(color.redF(), color.greenF(), color.blueF(), color.alphaF())       
+                            atom.setColor(color.redF(), color.greenF(), color.blueF(), color.alphaF())
+
 
     def setSpecificAtomColor(self, molecule, color):
         for chain in self.loadedChains:
@@ -624,7 +632,13 @@ class CAlphaViewer(BaseViewer):
         return self.app.themes.getColor(self.title + ":" + "Oxygen" )
         
     def getSulphurColor(self):
-        return self.app.themes.getColor(self.title + ":" + "Sulphur" )        
+        return self.app.themes.getColor(self.title + ":" + "Sulphur" )
+
+    def getClosestDistColor(self):
+        return self.app.themes.getColor("Validation:Closest")
+
+    def getFarthestDistColor(self):
+        return self.app.themes.getColor("Validation:Farthest")
             
     def setAtomVisibility(self, visible):
         self.atomsVisible = visible
@@ -713,7 +727,7 @@ class CAlphaViewer(BaseViewer):
         openAct.setStatusTip(self.tr("Load a C-Alpha atom file"))
         self.connect(openAct, QtCore.SIGNAL("triggered()"), self.loadData)
         self.app.actions.addAction("load_CAlpha", openAct)
-        
+
         openSeqAct = QtGui.QAction(self.tr('Se&quence and SSE prediction'), self)
         openSeqAct.setShortcut(self.tr('Ctrl+U'))
         openSeqAct.setStatusTip(self.tr('Load a sequence possibly with SSE predictions'))
@@ -739,6 +753,7 @@ class CAlphaViewer(BaseViewer):
         seqDockAct.setStatusTip(self.tr("Perform partly automated atom placement"))
         seqDockAct.setCheckable(True)
         seqDockAct.setChecked(False)
+
         def showDock():
             loaded = True
             if not self.structPred:
@@ -749,6 +764,7 @@ class CAlphaViewer(BaseViewer):
                 CAlphaSequenceDock.changeDockVisibility(self.app, self, self.structPred, self.main_chain)
         self.connect(seqDockAct, QtCore.SIGNAL("triggered()"), showDock)
         self.app.actions.addAction("seqDock", seqDockAct)
+
     
     def loadSSEHunterData(self, fileName):
         if(self.loaded):
@@ -800,37 +816,44 @@ class CAlphaViewer(BaseViewer):
                     if atom:
                         atom = renderer.addAtom(atom)
                         mychain[i].addAtomObject(atom)
+                        if atom.getName() == "CA":
+                            self.loadedAtoms.append(atom)
                                        
-        self.fileName = QtGui.QFileDialog.getOpenFileName(self, self.tr("Open Data"), "", 
-                            self.tr('Atom Positions (*.pdb)\nFASTA (*.fas *.fa *.fasta)'))
-        fileNameTemp = self.fileName
-        self.whichChainID = None
-        filename = unicode(self.fileName)
-        if filename.split('.')[-1].lower() == 'pdb':
-            dlg = CAlphaChooseChainToLoadForm(unicode(self.fileName))
-            if dlg.exec_():
-                self.whichChainID = dlg.whichChainID
-                if not self.fileName.isEmpty():
-                    if(self.loaded):
-                        self.unloadData()
-                        
-                    self.fileName = fileNameTemp
-                    
-                    if self.whichChainID == 'ALL':
-                        mychainKeys = Chain.loadAllChains(str(self.fileName), qparent=self.app)
-                        for chainKey in mychainKeys:
-                            setupChain(Chain.getChain(chainKey))
-                    else:
-                        mychain = Chain.load(str(self.fileName), qparent=self.app, whichChainID = self.whichChainID)
-                        setupChain(mychain)
-        
-                    if not self.loaded:
-                        self.dirty = False
-                        self.loaded = True
-                        self.setAtomColorsAndVisibility(self.displayStyle)                        
-                        self.emitModelLoadedPreDraw()
-                        self.emitModelLoaded()
-                        self.emitViewerSetCenter()
+        # self.fileName = QtGui.QFileDialog.getOpenFileName(self, self.tr("Open Data"), "",
+        #                     self.tr('Atom Positions (*.pdb)\nFASTA (*.fas *.fa *.fasta)'))
+
+        dialog = QtGui.QFileDialog(self)
+        dialog.setWindowTitle(self.tr('Open Data'))
+        dialog.setNameFilter(self.tr('Atom Positions (*.pdb)\nFASTA (*.fas *.fa *.fasta)'))
+        dialog.setFileMode(QtGui.QFileDialog.ExistingFile)
+        if dialog.exec_() == QtGui.QDialog.Accepted:
+            self.fileName = dialog.selectedFiles()[0]
+            fileNameTemp = self.fileName
+            self.whichChainID = None
+            filename = unicode(self.fileName)
+            if filename.split('.')[-1].lower() == 'pdb':
+                dlg = CAlphaChooseChainToLoadForm(unicode(self.fileName))
+                if dlg.exec_():
+                    self.whichChainID = dlg.whichChainID
+                    if not self.fileName.isEmpty():
+                        if(self.loaded):
+                            self.unloadData()
+                        self.fileName = fileNameTemp
+                        if self.whichChainID == 'ALL':
+                            mychainKeys = Chain.loadAllChains(str(self.fileName), qparent=self.app)
+                            for chainKey in mychainKeys:
+                                setupChain(Chain.getChain(chainKey))
+                        else:
+                            mychain = Chain.load(str(self.fileName), qparent=self.app, whichChainID = self.whichChainID)
+                            setupChain(mychain)
+                        if not self.loaded:
+                            self.dirty = False
+                            self.loaded = True
+                            self.setAtomColorsAndVisibility(self.displayStyle)
+                            self.emitModelLoadedPreDraw()
+                            self.emitModelLoaded()
+                            self.emitViewerSetCenter()
+
     
     def unloadData(self):
         #overwriting the function in base viewer

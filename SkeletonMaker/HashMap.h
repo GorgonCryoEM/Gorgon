@@ -3,14 +3,17 @@
 // Description:   A Hash Map implementation
 
 // CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
+//   $Source: /project/mm/cvs/graphics/ssa1/source/SkeletonMaker/HashMap.h,v $
+//   $Revision: 1.4 $
+//   $Date: 2009/10/13 18:09:34 $
+//   $Author: ssa1 $
+//   $State: Exp $
 //
 // History Log: 
-//   $Log$
+//   $Log: HashMap.h,v $
+//   Revision 1.4  2009/10/13 18:09:34  ssa1
+//   Refactoring Volume.h
+//
 //   Revision 1.3  2008/09/29 16:43:15  ssa1
 //   Adding in CVS meta information
 //

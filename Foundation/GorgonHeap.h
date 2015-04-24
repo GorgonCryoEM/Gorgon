@@ -3,14 +3,17 @@
 // Description:   A class for storing a Heap ADT
 
 // CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
+//   $Source: /project/mm/cvs/graphics/ssa1/source/Foundation/GorgonHeap.h,v $
+//   $Revision: 1.3 $
+//   $Date: 2010/01/08 21:17:45 $
+//   $Author: schuhs $
+//   $State: Exp $
 //
 // History Log: 
-//   $Log$
+//   $Log: GorgonHeap.h,v $
+//   Revision 1.3  2010/01/08 21:17:45  schuhs
+//   Using GorgonPriorityQueue instead of PriorityQueue
+//
 //   Revision 1.2  2009/12/21 22:03:32  ssa1
 //   Checking in FFTW windows binaries
 //

@@ -3,14 +3,17 @@
 # Description:   A widget which paints itself based on the specified color 
 
 # CVS Meta Information: 
-#   $Source$
-#   $Revision$
-#   $Date$
-#   $Author$
-#   $State$
+#   $Source: /project/mm/cvs/graphics/ssa1/source/Gorgon/src_py/colored_widget.py,v $
+#   $Revision: 1.3 $
+#   $Date: 2008/06/18 18:15:41 $
+#   $Author: ssa1 $
+#   $State: Exp $
 #
 # History Log: 
-#   $Log$
+#   $Log: colored_widget.py,v $
+#   Revision 1.3  2008/06/18 18:15:41  ssa1
+#   Adding in CVS meta data
+#
 
 from PyQt4 import QtCore, QtGui
 

@@ -3,14 +3,17 @@
 # Description:   The base class for a viewable scene. 
 
 # CVS Meta Information: 
-#   $Source$
-#   $Revision$
-#   $Date$
-#   $Author$
-#   $State$
+#   $Source: /project/mm/cvs/graphics/ssa1/source/Gorgon/src_py/base_viewer.py,v $
+#   $Revision: 1.66 $
+#   $Date: 2010/07/19 17:29:02 $
+#   $Author: heiderp $
+#   $State: Exp $
 #
 # History Log: 
-#   $Log$
+#   $Log: base_viewer.py,v $
+#   Revision 1.66  2010/07/19 17:29:02  heiderp
+#   LARGE update.  Added flexible fitting functionality, lots of logic in FlexibleFittingEngine.h
+#
 #   Revision 1.65  2010/06/08 22:00:03  ssa1
 #   Fixing performance issue where changing color took time.
 #

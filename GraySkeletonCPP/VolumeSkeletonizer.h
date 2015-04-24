@@ -3,14 +3,17 @@
 // Description:   Performs skeletonization on a grayscale volume
 
 // CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
+//   $Source: /project/mm/cvs/graphics/ssa1/source/GraySkeletonCPP/VolumeSkeletonizer.h,v $
+//   $Revision: 1.41 $
+//   $Date: 2009/10/13 18:09:34 $
+//   $Author: ssa1 $
+//   $State: Exp $
 //
 // History Log: 
-//   $Log$
+//   $Log: VolumeSkeletonizer.h,v $
+//   Revision 1.41  2009/10/13 18:09:34  ssa1
+//   Refactoring Volume.h
+//
 //   Revision 1.40  2009/09/10 23:44:56  ssa1
 //   Allowing the option of preserving the earlier skeleton when performing grayscale skeletonization.. (Leads to better skeletons)
 //

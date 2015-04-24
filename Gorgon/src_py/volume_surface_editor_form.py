@@ -3,14 +3,17 @@
 # Description:   A widget to alter the surface properties of a volume 
 
 # CVS Meta Information: 
-#   $Source$
-#   $Revision$
-#   $Date$
-#   $Author$
-#   $State$
+#   $Source: /project/mm/cvs/graphics/ssa1/source/Gorgon/src_py/volume_surface_editor_form.py,v $
+#   $Revision: 1.23 $
+#   $Date: 2011/08/28 01:46:18 $
+#   $Author: coleman.r $
+#   $State: Exp $
 #
 # History Log: 
-#   $Log$
+#   $Log: volume_surface_editor_form.py,v $
+#   Revision 1.23  2011/08/28 01:46:18  coleman.r
+#   changing the display radius from a slider to a spinbox, saving screen space (good for laptops)
+#
 #   Revision 1.22  2010/01/17 18:34:59  ssa1
 #   Histogram for density visualization
 #

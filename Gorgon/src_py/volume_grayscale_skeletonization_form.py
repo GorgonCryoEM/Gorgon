@@ -3,14 +3,17 @@
 # Description:   A widget used to perform grayscale skeletonization on a volume 
 
 # CVS Meta Information: 
-#   $Source$
-#   $Revision$
-#   $Date$
-#   $Author$
-#   $State$
+#   $Source: /project/mm/cvs/graphics/ssa1/source/Gorgon/src_py/volume_grayscale_skeletonization_form.py,v $
+#   $Revision: 1.5 $
+#   $Date: 2009/12/24 07:25:07 $
+#   $Author: ssa1 $
+#   $State: Exp $
 #
 # History Log: 
-#   $Log$
+#   $Log: volume_grayscale_skeletonization_form.py,v $
+#   Revision 1.5  2009/12/24 07:25:07  ssa1
+#   Refactoring child window behavior.. Using base classes to encapsulate common behavior
+#
 #   Revision 1.4  2009/09/10 23:44:56  ssa1
 #   Allowing the option of preserving the earlier skeleton when performing grayscale skeletonization.. (Leads to better skeletons)
 #

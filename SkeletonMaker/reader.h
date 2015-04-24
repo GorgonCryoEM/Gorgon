@@ -3,14 +3,17 @@
 // Description:   Reading routines for volumetric data
 
 // CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
+//   $Source: /project/mm/cvs/graphics/ssa1/source/SkeletonMaker/reader.h,v $
+//   $Revision: 1.18 $
+//   $Date: 2011/04/14 22:21:14 $
+//   $Author: coleman.r $
+//   $State: Exp $
 //
 // History Log: 
-//   $Log$
+//   $Log: reader.h,v $
+//   Revision 1.18  2011/04/14 22:21:14  coleman.r
+//   fixing MRCReader and InvMRCReader to calculate spacing (Anstroms per pixel) the same way as EMAN2 and (according to my test files) UCSF Chimera
+//
 //   Revision 1.17  2009/11/02 19:49:06  colemanr
 //   use <string> with Visual Studio and <cstring> otherwise
 //

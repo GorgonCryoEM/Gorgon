@@ -3,14 +3,17 @@
 # Description:   A dialog box which can be used to modify the visualization options of a loaded atomic model 
 
 # CVS Meta Information: 
-#   $Source$
-#   $Revision$
-#   $Date$
-#   $Author$
-#   $State$
+#   $Source: /project/mm/cvs/graphics/ssa1/source/Gorgon/src_py/atom_visualization_form.py,v $
+#   $Revision: 1.4 $
+#   $Date: 2010/08/19 23:05:08 $
+#   $Author: chenb $
+#   $State: Exp $
 #
 # History Log: 
-#   $Log$
+#   $Log: atom_visualization_form.py,v $
+#   Revision 1.4  2010/08/19 23:05:08  chenb
+#   Cleaned and commented ribbon diagram code
+#
 #   Revision 1.3  2010/07/27 23:18:58  chenb
 #   Ribbon diagram code now merged with flexible fitting code
 #

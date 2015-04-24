@@ -3,14 +3,17 @@
 // Description:   A storage class for a list of images
 
 // CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
+//   $Source: /project/mm/cvs/graphics/ssa1/source/GraySkeletonCPP/GrayImageList.h,v $
+//   $Revision: 1.7 $
+//   $Date: 2008/09/29 16:30:15 $
+//   $Author: ssa1 $
+//   $State: Exp $
 //
 // History Log: 
-//   $Log$
+//   $Log: GrayImageList.h,v $
+//   Revision 1.7  2008/09/29 16:30:15  ssa1
+//   Adding in CVS meta information
+//
 
 #ifndef GRAYSKELETONCPP_GRAY_IMAGE_LIST_H
 #define GRAYSKELETONCPP_GRAY_IMAGE_LIST_H

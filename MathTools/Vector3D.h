@@ -3,14 +3,17 @@
 // Description:   A class for instantiating a set of vector classes, and implementing their converters
 
 // CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
+//   $Source: /project/mm/cvs/graphics/ssa1/source/MathTools/Vector3D.h,v $
+//   $Revision: 1.8 $
+//   $Date: 2009/12/07 05:00:52 $
+//   $Author: ssa1 $
+//   $State: Exp $
 //
 // History Log: 
-//   $Log$
+//   $Log: Vector3D.h,v $
+//   Revision 1.8  2009/12/07 05:00:52  ssa1
+//   Adding in Matrix functionality for Singular Value Decomposition
+//
 //   Revision 1.7  2008/10/14 14:59:33  ssa1
 //   Adding in sketching mode for interactive skeletonization
 //

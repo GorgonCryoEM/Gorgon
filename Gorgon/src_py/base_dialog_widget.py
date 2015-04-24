@@ -3,14 +3,17 @@
 # Description:   A base class for dialog boxes triggered through an action
 
 # CVS Meta Information: 
-#   $Source$
-#   $Revision$
-#   $Date$
-#   $Author$
-#   $State$
+#   $Source: /project/mm/cvs/graphics/ssa1/source/Gorgon/src_py/base_dialog_widget.py,v $
+#   $Revision: 1.2 $
+#   $Date: 2009/12/24 07:25:07 $
+#   $Author: ssa1 $
+#   $State: Exp $
 #
 # History Log: 
-#   $Log$
+#   $Log: base_dialog_widget.py,v $
+#   Revision 1.2  2009/12/24 07:25:07  ssa1
+#   Refactoring child window behavior.. Using base classes to encapsulate common behavior
+#
 #   Revision 1.1  2009/12/24 05:09:30  ssa1
 #   Refactoring child window behavior.. Using base classes to encapsulate common behavior
 #

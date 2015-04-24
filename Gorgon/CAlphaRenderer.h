@@ -3,14 +3,17 @@
 // Description:   Rendering engine responsible for rendering C-Alpha atoms.
 
 // CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
+//   $Source: /project/mm/cvs/graphics/ssa1/source/Gorgon/CAlphaRenderer.h,v $
+//   $Revision: 1.69 $
+//   $Date: 2011/10/12 21:08:47 $
+//   $Author: coleman.r $
+//   $State: Exp $
 //
 // History Log: 
-//   $Log$
+//   $Log: CAlphaRenderer.h,v $
+//   Revision 1.69  2011/10/12 21:08:47  coleman.r
+//   commented out SSEHunter C++ code that is not in use. Some of it has been replaced with Python code in Gorgon/src_py/sse_hunter_engine.py.
+//
 //   Revision 1.68  2011/08/20 20:03:21  coleman.r
 //   Reverting the algorithm for GetSelectedAtom, fixing a logical error I made in my last commit.
 //

@@ -3,14 +3,17 @@
 // Description:   A data structure to store PDB Bond information
 
 // CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
+//   $Source: /project/mm/cvs/graphics/ssa1/source/GraphMatch/PDBBond.h,v $
+//   $Revision: 1.3 $
+//   $Date: 2008/09/29 16:19:30 $
+//   $Author: ssa1 $
+//   $State: Exp $
 //
 // History Log: 
-//   $Log$
+//   $Log: PDBBond.h,v $
+//   Revision 1.3  2008/09/29 16:19:30  ssa1
+//   Adding in CVS meta information
+//
 
 
 #ifndef GRAPH_MATCH_PDB_BOND_H

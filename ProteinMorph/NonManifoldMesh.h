@@ -3,14 +3,17 @@
 // Description:   A class for a non-manifold mesh.
 
 // CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
+//   $Source: /project/mm/cvs/graphics/ssa1/source/ProteinMorph/NonManifoldMesh.h,v $
+//   $Revision: 1.43 $
+//   $Date: 2010/07/19 17:38:31 $
+//   $Author: heiderp $
+//   $State: Exp $
 //
 // History Log: 
-//   $Log$
+//   $Log: NonManifoldMesh.h,v $
+//   Revision 1.43  2010/07/19 17:38:31  heiderp
+//   Flexible fitting.
+//
 //   Revision 1.42  2010/04/04 19:05:51  ssa1
 //   Fixing misc bugs, and redoing sheet visualization mechanism
 //

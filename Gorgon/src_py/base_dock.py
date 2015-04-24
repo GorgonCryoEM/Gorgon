@@ -3,14 +3,17 @@
 # Description:   A base class for dock widgets
 
 # CVS Meta Information: 
-#   $Source$
-#   $Revision$
-#   $Date$
-#   $Author$
-#   $State$
+#   $Source: /project/mm/cvs/graphics/ssa1/source/Gorgon/src_py/base_dock.py,v $
+#   $Revision: 1.2 $
+#   $Date: 2009/12/24 21:53:49 $
+#   $Author: ssa1 $
+#   $State: Exp $
 #
 # History Log: 
-#   $Log$
+#   $Log: base_dock.py,v $
+#   Revision 1.2  2009/12/24 21:53:49  ssa1
+#   Giving back color control to the SSE Visualization options form when SSE Correspondence engine is not running (Bug ID: 58)
+#
 #   Revision 1.1  2009/12/24 19:37:36  ssa1
 #   Refactoring child window behavior.. Using base classes to encapsulate common behavior
 

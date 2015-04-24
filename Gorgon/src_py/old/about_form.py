@@ -3,14 +3,17 @@
 # Description:   A utility class which hooks up events for a form which displays information about Gorgon. 
 
 # CVS Meta Information: 
-#   $Source$
-#   $Revision$
-#   $Date$
-#   $Author$
-#   $State$
+#   $Source: /project/mm/cvs/graphics/ssa1/source/Gorgon/src_py/old/about_form.py,v $
+#   $Revision: 1.1 $
+#   $Date: 2009/11/23 16:36:14 $
+#   $Author: ssa1 $
+#   $State: Exp $
 #
 # History Log: 
-#   $Log$
+#   $Log: about_form.py,v $
+#   Revision 1.1  2009/11/23 16:36:14  ssa1
+#   Adding in design files
+#
 #   Revision 1.15  2008/12/17 16:00:04  ssa1
 #   Changing Version information for next public release
 #

@@ -3,14 +3,17 @@
 // Description:   A dummy CPP file for the Protein Morph Module.
 
 // CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
+//   $Source: /project/mm/cvs/graphics/ssa1/source/ProteinMorph/ProteinMorph.cpp,v $
+//   $Revision: 1.22 $
+//   $Date: 2010/07/22 21:09:07 $
+//   $Author: heiderp $
+//   $State: Exp $
 //
 // History Log: 
-//   $Log$
+//   $Log: ProteinMorph.cpp,v $
+//   Revision 1.22  2010/07/22 21:09:07  heiderp
+//   Minor updates. Mostly commenting and removing extra material from CurveDeformer.h
+//
 //   Revision 1.21  2010/07/19 17:38:31  heiderp
 //   Flexible fitting.
 //

@@ -1,0 +1,1 @@
+/usr/bin/c++  -fPIC  -Wall    -shared -Wl,-soname,libpyGORGON.so -o CMakeFiles/CMakeRelink.dir/libpyGORGON.so CMakeFiles/pyGORGON.dir/Gorgon/src_cpp/LibPyGorgon.cpp.o -lGL -lGLU -lglut -lboost_python -lpython2.7 -lfftw3f -lm 

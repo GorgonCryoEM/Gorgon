@@ -3,14 +3,17 @@
 // Description:   A dummy cpp file for the FOUNDATION module.
 
 // CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
+//   $Source: /project/mm/cvs/graphics/ssa1/source/Foundation/Foundation.cpp,v $
+//   $Revision: 1.15 $
+//   $Date: 2009/12/15 04:26:15 $
+//   $Author: ssa1 $
+//   $State: Exp $
 //
 // History Log: 
-//   $Log$
+//   $Log: Foundation.cpp,v $
+//   Revision 1.15  2009/12/15 04:26:15  ssa1
+//   Using GorgonPriorityQueue instead of PriorityQueue
+//
 //   Revision 1.14  2009/12/14 22:11:21  ssa1
 //   Adding in abstract data structures
 //

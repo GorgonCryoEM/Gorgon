@@ -3,14 +3,17 @@
 // Description:   A class that acts as a wrapper to the Matlab libraries
 
 // CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
+//   $Source: /project/mm/cvs/graphics/ssa1/source/MathTools/MatlabWrapper.h,v $
+//   $Revision: 1.9 $
+//   $Date: 2009/12/07 21:34:36 $
+//   $Author: ssa1 $
+//   $State: Exp $
 //
 // History Log: 
-//   $Log$
+//   $Log: MatlabWrapper.h,v $
+//   Revision 1.9  2009/12/07 21:34:36  ssa1
+//   Finding Rotation using SVD, and removing compiler warnings
+//
 //   Revision 1.8  2009/12/07 05:00:52  ssa1
 //   Adding in Matrix functionality for Singular Value Decomposition
 //

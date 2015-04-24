@@ -3,14 +3,17 @@
 // Description:   A class for vertex stored in a triangle mesh
 
 // CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
+//   $Source: /project/mm/cvs/graphics/ssa1/source/ProteinMorph/TriangleMeshVertex.h,v $
+//   $Revision: 1.2 $
+//   $Date: 2009/03/16 16:17:34 $
+//   $Author: ssa1 $
+//   $State: Exp $
 //
 // History Log: 
-//   $Log$
+//   $Log: TriangleMeshVertex.h,v $
+//   Revision 1.2  2009/03/16 16:17:34  ssa1
+//   Fitting SSEs into the Density
+//
 
 
 #ifndef PROTEINMORPH_TRIANGLE_MESH_VERTEX_H
