@@ -1,5 +1,8 @@
 /*
- * $Log$
+ * $Log: machar.c,v $
+ * Revision 1.1  2008/01/26 05:59:46  ssa1
+ * Re-organizing cvs structure
+ *
  * Revision 1.1  2000/05/03 18:06:43  aking
  * Initial revision
  *

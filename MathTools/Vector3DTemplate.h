@@ -3,14 +3,17 @@
 // Description:   A template class for 3D vectors
 
 // CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
+//   $Source: /project/mm/cvs/graphics/ssa1/source/MathTools/Vector3DTemplate.h,v $
+//   $Revision: 1.13 $
+//   $Date: 2010/07/02 15:56:11 $
+//   $Author: coleman.r $
+//   $State: Exp $
 //
 // History Log: 
-//   $Log$
+//   $Log: Vector3DTemplate.h,v $
+//   Revision 1.13  2010/07/02 15:56:11  coleman.r
+//   begin() and end() functions --> make iterable for Python tuple/list type conversion
+//
 //   Revision 1.12  2010/06/30 16:35:30  coleman.r
 //   STL vector convert constructor
 //

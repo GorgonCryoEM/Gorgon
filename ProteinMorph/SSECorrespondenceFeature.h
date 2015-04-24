@@ -3,14 +3,17 @@
 // Description:   A correspondence feature
 
 // CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
+//   $Source: /project/mm/cvs/graphics/ssa1/source/ProteinMorph/SSECorrespondenceFeature.h,v $
+//   $Revision: 1.1 $
+//   $Date: 2009/08/26 14:58:55 $
+//   $Author: ssa1 $
+//   $State: Exp $
 //
 // History Log: 
-//   $Log$
+//   $Log: SSECorrespondenceFeature.h,v $
+//   Revision 1.1  2009/08/26 14:58:55  ssa1
+//   Adding in Flexible fitting clique search
+//
 
 
 #ifndef PROTEINMORPH_SSE_CORRESPONDENCE_FEATURE_H

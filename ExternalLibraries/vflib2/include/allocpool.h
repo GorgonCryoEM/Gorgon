@@ -3,12 +3,15 @@
  * Definition of an allocation pool class.
  *
  * Author: P. Foggia
- * $Id$
+ * $Id: allocpool.h,v 1.1 2006/08/21 19:02:21 ssa1 Exp $
  ----------------------------------------------------*/
 
 /*----------------------------------------------------
  * REVISION HISTORY
- *   $Log$
+ *   $Log: allocpool.h,v $
+ *   Revision 1.1  2006/08/21 19:02:21  ssa1
+ *   Initial checkin
+ *
  *   Revision 1.4  1998/12/19 11:35:24  foggia
  *   Minor changes
  *

@@ -3,14 +3,17 @@
 // Description:   A dummy CPP file for the GRAYSKELETONCPP Module
 
 // CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
+//   $Source: /project/mm/cvs/graphics/ssa1/source/GraySkeletonCPP/GraySkeletonCPP.cpp,v $
+//   $Revision: 1.36 $
+//   $Date: 2009/10/13 18:09:34 $
+//   $Author: ssa1 $
+//   $State: Exp $
 //
 // History Log: 
-//   $Log$
+//   $Log: GraySkeletonCPP.cpp,v $
+//   Revision 1.36  2009/10/13 18:09:34  ssa1
+//   Refactoring Volume.h
+//
 //   Revision 1.35  2009/09/10 23:44:56  ssa1
 //   Allowing the option of preserving the earlier skeleton when performing grayscale skeletonization.. (Leads to better skeletons)
 //

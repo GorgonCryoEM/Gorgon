@@ -3,14 +3,17 @@
 # Description:   This QDockWidget contains a CAlphaSequenceWidget. Its methods handle much of the interaction with the other parts of the Gorgon application.
 
 # CVS Meta Information: 
-#   $Source$
-#   $Revision$
-#   $Date$
-#   $Author$
-#   $State$
+#   $Source: /project/mm/cvs/graphics/ssa1/source/Gorgon/src_py/calpha_sequence_dock.py,v $
+#   $Revision: 1.4 $
+#   $Date: 2009/12/24 23:38:37 $
+#   $Author: ssa1 $
+#   $State: Exp $
 #
 # History Log: 
-#   $Log$
+#   $Log: calpha_sequence_dock.py,v $
+#   Revision 1.4  2009/12/24 23:38:37  ssa1
+#   Making Sequence dock behave similar to the other docked windows
+#
 #   Revision 1.3  2009/04/02 19:00:20  ssa1
 #   CAlpha Viewer bug fixes and smoother uniform functionality
 #

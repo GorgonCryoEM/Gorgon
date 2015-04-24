@@ -2,14 +2,17 @@
 // Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 // Description:   An engine for performing correspondence queries.
 // CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
+//   $Source: /project/mm/cvs/graphics/ssa1/source/GraphMatch/QueryEngine.h,v $
+//   $Revision: 1.10 $
+//   $Date: 2008/11/10 21:09:27 $
+//   $Author: colemanr $
+//   $State: Exp $
 //
 // History Log: 
-//   $Log$
+//   $Log: QueryEngine.h,v $
+//   Revision 1.10  2008/11/10 21:09:27  colemanr
+//   QueryEngine::LoadSequenceGraph choses between PDBReader and SEQReader
+//
 //   Revision 1.9  2008/09/29 16:19:30  ssa1
 //   Adding in CVS meta information
 //

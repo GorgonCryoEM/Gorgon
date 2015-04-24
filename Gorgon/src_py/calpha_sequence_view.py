@@ -5,14 +5,17 @@
 #                on this class. Thus, a CAlphaScrollableSequenceView contains this class.
 
 # CVS Meta Information: 
-#   $Source$
-#   $Revision$
-#   $Date$
-#   $Author$
-#   $State$
+#   $Source: /project/mm/cvs/graphics/ssa1/source/Gorgon/src_py/calpha_sequence_view.py,v $
+#   $Revision: 1.4 $
+#   $Date: 2009/12/27 02:42:10 $
+#   $Author: ssa1 $
+#   $State: Exp $
 #
 # History Log: 
-#   $Log$
+#   $Log: calpha_sequence_view.py,v $
+#   Revision 1.4  2009/12/27 02:42:10  ssa1
+#   Fixing interactive loop placement bugs
+#
 #   Revision 1.3  2009/04/03 19:44:37  ssa1
 #   CAlpha bug fixes
 #

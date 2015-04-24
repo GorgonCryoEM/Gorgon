@@ -6,13 +6,16 @@
  * See: argraph.h state.h
  *
  * Author: P. Foggia
- * $Id$
+ * $Id: vf_mono_state.h,v 1.1 2006/08/21 19:02:21 ssa1 Exp $
  *-----------------------------------------------------------------*/
 
 
 /*-----------------------------------------------------------------
  * REVISION HISTORY
- *   $Log$
+ *   $Log: vf_mono_state.h,v $
+ *   Revision 1.1  2006/08/21 19:02:21  ssa1
+ *   Initial checkin
+ *
  *   Revision 1.1  1999/01/05 10:28:23  foggia
  *   Initial revision
  *

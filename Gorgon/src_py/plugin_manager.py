@@ -3,14 +3,17 @@
 # Description:   A widget that manages all the windows of the main form. 
 
 # CVS Meta Information: 
-#   $Source$
-#   $Revision$
-#   $Date$
-#   $Author$
-#   $State$
+#   $Source: /project/mm/cvs/graphics/ssa1/source/Gorgon/src_py/plugin_manager.py,v $
+#   $Revision: 1.1 $
+#   $Date: 2009/04/08 19:54:59 $
+#   $Author: ssa1 $
+#   $State: Exp $
 #
 # History Log: 
-#   $Log$
+#   $Log: plugin_manager.py,v $
+#   Revision 1.1  2009/04/08 19:54:59  ssa1
+#   Adding in plugin functionality
+#
 
 import inspect
 import sys, os

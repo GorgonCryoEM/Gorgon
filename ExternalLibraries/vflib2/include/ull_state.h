@@ -4,13 +4,16 @@
  * Definition of the class UllState
  *
  * Author: P. Foggia
- * $Id$
+ * $Id: ull_state.h,v 1.1 2006/08/21 19:02:21 ssa1 Exp $
  *-----------------------------------------------------------------*/
 
 
 /*-----------------------------------------------------------------
  * REVISION HISTORY
- *   $Log$
+ *   $Log: ull_state.h,v $
+ *   Revision 1.1  2006/08/21 19:02:21  ssa1
+ *   Initial checkin
+ *
  *   Revision 1.1  1998/09/29 09:50:38  foggia
  *   Initial revision
  *

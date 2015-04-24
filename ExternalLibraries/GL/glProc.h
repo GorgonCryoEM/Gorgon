@@ -3,7 +3,7 @@
 
 /* Copyright NVIDIA Corporation, 2000, 2001. */
 
-/* $Id$ */
+/* $Id: glProc.h,v 1.1 2007/10/24 14:27:10 ssa1 Exp $ */
 
 #ifndef __GLEXT_PROC_DEFS_H__
 #define __GLEXT_PROC_DEFS_H__

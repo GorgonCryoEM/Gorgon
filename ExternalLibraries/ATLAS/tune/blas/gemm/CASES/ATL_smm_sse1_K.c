@@ -46,7 +46,7 @@ void ATL_USERMM
 
 {
    /*--- program info ---*/
-   /*  $Revision$  */
+   /*  $Revision: 1.1 $  */
    /*  loadfirst = 'a'  */
    /*  nu = 1  */
    /*  problem = 'gemm'  */
@@ -55,7 +55,7 @@ void ATL_USERMM
    /*  n_cleanup = {}  */
    /*  mu = 4  */
    /*  k_loop = None  */
-   /*  rev = '$Revision$'  */
+   /*  rev = '$Revision: 1.1 $'  */
    /*  applyfilter = 0  */
    /*  align_jumps = 0  */
    /*  prec = 'single'  */
@@ -177,7 +177,7 @@ void ATL_USERMM
 
 {
    /*--- program info ---*/
-   /*  $Revision$  */
+   /*  $Revision: 1.1 $  */
    /*  loadfirst = 'a'  */
    /*  nu = 1  */
    /*  problem = 'gemm'  */
@@ -186,7 +186,7 @@ void ATL_USERMM
    /*  n_cleanup = {}  */
    /*  mu = 4  */
    /*  k_loop = None  */
-   /*  rev = '$Revision$'  */
+   /*  rev = '$Revision: 1.1 $'  */
    /*  applyfilter = 0  */
    /*  align_jumps = 0  */
    /*  prec = 'single'  */
@@ -320,7 +320,7 @@ void ATL_USERMM
 
 {
    /*--- program info ---*/
-   /*  $Revision$  */
+   /*  $Revision: 1.1 $  */
    /*  loadfirst = 'a'  */
    /*  nu = 1  */
    /*  problem = 'gemm'  */
@@ -329,7 +329,7 @@ void ATL_USERMM
    /*  n_cleanup = {}  */
    /*  mu = 4  */
    /*  k_loop = None  */
-   /*  rev = '$Revision$'  */
+   /*  rev = '$Revision: 1.1 $'  */
    /*  applyfilter = 0  */
    /*  align_jumps = 0  */
    /*  prec = 'single'  */
@@ -475,7 +475,7 @@ void ATL_USERMM
 
 {
    /*--- program info ---*/
-   /*  $Revision$  */
+   /*  $Revision: 1.1 $  */
    /*  loadfirst = 'a'  */
    /*  nu = 1  */
    /*  problem = 'gemm'  */
@@ -484,7 +484,7 @@ void ATL_USERMM
    /*  n_cleanup = {}  */
    /*  mu = 4  */
    /*  k_loop = None  */
-   /*  rev = '$Revision$'  */
+   /*  rev = '$Revision: 1.1 $'  */
    /*  applyfilter = 0  */
    /*  align_jumps = 0  */
    /*  prec = 'single'  */
@@ -642,7 +642,7 @@ void ATL_USERMM
 
 {
    /*--- program info ---*/
-   /*  $Revision$  */
+   /*  $Revision: 1.1 $  */
    /*  loadfirst = 'a'  */
    /*  nu = 1  */
    /*  problem = 'gemm'  */
@@ -651,7 +651,7 @@ void ATL_USERMM
    /*  n_cleanup = {}  */
    /*  mu = 4  */
    /*  k_loop = None  */
-   /*  rev = '$Revision$'  */
+   /*  rev = '$Revision: 1.1 $'  */
    /*  applyfilter = 0  */
    /*  align_jumps = 0  */
    /*  prec = 'single'  */
@@ -821,7 +821,7 @@ void ATL_USERMM
 
 {
    /*--- program info ---*/
-   /*  $Revision$  */
+   /*  $Revision: 1.1 $  */
    /*  loadfirst = 'a'  */
    /*  nu = 1  */
    /*  problem = 'gemm'  */
@@ -830,7 +830,7 @@ void ATL_USERMM
    /*  n_cleanup = {}  */
    /*  mu = 4  */
    /*  k_loop = None  */
-   /*  rev = '$Revision$'  */
+   /*  rev = '$Revision: 1.1 $'  */
    /*  applyfilter = 0  */
    /*  align_jumps = 0  */
    /*  prec = 'single'  */
@@ -1012,7 +1012,7 @@ void ATL_USERMM
 
 {
    /*--- program info ---*/
-   /*  $Revision$  */
+   /*  $Revision: 1.1 $  */
    /*  loadfirst = 'a'  */
    /*  nu = 1  */
    /*  problem = 'gemm'  */
@@ -1021,7 +1021,7 @@ void ATL_USERMM
    /*  n_cleanup = {}  */
    /*  mu = 2  */
    /*  k_loop = None  */
-   /*  rev = '$Revision$'  */
+   /*  rev = '$Revision: 1.1 $'  */
    /*  applyfilter = 0  */
    /*  align_jumps = 0  */
    /*  prec = 'single'  */
@@ -1156,7 +1156,7 @@ void ATL_USERMM
 
 {
    /*--- program info ---*/
-   /*  $Revision$  */
+   /*  $Revision: 1.1 $  */
    /*  loadfirst = 'a'  */
    /*  nu = 1  */
    /*  problem = 'gemm'  */
@@ -1165,7 +1165,7 @@ void ATL_USERMM
    /*  n_cleanup = {}  */
    /*  mu = 2  */
    /*  k_loop = None  */
-   /*  rev = '$Revision$'  */
+   /*  rev = '$Revision: 1.1 $'  */
    /*  applyfilter = 0  */
    /*  align_jumps = 0  */
    /*  prec = 'single'  */
@@ -1306,7 +1306,7 @@ void ATL_USERMM
 
 {
    /*--- program info ---*/
-   /*  $Revision$  */
+   /*  $Revision: 1.1 $  */
    /*  loadfirst = 'a'  */
    /*  nu = 1  */
    /*  problem = 'gemm'  */
@@ -1315,7 +1315,7 @@ void ATL_USERMM
    /*  n_cleanup = {}  */
    /*  mu = 2  */
    /*  k_loop = None  */
-   /*  rev = '$Revision$'  */
+   /*  rev = '$Revision: 1.1 $'  */
    /*  applyfilter = 0  */
    /*  align_jumps = 0  */
    /*  prec = 'single'  */
@@ -1462,7 +1462,7 @@ void ATL_USERMM
 
 {
    /*--- program info ---*/
-   /*  $Revision$  */
+   /*  $Revision: 1.1 $  */
    /*  loadfirst = 'a'  */
    /*  nu = 1  */
    /*  problem = 'gemm'  */
@@ -1471,7 +1471,7 @@ void ATL_USERMM
    /*  n_cleanup = {}  */
    /*  mu = 2  */
    /*  k_loop = None  */
-   /*  rev = '$Revision$'  */
+   /*  rev = '$Revision: 1.1 $'  */
    /*  applyfilter = 0  */
    /*  align_jumps = 0  */
    /*  prec = 'single'  */
@@ -1624,7 +1624,7 @@ void ATL_USERMM
 
 {
    /*--- program info ---*/
-   /*  $Revision$  */
+   /*  $Revision: 1.1 $  */
    /*  loadfirst = 'a'  */
    /*  nu = 1  */
    /*  problem = 'gemm'  */
@@ -1633,7 +1633,7 @@ void ATL_USERMM
    /*  n_cleanup = {}  */
    /*  mu = 2  */
    /*  k_loop = None  */
-   /*  rev = '$Revision$'  */
+   /*  rev = '$Revision: 1.1 $'  */
    /*  applyfilter = 0  */
    /*  align_jumps = 0  */
    /*  prec = 'single'  */
@@ -1792,7 +1792,7 @@ void ATL_USERMM
 
 {
    /*--- program info ---*/
-   /*  $Revision$  */
+   /*  $Revision: 1.1 $  */
    /*  loadfirst = 'a'  */
    /*  nu = 1  */
    /*  problem = 'gemm'  */
@@ -1801,7 +1801,7 @@ void ATL_USERMM
    /*  n_cleanup = {}  */
    /*  mu = 2  */
    /*  k_loop = None  */
-   /*  rev = '$Revision$'  */
+   /*  rev = '$Revision: 1.1 $'  */
    /*  applyfilter = 0  */
    /*  align_jumps = 0  */
    /*  prec = 'single'  */
@@ -1966,7 +1966,7 @@ void ATL_USERMM
 
 {
    /*--- program info ---*/
-   /*  $Revision$  */
+   /*  $Revision: 1.1 $  */
    /*  loadfirst = 'a'  */
    /*  nu = 1  */
    /*  problem = 'gemm'  */
@@ -1975,7 +1975,7 @@ void ATL_USERMM
    /*  n_cleanup = {}  */
    /*  mu = 2  */
    /*  k_loop = None  */
-   /*  rev = '$Revision$'  */
+   /*  rev = '$Revision: 1.1 $'  */
    /*  applyfilter = 0  */
    /*  align_jumps = 0  */
    /*  prec = 'single'  */
@@ -2146,7 +2146,7 @@ void ATL_USERMM
 
 {
    /*--- program info ---*/
-   /*  $Revision$  */
+   /*  $Revision: 1.1 $  */
    /*  loadfirst = 'a'  */
    /*  nu = 1  */
    /*  problem = 'gemm'  */
@@ -2155,7 +2155,7 @@ void ATL_USERMM
    /*  n_cleanup = {}  */
    /*  mu = 2  */
    /*  k_loop = None  */
-   /*  rev = '$Revision$'  */
+   /*  rev = '$Revision: 1.1 $'  */
    /*  applyfilter = 0  */
    /*  align_jumps = 0  */
    /*  prec = 'single'  */
@@ -2332,7 +2332,7 @@ void ATL_USERMM
 
 {
    /*--- program info ---*/
-   /*  $Revision$  */
+   /*  $Revision: 1.1 $  */
    /*  loadfirst = 'a'  */
    /*  nu = 1  */
    /*  problem = 'gemm'  */
@@ -2341,7 +2341,7 @@ void ATL_USERMM
    /*  n_cleanup = {}  */
    /*  mu = 2  */
    /*  k_loop = None  */
-   /*  rev = '$Revision$'  */
+   /*  rev = '$Revision: 1.1 $'  */
    /*  applyfilter = 0  */
    /*  align_jumps = 0  */
    /*  prec = 'single'  */

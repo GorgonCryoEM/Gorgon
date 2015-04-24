@@ -3,14 +3,17 @@
 // Description:   A template for thinning.
 
 // CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
+//   $Source: /project/mm/cvs/graphics/ssa1/source/SkeletonMaker/ThinningTemplate.h,v $
+//   $Revision: 1.1 $
+//   $Date: 2009/10/13 18:09:34 $
+//   $Author: ssa1 $
+//   $State: Exp $
 //
 // History Log: 
-//   $Log$
+//   $Log: ThinningTemplate.h,v $
+//   Revision 1.1  2009/10/13 18:09:34  ssa1
+//   Refactoring Volume.h
+//
 
 #ifndef SKELETON_MAKER_THINNING_TEMPLATE_H
 #define SKELETON_MAKER_THINNING_TEMPLATE_H

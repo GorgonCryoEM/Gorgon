@@ -3,14 +3,17 @@
 // Description:   A data structure to store PDB atom information
 
 // CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
+//   $Source: /project/mm/cvs/graphics/ssa1/source/GraphMatch/PDBAtom.h,v $
+//   $Revision: 1.21 $
+//   $Date: 2011/08/19 19:10:30 $
+//   $Author: coleman.r $
+//   $State: Exp $
 //
 // History Log: 
-//   $Log$
+//   $Log: PDBAtom.h,v $
+//   Revision 1.21  2011/08/19 19:10:30  coleman.r
+//   bugfix: Reverting a change because C++ 98 does not support delegating constructors. A PDB ID is still an optional arugment for the third constructor which uses an atom coordinate line from a PDB file to construct an atom.
+//
 //   Revision 1.20  2011/06/07 15:52:43  coleman.r
 //   The PDBAtom default constructor now calls 4 parameter constructor to avoid code duplication. The constructor that takes a line from the atom coordinates section of a PDB file, now accepts a PDB ID as an optional argument.
 //

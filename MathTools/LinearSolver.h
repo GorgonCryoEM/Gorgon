@@ -3,14 +3,17 @@
 // Description:   Performs Linear solving
 
 // CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
+//   $Source: /project/mm/cvs/graphics/ssa1/source/MathTools/LinearSolver.h,v $
+//   $Revision: 1.5 $
+//   $Date: 2010/07/19 17:38:31 $
+//   $Author: heiderp $
+//   $State: Exp $
 //
 // History Log: 
-//   $Log$
+//   $Log: LinearSolver.h,v $
+//   Revision 1.5  2010/07/19 17:38:31  heiderp
+//   Flexible fitting.
+//
 //   Revision 1.4  2010/04/12 20:17:25  colemanr
 //   LinearSolver::SumDistSqrd()
 //

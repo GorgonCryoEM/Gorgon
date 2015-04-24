@@ -3,14 +3,17 @@
 // Description:   A static store of global constants for the GRAPHMATCH module
 
 // CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
+//   $Source: /project/mm/cvs/graphics/ssa1/source/GraphMatch/GlobalConstants.h,v $
+//   $Revision: 1.35 $
+//   $Date: 2010/01/08 22:27:34 $
+//   $Author: schuhs $
+//   $State: Exp $
 //
 // History Log: 
-//   $Log$
+//   $Log: GlobalConstants.h,v $
+//   Revision 1.35  2010/01/08 22:27:34  schuhs
+//   Helix-only correspondence works with SEQ file
+//
 //   Revision 1.34  2010/01/04 20:38:52  ssa1
 //   Removing dependancy on SSE files for helix length calculation.
 //

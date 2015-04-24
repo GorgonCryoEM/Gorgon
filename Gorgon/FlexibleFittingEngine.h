@@ -3,14 +3,17 @@
 // Description:   An engine for interactively creating and modifying skeletons
 
 // CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
+//   $Source: /project/mm/cvs/graphics/ssa1/source/Gorgon/FlexibleFittingEngine.h,v $
+//   $Revision: 1.8 $
+//   $Date: 2010/07/29 20:21:59 $
+//   $Author: coleman.r $
+//   $State: Exp $
 //
 // History Log: 
-//   $Log$
+//   $Log: FlexibleFittingEngine.h,v $
+//   Revision 1.8  2010/07/29 20:21:59  coleman.r
+//   gcc compile fix: gcc requires nested templates to end in "> >" not ">>"
+//
 //   Revision 1.7  2010/07/23 18:18:32  heiderp
 //   Side chains now transform correctly.  PDB helices now color correctly and rigid initialization bug is fixed
 //

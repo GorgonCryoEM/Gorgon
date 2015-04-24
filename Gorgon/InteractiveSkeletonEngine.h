@@ -3,14 +3,17 @@
 // Description:   An engine for interactively creating and modifying skeletons
 
 // CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
+//   $Source: /project/mm/cvs/graphics/ssa1/source/Gorgon/InteractiveSkeletonEngine.h,v $
+//   $Revision: 1.31 $
+//   $Date: 2009/10/13 18:09:34 $
+//   $Author: ssa1 $
+//   $State: Exp $
 //
 // History Log: 
-//   $Log$
+//   $Log: InteractiveSkeletonEngine.h,v $
+//   Revision 1.31  2009/10/13 18:09:34  ssa1
+//   Refactoring Volume.h
+//
 //   Revision 1.30  2009/06/24 13:06:51  ssa1
 //   Fixing compilation issues on MacOS
 //

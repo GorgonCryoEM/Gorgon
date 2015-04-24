@@ -3,14 +3,17 @@
 // Description:   An engine for finding the correspondance between secondary structure elements and the amino acid sequence.
 
 // CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
+//   $Source: /project/mm/cvs/graphics/ssa1/source/Gorgon/SSECorrespondenceEngine.h,v $
+//   $Revision: 1.14 $
+//   $Date: 2010/04/04 19:05:51 $
+//   $Author: ssa1 $
+//   $State: Exp $
 //
 // History Log: 
-//   $Log$
+//   $Log: SSECorrespondenceEngine.h,v $
+//   Revision 1.14  2010/04/04 19:05:51  ssa1
+//   Fixing misc bugs, and redoing sheet visualization mechanism
+//
 //   Revision 1.13  2010/03/27 01:08:21  schuhs
 //   Adding code (commented out) to draw straight line paths across sheets and through helices.
 //

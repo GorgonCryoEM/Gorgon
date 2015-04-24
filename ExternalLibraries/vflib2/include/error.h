@@ -4,12 +4,15 @@
  * Error handling functions
  *
  * Author: P. Foggia
- * $Id$
+ * $Id: error.h,v 1.1 2006/08/21 19:02:21 ssa1 Exp $
  *--------------------------------------------------*/
 
 /*----------------------------------------------------
  * REVISION HISTORY
- *   $Log$
+ *   $Log: error.h,v $
+ *   Revision 1.1  2006/08/21 19:02:21  ssa1
+ *   Initial checkin
+ *
  *   Revision 1.2  1998/12/12 12:17:32  foggia
  *   Now supports full printf syntax
  *

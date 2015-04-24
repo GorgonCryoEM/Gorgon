@@ -3,14 +3,17 @@
 // Description:   A class for storing a binary tree ADT
 
 // CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
+//   $Source: /project/mm/cvs/graphics/ssa1/source/Foundation/GorgonBinaryTree.h,v $
+//   $Revision: 1.2 $
+//   $Date: 2009/12/13 23:35:51 $
+//   $Author: ssa1 $
+//   $State: Exp $
 //
 // History Log: 
-//   $Log$
+//   $Log: GorgonBinaryTree.h,v $
+//   Revision 1.2  2009/12/13 23:35:51  ssa1
+//   Adding in abstract data structures
+//
 //   Revision 1.1  2009/12/13 19:38:37  ssa1
 //   Adding in abstract data structures
 //

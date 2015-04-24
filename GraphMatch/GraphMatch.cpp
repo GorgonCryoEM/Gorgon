@@ -3,14 +3,17 @@
 // Description:   A dummy CPP file for the GRAPHMATCH module.
 
 // CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
+//   $Source: /project/mm/cvs/graphics/ssa1/source/GraphMatch/GraphMatch.cpp,v $
+//   $Revision: 1.31 $
+//   $Date: 2009/10/13 18:09:34 $
+//   $Author: ssa1 $
+//   $State: Exp $
 //
 // History Log: 
-//   $Log$
+//   $Log: GraphMatch.cpp,v $
+//   Revision 1.31  2009/10/13 18:09:34  ssa1
+//   Refactoring Volume.h
+//
 //   Revision 1.30  2009/08/26 14:58:55  ssa1
 //   Adding in Flexible fitting clique search
 //

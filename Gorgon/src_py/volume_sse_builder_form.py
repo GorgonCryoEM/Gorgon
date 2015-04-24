@@ -3,14 +3,17 @@
 # Description:   A widget to build SSEs from SSE Hunter results
 
 # CVS Meta Information: 
-#   $Source$
-#   $Revision$
-#   $Date$
-#   $Author$
-#   $State$
+#   $Source: /project/mm/cvs/graphics/ssa1/source/Gorgon/src_py/volume_sse_builder_form.py,v $
+#   $Revision: 1.17 $
+#   $Date: 2010/07/09 19:56:23 $
+#   $Author: coleman.r $
+#   $State: Exp $
 #
 # History Log: 
-#   $Log$
+#   $Log: volume_sse_builder_form.py,v $
+#   Revision 1.17  2010/07/09 19:56:23  coleman.r
+#   Remove Helices button
+#
 #   Revision 1.16  2010/07/09 03:30:20  coleman.r
 #   auto helix building
 #

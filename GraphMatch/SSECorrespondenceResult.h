@@ -3,14 +3,17 @@
 // Description:   The storage structure for the correspondence result between the SSE element and the sequence.
 
 // CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
+//   $Source: /project/mm/cvs/graphics/ssa1/source/GraphMatch/SSECorrespondenceResult.h,v $
+//   $Revision: 1.5 $
+//   $Date: 2009/12/22 01:03:06 $
+//   $Author: schuhs $
+//   $State: Exp $
 //
 // History Log: 
-//   $Log$
+//   $Log: SSECorrespondenceResult.h,v $
+//   Revision 1.5  2009/12/22 01:03:06  schuhs
+//   Adding support for beta sheets to the SSE correspondence search algorithm
+//
 //   Revision 1.4  2008/09/29 16:19:30  ssa1
 //   Adding in CVS meta information
 //

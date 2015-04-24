@@ -3,14 +3,17 @@
 // Description:   Renderer for rendering mesh objects
 
 // CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
+//   $Source: /project/mm/cvs/graphics/ssa1/source/Gorgon/MeshRenderer.h,v $
+//   $Revision: 1.35 $
+//   $Date: 2010/06/23 13:02:56 $
+//   $Author: ssa1 $
+//   $State: Exp $
 //
 // History Log: 
-//   $Log$
+//   $Log: MeshRenderer.h,v $
+//   Revision 1.35  2010/06/23 13:02:56  ssa1
+//   Allowing users to reset a flexible fitting if need be.
+//
 //   Revision 1.34  2010/04/04 19:05:51  ssa1
 //   Fixing misc bugs, and redoing sheet visualization mechanism
 //

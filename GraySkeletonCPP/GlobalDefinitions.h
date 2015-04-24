@@ -3,14 +3,17 @@
 // Description:   Stores the global definitions for the GRAYSKELETONCPP module
 
 // CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
+//   $Source: /project/mm/cvs/graphics/ssa1/source/GraySkeletonCPP/GlobalDefinitions.h,v $
+//   $Revision: 1.20 $
+//   $Date: 2008/09/29 16:30:15 $
+//   $Author: ssa1 $
+//   $State: Exp $
 //
 // History Log: 
-//   $Log$
+//   $Log: GlobalDefinitions.h,v $
+//   Revision 1.20  2008/09/29 16:30:15  ssa1
+//   Adding in CVS meta information
+//
 
 #ifndef GRAYSKELETONCPP_GLOBAL_DEFINITIONS_H
 #define GRAYSKELETONCPP_GLOBAL_DEFINITIONS_H
@@ -113,4 +116,5 @@ namespace wustl_mm {
 	}
 }
 
+#undef round
 #endif

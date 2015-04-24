@@ -3,13 +3,16 @@
  * Implementation of the class VFSubState
  *
  * Author: P. Foggia
- * $Id$
+ * $Id: vf_sub_state.cc,v 1.1 2006/08/21 19:02:21 ssa1 Exp $
  *-----------------------------------------------------------------*/
 
 
 /*-----------------------------------------------------------------
  * REVISION HISTORY
- *   $Log$
+ *   $Log: vf_sub_state.cc,v $
+ *   Revision 1.1  2006/08/21 19:02:21  ssa1
+ *   Initial checkin
+ *
  *   Revision 1.3  1999/01/05 10:29:41  foggia
  *   Bug fix
  *

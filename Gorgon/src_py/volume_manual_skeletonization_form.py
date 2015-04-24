@@ -3,14 +3,17 @@
 # Description:   A widget used to perform manual skeletonization of a volume 
 
 # CVS Meta Information: 
-#   $Source$
-#   $Revision$
-#   $Date$
-#   $Author$
-#   $State$
+#   $Source: /project/mm/cvs/graphics/ssa1/source/Gorgon/src_py/volume_manual_skeletonization_form.py,v $
+#   $Revision: 1.32 $
+#   $Date: 2009/12/24 07:25:07 $
+#   $Author: ssa1 $
+#   $State: Exp $
 #
 # History Log: 
-#   $Log$
+#   $Log: volume_manual_skeletonization_form.py,v $
+#   Revision 1.32  2009/12/24 07:25:07  ssa1
+#   Refactoring child window behavior.. Using base classes to encapsulate common behavior
+#
 #   Revision 1.31  2009/03/30 21:36:12  ssa1
 #   Interactive loop building
 #

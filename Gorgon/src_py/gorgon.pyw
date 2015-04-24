@@ -3,14 +3,17 @@
 # Description:   The Gorgon application 
 
 # CVS Meta Information: 
-#   $Source$
-#   $Revision$
-#   $Date$
-#   $Author$
-#   $State$
+#   $Source: /project/mm/cvs/graphics/ssa1/source/Gorgon/src_py/gorgon.pyw,v $
+#   $Revision: 1.25 $
+#   $Date: 2011/03/09 21:59:20 $
+#   $Author: coleman.r $
+#   $State: Exp $
 #
 # History Log: 
-#   $Log$
+#   $Log: gorgon.pyw,v $
+#   Revision 1.25  2011/03/09 21:59:20  coleman.r
+#   ok, actually version 2.1.1b
+#
 #   Revision 1.24  2011/03/09 21:14:40  coleman.r
 #   version number 2.1.0b
 #
@@ -71,7 +74,7 @@ if(sys.platform == 'win32'):
     sys.path.append(pathname)
 elif(sys.platform == 'darwin'):
     if os.environ.has_key('RESOURCEPATH') :
-        sys.path = [os.path.join(os.environ['RESOURCEPATH'], 'lib', 'python2.5', 'lib-dynload')] + sys.path
+        sys.path = [os.path.join(os.environ['RESOURCEPATH'], 'lib', 'python2.7', 'lib-dynload')] + sys.path
 ###########################################################################################################
 
 

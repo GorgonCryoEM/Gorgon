@@ -6,12 +6,15 @@
  * See: argraph.h
  *
  * Author: P. Foggia
- * $Id$
+ * $Id: gene_mesh.h,v 1.1 2006/08/21 19:02:21 ssa1 Exp $
  ----------------------------------------------------*/
 
 /*-----------------------------------------------------------------
  * REVISION HISTORY
- *   $Log$
+ *   $Log: gene_mesh.h,v $
+ *   Revision 1.1  2006/08/21 19:02:21  ssa1
+ *   Initial checkin
+ *
  *   Revision 1.2  1999/01/06 20:03:53  foggia
  *   Added the option to generate subgraphs
  *

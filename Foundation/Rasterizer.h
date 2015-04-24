@@ -3,14 +3,17 @@
 // Description:   A class for rasterizing vector representations
 
 // CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
+//   $Source: /project/mm/cvs/graphics/ssa1/source/Foundation/Rasterizer.h,v $
+//   $Revision: 1.3 $
+//   $Date: 2009/05/21 16:55:15 $
+//   $Author: ssa1 $
+//   $State: Exp $
 //
 // History Log: 
-//   $Log$
+//   $Log: Rasterizer.h,v $
+//   Revision 1.3  2009/05/21 16:55:15  ssa1
+//   when saving a skeleton as an MRC, we now use 8 connectivity
+//
 //   Revision 1.2  2008/10/15 19:41:29  ssa1
 //   Esc to cancel path, Clear Button and Tracking of start seed point
 //

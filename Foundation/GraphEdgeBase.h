@@ -3,14 +3,17 @@
 // Description:   A class for storing an base graph edge
 
 // CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
+//   $Source: /project/mm/cvs/graphics/ssa1/source/Foundation/GraphEdgeBase.h,v $
+//   $Revision: 1.2 $
+//   $Date: 2009/08/26 14:58:55 $
+//   $Author: ssa1 $
+//   $State: Exp $
 //
 // History Log: 
-//   $Log$
+//   $Log: GraphEdgeBase.h,v $
+//   Revision 1.2  2009/08/26 14:58:55  ssa1
+//   Adding in Flexible fitting clique search
+//
 //   Revision 1.1  2009/08/18 19:55:06  ssa1
 //   Adding A base graph class for finding maximal cliques, and connected components
 

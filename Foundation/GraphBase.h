@@ -3,14 +3,17 @@
 // Description:   A class for storing an base graph
 
 // CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
+//   $Source: /project/mm/cvs/graphics/ssa1/source/Foundation/GraphBase.h,v $
+//   $Revision: 1.10 $
+//   $Date: 2010/07/09 21:42:24 $
+//   $Author: coleman.r $
+//   $State: Exp $
 //
 // History Log: 
-//   $Log$
+//   $Log: GraphBase.h,v $
+//   Revision 1.10  2010/07/09 21:42:24  coleman.r
+//   fixed 32 bit Linux compilation errorfixed 32 bit Linux compilation errorfixed 32 bit Linux compilation errorfixed 32 bit Linux compilation errorfixed 32 bit Linux compilation errorfixed 32 bit Linux compilation errorfixed 32 bit Linux compilation errorfixed 32 bit Linux compilation errorfixed 32 bit Linux compilation errorfixed 32 bit Linux compilation errorfixed 32 bit Linux compilation errorfixed 32 bit Linux compilation errorfixed 32 bit Linux compilation errorfixed 32 bit Linux compilation errorfixed 32 bit Linux compilation errorfixed 32 bit Linux compilation errorfixed 32 bit Linux compilation errorfixed 32 bit Linux compilation errorfixed 32 bit Linux compilation errorfixed 32 bit Linux compilation errorfixed 32 bit Linux compilation errorfixed 32 bit Linux compilation errorfixed 32 bit Linux compilation errorfixed 32 bit Linux compilation errorfixed 32 bit Linux compilation errorfixed 32 bit Linux compilation errorfixed 32 bit Linux compilation errorfixed 32 bit Linux compilation errorfixed 32 bit Linux compilation errorfixed 32 bit Linux compilation errorfixed 32 bit Linux compilation errorfixed 32 bit Linux compilation error
+//
 //   Revision 1.9  2010/05/26 20:44:19  ssa1
 //   Fixing macos build errors
 //

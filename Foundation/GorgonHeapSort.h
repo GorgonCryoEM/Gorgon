@@ -2,14 +2,17 @@
 // Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 // Description:   An abstract class for heap sorting
 // CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
+//   $Source: /project/mm/cvs/graphics/ssa1/source/Foundation/GorgonHeapSort.h,v $
+//   $Revision: 1.3 $
+//   $Date: 2009/12/14 22:11:21 $
+//   $Author: ssa1 $
+//   $State: Exp $
 //
 // History Log: 
-//   $Log$
+//   $Log: GorgonHeapSort.h,v $
+//   Revision 1.3  2009/12/14 22:11:21  ssa1
+//   Adding in abstract data structures
+//
 //   Revision 1.2  2009/12/13 19:39:32  ssa1
 //   Adding in abstract data structures
 //

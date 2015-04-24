@@ -3,14 +3,17 @@
 // Description:   A search node in the A* search used to find the correspondence between feature pairs.
 
 // CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
+//   $Source: /project/mm/cvs/graphics/ssa1/source/ProteinMorph/SSECorrespondenceSearchNode2.h,v $
+//   $Revision: 1.1 $
+//   $Date: 2010/05/06 15:36:23 $
+//   $Author: ssa1 $
+//   $State: Exp $
 //
 // History Log: 
-//   $Log$
+//   $Log: SSECorrespondenceSearchNode2.h,v $
+//   Revision 1.1  2010/05/06 15:36:23  ssa1
+//   Adding in missing file
+//
 
 #ifndef PROTEINMORPH_SSE_CORRESPONDENCE_SEARCH_NODE2_H
 #define PROTEINMORPH_SSE_CORRESPONDENCE_SEARCH_NODE2_H

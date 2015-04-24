@@ -3,14 +3,17 @@
 // Description:   Performs combinatoric calculations
 
 // CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
+//   $Source: /project/mm/cvs/graphics/ssa1/source/MathTools/Combinatorics.h,v $
+//   $Revision: 1.4 $
+//   $Date: 2009/12/07 21:34:36 $
+//   $Author: ssa1 $
+//   $State: Exp $
 //
 // History Log: 
-//   $Log$
+//   $Log: Combinatorics.h,v $
+//   Revision 1.4  2009/12/07 21:34:36  ssa1
+//   Finding Rotation using SVD, and removing compiler warnings
+//
 //   Revision 1.3  2008/09/29 16:43:15  ssa1
 //   Adding in CVS meta information
 //

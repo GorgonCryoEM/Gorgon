@@ -3,14 +3,17 @@
 // Description:   Renderer for rendering volumetric data sets
 
 // CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
+//   $Source: /project/mm/cvs/graphics/ssa1/source/Gorgon/VolumeRenderer.h,v $
+//   $Revision: 1.57 $
+//   $Date: 2010/03/15 20:21:38 $
+//   $Author: ssa1 $
+//   $State: Exp $
 //
 // History Log: 
-//   $Log$
+//   $Log: VolumeRenderer.h,v $
+//   Revision 1.57  2010/03/15 20:21:38  ssa1
+//   Introducing volume laplacian smoothing
+//
 //   Revision 1.56  2009/12/07 21:34:36  ssa1
 //   Finding Rotation using SVD, and removing compiler warnings
 //

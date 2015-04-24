@@ -3,14 +3,17 @@
 # Description:   This class creates the QUndoCommand objects for the undo/redo stack.
 
 # CVS Meta Information: 
-#   $Source$
-#   $Revision$
-#   $Date$
-#   $Author$
-#   $State$
+#   $Source: /project/mm/cvs/graphics/ssa1/source/Gorgon/src_py/calpha_structure_editor_command_change_position.py,v $
+#   $Revision: 1.1 $
+#   $Date: 2009/04/03 21:22:06 $
+#   $Author: ssa1 $
+#   $State: Exp $
 #
 # History Log: 
-#   $Log$
+#   $Log: calpha_structure_editor_command_change_position.py,v $
+#   Revision 1.1  2009/04/03 21:22:06  ssa1
+#   Undo redo for position
+#
 
 
 import math
