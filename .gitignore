@@ -2,3 +2,7 @@
 *.cvsignore
 *.suo
 *.user
+
+# Visual Studio files
+*.sdf
+*.sln
