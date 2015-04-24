@@ -205,6 +205,13 @@ FakesAssemblies/
 # Visual Studio 6 workspace options file
 *.opt
 
+# https://github.com/github/gitignore/blob/master/CMake.gitignore
+CMakeCache.txt
+CMakeFiles
+Makefile
+cmake_install.cmake
+install_manifest.txt
+
 # https://github.com/github/gitignore/blob/master/Python.gitignore
 # Byte-compiled / optimized / DLL files
 __pycache__/
