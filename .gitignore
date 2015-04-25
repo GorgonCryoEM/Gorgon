@@ -435,3 +435,10 @@ local.properties
 .target
 # TeXlipse plugin
 .texlipse
+
+# https://github.com/github/gitignore/blob/557c62cd54524fe6f7559cab042d91553bb0755e/Global/CVS.gitignore
+/CVS/*
+*/CVS/*
+.cvsignore
+*/.cvsignore
+
