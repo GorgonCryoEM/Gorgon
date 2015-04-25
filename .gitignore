@@ -438,8 +438,7 @@ local.properties
 .texlipse
 
 # https://github.com/github/gitignore/blob/557c62cd54524fe6f7559cab042d91553bb0755e/Global/CVS.gitignore
-/CVS/*
-*/CVS/*
+CVS/
 .cvsignore
 */.cvsignore
 
