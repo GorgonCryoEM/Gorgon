@@ -2,18 +2,6 @@
 // Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 // Description:   Performs combinatoric calculations
 
-// CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
-//
-// History Log: 
-//   $Log$
-//   Revision 1.3  2008/09/29 16:43:15  ssa1
-//   Adding in CVS meta information
-//
 
 #ifndef COMBINATORICS_H
 #define COMBINATORICS_H

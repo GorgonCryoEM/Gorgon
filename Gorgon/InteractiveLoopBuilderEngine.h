@@ -2,30 +2,6 @@
 // Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 // Description:   An engine for interactively creating and modifying c-alpha loops
 
-// CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
-//
-// History Log: 
-//   $Log$
-//   Revision 1.5  2009/12/27 02:20:30  ssa1
-//   Fixing Interactive loop placement bug where atoms are placed at wrong locations.
-//
-//   Revision 1.4  2009/10/13 18:09:34  ssa1
-//   Refactoring Volume.h
-//
-//   Revision 1.3  2009/04/04 21:33:23  ssa1
-//   More structure approach for placing cAlpha loops, and helix flip bug fix
-//
-//   Revision 1.2  2009/03/30 21:36:12  ssa1
-//   Interactive loop building
-//
-//   Revision 1.1  2009/03/26 19:33:52  ssa1
-//   Adding in an Interactive Loop Builder
-//
 
 
 #ifndef GORGON_INTERACTIVE_LOOP_BUILDER_ENGINE_H

@@ -2,18 +2,6 @@
 # Author:        Ross A. Coleman (racolema@bcm.edu)
 # Description:   Widget that lets the user see what chain models are in memory and select the one to work with
 
-# CVS Meta Information: 
-#   $Source$
-#   $Revision$
-#   $Date$
-#   $Author$
-#   $State$
-#
-# History Log: 
-#   $Log$
-#   Revision 1.1  2009/03/31 20:08:45  ssa1
-#   Refactoring: Renaming and moving ChooseChainModel to CAlphaChooseChainModel
-#
 
 import sys
 from PyQt4 import QtCore, QtGui

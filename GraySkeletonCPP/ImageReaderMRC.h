@@ -2,15 +2,6 @@
 // Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 // Description:   Reads Grayscale images from MRC files
 
-// CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
-//
-// History Log: 
-//   $Log$
 
 #ifndef GRAYSKELETONCPP_IMAGE_READER_MRC_H
 #define GRAYSKELETONCPP_IMAGE_READER_MRC_H
