@@ -2,18 +2,6 @@
 // Author:        Tao Ju, Refactored by Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 // Description:   Grid queue
 
-// CVS Meta Information: 
-//   $Source: /project/mm/cvs/graphics/ssa1/source/SkeletonMaker/GridQueue2.h,v $
-//   $Revision: 1.1 $
-//   $Date: 2009/10/13 18:09:34 $
-//   $Author: ssa1 $
-//   $State: Exp $
-//
-// History Log: 
-//   $Log: GridQueue2.h,v $
-//   Revision 1.1  2009/10/13 18:09:34  ssa1
-//   Refactoring Volume.h
-//
 
 #ifndef SKELETON_MAKER_GRID_QUEUE2_H
 #define SKELETON_MAKER_GRID_QUEUE2_H

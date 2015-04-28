@@ -2,24 +2,6 @@
 // Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 // Description:   A dummy CPP file for the GORGON module.
 
-// CVS Meta Information: 
-//   $Source: /project/mm/cvs/graphics/ssa1/source/Gorgon/Gorgon.cpp,v $
-//   $Revision: 1.9 $
-//   $Date: 2010/07/19 17:29:02 $
-//   $Author: heiderp $
-//   $State: Exp $
-//
-// History Log: 
-//   $Log: Gorgon.cpp,v $
-//   Revision 1.9  2010/07/19 17:29:02  heiderp
-//   LARGE update.  Added flexible fitting functionality, lots of logic in FlexibleFittingEngine.h
-//
-//   Revision 1.8  2008/09/29 16:09:44  ssa1
-//   Removing GLVisualizer.h
-//
-//   Revision 1.7  2008/09/29 16:01:17  ssa1
-//   Adding in CVS meta information
-//
 
 #ifndef GORGON_GORGON_CPP
 #define GORGON_GORGON_CPP

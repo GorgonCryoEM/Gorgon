@@ -2,21 +2,6 @@
 // Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 // Description:   Gets a path and marks it in the skeleton.
 
-// CVS Meta Information: 
-//   $Source: /project/mm/cvs/graphics/ssa1/source/GraphMatch/PathGenerator.h,v $
-//   $Revision: 1.10 $
-//   $Date: 2009/10/13 18:09:34 $
-//   $Author: ssa1 $
-//   $State: Exp $
-//
-// History Log: 
-//   $Log: PathGenerator.h,v $
-//   Revision 1.10  2009/10/13 18:09:34  ssa1
-//   Refactoring Volume.h
-//
-//   Revision 1.9  2008/09/29 16:19:30  ssa1
-//   Adding in CVS meta information
-//
 
 #ifndef PATHGENERATOR_H
 #define PATHGENERATOR_H

@@ -2,18 +2,6 @@
 // Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 // Description:   A class for openGL utilities
 
-// CVS Meta Information: 
-//   $Source: /project/mm/cvs/graphics/ssa1/source/Foundation/OpenGLUtils.h,v $
-//   $Revision: 1.1 $
-//   $Date: 2009/07/01 21:25:13 $
-//   $Author: ssa1 $
-//   $State: Exp $
-//
-// History Log: 
-//   $Log: OpenGLUtils.h,v $
-//   Revision 1.1  2009/07/01 21:25:13  ssa1
-//   Centering the volume cropped using a radius around the point selected by the atom selection tool.
-//
 
 #ifndef FOUNDATION_OPENGL_UTILS_H
 #define FOUNDATION_OPENGL_UTILS_H

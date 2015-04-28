@@ -2,24 +2,6 @@
 # Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 # Description:   A widget used ot perform binary skeletonization on a volume 
 
-# CVS Meta Information: 
-#   $Source: /project/mm/cvs/graphics/ssa1/source/Gorgon/src_py/volume_binary_skeletonization_form.py,v $
-#   $Revision: 1.5 $
-#   $Date: 2009/12/24 07:25:07 $
-#   $Author: ssa1 $
-#   $State: Exp $
-#
-# History Log: 
-#   $Log: volume_binary_skeletonization_form.py,v $
-#   Revision 1.5  2009/12/24 07:25:07  ssa1
-#   Refactoring child window behavior.. Using base classes to encapsulate common behavior
-#
-#   Revision 1.4  2009/09/02 18:43:05  ssa1
-#   Setting the binary skeletonization threshold to be the one that is being visualized by default
-#
-#   Revision 1.3  2008/06/18 18:15:41  ssa1
-#   Adding in CVS meta data
-#
 
 from PyQt4 import QtCore, QtGui
 from ui_dialog_volume_binary_skeletonization import Ui_DialogVolumeBinarySkeletonization

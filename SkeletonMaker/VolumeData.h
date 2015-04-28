@@ -2,28 +2,6 @@
 // Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 // Description:   Stores information of a density volume
 
-// CVS Meta Information: 
-//   $Source: /project/mm/cvs/graphics/ssa1/source/SkeletonMaker/VolumeData.h,v $
-//   $Revision: 1.4 $
-//   $Date: 2010/02/25 16:31:24 $
-//   $Author: colemanr $
-//   $State: Exp $
-//
-// History Log: 
-//   $Log: VolumeData.h,v $
-//   Revision 1.4  2010/02/25 16:31:24  colemanr
-//   copy constructors
-//
-//   Revision 1.3  2009/12/09 21:08:14  colemanr
-//   added VolumeData::GetArrayCopy()
-//   iCVS: ----------------------------------------------------------------------
-//
-//   Revision 1.2  2009/10/30 06:11:26  colemanr
-//   fixed compiler warning for comparison between signed and unsigned integers
-//
-//   Revision 1.1  2009/10/13 18:09:34  ssa1
-//   Refactoring Volume.h
-//
 
 
 

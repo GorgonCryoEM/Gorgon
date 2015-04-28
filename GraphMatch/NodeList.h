@@ -2,18 +2,6 @@
 // Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 // Description:   Storage structure for the list of nodes being processed.
 
-// CVS Meta Information: 
-//   $Source: /project/mm/cvs/graphics/ssa1/source/GraphMatch/NodeList.h,v $
-//   $Revision: 1.4 $
-//   $Date: 2008/09/29 16:19:30 $
-//   $Author: ssa1 $
-//   $State: Exp $
-//
-// History Log: 
-//   $Log: NodeList.h,v $
-//   Revision 1.4  2008/09/29 16:19:30  ssa1
-//   Adding in CVS meta information
-//
 
 
 #ifndef NODELIST_H

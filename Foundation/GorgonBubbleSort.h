@@ -1,18 +1,6 @@
 // Copyright (C) 2005-2008 Washington University in St Louis, Baylor College of Medicine.  All rights reserved
 // Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 // Description:   An abstract class for sorting
-// CVS Meta Information: 
-//   $Source: /project/mm/cvs/graphics/ssa1/source/Foundation/GorgonBubbleSort.h,v $
-//   $Revision: 1.1 $
-//   $Date: 2009/12/13 19:38:37 $
-//   $Author: ssa1 $
-//   $State: Exp $
-//
-// History Log: 
-//   $Log: GorgonBubbleSort.h,v $
-//   Revision 1.1  2009/12/13 19:38:37  ssa1
-//   Adding in abstract data structures
-//
 
 #ifndef FOUNDATION_GORGONBUBBLESORT_H
 #define FOUNDATION_GORGONBUBBLESORT_H

@@ -2,21 +2,6 @@
 # Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 # Description:   A dialog box which can be used to pick a color 
 
-# CVS Meta Information: 
-#   $Source: /project/mm/cvs/graphics/ssa1/source/Gorgon/src_py/color_picker_form.py,v $
-#   $Revision: 1.5 $
-#   $Date: 2009/04/08 19:54:59 $
-#   $Author: ssa1 $
-#   $State: Exp $
-#
-# History Log: 
-#   $Log: color_picker_form.py,v $
-#   Revision 1.5  2009/04/08 19:54:59  ssa1
-#   Adding in plugin functionality
-#
-#   Revision 1.4  2008/06/18 18:15:41  ssa1
-#   Adding in CVS meta data
-#
 
 from PyQt4 import QtCore, QtGui
 from ui_dialog_color_picker import Ui_DialogColorPicker

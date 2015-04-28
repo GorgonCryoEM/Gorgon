@@ -2,21 +2,6 @@
 # Author:        Ross A. Coleman (racolema@bcm.edu)
 # Description:   This class creates the QUndoCommand objects for the undo/redo stack.
 
-# CVS Meta Information: 
-#   $Source: /project/mm/cvs/graphics/ssa1/source/Gorgon/src_py/calpha_structure_editor_command_atom_placement.py,v $
-#   $Revision: 1.2 $
-#   $Date: 2009/04/01 23:00:32 $
-#   $Author: ssa1 $
-#   $State: Exp $
-#
-# History Log: 
-#   $Log: calpha_structure_editor_command_atom_placement.py,v $
-#   Revision 1.2  2009/04/01 23:00:32  ssa1
-#   Refactor: Redesigning semi-automatic atom placement window.  Fixing bugs, and more consistant layout
-#
-#   Revision 1.1  2009/04/01 16:01:38  ssa1
-#   Refactoring: Splitting structure_editor into subclasses
-#
 
 from PyQt4 import QtGui, QtCore
 from libpyGORGON import PDBAtom, PDBBond, Vector3DFloat

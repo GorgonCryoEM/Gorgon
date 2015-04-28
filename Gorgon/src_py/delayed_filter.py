@@ -2,24 +2,6 @@
 # Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 # Description:   A filter which transmits events based on a timer.. (simply bundles events into one event) 
 
-# CVS Meta Information: 
-#   $Source: /project/mm/cvs/graphics/ssa1/source/Gorgon/src_py/delayed_filter.py,v $
-#   $Revision: 1.8 $
-#   $Date: 2010/01/17 18:34:59 $
-#   $Author: ssa1 $
-#   $State: Exp $
-#
-# History Log: 
-#   $Log: delayed_filter.py,v $
-#   Revision 1.8  2010/01/17 18:34:59  ssa1
-#   Histogram for density visualization
-#
-#   Revision 1.7  2008/09/03 19:48:19  ssa1
-#   Maximizing performance of volume visualization by minimizing method call count
-#
-#   Revision 1.6  2008/06/18 18:15:41  ssa1
-#   Adding in CVS meta data
-#
 
 from PyQt4 import QtGui, QtCore
 import thread
