@@ -2,15 +2,6 @@
 # Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 # Description:   Maintains all the menu items in the application 
 
-# CVS Meta Information: 
-#   $Source$
-#   $Revision$
-#   $Date$
-#   $Author$
-#   $State$
-#
-# History Log: 
-#   $Log$
 
 from PyQt4 import QtGui
 

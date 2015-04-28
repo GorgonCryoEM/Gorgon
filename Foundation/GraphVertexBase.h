@@ -2,29 +2,6 @@
 // Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 // Description:   A class for storing an base graph vertex
 
-// CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
-//
-// History Log: 
-//   $Log$
-//   Revision 1.5  2010/04/27 17:30:54  ssa1
-//   SSE Registration search by first finding all cliques, and then finding the matching.
-//
-//   Revision 1.4  2009/11/04 20:29:38  ssa1
-//   Implementing Triangle based clique search and chain based flexible fitting.
-//
-//   Revision 1.3  2009/09/02 19:06:13  ssa1
-//   Working towards flexible fitting
-//
-//   Revision 1.2  2009/08/26 14:58:55  ssa1
-//   Adding in Flexible fitting clique search
-//
-//   Revision 1.1  2009/08/18 19:55:06  ssa1
-//   Adding A base graph class for finding maximal cliques, and connected components
 
 
 #ifndef FOUNDATION_GRAPH_VERTEX_BASE_H

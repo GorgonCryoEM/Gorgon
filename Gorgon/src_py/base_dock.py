@@ -2,17 +2,6 @@
 # Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 # Description:   A base class for dock widgets
 
-# CVS Meta Information: 
-#   $Source$
-#   $Revision$
-#   $Date$
-#   $Author$
-#   $State$
-#
-# History Log: 
-#   $Log$
-#   Revision 1.1  2009/12/24 19:37:36  ssa1
-#   Refactoring child window behavior.. Using base classes to encapsulate common behavior
 
 
 

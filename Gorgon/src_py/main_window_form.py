@@ -2,57 +2,6 @@
 # Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 # Description:   The main window of the Gorgon application 
 
-# CVS Meta Information: 
-#   $Source$
-#   $Revision$
-#   $Date$
-#   $Author$
-#   $State$
-#
-# History Log: 
-#   $Log$
-#   Revision 1.18  2010/01/04 22:14:23  ssa1
-#   Adding update notifier plugin to check for newer versions of gorgon
-#
-#   Revision 1.17  2009/12/24 07:25:07  ssa1
-#   Refactoring child window behavior.. Using base classes to encapsulate common behavior
-#
-#   Revision 1.16  2009/04/14 18:46:20  ssa1
-#   Changing how the WindowManager and PluginManager are loaded
-#
-#   Revision 1.15  2009/04/08 19:54:59  ssa1
-#   Adding in plugin functionality
-#
-#   Revision 1.14  2008/12/17 16:00:04  ssa1
-#   Changing Version information for next public release
-#
-#   Revision 1.13  2008/12/03 20:27:05  ssa1
-#   adding in bug tracker
-#
-#   Revision 1.12  2008/12/02 21:10:06  colemanr
-#   Added a file-export menu.
-#
-#   Revision 1.11  2008/12/01 01:25:54  ssa1
-#   Docking widgets as tabs to preserve screen real-estate
-#
-#   Revision 1.10  2008/11/30 00:25:44  ssa1
-#   Splash screen for public beta 1 release
-#
-#   Revision 1.9  2008/11/29 04:48:28  ssa1
-#   Icon support and Redirecting help to website.
-#
-#   Revision 1.8  2008/11/25 21:03:40  ssa1
-#   User constraints on finding correspondences (v3)
-#
-#   Revision 1.7  2008/11/06 05:29:04  ssa1
-#   CGI submission milestone for Interactive Skeletonization, and theme support, and fixing (hopefully) mac-os flicker bug
-#
-#   Revision 1.6  2008/10/15 19:41:32  ssa1
-#   Esc to cancel path, Clear Button and Tracking of start seed point
-#
-#   Revision 1.5  2008/06/18 18:15:41  ssa1
-#   Adding in CVS meta data
-#
 
 from PyQt4 import QtCore, QtGui
 from menu_manager import MenuManager
