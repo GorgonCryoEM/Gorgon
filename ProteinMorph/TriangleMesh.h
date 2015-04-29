@@ -2,27 +2,6 @@
 // Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 // Description:   A class for a triangle mesh
 
-// CVS Meta Information: 
-//   $Source: /project/mm/cvs/graphics/ssa1/source/ProteinMorph/TriangleMesh.h,v $
-//   $Revision: 1.5 $
-//   $Date: 2009/12/07 21:34:36 $
-//   $Author: ssa1 $
-//   $State: Exp $
-//
-// History Log: 
-//   $Log: TriangleMesh.h,v $
-//   Revision 1.5  2009/12/07 21:34:36  ssa1
-//   Finding Rotation using SVD, and removing compiler warnings
-//
-//   Revision 1.4  2009/07/15 15:34:21  ssa1
-//   Fixing Macos Compilation issue for template based types used as iterators
-//
-//   Revision 1.3  2009/07/01 21:25:13  ssa1
-//   Centering the volume cropped using a radius around the point selected by the atom selection tool.
-//
-//   Revision 1.2  2009/03/16 16:17:34  ssa1
-//   Fitting SSEs into the Density
-//
 
 
 #ifndef PROTEINMORPH_TRIANGLE_MESH_H

@@ -2,23 +2,6 @@
 // Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 // Description:   Reads volumes in the TNS File Format
 
-// CVS Meta Information: 
-//   $Source: /project/mm/cvs/graphics/ssa1/source/GraySkeletonCPP/VolumeReaderTNS.h,v $
-//   $Revision: 1.3 $
-//   $Date: 2009/10/13 18:09:34 $
-//   $Author: ssa1 $
-//   $State: Exp $
-//
-// History Log: 
-//   $Log: VolumeReaderTNS.h,v $
-//   Revision 1.3  2009/10/13 18:09:34  ssa1
-//   Refactoring Volume.h
-//
-//   Revision 1.2  2009/03/03 22:33:11  ssa1
-//   Point clouds are little gaussians.. (no longer bins)
-//
-//   Revision 1.1  2009/03/02 16:31:47  ssa1
-//   Adding in Point Clouds and Structure Tensor Fields
 
 
 #ifndef GRAYSKELETONCPP_VOLUME_READER_TNS_H

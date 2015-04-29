@@ -2,18 +2,6 @@
 // Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 // Description:   Reads Grayscale images from MRC files
 
-// CVS Meta Information: 
-//   $Source: /project/mm/cvs/graphics/ssa1/source/GraySkeletonCPP/ImageReaderMRC.h,v $
-//   $Revision: 1.10 $
-//   $Date: 2008/09/29 16:30:15 $
-//   $Author: ssa1 $
-//   $State: Exp $
-//
-// History Log: 
-//   $Log: ImageReaderMRC.h,v $
-//   Revision 1.10  2008/09/29 16:30:15  ssa1
-//   Adding in CVS meta information
-//
 
 #ifndef GRAYSKELETONCPP_IMAGE_READER_MRC_H
 #define GRAYSKELETONCPP_IMAGE_READER_MRC_H

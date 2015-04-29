@@ -2,18 +2,6 @@
 // Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 // Description:   A library that generates random graphs
 
-// CVS Meta Information: 
-//   $Source: /project/mm/cvs/graphics/ssa1/source/GraphMatch/GraphGenerator.h,v $
-//   $Revision: 1.4 $
-//   $Date: 2008/09/29 16:19:30 $
-//   $Author: ssa1 $
-//   $State: Exp $
-//
-// History Log: 
-//   $Log: GraphGenerator.h,v $
-//   Revision 1.4  2008/09/29 16:19:30  ssa1
-//   Adding in CVS meta information
-//
 
 #ifndef GRAPHGENERATOR_H
 #define GRAPHGENERATOR_H

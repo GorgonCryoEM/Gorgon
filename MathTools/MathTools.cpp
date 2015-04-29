@@ -2,24 +2,6 @@
 // Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 // Description:   A dummy CPP file for the MATHTOOLS Module
 
-// CVS Meta Information: 
-//   $Source: /project/mm/cvs/graphics/ssa1/source/MathTools/MathTools.cpp,v $
-//   $Revision: 1.7 $
-//   $Date: 2009/12/07 21:34:36 $
-//   $Author: ssa1 $
-//   $State: Exp $
-//
-// History Log: 
-//   $Log: MathTools.cpp,v $
-//   Revision 1.7  2009/12/07 21:34:36  ssa1
-//   Finding Rotation using SVD, and removing compiler warnings
-//
-//   Revision 1.6  2009/12/07 05:00:52  ssa1
-//   Adding in Matrix functionality for Singular Value Decomposition
-//
-//   Revision 1.5  2008/09/29 16:43:15  ssa1
-//   Adding in CVS meta information
-//
 
 #ifndef MATHTOOLS_SWITCHBOARD_CPP
 #define MATHTOOLS_SWITCHBOARD_CPP

@@ -2,30 +2,6 @@
 // Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 // Description:   Performs Linear solving
 
-// CVS Meta Information: 
-//   $Source: /project/mm/cvs/graphics/ssa1/source/MathTools/LinearSolver.h,v $
-//   $Revision: 1.5 $
-//   $Date: 2010/07/19 17:38:31 $
-//   $Author: heiderp $
-//   $State: Exp $
-//
-// History Log: 
-//   $Log: LinearSolver.h,v $
-//   Revision 1.5  2010/07/19 17:38:31  heiderp
-//   Flexible fitting.
-//
-//   Revision 1.4  2010/04/12 20:17:25  colemanr
-//   LinearSolver::SumDistSqrd()
-//
-//   Revision 1.3  2009/12/07 22:35:32  ssa1
-//   A* triangle search using SVD rotations and translations.
-//
-//   Revision 1.2  2009/12/07 21:34:36  ssa1
-//   Finding Rotation using SVD, and removing compiler warnings
-//
-//   Revision 1.1  2009/09/21 19:03:22  ssa1
-//   Linear least squares fit implementation, and using it in helix positioning of SSE Builder
-//
 
 #ifndef MATH_TOOLS_LINEAR_SOLVER_H
 #define MATH_TOOLS_LINEAR_SOLVER_H

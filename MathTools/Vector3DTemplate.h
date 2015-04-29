@@ -2,42 +2,6 @@
 // Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 // Description:   A template class for 3D vectors
 
-// CVS Meta Information: 
-//   $Source: /project/mm/cvs/graphics/ssa1/source/MathTools/Vector3DTemplate.h,v $
-//   $Revision: 1.13 $
-//   $Date: 2010/07/02 15:56:11 $
-//   $Author: coleman.r $
-//   $State: Exp $
-//
-// History Log: 
-//   $Log: Vector3DTemplate.h,v $
-//   Revision 1.13  2010/07/02 15:56:11  coleman.r
-//   begin() and end() functions --> make iterable for Python tuple/list type conversion
-//
-//   Revision 1.12  2010/06/30 16:35:30  coleman.r
-//   STL vector convert constructor
-//
-//   Revision 1.11  2010/04/17 02:57:08  colemanr
-//   subscript operator
-//
-//   Revision 1.10  2009/12/07 22:35:32  ssa1
-//   A* triangle search using SVD rotations and translations.
-//
-//   Revision 1.9  2009/12/07 05:00:52  ssa1
-//   Adding in Matrix functionality for Singular Value Decomposition
-//
-//   Revision 1.8  2009/08/27 21:19:39  colemanr
-//   Missing semicolons added.
-//
-//   Revision 1.7  2009/08/26 14:58:55  ssa1
-//   Adding in Flexible fitting clique search
-//
-//   Revision 1.6  2008/10/08 16:43:19  ssa1
-//   Interactive skeletonization changes
-//
-//   Revision 1.5  2008/09/29 16:43:15  ssa1
-//   Adding in CVS meta information
-//
 
 #ifndef MATHTOOLS_VECTORT3DTEMPLATE_H
 #define MATHTOOLS_VECTORT3DTEMPLATE_H

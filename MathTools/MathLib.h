@@ -2,18 +2,6 @@
 // Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 // Description:   A maths library class
 
-// CVS Meta Information: 
-//   $Source: /project/mm/cvs/graphics/ssa1/source/MathTools/MathLib.h,v $
-//   $Revision: 1.2 $
-//   $Date: 2008/09/29 16:43:15 $
-//   $Author: ssa1 $
-//   $State: Exp $
-//
-// History Log: 
-//   $Log: MathLib.h,v $
-//   Revision 1.2  2008/09/29 16:43:15  ssa1
-//   Adding in CVS meta information
-//
 
 #ifndef MATH_LIB_H
 #define MATH_LIB_H
