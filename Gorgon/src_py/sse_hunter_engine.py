@@ -2,27 +2,6 @@
 # Author:        Ross Coleman
 # Description:   An engine which performs SSE Hunter (Scoring of PDB atoms based on how likely it is that they form Secondary Structure Elements)
 
-# CVS Meta Information: 
-#   $Source$
-#   $Revision$
-#   $Date$
-#   $Author$
-#   $State$
-#
-# History Log: 
-#   $Log$
-#   Revision 1.7  2011/04/14 22:39:31  coleman.r
-#   adding score printouts to compare to SSEHunter in EMAN1 and EMAN2
-#
-#   Revision 1.6  2011/04/01 01:34:37  coleman.r
-#   adding geometry scoring code from EMAN
-#
-#   Revision 1.5  2010/02/27 05:23:31  colemanr
-#   default to polynomial radial profile
-#
-#   Revision 1.4  2010/02/11 23:19:13  ssa1
-#   Allowing the ability to save pseudoatoms generated from SSEHunter
-#
 
 
 from libpyGORGON import SSEHunter, RadialProfileType
