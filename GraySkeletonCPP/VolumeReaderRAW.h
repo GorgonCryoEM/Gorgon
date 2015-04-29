@@ -2,21 +2,6 @@
 // Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 // Description:   Reads volumes in the RAW file format
 
-// CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
-//
-// History Log: 
-//   $Log$
-//   Revision 1.8  2008/12/15 22:38:31  ssa1
-//   Adding in support to load RAW volumes
-//
-//   Revision 1.7  2008/09/29 16:30:15  ssa1
-//   Adding in CVS meta information
-//
 
 #ifndef GRAYSKELETONCPP_VOLUME_READER_RAW_H
 #define GRAYSKELETONCPP_VOLUME_READER_RAW_H
