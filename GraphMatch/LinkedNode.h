@@ -2,24 +2,6 @@
 // Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 // Description:   Storage structure for a node in the graph traversal.
 
-// CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
-//
-// History Log: 
-//   $Log$
-//   Revision 1.15  2009/12/22 01:03:06  schuhs
-//   Adding support for beta sheets to the SSE correspondence search algorithm
-//
-//   Revision 1.14  2008/09/29 16:30:27  ssa1
-//   Removing compiler warnings
-//
-//   Revision 1.13  2008/09/29 16:19:30  ssa1
-//   Adding in CVS meta information
-//
 
 #ifndef LINKEDNODE_H
 #define LINKEDNODE_H

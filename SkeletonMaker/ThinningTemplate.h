@@ -2,15 +2,6 @@
 // Author:        Tao Ju, Refactored by Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 // Description:   A template for thinning.
 
-// CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
-//
-// History Log: 
-//   $Log$
 
 #ifndef SKELETON_MAKER_THINNING_TEMPLATE_H
 #define SKELETON_MAKER_THINNING_TEMPLATE_H

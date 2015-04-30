@@ -2,30 +2,6 @@
 # Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 # Description:   A widget that manages all the windows of the main form. 
 
-# CVS Meta Information: 
-#   $Source$
-#   $Revision$
-#   $Date$
-#   $Author$
-#   $State$
-#
-# History Log: 
-#   $Log$
-#   Revision 1.13  2009/12/24 05:09:30  ssa1
-#   Refactoring child window behavior.. Using base classes to encapsulate common behavior
-#
-#   Revision 1.12  2009/10/05 17:57:37  ssa1
-#   Initial session saving functionality (Request ID:52)
-#
-#   Revision 1.11  2009/04/08 19:54:59  ssa1
-#   Adding in plugin functionality
-#
-#   Revision 1.10  2008/12/18 15:19:31  ssa1
-#   Moving About Form functionality into HelpMenus
-#
-#   Revision 1.9  2008/06/18 18:15:41  ssa1
-#   Adding in CVS meta data
-#
 
 from PyQt4 import QtGui, QtCore
 from help_menus import HelpMenus
@@ -34,6 +10,7 @@ from volume_viewer import VolumeViewer
 from skeleton_viewer import SkeletonViewer
 from sse_viewer import SSEViewer
 from calpha_viewer import CAlphaViewer
+from calpha_reference_viewer import CAlphaReferenceViewer
 import datetime
 from session_manager import SessionManager
 
@@ -55,7 +32,8 @@ class WindowManager(QtGui.QWidget):
         self.skeletonViewer = SkeletonViewer(self.app)
         self.sseViewer = SSEViewer(self.app)
         self.calphaViewer = CAlphaViewer(self.app)
-        self.mainCamera = Camera([self.calphaViewer, self.sseViewer, self.skeletonViewer, self.volumeViewer], self.app)
+        self.calphaReference = CAlphaReferenceViewer(self.app)
+        self.mainCamera = Camera([self.calphaViewer, self.calphaReference, self.sseViewer, self.skeletonViewer, self.volumeViewer], self.app)
         self.app.mainCamera = self.mainCamera   
         self.app.setCentralWidget(self.mainCamera)
         
@@ -101,6 +79,7 @@ class WindowManager(QtGui.QWidget):
         textLines.extend(self.skeletonViewer.getSessionInfo(sessionManager))
         textLines.extend(self.sseViewer.getSessionInfo(sessionManager))
         textLines.extend(self.calphaViewer.getSessionInfo(sessionManager))
+        # textLines.extend(self.calphaReference.getSessionInfo(sessionManager))
         
         file.writelines(textLines)
         file.close()
@@ -122,6 +101,7 @@ class WindowManager(QtGui.QWidget):
         self.skeletonViewer.loadSessionInfo(sessionManager, propertyDict)
         self.sseViewer.loadSessionInfo(sessionManager, propertyDict)
         self.calphaViewer.loadSessionInfo(sessionManager, propertyDict)
+        # self.calphaReference.loadSessionInfo(sessionManager, propertyDict)
                
         self.mainCamera.loadSessionInfo(sessionManager, propertyDict)
         file.close()
@@ -144,3 +124,5 @@ class WindowManager(QtGui.QWidget):
                 self.sseViewer.unloadData()
             if (self.calphaViewer.loaded) :
                 self.calphaViewer.unloadData()
+            if (self.calphaReference.loaded) :
+                self.calphaReference.unloadData()

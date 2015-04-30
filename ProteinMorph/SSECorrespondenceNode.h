@@ -2,24 +2,6 @@
 // Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 // Description:   A correspondence node
 
-// CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
-//
-// History Log: 
-//   $Log$
-//   Revision 1.3  2010/04/27 21:10:17  ssa1
-//   Implementing Cost-matrix based SSE Registration and performance optimizations on graph construction
-//
-//   Revision 1.2  2009/11/19 18:19:25  ssa1
-//   Improved flexible fitting.. (Split nodes to guarantee direction)
-//
-//   Revision 1.1  2009/08/26 14:58:55  ssa1
-//   Adding in Flexible fitting clique search
-//
 
 
 #ifndef PROTEINMORPH_SSE_CORRESPONDENCE_NODE_H

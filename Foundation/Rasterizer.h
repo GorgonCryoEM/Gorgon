@@ -2,21 +2,6 @@
 // Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 // Description:   A class for rasterizing vector representations
 
-// CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
-//
-// History Log: 
-//   $Log$
-//   Revision 1.2  2008/10/15 19:41:29  ssa1
-//   Esc to cancel path, Clear Button and Tracking of start seed point
-//
-//   Revision 1.1  2008/10/10 14:25:55  ssa1
-//   Setting the cost functions to scale with the edge length
-//
 
 #ifndef FOUNDATION_RASTERIZER_H
 #define FOUNDATION_RASTERIZER_H

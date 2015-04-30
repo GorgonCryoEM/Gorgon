@@ -2,18 +2,6 @@
 // Author:        Tao Ju, Refactored by Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 // Description:   Grid queue
 
-// CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
-//
-// History Log: 
-//   $Log$
-//   Revision 1.1  2009/10/13 18:09:34  ssa1
-//   Refactoring Volume.h
-//
 
 #ifndef SKELETON_MAKER_GRID_QUEUE_H
 #define SKELETON_MAKER_GRID_QUEUE_H
