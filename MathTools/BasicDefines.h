@@ -2,15 +2,6 @@
 // Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 // Description:   A set of global definitions for the MATHTOOLS module
 
-// CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
-//
-// History Log: 
-//   $Log$
 
 #ifndef BASIC_DEFINES_H
 #define BASIC_DEFINES_H
@@ -41,4 +32,5 @@ namespace wustl_mm {
 	}
 }
 
+#undef round
 #endif

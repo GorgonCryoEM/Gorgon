@@ -1,21 +1,6 @@
 // Copyright (C) 2005-2008 Washington University in St Louis, Baylor College of Medicine.  All rights reserved
 // Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 // Description:   An abstract class for heap sorting
-// CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
-//
-// History Log: 
-//   $Log$
-//   Revision 1.2  2009/12/13 19:39:32  ssa1
-//   Adding in abstract data structures
-//
-//   Revision 1.1  2009/12/13 19:38:37  ssa1
-//   Adding in abstract data structures
-//
 
 #ifndef FOUNDATION_GORGONHEAPSORT_H
 #define FOUNDATION_GORGONHEAPSORT_H
