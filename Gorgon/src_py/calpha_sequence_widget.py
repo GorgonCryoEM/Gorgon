@@ -4,27 +4,6 @@
 #                widget of a global view of  a chain, a scrollable of its residues, and 
 #                a local view that provides chain editing features. 
 
-# CVS Meta Information: 
-#   $Source: /project/mm/cvs/graphics/ssa1/source/Gorgon/src_py/calpha_sequence_widget.py,v $
-#   $Revision: 1.4 $
-#   $Date: 2009/12/24 23:38:37 $
-#   $Author: ssa1 $
-#   $State: Exp $
-#
-# History Log: 
-#   $Log: calpha_sequence_widget.py,v $
-#   Revision 1.4  2009/12/24 23:38:37  ssa1
-#   Making Sequence dock behave similar to the other docked windows
-#
-#   Revision 1.3  2009/04/02 19:00:20  ssa1
-#   CAlpha Viewer bug fixes and smoother uniform functionality
-#
-#   Revision 1.2  2009/04/01 16:01:38  ssa1
-#   Refactoring: Splitting structure_editor into subclasses
-#
-#   Revision 1.1  2009/03/31 21:40:13  ssa1
-#   Refactoring: Splitting seq_model\SequenceView.py into subclasses
-#
 
 from PyQt4 import Qt,QtGui,QtCore
 from calpha_structure_editor import CAlphaStructureEditor

@@ -2,18 +2,6 @@
 // Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 // Description:   The base class for all image readers
 
-// CVS Meta Information: 
-//   $Source: /project/mm/cvs/graphics/ssa1/source/GraySkeletonCPP/ImageReader.h,v $
-//   $Revision: 1.6 $
-//   $Date: 2008/09/29 16:30:15 $
-//   $Author: ssa1 $
-//   $State: Exp $
-//
-// History Log: 
-//   $Log: ImageReader.h,v $
-//   Revision 1.6  2008/09/29 16:30:15  ssa1
-//   Adding in CVS meta information
-//
 
 #ifndef GRAYSKELETONCPP_IMAGE_READER_H
 #define GRAYSKELETONCPP_IMAGE_READER_H

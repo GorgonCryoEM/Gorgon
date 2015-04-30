@@ -6,21 +6,6 @@
 //				  Modified to support missing helixes and constrained nodes
 //				  Contains only the A future function
 
-// CVS Meta Information: 
-//   $Source: /project/mm/cvs/graphics/ssa1/source/GraphMatch/WongMatch15ConstrainedOnlyA.h,v $
-//   $Revision: 1.10 $
-//   $Date: 2008/11/18 18:10:24 $
-//   $Author: ssa1 $
-//   $State: Exp $
-//
-// History Log: 
-//   $Log: WongMatch15ConstrainedOnlyA.h,v $
-//   Revision 1.10  2008/11/18 18:10:24  ssa1
-//   Changing the scaling functions when doing graph matching to find correspondences
-//
-//   Revision 1.9  2008/09/29 16:19:30  ssa1
-//   Adding in CVS meta information
-//
 
 
 #ifndef WONGMATCH15CONSTRAINEDONLYA_H

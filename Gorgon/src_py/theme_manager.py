@@ -2,21 +2,6 @@
 # Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 # Description:   A widget that manages the colors of the application 
 
-# CVS Meta Information: 
-#   $Source: /project/mm/cvs/graphics/ssa1/source/Gorgon/src_py/theme_manager.py,v $
-#   $Revision: 1.2 $
-#   $Date: 2009/12/24 01:38:53 $
-#   $Author: ssa1 $
-#   $State: Exp $
-#
-# History Log: 
-#   $Log: theme_manager.py,v $
-#   Revision 1.2  2009/12/24 01:38:53  ssa1
-#   Fixing bug in macos where color dialogs automatically change when camera changes.  Bug ID 4
-#
-#   Revision 1.1  2008/11/06 05:29:04  ssa1
-#   CGI submission milestone for Interactive Skeletonization, and theme support, and fixing (hopefully) mac-os flicker bug
-#
 
 from PyQt4 import QtGui, QtCore
 import pickle

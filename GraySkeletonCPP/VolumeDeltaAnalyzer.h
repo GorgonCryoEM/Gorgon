@@ -2,21 +2,6 @@
 // Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 // Description:   Analyzes the difference between two volumes
 
-// CVS Meta Information: 
-//   $Source: /project/mm/cvs/graphics/ssa1/source/GraySkeletonCPP/VolumeDeltaAnalyzer.h,v $
-//   $Revision: 1.9 $
-//   $Date: 2009/10/13 18:09:34 $
-//   $Author: ssa1 $
-//   $State: Exp $
-//
-// History Log: 
-//   $Log: VolumeDeltaAnalyzer.h,v $
-//   Revision 1.9  2009/10/13 18:09:34  ssa1
-//   Refactoring Volume.h
-//
-//   Revision 1.8  2008/09/29 16:30:15  ssa1
-//   Adding in CVS meta information
-//
 
 #ifndef GRAYSKELETONCPP_VOLUME_DELTA_ANALYZER_H
 #define GRAYSKELETONCPP_VOLUME_DELTA_ANALYZER_H

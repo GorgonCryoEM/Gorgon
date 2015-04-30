@@ -2,21 +2,6 @@
 # Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 # Description:   A utility module for vector manipulation 
 
-# CVS Meta Information: 
-#   $Source: /project/mm/cvs/graphics/ssa1/source/Gorgon/src_py/vector_lib.py,v $
-#   $Revision: 1.5 $
-#   $Date: 2008/09/26 20:23:33 $
-#   $Author: ssa1 $
-#   $State: Exp $
-#
-# History Log: 
-#   $Log: vector_lib.py,v $
-#   Revision 1.5  2008/09/26 20:23:33  ssa1
-#   Rotations of helices
-#
-#   Revision 1.4  2008/06/18 18:15:41  ssa1
-#   Adding in CVS meta data
-#
 
 from cmath import *   
     

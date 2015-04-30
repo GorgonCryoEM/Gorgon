@@ -2,27 +2,6 @@
 // Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 // Description:   Storage structure for an attributed relational graph
 
-// CVS Meta Information: 
-//   $Source: /project/mm/cvs/graphics/ssa1/source/GraphMatch/StandardGraph.h,v $
-//   $Revision: 1.15 $
-//   $Date: 2009/12/22 01:03:06 $
-//   $Author: schuhs $
-//   $State: Exp $
-//
-// History Log: 
-//   $Log: StandardGraph.h,v $
-//   Revision 1.15  2009/12/22 01:03:06  schuhs
-//   Adding support for beta sheets to the SSE correspondence search algorithm
-//
-//   Revision 1.14  2009/10/13 18:09:34  ssa1
-//   Refactoring Volume.h
-//
-//   Revision 1.13  2008/11/18 18:10:24  ssa1
-//   Changing the scaling functions when doing graph matching to find correspondences
-//
-//   Revision 1.12  2008/09/29 16:19:30  ssa1
-//   Adding in CVS meta information
-//
 
 
 #ifndef STANDARDGRAPH_H
