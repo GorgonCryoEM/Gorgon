@@ -2,18 +2,6 @@
 // Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 // Description:   A class for a non-manifold mesh.
 
-// CVS Meta Information: 
-//   $Source: /project/mm/cvs/graphics/ssa1/source/ProteinMorph/NonManifoldMesh2.h,v $
-//   $Revision: 1.2 $
-//   $Date: 2009/03/16 16:17:34 $
-//   $Author: ssa1 $
-//   $State: Exp $
-//
-// History Log: 
-//   $Log: NonManifoldMesh2.h,v $
-//   Revision 1.2  2009/03/16 16:17:34  ssa1
-//   Fitting SSEs into the Density
-//
 
 
 #ifndef PROTEINMORPH_NON_MANIFOLD_MESH2_H

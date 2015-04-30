@@ -2,21 +2,6 @@
 // Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 // Description:   A class for displaying execution time... maintains a time stack so that the execution time can be broken down.
 
-// CVS Meta Information: 
-//   $Source: /project/mm/cvs/graphics/ssa1/source/Foundation/TimeManager.h,v $
-//   $Revision: 1.6 $
-//   $Date: 2010/04/04 19:05:51 $
-//   $Author: ssa1 $
-//   $State: Exp $
-//
-// History Log: 
-//   $Log: TimeManager.h,v $
-//   Revision 1.6  2010/04/04 19:05:51  ssa1
-//   Fixing misc bugs, and redoing sheet visualization mechanism
-//
-//   Revision 1.5  2008/09/29 15:45:09  ssa1
-//   Adding in CVS meta information
-//
 
 #ifndef FOUNDATION_TIME_MANAGER_H
 #define FOUNDATION_TIME_MANAGER_H

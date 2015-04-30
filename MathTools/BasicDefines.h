@@ -2,18 +2,6 @@
 // Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 // Description:   A set of global definitions for the MATHTOOLS module
 
-// CVS Meta Information: 
-//   $Source: /project/mm/cvs/graphics/ssa1/source/MathTools/BasicDefines.h,v $
-//   $Revision: 1.6 $
-//   $Date: 2008/09/29 16:43:15 $
-//   $Author: ssa1 $
-//   $State: Exp $
-//
-// History Log: 
-//   $Log: BasicDefines.h,v $
-//   Revision 1.6  2008/09/29 16:43:15  ssa1
-//   Adding in CVS meta information
-//
 
 #ifndef BASIC_DEFINES_H
 #define BASIC_DEFINES_H

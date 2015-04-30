@@ -2,21 +2,6 @@
 # Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 # Description:   A widget can be used to perform laplacian smoothing on a skeleton 
 
-# CVS Meta Information: 
-#   $Source: /project/mm/cvs/graphics/ssa1/source/Gorgon/src_py/skeleton_laplacian_smoothing_form.py,v $
-#   $Revision: 1.8 $
-#   $Date: 2009/12/24 07:25:07 $
-#   $Author: ssa1 $
-#   $State: Exp $
-#
-# History Log: 
-#   $Log: skeleton_laplacian_smoothing_form.py,v $
-#   Revision 1.8  2009/12/24 07:25:07  ssa1
-#   Refactoring child window behavior.. Using base classes to encapsulate common behavior
-#
-#   Revision 1.7  2008/06/18 18:15:41  ssa1
-#   Adding in CVS meta data
-#
 
 from PyQt4 import QtCore, QtGui
 from ui_dialog_skeleton_laplacian_smoothing import Ui_DialogSkeletonLaplacianSmoothing

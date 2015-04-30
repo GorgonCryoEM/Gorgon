@@ -2,24 +2,6 @@
 // Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 // Description:   A simulated annealing based fitting tool to fit a secondary structure element into the density.
 
-// CVS Meta Information: 
-//   $Source: /project/mm/cvs/graphics/ssa1/source/ProteinMorph/SSEFlexibleFitter.h,v $
-//   $Revision: 1.3 $
-//   $Date: 2009/10/13 18:09:34 $
-//   $Author: ssa1 $
-//   $State: Exp $
-//
-// History Log: 
-//   $Log: SSEFlexibleFitter.h,v $
-//   Revision 1.3  2009/10/13 18:09:34  ssa1
-//   Refactoring Volume.h
-//
-//   Revision 1.2  2009/08/26 14:58:55  ssa1
-//   Adding in Flexible fitting clique search
-//
-//   Revision 1.1  2009/03/17 20:00:17  ssa1
-//   Removing Sheets from fiting process
-//
 
 #include <SkeletonMaker/volume.h>
 #include <MathTools/Vector3D.h>

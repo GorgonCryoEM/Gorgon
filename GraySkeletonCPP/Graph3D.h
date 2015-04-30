@@ -2,18 +2,6 @@
 // Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 // Description:   An implementation of a 3D Spatial graph
 
-// CVS Meta Information: 
-//   $Source: /project/mm/cvs/graphics/ssa1/source/GraySkeletonCPP/Graph3D.h,v $
-//   $Revision: 1.6 $
-//   $Date: 2008/09/29 16:30:15 $
-//   $Author: ssa1 $
-//   $State: Exp $
-//
-// History Log: 
-//   $Log: Graph3D.h,v $
-//   Revision 1.6  2008/09/29 16:30:15  ssa1
-//   Adding in CVS meta information
-//
 
 #ifndef GRAYSKELETONCPP_GRAPH_3D_H
 #define GRAYSKELETONCPP_GRAPH_3D_H
