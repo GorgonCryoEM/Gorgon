@@ -2,21 +2,6 @@
 // Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 // Description:   Reads volumes in the ATOM file format
 
-// CVS Meta Information: 
-//   $Source: /project/mm/cvs/graphics/ssa1/source/GraySkeletonCPP/VolumeReaderATOM.h,v $
-//   $Revision: 1.5 $
-//   $Date: 2009/10/13 18:09:34 $
-//   $Author: ssa1 $
-//   $State: Exp $
-//
-// History Log: 
-//   $Log: VolumeReaderATOM.h,v $
-//   Revision 1.5  2009/10/13 18:09:34  ssa1
-//   Refactoring Volume.h
-//
-//   Revision 1.4  2008/09/29 16:30:15  ssa1
-//   Adding in CVS meta information
-//
 
 #ifndef GRAYSKELETONCPP_VOLUME_READER_ATOM_H
 #define GRAYSKELETONCPP_VOLUME_READER_ATOM_H

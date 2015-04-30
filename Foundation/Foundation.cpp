@@ -2,36 +2,6 @@
 // Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 // Description:   A dummy cpp file for the FOUNDATION module.
 
-// CVS Meta Information: 
-//   $Source: /project/mm/cvs/graphics/ssa1/source/Foundation/Foundation.cpp,v $
-//   $Revision: 1.15 $
-//   $Date: 2009/12/15 04:26:15 $
-//   $Author: ssa1 $
-//   $State: Exp $
-//
-// History Log: 
-//   $Log: Foundation.cpp,v $
-//   Revision 1.15  2009/12/15 04:26:15  ssa1
-//   Using GorgonPriorityQueue instead of PriorityQueue
-//
-//   Revision 1.14  2009/12/14 22:11:21  ssa1
-//   Adding in abstract data structures
-//
-//   Revision 1.13  2009/12/13 23:35:51  ssa1
-//   Adding in abstract data structures
-//
-//   Revision 1.12  2009/12/13 19:38:37  ssa1
-//   Adding in abstract data structures
-//
-//   Revision 1.11  2009/09/02 19:06:13  ssa1
-//   Working towards flexible fitting
-//
-//   Revision 1.10  2009/08/18 19:55:06  ssa1
-//   Adding A base graph class for finding maximal cliques, and connected components
-//
-//   Revision 1.9  2008/09/29 15:45:09  ssa1
-//   Adding in CVS meta information
-//
 
 
 #define _CRT_SECURE_NO_DEPRECATE 1

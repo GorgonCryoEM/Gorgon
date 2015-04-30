@@ -2,27 +2,6 @@
 // Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 // Description:   A class for string manipulation
 
-// CVS Meta Information: 
-//   $Source: /project/mm/cvs/graphics/ssa1/source/Foundation/StringUtils.h,v $
-//   $Revision: 1.9 $
-//   $Date: 2010/02/11 23:19:11 $
-//   $Author: ssa1 $
-//   $State: Exp $
-//
-// History Log: 
-//   $Log: StringUtils.h,v $
-//   Revision 1.9  2010/02/11 23:19:11  ssa1
-//   Allowing the ability to save pseudoatoms generated from SSEHunter
-//
-//   Revision 1.8  2008/09/29 19:05:37  ssa1
-//   Fixing String Utils.h linking errors
-//
-//   Revision 1.7  2008/09/29 16:22:17  ssa1
-//   Removing compiler warnings
-//
-//   Revision 1.6  2008/09/29 15:45:09  ssa1
-//   Adding in CVS meta information
-//
 
 #ifndef FOUNDATION_STRING_UTILS_H
 #define FOUNDATION_STRING_UTILS_H

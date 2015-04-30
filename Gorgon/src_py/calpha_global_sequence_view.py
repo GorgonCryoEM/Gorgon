@@ -5,21 +5,6 @@
 #                QWidget Object, and updates the CAlphaSequenceView to show the residues 
 #                corresponding to the selection on it, and vice versa.
 
-# CVS Meta Information: 
-#   $Source: /project/mm/cvs/graphics/ssa1/source/Gorgon/src_py/calpha_global_sequence_view.py,v $
-#   $Revision: 1.2 $
-#   $Date: 2009/04/02 19:00:20 $
-#   $Author: ssa1 $
-#   $State: Exp $
-#
-# History Log: 
-#   $Log: calpha_global_sequence_view.py,v $
-#   Revision 1.2  2009/04/02 19:00:20  ssa1
-#   CAlpha Viewer bug fixes and smoother uniform functionality
-#
-#   Revision 1.1  2009/03/31 21:40:13  ssa1
-#   Refactoring: Splitting seq_model\SequenceView.py into subclasses
-#
 
 
 from PyQt4 import Qt,QtGui,QtCore

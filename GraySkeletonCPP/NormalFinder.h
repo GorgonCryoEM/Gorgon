@@ -2,21 +2,6 @@
 // Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 // Description:   A method to find the surface normals
 
-// CVS Meta Information: 
-//   $Source: /project/mm/cvs/graphics/ssa1/source/GraySkeletonCPP/NormalFinder.h,v $
-//   $Revision: 1.7 $
-//   $Date: 2009/10/13 18:09:34 $
-//   $Author: ssa1 $
-//   $State: Exp $
-//
-// History Log: 
-//   $Log: NormalFinder.h,v $
-//   Revision 1.7  2009/10/13 18:09:34  ssa1
-//   Refactoring Volume.h
-//
-//   Revision 1.6  2008/09/29 16:30:15  ssa1
-//   Adding in CVS meta information
-//
 
 #ifndef GRAYSKELETONCPP_NORMAL_FINDER_H
 #define GRAYSKELETONCPP_NORMAL_FINDER_H

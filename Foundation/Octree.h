@@ -2,21 +2,6 @@
 // Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 // Description:   A class for storing an octree.
 
-// CVS Meta Information: 
-//   $Source: /project/mm/cvs/graphics/ssa1/source/Foundation/Octree.h,v $
-//   $Revision: 1.9 $
-//   $Date: 2008/10/28 18:46:52 $
-//   $Author: ssa1 $
-//   $State: Exp $
-//
-// History Log: 
-//   $Log: Octree.h,v $
-//   Revision 1.9  2008/10/28 18:46:52  ssa1
-//   Fixing octree neighbor search, and changing the structure tensor cost function
-//
-//   Revision 1.8  2008/09/29 15:42:54  ssa1
-//   Adding in CVS meta information
-//
 
 #ifndef FOUNDATION_OCTREE_H
 #define FOUNDATION_OCTREE_H
