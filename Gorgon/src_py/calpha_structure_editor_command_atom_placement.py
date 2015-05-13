@@ -2,18 +2,6 @@
 # Author:        Ross A. Coleman (racolema@bcm.edu)
 # Description:   This class creates the QUndoCommand objects for the undo/redo stack.
 
-# CVS Meta Information: 
-#   $Source$
-#   $Revision$
-#   $Date$
-#   $Author$
-#   $State$
-#
-# History Log: 
-#   $Log$
-#   Revision 1.1  2009/04/01 16:01:38  ssa1
-#   Refactoring: Splitting structure_editor into subclasses
-#
 
 from PyQt4 import QtGui, QtCore
 from libpyGORGON import PDBAtom, PDBBond, Vector3DFloat

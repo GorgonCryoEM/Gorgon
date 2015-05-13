@@ -2,36 +2,6 @@
 // Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 // Description:   An engine for interactively creating and modifying skeletons
 
-// CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
-//
-// History Log: 
-//   $Log$
-//   Revision 1.7  2010/07/23 18:18:32  heiderp
-//   Side chains now transform correctly.  PDB helices now color correctly and rigid initialization bug is fixed
-//
-//   Revision 1.6  2010/07/22 21:09:07  heiderp
-//   Minor updates. Mostly commenting and removing extra material from CurveDeformer.h
-//
-//   Revision 1.5  2010/07/19 17:29:02  heiderp
-//   LARGE update.  Added flexible fitting functionality, lots of logic in FlexibleFittingEngine.h
-//
-//   Revision 1.4  2010/06/17 19:31:47  ssa1
-//   Visually displaying flexible fitting clusters.
-//
-//   Revision 1.3  2010/05/21 15:45:16  ssa1
-//   Flexible fitting implemented in Gorgon
-//
-//   Revision 1.2  2010/05/20 21:55:53  ssa1
-//   Rigid body alignment based on largest flexible cluster
-//
-//   Revision 1.1  2010/05/06 21:50:11  ssa1
-//   Fixing performance bug when moving a volume
-//
 
 
 #ifndef GORGON_FLEXIBLE_FITTING_ENGINE_H
