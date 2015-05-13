@@ -2,27 +2,6 @@
 // Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 // Description:   Storage structure for a node in the graph traversal.
 
-// CVS Meta Information: 
-//   $Source: /project/mm/cvs/graphics/ssa1/source/GraphMatch/LinkedNode.h,v $
-//   $Revision: 1.16 $
-//   $Date: 2009/12/22 19:00:51 $
-//   $Author: colemanr $
-//   $State: Exp $
-//
-// History Log: 
-//   $Log: LinkedNode.h,v $
-//   Revision 1.16  2009/12/22 19:00:51  colemanr
-//   removing extra qualification inside class declaration
-//
-//   Revision 1.15  2009/12/22 01:03:06  schuhs
-//   Adding support for beta sheets to the SSE correspondence search algorithm
-//
-//   Revision 1.14  2008/09/29 16:30:27  ssa1
-//   Removing compiler warnings
-//
-//   Revision 1.13  2008/09/29 16:19:30  ssa1
-//   Adding in CVS meta information
-//
 
 #ifndef LINKEDNODE_H
 #define LINKEDNODE_H

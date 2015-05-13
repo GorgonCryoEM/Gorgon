@@ -2,43 +2,6 @@
 // Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 // Description:   A static store of global constants for the GRAPHMATCH module
 
-// CVS Meta Information: 
-//   $Source: /project/mm/cvs/graphics/ssa1/source/GraphMatch/GlobalConstants.h,v $
-//   $Revision: 1.35 $
-//   $Date: 2010/01/08 22:27:34 $
-//   $Author: schuhs $
-//   $State: Exp $
-//
-// History Log: 
-//   $Log: GlobalConstants.h,v $
-//   Revision 1.35  2010/01/08 22:27:34  schuhs
-//   Helix-only correspondence works with SEQ file
-//
-//   Revision 1.34  2010/01/04 20:38:52  ssa1
-//   Removing dependancy on SSE files for helix length calculation.
-//
-//   Revision 1.33  2009/12/22 01:03:06  schuhs
-//   Adding support for beta sheets to the SSE correspondence search algorithm
-//
-//   Revision 1.32  2008/12/12 21:43:38  ssa1
-//   Fixing bug: Application crashing when loading skeletons via the sse correspondence finder
-//
-//   Revision 1.31  2008/11/25 03:30:12  ssa1
-//   User constraints on finding correspondences (v2)
-//
-//   Revision 1.30  2008/11/18 18:10:24  ssa1
-//   Changing the scaling functions when doing graph matching to find correspondences
-//
-//   Revision 1.28  2008/11/10 21:07:11  colemanr
-//   Removed changed constants to allow sequences of several different file
-//   types to be loaded, and the file type to also be saved in a variable.
-//
-//   Revision 1.27  2008/10/22 17:25:43  colemanr
-//   Added compile flags for Win32 to use std::string, and cstring otherwise.
-//
-//   Revision 1.26  2008/09/29 16:19:30  ssa1
-//   Adding in CVS meta information
-//
 
 
 #ifndef GLOBALCONSTANTS_H

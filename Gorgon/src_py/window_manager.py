@@ -2,33 +2,6 @@
 # Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 # Description:   A widget that manages all the windows of the main form. 
 
-# CVS Meta Information: 
-#   $Source: /project/mm/cvs/graphics/ssa1/source/Gorgon/src_py/window_manager.py,v $
-#   $Revision: 1.14 $
-#   $Date: 2009/12/27 00:31:04 $
-#   $Author: ssa1 $
-#   $State: Exp $
-#
-# History Log: 
-#   $Log: window_manager.py,v $
-#   Revision 1.14  2009/12/27 00:31:04  ssa1
-#   Fixing weird PyOpenGL bug when working with new PyQT4, and parent window set.
-#
-#   Revision 1.13  2009/12/24 05:09:30  ssa1
-#   Refactoring child window behavior.. Using base classes to encapsulate common behavior
-#
-#   Revision 1.12  2009/10/05 17:57:37  ssa1
-#   Initial session saving functionality (Request ID:52)
-#
-#   Revision 1.11  2009/04/08 19:54:59  ssa1
-#   Adding in plugin functionality
-#
-#   Revision 1.10  2008/12/18 15:19:31  ssa1
-#   Moving About Form functionality into HelpMenus
-#
-#   Revision 1.9  2008/06/18 18:15:41  ssa1
-#   Adding in CVS meta data
-#
 
 from PyQt4 import QtGui, QtCore
 from help_menus import HelpMenus

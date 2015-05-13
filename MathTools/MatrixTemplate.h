@@ -2,27 +2,6 @@
 // Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 // Description:   A template class for matrices
 
-// CVS Meta Information: 
-//   $Source: /project/mm/cvs/graphics/ssa1/source/MathTools/MatrixTemplate.h,v $
-//   $Revision: 1.4 $
-//   $Date: 2009/12/08 23:54:02 $
-//   $Author: ssa1 $
-//   $State: Exp $
-//
-// History Log: 
-//   $Log: MatrixTemplate.h,v $
-//   Revision 1.4  2009/12/08 23:54:02  ssa1
-//   Changin overridden methods to work in macos
-//
-//   Revision 1.3  2009/12/08 21:17:45  ssa1
-//   Fixing Switch/Case syntax
-//
-//   Revision 1.2  2009/12/07 21:34:36  ssa1
-//   Finding Rotation using SVD, and removing compiler warnings
-//
-//   Revision 1.1  2009/12/07 05:00:52  ssa1
-//   Adding in Matrix functionality for Singular Value Decomposition
-//
 
 #ifndef MATHTOOLS_MATRIX_TEMPLATE_H
 #define MATHTOOLS_MATRIX_TEMPLATE_H

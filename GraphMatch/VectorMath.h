@@ -2,24 +2,6 @@
 // Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 // Description:   Has basic vector functions
 
-// CVS Meta Information: 
-//   $Source: /project/mm/cvs/graphics/ssa1/source/GraphMatch/VectorMath.h,v $
-//   $Revision: 1.8 $
-//   $Date: 2010/07/19 17:38:31 $
-//   $Author: heiderp $
-//   $State: Exp $
-//
-// History Log: 
-//   $Log: VectorMath.h,v $
-//   Revision 1.8  2010/07/19 17:38:31  heiderp
-//   Flexible fitting.
-//
-//   Revision 1.7  2008/11/18 18:10:24  ssa1
-//   Changing the scaling functions when doing graph matching to find correspondences
-//
-//   Revision 1.6  2008/09/29 16:19:30  ssa1
-//   Adding in CVS meta information
-//
 
 
 #ifndef VECMATH_H

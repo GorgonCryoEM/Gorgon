@@ -2,18 +2,6 @@
 // Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 // Description:   A class for storing a stack ADT
 
-// CVS Meta Information: 
-//   $Source: /project/mm/cvs/graphics/ssa1/source/Foundation/GorgonStack.h,v $
-//   $Revision: 1.1 $
-//   $Date: 2009/12/13 19:38:37 $
-//   $Author: ssa1 $
-//   $State: Exp $
-//
-// History Log: 
-//   $Log: GorgonStack.h,v $
-//   Revision 1.1  2009/12/13 19:38:37  ssa1
-//   Adding in abstract data structures
-//
 
 #ifndef FOUNDATION_GORGONSTACK_H
 #define FOUNDATION_GORGONSTACK_H

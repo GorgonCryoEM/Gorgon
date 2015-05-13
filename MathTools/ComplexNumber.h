@@ -2,18 +2,6 @@
 // Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 // Description:   An implementation of complex numbers
 
-// CVS Meta Information: 
-//   $Source: /project/mm/cvs/graphics/ssa1/source/MathTools/ComplexNumber.h,v $
-//   $Revision: 1.5 $
-//   $Date: 2008/09/29 16:43:15 $
-//   $Author: ssa1 $
-//   $State: Exp $
-//
-// History Log: 
-//   $Log: ComplexNumber.h,v $
-//   Revision 1.5  2008/09/29 16:43:15  ssa1
-//   Adding in CVS meta information
-//
 
 #ifndef COMPLEX_NUMBER_H
 #define COMPLEX_NUMBER_H
