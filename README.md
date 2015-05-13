@@ -1,3 +1,14 @@
+# Gorgon
+Gorgon, an interactive molecular modeling system 
+
+WARNING: This repository is still under construction!
+
+[![Gorgon](http://gorgon.wustl.edu/images/banner.png)](http://gorgon.wustl.edu/)
+
+#Dependencies#
+Dependencies are maintained in their own repository [here](../../../ExternalLibraries).
+
+*Original content*
 # README #
 
 This README would normally document whatever steps are necessary to get your application up and running.
