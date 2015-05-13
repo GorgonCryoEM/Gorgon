@@ -2,18 +2,6 @@
 # Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 # Description:   A widget that manages the colors of the application 
 
-# CVS Meta Information: 
-#   $Source$
-#   $Revision$
-#   $Date$
-#   $Author$
-#   $State$
-#
-# History Log: 
-#   $Log$
-#   Revision 1.1  2008/11/06 05:29:04  ssa1
-#   CGI submission milestone for Interactive Skeletonization, and theme support, and fixing (hopefully) mac-os flicker bug
-#
 
 from PyQt4 import QtGui, QtCore
 import pickle
@@ -71,7 +59,7 @@ class ThemeManager(QtGui.QWidget):
                                 
         return self.colorList[tag]
         
-    def addColor(self, tag, color):    
+    def addColor(self, tag, color):
         if(not(tag in self.colorList) or (self.colorList[tag] != color)):               
            self.colorList[tag] = color
         
@@ -83,5 +71,6 @@ class ThemeManager(QtGui.QWidget):
             self.colorList[tag] = QtGui.QColor.fromRgb(r, g, b, a)      
             
     def emitThemeChanged(self):
+        print "emitThemeChanged"
         self.emit(QtCore.SIGNAL("themeChanged()"))         
     

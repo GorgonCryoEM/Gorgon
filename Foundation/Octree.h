@@ -2,18 +2,6 @@
 // Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 // Description:   A class for storing an octree.
 
-// CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
-//
-// History Log: 
-//   $Log$
-//   Revision 1.8  2008/09/29 15:42:54  ssa1
-//   Adding in CVS meta information
-//
 
 #ifndef FOUNDATION_OCTREE_H
 #define FOUNDATION_OCTREE_H

@@ -2,21 +2,6 @@
 # Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 # Description:   A pushbutton which instead of displaying text, displays a color 
 
-# CVS Meta Information: 
-#   $Source$
-#   $Revision$
-#   $Date$
-#   $Author$
-#   $State$
-#
-# History Log: 
-#   $Log$
-#   Revision 1.5  2009/12/24 01:38:53  ssa1
-#   Fixing bug in macos where color dialogs automatically change when camera changes.  Bug ID 4
-#
-#   Revision 1.4  2008/06/18 18:15:41  ssa1
-#   Adding in CVS meta data
-#
 
 from PyQt4 import QtCore, QtGui
 from color_picker_form import ColorPickerForm

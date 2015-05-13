@@ -2,51 +2,6 @@
 # Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 # Description:   Shows the help menus
 
-# CVS Meta Information: 
-#   $Source$
-#   $Revision$
-#   $Date$
-#   $Author$
-#   $State$
-#
-# History Log: 
-#   $Log$
-#   Revision 1.1  2008/12/18 15:19:31  ssa1
-#   Moving About Form functionality into HelpMenus
-#
-#   Revision 1.15  2008/12/17 16:00:04  ssa1
-#   Changing Version information for next public release
-#
-#   Revision 1.14  2008/12/04 20:55:16  ssa1
-#   fixing bugs when running bug report in macos
-#
-#   Revision 1.13  2008/12/04 20:23:09  ssa1
-#   Adding link to license
-#
-#   Revision 1.12  2008/12/04 20:02:01  ssa1
-#   sending system information when submitting bug report
-#
-#   Revision 1.11  2008/12/04 01:03:31  ssa1
-#   adding in bug tracker
-#
-#   Revision 1.10  2008/12/03 20:29:55  ssa1
-#   adding in bug tracker
-#
-#   Revision 1.9  2008/12/03 20:27:05  ssa1
-#   adding in bug tracker
-#
-#   Revision 1.8  2008/12/01 21:02:14  ssa1
-#   Putting in link for related publications
-#
-#   Revision 1.7  2008/11/29 04:48:28  ssa1
-#   Icon support and Redirecting help to website.
-#
-#   Revision 1.6  2008/06/18 17:59:02  ssa1
-#   Adding in CVS meta data
-#
-#   Revision 1.5  2008/06/18 17:56:32  ssa1
-#   Adding in CVS meta data
-#
 
 import sys
 from PyQt4 import QtCore, QtGui
