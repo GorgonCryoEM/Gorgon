@@ -5,8 +5,13 @@ WARNING: This repository is still under construction!
 
 [![Gorgon](http://gorgon.wustl.edu/images/banner.png)](http://gorgon.wustl.edu/)
 
-#Dependencies#
+# Dependencies#
 Dependencies are maintained in their own repository [here](../../../ExternalLibraries).
+
+# Development
+- Stable branch is ```master```. Releases are published off of this branch.
+- Active development is on ```develop```.
+- Topic branches are off of ```develop```. Names can be ```feature-*``` or ```feat-*```, ```fix-*```, ```update-*```, ```upgrade-*```, ```refactor-*```... For more reading, see http://stackoverflow.com/a/6065944,  http://www.guyroutledge.co.uk/blog/git-branch-naming-conventions/ and https://gist.github.com/digitaljhelms/4287848
 
 *Original content*
 # README #
