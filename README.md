@@ -11,7 +11,7 @@ Dependencies are maintained in their own repository [here](../../../ExternalLibr
 # Development
 - Stable branch is ```master```. Releases are published off of this branch.
 - Active development is on ```develop```.
-- Topic branches are off of ```develop```. Names can be ```feature-*``` or ```feat-*```, ```fix-*```, ```update-*```, ```upgrade-*```, ```refactor-*```... For more reading, see http://stackoverflow.com/a/6065944,  http://www.guyroutledge.co.uk/blog/git-branch-naming-conventions/ and https://gist.github.com/digitaljhelms/4287848
+- Topic branches are off of ```develop```. Names can be ```feature-*``` or ```feat-*```, ```fix-*```, ```update-*```, ```upgrade-*```, ```refactor-*```... For more reading, see [here](http://stackoverflow.com/a/6065944),  [here](http://www.guyroutledge.co.uk/blog/git-branch-naming-conventions/) and [here](https://gist.github.com/digitaljhelms/4287848).
 
 *Original content*
 # README #
