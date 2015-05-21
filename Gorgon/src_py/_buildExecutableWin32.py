@@ -13,17 +13,15 @@ setup(
       data_files=[('' ,[
                         'splash.png', 
                         'gorgon.ico',
-                        'msvcr80.dll',
-                        'msvcp80.dll',
-                        'libfftw3-3.dll',
-                        'libfftw3f-3.dll',
-                        'libfftw3l-3.dll' ]), 
+                        'msvcr110.dll',
+                        'msvcp110.dll',
+                        'libfftw3f-3.dll' ]),
                   ('themes', ['..\\resources\\Dark.thm', '..\\resources\\Light.thm'] ),
                   ('plugins', ['.\\plugins\\__init__.py', '.\\plugins\\update_notifier_plugin.py'])                  
                   ],
       options={
                "py2exe":{
-                         "includes" : ["sip", "PyQt4.Qt", "ctypes", "distutils.util", "logging", "ctypes.util", "weakref"],
+                         "includes" : ["sip", "PyQt4.Qt", "ctypes", "distutils.util", "logging", "ctypes.util", "weakref","numpy"],
                          "excludes" : ["OpenGL"]
                          }
                }
