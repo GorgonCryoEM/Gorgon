@@ -26,7 +26,7 @@ import time
 
 
 if __name__ == '__main__':
-    gorgonVersion = '2.1.1b'
+    gorgonVersion = '2.2.0'
     app = QtGui.QApplication(sys.argv)    
     #setting different font sizes for different OSs
     if(sys.platform == 'win32'):

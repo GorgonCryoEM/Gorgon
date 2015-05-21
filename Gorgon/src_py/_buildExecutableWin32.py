@@ -3,7 +3,7 @@ import py2exe
 
 setup(
       name = "Gorgon",
-      version = "2.0.0",
+      version = "2.2.0",
       description = "Gorgon: A toolkit for protein structure reconstruction",
       windows=[{
                 'script': 'gorgon.pyw',
