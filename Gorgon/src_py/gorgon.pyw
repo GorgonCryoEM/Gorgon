@@ -13,7 +13,11 @@ elif(sys.platform == 'darwin'):
     if os.environ.has_key('RESOURCEPATH') :
         sys.path = [os.path.join(os.environ['RESOURCEPATH'], 'lib', 'python2.7', 'lib-dynload')] + sys.path
 ###########################################################################################################
-
+from ctypes import util
+try:
+    from OpenGL.platform import win32
+except AttributeError:
+    pass
 
 from PyQt4 import QtGui, QtCore
 from main_window_form import MainWindowForm
@@ -22,7 +26,7 @@ import time
 
 
 if __name__ == '__main__':
-    gorgonVersion = '2.1.1b'
+    gorgonVersion = '2.2.0'
     app = QtGui.QApplication(sys.argv)    
     #setting different font sizes for different OSs
     if(sys.platform == 'win32'):
