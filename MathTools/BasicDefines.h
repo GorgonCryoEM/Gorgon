@@ -6,9 +6,7 @@
 #ifndef BASIC_DEFINES_H
 #define BASIC_DEFINES_H
 
-#ifdef _WIN32
-	#define round(f) ((f >= 0)?(int)(f + .5):(int)(f - .5))
-#endif
+double round(double f);
 
 namespace wustl_mm {
 	namespace MathTools {
