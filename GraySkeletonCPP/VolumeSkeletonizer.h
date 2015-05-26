@@ -21,6 +21,7 @@
 #include <string>
 #include <Foundation/TimeManager.h>
 #include <new>
+#include <functional>
 
 using namespace wustl_mm::MathTools;
 using namespace wustl_mm::Foundation;
