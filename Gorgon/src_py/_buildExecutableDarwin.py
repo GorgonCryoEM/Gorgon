@@ -5,6 +5,7 @@ import py2app.recipes
 
 setup(
     app=['gorgon.pyw'],
+    version="2.2.0",
     data_files=[('', ['splash.png', 'gorgon.icns']), 
                 ('../../../themes', ['../resources/Dark.thm', '../resources/Light.thm'] )],
     options={
