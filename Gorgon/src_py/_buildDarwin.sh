@@ -1,7 +1,7 @@
 #!/bin/bash
 
 topdir="/Users/durmaz/Files/eclipse_workspace/workspace_work/gitGorgonBitBucket/Gorgon/src_py"
-fboost="libboost_python.dylib"
+fboost="/opt/local/lib/libboost_python-mt.dylib"
 
 rm -r build dist libpyGORGON.so libpyGORGON.dylib
 
@@ -11,7 +11,7 @@ mkdir -p dist/gorgon.app/Contents/Frameworks
 mkdir -p dist/gorgon.app/Contents/Resources/lib/python2.7/lib-dynload/
 
 cp -v ~/Gorgon/lib/libpyGORGON.dylib .
-cp -v /Users/durmaz/Documents/boost_1_57_0/stage/lib/$fboost . 
+cp -v $fboost . 
 cp -v /opt/local/lib/libfftw3f.dylib .
 
 cp -v libpyGORGON.dylib      dist/gorgon.app/Contents/Frameworks
@@ -24,7 +24,7 @@ cp -v plugins/*.py dist/plugins
 #cd ..
 
 #cd dist/gorgon.app/Contents/Resources/lib/python2.7/lib-dynload/
-cp -av     libpyGORGON.dylib                          dist/gorgon.app/Contents/Resources/lib/python2.7/lib-dynload/libpyGORGON.so
+cp -av     libpyGORGON.dylib     dist/gorgon.app/Contents/Resources/lib/python2.7/lib-dynload/libpyGORGON.so
 chmod +rx  dist/gorgon.app/Contents/Resources/lib/python2.7/lib-dynload/libpyGORGON.so
 
 cd dist/gorgon.app/Contents/Resources/lib/python2.7/lib-dynload/
@@ -37,4 +37,4 @@ ln -sv   ../../../../plugins
 
 #cd ../../../..
 cd $topdir
-cp -av libpyGORGON.dylib libpyGORGON.so
+#cp -av libpyGORGON.dylib libpyGORGON.so
