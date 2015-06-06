@@ -33,16 +33,17 @@ include(${CMAKE_SOURCE_DIR}/ExternalLibraries/GLUT.cmake)
 #message(FATAL_ERROR "After GLUT: ${GLUT_INCLUDE_DIR}")
 
 message("Before: ${Boost_INCLUDE_DIR}")
-#include(${CMAKE_SOURCE_DIR}/ExternalLibraries/Boost.cmake)
-#add_dependencies(Gorgon Boost)
-#message(FATAL_ERROR "Boost finished")
+include(${CMAKE_SOURCE_DIR}/ExternalLibraries/Boost.cmake)
 
-#set(ext_dir ${CMAKE_SOURCE_DIR}/ExternalLibraries/)
-set(BOOST_ROOT ${CMAKE_SOURCE_DIR}/ExternalLibraries/boost CACHE PATH "blah (??) blah" FORCE)
-set(BOOST_LIBRARYDIR ${BOOST_ROOT}/lib CACHE PATH "libdir")
+if(WIN32)
+    set(boost_components "python serialization")
+else()
+    set(boost_components "python")
+endif()
 
 set(Boost_USE_MULTITHREADED ON)
-find_package(Boost 1.57 EXACT REQUIRED COMPONENTS python serialization)
+  
+#find_package(Boost 1.57 REQUIRED COMPONENTS ${boost_components})
 
 message("After 2: ${Boost_INCLUDE_DIR}")
 
