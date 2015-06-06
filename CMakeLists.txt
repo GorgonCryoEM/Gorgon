@@ -42,7 +42,7 @@ set(BOOST_ROOT ${CMAKE_SOURCE_DIR}/ExternalLibraries/boost CACHE PATH "blah (??)
 set(BOOST_LIBRARYDIR ${BOOST_ROOT}/lib CACHE PATH "libdir")
 
 set(Boost_USE_MULTITHREADED ON)
-find_package(Boost 1.57 REQUIRED COMPONENTS python)
+find_package(Boost 1.57 EXACT REQUIRED COMPONENTS python serialization)
 
 message("After 2: ${Boost_INCLUDE_DIR}")
 
