@@ -20,9 +20,6 @@ endif()
 
 include(${CMAKE_SOURCE_DIR}/ExternalLibraries/FFTW3f.cmake)
 include(${CMAKE_SOURCE_DIR}/ExternalLibraries/GLUT.cmake)
-#message(FATAL_ERROR "After GLUT: ${GLUT_INCLUDE_DIR}")
-
-message("Before: ${Boost_INCLUDE_DIR}")
 include(${CMAKE_SOURCE_DIR}/ExternalLibraries/Boost.cmake)
 
 if(WIN32)
@@ -34,8 +31,6 @@ endif()
 set(Boost_USE_MULTITHREADED ON)
   
 #find_package(Boost 1.57 REQUIRED COMPONENTS ${boost_components})
-
-message("After 2: ${Boost_INCLUDE_DIR}")
 
 function (getListOfVarsStartingWith _prefix _varResult)
     get_cmake_property(_vars VARIABLES)
