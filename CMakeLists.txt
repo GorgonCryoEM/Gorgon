@@ -38,18 +38,11 @@ function (getListOfVarsStartingWith _prefix _varResult)
     set (${_varResult} ${_matchedVars} PARENT_SCOPE)
 endfunction()
 
-#
-#if(NOT Boost_FOUND)
-#	set(BOOST_ROOT $ENV{HOME} CACHE PATH "The root directory containing Boost")
-#	message(SEND_ERROR ${Boost_ERROR_REASON})
-#endif()
-#else()
 	getListOfVarsStartingWith("GL" matchedVars)
 	getListOfVarsStartingWith("gl" matchedVars1)
 	foreach (_var IN LISTS matchedVars matchedVars1)
 		message("${_var}=${${_var}}")
 	endforeach()
-#endif()
 
 ## Linux
 #set(PYTHON_INCLUDE_DIR /usr/include/python2.6 CACHE PATH "blah (??) blah" FORCE)
