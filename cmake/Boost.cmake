@@ -78,6 +78,8 @@ message("Boost.cmake: ${CMAKE_BINARY_DIR}")
 
 endif()
 
+include_directories(${Boost_INCLUDE_DIR})
+
 INCLUDE(FindPackageHandleStandardArgs)
 FIND_PACKAGE_HANDLE_STANDARD_ARGS(Boost DEFAULT_MSG Boost_LIBRARIES Boost_LIBRARY_DIR Boost_INCLUDE_DIR)
 MARK_AS_ADVANCED(Boost_LIBRARIES Boost_LIBRARY_DIR Boost_INCLUDE_DIR)
