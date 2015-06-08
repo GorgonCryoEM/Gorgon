@@ -6,7 +6,6 @@ find_package(OpenGL REQUIRED)
 find_package(PythonLibs REQUIRED)
 
 set(ext_dir ${CMAKE_SOURCE_DIR}/ExternalLibraries)
-set(ext_dirs FFTW GL)
 
 if(APPLE)
 	set(folder_name "Mac")
