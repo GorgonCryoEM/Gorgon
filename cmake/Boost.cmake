@@ -18,7 +18,7 @@ find_package(Boost 1.41 REQUIRED COMPONENTS ${boost_components})
 if( NOT Boost_FOUND)
     set(BOOST_ROOT ${CMAKE_SOURCE_DIR}/ExternalLibraries/boost CACHE PATH "blah (??) blah" )
     set(BOOST_LIBRARYDIR ${BOOST_ROOT}/lib CACHE PATH "libdir")
-    find_package(Boost 1.41 REQUIRED COMPONENTS ${boost_components})
+    find_package(Boost 1.41 COMPONENTS ${boost_components})
 endif()
 
 if( NOT Boost_FOUND)
