@@ -60,7 +60,7 @@ ExternalProject_Add( Boost
  #--Install step---------------
 # INSTALL_DIR ${Source_Dir}           # Installation prefix
 #    INSTALL_COMMAND ${Boost_b2_CMD} install   # Command to drive install after build
-    INSTALL_COMMAND ${Boost_b2_CMD} install --prefix=${CMAKE_CURRENT_LIST_DIR}/boost/ ${boost_options}
+    INSTALL_COMMAND ${Boost_b2_CMD} install --prefix=${CMAKE_SOURCE_DIR}/ExternalLibraries/boost/ ${boost_options}
  #--Output logging-------------
   LOG_DOWNLOAD 1            # Wrap download in script to log output
   LOG_UPDATE 1              # Wrap update in script to log output
