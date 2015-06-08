@@ -6,6 +6,11 @@ else()
     set(boost_components python)
 endif()
 
+set(boost_options)
+foreach(comp ${boost_components})
+    list(APPEND boost_options --with-${comp})
+endforeach()
+
 set(Boost_USE_MULTITHREADED ON)
   
 find_package(Boost 1.41 REQUIRED COMPONENTS ${boost_components})
