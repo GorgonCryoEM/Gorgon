@@ -14,10 +14,6 @@ find_package(PythonLibs REQUIRED)
 set(ext_dir ${CMAKE_SOURCE_DIR}/ExternalLibraries)
 set(ext_dirs FFTW GL)
 
-foreach(e ${ext_dirs})
-    message(STATUS "${e}")
-endforeach()
-
 if(APPLE)
 	set(folder_name "Mac")
 else()
