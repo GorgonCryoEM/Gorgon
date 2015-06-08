@@ -11,14 +11,8 @@ set(Boost_USE_MULTITHREADED ON)
 find_package(Boost 1.41 REQUIRED COMPONENTS ${boost_components})
 
 if( NOT Boost_FOUND)
-    #add_dependencies(Gorgon Boost)
-    #message(FATAL_ERROR "Boost finished")
-    
-    #set(ext_dir ${CMAKE_SOURCE_DIR}/ExternalLibraries/)
     set(BOOST_ROOT ${CMAKE_SOURCE_DIR}/ExternalLibraries/boost CACHE PATH "blah (??) blah" )
     set(BOOST_LIBRARYDIR ${BOOST_ROOT}/lib CACHE PATH "libdir")
-    
-  #  find_package(Boost 1.57 COMPONENTS ${boost_components})
 endif()
 
 if( NOT Boost_FOUND)
