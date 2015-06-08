@@ -99,9 +99,6 @@ SET(LIB_DIRS
 	)
 
 INCLUDE_DIRECTORIES(${INCLUDE_DIRS}) 
-message("include dirs: ${INCLUDE_DIRS}")
-get_directory_property(_vv INCLUDE_DIRECTORIES)
-message("vvvvv: ${_vv}")
 LINK_DIRECTORIES(${Boost_LIBRARY_DIRS})
 
 ADD_LIBRARY(pyGORGON SHARED Gorgon/src_cpp/LibPyGorgon.cpp)
