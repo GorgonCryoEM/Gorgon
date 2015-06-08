@@ -32,18 +32,6 @@ set(Boost_USE_MULTITHREADED ON)
   
 #find_package(Boost 1.57 REQUIRED COMPONENTS ${boost_components})
 
-function (getListOfVarsStartingWith _prefix _varResult)
-    get_cmake_property(_vars VARIABLES)
-    string (REGEX MATCHALL "[A-Za-z0-9_]*${_prefix}[A-Za-z0-9_]*" _matchedVars "${_vars}")
-    set (${_varResult} ${_matchedVars} PARENT_SCOPE)
-endfunction()
-
-	getListOfVarsStartingWith("GL" matchedVars)
-	getListOfVarsStartingWith("gl" matchedVars1)
-	foreach (_var IN LISTS matchedVars matchedVars1)
-		message("${_var}=${${_var}}")
-	endforeach()
-
 ## Linux
 #set(PYTHON_INCLUDE_DIR /usr/include/python2.6 CACHE PATH "blah (??) blah" FORCE)
 #set(PYTHON_LIBRARY /usr/lib64/libpython2.6.so CACHE PATH "blah (??) blah" FORCE)
