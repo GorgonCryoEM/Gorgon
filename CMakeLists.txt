@@ -18,9 +18,9 @@ else()
 	endif()
 endif()
 
-include(${CMAKE_SOURCE_DIR}/ExternalLibraries/FFTW3f.cmake)
-include(${CMAKE_SOURCE_DIR}/ExternalLibraries/GLUT.cmake)
-include(${CMAKE_SOURCE_DIR}/ExternalLibraries/Boost.cmake)
+include(cmake/FFTW3f.cmake)
+include(cmake/GLUT.cmake)
+include(cmake/Boost.cmake)
 
 if(WIN32)
     set(boost_components "python serialization")
