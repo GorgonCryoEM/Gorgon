@@ -70,5 +70,8 @@ message("Boost.cmake: ${BINARY_DIR}")
 message("Boost.cmake: ${CMAKE_BINARY_DIR}")
 #message(FATAL_ERROR "Boost.cmake finished")
 
-
 endif()
+
+INCLUDE(FindPackageHandleStandardArgs)
+FIND_PACKAGE_HANDLE_STANDARD_ARGS(Boost DEFAULT_MSG Boost_LIBRARIES Boost_LIBRARY_DIR Boost_INCLUDE_DIR)
+MARK_AS_ADVANCED(Boost_LIBRARIES Boost_LIBRARY_DIR Boost_INCLUDE_DIR)
