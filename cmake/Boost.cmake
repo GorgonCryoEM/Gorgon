@@ -1,9 +1,9 @@
 message("Dependency - Boost")
 
 if(WIN32)
-    set(boost_components "python serialization")
+    set(boost_components python serialization)
 else()
-    set(boost_components "python")
+    set(boost_components python)
 endif()
 
 set(Boost_USE_MULTITHREADED ON)
