@@ -21,16 +21,6 @@ include(cmake/FFTW3f.cmake)
 include(cmake/GLUT.cmake)
 include(cmake/Boost.cmake)
 
-if(WIN32)
-    set(boost_components "python serialization")
-else()
-    set(boost_components "python")
-endif()
-
-set(Boost_USE_MULTITHREADED ON)
-  
-#find_package(Boost 1.57 REQUIRED COMPONENTS ${boost_components})
-
 ## Linux
 #set(PYTHON_INCLUDE_DIR /usr/include/python2.6 CACHE PATH "blah (??) blah" FORCE)
 #set(PYTHON_LIBRARY /usr/lib64/libpython2.6.so CACHE PATH "blah (??) blah" FORCE)
