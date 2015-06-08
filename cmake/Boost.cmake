@@ -49,18 +49,18 @@ ExternalProject_Add( Boost
     URL_MD5 5a5d5614d9a07672e1ab2a250b5defc5 # Equivalent to URL_HASH MD5=md5
  #--Configure step-------------
 # SOURCE_DIR ${Source_Dir}            # Source dir to be used for build
-    CONFIGURE_COMMAND  ${Boost_Bootstrap_CMD} --with-libraries=python # Build tree configuration command
+    CONFIGURE_COMMAND  ${Boost_Bootstrap_CMD} # Build tree configuration command
 #    CONFIGURE_COMMAND  ${Boost_Bootstrap_CMD} --with-libraries=python # Build tree configuration command
  #--Build step-----------------
 # BINARY_DIR   ${Source_Dir}          # Specify build dir location
     #BUILD_COMMAND ${Boost_b2_CMD}      # Command to drive the native build
-    BUILD_COMMAND ${Boost_b2_CMD}    --with-python# Build tree configuration command
+    BUILD_COMMAND ${Boost_b2_CMD}    ${boost_options} # Build tree configuration command
 #    BUILD_COMMAND ""      # Command to drive the native build
     BUILD_IN_SOURCE 1         # Use source dir for build dir
  #--Install step---------------
 # INSTALL_DIR ${Source_Dir}           # Installation prefix
 #    INSTALL_COMMAND ${Boost_b2_CMD} install   # Command to drive install after build
-    INSTALL_COMMAND ${Boost_b2_CMD} install --prefix=${CMAKE_CURRENT_LIST_DIR}/boost/ --with-python
+    INSTALL_COMMAND ${Boost_b2_CMD} install --prefix=${CMAKE_CURRENT_LIST_DIR}/boost/ ${boost_options}
  #--Output logging-------------
   LOG_DOWNLOAD 1            # Wrap download in script to log output
   LOG_UPDATE 1              # Wrap update in script to log output
