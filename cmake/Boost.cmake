@@ -1,6 +1,5 @@
 message("Dependency - Boost")
 
-
 if(WIN32)
     set(boost_components "python serialization")
 else()
@@ -9,7 +8,7 @@ endif()
 
 set(Boost_USE_MULTITHREADED ON)
   
-#find_package(Boost 1.57 REQUIRED COMPONENTS ${boost_components})
+find_package(Boost 1.41 REQUIRED COMPONENTS ${boost_components})
 
 if( NOT Boost_FOUND)
     #add_dependencies(Gorgon Boost)
