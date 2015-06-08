@@ -1,6 +1,8 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 3.0)
 PROJECT(Gorgon)
 
+include(cmake/Boost.cmake)
+
 find_package(OpenGL REQUIRED)
 #find_package(GLUT REQUIRED)
 find_package(PythonLibs REQUIRED)
@@ -19,7 +21,6 @@ endif()
 
 include(cmake/FFTW3f.cmake)
 include(cmake/GLUT.cmake)
-include(cmake/Boost.cmake)
 
 ## Linux
 #set(PYTHON_INCLUDE_DIR /usr/include/python2.6 CACHE PATH "blah (??) blah" FORCE)
