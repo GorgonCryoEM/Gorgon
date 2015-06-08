@@ -100,8 +100,7 @@ SET(LIB_DIRS
 	${FFTW3F_LIBRARIES}
 	)
 
-#INCLUDE_DIRECTORIES(${INCLUDE_DIRS}) 
-include_directories(${INCLUDE_DIRS})
+INCLUDE_DIRECTORIES(${INCLUDE_DIRS}) 
 message("include dirs: ${INCLUDE_DIRS}")
 get_directory_property(_vv INCLUDE_DIRECTORIES)
 message("vvvvv: ${_vv}")
