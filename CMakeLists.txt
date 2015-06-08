@@ -5,10 +5,6 @@ find_package(OpenGL REQUIRED)
 #find_package(GLUT REQUIRED)
 find_package(PythonLibs REQUIRED)
 
-
-#find_package(FFTW3F REQUIRED)
-
-#set(ext_dir ${CMAKE_SOURCE_DIR}/ExternalLibraries/FFTW)
 set(ext_dir ${CMAKE_SOURCE_DIR}/ExternalLibraries)
 set(ext_dirs FFTW GL)
 
