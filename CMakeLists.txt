@@ -1,13 +1,11 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 3.0)
 PROJECT(Gorgon)
 
-#set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} /usr/local/share/cmake-3.2/Modules/)
-#message(FATAL_ERROR "CMAKE_MODULE_PATH: " ${CMAKE_MODULE_PATH})
 find_package(OpenGL REQUIRED)
 #find_package(GLUT REQUIRED)
 find_package(PythonLibs REQUIRED)
 
-#set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake/Modules)
+
 #find_package(FFTW3F REQUIRED)
 
 #set(ext_dir ${CMAKE_SOURCE_DIR}/ExternalLibraries/FFTW)
