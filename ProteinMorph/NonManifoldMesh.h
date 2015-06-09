@@ -10,7 +10,7 @@
 #include <MathTools/Vector3D.h>
 #include <SkeletonMaker/volume.h>
 #include <string>
-#include <glut.h>
+#include <GL/glut.h>
 #include <Foundation/Rasterizer.h>
 #include <map>	
 #include <queue>
