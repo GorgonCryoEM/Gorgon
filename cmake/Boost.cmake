@@ -52,11 +52,8 @@ if( NOT Boost_FOUND)
      #--Configure step-------------
         CONFIGURE_COMMAND  ${Boost_Bootstrap_CMD}
      #--Build step-----------------
-    # BINARY_DIR   ${Source_Dir}          # Specify build dir location
-        #BUILD_COMMAND ${Boost_b2_CMD}      # Command to drive the native build
-        BUILD_COMMAND ${Boost_b2_CMD}    ${boost_options} # Build tree configuration command
-    #    BUILD_COMMAND ""      # Command to drive the native build
-        BUILD_IN_SOURCE 1         # Use source dir for build dir
+        BUILD_COMMAND ${Boost_b2_CMD}    ${boost_options}
+        BUILD_IN_SOURCE 1
      #--Install step---------------
     # INSTALL_DIR ${Source_Dir}           # Installation prefix
     #    INSTALL_COMMAND ${Boost_b2_CMD} install   # Command to drive install after build
