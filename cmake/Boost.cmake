@@ -55,9 +55,7 @@ if( NOT Boost_FOUND)
         BUILD_COMMAND ${Boost_b2_CMD}    ${boost_options}
         BUILD_IN_SOURCE 1
      #--Install step---------------
-    # INSTALL_DIR ${Source_Dir}           # Installation prefix
-    #    INSTALL_COMMAND ${Boost_b2_CMD} install   # Command to drive install after build
-        INSTALL_COMMAND ${Boost_b2_CMD} install --prefix=${CMAKE_SOURCE_DIR}/ExternalLibraries/boost/ ${boost_options}
+        INSTALL_COMMAND ${Boost_b2_CMD} install --prefix=${boost_install_prefix} ${boost_options}
      #--Output logging-------------
       LOG_DOWNLOAD 1            # Wrap download in script to log output
       LOG_UPDATE 1              # Wrap update in script to log output
