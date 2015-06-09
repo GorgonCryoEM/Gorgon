@@ -13,7 +13,7 @@ endforeach()
 
 set(Boost_USE_MULTITHREADED ON)
   
-find_package(Boost 1.41 REQUIRED COMPONENTS ${boost_components})
+find_package(Boost 1.41 COMPONENTS ${boost_components})
 
 if( NOT Boost_FOUND)
     set(BOOST_ROOT ${CMAKE_SOURCE_DIR}/ExternalLibraries/boost CACHE PATH "blah (??) blah" )
