@@ -50,9 +50,7 @@ if( NOT Boost_FOUND)
         URL_HASH SHA1=${boost_url_sha1}
         URL_MD5       ${boost_url_md5}
      #--Configure step-------------
-    # SOURCE_DIR ${Source_Dir}            # Source dir to be used for build
-        CONFIGURE_COMMAND  ${Boost_Bootstrap_CMD} # Build tree configuration command
-    #    CONFIGURE_COMMAND  ${Boost_Bootstrap_CMD} --with-libraries=python # Build tree configuration command
+        CONFIGURE_COMMAND  ${Boost_Bootstrap_CMD}
      #--Build step-----------------
     # BINARY_DIR   ${Source_Dir}          # Specify build dir location
         #BUILD_COMMAND ${Boost_b2_CMD}      # Command to drive the native build
