@@ -18,6 +18,8 @@ set(Boost_USE_MULTITHREADED ON)
 find_package(Boost 1.41 COMPONENTS ${boost_components})
 
 # Set variables
+set(boost_version 1.41)
+
 set(boost_root           ${CMAKE_SOURCE_DIR}/ExternalLibraries/boost )
 set(boost_librarydir     ${boost_root}/lib                           )
 
