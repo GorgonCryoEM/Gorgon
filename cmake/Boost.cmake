@@ -36,6 +36,10 @@ if( NOT Boost_FOUND)
     endif()
     
     # Set variables
+    set(boost_url            http://downloads.sourceforge.net/project/boost/boost/1.58.0/boost_1_58_0.tar.gz )
+    set(boost_url_sha1       a27b010b9d5de0c07df9dddc9c336767725b1e6b                                        )
+    set(boost_url_md5        5a5d5614d9a07672e1ab2a250b5defc5                                                )
+    set(boost_install_prefix ${CMAKE_SOURCE_DIR}/ExternalLibraries/boost/                                    )
     
     include(ExternalProject)
     
