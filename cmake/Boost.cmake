@@ -1,5 +1,16 @@
 message("Dependency - Boost")
 
+# Set variables
+set(boost_version 1.41)
+
+set(boost_root           ${CMAKE_SOURCE_DIR}/ExternalLibraries/boost )
+set(boost_librarydir     ${boost_root}/lib                           )
+
+set(boost_url            http://downloads.sourceforge.net/project/boost/boost/1.58.0/boost_1_58_0.tar.gz )
+set(boost_url_sha1       a27b010b9d5de0c07df9dddc9c336767725b1e6b                                        )
+set(boost_url_md5        5a5d5614d9a07672e1ab2a250b5defc5                                                )
+set(boost_install_prefix ${CMAKE_SOURCE_DIR}/ExternalLibraries/boost/                                    )
+
 # Windows needs `libbost_serialization` for some reason
 if(WIN32)
     set(boost_components python serialization)
@@ -16,17 +27,6 @@ endforeach()
 set(Boost_USE_MULTITHREADED ON)
   
 find_package(Boost 1.41 COMPONENTS ${boost_components})
-
-# Set variables
-set(boost_version 1.41)
-
-set(boost_root           ${CMAKE_SOURCE_DIR}/ExternalLibraries/boost )
-set(boost_librarydir     ${boost_root}/lib                           )
-
-set(boost_url            http://downloads.sourceforge.net/project/boost/boost/1.58.0/boost_1_58_0.tar.gz )
-set(boost_url_sha1       a27b010b9d5de0c07df9dddc9c336767725b1e6b                                        )
-set(boost_url_md5        5a5d5614d9a07672e1ab2a250b5defc5                                                )
-set(boost_install_prefix ${CMAKE_SOURCE_DIR}/ExternalLibraries/boost/                                    )
 
 if( NOT Boost_FOUND)
     set(BOOST_ROOT       ${boost_root}       CACHE PATH "Boost root directory" )
