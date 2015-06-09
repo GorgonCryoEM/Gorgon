@@ -26,12 +26,13 @@ endforeach()
 
 set(Boost_USE_MULTITHREADED ON)
   
-find_package(Boost 1.41 COMPONENTS ${boost_components})
+find_package(Boost ${boost_version} COMPONENTS ${boost_components})
 
 if( NOT Boost_FOUND)
     set(BOOST_ROOT       ${boost_root}       CACHE PATH "Boost root directory" )
     set(BOOST_LIBRARYDIR ${boost_librarydir} CACHE PATH "Boost library directory")
-    find_package(Boost 1.41 COMPONENTS ${boost_components})
+    
+    find_package(Boost ${boost_version} COMPONENTS ${boost_components})
 endif()
 
 # If not found so far, donwload, build and install Boost
