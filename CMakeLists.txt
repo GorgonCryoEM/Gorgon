@@ -1,22 +1,13 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 3.0)
 PROJECT(Gorgon)
 
-#set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} /usr/local/share/cmake-3.2/Modules/)
-#message(FATAL_ERROR "CMAKE_MODULE_PATH: " ${CMAKE_MODULE_PATH})
+set(extlibs_dir ${CMAKE_SOURCE_DIR}/ExternalLibraries CACHE INTERNAL "External Libraries directory")
+
+include(cmake/Boost.cmake)
+
 find_package(OpenGL REQUIRED)
 #find_package(GLUT REQUIRED)
 find_package(PythonLibs REQUIRED)
-
-#set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake/Modules)
-#find_package(FFTW3F REQUIRED)
-
-#set(ext_dir ${CMAKE_SOURCE_DIR}/ExternalLibraries/FFTW)
-set(ext_dir ${CMAKE_SOURCE_DIR}/ExternalLibraries)
-set(ext_dirs FFTW GL)
-
-foreach(e ${ext_dirs})
-    message(STATUS "${e}")
-endforeach()
 
 if(APPLE)
 	set(folder_name "Mac")
@@ -28,42 +19,8 @@ else()
 	endif()
 endif()
 
-include(${CMAKE_SOURCE_DIR}/ExternalLibraries/FFTW3f.cmake)
-include(${CMAKE_SOURCE_DIR}/ExternalLibraries/GLUT.cmake)
-#message(FATAL_ERROR "After GLUT: ${GLUT_INCLUDE_DIR}")
-
-message("Before: ${Boost_INCLUDE_DIR}")
-#include(${CMAKE_SOURCE_DIR}/ExternalLibraries/Boost.cmake)
-#add_dependencies(Gorgon Boost)
-#message(FATAL_ERROR "Boost finished")
-
-#set(ext_dir ${CMAKE_SOURCE_DIR}/ExternalLibraries/)
-set(BOOST_ROOT ${CMAKE_SOURCE_DIR}/ExternalLibraries/boost CACHE PATH "blah (??) blah" FORCE)
-set(BOOST_LIBRARYDIR ${BOOST_ROOT}/lib CACHE PATH "libdir")
-
-set(Boost_USE_MULTITHREADED ON)
-find_package(Boost 1.57 REQUIRED COMPONENTS python)
-
-message("After 2: ${Boost_INCLUDE_DIR}")
-
-function (getListOfVarsStartingWith _prefix _varResult)
-    get_cmake_property(_vars VARIABLES)
-    string (REGEX MATCHALL "[A-Za-z0-9_]*${_prefix}[A-Za-z0-9_]*" _matchedVars "${_vars}")
-    set (${_varResult} ${_matchedVars} PARENT_SCOPE)
-endfunction()
-
-#
-#if(NOT Boost_FOUND)
-#	set(BOOST_ROOT $ENV{HOME} CACHE PATH "The root directory containing Boost")
-#	message(SEND_ERROR ${Boost_ERROR_REASON})
-#endif()
-#else()
-	getListOfVarsStartingWith("GL" matchedVars)
-	getListOfVarsStartingWith("gl" matchedVars1)
-	foreach (_var IN LISTS matchedVars matchedVars1)
-		message("${_var}=${${_var}}")
-	endforeach()
-#endif()
+include(cmake/FFTW3f.cmake)
+include(cmake/GLUT.cmake)
 
 ## Linux
 #set(PYTHON_INCLUDE_DIR /usr/include/python2.6 CACHE PATH "blah (??) blah" FORCE)
@@ -112,11 +69,7 @@ SET(LIB_DIRS
 	${FFTW3F_LIBRARIES}
 	)
 
-#INCLUDE_DIRECTORIES(${INCLUDE_DIRS}) 
-include_directories(${INCLUDE_DIRS})
-message("include dirs: ${INCLUDE_DIRS}")
-get_directory_property(_vv INCLUDE_DIRECTORIES)
-message("vvvvv: ${_vv}")
+INCLUDE_DIRECTORIES(${INCLUDE_DIRS}) 
 LINK_DIRECTORIES(${Boost_LIBRARY_DIRS})
 
 ADD_LIBRARY(pyGORGON SHARED Gorgon/src_cpp/LibPyGorgon.cpp)
