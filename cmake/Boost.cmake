@@ -3,8 +3,9 @@ message("Dependency - Boost")
 # Set variables
 set(boost_version 1.41)
 
-set(boost_root           ${extlibs_dir}/boost )
-set(boost_librarydir     ${boost_root}/lib    )
+set(boost_root           ${extlibs_dir}/boost  )
+set(boost_librarydir     ${boost_root}/lib     )
+set(boost_includedir     ${boost_root}/include )
 
 set(boost_url            http://downloads.sourceforge.net/project/boost/boost/1.58.0/boost_1_58_0.tar.gz )
 set(boost_url_sha1       a27b010b9d5de0c07df9dddc9c336767725b1e6b                                        )
@@ -29,7 +30,8 @@ set(Boost_USE_MULTITHREADED ON)
 find_package(Boost ${boost_version} COMPONENTS ${boost_components})
 
 if( NOT Boost_FOUND)
-    set(BOOST_ROOT       ${boost_root}       CACHE PATH "Boost root directory" )
+    set(BOOST_ROOT       ${boost_root}       CACHE PATH "Boost root directory"   )
+    set(BOOST_INCLUDEDIR ${boost_includedir} CACHE PATH "Boost include directory")
     set(BOOST_LIBRARYDIR ${boost_librarydir} CACHE PATH "Boost library directory")
     
     find_package(Boost ${boost_version} COMPONENTS ${boost_components})
