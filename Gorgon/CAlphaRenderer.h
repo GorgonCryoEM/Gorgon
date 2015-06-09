@@ -7,7 +7,7 @@
 #define GORGON_CALPHA_RENDERER_H
 
 
-#include <glut.h>
+#include <GL/glut.h>
 #include <cstdlib>
 #include <cstdio>
 #include <ProteinMorph/NonManifoldMesh.h>
