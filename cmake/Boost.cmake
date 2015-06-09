@@ -27,8 +27,8 @@ set(boost_url_md5        5a5d5614d9a07672e1ab2a250b5defc5                       
 set(boost_install_prefix ${CMAKE_SOURCE_DIR}/ExternalLibraries/boost/                                    )
 
 if( NOT Boost_FOUND)
-    set(BOOST_ROOT ${boost_root} CACHE PATH "Boost root directory" )
-    set(BOOST_LIBRARYDIR ${BOOST_ROOT}/lib CACHE PATH "Boost library directory")
+    set(BOOST_ROOT       ${boost_root}       CACHE PATH "Boost root directory" )
+    set(BOOST_LIBRARYDIR ${boost_librarydir} CACHE PATH "Boost library directory")
     find_package(Boost 1.41 COMPONENTS ${boost_components})
 endif()
 
