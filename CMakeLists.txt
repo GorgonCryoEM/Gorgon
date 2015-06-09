@@ -7,7 +7,7 @@ find_package(OpenGL REQUIRED)
 #find_package(GLUT REQUIRED)
 find_package(PythonLibs REQUIRED)
 
-set(ext_dir ${CMAKE_SOURCE_DIR}/ExternalLibraries)
+set(extlibs_dir ${CMAKE_SOURCE_DIR}/ExternalLibraries CACHE INTERNAL PATH "External Libraries directory")
 
 if(APPLE)
 	set(folder_name "Mac")
