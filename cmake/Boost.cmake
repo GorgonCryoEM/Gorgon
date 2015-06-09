@@ -1,11 +1,13 @@
 message("Dependency - Boost")
 
+# Windows needs `libbost_serialization` for some reason
 if(WIN32)
     set(boost_components python serialization)
 else()
     set(boost_components python)
 endif()
 
+# Prepare options for all the components needed
 set(boost_options)
 foreach(comp ${boost_components})
     list(APPEND boost_options --with-${comp})
@@ -16,11 +18,12 @@ set(Boost_USE_MULTITHREADED ON)
 find_package(Boost 1.41 COMPONENTS ${boost_components})
 
 if( NOT Boost_FOUND)
-    set(BOOST_ROOT ${CMAKE_SOURCE_DIR}/ExternalLibraries/boost CACHE PATH "blah (??) blah" )
-    set(BOOST_LIBRARYDIR ${BOOST_ROOT}/lib CACHE PATH "libdir")
+    set(BOOST_ROOT ${CMAKE_SOURCE_DIR}/ExternalLibraries/boost CACHE PATH "Boost root directory" )
+    set(BOOST_LIBRARYDIR ${BOOST_ROOT}/lib CACHE PATH "Boost library directory")
     find_package(Boost 1.41 COMPONENTS ${boost_components})
 endif()
 
+# If not found so far, donwload, build and install Boost
 if( NOT Boost_FOUND)
     if( UNIX )
       set( Boost_Bootstrap_CMD ./bootstrap.sh )
