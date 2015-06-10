@@ -21,11 +21,8 @@ set(glut_includedir   ${glut_root}/include/GL )
 if(WIN32)
     set(glut_librarydir   ${glut_root}/lib     )
 elseif(UNIX AND NOT APPLE)
-    set(glut_librarydir   ${glut_root}/lib64         )
+    set(glut_librarydir   ${glut_root}/lib64   )
 endif()
-
-set( include_folder "${ext_dir}/include/GL" )
-set( lib_folder "${ext_dir}/lib" )
 
 message("          GLUT: ${glut_root}")
 message("          GLUT include: ${include_folder}")
