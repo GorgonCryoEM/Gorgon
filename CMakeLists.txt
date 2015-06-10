@@ -11,16 +11,6 @@ find_package(OpenGL REQUIRED)
 #find_package(GLUT REQUIRED)
 find_package(PythonLibs REQUIRED)
 
-if(APPLE)
-	set(folder_name "Mac")
-else()
-	if(UNIX)
-		set(folder_name "Linux")
-	else()
-		set(folder_name "Win")
-	endif()
-endif()
-
 ## Linux
 #set(PYTHON_INCLUDE_DIR /usr/include/python2.6 CACHE PATH "blah (??) blah" FORCE)
 #set(PYTHON_LIBRARY /usr/lib64/libpython2.6.so CACHE PATH "blah (??) blah" FORCE)
