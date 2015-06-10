@@ -12,7 +12,7 @@
 
 #include <iostream>
 #include <glut.h>
-#include <GL/glext.h>
+#include <glext.h>
 #include <string>
 #include <GraphMatch/VectorMath.h>
 #include "Renderer.h"
