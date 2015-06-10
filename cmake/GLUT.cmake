@@ -10,9 +10,9 @@ set(glut_source freeglut-3.0.0   )
 
 # Set top directory
 if(WIN32)
-    set(glut_root    ${glut_root}/${fftw_win32}  )
+    set(glut_root    ${glut_root}/${glut_win32}  )
 elseif(UNIX AND NOT APPLE)
-    set(glut_root    ${glut_root}/${fftw_linux}  )
+    set(glut_root    ${glut_root}/${glut_linux}  )
 endif()
 
 # Set include & library directories
@@ -27,8 +27,8 @@ else()
 endif()
 
 message("          GLUT: ${glut_root}")
-message("          GLUT include: ${include_folder}")
-message("          GLUT lib    : ${lib_folder}")
+message("          GLUT include: ${glut_includedir}")
+message("          GLUT lib    : ${glut_librarydir}")
 
 
 FIND_PATH(
