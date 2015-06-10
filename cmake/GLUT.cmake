@@ -10,9 +10,9 @@ set(glut_source freeglut-3.0.0   )
 
 # Set top directory
 if(WIN32)
-    set(glut_root    ${glut_root}/${fftw_win32}  )
+    set(glut_root    ${glut_root}/${glut_win32}  )
 elseif(UNIX AND NOT APPLE)
-    set(glut_root    ${glut_root}/${fftw_linux}  )
+    set(glut_root    ${glut_root}/${glut_linux}  )
 endif()
 
 # Set include & library directories
