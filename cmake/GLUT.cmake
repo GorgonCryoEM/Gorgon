@@ -11,13 +11,6 @@ set(glut_source freeglut-3.0.0   )
 
 message("          GLUT: ${glut_root}")
 
-#if(NOT WIN32)
-#    set( include_folder "${ext_dir}/include" )
-#    set( lib_folder "${ext_dir}/lib" )
-#else()
-#    set( include_folder ${ext_dir} )
-#    set( lib_folder     ${ext_dir} )
-#endif()
 
 set( include_folder "${ext_dir}/include/GL" )
 set( lib_folder "${ext_dir}/lib" )
