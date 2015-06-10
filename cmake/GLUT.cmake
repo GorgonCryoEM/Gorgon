@@ -20,7 +20,9 @@ set(glut_includedir   ${glut_root}/include/GL )
 
 if(WIN32)
     set(glut_librarydir   ${glut_root}/lib     )
-elseif(UNIX AND NOT APPLE)
+elseif(APPLE)
+    find_package(GLUT REQUIRED)
+else()
     set(glut_librarydir   ${glut_root}/lib64   )
 endif()
 
