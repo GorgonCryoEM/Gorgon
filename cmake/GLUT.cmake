@@ -20,6 +20,13 @@ else()
     set(glut_root    ${glut_root}/${fftw_linux}  )
 endif()
 
+# Set include & library directories
+set(glut_includedir   ${glut_root}/include )
+if(WIN32)
+    set(glut_librarydir   ${glut_root}/lib     )
+elseif(UNIX AND NOT APPLE)
+    set(glut_librarydir   ${glut_root}/lib64         )
+endif()
 
 set( include_folder "${ext_dir}/include/GL" )
 set( lib_folder "${ext_dir}/lib" )
