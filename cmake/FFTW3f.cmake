@@ -7,9 +7,6 @@ set(fftw_root           ${extlibs_dir}/FFTW  )
 set(fftw_librarydir     ${fftw_root}/lib     )
 set(fftw_includedir     ${fftw_root}/include )
 
-
-set(ext_dir ${CMAKE_SOURCE_DIR}/ExternalLibraries/FFTW/${folder_name})
-
 message("          FFTW: ${ext_dir}")
 
 if(NOT WIN32)
