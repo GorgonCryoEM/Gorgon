@@ -9,8 +9,6 @@ set(glut_linux  Linux_CentOS_6.6 )
 set(glut_mac    MacOSX           )
 set(glut_source freeglut-3.0.0   )
 
-message("          GLUT: ${glut_root}")
-
 # Set top directory
 if(WIN32)
     set(glut_root    ${glut_root}/${fftw_win32}  )
@@ -31,6 +29,7 @@ endif()
 set( include_folder "${ext_dir}/include/GL" )
 set( lib_folder "${ext_dir}/lib" )
 
+message("          GLUT: ${glut_root}")
 message("          GLUT include: ${include_folder}")
 message("          GLUT lib    : ${lib_folder}")
 
