@@ -1,4 +1,4 @@
-message("Dependency - FFTW3")
+message("Dependency - GLUT")
 
 # Set variables
 set(glut_root           ${extlibs_dir}/GL  )
