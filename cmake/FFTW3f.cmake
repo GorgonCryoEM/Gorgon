@@ -9,6 +9,15 @@ set(fftw_linux  fftw-3.3.4-Linux_CentOS_6.6 )
 set(fftw_mac    fftw-3.3.4-MacOSX_10.10     )
 set(fftw_source fftw-3.3.4-source           )
 
+# Set top directory
+if(WIN32)
+    set(fftw_root    ${fftw_root}/${fftw_win32}  )
+elseif(APPLE)
+    set(fftw_root    ${fftw_root}/${fftw_mac}  )
+else()
+    set(fftw_root    ${fftw_root}/${fftw_linux}  )
+endif()
+
 if(WIN32)
     set(fftw_includedir   ${fftw_root}         )
     set(fftw_librarydir   ${fftw_root}         )
@@ -18,7 +27,6 @@ else()
 endif()
 
 message("          FFTW: ${fftw_root}")
-
 message("          FFTW include: ${fftw_includedir}")
 message("          FFTW lib    : ${fftw_librarydir}")
 
