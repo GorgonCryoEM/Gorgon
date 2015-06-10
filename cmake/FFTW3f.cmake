@@ -9,13 +9,11 @@ set(fftw_mac    fftw-3.3.4-MacOSX_10.10     )
 set(fftw_source fftw-3.3.4-source           )
 
 if(WIN32)
-    set(fftw_includedir     ${fftw_root}/include )
-    set(fftw_librarydir     ${fftw_root}/lib     )
-    set( include_folder ${ext_dir} )
-    set( lib_folder     ${ext_dir} )
+    set(fftw_includedir   ${fftw_root}         )
+    set(fftw_librarydir   ${fftw_root}         )
 else()
-    set( include_folder "${ext_dir}/include" )
-    set( lib_folder "${ext_dir}/lib" )
+    set(fftw_includedir   ${fftw_root}/include )
+    set(fftw_librarydir   ${fftw_root}/lib     )
 endif()
 
 # Set variables
