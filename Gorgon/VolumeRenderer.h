@@ -11,7 +11,7 @@
 
 
 #include <iostream>
-#include <GL/glut.h>
+#include <glut.h>
 #include <GL/glext.h>
 #include <string>
 #include <GraphMatch/VectorMath.h>
