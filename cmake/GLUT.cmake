@@ -27,8 +27,8 @@ else()
 endif()
 
 message("          GLUT: ${glut_root}")
-message("          GLUT include: ${include_folder}")
-message("          GLUT lib    : ${lib_folder}")
+message("          GLUT include: ${glut_includedir}")
+message("          GLUT lib    : ${glut_librarydir}")
 
 
 FIND_PATH(
