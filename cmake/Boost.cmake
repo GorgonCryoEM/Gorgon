@@ -1,7 +1,7 @@
 message("Dependency - Boost")
 
 # Set variables
-set(boost_version 1.41)
+set(boost_version 1.44)
 
 set(boost_root           ${extlibs_dir}/boost  )
 set(boost_librarydir     ${boost_root}/lib     )
