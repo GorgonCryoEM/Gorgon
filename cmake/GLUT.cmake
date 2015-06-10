@@ -1,7 +1,9 @@
+message("Dependency - FFTW3")
 
-set(ext_dir ${CMAKE_SOURCE_DIR}/ExternalLibraries/GL/${folder_name})
+# Set variables
+set(glut_root           ${extlibs_dir}/GL  )
 
-message("          GLUT: ${ext_dir}")
+message("          GLUT: ${glut_root}")
 
 #if(NOT WIN32)
 #    set( include_folder "${ext_dir}/include" )
