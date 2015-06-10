@@ -1,5 +1,15 @@
 message("Dependency - FFTW3")
 
+if(WIN32)
+    set(fftw_includedir     ${fftw_root}/include )
+    set(fftw_librarydir     ${fftw_root}/lib     )
+    set( include_folder ${ext_dir} )
+    set( lib_folder     ${ext_dir} )
+else()
+    set( include_folder "${ext_dir}/include" )
+    set( lib_folder "${ext_dir}/lib" )
+endif()
+
 # Set variables
 set(fftw_version 3.3.4)
 
@@ -8,14 +18,6 @@ set(fftw_librarydir     ${fftw_root}/lib     )
 set(fftw_includedir     ${fftw_root}/include )
 
 message("          FFTW: ${ext_dir}")
-
-if(NOT WIN32)
-    set( include_folder "${ext_dir}/include" )
-    set( lib_folder "${ext_dir}/lib" )
-else()
-    set( include_folder ${ext_dir} )
-    set( lib_folder     ${ext_dir} )
-endif()
 
 message("          FFTW include: ${include_folder}")
 message("          FFTW lib    : ${lib_folder}")
