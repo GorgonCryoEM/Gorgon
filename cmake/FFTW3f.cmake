@@ -1,11 +1,11 @@
-message("Dependency - Boost")
+message("Dependency - FFTW3")
 
 # Set variables
-set(boost_version 1.41)
+set(fftw_version 3.3.4)
 
-set(boost_root           ${extlibs_dir}/boost  )
-set(boost_librarydir     ${boost_root}/lib     )
-set(boost_includedir     ${boost_root}/include )
+set(fftw_root           ${extlibs_dir}/FFTW  )
+set(fftw_librarydir     ${fftw_root}/lib     )
+set(fftw_includedir     ${fftw_root}/include )
 
 
 set(ext_dir ${CMAKE_SOURCE_DIR}/ExternalLibraries/FFTW/${folder_name})
