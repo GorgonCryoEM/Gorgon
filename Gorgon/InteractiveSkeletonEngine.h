@@ -14,8 +14,6 @@
 #include <vector>
 #include <map>
 
-#include <GL/glut.h>
-
 using namespace wustl_mm::Protein_Morph;
 using namespace wustl_mm::GraySkeletonCPP;
 using namespace std;
