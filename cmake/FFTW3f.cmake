@@ -1,7 +1,12 @@
-# http://tim.klingt.org/code/projects/supernova/repository/revisions/d336dd6f400e381bcfd720e96139656de0c53b6a/entry/cmake_modules/FindFFTW3f.cmake
-# Modified to use pkg config and use standard var names
+message("Dependency - Boost")
 
-# Find single-precision (float) version of FFTW3
+# Set variables
+set(boost_version 1.41)
+
+set(boost_root           ${extlibs_dir}/boost  )
+set(boost_librarydir     ${boost_root}/lib     )
+set(boost_includedir     ${boost_root}/include )
+
 
 set(ext_dir ${CMAKE_SOURCE_DIR}/ExternalLibraries/FFTW/${folder_name})
 
