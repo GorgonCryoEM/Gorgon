@@ -4,6 +4,8 @@ PROJECT(Gorgon)
 set(extlibs_dir ${CMAKE_SOURCE_DIR}/ExternalLibraries CACHE INTERNAL "External Libraries directory")
 
 include(cmake/Boost.cmake)
+include(cmake/FFTW3f.cmake)
+include(cmake/GLUT.cmake)
 
 find_package(OpenGL REQUIRED)
 #find_package(GLUT REQUIRED)
@@ -18,9 +20,6 @@ else()
 		set(folder_name "Win")
 	endif()
 endif()
-
-include(cmake/FFTW3f.cmake)
-include(cmake/GLUT.cmake)
 
 ## Linux
 #set(PYTHON_INCLUDE_DIR /usr/include/python2.6 CACHE PATH "blah (??) blah" FORCE)
