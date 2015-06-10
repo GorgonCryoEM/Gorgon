@@ -25,14 +25,14 @@ message("          FFTW lib    : ${fftw_librarydir}")
 FIND_PATH(
     FFTW3F_INCLUDE_DIRS
     NAMES fftw3.h
-    PATHS ${include_folder}
+    PATHS ${fftw_includedir}
     NO_DEFAULT_PATH
 )
 
 FIND_LIBRARY(
     FFTW3F_LIBRARIES
     NAMES fftw3f fftw3f-3 libfftw3f-3
-    PATHS ${lib_folder}
+    PATHS ${fftw_librarydir}
     NO_DEFAULT_PATH
 )
 
