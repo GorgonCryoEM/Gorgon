@@ -32,14 +32,14 @@ message("          GLUT lib    : ${lib_folder}")
 FIND_PATH(
     GLUT_INCLUDE_DIR
     NAMES glut.h
-    PATHS ${include_folder}
+    PATHS ${glut_includedir}
     #NO_DEFAULT_PATH
 )
 
 FIND_LIBRARY(
     GLUT_glut_LIBRARY
     NAMES freeglut
-    PATHS ${lib_folder}
+    PATHS ${glut_librarydir}
     #NO_DEFAULT_PATH
 )
 
