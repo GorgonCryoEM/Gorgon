@@ -3,6 +3,12 @@ message("Dependency - FFTW3")
 # Set variables
 set(glut_root           ${extlibs_dir}/GL  )
 
+set(glut_win32  Win              )
+set(glut_win64  ""               )
+set(glut_linux  Linux_CentOS_6.6 )
+set(glut_mac    MacOSX           )
+set(glut_source freeglut-3.0.0   )
+
 message("          GLUT: ${glut_root}")
 
 #if(NOT WIN32)
