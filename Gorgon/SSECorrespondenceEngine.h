@@ -14,7 +14,7 @@
 #include <set>
 #include "MeshRenderer.h" // to include Draw function
 #include "Renderer.h" // to include DrawSphere function
-#include <GL/glut.h>
+#include <glut.h>
 #include <Foundation/StringUtils.h>
 
 using namespace wustl_mm::GraphMatch;

@@ -9,7 +9,7 @@
 
 #include <cstdlib>
 #include <cstdio>
-#include <GL/glut.h>
+#include <glut.h>
 #include <string>
 #include <SkeletonMaker/volume.h>
 #include <SkeletonMaker/reader.h>
