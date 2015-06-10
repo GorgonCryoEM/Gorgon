@@ -19,7 +19,8 @@ else()
 endif()
 
 # Set include & library directories
-set(glut_includedir   ${glut_root}/include )
+set(glut_includedir   ${glut_root}/include/GL )
+
 if(WIN32)
     set(glut_librarydir   ${glut_root}/lib     )
 elseif(UNIX AND NOT APPLE)
