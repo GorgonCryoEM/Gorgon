@@ -18,6 +18,7 @@ else()
     set(fftw_root    ${fftw_root}/${fftw_linux}  )
 endif()
 
+# Set include & library directories
 if(WIN32)
     set(fftw_includedir   ${fftw_root}         )
     set(fftw_librarydir   ${fftw_root}         )
