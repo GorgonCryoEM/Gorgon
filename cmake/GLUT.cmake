@@ -11,6 +11,15 @@ set(glut_source freeglut-3.0.0   )
 
 message("          GLUT: ${glut_root}")
 
+# Set top directory
+if(WIN32)
+    set(glut_root    ${glut_root}/${fftw_win32}  )
+elseif(APPLE)
+    set(glut_root    ${glut_root}/${fftw_mac}  )
+else()
+    set(glut_root    ${glut_root}/${fftw_linux}  )
+endif()
+
 
 set( include_folder "${ext_dir}/include/GL" )
 set( lib_folder "${ext_dir}/lib" )
