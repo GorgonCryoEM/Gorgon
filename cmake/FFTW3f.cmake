@@ -1,5 +1,13 @@
 message("Dependency - FFTW3")
 
+set(fftw_root           ${extlibs_dir}/FFTW  )
+
+set(fftw_win32  fftw-3.3.4-dll32            )
+set(fftw_win64  fftw-3.3.4-dll64            )
+set(fftw_linux  fftw-3.3.4-Linux_CentOS_6.6 )
+set(fftw_mac    fftw-3.3.4-MacOSX_10.10     )
+set(fftw_source fftw-3.3.4-source           )
+
 if(WIN32)
     set(fftw_includedir     ${fftw_root}/include )
     set(fftw_librarydir     ${fftw_root}/lib     )
