@@ -33,14 +33,14 @@ FIND_PATH(
     GLUT_INCLUDE_DIR
     NAMES glut.h
     PATHS ${glut_includedir}
-    #NO_DEFAULT_PATH
+    NO_DEFAULT_PATH
 )
 
 FIND_LIBRARY(
     GLUT_glut_LIBRARY
     NAMES freeglut
     PATHS ${glut_librarydir}
-    #NO_DEFAULT_PATH
+    NO_DEFAULT_PATH
 )
 
 
