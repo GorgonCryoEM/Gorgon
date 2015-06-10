@@ -6,15 +6,12 @@ set(glut_root           ${extlibs_dir}/GL  )
 set(glut_win32  Win              )
 set(glut_win64  ""               )
 set(glut_linux  Linux_CentOS_6.6 )
-set(glut_mac    MacOSX           )
 set(glut_source freeglut-3.0.0   )
 
 # Set top directory
 if(WIN32)
     set(glut_root    ${glut_root}/${fftw_win32}  )
-elseif(APPLE)
-    set(glut_root    ${glut_root}/${fftw_mac}  )
-else()
+elseif(UNIX AND NOT APPLE)
     set(glut_root    ${glut_root}/${fftw_linux}  )
 endif()
 
