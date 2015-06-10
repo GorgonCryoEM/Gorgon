@@ -1,5 +1,6 @@
 message("Dependency - FFTW3")
 
+# Set variables
 set(fftw_root           ${extlibs_dir}/FFTW  )
 
 set(fftw_win32  fftw-3.3.4-dll32            )
@@ -16,17 +17,10 @@ else()
     set(fftw_librarydir   ${fftw_root}/lib     )
 endif()
 
-# Set variables
-set(fftw_version 3.3.4)
+message("          FFTW: ${fftw_root}")
 
-set(fftw_root           ${extlibs_dir}/FFTW  )
-set(fftw_librarydir     ${fftw_root}/lib     )
-set(fftw_includedir     ${fftw_root}/include )
-
-message("          FFTW: ${ext_dir}")
-
-message("          FFTW include: ${include_folder}")
-message("          FFTW lib    : ${lib_folder}")
+message("          FFTW include: ${fftw_includedir}")
+message("          FFTW lib    : ${fftw_librarydir}")
 
 FIND_PATH(
     FFTW3F_INCLUDE_DIRS
