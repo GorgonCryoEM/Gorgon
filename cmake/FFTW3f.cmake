@@ -1,34 +1,47 @@
-# http://tim.klingt.org/code/projects/supernova/repository/revisions/d336dd6f400e381bcfd720e96139656de0c53b6a/entry/cmake_modules/FindFFTW3f.cmake
-# Modified to use pkg config and use standard var names
+message("Dependency - FFTW3")
 
-# Find single-precision (float) version of FFTW3
+# Set variables
+set(fftw_root           ${extlibs_dir}/FFTW  )
 
-set(ext_dir ${CMAKE_SOURCE_DIR}/ExternalLibraries/FFTW/${folder_name})
+set(fftw_win32  fftw-3.3.4-dll32            )
+set(fftw_win64  fftw-3.3.4-dll64            )
+set(fftw_linux  fftw-3.3.4-Linux_CentOS_6.6 )
+set(fftw_mac    fftw-3.3.4-MacOSX_10.10     )
+set(fftw_source fftw-3.3.4-source           )
 
-message("          FFTW: ${ext_dir}")
-
-if(NOT WIN32)
-    set( include_folder "${ext_dir}/include" )
-    set( lib_folder "${ext_dir}/lib" )
+# Set top directory
+if(WIN32)
+    set(fftw_root    ${fftw_root}/${fftw_win32}  )
+elseif(APPLE)
+    set(fftw_root    ${fftw_root}/${fftw_mac}  )
 else()
-    set( include_folder ${ext_dir} )
-    set( lib_folder     ${ext_dir} )
+    set(fftw_root    ${fftw_root}/${fftw_linux}  )
 endif()
 
-message("          FFTW include: ${include_folder}")
-message("          FFTW lib    : ${lib_folder}")
+# Set include & library directories
+if(WIN32)
+    set(fftw_includedir   ${fftw_root}         )
+    set(fftw_librarydir   ${fftw_root}         )
+else()
+    set(fftw_includedir   ${fftw_root}/include )
+    set(fftw_librarydir   ${fftw_root}/lib     )
+endif()
+
+message("          FFTW: ${fftw_root}")
+message("          FFTW include: ${fftw_includedir}")
+message("          FFTW lib    : ${fftw_librarydir}")
 
 FIND_PATH(
     FFTW3F_INCLUDE_DIRS
     NAMES fftw3.h
-    PATHS ${include_folder}
+    PATHS ${fftw_includedir}
     NO_DEFAULT_PATH
 )
 
 FIND_LIBRARY(
     FFTW3F_LIBRARIES
     NAMES fftw3f fftw3f-3 libfftw3f-3
-    PATHS ${lib_folder}
+    PATHS ${fftw_librarydir}
     NO_DEFAULT_PATH
 )
 
