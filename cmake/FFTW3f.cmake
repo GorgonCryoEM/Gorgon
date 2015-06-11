@@ -11,7 +11,7 @@ set(fftw_source fftw-3.3.4-source           )
 
 # Set top directory
 if(WIN32)
-    if(target_arch eq 32)
+    if(target_arch EQUAL 32)
         set(fftw_root    ${fftw_root}/${fftw_win32}  )
     else()
         set(fftw_root    ${fftw_root}/${fftw_win64}  )
