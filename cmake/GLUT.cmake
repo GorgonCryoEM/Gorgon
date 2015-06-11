@@ -19,7 +19,7 @@ endif()
 set(glut_includedir   ${glut_root}/include/GL )
 
 if(WIN32)
-    if(target_arch eq 32)
+    if(target_arch EQUAL 32)
         set(glut_librarydir   ${glut_root}/lib     )
     else()
         set(glut_librarydir   ${glut_root}/lib/x64 )
