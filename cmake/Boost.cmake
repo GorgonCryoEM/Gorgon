@@ -60,10 +60,10 @@ if( NOT Boost_FOUND)
      #--Configure step-------------
         CONFIGURE_COMMAND  ${Boost_Bootstrap_CMD}
      #--Build step-----------------
-        BUILD_COMMAND ${Boost_b2_CMD}    ${boost_options}
+        BUILD_COMMAND ${Boost_b2_CMD}    ${boost_options} link=shared
         BUILD_IN_SOURCE 1
      #--Install step---------------
-        INSTALL_COMMAND ${Boost_b2_CMD} install --prefix=${boost_install_prefix} ${boost_options}
+        INSTALL_COMMAND ${Boost_b2_CMD} install --prefix=${boost_install_prefix} ${boost_options} link=shared
      #--Output logging-------------
       LOG_DOWNLOAD 1            # Wrap download in script to log output
       LOG_UPDATE 1              # Wrap update in script to log output
