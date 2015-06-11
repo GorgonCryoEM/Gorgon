@@ -15,12 +15,13 @@ set(boost_install_prefix ${extlibs_dir}/boost/                                  
 # Windows needs `libbost_serialization` for some reason
 if(WIN32)
     set(boost_components python serialization)
+    set(boost_options  --build-type=complete)
 else()
+    set(boost_options)
     set(boost_components python)
 endif()
 
 # Prepare options for all the components needed
-set(boost_options)
 foreach(comp ${boost_components})
     list(APPEND boost_options --with-${comp})
 endforeach()
@@ -60,10 +61,10 @@ if( NOT Boost_FOUND)
      #--Configure step-------------
         CONFIGURE_COMMAND  ${Boost_Bootstrap_CMD}
      #--Build step-----------------
-        BUILD_COMMAND ${Boost_b2_CMD}    ${boost_options} --build-type=complete
+        BUILD_COMMAND ${Boost_b2_CMD}    ${boost_options}
         BUILD_IN_SOURCE 1
      #--Install step---------------
-        INSTALL_COMMAND ${Boost_b2_CMD} install --prefix=${boost_install_prefix} ${boost_options} --build-type=complete
+        INSTALL_COMMAND ${Boost_b2_CMD} install --prefix=${boost_install_prefix} ${boost_options}
      #--Output logging-------------
       LOG_DOWNLOAD 1            # Wrap download in script to log output
       LOG_UPDATE 1              # Wrap update in script to log output
