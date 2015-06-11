@@ -3,6 +3,12 @@ PROJECT(Gorgon)
 
 set(extlibs_dir ${CMAKE_SOURCE_DIR}/ExternalLibraries CACHE INTERNAL "External Libraries directory")
 
+if( CMAKE_SIZEOF_VOID_P EQUAL 8 )
+    set( target_arch 64 CACHE INTERNAL "Target architecture")
+  else()
+    set( target_arch 32 CACHE INTERNAL "Target architecture")
+endif()
+
 include(cmake/Boost.cmake)
 include(cmake/FFTW3f.cmake)
 include(cmake/GLUT.cmake)
