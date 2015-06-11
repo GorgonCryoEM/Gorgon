@@ -12,7 +12,9 @@
 
 #include <iostream>
 #include <glut.h>
-#include <glExt.h>
+#ifndef __APPLE__
+	#include <glExt.h>
+#endif
 #include <string>
 #include <GraphMatch/VectorMath.h>
 #include "Renderer.h"
