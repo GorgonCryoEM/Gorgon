@@ -2,45 +2,6 @@
 // Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 // Description:   Reads skeleton files and creates graphs from them.
 
-// CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
-//
-// History Log: 
-//   $Log$
-//   Revision 1.24  2009/12/22 19:02:41  colemanr
-//   gcc marks vector<vector<double>> as a syntax error... using vector<vector<double> >
-//
-//   Revision 1.23  2009/12/22 01:03:06  schuhs
-//   Adding support for beta sheets to the SSE correspondence search algorithm
-//
-//   Revision 1.22  2009/11/02 19:45:36  colemanr
-//   now using round() from MathTools/BasicDefines.h instead of Round()
-//
-//   Revision 1.21  2009/10/13 18:09:34  ssa1
-//   Refactoring Volume.h
-//
-//   Revision 1.20  2009/09/17 20:00:24  ssa1
-//   Steps towards exporting to Rosetta
-//
-//   Revision 1.19  2008/12/12 21:43:38  ssa1
-//   Fixing bug: Application crashing when loading skeletons via the sse correspondence finder
-//
-//   Revision 1.18  2008/12/02 04:11:33  ssa1
-//   Fixing bug when tracing the backbone of a sequence
-//
-//   Revision 1.17  2008/11/20 20:49:09  ssa1
-//   Fixing bug with loading in more VRML helices than there are in the SEQ... Also using scale directly from volume instead of a user-parameter
-//
-//   Revision 1.16  2008/11/18 18:10:24  ssa1
-//   Changing the scaling functions when doing graph matching to find correspondences
-//
-//   Revision 1.15  2008/09/29 16:19:30  ssa1
-//   Adding in CVS meta information
-//
 
 
 #ifndef SKELETONREADER_H

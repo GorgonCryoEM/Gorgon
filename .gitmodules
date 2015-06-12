@@ -1,0 +1,6 @@
+[submodule "ExternalLibraries"]
+	path = ExternalLibraries
+	url = git@github.com:GorgonCryoEM/ExternalLibraries.git
+[submodule "Utilities"]
+	path = Utilities
+	url = git@github.com:GorgonCryoEM/Utilities.git
