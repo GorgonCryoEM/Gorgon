@@ -1,7 +1,7 @@
 message("Dependency - Boost")
 
 # Set variables
-set(boost_version 1.41)
+set(boost_version 1.44)
 
 set(boost_root           ${extlibs_dir}/boost  )
 set(boost_librarydir     ${boost_root}/lib     )
@@ -15,12 +15,13 @@ set(boost_install_prefix ${extlibs_dir}/boost/                                  
 # Windows needs `libbost_serialization` for some reason
 if(WIN32)
     set(boost_components python serialization)
+    set(boost_options  --build-type=complete)
 else()
+    set(boost_options)
     set(boost_components python)
 endif()
 
 # Prepare options for all the components needed
-set(boost_options)
 foreach(comp ${boost_components})
     list(APPEND boost_options --with-${comp})
 endforeach()

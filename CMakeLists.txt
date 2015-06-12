@@ -3,29 +3,19 @@ PROJECT(Gorgon)
 
 set(extlibs_dir ${CMAKE_SOURCE_DIR}/ExternalLibraries CACHE INTERNAL "External Libraries directory")
 
+if( CMAKE_SIZEOF_VOID_P EQUAL 8 )
+    set( target_arch 64 CACHE INTERNAL "Target architecture")
+  else()
+    set( target_arch 32 CACHE INTERNAL "Target architecture")
+endif()
+
 include(cmake/Boost.cmake)
+include(cmake/FFTW3f.cmake)
+include(cmake/GLUT.cmake)
 
 find_package(OpenGL REQUIRED)
 #find_package(GLUT REQUIRED)
 find_package(PythonLibs REQUIRED)
-
-if(APPLE)
-	set(folder_name "Mac")
-else()
-	if(UNIX)
-		set(folder_name "Linux")
-	else()
-		set(folder_name "Win")
-	endif()
-endif()
-
-include(cmake/FFTW3f.cmake)
-include(cmake/GLUT.cmake)
-
-## Linux
-#set(PYTHON_INCLUDE_DIR /usr/include/python2.6 CACHE PATH "blah (??) blah" FORCE)
-#set(PYTHON_LIBRARY /usr/lib64/libpython2.6.so CACHE PATH "blah (??) blah" FORCE)
-
 
 OPTION(CMAKE_VERBOSE_MAKEFILE "if all commands will be echoed to the console during the make" ON)
 OPTION(ENABLE_FFTW3 "enable fftw 3 support" ON)
@@ -38,10 +28,14 @@ IF(ENABLE_FFTW_PLAN_CACHING)
 	ADD_DEFINITIONS(-DFFTW_PLAN_CACHING)
 ENDIF(ENABLE_FFTW_PLAN_CACHING)
 
+if(MSVC AND target_arch EQUAL 64)
+	ADD_DEFINITIONS(/bigobj)
+endif()
+
 SET(GORGON_INSTALL_PREFIX $ENV{HOME}/Gorgon CACHE PATH "installation prefix")
 SET(CMAKE_INSTALL_PREFIX ${GORGON_INSTALL_PREFIX} CACHE INTERNAL "installation prefix")
 
-SET(LIBRARY_OUTPUT_PATH ${GORGON_INSTALL_PREFIX}/lib CACHE PATH "output directory for building all libraries.")
+SET(LIBRARY_OUTPUT_PATH ${GORGON_INSTALL_PREFIX}/lib/x${target_arch} CACHE PATH "output directory for building all libraries.")
 
 MARK_AS_ADVANCED(CLEAR CMAKE_VERBOSE_MAKEFILE)
 MARK_AS_ADVANCED(CLEAR GORGON_INSTALL_PREFIX)
