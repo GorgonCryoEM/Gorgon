@@ -11,7 +11,11 @@ set(fftw_source fftw-3.3.4-source           )
 
 # Set top directory
 if(WIN32)
-    set(fftw_root    ${fftw_root}/${fftw_win32}  )
+    if(target_arch EQUAL 32)
+        set(fftw_root    ${fftw_root}/${fftw_win32}  )
+    else()
+        set(fftw_root    ${fftw_root}/${fftw_win64}  )
+    endif()
 elseif(APPLE)
     set(fftw_root    ${fftw_root}/${fftw_mac}  )
 else()
