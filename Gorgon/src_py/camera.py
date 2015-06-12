@@ -2,122 +2,6 @@
 # Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 # Description:   This manages a single camera, and the scenes which are rendered using this camera 
 
-# CVS Meta Information: 
-#   $Source$
-#   $Revision$
-#   $Date$
-#   $Author$
-#   $State$
-#
-# History Log: 
-#   $Log$
-#   Revision 1.58  2010/07/19 17:29:02  heiderp
-#   LARGE update.  Added flexible fitting functionality, lots of logic in FlexibleFittingEngine.h
-#
-#   Revision 1.57  2009/12/28 18:53:18  ssa1
-#   Fixing Lights when light0 location is set to follow the eye.
-#
-#   Revision 1.56  2009/10/05 17:57:37  ssa1
-#   Initial session saving functionality (Request ID:52)
-#
-#   Revision 1.55  2009/07/01 22:00:27  ssa1
-#   Centering the volume cropped using a radius around the point selected by the atom selection tool.
-#
-#   Revision 1.54  2009/06/24 21:33:48  ssa1
-#   SSE Builder Functionality: Sheet building and better camera functionality when loading new data.
-#
-#   Revision 1.53  2009/05/08 20:45:49  ssa1
-#   auto rotate of camera when user clicks CTRL + ALT and left move
-#
-#   Revision 1.52  2008/12/03 21:58:25  ssa1
-#   Selection rotations for atoms and helices.
-#
-#   Revision 1.51  2008/12/02 21:02:54  ssa1
-#   Saving screen real-estate
-#
-#   Revision 1.50  2008/12/02 18:31:33  ssa1
-#   Fixing the flicker bug on macos...
-#
-#   Revision 1.49  2008/11/28 16:05:59  ssa1
-#   Changing platform detection code for mac and windows
-#
-#   Revision 1.48  2008/11/28 05:11:56  ssa1
-#   Not running glutInit on MacOS
-#
-#   Revision 1.47  2008/11/28 04:36:17  ssa1
-#   Removing error message if pyopengl does not exist.  (To make executable building easier to debug)
-#
-#   Revision 1.46  2008/11/25 21:17:57  ssa1
-#   Moving focus functionality into only C-Alpha atoms
-#
-#   Revision 1.45  2008/11/25 21:03:40  ssa1
-#   User constraints on finding correspondences (v3)
-#
-#   Revision 1.44  2008/11/25 20:43:10  colemanr
-#   Removed self.centerOnSelectedAtom; functionality moved to CAlphaViewer.
-#
-#   Revision 1.43  2008/11/20 20:09:14  colemanr
-#   modified self.centerOnSelectedAtom() to use the new renderer origin
-#
-#   Revision 1.42  2008/11/18 22:01:18  ssa1
-#   Removing printfs, and adding cropping
-#
-#   Revision 1.41  2008/11/15 01:09:06  colemanr
-#   fixed centerOnSelectedAtom when the origin is translated
-#
-#   Revision 1.40  2008/11/14 22:54:48  colemanr
-#   Fixed centerOnSelectedAtom to work with the changes to scaling in
-#   renderers and viewers
-#
-#   Revision 1.39  2008/11/06 05:29:04  ssa1
-#   CGI submission milestone for Interactive Skeletonization, and theme support, and fixing (hopefully) mac-os flicker bug
-#
-#   Revision 1.38  2008/10/30 21:19:39  colemanr
-#   actually making use of CAlphaViewer.main_chain
-#
-#   Revision 1.37  2008/10/28 22:18:05  ssa1
-#   Changing visualization of meshes, and sketches
-#
-#   Revision 1.36  2008/10/28 21:11:40  colemanr
-#   added camera.centerOnSelectedAtom() -- moved this functionality from
-#   sequence_view.py
-#
-#   Revision 1.35  2008/10/15 19:41:32  ssa1
-#   Esc to cancel path, Clear Button and Tracking of start seed point
-#
-#   Revision 1.34  2008/09/26 20:23:33  ssa1
-#   Rotations of helices
-#
-#   Revision 1.33  2008/09/24 20:46:12  ssa1
-#   Translating the selected elements
-#
-#   Revision 1.32  2008/09/24 19:34:34  ssa1
-#   Fixing scaling bug in CTRL + zoom, Providing function for neighboring atoms, Saving volumes as projections
-#
-#   Revision 1.31  2008/09/23 16:46:57  ssa1
-#   CTRL + Mouse wheel for iso-value modification
-#
-#   Revision 1.30  2008/09/15 19:38:12  ssa1
-#   Adding in scene translation, and scene roll
-#
-#   Revision 1.29  2008/09/15 18:43:13  ssa1
-#   Adding in right clicking (Focus) functionality
-#
-#   Revision 1.28  2008/09/15 16:37:54  ssa1
-#   Implementing multiple selection behavior
-#
-#   Revision 1.27  2008/09/13 02:46:51  ssa1
-#   Multiple selection behavior for cAlpha atoms
-#
-#   Revision 1.26  2008/09/12 20:57:44  ssa1
-#   Adding an Eye light source
-#
-#   Revision 1.25  2008/07/07 14:45:06  ssa1
-#   Changing the interactive skeletonization to go from OpenGL Hitstack to RayTracing
-#
-#   Revision 1.24  2008/06/18 18:15:41  ssa1
-#   Adding in CVS meta data
-#
 
 import sys, os, time
 from PyQt4 import QtOpenGL, QtCore, QtGui
@@ -174,7 +58,6 @@ class Camera(QtOpenGL.QGLWidget):
         self.setEye(0, -4, 0) 
         self.setUp(0, 0, 1)     
         self.setEyeRotation(0, 0, 0)
-        self.setNearFarZoom(0.1, 1000, 0.25)
         self.lastPos = QtCore.QPoint()
         self.sceneEditor = SceneEditorForm(self.app, self)
         self.connect(self.app.themes, QtCore.SIGNAL("themeChanged()"), self.themeChanged)
@@ -330,6 +213,7 @@ class Camera(QtOpenGL.QGLWidget):
         glClearDepth( 1.0 )
         
         self.setLights()
+        self.setNearFarZoom(0.1, 1000, 0.25)
 
         if(self.fogEnabled):
             fogColor = self.app.themes.getColor("Camera:Fog")
