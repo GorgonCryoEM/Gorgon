@@ -1,38 +1,55 @@
+message("Dependency - GLUT")
 
-set(ext_dir ${CMAKE_SOURCE_DIR}/ExternalLibraries/GL/${folder_name})
+# Set variables
+set(glut_root           ${extlibs_dir}/GL  )
 
-message("          GLUT: ${ext_dir}")
+set(glut_win32  Win              )
+set(glut_win64  ""               )
+set(glut_linux  Linux_CentOS_6.6 )
+set(glut_source freeglut-3.0.0   )
 
-#if(NOT WIN32)
-#    set( include_folder "${ext_dir}/include" )
-#    set( lib_folder "${ext_dir}/lib" )
-#else()
-#    set( include_folder ${ext_dir} )
-#    set( lib_folder     ${ext_dir} )
-#endif()
+# Set top directory
+if(WIN32)
+    set(glut_root    ${glut_root}/${glut_win32}  )
+elseif(UNIX AND NOT APPLE)
+    set(glut_root    ${glut_root}/${glut_linux}  )
+endif()
 
-set( include_folder "${ext_dir}/include/GL" )
-set( lib_folder "${ext_dir}/lib" )
+# Set include & library directories
+set(glut_includedir   ${glut_root}/include/GL )
 
-message("          GLUT include: ${include_folder}")
-message("          GLUT lib    : ${lib_folder}")
+if(WIN32)
+    if(target_arch EQUAL 32)
+        set(glut_librarydir   ${glut_root}/lib     )
+    else()
+        set(glut_librarydir   ${glut_root}/lib/x64 )
+    endif()
+elseif(APPLE)
+    find_package(GLUT REQUIRED)
+else()
+    set(glut_librarydir   ${glut_root}/lib64   )
+endif()
+
+message("          GLUT: ${glut_root}")
+message("          GLUT include: ${glut_includedir}")
+message("          GLUT lib    : ${glut_librarydir}")
 
 
 FIND_PATH(
     GLUT_INCLUDE_DIR
     NAMES glut.h
-    PATHS ${include_folder}
-    #NO_DEFAULT_PATH
+    PATHS ${glut_includedir}
+    NO_DEFAULT_PATH
 )
 
 FIND_LIBRARY(
     GLUT_glut_LIBRARY
     NAMES freeglut
-    PATHS ${lib_folder}
-    #NO_DEFAULT_PATH
+    PATHS ${glut_librarydir}
+    NO_DEFAULT_PATH
 )
 
 
 INCLUDE(FindPackageHandleStandardArgs)
 FIND_PACKAGE_HANDLE_STANDARD_ARGS(GLUT DEFAULT_MSG GLUT_glut_LIBRARY GLUT_INCLUDE_DIR)
-#MARK_AS_ADVANCED(FFTW3F_LIBRARIES FFTW3F_INCLUDE_DIRS FFTW3F_THREADS_LIBRARIES)
+MARK_AS_ADVANCED(GLUT_glut_LIBRARY GLUT_INCLUDE_DIR)
