@@ -56,7 +56,7 @@ namespace python = boost::python;
 
 
 template <class T>
-struct vector_to_python : python::to_python_converter<vector<T>, vector_to_python<T> > {
+struct vector_to_python {
 	static PyObject* convert(vector<T> const& v) {
 		python::list result;
 		for (size_t i = 0; i < v.size(); i++) {
@@ -143,13 +143,13 @@ struct tuple3_from_python {
 	}
 };
 
-template <class T>
-struct tuple3_to_python : python::to_python_converter<T, tuple3_to_python<T> > {
-	static PyObject* convert(T const& p) {
-		python::tuple result = python::make_tuple(p[0], p[1], p[2]);
-		return python::incref(python::tuple(result).ptr());
-	}
-};
+//template <class T>
+//struct tuple3_to_python : python::to_python_converter<T, tuple3_to_python<T> > {
+//	static PyObject* convert(T const& p) {
+//		python::boost::tuple result = python::make_tuple(p[0], p[1], p[2]);
+//		return python::incref(python::boost::tuple(result).ptr());
+//	}
+//};
 
 // **************************************************************************************
 
