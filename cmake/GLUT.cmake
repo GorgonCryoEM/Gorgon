@@ -1,4 +1,6 @@
-message("Dependency - GLUT")
+if(ENABLE_CMAKE_DEBUG_OUTPUT)
+    message("Dependency - GLUT")
+endif()
 
 # Set variables
 set(glut_root           ${extlibs_dir}/GL  )
@@ -30,9 +32,11 @@ else()
     set(glut_librarydir   ${glut_root}/lib64   )
 endif()
 
-message("          GLUT: ${glut_root}")
-message("          GLUT include: ${glut_includedir}")
-message("          GLUT lib    : ${glut_librarydir}")
+if(ENABLE_CMAKE_DEBUG_OUTPUT)
+    message("          GLUT: ${glut_root}")
+    message("          GLUT include: ${glut_includedir}")
+    message("          GLUT lib    : ${glut_librarydir}")
+endif()
 
 
 FIND_PATH(
