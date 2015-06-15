@@ -16,6 +16,7 @@ set(CMAKE_OSX_SYSROOT "$ENV{HOME}/Documents/MacOSX_SDKs/MacOSX${target_osx_versi
 set(MACOSX_DEPLOYMENT_TARGET "$ENV{HOME}/Documents/MacOSX_SDKs/MacOSX${target_osx_version}.sdk" CACHE PATH "" FORCE)
 
 set(CMAKE_OSX_DEPLOYMENT_TARGET ${target_osx_version} CACHE STRING "" FORCE)
+set(CMAKE_CXX_FLAGS "--sysroot ${CMAKE_OSX_SYSROOT} ${CMAKE_CXX_FLAGS}")
 
 include(cmake/Boost.cmake)
 include(cmake/FFTW3f.cmake)
