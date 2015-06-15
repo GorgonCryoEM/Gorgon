@@ -9,6 +9,15 @@ if( CMAKE_SIZEOF_VOID_P EQUAL 8 )
     set( target_arch 32 CACHE INTERNAL "Target architecture")
 endif()
 
+set(target_osx_version "10.10" CACHE STRING "Target OSX version")
+set_property(CACHE target_osx_version PROPERTY STRINGS 10.10 10.9 10.8 10.7)
+
+set(CMAKE_OSX_SYSROOT "$ENV{HOME}/Documents/MacOSX_SDKs/MacOSX${target_osx_version}.sdk" CACHE PATH "" FORCE)
+set(MACOSX_DEPLOYMENT_TARGET "$ENV{HOME}/Documents/MacOSX_SDKs/MacOSX${target_osx_version}.sdk" CACHE PATH "" FORCE)
+
+set(CMAKE_OSX_DEPLOYMENT_TARGET ${target_osx_version} CACHE STRING "" FORCE)
+set(CMAKE_CXX_FLAGS "--sysroot ${CMAKE_OSX_SYSROOT} ${CMAKE_CXX_FLAGS}")
+
 include(cmake/Boost.cmake)
 include(cmake/FFTW3f.cmake)
 include(cmake/GLUT.cmake)
@@ -35,7 +44,7 @@ endif()
 SET(GORGON_INSTALL_PREFIX $ENV{HOME}/Gorgon CACHE PATH "installation prefix")
 SET(CMAKE_INSTALL_PREFIX ${GORGON_INSTALL_PREFIX} CACHE INTERNAL "installation prefix")
 
-SET(LIBRARY_OUTPUT_PATH ${GORGON_INSTALL_PREFIX}/lib/x${target_arch} CACHE PATH "output directory for building all libraries.")
+SET(LIBRARY_OUTPUT_PATH ${GORGON_INSTALL_PREFIX}/lib/x${target_arch}/${target_osx_version} CACHE PATH "output directory for building all libraries." FORCE)
 
 MARK_AS_ADVANCED(CLEAR CMAKE_VERBOSE_MAKEFILE)
 MARK_AS_ADVANCED(CLEAR GORGON_INSTALL_PREFIX)
