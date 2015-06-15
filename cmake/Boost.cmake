@@ -1,4 +1,6 @@
-message("Dependency - Boost")
+if(ENABLE_CMAKE_DEBUG_OUTPUT)
+    message("Dependency - Boost")
+endif()
 
 # Set variables
 set(boost_version 1.44)
