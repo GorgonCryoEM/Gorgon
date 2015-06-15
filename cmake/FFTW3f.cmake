@@ -1,4 +1,6 @@
-message("Dependency - FFTW3")
+if(ENABLE_CMAKE_DEBUG_OUTPUT)
+    message("Dependency - FFTW3")
+endif()
 
 # Set variables
 set(fftw_root           ${extlibs_dir}/FFTW  )
@@ -31,9 +33,11 @@ else()
     set(fftw_librarydir   ${fftw_root}/lib     )
 endif()
 
-message("          FFTW: ${fftw_root}")
-message("          FFTW include: ${fftw_includedir}")
-message("          FFTW lib    : ${fftw_librarydir}")
+if(ENABLE_CMAKE_DEBUG_OUTPUT)
+    message("          FFTW: ${fftw_root}")
+    message("          FFTW include: ${fftw_includedir}")
+    message("          FFTW lib    : ${fftw_librarydir}")
+endif()
 
 FIND_PATH(
     FFTW3F_INCLUDE_DIRS
