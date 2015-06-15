@@ -9,6 +9,9 @@ if( CMAKE_SIZEOF_VOID_P EQUAL 8 )
     set( target_arch 32 CACHE INTERNAL "Target architecture")
 endif()
 
+set(target_osx_version "10.10" CACHE STRING "Target OSX version")
+set_property(CACHE target_osx_version PROPERTY STRINGS 10.10 10.9 10.8 10.7)
+
 include(cmake/Boost.cmake)
 include(cmake/FFTW3f.cmake)
 include(cmake/GLUT.cmake)
