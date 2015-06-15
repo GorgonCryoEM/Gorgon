@@ -46,7 +46,7 @@ endif()
 SET(GORGON_INSTALL_PREFIX $ENV{HOME}/Gorgon CACHE PATH "installation prefix")
 SET(CMAKE_INSTALL_PREFIX ${GORGON_INSTALL_PREFIX} CACHE INTERNAL "installation prefix")
 
-SET(LIBRARY_OUTPUT_PATH ${GORGON_INSTALL_PREFIX}/lib/x${target_arch} CACHE PATH "output directory for building all libraries.")
+SET(LIBRARY_OUTPUT_PATH ${GORGON_INSTALL_PREFIX}/lib/x${target_arch}/${target_osx_version} CACHE PATH "output directory for building all libraries." FORCE)
 
 MARK_AS_ADVANCED(CLEAR CMAKE_VERBOSE_MAKEFILE)
 MARK_AS_ADVANCED(CLEAR GORGON_INSTALL_PREFIX)
