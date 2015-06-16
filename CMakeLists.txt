@@ -9,9 +9,9 @@ option(ENABLE_CMAKE_DEBUG_OUTPUT "print output of some variables for debugging p
 set(extlibs_dir ${CMAKE_SOURCE_DIR}/ExternalLibraries CACHE INTERNAL "External Libraries directory")
 
 if( CMAKE_SIZEOF_VOID_P EQUAL 8 )
-    set( target_arch 64 CACHE INTERNAL "Target architecture")
+    set( GORGON_TARGET_ARCH 64 CACHE INTERNAL "Target architecture")
   else()
-    set( target_arch 32 CACHE INTERNAL "Target architecture")
+    set( GORGON_TARGET_ARCH 32 CACHE INTERNAL "Target architecture")
 endif()
 
 include(cmake/Boost.cmake)
@@ -32,11 +32,11 @@ IF(ENABLE_FFTW_PLAN_CACHING)
 	ADD_DEFINITIONS(-DFFTW_PLAN_CACHING)
 ENDIF(ENABLE_FFTW_PLAN_CACHING)
 
-if(MSVC AND target_arch EQUAL 64)
+if(MSVC AND GORGON_TARGET_ARCH EQUAL 64)
 	ADD_DEFINITIONS(/bigobj)
 endif()
 
-SET(LIBRARY_OUTPUT_PATH ${GORGON_INSTALL_PREFIX}/lib/x${target_arch} CACHE PATH "Library output directory for cross-compiling on Mac")
+SET(LIBRARY_OUTPUT_PATH ${GORGON_INSTALL_PREFIX}/lib/x${GORGON_TARGET_ARCH} CACHE PATH "Library output directory for cross-compiling on Mac")
 
 SET(INCLUDE_DIRS 
 	${GLUT_INCLUDE_DIR}
