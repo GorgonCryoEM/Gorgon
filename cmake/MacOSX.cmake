@@ -1,11 +1,11 @@
 if(APPLE)
     set(GORGON_TARGET_OSX_VERSION)
-    option(ENABLE_CROSS_COMPILE_MAC "enable cross-compile for Mac OSX")
+    option(GORGON_ENABLE_CROSS_COMPILE_MAC "enable cross-compile for Mac OSX")
     
-    mark_as_advanced(ENABLE_CROSS_COMPILE_MAC)
+    mark_as_advanced(GORGON_ENABLE_CROSS_COMPILE_MAC)
     mark_as_advanced(GORGON_TARGET_OSX_VERSION)
     
-    if(ENABLE_CROSS_COMPILE_MAC)
+    if(GORGON_ENABLE_CROSS_COMPILE_MAC)
         set(GORGON_TARGET_OSX_VERSION "10.10" CACHE STRING "Target OSX version")
         set_property(CACHE GORGON_TARGET_OSX_VERSION PROPERTY STRINGS 10.10 10.9 10.8 10.7)
         
