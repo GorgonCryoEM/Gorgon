@@ -36,11 +36,7 @@ if(MSVC AND target_arch EQUAL 64)
 	ADD_DEFINITIONS(/bigobj)
 endif()
 
-SET(GORGON_INSTALL_PREFIX $ENV{HOME}/Gorgon CACHE PATH "installation prefix")
-SET(CMAKE_INSTALL_PREFIX ${GORGON_INSTALL_PREFIX} CACHE INTERNAL "installation prefix")
-
 SET(LIBRARY_OUTPUT_PATH ${GORGON_INSTALL_PREFIX}/lib/x${target_arch} CACHE PATH "Library output directory for cross-compiling on Mac")
-
 
 SET(INCLUDE_DIRS 
 	${GLUT_INCLUDE_DIR}
