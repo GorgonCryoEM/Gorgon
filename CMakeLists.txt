@@ -11,9 +11,7 @@ if( CMAKE_SIZEOF_VOID_P EQUAL 8 )
     set( target_arch 32 CACHE INTERNAL "Target architecture")
 endif()
 
-if(APPLE)
     include(cmake/MacOSX.cmake)
-endif()
 
 include(cmake/Boost.cmake)
 include(cmake/FFTW3f.cmake)
