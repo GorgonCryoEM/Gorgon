@@ -1,5 +1,9 @@
 if(APPLE)
+    set(target_osx_version)
     option(ENABLE_CROSS_COMPILE_MAC "enable cross-compile for Mac OSX")
+    
+    mark_as_advanced(ENABLE_CROSS_COMPILE_MAC)
+    mark_as_advanced(target_osx_version)
     
     if(ENABLE_CROSS_COMPILE_MAC)
         set(target_osx_version "10.10" CACHE STRING "Target OSX version")
