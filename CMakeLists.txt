@@ -1,4 +1,7 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 3.0)
+
+include(cmake/MacOSX.cmake)
+
 PROJECT(Gorgon)
 
 option(ENABLE_CMAKE_DEBUG_OUTPUT "print output of some variables for debugging purposes" OFF)
@@ -10,8 +13,6 @@ if( CMAKE_SIZEOF_VOID_P EQUAL 8 )
   else()
     set( target_arch 32 CACHE INTERNAL "Target architecture")
 endif()
-
-    include(cmake/MacOSX.cmake)
 
 include(cmake/Boost.cmake)
 include(cmake/FFTW3f.cmake)
