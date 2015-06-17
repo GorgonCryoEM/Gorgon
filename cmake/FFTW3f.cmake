@@ -3,7 +3,7 @@ if(ENABLE_CMAKE_DEBUG_OUTPUT)
 endif()
 
 # Set variables
-set(fftw_root           ${extlibs_dir}/FFTW  )
+set(fftw_root           ${GORGON_EXTERNAL_LIBRARIES_DIR}/FFTW  )
 
 set(fftw_win32  fftw-3.3.4-dll32            )
 set(fftw_win64  fftw-3.3.4-dll64            )
