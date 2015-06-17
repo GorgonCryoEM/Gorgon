@@ -16,6 +16,7 @@ ez_setup.use_setuptools()
 import sys
 from setuptools import setup
 
+mainscript = 'gorgon.pyw'
 # --------
 APP = ['gorgon.pyw']
 DATA_FILES = [('', ['splash.png', 'gorgon.icns']),
@@ -26,7 +27,6 @@ OPTIONS = {'argv_emulation': True,
 	   "includes" : ['sip', 'PyQt4'],
 	   "excludes" : []
 	   }
-mainscript = 'gorgon.pyw'
 # --------
 
 if sys.platform == 'darwin':
