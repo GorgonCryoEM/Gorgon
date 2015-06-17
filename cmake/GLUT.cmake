@@ -3,7 +3,7 @@ if(ENABLE_CMAKE_DEBUG_OUTPUT)
 endif()
 
 # Set variables
-set(glut_root           ${extlibs_dir}/GL  )
+set(glut_root           ${GORGON_EXTERNAL_LIBRARIES_DIR}/GL  )
 
 set(glut_win32  Win              )
 set(glut_win64  ""               )
@@ -21,7 +21,7 @@ endif()
 set(glut_includedir   ${glut_root}/include/GL )
 
 if(WIN32)
-    if(target_arch EQUAL 32)
+    if(GORGON_TARGET_ARCH EQUAL 32)
         set(glut_librarydir   ${glut_root}/lib     )
     else()
         set(glut_librarydir   ${glut_root}/lib/x64 )
