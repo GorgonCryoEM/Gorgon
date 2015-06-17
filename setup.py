@@ -16,6 +16,15 @@ ez_setup.use_setuptools()
 import sys
 from setuptools import setup
 
+APP = ['gorgon.pyw']
+DATA_FILES = [('', ['splash.png', 'gorgon.icns']),
+	('../../../themes', ['../resources/Dark.thm', '../resources/Light.thm'] )]
+OPTIONS = {'argv_emulation': True,
+	   'iconfile' : 'gorgon.icns',
+	   'packages' : [],
+	   "includes" : ['sip', 'PyQt4'],
+	   "excludes" : []
+	   }
 mainscript = 'gorgon.pyw'
 
 if sys.platform == 'darwin':
@@ -39,6 +48,11 @@ else:
      )
 
 setup(
+    app=APP,
+    data_files=DATA_FILES,
+    options={'py2app': OPTIONS},
+    setup_requires=['py2app'],
+)
     name="Gorgon",
     **extra_options
 )
