@@ -17,8 +17,7 @@ import sys
 from setuptools import setup
 
 mainscript = 'gorgon.pyw'
-# --------
-APP = ['gorgon.pyw']
+
 DATA_FILES = [('', ['splash.png', 'gorgon.icns']),
 	('../../../themes', ['../resources/Dark.thm', '../resources/Light.thm'] )]
 OPTIONS = {'argv_emulation': True,
@@ -27,7 +26,6 @@ OPTIONS = {'argv_emulation': True,
 	   "includes" : ['sip', 'PyQt4'],
 	   "excludes" : []
 	   }
-# --------
 
 if sys.platform == 'darwin':
     extra_options = dict(
@@ -35,7 +33,7 @@ if sys.platform == 'darwin':
         app=[mainscript],
         # Cross-platform applications generally expect sys.argv to
         # be used for opening files.
-        options=dict(py2app=dict(argv_emulation=True)),
+        options=dict(py2app=OPTIONS),
     )
 elif sys.platform == 'win32':
     extra_options = dict(
@@ -50,12 +48,7 @@ else:
      )
 
 setup(
-# --------
-    app=APP,
     data_files=DATA_FILES,
-    options={'py2app': OPTIONS},
-    setup_requires=['py2app'],
-# --------
     name="Gorgon",
     **extra_options
 )
