@@ -68,8 +68,6 @@ LINK_DIRECTORIES(${Boost_LIBRARY_DIRS})
 ADD_LIBRARY(pyGORGON SHARED Gorgon/src_cpp/LibPyGorgon.cpp)
 TARGET_LINK_LIBRARIES(pyGORGON ${LIB_DIRS})
 
-include(CPack)
-
 #install(TARGETS pyGORGON
 #         LIBRARY DESTINATION dist)
 #INSTALL_FILES(/include "^.+\\.h$")
