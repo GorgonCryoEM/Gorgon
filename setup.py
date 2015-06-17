@@ -10,18 +10,19 @@ Usage (Mac OS X):
 Usage (Windows):
     python setup.py py2exe
 """
-import ez_setup
-ez_setup.use_setuptools()
+# import ez_setup
+# ez_setup.use_setuptools()
 
 import sys
 from setuptools import setup
+import py2app.recipes
 
 mainscript = 'gorgon.pyw'
 
-DATA_FILES = [('', ['Gorgon/design/splash.png', 'Gorgon/design/gorgon.icns']),
-	('../../../themes', ['Gorgon/resources/Dark.thm', 'Gorgon/resources/Light.thm'] )]
+DATA_FILES = [('', ['../design/splash.png', '../design/gorgon.icns']),
+	('../../../themes', ['../resources/Dark.thm', '../resources/Light.thm'] )]
 OPTIONS = {'argv_emulation': True,
-	   'iconfile' : 'gorgon.icns',
+	   'iconfile' : '../design/gorgon.icns',
 	   'packages' : [],
 	   "includes" : ['sip', 'PyQt4'],
 	   "excludes" : []
