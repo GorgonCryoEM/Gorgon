@@ -3,7 +3,7 @@ if(ENABLE_CMAKE_DEBUG_OUTPUT)
 endif()
 
 # Set variables
-set(fftw_root           ${extlibs_dir}/FFTW  )
+set(fftw_root           ${GORGON_EXTERNAL_LIBRARIES_DIR}/FFTW  )
 
 set(fftw_win32  fftw-3.3.4-dll32            )
 set(fftw_win64  fftw-3.3.4-dll64            )
@@ -13,7 +13,7 @@ set(fftw_source fftw-3.3.4-source           )
 
 # Set top directory
 if(WIN32)
-    if(target_arch EQUAL 32)
+    if(GORGON_TARGET_ARCH EQUAL 32)
         set(fftw_root    ${fftw_root}/${fftw_win32}  )
     else()
         set(fftw_root    ${fftw_root}/${fftw_win64}  )
