@@ -1,18 +1,18 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 3.0)
+
+include(cmake/MacOSX.cmake)
+include(cmake/Windows.cmake)
+
 PROJECT(Gorgon)
 
 option(ENABLE_CMAKE_DEBUG_OUTPUT "print output of some variables for debugging purposes" OFF)
 
-set(extlibs_dir ${CMAKE_SOURCE_DIR}/ExternalLibraries CACHE INTERNAL "External Libraries directory")
+set(GORGON_EXTERNAL_LIBRARIES_DIR ${CMAKE_SOURCE_DIR}/ExternalLibraries CACHE INTERNAL "External Libraries directory")
 
 if( CMAKE_SIZEOF_VOID_P EQUAL 8 )
-    set( target_arch 64 CACHE INTERNAL "Target architecture")
+    set( GORGON_TARGET_ARCH 64 CACHE INTERNAL "Target architecture")
   else()
-    set( target_arch 32 CACHE INTERNAL "Target architecture")
-endif()
-
-if(APPLE)
-    include(cmake/MacOSX.cmake)
+    set( GORGON_TARGET_ARCH 32 CACHE INTERNAL "Target architecture")
 endif()
 
 include(cmake/Boost.cmake)
@@ -22,8 +22,6 @@ include(cmake/GLUT.cmake)
 find_package(OpenGL REQUIRED)
 #find_package(GLUT REQUIRED)
 find_package(PythonLibs REQUIRED)
-
-OPTION(CMAKE_VERBOSE_MAKEFILE "if all commands will be echoed to the console during the make" ON)
 
 OPTION(ENABLE_FFTW3 "enable fftw 3 support" ON)
 OPTION(ENABLE_FFTW_PLAN_CACHING "enable fftw caching" ON)
@@ -36,19 +34,12 @@ IF(ENABLE_FFTW_PLAN_CACHING)
 	ADD_DEFINITIONS(-DFFTW_PLAN_CACHING)
 ENDIF(ENABLE_FFTW_PLAN_CACHING)
 
-if(MSVC AND target_arch EQUAL 64)
-	ADD_DEFINITIONS(/bigobj)
+SET(LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/lib${GORGON_OS_VERSION}/x${GORGON_TARGET_ARCH})
+if(ENABLE_CMAKE_DEBUG_OUTPUT)
+    message("LIBRARY_OUTPUT_PATH= ${LIBRARY_OUTPUT_PATH}")
 endif()
 
-SET(GORGON_INSTALL_PREFIX $ENV{HOME}/Gorgon CACHE PATH "installation prefix")
-SET(CMAKE_INSTALL_PREFIX ${GORGON_INSTALL_PREFIX} CACHE INTERNAL "installation prefix")
-
-SET(LIBRARY_OUTPUT_PATH ${GORGON_INSTALL_PREFIX}/lib/x${target_arch}/${target_osx_version} CACHE PATH "output directory for building all libraries." FORCE)
-
-MARK_AS_ADVANCED(CLEAR CMAKE_VERBOSE_MAKEFILE)
-MARK_AS_ADVANCED(CLEAR GORGON_INSTALL_PREFIX)
-
-SET(INCLUDE_DIRS 
+SET(GORGON_INCLUDE_DIRS 
 	${GLUT_INCLUDE_DIR}
 	${CMAKE_CURRENT_SOURCE_DIR}
 	${CMAKE_CURRENT_SOURCE_DIR}/ExternalLibraries
@@ -61,7 +52,7 @@ SET(INCLUDE_DIRS
 	${FFTW3F_INCLUDE_DIRS}
 	)
 
-SET(LIB_DIRS
+SET(GORGON_LIBS
 	${OPENGL_gl_LIBRARY}
 	${OPENGL_glu_LIBRARY}
 	${GLUT_glut_LIBRARY}
@@ -71,13 +62,10 @@ SET(LIB_DIRS
 	${FFTW3F_LIBRARIES}
 	)
 
-INCLUDE_DIRECTORIES(${INCLUDE_DIRS}) 
-LINK_DIRECTORIES(${Boost_LIBRARY_DIRS})
+INCLUDE_DIRECTORIES(${GORGON_INCLUDE_DIRS}) 
 
 ADD_LIBRARY(pyGORGON SHARED Gorgon/src_cpp/LibPyGorgon.cpp)
-TARGET_LINK_LIBRARIES(pyGORGON ${LIB_DIRS})
-
-include(CPack)
+TARGET_LINK_LIBRARIES(pyGORGON ${GORGON_LIBS})
 
 #install(TARGETS pyGORGON
 #         LIBRARY DESTINATION dist)
