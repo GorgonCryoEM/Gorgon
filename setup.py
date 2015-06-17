@@ -18,8 +18,8 @@ from setuptools import setup
 
 mainscript = 'gorgon.pyw'
 
-DATA_FILES = [('', ['splash.png', 'gorgon.icns']),
-	('../../../themes', ['../resources/Dark.thm', '../resources/Light.thm'] )]
+DATA_FILES = [('', ['Gorgon/design/splash.png', 'Gorgon/design/gorgon.icns']),
+	('../../../themes', ['Gorgon/resources/Dark.thm', 'Gorgon/resources/Light.thm'] )]
 OPTIONS = {'argv_emulation': True,
 	   'iconfile' : 'gorgon.icns',
 	   'packages' : [],
