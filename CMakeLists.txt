@@ -15,16 +15,15 @@ if( CMAKE_SIZEOF_VOID_P EQUAL 8 )
     set( GORGON_TARGET_ARCH 32 CACHE INTERNAL "Target architecture")
 endif()
 
-#include(cmake/Python.cmake)
 #find_package(PythonInterp)
 #find_package(PythonLibs REQUIRED)
 #INCLUDE(FindPackageHandleStandardArgs)
 #FIND_PACKAGE_HANDLE_STANDARD_ARGS(python DEFAULT_MSG python_LIBRARIES python_LIBRARY_DIR python_INCLUDE_DIR)
 
 #find_package(GLUT REQUIRED)
-add_subdirectory(${GORGON_EXTERNAL_LIBRARIES_DIR}/python)
-add_subdirectory(${GORGON_EXTERNAL_LIBRARIES_DIR}/boost)
 
+include(cmake/Python.cmake)
+include(cmake/Boost.cmake)
 
 SET(GORGON_INCLUDE_DIRS 
 	${GLUT_INCLUDE_DIR}
