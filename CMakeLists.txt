@@ -4,7 +4,6 @@ include(cmake/MacOSX.cmake)
 include(cmake/Windows.cmake)
 
 PROJECT(Gorgon)
-ADD_LIBRARY(pyGORGON SHARED Gorgon/src_cpp/LibPyGorgon.cpp)
 #include(cmake/Python.cmake)
 
 option(ENABLE_CMAKE_DEBUG_OUTPUT "print output of some variables for debugging purposes" OFF)
@@ -27,6 +26,7 @@ endif()
 #find_package(GLUT REQUIRED)
 
 add_subdirectory(${GORGON_EXTERNAL_LIBRARIES_DIR}/python)
+ADD_LIBRARY(pyGORGON SHARED Gorgon/src_cpp/LibPyGorgon.cpp)
 TARGET_LINK_LIBRARIES(pyGORGON Python)
 
 #add_dependencies(pyGORGON boost)
