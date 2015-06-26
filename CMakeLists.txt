@@ -21,9 +21,9 @@ endif()
 #INCLUDE(FindPackageHandleStandardArgs)
 #FIND_PACKAGE_HANDLE_STANDARD_ARGS(python DEFAULT_MSG python_LIBRARIES python_LIBRARY_DIR python_INCLUDE_DIR)
 
-
-
 #find_package(GLUT REQUIRED)
+add_subdirectory(${GORGON_EXTERNAL_LIBRARIES_DIR}/python)
+add_subdirectory(${GORGON_EXTERNAL_LIBRARIES_DIR}/boost)
 
 
 SET(GORGON_INCLUDE_DIRS 
@@ -40,8 +40,6 @@ SET(GORGON_INCLUDE_DIRS
 	)
 INCLUDE_DIRECTORIES(${GORGON_INCLUDE_DIRS}) 
 
-add_subdirectory(${GORGON_EXTERNAL_LIBRARIES_DIR}/python)
-add_subdirectory(${GORGON_EXTERNAL_LIBRARIES_DIR}/boost)
 ADD_LIBRARY(pyGORGON SHARED Gorgon/src_cpp/LibPyGorgon.cpp)
 
 add_dependencies(pyGORGON Boost)
