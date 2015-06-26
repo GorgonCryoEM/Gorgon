@@ -48,9 +48,9 @@ set(python_install_prefix ${GORGON_EXTERNAL_LIBRARIES_DIR}/python/              
 
 #include_directories(${PYTHON_INCLUDE_DIR})
 ExternalProject_Get_Property(Python INSTALL_DIR)
-#set(Python_LIBRARY     ${INSTALL_DIR}/lib/libpython2.7.dylib CACHE FILEPATH "")
+set(Python_LIBRARY     ${INSTALL_DIR}/lib/libpython2.7.dylib CACHE FILEPATH "")
 
-install(TARGETS myexe EXPORT myproj DESTINATION bin)
+#install(TARGETS myexe EXPORT myproj DESTINATION bin)
 
 #find_package(PkgConfig)
 #pkg_search_module(PYTHON REQUIRED python)
@@ -62,11 +62,11 @@ install(TARGETS myexe EXPORT myproj DESTINATION bin)
 #libfind_pkg_check_modules(PYTHON_PKGCONF python)
 #libfind_pkg_detect(Python python FIND_PATH Python.h FIND_LIBRARY python)
 
-find_library(PYTHON_LIBRARY
-                name python2.7
-                PATHS ${INSTALL_DIR}/lib
-                NO_DEFAULT_PATH
-                )
+#find_library(PYTHON_LIBRARY
+#                name python2.7
+#                PATHS ${INSTALL_DIR}/lib
+#                NO_DEFAULT_PATH
+#                )
 #set(Python_LIBRARY_DIR ${python_install_dir})
 set(PYTHON_INCLUDE_DIR ${INSTALL_DIR}/include/python2.7 CACHE PATH "")
 set(PYTHON_EXECUTABLE ${INSTALL_DIR}/bin/python CACHE PATH "")
