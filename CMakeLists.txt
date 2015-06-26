@@ -5,6 +5,7 @@ include(cmake/Windows.cmake)
 
 PROJECT(Gorgon)
 ADD_LIBRARY(pyGORGON SHARED Gorgon/src_cpp/LibPyGorgon.cpp)
+#include(cmake/Python.cmake)
 add_dependencies(pyGORGON python)
 
 option(ENABLE_CMAKE_DEBUG_OUTPUT "print output of some variables for debugging purposes" OFF)
@@ -24,7 +25,6 @@ endif()
 
 
 
-include(cmake/Python.cmake)
 include(cmake/Boost.cmake)
 
 include(cmake/FFTW3f.cmake)
