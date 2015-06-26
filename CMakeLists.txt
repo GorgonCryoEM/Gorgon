@@ -27,7 +27,6 @@ endif()
 
 add_subdirectory(${GORGON_EXTERNAL_LIBRARIES_DIR}/python)
 ADD_LIBRARY(pyGORGON SHARED Gorgon/src_cpp/LibPyGorgon.cpp)
-TARGET_LINK_LIBRARIES(pyGORGON Python)
 
 #add_dependencies(pyGORGON boost)
 #add_dependencies(pyGORGON Rescan)
