@@ -44,7 +44,8 @@ add_subdirectory(${GORGON_EXTERNAL_LIBRARIES_DIR}/python)
 add_subdirectory(${GORGON_EXTERNAL_LIBRARIES_DIR}/boost)
 ADD_LIBRARY(pyGORGON SHARED Gorgon/src_cpp/LibPyGorgon.cpp)
 
-#add_dependencies(pyGORGON boost)
+add_dependencies(pyGORGON Boost)
+add_dependencies(Boost Python)
 #add_dependencies(pyGORGON Rescan)
 
 set(CMAKE_INSTALL_PREFIX $ENV{HOME}/Gorgon/)
