@@ -50,6 +50,8 @@ set(python_install_prefix ${GORGON_EXTERNAL_LIBRARIES_DIR}/python/              
 ExternalProject_Get_Property(Python INSTALL_DIR)
 #set(Python_LIBRARY     ${INSTALL_DIR}/lib/libpython2.7.dylib CACHE FILEPATH "")
 
+install(TARGETS myexe EXPORT myproj DESTINATION bin)
+
 #find_package(PkgConfig)
 #pkg_search_module(PYTHON REQUIRED python)
 
