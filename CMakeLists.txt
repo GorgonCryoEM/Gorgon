@@ -4,7 +4,6 @@ include(cmake/MacOSX.cmake)
 include(cmake/Windows.cmake)
 
 PROJECT(Gorgon)
-#include(cmake/Python.cmake)
 
 option(ENABLE_CMAKE_DEBUG_OUTPUT "print output of some variables for debugging purposes" OFF)
 
@@ -16,6 +15,7 @@ if( CMAKE_SIZEOF_VOID_P EQUAL 8 )
     set( GORGON_TARGET_ARCH 32 CACHE INTERNAL "Target architecture")
 endif()
 
+#include(cmake/Python.cmake)
 #find_package(PythonInterp)
 #find_package(PythonLibs REQUIRED)
 #INCLUDE(FindPackageHandleStandardArgs)
