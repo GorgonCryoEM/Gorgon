@@ -41,6 +41,7 @@ SET(GORGON_INCLUDE_DIRS
 INCLUDE_DIRECTORIES(${GORGON_INCLUDE_DIRS}) 
 
 add_subdirectory(${GORGON_EXTERNAL_LIBRARIES_DIR}/python)
+add_subdirectory(${GORGON_EXTERNAL_LIBRARIES_DIR}/boost)
 ADD_LIBRARY(pyGORGON SHARED Gorgon/src_cpp/LibPyGorgon.cpp)
 
 #add_dependencies(pyGORGON boost)
