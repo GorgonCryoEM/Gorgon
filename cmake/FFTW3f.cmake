@@ -21,7 +21,7 @@ set(fftw3_install_prefix ${fftw3_root}                                          
 #        URL_MD5       ${fftw3_url_md5}
      #--Configure step-------------
 #        CONFIGURE_COMMAND  ./configure --prefix=${fftw3_install_prefix} --enable-shared
-        CONFIGURE_COMMAND  ./configure --prefix=${CMAKE_CURRENT_BINARY_DIR}/fftw3 --enable-shared
+        CONFIGURE_COMMAND  ./configure --prefix=${CMAKE_CURRENT_BINARY_DIR}/fftw3 --enable-shared --enable-float
      #--Build step-----------------
 #        BUILD_COMMAND ${fftw3_b2_CMD}    ${fftw3_options}
         BUILD_IN_SOURCE 1
