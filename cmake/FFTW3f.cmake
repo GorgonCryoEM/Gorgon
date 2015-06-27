@@ -43,10 +43,10 @@ set(fftw3_install_prefix ${fftw3_root}                                          
 
 #include_directories(${FFTW3F_INCLUDE_DIR})
 ExternalProject_Get_Property(FFTW3F INSTALL_DIR)
-set(FFTW3F_LIBRARY     ${INSTALL_DIR}/lib/libfftw3f.dylib CACHE FILEPATH "")
+set(FFTW3F_LIBRARY     ${INSTALL_DIR}/lib/libfftw3.dylib CACHE FILEPATH "")
 
 
-set(FFTW3F_INCLUDE_DIR ${INSTALL_DIR}/include/python2.7 CACHE PATH "")
+set(FFTW3F_INCLUDE_DIR ${INSTALL_DIR}/include/ CACHE PATH "")
 #set(FFTW3F_EXECUTABLE ${INSTALL_DIR}/bin/python CACHE PATH "")
 
 INCLUDE(FindPackageHandleStandardArgs)
