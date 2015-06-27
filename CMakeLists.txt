@@ -20,7 +20,7 @@ endif()
 #INCLUDE(FindPackageHandleStandardArgs)
 #FIND_PACKAGE_HANDLE_STANDARD_ARGS(python DEFAULT_MSG python_LIBRARIES python_LIBRARY_DIR python_INCLUDE_DIR)
 
-#find_package(GLUT REQUIRED)
+find_package(GLUT REQUIRED)
 
 include(cmake/Python.cmake)
 include(cmake/Boost.cmake)
