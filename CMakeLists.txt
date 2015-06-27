@@ -24,6 +24,7 @@ find_package(GLUT REQUIRED)
 
 include(cmake/Python.cmake)
 include(cmake/Boost.cmake)
+include(cmake/FFTW3f.cmake)
 
 SET(GORGON_INCLUDE_DIRS 
 	${GLUT_INCLUDE_DIR}
@@ -43,6 +44,7 @@ ADD_LIBRARY(pyGORGON SHARED Gorgon/src_cpp/LibPyGorgon.cpp)
 TARGET_LINK_LIBRARIES(pyGORGON
             ${Python_LIBRARY}
             ${Boost_LIBRARY}
+            ${FFTW3F_LIBRARIES}
             )
 
 add_dependencies(pyGORGON Boost)
