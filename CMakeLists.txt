@@ -26,6 +26,17 @@ find_package(OpenGL REQUIRED)
 include(cmake/Python.cmake)
 include(cmake/Boost.cmake)
 include(cmake/FFTW3f.cmake)
+OPTION(ENABLE_FFTW3 "enable fftw 3 support" ON)
+OPTION(ENABLE_FFTW_PLAN_CACHING "enable fftw caching" ON)
+
+IF(ENABLE_FFTW3)
+	ADD_DEFINITIONS(-DFFTW3)
+ENDIF()
+
+IF(ENABLE_FFTW_PLAN_CACHING)
+	ADD_DEFINITIONS(-DFFTW_PLAN_CACHING)
+ENDIF(ENABLE_FFTW_PLAN_CACHING)
+
 
 SET(GORGON_INCLUDE_DIRS 
 	${GLUT_INCLUDE_DIR}
