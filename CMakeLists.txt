@@ -36,7 +36,7 @@ SET(GORGON_INCLUDE_DIRS
 	${OPENGL_INCLUDE_DIR}
 	${Boost_INCLUDE_DIRS}
 	${PYTHON_INCLUDE_DIR}
-	${FFTW3F_INCLUDE_DIRS}
+	${FFTW3F_INCLUDE_DIR}
 	)
 INCLUDE_DIRECTORIES(${GORGON_INCLUDE_DIRS}) 
 
@@ -44,7 +44,7 @@ ADD_LIBRARY(pyGORGON SHARED Gorgon/src_cpp/LibPyGorgon.cpp)
 TARGET_LINK_LIBRARIES(pyGORGON
             ${Python_LIBRARY}
             ${Boost_LIBRARY}
-            ${FFTW3F_LIBRARIES}
+            ${FFTW3F_LIBRARY}
             )
 
 add_dependencies(pyGORGON Boost)
