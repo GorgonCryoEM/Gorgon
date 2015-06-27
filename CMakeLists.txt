@@ -49,6 +49,7 @@ TARGET_LINK_LIBRARIES(pyGORGON
 
 add_dependencies(pyGORGON Boost)
 add_dependencies(Boost Python)
+add_dependencies(pyGORGON FFTW3F)
 #add_dependencies(pyGORGON Rescan)
 
 set(CMAKE_INSTALL_PREFIX $ENV{HOME}/Gorgon/)
