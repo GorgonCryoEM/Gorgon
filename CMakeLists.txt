@@ -57,6 +57,10 @@ TARGET_LINK_LIBRARIES(pyGORGON
             ${Python_LIBRARY}
             ${Boost_LIBRARY}
             ${FFTW3F_LIBRARY}
+            
+            ${OPENGL_gl_LIBRARY}
+        	${OPENGL_glu_LIBRARY}
+        	${GLUT_glut_LIBRARY}
             )
 
 #add_dependencies(pyGORGON Rescan)
