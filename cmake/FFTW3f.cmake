@@ -41,7 +41,7 @@ set(fftw3_install_prefix ${fftw3_root}                                          
 
 #find_package(FFTW3F)
 
-#include_directories(${FFTW3F_INCLUDE_DIR})
+include_directories(${FFTW3F_INCLUDE_DIR})
 ExternalProject_Get_Property(FFTW3F INSTALL_DIR)
 set(FFTW3F_LIBRARY     ${INSTALL_DIR}/lib/libfftw3f.dylib CACHE FILEPATH "")
 
