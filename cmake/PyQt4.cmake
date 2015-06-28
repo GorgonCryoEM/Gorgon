@@ -17,7 +17,7 @@ set(pyqt4_install_prefix ${GORGON_EXTERNAL_LIBRARIES_DIR}/pyqt4/                
     include(ExternalProject)
     
     ExternalProject_Add( PyQt4
-    DEPENDS Python
+    DEPENDS SIP
     	PREFIX pyqt4
      #--Download step--------------
         URL           ${pyqt4_url}
