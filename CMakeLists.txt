@@ -27,7 +27,7 @@ include(cmake/Python.cmake)
 include(cmake/Boost.cmake)
 include(cmake/FFTW3f.cmake)
 
-include(cmake/Qt4.cmake)
+#include(cmake/Qt4.cmake)
 include(cmake/SIP.cmake)
 include(cmake/PyQt4.cmake)
 
