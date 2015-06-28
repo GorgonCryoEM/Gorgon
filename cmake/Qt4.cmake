@@ -26,7 +26,7 @@ set(qt4_install_prefix ${GORGON_EXTERNAL_LIBRARIES_DIR}/qt4/                    
 #        CONFIGURE_COMMAND  ./configure --prefix=${qt4_install_prefix} --enable-shared
         CONFIGURE_COMMAND   ./configure -confirm-license -prefix ${CMAKE_BINARY_DIR}/qt4 -opensource -release -no-phonon -no-multimedia -no-phonon-backend -no-webkit -no-javascript-jit     
      #--Build step-----------------
-#        BUILD_COMMAND ${qt4_b2_CMD}    ${qt4_options}
+        BUILD_COMMAND ${CMAKE_MAKE_PROGRAM} -j
         BUILD_IN_SOURCE 1
      #--Install step---------------
 #         INSTALL_DIR qt4
