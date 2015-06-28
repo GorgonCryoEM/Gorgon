@@ -78,5 +78,11 @@ endif()
 #install(TARGETS pyGORGON
 #         BUNDLE DESTINATION dist)
 install(CODE "execute_process(COMMAND python ../../setup.py py2app --bdist-base=${CMAKE_BINARY_DIR}/test/build  --dist-dir=${CMAKE_BINARY_DIR}/test/dist
+#install(CODE "execute_process(COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_SOURCE_DIR}/get-pip.py
+#    WORKING_DIRECTORY ${CMAKE_BINARY_DIR})"
+#    )
+#install(CODE "execute_process(COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_BINARY_DIR}/python/lib/python2.7/site-packages/pip install py2app
+#    WORKING_DIRECTORY ${CMAKE_BINARY_DIR})"
+#    )
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/Gorgon/src_py/)"
     )
