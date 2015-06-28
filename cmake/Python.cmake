@@ -25,7 +25,7 @@ set(python_install_prefix ${GORGON_EXTERNAL_LIBRARIES_DIR}/python/              
         URL_MD5       ${python_url_md5}
      #--Configure step-------------
 #        CONFIGURE_COMMAND  ./configure --prefix=${python_install_prefix} --enable-shared
-        CONFIGURE_COMMAND  ./configure --prefix=${CMAKE_CURRENT_BINARY_DIR}/python --enable-shared --with-pydebug
+        CONFIGURE_COMMAND  ./configure --prefix=${CMAKE_CURRENT_BINARY_DIR}/python --with-pydebug --enable-framework=${CMAKE_CURRENT_BINARY_DIR}/python
      #--Build step-----------------
 #        BUILD_COMMAND ${python_b2_CMD}    ${python_options}
         BUILD_IN_SOURCE 1
