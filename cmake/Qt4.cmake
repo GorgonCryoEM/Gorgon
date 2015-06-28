@@ -17,7 +17,6 @@ set(qt4_install_prefix ${GORGON_EXTERNAL_LIBRARIES_DIR}/qt4/                    
     include(ExternalProject)
     
     ExternalProject_Add( Qt4
-    DEPENDS SIP Qt4
     	PREFIX qt4
      #--Download step--------------
         URL           ${qt4_url}
