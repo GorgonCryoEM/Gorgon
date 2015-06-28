@@ -8,23 +8,24 @@ set(sip_includedir     ${sip_root}/include )
 
 set(sip_url            http://downloads.sourceforge.net/project/pyqt/sip/sip-4.16.8/sip-4.16.8.tar.gz )
 #set(sip_url_sha1       a27b010b9d5de0c07df9dddc9c336767725b1e6b                                        )
-set(sip_url_md5        d7547558fd673bd9d38e2108c6b42521                                                )
+#set(sip_url_md5        d7547558fd673bd9d38e2108c6b42521                                                )
 set(sip_install_prefix ${GORGON_EXTERNAL_LIBRARIES_DIR}/sip/                                                           )
 
 # If not found so far, donwload, build and install sip
-#if( NOT sip_FOUND)
+#if( NOT SIP_FOUND)
   
     include(ExternalProject)
     
     ExternalProject_Add( SIP
+    DEPENDS Python
     	PREFIX sip
      #--Download step--------------
         URL           ${sip_url}
 #        URL_HASH SHA1=${sip_url_sha1}
-        URL_MD5       ${sip_url_md5}
+#        URL_MD5       ${sip_url_md5}
      #--Configure step-------------
 #        CONFIGURE_COMMAND  ./configure --prefix=${sip_install_prefix} --enable-shared
-        CONFIGURE_COMMAND  ./configure --prefix=${CMAKE_CURRENT_BINARY_DIR}/sip --with-pydebug --enable-framework=${CMAKE_CURRENT_BINARY_DIR}/sip
+        CONFIGURE_COMMAND  ${PYTHON_EXECUTABLE} configure.py
      #--Build step-----------------
 #        BUILD_COMMAND ${sip_b2_CMD}    ${sip_options}
         BUILD_IN_SOURCE 1
