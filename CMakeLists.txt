@@ -87,6 +87,13 @@ endif()
 #)
 #install(TARGETS pyGORGON
 #         BUNDLE DESTINATION dist)
+
+#TODO: Move, maybe into a custom target that is dependent on Boost
+#or ExternalProject_AddStep
+        foreach(lib  ${Boost_LIBRARIES})
+            execute_process(COMMAND ${CMAKE_INSTALL_NAME_TOOL} -id ${lib} ${lib})
+        endforeach()
+
 install(CODE "execute_process(COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_SOURCE_DIR}/get-pip.py
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR})"
     )
