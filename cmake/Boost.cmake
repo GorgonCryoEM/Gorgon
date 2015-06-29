@@ -101,6 +101,11 @@ ExternalProject_Get_Property(Boost INSTALL_DIR)
 set(BOOST_ROOT       ${boost_root}       CACHE PATH "Boost root directory"   )
 find_package(Boost ${boost_version} COMPONENTS ${boost_components})
 
+foreach(lib  ${Boost_LIBRARIES})
+    execute_process(COMMAND ${CMAKE_INSTALL_NAME_TOOL} -id ${lib} ${lib}  
+    )
+endforeach()
+
 #include_directories(${Boost_INCLUDE_DIR})
 #
 INCLUDE(FindPackageHandleStandardArgs)
