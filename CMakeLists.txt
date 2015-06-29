@@ -1,5 +1,6 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 3.0)
 
+include(cmake/Debug.cmake)
 include(cmake/MacOSX.cmake)
 include(cmake/Windows.cmake)
 
