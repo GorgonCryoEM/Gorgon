@@ -86,6 +86,7 @@ find_package(Boost ${boost_version} COMPONENTS ${boost_components})
 #else()
 #    find_package(Boost ${boost_version} COMPONENTS ${boost_components})
 
+#TODO: Modify to work with multiple libraries
 ExternalProject_Add_Step(Boost install_name
   COMMAND ${CMAKE_INSTALL_NAME_TOOL} -id ${Boost_LIBRARIES} ${Boost_LIBRARIES}
   COMMENT "Updating install_name"     # Text printed when step executes
