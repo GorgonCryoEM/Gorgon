@@ -27,7 +27,7 @@ set(pyqt4_install_prefix ${GORGON_EXTERNAL_LIBRARIES_DIR}/pyqt4/                
 #        CONFIGURE_COMMAND  ./configure --prefix=${pyqt4_install_prefix} --enable-shared
         CONFIGURE_COMMAND  ${PYTHON_EXECUTABLE} configure-ng.py --confirm-license --sip ${CMAKE_BINARY_DIR}/python/Python.framework/Versions/2.7/bin/sip
      #--Build step-----------------
-#        BUILD_COMMAND ${pyqt4_b2_CMD}    ${pyqt4_options}
+        BUILD_COMMAND ${CMAKE_MAKE_PROGRAM} -j
         BUILD_IN_SOURCE 1
      #--Install step---------------
 #         INSTALL_DIR pyqt4
