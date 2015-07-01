@@ -1,7 +1,9 @@
 # Gorgon
 Gorgon, an interactive molecular modeling system 
 
-WARNING: This repository is still under construction!
+**WARNING: This repository is still under construction!**
+
+![](http://www.animatedgif.net/underconstruction/shake_e0.gif)
 
 [![Gorgon](http://gorgon.wustl.edu/images/banner.png)](http://gorgon.wustl.edu/)
 
