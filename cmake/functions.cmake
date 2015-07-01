@@ -1,30 +1,23 @@
 include(cmake/Debug.cmake)
 
-function(external_project proj prefix _incl _lib)
-    find_package(${proj} REQUIRED)
-    message(${prefix})
+function(external_project proj)
 
-    string(TOUPPER ${prefix} prefixup)
-    string(TOLOWER ${prefix} prefixlo)
-    
-    message("${prefix}_LIBRARY     = ${${prefix}_LIBRARY}    ")
-    message("${prefix}_LIBRARIES   = ${${prefix}_LIBRARIES}  ")
-    message("${prefixup}_LIBRARY   = ${${prefixup}_LIBRARY}  ")
-    message("${prefixup}_LIBRARIES = ${${prefixup}_LIBRARIES}")
-    
-    list(APPEND ${_incl} ${${prefix}_INCLUDE_DIR})
-    list(REMOVE_DUPLICATES ${_incl})
-    set(${_incl} ${${_incl}} PARENT_SCOPE)
+    set(CMAKE_PREFIX_PATH ${_root})
+    find_package(${proj} ${_pkg_arg})
 
-    list(APPEND ${_lib} ${${prefix}_LIBRARY})
-    list(APPEND ${_lib} ${${prefix}_LIBRARIES})
-    list(APPEND ${_lib} ${${prefixup}_LIBRARY})
-    list(APPEND ${_lib} ${${prefixup}_LIBRARIES})
-#    list(APPEND ${_lib} ${${prefixlo}_LIBRARY})
-#    list(APPEND ${_lib} ${${prefixlo}_LIBRARIES})
-list(REMOVE_DUPLICATES ${_lib})
-    set(${_lib} ${${_lib}} PARENT_SCOPE)
-        
+#    string(TOUPPER ${_prefix} prefixup)
+#    string(TOLOWER ${_prefix} prefixlo)
+    
+    list(APPEND gor_inc ${${ARGV1}_INCLUDE_DIR})
+    list(APPEND gor_inc ${${ARGV1}_INCLUDE_PATH})
+    list(APPEND gor_inc ${${ARGV1}_INCLUDE_DIRS})
+    list(APPEND gor_inc ${${ARGV1}_INCLUDE_PATHS})
+    include_directories(${gor_inc})
+
+    list(APPEND gor_lib ${${ARGV1}_LIBRARY})
+    list(APPEND gor_lib ${${ARGV1}_LIBRARIES})
+    set_property(TARGET pyGORGON APPEND PROPERTY LINK_LIBRARIES  ${gor_lib})
+    
 #    if(${proj}_FOUND OR ${projup}_FOUND OR ${projlo}_FOUND)
 #        message(STATUS "${prefix}_INCLUDE_DIR:= ${${prefix}_INCLUDE_DIR}")
 #        message(STATUS "${prefix}_LIBRARY:= ${${prefix}_LIBRARY}")
