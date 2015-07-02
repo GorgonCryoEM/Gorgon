@@ -14,31 +14,19 @@ set(pyqt4_install_prefix ${GORGON_EXTERNAL_LIBRARIES_DIR}/pyqt4/                
 # If not found so far, donwload, build and install pyqt4
 #if( NOT PyQt4_FOUND)
   
-    include(ExternalProject)
-    
-    ExternalProject_Add( PyQt4
-    DEPENDS SIP #Qt4
-    	PREFIX pyqt4
-     #--Download step--------------
-        URL           ${pyqt4_url}
+    external_project_build( 
+         PyQt4
+         SIP #Qt4
+    	";"
+           ${pyqt4_url}
 #        URL_HASH SHA1=${pyqt4_url_sha1}
 #        URL_MD5       ${pyqt4_url_md5}
-     #--Configure step-------------
 #        CONFIGURE_COMMAND  ./configure --prefix=${pyqt4_install_prefix} --enable-shared
-        CONFIGURE_COMMAND  ${PYTHON_EXECUTABLE} configure-ng.py --confirm-license --sip ${CMAKE_BINARY_DIR}/python/Python.framework/Versions/2.7/bin/sip
-     #--Build step-----------------
-        BUILD_COMMAND ${CMAKE_MAKE_PROGRAM} -j
-        BUILD_IN_SOURCE 1
-     #--Install step---------------
+        "${PYTHON_EXECUTABLE};configure-ng.py;--confirm-license;--sip;${CMAKE_BINARY_DIR}/python/Python.framework/Versions/2.7/bin/sip"
+         "${CMAKE_MAKE_PROGRAM};-j${NUMBER_OF_PARALLEL_JOBS}"
+         "${CMAKE_MAKE_PROGRAM};install"
 #         INSTALL_DIR pyqt4
 #        INSTALL_COMMAND ${CMAKE_MAKE_PROGRAM} install --prefix=${pyqt4_install_prefix}
-     #--Output logging-------------
-      LOG_DOWNLOAD 1            # Wrap download in script to log output
-      LOG_UPDATE 1              # Wrap update in script to log output
-      LOG_CONFIGURE 1           # Wrap configure in script to log output
-      LOG_BUILD 1               # Wrap build in script to log output
-      LOG_TEST 1                # Wrap test in script to log output
-      LOG_INSTALL 1             # Wrap install in script to log output
      #--Custom targets-------------
      # [STEP_TARGETS st1 st2 ...]  # Generate custom targets for these steps
     )
