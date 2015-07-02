@@ -2,34 +2,59 @@ include(cmake/Debug.cmake)
 
 function(external_project proj)
 
-#    set(${proj}_root_type "Gorgon" CACHE STRING "${proj} root directory type")
-#    set_property(CACHE ${proj}_root_type PROPERTY STRINGS Custom Gorgon)
-#    if(${proj}_root_type STREQUAL Gorgon)
-#        string(TOLOWER ${proj}_root root_low)
-#        set(${proj}_root ${CMAKE_BINARY_DIR}/${root_low})
-#        
+    set(${proj}_root_type "Gorgon" CACHE STRING "${proj} root directory type")
+    set_property(CACHE ${proj}_root_type PROPERTY STRINGS Custom Gorgon)
+    if(${proj}_root_type STREQUAL Gorgon)
+        string(TOLOWER ${proj}_root root_low)
+        set(${proj}_root ${CMAKE_BINARY_DIR}/${root_low})
+        
 #        include(${CMAKE_SOURCE_DIR}/cmake/${proj}.cmake)
-#    endif()
-#
-#    if(${${proj}_find})
-#        set(CMAKE_PREFIX_PATH ${root_low})
-#        find_package(${${proj}_find} ${_pkg_arg})
-#    endif()
+    endif()
 
-#    string(TOUPPER ${_prefix} prefixup)
-#    string(TOLOWER ${_prefix} prefixlo)
+    if(${${proj}_find})
+        set(CMAKE_PREFIX_PATH ${root_low})
+        find_package(${${proj}_find} ${_pkg_arg})
+    endif()
+
+    string(TOUPPER ${proj} projup)
+    string(TOLOWER ${proj} projlo)
     
     list(APPEND gor_inc ${${proj}_INCLUDE_DIR})
     list(APPEND gor_inc ${${proj}_INCLUDE_PATH})
     list(APPEND gor_inc ${${proj}_INCLUDE_DIRS})
     list(APPEND gor_inc ${${proj}_INCLUDE_PATHS})
-#    include_directories(${gor_inc})
-    set(GORGON_INCLUDE_DIRS ${GORGON_INCLUDE_DIRS} ${gor_inc} PARENT_SCOPE)
+    include_directories(${gor_inc})
+#    set(GORGON_INCLUDE_DIRS ${GORGON_INCLUDE_DIRS} ${gor_inc} PARENT_SCOPE)
 
-    list(APPEND gor_lib ${${proj}_LIBRARY})
-    list(APPEND gor_lib ${${proj}_LIBRARIES})
+#    list(APPEND gor_lib ${${proj}_LIBRARY})
+#    list(APPEND gor_lib ${${proj}_LIBRARIES})
+    getListOfVarsWith2(${proj} LIBRARY gor_lib)
+    message("${proj}")
+    message("${gor_lib}")
+    list(APPEND ggg ${gor_lib})
+    
+    getListOfVarsWith2(${proj} LIBRARIES gor_lib)
+    message("${proj}")
+    message("${gor_lib}")
+    list(APPEND ggg ${gor_lib})
+    
+    getListOfVarsWith2(${projup} LIBRARY gor_lib)
+    message("${projup}")
+    message("${gor_lib}")
+    list(APPEND ggg ${gor_lib})
+    
+    getListOfVarsWith2(${projup} LIBRARIES gor_lib)
+    message("${projup}")
+    message("${gor_lib}")
+    list(APPEND ggg ${gor_lib})
+    
+#    getListOfVarsWith2(${projlo} LIBRAR gor_lib)
+#    message("${projlo}")
+#    message("${gor_lib}")
+#    list(APPEND ggg ${gor_lib})    
+    
 #    set_property(TARGET pyGORGON APPEND PROPERTY LINK_LIBRARIES  ${gor_lib})
-    set(GORGON_LIBRARIES ${GORGON_LIBRARIES} ${gor_lib} PARENT_SCOPE)
+    set(GORGON_LIBRARIES ${GORGON_LIBRARIES} ${ggg} PARENT_SCOPE)
     
 #    if(${proj}_FOUND OR ${projup}_FOUND OR ${projlo}_FOUND)
 #        message(STATUS "${prefix}_INCLUDE_DIR:= ${${prefix}_INCLUDE_DIR}")
