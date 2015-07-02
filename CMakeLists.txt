@@ -57,6 +57,8 @@ external_project(SIP)
 
 #include(cmake/PyQt4.cmake)
 
+external_project(PyQt4)
+
 SET(LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/lib${GORGON_OS_VERSION}/x${GORGON_TARGET_ARCH})
 if(ENABLE_CMAKE_DEBUG_OUTPUT)
     message("LIBRARY_OUTPUT_PATH= ${LIBRARY_OUTPUT_PATH}")
