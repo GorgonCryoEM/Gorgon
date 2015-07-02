@@ -20,7 +20,7 @@ endfunction()
 
 function (getListOfVarsWith2 _w1 _w2 _varResult)
     get_cmake_property(_vars VARIABLES)
-    string (REGEX MATCHALL "[A-Za-z0-9_]*${_w1}[A-Za-z0-9_]*${_w2}[A-Za-z0-9_]*" _matchedVars "${_vars}")
+    string (REGEX MATCHALL "${_w1}[A-Za-z0-9_]*${_w2}[A-Za-z0-9_]*" _matchedVars "${_vars}")
     set (${_varResult} ${_matchedVars} PARENT_SCOPE)
 endfunction()
 
