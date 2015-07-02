@@ -24,13 +24,15 @@ include(cmake/functions.cmake)
 ADD_LIBRARY(pyGORGON MODULE Gorgon/src_cpp/LibPyGorgon.cpp)
 #external_project(PythonLibs PYTHON "" gor_inc gor_lib "")
 #set(_prefix PYTHON)
-external_project(PythonLibs PYTHON)
+set(PYTHON_find PythonLibs)
+external_project( PYTHON)
 
 #include(cmake/Boost.cmake)
 
 set( _pkg_arg 1.58 COMPONENTS python)
 #external_project(Boost      Boost  gor_inc gor_lib ${CMAKE_BINARY_DIR}/boost)
-external_project(Boost Boost)
+set(Boost_find Boost)
+external_project(Boost )
 
 find_package(GLUT REQUIRED)
 find_package(OpenGL REQUIRED)
