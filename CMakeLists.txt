@@ -35,6 +35,7 @@ set( _pkg_arg 1.58 COMPONENTS python)
 #external_project(Boost      Boost  gor_inc gor_lib ${CMAKE_BINARY_DIR}/boost)
 set(Boost_find Boost)
 external_project(Boost )
+unset( _pkg_arg )
 
 find_package(GLUT REQUIRED)
 find_package(OpenGL REQUIRED)
