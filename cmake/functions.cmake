@@ -42,13 +42,13 @@ function(external_project proj)
     
 endfunction()
 
-function(external_project_build trgt url config build instll)
+function(external_project_build trgt deps sep url config build instll)
       include(ExternalProject)
       
       string(TOLOWER ${trgt} proj)
   
     ExternalProject_Add( ${trgt}
-#    DEPENDS Python
+    DEPENDS ${deps}
     	PREFIX ${proj}
 #    	TMP_DIR = <prefix>/tmp
 #        STAMP_DIR = <prefix>/src/<name>-stamp
@@ -59,6 +59,7 @@ function(external_project_build trgt url config build instll)
 #        BINARY_DIR = <prefix>/src/<name>-build
 #        BINARY_DIR = ${GORGON_EXTERNAL_LIBRARIES_DOWNLOAD_DIR}/${proj}/${trgt}
 #        INSTALL_DIR = <prefix>
+    	LIST_SEPARATOR ${sep}
      #--Download step--------------
         URL           ${url}
 #        URL_HASH SHA1=${boost_url_sha1}
