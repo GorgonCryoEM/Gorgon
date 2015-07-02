@@ -1,8 +1,3 @@
-if(ENABLE_CMAKE_DEBUG_OUTPUT)
-    message("Dependency - GLUT")
-endif()
-
-# Set variables
 set(glut_root           ${GORGON_EXTERNAL_LIBRARIES_DIR}/GL  )
 
 set(glut_win32  Win              )
