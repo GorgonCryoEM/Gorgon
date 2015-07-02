@@ -11,8 +11,10 @@ function(external_project proj)
         include(${CMAKE_SOURCE_DIR}/cmake/${proj}.cmake)
     endif()
 
-    set(CMAKE_PREFIX_PATH ${root_low})
-    find_package(${${proj}_find} ${_pkg_arg})
+    if(${${proj}_find})
+        set(CMAKE_PREFIX_PATH ${root_low})
+        find_package(${${proj}_find} ${_pkg_arg})
+    endif()
 
 #    string(TOUPPER ${_prefix} prefixup)
 #    string(TOLOWER ${_prefix} prefixlo)
