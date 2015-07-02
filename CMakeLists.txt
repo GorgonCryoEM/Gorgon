@@ -6,6 +6,10 @@ include(cmake/Windows.cmake)
 
 PROJECT(Gorgon)
 
+include(ProcessorCount)
+ProcessorCount(NUMBER_OF_PARALLEL_JOBS)
+math(EXPR NUMBER_OF_PARALLEL_JOBS ${NUMBER_OF_PARALLEL_JOBS}-1)
+
 option(ENABLE_CMAKE_DEBUG_OUTPUT "print output of some variables for debugging purposes" OFF)
 
 set(GORGON_EXTERNAL_LIBRARIES_DIR ${CMAKE_SOURCE_DIR}/ExternalLibraries CACHE INTERNAL "External Libraries directory")
