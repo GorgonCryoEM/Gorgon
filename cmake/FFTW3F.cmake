@@ -1,7 +1,3 @@
-if(ENABLE_CMAKE_DEBUG_OUTPUT)
-    message("Dependency - FFTW3F")
-endif()
-
 set(fftw3_root           ${CMAKE_CURRENT_BINARY_DIR}/fftw  )
 set(fftw3_librarydir     ${fftw3_root}/lib     )
 set(fftw3_includedir     ${fftw3_root}/include )
@@ -38,10 +34,6 @@ set(FFTW3F_LIBRARIES     ${INSTALL_DIR}/lib/libfftw3f.dylib CACHE FILEPATH "")
 
 set(FFTW3F_INCLUDE_DIRS ${INSTALL_DIR}/include/ CACHE PATH "")
 #set(FFTW3F_EXECUTABLE ${INSTALL_DIR}/bin/python CACHE PATH "")
-
-INCLUDE(FindPackageHandleStandardArgs)
-FIND_PACKAGE_HANDLE_STANDARD_ARGS(FFTW3F DEFAULT_MSG FFTW3F_LIBRARIES FFTW3F_INCLUDE_DIRS)
-MARK_AS_ADVANCED(FFTW3F_LIBRARIES FFTW3F_INCLUDE_DIRS)
 
 
 OPTION(ENABLE_FFTW3 "enable fftw 3 support" ON)
