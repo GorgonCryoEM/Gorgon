@@ -53,8 +53,8 @@ unset( _pkg_arg )
 # FFTW3F
 # --------------------------------------------------------------------
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake)
-set(FFTW3f_find FFTW3f)
-external_project(FFTW3f)
+set(FFTW3F_find FFTW3F)
+external_project(FFTW3F)
 # --------------------------------------------------------------------
 # SIP & PyQt4
 # --------------------------------------------------------------------
