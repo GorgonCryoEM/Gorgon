@@ -50,10 +50,15 @@ function(external_project_build trgt url config build instll)
     ExternalProject_Add( ${trgt}
 #    DEPENDS Python
     	PREFIX ${proj}
+#    	TMP_DIR = <prefix>/tmp
+#        STAMP_DIR = <prefix>/src/<name>-stamp
 #        DOWNLOAD_DIR = <prefix>/src
     	DOWNLOAD_DIR ${GORGON_EXTERNAL_LIBRARIES_DOWNLOAD_DIR}/${proj}
 #        SOURCE_DIR = <prefix> /src/<name>
     	SOURCE_DIR   ${GORGON_EXTERNAL_LIBRARIES_DOWNLOAD_DIR}/${proj}/${trgt}
+#        BINARY_DIR = <prefix>/src/<name>-build
+#        BINARY_DIR = ${GORGON_EXTERNAL_LIBRARIES_DOWNLOAD_DIR}/${proj}/${trgt}
+#        INSTALL_DIR = <prefix>
      #--Download step--------------
         URL           ${url}
 #        URL_HASH SHA1=${boost_url_sha1}
