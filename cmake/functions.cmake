@@ -41,3 +41,35 @@ function(external_project proj)
 #    endif()
     
 endfunction()
+
+function(external_project_build trgt url config build instll)
+      include(ExternalProject)
+      
+      string(TOLOWER ${trgt} proj)
+  
+    ExternalProject_Add( ${trgt}
+#    DEPENDS Python
+    	PREFIX ${proj}
+     #--Download step--------------
+        URL           ${url}
+#        URL_HASH SHA1=${boost_url_sha1}
+#        URL_MD5       ${boost_url_md5}
+     #--Configure step-------------
+        CONFIGURE_COMMAND  ${config}
+     #--Build step-----------------
+        BUILD_COMMAND ${build}
+        BUILD_IN_SOURCE 1
+     #--Install step---------------
+        INSTALL_COMMAND ${instll}
+     #--Output logging-------------
+      LOG_DOWNLOAD 1            # Wrap download in script to log output
+      LOG_UPDATE 1              # Wrap update in script to log output
+      LOG_CONFIGURE 1           # Wrap configure in script to log output
+      LOG_BUILD 1               # Wrap build in script to log output
+      LOG_TEST 1                # Wrap test in script to log output
+      LOG_INSTALL 1             # Wrap install in script to log output
+     #--Custom targets-------------
+#     STEP_TARGETS install_name  # Generate custom targets for these steps
+    )
+
+endfunction() 
