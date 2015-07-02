@@ -52,6 +52,9 @@ external_project(FFTW3f)
 
 #include(cmake/Qt4.cmake)
 #include(cmake/SIP.cmake)
+
+external_project(SIP)
+
 #include(cmake/PyQt4.cmake)
 
 SET(LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/lib${GORGON_OS_VERSION}/x${GORGON_TARGET_ARCH})
