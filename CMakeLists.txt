@@ -20,6 +20,7 @@ if( CMAKE_SIZEOF_VOID_P EQUAL 8 )
     set( GORGON_TARGET_ARCH 32 CACHE INTERNAL "Target architecture")
 endif()
 
+option(LOG_EXTERNAL_LIBRARY_BUILDS OFF)
 include(cmake/functions.cmake)
 ADD_LIBRARY(pyGORGON MODULE Gorgon/src_cpp/LibPyGorgon.cpp)
 #external_project(PythonLibs PYTHON "" gor_inc gor_lib "")
