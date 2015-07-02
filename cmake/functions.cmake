@@ -50,40 +50,41 @@ function(external_project_build trgt deps sep url config build instll)
       include(ExternalProject)
       
       string(TOLOWER ${trgt} proj)
-  
-    ExternalProject_Add( ${trgt}
-    DEPENDS ${deps}
-    	PREFIX ${proj}
-#    	TMP_DIR = <prefix>/tmp
-#        STAMP_DIR = <prefix>/src/<name>-stamp
-#        DOWNLOAD_DIR = <prefix>/src
-    	DOWNLOAD_DIR ${GORGON_EXTERNAL_LIBRARIES_DOWNLOAD_DIR}/${proj}
-#        SOURCE_DIR = <prefix> /src/<name>
-    	SOURCE_DIR   ${GORGON_EXTERNAL_LIBRARIES_DOWNLOAD_DIR}/${proj}/${trgt}
-#        BINARY_DIR = <prefix>/src/<name>-build
-#        BINARY_DIR = ${GORGON_EXTERNAL_LIBRARIES_DOWNLOAD_DIR}/${proj}/${trgt}
-#        INSTALL_DIR = <prefix>
-    	LIST_SEPARATOR ${sep}
-     #--Download step--------------
-        URL           ${url}
-#        URL_HASH SHA1=${boost_url_sha1}
-#        URL_MD5       ${boost_url_md5}
-     #--Configure step-------------
-        CONFIGURE_COMMAND  ${config}
-     #--Build step-----------------
-        BUILD_COMMAND ${build}
-        BUILD_IN_SOURCE 1
-     #--Install step---------------
-        INSTALL_COMMAND ${instll}
-     #--Output logging-------------
-      LOG_DOWNLOAD  ${LOG_EXTERNAL_LIBRARY_BUILDS}            # Wrap download in script to log output
-      LOG_UPDATE    ${LOG_EXTERNAL_LIBRARY_BUILDS}              # Wrap update in script to log output
-      LOG_CONFIGURE ${LOG_EXTERNAL_LIBRARY_BUILDS}           # Wrap configure in script to log output
-      LOG_BUILD     ${LOG_EXTERNAL_LIBRARY_BUILDS}               # Wrap build in script to log output
-      LOG_TEST      ${LOG_EXTERNAL_LIBRARY_BUILDS}                # Wrap test in script to log output
-      LOG_INSTALL   ${LOG_EXTERNAL_LIBRARY_BUILDS}             # Wrap install in script to log output
-     #--Custom targets-------------
-#     STEP_TARGETS install_name  # Generate custom targets for these steps
-    )
+if(EXTERNAL_LIBS_BUILD)  
+        ExternalProject_Add( ${trgt}
+        DEPENDS ${deps}
+        	PREFIX ${proj}
+    #    	TMP_DIR = <prefix>/tmp
+    #        STAMP_DIR = <prefix>/src/<name>-stamp
+    #        DOWNLOAD_DIR = <prefix>/src
+        	DOWNLOAD_DIR ${GORGON_EXTERNAL_LIBRARIES_DOWNLOAD_DIR}/${proj}
+    #        SOURCE_DIR = <prefix> /src/<name>
+        	SOURCE_DIR   ${GORGON_EXTERNAL_LIBRARIES_DOWNLOAD_DIR}/${proj}/${trgt}
+    #        BINARY_DIR = <prefix>/src/<name>-build
+    #        BINARY_DIR = ${GORGON_EXTERNAL_LIBRARIES_DOWNLOAD_DIR}/${proj}/${trgt}
+    #        INSTALL_DIR = <prefix>
+        	LIST_SEPARATOR ${sep}
+         #--Download step--------------
+            URL           ${url}
+    #        URL_HASH SHA1=${boost_url_sha1}
+    #        URL_MD5       ${boost_url_md5}
+         #--Configure step-------------
+            CONFIGURE_COMMAND  ${config}
+         #--Build step-----------------
+            BUILD_COMMAND ${build}
+            BUILD_IN_SOURCE 1
+         #--Install step---------------
+            INSTALL_COMMAND ${instll}
+         #--Output logging-------------
+          LOG_DOWNLOAD  ${LOG_EXTERNAL_LIBRARY_BUILDS}            # Wrap download in script to log output
+          LOG_UPDATE    ${LOG_EXTERNAL_LIBRARY_BUILDS}              # Wrap update in script to log output
+          LOG_CONFIGURE ${LOG_EXTERNAL_LIBRARY_BUILDS}           # Wrap configure in script to log output
+          LOG_BUILD     ${LOG_EXTERNAL_LIBRARY_BUILDS}               # Wrap build in script to log output
+          LOG_TEST      ${LOG_EXTERNAL_LIBRARY_BUILDS}                # Wrap test in script to log output
+          LOG_INSTALL   ${LOG_EXTERNAL_LIBRARY_BUILDS}             # Wrap install in script to log output
+         #--Custom targets-------------
+    #     STEP_TARGETS install_name  # Generate custom targets for these steps
+        )
+endif()
 
 endfunction() 
