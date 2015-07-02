@@ -1,7 +1,3 @@
-if(ENABLE_CMAKE_DEBUG_OUTPUT)
-    message("Dependency - SIP")
-endif()
-
 set(sip_root           ${GORGON_EXTERNAL_LIBRARIES_DIR}/sip  )
 set(sip_librarydir     ${sip_root}/lib     )
 set(sip_includedir     ${sip_root}/include )
@@ -35,7 +31,3 @@ set(sip_install_prefix ${GORGON_EXTERNAL_LIBRARIES_DIR}/sip/                    
 
 ExternalProject_Get_Property(SIP INSTALL_DIR)
 #find_package(SIPLibs)
-
-INCLUDE(FindPackageHandleStandardArgs)
-FIND_PACKAGE_HANDLE_STANDARD_ARGS(SIP DEFAULT_MSG SIP_LIBRARY SIP_INCLUDE_DIR SIP_EXECUTABLE)
-MARK_AS_ADVANCED(SIP_LIBRARY SIP_INCLUDE_DIR SIP_EXECUTABLE)
