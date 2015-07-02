@@ -62,12 +62,12 @@ function(external_project_build trgt url config build instll)
      #--Install step---------------
         INSTALL_COMMAND ${instll}
      #--Output logging-------------
-      LOG_DOWNLOAD 1            # Wrap download in script to log output
-      LOG_UPDATE 1              # Wrap update in script to log output
-      LOG_CONFIGURE 1           # Wrap configure in script to log output
-      LOG_BUILD 1               # Wrap build in script to log output
-      LOG_TEST 1                # Wrap test in script to log output
-      LOG_INSTALL 1             # Wrap install in script to log output
+      LOG_DOWNLOAD  ${LOG_EXTERNAL_LIBRARY_BUILDS}            # Wrap download in script to log output
+      LOG_UPDATE    ${LOG_EXTERNAL_LIBRARY_BUILDS}              # Wrap update in script to log output
+      LOG_CONFIGURE ${LOG_EXTERNAL_LIBRARY_BUILDS}           # Wrap configure in script to log output
+      LOG_BUILD     ${LOG_EXTERNAL_LIBRARY_BUILDS}               # Wrap build in script to log output
+      LOG_TEST      ${LOG_EXTERNAL_LIBRARY_BUILDS}                # Wrap test in script to log output
+      LOG_INSTALL   ${LOG_EXTERNAL_LIBRARY_BUILDS}             # Wrap install in script to log output
      #--Custom targets-------------
 #     STEP_TARGETS install_name  # Generate custom targets for these steps
     )
