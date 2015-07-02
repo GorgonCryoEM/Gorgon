@@ -94,11 +94,16 @@ set( GORGON_LIBRARIES ${GORGON_LIBRARIES}
         	${GLUT_glut_LIBRARY}
             )
 target_link_libraries(pyGORGON ${GORGON_LIBRARIES})
+message(STATUS "GORGON_LIBRARIES: ${GORGON_LIBRARIES}")
 #set_property(TARGET pyGORGON APPEND PROPERTY LINK_LIBRARIES  ${libs})
 get_property(dirs TARGET pyGORGON PROPERTY LINK_LIBRARIES)
 #message(STATUS "LINK_LIBRARIES: ${dirs}")
 foreach(dir ${dirs})
   message(STATUS "llls='${dir}'")
+endforeach()
+
+foreach(dir ${GORGON_LIBRARIES})
+  message("LIBS='${dir}'")
 endforeach()
 
 

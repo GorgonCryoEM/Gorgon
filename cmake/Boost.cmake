@@ -1,15 +1,8 @@
-if(ENABLE_CMAKE_DEBUG_OUTPUT)
-    message("Dependency - Boost")
-endif()
-
-set(BOOST_LOCATION_OPTIONS Gorgon CACHE STRING "Boost location option")
-set_property(CACHE BOOST_LOCATION_OPTIONS PROPERTY STRINGS Gorgon System)
-# Set variables
-set(boost_version 1.44)
-
 set(boost_root           ${CMAKE_CURRENT_BINARY_DIR}/boost  )
 set(boost_librarydir     ${boost_root}/lib     )
 set(boost_includedir     ${boost_root}/include )
+
+set(boost_version 1.44)
 
 set(boost_url            http://downloads.sourceforge.net/project/boost/boost/1.58.0/boost_1_58_0.tar.gz )
 set(boost_url_sha1       a27b010b9d5de0c07df9dddc9c336767725b1e6b                                        )
@@ -95,9 +88,3 @@ ExternalProject_Get_Property(Boost INSTALL_DIR)
 
 set(BOOST_ROOT       ${boost_root}       CACHE PATH "Boost root directory"   )
 find_package(Boost ${boost_version} COMPONENTS ${boost_components})
-
-#include_directories(${Boost_INCLUDE_DIR})
-#
-INCLUDE(FindPackageHandleStandardArgs)
-FIND_PACKAGE_HANDLE_STANDARD_ARGS(Boost DEFAULT_MSG Boost_LIBRARIES Boost_LIBRARY_DIR Boost_INCLUDE_DIR)
-MARK_AS_ADVANCED(Boost_LIBRARIES Boost_LIBRARY_DIR Boost_INCLUDE_DIR)
