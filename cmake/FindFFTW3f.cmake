@@ -1,11 +1,8 @@
 # http://tim.klingt.org/code/projects/supernova/repository/revisions/d336dd6f400e381bcfd720e96139656de0c53b6a/entry/cmake_modules/FindFFTW3f.cmake
-
 # Find single-precision (float) version of FFTW3
 
 INCLUDE(FindPkgConfig)
-
 PKG_CHECK_MODULES(FFTW3F "fftw3f >= 3.0")
-
 IF(NOT FFTW3F_FOUND)
 
 FIND_PATH(
