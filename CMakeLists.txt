@@ -60,28 +60,13 @@ external_project(FFTW3f)
 external_project(SIP)
 external_project(PyQt4)
 
-#external_project(PythonLibs PYTHON "" gor_inc gor_lib "")
-#set(_prefix PYTHON)
-#include(cmake/Boost.cmake)
-#external_project(Boost      Boost  gor_inc gor_lib ${CMAKE_BINARY_DIR}/boost)
-
-#include(cmake/Python.cmake)
-#include(cmake/Boost.cmake)
-#include(cmake/FFTW3f.cmake)
-#set(CMAKE_PREFIX_PATH ${CMAKE_BINARY_DIR}/FFTW)
-#find_package(FFTW3f REQUIRED)
-
-#include(cmake/Qt4.cmake)
-#include(cmake/SIP.cmake)
-#include(cmake/PyQt4.cmake)
-
 
 SET(LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/lib${GORGON_OS_VERSION}/x${GORGON_TARGET_ARCH})
 if(ENABLE_CMAKE_DEBUG_OUTPUT)
     message("LIBRARY_OUTPUT_PATH= ${LIBRARY_OUTPUT_PATH}")
 endif()
 
-SET(GORGON_INCLUDE_DIRS 
+SET(GORGON_INCLUDE_DIRS ${GORGON_INCLUDE_DIRS}
 	${GLUT_INCLUDE_DIR}
 	${CMAKE_CURRENT_SOURCE_DIR}
 	${GORGON_EXTERNAL_LIBRARIES_DIR}
@@ -95,13 +80,25 @@ SET(GORGON_INCLUDE_DIRS
 	)
 INCLUDE_DIRECTORIES(${GORGON_INCLUDE_DIRS})
 
+get_property(dirs DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY INCLUDE_DIRECTORIES)
+#message(STATUS "INCLUDE_DIRECTORIES: ${dirs}")
+foreach(dir ${dirs})
+  message(STATUS "dir='${dir}'")
+endforeach()
 
-set( libs
+
+set( GORGON_LIBRARIES ${GORGON_LIBRARIES}
             ${OPENGL_gl_LIBRARY}
         	${OPENGL_glu_LIBRARY}
         	${GLUT_glut_LIBRARY}
             )
-set_property(TARGET pyGORGON APPEND PROPERTY LINK_LIBRARIES  ${libs})
+target_link_libraries(pyGORGON ${GORGON_LIBRARIES})
+#set_property(TARGET pyGORGON APPEND PROPERTY LINK_LIBRARIES  ${libs})
+get_property(dirs TARGET pyGORGON PROPERTY LINK_LIBRARIES)
+#message(STATUS "LINK_LIBRARIES: ${dirs}")
+foreach(dir ${dirs})
+  message(STATUS "llls='${dir}'")
+endforeach()
 
 
 #add_dependencies(pyGORGON Rescan)
