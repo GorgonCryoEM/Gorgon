@@ -24,40 +24,39 @@ set(GORGON_EXTERNAL_LIBRARIES_DOWNLOAD_DIR ${CMAKE_BINARY_DIR}/../Gorgon-Downloa
 option(LOG_EXTERNAL_LIBRARY_BUILDS OFF)
 include(cmake/functions.cmake)
 ADD_LIBRARY(pyGORGON MODULE Gorgon/src_cpp/LibPyGorgon.cpp)
-#external_project(PythonLibs PYTHON "" gor_inc gor_lib "")
-#set(_prefix PYTHON)
-set(PYTHON_find PythonLibs)
-external_project( PYTHON)
-
-#include(cmake/Boost.cmake)
-
-set( _pkg_arg 1.58 COMPONENTS python)
-#external_project(Boost      Boost  gor_inc gor_lib ${CMAKE_BINARY_DIR}/boost)
-set(Boost_find Boost)
-external_project(Boost )
-unset( _pkg_arg )
 
 find_package(GLUT REQUIRED)
 find_package(OpenGL REQUIRED)
 
+set(PYTHON_find PythonLibs)
+external_project( PYTHON)
+
+set( _pkg_arg 1.58 COMPONENTS python)
+set(Boost_find Boost)
+external_project(Boost )
+unset( _pkg_arg )
+
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake)
+set(FFTW3f_find FFTW3f)
+external_project(FFTW3f)
+external_project(SIP)
+external_project(PyQt4)
+
+#external_project(PythonLibs PYTHON "" gor_inc gor_lib "")
+#set(_prefix PYTHON)
+#include(cmake/Boost.cmake)
+#external_project(Boost      Boost  gor_inc gor_lib ${CMAKE_BINARY_DIR}/boost)
+
 #include(cmake/Python.cmake)
 #include(cmake/Boost.cmake)
 #include(cmake/FFTW3f.cmake)
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake)
 #set(CMAKE_PREFIX_PATH ${CMAKE_BINARY_DIR}/FFTW)
 #find_package(FFTW3f REQUIRED)
 
-set(FFTW3f_find FFTW3f)
-external_project(FFTW3f)
-
 #include(cmake/Qt4.cmake)
 #include(cmake/SIP.cmake)
-
-external_project(SIP)
-
 #include(cmake/PyQt4.cmake)
 
-external_project(PyQt4)
 
 SET(LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/lib${GORGON_OS_VERSION}/x${GORGON_TARGET_ARCH})
 if(ENABLE_CMAKE_DEBUG_OUTPUT)
