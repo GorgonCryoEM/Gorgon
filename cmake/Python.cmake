@@ -15,31 +15,19 @@ set(python_install_prefix ${GORGON_EXTERNAL_LIBRARIES_DIR}/python/              
 # If not found so far, donwload, build and install python
 #if( NOT python_FOUND)
   
-    include(ExternalProject)
-    
-    ExternalProject_Add( Python
-    	PREFIX python
-     #--Download step--------------
-        URL           ${python_url}
-#        URL_HASH SHA1=${python_url_sha1}
-        URL_MD5       ${python_url_md5}
-     #--Configure step-------------
+    external_project_build(
+            Python
+            ""
+            ";"
+               ${python_url}
+##        URL_HASH SHA1=${python_url_sha1}
+#        URL_MD5       ${python_url_md5}
 #        CONFIGURE_COMMAND  ./configure --prefix=${python_install_prefix} --enable-shared
-        CONFIGURE_COMMAND  ./configure --prefix=${CMAKE_CURRENT_BINARY_DIR}/python --with-pydebug --enable-framework=${CMAKE_CURRENT_BINARY_DIR}/python
-     #--Build step-----------------
+         "./configure;--prefix=${CMAKE_CURRENT_BINARY_DIR}/python;--with-pydebug;--enable-framework=${CMAKE_CURRENT_BINARY_DIR}/python"
+         "${CMAKE_MAKE_PROGRAM}"
+         "${CMAKE_MAKE_PROGRAM};install"
 #        BUILD_COMMAND ${python_b2_CMD}    ${python_options}
-        BUILD_IN_SOURCE 1
-     #--Install step---------------
-#         INSTALL_DIR python
-#        INSTALL_COMMAND ${CMAKE_MAKE_PROGRAM} install --prefix=${python_install_prefix}
-     #--Output logging-------------
-      LOG_DOWNLOAD 1            # Wrap download in script to log output
-      LOG_UPDATE 1              # Wrap update in script to log output
-      LOG_CONFIGURE 1           # Wrap configure in script to log output
-      LOG_BUILD 1               # Wrap build in script to log output
-      LOG_TEST 1                # Wrap test in script to log output
-      LOG_INSTALL 1             # Wrap install in script to log output
-     #--Custom targets-------------
+#         INSTALL_COMMAND ${CMAKE_MAKE_PROGRAM} install --prefix=${python_install_prefix}
      # [STEP_TARGETS st1 st2 ...]  # Generate custom targets for these steps
     )
 
