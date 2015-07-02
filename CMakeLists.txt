@@ -20,6 +20,7 @@ if( CMAKE_SIZEOF_VOID_P EQUAL 8 )
     set( GORGON_TARGET_ARCH 32 CACHE INTERNAL "Target architecture")
 endif()
 
+set(GORGON_EXTERNAL_LIBRARIES_DOWNLOAD_DIR ${CMAKE_BINARY_DIR}/../Gorgon-Downloads CACHE PATHNAME "Download directory")
 option(LOG_EXTERNAL_LIBRARY_BUILDS OFF)
 include(cmake/functions.cmake)
 ADD_LIBRARY(pyGORGON MODULE Gorgon/src_cpp/LibPyGorgon.cpp)
