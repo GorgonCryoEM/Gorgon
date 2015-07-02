@@ -1,7 +1,3 @@
-if(ENABLE_CMAKE_DEBUG_OUTPUT)
-    message("Dependency - PyQt4")
-endif()
-
 set(pyqt4_root           ${GORGON_EXTERNAL_LIBRARIES_DIR}/pyqt4  )
 set(pyqt4_librarydir     ${pyqt4_root}/lib     )
 set(pyqt4_includedir     ${pyqt4_root}/include )
@@ -33,7 +29,3 @@ set(pyqt4_install_prefix ${GORGON_EXTERNAL_LIBRARIES_DIR}/pyqt4/                
 
 ExternalProject_Get_Property(PyQt4 INSTALL_DIR)
 #find_package(PyQt4Libs)
-
-INCLUDE(FindPackageHandleStandardArgs)
-FIND_PACKAGE_HANDLE_STANDARD_ARGS(PyQt4 DEFAULT_MSG PyQt4_LIBRARY PyQt4_INCLUDE_DIR PyQt4_EXECUTABLE)
-MARK_AS_ADVANCED(PyQt4_LIBRARY PyQt4_INCLUDE_DIR PyQt4_EXECUTABLE)

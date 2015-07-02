@@ -1,8 +1,3 @@
-if(ENABLE_CMAKE_DEBUG_OUTPUT)
-    message("Dependency - Python")
-endif()
-#find_package(PythonInterp)
-
 set(python_root           ${GORGON_EXTERNAL_LIBRARIES_DIR}/python  )
 set(python_librarydir     ${python_root}/lib     )
 set(python_includedir     ${python_root}/include )
@@ -65,7 +60,3 @@ find_package(PythonLibs)
 #                PATHS ${INSTALL_DIR}/include/
 #                NO_DEFAULT_PATH
 #                )
-
-INCLUDE(FindPackageHandleStandardArgs)
-FIND_PACKAGE_HANDLE_STANDARD_ARGS(Python DEFAULT_MSG PYTHON_LIBRARY PYTHON_INCLUDE_DIR PYTHON_EXECUTABLE)
-MARK_AS_ADVANCED(PYTHON_LIBRARY PYTHON_INCLUDE_DIR PYTHON_EXECUTABLE)

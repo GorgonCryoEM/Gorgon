@@ -1,6 +1,9 @@
 include(cmake/Debug.cmake)
 
 function(external_project proj)
+    if(ENABLE_CMAKE_DEBUG_OUTPUT)
+        message("Dependency - ${proj}")
+    endif()
 
     set(${proj}_root_type "Gorgon" CACHE STRING "${proj} root directory type")
     set_property(CACHE ${proj}_root_type PROPERTY STRINGS Custom Gorgon)
@@ -31,22 +34,22 @@ function(external_project proj)
     getListOfVarsWith2(${proj} LIBRARY gor_lib)
     message("${proj}")
     message("${gor_lib}")
-    list(APPEND ggg ${gor_lib})
+    list(APPEND ggg ${${gor_lib}})
     
     getListOfVarsWith2(${proj} LIBRARIES gor_lib)
     message("${proj}")
     message("${gor_lib}")
-    list(APPEND ggg ${gor_lib})
+    list(APPEND ggg ${${gor_lib}})
     
     getListOfVarsWith2(${projup} LIBRARY gor_lib)
     message("${projup}")
     message("${gor_lib}")
-    list(APPEND ggg ${gor_lib})
+    list(APPEND ggg ${${gor_lib}})
     
     getListOfVarsWith2(${projup} LIBRARIES gor_lib)
     message("${projup}")
     message("${gor_lib}")
-    list(APPEND ggg ${gor_lib})
+    list(APPEND ggg ${${gor_lib}})
     
 #    getListOfVarsWith2(${projlo} LIBRAR gor_lib)
 #    message("${projlo}")
