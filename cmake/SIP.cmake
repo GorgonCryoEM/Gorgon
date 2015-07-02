@@ -14,31 +14,21 @@ set(sip_install_prefix ${GORGON_EXTERNAL_LIBRARIES_DIR}/sip/                    
 # If not found so far, donwload, build and install sip
 #if( NOT SIP_FOUND)
   
-    include(ExternalProject)
-    
-    ExternalProject_Add( SIP
-    DEPENDS Python
-    	PREFIX sip
-     #--Download step--------------
-        URL           ${sip_url}
+    external_project_build( 
+     SIP
+     Python
+    ";"
+           ${sip_url}
 #        URL_HASH SHA1=${sip_url_sha1}
 #        URL_MD5       ${sip_url_md5}
-     #--Configure step-------------
 #        CONFIGURE_COMMAND  ./configure --prefix=${sip_install_prefix} --enable-shared
-        CONFIGURE_COMMAND  ${PYTHON_EXECUTABLE} configure.py
-     #--Build step-----------------
+        "${PYTHON_EXECUTABLE};configure.py"
 #        BUILD_COMMAND ${sip_b2_CMD}    ${sip_options}
-        BUILD_IN_SOURCE 1
+         "${CMAKE_MAKE_PROGRAM}"
+         "${CMAKE_MAKE_PROGRAM};install"
      #--Install step---------------
 #         INSTALL_DIR sip
 #        INSTALL_COMMAND ${CMAKE_MAKE_PROGRAM} install --prefix=${sip_install_prefix}
-     #--Output logging-------------
-      LOG_DOWNLOAD 1            # Wrap download in script to log output
-      LOG_UPDATE 1              # Wrap update in script to log output
-      LOG_CONFIGURE 1           # Wrap configure in script to log output
-      LOG_BUILD 1               # Wrap build in script to log output
-      LOG_TEST 1                # Wrap test in script to log output
-      LOG_INSTALL 1             # Wrap install in script to log output
      #--Custom targets-------------
      # [STEP_TARGETS st1 st2 ...]  # Generate custom targets for these steps
     )
