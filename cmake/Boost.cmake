@@ -53,50 +53,33 @@ find_package(Boost ${boost_version} COMPONENTS ${boost_components})
       endif()
     endif()
     
-    include(ExternalProject)
-
-#    --with-python=PYTHON      specify the Python executable [python]
-#  --with-python-root=DIR
-  
-    ExternalProject_Add( Boost
-    DEPENDS Python
-    	PREFIX boost
-     #--Download step--------------
-        URL           ${boost_url}
-        URL_HASH SHA1=${boost_url_sha1}
-        URL_MD5       ${boost_url_md5}
-     #--Configure step-------------
-        CONFIGURE_COMMAND  ${Boost_Bootstrap_CMD} --with-python=${PYTHON_EXECUTABLE}
-     #--Build step-----------------
-        BUILD_COMMAND ${Boost_b2_CMD}    ${boost_options}
-        BUILD_IN_SOURCE 1
-     #--Install step---------------
-        INSTALL_COMMAND ${Boost_b2_CMD} install --prefix=${boost_install_prefix} ${boost_options}
-     #--Output logging-------------
-      LOG_DOWNLOAD 1            # Wrap download in script to log output
-      LOG_UPDATE 1              # Wrap update in script to log output
-      LOG_CONFIGURE 1           # Wrap configure in script to log output
-      LOG_BUILD 1               # Wrap build in script to log output
-      LOG_TEST 1                # Wrap test in script to log output
-      LOG_INSTALL 1             # Wrap install in script to log output
-     #--Custom targets-------------
-     STEP_TARGETS install_name  # Generate custom targets for these steps
+  external_project_build( 
+              Boost
+        Python
+        ";"
+        ${boost_url}
+#        URL_HASH SHA1=${boost_url_sha1}
+#        URL_MD5       ${boost_url_md5}
+        "${Boost_Bootstrap_CMD};--with-python=${PYTHON_EXECUTABLE}"
+        "${Boost_b2_CMD};${boost_options}"
+        "${Boost_b2_CMD};install;--prefix=${boost_install_prefix};${boost_options}"
+#     STEP_TARGETS install_name  # Generate custom targets for these steps
     )
 #endif()
 #else()
 #    find_package(Boost ${boost_version} COMPONENTS ${boost_components})
 
-#TODO: Modify to work with multiple libraries
-ExternalProject_Add_Step(Boost install_name
-  COMMAND ${CMAKE_INSTALL_NAME_TOOL} -id ${Boost_LIBRARIES} ${Boost_LIBRARIES}
-  COMMENT "Updating install_name"     # Text printed when step executes
-  DEPENDEES install    # Steps on which this step depends
-#  DEPENDERS install     # Steps that depend on this step
-  DEPENDS ${Boost_LIBRARIES} ${CMAKE_CURRENT_LIST_FILE}     # Files on which this step depends
-#  [ALWAYS 1]              # No stamp file, step always runs
-#  [WORKING_DIRECTORY dir] # Working directory for command
-  LOG 1                 # Wrap step in script to log output
-  )
+##TODO: Modify to work with multiple libraries
+#ExternalProject_Add_Step(Boost install_name
+#  COMMAND ${CMAKE_INSTALL_NAME_TOOL} -id ${Boost_LIBRARIES} ${Boost_LIBRARIES}
+#  COMMENT "Updating install_name"     # Text printed when step executes
+#  DEPENDEES install    # Steps on which this step depends
+##  DEPENDERS install     # Steps that depend on this step
+#  DEPENDS ${Boost_LIBRARIES} ${CMAKE_CURRENT_LIST_FILE}     # Files on which this step depends
+##  [ALWAYS 1]              # No stamp file, step always runs
+##  [WORKING_DIRECTORY dir] # Working directory for command
+#  LOG 1                 # Wrap step in script to log output
+#  )
 
 #if( NOT Boost_FOUND)
 #        add_custom_target(Rescan ${CMAKE_COMMAND} ${CMAKE_SOURCE_DIR} DEPENDS Boost)
