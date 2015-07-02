@@ -45,8 +45,11 @@ find_package(OpenGL REQUIRED)
 #include(cmake/FFTW3f.cmake)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake)
 #set(CMAKE_PREFIX_PATH ${CMAKE_BINARY_DIR}/FFTW)
-find_package(FFTW3f REQUIRED)
-#
+#find_package(FFTW3f REQUIRED)
+
+set(FFTW3f_find FFTW3f)
+external_project(FFTW3f)
+
 #include(cmake/Qt4.cmake)
 #include(cmake/SIP.cmake)
 #include(cmake/PyQt4.cmake)
