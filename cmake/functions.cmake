@@ -1,5 +1,18 @@
 include(cmake/Debug.cmake)
 
+function(external_project_vars proj url)
+    set(  proj_root             ${proj}_root )
+    set( ${proj_root}           ${CMAKE_CURRENT_BINARY_DIR}/${proj}  )
+    set( ${proj}_librarydir     ${${proj_root}}/lib     )
+    set( ${proj}_includedir     ${${proj_root}}/include )
+    set( ${proj}_url            ${url}                  )
+    #set( ${proj}_url_sha1        )
+    #set( ${proj}_url_md5        )
+    set( ${proj}_install_prefix ${${proj_root}} )
+    
+    #set(boost_version 1.44)
+endfunction()
+
 function(external_project proj)
     if(ENABLE_CMAKE_DEBUG_OUTPUT)
         message("Dependency - ${proj}")
