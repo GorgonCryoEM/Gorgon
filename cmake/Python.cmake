@@ -1,11 +1,9 @@
-set(python_root           ${GORGON_EXTERNAL_LIBRARIES_DIR}/python  )
-set(python_librarydir     ${python_root}/lib     )
-set(python_includedir     ${python_root}/include )
-
-set(python_url            https://www.python.org/ftp/python/2.7.10/Python-2.7.10.tgz )
-#set(python_url_sha1       a27b010b9d5de0c07df9dddc9c336767725b1e6b                                        )
 set(python_url_md5        d7547558fd673bd9d38e2108c6b42521                                                )
-set(python_install_prefix ${GORGON_EXTERNAL_LIBRARIES_DIR}/python/                                                           )
+
+external_project_vars( Python
+    https://www.python.org/ftp/python/2.7.10/Python-2.7.10.tgz
+    )
+
 
 # If not found so far, donwload, build and install python
 #if( NOT python_FOUND)

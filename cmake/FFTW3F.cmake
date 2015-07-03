@@ -1,11 +1,6 @@
-set(fftw3_root           ${CMAKE_CURRENT_BINARY_DIR}/fftw  )
-set(fftw3_librarydir     ${fftw3_root}/lib     )
-set(fftw3_includedir     ${fftw3_root}/include )
-
-set(fftw3_url            ${GORGON_EXTERNAL_LIBRARIES_DIR}/FFTW/fftw-3.3.4-source )
-#set(fftw3_url_sha1       a27b010b9d5de0c07df9dddc9c336767725b1e6b                                        )
-#set(fftw3_url_md5        d7547558fd673bd9d38e2108c6b42521                                                )
-set(fftw3_install_prefix ${fftw3_root}                                                           )
+external_project_vars( FFTW3F
+    ${GORGON_EXTERNAL_LIBRARIES_DIR}/FFTW/fftw-3.3.4-source
+    )
   
     external_project_build( 
         FFTW3F
