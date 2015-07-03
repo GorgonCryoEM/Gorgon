@@ -37,30 +37,19 @@ find_package(GLUT REQUIRED)
 find_package(OpenGL REQUIRED)
 
 include(cmake/functions.cmake)
-# --------------------------------------------------------------------
-# Python
-# --------------------------------------------------------------------
-set(PYTHON_find PythonLibs)
-external_project( PYTHON)
-# --------------------------------------------------------------------
-# Boost
-# --------------------------------------------------------------------
-set( _pkg_arg 1.58 COMPONENTS python)
-set(Boost_find Boost)
-external_project(Boost )
-unset( _pkg_arg )
-# --------------------------------------------------------------------
-# FFTW3F
-# --------------------------------------------------------------------
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake)
-set(FFTW3F_find FFTW3F)
-external_project(FFTW3F)
-# --------------------------------------------------------------------
-# SIP & PyQt4
-# --------------------------------------------------------------------
-external_project(SIP)
-external_project(PyQt4)
 
+set( EXTERNAL_PROJECTS
+        Python
+        Boost
+        FFTW3F
+        SIP
+        PyQt4
+        )
+
+foreach(proj ${EXTERNAL_PROJECTS})
+    include(cmake/${proj}.cmake)
+endforeach()
+# --------------------------------------------------------------------
 
 SET(LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/lib${GORGON_OS_VERSION}/x${GORGON_TARGET_ARCH})
 if(ENABLE_CMAKE_DEBUG_OUTPUT)

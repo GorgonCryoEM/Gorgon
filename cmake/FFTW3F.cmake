@@ -1,35 +1,14 @@
 external_project_vars( FFTW3F
-    ${GORGON_EXTERNAL_LIBRARIES_DIR}/FFTW/fftw-3.3.4-source
-    )
-  
-    external_project_build( 
-        FFTW3F
         ""
-    	";"
-        ${fftw3_url}
-#        URL_HASH SHA1=${fftw3_url_sha1}
-#        URL_MD5       ${fftw3_url_md5}
-#        CONFIGURE_COMMAND  ./configure --prefix=${fftw3_install_prefix} --enable-shared
+        ${GORGON_EXTERNAL_LIBRARIES_DIR}/FFTW/fftw-3.3.4-source
         "./configure;--prefix=${CMAKE_CURRENT_BINARY_DIR}/fftw3f;--enable-shared;--enable-float"
-#        BUILD_COMMAND ${fftw3_b2_CMD}    ${fftw3_options}
-         "${CMAKE_MAKE_PROGRAM}"
-#         INSTALL_DIR fftw3
-#        INSTALL_COMMAND ${CMAKE_MAKE_PROGRAM} install --prefix=${fftw3_install_prefix}
-         "${CMAKE_MAKE_PROGRAM};install"
-     #--Custom targets-------------
-     # [STEP_TARGETS st1 st2 ...]  # Generate custom targets for these steps
+        "${CMAKE_MAKE_PROGRAM}"
+        "${CMAKE_MAKE_PROGRAM};install"
     )
 
-#find_package(FFTW3F)
-
-#include_directories(${FFTW3F_INCLUDE_DIRS})
-ExternalProject_Get_Property(FFTW3F INSTALL_DIR)
-set(FFTW3F_LIBRARIES     ${INSTALL_DIR}/lib/libfftw3f.dylib CACHE FILEPATH "")
-
-
-set(FFTW3F_INCLUDE_DIRS ${INSTALL_DIR}/include/ CACHE PATH "")
-#set(FFTW3F_EXECUTABLE ${INSTALL_DIR}/bin/python CACHE PATH "")
-
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake)
+set(FFTW3F_find FFTW3F)
+external_project_find_paths(FFTW3F)
 
 OPTION(ENABLE_FFTW3 "enable fftw 3 support" ON)
 OPTION(ENABLE_FFTW_PLAN_CACHING "enable fftw caching" ON)
@@ -41,4 +20,3 @@ ENDIF()
 IF(ENABLE_FFTW_PLAN_CACHING)
 	ADD_DEFINITIONS(-DFFTW_PLAN_CACHING)
 ENDIF(ENABLE_FFTW_PLAN_CACHING)
-
