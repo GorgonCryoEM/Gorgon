@@ -1,36 +1,94 @@
 include(cmake/Debug.cmake)
+# --------------------------------------------------------------------
+function(external_project_vars trgt deps url config_cmd build_cmd install_cmd)
+    string(TOLOWER ${trgt} proj)
+    
+#    set(${trgt}_root_type Gorgon CACHE STRING "${proj} root directory type")
+#    set_property(CACHE ${trgt}_root_type PROPERTY STRINGS Custom Gorgon)
 
-function(external_project_vars proj url)
-    set(  proj_root             ${proj}_root )
-    set( ${proj_root}           ${CMAKE_CURRENT_BINARY_DIR}/${proj}  )
-    set( ${proj}_librarydir     ${${proj_root}}/lib     )
-    set( ${proj}_includedir     ${${proj_root}}/include )
-    set( ${proj}_url            ${url}                  )
-    #set( ${proj}_url_sha1        )
-    #set( ${proj}_url_md5        )
-    set( ${proj}_install_prefix ${${proj_root}} )
+    set( ${proj}_name           ${trgt}                              CACHE INTERNAL "")
+    set(  proj_root             ${proj}_root)
+    set( ${proj_root}           ${CMAKE_CURRENT_BINARY_DIR}/${proj}  CACHE INTERNAL "")
+    set( ${proj}_url            ${url}                               CACHE INTERNAL "")
+#    set( ${proj}_url_sha1                                            CACHE INTERNAL "")
+#    set( ${proj}_url_md5                                             CACHE INTERNAL "")    
+    set( ${proj}_deps           ${deps}                              CACHE INTERNAL "")
+    set( ${proj}_config_cmd     ${config_cmd}                        CACHE INTERNAL "")
+    set( ${proj}_build_cmd      ${build_cmd}                         CACHE INTERNAL "")
+    set( ${proj}_install_cmd    ${install_cmd}                       CACHE INTERNAL "")
+    set( ${proj}_install_prefix ${${proj_root}}                      CACHE INTERNAL "")
     
     #set(boost_version 1.44)
-endfunction()
+    
+#    set( ${proj}_librarydir     ${${proj_root}}/lib                  CACHE INTERNAL "")
+#    set( ${proj}_includedir     ${${proj_root}}/include              CACHE INTERNAL "")
 
-function(external_project proj)
+    external_project_build(${trgt})
+endfunction()
+# --------------------------------------------------------------------
+function(external_project_build trgt)
+    if(ENABLE_CMAKE_DEBUG_OUTPUT)
+        message("Dependency - ${proj}: BUILD")
+    endif()
+    
+    include(ExternalProject)
+        
+    string(TOLOWER ${trgt} proj)
+    
+    if(EXTERNAL_LIBS_BUILD)  
+            ExternalProject_Add( ${trgt}
+            DEPENDS ${${proj}_deps}
+            	PREFIX ${proj}
+        #    	TMP_DIR = <prefix>/tmp
+        #        STAMP_DIR = <prefix>/src/<name>-stamp
+        #        DOWNLOAD_DIR = <prefix>/src
+            	DOWNLOAD_DIR ${GORGON_EXTERNAL_LIBRARIES_DOWNLOAD_DIR}/${proj}
+        #        SOURCE_DIR = <prefix> /src/<name>
+            	SOURCE_DIR   ${GORGON_EXTERNAL_LIBRARIES_DOWNLOAD_DIR}/${proj}/${trgt}
+        #        BINARY_DIR = <prefix>/src/<name>-build
+        #        BINARY_DIR = ${GORGON_EXTERNAL_LIBRARIES_DOWNLOAD_DIR}/${proj}/${trgt}
+        #        INSTALL_DIR = <prefix>
+#            	LIST_SEPARATOR ${sep}
+             #--Download step--------------
+                URL           ${${proj}_url}
+        #        URL_HASH SHA1=${boost_url_sha1}
+        #        URL_MD5       ${boost_url_md5}
+             #--Configure step-------------
+                CONFIGURE_COMMAND  ${${proj}_config_cmd}
+             #--Build step-----------------
+                BUILD_COMMAND ${${proj}_build_cmd}
+                BUILD_IN_SOURCE 1
+             #--Install step---------------
+                INSTALL_COMMAND ${${proj}_install_cmd}
+             #--Output logging-------------
+              LOG_DOWNLOAD  ${LOG_EXTERNAL_LIBRARY_BUILDS}            # Wrap download in script to log output
+              LOG_UPDATE    ${LOG_EXTERNAL_LIBRARY_BUILDS}              # Wrap update in script to log output
+              LOG_CONFIGURE ${LOG_EXTERNAL_LIBRARY_BUILDS}           # Wrap configure in script to log output
+              LOG_BUILD     ${LOG_EXTERNAL_LIBRARY_BUILDS}               # Wrap build in script to log output
+              LOG_TEST      ${LOG_EXTERNAL_LIBRARY_BUILDS}                # Wrap test in script to log output
+              LOG_INSTALL   ${LOG_EXTERNAL_LIBRARY_BUILDS}             # Wrap install in script to log output
+             #--Custom targets-------------
+        #     STEP_TARGETS install_name  # Generate custom targets for these steps
+            )
+    endif()
+endfunction() 
+# --------------------------------------------------------------------
+function(external_project_find_paths trgt)
     if(ENABLE_CMAKE_DEBUG_OUTPUT)
         message("Dependency - ${proj}")
     endif()
 
-    set(${proj}_root_type "Gorgon" CACHE STRING "${proj} root directory type")
-    set_property(CACHE ${proj}_root_type PROPERTY STRINGS Custom Gorgon)
-    if(${proj}_root_type STREQUAL Gorgon)
-        string(TOLOWER ${proj}_root root_low)
-        set(${proj}_root ${CMAKE_BINARY_DIR}/${root_low})
-        
-#        include(${CMAKE_SOURCE_DIR}/cmake/${proj}.cmake)
+    string(TOLOWER ${trgt} proj)
+
+#FIXME:
+    if(${trgt}_root_type STREQUAL Gorgon)
+        set(${trgt}_root ${${proj}_root} CACHE PATH "${trgt} root directory" FORCE)
+    else()
+        set(${trgt}_root ${${proj}_root} CACHE PATH "${trgt} root directory")
     endif()
 
-    if(${${proj}_find})
-        set(CMAKE_PREFIX_PATH ${root_low})
-        find_package(${${proj}_find} ${_pkg_arg})
-    endif()
+    set(CMAKE_PREFIX_PATH ${${trgt}_root})
+    find_package(${trgt} ${_pkg_arg})
 
     string(TOUPPER ${proj} projup)
     string(TOLOWER ${proj} projlo)
@@ -86,46 +144,15 @@ function(external_project proj)
 #    endif()
     
 endfunction()
+# --------------------------------------------------------------------
 
-function(external_project_build trgt deps sep url config build instll)
-      include(ExternalProject)
-      
-      string(TOLOWER ${trgt} proj)
-if(EXTERNAL_LIBS_BUILD)  
-        ExternalProject_Add( ${trgt}
-        DEPENDS ${deps}
-        	PREFIX ${proj}
-    #    	TMP_DIR = <prefix>/tmp
-    #        STAMP_DIR = <prefix>/src/<name>-stamp
-    #        DOWNLOAD_DIR = <prefix>/src
-        	DOWNLOAD_DIR ${GORGON_EXTERNAL_LIBRARIES_DOWNLOAD_DIR}/${proj}
-    #        SOURCE_DIR = <prefix> /src/<name>
-        	SOURCE_DIR   ${GORGON_EXTERNAL_LIBRARIES_DOWNLOAD_DIR}/${proj}/${trgt}
-    #        BINARY_DIR = <prefix>/src/<name>-build
-    #        BINARY_DIR = ${GORGON_EXTERNAL_LIBRARIES_DOWNLOAD_DIR}/${proj}/${trgt}
-    #        INSTALL_DIR = <prefix>
-        	LIST_SEPARATOR ${sep}
-         #--Download step--------------
-            URL           ${url}
-    #        URL_HASH SHA1=${boost_url_sha1}
-    #        URL_MD5       ${boost_url_md5}
-         #--Configure step-------------
-            CONFIGURE_COMMAND  ${config}
-         #--Build step-----------------
-            BUILD_COMMAND ${build}
-            BUILD_IN_SOURCE 1
-         #--Install step---------------
-            INSTALL_COMMAND ${instll}
-         #--Output logging-------------
-          LOG_DOWNLOAD  ${LOG_EXTERNAL_LIBRARY_BUILDS}            # Wrap download in script to log output
-          LOG_UPDATE    ${LOG_EXTERNAL_LIBRARY_BUILDS}              # Wrap update in script to log output
-          LOG_CONFIGURE ${LOG_EXTERNAL_LIBRARY_BUILDS}           # Wrap configure in script to log output
-          LOG_BUILD     ${LOG_EXTERNAL_LIBRARY_BUILDS}               # Wrap build in script to log output
-          LOG_TEST      ${LOG_EXTERNAL_LIBRARY_BUILDS}                # Wrap test in script to log output
-          LOG_INSTALL   ${LOG_EXTERNAL_LIBRARY_BUILDS}             # Wrap install in script to log output
-         #--Custom targets-------------
-    #     STEP_TARGETS install_name  # Generate custom targets for these steps
-        )
-endif()
+#if( NOT Boost_FOUND)
+#        add_custom_target(Rescan ${CMAKE_COMMAND} ${CMAKE_SOURCE_DIR} DEPENDS Boost)
+#else()
+#        add_custom_target(Rescan)
+#endif()
 
-endfunction() 
+#add_dependencies(pyGORGON Rescan)
+#if(  Boost_FOUND)
+#        TARGET_LINK_LIBRARIES(pyGORGON Boost)
+#endif()
