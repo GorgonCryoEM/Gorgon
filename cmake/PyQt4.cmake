@@ -1,11 +1,6 @@
-set(pyqt4_root           ${GORGON_EXTERNAL_LIBRARIES_DIR}/pyqt4  )
-set(pyqt4_librarydir     ${pyqt4_root}/lib     )
-set(pyqt4_includedir     ${pyqt4_root}/include )
-
-set(pyqt4_url            http://sourceforge.net/projects/pyqt/files/PyQt4/PyQt-4.11.4/PyQt-x11-gpl-4.11.4.tar.gz )
-#set(pyqt4_url_sha1       a27b010b9d5de0c07df9dddc9c336767725b1e6b                                        )
-#set(pyqt4_url_md5        d7547558fd673bd9d38e2108c6b42521                                                )
-set(pyqt4_install_prefix ${GORGON_EXTERNAL_LIBRARIES_DIR}/pyqt4/                                                           )
+external_project_vars( PyQt4
+    http://sourceforge.net/projects/pyqt/files/PyQt4/PyQt-4.11.4/PyQt-x11-gpl-4.11.4.tar.gz
+    )
 
 # If not found so far, donwload, build and install pyqt4
 #if( NOT PyQt4_FOUND)
