@@ -36,7 +36,6 @@ ADD_LIBRARY(pyGORGON MODULE Gorgon/src_cpp/LibPyGorgon.cpp)
 
 include(cmake/functions.cmake)
 
-
 set( EXTERNAL_PROJECTS
         OpenGL
         GLUT
@@ -62,9 +61,6 @@ list(APPEND GORGON_INCLUDE_DIRS
 	${GORGON_EXTERNAL_LIBRARIES_DIR}
 	${GORGON_EXTERNAL_LIBRARIES_DIR}/GL
 	)
-
-list(APPEND GORGON_LIBRARIES
-    )
 
 include_directories(${GORGON_INCLUDE_DIRS})
 target_link_libraries(pyGORGON ${GORGON_LIBRARIES})
