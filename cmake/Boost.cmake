@@ -32,14 +32,11 @@ external_project_vars( Boost
 
 set(Boost_USE_MULTITHREADED ON)
 
-#set(CMAKE_PREFIX_PATH ${boost_install_prefix})
 set(BOOST_ROOT ${boost_root})
 find_package(Boost ${boost_version} COMPONENTS ${boost_components})
 
 list(APPEND GORGON_LIBRARIES ${Boost_LIBRARIES})
-
 list(APPEND GORGON_INCLUDE_DIRS ${Boost_INCLUDE_DIR})
-
 
 #set(Boost_find Boost)
 
@@ -54,7 +51,6 @@ list(APPEND GORGON_INCLUDE_DIRS ${Boost_INCLUDE_DIR})
 ##  [WORKING_DIRECTORY dir] # Working directory for command
 #  LOG 1                 # Wrap step in script to log output
 #  )
-
 
 set(boost_url_sha1       a27b010b9d5de0c07df9dddc9c336767725b1e6b                                        )
 set(boost_url_md5        5a5d5614d9a07672e1ab2a250b5defc5                                                )
