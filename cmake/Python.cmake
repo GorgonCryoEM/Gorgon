@@ -1,7 +1,7 @@
 external_project_vars( Python
         ""
         https://www.python.org/ftp/python/2.7.10/Python-2.7.10.tgz
-        "./configure;--prefix=${CMAKE_CURRENT_BINARY_DIR}/python;--with-pydebug;--enable-framework=${CMAKE_CURRENT_BINARY_DIR}/python"
+        "./configure;--prefix=${python_install_prefix};--with-pydebug;--enable-framework=${python_install_prefix}"
         "${CMAKE_MAKE_PROGRAM}"
         "${CMAKE_MAKE_PROGRAM};install"
     )
