@@ -6,4 +6,3 @@ external_project_vars( SIP
         "${CMAKE_MAKE_PROGRAM};install"
     )
 
-external_project_find_paths(SIP)
