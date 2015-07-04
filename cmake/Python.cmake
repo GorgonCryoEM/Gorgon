@@ -18,6 +18,11 @@ find_library(PYTHON_LIBRARY
 set(CMAKE_PREFIX_PATH ${python_install_prefix})
 find_package(PythonLibs)
 
+
+list(APPEND GORGON_LIBRARIES ${PYTHON_LIBRARY})
+
+list(APPEND GORGON_INCLUDE_DIRS ${PYTHON_INCLUDE_DIR})
+
 #set(PYTHON_find PythonLibs)
 #external_project_find_paths(PYTHON)
 

@@ -7,8 +7,11 @@ external_project_vars( FFTW3F
     )
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake)
-set(FFTW3F_find FFTW3F)
-external_project_find_paths(FFTW3F)
+find_package(FFTW3F)
+
+list(APPEND GORGON_LIBRARIES ${FFTW3F_LIBRARIES})
+
+list(APPEND GORGON_INCLUDE_DIRS ${FFTW3F_INCLUDE_DIRS})
 
 OPTION(ENABLE_FFTW3 "enable fftw 3 support" ON)
 OPTION(ENABLE_FFTW_PLAN_CACHING "enable fftw caching" ON)
