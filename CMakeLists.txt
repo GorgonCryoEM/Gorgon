@@ -64,20 +64,15 @@ list(APPEND GORGON_INCLUDE_DIRS
 	${GLU_INCLUDE_PATH}
 	${GL_INCLUDE_PATH}
 	${OPENGL_INCLUDE_DIR}
-#	${Boost_INCLUDE_DIR}
-#	${PYTHON_INCLUDE_DIR}
-#	${FFTW3F_INCLUDE_DIR}
 	)
-INCLUDE_DIRECTORIES(${GORGON_INCLUDE_DIRS})
 
+list(APPEND GORGON_LIBRARIES
+    ${OPENGL_gl_LIBRARY}
+    ${OPENGL_glu_LIBRARY}
+    ${GLUT_glut_LIBRARY}
+    )
 
-
-
-list(APPEND GORGON_LIBRARIES ${OPENGL_gl_LIBRARY}
-                            ${OPENGL_glu_LIBRARY}
-                            ${GLUT_glut_LIBRARY}
-                            )
-
+include_directories(${GORGON_INCLUDE_DIRS})
 target_link_libraries(pyGORGON ${GORGON_LIBRARIES})
 
 if(ENABLE_CMAKE_DEBUG_OUTPUT)
