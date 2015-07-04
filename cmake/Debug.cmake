@@ -25,7 +25,7 @@ function (getListOfVarsWith2 _w1 _w2 _varResult)
 endfunction()
 
 if(ENABLE_CMAKE_DEBUG_OUTPUT)
-    set(SEARCH_STRING "" CACHE STRING "String to search for in all variables")
+    set(SEARCH_STRING "-" CACHE STRING "String to search for in all variables")
     mark_as_advanced(CLEAR SEARCH_STRING)
     
     getListOfVarsWith(${SEARCH_STRING} ddd)
