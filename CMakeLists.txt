@@ -88,17 +88,6 @@ if(ENABLE_CMAKE_DEBUG_OUTPUT)
     message("CMAKE_INSTALL_PREFIX= ${CMAKE_INSTALL_PREFIX}")
 endif()
 
-#execute_process(COMMAND ls)
-#add_custom_target(install 
-#    COMMENT "Installing target"
-#    )
-#    
-#add_custom_command(TARGET pyGORGON
-#    POST_BUILD
-#    COMMAND 
-#    WORKING_DIRECTORY $CMAKE_INSTALL_PREFIX}/test
-#    COMMENT "WORKING on my new command"
-#)
 #install(TARGETS pyGORGON
 #         BUNDLE DESTINATION dist)
 
@@ -110,7 +99,7 @@ set( EXTERNAL_PROJECTS_INSTALL
 install(CODE "execute_process(COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_SOURCE_DIR}/get-pip.py
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR})"
     )
-#install(CODE "execute_process(COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_BINARY_DIR}/python/lib/python2.7/site-packages/pip install py2app
+
 install(CODE "execute_process(COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_BINARY_DIR}/python/Python.framework/Versions/2.7/lib/python2.7/site-packages/pip install py2app PyOpenGL PyOpenGL_accelerate
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR})"
     )
