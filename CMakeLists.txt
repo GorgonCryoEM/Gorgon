@@ -36,10 +36,10 @@ ADD_LIBRARY(pyGORGON MODULE Gorgon/src_cpp/LibPyGorgon.cpp)
 
 include(cmake/functions.cmake)
 
-find_package(GLUT REQUIRED)
 
 set( EXTERNAL_PROJECTS
         OpenGL
+        GLUT
         Python
         Boost
         FFTW3F
@@ -58,14 +58,12 @@ if(ENABLE_CMAKE_DEBUG_OUTPUT)
 endif()
 
 list(APPEND GORGON_INCLUDE_DIRS 
-	${GLUT_INCLUDE_DIR}
 	${CMAKE_CURRENT_SOURCE_DIR}
 	${GORGON_EXTERNAL_LIBRARIES_DIR}
 	${GORGON_EXTERNAL_LIBRARIES_DIR}/GL
 	)
 
 list(APPEND GORGON_LIBRARIES
-    ${GLUT_glut_LIBRARY}
     )
 
 include_directories(${GORGON_INCLUDE_DIRS})
