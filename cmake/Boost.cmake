@@ -33,12 +33,15 @@ external_project_vars( Boost
 set(Boost_USE_MULTITHREADED ON)
 
 #set(CMAKE_PREFIX_PATH ${boost_install_prefix})
-#find_package(Boost ${boost_version} COMPONENTS ${boost_components})
+set(BOOST_ROOT ${boost_root})
+find_package(Boost ${boost_version} COMPONENTS ${boost_components})
 
-set( _pkg_arg 1.58 COMPONENTS python)
+list(APPEND GORGON_LIBRARIES ${Boost_LIBRARIES})
+
+list(APPEND GORGON_INCLUDE_DIRS ${Boost_INCLUDE_DIR})
+
+
 #set(Boost_find Boost)
-external_project_find_paths(Boost)
-unset( _pkg_arg )
 
 ##TODO: Modify to work with multiple libraries
 #ExternalProject_Add_Step(Boost install_name

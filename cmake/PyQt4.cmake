@@ -6,4 +6,3 @@ external_project_vars( PyQt4
         "${CMAKE_MAKE_PROGRAM};install"
     )
 
-external_project_find_paths(PyQt4)
