@@ -1,3 +1,14 @@
+find_package(GLUT REQUIRED)
+
+list(APPEND GORGON_LIBRARIES   
+        	${GLUT_INCLUDE_DIR}
+        	)
+list(APPEND GORGON_INCLUDE_DIRS
+            ${GLUT_glut_LIBRARY}
+            )
+
+
+
 set(glut_root           ${GORGON_EXTERNAL_LIBRARIES_DIR}/GL  )
 
 set(glut_win32  Win              )
