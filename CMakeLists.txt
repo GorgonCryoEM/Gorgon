@@ -33,10 +33,11 @@ ADD_LIBRARY(pyGORGON MODULE Gorgon/src_cpp/LibPyGorgon.cpp)
 # --------------------------------------------------------------------
 # Find dependencies
 # --------------------------------------------------------------------
-find_package(GLUT REQUIRED)
-find_package(OpenGL REQUIRED)
 
 include(cmake/functions.cmake)
+
+find_package(GLUT REQUIRED)
+find_package(OpenGL REQUIRED)
 
 set( EXTERNAL_PROJECTS
         Python
