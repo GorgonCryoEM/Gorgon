@@ -5,4 +5,3 @@ external_project_vars( SIP
         "${CMAKE_MAKE_PROGRAM}"
         "${CMAKE_MAKE_PROGRAM};install"
     )
-
