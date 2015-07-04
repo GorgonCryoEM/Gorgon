@@ -36,21 +36,18 @@ ADD_LIBRARY(pyGORGON MODULE Gorgon/src_cpp/LibPyGorgon.cpp)
 
 include(cmake/functions.cmake)
 
-set( EXTERNAL_PROJECTS
+set( EXTERNAL_PROJECTS_BUILD
         OpenGL
         GLUT
         Python
         Boost
         FFTW3F
-        SIP
-        PyQt4
         )
 
-foreach(proj ${EXTERNAL_PROJECTS})
+foreach(proj ${EXTERNAL_PROJECTS_BUILD})
     include(cmake/${proj}.cmake)
 endforeach()
 # --------------------------------------------------------------------
-
 SET(LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/lib${GORGON_OS_VERSION}/x${GORGON_TARGET_ARCH})
 if(ENABLE_CMAKE_DEBUG_OUTPUT)
     message("LIBRARY_OUTPUT_PATH= ${LIBRARY_OUTPUT_PATH}")
@@ -80,27 +77,29 @@ if(ENABLE_CMAKE_DEBUG_OUTPUT)
     endforeach()
 endif()
 
-#add_dependencies(pyGORGON Rescan)
-
 set(CMAKE_INSTALL_PREFIX $ENV{HOME}/Gorgon/)
 
 if(ENABLE_CMAKE_DEBUG_OUTPUT)
     message("CMAKE_INSTALL_PREFIX= ${CMAKE_INSTALL_PREFIX}")
 endif()
 
+install(TARGETS pyGORGON
+         LIBRARY
+         DESTINATION ${CMAKE_BINARY_DIR}/python/Python.framework/Versions/2.7/lib/python2.7/lib-dynload)
+
 set( EXTERNAL_PROJECTS_INSTALL
         SIP
         PyQt4
         )
 
-install(TARGETS pyGORGON
-         LIBRARY
-         DESTINATION ${CMAKE_BINARY_DIR}/python/Python.framework/Versions/2.7/lib/python2.7/lib-dynload)
+foreach(proj ${EXTERNAL_PROJECTS_INSTALL})
+    include(cmake/${proj}.cmake)
+endforeach()
+
 
 install(CODE "execute_process(COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_SOURCE_DIR}/get-pip.py
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR})"
     )
-
 install(CODE "execute_process(COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_BINARY_DIR}/python/Python.framework/Versions/2.7/lib/python2.7/site-packages/pip install py2app PyOpenGL PyOpenGL_accelerate
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR})"
     )
