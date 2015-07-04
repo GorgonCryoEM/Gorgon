@@ -1,5 +1,3 @@
-include(cmake/Debug.cmake)
-# --------------------------------------------------------------------
 function(external_project_vars trgt deps url config_cmd build_cmd install_cmd)
     string(TOLOWER ${trgt} proj)
     
