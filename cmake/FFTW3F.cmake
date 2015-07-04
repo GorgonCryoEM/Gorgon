@@ -1,7 +1,7 @@
 external_project_vars( FFTW3F
         ""
         ${GORGON_EXTERNAL_LIBRARIES_DIR}/FFTW/fftw-3.3.4-source
-        "./configure;--prefix=${CMAKE_CURRENT_BINARY_DIR}/fftw3f;--enable-shared;--enable-float"
+        "./configure;--prefix=${fftw3f_install_prefix};--enable-shared;--enable-float"
         "${CMAKE_MAKE_PROGRAM}"
         "${CMAKE_MAKE_PROGRAM};install"
     )
