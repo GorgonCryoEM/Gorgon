@@ -88,13 +88,14 @@ if(ENABLE_CMAKE_DEBUG_OUTPUT)
     message("CMAKE_INSTALL_PREFIX= ${CMAKE_INSTALL_PREFIX}")
 endif()
 
-#install(TARGETS pyGORGON
-#         BUNDLE DESTINATION dist)
-
 set( EXTERNAL_PROJECTS_INSTALL
         SIP
         PyQt4
         )
+
+install(TARGETS pyGORGON
+         LIBRARY
+         DESTINATION ${CMAKE_BINARY_DIR}/python/Python.framework/Versions/2.7/lib/python2.7/lib-dynload)
 
 install(CODE "execute_process(COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_SOURCE_DIR}/get-pip.py
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR})"
