@@ -15,8 +15,22 @@ function(external_project_vars trgt deps url config_cmd build_cmd install_cmd)
     set( ${proj}_build_cmd      ${build_cmd}                         CACHE INTERNAL "")
     set( ${proj}_install_cmd    ${install_cmd}                       CACHE INTERNAL "")
     set( ${proj}_install_prefix ${${proj_root}}                      CACHE INTERNAL "")
+    set( ${proj}_extra_options  ""                                   CACHE INTERNAL "")
     
-    #set(boost_version 1.44)
+    if(ARGN)
+        list(LENGTH ARGN N)
+        math(EXPR N ${N}-1)
+        
+        foreach(i RANGE 0 ${N} 2)
+            math(EXPR i1 ${i}+1)
+            list(GET ARGN ${i} key)
+            list(GET ARGN ${i1} val)
+            set( ${proj}_${key} ${val})
+            
+            list(APPEND ${proj}_extra_options --${key}=${val})
+        endforeach()        
+    endif()
+    set( ${proj}_extra_options ${${proj}_extra_options}  CACHE INTERNAL "Additional options for ${proj}_name")
     
 #    set( ${proj}_librarydir     ${${proj_root}}/lib                  CACHE INTERNAL "")
 #    set( ${proj}_includedir     ${${proj_root}}/include              CACHE INTERNAL "")
