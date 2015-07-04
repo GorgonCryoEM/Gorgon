@@ -70,11 +70,6 @@ list(APPEND GORGON_INCLUDE_DIRS
 	)
 INCLUDE_DIRECTORIES(${GORGON_INCLUDE_DIRS})
 
-get_property(dirs DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY INCLUDE_DIRECTORIES)
-#message(STATUS "INCLUDE_DIRECTORIES: ${dirs}")
-foreach(dir ${dirs})
-  message(STATUS "dir='${dir}'")
-endforeach()
 
 
 
@@ -84,18 +79,19 @@ list(APPEND GORGON_LIBRARIES ${OPENGL_gl_LIBRARY}
                             )
 
 target_link_libraries(pyGORGON ${GORGON_LIBRARIES})
-message(STATUS "GORGON_LIBRARIES: ${GORGON_LIBRARIES}")
-#set_property(TARGET pyGORGON APPEND PROPERTY LINK_LIBRARIES  ${libs})
-get_property(dirs TARGET pyGORGON PROPERTY LINK_LIBRARIES)
-#message(STATUS "LINK_LIBRARIES: ${dirs}")
-foreach(dir ${dirs})
-  message(STATUS "llls='${dir}'")
-endforeach()
 
-foreach(dir ${GORGON_LIBRARIES})
-  message("LIBS='${dir}'")
-endforeach()
+if(ENABLE_CMAKE_DEBUG_OUTPUT)
+    get_property(dirs DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY INCLUDE_DIRECTORIES)
+    get_property(dirs TARGET pyGORGON PROPERTY LINK_LIBRARIES)    
 
+    foreach(dir ${dirs})
+      message(STATUS "DIRS='${dir}'")
+    endforeach()
+
+    foreach(dir ${GORGON_LIBRARIES})
+      message("LIBS='${dir}'")
+    endforeach()
+endif()
 
 #add_dependencies(pyGORGON Rescan)
 
