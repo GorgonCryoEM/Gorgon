@@ -56,7 +56,7 @@ if(ENABLE_CMAKE_DEBUG_OUTPUT)
     message("LIBRARY_OUTPUT_PATH= ${LIBRARY_OUTPUT_PATH}")
 endif()
 
-SET(GORGON_INCLUDE_DIRS ${GORGON_INCLUDE_DIRS}
+list(APPEND GORGON_INCLUDE_DIRS 
 	${GLUT_INCLUDE_DIR}
 	${CMAKE_CURRENT_SOURCE_DIR}
 	${GORGON_EXTERNAL_LIBRARIES_DIR}
@@ -77,11 +77,12 @@ foreach(dir ${dirs})
 endforeach()
 
 
-set( GORGON_LIBRARIES ${GORGON_LIBRARIES}
-            ${OPENGL_gl_LIBRARY}
-        	${OPENGL_glu_LIBRARY}
-        	${GLUT_glut_LIBRARY}
-            )
+
+list(APPEND GORGON_LIBRARIES ${OPENGL_gl_LIBRARY}
+                            ${OPENGL_glu_LIBRARY}
+                            ${GLUT_glut_LIBRARY}
+                            )
+
 target_link_libraries(pyGORGON ${GORGON_LIBRARIES})
 message(STATUS "GORGON_LIBRARIES: ${GORGON_LIBRARIES}")
 #set_property(TARGET pyGORGON APPEND PROPERTY LINK_LIBRARIES  ${libs})
