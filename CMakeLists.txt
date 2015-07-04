@@ -59,6 +59,7 @@ endif()
 list(APPEND GORGON_INCLUDE_DIRS 
 	${CMAKE_CURRENT_SOURCE_DIR}
 	${GORGON_EXTERNAL_LIBRARIES_DIR}
+#	TODO: Is this line necessary? Removing works on Mac 
 	${GORGON_EXTERNAL_LIBRARIES_DIR}/GL
 	)
 
