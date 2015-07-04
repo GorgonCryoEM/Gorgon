@@ -5,4 +5,3 @@ external_project_vars( PyQt4
         "${CMAKE_MAKE_PROGRAM};-j${NUMBER_OF_PARALLEL_JOBS}"
         "${CMAKE_MAKE_PROGRAM};install"
     )
-
