@@ -1,10 +1,10 @@
 find_package(GLUT REQUIRED)
 
 list(APPEND GORGON_LIBRARIES   
-        	${GLUT_INCLUDE_DIR}
+            ${GLUT_glut_LIBRARY}
         	)
 list(APPEND GORGON_INCLUDE_DIRS
-            ${GLUT_glut_LIBRARY}
+        	${GLUT_INCLUDE_DIR}
             )
 
 
