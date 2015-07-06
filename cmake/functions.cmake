@@ -39,7 +39,10 @@ function(external_project_vars deps url config_cmd build_cmd install_cmd)
 #    set( ${proj}_librarydir     ${${proj_root}}/lib                  CACHE INTERNAL "")
 #    set( ${proj}_includedir     ${${proj_root}}/include              CACHE INTERNAL "")
 
-    external_project_build(${trgt})
+    if(EXTERNAL_LIBS_BUILD)
+        external_project_build(${trgt})
+    endif()
+    
 endfunction()
 # --------------------------------------------------------------------
 function(external_project_build trgt)
