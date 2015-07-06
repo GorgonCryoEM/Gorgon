@@ -8,6 +8,7 @@ function(external_project_vars deps url config_cmd build_cmd install_cmd)
 #    set_property(CACHE ${trgt}_root_type PROPERTY STRINGS Custom Gorgon)
 
     set( ${proj}_name           ${trgt}                              CACHE INTERNAL "")
+    set( ${trgt}_proj           ${proj}                              CACHE INTERNAL "")
     set(  proj_root             ${proj}_root)
     set( ${proj_root}           ${CMAKE_CURRENT_BINARY_DIR}/${proj}  CACHE INTERNAL "")
     set( ${proj}_url            ${url}                               CACHE INTERNAL "")
@@ -48,7 +49,7 @@ function(external_project_build trgt)
     
     include(ExternalProject)
         
-    string(TOLOWER ${trgt} proj)
+    set(proj ${${trgt}_proj})
     
     if(EXTERNAL_LIBS_BUILD)  
             ExternalProject_Add( ${trgt}
