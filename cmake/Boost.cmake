@@ -26,8 +26,8 @@ external_project_vars(
         Python
         http://downloads.sourceforge.net/project/boost/boost/1.58.0/boost_1_58_0.tar.gz
         "${Boost_Bootstrap_CMD};--with-python=${PYTHON_EXECUTABLE}"
-        "${Boost_b2_CMD};${boost_options}"
-        "${Boost_b2_CMD};install;--prefix=${boost_install_prefix};${boost_options}"
+        "${Boost_b2_CMD};-j${NUMBER_OF_PARALLEL_JOBS};${boost_options}"
+        "${Boost_b2_CMD};install;-j${NUMBER_OF_PARALLEL_JOBS};--prefix=${boost_install_prefix};${boost_options}"
     )
 
 set(Boost_USE_MULTITHREADED ON)
