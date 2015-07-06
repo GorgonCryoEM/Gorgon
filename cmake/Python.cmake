@@ -2,7 +2,7 @@ external_project_vars(
         ""
         https://www.python.org/ftp/python/2.7.10/Python-2.7.10.tgz
         "./configure;--prefix=${python_install_prefix};--with-pydebug;--enable-framework=${python_install_prefix}"
-        "${CMAKE_MAKE_PROGRAM}"
+        "${CMAKE_MAKE_PROGRAM};-j${NUMBER_OF_PARALLEL_JOBS}"
         "${CMAKE_MAKE_PROGRAM};install"
     )
 
