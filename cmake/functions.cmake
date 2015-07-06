@@ -1,4 +1,7 @@
-function(external_project_vars trgt deps url config_cmd build_cmd install_cmd)
+function(external_project_vars deps url config_cmd build_cmd install_cmd)
+    set(file_name ${CMAKE_CURRENT_LIST_FILE})
+    get_filename_component(trgt ${file_name} NAME_WE)
+
     string(TOLOWER ${trgt} proj)
     
 #    set(${trgt}_root_type Gorgon CACHE STRING "${proj} root directory type")
