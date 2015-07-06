@@ -1,4 +1,4 @@
-external_project_vars( SIP
+external_project_vars(
         Python
         http://downloads.sourceforge.net/project/pyqt/sip/sip-4.16.8/sip-4.16.8.tar.gz
         "${PYTHON_EXECUTABLE};configure.py;${sip_extra_options}"

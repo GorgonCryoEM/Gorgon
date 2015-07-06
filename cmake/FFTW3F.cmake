@@ -1,4 +1,4 @@
-external_project_vars( FFTW3F
+external_project_vars(
         ""
         ${GORGON_EXTERNAL_LIBRARIES_DIR}/FFTW/fftw-3.3.4-source
         "./configure;--prefix=${fftw3f_install_prefix};--enable-shared;--enable-float"
