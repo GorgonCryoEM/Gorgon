@@ -22,7 +22,7 @@ else()
   endif()
 endif()
 
-external_project_vars( Boost
+external_project_vars(
         Python
         http://downloads.sourceforge.net/project/boost/boost/1.58.0/boost_1_58_0.tar.gz
         "${Boost_Bootstrap_CMD};--with-python=${PYTHON_EXECUTABLE}"
