@@ -68,11 +68,12 @@ target_link_libraries(pyGORGON ${GORGON_LIBRARIES})
 
 if(ENABLE_CMAKE_DEBUG_OUTPUT)
     get_property(dirs DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY INCLUDE_DIRECTORIES)
-    get_property(dirs TARGET pyGORGON PROPERTY LINK_LIBRARIES)    
 
     foreach(dir ${dirs})
       message(STATUS "DIRS='${dir}'")
     endforeach()
+
+    get_property(dirs TARGET pyGORGON PROPERTY LINK_LIBRARIES)    
 
     foreach(dir ${GORGON_LIBRARIES})
       message("LIBS='${dir}'")
