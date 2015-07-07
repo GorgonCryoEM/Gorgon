@@ -77,6 +77,7 @@ function(external_project_build trgt)
         BUILD_IN_SOURCE 1
      #--Install step---------------
         INSTALL_COMMAND ${${proj}_install_cmd}
+        ${${proj}_install_cmd_extra}
      #--Output logging-------------
       LOG_DOWNLOAD  ${LOG_EXTERNAL_LIBRARY_BUILDS}           # Wrap download in script to log output
       LOG_UPDATE    ${LOG_EXTERNAL_LIBRARY_BUILDS}           # Wrap update in script to log output
