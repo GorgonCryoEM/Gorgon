@@ -14,7 +14,7 @@ math(EXPR NUMBER_OF_PARALLEL_JOBS ${NUMBER_OF_PARALLEL_JOBS}-1)
 # --------------------------------------------------------------------
 # Set some variables and options
 # --------------------------------------------------------------------
-option(ENABLE_CMAKE_DEBUG_OUTPUT "print output of some variables for debugging purposes" OFF)
+option(ENABLE_CMAKE_DEBUG_OUTPUT "Print output of some variables for debugging purposes" OFF)
 
 set(GORGON_EXTERNAL_LIBRARIES_DIR ${CMAKE_SOURCE_DIR}/ExternalLibraries CACHE INTERNAL "External Libraries directory")
 
@@ -25,7 +25,7 @@ if( CMAKE_SIZEOF_VOID_P EQUAL 8 )
 endif()
 
 set(GORGON_EXTERNAL_LIBRARIES_DOWNLOAD_DIR ${CMAKE_BINARY_DIR}/../Gorgon-Downloads CACHE PATHNAME "Download directory")
-option(EXTERNAL_LIBS_BUILD OFF)
+option(EXTERNAL_LIBS_BUILD         OFF)
 option(LOG_EXTERNAL_LIBRARY_BUILDS ON )
 
 ADD_LIBRARY(pyGORGON MODULE Gorgon/src_cpp/LibPyGorgon.cpp)
