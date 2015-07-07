@@ -25,8 +25,8 @@ if( CMAKE_SIZEOF_VOID_P EQUAL 8 )
 endif()
 
 set(GORGON_EXTERNAL_LIBRARIES_DOWNLOAD_DIR ${CMAKE_BINARY_DIR}/../Gorgon-Downloads CACHE PATHNAME "Download directory")
-option(EXTERNAL_LIBS_BUILD         OFF)
-option(LOG_EXTERNAL_LIBRARY_BUILDS ON )
+option(EXTERNAL_LIBS_BUILD         "Build external libraries" OFF)
+option(LOG_EXTERNAL_LIBRARY_BUILDS "Log output of external library builds" ON )
 
 ADD_LIBRARY(pyGORGON MODULE Gorgon/src_cpp/LibPyGorgon.cpp)
 
