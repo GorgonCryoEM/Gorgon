@@ -38,19 +38,11 @@ find_package(Boost ${boost_version} COMPONENTS ${boost_components})
 list(APPEND GORGON_LIBRARIES    ${Boost_LIBRARIES}  )
 list(APPEND GORGON_INCLUDE_DIRS ${Boost_INCLUDE_DIR})
 
-#set(Boost_find Boost)
-
-##TODO: Modify to work with multiple libraries
-#ExternalProject_Add_Step(Boost install_name
-#  COMMAND ${CMAKE_INSTALL_NAME_TOOL} -id ${Boost_LIBRARIES} ${Boost_LIBRARIES}
-#  COMMENT "Updating install_name"     # Text printed when step executes
-#  DEPENDEES install    # Steps on which this step depends
-##  DEPENDERS install     # Steps that depend on this step
-#  DEPENDS ${Boost_LIBRARIES} ${CMAKE_CURRENT_LIST_FILE}     # Files on which this step depends
-##  [ALWAYS 1]              # No stamp file, step always runs
-##  [WORKING_DIRECTORY dir] # Working directory for command
-#  LOG 1                 # Wrap step in script to log output
-#  )
+#TODO: Modify to work with multiple libraries
+set(boost_install_cmd_extra 
+    COMMAND    ${CMAKE_INSTALL_NAME_TOOL} -id ${Boost_PYTHON_LIBRARY_RELEASE} ${Boost_PYTHON_LIBRARY_RELEASE}
+    CACHE INTERNAL ""
+    )
 
 set(boost_url_sha1       a27b010b9d5de0c07df9dddc9c336767725b1e6b                                        )
 set(boost_url_md5        5a5d5614d9a07672e1ab2a250b5defc5                                                )
