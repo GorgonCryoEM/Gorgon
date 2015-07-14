@@ -47,7 +47,7 @@ INCLUDE_DIRECTORIES(${GORGON_INCLUDE_DIRS})
 
 ADD_LIBRARY(pyGORGON SHARED Gorgon/src_cpp/LibPyGorgon.cpp)
 TARGET_LINK_LIBRARIES(pyGORGON
-            ${Python_LIBRARY}
+            ${PYTHON_LIBRARY}
             ${Boost_LIBRARIES}
             ${FFTW3F_LIBRARY}
             
@@ -77,6 +77,13 @@ endif()
 #)
 #install(TARGETS pyGORGON
 #         BUNDLE DESTINATION dist)
-install(CODE "execute_process(COMMAND python ../../setup.py py2app --bdist-base=${CMAKE_BINARY_DIR}/test/build  --dist-dir=${CMAKE_BINARY_DIR}/test/dist
+install(CODE "execute_process(COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_SOURCE_DIR}/get-pip.py
+    WORKING_DIRECTORY ${CMAKE_BINARY_DIR})"
+    )
+#install(CODE "execute_process(COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_BINARY_DIR}/python/lib/python2.7/site-packages/pip install py2app
+install(CODE "execute_process(COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_BINARY_DIR}/python/Python.framework/Versions/2.7/lib/python2.7/site-packages/pip install py2app PyOpenGL
+    WORKING_DIRECTORY ${CMAKE_BINARY_DIR})"
+    )
+install(CODE "execute_process(COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_SOURCE_DIR}/setup.py py2app --bdist-base=${CMAKE_BINARY_DIR}/test/build  --dist-dir=${CMAKE_BINARY_DIR}/test/dist
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/Gorgon/src_py/)"
     )
