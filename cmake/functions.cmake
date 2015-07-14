@@ -88,6 +88,9 @@ function(external_project_build trgt)
      #--Custom targets-------------
 #     STEP_TARGETS install_name  # Generate custom targets for these steps
     )
+    
+    if(${proj}_add_step_args)
+        ExternalProject_Add_Step(${trgt} ${${proj}_add_step_args})
     endif()
 endfunction() 
 # --------------------------------------------------------------------
