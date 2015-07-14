@@ -15,13 +15,21 @@ if( CMAKE_SIZEOF_VOID_P EQUAL 8 )
     set( GORGON_TARGET_ARCH 32 CACHE INTERNAL "Target architecture")
 endif()
 
+#find_package(PythonInterp)
+#find_package(PythonLibs REQUIRED)
+#INCLUDE(FindPackageHandleStandardArgs)
+#FIND_PACKAGE_HANDLE_STANDARD_ARGS(python DEFAULT_MSG python_LIBRARIES python_LIBRARY_DIR python_INCLUDE_DIR)
+
+
+
+include(cmake/Python.cmake)
 include(cmake/Boost.cmake)
+
 include(cmake/FFTW3f.cmake)
 include(cmake/GLUT.cmake)
 
 find_package(OpenGL REQUIRED)
 #find_package(GLUT REQUIRED)
-find_package(PythonLibs REQUIRED)
 
 OPTION(ENABLE_FFTW3 "enable fftw 3 support" ON)
 OPTION(ENABLE_FFTW_PLAN_CACHING "enable fftw caching" ON)
@@ -66,6 +74,10 @@ INCLUDE_DIRECTORIES(${GORGON_INCLUDE_DIRS})
 
 ADD_LIBRARY(pyGORGON SHARED Gorgon/src_cpp/LibPyGorgon.cpp)
 TARGET_LINK_LIBRARIES(pyGORGON ${GORGON_LIBS})
+
+#add_dependencies(pyGORGON boost)
+#add_dependencies(pyGORGON python)
+#add_dependencies(pyGORGON Rescan)
 
 set(CMAKE_INSTALL_PREFIX $ENV{HOME}/Gorgon/)
 
