@@ -25,7 +25,7 @@ set(python_install_prefix ${GORGON_EXTERNAL_LIBRARIES_DIR}/python/              
         URL_MD5       ${python_url_md5}
      #--Configure step-------------
 #        CONFIGURE_COMMAND  ./configure --prefix=${python_install_prefix} --enable-shared
-        CONFIGURE_COMMAND  ./configure --prefix=${CMAKE_CURRENT_BINARY_DIR}/python --enable-shared
+        CONFIGURE_COMMAND  ./configure --prefix=${CMAKE_CURRENT_BINARY_DIR}/python --with-pydebug --enable-framework=${CMAKE_CURRENT_BINARY_DIR}/python
      #--Build step-----------------
 #        BUILD_COMMAND ${python_b2_CMD}    ${python_options}
         BUILD_IN_SOURCE 1
@@ -43,33 +43,32 @@ set(python_install_prefix ${GORGON_EXTERNAL_LIBRARIES_DIR}/python/              
      # [STEP_TARGETS st1 st2 ...]  # Generate custom targets for these steps
     )
 
-#find_package(PythonInterp)
-#find_package(PythonLibs REQUIRED)
-
-#include_directories(${PYTHON_INCLUDE_DIR})
 ExternalProject_Get_Property(Python INSTALL_DIR)
-set(Python_LIBRARY     ${INSTALL_DIR}/lib/libpython2.7.dylib CACHE FILEPATH "")
-
-#install(TARGETS myexe EXPORT myproj DESTINATION bin)
-
-#find_package(PkgConfig)
-#pkg_search_module(PYTHON REQUIRED python)
+set(CMAKE_PREFIX_PATH ${INSTALL_DIR})
+find_package(PythonInterp)
+#set(CMAKE_PREFIX_PATH ${INSTALL_DIR})
+#set(CMAKE_LIBRARY_PATH ${INSTALL_DIR})
+find_library(PYTHON_LIBRARY
+                name python
+                PATHS ${INSTALL_DIR}
+#                NO_DEFAULT_PATH
+                )
+find_package(PythonLibs)
+#message("PYTHON_LIBRARIES= ${PYTHON_LIBRARIES}")
+#include_directories(${PYTHON_INCLUDE_DIR})
+#set(Python_LIBRARY     ${INSTALL_DIR}/lib/libpython2.7.dylib CACHE FILEPATH "")
 
 #include(cmake/LibFindMacros.cmake)
 # Dependencies
-#libfind_package(PYTHON python)
-# Use pkg-config to get hints about paths
-#libfind_pkg_check_modules(PYTHON_PKGCONF python)
-#libfind_pkg_detect(Python python FIND_PATH Python.h FIND_LIBRARY python)
 
 #find_library(PYTHON_LIBRARY
-#                name python2.7
-#                PATHS ${INSTALL_DIR}/lib
+#                name python
+#                PATHS ${INSTALL_DIR}
 #                NO_DEFAULT_PATH
 #                )
 #set(Python_LIBRARY_DIR ${python_install_dir})
-set(PYTHON_INCLUDE_DIR ${INSTALL_DIR}/include/python2.7 CACHE PATH "")
-set(PYTHON_EXECUTABLE ${INSTALL_DIR}/bin/python CACHE PATH "")
+#set(PYTHON_INCLUDE_DIR ${INSTALL_DIR}/include/python2.7 CACHE PATH "")
+#set(PYTHON_EXECUTABLE ${INSTALL_DIR}/bin/python CACHE PATH "")
 #set(PYTHON_LIBRARY_DIR ${INSTALL_DIR}/lib CACHE PATH "")
 
 #set(CMAKE_FIND_FRAMEWORK NEVER)

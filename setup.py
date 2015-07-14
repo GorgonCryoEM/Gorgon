@@ -10,8 +10,8 @@ Usage (Mac OS X):
 Usage (Windows):
     python setup.py py2exe
 """
-# import ez_setup
-# ez_setup.use_setuptools()
+import ez_setup
+ez_setup.use_setuptools()
 
 import sys
 from setuptools import setup
