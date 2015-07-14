@@ -92,15 +92,3 @@ function(external_project_build trgt)
     endif()
 endfunction() 
 # --------------------------------------------------------------------
-# --------------------------------------------------------------------
-
-#if( NOT Boost_FOUND)
-#        add_custom_target(Rescan ${CMAKE_COMMAND} ${CMAKE_SOURCE_DIR} DEPENDS Boost)
-#else()
-#        add_custom_target(Rescan)
-#endif()
-
-#add_dependencies(pyGORGON Rescan)
-#if(  Boost_FOUND)
-#        TARGET_LINK_LIBRARIES(pyGORGON Boost)
-#endif()
