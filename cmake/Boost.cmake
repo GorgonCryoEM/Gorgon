@@ -13,13 +13,11 @@ foreach(comp ${boost_components})
 endforeach()
 
 if( UNIX )
-  set( Boost_Bootstrap_CMD ./bootstrap.sh )
-  set( Boost_b2_CMD ./b2 )
-else()
-  if( WIN32 )
+    set( Boost_Bootstrap_CMD ./bootstrap.sh )
+    set( Boost_b2_CMD ./b2 )
+elseif(WIN32 )
     set( Boost_Bootstrap_CMD bootstrap.bat )
     set( Boost_b2_CMD b2.exe )
-  endif()
 endif()
 
 external_project_vars(
