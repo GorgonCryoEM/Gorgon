@@ -64,7 +64,7 @@ function(external_project_vars deps url config_cmd build_cmd install_cmd)
             math(EXPR i1 ${i}+1)
             list(GET ARGN ${i} key)
             list(GET ARGN ${i1} val)
-            set( ${proj}_${key} ${val})
+            set( ${proj}_${key} ${val}  CACHE INTERNAL "")
             
             list(APPEND ${proj}_extra_options --${key}=${val})
         endforeach()        
