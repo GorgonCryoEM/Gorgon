@@ -80,11 +80,23 @@ find_package(Boost ${boost_version} COMPONENTS ${boost_components})
       LOG_TEST 1                # Wrap test in script to log output
       LOG_INSTALL 1             # Wrap install in script to log output
      #--Custom targets-------------
-     # [STEP_TARGETS st1 st2 ...]  # Generate custom targets for these steps
+     STEP_TARGETS install_name  # Generate custom targets for these steps
     )
 #endif()
 #else()
 #    find_package(Boost ${boost_version} COMPONENTS ${boost_components})
+
+#TODO: Modify to work with multiple libraries
+ExternalProject_Add_Step(Boost install_name
+  COMMAND ${CMAKE_INSTALL_NAME_TOOL} -id ${Boost_LIBRARIES} ${Boost_LIBRARIES}
+  COMMENT "Updating install_name"     # Text printed when step executes
+  DEPENDEES install    # Steps on which this step depends
+#  DEPENDERS install     # Steps that depend on this step
+  DEPENDS ${Boost_LIBRARIES} ${CMAKE_CURRENT_LIST_FILE}     # Files on which this step depends
+#  [ALWAYS 1]              # No stamp file, step always runs
+#  [WORKING_DIRECTORY dir] # Working directory for command
+  LOG 1                 # Wrap step in script to log output
+  )
 
 #if( NOT Boost_FOUND)
 #        add_custom_target(Rescan ${CMAKE_COMMAND} ${CMAKE_SOURCE_DIR} DEPENDS Boost)
@@ -100,11 +112,6 @@ ExternalProject_Get_Property(Boost INSTALL_DIR)
 
 set(BOOST_ROOT       ${boost_root}       CACHE PATH "Boost root directory"   )
 find_package(Boost ${boost_version} COMPONENTS ${boost_components})
-
-foreach(lib  ${Boost_LIBRARIES})
-    execute_process(COMMAND ${CMAKE_INSTALL_NAME_TOOL} -id ${lib} ${lib}  
-    )
-endforeach()
 
 #include_directories(${Boost_INCLUDE_DIR})
 #
