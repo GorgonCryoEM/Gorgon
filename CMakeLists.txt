@@ -110,14 +110,15 @@ endif()
 
 install(TARGETS pyGORGON
          LIBRARY
-         DESTINATION ${CMAKE_BINARY_DIR}/python/Python.framework/Versions/2.7/lib/python2.7/lib-dynload)
+         DESTINATION ${python_lib-dynload}
+         )
 
 foreach(proj ${EXTERNAL_PROJECTS_INSTALL})
     include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/${proj}.cmake)
 endforeach()
 
 
-install(CODE "execute_process(COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_BINARY_DIR}/python/Python.framework/Versions/2.7/lib/python2.7/site-packages/pip install --upgrade pip py2app PyOpenGL PyOpenGL_accelerate
+install(CODE "execute_process(COMMAND ${PYTHON_EXECUTABLE} ${python_site-packages}/pip install --upgrade pip py2app PyOpenGL PyOpenGL_accelerate
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR})"
     )
 # --------------------------------------------------------------------
