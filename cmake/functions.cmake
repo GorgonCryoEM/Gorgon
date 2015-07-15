@@ -69,7 +69,7 @@ function(external_project_vars deps url config_cmd build_cmd install_cmd)
             list(APPEND ${proj}_extra_options --${key}=${val})
         endforeach()        
     endif()
-    set( ${proj}_extra_options ${${proj}_extra_options}  CACHE INTERNAL "Additional options for ${proj}_name")
+    set( ${proj}_extra_options ${${proj}_extra_options}  CACHE INTERNAL "Additional options for ${${proj}_name}")
     
 #    set( ${proj}_librarydir     ${${proj_root}}/lib                  CACHE INTERNAL "")
 #    set( ${proj}_includedir     ${${proj_root}}/include              CACHE INTERNAL "")
