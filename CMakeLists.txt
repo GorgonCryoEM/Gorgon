@@ -20,7 +20,7 @@ set(GORGON_EXTERNAL_LIBRARIES_DIR ${CMAKE_SOURCE_DIR}/ExternalLibraries CACHE IN
 
 if( CMAKE_SIZEOF_VOID_P EQUAL 8 )
     set( GORGON_TARGET_ARCH 64 CACHE INTERNAL "Target architecture")
-  else()
+else()
     set( GORGON_TARGET_ARCH 32 CACHE INTERNAL "Target architecture")
 endif()
 
