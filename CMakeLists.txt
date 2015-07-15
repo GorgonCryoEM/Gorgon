@@ -113,7 +113,7 @@ install(TARGETS pyGORGON
          DESTINATION ${CMAKE_BINARY_DIR}/python/Python.framework/Versions/2.7/lib/python2.7/lib-dynload)
 
 foreach(proj ${EXTERNAL_PROJECTS_INSTALL})
-    include(cmake/${proj}.cmake)
+    include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/${proj}.cmake)
 endforeach()
 
 
