@@ -28,9 +28,13 @@ external_project_vars(
         "${Boost_b2_CMD};install;-j${NUMBER_OF_PARALLEL_JOBS};--prefix=${boost_install_prefix};${boost_options}"
     )
 
-set(Boost_USE_MULTITHREADED ON)
+# Fails miserably on Linux without this
+set(Boost_NO_BOOST_CMAKE ON)
 
+set(Boost_USE_MULTITHREADED ON)
 set(BOOST_ROOT ${boost_root})
+
+#set(CMAKE_PREFIX_PATH ${boost_install_prefix})
 find_package(Boost ${boost_version} COMPONENTS ${boost_components})
 
 #list(APPEND GORGON_LIBRARIES    ${Boost_LIBRARIES}  )
