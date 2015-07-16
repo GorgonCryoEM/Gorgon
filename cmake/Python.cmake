@@ -18,7 +18,8 @@ find_library(PYTHON_LIBRARY
 set(CMAKE_PREFIX_PATH ${python_install_prefix})
 find_package(PythonLibs)
 
-list(APPEND GORGON_LIBRARIES    ${PYTHON_LIBRARY}    )
-list(APPEND GORGON_INCLUDE_DIRS ${PYTHON_INCLUDE_DIR})
+#list(APPEND GORGON_LIBRARIES    ${PYTHON_LIBRARY}    )
+#list(APPEND GORGON_INCLUDE_DIRS ${PYTHON_INCLUDE_DIR})
+update_libs_includes(PYTHON_LIBRARY PYTHON_INCLUDE_DIR)
 
 set(python_url_md5        d7547558fd673bd9d38e2108c6b42521                                                )
