@@ -33,8 +33,9 @@ set(Boost_USE_MULTITHREADED ON)
 set(BOOST_ROOT ${boost_root})
 find_package(Boost ${boost_version} COMPONENTS ${boost_components})
 
-list(APPEND GORGON_LIBRARIES    ${Boost_LIBRARIES}  )
-list(APPEND GORGON_INCLUDE_DIRS ${Boost_INCLUDE_DIR})
+#list(APPEND GORGON_LIBRARIES    ${Boost_LIBRARIES}  )
+#list(APPEND GORGON_INCLUDE_DIRS ${Boost_INCLUDE_DIR})
+update_libs_includes(Boost_LIBRARIES Boost_INCLUDE_DIR)
 
 #TODO: Modify to work with multiple libraries
 set(boost_install_cmd_extra 
