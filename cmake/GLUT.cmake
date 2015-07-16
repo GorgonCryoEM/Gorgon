@@ -1,13 +1,12 @@
 find_package(GLUT REQUIRED)
 
-list(APPEND GORGON_LIBRARIES   
-            ${GLUT_glut_LIBRARY}
-        	)
-list(APPEND GORGON_INCLUDE_DIRS
-        	${GLUT_INCLUDE_DIR}
-            )
-
-
+#list(APPEND GORGON_LIBRARIES   
+#            ${GLUT_glut_LIBRARY}
+#        	)
+#list(APPEND GORGON_INCLUDE_DIRS
+#        	${GLUT_INCLUDE_DIR}
+#            )
+update_libs_includes(GLUT_glut_LIBRARY GLUT_INCLUDE_DIR)
 
 set(glut_root           ${GORGON_EXTERNAL_LIBRARIES_DIR}/GL  )
 
