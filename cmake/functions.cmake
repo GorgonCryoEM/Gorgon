@@ -104,7 +104,9 @@ function(external_project_build trgt)
      #--Download step--------------
         URL           ${${proj}_url}
 #        URL_HASH SHA1=${boost_url_sha1}
+        ${${proj}_url_sha1_cmd}
 #        URL_MD5       ${boost_url_md5}
+        ${${proj}_url_md5_cmd}
      #--Configure step-------------
         CONFIGURE_COMMAND  ${${proj}_config_cmd}
      #--Build step-----------------
