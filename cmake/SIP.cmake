@@ -7,4 +7,5 @@ external_project_vars(
         "bindir;${python_install_prefix}/bin"
         "sip-module;sip"
     )
-    
+
+set(sip_url_md5_cmd        URL_MD5       8e48cd78bcd31f9310a701a4111c2739 )
