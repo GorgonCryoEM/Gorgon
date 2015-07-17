@@ -43,5 +43,5 @@ set(boost_install_cmd_extra
     CACHE INTERNAL ""
     )
 
-set(boost_url_sha1_cmd       URL_HASH SHA1=a27b010b9d5de0c07df9dddc9c336767725b1e6b )
-set(boost_url_md5_cmd        URL_MD5       5a5d5614d9a07672e1ab2a250b5defc5         )
+set(boost_url_sha1_cmd       URL_HASH SHA1=a27b010b9d5de0c07df9dddc9c336767725b1e6b  CACHE INTERNAL "")
+set(boost_url_md5_cmd        URL_MD5       5a5d5614d9a07672e1ab2a250b5defc5          CACHE INTERNAL "")

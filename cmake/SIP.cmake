@@ -8,4 +8,4 @@ external_project_vars(
         "sip-module;sip"
     )
 
-set(sip_url_md5_cmd        URL_MD5       8e48cd78bcd31f9310a701a4111c2739 )
+set(sip_url_md5_cmd        URL_MD5       8e48cd78bcd31f9310a701a4111c2739  CACHE INTERNAL "")
