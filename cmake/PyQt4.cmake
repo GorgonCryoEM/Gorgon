@@ -6,4 +6,4 @@ external_project_vars(
         "${CMAKE_MAKE_PROGRAM};install"
     )
 
-set(sip_url_md5_cmd        URL_MD5       2fe8265b2ae2fc593241c2c84d09d481 )
+set(sip_url_md5_cmd        URL_MD5       2fe8265b2ae2fc593241c2c84d09d481  CACHE INTERNAL "")
