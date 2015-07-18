@@ -48,6 +48,19 @@ foreach(proj ${EXTERNAL_PROJECTS_BUILD})
     include(cmake/${proj}.cmake)
 endforeach()
 # --------------------------------------------------------------------
+# Download-All Step
+# --------------------------------------------------------------------
+foreach(proj ${EXTERNAL_PROJECTS_BUILD})
+    list(APPEND downs ${proj}-download) 
+endforeach()
+
+add_custom_target(Download-All
+                 DEPENDS ${downs}
+#                COMMAND
+                COMMENT "Download-All Step"
+#                VERBATIM
+                )
+# --------------------------------------------------------------------
 SET(LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/lib${GORGON_OS_VERSION}/x${GORGON_TARGET_ARCH})
 if(ENABLE_CMAKE_DEBUG_OUTPUT)
     message("LIBRARY_OUTPUT_PATH= ${LIBRARY_OUTPUT_PATH}")
