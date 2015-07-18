@@ -130,7 +130,8 @@ function(external_project_build trgt)
       LOG_TEST      ${LOG_EXTERNAL_LIBRARY_BUILDS}           # Wrap test in script to log output
       LOG_INSTALL   ${LOG_EXTERNAL_LIBRARY_BUILDS}           # Wrap install in script to log output
      #--Custom targets-------------
-#     STEP_TARGETS install_name  # Generate custom targets for these steps
+     INDEPENDENT_STEP_TARGETS  download                  # Generate custom targets for these steps that do not depend on other external projects even if a dependency is set
+#     STEP_TARGETS              configure build install        # Generate custom targets for these steps
     )
     
 #    ExternalProject_Get_Property(${trgt} download_dir)
