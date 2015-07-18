@@ -80,6 +80,13 @@ function(external_project_vars deps url config_cmd build_cmd install_cmd)
     
 endfunction()
 # --------------------------------------------------------------------
+# TODO: 
+# 1. step targets
+# 2. separate downloads-update-verify steps into other external projects
+# 3. separate/group configure/build/install steps
+# 4. Then, maybe prevent from re-downloading
+# 5. Explore ExternalProject_Add_Step and similar new functions
+# --------------------------------------------------------------------
 function(external_project_build trgt)
     if(ENABLE_CMAKE_DEBUG_OUTPUT)
         message("Dependency - ${proj}: BUILD")
