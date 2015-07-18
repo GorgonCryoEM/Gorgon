@@ -133,6 +133,14 @@ function(external_project_build trgt)
 #     STEP_TARGETS install_name  # Generate custom targets for these steps
     )
     
+#    ExternalProject_Get_Property(${trgt} download_dir)
+#    ExternalProject_Add_Step( ${trgt} download_complete
+#        COMMAND ${CMAKE_COMMAND} -E echo "${trgt} download finished!"
+#        COMMAND ${CMAKE_COMMAND} -E echo "${trgt} download finished!"
+#        DEPENDEES download
+#        DEPENDERS build
+#    )
+    
 #    if(${proj}_add_step_args)
 #        ExternalProject_Add_Step(${trgt} ${${proj}_add_step_args})
 #    endif()
