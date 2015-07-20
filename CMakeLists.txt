@@ -36,12 +36,21 @@ ADD_LIBRARY(pyGORGON MODULE Gorgon/src_cpp/LibPyGorgon.cpp)
 
 include(cmake/functions.cmake)
 
-set( EXTERNAL_PROJECTS_BUILD
-        OpenGL
-        GLUT
+set( EXTERNAL_PROJECTS_DOWNLOAD
         Python
         Boost
         FFTW3F
+        )
+
+set( EXTERNAL_PROJECTS_BUILD
+        OpenGL
+        GLUT
+        ${EXTERNAL_PROJECTS_DOWNLOAD}
+        )
+
+set( EXTERNAL_PROJECTS_INSTALL
+        SIP
+        PyQt4
         )
 
 foreach(proj ${EXTERNAL_PROJECTS_BUILD})
@@ -50,7 +59,8 @@ endforeach()
 # --------------------------------------------------------------------
 # Download-All Step
 # --------------------------------------------------------------------
-foreach(proj ${EXTERNAL_PROJECTS_BUILD})
+list(APPEND EXTERNAL_PROJECTS_DOWNLOAD ${EXTERNAL_PROJECTS_INSTALL})
+foreach(proj ${EXTERNAL_PROJECTS_DOWNLOAD})
     list(APPEND downs ${proj}-download) 
 endforeach()
 
@@ -99,11 +109,6 @@ endif()
 install(TARGETS pyGORGON
          LIBRARY
          DESTINATION ${CMAKE_BINARY_DIR}/python/Python.framework/Versions/2.7/lib/python2.7/lib-dynload)
-
-set( EXTERNAL_PROJECTS_INSTALL
-        SIP
-        PyQt4
-        )
 
 foreach(proj ${EXTERNAL_PROJECTS_INSTALL})
     include(cmake/${proj}.cmake)
