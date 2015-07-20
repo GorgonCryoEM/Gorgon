@@ -80,6 +80,13 @@ function(external_project_vars deps url config_cmd build_cmd install_cmd)
     
 endfunction()
 # --------------------------------------------------------------------
+# TODO: 
+# 1. step targets
+# 2. separate downloads-update-verify steps into other external projects
+# 3. separate/group configure/build/install steps
+# 4. Then, maybe prevent from re-downloading
+# 5. Explore ExternalProject_Add_Step and similar new functions
+# --------------------------------------------------------------------
 function(external_project_build trgt)
     if(ENABLE_CMAKE_DEBUG_OUTPUT)
         message("Dependency - ${proj}: BUILD")
@@ -123,11 +130,20 @@ function(external_project_build trgt)
       LOG_TEST      ${LOG_EXTERNAL_LIBRARY_BUILDS}           # Wrap test in script to log output
       LOG_INSTALL   ${LOG_EXTERNAL_LIBRARY_BUILDS}           # Wrap install in script to log output
      #--Custom targets-------------
-#     STEP_TARGETS install_name  # Generate custom targets for these steps
+     INDEPENDENT_STEP_TARGETS  download                  # Generate custom targets for these steps that do not depend on other external projects even if a dependency is set
+#     STEP_TARGETS              configure build install        # Generate custom targets for these steps
     )
     
-    if(${proj}_add_step_args)
-        ExternalProject_Add_Step(${trgt} ${${proj}_add_step_args})
-    endif()
+#    ExternalProject_Get_Property(${trgt} download_dir)
+#    ExternalProject_Add_Step( ${trgt} download_complete
+#        COMMAND ${CMAKE_COMMAND} -E echo "${trgt} download finished!"
+#        COMMAND ${CMAKE_COMMAND} -E echo "${trgt} download finished!"
+#        DEPENDEES download
+#        DEPENDERS build
+#    )
+    
+#    if(${proj}_add_step_args)
+#        ExternalProject_Add_Step(${trgt} ${${proj}_add_step_args})
+#    endif()
 endfunction() 
 # --------------------------------------------------------------------
