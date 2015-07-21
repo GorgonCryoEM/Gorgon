@@ -45,6 +45,7 @@ set( EXTERNAL_PROJECTS_DOWNLOAD
 set( EXTERNAL_PROJECTS_BUILD
         OpenGL
         GLUT
+        Qt4
         ${EXTERNAL_PROJECTS_DOWNLOAD}
         )
 
@@ -60,6 +61,7 @@ endforeach()
 # Download-All Step
 # --------------------------------------------------------------------
 list(APPEND EXTERNAL_PROJECTS_DOWNLOAD ${EXTERNAL_PROJECTS_INSTALL})
+
 foreach(proj ${EXTERNAL_PROJECTS_DOWNLOAD})
     list(APPEND downs ${proj}-download) 
 endforeach()
