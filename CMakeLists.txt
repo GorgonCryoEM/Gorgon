@@ -107,6 +107,12 @@ set(CMAKE_INSTALL_PREFIX $ENV{HOME}/Gorgon/)
 if(ENABLE_CMAKE_DEBUG_OUTPUT)
     message("CMAKE_INSTALL_PREFIX= ${CMAKE_INSTALL_PREFIX}")
 endif()
+# --------------------------------------------------------------------
+# This is, actually, an install step, but runs at build time.
+# Adding the loop into install(CODE ...) seems to run only those lines, not the whole CMakeLists.txt
+# Thus, the functions called in *.cmake are not defined at that stage
+# It is not possible to add dependencies to install target as it is not a real target
+# --------------------------------------------------------------------
 
 install(TARGETS pyGORGON
          LIBRARY
