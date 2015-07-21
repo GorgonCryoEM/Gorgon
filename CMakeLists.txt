@@ -119,7 +119,7 @@ foreach(proj ${EXTERNAL_PROJECTS_INSTALL})
 endforeach()
 
 
-install(CODE "execute_process(COMMAND ${PYTHON_EXECUTABLE} ${python_site-packages}/pip install --upgrade pip py2app PyOpenGL PyOpenGL_accelerate
+install(CODE "execute_process(COMMAND ${PYTHON_EXECUTABLE} ${python_site-packages}/pip install --upgrade -r ${CMAKE_SOURCE_DIR}/requirements.txt
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR})"
     )
 # --------------------------------------------------------------------
