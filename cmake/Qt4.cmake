@@ -10,4 +10,4 @@
 #set(qt4_url_sha1_cmd       URL_HASH SHA1=ddf9c20ca8309a116e0466c42984238009525da6  CACHE INTERNAL "")
 #set(qt4_url_md5_cmd        URL_MD5       2edbe4d6c2eff33ef91732602f3518eb          CACHE INTERNAL "")
 
-find_package(Qt4)
+#find_package(Qt4)
