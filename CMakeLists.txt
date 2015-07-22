@@ -113,6 +113,7 @@ install(TARGETS pyGORGON
          LIBRARY
          DESTINATION ${python_lib-dynload}
          )
+        COMPONENT "Gorgon"
 
 foreach(proj ${EXTERNAL_PROJECTS_INSTALL})
     include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/${proj}.cmake)
@@ -121,6 +122,7 @@ endforeach()
 
 install(CODE "execute_process(COMMAND ${PYTHON_EXECUTABLE} ${python_site-packages}/pip install --upgrade -r ${CMAKE_SOURCE_DIR}/requirements.txt
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR})"
+    COMPONENT "python_deps"
     )
 # --------------------------------------------------------------------
 #Package Step
@@ -129,4 +131,5 @@ install(CODE "execute_process(COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_SOURCE_DIR}/s
                                                     --bdist-base=${CMAKE_BINARY_DIR}/package/build
                                                     --dist-dir=${CMAKE_BINARY_DIR}/package/dist
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/Gorgon/src_py/)"
+    COMPONENT "package"
     )
