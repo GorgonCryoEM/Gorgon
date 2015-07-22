@@ -115,6 +115,10 @@ install(TARGETS pyGORGON
          )
         COMPONENT "Gorgon"
 
+add_custom_target(Gorgon
+        COMMAND ${CMAKE_COMMAND} -DCOMPONENT=Gorgon -P cmake_install.cmake
+        )
+
 foreach(proj ${EXTERNAL_PROJECTS_INSTALL})
     include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/${proj}.cmake)
 endforeach()
