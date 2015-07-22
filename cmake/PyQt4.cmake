@@ -9,7 +9,7 @@ external_project_vars(
 #        http://sourceforge.net/projects/pyqt/files/PyQt4/PyQt-4.11.4/PyQt-x11-gpl-4.11.4.tar.gz
 #        http://sourceforge.net/projects/pyqt/files/PyQt4/PyQt-4.11.4/PyQt-mac-gpl-4.11.4.tar.gz
 ""
-        "${PYTHON_EXECUTABLE};configure-ng.py;--confirm-license;--sip;${sip_bindir}/${sip_sip-module};${qmake_arg};--static"
+        "${PYTHON_EXECUTABLE};configure-ng.py;--confirm-license;--sip;${sip_bindir}/${sip_sip-module};${qmake_arg}"
         "${CMAKE_MAKE_PROGRAM};-j${NUMBER_OF_PARALLEL_JOBS}"
         "${CMAKE_MAKE_PROGRAM};install"
     )
