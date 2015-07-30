@@ -16,10 +16,8 @@ endforeach()
 set(Boost_NO_BOOST_CMAKE ON)
 
 set(Boost_USE_MULTITHREADED ON)
-set(BOOST_ROOT ${boost_root})
 
-#set(CMAKE_PREFIX_PATH ${boost_install_prefix})
-find_package(Boost ${boost_version} COMPONENTS ${boost_components})
+find_package(Boost COMPONENTS ${boost_components})
 
 #list(APPEND GORGON_LIBRARIES    ${Boost_LIBRARIES}  )
 #list(APPEND GORGON_INCLUDE_DIRS ${Boost_INCLUDE_DIR})
