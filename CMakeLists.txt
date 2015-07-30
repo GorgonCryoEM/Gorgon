@@ -87,7 +87,7 @@ endif()
 
 install(TARGETS pyGORGON
         LIBRARY
-        DESTINATION ${python_lib-dynload}
+        DESTINATION ${CMAKE_SOURCE_DIR}/Gorgon/src_py/
         COMPONENT "Gorgon"
         )
 
