@@ -7,7 +7,7 @@
 #define GORGON_CALPHA_RENDERER_H
 
 
-#include <glut.h>
+#include <GL/glut.h>
 #include <cstdlib>
 #include <cstdio>
 #include <ProteinMorph/NonManifoldMesh.h>
@@ -225,11 +225,11 @@ namespace wustl_mm {
 			//vector<int> selectedSecelIndices; //unsure if I can just keep track of secels as one structure or not
 			vector<int> selectedStrandIndices;
 			vector<int> selectedLoopIndices;
-			vector < tuple<int, int> > corrs;
+			vector < boost::tuple<int, int> > corrs;
 			vector<int> selectedSSEHelices;
-			vector< tuple<Vector3DFloat, Vector3DFloat> > featureVecs;
+			vector< boost::tuple<Vector3DFloat, Vector3DFloat> > featureVecs;
 
-			map<int,tuple<float, float, float> > helixColors;
+			map<int,boost::tuple<float, float, float> > helixColors;
 
 			int renderingType;
 			float thinRibbThickness;
@@ -423,7 +423,7 @@ namespace wustl_mm {
 						glMaterialfv(GL_FRONT, GL_EMISSION, emissionColor);
 						glMaterialfv(GL_BACK, GL_EMISSION, emissionColor);
 					}
-					map<int, tuple<float,float,float> >::iterator iter = helixColors.begin();
+					map<int, boost::tuple<float,float,float> >::iterator iter = helixColors.begin();
 					iter = helixColors.find(i);
 					if(iter != helixColors.end()){
 
@@ -1624,7 +1624,7 @@ namespace wustl_mm {
 			else
 				corrs.clear();
 			for(int i=0; i < flatCorrespondences.size(); i = i+2){
-				corrs.push_back(tuple<int, int>(flatCorrespondences[i], flatCorrespondences[i+1]));
+				corrs.push_back(boost::tuple<int, int>(flatCorrespondences[i], flatCorrespondences[i+1]));
 			}
 		}
 
@@ -1634,7 +1634,7 @@ namespace wustl_mm {
 			else
 				featureVecs.clear();
 			for(int i=0; i < flatFeatureVecs.size(); i = i+2){
-				featureVecs.push_back(tuple<Vector3DFloat, Vector3DFloat>(flatFeatureVecs[i], flatFeatureVecs[i+1]));
+				featureVecs.push_back(boost::tuple<Vector3DFloat, Vector3DFloat>(flatFeatureVecs[i], flatFeatureVecs[i+1]));
 			}
 
 		}
@@ -1646,7 +1646,7 @@ namespace wustl_mm {
 		void CAlphaRenderer::SetHelixColor(int helixNum, float r, float g, float b){
 			cout << "setting helix color " << helixNum << " to (" << r << ", " << g << ", " << b << ")" <<endl;
 			helixColors.erase(helixNum);
-			helixColors.insert(pair<int, tuple<float, float, float> >(helixNum, tuple<float, float, float>(r,g,b)));
+			helixColors.insert(pair<int, boost::tuple<float, float, float> >(helixNum, boost::tuple<float, float, float>(r,g,b)));
 		}
 
 		// creates a vector of Vector3DFloats that represents the locations of all the PDBAtoms
