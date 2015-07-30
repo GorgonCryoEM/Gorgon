@@ -2,30 +2,6 @@
 # Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 # Description:   A widget used to perform manual skeletonization of a volume 
 
-# CVS Meta Information: 
-#   $Source$
-#   $Revision$
-#   $Date$
-#   $Author$
-#   $State$
-#
-# History Log: 
-#   $Log$
-#   Revision 1.3  2009/04/04 21:33:23  ssa1
-#   More structure approach for placing cAlpha loops, and helix flip bug fix
-#
-#   Revision 1.2  2009/04/02 19:00:20  ssa1
-#   CAlpha Viewer bug fixes and smoother uniform functionality
-#
-#   Revision 1.1  2009/03/31 19:49:06  ssa1
-#   Moving interactive loop builder to root
-#
-#   Revision 1.2  2009/03/30 21:36:12  ssa1
-#   Interactive loop building
-#
-#   Revision 1.1  2009/03/26 19:33:52  ssa1
-#   Adding in an Interactive Loop Builder
-#
 
 from PyQt4 import QtCore, QtGui
 from libpyGORGON import InteractiveLoopBuilderEngine, PDBAtom, Vector3DFloat, PDBBond

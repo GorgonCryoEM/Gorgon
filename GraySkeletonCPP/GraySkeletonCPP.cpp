@@ -2,21 +2,6 @@
 // Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 // Description:   A dummy CPP file for the GRAYSKELETONCPP Module
 
-// CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
-//
-// History Log: 
-//   $Log$
-//   Revision 1.35  2009/09/10 23:44:56  ssa1
-//   Allowing the option of preserving the earlier skeleton when performing grayscale skeletonization.. (Leads to better skeletons)
-//
-//   Revision 1.34  2008/09/29 16:30:15  ssa1
-//   Adding in CVS meta information
-//
 
 #ifndef GRAY_SKELETON_CPP_CPP
 #define GRAY_SKELETON_CPP_CPP

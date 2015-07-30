@@ -2,18 +2,6 @@
 // Author:        Tao Ju (taoju@cse.wustl.edu)
 // Description:   A dummy CPP file for the SKELETONMAKER module
 
-// CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
-//
-// History Log: 
-//   $Log$
-//   Revision 1.9  2008/09/29 16:43:15  ssa1
-//   Adding in CVS meta information
-//
 
 
 #define _CRT_SECURE_NO_DEPRECATE 1

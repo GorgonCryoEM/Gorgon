@@ -2,21 +2,6 @@
 // Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 // Description:   A dummy CPP file for the MATHTOOLS Module
 
-// CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
-//
-// History Log: 
-//   $Log$
-//   Revision 1.6  2009/12/07 05:00:52  ssa1
-//   Adding in Matrix functionality for Singular Value Decomposition
-//
-//   Revision 1.5  2008/09/29 16:43:15  ssa1
-//   Adding in CVS meta information
-//
 
 #ifndef MATHTOOLS_SWITCHBOARD_CPP
 #define MATHTOOLS_SWITCHBOARD_CPP

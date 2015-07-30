@@ -2,15 +2,6 @@
 # Author:        Ross A. Coleman (racolema@bcm.edu)
 # Description:   This class creates the QUndoCommand objects for the undo/redo stack.
 
-# CVS Meta Information: 
-#   $Source$
-#   $Revision$
-#   $Date$
-#   $Author$
-#   $State$
-#
-# History Log: 
-#   $Log$
 
 
 import math

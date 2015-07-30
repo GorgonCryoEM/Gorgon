@@ -2,30 +2,6 @@
 // Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 // Description:   Performs skeletonization on a grayscale volume
 
-// CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
-//
-// History Log: 
-//   $Log$
-//   Revision 1.40  2009/09/10 23:44:56  ssa1
-//   Allowing the option of preserving the earlier skeleton when performing grayscale skeletonization.. (Leads to better skeletons)
-//
-//   Revision 1.39  2009/03/02 16:31:47  ssa1
-//   Adding in Point Clouds and Structure Tensor Fields
-//
-//   Revision 1.38  2008/10/29 19:26:26  ssa1
-//   Reducing memory footprint, Increasing performance and adding volume normalization
-//
-//   Revision 1.37  2008/10/10 14:25:55  ssa1
-//   Setting the cost functions to scale with the edge length
-//
-//   Revision 1.36  2008/09/29 16:30:15  ssa1
-//   Adding in CVS meta information
-//
 
 #ifndef GRAYSKELETONCPP_VOLUME_SKELETONIZER_H
 #define GRAYSKELETONCPP_VOLUME_SKELETONIZER_H
@@ -45,6 +21,8 @@
 #include <string>
 #include <Foundation/TimeManager.h>
 #include <new>
+#include <functional>
+#include <list>
 
 using namespace wustl_mm::MathTools;
 using namespace wustl_mm::Foundation;
@@ -354,23 +332,23 @@ namespace wustl_mm {
 				}
 
 				Volume * visited = new Volume(size, size, size);
-
-				vector<Vector3DInt> list;
-				list.push_back(Vector3DInt(margin+radius, margin+radius, margin+radius));
+//				:TODO: rename llist
+				vector<Vector3DInt> llist;
+				llist.push_back(Vector3DInt(margin+radius, margin+radius, margin+radius));
 				Vector3DInt currentPos;
 				Vector3DInt * n6;
 				int n6Count;
 
-				while(list.size() > 0) {
-					currentPos = list[list.size()-1];
-					list.pop_back();
+				while(llist.size() > 0) {
+					currentPos = llist[llist.size()-1];
+					llist.pop_back();
 					visited->setDataAt(currentPos.X(), currentPos.Y(), currentPos.Z(), 1);
 					n6Count = DiscreteMesh::GetN6(n6, block, currentPos.X(), currentPos.Y(), currentPos.Z());
 
 					if(DiscreteMesh::GetN6Count(skeleton, x+currentPos.X()-margin-radius, y+currentPos.Y()-margin-radius, z+currentPos.Z()-margin-radius) <= 2) {
 						for(int i = 0; i < n6Count; i++) {
 							if(visited->getDataAt(n6[i].X(), n6[i].Y(), n6[i].Z()) < 1) {
-								list.push_back(n6[i]);
+								llist.push_back(n6[i]);
 							}
 						}
 					}
@@ -418,15 +396,15 @@ namespace wustl_mm {
 				}
 
 				Volume * visited = new Volume(size, size, size);
-
-				vector<Vector3DInt> list;
-				list.push_back(Vector3DInt(margin+radius, margin+radius, margin+radius));
+//				:TODO: rename llist
+				vector<Vector3DInt> llist;
+				llist.push_back(Vector3DInt(margin+radius, margin+radius, margin+radius));
 				Vector3DInt currentPos, newPos;
 				Vector3DFloat tempDir;
 
-				while(list.size() > 0) {
-					currentPos = list[list.size()-1];
-					list.pop_back();
+				while(llist.size() > 0) {
+					currentPos = llist[llist.size()-1];
+					llist.pop_back();
 					visited->setDataAt(currentPos.X(), currentPos.Y(), currentPos.Z(), 1);
 					tempDir = localDirections[skeleton->getIndex(x+currentPos.X()-margin-radius, y+currentPos.Y()-margin-radius, z+currentPos.Z()-margin-radius)];
 
@@ -438,7 +416,7 @@ namespace wustl_mm {
 								for(int j = 0; j < 3; j++) {
 									newPos = currentPos + Vector3DInt(VOLUME_NEIGHBOR_FACES[i][j][0], VOLUME_NEIGHBOR_FACES[i][j][1], VOLUME_NEIGHBOR_FACES[i][j][2]);
 									if(visited->getDataAt(newPos.X(), newPos.Y(), newPos.Z()) < 1) {
-										list.push_back(newPos);
+										llist.push_back(newPos);
 									}
 								}
 							}
@@ -1801,7 +1779,8 @@ namespace wustl_mm {
 			int key;
 			bool modified;
 			double value;
-			list<int> cleanupIndices;
+//			:TODO: why do we have to use namespace std, it is declared already
+			std::list<int> cleanupIndices;
 			PriorityQueue<ImmersionBeachElement, int> beach(MAX_QUEUELEN);
 			ImmersionBeachElement * element;
 			int index;
