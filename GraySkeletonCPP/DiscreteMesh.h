@@ -2,18 +2,6 @@
 // Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 // Description:   A storage class for a discrete 3D Mesh.
 
-// CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
-//
-// History Log: 
-//   $Log$
-//   Revision 1.15  2008/09/29 16:30:15  ssa1
-//   Adding in CVS meta information
-//
 
 #ifndef GRAYSKELETONCPP_DISCRETE_MESH_H
 #define GRAYSKELETONCPP_DISCRETE_MESH_H
@@ -24,6 +12,7 @@
 #include <MathTools/Vector3D.h>
 #include <string>
 #include <list>
+#include <functional>
 
 using namespace std;
 using namespace wustl_mm::MathTools;

@@ -2,24 +2,6 @@
 // Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 // Description:   A dummy CPP file for the GRAPHMATCH module.
 
-// CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
-//
-// History Log: 
-//   $Log$
-//   Revision 1.30  2009/08/26 14:58:55  ssa1
-//   Adding in Flexible fitting clique search
-//
-//   Revision 1.29  2008/09/29 16:22:17  ssa1
-//   Removing compiler warnings
-//
-//   Revision 1.28  2008/09/29 16:19:30  ssa1
-//   Adding in CVS meta information
-//
 
 
 #define _CRT_SECURE_NO_DEPRECATE 1

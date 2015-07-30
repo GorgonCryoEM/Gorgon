@@ -4,24 +4,6 @@
 #                and the index below. Most chains will be too big to fit on the screen 
 #                on this class. Thus, a CAlphaScrollableSequenceView contains this class.
 
-# CVS Meta Information: 
-#   $Source$
-#   $Revision$
-#   $Date$
-#   $Author$
-#   $State$
-#
-# History Log: 
-#   $Log$
-#   Revision 1.3  2009/04/03 19:44:37  ssa1
-#   CAlpha bug fixes
-#
-#   Revision 1.2  2009/04/02 19:00:20  ssa1
-#   CAlpha Viewer bug fixes and smoother uniform functionality
-#
-#   Revision 1.1  2009/03/31 21:40:13  ssa1
-#   Refactoring: Splitting seq_model\SequenceView.py into subclasses
-#
 
 from PyQt4 import Qt,QtGui,QtCore
 
