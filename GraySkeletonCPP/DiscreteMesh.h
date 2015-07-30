@@ -12,6 +12,7 @@
 #include <MathTools/Vector3D.h>
 #include <string>
 #include <list>
+#include <functional>
 
 using namespace std;
 using namespace wustl_mm::MathTools;

@@ -78,7 +78,7 @@ namespace wustl_mm {
 			vector<Vector3DFloat> softHandles;
 			CurveDeformer cd;
 			vector < vector < vector<SSECorrespondenceNode> > > corrs;
-			vector<tuple<int, int, int> > helixDistancesSorted;
+			vector<boost::tuple<int, int, int> > helixDistancesSorted;
 
 			vector < vector < vector<SSECorrespondenceNode> > > savedCorrs;
 			vector<SSECorrespondenceFeature> savedFeatureList1;
@@ -227,7 +227,7 @@ namespace wustl_mm {
 				return finder.GetTransform(corrs[corrIx][clusterIx], SAMPLE_COUNT);	
 			}
 			else{
-				vector<tuple<int, int> > PQMatchings;
+				vector<boost::tuple<int, int> > PQMatchings;
 				if(helixDistancesSorted.size() == 0){
 					BuildSortedHelixDistances(corrIx);
 				}			
@@ -372,12 +372,12 @@ namespace wustl_mm {
 		//for each pdb helix finds and stores the 3 closest pdb helices by centroid
 		//stored in helixDistancesSorted
 		void FlexibleFittingEngine::BuildSortedHelixDistances(int corrIx){
-			vector<tuple<int, int> > PQMatchings;
+			vector<boost::tuple<int, int> > PQMatchings;
 			
 			//saving which SSE elements correspond
 			for(unsigned int i = 0; i < corrs[corrIx].size(); i++) {
 				for(unsigned int j = 0; j < corrs[corrIx][i].size(); j++) {
-					PQMatchings.push_back(tuple<int,int>(corrs[corrIx][i][j].GetPIndex(), corrs[corrIx][i][j].GetQIndex()));
+					PQMatchings.push_back(boost::tuple<int,int>(corrs[corrIx][i][j].GetPIndex(), corrs[corrIx][i][j].GetQIndex()));
 				}
 			}	
 
@@ -405,7 +405,7 @@ namespace wustl_mm {
 						}
 					}
 				}
-				helixDistancesSorted.push_back(tuple<int, int, int>(ind1, ind2, ind3));
+				helixDistancesSorted.push_back(boost::tuple<int, int, int>(ind1, ind2, ind3));
 			}			
 
 		}
