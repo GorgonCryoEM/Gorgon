@@ -92,7 +92,7 @@ add_custom_target(Gorgon
         COMMAND ${CMAKE_COMMAND} -DCOMPONENT=Gorgon -P cmake_install.cmake
         )
 
-install(CODE "execute_process(COMMAND ${PYTHON_EXECUTABLE} ${python_site-packages}/pip install --upgrade -r ${CMAKE_SOURCE_DIR}/requirements.txt
+install(CODE "execute_process(COMMAND ${PYTHON_EXECUTABLE} ${Python_SITE-PACKAGES}/pip install --upgrade -r ${CMAKE_SOURCE_DIR}/requirements.txt
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR})"
     COMPONENT "Python-Modules"
     )
