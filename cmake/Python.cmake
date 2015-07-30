@@ -1,13 +1,4 @@
-set(CMAKE_PREFIX_PATH ${python_install_prefix})
 find_package(PythonInterp)
-
-find_library(PYTHON_LIBRARY
-                name python
-                PATHS ${python_install_prefix}
-                NO_DEFAULT_PATH
-                )
-
-set(CMAKE_PREFIX_PATH ${python_install_prefix})
 find_package(PythonLibs)
 
 #list(APPEND GORGON_LIBRARIES    ${PYTHON_LIBRARY}    )
