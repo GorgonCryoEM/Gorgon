@@ -24,9 +24,6 @@ else()
     set( GORGON_TARGET_ARCH 32 CACHE INTERNAL "Target architecture")
 endif()
 
-option(EXTERNAL_LIBS_BUILD         "Build external libraries" OFF)
-option(LOG_EXTERNAL_LIBRARY_BUILDS "Log output of external library builds" ON )
-
 ADD_LIBRARY(pyGORGON MODULE Gorgon/src_cpp/LibPyGorgon.cpp)
 
 # --------------------------------------------------------------------
