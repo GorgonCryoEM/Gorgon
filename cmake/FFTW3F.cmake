@@ -1,11 +1,3 @@
-external_project_vars(
-        ""
-        ${GORGON_EXTERNAL_LIBRARIES_DIR}/FFTW/fftw-3.3.4-source
-        "./configure;--prefix=${fftw3f_install_prefix};--enable-shared;--enable-float"
-        "${CMAKE_MAKE_PROGRAM};-j${NUMBER_OF_PARALLEL_JOBS}"
-        "${CMAKE_MAKE_PROGRAM};install"
-    )
-
 OPTION(ENABLE_FFTW3 "enable fftw 3 support" ON)
 OPTION(ENABLE_FFTW_PLAN_CACHING "enable fftw caching" ON)
 
