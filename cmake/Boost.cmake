@@ -12,22 +12,6 @@ foreach(comp ${boost_components})
     list(APPEND boost_options --with-${comp})
 endforeach()
 
-if( UNIX )
-    set( Boost_Bootstrap_CMD ./bootstrap.sh )
-    set( Boost_b2_CMD ./b2 )
-elseif(WIN32 )
-    set( Boost_Bootstrap_CMD bootstrap.bat )
-    set( Boost_b2_CMD b2.exe )
-endif()
-
-external_project_vars(
-        Python
-        http://downloads.sourceforge.net/project/boost/boost/1.58.0/boost_1_58_0.tar.gz
-        "${Boost_Bootstrap_CMD};--with-python=${PYTHON_EXECUTABLE}"
-        "${Boost_b2_CMD};-j${NUMBER_OF_PARALLEL_JOBS};${boost_options}"
-        "${Boost_b2_CMD};install;-j${NUMBER_OF_PARALLEL_JOBS};--prefix=${boost_install_prefix};${boost_options}"
-    )
-
 # Fails miserably on Linux without this
 set(Boost_NO_BOOST_CMAKE ON)
 
