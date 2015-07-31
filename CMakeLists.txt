@@ -45,6 +45,7 @@ foreach(proj ${EXTERNAL_PROJECTS_BUILD})
 endforeach()
 # --------------------------------------------------------------------
 SET(LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/lib${GORGON_OS_VERSION}/x${GORGON_TARGET_ARCH})
+SET(CMAKE_INSTALL_PREFIX ${LIBRARY_OUTPUT_PATH} CACHE PATH "" FORCE)
 if(ENABLE_CMAKE_DEBUG_OUTPUT)
     message("LIBRARY_OUTPUT_PATH= ${LIBRARY_OUTPUT_PATH}")
 endif()
@@ -90,15 +91,6 @@ install(TARGETS pyGORGON
 
 add_custom_target(Gorgon
         COMMAND ${CMAKE_COMMAND} -DCOMPONENT=Gorgon -P cmake_install.cmake
-        )
-
-install(CODE "execute_process(COMMAND ${PYTHON_EXECUTABLE} ${python_site-packages}/pip install --upgrade -r ${CMAKE_SOURCE_DIR}/requirements.txt
-    WORKING_DIRECTORY ${CMAKE_BINARY_DIR})"
-    COMPONENT "Python-Modules"
-    )
-
-add_custom_target(Python-Modules
-        COMMAND ${CMAKE_COMMAND} -DCOMPONENT=Python-Modules -P cmake_install.cmake
         )
 # --------------------------------------------------------------------
 #Package Step
