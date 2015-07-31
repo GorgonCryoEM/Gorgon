@@ -25,14 +25,12 @@ else()
 endif()
 
 ADD_LIBRARY(pyGORGON MODULE Gorgon/src_cpp/LibPyGorgon.cpp)
-
 # --------------------------------------------------------------------
 # Find dependencies
 # --------------------------------------------------------------------
-
 include(cmake/functions.cmake)
 
-set( EXTERNAL_PROJECTS_BUILD
+set( EXTERNAL_PROJECTS
         OpenGL
         GLUT
         Python
@@ -40,7 +38,7 @@ set( EXTERNAL_PROJECTS_BUILD
         FFTW3F
         )
 
-foreach(proj ${EXTERNAL_PROJECTS_BUILD})
+foreach(proj ${EXTERNAL_PROJECTS})
     include(cmake/${proj}.cmake)
 endforeach()
 # --------------------------------------------------------------------
