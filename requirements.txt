@@ -1,0 +1,7 @@
+altgraph>=0.12
+macholib>=1.7
+modulegraph>=0.12.1
+pip>=7.1.0
+py2app>=0.9
+PyOpenGL>=3.1.0
+PyOpenGL-accelerate>=3.1.0

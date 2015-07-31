@@ -11,8 +11,10 @@
 
 
 #include <iostream>
-#include <GL/glut.h>
-#include <GL/glext.h>
+#include <glut.h>
+#ifndef __APPLE__
+	#include <glExt.h>
+#endif
 #include <string>
 #include <GraphMatch/VectorMath.h>
 #include "Renderer.h"
