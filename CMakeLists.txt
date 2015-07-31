@@ -99,25 +99,48 @@ if(ENABLE_CMAKE_DEBUG_OUTPUT)
       message("LIBS='${dir}'")
     endforeach()
 endif()
-
-set(CMAKE_INSTALL_PREFIX $ENV{HOME}/Gorgon/)
-
-if(ENABLE_CMAKE_DEBUG_OUTPUT)
-    message("CMAKE_INSTALL_PREFIX= ${CMAKE_INSTALL_PREFIX}")
-endif()
+# --------------------------------------------------------------------
+#Install Step
+# --------------------------------------------------------------------
+# --------------------------------------------------------------------
+# This is, actually, an install step, but runs at build time.
+# Adding the loop into install(CODE ...) seems to run only those lines, not the whole CMakeLists.txt
+# Thus, the functions called in *.cmake are not defined at that stage
+# It is not possible to add dependencies to install target as it is not a real target
+# --------------------------------------------------------------------
 
 install(TARGETS pyGORGON
-         LIBRARY
-         DESTINATION ${CMAKE_BINARY_DIR}/python/Python.framework/Versions/2.7/lib/python2.7/lib-dynload)
+        LIBRARY
+        DESTINATION ${python_lib-dynload}
+        COMPONENT "Gorgon"
+        )
+
+add_custom_target(Gorgon
+        COMMAND ${CMAKE_COMMAND} -DCOMPONENT=Gorgon -P cmake_install.cmake
+        )
 
 foreach(proj ${EXTERNAL_PROJECTS_INSTALL})
-    include(cmake/${proj}.cmake)
+    include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/${proj}.cmake)
 endforeach()
 
-
-install(CODE "execute_process(COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_BINARY_DIR}/python/Python.framework/Versions/2.7/lib/python2.7/site-packages/pip install --upgrade pip py2app PyOpenGL PyOpenGL_accelerate
+install(CODE "execute_process(COMMAND ${PYTHON_EXECUTABLE} ${python_site-packages}/pip install --upgrade -r ${CMAKE_SOURCE_DIR}/requirements.txt
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR})"
+    COMPONENT "Python-Modules"
     )
-install(CODE "execute_process(COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_SOURCE_DIR}/setup.py py2app --bdist-base=${CMAKE_BINARY_DIR}/test/build  --dist-dir=${CMAKE_BINARY_DIR}/test/dist
+
+add_custom_target(Python-Modules
+        COMMAND ${CMAKE_COMMAND} -DCOMPONENT=Python-Modules -P cmake_install.cmake
+        )
+# --------------------------------------------------------------------
+#Package Step
+# --------------------------------------------------------------------
+install(CODE "execute_process(COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_SOURCE_DIR}/setup.py py2app
+                                                    --bdist-base=${CMAKE_BINARY_DIR}/package/build
+                                                    --dist-dir=${CMAKE_BINARY_DIR}/package/dist
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/Gorgon/src_py/)"
+    COMPONENT "Package-Dist"
     )
+
+add_custom_target(Package-Dist
+        COMMAND ${CMAKE_COMMAND} -DCOMPONENT=Package-Dist -P cmake_install.cmake
+        )
