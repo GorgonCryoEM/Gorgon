@@ -12,9 +12,8 @@ foreach(comp ${boost_components})
     list(APPEND boost_options --with-${comp})
 endforeach()
 
-# Fails miserably on Linux without this
-set(Boost_NO_BOOST_CMAKE ON)
-
+#TODO: remove if not needed on Linux anymore
+#set(Boost_NO_BOOST_CMAKE ON)
 set(Boost_USE_MULTITHREADED ON)
 
 find_package(Boost COMPONENTS ${boost_components})
