@@ -1,0 +1,4 @@
+find_package(PythonInterp)
+find_package(PythonLibs)
+
+update_libs_includes(PYTHON_LIBRARY PYTHON_INCLUDE_DIR)
