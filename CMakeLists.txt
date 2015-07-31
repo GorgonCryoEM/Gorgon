@@ -24,56 +24,26 @@ else()
     set( GORGON_TARGET_ARCH 32 CACHE INTERNAL "Target architecture")
 endif()
 
-set(GORGON_EXTERNAL_LIBRARIES_DOWNLOAD_DIR ${CMAKE_BINARY_DIR}/../Gorgon-Downloads CACHE PATHNAME "Download directory")
-option(EXTERNAL_LIBS_BUILD         "Build external libraries" OFF)
-option(LOG_EXTERNAL_LIBRARY_BUILDS "Log output of external library builds" ON )
-
 ADD_LIBRARY(pyGORGON MODULE Gorgon/src_cpp/LibPyGorgon.cpp)
-
 # --------------------------------------------------------------------
 # Find dependencies
 # --------------------------------------------------------------------
-
 include(cmake/functions.cmake)
 
-set( EXTERNAL_PROJECTS_DOWNLOAD
+set( EXTERNAL_PROJECTS
+        OpenGL
+        GLUT
         Python
         Boost
         FFTW3F
         )
 
-set( EXTERNAL_PROJECTS_BUILD
-        OpenGL
-        GLUT
-        Qt4
-        ${EXTERNAL_PROJECTS_DOWNLOAD}
-        )
-
-set( EXTERNAL_PROJECTS_INSTALL
-        SIP
-        PyQt4
-        )
-
-foreach(proj ${EXTERNAL_PROJECTS_BUILD})
+foreach(proj ${EXTERNAL_PROJECTS})
     include(cmake/${proj}.cmake)
 endforeach()
 # --------------------------------------------------------------------
-# Download-All Step
-# --------------------------------------------------------------------
-list(APPEND EXTERNAL_PROJECTS_DOWNLOAD ${EXTERNAL_PROJECTS_INSTALL})
-
-foreach(proj ${EXTERNAL_PROJECTS_DOWNLOAD})
-    list(APPEND downs ${proj}-download) 
-endforeach()
-
-add_custom_target(Download-All
-                 DEPENDS ${downs}
-#                COMMAND
-                COMMENT "Download-All Step"
-#                VERBATIM
-                )
-# --------------------------------------------------------------------
 SET(LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/lib${GORGON_OS_VERSION}/x${GORGON_TARGET_ARCH})
+SET(CMAKE_INSTALL_PREFIX ${LIBRARY_OUTPUT_PATH} CACHE PATH "" FORCE)
 if(ENABLE_CMAKE_DEBUG_OUTPUT)
     message("LIBRARY_OUTPUT_PATH= ${LIBRARY_OUTPUT_PATH}")
 endif()
@@ -113,25 +83,12 @@ endif()
 
 install(TARGETS pyGORGON
         LIBRARY
-        DESTINATION ${python_lib-dynload}
+        DESTINATION ${CMAKE_SOURCE_DIR}/Gorgon/src_py/
         COMPONENT "Gorgon"
         )
 
 add_custom_target(Gorgon
         COMMAND ${CMAKE_COMMAND} -DCOMPONENT=Gorgon -P cmake_install.cmake
-        )
-
-foreach(proj ${EXTERNAL_PROJECTS_INSTALL})
-    include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/${proj}.cmake)
-endforeach()
-
-install(CODE "execute_process(COMMAND ${PYTHON_EXECUTABLE} ${python_site-packages}/pip install --upgrade -r ${CMAKE_SOURCE_DIR}/requirements.txt
-    WORKING_DIRECTORY ${CMAKE_BINARY_DIR})"
-    COMPONENT "Python-Modules"
-    )
-
-add_custom_target(Python-Modules
-        COMMAND ${CMAKE_COMMAND} -DCOMPONENT=Python-Modules -P cmake_install.cmake
         )
 # --------------------------------------------------------------------
 #Package Step
