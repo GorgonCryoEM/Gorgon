@@ -1,4 +1,12 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 3.0)
+PROJECT(Gorgon
+        VERSION 2.2.1
+        LANGUAGES CXX
+        )
+
+configure_file(${CMAKE_SOURCE_DIR}/Gorgon/src_py/gorgon.pyw.in
+                ${CMAKE_SOURCE_DIR}/Gorgon/src_py/gorgon.pyw
+               )
 
 include(cmake/Debug.cmake)
 include(cmake/MacOSX.cmake)
