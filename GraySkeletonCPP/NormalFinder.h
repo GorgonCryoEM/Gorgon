@@ -230,4 +230,4 @@ namespace wustl_mm {
 	};
 };
 
-#endif NORMAL_FINDER_H
+#endif //NORMAL_FINDER_H
