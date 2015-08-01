@@ -26,4 +26,4 @@ Matcher2Helix::Matcher2Helix(int length, int node1, int node2) {
 	this->node1 = node1;
 	this->node2 = node2;
 }
-#endif;
+#endif
