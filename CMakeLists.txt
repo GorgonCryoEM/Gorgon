@@ -115,3 +115,15 @@ install(CODE "execute_process(COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_SOURCE_DIR}/s
 add_custom_target(Package-Dist
         COMMAND ${CMAKE_COMMAND} -DCOMPONENT=Package-Dist -P cmake_install.cmake
         )
+
+install(CODE "execute_process(
+#COMMAND ${CMAKE_COMMAND} -E remove package/dist/Gorgon.app/Contents/Resources/lib/python2.7/lib-dynload/libpyGORGON.so
+COMMAND ${CMAKE_COMMAND} -E rename package/dist/Gorgon.app/Contents/Frameworks/libpyGORGON.so package/dist/Gorgon.app/Contents/Resources/lib/python2.7/lib-dynload/libpyGORGON.so
+#COMMAND ${CMAKE_COMMAND} -E remove package/dist/Gorgon.app/Contents/Frameworks/libpyGORGON.so
+    WORKING_DIRECTORY ${CMAKE_BINARY_DIR})"
+    COMPONENT "Package-Dist-Post"
+    )
+
+add_custom_target(Package-Dist-Post
+        COMMAND ${CMAKE_COMMAND} -DCOMPONENT=Package-Dist-Post -P cmake_install.cmake
+        )
