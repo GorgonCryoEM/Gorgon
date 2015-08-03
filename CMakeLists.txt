@@ -8,6 +8,10 @@ configure_file(${CMAKE_SOURCE_DIR}/Gorgon/src_py/gorgon.pyw.in
                 ${CMAKE_SOURCE_DIR}/Gorgon/src_py/gorgon.pyw
                )
 
+configure_file(${CMAKE_SOURCE_DIR}/setup.py.in
+                ${CMAKE_SOURCE_DIR}/setup.py
+               )
+
 include(cmake/Debug.cmake)
 include(cmake/MacOSX.cmake)
 include(cmake/Windows.cmake)
@@ -66,6 +70,10 @@ list(APPEND GORGON_INCLUDE_DIRS
 include_directories(${GORGON_INCLUDE_DIRS})
 target_link_libraries(pyGORGON ${GORGON_LIBRARIES})
 
+#set(cxx11_flags "-std=c++0x --stdlib=libc++")
+#list( APPEND CMAKE_CXX_FLAGS           ${cxx11_flags})
+#list( APPEND CMAKE_SHARED_LINKER_FLAGS ${cxx11_flags})
+
 if(ENABLE_CMAKE_DEBUG_OUTPUT)
     get_property(dirs DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY INCLUDE_DIRECTORIES)
 
@@ -110,4 +118,15 @@ install(CODE "execute_process(COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_SOURCE_DIR}/s
 
 add_custom_target(Package-Dist
         COMMAND ${CMAKE_COMMAND} -DCOMPONENT=Package-Dist -P cmake_install.cmake
+        )
+
+install(CODE "execute_process(COMMAND ${CMAKE_COMMAND} -E rename
+                                        package/dist/Gorgon.app/Contents/Frameworks/libpyGORGON.so
+                                        package/dist/Gorgon.app/Contents/Resources/lib/python2.7/lib-dynload/libpyGORGON.so
+    WORKING_DIRECTORY ${CMAKE_BINARY_DIR})"
+    COMPONENT "Package-Dist-Post"
+    )
+
+add_custom_target(Package-Dist-Post
+        COMMAND ${CMAKE_COMMAND} -DCOMPONENT=Package-Dist-Post -P cmake_install.cmake
         )
