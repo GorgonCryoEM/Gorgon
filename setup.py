@@ -51,5 +51,6 @@ else:
 setup(
     data_files=DATA_FILES,
     name="Gorgon",
+    version="2.2.2",
     **extra_options
 )
