@@ -1,0 +1,1 @@
+../../../groel-demo/densityMap-skeleton.mrc
