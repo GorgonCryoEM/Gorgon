@@ -47,5 +47,5 @@ if __name__ == '__main__':
     window.showMaximized()
     splash.finish(window)
     window.loadPlugins()
-    sys.exit(app.exec_())
+    app.exec_()
     
