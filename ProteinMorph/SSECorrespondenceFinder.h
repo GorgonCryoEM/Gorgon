@@ -186,7 +186,7 @@ namespace wustl_mm {
 			helices2.clear();
 		}
 
-		void SSECorrespondenceFinder::InitializeConstants(float rigidityThreshold, float featureChangeThreshold, float rigidityAngleCoeff, float rigidityCentroidDistanceCoeff, float rigidityFeatureChangeCoeff, float rigidComponentCoeff, float intraComponentCoeff, float jointAngleThreshold, float dihedralAngleThreshold, float centroidDistanceThreshold, unsigned int maxSolutionCount, float maxCostMatrixError) {
+		void SSECorrespondenceFinder::InitializeConstants(float rigidityThreshold, float featureChangeThreshold, float rigidityAngleCoeff, float rigidityCentroidDistanceCoeff, float featureChangeCoeff, float rigidComponentCoeff, float intraComponentCoeff, float jointAngleThreshold, float dihedralAngleThreshold, float centroidDistanceThreshold, unsigned int maxSolutionCount, float maxCostMatrixError) {
 			this->rigidityThreshold = rigidityThreshold;
 			this->featureChangeThreshold = featureChangeThreshold;
 			this->rigidityAngleCoeff = rigidityAngleCoeff;
