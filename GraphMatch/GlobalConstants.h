@@ -21,6 +21,7 @@
 
 #include <cstdio>
 #include <cstdlib>
+#include <iostream>
 
 namespace wustl_mm {
 	namespace GraphMatch {
@@ -480,64 +481,64 @@ namespace wustl_mm {
 		void DisplayConstants()
 		{
 		#ifdef VERBOSE
-			printf("Constants...\n");
-			printf("\tMAXIMUM_DISTANCE_SHEET_SKELETON  = %lf\n", MAXIMUM_DISTANCE_SHEET_SKELETON);
-			printf("\tMINIMUM_SHEET_SIZE               = %ld\n", MINIMUM_SHEET_SIZE);
-			printf("\tEUCLIDEAN_DISTANCE_THRESHOLD     = %lf\n", EUCLIDEAN_DISTANCE_THRESHOLD);
-			printf("\tBORDER_MARGIN_THRESHOLD          = %ld\n", BORDER_MARGIN_THRESHOLD);
-			printf("\tNORMALIZE_GRAPHS                 = %ld\n", NORMALIZE_GRAPHS);
-			printf("\tTRANSLATE_VOLUMETRIC_COORDINATES = %ld\n", TRANSLATE_VOLUMETRIC_COORDINATES);
-			printf("\tMISSING_HELIX_PENALTY            = %lf\n", MISSING_HELIX_PENALTY);
-			printf("\tMISSING_SHEET_PENALTY            = %lf\n", MISSING_SHEET_PENALTY);
-			printf("\tMISSING_HELIX_PENALTY_SCALED     = %lf\n", MISSING_HELIX_PENALTY_SCALED);
-			printf("\tMISSING_SHEET_PENALTY_SCALED     = %lf\n", MISSING_SHEET_PENALTY_SCALED);
-			printf("\tEUCLIDEAN_LOOP_PENALTY           = %lf\n", EUCLIDEAN_LOOP_PENALTY);
-			printf("\tSTART_END_MISSING_HELIX_PENALTY  = %lf\n", START_END_MISSING_HELIX_PENALTY);
-			printf("\tHELIX_WEIGHT_COEFFICIENT         = %lf\n", HELIX_WEIGHT_COEFFICIENT);
-			printf("\tLOOP_WEIGHT_COEFFICIENT          = %lf\n", LOOP_WEIGHT_COEFFICIENT);
-			printf("\tSHEET_WEIGHT_COEFFICIENT         = %lf\n", SHEET_WEIGHT_COEFFICIENT);
-			printf("\tSHEET_CAPACITY_COEFFICIENT       = %lf\n", SHEET_CAPACITY_COEFFICIENT);
-			printf("\tSHEET_MERGE_THRESHOLD            = %lf\n", SHEET_MERGE_THRESHOLD);
-			printf("\tMISSING_HELIX_LENGTH             = %lf\n", MISSING_HELIX_LENGTH);
-			printf("\tMISSING_SHEET_LENGTH             = %lf\n", MISSING_SHEET_LENGTH);
-			printf("\tSHEET_SELF_LOOP_LENGTH           = %lf\n", SHEET_SELF_LOOP_LENGTH);
-			printf("\tCOST_FUNCTION                    = %ld -- 1 : |a-b|       2 : |a-b|/(a+b)      3:|a-b|^2\n", COST_FUNCTION);
-			printf("\tINCLUDE_STRANDS                  = %ld -- 0 : no       1 : yes\n", INCLUDE_STRANDS);
-			printf("\tVOXEL_SIZE                       = %lf\n", VOXEL_SIZE);
-			printf("\tMISSING_HELIX_COUNT              = %ld\n", MISSING_HELIX_COUNT);
-			printf("\tMISSING_SHEET_COUNT              = %ld\n", MISSING_SHEET_COUNT);
-			printf("\tEUCLIDEAN_VOXEL_TO_PDB_RATIO     = %lf\n", EUCLIDEAN_VOXEL_TO_PDB_RATIO);
-			printf("\tNODE_CONSTRAINTS                 = ");
+			std::cout << "Constants...\n";
+			std::cout << "\tMAXIMUM_DISTANCE_SHEET_SKELETON  = " << MAXIMUM_DISTANCE_SHEET_SKELETON                                         <<std::endl;
+			std::cout << "\tMINIMUM_SHEET_SIZE               = " << MINIMUM_SHEET_SIZE                                                      <<std::endl;
+			std::cout << "\tEUCLIDEAN_DISTANCE_THRESHOLD     = " << EUCLIDEAN_DISTANCE_THRESHOLD                                            <<std::endl;
+			std::cout << "\tBORDER_MARGIN_THRESHOLD          = " << BORDER_MARGIN_THRESHOLD                                                 <<std::endl;
+			std::cout << "\tNORMALIZE_GRAPHS                 = " << NORMALIZE_GRAPHS                                                        <<std::endl;
+			std::cout << "\tTRANSLATE_VOLUMETRIC_COORDINATES = " << TRANSLATE_VOLUMETRIC_COORDINATES                                        <<std::endl;
+			std::cout << "\tMISSING_HELIX_PENALTY            = " << MISSING_HELIX_PENALTY                                                   <<std::endl;
+			std::cout << "\tMISSING_SHEET_PENALTY            = " << MISSING_SHEET_PENALTY                                                   <<std::endl;
+			std::cout << "\tMISSING_HELIX_PENALTY_SCALED     = " << MISSING_HELIX_PENALTY_SCALED                                            <<std::endl;
+			std::cout << "\tMISSING_SHEET_PENALTY_SCALED     = " << MISSING_SHEET_PENALTY_SCALED                                            <<std::endl;
+			std::cout << "\tEUCLIDEAN_LOOP_PENALTY           = " << EUCLIDEAN_LOOP_PENALTY                                                  <<std::endl;
+			std::cout << "\tSTART_END_MISSING_HELIX_PENALTY  = " << START_END_MISSING_HELIX_PENALTY                                         <<std::endl;
+			std::cout << "\tHELIX_WEIGHT_COEFFICIENT         = " << HELIX_WEIGHT_COEFFICIENT                                                <<std::endl;
+			std::cout << "\tLOOP_WEIGHT_COEFFICIENT          = " << LOOP_WEIGHT_COEFFICIENT                                                 <<std::endl;
+			std::cout << "\tSHEET_WEIGHT_COEFFICIENT         = " << SHEET_WEIGHT_COEFFICIENT                                                <<std::endl;
+			std::cout << "\tSHEET_CAPACITY_COEFFICIENT       = " << SHEET_CAPACITY_COEFFICIENT                                              <<std::endl;
+			std::cout << "\tSHEET_MERGE_THRESHOLD            = " << SHEET_MERGE_THRESHOLD                                                   <<std::endl;
+			std::cout << "\tMISSING_HELIX_LENGTH             = " << MISSING_HELIX_LENGTH                                                    <<std::endl;
+			std::cout << "\tMISSING_SHEET_LENGTH             = " << MISSING_SHEET_LENGTH                                                    <<std::endl;
+			std::cout << "\tSHEET_SELF_LOOP_LENGTH           = " << SHEET_SELF_LOOP_LENGTH                                                  <<std::endl;
+			std::cout << "\tCOST_FUNCTION                    = " << COST_FUNCTION    <<" -- 1 : |a-b|       2 : |a-b|/(a+b)      3:|a-b|^2" <<std::endl;
+			std::cout << "\tINCLUDE_STRANDS                  = " << INCLUDE_STRANDS  <<" -- 0 : no       1 : yes"                           <<std::endl;
+			std::cout << "\tVOXEL_SIZE                       = " << VOXEL_SIZE                                                              <<std::endl;
+			std::cout << "\tMISSING_HELIX_COUNT              = " << MISSING_HELIX_COUNT                                                     <<std::endl;
+			std::cout << "\tMISSING_SHEET_COUNT              = " << MISSING_SHEET_COUNT                                                     <<std::endl;
+			std::cout << "\tEUCLIDEAN_VOXEL_TO_PDB_RATIO     = " << EUCLIDEAN_VOXEL_TO_PDB_RATIO                                            <<std::endl;
+			std::cout << "\tNODE_CONSTRAINTS                 = ";
 			for(int i = 0 ; i < MAX_NODES; i++) {
 				if(allowedConstraintCount[i] > 0) {
-					printf("(%d -", i+1);
+					std::cout<<"("<<i+1<<" -";
 					for(unsigned int j = 0; j < allowedConstraintCount[i]; j++) {
-						printf(" %d", allowedConstraintCollection[i][j]);
+						std::cout<<" "<< allowedConstraintCollection[i][j];
 					}
-					printf(") ");				
+					std::cout<<") ";
 				}
 			}
-			printf("\n\tNODE_MISMATCHES                  = ");
+			std::cout<<"\n\tNODE_MISMATCHES                  = ";
 			for(int i = 0 ; i < MAX_NODES; i++) {
 				int x = notAllowedConstraintCount[i];
 				if(x > 0) {
-					printf("(%d -", i+1);
+					std::cout<<"("<<i+1<<" -";
 					for(int j = 0; j < x; j++) {
-						printf(" %d", notAllowedConstraintCollection[i][j]);
+						std::cout<<" "<<notAllowedConstraintCollection[i][j];
 					}
-					printf(") ");				
+					std::cout<<") ";
 				}
 			}
-			printf("\n\tSOLUTION                         = ");
+			std::cout<<"\n\tSOLUTION                         = ";
 			for(int i = 0 ; i < MAX_NODES; i++) {
 				if(SOLUTION[i] != -2) {
-					printf("%d ", SOLUTION[i]);
+					std::cout<<SOLUTION[i]<<" ";
 				} else {
-					printf(".. ");
+					std::cout<<".. ";
 				}
 			}
 
-			printf("\n\n");
+			std::cout<<"\n\n";
 		#endif //VERBOSE
 		}
 
