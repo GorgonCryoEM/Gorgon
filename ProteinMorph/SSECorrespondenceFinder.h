@@ -602,7 +602,7 @@ namespace wustl_mm {
 			
 			tm.PushCurrentTime();
 			vector< set<unsigned long long> > allCliques = parentGraph.GetAllCliquesTriangleApprox(smallestCliqueSize);
-			printf("(*%d cliques found ", allCliques.size());
+			printf("(*%d cliques found ", (int)allCliques.size());
 			tm.PopAndDisplayTime("%f seconds!*)\n");
 
 			tm.PushCurrentTime();
