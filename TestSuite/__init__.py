@@ -1,4 +1,4 @@
-import sys, os
+import sys, os, inspect
 
 topdir = os.path.abspath(inspect.getfile(inspect.currentframe()))
 topdir = os.path.join(os.path.dirname(topdir),os.pardir)
