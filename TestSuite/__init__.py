@@ -3,7 +3,9 @@ import sys, os
 topdir = os.path.abspath(inspect.getfile(inspect.currentframe()))
 topdir = os.path.join(os.path.dirname(topdir),os.pardir)
 topdir = os.path.abspath(topdir)
-sys.path.append(os.path.join(topdir,'Gorgon','src_py'))
+
+gorgon_path = sys.path.append(os.path.join(topdir,'Gorgon','src_py'))
+sys.path.append(gorgon_path)
 
 from PyQt4 import QtGui, QtCore
 from main_window_form import MainWindowForm
