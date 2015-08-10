@@ -1,18 +1,4 @@
-###########################################################################################################
-# Following is a hack to overcome a PyOpenGL bug with P2EXE Should be removed when py2exe adds egg support
 import sys, os
-pathname = os.path.abspath(os.path.dirname(sys.argv[0]))
-if(sys.platform == 'win32'):
-    sys.path.append(pathname)
-elif(sys.platform == 'darwin'):
-    if os.environ.has_key('RESOURCEPATH') :
-        sys.path = [os.path.join(os.environ['RESOURCEPATH'], 'lib', 'python2.7', 'lib-dynload')] + sys.path
-###########################################################################################################
-from ctypes import util
-try:
-    from OpenGL.platform import win32
-except AttributeError:
-    pass
 
 topdir = os.path.join(pathname, os.pardir)
 topdir = os.path.abspath(topdir)
