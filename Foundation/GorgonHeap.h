@@ -82,11 +82,11 @@ namespace wustl_mm {
 				unsigned int properRoot;
 
 				properRoot = rootIndex;
-				if((left < size) && (isMaxHeap && ((values[left] > values[properRoot])) || (!isMaxHeap && (values[left] < values[properRoot])))) {
+				if((left < size) && ((isMaxHeap && (values[left] > values[properRoot])) || (!isMaxHeap && (values[left] < values[properRoot])))) {
 					properRoot = left;
 				}
 
-				if((right < size) && (isMaxHeap && ((values[right] > values[properRoot])) || (!isMaxHeap && (values[right] < values[properRoot])))) {
+				if((right < size) && ((isMaxHeap && (values[right] > values[properRoot])) || (!isMaxHeap && (values[right] < values[properRoot])))) {
 					properRoot = right;
 				}
 
