@@ -48,4 +48,3 @@ if __name__ == '__main__':
     splash.finish(window)
     window.loadPlugins()
     sys.exit(app.exec_())
-    
