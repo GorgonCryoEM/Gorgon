@@ -1,8 +1,3 @@
-# Copyright (C) 2005-2008 Washington University in St Louis, Baylor College of Medicine.  All rights reserved
-# Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
-# Description:   The Gorgon application 
-
-
 ###########################################################################################################
 # Following is a hack to overcome a PyOpenGL bug with P2EXE Should be removed when py2exe adds egg support
 import sys, os
@@ -28,7 +23,6 @@ from main_window_form import MainWindowForm
 
 import time
 
-
 # if __name__ == '__main__':
 gorgonVersion = '2.2.2'
 app = QtGui.QApplication(sys.argv)    
@@ -52,4 +46,3 @@ window.showMaximized()
 splash.finish(window)
 window.loadPlugins()
 #     app.exec_()
-    
