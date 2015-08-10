@@ -1,6 +1,7 @@
 import sys, os
 
-topdir = os.path.join(pathname, os.pardir)
+topdir = os.path.abspath(inspect.getfile(inspect.currentframe()))
+topdir = os.path.join(os.path.dirname(topdir),os.pardir)
 topdir = os.path.abspath(topdir)
 sys.path.append(os.path.join(topdir,'Gorgon','src_py'))
 
