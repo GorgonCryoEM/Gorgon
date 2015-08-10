@@ -19,6 +19,10 @@ try:
 except AttributeError:
     pass
 
+topdir = os.path.join(pathname, os.pardir)
+topdir = os.path.abspath(topdir)
+sys.path.append(os.path.join(topdir,'Gorgon','src_py'))
+
 from PyQt4 import QtGui, QtCore
 from main_window_form import MainWindowForm
 
@@ -36,7 +40,7 @@ elif(sys.platform == 'darwin'):
 else :
     app.setStyleSheet("* { font-size: 10px }")
     
-pixmap = QtGui.QPixmap(pathname + "/splash.png")
+pixmap = QtGui.QPixmap(os.path.join(topdir, "Gorgon", "design","splash.png"))
 splash = QtGui.QSplashScreen(pixmap, QtCore.Qt.WindowStaysOnTopHint)
 splash.setMask(pixmap.mask())
 splash.show()
