@@ -340,7 +340,7 @@ namespace wustl_mm {
 			float score;
 			for(unsigned int i = 0; i < atomVolumePositions.size(); i++) {
 				index = maskVol->getIndex(atomVolumePositions[i].X() + offset, atomVolumePositions[i].Y() + offset, atomVolumePositions[i].Z() + offset);
-				eigens[index];
+
 				x = eigens[index].values[0];
 				y = eigens[index].values[1];
 				z = eigens[index].values[2];
