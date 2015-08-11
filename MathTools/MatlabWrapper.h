@@ -134,4 +134,4 @@ namespace wustl_mm {
 }
 
 
-#endif MATLAB_WRAPPER_H
+#endif //MATLAB_WRAPPER_H
