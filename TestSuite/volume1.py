@@ -1,4 +1,3 @@
-from TestSuite import *
 import TestSuite
 
 pathname = TestSuite.__path__[0]+'/volume/'
