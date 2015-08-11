@@ -1,4 +1,4 @@
-__all__=['volume1','skeletonization', 'skeleton1']
+__all__=['volume1','skeletonization', 'skeleton1', 'sse']
 
 import sys, os, inspect
 
