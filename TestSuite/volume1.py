@@ -22,7 +22,7 @@ def downsample():
     volumeViewer.renderer.downsampleVolume()
     volumeViewer.renderer.saveFile(pathname +'downsampled_vol_test.mrc')
 
-def lapl():
+def laplacian_smooth():
     laplacianSmoother = volumeViewer.laplacianSmoother
     
     volumeViewer.loadDataFromFile(pathname +'densityMap.mrc')
