@@ -10477,7 +10477,7 @@ namespace wustl_mm {
 
 			printf("Writing...") ;
 			segvol->toMRCFile( mrcfile ) ;
-			segvol->toMRCFile( "../colors.mrc" ) ;
+//			segvol->toMRCFile( "../colors.mrc" ) ;
 			printf("Done.\n") ;
 		
 			printf("Segmentation...") ;
