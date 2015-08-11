@@ -3,15 +3,14 @@ import TestSuite
 
 pathname = TestSuite.__path__[0]+'/volume/'
 
-def normalize():
-    volumeViewer = TestSuite.window.windowManager.volumeViewer
-     
+volumeViewer = TestSuite.window.windowManager.volumeViewer
+
+def normalize():     
     volumeViewer.loadDataFromFile(pathname +'densityMap.mrc')
     volumeViewer.renderer.normalizeVolume()
     volumeViewer.renderer.saveFile(pathname +'normalized_vol_test.mrc')
 
 def crop():
-    volumeViewer = TestSuite.window.windowManager.volumeViewer
     cropper      = volumeViewer.cropper
     
     volumeViewer.loadDataFromFile(pathname +'densityMap.mrc')
@@ -19,14 +18,11 @@ def crop():
     volumeViewer.renderer.saveFile(pathname +'cropped_vol_test.mrc')
 
 def downsample():
-    volumeViewer = TestSuite.window.windowManager.volumeViewer
-    
     volumeViewer.loadDataFromFile(pathname +'densityMap.mrc')
     volumeViewer.renderer.downsampleVolume()
     volumeViewer.renderer.saveFile(pathname +'downsampled_vol_test.mrc')
 
 def lapl():
-    volumeViewer      = TestSuite.window.windowManager.volumeViewer
     laplacianSmoother = volumeViewer.laplacianSmoother
     
     volumeViewer.loadDataFromFile(pathname +'densityMap.mrc')
