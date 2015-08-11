@@ -82,11 +82,11 @@ namespace wustl_mm {
 				unsigned int properRoot;
 
 				properRoot = rootIndex;
-				if((left < size) && (isMaxHeap && ((values[left] > values[properRoot])) || (!isMaxHeap && (values[left] < values[properRoot])))) {
+				if((left < size) && ((isMaxHeap && (values[left] > values[properRoot])) || (!isMaxHeap && (values[left] < values[properRoot])))) {
 					properRoot = left;
 				}
 
-				if((right < size) && (isMaxHeap && ((values[right] > values[properRoot])) || (!isMaxHeap && (values[right] < values[properRoot])))) {
+				if((right < size) && ((isMaxHeap && (values[right] > values[properRoot])) || (!isMaxHeap && (values[right] < values[properRoot])))) {
 					properRoot = right;
 				}
 
@@ -155,7 +155,7 @@ namespace wustl_mm {
 		void GorgonHeap<T>::BuildHeap(vector<T> & values) {
 			this->values.clear();
 			this->values = values;
-			for(unsigned int i = values.size() / 2; i >= 0; i--) {
+			for(int i = (int)values.size() / 2; i >= 0; i--) {
 				Heapify(i);
 			}
 
