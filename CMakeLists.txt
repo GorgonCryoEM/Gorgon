@@ -103,6 +103,12 @@ install(TARGETS pyGORGON
         COMPONENT "Gorgon"
         )
 
+install(TARGETS pyGORGON
+        LIBRARY
+        DESTINATION ${CMAKE_SOURCE_DIR}/TestSuite
+        COMPONENT "Gorgon"
+        )
+
 add_custom_target(Gorgon
         COMMAND ${CMAKE_COMMAND} -DCOMPONENT=Gorgon -P cmake_install.cmake
         )
