@@ -10,6 +10,14 @@ def hello_world():
     """
     print libpygorgon.hello()
 
+def hello():
+    """ Returns Hello World!
+    
+    >>> libpygorgon.hello()
+    'Hello World!'
+    """
+    return libpygorgon.hello()
+
 if __name__ == '__main__':
     import doctest
     doctest.testmod()
