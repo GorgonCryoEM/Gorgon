@@ -89,6 +89,12 @@ install(TARGETS ${gorgon_lib_target_name}
         COMPONENT "Gorgon"
         )
 
+install(TARGETS ${gorgon_lib_target_name}
+        LIBRARY
+        DESTINATION ${CMAKE_BINARY_DIR}/tests/
+        COMPONENT "Gorgon"
+        )
+
 #install(TARGETS pyGORGON
 #        LIBRARY
 #        DESTINATION ${CMAKE_SOURCE_DIR}/TestSuite
