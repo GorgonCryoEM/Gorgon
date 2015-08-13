@@ -104,6 +104,14 @@ install(FILES ${py_srcs}
         COMPONENT "Gorgon"
         )
 
+file(GLOB py_tests ${CMAKE_SOURCE_DIR}/../tests/*.py)
+
+install(FILES ${py_tests}
+        PERMISSIONS OWNER_WRITE OWNER_READ OWNER_EXECUTE GROUP_READ WORLD_READ
+        DESTINATION ${CMAKE_BINARY_DIR}/tests/
+        COMPONENT "Gorgon"
+        )
+
 add_custom_target(Gorgon
         COMMAND ${CMAKE_COMMAND} -DCOMPONENT=Gorgon -P cmake_install.cmake
         )
