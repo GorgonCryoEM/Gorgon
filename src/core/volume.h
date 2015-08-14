@@ -1,3 +1,14 @@
+/*
+ * volume.h
+ *
+ *  Created on: Aug 14, 2015
+ *      Author: shadow_walker
+ */
+
+#ifndef SRC_CORE_VOLUME_H_
+#define SRC_CORE_VOLUME_H_
+
+
 // Copyright (C) 2005-2008 Washington University in St Louis, Baylor College of Medicine.  All rights reserved
 // Author:        Tao Ju (taoju@cse.wustl.edu), Refactored by Sasakthi Abeysinghe (sasakthi.abeysinghe@wustl.edu)
 // Description:   Volumetric data definition
@@ -31,14 +42,14 @@ namespace wustl_mm {
 
 		const int neighbor6[6][3]={{0,0,1},{0,0,-1},{0,1,0},{0,-1,0},{1,0,0},{-1,0,0}} ;
 		const int neighbor4[4][2]={{0,1},{0,-1},{1,0},{-1,0}} ;
-		const int neighbor64[6][4][3] = { 
+		const int neighbor64[6][4][3] = {
 			{{0,1,0},{0,-1,0},{1,0,0},{-1,0,0}},
 			{{0,1,0},{0,-1,0},{1,0,0},{-1,0,0}},
 			{{0,0,1},{0,0,-1},{1,0,0},{-1,0,0}},
 			{{0,0,1},{0,0,-1},{1,0,0},{-1,0,0}},
 			{{0,0,1},{0,0,-1},{0,1,0},{0,-1,0}},
 			{{0,0,1},{0,0,-1},{0,1,0},{0,-1,0}}} ;
-			
+
 		const int sheetNeighbor[12][4][3] = {
 			{{0,-1,-1},{0,-1,0},{0,0,-1},{0,0,0}},
 			{{0,-1,0},{0,-1,1},{0,0,0},{0,0,1}},
@@ -58,7 +69,7 @@ namespace wustl_mm {
 
 		const int faceCells[12][2]={{0,4},{1,5},{2,6},{3,7},{0,2},{1,3},{4,6},{5,7},{0,1},{2,3},{4,5},{6,7}};
 
-		const int cubeFaces[6][4] = 
+		const int cubeFaces[6][4] =
 		{ {1,5,7,3},{0,2,6,4},{2,3,7,6},{0,4,5,1},{5,4,6,7},{0,1,3,2}};
 
 		const int faceEdges[12][2] = {{3,1},{3,0},{2,1},{2,0},
@@ -227,7 +238,7 @@ namespace wustl_mm {
 			void toMRCFile( char* fname );
 			void buildHistogram(int binCount);
 			int getHistogramBinValue(int binIx);
-			
+
 		private:
 			VolumeData * getVolumeData();
 			vector<int> histogram;
@@ -283,7 +294,7 @@ namespace wustl_mm {
 			volData->SetDataAt(index, (float)d);
 		}
 
-		double Volume::getDataAt( int x, int y, int z ) 
+		double Volume::getDataAt( int x, int y, int z )
 		{
 			return volData->GetDataAt(x, y, z);
 		}
@@ -296,7 +307,7 @@ namespace wustl_mm {
 			return volData;
 		}
 
-		void Volume::setSpacing(float spx, float spy, float spz ) {	
+		void Volume::setSpacing(float spx, float spy, float spz ) {
 			volData->SetSpacing(spx, spy, spz);
 		}
 
@@ -334,8 +345,8 @@ namespace wustl_mm {
 			int i, j, k ;
 			Volume * res = new Volume(getSizeX(), getSizeY(), getSizeZ(), 0, 0, 0, this);
 			int size = getSizeX() * getSizeY() * getSizeZ() ;
-			srand(123) ;	
-			
+			srand(123) ;
+
 			for ( i = 0 ; i < getSizeX() ; i ++ )
 				for ( j = 0 ; j < getSizeY() ; j ++ )
 					for ( k = 0 ; k < getSizeZ() ; k ++ ) {
@@ -362,7 +373,7 @@ namespace wustl_mm {
 				res->smooth( 0.5f ) ;
 			}
 			*/
-			
+
 			Volume * tvol = new Volume( getSizeX(), getSizeY(), getSizeZ(), 0, 0, 0, res);
 			float d, ad, ct, temp;
 			for ( int it = 0 ; it < 3 ; it ++ )
@@ -382,7 +393,7 @@ namespace wustl_mm {
 							}
 						}
 					}
-			
+
 			delete tvol;
 			tvol = new Volume( getSizeX(), getSizeY(), getSizeZ(), 0, 0, 0, res ) ;
 			for ( i = 0 ; i < 40 ; i ++ )
@@ -397,7 +408,7 @@ namespace wustl_mm {
 				//	{
 				//		res->setDataAt( j, tvol->getDataAt( j ) ) ;
 				//	}
-				//	
+				//
 				//}
 
 			}
@@ -447,7 +458,7 @@ namespace wustl_mm {
 				printf("Smoothing round %d\n", i) ;
 				res->smooth( 0.5f ) ;
 			}
-			
+
 
 			return res ;
 		}
@@ -535,13 +546,13 @@ namespace wustl_mm {
 				}
 			}
 			return rvalue ;
-		}	
+		}
 
 		double Volume::getMaxValuePosition(int& maxX, int& maxY, int& maxZ) {
 			double maxVal = getDataAt(0,0,0);
 			maxX = 0; maxY = 0; maxZ = 0;
 			double data;
-			
+
 			for(int x = 0; x < getSizeX(); x++) {
 				for(int y = 0; y < getSizeY(); y++) {
 					for(int z = 0; z < getSizeZ(); z++) {
@@ -549,7 +560,7 @@ namespace wustl_mm {
 						if(data > maxVal) {
 							maxVal = data;
 							maxX = x; maxY = y; maxZ = z;
-						}					
+						}
 					}
 				}
 			}
@@ -608,7 +619,7 @@ namespace wustl_mm {
 			for ( i = -1 ; i < 2 ; i ++ )
 				for ( j = -1 ; j < 2 ; j ++ )
 					for ( k = -1 ; k < 2 ; k ++ ) {
-						double tval = getDataAt( ox + i, oy + j, oz + k ) ; 
+						double tval = getDataAt( ox + i, oy + j, oz + k ) ;
 							vox[ i + 1 ][ j + 1 ][ k + 1 ] = tval ;
 					}
 
@@ -671,7 +682,7 @@ namespace wustl_mm {
 						vox[i+1][j+1][k+1] = getDataAt( ox + i, oy + j, oz + k ) ;
 					}
 
-			for ( i = 0 ; i < 12 ; i ++ ) {	
+			for ( i = 0 ; i < 12 ; i ++ ) {
 				for ( j = 0 ; j < 4 ; j ++ ) {
 					nx = sheetNeighbor[i][j][0] + 1;
 					ny = sheetNeighbor[i][j][1] + 1;
@@ -695,7 +706,7 @@ namespace wustl_mm {
 			int cn = 12 ;
 			int nx, ny, nz ;
 
-			for ( int i = 0 ; i < 12 ; i ++ ) {	
+			for ( int i = 0 ; i < 12 ; i ++ ) {
 				for ( int j = 0 ; j < 4 ; j ++ ) {
 					nx = ox + sheetNeighbor[i][j][0] ;
 					ny = oy + sheetNeighbor[i][j][1] ;
@@ -727,7 +738,7 @@ namespace wustl_mm {
 			//Start clustering
 			printf("Start clustering...\n" ) ;
 			int ox, oy, oz ;
-			for ( i = 0 ; i < getSizeX() ; i ++ ) 
+			for ( i = 0 ; i < getSizeX() ; i ++ )
 				for ( j = 0 ; j < getSizeY() ; j ++ )
 					for ( k = 0 ; k < getSizeZ() ; k ++ ) {
 						if ( getDataAt(i,j,k) <= 0 || svol->getDataAt(i,j,k) != 0 ) {
@@ -871,7 +882,7 @@ namespace wustl_mm {
 
 		}
 
-		int Volume::isEndPoint( int ox, int oy, int oz ) {			
+		int Volume::isEndPoint( int ox, int oy, int oz ) {
 			if ( getDataAt( ox - 1, oy, oz ) < 0 && getDataAt( ox + 1, oy, oz ) < 0 ) {
 				return 1 ;
 			}
@@ -880,7 +891,7 @@ namespace wustl_mm {
 			}
 			if ( getDataAt( ox, oy, oz - 1 ) < 0 && getDataAt( ox, oy, oz + 1 ) < 0 ) {
 				return 1 ;
-			}		
+			}
 			return 0 ;
 		}
 
@@ -907,7 +918,7 @@ namespace wustl_mm {
 			int hasNoiseFace = 0 ;
 			int tot = 0 ;
 
-			for ( i = 0 ; i < 12 ; i ++ ) {	
+			for ( i = 0 ; i < 12 ; i ++ ) {
 				faceflag[ i ] = 1 ;
 				int hasNoise = 0 ;
 
@@ -965,7 +976,7 @@ namespace wustl_mm {
 				for ( j = 0 ; j < 4 ; j ++ ) {
 					f = edgeFaces[ e ][ j ] ;
 					if ( faceflag[ f ] ) {
-						break ; 
+						break ;
 					}
 				}
 
@@ -990,7 +1001,7 @@ namespace wustl_mm {
 
 			if ( tot > 0 ) {
 				return 0 ;
-			}		
+			}
 			return 1 ;
 		}
 
@@ -1003,7 +1014,7 @@ namespace wustl_mm {
 			int hasNoiseFace = 0 ;
 			int tot = 0 ;
 
-			for ( i = 0 ; i < 12 ; i ++ ) {	
+			for ( i = 0 ; i < 12 ; i ++ ) {
 				faceflag[ i ] = 1 ;
 				int hasNoise = 0 ;
 
@@ -1062,7 +1073,7 @@ namespace wustl_mm {
 				for ( j = 0 ; j < 4 ; j ++ ) {
 					f = edgeFaces[ e ][ j ] ;
 					if ( faceflag[ f ] ) {
-						break ; 
+						break ;
 					}
 				}
 
@@ -1087,7 +1098,7 @@ namespace wustl_mm {
 
 			if ( tot > 0 ) {
 				return 0 ;
-			}			
+			}
 			return 1 ;
 		}
 
@@ -1132,7 +1143,7 @@ namespace wustl_mm {
 					}
 
 			int cells[8] = { 1, 1, 1, 1, 1, 1, 1, 1 } ;
-			for ( i = 0 ; i < 8 ; i ++ ) {	
+			for ( i = 0 ; i < 8 ; i ++ ) {
 				int x = ( ( i >> 2 ) & 1 ) ;
 				int y = ( ( i >> 1 ) & 1 ) ;
 				int z = ( i & 1 ) ;
@@ -1140,7 +1151,7 @@ namespace wustl_mm {
 					nx = x + ( ( j >> 2 ) & 1 ) ;
 					ny = y + ( ( j >> 1 ) & 1 ) ;
 					nz = z + ( j & 1 ) ;
-					
+
 					if ( vox[nx][ny][nz] < 0 ) {
 						cells[i] = 0 ;
 						break;
@@ -1148,7 +1159,7 @@ namespace wustl_mm {
 				}
 			}
 
-			for ( i = 0 ; i < 12 ; i ++ ) {	
+			for ( i = 0 ; i < 12 ; i ++ ) {
 				if ( cells[ faceCells[i][0] ] == 1 || cells[ faceCells[i][1] ] == 1 ) {
 					continue ;
 				}
@@ -1184,7 +1195,7 @@ namespace wustl_mm {
 
 			int edge[6] = { 0,0,0,0,0,0 } ;
 
-			for ( i = 0 ; i < 12 ; i ++ ) {	
+			for ( i = 0 ; i < 12 ; i ++ ) {
 				int flag = 1 ;
 				for ( j = 0 ; j < 4 ; j ++ ) {
 					nx = 1 + sheetNeighbor[i][j][0] ;
@@ -1208,11 +1219,11 @@ namespace wustl_mm {
 				if ( edge[i] ) {
 					continue ;
 				}
-				
+
 				nx = 1 + neighbor6[i][0] ;
 				ny = 1 + neighbor6[i][1] ;
 				nz = 1 + neighbor6[i][2] ;
-				
+
 				if ( vox[nx][ny][nz] >= 0 ) {
 					return 1 ;
 				}
@@ -1238,7 +1249,7 @@ namespace wustl_mm {
 			}
 
 			return facenum;
-		}		
+		}
 		int Volume::hasCell( int ox, int oy, int oz ) {
 			for ( int i = 0 ; i < 2 ; i ++ )
 				for ( int j = 0 ; j < 2 ; j ++ )
@@ -1295,9 +1306,9 @@ namespace wustl_mm {
 					{
 						if( getDataAt(x,y,z) >= 0 )
 						{
-							
+
 							for ( i = 0 ; i < 3 ; i ++ )
-							{	
+							{
 								int hasFace = 1 ;
 								for ( j = 0 ; j < 4 ; j ++ )
 								{
@@ -1317,7 +1328,7 @@ namespace wustl_mm {
 									// Look for open edges
 									switch( i )
 									{
-									case 0: 
+									case 0:
 										if ( countFace( x, y, z, 0 ) == 1 )
 										{
 											fvol->setDataAt(x, y, z, (double)(1<<0)) ;
@@ -1340,7 +1351,7 @@ namespace wustl_mm {
 										}
 										printf("Hmmm... a face with no open edges.\n");
 										break ;
-									case 1: 
+									case 1:
 										if ( countFace( x, y, z, 0 ) == 1 )
 										{
 											fvol->setDataAt(x, y, z, (double)(1<<0)) ;
@@ -1363,7 +1374,7 @@ namespace wustl_mm {
 										}
 										printf("Hmmm... a face with no open edges.\n");
 										break ;
-									case 2: 
+									case 2:
 										if ( countFace( x, y, z, 2 ) == 1 )
 										{
 											fvol->setDataAt(x, y, z, (double)(1<<2)) ;
@@ -1418,12 +1429,12 @@ namespace wustl_mm {
 						else
 						{
 							cellflag[ ct ] = 0 ;
-						} 
+						}
 						ct ++ ;
 					}
 
 			for ( i = 0 ; i < 12 ; i ++ )
-			{	
+			{
 				faceflag[ i ] = 1 ;
 				for ( j = 0 ; j < 4 ; j ++ )
 				{
@@ -1442,11 +1453,11 @@ namespace wustl_mm {
 				{
 					if ( cellflag[ faceCells[i][0] ] ^ cellflag[ faceCells[i][1] ] )
 					{
-						int v1 = (int)( fvol->getDataAt( 
+						int v1 = (int)( fvol->getDataAt(
 							ox - 1 + (( faceCells[i][0] >> 2 ) & 1 ),
 							oy - 1 + (( faceCells[i][0] >> 1 ) & 1 ),
 							oz - 1 + (( faceCells[i][0] ) & 1)) ) ;
-						int v2 = (int)( fvol->getDataAt( 
+						int v2 = (int)( fvol->getDataAt(
 							ox - 1 + (( faceCells[i][1] >> 2 ) & 1 ),
 							oy - 1 + (( faceCells[i][1] >> 1 ) & 1 ),
 							oz - 1 + (( faceCells[i][1] ) & 1)) ) ;
@@ -1500,7 +1511,7 @@ namespace wustl_mm {
 					f = edgeFaces[ e ][ j ] ;
 					if ( faceflag[ f ] )
 					{
-						break ; 
+						break ;
 					}
 				}
 
@@ -1541,7 +1552,7 @@ namespace wustl_mm {
 			{
 				return 1 ;
 			}
-			
+
 			return 0 ;
 		}
 
@@ -1567,7 +1578,7 @@ namespace wustl_mm {
 			int tot = 0 ;
 
 			for ( i = 0 ; i < 12 ; i ++ )
-			{	
+			{
 				faceflag[ i ] = 1 ;
 				for ( j = 0 ; j < 4 ; j ++ )
 				{
@@ -1624,7 +1635,7 @@ namespace wustl_mm {
 					f = edgeFaces[ e ][ j ] ;
 					if ( faceflag[ f ] )
 					{
-						break ; 
+						break ;
 					}
 				}
 
@@ -1678,7 +1689,7 @@ namespace wustl_mm {
 				}
 				return 0 ;
 			}
-		}			
+		}
 		int Volume::hasCompleteHelix( int ox, int oy, int oz )
 		{
 			// Returns 1 if it has a complete helix
@@ -1692,7 +1703,7 @@ namespace wustl_mm {
 				nx = ox + neighbor6[i][0] ;
 				ny = oy + neighbor6[i][1] ;
 				nz = oz + neighbor6[i][2] ;
-				if ( getDataAt( nx, ny, nz ) >= 0 ) 
+				if ( getDataAt( nx, ny, nz ) >= 0 )
 				{
 					c1 ++ ;
 					j = i ;
@@ -1717,13 +1728,13 @@ namespace wustl_mm {
 				nx = ox + neighbor6[i][0] ;
 				ny = oy + neighbor6[i][1] ;
 				nz = oz + neighbor6[i][2] ;
-				if ( getDataAt( nx, ny, nz ) >= 0 ) 
+				if ( getDataAt( nx, ny, nz ) >= 0 )
 				{
 					c1 ++ ;
 				}
 
 			}
-			
+
 			if ( c1 > 1 )
 			{
 				return 0 ;
@@ -1737,7 +1748,7 @@ namespace wustl_mm {
 
 		int Volume::hasCompleteHelix( int ox, int oy, int oz, Volume* fvol )
 		{
-			
+
 			int i ;
 			int c1 = 0;
 			int nx, ny, nz ;
@@ -1748,7 +1759,7 @@ namespace wustl_mm {
 				nx = ox + neighbor6[i][0] ;
 				ny = oy + neighbor6[i][1] ;
 				nz = oz + neighbor6[i][2] ;
-				if ( getDataAt( nx, ny, nz ) >= 0 ) 
+				if ( getDataAt( nx, ny, nz ) >= 0 )
 				{
 					if ( i % 2 == 0 )
 					{
@@ -1767,7 +1778,7 @@ namespace wustl_mm {
 
 			}
 
-			if ( c1 > 1 ) 
+			if ( c1 > 1 )
 			{
 				return 1 ;
 			}
@@ -1784,13 +1795,13 @@ namespace wustl_mm {
 				nx = ox + neighbor6[i][0] ;
 				ny = oy + neighbor6[i][1] ;
 				nz = oz + neighbor6[i][2] ;
-				if ( getDataAt( nx, ny, nz ) >= 0 ) 
+				if ( getDataAt( nx, ny, nz ) >= 0 )
 				{
 					c1 ++ ;
 				}
 
 			}
-			
+
 			if ( c1 > 1 )
 			{
 				return 0 ;
@@ -1801,9 +1812,9 @@ namespace wustl_mm {
 			}
 			*/
 		}
-		
+
 		int Volume::isHelixEnd( int ox, int oy, int oz, Volume* nvol ) {
-			// Returns 1 if it is a curve endpoint				
+			// Returns 1 if it is a curve endpoint
 			int i ;
 			int c1 = 0 , c2 = 0 ;
 			int nx, ny, nz ;
@@ -1813,13 +1824,13 @@ namespace wustl_mm {
 				nx = ox + neighbor6[i][0] ;
 				ny = oy + neighbor6[i][1] ;
 				nz = oz + neighbor6[i][2] ;
-				
+
 				double val = getDataAt( nx, ny, nz ) ;
 
-				if ( val >= 0 ) 
+				if ( val >= 0 )
 				{
 					c1 ++ ;
-					if ( val > 0 && val < MAX_ERODE && nvol->getDataAt( nx, ny, nz ) == 0 ) 
+					if ( val > 0 && val < MAX_ERODE && nvol->getDataAt( nx, ny, nz ) == 0 )
 					{
 						c2 ++ ;
 					}
@@ -1839,7 +1850,7 @@ namespace wustl_mm {
 		{
 			// Border: > 0
 			// Interior: == 0
-			// Outside: < 0 
+			// Outside: < 0
 			if ( getDataAt( ox, oy, oz ) <= 0 )
 			{
 				return 0 ;
@@ -1871,10 +1882,10 @@ namespace wustl_mm {
 				nx = ox + neighbor6[i][0] ;
 				ny = oy + neighbor6[i][1] ;
 				nz = oz + neighbor6[i][2] ;
-				
+
 				double val = getDataAt( nx, ny, nz ) ;
 
-				if ( val >= 0 ) 
+				if ( val >= 0 )
 				{
 					c1 ++ ;
 				}
@@ -1908,7 +1919,7 @@ namespace wustl_mm {
 			int edge2[6] = { 4,4,4,4,4,4 } ;
 
 			for ( i = 0 ; i < 12 ; i ++ )
-			{	
+			{
 				for ( j = 0 ; j < 4 ; j ++ )
 				{
 					nx = 1 + sheetNeighbor[i][j][0] ;
@@ -1945,7 +1956,7 @@ namespace wustl_mm {
 				}
 			}
 
-			return 0 ;	
+			return 0 ;
 		}
 
 		int Volume::isNoise( int ox, int oy, int oz, int noise )
@@ -1962,7 +1973,7 @@ namespace wustl_mm {
 					int nx = ox + neighbor6[i][0] ;
 					int ny = oy + neighbor6[i][1] ;
 					int nz = oz + neighbor6[i][2] ;
-					
+
 					if ( getDataAt( nx, ny, nz ) > 0 )
 					{
 						if ( isNoise( nx, ny, nz, noise - 1 ) )
@@ -1979,7 +1990,7 @@ namespace wustl_mm {
 
 		int Volume::isNoiseHelixEnd( int ox, int oy, int oz )
 		{
-			
+
 			int i ;
 			int c1 = 0 , c2 = 0 ;
 			int nx, ny, nz ;
@@ -1989,13 +2000,13 @@ namespace wustl_mm {
 				nx = ox + neighbor6[i][0] ;
 				ny = oy + neighbor6[i][1] ;
 				nz = oz + neighbor6[i][2] ;
-				
+
 				double val = getDataAt( nx, ny, nz ) ;
 
-				if ( val >= 0 ) 
+				if ( val >= 0 )
 				{
 					c1 ++ ;
-					if ( val > 0 && val < MAX_ERODE ) 
+					if ( val > 0 && val < MAX_ERODE )
 					{
 						c2 ++ ;
 					}
@@ -2013,7 +2024,7 @@ namespace wustl_mm {
 
 
 		int Volume::isHelixEnd( int ox, int oy, int oz ) {
-			
+
 			int i ;
 			int c1 = 0 , c2 = 0 ;
 			int nx, ny, nz ;
@@ -2023,13 +2034,13 @@ namespace wustl_mm {
 				nx = ox + neighbor6[i][0] ;
 				ny = oy + neighbor6[i][1] ;
 				nz = oz + neighbor6[i][2] ;
-				
+
 				double val = getDataAt( nx, ny, nz ) ;
 
-				if ( val >= 0 ) 
+				if ( val >= 0 )
 				{
 					c1 ++ ;
-					if ( getNumNeighbor6(nx,ny,nz) < 6 ) // if ( val > 0 && val < MAX_ERODE ) 
+					if ( getNumNeighbor6(nx,ny,nz) < 6 ) // if ( val > 0 && val < MAX_ERODE )
 					{
 						c2 ++ ;
 					}
@@ -2043,7 +2054,7 @@ namespace wustl_mm {
 			}
 
 			return 0 ;
-		}			
+		}
 		int Volume::isSheetEnd( int ox, int oy, int oz, Volume* nvol )
 		{
 			// Returns 1 if it contains a sheet boundary. Noise-resistant
@@ -2056,7 +2067,7 @@ namespace wustl_mm {
 			int tot = 0 ;
 
 			for ( i = 0 ; i < 12 ; i ++ )
-			{	
+			{
 				faceflag[ i ] = 1 ;
 				int hasFeature = 1 ;
 
@@ -2129,7 +2140,7 @@ namespace wustl_mm {
 					f = edgeFaces[ e ][ j ] ;
 					if ( faceflag[ f ] )
 					{
-						break ; 
+						break ;
 					}
 				}
 
@@ -2170,7 +2181,7 @@ namespace wustl_mm {
 			{
 				return 0 ;
 			}
-			
+
 			return 1 ;
 		}
 
@@ -2181,7 +2192,7 @@ namespace wustl_mm {
 
 			int faces = 12 ;
 			for ( i = 0 ; i < 12 ; i ++ )
-			{	
+			{
 				for ( j = 0 ; j < 4 ; j ++ )
 				{
 					nx = ox + sheetNeighbor[i][j][0] ;
@@ -2237,7 +2248,7 @@ namespace wustl_mm {
 			int edge[6] = { 0,0,0,0,0,0 } ;
 
 			for ( i = 0 ; i < 12 ; i ++ )
-			{	
+			{
 				int flag = 1 ;
 				for ( j = 0 ; j < 4 ; j ++ )
 				{
@@ -2267,11 +2278,11 @@ namespace wustl_mm {
 				{
 					continue ;
 				}
-				
+
 				nx = 1 + neighbor6[i][0] ;
 				ny = 1 + neighbor6[i][1] ;
 				nz = 1 + neighbor6[i][2] ;
-				
+
 				if ( vox[nx][ny][nz] >= 0 )
 				{
 					edges ++ ;
@@ -2302,12 +2313,12 @@ namespace wustl_mm {
 						else
 						{
 							cellflag[ ct ] = 0 ;
-						} 
+						}
 						ct ++ ;
 					}
 
 			for ( i = 0 ; i < 12 ; i ++ )
-			{	
+			{
 				int hasFace = 1 ;
 				for ( j = 0 ; j < 4 ; j ++ )
 				{
@@ -2324,7 +2335,7 @@ namespace wustl_mm {
 
 				if ( hasFace )
 				{
-					if (cellflag[ faceCells[i][0] ] == 0 && cellflag[ faceCells[i][1] ] == 0 ) 
+					if (cellflag[ faceCells[i][0] ] == 0 && cellflag[ faceCells[i][1] ] == 0 )
 					{
 						faces ++ ;
 					}
@@ -2345,10 +2356,10 @@ namespace wustl_mm {
 				nx = ox + neighbor6[i][0] ;
 				ny = oy + neighbor6[i][1] ;
 				nz = oz + neighbor6[i][2] ;
-				
+
 				double val = getDataAt( nx, ny, nz ) ;
 
-				if ( val == 0 ) 
+				if ( val == 0 )
 				{
 					return 0 ;
 				}
@@ -2367,7 +2378,7 @@ namespace wustl_mm {
 
 			int faces = 12 ;
 			for ( i = 0 ; i < 12 ; i ++ )
-			{	
+			{
 				int ct = 0 ;
 				for ( j = 0 ; j < 4 ; j ++ )
 				{
@@ -2389,7 +2400,7 @@ namespace wustl_mm {
 	//				{
 	//					ct ++ ;
 	//				}
-					
+
 
 				}
 				if ( ct == -1 || ct >= 1 )
@@ -2427,13 +2438,13 @@ namespace wustl_mm {
 						else
 						{
 							cellflag[ ct ] = 0 ;
-						} 
+						}
 						ct ++ ;
 					}
 
 			// Find isolated and boundary faces
 			for ( i = 0 ; i < 12 ; i ++ )
-			{	
+			{
 				faceflag = 1 ;
 				for ( j = 0 ; j < 4 ; j ++ )
 				{
@@ -2482,7 +2493,7 @@ namespace wustl_mm {
 			//int edge2[6] = { 4,4,4,4,4,4 } ;
 
 			//for ( i = 0 ; i < 12 ; i ++ )
-			//{	
+			//{
 			//	for ( j = 0 ; j < 4 ; j ++ )
 			//	{
 			//		nx = 1 + sheetNeighbor[i][j][0] ;
@@ -2519,7 +2530,7 @@ namespace wustl_mm {
 			//	nx = 1 + neighbor6[i][0] ;
 			//	ny = 1 + neighbor6[i][1] ;
 			//	nz = 1 + neighbor6[i][2] ;
-			//	if ( edge[i] == 0 && vox[nx][ny][nz] >= 0 ) 
+			//	if ( edge[i] == 0 && vox[nx][ny][nz] >= 0 )
 			//	{
 			//		return 0 ;
 			//	}
@@ -2538,7 +2549,7 @@ namespace wustl_mm {
 
 			//return 0 ;
 		}
-		
+
 		int Volume::isSimple( int ox, int oy, int oz )
 		{
 			/* Test if this is a simple voxel */
@@ -2571,7 +2582,7 @@ namespace wustl_mm {
 						}
 					}
 
-				/* Debugging 
+				/* Debugging
 				printf("{") ;
 				for ( i = 0 ; i < 3 ; i ++ )
 				{
@@ -2593,7 +2604,7 @@ namespace wustl_mm {
 				printf("} Int: %d, Ext: %d\n", countInt( vox ), countExt( vox )) ;
 				*/
 
-			if ( countInt( vox ) == 1 && countExt( vox ) == 1 ) 
+			if ( countInt( vox ) == 1 && countExt( vox ) == 1 )
 			{
 				return 1 ;
 			}
@@ -2636,7 +2647,7 @@ namespace wustl_mm {
 						}
 					}
 
-				/* Debugging 
+				/* Debugging
 				printf("{") ;
 				for ( i = 0 ; i < 3 ; i ++ )
 				{
@@ -2658,7 +2669,7 @@ namespace wustl_mm {
 				printf("} Int: %d, Ext: %d\n", countInt( vox ), countExt( vox )) ;
 				*/
 
-			if ( countInt( vox ) == 1 && countExt( vox ) != 1 ) 
+			if ( countInt( vox ) == 1 && countExt( vox ) != 1 )
 			{
 				return 1 ;
 			}
@@ -2668,7 +2679,7 @@ namespace wustl_mm {
 			}
 		}
 
-		
+
 		int Volume::isSimple2( int v[3][3][3] )
 		{
 			// int flag = 0 ;
@@ -2688,7 +2699,7 @@ namespace wustl_mm {
 							vox[i][j][k] = -1 ;
 						}
 					}
-			if ( countInt( vox ) == 1 && countExt( vox ) == 1 ) 
+			if ( countInt( vox ) == 1 && countExt( vox ) == 1 )
 			{
 				return 1 ;
 			}
@@ -2702,7 +2713,7 @@ namespace wustl_mm {
 		int Volume::getNumPotComplex3( int ox, int oy, int oz )
 		{
 			// return 0 ;
-			
+
 
 			int i, j, k ;
 			if ( ! isSimple( ox, oy, oz ) || isSheetEnd( ox, oy, oz ) )
@@ -2750,11 +2761,11 @@ namespace wustl_mm {
 							}
 						}
 					}
-					
+
 
 			setDataAt( ox, oy, oz, val ) ;
 
-					
+
 
 
 			return 30 - ( numPotSimple  - numSimple ) ;
@@ -2786,7 +2797,7 @@ namespace wustl_mm {
 
 			// int v = ((getNumNeighbor6( ox, oy, oz ) & 255) << 24) ;
 			//int v = 0  ;
-			
+
 			int rvalue = 0, nx, ny, nz ;
 			setDataAt( ox, oy, oz, -val ) ;
 
@@ -2823,7 +2834,7 @@ namespace wustl_mm {
 					}
 				}
 			}
-					
+
 
 			setDataAt( ox, oy, oz, val ) ;
 
@@ -2923,7 +2934,7 @@ namespace wustl_mm {
 
 		int Volume::components6( int vox[3][3][3] )
 		{
-			// Stupid flood fill 
+			// Stupid flood fill
 			int tot = 0 ;
 			int queue[27][3] ;
 			int vis[3][3][3] ;
@@ -2992,7 +3003,7 @@ namespace wustl_mm {
 		}
 		int Volume::components26( int vox[3][3][3] )
 		{
-			// Stupid flood fill 
+			// Stupid flood fill
 			int tot = 0 ;
 			int queue[27][3] ;
 			int vis[3][3][3] ;
@@ -3078,7 +3089,7 @@ namespace wustl_mm {
 							tvox[i][j][k] = 0 ;
 						}
 					}
-			
+
 			return components26( tvox ) ;
 		}
 
@@ -3110,7 +3121,7 @@ namespace wustl_mm {
 						if ( vox[ nnx ][ nny ][ nnz ] >= 0 )
 						{
 							tvox[ nnx ][ nny ][ nnz ] = 1 ;
-						}	
+						}
 					}
 				}
 			}
@@ -3205,7 +3216,7 @@ namespace wustl_mm {
 			#ifdef VERBOSE
 			printf("Total %d nodes\n", queue->getNumElements() ) ;
 
-			// Perform erosion 
+			// Perform erosion
 			printf("Start erosion to %d...\n", wid) ;
 			#endif
 			double val = 0;
@@ -3259,7 +3270,7 @@ namespace wustl_mm {
 			threshold( 0, 0, 1 ) ;
 
 		}
-		
+
 		void Volume::erodeTopo( float thr, int wid )
 		{
 			/* Minimal topology check */
@@ -3296,7 +3307,7 @@ namespace wustl_mm {
 			#ifdef VERBOSE
 			printf("Total %d nodes\n", queue->getNumElements() ) ;
 
-			// Perform erosion 
+			// Perform erosion
 			printf("Start erosion to %d...\n", wid) ;
 			#endif
 
@@ -3398,7 +3409,7 @@ namespace wustl_mm {
 			#ifdef VERBOSE
 			printf("Total %d nodes\n", queue->getNumElements() ) ;
 
-			// Perform erosion 
+			// Perform erosion
 			// wid = MAX_ERODE ;
 			printf("Start erosion to %d...\n", wid) ;
 			#endif
@@ -3411,8 +3422,8 @@ namespace wustl_mm {
 				#ifdef VERBOSE
 				printf("Processing %d nodes in layer %d\n", queue->getNumElements(), curwid) ;
 				#endif
-				
-				/* set nodes for next layer 
+
+				/* set nodes for next layer
 				while ( ( ele = queue->getNext() ) != NULL )
 				{
 					for ( int m = 0 ; m < 6 ; m ++ )
@@ -3447,7 +3458,7 @@ namespace wustl_mm {
 						oz = ele->z ;
 
 						// Check simple only if within the last modified range
-						if ( seed[0] < 0 || 
+						if ( seed[0] < 0 ||
 							( ox < seed[0] + 2 && ox > seed[0] - 2 &&
 							oy < seed[1] + 2 && oy > seed[1] - 2 &&
 							oz < seed[2] + 2 && oz > seed[2] - 2 ) )
@@ -3483,7 +3494,7 @@ namespace wustl_mm {
 						oz = ele->z ;
 
 						// Update score only if within the last modified range
-						if ( seed[0] < 0 || 
+						if ( seed[0] < 0 ||
 							( ox < seed[0] + 3 && ox > seed[0] - 3 &&
 							  oy < seed[1] + 3 && oy > seed[1] - 3 &&
 							  oz < seed[2] + 3 && oz > seed[2] - 3 ) )
@@ -3491,7 +3502,7 @@ namespace wustl_mm {
 							ele->score = getNumPotComplex( ox, oy, oz ) ;
 						}
 
-						
+
 						if ( ele->score < preScore )
 						{
 							// Swap
@@ -3528,8 +3539,8 @@ namespace wustl_mm {
 									queue2->prepend( nx, ny, nz ) ;
 								}
 							}
-					
-							
+
+
 							numSimple ++ ;
 							ele = NULL ;
 						}
@@ -3561,7 +3572,7 @@ namespace wustl_mm {
 			threshold( 0, 0, 1 ) ;
 
 		}
-	
+
 		void Volume::erodeShapeTopo( float thr, int wid )
 		{
 			/* Faster version of erode2 using priority queue */
@@ -3601,7 +3612,7 @@ namespace wustl_mm {
 			printf("Total %d nodes\n", queue2->getNumElements() ) ;
 
 
-			// Perform erosion 
+			// Perform erosion
 			// wid = MAX_ERODE ;
 			printf("Start erosion to %d...\n", wid) ;
 			#endif
@@ -3617,7 +3628,7 @@ namespace wustl_mm {
 
 			for ( int curwid = 1 ; curwid <= wid ; curwid ++ )
 			{
-				// At the start of each iteration, 
+				// At the start of each iteration,
 				// queue2 holds all the nodes for this layer
 				// queue3 and queue are empty
 
@@ -3625,9 +3636,9 @@ namespace wustl_mm {
 				#ifdef VERBOSE
 				printf("Processing %d nodes in layer %d\n", queue2->getNumElements(), curwid) ;
 				#endif
-				
-				// First, 
-				// check for complex nodes in queue2 
+
+				// First,
+				// check for complex nodes in queue2
 				// move them from queue2 to queue3
 				queue2->reset() ;
 				ele = queue2->getNext() ;
@@ -3636,15 +3647,15 @@ namespace wustl_mm {
 					ox = ele->x ;
 					oy = ele->y ;
 					oz = ele->z ;
-					
-					// Check simple 
+
+					// Check simple
 					if ( ! isSimple( ox, oy, oz ) )
 					{
 						// Complex, set to next layer
 						setDataAt( ox, oy, oz, curwid + 1 ) ;
 						queue3->prepend( ox, oy, oz ) ;
 						ele = queue2->remove() ;
-						
+
 						numComplex ++ ;
 					}
 					else
@@ -3663,7 +3674,7 @@ namespace wustl_mm {
 					ox = ele->x ;
 					oy = ele->y ;
 					oz = ele->z ;
-					
+
 					// Compute score
 					score = getNumPotComplex( ox, oy, oz ) ;
 					scrvol->setDataAt( ox, oy, oz, score ) ;
@@ -3674,11 +3685,11 @@ namespace wustl_mm {
 					gp->y = oy ;
 					gp->z = oz ;
 					queue->add( gp, -score ) ;
-					
+
 					ele = queue2->remove() ;
 				}
 
-				// Rename queue3 to be queue2, 
+				// Rename queue3 to be queue2,
 				// Clear queue3
 				delete queue2 ;
 				queue2 = queue3 ;
@@ -3695,7 +3706,7 @@ namespace wustl_mm {
 					delete gp ;
 					score = -score ;
 
-					// Ignore the node 
+					// Ignore the node
 					// if it has been processed before
 					// or it has an updated score
 					if ( getDataAt( ox, oy, oz ) != curwid || (int) scrvol->getDataAt( ox, oy, oz ) != score )
@@ -3720,7 +3731,7 @@ namespace wustl_mm {
 							queue2->prepend( nx, ny, nz ) ;
 						}
 					}
-					
+
 					// Find complex nodes in its 3x3 neighborhood
 					// move them to queue2
 					for ( i = -1 ; i < 2 ; i ++ )
@@ -3731,7 +3742,7 @@ namespace wustl_mm {
 								int ny = oy + j ;
 								int nz = oz + k ;
 
-								// Check simple 
+								// Check simple
 								if ( getDataAt( nx, ny, nz ) == curwid && ! isSimple( nx, ny, nz ) )
 								{
 									// Complex, set to next layer
@@ -3756,7 +3767,7 @@ namespace wustl_mm {
 								{
 									// Compute score
 									score = getNumPotComplex( nx, ny, nz ) ;
-									
+
 									if ( score != (int) scrvol->getDataAt( nx, ny, nz ) )
 									{
 										// printf("Update\n") ;
@@ -3792,7 +3803,7 @@ namespace wustl_mm {
 
 		}
 
-	
+
 		void Volume::erodeAtom( float thr, int wid, Volume* avol )
 		{
 			/* Erode to atoms */
@@ -3839,7 +3850,7 @@ namespace wustl_mm {
 			printf("Total %d nodes\n", queue2->getNumElements() ) ;
 
 
-			// Perform erosion 
+			// Perform erosion
 			// wid = MAX_ERODE ;
 			printf("Start erosion to %d...\n", wid) ;
 			#endif
@@ -3856,7 +3867,7 @@ namespace wustl_mm {
 
 			for ( int curwid = 1 ; curwid <= wid ; curwid ++ )
 			{
-				// At the start of each iteration, 
+				// At the start of each iteration,
 				// queue2 holds all the nodes for this layer
 				// queue3 and queue are empty
 
@@ -3864,9 +3875,9 @@ namespace wustl_mm {
 				#ifdef VERBOSE
 				printf("Processing %d nodes in layer %d\n", queue2->getNumElements(), curwid) ;
 				#endif
-				
-				// First, 
-				// check for complex nodes in queue2 
+
+				// First,
+				// check for complex nodes in queue2
 				// move them from queue2 to queue3
 				queue2->reset() ;
 				ele = queue2->getNext() ;
@@ -3875,15 +3886,15 @@ namespace wustl_mm {
 					ox = ele->x ;
 					oy = ele->y ;
 					oz = ele->z ;
-					
-					// Check simple 
-					if ( ! isSimple( ox, oy, oz ) ) 
+
+					// Check simple
+					if ( ! isSimple( ox, oy, oz ) )
 					{
 						// Complex, set to next layer
 						setDataAt( ox, oy, oz, curwid + 1 ) ;
 						queue3->prepend( ox, oy, oz ) ;
 						ele = queue2->remove() ;
-						
+
 						numComplex ++ ;
 					}
 					else
@@ -3902,7 +3913,7 @@ namespace wustl_mm {
 					ox = ele->x ;
 					oy = ele->y ;
 					oz = ele->z ;
-					
+
 					// Compute score
 					score = getNumPotComplex( ox, oy, oz ) ;
 					scrvol->setDataAt( ox, oy, oz, score ) ;
@@ -3913,11 +3924,11 @@ namespace wustl_mm {
 					gp->y = oy ;
 					gp->z = oz ;
 					queue->add( gp, -score ) ;
-					
+
 					ele = queue2->remove() ;
 				}
 
-				// Rename queue3 to be queue2, 
+				// Rename queue3 to be queue2,
 				// Clear queue3
 				delete queue2 ;
 				queue2 = queue3 ;
@@ -3934,7 +3945,7 @@ namespace wustl_mm {
 					delete gp ;
 					score = -score ;
 
-					// Ignore the node 
+					// Ignore the node
 					// if it has been processed before
 					// or it has an updated score
 					if ( getDataAt( ox, oy, oz ) != curwid || (int) scrvol->getDataAt( ox, oy, oz ) != score )
@@ -3959,7 +3970,7 @@ namespace wustl_mm {
 							queue2->prepend( nx, ny, nz ) ;
 						}
 					}
-					
+
 					// Find complex nodes in its 3x3 neighborhood
 					// move them to queue2
 					for ( i = -1 ; i < 2 ; i ++ )
@@ -3970,8 +3981,8 @@ namespace wustl_mm {
 								int ny = oy + j ;
 								int nz = oz + k ;
 
-								// Check simple 
-								if ( getDataAt( nx, ny, nz ) == curwid && ! isSimple( nx, ny, nz ) ) 
+								// Check simple
+								if ( getDataAt( nx, ny, nz ) == curwid && ! isSimple( nx, ny, nz ) )
 
 								{
 									// Complex, set to next layer
@@ -3996,7 +4007,7 @@ namespace wustl_mm {
 								{
 									// Compute score
 									score = getNumPotComplex( nx, ny, nz ) ;
-									
+
 									if ( score != (int) scrvol->getDataAt( nx, ny, nz ) )
 									{
 										// printf("Update\n") ;
@@ -4015,7 +4026,7 @@ namespace wustl_mm {
 				}
 				#ifdef VERBOSE
 				printf("%d complex, %d simple\n", numComplex, numSimple) ;
-				#endif			
+				#endif
 
 				if ( numSimple == 0 )
 				{
@@ -4044,7 +4055,7 @@ namespace wustl_mm {
 			#endif
 			threshold( 0.5f, -1, 0 ) ;
 
-			// Next, apply convergent erosion 
+			// Next, apply convergent erosion
 			// by preserving: complex nodes, curve end-points, and sheet points
 
 			// Next, initialize the linked queue
@@ -4088,7 +4099,7 @@ namespace wustl_mm {
 			#endif
 
 
-			// Perform erosion 
+			// Perform erosion
 			gridQueueEle* ele ;
 			gridPoint* gp ;
 			int ox, oy, oz ;
@@ -4105,7 +4116,7 @@ namespace wustl_mm {
 
 			for ( int curwid = 1 ; curwid <= wid ; curwid ++ )
 			{
-				// At the start of each iteration, 
+				// At the start of each iteration,
 				// queue2 holds all the nodes for this layer
 				// queue3 and queue are empty
 
@@ -4113,7 +4124,7 @@ namespace wustl_mm {
 				#ifdef VERBOSE
 				printf("Processing %d nodes in layer %d\n", queue2->getNumElements(), curwid) ;
 				#endif
-				
+
 				/*
 				We first need to assign curwid + 1 to every node in this layer
 				*/
@@ -4124,7 +4135,7 @@ namespace wustl_mm {
 					ox = ele->x ;
 					oy = ele->y ;
 					oz = ele->z ;
-					
+
 					if ( getDataAt(ox,oy,oz) == curwid )
 					{
 						ele = queue2->remove() ;
@@ -4152,7 +4163,7 @@ namespace wustl_mm {
 	#ifdef NOISE_DIS_HELIX
 				/* Extra step: classify nodes in queue2 into noise and non-noise nodes */
 				queue2->reset() ;
-				
+
 				// First run
 				int flag = 0 ;
 				while ( ( ele = queue2->getNext() ) != NULL )
@@ -4198,7 +4209,7 @@ namespace wustl_mm {
 						ox = ele->x ;
 						oy = ele->y ;
 						oz = ele->z ;
-						
+
 						if ( noisevol->getDataAt( ox, oy, oz ) == 1 )
 						{
 							visited ++ ;
@@ -4231,9 +4242,9 @@ namespace wustl_mm {
 
 	#endif
 				/* Commented out for debugging
-				
-				// First, 
-				// check for complex nodes in queue2 
+
+				// First,
+				// check for complex nodes in queue2
 				// move them from queue2 to queue3
 				queue2->reset() ;
 				ele = queue2->getNext() ;
@@ -4242,19 +4253,19 @@ namespace wustl_mm {
 					ox = ele->x ;
 					oy = ele->y ;
 					oz = ele->z ;
-					
-					// Check simple 
+
+					// Check simple
 	#ifndef NOISE_DIS_HELIX
-					if ( isHelixEnd( ox, oy, oz ) || ! isSimple( ox, oy, oz ) ) 
+					if ( isHelixEnd( ox, oy, oz ) || ! isSimple( ox, oy, oz ) )
 	#else
-					if ( isHelixEnd( ox, oy, oz, noisevol ) || ! isSimple( ox, oy, oz ) ) 
+					if ( isHelixEnd( ox, oy, oz, noisevol ) || ! isSimple( ox, oy, oz ) )
 	#endif
 					{
 						// Complex, set to next layer
 						setDataAt( ox, oy, oz, curwid + 1 ) ;
 						queue3->prepend( ox, oy, oz ) ;
 						ele = queue2->remove() ;
-						
+
 						numComplex ++ ;
 					}
 					else
@@ -4274,7 +4285,7 @@ namespace wustl_mm {
 					ox = ele->x ;
 					oy = ele->y ;
 					oz = ele->z ;
-					
+
 					// Compute score
 					score = getNumPotComplex2( ox, oy, oz ) ;
 					scrvol->setDataAt( ox, oy, oz, score ) ;
@@ -4286,11 +4297,11 @@ namespace wustl_mm {
 					gp->z = oz ;
 					// queue->add( gp, -score ) ;
 					queue->add( gp, score ) ;
-					
+
 					ele = queue2->remove() ;
 				}
 
-				// Rename queue3 to be queue2, 
+				// Rename queue3 to be queue2,
 				// Clear queue3
 				// From now on, queue2 holds nodes of next level
 				delete queue2 ;
@@ -4308,7 +4319,7 @@ namespace wustl_mm {
 					delete gp ;
 	//				score = -score ;
 
-					// Ignore the node 
+					// Ignore the node
 					// if it has been processed before
 					// or it has an updated score
 					if ( getDataAt( ox, oy, oz ) != curwid || (int) scrvol->getDataAt( ox, oy, oz ) != score )
@@ -4325,12 +4336,12 @@ namespace wustl_mm {
 					*/
 
 					/* Added for debugging */
-					// Check simple 
+					// Check simple
 	#ifndef NOISE_DIS_HELIX
-					// if ( hasIsolatedEdge( ox, oy, oz ) && ! isNoiseHelixEnd( ox, oy, oz ) ) 
-					if ( isHelixEnd( ox, oy, oz ) || ! isSimple( ox, oy, oz ) ) 
+					// if ( hasIsolatedEdge( ox, oy, oz ) && ! isNoiseHelixEnd( ox, oy, oz ) )
+					if ( isHelixEnd( ox, oy, oz ) || ! isSimple( ox, oy, oz ) )
 	#else
-					if ( isHelixEnd( ox, oy, oz ) || ! isSimple( ox, oy, oz ) ) 
+					if ( isHelixEnd( ox, oy, oz ) || ! isSimple( ox, oy, oz ) )
 	#endif
 					{
 						// Complex, set to next layer
@@ -4359,10 +4370,10 @@ namespace wustl_mm {
 						}
 
 					}
-					
+
 
 					/* Commented out for debugging
-				
+
 					// Find complex nodes in its 3x3 neighborhood
 					// move them to queue2
 					for ( i = -1 ; i < 2 ; i ++ )
@@ -4373,8 +4384,8 @@ namespace wustl_mm {
 								int ny = oy + j ;
 								int nz = oz + k ;
 
-								// Check simple 
-								if ( getDataAt( nx, ny, nz ) == curwid && 
+								// Check simple
+								if ( getDataAt( nx, ny, nz ) == curwid &&
 									// ( isSheetEnd( ox, oy, oz ) || ! isSimple( nx, ny, nz )) )
 	#ifndef NOISE_DIS_HELIX
 									( isHelixEnd( nx, ny, nz ) || ! isSimple( nx, ny, nz ) ) )
@@ -4393,7 +4404,7 @@ namespace wustl_mm {
 
 					// Update scores for nodes in its 5x5 neighborhood
 					// insert them back into priority queue
-							
+
 					for ( i = -2 ; i < 3 ;i ++ )
 						for ( j = -2 ; j < 3 ; j ++ )
 							for ( k = -2 ; k < 3 ; k ++ )
@@ -4406,7 +4417,7 @@ namespace wustl_mm {
 								{
 									// Compute score
 									score = getNumPotComplex2( nx, ny, nz ) ;
-									
+
 									if ( score != (int) scrvol->getDataAt( nx, ny, nz ) )
 									{
 										// printf("Update\n") ;
@@ -4421,14 +4432,14 @@ namespace wustl_mm {
 									}
 								}
 							}
-							
+
 
 				}
 
 				#ifdef VERBOSE
 				printf("%d complex, %d simple\n", numComplex, numSimple) ;
 				#endif
-				
+
 				if ( numSimple == 0 )
 				{
 					if ( queue2->getNumElements() > 0 )
@@ -4449,19 +4460,19 @@ namespace wustl_mm {
 				oy = ele->y ;
 				oz = ele->z ;
 
-				if ( isPiercable(ox,oy,oz) == 1 )  // hasCompleteSheet( ox, oy, oz ) == 1 ) //  
+				if ( isPiercable(ox,oy,oz) == 1 )  // hasCompleteSheet( ox, oy, oz ) == 1 ) //
 				{
 					queue2->prepend(ox,oy,oz) ;
 				//	setDataAt( ox, oy, oz, -1 ) ;
 				}
 				ele = queue4->remove() ;
 			}
-			
+
 			for ( i = 0 ; i < getSizeX() ; i ++ )
 				for ( j = 0 ; j < getSizeY() ; j ++ )
 					for ( k = 0 ; k < getSizeZ() ; k ++ )
 					{
-						if ( getDataAt( i, j, k ) == 0 && isPiercable(i,j,k) ) //hasCompleteSheet(i,j,k) == 1) //  
+						if ( getDataAt( i, j, k ) == 0 && isPiercable(i,j,k) ) //hasCompleteSheet(i,j,k) == 1) //
 						{
 							queue2->prepend( i, j, k ) ;
 						}
@@ -4487,7 +4498,7 @@ namespace wustl_mm {
 			#ifdef VERBOSE
 			printf("Thresholding the volume to 0/1...\n") ;
 			#endif
-			threshold( 0, 0, 1 ) ;		
+			threshold( 0, 0, 1 ) ;
 		}
 
 		// Compute curve skeleton
@@ -4500,7 +4511,7 @@ namespace wustl_mm {
 			#endif
 			threshold( thr, -1, 0 ) ;
 
-			// Next, apply convergent erosion 
+			// Next, apply convergent erosion
 			// by preserving: complex nodes, curve end-points, and sheet points
 
 			// Next, initialize the linked queue
@@ -4536,7 +4547,7 @@ namespace wustl_mm {
 							}
 						}
 					}
-			
+
 			int wid = MAX_ERODE ;
 			#ifdef VERBOSE
 			printf("Total %d nodes\n", queue2->getNumElements() ) ;
@@ -4544,7 +4555,7 @@ namespace wustl_mm {
 			#endif
 
 
-			// Perform erosion 
+			// Perform erosion
 			gridQueueEle* ele ;
 			gridPoint* gp ;
 			int ox, oy, oz ;
@@ -4561,7 +4572,7 @@ namespace wustl_mm {
 
 			for ( int curwid = 1 ; curwid <= wid ; curwid ++ )
 			{
-				// At the start of each iteration, 
+				// At the start of each iteration,
 				// queue2 holds all the nodes for this layer
 				// queue3 and queue are empty
 
@@ -4569,7 +4580,7 @@ namespace wustl_mm {
 				#ifdef VERBOSE
 				printf("Processing %d nodes in layer %d\n", queue2->getNumElements(), curwid) ;
 				#endif
-				
+
 				/*
 				We first need to assign curwid + 1 to every node in this layer
 				*/
@@ -4580,7 +4591,7 @@ namespace wustl_mm {
 					ox = ele->x ;
 					oy = ele->y ;
 					oz = ele->z ;
-					
+
 					if ( getDataAt(ox,oy,oz) == curwid )
 					{
 						ele = queue2->remove() ;
@@ -4608,7 +4619,7 @@ namespace wustl_mm {
 	#ifdef NOISE_DIS_HELIX
 				/* Extra step: classify nodes in queue2 into noise and non-noise nodes */
 				queue2->reset() ;
-				
+
 				// First run
 				int flag = 0 ;
 				while ( ( ele = queue2->getNext() ) != NULL )
@@ -4654,7 +4665,7 @@ namespace wustl_mm {
 						ox = ele->x ;
 						oy = ele->y ;
 						oz = ele->z ;
-						
+
 						if ( noisevol->getDataAt( ox, oy, oz ) == 1 )
 						{
 							visited ++ ;
@@ -4687,9 +4698,9 @@ namespace wustl_mm {
 
 	#endif
 				/* Commented out for debugging
-				
-				// First, 
-				// check for complex nodes in queue2 
+
+				// First,
+				// check for complex nodes in queue2
 				// move them from queue2 to queue3
 				queue2->reset() ;
 				ele = queue2->getNext() ;
@@ -4698,19 +4709,19 @@ namespace wustl_mm {
 					ox = ele->x ;
 					oy = ele->y ;
 					oz = ele->z ;
-					
-					// Check simple 
+
+					// Check simple
 	#ifndef NOISE_DIS_HELIX
-					if ( isHelixEnd( ox, oy, oz ) || ! isSimple( ox, oy, oz ) ) 
+					if ( isHelixEnd( ox, oy, oz ) || ! isSimple( ox, oy, oz ) )
 	#else
-					if ( isHelixEnd( ox, oy, oz, noisevol ) || ! isSimple( ox, oy, oz ) ) 
+					if ( isHelixEnd( ox, oy, oz, noisevol ) || ! isSimple( ox, oy, oz ) )
 	#endif
 					{
 						// Complex, set to next layer
 						setDataAt( ox, oy, oz, curwid + 1 ) ;
 						queue3->prepend( ox, oy, oz ) ;
 						ele = queue2->remove() ;
-						
+
 						numComplex ++ ;
 					}
 					else
@@ -4730,7 +4741,7 @@ namespace wustl_mm {
 					ox = ele->x ;
 					oy = ele->y ;
 					oz = ele->z ;
-					
+
 					// Compute score
 					score = getNumPotComplex2( ox, oy, oz ) ;
 					scrvol->setDataAt( ox, oy, oz, score ) ;
@@ -4742,11 +4753,11 @@ namespace wustl_mm {
 					gp->z = oz ;
 					// queue->add( gp, -score ) ;
 					queue->add( gp, score ) ;
-					
+
 					ele = queue2->remove() ;
 				}
 
-				// Rename queue3 to be queue2, 
+				// Rename queue3 to be queue2,
 				// Clear queue3
 				// From now on, queue2 holds nodes of next level
 				delete queue2 ;
@@ -4764,7 +4775,7 @@ namespace wustl_mm {
 					delete gp ;
 	//				score = -score ;
 
-					// Ignore the node 
+					// Ignore the node
 					// if it has been processed before
 					// or it has an updated score
 					if ( getDataAt( ox, oy, oz ) != curwid || (int) scrvol->getDataAt( ox, oy, oz ) != score )
@@ -4781,12 +4792,12 @@ namespace wustl_mm {
 					*/
 
 					/* Added for debugging */
-					// Check simple 
+					// Check simple
 	#ifndef NOISE_DIS_HELIX
-					// if ( hasIsolatedEdge( ox, oy, oz ) && ! isNoiseHelixEnd( ox, oy, oz ) ) 
-					if ( isHelixEnd( ox, oy, oz ) || ! isSimple( ox, oy, oz ) ) 
+					// if ( hasIsolatedEdge( ox, oy, oz ) && ! isNoiseHelixEnd( ox, oy, oz ) )
+					if ( isHelixEnd( ox, oy, oz ) || ! isSimple( ox, oy, oz ) )
 	#else
-					if ( isHelixEnd( ox, oy, oz ) || ! isSimple( ox, oy, oz ) ) 
+					if ( isHelixEnd( ox, oy, oz ) || ! isSimple( ox, oy, oz ) )
 	#endif
 					{
 						// Complex, set to next layer
@@ -4813,9 +4824,9 @@ namespace wustl_mm {
 							queue2->prepend( nx, ny, nz ) ;
 						}
 					}
-					
+
 					/* Commented out for debugging
-				
+
 					// Find complex nodes in its 3x3 neighborhood
 					// move them to queue2
 					for ( i = -1 ; i < 2 ; i ++ )
@@ -4826,8 +4837,8 @@ namespace wustl_mm {
 								int ny = oy + j ;
 								int nz = oz + k ;
 
-								// Check simple 
-								if ( getDataAt( nx, ny, nz ) == curwid && 
+								// Check simple
+								if ( getDataAt( nx, ny, nz ) == curwid &&
 									// ( isSheetEnd( ox, oy, oz ) || ! isSimple( nx, ny, nz )) )
 	#ifndef NOISE_DIS_HELIX
 									( isHelixEnd( nx, ny, nz ) || ! isSimple( nx, ny, nz ) ) )
@@ -4846,7 +4857,7 @@ namespace wustl_mm {
 
 					// Update scores for nodes in its 5x5 neighborhood
 					// insert them back into priority queue
-							
+
 					for ( i = -2 ; i < 3 ;i ++ )
 						for ( j = -2 ; j < 3 ; j ++ )
 							for ( k = -2 ; k < 3 ; k ++ )
@@ -4859,7 +4870,7 @@ namespace wustl_mm {
 								{
 									// Compute score
 									score = getNumPotComplex2( nx, ny, nz ) ;
-									
+
 									if ( score != (int) scrvol->getDataAt( nx, ny, nz ) )
 									{
 										// printf("Update\n") ;
@@ -4874,14 +4885,14 @@ namespace wustl_mm {
 									}
 								}
 							}
-							
+
 
 				}
 
 				#ifdef VERBOSE
 				printf("%d complex, %d simple\n", numComplex, numSimple) ;
 				#endif
-				
+
 				if ( numSimple == 0 )
 				{
 						break ;
@@ -4897,7 +4908,7 @@ namespace wustl_mm {
 			#ifdef VERBOSE
 			printf("Thresholding the volume to 0/1...\n") ;
 			#endif
-			threshold( 0, 0, 1 ) ;		
+			threshold( 0, 0, 1 ) ;
 		}
 
 		// Compute curve skeleton in 2D
@@ -4910,7 +4921,7 @@ namespace wustl_mm {
 			#endif
 			threshold( thr, -1, 0 ) ;
 
-			// Next, apply convergent erosion 
+			// Next, apply convergent erosion
 			// by preserving: complex nodes, curve end-points, and sheet points
 
 			// Next, initialize the linked queue
@@ -4953,7 +4964,7 @@ namespace wustl_mm {
 			#endif
 
 
-			// Perform erosion 
+			// Perform erosion
 			gridQueueEle* ele ;
 			gridPoint* gp ;
 			int ox, oy, oz ;
@@ -4970,7 +4981,7 @@ namespace wustl_mm {
 
 			for ( int curwid = 1 ; curwid <= wid ; curwid ++ )
 			{
-				// At the start of each iteration, 
+				// At the start of each iteration,
 				// queue2 holds all the nodes for this layer
 				// queue3 and queue are empty
 
@@ -4978,7 +4989,7 @@ namespace wustl_mm {
 				#ifdef VERBOSE
 				printf("Processing %d nodes in layer %d\n", queue2->getNumElements(), curwid) ;
 				#endif
-				
+
 				/*
 				We first need to assign curwid + 1 to every node in this layer
 				*/
@@ -4989,7 +5000,7 @@ namespace wustl_mm {
 					ox = ele->x ;
 					oy = ele->y ;
 					oz = ele->z ;
-					
+
 					if ( getDataAt(ox,oy,oz) == curwid )
 					{
 						ele = queue2->remove() ;
@@ -5017,7 +5028,7 @@ namespace wustl_mm {
 				#ifdef NOISE_DIS_HELIX
 				/* Extra step: classify nodes in queue2 into noise and non-noise nodes */
 				queue2->reset() ;
-				
+
 				// First run
 				int flag = 0 ;
 				while ( ( ele = queue2->getNext() ) != NULL )
@@ -5063,7 +5074,7 @@ namespace wustl_mm {
 						ox = ele->x ;
 						oy = ele->y ;
 						oz = ele->z ;
-						
+
 						if ( noisevol->getDataAt( ox, oy, oz ) == 1 )
 						{
 							visited ++ ;
@@ -5096,9 +5107,9 @@ namespace wustl_mm {
 
 				#endif
 				/* Commented out for debugging
-				
-				// First, 
-				// check for complex nodes in queue2 
+
+				// First,
+				// check for complex nodes in queue2
 				// move them from queue2 to queue3
 				queue2->reset() ;
 				ele = queue2->getNext() ;
@@ -5107,19 +5118,19 @@ namespace wustl_mm {
 					ox = ele->x ;
 					oy = ele->y ;
 					oz = ele->z ;
-					
-					// Check simple 
+
+					// Check simple
 	#ifndef NOISE_DIS_HELIX
-					if ( isHelixEnd( ox, oy, oz ) || ! isSimple( ox, oy, oz ) ) 
+					if ( isHelixEnd( ox, oy, oz ) || ! isSimple( ox, oy, oz ) )
 	#else
-					if ( isHelixEnd( ox, oy, oz, noisevol ) || ! isSimple( ox, oy, oz ) ) 
+					if ( isHelixEnd( ox, oy, oz, noisevol ) || ! isSimple( ox, oy, oz ) )
 	#endif
 					{
 						// Complex, set to next layer
 						setDataAt( ox, oy, oz, curwid + 1 ) ;
 						queue3->prepend( ox, oy, oz ) ;
 						ele = queue2->remove() ;
-						
+
 						numComplex ++ ;
 					}
 					else
@@ -5139,7 +5150,7 @@ namespace wustl_mm {
 					ox = ele->x ;
 					oy = ele->y ;
 					oz = ele->z ;
-					
+
 					// Compute score
 					score = getNumPotComplex2( ox, oy, oz ) ;
 					//score = getNumNeighbor6( ox, oy, oz ) ;
@@ -5152,11 +5163,11 @@ namespace wustl_mm {
 					gp->z = oz ;
 					// queue->add( gp, -score ) ;
 					queue->add( gp, score ) ;
-					
+
 					ele = queue2->remove() ;
 				}
 
-				// Rename queue3 to be queue2, 
+				// Rename queue3 to be queue2,
 				// Clear queue3
 				// From now on, queue2 holds nodes of next level
 				delete queue2 ;
@@ -5174,7 +5185,7 @@ namespace wustl_mm {
 					delete gp ;
 	//				score = -score ;
 
-					// Ignore the node 
+					// Ignore the node
 					// if it has been processed before
 					// or it has an updated score
 					if ( getDataAt( ox, oy, oz ) != curwid || (int) scrvol->getDataAt( ox, oy, oz ) != score )
@@ -5191,12 +5202,12 @@ namespace wustl_mm {
 					*/
 
 					/* Added for debugging */
-					// Check simple 
+					// Check simple
 					#ifndef NOISE_DIS_HELIX
-					// if ( hasIsolatedEdge( ox, oy, oz ) && ! isNoiseHelixEnd( ox, oy, oz ) ) 
-					if ( isHelixEnd( ox, oy, oz ) || ! isSimple( ox, oy, oz ) ) 
+					// if ( hasIsolatedEdge( ox, oy, oz ) && ! isNoiseHelixEnd( ox, oy, oz ) )
+					if ( isHelixEnd( ox, oy, oz ) || ! isSimple( ox, oy, oz ) )
 					#else
-					if ( isHelixEnd( ox, oy, oz ) || ! isSimple( ox, oy, oz ) ) 
+					if ( isHelixEnd( ox, oy, oz ) || ! isSimple( ox, oy, oz ) )
 					#endif
 					{
 						// Complex, set to next layer
@@ -5223,9 +5234,9 @@ namespace wustl_mm {
 							queue2->prepend( nx, ny, nz ) ;
 						}
 					}
-					
+
 					/* Commented out for debugging
-				
+
 					// Find complex nodes in its 3x3 neighborhood
 					// move them to queue2
 					for ( i = -1 ; i < 2 ; i ++ )
@@ -5236,8 +5247,8 @@ namespace wustl_mm {
 								int ny = oy + j ;
 								int nz = oz + k ;
 
-								// Check simple 
-								if ( getDataAt( nx, ny, nz ) == curwid && 
+								// Check simple
+								if ( getDataAt( nx, ny, nz ) == curwid &&
 									// ( isSheetEnd( ox, oy, oz ) || ! isSimple( nx, ny, nz )) )
 	#ifndef NOISE_DIS_HELIX
 									( isHelixEnd( nx, ny, nz ) || ! isSimple( nx, ny, nz ) ) )
@@ -5256,7 +5267,7 @@ namespace wustl_mm {
 
 					// Update scores for nodes in its 5x5 neighborhood
 					// insert them back into priority queue
-							
+
 					for ( i = -2 ; i < 3 ;i ++ )
 						for ( j = -2 ; j < 3 ; j ++ )
 							for ( k = -2 ; k < 3 ; k ++ )
@@ -5270,7 +5281,7 @@ namespace wustl_mm {
 									// Compute score
 									score = getNumPotComplex2( nx, ny, nz ) ;
 									//score = getNumNeighbor6( nx, ny, nz ) ;
-									
+
 									if ( score != (int) scrvol->getDataAt( nx, ny, nz ) )
 									{
 										// printf("Update\n") ;
@@ -5285,14 +5296,14 @@ namespace wustl_mm {
 									}
 								}
 							}
-							
+
 
 				}
 
 				#ifdef VERBOSE
 				printf("%d complex, %d simple\n", numComplex, numSimple) ;
 				#endif
-				
+
 				if ( numSimple == 0 )
 				{
 						break ;
@@ -5303,7 +5314,7 @@ namespace wustl_mm {
 			#ifdef VERBOSE
 			printf("Thresholding the volume to 0/1...\n") ;
 			#endif
-			threshold( 0, 0, 1 ) ;		
+			threshold( 0, 0, 1 ) ;
 			delete scrvol;
 			delete queue;
 			delete queue2;
@@ -5321,7 +5332,7 @@ namespace wustl_mm {
 			#endif
 			threshold( thr, -1, 0 ) ;
 
-			// Next, apply convergent erosion 
+			// Next, apply convergent erosion
 			// by preserving: complex nodes, curve end-points, and sheet points
 
 			// Next, initialize the linked queue
@@ -5356,7 +5367,7 @@ namespace wustl_mm {
 			printf("Start erosion to %d...\n", wid) ;
 			#endif
 
-			// Perform erosion 
+			// Perform erosion
 			gridQueueEle* ele ;
 			int ox, oy, oz ;
 
@@ -5364,16 +5375,16 @@ namespace wustl_mm {
 			{
 				wid ++ ;
 
-				// At the start of each iteration, 
+				// At the start of each iteration,
 				// queue2 holds all the nodes for this layer
 				// queue is empty
 
 				int numComplex = 0, numSimple = 0 ;
 				#ifdef VERBOSE
 				printf("Processing %d nodes in layer %d\n", queue2->getNumElements(), wid) ;
-				#endif			
+				#endif
 
-				// Rename queue2 to be queue, 
+				// Rename queue2 to be queue,
 				// Clear queue2
 				// From now on, queue2 holds nodes of next level
 				delete queue ;
@@ -5390,15 +5401,15 @@ namespace wustl_mm {
 					oz = ele->z ;
 	//				delete ele ;
 
-					// Check simple 
-					if ( ! isSimple( ox, oy, oz ) ) 
+					// Check simple
+					if ( ! isSimple( ox, oy, oz ) )
 					{
 						// Complex, set to next layer
 						queue2->prepend( ox, oy, oz ) ;
 						numComplex ++ ;
 					}
 					/*
-					else if ( ox == off || oy == off || oz == off || 
+					else if ( ox == off || oy == off || oz == off ||
 						ox == getSizeX() - off - 1 || oy == getSizeY() - off - 1 || oz == getSizeZ() - off - 1 )
 					{
 						// Wall, don't erode, set to next layer
@@ -5443,7 +5454,7 @@ namespace wustl_mm {
 			#ifdef VERBOSE
 			printf("Thresholding the volume to 0/1...\n") ;
 			#endif
-			threshold( 0, 0, 1 ) ;		
+			threshold( 0, 0, 1 ) ;
 		}
 
 		// Compute minimal skeleton
@@ -5456,7 +5467,7 @@ namespace wustl_mm {
 			#endif
 			threshold( thr, -1, 0 ) ;
 
-			// Next, apply convergent erosion 
+			// Next, apply convergent erosion
 			// by preserving: complex nodes, curve end-points, and sheet points
 
 			// Next, initialize the linked queue
@@ -5473,7 +5484,7 @@ namespace wustl_mm {
 					{
 						if ( getDataAt( i, j, k ) >= 0 )
 						{
-							if ( i == off || j == off || k == off || 
+							if ( i == off || j == off || k == off ||
 								 i == getSizeX() - off - 1 || j == getSizeY() - off - 1 || k == getSizeZ() - off - 1 )
 							{
 								setDataAt( i, j, k, MAX_ERODE ) ;
@@ -5497,7 +5508,7 @@ namespace wustl_mm {
 			printf("Total %d nodes\n", queue2->getNumElements() ) ;
 
 
-			// Perform erosion 
+			// Perform erosion
 			printf("Start erosion to %d...\n", wid) ;
 			#endif
 
@@ -5515,7 +5526,7 @@ namespace wustl_mm {
 
 			for ( int curwid = 1 ; curwid <= wid ; curwid ++ )
 			{
-				// At the start of each iteration, 
+				// At the start of each iteration,
 				// queue2 holds all the nodes for this layer
 				// queue3 and queue are empty
 
@@ -5534,7 +5545,7 @@ namespace wustl_mm {
 					ox = ele->x ;
 					oy = ele->y ;
 					oz = ele->z ;
-					
+
 					// Compute score
 					score = getNumPotComplex2( ox, oy, oz ) ;
 					scrvol->setDataAt( ox, oy, oz, score ) ;
@@ -5546,11 +5557,11 @@ namespace wustl_mm {
 					gp->z = oz ;
 					// queue->add( gp, -score ) ;
 					queue->add( gp, score ) ;
-					
+
 					ele = queue2->remove() ;
 				}
 
-				// Rename queue3 to be queue2, 
+				// Rename queue3 to be queue2,
 				// Clear queue3
 				// From now on, queue2 holds nodes of next level
 				delete queue2 ;
@@ -5568,7 +5579,7 @@ namespace wustl_mm {
 					delete gp ;
 	//				score = -score ;
 
-					// Ignore the node 
+					// Ignore the node
 					// if it has been processed before
 					// or it has an updated score
 					if ( getDataAt( ox, oy, oz ) != curwid || (int) scrvol->getDataAt( ox, oy, oz ) != score )
@@ -5577,8 +5588,8 @@ namespace wustl_mm {
 					}
 
 					/* Added for debugging */
-					// Check simple 
-					if ( ! isSimple( ox, oy, oz ) ) 
+					// Check simple
+					if ( ! isSimple( ox, oy, oz ) )
 					{
 						// Complex, set to next layer
 						setDataAt( ox, oy, oz, curwid + 1 ) ;
@@ -5604,10 +5615,10 @@ namespace wustl_mm {
 							queue2->prepend( nx, ny, nz ) ;
 						}
 					}
-					
+
 					// Update scores for nodes in its 5x5 neighborhood
 					// insert them back into priority queue
-						/*	
+						/*
 					for ( i = -2 ; i < 3 ;i ++ )
 						for ( j = -2 ; j < 3 ; j ++ )
 							for ( k = -2 ; k < 3 ; k ++ )
@@ -5620,7 +5631,7 @@ namespace wustl_mm {
 								{
 									// Compute score
 									score = getNumPotComplex2( nx, ny, nz ) ;
-									
+
 									if ( score != (int) scrvol->getDataAt( nx, ny, nz ) )
 									{
 										// printf("Update\n") ;
@@ -5635,7 +5646,7 @@ namespace wustl_mm {
 									}
 								}
 							}
-							
+
 						*/
 				}
 				#ifdef VERBOSE
@@ -5654,7 +5665,7 @@ namespace wustl_mm {
 			#ifdef VERBOSE
 			printf("Thresholding the volume to 0/1...\n") ;
 			#endif
-			threshold( 0, 0, 1 ) ;		
+			threshold( 0, 0, 1 ) ;
 		}
 
 		/* Thin the current volume while preserving voxels with values > highthr or <= lowthr in grayvol
@@ -5669,7 +5680,7 @@ namespace wustl_mm {
 			#endif
 			threshold( 0.5f, -1, 0 ) ;
 
-			// Next, apply convergent erosion 
+			// Next, apply convergent erosion
 			// by preserving: complex nodes, curve end-points, and sheet points
 
 			// Next, initialize the linked queue
@@ -5710,7 +5721,7 @@ namespace wustl_mm {
 			#endif
 
 
-			// Perform erosion 
+			// Perform erosion
 			int wid = MAX_ERODE ;
 			#ifdef VERBOSE
 			printf("Start erosion to %d...\n", wid) ;
@@ -5728,7 +5739,7 @@ namespace wustl_mm {
 
 			for ( int curwid = 1 ; curwid <= wid ; curwid ++ )
 			{
-				// At the start of each iteration, 
+				// At the start of each iteration,
 				// queue2 holds all the nodes for this layer
 				// queue3 and queue are empty
 
@@ -5736,7 +5747,7 @@ namespace wustl_mm {
 				#ifdef VERBOSE
 				printf("Processing %d nodes in layer %d\n", queue2->getNumElements(), curwid) ;
 				#endif
-				
+
 
 				// Next,
 				// Compute score for each node left in queue2
@@ -5748,7 +5759,7 @@ namespace wustl_mm {
 					ox = ele->x ;
 					oy = ele->y ;
 					oz = ele->z ;
-					
+
 					// Compute score
 					score = getNumPotComplex2( ox, oy, oz ) ;
 					scrvol->setDataAt( ox, oy, oz, score ) ;
@@ -5760,11 +5771,11 @@ namespace wustl_mm {
 					gp->z = oz ;
 					// queue->add( gp, -score ) ;
 					queue->add( gp, score ) ;
-					
+
 					ele = queue2->remove() ;
 				}
 
-				// Rename queue3 to be queue2, 
+				// Rename queue3 to be queue2,
 				// Clear queue3
 				// From now on, queue2 holds nodes of next level
 				delete queue2 ;
@@ -5782,7 +5793,7 @@ namespace wustl_mm {
 					delete gp ;
 	//				score = -score ;
 
-					// Ignore the node 
+					// Ignore the node
 					// if it has been processed before
 					// or it has an updated score
 					if ( getDataAt( ox, oy, oz ) != curwid || (int) scrvol->getDataAt( ox, oy, oz ) != score )
@@ -5791,8 +5802,8 @@ namespace wustl_mm {
 					}
 
 					/* Added for debugging */
-					// Check simple 
-					if ( ! isSimple( ox, oy, oz ) ) 
+					// Check simple
+					if ( ! isSimple( ox, oy, oz ) )
 					{
 						// Complex, set to next layer
 						setDataAt( ox, oy, oz, curwid + 1 ) ;
@@ -5804,7 +5815,7 @@ namespace wustl_mm {
 						setDataAt( ox, oy, oz, -1 ) ;
 						numSimple ++ ;
 					/* Adding ends */
-						
+
 						// Move its neighboring unvisited node to queue2
 						for ( int m = 0 ; m < 6 ; m ++ )
 						{
@@ -5817,12 +5828,12 @@ namespace wustl_mm {
 								queue2->prepend( nx, ny, nz ) ;
 							}
 						}
-						
+
 					}
 
 					// Update scores for nodes in its 5x5 neighborhood
 					// insert them back into priority queue
-							
+
 					for ( i = -2 ; i < 3 ;i ++ )
 						for ( j = -2 ; j < 3 ; j ++ )
 							for ( k = -2 ; k < 3 ; k ++ )
@@ -5835,7 +5846,7 @@ namespace wustl_mm {
 								{
 									// Compute score
 									score = getNumPotComplex2( nx, ny, nz ) ;
-									
+
 									if ( score != (int) scrvol->getDataAt( nx, ny, nz ) )
 									{
 										// printf("Update\n") ;
@@ -5850,13 +5861,13 @@ namespace wustl_mm {
 									}
 								}
 							}
-							
+
 
 				}
 				#ifdef VERBOSE
 				printf("%d complex, %d simple\n", numComplex, numSimple) ;
 				#endif
-				
+
 				if ( numSimple == 0 )
 				{
 						break ;
@@ -5881,7 +5892,7 @@ namespace wustl_mm {
 					ele = queue2->remove() ;
 				}
 			}
-			
+
 			for ( i = 0 ; i < getSizeX() ; i ++ )
 				for ( j = 0 ; j < getSizeY() ; j ++ )
 					for ( k = 0 ; k < getSizeZ() ; k ++ )
@@ -5910,7 +5921,7 @@ namespace wustl_mm {
 			#ifdef VERBOSE
 			printf("Thresholding the volume to 0/1...\n") ;
 			#endif
-			threshold( 0, 0, 1 ) ;		
+			threshold( 0, 0, 1 ) ;
 		}
 
 
@@ -5924,7 +5935,7 @@ namespace wustl_mm {
 			#endif
 			threshold( thr, -1, 0 ) ;
 
-			// Next, apply convergent erosion 
+			// Next, apply convergent erosion
 			// by preserving: complex nodes, curve end-points, and sheet points
 
 			// Next, initialize the linked queue
@@ -5964,7 +5975,7 @@ namespace wustl_mm {
 			printf("Total %d nodes\n", queue2->getNumElements() ) ;
 
 
-			// Perform erosion 
+			// Perform erosion
 			printf("Start erosion to %d...\n", wid) ;
 			#endif
 			gridQueueEle* ele ;
@@ -5980,7 +5991,7 @@ namespace wustl_mm {
 
 			for ( int curwid = 1 ; curwid <= wid ; curwid ++ )
 			{
-				// At the start of each iteration, 
+				// At the start of each iteration,
 				// queue2 holds all the nodes for this layer
 				// queue3 and queue are empty
 
@@ -5988,7 +5999,7 @@ namespace wustl_mm {
 				#ifdef VERBOSE
 				printf("Processing %d nodes in layer %d\n", queue2->getNumElements(), curwid) ;
 				#endif
-				
+
 
 				// Next,
 				// Compute score for each node left in queue2
@@ -6000,7 +6011,7 @@ namespace wustl_mm {
 					ox = ele->x ;
 					oy = ele->y ;
 					oz = ele->z ;
-					
+
 					// Compute score
 					score = getNumPotComplex2( ox, oy, oz ) ;
 					scrvol->setDataAt( ox, oy, oz, score ) ;
@@ -6012,11 +6023,11 @@ namespace wustl_mm {
 					gp->z = oz ;
 					// queue->add( gp, -score ) ;
 					queue->add( gp, score ) ;
-									
+
 					ele = queue2->remove() ;
 				}
 
-				// Rename queue3 to be queue2, 
+				// Rename queue3 to be queue2,
 				// Clear queue3
 				// From now on, queue2 holds nodes of next level
 				delete queue2 ;
@@ -6034,7 +6045,7 @@ namespace wustl_mm {
 					delete gp ;
 	//				score = -score ;
 
-					// Ignore the node 
+					// Ignore the node
 					// if it has been processed before
 					// or it has an updated score
 					if ( getDataAt( ox, oy, oz ) != curwid || (int) scrvol->getDataAt( ox, oy, oz ) != score )
@@ -6043,8 +6054,8 @@ namespace wustl_mm {
 					}
 
 					/* Added for debugging */
-					// Check simple 
-					if ( ! isSimple( ox, oy, oz ) ) 
+					// Check simple
+					if ( ! isSimple( ox, oy, oz ) )
 					{
 						// Complex, set to next layer
 						setDataAt( ox, oy, oz, curwid + 1 ) ;
@@ -6070,10 +6081,10 @@ namespace wustl_mm {
 							queue2->prepend( nx, ny, nz ) ;
 						}
 					}
-					
+
 					// Update scores for nodes in its 5x5 neighborhood
 					// insert them back into priority queue
-							
+
 					for ( i = -2 ; i < 3 ;i ++ )
 						for ( j = -2 ; j < 3 ; j ++ )
 							for ( k = -2 ; k < 3 ; k ++ )
@@ -6086,7 +6097,7 @@ namespace wustl_mm {
 								{
 									// Compute score
 									score = getNumPotComplex2( nx, ny, nz ) ;
-									
+
 									if ( score != (int) scrvol->getDataAt( nx, ny, nz ) )
 									{
 										// printf("Update\n") ;
@@ -6101,14 +6112,14 @@ namespace wustl_mm {
 									}
 								}
 							}
-							
+
 
 				}
 
 				#ifdef VERBOSE
 				printf("%d complex, %d simple\n", numComplex, numSimple) ;
 				#endif
-				
+
 				if ( numSimple == 0 )
 				{
 					delete queue2 ;
@@ -6120,7 +6131,7 @@ namespace wustl_mm {
 			#ifdef VERBOSE
 			printf("Thresholding the volume to 0/1...\n") ;
 			#endif
-			threshold( 0, 0, 1 ) ;	
+			threshold( 0, 0, 1 ) ;
 			delete scrvol;
 			delete queue;
 			delete queue3;
@@ -6132,15 +6143,15 @@ namespace wustl_mm {
 		{
 			erodeHelix( 3 ) ;
 		}
-		
-		
+
+
 		void Volume::erodeHelix( int disthr )
 		{
 			int i, j, k ;
 			// First, threshold the volume
 			//printf("Thresholding the volume to -1/0...\n") ;
 			threshold( 0.1f, -1, 0 ) ;
-			
+
 			/* Debug: remove faces */
 			//Volume* facevol = markFaceEdge() ;
 			/* End debugging */
@@ -6207,7 +6218,7 @@ namespace wustl_mm {
 							}
 						}
 					}
-					
+
 					ele = queue2->remove() ;
 				}
 
@@ -6300,8 +6311,8 @@ namespace wustl_mm {
 			{
 				disthr = - dis - 2 ;
 			}
-			int d; 
-			
+			int d;
+
 			for ( d = - dis ; d > disthr + 1 ; d -- )
 			{
 				queues[ d ]->reset() ;
@@ -6310,7 +6321,7 @@ namespace wustl_mm {
 					setDataAt( ele->x, ele->y, ele->z, d ) ;
 				}
 			}
-			
+
 
 			for ( d = disthr + 1 ; d >= 2 ; d -- )
 			{
@@ -6333,13 +6344,13 @@ namespace wustl_mm {
 								}
 							}
 
-					
+
 					if ( ! dilatable )
 					{
 						/*
 						setDataAt( ele->x, ele->y, ele->z, - 1 ) ;
 						*/
-						
+
 						setDataAt( ele->x, ele->y, ele->z, - d + 1 ) ;
 						if ( d > 2 )
 						{
@@ -6352,7 +6363,7 @@ namespace wustl_mm {
 						setDataAt( ele->x, ele->y, ele->z, d ) ;
 						ele = queues[ d ]->getNext() ;
 					}
-					
+
 				}
 
 				/* Debug: extract minimal set */
@@ -6365,7 +6376,7 @@ namespace wustl_mm {
 					{
 						int critical = 0 ;
 						setDataAt( ele->x, ele->y, ele->z, -1 ) ;
-						
+
 						for ( i = -1 ; i < 2 ; i ++ )
 						{
 							for ( j = -1 ; j < 2 ; j ++ )
@@ -6395,7 +6406,7 @@ namespace wustl_mm {
 								break ;
 							}
 						}
-						
+
 						if ( critical )
 						{
 							setDataAt( ele->x, ele->y, ele->z, d ) ;
@@ -6411,7 +6422,7 @@ namespace wustl_mm {
 							ele = queues[ d ]->remove() ;
 							num ++ ;
 						}
-						
+
 					}
 
 					#ifdef VERBOSE
@@ -6426,7 +6437,7 @@ namespace wustl_mm {
 
 
 				/* End of debugging */
-		
+
 				/*
 				queue3->reset() ;
 				ele = queue3->getNext() ;
@@ -6461,8 +6472,8 @@ namespace wustl_mm {
 		{
 			return erodeSheet( 3 ) ;
 		}
-		
-		
+
+
 		int Volume::erodeSheet( int disthr )
 		{
 			int i, j, k ;
@@ -6473,7 +6484,7 @@ namespace wustl_mm {
 			/* Debug: remove cells */
 			Volume* facevol = markCellFace() ;
 			/* End debugging */
-			
+
 			// Next, initialize the linked queue
 			//printf("Initializing queue...\n") ;
 			Volume * fvol = new Volume( getSizeX(), getSizeY(), getSizeZ() ) ;
@@ -6549,7 +6560,7 @@ namespace wustl_mm {
 									}
 								}
 							}
-					
+
 					ele = queue2->remove() ;
 				}
 
@@ -6560,7 +6571,7 @@ namespace wustl_mm {
 			}
 
 			/* Deal with closed rings */
-			
+
 			dis -- ;
 			queues[ - dis ] = new GridQueue2( ) ;
 			#ifdef VERBOSE
@@ -6595,9 +6606,9 @@ namespace wustl_mm {
 			#ifdef VERBOSE
 			printf("%d nodes\n", ftot) ;
 			#endif
-			
 
-			/* Find local minimum: to help determine erosion level 
+
+			/* Find local minimum: to help determine erosion level
 			int cts[ 64 ] ;
 			for ( i = 0 ; i <= - dis ; i ++ )
 			{
@@ -6657,7 +6668,7 @@ namespace wustl_mm {
 
 			for (d = disthr + 1 ; d >= 2 ; d -- )
 			{
-				
+
 				//delete queue3 ;
 				//queue3 = new GridQueue2( ) ;
 				queues[ d ]->reset() ;
@@ -6685,16 +6696,16 @@ namespace wustl_mm {
 					}
 					*/
 					for ( i = 0 ; i < 12 ; i ++ )
-					{	
+					{
 						int flag = 1, flag2 = 0 ;
 						for ( j = 0 ; j < 4 ; j ++ )
 						{
 							int nx = ele->x + sheetNeighbor[i][j][0] ;
 							int ny = ele->y + sheetNeighbor[i][j][1] ;
 							int nz = ele->z + sheetNeighbor[i][j][2] ;
-							
+
 							double val = getDataAt( nx, ny, nz ) ;
-							
+
 							if ( val > - d && val < 0)
 							{
 								flag = 0 ;
@@ -6705,19 +6716,19 @@ namespace wustl_mm {
 								flag2 ++ ;
 							}
 						}
-						
+
 						if ( flag && flag2 )
 						{
 							dilatable = 1 ;
 							break ;
 						}
 					}
-					
+
 					if ( ! dilatable )
 					{
 						// setDataAt( ele->x, ele->y, ele->z, - 1 ) ;
 						// queue3->prepend( ele->x, ele->y, ele->z ) ;
-						
+
 						setDataAt( ele->x, ele->y, ele->z, - d + 1 ) ;
 						if ( d > 2 )
 						{
@@ -6742,7 +6753,7 @@ namespace wustl_mm {
 					{
 						int critical = 0 ;
 						setDataAt( ele->x, ele->y, ele->z, -1 ) ;
-						
+
 						for ( i = -1 ; i < 2 ; i ++ )
 						{
 							for ( j = -1 ; j < 2 ; j ++ )
@@ -6773,7 +6784,7 @@ namespace wustl_mm {
 								break ;
 							}
 						}
-						
+
 						if ( critical )
 						{
 							setDataAt( ele->x, ele->y, ele->z, d ) ;
@@ -6789,7 +6800,7 @@ namespace wustl_mm {
 							ele = queues[ d ]->remove() ;
 							num ++ ;
 						}
-						
+
 					}
 					#ifdef VERBOSE
 					printf("Non-minimal: %d\n", num) ;
@@ -6803,7 +6814,7 @@ namespace wustl_mm {
 
 
 				/* End of debugging */
-				
+
 				/*
 				queue3->reset() ;
 				ele = queue3->getNext() ;
@@ -6814,7 +6825,7 @@ namespace wustl_mm {
 				}
 				*/
 			}
-			
+
 
 			// Finally, threshold the volume
 			#ifdef VERBOSE
@@ -6831,10 +6842,10 @@ namespace wustl_mm {
 				delete queues[d];
 			}
 			delete [] queues;
-		
+
 			return - dis - 1 ;
 		}
-			
+
 		void Volume::erodeSheetOld( int disthr )
 		{
 			int i, j, k ;
@@ -6843,7 +6854,7 @@ namespace wustl_mm {
 			printf("Thresholding the volume to -1/0...\n") ;
 			#endif
 			threshold( 0.1f, -1, 0 ) ;
-			
+
 			// Next, initialize the linked queue
 			#ifdef VERBOSE
 			printf("Initializing queue...\n") ;
@@ -6899,7 +6910,7 @@ namespace wustl_mm {
 							queue3->prepend( nx, ny, nz ) ;
 						}
 					}
-					
+
 					ele = queue2->remove() ;
 				}
 
@@ -6958,7 +6969,7 @@ namespace wustl_mm {
 			{
 				printf("Local minima: %d with %d nodes.\n", -i, cts[ i ] ) ;
 			}
-			
+
 
 			// return ;
 
@@ -6993,7 +7004,7 @@ namespace wustl_mm {
 							}
 					*/
 					for ( i = 0 ; i < 12 ; i ++ )
-					{	
+					{
 						int flag = 1, flag2 = 0 ;
 						for ( j = 0 ; j < 4 ; j ++ )
 						{
@@ -7051,7 +7062,7 @@ namespace wustl_mm {
 			threshold( -1, 1, 0, 0 ) ;
 		}
 
-		
+
 
 		void Volume::addNoise( float thr, float pos )
 		{
@@ -7085,7 +7096,7 @@ namespace wustl_mm {
 		}
 
 		/************************************************************************/
-		// A sequential thinning method for extracting 6-connected skeletons                
+		// A sequential thinning method for extracting 6-connected skeletons
 		// Properties: medial, topology preserving, shape preserving, noise resistance!
 		// @param thr: threshold
 		// @param type: 0 for curve preserving, 1 for surface preserving
@@ -7234,7 +7245,7 @@ namespace wustl_mm {
 									{
 										complex = 1 ;
 									}
-									
+
 									if ( val == 2 && complex )
 									{
 										// A non-complex node becomes complex
@@ -7246,10 +7257,10 @@ namespace wustl_mm {
 										setDataAt( nx, ny, nz, 2 ) ;
 										queue2->prepend( nx, ny, nz ) ;
 									}
-									
+
 								}
 							}
-							
+
 					queue2->reset() ;
 				}
 
@@ -7383,7 +7394,7 @@ namespace wustl_mm {
 					}
 
 
-			// Perform erosion 
+			// Perform erosion
 			int wid = MAX_ERODE ;
 			gridQueueEle* ele ;
 			gridPoint* gp ;
@@ -7407,7 +7418,7 @@ namespace wustl_mm {
 				#ifdef VERBOSE
 				printf("Processing %d nodes in layer %d\n", queue2->getNumElements(), curwid) ;
 				#endif
-				
+
 				queue2->reset() ;
 				ele = queue2->getNext() ;
 				while ( ele != NULL )
@@ -7415,7 +7426,7 @@ namespace wustl_mm {
 					ox = ele->x ;
 					oy = ele->y ;
 					oz = ele->z ;
-					
+
 					if ( getDataAt(ox,oy,oz) == curwid )
 					{
 						ele = queue2->remove() ;
@@ -7443,7 +7454,7 @@ namespace wustl_mm {
 				#ifdef NOISE_DIS_SHEET
 				/* Extra step: classify nodes in queue2 into noise and non-noise nodes */
 				queue2->reset() ;
-				
+
 				// First run
 				int flag = 0 ;
 				while ( ( ele = queue2->getNext() ) != NULL )
@@ -7487,7 +7498,7 @@ namespace wustl_mm {
 						ox = ele->x ;
 						oy = ele->y ;
 						oz = ele->z ;
-						
+
 						if ( noisevol->getDataAt( ox, oy, oz ) == 1 )
 						{
 							continue ;
@@ -7524,7 +7535,7 @@ namespace wustl_mm {
 					ox = ele->x ;
 					oy = ele->y ;
 					oz = ele->z ;
-					
+
 					// Compute score
 					score = getNumPotComplex( ox, oy, oz ) ;
 					scrvol->setDataAt( ox, oy, oz, score ) ;
@@ -7536,7 +7547,7 @@ namespace wustl_mm {
 					gp->z = oz ;
 					// queue->add( gp, -score ) ;
 					queue->add( gp, score ) ;
-					
+
 					ele = queue2->remove() ;
 				}
 
@@ -7566,11 +7577,11 @@ namespace wustl_mm {
 					#ifndef NOISE_DIS_SHEET
 					// if ( hasFeatureFace( ox, oy, oz ) )
 					if ( (! isSimple( ox, oy, oz )) || isSheetEnd( ox, oy, oz ) )
-					// if ( hasIsolatedFace(ox,oy,oz)  && (! isNoiseSheetEnd(ox,oy,oz))) 
+					// if ( hasIsolatedFace(ox,oy,oz)  && (! isNoiseSheetEnd(ox,oy,oz)))
 					#else
-					// if ( ! isSimple( ox, oy, oz ) || isSheetEnd( ox, oy, oz, noisevol ) ) 
-					if ( ! isSimple( ox, oy, oz ) || isSheetEnd( ox, oy, oz, noisevol ) || isHelixEnd( ox, oy, oz, noisevol )) 
-					// if ( isBertrandEndPoint( ox, oy, oz ) ) 
+					// if ( ! isSimple( ox, oy, oz ) || isSheetEnd( ox, oy, oz, noisevol ) )
+					if ( ! isSimple( ox, oy, oz ) || isSheetEnd( ox, oy, oz, noisevol ) || isHelixEnd( ox, oy, oz, noisevol ))
+					// if ( isBertrandEndPoint( ox, oy, oz ) )
 					#endif
 					{
 						// Complex, set to next layer
@@ -7596,7 +7607,7 @@ namespace wustl_mm {
 								queue2->prepend( nx, ny, nz ) ;
 							}
 						}
-					
+
 						if ( nowComplex )
 						{
 
@@ -7606,7 +7617,7 @@ namespace wustl_mm {
 
 					// Update scores for nodes in its 5x5 neighborhood
 					// insert them back into priority queue
-						
+
 					for ( i = -2 ; i < 3 ;i ++ )
 						for ( j = -2 ; j < 3 ; j ++ )
 							for ( k = -2 ; k < 3 ; k ++ )
@@ -7619,7 +7630,7 @@ namespace wustl_mm {
 								{
 									// Compute score
 									score = getNumPotComplex( nx, ny, nz ) ;
-									
+
 									if ( score != (int) scrvol->getDataAt( nx, ny, nz ) )
 									{
 										// printf("Update\n") ;
@@ -7634,10 +7645,10 @@ namespace wustl_mm {
 									}
 								}
 							}
-							
+
 
 				}
-				
+
 				if ( numSimple == 0 )
 				{
 					if ( queue2->getNumElements() > 0 )
@@ -7649,7 +7660,7 @@ namespace wustl_mm {
 			}
 
 			// Remove all internal voxels (contained in cells)
-			
+
 			queue4->reset() ;
 			ele = queue4->getNext() ;
 			while ( ele != NULL )
@@ -7677,8 +7688,8 @@ namespace wustl_mm {
 				setDataAt( ox, oy, oz, -1 ) ;
 				ele = queue2->remove() ;
 			}
-			
-			
+
+
 
 			// Finally, clean up
 			delete scrvol;
@@ -7732,7 +7743,7 @@ namespace wustl_mm {
 			printf("Total %d nodes\n", queue2->getNumElements() ) ;
 
 
-			// Perform erosion 
+			// Perform erosion
 			printf("Start erosion to %d...\n", wid) ;
 			#endif
 			gridQueueEle* ele ;
@@ -7751,13 +7762,13 @@ namespace wustl_mm {
 
 			for ( int curwid = 1 ; curwid <= wid ; curwid ++ )
 			{
-				// At the start of each iteration, 
+				// At the start of each iteration,
 				// queue2 and queue4 holds all the nodes for this layer
 				// queue3 and queue are empty
 
 				int numComplex = 0, numSimple = 0 ;
 				printf("Processing %d nodes in layer %d\n", queue2->getNumElements(), curwid) ;
-				
+
 				/*
 				We first need to assign curwid + 1 to every node in this layer
 				*/
@@ -7768,7 +7779,7 @@ namespace wustl_mm {
 					ox = ele->x ;
 					oy = ele->y ;
 					oz = ele->z ;
-					
+
 					if ( getDataAt(ox,oy,oz) == curwid )
 					{
 						ele = queue2->remove() ;
@@ -7796,7 +7807,7 @@ namespace wustl_mm {
 	#ifdef NOISE_DIS_SHEET
 				/* Extra step: classify nodes in queue2 into noise and non-noise nodes */
 				queue2->reset() ;
-				
+
 				// First run
 				int flag = 0 ;
 				while ( ( ele = queue2->getNext() ) != NULL )
@@ -7840,7 +7851,7 @@ namespace wustl_mm {
 						ox = ele->x ;
 						oy = ele->y ;
 						oz = ele->z ;
-						
+
 						if ( noisevol->getDataAt( ox, oy, oz ) == 1 )
 						{
 							continue ;
@@ -7872,8 +7883,8 @@ namespace wustl_mm {
 
 				/* Commented for debugging
 
-				// First, 
-				// check for complex nodes in queue2 
+				// First,
+				// check for complex nodes in queue2
 				// move them from queue2 to queue3
 				queue2->reset() ;
 				ele = queue2->getNext() ;
@@ -7882,19 +7893,19 @@ namespace wustl_mm {
 					ox = ele->x ;
 					oy = ele->y ;
 					oz = ele->z ;
-					
-					// Check simple 
+
+					// Check simple
 	#ifndef NOISE_DIS_SHEET
-					if ( isSheetEnd( ox, oy, oz ) || ! isSimple( ox, oy, oz ) ) 
+					if ( isSheetEnd( ox, oy, oz ) || ! isSimple( ox, oy, oz ) )
 	#else
-					if ( isSheetEnd( ox, oy, oz, noisevol ) || ! isSimple( ox, oy, oz ) ) 
+					if ( isSheetEnd( ox, oy, oz, noisevol ) || ! isSimple( ox, oy, oz ) )
 	#endif
 					{
 						// Complex, set to next layer
 						setDataAt( ox, oy, oz, curwid + 1 ) ;
 						queue3->prepend( ox, oy, oz ) ;
 						ele = queue2->remove() ;
-						
+
 						numComplex ++ ;
 					}
 					else
@@ -7915,7 +7926,7 @@ namespace wustl_mm {
 					ox = ele->x ;
 					oy = ele->y ;
 					oz = ele->z ;
-					
+
 					// Compute score
 					score = getNumPotComplex( ox, oy, oz ) ;
 					scrvol->setDataAt( ox, oy, oz, score ) ;
@@ -7927,11 +7938,11 @@ namespace wustl_mm {
 					gp->z = oz ;
 					// queue->add( gp, -score ) ;
 					queue->add( gp, score ) ;
-					
+
 					ele = queue2->remove() ;
 				}
 
-				// Rename queue3 to be queue2, 
+				// Rename queue3 to be queue2,
 				// Clear queue3
 				// From now on, queue2 holds nodes of next level
 				delete queue2 ;
@@ -7952,7 +7963,7 @@ namespace wustl_mm {
 					// printf("%d\n", score);
 	//				score = -score ;
 
-					// Ignore the node 
+					// Ignore the node
 					// if it has been processed before
 					// or it has an updated score
 					if ( getDataAt( ox, oy, oz ) != curwid || (int) scrvol->getDataAt( ox, oy, oz ) != score )
@@ -7969,15 +7980,15 @@ namespace wustl_mm {
 					*/
 
 					/* Added for debugging */
-					// Check simple 
+					// Check simple
 	#ifndef NOISE_DIS_SHEET
 					// if ( hasFeatureFace( ox, oy, oz ) )
 					if ( (! isSimple( ox, oy, oz )) || isSheetEnd( ox, oy, oz ) )
-					// if ( hasIsolatedFace(ox,oy,oz)  && (! isNoiseSheetEnd(ox,oy,oz))) 
+					// if ( hasIsolatedFace(ox,oy,oz)  && (! isNoiseSheetEnd(ox,oy,oz)))
 	#else
-					// if ( ! isSimple( ox, oy, oz ) || isSheetEnd( ox, oy, oz, noisevol ) ) 
-					if ( ! isSimple( ox, oy, oz ) || isSheetEnd( ox, oy, oz, noisevol ) || isHelixEnd( ox, oy, oz, noisevol )) 
-					// if ( isBertrandEndPoint( ox, oy, oz ) ) 
+					// if ( ! isSimple( ox, oy, oz ) || isSheetEnd( ox, oy, oz, noisevol ) )
+					if ( ! isSimple( ox, oy, oz ) || isSheetEnd( ox, oy, oz, noisevol ) || isHelixEnd( ox, oy, oz, noisevol ))
+					// if ( isBertrandEndPoint( ox, oy, oz ) )
 	#endif
 					{
 						// Complex, set to next layer
@@ -8012,9 +8023,9 @@ namespace wustl_mm {
 							queue2->prepend( nx, ny, nz ) ;
 						}
 					}
-					
+
 					/* Commented for debugging
-					
+
 					// Find complex nodes in its 3x3 neighborhood
 					// move them to queue2
 					for ( i = -1 ; i < 2 ; i ++ )
@@ -8025,8 +8036,8 @@ namespace wustl_mm {
 								int ny = oy + j ;
 								int nz = oz + k ;
 
-								// Check simple 
-								if ( getDataAt( nx, ny, nz ) == curwid && 
+								// Check simple
+								if ( getDataAt( nx, ny, nz ) == curwid &&
 									// ( isSheetEnd( ox, oy, oz ) || ! isSimple( nx, ny, nz )) )
 	#ifndef NOISE_DIS_SHEET
 									( isSheetEnd( nx, ny, nz ) || ! isSimple( nx, ny, nz ) ) )
@@ -8045,7 +8056,7 @@ namespace wustl_mm {
 
 					// Update scores for nodes in its 5x5 neighborhood
 					// insert them back into priority queue
-						
+
 					for ( i = -2 ; i < 3 ;i ++ )
 						for ( j = -2 ; j < 3 ; j ++ )
 							for ( k = -2 ; k < 3 ; k ++ )
@@ -8058,7 +8069,7 @@ namespace wustl_mm {
 								{
 									// Compute score
 									score = getNumPotComplex( nx, ny, nz ) ;
-									
+
 									if ( score != (int) scrvol->getDataAt( nx, ny, nz ) )
 									{
 										// printf("Update\n") ;
@@ -8073,12 +8084,12 @@ namespace wustl_mm {
 									}
 								}
 							}
-							
+
 
 				}
 
 				printf("%d complex, %d simple\n", numComplex, numSimple) ;
-				
+
 				if ( numSimple == 0 )
 				{
 						break ;
@@ -8135,7 +8146,7 @@ namespace wustl_mm {
 			printf("Total %d nodes\n", queue2->getNumElements() ) ;
 
 
-			// Perform erosion 
+			// Perform erosion
 			printf("Start erosion to %d...\n", wid) ;
 			#endif
 			gridQueueEle* ele ;
@@ -8154,13 +8165,13 @@ namespace wustl_mm {
 
 			for ( int curwid = 1 ; curwid <= wid ; curwid ++ )
 			{
-				// At the start of each iteration, 
+				// At the start of each iteration,
 				// queue2 and queue4 holds all the nodes for this layer
 				// queue3 and queue are empty
 
 				int numComplex = 0, numSimple = 0 ;
 				printf("Processing %d nodes in layer %d\n", queue2->getNumElements(), curwid) ;
-				
+
 				/*
 				We first need to assign curwid + 1 to every node in this layer
 				*/
@@ -8171,7 +8182,7 @@ namespace wustl_mm {
 					ox = ele->x ;
 					oy = ele->y ;
 					oz = ele->z ;
-					
+
 					if ( getDataAt(ox,oy,oz) == curwid )
 					{
 						ele = queue2->remove() ;
@@ -8199,7 +8210,7 @@ namespace wustl_mm {
 	#ifdef NOISE_DIS_SHEET
 				/* Extra step: classify nodes in queue2 into noise and non-noise nodes */
 				queue2->reset() ;
-				
+
 				// First run
 				int flag = 0 ;
 				while ( ( ele = queue2->getNext() ) != NULL )
@@ -8243,7 +8254,7 @@ namespace wustl_mm {
 						ox = ele->x ;
 						oy = ele->y ;
 						oz = ele->z ;
-						
+
 						if ( noisevol->getDataAt( ox, oy, oz ) == 1 )
 						{
 							continue ;
@@ -8275,8 +8286,8 @@ namespace wustl_mm {
 
 				/* Commented for debugging
 
-				// First, 
-				// check for complex nodes in queue2 
+				// First,
+				// check for complex nodes in queue2
 				// move them from queue2 to queue3
 				queue2->reset() ;
 				ele = queue2->getNext() ;
@@ -8285,19 +8296,19 @@ namespace wustl_mm {
 					ox = ele->x ;
 					oy = ele->y ;
 					oz = ele->z ;
-					
-					// Check simple 
+
+					// Check simple
 	#ifndef NOISE_DIS_SHEET
-					if ( isSheetEnd( ox, oy, oz ) || ! isSimple( ox, oy, oz ) ) 
+					if ( isSheetEnd( ox, oy, oz ) || ! isSimple( ox, oy, oz ) )
 	#else
-					if ( isSheetEnd( ox, oy, oz, noisevol ) || ! isSimple( ox, oy, oz ) ) 
+					if ( isSheetEnd( ox, oy, oz, noisevol ) || ! isSimple( ox, oy, oz ) )
 	#endif
 					{
 						// Complex, set to next layer
 						setDataAt( ox, oy, oz, curwid + 1 ) ;
 						queue3->prepend( ox, oy, oz ) ;
 						ele = queue2->remove() ;
-						
+
 						numComplex ++ ;
 					}
 					else
@@ -8318,7 +8329,7 @@ namespace wustl_mm {
 					ox = ele->x ;
 					oy = ele->y ;
 					oz = ele->z ;
-					
+
 					// Compute score
 					score = getNumPotComplex( ox, oy, oz ) ;
 					scrvol->setDataAt( ox, oy, oz, score ) ;
@@ -8330,11 +8341,11 @@ namespace wustl_mm {
 					gp->z = oz ;
 					// queue->add( gp, -score ) ;
 					queue->add( gp, score ) ;
-					
+
 					ele = queue2->remove() ;
 				}
 
-				// Rename queue3 to be queue2, 
+				// Rename queue3 to be queue2,
 				// Clear queue3
 				// From now on, queue2 holds nodes of next level
 				delete queue2 ;
@@ -8355,7 +8366,7 @@ namespace wustl_mm {
 					// printf("%d\n", score);
 	//				score = -score ;
 
-					// Ignore the node 
+					// Ignore the node
 					// if it has been processed before
 					// or it has an updated score
 					if ( getDataAt( ox, oy, oz ) != curwid || (int) scrvol->getDataAt( ox, oy, oz ) != score )
@@ -8372,15 +8383,15 @@ namespace wustl_mm {
 					*/
 
 					/* Added for debugging */
-					// Check simple 
+					// Check simple
 	#ifndef NOISE_DIS_SHEET
 					// if ( hasFeatureFace( ox, oy, oz ) )
 					if ( (! isSimple( ox, oy, oz )) || isSheetEnd( ox, oy, oz ) )
-					// if ( hasIsolatedFace(ox,oy,oz)  && (! isNoiseSheetEnd(ox,oy,oz))) 
+					// if ( hasIsolatedFace(ox,oy,oz)  && (! isNoiseSheetEnd(ox,oy,oz)))
 	#else
-					// if ( ! isSimple( ox, oy, oz ) || isSheetEnd( ox, oy, oz, noisevol ) ) 
-					if ( ! isSimple( ox, oy, oz ) || isSheetEnd( ox, oy, oz, noisevol ) || isHelixEnd( ox, oy, oz, noisevol )) 
-					// if ( isBertrandEndPoint( ox, oy, oz ) ) 
+					// if ( ! isSimple( ox, oy, oz ) || isSheetEnd( ox, oy, oz, noisevol ) )
+					if ( ! isSimple( ox, oy, oz ) || isSheetEnd( ox, oy, oz, noisevol ) || isHelixEnd( ox, oy, oz, noisevol ))
+					// if ( isBertrandEndPoint( ox, oy, oz ) )
 	#endif
 					{
 						// Complex, set to next layer
@@ -8415,9 +8426,9 @@ namespace wustl_mm {
 							queue2->prepend( nx, ny, nz ) ;
 						}
 					}
-					
+
 					/* Commented for debugging
-					
+
 					// Find complex nodes in its 3x3 neighborhood
 					// move them to queue2
 					for ( i = -1 ; i < 2 ; i ++ )
@@ -8428,8 +8439,8 @@ namespace wustl_mm {
 								int ny = oy + j ;
 								int nz = oz + k ;
 
-								// Check simple 
-								if ( getDataAt( nx, ny, nz ) == curwid && 
+								// Check simple
+								if ( getDataAt( nx, ny, nz ) == curwid &&
 									// ( isSheetEnd( ox, oy, oz ) || ! isSimple( nx, ny, nz )) )
 	#ifndef NOISE_DIS_SHEET
 									( isSheetEnd( nx, ny, nz ) || ! isSimple( nx, ny, nz ) ) )
@@ -8448,7 +8459,7 @@ namespace wustl_mm {
 
 					// Update scores for nodes in its 5x5 neighborhood
 					// insert them back into priority queue
-						
+
 					for ( i = -2 ; i < 3 ;i ++ )
 						for ( j = -2 ; j < 3 ; j ++ )
 							for ( k = -2 ; k < 3 ; k ++ )
@@ -8461,7 +8472,7 @@ namespace wustl_mm {
 								{
 									// Compute score
 									score = getNumPotComplex( nx, ny, nz ) ;
-									
+
 									if ( score != (int) scrvol->getDataAt( nx, ny, nz ) )
 									{
 										// printf("Update\n") ;
@@ -8476,12 +8487,12 @@ namespace wustl_mm {
 									}
 								}
 							}
-							
+
 
 				}
 
 				printf("%d complex, %d simple\n", numComplex, numSimple) ;
-				
+
 				if ( numSimple == 0 )
 				{
 						break ;
@@ -8536,7 +8547,7 @@ namespace wustl_mm {
 			printf("Total %d nodes\n", queue2->getNumElements() ) ;
 			#endif
 
-			// Perform erosion 
+			// Perform erosion
 			int wid = MAX_ERODE ;
 			#ifdef VERBOSE
 			printf("Start erosion to %d...\n", wid) ;
@@ -8557,14 +8568,14 @@ namespace wustl_mm {
 
 			for ( int curwid = 1 ; curwid <= wid ; curwid ++ )
 			{
-				// At the start of each iteration, 
+				// At the start of each iteration,
 				// queue2 and queue4 holds all the nodes for this layer
 				// queue3 and queue are empty
 
 				int numComplex = 0, numSimple = 0 ;
 				#ifdef VERBOSE
 				printf("Processing %d nodes in layer %d\n", queue2->getNumElements(), curwid) ;
-				#endif			
+				#endif
 
 				/*
 				We first need to assign curwid + 1 to every node in this layer
@@ -8576,7 +8587,7 @@ namespace wustl_mm {
 					ox = ele->x ;
 					oy = ele->y ;
 					oz = ele->z ;
-					
+
 					if ( getDataAt(ox,oy,oz) == curwid )
 					{
 						ele = queue2->remove() ;
@@ -8604,7 +8615,7 @@ namespace wustl_mm {
 	#ifdef NOISE_DIS_SHEET
 				/* Extra step: classify nodes in queue2 into noise and non-noise nodes */
 				queue2->reset() ;
-				
+
 				// First run
 				int flag = 0 ;
 				while ( ( ele = queue2->getNext() ) != NULL )
@@ -8648,7 +8659,7 @@ namespace wustl_mm {
 						ox = ele->x ;
 						oy = ele->y ;
 						oz = ele->z ;
-						
+
 						if ( noisevol->getDataAt( ox, oy, oz ) == 1 )
 						{
 							continue ;
@@ -8680,8 +8691,8 @@ namespace wustl_mm {
 
 				/* Commented for debugging
 
-				// First, 
-				// check for complex nodes in queue2 
+				// First,
+				// check for complex nodes in queue2
 				// move them from queue2 to queue3
 				queue2->reset() ;
 				ele = queue2->getNext() ;
@@ -8690,19 +8701,19 @@ namespace wustl_mm {
 					ox = ele->x ;
 					oy = ele->y ;
 					oz = ele->z ;
-					
-					// Check simple 
+
+					// Check simple
 	#ifndef NOISE_DIS_SHEET
-					if ( isSheetEnd( ox, oy, oz ) || ! isSimple( ox, oy, oz ) ) 
+					if ( isSheetEnd( ox, oy, oz ) || ! isSimple( ox, oy, oz ) )
 	#else
-					if ( isSheetEnd( ox, oy, oz, noisevol ) || ! isSimple( ox, oy, oz ) ) 
+					if ( isSheetEnd( ox, oy, oz, noisevol ) || ! isSimple( ox, oy, oz ) )
 	#endif
 					{
 						// Complex, set to next layer
 						setDataAt( ox, oy, oz, curwid + 1 ) ;
 						queue3->prepend( ox, oy, oz ) ;
 						ele = queue2->remove() ;
-						
+
 						numComplex ++ ;
 					}
 					else
@@ -8723,7 +8734,7 @@ namespace wustl_mm {
 					ox = ele->x ;
 					oy = ele->y ;
 					oz = ele->z ;
-					
+
 					// Compute score
 					score = getNumPotComplex( ox, oy, oz ) ;
 					scrvol->setDataAt( ox, oy, oz, score ) ;
@@ -8735,11 +8746,11 @@ namespace wustl_mm {
 					gp->z = oz ;
 					// queue->add( gp, -score ) ;
 					queue->add( gp, score ) ;
-					
+
 					ele = queue2->remove() ;
 				}
 
-				// Rename queue3 to be queue2, 
+				// Rename queue3 to be queue2,
 				// Clear queue3
 				// From now on, queue2 holds nodes of next level
 				delete queue2 ;
@@ -8758,7 +8769,7 @@ namespace wustl_mm {
 					// printf("%d\n", score);
 	//				score = -score ;
 
-					// Ignore the node 
+					// Ignore the node
 					// if it has been processed before
 					// or it has an updated score
 					if ( getDataAt( ox, oy, oz ) != curwid || (int) scrvol->getDataAt( ox, oy, oz ) != score )
@@ -8775,15 +8786,15 @@ namespace wustl_mm {
 					*/
 
 					/* Added for debugging */
-					// Check simple 
+					// Check simple
 	#ifndef NOISE_DIS_SHEET
 					// if ( hasFeatureFace( ox, oy, oz ) )
 					if ( (! isSimple( ox, oy, oz )) || isSheetEnd( ox, oy, oz ) )
-					// if ( hasIsolatedFace(ox,oy,oz)  && (! isNoiseSheetEnd(ox,oy,oz))) 
+					// if ( hasIsolatedFace(ox,oy,oz)  && (! isNoiseSheetEnd(ox,oy,oz)))
 	#else
-					// if ( ! isSimple( ox, oy, oz ) || isSheetEnd( ox, oy, oz, noisevol ) ) 
-					if ( ! isSimple( ox, oy, oz ) || isSheetEnd( ox, oy, oz, noisevol ) || isHelixEnd( ox, oy, oz, noisevol )) 
-					// if ( isBertrandEndPoint( ox, oy, oz ) ) 
+					// if ( ! isSimple( ox, oy, oz ) || isSheetEnd( ox, oy, oz, noisevol ) )
+					if ( ! isSimple( ox, oy, oz ) || isSheetEnd( ox, oy, oz, noisevol ) || isHelixEnd( ox, oy, oz, noisevol ))
+					// if ( isBertrandEndPoint( ox, oy, oz ) )
 	#endif
 					{
 						// Complex, set to next layer
@@ -8812,9 +8823,9 @@ namespace wustl_mm {
 							queue2->prepend( nx, ny, nz ) ;
 						}
 					}
-					
+
 					/* Commented for debugging
-					
+
 					// Find complex nodes in its 3x3 neighborhood
 					// move them to queue2
 					for ( i = -1 ; i < 2 ; i ++ )
@@ -8825,8 +8836,8 @@ namespace wustl_mm {
 								int ny = oy + j ;
 								int nz = oz + k ;
 
-								// Check simple 
-								if ( getDataAt( nx, ny, nz ) == curwid && 
+								// Check simple
+								if ( getDataAt( nx, ny, nz ) == curwid &&
 									// ( isSheetEnd( ox, oy, oz ) || ! isSimple( nx, ny, nz )) )
 	#ifndef NOISE_DIS_SHEET
 									( isSheetEnd( nx, ny, nz ) || ! isSimple( nx, ny, nz ) ) )
@@ -8845,7 +8856,7 @@ namespace wustl_mm {
 
 					// Update scores for nodes in its 5x5 neighborhood
 					// insert them back into priority queue
-						
+
 					for ( i = -2 ; i < 3 ;i ++ )
 						for ( j = -2 ; j < 3 ; j ++ )
 							for ( k = -2 ; k < 3 ; k ++ )
@@ -8858,7 +8869,7 @@ namespace wustl_mm {
 								{
 									// Compute score
 									score = getNumPotComplex( nx, ny, nz ) ;
-									
+
 									if ( score != (int) scrvol->getDataAt( nx, ny, nz ) )
 									{
 										// printf("Update\n") ;
@@ -8873,12 +8884,12 @@ namespace wustl_mm {
 									}
 								}
 							}
-							
+
 
 				}
 				#ifdef VERBOSE
 				printf("%d complex, %d simple\n", numComplex, numSimple) ;
-				#endif			
+				#endif
 
 				if ( numSimple == 0 )
 				{
@@ -8941,7 +8952,7 @@ namespace wustl_mm {
 			#endif
 
 
-			// Perform erosion 
+			// Perform erosion
 			gridQueueEle* ele ;
 			gridPoint* gp ;
 			int ox, oy, oz ;
@@ -8958,14 +8969,14 @@ namespace wustl_mm {
 
 			for ( int curwid = 1 ; curwid <= wid ; curwid ++ )
 			{
-				// At the start of each iteration, 
+				// At the start of each iteration,
 				// queue2 and queue4 holds all the nodes for this layer
 				// queue3 and queue are empty
 
 				int numComplex = 0, numSimple = 0 ;
 				#ifdef VERBOSE
 				printf("Processing %d nodes in layer %d\n", queue2->getNumElements(), curwid) ;
-				#endif			
+				#endif
 
 				/*
 				We first need to assign curwid + 1 to every node in this layer
@@ -8977,7 +8988,7 @@ namespace wustl_mm {
 					ox = ele->x ;
 					oy = ele->y ;
 					oz = ele->z ;
-					
+
 					if ( getDataAt(ox,oy,oz) == curwid )
 					{
 						ele = queue2->remove() ;
@@ -9005,7 +9016,7 @@ namespace wustl_mm {
 	#ifdef NOISE_DIS_SHEET
 				/* Extra step: classify nodes in queue2 into noise and non-noise nodes */
 				queue2->reset() ;
-				
+
 				// First run
 				int flag = 0 ;
 				while ( ( ele = queue2->getNext() ) != NULL )
@@ -9049,7 +9060,7 @@ namespace wustl_mm {
 						ox = ele->x ;
 						oy = ele->y ;
 						oz = ele->z ;
-						
+
 						if ( noisevol->getDataAt( ox, oy, oz ) == 1 )
 						{
 							continue ;
@@ -9081,8 +9092,8 @@ namespace wustl_mm {
 
 				/* Commented for debugging
 
-				// First, 
-				// check for complex nodes in queue2 
+				// First,
+				// check for complex nodes in queue2
 				// move them from queue2 to queue3
 				queue2->reset() ;
 				ele = queue2->getNext() ;
@@ -9091,19 +9102,19 @@ namespace wustl_mm {
 					ox = ele->x ;
 					oy = ele->y ;
 					oz = ele->z ;
-					
-					// Check simple 
+
+					// Check simple
 	#ifndef NOISE_DIS_SHEET
-					if ( isSheetEnd( ox, oy, oz ) || ! isSimple( ox, oy, oz ) ) 
+					if ( isSheetEnd( ox, oy, oz ) || ! isSimple( ox, oy, oz ) )
 	#else
-					if ( isSheetEnd( ox, oy, oz, noisevol ) || ! isSimple( ox, oy, oz ) ) 
+					if ( isSheetEnd( ox, oy, oz, noisevol ) || ! isSimple( ox, oy, oz ) )
 	#endif
 					{
 						// Complex, set to next layer
 						setDataAt( ox, oy, oz, curwid + 1 ) ;
 						queue3->prepend( ox, oy, oz ) ;
 						ele = queue2->remove() ;
-						
+
 						numComplex ++ ;
 					}
 					else
@@ -9124,7 +9135,7 @@ namespace wustl_mm {
 					ox = ele->x ;
 					oy = ele->y ;
 					oz = ele->z ;
-					
+
 					// Compute score
 					score = getNumPotComplex( ox, oy, oz ) ;
 					scrvol->setDataAt( ox, oy, oz, score ) ;
@@ -9136,11 +9147,11 @@ namespace wustl_mm {
 					gp->z = oz ;
 					// queue->add( gp, -score ) ;
 					queue->add( gp, score ) ;
-					
-					ele = queue2->remove() ;				
+
+					ele = queue2->remove() ;
 				}
 
-				// Rename queue3 to be queue2, 
+				// Rename queue3 to be queue2,
 				// Clear queue3
 				// From now on, queue2 holds nodes of next level
 				delete queue2 ;
@@ -9160,7 +9171,7 @@ namespace wustl_mm {
 					// printf("%d\n", score);
 	//				score = -score ;
 
-					// Ignore the node 
+					// Ignore the node
 					// if it has been processed before
 					// or it has an updated score
 					if ( getDataAt( ox, oy, oz ) != curwid || (int) scrvol->getDataAt( ox, oy, oz ) != score )
@@ -9177,15 +9188,15 @@ namespace wustl_mm {
 					*/
 
 					/* Added for debugging */
-					// Check simple 
+					// Check simple
 	#ifndef NOISE_DIS_SHEET
 					// if ( hasFeatureFace( ox, oy, oz ) )
 					if ( (! isSimple( ox, oy, oz )) || isSheetEnd( ox, oy, oz ) )
-					// if ( hasIsolatedFace(ox,oy,oz)  && (! isNoiseSheetEnd(ox,oy,oz))) 
+					// if ( hasIsolatedFace(ox,oy,oz)  && (! isNoiseSheetEnd(ox,oy,oz)))
 	#else
-					// if ( ! isSimple( ox, oy, oz ) || isSheetEnd( ox, oy, oz, noisevol ) ) 
-					if ( ! isSimple( ox, oy, oz ) || isSheetEnd( ox, oy, oz, noisevol ) || isHelixEnd( ox, oy, oz, noisevol )) 
-					// if ( isBertrandEndPoint( ox, oy, oz ) ) 
+					// if ( ! isSimple( ox, oy, oz ) || isSheetEnd( ox, oy, oz, noisevol ) )
+					if ( ! isSimple( ox, oy, oz ) || isSheetEnd( ox, oy, oz, noisevol ) || isHelixEnd( ox, oy, oz, noisevol ))
+					// if ( isBertrandEndPoint( ox, oy, oz ) )
 	#endif
 					{
 						// Complex, set to next layer
@@ -9214,9 +9225,9 @@ namespace wustl_mm {
 							queue2->prepend( nx, ny, nz ) ;
 						}
 					}
-					
+
 					/* Commented for debugging
-					
+
 					// Find complex nodes in its 3x3 neighborhood
 					// move them to queue2
 					for ( i = -1 ; i < 2 ; i ++ )
@@ -9227,8 +9238,8 @@ namespace wustl_mm {
 								int ny = oy + j ;
 								int nz = oz + k ;
 
-								// Check simple 
-								if ( getDataAt( nx, ny, nz ) == curwid && 
+								// Check simple
+								if ( getDataAt( nx, ny, nz ) == curwid &&
 									// ( isSheetEnd( ox, oy, oz ) || ! isSimple( nx, ny, nz )) )
 	#ifndef NOISE_DIS_SHEET
 									( isSheetEnd( nx, ny, nz ) || ! isSimple( nx, ny, nz ) ) )
@@ -9247,7 +9258,7 @@ namespace wustl_mm {
 
 					// Update scores for nodes in its 5x5 neighborhood
 					// insert them back into priority queue
-						
+
 					for ( i = -2 ; i < 3 ;i ++ )
 						for ( j = -2 ; j < 3 ; j ++ )
 							for ( k = -2 ; k < 3 ; k ++ )
@@ -9260,7 +9271,7 @@ namespace wustl_mm {
 								{
 									// Compute score
 									score = getNumPotComplex( nx, ny, nz ) ;
-									
+
 									if ( score != (int) scrvol->getDataAt( nx, ny, nz ) )
 									{
 										// printf("Update\n") ;
@@ -9275,13 +9286,13 @@ namespace wustl_mm {
 									}
 								}
 							}
-							
+
 
 				}
 
 				#ifdef VERBOSE
 				printf("%d complex, %d simple\n", numComplex, numSimple) ;
-				#endif			
+				#endif
 
 				if ( numSimple == 0 )
 				{
@@ -9353,7 +9364,7 @@ namespace wustl_mm {
 				int deleted = 0 ;
 				for ( i = 0 ; i < 6 ; i ++ )
 				{
-					// At the beginning of each iteration, 
+					// At the beginning of each iteration,
 					// queue2 holds all remaining boundary nodes
 					// queue3 is a deletable array, starting empty
 					// queue4 holds the candidates for next layer
@@ -9367,7 +9378,7 @@ namespace wustl_mm {
 						int ox = ele->x ;
 						int oy = ele->y ;
 						int oz = ele->z ;
-						
+
 						if ( isBertrandBorder( ox,oy,oz, i ) )
 						{
 							if ( ! isBertrandEndPoint( ox,oy,oz ) )
@@ -9400,8 +9411,8 @@ namespace wustl_mm {
 						}
 					}
 
-					// Now, queue2 holds all remaining nodes, 
-					// queue3 holds all deletable nodes, 
+					// Now, queue2 holds all remaining nodes,
+					// queue3 holds all deletable nodes,
 					// and queue4 holds nodes to be added to the next layer
 
 					// Simultaneous deletion
@@ -9433,7 +9444,7 @@ namespace wustl_mm {
 					queue2->prepend( ele->x, ele->y, ele->z) ;
 					ele = queue4->remove() ;
 				}
-				
+
 				if ( deleted == 0 )
 				{
 					printf("No more deletable nodes.\n");
@@ -9489,7 +9500,7 @@ namespace wustl_mm {
 							}
 
 						}
-				
+
 
 				if ( queue2->getNumElements() == 0 )
 				{
@@ -9620,7 +9631,7 @@ namespace wustl_mm {
 				int deleted = 0 ;
 				for ( i = 0 ; i < 12 ; i ++ )
 				{
-					// At the beginning of each iteration, 
+					// At the beginning of each iteration,
 					// queue2 holds all remaining boundary nodes
 					// queue3 is a deletable array, starting empty
 					// queue4 holds the candidates for next layer
@@ -9634,7 +9645,7 @@ namespace wustl_mm {
 						int ox = ele->x ;
 						int oy = ele->y ;
 						int oz = ele->z ;
-						
+
 						// Check with templates
 						int match = 0 ;
 						for ( int ci = -1 ; ci < 2 ; ci ++ )
@@ -9643,7 +9654,7 @@ namespace wustl_mm {
 								{
 									vox[ ci + 1 ][cj + 1][ck + 1] = (int)getDataAt( ox + ci, oy + cj, oz + ck ) ;
 								}
-						
+
 						for ( j = 0 ; j < 6 ; j ++ )
 						// j = 1 ;
 						{
@@ -9696,8 +9707,8 @@ namespace wustl_mm {
 						}
 					}
 
-					// Now, queue2 holds all remaining nodes, 
-					// queue3 holds all deletable nodes, 
+					// Now, queue2 holds all remaining nodes,
+					// queue3 holds all deletable nodes,
 					// and queue4 holds nodes to be added to the next layer
 
 					// Simultaneous deletion
@@ -9722,7 +9733,7 @@ namespace wustl_mm {
 					queue2->prepend( ele->x, ele->y, ele->z) ;
 					ele = queue4->remove() ;
 				}
-				
+
 				if ( deleted == 0 )
 				{
 					printf("No more deletable nodes.\n");
@@ -9734,9 +9745,9 @@ namespace wustl_mm {
 				}
 			}
 		}
-		
+
 		/**
-		 * Normalize to a given range 
+		 * Normalize to a given range
 		 */
 		void Volume::threshold( double thr )
 		{
@@ -9767,7 +9778,7 @@ namespace wustl_mm {
 									setDataAt(i, j, k, out);
 								} else {
 									setDataAt(i, j, k, in);
-								}								
+								}
 							}
 							else
 							{
@@ -9776,7 +9787,7 @@ namespace wustl_mm {
 						} else {
 							if(val < thr) {
 								setDataAt(i, j, k, out);
-							} else { 
+							} else {
 								setDataAt(i, j, k, in);
 							}
 						}
@@ -9804,7 +9815,7 @@ namespace wustl_mm {
 			for (int i = 1; i < getSizeX() - 1; i++)
 				for (int j = 1; j < getSizeY() - 1; j++)
 					for (int k = 1; k < getSizeZ() - 1; k++) {
-						float v = (float)getDataAt( i - 1, j, k ) + 
+						float v = (float)getDataAt( i - 1, j, k ) +
 							(float)getDataAt( i + 1, j, k ) +
 							(float)getDataAt( i, j - 1, k ) +
 							(float)getDataAt( i, j + 1, k ) +
@@ -9825,7 +9836,7 @@ namespace wustl_mm {
 
 			int size = volData->GetMaxIndex();
 			for(int i = 0 ; i < size ; i ++) {
-				setDataAt(i, ((getDataAt(i) - (float)imin ) / (float)irange) * (float)range + (float)min);  
+				setDataAt(i, ((getDataAt(i) - (float)imin ) / (float)irange) * (float)range + (float)min);
 			}
 		}
 
@@ -9863,18 +9874,18 @@ namespace wustl_mm {
 			}
 			return range;
 		}
-		
+
 		/* Get data at an interpolated voxel */
-		double Volume::getInterpDataAt( double x, double y, double z ) 
+		double Volume::getInterpDataAt( double x, double y, double z )
 		{
 			/*
 			double rad = getSizeX() / 4.0 ;
 			double cent = ( getSizeX() - 1 ) / 2.0 ;
-			
+
 			double ox = x - cent ;
 			double oy = y - cent ;
 			double oz = z - cent ;
-			
+
 			double a = -0.3 ;
 			double nx = ox ;
 			double ny = cos( a ) * oy + sin( a ) * oz ;
@@ -9884,7 +9895,7 @@ namespace wustl_mm {
 			double nnx = cos( b ) * nx + sin( b ) * ny - 2;
 			double nny = -sin( b ) * nx + cos ( b ) * ny - 1;
 			double nnz = nz + 1;
-			
+
 			double dis = nnx * nnx + nny * nny ;
 			return 10 - 10 * dis / ( rad * rad ) ;
 			*/
@@ -9896,13 +9907,13 @@ namespace wustl_mm {
 			int ly = (int) floor( y ) ;
 			int hz = (int) ceil( z ) ;
 			int lz = (int) floor( z ) ;
-			
+
 			double x1 = x - lx, x2 = 1 - x1 ;
-			double r1 = x2 * getDataAt( lx, ly, lz) + x1 * getDataAt( hx, ly, lz ) ; 
-			double r2 = x2 * getDataAt( lx, ly, hz) + x1 * getDataAt( hx, ly, hz ) ; 
-			double r3 = x2 * getDataAt( lx, hy, lz) + x1 * getDataAt( hx, hy, lz ) ; 
-			double r4 = x2 * getDataAt( lx, hy, hz) + x1 * getDataAt( hx, hy, hz ) ; 
-			
+			double r1 = x2 * getDataAt( lx, ly, lz) + x1 * getDataAt( hx, ly, lz ) ;
+			double r2 = x2 * getDataAt( lx, ly, hz) + x1 * getDataAt( hx, ly, hz ) ;
+			double r3 = x2 * getDataAt( lx, hy, lz) + x1 * getDataAt( hx, hy, lz ) ;
+			double r4 = x2 * getDataAt( lx, hy, hz) + x1 * getDataAt( hx, hy, hz ) ;
+
 			double y1 = y - ly, y2 = 1 - y1 ;
 			double r5 = y2 * r1 + y1 * r3 ;
 			double r6 = y2 * r2 + y1 * r4 ;
@@ -9955,7 +9966,7 @@ namespace wustl_mm {
 						} else if ( nz > sizeZ - 1 ) {
 							nz = sizeZ - 1 ;
 						}
-						
+
 						newData->SetDataAt(i, j, k, (float)getInterpDataAt( nx, ny, nz ));
 					}
 
@@ -10078,7 +10089,7 @@ namespace wustl_mm {
 									int nx = i + sheetNeighbor[find][mj][0] ;
 									int ny = j + sheetNeighbor[find][mj][1] ;
 									int nz = k + sheetNeighbor[find][mj][2] ;
-									
+
 									if ( getDataAt( nx, ny, nz ) < thr )
 									{
 										isFace = 0 ;
@@ -10134,7 +10145,7 @@ namespace wustl_mm {
 									int nz = k + sheetNeighbor[find][mj][2] ;
 
 									vts[ mj ] = (int)( indvol->getDataAt( nx, ny, nz ) );
-									
+
 									if ( getDataAt( nx, ny, nz ) < thr )
 									{
 										isFace = 0 ;
@@ -10239,7 +10250,7 @@ namespace wustl_mm {
 		{
 			int i,j,k ;
 			Volume* segvol = new Volume( getSizeX(), getSizeY(), getSizeZ(), 0 ) ;
-			
+
 			for ( i = 0 ; i < getSizeX() ; i ++ )
 				for ( j = 0 ; j < getSizeY() ; j ++ )
 					for ( k = 0 ; k < getSizeZ() ; k ++ )
@@ -10256,7 +10267,7 @@ namespace wustl_mm {
 						{
 							segvol->setDataAt( i,j,k, 0 ) ;
 						}
-					}	
+					}
 
 			writeSegmentation( threshold, segvol, NULL, mrcfile ) ;
 		}
@@ -10277,7 +10288,7 @@ namespace wustl_mm {
 				int nodes = 0 ;
 				testvol = new Volume( getSizeX(), getSizeY(), getSizeZ(), 0, 0, 0, vol ) ;
 				testvol->erodeSheet( i ) ;
-				
+
 				for ( j = 0 ; j < size ; j ++ )
 				{
 					if ( disvol->getDataAt(j) == 0 && testvol->getDataAt(j) > 0 )
@@ -10317,7 +10328,7 @@ namespace wustl_mm {
 						{
 							continue ;
 						}
-						
+
 						vvol->setDataAt(i,j,k,1) ;
 						queue->prepend( i,j,k ) ;
 					}
@@ -10366,7 +10377,7 @@ namespace wustl_mm {
 							isBorder = 1 ;
 						}
 					}
-					
+
 					if ( isBorder )
 					{
 						queue3->prepend( ox, oy, oz ) ;
@@ -10432,7 +10443,7 @@ namespace wustl_mm {
 				oy = ele->y ;
 				oz = ele->z ;
 				double seg = segvol->getDataAt(ox,oy,oz) ;
-				
+
 				for ( int mx = -1 ; mx < 2 ; mx ++ )
 					for ( int my = -1 ; my < 2 ; my ++ )
 						for ( int mz = -1 ; mz < 2 ; mz ++ )
@@ -10444,10 +10455,10 @@ namespace wustl_mm {
 					{
 						double ct = (int) tvol1->getDataAt(nx,ny,nz) ;
 						double val = tvol2->getDataAt(nx,ny,nz) ;
-						
+
 						tvol1->setDataAt(nx,ny,nz, ct + 1 ) ;
 						tvol2->setDataAt(nx,ny,nz, val + seg ) ;
-						
+
 						if (ct == 0)
 						{
 							queue2->prepend( nx, ny, nz ) ;
@@ -10456,7 +10467,7 @@ namespace wustl_mm {
 				}
 				ele = queue3->remove() ;
 			}
-			
+
 			// Normalize values of nodes in queue2
 			queue2->reset() ;
 			while ( ( ele = queue2->getNext() ) != NULL )
@@ -10464,10 +10475,10 @@ namespace wustl_mm {
 				ox = ele->x ;
 				oy = ele->y ;
 				oz = ele->z ;
-				
+
 				double ct = tvol1->getDataAt(ox,oy,oz) ;
 				double val = tvol2->getDataAt(ox,oy,oz) ;
-				
+
 				if ( ct == 0 )
 				{
 					printf("Wrong! %f\n", ct) ;
@@ -10479,7 +10490,7 @@ namespace wustl_mm {
 			segvol->toMRCFile( mrcfile ) ;
 //			segvol->toMRCFile( "../colors.mrc" ) ;
 			printf("Done.\n") ;
-		
+
 			printf("Segmentation...") ;
 			for ( i = 0 ; i < getSizeX() * getSizeY() * getSizeZ() ; i ++ )
 			{
@@ -10493,7 +10504,7 @@ namespace wustl_mm {
 				{
 					tvol1->setDataAt(i, -1) ;
 				}
-				
+
 				// Low values
 				if ( segval < 1.5f && segval >= 1 )
 				{
@@ -10597,7 +10608,7 @@ namespace wustl_mm {
 						if ( ct % 100000 == 0 )
 						{
 							printf("%d nodes processed.\n", ct);
-						} 
+						}
 					}
 				}
 
@@ -10605,7 +10616,7 @@ namespace wustl_mm {
 				ele = queue->getNext() ;
 			}
 			printf("Done.\n") ;
-			
+
 			// Done
 			for ( i = 0 ; i < getSizeX()*getSizeY()*getSizeZ() ; i ++ )
 			{
@@ -10643,7 +10654,7 @@ namespace wustl_mm {
 								int oy = ele->y ;
 								int oz = ele->z ;
 								queue->remove() ;
-								
+
 								for ( int m = 0 ; m < 6 ; m ++ )
 								{
 									int nx = ox + neighbor6[m][0] ;
@@ -10664,12 +10675,12 @@ namespace wustl_mm {
 
 								queue->reset() ;
 								ele = queue->getNext() ;
-							}	
-							
+							}
+
 							if ( ct < size )
 							{
 								// remove component
-								
+
 								queue2->reset() ;
 								ele = queue2->getNext() ;
 								while ( ele != NULL )
@@ -10678,7 +10689,7 @@ namespace wustl_mm {
 									ele = queue2->remove() ;
 								}
 								queue2->reset() ;
-								
+
 							}
 							else
 							{
@@ -10729,7 +10740,7 @@ namespace wustl_mm {
 								int oy = ele->y ;
 								int oz = ele->z ;
 								queue->remove() ;
-								
+
 								for ( int m = 0 ; m < 6 ; m ++ )
 								{
 									int nx = ox + neighbor6[m][0] ;
@@ -10750,8 +10761,8 @@ namespace wustl_mm {
 
 								queue->reset() ;
 								ele = queue->getNext() ;
-							}	
-							
+							}
+
 							queue2->reset() ;
 							ele = queue2->getNext() ;
 							while ( ele != NULL )
@@ -10807,7 +10818,7 @@ namespace wustl_mm {
 								int oy = ele->y ;
 								int oz = ele->z ;
 								queue->remove() ;
-								
+
 								for ( int m = 0 ; m < 6 ; m ++ )
 								{
 									int nx = ox + neighbor6[m][0] ;
@@ -10828,7 +10839,7 @@ namespace wustl_mm {
 
 								queue->reset() ;
 								ele = queue->getNext() ;
-							}	
+							}
 
 							int removing = 1 ;
 							for ( int ind = 0 ; ind < num ; ind ++ )
@@ -10839,11 +10850,11 @@ namespace wustl_mm {
 									break ;
 								}
 							}
-							
+
 							if ( removing )
 							{
 								// remove component
-								
+
 								queue2->reset() ;
 								ele = queue2->getNext() ;
 								while ( ele != NULL )
@@ -10852,7 +10863,7 @@ namespace wustl_mm {
 									ele = queue2->remove() ;
 								}
 								queue2->reset() ;
-								
+
 							}
 							else
 							{
@@ -10906,7 +10917,7 @@ namespace wustl_mm {
 						if ( ct % 100000 == 0 )
 						{
 							printf("%d nodes processed.\n", ct);
-						} 
+						}
 					}
 					else if ( getDataAt( nx, ny, nz ) == 1 )
 					{
@@ -10933,7 +10944,7 @@ namespace wustl_mm {
 			}
 			*/
 
-			
+
 			// Find inside seed point
 			int maxRounds = 1 ;
 			for ( int rounds = 0 ; rounds < maxRounds ; rounds ++ )
@@ -10942,7 +10953,7 @@ namespace wustl_mm {
 			int isSolid = 0 ;
 			for ( i = 0 ; i < getSizeX() ; i ++ )
 			{
-				if ( getDataAt( i, getSizeY() / 2, getSizeZ() / 2 ) == 1 ) 
+				if ( getDataAt( i, getSizeY() / 2, getSizeZ() / 2 ) == 1 )
 				{
 					isSolid = 1 ;
 				}
@@ -10986,7 +10997,7 @@ namespace wustl_mm {
 						if ( ct % 100000 == 0 )
 						{
 							printf("%d nodes processed.\n", ct);
-						} 
+						}
 					}
 					else if ( getDataAt( nx, ny, nz ) == 1 )
 					{
@@ -11003,7 +11014,7 @@ namespace wustl_mm {
 				ele = queue->getNext() ;
 			}
 			printf("Done.\n") ;
-			
+
 			// Done
 			for ( i = 0 ; i < getSizeX()*getSizeY()*getSizeZ() ; i ++ )
 			{
@@ -11017,13 +11028,13 @@ namespace wustl_mm {
 				{
 					setDataAt( i, 1 ) ;
 				}
-				
+
 	/*
 				else if ( tvol->getDataAt(i) == 0 && invol->getDataAt(i) == 0 )
 				{
 					setDataAt( i, 1 ) ;
 				}
-	*/			
+	*/
 			}
 
 					delete invol ;
@@ -11050,7 +11061,7 @@ namespace wustl_mm {
 				int nodes = 0 ;
 				testvol = new Volume( getSizeX(), getSizeY(), getSizeZ(), 0, 0, 0, this ) ;
 				testvol->erodeSheet( i ) ;
-				
+
 				for ( j = 0 ; j < size ; j ++ )
 				{
 					if ( disvol->getDataAt(j) == 0 && testvol->getDataAt(j) > 0 )
@@ -11081,7 +11092,7 @@ namespace wustl_mm {
 							ct ++ ;
 						}
 					}
-						
+
 			if ( ct != totNodes )
 			{
 				printf("Counting wrong! %d %d\n", totNodes, ct) ;
@@ -11107,7 +11118,7 @@ namespace wustl_mm {
 						if ( val > 0 )
 						{
 							float x = (i - padding) * spc + minx ;
-							float y = (j - padding) * spc + miny ; 
+							float y = (j - padding) * spc + miny ;
 							float z = (k - padding) * spc + minz ;
 							fprintf( fout, "ATOM      1  X   DUM     1     %4.3f %4.3f %4.3f 0.000 0.000\n", x, y, z ) ;
 						}
@@ -11130,7 +11141,7 @@ namespace wustl_mm {
 
 			int mode = 2 ;
 			fwrite( &mode, sizeof ( int ), 1, fout ) ;
-			
+
 			int off[3] = {0,0,0} ;
 
 			// Changed: MX == NX instead of MX = NX -1 (similar for Y and Z) because that is how EMAN2 and UCSF Chimera do it
@@ -11163,7 +11174,7 @@ namespace wustl_mm {
 			float ds[3] = {(float)dmin, (float)dmax, (float)0} ;
 			fwrite( ds, sizeof( float ), 3, fout ) ;
 
-			int zero = 0 ;		
+			int zero = 0 ;
 			for (i = 23 ; i <= 49 ; i ++ )
 			{
 				fwrite( &zero, sizeof( int ), 1, fout );
@@ -11277,17 +11288,17 @@ namespace wustl_mm {
 			Vector3DFloat centerOfMass( xmoment/mass, ymoment/mass, zmoment/mass );
 			return centerOfMass;
 		}
-		
+
 		float* Volume::getArrayCopy(int padX, int padY, int padZ, float padValue) {
 			return getVolumeData()->GetArrayCopy(padX, padY, padZ, padValue);
 		}
-		
+
 		void Volume::buildHistogram(int binCount) {
 			histogram.clear();
 			for(int i = 0; i < binCount; i++) {
 				histogram.push_back(0);
 			}
-			
+
 			float minVal = getMin();
 			float maxVal = getMax();
 			float binSize = (maxVal - minVal)/(float)(binCount - 1);
@@ -11299,15 +11310,19 @@ namespace wustl_mm {
 						histogram[binIx]++;
 					}
 				}
-			}		
+			}
 		}
-		
+
 		int Volume::getHistogramBinValue(int binIx) {
 			return histogram[binIx];
-			
+
 		}
 
 	}
 }
 #endif
 #endif
+
+
+
+#endif /* SRC_CORE_VOLUME_H_ */
