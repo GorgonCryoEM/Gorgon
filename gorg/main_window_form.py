@@ -4,11 +4,11 @@
 
 
 from PyQt4 import QtCore, QtGui
-from menu_manager import MenuManager
-from action_manager import ActionManager
+# from menu_manager import MenuManager
+# from action_manager import ActionManager
 from theme_manager import ThemeManager
 from window_manager import WindowManager
-from plugin_manager import PluginManager
+# from plugin_manager import PluginManager
 import sys, os
 
 class MainWindowForm(QtGui.QMainWindow):
