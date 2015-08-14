@@ -8,17 +8,6 @@
 #ifndef SRC_CORE_VOLUME_H_
 #define SRC_CORE_VOLUME_H_
 
-
-// Copyright (C) 2005-2008 Washington University in St Louis, Baylor College of Medicine.  All rights reserved
-// Author:        Tao Ju (taoju@cse.wustl.edu), Refactored by Sasakthi Abeysinghe (sasakthi.abeysinghe@wustl.edu)
-// Description:   Volumetric data definition
-
-
-#ifndef SKELETON_MAKER_VOLUME_H
-#define SKELETON_MAKER_VOLUME_H
-#ifndef BOOST_MATH_TOOLS_SERIES_INCLUDED
-#define BOOST_MATH_TOOLS_SERIES_INCLUDED
-
 #define MAX_SHEETS 100000
 #define MAX_QUEUELEN 5000000
 #define MAX_ERODE 1000
@@ -11320,9 +11309,5 @@ namespace wustl_mm {
 
 	}
 }
-#endif
-#endif
-
-
 
 #endif /* SRC_CORE_VOLUME_H_ */
