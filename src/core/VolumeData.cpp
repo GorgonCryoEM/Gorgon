@@ -5,6 +5,8 @@
  *      Author: shadow_walker
  */
 
+#include "VolumeData.h"
+
 VolumeData::VolumeData(VolumeData& obj) {
 	for (int i = 0; i < 3; i++) {
 		size[i] = obj.size[i];
