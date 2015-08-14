@@ -83,11 +83,11 @@ endif()
 # --------------------------------------------------------------------
 #Install Step
 # --------------------------------------------------------------------
-install(TARGETS ${gorgon_lib_target_name}
-        LIBRARY
-        DESTINATION ${CMAKE_BINARY_DIR}/bin/
-        COMPONENT "Gorgon"
-        )
+#install(TARGETS ${gorgon_lib_target_name}
+#        LIBRARY
+#        DESTINATION ${CMAKE_BINARY_DIR}/bin/
+#        COMPONENT "Gorgon"
+#        )
 
 install(TARGETS ${gorgon_lib_target_name}
         LIBRARY
