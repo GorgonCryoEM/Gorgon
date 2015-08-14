@@ -4,15 +4,15 @@
 
 
 from PyQt4 import QtGui, QtCore
-from help_menus import HelpMenus
+# from help_menus import HelpMenus
 from camera import Camera
 from volume_viewer import VolumeViewer
-from skeleton_viewer import SkeletonViewer
-from sse_viewer import SSEViewer
-from calpha_viewer import CAlphaViewer
-from calpha_reference_viewer import CAlphaReferenceViewer
+# from skeleton_viewer import SkeletonViewer
+# from sse_viewer import SSEViewer
+# from calpha_viewer import CAlphaViewer
+# from calpha_reference_viewer import CAlphaReferenceViewer
 import datetime
-from session_manager import SessionManager
+# from session_manager import SessionManager
 
 class WindowManager(QtGui.QWidget):
     
