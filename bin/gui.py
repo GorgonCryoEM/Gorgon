@@ -1,3 +1,4 @@
 #!/usr/bin/env python
 
-import libpygorgon
+# import libpygorgon
+import gorg
