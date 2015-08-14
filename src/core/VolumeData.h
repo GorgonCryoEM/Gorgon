@@ -8,16 +8,6 @@
 #ifndef SRC_CORE_VOLUMEDATA_H_
 #define SRC_CORE_VOLUMEDATA_H_
 
-// Copyright (C) 2005-2008 Washington University in St Louis, Baylor College of Medicine.  All rights reserved
-// Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
-// Description:   Stores information of a density volume
-
-
-
-
-#ifndef SKELETON_MAKER_VOLUME_DATA_H
-#define SKELETON_MAKER_VOLUME_DATA_H
-
 #include <cstdlib>
 using std::malloc;
 
@@ -259,12 +249,5 @@ namespace wustl_mm {
 		}
 	}
 }
-
-
-
-#endif
-
-
-
 
 #endif /* SRC_CORE_VOLUMEDATA_H_ */
