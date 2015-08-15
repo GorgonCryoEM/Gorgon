@@ -51,10 +51,10 @@ class VolumeSurfaceEditorForm(BaseDockWidget):
 #         self.connect(self.ui.histogram,QtCore.SIGNAL("higherValueChanged(float)"),self.filterIsoValueMax.setValue)
         
         self.connect(self.ui.comboBoxSamplingInterval, QtCore.SIGNAL("currentIndexChanged(int)"), self.samplingChanged)
-        self.connect(self.ui.spinBoxDisplayRadius, QtCore.SIGNAL("valueChanged(int)"),self.filterDisplayRadius.setValue)
-        self.connect(self.filterIsoValue, QtCore.SIGNAL("valueChanged(float)"), self.isoValueChanged )
-        self.connect(self.filterIsoValueMax, QtCore.SIGNAL("valueChanged(float)"), self.isoValueMaxChanged )
-        self.connect(self.filterDisplayRadius, QtCore.SIGNAL("valueChanged(float)"), self.displayRadiusChanged )
+#         self.connect(self.ui.spinBoxDisplayRadius, QtCore.SIGNAL("valueChanged(int)"),self.filterDisplayRadius.setValue)
+#         self.connect(self.filterIsoValue, QtCore.SIGNAL("valueChanged(float)"), self.isoValueChanged )
+#         self.connect(self.filterIsoValueMax, QtCore.SIGNAL("valueChanged(float)"), self.isoValueMaxChanged )
+#         self.connect(self.filterDisplayRadius, QtCore.SIGNAL("valueChanged(float)"), self.displayRadiusChanged )
         self.connect(self.ui.radioButtonIsoSurface, QtCore.SIGNAL("toggled(bool)"), self.setViewingType)
         self.connect(self.ui.radioButtonCrossSection, QtCore.SIGNAL("toggled(bool)"), self.setViewingType)
         self.connect(self.ui.radioButtonSolid, QtCore.SIGNAL("toggled(bool)"), self.setViewingType)
@@ -94,8 +94,8 @@ class VolumeSurfaceEditorForm(BaseDockWidget):
     
     def modelLoadedPreDraw(self):
         self.viewer.renderer.enableDraw(False)
-        self.filterIsoValue.enabled = False
-        self.filterDisplayRadius.enabled = False        
+#         self.filterIsoValue.enabled = False
+#         self.filterDisplayRadius.enabled = False        
         maxDensity = self.viewer.renderer.getMaxDensity()
         minDensity = self.viewer.renderer.getMinDensity()
         self.populateHistogram()        
@@ -118,8 +118,8 @@ class VolumeSurfaceEditorForm(BaseDockWidget):
         self.app.actions.getAction("show_VolumeSurfaceEditor").setChecked(True)
         self.app.actions.getAction("show_VolumeSurfaceEditor").setEnabled(True)
         self.showWidget(True)
-        self.filterIsoValue.enabled = True
-        self.filterDisplayRadius.enabled = True
+#         self.filterIsoValue.enabled = True
+#         self.filterDisplayRadius.enabled = True
         self.viewer.renderer.enableDraw(True)
         
 
