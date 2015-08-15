@@ -7,7 +7,7 @@ from PyQt4 import QtCore, QtGui
 from ui_dialog_volume_surface_editor import Ui_DialogVolumeSurfaceEditor
 from delayed_filter import DelayedFilter
 from base_dock_widget import BaseDockWidget
-from histogram_slider_widget import HistogramSliderWidget
+# from histogram_slider_widget import HistogramSliderWidget
 import threading
 
 class VolumeSurfaceEditorForm(BaseDockWidget):
@@ -42,7 +42,7 @@ class VolumeSurfaceEditorForm(BaseDockWidget):
         self.ui.labelIsoLevelMax.setVisible(False)
         self.ui.doubleSpinBoxDensityMax.setVisible(False)
         
-        self.ui.histogram.setSliderType(HistogramSliderWidget.HistogramSliderTypeValue)
+#         self.ui.histogram.setSliderType(HistogramSliderWidget.HistogramSliderTypeValue)
         
         self.connect(self.ui.histogram,QtCore.SIGNAL("lowerValueChanged(float)"),self.isoValueIndicatorChanged)
         self.connect(self.ui.histogram,QtCore.SIGNAL("higherValueChanged(float)"),self.isoValueMaxIndicatorChanged)
@@ -70,7 +70,7 @@ class VolumeSurfaceEditorForm(BaseDockWidget):
                 self.viewer.renderer.setViewingType(self.ViewingTypeIsoSurface)
                 self.viewer.visualizationOptions.ui.radioButtonFlat.setEnabled(True)
                 self.viewer.visualizationOptions.ui.radioButtonWireframe.setEnabled(True)
-                self.ui.histogram.setSliderType(HistogramSliderWidget.HistogramSliderTypeValue)
+#                 self.ui.histogram.setSliderType(HistogramSliderWidget.HistogramSliderTypeValue)
 
             elif self.ui.radioButtonCrossSection.isChecked():
                 self.ui.labelIsoLevel.setText("Minimum Density:");
@@ -78,7 +78,7 @@ class VolumeSurfaceEditorForm(BaseDockWidget):
                 self.viewer.visualizationOptions.ui.radioButtonFlat.setEnabled(False)
                 self.viewer.visualizationOptions.ui.radioButtonWireframe.setEnabled(False)
                 self.viewer.visualizationOptions.ui.radioButtonSmooth.setChecked(True)
-                self.ui.histogram.setSliderType(HistogramSliderWidget.HistogramSliderTypeRange)
+#                 self.ui.histogram.setSliderType(HistogramSliderWidget.HistogramSliderTypeRange)
 
             elif self.ui.radioButtonSolid.isChecked():
                 self.ui.labelIsoLevel.setText("Minimum Density:");
@@ -87,7 +87,7 @@ class VolumeSurfaceEditorForm(BaseDockWidget):
                 self.viewer.visualizationOptions.ui.radioButtonFlat.setEnabled(False)
                 self.viewer.visualizationOptions.ui.radioButtonWireframe.setEnabled(False)
                 self.viewer.visualizationOptions.ui.radioButtonSmooth.setChecked(True)
-                self.ui.histogram.setSliderType(HistogramSliderWidget.HistogramSliderTypeRange)
+#                 self.ui.histogram.setSliderType(HistogramSliderWidget.HistogramSliderTypeRange)
                 
             print "setViewingType", QtCore.QThread.currentThreadId()
             self.viewer.emitModelChanged()
