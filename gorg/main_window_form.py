@@ -29,7 +29,7 @@ class MainWindowForm(QtGui.QMainWindow):
         self.windowManager = WindowManager(self)
                 
         self.statusBar().showMessage(self.tr("Gorgon: Protein Visualization Suite"))
-        self.setWindowTitle(self.tr("Gorgon Explorer - v" + self.version + "b"))
+        self.setWindowTitle(self.tr("Gorgon Explorer - v" + self.version))
         pathname = os.path.abspath(os.path.dirname(sys.argv[0]))
         self.setWindowIcon(QtGui.QIcon(pathname + '/gorgon.ico'))
 
