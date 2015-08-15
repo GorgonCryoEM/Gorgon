@@ -27,7 +27,7 @@ class WindowManager(QtGui.QWidget):
         self.createChildWindows()        
         
     def createChildWindows(self):
-        self.helpMenus = HelpMenus(self.app)
+#         self.helpMenus = HelpMenus(self.app)
         self.volumeViewer = VolumeViewer(self.app)
         self.skeletonViewer = SkeletonViewer(self.app)
         self.sseViewer = SSEViewer(self.app)
