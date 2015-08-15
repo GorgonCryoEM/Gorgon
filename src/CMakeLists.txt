@@ -118,6 +118,12 @@ install(FILES ${py_tests}
         COMPONENT "Gorgon"
         )
 
+install(DIRECTORY ${CMAKE_SOURCE_DIR}/../gorg
+        DESTINATION ${CMAKE_BINARY_DIR}/bin
+        COMPONENT "Gorgon"
+        FILES_MATCHING PATTERN "*.py"         
+        )
+        
 add_custom_target(Gorgon
         COMMAND ${CMAKE_COMMAND} -DCOMPONENT=Gorgon -P cmake_install.cmake
         )
