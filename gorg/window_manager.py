@@ -29,10 +29,10 @@ class WindowManager(QtGui.QWidget):
     def createChildWindows(self):
 #         self.helpMenus = HelpMenus(self.app)
         self.volumeViewer = VolumeViewer(self.app)
-        self.skeletonViewer = SkeletonViewer(self.app)
-        self.sseViewer = SSEViewer(self.app)
-        self.calphaViewer = CAlphaViewer(self.app)
-        self.calphaReference = CAlphaReferenceViewer(self.app)
+#         self.skeletonViewer = SkeletonViewer(self.app)
+#         self.sseViewer = SSEViewer(self.app)
+#         self.calphaViewer = CAlphaViewer(self.app)
+#         self.calphaReference = CAlphaReferenceViewer(self.app)
         self.mainCamera = Camera([self.calphaViewer, self.calphaReference, self.sseViewer, self.skeletonViewer, self.volumeViewer], self.app)
         self.app.mainCamera = self.mainCamera   
         self.app.setCentralWidget(self.mainCamera)
