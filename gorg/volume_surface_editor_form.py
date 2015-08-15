@@ -98,7 +98,7 @@ class VolumeSurfaceEditorForm(BaseDockWidget):
 #         self.filterDisplayRadius.enabled = False        
         maxDensity = self.viewer.renderer.getMaxDensity()
         minDensity = self.viewer.renderer.getMinDensity()
-        self.populateHistogram()        
+#         self.populateHistogram()        
         self.ui.doubleSpinBoxDensity.setMinimum(minDensity)
         self.ui.doubleSpinBoxDensity.setMaximum(maxDensity)        
         self.ui.doubleSpinBoxDensityMax.setMinimum(minDensity)
