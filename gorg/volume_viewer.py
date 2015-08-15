@@ -82,13 +82,14 @@ class VolumeViewer(BaseViewer):
         self.app.menus.addMenu("actions-volume-skeletonization", self.tr("S&keletonization"), "actions-volume");               
     
     def createChildWindows(self):
-#         self.surfaceEditor = VolumeSurfaceEditorForm(self.app, self, self)
-        self.manualSkeletonizer = VolumeManualSkeletonizationForm(self.app, self, self)
-        self.binarySkeletonizer = VolumeBinarySkeletonizationForm(self.app, self, self)
-        self.grayscaleSkeletonizer = VolumeGrayscaleSkeletonizationForm(self.app, self, self)
-        self.cropper = VolumeCropForm(self.app, self, self)
-        self.rawLoader = VolumeRawLoaderForm(self.app, self, self)
-        self.laplacianSmoother = VolumeLaplacianSmoothingForm(self.app, self, self)
+        pass
+# #         self.surfaceEditor = VolumeSurfaceEditorForm(self.app, self, self)
+#         self.manualSkeletonizer = VolumeManualSkeletonizationForm(self.app, self, self)
+#         self.binarySkeletonizer = VolumeBinarySkeletonizationForm(self.app, self, self)
+#         self.grayscaleSkeletonizer = VolumeGrayscaleSkeletonizationForm(self.app, self, self)
+#         self.cropper = VolumeCropForm(self.app, self, self)
+#         self.rawLoader = VolumeRawLoaderForm(self.app, self, self)
+#         self.laplacianSmoother = VolumeLaplacianSmoothingForm(self.app, self, self)
     
     def updateActionsAndMenus(self):
         self.app.actions.getAction("save_Volume").setEnabled(self.loaded)
