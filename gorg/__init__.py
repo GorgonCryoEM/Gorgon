@@ -8,7 +8,7 @@ from main_window_form import MainWindowForm
 # import time
 
 # if __name__ == '__main__':
-gorgonVersion = '2.2.2'
+gorgonVersion = '2.2.2b'
 app = QtGui.QApplication(sys.argv)    
 app.processEvents()
 
