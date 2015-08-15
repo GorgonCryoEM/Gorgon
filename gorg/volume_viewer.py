@@ -6,7 +6,7 @@
 from PyQt4 import QtGui, QtCore, QtOpenGL
 from base_viewer import BaseViewer
 from libpyGORGON import VolumeRenderer
-from volume_surface_editor_form import VolumeSurfaceEditorForm
+# from volume_surface_editor_form import VolumeSurfaceEditorForm
 from volume_binary_skeletonization_form import VolumeBinarySkeletonizationForm
 from volume_grayscale_skeletonization_form import VolumeGrayscaleSkeletonizationForm
 from volume_manual_skeletonization_form import VolumeManualSkeletonizationForm
@@ -82,7 +82,7 @@ class VolumeViewer(BaseViewer):
         self.app.menus.addMenu("actions-volume-skeletonization", self.tr("S&keletonization"), "actions-volume");               
     
     def createChildWindows(self):
-        self.surfaceEditor = VolumeSurfaceEditorForm(self.app, self, self)
+#         self.surfaceEditor = VolumeSurfaceEditorForm(self.app, self, self)
         self.manualSkeletonizer = VolumeManualSkeletonizationForm(self.app, self, self)
         self.binarySkeletonizer = VolumeBinarySkeletonizationForm(self.app, self, self)
         self.grayscaleSkeletonizer = VolumeGrayscaleSkeletonizationForm(self.app, self, self)
