@@ -137,4 +137,4 @@ class Ui_DialogVolumeSurfaceEditor(object):
         self.checkBoxUseRadius.setWhatsThis(QtGui.QApplication.translate("DialogVolumeSurfaceEditor", "The volume will be displayed for this radius around the selected point", None, QtGui.QApplication.UnicodeUTF8))
         self.checkBoxUseRadius.setText(QtGui.QApplication.translate("DialogVolumeSurfaceEditor", "Display Radius:", None, QtGui.QApplication.UnicodeUTF8))
 
-from histogram_slider_widget import HistogramSliderWidget
+# from histogram_slider_widget import HistogramSliderWidget
