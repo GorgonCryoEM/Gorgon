@@ -6,11 +6,11 @@
 import sys, os, time
 from PyQt4 import QtOpenGL, QtCore, QtGui
 from vector_lib import *
-from scene_editor_form import SceneEditorForm
+# from scene_editor_form import SceneEditorForm
 from libpyGORGON import Vector3DFloat
 from cmath import *   
-from libpyGORGON import CAlphaRenderer
-from seq_model.Chain import Chain
+# from libpyGORGON import CAlphaRenderer
+# from seq_model.Chain import Chain
 
 from OpenGL.GL import *
 from OpenGL.GLU import *
@@ -59,7 +59,7 @@ class Camera(QtOpenGL.QGLWidget):
         self.setUp(0, 0, 1)     
         self.setEyeRotation(0, 0, 0)
         self.lastPos = QtCore.QPoint()
-        self.sceneEditor = SceneEditorForm(self.app, self)
+#         self.sceneEditor = SceneEditorForm(self.app, self)
         self.connect(self.app.themes, QtCore.SIGNAL("themeChanged()"), self.themeChanged)
         
         for i in range(len(self.scene)): 
