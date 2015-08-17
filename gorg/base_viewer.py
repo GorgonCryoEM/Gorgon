@@ -5,7 +5,7 @@
 
 from PyQt4 import QtGui, QtCore, QtOpenGL
 from libpyGORGON import VolumeRenderer, Vector3DFloat
-from vector_lib import *
+from libs.vector_lib import *
 # from session_manager import SessionManager
 
 from OpenGL.GL import *
