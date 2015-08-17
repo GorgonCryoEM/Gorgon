@@ -4,8 +4,6 @@
 
 
 
-# from PyQt4 import QtGui
-
 class ActionManager(object):
     def __init__(self, main, parent=None):
         self.app = main
