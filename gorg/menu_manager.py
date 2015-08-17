@@ -3,7 +3,7 @@
 # Description:   Maintains all the menu items in the application 
 
 
-from PyQt4 import QtGui
+# from PyQt4 import QtGui
 
 class MenuManager(object):
     def __init__(self, main, parent=None):
