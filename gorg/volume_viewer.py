@@ -1,19 +1,8 @@
-# Copyright (C) 2005-2008 Washington University in St Louis, Baylor College of Medicine.  All rights reserved
-# Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
-# Description:   A viewer for volume data 
-
-
 from PyQt4 import QtGui, QtCore, QtOpenGL
 from base_viewer import BaseViewer
 from libpyGORGON import VolumeRenderer
 from volume_surface_editor_form import VolumeSurfaceEditorForm
-# from volume_binary_skeletonization_form import VolumeBinarySkeletonizationForm
-# from volume_grayscale_skeletonization_form import VolumeGrayscaleSkeletonizationForm
-# from volume_manual_skeletonization_form import VolumeManualSkeletonizationForm
 from model_visualization_form import ModelVisualizationForm
-# from volume_laplacian_smoothing_form import VolumeLaplacianSmoothingForm
-# from volume_crop_form import VolumeCropForm
-# from volume_raw_loader_form import VolumeRawLoaderForm
 from string import split, upper
 
 from OpenGL.GL import *
@@ -80,12 +69,6 @@ class VolumeViewer(BaseViewer):
     
     def createChildWindows(self):
         self.surfaceEditor = VolumeSurfaceEditorForm(self.app, self, self)
-#         self.manualSkeletonizer = VolumeManualSkeletonizationForm(self.app, self, self)
-#         self.binarySkeletonizer = VolumeBinarySkeletonizationForm(self.app, self, self)
-#         self.grayscaleSkeletonizer = VolumeGrayscaleSkeletonizationForm(self.app, self, self)
-#         self.cropper = VolumeCropForm(self.app, self, self)
-#         self.rawLoader = VolumeRawLoaderForm(self.app, self, self)
-#         self.laplacianSmoother = VolumeLaplacianSmoothingForm(self.app, self, self)
     
     def updateActionsAndMenus(self):
         self.app.actions.getAction("save_Volume").setEnabled(self.loaded)
