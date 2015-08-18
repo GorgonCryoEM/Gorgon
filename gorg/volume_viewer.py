@@ -79,18 +79,6 @@ class VolumeViewer(BaseViewer):
         self.app.actions.getAction("downsample_Volume").setEnabled(self.loaded)
         self.app.menus.getMenu("actions-volume-skeletonization").setEnabled(self.loaded)
     
-    def normalizeVolume(self):
-        self.renderer.normalizeVolume()
-        self.surfaceEditor.modelLoadedPreDraw()
-        
-    def downsampleVolume(self):
-        self.renderer.downsampleVolume()
-        self.surfaceEditor.modelLoadedPreDraw()
-        self.emitModelChanged();       
-        
-    def cropVolume(self):
-        pass 
-    
     def loadData(self):
         fileName = str(QtGui.QFileDialog.getOpenFileName(self, self.tr("Open Volume"), "", self.tr(self.renderer.getSupportedLoadFileFormats())))
         self.loadDataFromFile(fileName)
