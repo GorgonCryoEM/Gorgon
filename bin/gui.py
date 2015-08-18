@@ -5,7 +5,7 @@ import gorg
 
 import os, sys
 
-pathname = os.path.abspath(gorg.__path__[0]+'/../../../../groel-demo')
+pathname = os.path.abspath(gorg.__path__[0]+'/../../demo/groel')
 print pathname
 
 gorg.window.show()
