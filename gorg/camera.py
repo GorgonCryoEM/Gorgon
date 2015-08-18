@@ -204,7 +204,7 @@ class Camera(QtOpenGL.QGLWidget):
             glutInit(sys.argv)      #This must be here to get it to work with Freeglut.
             #otherwise you get: "freeglut  ERROR:  Function <glutWireCube> called without first calling 'glutInit'."
        
-        backgroundColor = self.app.themes.getColor("Camera:Background")        
+        backgroundColor = QtGui.QColor(0, 0, 0, 255)        
         glClearColor(backgroundColor.redF(), backgroundColor.greenF(), backgroundColor.blueF(), backgroundColor.alphaF())
         glClearDepth( 1.0 )
         
@@ -212,7 +212,7 @@ class Camera(QtOpenGL.QGLWidget):
         self.setNearFarZoom(0.1, 1000, 0.25)
 
         if(self.fogEnabled):
-            fogColor = self.app.themes.getColor("Camera:Fog")
+            fogColor = QtGui.QColor(0, 0, 0, 255)
             glFogi(GL_FOG_MODE, GL_LINEAR)
             glFogfv(GL_FOG_COLOR, [fogColor.redF(), fogColor.greenF(), fogColor.blueF(), fogColor.alphaF()])
             glFogf(GL_FOG_DENSITY, self.fogDensity)   
