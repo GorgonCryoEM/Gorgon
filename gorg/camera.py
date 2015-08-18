@@ -57,7 +57,6 @@ class Camera(QtOpenGL.QGLWidget):
         self.setEyeRotation(0, 0, 0)
         self.lastPos = QtCore.QPoint()
         self.sceneEditor = SceneEditorForm(self.app, self)
-#         self.connect(self.app.themes, QtCore.SIGNAL("themeChanged()"), self.themeChanged)
         
         for i in range(len(self.scene)): 
             self.scene[i].sceneIndex = i;     
@@ -205,7 +204,7 @@ class Camera(QtOpenGL.QGLWidget):
             glutInit(sys.argv)      #This must be here to get it to work with Freeglut.
             #otherwise you get: "freeglut  ERROR:  Function <glutWireCube> called without first calling 'glutInit'."
        
-        backgroundColor = self.app.themes.getColor("Camera:Background")        
+        backgroundColor = QtGui.QColor(0, 0, 0, 255)        
         glClearColor(backgroundColor.redF(), backgroundColor.greenF(), backgroundColor.blueF(), backgroundColor.alphaF())
         glClearDepth( 1.0 )
         
@@ -213,7 +212,7 @@ class Camera(QtOpenGL.QGLWidget):
         self.setNearFarZoom(0.1, 1000, 0.25)
 
         if(self.fogEnabled):
-            fogColor = self.app.themes.getColor("Camera:Fog")
+            fogColor = QtGui.QColor(0, 0, 0, 255)
             glFogi(GL_FOG_MODE, GL_LINEAR)
             glFogfv(GL_FOG_COLOR, [fogColor.redF(), fogColor.greenF(), fogColor.blueF(), fogColor.alphaF()])
             glFogf(GL_FOG_DENSITY, self.fogDensity)   
@@ -531,13 +530,6 @@ class Camera(QtOpenGL.QGLWidget):
                 maxDistance = max(maxDistance, eyeDist + modelDist + distance/2.0)
         self.setNearFarZoom(minDistance, maxDistance, self.eyeZoom)
         self.updateGL()  
-
-    def themeChanged(self):
-        self.sceneEditor.ui.pushButtonLight1Color.setColor(self.app.themes.getColor("Camera:Light:0"))
-        self.sceneEditor.ui.pushButtonLight2Color.setColor(self.app.themes.getColor("Camera:Light:1"))  
-        self.sceneEditor.ui.pushButtonBackgroundColor.setColor(self.app.themes.getColor("Camera:Background"))
-        self.sceneEditor.ui.pushButtonFogColor.setColor(self.app.themes.getColor("Camera:Fog"))
-        self.initializeGL()
         
     def getSessionInfo(self, sessionManager):
         info = []

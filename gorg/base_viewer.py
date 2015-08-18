@@ -37,7 +37,7 @@ class BaseViewer(QtOpenGL.QGLWidget):
         self.connect(self, QtCore.SIGNAL("modelChanged()"), self.modelChanged) 
         self.connect(self, QtCore.SIGNAL("modelLoaded()"), self.modelChanged) 
         self.connect(self, QtCore.SIGNAL("modelUnloaded()"), self.modelChanged) 
-#         self.connect(self.app.themes, QtCore.SIGNAL("themeChanged()"), self.themeChanged)           
+
         self.glLists = []
         self.showBox = False
         self.twoWayLighting = False
@@ -132,10 +132,6 @@ class BaseViewer(QtOpenGL.QGLWidget):
             self.app.mainCamera.updateGL()
         
 
-    def setBoundingBoxColor(self, color):
-        self.app.themes.addColor(self.title + ":" + "BoundingBox", color)
-        self.repaintCamera()
-
     def setDisplayStyle(self, style):
         self.displayStyle = style
         self.renderer.setDisplayStyle(style)
@@ -162,21 +158,6 @@ class BaseViewer(QtOpenGL.QGLWidget):
     def getModel3Color(self):
         return QtGui.QColor(180, 180, 180, 150)
     
-    def setModelColor(self, color):
-        oldColor = self.getModelColor()            
-        self.app.themes.addColor(self.title + ":" + "Model:0", color)
-        self.repaintCamera2(oldColor, color)
-
-    def setModel2Color(self, color):
-        oldColor = self.getModel2Color()            
-        self.app.themes.addColor(self.title + ":" + "Model:1", color)
-        self.repaintCamera2(oldColor, color)
-
-    def setModel3Color(self, color):
-        oldColor = self.getModel3Color()                    
-        self.app.themes.addColor(self.title + ":" + "Model:2", color)
-        self.repaintCamera2(oldColor, color)
-
     def setMaterials(self, color):
         glColor4f(color.redF(), color.greenF(), color.blueF(), color.alphaF())
         diffuseMaterial = [color.redF(), color.greenF(), color.blueF(), color.alphaF()]
@@ -492,13 +473,6 @@ class BaseViewer(QtOpenGL.QGLWidget):
     def processMouseMove(self, hitStack, event):
         self.emitElementMouseOver(hitStack, event)
         
-    def themeChanged(self):
-        self.visualizationOptions.ui.pushButtonModelColor.setColor(self.getModelColor())
-        self.visualizationOptions.ui.pushButtonModel2Color.setColor(self.getModel2Color())
-        self.visualizationOptions.ui.pushButtonModel3Color.setColor(self.getModel3Color())
-        self.visualizationOptions.ui.pushButtonBoundingBoxColor.setColor(self.getBoundingBoxColor())  
-        self.emitModelChanged()          
-       
         
     def processMouseMoveRay(self, ray, rayWidth, eye, event):
         self.emitMouseOverRay(ray, rayWidth, eye, event)
