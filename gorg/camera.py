@@ -229,8 +229,8 @@ class Camera(QtOpenGL.QGLWidget):
 
     def setLights(self):
         glLight = [GL_LIGHT0, GL_LIGHT1]
-        light0Color = self.app.themes.getColor("Camera:Light:0")
-        light1Color = self.app.themes.getColor("Camera:Light:1")
+        light0Color = QtGui.QColor(255, 255, 255, 255)
+        light1Color = QtGui.QColor(255, 255, 255, 255)
 
         lightsColor = [[light0Color.redF(), light0Color.greenF(), light0Color.blueF(), 1.0],[light1Color.redF(), light1Color.greenF(), light1Color.blueF(), 1.0]]
         for i in range(2):
