@@ -1,6 +1,6 @@
 from PyQt4 import QtCore, QtGui
 from ui_dialog_volume_surface_editor import Ui_DialogVolumeSurfaceEditor
-# from delayed_filter import DelayedFilter
+from delayed_filter import DelayedFilter
 from base_dock_widget import BaseDockWidget
 from histogram_slider_widget import HistogramSliderWidget
 import threading
@@ -31,9 +31,9 @@ class VolumeSurfaceEditorForm(BaseDockWidget):
         self.ui = Ui_DialogVolumeSurfaceEditor()
         self.ui.setupUi(self)       
  
-#         self.filterIsoValue = DelayedFilter(self.thread())
-#         self.filterIsoValueMax = DelayedFilter(self.thread())
-#         self.filterDisplayRadius = DelayedFilter(self.thread())
+        self.filterIsoValue = DelayedFilter(self.thread())
+        self.filterIsoValueMax = DelayedFilter(self.thread())
+        self.filterDisplayRadius = DelayedFilter(self.thread())
         self.ui.labelIsoLevelMax.setVisible(False)
         self.ui.doubleSpinBoxDensityMax.setVisible(False)
         
