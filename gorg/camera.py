@@ -531,56 +531,6 @@ class Camera(QtOpenGL.QGLWidget):
         self.setNearFarZoom(minDistance, maxDistance, self.eyeZoom)
         self.updateGL()  
         
-    def getSessionInfo(self, sessionManager):
-        info = []
-        info.extend(sessionManager.getRemarkLines("CAM", "CUTTING_PLANE", self.cuttingPlane))
-        info.extend(sessionManager.getRemarkLines("CAM", "MOUSE_TRACKING_ENABLED", self.mouseTrackingEnabled))
-        info.extend(sessionManager.getRemarkLines("CAM", "MOUSE_TRACKING_ENABLED_RAY", self.mouseTrackingEnabledRay))
-        info.extend(sessionManager.getRemarkLines("CAM", "ASPECT_RATIO", self.aspectRatio))
-        info.extend(sessionManager.getRemarkLines("CAM", "SELECTED_SCENE", self.selectedScene))
-        info.extend(sessionManager.getRemarkLines("CAM", "LIGHTS_ENABLED", self.lightsEnabled))       
-        info.extend(sessionManager.getRemarkLines("CAM", "LIGHTS_POSITION", self.lightsPosition))
-        info.extend(sessionManager.getRemarkLines("CAM", "LIGHTS_USE_EYE_POSITION", self.lightsUseEyePosition))
-        info.extend(sessionManager.getRemarkLines("CAM", "FOG_DENSITY", self.fogDensity))
-        info.extend(sessionManager.getRemarkLines("CAM", "FOG_ENABLED", self.fogEnabled))            
-        info.extend(sessionManager.getRemarkLines("CAM", "CENTER", self.center))
-        info.extend(sessionManager.getRemarkLines("CAM", "EYE", self.eye))
-        info.extend(sessionManager.getRemarkLines("CAM", "LOOK", self.look))
-        info.extend(sessionManager.getRemarkLines("CAM", "RIGHT", self.right))
-        info.extend(sessionManager.getRemarkLines("CAM", "UP", self.up))
-        info.extend(sessionManager.getRemarkLines("CAM", "NEAR", self.near))
-        info.extend(sessionManager.getRemarkLines("CAM", "FAR", self.far))
-        info.extend(sessionManager.getRemarkLines("CAM", "EYE_ZOOM", self.eyeZoom))
-            
-        return info
-
-    def loadSessionInfo(self, sessionManager, sessionProperties):
-        self.cuttingPlane = sessionManager.getProperty(sessionProperties, "CAM", "CUTTING_PLANE")
-        self.mouseTrackingEnabled = sessionManager.getProperty(sessionProperties, "CAM", "MOUSE_TRACKING_ENABLED")
-        self.mouseTrackingEnabledRay = sessionManager.getProperty(sessionProperties, "CAM", "MOUSE_TRACKING_ENABLED_RAY")
-        self.aspectRatio = sessionManager.getProperty(sessionProperties, "CAM", "ASPECT_RATIO")
-        self.selectedScene = sessionManager.getProperty(sessionProperties, "CAM", "SELECTED_SCENE")
-        self.lightsEnabled = sessionManager.getProperty(sessionProperties, "CAM", "LIGHTS_ENABLED")
-        self.lightsPosition = sessionManager.getProperty(sessionProperties, "CAM", "LIGHTS_POSITION")
-        self.lightsUseEyePosition = sessionManager.getProperty(sessionProperties, "CAM", "LIGHTS_USE_EYE_POSITION")
-        self.fogDensity = sessionManager.getProperty(sessionProperties, "CAM", "FOG_DENSITY")
-        self.fogEnabled = sessionManager.getProperty(sessionProperties, "CAM", "FOG_ENABLED")
-        self.center = sessionManager.getProperty(sessionProperties, "CAM", "CENTER")
-        self.eye = sessionManager.getProperty(sessionProperties, "CAM", "EYE")
-        self.look = sessionManager.getProperty(sessionProperties, "CAM", "LOOK")
-        self.right = sessionManager.getProperty(sessionProperties, "CAM", "RIGHT")
-        self.up = sessionManager.getProperty(sessionProperties, "CAM", "UP")
-        self.near = sessionManager.getProperty(sessionProperties, "CAM", "NEAR")
-        self.far = sessionManager.getProperty(sessionProperties, "CAM", "FAR")
-        self.eyeZoom = sessionManager.getProperty(sessionProperties, "CAM", "EYE_ZOOM")
-        
-        self.setNearFarZoom(self.near, self.far, self.eyeZoom)
-        self.setRendererCuttingPlanes()
-        self.setRendererCenter()
-        self.emitCameraChanged()            
-       
-        
-        
         
     def emitCameraChanged(self):
         self.emit(QtCore.SIGNAL("cameraChanged()"))
