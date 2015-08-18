@@ -43,7 +43,6 @@ class MainWindowForm(QtGui.QMainWindow):
         self.menus.addMenu("file-close", self.tr("&Close"), "file")
         self.menus.getMenu("file").addSeparator()
         self.menus.addAction("file-exit", self.actions.getAction("exit_Application"), "file")        
-        #self.menus.addMenu("options", self.tr("&Options"))    
         self.menus.addMenu("window", self.tr("&Window"))
         self.menus.addMenu("help", self.tr("&Help"))
         
