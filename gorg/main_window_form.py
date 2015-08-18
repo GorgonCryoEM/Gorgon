@@ -16,7 +16,6 @@ class MainWindowForm(QtGui.QMainWindow):
         self.createUI()
         self.createActions()
         self.createMenus()
-        self.plugins = {}
         self.setContextMenuPolicy(QtCore.Qt.NoContextMenu)
         self.dockWidgets = []
         self.windowManager = WindowManager(self)
@@ -106,7 +105,3 @@ class MainWindowForm(QtGui.QMainWindow):
 
     def emitKeyReleased(self, event):
         self.emit(QtCore.SIGNAL("keyReleased(QKeyEvent)"), event);
-        
-    def loadPlugins(self):
-        self.pluginManager = PluginManager(self)
-
