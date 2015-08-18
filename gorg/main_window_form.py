@@ -24,9 +24,6 @@ class MainWindowForm(QtGui.QMainWindow):
         self.setWindowTitle(self.tr("Gorgon Explorer - v" + self.version))
         pathname = os.path.abspath(os.path.dirname(sys.argv[0]))
         self.setWindowIcon(QtGui.QIcon(pathname + '/gorgon.ico'))
-
-    def addModule(self, module):
-        self.modules.append(module)
             
     def createUI(self):
         pass
