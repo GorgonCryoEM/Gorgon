@@ -1,0 +1,19 @@
+		QtGui.QColor()
+
+        self.app.themes.addDefaultRGB("Volume:Model:0", 180, 180, 180, 150) #rgba color: default alpha used to be 255 for opaque
+        self.app.themes.addDefaultRGB("Volume:Model:1", 180, 180, 180, 150)
+        self.app.themes.addDefaultRGB("Volume:Model:2", 180, 180, 180, 150)
+        self.app.themes.addDefaultRGB("Volume:BoundingBox", 255, 255, 255, 255)                         
+
+
+        QtGui.QColor(180, 180, 180, 150)
+        QtGui.QColor(255, 255, 255, 255)
+
+        
+        self.app.themes.addDefaultRGB("Camera:Light:0", 255, 255, 255, 255)
+        self.app.themes.addDefaultRGB("Camera:Light:1", 255, 255, 255, 255)
+        self.app.themes.addDefaultRGB("Camera:Fog", 0, 0, 0, 255)
+        self.app.themes.addDefaultRGB("Camera:Background", 0, 0, 0, 255)        
+
+        QtGui.QColor(255, 255, 255, 255)
+        QtGui.QColor(0, 0, 0, 255)
