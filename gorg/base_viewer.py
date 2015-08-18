@@ -37,7 +37,7 @@ class BaseViewer(QtOpenGL.QGLWidget):
         self.connect(self, QtCore.SIGNAL("modelChanged()"), self.modelChanged) 
         self.connect(self, QtCore.SIGNAL("modelLoaded()"), self.modelChanged) 
         self.connect(self, QtCore.SIGNAL("modelUnloaded()"), self.modelChanged) 
-#         self.connect(self.app.themes, QtCore.SIGNAL("themeChanged()"), self.themeChanged)           
+
         self.glLists = []
         self.showBox = False
         self.twoWayLighting = False
