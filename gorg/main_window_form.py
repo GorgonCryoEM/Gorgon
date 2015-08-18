@@ -55,7 +55,6 @@ class MainWindowForm(QtGui.QMainWindow):
         #self.menus.addMenu("options", self.tr("&Options"))    
         self.menus.addMenu("actions", self.tr("&Actions"))     
         self.menus.addMenu("window", self.tr("&Window"))
-        self.menus.addMenu("themes", self.tr("&Themes"))
         self.menus.addMenu("help", self.tr("&Help"))
         
     def addDockWidget (self, area, dockwidget):

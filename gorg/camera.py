@@ -530,13 +530,6 @@ class Camera(QtOpenGL.QGLWidget):
                 maxDistance = max(maxDistance, eyeDist + modelDist + distance/2.0)
         self.setNearFarZoom(minDistance, maxDistance, self.eyeZoom)
         self.updateGL()  
-
-    def themeChanged(self):
-        self.sceneEditor.ui.pushButtonLight1Color.setColor(self.app.themes.getColor("Camera:Light:0"))
-        self.sceneEditor.ui.pushButtonLight2Color.setColor(self.app.themes.getColor("Camera:Light:1"))  
-        self.sceneEditor.ui.pushButtonBackgroundColor.setColor(self.app.themes.getColor("Camera:Background"))
-        self.sceneEditor.ui.pushButtonFogColor.setColor(self.app.themes.getColor("Camera:Fog"))
-        self.initializeGL()
         
     def getSessionInfo(self, sessionManager):
         info = []

@@ -109,11 +109,6 @@ class SceneEditorForm(BaseDockWidget):
         self.camera.initializeScene()
         self.camera.updateGL()        
 
-    def light1ColorChanged(self):
-        self.app.themes.addColor("Camera:Light:0", self.ui.pushButtonLight1Color.color())
-        self.camera.initializeScene()
-        self.camera.updateGL()        
-        
     def light1PositionChanged(self):
         self.camera.lightsPosition[0] = [self.ui.doubleSpinBoxLight1X.value(), self.ui.doubleSpinBoxLight1Y.value(), self.ui.doubleSpinBoxLight1Z.value()]
         self.camera.initializeScene()
@@ -129,21 +124,11 @@ class SceneEditorForm(BaseDockWidget):
         self.camera.initializeScene()
         self.camera.updateGL()        
         
-    def light2ColorChanged(self):
-        self.app.themes.addColor("Camera:Light:1", self.ui.pushButtonLight2Color.color())
-        self.camera.initializeScene()
-        self.camera.updateGL()     
-        
     def light2PositionChanged(self):
         self.camera.lightsPosition[1] = [self.ui.doubleSpinBoxLight2X.value(), self.ui.doubleSpinBoxLight2Y.value(), self.ui.doubleSpinBoxLight2Z.value()]
         self.camera.initializeScene()
         self.camera.updateGL()
         
-    def backgroundColorChanged(self):
-        self.app.themes.addColor("Camera:Background", self.ui.pushButtonBackgroundColor.color())
-        self.camera.initializeScene()
-        self.camera.updateGL()    
-            
     def fogEnabled(self, value):
         self.camera.fogEnabled = value
         self.camera.initializeScene()
@@ -153,8 +138,3 @@ class SceneEditorForm(BaseDockWidget):
         self.camera.fogDensity = self.ui.doubleSpinBoxFogDensity.value()
         self.camera.initializeScene()
         self.camera.updateGL()     
-                
-    def fogColorChanged(self):
-        self.app.themes.addColor("Camera:Fog", self.ui.pushButtonFogColor.color())
-        self.camera.initializeScene()
-        self.camera.updateGL()             
