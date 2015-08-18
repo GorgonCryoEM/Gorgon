@@ -1,8 +1,3 @@
-# Copyright (C) 2005-2008 Washington University in St Louis, Baylor College of Medicine.  All rights reserved
-# Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
-# Description:   A dialog box which can be used to modify the visualization options of a loaded model 
-
-
 from PyQt4 import QtCore, QtGui
 from ui_dialog_model_visualization import Ui_DialogModelVisualization
 from base_dock_widget import BaseDockWidget

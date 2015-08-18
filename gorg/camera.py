@@ -1,16 +1,9 @@
-# Copyright (C) 2005-2008 Washington University in St Louis, Baylor College of Medicine.  All rights reserved
-# Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
-# Description:   This manages a single camera, and the scenes which are rendered using this camera 
-
-
 import sys, os, time
 from PyQt4 import QtOpenGL, QtCore, QtGui
 from libs.vector import *
 from scene_editor_form import SceneEditorForm
 from libpyGORGON import Vector3DFloat
-from cmath import *   
-# from libpyGORGON import CAlphaRenderer
-# from seq_model.Chain import Chain
+from cmath import *
 
 from OpenGL.GL import *
 from OpenGL.GLU import *
