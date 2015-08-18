@@ -37,7 +37,7 @@ class BaseViewer(QtOpenGL.QGLWidget):
         self.connect(self, QtCore.SIGNAL("modelChanged()"), self.modelChanged) 
         self.connect(self, QtCore.SIGNAL("modelLoaded()"), self.modelChanged) 
         self.connect(self, QtCore.SIGNAL("modelUnloaded()"), self.modelChanged) 
-        self.connect(self.app.themes, QtCore.SIGNAL("themeChanged()"), self.themeChanged)           
+#         self.connect(self.app.themes, QtCore.SIGNAL("themeChanged()"), self.themeChanged)           
         self.glLists = []
         self.showBox = False
         self.twoWayLighting = False
@@ -119,7 +119,7 @@ class BaseViewer(QtOpenGL.QGLWidget):
             self.app.mainCamera.updateGL()
 
     def getBoundingBoxColor(self):
-        return self.app.themes.getColor(self.title + ":" + "BoundingBox" )
+        return QtGui.QColor(255, 255, 255, 255)
 
     def repaintCamera2(self, oldColor, newColor):
         if((oldColor.alpha() == 255 and newColor.alpha() != 255) or (oldColor.alpha() != 255 and newColor.alpha() == 255)):
@@ -154,13 +154,13 @@ class BaseViewer(QtOpenGL.QGLWidget):
         self.repaintCamera()
         
     def getModelColor(self):
-        return self.app.themes.getColor(self.title + ":" + "Model:0" )    
+        return QtGui.QColor(180, 180, 180, 150)    
 
     def getModel2Color(self):
-        return self.app.themes.getColor(self.title + ":" + "Model:1" )
+        return QtGui.QColor(180, 180, 180, 150)
     
     def getModel3Color(self):
-        return self.app.themes.getColor(self.title + ":" + "Model:2" )
+        return QtGui.QColor(180, 180, 180, 150)
     
     def setModelColor(self, color):
         oldColor = self.getModelColor()            

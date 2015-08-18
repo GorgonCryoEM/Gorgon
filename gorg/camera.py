@@ -21,10 +21,7 @@ class Camera(QtOpenGL.QGLWidget):
     def __init__(self, scene, main, parent=None):
         QtOpenGL.QGLWidget.__init__(self, parent)
         self.app = main        
-        self.app.themes.addDefaultRGB("Camera:Light:0", 255, 255, 255, 255)
-        self.app.themes.addDefaultRGB("Camera:Light:1", 255, 255, 255, 255)
-        self.app.themes.addDefaultRGB("Camera:Fog", 0, 0, 0, 255)
-        self.app.themes.addDefaultRGB("Camera:Background", 0, 0, 0, 255)        
+
         self.near = 0
         self.cuttingPlane = 0.0
         self.scene = scene
@@ -60,7 +57,7 @@ class Camera(QtOpenGL.QGLWidget):
         self.setEyeRotation(0, 0, 0)
         self.lastPos = QtCore.QPoint()
         self.sceneEditor = SceneEditorForm(self.app, self)
-        self.connect(self.app.themes, QtCore.SIGNAL("themeChanged()"), self.themeChanged)
+#         self.connect(self.app.themes, QtCore.SIGNAL("themeChanged()"), self.themeChanged)
         
         for i in range(len(self.scene)): 
             self.scene[i].sceneIndex = i;     
@@ -232,8 +229,8 @@ class Camera(QtOpenGL.QGLWidget):
 
     def setLights(self):
         glLight = [GL_LIGHT0, GL_LIGHT1]
-        light0Color = self.app.themes.getColor("Camera:Light:0")
-        light1Color = self.app.themes.getColor("Camera:Light:1")
+        light0Color = QtGui.QColor(255, 255, 255, 255)
+        light1Color = QtGui.QColor(255, 255, 255, 255)
 
         lightsColor = [[light0Color.redF(), light0Color.greenF(), light0Color.blueF(), 1.0],[light1Color.redF(), light1Color.greenF(), light1Color.blueF(), 1.0]]
         for i in range(2):
