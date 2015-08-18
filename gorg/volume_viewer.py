@@ -26,10 +26,7 @@ class VolumeViewer(BaseViewer):
         BaseViewer.__init__(self, main, parent)
         self.title = "Volume"    
         self.shortTitle = "VOL"
-        self.app.themes.addDefaultRGB("Volume:Model:0", 180, 180, 180, 150) #rgba color: default alpha used to be 255 for opaque
-        self.app.themes.addDefaultRGB("Volume:Model:1", 180, 180, 180, 150)
-        self.app.themes.addDefaultRGB("Volume:Model:2", 180, 180, 180, 150)
-        self.app.themes.addDefaultRGB("Volume:BoundingBox", 255, 255, 255, 255)                         
+
         self.renderer = VolumeRenderer()          
         self.loaded = False
         self.createUI()
