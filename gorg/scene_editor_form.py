@@ -73,17 +73,17 @@ class SceneEditorForm(BaseDockWidget):
         self.ui.doubleSpinBoxLight1X.setValue(self.camera.lightsPosition[0][0])
         self.ui.doubleSpinBoxLight1Y.setValue(self.camera.lightsPosition[0][1])
         self.ui.doubleSpinBoxLight1Z.setValue(self.camera.lightsPosition[0][2])
-        self.ui.pushButtonLight1Color.setColor(self.app.themes.getColor("Camera:Light:0"))
+        self.ui.pushButtonLight1Color.setColor(QtGui.QColor(255, 255, 255, 255))
         self.ui.checkBoxLight2Enabled.setChecked(self.camera.lightsEnabled[1])
         self.ui.doubleSpinBoxLight2X.setValue(self.camera.lightsPosition[1][0])
         self.ui.doubleSpinBoxLight2Y.setValue(self.camera.lightsPosition[1][1])
         self.ui.doubleSpinBoxLight2Z.setValue(self.camera.lightsPosition[1][2])
-        self.ui.pushButtonLight2Color.setColor(self.app.themes.getColor("Camera:Light:1"))  
-        self.ui.pushButtonBackgroundColor.setColor(self.app.themes.getColor("Camera:Background"))
+        self.ui.pushButtonLight2Color.setColor(QtGui.QColor(255, 255, 255, 255))  
+        self.ui.pushButtonBackgroundColor.setColor(QtGui.QColor(0, 0, 0, 255))
         self.ui.checkBoxFogEnabled.setChecked(self.camera.fogEnabled)
         self.ui.doubleSpinBoxFogDensity.setValue(self.camera.fogDensity)
-        self.ui.pushButtonFogColor.setColor(self.app.themes.getColor("Camera:Fog"))
                 
+        self.ui.pushButtonFogColor.setColor(QtGui.QColor(0, 0, 0, 255))
 
     def eyePositionChanged(self):
         self.camera.setEye(self.ui.doubleSpinBoxEyeX.value(), self.ui.doubleSpinBoxEyeY.value(), self.ui.doubleSpinBoxEyeZ.value())
