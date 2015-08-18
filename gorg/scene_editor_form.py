@@ -42,18 +42,14 @@ class SceneEditorForm(BaseDockWidget):
         self.connect(self.ui.doubleSpinBoxZoom, QtCore.SIGNAL("editingFinished ()"), self.zoomChanged)
         self.connect(self.ui.checkBoxLight1Enabled, QtCore.SIGNAL("toggled (bool)"), self.light1Enabled)
         self.connect(self.ui.checkBoxLight2Enabled, QtCore.SIGNAL("toggled (bool)"), self.light2Enabled)
-        self.connect(self.ui.pushButtonLight1Color, QtCore.SIGNAL("colorChanged ()"), self.light1ColorChanged)
-        self.connect(self.ui.pushButtonLight2Color, QtCore.SIGNAL("colorChanged ()"), self.light2ColorChanged)
         self.connect(self.ui.doubleSpinBoxLight1X, QtCore.SIGNAL("editingFinished ()"), self.light1PositionChanged)
         self.connect(self.ui.doubleSpinBoxLight1Y, QtCore.SIGNAL("editingFinished ()"), self.light1PositionChanged)
         self.connect(self.ui.doubleSpinBoxLight1Z, QtCore.SIGNAL("editingFinished ()"), self.light1PositionChanged)                                                        
         self.connect(self.ui.doubleSpinBoxLight2X, QtCore.SIGNAL("editingFinished ()"), self.light2PositionChanged)
         self.connect(self.ui.doubleSpinBoxLight2Y, QtCore.SIGNAL("editingFinished ()"), self.light2PositionChanged)
         self.connect(self.ui.doubleSpinBoxLight2Z, QtCore.SIGNAL("editingFinished ()"), self.light2PositionChanged)
-        self.connect(self.ui.pushButtonBackgroundColor, QtCore.SIGNAL("colorChanged ()"), self.backgroundColorChanged)
         self.connect(self.ui.checkBoxFogEnabled, QtCore.SIGNAL("toggled (bool)"), self.fogEnabled)
         self.connect(self.ui.doubleSpinBoxFogDensity, QtCore.SIGNAL("editingFinished ()"), self.fogDensityChanged)
-        self.connect(self.ui.pushButtonFogColor, QtCore.SIGNAL("colorChanged ()"), self.fogColorChanged)
         self.connect(self.ui.checkBoxLight1EyePosition, QtCore.SIGNAL("toggled (bool)"), self.light1EyePositionChecked)
                   
         
