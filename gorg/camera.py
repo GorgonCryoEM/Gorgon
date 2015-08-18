@@ -57,7 +57,7 @@ class Camera(QtOpenGL.QGLWidget):
         self.setEyeRotation(0, 0, 0)
         self.lastPos = QtCore.QPoint()
         self.sceneEditor = SceneEditorForm(self.app, self)
-        self.connect(self.app.themes, QtCore.SIGNAL("themeChanged()"), self.themeChanged)
+#         self.connect(self.app.themes, QtCore.SIGNAL("themeChanged()"), self.themeChanged)
         
         for i in range(len(self.scene)): 
             self.scene[i].sceneIndex = i;     
