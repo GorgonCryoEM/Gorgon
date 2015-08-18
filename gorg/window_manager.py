@@ -18,16 +18,3 @@ class WindowManager(QtGui.QWidget):
         self.mainCamera = Camera([self.volumeViewer], self.app)
         self.app.mainCamera = self.mainCamera   
         self.app.setCentralWidget(self.mainCamera)
-        
-    def closeSession(self):
-        if (QtGui.QMessageBox.warning(self, self.tr("Are you sure?"), self.tr("You are about to close the session.  All unsaved data will be lost!"), QtGui.QMessageBox.Yes, QtGui.QMessageBox.Cancel) == QtGui.QMessageBox.Yes):
-            if (self.volumeViewer.loaded) :
-                self.volumeViewer.unloadData()
-            if (self.skeletonViewer.loaded) :
-                self.skeletonViewer.unloadData()
-            if (self.sseViewer.loaded) :
-                self.sseViewer.unloadData()
-            if (self.calphaViewer.loaded) :
-                self.calphaViewer.unloadData()
-            if (self.calphaReference.loaded) :
-                self.calphaReference.unloadData()
