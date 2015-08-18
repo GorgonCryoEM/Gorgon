@@ -45,27 +45,12 @@ class VolumeViewer(BaseViewer):
         closeAct.setStatusTip(self.tr("Close the loaded volume"))
         self.connect(closeAct, QtCore.SIGNAL("triggered()"), self.unloadData)
         self.app.actions.addAction("unload_Volume", closeAct)
+    
 
-        normalizeAct = QtGui.QAction(self.tr("N&ormalize"), self)
-        normalizeAct.setStatusTip(self.tr("Normalized the loaded volume"))
-        self.connect(normalizeAct, QtCore.SIGNAL("triggered()"), self.normalizeVolume)
-        self.app.actions.addAction("normalize_Volume", normalizeAct)
-        
-        downsampleAct = QtGui.QAction(self.tr("Do&wnsample"), self)
-        downsampleAct.setStatusTip(self.tr("Downsample the loaded volume"))
-        self.connect(downsampleAct, QtCore.SIGNAL("triggered()"), self.downsampleVolume)
-        self.app.actions.addAction("downsample_Volume", downsampleAct)     
-         
- 
-                                               
     def createMenus(self):
         self.app.menus.addAction("file-open-volume", self.app.actions.getAction("load_Volume"), "file-open")
         self.app.menus.addAction("file-save-volume", self.app.actions.getAction("save_Volume"), "file-save");    
         self.app.menus.addAction("file-close-volume", self.app.actions.getAction("unload_Volume"), "file-close");
-        self.app.menus.addMenu("actions-volume", self.tr("V&olume"), "actions");   
-        self.app.menus.addAction("actions-volume-normalize", self.app.actions.getAction("normalize_Volume"), "actions-volume");
-        self.app.menus.addAction("actions-volume-downsample", self.app.actions.getAction("downsample_Volume"), "actions-volume");
-        self.app.menus.addMenu("actions-volume-skeletonization", self.tr("S&keletonization"), "actions-volume");               
     
     def createChildWindows(self):
         self.surfaceEditor = VolumeSurfaceEditorForm(self.app, self, self)
@@ -73,23 +58,6 @@ class VolumeViewer(BaseViewer):
     def updateActionsAndMenus(self):
         self.app.actions.getAction("save_Volume").setEnabled(self.loaded)
         self.app.actions.getAction("unload_Volume").setEnabled(self.loaded)
-        self.app.actions.getAction("normalize_Volume").setEnabled(self.loaded)
-        self.app.menus.getMenu("actions-volume").setEnabled(True)
-        self.app.actions.getAction("normalize_Volume").setEnabled(self.loaded)
-        self.app.actions.getAction("downsample_Volume").setEnabled(self.loaded)
-        self.app.menus.getMenu("actions-volume-skeletonization").setEnabled(self.loaded)
-    
-    def normalizeVolume(self):
-        self.renderer.normalizeVolume()
-        self.surfaceEditor.modelLoadedPreDraw()
-        
-    def downsampleVolume(self):
-        self.renderer.downsampleVolume()
-        self.surfaceEditor.modelLoadedPreDraw()
-        self.emitModelChanged();       
-        
-    def cropVolume(self):
-        pass 
     
     def loadData(self):
         fileName = str(QtGui.QFileDialog.getOpenFileName(self, self.tr("Open Volume"), "", self.tr(self.renderer.getSupportedLoadFileFormats())))
