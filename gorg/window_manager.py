@@ -21,8 +21,6 @@ class WindowManager(QtGui.QWidget):
         self.createUI()
 
     def createUI(self):
-        self.createActions()
-        self.createMenus()
         self.createChildWindows()        
         
     def createChildWindows(self):
