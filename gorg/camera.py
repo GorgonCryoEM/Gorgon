@@ -21,10 +21,7 @@ class Camera(QtOpenGL.QGLWidget):
     def __init__(self, scene, main, parent=None):
         QtOpenGL.QGLWidget.__init__(self, parent)
         self.app = main        
-        self.app.themes.addDefaultRGB("Camera:Light:0", 255, 255, 255, 255)
-        self.app.themes.addDefaultRGB("Camera:Light:1", 255, 255, 255, 255)
-        self.app.themes.addDefaultRGB("Camera:Fog", 0, 0, 0, 255)
-        self.app.themes.addDefaultRGB("Camera:Background", 0, 0, 0, 255)        
+
         self.near = 0
         self.cuttingPlane = 0.0
         self.scene = scene
