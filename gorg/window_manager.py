@@ -63,58 +63,6 @@ class WindowManager(QtGui.QWidget):
         self.app.menus.getMenu("file-close").addSeparator()
 
         
-    def getSessionHeader(self, sessionManager):           
-        header = []
-        header.extend(sessionManager.getRemarkLines("APP", "DESC", "Session Information"))
-        header.extend(sessionManager.getRemarkLines("APP", "SAVED_ON",  datetime.datetime.now()))
-        header.extend(sessionManager.getRemarkLines("APP", "VERSION", self.app.version))               
-        return header       
-                       
-    def saveSessionToFile(self, fileName):
-        sessionManager = SessionManager(self.app)
-        file = open(fileName, "w")
-        textLines = []
-        textLines.extend(self.getSessionHeader(sessionManager))
-        textLines.extend(self.mainCamera.getSessionInfo(sessionManager))
-        textLines.extend(self.volumeViewer.getSessionInfo(sessionManager))
-        textLines.extend(self.skeletonViewer.getSessionInfo(sessionManager))
-        textLines.extend(self.sseViewer.getSessionInfo(sessionManager))
-        textLines.extend(self.calphaViewer.getSessionInfo(sessionManager))
-        # textLines.extend(self.calphaReference.getSessionInfo(sessionManager))
-        
-        file.writelines(textLines)
-        file.close()
-                
-        
-    def saveSession(self):
-        fileName = QtGui.QFileDialog.getSaveFileName(self, self.tr("Save Session"), "", self.tr("Gorgon Session File (*.pdb)"))
-        if not fileName.isEmpty():  
-            self.setCursor(QtCore.Qt.WaitCursor)
-            self.saveSessionToFile(fileName)
-            self.setCursor(QtCore.Qt.ArrowCursor)        
-    
-    def loadSessionFromFile(self, fileName):
-        sessionManager = SessionManager(self.app)
-        file = open(fileName, "r")
-        propertyDict = sessionManager.parseTextLines(file.readlines())
-        
-        self.volumeViewer.loadSessionInfo(sessionManager, propertyDict)
-        self.skeletonViewer.loadSessionInfo(sessionManager, propertyDict)
-        self.sseViewer.loadSessionInfo(sessionManager, propertyDict)
-        self.calphaViewer.loadSessionInfo(sessionManager, propertyDict)
-        # self.calphaReference.loadSessionInfo(sessionManager, propertyDict)
-               
-        self.mainCamera.loadSessionInfo(sessionManager, propertyDict)
-        file.close()
-        
-            
-    def loadSession(self):
-        fileName = QtGui.QFileDialog.getOpenFileName(self, self.tr("Load Session"), "", self.tr("Gorgon Session File (*.pdb)"))
-        if not fileName.isEmpty():  
-            self.setCursor(QtCore.Qt.WaitCursor)
-            self.loadSessionFromFile(fileName)
-            self.setCursor(QtCore.Qt.ArrowCursor)               
-
     def closeSession(self):
         if (QtGui.QMessageBox.warning(self, self.tr("Are you sure?"), self.tr("You are about to close the session.  All unsaved data will be lost!"), QtGui.QMessageBox.Yes, QtGui.QMessageBox.Cancel) == QtGui.QMessageBox.Yes):
             if (self.volumeViewer.loaded) :
