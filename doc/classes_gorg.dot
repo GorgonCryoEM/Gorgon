@@ -1,0 +1,58 @@
+digraph "classes_gorg" {
+charset="utf-8"
+rankdir=BT
+"0" [label="ActionManager", shape="record"];
+"1" [label="BaseDock", shape="record"];
+"2" [label="BaseDockWidget", shape="record"];
+"3" [label="BaseViewer", shape="record"];
+"4" [label="Camera", shape="record"];
+"5" [label="ColorPickerForm", shape="record"];
+"6" [label="ColoredPushButton", shape="record"];
+"7" [label="ColoredWidget", shape="record"];
+"8" [label="DelayedFilter", shape="record"];
+"9" [label="HistogramSliderWidget", shape="record"];
+"10" [label="HistogramWidget", shape="record"];
+"11" [label="MainWindowForm", shape="record"];
+"12" [label="MenuManager", shape="record"];
+"13" [label="ModelVisualizationForm", shape="record"];
+"14" [label="SceneEditorForm", shape="record"];
+"15" [label="Ui_DialogColorPicker", shape="record"];
+"16" [label="Ui_DialogModelVisualization", shape="record"];
+"17" [label="Ui_DialogSceneEditor", shape="record"];
+"18" [label="Ui_DialogVolumeSurfaceEditor", shape="record"];
+"19" [label="VolumeSurfaceEditorForm", shape="record"];
+"20" [label="VolumeViewer", shape="record"];
+"21" [label="WindowManager", shape="record"];
+"9" -> "10" [arrowhead="empty", arrowtail="none"];
+"13" -> "2" [arrowhead="empty", arrowtail="none"];
+"14" -> "2" [arrowhead="empty", arrowtail="none"];
+"19" -> "2" [arrowhead="empty", arrowtail="none"];
+"20" -> "3" [arrowhead="empty", arrowtail="none"];
+"0" -> "11" [arrowhead="diamond", arrowtail="none", fontcolor="green", label="actions", style="solid"];
+"1" -> "2" [arrowhead="diamond", arrowtail="none", fontcolor="green", label="dock", style="solid"];
+"4" -> "21" [arrowhead="diamond", arrowtail="none", fontcolor="green", label="mainCamera", style="solid"];
+"5" -> "6" [arrowhead="diamond", arrowtail="none", fontcolor="green", label="colorPicker", style="solid"];
+"5" -> "14" [arrowhead="diamond", arrowtail="none", fontcolor="green", label="colorPicker", style="solid"];
+"6" -> "16" [arrowhead="diamond", arrowtail="none", fontcolor="green", label="pushButtonBoundingBoxColor", style="solid"];
+"6" -> "16" [arrowhead="diamond", arrowtail="none", fontcolor="green", label="pushButtonModel2Color", style="solid"];
+"6" -> "16" [arrowhead="diamond", arrowtail="none", fontcolor="green", label="pushButtonModelColor", style="solid"];
+"6" -> "16" [arrowhead="diamond", arrowtail="none", fontcolor="green", label="pushButtonModel3Color", style="solid"];
+"6" -> "17" [arrowhead="diamond", arrowtail="none", fontcolor="green", label="pushButtonBackgroundColor", style="solid"];
+"6" -> "17" [arrowhead="diamond", arrowtail="none", fontcolor="green", label="pushButtonLight2Color", style="solid"];
+"6" -> "17" [arrowhead="diamond", arrowtail="none", fontcolor="green", label="pushButtonFogColor", style="solid"];
+"6" -> "17" [arrowhead="diamond", arrowtail="none", fontcolor="green", label="pushButtonLight1Color", style="solid"];
+"7" -> "15" [arrowhead="diamond", arrowtail="none", fontcolor="green", label="colorPanel", style="solid"];
+"8" -> "19" [arrowhead="diamond", arrowtail="none", fontcolor="green", label="filterIsoValueMax", style="solid"];
+"8" -> "19" [arrowhead="diamond", arrowtail="none", fontcolor="green", label="filterDisplayRadius", style="solid"];
+"8" -> "19" [arrowhead="diamond", arrowtail="none", fontcolor="green", label="filterIsoValue", style="solid"];
+"9" -> "18" [arrowhead="diamond", arrowtail="none", fontcolor="green", label="histogram", style="solid"];
+"12" -> "11" [arrowhead="diamond", arrowtail="none", fontcolor="green", label="menus", style="solid"];
+"14" -> "4" [arrowhead="diamond", arrowtail="none", fontcolor="green", label="sceneEditor", style="solid"];
+"15" -> "5" [arrowhead="diamond", arrowtail="none", fontcolor="green", label="ui", style="solid"];
+"16" -> "13" [arrowhead="diamond", arrowtail="none", fontcolor="green", label="ui", style="solid"];
+"17" -> "14" [arrowhead="diamond", arrowtail="none", fontcolor="green", label="ui", style="solid"];
+"18" -> "19" [arrowhead="diamond", arrowtail="none", fontcolor="green", label="ui", style="solid"];
+"19" -> "20" [arrowhead="diamond", arrowtail="none", fontcolor="green", label="surfaceEditor", style="solid"];
+"20" -> "21" [arrowhead="diamond", arrowtail="none", fontcolor="green", label="volumeViewer", style="solid"];
+"21" -> "11" [arrowhead="diamond", arrowtail="none", fontcolor="green", label="windowManager", style="solid"];
+}
