@@ -9,7 +9,7 @@ class MainWindowForm(QtGui.QMainWindow):
     def __init__(self, version):
         super(MainWindowForm, self).__init__()
         self.version = version
-        self.modules = []
+
         self.viewers = {}
         self.menus = MenuManager(self)       
         self.actions = ActionManager(self) 
