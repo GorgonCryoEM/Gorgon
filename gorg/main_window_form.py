@@ -13,7 +13,7 @@ class MainWindowForm(QtGui.QMainWindow):
         self.viewers = {}
         self.menus = MenuManager(self)       
         self.actions = ActionManager(self) 
-        self.createUI()
+
         self.createActions()
         self.createMenus()
         self.setContextMenuPolicy(QtCore.Qt.NoContextMenu)
@@ -24,9 +24,6 @@ class MainWindowForm(QtGui.QMainWindow):
         self.setWindowTitle(self.tr("Gorgon Explorer - v" + self.version))
         pathname = os.path.abspath(os.path.dirname(sys.argv[0]))
         self.setWindowIcon(QtGui.QIcon(pathname + '/gorgon.ico'))
-            
-    def createUI(self):
-        pass
         
     def createActions(self):
         exitAct = QtGui.QAction(self.tr("E&xit"), self)
