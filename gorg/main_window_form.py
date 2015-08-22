@@ -7,7 +7,7 @@ import sys, os
 
 class MainWindowForm(QtGui.QMainWindow):
     def __init__(self, version, parent=None):
-        QtGui.QMainWindow.__init__(self, parent)
+        super(MainWindowForm, self).__init__()
         self.version = version
         self.modules = []
         self.viewers = {}
