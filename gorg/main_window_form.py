@@ -6,7 +6,7 @@ from window_manager import WindowManager
 import sys, os
 
 class MainWindowForm(QtGui.QMainWindow):
-    def __init__(self, version, parent=None):
+    def __init__(self, version):
         super(MainWindowForm, self).__init__()
         self.version = version
         self.modules = []
