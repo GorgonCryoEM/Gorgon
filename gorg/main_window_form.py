@@ -9,7 +9,6 @@ class MainWindowForm(QtGui.QMainWindow):
         self.version = version
 
         self.viewers = {}
-        self.setContextMenuPolicy(QtCore.Qt.NoContextMenu)
         self.dockWidgets = []
         self.windowManager = WindowManager(self)
                 
