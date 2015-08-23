@@ -25,7 +25,6 @@ class VolumeViewer(BaseViewer):
 
     def createUI(self):
         self.createActions()
-        self.createMenus()
         self.createChildWindows()
         self.updateActionsAndMenus()
                           
@@ -47,11 +46,6 @@ class VolumeViewer(BaseViewer):
         self.app.actions.addAction("unload_Volume", closeAct)
     
 
-    def createMenus(self):
-        self.app.menus.addAction("file-open-volume", self.app.actions.getAction("load_Volume"), "file-open")
-        self.app.menus.addAction("file-save-volume", self.app.actions.getAction("save_Volume"), "file-save");    
-        self.app.menus.addAction("file-close-volume", self.app.actions.getAction("unload_Volume"), "file-close");
-    
     def createChildWindows(self):
         self.surfaceEditor = VolumeSurfaceEditorForm(self.app, self, self)
     
