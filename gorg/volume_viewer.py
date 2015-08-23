@@ -44,6 +44,10 @@ class VolumeViewer(BaseViewer):
         closeAct.setStatusTip(self.tr("Close the loaded volume"))
         closeAct.triggered.connect(self.unloadData)
 
+        self.menu.addAction(openAct)
+        self.menu.addAction(saveAct)
+        self.menu.addAction(closeAct)
+        
     def createChildWindows(self):
         self.surfaceEditor = VolumeSurfaceEditorForm(self.app, self, self)
     
