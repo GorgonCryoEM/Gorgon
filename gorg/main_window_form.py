@@ -9,6 +9,16 @@ class MainWindowForm(QtGui.QMainWindow):
         self.version = version
 
         self.viewers = {}
+        
+        self.menubar = self.menuBar()
+        self.explorerMenu = self.menubar.addMenu(self.tr('&Explorer'))
+        
+        exitAction = QtGui.QAction('&Exit', self)
+        exitAction.setShortcut(self.tr('Ctrl+Q'))
+#         exitAction.setStatusTip('Exit application')
+        exitAction.triggered.connect(QtGui.qApp.quit)
+        self.explorerMenu.addAction(exitAction)
+        
         self.dockWidgets = []
         self.windowManager = WindowManager(self)
                 
