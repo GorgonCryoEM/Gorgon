@@ -10,5 +10,5 @@ print pathname
 
 gorg.window.show()
 
-volumeViewer = gorg.window.windowManager.volumeViewer
+volumeViewer = gorg.window.volumeViewer
 volumeViewer.loadDataFromFile(pathname +'/densityMap.mrc')

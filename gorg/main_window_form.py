@@ -1,5 +1,6 @@
 from PyQt4 import QtCore, QtGui
-from window_manager import WindowManager
+from camera import Camera
+from volume_viewer import VolumeViewer
 
 import sys, os
 
@@ -20,7 +21,12 @@ class MainWindowForm(QtGui.QMainWindow):
         self.explorerMenu.addAction(exitAction)
         
         self.dockWidgets = []
-        self.windowManager = WindowManager(self)
+        
+        self.windowManager = QtGui.QWidget(self)
+
+        self.volumeViewer = VolumeViewer(self)
+        self.mainCamera = Camera([self.volumeViewer], self)
+        self.setCentralWidget(self.mainCamera)
                 
         self.statusBar().showMessage(self.tr("Gorgon: Protein Visualization Suite"))
         self.setWindowTitle(self.tr("Gorgon Explorer - v" + self.version))
