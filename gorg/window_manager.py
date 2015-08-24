@@ -8,13 +8,9 @@ class WindowManager(QtGui.QWidget):
     def __init__(self, main, parent=None):
         QtGui.QWidget.__init__(self, parent)
         self.app = main
-        self.createUI()
+        self.createChildWindows()
 
-    def createUI(self):
-        self.createChildWindows()        
-        
     def createChildWindows(self):
         self.volumeViewer = VolumeViewer(self.app)
         self.mainCamera = Camera([self.volumeViewer], self.app)
-        self.app.mainCamera = self.mainCamera   
         self.app.setCentralWidget(self.mainCamera)

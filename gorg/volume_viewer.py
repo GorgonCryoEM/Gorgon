@@ -16,6 +16,8 @@ class VolumeViewer(BaseViewer):
         self.title = "Volume"    
         self.shortTitle = "VOL"
 
+        self.menu = self.app.menubar.addMenu('Volume')
+
         self.renderer = VolumeRenderer()          
         self.loaded = False
         self.createUI()
@@ -25,39 +27,34 @@ class VolumeViewer(BaseViewer):
 
     def createUI(self):
         self.createActions()
-        self.createMenus()
         self.createChildWindows()
-        self.updateActionsAndMenus()
+#         self.updateActionsAndMenus()
                           
     def createActions(self):
-        openAct = QtGui.QAction(self.tr("&Volume..."), self)
+        openAct = QtGui.QAction(self.tr("&Open"), self)
         openAct.setShortcut(self.tr("Ctrl+V"))
         openAct.setStatusTip(self.tr("Load a volume file"))
-        self.connect(openAct, QtCore.SIGNAL("triggered()"), self.loadData)
-        self.app.actions.addAction("load_Volume", openAct)
+        openAct.triggered.connect(self.loadData)
         
-        saveAct = QtGui.QAction(self.tr("&Volume..."), self)
+        saveAct = QtGui.QAction(self.tr("&Save"), self)
         saveAct.setStatusTip(self.tr("Save a volume file"))
-        self.connect(saveAct, QtCore.SIGNAL("triggered()"), self.saveData)
-        self.app.actions.addAction("save_Volume", saveAct)        
+        saveAct.triggered.connect(self.saveData)
         
-        closeAct = QtGui.QAction(self.tr("&Volume"), self)
+        closeAct = QtGui.QAction(self.tr("&Close"), self)
         closeAct.setStatusTip(self.tr("Close the loaded volume"))
-        self.connect(closeAct, QtCore.SIGNAL("triggered()"), self.unloadData)
-        self.app.actions.addAction("unload_Volume", closeAct)
-    
+        closeAct.triggered.connect(self.unloadData)
 
-    def createMenus(self):
-        self.app.menus.addAction("file-open-volume", self.app.actions.getAction("load_Volume"), "file-open")
-        self.app.menus.addAction("file-save-volume", self.app.actions.getAction("save_Volume"), "file-save");    
-        self.app.menus.addAction("file-close-volume", self.app.actions.getAction("unload_Volume"), "file-close");
-    
+        self.menu.addAction(openAct)
+        self.menu.addAction(saveAct)
+        self.menu.addAction(closeAct)
+        
     def createChildWindows(self):
         self.surfaceEditor = VolumeSurfaceEditorForm(self.app, self, self)
     
     def updateActionsAndMenus(self):
-        self.app.actions.getAction("save_Volume").setEnabled(self.loaded)
-        self.app.actions.getAction("unload_Volume").setEnabled(self.loaded)
+        pass
+#         self.app.actions.getAction("save_Volume").setEnabled(self.loaded)
+#         self.app.actions.getAction("unload_Volume").setEnabled(self.loaded)
     
     def loadData(self):
         fileName = str(QtGui.QFileDialog.getOpenFileName(self, self.tr("Open Volume"), "", self.tr(self.renderer.getSupportedLoadFileFormats())))
