@@ -25,7 +25,6 @@ class VolumeSurfaceEditorForm(BaseDockWidget):
         self.connect(self.viewer, QtCore.SIGNAL("modelUnloaded()"), self.modelUnloaded)
         self.createUI()
         self.createActions()
-        self.createMenus()
 
     def createUI(self):
         self.ui = Ui_DialogVolumeSurfaceEditor()
@@ -144,9 +143,6 @@ class VolumeSurfaceEditorForm(BaseDockWidget):
         
     def createActions(self):               
         self.displayAct.setEnabled(False)
-  
-    def createMenus(self):
-        pass
     
     def isoValueIndicatorChanged(self, newValue):
         self.ui.doubleSpinBoxDensity.setValue(float(newValue))
