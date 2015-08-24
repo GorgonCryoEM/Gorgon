@@ -28,7 +28,7 @@ class VolumeViewer(BaseViewer):
     def createUI(self):
         self.createActions()
         self.createChildWindows()
-#         self.updateActionsAndMenus()
+        self.updateActionsAndMenus()
                           
     def createActions(self):
         self.openAct = QtGui.QAction(self.tr("&Open"), self)
@@ -52,9 +52,8 @@ class VolumeViewer(BaseViewer):
         self.surfaceEditor = VolumeSurfaceEditorForm(self.app, self, self)
     
     def updateActionsAndMenus(self):
-        pass
-#         self.app.actions.getAction("save_Volume").setEnabled(self.loaded)
-#         self.app.actions.getAction("unload_Volume").setEnabled(self.loaded)
+        self.saveAct.setEnabled(self.loaded)
+        self.closeAct.setEnabled(self.loaded)
     
     def loadData(self):
         fileName = str(QtGui.QFileDialog.getOpenFileName(self, self.tr("Open Volume"), "", self.tr(self.renderer.getSupportedLoadFileFormats())))
