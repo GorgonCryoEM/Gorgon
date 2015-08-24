@@ -31,22 +31,22 @@ class VolumeViewer(BaseViewer):
 #         self.updateActionsAndMenus()
                           
     def createActions(self):
-        openAct = QtGui.QAction(self.tr("&Open"), self)
-        openAct.setShortcut(self.tr("Ctrl+V"))
-        openAct.setStatusTip(self.tr("Load a volume file"))
-        openAct.triggered.connect(self.loadData)
+        self.openAct = QtGui.QAction(self.tr("&Open"), self)
+        self.openAct.setShortcut(self.tr("Ctrl+V"))
+        self.openAct.setStatusTip(self.tr("Load a volume file"))
+        self.openAct.triggered.connect(self.loadData)
         
-        saveAct = QtGui.QAction(self.tr("&Save"), self)
-        saveAct.setStatusTip(self.tr("Save a volume file"))
-        saveAct.triggered.connect(self.saveData)
+        self.saveAct = QtGui.QAction(self.tr("&Save"), self)
+        self.saveAct.setStatusTip(self.tr("Save a volume file"))
+        self.saveAct.triggered.connect(self.saveData)
         
-        closeAct = QtGui.QAction(self.tr("&Close"), self)
-        closeAct.setStatusTip(self.tr("Close the loaded volume"))
-        closeAct.triggered.connect(self.unloadData)
+        self.closeAct = QtGui.QAction(self.tr("&Close"), self)
+        self.closeAct.setStatusTip(self.tr("Close the loaded volume"))
+        self.closeAct.triggered.connect(self.unloadData)
 
-        self.menu.addAction(openAct)
-        self.menu.addAction(saveAct)
-        self.menu.addAction(closeAct)
+        self.menu.addAction(self.openAct)
+        self.menu.addAction(self.saveAct)
+        self.menu.addAction(self.closeAct)
         
     def createChildWindows(self):
         self.surfaceEditor = VolumeSurfaceEditorForm(self.app, self, self)
