@@ -7,7 +7,7 @@ class BaseDockWidget(QtGui.QWidget):
         self.app = main
         self.defaultArea = defaultArea        
         self.createDisplayAction(title, hint, actionName)
-#         self.createDisplayMenu(menuName, parentMenuName)
+        self.createDisplayMenu(menuName, parentMenuName)
         self.createDock(title, allowedAreas)        
 
     def createDock(self, title, allowedAreas):
@@ -23,7 +23,7 @@ class BaseDockWidget(QtGui.QWidget):
         self.displayAct.setCheckable(True)
         self.displayAct.setChecked(False)
         self.connect(self.displayAct, QtCore.SIGNAL("triggered()"), self.loadWidget)
-#         self.app.actions.addAction(actionName,  self.displayAct)
+        self.app.actions.addAction(actionName,  self.displayAct)
   
     def createDisplayMenu(self, menuName, parentMenuName):
         self.app.menus.addAction(menuName, self.displayAct, parentMenuName)                                   
