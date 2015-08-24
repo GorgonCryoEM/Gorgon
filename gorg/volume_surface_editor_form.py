@@ -136,7 +136,7 @@ class VolumeSurfaceEditorForm(BaseDockWidget):
     
     def modelUnloaded(self):
         self.viewer.renderer.enableDraw(False)
-        self.app.actions.getAction("show_VolumeSurfaceEditor").setEnabled(False)
+        self.displayAct.setEnabled(False)
         self.showWidget(False)            
         self.ui.histogram.clearData()
         
