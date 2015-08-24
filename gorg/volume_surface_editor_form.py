@@ -2,7 +2,7 @@ from PyQt4 import QtCore, QtGui
 from ui_dialog_volume_surface_editor import Ui_DialogVolumeSurfaceEditor
 from base_dock_widget import BaseDockWidget
 from histogram_slider_widget import HistogramSliderWidget
-import threading
+# import threading
 
 class VolumeSurfaceEditorForm(BaseDockWidget):
     ViewingTypeIsoSurface, ViewingTypeCrossSection, ViewingTypeSolid = range(3)
