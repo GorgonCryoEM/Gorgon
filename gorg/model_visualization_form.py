@@ -25,7 +25,6 @@ class ModelVisualizationForm(BaseDockWidget):
         
         self.createUI()
         self.createActions()
-        self.createMenus()
         self.updateFromViewer()
 
     def createUI(self):
@@ -99,9 +98,6 @@ class ModelVisualizationForm(BaseDockWidget):
     def createActions(self):               
         self.visualizerAct = self.displayAct
         self.visualizerAct.setEnabled(False)
-  
-    def createMenus(self):
-        pass     
              
     def modelLoaded(self):
         self.visualizerAct.setEnabled(True)

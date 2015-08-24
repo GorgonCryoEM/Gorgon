@@ -25,7 +25,6 @@ class VolumeSurfaceEditorForm(BaseDockWidget):
         self.connect(self.viewer, QtCore.SIGNAL("modelUnloaded()"), self.modelUnloaded)
         self.createUI()
         self.createActions()
-        self.createMenus()
 
     def createUI(self):
         self.ui = Ui_DialogVolumeSurfaceEditor()
@@ -110,8 +109,8 @@ class VolumeSurfaceEditorForm(BaseDockWidget):
         self.viewer.renderer.setSampleInterval(self.getSamplingValue())
         self.viewer.renderer.setSurfaceValue(defaultDensity)
         self.viewer.renderer.setDisplayRadius(maxRadius)
-        self.app.actions.getAction("show_VolumeSurfaceEditor").setChecked(True)
-        self.app.actions.getAction("show_VolumeSurfaceEditor").setEnabled(True)
+        self.displayAct.setChecked(True)
+        self.displayAct.setEnabled(True)
         self.showWidget(True)
         self.filterIsoValue.enabled = True
         self.filterDisplayRadius.enabled = True
@@ -137,16 +136,13 @@ class VolumeSurfaceEditorForm(BaseDockWidget):
     
     def modelUnloaded(self):
         self.viewer.renderer.enableDraw(False)
-        self.app.actions.getAction("show_VolumeSurfaceEditor").setEnabled(False)
+        self.displayAct.setEnabled(False)
         self.showWidget(False)            
         self.ui.histogram.clearData()
         
         
     def createActions(self):               
         self.displayAct.setEnabled(False)
-  
-    def createMenus(self):
-        pass
     
     def isoValueIndicatorChanged(self, newValue):
         self.ui.doubleSpinBoxDensity.setValue(float(newValue))
