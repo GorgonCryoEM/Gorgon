@@ -110,8 +110,8 @@ class VolumeSurfaceEditorForm(BaseDockWidget):
         self.viewer.renderer.setSampleInterval(self.getSamplingValue())
         self.viewer.renderer.setSurfaceValue(defaultDensity)
         self.viewer.renderer.setDisplayRadius(maxRadius)
-        self.app.actions.getAction("show_VolumeSurfaceEditor").setChecked(True)
-        self.app.actions.getAction("show_VolumeSurfaceEditor").setEnabled(True)
+        self.displayAct.setChecked(True)
+        self.displayAct.setEnabled(True)
         self.showWidget(True)
         self.filterIsoValue.enabled = True
         self.filterDisplayRadius.enabled = True

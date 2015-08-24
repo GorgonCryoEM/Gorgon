@@ -8,12 +8,12 @@ class BaseDockWidget(QtGui.QWidget):
         self.defaultArea = defaultArea        
         
 #         :TODO Maybe keep action and/or menu manager ????
-        menuWindows = dict((str(m.text()), m) for m in self.app.menubar.actions()).get('Window')
+        self.menuParent = dict((str(m.text()), m) for m in self.app.menubar.actions()).get('Window')
 
-        if not menuWindows:
-            self.menu = self.app.menubar.addMenu('Window')
+        if not self.menuParent:
+            self.menuParent = self.app.menubar.addMenu('Window')
         else:
-            self.menu = menuWindows.menu()
+            self.menuParent = self.menuParent.menu()
         
         self.createDisplayAction(title, hint, actionName)
 #         self.createDisplayMenu(menuName, parentMenuName)
@@ -33,7 +33,7 @@ class BaseDockWidget(QtGui.QWidget):
         self.displayAct.setChecked(False)
         self.displayAct.triggered.connect(self.loadWidget)
         
-        self.menu.addAction(self.displayAct)
+        self.menuParent.addAction(self.displayAct)        
   
 #     def createDisplayMenu(self, menuName, parentMenuName):
 #         self.app.menus.addAction(menuName, self.displayAct, parentMenuName)                                   
