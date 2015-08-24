@@ -22,8 +22,7 @@ class BaseDockWidget(QtGui.QWidget):
         self.displayAct.setStatusTip(self.tr(hint))
         self.displayAct.setCheckable(True)
         self.displayAct.setChecked(False)
-        self.connect(self.displayAct, QtCore.SIGNAL("triggered()"), self.loadWidget)
-        self.app.actions.addAction(actionName,  self.displayAct)
+        self.displayAct.triggered.connect(self.loadWidget)
   
 #     def createDisplayMenu(self, menuName, parentMenuName):
 #         self.app.menus.addAction(menuName, self.displayAct, parentMenuName)                                   
