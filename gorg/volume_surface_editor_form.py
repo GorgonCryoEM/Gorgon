@@ -1,6 +1,5 @@
 from PyQt4 import QtCore, QtGui
 from ui_dialog_volume_surface_editor import Ui_DialogVolumeSurfaceEditor
-from delayed_filter import DelayedFilter
 from base_dock_widget import BaseDockWidget
 from histogram_slider_widget import HistogramSliderWidget
 import threading
@@ -30,9 +29,6 @@ class VolumeSurfaceEditorForm(BaseDockWidget):
         self.ui = Ui_DialogVolumeSurfaceEditor()
         self.ui.setupUi(self)       
  
-        self.filterIsoValue = DelayedFilter(self.thread())
-        self.filterIsoValueMax = DelayedFilter(self.thread())
-        self.filterDisplayRadius = DelayedFilter(self.thread())
         self.ui.labelIsoLevelMax.setVisible(False)
         self.ui.doubleSpinBoxDensityMax.setVisible(False)
         
@@ -41,14 +37,8 @@ class VolumeSurfaceEditorForm(BaseDockWidget):
         self.connect(self.ui.histogram,QtCore.SIGNAL("lowerValueChanged(float)"),self.isoValueIndicatorChanged)
         self.connect(self.ui.histogram,QtCore.SIGNAL("higherValueChanged(float)"),self.isoValueMaxIndicatorChanged)
         self.connect(self.ui.histogram, QtCore.SIGNAL("widgetResized()"), self.histogramResized)
-        self.connect(self.ui.histogram,QtCore.SIGNAL("lowerValueChanged(float)"),self.filterIsoValue.setValue)
-        self.connect(self.ui.histogram,QtCore.SIGNAL("higherValueChanged(float)"),self.filterIsoValueMax.setValue)
         
         self.connect(self.ui.comboBoxSamplingInterval, QtCore.SIGNAL("currentIndexChanged(int)"), self.samplingChanged)
-        self.connect(self.ui.spinBoxDisplayRadius, QtCore.SIGNAL("valueChanged(int)"),self.filterDisplayRadius.setValue)
-        self.connect(self.filterIsoValue, QtCore.SIGNAL("valueChanged(float)"), self.isoValueChanged )
-        self.connect(self.filterIsoValueMax, QtCore.SIGNAL("valueChanged(float)"), self.isoValueMaxChanged )
-        self.connect(self.filterDisplayRadius, QtCore.SIGNAL("valueChanged(float)"), self.displayRadiusChanged )
         self.connect(self.ui.radioButtonIsoSurface, QtCore.SIGNAL("toggled(bool)"), self.setViewingType)
         self.connect(self.ui.radioButtonCrossSection, QtCore.SIGNAL("toggled(bool)"), self.setViewingType)
         self.connect(self.ui.radioButtonSolid, QtCore.SIGNAL("toggled(bool)"), self.setViewingType)
@@ -88,8 +78,6 @@ class VolumeSurfaceEditorForm(BaseDockWidget):
     
     def modelLoadedPreDraw(self):
         self.viewer.renderer.enableDraw(False)
-        self.filterIsoValue.enabled = False
-        self.filterDisplayRadius.enabled = False        
         maxDensity = self.viewer.renderer.getMaxDensity()
         minDensity = self.viewer.renderer.getMinDensity()
         self.populateHistogram()        
@@ -112,8 +100,6 @@ class VolumeSurfaceEditorForm(BaseDockWidget):
         self.displayAct.setChecked(True)
         self.displayAct.setEnabled(True)
         self.showWidget(True)
-        self.filterIsoValue.enabled = True
-        self.filterDisplayRadius.enabled = True
         self.viewer.renderer.enableDraw(True)
         
 
