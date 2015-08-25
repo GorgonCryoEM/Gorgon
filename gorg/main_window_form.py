@@ -74,16 +74,4 @@ class MainWindowForm(QtGui.QMainWindow):
         def dockLocationChanged_widget(area):
             widget.area = area
         return dockLocationChanged_widget
-    
-        
-    def keyPressEvent(self, event):
-        self.emitKeyPressed(event)
-        
-    def keyReleaseEvent(self, event):
-        self.emitKeyReleased(event)
-        
-    def emitKeyPressed(self, event):
-        self.emit(QtCore.SIGNAL("keyPressed(QKeyEvent)"), event);        
 
-    def emitKeyReleased(self, event):
-        self.emit(QtCore.SIGNAL("keyReleased(QKeyEvent)"), event);
