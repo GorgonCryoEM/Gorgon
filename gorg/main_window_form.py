@@ -43,13 +43,13 @@ class MainWindowForm(QtGui.QMainWindow):
         if(otherwidget):
             self.tabifyDockWidget(otherwidget, dockwidget)
         self.dockWidgets.append(dockwidget)
-        self.connect(dockwidget, QtCore.SIGNAL("dockLocationChanged ( Qt::DockWidgetArea )"), self.dockLocationChanged(dockwidget))
+        dockwidget.dockLocationChanged.connect(self.dockLocationChanged(dockwidget))
         
     def removeDockWidget (self, dockwidget):
         QtGui.QMainWindow.removeDockWidget(self, dockwidget)
         if(dockwidget in self.dockWidgets):
             self.dockWidgets.remove(dockwidget)
-            self.disconnect(dockwidget, QtCore.SIGNAL("dockLocationChanged ( Qt::DockWidgetArea )"), self.dockLocationChanged(dockwidget))
+            dockwidget.dockLocationChanged.disconnect()
     
     def isDockWidget(self, dockWidget):
         isWidget = False
