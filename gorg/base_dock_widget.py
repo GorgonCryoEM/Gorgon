@@ -24,7 +24,7 @@ class BaseDockWidget(QtGui.QWidget):
         self.dock.setAllowedAreas(allowedAreas)
         self.dock.setWidget(self)
         self.dock.close()  
-        self.connect(self.dock, QtCore.SIGNAL("visibilityChanged (bool)"), self.dockVisibilityChanged)
+        self.dock.visibilityChanged.connect(self.dockVisibilityChanged)
    
     def createDisplayAction(self, title, hint, actionName):               
         self.displayAct = QtGui.QAction(self.tr(title + "..."), self)
