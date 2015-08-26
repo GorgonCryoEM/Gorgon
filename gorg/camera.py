@@ -1,9 +1,7 @@
-import sys, os, time
 from PyQt4 import QtOpenGL, QtCore, QtGui
 from libs.vector import *
 from scene_editor_form import SceneEditorForm
 from libpyGORGON import Vector3DFloat
-from cmath import *
 
 from OpenGL.GL import *
 from OpenGL.GLU import *
