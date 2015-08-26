@@ -1,4 +1,3 @@
-import sys, os, time
 from PyQt4 import QtOpenGL, QtCore, QtGui
 from libs.vector import *
 from scene_editor_form import SceneEditorForm
