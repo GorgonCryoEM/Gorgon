@@ -6,7 +6,7 @@ from OpenGL.GLUT import *
 
 app = QtGui.QApplication(["My OpenGL"])
 
-window = QtGui.QMainWindow()
+window = QtOpenGL.QGLWidget()
 
 window.setMinimumSize(300, 300)
 window.setWindowTitle("Yay")
