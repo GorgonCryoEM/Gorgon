@@ -10,8 +10,6 @@ class GLWidget(QtOpenGL.QGLWidget):
         
         self.setMinimumSize(300, 300)
         self.setWindowTitle("Yay")
-
-        self.L = 0.5
     
     def initializeGL(self):
         glEnable(GL_DEPTH_TEST)
@@ -29,7 +27,6 @@ class GLWidget(QtOpenGL.QGLWidget):
         glRotate(5,1,1,0)
         self.drawAxes(.7)
         return
-        L = self.L
         z = -.3
         
         glBegin(GL_TRIANGLES)
