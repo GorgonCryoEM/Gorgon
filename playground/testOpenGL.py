@@ -7,14 +7,15 @@ from OpenGL.GLUT import *
 class GLWidget(QtOpenGL.QGLWidget):
     def __init__(self):
         super(GLWidget, self).__init__()
+    
+    def initializeGL(self):
+        self.setMinimumSize(300, 300)
+        self.setWindowTitle("Yay")
         
         
 app = QtGui.QApplication(["My OpenGL"])
 
 window = GLWidget()
-
-window.setMinimumSize(300, 300)
-window.setWindowTitle("Yay")
 
 glClear(GL_COLOR_BUFFER_BIT)
 glClearColor(0,0,0,1)
