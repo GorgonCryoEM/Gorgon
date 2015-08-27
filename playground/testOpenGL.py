@@ -35,7 +35,7 @@ class GLWidget(QtOpenGL.QGLWidget):
         
         glVertex(-L,-L, z*2)
         glVertex(+L,+L, z*2)
-        glVertex(+L,-L, z*2)
+        glVertex(+L,-L, 1)
         
         glEnd()
         
