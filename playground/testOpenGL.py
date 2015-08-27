@@ -11,14 +11,16 @@ class GLWidget(QtOpenGL.QGLWidget):
     def initializeGL(self):
         self.setMinimumSize(300, 300)
         self.setWindowTitle("Yay")
+    
+    def paintGL(self):    
+        glClear(GL_COLOR_BUFFER_BIT)
+        glClearColor(0,0,0,1)
         
         
 app = QtGui.QApplication(["My OpenGL"])
 
 window = GLWidget()
 
-glClear(GL_COLOR_BUFFER_BIT)
-glClearColor(0,0,0,1)
 
 glBegin(GL_LINE_STRIP)
 glVertex(-1,-1,0)
