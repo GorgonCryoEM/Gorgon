@@ -7,6 +7,8 @@ from OpenGL.GLUT import *
 class GLWidget(QtOpenGL.QGLWidget):
     def __init__(self):
         super(GLWidget, self).__init__()
+        
+        self.L = 0.5
     
     def initializeGL(self):
         self.setMinimumSize(300, 300)
@@ -16,12 +18,13 @@ class GLWidget(QtOpenGL.QGLWidget):
         glClear(GL_COLOR_BUFFER_BIT)
         glClearColor(0,0,0,1)
         
-        glBegin(GL_LINE_STRIP)
+        L = self.L
+        glBegin(GL_LINE_LOOP)
         glColor(.5,0,0,1)
-        glVertex(-1,-1,0)
-        glVertex(+1,+1,0)
-        glVertex(-1,+1,0)
-        glVertex(+1,-1,0)
+        glVertex(-L,-L,0)
+        glVertex(+L,+L,0)
+        glVertex(-L,+L,0)
+        glVertex(+L,-L,0)
         glEnd()
         
         
