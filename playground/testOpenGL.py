@@ -24,6 +24,10 @@ class GLWidget(QtOpenGL.QGLWidget):
         self.drawRef()
         self.drawWireCube(.8) # Bounding Box
         
+        self.drawWireCube(.2) # Main
+        glPushMatrix()
+        glPopMatrix()
+
     def drawRef(self):
         self.drawCenter()
         self.drawAxes(1)
