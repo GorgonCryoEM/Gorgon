@@ -16,6 +16,9 @@ class GLWidget(QtOpenGL.QGLWidget):
         glRotate(10,1,2,0)
     
     def paintGL(self):    
+        self.draw()
+        
+    def draw(self):
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
         glClearColor(0,0,0,1)
         
