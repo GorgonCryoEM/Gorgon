@@ -26,6 +26,9 @@ class GLWidget(QtOpenGL.QGLWidget):
         glVertex(0,0,0,1)
         glEnd()
         
+        glRotate(5,1,1,0)
+        self.drawAxes(.7)
+        return
         L = self.L
         z = -.3
         
@@ -65,6 +68,23 @@ class GLWidget(QtOpenGL.QGLWidget):
  
         glVertex(-L,+L, z)
         glVertex(-L/2,+L/2, 2*z)
+        
+        glEnd()
+        
+    def drawAxes(self, L=1):
+        glBegin(GL_LINES)
+        
+        glColor(1,0,0,1)
+        glVertex(0,0,0)
+        glVertex(L,0,0)
+        
+        glColor(0,1,0,1)
+        glVertex(0,0,0)
+        glVertex(0,L,0)
+        
+        glColor(0,0,1,1)
+        glVertex(0,0,0)
+        glVertex(0,0,-L)
         
         glEnd()
         
