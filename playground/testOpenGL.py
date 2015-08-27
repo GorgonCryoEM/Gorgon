@@ -25,7 +25,6 @@ class GLWidget(QtOpenGL.QGLWidget):
         
     def drawRef(self):
         self.drawCenter()
-#         glTranslate(0.1,0.1,0)
         self.drawAxes(1)
         
     def drawCenter(self):
