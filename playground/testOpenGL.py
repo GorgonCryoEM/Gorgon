@@ -8,11 +8,12 @@ class GLWidget(QtOpenGL.QGLWidget):
     def __init__(self):
         super(GLWidget, self).__init__()
         
+        self.setMinimumSize(300, 300)
+        self.setWindowTitle("Yay")
+
         self.L = 0.5
     
     def initializeGL(self):
-        self.setMinimumSize(300, 300)
-        self.setWindowTitle("Yay")
     
     def paintGL(self):    
         glClear(GL_COLOR_BUFFER_BIT)
