@@ -18,6 +18,8 @@ class GLWidget(QtOpenGL.QGLWidget):
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
         glClearColor(0,0,0,1)
         
+        
+    def drawCenter(self):
         glPointSize(10)
         glBegin(GL_POINTS)
         glColor(.5,.5,.5,1)
