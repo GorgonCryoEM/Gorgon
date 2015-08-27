@@ -40,15 +40,6 @@ class GLWidget(QtOpenGL.QGLWidget):
         
         glEnd()
         
-        glBegin(GL_LINE_LOOP)
-        glColor(.5,0,0,1)
-        
-        glVertex(-L,-L, z)
-        glVertex(+L,-L, z)
-        glVertex(+L,+L, z)
-        glVertex(-L,+L, z)
-        
-        glEnd()
         
         glBegin(GL_LINE_LOOP)
         L /= 2.
