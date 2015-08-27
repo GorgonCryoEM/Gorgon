@@ -16,13 +16,13 @@ class GLWidget(QtOpenGL.QGLWidget):
         glRotate(10,1,2,0)
     
     def paintGL(self):    
+        glRotate(5,1,2,0)
         self.draw()
         
     def draw(self):
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
         glClearColor(0,0,0,1)
         
-        glRotate(5,1,2,0)
 
         self.drawRef()
         self.drawWireCube(.8) # Bounding Box
