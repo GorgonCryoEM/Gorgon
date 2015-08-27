@@ -18,6 +18,9 @@ class GLWidget(QtOpenGL.QGLWidget):
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
         glClearColor(0,0,0,1)
         
+        glRotate(5,1,1,0)
+        self.drawAxes(1)
+        
         
     def drawCenter(self):
         glPointSize(10)
@@ -25,9 +28,6 @@ class GLWidget(QtOpenGL.QGLWidget):
         glColor(.5,.5,.5,1)
         glVertex(0,0,0,1)
         glEnd()
-        
-        glRotate(5,1,1,0)
-        self.drawAxes(.7)
         
     def drawAxes(self, L=1):
         glBegin(GL_LINES)
