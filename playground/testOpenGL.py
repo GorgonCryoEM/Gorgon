@@ -20,6 +20,12 @@ class GLWidget(QtOpenGL.QGLWidget):
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
         glClearColor(0,0,0,1)
         
+        glPointSize(10)
+        glBegin(GL_POINTS)
+        glColor(.5,.5,.5,1)
+        glVertex(0,0,0,1)
+        glEnd()
+        
         L = self.L
         z = -.3
         
