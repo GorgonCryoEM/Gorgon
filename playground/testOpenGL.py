@@ -13,6 +13,7 @@ class GLWidget(QtOpenGL.QGLWidget):
     
     def initializeGL(self):
         glEnable(GL_DEPTH_TEST)
+        glRotate(10,1,2,0)
     
     def paintGL(self):    
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
