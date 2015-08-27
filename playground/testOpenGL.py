@@ -18,9 +18,11 @@ class GLWidget(QtOpenGL.QGLWidget):
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
         glClearColor(0,0,0,1)
         
-        glRotate(5,1,1,0)
-        self.drawAxes(1)
+        glRotate(5,1,2,0)
         
+        self.drawCenter()
+#         glTranslate(0.1,0.1,0)
+        self.drawAxes(1)
         
     def drawCenter(self):
         glPointSize(10)
@@ -47,44 +49,83 @@ class GLWidget(QtOpenGL.QGLWidget):
         glEnd()
         
     def drawCube(self, L=0.5):
-        z = -.3
+        z = L
         
-        glBegin(GL_TRIANGLES)
+        glBegin(GL_TRIANGLE_FAN)
         
-        glColor(.5,0,0,1)
-        
-        glVertex(-L,-L, z*2)
-        glVertex(+L,+L, z*2)
-        glVertex(+L,-L, 1)
-        
-        glEnd()
-        
-        
-        glBegin(GL_LINE_LOOP)
-        L /= 2.
-        glColor(0,.5,0,1)
-        glVertex(-L,-L, 2*z)
-        glVertex(+L,-L, 2*z)
-        glVertex(+L,+L, 2*z)
-        glVertex(-L,+L, 2*z)
-        
-        glEnd()
-        
-        glBegin(GL_LINE_STRIP)
-        L *= 2.
-        glColor(0,0,.5,1)
+        glColor(0, 1, 1, 1)
         
         glVertex(-L,-L, z)
-        glVertex(-L/2,-L/2, 2*z)
-        
         glVertex(+L,-L, z)
-        glVertex(+L/2,-L/2, 2*z)
- 
         glVertex(+L,+L, z)
-        glVertex(+L/2,+L/2, 2*z)
- 
         glVertex(-L,+L, z)
-        glVertex(-L/2,+L/2, 2*z)
+        
+        glEnd()
+        
+        glBegin(GL_TRIANGLE_FAN)
+        glColor(0, 0.5, 0, 1)
+ 
+        glVertex(-L,-L, -z)
+        glVertex(+L,-L, -z)
+        glVertex(+L,+L, -z)
+        glVertex(-L,+L, -z)
+         
+        glEnd()
+        
+        glBegin(GL_LINES)
+        glColor(1, 0, 0, 1)
+        
+        glVertex(-L,-L, z)
+        glVertex(-L,-L, -z)
+
+        glVertex(+L,-L, z)
+        glVertex(+L,-L, -z)
+        
+        glVertex(+L,+L, z)
+        glVertex(+L,+L, -z)
+        
+        glVertex(-L,+L, z)
+        glVertex(-L,+L, -z)
+        
+        glEnd()
+
+    def drawWireCube(self, L=0.5):
+        z = L
+        glBegin(GL_LINE_LOOP)
+        
+        glColor(0.3, .4, 0.4, 1)
+        
+        glVertex(-L,-L, z)
+        glVertex(+L,-L, z)
+        glVertex(+L,+L, z)
+        glVertex(-L,+L, z)
+        
+        glEnd()
+        
+        glBegin(GL_LINE_LOOP)
+#         glColor(0, 0.5, 0, 1)
+ 
+        glVertex(-L,-L, -z)
+        glVertex(+L,-L, -z)
+        glVertex(+L,+L, -z)
+        glVertex(-L,+L, -z)
+         
+        glEnd()
+        
+        glBegin(GL_LINES)
+#         glColor(1, 0, 0, 1)
+        
+        glVertex(-L,-L, z)
+        glVertex(-L,-L, -z)
+
+        glVertex(+L,-L, z)
+        glVertex(+L,-L, -z)
+        
+        glVertex(+L,+L, z)
+        glVertex(+L,+L, -z)
+        
+        glVertex(-L,+L, z)
+        glVertex(-L,+L, -z)
         
         glEnd()
         
