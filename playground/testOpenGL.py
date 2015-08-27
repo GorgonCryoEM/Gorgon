@@ -19,6 +19,8 @@ class GLWidget(QtOpenGL.QGLWidget):
         glBegin(GL_LINE_STRIP)
         glVertex(-1,-1,0)
         glVertex(+1,+1,0)
+        glVertex(-1,+1,0)
+        glVertex(+1,-1,0)
         glEnd()
         
         
