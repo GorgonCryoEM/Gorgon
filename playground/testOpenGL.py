@@ -4,9 +4,14 @@ from OpenGL.GL import *
 from OpenGL.GLU import *
 from OpenGL.GLUT import *
 
+class GLWidget(QtOpenGL.QGLWidget):
+    def __init__(self):
+        super(GLWidget, self).__init__()
+        
+        
 app = QtGui.QApplication(["My OpenGL"])
 
-window = QtOpenGL.QGLWidget()
+window = GLWidget()
 
 window.setMinimumSize(300, 300)
 window.setWindowTitle("Yay")
