@@ -19,7 +19,10 @@ class GLWidget(QtOpenGL.QGLWidget):
         glClearColor(0,0,0,1)
         
         glRotate(5,1,2,0)
+
+        self.drawRef()
         
+    def drawRef(self):
         self.drawCenter()
 #         glTranslate(0.1,0.1,0)
         self.drawAxes(1)
