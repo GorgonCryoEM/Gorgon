@@ -33,6 +33,16 @@ class GLWidget(QtOpenGL.QGLWidget):
         
         glEnd()
         
+        glBegin(GL_LINE_LOOP)
+        L /= 2.
+        glColor(0,.5,0,1)
+        glVertex(-L,-L, 2*z)
+        glVertex(+L,-L, 2*z)
+        glVertex(+L,+L, 2*z)
+        glVertex(-L,+L, 2*z)
+        
+        glEnd()
+        
         
 app = QtGui.QApplication(["My OpenGL"])
 
