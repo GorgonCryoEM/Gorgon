@@ -26,6 +26,8 @@ class GLWidget(QtOpenGL.QGLWidget):
         
         self.drawWireCube(.2) # Main
         glPushMatrix()
+        glTranslate(0,0.3,0)
+        self.drawWireCube(.1) # Top
         glPopMatrix()
 
     def drawRef(self):
