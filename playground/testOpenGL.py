@@ -86,6 +86,9 @@ class GLWidget(QtOpenGL.QGLWidget):
         
         glEnd()
         
+    def resizeGL(self, w, h):
+        glViewport(0,0,w,h)
+        
 app = QtGui.QApplication(["My OpenGL"])
 
 window = GLWidget()
