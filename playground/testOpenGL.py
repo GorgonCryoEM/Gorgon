@@ -22,6 +22,7 @@ class GLWidget(QtOpenGL.QGLWidget):
         glRotate(5,1,2,0)
 
         self.drawRef()
+        self.drawWireCube(.8) # Bounding Box
         
     def drawRef(self):
         self.drawCenter()
