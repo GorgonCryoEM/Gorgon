@@ -11,6 +11,7 @@ window = QtOpenGL.QGLWidget()
 window.setMinimumSize(300, 300)
 window.setWindowTitle("Yay")
 
+glClearColor(0,0,0,1)
 window.show()
 window.raise_()
 
