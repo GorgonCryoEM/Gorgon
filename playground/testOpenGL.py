@@ -14,9 +14,10 @@ class GLWidget(QtOpenGL.QGLWidget):
         self.L = 0.5
     
     def initializeGL(self):
+        glEnable(GL_DEPTH_TEST)
     
     def paintGL(self):    
-        glClear(GL_COLOR_BUFFER_BIT)
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
         glClearColor(0,0,0,1)
         
         L = self.L
