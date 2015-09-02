@@ -14,6 +14,12 @@ class GLWidget(QtOpenGL.QGLWidget):
     def initializeGL(self):
         glEnable(GL_DEPTH_TEST)
         glRotate(10,1,2,0)
+        self.cubeColor = QtCore.Qt.yellow
+        
+    def mouseDoubleClickEvent(self, e):        
+        self.cubeColor = QtGui.QColorDialog.getColor()
+        self.updateGL() 
+
     
     def paintGL(self):    
         glRotate(5,1,2,0)
@@ -96,7 +102,6 @@ class GLWidget(QtOpenGL.QGLWidget):
         glEnd()
         
         glBegin(GL_LINES)
-        glColor(1, 0, 0, 1)
         
         glVertex(-L,-L, z)
         glVertex(-L,-L, -z)
@@ -116,7 +121,10 @@ class GLWidget(QtOpenGL.QGLWidget):
         z = L
         glBegin(GL_LINE_LOOP)
         
-        glColor(0.3, .4, 0.4, 1)
+#         glColor(0.3, .4, 0.4, 1)
+        self.qglColor(self.cubeColor)
+#         QColor(Qt.RED)
+
         
         glVertex(-L,-L, z)
         glVertex(+L,-L, z)
