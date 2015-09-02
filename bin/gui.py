@@ -14,3 +14,5 @@ w.raise_()
 
 volumeViewer = gorg.window.windowManager.volumeViewer
 volumeViewer.loadDataFromFile(pathname +'/densityMap.mrc')
+
+gorg.app.exec_()
