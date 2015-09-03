@@ -1,16 +1,7 @@
-# Copyright (C) 2005-2008 Washington University in St Louis, Baylor College of Medicine.  All rights reserved
-# Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
-# Description:   This manages a single camera, and the scenes which are rendered using this camera 
-
-
-import sys, os, time
 from PyQt4 import QtOpenGL, QtCore, QtGui
-from vector_lib import *
+from libs.vector import *
 from scene_editor_form import SceneEditorForm
 from libpyGORGON import Vector3DFloat
-from cmath import *   
-# from libpyGORGON import CAlphaRenderer
-# from seq_model.Chain import Chain
 
 from OpenGL.GL import *
 from OpenGL.GLU import *
@@ -21,10 +12,7 @@ class Camera(QtOpenGL.QGLWidget):
     def __init__(self, scene, main, parent=None):
         QtOpenGL.QGLWidget.__init__(self, parent)
         self.app = main        
-        self.app.themes.addDefaultRGB("Camera:Light:0", 255, 255, 255, 255)
-        self.app.themes.addDefaultRGB("Camera:Light:1", 255, 255, 255, 255)
-        self.app.themes.addDefaultRGB("Camera:Fog", 0, 0, 0, 255)
-        self.app.themes.addDefaultRGB("Camera:Background", 0, 0, 0, 255)        
+
         self.near = 0
         self.cuttingPlane = 0.0
         self.scene = scene
@@ -60,7 +48,6 @@ class Camera(QtOpenGL.QGLWidget):
         self.setEyeRotation(0, 0, 0)
         self.lastPos = QtCore.QPoint()
         self.sceneEditor = SceneEditorForm(self.app, self)
-        self.connect(self.app.themes, QtCore.SIGNAL("themeChanged()"), self.themeChanged)
         
         for i in range(len(self.scene)): 
             self.scene[i].sceneIndex = i;     
@@ -208,7 +195,7 @@ class Camera(QtOpenGL.QGLWidget):
             glutInit(sys.argv)      #This must be here to get it to work with Freeglut.
             #otherwise you get: "freeglut  ERROR:  Function <glutWireCube> called without first calling 'glutInit'."
        
-        backgroundColor = self.app.themes.getColor("Camera:Background")        
+        backgroundColor = QtGui.QColor(0, 0, 0, 255)        
         glClearColor(backgroundColor.redF(), backgroundColor.greenF(), backgroundColor.blueF(), backgroundColor.alphaF())
         glClearDepth( 1.0 )
         
@@ -216,7 +203,7 @@ class Camera(QtOpenGL.QGLWidget):
         self.setNearFarZoom(0.1, 1000, 0.25)
 
         if(self.fogEnabled):
-            fogColor = self.app.themes.getColor("Camera:Fog")
+            fogColor = QtGui.QColor(0, 0, 0, 255)
             glFogi(GL_FOG_MODE, GL_LINEAR)
             glFogfv(GL_FOG_COLOR, [fogColor.redF(), fogColor.greenF(), fogColor.blueF(), fogColor.alphaF()])
             glFogf(GL_FOG_DENSITY, self.fogDensity)   
@@ -232,8 +219,8 @@ class Camera(QtOpenGL.QGLWidget):
 
     def setLights(self):
         glLight = [GL_LIGHT0, GL_LIGHT1]
-        light0Color = self.app.themes.getColor("Camera:Light:0")
-        light1Color = self.app.themes.getColor("Camera:Light:1")
+        light0Color = QtGui.QColor(255, 255, 255, 255)
+        light1Color = QtGui.QColor(255, 255, 255, 255)
 
         lightsColor = [[light0Color.redF(), light0Color.greenF(), light0Color.blueF(), 1.0],[light1Color.redF(), light1Color.greenF(), light1Color.blueF(), 1.0]]
         for i in range(2):
@@ -534,63 +521,6 @@ class Camera(QtOpenGL.QGLWidget):
                 maxDistance = max(maxDistance, eyeDist + modelDist + distance/2.0)
         self.setNearFarZoom(minDistance, maxDistance, self.eyeZoom)
         self.updateGL()  
-
-    def themeChanged(self):
-        self.sceneEditor.ui.pushButtonLight1Color.setColor(self.app.themes.getColor("Camera:Light:0"))
-        self.sceneEditor.ui.pushButtonLight2Color.setColor(self.app.themes.getColor("Camera:Light:1"))  
-        self.sceneEditor.ui.pushButtonBackgroundColor.setColor(self.app.themes.getColor("Camera:Background"))
-        self.sceneEditor.ui.pushButtonFogColor.setColor(self.app.themes.getColor("Camera:Fog"))
-        self.initializeGL()
-        
-    def getSessionInfo(self, sessionManager):
-        info = []
-        info.extend(sessionManager.getRemarkLines("CAM", "CUTTING_PLANE", self.cuttingPlane))
-        info.extend(sessionManager.getRemarkLines("CAM", "MOUSE_TRACKING_ENABLED", self.mouseTrackingEnabled))
-        info.extend(sessionManager.getRemarkLines("CAM", "MOUSE_TRACKING_ENABLED_RAY", self.mouseTrackingEnabledRay))
-        info.extend(sessionManager.getRemarkLines("CAM", "ASPECT_RATIO", self.aspectRatio))
-        info.extend(sessionManager.getRemarkLines("CAM", "SELECTED_SCENE", self.selectedScene))
-        info.extend(sessionManager.getRemarkLines("CAM", "LIGHTS_ENABLED", self.lightsEnabled))       
-        info.extend(sessionManager.getRemarkLines("CAM", "LIGHTS_POSITION", self.lightsPosition))
-        info.extend(sessionManager.getRemarkLines("CAM", "LIGHTS_USE_EYE_POSITION", self.lightsUseEyePosition))
-        info.extend(sessionManager.getRemarkLines("CAM", "FOG_DENSITY", self.fogDensity))
-        info.extend(sessionManager.getRemarkLines("CAM", "FOG_ENABLED", self.fogEnabled))            
-        info.extend(sessionManager.getRemarkLines("CAM", "CENTER", self.center))
-        info.extend(sessionManager.getRemarkLines("CAM", "EYE", self.eye))
-        info.extend(sessionManager.getRemarkLines("CAM", "LOOK", self.look))
-        info.extend(sessionManager.getRemarkLines("CAM", "RIGHT", self.right))
-        info.extend(sessionManager.getRemarkLines("CAM", "UP", self.up))
-        info.extend(sessionManager.getRemarkLines("CAM", "NEAR", self.near))
-        info.extend(sessionManager.getRemarkLines("CAM", "FAR", self.far))
-        info.extend(sessionManager.getRemarkLines("CAM", "EYE_ZOOM", self.eyeZoom))
-            
-        return info
-
-    def loadSessionInfo(self, sessionManager, sessionProperties):
-        self.cuttingPlane = sessionManager.getProperty(sessionProperties, "CAM", "CUTTING_PLANE")
-        self.mouseTrackingEnabled = sessionManager.getProperty(sessionProperties, "CAM", "MOUSE_TRACKING_ENABLED")
-        self.mouseTrackingEnabledRay = sessionManager.getProperty(sessionProperties, "CAM", "MOUSE_TRACKING_ENABLED_RAY")
-        self.aspectRatio = sessionManager.getProperty(sessionProperties, "CAM", "ASPECT_RATIO")
-        self.selectedScene = sessionManager.getProperty(sessionProperties, "CAM", "SELECTED_SCENE")
-        self.lightsEnabled = sessionManager.getProperty(sessionProperties, "CAM", "LIGHTS_ENABLED")
-        self.lightsPosition = sessionManager.getProperty(sessionProperties, "CAM", "LIGHTS_POSITION")
-        self.lightsUseEyePosition = sessionManager.getProperty(sessionProperties, "CAM", "LIGHTS_USE_EYE_POSITION")
-        self.fogDensity = sessionManager.getProperty(sessionProperties, "CAM", "FOG_DENSITY")
-        self.fogEnabled = sessionManager.getProperty(sessionProperties, "CAM", "FOG_ENABLED")
-        self.center = sessionManager.getProperty(sessionProperties, "CAM", "CENTER")
-        self.eye = sessionManager.getProperty(sessionProperties, "CAM", "EYE")
-        self.look = sessionManager.getProperty(sessionProperties, "CAM", "LOOK")
-        self.right = sessionManager.getProperty(sessionProperties, "CAM", "RIGHT")
-        self.up = sessionManager.getProperty(sessionProperties, "CAM", "UP")
-        self.near = sessionManager.getProperty(sessionProperties, "CAM", "NEAR")
-        self.far = sessionManager.getProperty(sessionProperties, "CAM", "FAR")
-        self.eyeZoom = sessionManager.getProperty(sessionProperties, "CAM", "EYE_ZOOM")
-        
-        self.setNearFarZoom(self.near, self.far, self.eyeZoom)
-        self.setRendererCuttingPlanes()
-        self.setRendererCenter()
-        self.emitCameraChanged()            
-       
-        
         
         
     def emitCameraChanged(self):

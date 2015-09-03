@@ -124,6 +124,11 @@ install(DIRECTORY ${CMAKE_SOURCE_DIR}/../gorg
         FILES_MATCHING PATTERN "*.py"         
         )
         
+install(DIRECTORY ${CMAKE_SOURCE_DIR}/../demo  ${CMAKE_SOURCE_DIR}/../playground
+        DESTINATION ${CMAKE_BINARY_DIR}
+        COMPONENT "Gorgon"
+        )
+        
 add_custom_target(Gorgon
         COMMAND ${CMAKE_COMMAND} -DCOMPONENT=Gorgon -P cmake_install.cmake
         )
