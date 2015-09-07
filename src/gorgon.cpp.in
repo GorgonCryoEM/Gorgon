@@ -6,11 +6,9 @@
  */
 
 #include <boost/python.hpp>
-#include "hello.h"
 
 using namespace boost::python;
 
 BOOST_PYTHON_MODULE(lib@gorgon_lib_target_name@)
 {
-    def("hello", hello);
 }
