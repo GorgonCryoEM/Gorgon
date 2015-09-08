@@ -1,5 +1,5 @@
 from PyQt4 import QtGui, QtCore, QtOpenGL
-from libpyGORGON import VolumeRenderer, Vector3DFloat
+from libpygorgon import VolumeRenderer, Vector3DFloat
 from libs.vector import *
 
 from OpenGL.GL import *
