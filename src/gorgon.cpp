@@ -12,6 +12,7 @@
 
 using namespace boost::python;
 
+using namespace wustl_mm::Visualization;
 using namespace wustl_mm::MathTools;
 
 BOOST_PYTHON_MODULE(libpygorgon)
