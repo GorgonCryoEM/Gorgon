@@ -11,6 +11,8 @@
 
 using namespace boost::python;
 
+using namespace wustl_mm::MathTools;
+
 BOOST_PYTHON_MODULE(libpygorgon)
 {
 	class_<Vector3DFloat>("Vector3DFloat", init<float, float, float>())
