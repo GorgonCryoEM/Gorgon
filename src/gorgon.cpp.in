@@ -27,11 +27,11 @@ BOOST_PYTHON_MODULE(lib@gorgon_lib_target_name@)
 //			.def("getSpacingX", &Volume::getSpacingX)
 //			.def("getSpacingY", &Volume::getSpacingY)
 //			.def("getSpacingZ", &Volume::getSpacingZ)
-//			.def("getMin", &Volume::getMin)
-//			.def("getMax", &Volume::getMax)
+			.def("getMin", &Volume::getMin)
+			.def("getMax", &Volume::getMax)
 //			.def("getDataAt", getDataAt1)
-//			.def("buildHistogram", &Volume::buildHistogram)
-//			.def("getHistogramBinValue", &Volume::getHistogramBinValue)
+			.def("buildHistogram", &Volume::buildHistogram)
+			.def("getHistogramBinValue", &Volume::getHistogramBinValue)
 
 		;
 	
