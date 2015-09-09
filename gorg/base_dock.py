@@ -1,10 +1,3 @@
-# Copyright (C) 2005-2008 Washington University in St Louis, Baylor College of Medicine.  All rights reserved
-# Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
-# Description:   A base class for dock widgets
-
-
-
-
 from PyQt4 import QtCore, QtGui
 
 class BaseDock(QtGui.QDockWidget):
