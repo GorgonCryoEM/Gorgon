@@ -35,25 +35,6 @@ BOOST_PYTHON_MODULE(lib@gorgon_lib_target_name@)
 
 		;
 	
-	class_<Vector3DFloat>("Vector3DFloat", init<float, float, float>())
-			.def("x", &Vector3DFloat::X)
-			.def("y", &Vector3DFloat::Y)
-			.def("z", &Vector3DFloat::Z)
-			.def("length", &Vector3DFloat::Length)
-			.def("Transform", &Vector3DFloat::Transform)
-			.def("rotate", &Vector3DFloat::Rotate)
-			.def("Print", &Vector3DFloat::Print)
-			.def(self * double())
-			.def(self + self)
-			.def(self - self)
-			.def(self ^ self)
-			.def(self += self)
-			.def(self -= self)
-			//Vector3DTemplate<T> operator-();
-			//Vector3DTemplate<T>& operator=(const Vector3DTemplate<T>& d);
-
-		;
-	
 	class_<Renderer>("Renderer", init<>())
 //			.def("draw", &Renderer::Draw)
 //			.def("drawBoundingBox", &Renderer::DrawBoundingBox)
@@ -83,7 +64,7 @@ BOOST_PYTHON_MODULE(lib@gorgon_lib_target_name@)
 //			.def("setDisplayStyle", &Renderer::SetDisplayStyle)
 //			.def("setObjectSpecificColoring", &Renderer::SetObjectSpecificColoring)
 //			.def("updateBoundingBox", &Renderer::UpdateBoundingBox)
-//			.def("clearOtherHighlights", &Renderer::ClearOtherHighlights)
+			.def("clearOtherHighlights", &Renderer::ClearOtherHighlights)
 		;
 	
 	class_< VolumeRenderer, bases<Renderer> >("VolumeRenderer", init<>())		
@@ -98,7 +79,7 @@ BOOST_PYTHON_MODULE(lib@gorgon_lib_target_name@)
 //			.def("selectionObjectCount", &VolumeRenderer::SelectionObjectCount)
 //			.def("selectionCenterOfMass", &VolumeRenderer::SelectionCenterOfMass)
 //			.def("selectionMove", &VolumeRenderer::SelectionMove)
-//			.def("selectionClear", &VolumeRenderer::SelectionClear)		
+			.def("selectionClear", &VolumeRenderer::SelectionClear)		
 //			.def("selectionToggle", &VolumeRenderer::SelectionToggle)	
 //			.def("getSupportedLoadFileFormats", &VolumeRenderer::GetSupportedLoadFileFormats)
 //			.def("getSupportedSaveFileFormats", &VolumeRenderer::GetSupportedSaveFileFormats)
