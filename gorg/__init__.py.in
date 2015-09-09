@@ -1,4 +1,5 @@
 # __all__=[]
+__version__ = '@Gorgon-Explorer_VERSION@'
 
 import sys, os, inspect
 
@@ -8,12 +9,10 @@ from main_window_form import MainWindowForm
 # import time
 
 # if __name__ == '__main__':
-__version__ = '@Gorgon-Explorer_VERSION@'
-gorgonVersion = __version__
 app = QtGui.QApplication(sys.argv)    
 app.processEvents()
 
-window = MainWindowForm(gorgonVersion)
+window = MainWindowForm(__version__)
 # window.isNightlyBuild = True
 # window.showMaximized()
 # window.loadPlugins()
