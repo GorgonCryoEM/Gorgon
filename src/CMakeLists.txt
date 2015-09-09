@@ -1,6 +1,6 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 3.0)
 PROJECT(Gorgon-Explorer
-        VERSION 2.2.2
+        VERSION 2.2.3
         LANGUAGES CXX
         )
 include(cmake/Debug.cmake)
