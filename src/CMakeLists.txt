@@ -1,6 +1,6 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 3.0)
-PROJECT(Gorgon
-        VERSION 2.3.0
+PROJECT(Gorgon-Explorer
+        VERSION 2.2.3
         LANGUAGES CXX
         )
 include(cmake/Debug.cmake)
@@ -55,6 +55,9 @@ set(core_lib_target_name core)
 # --------------------------------------------------------------------
 configure_file(${CMAKE_SOURCE_DIR}/gorgon.cpp.in
                 ${CMAKE_SOURCE_DIR}/gorgon.cpp
+               )
+configure_file(${CMAKE_SOURCE_DIR}/../gorg/__init__.py.in
+                ${CMAKE_SOURCE_DIR}/../gorg/__init__.py
                )
 # --------------------------------------------------------------------
 add_subdirectory(${core_lib_target_name})
