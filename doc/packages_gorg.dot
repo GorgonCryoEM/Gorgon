@@ -1,0 +1,58 @@
+digraph "packages_gorg" {
+charset="utf-8"
+rankdir=BT
+"0" [label="gorg", shape="box"];
+"1" [label="gorg.action_manager", shape="box"];
+"2" [label="gorg.base_dock", shape="box"];
+"3" [label="gorg.base_dock_widget", shape="box"];
+"4" [label="gorg.base_viewer", shape="box"];
+"5" [label="gorg.camera", shape="box"];
+"6" [label="gorg.color_picker_form", shape="box"];
+"7" [label="gorg.colored_push_button", shape="box"];
+"8" [label="gorg.colored_widget", shape="box"];
+"9" [label="gorg.delayed_filter", shape="box"];
+"10" [label="gorg.histogram_slider_widget", shape="box"];
+"11" [label="gorg.histogram_widget", shape="box"];
+"12" [label="gorg.libs", shape="box"];
+"13" [label="gorg.libs.vector", shape="box"];
+"14" [label="gorg.main_window_form", shape="box"];
+"15" [label="gorg.menu_manager", shape="box"];
+"16" [label="gorg.model_visualization_form", shape="box"];
+"17" [label="gorg.scene_editor_form", shape="box"];
+"18" [label="gorg.ui_dialog_color_picker", shape="box"];
+"19" [label="gorg.ui_dialog_model_visualization", shape="box"];
+"20" [label="gorg.ui_dialog_scene_editor", shape="box"];
+"21" [label="gorg.ui_dialog_volume_surface_editor", shape="box"];
+"22" [label="gorg.volume_surface_editor_form", shape="box"];
+"23" [label="gorg.volume_viewer", shape="box"];
+"24" [label="gorg.window_manager", shape="box"];
+"0" -> "14" [arrowhead="open", arrowtail="none"];
+"3" -> "2" [arrowhead="open", arrowtail="none"];
+"4" -> "13" [arrowhead="open", arrowtail="none"];
+"5" -> "13" [arrowhead="open", arrowtail="none"];
+"5" -> "17" [arrowhead="open", arrowtail="none"];
+"6" -> "18" [arrowhead="open", arrowtail="none"];
+"7" -> "6" [arrowhead="open", arrowtail="none"];
+"10" -> "11" [arrowhead="open", arrowtail="none"];
+"14" -> "1" [arrowhead="open", arrowtail="none"];
+"14" -> "15" [arrowhead="open", arrowtail="none"];
+"14" -> "24" [arrowhead="open", arrowtail="none"];
+"16" -> "3" [arrowhead="open", arrowtail="none"];
+"16" -> "19" [arrowhead="open", arrowtail="none"];
+"17" -> "3" [arrowhead="open", arrowtail="none"];
+"17" -> "6" [arrowhead="open", arrowtail="none"];
+"17" -> "20" [arrowhead="open", arrowtail="none"];
+"18" -> "8" [arrowhead="open", arrowtail="none"];
+"19" -> "7" [arrowhead="open", arrowtail="none"];
+"20" -> "7" [arrowhead="open", arrowtail="none"];
+"21" -> "10" [arrowhead="open", arrowtail="none"];
+"22" -> "3" [arrowhead="open", arrowtail="none"];
+"22" -> "9" [arrowhead="open", arrowtail="none"];
+"22" -> "10" [arrowhead="open", arrowtail="none"];
+"22" -> "21" [arrowhead="open", arrowtail="none"];
+"23" -> "4" [arrowhead="open", arrowtail="none"];
+"23" -> "16" [arrowhead="open", arrowtail="none"];
+"23" -> "22" [arrowhead="open", arrowtail="none"];
+"24" -> "5" [arrowhead="open", arrowtail="none"];
+"24" -> "23" [arrowhead="open", arrowtail="none"];
+}

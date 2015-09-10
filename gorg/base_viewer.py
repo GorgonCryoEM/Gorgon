@@ -1,12 +1,6 @@
-# Copyright (C) 2005-2008 Washington University in St Louis, Baylor College of Medicine.  All rights reserved
-# Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
-# Description:   The base class for a viewable scene. 
-
-
 from PyQt4 import QtGui, QtCore, QtOpenGL
-from libpyGORGON import VolumeRenderer, Vector3DFloat
-from vector_lib import *
-# from session_manager import SessionManager
+from libpygorgon import VolumeRenderer
+from libs.vector import *
 
 from OpenGL.GL import *
 from OpenGL.GLU import *
@@ -37,7 +31,7 @@ class BaseViewer(QtOpenGL.QGLWidget):
         self.connect(self, QtCore.SIGNAL("modelChanged()"), self.modelChanged) 
         self.connect(self, QtCore.SIGNAL("modelLoaded()"), self.modelChanged) 
         self.connect(self, QtCore.SIGNAL("modelUnloaded()"), self.modelChanged) 
-        self.connect(self.app.themes, QtCore.SIGNAL("themeChanged()"), self.themeChanged)           
+
         self.glLists = []
         self.showBox = False
         self.twoWayLighting = False
@@ -119,7 +113,7 @@ class BaseViewer(QtOpenGL.QGLWidget):
             self.app.mainCamera.updateGL()
 
     def getBoundingBoxColor(self):
-        return self.app.themes.getColor(self.title + ":" + "BoundingBox" )
+        return QtGui.QColor(255, 255, 255, 255)
 
     def repaintCamera2(self, oldColor, newColor):
         if((oldColor.alpha() == 255 and newColor.alpha() != 255) or (oldColor.alpha() != 255 and newColor.alpha() == 255)):
@@ -131,10 +125,6 @@ class BaseViewer(QtOpenGL.QGLWidget):
         if(hasattr(self.app, "mainCamera")) :
             self.app.mainCamera.updateGL()
         
-
-    def setBoundingBoxColor(self, color):
-        self.app.themes.addColor(self.title + ":" + "BoundingBox", color)
-        self.repaintCamera()
 
     def setDisplayStyle(self, style):
         self.displayStyle = style
@@ -154,29 +144,14 @@ class BaseViewer(QtOpenGL.QGLWidget):
         self.repaintCamera()
         
     def getModelColor(self):
-        return self.app.themes.getColor(self.title + ":" + "Model:0" )    
+        return QtGui.QColor(180, 180, 180, 150)    
 
     def getModel2Color(self):
-        return self.app.themes.getColor(self.title + ":" + "Model:1" )
+        return QtGui.QColor(180, 180, 180, 150)
     
     def getModel3Color(self):
-        return self.app.themes.getColor(self.title + ":" + "Model:2" )
+        return QtGui.QColor(180, 180, 180, 150)
     
-    def setModelColor(self, color):
-        oldColor = self.getModelColor()            
-        self.app.themes.addColor(self.title + ":" + "Model:0", color)
-        self.repaintCamera2(oldColor, color)
-
-    def setModel2Color(self, color):
-        oldColor = self.getModel2Color()            
-        self.app.themes.addColor(self.title + ":" + "Model:1", color)
-        self.repaintCamera2(oldColor, color)
-
-    def setModel3Color(self, color):
-        oldColor = self.getModel3Color()                    
-        self.app.themes.addColor(self.title + ":" + "Model:2", color)
-        self.repaintCamera2(oldColor, color)
-
     def setMaterials(self, color):
         glColor4f(color.redF(), color.greenF(), color.blueF(), color.alphaF())
         diffuseMaterial = [color.redF(), color.greenF(), color.blueF(), color.alphaF()]
@@ -492,13 +467,6 @@ class BaseViewer(QtOpenGL.QGLWidget):
     def processMouseMove(self, hitStack, event):
         self.emitElementMouseOver(hitStack, event)
         
-    def themeChanged(self):
-        self.visualizationOptions.ui.pushButtonModelColor.setColor(self.getModelColor())
-        self.visualizationOptions.ui.pushButtonModel2Color.setColor(self.getModel2Color())
-        self.visualizationOptions.ui.pushButtonModel3Color.setColor(self.getModel3Color())
-        self.visualizationOptions.ui.pushButtonBoundingBoxColor.setColor(self.getBoundingBoxColor())  
-        self.emitModelChanged()          
-       
         
     def processMouseMoveRay(self, ray, rayWidth, eye, event):
         self.emitMouseOverRay(ray, rayWidth, eye, event)
@@ -506,44 +474,6 @@ class BaseViewer(QtOpenGL.QGLWidget):
     def setCenter(self, center):
         return False
     
-    def getSessionInfo(self, sessionManager):
-        info = []
-        info.extend(sessionManager.getRemarkLines(self.shortTitle, "FILE", self.fileName))
-        info.extend(sessionManager.getRemarkLines(self.shortTitle, "LOADED", self.loaded))
-        #info.extend(sessionManager.getRemarkLines(self.shortTitle, "SELECT_ENABLED", self.selectEnabled))
-        #info.extend(sessionManager.getRemarkLines(self.shortTitle, "MOUSE_MOVE_ENABLED", self.mouseMoveEnabled))
-        #info.extend(sessionManager.getRemarkLines(self.shortTitle, "MOUSE_MOVE_ENABLED_RAY", self.mouseMoveEnabledRay))
-        #info.extend(sessionManager.getRemarkLines(self.shortTitle, "IS_CLOSED_MESH", self.isClosedMesh))
-        #info.extend(sessionManager.getRemarkLines(self.shortTitle, "VIEWER_AUTONOMOUS", self.viewerAutonomous))        
-        info.extend(sessionManager.getRemarkLines(self.shortTitle, "DISPLAY_STYLE", self.displayStyle))
-        info.extend(sessionManager.getRemarkLines(self.shortTitle, "MODEL_VISIBLE", self.modelVisible))            
-        info.extend(sessionManager.getRemarkLines(self.shortTitle, "MODEL_2_VISIBLE", self.model2Visible))
-        info.extend(sessionManager.getRemarkLines(self.shortTitle, "ROTATION", self.rotation))
-        info.extend(sessionManager.getRemarkLines(self.shortTitle, "SHOW_BOX", self.showBox))        
-        info.extend(sessionManager.getRemarkLines(self.shortTitle, "SCALE", [self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ()]))
-        info.extend(sessionManager.getRemarkLines(self.shortTitle, "LOCATION", [self.renderer.getOriginX(), self.renderer.getOriginY(), self.renderer.getOriginZ()]))
-                            
-        return info                    
-        
-    def loadSessionInfo(self, sessionManager, sessionProperties):        
-        self.loaded = sessionManager.getProperty(sessionProperties, self.shortTitle, "LOADED")
-        if self.loaded:
-            self.fileName = sessionManager.getProperty(sessionProperties, self.shortTitle, "FILE")
-            self.loadDataFromFile(self.fileName)
-        self.displayStyle = sessionManager.getProperty(sessionProperties, self.shortTitle, "DISPLAY_STYLE")
-        self.modelVisible = sessionManager.getProperty(sessionProperties, self.shortTitle, "MODEL_VISIBLE")
-        self.model2Visible = sessionManager.getProperty(sessionProperties, self.shortTitle, "MODEL_2_VISIBLE")
-        self.rotation = sessionManager.getProperty(sessionProperties, self.shortTitle, "ROTATION")
-        self.showBox = sessionManager.getProperty(sessionProperties, self.shortTitle, "SHOW_BOX")
-        scale = sessionManager.getProperty(sessionProperties, self.shortTitle, "SCALE")
-        self.setScaleNoEmit(scale[0], scale[1], scale[2])
-        location = sessionManager.getProperty(sessionProperties, self.shortTitle, "LOCATION")
-        self.setLocation(location[0], location[1], location[2])
-
-        self.emitModelVisualizationChanged()
-        self.emitModelChanged()
-                
-        
     def emitThicknessChanged(self, value):
         self.emit(QtCore.SIGNAL("thicknessChanged(int)"), value);
 

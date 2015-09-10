@@ -1,6 +1,6 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 3.0)
-PROJECT(Gorgon
-        VERSION 2.3.0
+PROJECT(Gorgon-Explorer
+        VERSION 2.2.3
         LANGUAGES CXX
         )
 include(cmake/Debug.cmake)
@@ -15,7 +15,7 @@ math(EXPR NUMBER_OF_PARALLEL_JOBS ${NUMBER_OF_PARALLEL_JOBS}-1)
 # Set some variables and options
 # --------------------------------------------------------------------
 option(ENABLE_CMAKE_DEBUG_OUTPUT "Print output of some variables for debugging purposes" OFF)
-#set(GORGON_EXTERNAL_LIBRARIES_DIR ${CMAKE_SOURCE_DIR}/../ExternalLibraries CACHE INTERNAL "External Libraries directory")
+set(GORGON_EXTERNAL_LIBRARIES_DIR ${CMAKE_SOURCE_DIR}/../ExternalLibraries CACHE INTERNAL "External Libraries directory")
 
 if( CMAKE_SIZEOF_VOID_P EQUAL 8 )
     set( GORGON_TARGET_ARCH 64 CACHE INTERNAL "Target architecture")
@@ -28,8 +28,8 @@ endif()
 include(cmake/functions.cmake)
 
 set( EXTERNAL_PROJECTS
-#        OpenGL
-#        GLUT
+        OpenGL
+        GLUT
         Python
         Boost
 #        FFTW3F
@@ -41,12 +41,12 @@ endforeach()
 # --------------------------------------------------------------------
 SET(LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/lib${GORGON_OS_VERSION}/x${GORGON_TARGET_ARCH})
 
-#list(APPEND GORGON_INCLUDE_DIRS 
+list(APPEND GORGON_INCLUDE_DIRS 
 #	${CMAKE_CURRENT_SOURCE_DIR}
-#	${GORGON_EXTERNAL_LIBRARIES_DIR}
+	${GORGON_EXTERNAL_LIBRARIES_DIR}
 #	TODO: Is this line necessary? Removing works on Mac 
-#	${GORGON_EXTERNAL_LIBRARIES_DIR}/GL
-#	)
+	${GORGON_EXTERNAL_LIBRARIES_DIR}/GL
+	)
 # --------------------------------------------------------------------
 # Set target name vars
 # --------------------------------------------------------------------
@@ -55,6 +55,9 @@ set(core_lib_target_name core)
 # --------------------------------------------------------------------
 configure_file(${CMAKE_SOURCE_DIR}/gorgon.cpp.in
                 ${CMAKE_SOURCE_DIR}/gorgon.cpp
+               )
+configure_file(${CMAKE_SOURCE_DIR}/../gorg/__init__.py.in
+                ${CMAKE_SOURCE_DIR}/../gorg/__init__.py
                )
 # --------------------------------------------------------------------
 add_subdirectory(${core_lib_target_name})
@@ -83,11 +86,11 @@ endif()
 # --------------------------------------------------------------------
 #Install Step
 # --------------------------------------------------------------------
-#install(TARGETS ${gorgon_lib_target_name}
-#        LIBRARY
-#        DESTINATION ${CMAKE_BINARY_DIR}/bin/
-#        COMPONENT "Gorgon"
-#        )
+install(TARGETS ${gorgon_lib_target_name}
+        LIBRARY
+        DESTINATION ${CMAKE_BINARY_DIR}/bin/
+        COMPONENT "Gorgon"
+        )
 
 install(TARGETS ${gorgon_lib_target_name}
         LIBRARY
@@ -122,6 +125,11 @@ install(DIRECTORY ${CMAKE_SOURCE_DIR}/../gorg
         DESTINATION ${CMAKE_BINARY_DIR}/bin
         COMPONENT "Gorgon"
         FILES_MATCHING PATTERN "*.py"         
+        )
+        
+install(DIRECTORY ${CMAKE_SOURCE_DIR}/../demo  ${CMAKE_SOURCE_DIR}/../playground
+        DESTINATION ${CMAKE_BINARY_DIR}
+        COMPONENT "Gorgon"
         )
         
 add_custom_target(Gorgon
