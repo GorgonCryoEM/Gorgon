@@ -7,7 +7,6 @@ import sys, os
 class MainWindowForm(QtGui.QMainWindow):
     def __init__(self, version):
         super(MainWindowForm, self).__init__()
-        self.version = version
 
         self.viewers = {}
         
@@ -29,7 +28,7 @@ class MainWindowForm(QtGui.QMainWindow):
         self.setCentralWidget(self.mainCamera)
                 
         self.statusBar().showMessage(self.tr("Gorgon: Protein Visualization Suite"))
-        self.setWindowTitle(self.tr("Gorgon Explorer - v" + self.version))
+        self.setWindowTitle(self.tr("Gorgon Explorer - v" + version))
         pathname = os.path.abspath(os.path.dirname(sys.argv[0]))
         self.setWindowIcon(QtGui.QIcon(pathname + '/gorgon.ico'))
         
