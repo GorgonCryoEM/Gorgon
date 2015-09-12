@@ -88,13 +88,13 @@ endif()
 install(TARGETS ${gorgon_lib_target_name}
         LIBRARY
         DESTINATION ${CMAKE_BINARY_DIR}/bin/
-        COMPONENT "Gorgon"
+        COMPONENT "Explorer"
         )
 
 install(TARGETS ${gorgon_lib_target_name}
         LIBRARY
         DESTINATION ${CMAKE_BINARY_DIR}/tests/
-        COMPONENT "Gorgon"
+        COMPONENT "Explorer"
         )
 
 #install(TARGETS pyGORGON
@@ -109,7 +109,7 @@ file(GLOB py_srcs ${CMAKE_SOURCE_DIR}/../bin/*.py)
 install(FILES ${py_srcs}
         PERMISSIONS OWNER_WRITE OWNER_READ OWNER_EXECUTE GROUP_READ WORLD_READ
         DESTINATION ${CMAKE_BINARY_DIR}/bin/
-        COMPONENT "Gorgon"
+        COMPONENT "Explorer"
         )
 
 file(GLOB py_tests ${CMAKE_SOURCE_DIR}/../tests/*.py)
@@ -117,22 +117,22 @@ file(GLOB py_tests ${CMAKE_SOURCE_DIR}/../tests/*.py)
 install(FILES ${py_tests}
         PERMISSIONS OWNER_WRITE OWNER_READ OWNER_EXECUTE GROUP_READ WORLD_READ
         DESTINATION ${CMAKE_BINARY_DIR}/tests/
-        COMPONENT "Gorgon"
+        COMPONENT "Explorer"
         )
 
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/../gorg
         DESTINATION ${CMAKE_BINARY_DIR}/bin
-        COMPONENT "Gorgon"
+        COMPONENT "Explorer"
         FILES_MATCHING PATTERN "*.py"         
         )
         
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/../demo  ${CMAKE_SOURCE_DIR}/../playground
         DESTINATION ${CMAKE_BINARY_DIR}
-        COMPONENT "Gorgon"
+        COMPONENT "Explorer"
         )
         
 add_custom_target(Gorgon
-        COMMAND ${CMAKE_COMMAND} -DCOMPONENT=Gorgon -P cmake_install.cmake
+        COMMAND ${CMAKE_COMMAND} -DCOMPONENT=Explorer -P cmake_install.cmake
         )
 # --------------------------------------------------------------------
 #Package Step
