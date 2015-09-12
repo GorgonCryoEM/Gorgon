@@ -4,7 +4,6 @@ PROJECT(Gorgon-Explorer
         LANGUAGES CXX
         )
 include(cmake/Debug.cmake)
-PROJECT(Gorgon)
 # --------------------------------------------------------------------
 # Number of preocessors/cores
 # --------------------------------------------------------------------
