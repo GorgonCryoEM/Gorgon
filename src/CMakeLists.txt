@@ -131,7 +131,7 @@ install(DIRECTORY ${CMAKE_SOURCE_DIR}/../demo  ${CMAKE_SOURCE_DIR}/../playground
         COMPONENT "Explorer"
         )
         
-add_custom_target(Gorgon
+add_custom_target(Explorer
         COMMAND ${CMAKE_COMMAND} -DCOMPONENT=Explorer -P cmake_install.cmake
         )
 # --------------------------------------------------------------------
