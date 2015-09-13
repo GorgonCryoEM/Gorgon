@@ -1,5 +1,5 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 3.0)
-PROJECT(Gorgon-Explorer
+PROJECT(GorgonExplorer
         VERSION 2.2.3
         LANGUAGES CXX
         )
