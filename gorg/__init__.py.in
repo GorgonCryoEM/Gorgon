@@ -1,5 +1,5 @@
 # __all__=[]
-__version__ = '@Gorgon-Explorer_VERSION@'
+__version__ = '@GorgonExplorer_VERSION@'
 
 import sys, os, inspect
 
