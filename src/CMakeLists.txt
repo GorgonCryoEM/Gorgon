@@ -59,8 +59,7 @@ configure_file(${CMAKE_SOURCE_DIR}/../gorg/__init__.py.in
                 ${CMAKE_SOURCE_DIR}/../gorg/__init__.py
                )
 # --------------------------------------------------------------------
-add_subdirectory(${core_lib_target_name})
-add_library(${gorgon_lib_target_name} MODULE gorgon.cpp $<TARGET_OBJECTS:${core_lib_target_name}>)
+add_library(${gorgon_lib_target_name} MODULE gorgon.cpp)
 
 include_directories(${GORGON_INCLUDE_DIRS} ${core_lib_target_name})
 target_link_libraries(${gorgon_lib_target_name} ${GORGON_LIBRARIES})
