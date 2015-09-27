@@ -61,6 +61,8 @@ configure_file(${CMAKE_SOURCE_DIR}/../gorg/__init__.py.in
 # --------------------------------------------------------------------
 SET(CMAKE_INCLUDE_CURRENT_DIR ON)
 include_directories(${GORGON_INCLUDE_DIRS})
+
+set(target_installation_locations bin/ tests/)
 add_subdirectory(${core_lib_target_name})
 
 add_library(${gorgon_lib_target_name} MODULE gorgon.cpp)
@@ -88,6 +90,13 @@ endif()
 # --------------------------------------------------------------------
 #Install Step
 # --------------------------------------------------------------------
+foreach(d ${target_installation_locations})
+    install(TARGETS ${gorgon_lib_target_name}
+            LIBRARY
+            DESTINATION ${CMAKE_BINARY_DIR}/${d}
+            COMPONENT "Explorer"
+            ) 
+endforeach()
 
 #install(TARGETS ${gorgon_lib_target_name}
 #        LIBRARY
