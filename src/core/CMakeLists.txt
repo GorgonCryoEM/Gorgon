@@ -1,4 +1,4 @@
-file(GLOB srcs "*.cpp")
+file(GLOB_RECURSE srcs "*.cpp")
 
 add_library(${core_lib_target_name} SHARED ${srcs})
 
