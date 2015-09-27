@@ -65,8 +65,8 @@ add_subdirectory(${core_lib_target_name})
 
 add_library(${gorgon_lib_target_name} MODULE gorgon.cpp)
 
-target_link_libraries(${gorgon_lib_target_name} ${core_lib_target_name} ${GORGON_LIBRARIES})
 include_directories(${core_lib_target_name})
+target_link_libraries(${gorgon_lib_target_name} ${GORGON_LIBRARIES} ${core_lib_target_name})
 
 #set(cxx11_flags "-std=c++0x --stdlib=libc++")
 #list( APPEND CMAKE_CXX_FLAGS           ${cxx11_flags})
