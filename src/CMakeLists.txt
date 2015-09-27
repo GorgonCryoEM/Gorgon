@@ -88,17 +88,18 @@ endif()
 # --------------------------------------------------------------------
 #Install Step
 # --------------------------------------------------------------------
-install(TARGETS ${gorgon_lib_target_name}
-        LIBRARY
-        DESTINATION ${CMAKE_BINARY_DIR}/bin/
-        COMPONENT "Explorer"
-        )
 
-install(TARGETS ${gorgon_lib_target_name}
-        LIBRARY
-        DESTINATION ${CMAKE_BINARY_DIR}/tests/
-        COMPONENT "Explorer"
-        )
+#install(TARGETS ${gorgon_lib_target_name}
+#        LIBRARY
+#        DESTINATION ${CMAKE_BINARY_DIR}/bin/
+#        COMPONENT "Explorer"
+#        )
+#
+#install(TARGETS ${gorgon_lib_target_name}
+#        LIBRARY
+#        DESTINATION ${CMAKE_BINARY_DIR}/tests/
+#        COMPONENT "Explorer"
+#        )
 
 #install(TARGETS pyGORGON
 #        LIBRARY
