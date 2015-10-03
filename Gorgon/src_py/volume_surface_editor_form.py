@@ -2,54 +2,6 @@
 # Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 # Description:   A widget to alter the surface properties of a volume 
 
-# CVS Meta Information: 
-#   $Source$
-#   $Revision$
-#   $Date$
-#   $Author$
-#   $State$
-#
-# History Log: 
-#   $Log$
-#   Revision 1.22  2010/01/17 18:34:59  ssa1
-#   Histogram for density visualization
-#
-#   Revision 1.21  2010/01/16 16:14:23  ssa1
-#   Disabling wireframe and flat shading with solid and cross section rendering modes (BugID: 64)
-#
-#   Revision 1.20  2009/12/24 05:09:30  ssa1
-#   Refactoring child window behavior.. Using base classes to encapsulate common behavior
-#
-#   Revision 1.19  2009/07/01 22:00:27  ssa1
-#   Centering the volume cropped using a radius around the point selected by the atom selection tool.
-#
-#   Revision 1.18  2009/03/24 16:22:27  ssa1
-#   Better cross section & Solid Rendering viewing
-#
-#   Revision 1.17  2009/03/24 15:18:15  ssa1
-#   Better cross section & Solid Rendering viewing
-#
-#   Revision 1.16  2008/12/02 05:34:16  ssa1
-#   editable iso level
-#
-#   Revision 1.15  2008/12/02 05:13:07  ssa1
-#   allowing manual edit of iso surface
-#
-#   Revision 1.14  2008/12/01 21:54:11  ssa1
-#   Improving performance when changing viewing type
-#
-#   Revision 1.13  2008/09/03 19:53:20  ssa1
-#   First loading the model, and then changing the viewing position
-#
-#   Revision 1.12  2008/09/03 19:48:19  ssa1
-#   Maximizing performance of volume visualization by minimizing method call count
-#
-#   Revision 1.11  2008/09/03 18:41:07  ssa1
-#   Setting a display radius for surfaces
-#
-#   Revision 1.10  2008/06/18 18:15:41  ssa1
-#   Adding in CVS meta data
-#
 
 from PyQt4 import QtCore, QtGui
 from ui_dialog_volume_surface_editor import Ui_DialogVolumeSurfaceEditor

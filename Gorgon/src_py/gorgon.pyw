@@ -2,66 +2,6 @@
 # Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 # Description:   The Gorgon application 
 
-# CVS Meta Information: 
-#   $Source$
-#   $Revision$
-#   $Date$
-#   $Author$
-#   $State$
-#
-# History Log: 
-#   $Log$
-#   Revision 1.24  2011/03/09 21:14:40  coleman.r
-#   version number 2.1.0b
-#
-#   Revision 1.23  2010/01/16 16:01:08  ssa1
-#   Setting a smaller font size for Non Win32 systems
-#
-#   Revision 1.22  2010/01/11 22:40:45  ssa1
-#   Changing version to 2.0.1b
-#
-#   Revision 1.21  2010/01/11 16:20:12  ssa1
-#   Not checking for newer versions if this is a nightly build release
-#
-#   Revision 1.20  2010/01/04 22:14:23  ssa1
-#   Adding update notifier plugin to check for newer versions of gorgon
-#
-#   Revision 1.19  2009/12/24 01:38:53  ssa1
-#   Fixing bug in macos where color dialogs automatically change when camera changes.  Bug ID 4
-#
-#   Revision 1.18  2009/04/14 20:17:35  ssa1
-#   Changing scripts for PyOpenGL 3.0.0
-#
-#   Revision 1.17  2009/04/14 18:46:20  ssa1
-#   Changing how the WindowManager and PluginManager are loaded
-#
-#   Revision 1.16  2009/04/08 19:54:59  ssa1
-#   Adding in plugin functionality
-#
-#   Revision 1.15  2008/12/18 15:19:31  ssa1
-#   Moving About Form functionality into HelpMenus
-#
-#   Revision 1.14  2008/12/17 16:00:04  ssa1
-#   Changing Version information for next public release
-#
-#   Revision 1.13  2008/11/30 00:13:41  ssa1
-#   Build Configuration scripts on MacOSX
-#
-#   Revision 1.12  2008/11/29 04:48:28  ssa1
-#   Icon support and Redirecting help to website.
-#
-#   Revision 1.11  2008/11/28 19:47:18  ssa1
-#   Splash screen for public beta 1 release
-#
-#   Revision 1.10  2008/11/28 17:56:09  ssa1
-#   Splash screen for public beta 1 release
-#
-#   Revision 1.9  2008/11/28 04:36:17  ssa1
-#   Removing error message if pyopengl does not exist.  (To make executable building easier to debug)
-#
-#   Revision 1.8  2008/06/18 18:15:41  ssa1
-#   Adding in CVS meta data
-#
 
 ###########################################################################################################
 # Following is a hack to overcome a PyOpenGL bug with P2EXE Should be removed when py2exe adds egg support
