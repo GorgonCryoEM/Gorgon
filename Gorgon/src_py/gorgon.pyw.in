@@ -46,6 +46,7 @@ if __name__ == '__main__':
     window.isNightlyBuild = True
     window.showMaximized()
     splash.finish(window)
+    window.raise_()
     window.loadPlugins()
     sys.exit(app.exec_())
     
