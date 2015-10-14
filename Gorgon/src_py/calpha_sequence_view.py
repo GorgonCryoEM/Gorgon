@@ -29,7 +29,7 @@ class CAlphaSequenceView(QtGui.QWidget):
 
     metrics=QtGui.QFontMetrics(self.font)
     self.height = int(3.5*metrics.lineSpacing())
-    self.width = int(40*metrics.maxWidth())
+    self.width = int(40*metrics.width("W"))
     self.resize(self.width, self.height)
     self.setMinimumSize(self.width, self.height)
 
@@ -212,7 +212,7 @@ this returns the residue index of that residue.
     '''
     metrics=QtGui.QFontMetrics(self.font)
     cellHeight=metrics.lineSpacing()
-    maxCharWidth=QtGui.QFontMetrics(self.font).maxWidth()
+    maxCharWidth=QtGui.QFontMetrics(self.font).width("W")
     index= int(x/maxCharWidth)
     if y > 1*cellHeight and y < 2*cellHeight:
       return self.residueRange[index]
@@ -319,7 +319,7 @@ This updates the height and width of the CAlphaSequenceView.
     '''
     metrics=QtGui.QFontMetrics(self.font)
     height=int(3.5*metrics.lineSpacing())
-    width=metrics.maxWidth()*len(self.structurePrediction.chain.residueRange())
+    width=metrics.width("W")*len(self.structurePrediction.chain.residueRange())
     self.resize(QtCore.QSize(width,height))
 
 
@@ -378,7 +378,7 @@ CAlphaSequenceView.
 
   def setFontSize(self, newFontSize):
     oldValue=self.scrollbar.value()
-    oldCellWidth=QtGui.QFontMetrics(self.font).maxWidth()
+    oldCellWidth=QtGui.QFontMetrics(self.font).width("W")
 
     self.fontSize=newFontSize
     self.font=QtGui.QFont(self.fontName,self.fontSize)
@@ -386,7 +386,7 @@ CAlphaSequenceView.
     self.updatePanelHeight()
 
     newValue=self.scrollbar.value()
-    newCellWidth=QtGui.QFontMetrics(self.font).maxWidth()
+    newCellWidth=QtGui.QFontMetrics(self.font).width("W")
     ratio=float(newCellWidth/oldCellWidth)
 
     self.emit( QtCore.SIGNAL('SequencePanelUpdate'))
@@ -402,7 +402,7 @@ CAlphaSequenceView.
 
   def cellWidth(self):
     metrics=QtGui.QFontMetrics(self.font)
-    cellWidth=metrics.maxWidth()
+    cellWidth=metrics.width("W")
     return cellWidth
 
   def paintEvent(self, event):
@@ -421,7 +421,7 @@ CAlphaSequenceView.
 
   def calculateViewportRange(self, j):
     metrics=QtGui.QFontMetrics(self.font)
-    cellWidth=metrics.maxWidth()
+    cellWidth=metrics.width("W")
     viewportStart=self.scrollbar.value()/cellWidth
     viewportWidth=self.parentWidget().parentWidget().width()/cellWidth 
     #self.parentWidget() => QWidget object, self.parentWidget().parentWidget() => CAlphaScrollableSequenceView object
