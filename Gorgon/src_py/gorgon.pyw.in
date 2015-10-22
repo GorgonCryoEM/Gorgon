@@ -44,7 +44,7 @@ if __name__ == '__main__':
     
     window = MainWindowForm(gorgonVersion)
     window.isNightlyBuild = True
-    window.showMaximized()
+    window.showNormal()
     splash.finish(window)
     window.raise_()
     window.loadPlugins()
