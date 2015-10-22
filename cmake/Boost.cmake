@@ -13,7 +13,10 @@ foreach(comp ${boost_components})
 endforeach()
 
 #TODO: remove if not needed on Linux anymore
-#set(Boost_NO_BOOST_CMAKE ON)
+if(UNIX)
+	set(Boost_NO_BOOST_CMAKE ON)
+endif()
+
 set(Boost_USE_MULTITHREADED ON)
 
 find_package(Boost COMPONENTS ${boost_components})
