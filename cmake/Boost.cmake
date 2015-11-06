@@ -19,6 +19,6 @@ endif()
 
 set(Boost_USE_MULTITHREADED ON)
 
-find_package(Boost COMPONENTS ${boost_components})
 
+find_package(Boost COMPONENTS python)
 update_libs_includes(Boost_LIBRARIES Boost_INCLUDE_DIR)

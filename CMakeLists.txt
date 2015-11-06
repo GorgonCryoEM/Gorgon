@@ -31,6 +31,7 @@ else()
     set( GORGON_TARGET_ARCH 32 CACHE INTERNAL "Target architecture")
 endif()
 
+link_directories(${Boost_LIBRARY_DIR})
 ADD_LIBRARY(pyGORGON MODULE Gorgon/src_cpp/LibPyGorgon.cpp)
 set(CMAKE_CXX_FLAGS_DEBUG "-DGORGON_DEBUG")
 # --------------------------------------------------------------------
