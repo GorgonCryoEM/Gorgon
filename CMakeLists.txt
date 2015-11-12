@@ -31,8 +31,6 @@ else()
     set( GORGON_TARGET_ARCH 32 CACHE INTERNAL "Target architecture")
 endif()
 
-link_directories(${Boost_LIBRARY_DIR})
-ADD_LIBRARY(pyGORGON MODULE Gorgon/src_cpp/LibPyGorgon.cpp)
 set(CMAKE_CXX_FLAGS_DEBUG "-DGORGON_DEBUG")
 # --------------------------------------------------------------------
 # Find dependencies
@@ -62,7 +60,9 @@ list(APPEND GORGON_INCLUDE_DIRS
 	${GORGON_EXTERNAL_LIBRARIES_DIR}/GL
 	)
 
+link_directories(${Boost_LIBRARY_DIR})
 include_directories(${GORGON_INCLUDE_DIRS})
+ADD_LIBRARY(pyGORGON MODULE Gorgon/src_cpp/LibPyGorgon.cpp)
 target_link_libraries(pyGORGON ${GORGON_LIBRARIES})
 
 #set(cxx11_flags "-std=c++0x --stdlib=libc++")
