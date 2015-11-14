@@ -309,6 +309,7 @@ namespace wustl_mm {
 				groundTruth[i]=SOLUTION[i];
 			}
 			ComputeSolutionCost(groundTruth);*/
+			/*
 			cout << "The ground truth solution is" << endl;
 			cout << "**      ";
 			for (int i = 0; i < patternGraph->GetNodeCount(); i++) {
@@ -319,6 +320,7 @@ namespace wustl_mm {
 			ComputeSolutionCost(SOLUTION, false);
 			AnalyzeResults(bestMatches, SOLUTION);
 			cout << endl;
+			*/
 			return foundCount;
 		}
 

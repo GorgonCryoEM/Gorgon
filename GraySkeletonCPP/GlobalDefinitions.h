@@ -10,7 +10,9 @@
 
 //#define SAVE_INTERMEDIATE_RESULTS
 
-#define round(f) ((f >= 0)?(int)(f + .5):(int)(f - .5))
+double round(double f){
+	return (f >= 0?(int)(f + .5):(int)(f - .5));
+}
 
 using namespace wustl_mm::Foundation;
 
