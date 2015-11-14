@@ -11,11 +11,9 @@ include(cmake/MacOSX.cmake)
 include(cmake/Windows.cmake)
 
 # --------------------------------------------------------------------
-# Number of preocessors/cores
+# Number of processors/cores
 # --------------------------------------------------------------------
-include(ProcessorCount)
-ProcessorCount(NUMBER_OF_PARALLEL_JOBS)
-math(EXPR NUMBER_OF_PARALLEL_JOBS ${NUMBER_OF_PARALLEL_JOBS}-1)
+include(cmake/ParallelJobs.cmake)
 # --------------------------------------------------------------------
 # Set some variables and options
 # --------------------------------------------------------------------
