@@ -10,10 +10,10 @@ include(cmake/Debug.cmake)
 include(cmake/MacOSX.cmake)
 include(cmake/Windows.cmake)
 
-# --------------------------------------------------------------------
+
 # Number of processors/cores
-# --------------------------------------------------------------------
 include(cmake/ParallelJobs.cmake)
+
 # --------------------------------------------------------------------
 # Set some variables and options
 # --------------------------------------------------------------------
@@ -28,6 +28,7 @@ else()
 endif()
 
 set(CMAKE_CXX_FLAGS_DEBUG "-DGORGON_DEBUG")
+
 SET(LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/lib${GORGON_OS_VERSION}/x${GORGON_TARGET_ARCH})
 SET(CMAKE_INSTALL_PREFIX ${LIBRARY_OUTPUT_PATH} CACHE PATH "" FORCE)
 if(ENABLE_CMAKE_DEBUG_OUTPUT)
@@ -50,6 +51,9 @@ set( EXTERNAL_PROJECTS
 foreach(proj ${EXTERNAL_PROJECTS})
     include(cmake/${proj}.cmake)
 endforeach()
+
+# --------------------------------------------------------------------
+# Include and link directories, targets, target link libraries
 # --------------------------------------------------------------------
 list(APPEND GORGON_INCLUDE_DIRS 
 	${CMAKE_CURRENT_SOURCE_DIR}
@@ -61,10 +65,16 @@ include_directories(${GORGON_INCLUDE_DIRS})
 ADD_LIBRARY(pyGORGON MODULE Gorgon/src_cpp/LibPyGorgon.cpp)
 target_link_libraries(pyGORGON ${GORGON_LIBRARIES})
 
+# --------------------------------------------------------------------
+# C++11 flags
+# --------------------------------------------------------------------
 #set(cxx11_flags "-std=c++0x --stdlib=libc++")
 #list( APPEND CMAKE_CXX_FLAGS           ${cxx11_flags})
 #list( APPEND CMAKE_SHARED_LINKER_FLAGS ${cxx11_flags})
 
+# --------------------------------------------------------------------
+# Some debug output
+# --------------------------------------------------------------------
 if(ENABLE_CMAKE_DEBUG_OUTPUT)
     get_property(dirs DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY INCLUDE_DIRECTORIES)
 
@@ -78,14 +88,9 @@ if(ENABLE_CMAKE_DEBUG_OUTPUT)
       message("LIBS='${dir}'")
     endforeach()
 endif()
+
 # --------------------------------------------------------------------
 #Install Step
-# --------------------------------------------------------------------
-# --------------------------------------------------------------------
-# This is, actually, an install step, but runs at build time.
-# Adding the loop into install(CODE ...) seems to run only those lines, not the whole CMakeLists.txt
-# Thus, the functions called in *.cmake are not defined at that stage
-# It is not possible to add dependencies to install target as it is not a real target
 # --------------------------------------------------------------------
 install(TARGETS pyGORGON
         LIBRARY
