@@ -11,6 +11,7 @@
 
 #ifndef __APPLE__
     #include <GL/glut.h>
+    #include <GL/glext.h>
 #else
     #include <GLUT/glut.h>
 #endif

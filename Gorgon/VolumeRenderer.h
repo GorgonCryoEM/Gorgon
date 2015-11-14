@@ -12,7 +12,6 @@
 
 #include <iostream>
 #include <GorgonGL.h>
-#include <glext.h>
 #include <string>
 #include <GraphMatch/VectorMath.h>
 #include "Renderer.h"
