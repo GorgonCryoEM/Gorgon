@@ -4,9 +4,7 @@ PROJECT(Gorgon
         LANGUAGES CXX
         )
 
-configure_file(${CMAKE_SOURCE_DIR}/Gorgon/src_py/gorgon.pyw.in
-                ${CMAKE_SOURCE_DIR}/Gorgon/src_py/gorgon.pyw
-               )
+include(cmake/Configure.cmake)
 
 include(cmake/Debug.cmake)
 include(cmake/MacOSX.cmake)
