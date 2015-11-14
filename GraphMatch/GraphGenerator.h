@@ -32,7 +32,7 @@ namespace wustl_mm {
 		};
 
 		int GraphGenerator::GetRandom(int maxNumber) {
-			return (rand() * (maxNumber + 1)) / (RAND_MAX + 1);
+			return ((float)rand() / (float)(RAND_MAX + 1))* (float)(maxNumber + 1);
 		}
 
 		double GraphGenerator::GetRandom(double maxNumber) {

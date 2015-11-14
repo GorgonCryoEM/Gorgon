@@ -1562,7 +1562,7 @@ namespace wustl_mm {
 			switch(subsceneIndex) {
 				case(0):
 					if((ix0 >= 0) && (ix0 <= (int)atoms.size())) {
-						PDBAtom * a = (PDBAtom*)ix0;
+						PDBAtom * a =  & (atoms [ix0]);
 						position = a->GetPosition();
 					}
 					break;

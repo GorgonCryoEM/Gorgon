@@ -147,7 +147,7 @@ namespace wustl_mm {
 		template <class TVertex, class TFace> void TriangleMesh<TVertex, TFace>::SaveFile(string fileName) {
 			FILE * outFile = fopen(fileName.c_str(), "wt");
 			fprintf(outFile, "OFF\n");
-			fprintf(outFile, "%d %d %d\n", (int)vertices.size(), faces.size(), 0);
+			fprintf(outFile, "%d %d %d\n", (int)vertices.size(), (int)faces.size(), 0);
 
 			map<unsigned long long, int> indexedVertices;
 			vector<Vector3DFloat> vertexList;
