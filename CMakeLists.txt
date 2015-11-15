@@ -108,6 +108,8 @@ install(DIRECTORY ${CMAKE_SOURCE_DIR}/Gorgon/src_py/
 add_custom_target(Gorgon
         COMMAND ${CMAKE_COMMAND} -DCOMPONENT=Gorgon -P cmake_install.cmake
         )
+        
+include(cmake/Win_install.cmake)
 # --------------------------------------------------------------------
 #Package Step
 # --------------------------------------------------------------------
