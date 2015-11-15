@@ -94,8 +94,15 @@ endif()
 # --------------------------------------------------------------------
 install(TARGETS pyGORGON
         LIBRARY
-        DESTINATION ${CMAKE_SOURCE_DIR}/Gorgon/src_py/
+        DESTINATION ${CMAKE_BINARY_DIR}/run/
         COMPONENT "Gorgon"
+        )
+
+install(DIRECTORY ${CMAKE_SOURCE_DIR}/Gorgon/src_py/
+        DESTINATION ${CMAKE_BINARY_DIR}/run
+        COMPONENT "Gorgon"
+        FILES_MATCHING
+        PATTERN "*.py"
         )
 
 add_custom_target(Gorgon
