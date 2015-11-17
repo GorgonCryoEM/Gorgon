@@ -119,7 +119,7 @@ elseif(WIN32)
     include(cmake/Win_package.cmake)
 else()
     install(CODE "execute_process(COMMAND pyinstaller ${CMAKE_BINARY_DIR}/run/gorgon.pyw
-                                                        --distpath=${CMAKE_BINARY_DIR}/package/dist
+                                                        --distpath=${CMAKE_BINARY_DIR}/dist
                                                         --clean -y
         WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/run/)"
         COMPONENT "Package"
