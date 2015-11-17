@@ -2,7 +2,7 @@ SET(run_dir     ${CMAKE_BINARY_DIR}/run/  CACHE PATH "The directory to place wor
 SET(package_dir ${CMAKE_BINARY_DIR}/dist/ CACHE PATH "The directory to place Gorgon package")
 
 configure_file(${CMAKE_SOURCE_DIR}/Gorgon/src_py/gorgon.pyw.in
-                ${CMAKE_BINARY_DIR}/run/gorgon.pyw
+                ${run_dir}/gorgon.pyw
                )
 
 if(APPLE)
@@ -15,6 +15,6 @@ endif()
 
 if(APPLE OR WIN32)
     configure_file(${package_setup_file}
-                    ${CMAKE_BINARY_DIR}/run/setup.py
+                    ${run_dir}/setup.py
                    )
 endif()

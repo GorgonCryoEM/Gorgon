@@ -19,7 +19,7 @@ if(WIN32)
 #        message(STATUS "dll: ${dll}")
         
         install(FILES ${dll}
-                DESTINATION ${CMAKE_BINARY_DIR}/run
+                DESTINATION ${run_dir}
                 COMPONENT "Gorgon"
                 )
         

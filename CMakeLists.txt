@@ -94,12 +94,12 @@ endif()
 # --------------------------------------------------------------------
 install(TARGETS pyGORGON
         LIBRARY
-        DESTINATION ${CMAKE_BINARY_DIR}/run/
+        DESTINATION ${run_dir}
         COMPONENT "Gorgon"
         )
 
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/Gorgon/src_py/
-        DESTINATION ${CMAKE_BINARY_DIR}/run
+        DESTINATION ${run_dir}
         COMPONENT "Gorgon"
         FILES_MATCHING
         PATTERN "*.py"
@@ -118,10 +118,10 @@ if(APPLE)
 elseif(WIN32)
     include(cmake/Win_package.cmake)
 else()
-    install(CODE "execute_process(COMMAND pyinstaller ${CMAKE_BINARY_DIR}/run/gorgon.pyw
+    install(CODE "execute_process(COMMAND pyinstaller ${run_dir}/gorgon.pyw
                                                         --distpath=${CMAKE_BINARY_DIR}/dist
                                                         --clean -y
-        WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/run/)"
+        WORKING_DIRECTORY ${run_dir})"
         COMPONENT "Package"
         )
 endif()
