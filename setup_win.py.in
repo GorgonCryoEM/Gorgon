@@ -3,6 +3,9 @@ py2exe package script for gorgon.pyw.
 
 Usage (Windows):
     python setup.py py2exe
+    
+For list of options:
+http://www.py2exe.org/index.cgi/ListOfOptions
 """
 
 from distutils.core import setup
