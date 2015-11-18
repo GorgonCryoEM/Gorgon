@@ -117,11 +117,11 @@ install(CODE "execute_process(COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_SOURCE_DIR}/s
                                                     --bdist-base=${CMAKE_BINARY_DIR}/package/build
                                                     --dist-dir=${CMAKE_BINARY_DIR}/package/dist
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/Gorgon/src_py/)"
-    COMPONENT "Package-Dist"
+        COMPONENT "Package"
     )
 
-add_custom_target(Package-Dist
-        COMMAND ${CMAKE_COMMAND} -DCOMPONENT=Package-Dist -P cmake_install.cmake
+add_custom_target(Package
+        COMMAND ${CMAKE_COMMAND} -DCOMPONENT=Package -P cmake_install.cmake
         )
 
 install(CODE "execute_process(COMMAND ${CMAKE_COMMAND} -E rename
