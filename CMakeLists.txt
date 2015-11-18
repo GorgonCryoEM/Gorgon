@@ -113,6 +113,18 @@ include(cmake/Win_install.cmake)
 # --------------------------------------------------------------------
 #Package Step
 # --------------------------------------------------------------------
+if(APPLE)
+    include(cmake/Mac_package.cmake)
+elseif(WIN32)
+    include(cmake/Win_package.cmake)
+else()
+    install(CODE "execute_process(COMMAND pyinstaller ${CMAKE_BINARY_DIR}/run/gorgon.pyw
+                                                        --distpath=${CMAKE_BINARY_DIR}/package/dist
+                                                        --clean -y
+        WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/run/)"
+        COMPONENT "Package"
+        )
+endif()
 
 add_custom_target(Package
         COMMAND ${CMAKE_COMMAND} -DCOMPONENT=Package -P cmake_install.cmake
