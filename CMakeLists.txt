@@ -113,24 +113,7 @@ include(cmake/Win_install.cmake)
 # --------------------------------------------------------------------
 #Package Step
 # --------------------------------------------------------------------
-install(CODE "execute_process(COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_SOURCE_DIR}/setup.py py2app
-                                                    --bdist-base=${CMAKE_BINARY_DIR}/package/build
-                                                    --dist-dir=${CMAKE_BINARY_DIR}/package/dist
-    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/Gorgon/src_py/)"
-        COMPONENT "Package"
-    )
 
 add_custom_target(Package
         COMMAND ${CMAKE_COMMAND} -DCOMPONENT=Package -P cmake_install.cmake
-        )
-
-install(CODE "execute_process(COMMAND ${CMAKE_COMMAND} -E rename
-                                        package/dist/Gorgon.app/Contents/Frameworks/libpyGORGON.so
-                                        package/dist/Gorgon.app/Contents/Resources/lib/python2.7/lib-dynload/libpyGORGON.so
-    WORKING_DIRECTORY ${CMAKE_BINARY_DIR})"
-    COMPONENT "Package-Dist-Post"
-    )
-
-add_custom_target(Package-Dist-Post
-        COMMAND ${CMAKE_COMMAND} -DCOMPONENT=Package-Dist-Post -P cmake_install.cmake
         )
