@@ -55,27 +55,6 @@ SET(LIB_DIRS
 	/sw/lib
 	)
 
-MACRO(CHECK_REQUIRED_LIB2 upper lower header lower2 header2)
-    FIND_PATH(${upper}_INCLUDE_PATH ${header} $ENV{${upper}DIR}/include ${INCLUDE_DIRS})
-    IF(${upper}_INCLUDE_PATH)
-    ELSE (${upper}_INCLUDE_PATH)
-		FIND_PATH(${upper}_INCLUDE_PATH ${header2} $ENV{${upper}DIR}/include ${INCLUDE_DIRS})
-    ENDIF(${upper}_INCLUDE_PATH)
-    
-    IF(${upper}_INCLUDE_PATH)
-		FIND_LIBRARY(${upper}_LIBRARY NAMES ${lower} ${lower2} PATHS $ENV{${upper}DIR}/lib ${LIB_DIRS})		
-		IF(${upper}_LIBRARY)
-		ELSE(${upper}_LIBRARY)
-			MESSAGE(SEND_ERROR "ERROR: ${upper} not found. please install ${upper} first!")
-		ENDIF(${upper}_LIBRARY)
-    ELSE(${upper}_INCLUDE_PATH)
-		MESSAGE(SEND_ERROR "ERROR: ${upper} not found. please install ${upper} first!")
-    ENDIF(${upper}_INCLUDE_PATH)
-ENDMACRO(CHECK_REQUIRED_LIB2)
-
-MACRO(CHECK_REQUIRED_LIB upper lower header)
-    CHECK_REQUIRED_LIB2(${upper} ${lower} ${header} "" "")
-ENDMACRO(CHECK_REQUIRED_LIB)
 
 CHECK_REQUIRED_LIB(GL GL GL/gl.h)
 CHECK_REQUIRED_LIB(GLU GLU GL/glu.h)
@@ -89,53 +68,6 @@ INCLUDE_DIRECTORIES(. ${GORGON_SOURCE_DIR}
 					${INCLUDE_DIRS}	   
 			) 
 
-MACRO(CHECK_OPTIONAL_LIB upper lower header)
-    FIND_PATH(${upper}_INCLUDE_PATH ${header} $ENV{${upper}DIR}/include ${INCLUDE_DIRS}) 
-    
-    IF(${upper}_INCLUDE_PATH)
-        FIND_LIBRARY(${upper}_LIBRARY NAMES ${lower} PATHS $ENV{${upper}DIR}/lib ${LIB_DIRS})
-		
-        IF(${upper}_LIBRARY)
-			ADD_DEFINITIONS(-DEM_${upper})
-			INCLUDE_DIRECTORIES(${${upper}_INCLUDE_PATH})
-        ELSE(${upper}_LIBRARY)    
-			#MESSAGE("WARNING: ${upper} not found, ENABLE_${upper} is set back to OFF")
-			OPTION(ENABLE_${upper} "if enable ${upper} support" OFF)
-        ENDIF(${upper}_LIBRARY)
-		
-    ELSE(${upper}_INCLUDE_PATH)
-		#MESSAGE("WARNING: ${upper} not found, ENABLE_${upper} is set back to OFF")
-        OPTION(ENABLE_${upper} "if enable ${upper} support" OFF)
-    ENDIF(${upper}_INCLUDE_PATH)
-ENDMACRO(CHECK_OPTIONAL_LIB)
-
-MACRO(CHECK_PYTHON)
-	SET(PYTHON_FOUND FALSE)
-	
-	FOREACH(PYVER ${ARGV})
-		IF(NOT PYTHON_FOUND)			
-			FIND_PATH(PYTHON_INCLUDE_PATH Python.h
-				$ENV{PYTHON_ROOT}/include/python${PYVER}
-				/usr/local/include/python${PYVER}
-				/usr/include/python${PYVER})
-			
-			FIND_LIBRARY(PYTHON_LIBRARY NAMES python${PYVER} PATHS
-				$ENV{PYTHON_ROOT}/lib/python${PYVER}/config
-				/usr/local/lib/python${PYVER}/config
-				/usr/lib/python${PYVER}/config
-				/usr/lib64/python${PYVER}/config
-				$ENV{PYTHON_ROOT}/lib /usr/local/lib /usr/lib)
-			
-			IF(PYTHON_INCLUDE_PATH)
-				IF(PYTHON_LIBRARY)
-					SET(PYTHON_FOUND TRUE)
-				ENDIF(PYTHON_LIBRARY)
-			ENDIF(PYTHON_INCLUDE_PATH)
-			
-		ENDIF(NOT PYTHON_FOUND)
-    ENDFOREACH(PYVER)
-ENDMACRO(CHECK_PYTHON)
-				   
 IF(ENABLE_PYTHON)
 	
    	CHECK_PYTHON($ENV{PYTHON_VERSION} 2.7 2.5 2.4 2.3 2.2)
