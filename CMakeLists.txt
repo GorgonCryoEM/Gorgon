@@ -73,13 +73,23 @@ if(ENABLE_CMAKE_DEBUG_OUTPUT)
       message("LIBS='${dir}'")
     endforeach()
 endif()
-#INSTALL_TARGETS(/lib GORGON)
+# --------------------------------------------------------------------
+#Install Step
+# --------------------------------------------------------------------
+# --------------------------------------------------------------------
+# This is, actually, an install step, but runs at build time.
+# Adding the loop into install(CODE ...) seems to run only those lines, not the whole CMakeLists.txt
+# Thus, the functions called in *.cmake are not defined at that stage
+# It is not possible to add dependencies to install target as it is not a real target
+# --------------------------------------------------------------------
+install(TARGETS pyGORGON
+        LIBRARY
+        DESTINATION ${CMAKE_SOURCE_DIR}/Gorgon/src_py/
+        COMPONENT "Gorgon"
+        )
+
+add_custom_target(Gorgon
+        COMMAND ${CMAKE_COMMAND} -DCOMPONENT=Gorgon -P cmake_install.cmake
+        )
 
 
-
-
-
-
-
-INSTALL_TARGETS(/lib pyGORGON)
-#INSTALL_FILES(/include "^.+\\.h$")
