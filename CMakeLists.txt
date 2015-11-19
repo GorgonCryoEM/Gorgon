@@ -28,6 +28,7 @@ else()
 endif()
 
 ADD_LIBRARY(pyGORGON MODULE Gorgon/src_cpp/LibPyGorgon.cpp)
+set(CMAKE_CXX_FLAGS_DEBUG "-DGORGON_DEBUG")
 # --------------------------------------------------------------------
 # Find dependencies
 # --------------------------------------------------------------------
