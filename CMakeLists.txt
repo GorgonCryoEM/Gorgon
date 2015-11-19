@@ -40,6 +40,23 @@ else()
     set( GORGON_TARGET_ARCH 32 CACHE INTERNAL "Target architecture")
 endif()
 
+# --------------------------------------------------------------------
+# Find dependencies
+# --------------------------------------------------------------------
+include(cmake/functions.cmake)
+
+set( EXTERNAL_PROJECTS
+        OpenGL
+        GLUT
+        Python
+        Boost
+        FFTW3F
+        )
+
+foreach(proj ${EXTERNAL_PROJECTS})
+    include(cmake/${proj}.cmake)
+endforeach()
+# --------------------------------------------------------------------
 if(ENABLE_CMAKE_DEBUG_OUTPUT)
     message("LIBRARY_OUTPUT_PATH= ${LIBRARY_OUTPUT_PATH}")
 endif()
@@ -55,11 +72,6 @@ SET(LIB_DIRS
 	/sw/lib
 	)
 
-
-CHECK_REQUIRED_LIB(GL GL GL/gl.h)
-CHECK_REQUIRED_LIB(GLU GLU GL/glu.h)
-CHECK_REQUIRED_LIB(GLUT glut GL/glut.h)
-CHECK_REQUIRED_LIB(GLUT glext GL/glext.h)
 
 INCLUDE_DIRECTORIES(. ${GORGON_SOURCE_DIR}
 					${GORGON_SOURCE_DIR}/ExternalLibraries
