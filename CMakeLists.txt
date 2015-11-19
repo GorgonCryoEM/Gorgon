@@ -94,12 +94,12 @@ endif()
 # --------------------------------------------------------------------
 install(TARGETS pyGORGON
         LIBRARY
-        DESTINATION ${CMAKE_BINARY_DIR}/run/
+        DESTINATION ${run_dir}
         COMPONENT "Gorgon"
         )
 
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/Gorgon/src_py/
-        DESTINATION ${CMAKE_BINARY_DIR}/run
+        DESTINATION ${run_dir}
         COMPONENT "Gorgon"
         FILES_MATCHING
         PATTERN "*.py"
@@ -113,24 +113,19 @@ include(cmake/Win_install.cmake)
 # --------------------------------------------------------------------
 #Package Step
 # --------------------------------------------------------------------
-install(CODE "execute_process(COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_SOURCE_DIR}/setup.py py2app
-                                                    --bdist-base=${CMAKE_BINARY_DIR}/package/build
-                                                    --dist-dir=${CMAKE_BINARY_DIR}/package/dist
-    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/Gorgon/src_py/)"
-    COMPONENT "Package-Dist"
-    )
-
-add_custom_target(Package-Dist
-        COMMAND ${CMAKE_COMMAND} -DCOMPONENT=Package-Dist -P cmake_install.cmake
+if(APPLE)
+    include(cmake/Mac_package.cmake)
+elseif(WIN32)
+    include(cmake/Win_package.cmake)
+else()
+    install(CODE "execute_process(COMMAND pyinstaller ${run_dir}/gorgon.pyw
+                                                        --distpath=${package_dir}
+                                                        --clean -y
+        WORKING_DIRECTORY ${run_dir})"
+        COMPONENT "Package"
         )
+endif()
 
-install(CODE "execute_process(COMMAND ${CMAKE_COMMAND} -E rename
-                                        package/dist/Gorgon.app/Contents/Frameworks/libpyGORGON.so
-                                        package/dist/Gorgon.app/Contents/Resources/lib/python2.7/lib-dynload/libpyGORGON.so
-    WORKING_DIRECTORY ${CMAKE_BINARY_DIR})"
-    COMPONENT "Package-Dist-Post"
-    )
-
-add_custom_target(Package-Dist-Post
-        COMMAND ${CMAKE_COMMAND} -DCOMPONENT=Package-Dist-Post -P cmake_install.cmake
+add_custom_target(Package
+        COMMAND ${CMAKE_COMMAND} -DCOMPONENT=Package -P cmake_install.cmake
         )
