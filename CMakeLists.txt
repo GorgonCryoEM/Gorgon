@@ -59,6 +59,9 @@ list(APPEND GORGON_INCLUDE_DIRS
 include_directories(${GORGON_INCLUDE_DIRS})
 target_link_libraries(pyGORGON ${GORGON_LIBRARIES})
 
+#set(cxx11_flags "-std=c++0x --stdlib=libc++")
+#list( APPEND CMAKE_CXX_FLAGS           ${cxx11_flags})
+#list( APPEND CMAKE_SHARED_LINKER_FLAGS ${cxx11_flags})
 
 if(ENABLE_CMAKE_DEBUG_OUTPUT)
     get_property(dirs DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY INCLUDE_DIRECTORIES)
