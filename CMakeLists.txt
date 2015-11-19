@@ -4,19 +4,6 @@ PROJECT(Gorgon
         LANGUAGES CXX
         )
 
-SET(INCLUDE_DIRS 
-	${GORGON_SOURCE_DIR}
-	${GORGON_SOURCE_DIR}/ExternalLibraries
-	$ENV{HOME}/include 
-	/usr/local/include
-	/usr/local/cuda/include
-	/usr/include 
-	/sw/include
-	/usr/X11R6/include
-	${GLUT_INCLUDE_PATH}
-	${GLU_INCLUDE_PATH}
-	${GL_INCLUDE_PATH}
-	)
 include(cmake/Debug.cmake)
 include(cmake/MacOSX.cmake)
 include(cmake/Windows.cmake)
@@ -61,15 +48,11 @@ if(ENABLE_CMAKE_DEBUG_OUTPUT)
     message("LIBRARY_OUTPUT_PATH= ${LIBRARY_OUTPUT_PATH}")
 endif()
 
-SET(LIB_DIRS 
-	$ENV{GORGONDIR}/lib 
-	$ENV{HOME}/lib 
-	${PLATFORMLIB} 
-	/usr/local/lib
-	/usr/local/cuda/lib
-	/usr/lib64 
-	/usr/lib 
-	/sw/lib
+list(APPEND GORGON_INCLUDE_DIRS 
+	${CMAKE_CURRENT_SOURCE_DIR}
+	${GORGON_EXTERNAL_LIBRARIES_DIR}
+#	TODO: Is this line necessary? Removing works on Mac 
+	${GORGON_EXTERNAL_LIBRARIES_DIR}/GL
 	)
 
 
