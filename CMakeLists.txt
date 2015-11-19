@@ -27,6 +27,7 @@ else()
     set( GORGON_TARGET_ARCH 32 CACHE INTERNAL "Target architecture")
 endif()
 
+ADD_LIBRARY(pyGORGON MODULE Gorgon/src_cpp/LibPyGorgon.cpp)
 # --------------------------------------------------------------------
 # Find dependencies
 # --------------------------------------------------------------------
@@ -72,19 +73,12 @@ if(ENABLE_CMAKE_DEBUG_OUTPUT)
       message("LIBS='${dir}'")
     endforeach()
 endif()
-#ADD_LIBRARY(GORGON SHARED ${LIB_GORGON_SOURCE})
-#TARGET_LINK_LIBRARIES(GORGON ${GL_LIBRARY} ${GLU_LIBRARY} ${GLUT_LIBRARY} m)
-
 #INSTALL_TARGETS(/lib GORGON)
 
 
 
 
-ADD_LIBRARY(pyGORGON SHARED Gorgon/src_cpp/LibPyGorgon.cpp)
 
-#ADD_EXECUTABLE(test test.cpp)
-#TARGET_LINK_LIBRARIES(test GORGON)
-#INSTALL_TARGETS($/ test)
 
 
 INSTALL_TARGETS(/lib pyGORGON)
