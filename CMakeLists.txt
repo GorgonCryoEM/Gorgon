@@ -4,10 +4,6 @@ PROJECT(Gorgon
         LANGUAGES CXX
         )
 
-INCLUDE(${CMAKE_ROOT}/Modules/CheckIncludeFiles.cmake)
-INCLUDE(${CMAKE_ROOT}/Modules/CheckFunctionExists.cmake)
-INCLUDE(${CMAKE_ROOT}/Modules/CheckTypeSize.cmake)
-
 SET(INCLUDE_DIRS 
 	${GORGON_SOURCE_DIR}
 	${GORGON_SOURCE_DIR}/ExternalLibraries
@@ -21,6 +17,10 @@ SET(INCLUDE_DIRS
 	${GLU_INCLUDE_PATH}
 	${GL_INCLUDE_PATH}
 	)
+include(cmake/Debug.cmake)
+include(cmake/MacOSX.cmake)
+include(cmake/Windows.cmake)
+
 # --------------------------------------------------------------------
 # Number of preocessors/cores
 # --------------------------------------------------------------------
@@ -40,6 +40,9 @@ else()
     set( GORGON_TARGET_ARCH 32 CACHE INTERNAL "Target architecture")
 endif()
 
+if(ENABLE_CMAKE_DEBUG_OUTPUT)
+    message("LIBRARY_OUTPUT_PATH= ${LIBRARY_OUTPUT_PATH}")
+endif()
 
 SET(LIB_DIRS 
 	$ENV{GORGONDIR}/lib 
