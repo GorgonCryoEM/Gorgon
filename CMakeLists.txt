@@ -124,6 +124,10 @@ else()
         WORKING_DIRECTORY ${run_dir})"
         COMPONENT "Package"
         )
+    install(CODE "execute_process(COMMAND sh ${CMAKE_SOURCE_DIR}/cmake/post-pyinstaller.sh
+        WORKING_DIRECTORY ${package_dir}/gorgon)"
+        COMPONENT "Package"
+        )
 endif()
 
 add_custom_target(Package
