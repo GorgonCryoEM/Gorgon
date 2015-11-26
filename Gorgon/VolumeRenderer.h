@@ -11,8 +11,7 @@
 
 
 #include <iostream>
-#include <glut.h>
-#include <glext.h>
+#include <GorgonGL.h>
 #include <string>
 #include <GraphMatch/VectorMath.h>
 #include "Renderer.h"
@@ -381,7 +380,7 @@ namespace wustl_mm {
 					Vector3DFloat vertex;
 					// The outside box
 
-					if((viewingType == VIEWING_TYPE_CROSS_SECTION)) {
+					if(viewingType == VIEWING_TYPE_CROSS_SECTION) {
 						glBegin(GL_LINES);
 						for(unsigned int i = 0; i < cuttingMesh->edges.size(); i++) {
 							if(cuttingMesh->edges[i].faceIds.size() == 1) {
