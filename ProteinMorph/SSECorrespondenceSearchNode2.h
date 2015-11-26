@@ -2,15 +2,6 @@
 // Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 // Description:   A search node in the A* search used to find the correspondence between feature pairs.
 
-// CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
-//
-// History Log: 
-//   $Log$
 
 #ifndef PROTEINMORPH_SSE_CORRESPONDENCE_SEARCH_NODE2_H
 #define PROTEINMORPH_SSE_CORRESPONDENCE_SEARCH_NODE2_H

@@ -2,21 +2,6 @@
 # Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 # Description:   A widget to crop the volume 
 
-# CVS Meta Information: 
-#   $Source$
-#   $Revision$
-#   $Date$
-#   $Author$
-#   $State$
-#
-# History Log: 
-#   $Log$
-#   Revision 1.2  2008/11/28 04:36:17  ssa1
-#   Removing error message if pyopengl does not exist.  (To make executable building easier to debug)
-#
-#   Revision 1.1  2008/11/19 17:53:43  ssa1
-#   Removing printfs, and adding cropping
-#
 
 from PyQt4 import QtCore, QtGui
 from ui_dialog_volume_crop import Ui_DialogVolumeCrop

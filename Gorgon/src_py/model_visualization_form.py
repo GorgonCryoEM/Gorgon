@@ -2,39 +2,6 @@
 # Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 # Description:   A dialog box which can be used to modify the visualization options of a loaded model 
 
-# CVS Meta Information: 
-#   $Source$
-#   $Revision$
-#   $Date$
-#   $Author$
-#   $State$
-#
-# History Log: 
-#   $Log$
-#   Revision 1.15  2009/12/24 03:24:52  ssa1
-#   Fixing visualization order when loading dock widgets
-#
-#   Revision 1.14  2009/12/22 01:02:24  schuhs
-#   Adding support for beta sheet matching to the SSE correspondence search algorithm
-#
-#   Revision 1.13  2009/06/24 21:33:48  ssa1
-#   SSE Builder Functionality: Sheet building and better camera functionality when loading new data.
-#
-#   Revision 1.12  2008/12/02 04:50:38  ssa1
-#   saving screen realestate
-#
-#   Revision 1.11  2008/11/20 18:33:05  ssa1
-#   Using the origin of the MRC volume
-#
-#   Revision 1.10  2008/11/13 20:54:40  ssa1
-#   Using the correct scale when loading volumes
-#
-#   Revision 1.9  2008/11/06 05:29:04  ssa1
-#   CGI submission milestone for Interactive Skeletonization, and theme support, and fixing (hopefully) mac-os flicker bug
-#
-#   Revision 1.8  2008/06/18 18:15:41  ssa1
-#   Adding in CVS meta data
-#
 
 from PyQt4 import QtCore, QtGui
 from ui_dialog_model_visualization import Ui_DialogModelVisualization
