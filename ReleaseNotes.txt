@@ -1,3 +1,13 @@
+Version 2.2.0
+  Code moved to GitHub
+  Issue reporting system on GitHub to report bugs, request features
+  Cross-platform build system, including configure, build, install and package steps
+  External libraries cleaned up and moved to new repository and set up as submodule
+  Some programs and files not needed for building Gorgon moved to new repository Utilities
+  New Wiki page on GitHub that is also a submodule to keep the code and the documentation in sync
+  New macro for debugging: GORGON_DEBUG
+  Bug fixes
+	
 Version 2.0.1b
   Export of predicted correspondences so that it can be analyzed by Rosetta
 	
