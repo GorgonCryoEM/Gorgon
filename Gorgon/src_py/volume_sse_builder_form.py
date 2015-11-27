@@ -2,63 +2,6 @@
 # Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 # Description:   A widget to build SSEs from SSE Hunter results
 
-# CVS Meta Information: 
-#   $Source$
-#   $Revision$
-#   $Date$
-#   $Author$
-#   $State$
-#
-# History Log: 
-#   $Log$
-#   Revision 1.16  2010/07/09 03:30:20  coleman.r
-#   auto helix building
-#
-#   Revision 1.15  2010/02/11 23:19:13  ssa1
-#   Allowing the ability to save pseudoatoms generated from SSEHunter
-#
-#   Revision 1.14  2010/01/16 22:34:29  colemanr
-#   using the new SSEHunterEngine Python class
-#
-#   Revision 1.13  2010/01/16 20:05:16  colemanr
-#   moving the total score calculation of SSEHunter to Python
-#
-#   Revision 1.12  2010/01/14 23:34:25  ssa1
-#   Allowing the deletion of SSEs from the SSEBuilder window
-#
-#   Revision 1.11  2010/01/10 05:31:43  colemanr
-#   PDBAtoms now store their correlation, skeleton, and geometry scores. Changing the weighting for these three scores in the GUI now changes the total score for each pseudoatom.
-#
-#   Revision 1.10  2009/12/31 06:09:09  ssa1
-#   Fixing bug where Helix save is disabled when helix is created using SSEBuilder
-#
-#   Revision 1.9  2009/12/28 19:22:05  ssa1
-#   Fixing SSE Builder being disabled when model is unloaded.
-#
-#   Revision 1.8  2009/12/24 07:25:07  ssa1
-#   Refactoring child window behavior.. Using base classes to encapsulate common behavior
-#
-#   Revision 1.7  2009/09/21 19:03:22  ssa1
-#   Linear least squares fit implementation, and using it in helix positioning of SSE Builder
-#
-#   Revision 1.6  2009/09/02 18:02:39  ssa1
-#   Moving SSEHunter to the SSEViewer menu, and adding checks for loading up volumes and skeletons
-#
-#   Revision 1.5  2009/09/02 17:38:44  ssa1
-#   BugFix: Exception when clicking add helix / add sheet
-#
-#   Revision 1.4  2009/08/10 20:03:40  ssa1
-#   SSEHunter interfaced into Gorgon
-#
-#   Revision 1.3  2009/06/24 21:33:48  ssa1
-#   SSE Builder Functionality: Sheet building and better camera functionality when loading new data.
-#
-#   Revision 1.2  2009/06/23 16:50:34  ssa1
-#   Adding in SSEBuilder Functionality: Saving helix as WRL and SSE files
-#
-#   Revision 1.1  2009/06/22 20:17:27  ssa1
-#   Adding in SSEBuilder Functionality: Selection to Helix functionality
-#
 
 from PyQt4 import QtCore, QtGui
 from ui_dialog_volume_sse_builder import Ui_DialogVolumeSSEBuilder

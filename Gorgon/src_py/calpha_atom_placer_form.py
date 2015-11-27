@@ -2,58 +2,6 @@
 # Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 # Description:   A widget can be used to place c-alpha atoms 
 
-# CVS Meta Information: 
-#   $Source$
-#   $Revision$
-#   $Date$
-#   $Author$
-#   $State$
-#
-# History Log: 
-#   $Log$
-#   Revision 1.17  2009/08/19 15:24:08  ssa1
-#   Bug Fix: Removing error when loading manual atom placement form without loading a calpha sequence
-#
-#   Revision 1.16  2009/03/31 21:40:13  ssa1
-#   Refactoring: Splitting seq_model\SequenceView.py into subclasses
-#
-#   Revision 1.15  2008/12/02 01:08:44  colemanr
-#   Opens on the right.
-#
-#   Revision 1.14  2008/11/20 21:52:10  ssa1
-#   Fixing manual placement form coordinate space bug
-#
-#   Revision 1.13  2008/11/14 23:06:54  colemanr
-#   now makes use of CAlphaViewer.strucPred in addition to CAlphaViewer.main_chain
-#
-#   Revision 1.12  2008/11/13 01:02:08  colemanr
-#   removed a completed "#TODO: ..." comment
-#
-#   Revision 1.11  2008/11/10 19:35:21  colemanr
-#   Modified to work with the updated CAlphaRenderer.h--no longer need to
-#   delete and re-add atoms to the renderer to display changes
-#
-#   Revision 1.10  2008/11/04 16:09:45  colemanr
-#   no longer import ui_dialog_calpha_atom_placer - coded by hand now
-#
-#   Revision 1.9  2008/10/30 21:13:26  colemanr
-#   no longer relies on deprecated GAtom objects, displays the correct
-#   residue symbol for the selected index, no longer depends on the output
-#   of the ui file & now has tabs to save screen space and show the most
-#   common options by default
-#
-#   Revision 1.8  2008/08/27 15:26:52  marshm
-#   Updates to CAlphaSequenceView.  Updated coloring scheme for correspondence matches.
-#
-#   Revision 1.7  2008/07/28 16:19:22  ssa1
-#   Adding in correspondance data repository
-#
-#   Revision 1.6  2008/07/01 13:41:39  marshm
-#   made changes to accomodate seq_model.py:Chain object for calpha-backbone models
-#
-#   Revision 1.5  2008/06/18 18:15:41  ssa1
-#   Adding in CVS meta data
-#
 
 from PyQt4 import QtCore, QtGui
 from libpyGORGON import PDBAtom, Vector3DFloat

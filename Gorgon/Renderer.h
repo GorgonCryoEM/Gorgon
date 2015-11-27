@@ -2,60 +2,12 @@
 // Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 // Description:   The base renderer.  This has to be extended by all renderer classes.
 
-// CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
-//
-// History Log: 
-//   $Log$
-//   Revision 1.34  2010/06/23 13:02:56  ssa1
-//   Allowing users to reset a flexible fitting if need be.
-//
-//   Revision 1.33  2010/06/17 19:42:38  ssa1
-//   Generic method for setting object specific coloring
-//
-//   Revision 1.32  2010/05/27 17:10:19  ssa1
-//   Better color control for all atom visualization
-//
-//   Revision 1.31  2010/05/27 04:41:54  ssa1
-//   Side chain visualization on Gorgon
-//
-//   Revision 1.30  2010/05/26 20:17:35  ssa1
-//   Adding in display styles for atom rendering.
-//
-//   Revision 1.29  2009/07/01 21:25:13  ssa1
-//   Centering the volume cropped using a radius around the point selected by the atom selection tool.
-//
-//   Revision 1.28  2008/11/20 18:33:00  ssa1
-//   Using the origin of the MRC volume
-//
-//   Revision 1.27  2008/11/13 20:54:40  ssa1
-//   Using the correct scale when loading volumes
-//
-//   Revision 1.26  2008/11/06 20:34:23  ssa1
-//   Proper lighting for bounding boxes
-//
-//   Revision 1.25  2008/10/28 22:18:05  ssa1
-//   Changing visualization of meshes, and sketches
-//
-//   Revision 1.24  2008/10/16 02:39:57  ssa1
-//   Modifying the sketch behavior to supplement line drawing instead of replace it.
-//
-//   Revision 1.23  2008/09/29 20:36:35  ssa1
-//   Drawing skeletal curves as cylinders and spheres
-//
-//   Revision 1.22  2008/09/29 16:01:17  ssa1
-//   Adding in CVS meta information
-//
 
 #ifndef GORGON_RENDERER_H
 #define GORGON_RENDERER_H
 
 #include <string>
-#include <glut.h>
+#include <GorgonGL.h>
 #include <Foundation/OpenGLUtils.h>
 #include <MathTools/Vector3D.h>
 #include <MathTools/MathLib.h>

@@ -2,39 +2,6 @@
 // Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 // Description:   Performs interactive skeletonization of a volume
 
-// CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
-//
-// History Log: 
-//   $Log$
-//   Revision 1.26  2008/11/06 05:29:04  ssa1
-//   CGI submission milestone for Interactive Skeletonization, and theme support, and fixing (hopefully) mac-os flicker bug
-//
-//   Revision 1.25  2008/10/29 19:26:26  ssa1
-//   Reducing memory footprint, Increasing performance and adding volume normalization
-//
-//   Revision 1.24  2008/10/28 18:46:52  ssa1
-//   Fixing octree neighbor search, and changing the structure tensor cost function
-//
-//   Revision 1.23  2008/10/15 12:23:50  ssa1
-//   Modifying the cost function for sketch interraction, and changing mousebehavior to trigger different interaction modes
-//
-//   Revision 1.22  2008/10/14 14:59:33  ssa1
-//   Adding in sketching mode for interactive skeletonization
-//
-//   Revision 1.21  2008/10/10 14:25:55  ssa1
-//   Setting the cost functions to scale with the edge length
-//
-//   Revision 1.20  2008/10/08 16:43:19  ssa1
-//   Interactive skeletonization changes
-//
-//   Revision 1.19  2008/09/29 16:30:15  ssa1
-//   Adding in CVS meta information
-//
 
 #ifndef GRAYSKELETONCPP_INTERACTIVE_SKELETONIZER_H
 #define GRAYSKELETONCPP_INTERACTIVE_SKELETONIZER_H
@@ -133,7 +100,7 @@ namespace wustl_mm {
 			delete skeleton;
 
 			appTimeManager.PopAndDisplayTime("Creating graphs: %f seconds!\n"); 
-			printf("Graph size: %d nodes, %d edges\n", graph->vertices.size(), graph->edges.size());
+			printf("Graph size: %d nodes, %d edges\n", (int)graph->vertices.size(), (int)graph->edges.size());
 		}
 
 

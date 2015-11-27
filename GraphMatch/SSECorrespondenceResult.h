@@ -2,18 +2,6 @@
 // Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 // Description:   The storage structure for the correspondence result between the SSE element and the sequence.
 
-// CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
-//
-// History Log: 
-//   $Log$
-//   Revision 1.4  2008/09/29 16:19:30  ssa1
-//   Adding in CVS meta information
-//
 
 #ifndef GRAPHMATCH_SSE_CORRESPONDENCE_RESULT_H
 #define GRAPHMATCH_SSE_CORRESPONDENCE_RESULT_H

@@ -2,42 +2,6 @@
 // Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 // Description:   An engine for finding the correspondance between secondary structure elements and the amino acid sequence.
 
-// CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
-//
-// History Log: 
-//   $Log$
-//   Revision 1.13  2010/03/27 01:08:21  schuhs
-//   Adding code (commented out) to draw straight line paths across sheets and through helices.
-//
-//   Revision 1.12  2009/12/22 01:02:24  schuhs
-//   Adding support for beta sheet matching to the SSE correspondence search algorithm
-//
-//   Revision 1.11  2009/12/07 21:34:36  ssa1
-//   Finding Rotation using SVD, and removing compiler warnings
-//
-//   Revision 1.10  2009/09/29 19:23:39  ssa1
-//   Fixing indexing bugs when performing sse correspondence search.
-//
-//   Revision 1.9  2009/09/21 14:54:18  ssa1
-//   Steps towards exporting to Rosetta
-//
-//   Revision 1.8  2009/09/17 20:00:24  ssa1
-//   Steps towards exporting to Rosetta
-//
-//   Revision 1.7  2008/12/01 23:42:55  ssa1
-//   Setting theming support for backbone trace
-//
-//   Revision 1.6  2008/11/07 21:22:25  ssa1
-//   Fixing memory corruption errors when python garbage collects c++ objects
-//
-//   Revision 1.5  2008/09/29 16:01:17  ssa1
-//   Adding in CVS meta information
-//
 
 #ifndef GORGON_SSE_CORRESPONDENCE_ENGINE_H
 #define GORGON_SSE_CORRESPONDENCE_ENGINE_H
@@ -50,7 +14,7 @@
 #include <set>
 #include "MeshRenderer.h" // to include Draw function
 #include "Renderer.h" // to include DrawSphere function
-#include <glut.h>
+#include <GorgonGL.h>
 #include <Foundation/StringUtils.h>
 
 using namespace wustl_mm::GraphMatch;

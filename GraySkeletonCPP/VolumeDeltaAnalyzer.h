@@ -2,18 +2,6 @@
 // Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 // Description:   Analyzes the difference between two volumes
 
-// CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
-//
-// History Log: 
-//   $Log$
-//   Revision 1.8  2008/09/29 16:30:15  ssa1
-//   Adding in CVS meta information
-//
 
 #ifndef GRAYSKELETONCPP_VOLUME_DELTA_ANALYZER_H
 #define GRAYSKELETONCPP_VOLUME_DELTA_ANALYZER_H
@@ -341,4 +329,4 @@ namespace wustl_mm {
 }
 
 
-#endif;
+#endif

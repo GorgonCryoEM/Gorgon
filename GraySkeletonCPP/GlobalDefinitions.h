@@ -2,15 +2,6 @@
 // Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 // Description:   Stores the global definitions for the GRAYSKELETONCPP module
 
-// CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
-//
-// History Log: 
-//   $Log$
 
 #ifndef GRAYSKELETONCPP_GLOBAL_DEFINITIONS_H
 #define GRAYSKELETONCPP_GLOBAL_DEFINITIONS_H
@@ -19,7 +10,9 @@
 
 //#define SAVE_INTERMEDIATE_RESULTS
 
-#define round(f) ((f >= 0)?(int)(f + .5):(int)(f - .5))
+double round(double f){
+	return (f >= 0?(int)(f + .5):(int)(f - .5));
+}
 
 using namespace wustl_mm::Foundation;
 

@@ -2,22 +2,11 @@
 // Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 // Description:   A set of global definitions for the MATHTOOLS module
 
-// CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
-//
-// History Log: 
-//   $Log$
 
 #ifndef BASIC_DEFINES_H
 #define BASIC_DEFINES_H
 
-#ifdef _WIN32
-	#define round(f) ((f >= 0)?(int)(f + .5):(int)(f - .5))
-#endif
+double round(double f);
 
 namespace wustl_mm {
 	namespace MathTools {

@@ -2,111 +2,6 @@
 // Author:        Originally written in python by Matthew Baker (mlbaker@gmail.com).. Rewritten in C++ by Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 // Description:   C++ Implementation of SSEHunter
 
-// CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
-//
-// History Log: 
-//   $Log$
-//   Revision 1.30  2011/04/17 00:02:32  coleman.r
-//   some code documentation
-//
-//   Revision 1.29  2011/04/15 23:36:21  coleman.r
-//   got pseudoatom creation to be the same as in EMAN -- < not <= in for loops
-//
-//   Revision 1.28  2011/04/14 22:26:59  coleman.r
-//   getting Skeleton scoring algorithm closer to the algorithm used in EMAN1
-//
-//   Revision 1.27  2010/07/08 19:38:31  coleman.r
-//   pseudoatoms named "CA" instead of "C", so they display in the CAlphaRenderer
-//
-//   Revision 1.26  2010/03/05 20:30:22  ssa1
-//   Fixing loading of helices using .SSE files
-//
-//   Revision 1.25  2010/02/27 05:19:06  colemanr
-//   CCF runs ~2x faster than last commit; added MCF, which takes about twice as long as CCF, but gives better results often
-//
-//   Revision 1.24  2010/02/25 16:37:27  colemanr
-//   return zero for radial profile functions for radii that would give values < 1E-4 if calculated (for speed); HelixCorrelation() thresholding and normalization steps to match the EMAN1 helixHunter2.C algorithm
-//
-//   Revision 1.23  2010/02/24 19:20:27  colemanr
-//   template cylinders now have axis along the z axis of a coordinate system rotated by alt and az -- runs faster than specifying an axis unit vector and calculating cross products and dot products
-//
-//   Revision 1.22  2010/02/20 14:20:08  colemanr
-//   HelixCorrelation() modifications
-//
-//   Revision 1.21  2010/01/16 22:29:17  colemanr
-//   trivial
-//
-//   Revision 1.20  2010/01/16 20:05:15  colemanr
-//   moving the total score calculation of SSEHunter to Python
-//
-//   Revision 1.19  2010/01/15 02:12:57  colemanr
-//   changing public/private for functions that will be wrapped in Python
-//
-//   Revision 1.18  2010/01/12 17:06:45  colemanr
-//   fixed HelixCorrelation() array bounds errors on bestCCF object
-//
-//   Revision 1.17  2010/01/10 05:31:43  colemanr
-//   PDBAtoms now store their correlation, skeleton, and geometry scores. Changing the weighting for these three scores in the GUI now changes the total score for each pseudoatom.
-//
-//   Revision 1.16  2010/01/06 03:48:13  colemanr
-//   helix correlation score fixes
-//
-//   Revision 1.15  2009/12/25 17:32:21  colemanr
-//   fixed runtime error if alt and az volumes are not used
-//   fixed various compiler warning messages
-//
-//   Revision 1.14  2009/12/21 22:03:16  ssa1
-//   Checking in FFTW windows binaries
-//
-//   Revision 1.13  2009/12/21 20:38:42  colemanr
-//   HelixCorrelation() normalizes the output map to values between zero and one, now.
-//   Added AddHelixCorrelationWeights()
-//   Added FFTW3 conditional compilation
-//
-//   Revision 1.12  2009/12/19 05:49:55  colemanr
-//   SSEHunter::HelixCorrelation() now uses float arrays not volumes to hold the template cylinder.
-//   Added SSEHunter::ApplyTemplateHelix(float map[], ...).
-//   HelixCorrelation() now does proper complex number multiplication, and it no longer has 2 memory leaks.
-//
-//   Revision 1.11  2009/12/17 23:15:45  colemanr
-//   fixed a memory leak in SSEHunter::HelixCorrelation()
-//
-//   Revision 1.10  2009/12/09 21:17:06  colemanr
-//   Cylinder's can be generated with any orientation, now. Added helix correlation using cylinders to represent alpha-helix density.
-//
-//   Revision 1.9  2009/11/03 18:05:10  colemanr
-//   bug-fix for AtomsToVolumeBySummation; changed names for radial profile functions
-//
-//   Revision 1.8  2009/11/02 19:48:07  colemanr
-//   using round() rather than Round() and added an include to get NonManifoldMesh_Annotated
-//
-//   Revision 1.7  2009/10/30 06:12:37  colemanr
-//   added functions used to calculate a template helix
-//
-//   Revision 1.6  2009/10/28 21:23:49  colemanr
-//   added AtomsToVolumeBySummation based on EMAN2's PointArray::pdb2mrc_by_summation
-//
-//   Revision 1.5  2009/10/13 18:09:34  ssa1
-//   Refactoring Volume.h
-//
-//   Revision 1.4  2009/10/08 23:29:10  colemanr
-//   I added functions that will create a cylinder Volume with density resembling
-//   that of an alpha helix.
-//
-//   Revision 1.3  2009/08/26 14:58:55  ssa1
-//   Adding in Flexible fitting clique search
-//
-//   Revision 1.2  2009/08/10 20:03:40  ssa1
-//   SSEHunter interfaced into Gorgon
-//
-//   Revision 1.1  2009/08/10 13:54:38  ssa1
-//   Adding initial ssehunter program
-//
 
 #ifndef PROTEINMORPH_SSE_HUNTER_H
 #define PROTEINMORPH_SSE_HUNTER_H
@@ -445,7 +340,7 @@ namespace wustl_mm {
 			float score;
 			for(unsigned int i = 0; i < atomVolumePositions.size(); i++) {
 				index = maskVol->getIndex(atomVolumePositions[i].X() + offset, atomVolumePositions[i].Y() + offset, atomVolumePositions[i].Z() + offset);
-				eigens[index];
+
 				x = eigens[index].values[0];
 				y = eigens[index].values[1];
 				z = eigens[index].values[2];

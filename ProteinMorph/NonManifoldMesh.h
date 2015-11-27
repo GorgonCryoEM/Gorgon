@@ -2,72 +2,6 @@
 // Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 // Description:   A class for a non-manifold mesh.
 
-// CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
-//
-// History Log: 
-//   $Log$
-//   Revision 1.42  2010/04/04 19:05:51  ssa1
-//   Fixing misc bugs, and redoing sheet visualization mechanism
-//
-//   Revision 1.41  2009/12/07 21:34:36  ssa1
-//   Finding Rotation using SVD, and removing compiler warnings
-//
-//   Revision 1.40  2009/10/13 18:09:34  ssa1
-//   Refactoring Volume.h
-//
-//   Revision 1.39  2009/09/17 20:00:24  ssa1
-//   Steps towards exporting to Rosetta
-//
-//   Revision 1.38  2009/08/10 13:54:38  ssa1
-//   Adding initial ssehunter program
-//
-//   Revision 1.37  2009/05/21 16:55:15  ssa1
-//   when saving a skeleton as an MRC, we now use 8 connectivity
-//
-//   Revision 1.36  2009/05/14 19:50:26  ssa1
-//   fixing crash when saving a mesh as a volume
-//
-//   Revision 1.35  2009/03/30 21:36:13  ssa1
-//   Interactive loop building
-//
-//   Revision 1.34  2009/03/17 20:00:17  ssa1
-//   Removing Sheets from fiting process
-//
-//   Revision 1.33  2008/12/01 01:38:03  ssa1
-//   Fixing resetting of scale and location when performing laplacian smoothing
-//
-//   Revision 1.32  2008/11/20 19:04:07  ssa1
-//   Proper scaling for binary and grayscale skeletonization
-//
-//   Revision 1.31  2008/11/20 18:33:00  ssa1
-//   Using the origin of the MRC volume
-//
-//   Revision 1.30  2008/11/13 20:54:40  ssa1
-//   Using the correct scale when loading volumes
-//
-//   Revision 1.29  2008/11/06 20:34:23  ssa1
-//   Proper lighting for bounding boxes
-//
-//   Revision 1.28  2008/11/06 05:29:04  ssa1
-//   CGI submission milestone for Interactive Skeletonization, and theme support, and fixing (hopefully) mac-os flicker bug
-//
-//   Revision 1.27  2008/10/28 22:18:05  ssa1
-//   Changing visualization of meshes, and sketches
-//
-//   Revision 1.26  2008/10/16 19:50:44  ssa1
-//   Supporting line deletion
-//
-//   Revision 1.25  2008/10/15 19:41:30  ssa1
-//   Esc to cancel path, Clear Button and Tracking of start seed point
-//
-//   Revision 1.24  2008/09/29 16:43:15  ssa1
-//   Adding in CVS meta information
-//
 
 #ifndef PROTEINMORPH_NON_MANIFOLD_MESH_H
 #define PROTEINMORPH_NON_MANIFOLD_MESH_H
@@ -76,7 +10,7 @@
 #include <MathTools/Vector3D.h>
 #include <SkeletonMaker/volume.h>
 #include <string>
-#include <glut.h>
+#include <GorgonGL.h>
 #include <Foundation/Rasterizer.h>
 #include <map>	
 #include <queue>

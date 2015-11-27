@@ -6,42 +6,6 @@
 //				  Modified to support missing helixes and constrained nodes
 //				  Contains no future function
 
-// CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
-//
-// History Log: 
-//   $Log$
-//   Revision 1.21  2010/03/26 19:00:23  schuhs
-//   Adding to the stats presented with results.
-//
-//   Revision 1.20  2010/03/26 18:50:23  schuhs
-//   Fix array initialization bug in performance stats computation.
-//
-//   Revision 1.19  2010/03/25 18:14:47  schuhs
-//   Add statistics to show how results compare to ground truth
-//
-//   Revision 1.18  2010/01/08 22:27:34  schuhs
-//   Helix-only correspondence works with SEQ file
-//
-//   Revision 1.17  2010/01/08 21:17:45  schuhs
-//   Using GorgonPriorityQueue instead of PriorityQueue
-//
-//   Revision 1.16  2009/12/22 01:03:06  schuhs
-//   Adding support for beta sheets to the SSE correspondence search algorithm
-//
-//   Revision 1.15  2008/11/20 20:49:09  ssa1
-//   Fixing bug with loading in more VRML helices than there are in the SEQ... Also using scale directly from volume instead of a user-parameter
-//
-//   Revision 1.14  2008/11/18 18:10:24  ssa1
-//   Changing the scaling functions when doing graph matching to find correspondences
-//
-//   Revision 1.13  2008/09/29 16:19:30  ssa1
-//   Adding in CVS meta information
-//
 
 
 #ifndef WONGMATCH15CONSTRAINEDNOFUTURE_H
@@ -345,6 +309,7 @@ namespace wustl_mm {
 				groundTruth[i]=SOLUTION[i];
 			}
 			ComputeSolutionCost(groundTruth);*/
+			/*
 			cout << "The ground truth solution is" << endl;
 			cout << "**      ";
 			for (int i = 0; i < patternGraph->GetNodeCount(); i++) {
@@ -355,6 +320,7 @@ namespace wustl_mm {
 			ComputeSolutionCost(SOLUTION, false);
 			AnalyzeResults(bestMatches, SOLUTION);
 			cout << endl;
+			*/
 			return foundCount;
 		}
 

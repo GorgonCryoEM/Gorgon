@@ -2,15 +2,6 @@
 // Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 // Description:   A collection of data structures used in the GRAPHMATCH module
 
-// CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
-//
-// History Log: 
-//   $Log$
 
 #ifndef STRUCTURES_H
 #define STRUCTURES_H

@@ -2,21 +2,6 @@
 // Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 // Description:   A class for storing a Heap ADT
 
-// CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
-//
-// History Log: 
-//   $Log$
-//   Revision 1.2  2009/12/21 22:03:32  ssa1
-//   Checking in FFTW windows binaries
-//
-//   Revision 1.1  2009/12/13 19:38:37  ssa1
-//   Adding in abstract data structures
-//
 
 #ifndef FOUNDATION_GORGONHEAP_H
 #define FOUNDATION_GORGONHEAP_H
@@ -97,11 +82,11 @@ namespace wustl_mm {
 				unsigned int properRoot;
 
 				properRoot = rootIndex;
-				if((left < size) && (isMaxHeap && ((values[left] > values[properRoot])) || (!isMaxHeap && (values[left] < values[properRoot])))) {
+				if((left < size) && ((isMaxHeap && (values[left] > values[properRoot])) || (!isMaxHeap && (values[left] < values[properRoot])))) {
 					properRoot = left;
 				}
 
-				if((right < size) && (isMaxHeap && ((values[right] > values[properRoot])) || (!isMaxHeap && (values[right] < values[properRoot])))) {
+				if((right < size) && ((isMaxHeap && (values[right] > values[properRoot])) || (!isMaxHeap && (values[right] < values[properRoot])))) {
 					properRoot = right;
 				}
 
@@ -170,7 +155,7 @@ namespace wustl_mm {
 		void GorgonHeap<T>::BuildHeap(vector<T> & values) {
 			this->values.clear();
 			this->values = values;
-			for(unsigned int i = values.size() / 2; i >= 0; i--) {
+			for(int i = (int)values.size() / 2; i >= 0; i--) {
 				Heapify(i);
 			}
 

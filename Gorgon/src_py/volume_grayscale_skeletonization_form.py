@@ -2,21 +2,6 @@
 # Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 # Description:   A widget used to perform grayscale skeletonization on a volume 
 
-# CVS Meta Information: 
-#   $Source$
-#   $Revision$
-#   $Date$
-#   $Author$
-#   $State$
-#
-# History Log: 
-#   $Log$
-#   Revision 1.4  2009/09/10 23:44:56  ssa1
-#   Allowing the option of preserving the earlier skeleton when performing grayscale skeletonization.. (Leads to better skeletons)
-#
-#   Revision 1.3  2008/06/18 18:15:41  ssa1
-#   Adding in CVS meta data
-#
 
 from PyQt4 import QtCore, QtGui
 from ui_dialog_volume_grayscale_skeletonization import Ui_DialogVolumeGrayscaleSkeletonization

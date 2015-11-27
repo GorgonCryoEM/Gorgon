@@ -2,15 +2,6 @@
 // Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 // Description:   A library that generates random graphs
 
-// CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
-//
-// History Log: 
-//   $Log$
 
 #ifndef GRAPHGENERATOR_H
 #define GRAPHGENERATOR_H
@@ -41,7 +32,7 @@ namespace wustl_mm {
 		};
 
 		int GraphGenerator::GetRandom(int maxNumber) {
-			return (rand() * (maxNumber + 1)) / (RAND_MAX + 1);
+			return ((float)rand() / (float)(RAND_MAX + 1))* (float)(maxNumber + 1);
 		}
 
 		double GraphGenerator::GetRandom(double maxNumber) {
