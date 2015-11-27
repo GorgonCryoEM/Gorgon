@@ -124,6 +124,17 @@ else()
         WORKING_DIRECTORY ${run_dir})"
         COMPONENT "Package"
         )
+    find_program (PATCHELF patchelf)
+    if(PATCHELF)
+        install(CODE "execute_process(COMMAND sh ${CMAKE_SOURCE_DIR}/cmake/post-pyinstaller.sh
+            WORKING_DIRECTORY ${package_dir}/gorgon)"
+            COMPONENT "Package"
+            )
+    else()
+          install(CODE "MESSAGE(WARNING \"patchelf NOT FOUND.\")"
+            COMPONENT "Package"
+            )
+    endif()
 endif()
 
 add_custom_target(Package
