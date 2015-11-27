@@ -23,6 +23,6 @@ class Match:
     if self.observed is None:
       return 0
     elif self.direction is self.FORWARD:
-      return self.observed.label.lower()
+      return str(self.observed.label).lower()
     else:
-      return self.observed.label.capitalize()
+      return str(self.observed.label).capitalize()

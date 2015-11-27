@@ -6,7 +6,7 @@
 #ifndef FOUNDATION_OPENGL_UTILS_H
 #define FOUNDATION_OPENGL_UTILS_H
 
-#include <glut.h>
+#include <GorgonGL.h>
 using namespace std;
 
 namespace wustl_mm {
