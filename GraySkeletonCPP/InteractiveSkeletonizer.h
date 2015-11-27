@@ -100,7 +100,7 @@ namespace wustl_mm {
 			delete skeleton;
 
 			appTimeManager.PopAndDisplayTime("Creating graphs: %f seconds!\n"); 
-			printf("Graph size: %d nodes, %d edges\n", graph->vertices.size(), graph->edges.size());
+			printf("Graph size: %d nodes, %d edges\n", (int)graph->vertices.size(), (int)graph->edges.size());
 		}
 
 

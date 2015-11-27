@@ -143,9 +143,9 @@ namespace wustl_mm {
 			const char strandChar = 'E';
 			const unsigned short minStrandLength = 0;
 			char currentChar = predictedSSEs[0];
-			unsigned int startCharNum = 0;
-			unsigned int stopCharNum = 0;
-			unsigned int length = 0;
+			int startCharNum = 0;
+			int stopCharNum = 0;
+			int length = 0;
 			char ch;
 			string substring;
 			string sseID;

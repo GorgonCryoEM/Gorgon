@@ -99,7 +99,7 @@ namespace wustl_mm {
 
 			vector<bool> helixFlips;
 			vector<int> selectedHelices;
-			vector < tuple<int,int> > corrs;
+			vector < boost::tuple<int,int> > corrs;
 			vector<int> selectedPDBHelices;
 		};
 
@@ -884,7 +884,7 @@ namespace wustl_mm {
 				helices[ix0]->SetSelected(forceTrue || !helices[ix0]->GetSelected());
 			}
 
-			if((subsceneIndex == 1)) {
+			if(subsceneIndex == 1) {
 				for(unsigned int i = 0; i < sheetMesh->faces.size(); i++) {
 					if(sheetMesh->faces[i].tag.id == ix0) {
 						sheetMesh->faces[i].tag.selected = forceTrue || !sheetMesh->faces[i].tag.selected;
@@ -894,7 +894,7 @@ namespace wustl_mm {
 				selectedSheets[ix0] = forceTrue || !selectedSheets[ix0];
 				sheets[ix0-1]->SetSelected(selectedSheets[ix0]);
 			}
-			if((subsceneIndex == 2)) {
+			if(subsceneIndex == 2) {
 				for(unsigned int i = 0; i < graphSheetMesh->faces.size(); i++) {
 					if(graphSheetMesh->faces[i].tag.id == ix0) {
 						graphSheetMesh->faces[i].tag.selected = forceTrue || !graphSheetMesh->faces[i].tag.selected;
@@ -1164,7 +1164,7 @@ namespace wustl_mm {
 			else
 				corrs.clear();
 			for(int i=0; i < flatCorrespondences.size(); i = i+2){
-				corrs.push_back(tuple<int, int>(flatCorrespondences[i], flatCorrespondences[i+1]));
+				corrs.push_back(boost::tuple<int, int>(flatCorrespondences[i], flatCorrespondences[i+1]));
 			}
 		}
 		void SSERenderer::SetSelectedPDBHelices(vector<int> indices){

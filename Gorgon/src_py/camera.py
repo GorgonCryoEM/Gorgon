@@ -58,7 +58,6 @@ class Camera(QtOpenGL.QGLWidget):
         self.setEye(0, -4, 0) 
         self.setUp(0, 0, 1)     
         self.setEyeRotation(0, 0, 0)
-        self.setNearFarZoom(0.1, 1000, 0.25)
         self.lastPos = QtCore.QPoint()
         self.sceneEditor = SceneEditorForm(self.app, self)
         self.connect(self.app.themes, QtCore.SIGNAL("themeChanged()"), self.themeChanged)
@@ -214,6 +213,7 @@ class Camera(QtOpenGL.QGLWidget):
         glClearDepth( 1.0 )
         
         self.setLights()
+        self.setNearFarZoom(0.1, 1000, 0.25)
 
         if(self.fogEnabled):
             fogColor = self.app.themes.getColor("Camera:Fog")

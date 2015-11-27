@@ -7,7 +7,7 @@
 #define GORGON_RENDERER_H
 
 #include <string>
-#include <glut.h>
+#include <GorgonGL.h>
 #include <Foundation/OpenGLUtils.h>
 #include <MathTools/Vector3D.h>
 #include <MathTools/MathLib.h>

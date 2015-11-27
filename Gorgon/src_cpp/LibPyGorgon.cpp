@@ -55,16 +55,6 @@ using wustl_mm::MathTools::LinearSolver;
 namespace python = boost::python;
 
 
-template <class T>
-struct vector_to_python : python::to_python_converter<vector<T>, vector_to_python<T> > {
-	static PyObject* convert(vector<T> const& v) {
-		python::list result;
-		for (size_t i = 0; i < v.size(); i++) {
-			result.append(v[i]);
-		}
-		return python::incref(python::list(result).ptr());
-	}
-};
 
 template <class T>
 struct vector_from_python {
@@ -153,30 +143,32 @@ struct tuple3_to_python : python::to_python_converter<T, tuple3_to_python<T> > {
 
 // **************************************************************************************
 
+#include <boost/python/suite/indexing/vector_indexing_suite.hpp>
 BOOST_PYTHON_MODULE(libpyGORGON)
 {
 	
-	vector_to_python<float>();
 	vector_from_python<float>();
-	vector_to_python< std::vector<float> >();
+	class_<std::vector<float> >("std::vector<float>")
+	        .def(vector_indexing_suite<std::vector<float> >() );
+	class_<std::vector<std::vector<float> > >("std::vector<std::vector<float> >")
+	        .def(vector_indexing_suite<std::vector<std::vector<float> > >() );
+
+	class_<std::vector<int> >("std::vector<int>")
+	        .def(vector_indexing_suite<std::vector<int> >() );
+	class_<std::vector<std::vector<int> > >("std::vector<std::vector<int> >")
+	        .def(vector_indexing_suite<std::vector<std::vector<int> > >() );
+
 	vector_from_python< std::vector<float> >();
 
-	vector_to_python<int>();
 	vector_from_python<int>();
-	vector_to_python< std::vector<int> >();
 	vector_from_python< std::vector<int> >();
 
-	vector_to_python<bool>();
 	vector_from_python<bool>();
-	vector_to_python< std::vector<bool> >();
 	vector_from_python< std::vector<bool> >();
 
-    vector_to_python<unsigned long long>();
     vector_from_python<unsigned long long>();
 
-	vector_to_python<Vector3DFloat>();
 	vector_from_python<Vector3DFloat>();
-	vector_to_python< std::vector<Vector3DFloat> >();
 	vector_from_python< std::vector<Vector3DFloat> >();
 
 

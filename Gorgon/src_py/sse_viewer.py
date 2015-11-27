@@ -230,7 +230,6 @@ class SSEViewer(BaseViewer):
             self.selectedObjects = []
             self.selectedObjects.append(sseIndex)
             
-        self.emit(QtCore.SIGNAL("SSE selected"))
         if sseType == 0:
             try:
                 self.correspondenceLibrary
