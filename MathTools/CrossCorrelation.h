@@ -2,21 +2,6 @@
 // Author:        Ross Coleman (racolema@bcm.edu)
 // Description:   C++ Implementation of SSEHunter
 
-// CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
-//
-// History Log: 
-//   $Log$
-//   Revision 1.4  2010/02/15 17:24:40  colemanr
-//   complex number multiplication without function call while calculating CCF; fixed bounds error in out of place CCF
-//
-//   Revision 1.3  2009/12/21 22:03:02  ssa1
-//   Checking in FFTW windows binaries
-//
 
 #ifndef MATHTOOLS_CROSS_CORRELATION_H
 #define MATHTOOLS_CROSS_CORRELATION_H

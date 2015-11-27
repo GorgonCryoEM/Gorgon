@@ -1,18 +1,6 @@
 // Copyright (C) 2005-2008 Washington University in St Louis, Baylor College of Medicine.  All rights reserved
 // Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 // Description:   An engine for performing correspondence queries.
-// CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
-//
-// History Log: 
-//   $Log$
-//   Revision 1.9  2008/09/29 16:19:30  ssa1
-//   Adding in CVS meta information
-//
 
 #ifndef QUERY_ENGINE_H
 #define QUERY_ENGINE_H

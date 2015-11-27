@@ -2,15 +2,6 @@
 // Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 // Description:   Stores data structures for the MATHTOOLS Module
 
-// CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
-//
-// History Log: 
-//   $Log$
 
 #ifndef DATA_STRUCTURES_H
 #define DATA_STRUCTURES_H

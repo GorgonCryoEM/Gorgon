@@ -2,24 +2,6 @@
 # Author:        Ross A. Coleman (racolema@bcm.edu)
 # Description:   This QDockWidget contains a CAlphaSequenceWidget. Its methods handle much of the interaction with the other parts of the Gorgon application.
 
-# CVS Meta Information: 
-#   $Source$
-#   $Revision$
-#   $Date$
-#   $Author$
-#   $State$
-#
-# History Log: 
-#   $Log$
-#   Revision 1.3  2009/04/02 19:00:20  ssa1
-#   CAlpha Viewer bug fixes and smoother uniform functionality
-#
-#   Revision 1.2  2009/04/01 23:00:32  ssa1
-#   Refactor: Redesigning semi-automatic atom placement window.  Fixing bugs, and more consistant layout
-#
-#   Revision 1.1  2009/03/31 21:40:13  ssa1
-#   Refactoring: Splitting seq_model\SequenceView.py into subclasses
-#
 
 from PyQt4 import Qt,QtGui,QtCore
 from calpha_sequence_widget import CAlphaSequenceWidget

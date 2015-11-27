@@ -2,18 +2,6 @@
 # Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 # Description:   A base class for dialog boxes triggered through an action
 
-# CVS Meta Information: 
-#   $Source$
-#   $Revision$
-#   $Date$
-#   $Author$
-#   $State$
-#
-# History Log: 
-#   $Log$
-#   Revision 1.1  2009/12/24 05:09:30  ssa1
-#   Refactoring child window behavior.. Using base classes to encapsulate common behavior
-#
 
 
 from PyQt4 import QtCore, QtGui

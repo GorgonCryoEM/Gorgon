@@ -2,18 +2,6 @@
 // Author:        Tao Ju (taoju@cse.wustl.edu)
 // Description:   A Priority queue implementation
 
-// CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
-//
-// History Log: 
-//   $Log$
-//   Revision 1.5  2008/09/29 16:43:15  ssa1
-//   Adding in CVS meta information
-//
 
 #ifndef SKELETON_MAKER_PRIORITY_QUEUE_H
 #define SKELETON_MAKER_PRIORITY_QUEUE_H

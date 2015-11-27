@@ -2,88 +2,6 @@
 # Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 # Description:   A viewer for secondary structure elements 
 
-# CVS Meta Information: 
-#   $Source$
-#   $Revision$
-#   $Date$
-#   $Author$
-#   $State$
-#
-# History Log: 
-#   $Log$
-#   Revision 1.34  2010/01/17 05:13:36  schuhs
-#   Fixing bug that created an offset between the skeleton and the SSEHunter sheets in the SSE correspondence code
-#
-#   Revision 1.33  2010/01/14 23:52:12  ssa1
-#   Gracefully catching exceptions when loading invalid files
-#
-#   Revision 1.32  2009/12/24 21:53:49  ssa1
-#   Giving back color control to the SSE Visualization options form when SSE Correspondence engine is not running (Bug ID: 58)
-#
-#   Revision 1.31  2009/12/24 07:25:07  ssa1
-#   Refactoring child window behavior.. Using base classes to encapsulate common behavior
-#
-#   Revision 1.30  2009/12/22 01:02:24  schuhs
-#   Adding support for beta sheet matching to the SSE correspondence search algorithm
-#
-#   Revision 1.29  2009/10/05 17:57:37  ssa1
-#   Initial session saving functionality (Request ID:52)
-#
-#   Revision 1.28  2009/09/02 18:02:39  ssa1
-#   Moving SSEHunter to the SSEViewer menu, and adding checks for loading up volumes and skeletons
-#
-#   Revision 1.27  2009/06/24 21:33:48  ssa1
-#   SSE Builder Functionality: Sheet building and better camera functionality when loading new data.
-#
-#   Revision 1.26  2009/06/24 13:06:51  ssa1
-#   Fixing compilation issues on MacOS
-#
-#   Revision 1.25  2009/06/23 16:50:34  ssa1
-#   Adding in SSEBuilder Functionality: Saving helix as WRL and SSE files
-#
-#   Revision 1.24  2009/04/02 19:00:20  ssa1
-#   CAlpha Viewer bug fixes and smoother uniform functionality
-#
-#   Revision 1.23  2009/03/17 20:00:17  ssa1
-#   Removing Sheets from fiting process
-#
-#   Revision 1.22  2009/03/16 17:15:24  ssa1
-#   setting busy state when fitting
-#
-#   Revision 1.21  2009/03/16 16:17:34  ssa1
-#   Fitting SSEs into the Density
-#
-#   Revision 1.20  2009/01/01 22:09:39  colemanr
-#   added docstring
-#
-#   Revision 1.19  2008/12/19 23:00:54  colemanr
-#   In response to the signal elementSelected, SSE viewer saves the current match between an observed and predicted helix
-#   if the selected element is a helix.  If it is a helix, the SSE viewer emits "SSE selected"
-#
-#   Revision 1.18  2008/12/18 20:15:23  ssa1
-#   Adding sequence predictor
-#
-#   Revision 1.17  2008/12/02 21:54:53  ssa1
-#   visualizing a dummy file name for sse elements
-#
-#   Revision 1.16  2008/11/28 04:36:17  ssa1
-#   Removing error message if pyopengl does not exist.  (To make executable building easier to debug)
-#
-#   Revision 1.15  2008/11/20 20:56:30  ssa1
-#   Properly scaling the suggested backbone
-#
-#   Revision 1.14  2008/11/13 20:54:40  ssa1
-#   Using the correct scale when loading volumes
-#
-#   Revision 1.13  2008/11/06 05:29:04  ssa1
-#   CGI submission milestone for Interactive Skeletonization, and theme support, and fixing (hopefully) mac-os flicker bug
-#
-#   Revision 1.12  2008/08/06 06:21:37  ssa1
-#   Tracing protein path, for SSE Correspondance matching
-#
-#   Revision 1.11  2008/06/18 18:15:41  ssa1
-#   Adding in CVS meta data
-#
 
 from PyQt4 import QtGui, QtCore, QtOpenGL
 from libpyGORGON import SSERenderer
@@ -312,7 +230,6 @@ class SSEViewer(BaseViewer):
             self.selectedObjects = []
             self.selectedObjects.append(sseIndex)
             
-        self.emit(QtCore.SIGNAL("SSE selected"))
         if sseType == 0:
             try:
                 self.correspondenceLibrary

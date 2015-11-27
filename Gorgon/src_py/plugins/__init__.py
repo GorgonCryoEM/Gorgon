@@ -2,11 +2,3 @@
 # Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 # Description:   An initalization file for the plugins module.  Please do NOT remove this file.  Doing so will result in plugins not being loaded
 
-# CVS Meta Information: 
-#   $Revision$
-#   $Date$
-#   $Author$
-#   $State$
-#
-# History Log: 
-#   $Log$

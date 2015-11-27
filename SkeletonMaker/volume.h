@@ -2,60 +2,6 @@
 // Author:        Tao Ju (taoju@cse.wustl.edu), Refactored by Sasakthi Abeysinghe (sasakthi.abeysinghe@wustl.edu)
 // Description:   Volumetric data definition
 
-// CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
-//
-// History Log: 
-//   $Log$
-//   Revision 1.38  2010/02/25 16:31:24  colemanr
-//   copy constructors
-//
-//   Revision 1.37  2010/01/17 18:34:59  ssa1
-//   Histogram for density visualization
-//
-//   Revision 1.36  2009/12/09 21:08:44  colemanr
-//   added Volume::getArrayCopy()
-//
-//   Revision 1.35  2009/12/07 21:34:36  ssa1
-//   Finding Rotation using SVD, and removing compiler warnings
-//
-//   Revision 1.34  2009/11/03 04:44:07  colemanr
-//   fixed the algorithm for getEdgeMean() and added function descriptions
-//
-//   Revision 1.33  2009/11/02 19:50:22  colemanr
-//   added include for MathTools/Vector3D.h
-//
-//   Revision 1.32  2009/10/30 06:09:27  colemanr
-//   added functions to calculate the mean, standard deviation, and center of mass, as well as one that calculates the mean of the outer 1 pixel surfaces
-//
-//   Revision 1.31  2009/10/13 18:09:34  ssa1
-//   Refactoring Volume.h
-//
-//   Revision 1.30  2009/08/10 13:54:38  ssa1
-//   Adding initial ssehunter program
-//
-//   Revision 1.29  2009/03/02 16:31:47  ssa1
-//   Adding in Point Clouds and Structure Tensor Fields
-//
-//   Revision 1.28  2008/11/23 19:56:09  ssa1
-//   Setting volume origin to be center of mass instead of bottom left...
-//
-//   Revision 1.27  2008/11/20 18:33:00  ssa1
-//   Using the origin of the MRC volume
-//
-//   Revision 1.26  2008/11/18 22:01:18  ssa1
-//   Removing printfs, and adding cropping
-//
-//   Revision 1.25  2008/11/13 20:54:40  ssa1
-//   Using the correct scale when loading volumes
-//
-//   Revision 1.24  2008/09/29 16:43:15  ssa1
-//   Adding in CVS meta information
-//
 
 #ifndef SKELETON_MAKER_VOLUME_H
 #define SKELETON_MAKER_VOLUME_H
@@ -10529,7 +10475,7 @@ namespace wustl_mm {
 
 			printf("Writing...") ;
 			segvol->toMRCFile( mrcfile ) ;
-			segvol->toMRCFile( "../colors.mrc" ) ;
+//			segvol->toMRCFile( "../colors.mrc" ) ;
 			printf("Done.\n") ;
 		
 			printf("Segmentation...") ;

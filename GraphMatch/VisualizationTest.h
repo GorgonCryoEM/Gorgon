@@ -2,7 +2,7 @@
 #define _VISUALIZATION_TEST_
 
 #include "BackEndInterface.h"
-#include <GL/glut.h>
+#include <GorgonGL.h>
 
 namespace wustl_mm {
 	namespace GraphMatch {

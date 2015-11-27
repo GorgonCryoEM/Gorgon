@@ -6,18 +6,6 @@
 //				  Modified to support missing helixes and constrained nodes
 //				  Contains all future information
 
-// CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
-//
-// History Log: 
-//   $Log$
-//   Revision 1.13  2008/09/29 16:19:30  ssa1
-//   Adding in CVS meta information
-//
 
 
 #ifndef WONGMATCH15CONSTRAINED_H

@@ -2,18 +2,6 @@
 # Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 # Description:   Using structure prediction servers to predict SSE elements from the sequence
 
-# CVS Meta Information: 
-#   $Source$
-#   $Revision$
-#   $Date$
-#   $Author$
-#   $State$
-#
-# History Log: 
-#   $Log$
-#   Revision 1.1  2008/12/18 20:15:23  ssa1
-#   Adding sequence predictor
-#
 
 from PyQt4 import QtCore, QtGui
 from ui_dialog_sse_sequence_predictor import Ui_DialogSSESequencePredictor

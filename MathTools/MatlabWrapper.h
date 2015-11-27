@@ -2,21 +2,6 @@
 // Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 // Description:   A class that acts as a wrapper to the Matlab libraries
 
-// CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
-//
-// History Log: 
-//   $Log$
-//   Revision 1.8  2009/12/07 05:00:52  ssa1
-//   Adding in Matrix functionality for Singular Value Decomposition
-//
-//   Revision 1.7  2008/09/29 16:43:15  ssa1
-//   Adding in CVS meta information
-//
 
 #ifndef MATLAB_WRAPPER_H
 #define MATLAB_WRAPPER_H
@@ -149,4 +134,4 @@ namespace wustl_mm {
 }
 
 
-#endif MATLAB_WRAPPER_H
+#endif //MATLAB_WRAPPER_H

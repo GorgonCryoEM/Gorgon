@@ -2,57 +2,6 @@
 // Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 // Description:   Renderer for rendering mesh objects
 
-// CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
-//
-// History Log: 
-//   $Log$
-//   Revision 1.34  2010/04/04 19:05:51  ssa1
-//   Fixing misc bugs, and redoing sheet visualization mechanism
-//
-//   Revision 1.33  2009/10/13 18:09:34  ssa1
-//   Refactoring Volume.h
-//
-//   Revision 1.32  2009/05/08 20:45:49  ssa1
-//   auto rotate of camera when user clicks CTRL + ALT and left move
-//
-//   Revision 1.31  2008/12/12 21:42:31  ssa1
-//   Fixing bug: Cant move a skeleton in te z axis by using the position tab
-//
-//   Revision 1.30  2008/12/01 01:38:03  ssa1
-//   Fixing resetting of scale and location when performing laplacian smoothing
-//
-//   Revision 1.29  2008/12/01 01:31:34  ssa1
-//   Fixing resetting of scale and location when performing laplacian smoothing
-//
-//   Revision 1.28  2008/11/20 19:04:07  ssa1
-//   Proper scaling for binary and grayscale skeletonization
-//
-//   Revision 1.27  2008/11/13 20:54:40  ssa1
-//   Using the correct scale when loading volumes
-//
-//   Revision 1.26  2008/11/11 00:20:18  colemanr
-//   changed to make *.mrc files appear above *.off files in an open dialog
-//
-//   Revision 1.25  2008/11/06 05:29:04  ssa1
-//   CGI submission milestone for Interactive Skeletonization, and theme support, and fixing (hopefully) mac-os flicker bug
-//
-//   Revision 1.24  2008/10/28 22:18:05  ssa1
-//   Changing visualization of meshes, and sketches
-//
-//   Revision 1.23  2008/10/28 18:46:52  ssa1
-//   Fixing octree neighbor search, and changing the structure tensor cost function
-//
-//   Revision 1.22  2008/09/29 20:36:35  ssa1
-//   Drawing skeletal curves as cylinders and spheres
-//
-//   Revision 1.21  2008/09/29 16:01:17  ssa1
-//   Adding in CVS meta information
-//
 
 
 #ifndef GORGON_MESH_RENDERER_H
@@ -60,7 +9,7 @@
 
 #include <cstdlib>
 #include <cstdio>
-#include <glut.h>
+#include <GorgonGL.h>
 #include <string>
 #include <SkeletonMaker/volume.h>
 #include <SkeletonMaker/reader.h>

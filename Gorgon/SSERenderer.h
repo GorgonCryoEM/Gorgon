@@ -2,108 +2,6 @@
 // Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 // Description:   Renderer for rendering secondary structure elements.
 
-// CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
-//
-// History Log: 
-//   $Log$
-//   Revision 1.48  2010/08/13 21:20:16  coleman.r
-//   AutoHelixBuilder changes
-//
-//   Revision 1.47  2010/07/19 17:29:02  heiderp
-//   LARGE update.  Added flexible fitting functionality, lots of logic in FlexibleFittingEngine.h
-//
-//   Revision 1.46  2010/07/09 19:53:49  coleman.r
-//   SSERenderer::removeHelices() and removeSheets()
-//
-//   Revision 1.45  2010/06/23 13:02:56  ssa1
-//   Allowing users to reset a flexible fitting if need be.
-//
-//   Revision 1.44  2010/06/17 19:42:38  ssa1
-//   Generic method for setting object specific coloring
-//
-//   Revision 1.43  2010/05/20 21:55:53  ssa1
-//   Rigid body alignment based on largest flexible cluster
-//
-//   Revision 1.42  2010/04/04 19:05:51  ssa1
-//   Fixing misc bugs, and redoing sheet visualization mechanism
-//
-//   Revision 1.41  2010/03/05 20:30:21  ssa1
-//   Fixing loading of helices using .SSE files
-//
-//   Revision 1.40  2010/01/17 05:10:13  schuhs
-//   Fixing bug that created an offset between the skeleton and the SSEHunter sheets in the SSE correspondence code
-//
-//   Revision 1.39  2010/01/14 23:34:25  ssa1
-//   Allowing the deletion of SSEs from the SSEBuilder window
-//
-//   Revision 1.38  2009/12/28 17:42:27  ssa1
-//   Fixing SSEBuilder bug when adding sheets
-//
-//   Revision 1.37  2009/12/24 21:53:49  ssa1
-//   Giving back color control to the SSE Visualization options form when SSE Correspondence engine is not running (Bug ID: 58)
-//
-//   Revision 1.36  2009/12/22 01:02:24  schuhs
-//   Adding support for beta sheet matching to the SSE correspondence search algorithm
-//
-//   Revision 1.35  2009/12/08 22:08:29  ssa1
-//   Fixing SheetGenerator syntax issues (and instead of &&, etc..)
-//
-//   Revision 1.34  2009/12/08 20:06:06  abramsa
-//   Some algorithms and implementation for better sheet generation, given an initial set of points.  For use in the SSEHunter.
-//
-//   Revision 1.33  2009/12/07 21:34:36  ssa1
-//   Finding Rotation using SVD, and removing compiler warnings
-//
-//   Revision 1.32  2009/10/13 18:09:34  ssa1
-//   Refactoring Volume.h
-//
-//   Revision 1.31  2009/09/21 19:03:22  ssa1
-//   Linear least squares fit implementation, and using it in helix positioning of SSE Builder
-//
-//   Revision 1.30  2009/09/17 20:00:24  ssa1
-//   Steps towards exporting to Rosetta
-//
-//   Revision 1.29  2009/07/01 21:25:13  ssa1
-//   Centering the volume cropped using a radius around the point selected by the atom selection tool.
-//
-//   Revision 1.28  2009/06/24 21:33:48  ssa1
-//   SSE Builder Functionality: Sheet building and better camera functionality when loading new data.
-//
-//   Revision 1.27  2009/06/24 13:06:51  ssa1
-//   Fixing compilation issues on MacOS
-//
-//   Revision 1.26  2009/06/23 16:50:34  ssa1
-//   Adding in SSEBuilder Functionality: Saving helix as WRL and SSE files
-//
-//   Revision 1.25  2009/06/22 20:17:27  ssa1
-//   Adding in SSEBuilder Functionality: Selection to Helix functionality
-//
-//   Revision 1.24  2009/03/17 20:00:17  ssa1
-//   Removing Sheets from fiting process
-//
-//   Revision 1.23  2009/03/16 17:08:46  ssa1
-//   Fixing bug when densities have negative values
-//
-//   Revision 1.22  2009/03/16 16:17:34  ssa1
-//   Fitting SSEs into the Density
-//
-//   Revision 1.21  2008/12/03 21:58:25  ssa1
-//   Selection rotations for atoms and helices.
-//
-//   Revision 1.20  2008/11/13 20:54:40  ssa1
-//   Using the correct scale when loading volumes
-//
-//   Revision 1.19  2008/09/29 16:09:44  ssa1
-//   Removing GLVisualizer.h
-//
-//   Revision 1.18  2008/09/29 16:01:17  ssa1
-//   Adding in CVS meta information
-//
 
 #ifndef GORGON_SSE_RENDERER_H
 #define GORGON_SSE_RENDERER_H
@@ -201,7 +99,7 @@ namespace wustl_mm {
 
 			vector<bool> helixFlips;
 			vector<int> selectedHelices;
-			vector < tuple<int,int> > corrs;
+			vector < boost::tuple<int,int> > corrs;
 			vector<int> selectedPDBHelices;
 		};
 
@@ -986,7 +884,7 @@ namespace wustl_mm {
 				helices[ix0]->SetSelected(forceTrue || !helices[ix0]->GetSelected());
 			}
 
-			if((subsceneIndex == 1)) {
+			if(subsceneIndex == 1) {
 				for(unsigned int i = 0; i < sheetMesh->faces.size(); i++) {
 					if(sheetMesh->faces[i].tag.id == ix0) {
 						sheetMesh->faces[i].tag.selected = forceTrue || !sheetMesh->faces[i].tag.selected;
@@ -996,7 +894,7 @@ namespace wustl_mm {
 				selectedSheets[ix0] = forceTrue || !selectedSheets[ix0];
 				sheets[ix0-1]->SetSelected(selectedSheets[ix0]);
 			}
-			if((subsceneIndex == 2)) {
+			if(subsceneIndex == 2) {
 				for(unsigned int i = 0; i < graphSheetMesh->faces.size(); i++) {
 					if(graphSheetMesh->faces[i].tag.id == ix0) {
 						graphSheetMesh->faces[i].tag.selected = forceTrue || !graphSheetMesh->faces[i].tag.selected;
@@ -1266,7 +1164,7 @@ namespace wustl_mm {
 			else
 				corrs.clear();
 			for(int i=0; i < flatCorrespondences.size(); i = i+2){
-				corrs.push_back(tuple<int, int>(flatCorrespondences[i], flatCorrespondences[i+1]));
+				corrs.push_back(boost::tuple<int, int>(flatCorrespondences[i], flatCorrespondences[i+1]));
 			}
 		}
 		void SSERenderer::SetSelectedPDBHelices(vector<int> indices){

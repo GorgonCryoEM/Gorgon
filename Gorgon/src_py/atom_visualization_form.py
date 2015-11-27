@@ -2,24 +2,6 @@
 # Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 # Description:   A dialog box which can be used to modify the visualization options of a loaded atomic model 
 
-# CVS Meta Information: 
-#   $Source$
-#   $Revision$
-#   $Date$
-#   $Author$
-#   $State$
-#
-# History Log: 
-#   $Log$
-#   Revision 1.3  2010/07/27 23:18:58  chenb
-#   Ribbon diagram code now merged with flexible fitting code
-#
-#   Revision 1.2  2010/05/27 17:10:19  ssa1
-#   Better color control for all atom visualization
-#
-#   Revision 1.1  2010/05/26 20:58:10  ssa1
-#   Adding in display styles for atom rendering.
-#
 
 
 from PyQt4 import QtCore, QtGui

@@ -1,15 +1,6 @@
 // Copyright (C) 2005-2008 Washington University in St Louis, Baylor College of Medicine.  All rights reserved
 // Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 // Description:   An abstract class for a binary search tree
-// CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
-//
-// History Log: 
-//   $Log$
 
 #ifndef FOUNDATION_GORGONBINARYSEARCHTREE_H
 #define FOUNDATION_GORGONBINARYSEARCHTREE_H

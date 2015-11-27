@@ -2,39 +2,6 @@
 # Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 # Description:   A viewer for skeletons 
 
-# CVS Meta Information: 
-#   $Source$
-#   $Revision$
-#   $Date$
-#   $Author$
-#   $State$
-#
-# History Log: 
-#   $Log$
-#   Revision 1.21  2009/12/24 07:25:07  ssa1
-#   Refactoring child window behavior.. Using base classes to encapsulate common behavior
-#
-#   Revision 1.20  2009/12/22 01:02:24  schuhs
-#   Adding support for beta sheet matching to the SSE correspondence search algorithm
-#
-#   Revision 1.19  2009/10/05 17:57:37  ssa1
-#   Initial session saving functionality (Request ID:52)
-#
-#   Revision 1.18  2008/12/01 23:16:31  ssa1
-#   Restructuring interactive skeleton drawing, and fixing it for scale space changes.
-#
-#   Revision 1.17  2008/11/28 04:36:17  ssa1
-#   Removing error message if pyopengl does not exist.  (To make executable building easier to debug)
-#
-#   Revision 1.16  2008/11/13 20:54:40  ssa1
-#   Using the correct scale when loading volumes
-#
-#   Revision 1.15  2008/11/06 05:29:04  ssa1
-#   CGI submission milestone for Interactive Skeletonization, and theme support, and fixing (hopefully) mac-os flicker bug
-#
-#   Revision 1.14  2008/06/18 18:15:41  ssa1
-#   Adding in CVS meta data
-#
 
 from PyQt4 import QtGui, QtCore, QtOpenGL
 from libpyGORGON import MeshRenderer

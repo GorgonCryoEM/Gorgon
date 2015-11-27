@@ -2,23 +2,6 @@
 // Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 // Description:   Reads volumes in the PTS file format.
 
-// CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
-//
-// History Log: 
-//   $Log$
-//   Revision 1.3  2009/03/03 22:33:11  ssa1
-//   Point clouds are little gaussians.. (no longer bins)
-//
-//   Revision 1.2  2009/03/02 17:21:40  ssa1
-//   Point clouds are little gaussians.. (no longer bins)
-//
-//   Revision 1.1  2009/03/02 16:31:47  ssa1
-//   Adding in Point Clouds and Structure Tensor Fields
 
 
 #ifndef GRAYSKELETONCPP_VOLUME_READER_PTS_H

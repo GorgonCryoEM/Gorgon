@@ -2,30 +2,6 @@
 // Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 // Description:   Converts the volumes from one data type to another
 
-// CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
-//
-// History Log: 
-//   $Log$
-//   Revision 1.22  2009/05/14 19:49:57  ssa1
-//   Enabling the .map format
-//
-//   Revision 1.21  2009/03/02 16:31:47  ssa1
-//   Adding in Point Clouds and Structure Tensor Fields
-//
-//   Revision 1.20  2008/12/15 22:38:31  ssa1
-//   Adding in support to load RAW volumes
-//
-//   Revision 1.19  2008/12/15 21:16:20  ssa1
-//   Adding support for CCP4 files
-//
-//   Revision 1.18  2008/09/29 16:30:15  ssa1
-//   Adding in CVS meta information
-//
 
 #ifndef GRAYSKELETONCPP_VOLUME_FORMAT_CONVERTER_H
 #define GRAYSKELETONCPP_VOLUME_FORMAT_CONVERTER_H

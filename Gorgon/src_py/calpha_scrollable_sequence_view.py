@@ -2,15 +2,6 @@
 # Author:        Ross A. Coleman (racolema@bcm.edu)
 # Description:    This QWidget contains a CAlphaSequenceView object but in a scrollable view.
 
-# CVS Meta Information: 
-#   $Source$
-#   $Revision$
-#   $Date$
-#   $Author$
-#   $State$
-#
-# History Log: 
-#   $Log$
 
 from PyQt4 import Qt,QtGui,QtCore
 from calpha_sequence_view import CAlphaSequenceView

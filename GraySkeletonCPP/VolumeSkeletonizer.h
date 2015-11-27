@@ -2,30 +2,6 @@
 // Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 // Description:   Performs skeletonization on a grayscale volume
 
-// CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
-//
-// History Log: 
-//   $Log$
-//   Revision 1.40  2009/09/10 23:44:56  ssa1
-//   Allowing the option of preserving the earlier skeleton when performing grayscale skeletonization.. (Leads to better skeletons)
-//
-//   Revision 1.39  2009/03/02 16:31:47  ssa1
-//   Adding in Point Clouds and Structure Tensor Fields
-//
-//   Revision 1.38  2008/10/29 19:26:26  ssa1
-//   Reducing memory footprint, Increasing performance and adding volume normalization
-//
-//   Revision 1.37  2008/10/10 14:25:55  ssa1
-//   Setting the cost functions to scale with the edge length
-//
-//   Revision 1.36  2008/09/29 16:30:15  ssa1
-//   Adding in CVS meta information
-//
 
 #ifndef GRAYSKELETONCPP_VOLUME_SKELETONIZER_H
 #define GRAYSKELETONCPP_VOLUME_SKELETONIZER_H
@@ -45,6 +21,7 @@
 #include <string>
 #include <Foundation/TimeManager.h>
 #include <new>
+#include <functional>
 
 using namespace wustl_mm::MathTools;
 using namespace wustl_mm::Foundation;

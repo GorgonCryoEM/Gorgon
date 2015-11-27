@@ -2,25 +2,6 @@
 // Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 // Description:   Stores information of a density volume
 
-// CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
-//
-// History Log: 
-//   $Log$
-//   Revision 1.3  2009/12/09 21:08:14  colemanr
-//   added VolumeData::GetArrayCopy()
-//   iCVS: ----------------------------------------------------------------------
-//
-//   Revision 1.2  2009/10/30 06:11:26  colemanr
-//   fixed compiler warning for comparison between signed and unsigned integers
-//
-//   Revision 1.1  2009/10/13 18:09:34  ssa1
-//   Refactoring Volume.h
-//
 
 
 

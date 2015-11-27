@@ -2,18 +2,6 @@
 // Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 // Description:   A method to find the surface normals
 
-// CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
-//
-// History Log: 
-//   $Log$
-//   Revision 1.6  2008/09/29 16:30:15  ssa1
-//   Adding in CVS meta information
-//
 
 #ifndef GRAYSKELETONCPP_NORMAL_FINDER_H
 #define GRAYSKELETONCPP_NORMAL_FINDER_H
@@ -242,4 +230,4 @@ namespace wustl_mm {
 	};
 };
 
-#endif NORMAL_FINDER_H
+#endif //NORMAL_FINDER_H

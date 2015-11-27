@@ -2,103 +2,6 @@
 // Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 // Description:   Renderer for rendering volumetric data sets
 
-// CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
-//
-// History Log: 
-//   $Log$
-//   Revision 1.56  2009/12/07 21:34:36  ssa1
-//   Finding Rotation using SVD, and removing compiler warnings
-//
-//   Revision 1.55  2009/10/13 18:09:34  ssa1
-//   Refactoring Volume.h
-//
-//   Revision 1.54  2009/09/17 20:00:24  ssa1
-//   Steps towards exporting to Rosetta
-//
-//   Revision 1.53  2009/09/10 23:44:56  ssa1
-//   Allowing the option of preserving the earlier skeleton when performing grayscale skeletonization.. (Leads to better skeletons)
-//
-//   Revision 1.52  2009/07/01 22:00:27  ssa1
-//   Centering the volume cropped using a radius around the point selected by the atom selection tool.
-//
-//   Revision 1.51  2009/07/01 21:25:13  ssa1
-//   Centering the volume cropped using a radius around the point selected by the atom selection tool.
-//
-//   Revision 1.50  2009/05/14 19:48:51  ssa1
-//   Enabling the .map format
-//
-//   Revision 1.49  2009/05/08 20:45:49  ssa1
-//   auto rotate of camera when user clicks CTRL + ALT and left move
-//
-//   Revision 1.48  2009/03/24 16:22:27  ssa1
-//   Better cross section & Solid Rendering viewing
-//
-//   Revision 1.47  2009/03/24 15:18:15  ssa1
-//   Better cross section & Solid Rendering viewing
-//
-//   Revision 1.46  2009/03/20 15:49:27  ssa1
-//   Better cross section viewing
-//
-//   Revision 1.45  2009/03/16 16:17:34  ssa1
-//   Fitting SSEs into the Density
-//
-//   Revision 1.44  2009/03/02 16:31:47  ssa1
-//   Adding in Point Clouds and Structure Tensor Fields
-//
-//   Revision 1.43  2008/12/15 22:38:31  ssa1
-//   Adding in support to load RAW volumes
-//
-//   Revision 1.42  2008/12/15 21:16:20  ssa1
-//   Adding support for CCP4 files
-//
-//   Revision 1.41  2008/12/02 21:45:40  ssa1
-//   solid and cross section rendering using palette color
-//
-//   Revision 1.40  2008/11/20 18:33:00  ssa1
-//   Using the origin of the MRC volume
-//
-//   Revision 1.39  2008/11/19 22:14:29  ssa1
-//   Properly setting solid rendering and cross section views
-//
-//   Revision 1.38  2008/11/18 22:01:18  ssa1
-//   Removing printfs, and adding cropping
-//
-//   Revision 1.37  2008/11/13 20:54:40  ssa1
-//   Using the correct scale when loading volumes
-//
-//   Revision 1.36  2008/11/13 17:01:58  ssa1
-//   Making the cross section and solid viewers slightly better
-//
-//   Revision 1.35  2008/11/13 15:49:00  ssa1
-//   Performance improvements for creating a mesh from marching cubes
-//
-//   Revision 1.34  2008/11/11 16:14:12  colemanr
-//   Replaced printf and flushall() with cout, because flushall isn't in gcc
-//   and isn't ANSI.
-//
-//   Revision 1.33  2008/11/10 20:41:01  ssa1
-//   Calculating the surface using an octree
-//
-//   Revision 1.32  2008/11/06 20:34:23  ssa1
-//   Proper lighting for bounding boxes
-//
-//   Revision 1.31  2008/11/06 05:29:04  ssa1
-//   CGI submission milestone for Interactive Skeletonization, and theme support, and fixing (hopefully) mac-os flicker bug
-//
-//   Revision 1.30  2008/10/29 19:26:26  ssa1
-//   Reducing memory footprint, Increasing performance and adding volume normalization
-//
-//   Revision 1.29  2008/10/28 22:18:05  ssa1
-//   Changing visualization of meshes, and sketches
-//
-//   Revision 1.28  2008/09/29 16:01:17  ssa1
-//   Adding in CVS meta information
-//
 
 #ifndef GORGON_MARCHING_CUBES_H
 #define GORGON_MARCHING_CUBES_H
@@ -108,8 +11,7 @@
 
 
 #include <iostream>
-#include <glut.h>
-#include <glext.h>
+#include <GorgonGL.h>
 #include <string>
 #include <GraphMatch/VectorMath.h>
 #include "Renderer.h"
@@ -478,7 +380,7 @@ namespace wustl_mm {
 					Vector3DFloat vertex;
 					// The outside box
 
-					if((viewingType == VIEWING_TYPE_CROSS_SECTION)) {
+					if(viewingType == VIEWING_TYPE_CROSS_SECTION) {
 						glBegin(GL_LINES);
 						for(unsigned int i = 0; i < cuttingMesh->edges.size(); i++) {
 							if(cuttingMesh->edges[i].faceIds.size() == 1) {

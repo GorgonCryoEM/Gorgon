@@ -2,21 +2,6 @@
 // Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 // Description:   Has basic vector functions
 
-// CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
-//
-// History Log: 
-//   $Log$
-//   Revision 1.7  2008/11/18 18:10:24  ssa1
-//   Changing the scaling functions when doing graph matching to find correspondences
-//
-//   Revision 1.6  2008/09/29 16:19:30  ssa1
-//   Adding in CVS meta information
-//
 
 
 #ifndef VECMATH_H

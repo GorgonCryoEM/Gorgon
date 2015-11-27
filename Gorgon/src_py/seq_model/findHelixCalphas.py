@@ -52,7 +52,7 @@ This function may also take the angstroms per pixel ratio argument.
         
     xyplane=math.sqrt((dx*dx)+(dy*dy))
 
-    print "\nhelix:"
+    print "helix:"
     if dy >= 0:
         phi=math.atan2(dy,dx) + math.pi/2.0
     else:
@@ -66,7 +66,7 @@ This function may also take the angstroms per pixel ratio argument.
     print dx,dy,dz
     print "phi   : %f"%phi
     print "theta : %f"%theta
-    print "length: %d\n"%intlength
+    print "length: %d"%intlength
     
     #hlxorig = [0, 0, 1.0]
     hlxorig = [0, 1, 0.0]

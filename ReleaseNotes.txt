@@ -1,0 +1,47 @@
+Version 2.2.0
+  Code moved to GitHub
+  Issue reporting system on GitHub to report bugs, request features
+  Cross-platform build system, including configure, build, install and package steps
+  External libraries cleaned up and moved to new repository and set up as submodule
+  Some programs and files not needed for building Gorgon moved to new repository Utilities
+  New Wiki page on GitHub that is also a submodule to keep the code and the documentation in sync
+  New macro for debugging: GORGON_DEBUG
+  Bug fixes
+	
+Version 2.0.1b
+  Export of predicted correspondences so that it can be analyzed by Rosetta
+	
+Version 2.0.0
+  Support for loading Point clouds as volumes (PTS format)
+  Support for saving volumes as structure tensor fields (TNS format)
+  Support for saving volumes as a mathamatica list (NB format)
+  Support for saving volumes as surface meshes (OFF Format)
+  Better visualization of cross sections of volumes
+  Better control of density to be visualized in cross sections and for solid rendering
+  Rigid body alignment of helices to the density
+  Interactive placement of CAlpha loops
+  Plugin functionality
+  Using PyOpenGL 3.0.0
+  CTRL+ALT and drag mouse to rotate scene for 10 seconds
+  Support for loading MAP volumes
+  SSE Builder functionality for creating Secondary Structure annotations from SSEHunter results
+  Saving Secondary structure annotations as VRML (VRML / WRL format) as well as DeJaVu (SSE format)
+  Support for saving, loading and closing gorgon session
+  SSE Hunter integrated to Gorgon
+  SSE Correspondence search extended to include Beta Sheets
+
+Version 1.0.1
+  Support for loading CCP4 and RAW volumes
+
+Version 1.0.0
+  Support for loading MRC volumes
+  Support for loading MRC and OFF skeletons
+  Support for loading VRML secondary structure annotations
+  Support for loading PDB C-Alpha atom positions
+  Binary Skeletonization [Ju CAD 2007]
+  Grayscale Skeletonization [Abeysinghe SMI 2008]
+  Interactive Skeletonization [Abeysinghe TVC 2009]
+  Laplacian smoothing of skeletons
+  Correspondence between observed and predicted secondary structure elements [Abeysinghe CAD 2008]
+  Semi-automatic creation of a C-Alpha Backbone
+  Manual creation of a C-Alpha Backbone

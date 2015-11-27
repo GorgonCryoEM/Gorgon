@@ -2,213 +2,6 @@
 // Author:        Sasakthi Abeysinghe (sasakthi@gmail.com)
 // Description:   Boosts the interfaces required for the python GORGON interface.
 
-// CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
-//
-// History Log: 
-//   $Log$
-//   Revision 1.92  2011/04/14 22:41:24  coleman.r
-//   wrapping more Volume methods in Python
-//
-//   Revision 1.91  2010/08/19 23:05:08  chenb
-//   Cleaned and commented ribbon diagram code
-//
-//   Revision 1.90  2010/08/13 21:20:16  coleman.r
-//   AutoHelixBuilder changes
-//
-//   Revision 1.89  2010/07/27 23:18:58  chenb
-//   Ribbon diagram code now merged with flexible fitting code
-//
-//   Revision 1.88  2010/07/23 18:18:32  heiderp
-//   Side chains now transform correctly.  PDB helices now color correctly and rigid initialization bug is fixed
-//
-//   Revision 1.87  2010/07/22 21:09:07  heiderp
-//   Minor updates. Mostly commenting and removing extra material from CurveDeformer.h
-//
-//   Revision 1.86  2010/07/19 17:29:02  heiderp
-//   LARGE update.  Added flexible fitting functionality, lots of logic in FlexibleFittingEngine.h
-//
-//   Revision 1.81  2010/06/23 19:11:51  ssa1
-//   Adding simple ribbon rendering and associated events for flexible fitting
-//
-//   Revision 1.80  2010/06/23 13:02:56  ssa1
-//   Allowing users to reset a flexible fitting if need be.
-//
-//   Revision 1.79  2010/06/17 19:42:38  ssa1
-//   Generic method for setting object specific coloring
-//
-//   Revision 1.78  2010/06/17 19:31:47  ssa1
-//   Visually displaying flexible fitting clusters.
-//
-//   Revision 1.77  2010/05/27 04:41:54  ssa1
-//   Side chain visualization on Gorgon
-//
-//   Revision 1.76  2010/05/26 20:17:35  ssa1
-//   Adding in display styles for atom rendering.
-//
-//   Revision 1.75  2010/05/21 15:45:16  ssa1
-//   Flexible fitting implemented in Gorgon
-//
-//   Revision 1.74  2010/05/20 21:55:53  ssa1
-//   Rigid body alignment based on largest flexible cluster
-//
-//   Revision 1.73  2010/04/17 02:59:12  colemanr
-//   conversion to/from 3D tuples
-//
-//   Revision 1.72  2010/03/15 20:21:38  ssa1
-//   Introducing volume laplacian smoothing
-//
-//   Revision 1.71  2010/02/11 23:19:13  ssa1
-//   Allowing the ability to save pseudoatoms generated from SSEHunter
-//
-//   Revision 1.70  2010/01/20 05:08:30  colemanr
-//   added conversions from STL vector to Python list or reverse - code from EMAN2
-//
-//   Revision 1.69  2010/01/17 18:34:59  ssa1
-//   Histogram for density visualization
-//
-//   Revision 1.68  2010/01/16 22:30:45  colemanr
-//   score accessor functions for PDBAtoms
-//
-//   Revision 1.67  2010/01/16 20:05:16  colemanr
-//   moving the total score calculation of SSEHunter to Python
-//
-//   Revision 1.66  2010/01/15 02:09:50  colemanr
-//   wrapping some SSEHunter functions
-//
-//   Revision 1.65  2010/01/14 23:34:25  ssa1
-//   Allowing the deletion of SSEs from the SSEBuilder window
-//
-//   Revision 1.64  2010/01/10 05:31:43  colemanr
-//   PDBAtoms now store their correlation, skeleton, and geometry scores. Changing the weighting for these three scores in the GUI now changes the total score for each pseudoatom.
-//
-//   Revision 1.63  2009/12/24 21:53:49  ssa1
-//   Giving back color control to the SSE Visualization options form when SSE Correspondence engine is not running (Bug ID: 58)
-//
-//   Revision 1.62  2009/12/22 01:02:24  schuhs
-//   Adding support for beta sheet matching to the SSE correspondence search algorithm
-//
-//   Revision 1.61  2009/10/13 18:09:34  ssa1
-//   Refactoring Volume.h
-//
-//   Revision 1.60  2009/09/21 19:03:22  ssa1
-//   Linear least squares fit implementation, and using it in helix positioning of SSE Builder
-//
-//   Revision 1.59  2009/09/17 20:00:24  ssa1
-//   Steps towards exporting to Rosetta
-//
-//   Revision 1.58  2009/09/10 23:44:56  ssa1
-//   Allowing the option of preserving the earlier skeleton when performing grayscale skeletonization.. (Leads to better skeletons)
-//
-//   Revision 1.57  2009/08/10 13:54:39  ssa1
-//   Adding initial ssehunter program
-//
-//   Revision 1.56  2009/07/01 22:00:27  ssa1
-//   Centering the volume cropped using a radius around the point selected by the atom selection tool.
-//
-//   Revision 1.55  2009/07/01 21:25:14  ssa1
-//   Centering the volume cropped using a radius around the point selected by the atom selection tool.
-//
-//   Revision 1.54  2009/06/24 21:33:48  ssa1
-//   SSE Builder Functionality: Sheet building and better camera functionality when loading new data.
-//
-//   Revision 1.53  2009/06/23 16:50:34  ssa1
-//   Adding in SSEBuilder Functionality: Saving helix as WRL and SSE files
-//
-//   Revision 1.52  2009/06/22 20:17:27  ssa1
-//   Adding in SSEBuilder Functionality: Selection to Helix functionality
-//
-//   Revision 1.51  2009/06/19 18:51:05  ssa1
-//   Adding in SSEBuilder Functionality
-//
-//   Revision 1.50  2009/03/30 21:36:12  ssa1
-//   Interactive loop building
-//
-//   Revision 1.49  2009/03/26 19:33:52  ssa1
-//   Adding in an Interactive Loop Builder
-//
-//   Revision 1.48  2009/03/24 15:18:15  ssa1
-//   Better cross section & Solid Rendering viewing
-//
-//   Revision 1.47  2009/03/16 16:17:34  ssa1
-//   Fitting SSEs into the Density
-//
-//   Revision 1.46  2009/01/01 18:00:50  colemanr
-//   If GL_GLEXT_PROTOTYPES is not defined and the platform is Linux, it is defined.
-//
-//   Revision 1.45  2008/12/15 22:38:31  ssa1
-//   Adding in support to load RAW volumes
-//
-//   Revision 1.44  2008/12/02 21:25:44  ssa1
-//   adding getBondIndex method to give access to bonds
-//
-//   Revision 1.43  2008/11/25 03:36:08  ssa1
-//   User constraints on finding correspondences (v2)
-//
-//   Revision 1.42  2008/11/24 20:02:49  ssa1
-//   User constraints on finding correspondences (v1)
-//
-//   Revision 1.41  2008/11/24 19:37:48  ssa1
-//   Boosting the helix.GetSelected method
-//
-//   Revision 1.40  2008/11/24 18:32:26  ssa1
-//   Giving helix end points
-//
-//   Revision 1.39  2008/11/20 18:33:04  ssa1
-//   Using the origin of the MRC volume
-//
-//   Revision 1.38  2008/11/18 22:01:18  ssa1
-//   Removing printfs, and adding cropping
-//
-//   Revision 1.37  2008/11/17 19:37:24  colemanr
-//   added "SeqFileData" and "SeqReader"
-//
-//   Revision 1.36  2008/11/13 20:54:40  ssa1
-//   Using the correct scale when loading volumes
-//
-//   Revision 1.35  2008/11/10 16:15:43  ssa1
-//   Making python and C++ use the same PDBAtom objects
-//
-//   Revision 1.34  2008/11/07 21:32:21  ssa1
-//   Fixing returning of the actual c++ pdbatom object instead of a copy
-//
-//   Revision 1.33  2008/11/07 21:22:25  ssa1
-//   Fixing memory corruption errors when python garbage collects c++ objects
-//
-//   Revision 1.32  2008/11/06 05:29:04  ssa1
-//   CGI submission milestone for Interactive Skeletonization, and theme support, and fixing (hopefully) mac-os flicker bug
-//
-//   Revision 1.31  2008/10/29 19:26:26  ssa1
-//   Reducing memory footprint, Increasing performance and adding volume normalization
-//
-//   Revision 1.30  2008/10/28 22:18:05  ssa1
-//   Changing visualization of meshes, and sketches
-//
-//   Revision 1.29  2008/10/16 19:50:44  ssa1
-//   Supporting line deletion
-//
-//   Revision 1.28  2008/10/16 02:39:57  ssa1
-//   Modifying the sketch behavior to supplement line drawing instead of replace it.
-//
-//   Revision 1.27  2008/10/15 19:41:32  ssa1
-//   Esc to cancel path, Clear Button and Tracking of start seed point
-//
-//   Revision 1.26  2008/10/14 14:59:33  ssa1
-//   Adding in sketching mode for interactive skeletonization
-//
-//   Revision 1.25  2008/10/08 16:43:19  ssa1
-//   Interactive skeletonization changes
-//
-//   Revision 1.24  2008/10/07 23:49:43  colemanr
-//   Added CAlphaViewer::GetAtomFromHitStack.
-//
-//   Revision 1.23  2008/09/29 16:43:13  ssa1
-//   Adding in CVS meta information
-//
 
 
 
@@ -262,16 +55,6 @@ using wustl_mm::MathTools::LinearSolver;
 namespace python = boost::python;
 
 
-template <class T>
-struct vector_to_python : python::to_python_converter<vector<T>, vector_to_python<T> > {
-	static PyObject* convert(vector<T> const& v) {
-		python::list result;
-		for (size_t i = 0; i < v.size(); i++) {
-			result.append(v[i]);
-		}
-		return python::incref(python::list(result).ptr());
-	}
-};
 
 template <class T>
 struct vector_from_python {
@@ -360,30 +143,32 @@ struct tuple3_to_python : python::to_python_converter<T, tuple3_to_python<T> > {
 
 // **************************************************************************************
 
+#include <boost/python/suite/indexing/vector_indexing_suite.hpp>
 BOOST_PYTHON_MODULE(libpyGORGON)
 {
 	
-	vector_to_python<float>();
 	vector_from_python<float>();
-	vector_to_python< std::vector<float> >();
+	class_<std::vector<float> >("std::vector<float>")
+	        .def(vector_indexing_suite<std::vector<float> >() );
+	class_<std::vector<std::vector<float> > >("std::vector<std::vector<float> >")
+	        .def(vector_indexing_suite<std::vector<std::vector<float> > >() );
+
+	class_<std::vector<int> >("std::vector<int>")
+	        .def(vector_indexing_suite<std::vector<int> >() );
+	class_<std::vector<std::vector<int> > >("std::vector<std::vector<int> >")
+	        .def(vector_indexing_suite<std::vector<std::vector<int> > >() );
+
 	vector_from_python< std::vector<float> >();
 
-	vector_to_python<int>();
 	vector_from_python<int>();
-	vector_to_python< std::vector<int> >();
 	vector_from_python< std::vector<int> >();
 
-	vector_to_python<bool>();
 	vector_from_python<bool>();
-	vector_to_python< std::vector<bool> >();
 	vector_from_python< std::vector<bool> >();
 
-    vector_to_python<unsigned long long>();
     vector_from_python<unsigned long long>();
 
-	vector_to_python<Vector3DFloat>();
 	vector_from_python<Vector3DFloat>();
-	vector_to_python< std::vector<Vector3DFloat> >();
 	vector_from_python< std::vector<Vector3DFloat> >();
 
 

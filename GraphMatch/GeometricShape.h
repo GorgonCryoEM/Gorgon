@@ -2,48 +2,6 @@
 // Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 // Description:   Data storage and basic functions on primitive geometric shapes
 
-// CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
-//
-// History Log: 
-//   $Log$
-//   Revision 1.22  2010/03/05 20:30:21  ssa1
-//   Fixing loading of helices using .SSE files
-//
-//   Revision 1.21  2010/01/08 20:43:23  schuhs
-//   Removing dependancy on SSE files for helix length calculation.
-//
-//   Revision 1.20  2009/12/28 17:42:27  ssa1
-//   Fixing SSEBuilder bug when adding sheets
-//
-//   Revision 1.19  2009/12/22 01:03:06  schuhs
-//   Adding support for beta sheets to the SSE correspondence search algorithm
-//
-//   Revision 1.18  2009/12/07 21:34:36  ssa1
-//   Finding Rotation using SVD, and removing compiler warnings
-//
-//   Revision 1.17  2009/09/17 20:00:24  ssa1
-//   Steps towards exporting to Rosetta
-//
-//   Revision 1.16  2009/06/23 16:50:34  ssa1
-//   Adding in SSEBuilder Functionality: Saving helix as WRL and SSE files
-//
-//   Revision 1.15  2009/03/16 16:17:34  ssa1
-//   Fitting SSEs into the Density
-//
-//   Revision 1.14  2008/11/24 18:32:28  ssa1
-//   Giving helix end points
-//
-//   Revision 1.13  2008/11/18 18:10:24  ssa1
-//   Changing the scaling functions when doing graph matching to find correspondences
-//
-//   Revision 1.12  2008/09/29 16:19:30  ssa1
-//   Adding in CVS meta information
-//
 
 
 #ifndef GEOMETRICSHAPE_H

@@ -2,54 +2,6 @@
 // Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 // Description:   A data structure to store PDB atom information
 
-// CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
-//
-// History Log: 
-//   $Log$
-//   Revision 1.20  2011/06/07 15:52:43  coleman.r
-//   The PDBAtom default constructor now calls 4 parameter constructor to avoid code duplication. The constructor that takes a line from the atom coordinates section of a PDB file, now accepts a PDB ID as an optional argument.
-//
-//   Revision 1.19  2010/07/27 23:18:58  chenb
-//   Ribbon diagram code now merged with flexible fitting code
-//
-//   Revision 1.18  2010/07/19 17:38:31  heiderp
-//   Flexible fitting.
-//
-//   Revision 1.16  2010/05/27 17:10:19  ssa1
-//   Better color control for all atom visualization
-//
-//   Revision 1.15  2010/05/27 04:41:54  ssa1
-//   Side chain visualization on Gorgon
-//
-//   Revision 1.14  2010/05/21 15:45:16  ssa1
-//   Flexible fitting implemented in Gorgon
-//
-//   Revision 1.13  2010/02/11 23:19:11  ssa1
-//   Allowing the ability to save pseudoatoms generated from SSEHunter
-//
-//   Revision 1.12  2010/01/11 18:09:35  colemanr
-//   update constructors to initialize correlationScore, skeletonScore, and geometryScore
-//
-//   Revision 1.11  2010/01/10 05:31:43  colemanr
-//   PDBAtoms now store their correlation, skeleton, and geometry scores. Changing the weighting for these three scores in the GUI now changes the total score for each pseudoatom.
-//
-//   Revision 1.10  2009/04/03 19:44:37  ssa1
-//   CAlpha bug fixes
-//
-//   Revision 1.9  2009/03/30 21:36:13  ssa1
-//   Interactive loop building
-//
-//   Revision 1.8  2008/09/29 19:05:37  ssa1
-//   Fixing String Utils.h linking errors
-//
-//   Revision 1.7  2008/09/29 16:19:30  ssa1
-//   Adding in CVS meta information
-//
 
 
 #ifndef GRAPH_MATCH_PDB_ATOM_H

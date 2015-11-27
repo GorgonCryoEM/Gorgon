@@ -2,41 +2,6 @@
 // Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 // Description:   A class for storing an base graph
 
-// CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
-//
-// History Log: 
-//   $Log$
-//   Revision 1.9  2010/05/26 20:44:19  ssa1
-//   Fixing macos build errors
-//
-//   Revision 1.8  2010/04/27 21:10:17  ssa1
-//   Implementing Cost-matrix based SSE Registration and performance optimizations on graph construction
-//
-//   Revision 1.7  2010/04/27 17:30:54  ssa1
-//   SSE Registration search by first finding all cliques, and then finding the matching.
-//
-//   Revision 1.6  2009/12/21 22:03:32  ssa1
-//   Checking in FFTW windows binaries
-//
-//   Revision 1.5  2009/11/30 04:23:44  ssa1
-//   Triangle based A* search for flexible fitting
-//
-//   Revision 1.4  2009/11/04 20:29:38  ssa1
-//   Implementing Triangle based clique search and chain based flexible fitting.
-//
-//   Revision 1.3  2009/09/02 19:06:13  ssa1
-//   Working towards flexible fitting
-//
-//   Revision 1.2  2009/08/26 14:58:55  ssa1
-//   Adding in Flexible fitting clique search
-//
-//   Revision 1.1  2009/08/18 19:55:06  ssa1
-//   Adding A base graph class for finding maximal cliques, and connected components
 
 
 #ifndef FOUNDATION_GRAPH_BASE_H

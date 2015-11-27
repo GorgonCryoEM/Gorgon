@@ -2,15 +2,6 @@
 # Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 # Description:   A widget to load RAW files 
 
-# CVS Meta Information: 
-#   $Source$
-#   $Revision$
-#   $Date$
-#   $Author$
-#   $State$
-#
-# History Log: 
-#   $Log$
 
 from PyQt4 import QtCore, QtGui
 from ui_dialog_volume_raw_loader import Ui_DialogVolumeRawLoader

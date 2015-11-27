@@ -2,24 +2,6 @@
 // Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 // Description:   A class for string manipulation
 
-// CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
-//
-// History Log: 
-//   $Log$
-//   Revision 1.8  2008/09/29 19:05:37  ssa1
-//   Fixing String Utils.h linking errors
-//
-//   Revision 1.7  2008/09/29 16:22:17  ssa1
-//   Removing compiler warnings
-//
-//   Revision 1.6  2008/09/29 15:45:09  ssa1
-//   Adding in CVS meta information
-//
 
 #ifndef FOUNDATION_STRING_UTILS_H
 #define FOUNDATION_STRING_UTILS_H

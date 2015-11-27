@@ -2,66 +2,6 @@
 // Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 // Description:   An engine for interactively creating and modifying skeletons
 
-// CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
-//
-// History Log: 
-//   $Log$
-//   Revision 1.30  2009/06/24 13:06:51  ssa1
-//   Fixing compilation issues on MacOS
-//
-//   Revision 1.29  2009/03/30 21:36:12  ssa1
-//   Interactive loop building
-//
-//   Revision 1.28  2008/12/01 23:16:31  ssa1
-//   Restructuring interactive skeleton drawing, and fixing it for scale space changes.
-//
-//   Revision 1.27  2008/11/06 20:34:23  ssa1
-//   Proper lighting for bounding boxes
-//
-//   Revision 1.26  2008/11/06 05:29:04  ssa1
-//   CGI submission milestone for Interactive Skeletonization, and theme support, and fixing (hopefully) mac-os flicker bug
-//
-//   Revision 1.25  2008/10/28 22:18:05  ssa1
-//   Changing visualization of meshes, and sketches
-//
-//   Revision 1.24  2008/10/28 18:46:52  ssa1
-//   Fixing octree neighbor search, and changing the structure tensor cost function
-//
-//   Revision 1.23  2008/10/16 19:50:44  ssa1
-//   Supporting line deletion
-//
-//   Revision 1.22  2008/10/16 02:39:57  ssa1
-//   Modifying the sketch behavior to supplement line drawing instead of replace it.
-//
-//   Revision 1.21  2008/10/15 19:41:30  ssa1
-//   Esc to cancel path, Clear Button and Tracking of start seed point
-//
-//   Revision 1.20  2008/10/15 16:34:18  colemanr
-//   includes grant's fix for a gcc compile error.
-//
-//   Revision 1.19  2008/10/15 12:23:50  ssa1
-//   Modifying the cost function for sketch interraction, and changing mousebehavior to trigger different interaction modes
-//
-//   Revision 1.18  2008/10/14 17:52:07  ssa1
-//   Fixing SketchRatio error
-//
-//   Revision 1.17  2008/10/14 14:59:33  ssa1
-//   Adding in sketching mode for interactive skeletonization
-//
-//   Revision 1.16  2008/10/10 14:25:55  ssa1
-//   Setting the cost functions to scale with the edge length
-//
-//   Revision 1.15  2008/10/08 16:43:19  ssa1
-//   Interactive skeletonization changes
-//
-//   Revision 1.14  2008/09/29 16:01:17  ssa1
-//   Adding in CVS meta information
-//
 
 #ifndef GORGON_INTERACTIVE_SKELETON_ENGINE_H
 #define GORGON_INTERACTIVE_SKELETON_ENGINE_H

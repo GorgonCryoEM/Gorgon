@@ -2,15 +2,6 @@
 // Author:        Austin D. Abrams (austin.abrams@gmail.com)
 // Description:   A function to create a sheet from a set of 3D points.
 
-// CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
-//
-// History Log: 
-//   $Log$
 
 #ifndef PROTEINMORPH_SHEETGENERATOR_H
 #define PROTEINMORPH_SHEETGENERATOR_H

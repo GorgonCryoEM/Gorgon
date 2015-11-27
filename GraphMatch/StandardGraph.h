@@ -2,24 +2,6 @@
 // Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 // Description:   Storage structure for an attributed relational graph
 
-// CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
-//
-// History Log: 
-//   $Log$
-//   Revision 1.14  2009/10/13 18:09:34  ssa1
-//   Refactoring Volume.h
-//
-//   Revision 1.13  2008/11/18 18:10:24  ssa1
-//   Changing the scaling functions when doing graph matching to find correspondences
-//
-//   Revision 1.12  2008/09/29 16:19:30  ssa1
-//   Adding in CVS meta information
-//
 
 
 #ifndef STANDARDGRAPH_H
@@ -539,7 +521,7 @@ namespace wustl_mm {
 								for (int m = 0; m <= lastRowColumn; m++) {
 									adjacencyMatrix[k][m][0] = adjacencyMatrix[k+1][m][0];
 									adjacencyMatrix[k][m][1] = adjacencyMatrix[k+1][m][1];
-									adjacencyMatrix[k][m][2] = adjacencyMatrix[k+1][m][2];
+//									adjacencyMatrix[k][m][2] = adjacencyMatrix[k+1][m][2];
 									euclideanMatrix[k][m] = euclideanMatrix[k+1][m];
 									paths[k][m] = paths[k+1][m];
 								}
@@ -549,7 +531,7 @@ namespace wustl_mm {
 								for (int m = 0; m < firstSheet*2 + numSheets + 1; m++) {
 									adjacencyMatrix[m][k][0] = adjacencyMatrix[m][k+1][0];
 									adjacencyMatrix[m][k][1] = adjacencyMatrix[m][k+1][1];
-									adjacencyMatrix[m][k][2] = adjacencyMatrix[m][k+1][2];
+//									adjacencyMatrix[m][k][2] = adjacencyMatrix[m][k+1][2];
 									euclideanMatrix[m][k] = euclideanMatrix[m][k+1];
 									paths[m][k] = paths[m][k+1];
 								}
@@ -558,14 +540,14 @@ namespace wustl_mm {
 							for (int m = 0; m <= lastRowColumn; m++) {
 								adjacencyMatrix[lastRowColumn][m][0] = 3;
 								adjacencyMatrix[lastRowColumn][m][1] = MAXINT;
-								adjacencyMatrix[lastRowColumn][m][2] = 0;
+//								adjacencyMatrix[lastRowColumn][m][2] = 0;
 								euclideanMatrix[lastRowColumn][m] = 0;
 							}
 							// remove last column 
 							for (int m = 0; m <= lastRowColumn; m++) {
 								adjacencyMatrix[m][lastRowColumn][0] = 3;
 								adjacencyMatrix[m][lastRowColumn][1] = MAXINT;
-								adjacencyMatrix[m][lastRowColumn][2] = 0;
+//								adjacencyMatrix[m][lastRowColumn][2] = 0;
 								euclideanMatrix[m][lastRowColumn] = 0;
 							}
 

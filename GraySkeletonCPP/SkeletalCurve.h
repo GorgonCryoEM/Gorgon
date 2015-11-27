@@ -2,15 +2,6 @@
 // Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 // Description:   A data storage to store skeletal curves
 
-// CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
-//
-// History Log: 
-//   $Log$
 
 #ifndef GRAYSKELETONCPP_SKELETAL_CURVE_H
 #define GRAYSKELETONCPP_SKELETAL_CURVE_H

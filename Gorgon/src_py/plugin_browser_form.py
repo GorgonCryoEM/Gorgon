@@ -2,21 +2,6 @@
 # Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 # Description:   A dialog box which can be used to browse plugins
 
-# CVS Meta Information: 
-#   $Source$
-#   $Revision$
-#   $Date$
-#   $Author$
-#   $State$
-#
-# History Log: 
-#   $Log$
-#   Revision 1.2  2009/12/24 05:09:30  ssa1
-#   Refactoring child window behavior.. Using base classes to encapsulate common behavior
-#
-#   Revision 1.1  2009/04/08 19:54:59  ssa1
-#   Adding in plugin functionality
-#
 
 from PyQt4 import QtCore, QtGui
 from ui_dialog_plugin_browser import Ui_DialogPluginBrowser

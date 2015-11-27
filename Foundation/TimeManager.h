@@ -2,18 +2,6 @@
 // Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 // Description:   A class for displaying execution time... maintains a time stack so that the execution time can be broken down.
 
-// CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
-//
-// History Log: 
-//   $Log$
-//   Revision 1.5  2008/09/29 15:45:09  ssa1
-//   Adding in CVS meta information
-//
 
 #ifndef FOUNDATION_TIME_MANAGER_H
 #define FOUNDATION_TIME_MANAGER_H

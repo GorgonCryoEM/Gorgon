@@ -2,36 +2,6 @@
 // Author:        Tao Ju (taoju@cse.wustl.edu)
 // Description:   Reading routines for volumetric data
 
-// CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
-//
-// History Log: 
-//   $Log$
-//   Revision 1.17  2009/11/02 19:49:06  colemanr
-//   use <string> with Visual Studio and <cstring> otherwise
-//
-//   Revision 1.16  2009/10/13 18:09:34  ssa1
-//   Refactoring Volume.h
-//
-//   Revision 1.15  2008/11/23 19:56:09  ssa1
-//   Setting volume origin to be center of mass instead of bottom left...
-//
-//   Revision 1.14  2008/11/20 18:33:00  ssa1
-//   Using the origin of the MRC volume
-//
-//   Revision 1.13  2008/11/18 22:01:18  ssa1
-//   Removing printfs, and adding cropping
-//
-//   Revision 1.12  2008/11/13 20:54:40  ssa1
-//   Using the correct scale when loading volumes
-//
-//   Revision 1.11  2008/09/29 16:43:15  ssa1
-//   Adding in CVS meta information
-//
 
 
 

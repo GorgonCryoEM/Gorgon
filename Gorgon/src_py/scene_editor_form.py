@@ -2,24 +2,6 @@
 # Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 # Description:   A dialog box which can be used to modify the visualization options of the scene 
 
-# CVS Meta Information: 
-#   $Source$
-#   $Revision$
-#   $Date$
-#   $Author$
-#   $State$
-#
-# History Log: 
-#   $Log$
-#   Revision 1.4  2008/11/06 05:29:04  ssa1
-#   CGI submission milestone for Interactive Skeletonization, and theme support, and fixing (hopefully) mac-os flicker bug
-#
-#   Revision 1.3  2008/09/12 20:57:44  ssa1
-#   Adding an Eye light source
-#
-#   Revision 1.2  2008/06/18 18:15:41  ssa1
-#   Adding in CVS meta data
-#
 
 from PyQt4 import QtCore, QtGui
 from ui_dialog_scene_editor import Ui_DialogSceneEditor

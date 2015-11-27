@@ -2,21 +2,6 @@
 // Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 // Description:   A simulated annealing based fitting tool to fit a secondary structure element into the density.
 
-// CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
-//
-// History Log: 
-//   $Log$
-//   Revision 1.2  2009/08/26 14:58:55  ssa1
-//   Adding in Flexible fitting clique search
-//
-//   Revision 1.1  2009/03/17 20:00:17  ssa1
-//   Removing Sheets from fiting process
-//
 
 #include <SkeletonMaker/volume.h>
 #include <MathTools/Vector3D.h>

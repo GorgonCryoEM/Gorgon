@@ -1,0 +1,3 @@
+include(ProcessorCount)
+ProcessorCount(NUMBER_OF_PARALLEL_JOBS)
+math(EXPR NUMBER_OF_PARALLEL_JOBS ${NUMBER_OF_PARALLEL_JOBS}-1)

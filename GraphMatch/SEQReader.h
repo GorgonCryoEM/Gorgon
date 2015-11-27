@@ -2,56 +2,6 @@
 // Author:        Ross Coleman (racolema@bcm.edu)
 // Description:   Reads SEQ Files
 
-// CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
-//
-// History Log: 
-//   $Log$
-//   Revision 1.13  2010/01/08 22:27:34  schuhs
-//   Helix-only correspondence works with SEQ file
-//
-//   Revision 1.12  2009/12/09 21:13:20  colemanr
-//   fixed compiler warnings about unused variables
-//
-//   Revision 1.11  2008/11/20 16:02:21  colemanr
-//   Fixed the logic on whether there is a START or start line at the
-//   beginning, and implemented handling of NULL pointers in error
-//   conditions.
-//
-//   Revision 1.10  2008/11/18 18:10:24  ssa1
-//   Changing the scaling functions when doing graph matching to find correspondences
-//
-//   Revision 1.9  2008/11/17 19:35:50  colemanr
-//   defined SEQFileData class, and used it in the functions
-//
-//   Revision 1.8  2008/11/14 22:18:30  colemanr
-//   ReadFile() logic is now broken down into two seperate functions
-//
-//   Revision 1.7  2008/11/13 00:48:02  colemanr
-//   Ignores helices that are shorter than minHelixLength = 6
-//
-//   Revision 1.6  2008/11/13 00:40:33  colemanr
-//   Fixed a memory error.  string::c_str() returns a reference to a string, not a copy, so I am
-//   now making a copy using string::copy().  Also, switched from using Foundation/StringUtils.h to
-//   using <sstream> to convert integers to strings.
-//
-//   Revision 1.5  2008/11/12 20:40:10  colemanr
-//   fixed some indexing errors
-//
-//   Revision 1.4  2008/11/10 21:31:44  ssa1
-//   Fixing compilation errors
-//
-//   Revision 1.3  2008/11/10 21:10:28  colemanr
-//   updated debugging code to show the line of a runtime error that was
-//   occurring
-//
-//   Revision 1.2  2008/11/10 16:15:22  ssa1
-//   Adding in ifdef statements to support compilation
-//
 
 
 #ifndef SEQREADER_H
@@ -193,9 +143,9 @@ namespace wustl_mm {
 			const char strandChar = 'E';
 			const unsigned short minStrandLength = 0;
 			char currentChar = predictedSSEs[0];
-			unsigned int startCharNum = 0;
-			unsigned int stopCharNum = 0;
-			unsigned int length = 0;
+			int startCharNum = 0;
+			int stopCharNum = 0;
+			int length = 0;
 			char ch;
 			string substring;
 			string sseID;

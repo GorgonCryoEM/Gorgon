@@ -2,54 +2,6 @@
 // Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 // Description:   A search node in the A* search used to find the correspondence between feature pairs.
 
-// CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
-//
-// History Log: 
-//   $Log$
-//   Revision 1.13  2010/02/23 21:19:08  ssa1
-//   Better correspondence search
-//
-//   Revision 1.12  2010/02/11 23:20:47  ssa1
-//   Flexible fitting algorithm #5 - Better scoring function which scales based on depth of tree and local distance
-//
-//   Revision 1.11  2009/12/21 22:03:32  ssa1
-//   Checking in FFTW windows binaries
-//
-//   Revision 1.10  2009/12/07 22:35:32  ssa1
-//   A* triangle search using SVD rotations and translations.
-//
-//   Revision 1.9  2009/12/07 21:34:36  ssa1
-//   Finding Rotation using SVD, and removing compiler warnings
-//
-//   Revision 1.8  2009/12/07 05:00:52  ssa1
-//   Adding in Matrix functionality for Singular Value Decomposition
-//
-//   Revision 1.7  2009/11/30 04:23:44  ssa1
-//   Triangle based A* search for flexible fitting
-//
-//   Revision 1.6  2009/11/19 18:19:25  ssa1
-//   Improved flexible fitting.. (Split nodes to guarantee direction)
-//
-//   Revision 1.5  2009/11/04 20:29:38  ssa1
-//   Implementing Triangle based clique search and chain based flexible fitting.
-//
-//   Revision 1.4  2009/10/13 18:09:34  ssa1
-//   Refactoring Volume.h
-//
-//   Revision 1.3  2009/09/29 19:23:39  ssa1
-//   Fixing indexing bugs when performing sse correspondence search.
-//
-//   Revision 1.2  2009/09/02 19:06:13  ssa1
-//   Working towards flexible fitting
-//
-//   Revision 1.1  2009/08/26 14:58:55  ssa1
-//   Adding in Flexible fitting clique search
-//
 
 #ifndef PROTEINMORPH_SSE_CORRESPONDENCE_SEARCH_NODE_H
 #define PROTEINMORPH_SSE_CORRESPONDENCE_SEARCH_NODE_H

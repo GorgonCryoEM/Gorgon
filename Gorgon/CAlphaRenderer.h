@@ -2,147 +2,12 @@
 // Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 // Description:   Rendering engine responsible for rendering C-Alpha atoms.
 
-// CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
-//
-// History Log: 
-//   $Log$
-//   Revision 1.68  2011/08/20 20:03:21  coleman.r
-//   Reverting the algorithm for GetSelectedAtom, fixing a logical error I made in my last commit.
-//
-//   Revision 1.67  2011/06/07 16:03:23  coleman.r
-//   We had been using memory addresses for "names" in glLoadName() in GL_SELECT mode. Now, we are storing atom hash keys in a vector (hash keys are 64 bit) and using the indices of these hash keys as "names". (The indices should be 32 bit and can be cast to GLuint safely.) This avoids a bug on 64 bit systems where memory addresses were too large to fit in a GLuint type. Thus, a 64 bit OS segmentation fault (we previously cast int "names" back to pointers with SelectionToggle()) is avoided.
-//
-//   Revision 1.66  2010/10/11 23:24:36  coleman.r
-//   Fixing last commit (I had made similar changes to the code on two different computers)
-//
-//   Revision 1.65  2010/10/11 23:18:49  coleman.r
-//   added GetAtomHashes()
-//
-//   Revision 1.64  2010/08/20 13:52:43  coleman.r
-//   gcc compile fix: gcc requires nested templates to end in "> >" not ">>"
-//
-//   Revision 1.63  2010/08/19 23:05:07  chenb
-//   Cleaned and commented ribbon diagram code
-//
-//   Revision 1.62  2010/08/13 21:20:16  coleman.r
-//   AutoHelixBuilder changes
-//
-//   Revision 1.61  2010/07/29 20:21:58  coleman.r
-//   gcc compile fix: gcc requires nested templates to end in "> >" not ">>"
-//
-//   Revision 1.60  2010/07/27 23:18:58  chenb
-//   Ribbon diagram code now merged with flexible fitting code
-//
-//   Revision 1.59  2010/07/23 18:18:32  heiderp
-//   Side chains now transform correctly.  PDB helices now color correctly and rigid initialization bug is fixed
-//
-//   Revision 1.58  2010/07/22 21:09:07  heiderp
-//   Minor updates. Mostly commenting and removing extra material from CurveDeformer.h
-//
-//   Revision 1.57  2010/07/19 17:29:02  heiderp
-//   LARGE update.  Added flexible fitting functionality, lots of logic in FlexibleFittingEngine.h
-//
-//   Revision 1.51  2010/06/23 19:11:51  ssa1
-//   Adding simple ribbon rendering and associated events for flexible fitting
-//
-//   Revision 1.50  2010/06/23 13:02:56  ssa1
-//   Allowing users to reset a flexible fitting if need be.
-//
-//   Revision 1.49  2010/05/27 18:28:46  ssa1
-//   Better color control for all atom visualization
-//
-//   Revision 1.48  2010/05/27 17:10:18  ssa1
-//   Better color control for all atom visualization
-//
-//   Revision 1.47  2010/05/27 05:08:49  ssa1
-//   Side chain visualization on Gorgon
-//
-//   Revision 1.46  2010/05/27 04:41:54  ssa1
-//   Side chain visualization on Gorgon
-//
-//   Revision 1.45  2010/05/26 20:17:35  ssa1
-//   Adding in display styles for atom rendering.
-//
-//   Revision 1.44  2010/05/21 15:45:16  ssa1
-//   Flexible fitting implemented in Gorgon
-//
-//   Revision 1.43  2010/05/20 21:55:53  ssa1
-//   Rigid body alignment based on largest flexible cluster
-//
-//   Revision 1.42  2010/02/11 23:19:11  ssa1
-//   Allowing the ability to save pseudoatoms generated from SSEHunter
-//
-//   Revision 1.41  2010/01/10 05:31:43  colemanr
-//   PDBAtoms now store their correlation, skeleton, and geometry scores. Changing the weighting for these three scores in the GUI now changes the total score for each pseudoatom.
-//
-//   Revision 1.40  2009/10/13 18:09:34  ssa1
-//   Refactoring Volume.h
-//
-//   Revision 1.39  2009/08/10 20:03:40  ssa1
-//   SSEHunter interfaced into Gorgon
-//
-//   Revision 1.38  2009/08/10 13:54:38  ssa1
-//   Adding initial ssehunter program
-//
-//   Revision 1.37  2009/07/01 21:25:13  ssa1
-//   Centering the volume cropped using a radius around the point selected by the atom selection tool.
-//
-//   Revision 1.36  2009/06/30 21:23:24  ssa1
-//   SSEHunter results have range between -3 and 3, not -1 and 1
-//
-//   Revision 1.35  2009/06/22 20:17:27  ssa1
-//   Adding in SSEBuilder Functionality: Selection to Helix functionality
-//
-//   Revision 1.34  2009/06/19 18:51:05  ssa1
-//   Adding in SSEBuilder Functionality
-//
-//   Revision 1.33  2009/03/30 21:36:12  ssa1
-//   Interactive loop building
-//
-//   Revision 1.32  2008/12/07 07:11:36  ssa1
-//   Coloring bonds with red and blue if they exceed maximum or minimum length restrictions
-//
-//   Revision 1.31  2008/12/03 21:58:25  ssa1
-//   Selection rotations for atoms and helices.
-//
-//   Revision 1.30  2008/12/02 23:55:43  colemanr
-//   Fixed logic for GetBondIndex().
-//
-//   Revision 1.29  2008/12/02 21:25:44  ssa1
-//   adding getBondIndex method to give access to bonds
-//
-//   Revision 1.28  2008/11/13 20:54:40  ssa1
-//   Using the correct scale when loading volumes
-//
-//   Revision 1.27  2008/11/10 16:15:43  ssa1
-//   Making python and C++ use the same PDBAtom objects
-//
-//   Revision 1.26  2008/11/07 21:32:21  ssa1
-//   Fixing returning of the actual c++ pdbatom object instead of a copy
-//
-//   Revision 1.25  2008/10/10 14:25:55  ssa1
-//   Setting the cost functions to scale with the edge length
-//
-//   Revision 1.24  2008/10/07 23:48:14  colemanr
-//   added a function which returns the PDBAtom for a given hitStack
-//
-//   Revision 1.23  2008/09/29 20:36:35  ssa1
-//   Drawing skeletal curves as cylinders and spheres
-//
-//   Revision 1.22  2008/09/29 16:01:17  ssa1
-//   Adding in CVS meta information
-//
 
 #ifndef GORGON_CALPHA_RENDERER_H
 #define GORGON_CALPHA_RENDERER_H
 
 
-#include <glut.h>
+#include <GorgonGL.h>
 #include <cstdlib>
 #include <cstdio>
 #include <ProteinMorph/NonManifoldMesh.h>
@@ -360,11 +225,11 @@ namespace wustl_mm {
 			//vector<int> selectedSecelIndices; //unsure if I can just keep track of secels as one structure or not
 			vector<int> selectedStrandIndices;
 			vector<int> selectedLoopIndices;
-			vector < tuple<int, int> > corrs;
+			vector < boost::tuple<int, int> > corrs;
 			vector<int> selectedSSEHelices;
-			vector< tuple<Vector3DFloat, Vector3DFloat> > featureVecs;
+			vector< boost::tuple<Vector3DFloat, Vector3DFloat> > featureVecs;
 
-			map<int,tuple<float, float, float> > helixColors;
+			map<int,boost::tuple<float, float, float> > helixColors;
 
 			int renderingType;
 			float thinRibbThickness;
@@ -558,7 +423,7 @@ namespace wustl_mm {
 						glMaterialfv(GL_FRONT, GL_EMISSION, emissionColor);
 						glMaterialfv(GL_BACK, GL_EMISSION, emissionColor);
 					}
-					map<int, tuple<float,float,float> >::iterator iter = helixColors.begin();
+					map<int, boost::tuple<float,float,float> >::iterator iter = helixColors.begin();
 					iter = helixColors.find(i);
 					if(iter != helixColors.end()){
 
@@ -1697,7 +1562,7 @@ namespace wustl_mm {
 			switch(subsceneIndex) {
 				case(0):
 					if((ix0 >= 0) && (ix0 <= (int)atoms.size())) {
-						PDBAtom * a = (PDBAtom*)ix0;
+						PDBAtom * a =  & (atoms [ix0]);
 						position = a->GetPosition();
 					}
 					break;
@@ -1759,7 +1624,7 @@ namespace wustl_mm {
 			else
 				corrs.clear();
 			for(int i=0; i < flatCorrespondences.size(); i = i+2){
-				corrs.push_back(tuple<int, int>(flatCorrespondences[i], flatCorrespondences[i+1]));
+				corrs.push_back(boost::tuple<int, int>(flatCorrespondences[i], flatCorrespondences[i+1]));
 			}
 		}
 
@@ -1769,7 +1634,7 @@ namespace wustl_mm {
 			else
 				featureVecs.clear();
 			for(int i=0; i < flatFeatureVecs.size(); i = i+2){
-				featureVecs.push_back(tuple<Vector3DFloat, Vector3DFloat>(flatFeatureVecs[i], flatFeatureVecs[i+1]));
+				featureVecs.push_back(boost::tuple<Vector3DFloat, Vector3DFloat>(flatFeatureVecs[i], flatFeatureVecs[i+1]));
 			}
 
 		}
@@ -1781,7 +1646,7 @@ namespace wustl_mm {
 		void CAlphaRenderer::SetHelixColor(int helixNum, float r, float g, float b){
 			cout << "setting helix color " << helixNum << " to (" << r << ", " << g << ", " << b << ")" <<endl;
 			helixColors.erase(helixNum);
-			helixColors.insert(pair<int, tuple<float, float, float> >(helixNum, tuple<float, float, float>(r,g,b)));
+			helixColors.insert(pair<int, boost::tuple<float, float, float> >(helixNum, boost::tuple<float, float, float>(r,g,b)));
 		}
 
 		// creates a vector of Vector3DFloats that represents the locations of all the PDBAtoms

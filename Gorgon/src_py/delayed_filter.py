@@ -2,21 +2,6 @@
 # Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 # Description:   A filter which transmits events based on a timer.. (simply bundles events into one event) 
 
-# CVS Meta Information: 
-#   $Source$
-#   $Revision$
-#   $Date$
-#   $Author$
-#   $State$
-#
-# History Log: 
-#   $Log$
-#   Revision 1.7  2008/09/03 19:48:19  ssa1
-#   Maximizing performance of volume visualization by minimizing method call count
-#
-#   Revision 1.6  2008/06/18 18:15:41  ssa1
-#   Adding in CVS meta data
-#
 
 from PyQt4 import QtGui, QtCore
 import thread

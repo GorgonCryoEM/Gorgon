@@ -2,24 +2,6 @@
 // Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 // Description:   A class for a triangle mesh
 
-// CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
-//
-// History Log: 
-//   $Log$
-//   Revision 1.4  2009/07/15 15:34:21  ssa1
-//   Fixing Macos Compilation issue for template based types used as iterators
-//
-//   Revision 1.3  2009/07/01 21:25:13  ssa1
-//   Centering the volume cropped using a radius around the point selected by the atom selection tool.
-//
-//   Revision 1.2  2009/03/16 16:17:34  ssa1
-//   Fitting SSEs into the Density
-//
 
 
 #ifndef PROTEINMORPH_TRIANGLE_MESH_H
@@ -165,7 +147,7 @@ namespace wustl_mm {
 		template <class TVertex, class TFace> void TriangleMesh<TVertex, TFace>::SaveFile(string fileName) {
 			FILE * outFile = fopen(fileName.c_str(), "wt");
 			fprintf(outFile, "OFF\n");
-			fprintf(outFile, "%d %d %d\n", (int)vertices.size(), faces.size(), 0);
+			fprintf(outFile, "%d %d %d\n", (int)vertices.size(), (int)faces.size(), 0);
 
 			map<unsigned long long, int> indexedVertices;
 			vector<Vector3DFloat> vertexList;

@@ -2,78 +2,6 @@
 // Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 // Description:   A clique based fitting tool which attempts to find semi-rigid correspondence between 2 pairs of secondary structure elements
 
-// CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
-//
-// History Log: 
-//   $Log$
-//   Revision 1.21  2010/07/22 21:09:07  heiderp
-//   Minor updates. Mostly commenting and removing extra material from CurveDeformer.h
-//
-//   Revision 1.20  2010/07/19 17:38:31  heiderp
-//   Flexible fitting.
-//
-//   Revision 1.19  2010/06/08 22:00:05  ssa1
-//   Fixing performance issue where changing color took time.
-//
-//   Revision 1.18  2010/05/26 20:44:19  ssa1
-//   Fixing macos build errors
-//
-//   Revision 1.17  2010/05/20 21:55:53  ssa1
-//   Rigid body alignment based on largest flexible cluster
-//
-//   Revision 1.16  2010/04/30 04:56:32  ssa1
-//   Flexible fitting changes.
-//
-//   Revision 1.15  2010/04/27 21:10:17  ssa1
-//   Implementing Cost-matrix based SSE Registration and performance optimizations on graph construction
-//
-//   Revision 1.14  2010/04/27 17:30:54  ssa1
-//   SSE Registration search by first finding all cliques, and then finding the matching.
-//
-//   Revision 1.13  2010/04/04 19:05:51  ssa1
-//   Fixing misc bugs, and redoing sheet visualization mechanism
-//
-//   Revision 1.12  2010/02/23 21:19:08  ssa1
-//   Better correspondence search
-//
-//   Revision 1.11  2010/02/11 23:20:47  ssa1
-//   Flexible fitting algorithm #5 - Better scoring function which scales based on depth of tree and local distance
-//
-//   Revision 1.10  2009/12/21 22:03:32  ssa1
-//   Checking in FFTW windows binaries
-//
-//   Revision 1.9  2009/12/15 04:26:15  ssa1
-//   Using GorgonPriorityQueue instead of PriorityQueue
-//
-//   Revision 1.8  2009/12/07 21:34:36  ssa1
-//   Finding Rotation using SVD, and removing compiler warnings
-//
-//   Revision 1.7  2009/11/30 04:23:44  ssa1
-//   Triangle based A* search for flexible fitting
-//
-//   Revision 1.6  2009/11/19 18:19:25  ssa1
-//   Improved flexible fitting.. (Split nodes to guarantee direction)
-//
-//   Revision 1.5  2009/11/04 20:29:38  ssa1
-//   Implementing Triangle based clique search and chain based flexible fitting.
-//
-//   Revision 1.4  2009/10/13 18:09:34  ssa1
-//   Refactoring Volume.h
-//
-//   Revision 1.3  2009/09/29 19:23:39  ssa1
-//   Fixing indexing bugs when performing sse correspondence search.
-//
-//   Revision 1.2  2009/09/02 19:06:13  ssa1
-//   Working towards flexible fitting
-//
-//   Revision 1.1  2009/08/26 14:58:55  ssa1
-//   Adding in Flexible fitting clique search
-//
 
 
 #ifndef PROTEINMORPH_SSE_CORRESPONDENCE_FINDER
@@ -258,7 +186,7 @@ namespace wustl_mm {
 			helices2.clear();
 		}
 
-		void SSECorrespondenceFinder::InitializeConstants(float rigidityThreshold, float featureChangeThreshold, float rigidityAngleCoeff, float rigidityCentroidDistanceCoeff, float rigidityFeatureChangeCoeff, float rigidComponentCoeff, float intraComponentCoeff, float jointAngleThreshold, float dihedralAngleThreshold, float centroidDistanceThreshold, unsigned int maxSolutionCount, float maxCostMatrixError) {
+		void SSECorrespondenceFinder::InitializeConstants(float rigidityThreshold, float featureChangeThreshold, float rigidityAngleCoeff, float rigidityCentroidDistanceCoeff, float featureChangeCoeff, float rigidComponentCoeff, float intraComponentCoeff, float jointAngleThreshold, float dihedralAngleThreshold, float centroidDistanceThreshold, unsigned int maxSolutionCount, float maxCostMatrixError) {
 			this->rigidityThreshold = rigidityThreshold;
 			this->featureChangeThreshold = featureChangeThreshold;
 			this->rigidityAngleCoeff = rigidityAngleCoeff;
@@ -674,7 +602,7 @@ namespace wustl_mm {
 			
 			tm.PushCurrentTime();
 			vector< set<unsigned long long> > allCliques = parentGraph.GetAllCliquesTriangleApprox(smallestCliqueSize);
-			printf("(*%d cliques found ", allCliques.size());
+			printf("(*%d cliques found ", (int)allCliques.size());
 			tm.PopAndDisplayTime("%f seconds!*)\n");
 
 			tm.PushCurrentTime();

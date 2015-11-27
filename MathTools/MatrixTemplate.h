@@ -2,24 +2,6 @@
 // Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 // Description:   A template class for matrices
 
-// CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
-//
-// History Log: 
-//   $Log$
-//   Revision 1.3  2009/12/08 21:17:45  ssa1
-//   Fixing Switch/Case syntax
-//
-//   Revision 1.2  2009/12/07 21:34:36  ssa1
-//   Finding Rotation using SVD, and removing compiler warnings
-//
-//   Revision 1.1  2009/12/07 05:00:52  ssa1
-//   Adding in Matrix functionality for Singular Value Decomposition
-//
 
 #ifndef MATHTOOLS_MATRIX_TEMPLATE_H
 #define MATHTOOLS_MATRIX_TEMPLATE_H

@@ -2,39 +2,6 @@
 // Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 // Description:   Reads PDB files.
 
-// CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
-//
-// History Log: 
-//   $Log$
-//   Revision 1.20  2010/03/25 18:44:23  schuhs
-//   Comment out some console messages that occasionally cause crash
-//
-//   Revision 1.19  2010/02/11 23:19:11  ssa1
-//   Allowing the ability to save pseudoatoms generated from SSEHunter
-//
-//   Revision 1.18  2010/01/09 00:07:49  schuhs
-//   SSE correspondence search now works with SEQ files
-//
-//   Revision 1.17  2009/12/22 01:03:06  schuhs
-//   Adding support for beta sheets to the SSE correspondence search algorithm
-//
-//   Revision 1.16  2009/09/21 19:03:22  ssa1
-//   Linear least squares fit implementation, and using it in helix positioning of SSE Builder
-//
-//   Revision 1.15  2009/08/26 14:58:55  ssa1
-//   Adding in Flexible fitting clique search
-//
-//   Revision 1.14  2008/11/18 18:10:24  ssa1
-//   Changing the scaling functions when doing graph matching to find correspondences
-//
-//   Revision 1.13  2008/09/29 16:19:30  ssa1
-//   Adding in CVS meta information
-//
 
 
 #ifndef PDBREADER_H

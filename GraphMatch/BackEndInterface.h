@@ -2,33 +2,6 @@
 // Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 // Description:   An interface to start the graph matching engine.
 
-// CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
-//
-// History Log: 
-//   $Log$
-//   Revision 1.16  2008/11/25 03:30:12  ssa1
-//   User constraints on finding correspondences (v2)
-//
-//   Revision 1.15  2008/11/24 20:02:53  ssa1
-//   User constraints on finding correspondences (v1)
-//
-//   Revision 1.14  2008/11/18 22:01:18  ssa1
-//   Removing printfs, and adding cropping
-//
-//   Revision 1.13  2008/11/18 18:10:24  ssa1
-//   Changing the scaling functions when doing graph matching to find correspondences
-//
-//   Revision 1.12  2008/11/10 21:11:19  colemanr
-//   added some debugging code
-//
-//   Revision 1.11  2008/09/29 16:19:30  ssa1
-//   Adding in CVS meta information
-//
 
 
 #ifndef BACK_END_INTERFACE_H

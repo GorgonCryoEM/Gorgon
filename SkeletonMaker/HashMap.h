@@ -2,18 +2,6 @@
 // Author:        Tao Ju (taoju@cse.wustl.edu)
 // Description:   A Hash Map implementation
 
-// CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
-//
-// History Log: 
-//   $Log$
-//   Revision 1.3  2008/09/29 16:43:15  ssa1
-//   Adding in CVS meta information
-//
 
 #ifndef SKELETON_MAKER_HASH_MAP_H
 #define SKELETON_MAKER_HASH_MAP_H

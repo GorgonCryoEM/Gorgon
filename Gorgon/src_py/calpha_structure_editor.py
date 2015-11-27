@@ -4,60 +4,6 @@
 #                for editing the chain model--atomic editor, helix editor, loop editor, 
 #                position editor, etc.  
 
-# CVS Meta Information: 
-#   $Source$
-#   $Revision$
-#   $Date$
-#   $Author$
-#   $State$
-#
-# History Log: 
-#   $Log$
-#   Revision 1.15  2009/12/27 02:42:10  ssa1
-#   Fixing interactive loop placement bugs
-#
-#   Revision 1.14  2009/12/24 23:38:37  ssa1
-#   Making Sequence dock behave similar to the other docked windows
-#
-#   Revision 1.13  2009/09/17 20:00:24  ssa1
-#   Steps towards exporting to Rosetta
-#
-#   Revision 1.12  2009/09/03 14:42:27  ssa1
-#   BugFix: Fixing bug that causes unpredictable behavior during semi-automatic atom placement when the start=1 (or any low number) in the .seq file
-#
-#   Revision 1.11  2009/08/19 15:23:35  ssa1
-#   Bug Fix: Disabling accept button when no options are available for semi-automatic atom placement
-#
-#   Revision 1.10  2009/08/19 14:59:52  ssa1
-#   Correcting bug: possible residues do not appear when performing semi-automatic placement, when the atom being clicked is the first or last in the sequence
-#
-#   Revision 1.9  2009/04/07 19:16:43  ssa1
-#   Bug fixes when starting loop builder without selecting atoms, flipping a helix, adding ca atoms to a helix
-#
-#   Revision 1.8  2009/04/04 21:33:23  ssa1
-#   More structure approach for placing cAlpha loops, and helix flip bug fix
-#
-#   Revision 1.7  2009/04/03 22:05:28  ssa1
-#   Fixing helix flip bug
-#
-#   Revision 1.6  2009/04/03 21:33:55  ssa1
-#   Enabling Undo Redo properly
-#
-#   Revision 1.5  2009/04/03 21:22:06  ssa1
-#   Undo redo for position
-#
-#   Revision 1.4  2009/04/03 19:44:37  ssa1
-#   CAlpha bug fixes
-#
-#   Revision 1.3  2009/04/02 19:00:20  ssa1
-#   CAlpha Viewer bug fixes and smoother uniform functionality
-#
-#   Revision 1.2  2009/04/01 23:00:32  ssa1
-#   Refactor: Redesigning semi-automatic atom placement window.  Fixing bugs, and more consistant layout
-#
-#   Revision 1.1  2009/04/01 16:01:38  ssa1
-#   Refactoring: Splitting structure_editor into subclasses
-#
 
 from PyQt4 import QtGui, QtCore
 from libpyGORGON import PDBAtom, PDBBond, Vector3DFloat

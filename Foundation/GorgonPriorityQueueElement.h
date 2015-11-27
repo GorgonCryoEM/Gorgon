@@ -2,18 +2,6 @@
 // Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
 // Description:   A class for storing a priority queue ADT
 
-// CVS Meta Information: 
-//   $Source$
-//   $Revision$
-//   $Date$
-//   $Author$
-//   $State$
-//
-// History Log: 
-//   $Log$
-//   Revision 1.1  2009/12/13 19:38:37  ssa1
-//   Adding in abstract data structures
-//
 
 #ifndef FOUNDATION_GORGONPRIORITYQUEUEELEMENT_H
 #define FOUNDATION_GORGONPRIORITYQUEUEELEMENT_H
