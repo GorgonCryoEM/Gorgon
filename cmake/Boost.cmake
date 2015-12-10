@@ -9,5 +9,5 @@ find_package(Boost COMPONENTS python)
 update_libs_includes(Boost_LIBRARIES Boost_INCLUDE_DIR)
 
 if(WIN32)
-	link_directories(${Boost_LIBRARY_DIR})
+	link_directories(${Boost_LIBRARY_DIR_RELEASE})
 endif()
