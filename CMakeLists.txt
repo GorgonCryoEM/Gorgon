@@ -109,6 +109,11 @@ add_custom_target(Gorgon
         COMMAND ${CMAKE_COMMAND} -DCOMPONENT=Gorgon -P cmake_install.cmake
         )
         
+install(DIRECTORY ${CMAKE_SOURCE_DIR}/demo
+        DESTINATION ${CMAKE_BINARY_DIR}
+        COMPONENT "Gorgon"
+        )
+        
 include(cmake/Win_install.cmake)
 # --------------------------------------------------------------------
 #Package Step
