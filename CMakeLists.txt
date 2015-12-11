@@ -55,7 +55,7 @@ endforeach()
 # --------------------------------------------------------------------
 # Include and link directories, targets, target link libraries
 # --------------------------------------------------------------------
-list(APPEND GORGON_INCLUDE_DIRS 
+list(APPEND GORGON_INCLUDE_DIRS
 	${CMAKE_CURRENT_SOURCE_DIR}
 	${GORGON_EXTERNAL_LIBRARIES_DIR}
 	)
@@ -82,7 +82,7 @@ if(ENABLE_CMAKE_DEBUG_OUTPUT)
       message(STATUS "DIRS='${dir}'")
     endforeach()
 
-    get_property(dirs TARGET pyGORGON PROPERTY LINK_LIBRARIES)    
+    get_property(dirs TARGET pyGORGON PROPERTY LINK_LIBRARIES)
 
     foreach(dir ${GORGON_LIBRARIES})
       message("LIBS='${dir}'")
