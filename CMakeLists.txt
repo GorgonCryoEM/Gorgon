@@ -60,7 +60,6 @@ list(APPEND GORGON_INCLUDE_DIRS
 	${GORGON_EXTERNAL_LIBRARIES_DIR}
 	)
 
-link_directories(${Boost_LIBRARY_DIR})
 include_directories(${GORGON_INCLUDE_DIRS})
 ADD_LIBRARY(pyGORGON MODULE Gorgon/src_cpp/LibPyGorgon.cpp)
 target_link_libraries(pyGORGON ${GORGON_LIBRARIES})
