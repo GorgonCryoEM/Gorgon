@@ -19,3 +19,11 @@ function(update_libs_includes libs incs)
     set(GORGON_INCLUDE_DIRS ${GORGON_INCLUDE_DIRS} PARENT_SCOPE)
 endfunction()
 # --------------------------------------------------------------------
+function(add_dll lib)
+    get_filename_component(dll_name ${lib} NAME_WE)
+    get_filename_component(dll_dir  ${lib} DIRECTORY)
+    
+    list(APPEND win_dlls ${dll_dir}/${dll_name}.dll)
+    set(win_dlls ${win_dlls} PARENT_SCOPE)
+endfunction()
+# --------------------------------------------------------------------
