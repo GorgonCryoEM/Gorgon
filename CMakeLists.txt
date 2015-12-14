@@ -6,12 +6,12 @@ PROJECT(Gorgon
 
 set(legacy_trgt_name pyGORGON)
 
+include(cmake/functions.cmake)
 include(cmake/Configure.cmake)
-
 include(cmake/Debug.cmake)
+
 include(cmake/MacOSX/init.cmake)
 include(cmake/Windows/init.cmake)
-
 
 # Number of processors/cores
 include(cmake/ParallelJobs.cmake)
@@ -40,8 +40,6 @@ endif()
 # --------------------------------------------------------------------
 # Find dependencies
 # --------------------------------------------------------------------
-include(cmake/functions.cmake)
-
 set( EXTERNAL_PROJECTS
         OpenGL
         GLUT
