@@ -1,3 +1,37 @@
+function(install_wrapper)
+    set(options)
+    set(oneValueArgs COMPONENT)
+    set(multiValueArgs TARGETS FILES PROGRAMS DIRECTORY DESTINATIONS)
+    cmake_parse_arguments(p "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+    
+    if(p_TARGETS)
+      set(type TARGETS)
+    endif()
+    
+    if(p_FILES)
+      set(type FILES)
+    endif()
+    
+    if(p_PROGRAMS)
+      set(type PROGRAMS)
+    endif()
+
+    if(p_DIRECTORY)
+      set(type DIRECTORY)
+    endif()
+
+    set(type_contents p_${type})
+    
+    foreach(d ${p_DESTINATIONS})
+      foreach(t ${${type_contents}})
+          install(${type} ${t}
+                  DESTINATION ${d}
+                  COMPONENT ${p_COMPONENT}
+                  )
+      endforeach()
+    endforeach()
+endfunction()
+# --------------------------------------------------------------------
 function(add_module proj)
     set(proj_low ${${proj}_trgt_name})
     
