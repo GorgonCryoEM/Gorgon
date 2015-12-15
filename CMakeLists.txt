@@ -19,6 +19,8 @@ include(cmake/ParallelJobs.cmake)
 # --------------------------------------------------------------------
 option(ENABLE_CMAKE_DEBUG_OUTPUT "Print output of some variables for debugging purposes" OFF)
 
+set(legacy_trgt_name pyGORGON)
+
 set(GORGON_EXTERNAL_LIBRARIES_DIR ${CMAKE_SOURCE_DIR}/ExternalLibraries CACHE INTERNAL "External Libraries directory")
 
 if( CMAKE_SIZEOF_VOID_P EQUAL 8 )
@@ -61,8 +63,8 @@ list(APPEND GORGON_INCLUDE_DIRS
 	)
 
 include_directories(${GORGON_INCLUDE_DIRS})
-ADD_LIBRARY(pyGORGON MODULE Gorgon/src_cpp/LibPyGorgon.cpp)
-target_link_libraries(pyGORGON ${GORGON_LIBRARIES})
+ADD_LIBRARY(${legacy_trgt_name} MODULE Gorgon/src_cpp/LibPyGorgon.cpp)
+target_link_libraries(${legacy_trgt_name} ${GORGON_LIBRARIES})
 
 # --------------------------------------------------------------------
 # C++11 flags
@@ -81,7 +83,7 @@ if(ENABLE_CMAKE_DEBUG_OUTPUT)
       message(STATUS "DIRS='${dir}'")
     endforeach()
 
-    get_property(dirs TARGET pyGORGON PROPERTY LINK_LIBRARIES)
+    get_property(dirs TARGET ${legacy_trgt_name} PROPERTY LINK_LIBRARIES)
 
     foreach(dir ${GORGON_LIBRARIES})
       message("LIBS='${dir}'")
@@ -91,7 +93,7 @@ endif()
 # --------------------------------------------------------------------
 # Install Step
 # --------------------------------------------------------------------
-install(TARGETS pyGORGON
+install(TARGETS ${legacy_trgt_name}
         LIBRARY
         DESTINATION ${run_dir}
         COMPONENT "Gorgon"
@@ -106,6 +108,7 @@ install(DIRECTORY ${CMAKE_SOURCE_DIR}/Gorgon/src_py/
 
 add_custom_target(Gorgon
         COMMAND ${CMAKE_COMMAND} -DCOMPONENT=Gorgon -P cmake_install.cmake
+        DEPENDS ${legacy_trgt_name}
         )
         
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/demo
