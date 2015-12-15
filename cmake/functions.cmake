@@ -16,6 +16,6 @@ function(update_libs_includes libs incs)
     loop_list(incs GORGON_INCLUDE_DIRS)
  
     set(GORGON_LIBRARIES ${GORGON_LIBRARIES} PARENT_SCOPE)
-    set(GORGON_INCLUDE_DIRS ${GORGON_INCLUDE_DIRS} PARENT_SCOPE)    
+    set(GORGON_INCLUDE_DIRS ${GORGON_INCLUDE_DIRS} PARENT_SCOPE)
 endfunction()
 # --------------------------------------------------------------------
