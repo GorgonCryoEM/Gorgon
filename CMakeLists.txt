@@ -4,6 +4,8 @@ PROJECT(Gorgon
         LANGUAGES CXX
         )
 
+set(legacy_trgt_name pyGORGON)
+
 include(cmake/Configure.cmake)
 
 include(cmake/Debug.cmake)
@@ -18,8 +20,6 @@ include(cmake/ParallelJobs.cmake)
 # Set some variables and options
 # --------------------------------------------------------------------
 option(ENABLE_CMAKE_DEBUG_OUTPUT "Print output of some variables for debugging purposes" OFF)
-
-set(legacy_trgt_name pyGORGON)
 
 set(GORGON_EXTERNAL_LIBRARIES_DIR ${CMAKE_SOURCE_DIR}/ExternalLibraries CACHE INTERNAL "External Libraries directory")
 
@@ -63,7 +63,7 @@ list(APPEND GORGON_INCLUDE_DIRS
 	)
 
 include_directories(${GORGON_INCLUDE_DIRS})
-ADD_LIBRARY(${legacy_trgt_name} MODULE Gorgon/src_cpp/LibPyGorgon.cpp)
+ADD_LIBRARY(${legacy_trgt_name} MODULE ${CMAKE_BINARY_DIR}/src/LibPyGorgon.cpp)
 target_link_libraries(${legacy_trgt_name} ${GORGON_LIBRARIES})
 
 # --------------------------------------------------------------------
