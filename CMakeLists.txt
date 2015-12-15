@@ -120,6 +120,11 @@ include(cmake/Win_install.cmake)
 # --------------------------------------------------------------------
 # Package Step
 # --------------------------------------------------------------------
+add_custom_target(Package
+        COMMAND ${CMAKE_COMMAND} -DCOMPONENT=Package -P cmake_install.cmake
+        DEPENDS Gorgon
+        )
+        
 if(APPLE)
     include(cmake/Mac_package.cmake)
 elseif(WIN32)
@@ -134,7 +139,4 @@ else()
         )
 endif()
 
-add_custom_target(Package
-        COMMAND ${CMAKE_COMMAND} -DCOMPONENT=Package -P cmake_install.cmake
-        )
 # --------------------------------------------------------------------
