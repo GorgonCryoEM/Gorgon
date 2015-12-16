@@ -32,6 +32,30 @@ function(install_wrapper)
     endforeach()
 endfunction()
 # --------------------------------------------------------------------
+function(add_custom_target_wrapper)
+    set(options)
+    set(oneValueArgs TARGET COMPONENT)
+    set(multiValueArgs TARGETS FILES PROGRAMS DIRECTORY DESTINATIONS DEPENDS)
+    cmake_parse_arguments(p "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+    
+    add_custom_target(${p_TARGET}
+        COMMAND ${CMAKE_COMMAND} -DCOMPONENT=${p_TARGET} -P cmake_install.cmake
+        DEPENDS ${p_DEPENDS}
+        )
+        
+    set(types TARGETS FILES PROGRAMS DIRECTORY)
+    
+    foreach(t ${types})
+        set(t_contents ${p_${t}})
+        if(t_contents)
+            install_wrapper(${t} ${t_contents}
+                    DESTINATIONS ${p_DESTINATIONS}
+                    COMPONENT ${p_COMPONENT}
+                    )
+        endif()
+    endforeach()
+endfunction()
+# --------------------------------------------------------------------
 function(add_module proj)
     set(proj_low ${${proj}_trgt_name})
     
