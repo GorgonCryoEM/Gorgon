@@ -95,3 +95,12 @@ function(add_subdirectory_wrapper proj)
             )
 endfunction()
 # --------------------------------------------------------------------
+function(cmakelist)
+    set(proj ${CMAKE_CURRENT_SOURCE_DIR})
+    string(REGEX REPLACE ".*/" "" proj ${proj})
+    to_title_case(${proj} proj)
+    set_proj_vars(${proj})
+    
+    add_module(${proj})
+endfunction()
+# --------------------------------------------------------------------
