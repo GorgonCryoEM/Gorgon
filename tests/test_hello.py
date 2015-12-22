@@ -1,4 +1,4 @@
-import libpygorgon as gorgon
+import libpyhello as gorgon
 
 def test():
 		assert gorgon.hello() == 'Hello World!'
