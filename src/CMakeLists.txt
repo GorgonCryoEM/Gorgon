@@ -20,4 +20,3 @@ SET(CMAKE_INSTALL_RPATH ${target_installation_locations})
 #SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
 # --------------------------------------------------------------------
-add_library(${gorgon_lib_target_name} MODULE ${CMAKE_BINARY_DIR}/src/gorgon.cpp $<TARGET_OBJECTS:${core_lib_target_name}>)
