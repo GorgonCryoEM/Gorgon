@@ -25,3 +25,9 @@ include(${CMAKE_SOURCE_DIR}/cmake/wrappers.cmake)
 add_subdirectory_wrapper(Hello)
 add_subdirectory_wrapper(Core)
 # --------------------------------------------------------------------
+# Install Step
+# --------------------------------------------------------------------
+include(cmake/toolkit.cmake)
+include(cmake/demo.cmake)
+include(cmake/tests.cmake)
+# --------------------------------------------------------------------
