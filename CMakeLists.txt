@@ -126,6 +126,7 @@ else()
                                                         --distpath=${package_dir}
                                                         --clean -y
         WORKING_DIRECTORY ${run_dir})"
+        DEPENDS Gorgon
         COMPONENT "Package"
         )
 endif()
