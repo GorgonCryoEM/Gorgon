@@ -20,3 +20,8 @@ SET(CMAKE_INSTALL_RPATH ${target_installation_locations})
 #SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
 # --------------------------------------------------------------------
+include(${CMAKE_SOURCE_DIR}/cmake/wrappers.cmake)
+
+add_subdirectory_wrapper(Hello)
+add_subdirectory_wrapper(Core)
+# --------------------------------------------------------------------
