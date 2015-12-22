@@ -65,6 +65,10 @@ list(APPEND GORGON_INCLUDE_DIRS
 include_directories(${GORGON_INCLUDE_DIRS})
 ADD_LIBRARY(${legacy_trgt_name} MODULE ${CMAKE_BINARY_DIR}/src/LibPyGorgon.cpp)
 target_link_libraries(${legacy_trgt_name} ${GORGON_LIBRARIES})
+# --------------------------------------------------------------------
+# Add subdirectories and enable testing
+# --------------------------------------------------------------------
+enable_testing()
 
 add_subdirectory(src)
 # --------------------------------------------------------------------
