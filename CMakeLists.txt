@@ -9,8 +9,8 @@ set(legacy_trgt_name pyGORGON)
 include(cmake/Configure.cmake)
 
 include(cmake/Debug.cmake)
-include(cmake/MacOSX.cmake)
-include(cmake/Windows.cmake)
+include(cmake/MacOSX/init.cmake)
+include(cmake/Windows/init.cmake)
 
 
 # Number of processors/cores
@@ -120,7 +120,7 @@ install(DIRECTORY ${CMAKE_SOURCE_DIR}/demo
         COMPONENT "Gorgon"
         )
         
-include(cmake/Win_install.cmake)
+include(cmake/Windows/install.cmake)
 # --------------------------------------------------------------------
 # Package Step
 # --------------------------------------------------------------------
@@ -134,9 +134,9 @@ add_custom_target(Package-only
         )
         
 if(APPLE)
-    include(cmake/Mac_package.cmake)
+    include(cmake/MacOSX/package.cmake)
 elseif(WIN32)
-    include(cmake/Win_package.cmake)
+    include(cmake/Windows/package.cmake)
 else()
     install(CODE "execute_process(COMMAND pyinstaller ${run_dir}/gorgon.pyw
                                                         --distpath=${package_dir}
