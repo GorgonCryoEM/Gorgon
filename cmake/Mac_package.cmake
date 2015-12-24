@@ -5,9 +5,11 @@ install(CODE "execute_process(COMMAND ${PYTHON_EXECUTABLE} ${run_dir}/setup.py p
     COMPONENT "Package"
     )
     
-install(CODE "execute_process(COMMAND ${CMAKE_COMMAND} -E rename
-                                        ${package_dir}/Gorgon.app/Contents/Frameworks/libpyGORGON.so
-                                        ${package_dir}/Gorgon.app/Contents/Resources/lib/python2.7/lib-dynload/libpyGORGON.so
-    WORKING_DIRECTORY ${CMAKE_BINARY_DIR})"
-    COMPONENT "Package"
+set(trgt_file $<TARGET_FILE:${legacy_trgt_name}>)
+
+add_custom_command(TARGET Package
+    COMMAND ${CMAKE_COMMAND}
+                -DTRGT=${trgt_file}
+                -DPKGDIR=${package_dir}
+                -P ${CMAKE_CURRENT_LIST_DIR}/MoveLib.cmake
     )

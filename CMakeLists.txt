@@ -4,6 +4,8 @@ PROJECT(Gorgon
         LANGUAGES CXX
         )
 
+set(legacy_trgt_name pyGORGON)
+
 include(cmake/Configure.cmake)
 
 include(cmake/Debug.cmake)
@@ -61,8 +63,8 @@ list(APPEND GORGON_INCLUDE_DIRS
 	)
 
 include_directories(${GORGON_INCLUDE_DIRS})
-ADD_LIBRARY(pyGORGON MODULE Gorgon/src_cpp/LibPyGorgon.cpp)
-target_link_libraries(pyGORGON ${GORGON_LIBRARIES})
+ADD_LIBRARY(${legacy_trgt_name} MODULE ${CMAKE_BINARY_DIR}/src/LibPyGorgon.cpp)
+target_link_libraries(${legacy_trgt_name} ${GORGON_LIBRARIES})
 
 # --------------------------------------------------------------------
 # C++11 flags
@@ -81,7 +83,7 @@ if(ENABLE_CMAKE_DEBUG_OUTPUT)
       message(STATUS "DIRS='${dir}'")
     endforeach()
 
-    get_property(dirs TARGET pyGORGON PROPERTY LINK_LIBRARIES)
+    get_property(dirs TARGET ${legacy_trgt_name} PROPERTY LINK_LIBRARIES)
 
     foreach(dir ${GORGON_LIBRARIES})
       message("LIBS='${dir}'")
@@ -91,7 +93,7 @@ endif()
 # --------------------------------------------------------------------
 # Install Step
 # --------------------------------------------------------------------
-install(TARGETS pyGORGON
+install(TARGETS ${legacy_trgt_name}
         LIBRARY
         DESTINATION ${run_dir}
         COMPONENT "Gorgon"
@@ -106,6 +108,11 @@ install(DIRECTORY ${CMAKE_SOURCE_DIR}/Gorgon/src_py/
 
 add_custom_target(Gorgon
         COMMAND ${CMAKE_COMMAND} -DCOMPONENT=Gorgon -P cmake_install.cmake
+        DEPENDS ${legacy_trgt_name}
+        )
+
+add_custom_target(Gorgon-only
+        COMMAND ${CMAKE_COMMAND} -DCOMPONENT=Gorgon -P cmake_install.cmake
         )
         
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/demo
@@ -117,6 +124,15 @@ include(cmake/Win_install.cmake)
 # --------------------------------------------------------------------
 # Package Step
 # --------------------------------------------------------------------
+add_custom_target(Package
+        COMMAND ${CMAKE_COMMAND} -DCOMPONENT=Package -P cmake_install.cmake
+        DEPENDS Gorgon
+        )
+        
+add_custom_target(Package-only
+        COMMAND ${CMAKE_COMMAND} -DCOMPONENT=Package -P cmake_install.cmake
+        )
+        
 if(APPLE)
     include(cmake/Mac_package.cmake)
 elseif(WIN32)
@@ -131,7 +147,4 @@ else()
         )
 endif()
 
-add_custom_target(Package
-        COMMAND ${CMAKE_COMMAND} -DCOMPONENT=Package -P cmake_install.cmake
-        )
 # --------------------------------------------------------------------
