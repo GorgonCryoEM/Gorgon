@@ -35,6 +35,16 @@ function(rename_target_windows trgt)
                     )
 endfunction()
 # --------------------------------------------------------------------
+function(install_dlls trgt)
+    set(trgt ${${trgt}_trgt_name})
+    rename_target_windows(py${trgt})
+    
+    install_wrapper(FILES ${win_dlls}
+            DESTINATIONS ${target_installation_locations}
+            COMPONENT ${${trgt}_install_component}
+            )
+endfunction()
+# --------------------------------------------------------------------
 function(to_title_case in out)
     string(LENGTH ${in} len)
     string(SUBSTRING ${in} 0 1 first_letter)
