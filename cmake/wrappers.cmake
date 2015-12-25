@@ -26,3 +26,14 @@ function(add_module proj)
     endif()    
 endfunction()
 # --------------------------------------------------------------------
+function(add_subdirectory_wrapper proj)
+    string(TOLOWER ${proj} proj_low)
+    
+    add_subdirectory(${proj_low})
+    
+    add_custom_target(${proj}
+            COMMAND ${CMAKE_COMMAND} -DCOMPONENT=${proj} -P cmake_install.cmake
+            DEPENDS py${proj_low}
+            )
+endfunction()
+# --------------------------------------------------------------------
