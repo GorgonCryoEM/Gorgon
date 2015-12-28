@@ -34,7 +34,7 @@ include(cmake/tests.cmake)
 # Tests
 # --------------------------------------------------------------------
 add_custom_target(test-verbose
-        COMMAND ${CMAKE_CTEST_COMMAND} -V
+        COMMAND ${CMAKE_CTEST_COMMAND} -V -C Release
         DEPENDS Tests
         )
 # --------------------------------------------------------------------
