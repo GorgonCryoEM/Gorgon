@@ -35,6 +35,16 @@ function(rename_target_windows trgt)
                     )
 endfunction()
 # --------------------------------------------------------------------
+function(to_title_case in out)
+    string(LENGTH ${in} len)
+    string(SUBSTRING ${in} 0 1 first_letter)
+    math(EXPR len ${len}-1)
+    string(SUBSTRING ${in} 1 ${len} remaining_word)
+    string(TOUPPER ${first_letter} first_letter)
+    string(CONCAT word ${first_letter} ${remaining_word})
+    set(${out} ${word} PARENT_SCOPE)
+endfunction()
+# --------------------------------------------------------------------
 function(set_proj_vars proj)
     string(TOLOWER ${proj} proj_low)
     
