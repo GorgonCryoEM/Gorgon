@@ -1,7 +1,3 @@
 if(WIN32)
-    set_target_properties(pyGORGON
-                    PROPERTIES
-                     PREFIX lib
-                     SUFFIX .pyd
-                     )
+    rename_target_windows(${legacy_trgt_name})
 endif()
