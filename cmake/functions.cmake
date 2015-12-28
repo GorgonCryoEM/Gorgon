@@ -27,6 +27,14 @@ function(add_dll lib)
     set(win_dlls ${win_dlls} PARENT_SCOPE)
 endfunction()
 # --------------------------------------------------------------------
+function(rename_target_windows trgt)
+    set_target_properties(${trgt}
+                    PROPERTIES
+                    PREFIX lib
+                    SUFFIX .pyd
+                    )
+endfunction()
+# --------------------------------------------------------------------
 function(set_proj_vars proj)
     string(TOLOWER ${proj} proj_low)
     
