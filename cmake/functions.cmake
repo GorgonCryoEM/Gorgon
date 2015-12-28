@@ -27,3 +27,12 @@ function(add_dll lib)
     set(win_dlls ${win_dlls} PARENT_SCOPE)
 endfunction()
 # --------------------------------------------------------------------
+function(set_proj_vars proj)
+    string(TOLOWER ${proj} proj_low)
+    
+    set( ${proj_low}_trgt_name         ${proj_low}                         CACHE INTERNAL "")
+    set( ${proj}_trgt_name             ${proj_low}                         CACHE INTERNAL "")
+    set( ${proj_low}_install_component ${proj}                             CACHE INTERNAL "")
+    set( ${proj}_install_component     ${proj}                             CACHE INTERNAL "")
+endfunction()
+# --------------------------------------------------------------------
