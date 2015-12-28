@@ -31,3 +31,15 @@ include(cmake/toolkit.cmake)
 include(cmake/demo.cmake)
 include(cmake/tests.cmake)
 # --------------------------------------------------------------------
+# Tests
+# --------------------------------------------------------------------
+add_custom_target(test-verbose
+        COMMAND ${CMAKE_CTEST_COMMAND} -V
+        DEPENDS Tests
+        )
+# --------------------------------------------------------------------
+add_test(NAME test-build
+        COMMAND nosetests --with-doctest --doctest-tests -vv
+        WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+        )
+# --------------------------------------------------------------------
