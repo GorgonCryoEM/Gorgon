@@ -2,16 +2,16 @@
 
 import argparse
 
-from Toolkit import Binary, GrayScale
+from Toolkit import *
 
 
 def main():
     mode_map = {'binary': "Binary", 'grayscale': "GrayScale"}
     
-    parser = argparse.ArgumentParser(description='Gorgon skeletonizer')
+    parser = argparse.ArgumentParser(description='Gorgon Toolkit')
+    parser.add_argument('input', action="store")
+    parser.add_argument('output', action="store")
     
-    parser.add_argument('volume', action="store")
-    parser.add_argument('skeleton', action="store")
     parser.add_argument('--mode', required=True, choices=(mode_map.keys()))
     
     args = parser.parse_args()
