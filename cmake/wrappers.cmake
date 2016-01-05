@@ -79,9 +79,21 @@ function(add_module proj)
     target_link_libraries(${proj_low}                                ${libs}    )
                    
     add_library(py${proj_low} MODULE ${CMAKE_BINARY_DIR}/src/py${proj_low}.cpp)
-    include_directories(${CMAKE_CURRENT_SOURCE_DIR})
-    #target_link_libraries(py${proj_low} ${proj_low} ${Boost_LIBRARIES} ${PYTHON_LIBRARY})
-    target_link_libraries(py${proj_low} ${proj_low} ${GORGON_LIBRARIES})
+
+    list(APPEND pyincludes
+                ${CMAKE_CURRENT_SOURCE_DIR}
+                ${Boost_INCLUDE_DIR}
+                ${PYTHON_INCLUDE_DIR}
+                ${includes}
+                )
+    list(APPEND pylibs
+                ${Boost_LIBRARIES}
+                ${PYTHON_LIBRARY}
+                )
+                
+    set_target_properties(py${proj_low} PROPERTIES INCLUDE_DIRECTORIES "${pyincludes}")
+    target_link_libraries(py${proj_low} ${proj_low}                     ${pylibs}     )
+#    target_link_libraries(py${proj_low} ${proj_low} ${GORGON_LIBRARIES})
     
     install_wrapper(TARGETS ${proj_low} py${proj_low}
             DESTINATIONS ${target_installation_locations}
