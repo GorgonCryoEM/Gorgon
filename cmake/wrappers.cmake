@@ -95,6 +95,40 @@ function(add_module proj)
     target_link_libraries(py${proj_low} ${proj_low}                     ${pylibs}     )
 #    target_link_libraries(py${proj_low} ${proj_low} ${GORGON_LIBRARIES})
     
+    if(ENABLE_CMAKE_DEBUG_OUTPUT)
+        message("\nDebug: ${proj_low}")
+    
+        get_target_property(includes ${proj_low} INCLUDE_DIRECTORIES)
+        get_target_property(libs     ${proj_low} LINK_LIBRARIES)
+    
+        message("includes")
+        foreach(i ${includes})
+          message(STATUS "${i}")
+        endforeach()
+        
+        message("libs")
+        foreach(i ${libs})
+          message(STATUS "${i}")
+        endforeach()
+
+        message("Debug: py${proj_low}")
+    
+        get_target_property(includes py${proj_low} INCLUDE_DIRECTORIES)
+        get_target_property(libs     py${proj_low} LINK_LIBRARIES)
+    
+        message("includes")
+        foreach(i ${includes})
+          message(STATUS "${i}")
+        endforeach()
+        
+        message("libs")
+        foreach(i ${libs})
+          message(STATUS "${i}")
+        endforeach()
+        
+        message("Debug: py${proj_low} END\n")
+    endif()
+    
     install_wrapper(TARGETS ${proj_low} py${proj_low}
             DESTINATIONS ${target_installation_locations}
             COMPONENT ${${proj_low}_install_component}
