@@ -67,6 +67,16 @@ function(add_module proj)
                    )
     
     add_library(${proj_low} SHARED ${srcs})
+
+    list(APPEND includes
+                ${GORGON_EXTERNAL_LIBRARIES_DIR}
+                )
+    list(APPEND libs
+                ""
+                )
+                
+    set_target_properties(${proj_low} PROPERTIES INCLUDE_DIRECTORIES ${includes})
+    target_link_libraries(${proj_low}                                ${libs}    )
                    
     add_library(py${proj_low} MODULE ${CMAKE_BINARY_DIR}/src/py${proj_low}.cpp)
     include_directories(${CMAKE_CURRENT_SOURCE_DIR})
