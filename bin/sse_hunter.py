@@ -6,7 +6,6 @@ from Toolkit.sse import VolumeSSEBuilderForm
 
 
 def main():
-    sseh = VolumeSSEBuilderForm()
     parser = argparse.ArgumentParser(description='Gorgon SSEHunter')
     
     parser.add_argument('volume', action="store")
@@ -15,6 +14,7 @@ def main():
     
     args = parser.parse_args()
 
+    sseh = VolumeSSEBuilderForm(args.volume, args.skeleton, args.output)
 
 if __name__ == "__main__":
     main()
