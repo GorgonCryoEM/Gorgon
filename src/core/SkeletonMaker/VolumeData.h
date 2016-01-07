@@ -1,11 +1,10 @@
 #ifndef CORE_SKELETON_MAKER_VOLUME_DATA_H
 #define CORE_SKELETON_MAKER_VOLUME_DATA_H
 
-#include <cstdlib>
-using std::malloc;
-
+#include <vector>
 #include "Dim3D.h"
 
+using namespace std;
 using namespace Core;
 
 namespace SkeletonMaker {
@@ -14,7 +13,6 @@ namespace SkeletonMaker {
         VolumeData(int sizeX, int sizeY, int sizeZ);
         VolumeData(int sizeX, int sizeY, int sizeZ, float val);
         VolumeData(int sizeX, int sizeY, int sizeZ, int offsetX, int offsetY, int offsetZ, VolumeData * data);
-        VolumeData(VolumeData& obj);
         ~VolumeData();
 
         int GetSizeX();
@@ -30,7 +28,10 @@ namespace SkeletonMaker {
         float GetDataAt(int index);
         int GetIndex(int x, int y, int z);
         int GetMaxIndex();
-        float* GetArrayCopy(int padX=0, int padY=0, int padZ=0, float padValue=0); //uses malloc as required by FFT libraries
+        //uses malloc as required by FFT libraries
+        // :WARNING: Update: no malloc anymore, data is a vector
+        // malloc allocation will be done in a wrapper, if absolutely necessary
+        vector<float> GetArrayCopy(int padX=0, int padY=0, int padZ=0, float padValue=0);
 
         void SetSpacing(float spacingX, float spacingY, float spacingZ);
         void SetOrigin(float originX, float originY, float originZ);
@@ -44,20 +45,8 @@ namespace SkeletonMaker {
         Dim3D<int> size;
         Dim3D<float> spacing;
         Dim3D<float> origin;
-        float * data;
+        vector<float> data;
     };
-
-    VolumeData::VolumeData(VolumeData& obj) {
-        size = obj.size;
-        spacing = obj.spacing;
-        origin = obj.origin;
-
-        int N = size.X()*size.Z()*size.Z();
-        data = new float[N];
-        for (int i = 0; i < N; i++) {
-            data[i] = obj.data[i];
-        }
-    }
 
     VolumeData::VolumeData(int sizeX, int sizeY, int sizeZ) {
         InitializeVolumeData(sizeX, sizeY, sizeZ, 1, 1, 1, 0, 0, 0, true, 0);
@@ -80,16 +69,14 @@ namespace SkeletonMaker {
         }
     }
 
-    VolumeData::~VolumeData() {
-        delete [] data;
-    }
+    VolumeData::~VolumeData() {}
 
     void VolumeData::InitializeVolumeData(int sizeX, int sizeY, int sizeZ, float spacingX, float spacingY, float spacingZ, float originX, float originY, float originZ, bool initializeData, float val) {
         SetSize(sizeX, sizeY, sizeZ);
         SetSpacing(spacingX, spacingY, spacingZ);
         SetOrigin(originX, originY, originZ);
         int maxIndex = GetMaxIndex();
-        data = new float [maxIndex];
+        data.resize(maxIndex);
         if(initializeData) {
             for (int i=0; i < maxIndex; i++) {
                 data[i] = val;
@@ -178,7 +165,7 @@ namespace SkeletonMaker {
         int newSizeY = sizey + 2*padBy;
         int newSizeZ = sizez + 2*padBy;
 
-        float * newData = new float[newSizeX * newSizeY * newSizeZ];
+        vector<float> newData(newSizeX * newSizeY * newSizeZ);
         double value;
 
 
@@ -195,18 +182,17 @@ namespace SkeletonMaker {
                 }
             }
         }
-        delete [] data;
         data = newData;
         SetSize(newSizeX, newSizeY, newSizeZ);
 
     }
 
 
-    float* VolumeData::GetArrayCopy(int padX, int padY, int padZ, float padValue) {
+    vector<float> VolumeData::GetArrayCopy(int padX, int padY, int padZ, float padValue) {
         int xSize = GetSizeX()+padX;
         int ySize = GetSizeY()+padY;
         int zSize = GetSizeZ()+padZ;
-        float* copy = (float*) malloc(sizeof(float)*xSize*ySize*zSize);
+        vector<float> copy(xSize*ySize*zSize);
 
         for (int i=0; i < xSize; i++)
             for (int j=0; j < ySize; j++)

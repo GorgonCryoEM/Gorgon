@@ -106,7 +106,7 @@ namespace SkeletonMaker {
         float getEdgeMean(); // Returns the mean value of all the surface voxels but no interior voxels
         float getStdDev(); // Returns the population standard deviation of the values at all the voxels
         Vector3DFloat getCenterOfMass(); // Returns the center of mass of the image in pixels (not angstroms)
-        float* getArrayCopy(int padX=0, int padY=0, int padZ=0, float padValue=0);
+        vector<float> getArrayCopy(int padX=0, int padY=0, int padZ=0, float padValue=0);
 
         void fill(double val);
         int isBertrandBorder(int ox, int oy, int oz, int dir);
@@ -11270,7 +11270,7 @@ namespace SkeletonMaker {
         return centerOfMass;
     }
 
-    float* Volume::getArrayCopy(int padX, int padY, int padZ, float padValue) {
+    vector<float> Volume::getArrayCopy(int padX, int padY, int padZ, float padValue) {
         return getVolumeData()->GetArrayCopy(padX, padY, padZ, padValue);
     }
 
