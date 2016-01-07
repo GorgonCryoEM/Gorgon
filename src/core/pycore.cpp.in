@@ -69,6 +69,7 @@ BOOST_PYTHON_MODULE(@current_pylib@)
 //        .def("performPreservingGrayscaleSkeletonizationAbeysinghe2008", &VolumeRenderer::PerformPreservingGrayscaleSkeletonizationAbeysinghe2008, return_value_policy<reference_existing_object>())     
       .def("getMinDensity", &VolumeRenderer::GetMinDensity)
       .def("getMaxDensity", &VolumeRenderer::GetMaxDensity)
+      .def("setVolume", &VolumeRenderer::setVolume)
 //      .def("saveFile", &VolumeRenderer::SaveFile)
   ;
 
