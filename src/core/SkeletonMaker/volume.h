@@ -471,7 +471,7 @@ namespace SkeletonMaker {
         for(int xx = x - radius; xx <= x + radius; xx++) {
             for(int yy = y - radius; yy <= y + radius; yy++) {
                 for(int zz = z - radius; zz <= z + radius; zz++) {
-                    mx = max(mx, getDataAt(xx, yy, zz));
+                    mx = max(mx, (double)getDataAt(xx, yy, zz));
                 }
             }
         }
@@ -483,7 +483,7 @@ namespace SkeletonMaker {
         for(int xx = x - radius; xx <= x + radius; xx++) {
             for(int yy = y - radius; yy <= y + radius; yy++) {
                 for(int zz = z - radius; zz <= z + radius; zz++) {
-                    mn = min(mn, getDataAt(xx, yy, zz));
+                    mn = min(mn, (double)getDataAt(xx, yy, zz));
                 }
             }
         }
