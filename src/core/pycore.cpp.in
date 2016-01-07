@@ -1,7 +1,76 @@
 #include <boost/python.hpp>
 
+#include "VolumeRenderer.h"
+#include "Renderer.h"
+
+using namespace Visualization;
+
 using namespace boost::python;
 
 BOOST_PYTHON_MODULE(@current_pylib@)
 {
+  class_<Volume>("Volume", init<int,int,int>())
+//      .def("getOriginX", &Volume::getOriginX)
+//      .def("getOriginY", &Volume::getOriginY)
+//      .def("getOriginZ", &Volume::getOriginZ)
+//      .def("getSizeX", &Volume::getSizeX)
+//      .def("getSizeY", &Volume::getSizeY)
+//      .def("getSizeZ", &Volume::getSizeZ)
+//      .def("getSpacingX", &Volume::getSpacingX)
+//      .def("getSpacingY", &Volume::getSpacingY)
+//      .def("getSpacingZ", &Volume::getSpacingZ)
+//      .def("getMin", &Volume::getMin)
+//      .def("getMax", &Volume::getMax)
+//      .def("getDataAt", getDataAt1)
+//      .def("buildHistogram", &Volume::buildHistogram)
+//      .def("getHistogramBinValue", &Volume::getHistogramBinValue)
+//
+  ;
+
+    class_<Renderer>("Renderer", init<>())
+//        .def("draw", &Renderer::Draw)
+//        .def("drawBoundingBox", &Renderer::DrawBoundingBox)
+        .def("loadFile", &Renderer::LoadFile)
+        .def("saveFile", &Renderer::SaveFile)
+//        .def("unload", &Renderer::Unload)
+//        .def("selectionRotate", &Renderer::SelectionRotate)
+//        .def("selectionObjectCount", &Renderer::SelectionObjectCount)
+//        .def("selectionCenterOfMass", &Renderer::SelectionCenterOfMass)
+//        .def("selectionMove", &Renderer::SelectionMove)
+//        .def("selectionClear", &Renderer::SelectionClear)       
+//        .def("selectionToggle", &Renderer::SelectionToggle) 
+//        .def("getSupportedLoadFileFormats", &Renderer::GetSupportedLoadFileFormats)
+//        .def("getSupportedSaveFileFormats", &Renderer::GetSupportedSaveFileFormats)
+//        .def("getMin", &Renderer::GetMin)
+//        .def("getMax", &Renderer::GetMax)
+//        .def("get3DCoordinates", &Renderer::Get3DCoordinates)
+//        .def("setCuttingPlane", &Renderer::SetCuttingPlane) 
+//        .def("setSpacing", &Renderer::SetSpacing)
+//        .def("getSpacingX", &Renderer::GetSpacingX)
+//        .def("getSpacingY", &Renderer::GetSpacingY)
+//        .def("getSpacingZ", &Renderer::GetSpacingZ)
+//        .def("setOrigin", &Renderer::SetOrigin)
+//        .def("getOriginX", &Renderer::GetOriginX)
+//        .def("getOriginY", &Renderer::GetOriginY)
+//        .def("getOriginZ", &Renderer::GetOriginZ)
+//        .def("setDisplayStyle", &Renderer::SetDisplayStyle)
+//        .def("setObjectSpecificColoring", &Renderer::SetObjectSpecificColoring)
+//        .def("updateBoundingBox", &Renderer::UpdateBoundingBox)
+//        .def("clearOtherHighlights", &Renderer::ClearOtherHighlights)
+    ;
+  
+  
+  class_< VolumeRenderer, bases<Renderer> >("VolumeRenderer", init<>())       
+      .def("normalizeVolume", &VolumeRenderer::NormalizeVolume)
+//        .def("downsampleVolume", &VolumeRenderer::DownsampleVolume)
+//        .def("cropVolume", &VolumeRenderer::CropVolume)
+      .def("performBinarySkeletonizationJu2007", &VolumeRenderer::PerformBinarySkeletonizationJu2007, return_value_policy<reference_existing_object>())
+      .def("performGrayscaleSkeletonizationAbeysinghe2008", &VolumeRenderer::PerformGrayscaleSkeletonizationAbeysinghe2008, return_value_policy<reference_existing_object>())     
+//        .def("performPreservingGrayscaleSkeletonizationAbeysinghe2008", &VolumeRenderer::PerformPreservingGrayscaleSkeletonizationAbeysinghe2008, return_value_policy<reference_existing_object>())     
+      .def("getMinDensity", &VolumeRenderer::GetMinDensity)
+      .def("getMaxDensity", &VolumeRenderer::GetMaxDensity)
+      .def("setVolume", &VolumeRenderer::setVolume)
+//      .def("saveFile", &VolumeRenderer::SaveFile)
+  ;
+
 }
