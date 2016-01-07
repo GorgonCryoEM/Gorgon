@@ -4,6 +4,10 @@
 #include <cstdlib>
 using std::malloc;
 
+#include "Dim3D.h"
+
+using namespace Core;
+
 namespace SkeletonMaker {
     class VolumeData {
     public:
@@ -13,15 +17,12 @@ namespace SkeletonMaker {
         VolumeData(VolumeData& obj);
         ~VolumeData();
 
-        int GetSize(int dimension);
         int GetSizeX();
         int GetSizeY();
         int GetSizeZ();
-        float GetSpacing(int dimension);
         float GetSpacingX();
         float GetSpacingY();
         float GetSpacingZ();
-        float GetOrigin(int dimension);
         float GetOriginX();
         float GetOriginY();
         float GetOriginZ();
@@ -40,19 +41,18 @@ namespace SkeletonMaker {
         void InitializeVolumeData(int sizeX, int sizeY, int sizeZ, float spacingX, float spacingY, float spacingZ, float originX, float originY, float originZ, bool initializeData, float val);
         void SetSize(int sizeX, int sizeY, int sizeZ);
     private:
-        int size[3];
-        float spacing[3];
-        float origin[3];
+        Dim3D<int> size;
+        Dim3D<float> spacing;
+        Dim3D<float> origin;
         float * data;
     };
 
     VolumeData::VolumeData(VolumeData& obj) {
-        for (int i = 0; i < 3; i++) {
-            size[i] = obj.size[i];
-            spacing[i] = obj.spacing[i];
-            origin[i] = obj.origin[i];
-        }
-        int N = size[0]*size[1]*size[2];
+        size = obj.size;
+        spacing = obj.spacing;
+        origin = obj.origin;
+
+        int N = size.X()*size.Z()*size.Z();
         data = new float[N];
         for (int i = 0; i < N; i++) {
             data[i] = obj.data[i];
@@ -97,52 +97,40 @@ namespace SkeletonMaker {
         }
     }
 
-    int VolumeData::GetSize(int dimension) {
-        return size[dimension];
-    }
-
     int VolumeData::GetSizeX() {
-        return GetSize(0);
+        return size.X();
     }
 
     int VolumeData::GetSizeY() {
-        return GetSize(1);
+        return size.Y();
     }
 
     int VolumeData::GetSizeZ() {
-        return GetSize(2);
-    }
-
-    float VolumeData::GetSpacing(int dimension) {
-        return spacing[dimension];
+        return size.Z();
     }
 
     float VolumeData::GetSpacingX() {
-        return GetSpacing(0);
+        return spacing.X();
     }
 
     float VolumeData::GetSpacingY() {
-        return GetSpacing(1);
+        return spacing.Y();
     }
 
     float VolumeData::GetSpacingZ() {
-        return GetSpacing(2);
-    }
-
-    float VolumeData::GetOrigin(int dimension) {
-        return origin[dimension];
+        return spacing.Z();
     }
 
     float VolumeData::GetOriginX() {
-        return GetOrigin(0);
+        return origin.X();
     }
 
     float VolumeData::GetOriginY() {
-        return GetOrigin(1);
+        return origin.Y();
     }
 
     float VolumeData::GetOriginZ() {
-        return GetOrigin(2);
+        return origin.Z();
     }
 
 
@@ -159,26 +147,20 @@ namespace SkeletonMaker {
     }
 
     int VolumeData::GetMaxIndex() {
-        return size[0] * size[1] * size[2];
+        return size.X() * size.Y() * size.Z();
     }
 
     void VolumeData::SetSpacing(float spacingX, float spacingY, float spacingZ) {
-        spacing[0] = spacingX;
-        spacing[1] = spacingY;
-        spacing[2] = spacingZ;
+        spacing = Dim3D<float>(spacingX, spacingY, spacingZ);
     }
 
     void VolumeData::SetOrigin(float originX, float originY, float originZ) {
-        origin[0] = originX;
-        origin[1] = originY;
-        origin[2] = originZ;
+        origin = Dim3D<float>(originX, originY, originZ);
     }
 
 
     void VolumeData::SetSize(int sizeX, int sizeY, int sizeZ) {
-        size[0] = sizeX;
-        size[1] = sizeY;
-        size[2] = sizeZ;
+        size = Dim3D<int>(sizeX, sizeY, sizeZ);
     }
 
     void VolumeData::SetDataAt(int x, int y, int z, float value) {
