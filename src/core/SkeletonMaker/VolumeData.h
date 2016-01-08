@@ -148,6 +148,7 @@ namespace SkeletonMaker {
 
     void VolumeData::setSize(int sizeX, int sizeY, int sizeZ) {
         size = Dim3D<int>(sizeX, sizeY, sizeZ);
+        data.resize(getMaxIndex());
     }
 
     void VolumeData::setDataAt(int x, int y, int z, float value) {
