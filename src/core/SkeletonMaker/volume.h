@@ -211,31 +211,30 @@ namespace SkeletonMaker {
         VolumeData * volData;
     };
 
-    Volume::Volume(const Volume& obj) {
-        volData = new VolumeData(*(obj.volData));
-        histogram = obj.histogram;
+    Volume::Volume(const Volume& obj)
+          : VolumeData(static_cast<VolumeData>(obj)), histogram(obj.histogram), volData(getVolumeData())
+    {
+//        volData = new VolumeData(*(obj.volData));
     }
 
-    Volume::Volume(int x, int y, int z) {
-        volData = new VolumeData(x, y, z);
-    }
+    Volume::Volume(int x, int y, int z)
+          : VolumeData(x, y, z), volData(getVolumeData())
+    {}
 
-    Volume::Volume(int x, int y, int z, float val) {
-        volData = new VolumeData(x, y, z, val);
-    }
+    Volume::Volume(int x, int y, int z, float val)
+          : VolumeData(x, y, z, val), volData(getVolumeData())
+    {}
 
-    Volume::Volume(int x, int y, int z, int offx, int offy, int offz, Volume * vol) {
-        volData = new VolumeData(x, y, z, offx, offy, offz, vol->getVolumeData());
-    }
+    Volume::Volume(int x, int y, int z, int offx, int offy, int offz, Volume * vol)
+          : VolumeData(x, y, z, offx, offy, offz, vol->getVolumeData()), volData(getVolumeData())
+    {}
 
 
     Volume::~Volume( )
-    {
-        delete volData;
-    }
+    {}
 
     VolumeData * Volume::getVolumeData() {
-        return volData;
+        return dynamic_cast<VolumeData *>(this);
     }
 
     Volume * Volume::getPseudoDensity( ) {
