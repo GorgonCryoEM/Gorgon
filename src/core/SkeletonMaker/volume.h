@@ -72,23 +72,6 @@ namespace SkeletonMaker {
         Volume(const Volume& obj);
         ~Volume( );
 
-        float getSpacingX();
-        float getSpacingY();
-        float getSpacingZ();
-        float getOriginX();
-        float getOriginY();
-        float getOriginZ();
-        int getSizeX();
-        int getSizeY();
-        int getSizeZ();
-        int getIndex(int x, int y, int z);
-        double getDataAt( int x, int y, int z );
-        double getDataAt( int index );
-        void setSpacing(float spx, float spy, float spz );
-        void setOrigin(float orgX, float orgY, float orgZ);
-        void setDataAt( int x, int y, int z, double d );
-        void setDataAt( int index, double d );
-
         Volume * getPseudoDensity();
         Volume * getDistanceField(int rad, float randf);
         int getNonZeroVoxelCount();
@@ -251,73 +234,8 @@ namespace SkeletonMaker {
         delete volData;
     }
 
-    int Volume::getSizeX() {
-        return volData->GetSizeX();
-    }
-
-    int Volume::getSizeY() {
-        return volData->GetSizeY();
-    }
-
-    int Volume::getSizeZ() {
-        return volData->GetSizeZ();
-    }
-
-    int Volume::getIndex(int x, int y, int z) {
-        return volData->GetIndex(x, y, z);
-    }
-
-    void Volume::setDataAt( int x, int y, int z, double d ) {
-        volData->SetDataAt(x, y, z, (float)d);
-    }
-
-    void Volume::setDataAt( int index, double d ) {
-        volData->SetDataAt(index, (float)d);
-    }
-
-    double Volume::getDataAt( int x, int y, int z )
-    {
-        return volData->GetDataAt(x, y, z);
-    }
-
-    double Volume::getDataAt( int index ) {
-        return volData->GetDataAt(index);
-    }
-
     VolumeData * Volume::getVolumeData() {
         return volData;
-    }
-
-    void Volume::setSpacing(float spx, float spy, float spz ) {
-        volData->SetSpacing(spx, spy, spz);
-    }
-
-    void Volume::setOrigin(float orgX, float orgY, float orgZ) {
-        volData->SetOrigin(orgX, orgY, orgZ);
-    }
-
-    float Volume::getSpacingX() {
-        return volData->GetSpacingX();
-    }
-
-    float Volume::getSpacingY() {
-        return volData->GetSpacingY();
-    }
-
-    float Volume::getSpacingZ() {
-        return volData->GetSpacingZ();
-    }
-
-    float Volume::getOriginX() {
-        return volData->GetOriginX();
-    }
-
-    float Volume::getOriginY() {
-        return volData->GetOriginY();
-    }
-
-    float Volume::getOriginZ() {
-        return volData->GetOriginZ();
     }
 
     Volume * Volume::getPseudoDensity( ) {
