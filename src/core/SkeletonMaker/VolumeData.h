@@ -19,6 +19,8 @@ namespace SkeletonMaker {
         int getSizeX();
         int getSizeY();
         int getSizeZ();
+        int getSize();
+        Dim3D<int> getSizeObj();
         float getSpacingX();
         float getSpacingY();
         float getSpacingZ();
@@ -99,6 +101,14 @@ namespace SkeletonMaker {
 
     int VolumeData::getSizeZ() {
         return size.Z();
+    }
+
+    int VolumeData::getSize() {
+        return data.size();
+    }
+
+    Dim3D<int> VolumeData::getSizeObj() {
+        return size;
     }
 
     float VolumeData::getSpacingX() {
