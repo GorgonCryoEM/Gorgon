@@ -10,6 +10,7 @@ using namespace Core;
 namespace SkeletonMaker {
     class VolumeData {
     public:
+        VolumeData();
         VolumeData(int sizeX, int sizeY, int sizeZ);
         VolumeData(int sizeX, int sizeY, int sizeZ, float val);
         VolumeData(int sizeX, int sizeY, int sizeZ, int offsetX, int offsetY, int offsetZ, VolumeData * data);
@@ -47,6 +48,10 @@ namespace SkeletonMaker {
         Dim3D<float> origin;
         vector<float> data;
     };
+
+    VolumeData::VolumeData() {
+      InitializeVolumeData(0, 0, 0, 1, 1, 1, 0, 0, 0, true, 0);
+    }
 
     VolumeData::VolumeData(int sizeX, int sizeY, int sizeZ) {
         InitializeVolumeData(sizeX, sizeY, sizeZ, 1, 1, 1, 0, 0, 0, true, 0);
