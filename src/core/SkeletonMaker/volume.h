@@ -424,10 +424,10 @@ namespace SkeletonMaker {
     }
 
     double Volume::getMin() {
-        int size = volData->GetMaxIndex();
-        double rvalue = volData->GetDataAt(0);
+        int size = volData->getMaxIndex();
+        double rvalue = volData->getDataAt(0);
         for (int i=1; i < size; i++) {
-            float val = volData->GetDataAt(i);
+            float val = volData->getDataAt(i);
             if ( rvalue > val) {
                 rvalue = val;
             }
@@ -436,10 +436,10 @@ namespace SkeletonMaker {
     }
 
     double Volume::getMax() {
-        int size = volData->GetMaxIndex();
-        double rvalue = volData->GetDataAt(0);
+        int size = volData->getMaxIndex();
+        double rvalue = volData->getDataAt(0);
         for (int i=1; i < size; i++) {
-            float val = volData->GetDataAt(i);
+            float val = volData->getDataAt(i);
             if ( rvalue < val) {
                 rvalue = val;
             }
@@ -9720,7 +9720,7 @@ namespace SkeletonMaker {
                         (float)getDataAt( i, j + 1, k ) +
                         (float)getDataAt( i, j, k - 1 ) +
                         (float)getDataAt( i, j, k + 1 ) ;
-                    smoothedData->SetDataAt(i, j, k, smoothedData->GetDataAt(i, j, k) * alpha + ( 1 - alpha ) * v / 6);
+                    smoothedData->setDataAt(i, j, k, smoothedData->getDataAt(i, j, k) * alpha + ( 1 - alpha ) * v / 6);
                 }
         delete volData;
         volData = smoothedData;
@@ -9733,7 +9733,7 @@ namespace SkeletonMaker {
         double irange = imax - imin ;
         double range = max - min ;
 
-        int size = volData->GetMaxIndex();
+        int size = volData->getMaxIndex();
         for(int i = 0 ; i < size ; i ++) {
             setDataAt(i, ((getDataAt(i) - (float)imin ) / (float)irange) * (float)range + (float)min);
         }
@@ -9748,7 +9748,7 @@ namespace SkeletonMaker {
         double range1 = thresh - min;
         double range2 = max - thresh ;
 
-        int size = volData->GetMaxIndex();
+        int size = volData->getMaxIndex();
         for (int i = 0; i < size; i++) {
             if (getDataAt(i) < ithresh) {
                 setDataAt(i, ((getDataAt(i) - (float)imin ) / (float)irange1) * (float)range1 + (float)min);
@@ -9866,7 +9866,7 @@ namespace SkeletonMaker {
                         nz = sizeZ - 1 ;
                     }
 
-                    newData->SetDataAt(i, j, k, (float)getInterpDataAt( nx, ny, nz ));
+                    newData->setDataAt(i, j, k, (float)getInterpDataAt( nx, ny, nz ));
                 }
 
             delete volData;
@@ -11060,7 +11060,7 @@ namespace SkeletonMaker {
 
         double dmin = 100000, dmax = -100000 ;
         int i ;
-        int size = volData->GetMaxIndex();
+        int size = volData->getMaxIndex();
         for (i = 0 ; i < size; i++) {
             float val = (float)getDataAt(i);
             if (val < dmin) {
@@ -11106,7 +11106,7 @@ namespace SkeletonMaker {
     // Returns the mean value of all the voxels
     float Volume::getMean()
     {
-        int N = volData->GetMaxIndex();
+        int N = volData->getMaxIndex();
         double mass = 0;
         for (int i = 0; i < N; i++)
             mass += getDataAt(i);
@@ -11144,7 +11144,7 @@ namespace SkeletonMaker {
     // Returns the population standard deviation of the values at all the voxels
     float Volume::getStdDev()
     {
-        int N = volData->GetMaxIndex();
+        int N = volData->getMaxIndex();
 
         //Calculate the standard deviation of all the voxels in the image
         double voxel_sum = 0;
