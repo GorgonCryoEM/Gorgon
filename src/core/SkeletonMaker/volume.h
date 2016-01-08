@@ -64,7 +64,7 @@ namespace SkeletonMaker {
         int x, y, z;
     };
 
-    class Volume {
+    class Volume : public VolumeData {
     public:
         Volume(int x, int y, int z);
         Volume(int x, int y, int z, float val);
