@@ -82,12 +82,8 @@ namespace SkeletonMaker {
         setSize(sizeX, sizeY, sizeZ);
         setSpacing(spacingX, spacingY, spacingZ);
         setOrigin(originX, originY, originZ);
-        int maxIndex = getMaxIndex();
-        data.resize(maxIndex);
         if(initializeData) {
-            for (int i=0; i < maxIndex; i++) {
-                data[i] = val;
-            }
+          data.assign(data.size(), val);
         }
     }
 
