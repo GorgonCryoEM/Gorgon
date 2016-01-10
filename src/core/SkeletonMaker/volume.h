@@ -234,7 +234,7 @@ namespace SkeletonMaker {
         // This function assumes the volume is binary (1/0), and builds a pseudo density volume from the 1 voxels
         // First: assign a density value at each point
         int i, j, k ;
-        Volume * res = new Volume(getSizeX(), getSizeY(), getSizeZ(), 0, 0, 0, this);
+        Volume * res = new Volume(*this);
         int size = getSizeX() * getSizeY() * getSizeZ() ;
         srand(123) ;
 
@@ -265,7 +265,7 @@ namespace SkeletonMaker {
         }
         */
 
-        Volume * tvol = new Volume( getSizeX(), getSizeY(), getSizeZ(), 0, 0, 0, res);
+        Volume * tvol = new Volume(*res);
         float d, ad, ct, temp;
         for ( int it = 0 ; it < 3 ; it ++ )
         for ( i = 0 ; i < getSizeX() ; i ++ )
@@ -286,7 +286,7 @@ namespace SkeletonMaker {
                 }
 
         delete tvol;
-        tvol = new Volume( getSizeX(), getSizeY(), getSizeZ(), 0, 0, 0, res ) ;
+        tvol = new Volume(*res ) ;
         for ( i = 0 ; i < 40 ; i ++ )
         {
             printf("Smoothing round %d\n", i) ;
@@ -316,7 +316,7 @@ namespace SkeletonMaker {
 
         // First: assign a density value at each point
         int i, j, k ;
-        Volume * res = new Volume(getSizeX(), getSizeY(), getSizeZ(), 0, 0, 0, this);
+        Volume * res = new Volume(*this);
         srand( 123 ) ;
 
         for ( i = 0 ; i < getSizeX() ; i ++ )
@@ -6958,7 +6958,7 @@ namespace SkeletonMaker {
         printf("Thresholding the volume to -MAX_ERODE/0...\n") ;
         #endif
         threshold( thr, -MAX_ERODE, 0 ) ;
-        Volume* tvol = new Volume( getSizeX(), getSizeY(), getSizeZ(), 0, 0, 0, this ) ;
+        Volume* tvol = new Volume(*this ) ;
 
         for ( i = 0 ; i < getSizeX() ; i ++ )
             for ( j = 0 ; j < getSizeY() ; j ++ )
@@ -9697,7 +9697,7 @@ namespace SkeletonMaker {
 
     void Volume::smooth( float alpha )
     {
-        VolumeData * smoothedData = new VolumeData(getSizeX(), getSizeY(), getSizeZ(), 0, 0, 0, volData);
+        VolumeData * smoothedData = new VolumeData(*volData);
 
         for (int i = 1; i < getSizeX() - 1; i++)
             for (int j = 1; j < getSizeY() - 1; j++)
@@ -9821,7 +9821,7 @@ namespace SkeletonMaker {
             return ;
         }
 
-        VolumeData * newData = new VolumeData(sizeX, sizeY, sizeZ, 0, 0, 0, volData);
+        VolumeData * newData = new VolumeData(*volData);
 
         double cent = ( sizeX - 1 ) / 2.0 ;
         for ( i = 0 ; i < sizeX ; i ++ )
@@ -10173,7 +10173,7 @@ namespace SkeletonMaker {
             if ( i == 1 ) continue ;
 
             int nodes = 0 ;
-            testvol = new Volume( getSizeX(), getSizeY(), getSizeZ(), 0, 0, 0, vol ) ;
+            testvol = new Volume( *vol ) ;
             testvol->erodeSheet( i ) ;
 
             for ( j = 0 ; j < size ; j ++ )
@@ -10946,7 +10946,7 @@ namespace SkeletonMaker {
         for ( i = maxDis ; i >= 0 ; i -- )
         {
             int nodes = 0 ;
-            testvol = new Volume( getSizeX(), getSizeY(), getSizeZ(), 0, 0, 0, this ) ;
+            testvol = new Volume(*this ) ;
             testvol->erodeSheet( i ) ;
 
             for ( j = 0 ; j < size ; j ++ )
