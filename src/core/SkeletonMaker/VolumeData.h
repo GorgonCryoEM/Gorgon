@@ -44,7 +44,7 @@ namespace SkeletonMaker {
         void setDataAt(int index, float value);
         void pad(int padBy, double padValue);
     private:
-        void InitializeVolumeData(int sizeX, int sizeY, int sizeZ, float spacingX, float spacingY, float spacingZ, float originX, float originY, float originZ, bool initializeData, float val);
+        void init(int sizeX, int sizeY, int sizeZ, float spacingX, float spacingY, float spacingZ, float originX, float originY, float originZ, bool initializeData, float val);
         void setSize(int sizeX, int sizeY, int sizeZ);
     protected:
         Dim3D<int> size;
@@ -54,19 +54,19 @@ namespace SkeletonMaker {
     };
 
     VolumeData::VolumeData() {
-      InitializeVolumeData(0, 0, 0, 1, 1, 1, 0, 0, 0, true, 0);
+      init(0, 0, 0, 1, 1, 1, 0, 0, 0, true, 0);
     }
 
     VolumeData::VolumeData(int sizeX, int sizeY, int sizeZ) {
-        InitializeVolumeData(sizeX, sizeY, sizeZ, 1, 1, 1, 0, 0, 0, true, 0);
+        init(sizeX, sizeY, sizeZ, 1, 1, 1, 0, 0, 0, true, 0);
     }
 
     VolumeData::VolumeData(int sizeX, int sizeY, int sizeZ, float val) {
-        InitializeVolumeData(sizeX, sizeY, sizeZ, 1, 1, 1, 0, 0, 0, true, val);
+        init(sizeX, sizeY, sizeZ, 1, 1, 1, 0, 0, 0, true, val);
     }
 
     VolumeData::VolumeData(int sizeX, int sizeY, int sizeZ, int offsetX, int offsetY, int offsetZ, VolumeData * data) {
-        InitializeVolumeData(sizeX, sizeY, sizeZ, data->getSpacingX(), data->getSpacingY(), data->getSpacingZ(), data->getOriginX(), data->getOriginY(), data->getOriginZ(), false, 0);
+        init(sizeX, sizeY, sizeZ, data->getSpacingX(), data->getSpacingY(), data->getSpacingZ(), data->getOriginX(), data->getOriginY(), data->getOriginZ(), false, 0);
         int ct = 0 ;
         for (int i = offsetX; i < sizeX + offsetX; i++) {
             for (int j = offsetY; j < sizeY + offsetY; j++ ) {
@@ -80,7 +80,7 @@ namespace SkeletonMaker {
 
     VolumeData::~VolumeData() {}
 
-    void VolumeData::InitializeVolumeData(int sizeX, int sizeY, int sizeZ, float spacingX, float spacingY, float spacingZ, float originX, float originY, float originZ, bool initializeData, float val) {
+    void VolumeData::init(int sizeX, int sizeY, int sizeZ, float spacingX, float spacingY, float spacingZ, float originX, float originY, float originZ, bool initializeData, float val) {
         setSize(sizeX, sizeY, sizeZ);
         setSpacing(spacingX, spacingY, spacingZ);
         setOrigin(originX, originY, originZ);
