@@ -9218,7 +9218,7 @@ namespace SkeletonMaker {
         GridQueue2* queue2 = new GridQueue2( ) ;
         GridQueue2* queue3 = new GridQueue2( ) ;
         GridQueue2* queue4 = new GridQueue2( ) ;
-        Volume* fvol = new Volume( this->getSizeX(), this->getSizeY(), this->getSizeZ(), 0 ) ;
+        Volume* fvol = new Volume( this->getSizeX(), this->getSizeY(), this->getSizeZ() ) ;
 
         for ( i = 0 ; i < getSizeX() ; i ++ )
             for ( j = 0 ; j < getSizeY() ; j ++ )
@@ -9484,7 +9484,7 @@ namespace SkeletonMaker {
         GridQueue2* queue2 = new GridQueue2( ) ;
         GridQueue2* queue3 = new GridQueue2( ) ;
         GridQueue2* queue4 = new GridQueue2( ) ;
-        Volume* fvol = new Volume( this->getSizeX(), this->getSizeY(), this->getSizeZ(), 0 ) ;
+        Volume* fvol = new Volume( this->getSizeX(), this->getSizeY(), this->getSizeZ()) ;
 
         for ( i = 0 ; i < getSizeX() ; i ++ )
             for ( j = 0 ; j < getSizeY() ; j ++ )
@@ -10136,7 +10136,7 @@ namespace SkeletonMaker {
     void Volume::segment( float threshold, Volume* lowvol, Volume* highvol, char* mrcfile )
     {
         int i,j,k ;
-        Volume* segvol = new Volume( getSizeX(), getSizeY(), getSizeZ(), 0 ) ;
+        Volume* segvol = new Volume( getSizeX(), getSizeY(), getSizeZ()) ;
 
         for ( i = 0 ; i < getSizeX() ; i ++ )
             for ( j = 0 ; j < getSizeY() ; j ++ )
@@ -10199,9 +10199,9 @@ namespace SkeletonMaker {
     {
         printf("Start segmentation.\n") ;
         int i,j,k ;
-        Volume* vvol = new Volume( getSizeX(), getSizeY(), getSizeZ(), 0 ) ;
-        Volume* tvol1 = new Volume( getSizeX(), getSizeY(), getSizeZ(), 0 ) ;
-        Volume* tvol2 = new Volume( getSizeX(), getSizeY(), getSizeZ(), 0 ) ;
+        Volume* vvol = new Volume( getSizeX(), getSizeY(), getSizeZ()) ;
+        Volume* tvol1 = new Volume( getSizeX(), getSizeY(), getSizeZ()) ;
+        Volume* tvol2 = new Volume( getSizeX(), getSizeY(), getSizeZ()) ;
 
         // Initialize
         GridQueue2* queue = new GridQueue2() ;
@@ -10459,7 +10459,7 @@ namespace SkeletonMaker {
         threshold( thr, 0, 1 ) ;
 
         // Next, initialize queue
-        Volume* tvol = new Volume( getSizeX(), getSizeY(), getSizeZ(), 0 ) ;
+        Volume* tvol = new Volume( getSizeX(), getSizeY(), getSizeZ()) ;
         GridQueue2* queue = new GridQueue2() ;
         gridQueueEle* ele ;
         queue->prepend( 0, 0, 0 ) ;
@@ -10514,7 +10514,7 @@ namespace SkeletonMaker {
     void Volume::reduceComponent( int size )
     {
         int i, j, k ;
-        Volume* tvol = new Volume( getSizeX(), getSizeY(), getSizeZ(), 0 ) ;
+        Volume* tvol = new Volume( getSizeX(), getSizeY(), getSizeZ()) ;
         GridQueue2* queue = new GridQueue2() ;
         GridQueue2* queue2 = new GridQueue2() ;
         gridQueueEle* ele ;
@@ -10593,7 +10593,7 @@ namespace SkeletonMaker {
     void Volume::reduceComponent2( int num )
     {
         int i, j, k ;
-        Volume* tvol = new Volume( getSizeX(), getSizeY(), getSizeZ(), 0 ) ;
+        Volume* tvol = new Volume( getSizeX(), getSizeY(), getSizeZ()) ;
         GridQueue2* queue = new GridQueue2() ;
         GridQueue2* queue2 = new GridQueue2() ;
         gridQueueEle* ele ;
@@ -10850,7 +10850,7 @@ namespace SkeletonMaker {
             }
         }
 
-        Volume* invol = new Volume( getSizeX(), getSizeY(), getSizeZ(), 0 ) ;
+        Volume* invol = new Volume( getSizeX(), getSizeY(), getSizeZ()) ;
         queue->prepend( i, getSizeY()/2, getSizeZ()/2 ) ;
         invol->setDataAt( i, getSizeY()/2, getSizeZ()/2, 1 ) ;
         printf("Flood filling inside from  (%d,%d,%d)...\n",i, getSizeY()/2, getSizeZ()/2) ;
