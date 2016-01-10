@@ -11,8 +11,7 @@ namespace SkeletonMaker {
     class VolumeData {
     public:
         VolumeData();
-        VolumeData(int sizeX, int sizeY, int sizeZ);
-        VolumeData(int sizeX, int sizeY, int sizeZ, float val);
+        VolumeData(int sizeX, int sizeY, int sizeZ, float val=0.0);
         VolumeData(int sizeX, int sizeY, int sizeZ, int offsetX, int offsetY, int offsetZ, VolumeData * data);
         ~VolumeData();
 
@@ -55,10 +54,6 @@ namespace SkeletonMaker {
 
     VolumeData::VolumeData() {
       init(0, 0, 0, 1, 1, 1, 0, 0, 0, true, 0);
-    }
-
-    VolumeData::VolumeData(int sizeX, int sizeY, int sizeZ) {
-        init(sizeX, sizeY, sizeZ, 1, 1, 1, 0, 0, 0, true, 0);
     }
 
     VolumeData::VolumeData(int sizeX, int sizeY, int sizeZ, float val) {
