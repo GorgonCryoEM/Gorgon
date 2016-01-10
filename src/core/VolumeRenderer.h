@@ -45,7 +45,6 @@ namespace Visualization {
         void Unload();
         void NormalizeVolume();
         void DownsampleVolume();
-        void CropVolume(int minX, int minY, int minZ, int maxX, int maxY, int maxZ);
         void PerformSmoothLaplacian(double convergenceRate, int iterations);
         Volume * GetVolume();
         void setVolume(Volume *vol);
@@ -184,13 +183,6 @@ namespace Visualization {
 
         delete math;
         delete sourceVol;
-        dataVolume = destVol;
-    }
-
-
-    void VolumeRenderer::CropVolume(int startX, int startY, int startZ, int endX, int endY, int endZ) {
-        Volume * destVol = new Volume(endX-startX+1, endY-startY+1, endZ-startZ+1, startX, startY, startZ, dataVolume);
-        delete dataVolume;
         dataVolume = destVol;
     }
 
