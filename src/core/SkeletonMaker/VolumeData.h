@@ -36,13 +36,13 @@ namespace SkeletonMaker {
         //uses malloc as required by FFT libraries
         // :WARNING: Update: no malloc anymore, data is a vector
         // malloc allocation will be done in a wrapper, if absolutely necessary
-        vector<float> GetArrayCopy(int padX=0, int padY=0, int padZ=0, float padValue=0);
+        vector<float> getArrayCopy(int padX=0, int padY=0, int padZ=0, float padValue=0);
 
         void setSpacing(float spacingX, float spacingY, float spacingZ);
         void setOrigin(float originX, float originY, float originZ);
         void setDataAt(int x, int y, int z, float value);
         void setDataAt(int index, float value);
-        void Pad(int padBy, double padValue);
+        void pad(int padBy, double padValue);
     private:
         void InitializeVolumeData(int sizeX, int sizeY, int sizeZ, float spacingX, float spacingY, float spacingZ, float originX, float originY, float originZ, bool initializeData, float val);
         void setSize(int sizeX, int sizeY, int sizeZ);
@@ -170,7 +170,7 @@ namespace SkeletonMaker {
     void VolumeData::setDataAt(int index, float value) {
         data[index] = value;
     }
-    void VolumeData::Pad(int padBy, double padValue) {
+    void VolumeData::pad(int padBy, double padValue) {
         int sizex = getSizeX();
         int sizey = getSizeY();
         int sizez = getSizeZ();
@@ -201,7 +201,7 @@ namespace SkeletonMaker {
     }
 
 
-    vector<float> VolumeData::GetArrayCopy(int padX, int padY, int padZ, float padValue) {
+    vector<float> VolumeData::getArrayCopy(int padX, int padY, int padZ, float padValue) {
         int xSize = getSizeX()+padX;
         int ySize = getSizeY()+padY;
         int zSize = getSizeZ()+padZ;

@@ -77,7 +77,6 @@ namespace SkeletonMaker {
         int getNonZeroVoxelCount();
         void print();
         void subtract(Volume * vol);
-        void pad (int padBy, double padValue);
         void applyMask(Volume * maskVol, double maskValue, bool keepMaskValue);
         double getMin();
         double getMax();
@@ -89,7 +88,6 @@ namespace SkeletonMaker {
         float getEdgeMean(); // Returns the mean value of all the surface voxels but no interior voxels
         float getStdDev(); // Returns the population standard deviation of the values at all the voxels
         Vector3DFloat getCenterOfMass(); // Returns the center of mass of the image in pixels (not angstroms)
-        vector<float> getArrayCopy(int padX=0, int padY=0, int padZ=0, float padValue=0);
 
         void fill(double val);
         int isBertrandBorder(int ox, int oy, int oz, int dir);
@@ -403,10 +401,6 @@ namespace SkeletonMaker {
                     }
                 }
 
-    }
-
-    void Volume::pad (int padBy, double padValue) {
-        volData->Pad(padBy, padValue);
     }
 
     void Volume::applyMask(Volume * maskVol, double maskValue, bool keepMaskValue) {
@@ -11185,10 +11179,6 @@ namespace SkeletonMaker {
 
         Vector3DFloat centerOfMass( xmoment/mass, ymoment/mass, zmoment/mass );
         return centerOfMass;
-    }
-
-    vector<float> Volume::getArrayCopy(int padX, int padY, int padZ, float padValue) {
-        return getVolumeData()->GetArrayCopy(padX, padY, padZ, padValue);
     }
 
     void Volume::buildHistogram(int binCount) {
