@@ -66,9 +66,8 @@ namespace SkeletonMaker {
 
     class Volume : public VolumeData {
     public:
-        Volume(int x, int y, int z);
-        Volume(int x, int y, int z, float val);
         Volume(int x, int y, int z, int offx, int offy, int offz, Volume * vol);
+        Volume(int x, int y, int z, float val=0.0);
         Volume(const Volume& obj);
         ~Volume( );
 
@@ -214,10 +213,6 @@ namespace SkeletonMaker {
     {
 //        volData = new VolumeData(*(obj.volData));
     }
-
-    Volume::Volume(int x, int y, int z)
-          : VolumeData(x, y, z), volData(getVolumeData())
-    {}
 
     Volume::Volume(int x, int y, int z, float val)
           : VolumeData(x, y, z, val), volData(getVolumeData())
