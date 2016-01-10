@@ -16,21 +16,23 @@ namespace SkeletonMaker {
         VolumeData(int sizeX, int sizeY, int sizeZ, int offsetX, int offsetY, int offsetZ, VolumeData * data);
         ~VolumeData();
 
-        int getSizeX();
-        int getSizeY();
-        int getSizeZ();
-        int getSize();
-        Dim3D<int> getSizeObj();
-        float getSpacingX();
-        float getSpacingY();
-        float getSpacingZ();
-        float getOriginX();
-        float getOriginY();
-        float getOriginZ();
-        float getDataAt(int x, int y, int z);
-        float getDataAt(int index);
-        int getIndex(int x, int y, int z);
-        int getMaxIndex();
+        int getSizeX() const;
+        int getSizeY() const;
+        int getSizeZ() const;
+        int getSize() const;
+        Dim3D<int> getSizeObj() const;
+        float getSpacingX() const;
+        float getSpacingY() const;
+        float getSpacingZ() const;
+        float getOriginX() const;
+        float getOriginY() const;
+        float getOriginZ() const;
+
+        float getDataAt(int x, int y, int z) const;
+        float getDataAt(int index) const;
+        int getIndex(int x, int y, int z) const;
+        int getMaxIndex() const;
+
         //uses malloc as required by FFT libraries
         // :WARNING: Update: no malloc anymore, data is a vector
         // malloc allocation will be done in a wrapper, if absolutely necessary
@@ -87,64 +89,63 @@ namespace SkeletonMaker {
         }
     }
 
-    int VolumeData::getSizeX() {
+    int VolumeData::getSizeX() const {
         return size.X();
     }
 
-    int VolumeData::getSizeY() {
+    int VolumeData::getSizeY() const {
         return size.Y();
     }
 
-    int VolumeData::getSizeZ() {
+    int VolumeData::getSizeZ() const {
         return size.Z();
     }
 
-    int VolumeData::getSize() {
+    int VolumeData::getSize() const {
         return data.size();
     }
 
-    Dim3D<int> VolumeData::getSizeObj() {
+    Dim3D<int> VolumeData::getSizeObj() const {
         return size;
     }
 
-    float VolumeData::getSpacingX() {
+    float VolumeData::getSpacingX() const {
         return spacing.X();
     }
 
-    float VolumeData::getSpacingY() {
+    float VolumeData::getSpacingY() const {
         return spacing.Y();
     }
 
-    float VolumeData::getSpacingZ() {
+    float VolumeData::getSpacingZ() const {
         return spacing.Z();
     }
 
-    float VolumeData::getOriginX() {
+    float VolumeData::getOriginX() const {
         return origin.X();
     }
 
-    float VolumeData::getOriginY() {
+    float VolumeData::getOriginY() const {
         return origin.Y();
     }
 
-    float VolumeData::getOriginZ() {
+    float VolumeData::getOriginZ() const {
         return origin.Z();
     }
 
-
-    float VolumeData::getDataAt(int x, int y, int z) {
+    float VolumeData::getDataAt(int x, int y, int z) const {
         return getDataAt(getIndex(x, y, z));
     }
 
-    float VolumeData::getDataAt(int index) {
+    float VolumeData::getDataAt(int index) const {
         return data[index];
     }
 
-    int VolumeData::getIndex(int x, int y, int z) {
+    int VolumeData::getIndex(int x, int y, int z) const {
         return (x * getSizeY() * getSizeZ() + y * getSizeZ() + z);
     }
 
-    int VolumeData::getMaxIndex() {
+    int VolumeData::getMaxIndex() const {
         return size.X() * size.Y() * size.Z();
     }
 
