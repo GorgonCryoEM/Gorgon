@@ -12,7 +12,7 @@ namespace SkeletonMaker {
     public:
         VolumeData();
         VolumeData(int sizeX, int sizeY, int sizeZ, float val=0.0);
-        VolumeData(int sizeX, int sizeY, int sizeZ, int offsetX, int offsetY, int offsetZ, VolumeData * data);
+        VolumeData(int sizeX, int sizeY, int sizeZ, VolumeData * data);
         ~VolumeData();
 
         int getSizeX() const;
@@ -60,12 +60,12 @@ namespace SkeletonMaker {
         init(sizeX, sizeY, sizeZ, 1, 1, 1, 0, 0, 0, true, val);
     }
 
-    VolumeData::VolumeData(int sizeX, int sizeY, int sizeZ, int offsetX, int offsetY, int offsetZ, VolumeData * data) {
+    VolumeData::VolumeData(int sizeX, int sizeY, int sizeZ, VolumeData * data) {
         init(sizeX, sizeY, sizeZ, data->getSpacingX(), data->getSpacingY(), data->getSpacingZ(), data->getOriginX(), data->getOriginY(), data->getOriginZ(), false, 0);
         int ct = 0 ;
-        for (int i = offsetX; i < sizeX + offsetX; i++) {
-            for (int j = offsetY; j < sizeY + offsetY; j++ ) {
-                for ( int k = offsetZ; k < sizeZ + offsetZ; k++) {
+        for (int i = 0; i < sizeX; i++) {
+            for (int j = 0; j < sizeY; j++ ) {
+                for ( int k = 0; k < sizeZ; k++) {
                     this->data[ct] = data->getDataAt(i, j, k);
                     ct++;
                 }
