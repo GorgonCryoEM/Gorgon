@@ -43,7 +43,7 @@ namespace SkeletonMaker {
         void setDataAt(int index, float value);
         void pad(int padBy, double padValue);
     private:
-        void init(int sizeX, int sizeY, int sizeZ, float spacingX, float spacingY, float spacingZ, float originX, float originY, float originZ, bool initializeData, float val);
+        void init(int sizeX, int sizeY, int sizeZ, float spacingX, float spacingY, float spacingZ, float originX, float originY, float originZ, bool initializeData, float val=0.0);
         void setSize(int sizeX, int sizeY, int sizeZ);
     protected:
         Dim3D<int> size;
@@ -53,7 +53,7 @@ namespace SkeletonMaker {
     };
 
     VolumeData::VolumeData() {
-      init(0, 0, 0, 1, 1, 1, 0, 0, 0, true, 0);
+      init(0, 0, 0, 1, 1, 1, 0, 0, 0, true);
     }
 
     VolumeData::VolumeData(int sizeX, int sizeY, int sizeZ, float val) {
