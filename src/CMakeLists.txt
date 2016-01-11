@@ -37,8 +37,8 @@ add_custom_target(test-verbose
         COMMAND ${CMAKE_CTEST_COMMAND} -V -C Release
         DEPENDS Tests
         )
-# --------------------------------------------------------------------
-add_test(NAME test-build
+        
+add_test(NAME test-all
         COMMAND nosetests --with-doctest --doctest-tests -vv
         WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
         )
