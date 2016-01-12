@@ -1,4 +1,4 @@
-from ..toolkit_tests import ToolkitTestCases
+from .toolkit_tests import ToolkitTestCases
 
 
 class TestSkeletonization(ToolkitTestCases.ToolkitTests):
