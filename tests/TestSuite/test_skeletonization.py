@@ -4,7 +4,8 @@ from .toolkit_tests import ToolkitTestCases
 class TestSkeletonization(ToolkitTestCases.ToolkitTests):
 
 	def __init__(self):
-		self.py = 'skeletonization.py'
+		self.py = 'gorgon.py'
+		self.prog = '--skeletonize'
 		self.fprefix = 'skeleton_'
 		ToolkitTestCases.ToolkitTests.__init__(self)
 
