@@ -6,13 +6,15 @@
 //#include <GorgonGL.h>
 //#include <Foundation/OpenGLUtils.h>
 //#include <MathTools/MathLib.h>
+#include <SkeletonMaker/volume.h>
 
 using namespace std;
 using namespace MathTools;
 //using namespace Foundation;
+using namespace SkeletonMaker;
 
 namespace Visualization {
-    class Renderer {
+    class Renderer : public Volume {
     public:
         Renderer();
         virtual ~Renderer();
