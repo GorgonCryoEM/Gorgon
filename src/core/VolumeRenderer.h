@@ -270,7 +270,7 @@ namespace Visualization {
     }
 
     Volume * VolumeRenderer::GetVolume() {
-        return dataVolume;
+        return dynamic_cast<Volume *>(this);
     }
 
     void VolumeRenderer::setVolume(Volume *vol) {
