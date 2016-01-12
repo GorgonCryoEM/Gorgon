@@ -44,7 +44,7 @@ add_test(NAME test-all
         )
 # --------------------------------------------------------------------
 add_custom_target(test-verbose-quick
-        COMMAND nosetests --with-doctest --doctest-tests -vv -a \!long
+        COMMAND nosetests --with-doctest --doctest-tests -s -vv -a \!long
         WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
         DEPENDS Tests
         )
