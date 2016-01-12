@@ -31,8 +31,6 @@ namespace Visualization {
     protected:
         float minPts[3];
         float maxPts[3];
-        float spacing[3];
-        float origin[3];
     };
 
     Renderer::Renderer()
