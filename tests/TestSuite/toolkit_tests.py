@@ -28,7 +28,7 @@ class ToolkitTestCases(unittest.TestCase):
 
 		def run(self, mode):
 			output = join(self.outdir, self.fprefix + mode + '.mrc')
-			ref    = join(self.refdir, self.fprefix + mode + '_ref.mrc')
+			ref    = join(self.refdir, self.fprefix + mode + '.mrc')
 
 			cmd = '%s %s %s %s' % (self.exe, self.input, output, ' --mode ' + mode)
 
