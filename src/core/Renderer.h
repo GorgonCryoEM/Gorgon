@@ -22,17 +22,17 @@ namespace Visualization {
         virtual string GetSupportedLoadFileFormats();
         virtual string GetSupportedSaveFileFormats();
         virtual Vector3DFloat Get3DCoordinates(int subsceneIndex, int ix0, int ix1 = -1, int ix2 = -1, int ix3 = -1, int ix4 = -1);
-        virtual void SetSpacing(float spX, float spY, float spZ);
-        virtual float GetSpacingX();
-        virtual float GetSpacingY();
-        virtual float GetSpacingZ();
-        virtual void SetOrigin(float orgX, float orgY, float orgZ);
-        virtual float GetOriginX();
-        virtual float GetOriginY();
-        virtual float GetOriginZ();
+        virtual void setSpacing(float spX, float spY, float spZ);
+        virtual float getSpacingX();
+        virtual float getSpacingY();
+        virtual float getSpacingZ();
+        virtual void setOrigin(float orgX, float orgY, float orgZ);
+        virtual float getOriginX();
+        virtual float getOriginY();
+        virtual float getOriginZ();
 
-        float GetMin(int dimension);
-        float GetMax(int dimension);
+        float getMin(int dimension);
+        float getMax(int dimension);
 
     protected:
         float minPts[3];
@@ -42,23 +42,23 @@ namespace Visualization {
     };
 
     Renderer::Renderer() {
-        SetSpacing(1.0f, 1.0f, 1.0f);
-        SetOrigin(0.0f, 0.0f, 0.0f);
+        setSpacing(1.0f, 1.0f, 1.0f);
+        setOrigin(0.0f, 0.0f, 0.0f);
     }
 
     Renderer::~Renderer() {
     }
 
-    float Renderer::GetMin(int dimension) {
+    float Renderer::getMin(int dimension) {
         return minPts[dimension];
     }
 
-    float Renderer::GetMax(int dimension) {
+    float Renderer::getMax(int dimension) {
         return maxPts[dimension];
     }
 
     void Renderer::LoadFile(string fileName) {
-        SetSpacing(1.0f, 1.0f, 1.0f);
+        setSpacing(1.0f, 1.0f, 1.0f);
     }
 
     void Renderer::SaveFile(string fileName) {
@@ -79,40 +79,40 @@ namespace Visualization {
         return "All Files (*.*)";
     }
 
-    void Renderer::SetSpacing(float spX, float spY, float spZ) {
+    void Renderer::setSpacing(float spX, float spY, float spZ) {
         spacing[0] = spX;
         spacing[1] = spY;
         spacing[2] = spZ;
     }
 
-    float Renderer::GetSpacingX() {
+    float Renderer::getSpacingX() {
         return spacing[0];
     }
 
-    float Renderer::GetSpacingY() {
+    float Renderer::getSpacingY() {
         return spacing[1];
     }
 
-    float Renderer::GetSpacingZ() {
+    float Renderer::getSpacingZ() {
         return spacing[2];
     }
 
-    void Renderer::SetOrigin(float orgX, float orgY, float orgZ) {
+    void Renderer::setOrigin(float orgX, float orgY, float orgZ) {
         origin[0] = orgX;
         origin[1] = orgY;
         origin[2] = orgZ;
     }
 
 
-    float Renderer::GetOriginX() {
+    float Renderer::getOriginX() {
         return origin[0];
     }
 
-    float Renderer::GetOriginY() {
+    float Renderer::getOriginY() {
         return origin[1];
     }
 
-    float Renderer::GetOriginZ() {
+    float Renderer::getOriginZ() {
         return origin[2];
     }
 }

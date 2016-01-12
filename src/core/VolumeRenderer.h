@@ -285,7 +285,7 @@ namespace Visualization {
         if(dataVolume != NULL) {
             dataVolume->setSpacing(spX, spY, spZ);
         } else {
-            Renderer::SetSpacing(spX, spY, spZ);
+            Renderer::setSpacing(spX, spY, spZ);
         }
     }
 
@@ -293,28 +293,28 @@ namespace Visualization {
         if(dataVolume != NULL) {
             return dataVolume->getSpacingX();
         }
-        return Renderer::GetSpacingX();
+        return Renderer::getSpacingX();
     }
 
     float VolumeRenderer::GetSpacingY() {
         if(dataVolume != NULL) {
             return dataVolume->getSpacingY();
         }
-        return Renderer::GetSpacingY();
+        return Renderer::getSpacingY();
     }
 
     float VolumeRenderer::GetSpacingZ() {
         if(dataVolume != NULL) {
             return dataVolume->getSpacingZ();
         }
-        return Renderer::GetSpacingZ();
+        return Renderer::getSpacingZ();
     }
 
     void VolumeRenderer::SetOrigin(float orgX, float orgY, float orgZ) {
         if(dataVolume != NULL) {
             dataVolume->setOrigin(orgX, orgY, orgZ);
         } else {
-            Renderer::SetOrigin(orgX, orgY, orgZ);
+            Renderer::setOrigin(orgX, orgY, orgZ);
         }
     }
 
@@ -322,21 +322,21 @@ namespace Visualization {
         if(dataVolume != NULL) {
             return dataVolume->getOriginX();
         }
-        return Renderer::GetOriginX();
+        return Renderer::getOriginX();
     }
 
     float VolumeRenderer::GetOriginY() {
         if(dataVolume != NULL) {
             return dataVolume->getOriginY();
         }
-        return Renderer::GetOriginY();
+        return Renderer::getOriginY();
     }
 
     float VolumeRenderer::GetOriginZ() {
         if(dataVolume != NULL) {
             return dataVolume->getOriginZ();
         }
-        return Renderer::GetOriginZ();
+        return Renderer::getOriginZ();
     }
 
 }
