@@ -24,14 +24,6 @@ namespace Visualization {
         virtual string GetSupportedLoadFileFormats();
         virtual string GetSupportedSaveFileFormats();
         virtual Vector3DFloat Get3DCoordinates(int subsceneIndex, int ix0, int ix1 = -1, int ix2 = -1, int ix3 = -1, int ix4 = -1);
-        virtual void setSpacing(float spX, float spY, float spZ);
-        virtual float getSpacingX() const;
-        virtual float getSpacingY() const;
-        virtual float getSpacingZ() const;
-        virtual void setOrigin(float orgX, float orgY, float orgZ);
-        virtual float getOriginX() const;
-        virtual float getOriginY() const;
-        virtual float getOriginZ() const;
 
         float getMin(int dimension) const;
         float getMax(int dimension) const;
@@ -79,42 +71,6 @@ namespace Visualization {
         return "All Files (*.*)";
     }
 
-    void Renderer::setSpacing(float spX, float spY, float spZ) {
-        spacing[0] = spX;
-        spacing[1] = spY;
-        spacing[2] = spZ;
-    }
-
-    float Renderer::getSpacingX() const {
-        return spacing[0];
-    }
-
-    float Renderer::getSpacingY() const {
-        return spacing[1];
-    }
-
-    float Renderer::getSpacingZ() const {
-        return spacing[2];
-    }
-
-    void Renderer::setOrigin(float orgX, float orgY, float orgZ) {
-        origin[0] = orgX;
-        origin[1] = orgY;
-        origin[2] = orgZ;
-    }
-
-
-    float Renderer::getOriginX() const {
-        return origin[0];
-    }
-
-    float Renderer::getOriginY() const {
-        return origin[1];
-    }
-
-    float Renderer::getOriginZ() const {
-        return origin[2];
-    }
 }
 
 
