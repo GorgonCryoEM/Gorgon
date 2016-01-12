@@ -26,11 +26,11 @@ class ToolkitTestCases(unittest.TestCase):
 			if not path.exists(self.outdir):
 				mkdir(self.outdir)
 
-		def run(self, mode):
-			output = join(self.outdir, self.fprefix + mode + '.mrc')
-			ref    = join(self.refdir, self.fprefix + mode + '.mrc')
+		def run(self, option):
+			output = join(self.outdir, self.fprefix + option + '.mrc')
+			ref    = join(self.refdir, self.fprefix + option + '.mrc')
 
-			cmd = '%s %s %s %s' % (self.exe, self.input, output, ' --mode ' + mode)
+			cmd = '%s %s %s %s %s' % (self.exe, self.input, output, self.prog, option)
 
 			check_call([cmd], shell=True)
 			assert cmp(output, ref), "\nFiles differ:\n   1: %s\n   2: %s" % (output, ref)
