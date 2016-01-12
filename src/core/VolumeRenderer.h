@@ -6,7 +6,6 @@
 #include <string>
 //#include <GorgonGL.h>
 //#include <GraphMatch/VectorMath.h>
-#include "Renderer.h"
 #include "GlobalConstants.h"
 #include <SkeletonMaker/volume.h>
 #include <GraySkeletonCPP/GlobalDefinitions.h>
