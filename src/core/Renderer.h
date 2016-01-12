@@ -18,13 +18,6 @@ namespace Visualization {
     public:
         Renderer();
         virtual ~Renderer();
-        virtual void LoadFile(string fileName);
-        virtual void SaveFile(string fileName);
-        virtual void Unload();
-        virtual string GetSupportedLoadFileFormats();
-        virtual string GetSupportedSaveFileFormats();
-        virtual Vector3DFloat Get3DCoordinates(int subsceneIndex, int ix0, int ix1 = -1, int ix2 = -1, int ix3 = -1, int ix4 = -1);
-
     };
 
     Renderer::Renderer()
@@ -32,28 +25,6 @@ namespace Visualization {
     {}
 
     Renderer::~Renderer() {}
-
-    void Renderer::LoadFile(string fileName) {
-        setSpacing(1.0f, 1.0f, 1.0f);
-    }
-
-    void Renderer::SaveFile(string fileName) {
-    }
-
-    Vector3DFloat Renderer::Get3DCoordinates(int subsceneIndex, int ix0, int ix1, int ix2, int ix3, int ix4) {
-        return Vector3DFloat(0,0,0);
-    }
-
-    void Renderer::Unload() {
-    }
-
-    string Renderer::GetSupportedLoadFileFormats() {
-        return "All Files (*.*)";
-    }
-
-    string Renderer::GetSupportedSaveFileFormats() {
-        return "All Files (*.*)";
-    }
 
 }
 

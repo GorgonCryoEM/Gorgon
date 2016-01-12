@@ -188,7 +188,6 @@ namespace Visualization {
 
 
     void VolumeRenderer::LoadFile(string fileName) {
-        Renderer::LoadFile(fileName);
         if(dataVolume != NULL) {
             delete dataVolume;
         }
@@ -196,7 +195,6 @@ namespace Visualization {
     }
 
     void VolumeRenderer::LoadFileRAW(string fileName, int bitsPerCell, int sizeX, int sizeY, int sizeZ) {
-        Renderer::LoadFile(fileName);
         if(dataVolume != NULL) {
             delete dataVolume;
         }
@@ -246,7 +244,6 @@ namespace Visualization {
 
 
     void VolumeRenderer::Unload() {
-        Renderer::Unload();
         if(dataVolume != NULL) {
             delete dataVolume;
         }
