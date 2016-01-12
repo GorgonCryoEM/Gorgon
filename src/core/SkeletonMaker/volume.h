@@ -209,7 +209,8 @@ namespace SkeletonMaker {
     };
 
     Volume::Volume(const Volume& obj)
-          : VolumeData(static_cast<VolumeData>(obj)), histogram(obj.histogram), volData(getVolumeData())
+          : VolumeData(static_cast<VolumeData>(obj)), histogram(obj.histogram),
+            volData(dynamic_cast<VolumeData *>(this))
     {
 //        volData = new VolumeData(*(obj.volData));
     }
