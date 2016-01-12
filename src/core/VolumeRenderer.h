@@ -41,7 +41,6 @@ namespace Visualization {
         void loadFile(string fileName);
         void loadFileRAW(string fileName, int bitsPerCell, int sizeX, int sizeY, int sizeZ);
         void saveFile(string fileName);
-        void unload();
         void normalizeVolume();
         void downsampleVolume();
         void PerformSmoothLaplacian(double convergenceRate, int iterations);
@@ -219,14 +218,6 @@ namespace Visualization {
                 this->dataVolume->smooth(convergenceRate);
             }
         }
-    }
-
-
-    void VolumeRenderer::unload() {
-        if(dataVolume != NULL) {
-            delete dataVolume;
-        }
-        dataVolume = NULL;
     }
 
 
