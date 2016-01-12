@@ -23,16 +23,16 @@ namespace Visualization {
         virtual string GetSupportedSaveFileFormats();
         virtual Vector3DFloat Get3DCoordinates(int subsceneIndex, int ix0, int ix1 = -1, int ix2 = -1, int ix3 = -1, int ix4 = -1);
         virtual void setSpacing(float spX, float spY, float spZ);
-        virtual float getSpacingX();
-        virtual float getSpacingY();
-        virtual float getSpacingZ();
+        virtual float getSpacingX() const;
+        virtual float getSpacingY() const;
+        virtual float getSpacingZ() const;
         virtual void setOrigin(float orgX, float orgY, float orgZ);
-        virtual float getOriginX();
-        virtual float getOriginY();
-        virtual float getOriginZ();
+        virtual float getOriginX() const;
+        virtual float getOriginY() const;
+        virtual float getOriginZ() const;
 
-        float getMin(int dimension);
-        float getMax(int dimension);
+        float getMin(int dimension) const;
+        float getMax(int dimension) const;
 
     protected:
         float minPts[3];
@@ -49,11 +49,11 @@ namespace Visualization {
     Renderer::~Renderer() {
     }
 
-    float Renderer::getMin(int dimension) {
+    float Renderer::getMin(int dimension) const {
         return minPts[dimension];
     }
 
-    float Renderer::getMax(int dimension) {
+    float Renderer::getMax(int dimension) const {
         return maxPts[dimension];
     }
 
@@ -85,15 +85,15 @@ namespace Visualization {
         spacing[2] = spZ;
     }
 
-    float Renderer::getSpacingX() {
+    float Renderer::getSpacingX() const {
         return spacing[0];
     }
 
-    float Renderer::getSpacingY() {
+    float Renderer::getSpacingY() const {
         return spacing[1];
     }
 
-    float Renderer::getSpacingZ() {
+    float Renderer::getSpacingZ() const {
         return spacing[2];
     }
 
@@ -104,15 +104,15 @@ namespace Visualization {
     }
 
 
-    float Renderer::getOriginX() {
+    float Renderer::getOriginX() const {
         return origin[0];
     }
 
-    float Renderer::getOriginY() {
+    float Renderer::getOriginY() const {
         return origin[1];
     }
 
-    float Renderer::getOriginZ() {
+    float Renderer::getOriginZ() const {
         return origin[2];
     }
 }
