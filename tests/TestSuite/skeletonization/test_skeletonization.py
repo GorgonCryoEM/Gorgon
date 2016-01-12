@@ -1,7 +1,7 @@
 from ..toolkit_tests import ToolkitTestCases
 
 
-class Skeletonization(ToolkitTestCases.ToolkitTests):
+class TestSkeletonization(ToolkitTestCases.ToolkitTests):
 
 	def __init__(self):
 		self.py = 'skeletonization.py'
