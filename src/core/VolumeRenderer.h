@@ -138,8 +138,7 @@ namespace Visualization {
     }
 
     void VolumeRenderer::downsampleVolume() {
-        Volume * sourceVol = dataVolume;
-        Volume * destVol = new Volume(sourceVol->getSizeX()/2, sourceVol->getSizeY()/2, sourceVol->getSizeZ()/2);
+        Volume * destVol = new Volume(getSizeX()/2, getSizeY()/2, getSizeZ()/2);
         double val;
 
         int radius = 1;
@@ -156,7 +155,7 @@ namespace Visualization {
                     for(int xx = -radius; xx <= radius; xx++) {
                         for(int yy = -radius; yy <= radius; yy++) {
                             for(int zz = -radius; zz <= radius; zz++) {
-                                val += sourceVol->getDataAt(2*x+xx, 2*y+yy, 2*z+zz) * gaussianFilter.values[xx+radius][yy+radius][zz+radius] ;
+                                val += getDataAt(2*x+xx, 2*y+yy, 2*z+zz) * gaussianFilter.values[xx+radius][yy+radius][zz+radius] ;
                             }
                         }
                     }
@@ -166,7 +165,6 @@ namespace Visualization {
         }
 
         delete math;
-        delete sourceVol;
         dataVolume = destVol;
     }
 
