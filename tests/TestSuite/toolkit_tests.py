@@ -33,4 +33,4 @@ class ToolkitTestCases(unittest.TestCase):
 			cmd = '%s %s %s %s' % (self.exe, self.input, output, ' --mode ' + mode)
 
 			check_call([cmd], shell=True)
-			assert cmp(output, ref)
+			assert cmp(output, ref), "\nFiles differ:\n   1: %s\n   2: %s" % (output, ref)
