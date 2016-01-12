@@ -43,13 +43,11 @@ namespace Visualization {
         float origin[3];
     };
 
-    Renderer::Renderer() {
-        setSpacing(1.0f, 1.0f, 1.0f);
-        setOrigin(0.0f, 0.0f, 0.0f);
-    }
+    Renderer::Renderer()
+            : Volume()
+    {}
 
-    Renderer::~Renderer() {
-    }
+    Renderer::~Renderer() {}
 
     float Renderer::getMin(int dimension) const {
         return minPts[dimension];
