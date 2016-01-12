@@ -14,10 +14,10 @@
 //#include <cmath>
 #include "PriorityQueue.h"
 //#include <vector>
-//#include <MathTools/Vector3D.h>
+#include <MathTools/Vector3D.h>
 
 //using namespace std;
-//using namespace MathTools;
+using namespace MathTools;
 
 namespace SkeletonMaker {
 
