@@ -31,6 +31,7 @@ namespace Visualization {
     class VolumeRenderer : public Volume {
     public:
         VolumeRenderer();
+        VolumeRenderer(const VolumeRenderer& obj);
         ~VolumeRenderer();
 
         float getMaxDensity();
@@ -62,16 +63,16 @@ namespace Visualization {
         Volume * dataVolume;
     };
 
-    VolumeRenderer::VolumeRenderer() {
-        dataVolume = NULL;
-        surfaceValue = 1.5;
-    }
+    VolumeRenderer::VolumeRenderer()
+                : Volume(), dataVolume(getVolume()), surfaceValue(1.5)
+    {}
 
-    VolumeRenderer::~VolumeRenderer() {
-        if(dataVolume != NULL) {
-            delete dataVolume;
-        }
-    }
+    VolumeRenderer::VolumeRenderer(const VolumeRenderer& obj)
+                : Volume(static_cast<Volume>(obj)),
+                  dataVolume(dynamic_cast<Volume *>(this))
+    {}
+
+    VolumeRenderer::~VolumeRenderer() {}
 
     float VolumeRenderer::getMaxDensity(){
         return dataVolume->getMax();
@@ -179,16 +180,10 @@ namespace Visualization {
 
 
     void VolumeRenderer::loadFile(string fileName) {
-        if(dataVolume != NULL) {
-            delete dataVolume;
-        }
         dataVolume = VolumeFormatConverter::LoadVolume(fileName);
     }
 
     void VolumeRenderer::loadFileRAW(string fileName, int bitsPerCell, int sizeX, int sizeY, int sizeZ) {
-        if(dataVolume != NULL) {
-            delete dataVolume;
-        }
         dataVolume = VolumeFormatConverter::LoadVolume(fileName, bitsPerCell, sizeX, sizeY, sizeZ);
     }
 
