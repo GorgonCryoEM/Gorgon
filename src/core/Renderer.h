@@ -25,12 +25,6 @@ namespace Visualization {
         virtual string GetSupportedSaveFileFormats();
         virtual Vector3DFloat Get3DCoordinates(int subsceneIndex, int ix0, int ix1 = -1, int ix2 = -1, int ix3 = -1, int ix4 = -1);
 
-        float getMin(int dimension) const;
-        float getMax(int dimension) const;
-
-    protected:
-        float minPts[3];
-        float maxPts[3];
     };
 
     Renderer::Renderer()
@@ -38,14 +32,6 @@ namespace Visualization {
     {}
 
     Renderer::~Renderer() {}
-
-    float Renderer::getMin(int dimension) const {
-        return minPts[dimension];
-    }
-
-    float Renderer::getMax(int dimension) const {
-        return maxPts[dimension];
-    }
 
     void Renderer::LoadFile(string fileName) {
         setSpacing(1.0f, 1.0f, 1.0f);
