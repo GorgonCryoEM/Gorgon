@@ -14,6 +14,8 @@ class Skeletonization(ToolkitTestCases.ToolkitTests):
 	def test_grayscale(self):
 		self.run('grayscale')
 		
+	test_grayscale.long = True
+	
 	
 if __name__ == '__main__':
     import doctest
