@@ -77,8 +77,8 @@ namespace SkeletonMaker {
         void print();
         void subtract(Volume * vol);
         void applyMask(Volume * maskVol, double maskValue, bool keepMaskValue);
-        double getMin();
-        double getMax();
+        double getMin() const;
+        double getMax() const;
         double getMaxValuePosition(int& maxX, int& maxY, int& maxZ);
         double getLocalMax(int x, int y, int z, int radius);
         double getLocalMin(int x, int y, int z, int radius);
@@ -411,7 +411,7 @@ namespace SkeletonMaker {
         }
     }
 
-    double Volume::getMin() {
+    double Volume::getMin() const {
         int size = volData->getMaxIndex();
         double rvalue = volData->getDataAt(0);
         for (int i=1; i < size; i++) {
@@ -423,7 +423,7 @@ namespace SkeletonMaker {
         return rvalue;
     }
 
-    double Volume::getMax() {
+    double Volume::getMax() const {
         int size = volData->getMaxIndex();
         double rvalue = volData->getDataAt(0);
         for (int i=1; i < size; i++) {
