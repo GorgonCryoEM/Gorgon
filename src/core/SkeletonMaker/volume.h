@@ -69,7 +69,7 @@ namespace SkeletonMaker {
         Volume();
         Volume(int x, int y, int z, float val=0.0);
         Volume(const Volume& obj);
-        ~Volume( );
+        virtual ~Volume( );
 
         Volume * getPseudoDensity();
         Volume * getDistanceField(int rad, float randf);
