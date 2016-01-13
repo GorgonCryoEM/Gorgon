@@ -32,9 +32,7 @@ namespace SkeletonMaker {
         int getMaxIndex() const;
 
         //uses malloc as required by FFT libraries
-        // :WARNING: Update: no malloc anymore, data is a vector
-        // malloc allocation will be done in a wrapper, if absolutely necessary
-        vector<float> getArrayCopy(int padX=0, int padY=0, int padZ=0, float padValue=0);
+        float* getArrayCopy(int padX=0, int padY=0, int padZ=0, float padValue=0);
 
         void setSpacing(float spacingX, float spacingY, float spacingZ);
         void setOrigin(float originX, float originY, float originZ);
@@ -190,11 +188,11 @@ namespace SkeletonMaker {
     }
 
 
-    vector<float> VolumeData::getArrayCopy(int padX, int padY, int padZ, float padValue) {
+    float* VolumeData::getArrayCopy(int padX, int padY, int padZ, float padValue) {
         int xSize = getSizeX()+padX;
         int ySize = getSizeY()+padY;
         int zSize = getSizeZ()+padZ;
-        vector<float> copy(xSize*ySize*zSize);
+        float* copy = (float*) malloc(sizeof(float)*xSize*ySize*zSize);
 
         for (int i=0; i < xSize; i++)
             for (int j=0; j < ySize; j++)
