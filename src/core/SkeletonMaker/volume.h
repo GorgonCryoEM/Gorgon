@@ -197,8 +197,6 @@ namespace SkeletonMaker {
         void writeDistances( char* fname, int maxDis );
         void toPQRFile( char* fname, float spc, float minx, float miny, float minz, int padding );
         void toMRCFile( char* fname );
-        void buildHistogram(int binCount);
-        int getHistogramBinValue(int binIx);
 
     private:
         VolumeData * getVolumeData();
@@ -11177,30 +11175,6 @@ namespace SkeletonMaker {
         return centerOfMass;
     }
 
-    void Volume::buildHistogram(int binCount) {
-        histogram.clear();
-        for(int i = 0; i < binCount; i++) {
-            histogram.push_back(0);
-        }
-
-        float minVal = getMin();
-        float maxVal = getMax();
-        float binSize = (maxVal - minVal)/(float)(binCount - 1);
-        int binIx;
-        for(unsigned int i = 0; i < getSizeX(); i++) {
-            for(unsigned int j = 0; j < getSizeY(); j++) {
-                for(unsigned int k = 0; k < getSizeZ(); k++) {
-                    binIx = (int)((getDataAt(i,j,k) - minVal)/binSize);
-                    histogram[binIx]++;
-                }
-            }
-        }
-    }
-
-    int Volume::getHistogramBinValue(int binIx) {
-        return histogram[binIx];
-
-    }
 
 }
 
