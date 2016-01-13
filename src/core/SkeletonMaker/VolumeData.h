@@ -14,6 +14,8 @@ namespace SkeletonMaker {
         VolumeData(int sizeX, int sizeY, int sizeZ, float val=0.0);
         ~VolumeData();
 
+        bool cmp(const VolumeData& obj)  const;
+
         int getSizeX() const;
         int getSizeY() const;
         int getSizeZ() const;
@@ -66,6 +68,21 @@ namespace SkeletonMaker {
         setSpacing(spacingX, spacingY, spacingZ);
         setOrigin(originX, originY, originZ);
         data.assign(data.size(), val);
+    }
+
+    bool VolumeData::cmp(const VolumeData& obj) const {
+      if(data.size() != obj.data.size())
+        return false;
+      else {
+        double tolerance = 0.0001;
+        int N = data.size();
+        for(int i=0; i<N; ++i){
+          double ratio = data[i]/obj.data[i];
+          if(ratio - 1.0 > tolerance)
+            return false;
+        }
+      }
+        return true;
     }
 
     int VolumeData::getSizeX() const {
