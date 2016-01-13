@@ -208,20 +208,20 @@ namespace Visualization {
 
             extension = StringUtils::StringToUpper(extension);
 
-            if(strcmp(extension.c_str(), "MRC") == 0) {
+            if(extension == "MRC") {
                 dataVolume->toMRCFile((char *)fileName.c_str());
-            } else if(strcmp(extension.c_str(), "CCP4") == 0) {
+            } else if(extension == "CCP4") {
                 dataVolume->toMRCFile((char *)fileName.c_str());
-            } else if(strcmp(extension.c_str(), "RAW") == 0) {
+            } else if(extension == "RAW") {
                 VolumeReaderRAW::SaveVolume16bit(dataVolume, fileName);
-            } else if(strcmp(extension.c_str(), "NB") == 0) {
+            } else if(extension == "NB") {
                 dataVolume->toMathematicaFile((char *)fileName.c_str());
-            } else if(strcmp(extension.c_str(), "TNS") == 0) {
+            } else if(extension == "TNS") {
                 VolumeReaderTNS::SaveVolume(dataVolume, fileName);
-            } else if(strcmp(extension.c_str(), "BMP") == 0) {
+            } else if(extension == "BMP") {
                 ImageReaderBMP::SaveVolumeAsImageSet(dataVolume, fileName);
             } else {
-                printf("Input format %s not supported!\n", extension.c_str());
+                cout<<"Input format "<<extension<<" not supported!"<<endl;
             }
 
 
