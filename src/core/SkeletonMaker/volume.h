@@ -71,8 +71,6 @@ namespace SkeletonMaker {
         Volume(const Volume& obj);
         virtual ~Volume( );
 
-        Volume * getPseudoDensity();
-        Volume * getDistanceField(int rad, float randf);
         int getNonZeroVoxelCount();
         void print();
         void subtract(Volume * vol);
@@ -229,129 +227,7 @@ namespace SkeletonMaker {
         return dynamic_cast<VolumeData *>(this);
     }
 
-    Volume * Volume::getPseudoDensity( ) {
-        // This function assumes the volume is binary (1/0), and builds a pseudo density volume from the 1 voxels
-        // First: assign a density value at each point
-        int i, j, k ;
-        Volume * res = new Volume(*this);
-        int size = getSizeX() * getSizeY() * getSizeZ() ;
-        srand(123) ;
 
-        for ( i = 0 ; i < getSizeX() ; i ++ )
-            for ( j = 0 ; j < getSizeY() ; j ++ )
-                for ( k = 0 ; k < getSizeZ() ; k ++ ) {
-                    if ( res->getDataAt( i, j, k ) > 0 ) {
-                        int ct = 0 ;
-                        for ( int m = 0 ; m < 6 ; m ++ ) {
-                            if ( res->getDataAt( i + neighbor6[m][0], j + neighbor6[m][1], k + neighbor6[m][2] ) > 0 ) {
-                                ct ++ ;
-                            }
-                        }
-                        res->setDataAt( i,j,k, (k/(float)getSizeZ())*(k/(float)getSizeZ()) ) ;
-                        if ( ct > 2 ) {
-                            //res->setDataAt( i,j,k, rand() / (double) RAND_MAX / 2.0f ) ;
-                        } else {
-                            //res->setDataAt( i,j,k, rand() / (double) RAND_MAX ) ;
-                        }
-                    }
-                }
-
-        /* Next, smooth
-        for ( i = 0 ; i < 20 ; i ++ )
-        {
-            printf("Smoothing round %d\n", i) ;
-            res->smooth( 0.5f ) ;
-        }
-        */
-
-        Volume * tvol = new Volume(*res);
-        float d, ad, ct, temp;
-        for ( int it = 0 ; it < 3 ; it ++ )
-        for ( i = 0 ; i < getSizeX() ; i ++ )
-            for ( j = 0 ; j < getSizeY() ; j ++ )
-                for ( k = 0 ; k < getSizeZ() ; k ++ ) {
-                    if ( (d = (float)tvol->getDataAt( i, j, k )) > 0 ) {
-                        ad = 0 ; ct = 0 ;
-                        for ( int m = 0 ; m < 6 ; m ++ ) {
-                            if ( (temp = (float)tvol->getDataAt( i + neighbor6[m][0], j + neighbor6[m][1], k + neighbor6[m][2] )) > 0 ) {
-                                ad += temp;
-                                ct ++ ;
-                            }
-                        }
-                        if ( ct > 0 ) {
-                            res->setDataAt( i, j, k, ( d + ad/ct ) / 2 ) ;
-                        }
-                    }
-                }
-
-        delete tvol;
-        tvol = new Volume(*res ) ;
-        for ( i = 0 ; i < 40 ; i ++ )
-        {
-            printf("Smoothing round %d\n", i) ;
-            res->smooth( 0.5f ) ;
-            continue ;
-
-            //for ( j = 0 ; j < size ; j ++ )
-            //{
-            //	if ( tvol->getDataAt( j ) > 0 )
-            //	{
-            //		res->setDataAt( j, tvol->getDataAt( j ) ) ;
-            //	}
-            //
-            //}
-
-        }
-
-
-        return res ;
-    }
-
-
-    Volume * Volume::getDistanceField(int rad, float randf) {
-        // This function assumes the volume is binary (1/0), and builds a pseudo density volume from the 1 voxels
-        // rad is the radius of each distance function (e.g., center pixel gets 1, pixels at rad from the center gets 0)
-        // randf is how much noise you want to add. this means the center pixel will maximally have value 1+randf.
-
-        // First: assign a density value at each point
-        int i, j, k ;
-        Volume * res = new Volume(*this);
-        srand( 123 ) ;
-
-        for ( i = 0 ; i < getSizeX() ; i ++ )
-            for ( j = 0 ; j < getSizeY() ; j ++ )
-                for ( k = 0 ; k < getSizeZ() ; k ++ ) {
-                    if ( getDataAt(i, j, k) > 0 ) {
-                        float mag = 1 + randf * (float) rand() / (float) RAND_MAX ;
-                        int lx = max(0,i-rad) ;
-                        int ly = max(0,j-rad) ;
-                        int lz = max(0,k-rad) ;
-                        int hx = min(getSizeX()-1,i+rad) ;
-                        int hy = min(getSizeY()-1,j+rad) ;
-                        int hz = min(getSizeZ()-1,k+rad) ;
-                        int x,y,z;
-                        for ( x = lx ; x <= hx ; x ++ )
-                            for ( y = ly ; y <= hy ; y ++ )
-                                for ( z = lz ; z <= hz ; z ++ ) {
-                                    float val = 1 - (float) sqrt((double)((x-i)*(x-i) + (y-j)*(y-j) + (z-k)*(z-k))) / (float) rad ;
-                                    val *= mag ;
-                                    if ( res->getDataAt( x, y, z ) < val ) {
-                                        res->setDataAt( x, y, z, val ) ;
-                                    }
-                                }
-                    }
-                }
-
-        /* Next, smooth */
-        for ( i = 0 ; i < 2 ; i ++ )
-        {
-            printf("Smoothing round %d\n", i) ;
-            res->smooth( 0.5f ) ;
-        }
-
-
-        return res ;
-    }
 
 
     int Volume::getNonZeroVoxelCount() {
