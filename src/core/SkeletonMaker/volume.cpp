@@ -48,7 +48,7 @@ Volume * Volume::getVolume() {
 }
 
 void Volume::setVolume(Volume *vol) {
-    dataVolume = vol;
+	*this = *vol;
 }
 //-----------------------------------
 
@@ -10955,16 +10955,16 @@ void Volume::downsampleVolume() {
   }
 
   delete math;
-  dataVolume = destVol;
+  *this = *destVol;
 }
 
 
 void Volume::loadFile(string fileName) {
-  dataVolume = VolumeFormatConverter::LoadVolume(fileName);
+	*this = *VolumeFormatConverter::LoadVolume(fileName);
 }
 
 void Volume::loadFileRAW(string fileName, int bitsPerCell, int sizeX, int sizeY, int sizeZ) {
-  dataVolume = VolumeFormatConverter::LoadVolume(fileName, bitsPerCell, sizeX, sizeY, sizeZ);
+	*this = *VolumeFormatConverter::LoadVolume(fileName, bitsPerCell, sizeX, sizeY, sizeZ);
 }
 
 
