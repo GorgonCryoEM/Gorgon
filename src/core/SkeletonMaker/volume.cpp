@@ -10969,7 +10969,6 @@ void Volume::loadFileRAW(string fileName, int bitsPerCell, int sizeX, int sizeY,
 
 
 void Volume::saveFile(string fileName) {
-  if(dataVolume != NULL) {
     int pos = fileName.rfind(".") + 1;
     string extension = fileName.substr(pos, fileName.length()-pos);
 
@@ -10980,34 +10979,29 @@ void Volume::saveFile(string fileName) {
     } else if(extension == "CCP4") {
       toMRCFile((char *)fileName.c_str());
     } else if(extension == "RAW") {
-      VolumeReaderRAW::SaveVolume16bit(dataVolume, fileName);
+      VolumeReaderRAW::SaveVolume16bit(this, fileName);
     } else if(extension == "NB") {
       toMathematicaFile((char *)fileName.c_str());
     } else if(extension == "TNS") {
-      VolumeReaderTNS::SaveVolume(dataVolume, fileName);
+      VolumeReaderTNS::SaveVolume(this, fileName);
     } else if(extension == "BMP") {
-      ImageReaderBMP::SaveVolumeAsImageSet(dataVolume, fileName);
+      ImageReaderBMP::SaveVolumeAsImageSet(this, fileName);
     } else {
       cout<<"Input format "<<extension<<" not supported!"<<endl;
     }
-
-
-  }
 }
 
 
 void Volume::PerformSmoothLaplacian(double convergenceRate, int iterations) {
-  if(dataVolume != NULL) {
     for(unsigned int i = 0; i < iterations; i++) {
       this->smooth(convergenceRate);
     }
-  }
 }
 
 
 Volume * Volume::PerformBinarySkeletonizationJu2007(double threshold, int minCurveSize, int minSurfaceSize) {
   VolumeSkeletonizer * skeletonizer = new VolumeSkeletonizer(0,0,0,DEFAULT_SKELETON_DIRECTION_RADIUS);
-  Volume * outputVol = skeletonizer->PerformPureJuSkeletonization(dataVolume, "", threshold, minCurveSize, minSurfaceSize);
+  Volume * outputVol = skeletonizer->PerformPureJuSkeletonization(this, "", threshold, minCurveSize, minSurfaceSize);
   delete skeletonizer;
 
   return outputVol;
@@ -11017,7 +11011,7 @@ Volume * Volume::PerformGrayscaleSkeletonizationAbeysinghe2008(double startDensi
   double stepSize = (getMax() - startDensity) / stepCount;
   if(!isZero(stepSize)) {
     VolumeSkeletonizer * skeletonizer = new VolumeSkeletonizer(0, curveRadius, surfaceRadius, skeletonRadius);
-    Volume * outputVol = skeletonizer->PerformImmersionSkeletonizationAndPruning(dataVolume, NULL, startDensity, getMax(), stepSize, 0, 0, minCurveSize, minSurfaceSize, 0, 0, "", true, 1.0, DEFAULT_PRUNE_THRESHOLD, DEFAULT_PRUNE_THRESHOLD);
+    Volume * outputVol = skeletonizer->PerformImmersionSkeletonizationAndPruning(this, NULL, startDensity, getMax(), stepSize, 0, 0, minCurveSize, minSurfaceSize, 0, 0, "", true, 1.0, DEFAULT_PRUNE_THRESHOLD, DEFAULT_PRUNE_THRESHOLD);
     delete skeletonizer;
     return outputVol;
   } else {
