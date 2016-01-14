@@ -17,7 +17,7 @@
 using namespace std;
 using namespace MathTools;
 using namespace Foundation;
-//using namespace SkeletonMaker;
+using namespace SkeletonMaker;
 
 
 namespace Protein_Morph {
