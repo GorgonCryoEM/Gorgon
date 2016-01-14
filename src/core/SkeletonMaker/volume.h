@@ -245,10 +245,6 @@ namespace SkeletonMaker {
         VolumeData * volData;
 //----------------------
     public:
-        VolumeRenderer();
-        VolumeRenderer(const VolumeRenderer& obj);
-        ~VolumeRenderer();
-
         string getSupportedLoadFileFormats() const;
         string getSupportedSaveFileFormats() const;
         Volume * getVolume();
@@ -258,25 +254,11 @@ namespace SkeletonMaker {
         int getHashKey(int x, int y, int z, int edge, int iScale) const;
         float getOffset(float fValue1, float fValue2, float fValueDesired) const;
         int Smallest2ndPower(int value) const;
-    private:
-        Volume * dataVolume;
-
+        //----------------------
     };
 
 //    ---------------------
-
-    VolumeRenderer::VolumeRenderer()
-                : Volume(), dataVolume(getVolume())
-    {}
-
-    VolumeRenderer::VolumeRenderer(const VolumeRenderer& obj)
-                : Volume(static_cast<Volume>(obj)),
-                  dataVolume(dynamic_cast<Volume *>(this))
-    {}
-
-    VolumeRenderer::~VolumeRenderer() {}
-
-    float VolumeRenderer::getOffset(float fValue1, float fValue2, float fValueDesired) const {
+    float Volume::getOffset(float fValue1, float fValue2, float fValueDesired) const {
         double fDelta = fValue2 - fValue1;
         if(fDelta == 0.0) {
                 return 0.5;
@@ -285,7 +267,7 @@ namespace SkeletonMaker {
     }
 
 
-    int VolumeRenderer::getHashKey(int x, int y, int z, int edge, int iScale) const {
+    int Volume::getHashKey(int x, int y, int z, int edge, int iScale) const {
 
         x += a2iEdgeHash[edge][1]*iScale;
         y += a2iEdgeHash[edge][2]*iScale;
@@ -295,26 +277,26 @@ namespace SkeletonMaker {
         return x * dataVolume->getSizeY() * dataVolume->getSizeZ() * 3 + y * dataVolume->getSizeZ() * 3 + z * 3 + edge;
     }
 
-    int VolumeRenderer::Smallest2ndPower(int value) const {
+    int Volume::Smallest2ndPower(int value) const {
         int power = 1;
         while (power < value) {
             power = power * 2;
         }
         return power;
     }
-    string VolumeRenderer::getSupportedLoadFileFormats() const {
+    string Volume::getSupportedLoadFileFormats() const {
         return "All Files (*.mrc *.ccp4 *.map *.raw *.pts);; Volumes (*.mrc *.ccp4 *.map *.raw);;Point Cloud (*.pts)";
     }
 
-    string VolumeRenderer::getSupportedSaveFileFormats() const {
+    string Volume::getSupportedSaveFileFormats() const {
         return "Volumes (*.mrc *.ccp4 *.map *.raw);;Mathematica List (*.nb);;Bitmap Image set (*.bmp);;Structure Tensor Field (*.tns);;Surface Mesh(*.off)";
     }
 
-    Volume * VolumeRenderer::getVolume() {
+    Volume * Volume::getVolume() {
         return dynamic_cast<Volume *>(this);
     }
 
-    void VolumeRenderer::setVolume(Volume *vol) {
+    void Volume::setVolume(Volume *vol) {
         dataVolume = vol;
     }
 //-----------------------------------
