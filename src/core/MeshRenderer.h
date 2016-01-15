@@ -18,7 +18,7 @@ using namespace Foundation;
 using namespace SkeletonMaker;
 
 namespace Visualization {
-    typedef NonManifoldMesh<bool, unsigned char, unsigned char> NonManifoldMesh_Annotated;
+    typedef NonManifoldMesh NonManifoldMesh_Annotated;
     class MeshRenderer : public Volume {
     public:
         MeshRenderer();

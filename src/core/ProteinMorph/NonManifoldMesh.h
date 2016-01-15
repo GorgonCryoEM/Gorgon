@@ -21,28 +21,28 @@ using namespace SkeletonMaker;
 
 
 namespace Protein_Morph {
-    template <class TEdge> struct NonManifoldMeshEdge {
+    struct NonManifoldMeshEdge {
         unsigned int id;
         unsigned int vertexIds[2];
         vector<unsigned int> faceIds;
-        TEdge tag;
+        unsigned char tag;
         bool valid;
     };
 
-    template <class TFace> struct NonManifoldMeshFace {
+    struct NonManifoldMeshFace {
         unsigned int id;
         vector<unsigned int> edgeIds;
         vector<unsigned int> vertexIds;
-        TFace tag;
+        unsigned char tag;
         bool valid;
     };
 
-    template <class TVertex> struct NonManifoldMeshVertex {
+    struct NonManifoldMeshVertex {
         unsigned int id;
         Vector3DFloat position;
         vector<unsigned int> edgeIds;
         bool valid;
-        TVertex tag;
+        bool tag;
     };
 
 
@@ -52,19 +52,19 @@ namespace Protein_Morph {
         typedef map<int, int> HashMapType;
     #endif
 
-    template <class TVertex, class TEdge, class TFace> class NonManifoldMesh{
+    class NonManifoldMesh{
     public:
         NonManifoldMesh();
-        NonManifoldMesh(NonManifoldMesh<TVertex, TEdge, TFace> * srcMesh);
+        NonManifoldMesh(NonManifoldMesh * srcMesh);
         NonManifoldMesh(Volume * sourceVol);
         ~NonManifoldMesh();
         bool IsEdgePresent(int vertexId1, int vertexId2);
         bool IsSurfaceVertex(int ix);
-        int AddVertex(NonManifoldMeshVertex<TVertex> vertex);
-        int AddVertex(Vector3DFloat location, TVertex tag = NULL);
-        int AddHashedVertex(Vector3DFloat location, int hashKey, TVertex tag = NULL);
-        int AddEdge(NonManifoldMeshEdge<TEdge> edge);
-        int AddFace(NonManifoldMeshFace<TFace> face);
+        int AddVertex(NonManifoldMeshVertex vertex);
+        int AddVertex(Vector3DFloat location, bool tag = NULL);
+        int AddHashedVertex(Vector3DFloat location, int hashKey, bool tag = NULL);
+        int AddEdge(NonManifoldMeshEdge edge);
+        int AddFace(NonManifoldMeshFace face);
         int GetVertexIndex(int vertexId);
         int GetFaceIndex(int faceId);
         int GetEdgeIndex(int edgeId);
@@ -73,12 +73,12 @@ namespace Protein_Morph {
         float GetOriginY();
         float GetOriginZ();
         int GetClosestVertexIndex(Vector3DFloat pos);
-        void AddEdge(int vertexId1, int vertexId2, TEdge tag = NULL);
-        void AddQuad(int vertexId1, int vertexId2, int vertexId3, int vertexId4, TEdge newEdgeTag = NULL, TFace faceTag = NULL);
-        void AddTriangle(int vertexId1, int vertexId2, int vertexId3, TEdge newEdgeTag = NULL, TFace faceTag = NULL);
+        void AddEdge(int vertexId1, int vertexId2, unsigned char tag = NULL);
+        void AddQuad(int vertexId1, int vertexId2, int vertexId3, int vertexId4, unsigned char newEdgeTag = NULL, unsigned char faceTag = NULL);
+        void AddTriangle(int vertexId1, int vertexId2, int vertexId3, unsigned char newEdgeTag = NULL, unsigned char faceTag = NULL);
         void Clear();
         void MarkFixedVertices();
-        void MergeMesh(NonManifoldMesh<TVertex, TEdge, TFace> * srcMesh);
+        void MergeMesh(NonManifoldMesh * srcMesh);
         void RemoveFace(int faceId);
         void RemoveEdge(int edgeId);
         void RemoveVertex(int vertexId);
@@ -102,9 +102,9 @@ namespace Protein_Morph {
     public:
         float origin[3];
         float scale[3];
-        vector< NonManifoldMeshVertex<TVertex> > vertices;
-        vector< NonManifoldMeshEdge<TEdge> > edges;
-        vector< NonManifoldMeshFace<TFace> > faces;
+        vector< NonManifoldMeshVertex > vertices;
+        vector< NonManifoldMeshEdge > edges;
+        vector< NonManifoldMeshFace > faces;
         int edgeCount;
         int vertexCount;
         int faceCount;
@@ -114,10 +114,8 @@ namespace Protein_Morph {
     };
 
 
-    typedef NonManifoldMesh<bool, bool, bool> NonManifoldMesh_NoTags;
 
-    template <class TVertex, class TEdge, class TFace>
-    NonManifoldMesh<TVertex, TEdge, TFace>::NonManifoldMesh() {
+    NonManifoldMesh::NonManifoldMesh() {
         Clear();
         fromVolume = false;
         SetOrigin(0,0,0);
@@ -125,8 +123,7 @@ namespace Protein_Morph {
 
     }
 
-    template <class TVertex, class TEdge, class TFace>
-    NonManifoldMesh<TVertex, TEdge, TFace>::NonManifoldMesh(NonManifoldMesh<TVertex, TEdge, TFace> * srcMesh) {
+    NonManifoldMesh::NonManifoldMesh(NonManifoldMesh * srcMesh) {
         Clear();
         fromVolume = false;
         for(unsigned int i = 0; i < srcMesh->vertices.size(); i++) {
@@ -142,8 +139,7 @@ namespace Protein_Morph {
         SetScale(srcMesh->scale[0], srcMesh->scale[1], srcMesh->scale[2]);
     }
 
-    template <class TVertex, class TEdge, class TFace>
-    NonManifoldMesh<TVertex, TEdge, TFace>::NonManifoldMesh(Volume * sourceVol) {
+    NonManifoldMesh::NonManifoldMesh(Volume * sourceVol) {
         Clear();
 
         int x, y, z, i, j, index, index2;
@@ -157,7 +153,7 @@ namespace Protein_Morph {
         SetScale(sourceVol->getSpacingX(), sourceVol->getSpacingY(), sourceVol->getSpacingZ());
 
         // Adding vertices
-        NonManifoldMeshVertex<TVertex> tempVertex;
+        NonManifoldMeshVertex tempVertex;
         tempVertex.edgeIds.clear();
         for(x = 0; x < sourceVol->getSizeX(); x++) {
             for(y = 0; y < sourceVol->getSizeY(); y++) {
@@ -220,13 +216,11 @@ namespace Protein_Morph {
         MarkFixedVertices();
     }
 
-    template <class TVertex, class TEdge, class TFace>
-    NonManifoldMesh<TVertex, TEdge, TFace>::~NonManifoldMesh() {
+    NonManifoldMesh::~NonManifoldMesh() {
         Clear();
     }
 
-    template <class TVertex, class TEdge, class TFace>
-    bool NonManifoldMesh<TVertex, TEdge, TFace>::IsEdgePresent(int vertexId1, int vertexId2) {
+    bool NonManifoldMesh::IsEdgePresent(int vertexId1, int vertexId2) {
         bool isPresent = false;
         int v1Index = GetVertexIndex(vertexId1);
         int v2Index = GetVertexIndex(vertexId2);
@@ -236,8 +230,7 @@ namespace Protein_Morph {
         return isPresent;
 
     }
-    template <class TVertex, class TEdge, class TFace>
-    int NonManifoldMesh<TVertex, TEdge, TFace>::AddVertex(NonManifoldMeshVertex<TVertex> vertex) {
+    int NonManifoldMesh::AddVertex(NonManifoldMeshVertex vertex) {
         vertex.id = vertices.size();
         vertex.valid = true;
         vertices.push_back(vertex);
@@ -245,16 +238,14 @@ namespace Protein_Morph {
         return vertex.id;
     }
 
-    template <class TVertex, class TEdge, class TFace>
-    int NonManifoldMesh<TVertex, TEdge, TFace>::AddVertex(Vector3DFloat location, TVertex tag) {
-        NonManifoldMeshVertex<TVertex> v;
+    int NonManifoldMesh::AddVertex(Vector3DFloat location, bool tag) {
+        NonManifoldMeshVertex v;
         v.position = location;
         v.tag = tag;
         return AddVertex(v);
     }
 
-    template <class TVertex, class TEdge, class TFace>
-    int NonManifoldMesh<TVertex, TEdge, TFace>::AddHashedVertex(Vector3DFloat location, int hashKey, TVertex tag) {
+    int NonManifoldMesh::AddHashedVertex(Vector3DFloat location, int hashKey, bool tag) {
         HashMapType::const_iterator pos = vertexHashMap.find(hashKey);
         int vertexId;
         if(pos == vertexHashMap.end()) {
@@ -266,8 +257,7 @@ namespace Protein_Morph {
         return vertexId;
     }
 
-    template <class TVertex, class TEdge, class TFace>
-    int NonManifoldMesh<TVertex, TEdge, TFace>::AddEdge(NonManifoldMeshEdge<TEdge> edge) {
+    int NonManifoldMesh::AddEdge(NonManifoldMeshEdge edge) {
         edge.id = edges.size();
         edge.valid = true;
         edges.push_back(edge);
@@ -275,8 +265,7 @@ namespace Protein_Morph {
         return edge.id;
     }
 
-    template <class TVertex, class TEdge, class TFace>
-    int NonManifoldMesh<TVertex, TEdge, TFace>::AddFace(NonManifoldMeshFace<TFace> face) {
+    int NonManifoldMesh::AddFace(NonManifoldMeshFace face) {
         face.id = faces.size();
         face.valid = true;
         faces.push_back(face);
@@ -284,23 +273,19 @@ namespace Protein_Morph {
         return face.id;
     }
 
-    template <class TVertex, class TEdge, class TFace>
-    int NonManifoldMesh<TVertex, TEdge, TFace>::GetVertexIndex(int vertexId) {
+    int NonManifoldMesh::GetVertexIndex(int vertexId) {
         return vertexId;
     }
 
-    template <class TVertex, class TEdge, class TFace>
-    int NonManifoldMesh<TVertex, TEdge, TFace>::GetFaceIndex(int faceId) {
+    int NonManifoldMesh::GetFaceIndex(int faceId) {
         return faceId;
     }
 
-    template <class TVertex, class TEdge, class TFace>
-    int NonManifoldMesh<TVertex, TEdge, TFace>::GetEdgeIndex(int edgeId) {
+    int NonManifoldMesh::GetEdgeIndex(int edgeId) {
         return edgeId;
     }
 
-    template <class TVertex, class TEdge, class TFace>
-    int NonManifoldMesh<TVertex, TEdge, TFace>::GetEdgeIndex(int vertexId1, int vertexId2) {
+    int NonManifoldMesh::GetEdgeIndex(int vertexId1, int vertexId2) {
         int edgeId = -1;
         for(int i = 0; i < vertices[vertexId1].edgeIds.size(); i++) {
             if((edges[vertices[vertexId1].edgeIds[i]].vertexIds[0] == vertexId2) ||
@@ -311,9 +296,8 @@ namespace Protein_Morph {
         return edgeId;
     }
 
-    template <class TVertex, class TEdge, class TFace>
-    void NonManifoldMesh<TVertex, TEdge, TFace>::AddEdge(int vertexId1, int vertexId2, TEdge tag){
-        NonManifoldMeshEdge<TEdge> edge;
+    void NonManifoldMesh::AddEdge(int vertexId1, int vertexId2, unsigned char tag){
+        NonManifoldMeshEdge edge;
         edge.tag = tag;
         edge.faceIds.clear();
         edge.vertexIds[0] = vertexId1;
@@ -323,14 +307,12 @@ namespace Protein_Morph {
         vertices[GetVertexIndex(vertexId2)].edgeIds.push_back(edgeId);
     }
 
-    template <class TVertex, class TEdge, class TFace>
-    void NonManifoldMesh<TVertex, TEdge, TFace>::AddQuad(int vertexId1, int vertexId2, int vertexId3, int vertexId4, TEdge newEdgeTag, TFace faceTag) {
+    void NonManifoldMesh::AddQuad(int vertexId1, int vertexId2, int vertexId3, int vertexId4, unsigned char newEdgeTag, unsigned char faceTag) {
         AddTriangle(vertexId1, vertexId2, vertexId3, newEdgeTag, faceTag);
         AddTriangle(vertexId1, vertexId3, vertexId4, newEdgeTag, faceTag);
     }
 
-    template <class TVertex, class TEdge, class TFace>
-    void NonManifoldMesh<TVertex, TEdge, TFace>::AddTriangle(int vertexId1, int vertexId2, int vertexId3, TEdge newEdgeTag, TFace faceTag) {
+    void NonManifoldMesh::AddTriangle(int vertexId1, int vertexId2, int vertexId3, unsigned char newEdgeTag, unsigned char faceTag) {
         if(!IsEdgePresent(vertexId1, vertexId2)) {
                 AddEdge(vertexId1, vertexId2, newEdgeTag);
         }
@@ -341,7 +323,7 @@ namespace Protein_Morph {
                 AddEdge(vertexId3, vertexId1, newEdgeTag);
         }
 
-        NonManifoldMeshFace<TFace> face;
+        NonManifoldMeshFace face;
         face.tag = faceTag;
         face.vertexIds.clear();
         face.vertexIds.push_back(vertexId1);
@@ -369,8 +351,7 @@ namespace Protein_Morph {
         }
     }
 
-    template <class TVertex, class TEdge, class TFace>
-    void NonManifoldMesh<TVertex, TEdge, TFace>::Clear() {
+    void NonManifoldMesh::Clear() {
         vertices.clear();
         edges.clear();
         faces.clear();
@@ -380,8 +361,7 @@ namespace Protein_Morph {
         vertexHashMap.clear();
     }
 
-    template <class TVertex, class TEdge, class TFace>
-    void NonManifoldMesh<TVertex, TEdge, TFace>::MarkFixedVertices() {
+    void NonManifoldMesh::MarkFixedVertices() {
         bool sheetFound;
         bool edgeFound;
 
@@ -397,8 +377,7 @@ namespace Protein_Morph {
         }
     }
 
-    template <class TVertex, class TEdge, class TFace>
-    void NonManifoldMesh<TVertex, TEdge, TFace>::MergeMesh(NonManifoldMesh<TVertex, TEdge, TFace> * srcMesh) {
+    void NonManifoldMesh::MergeMesh(NonManifoldMesh * srcMesh) {
         vector<int> indices;
         indices.clear();
         for(unsigned int i = 0; i < srcMesh->vertices.size(); i++) {
@@ -416,8 +395,7 @@ namespace Protein_Morph {
         }
     }
 
-    template <class TVertex, class TEdge, class TFace>
-    void NonManifoldMesh<TVertex, TEdge, TFace>::RemoveFace(int faceId) {
+    void NonManifoldMesh::RemoveFace(int faceId) {
         int faceIndex = GetFaceIndex(faceId);
         int edgeIndex;
         faces[faceIndex].valid = false;
@@ -432,8 +410,7 @@ namespace Protein_Morph {
         }
     }
 
-    template <class TVertex, class TEdge, class TFace>
-    void NonManifoldMesh<TVertex, TEdge, TFace>::RemoveEdge(int edgeId) {
+    void NonManifoldMesh::RemoveEdge(int edgeId) {
         int edgeIndex = GetEdgeIndex(edgeId);
         int vertexIndex;
         if(edges[edgeIndex].faceIds.size() > 0) {
@@ -453,8 +430,7 @@ namespace Protein_Morph {
         }
     }
 
-    template <class TVertex, class TEdge, class TFace>
-    void NonManifoldMesh<TVertex, TEdge, TFace>::RemoveVertex(int vertexId) {
+    void NonManifoldMesh::RemoveVertex(int vertexId) {
         int vertexIndex = GetVertexIndex(vertexId);
         vertices[vertexIndex].valid = false;
         vertexCount--;
@@ -465,8 +441,7 @@ namespace Protein_Morph {
         }
     }
 
-    template <class TVertex, class TEdge, class TFace>
-    void NonManifoldMesh<TVertex, TEdge, TFace>::RemoveNullEntries() {
+    void NonManifoldMesh::RemoveNullEntries() {
         for(int i = (int)vertices.size()-1; i >= 0; i--) {
             if(!vertices[i].valid) {
                 vertices.erase(vertices.begin() + i);
@@ -542,8 +517,7 @@ namespace Protein_Morph {
     }
 
 
-    template <class TVertex, class TEdge, class TFace>
-    void NonManifoldMesh<TVertex, TEdge, TFace>::ToOffCells(string fileName) {
+    void NonManifoldMesh::ToOffCells(string fileName) {
         RemoveNullEntries();
         FILE * outFile = fopen(fileName.c_str(), "wt");
         fprintf(outFile, "OFF\n");
@@ -571,8 +545,7 @@ namespace Protein_Morph {
     }
 
 
-    template <class TVertex, class TEdge, class TFace>
-    void NonManifoldMesh<TVertex, TEdge, TFace>::ToMathematicaFile(string fileName) {
+    void NonManifoldMesh::ToMathematicaFile(string fileName) {
         RemoveNullEntries();
         FILE * outF = fopen(fileName.c_str(), "wt");
         // Vertices
@@ -626,8 +599,7 @@ namespace Protein_Morph {
 
         fclose(outF);
     }
-    template <class TVertex, class TEdge, class TFace>
-    Volume * NonManifoldMesh<TVertex, TEdge, TFace>::ToVolume() {
+    Volume * NonManifoldMesh::ToVolume() {
         double minPos[3] = {MAX_DOUBLE,MAX_DOUBLE,MAX_DOUBLE};
         double maxPos[3] = {MIN_DOUBLE, MIN_DOUBLE, MIN_DOUBLE};
         if(fromVolume) {
@@ -654,7 +626,7 @@ namespace Protein_Morph {
         }
         Volume * vol = new Volume(maxPosInt[0] - minPosInt[0]+1, maxPosInt[1] - minPosInt[1]+1, maxPosInt[2] - minPosInt[2]+1);
 
-        NonManifoldMeshVertex<TVertex> v1,v2;
+        NonManifoldMeshVertex v1,v2;
         int pos[3];
 
         for(unsigned int i = 0;  i < edges.size(); i++) {
@@ -674,8 +646,7 @@ namespace Protein_Morph {
     }
 
 
-    template <class TVertex, class TEdge, class TFace>
-    Vector3DFloat NonManifoldMesh<TVertex, TEdge, TFace>::GetVertexNormal(int vertexId) {
+    Vector3DFloat NonManifoldMesh::GetVertexNormal(int vertexId) {
         int index = GetVertexIndex(vertexId);
         int edgeIndex;
         Vector3DFloat normal = Vector3DFloat(0,0,0);
@@ -689,12 +660,11 @@ namespace Protein_Morph {
         return normal;
     }
 
-    template <class TVertex, class TEdge, class TFace>
-    Vector3DFloat NonManifoldMesh<TVertex, TEdge, TFace>::GetFaceNormal(int faceId) {
+    Vector3DFloat NonManifoldMesh::GetFaceNormal(int faceId) {
 
         Vector3DFloat normal = Vector3DFloat(1,0,0);
 
-        NonManifoldMeshFace<TFace> face = faces[GetFaceIndex(faceId)];
+        NonManifoldMeshFace face = faces[GetFaceIndex(faceId)];
 
         if(face.vertexIds.size() >= 3) {
             normal = (vertices[GetVertexIndex(face.vertexIds[1])].position - vertices[GetVertexIndex(face.vertexIds[0])].position) ^
@@ -703,12 +673,11 @@ namespace Protein_Morph {
         }
         return normal;
     }
-    template <class TVertex, class TEdge, class TFace>
-    NonManifoldMesh<TVertex, TEdge, TFace> * NonManifoldMesh<TVertex, TEdge, TFace>::SmoothLaplacian(double converganceRate) {
+    NonManifoldMesh * NonManifoldMesh::SmoothLaplacian(double converganceRate) {
         NonManifoldMesh * smoothedMesh = new NonManifoldMesh(this);
         int i, j, vertexIndex;
         Vector3DFloat newPosition;
-        NonManifoldMeshVertex<TVertex> vertex;
+        NonManifoldMeshVertex vertex;
         for(i = 0; i < (int)vertices.size(); i++) {
             vertex = vertices[i];
             if(vertex.valid) {
@@ -734,8 +703,7 @@ namespace Protein_Morph {
     }
 
 
-    template <class TVertex, class TEdge, class TFace>
-    NonManifoldMesh<TVertex, TEdge, TFace> * NonManifoldMesh<TVertex, TEdge, TFace>::SmoothLaplacian(double converganceRate, int iterations) {
+    NonManifoldMesh * NonManifoldMesh::SmoothLaplacian(double converganceRate, int iterations) {
         NonManifoldMesh * newMesh;
         NonManifoldMesh * oldMesh = new NonManifoldMesh(this);
 
@@ -747,8 +715,7 @@ namespace Protein_Morph {
 
         return oldMesh;
     }
-    template <class TVertex, class TEdge, class TFace>
-    NonManifoldMesh<TVertex, TEdge, TFace> * NonManifoldMesh<TVertex, TEdge, TFace>::LoadOffFile(string fileName) {
+    NonManifoldMesh * NonManifoldMesh::LoadOffFile(string fileName) {
         NonManifoldMesh * mesh = new NonManifoldMesh();
         FILE * inFile = fopen(fileName.c_str(), "rt");
         char strTemp[255];
@@ -825,8 +792,7 @@ namespace Protein_Morph {
         fclose(inFile);
         return mesh;
     }
-    template <class TVertex, class TEdge, class TFace>
-    vector<unsigned int> NonManifoldMesh<TVertex, TEdge, TFace>::GetPath(unsigned int edge0Ix, unsigned int edge1Ix) {
+    vector<unsigned int> NonManifoldMesh::GetPath(unsigned int edge0Ix, unsigned int edge1Ix) {
         vector<unsigned int> path;
         map<unsigned int,  unsigned int> source;
 
@@ -865,19 +831,18 @@ namespace Protein_Morph {
 
         return path;
     }
-    template <class TVertex, class TEdge, class TFace>
-    vector<Vector3DFloat> NonManifoldMesh<TVertex, TEdge, TFace>::SampleTriangle(int faceId, double discretizationStep) {
+    vector<Vector3DFloat> NonManifoldMesh::SampleTriangle(int faceId, double discretizationStep) {
         int faceIndex = GetFaceIndex(faceId);
-        NonManifoldMeshFace<TFace> face = faces[faceIndex];
+        NonManifoldMeshFace face = faces[faceIndex];
 
         vector<Vector3DFloat> points;
         if(face.vertexIds.size() != 3) {
             printf("ERROR: Sampling a polygon NOT a triangle!\n");
             return points;
         } else {
-            NonManifoldMeshVertex<TVertex> p = vertices[GetVertexIndex(face.vertexIds[0])];
-            NonManifoldMeshVertex<TVertex> q = vertices[GetVertexIndex(face.vertexIds[1])];
-            NonManifoldMeshVertex<TVertex> r = vertices[GetVertexIndex(face.vertexIds[2])];
+            NonManifoldMeshVertex p = vertices[GetVertexIndex(face.vertexIds[0])];
+            NonManifoldMeshVertex q = vertices[GetVertexIndex(face.vertexIds[1])];
+            NonManifoldMeshVertex r = vertices[GetVertexIndex(face.vertexIds[2])];
             Vector3DFloat v1 = q.position - p.position;
             Vector3DFloat v2 = r.position - p.position;
             double v1Length = v1.Length();
@@ -896,27 +861,23 @@ namespace Protein_Morph {
         }
     }
 
-    template <class TVertex, class TEdge, class TFace>
-    void NonManifoldMesh<TVertex, TEdge, TFace>::SetOrigin(float x, float y, float z){
+    void NonManifoldMesh::SetOrigin(float x, float y, float z){
         origin[0] = x;
         origin[1] = y;
         origin[2] = z;
     }
 
-    template <class TVertex, class TEdge, class TFace>
-    void NonManifoldMesh<TVertex, TEdge, TFace>::SetScale(float x, float y, float z){
+    void NonManifoldMesh::SetScale(float x, float y, float z){
         scale[0] = x;
         scale[1] = y;
         scale[2] = z;
     }
 
-    template <class TVertex, class TEdge, class TFace>
-    void NonManifoldMesh<TVertex, TEdge, TFace>::TranslateVertex(int vertexIx, Vector3DFloat translateVector) {
+    void NonManifoldMesh::TranslateVertex(int vertexIx, Vector3DFloat translateVector) {
         vertices[vertexIx].position = vertices[vertexIx].position + translateVector;
     }
 
-    template <class TVertex, class TEdge, class TFace>
-    int NonManifoldMesh<TVertex, TEdge, TFace>::GetClosestVertexIndex(Vector3DFloat pos) {
+    int NonManifoldMesh::GetClosestVertexIndex(Vector3DFloat pos) {
         if(vertices.size() == 0) {
             return -1;
         }
@@ -934,10 +895,9 @@ namespace Protein_Morph {
         return minIx;
     }
 
-    template <class TVertex, class TEdge, class TFace>
-    bool NonManifoldMesh<TVertex, TEdge, TFace>::IsSurfaceVertex(int ix) {
+    bool NonManifoldMesh::IsSurfaceVertex(int ix) {
         bool isSurface = false;
-        NonManifoldMeshEdge<TEdge> edge;
+        NonManifoldMeshEdge edge;
 
         for(unsigned int i = 0; i < vertices[ix].edgeIds.size(); i++) {
             edge = edges[GetEdgeIndex(vertices[ix].edgeIds[i])];
@@ -946,23 +906,19 @@ namespace Protein_Morph {
         return isSurface;
     }
 
-    template <class TVertex, class TEdge, class TFace>
-    float NonManifoldMesh<TVertex, TEdge, TFace>::GetOriginX() {
+    float NonManifoldMesh::GetOriginX() {
         return origin[0];
     }
 
-    template <class TVertex, class TEdge, class TFace>
-    float NonManifoldMesh<TVertex, TEdge, TFace>::GetOriginY() {
+    float NonManifoldMesh::GetOriginY() {
         return origin[1];
     }
 
-    template <class TVertex, class TEdge, class TFace>
-    float NonManifoldMesh<TVertex, TEdge, TFace>::GetOriginZ() {
+    float NonManifoldMesh::GetOriginZ() {
         return origin[2];
     }
 
-    template <class TVertex, class TEdge, class TFace>
-    vector<unsigned int> NonManifoldMesh<TVertex, TEdge, TFace>::GetNeighboringVertexIndices(unsigned int vertexIx) {
+    vector<unsigned int> NonManifoldMesh::GetNeighboringVertexIndices(unsigned int vertexIx) {
         vector<unsigned int> neighbors;
         for(unsigned int i = 0; i < vertices[vertexIx].edgeIds.size(); i++) {
             if(edges[vertices[vertexIx].edgeIds[i]].vertexIds[0] == vertexIx) {
