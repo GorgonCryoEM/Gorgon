@@ -38,6 +38,8 @@ namespace SkeletonMaker {
 
         void setSpacing(float spacingX, float spacingY, float spacingZ);
         void setOrigin(float originX, float originY, float originZ);
+        void setSpacing(Dim3D<float>);
+        void setOrigin(Dim3D<float>);
         void setDataAt(int x, int y, int z, float value);
         void setDataAt(int index, float value);
         void pad(int padBy, double padValue);
@@ -134,6 +136,14 @@ namespace SkeletonMaker {
 
     void VolumeData::setOrigin(float originX, float originY, float originZ) {
         origin = Dim3D<float>(originX, originY, originZ);
+    }
+
+    void VolumeData::setSpacing(Dim3D<float> val) {
+        spacing = val;
+    }
+
+    void VolumeData::setOrigin(Dim3D<float> val) {
+        origin = val;
     }
 
 
