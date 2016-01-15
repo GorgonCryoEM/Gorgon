@@ -21,27 +21,26 @@ using namespace SkeletonMaker;
 
 
 namespace Protein_Morph {
-    struct NonManifoldMeshEdge {
+    struct NonManifoldMeshBase {
         unsigned int id;
+        bool valid;
+    };
+
+    struct NonManifoldMeshEdge : public NonManifoldMeshBase {
         unsigned int vertexIds[2];
         vector<unsigned int> faceIds;
         unsigned char tag;
-        bool valid;
     };
 
-    struct NonManifoldMeshFace {
-        unsigned int id;
+    struct NonManifoldMeshFace : public NonManifoldMeshBase {
         vector<unsigned int> edgeIds;
         vector<unsigned int> vertexIds;
         unsigned char tag;
-        bool valid;
     };
 
-    struct NonManifoldMeshVertex {
-        unsigned int id;
+    struct NonManifoldMeshVertex : public NonManifoldMeshBase {
         Vector3DFloat position;
         vector<unsigned int> edgeIds;
-        bool valid;
         bool tag;
     };
 
