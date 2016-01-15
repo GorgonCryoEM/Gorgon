@@ -44,6 +44,10 @@ namespace Protein_Morph {
         bool tag;
     };
 
+    typedef vector<NonManifoldMeshVertex > TV;
+    typedef vector<NonManifoldMeshEdge >   TE;
+    typedef vector<NonManifoldMeshFace >   TF;
+
 
     #ifdef _WIN32
         typedef hash_map<int, int> HashMapType;
@@ -94,9 +98,9 @@ namespace Protein_Morph {
 
     public:
         Dim3D<float> scale;
-        vector< NonManifoldMeshVertex > vertices;
-        vector< NonManifoldMeshEdge > edges;
-        vector< NonManifoldMeshFace > faces;
+        TV vertices;
+        TE edges;
+        TF faces;
         int edgeCount;
         int vertexCount;
         int faceCount;
