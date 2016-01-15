@@ -104,7 +104,6 @@ namespace Protein_Morph {
         int faceCount;
         HashMapType vertexHashMap;
         bool fromVolume;
-        int volSizeX, volSizeY, volSizeZ;
     };
 
 
@@ -136,9 +135,7 @@ namespace Protein_Morph {
         int * vertexLocations = new int[sourceVol->getSizeX() * sourceVol->getSizeY() * sourceVol->getSizeZ()];
         int value;
         fromVolume = true;
-        volSizeX = sourceVol->getSizeX();
-        volSizeY = sourceVol->getSizeY();
-        volSizeZ = sourceVol->getSizeZ();
+        size = sourceVol->getSizeObj();
         setOrigin(sourceVol->getOriginX(), sourceVol->getOriginY(), sourceVol->getOriginZ());
         setScale(sourceVol->getSpacingX(), sourceVol->getSpacingY(), sourceVol->getSpacingZ());
 
@@ -582,9 +579,9 @@ namespace Protein_Morph {
             minPos[0] = 0;
             minPos[1] = 0;
             minPos[2] = 0;
-            maxPos[0] = volSizeX-1;
-            maxPos[1] = volSizeY-1;
-            maxPos[2] = volSizeZ-1;
+            maxPos[0] = getSizeX()-1;
+            maxPos[1] = getSizeY()-1;
+            maxPos[2] = getSizeZ()-1;
         }
         for(unsigned int i = 0; i < vertices.size(); i++) {
             for(unsigned int j = 0; j < 3; j++) {
