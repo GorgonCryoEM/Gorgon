@@ -116,7 +116,7 @@ namespace Protein_Morph {
 
     NonManifoldMesh::NonManifoldMesh(Volume * sourceVol) {
         int x, y, z, i, j, index, index2;
-        int * vertexLocations = new int[sourceVol->getSizeX() * sourceVol->getSizeY() * sourceVol->getSizeZ()];
+        int * vertexLocations = new int[sourceVol->getMaxIndex()];
         int value;
         fromVolume = true;
         size = sourceVol->getSizeObj();
@@ -852,8 +852,14 @@ namespace Protein_Morph {
         bool isSurface = false;
         NonManifoldMeshEdge edge;
 
-        for(unsigned int i = 0; i < vertices[ix].edgeIds.size(); i++) {
-            edge = edges[GetEdgeIndex(vertices[ix].edgeIds[i])];
+        #ifdef GORGON_DEBUG
+          NonManifoldMeshVertex vv = vertices.at(ix);
+        #else
+          NonManifoldMeshVertex vv = vertices[ix];
+        #endif
+
+        for(unsigned int i = 0; i < vv.edgeIds.size(); i++) {
+            edge = edges[GetEdgeIndex(vv.edgeIds[i])];
             isSurface = isSurface || (edge.faceIds.size() > 0);
         }
         return isSurface;
