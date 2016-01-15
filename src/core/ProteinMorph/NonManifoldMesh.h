@@ -68,9 +68,9 @@ namespace Protein_Morph {
         int GetFaceIndex(int faceId);
         int GetEdgeIndex(int edgeId);
         int GetEdgeIndex(int vertexId1, int vertexId2);
-        float GetOriginX();
-        float GetOriginY();
-        float GetOriginZ();
+        float getOriginX();
+        float getOriginY();
+        float getOriginZ();
         int GetClosestVertexIndex(Vector3DFloat pos);
         void AddEdge(int vertexId1, int vertexId2, unsigned char tag = NULL);
         void AddQuad(int vertexId1, int vertexId2, int vertexId3, int vertexId4, unsigned char newEdgeTag = NULL, unsigned char faceTag = NULL);
@@ -83,8 +83,8 @@ namespace Protein_Morph {
         void RemoveNullEntries();
         void ToOffCells(string fileName);
         void ToMathematicaFile(string fileName);
-        void SetOrigin(float x, float y, float z);
-        void SetScale(float x, float y, float z);
+        void setOrigin(float x, float y, float z);
+        void setScale(float x, float y, float z);
         void TranslateVertex(int vertexIx, Vector3DFloat translateVector);
         vector<unsigned int> GetPath(unsigned int edge0Ix, unsigned int edge1Ix);
         vector<unsigned int> GetNeighboringVertexIndices(unsigned int vertexIx);
@@ -115,8 +115,8 @@ namespace Protein_Morph {
 
     NonManifoldMesh::NonManifoldMesh() {
         fromVolume = false;
-        SetOrigin(0,0,0);
-        SetScale(1,1,1);
+        setOrigin(0,0,0);
+        setScale(1,1,1);
 
     }
 
@@ -131,8 +131,8 @@ namespace Protein_Morph {
         for(unsigned int i = 0; i < srcMesh->faces.size(); i++) {
             faces.push_back(srcMesh->faces[i]);
         }
-        SetOrigin(srcMesh->origin[0],srcMesh->origin[1],srcMesh->origin[2]);
-        SetScale(srcMesh->scale[0], srcMesh->scale[1], srcMesh->scale[2]);
+        setOrigin(srcMesh->origin[0],srcMesh->origin[1],srcMesh->origin[2]);
+        setScale(srcMesh->scale[0], srcMesh->scale[1], srcMesh->scale[2]);
     }
 
     NonManifoldMesh::NonManifoldMesh(Volume * sourceVol) {
@@ -143,8 +143,8 @@ namespace Protein_Morph {
         volSizeX = sourceVol->getSizeX();
         volSizeY = sourceVol->getSizeY();
         volSizeZ = sourceVol->getSizeZ();
-        SetOrigin(sourceVol->getOriginX(), sourceVol->getOriginY(), sourceVol->getOriginZ());
-        SetScale(sourceVol->getSpacingX(), sourceVol->getSpacingY(), sourceVol->getSpacingZ());
+        setOrigin(sourceVol->getOriginX(), sourceVol->getOriginY(), sourceVol->getOriginZ());
+        setScale(sourceVol->getSpacingX(), sourceVol->getSpacingY(), sourceVol->getSpacingZ());
 
         // Adding vertices
         NonManifoldMeshVertex tempVertex;
@@ -841,13 +841,13 @@ namespace Protein_Morph {
         }
     }
 
-    void NonManifoldMesh::SetOrigin(float x, float y, float z){
+    void NonManifoldMesh::setOrigin(float x, float y, float z){
         origin[0] = x;
         origin[1] = y;
         origin[2] = z;
     }
 
-    void NonManifoldMesh::SetScale(float x, float y, float z){
+    void NonManifoldMesh::setScale(float x, float y, float z){
         scale[0] = x;
         scale[1] = y;
         scale[2] = z;
@@ -886,15 +886,15 @@ namespace Protein_Morph {
         return isSurface;
     }
 
-    float NonManifoldMesh::GetOriginX() {
+    float NonManifoldMesh::getOriginX() {
         return origin[0];
     }
 
-    float NonManifoldMesh::GetOriginY() {
+    float NonManifoldMesh::getOriginY() {
         return origin[1];
     }
 
-    float NonManifoldMesh::GetOriginZ() {
+    float NonManifoldMesh::getOriginZ() {
         return origin[2];
     }
 
