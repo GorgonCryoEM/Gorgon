@@ -55,7 +55,6 @@ namespace Protein_Morph {
     class NonManifoldMesh : public Volume {
     public:
         NonManifoldMesh();
-        NonManifoldMesh(NonManifoldMesh * srcMesh);
         NonManifoldMesh(Volume * sourceVol);
         bool IsEdgePresent(int vertexId1, int vertexId2);
         bool IsSurfaceVertex(int ix);
@@ -108,20 +107,11 @@ namespace Protein_Morph {
 
 
 
-    NonManifoldMesh::NonManifoldMesh() {
-        fromVolume = false;
-        setOrigin(0,0,0);
-        setScale(1,1,1);
-
-    }
-
-    NonManifoldMesh::NonManifoldMesh(NonManifoldMesh * srcMesh) {
-        fromVolume = false;
-            vertices = srcMesh->vertices;
-            edges    = srcMesh->edges;
-            faces    = srcMesh->faces;
-        setOrigin(srcMesh->origin.X(),srcMesh->origin.Y(),srcMesh->origin.Z());
-        setScale(srcMesh->scale);
+    NonManifoldMesh::NonManifoldMesh()
+        : scale(1,1,1),
+          fromVolume(false)
+    {
+      setOrigin(0,0,0);
     }
 
     NonManifoldMesh::NonManifoldMesh(Volume * sourceVol) {
