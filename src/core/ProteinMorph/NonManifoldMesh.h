@@ -111,7 +111,6 @@ namespace Protein_Morph {
         HashMapType vertexHashMap;
         bool fromVolume;
         int volSizeX, volSizeY, volSizeZ;
-        bool drawingDisabled;
     };
 
 
@@ -123,7 +122,6 @@ namespace Protein_Morph {
         fromVolume = false;
         SetOrigin(0,0,0);
         SetScale(1,1,1);
-        drawingDisabled = false;
 
     }
 
@@ -142,13 +140,11 @@ namespace Protein_Morph {
         }
         SetOrigin(srcMesh->origin[0],srcMesh->origin[1],srcMesh->origin[2]);
         SetScale(srcMesh->scale[0], srcMesh->scale[1], srcMesh->scale[2]);
-        drawingDisabled = srcMesh->drawingDisabled;
     }
 
     template <class TVertex, class TEdge, class TFace>
     NonManifoldMesh<TVertex, TEdge, TFace>::NonManifoldMesh(Volume * sourceVol) {
         Clear();
-        drawingDisabled = false;
 
         int x, y, z, i, j, index, index2;
         int * vertexLocations = new int[sourceVol->getSizeX() * sourceVol->getSizeY() * sourceVol->getSizeZ()];
