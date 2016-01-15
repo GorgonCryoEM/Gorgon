@@ -57,7 +57,6 @@ namespace Protein_Morph {
         NonManifoldMesh();
         NonManifoldMesh(NonManifoldMesh * srcMesh);
         NonManifoldMesh(Volume * sourceVol);
-        ~NonManifoldMesh();
         bool IsEdgePresent(int vertexId1, int vertexId2);
         bool IsSurfaceVertex(int ix);
         int AddVertex(NonManifoldMeshVertex vertex);
@@ -76,7 +75,6 @@ namespace Protein_Morph {
         void AddEdge(int vertexId1, int vertexId2, unsigned char tag = NULL);
         void AddQuad(int vertexId1, int vertexId2, int vertexId3, int vertexId4, unsigned char newEdgeTag = NULL, unsigned char faceTag = NULL);
         void AddTriangle(int vertexId1, int vertexId2, int vertexId3, unsigned char newEdgeTag = NULL, unsigned char faceTag = NULL);
-        void Clear();
         void MarkFixedVertices();
         void MergeMesh(NonManifoldMesh * srcMesh);
         void RemoveFace(int faceId);
@@ -116,7 +114,6 @@ namespace Protein_Morph {
 
 
     NonManifoldMesh::NonManifoldMesh() {
-        Clear();
         fromVolume = false;
         SetOrigin(0,0,0);
         SetScale(1,1,1);
@@ -124,7 +121,6 @@ namespace Protein_Morph {
     }
 
     NonManifoldMesh::NonManifoldMesh(NonManifoldMesh * srcMesh) {
-        Clear();
         fromVolume = false;
         for(unsigned int i = 0; i < srcMesh->vertices.size(); i++) {
             vertices.push_back(srcMesh->vertices[i]);
@@ -140,8 +136,6 @@ namespace Protein_Morph {
     }
 
     NonManifoldMesh::NonManifoldMesh(Volume * sourceVol) {
-        Clear();
-
         int x, y, z, i, j, index, index2;
         int * vertexLocations = new int[sourceVol->getSizeX() * sourceVol->getSizeY() * sourceVol->getSizeZ()];
         int value;
@@ -214,10 +208,6 @@ namespace Protein_Morph {
         }
         delete [] vertexLocations;
         MarkFixedVertices();
-    }
-
-    NonManifoldMesh::~NonManifoldMesh() {
-        Clear();
     }
 
     bool NonManifoldMesh::IsEdgePresent(int vertexId1, int vertexId2) {
@@ -349,16 +339,6 @@ namespace Protein_Morph {
         for(i = 0; i < (int)face.edgeIds.size(); i++) {
             edges[GetEdgeIndex(face.edgeIds[i])].faceIds.push_back(faceId);
         }
-    }
-
-    void NonManifoldMesh::Clear() {
-        vertices.clear();
-        edges.clear();
-        faces.clear();
-        vertexCount = 0;
-        edgeCount = 0;
-        faceCount = 0;
-        vertexHashMap.clear();
     }
 
     void NonManifoldMesh::MarkFixedVertices() {
