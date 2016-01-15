@@ -117,15 +117,9 @@ namespace Protein_Morph {
 
     NonManifoldMesh::NonManifoldMesh(NonManifoldMesh * srcMesh) {
         fromVolume = false;
-        for(unsigned int i = 0; i < srcMesh->vertices.size(); i++) {
-            vertices.push_back(srcMesh->vertices[i]);
-        }
-        for(unsigned int i = 0; i < srcMesh->edges.size(); i++) {
-            edges.push_back(srcMesh->edges[i]);
-        }
-        for(unsigned int i = 0; i < srcMesh->faces.size(); i++) {
-            faces.push_back(srcMesh->faces[i]);
-        }
+            vertices = srcMesh->vertices;
+            edges    = srcMesh->edges;
+            faces    = srcMesh->faces;
         setOrigin(srcMesh->origin.X(),srcMesh->origin.Y(),srcMesh->origin.Z());
         setScale(srcMesh->scale);
     }
