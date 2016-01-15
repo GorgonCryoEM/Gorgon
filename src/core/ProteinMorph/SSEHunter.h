@@ -226,8 +226,12 @@ namespace Protein_Morph {
         for(unsigned int i = 0; i < patoms.size(); i++) {
             pAtomPosition = patoms[i].GetPosition();
             pAtomPosition -= skeletonOrigin;
+            vector<float> skel_scale(3);
+            skel_scale[0] = skeleton->scale.X();
+            skel_scale[1] = skeleton->scale.Y();
+            skel_scale[2] = skeleton->scale.Z();
             for (unsigned int n = 0; n < 3; n++)
-                pAtomPosition[n] = pAtomPosition[n] * (1.0/skeleton->scale[n]);
+                pAtomPosition[n] = pAtomPosition[n] * (1.0/skel_scale[n]);
             for (unsigned int j = 0; j < skeleton->vertices.size(); j++) {
                 skeletonAtom = skeleton->vertices[j].position;
                 Vector3DFloat d = skeletonAtom - pAtomPosition;

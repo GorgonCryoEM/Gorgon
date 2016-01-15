@@ -68,9 +68,6 @@ namespace Protein_Morph {
         int GetFaceIndex(int faceId);
         int GetEdgeIndex(int edgeId);
         int GetEdgeIndex(int vertexId1, int vertexId2);
-        float getOriginX();
-        float getOriginY();
-        float getOriginZ();
         int GetClosestVertexIndex(Vector3DFloat pos);
         void AddEdge(int vertexId1, int vertexId2, unsigned char tag = NULL);
         void AddQuad(int vertexId1, int vertexId2, int vertexId3, int vertexId4, unsigned char newEdgeTag = NULL, unsigned char faceTag = NULL);
@@ -83,8 +80,8 @@ namespace Protein_Morph {
         void RemoveNullEntries();
         void ToOffCells(string fileName);
         void ToMathematicaFile(string fileName);
-        void setOrigin(float x, float y, float z);
         void setScale(float x, float y, float z);
+        void setScale(Dim3D<float> val);
         void TranslateVertex(int vertexIx, Vector3DFloat translateVector);
         vector<unsigned int> GetPath(unsigned int edge0Ix, unsigned int edge1Ix);
         vector<unsigned int> GetNeighboringVertexIndices(unsigned int vertexIx);
@@ -98,8 +95,7 @@ namespace Protein_Morph {
 
 
     public:
-        float origin[3];
-        float scale[3];
+        Dim3D<float> scale;
         vector< NonManifoldMeshVertex > vertices;
         vector< NonManifoldMeshEdge > edges;
         vector< NonManifoldMeshFace > faces;
@@ -131,8 +127,8 @@ namespace Protein_Morph {
         for(unsigned int i = 0; i < srcMesh->faces.size(); i++) {
             faces.push_back(srcMesh->faces[i]);
         }
-        setOrigin(srcMesh->origin[0],srcMesh->origin[1],srcMesh->origin[2]);
-        setScale(srcMesh->scale[0], srcMesh->scale[1], srcMesh->scale[2]);
+        setOrigin(srcMesh->origin.X(),srcMesh->origin.Y(),srcMesh->origin.Z());
+        setScale(srcMesh->scale);
     }
 
     NonManifoldMesh::NonManifoldMesh(Volume * sourceVol) {
@@ -504,7 +500,7 @@ namespace Protein_Morph {
         fprintf(outFile, "%i %li %i\n", (int)vertices.size(), faces.size() + edges.size(), 0);
         int i,j;
         for(i = 0; i < (int)vertices.size(); i++) {
-            fprintf(outFile, "%lf %lf %lf\n", origin[0] + scale[0] * vertices[i].position.X(), origin[1] + scale[1] * vertices[i].position.Y(), origin[2] + scale[2] * vertices[i].position.Z());
+            fprintf(outFile, "%lf %lf %lf\n", origin.X() + scale.X() * vertices[i].position.X(), origin.Y() + scale.Y() * vertices[i].position.Y(), origin.Z() + scale.Z() * vertices[i].position.Z());
         }
         int lastVertex;
         for(i = 0; i < (int)faces.size(); i++) {
@@ -620,8 +616,8 @@ namespace Protein_Morph {
                 vol->setDataAt(pos[0], pos[1], pos[2], 1.0);
             }
         }
-        vol->setOrigin(origin[0], origin[1], origin[2]);
-        vol->setSpacing(scale[0], scale[1], scale[2]);
+        vol->setOrigin(origin);
+        vol->setSpacing(scale);
         return vol;
     }
 
@@ -841,16 +837,12 @@ namespace Protein_Morph {
         }
     }
 
-    void NonManifoldMesh::setOrigin(float x, float y, float z){
-        origin[0] = x;
-        origin[1] = y;
-        origin[2] = z;
+    void NonManifoldMesh::setScale(float x, float y, float z){
+        scale = Dim3D<float>(x, y, z);
     }
 
-    void NonManifoldMesh::setScale(float x, float y, float z){
-        scale[0] = x;
-        scale[1] = y;
-        scale[2] = z;
+    void NonManifoldMesh::setScale(Dim3D<float> val){
+        scale = val;
     }
 
     void NonManifoldMesh::TranslateVertex(int vertexIx, Vector3DFloat translateVector) {
@@ -884,18 +876,6 @@ namespace Protein_Morph {
             isSurface = isSurface || (edge.faceIds.size() > 0);
         }
         return isSurface;
-    }
-
-    float NonManifoldMesh::getOriginX() {
-        return origin[0];
-    }
-
-    float NonManifoldMesh::getOriginY() {
-        return origin[1];
-    }
-
-    float NonManifoldMesh::getOriginZ() {
-        return origin[2];
     }
 
     vector<unsigned int> NonManifoldMesh::GetNeighboringVertexIndices(unsigned int vertexIx) {
