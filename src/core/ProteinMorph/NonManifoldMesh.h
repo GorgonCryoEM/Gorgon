@@ -3,7 +3,7 @@
 
 #include <vector>
 #include <MathTools/BasicDefines.h>
-//#include <SkeletonMaker/volume.h>
+#include <SkeletonMaker/volume.h>
 //#include <string>
 //#include <GorgonGL.h>
 #include <Foundation/Rasterizer.h>
@@ -52,7 +52,7 @@ namespace Protein_Morph {
         typedef map<int, int> HashMapType;
     #endif
 
-    class NonManifoldMesh{
+    class NonManifoldMesh : public Volume {
     public:
         NonManifoldMesh();
         NonManifoldMesh(NonManifoldMesh * srcMesh);
