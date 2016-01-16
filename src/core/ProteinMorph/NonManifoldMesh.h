@@ -31,18 +31,38 @@ namespace Protein_Morph {
         vector<unsigned int> faceIds;
         unsigned char tag;
     };
+    ostream& operator<<(ostream& out, const NonManifoldMeshEdge& obj){
+        return out<<"\033[34m"
+                  <<"faceIds.size(): "<<obj.faceIds.size()
+                  <<endl
+                  <<"\033[0m";
+    }
 
     struct NonManifoldMeshFace : public NonManifoldMeshBase {
         vector<unsigned int> edgeIds;
         vector<unsigned int> vertexIds;
         unsigned char tag;
     };
+    ostream& operator<<(ostream& out, const NonManifoldMeshFace& obj){
+            return out<<"\033[34m"
+                      <<"edgeIds.size(): "<<obj.edgeIds.size()
+                      <<"vertexIds.size(): "<<obj.vertexIds.size()
+                      <<endl
+                      <<"\033[0m";
+    }
 
     struct NonManifoldMeshVertex : public NonManifoldMeshBase {
         Vector3DFloat position;
         vector<unsigned int> edgeIds;
         bool tag;
     };
+    ostream& operator<<(ostream& out, const NonManifoldMeshVertex& obj){
+            return out<<"\033[34m"
+                      <<"edgeIds.size(): "<<obj.edgeIds.size()
+                      <<endl
+                      <<"\033[0m";
+    }
+
 
     typedef vector<NonManifoldMeshVertex > TV;
     typedef vector<NonManifoldMeshEdge >   TE;
@@ -106,6 +126,15 @@ namespace Protein_Morph {
         int faceCount;
         HashMapType vertexHashMap;
         bool fromVolume;
+
+        friend ostream& operator<<(ostream& out, const NonManifoldMesh& obj){
+            return out<<"\033[34m"
+                      <<"vertices.size(): "<<obj.vertices.size()
+                      <<"\nedges.size(): "<<obj.edges.size()
+                      <<"\nfaces.size(): "<<obj.faces.size()
+                      <<endl
+                      <<"\033[0m";
+        }
     };
 
 
