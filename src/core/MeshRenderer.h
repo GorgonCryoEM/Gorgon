@@ -52,9 +52,6 @@ namespace Visualization {
     }
 
     NonManifoldMesh_Annotated * MeshRenderer::getMesh() {
-        if(mesh == NULL) {
-            mesh = new NonManifoldMesh_Annotated();
-        }
         return mesh;
     }
 
