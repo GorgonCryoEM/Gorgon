@@ -33,108 +33,68 @@ namespace Protein_Morph {
 
     class AtomCoordinatesAndSize
     {
-    public:
-        float x;
-        float y;
-        float z;
-        short size;
-        AtomCoordinatesAndSize() { x = y = z = size = 0; }
-        AtomCoordinatesAndSize(float x, float y, float z, short size) {
-            this->x = x;
-            this->y = y;
-            this->z = z;
-            this->size = size;
-        }
+        public:
+            float x;
+            float y;
+            float z;
+            short size;
+            AtomCoordinatesAndSize() { x = y = z = size = 0; }
+            AtomCoordinatesAndSize(float x, float y, float z, short size) {
+                this->x = x;
+                this->y = y;
+                this->z = z;
+                this->size = size;
+            }
     };
 
-    bool compare_z(AtomCoordinatesAndSize left, AtomCoordinatesAndSize right)
-    {
+    bool compare_z(AtomCoordinatesAndSize left, AtomCoordinatesAndSize right) {
         return (left.z < right.z);
     }
 
     enum RadialProfileType {GAUSSIAN, GAUSSIAN_DIP, POLYNOMIAL};
 
     class SSEHunter{
-    public:
-        SSEHunter();
-        ~SSEHunter();
+        public:
+            void CreatePseudoAtoms(Volume * vol, float resolution, float threshold);
+            int GetNumberOfPseudoAtoms();
+            PDBAtom& GetPseudoAtom(int i);
 
-//			//TODO: Finish coding the geometry score portion of this function
-//			map<unsigned long long, PDBAtom> GetScoredAtoms(Volume * vol, NonManifoldMesh_Annotated * skeleton, float resolution, float threshold,
-//															float correlationCoeff, float skeletonCoeff, float geometryCoeff,
-//															RadialProfileType type = POLYNOMIAL, float deltaAltRadians=5*PI/180);
+            void SetCorrelationScores(Volume * vol, RadialProfileType type, float resolution, float deltaAltRadians);
+            void SetSkeletonScores(Volume * vol, NonManifoldMesh_Annotated * skeleton, float resolution);
+            vector< vector<float> > GetAtomDistances();
+            vector<float> GetLocalDirectionalityScores(Volume * vol);
 
+        private:
+            void UpdateMap(Volume * vol, Vector3DInt loc,
+                           float rangeminX, float rangeminY, float rangeminZ,
+                           float rangemaxX, float rangemaxY, float rangemaxZ);
 
+            //Ross Coleman: modified from EMAN1 Cylinder.C by Wen Jiang
+            float RadialProfile(float r, RadialProfileType type); //r in angstroms
+            float RadialProfileGaussian(float r); // r in angstroms
+            float RadialProfileGaussianDip(float r);// r in angstroms
+            float RadialProfilePolynomial(float r);// r in angstroms
 
-        void CreatePseudoAtoms(Volume * vol, float resolution, float threshold);
-        int GetNumberOfPseudoAtoms();
-        PDBAtom& GetPseudoAtom(int i);
+        public:
+            void ApplyTemplateCylinder(float cylData[], int xsize, int ysize, int zsize,
+                                       int zFFTPadding, float alt, float az,
+                                       RadialProfileType type = POLYNOMIAL,
+                                       float len=16.2, float apix_x=1,
+                                       bool reset=true, float apix_y=-1, float apix_z=-1);
+            void NormThresh(Volume& map, float thresh);
+            Volume * HelixCorrelation(Volume* map_vol,
+                                      RadialProfileType type = POLYNOMIAL,
+                                      float length = 16.2, float deltaAltRadians = 5*PI/180,
+                                      bool use_mcf = true,
+                                      Volume* az_vol = NULL, Volume* alt_vol = NULL);
 
-        void SetCorrelationScores(Volume * vol, RadialProfileType type, float resolution, float deltaAltRadians);
-        void SetSkeletonScores(Volume * vol, NonManifoldMesh_Annotated * skeleton, float resolution);
-//			//TODO: Finish coding SetGeometryScores
-//			void SetGeometryScores(Volume * vol, float resolution, float threshold);
-        vector< vector<float> > GetAtomDistances();
-//			vector< vector<Vector3DInt> > GetNeighborhoodVoxels(Volume * vol, float threshold);
-        vector<float> GetLocalDirectionalityScores(Volume * vol);
-
-    private:
-        void UpdateMap(Volume * vol, Vector3DInt loc, float rangeminX, float rangeminY, float rangeminZ, float rangemaxX, float rangemaxY, float rangemaxZ);
-
-        //Ross Coleman: modified from EMAN1 Cylinder.C by Wen Jiang
-        float RadialProfile(float r, RadialProfileType type); //r in angstroms
-        float RadialProfileGaussian(float r); // r in angstroms
-        float RadialProfileGaussianDip(float r);// r in angstroms
-        float RadialProfilePolynomial(float r);// r in angstroms
-//			Volume* GetTemplateCylinder(int xsize, int ysize, int zsize, float alt, float az,
-//						RadialProfileType type = POLYNOMIAL, float len=16.2, float apix_x=1, float apix_y=-1, float apix_z=-1);
-    public:
-        void ApplyTemplateCylinder(float cylData[], int xsize, int ysize, int zsize, int zFFTPadding, float alt, float az,
-                    RadialProfileType type = POLYNOMIAL, float len=16.2, float apix_x=1, bool reset=true, float apix_y=-1, float apix_z=-1);
-//			Volume * GetTemplateHelix(double length, float apix, float resolution, int mapSize);
-        void NormThresh(Volume& map, float thresh);
-        Volume * HelixCorrelation(Volume* map_vol, RadialProfileType type = POLYNOMIAL, float length = 16.2, float deltaAltRadians = 5*PI/180,
-                    bool use_mcf = true, Volume* az_vol = NULL, Volume* alt_vol = NULL);
-    private:
-//			void NormalizeEdgeMean(Volume* vol);
-//			void ApplyPolynomialProfileToHelix(Volume * in, float lengthAngstroms, int z0=-1);
-
-//			//Ross Coleman: modified from EMAN2 PointArray::pdb2mrc_by_summation by Wen Jian
-//			Volume * AtomsToVolumeBySummation(int map_size, float apix, float res, vector< AtomCoordinatesAndSize > atoms);
-
-
-
-        vector<Vector3DInt> atomVolumePositions; // holds the i, j, k indices that give the voxel position of the pseudoatoms
-        vector<PDBAtom> patoms; // pseudoatoms
-        static const float max_radius; //for all r > max_radius, RadialProfile(r, {any type}) ~= 0
-
+        private:
+            vector<Vector3DInt> atomVolumePositions; // holds the i, j, k indices that give the voxel position of the pseudoatoms
+            vector<PDBAtom> patoms; // pseudoatoms
+            static const float max_radius; //for all r > max_radius, RadialProfile(r, {any type}) ~= 0
     };
 
     const float SSEHunter::max_radius = 14.0f;
-
-    SSEHunter::SSEHunter() {
-    }
-
-    SSEHunter::~SSEHunter() {
-    }
-
-//		map<unsigned long long, PDBAtom> SSEHunter::GetScoredAtoms(Volume * vol, NonManifoldMesh_Annotated * skeleton, float resolution, float threshold,
-//																   float correlationCoeff, float skeletonCoeff, float geometryCoeff,
-//																   RadialProfileType type, float deltaAltRadians) {
-//			cout << "GetScoredAtoms()\n";
-//			CreatePseudoAtoms(vol, resolution, threshold);
-//			SetSkeletonScores(vol, skeleton, resolution);
-//			SetGeometryScores(vol, resolution, threshold);
-//			SetCorrelationScores(vol, type, resolution, deltaAltRadians);
-//			map<unsigned long long, PDBAtom> atomMap;
-//			atomMap.clear();
-//			for(unsigned int i = 0; i < patoms.size();  i++) {
-//				patoms[i].SetTempFactor( patoms[i].GetTotalScore(correlationCoeff, skeletonCoeff, geometryCoeff) );
-//				atomMap[patoms[i].GetHashKey()] = patoms[i];
-//			}
-//			return atomMap;
-//
-//		}
 
     // SSEHunter::CreatePseudoAtoms
     // threshold: the minimum density value that will be represented with a pseudoatom
@@ -159,23 +119,33 @@ namespace Protein_Morph {
             atom.SetResName("GLY");
             atom.SetChainId('A');
             atom.SetResSeq(i);
-            atom.SetPosition(Vector3DFloat(vol->getOriginX() + mX*vol->getSpacingX(), vol->getOriginY() + mY*vol->getSpacingY(), vol->getOriginZ() + mZ*vol->getSpacingZ()));
+            atom.SetPosition(Vector3DFloat(vol->getOriginX() + mX*vol->getSpacingX(),
+                                           vol->getOriginY() + mY*vol->getSpacingY(),
+                                           vol->getOriginZ() + mZ*vol->getSpacingZ()
+                                           )
+                            );
             atom.SetOccupancy(1.0f);
             atom.SetTempFactor(0.0f);
             atom.SetElement("S_00");
             atom.SetCharge("0");
             patoms.push_back(atom);
             atomVolumePositions.push_back(Vector3DInt(mX, mY, mZ));
-            UpdateMap(tempVol, Vector3DInt(mX, mY, mZ), rangeminX, rangeminY, rangeminZ, rangemaxX, rangemaxY, rangemaxZ);
+            UpdateMap(tempVol, Vector3DInt(mX, mY, mZ),
+                      rangeminX, rangeminY, rangeminZ,
+                      rangemaxX, rangemaxY, rangemaxZ
+                      );
             maxVal = tempVol->getMaxValuePosition(mX, mY, mZ);
             i++;
-
         }
     }
 
     // SSEHunter::UpdateMap
     // called by SSEHunter::CreatePseudoAtoms after each pseudoatom is chosen
-    void SSEHunter::UpdateMap(Volume * vol, Vector3DInt loc, float rangeminX, float rangeminY, float rangeminZ, float rangemaxX, float rangemaxY, float rangemaxZ) {
+    void SSEHunter::UpdateMap(Volume * vol, Vector3DInt loc,
+                              float rangeminX, float rangeminY, float rangeminZ,
+                              float rangemaxX, float rangemaxY, float rangemaxZ
+                              )
+    {
         int rMinX = (int)round(rangeminX/2.0);
         int rMaxX = (int)(round(rangemaxX/2.0) + 1);
         int rMinY = (int)round(rangeminY/2.0);
@@ -286,36 +256,6 @@ namespace Protein_Morph {
         return distances;
     }
 
-//		// SSEHunter::GetNeighborhoodVoxels
-//		// patoms: pseudoatoms
-//		// atomVolumePositions: the i,j,k indices for the location of the pseudoatoms in vol
-//		vector< vector<Vector3DInt> > SSEHunter::GetNeighborhoodVoxels(Volume * vol, float threshold) {
-//			int kernelWidthX = (int)round(5.0/vol->getSpacingX());
-//			int kernelWidthY = (int)round(5.0/vol->getSpacingY());
-//			int kernelWidthZ = (int)round(5.0/vol->getSpacingZ());
-//
-//			vector< vector<Vector3DInt> > voxels;
-//			vector<Vector3DInt> voxelCoords;
-//			Vector3DInt voxel;
-//
-//			for(unsigned int i = 0; i < atomVolumePositions.size(); i++) {
-//				voxelCoords.clear();
-//
-//				for(int addX = -kernelWidthX; addX < kernelWidthX; addX++) {
-//					for(int addY = -kernelWidthY; addY < kernelWidthY; addY++) {
-//						for(int addZ = -kernelWidthZ; addZ < kernelWidthZ; addZ++) {
-//							voxel = Vector3DInt(addX + atomVolumePositions[i].X(), addY + atomVolumePositions[i].Y(), addZ + atomVolumePositions[i].Z());
-//							if (vol->getDataAt(voxel.X(), voxel.Y(), voxel.Z()) > threshold) {
-//								voxelCoords.push_back(voxel);
-//							}
-//						}
-//					}
-//				}
-//				voxels.push_back(voxelCoords);
-//			}
-//			return voxels;
-//		}
-
     vector<float> SSEHunter::GetLocalDirectionalityScores(Volume * vol) {
         Volume * tempVol = new Volume(*vol);
         double minVal = tempVol->getMin();
@@ -372,25 +312,6 @@ namespace Protein_Morph {
         delete tempVol;
         return aspectRatios;
     }
-
-//		//TODO: finish this function
-//		void SSEHunter::SetGeometryScores(Volume * vol, float resolution, float threshold) {
-//			cout << "SetGeometryScores()\n";
-//			vector< vector<float> > distances = GetAtomDistances();
-//			//vector< vector<Vector3DInt> > neighbors = GetNeighborhoodVoxels(vol, threshold);
-//			vector<float> localDirectionalityScore = GetLocalDirectionalityScores(vol);
-//			vector<float> geometryScore;
-//
-//			for(unsigned int i = 0; i < patoms.size(); i++) {
-//				geometryScore.push_back(localDirectionalityScore[i]);
-//			}
-//
-//
-//			for(unsigned int i = 0; i < geometryScore.size(); i++) {
-//				patoms[i].SetGeometryScore(geometryScore[i]);
-//			}
-//
-//		}
 
     float SSEHunter::RadialProfile(float r, RadialProfileType type) // r in angstroms
     {
@@ -458,63 +379,6 @@ namespace Protein_Morph {
         }
         return ret;
     }
-
-//		//synthesize cylinder that resembles the density seen from an alpha helix
-//		//len in Angstroms, default to 3 turns
-//		//The cylinder will be centered in the Volume
-//		Volume* SSEHunter::GetTemplateCylinder(int xsize, int ysize, int zsize, float alt, float az,
-//				RadialProfileType type, float len, float apix_x, float apix_y, float apix_z) {
-//			/*
-//			 *[ x' ]     [1      0       0    ] [ cos(az)  sin(az)  0][ x ]
-//			 *[ y' ]  =  [0   cos(al)  sin(al)] [-sin(az)  cos(az)  0][ y ]
-//			 *[ z' ]     [0  -sin(al)  cos(al)] [    0       0      1][ z ]
-//			 */
-//			if (apix_x <= 0) {
-//				apix_x = abs(apix_x);
-//			}
-//			if (apix_y <= 0) {
-//				apix_y = apix_x;
-//			}
-//			if (apix_z <=0) {
-//				apix_z = apix_x;
-//			}
-//			Volume * cyl = new Volume(xsize, ysize, zsize);
-//			cyl->setSpacing(apix_x, apix_y, apix_z);
-//
-//			float half_xsize = xsize/2.0;
-//			float half_ysize = ysize/2.0;
-//			float half_zsize = zsize/2.0;
-//			float cos_alt = cos(alt);
-//			float sin_alt = sin(alt);
-//			float cos_az = cos(az);
-//			float sin_az = sin(az);
-//			float radius;
-//			float x, y, z;
-//			float xprime, yprime, zprime;
-//
-//			for (int i = 0; i < xsize; i++) {
-//				for (int j = 0; j < ysize; j++) {
-//					for (int k = 0; k < zsize; k++) {
-//						x = apix_x*(i-half_xsize);
-//						y = apix_y*(j-half_ysize);
-//						z = apix_z*(k-half_zsize);
-//						zprime =  (x*sin_az-y*cos_az) * sin_alt + z*cos_alt;
-//						if ((2*zprime > -len ) && (2*zprime < len)) {
-//							xprime =   x*cos_az+y*sin_az;
-//							yprime = (-x*sin_az+y*cos_az) * cos_alt + z*sin_alt;
-//							radius = sqrt(xprime*xprime+yprime*yprime);
-//							cyl->setDataAt( i, j, k, RadialProfile(radius, type) );
-//						} else {
-//							cyl->setDataAt( i, j, k, 0);
-//						}
-//					}
-//				}
-//			}
-//
-//			return cyl;
-//
-//		}
-
 
     //cylinder that resembles the density seen from an alpha helix
     //The cylinder will be centered in the float array
@@ -595,241 +459,6 @@ namespace Protein_Morph {
             }
         }
     }
-
-
-//		//TODO: TEST
-//		//While a good idea for accuracy, we would have to rotate the template helix around its axis, adding another degree of freedom and HelixCorrelation() already takes minutes
-//		Volume * SSEHunter::GetTemplateHelix(double length, float apix, float resolution, int mapSize)
-//		{
-//			vector< AtomCoordinatesAndSize > atoms;
-//
-//			AtomCoordinatesAndSize nitrogen, c_alpha, carbon, oxygen;
-//			// Generating PDB Atoms
-//			for (int j=0; j <= round(length/1.54); j++)
-//			{
-//				nitrogen = AtomCoordinatesAndSize( 1.6*cos( (0  + 100*j) * PI/180.0), 1.6*sin( (0  + 100*j) * PI/180.0), 1.54*j + 0.00, 7.0 );
-//				c_alpha  = AtomCoordinatesAndSize( 2.3*cos( (28 + 100*j) * PI/180.0), 2.3*sin( (28 + 100*j) * PI/180.0), 1.54*j + 0.83, 6.0 );
-//				carbon   = AtomCoordinatesAndSize( 2.0*cos( (61 + 100*j) * PI/180.0), 2.0*sin( (61 + 100*j) * PI/180.0), 1.54*j + 1.70, 6.0 );
-//				oxygen   = AtomCoordinatesAndSize( 2.0*cos( (61 + 100*j) * PI/180.0), 2.0*sin( (61 + 100*j) * PI/180.0), 1.54*j + 3.09, 8.0 );
-//				atoms.push_back(nitrogen);
-//				atoms.push_back(c_alpha);
-//				atoms.push_back(carbon);
-//				atoms.push_back(oxygen);
-//			}
-//
-//			// TODO: check if the cast for mapSize is the way to go
-//			Volume* helixVolume = AtomsToVolumeBySummation(static_cast<int>(mapSize), apix, resolution, atoms);
-//			NormalizeEdgeMean(helixVolume);
-//			Vector3DFloat cm = helixVolume->getCenterOfMass();
-//			helixVolume->setOrigin(cm.X(), cm.Y(), cm.Z());
-//			ApplyPolynomialProfileToHelix(helixVolume, length);
-//			return helixVolume;
-//
-//			//Generating volume
-//			//mrcHelix=EMData()
-////#	mrcHelix=points.pdb2mrc_by_summation(box,apix,res)
-////#	mrcHelix.process_inplace("normalize.edgemean")
-////#	mrcHelix.process_inplace("xform.centerofmass")
-////#	aout=mrcHelix.copy()
-////#	aout.to_zero()
-////#	mrcHelix.process_inplace("filter.highpass.gauss",{"apix":apix,"cutoff_freq":100})
-////
-////#	for i in range(box):
-////#		r = Region(0,0,i,box,box,1)
-////#		slice1 = mrcHelix.get_clip(r)
-////#		thresh = slice1.process("threshold.binary", {"value":10})
-////#		neg = thresh.process("mask.addshells",{"nshells":2})
-////#		real_neg = neg-thresh
-////#		real_neg.mult(-10)
-////#		pos = neg.process("mask.addshells",{"nshells":1})
-////#		real_pos = pos-neg
-////#		real_pos.mult(10)
-////#		solution = slice1.copy()
-////#		solution.mult(thresh)
-////#		solution += real_neg
-////#		solution += real_pos
-////#		aout.insert_clip(solution,[0,0,i])
-////#	aout.write_image("helix.mrc")
-////#	return aout
-////#	mrcHelix.write_image("helix.mrc")
-//
-//		}
-
-
-//		// TODO: Test this function!!!!
-//		Volume * SSEHunter::AtomsToVolumeBySummation(int map_size, float apix, float res, vector< AtomCoordinatesAndSize > atoms)
-//		{
-//		#ifdef DEBUG
-//			printf("SSEHunter::AtomsToVolumeBySummation(): %d points\tmapsize = %4d\tapix = %g\tres = %g\n",atoms.size(),map_size, apix, res);
-//		#endif
-//			double gauss_real_width = res / (PI);	// in Angstrom, res is in Angstrom
-//			//if ( gauss_real_width < apix) LOGERR("PointArray::projection_by_summation(): apix(%g) is too large for resolution (%g Angstrom in Fourier space) with %g pixels of 1/e half width", apix, res, gauss_real_width);
-//
-//			double min_table_val = 1e-7;
-//			double max_table_x = sqrt(-log(min_table_val));	// for exp(-x*x)
-//
-//			double table_step_size = 0.001;	// number of steps for each pixel
-//			double inv_table_step_size = 1.0 / table_step_size;
-//			int table_size = int (max_table_x * gauss_real_width / (apix * table_step_size) * 1.25);
-//			vector<double> table;
-//			table.resize(table_size);
-//			//double *table = (double *) malloc(sizeof(double) * table_size);
-//			for (int i = 0; i < table_size; i++) {
-//				double x = -i * table_step_size * apix / gauss_real_width;
-//				table[i] = exp(-x * x);
-//			}
-//
-//			int gbox = int (max_table_x * gauss_real_width / apix);	// local box half size in pixels to consider for each point
-//			if (gbox <= 0)
-//				gbox = 1;
-//
-//
-//
-//		//	sort_by_axis(2);			// sort by Z-axis
-//			sort(atoms.begin(), atoms.end(), compare_z);
-//
-//
-//
-//			Volume *map = new Volume(map_size, map_size, map_size);
-//			map->fill(0);
-//		//	float *pd = map->get_data();
-//			for ( size_t s = 0; s < atoms.size(); ++s) {
-//				double xc = atoms[s].x / apix + map_size / 2;
-//				double yc = atoms[s].y / apix + map_size / 2;
-//				double zc = atoms[s].z / apix + map_size / 2;
-//				double fval = atoms[s].size;
-//				int imin = int (xc) - gbox, imax = int (xc) + gbox;
-//				int jmin = int (yc) - gbox, jmax = int (yc) + gbox;
-//				int kmin = int (zc) - gbox, kmax = int (zc) + gbox;
-//				if (imin < 0)
-//					imin = 0;
-//				if (jmin < 0)
-//					jmin = 0;
-//				if (kmin < 0)
-//					kmin = 0;
-//				if (imax > map_size)
-//					imax = map_size;
-//				if (jmax > map_size)
-//					jmax = map_size;
-//				if (kmax > map_size)
-//					kmax = map_size;
-//
-//				for (int k = kmin; k < kmax; k++) {
-//					size_t table_index_z = size_t (fabs(k - zc) * inv_table_step_size);
-//					if ( table_index_z >= table.size() ) continue;
-//					double zval = table[table_index_z];
-//		//			size_t pd_index_z = k * map_size * map_size;
-//					for (int j = jmin; j < jmax; j++) {
-//						size_t table_index_y = size_t (fabs(j - yc) * inv_table_step_size);
-//						if ( table_index_y >= table.size() ) continue;
-//						double yval = table[table_index_y];
-//		//				size_t pd_index = pd_index_z + j * map_size + imin;
-//						for (int i = imin; i < imax; i++) // , pd_index++)
-//						{
-//							size_t table_index_x = size_t (fabs(i - xc) * inv_table_step_size);
-//							if ( table_index_x >= table.size() ) continue;
-//							double xval = table[table_index_x];
-//		//					pd[pd_index] += (float) (fval * zval * yval * xval);
-//							double val = (fval * zval * yval * xval) + map->getDataAt(i,j,k);
-//							map->setDataAt(i,j,k, val);
-//						}
-//					}
-//				}
-//			}
-//			//for(int i=0; i<map_size*map_size; i++) pd[i]/=sqrt(PI);
-//		//	map->update();
-//			map->setSpacing(apix,apix,apix);
-//			map->setOrigin( -map_size/2*apix, -map_size/2*apix, -map_size/2*apix );
-//
-//			return map;
-//		}
-
-//		//TODO: TEST
-//		void SSEHunter::NormalizeEdgeMean(Volume* vol)
-//		{
-//			int nx = vol->getSizeX();
-//			int ny = vol->getSizeY();
-//			int nz = vol->getSizeZ();
-//			int N = nx*ny*nz;
-//
-//			float edge_mean = vol->getEdgeMean();
-//			float std_dev = vol->getStdDev();
-//			float val;
-//
-//			for (int i = 0; i < N; i++)
-//			{
-//				val = (vol->getDataAt(i)- edge_mean) / std_dev;
-//				vol->setDataAt(i, val);
-//			}
-//		}
-
-//		//TODO: TEST
-//		void SSEHunter::ApplyPolynomialProfileToHelix(Volume * in, float lengthAngstroms, int z0)
-//		{
-//			Volume* vol = in;
-//			int nx = vol->getSizeX();
-//			int ny = vol->getSizeY();
-//			int nz = vol->getSizeZ();
-//			float apix_x = vol->getSpacingX(); //TODO: Ask Matt if I correctly handled cases where apix_x != apix_y or apix_x != apix_z
-//			float apix_y = vol->getSpacingY();
-//			float apix_z = vol->getSpacingZ();
-//
-//			if (z0 < 0 || z0 >= nz)
-//				z0 = nz / 2;
-//
-//			int z_start = floor( ( z0 - 0.5*lengthAngstroms/apix_z ) + 0.5);
-//			int z_stop = floor( ( z0 + 0.5*lengthAngstroms/apix_z ) + 0.5);
-//
-//			double rho_x_sum, rho_y_sum, rho_sum;
-//			double x_cm, y_cm;
-//			double radius;
-//			float val;
-//
-//			for (int k = 0; k < nz; k++) //taking slices along z axis
-//			{
-//				rho_x_sum = rho_y_sum = rho_sum = 0; //Set to zero for a new slice
-//
-//				if (k >= z_start && k <= z_stop)
-//				//Apply the radial profile only between z_start and z_stop on the z axis
-//				{
-//					//Calculating CM for the slice...
-//					for (int j = 0; j < ny; j++)
-//					{
-//						for (int i = 0; i < nx; i++)
-//						{
-//							val = vol->getDataAt(i,j,k);
-//							rho_x_sum += val*i;
-//							rho_y_sum += val*j;
-//							rho_sum += val;
-//						}
-//					}
-//					if (rho_sum != 0) //If there was net mass was zero, we can't find the CM, so we'll just leave the slice as is
-//					{
-//						x_cm = rho_x_sum/rho_sum;
-//						y_cm = rho_y_sum/rho_sum;
-//
-//						//Applying radial profile...
-//						for (int j=0; j<ny;j++)
-//						{
-//							for (int i=0;i<nx;i++)
-//							{
-//								radius = hypot( (i-x_cm)*apix_x, (j-y_cm)*apix_y );
-//								vol->setDataAt(i,j,k, RadialProfilePolynomial((float)radius) );
-//							}
-//						}
-//					}
-//				}
-//				else //k < z_start || k > z_stop
-//				//Clear the map, setting the density to zero everywhere else.
-//				{
-//					for (int j=0; j<ny; j++)
-//						for(int i=0; i<nx; i++)
-//						{
-//							vol->setDataAt(i,j,k, 0);
-//						}
-//				}
-//			}
-//		}
 
     void SSEHunter::NormThresh(Volume& map, float thresh) {
         int	nx = map.getSizeX();
@@ -1126,9 +755,5 @@ namespace Protein_Morph {
     }
 
 }
-
-
-
-
 
 #endif
