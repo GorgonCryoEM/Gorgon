@@ -154,14 +154,12 @@ namespace Protein_Morph {
         int rMaxZ = (int)(round(rangemaxZ/2.0) + 1);
         float maxDistance = sqrt(3.0f * pow((float)max(max(abs(rMinX), abs(rMinY)), abs(rMinZ)), 2));
 
-        float tempVal, value;
-        float distance;
-
         for(int x = rMinX; x < rMaxX; x++){
             for(int y = rMinY; y < rMaxY; y++) {
                 for(int z = rMinZ; z < rMaxZ; z++) {
-                    tempVal = vol->getDataAt(loc.X() + x, loc.Y() + y, loc.Z() + z);
-                    distance = sqrt((float)(x*x + y*y + z*z));
+                    float tempVal = vol->getDataAt(loc.X() + x, loc.Y() + y, loc.Z() + z);
+                    float distance = sqrt((float)(x*x + y*y + z*z));
+                    float value;
                     if((x==0) && (y==0) && (z==0)) {
                         value = 0;
                     } else {
