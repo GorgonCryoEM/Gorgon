@@ -56,7 +56,7 @@ namespace Visualization {
             mesh = *NonManifoldMesh_Annotated::LoadOffFile(fileName);
         } else if(extension == "MRC" || extension == "ATOM") {
             Volume * volume = VolumeFormatConverter::LoadVolume(fileName);
-            mesh = new NonManifoldMesh_Annotated(volume);
+            mesh = NonManifoldMesh_Annotated(volume);
             delete volume;
         } else {
             cout<<"Input format "<<extension<<" not supported!"<<endl;
