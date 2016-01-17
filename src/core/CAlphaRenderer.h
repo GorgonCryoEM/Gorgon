@@ -8,12 +8,12 @@
 //#include <ProteinMorph/NonManifoldMesh.h>
 //#include <ProteinMorph/SSEHunter.h>
 #include <SkeletonMaker/volume.h>
-//#include <GraphMatch/PDBReader.h>
+#include <GraphMatch/PDBReader.h>
 //#include <GraphMatch/PDBAtom.h>
 #include <GraphMatch/PDBBond.h>
 //#include <map>
 //#include <list>
-//#include <GraphMatch/VectorMath.h>
+#include <GraphMatch/VectorMath.h>
 //#include <boost/tuple/tuple.hpp>
 
 //using namespace std;
