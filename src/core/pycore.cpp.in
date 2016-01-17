@@ -5,6 +5,7 @@
 #include "ProteinMorph/SSEHunter.h"
 #include <MathTools/Vector3D.h>
 #include "CAlphaRenderer.h"
+#include <boost/python/suite/indexing/vector_indexing_suite.hpp>
 
 using namespace SkeletonMaker;
 using namespace Protein_Morph;
@@ -13,6 +14,37 @@ using namespace boost::python;
 
 BOOST_PYTHON_MODULE(@current_pylib@)
 {
+//    vector_from_python<float>();
+    class_<std::vector<float> >("std::vector<float>")
+            .def(vector_indexing_suite<std::vector<float> >() );
+    class_<std::vector<std::vector<float> > >("std::vector<std::vector<float> >")
+            .def(vector_indexing_suite<std::vector<std::vector<float> > >() );
+
+//    class_<std::vector<int> >("std::vector<int>")
+//            .def(vector_indexing_suite<std::vector<int> >() );
+//    class_<std::vector<std::vector<int> > >("std::vector<std::vector<int> >")
+//            .def(vector_indexing_suite<std::vector<std::vector<int> > >() );
+
+//    vector_from_python< std::vector<float> >();
+
+//    vector_from_python<int>();
+//    vector_from_python< std::vector<int> >();
+//
+//    vector_from_python<bool>();
+//    vector_from_python< std::vector<bool> >();
+//
+//    vector_from_python<unsigned long long>();
+
+//    vector_from_python<Vector3DFloat>();
+//    vector_from_python< std::vector<Vector3DFloat> >();
+//
+//
+////  tuple3_to_python<Vector3DInt>();
+////  tuple3_to_python<Vector3DFloat>();
+//    tuple3_from_python<Vector3DInt, int>();
+//    tuple3_from_python<Vector3DFloat, float>();
+//
+
   class_<Volume>("Volume", init<>())
       .def("getOriginX", &Volume::getOriginX)
       .def("getOriginY", &Volume::getOriginY)
