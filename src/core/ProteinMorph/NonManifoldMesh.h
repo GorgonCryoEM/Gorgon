@@ -111,8 +111,8 @@ namespace Protein_Morph {
         Volume * ToVolume();
         Vector3DFloat GetVertexNormal(int vertexId);
         Vector3DFloat GetFaceNormal(int faceId);
-        NonManifoldMesh * SmoothLaplacian(double converganceRate);
-        NonManifoldMesh * SmoothLaplacian(double converganceRate, int iterations);
+        NonManifoldMesh SmoothLaplacian(double converganceRate);
+        NonManifoldMesh SmoothLaplacian(double converganceRate, int iterations);
         static NonManifoldMesh * LoadOffFile(string fileName);
 
 
@@ -662,8 +662,8 @@ namespace Protein_Morph {
         }
         return normal;
     }
-    NonManifoldMesh * NonManifoldMesh::SmoothLaplacian(double converganceRate) {
-        NonManifoldMesh * smoothedMesh = new NonManifoldMesh(this);
+    NonManifoldMesh NonManifoldMesh::SmoothLaplacian(double converganceRate) {
+        NonManifoldMesh smoothedMesh = NonManifoldMesh(this);
         int i, j, vertexIndex;
         Vector3DFloat newPosition;
         NonManifoldMeshVertex vertex;
@@ -685,21 +685,19 @@ namespace Protein_Morph {
                 } else {
                     newPosition = vertex.position;
                 }
-                smoothedMesh->vertices[i].position = smoothedMesh->vertices[i].position * (1.0 - converganceRate)+ newPosition * converganceRate;
+                smoothedMesh.vertices[i].position = smoothedMesh.vertices[i].position * (1.0 - converganceRate)+ newPosition * converganceRate;
             }
         }
         return smoothedMesh;
     }
 
 
-    NonManifoldMesh * NonManifoldMesh::SmoothLaplacian(double converganceRate, int iterations) {
-        NonManifoldMesh * newMesh;
-        NonManifoldMesh * oldMesh = new NonManifoldMesh(this);
+    NonManifoldMesh NonManifoldMesh::SmoothLaplacian(double converganceRate, int iterations) {
+        NonManifoldMesh newMesh;
+        NonManifoldMesh oldMesh = NonManifoldMesh(this);
 
         for(int i = 0; i < iterations; i++) {
-            newMesh = oldMesh->SmoothLaplacian(converganceRate);
-            delete oldMesh;
-            oldMesh = newMesh;
+            oldMesh = oldMesh.SmoothLaplacian(converganceRate);
         }
 
         return oldMesh;

@@ -33,13 +33,13 @@ namespace Visualization {
         int IntersectMeshAndSphere(Vector3DFloat center, float radius);
         Vector3DFloat getIntersectionPoint(int ix);
     private:
-        NonManifoldMesh_Annotated * mesh;
+        NonManifoldMesh_Annotated mesh;
         vector<Vector3DFloat> intersectionPoints;
     };
 
 
     NonManifoldMesh_Annotated * MeshRenderer::getMesh() {
-        return mesh;
+        return &mesh;
     }
 
     Vector3DFloat MeshRenderer::getIntersectionPoint(int ix) {
@@ -52,12 +52,8 @@ namespace Visualization {
         string extension = fileName.substr(pos, fileName.length()-pos);
         extension = StringUtils::StringToUpper(extension);
 
-        if(mesh != NULL) {
-            delete mesh;
-        }
-
         if(extension == "OFF") {
-            mesh = NonManifoldMesh_Annotated::LoadOffFile(fileName);
+            mesh = *NonManifoldMesh_Annotated::LoadOffFile(fileName);
         } else if(extension == "MRC" || extension == "ATOM") {
             Volume * volume = VolumeFormatConverter::LoadVolume(fileName);
             mesh = new NonManifoldMesh_Annotated(volume);
@@ -68,46 +64,30 @@ namespace Visualization {
     }
 
     void MeshRenderer::saveFile(string fileName) {
-        if(mesh != NULL) {
             int pos = fileName.rfind(".") + 1;
             string extension = fileName.substr(pos, fileName.length()-pos);
 
             extension = StringUtils::StringToUpper(extension);
 
             if(extension == "OFF") {
-                mesh->ToOffCells(fileName);
+                mesh.ToOffCells(fileName);
             } else if(extension == "MRC") {
-                Volume * volume = mesh->ToVolume();
+                Volume * volume = mesh.ToVolume();
                 volume->toMRCFile((char *)fileName.c_str());
                 delete volume;
             } else {
               cout<<"Input format "<<extension<<" not supported!"<<endl;
             }
-        }
-
-
-        if(mesh != NULL) {
-
-        }
     }
 
     void MeshRenderer::loadVolume(Volume * sourceVolume) {
-        if(mesh != NULL) {
-            delete mesh;
-        }
         mesh = new NonManifoldMesh_Annotated(sourceVolume);
     }
 
     void MeshRenderer::unload() {
-        if(mesh != NULL) {
-            delete mesh;
-            mesh = NULL;
-        }
     }
     void MeshRenderer::PerformSmoothLaplacian(double convergenceRate, int iterations) {
-        NonManifoldMesh_Annotated * newMesh = mesh->SmoothLaplacian(convergenceRate, iterations);
-        delete mesh;
-        mesh = newMesh;
+        mesh = mesh.SmoothLaplacian(convergenceRate, iterations);
     }
 
     int MeshRenderer::IntersectMeshAndSphere(Vector3DFloat center, float radius) {
@@ -119,9 +99,9 @@ namespace Visualization {
         r = radius;
         intersectionPoints.clear();
 
-        for(unsigned int i = 0; i < mesh->edges.size(); i++) {
-            p1 = mesh->vertices[mesh->edges[i].vertexIds[0]].position;
-            p2 = mesh->vertices[mesh->edges[i].vertexIds[1]].position;
+        for(unsigned int i = 0; i < mesh.edges.size(); i++) {
+            p1 = mesh.vertices[mesh.edges[i].vertexIds[0]].position;
+            p2 = mesh.vertices[mesh.edges[i].vertexIds[1]].position;
             x1 = p1.X();
             y1 = p1.Y();
             z1 = p1.Z();
@@ -163,19 +143,19 @@ namespace Visualization {
         if((subsceneIndex >= 0) && (ix0 >= 0)) {
             switch(subsceneIndex){
                 case 0:
-                    for(unsigned int i = 0; i < mesh->faces[ix1].vertexIds.size(); i++) {
-                        position += mesh->vertices[mesh->GetVertexIndex(mesh->faces[ix0].vertexIds[i])].position;
+                    for(unsigned int i = 0; i < mesh.faces[ix1].vertexIds.size(); i++) {
+                        position += mesh.vertices[mesh.GetVertexIndex(mesh.faces[ix0].vertexIds[i])].position;
                     }
-                    position = position * (1.0 / mesh->faces[ix1].vertexIds.size());
+                    position = position * (1.0 / mesh.faces[ix1].vertexIds.size());
                     break;
                 case 1:
                     for(unsigned int i = 0; i < 2; i++) {
-                        position += mesh->vertices[mesh->GetVertexIndex(mesh->edges[ix0].vertexIds[i])].position;
+                        position += mesh.vertices[mesh.GetVertexIndex(mesh.edges[ix0].vertexIds[i])].position;
                     }
                     position = position * 0.5;
                     break;
                 case 2:
-                    position = mesh->vertices[ix0].position;
+                    position = mesh.vertices[ix0].position;
                     break;
             }
         }
