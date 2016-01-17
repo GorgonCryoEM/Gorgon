@@ -21,7 +21,7 @@ namespace Visualization {
     typedef NonManifoldMesh NonManifoldMesh_Annotated;
     class MeshRenderer : public Volume {
     public:
-        NonManifoldMesh_Annotated * getMesh();
+        NonManifoldMesh_Annotated getMesh();
         Vector3DFloat get3DCoordinates(int subsceneIndex, int ix0, int ix1 = -1, int ix2 = -1, int ix3 = -1, int ix4 = -1);
         void loadFile(string fileName);
         void loadVolume(Volume * sourceVolume);
@@ -38,8 +38,8 @@ namespace Visualization {
     };
 
 
-    NonManifoldMesh_Annotated * MeshRenderer::getMesh() {
-        return &mesh;
+    NonManifoldMesh_Annotated MeshRenderer::getMesh() {
+        return mesh;
     }
 
     Vector3DFloat MeshRenderer::getIntersectionPoint(int ix) {
