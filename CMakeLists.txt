@@ -1,15 +1,17 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 3.0)
+CMAKE_MINIMUM_REQUIRED(VERSION 3.4)
 PROJECT(Gorgon
         VERSION 2.2.0
         LANGUAGES CXX
         )
 
+set(legacy_trgt_name pyGORGON)
+
+include(cmake/functions.cmake)
 include(cmake/Configure.cmake)
-
 include(cmake/Debug.cmake)
-include(cmake/MacOSX.cmake)
-include(cmake/Windows.cmake)
 
+include(cmake/MacOSX/init.cmake)
+include(cmake/Windows/init.cmake)
 
 # Number of processors/cores
 include(cmake/ParallelJobs.cmake)
@@ -38,8 +40,6 @@ endif()
 # --------------------------------------------------------------------
 # Find dependencies
 # --------------------------------------------------------------------
-include(cmake/functions.cmake)
-
 set( EXTERNAL_PROJECTS
         OpenGL
         GLUT
@@ -60,11 +60,15 @@ list(APPEND GORGON_INCLUDE_DIRS
 	${GORGON_EXTERNAL_LIBRARIES_DIR}
 	)
 
-link_directories(${Boost_LIBRARY_DIR})
 include_directories(${GORGON_INCLUDE_DIRS})
-ADD_LIBRARY(pyGORGON MODULE Gorgon/src_cpp/LibPyGorgon.cpp)
-target_link_libraries(pyGORGON ${GORGON_LIBRARIES})
+ADD_LIBRARY(${legacy_trgt_name} MODULE ${CMAKE_BINARY_DIR}/src/LibPyGorgon.cpp)
+target_link_libraries(${legacy_trgt_name} ${GORGON_LIBRARIES})
+# --------------------------------------------------------------------
+# Add subdirectories and enable testing
+# --------------------------------------------------------------------
+enable_testing()
 
+add_subdirectory(src)
 # --------------------------------------------------------------------
 # C++11 flags
 # --------------------------------------------------------------------
@@ -82,7 +86,7 @@ if(ENABLE_CMAKE_DEBUG_OUTPUT)
       message(STATUS "DIRS='${dir}'")
     endforeach()
 
-    get_property(dirs TARGET pyGORGON PROPERTY LINK_LIBRARIES)
+    get_property(dirs TARGET ${legacy_trgt_name} PROPERTY LINK_LIBRARIES)
 
     foreach(dir ${GORGON_LIBRARIES})
       message("LIBS='${dir}'")
@@ -90,9 +94,9 @@ if(ENABLE_CMAKE_DEBUG_OUTPUT)
 endif()
 
 # --------------------------------------------------------------------
-#Install Step
+# Install Step
 # --------------------------------------------------------------------
-install(TARGETS pyGORGON
+install(TARGETS ${legacy_trgt_name}
         LIBRARY
         DESTINATION ${run_dir}
         COMPONENT "Gorgon"
@@ -107,6 +111,11 @@ install(DIRECTORY ${CMAKE_SOURCE_DIR}/Gorgon/src_py/
 
 add_custom_target(Gorgon
         COMMAND ${CMAKE_COMMAND} -DCOMPONENT=Gorgon -P cmake_install.cmake
+        DEPENDS ${legacy_trgt_name}
+        )
+
+add_custom_target(Gorgon-only
+        COMMAND ${CMAKE_COMMAND} -DCOMPONENT=Gorgon -P cmake_install.cmake
         )
         
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/demo
@@ -114,23 +123,31 @@ install(DIRECTORY ${CMAKE_SOURCE_DIR}/demo
         COMPONENT "Gorgon"
         )
         
-include(cmake/Win_install.cmake)
+include(cmake/Windows/install.cmake)
 # --------------------------------------------------------------------
-#Package Step
+# Package Step
 # --------------------------------------------------------------------
+add_custom_target(Package
+        COMMAND ${CMAKE_COMMAND} -DCOMPONENT=Package -P cmake_install.cmake
+        DEPENDS Gorgon
+        )
+        
+add_custom_target(Package-only
+        COMMAND ${CMAKE_COMMAND} -DCOMPONENT=Package -P cmake_install.cmake
+        )
+        
 if(APPLE)
-    include(cmake/Mac_package.cmake)
+    include(cmake/MacOSX/package.cmake)
 elseif(WIN32)
-    include(cmake/Win_package.cmake)
+    include(cmake/Windows/package.cmake)
 else()
     install(CODE "execute_process(COMMAND pyinstaller ${run_dir}/gorgon.pyw
                                                         --distpath=${package_dir}
                                                         --clean -y
         WORKING_DIRECTORY ${run_dir})"
+        DEPENDS Gorgon
         COMPONENT "Package"
         )
 endif()
 
-add_custom_target(Package
-        COMMAND ${CMAKE_COMMAND} -DCOMPONENT=Package -P cmake_install.cmake
-        )
+# --------------------------------------------------------------------

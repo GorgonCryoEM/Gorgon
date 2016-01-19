@@ -5,6 +5,10 @@ configure_file(${CMAKE_SOURCE_DIR}/Gorgon/src_py/gorgon.pyw.in
                 ${run_dir}/gorgon.pyw
                )
 
+configure_file(${CMAKE_SOURCE_DIR}/Gorgon/src_cpp/LibPyGorgon.cpp.in
+                ${CMAKE_BINARY_DIR}/src/LibPyGorgon.cpp
+               )
+
 if(APPLE)
     set(package_setup_file ${CMAKE_SOURCE_DIR}/setup_mac.py.in)
 endif()
