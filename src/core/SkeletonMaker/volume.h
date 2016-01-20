@@ -14,10 +14,10 @@
 //#include <cmath>
 #include "PriorityQueue.h"
 //#include <vector>
-//#include <MathTools/Vector3D.h>
+#include <MathTools/Vector3D.h>
 
 //using namespace std;
-//using namespace MathTools;
+using namespace MathTools;
 
 namespace SkeletonMaker {
 
@@ -64,40 +64,21 @@ namespace SkeletonMaker {
         int x, y, z;
     };
 
-    class Volume {
+    class Volume : public VolumeData {
     public:
-        Volume(int x, int y, int z);
-        Volume(int x, int y, int z, float val);
-        Volume(int x, int y, int z, int offx, int offy, int offz, Volume * vol);
+        Volume();
+        Volume(int x, int y, int z, float val=0.0);
         Volume(const Volume& obj);
-        ~Volume( );
-
-        float getSpacingX();
-        float getSpacingY();
-        float getSpacingZ();
-        float getOriginX();
-        float getOriginY();
-        float getOriginZ();
-        int getSizeX();
-        int getSizeY();
-        int getSizeZ();
-        int getIndex(int x, int y, int z);
-        double getDataAt( int x, int y, int z );
-        double getDataAt( int index );
-        void setSpacing(float spx, float spy, float spz );
-        void setOrigin(float orgX, float orgY, float orgZ);
-        void setDataAt( int x, int y, int z, double d );
-        void setDataAt( int index, double d );
+        virtual ~Volume( );
 
         Volume * getPseudoDensity();
         Volume * getDistanceField(int rad, float randf);
         int getNonZeroVoxelCount();
         void print();
         void subtract(Volume * vol);
-        void pad (int padBy, double padValue);
         void applyMask(Volume * maskVol, double maskValue, bool keepMaskValue);
-        double getMin();
-        double getMax();
+        double getMin() const;
+        double getMax() const;
         double getMaxValuePosition(int& maxX, int& maxY, int& maxZ);
         double getLocalMax(int x, int y, int z, int radius);
         double getLocalMin(int x, int y, int z, int radius);
@@ -106,7 +87,6 @@ namespace SkeletonMaker {
         float getEdgeMean(); // Returns the mean value of all the surface voxels but no interior voxels
         float getStdDev(); // Returns the population standard deviation of the values at all the voxels
         Vector3DFloat getCenterOfMass(); // Returns the center of mass of the image in pixels (not angstroms)
-        float* getArrayCopy(int padX=0, int padY=0, int padZ=0, float padValue=0);
 
         void fill(double val);
         int isBertrandBorder(int ox, int oy, int oz, int dir);
@@ -228,103 +208,34 @@ namespace SkeletonMaker {
         VolumeData * volData;
     };
 
-    Volume::Volume(const Volume& obj) {
-        volData = new VolumeData(*(obj.volData));
-        histogram = obj.histogram;
+    Volume::Volume(const Volume& obj)
+          : VolumeData(static_cast<VolumeData>(obj)), histogram(obj.histogram),
+            volData(dynamic_cast<VolumeData *>(this))
+    {
+//        volData = new VolumeData(*(obj.volData));
     }
 
-    Volume::Volume(int x, int y, int z) {
-        volData = new VolumeData(x, y, z);
-    }
+    Volume::Volume()
+          : VolumeData(), volData(getVolumeData())
+    {}
 
-    Volume::Volume(int x, int y, int z, float val) {
-        volData = new VolumeData(x, y, z, val);
-    }
-
-    Volume::Volume(int x, int y, int z, int offx, int offy, int offz, Volume * vol) {
-        volData = new VolumeData(x, y, z, offx, offy, offz, vol->getVolumeData());
-    }
+    Volume::Volume(int x, int y, int z, float val)
+          : VolumeData(x, y, z, val), volData(getVolumeData())
+    {}
 
 
     Volume::~Volume( )
-    {
-        delete volData;
-    }
-
-    int Volume::getSizeX() {
-        return volData->GetSizeX();
-    }
-
-    int Volume::getSizeY() {
-        return volData->GetSizeY();
-    }
-
-    int Volume::getSizeZ() {
-        return volData->GetSizeZ();
-    }
-
-    int Volume::getIndex(int x, int y, int z) {
-        return volData->GetIndex(x, y, z);
-    }
-
-    void Volume::setDataAt( int x, int y, int z, double d ) {
-        volData->SetDataAt(x, y, z, (float)d);
-    }
-
-    void Volume::setDataAt( int index, double d ) {
-        volData->SetDataAt(index, (float)d);
-    }
-
-    double Volume::getDataAt( int x, int y, int z )
-    {
-        return volData->GetDataAt(x, y, z);
-    }
-
-    double Volume::getDataAt( int index ) {
-        return volData->GetDataAt(index);
-    }
+    {}
 
     VolumeData * Volume::getVolumeData() {
-        return volData;
-    }
-
-    void Volume::setSpacing(float spx, float spy, float spz ) {
-        volData->SetSpacing(spx, spy, spz);
-    }
-
-    void Volume::setOrigin(float orgX, float orgY, float orgZ) {
-        volData->SetOrigin(orgX, orgY, orgZ);
-    }
-
-    float Volume::getSpacingX() {
-        return volData->GetSpacingX();
-    }
-
-    float Volume::getSpacingY() {
-        return volData->GetSpacingY();
-    }
-
-    float Volume::getSpacingZ() {
-        return volData->GetSpacingZ();
-    }
-
-    float Volume::getOriginX() {
-        return volData->GetOriginX();
-    }
-
-    float Volume::getOriginY() {
-        return volData->GetOriginY();
-    }
-
-    float Volume::getOriginZ() {
-        return volData->GetOriginZ();
+        return dynamic_cast<VolumeData *>(this);
     }
 
     Volume * Volume::getPseudoDensity( ) {
         // This function assumes the volume is binary (1/0), and builds a pseudo density volume from the 1 voxels
         // First: assign a density value at each point
         int i, j, k ;
-        Volume * res = new Volume(getSizeX(), getSizeY(), getSizeZ(), 0, 0, 0, this);
+        Volume * res = new Volume(*this);
         int size = getSizeX() * getSizeY() * getSizeZ() ;
         srand(123) ;
 
@@ -355,7 +266,7 @@ namespace SkeletonMaker {
         }
         */
 
-        Volume * tvol = new Volume( getSizeX(), getSizeY(), getSizeZ(), 0, 0, 0, res);
+        Volume * tvol = new Volume(*res);
         float d, ad, ct, temp;
         for ( int it = 0 ; it < 3 ; it ++ )
         for ( i = 0 ; i < getSizeX() ; i ++ )
@@ -376,7 +287,7 @@ namespace SkeletonMaker {
                 }
 
         delete tvol;
-        tvol = new Volume( getSizeX(), getSizeY(), getSizeZ(), 0, 0, 0, res ) ;
+        tvol = new Volume(*res ) ;
         for ( i = 0 ; i < 40 ; i ++ )
         {
             printf("Smoothing round %d\n", i) ;
@@ -406,7 +317,7 @@ namespace SkeletonMaker {
 
         // First: assign a density value at each point
         int i, j, k ;
-        Volume * res = new Volume(getSizeX(), getSizeY(), getSizeZ(), 0, 0, 0, this);
+        Volume * res = new Volume(*this);
         srand( 123 ) ;
 
         for ( i = 0 ; i < getSizeX() ; i ++ )
@@ -488,10 +399,6 @@ namespace SkeletonMaker {
 
     }
 
-    void Volume::pad (int padBy, double padValue) {
-        volData->Pad(padBy, padValue);
-    }
-
     void Volume::applyMask(Volume * maskVol, double maskValue, bool keepMaskValue) {
         for(int x = 0; x < maskVol->getSizeX(); x++) {
             for(int y = 0; y < maskVol->getSizeY(); y++) {
@@ -505,11 +412,11 @@ namespace SkeletonMaker {
         }
     }
 
-    double Volume::getMin() {
-        int size = volData->GetMaxIndex();
-        double rvalue = volData->GetDataAt(0);
+    double Volume::getMin() const {
+        int size = volData->getMaxIndex();
+        double rvalue = volData->getDataAt(0);
         for (int i=1; i < size; i++) {
-            float val = volData->GetDataAt(i);
+            float val = volData->getDataAt(i);
             if ( rvalue > val) {
                 rvalue = val;
             }
@@ -517,11 +424,11 @@ namespace SkeletonMaker {
         return rvalue;
     }
 
-    double Volume::getMax() {
-        int size = volData->GetMaxIndex();
-        double rvalue = volData->GetDataAt(0);
+    double Volume::getMax() const {
+        int size = volData->getMaxIndex();
+        double rvalue = volData->getDataAt(0);
         for (int i=1; i < size; i++) {
-            float val = volData->GetDataAt(i);
+            float val = volData->getDataAt(i);
             if ( rvalue < val) {
                 rvalue = val;
             }
@@ -553,7 +460,7 @@ namespace SkeletonMaker {
         for(int xx = x - radius; xx <= x + radius; xx++) {
             for(int yy = y - radius; yy <= y + radius; yy++) {
                 for(int zz = z - radius; zz <= z + radius; zz++) {
-                    mx = max(mx, getDataAt(xx, yy, zz));
+                    mx = max(mx, (double)getDataAt(xx, yy, zz));
                 }
             }
         }
@@ -565,7 +472,7 @@ namespace SkeletonMaker {
         for(int xx = x - radius; xx <= x + radius; xx++) {
             for(int yy = y - radius; yy <= y + radius; yy++) {
                 for(int zz = z - radius; zz <= z + radius; zz++) {
-                    mn = min(mn, getDataAt(xx, yy, zz));
+                    mn = min(mn, (double)getDataAt(xx, yy, zz));
                 }
             }
         }
@@ -7052,7 +6959,7 @@ namespace SkeletonMaker {
         printf("Thresholding the volume to -MAX_ERODE/0...\n") ;
         #endif
         threshold( thr, -MAX_ERODE, 0 ) ;
-        Volume* tvol = new Volume( getSizeX(), getSizeY(), getSizeZ(), 0, 0, 0, this ) ;
+        Volume* tvol = new Volume(*this ) ;
 
         for ( i = 0 ; i < getSizeX() ; i ++ )
             for ( j = 0 ; j < getSizeY() ; j ++ )
@@ -9312,7 +9219,7 @@ namespace SkeletonMaker {
         GridQueue2* queue2 = new GridQueue2( ) ;
         GridQueue2* queue3 = new GridQueue2( ) ;
         GridQueue2* queue4 = new GridQueue2( ) ;
-        Volume* fvol = new Volume( this->getSizeX(), this->getSizeY(), this->getSizeZ(), 0 ) ;
+        Volume* fvol = new Volume( this->getSizeX(), this->getSizeY(), this->getSizeZ() ) ;
 
         for ( i = 0 ; i < getSizeX() ; i ++ )
             for ( j = 0 ; j < getSizeY() ; j ++ )
@@ -9578,7 +9485,7 @@ namespace SkeletonMaker {
         GridQueue2* queue2 = new GridQueue2( ) ;
         GridQueue2* queue3 = new GridQueue2( ) ;
         GridQueue2* queue4 = new GridQueue2( ) ;
-        Volume* fvol = new Volume( this->getSizeX(), this->getSizeY(), this->getSizeZ(), 0 ) ;
+        Volume* fvol = new Volume( this->getSizeX(), this->getSizeY(), this->getSizeZ()) ;
 
         for ( i = 0 ; i < getSizeX() ; i ++ )
             for ( j = 0 ; j < getSizeY() ; j ++ )
@@ -9791,7 +9698,7 @@ namespace SkeletonMaker {
 
     void Volume::smooth( float alpha )
     {
-        VolumeData * smoothedData = new VolumeData(getSizeX(), getSizeY(), getSizeZ(), 0, 0, 0, volData);
+        VolumeData * smoothedData = new VolumeData(*volData);
 
         for (int i = 1; i < getSizeX() - 1; i++)
             for (int j = 1; j < getSizeY() - 1; j++)
@@ -9802,7 +9709,7 @@ namespace SkeletonMaker {
                         (float)getDataAt( i, j + 1, k ) +
                         (float)getDataAt( i, j, k - 1 ) +
                         (float)getDataAt( i, j, k + 1 ) ;
-                    smoothedData->SetDataAt(i, j, k, smoothedData->GetDataAt(i, j, k) * alpha + ( 1 - alpha ) * v / 6);
+                    smoothedData->setDataAt(i, j, k, smoothedData->getDataAt(i, j, k) * alpha + ( 1 - alpha ) * v / 6);
                 }
         delete volData;
         volData = smoothedData;
@@ -9815,7 +9722,7 @@ namespace SkeletonMaker {
         double irange = imax - imin ;
         double range = max - min ;
 
-        int size = volData->GetMaxIndex();
+        int size = volData->getMaxIndex();
         for(int i = 0 ; i < size ; i ++) {
             setDataAt(i, ((getDataAt(i) - (float)imin ) / (float)irange) * (float)range + (float)min);
         }
@@ -9830,7 +9737,7 @@ namespace SkeletonMaker {
         double range1 = thresh - min;
         double range2 = max - thresh ;
 
-        int size = volData->GetMaxIndex();
+        int size = volData->getMaxIndex();
         for (int i = 0; i < size; i++) {
             if (getDataAt(i) < ithresh) {
                 setDataAt(i, ((getDataAt(i) - (float)imin ) / (float)irange1) * (float)range1 + (float)min);
@@ -9915,7 +9822,7 @@ namespace SkeletonMaker {
             return ;
         }
 
-        VolumeData * newData = new VolumeData(sizeX, sizeY, sizeZ, 0, 0, 0, volData);
+        VolumeData * newData = new VolumeData(*volData);
 
         double cent = ( sizeX - 1 ) / 2.0 ;
         for ( i = 0 ; i < sizeX ; i ++ )
@@ -9948,7 +9855,7 @@ namespace SkeletonMaker {
                         nz = sizeZ - 1 ;
                     }
 
-                    newData->SetDataAt(i, j, k, (float)getInterpDataAt( nx, ny, nz ));
+                    newData->setDataAt(i, j, k, (float)getInterpDataAt( nx, ny, nz ));
                 }
 
             delete volData;
@@ -10230,7 +10137,7 @@ namespace SkeletonMaker {
     void Volume::segment( float threshold, Volume* lowvol, Volume* highvol, char* mrcfile )
     {
         int i,j,k ;
-        Volume* segvol = new Volume( getSizeX(), getSizeY(), getSizeZ(), 0 ) ;
+        Volume* segvol = new Volume( getSizeX(), getSizeY(), getSizeZ()) ;
 
         for ( i = 0 ; i < getSizeX() ; i ++ )
             for ( j = 0 ; j < getSizeY() ; j ++ )
@@ -10267,7 +10174,7 @@ namespace SkeletonMaker {
             if ( i == 1 ) continue ;
 
             int nodes = 0 ;
-            testvol = new Volume( getSizeX(), getSizeY(), getSizeZ(), 0, 0, 0, vol ) ;
+            testvol = new Volume( *vol ) ;
             testvol->erodeSheet( i ) ;
 
             for ( j = 0 ; j < size ; j ++ )
@@ -10293,9 +10200,9 @@ namespace SkeletonMaker {
     {
         printf("Start segmentation.\n") ;
         int i,j,k ;
-        Volume* vvol = new Volume( getSizeX(), getSizeY(), getSizeZ(), 0 ) ;
-        Volume* tvol1 = new Volume( getSizeX(), getSizeY(), getSizeZ(), 0 ) ;
-        Volume* tvol2 = new Volume( getSizeX(), getSizeY(), getSizeZ(), 0 ) ;
+        Volume* vvol = new Volume( getSizeX(), getSizeY(), getSizeZ()) ;
+        Volume* tvol1 = new Volume( getSizeX(), getSizeY(), getSizeZ()) ;
+        Volume* tvol2 = new Volume( getSizeX(), getSizeY(), getSizeZ()) ;
 
         // Initialize
         GridQueue2* queue = new GridQueue2() ;
@@ -10553,7 +10460,7 @@ namespace SkeletonMaker {
         threshold( thr, 0, 1 ) ;
 
         // Next, initialize queue
-        Volume* tvol = new Volume( getSizeX(), getSizeY(), getSizeZ(), 0 ) ;
+        Volume* tvol = new Volume( getSizeX(), getSizeY(), getSizeZ()) ;
         GridQueue2* queue = new GridQueue2() ;
         gridQueueEle* ele ;
         queue->prepend( 0, 0, 0 ) ;
@@ -10608,7 +10515,7 @@ namespace SkeletonMaker {
     void Volume::reduceComponent( int size )
     {
         int i, j, k ;
-        Volume* tvol = new Volume( getSizeX(), getSizeY(), getSizeZ(), 0 ) ;
+        Volume* tvol = new Volume( getSizeX(), getSizeY(), getSizeZ()) ;
         GridQueue2* queue = new GridQueue2() ;
         GridQueue2* queue2 = new GridQueue2() ;
         gridQueueEle* ele ;
@@ -10687,7 +10594,7 @@ namespace SkeletonMaker {
     void Volume::reduceComponent2( int num )
     {
         int i, j, k ;
-        Volume* tvol = new Volume( getSizeX(), getSizeY(), getSizeZ(), 0 ) ;
+        Volume* tvol = new Volume( getSizeX(), getSizeY(), getSizeZ()) ;
         GridQueue2* queue = new GridQueue2() ;
         GridQueue2* queue2 = new GridQueue2() ;
         gridQueueEle* ele ;
@@ -10944,7 +10851,7 @@ namespace SkeletonMaker {
             }
         }
 
-        Volume* invol = new Volume( getSizeX(), getSizeY(), getSizeZ(), 0 ) ;
+        Volume* invol = new Volume( getSizeX(), getSizeY(), getSizeZ()) ;
         queue->prepend( i, getSizeY()/2, getSizeZ()/2 ) ;
         invol->setDataAt( i, getSizeY()/2, getSizeZ()/2, 1 ) ;
         printf("Flood filling inside from  (%d,%d,%d)...\n",i, getSizeY()/2, getSizeZ()/2) ;
@@ -11040,7 +10947,7 @@ namespace SkeletonMaker {
         for ( i = maxDis ; i >= 0 ; i -- )
         {
             int nodes = 0 ;
-            testvol = new Volume( getSizeX(), getSizeY(), getSizeZ(), 0, 0, 0, this ) ;
+            testvol = new Volume(*this ) ;
             testvol->erodeSheet( i ) ;
 
             for ( j = 0 ; j < size ; j ++ )
@@ -11142,7 +11049,7 @@ namespace SkeletonMaker {
 
         double dmin = 100000, dmax = -100000 ;
         int i ;
-        int size = volData->GetMaxIndex();
+        int size = volData->getMaxIndex();
         for (i = 0 ; i < size; i++) {
             float val = (float)getDataAt(i);
             if (val < dmin) {
@@ -11188,7 +11095,7 @@ namespace SkeletonMaker {
     // Returns the mean value of all the voxels
     float Volume::getMean()
     {
-        int N = volData->GetMaxIndex();
+        int N = volData->getMaxIndex();
         double mass = 0;
         for (int i = 0; i < N; i++)
             mass += getDataAt(i);
@@ -11226,7 +11133,7 @@ namespace SkeletonMaker {
     // Returns the population standard deviation of the values at all the voxels
     float Volume::getStdDev()
     {
-        int N = volData->GetMaxIndex();
+        int N = volData->getMaxIndex();
 
         //Calculate the standard deviation of all the voxels in the image
         double voxel_sum = 0;
@@ -11268,10 +11175,6 @@ namespace SkeletonMaker {
 
         Vector3DFloat centerOfMass( xmoment/mass, ymoment/mass, zmoment/mass );
         return centerOfMass;
-    }
-
-    float* Volume::getArrayCopy(int padX, int padY, int padZ, float padValue) {
-        return getVolumeData()->GetArrayCopy(padX, padY, padZ, padValue);
     }
 
     void Volume::buildHistogram(int binCount) {

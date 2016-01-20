@@ -114,7 +114,7 @@ namespace GraySkeletonCPP {
         int sizeZ = volume->getSizeZ();
         printf("This will not work if the dimensions exceed 260\n");
         double avg[260][260];
-        Volume * tempVolume = new Volume(sizeX, sizeY, sizeZ, 0, 0, 0, volume);
+        Volume * tempVolume = new Volume(*volume);
         tempVolume->normalize(0.0, 255.0);
         double maxVal;
         double avgVal;
