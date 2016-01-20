@@ -51,6 +51,15 @@ namespace SkeletonMaker {
         Dim3D<float> spacing;
         Dim3D<float> origin;
         vector<float> data;
+
+        friend ostream& operator<<(ostream& out, const VolumeData& obj){
+          out<<"\033[33m"
+              <<"size:    "<<obj.size
+              <<"spacing: "<<obj.spacing
+              <<"origin:  "<<obj.origin
+              <<"size:    "<<obj.data.size()
+              <<"\033[0m"<<endl;
+        }
     };
 
     VolumeData::VolumeData() {
