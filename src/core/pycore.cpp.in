@@ -62,7 +62,7 @@ BOOST_PYTHON_MODULE(@current_pylib@)
     ;
   
   
-  class_< VolumeRenderer, bases<Renderer> >("VolumeRenderer", init<>())       
+  class_< VolumeRenderer, bases<Volume> >("VolumeRenderer", init<>())       
       .def("normalizeVolume", &VolumeRenderer::NormalizeVolume)
 //        .def("downsampleVolume", &VolumeRenderer::DownsampleVolume)
 //        .def("cropVolume", &VolumeRenderer::CropVolume)

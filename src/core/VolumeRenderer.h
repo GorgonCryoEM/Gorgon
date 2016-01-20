@@ -28,7 +28,7 @@ using namespace GraySkeletonCPP;
 using namespace SkeletonMaker;
 
 namespace Visualization {
-    class VolumeRenderer : public Renderer {
+    class VolumeRenderer : public Volume {
     public:
         VolumeRenderer();
         ~VolumeRenderer();
@@ -281,7 +281,7 @@ namespace Visualization {
         if(dataVolume != NULL) {
             dataVolume->setSpacing(spX, spY, spZ);
         } else {
-            Renderer::setSpacing(spX, spY, spZ);
+            Volume::setSpacing(spX, spY, spZ);
         }
     }
 
@@ -289,28 +289,28 @@ namespace Visualization {
         if(dataVolume != NULL) {
             return dataVolume->getSpacingX();
         }
-        return Renderer::getSpacingX();
+        return Volume::getSpacingX();
     }
 
     float VolumeRenderer::GetSpacingY() {
         if(dataVolume != NULL) {
             return dataVolume->getSpacingY();
         }
-        return Renderer::getSpacingY();
+        return Volume::getSpacingY();
     }
 
     float VolumeRenderer::GetSpacingZ() {
         if(dataVolume != NULL) {
             return dataVolume->getSpacingZ();
         }
-        return Renderer::getSpacingZ();
+        return Volume::getSpacingZ();
     }
 
     void VolumeRenderer::SetOrigin(float orgX, float orgY, float orgZ) {
         if(dataVolume != NULL) {
             dataVolume->setOrigin(orgX, orgY, orgZ);
         } else {
-            Renderer::setOrigin(orgX, orgY, orgZ);
+            Volume::setOrigin(orgX, orgY, orgZ);
         }
     }
 
@@ -318,21 +318,21 @@ namespace Visualization {
         if(dataVolume != NULL) {
             return dataVolume->getOriginX();
         }
-        return Renderer::getOriginX();
+        return Volume::getOriginX();
     }
 
     float VolumeRenderer::GetOriginY() {
         if(dataVolume != NULL) {
             return dataVolume->getOriginY();
         }
-        return Renderer::getOriginY();
+        return Volume::getOriginY();
     }
 
     float VolumeRenderer::GetOriginZ() {
         if(dataVolume != NULL) {
             return dataVolume->getOriginZ();
         }
-        return Renderer::getOriginZ();
+        return Volume::getOriginZ();
     }
 
 }
