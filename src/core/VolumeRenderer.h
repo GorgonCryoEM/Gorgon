@@ -34,10 +34,10 @@ namespace Visualization {
         VolumeRenderer(const VolumeRenderer& obj);
         ~VolumeRenderer();
 
-        float getMaxDensity();
-        float getMinDensity();
-        string getSupportedLoadFileFormats();
-        string getSupportedSaveFileFormats();
+        float getMaxDensity() const;
+        float getMinDensity() const;
+        string getSupportedLoadFileFormats() const;
+        string getSupportedSaveFileFormats() const;
         void loadFile(string fileName);
         void loadFileRAW(string fileName, int bitsPerCell, int sizeX, int sizeY, int sizeZ);
         void saveFile(string fileName);
@@ -51,11 +51,11 @@ namespace Visualization {
         Volume * PerformGrayscaleSkeletonizationAbeysinghe2008(double startDensity, int stepCount, int minCurveSize, int minSurfaceSize, int curveRadius, int surfaceRadius, int skeletonSmoothenRadius);
 
     private:
-        int getHashKey(int x, int y, int z, int edge, int iScale);
-        float getVoxelData(Volume * vol, int x, int y, int z);
-        float getVoxelData(Volume * vol, float x, float y, float z);
-        float getOffset(float fValue1, float fValue2, float fValueDesired);
-        int Smallest2ndPower(int value);
+        int getHashKey(int x, int y, int z, int edge, int iScale) const;
+        float getVoxelData(Volume * vol, int x, int y, int z) const;
+        float getVoxelData(Volume * vol, float x, float y, float z) const;
+        float getOffset(float fValue1, float fValue2, float fValueDesired) const;
+        int Smallest2ndPower(int value) const;
     private:
         Volume * dataVolume;
     };
@@ -71,15 +71,15 @@ namespace Visualization {
 
     VolumeRenderer::~VolumeRenderer() {}
 
-    float VolumeRenderer::getMaxDensity(){
+    float VolumeRenderer::getMaxDensity() const {
         return dataVolume->getMax();
     }
 
-    float VolumeRenderer::getMinDensity() {
+    float VolumeRenderer::getMinDensity() const {
         return dataVolume->getMin();
     }
 
-    float VolumeRenderer::getOffset(float fValue1, float fValue2, float fValueDesired) {
+    float VolumeRenderer::getOffset(float fValue1, float fValue2, float fValueDesired) const {
         double fDelta = fValue2 - fValue1;
         if(fDelta == 0.0) {
                 return 0.5;
@@ -89,7 +89,7 @@ namespace Visualization {
 
 
 
-    float VolumeRenderer::getVoxelData(Volume * vol, int x, int y, int z) {
+    float VolumeRenderer::getVoxelData(Volume * vol, int x, int y, int z) const {
         if((x < 0) || (x > vol->getSizeX()-1) || (y < 0) || (y > vol->getSizeY()-1) || (z < 0) || (z > vol->getSizeZ()-1)) {
             return 0.0f;
         } else {
@@ -97,7 +97,7 @@ namespace Visualization {
         }
     }
 
-    float VolumeRenderer::getVoxelData(Volume * vol, float x, float y, float z) {
+    float VolumeRenderer::getVoxelData(Volume * vol, float x, float y, float z) const {
         int f[3] = {(int)x, (int)y, (int)z};
         int c[3] = {f[0]+1, f[1]+1, f[2]+1};
         float d[3] = {x - f[0], y - f[1], z - f[2]};
@@ -113,7 +113,7 @@ namespace Visualization {
         return w1 * (1.0 - d[0]) + w2 * d[0];
     }
 
-    int VolumeRenderer::getHashKey(int x, int y, int z, int edge, int iScale) {
+    int VolumeRenderer::getHashKey(int x, int y, int z, int edge, int iScale) const {
 
         x += a2iEdgeHash[edge][1]*iScale;
         y += a2iEdgeHash[edge][2]*iScale;
@@ -123,18 +123,18 @@ namespace Visualization {
         return x * dataVolume->getSizeY() * dataVolume->getSizeZ() * 3 + y * dataVolume->getSizeZ() * 3 + z * 3 + edge;
     }
 
-    int VolumeRenderer::Smallest2ndPower(int value) {
+    int VolumeRenderer::Smallest2ndPower(int value) const {
         int power = 1;
         while (power < value) {
             power = power * 2;
         }
         return power;
     }
-    string VolumeRenderer::getSupportedLoadFileFormats() {
+    string VolumeRenderer::getSupportedLoadFileFormats() const {
         return "All Files (*.mrc *.ccp4 *.map *.raw *.pts);; Volumes (*.mrc *.ccp4 *.map *.raw);;Point Cloud (*.pts)";
     }
 
-    string VolumeRenderer::getSupportedSaveFileFormats() {
+    string VolumeRenderer::getSupportedSaveFileFormats() const {
         return "Volumes (*.mrc *.ccp4 *.map *.raw);;Mathematica List (*.nb);;Bitmap Image set (*.bmp);;Structure Tensor Field (*.tns);;Surface Mesh(*.off)";
     }
 
