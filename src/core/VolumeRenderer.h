@@ -6,7 +6,6 @@
 #include <string>
 //#include <GorgonGL.h>
 //#include <GraphMatch/VectorMath.h>
-#include "Renderer.h"
 #include "GlobalConstants.h"
 #include <SkeletonMaker/volume.h>
 #include <GraySkeletonCPP/GlobalDefinitions.h>
@@ -29,68 +28,57 @@ using namespace GraySkeletonCPP;
 using namespace SkeletonMaker;
 
 namespace Visualization {
-    class VolumeRenderer : public Renderer {
+    class VolumeRenderer : public Volume {
     public:
         VolumeRenderer();
+        VolumeRenderer(const VolumeRenderer& obj);
         ~VolumeRenderer();
 
-        float GetMaxDensity();
-        float GetMinDensity();
-        float GetSurfaceValue() const ;
-        string GetSupportedLoadFileFormats();
-        string GetSupportedSaveFileFormats();
-        void LoadFile(string fileName);
-        void LoadFileRAW(string fileName, int bitsPerCell, int sizeX, int sizeY, int sizeZ);
-        void SaveFile(string fileName);
-        void Unload();
-        void NormalizeVolume();
-        void DownsampleVolume();
+        float getMaxDensity() const;
+        float getMinDensity() const;
+        string getSupportedLoadFileFormats() const;
+        string getSupportedSaveFileFormats() const;
+        void loadFile(string fileName);
+        void loadFileRAW(string fileName, int bitsPerCell, int sizeX, int sizeY, int sizeZ);
+        void saveFile(string fileName);
+        void normalizeVolume();
+        void downsampleVolume();
         void PerformSmoothLaplacian(double convergenceRate, int iterations);
-        Volume * GetVolume();
+        Volume * getVolume();
         void setVolume(Volume *vol);
         Volume * PerformBinarySkeletonizationJu2007(double threshold, int minCurveSize, int minSurfaceSize);
         Volume * PerformGrayscaleSkeletonizationAbeysinghe2008(double startDensity, int stepCount, int minCurveSize, int minSurfaceSize, int curveRadius, int surfaceRadius, int skeletonSmoothenRadius);
-        void SetSpacing(float spX, float spY, float spZ);
-        float GetSpacingX();
-        float GetSpacingY();
-        float GetSpacingZ();
-        void SetOrigin(float orgX, float orgY, float orgZ);
-        float GetOriginX();
-        float GetOriginY();
-        float GetOriginZ();
 
     private:
-        int GetHashKey(int x, int y, int z, int edge, int iScale);
-        float GetVoxelData(Volume * vol, int x, int y, int z);
-        float GetVoxelData(Volume * vol, float x, float y, float z);
-        float GetOffset(float fValue1, float fValue2, float fValueDesired);
-        int Smallest2ndPower(int value);
+        int getHashKey(int x, int y, int z, int edge, int iScale) const;
+        float getVoxelData(Volume * vol, int x, int y, int z) const;
+        float getVoxelData(Volume * vol, float x, float y, float z) const;
+        float getOffset(float fValue1, float fValue2, float fValueDesired) const;
+        int Smallest2ndPower(int value) const;
     private:
-        float surfaceValue;
-        float maxSurfaceValue;
         Volume * dataVolume;
     };
 
-    VolumeRenderer::VolumeRenderer() {
-        dataVolume = NULL;
-        surfaceValue = 1.5;
-    }
+    VolumeRenderer::VolumeRenderer()
+                : Volume(), dataVolume(getVolume())
+    {}
 
-    VolumeRenderer::~VolumeRenderer() {
-        if(dataVolume != NULL) {
-            delete dataVolume;
-        }
-    }
+    VolumeRenderer::VolumeRenderer(const VolumeRenderer& obj)
+                : Volume(static_cast<Volume>(obj)),
+                  dataVolume(dynamic_cast<Volume *>(this))
+    {}
 
-    float VolumeRenderer::GetMaxDensity(){
+    VolumeRenderer::~VolumeRenderer() {}
+
+    float VolumeRenderer::getMaxDensity() const {
         return dataVolume->getMax();
     }
 
-    float VolumeRenderer::GetMinDensity() {
+    float VolumeRenderer::getMinDensity() const {
         return dataVolume->getMin();
     }
 
-    float VolumeRenderer::GetOffset(float fValue1, float fValue2, float fValueDesired) {
+    float VolumeRenderer::getOffset(float fValue1, float fValue2, float fValueDesired) const {
         double fDelta = fValue2 - fValue1;
         if(fDelta == 0.0) {
                 return 0.5;
@@ -100,11 +88,7 @@ namespace Visualization {
 
 
 
-    float VolumeRenderer::GetSurfaceValue() const {
-        return surfaceValue;
-    }
-
-    float VolumeRenderer::GetVoxelData(Volume * vol, int x, int y, int z) {
+    float VolumeRenderer::getVoxelData(Volume * vol, int x, int y, int z) const {
         if((x < 0) || (x > vol->getSizeX()-1) || (y < 0) || (y > vol->getSizeY()-1) || (z < 0) || (z > vol->getSizeZ()-1)) {
             return 0.0f;
         } else {
@@ -112,15 +96,15 @@ namespace Visualization {
         }
     }
 
-    float VolumeRenderer::GetVoxelData(Volume * vol, float x, float y, float z) {
+    float VolumeRenderer::getVoxelData(Volume * vol, float x, float y, float z) const {
         int f[3] = {(int)x, (int)y, (int)z};
         int c[3] = {f[0]+1, f[1]+1, f[2]+1};
         float d[3] = {x - f[0], y - f[1], z - f[2]};
 
-        float i1 = GetVoxelData(vol, f[0], f[1], f[2]) * (1.0 - d[2]) + GetVoxelData(vol, f[0], f[1], c[2]) * d[2];
-        float i2 = GetVoxelData(vol, f[0], c[1], f[2]) * (1.0 - d[2]) + GetVoxelData(vol, f[0], c[1], c[2]) * d[2];
-        float j1 = GetVoxelData(vol, c[0], f[1], f[2]) * (1.0 - d[2]) + GetVoxelData(vol, c[0], f[1], c[2]) * d[2];
-        float j2 = GetVoxelData(vol, c[0], c[1], f[2]) * (1.0 - d[2]) + GetVoxelData(vol, c[0], c[1], c[2]) * d[2];
+        float i1 = getVoxelData(vol, f[0], f[1], f[2]) * (1.0 - d[2]) + getVoxelData(vol, f[0], f[1], c[2]) * d[2];
+        float i2 = getVoxelData(vol, f[0], c[1], f[2]) * (1.0 - d[2]) + getVoxelData(vol, f[0], c[1], c[2]) * d[2];
+        float j1 = getVoxelData(vol, c[0], f[1], f[2]) * (1.0 - d[2]) + getVoxelData(vol, c[0], f[1], c[2]) * d[2];
+        float j2 = getVoxelData(vol, c[0], c[1], f[2]) * (1.0 - d[2]) + getVoxelData(vol, c[0], c[1], c[2]) * d[2];
 
         float w1 = i1 * (1.0 - d[1]) + i2 * d[1];
         float w2 = j1 * (1.0 - d[1]) + j2 * d[1];
@@ -128,7 +112,7 @@ namespace Visualization {
         return w1 * (1.0 - d[0]) + w2 * d[0];
     }
 
-    int VolumeRenderer::GetHashKey(int x, int y, int z, int edge, int iScale) {
+    int VolumeRenderer::getHashKey(int x, int y, int z, int edge, int iScale) const {
 
         x += a2iEdgeHash[edge][1]*iScale;
         y += a2iEdgeHash[edge][2]*iScale;
@@ -138,24 +122,23 @@ namespace Visualization {
         return x * dataVolume->getSizeY() * dataVolume->getSizeZ() * 3 + y * dataVolume->getSizeZ() * 3 + z * 3 + edge;
     }
 
-    int VolumeRenderer::Smallest2ndPower(int value) {
+    int VolumeRenderer::Smallest2ndPower(int value) const {
         int power = 1;
         while (power < value) {
             power = power * 2;
         }
         return power;
     }
-    string VolumeRenderer::GetSupportedLoadFileFormats() {
+    string VolumeRenderer::getSupportedLoadFileFormats() const {
         return "All Files (*.mrc *.ccp4 *.map *.raw *.pts);; Volumes (*.mrc *.ccp4 *.map *.raw);;Point Cloud (*.pts)";
     }
 
-    string VolumeRenderer::GetSupportedSaveFileFormats() {
+    string VolumeRenderer::getSupportedSaveFileFormats() const {
         return "Volumes (*.mrc *.ccp4 *.map *.raw);;Mathematica List (*.nb);;Bitmap Image set (*.bmp);;Structure Tensor Field (*.tns);;Surface Mesh(*.off)";
     }
 
-    void VolumeRenderer::DownsampleVolume() {
-        Volume * sourceVol = dataVolume;
-        Volume * destVol = new Volume(sourceVol->getSizeX()/2, sourceVol->getSizeY()/2, sourceVol->getSizeZ()/2);
+    void VolumeRenderer::downsampleVolume() {
+        Volume * destVol = new Volume(getSizeX()/2, getSizeY()/2, getSizeZ()/2);
         double val;
 
         int radius = 1;
@@ -172,7 +155,7 @@ namespace Visualization {
                     for(int xx = -radius; xx <= radius; xx++) {
                         for(int yy = -radius; yy <= radius; yy++) {
                             for(int zz = -radius; zz <= radius; zz++) {
-                                val += sourceVol->getDataAt(2*x+xx, 2*y+yy, 2*z+zz) * gaussianFilter.values[xx+radius][yy+radius][zz+radius] ;
+                                val += getDataAt(2*x+xx, 2*y+yy, 2*z+zz) * gaussianFilter.values[xx+radius][yy+radius][zz+radius] ;
                             }
                         }
                     }
@@ -182,49 +165,40 @@ namespace Visualization {
         }
 
         delete math;
-        delete sourceVol;
         dataVolume = destVol;
     }
 
 
-    void VolumeRenderer::LoadFile(string fileName) {
-        Renderer::LoadFile(fileName);
-        if(dataVolume != NULL) {
-            delete dataVolume;
-        }
+    void VolumeRenderer::loadFile(string fileName) {
         dataVolume = VolumeFormatConverter::LoadVolume(fileName);
     }
 
-    void VolumeRenderer::LoadFileRAW(string fileName, int bitsPerCell, int sizeX, int sizeY, int sizeZ) {
-        Renderer::LoadFile(fileName);
-        if(dataVolume != NULL) {
-            delete dataVolume;
-        }
+    void VolumeRenderer::loadFileRAW(string fileName, int bitsPerCell, int sizeX, int sizeY, int sizeZ) {
         dataVolume = VolumeFormatConverter::LoadVolume(fileName, bitsPerCell, sizeX, sizeY, sizeZ);
     }
 
 
-    void VolumeRenderer::SaveFile(string fileName) {
+    void VolumeRenderer::saveFile(string fileName) {
         if(dataVolume != NULL) {
             int pos = fileName.rfind(".") + 1;
             string extension = fileName.substr(pos, fileName.length()-pos);
 
             extension = StringUtils::StringToUpper(extension);
 
-            if(strcmp(extension.c_str(), "MRC") == 0) {
+            if(extension == "MRC") {
                 dataVolume->toMRCFile((char *)fileName.c_str());
-            } else if(strcmp(extension.c_str(), "CCP4") == 0) {
+            } else if(extension == "CCP4") {
                 dataVolume->toMRCFile((char *)fileName.c_str());
-            } else if(strcmp(extension.c_str(), "RAW") == 0) {
+            } else if(extension == "RAW") {
                 VolumeReaderRAW::SaveVolume16bit(dataVolume, fileName);
-            } else if(strcmp(extension.c_str(), "NB") == 0) {
+            } else if(extension == "NB") {
                 dataVolume->toMathematicaFile((char *)fileName.c_str());
-            } else if(strcmp(extension.c_str(), "TNS") == 0) {
+            } else if(extension == "TNS") {
                 VolumeReaderTNS::SaveVolume(dataVolume, fileName);
-            } else if(strcmp(extension.c_str(), "BMP") == 0) {
+            } else if(extension == "BMP") {
                 ImageReaderBMP::SaveVolumeAsImageSet(dataVolume, fileName);
             } else {
-                printf("Input format %s not supported!\n", extension.c_str());
+                cout<<"Input format "<<extension<<" not supported!"<<endl;
             }
 
 
@@ -232,7 +206,7 @@ namespace Visualization {
     }
 
 
-    void VolumeRenderer::NormalizeVolume(){
+    void VolumeRenderer::normalizeVolume(){
         dataVolume->normalize(0, 1);
     }
 
@@ -242,15 +216,6 @@ namespace Visualization {
                 this->dataVolume->smooth(convergenceRate);
             }
         }
-    }
-
-
-    void VolumeRenderer::Unload() {
-        Renderer::Unload();
-        if(dataVolume != NULL) {
-            delete dataVolume;
-        }
-        dataVolume = NULL;
     }
 
 
@@ -273,72 +238,13 @@ namespace Visualization {
         }
     }
 
-    Volume * VolumeRenderer::GetVolume() {
-        return dataVolume;
+    Volume * VolumeRenderer::getVolume() {
+        return dynamic_cast<Volume *>(this);
     }
 
     void VolumeRenderer::setVolume(Volume *vol) {
         dataVolume = vol;
     }
-
-    void VolumeRenderer::SetSpacing(float spX, float spY, float spZ) {
-        if(dataVolume != NULL) {
-            dataVolume->setSpacing(spX, spY, spZ);
-        } else {
-            Renderer::SetSpacing(spX, spY, spZ);
-        }
-    }
-
-    float VolumeRenderer::GetSpacingX() {
-        if(dataVolume != NULL) {
-            return dataVolume->getSpacingX();
-        }
-        return Renderer::GetSpacingX();
-    }
-
-    float VolumeRenderer::GetSpacingY() {
-        if(dataVolume != NULL) {
-            return dataVolume->getSpacingY();
-        }
-        return Renderer::GetSpacingY();
-    }
-
-    float VolumeRenderer::GetSpacingZ() {
-        if(dataVolume != NULL) {
-            return dataVolume->getSpacingZ();
-        }
-        return Renderer::GetSpacingZ();
-    }
-
-    void VolumeRenderer::SetOrigin(float orgX, float orgY, float orgZ) {
-        if(dataVolume != NULL) {
-            dataVolume->setOrigin(orgX, orgY, orgZ);
-        } else {
-            Renderer::SetOrigin(orgX, orgY, orgZ);
-        }
-    }
-
-    float VolumeRenderer::GetOriginX() {
-        if(dataVolume != NULL) {
-            return dataVolume->getOriginX();
-        }
-        return Renderer::GetOriginX();
-    }
-
-    float VolumeRenderer::GetOriginY() {
-        if(dataVolume != NULL) {
-            return dataVolume->getOriginY();
-        }
-        return Renderer::GetOriginY();
-    }
-
-    float VolumeRenderer::GetOriginZ() {
-        if(dataVolume != NULL) {
-            return dataVolume->getOriginZ();
-        }
-        return Renderer::GetOriginZ();
-    }
-
 }
 
 #endif
