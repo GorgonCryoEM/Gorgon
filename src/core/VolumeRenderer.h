@@ -36,7 +36,6 @@ namespace Visualization {
 
         float getMaxDensity();
         float getMinDensity();
-        float getSurfaceValue() const ;
         string getSupportedLoadFileFormats();
         string getSupportedSaveFileFormats();
         void loadFile(string fileName);
@@ -58,13 +57,11 @@ namespace Visualization {
         float getOffset(float fValue1, float fValue2, float fValueDesired);
         int Smallest2ndPower(int value);
     private:
-        float surfaceValue;
-        float maxSurfaceValue;
         Volume * dataVolume;
     };
 
     VolumeRenderer::VolumeRenderer()
-                : Volume(), dataVolume(getVolume()), surfaceValue(1.5)
+                : Volume(), dataVolume(getVolume())
     {}
 
     VolumeRenderer::VolumeRenderer(const VolumeRenderer& obj)
@@ -91,10 +88,6 @@ namespace Visualization {
     }
 
 
-
-    float VolumeRenderer::getSurfaceValue() const {
-        return surfaceValue;
-    }
 
     float VolumeRenderer::getVoxelData(Volume * vol, int x, int y, int z) {
         if((x < 0) || (x > vol->getSizeX()-1) || (y < 0) || (y > vol->getSizeY()-1) || (z < 0) || (z > vol->getSizeZ()-1)) {
