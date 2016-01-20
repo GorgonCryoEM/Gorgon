@@ -209,7 +209,7 @@ namespace SkeletonMaker {
             }
         }
         data = newData;
-        setSize(newSizeX, newSizeY, newSizeZ);
+        size = Dim3D<int>(newSizeX, newSizeY, newSizeZ);
 
     }
 
