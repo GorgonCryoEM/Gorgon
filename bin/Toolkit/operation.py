@@ -11,7 +11,7 @@ class Operation(object):
         self.output = output
         self.logger = logging.getLogger(__name__)
         
-        self.renderer = VolumeRenderer()
+        self.renderer = Volume()
             
         self._loadVolume()
         self.run()
