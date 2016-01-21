@@ -1,6 +1,8 @@
 #include "volume.h"
 #include <Foundation/StringUtils.h>
 #include <GraySkeletonCPP/VolumeFormatConverter.h>
+#include <GraySkeletonCPP/GlobalDefinitions.h>
+#include <GraySkeletonCPP/VolumeSkeletonizer.h>
 
 
 using namespace SkeletonMaker;

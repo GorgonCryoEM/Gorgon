@@ -2,7 +2,7 @@
 #define CORE_GRAYSKELETONCPP_VOLUME_READER_TNS_H
 
 //#include "VolumeReader.h"
-//#include "VolumeSkeletonizer.h"
+#include "VolumeSkeletonizer.h"
 //#include <MathTools/Vector3D.h>
 //#include <MathTools/Combinatorics.h>
 //#include <MathTools/DataStructures.h>

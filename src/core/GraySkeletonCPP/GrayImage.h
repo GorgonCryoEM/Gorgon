@@ -3,7 +3,7 @@
 
 //#include <SkeletonMaker/reader.h>
 //#include <SkeletonMaker/volume.h>
-//#include "GlobalDefinitions.h"
+#include "GlobalDefinitions.h"
 
 using namespace SkeletonMaker;
 
