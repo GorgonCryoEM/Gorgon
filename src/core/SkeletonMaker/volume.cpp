@@ -25,7 +25,7 @@ int Volume::getHashKey(int x, int y, int z, int edge, int iScale) const {
     z += a2iEdgeHash[edge][3]*iScale;
 
     edge = a2iEdgeHash[edge][0];
-    return x * dataVolume->getSizeY() * dataVolume->getSizeZ() * 3 + y * dataVolume->getSizeZ() * 3 + z * 3 + edge;
+    return x * getSizeY() * getSizeZ() * 3 + y * getSizeZ() * 3 + z * 3 + edge;
 }
 
 int Volume::Smallest2ndPower(int value) const {
@@ -10923,7 +10923,7 @@ float Volume::getVoxelData(Volume * vol, float x, float y, float z) const {
 }
 
 void Volume::normalizeVolume(){
-  dataVolume->normalize(0, 1);
+  normalize(0, 1);
 }
 
 
@@ -10976,13 +10976,13 @@ void Volume::saveFile(string fileName) {
     extension = StringUtils::StringToUpper(extension);
 
     if(extension == "MRC") {
-      dataVolume->toMRCFile((char *)fileName.c_str());
+      toMRCFile((char *)fileName.c_str());
     } else if(extension == "CCP4") {
-      dataVolume->toMRCFile((char *)fileName.c_str());
+      toMRCFile((char *)fileName.c_str());
     } else if(extension == "RAW") {
       VolumeReaderRAW::SaveVolume16bit(dataVolume, fileName);
     } else if(extension == "NB") {
-      dataVolume->toMathematicaFile((char *)fileName.c_str());
+      toMathematicaFile((char *)fileName.c_str());
     } else if(extension == "TNS") {
       VolumeReaderTNS::SaveVolume(dataVolume, fileName);
     } else if(extension == "BMP") {
@@ -10999,7 +10999,7 @@ void Volume::saveFile(string fileName) {
 void Volume::PerformSmoothLaplacian(double convergenceRate, int iterations) {
   if(dataVolume != NULL) {
     for(unsigned int i = 0; i < iterations; i++) {
-      this->dataVolume->smooth(convergenceRate);
+      this->smooth(convergenceRate);
     }
   }
 }
@@ -11014,10 +11014,10 @@ Volume * Volume::PerformBinarySkeletonizationJu2007(double threshold, int minCur
 }
 
 Volume * Volume::PerformGrayscaleSkeletonizationAbeysinghe2008(double startDensity, int stepCount, int minCurveSize, int minSurfaceSize, int curveRadius, int surfaceRadius, int skeletonRadius) {
-  double stepSize = (dataVolume->getMax() - startDensity) / stepCount;
+  double stepSize = (getMax() - startDensity) / stepCount;
   if(!isZero(stepSize)) {
     VolumeSkeletonizer * skeletonizer = new VolumeSkeletonizer(0, curveRadius, surfaceRadius, skeletonRadius);
-    Volume * outputVol = skeletonizer->PerformImmersionSkeletonizationAndPruning(dataVolume, NULL, startDensity, dataVolume->getMax(), stepSize, 0, 0, minCurveSize, minSurfaceSize, 0, 0, "", true, 1.0, DEFAULT_PRUNE_THRESHOLD, DEFAULT_PRUNE_THRESHOLD);
+    Volume * outputVol = skeletonizer->PerformImmersionSkeletonizationAndPruning(dataVolume, NULL, startDensity, getMax(), stepSize, 0, 0, minCurveSize, minSurfaceSize, 0, 0, "", true, 1.0, DEFAULT_PRUNE_THRESHOLD, DEFAULT_PRUNE_THRESHOLD);
     delete skeletonizer;
     return outputVol;
   } else {
@@ -11026,10 +11026,10 @@ Volume * Volume::PerformGrayscaleSkeletonizationAbeysinghe2008(double startDensi
 }
 
 float Volume::getMaxDensity() const {
-  return dataVolume->getMax();
+  return getMax();
 }
 
 float Volume::getMinDensity() const {
-  return dataVolume->getMin();
+  return getMin();
 }
 
