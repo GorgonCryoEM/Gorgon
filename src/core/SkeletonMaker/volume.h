@@ -232,6 +232,12 @@ namespace SkeletonMaker {
         Volume * PerformBinarySkeletonizationJu2007(double threshold, int minCurveSize, int minSurfaceSize);
         Volume * PerformGrayscaleSkeletonizationAbeysinghe2008(double startDensity, int stepCount, int minCurveSize, int minSurfaceSize, int curveRadius, int surfaceRadius, int skeletonSmoothenRadius);
 
+#ifdef GORGON_DEBUG
+        static int id0;
+        static int id1;
+        static int id3;
+#endif
+
 
     private:
         float getVoxelData(Volume * vol, int x, int y, int z) const;

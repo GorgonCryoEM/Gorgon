@@ -183,12 +183,43 @@ namespace SkeletonMaker {
         data[index] = value;
     }
     void VolumeData::pad(int padBy, double padValue) {
+      #ifdef GORGON_DEBUG
+            cout<<"\033[36mDEBUG: File:   VolumeData.h"<<endl;
+            cout<<"DEBUG: Method: VolumeData::pad\033[0m"<<endl;
+            cout<<"DEBUG: Args: int, double\033[0m"<<endl;
+            cout<<getSize()<<endl;
+
+            cout<<*this;
+      #endif
+
         int sizex = getSizeX();
         int sizey = getSizeY();
         int sizez = getSizeZ();
         int newSizeX = sizex + 2*padBy;
         int newSizeY = sizey + 2*padBy;
         int newSizeZ = sizez + 2*padBy;
+
+#ifdef GORGON_DEBUG
+        cout<<"\033[31m";
+        cout<<" "<<sizex
+            <<" "<<sizey
+            <<" "<<sizez
+            <<" "<<endl;
+        cout<<"\033[0m";
+
+        cout<<"\033[32m";
+        cout<<" "<<newSizeX
+            <<" "<<newSizeY
+            <<" "<<newSizeZ
+            <<" "<<endl;
+        cout<<"\033[0m";
+
+        cout<<"\033[33m";
+        cout<<" "<<padBy
+            <<" "<<endl;
+        cout<<"\033[0m";
+#endif
+
 
         vector<float> newData(newSizeX * newSizeY * newSizeZ);
         double value;
@@ -209,6 +240,11 @@ namespace SkeletonMaker {
         }
         data = newData;
         size = Dim3D<int>(newSizeX, newSizeY, newSizeZ);
+#ifdef GORGON_DEBUG
+        cout<<*this;
+#endif
+
+
 
     }
 
