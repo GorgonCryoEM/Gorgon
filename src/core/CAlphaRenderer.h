@@ -95,7 +95,7 @@ namespace Visualization {
     End Hermite Curve code
     */
 
-    class CAlphaRenderer : public Renderer{
+    class CAlphaRenderer : public Volume{
     public:
         struct Secel{
             vector<unsigned long long> atomHashes;
