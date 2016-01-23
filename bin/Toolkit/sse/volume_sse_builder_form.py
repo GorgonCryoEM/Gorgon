@@ -1,7 +1,23 @@
+import logging
+from libpycore import *
 from sse_hunter_engine import SSEHunterEngine
 
 
 class VolumeSSEBuilderForm(object):
+
+    def __init__(self, volume, skeleton, output):
+        self.logger = logging.getLogger(__name__)
+        
+        self.volume = Volume()
+        self.volume.loadFile(volume)
+        self.volume = self.volume.getVolume()
+        
+        self.skeleton = MeshRenderer()
+        self.skeleton.loadFile(skeleton)
+        self.skeleton = self.skeleton.getMesh()
+        
+        self.output = output
+        self.calphaRenderer = CAlphaRenderer()
 
     def savePseudoatoms(self, temp):
         fileName = QtGui.QFileDialog.getSaveFileName(self, self.tr("Save Pseudoatoms"), "", self.tr("Protein Data Bank (PDB) Format (*.pdb)"))
