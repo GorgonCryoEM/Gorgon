@@ -191,7 +191,19 @@ namespace Protein_Morph {
         unsigned int count = 0;
         float maxscore = -1;
         float minscore = 1;
+#ifdef GORGON_DEBUG
+      cout<<"\033[32mDEBUG: File:   SSEHunter.h"<<endl;
+      cout<<"DEBUG: Method: SSEHunter::SetSkeletonScores\033[0m"<<endl;
+      cout<<"DEBUG: Args: Volume*, NonManifoldMesh_Annotated*, float\033[0m"<<endl;
+      cout<<"Checkpoint 1"<<endl;
+      cout<<*skeleton<<endl;
+      cout<<"patoms.size(): "<<patoms.size()<<endl;
+#endif
+
         for(unsigned int i = 0; i < patoms.size(); i++) {
+#ifdef GORGON_DEBUG
+      cout<<"Checkpoint 2: i: "<<i<<endl;
+#endif
             pAtomPosition = patoms[i].GetPosition();
             pAtomPosition -= skeletonOrigin;
             vector<float> skel_scale(3);
@@ -200,6 +212,10 @@ namespace Protein_Morph {
             skel_scale[2] = skeleton->scale.Z();
             for (unsigned int n = 0; n < 3; n++)
                 pAtomPosition[n] = pAtomPosition[n] * (1.0/skel_scale[n]);
+#ifdef GORGON_DEBUG
+      cout<<"Checkpoint 21: i: "<<i<<endl;
+      cout<<"skeleton:\n"<<*skeleton<<endl;
+#endif
             for (unsigned int j = 0; j < skeleton->vertices.size(); j++) {
                 skeletonAtom = skeleton->vertices[j].position;
                 Vector3DFloat d = skeletonAtom - pAtomPosition;
@@ -227,6 +243,10 @@ namespace Protein_Morph {
             score = 0;
             count = 0;
         }
+#ifdef GORGON_DEBUG
+      cout<<"Checkpoint 3: After loop"<<endl;
+#endif
+
         //Normalization (see main method of skeleton.C (with flag == 6) in EMAN1)
         for (unsigned int i = 0; i < patoms.size(); i++) {
             score = patoms[i].GetSkeletonScore();

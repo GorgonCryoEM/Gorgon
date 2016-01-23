@@ -147,6 +147,13 @@ namespace Protein_Morph {
     }
 
     NonManifoldMesh::NonManifoldMesh(Volume * sourceVol) {
+      #ifdef GORGON_DEBUG
+            cout<<"\033[33mDEBUG: File:   NonManifoldMesh.h"<<endl;
+            cout<<"DEBUG: Method: NonManifoldMesh::NonManifoldMesh\033[0m"<<endl;
+            cout<<"DEBUG: Args: Volume*\033[0m"<<endl;
+            cout<<"sourceVol->getSize(): "<<sourceVol->getSize()<<endl;
+      #endif
+
         int x, y, z, i, j, index, index2;
         int * vertexLocations = new int[sourceVol->getMaxIndex()];
         int value;
@@ -217,6 +224,11 @@ namespace Protein_Morph {
         }
         delete [] vertexLocations;
         MarkFixedVertices();
+#ifdef GORGON_DEBUG
+      cout<<"\033[33mDEBUG: END"<<endl;
+      cout<<"DEBUG: Method: NonManifoldMesh::NonManifoldMesh\n\033[0m"<<endl;
+#endif
+
     }
 
     bool NonManifoldMesh::IsEdgePresent(int vertexId1, int vertexId2) {
@@ -882,14 +894,8 @@ namespace Protein_Morph {
         bool isSurface = false;
         NonManifoldMeshEdge edge;
 
-        #ifdef GORGON_DEBUG
-          NonManifoldMeshVertex vv = vertices.at(ix);
-        #else
-          NonManifoldMeshVertex vv = vertices[ix];
-        #endif
-
-        for(unsigned int i = 0; i < vv.edgeIds.size(); i++) {
-            edge = edges[GetEdgeIndex(vv.edgeIds[i])];
+        for(unsigned int i = 0; i < vertices[ix].edgeIds.size(); i++) {
+            edge = edges[GetEdgeIndex(vertices[ix].edgeIds[i])];
             isSurface = isSurface || (edge.faceIds.size() > 0);
         }
         return isSurface;

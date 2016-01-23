@@ -65,15 +65,13 @@ Volume::Volume(const Volume& obj)
         volData(dynamic_cast<VolumeData *>(this))
 {
   #ifdef GORGON_DEBUG
-        cout<<"\033[32mDEBUG: File:   volume.h"<<endl;
-        cout<<"DEBUG: Method: Volume::Volume\033[0m"<<endl;
-        cout<<"DEBUG: Args: const Volume&\033[0m"<<endl;
-        cout<<id1<<endl;
+        cout<<"\033[32mDEBUG: File:   volume.cpp"<<endl;
+        cout<<"DEBUG: Method: Volume::Volume(const Volume&)\033[0m"<<endl;
+        cout<<"Id1: "<<id1<<endl;
         id1++;
 
         cout<<"\033[35mobj.size: "<<obj.getSize()<<endl;
-        cout<<"this->size: "<<this->getSize()<<endl;
-        cout<<"\033[0m";
+        cout<<"this->size: "<<this->getSize()<<"\033[0m"<<endl;
   #endif
 
 }
@@ -81,10 +79,10 @@ Volume::Volume(const Volume& obj)
 Volume::Volume()
       : VolumeData(), volData(getVolumeData())
 {
-#ifdef GORGON_DEBUG1
+#ifdef GORGON_DEBUG
         cout<<"\033[32mDEBUG: File:   volume.h"<<endl;
-        cout<<"DEBUG: Method: Volume::Volume\033[0m"<<endl;
-        cout<<id0<<endl;
+        cout<<"DEBUG: Method: Volume::Volume()\033[0m"<<endl;
+        cout<<"Id0: "<<id0<<endl;
         id0++;
   #endif
 }
@@ -92,10 +90,10 @@ Volume::Volume()
 Volume::Volume(int x, int y, int z, float val)
       : VolumeData(x, y, z, val), volData(getVolumeData())
 {
-  #ifdef GORGON_DEBUG1
-        cout<<"\033[32mDEBUG: File:   volume.h"<<endl;
-        cout<<"DEBUG: Method: Volume::Volume\033[0m"<<endl;
-        cout<<id3<<endl;
+  #ifdef GORGON_DEBUG
+        cout<<"\033[32mDEBUG: File:   volume.cpp"<<endl;
+        cout<<"DEBUG: Method: Volume::Volume(int, int, int, float)\033[0m"<<endl;
+        cout<<"Id3: "<<id3<<endl;
         id3++;
   #endif
 
@@ -10998,12 +10996,14 @@ void Volume::downsampleVolume() {
 void Volume::loadFile(string fileName) {
 	*this = *VolumeFormatConverter::LoadVolume(fileName);
 
-#ifdef GORGON_DEBUG
-	cout<<"Filename: "
-      <<" "<<fileName
-      <<endl;
-#endif
-
+	#ifdef GORGON_DEBUG
+          cout<<"\033[32mDEBUG: File:   volume.cpp"<<endl;
+          cout<<"DEBUG: Method: Volume::loadFile\033[0m"<<endl;
+          cout<<"DEBUG: Args: string\033[0m"<<endl;
+          cout<<"Filename: "
+              <<" "<<fileName
+              <<endl;
+    #endif
 }
 
 void Volume::loadFileRAW(string fileName, int bitsPerCell, int sizeX, int sizeY, int sizeZ) {

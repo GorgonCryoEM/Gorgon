@@ -52,11 +52,27 @@ namespace Visualization {
         string extension = fileName.substr(pos, fileName.length()-pos);
         extension = StringUtils::StringToUpper(extension);
 
+#ifdef GORGON_DEBUG
+      cout<<"\033[36mDEBUG: File:   MeshRenderer.h"<<endl;
+      cout<<"DEBUG: Method: MeshRenderer::loadFile\033[0m"<<endl;
+      cout<<"DEBUG: Args: string\033[0m"<<endl;
+      cout<<"FileName: "<<fileName<<endl;
+#endif
+
         if(extension == "OFF") {
             mesh = *NonManifoldMesh_Annotated::LoadOffFile(fileName);
         } else if(extension == "MRC" || extension == "ATOM") {
             Volume * volume = VolumeFormatConverter::LoadVolume(fileName);
+            #ifdef GORGON_DEBUG
+                  cout<<"\033[36mDEBUG: After VolumeFormatConverter::LoadVolume(fileName)"<<endl;
+                  cout<<"FileName: "<<fileName<<endl;
+                  cout<<volume->getSize()<<"\033[0m"<<endl;
+            #endif
+
             mesh = NonManifoldMesh_Annotated(volume);
+#ifdef GORGON_DEBUG
+      cout<<"\033[35m"<<mesh.getSize()<<"\033[0m"<<endl;
+#endif
             delete volume;
         } else {
             cout<<"Input format "<<extension<<" not supported!"<<endl;

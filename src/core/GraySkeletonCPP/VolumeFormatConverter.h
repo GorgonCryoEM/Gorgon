@@ -31,6 +31,19 @@ namespace GraySkeletonCPP {
         string inputFormat = inputFile.substr(pos, inputFile.length()-pos);
         inputFormat = StringUtils::StringToUpper(inputFormat);
 
+        #ifdef GORGON_DEBUG
+              cout<<"\033[32mDEBUG: File:   VolumeFormatConverter.h"<<endl;
+              cout<<"DEBUG: Method: VolumeFormatConverter::LoadVolume\033[0m"<<endl;
+              cout<<"DEBUG: Args: string, int, int, int, int\033[0m"<<endl;
+              cout<<"Filename: "
+                  <<" "<<inputFile
+                  <<endl
+                  <<"extension: "
+                  <<inputFormat
+                  <<endl;
+        #endif
+
+
         Volume * vol = NULL;
         if(strcmp(inputFormat.c_str(), "MRC") == 0) {
             vol = MRCReaderPicker::pick((char *)inputFile.c_str())->getVolume();
@@ -59,6 +72,14 @@ namespace GraySkeletonCPP {
         } else {
             printf("Input format [%s] not supported!\n", (char *)inputFormat.c_str());
         }
+
+        #ifdef GORGON_DEBUG
+              cout<<"\033[35mDEBUG: File:   VolumeFormatConverter.h"<<endl;
+              cout<<"DEBUG: Method: VolumeFormatConverter::LoadVolume\033[0m"<<endl;
+              cout<<"DEBUG: Args: string, int, int, int, int\033[0m"<<endl;
+              cout<<vol->getSize()<<endl;
+        #endif
+
         return vol;
     }
 
