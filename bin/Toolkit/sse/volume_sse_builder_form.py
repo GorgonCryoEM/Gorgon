@@ -18,6 +18,7 @@ class VolumeSSEBuilderForm(object):
         
         self.output = output
         self.calphaRenderer = CAlphaRenderer()
+        self.runSSEHunter()
 
     def savePseudoatoms(self, temp):
         fileName = QtGui.QFileDialog.getSaveFileName(self, self.tr("Save Pseudoatoms"), "", self.tr("Protein Data Bank (PDB) Format (*.pdb)"))
@@ -62,34 +63,20 @@ class VolumeSSEBuilderForm(object):
             for atom in helix:
                 atom.setSelected(False)
         
-    def runSSEHunter(self, result):
-        self.calphaViewer = self.app.viewers["calpha"]
-        self.sseViewer = self.app.viewers["sse"]
-        threshold = self.doubleSpinBoxThreshold.value()
-        resolution = self.doubleSpinBoxResolution.value()
-        correlationWeight = self.doubleSpinBoxCorrelation.value()
-        skeletonWeight = self.doubleSpinBoxSkeleton.value()
-        geometryWeight = self.doubleSpinBoxGeometry.value()
+    def runSSEHunter(self):
+        threshold = 0.38
+        resolution = 8.0
+        correlationWeight = 1.0
+        skeletonWeight = 1.0
+        geometryWeight = 1.0
 
         #self.calphaViewer.runSSEHunter( threshold, resolution, correlationWeight, skeletonWeight, geometryWeight )
 
-        vol = self.app.viewers["volume"].renderer.getVolume()
-        skel = self.app.viewers["skeleton"].renderer.getMesh()
-        sseh = SSEHunterEngine(vol, skel, resolution, threshold)
+        sseh = SSEHunterEngine(self.volume, self.skeleton, resolution, threshold)
         patoms = sseh.getScoredAtoms(correlationWeight, skeletonWeight, geometryWeight)
         
         for pseudoatom in patoms:
             self.calphaViewer.renderer.addAtom(pseudoatom)
-        
-        self.calphaViewer.renderer.colorSSEHunterAtoms()
-        self.calphaViewer.dirty = False
-        self.calphaViewer.loaded = True
-        self.calphaViewer.emitModelLoadedPreDraw()
-        self.calphaViewer.emitModelLoaded()
-        self.calphaViewer.emitViewerSetCenter()
-        self.connect(self.app.viewers["calpha"],  QtCore.SIGNAL("modelUnloaded()"), self.disableSavePseudoatoms)
-        self.pushButtonSavePseudoatoms.setEnabled(True)
-        self.bringToFront()
         
     def updateTotalScoreSSEHunterAtoms(self):
         self.calphaViewer.updateTotalScoreSSEHunterAtoms( self.doubleSpinBoxCorrelation.value(), self.doubleSpinBoxSkeleton.value(),
