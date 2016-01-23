@@ -1,6 +1,9 @@
 from math import *
+import logging
 
 from libpycore import SSEHunter, RadialProfileType
+# from colorama import *
+from termcolor import *
 
 
 def cross_product(a,b):
@@ -39,6 +42,14 @@ class SSEHunterEngine:
 		self.skeleton = skeleton
 		self.resolution = resolution
 		self.threshold = threshold
+		
+		self.logger = logging.getLogger(__name__)
+		self.logger.debug(__file__)
+		self.logger.debug("__init__:")
+		self.logger.debug(self.volume)
+		self.logger.debug("self.volume.getSize(): %d" % self.volume.getSize())
+		self.logger.debug(self.skeleton)
+		self.logger.debug("self.skeleton.getSize(): %d" % self.skeleton.getSize())
 		self.sseh = SSEHunter()
 		
 	def getScoredAtoms(self, correlationWeight, skeletonWeight, geometryWeight):
@@ -67,8 +78,16 @@ class SSEHunterEngine:
 		return pseudoatoms
 		
 	def createPseudoAtoms(self):
+		self.logger.debug(__file__)
+		cprint("createPseudoAtoms:", 'red')
+		self.logger.debug(self.volume)
+		self.logger.debug("self.volume.getSize(): %d" % self.volume.getSize())
+
 		self.sseh.createPseudoAtoms(self.volume, self.resolution, self.threshold)
 		
+		self.logger.debug(self.volume)
+		cprint("self.volume.getSize() %d" %  self.volume.getSize(), 'magenta')
+
 	def getNumberOfPseudoAtoms(self):
 		return self.sseh.getNumberOfPseudoAtoms()
 		
@@ -83,6 +102,10 @@ class SSEHunterEngine:
 		self.sseh.setCorrelationScores(self.volume, radialProfileType, self.resolution, deltaAngleRadians)
 		
 	def setSkeletonScores(self):
+		self.logger.debug(__file__)
+		self.logger.debug("setSkeletonScores:")
+		cprint("%s %d" % (self.volume, self.volume.getSize()), "yellow")
+		cprint("%s %d" % (self.skeleton, self.skeleton.getSize()), "yellow")
 		self.sseh.setSkeletonScores(self.volume, self.skeleton, self.resolution)
 
 	def setGeometryScores(self, correlationScores):
