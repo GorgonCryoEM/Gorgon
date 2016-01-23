@@ -19,15 +19,10 @@ class VolumeSSEBuilderForm(object):
         self.output = output
         self.calphaRenderer = CAlphaRenderer()
         self.runSSEHunter()
+        self.savePseudoatoms()
 
-    def savePseudoatoms(self, temp):
-        fileName = QtGui.QFileDialog.getSaveFileName(self, self.tr("Save Pseudoatoms"), "", self.tr("Protein Data Bank (PDB) Format (*.pdb)"))
-        if not fileName.isEmpty():
-            self.setCursor(QtCore.Qt.WaitCursor)
-            if not(self.app.viewers["calpha"].renderer.saveSSEHunterFile(str(fileName))):
-                # TODO: Put a error message here telling the user that the save failed
-                pass
-            self.setCursor(QtCore.Qt.ArrowCursor)
+    def savePseudoatoms(self):
+        self.calphaRenderer.saveSSEHunterFile(self.output)
     
     def removeHelices(self):
         self.viewer.renderer.removeHelices()
