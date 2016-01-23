@@ -71,7 +71,7 @@ class VolumeSSEBuilderForm(object):
         patoms = sseh.getScoredAtoms(correlationWeight, skeletonWeight, geometryWeight)
         
         for pseudoatom in patoms:
-            self.calphaViewer.renderer.addAtom(pseudoatom)
+            self.calphaRenderer.addAtom(pseudoatom)
         
     def updateTotalScoreSSEHunterAtoms(self):
         self.calphaViewer.updateTotalScoreSSEHunterAtoms( self.doubleSpinBoxCorrelation.value(), self.doubleSpinBoxSkeleton.value(),
