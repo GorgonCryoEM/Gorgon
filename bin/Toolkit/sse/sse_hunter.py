@@ -33,6 +33,13 @@ class SSEHunter(object):
 
         self.output = output
         self.calphaRenderer = CAlphaRenderer()
+        
+#         SSEHunterEngine
+        self.resolution = 8.0
+        self.threshold = 0.38
+        
+        self.sseh = SSEHunter()
+        
         self.run()
         self.savePseudoatoms()
 
@@ -45,8 +52,6 @@ class SSEHunter(object):
         self.logger.debug(self.skeleton)
         self.logger.debug("self.skeleton.getSize(): %d" % self.skeleton.getSize())
 
-        threshold = 0.38
-        resolution = 8.0
         correlationWeight = 1.0
         skeletonWeight = 1.0
         geometryWeight = 1.0
@@ -54,7 +59,6 @@ class SSEHunter(object):
         #self.calphaViewer.run( threshold, resolution, correlationWeight, skeletonWeight, geometryWeight )
         self.logger.debug(self.volume)
         self.logger.debug("self.volume.getSize(): %d" % self.volume.getSize())
-        sseh = SSEHunterEngine(self.volume, self.skeleton, resolution, threshold)
         patoms = sseh.getScoredAtoms(correlationWeight, skeletonWeight, geometryWeight)
         
         for pseudoatom in patoms:

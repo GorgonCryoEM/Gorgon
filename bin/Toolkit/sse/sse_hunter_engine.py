@@ -37,19 +37,6 @@ def get_angle(patoms, origin, p1, p2):
 
 class SSEHunterEngine:
 
-	def __init__(self, volume, skeleton, resolution, threshold):
-		self.volume = volume
-		self.skeleton = skeleton
-		self.resolution = resolution
-		self.threshold = threshold
-		
-		self.logger = logging.getLogger(__name__)
-		self.logger.debug(self.volume)
-		self.logger.debug("self.volume.getSize(): %d" % self.volume.getSize())
-		self.logger.debug(self.skeleton)
-		self.logger.debug("self.skeleton.getSize(): %d" % self.skeleton.getSize())
-		self.sseh = SSEHunter()
-		
 	def getScoredAtoms(self, correlationWeight, skeletonWeight, geometryWeight):
 		self.createPseudoAtoms()
 		self.setSkeletonScores()
