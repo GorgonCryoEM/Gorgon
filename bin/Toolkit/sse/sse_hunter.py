@@ -1,6 +1,6 @@
 import logging
 from libpycore import *
-from .sse_hunter_engine import *
+from .sse_math import *
 from termcolor import colored
 
 
