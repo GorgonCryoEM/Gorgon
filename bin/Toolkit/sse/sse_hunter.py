@@ -33,13 +33,13 @@ class SSEHunter(object):
 
         self.output = output
         self.calphaRenderer = CAlphaRenderer()
-        self.runSSEHunter()
+        self.run()
         self.savePseudoatoms()
 
     def savePseudoatoms(self):
         self.calphaRenderer.saveSSEHunterFile(self.output)
     
-    def runSSEHunter(self):
+    def run(self):
         self.logger.debug(self.volume)
         self.logger.debug("self.volume.getSize(): %d" % self.volume.getSize())
         self.logger.debug(self.skeleton)
@@ -51,7 +51,7 @@ class SSEHunter(object):
         skeletonWeight = 1.0
         geometryWeight = 1.0
 
-        #self.calphaViewer.runSSEHunter( threshold, resolution, correlationWeight, skeletonWeight, geometryWeight )
+        #self.calphaViewer.run( threshold, resolution, correlationWeight, skeletonWeight, geometryWeight )
         self.logger.debug(self.volume)
         self.logger.debug("self.volume.getSize(): %d" % self.volume.getSize())
         sseh = SSEHunterEngine(self.volume, self.skeleton, resolution, threshold)
