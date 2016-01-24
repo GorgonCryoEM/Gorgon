@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import argparse
+import logging
 
 from Toolkit.sse import VolumeSSEBuilderForm
 
@@ -11,8 +12,19 @@ def main():
     parser.add_argument('volume', action="store")
     parser.add_argument('skeleton', action="store")
     parser.add_argument('output', action="store")
-    
+    parser.add_argument('--log', action="store",
+                    dest='loglevel',
+                    choices=['info', 'debug'],
+                    default='info',
+                    help="log level"
+                    )
+
     args = parser.parse_args()
+    
+#     Logging setup
+    loglevel = getattr(logging, args.loglevel.upper())
+    logging.basicConfig(level=loglevel)
+    logger = logging.getLogger(__name__)
 
     sseh = VolumeSSEBuilderForm(args.volume, args.skeleton, args.output)
 
