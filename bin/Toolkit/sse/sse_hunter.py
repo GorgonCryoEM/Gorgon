@@ -59,7 +59,7 @@ class pySSEHunter(object):
         #self.calphaViewer.run( threshold, resolution, correlationWeight, skeletonWeight, geometryWeight )
         self.logger.debug(self.volume)
         self.logger.debug("self.volume.getSize(): %d" % self.volume.getSize())
-        patoms = sseh.getScoredAtoms(correlationWeight, skeletonWeight, geometryWeight)
+        patoms = self.getScoredAtoms(correlationWeight, skeletonWeight, geometryWeight)
         
         for pseudoatom in patoms:
             self.calphaRenderer.addAtom(pseudoatom)
