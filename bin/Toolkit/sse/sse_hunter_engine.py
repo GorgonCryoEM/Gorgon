@@ -3,7 +3,7 @@ import logging
 
 from libpycore import SSEHunter, RadialProfileType
 # from colorama import *
-from termcolor import *
+from termcolor import colored
 
 
 def cross_product(a,b):
@@ -82,7 +82,7 @@ class SSEHunterEngine:
 		self.sseh.createPseudoAtoms(self.volume, self.resolution, self.threshold)
 		
 		self.logger.debug(self.volume)
-		cprint("self.volume.getSize() %d" %  self.volume.getSize(), 'magenta')
+		self.logger.debug(colored("self.volume.getSize() %d" %  self.volume.getSize(), 'magenta'))
 
 	def getNumberOfPseudoAtoms(self):
 		return self.sseh.getNumberOfPseudoAtoms()
@@ -98,8 +98,8 @@ class SSEHunterEngine:
 		self.sseh.setCorrelationScores(self.volume, radialProfileType, self.resolution, deltaAngleRadians)
 		
 	def setSkeletonScores(self):
-		cprint("%s %d" % (self.volume, self.volume.getSize()), "yellow")
-		cprint("%s %d" % (self.skeleton, self.skeleton.getSize()), "yellow")
+		self.logger.debug(colored("%s %d" % (self.volume, self.volume.getSize()), "yellow"))
+		self.logger.debug(colored("%s %d" % (self.skeleton, self.skeleton.getSize()), "yellow"))
 		self.sseh.setSkeletonScores(self.volume, self.skeleton, self.resolution)
 
 	def setGeometryScores(self, correlationScores):

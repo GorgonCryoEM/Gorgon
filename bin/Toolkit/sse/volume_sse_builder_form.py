@@ -1,7 +1,7 @@
 import logging
 from libpycore import *
 from sse_hunter_engine import SSEHunterEngine
-from termcolor import *
+from termcolor import colored
 
 
 class VolumeSSEBuilderForm(object):
@@ -26,10 +26,10 @@ class VolumeSSEBuilderForm(object):
         
         self.skeleton.loadFile(skeleton)
         self.logger.debug(self.skeleton)
-        cprint("after loadFile(skeleton): self.skeleton.getSize(): %d" % self.skeleton.getSize(), "yellow")
+        self.logger.debug(colored("after loadFile(skeleton): self.skeleton.getSize(): %d" % self.skeleton.getSize(), "yellow"))
         self.skeleton = self.skeleton.getMesh()
         self.logger.debug(self.skeleton)
-        cprint("after skeleton.getMesh(): self.skeleton.getSize(): %d" % self.skeleton.getSize(), "cyan")
+        self.logger.debug(colored("after skeleton.getMesh(): self.skeleton.getSize(): %d" % self.skeleton.getSize(), "cyan"))
 
         self.output = output
         self.calphaRenderer = CAlphaRenderer()
