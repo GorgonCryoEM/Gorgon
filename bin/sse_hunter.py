@@ -23,7 +23,12 @@ def main():
     
 #     Logging setup
     loglevel = getattr(logging, args.loglevel.upper())
-    logging.basicConfig(level=loglevel)
+    
+    FORMAT = "%(levelname)s:%(name)s: %(funcName)s():%(lineno)s: %(message)s"
+    logging.basicConfig(level=loglevel,
+                        format=FORMAT
+                        )
+    
     logger = logging.getLogger(__name__)
 
     sseh = VolumeSSEBuilderForm(args.volume, args.skeleton, args.output)
