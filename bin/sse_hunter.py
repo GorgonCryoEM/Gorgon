@@ -3,7 +3,7 @@
 import argparse
 import logging
 
-from Toolkit.sse import VolumeSSEBuilderForm
+from Toolkit.sse import SSEHunter
 
 
 def main():
