@@ -11,8 +11,6 @@ class VolumeSSEBuilderForm(object):
         
         self.volume = Volume()
         self.volume.loadFile(volume)
-        self.logger.debug(__file__)
-        self.logger.debug("__init__")
         self.logger.debug("%s before getVolume" % self.volume)
         self.logger.debug("self.volume.getSize(): %d" % self.volume.getSize())
 #         self.volume = self.volume.getVolume()
@@ -21,8 +19,6 @@ class VolumeSSEBuilderForm(object):
 #         exit()
         
         self.skeleton = MeshRenderer()
-        self.logger.debug(__file__)
-        self.logger.debug("__init__")
         self.logger.debug(self.volume)
         self.logger.debug("self.volume.getSize(): %d" % self.volume.getSize())
         self.logger.debug(self.skeleton)
@@ -78,8 +74,6 @@ class VolumeSSEBuilderForm(object):
                 atom.setSelected(False)
         
     def runSSEHunter(self):
-        self.logger.debug(__file__)
-        self.logger.debug("runSSEHunter:")
         self.logger.debug(self.volume)
         self.logger.debug("self.volume.getSize(): %d" % self.volume.getSize())
         self.logger.debug(self.skeleton)
@@ -92,8 +86,6 @@ class VolumeSSEBuilderForm(object):
         geometryWeight = 1.0
 
         #self.calphaViewer.runSSEHunter( threshold, resolution, correlationWeight, skeletonWeight, geometryWeight )
-        self.logger.debug(__file__)
-        self.logger.debug("runSSEHunter")
         self.logger.debug(self.volume)
         self.logger.debug("self.volume.getSize(): %d" % self.volume.getSize())
         sseh = SSEHunterEngine(self.volume, self.skeleton, resolution, threshold)

@@ -44,8 +44,6 @@ class SSEHunterEngine:
 		self.threshold = threshold
 		
 		self.logger = logging.getLogger(__name__)
-		self.logger.debug(__file__)
-		self.logger.debug("__init__:")
 		self.logger.debug(self.volume)
 		self.logger.debug("self.volume.getSize(): %d" % self.volume.getSize())
 		self.logger.debug(self.skeleton)
@@ -78,8 +76,6 @@ class SSEHunterEngine:
 		return pseudoatoms
 		
 	def createPseudoAtoms(self):
-		self.logger.debug(__file__)
-		cprint("createPseudoAtoms:", 'red')
 		self.logger.debug(self.volume)
 		self.logger.debug("self.volume.getSize(): %d" % self.volume.getSize())
 
@@ -102,8 +98,6 @@ class SSEHunterEngine:
 		self.sseh.setCorrelationScores(self.volume, radialProfileType, self.resolution, deltaAngleRadians)
 		
 	def setSkeletonScores(self):
-		self.logger.debug(__file__)
-		self.logger.debug("setSkeletonScores:")
 		cprint("%s %d" % (self.volume, self.volume.getSize()), "yellow")
 		cprint("%s %d" % (self.skeleton, self.skeleton.getSize()), "yellow")
 		self.sseh.setSkeletonScores(self.volume, self.skeleton, self.resolution)
