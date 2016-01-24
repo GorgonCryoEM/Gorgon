@@ -1,1 +1,1 @@
-from .sse_hunter import SSEHunter
+from .sse_hunter import pySSEHunter

@@ -4,7 +4,7 @@ from .sse_hunter_engine import *
 from termcolor import colored
 
 
-class SSEHunter(object):
+class pySSEHunter(object):
 
     def __init__(self, volume, skeleton, output):
         self.logger = logging.getLogger(__name__)

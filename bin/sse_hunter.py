@@ -3,7 +3,7 @@
 import argparse
 import logging
 
-from Toolkit.sse import SSEHunter
+from Toolkit.sse import pySSEHunter
 
 
 def main():
@@ -31,7 +31,7 @@ def main():
     
     logger = logging.getLogger(__name__)
 
-    sseh = SSEHunter(args.volume, args.skeleton, args.output)
+    sseh = pySSEHunter(args.volume, args.skeleton, args.output)
 
 if __name__ == "__main__":
     main()
