@@ -31,7 +31,7 @@ def main():
     
     logger = logging.getLogger(__name__)
 
-    sseh = VolumeSSEBuilderForm(args.volume, args.skeleton, args.output)
+    sseh = SSEHunter(args.volume, args.skeleton, args.output)
 
 if __name__ == "__main__":
     main()
