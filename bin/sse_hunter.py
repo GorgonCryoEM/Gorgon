@@ -21,7 +21,9 @@ def main():
 
     args = parser.parse_args()
     
-#     Logging setup
+    '''
+    Logging setup
+    '''
     loglevel = getattr(logging, args.loglevel.upper())
     
     FORMAT = "%(levelname)s:%(name)s: %(funcName)s():%(lineno)s: %(message)s"

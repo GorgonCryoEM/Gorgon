@@ -9,6 +9,9 @@ class pySSEHunter(object):
     def __init__(self, volume, skeleton, output):
         self.logger = logging.getLogger(__name__)
         
+        '''
+        Volume
+        '''
         self.volume = Volume()
         self.volume.loadFile(volume)
         self.logger.debug("%s before getVolume" % self.volume)
@@ -18,6 +21,9 @@ class pySSEHunter(object):
         self.logger.debug("self.volume.getSize(): %d" % self.volume.getSize())
 #         exit()
         
+        '''
+        Skeleton
+        '''
         self.skeleton = MeshRenderer()
         self.logger.debug(self.volume)
         self.logger.debug("self.volume.getSize(): %d" % self.volume.getSize())
@@ -27,14 +33,20 @@ class pySSEHunter(object):
         self.skeleton.loadFile(skeleton)
         self.logger.debug(self.skeleton)
         self.logger.debug(colored("after loadFile(skeleton): self.skeleton.getSize(): %d" % self.skeleton.getSize(), "yellow"))
+
         self.skeleton = self.skeleton.getMesh()
         self.logger.debug(self.skeleton)
         self.logger.debug(colored("after skeleton.getMesh(): self.skeleton.getSize(): %d" % self.skeleton.getSize(), "cyan"))
 
+        '''
+        Output, CAlphaRenderer
+        '''
         self.output = output
         self.calphaRenderer = CAlphaRenderer()
         
-#         SSEHunterEngine
+        '''
+        SSEHunterEngine
+        '''
         self.resolution = 8.0
         self.threshold = 0.38
         
