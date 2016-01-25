@@ -3,6 +3,7 @@
 
 //#include "GrayImage.h"
 #include "ImageReader.h"
+#include "ImageReaderBMP.h"
 //#include <SkeletonMaker/reader.h>
 //#include <SkeletonMaker/volume.h>
 //#include <string>

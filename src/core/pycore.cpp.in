@@ -1,14 +1,14 @@
 #include <boost/python.hpp>
 
-#include "VolumeRenderer.h"
+#include "SkeletonMaker/volume.h"
 
-using namespace Visualization;
+using namespace SkeletonMaker;
 
 using namespace boost::python;
 
 BOOST_PYTHON_MODULE(@current_pylib@)
 {
-  class_<Volume>("Volume", init<int,int,int>())
+  class_<Volume>("Volume", init<>())
 //      .def("getOriginX", &Volume::getOriginX)
 //      .def("getOriginY", &Volume::getOriginY)
 //      .def("getOriginZ", &Volume::getOriginZ)
@@ -26,22 +26,18 @@ BOOST_PYTHON_MODULE(@current_pylib@)
 //      .def("buildHistogram", &Volume::buildHistogram)
 //      .def("getHistogramBinValue", &Volume::getHistogramBinValue)
 //
-  ;
-  
-  
-  class_< VolumeRenderer, bases<Volume> >("VolumeRenderer", init<>())       
-      .def("normalizeVolume", &VolumeRenderer::normalizeVolume)
-//        .def("downsampleVolume", &VolumeRenderer::DownsampleVolume)
-//        .def("cropVolume", &VolumeRenderer::CropVolume)
-      .def("performBinarySkeletonizationJu2007", &VolumeRenderer::PerformBinarySkeletonizationJu2007, return_value_policy<reference_existing_object>())
-      .def("performGrayscaleSkeletonizationAbeysinghe2008", &VolumeRenderer::PerformGrayscaleSkeletonizationAbeysinghe2008, return_value_policy<reference_existing_object>())     
-//        .def("performPreservingGrayscaleSkeletonizationAbeysinghe2008", &VolumeRenderer::PerformPreservingGrayscaleSkeletonizationAbeysinghe2008, return_value_policy<reference_existing_object>())     
-      .def("getMinDensity", &VolumeRenderer::getMinDensity)
-      .def("getMaxDensity", &VolumeRenderer::getMaxDensity)
-      .def("setVolume", &VolumeRenderer::setVolume)
-//      .def("saveFile", &VolumeRenderer::SaveFile)
-      .def("loadFile", &VolumeRenderer::loadFile)
-      .def("saveFile", &VolumeRenderer::saveFile)
+      .def("normalizeVolume", &Volume::normalizeVolume)
+//        .def("downsampleVolume", &Volume::DownsampleVolume)
+//        .def("cropVolume", &Volume::CropVolume)
+      .def("performBinarySkeletonizationJu2007", &Volume::PerformBinarySkeletonizationJu2007, return_value_policy<reference_existing_object>())
+      .def("performGrayscaleSkeletonizationAbeysinghe2008", &Volume::PerformGrayscaleSkeletonizationAbeysinghe2008, return_value_policy<reference_existing_object>())     
+//        .def("performPreservingGrayscaleSkeletonizationAbeysinghe2008", &Volume::PerformPreservingGrayscaleSkeletonizationAbeysinghe2008, return_value_policy<reference_existing_object>())     
+      .def("getMinDensity", &Volume::getMinDensity)
+      .def("getMaxDensity", &Volume::getMaxDensity)
+      .def("setVolume", &Volume::setVolume)
+//      .def("saveFile", &Volume::SaveFile)
+      .def("loadFile", &Volume::loadFile)
+      .def("saveFile", &Volume::saveFile)
 
   ;
 

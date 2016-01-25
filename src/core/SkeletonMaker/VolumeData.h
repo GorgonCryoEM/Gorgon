@@ -44,31 +44,39 @@ namespace SkeletonMaker {
         void setDataAt(int index, float value);
         void pad(int padBy, double padValue);
     private:
-        void init(int sizeX, int sizeY, int sizeZ, float spacingX, float spacingY, float spacingZ, float originX, float originY, float originZ, float val=0.0);
         void setSize(int sizeX, int sizeY, int sizeZ);
     protected:
         Dim3D<int> size;
         Dim3D<float> spacing;
         Dim3D<float> origin;
         vector<float> data;
+
+        friend ostream& operator<<(ostream& out, const VolumeData& obj){
+          out<<"\033[33m"
+              <<"size:    "<<obj.size
+              <<"spacing: "<<obj.spacing
+              <<"origin:  "<<obj.origin
+              <<"size:    "<<obj.data.size()
+              <<"\033[0m"<<endl;
+        }
     };
 
-    VolumeData::VolumeData() {
-      init(0, 0, 0, 1, 1, 1, 0, 0, 0);
-    }
+    VolumeData::VolumeData()
+          : size(0, 0, 0),
+            spacing(1, 1, 1),
+            origin(0, 0, 0)
+    {}
 
-    VolumeData::VolumeData(int sizeX, int sizeY, int sizeZ, float val) {
-        init(sizeX, sizeY, sizeZ, 1, 1, 1, 0, 0, 0, val);
+    VolumeData::VolumeData(int sizeX, int sizeY, int sizeZ, float val)
+          : size(sizeX, sizeY, sizeZ),
+            spacing(1, 1, 1),
+            origin(0, 0, 0)
+    {
+        setSize(sizeX, sizeY, sizeZ);
+        data.assign(data.size(), val);
     }
 
     VolumeData::~VolumeData() {}
-
-    void VolumeData::init(int sizeX, int sizeY, int sizeZ, float spacingX, float spacingY, float spacingZ, float originX, float originY, float originZ, float val) {
-        setSize(sizeX, sizeY, sizeZ);
-        setSpacing(spacingX, spacingY, spacingZ);
-        setOrigin(originX, originY, originZ);
-        data.assign(data.size(), val);
-    }
 
     bool VolumeData::cmp(const VolumeData& obj) const {
       if(data.size() != obj.data.size())
@@ -200,7 +208,7 @@ namespace SkeletonMaker {
             }
         }
         data = newData;
-        setSize(newSizeX, newSizeY, newSizeZ);
+        size = Dim3D<int>(newSizeX, newSizeY, newSizeZ);
 
     }
 
