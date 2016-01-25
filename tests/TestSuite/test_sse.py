@@ -22,6 +22,7 @@ class TestFilter(ToolkitTestCases.ToolkitTests):
 		check_call([cmd], shell=True)
 		assert cmp(output, ref), "\nFiles differ:\n   1: %s\n   2: %s" % (output, ref)
 		
+	test_sse_hunter.long = True
 	
 if __name__ == '__main__':
     import doctest
