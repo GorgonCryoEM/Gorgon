@@ -201,7 +201,7 @@ namespace Protein_Morph {
 #endif
 
         for(unsigned int i = 0; i < patoms.size(); i++) {
-#ifdef GORGON_DEBUG
+#ifdef GORGON_DEBUG_LOOP
       cout<<"Checkpoint 2: i: "<<i<<endl;
 #endif
             pAtomPosition = patoms[i].GetPosition();
@@ -212,7 +212,7 @@ namespace Protein_Morph {
             skel_scale[2] = skeleton->scale.Z();
             for (unsigned int n = 0; n < 3; n++)
                 pAtomPosition[n] = pAtomPosition[n] * (1.0/skel_scale[n]);
-#ifdef GORGON_DEBUG
+#ifdef GORGON_DEBUG_LOOP
       cout<<"Checkpoint 21: i: "<<i<<endl;
       cout<<"skeleton:\n"<<*skeleton<<endl;
 #endif
