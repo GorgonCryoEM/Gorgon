@@ -34,6 +34,12 @@ class SSEHelixCorrespondenceFinderForm(object):
         '''
         self.correspondenceEngine = SSECorrespondenceEngine()
         self.correspondenceLibrary = CorrespondenceLibrary()
+        
+        self.run()
+        
+    def run(self):
+        self.checkOk()
+        self.accept()
 
     def createUI(self):
         self.ui = Ui_DialogSSEHelixCorrespondenceFinder()
