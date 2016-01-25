@@ -3,7 +3,7 @@
 import argparse
 import logging
 
-from Toolkit.sse import VolumeSSEBuilderForm
+from Toolkit.sse import pySSEHunter
 
 
 def main():
@@ -21,7 +21,9 @@ def main():
 
     args = parser.parse_args()
     
-#     Logging setup
+    '''
+    Logging setup
+    '''
     loglevel = getattr(logging, args.loglevel.upper())
     
     FORMAT = "%(levelname)s:%(name)s: %(funcName)s():%(lineno)s: %(message)s"
@@ -31,7 +33,7 @@ def main():
     
     logger = logging.getLogger(__name__)
 
-    sseh = VolumeSSEBuilderForm(args.volume, args.skeleton, args.output)
+    sseh = pySSEHunter(args.volume, args.skeleton, args.output)
 
 if __name__ == "__main__":
     main()
