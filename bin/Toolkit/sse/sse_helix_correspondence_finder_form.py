@@ -13,7 +13,7 @@ from .correspondence.StructurePrediction import StructurePrediction
 import math
 
 
-class SSEHelixCorrespondenceFinderForm(BaseDockWidget):
+class SSEHelixCorrespondenceFinderForm(object):
 
     def __init__(self, main, viewer, parent=None):
         BaseDockWidget.__init__(self,
