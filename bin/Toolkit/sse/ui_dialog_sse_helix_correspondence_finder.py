@@ -1,16 +1,20 @@
 class Ui_DialogSSEHelixCorrespondenceFinder(object):
 
-    def setupUi(self, DialogSSEHelixCorrespondenceFinder):
-        self.doubleSpinBoxHelixImportance.setProperty("value", QtCore.QVariant(1.0))
-        self.doubleSpinBoxHelixMissingPenalty.setProperty("value", QtCore.QVariant(5.0))
-        self.doubleSpinBoxHelixMissingPenaltyScaled.setProperty("value", QtCore.QVariant(0.0))
-        self.doubleSpinBoxEndHelixMissingPenalty.setProperty("value", QtCore.QVariant(8.0))
-        self.doubleSpinBoxSheetImportance.setProperty("value", QtCore.QVariant(1.0))
-        self.doubleSpinBoxSheetMissingPenalty.setProperty("value", QtCore.QVariant(5.0))
-        self.doubleSpinBoxSheetMissingPenaltyScaled.setProperty("value", QtCore.QVariant(0.0))
-        self.spinBoxBorderMarginThreshold.setProperty("value", QtCore.QVariant(3))
-        self.doubleSpinBoxEuclideanDistance.setProperty("value", QtCore.QVariant(0.0))
-        self.spinBoxMinSheetSize.setProperty("value", QtCore.QVariant(10))
-        self.doubleSpinBoxMaxSheetDistance.setProperty("value", QtCore.QVariant(5.0))
-        self.doubleSpinBoxSheetSelfLoopLength.setProperty("value", QtCore.QVariant(5.0))
-        self.doubleSpinBoxSheetMergeThreshold.setProperty("value", QtCore.QVariant(3.0))
+    def __init__(self):
+        self.doubleSpinBoxHelixImportance           = 1.0
+        self.doubleSpinBoxHelixMissingPenalty       = 5.0
+        self.doubleSpinBoxHelixMissingPenaltyScaled = 0.0
+        self.doubleSpinBoxEndHelixMissingPenalty    = 8.0
+        self.doubleSpinBoxSheetImportance           = 1.0
+        self.doubleSpinBoxSheetMissingPenalty       = 5.0
+        self.doubleSpinBoxSheetMissingPenaltyScaled = 0.0
+        self.spinBoxBorderMarginThreshold           = 3
+        self.doubleSpinBoxEuclideanDistance         = 0.0
+        self.spinBoxMinSheetSize                    = 10
+        self.doubleSpinBoxMaxSheetDistance          = 5.0
+        self.doubleSpinBoxSheetSelfLoopLength       = 5.0
+        self.doubleSpinBoxSheetMergeThreshold       = 3.0
+        self.doubleSpinBoxEuclideanToPDBRatio       = 10.0
+        self.radioButtonAbsoluteDifference          = True
+        self.doubleSpinBoxLoopImportance            = 0.2
+        self.doubleSpinBoxEuclideanLoopUsedPenalty  = 5.0
