@@ -1,10 +1,4 @@
 #!/usr/bin/python
-# Copyright (C) 2005-2008 Washington University in St Louis, Baylor College of Medicine.  All rights reserved
-# Author:  Mike Marsh (michael.marsh@bcm.edu)
-# Class:  StructurePrediction
-# Class Description: Class that represents all of the secels predicted to exist based on primary sequence.
-#                    More info in: correspondence-doc.txt
-#
 
 from seq_model.Helix import Helix
 from seq_model.Coil import Coil
@@ -21,11 +15,13 @@ except:
     qtEnabled=False
     baseClass=object
 
+
 class StructurePrediction(baseClass):  #results of secondary-structure prediction
     """
 This class contains the sequence of a chain and the residue numbers 
 where SSEs are predicted to be based on the sequence.
     """
+
     def __init__(self, secelDict, chain, params=None, comments=None, qparent=None, secelType=None):
         if qparent and qtEnabled:
             super(QtCore.QObject,self).__init__(qparent)
@@ -55,8 +51,6 @@ where SSEs are predicted to be based on the sequence.
                 iS += 1
         return
     
-
-
     @classmethod
     def load(cls, filename, qparent=None, withStrands=0):
         '''
@@ -99,23 +93,23 @@ handled in C++.
                 n = 0
                 for char in sequence:
                     chain[startIndex+n] = Residue(char, chain)
-                    n += 1                
+                    n += 1
 
             numSSEs = data.getNumberOfStructures()
             for sseIx in range(numSSEs):
                 # cppSse is a c++ SecondaryStructure object
                 cppSse = data.getStructure(sseIx)
 
-                if cppSse.isHelix(): 
+                if cppSse.isHelix():
                     # create python Helix object using info from c++ SecondaryStructure object
                     pyHelix = Helix(chain, sseIx, str(cppSse.getSecondaryStructureID()), cppSse.getStartPosition(), cppSse.getEndPosition())
-                    secelDict[sseIx] = pyHelix                                
-                    secelType[sseIx] = 'helix'     
+                    secelDict[sseIx] = pyHelix
+                    secelType[sseIx] = 'helix'
                 elif cppSse.isSheet():
                     # create python strand object using info from c++ SecondaryStructure object
                     pyStrand = Strand(chain, sseIx, str(cppSse.getSecondaryStructureID()), cppSse.getStartPosition(), cppSse.getEndPosition())
                     secelDict[sseIx] = pyStrand
-                    secelType[sseIx] = 'strand'                                
+                    secelType[sseIx] = 'strand'
                     pass
                 
             # create new python StructurePrediction object and return it
@@ -151,7 +145,7 @@ handled in C++.
             for index in sorted(chain.secelList):
                 if chain.secelList[index] == lastSecel:
                     pass
-                    #print "same as last secel at " + str(index) + " (" + str(chain.secelList[index]) + ")" 
+                    #print "same as last secel at " + str(index) + " (" + str(chain.secelList[index]) + ")"
                 else:
                     #print "found new secel " + str(index) #+ " (" + str(chain.secelList[index]) + ")"
                     if chain.secelList[index].type == 'helix':
@@ -167,7 +161,6 @@ handled in C++.
                         lastSecel = chain.secelList[index]
                         i += 1
                 
-                 
             #chain.helices = {}
             #chain.sheets = {}
             #chain.secelList = {}
@@ -177,7 +170,6 @@ handled in C++.
                 chain[resIndex].clearAtoms()
             # create new python StructurePrediction object and return it
             return StructurePrediction(secelDict, chain, params, comments, qparent, secelType)
-        
         
     def getSecelByIndex(self, index):
         """
@@ -203,5 +195,6 @@ if it is not a part of a Helix or Strand.
         if not secel in self.secelDict.values():
             return
         self.__selectedSecel = secel
+
     def getSecelSelection(self):
         return self.__selectedSecel

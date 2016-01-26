@@ -1,14 +1,10 @@
 #!/usr/bin/python
-# Copyright (C) 2005-2008 Washington University in St Louis, Baylor College of Medicine.  All rights reserved
-# Author:  Mike Marsh (michael.marsh@bcm.edu)
-# Class:  StructureObservation
-# Class Description: Class that represents all of the secels found in an EM map.
-#                    More info in: correspondence-doc.txt
-#
 
 from ObservedHelix import ObservedHelix
 
+
 class StructureObservation:  #SSEBuilderResults
+
   def __init__(self, params=None, files=None, comments=None, helixDict=None, sheetDict=None, strandDict=None, filename=None):
     '''
     Parameters with *** attribute need to be recorded with the CorrespondenceLibrary
@@ -49,7 +45,7 @@ class StructureObservation:  #SSEBuilderResults
     else:
       self.params = params
       self.files = files
-      self.otherAttribs = {} 
+      self.otherAttribs = {}
       self.otherAttribs['comments']=comments
       self.helixDict = helixDict
       self.sheetDict = sheetDict
@@ -57,7 +53,6 @@ class StructureObservation:  #SSEBuilderResults
       #self.__loadHelices()
       #self.__loadSheets()
       #self.__loadStrands()
-
 
   def __loadHelices(self):
     infile=open(self.files['sseDejavu'])
@@ -106,7 +101,7 @@ class StructureObservation:  #SSEBuilderResults
     for line in lines:
 
       # Attributes with arbitrary key values.  Includes 'comments'
-      if line.rfind('\t') < 1 and line.find('=') > 0 :
+      if line.rfind('\t') < 1 and line.find('=') > 0:
         key=line.strip().split('=')[0]
         value=line.strip().split('=')[1]
         self.otherAttribs[key]=value
@@ -114,7 +109,7 @@ class StructureObservation:  #SSEBuilderResults
       # Nested Dictionary Items those found in dictionaries 'files' and 'params'
       else:
         # last character in line is ':'
-        if line.find(':') == len(line.strip()) :
+        if line.find(':') == len(line.strip()):
           dictName=line.strip().split(':')[0]
 
         else:
@@ -124,7 +119,6 @@ class StructureObservation:  #SSEBuilderResults
             key=split[0]
             value=split[1]
             self.__addAttrib (dictName, key, value)
-
 
   def save(self, filename):
     outfile=open(filename,'w')
