@@ -1008,10 +1008,3 @@ class SSEHelixCorrespondenceFinderForm(object):
         outFile = open(fileName, "w")
         outFile.writelines(doc.toprettyxml())
         outFile.close()
-        
-    def exportToRosetta(self):
-        rosettaFile = QtGui.QFileDialog.getSaveFileName(self, self.tr("Export to Rosetta"), "", "Correspondence Export Files (*.xml)")
-        if not rosettaFile.isEmpty():
-            self.setCursor(QtCore.Qt.WaitCursor)
-            self.exportToRosettaFile(rosettaFile)
-            self.setCursor(QtCore.Qt.ArrowCursor)
