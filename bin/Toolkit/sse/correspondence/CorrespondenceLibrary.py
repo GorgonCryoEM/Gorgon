@@ -1,14 +1,10 @@
 #!/usr/bin/python
-# Copyright (C) 2005-2008 Washington University in St Louis, Baylor College of Medicine.  All rights reserved
-# Author:  Mike Marsh (michael.marsh@bcm.edu)
-# Class: CorrespondenceLibrary
-# Class Description: Class that stores a set of correspondences and the parameters used to compute them.
-#                    More info in: correspondence-doc.txt
-#
 
 import cPickle as pickle
 
+
 class CorrespondenceLibrary:
+
   def __init__(self, sp=None, so=None, algo=None, params=None, correspondenceList=None, comments=None, filename=None):
     if (filename):
       self.load(filename)
@@ -22,8 +18,10 @@ class CorrespondenceLibrary:
       self.otherAttribs={}
       self.otherAttribs['comments']=comments
       # sort correspondences by score
+
   def getCurrentCorrespondenceIndex(self):
       return self.currentCorrespondenceIndex
+
   def setCurrentCorrespondenceIndex(self, corrIndex):
       self.currentCorrespondenceIndex = corrIndex
 

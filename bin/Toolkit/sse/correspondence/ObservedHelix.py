@@ -1,14 +1,9 @@
 #!/usr/bin/python
-# Copyright (C) 2005-2008 Washington University in St Louis, Baylor College of Medicine.  All rights reserved
-# Author: Mike Marsh (michael.marsh@bcm.edu)
-# Class: ObservedHelix
-# Class Description: Class that denotes a helix found by SSEHunter/Builder or any other routine that
-#                    can find helices in EM maps.
-#                    More info in: correspondence-doc.txt
-#
 import math
 
+
 class ObservedHelix:
+
     def __init__(self, label, beginningCoord, endCoord ):
         """
 Note that the label is currently an integer, not a string.
@@ -43,4 +38,4 @@ farther from the origin.
 This returns the length of the observed helix in angstroms (coordinates
 should be in angstroms).
         """
-        return pow( (self.beginningCoord[0] - self.endCoord[0])**2 + (self.beginningCoord[1] - self.endCoord[1])**2 + (self.beginningCoord[2] - self.endCoord[2])**2, 0.5) 
+        return pow( (self.beginningCoord[0] - self.endCoord[0])**2 + (self.beginningCoord[1] - self.endCoord[1])**2 + (self.beginningCoord[2] - self.endCoord[2])**2, 0.5)
