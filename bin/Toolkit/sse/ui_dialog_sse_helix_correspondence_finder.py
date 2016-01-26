@@ -7,6 +7,13 @@ class ComboBox(object):
     def currentIndex(self):
         return self.ind
 
+    def clear(self):
+        self.ind = -1
+        self.arr = []
+        
+    def addItem(self, item):
+        self.arr.append(item)
+
 
 class Ui_DialogSSEHelixCorrespondenceFinder(object):
 
