@@ -1,10 +1,9 @@
 #!/usr/bin/python
-# Copyright (C) 2005-2008 Washington University in St Louis, Baylor College of Medicine.  All rights reserved
-# Author:  Mike Marsh (michael.marsh@bcm.edu)
+
 # Class:  Sheet
 # Class Description: Class that models beta sheet, which act as containers for beta strand objects
 #                    More info in: seq_model-doc.txt
-#
+
 
 from seq_model.Strand import Strand
 

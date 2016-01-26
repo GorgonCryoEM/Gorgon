@@ -1,10 +1,9 @@
 #!/usr/bin/python
-# Copyright (C) 2005-2008 Washington University in St Louis, Baylor College of Medicine.  All rights reserved
-# Author:  Mike Marsh (michael.marsh@bcm.edu)
+
 # Class:  Secel
 # Class Description: Superclass that models secondary structure elements.  Subclassed by Helix, Strand, Coil
 #                    More info in: seq_model-doc.txt
-#
+
 
 try:
   from PyQt4 import QtGui

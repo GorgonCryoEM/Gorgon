@@ -1,10 +1,10 @@
 #!/usr/bin/python
-# Copyright (C) 2005-2008 Washington University in St Louis, Baylor College of Medicine.  All rights reserved
-# Author:  Mike Marsh (michael.marsh@bcm.edu)
+
 # Class:  Chain
 # Class Description: Class that models polypeptide chains, whih are sequences of Residue objects.
 #                    More info in: seq_model-doc.txt
-#
+
+
 from seq_model.Residue import Residue
 from seq_model.Helix import Helix
 from seq_model.Sheet import Sheet

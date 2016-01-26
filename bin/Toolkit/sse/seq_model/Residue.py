@@ -1,10 +1,9 @@
 #!/usr/bin/python
-# Copyright (C) 2005-2008 Washington University in St Louis, Baylor College of Medicine.  All rights reserved
-# Author:  Mike Marsh (michael.marsh@bcm.edu)
+
 # Class:  Residue
 # Class Description: Class that models amino acid residues.  Residue objects aggregate Atom objects.
 #                    More info in: seq_model-doc.txt
-#
+
 
 from libpyGORGON import PDBAtom,Vector3DFloat
 
