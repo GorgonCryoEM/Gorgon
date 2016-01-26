@@ -627,24 +627,6 @@ class SSEHelixCorrespondenceFinderForm(object):
         self.viewer.emitModelChanged()
         self.loadingCorrespondance = False
         
-    def drawOverlay(self):
-        if self.executed and self.corrAct.isChecked():
-            glPushAttrib(GL_LIGHTING_BIT)
-            self.viewer.setMaterials(self.app.themes.getColor("CorrespondenceFinder:BackboneTrace"))
-            # calls Draw method of c++ SSECorrespondenceEngine object
-            self.viewer.correspondenceEngine.draw(0)
-            glPopAttrib()
-        if self.corrAct.isChecked() and self.dataLoaded and (self.ui.checkBoxShowAllPaths.isChecked() or self.ui.checkBoxShowHelixCorners.isChecked() or self.ui.checkBoxShowSheetCorners.isChecked() or self.ui.checkBoxShowSheetColors.isChecked() ):
-            # TODO: Move this color changing code somewhere else
-            # set colors of all SSEs
-            # Probably should use the setColor calls in previous sections.
-            for i in range(self.viewer.correspondenceEngine.getSkeletonSSECount()):
-                color = self.getIndexedHelixColor(i, self.viewer.correspondenceEngine.getSkeletonSSECount())
-            glPushAttrib(GL_LIGHTING_BIT)
-            self.viewer.setMaterials(self.app.themes.getColor("CorrespondenceFinder:BackboneTrace"))
-            self.viewer.correspondenceEngine.drawAllPaths(0,self.ui.checkBoxShowAllPaths.isChecked(),self.ui.checkBoxShowHelixCorners.isChecked(),self.ui.checkBoxShowSheetCorners.isChecked(),False)
-            glPopAttrib()
-            
     def rebuildGraph(self):
         print "correspondence index before rebuilding is "
         print self.ui.comboBoxCorrespondences.currentIndex()
@@ -718,14 +700,6 @@ class SSEHelixCorrespondenceFinderForm(object):
             constrainAction.setEnabled(True)
             self.connect(constrainAction, QtCore.SIGNAL("triggered()"), self.constrainObservedHelix(-1))
             self.ui.tableWidgetCorrespondenceList.addAction(constrainAction)
-
-    def customMenuRequested(self, point):
-        self.createActionsForCell(self.ui.tableWidgetCorrespondenceList.currentRow(), self.ui.tableWidgetCorrespondenceList.currentColumn())
-        if(len(self.ui.tableWidgetCorrespondenceList.actions()) > 0):
-            menu = QtGui.QMenu()
-            for act in self.ui.tableWidgetCorrespondenceList.actions()[:]:
-                menu.addAction(act)
-            menu.exec_(self.ui.tableWidgetCorrespondenceList.mapToGlobal(point), self.ui.tableWidgetCorrespondenceList.actions()[0])
 
     def constrainSSE(self, pred, obs, dir):
         correspondenceIndex = self.ui.comboBoxCorrespondences.currentIndex()
