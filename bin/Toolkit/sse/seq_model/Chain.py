@@ -92,7 +92,6 @@ of Residue objects
         i += 1
     Chain.chainsDict[self.key]=self
 
-
   @classmethod
   def __createUniquePDBID(cls):
     '''
@@ -128,7 +127,6 @@ This creates a Chain object from a FASTA file.
       result=Chain(charString)
     #Chain.setSelectedChainKey(result.getIDs())
     return result
-
 
   @classmethod
   def __loadFromPDB (cls,filename,qparent=None, whichChainID=None):
@@ -173,7 +171,7 @@ object. If no chain ID is specified, it loads the first chain.
             
             residueIndex = int( line[22:26] )
             if residueIndex not in result.residueRange():
-                residue = Residue( line[17:20].strip(), result ) 
+                residue = Residue( line[17:20].strip(), result )
                 result[residueIndex] = residue
             else:
                 residue = result[residueIndex]
@@ -189,17 +187,17 @@ object. If no chain ID is specified, it loads the first chain.
                 occupancy   = float( line[54:60].strip() )
             except ValueError:
                 occupancy = None
-            try: 
+            try:
                 x = float( line[30:38] )
                 y = float( line[38:46] )
                 z = float( line[46:54] )
                 
                 atom = residue.addAtom(atomName, x,y,z, element, serialNo, occupancy, tempFactor)
-                #residue.atoms[atomName]=atom            
+                #residue.atoms[atomName]=atom
                 result.atoms[serialNo]=atom
                 #Chain.chainsDict[result.key] = result
             except ValueError:
-                print 'Chain.__loadFromPDB--no coordinates', 
+                print 'Chain.__loadFromPDB--no coordinates',
 
         elif line[0:6].strip()=='HELIX':
             Helix.parsePDB(line,result)
@@ -219,15 +217,14 @@ object. If no chain ID is specified, it loads the first chain.
         startPt = min(result.residueRange())
         coilIx = 1
         for i in range(len(startList)):
-            if startPt < startList[i] :
+            if startPt < startList[i]:
                 result.addCoil(coilIx, Coil(result, coilIx, 'L' + str(coilIx), startPt, startList[i]-1))
                 coilIx = coilIx + 1
             startPt = endList[i] + 1
         
         if startPt < max(result.residueRange()):
-            result.addCoil(coilIx, Coil(result, coilIx, 'L' + str(coilIx), startPt, max(result.residueRange())))        
+            result.addCoil(coilIx, Coil(result, coilIx, 'L' + str(coilIx), startPt, max(result.residueRange())))
             
-                
         Chain.chainsDict[result.key] = result
         #Chain.setSelectedChainKey(result.getIDs())
         
@@ -265,7 +262,7 @@ structure predictions.
             print startIndex
         else:
             startIndex = 1
-        stopIndex = None  
+        stopIndex = None
         
         lines = ''.join(lines)
         linesSize = len(lines)
@@ -304,21 +301,21 @@ structure predictions.
                 else:
                     stopIndex = i - 1
                     if currentElement == helix:
-                        newHelix = Helix(chain=newChain, serialNo=helixSerialNum, 
+                        newHelix = Helix(chain=newChain, serialNo=helixSerialNum,
                                     label = 'H' + str(elementNum),
                                     startIndex=startIndex, stopIndex=stopIndex)
                         newChain.addHelix(serialNo = helixSerialNum, helix = newHelix)
                         helixSerialNum += 1
                         elementNum += 1
                     elif currentElement == strand:
-                        newStrand = Strand(chain=newChain, strandNo=strandSerialNum, 
+                        newStrand = Strand(chain=newChain, strandNo=strandSerialNum,
                                         label = 'S' + str(elementNum),
                                         startIndex=startIndex, stopIndex=stopIndex)
                         newChain.addStrand(strand = newStrand, strandNo=strandSerialNum)
                         strandSerialNum += 1
                         elementNum += 1
                     elif currentElement == coil:
-                        newCoil = Coil(chain=newChain, serialNo=coilSerialNum, 
+                        newCoil = Coil(chain=newChain, serialNo=coilSerialNum,
                                         label = 'Coil', startIndex=startIndex, stopIndex=stopIndex)
                     else:
                         pass
@@ -422,7 +419,7 @@ This loads all the chains specified in a PDB file.
         chainIDs = [None]
     for whichChainID in chainIDs:
         chain = Chain.load(filename, qparent, whichChainID)
-        if not pdbID: 
+        if not pdbID:
             pdbID = chain.getPdbID()
         elif pdbID != chain.getPdbID():
             chain.setIDs(pdbID, chain.getChainID())  #Needed if PDB ID is auto-generated
@@ -443,8 +440,6 @@ This sets the viewer for the Chain class.
     '''
     Chain.__viewer=viewer
     
-
-
   def __convertNegativeIndex(self,i):
     '''
 Makes indexing a Chain with a negative index behave similar to lists, 
@@ -461,14 +456,14 @@ tuples, and strings. mychain[-1] returns the last residue of the chain.
     if hasattr(i,'start'):
       start=i.start
       stop=i.stop
-      if i.start is None: 
+      if i.start is None:
         start=1
       #Sasakthi: Removed reverse indexing functionality as residues can have negative indices.
       #elif i.start < 0:
       #  #start=len(self)+i.start+1
       #  start=self.__convertNegativeIndex(i.start)
 
-      if i.stop is None: 
+      if i.stop is None:
         stop=len(self)
       
       #Sasakthi: Removed reverse indexing functionality as residues can have negative indices.
@@ -498,7 +493,7 @@ tuples, and strings. mychain[-1] returns the last residue of the chain.
       try:
         next_residue_key=keys[key_index]
       except IndexError:
-        raise StopIteration 
+        raise StopIteration
 
   # len(my_chain) returns the length of residueList
   def __len__(self):
@@ -581,7 +576,7 @@ bond.setAtom0Ix--one doesn't want a bond between the 97th and 103rd
 residue.
     '''
     cnt = 0
-    try: 
+    try:
         viewer = Chain.getViewer()
     except:
         print 'Error: No viewer is set for Chain!'
@@ -602,7 +597,7 @@ residue.
             
   def addSideChainBonds(self):
     cnt = 0
-    try: 
+    try:
         viewer = Chain.getViewer()
     except:
         print 'Error: No viewer is set for Chain!'
@@ -612,7 +607,7 @@ residue.
             for j in range(len(self.sideChainConnectivity[self[i].symbol3])):
                 atom0 = self[i].getAtom(self.sideChainConnectivity[self[i].symbol3][j][0])
                 atom1 = self[i].getAtom(self.sideChainConnectivity[self[i].symbol3][j][1])
-                if atom0 and atom1 :
+                if atom0 and atom1:
                     bond = PDBBond()
                     bond.setAtom0Ix(atom0.getHashKey())
                     bond.setAtom1Ix(atom1.getHashKey())
@@ -621,15 +616,12 @@ residue.
         if i+1 in self.residueRange():
             atom0 = self[i].getAtom('C')
             atom1 = self[i+1].getAtom('N')
-            if atom0 and atom1 :
+            if atom0 and atom1:
                 bond = PDBBond()
                 bond.setAtom0Ix(atom0.getHashKey())
                 bond.setAtom1Ix(atom1.getHashKey())
                 viewer.renderer.addSideChainBond(bond)
             
-                                  
-    
-
   def addSecel(self, secel):
     '''
 This adds a secel object to the chain.
@@ -661,7 +653,7 @@ This adds a strand object to the chain.
   def addSheet(self, sheetID, sheet):
     '''
 This adds a sheet object to the chain.
-    '''    
+    '''
     if not self.sheets.has_key(sheetID):
       self.sheets[sheetID]=sheet
 
@@ -753,7 +745,6 @@ object where each element is an index in the Chain.
     keys.sort()
     return keys[len(keys)-1]
 
-
   def removeSecel(self, secel):
     '''
 This removes a Secel from the Chain.
@@ -812,7 +803,7 @@ The selection is a list object of indices in the Chain
         if(i in self.residueRange()):
             atom = self[i].getAtom('CA')
             if atom:
-                atom.setSelected(False)    
+                atom.setSelected(False)
                 
     if newSelection is not None:
       self.selectedResidues=newSelection
@@ -839,7 +830,7 @@ The selection is a list object of indices in the Chain
       self.emit( QtCore.SIGNAL('selection updated'))
 
   #Return a pdb-compliant string
-  def toPDB(self, backboneOnly=False, CAlphaPlaceholders=True,  verbose=True): 
+  def toPDB(self, backboneOnly=False, CAlphaPlaceholders=True,  verbose=True):
     """
 This decomposes chain into constituent residues and atoms to render pdb
 coordinate model.
@@ -870,9 +861,9 @@ If CAlphaPlaceholders=False, residues with no atoms will be ignored.
             try:
                 resList[n] = self[index+n].symbol3
             except (KeyError,  IndexError):
-                continue                
-        line = 'SEQRES %s %s %s  %s %s %s %s %s %s %s %s %s %s %s %s %s' % ( str(i).rjust(3), self.getChainID(), str(len(residueIndices)).rjust(4), 
-                                                                            resList[0], resList[1], resList[2], resList[3], resList[4], resList[5], resList[6], 
+                continue
+        line = 'SEQRES %s %s %s  %s %s %s %s %s %s %s %s %s %s %s %s %s' % ( str(i).rjust(3), self.getChainID(), str(len(residueIndices)).rjust(4),
+                                                                            resList[0], resList[1], resList[2], resList[3], resList[4], resList[5], resList[6],
                                                                             resList[7], resList[8], resList[9], resList[10], resList[11], resList[12] )
         line += ' '*10 + '\n'
         s += line
@@ -918,7 +909,7 @@ If CAlphaPlaceholders=False, residues with no atoms will be ignored.
                 element = ' C'
                 charge = '  '
                 
-                line = 'ATOM  %s %s%s%s %s%s%s   %s%s%s%s%s          %s%s\n' % (serial,  name,  altLoc,  resName,  chainID,  
+                line = 'ATOM  %s %s%s%s %s%s%s   %s%s%s%s%s          %s%s\n' % (serial,  name,  altLoc,  resName,  chainID,
                                                                                 resSeq,  iCode,  x,  y,  z,  occupancy,  tempFactor,  element,  charge)
                 s = s + line
                 atom_index += 1
@@ -939,7 +930,7 @@ If CAlphaPlaceholders=False, residues with no atoms will be ignored.
                 raise ValueError
             element = atom.getElement().rjust(2)
             charge = '  '
-            line = 'ATOM  %s %s%s%s %s%s%s   %s%s%s%s%s          %s%s\n' % (serial,  name,  altLoc,  resName,  chainID,  
+            line = 'ATOM  %s %s%s%s %s%s%s   %s%s%s%s%s          %s%s\n' % (serial,  name,  altLoc,  resName,  chainID,
                                                                             resSeq,  iCode,  x,  y,  z,  occupancy,  tempFactor,  element,  charge)
             s = s + line
             atom_index += 1
@@ -992,7 +983,7 @@ This returns a string in the format of an SEQ file for the Chain.
 
   def getSequence(self):
     startIndex = min(self.residueRange())
-    return repr(self).lstrip('.')      
+    return repr(self).lstrip('.')
 
 if __name__ == '__main__':
     mychain = Chain.load('1KPO.pdb')

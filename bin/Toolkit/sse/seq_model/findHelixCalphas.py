@@ -3,6 +3,7 @@
 
 import math
 
+
 def cross_product(a,b):
 	"""Cross product of two 3-d vectors. from http://www-hep.colorado.edu/~fperez/python/python-c/weave_examples.html
 	"""
@@ -12,6 +13,7 @@ def cross_product(a,b):
 	cross[2] = a[0]*b[1]-a[1]*b[0]
 	return cross
 
+
 def dot_product(a,b):
 	if len(a) != len(b): return
 	length = len(a)
@@ -20,12 +22,14 @@ def dot_product(a,b):
 		total += a[i]*b[i]
 	return total
 
+
 def normalize(a):
 	try:
 		r2 = math.sqrt(a[0]*a[0]+a[1]*a[1]+a[2]*a[2])
 		return [a[0]/r2, a[1]/r2, a[2]/r2]
 	except:
 		return a
+
 
 def helixEndpointsToCAlphaPositions(position1, position2, apix=1):
     """
@@ -59,7 +63,7 @@ This function may also take the angstroms per pixel ratio argument.
         phi = math.atan2(dy,dx) + math.pi/2.0
     new_dy = -dx * math.sin(phi) + dy * math.cos(phi)
 
-    if new_dy <= 0: 
+    if new_dy <= 0:
         theta=math.atan2(xyplane,dz)
     else:
         theta=math.atan2(xyplane,dz) + math.pi/2.0
@@ -87,12 +91,12 @@ This function may also take the angstroms per pixel ratio argument.
     rot=[phi,theta]
     mx=[0,0,0,0,0,0,0,0,0]
     mx[0]= math.cos(phi)
-    mx[1]= math.sin(phi) 
+    mx[1]= math.sin(phi)
     mx[2]= 0
     
     mx[3]= -math.cos(theta) * math.sin(phi)
     mx[4]= math.cos(theta) * math.cos(phi)
-    mx[5]= math.sin(theta)	
+    mx[5]= math.sin(theta)
 
     mx[6]= math.sin(theta) * math.sin(phi)
     mx[7]= -math.sin(theta) * math.cos(phi)

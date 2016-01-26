@@ -19,6 +19,7 @@ The Secel class stands for SECondary structure ELement, but doesn't use
 the common abbreviation SSE to distinguish it from other such classes. 
 It is subclassed by Helix, Strand, and Coil. 
     """
+
     def __init__(self, chain, serialNo, label, startIndex, stopIndex, color=None):
         self.chain=chain    #Actual chain instance object
         self.serialNo=serialNo
@@ -33,7 +34,7 @@ It is subclassed by Helix, Strand, and Coil.
     def __repr__(self):
         typeOfSecel = str(type(self)).split('.')[-1]
         typeOfSecel = typeOfSecel.split("'")[0]
-        return "%s(chain=Chain.getChain(%s), serialNo=%s, label=%s, startIndex=%i, stopIndex=%i)" % (typeOfSecel,  
+        return "%s(chain=Chain.getChain(%s), serialNo=%s, label=%s, startIndex=%i, stopIndex=%i)" % (typeOfSecel,
             self.chain.getIDs(),  self.serialNo,  self.label,  self.startIndex, self.stopIndex)
          
     def setColor(self, newColor):

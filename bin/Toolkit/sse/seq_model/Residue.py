@@ -8,33 +8,33 @@
 
 from libpyGORGON import PDBAtom,Vector3DFloat
 
+
 class Residue:
     '''Residue objects have one-letter and three-letter abbreviations and contain PDBAtoms'''
     _aa_dict={
-        'A':'ALA', 'C':'CYS', 'D':'ASP', 'E':'GLU', 'F':'PHE', 'G':'GLY', 'H':'HIS', 'I':'ILE', 
-        'K':'LYS', 'L':'LEU', 'M':'MET', 'N':'ASN', 'P':'PRO', 'Q':'GLN', 'R':'ARG', 'S':'SER', 
+        'A':'ALA', 'C':'CYS', 'D':'ASP', 'E':'GLU', 'F':'PHE', 'G':'GLY', 'H':'HIS', 'I':'ILE',
+        'K':'LYS', 'L':'LEU', 'M':'MET', 'N':'ASN', 'P':'PRO', 'Q':'GLN', 'R':'ARG', 'S':'SER',
         'T':'THR', 'V':'VAL', 'W':'TRP', 'X':'ANY', 'Y':'TYR',
-        'ANY':'X', 'ALA':'A', 'CYS':'C', 'ASP':'D', 'GLU':'E', 'PHE':'F', 'GLY':'G', 'HIS':'H', 
-        'ILE':'I', 'LYS':'K', 'LEU':'L', 'MET':'M', 'ASN':'N', 'PRO':'P', 'GLN':'Q', 'ARG':'R', 
+        'ANY':'X', 'ALA':'A', 'CYS':'C', 'ASP':'D', 'GLU':'E', 'PHE':'F', 'GLY':'G', 'HIS':'H',
+        'ILE':'I', 'LYS':'K', 'LEU':'L', 'MET':'M', 'ASN':'N', 'PRO':'P', 'GLN':'Q', 'ARG':'R',
         'SER':'S', 'THR':'T', 'VAL':'V', 'TYR':'Y', 'TRP':'W'
         }
 
     residueTypes = {
-        'nonpolar': ('GLY', 'ALA', 'VAL', 'LEU', 'ILE', 'PHE', 'TRP', 'MET', 'PRO'), 
-        'polarNoSulfur': ('ASN','GLN','TYR','SER','THR'), 
-        'negative': ('ASP',  'GLU'), 
-        'positive': ('HIS',  'LYS',  'ARG'), 
-        'sulfur': ('MET','CYS'), 
+        'nonpolar': ('GLY', 'ALA', 'VAL', 'LEU', 'ILE', 'PHE', 'TRP', 'MET', 'PRO'),
+        'polarNoSulfur': ('ASN','GLN','TYR','SER','THR'),
+        'negative': ('ASP',  'GLU'),
+        'positive': ('HIS',  'LYS',  'ARG'),
+        'sulfur': ('MET','CYS'),
         'greasy': ('VAL','ILE','LEU','PRO','GLY','ALA','TRP','PRO')
         }
     residueTypes['polar'] = residueTypes['polarNoSulfur'] + ('CYS', )
     residueTypes['neutral'] = residueTypes['nonpolar'] + residueTypes['polar']
     residueTypes['charged'] = residueTypes['negative'] + residueTypes['positive']
     
-
     size = {
-            'GLY':1, 'PRO':1,  
-            'ALA':2,'VAL':2,'THR':2,'CYS':2,  'SER':2, 
+            'GLY':1, 'PRO':1,
+            'ALA':2,'VAL':2,'THR':2,'CYS':2,  'SER':2,
             'MET':3,'LEU':3,'ILE':3,'ASN':3,'GLN':3,'ASP':3,'GLU':3,
             'TRP':4,'HIS':4,'TYR':4,'PHE':4,'ARG':4,'LYS':4
             }
@@ -47,7 +47,7 @@ class Residue:
                 self.symbol3=Residue._aa_dict[symbol]
             except KeyError:
                 self.symbol1 = 'X'
-                self.symbol3='ANY'                
+                self.symbol3='ANY'
 
         elif len(symbol)==3:
             try:
@@ -58,17 +58,14 @@ class Residue:
                 self.symbol3 = 'ANY'
 
         else:
-          raise ValueError, "Residue must be instantiated with either a 1-letter or 3-letter symbol" 
+          raise ValueError, "Residue must be instantiated with either a 1-letter or 3-letter symbol"
 
         self.__atoms={}
         self.chain=chain
 
-
-
     def getAtomNames(self):
         '''Returns the names of the residue's atoms'''
         return self.__atoms.keys()
-
 
     def getAtom(self, atomName):
         '''Returns the residue's PDBAtom given an atom name such as CA'''
@@ -80,7 +77,7 @@ class Residue:
     def addAtom(self, atomName, x, y, z, element="", serialNo=None, occupancy=None, tempFactor=None, charge="" ):
         '''Adds a new PDBAtom to the residue.'''
         residueIndex=self.chain.findIndexForRes(self)
-        rawAtom=PDBAtom(self.chain.getPdbID(), self.chain.getChainID() , residueIndex, atomName)
+        rawAtom=PDBAtom(self.chain.getPdbID(), self.chain.getChainID(), residueIndex, atomName)
         rawAtom.setPosition(Vector3DFloat(x,y,z))
         if not element:
             element = atomName[0]
@@ -116,6 +113,7 @@ class Residue:
     def clearAtom(self, atomName):
         '''Removes the PDBAtom specified by name from the residue'''
         self.__atoms.pop(atomName)
+
     def clearAtoms(self):
         '''Removes all the PDBAtoms from the residue'''
         self.__atoms={}

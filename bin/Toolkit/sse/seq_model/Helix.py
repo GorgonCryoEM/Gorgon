@@ -14,8 +14,10 @@ except:
 
 from seq_model.Secel import Secel
 
+
 class Helix(Secel):
     serialNo=0
+
     def __init__(self, chain, serialNo, label, startIndex, stopIndex, color=None):
         if qtEnabled and color==None:
           color=QtGui.QColor(51,208,208)
@@ -79,10 +81,8 @@ to the chain.
         cnt = len(atomList)
         for i in range(cnt):
             if(atomList[i]):
-                atomList[i].setPosition(positionList[cnt-i-1])                              
+                atomList[i].setPosition(positionList[cnt-i-1])
             
-    
-    
     def getAxisPoints(self):
         """
 This returns a tuple of the coordinates for the two endpoints of the 

@@ -2,7 +2,7 @@
 # Copyright (C) 2005-2008 Washington University in St Louis, Baylor College of Medicine.  All rights reserved
 # Author:  Mike Marsh (michael.marsh@bcm.edu)
 # Class:  Secel
-# Class Description: 
+# Class Description:
 #                    More info in: seq_model-doc.txt
 #
 
@@ -14,7 +14,9 @@ except:
 
 from seq_model.Secel import Secel
 
+
 class Coil(Secel):
+
   def __init__(self, chain, serialNo, label, startIndex, stopIndex, color=None):
     if qtEnabled and color==None:
       color=QtGui.QColor(60,60,60)

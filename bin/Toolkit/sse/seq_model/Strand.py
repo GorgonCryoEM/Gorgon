@@ -14,7 +14,9 @@ except:
 
 from seq_model.Secel import Secel
 
+
 class Strand(Secel):
+
     def __init__(self, chain, strandNo, label, startIndex, stopIndex, color=None):
         if qtEnabled and color==None:
           color=QtGui.QColor(0,180,50)
@@ -32,7 +34,6 @@ This returns a 'SHEET' line for this strand for a PDB file.
         startChainID=self.chain.chainID
         stopResName=self.chain.residueList[self.stopIndex].symbol3
         nStrands=len(sheet.strandList)
-    
     
         s= "SHEET "
         s=s+ str(self.strandNo).rjust(4) +' '

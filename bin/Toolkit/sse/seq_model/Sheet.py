@@ -8,12 +8,13 @@
 
 from seq_model.Strand import Strand
 
+
 class Sheet:
+
     def __init__(self, initialStrand=None):
         self.strandList={}
         if initialStrand is not None:
             self.strandList[initialStrand.strandNo]=initialStrand
-
 
     @classmethod
     def parsePDB(cls,line,chain):
@@ -40,7 +41,6 @@ adds it to the chain.
         else:
             #chain.sheets[sheetID].strandList[strandNo] = strand
             chain.addStrand(strand, strandNo, sheetID)
-
 
     def toPDB(self,sheetID):
         """
