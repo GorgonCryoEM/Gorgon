@@ -381,10 +381,10 @@ class SSEHelixCorrespondenceFinderForm(object):
     def setConstants(self):
         #Data Sources tab
         #self.correspondenceEngine.setConstant("SSE_FILE_NAME", str(self.ui.lineEditHelixLengthFile.text()))
-        self.correspondenceEngine.setConstant("VRML_HELIX_FILE_NAME", str(self.ui.lineEditHelixLocationFile.text()))
-        self.correspondenceEngine.setConstant("VRML_SHEET_FILE_NAME", str(self.ui.lineEditSheetLocationFile.text()))
-        self.correspondenceEngine.setConstant("MRC_FILE_NAME", str(self.ui.lineEditSkeletonFile.text()))
-        self.sequenceFileName = str(self.ui.lineEditSequenceFile.text())
+        self.correspondenceEngine.setConstant("VRML_HELIX_FILE_NAME", self.helix)
+#         self.correspondenceEngine.setConstant("VRML_SHEET_FILE_NAME", str(self.ui.lineEditSheetLocationFile.text()))
+        self.correspondenceEngine.setConstant("MRC_FILE_NAME", self.skeleton)
+        self.sequenceFileName = self.sequence
         self.correspondenceEngine.setConstant("SEQUENCE_FILE_NAME", self.sequenceFileName)
         if self.sequenceFileName.split('.')[-1].lower() == 'pdb':
             self.correspondenceEngine.setConstant("SEQUENCE_FILE_TYPE", "PDB")
