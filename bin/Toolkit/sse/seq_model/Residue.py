@@ -5,7 +5,7 @@
 #                    More info in: seq_model-doc.txt
 
 
-from libpyGORGON import PDBAtom,Vector3DFloat
+from libpycore import PDBAtom,Vector3DFloat
 
 
 class Residue:

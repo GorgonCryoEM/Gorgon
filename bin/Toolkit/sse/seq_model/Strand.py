@@ -11,7 +11,7 @@ try:
 except:
     qtEnabled=False
 
-from seq_model.Secel import Secel
+from .Secel import Secel
 
 
 class Strand(Secel):
