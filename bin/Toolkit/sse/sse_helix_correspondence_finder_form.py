@@ -15,28 +15,25 @@ import math
 
 class SSEHelixCorrespondenceFinderForm(object):
 
-    def __init__(self, main, viewer, parent=None):
-        BaseDockWidget.__init__(self,
-                               main,
-                               "Find SSE Correspondences",
-                               "Find the correspondence between observed and predicted SSEs",
-                               "perform_SSEFindHelixCorrespondences",
-                               "actions-sse-findhelixcorrespondences",
-                               "actions-sse",
-                               QtCore.Qt.LeftDockWidgetArea | QtCore.Qt.RightDockWidgetArea | QtCore.Qt.BottomDockWidgetArea,
-                               QtCore.Qt.RightDockWidgetArea,
-                               parent)
+    def __init__(self, skeleton, sequence, helix, output):
+        self.ui = Ui_DialogSSEHelixCorrespondenceFinder()
+        self.skeleton = skeleton
+        self.sequence = sequence
+        self.helix    = helix
+        self.output   = output
+        
         self.executed = False
-        self.app = main
-        self.app.themes.addDefaultRGB("CorrespondenceFinder:BackboneTrace", 255, 255, 255, 255)
-        self.viewer = viewer
-        self.createUI()
-        self.createActions()
         self.loadingCorrespondance = False
         self.userConstraints = {}
         self.constraintActions = {}
         self.selectedRow = 0
         self.dataLoaded = False
+        
+        '''
+        SSEViewer
+        '''
+        self.correspondenceEngine = SSECorrespondenceEngine()
+        self.correspondenceLibrary = CorrespondenceLibrary()
 
     def createUI(self):
         self.ui = Ui_DialogSSEHelixCorrespondenceFinder()
