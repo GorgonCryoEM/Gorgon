@@ -1,3 +1,13 @@
+class ComboBox(object):
+
+    def __init__(self):
+        self.ind = -1
+        self.arr = []
+        
+    def currentIndex(self):
+        return self.ind
+
+
 class Ui_DialogSSEHelixCorrespondenceFinder(object):
 
     def __init__(self):
@@ -18,3 +28,5 @@ class Ui_DialogSSEHelixCorrespondenceFinder(object):
         self.radioButtonAbsoluteDifference          = True
         self.doubleSpinBoxLoopImportance            = 0.2
         self.doubleSpinBoxEuclideanLoopUsedPenalty  = 5.0
+        
+        self.comboBoxCorrespondences = ComboBox()
