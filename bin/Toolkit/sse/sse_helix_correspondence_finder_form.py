@@ -182,22 +182,7 @@ class SSEHelixCorrespondenceFinderForm(object):
         print "begin checkOk"
         print "correspondence index at beginning is "
         print self.ui.comboBoxCorrespondences.currentIndex()
-
-        allLoaded = not(self.ui.lineEditHelixLocationFile.text().isEmpty()
-                           or self.ui.lineEditSheetLocationFile.text().isEmpty()
-                           or self.ui.lineEditSkeletonFile.text().isEmpty()
-                           or self.ui.lineEditSequenceFile.text().isEmpty())
-
-        self.dataLoaded = not((self.ui.lineEditHelixLocationFile.text().isEmpty()
-                           and self.ui.lineEditSheetLocationFile.text().isEmpty())
-                           or self.ui.lineEditSkeletonFile.text().isEmpty()
-                           or self.ui.lineEditSequenceFile.text().isEmpty())
-        self.ui.pushButtonOk.setEnabled(self.dataLoaded)
         
-        self.ui.tabWidget.setTabEnabled(1, self.dataLoaded)
-        self.ui.tabWidget.setTabEnabled(2, self.dataLoaded)
-        self.ui.tabWidget.setTabEnabled(3, self.dataLoaded)
-        self.ui.tabWidget.setTabEnabled(4, self.dataLoaded)
         if(self.dataLoaded):
             self.executed = False
             self.createBasicCorrespondence()
@@ -609,7 +594,6 @@ class SSEHelixCorrespondenceFinderForm(object):
 
         print "Starting to populate results. Found " + str(self.resultCount) + " results."
 
-        self.ui.tabWidget.setCurrentIndex(4)
         # clear the correspondence list
         corrList = []
         
@@ -715,7 +699,6 @@ class SSEHelixCorrespondenceFinderForm(object):
         
         print "before calling StructurePrediction.load"
         print "sequenceFileName is " + str(self.sequenceFileName)
-        print "app is " + str(self.app)
         includeStrands = self.correspondenceEngine.getConstantInt("INCLUDE_STRANDS")
         structPred = StructurePrediction.load(self.sequenceFileName, self.app, includeStrands)
         print "after calling StructurePrediction.load"
@@ -821,8 +804,6 @@ class SSEHelixCorrespondenceFinderForm(object):
             self.correspondenceLibrary.correspondenceList.append(self.lastCorrespondence)
 
         self.populateComboBox(self.correspondenceLibrary)
-        self.viewer.emitModelChanged()
-        self.ui.tabWidget.setCurrentIndex(4)
         print "done with search"
                 
     def reject(self):
