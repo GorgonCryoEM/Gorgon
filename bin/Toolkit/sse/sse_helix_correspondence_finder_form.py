@@ -1,8 +1,3 @@
-# Copyright (C) 2005-2008 Washington University in St Louis, Baylor College of Medicine.  All rights reserved
-# Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
-# Description:   A widget that can be used to find correspondance between helices
-
-
 from PyQt4 import QtCore, QtGui
 from ui_dialog_sse_helix_correspondence_finder import Ui_DialogSSEHelixCorrespondenceFinder
 from libpyGORGON import SSECorrespondenceEngine, SSECorrespondenceResult, Vector3DFloat
@@ -15,12 +10,6 @@ from correspondence.StructureObservation import StructureObservation
 from correspondence.StructurePrediction import StructurePrediction
 from seq_model.Helix import Helix
 from vector_lib import *
-import xml.dom.minidom
-from base_dock_widget import BaseDockWidget
-
-from OpenGL.GL import *
-from OpenGL.GLU import *
-from OpenGL.GLUT import *
 
 import math
 
