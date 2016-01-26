@@ -29,4 +29,7 @@ class Ui_DialogSSEHelixCorrespondenceFinder(object):
         self.doubleSpinBoxLoopImportance            = 0.2
         self.doubleSpinBoxEuclideanLoopUsedPenalty  = 5.0
         
+        self.checkBoxMissingHelices = bool()
+        self.checkBoxMissingSheets = bool()
+        
         self.comboBoxCorrespondences = ComboBox()
