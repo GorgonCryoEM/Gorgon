@@ -1,15 +1,14 @@
-from PyQt4 import QtCore, QtGui
+from libpycore import SSECorrespondenceEngine, SSECorrespondenceResult, Vector3DFloat
 from ui_dialog_sse_helix_correspondence_finder import Ui_DialogSSEHelixCorrespondenceFinder
-from libpyGORGON import SSECorrespondenceEngine, SSECorrespondenceResult, Vector3DFloat
-from correspondence.CorrespondenceLibrary import CorrespondenceLibrary
-from correspondence.Correspondence import Correspondence
-from correspondence.Match import Match
-from correspondence.ObservedHelix import ObservedHelix
-from correspondence.ObservedSheet import ObservedSheet
-from correspondence.StructureObservation import StructureObservation
-from correspondence.StructurePrediction import StructurePrediction
-from seq_model.Helix import Helix
-from vector_lib import *
+from .correspondence.CorrespondenceLibrary import CorrespondenceLibrary
+from .correspondence.Correspondence import Correspondence
+from .correspondence.Match import Match
+from .correspondence.ObservedHelix import ObservedHelix
+# from .correspondence.ObservedSheet import ObservedSheet
+from .correspondence.StructureObservation import StructureObservation
+from .correspondence.StructurePrediction import StructurePrediction
+# from .seq_model.Helix import Helix
+# from vector_lib import *
 
 import math
 
