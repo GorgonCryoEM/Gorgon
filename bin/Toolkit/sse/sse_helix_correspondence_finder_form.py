@@ -700,12 +700,11 @@ class SSEHelixCorrespondenceFinderForm(object):
         print "before calling StructurePrediction.load"
         print "sequenceFileName is " + str(self.sequenceFileName)
         includeStrands = self.correspondenceEngine.getConstantInt("INCLUDE_STRANDS")
-        structPred = StructurePrediction.load(self.sequenceFileName, self.app, includeStrands)
+        self.structPred = StructurePrediction.load(self.sequenceFileName, None, includeStrands)
         print "after calling StructurePrediction.load"
-        cAlphaViewer = self.app.viewers['calpha']
-        sseViewer = self.app.viewers['sse']
-        skeletonViewer = self.app.viewers['skeleton']
-        cAlphaViewer.structPred = structPred
+        cAlphaViewer   = None
+        sseViewer      = None
+        skeletonViewer = None
 
         def vector3DFloatToTuple(v3df):
             return (v3df.x(), v3df.y(), v3df.z())
@@ -758,7 +757,7 @@ class SSEHelixCorrespondenceFinderForm(object):
         print "writing to correspondenceLibrary"
 
         # create a new python CorrespondenceLibrary object
-        self.correspondenceLibrary = CorrespondenceLibrary(sp = structPred, so = structObserv)
+        self.correspondenceLibrary = CorrespondenceLibrary(sp = self.structPred, so = structObserv)
                
         print "finished creating basic correspondences"
         
