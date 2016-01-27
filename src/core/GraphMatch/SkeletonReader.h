@@ -28,7 +28,7 @@ namespace GraphMatch {
         static void FindPaths(StandardGraph * graph);
         static void FindPath(int startIx, int endIx, vector<vector<Vector3DInt> > nodes, Volume * maskVol, StandardGraph * graph, bool eraseMask);
         static void FindCornerCellsInSheet(Volume * vol, Volume * paintedVol, vector<GeometricShape*> & helixes, int sheetId);
-        static int isSkeletonSheet(Volume * vol, int ox, int oy, int oz );
+        static int isSkeletonSheet(const Volume &vol, int ox, int oy, int oz );
 
     };
 
@@ -447,7 +447,7 @@ namespace GraphMatch {
                         // Not a data point or has been visited
                         continue ;
                     }
-                    if ( ! isSkeletonSheet( vol, i, j, k ) )
+                    if ( ! isSkeletonSheet( *vol, i, j, k ) )
                     {
                         // Not a sheet point
                         continue ;
@@ -461,7 +461,7 @@ namespace GraphMatch {
                     while ( queue->popQueue(ox, oy, oz) )
                     {
                         // Test if neighbors satisfy sheet condition
-                        if ( isSkeletonSheet(vol, ox, oy, oz ) )
+                        if ( isSkeletonSheet(*vol, ox, oy, oz ) )
                         {
                             for ( int m = 0 ; m < 6 ; m ++ )
                             {
@@ -470,7 +470,7 @@ namespace GraphMatch {
                                 int nz = oz + neighbor6[m][2] ;
 
                                 //if ( vol->getDataAt(nx,ny,nz) > 0 && svol->getDataAt(nx,ny,nz) == 0 )
-                                if ( vol->getDataAt(nx,ny,nz) > 0 && svol->getDataAt(nx,ny,nz) == 0 && isSkeletonSheet(vol,nx,ny,nz) )
+                                if ( vol->getDataAt(nx,ny,nz) > 0 && svol->getDataAt(nx,ny,nz) == 0 && isSkeletonSheet(*vol,nx,ny,nz) )
                                 {
                                     svol->setDataAt(nx,ny,nz,totSheets);
                                     queue->pushQueue(nx,ny,nz) ;
@@ -508,7 +508,7 @@ namespace GraphMatch {
 
     // Returns a collection of individual sheets with minimum size minSize, created from input volume vol
     // This is a copy of isSheet from volume.h, with the minimum number of corner nodes changed from 3 to 1.
-    int SkeletonReader::isSkeletonSheet(Volume * vol, int ox, int oy, int oz )
+    int SkeletonReader::isSkeletonSheet(const Volume &vol, int ox, int oy, int oz )
     {
         int cn = 12 ;
         int nx, ny, nz ;
@@ -521,7 +521,7 @@ namespace GraphMatch {
                 ny = oy + sheetNeighbor[i][j][1] ;
                 nz = oz + sheetNeighbor[i][j][2] ;
 
-                if ( vol->getDataAt( nx, ny, nz ) <= 0 )
+                if ( vol.getDataAt( nx, ny, nz ) <= 0 )
                 {
                     cn -- ;
                     break ;
