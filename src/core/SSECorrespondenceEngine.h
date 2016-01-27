@@ -31,7 +31,6 @@ namespace Visualization {
         SecondaryStructure * GetSequenceSSE(int sseId);
         int GetSkeletonSSECount();
         int GetSequenceSSECount();
-        void SetSSEColor(int index, float r, float g, float b, float a);
         void SetVisibleCorrespondence(int correspondenceIndex);
 
         void InitializePathFinder(NonManifoldMesh_Annotated * mesh);
@@ -178,11 +177,6 @@ namespace Visualization {
 
     int SSECorrespondenceEngine::GetSequenceSSECount() {
         return sequence->pdbStructures.size();
-    }
-
-    // set the color of an SSE.
-    void SSECorrespondenceEngine::SetSSEColor(int index, float r, float g, float b, float a) {
-        skeleton->skeletonHelixes[index]->SetColor(r, g, b, a);
     }
 
     void SSECorrespondenceEngine::SetVisibleCorrespondence(int correspondenceIndex) {

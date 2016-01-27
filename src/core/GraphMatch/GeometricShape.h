@@ -23,7 +23,6 @@ namespace GraphMatch {
     public:
         GeometricShape();
         ~GeometricShape();
-        bool GetSelected();
         bool IsHelix();
         bool IsSheet();
         bool IsInsideShape(Point3 p);
@@ -42,13 +41,10 @@ namespace GraphMatch {
         void FindCornerCellsInHelix();
         void Rotate(Vector3 axis, double angle);
         void Translate(Vector3 translationVector);
-        void SetColor(float r, float g, float b, float a);
         void SetCenter(Point3 center);
         void SetCenter(Vector3DFloat center);
         void SetHeight(double height);
         void SetRadius(double radius);
-        void GetColor(float & r, float & g, float & b, float & a);
-        void SetSelected(bool selected);
         void GetRotationAxisAndAngle(Vector3DFloat &axis, double &angle);
         static GeometricShape * CreateHelix(Vector3DFloat p1, Vector3DFloat p2, float radius);
         static void WriteToFile(vector<GeometricShape*> & helices, FILE * fileName);
@@ -82,11 +78,6 @@ namespace GraphMatch {
         double  height;
         Matrix4 rotationMatrix;
         Matrix4 inverseRotationMatrix;
-        float colorR;
-        float colorG;
-        float colorB;
-        float colorA;
-        bool selected;
     };
 
     GeometricShape::GeometricShape() {
@@ -95,12 +86,6 @@ namespace GraphMatch {
         rotationMatrix = Matrix4::identity();
         inverseRotationMatrix = Matrix4::identity();
         internalCells.clear();
-        colorR = 0.0f;
-        colorG = 1.0f;
-        colorB = 0.0f;
-        colorA = 1.0f;
-        selected = false;
-
     }
 
     GeometricShape::~GeometricShape(){
@@ -108,10 +93,6 @@ namespace GraphMatch {
         cornerCells.clear();
         polygonPoints.clear();
         polygons.clear();
-    }
-
-    bool GeometricShape::GetSelected() {
-        return selected;
     }
 
     bool GeometricShape::IsHelix() {
@@ -400,13 +381,6 @@ namespace GraphMatch {
         UpdateWorldToObjectMatrix();
     }
 
-    void GeometricShape::SetColor(float r, float g, float b, float a) {
-        colorR = r;
-        colorG = g;
-        colorB = b;
-        colorA = a;
-    }
-
     void GeometricShape::SetCenter(Point3 center) {
         this->centerPoint = center;
         UpdateWorldToObjectMatrix();
@@ -430,15 +404,6 @@ namespace GraphMatch {
     void GeometricShape::UpdateWorldToObjectMatrix() {
         worldToObject = Matrix4::translation(centerPoint) * rotationMatrix * Matrix4::scaling(radius*2, height, radius*2);
         objectToWorld = Matrix4::scaling(1.0/(radius*2.0), 1.0/height, 1.0/(radius*2.0)) * inverseRotationMatrix * Matrix4::translation(Point3(-centerPoint[0], -centerPoint[1], -centerPoint[2]));
-    }
-    void GeometricShape::GetColor(float & r, float & g, float & b, float & a) {
-        r = colorR;
-        g = colorG;
-        b = colorB;
-        a = colorA;
-    }
-    void GeometricShape::SetSelected(bool selected) {
-        this->selected = selected;
     }
 
     void GeometricShape::GetRotationAxisAndAngle(Vector3DFloat &axis, double &angle) {
