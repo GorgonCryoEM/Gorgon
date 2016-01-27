@@ -37,6 +37,8 @@ class SSEHelixCorrespondenceFinderForm(object):
         
         self.run()
         
+        self.correspondenceEngine.saveCorrespondenceToFile(self.output)
+        
     def run(self):
         self.checkOk()
         self.accept()
