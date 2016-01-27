@@ -89,13 +89,13 @@ namespace GraphMatch {
         Volume * vol = (MRCReaderPicker::pick(volumeFile))->getVolume();
         //vol->toMathematicaFile("myVolume.nb");
 #ifdef VERBOSE
-        printf("Constructing 'paintedVol'...\n");
+        printf("\033[34mConstructing 'paintedVol'...\n\033[0m");
 #endif
 
         Volume paintedVol(vol->getSizeX(), vol->getSizeY(), vol->getSizeZ());
 
 #ifdef VERBOSE
-        printf("Finished reading volume file, now moving on to helixes...\n");
+        printf("\033[34mFinished reading volume file, now moving on to helixes...\n\033[0m");
 #endif
 
         // Read the helix file
@@ -108,7 +108,7 @@ namespace GraphMatch {
 #ifdef INCLUDE_SHEETS
 
 #ifdef VERBOSE
-        printf("Finished reading helix file, now moving on to sheets...\n");
+        printf("\033[34mFinished reading helix file, now moving on to sheets...\n\033[0m");
 #endif // VERBOSE
 
         vector<GeometricShape*> sheets;
@@ -117,7 +117,7 @@ namespace GraphMatch {
         ReadSheetFile(sheetFile, sheets);
 
 #ifdef VERBOSE
-        printf("Finished reading sheet file.\n");
+        printf("\033[34mFinished reading sheet file.\n\033[0m");
 #endif // VERBOSE
 
 #endif // INCLUDE_SHEETS
@@ -196,7 +196,7 @@ namespace GraphMatch {
         }
 
 #ifdef VERBOSE
-        cout << "min distance matrix: " << endl;
+        cout << "\033[34mmin distance matrix: \033[0m" << endl;
         for (int i = 1; i <= numSkeletonSheets; i++) {
             cout << "skeleton sheet " << i << ": ";
             for(int j = 0; j < (int)sheets.size(); j++) {
@@ -217,7 +217,8 @@ namespace GraphMatch {
                 }
             }
 #ifdef VERBOSE
-            cout << "skeleton sheet " << i << " maps to SSEHunter sheet " << sseSheetMapping[i] << endl;
+            cout << "\033[34mskeleton sheet " << i << " maps to SSEHunter sheet " << sseSheetMapping[i] << endl;
+            cout<<"\033[0m";
 #endif // VERBOSE
         }
 
@@ -271,7 +272,7 @@ namespace GraphMatch {
         }
 
 #ifdef VERBOSE
-        printf("Finished finding points inside helices and sheets.\n");
+        printf("\033[34mFinished finding points inside helices and sheets.\n\033[0m");
 #endif // VERBOSE
 
         int numH = 0;
@@ -351,7 +352,7 @@ namespace GraphMatch {
 #endif // VERBOSE
 
 #ifdef VERBOSE
-        printf("Finished creating connectivity graph.\n");
+        printf("\033[34mFinished creating connectivity graph.\n\033[0m");
 #endif // VERBOSE
 
         // populate graph->skeletonHelixes with list of helices and sheets
@@ -371,11 +372,11 @@ namespace GraphMatch {
         }
 
 #ifdef VERBOSE
-        printf("Finished running FindSizes2.\n");
+        printf("\033[34mFinished running FindSizes2.\n\033[0m");
 #endif // VERBOSE
 
 #ifdef VERBOSE
-        printf("Finished creating a list of helices and sheets.\n");
+        printf("\033[34mFinished creating a list of helices and sheets.\n\033[0m");
 #endif // VERBOSE
 
         // save results to graph->skeletonVolume
@@ -391,7 +392,7 @@ namespace GraphMatch {
         }
 
 #ifdef VERBOSE
-        printf("Graph saved to object.\n");
+        printf("\033[34mGraph saved to object.\n\033[0m");
 #endif // VERBOSE
 
         // measure Euclidian distance between all pairs of nodes and add edges between those nodes that are
@@ -399,17 +400,17 @@ namespace GraphMatch {
         graph->GenerateEuclidianMatrix(vol);
 
 #ifdef VERBOSE
-        printf("Euclidian matrix generated.\n");
+        printf("\033[34mEuclidian matrix generated.\n\033[0m");
 #endif // VERBOSE
 
 #ifdef VERBOSE
-        printf("Merging pairs of sheets that are close to each other.\n");
+        printf("\033[34mMerging pairs of sheets that are close to each other.\n\033[0m");
 #endif // VERBOSE
 
         graph->MergeSheets(SHEET_MERGE_THRESHOLD);
 
 #ifdef VERBOSE
-        printf("Done merging pairs of sheets.\n");
+        printf("\033[34mDone merging pairs of sheets.\n\033[0m");
 #endif // VERBOSE
 
 
@@ -421,7 +422,7 @@ namespace GraphMatch {
     Volume* SkeletonReader::getSheetsNoThreshold( Volume * vol, int minSize ) {
         //Initialize volume
 #ifdef VERBOSE
-        printf("Initialize volume at %d %d %d\n",  vol->getSizeX(), vol->getSizeY(), vol->getSizeZ() ) ;
+        printf("\033[34mInitialize volume at %d %d %d\n\033[0m",  vol->getSizeX(), vol->getSizeY(), vol->getSizeZ() ) ;
 #endif // VERBOSE
         Volume* svol = new Volume( vol->getSizeX(), vol->getSizeY(), vol->getSizeZ() ) ;
 
@@ -435,7 +436,7 @@ namespace GraphMatch {
 
         //Start clustering
 #ifdef VERBOSE
-        printf("Start clustering...\n" ) ;
+        printf("\033[34mStart clustering...\n\033[0m" ) ;
 #endif // VERBOSE
         int ox, oy, oz ;
         for ( int i = 0 ; i < vol->getSizeX() ; i ++ )
@@ -491,7 +492,7 @@ namespace GraphMatch {
 
         // Removing clusters less than minSize
 #ifdef VERBOSE
-        printf("Removing small clusters.\n") ;
+        printf("\033[34mRemoving small clusters.\n\033[0m") ;
 #endif // VERBOSE
         for (int i = 0 ; i < vol->getSizeX() ; i ++ )
             for (int j = 0 ; j < vol->getSizeY() ; j ++ )
@@ -574,13 +575,15 @@ namespace GraphMatch {
                     //helixes[sheetId]->cornerCells[helixes[sheetId]->cornerCells.size()-1].node = 1;
                     helixes[sheetId]->cornerCells[helixes[sheetId]->cornerCells.size()-1].node = helixes[sheetId]->cornerCells.size();
 #ifdef VERBOSE
-                    cout << "Sheet corner cell found at sheet " << sheetId << " node " << i << ", corner " << helixes[sheetId]->cornerCells.size() << ", coordinates (" << helixes[sheetId]->internalCells[i].x << "," << helixes[sheetId]->internalCells[i].y << "," << helixes[sheetId]->internalCells[i].z << "), outsideCounter = " << outsideCounter << endl;
+                    cout << "\033[34mSheet corner cell found at sheet " << sheetId << " node " << i << ", corner " << helixes[sheetId]->cornerCells.size() << ", coordinates (" << helixes[sheetId]->internalCells[i].x << "," << helixes[sheetId]->internalCells[i].y << "," << helixes[sheetId]->internalCells[i].z << "), outsideCounter = " << outsideCounter << endl;
+                    cout<<"\033[0m";
 #endif // VERBOSE
                 }
             }
         }
 #ifdef VERBOSE
-        cout << "Done finding corner cells for sheet " << sheetId << ". " << helixes[sheetId]->cornerCells.size() << " corner cells.  " << helixes[sheetId]->internalCells.size() << " internal cells." << endl;
+        cout << "\033[34mDone finding corner cells for sheet " << sheetId << ". " << helixes[sheetId]->cornerCells.size() << " corner cells.  " << helixes[sheetId]->internalCells.size() << " internal cells." << endl;
+        cout<<"\033[0m";
 #endif // VERBOSE
         //assert(helixes[sheetId]->cornerCells.size() >= 2);
         helixes[sheetId]->length = (float)helixes[sheetId]->internalCells.size();
@@ -903,7 +906,7 @@ namespace GraphMatch {
         vector<Vector3DInt> node;
 
 #ifdef VERBOSE
-        printf("Storing helix endpoints.\n");
+        printf("\033[34mStoring helix endpoints.\n\033[0m");
 #endif // VERBOSE
 
         // find all graph nodes
@@ -934,7 +937,7 @@ namespace GraphMatch {
         Volume * maskVol = new Volume(*graph->skeletonVolume);
 
 #ifdef VERBOSE
-        printf("Finding all paths through helices.\n");
+        printf("\033[34mFinding all paths through helices.\n\033[0m");
 #endif // VERBOSE
 
         // add all paths through helices, from (odd) start index to (even) end index
@@ -945,7 +948,7 @@ namespace GraphMatch {
         }
 
 #ifdef VERBOSE
-        printf("Finding all paths between helices.\n");
+        printf("\033[34mFinding all paths between helices.\n\033[0m");
 #endif // VERBOSE
         // for every pair of endpoints i!=j, add a path, if this path is not already defined
         for(unsigned int i = 0; i < nodes.size()-1; i++) {
@@ -960,7 +963,7 @@ namespace GraphMatch {
         cout << "after adding all paths, maskVol has " << maskVol->getNonZeroVoxelCount() << " nonzero voxels" << endl;
 
 #ifdef VERBOSE
-        printf("Done finding all paths between helices.\n");
+        printf("\033[34mDone finding all paths between helices.\n\033[0m");
 #endif // VERBOSE
 
         delete maskVol;
