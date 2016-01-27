@@ -24,8 +24,6 @@ namespace Visualization {
         int GetResultCount();
         int LoadCorrespondenceFromFile(string fileName);
         SSECorrespondenceResult GetResult(int rank);
-        string GetSupportedLoadFileFormats();
-        string GetSupportedSaveFileFormats();
         void SaveCorrespondenceToFile(string fileName);
         GeometricShape * GetSkeletonSSE(int sseId);
         SecondaryStructure * GetSequenceSSE(int sseId);
@@ -127,13 +125,6 @@ namespace Visualization {
         //}
     }
 
-    string SSECorrespondenceEngine::GetSupportedLoadFileFormats() {
-        return "Correspondence Results (*.corr)";
-    }
-
-    string SSECorrespondenceEngine::GetSupportedSaveFileFormats() {
-        return "Correspondence Results (*.corr)";
-    }
     void SSECorrespondenceEngine::SaveCorrespondenceToFile(string fileName) {
         FILE* fout = fopen((char*)fileName.c_str(), "wt");
         if (fout == NULL)
