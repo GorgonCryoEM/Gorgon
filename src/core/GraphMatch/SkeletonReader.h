@@ -420,8 +420,6 @@ namespace GraphMatch {
     // Returns a collection of individual sheets with minimum size minSize, created from input volume vol
     // This is a copy of getSheets from volume.h, with the final thresholding step removed.
     Volume* SkeletonReader::getSheetsNoThreshold( Volume * vol, int minSize ) {
-        int i, j, k ;
-
         //Initialize volume
 #ifdef VERBOSE
         printf("Initialize volume at %d %d %d\n",  vol->getSizeX(), vol->getSizeY(), vol->getSizeZ() ) ;
@@ -430,7 +428,7 @@ namespace GraphMatch {
 
         //Initialize cluster counters
         int sheets[MAX_SHEETS] ;
-        for ( i = 0 ; i < MAX_SHEETS ; i ++ )
+        for (int i = 0 ; i < MAX_SHEETS ; i ++ )
         {
             sheets[ i ] = 0 ;
         }
@@ -441,9 +439,9 @@ namespace GraphMatch {
         printf("Start clustering...\n" ) ;
 #endif // VERBOSE
         int ox, oy, oz ;
-        for ( i = 0 ; i < vol->getSizeX() ; i ++ )
-            for ( j = 0 ; j < vol->getSizeY() ; j ++ )
-                for ( k = 0 ; k < vol->getSizeZ() ; k ++ )
+        for ( int i = 0 ; i < vol->getSizeX() ; i ++ )
+            for ( int j = 0 ; j < vol->getSizeY() ; j ++ )
+                for ( int k = 0 ; k < vol->getSizeZ() ; k ++ )
                 {
                     if ( vol->getDataAt(i,j,k) <= 0 || svol->getDataAt(i,j,k) != 0 )
                     {
@@ -496,9 +494,9 @@ namespace GraphMatch {
 #ifdef VERBOSE
         printf("Removing small clusters.\n") ;
 #endif // VERBOSE
-        for ( i = 0 ; i < vol->getSizeX() ; i ++ )
-            for ( j = 0 ; j < vol->getSizeY() ; j ++ )
-                for ( k = 0 ; k < vol->getSizeZ() ; k ++ )
+        for (int i = 0 ; i < vol->getSizeX() ; i ++ )
+            for (int j = 0 ; j < vol->getSizeY() ; j ++ )
+                for (int k = 0 ; k < vol->getSizeZ() ; k ++ )
                 {
                     int cnt = (int) svol->getDataAt(i,j,k) ;
                     if ( cnt > 0 && sheets[ cnt ] < minSize )
