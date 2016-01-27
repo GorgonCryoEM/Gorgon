@@ -7,8 +7,6 @@
 #include <vector>
 #include <map>
 #include <set>
-//#include "MeshRenderer.h" // to include Draw function
-//#include "Renderer.h" // to include DrawSphere function
 //#include <GorgonGL.h>
 //#include <Foundation/StringUtils.h>
 
@@ -255,51 +253,6 @@ namespace Visualization {
         for(unsigned int i = 0; i < pathVertices.size(); i++) {
             mesh->vertices[pathVertices[i]].tag = false;
         }
-
-        //vector<unsigned int> endPoints;
-
-        //vector<unsigned int> neighbors, n2;
-        //for(unsigned int i=0; i < pathVertices.size(); i++) {
-        //	neighbors = mesh->GetNeighboringVertexIndices(pathVertices[i]);
-        //	int neighborCount = 0;
-        //	for(unsigned int j = 0; j < neighbors.size(); j++) {
-        //		if(!mesh->vertices[neighbors[j]].tag) {
-        //			neighborCount++;
-        //		}
-        //	}
-        //	if(neighborCount < 2) {
-        //		endPoints.push_back(pathVertices[i]);
-        //	}
-        //}
-
-        //int currIx;
-        //while(endPoints.size() > 0) {
-        //	currIx = endPoints[0];
-        //	endPoints.erase(endPoints.begin());
-        //	printf("Can I prune: %d", currIx);
-        //	if(!mesh->vertices[currIx].tag && (preserve.find(currIx) == preserve.end())) {
-        //		printf(" Yes!");
-        //		mesh->vertices[currIx].tag = true;
-        //		neighbors = mesh->GetNeighboringVertexIndices(currIx);
-
-        //		for(unsigned int j = 0; j < neighbors.size(); j++) {
-        //			if((!mesh->vertices[neighbors[j]].tag) && (preserve.find(neighbors[j]) == preserve.end())) {
-        //				int neighborCount = 0;
-        //				n2 = mesh->GetNeighboringVertexIndices(neighbors[j]);
-        //				for(unsigned int k = 0; k < n2.size(); k++) {
-        //					if(!mesh->vertices[n2[k]].tag) {
-        //						neighborCount++;
-        //					}
-        //				}
-
-        //				if(neighborCount < 2) {
-        //					endPoints.push_back(neighbors[j]);
-        //				}
-        //			}
-        //		}
-        //	}
-        //	printf("\n");
-        //}
     }
 
     void SSECorrespondenceEngine::GetPathSpace(int helix1Ix, bool helix1Start, int helix2Ix, bool helix2Start) {
