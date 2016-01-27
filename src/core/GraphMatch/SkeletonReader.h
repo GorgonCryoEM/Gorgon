@@ -92,7 +92,7 @@ namespace GraphMatch {
         printf("Constructing 'paintedVol'...\n");
 #endif
 
-        Volume * paintedVol = new Volume(vol->getSizeX(), vol->getSizeY(), vol->getSizeZ());
+        Volume paintedVol(vol->getSizeX(), vol->getSizeY(), vol->getSizeZ());
 
 #ifdef VERBOSE
         printf("Finished reading volume file, now moving on to helixes...\n");
@@ -141,7 +141,7 @@ namespace GraphMatch {
                             // if i is a helix and if point is inside helix i
                             if(helixes[i]->geometricShapeType == GRAPHEDGE_HELIX && helixes[i]->IsInsideShape(point)) {
                                 // store helix number for this point in the volume
-                                paintedVol->setDataAt(x, y, z, i+1);
+                                paintedVol.setDataAt(x, y, z, i+1);
                                 // add this point as as internal cell of the helix
                                 inHelix = true;
                                 helixes[i]->AddInternalCell(Point3Int(x, y, z, 0));
@@ -246,7 +246,7 @@ namespace GraphMatch {
                         int sseSheetNum = helixesMapping[skeletonSheetNum];
                         if (sseSheetNum != -1) {
                             // associate this voxel with this sheet
-                            paintedVol->setDataAt(x, y, z, sseSheetNum+1);
+                            paintedVol.setDataAt(x, y, z, sseSheetNum+1);
                             // add this point as as internal cell of the helix
                             helixes[sseSheetNum]->AddInternalCell(Point3Int(x, y, z, 0));
                         }
@@ -324,7 +324,7 @@ namespace GraphMatch {
                 int sheetNode = numH + i + 1; // each helix takes two nodes
 
                 // find all the corner cells in this sheet
-                FindCornerCellsInSheet(vol, paintedVol, helixes, i);
+                FindCornerCellsInSheet(vol, &paintedVol, helixes, i);
 
                 // cost is length of self-loops
                 graph->SetCost(sheetNode, sheetNode, SHEET_SELF_LOOP_LENGTH); // nonzero so it shows up as edge in StandardGraph::EdgeExists
@@ -366,7 +366,7 @@ namespace GraphMatch {
             for(int j = 0; j < (int)helixes[i]->cornerCells.size(); j++) {
                 // find all the paths from the entry/exit point to every other helix.
                 // results are stored in vol and paintedVol and as graph edges.
-                FindSizes(i, j, helixes, vol, paintedVol, graph);
+                FindSizes(i, j, helixes, vol, &paintedVol, graph);
             }
         }
 
@@ -380,7 +380,6 @@ namespace GraphMatch {
 
         // save results to graph->skeletonVolume
         graph->skeletonVolume = vol;
-        delete paintedVol;
 
         // save skeleton sheet volume to graph->skeletonSheetVolume
         graph->skeletonSheetVolume = sheetClusters;
