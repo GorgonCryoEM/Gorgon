@@ -18,7 +18,6 @@ namespace Visualization {
     class SSECorrespondenceEngine : public BackEndInterface {
     public:
         SSECorrespondenceEngine();
-        ~SSECorrespondenceEngine();
 
         int ExecuteQuery();
         int GetResultCount();
@@ -60,10 +59,6 @@ namespace Visualization {
         correspondence.clear();
         correspondenceIndex = -1;
         pathCount = 0;
-    }
-
-    SSECorrespondenceEngine::~SSECorrespondenceEngine() {
-        correspondence.clear();
     }
 
     int SSECorrespondenceEngine::ExecuteQuery() {
