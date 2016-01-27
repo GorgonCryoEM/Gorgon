@@ -28,7 +28,6 @@ namespace Visualization {
         SecondaryStructure * GetSequenceSSE(int sseId);
         int GetSkeletonSSECount();
         int GetSequenceSSECount();
-        void SetVisibleCorrespondence(int correspondenceIndex);
 
         void InitializePathFinder(NonManifoldMesh_Annotated * mesh);
         void InitializePathHelix(int helixIndex, Vector3DFloat p1, Vector3DFloat p2, float radius);
@@ -43,7 +42,6 @@ namespace Visualization {
 
     private:
         vector<SSECorrespondenceResult> correspondence;
-        int correspondenceIndex;
 
         // Attributes for path calculation
         NonManifoldMesh_Annotated * pathMesh;
@@ -57,7 +55,6 @@ namespace Visualization {
 
     SSECorrespondenceEngine::SSECorrespondenceEngine() {
         correspondence.clear();
-        correspondenceIndex = -1;
         pathCount = 0;
     }
 
@@ -163,10 +160,6 @@ namespace Visualization {
 
     int SSECorrespondenceEngine::GetSequenceSSECount() {
         return sequence->pdbStructures.size();
-    }
-
-    void SSECorrespondenceEngine::SetVisibleCorrespondence(int correspondenceIndex) {
-        this->correspondenceIndex = correspondenceIndex;
     }
 
 
