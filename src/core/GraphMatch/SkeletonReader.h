@@ -151,6 +151,13 @@ namespace GraphMatch {
                 }
             }
         }
+        #ifdef GORGON_DEBUG
+              cout<<"\033[32mDEBUG: File:   SkeletonReader.h"<<endl;
+              cout<<"DEBUG: Method: SkeletonReader::ReadFile(char*, char*, char*, char*)\033[0m"<<endl;
+              cout<<"vol: "<<endl;
+              cout<<*vol<<endl;
+        #endif
+
 
         Volume* sheetClusters = getSheetsNoThreshold(vol, MINIMUM_SHEET_SIZE);
 
@@ -160,7 +167,11 @@ namespace GraphMatch {
 
         int numSkeletonSheets = (int) sheetClusters->getMax();
 
-        //cout << "min sheet size = " << MINIMUM_SHEET_SIZE << ", num skeleton sheets = " << numSkeletonSheets << ", num SSEs = " << (int)helixes.size() + (int)sheets.size() << endl;
+        #ifdef GORGON_DEBUG
+              cout<<"sheetClusters: "<<endl;
+              cout<<*sheetClusters<<endl;
+              cout << "min sheet size = " << MINIMUM_SHEET_SIZE << ", num skeleton sheets = " << numSkeletonSheets << ", num SSEs = " << (int)helixes.size() + (int)sheets.size() << endl;
+        #endif
 
         vector<vector<double> > sheetDistance(numSkeletonSheets+1, vector<double> ((int)sheets.size()) );
 
@@ -424,7 +435,17 @@ namespace GraphMatch {
 #ifdef VERBOSE
         printf("\033[34mInitialize volume at %d %d %d\n\033[0m",  vol->getSizeX(), vol->getSizeY(), vol->getSizeZ() ) ;
 #endif // VERBOSE
+
         Volume* svol = new Volume( vol->getSizeX(), vol->getSizeY(), vol->getSizeZ() ) ;
+
+#ifdef GORGON_DEBUG
+        cout<<"\033[32mDEBUG: File:   SkeletonReader.h"<<endl;
+        cout<<"DEBUG: Method: SkeletonReader::getSheetsNoThreshold(Volume*, int)\033[0m"<<endl;
+        cout<<"vol in getSheetNoThreshold()"<<endl;
+        cout<<*vol;
+        cout<<"svol in getSheetNoThreshold()"<<endl;
+        cout<<*svol;
+#endif
 
         //Initialize cluster counters
         int sheets[MAX_SHEETS] ;
@@ -438,6 +459,7 @@ namespace GraphMatch {
 #ifdef VERBOSE
         printf("\033[34mStart clustering...\n\033[0m" ) ;
 #endif // VERBOSE
+
         int ox, oy, oz ;
         for ( int i = 0 ; i < vol->getSizeX() ; i ++ )
             for ( int j = 0 ; j < vol->getSizeY() ; j ++ )
@@ -484,7 +506,7 @@ namespace GraphMatch {
                     delete queue ;
                     if ( numNodes > 0 )
                     {
-                    //	printf("Sheet %d contain %d nodes.\n", totSheets, numNodes) ;
+                    	printf("Sheet %d contain %d nodes.\n", totSheets, numNodes) ;
                         sheets[ totSheets ] = numNodes ;
                         totSheets ++ ;
                     }
