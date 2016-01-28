@@ -22,7 +22,6 @@ namespace GraphMatch {
     class GeometricShape {
     public:
         GeometricShape();
-        ~GeometricShape();
         bool IsHelix();
         bool IsSheet();
         bool IsInsideShape(Point3 p);
@@ -85,14 +84,6 @@ namespace GraphMatch {
         objectToWorld = Matrix4::identity();
         rotationMatrix = Matrix4::identity();
         inverseRotationMatrix = Matrix4::identity();
-        internalCells.clear();
-    }
-
-    GeometricShape::~GeometricShape(){
-        internalCells.clear();
-        cornerCells.clear();
-        polygonPoints.clear();
-        polygons.clear();
     }
 
     bool GeometricShape::IsHelix() {
