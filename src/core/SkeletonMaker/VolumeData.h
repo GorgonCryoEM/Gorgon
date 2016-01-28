@@ -52,7 +52,7 @@ namespace SkeletonMaker {
         vector<float> data;
 
         friend ostream& operator<<(ostream& out, const VolumeData& obj){
-          out<<"\033[33m"
+          return out<<"\033[33m"
               <<"size:    "<<obj.size
               <<"spacing: "<<obj.spacing
               <<"origin:  "<<obj.origin
