@@ -2,6 +2,7 @@ from os      import path, mkdir
 from os.path import join
 
 import unittest
+import abc
 
 from subprocess import check_call
 from filecmp import cmp
@@ -10,6 +11,12 @@ from filecmp import cmp
 class ToolkitTestCases(unittest.TestCase):
 
 	class ToolkitTests:
+		__metaclass__ = abc.ABCMeta
+		
+		@abc.abstractmethod
+		def get_inputs(self):
+			'''Return list of inputs for the test'''
+			return
 
 		def __init__(self, out_extension, topdir=path.curdir, prog_name='gorgon.py', prog_option=None):
 			self.prog_name     = prog_name
