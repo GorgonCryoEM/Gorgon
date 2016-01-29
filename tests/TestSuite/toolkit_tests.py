@@ -20,7 +20,12 @@ class ToolkitTestCases(unittest.TestCase):
 			self.outdir        = join(testsdir,   'outputs')
 			self.refdir        = join(self.indir, 'refs')
 
-			self.input = join(self.indir, 'densityMap.mrc')
+			self.volume        = join(self.indir, 'densityMap.mrc')
+			self.skeleton      = join(self.indir, 'densityMap-skeleton.mrc')
+			self.segment       = join(self.indir, 'groel-segment.seq')
+			self.helix_lengths = join(self.indir, 'helix-lengths.sse')
+			self.helices       = join(self.indir, 'helices-densityMap.wrl')
+			
 			self.exe   = join(self.bindir, self.py)
 
 			if not path.exists(self.outdir):
