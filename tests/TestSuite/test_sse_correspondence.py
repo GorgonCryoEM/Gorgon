@@ -4,8 +4,7 @@ from .toolkit_tests import ToolkitTestCases
 class TestSSECorrespondence(ToolkitTestCases.ToolkitTests):
 
 	def __init__(self):
-		self.py = 'sse_correspondence.py'
-		ToolkitTestCases.ToolkitTests.__init__(self)
+		ToolkitTestCases.ToolkitTests.__init__(self, 'corr', prog_name='sse_correspondence.py')
 
 	def test_sse_correspondence(self):
 		input1 = join(self.indir, 'densityMap-skeleton.mrc')
