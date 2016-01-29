@@ -15,14 +15,13 @@ class ToolkitTestCases(unittest.TestCase):
 			topdir   = '.'
 			testsdir = 'tests'
 
-			indir       = join(testsdir, 'groel')
-			self.indir = indir
-			bindir      = join(topdir,   'bin')
-			self.outdir = join(testsdir, 'outputs')
-			self.refdir = join(indir,    'refs')
+			self.bindir        = join(topdir,     'bin')
+			self.indir         = join(testsdir,   'groel')
+			self.outdir        = join(testsdir,   'outputs')
+			self.refdir        = join(self.indir, 'refs')
 
-			self.input = join(indir, 'densityMap.mrc')
-			self.exe   = join(bindir, self.py)
+			self.input = join(self.indir, 'densityMap.mrc')
+			self.exe   = join(self.bindir, self.py)
 
 			if not path.exists(self.outdir):
 				mkdir(self.outdir)
