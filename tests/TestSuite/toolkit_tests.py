@@ -11,9 +11,12 @@ class ToolkitTestCases(unittest.TestCase):
 
 	class ToolkitTests:
 
-		def __init__(self):
-			topdir   = '.'
-			testsdir = 'tests'
+		def __init__(self, out_extension, topdir=path.curdir, prog_name='gorgon.py', prog_option=None):
+			self.prog_name     = prog_name
+			self.prog_option   = prog_option
+			self.out_extension = '.' + out_extension
+			
+			testsdir           = join(topdir, 'tests')
 
 			self.bindir        = join(topdir,     'bin')
 			self.indir         = join(testsdir,   'groel')
