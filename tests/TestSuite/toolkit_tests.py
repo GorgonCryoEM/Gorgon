@@ -55,6 +55,6 @@ class ToolkitTestCases(unittest.TestCase):
 			
 			return cmd
 
-		def run(self, option):
-			check_call([cmd], shell=True)
-			assert cmp(output, ref), "\nFiles differ:\n   1: %s\n   2: %s" % (output, ref)
+		def run(self, option=''):
+			check_call([self._cmd(option)], shell=True)
+			assert cmp(self.output, self.ref), "\nFiles differ:\n   1: %s\n   2: %s" % (self.output, self.ref)
