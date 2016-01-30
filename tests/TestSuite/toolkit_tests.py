@@ -31,6 +31,11 @@ class ToolkitTestCases(unittest.TestCase):
 			
 			self.exe          = join(self.bindir, self.prog_name)
 			
+			if self.prog_option:
+				self.outprefix    = self.prog_option + '_'
+			else:
+				self.outprefix    = path.splitext(self.prog_name)[0]
+		
 			if not path.exists(self.outdir):
 				mkdir(self.outdir)
 
