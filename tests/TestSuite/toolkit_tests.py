@@ -44,6 +44,12 @@ class ToolkitTestCases(unittest.TestCase):
 			self.output = join(self.outdir, filename)
 			self.ref    = join(self.refdir, filename)
 			
+			inputs = ' '.join(self.get_inputs())
+			if self.prog_option:
+				cmd_option = '--%s %s' % (self.prog_option, option)
+			else:
+				cmd_option = ''
+
 		def run(self, option):
 			cmd = '%s %s %s %s %s' % (self.exe, self.input, output, self.prog, option)
 
