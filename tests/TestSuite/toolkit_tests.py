@@ -38,7 +38,9 @@ class ToolkitTestCases(unittest.TestCase):
 		
 			if not path.exists(self.outdir):
 				mkdir(self.outdir)
-
+			
+			filename = self.outprefix + option + self.out_extension
+			
 		def run(self, option):
 			output = join(self.outdir, self.fprefix + option + '.mrc')
 			ref    = join(self.refdir, self.fprefix + option + '.mrc')
