@@ -1,24 +1,23 @@
 #ifndef CORE_GRAYSKELETONCPP_VOLUME_SKELETONIZER_H
 #define CORE_GRAYSKELETONCPP_VOLUME_SKELETONIZER_H
 
-#include "GrayImage.h"
 #include "GrayImageList.h"
 #include "ImageReaderBMP.h"
-//#include "ImageReaderMRC.h"
-//#include "GlobalDefinitions.h"
-//#include "VolumeDeltaAnalyzer.h"
-//#include <MathTools/Combinatorics.h>
-//#include <SkeletonMaker/PriorityQueue.h>
-#include <MathTools/MathLib.h>
-#include <MathTools/DataStructures.h>
-//#include <MathTools/Vector3D.h>
+////#include "ImageReaderMRC.h"
+////#include "GlobalDefinitions.h"
+////#include "VolumeDeltaAnalyzer.h"
+////#include <MathTools/Combinatorics.h>
+////#include <SkeletonMaker/PriorityQueue.h>
+//#include <MathTools/MathLib.h>
+//#include <MathTools/DataStructures.h>
+////#include <MathTools/Vector3D.h>
 #include "NormalFinder.h"
-//#include <string>
-//#include <Foundation/TimeManager.h>
-//#include <new>
-//#include <functional>
-#include <SkeletonMaker/volume.h>
-#include "MathTools/BasicDefines.h"
+////#include <string>
+////#include <Foundation/TimeManager.h>
+////#include <new>
+////#include <functional>
+//#include <SkeletonMaker/volume.h>
+//#include "MathTools/BasicDefines.h"
 #include "DiscreteMesh.h"
 
 using namespace std;
