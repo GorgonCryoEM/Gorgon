@@ -29,8 +29,8 @@ class ToolkitTestCases(unittest.TestCase):
 			self.helix_lengths = join(self.indir, 'helix-lengths.sse')
 			self.helices       = join(self.indir, 'helices-densityMap.wrl')
 			
-			self.exe   = join(self.bindir, self.py)
-
+			self.exe          = join(self.bindir, self.prog_name)
+			
 			if not path.exists(self.outdir):
 				mkdir(self.outdir)
 
