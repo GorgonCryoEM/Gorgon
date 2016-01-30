@@ -41,10 +41,10 @@ class ToolkitTestCases(unittest.TestCase):
 			
 			filename = self.outprefix + option + self.out_extension
 			
+			self.output = join(self.outdir, filename)
+			self.ref    = join(self.refdir, filename)
+			
 		def run(self, option):
-			output = join(self.outdir, self.fprefix + option + '.mrc')
-			ref    = join(self.refdir, self.fprefix + option + '.mrc')
-
 			cmd = '%s %s %s %s %s' % (self.exe, self.input, output, self.prog, option)
 
 			check_call([cmd], shell=True)
