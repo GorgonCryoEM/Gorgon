@@ -39,6 +39,7 @@ class ToolkitTestCases(unittest.TestCase):
 			if not path.exists(self.outdir):
 				mkdir(self.outdir)
 			
+		def _cmd(self, option):
 			filename = self.outprefix + option + self.out_extension
 			
 			self.output = join(self.outdir, filename)
@@ -49,9 +50,11 @@ class ToolkitTestCases(unittest.TestCase):
 				cmd_option = '--%s %s' % (self.prog_option, option)
 			else:
 				cmd_option = ''
+			
+			cmd = '%s %s %s %s' % (self.exe, inputs, self.output, cmd_option)
+			
+			return cmd
 
 		def run(self, option):
-			cmd = '%s %s %s %s %s' % (self.exe, self.input, output, self.prog, option)
-
 			check_call([cmd], shell=True)
 			assert cmp(output, ref), "\nFiles differ:\n   1: %s\n   2: %s" % (output, ref)
