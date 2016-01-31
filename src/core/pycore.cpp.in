@@ -372,8 +372,6 @@ BOOST_PYTHON_MODULE(@current_pylib@)
         .def("isSheet", &GeometricShape::IsSheet)
         .def("getCornerCell2", &GeometricShape::GetCornerCell2)
         .def("getCornerCell3", &GeometricShape::GetCornerCell3)
-        .def("setColor", &GeometricShape::SetColor)
-        .def("getSelected", &GeometricShape::GetSelected)
     ;
 
     bool (SSECorrespondenceEngine::*SetConstant1)(char *, char *)   = &SSECorrespondenceEngine::SetConstant;
