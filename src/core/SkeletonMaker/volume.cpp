@@ -10,6 +10,12 @@ using namespace Foundation;
 using namespace GraySkeletonCPP;
 
 
+#ifdef GORGON_DEBUG
+    int Volume::id0=0;
+    int Volume::id1=0;
+    int Volume::id3=0;
+#endif
+
 //    ---------------------
 float Volume::getOffset(float fValue1, float fValue2, float fValueDesired) const {
     double fDelta = fValue2 - fValue1;
@@ -57,15 +63,41 @@ void Volume::setVolume(Volume *vol) {
 Volume::Volume(const Volume& obj)
       : VolumeData(static_cast<VolumeData>(obj)), histogram(obj.histogram),
         volData(dynamic_cast<VolumeData *>(this))
-{}
+{
+  #ifdef GORGON_DEBUG
+        cout<<"\033[32mDEBUG: File:   volume.cpp"<<endl;
+        cout<<"DEBUG: Method: Volume::Volume(const Volume&)\033[0m"<<endl;
+        cout<<"Id1: "<<id1<<endl;
+        id1++;
+
+        cout<<"\033[35mobj.size: "<<obj.getSize()<<endl;
+        cout<<"this->size: "<<this->getSize()<<"\033[0m"<<endl;
+  #endif
+
+}
 
 Volume::Volume()
       : VolumeData(), volData(getVolumeData())
-{}
+{
+#ifdef GORGON_DEBUG
+        cout<<"\033[32mDEBUG: File:   volume.h"<<endl;
+        cout<<"DEBUG: Method: Volume::Volume()\033[0m"<<endl;
+        cout<<"Id0: "<<id0<<endl;
+        id0++;
+  #endif
+}
 
 Volume::Volume(int x, int y, int z, float val)
       : VolumeData(x, y, z, val), volData(getVolumeData())
-{}
+{
+  #ifdef GORGON_DEBUG
+        cout<<"\033[32mDEBUG: File:   volume.cpp"<<endl;
+        cout<<"DEBUG: Method: Volume::Volume(int, int, int, float)\033[0m"<<endl;
+        cout<<"Id3: "<<id3<<endl;
+        id3++;
+  #endif
+
+}
 
 
 Volume::~Volume( )
@@ -10963,6 +10995,15 @@ void Volume::downsampleVolume() {
 
 void Volume::loadFile(string fileName) {
 	*this = *VolumeFormatConverter::LoadVolume(fileName);
+
+	#ifdef GORGON_DEBUG
+          cout<<"\033[32mDEBUG: File:   volume.cpp"<<endl;
+          cout<<"DEBUG: Method: Volume::loadFile\033[0m"<<endl;
+          cout<<"DEBUG: Args: string\033[0m"<<endl;
+          cout<<"Filename: "
+              <<" "<<fileName
+              <<endl;
+    #endif
 }
 
 void Volume::loadFileRAW(string fileName, int bitsPerCell, int sizeX, int sizeY, int sizeZ) {
@@ -11003,8 +11044,19 @@ void Volume::PerformSmoothLaplacian(double convergenceRate, int iterations) {
 
 Volume * Volume::PerformBinarySkeletonizationJu2007(double threshold, int minCurveSize, int minSurfaceSize) {
   VolumeSkeletonizer * skeletonizer = new VolumeSkeletonizer(0,0,0,DEFAULT_SKELETON_DIRECTION_RADIUS);
+#ifdef GORGON_DEBUG
+  cout<<"DEBUG: File:   Volume.h"<<endl;
+  cout<<"DEBUG: Method: Volume::PerformBinarySkeletonizationJu2007"<<endl;
+  cout<<getSize()<<endl;
+#endif
+
   Volume * outputVol = skeletonizer->PerformPureJuSkeletonization(this, "", threshold, minCurveSize, minSurfaceSize);
   delete skeletonizer;
+#ifdef GORGON_DEBUG
+  cout<<"DEBUG: File:   Volume.h"<<endl;
+  cout<<"DEBUG: Method: Volume::PerformBinarySkeletonizationJu2007"<<endl;
+  cout<<"outputVol->getSize(): "<<outputVol->getSize()<<endl;
+#endif
 
   return outputVol;
 }
