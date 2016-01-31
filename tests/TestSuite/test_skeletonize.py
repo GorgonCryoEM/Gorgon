@@ -4,10 +4,12 @@ from .toolkit_tests import ToolkitTestCases
 class TestSkeletonization(ToolkitTestCases.ToolkitTests):
 
 	def __init__(self):
-		self.py = 'gorgon.py'
-		self.prog = '--skeletonize'
-		self.fprefix = 'skeleton_'
-		ToolkitTestCases.ToolkitTests.__init__(self)
+# 		self.inputs = [self.volume]
+		
+		ToolkitTestCases.ToolkitTests.__init__(self, 'mrc', prog_option='skeletonize')
+		
+	def get_inputs(self):
+		return [self.volume]
 
 	def test_binary(self):
 		self.run('binary')
