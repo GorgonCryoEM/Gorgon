@@ -7,8 +7,6 @@
 #include <vector>
 #include <map>
 #include <set>
-//#include "MeshRenderer.h" // to include Draw function
-//#include "Renderer.h" // to include DrawSphere function
 //#include <GorgonGL.h>
 //#include <Foundation/StringUtils.h>
 
@@ -20,21 +18,16 @@ namespace Visualization {
     class SSECorrespondenceEngine : public BackEndInterface {
     public:
         SSECorrespondenceEngine();
-        ~SSECorrespondenceEngine();
 
         int ExecuteQuery();
         int GetResultCount();
         int LoadCorrespondenceFromFile(string fileName);
         SSECorrespondenceResult GetResult(int rank);
-        string GetSupportedLoadFileFormats();
-        string GetSupportedSaveFileFormats();
         void SaveCorrespondenceToFile(string fileName);
         GeometricShape * GetSkeletonSSE(int sseId);
         SecondaryStructure * GetSequenceSSE(int sseId);
         int GetSkeletonSSECount();
         int GetSequenceSSECount();
-        void SetSSEColor(int index, float r, float g, float b, float a);
-        void SetVisibleCorrespondence(int correspondenceIndex);
 
         void InitializePathFinder(NonManifoldMesh_Annotated * mesh);
         void InitializePathHelix(int helixIndex, Vector3DFloat p1, Vector3DFloat p2, float radius);
@@ -49,7 +42,6 @@ namespace Visualization {
 
     private:
         vector<SSECorrespondenceResult> correspondence;
-        int correspondenceIndex;
 
         // Attributes for path calculation
         NonManifoldMesh_Annotated * pathMesh;
@@ -63,12 +55,7 @@ namespace Visualization {
 
     SSECorrespondenceEngine::SSECorrespondenceEngine() {
         correspondence.clear();
-        correspondenceIndex = -1;
         pathCount = 0;
-    }
-
-    SSECorrespondenceEngine::~SSECorrespondenceEngine() {
-        correspondence.clear();
     }
 
     int SSECorrespondenceEngine::ExecuteQuery() {
@@ -130,13 +117,6 @@ namespace Visualization {
         //}
     }
 
-    string SSECorrespondenceEngine::GetSupportedLoadFileFormats() {
-        return "Correspondence Results (*.corr)";
-    }
-
-    string SSECorrespondenceEngine::GetSupportedSaveFileFormats() {
-        return "Correspondence Results (*.corr)";
-    }
     void SSECorrespondenceEngine::SaveCorrespondenceToFile(string fileName) {
         FILE* fout = fopen((char*)fileName.c_str(), "wt");
         if (fout == NULL)
@@ -180,15 +160,6 @@ namespace Visualization {
 
     int SSECorrespondenceEngine::GetSequenceSSECount() {
         return sequence->pdbStructures.size();
-    }
-
-    // set the color of an SSE.
-    void SSECorrespondenceEngine::SetSSEColor(int index, float r, float g, float b, float a) {
-        skeleton->skeletonHelixes[index]->SetColor(r, g, b, a);
-    }
-
-    void SSECorrespondenceEngine::SetVisibleCorrespondence(int correspondenceIndex) {
-        this->correspondenceIndex = correspondenceIndex;
     }
 
 
@@ -255,51 +226,6 @@ namespace Visualization {
         for(unsigned int i = 0; i < pathVertices.size(); i++) {
             mesh->vertices[pathVertices[i]].tag = false;
         }
-
-        //vector<unsigned int> endPoints;
-
-        //vector<unsigned int> neighbors, n2;
-        //for(unsigned int i=0; i < pathVertices.size(); i++) {
-        //	neighbors = mesh->GetNeighboringVertexIndices(pathVertices[i]);
-        //	int neighborCount = 0;
-        //	for(unsigned int j = 0; j < neighbors.size(); j++) {
-        //		if(!mesh->vertices[neighbors[j]].tag) {
-        //			neighborCount++;
-        //		}
-        //	}
-        //	if(neighborCount < 2) {
-        //		endPoints.push_back(pathVertices[i]);
-        //	}
-        //}
-
-        //int currIx;
-        //while(endPoints.size() > 0) {
-        //	currIx = endPoints[0];
-        //	endPoints.erase(endPoints.begin());
-        //	printf("Can I prune: %d", currIx);
-        //	if(!mesh->vertices[currIx].tag && (preserve.find(currIx) == preserve.end())) {
-        //		printf(" Yes!");
-        //		mesh->vertices[currIx].tag = true;
-        //		neighbors = mesh->GetNeighboringVertexIndices(currIx);
-
-        //		for(unsigned int j = 0; j < neighbors.size(); j++) {
-        //			if((!mesh->vertices[neighbors[j]].tag) && (preserve.find(neighbors[j]) == preserve.end())) {
-        //				int neighborCount = 0;
-        //				n2 = mesh->GetNeighboringVertexIndices(neighbors[j]);
-        //				for(unsigned int k = 0; k < n2.size(); k++) {
-        //					if(!mesh->vertices[n2[k]].tag) {
-        //						neighborCount++;
-        //					}
-        //				}
-
-        //				if(neighborCount < 2) {
-        //					endPoints.push_back(neighbors[j]);
-        //				}
-        //			}
-        //		}
-        //	}
-        //	printf("\n");
-        //}
     }
 
     void SSECorrespondenceEngine::GetPathSpace(int helix1Ix, bool helix1Start, int helix2Ix, bool helix2Start) {
