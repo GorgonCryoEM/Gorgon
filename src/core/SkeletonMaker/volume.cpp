@@ -9618,7 +9618,7 @@ void Volume::rotateX ( double a )
 
 
 /* Write to file */
-void Volume::toMathematicaFile( char* fname )
+void Volume::toMathematicaFile( string fname )
 {
     FILE* fout = fopen( fname, "w" ) ;
 
@@ -9660,7 +9660,7 @@ void Volume::toMathematicaFile( char* fname )
 }
 
 /* Write to file */
-void Volume::toMathematicaFile( char* fname, int lx, int hx, int ly, int hy, int lz, int hz )
+void Volume::toMathematicaFile( string fname, int lx, int hx, int ly, int hy, int lz, int hz )
 {
     FILE* fout = fopen( fname, "w" ) ;
 
@@ -9697,16 +9697,16 @@ void Volume::toMathematicaFile( char* fname, int lx, int hx, int ly, int hy, int
 
 }
 
-void Volume::toOFFCells( char* fname )
+void Volume::toOFFCells( string fname )
 {
     toOFFCells( fname, 0.0001f ) ;
 }
-void Volume::toOFFCells2( char* fname )
+void Volume::toOFFCells2( string fname )
 {
     toOFFCells2( fname, 0.0001f ) ;
 }
 
-void Volume::toOFFCells2( char* fname, float thr )
+void Volume::toOFFCells2( string fname, float thr )
 {
     int i, j, k ;
     Volume* indvol = new Volume( getSizeX(), getSizeY(), getSizeZ(), -1 ) ;
@@ -9816,7 +9816,7 @@ void Volume::toOFFCells2( char* fname, float thr )
     delete indvol ;
 }
 
-void Volume::toOFFCells( char* fname, float thr )
+void Volume::toOFFCells( string fname, float thr )
 {
     int i, j, k ;
     // Volume* indvol = new Volume( getSizeX(), getSizeY(), getSizeZ(), -1 ) ;
@@ -9888,7 +9888,7 @@ void Volume::toOFFCells( char* fname, float thr )
     //delete indvol ;
 }
 
-void Volume::segment( float threshold, Volume* lowvol, Volume* highvol, char* mrcfile )
+void Volume::segment( float threshold, Volume* lowvol, Volume* highvol, string mrcfile )
 {
     int i,j,k ;
     Volume* segvol = new Volume( getSizeX(), getSizeY(), getSizeZ()) ;
@@ -9914,7 +9914,7 @@ void Volume::segment( float threshold, Volume* lowvol, Volume* highvol, char* mr
     writeSegmentation( threshold, segvol, NULL, mrcfile ) ;
 }
 
-void Volume::segment( float threshold, Volume* vol, int maxDis, char* mrcfile )
+void Volume::segment( float threshold, Volume* vol, int maxDis, string mrcfile )
 {
     int i,j;
     Volume* testvol = NULL ;
@@ -9950,7 +9950,7 @@ void Volume::segment( float threshold, Volume* vol, int maxDis, char* mrcfile )
 
 // Segment the volume using segvol
 // background voxels have values 0, others have values > 0
-void Volume::writeSegmentation( float threshold, Volume* segvol, char* txtfile, char* mrcfile )
+void Volume::writeSegmentation( float threshold, Volume* segvol, string txtfile, string mrcfile )
 {
     printf("Start segmentation.\n") ;
     int i,j,k ;
@@ -10688,7 +10688,7 @@ void Volume::floodFillPQR( int offset )
 }
 
 
-void Volume::writeDistances( char* fname, int maxDis )
+void Volume::writeDistances( string fname, int maxDis )
 {
     int i, j, k ;
     Volume* testvol = NULL ;
@@ -10743,7 +10743,7 @@ void Volume::writeDistances( char* fname, int maxDis )
 
 }
 
-void Volume::toPQRFile( char* fname, float spc, float minx, float miny, float minz, int padding )
+void Volume::toPQRFile( string fname, float spc, float minx, float miny, float minz, int padding )
 {
     FILE* fout = fopen( fname, "w" ) ;
     int i, j, k ;
@@ -10769,7 +10769,7 @@ void Volume::toPQRFile( char* fname, float spc, float minx, float miny, float mi
     fclose( fout ) ;
 }
 
-void Volume::toMRCFile( char* fname )
+void Volume::toMRCFile( string fname )
 {
     FILE* fout = fopen( fname, "wb" ) ;
 
@@ -11018,7 +11018,7 @@ void Volume::saveFile(string fileName) {
     extension = StringUtils::StringToUpper(extension);
 
     if(extension == "MRC") {
-      toMRCFile((char *)fileName.c_str());
+      toMRCFile(fileName.c_str());
     } else {
       cout<<"Input format "<<extension<<" not supported!"<<endl;
     }
