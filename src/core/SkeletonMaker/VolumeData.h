@@ -1,202 +1,227 @@
 #ifndef CORE_SKELETON_MAKER_VOLUME_DATA_H
 #define CORE_SKELETON_MAKER_VOLUME_DATA_H
 
-#include <cstdlib>
-using std::malloc;
+#include <vector>
+#include "Dim3D.h"
+
+using namespace std;
+using namespace Core;
 
 namespace SkeletonMaker {
     class VolumeData {
     public:
-        VolumeData(int sizeX, int sizeY, int sizeZ);
-        VolumeData(int sizeX, int sizeY, int sizeZ, float val);
-        VolumeData(int sizeX, int sizeY, int sizeZ, int offsetX, int offsetY, int offsetZ, VolumeData * data);
-        VolumeData(VolumeData& obj);
+        VolumeData();
+        VolumeData(int sizeX, int sizeY, int sizeZ, float val=0.0);
         ~VolumeData();
 
-        int GetSize(int dimension);
-        int GetSizeX();
-        int GetSizeY();
-        int GetSizeZ();
-        float GetSpacing(int dimension);
-        float GetSpacingX();
-        float GetSpacingY();
-        float GetSpacingZ();
-        float GetOrigin(int dimension);
-        float GetOriginX();
-        float GetOriginY();
-        float GetOriginZ();
-        float GetDataAt(int x, int y, int z);
-        float GetDataAt(int index);
-        int GetIndex(int x, int y, int z);
-        int GetMaxIndex();
-        float* GetArrayCopy(int padX=0, int padY=0, int padZ=0, float padValue=0); //uses malloc as required by FFT libraries
+        bool cmp(const VolumeData& obj)  const;
 
-        void SetSpacing(float spacingX, float spacingY, float spacingZ);
-        void SetOrigin(float originX, float originY, float originZ);
-        void SetDataAt(int x, int y, int z, float value);
-        void SetDataAt(int index, float value);
-        void Pad(int padBy, double padValue);
+        int getSizeX() const;
+        int getSizeY() const;
+        int getSizeZ() const;
+        int getSize() const;
+        Dim3D<int> getSizeObj() const;
+        float getSpacingX() const;
+        float getSpacingY() const;
+        float getSpacingZ() const;
+        float getOriginX() const;
+        float getOriginY() const;
+        float getOriginZ() const;
+
+        float getDataAt(int x, int y, int z) const;
+        float getDataAt(int index) const;
+        int getIndex(int x, int y, int z) const;
+        int getMaxIndex() const;
+
+        //uses malloc as required by FFT libraries
+        float* getArrayCopy(int padX=0, int padY=0, int padZ=0, float padValue=0);
+
+        void setSpacing(float spacingX, float spacingY, float spacingZ);
+        void setOrigin(float originX, float originY, float originZ);
+        void setSpacing(Dim3D<float>);
+        void setOrigin(Dim3D<float>);
+        void setDataAt(int x, int y, int z, float value);
+        void setDataAt(int index, float value);
+        void pad(int padBy, double padValue);
     private:
-        void InitializeVolumeData(int sizeX, int sizeY, int sizeZ, float spacingX, float spacingY, float spacingZ, float originX, float originY, float originZ, bool initializeData, float val);
-        void SetSize(int sizeX, int sizeY, int sizeZ);
-    private:
-        int size[3];
-        float spacing[3];
-        float origin[3];
-        float * data;
+        void setSize(int sizeX, int sizeY, int sizeZ);
+    protected:
+        Dim3D<int> size;
+        Dim3D<float> spacing;
+        Dim3D<float> origin;
+        vector<float> data;
+
+        friend ostream& operator<<(ostream& out, const VolumeData& obj){
+          return out<<"\033[33m"
+              <<"size:    "<<obj.size
+              <<"spacing: "<<obj.spacing
+              <<"origin:  "<<obj.origin
+              <<"size:    "<<obj.data.size()
+              <<"\033[0m"<<endl;
+        }
     };
 
-    VolumeData::VolumeData(VolumeData& obj) {
-        for (int i = 0; i < 3; i++) {
-            size[i] = obj.size[i];
-            spacing[i] = obj.spacing[i];
-            origin[i] = obj.origin[i];
+    VolumeData::VolumeData()
+          : size(0, 0, 0),
+            spacing(1, 1, 1),
+            origin(0, 0, 0)
+    {}
+
+    VolumeData::VolumeData(int sizeX, int sizeY, int sizeZ, float val)
+          : size(sizeX, sizeY, sizeZ),
+            spacing(1, 1, 1),
+            origin(0, 0, 0)
+    {
+        setSize(sizeX, sizeY, sizeZ);
+        data.assign(data.size(), val);
+    }
+
+    VolumeData::~VolumeData() {}
+
+    bool VolumeData::cmp(const VolumeData& obj) const {
+      if(data.size() != obj.data.size())
+        return false;
+      else {
+        double tolerance = 0.0001;
+        int N = data.size();
+        for(int i=0; i<N; ++i){
+          double ratio = data[i]/obj.data[i];
+          if(ratio - 1.0 > tolerance)
+            return false;
         }
-        int N = size[0]*size[1]*size[2];
-        data = new float[N];
-        for (int i = 0; i < N; i++) {
-            data[i] = obj.data[i];
-        }
+      }
+        return true;
     }
 
-    VolumeData::VolumeData(int sizeX, int sizeY, int sizeZ) {
-        InitializeVolumeData(sizeX, sizeY, sizeZ, 1, 1, 1, 0, 0, 0, true, 0);
+    int VolumeData::getSizeX() const {
+        return size.X();
     }
 
-    VolumeData::VolumeData(int sizeX, int sizeY, int sizeZ, float val) {
-        InitializeVolumeData(sizeX, sizeY, sizeZ, 1, 1, 1, 0, 0, 0, true, val);
+    int VolumeData::getSizeY() const {
+        return size.Y();
     }
 
-    VolumeData::VolumeData(int sizeX, int sizeY, int sizeZ, int offsetX, int offsetY, int offsetZ, VolumeData * data) {
-        InitializeVolumeData(sizeX, sizeY, sizeZ, data->GetSpacingX(), data->GetSpacingY(), data->GetSpacingZ(), data->GetOriginX(), data->GetOriginY(), data->GetOriginZ(), false, 0);
-        int ct = 0 ;
-        for (int i = offsetX; i < sizeX + offsetX; i++) {
-            for (int j = offsetY; j < sizeY + offsetY; j++ ) {
-                for ( int k = offsetZ; k < sizeZ + offsetZ; k++) {
-                    this->data[ct] = data->GetDataAt(i, j, k);
-                    ct++;
-                }
-            }
-        }
+    int VolumeData::getSizeZ() const {
+        return size.Z();
     }
 
-    VolumeData::~VolumeData() {
-        delete [] data;
+    int VolumeData::getSize() const {
+        return data.size();
     }
 
-    void VolumeData::InitializeVolumeData(int sizeX, int sizeY, int sizeZ, float spacingX, float spacingY, float spacingZ, float originX, float originY, float originZ, bool initializeData, float val) {
-        SetSize(sizeX, sizeY, sizeZ);
-        SetSpacing(spacingX, spacingY, spacingZ);
-        SetOrigin(originX, originY, originZ);
-        int maxIndex = GetMaxIndex();
-        data = new float [maxIndex];
-        if(initializeData) {
-            for (int i=0; i < maxIndex; i++) {
-                data[i] = val;
-            }
-        }
+    Dim3D<int> VolumeData::getSizeObj() const {
+        return size;
     }
 
-    int VolumeData::GetSize(int dimension) {
-        return size[dimension];
+    float VolumeData::getSpacingX() const {
+        return spacing.X();
     }
 
-    int VolumeData::GetSizeX() {
-        return GetSize(0);
+    float VolumeData::getSpacingY() const {
+        return spacing.Y();
     }
 
-    int VolumeData::GetSizeY() {
-        return GetSize(1);
+    float VolumeData::getSpacingZ() const {
+        return spacing.Z();
     }
 
-    int VolumeData::GetSizeZ() {
-        return GetSize(2);
+    float VolumeData::getOriginX() const {
+        return origin.X();
     }
 
-    float VolumeData::GetSpacing(int dimension) {
-        return spacing[dimension];
+    float VolumeData::getOriginY() const {
+        return origin.Y();
     }
 
-    float VolumeData::GetSpacingX() {
-        return GetSpacing(0);
+    float VolumeData::getOriginZ() const {
+        return origin.Z();
     }
 
-    float VolumeData::GetSpacingY() {
-        return GetSpacing(1);
+    float VolumeData::getDataAt(int x, int y, int z) const {
+        return getDataAt(getIndex(x, y, z));
     }
 
-    float VolumeData::GetSpacingZ() {
-        return GetSpacing(2);
-    }
-
-    float VolumeData::GetOrigin(int dimension) {
-        return origin[dimension];
-    }
-
-    float VolumeData::GetOriginX() {
-        return GetOrigin(0);
-    }
-
-    float VolumeData::GetOriginY() {
-        return GetOrigin(1);
-    }
-
-    float VolumeData::GetOriginZ() {
-        return GetOrigin(2);
-    }
-
-
-    float VolumeData::GetDataAt(int x, int y, int z) {
-        return GetDataAt(GetIndex(x, y, z));
-    }
-
-    float VolumeData::GetDataAt(int index) {
+    float VolumeData::getDataAt(int index) const {
         return data[index];
     }
 
-    int VolumeData::GetIndex(int x, int y, int z) {
-        return (x * GetSizeY() * GetSizeZ() + y * GetSizeZ() + z);
+    int VolumeData::getIndex(int x, int y, int z) const {
+        return (x * getSizeY() * getSizeZ() + y * getSizeZ() + z);
     }
 
-    int VolumeData::GetMaxIndex() {
-        return size[0] * size[1] * size[2];
+    int VolumeData::getMaxIndex() const {
+        return size.X() * size.Y() * size.Z();
     }
 
-    void VolumeData::SetSpacing(float spacingX, float spacingY, float spacingZ) {
-        spacing[0] = spacingX;
-        spacing[1] = spacingY;
-        spacing[2] = spacingZ;
+    void VolumeData::setSpacing(float spacingX, float spacingY, float spacingZ) {
+        spacing = Dim3D<float>(spacingX, spacingY, spacingZ);
     }
 
-    void VolumeData::SetOrigin(float originX, float originY, float originZ) {
-        origin[0] = originX;
-        origin[1] = originY;
-        origin[2] = originZ;
+    void VolumeData::setOrigin(float originX, float originY, float originZ) {
+        origin = Dim3D<float>(originX, originY, originZ);
+    }
+
+    void VolumeData::setSpacing(Dim3D<float> val) {
+        spacing = val;
+    }
+
+    void VolumeData::setOrigin(Dim3D<float> val) {
+        origin = val;
     }
 
 
-    void VolumeData::SetSize(int sizeX, int sizeY, int sizeZ) {
-        size[0] = sizeX;
-        size[1] = sizeY;
-        size[2] = sizeZ;
+    void VolumeData::setSize(int sizeX, int sizeY, int sizeZ) {
+        size = Dim3D<int>(sizeX, sizeY, sizeZ);
+        data.resize(getMaxIndex());
     }
 
-    void VolumeData::SetDataAt(int x, int y, int z, float value) {
-        SetDataAt(GetIndex(x, y, z), value);
+    void VolumeData::setDataAt(int x, int y, int z, float value) {
+        setDataAt(getIndex(x, y, z), value);
     }
 
-    void VolumeData::SetDataAt(int index, float value) {
+    void VolumeData::setDataAt(int index, float value) {
         data[index] = value;
     }
-    void VolumeData::Pad(int padBy, double padValue) {
-        int sizex = GetSizeX();
-        int sizey = GetSizeY();
-        int sizez = GetSizeZ();
+    void VolumeData::pad(int padBy, double padValue) {
+      #ifdef GORGON_DEBUG
+            cout<<"\033[36mDEBUG: File:   VolumeData.h"<<endl;
+            cout<<"DEBUG: Method: VolumeData::pad\033[0m"<<endl;
+            cout<<"DEBUG: Args: int, double\033[0m"<<endl;
+            cout<<getSize()<<endl;
+
+            cout<<*this;
+      #endif
+
+        int sizex = getSizeX();
+        int sizey = getSizeY();
+        int sizez = getSizeZ();
         int newSizeX = sizex + 2*padBy;
         int newSizeY = sizey + 2*padBy;
         int newSizeZ = sizez + 2*padBy;
 
-        float * newData = new float[newSizeX * newSizeY * newSizeZ];
+#ifdef GORGON_DEBUG
+        cout<<"\033[31m";
+        cout<<" "<<sizex
+            <<" "<<sizey
+            <<" "<<sizez
+            <<" "<<endl;
+        cout<<"\033[0m";
+
+        cout<<"\033[32m";
+        cout<<" "<<newSizeX
+            <<" "<<newSizeY
+            <<" "<<newSizeZ
+            <<" "<<endl;
+        cout<<"\033[0m";
+
+        cout<<"\033[33m";
+        cout<<" "<<padBy
+            <<" "<<endl;
+        cout<<"\033[0m";
+#endif
+
+
+        vector<float> newData(newSizeX * newSizeY * newSizeZ);
         double value;
 
 
@@ -206,31 +231,35 @@ namespace SkeletonMaker {
                     if ((x < padBy) || (y < padBy) || (z < padBy) || (x >= padBy + sizex) || (y >= padBy + sizey) || (z >= padBy + sizez)) {
                         value = padValue;
                     } else {
-                        value = GetDataAt(x-padBy, y-padBy, z-padBy);
+                        value = getDataAt(x-padBy, y-padBy, z-padBy);
                     }
 
                     newData[x * newSizeY * newSizeZ + y * newSizeZ + z] = (float)value;
                 }
             }
         }
-        delete [] data;
         data = newData;
-        SetSize(newSizeX, newSizeY, newSizeZ);
+        size = Dim3D<int>(newSizeX, newSizeY, newSizeZ);
+#ifdef GORGON_DEBUG
+        cout<<*this;
+#endif
+
+
 
     }
 
 
-    float* VolumeData::GetArrayCopy(int padX, int padY, int padZ, float padValue) {
-        int xSize = GetSizeX()+padX;
-        int ySize = GetSizeY()+padY;
-        int zSize = GetSizeZ()+padZ;
+    float* VolumeData::getArrayCopy(int padX, int padY, int padZ, float padValue) {
+        int xSize = getSizeX()+padX;
+        int ySize = getSizeY()+padY;
+        int zSize = getSizeZ()+padZ;
         float* copy = (float*) malloc(sizeof(float)*xSize*ySize*zSize);
 
         for (int i=0; i < xSize; i++)
             for (int j=0; j < ySize; j++)
                 for (int k=0; k < zSize; k++) {
-                    if ( i<GetSizeX() && j<GetSizeY() && k<GetSizeZ() ) {
-                        copy[k+(j+i*ySize)*zSize] = GetDataAt(i, j, k);
+                    if ( i<getSizeX() && j<getSizeY() && k<getSizeZ() ) {
+                        copy[k+(j+i*ySize)*zSize] = getDataAt(i, j, k);
                     } else {
                         copy[k+(j+i*ySize)*zSize] = padValue;
                     }

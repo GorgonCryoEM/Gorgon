@@ -1,7 +1,6 @@
 #ifndef CORE_BASIC_DEFINES_H
 #define CORE_BASIC_DEFINES_H
 
-double round(double f);
 
 namespace MathTools {
 

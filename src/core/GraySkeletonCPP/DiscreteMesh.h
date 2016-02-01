@@ -145,7 +145,7 @@ namespace GraySkeletonCPP {
         this->sizeX = mesh->sizeX;
         this->sizeY = mesh->sizeY;
         this->sizeZ = mesh->sizeZ;
-        this->volume = new Volume(sizeX, sizeY, sizeZ, 0, 0, 0, mesh->volume);
+        this->volume = new Volume(*(mesh->volume));
         points = new bool[sizeX * sizeY * sizeZ];
         curves = new unsigned char[sizeX * sizeY * sizeZ];
         surfaces = new unsigned char[sizeX * sizeY * sizeZ];
@@ -763,7 +763,7 @@ namespace GraySkeletonCPP {
     }
     int DiscreteMesh::GetImmersionSkeletalValue(Volume * skeleton, Vector3DInt point) {
         Volume * range = skeleton->getDataRange(point.values[0], point.values[1], point.values[2], 2);
-        Volume * thresholdedRange = new Volume(range->getSizeX(), range->getSizeY(), range->getSizeZ(), 0, 0, 0, range);
+        Volume * thresholdedRange = new Volume(*range);
         double value = 0;
         thresholdedRange->threshold(range->getDataAt(2, 2, 2), -1, 1, -1, false);
         /*if(IsSurfaceBorder(thresholdedRange, 2, 2, 2) || IsCurveEnd(thresholdedRange, 2, 2, 2) || IsPoint(thresholdedRange, 2, 2, 2)) {
@@ -784,7 +784,7 @@ namespace GraySkeletonCPP {
             for(unsigned int i = 0; i < thresholds.size(); i++) {
                 value = thresholds.front();
                 thresholds.pop_front();
-                thresholdedRange = new Volume(range->getSizeX(), range->getSizeY(), range->getSizeZ(), 0, 0, 0, range);
+                thresholdedRange = new Volume(*range);
                 thresholdedRange->threshold(value, -1, 1, -1, false);
                 if(!IsSimple(thresholdedRange, 2, 2, 2)) {
                     break;

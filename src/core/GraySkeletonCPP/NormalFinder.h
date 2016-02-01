@@ -1,11 +1,12 @@
 #ifndef CORE_GRAYSKELETONCPP_NORMAL_FINDER_H
 #define CORE_GRAYSKELETONCPP_NORMAL_FINDER_H
 
-#include <MathTools/Vector3D.h>
-#include "GraySkeletonCPP/GlobalDefinitions.h"
+//#include <MathTools/Vector3D.h>
+//#include "GraySkeletonCPP/GlobalDefinitions.h"
+//#include <SkeletonMaker/volume.h>
 
 //using namespace std;
-//using namespace MathTools;
+using namespace MathTools;
 using namespace SkeletonMaker;
 
 namespace GraySkeletonCPP {

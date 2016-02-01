@@ -4,5 +4,6 @@
 #include <string>
 
 std::string hello();
+std::string platform();
 
 #endif /* SRC_CORE_HELLO_H_ */

@@ -22,7 +22,14 @@ class Binary(Skeletonizer):
         super(Binary, self).__init__(input, output)
         
     def _run(self):
+        self.logger.debug(__file__)
+        self.logger.debug("Binary._run")
+        self.logger.debug(self.renderer)
+        self.logger.debug("renderer.getSize(): %d" % self.renderer.getSize())
         self.skeleton = self.renderer.performBinarySkeletonizationJu2007(self.defaultDensity(), 4, 4)
+        self.logger.debug(self.renderer)
+        self.logger.debug(self.skeleton)
+        self.logger.debug("skeleton.getSize(): %d" % self.skeleton.getSize())
         
 
 class GrayScale(Skeletonizer):

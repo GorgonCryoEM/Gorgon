@@ -1,23 +1,20 @@
-// Copyright (C) 2005-2008 Washington University in St Louis, Baylor College of Medicine.  All rights reserved
-// Author:        Sasakthi S. Abeysinghe (sasakthi@gmail.com)
-// Description:   An engine for performing correspondence queries.
+#ifndef CORE_GRAPHMATCH_QUERY_ENGINE_H
+#define CORE_GRAPHMATCH_QUERY_ENGINE_H
 
-#ifndef QUERY_ENGINE_H
-#define QUERY_ENGINE_H
-
-#include <cstdlib>
-#include <cstdio>
-#include "StandardGraph.h"
-#include "WongMatch15Constrained.h"
+//#include <cstdlib>
+//#include <cstdio>
+//#include "StandardGraph.h"
+//#include "WongMatch15Constrained.h"
 #include "WongMatch15ConstrainedNoFuture.h"
-#include "WongMatch15ConstrainedOnlyA.h"
-#include "PDBReader.h"
+//#include "WongMatch15ConstrainedOnlyA.h"
+//#include "PDBReader.h"
 #include "SEQReader.h"
 #include "SkeletonReader.h"
-#include "GlobalConstants.h"
-#include "GraphGenerator.h"
-#include <ctime>
-#include <string>
+//#include "GlobalConstants.h"
+//#include "GraphGenerator.h"
+//#include <ctime>
+//#include <string>
+#include "SSECorrespondenceResult.h"
 
 #ifdef DEBUG
 	#include <iostream>
@@ -25,7 +22,6 @@
 
 using namespace std;
 
-namespace wustl_mm {
 	namespace GraphMatch {
 
 		class QueryEngine {
@@ -41,7 +37,7 @@ namespace wustl_mm {
 
 
 		StandardGraph * QueryEngine::LoadSequenceGraph() {
-			#ifdef DEBUG
+			#ifdef GORGON_DEBUG
 				cout << "In QueryEngine::LoadSequenceGraph" << endl;
 			#endif
 			clock_t start, finish;
@@ -55,12 +51,12 @@ namespace wustl_mm {
 				graph = PDBReader::ReadFile(SEQUENCE_FILE_NAME);
 			else if (type == "SEQ")
 				graph = SEQReader::ReadFile(SEQUENCE_FILE_NAME);
-			else 
+			else
 				return NULL;
 			finish = clock();
 			#ifdef VERBOSE
 				printf("\tReading Pattern file Took %f seconds.\n", (double) (finish - start) / (double) CLOCKS_PER_SEC ) ;
-				graph->PrintGraph();	
+				graph->PrintGraph();
 			#endif
 			return graph;
 		}
@@ -75,7 +71,7 @@ namespace wustl_mm {
 			graph = SkeletonReader::ReadFile(MRC_FILE_NAME, VRML_HELIX_FILE_NAME, SSE_FILE_NAME, VRML_SHEET_FILE_NAME);
 			finish = clock();
 			#ifdef VERBOSE
-				printf("\tReading Base file Took %f seconds.\n", (double) (finish - start) / (double) CLOCKS_PER_SEC ) ;
+				printf("\033[32m\tReading Base file Took %f seconds.\n\033[0m", (double) (finish - start) / (double) CLOCKS_PER_SEC ) ;
 				graph->PrintGraph();
 			#endif
 			return graph;
@@ -109,5 +105,4 @@ namespace wustl_mm {
 			delete matcherConstrainedNoFuture;
 		}
 	}
-}
 #endif
