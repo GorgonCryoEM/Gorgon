@@ -29,7 +29,7 @@ namespace Protein_Morph {
     struct NonManifoldMeshEdge : public NonManifoldMeshBase {
         unsigned int vertexIds[2];
         vector<unsigned int> faceIds;
-        unsigned char tag;
+        string tag;
     };
     ostream& operator<<(ostream& out, const NonManifoldMeshEdge& obj){
         return out<<"\033[34m"
@@ -41,7 +41,7 @@ namespace Protein_Morph {
     struct NonManifoldMeshFace : public NonManifoldMeshBase {
         vector<unsigned int> edgeIds;
         vector<unsigned int> vertexIds;
-        unsigned char tag;
+        string tag;
     };
     ostream& operator<<(ostream& out, const NonManifoldMeshFace& obj){
             return out<<"\033[34m"
@@ -91,9 +91,9 @@ namespace Protein_Morph {
         int GetEdgeIndex(int edgeId);
         int GetEdgeIndex(int vertexId1, int vertexId2);
         int GetClosestVertexIndex(Vector3DFloat pos);
-        void AddEdge(int vertexId1, int vertexId2, unsigned char tag = NULL);
-        void AddQuad(int vertexId1, int vertexId2, int vertexId3, int vertexId4, unsigned char newEdgeTag = NULL, unsigned char faceTag = NULL);
-        void AddTriangle(int vertexId1, int vertexId2, int vertexId3, unsigned char newEdgeTag = NULL, unsigned char faceTag = NULL);
+        void AddEdge(int vertexId1, int vertexId2, string tag = "");
+        void AddQuad(int vertexId1, int vertexId2, int vertexId3, int vertexId4, string newEdgeTag = "", string faceTag = "");
+        void AddTriangle(int vertexId1, int vertexId2, int vertexId3, string newEdgeTag = "", string faceTag = "");
         void MarkFixedVertices();
         void MergeMesh(NonManifoldMesh * srcMesh);
         void RemoveFace(int faceId);
@@ -307,7 +307,7 @@ namespace Protein_Morph {
         return edgeId;
     }
 
-    void NonManifoldMesh::AddEdge(int vertexId1, int vertexId2, unsigned char tag){
+    void NonManifoldMesh::AddEdge(int vertexId1, int vertexId2, string tag){
         NonManifoldMeshEdge edge;
         edge.tag = tag;
         edge.faceIds.clear();
@@ -318,12 +318,12 @@ namespace Protein_Morph {
         vertices[GetVertexIndex(vertexId2)].edgeIds.push_back(edgeId);
     }
 
-    void NonManifoldMesh::AddQuad(int vertexId1, int vertexId2, int vertexId3, int vertexId4, unsigned char newEdgeTag, unsigned char faceTag) {
+    void NonManifoldMesh::AddQuad(int vertexId1, int vertexId2, int vertexId3, int vertexId4, string newEdgeTag, string faceTag) {
         AddTriangle(vertexId1, vertexId2, vertexId3, newEdgeTag, faceTag);
         AddTriangle(vertexId1, vertexId3, vertexId4, newEdgeTag, faceTag);
     }
 
-    void NonManifoldMesh::AddTriangle(int vertexId1, int vertexId2, int vertexId3, unsigned char newEdgeTag, unsigned char faceTag) {
+    void NonManifoldMesh::AddTriangle(int vertexId1, int vertexId2, int vertexId3, string newEdgeTag, string faceTag) {
         if(!IsEdgePresent(vertexId1, vertexId2)) {
                 AddEdge(vertexId1, vertexId2, newEdgeTag);
         }
