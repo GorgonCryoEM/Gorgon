@@ -20,10 +20,10 @@ namespace GraphMatch {
     public:
         static int GetGraphIndex(vector<GeometricShape*> & helixes, int helixNum, int cornerNum);
         static int GetGraphIndex(vector<GeometricShape*> & helixes, int helixNum, Point3Int * point);
-        static StandardGraph * ReadFile(char * volumeFile, char * helixFile, char * sseFile, char * sheetFile);
+        static StandardGraph * ReadFile(string volumeFile, string helixFile, string sseFile, string sheetFile);
         static Volume* getSheetsNoThreshold( Volume * vol, int minSize );
-        static void ReadSheetFile(char * sheetFile, vector<GeometricShape*> & helixes);
-        static void ReadHelixFile(char * helixFile, char * sseFile, vector<GeometricShape*> & helixes);
+        static void ReadSheetFile(string sheetFile, vector<GeometricShape*> & helixes);
+        static void ReadHelixFile(string helixFile, string sseFile, vector<GeometricShape*> & helixes);
         static void FindSizes(int startHelix, int startCell, vector<GeometricShape*> & helixList, Volume * vol, Volume * coloredVol, StandardGraph * graph);
         static void FindPaths(StandardGraph * graph);
         static void FindPath(int startIx, int endIx, vector<vector<Vector3DInt> > nodes, Volume * maskVol, StandardGraph * graph, bool eraseMask);
@@ -83,10 +83,10 @@ namespace GraphMatch {
         }
     }
 
-    StandardGraph * SkeletonReader::ReadFile(char * volumeFile, char * helixFile, char * sseFile, char * sheetFile) {
+    StandardGraph * SkeletonReader::ReadFile(string volumeFile, string helixFile, string sseFile, string sheetFile) {
 
         // Read the volume file and load volume data structure
-        Volume * vol = (MRCReaderPicker::pick(volumeFile))->getVolume();
+        Volume * vol = (MRCReaderPicker::pick(volumeFile.c_str()))->getVolume();
         //vol->toMathematicaFile("myVolume.nb");
 #ifdef VERBOSE
         printf("\033[34mConstructing 'paintedVol'...\n\033[0m");
@@ -614,22 +614,21 @@ namespace GraphMatch {
     // Parses sheetFile, a .wrl file containing a list of polygons that form a sheet.
     // Creates a GeometricShape object consisting of a collection of polygons (triangles) for each sheet.
     // Adds these sheet objects to helixes.
-    void SkeletonReader::ReadSheetFile(char * sheetFile, vector<GeometricShape*> & helixes){
-        FILE* fin = fopen(sheetFile, "rt");
-        if (fin == NULL) {
-            printf("Error reading sheet input file %s.  Skipping sheets.\n", sheetFile) ;
+    void SkeletonReader::ReadSheetFile(string sheetFile, vector<GeometricShape*> & helixes){
+        ifstream fin(sheetFile.c_str());
+        if (!fin) {
+            cout<<"Error reading sheet input file "<<sheetFile<<".  Skipping sheets.\n" ;
         } else {
             GeometricShape * shape = NULL;
 
-            char token[80];
+            string token;
             double x,y,z;
             int a,b,c,d;
             Polygon p;
             bool lastSheet = false;
-            while (!feof(fin)) {
-                fscanf(fin, "%s", token);
+            while (fin>>token) {
                 // add shape from previous iteration to list of SSEs
-                if(strcmp(token, TOKEN_VRML_SHAPE) == 0) {
+                if(token == TOKEN_VRML_SHAPE) {
                     if(shape != NULL) {
                         helixes.push_back(shape);
                     }
@@ -637,16 +636,16 @@ namespace GraphMatch {
                     shape->geometricShapeType = GRAPHEDGE_SHEET;
                     lastSheet = false;
                 // adds new 3d points to polygonPoints
-                } else if(strcmp(token, TOKEN_VRML_POINT) == 0) {
-                    fscanf(fin, "%s", token);
-                    while (fscanf(fin, "%lf %lf %lf,", &x, &y, &z)!= feof(fin)) {
+                } else if(token == TOKEN_VRML_POINT) {
+                    fin>>token;
+                    while (fin>>x>>y>>z) {
                         shape->polygonPoints.push_back(Point3(x, y, z));
                     }
                     lastSheet = true;
                 // adds new polygons built from list of polygonPoints to shape
-                } else if(strcmp(token, TOKEN_VRML_COORDINDEX) == 0) {
-                    fscanf(fin, "%s", token);
-                    while (fscanf(fin, "%d,%d,%d,%d", &a, &b, &c, &d)!= feof(fin)) {
+                } else if(token == TOKEN_VRML_COORDINDEX) {
+                    fin>>token;
+                    while (fin>>a>>b>>c>>d) {
                         p.pointIndex1 = a;
                         p.pointIndex2 = b;
                         p.pointIndex3 = c;
@@ -661,37 +660,36 @@ namespace GraphMatch {
                 helixes.push_back(shape);
             }
 
-            fclose(fin);
+            fin.close();
         }
     }
 
-    void SkeletonReader::ReadHelixFile(char * helixFile, char * sseFile, vector<GeometricShape*> & helixes){
-        FILE* fin = fopen(helixFile, "rt");
-        if (fin == NULL) {
-            printf("Error reading helix input file %s.  Skipping helices.\n", helixFile) ;
+    void SkeletonReader::ReadHelixFile(string helixFile, string sseFile, vector<GeometricShape*> & helixes){
+        ifstream fin(helixFile.c_str());
+        if (!fin) {
+            cout<<"Error reading helix input file "<<helixFile<<".  Skipping helices.\n" ;
         } else {
             GeometricShape * shape = new GeometricShape();
             shape->geometricShapeType = GRAPHEDGE_HELIX;
 
-            char token[80];
+            string token;
             double x,y,z,a;
 
             // read in helices, one at a time, adding each to helixes
-            while (!feof(fin)) {
-                fscanf(fin, "%s", token);
-                if(strcmp(token, TOKEN_VRML_TRANSLATION) == 0) {
-                    fscanf(fin, "%lf %lf %lf", &x, &y, &z);
+            while (fin>>token) {
+                if(token == TOKEN_VRML_TRANSLATION) {
+                    fin>>x>>y>>z;
                     //shape->Translate(Vector3(x, y, z));
                     shape->SetCenter(Point3(x, y, z));
-                } else if(strcmp(token, TOKEN_VRML_ROTATION) == 0) {
-                    fscanf(fin, "%lf %lf %lf %lf", &x, &y, &z, &a);
+                } else if(token == TOKEN_VRML_ROTATION) {
+                    fin>>x>>y>>z>>a;
                     shape->Rotate(Vector3(x, y, z), a);
-                } else if(strcmp(token, TOKEN_VRML_HEIGHT) == 0) {
-                    fscanf(fin, "%lf", &a);
+                } else if(token == TOKEN_VRML_HEIGHT) {
+                    fin>>a;
                     //shape->Scale(1.0, a, 1.0);
                     shape->SetHeight(a);
-                } else if(strcmp(token, TOKEN_VRML_RADIUS) == 0) {
-                    fscanf(fin, "%lf", &a);
+                } else if(token == TOKEN_VRML_RADIUS) {
+                    fin>>a;
                     //shape->Scale(a*2, 1.0, a*2);
                     shape->SetRadius(a);
 
@@ -705,31 +703,28 @@ namespace GraphMatch {
             }
             delete shape;
 
-            fclose(fin);
+            fin.close();
 
             // if sseFile was provided as an argument, parse it to get lengths of helices.
             // store the helix lengths in this file with the helices in helixes
             // assume that the lengths in this file are provided in the same order as the helices were stored above.
-            if(sseFile != NULL) {
-                fin = fopen(sseFile, "rt");
-                if (fin == NULL) {
-                    printf("Error reading helix length file %s. Skipping helix lengths\n", sseFile) ;
-                } else {
+            fin.open(sseFile.c_str());
+            if (!fin) {
+                cout<<"Error reading helix length file "<<sseFile<<". Skipping helix lengths\n" ;
+            } else {
 
-                    char t1[80], t2[80], t3[80];
-                    int length;
-                    unsigned int count = 0;
+                string t1, t2, t3;
+                int length;
+                unsigned int count = 0;
 
-                    while (!feof(fin)) {
-                        fscanf(fin, "%s", token);
-                        if(strcmp(token, TOKEN_SSE_ALPHA) == 0 && count < helixes.size() ) { // size check prevents crash when lengths file has more entries than helices loaded above
-                            fscanf(fin, "%s %s %s %d", t1, t2, t3, &length);
-                            helixes[count]->length = (float)length * HELIX_C_ALPHA_TO_ANGSTROMS;
-                            count++;
-                        }
+                while (fin>>token) {
+                    if(token == TOKEN_SSE_ALPHA && count < helixes.size() ) { // size check prevents crash when lengths file has more entries than helices loaded above
+                        fin>>t1>>t2>>t3>>length;
+                        helixes[count]->length = (float)length * HELIX_C_ALPHA_TO_ANGSTROMS;
+                        count++;
                     }
-                    fclose(fin);
                 }
+                fin.close();
             }
         }
     }
