@@ -615,9 +615,9 @@ namespace GraphMatch {
     // Creates a GeometricShape object consisting of a collection of polygons (triangles) for each sheet.
     // Adds these sheet objects to helixes.
     void SkeletonReader::ReadSheetFile(string sheetFile, vector<GeometricShape*> & helixes){
-        FILE* fin = fopen(sheetFile, "rt");
-        if (fin == NULL) {
-            printf("Error reading sheet input file %s.  Skipping sheets.\n", sheetFile) ;
+        ifstream fin(sheetFile.c_str());
+        if (!fin) {
+            cout<<"Error reading sheet input file "<<sheetFile<<".  Skipping sheets.\n" ;
         } else {
             GeometricShape * shape = NULL;
 
@@ -626,8 +626,7 @@ namespace GraphMatch {
             int a,b,c,d;
             Polygon p;
             bool lastSheet = false;
-            while (!feof(fin)) {
-                fscanf(fin, "%s", token);
+            while (fin>>token) {
                 // add shape from previous iteration to list of SSEs
                 if(token == TOKEN_VRML_SHAPE) {
                     if(shape != NULL) {
@@ -638,15 +637,15 @@ namespace GraphMatch {
                     lastSheet = false;
                 // adds new 3d points to polygonPoints
                 } else if(token == TOKEN_VRML_POINT) {
-                    fscanf(fin, "%s", token);
-                    while (fscanf(fin, "%lf %lf %lf,", &x, &y, &z)!= feof(fin)) {
+                    fin>>token;
+                    while (fin>>x>>y>>z) {
                         shape->polygonPoints.push_back(Point3(x, y, z));
                     }
                     lastSheet = true;
                 // adds new polygons built from list of polygonPoints to shape
                 } else if(token == TOKEN_VRML_COORDINDEX) {
-                    fscanf(fin, "%s", token);
-                    while (fscanf(fin, "%d,%d,%d,%d", &a, &b, &c, &d)!= feof(fin)) {
+                    fin>>token;
+                    while (fin>>a>>b>>c>>d) {
                         p.pointIndex1 = a;
                         p.pointIndex2 = b;
                         p.pointIndex3 = c;
@@ -661,14 +660,14 @@ namespace GraphMatch {
                 helixes.push_back(shape);
             }
 
-            fclose(fin);
+            fin.close();
         }
     }
 
     void SkeletonReader::ReadHelixFile(string helixFile, string sseFile, vector<GeometricShape*> & helixes){
-        FILE* fin = fopen(helixFile, "rt");
-        if (fin == NULL) {
-            printf("Error reading helix input file %s.  Skipping helices.\n", helixFile) ;
+        ifstream fin(helixFile.c_str());
+        if (!fin) {
+            cout<<"Error reading helix input file "<<helixFile<<".  Skipping helices.\n" ;
         } else {
             GeometricShape * shape = new GeometricShape();
             shape->geometricShapeType = GRAPHEDGE_HELIX;
@@ -677,21 +676,20 @@ namespace GraphMatch {
             double x,y,z,a;
 
             // read in helices, one at a time, adding each to helixes
-            while (!feof(fin)) {
-                fscanf(fin, "%s", token);
+            while (fin>>token) {
                 if(token == TOKEN_VRML_TRANSLATION) {
-                    fscanf(fin, "%lf %lf %lf", &x, &y, &z);
+                    fin>>x>>y>>z;
                     //shape->Translate(Vector3(x, y, z));
                     shape->SetCenter(Point3(x, y, z));
                 } else if(token == TOKEN_VRML_ROTATION) {
-                    fscanf(fin, "%lf %lf %lf %lf", &x, &y, &z, &a);
+                    fin>>x>>y>>z>>a;
                     shape->Rotate(Vector3(x, y, z), a);
                 } else if(token == TOKEN_VRML_HEIGHT) {
-                    fscanf(fin, "%lf", &a);
+                    fin>>a;
                     //shape->Scale(1.0, a, 1.0);
                     shape->SetHeight(a);
                 } else if(token == TOKEN_VRML_RADIUS) {
-                    fscanf(fin, "%lf", &a);
+                    fin>>a;
                     //shape->Scale(a*2, 1.0, a*2);
                     shape->SetRadius(a);
 
@@ -705,31 +703,28 @@ namespace GraphMatch {
             }
             delete shape;
 
-            fclose(fin);
+            fin.close();
 
             // if sseFile was provided as an argument, parse it to get lengths of helices.
             // store the helix lengths in this file with the helices in helixes
             // assume that the lengths in this file are provided in the same order as the helices were stored above.
-            if(sseFile != NULL) {
-                fin = fopen(sseFile, "rt");
-                if (fin == NULL) {
-                    printf("Error reading helix length file %s. Skipping helix lengths\n", sseFile) ;
-                } else {
+            fin.open(sseFile.c_str());
+            if (!fin) {
+                cout<<"Error reading helix length file "<<sseFile<<". Skipping helix lengths\n" ;
+            } else {
 
-                	string t1, t2, t3;
-                    int length;
-                    unsigned int count = 0;
+                string t1, t2, t3;
+                int length;
+                unsigned int count = 0;
 
-                    while (!feof(fin)) {
-                        fscanf(fin, "%s", token);
-                        if(token == TOKEN_SSE_ALPHA && count < helixes.size() ) { // size check prevents crash when lengths file has more entries than helices loaded above
-                            fscanf(fin, "%s %s %s %d", t1, t2, t3, &length);
-                            helixes[count]->length = (float)length * HELIX_C_ALPHA_TO_ANGSTROMS;
-                            count++;
-                        }
+                while (fin>>token) {
+                    if(token == TOKEN_SSE_ALPHA && count < helixes.size() ) { // size check prevents crash when lengths file has more entries than helices loaded above
+                        fin>>t1>>t2>>t3>>length;
+                        helixes[count]->length = (float)length * HELIX_C_ALPHA_TO_ANGSTROMS;
+                        count++;
                     }
-                    fclose(fin);
                 }
+                fin.close();
             }
         }
     }
