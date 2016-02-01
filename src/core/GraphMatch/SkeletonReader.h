@@ -629,7 +629,7 @@ namespace GraphMatch {
             while (!feof(fin)) {
                 fscanf(fin, "%s", token);
                 // add shape from previous iteration to list of SSEs
-                if(strcmp(token, TOKEN_VRML_SHAPE) == 0) {
+                if(token == TOKEN_VRML_SHAPE) {
                     if(shape != NULL) {
                         helixes.push_back(shape);
                     }
@@ -637,14 +637,14 @@ namespace GraphMatch {
                     shape->geometricShapeType = GRAPHEDGE_SHEET;
                     lastSheet = false;
                 // adds new 3d points to polygonPoints
-                } else if(strcmp(token, TOKEN_VRML_POINT) == 0) {
+                } else if(token == TOKEN_VRML_POINT) {
                     fscanf(fin, "%s", token);
                     while (fscanf(fin, "%lf %lf %lf,", &x, &y, &z)!= feof(fin)) {
                         shape->polygonPoints.push_back(Point3(x, y, z));
                     }
                     lastSheet = true;
                 // adds new polygons built from list of polygonPoints to shape
-                } else if(strcmp(token, TOKEN_VRML_COORDINDEX) == 0) {
+                } else if(token == TOKEN_VRML_COORDINDEX) {
                     fscanf(fin, "%s", token);
                     while (fscanf(fin, "%d,%d,%d,%d", &a, &b, &c, &d)!= feof(fin)) {
                         p.pointIndex1 = a;
@@ -679,18 +679,18 @@ namespace GraphMatch {
             // read in helices, one at a time, adding each to helixes
             while (!feof(fin)) {
                 fscanf(fin, "%s", token);
-                if(strcmp(token, TOKEN_VRML_TRANSLATION) == 0) {
+                if(token == TOKEN_VRML_TRANSLATION) {
                     fscanf(fin, "%lf %lf %lf", &x, &y, &z);
                     //shape->Translate(Vector3(x, y, z));
                     shape->SetCenter(Point3(x, y, z));
-                } else if(strcmp(token, TOKEN_VRML_ROTATION) == 0) {
+                } else if(token == TOKEN_VRML_ROTATION) {
                     fscanf(fin, "%lf %lf %lf %lf", &x, &y, &z, &a);
                     shape->Rotate(Vector3(x, y, z), a);
-                } else if(strcmp(token, TOKEN_VRML_HEIGHT) == 0) {
+                } else if(token == TOKEN_VRML_HEIGHT) {
                     fscanf(fin, "%lf", &a);
                     //shape->Scale(1.0, a, 1.0);
                     shape->SetHeight(a);
-                } else if(strcmp(token, TOKEN_VRML_RADIUS) == 0) {
+                } else if(token == TOKEN_VRML_RADIUS) {
                     fscanf(fin, "%lf", &a);
                     //shape->Scale(a*2, 1.0, a*2);
                     shape->SetRadius(a);
@@ -722,7 +722,7 @@ namespace GraphMatch {
 
                     while (!feof(fin)) {
                         fscanf(fin, "%s", token);
-                        if(strcmp(token, TOKEN_SSE_ALPHA) == 0 && count < helixes.size() ) { // size check prevents crash when lengths file has more entries than helices loaded above
+                        if(token == TOKEN_SSE_ALPHA && count < helixes.size() ) { // size check prevents crash when lengths file has more entries than helices loaded above
                             fscanf(fin, "%s %s %s %d", t1, t2, t3, &length);
                             helixes[count]->length = (float)length * HELIX_C_ALPHA_TO_ANGSTROMS;
                             count++;
