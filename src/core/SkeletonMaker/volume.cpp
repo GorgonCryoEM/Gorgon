@@ -11019,16 +11019,6 @@ void Volume::saveFile(string fileName) {
 
     if(extension == "MRC") {
       toMRCFile((char *)fileName.c_str());
-    } else if(extension == "CCP4") {
-      toMRCFile((char *)fileName.c_str());
-    } else if(extension == "RAW") {
-      VolumeReaderRAW::SaveVolume16bit(this, fileName);
-    } else if(extension == "NB") {
-      toMathematicaFile((char *)fileName.c_str());
-    } else if(extension == "TNS") {
-      VolumeReaderTNS::SaveVolume(this, fileName);
-    } else if(extension == "BMP") {
-      ImageReaderBMP::SaveVolumeAsImageSet(this, fileName);
     } else {
       cout<<"Input format "<<extension<<" not supported!"<<endl;
     }

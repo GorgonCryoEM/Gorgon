@@ -2,7 +2,6 @@
 #define CORE_GRAYSKELETONCPP_VOLUME_SKELETONIZER_H
 
 #include "GrayImageList.h"
-#include "ImageReaderBMP.h"
 ////#include "ImageReaderMRC.h"
 ////#include "GlobalDefinitions.h"
 ////#include "VolumeDeltaAnalyzer.h"
@@ -1827,10 +1826,6 @@ namespace GraySkeletonCPP {
             } while (modified);
             imageList.AddImage(GrayImage::GrayImageVolumeToImage(skeleton));
         }
-
-        GrayImage * progressImage = imageList.GetCompositeImage(3);
-        ImageReaderBMP::SaveGrayscaleImage(progressImage, outputPath + "-progress.bmp");
-        delete progressImage;
 
         return skeleton;
     }
