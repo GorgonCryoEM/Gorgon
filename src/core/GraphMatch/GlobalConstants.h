@@ -92,12 +92,12 @@ namespace GraphMatch {
     const float HELIX_C_ALPHA_TO_ANGSTROMS = 1.5f;
     const float LOOP_C_ALPHA_TO_ANGSTROMS = 3.8f / 1.5f; // 1.5 works well on test data
 
-    char SSE_FILE_NAME[700];
-    char VRML_HELIX_FILE_NAME[700];
-    char VRML_SHEET_FILE_NAME[700];
-    char SEQUENCE_FILE_NAME[700];
-    char SEQUENCE_FILE_TYPE[700];
-    char MRC_FILE_NAME[700];
+    string SSE_FILE_NAME;
+    string VRML_HELIX_FILE_NAME;
+    string VRML_SHEET_FILE_NAME;
+    string SEQUENCE_FILE_NAME;
+    string SEQUENCE_FILE_TYPE;
+    string MRC_FILE_NAME;
     double MAXIMUM_DISTANCE_SHEET_SKELETON = 0.0;
     int MINIMUM_SHEET_SIZE = 10;
     double EUCLIDEAN_DISTANCE_THRESHOLD = 15;
