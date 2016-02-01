@@ -374,10 +374,10 @@ BOOST_PYTHON_MODULE(@current_pylib@)
         .def("getCornerCell3", &GeometricShape::GetCornerCell3)
     ;
 
-    bool (SSECorrespondenceEngine::*SetConstant1)(char *, char *)   = &SSECorrespondenceEngine::SetConstant;
-    bool (SSECorrespondenceEngine::*SetConstant2)(char *, double)   = &SSECorrespondenceEngine::SetConstant;
-    bool (SSECorrespondenceEngine::*SetConstant3)(char *, int)      = &SSECorrespondenceEngine::SetConstant;
-    bool (SSECorrespondenceEngine::*SetConstant4)(char *, bool)     = &SSECorrespondenceEngine::SetConstant;
+    bool (SSECorrespondenceEngine::*SetConstant1)(string, string)   = &SSECorrespondenceEngine::SetConstant;
+    bool (SSECorrespondenceEngine::*SetConstant2)(string, double)   = &SSECorrespondenceEngine::SetConstant;
+    bool (SSECorrespondenceEngine::*SetConstant3)(string, int)      = &SSECorrespondenceEngine::SetConstant;
+    bool (SSECorrespondenceEngine::*SetConstant4)(string, bool)     = &SSECorrespondenceEngine::SetConstant;
 
     class_<SSECorrespondenceEngine>("SSECorrespondenceEngine", init<>())
         .def("setConstant", SetConstant1)

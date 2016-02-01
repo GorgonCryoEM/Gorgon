@@ -18,16 +18,16 @@ namespace GraphMatch {
         BackEndInterface();
         virtual ~BackEndInterface();
         // Initialization Methods
-        void SetConstantsFromFile(char * fileName);
-        bool SetConstant(char * token, char * value);
-        bool SetConstant(char * token, double value);
-        bool SetConstant(char * token, int value);
-        bool SetConstant(char * token, bool value);
-        bool GetConstant(char * token, char * value);
-        string GetConstantString(char * token);
-        double GetConstantDouble(char * token);
-        int GetConstantInt(char * token);
-        bool GetConstantBool(char * token);
+        void SetConstantsFromFile(string fileName);
+        bool SetConstant(string token, string value);
+        bool SetConstant(string token, double value);
+        bool SetConstant(string token, int value);
+        bool SetConstant(string token, bool value);
+        bool GetConstant(string token, string value);
+        string GetConstantString(string token);
+        double GetConstantDouble(string token);
+        int GetConstantInt(string token);
+        bool GetConstantBool(string token);
         void ClearAllConstraints();
         void SetHelixConstraint(int sequenceHelix, int skeletonHelix);
         void SetNodeConstraint(int sequenceNode, int skeletonNode);
@@ -66,35 +66,35 @@ namespace GraphMatch {
         }
     }
 
-    void BackEndInterface::SetConstantsFromFile(char * fileName) {
+    void BackEndInterface::SetConstantsFromFile(string fileName) {
         LoadConstantsFromFile(fileName);
     }
 
-    bool BackEndInterface::SetConstant(char * token, char * value) {
+    bool BackEndInterface::SetConstant(string token, string value) {
         return SetConstantFromToken(token, value, 0.0, 0, false);
     }
 
-    bool BackEndInterface::SetConstant(char *token, double value) {
+    bool BackEndInterface::SetConstant(string token, double value) {
         return SetConstantFromToken(token, NULL, value, 0, false);
     }
 
-    bool BackEndInterface::SetConstant(char *token, int value) {
+    bool BackEndInterface::SetConstant(string token, int value) {
         return SetConstantFromToken(token, NULL, 0.0, value, false);
     }
 
-    bool BackEndInterface::SetConstant(char *token, bool value) {
+    bool BackEndInterface::SetConstant(string token, bool value) {
         return SetConstantFromToken(token, NULL, 0.0, 0, value);
     }
 
-    bool BackEndInterface::GetConstant(char * token, char * value) {
+    bool BackEndInterface::GetConstant(string token, string value) {
         int iVal;
         double dVal;
         bool bVal;
         return GetConstantFromToken(token, value, dVal, iVal, bVal);
     }
 
-    string BackEndInterface::GetConstantString(char * token) {
-        char sVal[100];
+    string BackEndInterface::GetConstantString(string token) {
+        string  sVal;
         int iVal;
         double dVal;
         bool bVal;
@@ -102,7 +102,7 @@ namespace GraphMatch {
         return sVal;
     }
 
-    double BackEndInterface::GetConstantDouble(char *token) {
+    double BackEndInterface::GetConstantDouble(string token) {
         int iVal;
         double dVal;
         bool bVal;
@@ -110,7 +110,7 @@ namespace GraphMatch {
         return dVal;
     }
 
-    int BackEndInterface::GetConstantInt(char *token) {
+    int BackEndInterface::GetConstantInt(string token) {
         int iVal;
         double dVal;
         bool bVal;
@@ -118,7 +118,7 @@ namespace GraphMatch {
         return iVal;
     }
 
-    bool BackEndInterface::GetConstantBool(char *token) {
+    bool BackEndInterface::GetConstantBool(string token) {
         int iVal;
         double dVal;
         bool bVal;
