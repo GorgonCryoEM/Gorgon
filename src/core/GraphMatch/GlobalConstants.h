@@ -390,10 +390,10 @@ namespace GraphMatch {
                 fin>>VRML_SHEET_FILE_NAME;
             } else if(token == TOKEN_SEQUENCE_FILE_NAME) {
                 fin>>SEQUENCE_FILE_NAME;
-                sprintf(SEQUENCE_FILE_TYPE, "SEQ");
+                SEQUENCE_FILE_TYPE = "SEQ";
             } else if(token == TOKEN_PDB_FILE_NAME) {
                 fin>>SEQUENCE_FILE_NAME;
-                sprintf(SEQUENCE_FILE_TYPE, "PDB");
+                SEQUENCE_FILE_TYPE = "PDB";
             } else if(token == TOKEN_SEQUENCE_FILE_TYPE) {
                 fin>>SEQUENCE_FILE_TYPE;
             } else if(token == TOKEN_MRC_FILE_NAME) {
