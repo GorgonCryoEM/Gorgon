@@ -14,7 +14,6 @@ namespace GraphMatch {
         SSECorrespondenceResult();
         SSECorrespondenceResult(LinkedNode * node, int helixCount);
         SSECorrespondenceResult(vector<int> correspondence, double cost, int helixCount);
-        ~SSECorrespondenceResult();
 
         string GetNodeString();
         double GetCost();
@@ -30,12 +29,9 @@ namespace GraphMatch {
         int sheetCount;
     };
 
-    SSECorrespondenceResult::SSECorrespondenceResult(){
-        correspondence.clear();
-        cost = 0;
-        helixCount = 0;
-        sheetCount = 0;
-    }
+    SSECorrespondenceResult::SSECorrespondenceResult()
+    					: cost(0), helixCount(0), sheetCount(0)
+    {}
 
     SSECorrespondenceResult::SSECorrespondenceResult(LinkedNode * node, int helixCount){
         correspondence = node->GetNodeCorrespondence();
@@ -47,10 +43,6 @@ namespace GraphMatch {
         this->correspondence = correspondence;
         this->cost = cost;
         this->helixCount = helixCount;
-    }
-
-    SSECorrespondenceResult::~SSECorrespondenceResult(){
-        correspondence.clear();
     }
 
     string SSECorrespondenceResult::GetNodeString(){
