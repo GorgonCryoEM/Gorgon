@@ -7,6 +7,7 @@
 #include <vector>
 #include <map>
 #include <set>
+#include <iomanip>
 //#include <GorgonGL.h>
 //#include <Foundation/StringUtils.h>
 
@@ -77,10 +78,10 @@ namespace Visualization {
 
     int SSECorrespondenceEngine::LoadCorrespondenceFromFile(string fileName) {
 
-        FILE* fin = fopen((char*)fileName.c_str(), "rt");
-        if (fin == NULL)
+        ifstream fin(fileName.c_str());
+        if (!fin)
         {
-            printf("Error opening input file %s.\n", fileName.c_str()) ;
+            cout<<"Error opening input file "<<fileName<<".\n";
             exit(0) ;
         }
 
@@ -89,21 +90,21 @@ namespace Visualization {
         int correspondenceCount = 0, nodeCount, skeletonNode;
         vector<int> nodes;
         double cost;
-        fscanf(fin, "%d\n", &correspondenceCount);
+        fin>>correspondenceCount;
 
         for(int i = 0; i < correspondenceCount; i++) {
             nodes.clear();
-            fscanf(fin, "%d ", &nodeCount);
+            fin>>nodeCount;
             for(int j = 0; j < nodeCount; j++) {
-                fscanf(fin, "%d ", &skeletonNode);
+                fin>>skeletonNode;
                 nodes.push_back(skeletonNode);
             }
-            fscanf(fin, "%lf\n", &cost);
+            fin>>cost;
             // TODO: Fix! 0 not acceptable!
             correspondence.push_back(SSECorrespondenceResult(nodes, cost, 0));
         }
 
-        fclose(fin);
+        fin.close();
 
         return correspondenceCount;
     }
@@ -118,23 +119,23 @@ namespace Visualization {
     }
 
     void SSECorrespondenceEngine::SaveCorrespondenceToFile(string fileName) {
-        FILE* fout = fopen((char*)fileName.c_str(), "wt");
-        if (fout == NULL)
+        ofstream fout(fileName.c_str());
+        if (!fout)
         {
-            printf("Error opening output file %s.\n", fileName.c_str()) ;
+            cout<<"Error opening output file "<<fileName<<".\n";
             exit(0) ;
         }
 
-        fprintf(fout, "%ld\n", correspondence.size());
+        fout<<correspondence.size()<<endl;
         for(unsigned int i = 0; i < correspondence.size(); i++) {
-            fprintf(fout, "%d ", correspondence[i].GetNodeCount());
+            fout<<correspondence[i].GetNodeCount()<<" ";
             for(int j = 0; j < correspondence[i].GetNodeCount(); j++) {
-                fprintf(fout, "%d ", correspondence[i].GetSkeletonNode(j));
+                fout<<correspondence[i].GetSkeletonNode(j)<<" ";
             }
-            fprintf(fout, "%lf\n", correspondence[i].GetCost());
+            fout<<fixed<<setprecision(6)<<correspondence[i].GetCost()<<endl;
         }
 
-        fclose(fout);
+        fout.close();
     }
 
     GeometricShape * SSECorrespondenceEngine::GetSkeletonSSE(int sseId) {
