@@ -20,10 +20,10 @@ namespace GraphMatch {
     public:
         static int GetGraphIndex(vector<GeometricShape*> & helixes, int helixNum, int cornerNum);
         static int GetGraphIndex(vector<GeometricShape*> & helixes, int helixNum, Point3Int * point);
-        static StandardGraph * ReadFile(char * volumeFile, char * helixFile, char * sseFile, char * sheetFile);
+        static StandardGraph * ReadFile(string volumeFile, string helixFile, string sseFile, string sheetFile);
         static Volume* getSheetsNoThreshold( Volume * vol, int minSize );
-        static void ReadSheetFile(char * sheetFile, vector<GeometricShape*> & helixes);
-        static void ReadHelixFile(char * helixFile, char * sseFile, vector<GeometricShape*> & helixes);
+        static void ReadSheetFile(string sheetFile, vector<GeometricShape*> & helixes);
+        static void ReadHelixFile(string helixFile, string sseFile, vector<GeometricShape*> & helixes);
         static void FindSizes(int startHelix, int startCell, vector<GeometricShape*> & helixList, Volume * vol, Volume * coloredVol, StandardGraph * graph);
         static void FindPaths(StandardGraph * graph);
         static void FindPath(int startIx, int endIx, vector<vector<Vector3DInt> > nodes, Volume * maskVol, StandardGraph * graph, bool eraseMask);
@@ -83,7 +83,7 @@ namespace GraphMatch {
         }
     }
 
-    StandardGraph * SkeletonReader::ReadFile(char * volumeFile, char * helixFile, char * sseFile, char * sheetFile) {
+    StandardGraph * SkeletonReader::ReadFile(string volumeFile, string helixFile, string sseFile, string sheetFile) {
 
         // Read the volume file and load volume data structure
         Volume * vol = (MRCReaderPicker::pick(volumeFile))->getVolume();
@@ -614,14 +614,14 @@ namespace GraphMatch {
     // Parses sheetFile, a .wrl file containing a list of polygons that form a sheet.
     // Creates a GeometricShape object consisting of a collection of polygons (triangles) for each sheet.
     // Adds these sheet objects to helixes.
-    void SkeletonReader::ReadSheetFile(char * sheetFile, vector<GeometricShape*> & helixes){
+    void SkeletonReader::ReadSheetFile(string sheetFile, vector<GeometricShape*> & helixes){
         FILE* fin = fopen(sheetFile, "rt");
         if (fin == NULL) {
             printf("Error reading sheet input file %s.  Skipping sheets.\n", sheetFile) ;
         } else {
             GeometricShape * shape = NULL;
 
-            char token[80];
+            string token;
             double x,y,z;
             int a,b,c,d;
             Polygon p;
@@ -665,7 +665,7 @@ namespace GraphMatch {
         }
     }
 
-    void SkeletonReader::ReadHelixFile(char * helixFile, char * sseFile, vector<GeometricShape*> & helixes){
+    void SkeletonReader::ReadHelixFile(string helixFile, string sseFile, vector<GeometricShape*> & helixes){
         FILE* fin = fopen(helixFile, "rt");
         if (fin == NULL) {
             printf("Error reading helix input file %s.  Skipping helices.\n", helixFile) ;
@@ -673,7 +673,7 @@ namespace GraphMatch {
             GeometricShape * shape = new GeometricShape();
             shape->geometricShapeType = GRAPHEDGE_HELIX;
 
-            char token[80];
+            string token;
             double x,y,z,a;
 
             // read in helices, one at a time, adding each to helixes
@@ -716,7 +716,7 @@ namespace GraphMatch {
                     printf("Error reading helix length file %s. Skipping helix lengths\n", sseFile) ;
                 } else {
 
-                    char t1[80], t2[80], t3[80];
+                	string t1, t2, t3;
                     int length;
                     unsigned int count = 0;
 
