@@ -48,9 +48,9 @@ using namespace std;
 			#endif
 			start = clock();
 			if (type == "PDB")
-				graph = PDBReader::ReadFile(SEQUENCE_FILE_NAME);
+				graph = PDBReader::ReadFile(SEQUENCE_FILE_NAME.c_str());
 			else if (type == "SEQ")
-				graph = SEQReader::ReadFile(SEQUENCE_FILE_NAME);
+				graph = SEQReader::ReadFile(SEQUENCE_FILE_NAME.c_str());
 			else
 				return NULL;
 			finish = clock();
