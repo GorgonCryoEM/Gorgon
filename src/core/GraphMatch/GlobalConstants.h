@@ -16,6 +16,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <iostream>
+#include <fstream>
 
 namespace GraphMatch {
 
@@ -372,15 +373,14 @@ namespace GraphMatch {
 
         int tempInt1, tempInt2;
 
-        FILE* fin = fopen(settingsFile, "rt");
-        if (fin == NULL) {
-            printf("Error reading input file %s.\n", settingsFile) ;
+        ifstream fin(settingsFile.c_str());
+        if (!fin) {
+            cout<<"Error reading input file "<<settingsFile<<".\n" ;
             exit(0) ;
         }
 
         string token;
-        while (!feof(fin)) {
-            fscanf(fin, "%s", token);
+        while (fin>>token) {
             if(token == TOKEN_SSE_FILE_NAME) {
                 // Stop the usage of the SSE_FILE_NAME parameter
                 //fscanf(fin, "%s", &SSE_FILE_NAME);
@@ -467,7 +467,7 @@ namespace GraphMatch {
                 SOLUTION[tempInt1-1] = tempInt2;
             }
         }
-        fclose(fin);
+        fin.close();
     }
 
 
