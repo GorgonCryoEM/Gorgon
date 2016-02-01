@@ -383,87 +383,87 @@ namespace GraphMatch {
         while (fin>>token) {
             if(token == TOKEN_SSE_FILE_NAME) {
                 // Stop the usage of the SSE_FILE_NAME parameter
-                //fscanf(fin, "%s", &SSE_FILE_NAME);
+                //fin>>SSE_FILE_NAME;
             } else if(token == TOKEN_VRML_HELIX_FILE_NAME) {
-                fscanf(fin, "%s", &VRML_HELIX_FILE_NAME);
+                fin>>VRML_HELIX_FILE_NAME;
             } else if(token == TOKEN_VRML_SHEET_FILE_NAME) {
-                fscanf(fin, "%s", &VRML_SHEET_FILE_NAME);
+                fin>>VRML_SHEET_FILE_NAME;
             } else if(token == TOKEN_SEQUENCE_FILE_NAME) {
-                fscanf(fin, "%s", &SEQUENCE_FILE_NAME);
+                fin>>SEQUENCE_FILE_NAME;
                 sprintf(SEQUENCE_FILE_TYPE, "SEQ");
             } else if(token == TOKEN_PDB_FILE_NAME) {
-                fscanf(fin, "%s", &SEQUENCE_FILE_NAME);
+                fin>>SEQUENCE_FILE_NAME;
                 sprintf(SEQUENCE_FILE_TYPE, "PDB");
             } else if(token == TOKEN_SEQUENCE_FILE_TYPE) {
-                fscanf(fin, "%s", &SEQUENCE_FILE_TYPE);
+                fin>>SEQUENCE_FILE_TYPE;
             } else if(token == TOKEN_MRC_FILE_NAME) {
-                fscanf(fin, "%s", &MRC_FILE_NAME);
+                fin>>MRC_FILE_NAME;
             } else if(token == TOKEN_MAXIMUM_DISTANCE_SHEET_SKELETON) {
-                fscanf(fin, "%lf", &MAXIMUM_DISTANCE_SHEET_SKELETON);
+                fin>>MAXIMUM_DISTANCE_SHEET_SKELETON;
             } else if(token == TOKEN_MINIMUM_SHEET_SIZE) {
-                fscanf(fin, "%d", &MINIMUM_SHEET_SIZE);
+                fin>>MINIMUM_SHEET_SIZE;
             } else if(token == TOKEN_EUCLIDEAN_DISTANCE_THRESHOLD) {
-                fscanf(fin, "%lf", &EUCLIDEAN_DISTANCE_THRESHOLD);
+                fin>>EUCLIDEAN_DISTANCE_THRESHOLD;
             } else if(token == TOKEN_BORDER_MARGIN_THRESHOLD) {
-                fscanf(fin, "%d", &BORDER_MARGIN_THRESHOLD);
+                fin>>BORDER_MARGIN_THRESHOLD;
             } else if(token == TOKEN_NORMALIZE_GRAPHS) {
-                fscanf(fin, "%d", &NORMALIZE_GRAPHS);
+                fin>>NORMALIZE_GRAPHS;
             } else if(token == TOKEN_MISSING_HELIX_PENALTY) {
-                fscanf(fin, "%lf", &MISSING_HELIX_PENALTY);
+                fin>>MISSING_HELIX_PENALTY;
             } else if(token == TOKEN_MISSING_SHEET_PENALTY) {
-                fscanf(fin, "%lf", &MISSING_SHEET_PENALTY);
+                fin>>MISSING_SHEET_PENALTY;
             } else if(token == TOKEN_MISSING_HELIX_PENALTY_SCALED) {
-                fscanf(fin, "%lf", &MISSING_HELIX_PENALTY_SCALED);
+                fin>>MISSING_HELIX_PENALTY_SCALED;
             } else if(token == TOKEN_MISSING_SHEET_PENALTY_SCALED) {
-                fscanf(fin, "%lf", &MISSING_SHEET_PENALTY_SCALED);
+                fin>>MISSING_SHEET_PENALTY_SCALED;
             } else if(token == TOKEN_EUCLIDEAN_LOOP_PENALTY) {
-                fscanf(fin, "%lf", &EUCLIDEAN_LOOP_PENALTY);
+                fin>>EUCLIDEAN_LOOP_PENALTY;
             } else if(token == TOKEN_START_END_MISSING_HELIX_PENALTY) {
-                fscanf(fin, "%lf", &START_END_MISSING_HELIX_PENALTY);
+                fin>>START_END_MISSING_HELIX_PENALTY;
             } else if(token == TOKEN_HELIX_WEIGHT_COEFFICIENT) {
-                fscanf(fin, "%lf", &HELIX_WEIGHT_COEFFICIENT);
+                fin>>HELIX_WEIGHT_COEFFICIENT;
             } else if(token == TOKEN_LOOP_WEIGHT_COEFFICIENT) {
-                fscanf(fin, "%lf", &LOOP_WEIGHT_COEFFICIENT);
+                fin>>LOOP_WEIGHT_COEFFICIENT;
             } else if(token == TOKEN_SHEET_CAPACITY_COEFFICIENT) {
-                fscanf(fin, "%lf", &SHEET_CAPACITY_COEFFICIENT);
+                fin>>SHEET_CAPACITY_COEFFICIENT;
             } else if(token == TOKEN_SHEET_MERGE_THRESHOLD) {
-                fscanf(fin, "%lf", &SHEET_MERGE_THRESHOLD);
+                fin>>SHEET_MERGE_THRESHOLD;
             } else if(token == TOKEN_MISSING_HELIX_LENGTH) {
-                fscanf(fin, "%lf", &MISSING_HELIX_LENGTH);
+                fin>>MISSING_HELIX_LENGTH;
             } else if(token == TOKEN_MISSING_SHEET_LENGTH) {
-                fscanf(fin, "%lf", &MISSING_SHEET_LENGTH);
+                fin>>MISSING_SHEET_LENGTH;
             } else if(token == TOKEN_SHEET_SELF_LOOP_LENGTH) {
-                fscanf(fin, "%lf", &SHEET_SELF_LOOP_LENGTH);
+                fin>>SHEET_SELF_LOOP_LENGTH;
             } else if(token == TOKEN_SHEET_WEIGHT_COEFFICIENT) {
-                fscanf(fin, "%lf", &SHEET_WEIGHT_COEFFICIENT);
+                fin>>SHEET_WEIGHT_COEFFICIENT;
             } else if(token == TOKEN_COST_FUNCTION) {
-                fscanf(fin, "%d", &COST_FUNCTION);
+                fin>>COST_FUNCTION;
             } else if(token == TOKEN_INCLUDE_STRANDS) {
-                fscanf(fin, "%d", &INCLUDE_STRANDS);
+                fin>>INCLUDE_STRANDS;
             } else if(token == TOKEN_VOXEL_SIZE) {
-                fscanf(fin, "%lf", &VOXEL_SIZE);
+                fin>>VOXEL_SIZE;
             } else if(token == TOKEN_TRANSLATE_VOLUMETRIC_COORDINATES) {
-                fscanf(fin, "%d", &TRANSLATE_VOLUMETRIC_COORDINATES);
+                fin>>TRANSLATE_VOLUMETRIC_COORDINATES;
             } else if(token == TOKEN_MISSING_HELIX_COUNT) {
-                fscanf(fin, "%d", &MISSING_HELIX_COUNT);
+                fin>>MISSING_HELIX_COUNT;
             } else if(token == TOKEN_MISSING_SHEET_COUNT) {
-                fscanf(fin, "%d", &MISSING_SHEET_COUNT);
+                fin>>MISSING_SHEET_COUNT;
             } else if(token == TOKEN_EUCLIDEAN_VOXEL_TO_PDB_RATIO) {
-                fscanf(fin, "%lf", &EUCLIDEAN_VOXEL_TO_PDB_RATIO);
+                fin>>EUCLIDEAN_VOXEL_TO_PDB_RATIO;
             } else if(token == TOKEN_NODE_CONSTRAINT) {
-                fscanf(fin, "%d %d\n", &tempInt1, &tempInt2);
+                fin>>tempInt1>>tempInt2;
                 AddNodeConstraint(tempInt1, tempInt2);
             } else if(token == TOKEN_HELIX_CONSTRAINT) {
-                fscanf(fin, "%d %d\n", &tempInt1, &tempInt2);
+                fin>>tempInt1>>tempInt2;
                 AddHelixConstraint(tempInt1, tempInt2);
             } else if(token == TOKEN_NODE_MISMATCH) {
-                fscanf(fin, "%d %d\n", &tempInt1, &tempInt2);
+                fin>>tempInt1>>tempInt2;
                 AddNodeMismatch(tempInt1, tempInt2);
             } else if(token == TOKEN_HELIX_MISMATCH) {
-                fscanf(fin, "%d %d\n", &tempInt1, &tempInt2);
+                fin>>tempInt1>>tempInt2;
                 AddHelixMismatch(tempInt1, tempInt2);
             } else if(token == TOKEN_SOLUTION) {
-                fscanf(fin, "%d %d\n", &tempInt1, &tempInt2);
+                fin>>tempInt1>>tempInt2;
                 SOLUTION[tempInt1-1] = tempInt2;
             }
         }
