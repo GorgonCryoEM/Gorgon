@@ -38,11 +38,11 @@ namespace GraphMatch {
         this->helixCount = helixCount;
     }
 
-    SSECorrespondenceResult::SSECorrespondenceResult(vector<int> correspondence, double cost, int helixCount){
-        this->correspondence = correspondence;
-        this->cost = cost;
-        this->helixCount = helixCount;
-    }
+    SSECorrespondenceResult::SSECorrespondenceResult(vector<int> corr, double cst, int nHelix)
+    						: correspondence(corr),
+							  cost(cst),
+							  helixCount(nHelix)
+    {}
 
     double SSECorrespondenceResult::GetCost() {
         return cost;
