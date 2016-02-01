@@ -219,7 +219,7 @@ namespace GraphMatch {
     }
 
 
-    bool SetConstantFromToken(char * token, char * stringValue, double doubleValue, int intValue, bool boolValue) {
+    bool SetConstantFromToken(string token, string stringValue, double doubleValue, int intValue, bool boolValue) {
         if(token == TOKEN_SSE_FILE_NAME) {
             strcpy(SSE_FILE_NAME, stringValue);
         } else if(token == TOKEN_VRML_HELIX_FILE_NAME) {
@@ -291,7 +291,7 @@ namespace GraphMatch {
     }
 
 
-    bool GetConstantFromToken(char * token, char * stringValue, double &doubleValue, int &intValue, bool &boolValue) {
+    bool GetConstantFromToken(string token, string stringValue, double &doubleValue, int &intValue, bool &boolValue) {
         if(token == TOKEN_SSE_FILE_NAME) {
             strcpy(stringValue, SSE_FILE_NAME);
         } else if(token == TOKEN_VRML_HELIX_FILE_NAME) {
@@ -363,7 +363,7 @@ namespace GraphMatch {
     }
 
 
-    void LoadConstantsFromFile(char * settingsFile) {
+    void LoadConstantsFromFile(string settingsFile) {
         for(int i = 0; i < MAX_NODES; i++) {
             SOLUTION[i] = -2;
             allowedConstraintCount[i] = 0;
@@ -378,7 +378,7 @@ namespace GraphMatch {
             exit(0) ;
         }
 
-        char token[80];
+        string token;
         while (!feof(fin)) {
             fscanf(fin, "%s", token);
             if(token == TOKEN_SSE_FILE_NAME) {
