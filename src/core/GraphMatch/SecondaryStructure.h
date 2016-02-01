@@ -17,8 +17,6 @@ namespace GraphMatch {
         string secondaryStructureID;
 
     public:
-        SecondaryStructure();
-        ~SecondaryStructure();
         bool IsHelix();
         bool IsSheet();
         int GetLengthResidues();
@@ -29,16 +27,6 @@ namespace GraphMatch {
         int GetEndPosition();
         string GetSecondaryStructureID();
     };
-
-    SecondaryStructure::SecondaryStructure() {
-        secondaryStructureID = NULL;
-    }
-
-    SecondaryStructure::~SecondaryStructure() {
-        if(secondaryStructureID != NULL) {
-            delete secondaryStructureID;
-        }
-    }
 
     bool SecondaryStructure::IsHelix() {
         return (secondaryStructureType == GRAPHEDGE_HELIX);
