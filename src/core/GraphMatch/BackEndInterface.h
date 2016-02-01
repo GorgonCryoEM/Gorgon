@@ -75,15 +75,15 @@ namespace GraphMatch {
     }
 
     bool BackEndInterface::SetConstant(string token, double value) {
-        return SetConstantFromToken(token, NULL, value, 0, false);
+        return SetConstantFromToken(token, "", value, 0, false);
     }
 
     bool BackEndInterface::SetConstant(string token, int value) {
-        return SetConstantFromToken(token, NULL, 0.0, value, false);
+        return SetConstantFromToken(token, "", 0.0, value, false);
     }
 
     bool BackEndInterface::SetConstant(string token, bool value) {
-        return SetConstantFromToken(token, NULL, 0.0, 0, value);
+        return SetConstantFromToken(token, "", 0.0, 0, value);
     }
 
     bool BackEndInterface::GetConstant(string token, string value) {
@@ -106,7 +106,7 @@ namespace GraphMatch {
         int iVal;
         double dVal;
         bool bVal;
-        GetConstantFromToken(token, NULL, dVal, iVal, bVal);
+        GetConstantFromToken(token, "", dVal, iVal, bVal);
         return dVal;
     }
 
@@ -114,7 +114,7 @@ namespace GraphMatch {
         int iVal;
         double dVal;
         bool bVal;
-        GetConstantFromToken(token, NULL, dVal, iVal, bVal);
+        GetConstantFromToken(token, "", dVal, iVal, bVal);
         return iVal;
     }
 
@@ -122,7 +122,7 @@ namespace GraphMatch {
         int iVal;
         double dVal;
         bool bVal;
-        GetConstantFromToken(token, NULL, dVal, iVal, bVal);
+        GetConstantFromToken(token, "", dVal, iVal, bVal);
         return bVal;
     }
 
