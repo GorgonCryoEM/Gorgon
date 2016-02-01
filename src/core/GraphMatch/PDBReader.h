@@ -85,10 +85,10 @@ namespace GraphMatch {
     #endif
 
     StandardGraph * PDBReader::ReadFile(string fname) {
-        FILE* fin = fopen(fname, "rt");
-        if (fin == NULL)
+        ifstream fin(fname.c_str());
+        if (!fin)
         {
-            printf("Error reading input file %s.\n", fname) ;
+            cout<<"Error reading input file "<<fname<<".\n";
             exit(0) ;
         }
 
@@ -106,9 +106,8 @@ namespace GraphMatch {
         int start = 10000;
         #endif
 
-        while(!feof(fin))
+        while(getline(fin, line))
         {
-            fgets(line, 100, fin);
             token = GetString(line, 0, 6);
 
             if(token == TOKEN_PDB_HELIX) {
@@ -136,8 +135,7 @@ namespace GraphMatch {
                     acidString = GetString(line, 17,3);
                     acidChar = GetSingleLetterFromThree(acidString);
                     sequence += acidChar;
-                    printf("%c", acidChar);
-                    delete acidString;
+                    cout<<acidChar;
                 }
                 oldIndex = index;
             #endif
@@ -167,7 +165,7 @@ namespace GraphMatch {
         printf("\n");
         #endif
 
-        fclose( fin ) ;
+        fin.close() ;
 
         // Sorting the structures by the start position
         int i,j;
@@ -304,19 +302,18 @@ namespace GraphMatch {
     map<unsigned long long, PDBAtom> PDBReader::ReadAtomPositions(string fileName) {
         map<unsigned long long, PDBAtom> atomPositions;
 
-        FILE* fin = fopen((char *)fileName.c_str(), "rt");
-        if (fin == NULL)
+        ifstream fin(fileName.c_str());
+        if (!fin)
         {
-            printf("Error reading input file %s.\n", fileName.c_str()) ;
+            cout<<"Error reading input file "<<fileName<<".\n";
             exit(0) ;
         }
 
         string line;
         string lineStr;
         string token;
-        while(!feof(fin))
+        while(getline(fin, line))
         {
-            fgets(line, 100, fin);
             lineStr = line;
             token = lineStr.substr(0, 6);
 
@@ -325,7 +322,7 @@ namespace GraphMatch {
                 atomPositions[atom.GetHashKey()] = atom;
             }
         }
-        fclose(fin);
+        fin.close();
 
         return atomPositions;
     }
@@ -334,19 +331,18 @@ namespace GraphMatch {
         map<unsigned long long, PDBAtom> atomPositions = ReadAtomPositions(fileName);
         vector<PDBHelix> helices;
 
-        FILE* fin = fopen((char *)fileName.c_str(), "rt");
-        if (fin == NULL)
+        ifstream fin(fileName.c_str());
+        if (!fin)
         {
-            printf("Error reading input file %s.\n", fileName.c_str()) ;
+            cout<<"Error reading input file "<<fileName<<".\n";
             exit(0) ;
         }
 
         string line;
         string lineStr;
         string token;
-        while(!feof(fin))
+        while(getline(fin, line))
         {
-            fgets(line, 100, fin);
             lineStr = line;
             token = lineStr.substr(0, 6);
 
@@ -366,7 +362,7 @@ namespace GraphMatch {
             }
         }
         atomPositions.clear();
-        fclose(fin);
+        fin.close();
         return helices;
     }
 
@@ -430,17 +426,17 @@ namespace GraphMatch {
         return value;
     }
     bool PDBReader::WriteAtomPositions(map<unsigned long long, PDBAtom> &atoms, string fileName) {
-        FILE* fout = fopen((char *)fileName.c_str(), "wt");
-        if (fout == NULL) {
-            printf("Error reading output file %s.\n", fileName.c_str()) ;
+        ofstream fout(fileName.c_str());
+        if (!fout) {
+            cout<<"Error reading output file "<<fileName<<".\n";
             return false;
         } else {
-            fprintf(fout, "%s\n", StringUtils::RightPad("REMARK   5 Gorgon (C) 2005-2010", 70).c_str() );
-            fprintf(fout, "%s\n", StringUtils::RightPad("REMARK   5 Pseudoatom export using SSEHunter", 70).c_str());
+            fout<<StringUtils::RightPad("REMARK   5 Gorgon (C) 2005-2010", 70)<<endl;
+            fout<<StringUtils::RightPad("REMARK   5 Pseudoatom export using SSEHunter", 70)<<endl;
             for(map<unsigned long long, PDBAtom>::iterator i = atoms.begin(); i != atoms.end(); i++) {
-                fprintf(fout, "%s\n", i->second.GetPDBString().c_str() );
+                fout<<i->second.GetPDBString()<<endl;
         }
-            fclose(fout);
+            fout.close();
         }
         return true;
     }
