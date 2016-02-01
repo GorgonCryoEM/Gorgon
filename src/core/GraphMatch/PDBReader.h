@@ -36,45 +36,45 @@ namespace GraphMatch {
     #ifdef GET_AMINO_SEQUENCE
     string GetSingleLetterFromThree(string aminoAcid) {
         string result;
-        if(strcmp(aminoAcid, "ALA") == 0) {
+        if(aminoAcid == "ALA") {
             result = 'A';
-        } else if(strcmp(aminoAcid, "ARG") == 0) {
+        } else if(aminoAcid == "ARG") {
             result = 'R';
-        } else if(strcmp(aminoAcid, "ASN") == 0) {
+        } else if(aminoAcid == "ASN") {
             result = 'N';
-        } else if(strcmp(aminoAcid, "ASP") == 0) {
+        } else if(aminoAcid == "ASP") {
             result = 'D';
-        } else if(strcmp(aminoAcid, "CYS") == 0) {
+        } else if(aminoAcid == "CYS") {
             result = 'C';
-        } else if(strcmp(aminoAcid, "GLN") == 0) {
+        } else if(aminoAcid == "GLN") {
             result = 'Q';
-        } else if(strcmp(aminoAcid, "GLU") == 0) {
+        } else if(aminoAcid == "GLU") {
             result = 'E';
-        } else if(strcmp(aminoAcid, "GLY") == 0) {
+        } else if(aminoAcid == "GLY") {
             result = 'G';
-        } else if(strcmp(aminoAcid, "HIS") == 0) {
+        } else if(aminoAcid == "HIS") {
             result = 'H';
-        } else if(strcmp(aminoAcid, "ILE") == 0) {
+        } else if(aminoAcid == "ILE") {
             result = 'I';
-        } else if(strcmp(aminoAcid, "LEU") == 0) {
+        } else if(aminoAcid == "LEU") {
             result = 'L';
-        } else if(strcmp(aminoAcid, "LYS") == 0) {
+        } else if(aminoAcid == "LYS") {
             result = 'K';
-        } else if(strcmp(aminoAcid, "MET") == 0) {
+        } else if(aminoAcid == "MET") {
             result = 'M';
-        } else if(strcmp(aminoAcid, "PHE") == 0) {
+        } else if(aminoAcid == "PHE") {
             result = 'F';
-        } else if(strcmp(aminoAcid, "PRO") == 0) {
+        } else if(aminoAcid == "PRO") {
             result = 'P';
-        } else if(strcmp(aminoAcid, "SER") == 0) {
+        } else if(aminoAcid == "SER") {
             result = 'S';
-        } else if(strcmp(aminoAcid, "THR") == 0) {
+        } else if(aminoAcid == "THR") {
             result = 'T';
-        } else if(strcmp(aminoAcid, "TRP") == 0) {
+        } else if(aminoAcid == "TRP") {
             result = 'W';
-        } else if(strcmp(aminoAcid, "TYR") == 0) {
+        } else if(aminoAcid == "TYR") {
             result = 'Y';
-        } else if(strcmp(aminoAcid, "VAL") == 0) {
+        } else if(aminoAcid == "VAL") {
             result = 'V';
         } else {
             printf("/noops!!!/n");
@@ -111,7 +111,7 @@ namespace GraphMatch {
             fgets(line, 100, fin);
             token = GetString(line, 0, 6);
 
-            if(strcmp(token, TOKEN_PDB_HELIX)== 0) {
+            if(token == TOKEN_PDB_HELIX) {
                 currentStructure = new SecondaryStructure();
                 currentStructure->serialNumber = GetInt(line, 7, 3);
                 currentStructure->secondaryStructureID = GetString(line, 11, 3);
@@ -129,7 +129,7 @@ namespace GraphMatch {
                     delete currentStructure;
                 }
             #ifdef GET_AMINO_SEQUENCE
-            } else if(strcmp(token, "ATOM") == 0) {
+            } else if(token == "ATOM") {
                 index = GetInt(line, 22, 4);
                 start = min(index, start);
                 if(index != oldIndex){
@@ -142,7 +142,7 @@ namespace GraphMatch {
                 oldIndex = index;
             #endif
             #ifdef INCLUDE_SHEETS
-            } else if (strcmp(token, TOKEN_PDB_SHEET)== 0 && INCLUDE_STRANDS == 1) {
+            } else if (token == TOKEN_PDB_SHEET && INCLUDE_STRANDS == 1) {
                 currentStructure = new SecondaryStructure();
                 currentStructure->serialNumber = GetInt(line, 7, 3);
                 currentStructure->secondaryStructureID = GetString(line, 11, 3);
@@ -161,8 +161,6 @@ namespace GraphMatch {
                 }
             #endif
             }
-            delete [] token;
-            token = NULL;
         }
 
         #ifdef GET_AMINO_SEQUENCE
