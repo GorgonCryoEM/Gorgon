@@ -221,17 +221,17 @@ namespace GraphMatch {
 
     bool SetConstantFromToken(string token, string stringValue, double doubleValue, int intValue, bool boolValue) {
         if(token == TOKEN_SSE_FILE_NAME) {
-            strcpy(SSE_FILE_NAME, stringValue);
+            SSE_FILE_NAME = stringValue;
         } else if(token == TOKEN_VRML_HELIX_FILE_NAME) {
-            strcpy(VRML_HELIX_FILE_NAME, stringValue);
+            VRML_HELIX_FILE_NAME = stringValue;
         } else if(token == TOKEN_VRML_SHEET_FILE_NAME) {
-            strcpy(VRML_SHEET_FILE_NAME, stringValue);
+            VRML_SHEET_FILE_NAME = stringValue;
         } else if(token == TOKEN_SEQUENCE_FILE_NAME) {
-            strcpy(SEQUENCE_FILE_NAME, stringValue);
+            SEQUENCE_FILE_NAME = stringValue;
         } else if(token == TOKEN_SEQUENCE_FILE_TYPE) {
-            strcpy(SEQUENCE_FILE_TYPE, stringValue);
+            SEQUENCE_FILE_TYPE = stringValue;
         } else if(token == TOKEN_MRC_FILE_NAME) {
-            strcpy(MRC_FILE_NAME, stringValue);
+            MRC_FILE_NAME = stringValue;
         } else if(token == TOKEN_MAXIMUM_DISTANCE_SHEET_SKELETON) {
             MAXIMUM_DISTANCE_SHEET_SKELETON = doubleValue;
         } else if(token == TOKEN_MINIMUM_SHEET_SIZE) {
@@ -293,17 +293,17 @@ namespace GraphMatch {
 
     bool GetConstantFromToken(string token, string stringValue, double &doubleValue, int &intValue, bool &boolValue) {
         if(token == TOKEN_SSE_FILE_NAME) {
-            strcpy(stringValue, SSE_FILE_NAME);
+            stringValue = SSE_FILE_NAME;
         } else if(token == TOKEN_VRML_HELIX_FILE_NAME) {
-            strcpy(stringValue, VRML_HELIX_FILE_NAME);
+            stringValue = VRML_HELIX_FILE_NAME;
         } else if(token == TOKEN_VRML_SHEET_FILE_NAME) {
-            strcpy(stringValue, VRML_SHEET_FILE_NAME);
+            stringValue = VRML_SHEET_FILE_NAME;
         } else if(token == TOKEN_SEQUENCE_FILE_NAME) {
-            strcpy(stringValue, SEQUENCE_FILE_NAME);
+            stringValue = SEQUENCE_FILE_NAME;
         } else if(token == TOKEN_SEQUENCE_FILE_TYPE) {
-            strcpy(stringValue, SEQUENCE_FILE_TYPE);
+            stringValue = SEQUENCE_FILE_TYPE;
         } else if(token == TOKEN_MRC_FILE_NAME) {
-            strcpy(stringValue, MRC_FILE_NAME);
+            stringValue = MRC_FILE_NAME;
         } else if(token == TOKEN_MAXIMUM_DISTANCE_SHEET_SKELETON) {
             doubleValue = MAXIMUM_DISTANCE_SHEET_SKELETON;
         } else if(token == TOKEN_MINIMUM_SHEET_SIZE) {
