@@ -16,6 +16,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <iostream>
+#include <fstream>
 
 namespace GraphMatch {
 
@@ -35,55 +36,55 @@ namespace GraphMatch {
     const int GRAPHEDGE_LOOP_EUCLIDEAN = 4;
     const int GRAPHNODE_HELIX = 5;
     const int GRAPHNODE_SHEET = 6;
-    const char * TOKEN_PDB_HELIX = "HELIX";
-    const char * TOKEN_PDB_ATOM = "ATOM";
-    const char * TOKEN_PDB_SHEET = "SHEET";
-    const char * TOKEN_VRML_TRANSLATION = "translation";
-    const char * TOKEN_VRML_ROTATION = "rotation";
-    const char * TOKEN_VRML_HEIGHT = "height";
-    const char * TOKEN_VRML_RADIUS = "radius";
-    const char * TOKEN_VRML_SHAPE = "Shape";
-    const char * TOKEN_VRML_POINT = "point";
-    const char * TOKEN_VRML_COORDINDEX = "coordIndex";
-    const char * TOKEN_SSE_ALPHA = "ALPHA";
-    const char * TOKEN_SSE_FILE_NAME = "SSE_FILE_NAME";
-    const char * TOKEN_VRML_HELIX_FILE_NAME = "VRML_HELIX_FILE_NAME";
-    const char * TOKEN_VRML_SHEET_FILE_NAME = "VRML_SHEET_FILE_NAME";
-    const char * TOKEN_SEQUENCE_FILE_NAME = "SEQUENCE_FILE_NAME";
-    const char * TOKEN_SEQUENCE_FILE_TYPE = "SEQUENCE_FILE_TYPE";
-    const char * TOKEN_PDB_FILE_NAME = "PDB_FILE_NAME";
-    const char * TOKEN_MRC_FILE_NAME = "MRC_FILE_NAME";
-    const char * TOKEN_MAXIMUM_DISTANCE_SHEET_SKELETON = "MAXIMUM_DISTANCE_SHEET_SKELETON";
-    const char * TOKEN_MINIMUM_SHEET_SIZE = "MINIMUM_SHEET_SIZE";
-    const char * TOKEN_EUCLIDEAN_DISTANCE_THRESHOLD = "EUCLIDEAN_DISTANCE_THRESHOLD";
-    const char * TOKEN_BORDER_MARGIN_THRESHOLD = "BORDER_MARGIN_THRESHOLD";
-    const char * TOKEN_NORMALIZE_GRAPHS = "NORMALIZE_GRAPHS";
-    const char * TOKEN_MISSING_HELIX_PENALTY = "MISSING_HELIX_PENALTY";
-    const char * TOKEN_MISSING_SHEET_PENALTY = "MISSING_SHEET_PENALTY";
-    const char * TOKEN_MISSING_HELIX_PENALTY_SCALED = "MISSING_HELIX_PENALTY_SCALED";
-    const char * TOKEN_MISSING_SHEET_PENALTY_SCALED = "MISSING_SHEET_PENALTY_SCALED";
-    const char * TOKEN_EUCLIDEAN_LOOP_PENALTY = "EUCLIDEAN_LOOP_PENALTY";
-    const char * TOKEN_START_END_MISSING_HELIX_PENALTY = "START_END_MISSING_HELIX_PENALTY";
-    const char * TOKEN_HELIX_WEIGHT_COEFFICIENT = "HELIX_WEIGHT_COEFFICIENT";
-    const char * TOKEN_LOOP_WEIGHT_COEFFICIENT = "LOOP_WEIGHT_COEFFICIENT";
-    const char * TOKEN_SHEET_CAPACITY_COEFFICIENT = "SHEET_CAPACITY_COEFFICIENT";
-    const char * TOKEN_SHEET_MERGE_THRESHOLD = "SHEET_MERGE_THRESHOLD";
-    const char * TOKEN_MISSING_HELIX_LENGTH = "MISSING_HELIX_LENGTH";
-    const char * TOKEN_MISSING_SHEET_LENGTH = "MISSING_SHEET_LENGTH";
-    const char * TOKEN_SHEET_SELF_LOOP_LENGTH = "SHEET_SELF_LOOP_LENGTH";
-    const char * TOKEN_SHEET_WEIGHT_COEFFICIENT = "SHEET_WEIGHT_COEFFICIENT";
-    const char * TOKEN_COST_FUNCTION = "COST_FUNCTION";
-    const char * TOKEN_INCLUDE_STRANDS = "INCLUDE_STRANDS";
-    const char * TOKEN_VOXEL_SIZE = "VOXEL_SIZE";
-    const char * TOKEN_TRANSLATE_VOLUMETRIC_COORDINATES = "TRANSLATE_VOLUMETRIC_COORDINATES";
-    const char * TOKEN_MISSING_HELIX_COUNT = "MISSING_HELIX_COUNT";
-    const char * TOKEN_MISSING_SHEET_COUNT = "MISSING_SHEET_COUNT";
-    const char * TOKEN_NODE_CONSTRAINT = "NODE_CONSTRAINT";
-    const char * TOKEN_HELIX_CONSTRAINT = "HELIX_CONSTRAINT";
-    const char * TOKEN_NODE_MISMATCH = "NODE_MISMATCH";
-    const char * TOKEN_HELIX_MISMATCH = "HELIX_MISMATCH";
-    const char * TOKEN_EUCLIDEAN_VOXEL_TO_PDB_RATIO = "EUCLIDEAN_VOXEL_TO_PDB_RATIO";
-    const char * TOKEN_SOLUTION = "SOLUTION";
+    const string TOKEN_PDB_HELIX = "HELIX";
+    const string TOKEN_PDB_ATOM = "ATOM";
+    const string TOKEN_PDB_SHEET = "SHEET";
+    const string TOKEN_VRML_TRANSLATION = "translation";
+    const string TOKEN_VRML_ROTATION = "rotation";
+    const string TOKEN_VRML_HEIGHT = "height";
+    const string TOKEN_VRML_RADIUS = "radius";
+    const string TOKEN_VRML_SHAPE = "Shape";
+    const string TOKEN_VRML_POINT = "point";
+    const string TOKEN_VRML_COORDINDEX = "coordIndex";
+    const string TOKEN_SSE_ALPHA = "ALPHA";
+    const string TOKEN_SSE_FILE_NAME = "SSE_FILE_NAME";
+    const string TOKEN_VRML_HELIX_FILE_NAME = "VRML_HELIX_FILE_NAME";
+    const string TOKEN_VRML_SHEET_FILE_NAME = "VRML_SHEET_FILE_NAME";
+    const string TOKEN_SEQUENCE_FILE_NAME = "SEQUENCE_FILE_NAME";
+    const string TOKEN_SEQUENCE_FILE_TYPE = "SEQUENCE_FILE_TYPE";
+    const string TOKEN_PDB_FILE_NAME = "PDB_FILE_NAME";
+    const string TOKEN_MRC_FILE_NAME = "MRC_FILE_NAME";
+    const string TOKEN_MAXIMUM_DISTANCE_SHEET_SKELETON = "MAXIMUM_DISTANCE_SHEET_SKELETON";
+    const string TOKEN_MINIMUM_SHEET_SIZE = "MINIMUM_SHEET_SIZE";
+    const string TOKEN_EUCLIDEAN_DISTANCE_THRESHOLD = "EUCLIDEAN_DISTANCE_THRESHOLD";
+    const string TOKEN_BORDER_MARGIN_THRESHOLD = "BORDER_MARGIN_THRESHOLD";
+    const string TOKEN_NORMALIZE_GRAPHS = "NORMALIZE_GRAPHS";
+    const string TOKEN_MISSING_HELIX_PENALTY = "MISSING_HELIX_PENALTY";
+    const string TOKEN_MISSING_SHEET_PENALTY = "MISSING_SHEET_PENALTY";
+    const string TOKEN_MISSING_HELIX_PENALTY_SCALED = "MISSING_HELIX_PENALTY_SCALED";
+    const string TOKEN_MISSING_SHEET_PENALTY_SCALED = "MISSING_SHEET_PENALTY_SCALED";
+    const string TOKEN_EUCLIDEAN_LOOP_PENALTY = "EUCLIDEAN_LOOP_PENALTY";
+    const string TOKEN_START_END_MISSING_HELIX_PENALTY = "START_END_MISSING_HELIX_PENALTY";
+    const string TOKEN_HELIX_WEIGHT_COEFFICIENT = "HELIX_WEIGHT_COEFFICIENT";
+    const string TOKEN_LOOP_WEIGHT_COEFFICIENT = "LOOP_WEIGHT_COEFFICIENT";
+    const string TOKEN_SHEET_CAPACITY_COEFFICIENT = "SHEET_CAPACITY_COEFFICIENT";
+    const string TOKEN_SHEET_MERGE_THRESHOLD = "SHEET_MERGE_THRESHOLD";
+    const string TOKEN_MISSING_HELIX_LENGTH = "MISSING_HELIX_LENGTH";
+    const string TOKEN_MISSING_SHEET_LENGTH = "MISSING_SHEET_LENGTH";
+    const string TOKEN_SHEET_SELF_LOOP_LENGTH = "SHEET_SELF_LOOP_LENGTH";
+    const string TOKEN_SHEET_WEIGHT_COEFFICIENT = "SHEET_WEIGHT_COEFFICIENT";
+    const string TOKEN_COST_FUNCTION = "COST_FUNCTION";
+    const string TOKEN_INCLUDE_STRANDS = "INCLUDE_STRANDS";
+    const string TOKEN_VOXEL_SIZE = "VOXEL_SIZE";
+    const string TOKEN_TRANSLATE_VOLUMETRIC_COORDINATES = "TRANSLATE_VOLUMETRIC_COORDINATES";
+    const string TOKEN_MISSING_HELIX_COUNT = "MISSING_HELIX_COUNT";
+    const string TOKEN_MISSING_SHEET_COUNT = "MISSING_SHEET_COUNT";
+    const string TOKEN_NODE_CONSTRAINT = "NODE_CONSTRAINT";
+    const string TOKEN_HELIX_CONSTRAINT = "HELIX_CONSTRAINT";
+    const string TOKEN_NODE_MISMATCH = "NODE_MISMATCH";
+    const string TOKEN_HELIX_MISMATCH = "HELIX_MISMATCH";
+    const string TOKEN_EUCLIDEAN_VOXEL_TO_PDB_RATIO = "EUCLIDEAN_VOXEL_TO_PDB_RATIO";
+    const string TOKEN_SOLUTION = "SOLUTION";
     const int MAX_RANDOM_HELIX_SIZE = 30;
     const int MAX_RANDOM_LOOP_SIZE = 30;
     const int WONG_HASH_TABLE_SIZE = 1024;
@@ -91,12 +92,12 @@ namespace GraphMatch {
     const float HELIX_C_ALPHA_TO_ANGSTROMS = 1.5f;
     const float LOOP_C_ALPHA_TO_ANGSTROMS = 3.8f / 1.5f; // 1.5 works well on test data
 
-    char SSE_FILE_NAME[700];
-    char VRML_HELIX_FILE_NAME[700];
-    char VRML_SHEET_FILE_NAME[700];
-    char SEQUENCE_FILE_NAME[700];
-    char SEQUENCE_FILE_TYPE[700];
-    char MRC_FILE_NAME[700];
+    string SSE_FILE_NAME;
+    string VRML_HELIX_FILE_NAME;
+    string VRML_SHEET_FILE_NAME;
+    string SEQUENCE_FILE_NAME;
+    string SEQUENCE_FILE_TYPE;
+    string MRC_FILE_NAME;
     double MAXIMUM_DISTANCE_SHEET_SKELETON = 0.0;
     int MINIMUM_SHEET_SIZE = 10;
     double EUCLIDEAN_DISTANCE_THRESHOLD = 15;
@@ -219,70 +220,70 @@ namespace GraphMatch {
     }
 
 
-    bool SetConstantFromToken(char * token, char * stringValue, double doubleValue, int intValue, bool boolValue) {
-        if(strcmp(token, TOKEN_SSE_FILE_NAME) == 0) {
-            strcpy(SSE_FILE_NAME, stringValue);
-        } else if(strcmp(token, TOKEN_VRML_HELIX_FILE_NAME) == 0) {
-            strcpy(VRML_HELIX_FILE_NAME, stringValue);
-        } else if(strcmp(token, TOKEN_VRML_SHEET_FILE_NAME) == 0) {
-            strcpy(VRML_SHEET_FILE_NAME, stringValue);
-        } else if(strcmp(token, TOKEN_SEQUENCE_FILE_NAME) == 0) {
-            strcpy(SEQUENCE_FILE_NAME, stringValue);
-        } else if(strcmp(token, TOKEN_SEQUENCE_FILE_TYPE) == 0) {
-            strcpy(SEQUENCE_FILE_TYPE, stringValue);
-        } else if(strcmp(token, TOKEN_MRC_FILE_NAME) == 0) {
-            strcpy(MRC_FILE_NAME, stringValue);
-        } else if(strcmp(token, TOKEN_MAXIMUM_DISTANCE_SHEET_SKELETON) == 0) {
+    bool SetConstantFromToken(string token, string stringValue, double doubleValue, int intValue, bool boolValue) {
+        if(token == TOKEN_SSE_FILE_NAME) {
+            SSE_FILE_NAME = stringValue;
+        } else if(token == TOKEN_VRML_HELIX_FILE_NAME) {
+            VRML_HELIX_FILE_NAME = stringValue;
+        } else if(token == TOKEN_VRML_SHEET_FILE_NAME) {
+            VRML_SHEET_FILE_NAME = stringValue;
+        } else if(token == TOKEN_SEQUENCE_FILE_NAME) {
+            SEQUENCE_FILE_NAME = stringValue;
+        } else if(token == TOKEN_SEQUENCE_FILE_TYPE) {
+            SEQUENCE_FILE_TYPE = stringValue;
+        } else if(token == TOKEN_MRC_FILE_NAME) {
+            MRC_FILE_NAME = stringValue;
+        } else if(token == TOKEN_MAXIMUM_DISTANCE_SHEET_SKELETON) {
             MAXIMUM_DISTANCE_SHEET_SKELETON = doubleValue;
-        } else if(strcmp(token, TOKEN_MINIMUM_SHEET_SIZE) == 0) {
+        } else if(token == TOKEN_MINIMUM_SHEET_SIZE) {
             MINIMUM_SHEET_SIZE = intValue;
-        } else if(strcmp(token, TOKEN_EUCLIDEAN_DISTANCE_THRESHOLD) == 0) {
+        } else if(token == TOKEN_EUCLIDEAN_DISTANCE_THRESHOLD) {
             EUCLIDEAN_DISTANCE_THRESHOLD = doubleValue;
-        } else if(strcmp(token, TOKEN_BORDER_MARGIN_THRESHOLD) == 0) {
+        } else if(token == TOKEN_BORDER_MARGIN_THRESHOLD) {
             BORDER_MARGIN_THRESHOLD = intValue;
-        } else if(strcmp(token, TOKEN_NORMALIZE_GRAPHS) == 0) {
+        } else if(token == TOKEN_NORMALIZE_GRAPHS) {
             NORMALIZE_GRAPHS = boolValue;
-        } else if(strcmp(token, TOKEN_MISSING_HELIX_PENALTY) == 0) {
+        } else if(token == TOKEN_MISSING_HELIX_PENALTY) {
             MISSING_HELIX_PENALTY = doubleValue;
-        } else if(strcmp(token, TOKEN_MISSING_SHEET_PENALTY) == 0) {
+        } else if(token == TOKEN_MISSING_SHEET_PENALTY) {
             MISSING_SHEET_PENALTY = doubleValue;
-        } else if(strcmp(token, TOKEN_MISSING_HELIX_PENALTY_SCALED) == 0) {
+        } else if(token == TOKEN_MISSING_HELIX_PENALTY_SCALED) {
             MISSING_HELIX_PENALTY_SCALED = doubleValue;
-        } else if(strcmp(token, TOKEN_MISSING_SHEET_PENALTY_SCALED) == 0) {
+        } else if(token == TOKEN_MISSING_SHEET_PENALTY_SCALED) {
             MISSING_SHEET_PENALTY_SCALED = doubleValue;
-        } else if(strcmp(token, TOKEN_EUCLIDEAN_LOOP_PENALTY) == 0) {
+        } else if(token == TOKEN_EUCLIDEAN_LOOP_PENALTY) {
             EUCLIDEAN_LOOP_PENALTY = doubleValue;
-        } else if(strcmp(token, TOKEN_START_END_MISSING_HELIX_PENALTY) == 0) {
+        } else if(token == TOKEN_START_END_MISSING_HELIX_PENALTY) {
             START_END_MISSING_HELIX_PENALTY = doubleValue;
-        } else if(strcmp(token, TOKEN_HELIX_WEIGHT_COEFFICIENT) == 0) {
+        } else if(token == TOKEN_HELIX_WEIGHT_COEFFICIENT) {
             HELIX_WEIGHT_COEFFICIENT = doubleValue;
-        } else if(strcmp(token, TOKEN_LOOP_WEIGHT_COEFFICIENT) == 0) {
+        } else if(token == TOKEN_LOOP_WEIGHT_COEFFICIENT) {
             LOOP_WEIGHT_COEFFICIENT = doubleValue;
-        } else if(strcmp(token, TOKEN_SHEET_CAPACITY_COEFFICIENT) == 0) {
+        } else if(token == TOKEN_SHEET_CAPACITY_COEFFICIENT) {
             SHEET_CAPACITY_COEFFICIENT = doubleValue;
-        } else if(strcmp(token, TOKEN_SHEET_MERGE_THRESHOLD) == 0) {
+        } else if(token == TOKEN_SHEET_MERGE_THRESHOLD) {
             SHEET_MERGE_THRESHOLD = doubleValue;
-        } else if(strcmp(token, TOKEN_MISSING_HELIX_LENGTH) == 0) {
+        } else if(token == TOKEN_MISSING_HELIX_LENGTH) {
             MISSING_HELIX_LENGTH = doubleValue;
-        } else if(strcmp(token, TOKEN_MISSING_SHEET_LENGTH) == 0) {
+        } else if(token == TOKEN_MISSING_SHEET_LENGTH) {
             MISSING_SHEET_LENGTH = doubleValue;
-        } else if(strcmp(token, TOKEN_SHEET_SELF_LOOP_LENGTH) == 0) {
+        } else if(token == TOKEN_SHEET_SELF_LOOP_LENGTH) {
             SHEET_SELF_LOOP_LENGTH = doubleValue;
-        } else if(strcmp(token, TOKEN_SHEET_WEIGHT_COEFFICIENT) == 0) {
+        } else if(token == TOKEN_SHEET_WEIGHT_COEFFICIENT) {
             SHEET_WEIGHT_COEFFICIENT = doubleValue;
-        } else if(strcmp(token, TOKEN_COST_FUNCTION) == 0) {
+        } else if(token == TOKEN_COST_FUNCTION) {
             COST_FUNCTION = intValue;
-        } else if(strcmp(token, TOKEN_INCLUDE_STRANDS) == 0) {
+        } else if(token == TOKEN_INCLUDE_STRANDS) {
             INCLUDE_STRANDS = intValue;
-        } else if(strcmp(token, TOKEN_VOXEL_SIZE) == 0) {
+        } else if(token == TOKEN_VOXEL_SIZE) {
             VOXEL_SIZE = doubleValue;
-        } else if(strcmp(token, TOKEN_TRANSLATE_VOLUMETRIC_COORDINATES) == 0) {
+        } else if(token == TOKEN_TRANSLATE_VOLUMETRIC_COORDINATES) {
             TRANSLATE_VOLUMETRIC_COORDINATES = boolValue;
-        } else if(strcmp(token, TOKEN_MISSING_HELIX_COUNT) == 0) {
+        } else if(token == TOKEN_MISSING_HELIX_COUNT) {
             MISSING_HELIX_COUNT = intValue;
-        } else if(strcmp(token, TOKEN_MISSING_SHEET_COUNT) == 0) {
+        } else if(token == TOKEN_MISSING_SHEET_COUNT) {
             MISSING_SHEET_COUNT = intValue;
-        } else if(strcmp(token, TOKEN_EUCLIDEAN_VOXEL_TO_PDB_RATIO) == 0) {
+        } else if(token == TOKEN_EUCLIDEAN_VOXEL_TO_PDB_RATIO) {
             EUCLIDEAN_VOXEL_TO_PDB_RATIO = doubleValue;
         } else {
             return false;
@@ -291,70 +292,70 @@ namespace GraphMatch {
     }
 
 
-    bool GetConstantFromToken(char * token, char * stringValue, double &doubleValue, int &intValue, bool &boolValue) {
-        if(strcmp(token, TOKEN_SSE_FILE_NAME) == 0) {
-            strcpy(stringValue, SSE_FILE_NAME);
-        } else if(strcmp(token, TOKEN_VRML_HELIX_FILE_NAME) == 0) {
-            strcpy(stringValue, VRML_HELIX_FILE_NAME);
-        } else if(strcmp(token, TOKEN_VRML_SHEET_FILE_NAME) == 0) {
-            strcpy(stringValue, VRML_SHEET_FILE_NAME);
-        } else if(strcmp(token, TOKEN_SEQUENCE_FILE_NAME) == 0) {
-            strcpy(stringValue, SEQUENCE_FILE_NAME);
-        } else if(strcmp(token, TOKEN_SEQUENCE_FILE_TYPE) == 0) {
-            strcpy(stringValue, SEQUENCE_FILE_TYPE);
-        } else if(strcmp(token, TOKEN_MRC_FILE_NAME) == 0) {
-            strcpy(stringValue, MRC_FILE_NAME);
-        } else if(strcmp(token, TOKEN_MAXIMUM_DISTANCE_SHEET_SKELETON) == 0) {
+    bool GetConstantFromToken(string token, string stringValue, double &doubleValue, int &intValue, bool &boolValue) {
+        if(token == TOKEN_SSE_FILE_NAME) {
+            stringValue = SSE_FILE_NAME;
+        } else if(token == TOKEN_VRML_HELIX_FILE_NAME) {
+            stringValue = VRML_HELIX_FILE_NAME;
+        } else if(token == TOKEN_VRML_SHEET_FILE_NAME) {
+            stringValue = VRML_SHEET_FILE_NAME;
+        } else if(token == TOKEN_SEQUENCE_FILE_NAME) {
+            stringValue = SEQUENCE_FILE_NAME;
+        } else if(token == TOKEN_SEQUENCE_FILE_TYPE) {
+            stringValue = SEQUENCE_FILE_TYPE;
+        } else if(token == TOKEN_MRC_FILE_NAME) {
+            stringValue = MRC_FILE_NAME;
+        } else if(token == TOKEN_MAXIMUM_DISTANCE_SHEET_SKELETON) {
             doubleValue = MAXIMUM_DISTANCE_SHEET_SKELETON;
-        } else if(strcmp(token, TOKEN_MINIMUM_SHEET_SIZE) == 0) {
+        } else if(token == TOKEN_MINIMUM_SHEET_SIZE) {
             intValue = MINIMUM_SHEET_SIZE;
-        } else if(strcmp(token, TOKEN_EUCLIDEAN_DISTANCE_THRESHOLD) == 0) {
+        } else if(token == TOKEN_EUCLIDEAN_DISTANCE_THRESHOLD) {
             doubleValue = EUCLIDEAN_DISTANCE_THRESHOLD;
-        } else if(strcmp(token, TOKEN_BORDER_MARGIN_THRESHOLD) == 0) {
+        } else if(token == TOKEN_BORDER_MARGIN_THRESHOLD) {
             intValue = BORDER_MARGIN_THRESHOLD;
-        } else if(strcmp(token, TOKEN_NORMALIZE_GRAPHS) == 0) {
+        } else if(token == TOKEN_NORMALIZE_GRAPHS) {
             boolValue = NORMALIZE_GRAPHS;
-        } else if(strcmp(token, TOKEN_MISSING_HELIX_PENALTY) == 0) {
+        } else if(token == TOKEN_MISSING_HELIX_PENALTY) {
             doubleValue = MISSING_HELIX_PENALTY;
-        } else if(strcmp(token, TOKEN_MISSING_SHEET_PENALTY) == 0) {
+        } else if(token == TOKEN_MISSING_SHEET_PENALTY) {
             doubleValue = MISSING_SHEET_PENALTY;
-        } else if(strcmp(token, TOKEN_MISSING_HELIX_PENALTY_SCALED) == 0) {
+        } else if(token == TOKEN_MISSING_HELIX_PENALTY_SCALED) {
             doubleValue = MISSING_HELIX_PENALTY_SCALED;
-        } else if(strcmp(token, TOKEN_MISSING_SHEET_PENALTY_SCALED) == 0) {
+        } else if(token == TOKEN_MISSING_SHEET_PENALTY_SCALED) {
             doubleValue = MISSING_SHEET_PENALTY_SCALED;
-        } else if(strcmp(token, TOKEN_EUCLIDEAN_LOOP_PENALTY) == 0) {
+        } else if(token == TOKEN_EUCLIDEAN_LOOP_PENALTY) {
             doubleValue = EUCLIDEAN_LOOP_PENALTY;
-        } else if(strcmp(token, TOKEN_START_END_MISSING_HELIX_PENALTY) == 0) {
+        } else if(token == TOKEN_START_END_MISSING_HELIX_PENALTY) {
             doubleValue = START_END_MISSING_HELIX_PENALTY;
-        } else if(strcmp(token, TOKEN_HELIX_WEIGHT_COEFFICIENT) == 0) {
+        } else if(token == TOKEN_HELIX_WEIGHT_COEFFICIENT) {
             doubleValue = HELIX_WEIGHT_COEFFICIENT;
-        } else if(strcmp(token, TOKEN_LOOP_WEIGHT_COEFFICIENT) == 0) {
+        } else if(token == TOKEN_LOOP_WEIGHT_COEFFICIENT) {
             doubleValue = LOOP_WEIGHT_COEFFICIENT;
-        } else if(strcmp(token, TOKEN_SHEET_CAPACITY_COEFFICIENT) == 0) {
+        } else if(token == TOKEN_SHEET_CAPACITY_COEFFICIENT) {
             doubleValue = SHEET_CAPACITY_COEFFICIENT;
-        } else if(strcmp(token, TOKEN_SHEET_MERGE_THRESHOLD) == 0) {
+        } else if(token == TOKEN_SHEET_MERGE_THRESHOLD) {
             doubleValue = SHEET_MERGE_THRESHOLD;
-        } else if(strcmp(token, TOKEN_MISSING_HELIX_LENGTH) == 0) {
+        } else if(token == TOKEN_MISSING_HELIX_LENGTH) {
             doubleValue = MISSING_HELIX_LENGTH;
-        } else if(strcmp(token, TOKEN_MISSING_SHEET_LENGTH) == 0) {
+        } else if(token == TOKEN_MISSING_SHEET_LENGTH) {
             doubleValue = MISSING_SHEET_LENGTH;
-        } else if(strcmp(token, TOKEN_SHEET_SELF_LOOP_LENGTH) == 0) {
+        } else if(token == TOKEN_SHEET_SELF_LOOP_LENGTH) {
             doubleValue = SHEET_SELF_LOOP_LENGTH;
-        } else if(strcmp(token, TOKEN_SHEET_WEIGHT_COEFFICIENT) == 0) {
+        } else if(token == TOKEN_SHEET_WEIGHT_COEFFICIENT) {
             doubleValue = SHEET_WEIGHT_COEFFICIENT;
-        } else if(strcmp(token, TOKEN_COST_FUNCTION) == 0) {
+        } else if(token == TOKEN_COST_FUNCTION) {
             intValue = COST_FUNCTION;
-        } else if(strcmp(token, TOKEN_INCLUDE_STRANDS) == 0) {
+        } else if(token == TOKEN_INCLUDE_STRANDS) {
             intValue = INCLUDE_STRANDS;
-        } else if(strcmp(token, TOKEN_VOXEL_SIZE) == 0) {
+        } else if(token == TOKEN_VOXEL_SIZE) {
             doubleValue = VOXEL_SIZE;
-        } else if(strcmp(token, TOKEN_TRANSLATE_VOLUMETRIC_COORDINATES) == 0) {
+        } else if(token == TOKEN_TRANSLATE_VOLUMETRIC_COORDINATES) {
             boolValue = TRANSLATE_VOLUMETRIC_COORDINATES;
-        } else if(strcmp(token, TOKEN_MISSING_HELIX_COUNT) == 0) {
+        } else if(token == TOKEN_MISSING_HELIX_COUNT) {
             intValue = MISSING_HELIX_COUNT;
-        } else if(strcmp(token, TOKEN_MISSING_SHEET_COUNT) == 0) {
+        } else if(token == TOKEN_MISSING_SHEET_COUNT) {
             intValue = MISSING_SHEET_COUNT;
-        } else if(strcmp(token, TOKEN_EUCLIDEAN_VOXEL_TO_PDB_RATIO) == 0) {
+        } else if(token == TOKEN_EUCLIDEAN_VOXEL_TO_PDB_RATIO) {
             doubleValue = EUCLIDEAN_VOXEL_TO_PDB_RATIO;
         } else {
             return false;
@@ -363,7 +364,7 @@ namespace GraphMatch {
     }
 
 
-    void LoadConstantsFromFile(char * settingsFile) {
+    void LoadConstantsFromFile(string settingsFile) {
         for(int i = 0; i < MAX_NODES; i++) {
             SOLUTION[i] = -2;
             allowedConstraintCount[i] = 0;
@@ -372,102 +373,101 @@ namespace GraphMatch {
 
         int tempInt1, tempInt2;
 
-        FILE* fin = fopen(settingsFile, "rt");
-        if (fin == NULL) {
-            printf("Error reading input file %s.\n", settingsFile) ;
+        ifstream fin(settingsFile.c_str());
+        if (!fin) {
+            cout<<"Error reading input file "<<settingsFile<<".\n" ;
             exit(0) ;
         }
 
-        char token[80];
-        while (!feof(fin)) {
-            fscanf(fin, "%s", token);
-            if(strcmp(token, TOKEN_SSE_FILE_NAME) == 0) {
+        string token;
+        while (fin>>token) {
+            if(token == TOKEN_SSE_FILE_NAME) {
                 // Stop the usage of the SSE_FILE_NAME parameter
-                //fscanf(fin, "%s", &SSE_FILE_NAME);
-            } else if(strcmp(token, TOKEN_VRML_HELIX_FILE_NAME) == 0) {
-                fscanf(fin, "%s", &VRML_HELIX_FILE_NAME);
-            } else if(strcmp(token, TOKEN_VRML_SHEET_FILE_NAME) == 0) {
-                fscanf(fin, "%s", &VRML_SHEET_FILE_NAME);
-            } else if(strcmp(token, TOKEN_SEQUENCE_FILE_NAME) == 0) {
-                fscanf(fin, "%s", &SEQUENCE_FILE_NAME);
-                sprintf(SEQUENCE_FILE_TYPE, "SEQ");
-            } else if(strcmp(token, TOKEN_PDB_FILE_NAME) == 0) {
-                fscanf(fin, "%s", &SEQUENCE_FILE_NAME);
-                sprintf(SEQUENCE_FILE_TYPE, "PDB");
-            } else if(strcmp(token, TOKEN_SEQUENCE_FILE_TYPE) == 0) {
-                fscanf(fin, "%s", &SEQUENCE_FILE_TYPE);
-            } else if(strcmp(token, TOKEN_MRC_FILE_NAME) == 0) {
-                fscanf(fin, "%s", &MRC_FILE_NAME);
-            } else if(strcmp(token, TOKEN_MAXIMUM_DISTANCE_SHEET_SKELETON) == 0) {
-                fscanf(fin, "%lf", &MAXIMUM_DISTANCE_SHEET_SKELETON);
-            } else if(strcmp(token, TOKEN_MINIMUM_SHEET_SIZE) == 0) {
-                fscanf(fin, "%d", &MINIMUM_SHEET_SIZE);
-            } else if(strcmp(token, TOKEN_EUCLIDEAN_DISTANCE_THRESHOLD) == 0) {
-                fscanf(fin, "%lf", &EUCLIDEAN_DISTANCE_THRESHOLD);
-            } else if(strcmp(token, TOKEN_BORDER_MARGIN_THRESHOLD) == 0) {
-                fscanf(fin, "%d", &BORDER_MARGIN_THRESHOLD);
-            } else if(strcmp(token, TOKEN_NORMALIZE_GRAPHS) == 0) {
-                fscanf(fin, "%d", &NORMALIZE_GRAPHS);
-            } else if(strcmp(token, TOKEN_MISSING_HELIX_PENALTY) == 0) {
-                fscanf(fin, "%lf", &MISSING_HELIX_PENALTY);
-            } else if(strcmp(token, TOKEN_MISSING_SHEET_PENALTY) == 0) {
-                fscanf(fin, "%lf", &MISSING_SHEET_PENALTY);
-            } else if(strcmp(token, TOKEN_MISSING_HELIX_PENALTY_SCALED) == 0) {
-                fscanf(fin, "%lf", &MISSING_HELIX_PENALTY_SCALED);
-            } else if(strcmp(token, TOKEN_MISSING_SHEET_PENALTY_SCALED) == 0) {
-                fscanf(fin, "%lf", &MISSING_SHEET_PENALTY_SCALED);
-            } else if(strcmp(token, TOKEN_EUCLIDEAN_LOOP_PENALTY) == 0) {
-                fscanf(fin, "%lf", &EUCLIDEAN_LOOP_PENALTY);
-            } else if(strcmp(token, TOKEN_START_END_MISSING_HELIX_PENALTY) == 0) {
-                fscanf(fin, "%lf", &START_END_MISSING_HELIX_PENALTY);
-            } else if(strcmp(token, TOKEN_HELIX_WEIGHT_COEFFICIENT) == 0) {
-                fscanf(fin, "%lf", &HELIX_WEIGHT_COEFFICIENT);
-            } else if(strcmp(token, TOKEN_LOOP_WEIGHT_COEFFICIENT) == 0) {
-                fscanf(fin, "%lf", &LOOP_WEIGHT_COEFFICIENT);
-            } else if(strcmp(token, TOKEN_SHEET_CAPACITY_COEFFICIENT) == 0) {
-                fscanf(fin, "%lf", &SHEET_CAPACITY_COEFFICIENT);
-            } else if(strcmp(token, TOKEN_SHEET_MERGE_THRESHOLD) == 0) {
-                fscanf(fin, "%lf", &SHEET_MERGE_THRESHOLD);
-            } else if(strcmp(token, TOKEN_MISSING_HELIX_LENGTH) == 0) {
-                fscanf(fin, "%lf", &MISSING_HELIX_LENGTH);
-            } else if(strcmp(token, TOKEN_MISSING_SHEET_LENGTH) == 0) {
-                fscanf(fin, "%lf", &MISSING_SHEET_LENGTH);
-            } else if(strcmp(token, TOKEN_SHEET_SELF_LOOP_LENGTH) == 0) {
-                fscanf(fin, "%lf", &SHEET_SELF_LOOP_LENGTH);
-            } else if(strcmp(token, TOKEN_SHEET_WEIGHT_COEFFICIENT) == 0) {
-                fscanf(fin, "%lf", &SHEET_WEIGHT_COEFFICIENT);
-            } else if(strcmp(token, TOKEN_COST_FUNCTION) == 0) {
-                fscanf(fin, "%d", &COST_FUNCTION);
-            } else if(strcmp(token, TOKEN_INCLUDE_STRANDS) == 0) {
-                fscanf(fin, "%d", &INCLUDE_STRANDS);
-            } else if(strcmp(token, TOKEN_VOXEL_SIZE) == 0) {
-                fscanf(fin, "%lf", &VOXEL_SIZE);
-            } else if(strcmp(token, TOKEN_TRANSLATE_VOLUMETRIC_COORDINATES) == 0) {
-                fscanf(fin, "%d", &TRANSLATE_VOLUMETRIC_COORDINATES);
-            } else if(strcmp(token, TOKEN_MISSING_HELIX_COUNT) == 0) {
-                fscanf(fin, "%d", &MISSING_HELIX_COUNT);
-            } else if(strcmp(token, TOKEN_MISSING_SHEET_COUNT) == 0) {
-                fscanf(fin, "%d", &MISSING_SHEET_COUNT);
-            } else if(strcmp(token, TOKEN_EUCLIDEAN_VOXEL_TO_PDB_RATIO) == 0) {
-                fscanf(fin, "%lf", &EUCLIDEAN_VOXEL_TO_PDB_RATIO);
-            } else if(strcmp(token, TOKEN_NODE_CONSTRAINT) == 0) {
-                fscanf(fin, "%d %d\n", &tempInt1, &tempInt2);
+                //fin>>SSE_FILE_NAME;
+            } else if(token == TOKEN_VRML_HELIX_FILE_NAME) {
+                fin>>VRML_HELIX_FILE_NAME;
+            } else if(token == TOKEN_VRML_SHEET_FILE_NAME) {
+                fin>>VRML_SHEET_FILE_NAME;
+            } else if(token == TOKEN_SEQUENCE_FILE_NAME) {
+                fin>>SEQUENCE_FILE_NAME;
+                SEQUENCE_FILE_TYPE = "SEQ";
+            } else if(token == TOKEN_PDB_FILE_NAME) {
+                fin>>SEQUENCE_FILE_NAME;
+                SEQUENCE_FILE_TYPE = "PDB";
+            } else if(token == TOKEN_SEQUENCE_FILE_TYPE) {
+                fin>>SEQUENCE_FILE_TYPE;
+            } else if(token == TOKEN_MRC_FILE_NAME) {
+                fin>>MRC_FILE_NAME;
+            } else if(token == TOKEN_MAXIMUM_DISTANCE_SHEET_SKELETON) {
+                fin>>MAXIMUM_DISTANCE_SHEET_SKELETON;
+            } else if(token == TOKEN_MINIMUM_SHEET_SIZE) {
+                fin>>MINIMUM_SHEET_SIZE;
+            } else if(token == TOKEN_EUCLIDEAN_DISTANCE_THRESHOLD) {
+                fin>>EUCLIDEAN_DISTANCE_THRESHOLD;
+            } else if(token == TOKEN_BORDER_MARGIN_THRESHOLD) {
+                fin>>BORDER_MARGIN_THRESHOLD;
+            } else if(token == TOKEN_NORMALIZE_GRAPHS) {
+                fin>>NORMALIZE_GRAPHS;
+            } else if(token == TOKEN_MISSING_HELIX_PENALTY) {
+                fin>>MISSING_HELIX_PENALTY;
+            } else if(token == TOKEN_MISSING_SHEET_PENALTY) {
+                fin>>MISSING_SHEET_PENALTY;
+            } else if(token == TOKEN_MISSING_HELIX_PENALTY_SCALED) {
+                fin>>MISSING_HELIX_PENALTY_SCALED;
+            } else if(token == TOKEN_MISSING_SHEET_PENALTY_SCALED) {
+                fin>>MISSING_SHEET_PENALTY_SCALED;
+            } else if(token == TOKEN_EUCLIDEAN_LOOP_PENALTY) {
+                fin>>EUCLIDEAN_LOOP_PENALTY;
+            } else if(token == TOKEN_START_END_MISSING_HELIX_PENALTY) {
+                fin>>START_END_MISSING_HELIX_PENALTY;
+            } else if(token == TOKEN_HELIX_WEIGHT_COEFFICIENT) {
+                fin>>HELIX_WEIGHT_COEFFICIENT;
+            } else if(token == TOKEN_LOOP_WEIGHT_COEFFICIENT) {
+                fin>>LOOP_WEIGHT_COEFFICIENT;
+            } else if(token == TOKEN_SHEET_CAPACITY_COEFFICIENT) {
+                fin>>SHEET_CAPACITY_COEFFICIENT;
+            } else if(token == TOKEN_SHEET_MERGE_THRESHOLD) {
+                fin>>SHEET_MERGE_THRESHOLD;
+            } else if(token == TOKEN_MISSING_HELIX_LENGTH) {
+                fin>>MISSING_HELIX_LENGTH;
+            } else if(token == TOKEN_MISSING_SHEET_LENGTH) {
+                fin>>MISSING_SHEET_LENGTH;
+            } else if(token == TOKEN_SHEET_SELF_LOOP_LENGTH) {
+                fin>>SHEET_SELF_LOOP_LENGTH;
+            } else if(token == TOKEN_SHEET_WEIGHT_COEFFICIENT) {
+                fin>>SHEET_WEIGHT_COEFFICIENT;
+            } else if(token == TOKEN_COST_FUNCTION) {
+                fin>>COST_FUNCTION;
+            } else if(token == TOKEN_INCLUDE_STRANDS) {
+                fin>>INCLUDE_STRANDS;
+            } else if(token == TOKEN_VOXEL_SIZE) {
+                fin>>VOXEL_SIZE;
+            } else if(token == TOKEN_TRANSLATE_VOLUMETRIC_COORDINATES) {
+                fin>>TRANSLATE_VOLUMETRIC_COORDINATES;
+            } else if(token == TOKEN_MISSING_HELIX_COUNT) {
+                fin>>MISSING_HELIX_COUNT;
+            } else if(token == TOKEN_MISSING_SHEET_COUNT) {
+                fin>>MISSING_SHEET_COUNT;
+            } else if(token == TOKEN_EUCLIDEAN_VOXEL_TO_PDB_RATIO) {
+                fin>>EUCLIDEAN_VOXEL_TO_PDB_RATIO;
+            } else if(token == TOKEN_NODE_CONSTRAINT) {
+                fin>>tempInt1>>tempInt2;
                 AddNodeConstraint(tempInt1, tempInt2);
-            } else if(strcmp(token, TOKEN_HELIX_CONSTRAINT) == 0) {
-                fscanf(fin, "%d %d\n", &tempInt1, &tempInt2);
+            } else if(token == TOKEN_HELIX_CONSTRAINT) {
+                fin>>tempInt1>>tempInt2;
                 AddHelixConstraint(tempInt1, tempInt2);
-            } else if(strcmp(token, TOKEN_NODE_MISMATCH) == 0) {
-                fscanf(fin, "%d %d\n", &tempInt1, &tempInt2);
+            } else if(token == TOKEN_NODE_MISMATCH) {
+                fin>>tempInt1>>tempInt2;
                 AddNodeMismatch(tempInt1, tempInt2);
-            } else if(strcmp(token, TOKEN_HELIX_MISMATCH) == 0) {
-                fscanf(fin, "%d %d\n", &tempInt1, &tempInt2);
+            } else if(token == TOKEN_HELIX_MISMATCH) {
+                fin>>tempInt1>>tempInt2;
                 AddHelixMismatch(tempInt1, tempInt2);
-            } else if(strcmp(token,TOKEN_SOLUTION) == 0) {
-                fscanf(fin, "%d %d\n", &tempInt1, &tempInt2);
+            } else if(token == TOKEN_SOLUTION) {
+                fin>>tempInt1>>tempInt2;
                 SOLUTION[tempInt1-1] = tempInt2;
             }
         }
-        fclose(fin);
+        fin.close();
     }
 
 
