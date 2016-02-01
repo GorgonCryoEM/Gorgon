@@ -14,7 +14,7 @@ namespace GraphMatch {
         int serialNumber;
         int startPosition;
         int endPosition;
-        char * secondaryStructureID;
+        string secondaryStructureID;
 
     public:
         SecondaryStructure();
