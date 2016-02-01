@@ -237,7 +237,7 @@ namespace GraphMatch {
     }
 
     void BackEndInterface::LoadSequenceGraph() {
-        #ifdef DEBUG
+        #ifdef GORGON_DEBUG
         cout << "In BackEndInterface::LoadSequenceGraph" << endl;
         #endif
         if(sequence != NULL) {
@@ -252,7 +252,13 @@ namespace GraphMatch {
             delete skeleton;
         }
         skeleton = queryEngine->LoadSkeletonGraph();
-        //skeleton->PrintGraph();
+        #ifdef GORGON_DEBUG
+              cout<<"\033[32mDEBUG: File:   BackEndInterface.h"<<endl;
+              cout<<"DEBUG: Method: BackEndInterface::LoadSkeletonGraph()\033[0m"<<endl;
+              skeleton->PrintGraph();
+              cout<<"\033[32mDEBUG: END: File:   BackEndInterface.h\033[0m"<<endl;
+        #endif
+
     }
     /*
     int BackEndInterface::ExecuteQuery(StandardGraph * sequenceGraph, StandardGraph * skeletonGraph) {
