@@ -3,7 +3,6 @@
 
 //#include "GrayImage.h"
 #include "ImageReader.h"
-#include "ImageReaderBMP.h"
 //#include <SkeletonMaker/reader.h>
 //#include <SkeletonMaker/volume.h>
 //#include <string>
@@ -15,7 +14,6 @@ namespace GraySkeletonCPP {
     public:
         static GrayImage * LoadGrayscaleImage(string fileName, int slice, char dimension);
         static void SaveGrayscaleImage(GrayImage * image, string fileName);
-        static void SaveGrayscaleImage(Volume * volume, string fileName);
     };
 
     GrayImage * ImageReaderMRC::LoadGrayscaleImage(string fileName, int slice, char dimension) {
@@ -107,129 +105,6 @@ namespace GraySkeletonCPP {
         Volume * volume = image->ToVolume();
         volume->toMRCFile((char *)fileName.c_str());
         delete volume;
-    }
-    void ImageReaderMRC::SaveGrayscaleImage(Volume * volume, string fileName) {
-
-        int sizeX = volume->getSizeX();
-        int sizeY = volume->getSizeY();
-        int sizeZ = volume->getSizeZ();
-        printf("This will not work if the dimensions exceed 260\n");
-        double avg[260][260];
-        Volume * tempVolume = new Volume(*volume);
-        tempVolume->normalize(0.0, 255.0);
-        double maxVal;
-        double avgVal;
-        double val;
-        double minAvg, maxAvg;
-
-
-        GrayImage * maxImage = new GrayImage(sizeX, sizeY);
-        GrayImage * avgImage = new GrayImage(sizeX, sizeY);
-        minAvg = 3000;
-        maxAvg = -1;
-
-        for(int x = 0; x < sizeX; x++) {
-            for(int y = 0; y < sizeY; y++) {
-                maxVal = 0;
-                avgVal = 0;
-                for(int z = 0; z < sizeZ; z++) {
-                    val = tempVolume->getDataAt(x, y, z);
-                    maxVal = max(maxVal, val);
-                    avgVal += val/(double)sizeZ;
-
-                }
-                maxImage->SetDataAt(x, y, (unsigned char)round(maxVal));
-                avg[x][y] = avgVal;
-                minAvg = min(minAvg, avgVal);
-                maxAvg = max(maxAvg, avgVal);
-            }
-        }
-
-        for(int x = 0; x < sizeX; x++) {
-            for(int y = 0; y < sizeY; y++) {
-                avg[x][y] = ((avg[x][y] - minAvg) / (maxAvg - minAvg)) * 255.0;
-                avgImage->SetDataAt(x, y, (unsigned char)round(avg[x][y]));
-            }
-        }
-
-        ImageReaderBMP::SaveGrayscaleImage(maxImage, "max_xy_" + fileName);
-        ImageReaderBMP::SaveGrayscaleImage(avgImage, "avg_xy_" + fileName);
-        delete maxImage;
-        delete avgImage;
-
-
-
-        maxImage = new GrayImage(sizeX, sizeZ);
-        avgImage = new GrayImage(sizeX, sizeZ);
-        minAvg = 3000;
-        maxAvg = -1;
-
-        for(int x = 0; x < sizeX; x++) {
-            for(int z = 0; z < sizeZ; z++) {
-                maxVal = 0;
-                avgVal = 0;
-                for(int y = 0; y < sizeY; y++) {
-                    val = tempVolume->getDataAt(x, y, z);
-                    maxVal = max(maxVal, val);
-                    avgVal += val/(double)sizeY;
-
-                }
-                maxImage->SetDataAt(x, z, (unsigned char)round(maxVal));
-                avg[x][z] = avgVal;
-                minAvg = min(minAvg, avgVal);
-                maxAvg = max(maxAvg, avgVal);
-            }
-        }
-
-        for(int x = 0; x < sizeX; x++) {
-            for(int z = 0; z < sizeZ; z++) {
-                avg[x][z] = ((avg[x][z] - minAvg) / (maxAvg - minAvg)) * 255.0;
-                avgImage->SetDataAt(x, z, (unsigned char)round(avg[x][z]));
-            }
-        }
-
-        ImageReaderBMP::SaveGrayscaleImage(maxImage, "max_xz_" + fileName);
-        ImageReaderBMP::SaveGrayscaleImage(avgImage, "avg_xz_" + fileName);
-        delete maxImage;
-        delete avgImage;
-
-
-        maxImage = new GrayImage(sizeY, sizeZ);
-        avgImage = new GrayImage(sizeY, sizeZ);
-        minAvg = 3000;
-        maxAvg = -1;
-
-        for(int y = 0; y < sizeY; y++) {
-            for(int z = 0; z < sizeZ; z++) {
-                maxVal = 0;
-                avgVal = 0;
-                for(int x = 0; x < sizeX; x++) {
-                    val = tempVolume->getDataAt(x, y, z);
-                    maxVal = max(maxVal, val);
-                    avgVal += val/(double)sizeX;
-
-                }
-                maxImage->SetDataAt(y, z, (unsigned char)round(maxVal));
-                avg[y][z] = avgVal;
-                minAvg = min(minAvg, avgVal);
-                maxAvg = max(maxAvg, avgVal);
-            }
-        }
-
-        for(int y = 0; y < sizeY; y++) {
-            for(int z = 0; z < sizeZ; z++) {
-                avg[y][z] = ((avg[y][z] - minAvg) / (maxAvg - minAvg)) * 255.0;
-                avgImage->SetDataAt(y, z, (unsigned char)round(avg[y][z]));
-            }
-        }
-
-        ImageReaderBMP::SaveGrayscaleImage(maxImage, "max_yz_" + fileName);
-        ImageReaderBMP::SaveGrayscaleImage(avgImage, "avg_yz_" + fileName);
-        delete maxImage;
-        delete avgImage;
-
-        delete tempVolume;
-
     }
 }
 
