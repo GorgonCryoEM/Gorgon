@@ -37,7 +37,7 @@ using namespace std;
 
 
 		StandardGraph * QueryEngine::LoadSequenceGraph() {
-			#ifdef DEBUG
+			#ifdef GORGON_DEBUG
 				cout << "In QueryEngine::LoadSequenceGraph" << endl;
 			#endif
 			clock_t start, finish;
@@ -71,7 +71,7 @@ using namespace std;
 			graph = SkeletonReader::ReadFile(MRC_FILE_NAME, VRML_HELIX_FILE_NAME, SSE_FILE_NAME, VRML_SHEET_FILE_NAME);
 			finish = clock();
 			#ifdef VERBOSE
-				printf("\tReading Base file Took %f seconds.\n", (double) (finish - start) / (double) CLOCKS_PER_SEC ) ;
+				printf("\033[32m\tReading Base file Took %f seconds.\n\033[0m", (double) (finish - start) / (double) CLOCKS_PER_SEC ) ;
 				graph->PrintGraph();
 			#endif
 			return graph;
