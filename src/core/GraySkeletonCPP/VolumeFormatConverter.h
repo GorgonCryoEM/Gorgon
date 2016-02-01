@@ -4,7 +4,6 @@
 //#include <string>
 #include <Foundation/StringUtils.h>
 #include <SkeletonMaker/reader.h>
-#include "GraySkeletonCPP/ImageReaderMRC.h"
 //#include <SkeletonMaker/volume.h>
 
 
