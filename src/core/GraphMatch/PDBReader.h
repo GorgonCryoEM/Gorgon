@@ -22,20 +22,20 @@ namespace GraphMatch {
 
     class PDBReader {
     public:
-        static StandardGraph * ReadFile(char * fname);
+        static StandardGraph * ReadFile(string fname);
         static map<unsigned long long, PDBAtom> ReadAtomPositions(string fileName);
         static bool WriteAtomPositions(map<unsigned long long, PDBAtom> &atoms, string fileName);
         static vector<PDBHelix> ReadHelixPositions(string fileName);
-        static char * TrimString(char * string);
-        static int ToInt(char * string);
+        static string TrimString(string str);
+        static int ToInt(string str);
     private:
-        static char * GetString(char * string, int start, int length);
-        static int GetInt(char * string, int start, int length);
+        static string GetString(string str, int start, int length);
+        static int GetInt(string str, int start, int length);
     };
 
     #ifdef GET_AMINO_SEQUENCE
-    char GetSingleLetterFromThree(char * aminoAcid) {
-        char result;
+    string GetSingleLetterFromThree(string aminoAcid) {
+        string result;
         if(strcmp(aminoAcid, "ALA") == 0) {
             result = 'A';
         } else if(strcmp(aminoAcid, "ARG") == 0) {
@@ -84,7 +84,7 @@ namespace GraphMatch {
     }
     #endif
 
-    StandardGraph * PDBReader::ReadFile(char* fname) {
+    StandardGraph * PDBReader::ReadFile(string fname) {
         FILE* fin = fopen(fname, "rt");
         if (fin == NULL)
         {
@@ -92,17 +92,17 @@ namespace GraphMatch {
             exit(0) ;
         }
 
-        char line[100];
+        string line;
         string sequence = "";
-        char * token;
+        string token;
         vector<SecondaryStructure*> structures;
         SecondaryStructure * currentStructure;
         bool add;
         int oldIndex = 0;
         int index;
         #ifdef GET_AMINO_SEQUENCE
-        char * acidString;
-        char acidChar;
+        string acidString;
+        string acidChar;
         int start = 10000;
         #endif
 
@@ -313,7 +313,7 @@ namespace GraphMatch {
             exit(0) ;
         }
 
-        char line[100];
+        string line;
         string lineStr;
         string token;
         while(!feof(fin))
@@ -343,7 +343,7 @@ namespace GraphMatch {
             exit(0) ;
         }
 
-        char line[100];
+        string line;
         string lineStr;
         string token;
         while(!feof(fin))
@@ -372,67 +372,63 @@ namespace GraphMatch {
         return helices;
     }
 
-    char * PDBReader::TrimString(char * string) {
+    string PDBReader::TrimString(string str) {
         int startPos = 0;
-        int endPos = strlen(string) - 1;
+        int endPos = str.size() - 1;
         for(int i = 0; i < endPos; i++) {
-            if(string[startPos] != ' ') {
+            if(str[startPos] != ' ') {
                 break;
             }
             startPos++;
         }
         for(int i = endPos - 1; i >= startPos; i--) {
-            if(string[endPos] != ' ') {
+            if(str[endPos] != ' ') {
                 break;
             }
             endPos--;
         }
         int j = 0;
-        char * outString = new char[100];
+        string outString;
         for(int i = startPos; i <= endPos; i++) {
-            outString[j] = string[i];
+            outString[j] = str[i];
             j++;
         }
         outString[j] = 0;
         return outString;
     }
 
-    char * PDBReader::GetString(char * string, int start, int length) {
-        char * out = new char[100];
-        char * temp;
+    string PDBReader::GetString(string str, int start, int length) {
+        string out;
+        string temp;
         for(int i = 0; i < length; i++) {
-            out[i] = string[i+start];
+            out[i] = str[i+start];
         }
         out[length] = 0;
         temp = TrimString(out);
 
         // clean
-        delete [] out;
-        out = NULL;
         return temp;
     }
 
-    int PDBReader::ToInt(char * string) {
+    int PDBReader::ToInt(string str) {
         int value = 0;
         int sign = 1;
-        for(int i = 0; i < (int)strlen(string); i++) {
-            if(string[i] == '-') {
+        for(int i = 0; i < (int)str.size(); i++) {
+            if(str[i] == '-') {
                 sign = -1;
             } else {
-                value += sign * (string[i]-48);
+                value += sign * (str[i]-48);
                 value *= 10;
             }
         }
         value /= 10;
         return value;
     }
-    int PDBReader::GetInt(char * string, int start, int length) {
-        char * substring = GetString(string, start, length);
+    int PDBReader::GetInt(string str, int start, int length) {
+        string substring = GetString(str, start, length);
         int value = ToInt(substring);
 
         // clean
-        delete [] substring;
-        substring = NULL;
         return value;
     }
     bool PDBReader::WriteAtomPositions(map<unsigned long long, PDBAtom> &atoms, string fileName) {
