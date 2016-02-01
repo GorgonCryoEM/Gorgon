@@ -300,12 +300,6 @@ namespace Visualization {
             }
         }
 
-
-        //char filename[100];
-        //sprintf(filename, "C:\\path_%d_%d.off", pathCount, helix1Ix);
-        //printf("vertex count: %d, edgeCount: %d, faceCount: %d\n", singlePathMesh->vertices.size(), singlePathMesh->edges.size(), singlePathMesh->faces.size()); flushall();
-        //singlePathMesh->ToOffCells(filename);
-
         vertexMap.clear();
         pathVertices.clear();
         delete mesh;
