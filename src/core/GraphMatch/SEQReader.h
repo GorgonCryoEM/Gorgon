@@ -66,7 +66,7 @@ namespace GraphMatch {
 
     StandardGraph * SEQReader::ReadFile(string fileName)
     {
-        #ifdef DEBUG
+        #ifdef GORGON_DEBUG
             cout << "In SEQReader::ReadFile" << endl;
         #endif
         SEQFileData seqFData = ReadSeqFileData(fileName);
@@ -85,7 +85,7 @@ namespace GraphMatch {
         getline(fin, str);
         int startResNum = 1;
         if (!str.compare(0,5,"START") || !str.compare(0,5, "start"))	{
-            #ifdef DEBUG
+            #ifdef GORGON_DEBUG
                 cout << "There is a START line at the beginning" << endl;
             #endif
             size_t found;
@@ -101,7 +101,7 @@ namespace GraphMatch {
             getline(fin, tempStr);
             str.append(tempStr);
         }
-        #ifdef DEBUG
+        #ifdef GORGON_DEBUG
             cout << "str: " << str << endl;
         #endif
         int strLength = str.length();
@@ -114,7 +114,7 @@ namespace GraphMatch {
         string sequence = str.substr(0,strLength/2);
         string predictedSSEs = str.substr(strLength/2);
 
-        #ifdef DEBUG
+        #ifdef GORGON_DEBUG
             cout << "\nStart residue: " << startResNum << endl;
             cout << "\nSequence:\n" << sequence << endl;
             cout << "\nPredicted SSEs:\n" << predictedSSEs << endl;
@@ -180,7 +180,7 @@ namespace GraphMatch {
                             (currentStructure->endPosition == structures[i]->endPosition));
                     }
 
-                    #ifdef DEBUG
+                    #ifdef GORGON_DEBUG
                         cout << "\nHelix(" << startCharNum+startResNum << ',' << stopCharNum + startResNum << "):" << substring << endl;
                         cout << "Structure(" << currentStructure->GetStartPosition() << ',';
                         cout << currentStructure->GetEndPosition() << "):";
@@ -218,7 +218,7 @@ namespace GraphMatch {
                             (currentStructure->endPosition == structures[i]->endPosition));
                     }
 
-                    #ifdef DEBUG
+                    #ifdef GORGON_DEBUG
                         cout << "\nStrand(" << startCharNum+startResNum << ',' << stopCharNum + startResNum << "):" << substring << endl;
                         cout << "Structure(" << currentStructure->GetStartPosition() << ',';
                         cout << currentStructure->GetEndPosition() << "):";
@@ -262,7 +262,7 @@ namespace GraphMatch {
                     (currentStructure->endPosition == structures[i]->endPosition));
             }
 
-            #ifdef DEBUG
+            #ifdef GORGON_DEBUG
                 cout << "\nHelix(" << startCharNum+startResNum << ',' << stopCharNum + startResNum << "):" << substring << endl;
                 cout << "Structure(" << currentStructure->GetStartPosition() << ',';
                 cout << currentStructure->GetEndPosition() << "):";
@@ -300,7 +300,7 @@ namespace GraphMatch {
                     (currentStructure->endPosition == structures[i]->endPosition));
             }
 
-            #ifdef DEBUG
+            #ifdef GORGON_DEBUG
                 cout << "\nStrand(" << startCharNum+startResNum << ',' << stopCharNum + startResNum << "):" << substring << endl;
                 cout << "Structure(" << currentStructure->GetStartPosition() << ',';
                 cout << currentStructure->GetEndPosition() << "):";
