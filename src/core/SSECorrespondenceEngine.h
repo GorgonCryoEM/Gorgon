@@ -54,10 +54,9 @@ namespace Visualization {
     };
 
 
-    SSECorrespondenceEngine::SSECorrespondenceEngine() {
-        correspondence.clear();
-        pathCount = 0;
-    }
+    SSECorrespondenceEngine::SSECorrespondenceEngine()
+    						: pathCount(0)
+    {}
 
     int SSECorrespondenceEngine::ExecuteQuery() {
         if(skeleton != NULL && sequence != NULL) {
