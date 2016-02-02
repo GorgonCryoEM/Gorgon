@@ -4,6 +4,8 @@
 #include <GraySkeletonCPP/GlobalDefinitions.h>
 #include <GraySkeletonCPP/VolumeSkeletonizer.h>
 
+#include <fstream>
+#include <iomanip>
 
 using namespace SkeletonMaker;
 using namespace Foundation;
@@ -9620,49 +9622,49 @@ void Volume::rotateX ( double a )
 /* Write to file */
 void Volume::toMathematicaFile( string fname )
 {
-    FILE* fout = fopen( fname, "w" ) ;
+    ofstream fout(fname.c_str()) ;
 
-    fprintf( fout, "{" ) ;
+    fout<<"{";
     for ( int i = 0 ; i < getSizeX() ; i ++ )
     {
-        fprintf( fout, "{" ) ;
+        fout<<"{";
         for ( int j = 0 ; j < getSizeY() ; j ++ )
         {
-            fprintf( fout, "{" ) ;
+            fout<<"{";
             for ( int k = 0 ; k < getSizeZ() ; k ++ )
             {
-                fprintf( fout, "%.15f", getDataAt( i, j, k ) ) ;
+                fout<<setprecision(15)<<getDataAt( i, j, k );
                 if ( k < getSizeZ() - 1 )
                 {
-                    fprintf( fout, "," ) ;
+                    fout<<",";
                 }
             }
-            fprintf( fout, "}" ) ;
+            fout<<"}";
             if ( j < getSizeY() - 1 )
             {
-                fprintf( fout, ",\n" ) ;
+                fout<<",\n";
             } else {
-                fprintf( fout, "\n" ) ;
+                fout<<"\n";
             }
         }
-        fprintf( fout, "}" ) ;
+        fout<<"}";
         if ( i < getSizeX() - 1 )
         {
-            fprintf( fout, ",\n\n\n" ) ;
+            fout<<",\n\n\n";
         } else {
-            fprintf( fout, "\n\n\n" ) ;
+            fout<<"\n\n\n";
         }
     }
-    fprintf(fout,"}") ;
+    fout<<"}";
 
-    fclose( fout ) ;
+    fout.close() ;
 
 }
 
 /* Write to file */
 void Volume::toMathematicaFile( string fname, int lx, int hx, int ly, int hy, int lz, int hz )
 {
-    FILE* fout = fopen( fname, "w" ) ;
+    ofstream fout( fname.c_str() );
 
     fprintf( fout, "{" ) ;
     for ( int i = lx ; i < hx ; i ++ )
