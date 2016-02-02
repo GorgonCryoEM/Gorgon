@@ -205,10 +205,6 @@ namespace SkeletonMaker {
         double getInterpDataAt( double x, double y, double z );
         void rotateX ( double a );
         void toMathematicaFile( string fname );
-        void toOFFCells( string fname );
-        void toOFFCells2( string fname );
-        void toOFFCells2( string fname, float thr );
-        void toOFFCells( string fname, float thr );
         void segment( float threshold, Volume* lowvol, Volume* highvol, string mrcfile );
         void segment( float threshold, Volume* vol, int maxDis, string mrcfile );
         void writeSegmentation( float threshold, Volume* segvol, string txtfile, string mrcfile );
