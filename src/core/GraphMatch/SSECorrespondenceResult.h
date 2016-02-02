@@ -32,16 +32,16 @@ namespace GraphMatch {
     					: cost(0), helixCount(0), sheetCount(0)
     {}
 
-    SSECorrespondenceResult::SSECorrespondenceResult(LinkedNode * node, int helixCount){
-        correspondence = node->GetNodeCorrespondence();
-        cost = node->GetCost();
-        this->helixCount = helixCount;
-    }
+    SSECorrespondenceResult::SSECorrespondenceResult(LinkedNode * node, int nHelix)
+    					: correspondence(node->GetNodeCorrespondence()),
+						  cost(node->GetCost()),
+						  helixCount(nHelix)
+    {}
 
     SSECorrespondenceResult::SSECorrespondenceResult(vector<int> corr, double cst, int nHelix)
-    						: correspondence(corr),
-							  cost(cst),
-							  helixCount(nHelix)
+						: correspondence(corr),
+						  cost(cst),
+						  helixCount(nHelix)
     {}
 
     double SSECorrespondenceResult::GetCost() {
