@@ -220,7 +220,6 @@ namespace SkeletonMaker {
         float getMaxDensity() const;
         float getMinDensity() const;
         void loadFile(string fileName);
-        void loadFileRAW(string fileName, int bitsPerCell, int sizeX, int sizeY, int sizeZ);
         void saveFile(string fileName);
         void PerformSmoothLaplacian(double convergenceRate, int iterations);
         Volume * PerformBinarySkeletonizationJu2007(double threshold, int minCurveSize, int minSurfaceSize);
