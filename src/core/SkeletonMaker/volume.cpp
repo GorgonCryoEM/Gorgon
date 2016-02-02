@@ -10304,61 +10304,6 @@ void Volume::floodFillPQR( int offset )
     // Iteration
     printf("Flood filling outside from  (0,0,0)...\n") ;
     int ct = 1 ;
-    /*
-    queue->reset() ;
-    ele = queue->getNext() ;
-    while( ele != NULL )
-    {
-        int ox = ele->x ;
-        int oy = ele->y ;
-        int oz = ele->z ;
-        queue->remove() ;
-
-        int boundary = 0 ;
-        for ( int m = 0 ; m < 6 ; m ++ )
-        {
-            int nx = ox + neighbor6[m][0] ;
-            int ny = oy + neighbor6[m][1] ;
-            int nz = oz + neighbor6[m][2] ;
-            if ( nx < 0 || nx >= getSizeX()  || ny < 0 || ny >= getSizeY() || nz < 0 || nz >= getSizeZ() )
-            {
-                continue ;
-            }
-            if ( tvol->getDataAt( nx, ny, nz ) == 0 && getDataAt( nx, ny, nz ) == 0 )
-            {
-                queue->prepend( nx, ny, nz ) ;
-                tvol->setDataAt( nx, ny, nz, 1 ) ;
-                ct ++ ;
-                if ( ct % 100000 == 0 )
-                {
-                    printf("%d nodes processed.\n", ct);
-                }
-            }
-            else if ( getDataAt( nx, ny, nz ) == 1 )
-            {
-                boundary = 1 ;
-            }
-        }
-
-        if ( boundary )
-        {
-            tvol->setDataAt( ox, oy, oz, 2 ) ;
-        }
-
-        queue->reset() ;
-        ele = queue->getNext() ;
-    }
-    printf("Done.\n") ;
-    for ( i = 0 ; i < getSizeX()*getSizeY()*getSizeZ() ; i ++ )
-    {
-
-        if ( tvol->getDataAt(i) == 2 )
-        {
-            setDataAt( i, 1 ) ;
-        }
-    }
-    */
-
 
     // Find inside seed point
     int maxRounds = 1 ;
