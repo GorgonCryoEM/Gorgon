@@ -10518,7 +10518,7 @@ void Volume::writeDistances( string fname, int maxDis )
 
 void Volume::toMRCFile( string fname )
 {
-    FILE* fout = fopen( fname, "wb" ) ;
+    FILE* fout = fopen( fname.c_str(), "wb" ) ;
 
     // Write header
     int sizeX = getSizeX();
