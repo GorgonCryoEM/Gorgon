@@ -9930,10 +9930,10 @@ void Volume::writeSegmentation( float threshold, Volume* segvol, string txtfile,
             tvol2->setDataAt(i, -1) ;
         }
     }
-    char nname[1024] ;
-    sprintf( nname, "%s_sheet.mrc", mrcfile ) ;
+    string nname;
+    nname = mrcfile + "_sheet.mrc";
     tvol1->toMRCFile( nname ) ;
-    sprintf( nname, "%s_helix.mrc", mrcfile ) ;
+	nname = mrcfile + "_helix.mrc";
     tvol2->toMRCFile( nname ) ;
     printf("Done.\n") ;
     return ;
