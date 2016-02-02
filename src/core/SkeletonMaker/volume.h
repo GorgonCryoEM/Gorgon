@@ -205,7 +205,6 @@ namespace SkeletonMaker {
         double getInterpDataAt( double x, double y, double z );
         void rotateX ( double a );
         void toMathematicaFile( string fname );
-        void toMathematicaFile( string fname, int lx, int hx, int ly, int hy, int lz, int hz );
         void toOFFCells( string fname );
         void toOFFCells2( string fname );
         void toOFFCells2( string fname, float thr );

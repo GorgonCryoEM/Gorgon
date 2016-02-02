@@ -9661,43 +9661,6 @@ void Volume::toMathematicaFile( string fname )
 
 }
 
-/* Write to file */
-void Volume::toMathematicaFile( string fname, int lx, int hx, int ly, int hy, int lz, int hz )
-{
-    ofstream fout( fname.c_str() );
-
-    fprintf( fout, "{" ) ;
-    for ( int i = lx ; i < hx ; i ++ )
-    {
-        fprintf( fout, "{" ) ;
-        for ( int j = ly ; j < hy ; j ++ )
-        {
-            fprintf( fout, "{" ) ;
-            for ( int k = lz ; k < hz ; k ++ )
-            {
-                fprintf( fout, "%.15f", getDataAt( i, j, k ) ) ;
-                if ( k < hz - 1 )
-                {
-                    fprintf( fout, "," ) ;
-                }
-            }
-            fprintf( fout, "}" ) ;
-            if ( j < hy - 1 )
-            {
-                fprintf( fout, "," ) ;
-            }
-        }
-        fprintf( fout, "}" ) ;
-        if ( i < hx - 1 )
-        {
-            fprintf( fout, "," ) ;
-        }
-    }
-    fprintf(fout,"}") ;
-
-    fclose( fout ) ;
-
-}
 
 void Volume::toOFFCells( string fname )
 {
