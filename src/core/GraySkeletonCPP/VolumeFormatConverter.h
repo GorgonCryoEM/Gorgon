@@ -16,7 +16,6 @@ namespace GraySkeletonCPP {
     class VolumeFormatConverter {
     public:
         static Volume * LoadVolume(string inputFile, int bitsPerCell = 8, int sizeX = 0, int sizeY = 0, int sizeZ = 0);
-        static void ConvertVolume(string inputFile, string inputFormat, string outputFile, string outputFormat, int sizeX, int sizeY, int sizeZ);
     };
 
     Volume * VolumeFormatConverter::LoadVolume(string inputFile, int bitsPerCell, int sizeX, int sizeY, int sizeZ) {
@@ -54,27 +53,6 @@ namespace GraySkeletonCPP {
         return vol;
     }
 
-    void VolumeFormatConverter::ConvertVolume(string inputFile, string inputFormat, string outputFile, string outputFormat, int sizeX, int sizeY, int sizeZ) {
-        Volume * vol = NULL;
-        inputFormat = StringUtils::StringToUpper(inputFormat);
-
-        if(inputFormat == "MRC") {
-            vol = MRCReaderPicker::pick(inputFile.c_str())->getVolume();
-        } else {
-            printf("Input format [%s] not supported!\n", inputFormat.c_str());
-            return;
-        }
-
-        outputFormat = StringUtils::StringToUpper(outputFormat);
-
-        if(outputFormat == "MRC") {
-            vol->toMRCFile(outputFile.c_str());
-        } else {
-            printf("Output format %s not supported!\n", outputFormat.c_str());
-        }
-        delete vol;
-
-    }
 }
 
 #endif
