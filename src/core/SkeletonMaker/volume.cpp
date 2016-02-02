@@ -1,8 +1,8 @@
 #include "volume.h"
 #include <Foundation/StringUtils.h>
-#include <GraySkeletonCPP/VolumeFormatConverter.h>
 #include <GraySkeletonCPP/GlobalDefinitions.h>
 #include <GraySkeletonCPP/VolumeSkeletonizer.h>
+#include <SkeletonMaker/reader.h>
 
 #include <fstream>
 #include <iomanip>
@@ -10740,21 +10740,16 @@ void Volume::downsampleVolume() {
 }
 
 
-void Volume::loadFile(string fileName) {
-	*this = *VolumeFormatConverter::LoadVolume(fileName);
+void Volume::loadFile(string inputFile) {
 
-	#ifdef GORGON_DEBUG
-          cout<<"\033[32mDEBUG: File:   volume.cpp"<<endl;
-          cout<<"DEBUG: Method: Volume::loadFile\033[0m"<<endl;
-          cout<<"DEBUG: Args: string\033[0m"<<endl;
-          cout<<"Filename: "
-              <<" "<<fileName
-              <<endl;
-    #endif
-}
+    *volData = *MRCReaderPicker::pick(inputFile.c_str())->getVolume();
 
-void Volume::loadFileRAW(string fileName, int bitsPerCell, int sizeX, int sizeY, int sizeZ) {
-	*this = *VolumeFormatConverter::LoadVolume(fileName, bitsPerCell, sizeX, sizeY, sizeZ);
+          #ifdef GORGON_DEBUG
+                cout<<"\033[35mDEBUG: File:   VolumeFormatConverter.h"<<endl;
+                cout<<"DEBUG: Method: VolumeFormatConverter::LoadVolume\033[0m"<<endl;
+                cout<<"DEBUG: Args: string, int, int, int, int\033[0m"<<endl;
+                cout<<getSize()<<endl;
+          #endif
 }
 
 

@@ -6,14 +6,13 @@
 //#include <GorgonGL.h>
 //#include <string>
 #include <SkeletonMaker/volume.h>
-//#include <SkeletonMaker/reader.h>
+#include <SkeletonMaker/reader.h>
 #include <ProteinMorph/NonManifoldMesh.h>
-#include <GraySkeletonCPP/VolumeFormatConverter.h>
 //#include "Renderer.h"
 #include <Foundation/StringUtils.h>
 
 using namespace Protein_Morph;
-using namespace GraySkeletonCPP;
+//using namespace GraySkeletonCPP;
 using namespace Foundation;
 using namespace SkeletonMaker;
 
@@ -61,7 +60,7 @@ namespace Visualization {
         if(extension == "OFF") {
             mesh = *NonManifoldMesh_Annotated::LoadOffFile(fileName);
         } else if(extension == "MRC" || extension == "ATOM") {
-            Volume * volume = VolumeFormatConverter::LoadVolume(fileName);
+            Volume * volume = MRCReaderPicker::pick(fileName.c_str())->getVolume();
             #ifdef GORGON_DEBUG
                   cout<<"\033[36mDEBUG: After VolumeFormatConverter::LoadVolume(fileName)"<<endl;
                   cout<<"FileName: "<<fileName<<endl;
