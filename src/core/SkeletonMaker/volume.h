@@ -204,22 +204,16 @@ namespace SkeletonMaker {
         Volume * getDataRange(int x, int y, int z, int radius);
         double getInterpDataAt( double x, double y, double z );
         void rotateX ( double a );
-        void toMathematicaFile( char* fname );
-        void toMathematicaFile( char* fname, int lx, int hx, int ly, int hy, int lz, int hz );
-        void toOFFCells( char* fname );
-        void toOFFCells2( char* fname );
-        void toOFFCells2( char* fname, float thr );
-        void toOFFCells( char* fname, float thr );
-        void segment( float threshold, Volume* lowvol, Volume* highvol, char* mrcfile );
-        void segment( float threshold, Volume* vol, int maxDis, char* mrcfile );
-        void writeSegmentation( float threshold, Volume* segvol, char* txtfile, char* mrcfile );
+        void toMathematicaFile( string fname );
+        void segment( float threshold, Volume* lowvol, Volume* highvol, string mrcfile );
+        void segment( float threshold, Volume* vol, int maxDis, string mrcfile );
+        void writeSegmentation( float threshold, Volume* segvol, string txtfile, string mrcfile );
         void floodFill( float thr );
         void reduceComponent( int size );
         void reduceComponent2( int num );
         void floodFillPQR( int offset );
-        void writeDistances( char* fname, int maxDis );
-        void toPQRFile( char* fname, float spc, float minx, float miny, float minz, int padding );
-        void toMRCFile( char* fname );
+        void writeDistances( string fname, int maxDis );
+        void toMRCFile( string fname );
 
         void normalizeVolume();
         void downsampleVolume();

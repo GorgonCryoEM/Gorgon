@@ -4,6 +4,8 @@
 #include <GraySkeletonCPP/GlobalDefinitions.h>
 #include <GraySkeletonCPP/VolumeSkeletonizer.h>
 
+#include <fstream>
+#include <iomanip>
 
 using namespace SkeletonMaker;
 using namespace Foundation;
@@ -9618,277 +9620,48 @@ void Volume::rotateX ( double a )
 
 
 /* Write to file */
-void Volume::toMathematicaFile( char* fname )
+void Volume::toMathematicaFile( string fname )
 {
-    FILE* fout = fopen( fname, "w" ) ;
+    ofstream fout(fname.c_str()) ;
 
-    fprintf( fout, "{" ) ;
+    fout<<"{";
     for ( int i = 0 ; i < getSizeX() ; i ++ )
     {
-        fprintf( fout, "{" ) ;
+        fout<<"{";
         for ( int j = 0 ; j < getSizeY() ; j ++ )
         {
-            fprintf( fout, "{" ) ;
+            fout<<"{";
             for ( int k = 0 ; k < getSizeZ() ; k ++ )
             {
-                fprintf( fout, "%.15f", getDataAt( i, j, k ) ) ;
+                fout<<setprecision(15)<<getDataAt( i, j, k );
                 if ( k < getSizeZ() - 1 )
                 {
-                    fprintf( fout, "," ) ;
+                    fout<<",";
                 }
             }
-            fprintf( fout, "}" ) ;
+            fout<<"}";
             if ( j < getSizeY() - 1 )
             {
-                fprintf( fout, ",\n" ) ;
+                fout<<",\n";
             } else {
-                fprintf( fout, "\n" ) ;
+                fout<<"\n";
             }
         }
-        fprintf( fout, "}" ) ;
+        fout<<"}";
         if ( i < getSizeX() - 1 )
         {
-            fprintf( fout, ",\n\n\n" ) ;
+            fout<<",\n\n\n";
         } else {
-            fprintf( fout, "\n\n\n" ) ;
+            fout<<"\n\n\n";
         }
     }
-    fprintf(fout,"}") ;
+    fout<<"}";
 
-    fclose( fout ) ;
-
-}
-
-/* Write to file */
-void Volume::toMathematicaFile( char* fname, int lx, int hx, int ly, int hy, int lz, int hz )
-{
-    FILE* fout = fopen( fname, "w" ) ;
-
-    fprintf( fout, "{" ) ;
-    for ( int i = lx ; i < hx ; i ++ )
-    {
-        fprintf( fout, "{" ) ;
-        for ( int j = ly ; j < hy ; j ++ )
-        {
-            fprintf( fout, "{" ) ;
-            for ( int k = lz ; k < hz ; k ++ )
-            {
-                fprintf( fout, "%.15f", getDataAt( i, j, k ) ) ;
-                if ( k < hz - 1 )
-                {
-                    fprintf( fout, "," ) ;
-                }
-            }
-            fprintf( fout, "}" ) ;
-            if ( j < hy - 1 )
-            {
-                fprintf( fout, "," ) ;
-            }
-        }
-        fprintf( fout, "}" ) ;
-        if ( i < hx - 1 )
-        {
-            fprintf( fout, "," ) ;
-        }
-    }
-    fprintf(fout,"}") ;
-
-    fclose( fout ) ;
+    fout.close() ;
 
 }
 
-void Volume::toOFFCells( char* fname )
-{
-    toOFFCells( fname, 0.0001f ) ;
-}
-void Volume::toOFFCells2( char* fname )
-{
-    toOFFCells2( fname, 0.0001f ) ;
-}
-
-void Volume::toOFFCells2( char* fname, float thr )
-{
-    int i, j, k ;
-    Volume* indvol = new Volume( getSizeX(), getSizeY(), getSizeZ(), -1 ) ;
-
-    // Get number of cells to write
-    int numverts = 0, numfaces = 0 ;
-    for ( i = 0 ; i < getSizeX() ; i ++ )
-        for ( j = 0 ; j < getSizeY() ; j ++ )
-            for ( k = 0 ; k < getSizeZ() ; k ++ )
-            {
-                if ( getDataAt( i, j, k ) >= thr )
-                {
-                    indvol->setDataAt( i,j,k, numverts ) ;
-                    numverts ++ ;
-
-                    for ( int mi = 0 ; mi < 3 ; mi ++ )
-                    {
-                        int find = mi * 4 + 3 ;
-                        int isFace = 1 ;
-                        for ( int mj = 0 ; mj < 4 ; mj ++ )
-                        {
-                            int nx = i + sheetNeighbor[find][mj][0] ;
-                            int ny = j + sheetNeighbor[find][mj][1] ;
-                            int nz = k + sheetNeighbor[find][mj][2] ;
-
-                            if ( getDataAt( nx, ny, nz ) < thr )
-                            {
-                                isFace = 0 ;
-                                break ;
-                            }
-                        }
-                        if ( isFace )
-                        {
-                            numfaces ++ ;
-                        }
-
-                        int eind = mi * 2 + 1 ;
-                        if ( getDataAt( i + neighbor6[eind][0], j + neighbor6[eind][1], k + neighbor6[eind][2]) >= thr )
-                        {
-                            numfaces ++ ;
-                        }
-                    }
-                }
-            }
-
-    FILE* fin = fopen( fname, "w" ) ;
-    fprintf( fin, "OFF\n" ) ;
-    fprintf( fin, "%d %d 0\n", numverts, numfaces ) ;
-
-    // Write vertices
-    for ( i = 0 ; i < getSizeX() ; i ++ )
-        for ( j = 0 ; j < getSizeY() ; j ++ )
-            for ( k = 0 ; k < getSizeZ() ; k ++ )
-            {
-                if ( getDataAt( i,j,k ) >= thr )
-                {
-                    fprintf( fin, "%d %d %d\n", i, j, k ) ;
-                }
-            }
-
-    // Write faces
-    for ( i = 0 ; i < getSizeX() ; i ++ )
-        for ( j = 0 ; j < getSizeY() ; j ++ )
-            for ( k = 0 ; k < getSizeZ() ; k ++ )
-            {
-                if ( getDataAt( i,j,k ) >= thr )
-                {
-                    int thisvt = (int)( indvol->getDataAt( i,j,k ) );
-                    for ( int mi = 0 ; mi < 3 ; mi ++ )
-                    {
-                        int find = mi * 4 + 3 ;
-                        int isFace = 1 ;
-                        int vts[4] ;
-                        for ( int mj = 0 ; mj < 4 ; mj ++ )
-                        {
-                            int nx = i + sheetNeighbor[find][mj][0] ;
-                            int ny = j + sheetNeighbor[find][mj][1] ;
-                            int nz = k + sheetNeighbor[find][mj][2] ;
-
-                            vts[ mj ] = (int)( indvol->getDataAt( nx, ny, nz ) );
-
-                            if ( getDataAt( nx, ny, nz ) < thr )
-                            {
-                                isFace = 0 ;
-                                break ;
-                            }
-                        }
-                        if ( isFace )
-                        {
-                            fprintf( fin, "4 %d %d %d %d\n", vts[0], vts[1], vts[3], vts[2] ) ;
-                        }
-
-                        int eind = mi * 2 + 1 ;
-                        int mx = i + neighbor6[eind][0] ;
-                        int my = j + neighbor6[eind][1] ;
-                        int mz = k + neighbor6[eind][2] ;
-                        int vt = (int)( indvol->getDataAt( mx, my, mz ) );
-                        if ( getDataAt( mx, my, mz ) >= thr )
-                        {
-                            fprintf( fin, "4 %d %d %d %d\n", thisvt, thisvt, vt, vt ) ;
-                        }
-                    }
-                }
-            }
-
-    fclose( fin ) ;
-    delete indvol ;
-}
-
-void Volume::toOFFCells( char* fname, float thr )
-{
-    int i, j, k ;
-    // Volume* indvol = new Volume( getSizeX(), getSizeY(), getSizeZ(), -1 ) ;
-
-    // Get number of cells to write
-    int numverts = 0, numfaces = 0 ;
-    for ( i = 0 ; i < getSizeX() ; i ++ )
-        for ( j = 0 ; j < getSizeY() ; j ++ )
-            for ( k = 0 ; k < getSizeZ() ; k ++ )
-            {
-                if ( getDataAt( i, j, k ) >= thr )
-                {
-                    numverts += 8 ;
-                    for ( int mi = 0 ; mi < 6 ; mi ++ )
-                    {
-                        if ( getDataAt( i + neighbor6[mi][0], j + neighbor6[mi][1], k + neighbor6[mi][2] ) < thr )
-                        {
-                            numfaces ++ ;
-                        }
-                    }
-                }
-            }
-
-    FILE* fin = fopen( fname, "w" ) ;
-    fprintf( fin, "OFF\n" ) ;
-    fprintf( fin, "%d %d 0\n", numverts, numfaces ) ;
-
-    // Write vertices
-    for ( i = 0 ; i < getSizeX() ; i ++ )
-        for ( j = 0 ; j < getSizeY() ; j ++ )
-            for ( k = 0 ; k < getSizeZ() ; k ++ )
-            {
-                if ( getDataAt( i,j,k ) >= thr )
-                {
-                    float ox = i - 0.5f ;
-                    float oy = j - 0.5f ;
-                    float oz = k - 0.5f ;
-
-                    for ( int mi = 0 ; mi < 2 ; mi ++ )
-                        for ( int mj = 0 ; mj < 2 ; mj ++ )
-                            for ( int mk = 0 ; mk < 2 ; mk ++ )
-                            {
-                                fprintf( fin, "%f %f %f\n", ox + mi, oy + mj, oz + mk ) ;
-                            }
-                }
-            }
-
-    // Write faces
-    int ct = 0 ;
-    for ( i = 0 ; i < getSizeX() ; i ++ )
-        for ( j = 0 ; j < getSizeY() ; j ++ )
-            for ( k = 0 ; k < getSizeZ() ; k ++ )
-            {
-                if ( getDataAt( i,j,k ) >= thr )
-                {
-                    for ( int mi = 0 ; mi < 6 ; mi ++ )
-                    {
-                        if ( getDataAt( i + neighbor6[mi][0], j + neighbor6[mi][1], k + neighbor6[mi][2] ) < thr )
-                        {
-                            fprintf( fin, "4 %d %d %d %d\n", cubeFaces[mi][0] + ct, cubeFaces[mi][1] + ct, cubeFaces[mi][2] + ct, cubeFaces[mi][3] + ct ) ;
-                        }
-                    }
-
-                    ct += 8 ;
-                }
-            }
-
-    fclose( fin ) ;
-    //delete indvol ;
-}
-
-void Volume::segment( float threshold, Volume* lowvol, Volume* highvol, char* mrcfile )
+void Volume::segment( float threshold, Volume* lowvol, Volume* highvol, string mrcfile )
 {
     int i,j,k ;
     Volume* segvol = new Volume( getSizeX(), getSizeY(), getSizeZ()) ;
@@ -9914,7 +9687,7 @@ void Volume::segment( float threshold, Volume* lowvol, Volume* highvol, char* mr
     writeSegmentation( threshold, segvol, NULL, mrcfile ) ;
 }
 
-void Volume::segment( float threshold, Volume* vol, int maxDis, char* mrcfile )
+void Volume::segment( float threshold, Volume* vol, int maxDis, string mrcfile )
 {
     int i,j;
     Volume* testvol = NULL ;
@@ -9950,7 +9723,7 @@ void Volume::segment( float threshold, Volume* vol, int maxDis, char* mrcfile )
 
 // Segment the volume using segvol
 // background voxels have values 0, others have values > 0
-void Volume::writeSegmentation( float threshold, Volume* segvol, char* txtfile, char* mrcfile )
+void Volume::writeSegmentation( float threshold, Volume* segvol, string txtfile, string mrcfile )
 {
     printf("Start segmentation.\n") ;
     int i,j,k ;
@@ -10157,10 +9930,10 @@ void Volume::writeSegmentation( float threshold, Volume* segvol, char* txtfile, 
             tvol2->setDataAt(i, -1) ;
         }
     }
-    char nname[1024] ;
-    sprintf( nname, "%s_sheet.mrc", mrcfile ) ;
+    string nname;
+    nname = mrcfile + "_sheet.mrc";
     tvol1->toMRCFile( nname ) ;
-    sprintf( nname, "%s_helix.mrc", mrcfile ) ;
+	nname = mrcfile + "_helix.mrc";
     tvol2->toMRCFile( nname ) ;
     printf("Done.\n") ;
     return ;
@@ -10688,7 +10461,7 @@ void Volume::floodFillPQR( int offset )
 }
 
 
-void Volume::writeDistances( char* fname, int maxDis )
+void Volume::writeDistances( string fname, int maxDis )
 {
     int i, j, k ;
     Volume* testvol = NULL ;
@@ -10720,8 +10493,8 @@ void Volume::writeDistances( char* fname, int maxDis )
     printf("Totally %d nodes.\n", totNodes );
 
     //disvol->toMRCFile( "..\distance.mrc" ) ;
-    FILE* fout = fopen( fname, "w" ) ;
-    fprintf( fout, "%d\n", totNodes ) ;
+    ofstream fout(fname.c_str());
+    fout<<totNodes<<endl;
     int ct = 0 ;
     for ( i = 0 ; i < getSizeX() ; i ++ )
         for ( j = 0 ; j < getSizeY() ; j ++ )
@@ -10730,48 +10503,22 @@ void Volume::writeDistances( char* fname, int maxDis )
                 float val = (float)disvol->getDataAt(i,j,k) ;
                 if ( val > 0 )
                 {
-                    fprintf( fout, "%d %d %d %f\n", i, j, k, val ) ;
+                    fout<<i<<j<<k<<val<<endl;
                     ct ++ ;
                 }
             }
 
     if ( ct != totNodes )
     {
-        printf("Counting wrong! %d %d\n", totNodes, ct) ;
+        cout<<"Counting wrong! "<<totNodes<<" "<<ct<<endl;
     }
-    fclose( fout ) ;
+    fout.close();
 
 }
 
-void Volume::toPQRFile( char* fname, float spc, float minx, float miny, float minz, int padding )
+void Volume::toMRCFile( string fname )
 {
-    FILE* fout = fopen( fname, "w" ) ;
-    int i, j, k ;
-
-    for ( i = 0 ; i < getSizeX() ; i ++ )
-        for ( j = 0 ; j < getSizeY() ; j ++ )
-            for ( k = 0 ; k < getSizeZ() ; k ++ )
-            {
-                if ( i < padding || i >= getSizeX() - padding || j < padding || j >= getSizeY() - padding || k < padding || k >= getSizeZ() - padding )
-                {
-                    continue ;
-                }
-                float val = (float)this->getDataAt(i,j,k) ;
-                if ( val > 0 )
-                {
-                    float x = (i - padding) * spc + minx ;
-                    float y = (j - padding) * spc + miny ;
-                    float z = (k - padding) * spc + minz ;
-                    fprintf( fout, "ATOM      1  X   DUM     1     %4.3f %4.3f %4.3f 0.000 0.000\n", x, y, z ) ;
-                }
-            }
-
-    fclose( fout ) ;
-}
-
-void Volume::toMRCFile( char* fname )
-{
-    FILE* fout = fopen( fname, "wb" ) ;
+    FILE* fout = fopen( fname.c_str(), "wb" ) ;
 
     // Write header
     int sizeX = getSizeX();
@@ -11018,7 +10765,7 @@ void Volume::saveFile(string fileName) {
     extension = StringUtils::StringToUpper(extension);
 
     if(extension == "MRC") {
-      toMRCFile((char *)fileName.c_str());
+      toMRCFile(fileName.c_str());
     } else {
       cout<<"Input format "<<extension<<" not supported!"<<endl;
     }

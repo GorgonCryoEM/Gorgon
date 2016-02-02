@@ -39,9 +39,9 @@ namespace GraySkeletonCPP {
 
         Volume * vol = NULL;
         if(inputFormat == "MRC") {
-            vol = MRCReaderPicker::pick((char *)inputFile.c_str())->getVolume();
+            vol = MRCReaderPicker::pick(inputFile.c_str())->getVolume();
         } else {
-            printf("Input format [%s] not supported!\n", (char *)inputFormat.c_str());
+            printf("Input format [%s] not supported!\n", inputFormat.c_str());
         }
 
         #ifdef GORGON_DEBUG
@@ -59,7 +59,7 @@ namespace GraySkeletonCPP {
         inputFormat = StringUtils::StringToUpper(inputFormat);
 
         if(inputFormat == "MRC") {
-            vol = MRCReaderPicker::pick((char *)inputFile.c_str())->getVolume();
+            vol = MRCReaderPicker::pick(inputFile.c_str())->getVolume();
         } else {
             printf("Input format [%s] not supported!\n", inputFormat.c_str());
             return;
@@ -68,7 +68,7 @@ namespace GraySkeletonCPP {
         outputFormat = StringUtils::StringToUpper(outputFormat);
 
         if(outputFormat == "MRC") {
-            vol->toMRCFile((char *)outputFile.c_str());
+            vol->toMRCFile(outputFile.c_str());
         } else {
             printf("Output format %s not supported!\n", outputFormat.c_str());
         }
