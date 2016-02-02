@@ -233,9 +233,6 @@ namespace SkeletonMaker {
 
 
     private:
-        float getVoxelData(Volume * vol, int x, int y, int z) const;
-        float getVoxelData(Volume * vol, float x, float y, float z) const;
-
 
         VolumeData * getVolumeData();
         vector<int> histogram;

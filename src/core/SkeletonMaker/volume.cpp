@@ -10679,30 +10679,6 @@ Vector3DFloat Volume::getCenterOfMass()
 }
 
 
-float Volume::getVoxelData(Volume * vol, int x, int y, int z) const {
-    if((x < 0) || (x > vol->getSizeX()-1) || (y < 0) || (y > vol->getSizeY()-1) || (z < 0) || (z > vol->getSizeZ()-1)) {
-        return 0.0f;
-    } else {
-        return vol->getDataAt(x, y, z);
-    }
-}
-
-float Volume::getVoxelData(Volume * vol, float x, float y, float z) const {
-    int f[3] = {(int)x, (int)y, (int)z};
-    int c[3] = {f[0]+1, f[1]+1, f[2]+1};
-    float d[3] = {x - f[0], y - f[1], z - f[2]};
-
-    float i1 = getVoxelData(vol, f[0], f[1], f[2]) * (1.0 - d[2]) + getVoxelData(vol, f[0], f[1], c[2]) * d[2];
-    float i2 = getVoxelData(vol, f[0], c[1], f[2]) * (1.0 - d[2]) + getVoxelData(vol, f[0], c[1], c[2]) * d[2];
-    float j1 = getVoxelData(vol, c[0], f[1], f[2]) * (1.0 - d[2]) + getVoxelData(vol, c[0], f[1], c[2]) * d[2];
-    float j2 = getVoxelData(vol, c[0], c[1], f[2]) * (1.0 - d[2]) + getVoxelData(vol, c[0], c[1], c[2]) * d[2];
-
-    float w1 = i1 * (1.0 - d[1]) + i2 * d[1];
-    float w2 = j1 * (1.0 - d[1]) + j2 * d[1];
-
-    return w1 * (1.0 - d[0]) + w2 * d[0];
-}
-
 void Volume::normalizeVolume(){
   normalize(0, 1);
 }
