@@ -14,7 +14,7 @@
 namespace Protein_Morph {
 
     struct SheetIdsAndSelect {
-        unsigned char id;
+        string id;
         bool selected;
     };
 
