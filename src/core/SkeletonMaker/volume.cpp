@@ -10774,7 +10774,7 @@ void Volume::saveFile(string fileName) {
 
 void Volume::PerformSmoothLaplacian(double convergenceRate, int iterations) {
     for(unsigned int i = 0; i < iterations; i++) {
-      this->smooth(convergenceRate);
+      smooth(convergenceRate);
     }
 }
 
