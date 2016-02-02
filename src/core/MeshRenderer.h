@@ -26,7 +26,6 @@ namespace Visualization {
         void loadFile(string fileName);
         void loadVolume(Volume * sourceVolume);
         void saveFile(string fileName);
-        void unload();
         void PerformSmoothLaplacian(double convergenceRate, int iterations);
         string getSupportedLoadFileFormats();
         string getSupportedSaveFileFormats();
@@ -100,8 +99,6 @@ namespace Visualization {
         mesh = new NonManifoldMesh_Annotated(sourceVolume);
     }
 
-    void MeshRenderer::unload() {
-    }
     void MeshRenderer::PerformSmoothLaplacian(double convergenceRate, int iterations) {
         mesh = mesh.SmoothLaplacian(convergenceRate, iterations);
     }
