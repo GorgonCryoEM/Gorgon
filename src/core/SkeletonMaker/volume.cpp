@@ -10493,8 +10493,8 @@ void Volume::writeDistances( string fname, int maxDis )
     printf("Totally %d nodes.\n", totNodes );
 
     //disvol->toMRCFile( "..\distance.mrc" ) ;
-    FILE* fout = fopen( fname, "w" ) ;
-    fprintf( fout, "%d\n", totNodes ) ;
+    ofstream fout(fname.c_str());
+    fout<<totNodes<<endl;
     int ct = 0 ;
     for ( i = 0 ; i < getSizeX() ; i ++ )
         for ( j = 0 ; j < getSizeY() ; j ++ )
@@ -10503,22 +10503,22 @@ void Volume::writeDistances( string fname, int maxDis )
                 float val = (float)disvol->getDataAt(i,j,k) ;
                 if ( val > 0 )
                 {
-                    fprintf( fout, "%d %d %d %f\n", i, j, k, val ) ;
+                    fout<<i<<j<<k<<val<<endl;
                     ct ++ ;
                 }
             }
 
     if ( ct != totNodes )
     {
-        printf("Counting wrong! %d %d\n", totNodes, ct) ;
+        cout<<"Counting wrong! "<<totNodes<<" "<<ct<<endl;
     }
-    fclose( fout ) ;
+    fout.close();
 
 }
 
 void Volume::toPQRFile( string fname, float spc, float minx, float miny, float minz, int padding )
 {
-    FILE* fout = fopen( fname, "w" ) ;
+    ofstream fout(fname.c_str());
     int i, j, k ;
 
     for ( i = 0 ; i < getSizeX() ; i ++ )
