@@ -278,12 +278,6 @@ namespace Visualization {
             }
         }
 
-        //printf("Preserving:");
-        //for(set<unsigned int>::iterator i = preserve.begin(); i != preserve.end(); i++) {
-        //	printf("%d ", *i);
-        //}
-        //printf("\n");
-
         PrunePathMesh(mesh, pathVertices, preserve);
 
         singlePathMesh = new NonManifoldMesh_Annotated();
