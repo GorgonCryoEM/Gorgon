@@ -32,7 +32,7 @@ namespace Visualization {
 
         void InitializePathFinder(NonManifoldMesh_Annotated * mesh);
         void InitializePathHelix(int helixIndex, Vector3DFloat p1, Vector3DFloat p2, float radius);
-        void PrunePathMesh(NonManifoldMesh_Annotated * mesh, vector<unsigned int> pathVertices, set<unsigned int> preserve);
+        void PrunePathMesh(NonManifoldMesh_Annotated * mesh, vector<unsigned int> pathVertices);
         void GetPathSpace(int helix1Ix, bool helix1Start, int helix2Ix, bool helix2Start);
         int GetPathVertexCount();
         Vector3DFloat GetPathVertex(int index);
@@ -219,7 +219,7 @@ namespace Visualization {
 
     }
 
-    void SSECorrespondenceEngine::PrunePathMesh(NonManifoldMesh_Annotated * mesh, vector<unsigned int> pathVertices, set<unsigned int> preserve) {
+    void SSECorrespondenceEngine::PrunePathMesh(NonManifoldMesh_Annotated * mesh, vector<unsigned int> pathVertices) {
         for(unsigned int i = 0; i < mesh->vertices.size(); i++) {
             mesh->vertices[i].tag = true;
         }
@@ -277,7 +277,7 @@ namespace Visualization {
             }
         }
 
-        PrunePathMesh(mesh, pathVertices, preserve);
+        PrunePathMesh(mesh, pathVertices);
 
         singlePathMesh = new NonManifoldMesh_Annotated();
         map<unsigned int, unsigned int> vertexMap;
