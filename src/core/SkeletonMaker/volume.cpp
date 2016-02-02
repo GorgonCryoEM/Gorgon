@@ -10516,32 +10516,6 @@ void Volume::writeDistances( string fname, int maxDis )
 
 }
 
-void Volume::toPQRFile( string fname, float spc, float minx, float miny, float minz, int padding )
-{
-    ofstream fout(fname.c_str());
-    int i, j, k ;
-
-    for ( i = 0 ; i < getSizeX() ; i ++ )
-        for ( j = 0 ; j < getSizeY() ; j ++ )
-            for ( k = 0 ; k < getSizeZ() ; k ++ )
-            {
-                if ( i < padding || i >= getSizeX() - padding || j < padding || j >= getSizeY() - padding || k < padding || k >= getSizeZ() - padding )
-                {
-                    continue ;
-                }
-                float val = (float)this->getDataAt(i,j,k) ;
-                if ( val > 0 )
-                {
-                    float x = (i - padding) * spc + minx ;
-                    float y = (j - padding) * spc + miny ;
-                    float z = (k - padding) * spc + minz ;
-                    fprintf( fout, "ATOM      1  X   DUM     1     %4.3f %4.3f %4.3f 0.000 0.000\n", x, y, z ) ;
-                }
-            }
-
-    fclose( fout ) ;
-}
-
 void Volume::toMRCFile( string fname )
 {
     FILE* fout = fopen( fname, "wb" ) ;

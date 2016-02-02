@@ -213,7 +213,6 @@ namespace SkeletonMaker {
         void reduceComponent2( int num );
         void floodFillPQR( int offset );
         void writeDistances( string fname, int maxDis );
-        void toPQRFile( string fname, float spc, float minx, float miny, float minz, int padding );
         void toMRCFile( string fname );
 
         void normalizeVolume();
