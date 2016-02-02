@@ -255,28 +255,6 @@ namespace Visualization {
             }
         }
 
-        // Preserving start and end terminus, while pruning away the single directional branches.
-        set<unsigned int> preserve;
-        if(helix1Start) {
-            for(unsigned int i = 0; i < helixStartPoints[helix1Ix].size(); i++) {
-                preserve.insert(helixStartPoints[helix1Ix][i]);
-            }
-        } else {
-            for(unsigned int i = 0; i < helixEndPoints[helix1Ix].size(); i++) {
-                preserve.insert(helixEndPoints[helix1Ix][i]);
-            }
-        }
-
-        if(helix2Start) {
-            for(unsigned int i = 0; i < helixStartPoints[helix2Ix].size(); i++) {
-                preserve.insert(helixStartPoints[helix2Ix][i]);
-            }
-        } else {
-            for(unsigned int i = 0; i < helixEndPoints[helix2Ix].size(); i++) {
-                preserve.insert(helixEndPoints[helix2Ix][i]);
-            }
-        }
-
         PrunePathMesh(mesh, pathVertices);
 
         singlePathMesh = new NonManifoldMesh_Annotated();
