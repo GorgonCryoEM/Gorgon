@@ -1,6 +1,8 @@
 #include <boost/python.hpp>
 
-#include "SkeletonMaker/volume.h"
+#include "volume.h"
+
+using namespace Core;
 
 using namespace boost::python;
 
