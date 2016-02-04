@@ -3,7 +3,7 @@
 import argparse
 import logging
 
-from Toolkit.sse import SSEHelixCorrespondenceFinderForm
+from Toolkit.sse import SSEHelixCorrespondence
 
 
 def main():
@@ -34,7 +34,7 @@ def main():
     
     logger = logging.getLogger(__name__)
 
-    sse_finder = SSEHelixCorrespondenceFinderForm(args.skeleton, args.sequence, args.helix, args.output)
+    sse_finder = SSEHelixCorrespondence(args.skeleton, args.sequence, args.helix, args.output)
 
 if __name__ == "__main__":
     main()

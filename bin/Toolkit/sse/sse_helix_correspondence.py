@@ -1,5 +1,5 @@
 from libpycore import SSECorrespondenceEngine, SSECorrespondenceResult, Vector3DFloat
-from ui_dialog_sse_helix_correspondence_finder import Ui_DialogSSEHelixCorrespondenceFinder
+from sse_defaults import SSEDefaults
 from .correspondence.CorrespondenceLibrary import CorrespondenceLibrary
 from .correspondence.Correspondence import Correspondence
 from .correspondence.Match import Match
@@ -13,10 +13,10 @@ from .correspondence.StructurePrediction import StructurePrediction
 import math
 
 
-class SSEHelixCorrespondenceFinderForm(object):
+class SSEHelixCorrespondence(object):
 
     def __init__(self, skeleton, sequence, helix, output):
-        self.ui = Ui_DialogSSEHelixCorrespondenceFinder()
+        self.ui = SSEDefaults()
         self.skeleton = skeleton
         self.sequence = sequence
         self.helix    = helix

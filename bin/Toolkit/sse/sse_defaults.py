@@ -15,7 +15,7 @@ class ComboBox(object):
         self.arr.append(item)
 
 
-class Ui_DialogSSEHelixCorrespondenceFinder(object):
+class SSEDefaults(object):
 
     def __init__(self):
         self.doubleSpinBoxHelixImportance           = 1.0
