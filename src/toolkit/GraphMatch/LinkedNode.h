@@ -1,5 +1,5 @@
-#ifndef CORE_GRAPHMATCH_LINKEDNODE_H
-#define CORE_GRAPHMATCH_LINKEDNODE_H
+#ifndef TOOLKIT_GRAPHMATCH_LINKEDNODE_H
+#define TOOLKIT_GRAPHMATCH_LINKEDNODE_H
 
 //#include <vector>
 //#include "GlobalConstants.h"

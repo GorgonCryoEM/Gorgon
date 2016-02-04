@@ -1,5 +1,5 @@
-#ifndef CORE_GRAPH_MATCH_PDB_BOND_H
-#define CORE_GRAPH_MATCH_PDB_BOND_H
+#ifndef TOOLKIT_GRAPH_MATCH_PDB_BOND_H
+#define TOOLKIT_GRAPH_MATCH_PDB_BOND_H
 
 //using namespace MathTools;
 

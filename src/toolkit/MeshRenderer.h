@@ -1,5 +1,5 @@
-#ifndef CORE_MESH_RENDERER_H
-#define CORE_MESH_RENDERER_H
+#ifndef TOOLKIT_MESH_RENDERER_H
+#define TOOLKIT_MESH_RENDERER_H
 
 //#include <cstdlib>
 //#include <cstdio>

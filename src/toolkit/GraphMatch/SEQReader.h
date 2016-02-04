@@ -1,5 +1,5 @@
-#ifndef CORE_GRAPHMATCH_SEQREADER_H
-#define CORE_GRAPHMATCH_SEQREADER_H
+#ifndef TOOLKIT_GRAPHMATCH_SEQREADER_H
+#define TOOLKIT_GRAPHMATCH_SEQREADER_H
 
 #include <vector>
 //#include "GlobalConstants.h"

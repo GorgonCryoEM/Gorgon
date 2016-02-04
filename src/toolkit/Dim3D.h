@@ -5,8 +5,8 @@
  *      Author: shadow_walker
  */
 
-#ifndef SRC_CORE_DIM3D_H_
-#define SRC_CORE_DIM3D_H_
+#ifndef SRC_TOOLKIT_DIM3D_H_
+#define SRC_TOOLKIT_DIM3D_H_
 
 #include <iostream>
 
@@ -42,4 +42,4 @@ namespace Core {
 
 } /* namespace Core */
 
-#endif /* SRC_CORE_DIM3D_H_ */
+#endif /* SRC_TOOLKIT_DIM3D_H_ */

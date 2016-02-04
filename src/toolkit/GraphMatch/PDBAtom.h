@@ -1,5 +1,5 @@
-#ifndef CORE_GRAPH_MATCH_PDB_ATOM_H
-#define CORE_GRAPH_MATCH_PDB_ATOM_H
+#ifndef TOOLKIT_GRAPH_MATCH_PDB_ATOM_H
+#define TOOLKIT_GRAPH_MATCH_PDB_ATOM_H
 
 //#include <MathTools/Vector3D.h>
 //#include <Foundation/StringUtils.h>

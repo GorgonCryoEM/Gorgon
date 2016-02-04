@@ -1,5 +1,5 @@
-#ifndef CORE_GRAPHMATCH_SKELETONREADER_H
-#define CORE_GRAPHMATCH_SKELETONREADER_H
+#ifndef TOOLKIT_GRAPHMATCH_SKELETONREADER_H
+#define TOOLKIT_GRAPHMATCH_SKELETONREADER_H
 
 #include <SkeletonMaker/reader.h>
 #include <SkeletonMaker/volume.h>

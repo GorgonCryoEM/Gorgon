@@ -1,5 +1,5 @@
-#ifndef CORE_MATH_TOOLS_LINEAR_SOLVER_H
-#define CORE_MATH_TOOLS_LINEAR_SOLVER_H
+#ifndef TOOLKIT_MATH_TOOLS_LINEAR_SOLVER_H
+#define TOOLKIT_MATH_TOOLS_LINEAR_SOLVER_H
 
 //#include "Vector3D.h"
 //#include <vector>
