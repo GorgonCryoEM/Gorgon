@@ -5,7 +5,7 @@
 #include "Dim3D.h"
 
 using namespace std;
-using namespace Toolkit;
+using namespace Core;
 
 namespace SkeletonMaker {
     class VolumeData {

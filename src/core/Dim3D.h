@@ -12,7 +12,7 @@
 
 using namespace std;
 
-namespace Toolkit {
+namespace Core {
 
   template<class T>
   class Dim3D{
@@ -40,6 +40,6 @@ namespace Toolkit {
 
 #include "Dim3D.tpl"
 
-} /* namespace Toolkit */
+} /* namespace Core */
 
 #endif /* SRC_CORE_DIM3D_H_ */
