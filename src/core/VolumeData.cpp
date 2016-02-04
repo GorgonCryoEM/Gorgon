@@ -8,6 +8,8 @@
 
 #include "VolumeData.h"
 
+using namespace Core;
+
 VolumeData::VolumeData()
       : size(0, 0, 0),
         spacing(1, 1, 1),

@@ -1,6 +1,6 @@
 #include <boost/python.hpp>
 
-#include "volume.h"
+#include "VolumeData.h"
 
 using namespace Core;
 
@@ -19,37 +19,37 @@ BOOST_PYTHON_MODULE(@current_pylib@)
             .def(vector_indexing_suite<std::vector<std::vector<double> > >() );
 
 
-  class_<Volume>("Volume", init<>())
-      .def("getOriginX", &Volume::getOriginX)
-      .def("getOriginY", &Volume::getOriginY)
-      .def("getOriginZ", &Volume::getOriginZ)
-      .def("getSizeX", &Volume::getSizeX)
-      .def("getSizeY", &Volume::getSizeY)
-      .def("getSizeZ", &Volume::getSizeZ)
-      .def("getSize", &Volume::getSize)
-      .def("getSize", &Volume::cmp)
-      .def("getSpacingX", &Volume::getSpacingX)
-      .def("getSpacingY", &Volume::getSpacingY)
-      .def("getSpacingZ", &Volume::getSpacingZ)
-//      .def("getMin", &Volume::getMin)
-//      .def("getMax", &Volume::getMax)
+  class_<VolumeData>("VolumeData", init<>())
+      .def("getOriginX", &VolumeData::getOriginX)
+      .def("getOriginY", &VolumeData::getOriginY)
+      .def("getOriginZ", &VolumeData::getOriginZ)
+      .def("getSizeX", &VolumeData::getSizeX)
+      .def("getSizeY", &VolumeData::getSizeY)
+      .def("getSizeZ", &VolumeData::getSizeZ)
+      .def("getSize", &VolumeData::getSize)
+      .def("getSize", &VolumeData::cmp)
+      .def("getSpacingX", &VolumeData::getSpacingX)
+      .def("getSpacingY", &VolumeData::getSpacingY)
+      .def("getSpacingZ", &VolumeData::getSpacingZ)
+//      .def("getMin", &VolumeData::getMin)
+//      .def("getMax", &VolumeData::getMax)
 //      .def("getDataAt", getDataAt1)
-//      .def("buildHistogram", &Volume::buildHistogram)
-//      .def("getHistogramBinValue", &Volume::getHistogramBinValue)
+//      .def("buildHistogram", &VolumeData::buildHistogram)
+//      .def("getHistogramBinValue", &VolumeData::getHistogramBinValue)
 //
-      .def("normalizeVolume", &Volume::normalizeVolume)
-//        .def("downsampleVolume", &Volume::DownsampleVolume)
-//        .def("cropVolume", &Volume::CropVolume)
-      .def("performBinarySkeletonizationJu2007", &Volume::PerformBinarySkeletonizationJu2007, return_value_policy<reference_existing_object>())
-      .def("performGrayscaleSkeletonizationAbeysinghe2008", &Volume::PerformGrayscaleSkeletonizationAbeysinghe2008, return_value_policy<reference_existing_object>())     
-//        .def("performPreservingGrayscaleSkeletonizationAbeysinghe2008", &Volume::PerformPreservingGrayscaleSkeletonizationAbeysinghe2008, return_value_policy<reference_existing_object>())     
-      .def("getMinDensity", &Volume::getMinDensity)
-      .def("getMaxDensity", &Volume::getMaxDensity)
-      .def("setVolume", &Volume::setVolume)
-      .def("getVolume", &Volume::getVolume, return_value_policy<reference_existing_object>())      
-//      .def("saveFile", &Volume::SaveFile)
-      .def("loadFile", &Volume::loadFile)
-      .def("saveFile", &Volume::saveFile)
+      .def("normalizeVolumeData", &VolumeData::normalizeVolumeData)
+//        .def("downsampleVolumeData", &VolumeData::DownsampleVolumeData)
+//        .def("cropVolumeData", &VolumeData::CropVolumeData)
+      .def("performBinarySkeletonizationJu2007", &VolumeData::PerformBinarySkeletonizationJu2007, return_value_policy<reference_existing_object>())
+      .def("performGrayscaleSkeletonizationAbeysinghe2008", &VolumeData::PerformGrayscaleSkeletonizationAbeysinghe2008, return_value_policy<reference_existing_object>())     
+//        .def("performPreservingGrayscaleSkeletonizationAbeysinghe2008", &VolumeData::PerformPreservingGrayscaleSkeletonizationAbeysinghe2008, return_value_policy<reference_existing_object>())     
+      .def("getMinDensity", &VolumeData::getMinDensity)
+      .def("getMaxDensity", &VolumeData::getMaxDensity)
+      .def("setVolumeData", &VolumeData::setVolumeData)
+      .def("getVolumeData", &VolumeData::getVolumeData, return_value_policy<reference_existing_object>())      
+//      .def("saveFile", &VolumeData::SaveFile)
+      .def("loadFile", &VolumeData::loadFile)
+      .def("saveFile", &VolumeData::saveFile)
 
   ;
 
