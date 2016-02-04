@@ -1,7 +1,7 @@
 /*
  * Dim3D.cpp
  *
- * Author: shadow_walker
+ * Author: shadow_walker <shadowwalkersb@gmail.com>
  *
  */
 
