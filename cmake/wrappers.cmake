@@ -62,7 +62,7 @@ function(add_module proj)
     file(GLOB_RECURSE srcs "*.cpp")
     
     set(current_pylib "libpy${proj_low}")    
-    configure_file(${CMAKE_CURRENT_LIST_DIR}/py${proj_low}.cpp.in
+    configure_file(${CMAKE_CURRENT_LIST_DIR}/pylib.cpp.in
                     ${CMAKE_BINARY_DIR}/src/py${proj_low}.cpp
                    )
     
