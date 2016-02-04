@@ -5,9 +5,9 @@
 #include "Dim3D.h"
 
 using namespace std;
-using namespace Core;
+//using namespace Core;
 
-namespace SkeletonMaker {
+namespace Core {
     class VolumeData {
     public:
         VolumeData();
@@ -31,9 +31,6 @@ namespace SkeletonMaker {
         float getDataAt(int index) const;
         int getIndex(int x, int y, int z) const;
         int getMaxIndex() const;
-
-        //uses malloc as required by FFT libraries
-        float* getArrayCopy(int padX=0, int padY=0, int padZ=0, float padValue=0);
 
         void setSpacing(float spacingX, float spacingY, float spacingZ);
         void setOrigin(float originX, float originY, float originZ);
@@ -243,27 +240,6 @@ namespace SkeletonMaker {
 
 
 
-    }
-
-
-    float* VolumeData::getArrayCopy(int padX, int padY, int padZ, float padValue) {
-        int xSize = getSizeX()+padX;
-        int ySize = getSizeY()+padY;
-        int zSize = getSizeZ()+padZ;
-        float* copy = (float*) malloc(sizeof(float)*xSize*ySize*zSize);
-
-        for (int i=0; i < xSize; i++)
-            for (int j=0; j < ySize; j++)
-                for (int k=0; k < zSize; k++) {
-                    if ( i<getSizeX() && j<getSizeY() && k<getSizeZ() ) {
-                        copy[k+(j+i*ySize)*zSize] = getDataAt(i, j, k);
-                    } else {
-                        copy[k+(j+i*ySize)*zSize] = padValue;
-                    }
-
-                }
-
-        return copy;
     }
 }
 
