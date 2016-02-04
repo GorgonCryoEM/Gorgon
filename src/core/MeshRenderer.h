@@ -6,14 +6,13 @@
 //#include <GorgonGL.h>
 //#include <string>
 #include <SkeletonMaker/volume.h>
-//#include <SkeletonMaker/reader.h>
+#include <SkeletonMaker/reader.h>
 #include <ProteinMorph/NonManifoldMesh.h>
-#include <GraySkeletonCPP/VolumeFormatConverter.h>
 //#include "Renderer.h"
 #include <Foundation/StringUtils.h>
 
 using namespace Protein_Morph;
-using namespace GraySkeletonCPP;
+//using namespace GraySkeletonCPP;
 using namespace Foundation;
 using namespace SkeletonMaker;
 
@@ -26,7 +25,6 @@ namespace Visualization {
         void loadFile(string fileName);
         void loadVolume(Volume * sourceVolume);
         void saveFile(string fileName);
-        void unload();
         void PerformSmoothLaplacian(double convergenceRate, int iterations);
         string getSupportedLoadFileFormats();
         string getSupportedSaveFileFormats();
@@ -62,7 +60,7 @@ namespace Visualization {
         if(extension == "OFF") {
             mesh = *NonManifoldMesh_Annotated::LoadOffFile(fileName);
         } else if(extension == "MRC" || extension == "ATOM") {
-            Volume * volume = VolumeFormatConverter::LoadVolume(fileName);
+            Volume * volume = MRCReaderPicker::pick(fileName.c_str())->getVolume();
             #ifdef GORGON_DEBUG
                   cout<<"\033[36mDEBUG: After VolumeFormatConverter::LoadVolume(fileName)"<<endl;
                   cout<<"FileName: "<<fileName<<endl;
@@ -89,7 +87,7 @@ namespace Visualization {
                 mesh.ToOffCells(fileName);
             } else if(extension == "MRC") {
                 Volume * volume = mesh.ToVolume();
-                volume->toMRCFile((char *)fileName.c_str());
+                volume->toMRCFile(fileName.c_str());
                 delete volume;
             } else {
               cout<<"Input format "<<extension<<" not supported!"<<endl;
@@ -100,8 +98,6 @@ namespace Visualization {
         mesh = new NonManifoldMesh_Annotated(sourceVolume);
     }
 
-    void MeshRenderer::unload() {
-    }
     void MeshRenderer::PerformSmoothLaplacian(double convergenceRate, int iterations) {
         mesh = mesh.SmoothLaplacian(convergenceRate, iterations);
     }

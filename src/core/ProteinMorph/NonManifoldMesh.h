@@ -83,8 +83,8 @@ namespace Protein_Morph {
         bool IsEdgePresent(int vertexId1, int vertexId2);
         bool IsSurfaceVertex(int ix);
         int AddVertex(NonManifoldMeshVertex vertex);
-        int AddVertex(Vector3DFloat location, bool tag = NULL);
-        int AddHashedVertex(Vector3DFloat location, int hashKey, bool tag = NULL);
+        int AddVertex(Vector3DFloat location);
+        int AddHashedVertex(Vector3DFloat location, int hashKey);
         int AddEdge(NonManifoldMeshEdge edge);
         int AddFace(NonManifoldMeshFace face);
         int GetVertexIndex(int vertexId);
@@ -250,18 +250,18 @@ namespace Protein_Morph {
         return vertex.id;
     }
 
-    int NonManifoldMesh::AddVertex(Vector3DFloat location, bool tag) {
+    int NonManifoldMesh::AddVertex(Vector3DFloat location) {
         NonManifoldMeshVertex v;
         v.position = location;
-        v.tag = tag;
+//        v.tag = tag;
         return AddVertex(v);
     }
 
-    int NonManifoldMesh::AddHashedVertex(Vector3DFloat location, int hashKey, bool tag) {
+    int NonManifoldMesh::AddHashedVertex(Vector3DFloat location, int hashKey) {
         HashMapType::const_iterator pos = vertexHashMap.find(hashKey);
         int vertexId;
         if(pos == vertexHashMap.end()) {
-            vertexId = AddVertex(location, tag);
+            vertexId = AddVertex(location);
             vertexHashMap[hashKey] = vertexId;
         } else {
             vertexId = pos->second;

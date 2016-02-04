@@ -12,7 +12,6 @@ namespace SkeletonMaker {
     public:
         VolumeData();
         VolumeData(int sizeX, int sizeY, int sizeZ, float val=0.0);
-        ~VolumeData();
 
         bool cmp(const VolumeData& obj)  const;
 
@@ -75,8 +74,6 @@ namespace SkeletonMaker {
         setSize(sizeX, sizeY, sizeZ);
         data.assign(data.size(), val);
     }
-
-    VolumeData::~VolumeData() {}
 
     bool VolumeData::cmp(const VolumeData& obj) const {
       if(data.size() != obj.data.size())

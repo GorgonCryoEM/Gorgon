@@ -32,7 +32,7 @@ namespace Visualization {
 
         void InitializePathFinder(NonManifoldMesh_Annotated * mesh);
         void InitializePathHelix(int helixIndex, Vector3DFloat p1, Vector3DFloat p2, float radius);
-        void PrunePathMesh(NonManifoldMesh_Annotated * mesh, vector<unsigned int> pathVertices, set<unsigned int> preserve);
+        void PrunePathMesh(NonManifoldMesh_Annotated * mesh, vector<unsigned int> pathVertices);
         void GetPathSpace(int helix1Ix, bool helix1Start, int helix2Ix, bool helix2Start);
         int GetPathVertexCount();
         Vector3DFloat GetPathVertex(int index);
@@ -54,10 +54,9 @@ namespace Visualization {
     };
 
 
-    SSECorrespondenceEngine::SSECorrespondenceEngine() {
-        correspondence.clear();
-        pathCount = 0;
-    }
+    SSECorrespondenceEngine::SSECorrespondenceEngine()
+    						: pathCount(0)
+    {}
 
     int SSECorrespondenceEngine::ExecuteQuery() {
         if(skeleton != NULL && sequence != NULL) {
@@ -220,7 +219,7 @@ namespace Visualization {
 
     }
 
-    void SSECorrespondenceEngine::PrunePathMesh(NonManifoldMesh_Annotated * mesh, vector<unsigned int> pathVertices, set<unsigned int> preserve) {
+    void SSECorrespondenceEngine::PrunePathMesh(NonManifoldMesh_Annotated * mesh, vector<unsigned int> pathVertices) {
         for(unsigned int i = 0; i < mesh->vertices.size(); i++) {
             mesh->vertices[i].tag = true;
         }
@@ -256,35 +255,7 @@ namespace Visualization {
             }
         }
 
-        // Preserving start and end terminus, while pruning away the single directional branches.
-        set<unsigned int> preserve;
-        if(helix1Start) {
-            for(unsigned int i = 0; i < helixStartPoints[helix1Ix].size(); i++) {
-                preserve.insert(helixStartPoints[helix1Ix][i]);
-            }
-        } else {
-            for(unsigned int i = 0; i < helixEndPoints[helix1Ix].size(); i++) {
-                preserve.insert(helixEndPoints[helix1Ix][i]);
-            }
-        }
-
-        if(helix2Start) {
-            for(unsigned int i = 0; i < helixStartPoints[helix2Ix].size(); i++) {
-                preserve.insert(helixStartPoints[helix2Ix][i]);
-            }
-        } else {
-            for(unsigned int i = 0; i < helixEndPoints[helix2Ix].size(); i++) {
-                preserve.insert(helixEndPoints[helix2Ix][i]);
-            }
-        }
-
-        //printf("Preserving:");
-        //for(set<unsigned int>::iterator i = preserve.begin(); i != preserve.end(); i++) {
-        //	printf("%d ", *i);
-        //}
-        //printf("\n");
-
-        PrunePathMesh(mesh, pathVertices, preserve);
+        PrunePathMesh(mesh, pathVertices);
 
         singlePathMesh = new NonManifoldMesh_Annotated();
         map<unsigned int, unsigned int> vertexMap;
@@ -299,12 +270,6 @@ namespace Visualization {
                 singlePathMesh->AddEdge(vertexMap[mesh->edges[i].vertexIds[0]], vertexMap[mesh->edges[i].vertexIds[1]], mesh->edges[i].tag);
             }
         }
-
-
-        //char filename[100];
-        //sprintf(filename, "C:\\path_%d_%d.off", pathCount, helix1Ix);
-        //printf("vertex count: %d, edgeCount: %d, faceCount: %d\n", singlePathMesh->vertices.size(), singlePathMesh->edges.size(), singlePathMesh->faces.size()); flushall();
-        //singlePathMesh->ToOffCells(filename);
 
         vertexMap.clear();
         pathVertices.clear();
