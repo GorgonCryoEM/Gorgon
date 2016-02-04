@@ -1,5 +1,5 @@
-#ifndef TOOLKIT_GRAPHMATCH_PDB_HELIX_H
-#define TOOLKIT_GRAPHMATCH_PDB_HELIX_H
+#ifndef CORE_GRAPHMATCH_PDB_HELIX_H
+#define CORE_GRAPHMATCH_PDB_HELIX_H
 
 //#include <MathTools/Vector3D.h>
 //#include <Foundation/StringUtils.h>

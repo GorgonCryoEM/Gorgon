@@ -1,5 +1,5 @@
-#ifndef TOOLKIT_CALPHA_RENDERER_H
-#define TOOLKIT_CALPHA_RENDERER_H
+#ifndef CORE_CALPHA_RENDERER_H
+#define CORE_CALPHA_RENDERER_H
 
 
 //#include <GorgonGL.h>

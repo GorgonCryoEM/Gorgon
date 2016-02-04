@@ -1,5 +1,5 @@
-#ifndef TOOLKIT_MATHTOOLS_MATRIX_H
-#define TOOLKIT_MATHTOOLS_MATRIX_H
+#ifndef CORE_MATHTOOLS_MATRIX_H
+#define CORE_MATHTOOLS_MATRIX_H
 
 #include "MatrixTemplate.h"
 

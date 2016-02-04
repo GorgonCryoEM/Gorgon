@@ -1,5 +1,5 @@
-#ifndef TOOLKIT_SSE_CORRESPONDENCE_ENGINE_H
-#define TOOLKIT_SSE_CORRESPONDENCE_ENGINE_H
+#ifndef CORE_SSE_CORRESPONDENCE_ENGINE_H
+#define CORE_SSE_CORRESPONDENCE_ENGINE_H
 
 //#include <GraphMatch/SSECorrespondenceResult.h>
 #include <GraphMatch/BackEndInterface.h>

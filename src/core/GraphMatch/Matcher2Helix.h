@@ -5,8 +5,8 @@ Author: Sasakthi S. Abeysinghe
 Date  : 02/12/2006
 */
 
-#ifndef TOOLKIT_GRAPHMATCH_MATCHER2HELIX_H
-#define TOOLKIT_GRAPHMATCH_MATCHER2HELIX_H
+#ifndef CORE_GRAPHMATCH_MATCHER2HELIX_H
+#define CORE_GRAPHMATCH_MATCHER2HELIX_H
 
 class Matcher2Helix {
 public:

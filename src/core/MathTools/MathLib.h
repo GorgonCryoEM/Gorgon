@@ -1,5 +1,5 @@
-#ifndef TOOLKIT_MATHTOOLS_MATH_LIB_H
-#define TOOLKIT_MATHTOOLS_MATH_LIB_H
+#ifndef CORE_MATHTOOLS_MATH_LIB_H
+#define CORE_MATHTOOLS_MATH_LIB_H
 
 #include "MatlabWrapper.h"
 #include "Combinatorics.h"

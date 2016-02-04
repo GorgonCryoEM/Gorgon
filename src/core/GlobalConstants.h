@@ -1,5 +1,5 @@
-#ifndef TOOLKIT_GLOBAL_CONSTANTS_H
-#define TOOLKIT_GLOBAL_CONSTANTS_H
+#ifndef CORE_GLOBAL_CONSTANTS_H
+#define CORE_GLOBAL_CONSTANTS_H
 
 
 namespace Visualization {

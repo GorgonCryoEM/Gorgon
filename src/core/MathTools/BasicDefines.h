@@ -1,5 +1,5 @@
-#ifndef TOOLKIT_BASIC_DEFINES_H
-#define TOOLKIT_BASIC_DEFINES_H
+#ifndef CORE_BASIC_DEFINES_H
+#define CORE_BASIC_DEFINES_H
 
 
 namespace MathTools {

@@ -1,5 +1,5 @@
-#ifndef TOOLKIT_SKELETON_MAKER_READER_H
-#define TOOLKIT_SKELETON_MAKER_READER_H
+#ifndef CORE_SKELETON_MAKER_READER_H
+#define CORE_SKELETON_MAKER_READER_H
 
 #include <cstdio>
 #include <cstdlib>
