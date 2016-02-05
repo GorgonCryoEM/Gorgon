@@ -78,6 +78,10 @@ Dim3D<int> Volume::getSizeObj() const {
     return size;
 }
 
+void Volume::setItem(int i, int j, int k, double val){
+    (*this)(i, j, k) = val;
+}
+
 double & Volume::operator()(int i, int j, int k){
     return const_cast<double &>(static_cast<const Volume&>(*this)(i, j, k));
 }

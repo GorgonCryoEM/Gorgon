@@ -22,6 +22,7 @@ namespace Core {
         Dim3D<int> getSizeObj() const;
 
         double & operator()(int i, int j, int k);
+        void setItem(int i, int j, int k, double val);
         const double & operator()(int i, int j, int k) const;
         typedef vector<double>::const_iterator const_iterator;
         typedef vector<double>::iterator iterator;
