@@ -11,7 +11,7 @@ namespace Core {
     class Volume {
     public:
         Volume();
-        Volume(int sizeX, int sizeY, int sizeZ, float val=0.0);
+        Volume(int sizeX, int sizeY, int sizeZ, double val=0.0);
 
         bool cmp(const Volume& obj)  const;
 
@@ -21,18 +21,18 @@ namespace Core {
         int getSize() const;
         Dim3D<int> getSizeObj() const;
 
-        float getDataAt(int x, int y, int z) const;
-        float getDataAt(int index) const;
+        double getDataAt(int x, int y, int z) const;
+        double getDataAt(int index) const;
         int getIndex(int x, int y, int z) const;
         int getMaxIndex() const;
 
-        void setDataAt(int x, int y, int z, float value);
-        void setDataAt(int index, float value);
+        void setDataAt(int x, int y, int z, double value);
+        void setDataAt(int index, double value);
     private:
         void setSize(int sizeX, int sizeY, int sizeZ);
     protected:
         Dim3D<int> size;
-        vector<float> data;
+        vector<double> data;
 
         friend ostream& operator<<(ostream& out, const Volume& obj){
             return out<<"\033[33m"

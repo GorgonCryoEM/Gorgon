@@ -14,7 +14,7 @@ Volume::Volume()
       : size(0, 0, 0)
 {}
 
-Volume::Volume(int sizeX, int sizeY, int sizeZ, float val)
+Volume::Volume(int sizeX, int sizeY, int sizeZ, double val)
       : size(sizeX, sizeY, sizeZ)
 {
     setSize(sizeX, sizeY, sizeZ);
@@ -56,11 +56,11 @@ Dim3D<int> Volume::getSizeObj() const {
     return size;
 }
 
-float Volume::getDataAt(int x, int y, int z) const {
+double Volume::getDataAt(int x, int y, int z) const {
     return getDataAt(getIndex(x, y, z));
 }
 
-float Volume::getDataAt(int index) const {
+double Volume::getDataAt(int index) const {
     return data[index];
 }
 
@@ -77,10 +77,10 @@ void Volume::setSize(int sizeX, int sizeY, int sizeZ) {
     data.resize(getMaxIndex());
 }
 
-void Volume::setDataAt(int x, int y, int z, float value) {
+void Volume::setDataAt(int x, int y, int z, double value) {
     setDataAt(getIndex(x, y, z), value);
 }
 
-void Volume::setDataAt(int index, float value) {
+void Volume::setDataAt(int index, double value) {
     data[index] = value;
 }
