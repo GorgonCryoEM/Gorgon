@@ -56,14 +56,6 @@ Dim3D<int> Volume::getSizeObj() const {
     return size;
 }
 
-double Volume::getDataAt(int x, int y, int z) const {
-    return getDataAt(getIndex(x, y, z));
-}
-
-double Volume::getDataAt(int index) const {
-    return data[index];
-}
-
 int Volume::getIndex(int x, int y, int z) const {
     return (x * getSizeY() * getSizeZ() + y * getSizeZ() + z);
 }
@@ -71,12 +63,4 @@ int Volume::getIndex(int x, int y, int z) const {
 void Volume::setSize(int sizeX, int sizeY, int sizeZ, double val) {
     size = Dim3D<int>(sizeX, sizeY, sizeZ);
     data.resize(size.X() * size.Y() * size.Z(), val);
-}
-
-void Volume::setDataAt(int x, int y, int z, double value) {
-    setDataAt(getIndex(x, y, z), value);
-}
-
-void Volume::setDataAt(int index, double value) {
-    data[index] = value;
 }
