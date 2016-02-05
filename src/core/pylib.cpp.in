@@ -26,6 +26,8 @@ BOOST_PYTHON_MODULE(@current_pylib@)
       .def("getSizeZ", &Volume::getSizeZ)
       .def("getSize", &Volume::getSize)
       .def("cmp", &Volume::cmp)
+      .def("out", &Volume::print)
+
 //      .def("getMin", &Volume::getMin)
 //      .def("getMax", &Volume::getMax)
 //      .def("getDataAt", getDataAt)
