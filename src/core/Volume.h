@@ -20,39 +20,25 @@ namespace Core {
         int getSizeZ() const;
         int getSize() const;
         Dim3D<int> getSizeObj() const;
-        float getSpacingX() const;
-        float getSpacingY() const;
-        float getSpacingZ() const;
-        float getOriginX() const;
-        float getOriginY() const;
-        float getOriginZ() const;
 
         float getDataAt(int x, int y, int z) const;
         float getDataAt(int index) const;
         int getIndex(int x, int y, int z) const;
         int getMaxIndex() const;
 
-        void setSpacing(float spacingX, float spacingY, float spacingZ);
-        void setOrigin(float originX, float originY, float originZ);
-        void setSpacing(Dim3D<float>);
-        void setOrigin(Dim3D<float>);
         void setDataAt(int x, int y, int z, float value);
         void setDataAt(int index, float value);
     private:
         void setSize(int sizeX, int sizeY, int sizeZ);
     protected:
         Dim3D<int> size;
-        Dim3D<float> spacing;
-        Dim3D<float> origin;
         vector<float> data;
 
         friend ostream& operator<<(ostream& out, const Volume& obj){
-          return out<<"\033[33m"
-              <<"size:    "<<obj.size
-              <<"spacing: "<<obj.spacing
-              <<"origin:  "<<obj.origin
-              <<"size:    "<<obj.data.size()
-              <<"\033[0m"<<endl;
+            return out<<"\033[33m"
+                <<"size:    "<<obj.size
+                <<"size:    "<<obj.data.size()
+                <<"\033[0m"<<endl;
         }
     };
 }

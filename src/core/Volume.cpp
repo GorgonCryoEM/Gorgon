@@ -11,15 +11,11 @@
 using namespace Core;
 
 Volume::Volume()
-      : size(0, 0, 0),
-        spacing(1, 1, 1),
-        origin(0, 0, 0)
+      : size(0, 0, 0)
 {}
 
 Volume::Volume(int sizeX, int sizeY, int sizeZ, float val)
-      : size(sizeX, sizeY, sizeZ),
-        spacing(1, 1, 1),
-        origin(0, 0, 0)
+      : size(sizeX, sizeY, sizeZ)
 {
     setSize(sizeX, sizeY, sizeZ);
     data.assign(data.size(), val);
@@ -60,30 +56,6 @@ Dim3D<int> Volume::getSizeObj() const {
     return size;
 }
 
-float Volume::getSpacingX() const {
-    return spacing.X();
-}
-
-float Volume::getSpacingY() const {
-    return spacing.Y();
-}
-
-float Volume::getSpacingZ() const {
-    return spacing.Z();
-}
-
-float Volume::getOriginX() const {
-    return origin.X();
-}
-
-float Volume::getOriginY() const {
-    return origin.Y();
-}
-
-float Volume::getOriginZ() const {
-    return origin.Z();
-}
-
 float Volume::getDataAt(int x, int y, int z) const {
     return getDataAt(getIndex(x, y, z));
 }
@@ -99,23 +71,6 @@ int Volume::getIndex(int x, int y, int z) const {
 int Volume::getMaxIndex() const {
     return size.X() * size.Y() * size.Z();
 }
-
-void Volume::setSpacing(float spacingX, float spacingY, float spacingZ) {
-    spacing = Dim3D<float>(spacingX, spacingY, spacingZ);
-}
-
-void Volume::setOrigin(float originX, float originY, float originZ) {
-    origin = Dim3D<float>(originX, originY, originZ);
-}
-
-void Volume::setSpacing(Dim3D<float> val) {
-    spacing = val;
-}
-
-void Volume::setOrigin(Dim3D<float> val) {
-    origin = val;
-}
-
 
 void Volume::setSize(int sizeX, int sizeY, int sizeZ) {
     size = Dim3D<int>(sizeX, sizeY, sizeZ);
