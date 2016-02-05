@@ -38,7 +38,6 @@ namespace Core {
         void setOrigin(Dim3D<float>);
         void setDataAt(int x, int y, int z, float value);
         void setDataAt(int index, float value);
-        void pad(int padBy, double padValue);
     private:
         void setSize(int sizeX, int sizeY, int sizeZ);
     protected:
