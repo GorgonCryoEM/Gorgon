@@ -21,6 +21,7 @@ BOOST_PYTHON_MODULE(@current_pylib@)
 
 
   class_<Volume>("Volume", init<>())
+      .def(init<int, int, int, optional<double> >())
       .def("getSizeX", &Volume::getSizeX)
       .def("getSizeY", &Volume::getSizeY)
       .def("getSizeZ", &Volume::getSizeZ)
