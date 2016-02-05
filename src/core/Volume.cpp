@@ -21,6 +21,22 @@ Volume::Volume(int sizeX, int sizeY, int sizeZ, double val)
     setSize(sizeX, sizeY, sizeZ, val);
 }
 
+Volume::iterator Volume::begin(){
+    return data.begin();
+}
+
+Volume::iterator Volume::end(){
+    return data.end();
+}
+
+Volume::const_iterator Volume::begin() const {
+    return data.begin();
+}
+
+Volume::const_iterator Volume::end() const {
+    return data.end();
+}
+
 bool Volume::cmp(const Volume& obj) const {
   if(data.size() != obj.data.size())
     return false;
