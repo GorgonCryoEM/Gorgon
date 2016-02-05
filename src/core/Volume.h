@@ -21,6 +21,8 @@ namespace Core {
         int getSize() const;
         Dim3D<int> getSizeObj() const;
 
+        double & operator()(int i, int j, int k);
+        const double & operator()(int i, int j, int k) const;
 
     private:
         void setSize(int sizeX, int sizeY, int sizeZ, double val=0.0);

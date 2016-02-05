@@ -56,6 +56,14 @@ Dim3D<int> Volume::getSizeObj() const {
     return size;
 }
 
+double & Volume::operator()(int i, int j, int k){
+    return const_cast<double &>(static_cast<const Volume&>(*this)(i, j, k));
+}
+
+const double & Volume::operator()(int i, int j, int k) const {
+    return data[getIndex(i, j, k)];
+}
+
 int Volume::getIndex(int x, int y, int z) const {
     return (x * getSizeY() * getSizeZ() + y * getSizeZ() + z);
 }
