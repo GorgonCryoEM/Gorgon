@@ -23,13 +23,15 @@ namespace Core {
 
         double getDataAt(int x, int y, int z) const;
         double getDataAt(int index) const;
-        int getIndex(int x, int y, int z) const;
         int getMaxIndex() const;
 
         void setDataAt(int x, int y, int z, double value);
         void setDataAt(int index, double value);
     private:
         void setSize(int sizeX, int sizeY, int sizeZ);
+    protected:
+        int getIndex(int x, int y, int z) const;
+
     protected:
         Dim3D<int> size;
         vector<double> data;
