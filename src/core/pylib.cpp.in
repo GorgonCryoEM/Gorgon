@@ -19,6 +19,8 @@ BOOST_PYTHON_MODULE(@current_pylib@)
     class_<std::vector<std::vector<double> > >("std::vector<std::vector<double> >")
             .def(vector_indexing_suite<std::vector<std::vector<double> > >() );
 
+    const double & (Volume::*get)(int, int, int) const = &Volume::operator();
+    double & (Volume::*set)(int, int, int)             = &Volume::operator();
 
   class_<Volume>("Volume", init<>())
       .def(init<int, int, int, optional<double> >())
