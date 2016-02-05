@@ -8,12 +8,12 @@ using namespace std;
 //using namespace Core;
 
 namespace Core {
-    class VolumeData {
+    class Volume {
     public:
-        VolumeData();
-        VolumeData(int sizeX, int sizeY, int sizeZ, float val=0.0);
+        Volume();
+        Volume(int sizeX, int sizeY, int sizeZ, float val=0.0);
 
-        bool cmp(const VolumeData& obj)  const;
+        bool cmp(const Volume& obj)  const;
 
         int getSizeX() const;
         int getSizeY() const;
@@ -46,7 +46,7 @@ namespace Core {
         Dim3D<float> origin;
         vector<float> data;
 
-        friend ostream& operator<<(ostream& out, const VolumeData& obj){
+        friend ostream& operator<<(ostream& out, const Volume& obj){
           return out<<"\033[33m"
               <<"size:    "<<obj.size
               <<"spacing: "<<obj.spacing

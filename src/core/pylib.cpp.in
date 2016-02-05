@@ -1,7 +1,7 @@
 #include <boost/python.hpp>
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>
 
-#include "VolumeData.h"
+#include "Volume.h"
 
 using namespace Core;
 
@@ -20,20 +20,20 @@ BOOST_PYTHON_MODULE(@current_pylib@)
             .def(vector_indexing_suite<std::vector<std::vector<double> > >() );
 
 
-  class_<VolumeData>("VolumeData", init<>())
-      .def("getOriginX", &VolumeData::getOriginX)
-      .def("getOriginY", &VolumeData::getOriginY)
-      .def("getOriginZ", &VolumeData::getOriginZ)
-      .def("getSizeX", &VolumeData::getSizeX)
-      .def("getSizeY", &VolumeData::getSizeY)
-      .def("getSizeZ", &VolumeData::getSizeZ)
-      .def("getSize", &VolumeData::getSize)
-      .def("getSize", &VolumeData::cmp)
-      .def("getSpacingX", &VolumeData::getSpacingX)
-      .def("getSpacingY", &VolumeData::getSpacingY)
-      .def("getSpacingZ", &VolumeData::getSpacingZ)
-//      .def("getMin", &VolumeData::getMin)
-//      .def("getMax", &VolumeData::getMax)
+  class_<Volume>("Volume", init<>())
+      .def("getOriginX", &Volume::getOriginX)
+      .def("getOriginY", &Volume::getOriginY)
+      .def("getOriginZ", &Volume::getOriginZ)
+      .def("getSizeX", &Volume::getSizeX)
+      .def("getSizeY", &Volume::getSizeY)
+      .def("getSizeZ", &Volume::getSizeZ)
+      .def("getSize", &Volume::getSize)
+      .def("getSize", &Volume::cmp)
+      .def("getSpacingX", &Volume::getSpacingX)
+      .def("getSpacingY", &Volume::getSpacingY)
+      .def("getSpacingZ", &Volume::getSpacingZ)
+//      .def("getMin", &Volume::getMin)
+//      .def("getMax", &Volume::getMax)
 //      .def("getDataAt", getDataAt)
   ;
 

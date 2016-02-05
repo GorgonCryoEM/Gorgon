@@ -6,17 +6,17 @@
  */
 
 
-#include "VolumeData.h"
+#include "Volume.h"
 
 using namespace Core;
 
-VolumeData::VolumeData()
+Volume::Volume()
       : size(0, 0, 0),
         spacing(1, 1, 1),
         origin(0, 0, 0)
 {}
 
-VolumeData::VolumeData(int sizeX, int sizeY, int sizeZ, float val)
+Volume::Volume(int sizeX, int sizeY, int sizeZ, float val)
       : size(sizeX, sizeY, sizeZ),
         spacing(1, 1, 1),
         origin(0, 0, 0)
@@ -25,7 +25,7 @@ VolumeData::VolumeData(int sizeX, int sizeY, int sizeZ, float val)
     data.assign(data.size(), val);
 }
 
-bool VolumeData::cmp(const VolumeData& obj) const {
+bool Volume::cmp(const Volume& obj) const {
   if(data.size() != obj.data.size())
     return false;
   else {
@@ -40,92 +40,92 @@ bool VolumeData::cmp(const VolumeData& obj) const {
     return true;
 }
 
-int VolumeData::getSizeX() const {
+int Volume::getSizeX() const {
     return size.X();
 }
 
-int VolumeData::getSizeY() const {
+int Volume::getSizeY() const {
     return size.Y();
 }
 
-int VolumeData::getSizeZ() const {
+int Volume::getSizeZ() const {
     return size.Z();
 }
 
-int VolumeData::getSize() const {
+int Volume::getSize() const {
     return data.size();
 }
 
-Dim3D<int> VolumeData::getSizeObj() const {
+Dim3D<int> Volume::getSizeObj() const {
     return size;
 }
 
-float VolumeData::getSpacingX() const {
+float Volume::getSpacingX() const {
     return spacing.X();
 }
 
-float VolumeData::getSpacingY() const {
+float Volume::getSpacingY() const {
     return spacing.Y();
 }
 
-float VolumeData::getSpacingZ() const {
+float Volume::getSpacingZ() const {
     return spacing.Z();
 }
 
-float VolumeData::getOriginX() const {
+float Volume::getOriginX() const {
     return origin.X();
 }
 
-float VolumeData::getOriginY() const {
+float Volume::getOriginY() const {
     return origin.Y();
 }
 
-float VolumeData::getOriginZ() const {
+float Volume::getOriginZ() const {
     return origin.Z();
 }
 
-float VolumeData::getDataAt(int x, int y, int z) const {
+float Volume::getDataAt(int x, int y, int z) const {
     return getDataAt(getIndex(x, y, z));
 }
 
-float VolumeData::getDataAt(int index) const {
+float Volume::getDataAt(int index) const {
     return data[index];
 }
 
-int VolumeData::getIndex(int x, int y, int z) const {
+int Volume::getIndex(int x, int y, int z) const {
     return (x * getSizeY() * getSizeZ() + y * getSizeZ() + z);
 }
 
-int VolumeData::getMaxIndex() const {
+int Volume::getMaxIndex() const {
     return size.X() * size.Y() * size.Z();
 }
 
-void VolumeData::setSpacing(float spacingX, float spacingY, float spacingZ) {
+void Volume::setSpacing(float spacingX, float spacingY, float spacingZ) {
     spacing = Dim3D<float>(spacingX, spacingY, spacingZ);
 }
 
-void VolumeData::setOrigin(float originX, float originY, float originZ) {
+void Volume::setOrigin(float originX, float originY, float originZ) {
     origin = Dim3D<float>(originX, originY, originZ);
 }
 
-void VolumeData::setSpacing(Dim3D<float> val) {
+void Volume::setSpacing(Dim3D<float> val) {
     spacing = val;
 }
 
-void VolumeData::setOrigin(Dim3D<float> val) {
+void Volume::setOrigin(Dim3D<float> val) {
     origin = val;
 }
 
 
-void VolumeData::setSize(int sizeX, int sizeY, int sizeZ) {
+void Volume::setSize(int sizeX, int sizeY, int sizeZ) {
     size = Dim3D<int>(sizeX, sizeY, sizeZ);
     data.resize(getMaxIndex());
 }
 
-void VolumeData::setDataAt(int x, int y, int z, float value) {
+void Volume::setDataAt(int x, int y, int z, float value) {
     setDataAt(getIndex(x, y, z), value);
 }
 
-void VolumeData::setDataAt(int index, float value) {
+void Volume::setDataAt(int index, float value) {
     data[index] = value;
 }
