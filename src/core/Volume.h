@@ -23,7 +23,6 @@ namespace Core {
 
         double getDataAt(int x, int y, int z) const;
         double getDataAt(int index) const;
-        int getMaxIndex() const;
 
         void setDataAt(int x, int y, int z, double value);
         void setDataAt(int index, double value);

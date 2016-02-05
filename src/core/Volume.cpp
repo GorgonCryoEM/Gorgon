@@ -68,10 +68,6 @@ int Volume::getIndex(int x, int y, int z) const {
     return (x * getSizeY() * getSizeZ() + y * getSizeZ() + z);
 }
 
-int Volume::getMaxIndex() const {
-    return size.X() * size.Y() * size.Z();
-}
-
 void Volume::setSize(int sizeX, int sizeY, int sizeZ, double val) {
     size = Dim3D<int>(sizeX, sizeY, sizeZ);
     data.resize(size.X() * size.Y() * size.Z(), val);
