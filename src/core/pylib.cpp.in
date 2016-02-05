@@ -2,6 +2,7 @@
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>
 
 #include "Volume.h"
+#include "Operations.h"
 
 using namespace Core;
 
@@ -37,6 +38,14 @@ BOOST_PYTHON_MODULE(@current_pylib@)
 //      .def("getMin", &Volume::getMin)
 //      .def("getMax", &Volume::getMax)
 //      .def("getDataAt", getDataAt)
+  ;
+  
+//  class_<OperationWrapper>("Operation", no_init);
+//  class_<OperationWrapper>("Operation", init<Volume>());
+  
+//  class_<Fill, bases<Operation> >("Fill", init< Volume >())
+//  class_<Fill>("Fill", init<Volume&>())
+//       .def("__call__", &Fill::operator())
   ;
 
 }
