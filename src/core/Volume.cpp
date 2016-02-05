@@ -7,6 +7,7 @@
 
 
 #include "Volume.h"
+#include <cmath>
 
 using namespace Core;
 
@@ -29,7 +30,7 @@ bool Volume::cmp(const Volume& obj) const {
     int N = data.size();
     for(int i=0; i<N; ++i){
       double ratio = data[i]/obj.data[i];
-      if(ratio - 1.0 > tolerance)
+      if(abs(ratio - 1.0) > tolerance)
         return false;
     }
   }
