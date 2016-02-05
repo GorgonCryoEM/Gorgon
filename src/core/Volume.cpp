@@ -18,8 +18,7 @@ Volume::Volume()
 Volume::Volume(int sizeX, int sizeY, int sizeZ, double val)
       : size(sizeX, sizeY, sizeZ)
 {
-    setSize(sizeX, sizeY, sizeZ);
-    data.assign(data.size(), val);
+    setSize(sizeX, sizeY, sizeZ, val);
 }
 
 bool Volume::cmp(const Volume& obj) const {
@@ -73,9 +72,9 @@ int Volume::getMaxIndex() const {
     return size.X() * size.Y() * size.Z();
 }
 
-void Volume::setSize(int sizeX, int sizeY, int sizeZ) {
+void Volume::setSize(int sizeX, int sizeY, int sizeZ, double val) {
     size = Dim3D<int>(sizeX, sizeY, sizeZ);
-    data.resize(getMaxIndex());
+    data.resize(size.X() * size.Y() * size.Z(), val);
 }
 
 void Volume::setDataAt(int x, int y, int z, double value) {

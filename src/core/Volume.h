@@ -28,7 +28,8 @@ namespace Core {
         void setDataAt(int x, int y, int z, double value);
         void setDataAt(int index, double value);
     private:
-        void setSize(int sizeX, int sizeY, int sizeZ);
+        void setSize(int sizeX, int sizeY, int sizeZ, double val=0.0);
+
     protected:
         int getIndex(int x, int y, int z) const;
 
