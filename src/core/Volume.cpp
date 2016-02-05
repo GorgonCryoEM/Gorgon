@@ -37,6 +37,12 @@ Volume::const_iterator Volume::end() const {
     return data.end();
 }
 
+void Volume::print() const{
+    for(const_iterator it=begin(); it!=end(); ++it){
+        cout<<*it<<endl;
+    }
+}
+
 bool Volume::cmp(const Volume& obj) const {
   if(data.size() != obj.data.size())
     return false;

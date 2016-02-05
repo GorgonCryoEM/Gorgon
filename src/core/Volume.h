@@ -30,6 +30,7 @@ namespace Core {
         iterator end();
         const_iterator begin() const;
         const_iterator end() const;
+        void print() const;
 
     private:
         void setSize(int sizeX, int sizeY, int sizeZ, double val=0.0);
