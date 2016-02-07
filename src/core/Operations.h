@@ -13,15 +13,15 @@
 
 using namespace boost::python;
 
-using namespace Core;
-
-class Operation {
-    public:
-        Operation(VolumeData &vol);
-//        virtual void operator()(Volume &vol) =0;
-    protected:
-        VolumeData &volume;
-};
+namespace Core {
+    class Operation {
+        public:
+            Operation(VolumeData &vol);
+            void fill(double val);
+        protected:
+            VolumeData &volume;
+    };
+}
 
 
 #endif /* SRC_CORE_OPERATIONS_H_ */
