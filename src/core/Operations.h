@@ -8,8 +8,8 @@
 #ifndef SRC_CORE_OPERATIONS_H_
 #define SRC_CORE_OPERATIONS_H_
 
-#include "Volume.h"
 #include <boost/python.hpp>
+#include "VolumeData.h"
 
 using namespace boost::python;
 
@@ -17,10 +17,10 @@ using namespace Core;
 
 class Operation {
     public:
-        Operation(Volume &vol);
+        Operation(VolumeData &vol);
 //        virtual void operator()(Volume &vol) =0;
     protected:
-        Volume &volume;
+        VolumeData &volume;
 };
 
 

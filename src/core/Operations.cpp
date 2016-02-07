@@ -7,7 +7,7 @@
 
 #include "Operations.h"
 
-Operation::Operation(Volume &vol)
+Operation::Operation(VolumeData &vol)
         : volume(vol)
 {}
 

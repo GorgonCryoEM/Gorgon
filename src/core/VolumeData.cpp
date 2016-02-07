@@ -6,44 +6,44 @@
  */
 
 
-#include "Volume.h"
 #include <cmath>
+#include "VolumeData.h"
 
 using namespace Core;
 
-Volume::Volume()
+VolumeData::VolumeData()
       : size(0, 0, 0)
 {}
 
-Volume::Volume(int sizeX, int sizeY, int sizeZ, double val)
+VolumeData::VolumeData(int sizeX, int sizeY, int sizeZ, double val)
       : size(sizeX, sizeY, sizeZ)
 {
     setSize(sizeX, sizeY, sizeZ, val);
 }
 
-Volume::iterator Volume::begin(){
+VolumeData::iterator VolumeData::begin(){
     return data.begin();
 }
 
-Volume::iterator Volume::end(){
+VolumeData::iterator VolumeData::end(){
     return data.end();
 }
 
-Volume::const_iterator Volume::begin() const {
+VolumeData::const_iterator VolumeData::begin() const {
     return data.begin();
 }
 
-Volume::const_iterator Volume::end() const {
+VolumeData::const_iterator VolumeData::end() const {
     return data.end();
 }
 
-void Volume::print() const{
+void VolumeData::print() const{
     for(const_iterator it=begin(); it!=end(); ++it){
         cout<<*it<<endl;
     }
 }
 
-bool Volume::cmp(const Volume& obj) const {
+bool VolumeData::cmp(const VolumeData& obj) const {
   if(data.size() != obj.data.size())
     return false;
   else {
@@ -58,43 +58,43 @@ bool Volume::cmp(const Volume& obj) const {
     return true;
 }
 
-int Volume::getSizeX() const {
+int VolumeData::getSizeX() const {
     return size.X();
 }
 
-int Volume::getSizeY() const {
+int VolumeData::getSizeY() const {
     return size.Y();
 }
 
-int Volume::getSizeZ() const {
+int VolumeData::getSizeZ() const {
     return size.Z();
 }
 
-int Volume::getSize() const {
+int VolumeData::getSize() const {
     return data.size();
 }
 
-Dim3D<int> Volume::getSizeObj() const {
+Dim3D<int> VolumeData::getSizeObj() const {
     return size;
 }
 
-void Volume::setItem(int i, int j, int k, double val){
+void VolumeData::setItem(int i, int j, int k, double val){
     (*this)(i, j, k) = val;
 }
 
-double & Volume::operator()(int i, int j, int k){
-    return const_cast<double &>(static_cast<const Volume&>(*this)(i, j, k));
+double & VolumeData::operator()(int i, int j, int k){
+    return const_cast<double &>(static_cast<const VolumeData&>(*this)(i, j, k));
 }
 
-const double & Volume::operator()(int i, int j, int k) const {
+const double & VolumeData::operator()(int i, int j, int k) const {
     return data[getIndex(i, j, k)];
 }
 
-int Volume::getIndex(int x, int y, int z) const {
+int VolumeData::getIndex(int x, int y, int z) const {
     return (x * getSizeY() * getSizeZ() + y * getSizeZ() + z);
 }
 
-void Volume::setSize(int sizeX, int sizeY, int sizeZ, double val) {
+void VolumeData::setSize(int sizeX, int sizeY, int sizeZ, double val) {
     size = Dim3D<int>(sizeX, sizeY, sizeZ);
     data.resize(size.X() * size.Y() * size.Z(), val);
 }
