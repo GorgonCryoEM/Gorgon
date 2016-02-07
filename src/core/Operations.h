@@ -17,6 +17,7 @@ namespace Core {
     class Operation {
         public:
             Operation(VolumeData &vol);
+            virtual ~Operation(){};
             void fill(double val);
         protected:
             VolumeData &volume;
