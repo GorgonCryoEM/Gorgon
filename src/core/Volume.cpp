@@ -10,7 +10,7 @@
 namespace Core {
 
     Volume::Volume()
-            : VolumeData(), Operation(volume)
+            : VolumeData(), Operation(dynamic_cast<VolumeData &>(*this))
     {
         // TODO Auto-generated constructor stub
 
@@ -18,7 +18,7 @@ namespace Core {
     }
 
     Volume::Volume(int sizeX, int sizeY, int sizeZ, double val)
-            : VolumeData(sizeX, sizeY, sizeZ, val), Operation(volume)
+            : VolumeData(sizeX, sizeY, sizeZ, val), Operation(dynamic_cast<VolumeData &>(*this))
     {
     }
 
