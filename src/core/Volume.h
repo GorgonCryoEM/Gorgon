@@ -30,9 +30,6 @@ namespace Core {
             int getNonZeroVoxelCount();
             void print();
             void subtract(Volume * vol);
-            void applyMask(Volume * maskVol, double maskValue, bool keepMaskValue);
-            double getMin() const;
-            double getMax() const;
             double getMaxValuePosition(int& maxX, int& maxY, int& maxZ);
             double getLocalMax(int x, int y, int z, int radius);
             double getLocalMin(int x, int y, int z, int radius);
@@ -42,7 +39,6 @@ namespace Core {
             float getStdDev(); // Returns the population standard deviation of the values at all the voxels
             Vector3DFloat getCenterOfMass(); // Returns the center of mass of the image in pixels (not angstroms)
 
-            void fill(double val);
             int isBertrandBorder(int ox, int oy, int oz, int dir);
             int isBertrandEndPoint(int ox, int oy, int oz);
             int isHelix(int ox, int oy, int oz);
