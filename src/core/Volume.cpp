@@ -10,7 +10,8 @@
 namespace Core {
 
     Volume::Volume()
-            : VolumeData(), volume(dynamic_cast<VolumeData &>(*this))
+            : VolumeData(),
+              volume(dynamic_cast<VolumeData &>(*this))
     {
         // TODO Auto-generated constructor stub
 
@@ -18,7 +19,8 @@ namespace Core {
     }
 
     Volume::Volume(int sizeX, int sizeY, int sizeZ, double val)
-            : VolumeData(sizeX, sizeY, sizeZ, val), volume(dynamic_cast<VolumeData &>(*this))
+            : VolumeData(sizeX, sizeY, sizeZ, val),
+              volume(dynamic_cast<VolumeData &>(*this))
     {
     }
 
@@ -31,6 +33,7 @@ namespace Core {
         for(VolumeData::iterator it=volume.begin(); it!=volume.end(); ++it)
                     *it = val;
     }
+
     void Volume::applyMask(double maskValue, bool keepMaskValue) {
         for(VolumeData::iterator it=volume.begin(); it!=volume.end(); ++it)
             if(((*it== maskValue) && !keepMaskValue) ||
