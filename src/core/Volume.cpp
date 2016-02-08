@@ -6,6 +6,7 @@
  */
 
 #include "Volume.h"
+#include <cmath>
 
 #include <algorithm>
 #include <numeric>
@@ -34,7 +35,7 @@ namespace Core {
         for(iterator it=data.begin(); it!=data.end(); ++it)
             if((*it== maskValue && !keepMaskValue) ||
                (*it != maskValue && keepMaskValue))
-                        *it = 0;
+                *it = 0;
     }
 
     double Volume::getMin() const {
@@ -53,6 +54,17 @@ namespace Core {
 //    }
 
     double Volume::getStdDev() const {
+        //Calculate the standard deviation of all the voxels in the image
+        double sum  = 0.0;
+        double sum2 = 0.0;
+
+        for(const_iterator it=data.begin(); it!=data.end(); ++it) {
+            double val = *it;
+            sum  += val;
+            sum2 += val*val;
+        }
+
+        return sqrt( (sum2 - sum*sum/data.size()) / data.size() );
     }
 
 //    Vector3DFloat Volume::getCenterOfMass() const {
