@@ -160,11 +160,10 @@ namespace Core {
     {
         double x0 = getMin() ;
         double x1 = getMax() ;
-        double dx = x1 - x0 ;
-        double dy = y1 - y0 ;
+        double scale = (y1 - y0) / (x1 - x0);
 
         for(iterator it=data.begin(); it!=data.end(); ++it)
-            *it = ((*it - x0 ) / dx) * dy + y0;
+            *it = y0 + (*it - x0 ) * scale;
     }
 
     void Volume::normalize( double min, double max, double thresh, double ithresh )
