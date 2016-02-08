@@ -25,11 +25,11 @@ namespace Core {
             void applyMask(double maskValue, bool keepMaskValue);
             double getMin() const;
             double getMax() const;
-//
-//            float getMean(); // Returns the mean value of all the voxels
-//            float getEdgeMean(); // Returns the mean value of all the surface voxels but no interior voxels
-//            float getStdDev(); // Returns the population standard deviation of the values at all the voxels
-//            Vector3DFloat getCenterOfMass(); // Returns the center of mass of the image in pixels (not angstroms)
+
+            float getMean(); // Returns the mean value of all the voxels
+            float getEdgeMean(); // Returns the mean value of all the surface voxels but no interior voxels
+            float getStdDev(); // Returns the population standard deviation of the values at all the voxels
+            Vector3DFloat getCenterOfMass(); // Returns the center of mass of the image in pixels (not angstroms)
 
     // Declarations from volume.h START
 //            int getNonZeroVoxelCount();
