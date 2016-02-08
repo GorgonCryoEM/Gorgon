@@ -176,13 +176,10 @@ namespace Core {
         double range2 = max - thresh ;
 
         for(iterator it=data.begin(); it!=data.end(); ++it){
-            if (*it < ithresh) {
+            if (*it < ithresh)
                 *it = (*it - x0 ) * range1 / irange1 + min;
-            }
             else
-            {
                 *it = max - ( x1 - *it) * range2 / irange2;
-            }
         }
     }
 
