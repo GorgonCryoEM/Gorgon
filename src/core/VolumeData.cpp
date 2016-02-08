@@ -48,9 +48,11 @@ bool VolumeData::operator==(const VolumeData& obj) const {
     return false;
   else {
     double tolerance = 0.0001;
-    int N = data.size();
-    for(int i=0; i<N; ++i){
-      double ratio = data[i]/obj.data[i];
+    for(const_iterator it1=data.begin(), it2=obj.data.begin();
+            it1!=data.end() && it2!=obj.data.end();
+            ++it1, ++it2)
+    {
+      double ratio = *it1 / *it2;
       if(abs(ratio - 1.0) > tolerance)
         return false;
     }
