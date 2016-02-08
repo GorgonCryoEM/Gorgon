@@ -39,6 +39,9 @@ namespace Core {
 
             void smooth( double alpha );
 
+            void normalize( double min, double max );
+            void normalize( double min, double max, double thresh, double ithresh );
+
 
     // Declarations from volume.h START
 //            int getNonZeroVoxelCount();
@@ -128,8 +131,6 @@ namespace Core {
 //            void bertrandSurfaceSkeleton2( float thr );
 //            void bertrandSurfaceSkeleton( float thr );
 //            void palagyiSurfaceSkeleton( float thr );
-//            void normalize( double min, double max );
-//            void normalize( double min, double max, double thresh, double ithresh );
 //            Volume * getDataRange(int x, int y, int z, int radius);
 //            double getInterpDataAt( double x, double y, double z );
 //            void rotateX ( double a );
