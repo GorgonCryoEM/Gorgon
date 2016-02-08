@@ -119,21 +119,6 @@ int Volume::getNonZeroVoxelCount() {
     }
     return count;
 }
-void Volume::print() {
-    for(int x = 0; x < getSizeX(); x++) {
-        printf("{ ");
-        for(int y = 0; y < getSizeY(); y++) {
-            printf("{ ");
-            for(int z = 0; z < getSizeZ(); z++) {
-                printf("%f, ", getDataAt(x, y, z));
-            }
-            printf("} ");
-        }
-        printf("} ");
-    }
-    printf("\n");
-}
-
 
 void Volume::subtract( Volume* vol ) {
     int i, j, k ;
@@ -147,43 +132,6 @@ void Volume::subtract( Volume* vol ) {
                 }
             }
 
-}
-
-void Volume::applyMask(Volume * maskVol, double maskValue, bool keepMaskValue) {
-    for(int x = 0; x < maskVol->getSizeX(); x++) {
-        for(int y = 0; y < maskVol->getSizeY(); y++) {
-            for(int z = 0; z < maskVol->getSizeZ(); z++) {
-                if(((maskVol->getDataAt(x, y, z) == maskValue) && !keepMaskValue) ||
-                    ((maskVol->getDataAt(x, y, z) != maskValue) && keepMaskValue)) {
-                    setDataAt(x, y, z, 0);
-                }
-            }
-        }
-    }
-}
-
-double Volume::getMin() const {
-    int size = volData->getMaxIndex();
-    double rvalue = volData->getDataAt(0);
-    for (int i=1; i < size; i++) {
-        float val = volData->getDataAt(i);
-        if ( rvalue > val) {
-            rvalue = val;
-        }
-    }
-    return rvalue;
-}
-
-double Volume::getMax() const {
-    int size = volData->getMaxIndex();
-    double rvalue = volData->getDataAt(0);
-    for (int i=1; i < size; i++) {
-        float val = volData->getDataAt(i);
-        if ( rvalue < val) {
-            rvalue = val;
-        }
-    }
-    return rvalue ;
 }
 
 double Volume::getMaxValuePosition(int& maxX, int& maxY, int& maxZ) {
@@ -9384,121 +9332,6 @@ void Volume::palagyiSurfaceSkeleton( float thr )
     }
 }
 
-/**
- * Normalize to a given range
- */
-void Volume::threshold( double thr )
-{
-    threshold( thr, 0, 1, 0, true) ;
-}
-
-void Volume::threshold( double thr, int out, int in )
-{
-    threshold( thr, out, in, out, true) ;
-}
-
-void Volume::threshold( double thr, int out, int in, int boundary)
-{
-    threshold(thr, out, in, boundary, true);
-}
-
-void Volume::threshold( double thr, int out, int in, int boundary, bool markBoundary)
-{
-    float val;
-    for ( int i = 0 ; i < getSizeX() ; i ++ )
-        for ( int j = 0 ; j < getSizeY() ; j ++ )
-            for ( int k = 0 ; k < getSizeZ() ; k ++ )
-            {
-                val = (float)getDataAt(i, j, k);
-                if(markBoundary) {
-                    if ( i > 1 && i < getSizeX() - 2 && j > 1 && j < getSizeY() - 2 && k > 1 && k < getSizeZ() - 2 ) {
-                        if(val < thr) {
-                            setDataAt(i, j, k, out);
-                        } else {
-                            setDataAt(i, j, k, in);
-                        }
-                    }
-                    else
-                    {
-                        setDataAt(i, j, k, boundary);
-                    }
-                } else {
-                    if(val < thr) {
-                        setDataAt(i, j, k, out);
-                    } else {
-                        setDataAt(i, j, k, in);
-                    }
-                }
-            }
-}
-
-void Volume::threshold2( double thr, int out, int in )
-{
-    for ( int i = 0 ; i < getSizeX() ; i ++ )
-        for ( int j = 0 ; j < getSizeY() ; j ++ )
-            for ( int k = 0 ; k < getSizeZ() ; k ++ ) {
-                double val = getDataAt(i, j, k);
-                if(val <= thr) {
-                    setDataAt(i, j, k, out);
-                } else {
-                    setDataAt(i, j, k, in);
-                }
-            }
-}
-
-void Volume::smooth( float alpha )
-{
-    VolumeData * smoothedData = new VolumeData(*volData);
-
-    for (int i = 1; i < getSizeX() - 1; i++)
-        for (int j = 1; j < getSizeY() - 1; j++)
-            for (int k = 1; k < getSizeZ() - 1; k++) {
-                float v = (float)getDataAt( i - 1, j, k ) +
-                    (float)getDataAt( i + 1, j, k ) +
-                    (float)getDataAt( i, j - 1, k ) +
-                    (float)getDataAt( i, j + 1, k ) +
-                    (float)getDataAt( i, j, k - 1 ) +
-                    (float)getDataAt( i, j, k + 1 ) ;
-                smoothedData->setDataAt(i, j, k, smoothedData->getDataAt(i, j, k) * alpha + ( 1 - alpha ) * v / 6);
-            }
-    delete volData;
-    volData = smoothedData;
-}
-
-void Volume::normalize( double min, double max )
-{
-    double imin = getMin() ;
-    double imax = getMax() ;
-    double irange = imax - imin ;
-    double range = max - min ;
-
-    int size = volData->getMaxIndex();
-    for(int i = 0 ; i < size ; i ++) {
-        setDataAt(i, ((getDataAt(i) - (float)imin ) / (float)irange) * (float)range + (float)min);
-    }
-}
-
-void Volume::normalize( double min, double max, double thresh, double ithresh )
-{
-    double imin = getMin() ;
-    double imax = getMax() ;
-    double irange1 = ithresh - imin ;
-    double irange2 = imax - ithresh ;
-    double range1 = thresh - min;
-    double range2 = max - thresh ;
-
-    int size = volData->getMaxIndex();
-    for (int i = 0; i < size; i++) {
-        if (getDataAt(i) < ithresh) {
-            setDataAt(i, ((getDataAt(i) - (float)imin ) / (float)irange1) * (float)range1 + (float)min);
-        }
-        else
-        {
-            setDataAt(i, (float)max - (( (float)imax - getDataAt(i)) / (float)irange2) * (float)range2);
-        }
-    }
-}
-
 /* Set data at a pixel */
 
 Volume * Volume::getDataRange(int x, int y, int z, int radius) {
@@ -10570,25 +10403,6 @@ float Volume::getEdgeMean()
     return edge_mean;
 }
 
-// Returns the population standard deviation of the values at all the voxels
-float Volume::getStdDev()
-{
-    int N = volData->getMaxIndex();
-
-    //Calculate the standard deviation of all the voxels in the image
-    double voxel_sum = 0;
-    double voxel_squared_sum = 0;
-    float val;
-
-    for (int i = 0; i < N; i++)
-    {
-        val = (float)getDataAt(i);
-        voxel_sum += val;
-        voxel_squared_sum += val*val;
-    }
-    float std_dev = (float) sqrt( (voxel_squared_sum - voxel_sum*voxel_sum/N) / N );
-    return std_dev;
-}
 // Returns the center of mass of the image in pixels (not angstroms)
 Vector3DFloat Volume::getCenterOfMass()
 {
