@@ -8,6 +8,7 @@
 #include "Volume.h"
 
 #include <algorithm>
+#include <numeric>
 
 namespace Core {
 
@@ -52,6 +53,7 @@ namespace Core {
     }
 
     double Volume::getMean() const {
+        return accumulate(volume.begin(), volume.end(), 0.0) / data.size();
     }
 
     double Volume::getEdgeMean() const {
