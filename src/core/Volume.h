@@ -29,7 +29,7 @@ namespace Core {
             double getMean() const; // Returns the mean value of all the voxels
             double getEdgeMean() const; // Returns the mean value of all the surface voxels but no interior voxels
             double getStdDev() const; // Returns the population standard deviation of the values at all the voxels
-            Vector3DFloat getCenterOfMass() const; // Returns the center of mass of the image in pixels (not angstroms)
+//            Vector3DFloat getCenterOfMass() const; // Returns the center of mass of the image in pixels (not angstroms)
 
     // Declarations from volume.h START
 //            int getNonZeroVoxelCount();

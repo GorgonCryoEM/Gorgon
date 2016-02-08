@@ -60,7 +60,7 @@ namespace Core {
     double Volume::getStdDev() const {
     }
 
-    Vector3DFloat Volume::getCenterOfMass() const {
-    }
+//    Vector3DFloat Volume::getCenterOfMass() const {
+//    }
 
 } /* namespace Core */
