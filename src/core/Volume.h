@@ -8,7 +8,6 @@
 #ifndef SRC_CORE_VOLUME_H_
 #define SRC_CORE_VOLUME_H_
 
-#include "Operations.h"
 #include "VolumeData.h"
 
 namespace Core {
@@ -16,11 +15,17 @@ namespace Core {
     /*
      *
      */
-    class Volume : public VolumeData, public Operation {
+    class Volume : public VolumeData {
         public:
             Volume();
             Volume(int sizeX, int sizeY, int sizeZ, double val=0.0);
             virtual ~Volume();
+
+            void fill(double val);
+            void applyMask(double maskValue, bool keepMaskValue);
+
+        private:
+            VolumeData & volume;
     };
 
 } /* namespace Core */
