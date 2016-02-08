@@ -168,20 +168,20 @@ namespace Core {
 
     void Volume::normalize( double min, double max, double thresh, double ithresh )
     {
-        double imin = getMin() ;
-        double imax = getMax() ;
-        double irange1 = ithresh - imin ;
-        double irange2 = imax - ithresh ;
+        double x0 = getMin() ;
+        double x1 = getMax() ;
+        double irange1 = ithresh - x0 ;
+        double irange2 = x1 - ithresh ;
         double range1 = thresh - min;
         double range2 = max - thresh ;
 
         for(iterator it=data.begin(); it!=data.end(); ++it){
             if (*it < ithresh) {
-                *it = ((*it - imin ) / irange1) * range1 + min;
+                *it = ((*it - x0 ) / irange1) * range1 + min;
             }
             else
             {
-                *it = max - (( imax - *it) / irange2) * range2;
+                *it = max - (( x1 - *it) / irange2) * range2;
             }
         }
     }
