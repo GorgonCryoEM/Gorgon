@@ -56,8 +56,8 @@ namespace Core {
         return accumulate(volume.begin(), volume.end(), 0.0) / data.size();
     }
 
-    double Volume::getEdgeMean() const {
-    }
+//    double Volume::getEdgeMean() const {
+//    }
 
     double Volume::getStdDev() const {
     }
