@@ -163,10 +163,8 @@ namespace Core {
         double irange = imax - imin ;
         double range = max - min ;
 
-        int size = volData->getMaxIndex();
-        for(int i = 0 ; i < size ; i ++) {
-            setDataAt(i, ((getDataAt(i) - (float)imin ) / (float)irange) * (float)range + (float)min);
-        }
+        for(iterator it=data.begin(); it!=data.end(); ++it)
+            *it = ((*it - imin ) / irange) * range + min;
     }
 
     void Volume::normalize( double min, double max, double thresh, double ithresh )
@@ -178,14 +176,13 @@ namespace Core {
         double range1 = thresh - min;
         double range2 = max - thresh ;
 
-        int size = volData->getMaxIndex();
-        for (int i = 0; i < size; i++) {
-            if (getDataAt(i) < ithresh) {
-                setDataAt(i, ((getDataAt(i) - (float)imin ) / (float)irange1) * (float)range1 + (float)min);
+        for(iterator it=data.begin(); it!=data.end(); ++it){
+            if (*it < ithresh) {
+                *it = ((*it - imin ) / irange1) * range1 + min;
             }
             else
             {
-                setDataAt(i, (float)max - (( (float)imax - getDataAt(i)) / (float)irange2) * (float)range2);
+                *it = max - (( imax - *it) / irange2) * range2;
             }
         }
     }
