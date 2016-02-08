@@ -156,15 +156,15 @@ namespace Core {
     }
 
 
-    void Volume::normalize( double min, double max )
+    void Volume::normalize( double y0, double y1 )
     {
-        double imin = getMin() ;
-        double imax = getMax() ;
-        double irange = imax - imin ;
-        double range = max - min ;
+        double x0 = getMin() ;
+        double x1 = getMax() ;
+        double dx = x1 - x0 ;
+        double dy = y1 - y0 ;
 
         for(iterator it=data.begin(); it!=data.end(); ++it)
-            *it = ((*it - imin ) / irange) * range + min;
+            *it = ((*it - x0 ) / dx) * dy + y0;
     }
 
     void Volume::normalize( double min, double max, double thresh, double ithresh )
