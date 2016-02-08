@@ -85,4 +85,63 @@ namespace Core {
 //    Vector3DFloat Volume::getCenterOfMass() const {
 //    }
 
+    void Volume::threshold( double thr )
+    {
+        threshold( thr, 0, 1, 0, true) ;
+    }
+
+    void Volume::threshold( double thr, int out, int in )
+    {
+        threshold( thr, out, in, out, true) ;
+    }
+
+    void Volume::threshold( double thr, int out, int in, int boundary)
+    {
+        threshold(thr, out, in, boundary, true);
+    }
+
+    void Volume::threshold( double thr, int out, int in, int boundary, bool markBoundary)
+    {
+        float val;
+        for ( int i = 0 ; i < getSizeX() ; i ++ )
+            for ( int j = 0 ; j < getSizeY() ; j ++ )
+                for ( int k = 0 ; k < getSizeZ() ; k ++ )
+                {
+                    val = (*this)(i, j, k);
+                    if(markBoundary) {
+                        if ( i > 1 && i < getSizeX() - 2 && j > 1 && j < getSizeY() - 2 && k > 1 && k < getSizeZ() - 2 ) {
+                            if(val < thr) {
+                                (*this)(i, j, k) = out;
+                            } else {
+                                (*this)(i, j, k) = in;
+                            }
+                        }
+                        else
+                        {
+                            (*this)(i, j, k) = boundary;
+                        }
+                    } else {
+                        if(val < thr) {
+                            (*this)(i, j, k) = out;
+                        } else {
+                            (*this)(i, j, k) = in;
+                        }
+                    }
+                }
+    }
+
+    void Volume::threshold2( double thr, int out, int in )
+    {
+        for ( int i = 0 ; i < getSizeX() ; i ++ )
+            for ( int j = 0 ; j < getSizeY() ; j ++ )
+                for ( int k = 0 ; k < getSizeZ() ; k ++ ) {
+                    double val = (*this)(i, j, k);
+                    if(val <= thr) {
+                        (*this)(i, j, k) = out;
+                    } else {
+                        (*this)(i, j, k) = in;
+                    }
+                }
+    }
+
 } /* namespace Core */
