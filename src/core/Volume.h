@@ -32,6 +32,12 @@ namespace Core {
 //            Vector3DFloat getCenterOfMass() const; // Returns the center of mass of the image in pixels (not angstroms)
             void print() const;
 
+            //            void threshold( double thr );
+            //            void threshold( double thr, int out, int in );
+            //            void threshold( double thr, int out, int in, int boundary);
+            //            void threshold( double thr, int out, int in, int boundary, bool markBoundary);
+            //            void threshold2( double thr, int out, int in );
+
     // Declarations from volume.h START
 //            int getNonZeroVoxelCount();
 //            void subtract(Volume * vol);
@@ -120,11 +126,6 @@ namespace Core {
 //            void bertrandSurfaceSkeleton2( float thr );
 //            void bertrandSurfaceSkeleton( float thr );
 //            void palagyiSurfaceSkeleton( float thr );
-//            void threshold( double thr );
-//            void threshold( double thr, int out, int in );
-//            void threshold( double thr, int out, int in, int boundary);
-//            void threshold( double thr, int out, int in, int boundary, bool markBoundary);
-//            void threshold2( double thr, int out, int in );
 //            void smooth( float alpha );
 //            void normalize( double min, double max );
 //            void normalize( double min, double max, double thresh, double ithresh );
