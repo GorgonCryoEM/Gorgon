@@ -18,7 +18,7 @@ namespace Core {
         VolumeData(int sizeX, int sizeY, int sizeZ, double val=0.0);
         virtual ~VolumeData(){};
 
-        bool cmp(const VolumeData& obj)  const;
+        bool operator==(const VolumeData& obj)  const;
 
         int getSizeX() const;
         int getSizeY() const;

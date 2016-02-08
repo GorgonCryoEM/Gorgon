@@ -43,7 +43,7 @@ void VolumeData::print() const{
     }
 }
 
-bool VolumeData::cmp(const VolumeData& obj) const {
+bool VolumeData::operator==(const VolumeData& obj) const {
   if(data.size() != obj.data.size())
     return false;
   else {
