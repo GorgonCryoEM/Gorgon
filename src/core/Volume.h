@@ -34,8 +34,7 @@ namespace Core {
 
             void threshold( double thr );
             void threshold( double thr, int out, int in );
-            void threshold( double thr, int out, int in, int boundary);
-            void threshold( double thr, int out, int in, int boundary, bool markBoundary);
+            void threshold( double thr, int out, int in, int boundary, bool markBoundary=true);
             void threshold2( double thr, int out, int in );
 
     // Declarations from volume.h START

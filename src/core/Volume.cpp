@@ -87,27 +87,21 @@ namespace Core {
 
     void Volume::threshold( double thr )
     {
-        threshold( thr, 0, 1, 0, true) ;
+        threshold( thr, 0, 1, 0) ;
     }
 
     void Volume::threshold( double thr, int out, int in )
     {
-        threshold( thr, out, in, out, true) ;
-    }
-
-    void Volume::threshold( double thr, int out, int in, int boundary)
-    {
-        threshold(thr, out, in, boundary, true);
+        threshold( thr, out, in, out) ;
     }
 
     void Volume::threshold( double thr, int out, int in, int boundary, bool markBoundary)
     {
-        float val;
         for ( int i = 0 ; i < getSizeX() ; i ++ )
             for ( int j = 0 ; j < getSizeY() ; j ++ )
                 for ( int k = 0 ; k < getSizeZ() ; k ++ )
                 {
-                    val = (*this)(i, j, k);
+                    double val = (*this)(i, j, k);
                     if(markBoundary) {
                         if ( i > 1 && i < getSizeX() - 2 && j > 1 && j < getSizeY() - 2 && k > 1 && k < getSizeZ() - 2 ) {
                             if(val < thr) {
