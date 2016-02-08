@@ -158,8 +158,8 @@ namespace Core {
 
     void Volume::normalize( double y0, double y1 )
     {
-        double x0 = getMin() ;
-        double x1 = getMax() ;
+        double x0 = getMin();
+        double x1 = getMax();
         double scale = (y1 - y0) / (x1 - x0);
 
         for(iterator it=data.begin(); it!=data.end(); ++it)
