@@ -30,10 +30,10 @@ namespace Core {
 //            double getEdgeMean() const; // Returns the mean value of all the surface voxels but no interior voxels
             double getStdDev() const; // Returns the population standard deviation of the values at all the voxels
 //            Vector3DFloat getCenterOfMass() const; // Returns the center of mass of the image in pixels (not angstroms)
+            void print() const;
 
     // Declarations from volume.h START
 //            int getNonZeroVoxelCount();
-//            void print();
 //            void subtract(Volume * vol);
 //            double getMaxValuePosition(int& maxX, int& maxY, int& maxZ);
 //            double getLocalMax(int x, int y, int z, int radius);

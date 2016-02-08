@@ -53,6 +53,21 @@ namespace Core {
 //    double Volume::getEdgeMean() const {
 //    }
 
+    void Volume::print() const {
+        for(int i = 0; i < getSizeX(); i++) {
+            cout<<"{ ";
+            for(int j = 0; j < getSizeY(); j++) {
+                cout<<"{ ";
+                for(int k = 0; k < getSizeZ(); k++) {
+                    cout<<(*this)(i, j, k)<<" ";
+                }
+                cout<<"} ";
+            }
+            cout<<"} ";
+        }
+        cout<<endl;
+    }
+
     double Volume::getStdDev() const {
         //Calculate the standard deviation of all the voxels in the image
         double sum  = 0.0;
