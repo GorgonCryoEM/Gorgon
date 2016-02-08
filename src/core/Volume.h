@@ -37,6 +37,9 @@ namespace Core {
             void threshold( double thr, int out, int in, int boundary, bool markBoundary=true);
             void threshold2( double thr, int out, int in );
 
+            void smooth( float alpha );
+
+
     // Declarations from volume.h START
 //            int getNonZeroVoxelCount();
 //            void subtract(Volume * vol);
@@ -125,7 +128,6 @@ namespace Core {
 //            void bertrandSurfaceSkeleton2( float thr );
 //            void bertrandSurfaceSkeleton( float thr );
 //            void palagyiSurfaceSkeleton( float thr );
-//            void smooth( float alpha );
 //            void normalize( double min, double max );
 //            void normalize( double min, double max, double thresh, double ithresh );
 //            Volume * getDataRange(int x, int y, int z, int radius);
