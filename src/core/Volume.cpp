@@ -32,8 +32,8 @@ namespace Core {
 
     void Volume::applyMask(double maskValue, bool keepMaskValue) {
         for(iterator it=data.begin(); it!=data.end(); ++it)
-            if(((*it== maskValue) && !keepMaskValue) ||
-                        ((*it != maskValue) && keepMaskValue))
+            if((*it== maskValue && !keepMaskValue) ||
+               (*it != maskValue && keepMaskValue))
                         *it = 0;
     }
 
