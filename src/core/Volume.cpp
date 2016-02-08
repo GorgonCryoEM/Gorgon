@@ -138,4 +138,22 @@ namespace Core {
                 }
     }
 
+    void Volume::smooth( double alpha )
+    {
+        Volume backup(*this);
+
+        for (int i = 1; i < getSizeX() - 1; i++)
+            for (int j = 1; j < getSizeY() - 1; j++)
+                for (int k = 1; k < getSizeZ() - 1; k++) {
+                    double val = backup( i - 1, j    , k     ) +
+                                 backup( i + 1, j    , k     ) +
+                                 backup( i    , j - 1, k     ) +
+                                 backup( i    , j + 1, k     ) +
+                                 backup( i    , j    , k - 1 ) +
+                                 backup( i    , j    , k + 1 ) ;
+                    (*this)(i, j, k) = (*this)(i, j, k) * alpha + ( 1.0 - alpha ) * val / 6.0;
+                }
+    }
+
+
 } /* namespace Core */
