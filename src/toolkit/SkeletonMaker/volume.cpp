@@ -320,35 +320,6 @@ int Volume::hasCompleteHelix( int ox, int oy, int oz )
     */
 }
 
-int Volume::isEdgeEnd( int ox, int oy, int oz )
-{
-    int i ;
-    int c1 = 0 ;
-    int nx, ny, nz ;
-
-    for ( i = 0 ; i < 6 ; i ++ )
-    {
-        nx = ox + neighbor6[i][0] ;
-        ny = oy + neighbor6[i][1] ;
-        nz = oz + neighbor6[i][2] ;
-
-        double val = getDataAt( nx, ny, nz ) ;
-
-        if ( val >= 0 )
-        {
-            c1 ++ ;
-        }
-
-    }
-
-    if ( c1 == 1 )
-    {
-        return 1 ;
-    }
-
-    return 0 ;
-}
-
 int Volume::isFaceEnd( int ox, int oy, int oz )
 {
     // return isSheetEnd(ox,oy,oz) ;
