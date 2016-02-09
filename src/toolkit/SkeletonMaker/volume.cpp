@@ -8668,68 +8668,6 @@ void Volume::writeSegmentation( float threshold, Volume* segvol, string txtfile,
     */
 }
 
-void Volume::floodFill( float thr )
-{
-    int i;
-    // First, threshold the volume
-    #ifdef VERBOSE
-    printf("Thresholding the volume to 0/1...\n") ;
-    #endif
-    threshold( thr, 0, 1 ) ;
-
-    // Next, initialize queue
-    Volume* tvol = new Volume( getSizeX(), getSizeY(), getSizeZ()) ;
-    GridQueue2* queue = new GridQueue2() ;
-    gridQueueEle* ele ;
-    queue->prepend( 0, 0, 0 ) ;
-    tvol->setDataAt( 0,0,0, -1 ) ;
-
-    // Iteration
-    printf("Flood filling...\n") ;
-    queue->reset() ;
-    ele = queue->getNext() ;
-    int ct = 1 ;
-    while( ele != NULL )
-    {
-        int ox = ele->x ;
-        int oy = ele->y ;
-        int oz = ele->z ;
-        queue->remove() ;
-
-        for ( int m = 0 ; m < 6 ; m ++ )
-        {
-            int nx = ox + neighbor6[m][0] ;
-            int ny = oy + neighbor6[m][1] ;
-            int nz = oz + neighbor6[m][2] ;
-            if ( nx < 0 || nx >= getSizeX() || ny < 0 || ny >= getSizeY() || nz < 0 || nz >= getSizeZ() )
-            {
-                continue ;
-            }
-            if ( tvol->getDataAt( nx, ny, nz ) == 0 && getDataAt( nx, ny, nz ) == 0 )
-            {
-                queue->prepend( nx, ny, nz ) ;
-                tvol->setDataAt(nx,ny,nz, -1) ;
-                ct ++ ;
-
-                if ( ct % 100000 == 0 )
-                {
-                    printf("%d nodes processed.\n", ct);
-                }
-            }
-        }
-
-        queue->reset() ;
-        ele = queue->getNext() ;
-    }
-    printf("Done.\n") ;
-
-    // Done
-    for ( i = 0 ; i < getSizeX()*getSizeY()*getSizeZ() ; i ++ )
-    {
-        this->setDataAt(i, tvol->getDataAt(i) ) ;
-    }
-}
-
 void Volume::reduceComponent( int size )
 {
     int i, j, k ;
