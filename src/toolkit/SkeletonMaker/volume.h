@@ -115,7 +115,6 @@ namespace SkeletonMaker {
         int isInternal2(int ox, int oy, int oz);
         int hasCell(int ox, int oy, int oz);
         Volume * markCellFace();
-        int hasCompleteSheet(int ox, int oy, int oz, Volume * fvol);
         int hasCompleteSheet(int ox, int oy, int oz);
         int hasCompleteSheetSlow(int ox, int oy, int oz);
         int hasCompleteHelix(int ox, int oy, int oz);
