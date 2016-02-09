@@ -112,8 +112,6 @@ namespace SkeletonMaker {
         Vector3DFloat getCenterOfMass(); // Returns the center of mass of the image in pixels (not angstroms)
 
         int isHelix(int ox, int oy, int oz);
-        int isSheet(int ox, int oy, int oz);
-        Volume * getSheets(int minSize);
         Volume * getHelices(int minSize);
         int isEndPoint(int ox, int oy, int oz);
         int getNumNeighbor6(int ox, int oy, int oz);
