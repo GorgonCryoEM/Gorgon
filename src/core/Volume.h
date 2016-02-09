@@ -145,7 +145,6 @@ namespace Core {
 //            void writeDistances( string fname, int maxDis );
 //            void toMRCFile( string fname );
 //
-//            void normalizeVolume();
 //            void downsampleVolume();
 //            void loadFile(string fileName);
 //            void saveFile(string fileName);
