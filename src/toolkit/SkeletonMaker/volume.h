@@ -142,7 +142,6 @@ namespace SkeletonMaker {
         void erodeHelix( int disthr );
         int erodeSheet( int disthr );
         void surfaceSkeleton( Volume* grayvol, float lowthr, float highthr );
-        void surfaceSkeleton( float thr );
         void surfaceSkeleton( float thr, Volume* svol );
         void surfaceSkeletonPres( float thr, Volume * preserve );
         void palagyiSurfaceSkeleton( float thr );
