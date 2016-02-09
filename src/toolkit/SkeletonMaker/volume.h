@@ -6,8 +6,8 @@
 #define MAX_ERODE 1000
 
 #include "VolumeData.h"
-#include "ThinningTemplate.h"
 #include "GridQueue2.h"
+//#include "ThinningTemplate.h"
 ////#include <cstdio>
 ////#include <cstdlib>
 ////#include <cmath>
