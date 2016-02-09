@@ -235,17 +235,6 @@ double Volume::getLocalMin(int x, int y, int z, int radius) {
     return mn;
 }
 
-void Volume::fill( double val )
-{
-    for(int x = 0; x < getSizeX(); x++) {
-        for(int y = 0; y < getSizeY(); y++) {
-            for(int z = 0; z < getSizeZ(); z++) {
-                setDataAt(x, y, z, val);
-            }
-        }
-    }
-}
-
 int Volume::isBertrandBorder( int ox, int oy, int oz, int dir ) {
     int nx = ox + neighbor6[dir][0] ;
     int ny = oy + neighbor6[dir][1] ;

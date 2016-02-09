@@ -111,7 +111,6 @@ namespace SkeletonMaker {
         float getStdDev(); // Returns the population standard deviation of the values at all the voxels
         Vector3DFloat getCenterOfMass(); // Returns the center of mass of the image in pixels (not angstroms)
 
-        void fill(double val);
         int isBertrandBorder(int ox, int oy, int oz, int dir);
         int isBertrandEndPoint(int ox, int oy, int oz);
         int isHelix(int ox, int oy, int oz);
