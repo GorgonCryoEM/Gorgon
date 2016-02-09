@@ -82,7 +82,26 @@ namespace Core {
         return sqrt( (sum2 - sum*sum/data.size()) / data.size() );
     }
 
+    // Returns the center of mass of the image in pixels (not angstroms)
 //    Vector3DFloat Volume::getCenterOfMass() const {
+//
+//        double mass    = 0.0;
+//        double xmoment = 0.0;
+//        double ymoment = 0.0;
+//        double zmoment = 0.0;
+//
+//        for (int i=0; i<getSizeX(); i++)
+//            for (int j=0; j<getSizeY(); j++)
+//                for (int k=0; k<getSizeZ(); k++) {
+//                    double val = (*this)(i,j,k);
+//                    mass += val;
+//                    xmoment += i*val;
+//                    ymoment += j*val;
+//                    zmoment += k*val;
+//                }
+//
+//        Vector3DFloat centerOfMass( xmoment/mass, ymoment/mass, zmoment/mass );
+//        return centerOfMass;
 //    }
 
     void Volume::threshold( double thr )
