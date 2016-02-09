@@ -320,65 +320,6 @@ int Volume::hasCompleteHelix( int ox, int oy, int oz )
     */
 }
 
-int Volume::isFaceEnd( int ox, int oy, int oz )
-{
-    // return isSheetEnd(ox,oy,oz) ;
-
-    int i, j, k ;
-    int nx, ny, nz ;
-
-    double vox[3][3][3] ;
-    for ( i = -1 ; i < 2 ; i ++ )
-        for ( j = -1 ; j < 2 ; j ++ )
-            for ( k = -1 ; k < 2 ; k ++ )
-            {
-                vox[ i + 1 ][ j + 1 ][ k + 1 ] = getDataAt( ox + i, oy + j, oz + k ) ;
-            }
-
-    int edge[6] = { 4,4,4,4,4,4 } ;
-    int edge2[6] = { 4,4,4,4,4,4 } ;
-
-    for ( i = 0 ; i < 12 ; i ++ )
-    {
-        for ( j = 0 ; j < 4 ; j ++ )
-        {
-            nx = 1 + sheetNeighbor[i][j][0] ;
-            ny = 1 + sheetNeighbor[i][j][1] ;
-            nz = 1 + sheetNeighbor[i][j][2] ;
-
-            if ( vox[nx][ny][nz] < 0 )
-            {
-                edge[ faceEdges[ i ][ 0 ] ] -- ;
-                edge[ faceEdges[ i ][ 1 ] ] -- ;
-                break ;
-            }
-        }
-        for ( j = 0 ; j < 4 ; j ++ )
-        {
-            nx = 1 + sheetNeighbor[i][j][0] ;
-            ny = 1 + sheetNeighbor[i][j][1] ;
-            nz = 1 + sheetNeighbor[i][j][2] ;
-
-            if ( vox[nx][ny][nz] < 2 )
-            {
-                edge2[ faceEdges[ i ][ 0 ] ] -- ;
-                edge2[ faceEdges[ i ][ 1 ] ] -- ;
-                break ;
-            }
-        }
-    }
-
-    for ( i = 0 ; i < 6 ; i ++ )
-    {
-        if ( edge[ i ] == 1 && edge2[ i ] == 1 )
-        {
-            return 1 ;
-        }
-    }
-
-    return 0 ;
-}
-
 int Volume::isNoise( int ox, int oy, int oz, int noise )
 {
     if ( getDataAt(ox,oy,oz) == 1 )
