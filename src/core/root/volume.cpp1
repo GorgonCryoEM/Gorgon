@@ -10365,19 +10365,6 @@ void Volume::toMRCFile( string fname )
     fclose( fout ) ;
 }
 
-// Returns the mean value of all the voxels
-float Volume::getMean()
-{
-    int N = volData->getMaxIndex();
-    double mass = 0;
-    for (int i = 0; i < N; i++)
-        mass += getDataAt(i);
-    float mean = (float) mass/N;
-    return mean;
-}
-
-
-
 void Volume::downsampleVolume() {
   Volume * destVol = new Volume(getSizeX()/2, getSizeY()/2, getSizeZ()/2);
   double val;
