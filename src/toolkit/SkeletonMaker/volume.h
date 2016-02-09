@@ -186,7 +186,6 @@ namespace SkeletonMaker {
         Volume * getDataRange(int x, int y, int z, int radius);
         double getInterpDataAt( double x, double y, double z );
         void rotateX ( double a );
-        void toMathematicaFile( string fname );
         void segment( float threshold, Volume* lowvol, Volume* highvol, string mrcfile );
         void segment( float threshold, Volume* vol, int maxDis, string mrcfile );
         void writeSegmentation( float threshold, Volume* segvol, string txtfile, string mrcfile );

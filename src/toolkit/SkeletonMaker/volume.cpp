@@ -7659,49 +7659,6 @@ void Volume::rotateX ( double a )
         volData = newData;
 }
 
-
-/* Write to file */
-void Volume::toMathematicaFile( string fname )
-{
-    ofstream fout(fname.c_str()) ;
-
-    fout<<"{";
-    for ( int i = 0 ; i < getSizeX() ; i ++ )
-    {
-        fout<<"{";
-        for ( int j = 0 ; j < getSizeY() ; j ++ )
-        {
-            fout<<"{";
-            for ( int k = 0 ; k < getSizeZ() ; k ++ )
-            {
-                fout<<setprecision(15)<<getDataAt( i, j, k );
-                if ( k < getSizeZ() - 1 )
-                {
-                    fout<<",";
-                }
-            }
-            fout<<"}";
-            if ( j < getSizeY() - 1 )
-            {
-                fout<<",\n";
-            } else {
-                fout<<"\n";
-            }
-        }
-        fout<<"}";
-        if ( i < getSizeX() - 1 )
-        {
-            fout<<",\n\n\n";
-        } else {
-            fout<<"\n\n\n";
-        }
-    }
-    fout<<"}";
-
-    fout.close() ;
-
-}
-
 void Volume::segment( float threshold, Volume* lowvol, Volume* highvol, string mrcfile )
 {
     int i,j,k ;
