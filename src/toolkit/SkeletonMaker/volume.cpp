@@ -711,39 +711,6 @@ int Volume::getNumPotComplex2( int ox, int oy, int oz )
     //return rvalue + getNumNeighbor6( ox, oy, oz ) * 30 ;
 }
 
-int Volume::getNumNeighbor( int ox, int oy, int oz )
-{
-    int rvalue = 0 ;
-    double val = getDataAt( ox, oy, oz ) ;
-    for ( int i = 0 ; i < 6 ; i ++ )
-    {
-        int nx = ox + neighbor6[i][0] ;
-        int ny = oy + neighbor6[i][1] ;
-        int nz = oz + neighbor6[i][2] ;
-
-        if ( getDataAt( nx, ny, nz ) == val )
-        {
-            rvalue ++ ;
-        }
-    }
-    /*
-    for ( int i = -1 ; i < 2 ; i ++ )
-        for ( int j = -1 ; j < 2 ; j ++ )
-            for ( int k = -1 ; k < 2 ; k ++ )
-            {
-                int nx = ox + i ;
-                int ny = oy + j ;
-                int nz = oz + k ;
-
-                if ( getDataAt( nx, ny, nz ) == val )
-                {
-                    rvalue ++ ;
-                }
-            }
-    */
-    return rvalue ;
-}
-
 int Volume::components6( int vox[3][3][3] )
 {
     // Stupid flood fill
