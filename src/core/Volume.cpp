@@ -227,36 +227,28 @@ namespace Core {
         }
     }
 
-    void Volume::addNoise( double thr, double pos )
-    {
-        int i, j, k ;
-        #ifdef VERBOSE
-        printf("Thresholding the volume to -MAX_ERODE/0...\n") ;
-        #endif
-        threshold( thr, -MAX_ERODE, 0 ) ;
-        Volume* tvol = new Volume(*this ) ;
-
-        for ( i = 0 ; i < getSizeX() ; i ++ )
-            for ( j = 0 ; j < getSizeY() ; j ++ )
-                for ( k = 0 ; k < getSizeZ() ; k ++ )
-                {
-                    if ( tvol->getDataAt( i, j, k ) >= 0  && isSimple( i, j, k ) )
-                    {
-                        for ( int m = 0 ; m < 6 ; m ++ )
-                        {
-                            if ( tvol->getDataAt( i + neighbor6[m][0], j + neighbor6[m][1], k + neighbor6[m][2] ) < 0 )
-                            {
-                                if ( rand() < RAND_MAX * pos )
-                                {
-                                    setDataAt( i, j, k, thr - 1 ) ;
-                                }
-                                break ;
-                            }
-                        }
-                    }
-                }
-    }
-
+//    void Volume::addNoise(double thr, double pos) {
+//#ifdef VERBOSE
+//        printf("Thresholding the volume to -MAX_ERODE/0...\n") ;
+//#endif
+//        threshold( thr, -MAX_ERODE, 0 ) ;
+//        Volume tvol(*this);
+//
+//        for (int i = 0 ; i < getSizeX() ; i ++ )
+//            for (int j = 0 ; j < getSizeY() ; j ++ )
+//                for (int k = 0 ; k < getSizeZ() ; k ++ ) {
+//                    if ( tvol(i, j, k) >= 0  && isSimple(i, j, k)) {
+//                        for ( int m = 0 ; m < 6 ; m ++ ) {
+//                            if (tvol(i + neighbor6[m][0], j + neighbor6[m][1], k + neighbor6[m][2]) < 0) {
+//                                if ( rand() < RAND_MAX * pos ) {
+//                                    (*this)(i, j, k) = thr - 1.0;
+//                                }
+//                                break;
+//                            }
+//                        }
+//                    }
+//                }
+//    }
 
     void Volume::downsampleVolume() {
       Volume * destVol = new Volume(getSizeX()/2, getSizeY()/2, getSizeZ()/2);

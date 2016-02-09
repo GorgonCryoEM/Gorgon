@@ -43,7 +43,7 @@ namespace Core {
             void normalize( double min, double max );
             void normalize( double min, double max, double thresh, double ithresh );
 
-            void addNoise( double thr, double pos );
+//            void addNoise( double thr, double pos );
             void downsampleVolume();
 
     // Declarations from volume.h START
