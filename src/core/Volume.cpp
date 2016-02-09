@@ -227,6 +227,66 @@ namespace Core {
         }
     }
 
+    void Volume::addNoise( double thr, double pos )
+    {
+        int i, j, k ;
+        #ifdef VERBOSE
+        printf("Thresholding the volume to -MAX_ERODE/0...\n") ;
+        #endif
+        threshold( thr, -MAX_ERODE, 0 ) ;
+        Volume* tvol = new Volume(*this ) ;
 
+        for ( i = 0 ; i < getSizeX() ; i ++ )
+            for ( j = 0 ; j < getSizeY() ; j ++ )
+                for ( k = 0 ; k < getSizeZ() ; k ++ )
+                {
+                    if ( tvol->getDataAt( i, j, k ) >= 0  && isSimple( i, j, k ) )
+                    {
+                        for ( int m = 0 ; m < 6 ; m ++ )
+                        {
+                            if ( tvol->getDataAt( i + neighbor6[m][0], j + neighbor6[m][1], k + neighbor6[m][2] ) < 0 )
+                            {
+                                if ( rand() < RAND_MAX * pos )
+                                {
+                                    setDataAt( i, j, k, thr - 1 ) ;
+                                }
+                                break ;
+                            }
+                        }
+                    }
+                }
+    }
+
+
+    void Volume::downsampleVolume() {
+      Volume * destVol = new Volume(getSizeX()/2, getSizeY()/2, getSizeZ()/2);
+      double val;
+
+      int radius = 1;
+      MathLib * math = new MathLib();
+
+      ProbabilityDistribution3D gaussianFilter;
+      gaussianFilter.radius = radius;
+      math->GetBinomialDistribution(gaussianFilter);
+
+      for(int x = radius; x < destVol->getSizeX()-radius; x++) {
+        for(int y = radius; y < destVol->getSizeY()-radius; y++) {
+          for(int z = radius; z < destVol->getSizeZ()-radius; z++) {
+            val = 0;
+            for(int xx = -radius; xx <= radius; xx++) {
+              for(int yy = -radius; yy <= radius; yy++) {
+                for(int zz = -radius; zz <= radius; zz++) {
+                  val += getDataAt(2*x+xx, 2*y+yy, 2*z+zz) * gaussianFilter.values[xx+radius][yy+radius][zz+radius] ;
+                }
+              }
+            }
+            destVol->setDataAt(x, y, z, val);
+          }
+        }
+      }
+
+      delete math;
+      *this = *destVol;
+    }
 
 } /* namespace Core */
