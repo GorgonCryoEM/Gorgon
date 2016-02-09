@@ -4514,11 +4514,6 @@ void Volume::threshold( double thr, int out, int in )
     threshold( thr, out, in, out, true) ;
 }
 
-void Volume::threshold( double thr, int out, int in, int boundary)
-{
-    threshold(thr, out, in, boundary, true);
-}
-
 void Volume::threshold( double thr, int out, int in, int boundary, bool markBoundary)
 {
     float val;

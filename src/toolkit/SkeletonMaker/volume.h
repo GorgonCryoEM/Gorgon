@@ -145,7 +145,6 @@ namespace SkeletonMaker {
         void surfaceSkeletonPres( float thr, Volume * preserve );
         void threshold( double thr );
         void threshold( double thr, int out, int in );
-        void threshold( double thr, int out, int in, int boundary);
         void threshold( double thr, int out, int in, int boundary, bool markBoundary);
         void threshold2( double thr, int out, int in );
         void smooth( float alpha );
