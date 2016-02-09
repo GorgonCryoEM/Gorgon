@@ -113,7 +113,6 @@ namespace SkeletonMaker {
         int isEndPoint(int ox, int oy, int oz);
         int getNumNeighbor6(int ox, int oy, int oz);
         int isInternal2(int ox, int oy, int oz);
-        int hasIsolatedEdge(int ox, int oy, int oz);
         int countFace(int ox, int oy, int oz, int m);
         int hasCell(int ox, int oy, int oz);
         Volume * markCellFace();
