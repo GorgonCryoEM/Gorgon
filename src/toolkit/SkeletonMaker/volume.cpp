@@ -4351,10 +4351,6 @@ float Volume::getStdDev()
     return std_dev;
 }
 
-void Volume::normalizeVolume(){
-  normalize(0, 1);
-}
-
 void Volume::loadFile(string inputFile) {
 
     *volData = *MRCReaderPicker::pick(inputFile.c_str())->getVolume();

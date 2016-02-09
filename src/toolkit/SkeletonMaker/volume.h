@@ -142,7 +142,6 @@ namespace SkeletonMaker {
         Volume * getDataRange(int x, int y, int z, int radius);
         void toMRCFile( string fname );
 
-        void normalizeVolume();
         void loadFile(string fileName);
         void saveFile(string fileName);
         Volume * PerformBinarySkeletonizationJu2007(double threshold, int minCurveSize, int minSurfaceSize);
