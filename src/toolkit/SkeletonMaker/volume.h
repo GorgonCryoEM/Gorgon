@@ -121,7 +121,6 @@ namespace SkeletonMaker {
         int isFaceEnd(int ox, int oy, int oz);
         int isNoise(int ox, int oy, int oz, int noise);
         int isHelixEnd(int ox, int oy, int oz);
-        int isSheetEnd(int ox, int oy, int oz, Volume * nvol);
         int getNumFaces( int ox, int oy, int oz );
         int getNumCells( int ox, int oy, int oz );
         int getNumIsolatedEdges( int ox, int oy, int oz );
