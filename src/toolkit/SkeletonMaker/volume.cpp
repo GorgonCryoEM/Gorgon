@@ -597,41 +597,6 @@ int Volume::isNoise( int ox, int oy, int oz, int noise )
 
 }
 
-int Volume::isNoiseHelixEnd( int ox, int oy, int oz )
-{
-
-    int i ;
-    int c1 = 0 , c2 = 0 ;
-    int nx, ny, nz ;
-
-    for ( i = 0 ; i < 6 ; i ++ )
-    {
-        nx = ox + neighbor6[i][0] ;
-        ny = oy + neighbor6[i][1] ;
-        nz = oz + neighbor6[i][2] ;
-
-        double val = getDataAt( nx, ny, nz ) ;
-
-        if ( val >= 0 )
-        {
-            c1 ++ ;
-            if ( val > 0 && val < MAX_ERODE )
-            {
-                c2 ++ ;
-            }
-        }
-
-    }
-
-    if ( c1 == 1 && c2 == 0 )
-    {
-        return 1 ;
-    }
-
-    return 0 ;
-}
-
-
 int Volume::isHelixEnd( int ox, int oy, int oz ) {
 
     int i ;
