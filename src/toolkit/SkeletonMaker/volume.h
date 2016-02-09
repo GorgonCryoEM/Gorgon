@@ -161,10 +161,6 @@ namespace SkeletonMaker {
         int countInt( double vox[3][3][3] );
         int countIntEuler( int ox, int oy, int oz );
         void erodeNoTopo( float thr, int wid );
-        void erodeTopo( float thr, int wid );
-        void erode2( float thr, int wid );
-        void erodeShapeTopo( float thr, int wid );
-        void erodeAtom( float thr, int wid, Volume* avol );
         void curveSkeleton( Volume* grayvol, float lowthr, float highthr, Volume* svol );
         void curveSkeleton( float thr, Volume* svol );
         void curveSkeleton2D( float thr, Volume* svol );
