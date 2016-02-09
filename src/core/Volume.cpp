@@ -280,4 +280,18 @@ namespace Core {
 //        *this = *destVol;
 //    }
 
+        int rvalue = 0 ;
+        for ( int i = 0 ; i < 6 ; i ++ ) {
+            int nx = ox + neighbor6[i][0] ;
+            int ny = oy + neighbor6[i][1] ;
+            int nz = oz + neighbor6[i][2] ;
+            if ( getDataAt( nx, ny, nz ) >= 0 ) {
+                rvalue ++ ;
+            }
+        }
+    int Volume::getNumNeighbor6( int i, int j, int k ) const {
+
+        return rvalue ;
+    }
+
 } /* namespace Core */

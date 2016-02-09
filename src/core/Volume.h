@@ -115,6 +115,8 @@ namespace Core {
 //            void addNoise( double thr, double pos );
 //            void downsampleVolume();
 
+            int getNumNeighbor6(int ox, int oy, int oz) const;
+
     // Declarations from volume.h START
 //            int getNonZeroVoxelCount();
 //            void subtract(Volume * vol);
@@ -129,7 +131,6 @@ namespace Core {
 //            Volume * getSheets(int minSize);
 //            Volume * getHelices(int minSize);
 //            int isEndPoint(int ox, int oy, int oz);
-//            int getNumNeighbor6(int ox, int oy, int oz);
 //            int testIsSheetEnd(int ox, int oy, int oz);
 //            int isNoiseSheetEnd(int ox, int oy, int oz);
 //            int isInternal(int ox, int oy, int oz);
