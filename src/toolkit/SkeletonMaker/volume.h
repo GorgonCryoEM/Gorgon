@@ -111,8 +111,6 @@ namespace SkeletonMaker {
         float getStdDev(); // Returns the population standard deviation of the values at all the voxels
         Vector3DFloat getCenterOfMass(); // Returns the center of mass of the image in pixels (not angstroms)
 
-        int isBertrandBorder(int ox, int oy, int oz, int dir);
-        int isBertrandEndPoint(int ox, int oy, int oz);
         int isHelix(int ox, int oy, int oz);
         int isSheet(int ox, int oy, int oz);
         Volume * getSheets(int minSize);
@@ -189,8 +187,6 @@ namespace SkeletonMaker {
         void surfaceSkeleton( float thr, Volume* svol );
         void surfaceSkeletonOld( float thr );
         void surfaceSkeletonPres( float thr, Volume * preserve );
-        void bertrandSurfaceSkeleton2( float thr );
-        void bertrandSurfaceSkeleton( float thr );
         void palagyiSurfaceSkeleton( float thr );
         void threshold( double thr );
         void threshold( double thr, int out, int in );
