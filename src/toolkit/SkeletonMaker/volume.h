@@ -180,7 +180,6 @@ namespace SkeletonMaker {
 
     private:
         int getHashKey(int x, int y, int z, int edge, int iScale) const;
-        float getOffset(float fValue1, float fValue2, float fValueDesired) const;
         int Smallest2ndPower(int value) const;
         //----------------------
     };

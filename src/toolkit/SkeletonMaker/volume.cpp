@@ -19,14 +19,6 @@ using namespace GraySkeletonCPP;
 #endif
 
 //    ---------------------
-float Volume::getOffset(float fValue1, float fValue2, float fValueDesired) const {
-    double fDelta = fValue2 - fValue1;
-    if(fDelta == 0.0) {
-            return 0.5;
-    }
-    return (fValueDesired - fValue1)/fDelta;
-}
-
 
 int Volume::getHashKey(int x, int y, int z, int edge, int iScale) const {
 
