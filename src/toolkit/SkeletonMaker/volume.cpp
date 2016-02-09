@@ -4653,56 +4653,6 @@ double Volume::getInterpDataAt( double x, double y, double z )
     return rvalue ;
 }
 
-/* Rotation routine */
-void Volume::rotateX ( double a )
-{
-    int i ;
-    int sizeX = getSizeX(), sizeY = getSizeY(), sizeZ = getSizeZ();
-
-    if ( sizeX != sizeY || sizeX != sizeZ) {
-        return ;
-    }
-
-    VolumeData * newData = new VolumeData(*volData);
-
-    double cent = ( sizeX - 1 ) / 2.0 ;
-    for ( i = 0 ; i < sizeX ; i ++ )
-        for ( int j = 0 ; j < sizeY ; j ++ )
-            for ( int k = 0 ; k < sizeZ ; k ++ )
-            {
-                double x = i - cent ;
-                double y = j - cent ;
-                double z = k - cent ;
-
-                double nx = x + cent ;
-                double ny = cos( a ) * y + sin( a ) * z + cent ;
-                double nz = - sin( a ) * y + cos( a ) * z + cent ;
-
-                if ( nx < 0 ) {
-                    nx = 0 ;
-                } else if ( nx > sizeX - 1 ) {
-                    nx = sizeX - 1 ;
-                }
-
-                if ( ny < 0 ) {
-                    ny = 0 ;
-                } else if ( ny > sizeY - 1 ) {
-                    ny = sizeY - 1 ;
-                }
-
-                if ( nz < 0 ) {
-                    nz = 0 ;
-                } else if ( nz > sizeZ - 1 ) {
-                    nz = sizeZ - 1 ;
-                }
-
-                newData->setDataAt(i, j, k, (float)getInterpDataAt( nx, ny, nz ));
-            }
-
-        delete volData;
-        volData = newData;
-}
-
 void Volume::segment( float threshold, Volume* lowvol, Volume* highvol, string mrcfile )
 {
     int i,j,k ;
