@@ -320,35 +320,6 @@ int Volume::hasCompleteHelix( int ox, int oy, int oz )
     */
 }
 
-int Volume::isNoise( int ox, int oy, int oz, int noise )
-{
-    if ( getDataAt(ox,oy,oz) == 1 )
-    {
-        return 1 ;
-    }
-
-    if ( noise > 0 )
-    {
-        for ( int i = 0 ; i < 6 ; i ++ )
-        {
-            int nx = ox + neighbor6[i][0] ;
-            int ny = oy + neighbor6[i][1] ;
-            int nz = oz + neighbor6[i][2] ;
-
-            if ( getDataAt( nx, ny, nz ) > 0 )
-            {
-                if ( isNoise( nx, ny, nz, noise - 1 ) )
-                {
-                    return 1 ;
-                }
-            }
-        }
-    }
-
-    return 0 ;
-
-}
-
 int Volume::isHelixEnd( int ox, int oy, int oz ) {
 
     int i ;
