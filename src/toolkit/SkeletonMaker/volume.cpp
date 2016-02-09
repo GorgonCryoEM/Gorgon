@@ -480,31 +480,6 @@ int Volume::hasCompleteHelix( int ox, int oy, int oz )
     */
 }
 
-int Volume::isFeature18( int ox, int oy, int oz )
-{
-    // Border: > 0
-    // Interior: == 0
-    // Outside: < 0
-    if ( getDataAt( ox, oy, oz ) <= 0 )
-    {
-        return 0 ;
-    }
-
-    for ( int i = 0 ; i < 3 ; i ++ )
-        for ( int j = 0 ; j < 3 ; j ++ )
-            for ( int k = 0 ; k < 3 ; k ++ )
-            {
-                if ( i == 1 || j == 1 || k == 1 )
-                {
-                    if( getDataAt( ox - 1 + i, oy - 1 + j, oz - 1 + k ) == 0 )
-                    {
-                        return 0 ;
-                    }
-                }
-            }
-    return 1 ;
-}
-
 int Volume::isEdgeEnd( int ox, int oy, int oz )
 {
     int i ;
