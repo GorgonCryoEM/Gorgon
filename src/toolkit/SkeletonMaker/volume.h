@@ -168,14 +168,11 @@ namespace SkeletonMaker {
         void erodeHelix( int disthr );
         int erodeSheet( );
         int erodeSheet( int disthr );
-        void erodeSheetOld( int disthr );
-        void addNoise( float thr, float pos );
         void sequentialSkeleton( float thr, int type, int noise );
         void dumbsurfaceSkeleton( float thr );
         void surfaceSkeleton( Volume* grayvol, float lowthr, float highthr );
         void surfaceSkeleton( float thr );
         void surfaceSkeleton( float thr, Volume* svol );
-        void surfaceSkeletonOld( float thr );
         void surfaceSkeletonPres( float thr, Volume * preserve );
         void palagyiSurfaceSkeleton( float thr );
         void threshold( double thr );
