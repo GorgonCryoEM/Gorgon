@@ -14,6 +14,12 @@ namespace Core {
     /*
      *
      */
+    typedef vector<int> VI;
+    typedef vector<VI> VVI;
+
+    typedef vector<double> VD;
+    typedef vector<VD> VVD;
+
     const int neighbor6[6][3]={{0,0,1},{0,0,-1},{0,1,0},{0,-1,0},{1,0,0},{-1,0,0}} ;
     const int neighbor4[4][2]={{0,1},{0,-1},{1,0},{-1,0}} ;
     const int neighbor64[6][4][3] = {
