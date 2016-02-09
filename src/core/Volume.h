@@ -84,6 +84,8 @@ namespace Core {
        }
     };
 
+    typedef vector<Coordinate> VCOORD;
+
     class Volume : public VolumeData {
         public:
             Volume();
