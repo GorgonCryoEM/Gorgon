@@ -20,10 +20,6 @@ using namespace GraySkeletonCPP;
 
 //    ---------------------
 
-string Volume::getSupportedSaveFileFormats() const {
-    return "Volumes (*.mrc *.ccp4 *.map *.raw);;Mathematica List (*.nb);;Bitmap Image set (*.bmp);;Structure Tensor Field (*.tns);;Surface Mesh(*.off)";
-}
-
 Volume * Volume::getVolume() {
     return dynamic_cast<Volume *>(this);
 }

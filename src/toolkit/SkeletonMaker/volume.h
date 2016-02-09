@@ -173,7 +173,6 @@ namespace SkeletonMaker {
         VolumeData * volData;
 //----------------------
     public:
-        string getSupportedSaveFileFormats() const;
         Volume * getVolume();
         void setVolume(Volume *vol);
     };
