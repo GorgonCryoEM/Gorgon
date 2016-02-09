@@ -44,6 +44,7 @@ namespace Core {
             void normalize( double min, double max, double thresh, double ithresh );
 
             void addNoise( float thr, float pos );
+            void downsampleVolume();
 
     // Declarations from volume.h START
 //            int getNonZeroVoxelCount();
@@ -146,7 +147,6 @@ namespace Core {
 //            void writeDistances( string fname, int maxDis );
 //            void toMRCFile( string fname );
 //
-//            void downsampleVolume();
 //            void loadFile(string fileName);
 //            void saveFile(string fileName);
 //            void PerformSmoothLaplacian(double convergenceRate, int iterations);
