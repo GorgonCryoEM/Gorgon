@@ -178,38 +178,6 @@ double Volume::getMaxValuePosition(int& maxX, int& maxY, int& maxZ) {
     return maxVal;
 }
 
-int Volume::isHelix( int ox, int oy, int oz ) {
-    int cn = 12 ;
-    int nx, ny, nz ;
-    int i, j, k ;
-
-    double vox[3][3][3] ;
-    for ( i = -1 ; i < 2 ; i ++ )
-        for ( j = -1 ; j < 2; j ++ )
-            for ( k = -1 ; k < 2 ; k ++ ) {
-                vox[i+1][j+1][k+1] = getDataAt( ox + i, oy + j, oz + k ) ;
-            }
-
-    for ( i = 0 ; i < 12 ; i ++ ) {
-        for ( j = 0 ; j < 4 ; j ++ ) {
-            nx = sheetNeighbor[i][j][0] + 1;
-            ny = sheetNeighbor[i][j][1] + 1;
-            nz = sheetNeighbor[i][j][2] + 1;
-
-            if ( vox[nx][ny][nz] <= 0 ) {
-                cn -- ;
-                break ;
-            }
-        }
-    }
-
-    if ( cn >= 1 ) {
-        return 0 ;
-    } else {
-        return 1 ;
-    }
-}
-
 int Volume::isEndPoint( int ox, int oy, int oz ) {
     if ( getDataAt( ox - 1, oy, oz ) < 0 && getDataAt( ox + 1, oy, oz ) < 0 ) {
         return 1 ;
