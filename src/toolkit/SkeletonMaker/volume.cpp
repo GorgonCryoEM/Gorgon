@@ -72,6 +72,13 @@ Volume::Volume(int x, int y, int z, float val)
 Volume::~Volume( )
 {}
 
+VolumeData * Volume::getVolumeData() {
+    return dynamic_cast<VolumeData *>(this);
+}
+
+
+
+
 int Volume::getNonZeroVoxelCount() {
     int count = 0;
     for(int x = 0; x < getSizeX(); x++){
