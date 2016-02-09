@@ -150,7 +150,6 @@ namespace SkeletonMaker {
         void smooth( float alpha );
         void normalize( double min, double max );
         Volume * getDataRange(int x, int y, int z, int radius);
-        void writeSegmentation( float threshold, Volume* segvol, string txtfile, string mrcfile );
         void reduceComponent( int size );
         void floodFillPQR( int offset );
         void writeDistances( string fname, int maxDis );
