@@ -152,7 +152,6 @@ namespace SkeletonMaker {
         void toMRCFile( string fname );
 
         void normalizeVolume();
-        void downsampleVolume();
         void loadFile(string fileName);
         void saveFile(string fileName);
         void PerformSmoothLaplacian(double convergenceRate, int iterations);

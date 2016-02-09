@@ -4716,39 +4716,6 @@ void Volume::normalizeVolume(){
   normalize(0, 1);
 }
 
-
-void Volume::downsampleVolume() {
-  Volume * destVol = new Volume(getSizeX()/2, getSizeY()/2, getSizeZ()/2);
-  double val;
-
-  int radius = 1;
-  MathLib * math = new MathLib();
-
-  ProbabilityDistribution3D gaussianFilter;
-  gaussianFilter.radius = radius;
-  math->GetBinomialDistribution(gaussianFilter);
-
-  for(int x = radius; x < destVol->getSizeX()-radius; x++) {
-    for(int y = radius; y < destVol->getSizeY()-radius; y++) {
-      for(int z = radius; z < destVol->getSizeZ()-radius; z++) {
-        val = 0;
-        for(int xx = -radius; xx <= radius; xx++) {
-          for(int yy = -radius; yy <= radius; yy++) {
-            for(int zz = -radius; zz <= radius; zz++) {
-              val += getDataAt(2*x+xx, 2*y+yy, 2*z+zz) * gaussianFilter.values[xx+radius][yy+radius][zz+radius] ;
-            }
-          }
-        }
-        destVol->setDataAt(x, y, z, val);
-      }
-    }
-  }
-
-  delete math;
-  *this = *destVol;
-}
-
-
 void Volume::loadFile(string inputFile) {
 
     *volData = *MRCReaderPicker::pick(inputFile.c_str())->getVolume();
