@@ -20,6 +20,10 @@ using namespace GraySkeletonCPP;
 
 //    ---------------------
 
+Volume * Volume::getVolume() {
+    return dynamic_cast<Volume *>(this);
+}
+
 void Volume::setVolume(Volume *vol) {
 	*this = *vol;
 }
