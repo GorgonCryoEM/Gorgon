@@ -138,7 +138,6 @@ namespace SkeletonMaker {
         void threshold( double thr, int out, int in );
         void threshold( double thr, int out, int in, int boundary, bool markBoundary);
         void threshold2( double thr, int out, int in );
-        void smooth( float alpha );
         void normalize( double min, double max );
         Volume * getDataRange(int x, int y, int z, int radius);
         void toMRCFile( string fname );

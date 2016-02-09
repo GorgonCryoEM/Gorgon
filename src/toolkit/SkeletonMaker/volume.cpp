@@ -4216,25 +4216,6 @@ void Volume::threshold2( double thr, int out, int in )
             }
 }
 
-void Volume::smooth( float alpha )
-{
-    VolumeData * smoothedData = new VolumeData(*volData);
-
-    for (int i = 1; i < getSizeX() - 1; i++)
-        for (int j = 1; j < getSizeY() - 1; j++)
-            for (int k = 1; k < getSizeZ() - 1; k++) {
-                float v = (float)getDataAt( i - 1, j, k ) +
-                    (float)getDataAt( i + 1, j, k ) +
-                    (float)getDataAt( i, j - 1, k ) +
-                    (float)getDataAt( i, j + 1, k ) +
-                    (float)getDataAt( i, j, k - 1 ) +
-                    (float)getDataAt( i, j, k + 1 ) ;
-                smoothedData->setDataAt(i, j, k, smoothedData->getDataAt(i, j, k) * alpha + ( 1 - alpha ) * v / 6);
-            }
-    delete volData;
-    volData = smoothedData;
-}
-
 void Volume::normalize( double min, double max )
 {
     double imin = getMin() ;
