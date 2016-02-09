@@ -108,7 +108,6 @@ namespace SkeletonMaker {
         float getStdDev(); // Returns the population standard deviation of the values at all the voxels
 
         int isHelix(int ox, int oy, int oz);
-        Volume * getHelices(int minSize);
         int isEndPoint(int ox, int oy, int oz);
         int getNumNeighbor6(int ox, int oy, int oz);
         int isInternal2(int ox, int oy, int oz);
