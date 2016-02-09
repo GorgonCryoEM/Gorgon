@@ -105,7 +105,6 @@ namespace SkeletonMaker {
         double getMaxValuePosition(int& maxX, int& maxY, int& maxZ);
 
         float getMean(); // Returns the mean value of all the voxels
-        float getEdgeMean(); // Returns the mean value of all the surface voxels but no interior voxels
         float getStdDev(); // Returns the population standard deviation of the values at all the voxels
 
         int isHelix(int ox, int oy, int oz);
