@@ -155,6 +155,9 @@ namespace Core {
                 }
     }
 
+    void Volume::normalize() {
+        normalize(0.0, 1.0);
+    }
 
     void Volume::normalize( double y0, double y1 )
     {

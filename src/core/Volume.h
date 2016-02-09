@@ -39,6 +39,7 @@ namespace Core {
 
             void smooth( double alpha );
 
+            void normalize();
             void normalize( double min, double max );
             void normalize( double min, double max, double thresh, double ithresh );
 
