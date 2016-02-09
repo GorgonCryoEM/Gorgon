@@ -4604,61 +4604,6 @@ Volume * Volume::getDataRange(int x, int y, int z, int radius) {
     return range;
 }
 
-void Volume::writeDistances( string fname, int maxDis )
-{
-    int i, j, k ;
-    Volume* testvol = NULL ;
-    Volume* disvol = new Volume( getSizeX(), getSizeY(), getSizeZ() ) ;
-    printf("Writing distance transform to %d levels.\n", maxDis);
-
-    int totNodes = 0 ;
-    int size = getSizeX() * getSizeY() * getSizeZ() ;
-    float score = 10 ;
-    for ( i = maxDis ; i >= 0 ; i -- )
-    {
-        int nodes = 0 ;
-        testvol = new Volume(*this ) ;
-        testvol->erodeSheet( i ) ;
-
-        for ( j = 0 ; j < size ; j ++ )
-        {
-            if ( disvol->getDataAt(j) == 0 && testvol->getDataAt(j) > 0 )
-            {
-                disvol->setDataAt( j, i + 1 ) ;
-                nodes ++ ;
-            }
-        }
-        printf("Level %d has %d nodes.\n", i, nodes );
-        totNodes += nodes ;
-        score -= 0.5f ;
-        delete testvol ;
-    }
-    printf("Totally %d nodes.\n", totNodes );
-
-    //disvol->toMRCFile( "..\distance.mrc" ) ;
-    ofstream fout(fname.c_str());
-    fout<<totNodes<<endl;
-    int ct = 0 ;
-    for ( i = 0 ; i < getSizeX() ; i ++ )
-        for ( j = 0 ; j < getSizeY() ; j ++ )
-            for ( k = 0 ; k < getSizeZ() ; k ++ )
-            {
-                float val = (float)disvol->getDataAt(i,j,k) ;
-                if ( val > 0 )
-                {
-                    fout<<i<<j<<k<<val<<endl;
-                    ct ++ ;
-                }
-            }
-
-    if ( ct != totNodes )
-    {
-        cout<<"Counting wrong! "<<totNodes<<" "<<ct<<endl;
-    }
-    fout.close();
-
-}
-
 void Volume::toMRCFile( string fname )
 {
     FILE* fout = fopen( fname.c_str(), "wb" ) ;
