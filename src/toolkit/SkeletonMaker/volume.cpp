@@ -630,27 +630,6 @@ int Volume::isHelixEnd( int ox, int oy, int oz ) {
     return 0 ;
 }
 
-int Volume::getNumCells( int ox, int oy, int oz )
-{
-    int i, j, k ;
-
-    int cells = 0 ;
-
-    for (  i = -1 ; i < 1 ; i ++ )
-        for (  j = -1 ; j < 1 ; j ++ )
-            for (  k = -1 ; k < 1 ; k ++ )
-            {
-                if ( hasCell( ox + i, oy + j, oz + k ) )
-                {
-                    cells ++ ;
-                }
-            }
-
-    // printf("Faces: %d\n", faces);
-    return cells ;
-}
-
-
 int Volume::getNumIsolatedEdges( int ox, int oy, int oz )
 {
     int i, j, k ;
