@@ -134,7 +134,6 @@ namespace SkeletonMaker {
         int countExt( double vox[3][3][3] );
         int countInt( double vox[3][3][3] );
         int countIntEuler( int ox, int oy, int oz );
-        void erodeNoTopo( float thr, int wid );
         void curveSkeleton( Volume* grayvol, float lowthr, float highthr, Volume* svol );
         void curveSkeleton( float thr, Volume* svol );
         void curveSkeleton2D( float thr, Volume* svol );
