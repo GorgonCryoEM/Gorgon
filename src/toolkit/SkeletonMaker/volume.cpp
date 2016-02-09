@@ -178,19 +178,6 @@ double Volume::getMaxValuePosition(int& maxX, int& maxY, int& maxZ) {
     return maxVal;
 }
 
-int Volume::isEndPoint( int ox, int oy, int oz ) {
-    if ( getDataAt( ox - 1, oy, oz ) < 0 && getDataAt( ox + 1, oy, oz ) < 0 ) {
-        return 1 ;
-    }
-    if ( getDataAt( ox, oy - 1, oz ) < 0 && getDataAt( ox, oy + 1, oz ) < 0 ) {
-        return 1 ;
-    }
-    if ( getDataAt( ox, oy, oz - 1 ) < 0 && getDataAt( ox, oy, oz + 1 ) < 0 ) {
-        return 1 ;
-    }
-    return 0 ;
-}
-
 int Volume::getNumNeighbor6( int ox, int oy, int oz ) {
     int rvalue = 0 ;
     for ( int i = 0 ; i < 6 ; i ++ ) {

@@ -107,7 +107,6 @@ namespace SkeletonMaker {
         float getMean(); // Returns the mean value of all the voxels
         float getStdDev(); // Returns the population standard deviation of the values at all the voxels
 
-        int isEndPoint(int ox, int oy, int oz);
         int getNumNeighbor6(int ox, int oy, int oz);
         int isInternal2(int ox, int oy, int oz);
         int hasCell(int ox, int oy, int oz);
