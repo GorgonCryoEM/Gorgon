@@ -142,15 +142,11 @@ namespace SkeletonMaker {
         int getNumCells( int ox, int oy, int oz );
         int getNumIsolatedEdges( int ox, int oy, int oz );
         int getNumIsolatedFaces( int ox, int oy, int oz );
-        int isFeatureFace2( int ox, int oy, int oz );
         int isFeatureFace( int ox, int oy, int oz );
-        int hasFeatureFace( int ox, int oy, int oz );
         int isSheetEnd( int ox, int oy, int oz );
         int isSimple( int ox, int oy, int oz );
         int isPiercable( int ox, int oy, int oz );
         int isSimple2( int v[3][3][3] );
-        int getNumPotComplex3( int ox, int oy, int oz );
-        int getNumPotComplex4( int ox, int oy, int oz );
         int getNumPotComplex( int ox, int oy, int oz );
         int getNumPotComplex2( int ox, int oy, int oz );
         int getNumNeighbor( int ox, int oy, int oz );

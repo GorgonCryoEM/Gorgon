@@ -1814,28 +1814,6 @@ int Volume::getNumIsolatedFaces( int ox, int oy, int oz )
     return faces ;
 }
 
-int Volume::isFeatureFace2( int ox, int oy, int oz )
-{
-    int i ;
-    int nx, ny, nz ;
-
-    for ( i = 0 ; i < 6 ; i ++ )
-    {
-        nx = ox + neighbor6[i][0] ;
-        ny = oy + neighbor6[i][1] ;
-        nz = oz + neighbor6[i][2] ;
-
-        double val = getDataAt( nx, ny, nz ) ;
-
-        if ( val == 0 )
-        {
-            return 0 ;
-        }
-
-    }
-
-    return 1 ;
-}
 
 int Volume::isFeatureFace( int ox, int oy, int oz )
 {
@@ -1885,60 +1863,6 @@ int Volume::isFeatureFace( int ox, int oy, int oz )
 
 }
 
-int Volume::hasFeatureFace( int ox, int oy, int oz )
-{
-    int i, j, k ;
-    int nx, ny, nz ;
-
-    int faceflag ;
-    int cellflag[ 8 ] ;
-
-    // Get cells
-    int ct = 0 ;
-    for (  i = -1 ; i < 1 ; i ++ )
-        for (  j = -1 ; j < 1 ; j ++ )
-            for (  k = -1 ; k < 1 ; k ++ )
-            {
-                if ( hasCell( ox + i, oy + j, oz + k ) )
-                {
-                    cellflag[ ct ] = 1 ;
-                }
-                else
-                {
-                    cellflag[ ct ] = 0 ;
-                }
-                ct ++ ;
-            }
-
-    // Find isolated and boundary faces
-    for ( i = 0 ; i < 12 ; i ++ )
-    {
-        faceflag = 1 ;
-        for ( j = 0 ; j < 4 ; j ++ )
-        {
-            nx = ox + sheetNeighbor[i][j][0] ;
-            ny = oy + sheetNeighbor[i][j][1] ;
-            nz = oz + sheetNeighbor[i][j][2] ;
-
-            if ( getDataAt( nx, ny, nz ) < 0 )
-            {
-                faceflag = 0 ;
-                break ;
-            }
-        }
-
-        if ( faceflag )
-        {
-            if ( cellflag[ faceCells[i][0] ] == 0 && cellflag[ faceCells[i][1] ] == 0 )
-            {
-                return 1 ;
-            }
-        }
-    }
-
-    return 0 ;
-
-}
 
 int Volume::isSheetEnd( int ox, int oy, int oz )
 {
@@ -2178,77 +2102,6 @@ int Volume::isSimple2( int v[3][3][3] )
     }
 }
 
-int Volume::getNumPotComplex3( int ox, int oy, int oz )
-{
-    // return 0 ;
-
-
-    int i, j, k ;
-    if ( ! isSimple( ox, oy, oz ) || isSheetEnd( ox, oy, oz ) )
-    {
-        return 60 ;
-    }
-    double val = getDataAt( ox, oy, oz ) ;
-
-    int nx, ny, nz ;
-
-
-    int numSimple = 0 ;
-    for ( i = -1 ; i < 2 ; i ++ )
-        for ( j = -1 ; j < 2 ; j ++ )
-            for ( k = -1 ; k < 2 ; k ++ )
-            {
-                nx = ox + i ;
-                ny = oy + j ;
-                nz = oz + k ;
-                if ( getDataAt( nx, ny, nz ) > 0 )
-                {
-                    if ( isSimple( nx, ny, nz ) && ! isSheetEnd( nx, ny, nz ) )
-                    {
-                        numSimple ++ ;
-                    }
-                }
-            }
-    numSimple -- ;
-
-    setDataAt( ox, oy, oz, -val ) ;
-
-    int numPotSimple = 0 ;
-    for ( i = -1 ; i < 2 ; i ++ )
-        for ( j = -1 ; j < 2 ; j ++ )
-            for ( k = -1 ; k < 2 ; k ++ )
-            {
-                nx = ox + i ;
-                ny = oy + j ;
-                nz = oz + k ;
-                if ( getDataAt( nx, ny, nz ) > 0 )
-                {
-                    if ( isSimple( nx, ny, nz ) && ! isSheetEnd( nx, ny, nz ) )
-                    {
-                        numPotSimple ++ ;
-                    }
-                }
-            }
-
-
-    setDataAt( ox, oy, oz, val ) ;
-
-
-
-
-    return 30 - ( numPotSimple  - numSimple ) ;
-}
-
-int Volume::getNumPotComplex4( int ox, int oy, int oz )
-{
-
-    int cells = getNumCells(ox,oy,oz) ;
-    //int ifaces = getNumIsolatedFaces(ox,oy,oz) ;
-    int faces = getNumFaces(ox,oy,oz) ;
-    //int iedges = getNumIsolatedEdges(ox,oy,oz) ;
-
-    return ( cells * 6 - 2 * faces ) ; // + 2 * ( faces * 4 - 4 * iedges ) ;
-}
 
 int Volume::getNumPotComplex( int ox, int oy, int oz )
 {
