@@ -58,10 +58,31 @@ namespace Core {
 
     const int edgeFaces[6][4] = {{1,3,5,7},{0,2,4,6},{2,3,9,11},{0,1,8,10},{6,7,10,11},{4,5,8,9}} ;
 
-//    struct gridPoint
-//    {
-//        int x, y, z;
-//    };
+    struct Coordinate {
+       int x, y, z;
+       Coordinate(){}
+       Coordinate(int xx, int yy, int zz)
+           : x(xx), y(yy), z(zz)
+       {}
+       Coordinate(const VI & vi)
+                  : x(vi[0]), y(vi[1]), z(vi[2])
+              {}
+       Coordinate(const int arr[])
+                  : x(arr[0]), y(arr[1]), z(arr[2])
+              {}
+
+       vector<Coordinate> getNeighbors() const {
+           vector<Coordinate> res(6);
+           for(int i=0; i<6; ++i) {
+               res[i] = Coordinate(neighbor6[i]) + *this;
+           }
+           return res;
+       }
+
+       friend Coordinate operator+(const Coordinate &l, const Coordinate &r) {
+           return Coordinate(l.x+r.x, l.y+r.y, l.z+r.z);
+       }
+    };
 
     class Volume : public VolumeData {
         public:
