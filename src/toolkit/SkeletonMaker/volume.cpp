@@ -352,20 +352,6 @@ int Volume::getNumNeighbor6( int ox, int oy, int oz ) {
     return rvalue ;
 }
 
-int Volume::isInternal( int ox, int oy, int oz ) {
-    // assuming it's 0/1 volume
-    int i, j, k ;
-
-    for ( i = -1 ; i < 2 ; i ++ )
-        for ( j = -1 ; j < 2 ; j ++ )
-            for ( k = -1 ; k < 2 ; k ++ ) {
-                if ( getDataAt( ox + i, oy + j, oz + k ) <= 0 ) {
-                    return 0 ;
-                }
-            }
-    return 1 ;
-}
-
 int Volume::isInternal2( int ox, int oy, int oz ) {
     // assuming it's -1/0 volume
     int i, j, k ;
