@@ -8357,34 +8357,6 @@ float Volume::getStdDev()
     float std_dev = (float) sqrt( (voxel_squared_sum - voxel_sum*voxel_sum/N) / N );
     return std_dev;
 }
-// Returns the center of mass of the image in pixels (not angstroms)
-Vector3DFloat Volume::getCenterOfMass()
-{
-    int nx = getSizeX();
-    int ny = getSizeY();
-    int nz = getSizeZ();
-
-    float mass = 0;
-    float xmoment = 0;
-    float ymoment = 0;
-    float zmoment = 0;
-    float val;
-
-    for (int i=0; i<nx; i++)
-        for (int j=0; j<ny; j++)
-            for (int k=0; k<nz; k++)
-            {
-                val = (float)getDataAt(i,j,k);
-                mass += val;
-                xmoment += i*val;
-                ymoment += j*val;
-                zmoment += k*val;
-            }
-
-    Vector3DFloat centerOfMass( xmoment/mass, ymoment/mass, zmoment/mass );
-    return centerOfMass;
-}
-
 
 void Volume::normalizeVolume(){
   normalize(0, 1);
