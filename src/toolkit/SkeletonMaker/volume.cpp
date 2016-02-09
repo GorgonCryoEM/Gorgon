@@ -4604,55 +4604,6 @@ Volume * Volume::getDataRange(int x, int y, int z, int radius) {
     return range;
 }
 
-/* Get data at an interpolated voxel */
-double Volume::getInterpDataAt( double x, double y, double z )
-{
-    /*
-    double rad = getSizeX() / 4.0 ;
-    double cent = ( getSizeX() - 1 ) / 2.0 ;
-
-    double ox = x - cent ;
-    double oy = y - cent ;
-    double oz = z - cent ;
-
-    double a = -0.3 ;
-    double nx = ox ;
-    double ny = cos( a ) * oy + sin( a ) * oz ;
-    double nz = - sin( a ) * oy + cos( a ) * oz ;
-
-    double b = 1.4 ;
-    double nnx = cos( b ) * nx + sin( b ) * ny - 2;
-    double nny = -sin( b ) * nx + cos ( b ) * ny - 1;
-    double nnz = nz + 1;
-
-    double dis = nnx * nnx + nny * nny ;
-    return 10 - 10 * dis / ( rad * rad ) ;
-    */
-
-    double rvalue ;
-    int hx = (int) ceil( x ) ;
-    int lx = (int) floor( x ) ;
-    int hy = (int) ceil( y ) ;
-    int ly = (int) floor( y ) ;
-    int hz = (int) ceil( z ) ;
-    int lz = (int) floor( z ) ;
-
-    double x1 = x - lx, x2 = 1 - x1 ;
-    double r1 = x2 * getDataAt( lx, ly, lz) + x1 * getDataAt( hx, ly, lz ) ;
-    double r2 = x2 * getDataAt( lx, ly, hz) + x1 * getDataAt( hx, ly, hz ) ;
-    double r3 = x2 * getDataAt( lx, hy, lz) + x1 * getDataAt( hx, hy, lz ) ;
-    double r4 = x2 * getDataAt( lx, hy, hz) + x1 * getDataAt( hx, hy, hz ) ;
-
-    double y1 = y - ly, y2 = 1 - y1 ;
-    double r5 = y2 * r1 + y1 * r3 ;
-    double r6 = y2 * r2 + y1 * r4 ;
-
-    double z1 = z - lz, z2 = 1 - z1 ;
-    rvalue = z2 * r5 + z1 * r6 ;
-
-    return rvalue ;
-}
-
 void Volume::segment( float threshold, Volume* lowvol, Volume* highvol, string mrcfile )
 {
     int i,j,k ;
