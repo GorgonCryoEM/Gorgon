@@ -367,23 +367,6 @@ int Volume::isInternal2( int ox, int oy, int oz ) {
     return 1 ;
 }
 
-int Volume::countFace( int ox, int oy, int oz, int m ) {
-    int facenum = 4 ;
-    for ( int i = 0 ; i < 4 ; i ++ ) {
-        for ( int j = 0 ; j < 4 ; j ++ ) {
-            int nx = ox + sheetNeighbor[edgeFaces[m][i]][j][0] ;
-            int ny = oy + sheetNeighbor[edgeFaces[m][i]][j][1] ;
-            int nz = oz + sheetNeighbor[edgeFaces[m][i]][j][2] ;
-
-            if ( getDataAt( nx, ny, nz ) < 0 ) {
-                facenum -- ;
-                break ;
-            }
-        }
-    }
-
-    return facenum;
-}
 int Volume::hasCell( int ox, int oy, int oz ) {
     for ( int i = 0 ; i < 2 ; i ++ )
         for ( int j = 0 ; j < 2 ; j ++ )
