@@ -9242,12 +9242,3 @@ Volume * Volume::PerformGrayscaleSkeletonizationAbeysinghe2008(double startDensi
     return NULL;
   }
 }
-
-float Volume::getMaxDensity() const {
-  return getMax();
-}
-
-float Volume::getMinDensity() const {
-  return getMin();
-}
-
