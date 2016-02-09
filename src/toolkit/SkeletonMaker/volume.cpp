@@ -211,31 +211,6 @@ double Volume::getMaxValuePosition(int& maxX, int& maxY, int& maxZ) {
     return maxVal;
 }
 
-double Volume::getLocalMax(int x, int y, int z, int radius) {
-    double mx = getDataAt(x, y, z);
-    for(int xx = x - radius; xx <= x + radius; xx++) {
-        for(int yy = y - radius; yy <= y + radius; yy++) {
-            for(int zz = z - radius; zz <= z + radius; zz++) {
-                mx = max(mx, (double)getDataAt(xx, yy, zz));
-            }
-        }
-    }
-    return mx;
-}
-
-double Volume::getLocalMin(int x, int y, int z, int radius) {
-    double mn = getDataAt(x, y, z);
-    for(int xx = x - radius; xx <= x + radius; xx++) {
-        for(int yy = y - radius; yy <= y + radius; yy++) {
-            for(int zz = z - radius; zz <= z + radius; zz++) {
-                mn = min(mn, (double)getDataAt(xx, yy, zz));
-            }
-        }
-    }
-    return mn;
-}
-
-
 int Volume::isHelix( int ox, int oy, int oz ) {
     int cn = 12 ;
     int nx, ny, nz ;

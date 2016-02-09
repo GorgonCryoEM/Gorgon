@@ -103,8 +103,6 @@ namespace SkeletonMaker {
         double getMin() const;
         double getMax() const;
         double getMaxValuePosition(int& maxX, int& maxY, int& maxZ);
-        double getLocalMax(int x, int y, int z, int radius);
-        double getLocalMin(int x, int y, int z, int radius);
 
         float getMean(); // Returns the mean value of all the voxels
         float getEdgeMean(); // Returns the mean value of all the surface voxels but no interior voxels
