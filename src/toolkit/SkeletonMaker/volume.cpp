@@ -20,16 +20,6 @@ using namespace GraySkeletonCPP;
 
 //    ---------------------
 
-int Volume::getHashKey(int x, int y, int z, int edge, int iScale) const {
-
-    x += a2iEdgeHash[edge][1]*iScale;
-    y += a2iEdgeHash[edge][2]*iScale;
-    z += a2iEdgeHash[edge][3]*iScale;
-
-    edge = a2iEdgeHash[edge][0];
-    return x * getSizeY() * getSizeZ() * 3 + y * getSizeZ() * 3 + z * 3 + edge;
-}
-
 int Volume::Smallest2ndPower(int value) const {
     int power = 1;
     while (power < value) {
