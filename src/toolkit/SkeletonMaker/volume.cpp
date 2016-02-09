@@ -630,60 +630,6 @@ int Volume::isHelixEnd( int ox, int oy, int oz ) {
     return 0 ;
 }
 
-int Volume::getNumIsolatedFaces( int ox, int oy, int oz )
-{
-    int i, j, k ;
-    int nx, ny, nz ;
-
-    int faces = 0 ;
-    int cellflag[ 8 ] ;
-
-    int ct = 0 ;
-    for (  i = -1 ; i < 1 ; i ++ )
-        for (  j = -1 ; j < 1 ; j ++ )
-            for (  k = -1 ; k < 1 ; k ++ )
-            {
-                if ( hasCell( ox + i, oy + j, oz + k ) )
-                {
-                    cellflag[ ct ] = 1 ;
-                }
-                else
-                {
-                    cellflag[ ct ] = 0 ;
-                }
-                ct ++ ;
-            }
-
-    for ( i = 0 ; i < 12 ; i ++ )
-    {
-        int hasFace = 1 ;
-        for ( j = 0 ; j < 4 ; j ++ )
-        {
-            nx = ox + sheetNeighbor[i][j][0] ;
-            ny = oy + sheetNeighbor[i][j][1] ;
-            nz = oz + sheetNeighbor[i][j][2] ;
-
-            if ( getDataAt( nx, ny, nz ) < 0 )
-            {
-                hasFace = 0 ;
-                break ;
-            }
-        }
-
-        if ( hasFace )
-        {
-            if (cellflag[ faceCells[i][0] ] == 0 && cellflag[ faceCells[i][1] ] == 0 )
-            {
-                faces ++ ;
-            }
-        }
-    }
-
-    // printf("Faces: %d\n", faces);
-    return faces ;
-}
-
-
 int Volume::isFeatureFace( int ox, int oy, int oz )
 {
     // return 1 ;
