@@ -173,7 +173,6 @@ namespace SkeletonMaker {
         VolumeData * volData;
 //----------------------
     public:
-        Volume * getVolume();
         void setVolume(Volume *vol);
     };
 
