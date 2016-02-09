@@ -155,19 +155,6 @@ void Volume::subtract( Volume* vol ) {
 
 }
 
-void Volume::applyMask(Volume * maskVol, double maskValue, bool keepMaskValue) {
-    for(int x = 0; x < maskVol->getSizeX(); x++) {
-        for(int y = 0; y < maskVol->getSizeY(); y++) {
-            for(int z = 0; z < maskVol->getSizeZ(); z++) {
-                if(((maskVol->getDataAt(x, y, z) == maskValue) && !keepMaskValue) ||
-                    ((maskVol->getDataAt(x, y, z) != maskValue) && keepMaskValue)) {
-                    setDataAt(x, y, z, 0);
-                }
-            }
-        }
-    }
-}
-
 double Volume::getMin() const {
     int size = volData->getMaxIndex();
     double rvalue = volData->getDataAt(0);
