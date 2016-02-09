@@ -43,6 +43,7 @@ namespace Core {
             void normalize( double min, double max );
             void normalize( double min, double max, double thresh, double ithresh );
 
+            void addNoise( float thr, float pos );
 
     // Declarations from volume.h START
 //            int getNonZeroVoxelCount();
@@ -121,7 +122,6 @@ namespace Core {
 //            int erodeSheet( );
 //            int erodeSheet( int disthr );
 //            void erodeSheetOld( int disthr );
-//            void addNoise( float thr, float pos );
 //            void sequentialSkeleton( float thr, int type, int noise );
 //            void dumbsurfaceSkeleton( float thr );
 //            void surfaceSkeleton( Volume* grayvol, float lowthr, float highthr );
