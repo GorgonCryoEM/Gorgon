@@ -139,7 +139,6 @@ namespace SkeletonMaker {
         void curveSkeleton2D( float thr, Volume* svol );
         void pointSkeleton( Volume* grayvol, float lowthr, float highthr, Volume* svol, Volume* hvol );
         void skeleton( float thr, Volume* svol, Volume* hvol );
-        void erodeHelix( );
         void erodeHelix( int disthr );
         int erodeSheet( );
         int erodeSheet( int disthr );

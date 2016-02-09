@@ -3049,14 +3049,6 @@ void Volume::skeleton( float thr, Volume* svol, Volume* hvol )
     delete queue3;
 }
 
-
-// Apply helix erosion
-void Volume::erodeHelix( )
-{
-    erodeHelix( 3 ) ;
-}
-
-
 void Volume::erodeHelix( int disthr )
 {
     int i, j, k ;
