@@ -210,7 +210,6 @@ namespace SkeletonMaker {
         void writeSegmentation( float threshold, Volume* segvol, string txtfile, string mrcfile );
         void floodFill( float thr );
         void reduceComponent( int size );
-        void reduceComponent2( int num );
         void floodFillPQR( int offset );
         void writeDistances( string fname, int maxDis );
         void toMRCFile( string fname );
