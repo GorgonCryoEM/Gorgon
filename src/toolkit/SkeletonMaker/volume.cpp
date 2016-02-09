@@ -630,31 +630,6 @@ int Volume::isHelixEnd( int ox, int oy, int oz ) {
     return 0 ;
 }
 
-int Volume::getNumFaces( int ox, int oy, int oz )
-{
-    int i, j ;
-    int nx, ny, nz ;
-
-    int faces = 12 ;
-    for ( i = 0 ; i < 12 ; i ++ )
-    {
-        for ( j = 0 ; j < 4 ; j ++ )
-        {
-            nx = ox + sheetNeighbor[i][j][0] ;
-            ny = oy + sheetNeighbor[i][j][1] ;
-            nz = oz + sheetNeighbor[i][j][2] ;
-
-            if ( getDataAt( nx, ny, nz ) < 0 )
-            {
-                faces -- ;
-                break ;
-            }
-        }
-    }
-
-    return faces ;
-}
-
 int Volume::getNumCells( int ox, int oy, int oz )
 {
     int i, j, k ;
