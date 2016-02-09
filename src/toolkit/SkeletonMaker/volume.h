@@ -149,7 +149,6 @@ namespace SkeletonMaker {
         void threshold2( double thr, int out, int in );
         void smooth( float alpha );
         void normalize( double min, double max );
-        void normalize( double min, double max, double thresh, double ithresh );
         Volume * getDataRange(int x, int y, int z, int radius);
         double getInterpDataAt( double x, double y, double z );
         void rotateX ( double a );

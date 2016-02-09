@@ -4590,27 +4590,6 @@ void Volume::normalize( double min, double max )
     }
 }
 
-void Volume::normalize( double min, double max, double thresh, double ithresh )
-{
-    double imin = getMin() ;
-    double imax = getMax() ;
-    double irange1 = ithresh - imin ;
-    double irange2 = imax - ithresh ;
-    double range1 = thresh - min;
-    double range2 = max - thresh ;
-
-    int size = volData->getMaxIndex();
-    for (int i = 0; i < size; i++) {
-        if (getDataAt(i) < ithresh) {
-            setDataAt(i, ((getDataAt(i) - (float)imin ) / (float)irange1) * (float)range1 + (float)min);
-        }
-        else
-        {
-            setDataAt(i, (float)max - (( (float)imax - getDataAt(i)) / (float)irange2) * (float)range2);
-        }
-    }
-}
-
 /* Set data at a pixel */
 
 Volume * Volume::getDataRange(int x, int y, int z, int radius) {
