@@ -20,13 +20,6 @@ using namespace GraySkeletonCPP;
 
 //    ---------------------
 
-int Volume::Smallest2ndPower(int value) const {
-    int power = 1;
-    while (power < value) {
-        power = power * 2;
-    }
-    return power;
-}
 string Volume::getSupportedLoadFileFormats() const {
     return "All Files (*.mrc *.ccp4 *.map *.raw *.pts);; Volumes (*.mrc *.ccp4 *.map *.raw);;Point Cloud (*.pts)";
 }

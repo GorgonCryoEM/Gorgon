@@ -177,10 +177,6 @@ namespace SkeletonMaker {
         string getSupportedSaveFileFormats() const;
         Volume * getVolume();
         void setVolume(Volume *vol);
-
-    private:
-        int Smallest2ndPower(int value) const;
-        //----------------------
     };
 
 }
