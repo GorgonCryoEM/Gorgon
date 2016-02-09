@@ -606,36 +606,6 @@ int Volume::getNumPotComplex( int ox, int oy, int oz )
 int Volume::getNumPotComplex2( int ox, int oy, int oz )
 {
     return getNumPotComplex( ox, oy, oz ) ;
-
-    //int i, j, k ;
-    //double val = getDataAt( ox, oy, oz ) ;
-    //if ( val <= 0 )
-    //{
-    //	return 0 ;
-    //}
-
-    //int rvalue = 0, nx, ny, nz ;
-    //setDataAt( ox, oy, oz, -val ) ;
-
-    //for ( i = -1 ; i < 2 ; i ++ )
-    //	for ( j = -1 ; j < 2 ; j ++ )
-    //		for ( k = -1 ; k < 2 ; k ++ )
-    //		{
-    //			nx = ox + i ;
-    //			ny = oy + j ;
-    //			nz = oz + k ;
-    //			if ( getDataAt( nx, ny, nz ) == val )
-    //			{
-    //				if ( isHelixEnd( nx, ny, nz) || ! isSimple ( nx, ny, nz ) )
-    //				{
-    //					rvalue ++ ;
-    //				}
-    //			}
-    //		}
-
-    //setDataAt( ox, oy, oz, val ) ;
-
-    //return rvalue + getNumNeighbor6( ox, oy, oz ) * 30 ;
 }
 
 int Volume::components6( int vox[3][3][3] )
