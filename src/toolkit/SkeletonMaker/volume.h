@@ -143,7 +143,6 @@ namespace SkeletonMaker {
         int erodeSheet( int disthr );
         void surfaceSkeleton( Volume* grayvol, float lowthr, float highthr );
         void surfaceSkeletonPres( float thr, Volume * preserve );
-        void palagyiSurfaceSkeleton( float thr );
         void threshold( double thr );
         void threshold( double thr, int out, int in );
         void threshold( double thr, int out, int in, int boundary);
