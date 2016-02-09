@@ -119,6 +119,24 @@ namespace Core {
 
             int getNumNeighbor6(int ox, int oy, int oz) const;
 
+//            Volume * getDataRange(int x, int y, int z, int radius);
+//            double getInterpDataAt( double x, double y, double z );
+//            int isSimple( int ox, int oy, int oz );
+//            int isPiercable( int ox, int oy, int oz );
+//            int isSimple2( int v[3][3][3] );
+//            int getNumPotComplex3( int ox, int oy, int oz );
+//            int getNumPotComplex4( int ox, int oy, int oz );
+//            int getNumPotComplex( int ox, int oy, int oz );
+//            int getNumPotComplex2( int ox, int oy, int oz );
+//            int getNumNeighbor( int ox, int oy, int oz );
+//            int getNumCells( int ox, int oy, int oz );
+//            int getNumIsolatedEdges( int ox, int oy, int oz );
+//            int components6( int vox[3][3][3] );
+//            int components26( int vox[3][3][3] );
+//            int countExt( double vox[3][3][3] );
+//            int countInt( double vox[3][3][3] );
+//            int countIntEuler( int ox, int oy, int oz );
+
     // Declarations from volume.h START
 //            int getNonZeroVoxelCount();
 //            void subtract(Volume * vol);
@@ -157,27 +175,12 @@ namespace Core {
 //            int isHelixEnd(int ox, int oy, int oz);
 //            int isSheetEnd(int ox, int oy, int oz, Volume * nvol);
 //            int getNumFaces( int ox, int oy, int oz );
-//            int getNumCells( int ox, int oy, int oz );
-//            int getNumIsolatedEdges( int ox, int oy, int oz );
 //            int getNumIsolatedFaces( int ox, int oy, int oz );
 //            int isFeatureFace2( int ox, int oy, int oz );
 //            int isFeatureFace( int ox, int oy, int oz );
 //            int hasFeatureFace( int ox, int oy, int oz );
 //            int isSheetEnd( int ox, int oy, int oz );
-//            int isSimple( int ox, int oy, int oz );
-//            int isPiercable( int ox, int oy, int oz );
-//            int isSimple2( int v[3][3][3] );
-//            int getNumPotComplex3( int ox, int oy, int oz );
-//            int getNumPotComplex4( int ox, int oy, int oz );
-//            int getNumPotComplex( int ox, int oy, int oz );
-//            int getNumPotComplex2( int ox, int oy, int oz );
-//            int getNumNeighbor( int ox, int oy, int oz );
 //            void setScoreNeighbor( GridQueue* queue );
-//            int components6( int vox[3][3][3] );
-//            int components26( int vox[3][3][3] );
-//            int countExt( double vox[3][3][3] );
-//            int countInt( double vox[3][3][3] );
-//            int countIntEuler( int ox, int oy, int oz );
 //            void erodeNoTopo( float thr, int wid );
 //            void erodeTopo( float thr, int wid );
 //            void erode2( float thr, int wid );
@@ -205,8 +208,6 @@ namespace Core {
 //            void bertrandSurfaceSkeleton2( float thr );
 //            void bertrandSurfaceSkeleton( float thr );
 //            void palagyiSurfaceSkeleton( float thr );
-//            Volume * getDataRange(int x, int y, int z, int radius);
-//            double getInterpDataAt( double x, double y, double z );
 //            void rotateX ( double a );
 //            void toMathematicaFile( string fname );
 //            void segment( float threshold, Volume* lowvol, Volume* highvol, string mrcfile );
