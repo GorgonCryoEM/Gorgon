@@ -154,7 +154,6 @@ namespace SkeletonMaker {
         void normalizeVolume();
         void loadFile(string fileName);
         void saveFile(string fileName);
-        void PerformSmoothLaplacian(double convergenceRate, int iterations);
         Volume * PerformBinarySkeletonizationJu2007(double threshold, int minCurveSize, int minSurfaceSize);
         Volume * PerformGrayscaleSkeletonizationAbeysinghe2008(double startDensity, int stepCount, int minCurveSize, int minSurfaceSize, int curveRadius, int surfaceRadius, int skeletonSmoothenRadius);
 

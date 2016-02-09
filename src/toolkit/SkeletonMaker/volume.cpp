@@ -4742,14 +4742,6 @@ void Volume::saveFile(string fileName) {
     }
 }
 
-
-void Volume::PerformSmoothLaplacian(double convergenceRate, int iterations) {
-    for(unsigned int i = 0; i < iterations; i++) {
-      smooth(convergenceRate);
-    }
-}
-
-
 Volume * Volume::PerformBinarySkeletonizationJu2007(double threshold, int minCurveSize, int minSurfaceSize) {
   VolumeSkeletonizer * skeletonizer = new VolumeSkeletonizer(0,0,0,DEFAULT_SKELETON_DIRECTION_RADIUS);
 #ifdef GORGON_DEBUG
