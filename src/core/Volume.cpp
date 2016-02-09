@@ -57,23 +57,22 @@ namespace Core {
         int nz = getSizeZ();
 
         //Calculate the edge mean -- the average value of all the voxels on the surfaces (1 voxel) of the image
-        double edge_sum = 0; //The sum of the values on the outer surfaces (1 voxel) of the image
+        double edge_sum = 0.0; //The sum of the values on the outer surfaces (1 voxel) of the image
         int num_voxels = 0;
 
         //sum the values of each voxel on the surfaces of the rectangular prism
-        for (int i = 0; i < nx; i++)
+        for (int i=0; i<nx; i++)
             for (int j=0; j<ny; j++)
                 for (int k=0; k<nz; k++)
                 {
                     if (i==0 || i==nx-1 || j==0 || j==ny-1 || k==0 || k==nz-1)
                     {
-                        edge_sum += getDataAt(i,j,k);
+                        edge_sum += (*this)(i,j,k);
                         num_voxels++;
                     }
                 }
 
-        float edge_mean = (float) edge_sum / num_voxels;
-        return edge_mean;
+        return edge_sum / num_voxels;
     }
 
     void Volume::print() const {
