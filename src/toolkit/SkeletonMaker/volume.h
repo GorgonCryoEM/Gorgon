@@ -118,7 +118,6 @@ namespace SkeletonMaker {
         int isSheetEnd( int ox, int oy, int oz );
         int isSimple( int ox, int oy, int oz );
         int isPiercable( int ox, int oy, int oz );
-        int isSimple2( int v[3][3][3] );
         int getNumPotComplex( int ox, int oy, int oz );
         int getNumPotComplex2( int ox, int oy, int oz );
         int getNumNeighbor( int ox, int oy, int oz );

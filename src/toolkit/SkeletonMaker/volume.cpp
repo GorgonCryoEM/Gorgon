@@ -609,38 +609,6 @@ int Volume::isPiercable( int ox, int oy, int oz )
     }
 }
 
-
-int Volume::isSimple2( int v[3][3][3] )
-{
-    // int flag = 0 ;
-    double vox[3][3][3] ;
-
-    int i, j, k ;
-    for ( i = 0 ; i < 3 ; i ++ )
-        for ( j = 0 ; j < 3 ; j ++ )
-            for ( k = 0 ; k < 3 ; k ++ )
-            {
-                if ( v[i][j][k] == 0 )
-                {
-                    vox[ i ][ j ][ k ] = 1 ;
-                }
-                else
-                {
-                    vox[i][j][k] = -1 ;
-                }
-            }
-    if ( countInt( vox ) == 1 && countExt( vox ) == 1 )
-    {
-        return 1 ;
-    }
-    else
-    {
-        printf("Int: %d Ext: %d\n",countInt( vox ),countExt( vox ) );
-        return 0 ;
-    }
-}
-
-
 int Volume::getNumPotComplex( int ox, int oy, int oz )
 {
     //return 0 ;
