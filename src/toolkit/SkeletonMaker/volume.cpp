@@ -20,10 +20,6 @@ using namespace GraySkeletonCPP;
 
 //    ---------------------
 
-string Volume::getSupportedLoadFileFormats() const {
-    return "All Files (*.mrc *.ccp4 *.map *.raw *.pts);; Volumes (*.mrc *.ccp4 *.map *.raw);;Point Cloud (*.pts)";
-}
-
 string Volume::getSupportedSaveFileFormats() const {
     return "Volumes (*.mrc *.ccp4 *.map *.raw);;Mathematica List (*.nb);;Bitmap Image set (*.bmp);;Structure Tensor Field (*.tns);;Surface Mesh(*.off)";
 }
