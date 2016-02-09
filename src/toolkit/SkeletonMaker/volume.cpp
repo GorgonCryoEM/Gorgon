@@ -4604,40 +4604,6 @@ Volume * Volume::getDataRange(int x, int y, int z, int radius) {
     return range;
 }
 
-void Volume::segment( float threshold, Volume* vol, int maxDis, string mrcfile )
-{
-    int i,j;
-    Volume* testvol = NULL ;
-    Volume* disvol = new Volume( getSizeX(), getSizeY(), getSizeZ() ) ;
-    printf("Writing distance transform to %d levels.\n", maxDis);
-
-    int totNodes = 0 ;
-    int size = getSizeX() * getSizeY() * getSizeZ() ;
-    for ( i = maxDis ; i >= 0 ; i -- )
-    {
-        if ( i == 1 ) continue ;
-
-        int nodes = 0 ;
-        testvol = new Volume( *vol ) ;
-        testvol->erodeSheet( i ) ;
-
-        for ( j = 0 ; j < size ; j ++ )
-        {
-            if ( disvol->getDataAt(j) == 0 && testvol->getDataAt(j) > 0 )
-            {
-                disvol->setDataAt( j, i + 1 ) ;
-                nodes ++ ;
-            }
-        }
-        printf("Level %d has %d nodes.\n", i, nodes );
-        totNodes += nodes ;
-        delete testvol ;
-    }
-    printf("Totally %d nodes.\n", totNodes );
-
-    writeSegmentation( threshold, disvol, NULL, mrcfile ) ;
-}
-
 // Segment the volume using segvol
 // background voxels have values 0, others have values > 0
 void Volume::writeSegmentation( float threshold, Volume* segvol, string txtfile, string mrcfile )
