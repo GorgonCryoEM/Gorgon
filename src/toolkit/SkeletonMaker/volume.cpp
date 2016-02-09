@@ -3369,15 +3369,6 @@ void Volume::erodeHelix( int disthr )
 
 }
 
-
-
-// Apply sheet erosion
-int Volume::erodeSheet( )
-{
-    return erodeSheet( 3 ) ;
-}
-
-
 int Volume::erodeSheet( int disthr )
 {
     int i, j, k ;
