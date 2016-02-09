@@ -367,57 +367,6 @@ int Volume::isInternal2( int ox, int oy, int oz ) {
     return 1 ;
 }
 
-int Volume::hasIsolatedFace( int ox, int oy, int oz ) {
-    int i, j, k ;
-    int nx, ny, nz ;
-
-    double vox[3][3][3] ;
-    for ( i = -1 ; i < 2 ; i ++ )
-        for ( j = -1 ; j < 2 ; j ++ )
-            for ( k = -1 ; k < 2 ; k ++ ) {
-                vox[ i + 1 ][ j + 1 ][ k + 1 ] = getDataAt( ox + i, oy + j, oz + k ) ;
-            }
-
-    int cells[8] = { 1, 1, 1, 1, 1, 1, 1, 1 } ;
-    for ( i = 0 ; i < 8 ; i ++ ) {
-        int x = ( ( i >> 2 ) & 1 ) ;
-        int y = ( ( i >> 1 ) & 1 ) ;
-        int z = ( i & 1 ) ;
-        for ( j = 0 ; j < 8 ; j ++ ) {
-            nx = x + ( ( j >> 2 ) & 1 ) ;
-            ny = y + ( ( j >> 1 ) & 1 ) ;
-            nz = z + ( j & 1 ) ;
-
-            if ( vox[nx][ny][nz] < 0 ) {
-                cells[i] = 0 ;
-                break;
-            }
-        }
-    }
-
-    for ( i = 0 ; i < 12 ; i ++ ) {
-        if ( cells[ faceCells[i][0] ] == 1 || cells[ faceCells[i][1] ] == 1 ) {
-            continue ;
-        }
-        int flag = 1 ;
-        for ( j = 0 ; j < 4 ; j ++ ) {
-            nx = 1 + sheetNeighbor[i][j][0] ;
-            ny = 1 + sheetNeighbor[i][j][1] ;
-            nz = 1 + sheetNeighbor[i][j][2] ;
-
-            if ( vox[nx][ny][nz] < 0 ) {
-                flag = 0 ;
-                break;
-            }
-        }
-        if ( flag ) {
-            return 1 ;
-        }
-    }
-
-    return 0 ;
-}
-
 int Volume::hasIsolatedEdge( int ox, int oy, int oz ) {
     int i, j, k ;
     int nx, ny, nz ;
