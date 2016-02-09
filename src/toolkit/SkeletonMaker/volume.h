@@ -116,7 +116,6 @@ namespace SkeletonMaker {
         int countFace(int ox, int oy, int oz, int m);
         int hasCell(int ox, int oy, int oz);
         Volume * markCellFace();
-        Volume * markFaceEdge();
         int hasCompleteSheet(int ox, int oy, int oz, Volume * fvol);
         int hasCompleteSheet(int ox, int oy, int oz);
         int hasCompleteSheetSlow(int ox, int oy, int oz);
