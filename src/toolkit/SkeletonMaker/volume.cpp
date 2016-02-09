@@ -4604,32 +4604,6 @@ Volume * Volume::getDataRange(int x, int y, int z, int radius) {
     return range;
 }
 
-void Volume::segment( float threshold, Volume* lowvol, Volume* highvol, string mrcfile )
-{
-    int i,j,k ;
-    Volume* segvol = new Volume( getSizeX(), getSizeY(), getSizeZ()) ;
-
-    for ( i = 0 ; i < getSizeX() ; i ++ )
-        for ( j = 0 ; j < getSizeY() ; j ++ )
-            for ( k = 0 ; k < getSizeZ() ; k ++ )
-            {
-                if ( lowvol->getDataAt(i,j,k) > 0 )
-                {
-                    segvol->setDataAt( i,j,k, 1 ) ;
-                }
-                else if ( highvol->getDataAt(i,j,k) > 0 )
-                {
-                    segvol->setDataAt( i,j,k, 2 ) ;
-                }
-                else
-                {
-                    segvol->setDataAt( i,j,k, 0 ) ;
-                }
-            }
-
-    writeSegmentation( threshold, segvol, NULL, mrcfile ) ;
-}
-
 void Volume::segment( float threshold, Volume* vol, int maxDis, string mrcfile )
 {
     int i,j;
