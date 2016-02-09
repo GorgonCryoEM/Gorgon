@@ -129,7 +129,6 @@ namespace SkeletonMaker {
         int getNumPotComplex( int ox, int oy, int oz );
         int getNumPotComplex2( int ox, int oy, int oz );
         int getNumNeighbor( int ox, int oy, int oz );
-        void setScoreNeighbor( GridQueue* queue );
         int components6( int vox[3][3][3] );
         int components26( int vox[3][3][3] );
         int countExt( double vox[3][3][3] );

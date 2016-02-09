@@ -1053,21 +1053,6 @@ int Volume::getNumNeighbor( int ox, int oy, int oz )
     return rvalue ;
 }
 
-
-void Volume::setScoreNeighbor( GridQueue* queue )
-{
-    //printf("Scoring each node with number of neighbors...\n") ;
-    gridQueueEle* ele = queue->getHead() ;
-    while ( ele != NULL )
-    {
-        ele->score = getNumNeighbor( ele->x, ele->y, ele->z ) ;
-        ele = ele->next ;
-    }
-
-    queue->sort( queue->getNumElements() ) ;
-}
-
-
 int Volume::components6( int vox[3][3][3] )
 {
     // Stupid flood fill
