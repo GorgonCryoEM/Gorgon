@@ -1,6 +1,6 @@
 #include "volume.h"
 #include <Foundation/StringUtils.h>
-#include <GraySkeletonCPP/GlobalDefinitions.h>
+#include <GlobalDefinitions.h>
 #include <GraySkeletonCPP/VolumeSkeletonizer.h>
 #include <SkeletonMaker/reader.h>
 

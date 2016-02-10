@@ -2,7 +2,7 @@
 #define TOOLKIT_GRAYSKELETONCPP_NORMAL_FINDER_H
 
 //#include <MathTools/Vector3D.h>
-//#include "GraySkeletonCPP/GlobalDefinitions.h"
+//#include "GlobalDefinitions.h"
 //#include <SkeletonMaker/volume.h>
 
 //using namespace std;

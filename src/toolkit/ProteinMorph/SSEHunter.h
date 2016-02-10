@@ -14,7 +14,7 @@
 //#include <Gorgon/MeshRenderer.h>
 //#include <cmath>
 #include <iostream>
-#include <GraySkeletonCPP/GlobalDefinitions.h>
+#include <GlobalDefinitions.h>
 
 //#define USE_TIME_MANAGER
 #ifdef USE_TIME_MANAGER
