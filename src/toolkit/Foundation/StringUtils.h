@@ -12,8 +12,6 @@ namespace Foundation {
     public:
         static string DoubleToString(double number, int padSize = -1, string padChar = "0", int digits = -1, int decimals = -1);
         static string IntToString(int number, int padSize = -1, string padChar = "0");
-        static double StringToDouble(string s);
-        static int StringToInt(const string &s);
         static string StringToUpper(string strToConvert);
         static string StringToLower(string strToConvert);
         static void RightTrim(string &source, string t);
@@ -52,20 +50,6 @@ namespace Foundation {
         }
         delete [] x;
         return retVal;
-    }
-
-    double StringUtils::StringToDouble(string s) {
-        float retVal = 1;
-        sscanf(s.c_str(), "%f", &retVal);
-        return retVal;
-    }
-    int StringUtils::StringToInt(const string &s)
-    {
-      istringstream myStream(s);
-      int i;
-
-      myStream>>i;
-      return i;
     }
 
     string StringUtils::StringToUpper(string strToConvert) {
