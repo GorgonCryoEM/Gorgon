@@ -2,7 +2,7 @@
 #define TOOLKIT_GRAPHMATCH_SECONDARYSTRUCTURE_H
 
 #include <string>
-#include "GraphMatch/GlobalConstants.h"
+#include "GraphMatch/Constants.h"
 
 using namespace std;
 
