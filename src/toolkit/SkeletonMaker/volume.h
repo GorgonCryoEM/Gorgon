@@ -23,7 +23,7 @@
 ////#include <GraphMatch/VectorMath.h>
 #include "GlobalConstants.h"
 //#include <GlobalDefinitions.h>
-//#include <GraySkeletonCPP/VolumeSkeletonizer.h>
+//#include <SkeletonMaker/GraySkeletonCPP/VolumeSkeletonizer.h>
 //#include <GraySkeletonCPP/VolumeFormatConverter.h>
 ////#include "MeshRenderer.h"
 ////#include <ProteinMorph/NonManifoldMesh.h>
