@@ -9,11 +9,11 @@ using namespace std;
 
 namespace MathTools {
     template <class T>
-    class MatrixTemplate {
+    class Matrix {
     public:
-        MatrixTemplate();
-        MatrixTemplate(unsigned int rowCount, unsigned int colCount);
-        ~MatrixTemplate();
+        Matrix();
+        Matrix(unsigned int rowCount, unsigned int colCount);
+        ~Matrix();
 
         unsigned int GetRowCount() const;
         unsigned int GetColCount() const;
@@ -21,25 +21,25 @@ namespace MathTools {
         T GetValue(int row, int col) const;
         void SetValue(T value, int row, int col);
 
-        MatrixTemplate<T> operator+(const MatrixTemplate<T> &m );
-        MatrixTemplate<T> operator-(const MatrixTemplate<T> &m );
-        MatrixTemplate<T> operator*(const MatrixTemplate<T> & m );
-        MatrixTemplate<T>& operator=(const MatrixTemplate<T> &m );
-        MatrixTemplate<T>& operator+=(const MatrixTemplate<T> &m );
-        MatrixTemplate<T>& operator-=(const MatrixTemplate<T> &m );
-        MatrixTemplate<T> operator*(const T &s);
-        MatrixTemplate<T> Transpose();
-        MatrixTemplate<T> ConjugateTranspose();
+        Matrix<T> operator+(const Matrix<T> &m );
+        Matrix<T> operator-(const Matrix<T> &m );
+        Matrix<T> operator*(const Matrix<T> & m );
+        Matrix<T>& operator=(const Matrix<T> &m );
+        Matrix<T>& operator+=(const Matrix<T> &m );
+        Matrix<T>& operator-=(const Matrix<T> &m );
+        Matrix<T> operator*(const T &s);
+        Matrix<T> Transpose();
+        Matrix<T> ConjugateTranspose();
 
-        void SingularValueDecomposition(MatrixTemplate <T> &u, MatrixTemplate <T> &w, MatrixTemplate <T> &v);
+        void SingularValueDecomposition(Matrix <T> &u, Matrix <T> &w, Matrix <T> &v);
 
         T Determinant();
 
-        static MatrixTemplate<T> Identity(int size);
-        static MatrixTemplate<T> AllZero(int rowCount, int colCount);
-        static MatrixTemplate<T> AllOne(int rowCount, int colCount);
-        static MatrixTemplate<T> Random(int rowCount, int colCount);
-        static MatrixTemplate<T> Covariance(MatrixTemplate<T> m1, MatrixTemplate<T> m2);
+        static Matrix<T> Identity(int size);
+        static Matrix<T> AllZero(int rowCount, int colCount);
+        static Matrix<T> AllOne(int rowCount, int colCount);
+        static Matrix<T> Random(int rowCount, int colCount);
+        static Matrix<T> Covariance(Matrix<T> m1, Matrix<T> m2);
         static T Covariance(vector<T> v1, vector<T> v2);
         void Print(bool isInt);
 
@@ -52,18 +52,18 @@ namespace MathTools {
         vector<T> values;
     };
 
-    typedef MatrixTemplate<float>  MatrixFloat;
-    typedef MatrixTemplate<double> MatrixDouble;
+    typedef Matrix<float>  MatrixFloat;
+    typedef Matrix<double> MatrixDouble;
 
     template <class T>
-    MatrixTemplate<T>::MatrixTemplate() {
+    Matrix<T>::Matrix() {
         rowCount = 0;
         colCount = 0;
         values.clear();
     }
 
     template <class T>
-    MatrixTemplate<T>::MatrixTemplate(unsigned int rowCount, unsigned int colCount) {
+    Matrix<T>::Matrix(unsigned int rowCount, unsigned int colCount) {
         this->rowCount = rowCount;
         this->colCount = colCount;
         values.clear();
@@ -73,23 +73,23 @@ namespace MathTools {
     }
 
     template <class T>
-    MatrixTemplate<T>::~MatrixTemplate() {
+    Matrix<T>::~Matrix() {
         values.clear();
     }
 
     template <class T>
-    T MatrixTemplate<T>::GetValue(int row, int col) const {
+    T Matrix<T>::GetValue(int row, int col) const {
         return values[GetIndex(row, col)];
     }
 
     template <class T>
-    void MatrixTemplate<T>::SetValue(T value, int row, int col) {
+    void Matrix<T>::SetValue(T value, int row, int col) {
         values[GetIndex(row, col)] = value;
     }
 
 
     template <class T>
-    MatrixTemplate<T> &MatrixTemplate<T>::operator=(const MatrixTemplate<T>& m) {
+    Matrix<T> &Matrix<T>::operator=(const Matrix<T>& m) {
         if((rowCount != m.GetRowCount()) || (colCount != m.GetColCount())) {
             printf("Error! Assigning matrices of incompatible dimensions!\n");
             exit(0);
@@ -104,13 +104,13 @@ namespace MathTools {
     }
 
     template <class T>
-    MatrixTemplate<T> MatrixTemplate<T>::operator+(const MatrixTemplate<T> &m ) {
+    Matrix<T> Matrix<T>::operator+(const Matrix<T> &m ) {
         if((rowCount != m.GetRowCount()) || (colCount != m.GetColCount())) {
             printf("Error! Adding matrices of incompatible dimensions!\n");
             exit(0);
         }
 
-        MatrixTemplate<T> retVal = MatrixTemplate<T>(rowCount, colCount);
+        Matrix<T> retVal = Matrix<T>(rowCount, colCount);
 
         for(unsigned int i = 0; i < rowCount; i++) {
             for(unsigned int j = 0; j < colCount; j++) {
@@ -120,13 +120,13 @@ namespace MathTools {
         return retVal;
     }
     template <class T>
-    MatrixTemplate<T> MatrixTemplate<T>::operator*(const MatrixTemplate<T> & m ) {
+    Matrix<T> Matrix<T>::operator*(const Matrix<T> & m ) {
         if(colCount != m.GetRowCount()) {
             printf("Error! Multiplying matrices of incompatible dimensions!\n");
             exit(0);
         }
 
-        MatrixTemplate<T> retVal = MatrixTemplate<T>(rowCount, m.GetColCount());
+        Matrix<T> retVal = Matrix<T>(rowCount, m.GetColCount());
 
         T val;
         for(unsigned int i = 0; i < rowCount; i++) {
@@ -142,13 +142,13 @@ namespace MathTools {
     }
 
     template <class T>
-    MatrixTemplate<T> MatrixTemplate<T>::operator-(const MatrixTemplate<T> &m ) {
+    Matrix<T> Matrix<T>::operator-(const Matrix<T> &m ) {
         if((rowCount != m.GetRowCount()) || (colCount != m.GetColCount())) {
             printf("Error! Adding matrices of incompatible dimensions!\n");
             exit(0);
         }
 
-        MatrixTemplate<T> retVal = MatrixTemplate<T>(rowCount, colCount);
+        Matrix<T> retVal = Matrix<T>(rowCount, colCount);
 
         for(unsigned int i = 0; i < rowCount; i++) {
             for(unsigned int j = 0; j < colCount; j++) {
@@ -159,7 +159,7 @@ namespace MathTools {
     }
 
     template <class T>
-    MatrixTemplate<T>& MatrixTemplate<T>::operator+=(const MatrixTemplate<T> &m ) {
+    Matrix<T>& Matrix<T>::operator+=(const Matrix<T> &m ) {
         if((rowCount != m.GetRowCount()) || (colCount != m.GetColCount())) {
             printf("Error! Adding matrices of incompatible dimensions!\n");
             exit(0);
@@ -174,7 +174,7 @@ namespace MathTools {
     }
 
     template <class T>
-    MatrixTemplate<T>& MatrixTemplate<T>::operator-=(const MatrixTemplate<T> &m ) {
+    Matrix<T>& Matrix<T>::operator-=(const Matrix<T> &m ) {
         if((rowCount != m.GetRowCount()) || (colCount != m.GetColCount())) {
             printf("Error! Adding matrices of incompatible dimensions!\n");
             exit(0);
@@ -189,8 +189,8 @@ namespace MathTools {
     }
 
     template <class T>
-    MatrixTemplate<T> MatrixTemplate<T>::operator*(const T &s) {
-        MatrixTemplate<T> retVal = MatrixTemplate(rowCount, colCount);
+    Matrix<T> Matrix<T>::operator*(const T &s) {
+        Matrix<T> retVal = Matrix(rowCount, colCount);
         for(unsigned int i = 0; i < rowCount; i++) {
             for(unsigned int j = 0; j < colCount; j++) {
                 retVal.SetValue(this->GetValue(i, j) * s, i, j);
@@ -200,8 +200,8 @@ namespace MathTools {
     }
 
     template <class T>
-    MatrixTemplate<T> MatrixTemplate<T>::Transpose() {
-        MatrixTemplate<T> retVal = MatrixTemplate(colCount, rowCount);
+    Matrix<T> Matrix<T>::Transpose() {
+        Matrix<T> retVal = Matrix(colCount, rowCount);
         for(unsigned int i = 0; i < rowCount; i++) {
             for(unsigned int j = 0; j < colCount; j++) {
                 retVal.SetValue(this->GetValue(i, j), j, i);
@@ -212,28 +212,28 @@ namespace MathTools {
 
 
     template <class T>
-    MatrixTemplate<T> MatrixTemplate<T>::ConjugateTranspose() {
+    Matrix<T> Matrix<T>::ConjugateTranspose() {
         return Transpose();
     }
 
 
     template <class T>
-    unsigned int MatrixTemplate<T>::GetRowCount() const  {
+    unsigned int Matrix<T>::GetRowCount() const  {
         return rowCount;
     }
 
     template <class T>
-    unsigned int MatrixTemplate<T>::GetColCount() const {
+    unsigned int Matrix<T>::GetColCount() const {
         return colCount;
     }
 
     template <class T>
-    unsigned int MatrixTemplate<T>::GetIndex(int row, int col) const  {
+    unsigned int Matrix<T>::GetIndex(int row, int col) const  {
         return row*colCount + col;
     }
 
     template <class T>
-    T MatrixTemplate<T>::Determinant() {
+    T Matrix<T>::Determinant() {
         if(rowCount != colCount) {
             printf("Error! Determinant can be obtained of square matrices ONLY.");
             exit(0);
@@ -268,7 +268,7 @@ namespace MathTools {
     }
 
     template <class T>
-    void MatrixTemplate<T>::Print(bool isInt) {
+    void Matrix<T>::Print(bool isInt) {
         printf("\n");
         for(unsigned int i = 0; i < rowCount; i++) {
             for(unsigned int j = 0; j < colCount; j++) {
@@ -284,8 +284,8 @@ namespace MathTools {
     }
 
     template <class T>
-    MatrixTemplate<T> MatrixTemplate<T>::Identity(int size){
-        MatrixTemplate<T> retVal = MatrixTemplate<T>(size, size);
+    Matrix<T> Matrix<T>::Identity(int size){
+        Matrix<T> retVal = Matrix<T>(size, size);
         for(int i = 0; i < size; i++) {
             retVal.SetValue((T)1, i, i);
         }
@@ -293,14 +293,14 @@ namespace MathTools {
     }
 
     template <class T>
-    MatrixTemplate<T> MatrixTemplate<T>::AllZero(int rowCount, int colCount) {
-        MatrixTemplate<T> retVal = MatrixTemplate<T>(rowCount, colCount);
+    Matrix<T> Matrix<T>::AllZero(int rowCount, int colCount) {
+        Matrix<T> retVal = Matrix<T>(rowCount, colCount);
         return retVal;
     }
 
     template <class T>
-    MatrixTemplate<T> MatrixTemplate<T>::AllOne(int rowCount, int colCount) {
-        MatrixTemplate<T> retVal = MatrixTemplate<T>(rowCount, colCount);
+    Matrix<T> Matrix<T>::AllOne(int rowCount, int colCount) {
+        Matrix<T> retVal = Matrix<T>(rowCount, colCount);
         for(unsigned int i = 0; i < rowCount; i++) {
             for(unsigned int j = 0; j < colCount; j++) {
                 retVal.SetValue((T)1, i, j);
@@ -310,8 +310,8 @@ namespace MathTools {
     }
 
     template <class T>
-    MatrixTemplate<T> MatrixTemplate<T>::Random(int rowCount, int colCount) {
-        MatrixTemplate<T> retVal = MatrixTemplate<T>(rowCount, colCount);
+    Matrix<T> Matrix<T>::Random(int rowCount, int colCount) {
+        Matrix<T> retVal = Matrix<T>(rowCount, colCount);
         for(unsigned int i = 0; i < rowCount; i++) {
             for(unsigned int j = 0; j < colCount; j++) {
                 retVal.SetValue((T)rand(), i, j);
@@ -321,7 +321,7 @@ namespace MathTools {
     }
 
     template <class T>
-    void MatrixTemplate<T>::SingularValueDecomposition(MatrixTemplate <T> &u, MatrixTemplate <T> &w, MatrixTemplate <T> &v) {
+    void Matrix<T>::SingularValueDecomposition(Matrix <T> &u, Matrix <T> &w, Matrix <T> &v) {
         ap::real_2d_array a;
         a.setlength(rowCount, colCount);
         for(unsigned int i = 0; i < rowCount; i++) {
@@ -354,13 +354,13 @@ namespace MathTools {
     }
 
     template <class T>
-    MatrixTemplate<T> MatrixTemplate<T>::Covariance(MatrixTemplate<T> m1, MatrixTemplate<T> m2) {
+    Matrix<T> Matrix<T>::Covariance(Matrix<T> m1, Matrix<T> m2) {
         if(m1.GetRowCount() != m2.GetRowCount()) {
             printf("Error! Unable to get covariance of two matrices with incompatible row counts\n");
             exit(0);
         }
 
-        MatrixTemplate<T> retVal = MatrixTemplate<T>(m1.GetColCount(), m2.GetColCount());
+        Matrix<T> retVal = Matrix<T>(m1.GetColCount(), m2.GetColCount());
         vector<T> c1, c2;
 
         for(unsigned int i = 0; i < m1.GetColCount(); i++) {
@@ -380,7 +380,7 @@ namespace MathTools {
     }
 
     template <class T>
-    T MatrixTemplate<T>::Covariance(vector<T> v1, vector<T> v2) {
+    T Matrix<T>::Covariance(vector<T> v1, vector<T> v2) {
         if(v1.size() != v2.size()) {
             printf("Error! Covariance can be found of only vectors of same size.\n");
             exit(0);

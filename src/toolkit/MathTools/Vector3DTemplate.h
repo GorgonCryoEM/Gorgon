@@ -44,7 +44,7 @@ namespace MathTools {
         Vector3DTemplate<T>& operator-=(const Vector3DTemplate<T>& d);
         Vector3DTemplate<T> GetOrthogonal();
         Vector3DTemplate<T> Rotate(Vector3DTemplate<T> axis, double angle);
-        Vector3DTemplate<T> Transform(MatrixTemplate<T> transformation);
+        Vector3DTemplate<T> Transform(Matrix<T> transformation);
         T * begin();
         T * end();
 
@@ -326,8 +326,8 @@ namespace MathTools {
     }
 
     template <class T>
-    Vector3DTemplate<T> Vector3DTemplate<T>::Transform(MatrixTemplate<T> transformation) {
-        MatrixTemplate<T> p = MatrixTemplate<T>(4, 1);
+    Vector3DTemplate<T> Vector3DTemplate<T>::Transform(Matrix<T> transformation) {
+        Matrix<T> p = Matrix<T>(4, 1);
         p.SetValue(values[0], 0, 0);
         p.SetValue(values[1], 1, 0);
         p.SetValue(values[2], 2, 0);
