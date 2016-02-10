@@ -3,7 +3,7 @@
 
 #include <vector>
 #include <MathTools/BasicDefines.h>
-#include <SkeletonMaker/volume.h>
+#include <volume.h>
 //#include <string>
 //#include <GorgonGL.h>
 #include <Visualization/Rasterizer.h>

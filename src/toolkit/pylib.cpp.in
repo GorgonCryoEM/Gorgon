@@ -1,6 +1,6 @@
 #include <boost/python.hpp>
 
-#include "SkeletonMaker/volume.h"
+#include "volume.h"
 #include "Visualization/MeshRenderer.h"
 #include "ProteinMorph/SSEHunter.h"
 #include <MathTools/Vector3D.h>

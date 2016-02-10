@@ -7,7 +7,7 @@
 //#include <cstdio>
 //#include <ProteinMorph/NonManifoldMesh.h>
 //#include <ProteinMorph/SSEHunter.h>
-#include <SkeletonMaker/volume.h>
+#include <volume.h>
 #include <GraphMatch/PDBReader.h>
 //#include <GraphMatch/PDBAtom.h>
 #include <GraphMatch/PDBBond.h>

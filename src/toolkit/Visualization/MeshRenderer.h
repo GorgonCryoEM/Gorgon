@@ -5,7 +5,7 @@
 //#include <cstdio>
 //#include <GorgonGL.h>
 //#include <string>
-#include <SkeletonMaker/volume.h>
+#include <volume.h>
 #include <SkeletonMaker/reader.h>
 #include <Visualization/NonManifoldMesh.h>
 //#include "Renderer.h"

@@ -2,7 +2,7 @@
 #define TOOLKIT_GRAYSKELETONCPP_GRAY_IMAGE_H
 
 //#include <SkeletonMaker/reader.h>
-//#include <SkeletonMaker/volume.h>
+//#include <volume.h>
 #include "GlobalDefinitions.h"
 
 using namespace SkeletonMaker;

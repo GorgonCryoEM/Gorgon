@@ -7,9 +7,9 @@
 #include "Matcher2Helix.h"
 #include "SecondaryStructure.h"
 #include "GeometricShape.h"
-//#include <SkeletonMaker/volume.h>
+//#include <volume.h>
 //#include <MathTools/Vector3D.h>
-//#include <SkeletonMaker/volume.h>
+//#include <volume.h>
 //using namespace std;
 //using namespace SkeletonMaker;
 

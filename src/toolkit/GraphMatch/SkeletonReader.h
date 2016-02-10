@@ -2,7 +2,7 @@
 #define TOOLKIT_GRAPHMATCH_SKELETONREADER_H
 
 #include <SkeletonMaker/reader.h>
-#include <SkeletonMaker/volume.h>
+#include <volume.h>
 //#include <MathTools/BasicDefines.h>
 //#include "GeometricShape.h"
 #include <vector>
