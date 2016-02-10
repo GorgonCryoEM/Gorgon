@@ -52,6 +52,9 @@ namespace MathTools {
         vector<T> values;
     };
 
+    typedef MatrixTemplate<float>  MatrixFloat;
+    typedef MatrixTemplate<double> MatrixDouble;
+
     template <class T>
     MatrixTemplate<T>::MatrixTemplate() {
         rowCount = 0;
