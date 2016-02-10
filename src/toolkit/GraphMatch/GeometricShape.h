@@ -1,7 +1,7 @@
 #ifndef TOOLKIT_GRAPHMATCH_GEOMETRICSHAPE_H
 #define TOOLKIT_GRAPHMATCH_GEOMETRICSHAPE_H
 
-#include "VectorMath.h"
+#include "MathTools/VectorMath.h"
 //#include <vector>
 //#include <MathTools/Vector3D.h>
 //#include <MathTools/MathLib.h>

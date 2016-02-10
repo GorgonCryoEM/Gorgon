@@ -13,7 +13,7 @@
 #include <GraphMatch/PDBBond.h>
 //#include <map>
 //#include <list>
-#include <GraphMatch/VectorMath.h>
+#include <MathTools/VectorMath.h>
 //#include <boost/tuple/tuple.hpp>
 
 //using namespace std;

@@ -2,7 +2,7 @@
 #define TOOLKIT_GRAPHMATCH_WONGMATCH15CONSTRAINEDNOFUTURE_H
 
 //#include "StandardGraph.h"
-#include "LinkedNode.h"
+#include "Foundation/LinkedNode.h"
 //#include "NodeList.h"
 //#include "GlobalConstants.h"
 #include "PathGenerator.h"

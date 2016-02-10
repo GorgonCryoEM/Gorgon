@@ -6,12 +6,12 @@
 #define MAX_ERODE 1000
 
 #include "VolumeData.h"
-#include "SkeletonMaker/GridQueue2.h"
+#include "Foundation/GridQueue2.h"
 //#include "ThinningTemplate.h"
 ////#include <cstdio>
 ////#include <cstdlib>
 ////#include <cmath>
-#include "SkeletonMaker/PriorityQueue.h"
+#include "Foundation/PriorityQueue.h"
 ////#include <vector>
 #include <MathTools/Vector3D.h>
 #include <MathTools/MathLib.h>

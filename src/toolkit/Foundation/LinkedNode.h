@@ -6,7 +6,7 @@
 #include "LinkedNodeStub.h"
 //#include <string>
 //#include <cassert>
-#include "StandardGraph.h"
+#include "GraphMatch/StandardGraph.h"
 
 using namespace std;
 
