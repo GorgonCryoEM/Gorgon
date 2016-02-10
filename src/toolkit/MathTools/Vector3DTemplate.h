@@ -58,6 +58,10 @@ namespace MathTools {
         T values[3];
     };
 
+    typedef Vector3DTemplate<int>    Vector3DInt;
+    typedef Vector3DTemplate<float>  Vector3DFloat;
+    typedef Vector3DTemplate<double> Vector3DDouble;
+
     template <class T>
     Vector3DTemplate<T>::Vector3DTemplate() {
         values[0] = (T)0.0;
