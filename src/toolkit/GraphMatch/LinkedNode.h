@@ -6,6 +6,7 @@
 #include "LinkedNodeStub.h"
 //#include <string>
 //#include <cassert>
+#include "StandardGraph.h"
 
 using namespace std;
 

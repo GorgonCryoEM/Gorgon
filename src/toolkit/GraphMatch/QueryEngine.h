@@ -7,7 +7,7 @@
 //#include "WongMatch15Constrained.h"
 #include "WongMatch15ConstrainedNoFuture.h"
 //#include "WongMatch15ConstrainedOnlyA.h"
-//#include "PDBReader.h"
+#include "PDBReader.h"
 #include "SEQReader.h"
 #include "SkeletonReader.h"
 //#include "GlobalConstants.h"
