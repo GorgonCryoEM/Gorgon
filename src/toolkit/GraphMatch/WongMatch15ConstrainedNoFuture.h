@@ -4,7 +4,7 @@
 //#include "StandardGraph.h"
 #include "Foundation/LinkedNode.h"
 //#include "NodeList.h"
-//#include "GlobalConstants.h"
+//#include "Core/GlobalConstants.h"
 #include "PathGenerator.h"
 //#include "Structures.h"
 //#include <ctime>

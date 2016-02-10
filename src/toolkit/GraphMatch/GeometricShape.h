@@ -5,7 +5,7 @@
 //#include <vector>
 //#include <MathTools/Vector3D.h>
 //#include <MathTools/MathLib.h>
-#include "GlobalConstants.h"
+#include "Core/GlobalConstants.h"
 
 //using namespace std;
 using namespace MathTools;

@@ -10,7 +10,7 @@
 #include "PDBReader.h"
 #include "Readers/SEQReader.h"
 #include "Readers/SkeletonReader.h"
-//#include "GlobalConstants.h"
+//#include "Core/GlobalConstants.h"
 //#include "GraphGenerator.h"
 //#include <ctime>
 //#include <string>

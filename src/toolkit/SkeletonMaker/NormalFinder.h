@@ -2,8 +2,8 @@
 #define TOOLKIT_GRAYSKELETONCPP_NORMAL_FINDER_H
 
 //#include <MathTools/Vector3D.h>
-//#include "GlobalDefinitions.h"
-//#include <volume.h>
+//#include "Core/GlobalDefinitions.h"
+//#include <Core/volume.h>
 
 //using namespace std;
 using namespace MathTools;

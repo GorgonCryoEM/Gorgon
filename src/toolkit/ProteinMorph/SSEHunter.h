@@ -1,7 +1,7 @@
 #ifndef TOOLKIT_PROTEINMORPH_SSE_HUNTER_H
 #define TOOLKIT_PROTEINMORPH_SSE_HUNTER_H
 
-//#include <volume.h>
+//#include <Core/volume.h>
 #include "Visualization/NonManifoldMesh.h"
 //#include <vector>
 //#include <algorithm>
@@ -14,7 +14,7 @@
 //#include <Gorgon/MeshRenderer.h>
 //#include <cmath>
 #include <iostream>
-#include <GlobalDefinitions.h>
+#include <Core/GlobalDefinitions.h>
 
 //#define USE_TIME_MANAGER
 #ifdef USE_TIME_MANAGER

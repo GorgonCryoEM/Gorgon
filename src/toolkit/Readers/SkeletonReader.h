@@ -2,13 +2,13 @@
 #define TOOLKIT_GRAPHMATCH_SKELETONREADER_H
 
 #include <Readers/reader.h>
-#include <volume.h>
+#include <Core/volume.h>
 //#include <MathTools/BasicDefines.h>
 //#include "GeometricShape.h"
 #include <vector>
 #include <queue>
 #include <list>
-//#include "GlobalConstants.h"
+//#include "Core/GlobalConstants.h"
 
 using namespace std;
 using namespace SkeletonMaker;

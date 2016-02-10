@@ -2,7 +2,7 @@
 #define TOOLKIT_GRAPHMATCH_SEQREADER_H
 
 #include <vector>
-//#include "GlobalConstants.h"
+//#include "Core/GlobalConstants.h"
 #include "ProteinMorph/SecondaryStructure.h"
 //#include "StandardGraph.h"
 //#include "SheetStrand.h"

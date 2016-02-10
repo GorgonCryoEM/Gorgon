@@ -10,7 +10,7 @@
 	#include <cstring>
 #endif
 
-#include "volume.h"
+#include "Core/volume.h"
 
 namespace SkeletonMaker {
     class VolumeReader

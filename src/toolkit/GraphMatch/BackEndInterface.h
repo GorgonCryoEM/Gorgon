@@ -1,7 +1,7 @@
 #ifndef TOOLKIT_GRAPHMATCH_BACK_END_INTERFACE_H
 #define TOOLKIT_GRAPHMATCH_BACK_END_INTERFACE_H
 
-//#include "GlobalConstants.h"
+//#include "Core/GlobalConstants.h"
 #include "QueryEngine.h"
 //#include "LinkedNode.h"
 
