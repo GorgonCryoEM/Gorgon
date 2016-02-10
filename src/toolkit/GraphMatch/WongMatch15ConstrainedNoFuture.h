@@ -10,7 +10,7 @@
 //#include <ctime>
 ////#include <SkeletonMaker/PriorityQueue.h>
 #include <Foundation/GorgonPriorityQueue.h>
-#include "SSECorrespondenceResult.h"
+#include "ProteinMorph/SSECorrespondenceResult.h"
 
 using namespace Foundation;
 

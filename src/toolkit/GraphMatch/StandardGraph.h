@@ -5,7 +5,7 @@
 #include <vector>
 //#include "GlobalConstants.h"
 #include "Matcher2Helix.h"
-#include "SecondaryStructure.h"
+#include "ProteinMorph/SecondaryStructure.h"
 #include "GeometricShape.h"
 //#include <volume.h>
 //#include <MathTools/Vector3D.h>
