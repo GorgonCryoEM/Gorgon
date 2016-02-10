@@ -1,7 +1,7 @@
 #include "volume.h"
 #include <Foundation/StringUtils.h>
 #include <GlobalDefinitions.h>
-#include <SkeletonMaker/GraySkeletonCPP/VolumeSkeletonizer.h>
+#include <SkeletonMaker/VolumeSkeletonizer.h>
 #include <Readers/reader.h>
 
 #include <fstream>
