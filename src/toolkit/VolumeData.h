@@ -2,7 +2,7 @@
 #define TOOLKIT_SKELETON_MAKER_VOLUME_DATA_H
 
 #include <vector>
-#include "Dim3D.h"
+#include "MathTools/Dim3D.h"
 
 using namespace std;
 using namespace Toolkit;
