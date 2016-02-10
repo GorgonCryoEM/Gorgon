@@ -6,7 +6,7 @@
 //#include <GorgonGL.h>
 //#include <string>
 #include <volume.h>
-#include <SkeletonMaker/reader.h>
+#include <Readers/reader.h>
 #include <Visualization/NonManifoldMesh.h>
 //#include "Renderer.h"
 #include <Foundation/StringUtils.h>

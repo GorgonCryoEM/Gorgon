@@ -3,7 +3,7 @@
 
 #include <vector>
 //#include "GlobalConstants.h"
-#include "SecondaryStructure.h"
+#include "GraphMatch/SecondaryStructure.h"
 //#include "StandardGraph.h"
 //#include "SheetStrand.h"
 #include <string>

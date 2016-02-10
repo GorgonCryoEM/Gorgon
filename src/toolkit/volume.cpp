@@ -2,7 +2,7 @@
 #include <Foundation/StringUtils.h>
 #include <GlobalDefinitions.h>
 #include <SkeletonMaker/GraySkeletonCPP/VolumeSkeletonizer.h>
-#include <SkeletonMaker/reader.h>
+#include <Readers/reader.h>
 
 #include <fstream>
 #include <iomanip>
