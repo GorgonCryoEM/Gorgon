@@ -34,10 +34,6 @@ namespace MathTools {
         float values[MAX_PROBABILITY_DISTRIBUTION_WIDTH][MAX_PROBABILITY_DISTRIBUTION_WIDTH][MAX_PROBABILITY_DISTRIBUTION_WIDTH];
     };
 
-    struct Quarternion {
-        float values[4];
-    };
-
     struct EigenResults3D{
         float values[3];
         Vector3DFloat vectors[3];
