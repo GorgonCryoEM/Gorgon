@@ -9,7 +9,7 @@
 //#include <string>
 //#include <MathTools/Vector3D.h>
 #include "PDBAtom.h"
-#include "PDBHelix.h"
+//#include "PDBHelix.h"
 #include "StandardGraph.h"
 //#include <MathTools/LinearSolver.h>
 
