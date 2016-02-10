@@ -12,7 +12,7 @@ namespace MathTools {
     const    int MAX_INT    = std::numeric_limits<int>::max();
 
     inline bool isZero(double value, double varience = 1e-16) {
-        return (value < varience && value > -varience)? true : false;
+        return value < varience && value > -varience ? true : false;
     }
 
     inline bool isEqual(double value1, double value2, double varience = 1e-16) {
