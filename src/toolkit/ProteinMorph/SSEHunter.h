@@ -2,7 +2,7 @@
 #define TOOLKIT_PROTEINMORPH_SSE_HUNTER_H
 
 //#include <SkeletonMaker/volume.h>
-#include "NonManifoldMesh.h"
+#include "Visualization/NonManifoldMesh.h"
 //#include <vector>
 //#include <algorithm>
 //#include <map>

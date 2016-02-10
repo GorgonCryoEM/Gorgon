@@ -17,7 +17,7 @@
 ////#include <functional>
 //#include <SkeletonMaker/volume.h>
 //#include "MathTools/BasicDefines.h"
-#include "DiscreteMesh.h"
+#include "Visualization/DiscreteMesh.h"
 
 using namespace std;
 
