@@ -6,7 +6,7 @@
 #include <MathTools/Vector3D.h>
 #include "CAlphaRenderer.h"
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>
-#include "SSECorrespondenceEngine.h"
+#include "ProteinMorph/SSECorrespondenceEngine.h"
 #include "GraphMatch/PDBBond.h"
 #include "GraphMatch/SEQReader.h"
 
