@@ -1861,65 +1861,12 @@ void Volume::erodeHelix(int disthr) {
                 if(getDataAt(i, j, k) == 0) {
                     setDataAt(i, j, k, dis);
                     queues[-dis]->prepend(i, j, k);
-                    /*
-                     int fval = (int) fvol->getDataAt( i, j, k ) ;
-                     if ( fval == 0)
-                     {
-                     // queues[ -dis ]->prepend( i, j, k ) ;
-                     }
-                     else
-                     {
-                     setDataAt( i, j, k, fval - 1 ) ;
-                     // queues[ -fval + 1 ]->prepend( i, j, k ) ;
-                     }
-                     */
                     ftot++;
                 }
             }
 #ifdef VERBOSE
     printf("%d nodes\n", ftot);
 #endif
-
-    // return ;
-
-    /* Find local minimum: to help determine erosion level
-     int cts[ 64 ] ;
-     for ( i = 0 ; i <= - dis ; i ++ )
-     {
-     cts[ i ] = 0 ;
-     }
-     for ( i = 0 ; i < getSizeX() ; i ++ )
-     for ( j = 0 ; j < getSizeY() ; j ++ )
-     for ( k = 0 ; k < getSizeZ() ; k ++ )
-     {
-     double val = getDataAt( i, j, k ) ;
-     if ( val < -1 )
-     {
-     int min = 1 ;
-     for ( int m = 0 ; m < 6 ; m ++ )
-     {
-     int nx = i + neighbor6[m][0] ;
-     int ny = j + neighbor6[m][1] ;
-     int nz = k + neighbor6[m][2] ;
-     if ( getDataAt( nx, ny, nz ) < val )
-     {
-     min = 0 ;
-     break ;
-     }
-     }
-
-     if ( min )
-     {
-     cts[ (int) - val ] ++ ;
-     }
-     }
-     }
-
-     for ( i = 2 ; i <= - dis ; i ++ )
-     {
-     printf("Local minima: %d with %d nodes.\n", -i, cts[ i ] ) ;
-     }
-     */
 
     // Dilate back
     // Starting from nodes with distance - 2 - disthr
@@ -1953,10 +1900,6 @@ void Volume::erodeHelix(int disthr) {
             }
 
             if(!dilatable) {
-                /*
-                 setDataAt( ele->x, ele->y, ele->z, - 1 ) ;
-                 */
-
                 setDataAt(ele->x, ele->y, ele->z, -d + 1);
                 if(d > 2) {
                     queues[d - 1]->prepend(ele->x, ele->y, ele->z);
@@ -2029,16 +1972,6 @@ void Volume::erodeHelix(int disthr) {
         }
 
         /* End of debugging */
-
-        /*
-         queue3->reset() ;
-         ele = queue3->getNext() ;
-         while ( ele != NULL )
-         {
-         setDataAt( ele->x, ele->y, ele->z, - 1 ) ;
-         ele = queue3->remove() ;
-         }
-         */
     }
 
     // Finally, threshold the volume
@@ -2078,9 +2011,7 @@ int Volume::erodeSheet(int disthr) {
         for(j = 0; j < getSizeY(); j++)
             for(k = 0; k < getSizeZ(); k++) {
                 if(getDataAt(i, j, k) >= 0) {
-                    if(!hasCompleteSheet(i, j, k))
-                    //if ( ! hasCompleteSheet( i, j, k, facevol ) )
-                            {
+                    if(!hasCompleteSheet(i, j, k)) {
                         queue2->prepend(i, j, k);
                         fvol->setDataAt(i, j, k, -1);
                     }
@@ -2116,9 +2047,6 @@ int Volume::erodeSheet(int disthr) {
                         if(mx != 0 && my != 0 && mz != 0) {
                             continue;
                         }
-                        //int nx = ele->x + neighbor6[m][0] ;
-                        //int ny = ele->y + neighbor6[m][1] ;
-                        //int nz = ele->z + neighbor6[m][2] ;
                         int nx = ele->x + mx;
                         int ny = ele->y + my;
                         int nz = ele->z + mz;
@@ -2126,9 +2054,7 @@ int Volume::erodeSheet(int disthr) {
                         if(getDataAt(nx, ny, nz) == 0) {
                             fvol->setDataAt(nx, ny, nz, dis);
 
-                            if(!hasCompleteSheet(nx, ny, nz))
-                            // if  ( ! hasCompleteSheet( nx, ny, nz, facevol ) )
-                                    {
+                            if(!hasCompleteSheet(nx, ny, nz)) {
                                 setDataAt(nx, ny, nz, 1);
                                 queue3->prepend(nx, ny, nz);
                             }
@@ -2156,19 +2082,6 @@ int Volume::erodeSheet(int disthr) {
         for(j = 0; j < getSizeY(); j++)
             for(k = 0; k < getSizeZ(); k++) {
                 if(getDataAt(i, j, k) == 0) {
-                    /*
-                     int fval = (int) fvol->getDataAt( i, j, k ) ;
-                     if ( fval == 0)
-                     {
-                     setDataAt( i, j, k, dis - 2 ) ;
-                     // queues[ -dis ]->prepend( i, j, k ) ;
-                     }
-                     else
-                     {
-                     setDataAt( i, j, k, fval - 1 ) ;
-                     queues[ -fval + 1 ]->prepend( i, j, k ) ;
-                     }
-                     */
                     setDataAt(i, j, k, dis);
                     queues[-dis]->prepend(i, j, k);
 
@@ -2178,47 +2091,6 @@ int Volume::erodeSheet(int disthr) {
 #ifdef VERBOSE
     printf("%d nodes\n", ftot);
 #endif
-
-    /* Find local minimum: to help determine erosion level
-     int cts[ 64 ] ;
-     for ( i = 0 ; i <= - dis ; i ++ )
-     {
-     cts[ i ] = 0 ;
-     }
-     for ( i = 0 ; i < getSizeX() ; i ++ )
-     for ( j = 0 ; j < getSizeY() ; j ++ )
-     for ( k = 0 ; k < getSizeZ() ; k ++ )
-     {
-     double val = getDataAt( i, j, k ) ;
-     if ( val < -1 )
-     {
-     int min = 1 ;
-     for ( int m = 0 ; m < 6 ; m ++ )
-     {
-     int nx = i + neighbor6[m][0] ;
-     int ny = j + neighbor6[m][1] ;
-     int nz = k + neighbor6[m][2] ;
-     if ( getDataAt( nx, ny, nz ) < val )
-     {
-     min = 0 ;
-     break ;
-     }
-     }
-
-     if ( min )
-     {
-     cts[ (int) - val ] ++ ;
-     }
-     }
-     }
-
-     for ( i = 2 ; i <= - dis ; i ++ )
-     {
-     printf("Local minima: %d with %d nodes.\n", -i, cts[ i ] ) ;
-     }
-     */
-
-    // return ;
     // Dilate back
     // Starting from nodes with distance - 2 - disthr
     int d;
@@ -2241,25 +2113,6 @@ int Volume::erodeSheet(int disthr) {
         ele = queues[d]->getNext();
         while(ele != NULL) {
             int dilatable = 0;
-            // for ( int m = 0 ; m < 6 ; m ++ )
-            /*
-             for ( int mx = -1 ; mx < 2 ; mx ++ )
-             for ( int my = -1 ; my < 2 ; my ++ )
-             for ( int mz = -1 ; mz < 2 ; mz ++ )
-             {
-             if ( mx == 0 || my == 0 || mz == 0 )
-             {
-             int nx = ele->x + mx ; // neighbor6[m][0] ;
-             int ny = ele->y + my ; // neighbor6[m][1] ;
-             int nz = ele->z + mz ; // neighbor6[m][2] ;
-             if ( getDataAt( nx, ny, nz ) == - d - 1 )
-             {
-             dilatable = 1 ;
-             break ;
-             }
-             }
-             }
-             */
             for(i = 0; i < 12; i++) {
                 int flag = 1, flag2 = 0;
                 for(j = 0; j < 4; j++) {
@@ -2285,9 +2138,6 @@ int Volume::erodeSheet(int disthr) {
             }
 
             if(!dilatable) {
-                // setDataAt( ele->x, ele->y, ele->z, - 1 ) ;
-                // queue3->prepend( ele->x, ele->y, ele->z ) ;
-
                 setDataAt(ele->x, ele->y, ele->z, -d + 1);
                 if(d > 2) {
                     queues[d - 1]->prepend(ele->x, ele->y, ele->z);
@@ -2356,25 +2206,13 @@ int Volume::erodeSheet(int disthr) {
                 break;
             }
         }
-
         /* End of debugging */
-
-        /*
-         queue3->reset() ;
-         ele = queue3->getNext() ;
-         while ( ele != NULL )
-         {
-         setDataAt( ele->x, ele->y, ele->z, - 1 ) ;
-         ele = queue3->remove() ;
-         }
-         */
     }
 
     // Finally, threshold the volume
 #ifdef VERBOSE
     //printf("Thresholding the volume to 0/1...\n") ;
 #endif
-    //threshold( -1, 1, 0, 0 ) ;
     threshold(0, 0, 1);
 
     delete facevol;
@@ -2439,10 +2277,6 @@ void Volume::surfaceSkeleton(Volume* grayvol, float lowthr, float highthr) {
         scrvol->setDataAt(i, -1);
     }
 
-#ifdef  NOISE_DIS_SHEET
-    Volume* noisevol = new Volume( getSizeX(), getSizeY(), getSizeZ() );
-#endif
-
     for(int curwid = 1; curwid <= wid; curwid++) {
 
         int numComplex = 0, numSimple = 0;
@@ -2475,84 +2309,6 @@ void Volume::surfaceSkeleton(Volume* grayvol, float lowthr, float highthr) {
             queue2->prepend(ox, oy, oz);
             ele = queue4->remove();
         }
-
-        // Now queue2 holds all the nodes for this layer
-
-#ifdef NOISE_DIS_SHEET
-        /* Extra step: classify nodes in queue2 into noise and non-noise nodes */
-        queue2->reset();
-
-        // First run
-        int flag = 0;
-        while ( ( ele = queue2->getNext() ) != NULL )
-        {
-            ox = ele->x;
-            oy = ele->y;
-            oz = ele->z;
-            if ( NOISE_DIS_SHEET <= 1 )
-            {
-                noisevol->setDataAt( ox, oy, oz, 0 );
-            }
-            else
-            {
-                flag = 0;
-                for ( int m = 0; m < 6; m ++ )
-                {
-                    int nx = ox + neighbor6[m][0];
-                    int ny = oy + neighbor6[m][1];
-                    int nz = oz + neighbor6[m][2];
-                    if ( getDataAt( nx, ny, nz ) == 0 )
-                    {
-                        noisevol->setDataAt( ox, oy, oz, 1 );
-                        flag = 1;
-                        break;
-                    }
-                }
-                if ( ! flag )
-                {
-                    noisevol->setDataAt( ox, oy, oz, 0 );
-                }
-            }
-        }
-
-        for ( int cur = 1; cur < NOISE_DIS_SHEET; cur ++ )
-        {
-            queue2->reset();
-            int count = 0;
-
-            while ( ( ele = queue2->getNext() ) != NULL )
-            {
-                ox = ele->x;
-                oy = ele->y;
-                oz = ele->z;
-
-                if ( noisevol->getDataAt( ox, oy, oz ) == 1 )
-                {
-                    continue;
-                }
-
-                flag = 0;
-                for ( int m = 0; m < 6; m ++ )
-                {
-                    int nx = ox + neighbor6[m][0];
-                    int ny = oy + neighbor6[m][1];
-                    int nz = oz + neighbor6[m][2];
-                    if ( getDataAt( nx, ny, nz ) > 0 && noisevol->getDataAt( nx, ny, nz ) == 1 )
-                    {
-                        noisevol->setDataAt( ox, oy, oz, 1 );
-                        count ++;
-                        break;
-                    }
-                }
-            }
-
-            if ( count == 0 )
-            {
-                break;
-            }
-        }
-
-#endif
 
         queue2->reset();
         ele = queue2->getNext();
@@ -2597,16 +2353,7 @@ void Volume::surfaceSkeleton(Volume* grayvol, float lowthr, float highthr) {
                 continue;
             }
 
-#ifndef NOISE_DIS_SHEET
-            // if ( hasFeatureFace( ox, oy, oz ) )
-            if( (!isSimple(ox, oy, oz)) || isSheetEnd(ox, oy, oz))
-            // if ( hasIsolatedFace(ox,oy,oz)  && (! isNoiseSheetEnd(ox,oy,oz)))
-#else
-                       // if ( ! isSimple( ox, oy, oz ) || isSheetEnd( ox, oy, oz, noisevol ) )
-                       if ( ! isSimple( ox, oy, oz ) || isSheetEnd( ox, oy, oz, noisevol ) || isHelixEnd( ox, oy, oz, noisevol ))
-                       // if ( isBertrandEndPoint( ox, oy, oz ) )
-#endif
-                       {
+            if( (!isSimple(ox, oy, oz)) || isSheetEnd(ox, oy, oz)) {
                 // Complex, set to next layer
                 setDataAt(ox, oy, oz, curwid + 1);
                 queue4->prepend(ox, oy, oz);
@@ -2768,10 +2515,6 @@ void Volume::surfaceSkeletonPres(float thr, Volume * preserve) {
         scrvol->setDataAt(i, -1);
     }
 
-#ifdef  NOISE_DIS_SHEET
-    Volume* noisevol = new Volume( getSizeX(), getSizeY(), getSizeZ() );
-#endif
-
     for(int curwid = 1; curwid <= wid; curwid++) {
         // At the start of each iteration,
         // queue2 and queue4 holds all the nodes for this layer
@@ -2810,118 +2553,6 @@ void Volume::surfaceSkeletonPres(float thr, Volume * preserve) {
             queue2->prepend(ox, oy, oz);
             ele = queue4->remove();
         }
-
-        // Now queue2 holds all the nodes for this layer
-
-#ifdef NOISE_DIS_SHEET
-        /* Extra step: classify nodes in queue2 into noise and non-noise nodes */
-        queue2->reset();
-
-        // First run
-        int flag = 0;
-        while ( ( ele = queue2->getNext() ) != NULL )
-        {
-            ox = ele->x;
-            oy = ele->y;
-            oz = ele->z;
-            if ( NOISE_DIS_SHEET <= 1 )
-            {
-                noisevol->setDataAt( ox, oy, oz, 0 );
-            }
-            else
-            {
-                flag = 0;
-                for ( int m = 0; m < 6; m ++ )
-                {
-                    int nx = ox + neighbor6[m][0];
-                    int ny = oy + neighbor6[m][1];
-                    int nz = oz + neighbor6[m][2];
-                    if ( getDataAt( nx, ny, nz ) == 0 )
-                    {
-                        noisevol->setDataAt( ox, oy, oz, 1 );
-                        flag = 1;
-                        break;
-                    }
-                }
-                if ( ! flag )
-                {
-                    noisevol->setDataAt( ox, oy, oz, 0 );
-                }
-            }
-        }
-
-        for ( int cur = 1; cur < NOISE_DIS_SHEET; cur ++ )
-        {
-            queue2->reset();
-            int count = 0;
-
-            while ( ( ele = queue2->getNext() ) != NULL )
-            {
-                ox = ele->x;
-                oy = ele->y;
-                oz = ele->z;
-
-                if ( noisevol->getDataAt( ox, oy, oz ) == 1 )
-                {
-                    continue;
-                }
-
-                flag = 0;
-                for ( int m = 0; m < 6; m ++ )
-                {
-                    int nx = ox + neighbor6[m][0];
-                    int ny = oy + neighbor6[m][1];
-                    int nz = oz + neighbor6[m][2];
-                    if ( getDataAt( nx, ny, nz ) > 0 && noisevol->getDataAt( nx, ny, nz ) == 1 )
-                    {
-                        noisevol->setDataAt( ox, oy, oz, 1 );
-                        count ++;
-                        break;
-                    }
-                }
-            }
-
-            if ( count == 0 )
-            {
-                break;
-            }
-        }
-
-#endif
-
-        /* Commented for debugging
-
-         // First,
-         // check for complex nodes in queue2
-         // move them from queue2 to queue3
-         queue2->reset() ;
-         ele = queue2->getNext() ;
-         while ( ele != NULL )
-         {
-         ox = ele->x ;
-         oy = ele->y ;
-         oz = ele->z ;
-
-         // Check simple
-         #ifndef NOISE_DIS_SHEET
-         if ( isSheetEnd( ox, oy, oz ) || ! isSimple( ox, oy, oz ) )
-         #else
-         if ( isSheetEnd( ox, oy, oz, noisevol ) || ! isSimple( ox, oy, oz ) )
-         #endif
-         {
-         // Complex, set to next layer
-         setDataAt( ox, oy, oz, curwid + 1 ) ;
-         queue3->prepend( ox, oy, oz ) ;
-         ele = queue2->remove() ;
-
-         numComplex ++ ;
-         }
-         else
-         {
-         ele = queue2->getNext() ;
-         }
-         }
-         */
 
         // Next,
         // Compute score for each node left in queue2
@@ -2975,26 +2606,7 @@ void Volume::surfaceSkeletonPres(float thr, Volume * preserve) {
                 continue;
             }
 
-            /* Commented for debugging
-
-             // Remove this simple node
-             setDataAt( ox, oy, oz, -1 ) ;
-             numSimple ++ ;
-             // printf("Highest score: %d\n", score) ;
-             */
-
-            /* Added for debugging */
-            // Check simple
-#ifndef NOISE_DIS_SHEET
-            // if ( hasFeatureFace( ox, oy, oz ) )
-            if( (!isSimple(ox, oy, oz)) || isSheetEnd(ox, oy, oz))
-            // if ( hasIsolatedFace(ox,oy,oz)  && (! isNoiseSheetEnd(ox,oy,oz)))
-#else
-                       // if ( ! isSimple( ox, oy, oz ) || isSheetEnd( ox, oy, oz, noisevol ) )
-                       if ( ! isSimple( ox, oy, oz ) || isSheetEnd( ox, oy, oz, noisevol ) || isHelixEnd( ox, oy, oz, noisevol ))
-                       // if ( isBertrandEndPoint( ox, oy, oz ) )
-#endif
-                       {
+            if( (!isSimple(ox, oy, oz)) || isSheetEnd(ox, oy, oz)) {
                 // Complex, set to next layer
                 setDataAt(ox, oy, oz, curwid + 1);
                 queue4->prepend(ox, oy, oz);
@@ -3018,36 +2630,6 @@ void Volume::surfaceSkeletonPres(float thr, Volume * preserve) {
                     queue2->prepend(nx, ny, nz);
                 }
             }
-
-            /* Commented for debugging
-
-             // Find complex nodes in its 3x3 neighborhood
-             // move them to queue2
-             for ( i = -1 ; i < 2 ; i ++ )
-             for ( j = -1 ; j < 2 ; j ++ )
-             for ( k = -1 ; k < 2 ; k ++ )
-             {
-             int nx = ox + i ;
-             int ny = oy + j ;
-             int nz = oz + k ;
-
-             // Check simple
-             if ( getDataAt( nx, ny, nz ) == curwid &&
-             // ( isSheetEnd( ox, oy, oz ) || ! isSimple( nx, ny, nz )) )
-             #ifndef NOISE_DIS_SHEET
-             ( isSheetEnd( nx, ny, nz ) || ! isSimple( nx, ny, nz ) ) )
-             #else
-             ( isSheetEnd( nx, ny, nz, noisevol ) || ! isSimple( nx, ny, nz ) ) )
-             #endif
-
-             {
-             // Complex, set to next layer
-             setDataAt( nx, ny, nz, curwid + 1 ) ;
-             queue2->prepend( nx, ny, nz ) ;
-             numComplex ++ ;
-             }
-             }
-             */
 
             // Update scores for nodes in its 5x5 neighborhood
             // insert them back into priority queue
