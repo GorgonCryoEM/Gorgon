@@ -86,6 +86,13 @@ namespace SkeletonMaker {
         yy = head->y ;
         zz = head->z ;
 
+        gridQueueEle res = q.front();
+        q.pop();
+
+//        xx = res.x;
+//        yy = res.y;
+//        zz = res.z;
+
         gridQueueEle* temp = head ;
         head = head->next ;
         delete temp ;
