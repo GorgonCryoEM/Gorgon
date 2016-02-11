@@ -43,7 +43,7 @@ namespace SkeletonMaker {
             }
 
             bool isEmpty() {
-                return (queueLength == 0);
+                return q.empty();
             }
 
             bool isFull() {
@@ -93,7 +93,7 @@ namespace SkeletonMaker {
                 k = keyQueue[0];
                 queueLength--;
 
-                if(queueLength == 0) {
+                if(isEmpty()) {
                     valueQueue[0] = T();
                     return;
                 }
