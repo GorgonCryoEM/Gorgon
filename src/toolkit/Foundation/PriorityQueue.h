@@ -47,7 +47,7 @@ namespace SkeletonMaker {
             }
 
             bool isFull() {
-                return (queueLength == this->maxLength);
+                return (q.size() == maxLength);
             }
 
             void add(T v, int k) {
