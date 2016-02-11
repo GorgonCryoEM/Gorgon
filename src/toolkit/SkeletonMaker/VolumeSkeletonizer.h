@@ -32,6 +32,10 @@ namespace GraySkeletonCPP {
         int binIndex;
     };
 
+    bool operator<(const pair<ImmersionBeachElement,int> &l, const pair<ImmersionBeachElement,int> &r){
+        return l.second < r.second;
+    }
+
 
     class VolumeSkeletonizer{
     public:

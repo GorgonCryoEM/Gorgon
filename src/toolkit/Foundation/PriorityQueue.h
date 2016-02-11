@@ -3,24 +3,32 @@
 
 #include <cstdlib>
 #include <cstdio>
+#include <queue>
 
 namespace SkeletonMaker {
+
+    template<class T>
+    bool operator<(const pair<T,int> &l, const pair<T,int> &r){
+        return l.second < r.second;
+    }
+
 //      Template class for a priority queue.
 //    The smallest element is at the front
-    template<class ValueT>
+    template<class T>
     class PriorityQueue {
         public:
             int queueLength;
             int maxLength;
 
-            ValueT ** valueQueue;
+            T ** valueQueue;
             int * keyQueue;
+            priority_queue<pair<T,int> > q;
 
         public:
             PriorityQueue(int max) {
                 this->maxLength = max;
                 this->queueLength = 0;
-                this->valueQueue = new ValueT*[max];
+                this->valueQueue = new T*[max];
                 this->keyQueue = new int[max];
             }
 
@@ -44,7 +52,7 @@ namespace SkeletonMaker {
                 return (this->queueLength == this->maxLength);
             }
 
-            void add(ValueT * v, int k) {
+            void add(T * v, int k) {
                 if(this->isFull()) {
                     printf("PRIORITY QUEUE FILLED UP !!! \n");
                     return;
@@ -70,7 +78,7 @@ namespace SkeletonMaker {
                 keyQueue[ind] = k;
             }
 
-            void remove(ValueT *& v, int & k) {
+            void remove(T *& v, int & k) {
                 if(this->isEmpty()) {
                     v = NULL;
                     k = 0;
@@ -86,7 +94,7 @@ namespace SkeletonMaker {
                     return;
                 }
 
-                ValueT * vv = valueQueue[queueLength];
+                T * vv = valueQueue[queueLength];
                 int kk = keyQueue[queueLength], lowk;
                 int ind = 0, tind, ind2, ind3;
                 while(1) {
