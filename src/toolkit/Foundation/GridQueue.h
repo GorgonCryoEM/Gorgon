@@ -35,7 +35,6 @@ namespace SkeletonMaker {
     private:
         gridQueueEle* head ;
         gridQueueEle* tail ;
-        int numEles ;
 
         queue<gridQueueEle> q;
     };
@@ -44,7 +43,6 @@ namespace SkeletonMaker {
     GridQueue::GridQueue( ) {
         head = NULL ;
         tail = NULL ;
-        numEles = 0 ;
     }
 
     gridQueueEle* GridQueue::getHead( ) {
@@ -52,7 +50,7 @@ namespace SkeletonMaker {
     }
 
     int GridQueue::getNumElements( ) {
-        return numEles ;
+        return q.size();
     }
 
     void GridQueue::pushQueue( int xx, int yy, int zz ) {
@@ -71,7 +69,6 @@ namespace SkeletonMaker {
             tail->next = ele ;
         }
         tail = ele ;
-        numEles ++ ;
 
         q.push(gridQueueEle(xx, yy, zz));
     }
@@ -101,7 +98,6 @@ namespace SkeletonMaker {
         {
             tail = NULL ;
         }
-        numEles -- ;
 
         return 1 ;
     }
