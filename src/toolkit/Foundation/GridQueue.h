@@ -31,16 +31,11 @@ namespace SkeletonMaker {
 
 
     private:
-        gridQueueEle* head ;
-        gridQueueEle* tail ;
-
         queue<gridQueueEle> q;
     };
 
 
     GridQueue::GridQueue( ) {
-        head = NULL ;
-        tail = NULL ;
     }
 
     void GridQueue::pushQueue( int xx, int yy, int zz ) {
@@ -50,17 +45,9 @@ namespace SkeletonMaker {
         ele->z = zz ;
         ele->score = 0 ;
         ele->next = NULL ;
-        if ( head == NULL )
-        {
-            head = ele ;
-        }
-        else
-        {
-            tail->next = ele ;
-        }
-        tail = ele ;
 
         q.push(*ele);
+        delete ele;
     }
 
     int GridQueue::popQueue( int& xx, int& yy, int& zz ) {
