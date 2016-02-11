@@ -79,14 +79,15 @@ namespace SkeletonMaker {
             }
 
             void remove(T & v, int & k) {
-                pair<T,int> res = q.top();
-                q.pop();
 
                 if(isEmpty()) {
 //                    v = NULL;
                     k = 0;
                     return;
                 }
+
+                pair<T,int> res = q.top();
+                q.pop();
 
                 v = valueQueue[0];
                 k = keyQueue[0];
