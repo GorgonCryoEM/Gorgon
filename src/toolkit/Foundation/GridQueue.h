@@ -39,15 +39,14 @@ namespace SkeletonMaker {
     }
 
     void GridQueue::pushQueue( int xx, int yy, int zz ) {
-        gridQueueEle* ele = new gridQueueEle ;
-        ele->x = xx ;
-        ele->y = yy ;
-        ele->z = zz ;
-        ele->score = 0 ;
-        ele->next = NULL ;
+        gridQueueEle ele;
+        ele.x = xx ;
+        ele.y = yy ;
+        ele.z = zz ;
+        ele.score = 0 ;
+        ele.next = NULL ;
 
-        q.push(*ele);
-        delete ele;
+        q.push(ele);
     }
 
     int GridQueue::popQueue( int& xx, int& yy, int& zz ) {
