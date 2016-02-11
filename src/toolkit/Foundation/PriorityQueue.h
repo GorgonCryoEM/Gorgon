@@ -87,6 +87,8 @@ namespace SkeletonMaker {
 
                 v = valueQueue[0];
                 k = keyQueue[0];
+//                v = res.first;
+//                k = res.second;
 
 
                 T  vv = valueQueue[(int)q.size()];
