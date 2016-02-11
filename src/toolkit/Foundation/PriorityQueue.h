@@ -39,7 +39,7 @@ namespace SkeletonMaker {
             }
 
             int getLength() {
-                return q.size();
+                return (int)q.size();
             }
 
             bool isEmpty() {
@@ -47,7 +47,7 @@ namespace SkeletonMaker {
             }
 
             bool isFull() {
-                return (q.size() == maxLength);
+                return (getLength() == maxLength);
             }
 
             void add(T v, int k) {
@@ -61,7 +61,7 @@ namespace SkeletonMaker {
                 q.push(make_pair(v,k));
 
                 int tind;
-                queueLength++;
+                queueLength = q.size();
 
                 while(ind > 0) {
                     tind = (ind + 1) / 2 - 1;
@@ -93,7 +93,7 @@ namespace SkeletonMaker {
 
                 v = valueQueue[0];
                 k = keyQueue[0];
-                queueLength--;
+                queueLength = q.size();
 
                 if(isEmpty()) {
                     valueQueue[0] = T();
