@@ -24,8 +24,6 @@ namespace SkeletonMaker {
 
 
     private:
-        void swapEle(gridQueueEle* pre, gridQueueEle* e1, gridQueueEle* e2);
-    private:
         gridQueueEle* head ;
         gridQueueEle* tail ;
         int numEles ;
@@ -87,34 +85,6 @@ namespace SkeletonMaker {
 
         return 1 ;
     }
-
-    /* Switching two elements */
-    void GridQueue::swapEle( gridQueueEle* pre, gridQueueEle* e1, gridQueueEle* e2 )
-    {
-        if ( pre != NULL )
-        {
-            e1->next = e2->next ;
-            e2->next = pre->next ;
-            pre->next = e2 ;
-
-            if ( tail == e2 )
-            {
-                tail = e1 ;
-            }
-        }
-        else
-        {
-            e1->next = e2->next ;
-            e2->next = e1 ;
-            head = e2 ;
-
-            if ( tail == e2 )
-            {
-                tail = e1 ;
-            }
-        }
-    }
-
 
 }
 
