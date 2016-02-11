@@ -77,6 +77,7 @@ namespace SkeletonMaker {
 
                 if(isEmpty()) {
 //                    v = NULL;
+                    valueQueue[0] = T();
                     k = 0;
                     return;
                 }
@@ -87,10 +88,6 @@ namespace SkeletonMaker {
                 v = valueQueue[0];
                 k = keyQueue[0];
 
-                if(isEmpty()) {
-                    valueQueue[0] = T();
-                    return;
-                }
 
                 T  vv = valueQueue[(int)q.size()];
                 int kk = keyQueue[(int)q.size()], lowk;
