@@ -2,6 +2,7 @@
 #define TOOLKIT_SKELETON_MAKER_GRID_QUEUE_H
 
 #include <cstdlib>
+#include <queue>
 
 using namespace std;
 
@@ -27,6 +28,8 @@ namespace SkeletonMaker {
         gridQueueEle* head ;
         gridQueueEle* tail ;
         int numEles ;
+
+        queue<gridQueueEle> q;
     };
 
 
