@@ -845,10 +845,6 @@ void Volume::curveSkeleton(Volume* grayvol, float lowthr, float highthr,
         scrvol->setDataAt(i, -1);
     }
 
-#ifdef  NOISE_DIS_HELIX
-    Volume* noisevol = new Volume( getSizeX(), getSizeY(), getSizeZ() );
-#endif
-
     for(int curwid = 1; curwid <= wid; curwid++) {
         // At the start of each iteration,
         // queue2 holds all the nodes for this layer
@@ -887,89 +883,6 @@ void Volume::curveSkeleton(Volume* grayvol, float lowthr, float highthr,
             queue2->prepend(ox, oy, oz);
             ele = queue4->remove();
         }
-
-        // Now queue2 holds all the nodes for this layer
-
-#ifdef NOISE_DIS_HELIX
-        /* Extra step: classify nodes in queue2 into noise and non-noise nodes */
-        queue2->reset();
-
-        // First run
-        int flag = 0;
-        while ( ( ele = queue2->getNext() ) != NULL )
-        {
-            ox = ele->x;
-            oy = ele->y;
-            oz = ele->z;
-            if ( NOISE_DIS_HELIX <= 1 )
-            {
-                noisevol->setDataAt( ox, oy, oz, 0 );
-            }
-            else
-            {
-                flag = 0;
-                for ( int m = 0; m < 6; m ++ )
-                {
-                    int nx = ox + neighbor6[m][0];
-                    int ny = oy + neighbor6[m][1];
-                    int nz = oz + neighbor6[m][2];
-                    if ( getDataAt( nx, ny, nz ) == 0 )
-                    {
-                        noisevol->setDataAt( ox, oy, oz, 1 );
-                        flag = 1;
-                        break;
-                    }
-                }
-                if ( ! flag )
-                {
-                    noisevol->setDataAt( ox, oy, oz, 0 );
-                }
-            }
-        }
-
-        int cur, visited;
-        for ( cur = 1; cur < NOISE_DIS_HELIX; cur ++ )
-        {
-            queue2->reset();
-            int count = 0;
-            visited = 0;
-
-            while ( ( ele = queue2->getNext() ) != NULL )
-            {
-                ox = ele->x;
-                oy = ele->y;
-                oz = ele->z;
-
-                if ( noisevol->getDataAt( ox, oy, oz ) == 1 )
-                {
-                    visited ++;
-                    continue;
-                }
-
-                flag = 0;
-                for ( int m = 0; m < 6; m ++ )
-                {
-                    int nx = ox + neighbor6[m][0];
-                    int ny = oy + neighbor6[m][1];
-                    int nz = oz + neighbor6[m][2];
-                    if ( getDataAt( nx, ny, nz ) > 0 && noisevol->getDataAt( nx, ny, nz ) == 1 )
-                    {
-                        noisevol->setDataAt( ox, oy, oz, 1 );
-                        visited ++;
-                        count ++;
-                        break;
-                    }
-                }
-            }
-
-            if ( count == 0 )
-            {
-                break;
-            }
-        }
-        printf("Maximum feature distance: %d Un-touched: %d\n", cur, queue2->getNumElements() - visited );
-
-#endif
 
         // Next,
         // Compute score for each node left in queue2
@@ -1022,16 +935,8 @@ void Volume::curveSkeleton(Volume* grayvol, float lowthr, float highthr,
                 continue;
             }
 
-            /* Added for debugging */
             // Check simple
-#ifndef NOISE_DIS_HELIX
-            // if ( hasIsolatedEdge( ox, oy, oz ) && ! isNoiseHelixEnd( ox, oy, oz ) )
-            if(isHelixEnd(ox, oy, oz) || !isSimple(ox, oy,
-                       oz))
-#else
-                       if ( isHelixEnd( ox, oy, oz ) || ! isSimple( ox, oy, oz ) )
-#endif
-                       {
+            if(isHelixEnd(ox, oy, oz) || !isSimple(ox, oy, oz)) {
                 // Complex, set to next layer
                 setDataAt(ox, oy, oz, curwid + 1);
                 queue4->prepend(ox, oy, oz);
@@ -1204,10 +1109,6 @@ void Volume::curveSkeleton(float thr, Volume* svol) {
         scrvol->setDataAt(i, -1);
     }
 
-#ifdef  NOISE_DIS_HELIX
-    Volume* noisevol = new Volume( getSizeX(), getSizeY(), getSizeZ() );
-#endif
-
     for(int curwid = 1; curwid <= wid; curwid++) {
         // At the start of each iteration,
         // queue2 holds all the nodes for this layer
@@ -1246,89 +1147,6 @@ void Volume::curveSkeleton(float thr, Volume* svol) {
             queue2->prepend(ox, oy, oz);
             ele = queue4->remove();
         }
-
-        // Now queue2 holds all the nodes for this layer
-
-#ifdef NOISE_DIS_HELIX
-        /* Extra step: classify nodes in queue2 into noise and non-noise nodes */
-        queue2->reset();
-
-        // First run
-        int flag = 0;
-        while ( ( ele = queue2->getNext() ) != NULL )
-        {
-            ox = ele->x;
-            oy = ele->y;
-            oz = ele->z;
-            if ( NOISE_DIS_HELIX <= 1 )
-            {
-                noisevol->setDataAt( ox, oy, oz, 0 );
-            }
-            else
-            {
-                flag = 0;
-                for ( int m = 0; m < 6; m ++ )
-                {
-                    int nx = ox + neighbor6[m][0];
-                    int ny = oy + neighbor6[m][1];
-                    int nz = oz + neighbor6[m][2];
-                    if ( getDataAt( nx, ny, nz ) == 0 )
-                    {
-                        noisevol->setDataAt( ox, oy, oz, 1 );
-                        flag = 1;
-                        break;
-                    }
-                }
-                if ( ! flag )
-                {
-                    noisevol->setDataAt( ox, oy, oz, 0 );
-                }
-            }
-        }
-
-        int cur, visited;
-        for ( cur = 1; cur < NOISE_DIS_HELIX; cur ++ )
-        {
-            queue2->reset();
-            int count = 0;
-            visited = 0;
-
-            while ( ( ele = queue2->getNext() ) != NULL )
-            {
-                ox = ele->x;
-                oy = ele->y;
-                oz = ele->z;
-
-                if ( noisevol->getDataAt( ox, oy, oz ) == 1 )
-                {
-                    visited ++;
-                    continue;
-                }
-
-                flag = 0;
-                for ( int m = 0; m < 6; m ++ )
-                {
-                    int nx = ox + neighbor6[m][0];
-                    int ny = oy + neighbor6[m][1];
-                    int nz = oz + neighbor6[m][2];
-                    if ( getDataAt( nx, ny, nz ) > 0 && noisevol->getDataAt( nx, ny, nz ) == 1 )
-                    {
-                        noisevol->setDataAt( ox, oy, oz, 1 );
-                        visited ++;
-                        count ++;
-                        break;
-                    }
-                }
-            }
-
-            if ( count == 0 )
-            {
-                break;
-            }
-        }
-        printf("Maximum feature distance: %d Un-touched: %d\n", cur, queue2->getNumElements() - visited );
-
-#endif
 
         // Next,
         // Compute score for each node left in queue2
@@ -1381,16 +1199,7 @@ void Volume::curveSkeleton(float thr, Volume* svol) {
                 continue;
             }
 
-            /* Added for debugging */
-            // Check simple
-#ifndef NOISE_DIS_HELIX
-            // if ( hasIsolatedEdge( ox, oy, oz ) && ! isNoiseHelixEnd( ox, oy, oz ) )
-            if(isHelixEnd(ox, oy, oz) || !isSimple(ox, oy,
-                       oz))
-#else
-                       if ( isHelixEnd( ox, oy, oz ) || ! isSimple( ox, oy, oz ) )
-#endif
-                       {
+            if(isHelixEnd(ox, oy, oz) || !isSimple(ox, oy, oz)) {
                 // Complex, set to next layer
                 setDataAt(ox, oy, oz, curwid + 1);
                 queue4->prepend(ox, oy, oz);
@@ -1522,10 +1331,6 @@ void Volume::curveSkeleton2D(float thr, Volume* svol) {
         scrvol->setDataAt(i, -1);
     }
 
-#ifdef  NOISE_DIS_HELIX
-    Volume* noisevol = new Volume( getSizeX(), getSizeY(), getSizeZ() );
-#endif
-
     for(int curwid = 1; curwid <= wid; curwid++) {
         // At the start of each iteration,
         // queue2 holds all the nodes for this layer
@@ -1564,89 +1369,6 @@ void Volume::curveSkeleton2D(float thr, Volume* svol) {
             queue2->prepend(ox, oy, oz);
             ele = queue4->remove();
         }
-
-        // Now queue2 holds all the nodes for this layer
-
-#ifdef NOISE_DIS_HELIX
-        /* Extra step: classify nodes in queue2 into noise and non-noise nodes */
-        queue2->reset();
-
-        // First run
-        int flag = 0;
-        while ( ( ele = queue2->getNext() ) != NULL )
-        {
-            ox = ele->x;
-            oy = ele->y;
-            oz = ele->z;
-            if ( NOISE_DIS_HELIX <= 1 )
-            {
-                noisevol->setDataAt( ox, oy, oz, 0 );
-            }
-            else
-            {
-                flag = 0;
-                for ( int m = 0; m < 6; m ++ )
-                {
-                    int nx = ox + neighbor6[m][0];
-                    int ny = oy + neighbor6[m][1];
-                    int nz = oz + neighbor6[m][2];
-                    if ( getDataAt( nx, ny, nz ) == 0 )
-                    {
-                        noisevol->setDataAt( ox, oy, oz, 1 );
-                        flag = 1;
-                        break;
-                    }
-                }
-                if ( ! flag )
-                {
-                    noisevol->setDataAt( ox, oy, oz, 0 );
-                }
-            }
-        }
-
-        int cur, visited;
-        for ( cur = 1; cur < NOISE_DIS_HELIX; cur ++ )
-        {
-            queue2->reset();
-            int count = 0;
-            visited = 0;
-
-            while ( ( ele = queue2->getNext() ) != NULL )
-            {
-                ox = ele->x;
-                oy = ele->y;
-                oz = ele->z;
-
-                if ( noisevol->getDataAt( ox, oy, oz ) == 1 )
-                {
-                    visited ++;
-                    continue;
-                }
-
-                flag = 0;
-                for ( int m = 0; m < 6; m ++ )
-                {
-                    int nx = ox + neighbor6[m][0];
-                    int ny = oy + neighbor6[m][1];
-                    int nz = oz + neighbor6[m][2];
-                    if ( getDataAt( nx, ny, nz ) > 0 && noisevol->getDataAt( nx, ny, nz ) == 1 )
-                    {
-                        noisevol->setDataAt( ox, oy, oz, 1 );
-                        visited ++;
-                        count ++;
-                        break;
-                    }
-                }
-            }
-
-            if ( count == 0 )
-            {
-                break;
-            }
-        }
-        printf("Maximum feature distance: %d Un-touched: %d\n", cur, queue2->getNumElements() - visited );
-
-#endif
 
         // Next,
         // Compute score for each node left in queue2
@@ -1700,16 +1422,7 @@ void Volume::curveSkeleton2D(float thr, Volume* svol) {
                 continue;
             }
 
-            /* Added for debugging */
-            // Check simple
-#ifndef NOISE_DIS_HELIX
-            // if ( hasIsolatedEdge( ox, oy, oz ) && ! isNoiseHelixEnd( ox, oy, oz ) )
-            if(isHelixEnd(ox, oy, oz) || !isSimple(ox, oy,
-                       oz))
-#else
-                       if ( isHelixEnd( ox, oy, oz ) || ! isSimple( ox, oy, oz ) )
-#endif
-                       {
+            if(isHelixEnd(ox, oy, oz) || !isSimple(ox, oy, oz)) {
                 // Complex, set to next layer
                 setDataAt(ox, oy, oz, curwid + 1);
                 queue4->prepend(ox, oy, oz);
