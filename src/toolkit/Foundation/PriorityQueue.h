@@ -41,7 +41,7 @@ namespace SkeletonMaker {
             }
 
             bool isFull() {
-                return (q.size() == maxLength);
+                return ((int)q.size() == maxLength);
             }
 
             void add(T v, int k) {
@@ -92,8 +92,8 @@ namespace SkeletonMaker {
                     return;
                 }
 
-                T  vv = valueQueue[q.size()];
-                int kk = keyQueue[q.size()], lowk;
+                T  vv = valueQueue[(int)q.size()];
+                int kk = keyQueue[(int)q.size()], lowk;
                 int ind = 0, tind, ind2, ind3;
                 while(1) {
                     ind2 = 2 * (ind + 1) - 1;
@@ -101,7 +101,7 @@ namespace SkeletonMaker {
                     tind = ind;
                     lowk = kk;
 
-                    if(ind2 >= q.size()) {
+                    if(ind2 >= (int)q.size()) {
                         break;
                     }
                     else {
@@ -110,7 +110,7 @@ namespace SkeletonMaker {
                             lowk = keyQueue[ind2];
                         }
 
-                        if(ind3 < q.size()) {
+                        if(ind3 < (int)q.size()) {
                             if(keyQueue[ind3] < lowk) {
                                 tind = ind3;
                             }
@@ -129,8 +129,8 @@ namespace SkeletonMaker {
 
                 valueQueue[ind] = vv;
                 keyQueue[ind] = kk;
-                valueQueue[q.size()] = T();
-                keyQueue[q.size()] = 0;
+                valueQueue[(int)q.size()] = T();
+                keyQueue[(int)q.size()] = 0;
             }
     };
 }
