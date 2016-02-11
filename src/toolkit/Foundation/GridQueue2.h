@@ -15,7 +15,7 @@ namespace SkeletonMaker {
         int getNumElements();
         void prepend(int xx, int yy, int zz);
         gridQueueEle * remove();
-        gridQueueEle* swap();
+
     private:
         gridQueueEle* head ;
         gridQueueEle* pre ;
@@ -104,30 +104,6 @@ namespace SkeletonMaker {
             numEles -- ;
         }
 
-
-        return cur ;
-    }
-
-    /* Switching pre and cur */
-    gridQueueEle * GridQueue2::swap( )
-    {
-        if ( prepre != NULL )
-        {
-            pre->next = cur->next ;
-            cur->next = prepre->next ;
-            prepre->next = cur ;
-
-        }
-        else
-        {
-            pre->next = cur->next ;
-            cur->next = pre ;
-            head = cur ;
-        }
-
-        gridQueueEle* temp = pre ;
-        pre = cur ;
-        cur = temp ;
 
         return cur ;
     }
