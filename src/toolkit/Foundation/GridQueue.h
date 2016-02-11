@@ -51,30 +51,17 @@ namespace SkeletonMaker {
     }
 
     int GridQueue::popQueue( int& xx, int& yy, int& zz ) {
-        if ( head == NULL )
+        if ( q.size() == 0 )
         {
             return 0 ;
         }
 
-        xx = head->x ;
-        yy = head->y ;
-        zz = head->z ;
-
         gridQueueEle res = q.front();
         q.pop();
 
-//        xx = res.x;
-//        yy = res.y;
-//        zz = res.z;
-
-        gridQueueEle* temp = head ;
-        head = head->next ;
-        delete temp ;
-
-        if ( head == NULL )
-        {
-            tail = NULL ;
-        }
+        xx = res.x;
+        yy = res.y;
+        zz = res.z;
 
         return 1 ;
     }
