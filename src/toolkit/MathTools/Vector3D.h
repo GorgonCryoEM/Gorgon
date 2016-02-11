@@ -66,9 +66,6 @@ namespace MathTools {
                     <<"}";
         }
 
-        friend bool operator<(const Vector3D<T> & l, const Vector3D<T> & r){
-            return (l.values[0]<r.values[0]) && (l.values[1]<r.values[1]) && (l.values[2]<r.values[2]);
-        }
     };
 
     typedef Vector3D<int>    Vector3DInt;
