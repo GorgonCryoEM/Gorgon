@@ -20,40 +20,37 @@ namespace SkeletonMaker {
             int queueLength;
             int maxLength;
 
-            T ** valueQueue;
-            int * keyQueue;
+            T  *valueQueue;
+            int  *keyQueue;
             priority_queue<pair<T,int> > q;
 
         public:
             PriorityQueue(int max) {
-                this->maxLength = max;
-                this->queueLength = 0;
-                this->valueQueue = new T*[max];
-                this->keyQueue = new int[max];
+                maxLength = max;
+                queueLength = 0;
+                valueQueue = new T[max];
+                keyQueue = new int[max];
             }
 
             ~PriorityQueue() {
                 delete[] keyQueue;
-                for(int i = 0; i < queueLength; i++) {
-                    delete valueQueue[i];
-                }
                 delete[] valueQueue;
             }
 
             int getLength() {
-                return this->queueLength;
+                return queueLength;
             }
 
             bool isEmpty() {
-                return (this->queueLength == 0);
+                return (queueLength == 0);
             }
 
             bool isFull() {
-                return (this->queueLength == this->maxLength);
+                return (queueLength == this->maxLength);
             }
 
-            void add(T * v, int k) {
-                if(this->isFull()) {
+            void add(T v, int k) {
+                if(isFull()) {
                     printf("PRIORITY QUEUE FILLED UP !!! \n");
                     return;
                 }
@@ -78,9 +75,9 @@ namespace SkeletonMaker {
                 keyQueue[ind] = k;
             }
 
-            void remove(T *& v, int & k) {
-                if(this->isEmpty()) {
-                    v = NULL;
+            void remove(T & v, int & k) {
+                if(isEmpty()) {
+//                    v = NULL;
                     k = 0;
                     return;
                 }
@@ -94,7 +91,7 @@ namespace SkeletonMaker {
                     return;
                 }
 
-                T * vv = valueQueue[queueLength];
+                T  vv = valueQueue[queueLength];
                 int kk = keyQueue[queueLength], lowk;
                 int ind = 0, tind, ind2, ind3;
                 while(1) {
