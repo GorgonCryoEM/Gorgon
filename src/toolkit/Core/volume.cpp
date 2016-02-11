@@ -682,7 +682,7 @@ void Volume::curveSkeleton(Volume* grayvol, float lowthr, float highthr,
 
     // Perform erosion
     gridQueueEle* ele;
-    gridPoint* gp;
+    gridPoint gp;
     int ox, oy, oz;
     int score;
     Volume* scrvol = new Volume(this->getSizeX(), this->getSizeY(),
@@ -946,7 +946,7 @@ void Volume::curveSkeleton(float thr, Volume* svol) {
 
     // Perform erosion
     gridQueueEle* ele;
-    gridPoint* gp;
+    gridPoint gp;
     int ox, oy, oz;
     int score;
     Volume* scrvol = new Volume(this->getSizeX(), this->getSizeY(),
@@ -1168,7 +1168,7 @@ void Volume::curveSkeleton2D(float thr, Volume* svol) {
 
     // Perform erosion
     gridQueueEle* ele;
-    gridPoint* gp;
+    gridPoint gp;
     int ox, oy, oz;
     int score;
     Volume* scrvol = new Volume(this->getSizeX(), this->getSizeY(),
@@ -1400,7 +1400,7 @@ void Volume::pointSkeleton(Volume* grayvol, float lowthr, float highthr,
     printf("Start erosion to %d...\n", wid);
 #endif
     gridQueueEle* ele;
-    gridPoint* gp;
+    gridPoint gp;
     int ox, oy, oz;
     int score;
     Volume* scrvol = new Volume(this->getSizeX(), this->getSizeY(),
@@ -1628,7 +1628,7 @@ void Volume::skeleton(float thr, Volume* svol, Volume* hvol) {
     printf("Start erosion to %d...\n", wid);
 #endif
     gridQueueEle* ele;
-    gridPoint* gp;
+    gridPoint gp;
     int ox, oy, oz;
     int score;
     Volume* scrvol = new Volume(this->getSizeX(), this->getSizeY(),
@@ -2268,7 +2268,7 @@ void Volume::surfaceSkeleton(Volume* grayvol, float lowthr, float highthr) {
     // Perform erosion
     int wid = MAX_ERODE;
     gridQueueEle* ele;
-    gridPoint* gp;
+    gridPoint gp;
     int ox, oy, oz;
     int score;
     Volume* scrvol = new Volume(this->getSizeX(), this->getSizeY(),
@@ -2506,7 +2506,7 @@ void Volume::surfaceSkeletonPres(float thr, Volume * preserve) {
 
     // Perform erosion
     gridQueueEle* ele;
-    gridPoint* gp;
+    gridPoint gp;
     int ox, oy, oz;
     int score;
     Volume* scrvol = new Volume(this->getSizeX(), this->getSizeY(),
