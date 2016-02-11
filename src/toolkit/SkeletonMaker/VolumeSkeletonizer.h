@@ -1780,7 +1780,7 @@ namespace GraySkeletonCPP {
         double value;
         list<int> cleanupIndices;
         PriorityQueue<ImmersionBeachElement> beach(MAX_QUEUELEN);
-        ImmersionBeachElement * element;
+        ImmersionBeachElement element;
         int index;
 
         GrayImageList imageList;
@@ -1800,9 +1800,8 @@ namespace GraySkeletonCPP {
                 for(unsigned int i = 0; i < bins[g].size(); i++) {
                     n6Count = DiscreteMesh::GetImmersionN6Count(skeleton, bins[g][i]);
                     if(n6Count < 6) {
-                        element = new ImmersionBeachElement();
-                        element->p = bins[g][i];
-                        element->binIndex = i;
+                        element.p = bins[g][i];
+                        element.binIndex = i;
                         beach.add(element, n6Count);
                     }
                 }
@@ -1811,13 +1810,12 @@ namespace GraySkeletonCPP {
                 cleanupIndices.clear();
                 while(!beach.isEmpty()) {
                     beach.remove(element, key);
-                    value = DiscreteMesh::GetImmersionSkeletalValue(skeleton, element->p);
-                    skeleton->setDataAt(element->p.values[0], element->p.values[1], element->p.values[2], value);
+                    value = DiscreteMesh::GetImmersionSkeletalValue(skeleton, element.p);
+                    skeleton->setDataAt(element.p.values[0], element.p.values[1], element.p.values[2], value);
                     if(value != g) {
-                        cleanupIndices.push_back(element->binIndex);
+                        cleanupIndices.push_back(element.binIndex);
                         modified = true;
                     }
-                    delete element;
                 }
 
                 cleanupIndices.sort(greater<int>());
