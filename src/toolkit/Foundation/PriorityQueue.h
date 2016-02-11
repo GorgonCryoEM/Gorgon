@@ -22,7 +22,8 @@ namespace SkeletonMaker {
 
             T  *valueQueue;
             int  *keyQueue;
-            priority_queue<pair<T,int> > q;
+            typedef pair<T,int> Elem;
+            priority_queue<Elem, vector<Elem>, greater<Elem> > q;
 
         public:
             PriorityQueue(int max) {
