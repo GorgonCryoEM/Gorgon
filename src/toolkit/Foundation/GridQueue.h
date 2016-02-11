@@ -72,6 +72,8 @@ namespace SkeletonMaker {
         }
         tail = ele ;
         numEles ++ ;
+
+        q.push(gridQueueEle(xx, yy, zz));
     }
 
     int GridQueue::popQueue( int& xx, int& yy, int& zz ) {
