@@ -36,6 +36,18 @@ namespace GraySkeletonCPP {
         return l.second < r.second;
     }
 
+    bool operator==(const ImmersionBeachElement & l, const ImmersionBeachElement & r){
+        return (l.p == r.p) && (l.binIndex == r.binIndex);
+    }
+
+    ostream & operator<<(ostream & out, const ImmersionBeachElement & obj){
+        return out
+                <<"{"
+                <<obj.p<<", "
+                <<obj.binIndex
+                <<"}";
+    }
+
 
     class VolumeSkeletonizer{
     public:

@@ -95,6 +95,18 @@ namespace SkeletonMaker {
         {}
     };
 
+    bool operator==(const gridPoint & l, const gridPoint & r){
+        return (l.x == r.x) && (l.y == r.y) && (l.z == r.z);
+    }
+    ostream & operator<<(ostream & out, const gridPoint & obj){
+        return out
+                <<"{"
+                <<obj.x<<", "
+                <<obj.y<<", "
+                <<obj.z
+                <<"}";
+    }
+
     class Volume : public VolumeData {
     public:
         Volume();
