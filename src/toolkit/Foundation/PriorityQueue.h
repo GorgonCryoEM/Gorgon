@@ -17,7 +17,6 @@ namespace SkeletonMaker {
     template<class T>
     class PriorityQueue {
         public:
-            int queueLength;
             int maxLength;
 
             T  *valueQueue;
@@ -28,7 +27,6 @@ namespace SkeletonMaker {
         public:
             PriorityQueue(int max) {
                 maxLength = max;
-                queueLength = 0;
                 valueQueue = new T[max];
                 keyQueue = new int[max];
             }
@@ -61,7 +59,6 @@ namespace SkeletonMaker {
                 q.push(make_pair(v,k));
 
                 int tind;
-                queueLength = q.size();
 
                 while(ind > 0) {
                     tind = (ind + 1) / 2 - 1;
@@ -93,15 +90,14 @@ namespace SkeletonMaker {
 
                 v = valueQueue[0];
                 k = keyQueue[0];
-                queueLength = q.size();
 
                 if(isEmpty()) {
                     valueQueue[0] = T();
                     return;
                 }
 
-                T  vv = valueQueue[queueLength];
-                int kk = keyQueue[queueLength], lowk;
+                T  vv = valueQueue[getLength()];
+                int kk = keyQueue[getLength()], lowk;
                 int ind = 0, tind, ind2, ind3;
                 while(1) {
                     ind2 = 2 * (ind + 1) - 1;
@@ -109,7 +105,7 @@ namespace SkeletonMaker {
                     tind = ind;
                     lowk = kk;
 
-                    if(ind2 >= queueLength) {
+                    if(ind2 >= getLength()) {
                         break;
                     }
                     else {
@@ -118,7 +114,7 @@ namespace SkeletonMaker {
                             lowk = keyQueue[ind2];
                         }
 
-                        if(ind3 < queueLength) {
+                        if(ind3 < getLength()) {
                             if(keyQueue[ind3] < lowk) {
                                 tind = ind3;
                             }
@@ -137,8 +133,8 @@ namespace SkeletonMaker {
 
                 valueQueue[ind] = vv;
                 keyQueue[ind] = kk;
-                valueQueue[queueLength] = T();
-                keyQueue[queueLength] = 0;
+                valueQueue[getLength()] = T();
+                keyQueue[getLength()] = 0;
             }
     };
 }
