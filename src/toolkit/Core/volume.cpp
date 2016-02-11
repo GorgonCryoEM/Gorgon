@@ -273,51 +273,20 @@ int Volume::hasCompleteHelix(int ox, int oy, int oz) {
             c1++;
             j = i;
         }
-
     }
 
     if(c1 > 1) // || c1 == 0 )
     {
         return 1;
     }
-
     return 0;
-
-    /*
-     ox = ox + neighbor6[j][0] ;
-     oy = oy + neighbor6[j][1] ;
-     oz = oz + neighbor6[j][2] ;
-     c1 = 0 ;
-     for ( i = 0 ; i < 6 ; i ++ )
-     {
-     nx = ox + neighbor6[i][0] ;
-     ny = oy + neighbor6[i][1] ;
-     nz = oz + neighbor6[i][2] ;
-     if ( getDataAt( nx, ny, nz ) >= 0 )
-     {
-     c1 ++ ;
-     }
-
-     }
-
-     if ( c1 > 1 )
-     {
-     return 0 ;
-     }
-     else
-     {
-     return 1 ;
-     }
-     */
 }
 
 int Volume::isHelixEnd(int ox, int oy, int oz) {
-
-    int i;
     int c1 = 0, c2 = 0;
     int nx, ny, nz;
 
-    for(i = 0; i < 6; i++) {
+    for(int i = 0; i < 6; i++) {
         nx = ox + neighbor6[i][0];
         ny = oy + neighbor6[i][1];
         nz = oz + neighbor6[i][2];
@@ -326,12 +295,10 @@ int Volume::isHelixEnd(int ox, int oy, int oz) {
 
         if(val >= 0) {
             c1++;
-            if(getNumNeighbor6(nx, ny, nz) < 6) // if ( val > 0 && val < MAX_ERODE )
-            {
+            if(getNumNeighbor6(nx, ny, nz) < 6) {
                 c2++;
             }
         }
-
     }
 
     if(c1 == 1 && c2 == 1) {
@@ -342,8 +309,6 @@ int Volume::isHelixEnd(int ox, int oy, int oz) {
 }
 
 int Volume::isFeatureFace(int ox, int oy, int oz) {
-    // return 1 ;
-
     int i, j;
     int nx, ny, nz;
 
@@ -363,11 +328,6 @@ int Volume::isFeatureFace(int ox, int oy, int oz) {
                 ct = -1;
                 break;
             }
-//				else if ( getDataAt( nx, ny, nz ) == 0 )
-//				{
-//					ct ++ ;
-//				}
-
         }
         if(ct == -1 || ct >= 1) {
             faces--;
@@ -395,47 +355,8 @@ int Volume::isSimple(int ox, int oy, int oz) {
         for(j = -1; j < 2; j++)
             for(k = -1; k < 2; k++) {
                 double tval = getDataAt(ox + i, oy + j, oz + k);
-
-                /*
-                 if ( tval == 0 || tval > (va )
-                 {
-                 flag = 1 ;
-                 }
-                 */
-                /*
-                 if ( tval < 0 && tval == - curwid )
-                 {
-                 printf("Here %d", (int)-tval) ;
-                 vox[ i + 1 ][ j + 1 ][ k + 1 ] = - tval ;
-                 }
-                 else
-                 */
-                {
-                    vox[i + 1][j + 1][k + 1] = tval;
-                }
+                vox[i + 1][j + 1][k + 1] = tval;
             }
-
-    /* Debugging
-     printf("{") ;
-     for ( i = 0 ; i < 3 ; i ++ )
-     {
-     if ( i ) printf(",") ;
-     printf("{") ;
-     for ( j = 0 ; j < 3 ; j ++ )
-     {
-     if ( j ) printf(",") ;
-     printf("{") ;
-     for ( k = 0 ; k < 3 ; k ++ )
-     {
-     if ( k ) printf(",") ;
-     printf("%d", (vox[i][j][k] >=0 ? 1: 0));
-     }
-     printf("}") ;
-     }
-     printf("}") ;
-     }
-     printf("} Int: %d, Ext: %d\n", countInt( vox ), countExt( vox )) ;
-     */
 
     if(countInt(vox) == 1 && countExt(vox) == 1) {
         return 1;
@@ -455,47 +376,8 @@ int Volume::isPiercable(int ox, int oy, int oz) {
         for(j = -1; j < 2; j++)
             for(k = -1; k < 2; k++) {
                 double tval = getDataAt(ox + i, oy + j, oz + k);
-
-                /*
-                 if ( tval == 0 || tval > (va )
-                 {
-                 flag = 1 ;
-                 }
-                 */
-                /*
-                 if ( tval < 0 && tval == - curwid )
-                 {
-                 printf("Here %d", (int)-tval) ;
-                 vox[ i + 1 ][ j + 1 ][ k + 1 ] = - tval ;
-                 }
-                 else
-                 */
-                {
-                    vox[i + 1][j + 1][k + 1] = tval;
-                }
+                vox[i + 1][j + 1][k + 1] = tval;
             }
-
-    /* Debugging
-     printf("{") ;
-     for ( i = 0 ; i < 3 ; i ++ )
-     {
-     if ( i ) printf(",") ;
-     printf("{") ;
-     for ( j = 0 ; j < 3 ; j ++ )
-     {
-     if ( j ) printf(",") ;
-     printf("{") ;
-     for ( k = 0 ; k < 3 ; k ++ )
-     {
-     if ( k ) printf(",") ;
-     printf("%d", (vox[i][j][k] >=0 ? 1: 0));
-     }
-     printf("}") ;
-     }
-     printf("}") ;
-     }
-     printf("} Int: %d, Ext: %d\n", countInt( vox ), countExt( vox )) ;
-     */
 
     if(countInt(vox) == 1 && countExt(vox) != 1) {
         return 1;
@@ -506,39 +388,11 @@ int Volume::isPiercable(int ox, int oy, int oz) {
 }
 
 int Volume::getNumPotComplex(int ox, int oy, int oz) {
-    //return 0 ;
-
     int i;
     double val = getDataAt(ox, oy, oz);
-    if(val <= 0) {
-//		return 70 ;
-    }
-
-    // return getNumNeighbor6( ox, oy, oz ) ;
-
-    // int v = ((getNumNeighbor6( ox, oy, oz ) & 255) << 24) ;
-    //int v = 0  ;
 
     int rvalue = 0, nx, ny, nz;
     setDataAt(ox, oy, oz, -val);
-
-    /*
-     for ( i = -1 ; i < 2 ; i ++ )
-     for ( j = -1 ; j < 2 ; j ++ )
-     for ( k = -1 ; k < 2 ; k ++ )
-     {
-     nx = ox + i ;
-     ny = oy + j ;
-     nz = oz + k ;
-     if ( getDataAt( nx, ny, nz ) == val )
-     {
-     if ( isSheetEnd( nx, ny, nz) || ! isSimple ( nx, ny, nz ) )
-     {
-     rvalue ++ ;
-     }
-     }
-     }
-     */
 
     for(i = 0; i < 6; i++) {
         nx = ox + neighbor6[i][0];
@@ -556,14 +410,6 @@ int Volume::getNumPotComplex(int ox, int oy, int oz) {
     setDataAt(ox, oy, oz, val);
 
     return rvalue + getNumNeighbor6(ox, oy, oz) * 10;
-    /*
-     int v = (((rvalue + getNumNeighbor6( ox, oy, oz ) * 10) & 255) << 24) ;
-     v |= ( ( ox & 255 ) << 16 )  ;
-     v |= ( ( oy & 255 ) << 8 ) ;
-     v |= ( ( oz & 255 ) ) ;
-     return v ;
-     */
-
 }
 
 int Volume::getNumPotComplex2(int ox, int oy, int oz) {
