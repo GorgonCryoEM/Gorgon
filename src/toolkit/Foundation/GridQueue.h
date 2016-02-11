@@ -26,7 +26,6 @@ namespace SkeletonMaker {
     {
     public:
         GridQueue();
-        gridQueueEle* getHead();
         int getNumElements();
         void pushQueue(int xx, int yy, int zz);
         int popQueue(int& xx, int& yy, int& zz);
@@ -43,10 +42,6 @@ namespace SkeletonMaker {
     GridQueue::GridQueue( ) {
         head = NULL ;
         tail = NULL ;
-    }
-
-    gridQueueEle* GridQueue::getHead( ) {
-        return head ;
     }
 
     int GridQueue::getNumElements( ) {
