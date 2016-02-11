@@ -3,125 +3,107 @@
 
 namespace SkeletonMaker {
 
-    struct gridQueueEle
-    {
-        int x, y, z;
-        int score ;
-        gridQueueEle* next ;
+    struct gridQueueEle {
+            int x, y, z;
+            int score;
+            gridQueueEle* next;
 
-        gridQueueEle(int xx, int yy, int zz)
-                : x(xx), y(yy), z(zz)
-        {}
+            gridQueueEle(int xx, int yy, int zz)
+                    : x(xx), y(yy), z(zz)
+            {}
 
-        gridQueueEle()
-        {}
-
+            gridQueueEle() {}
     };
 
-    class GridQueue
-    {
-    public:
-        GridQueue();
-        ~GridQueue();
-        gridQueueEle* getNext();
-        void reset();
-        int getNumElements();
-        void prepend(int xx, int yy, int zz);
-        gridQueueEle * remove();
+    class GridQueue {
+        public:
+            GridQueue();
+            ~GridQueue();
+            gridQueueEle* getNext();
+            void reset();
+            int getNumElements();
+            void prepend(int xx, int yy, int zz);
+            gridQueueEle * remove();
 
-    private:
-        gridQueueEle* head ;
-        gridQueueEle* pre ;
-        gridQueueEle* prepre ;
-        gridQueueEle* cur ;
-        int numEles ;
+        private:
+            gridQueueEle* head;
+            gridQueueEle* pre;
+            gridQueueEle* prepre;
+            gridQueueEle* cur;
+            int numEles;
     };
 
-    GridQueue::GridQueue( )
-    {
-        head = NULL ;
-        cur = NULL ;
-        pre = NULL ;
-        prepre = NULL ;
-        numEles = 0 ;
+    GridQueue::GridQueue() {
+        head = NULL;
+        cur = NULL;
+        pre = NULL;
+        prepre = NULL;
+        numEles = 0;
     }
 
-    GridQueue::~GridQueue()
-    {
+    GridQueue::~GridQueue() {
         gridQueueEle* ele;
         reset();
-        ele=getNext();
-        while ( (ele=remove()) != NULL ){};
+        ele = getNext();
+        while( (ele = remove()) != NULL) {
+        };
     }
-    gridQueueEle* GridQueue::getNext( )
-    {
-        if ( cur == NULL )
-        {
-            prepre = NULL ;
-            pre = NULL ;
-            cur = head ;
+
+    gridQueueEle* GridQueue::getNext() {
+        if(cur == NULL) {
+            prepre = NULL;
+            pre = NULL;
+            cur = head;
         }
-        else
-        {
-            prepre = pre ;
-            pre = cur ;
-            cur = cur->next ;
+        else {
+            prepre = pre;
+            pre = cur;
+            cur = cur->next;
         }
 
-        return cur ;
+        return cur;
     }
 
-    void GridQueue::reset( )
-    {
-        prepre = NULL ;
-        pre = NULL ;
-        cur = NULL ;
+    void GridQueue::reset() {
+        prepre = NULL;
+        pre = NULL;
+        cur = NULL;
     }
 
-    int GridQueue::getNumElements( )
-    {
-        return numEles ;
+    int GridQueue::getNumElements() {
+        return numEles;
     }
 
-    void GridQueue::prepend( int xx, int yy, int zz )
-    {
-        gridQueueEle* ele = new gridQueueEle ;
-        ele->x = xx ;
-        ele->y = yy ;
-        ele->z = zz ;
-        ele->score = 0 ;
+    void GridQueue::prepend(int xx, int yy, int zz) {
+        gridQueueEle* ele = new gridQueueEle;
+        ele->x = xx;
+        ele->y = yy;
+        ele->z = zz;
+        ele->score = 0;
         ele->next = head;
-        head = ele ;
-        numEles ++ ;
+        head = ele;
+        numEles++;
 
-        reset() ;
+        reset();
     }
 
     /* Remove current element pointed by cur */
-    gridQueueEle * GridQueue::remove( )
-    {
-        gridQueueEle* temp = cur ;
-        if ( cur != NULL )
-        {
-            cur = cur->next ;
-            delete temp ;
+    gridQueueEle * GridQueue::remove() {
+        gridQueueEle* temp = cur;
+        if(cur != NULL) {
+            cur = cur->next;
+            delete temp;
 
-            if ( pre != NULL )
-            {
-                pre->next = cur ;
+            if(pre != NULL) {
+                pre->next = cur;
             }
-            else
-            {
-                head = cur ;
+            else {
+                head = cur;
             }
-            numEles -- ;
+            numEles--;
         }
-
-
-        return cur ;
+        return cur;
     }
-
-
 }
 
 #endif
