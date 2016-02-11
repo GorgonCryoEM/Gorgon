@@ -87,6 +87,12 @@ namespace SkeletonMaker {
     struct gridPoint
     {
         int x, y, z;
+
+        gridPoint(){}
+
+        gridPoint(int xx, int yy, int zz)
+                : x(xx), y(yy), z(zz)
+        {}
     };
 
     class Volume : public VolumeData {

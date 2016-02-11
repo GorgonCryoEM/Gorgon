@@ -649,7 +649,7 @@ void Volume::curveSkeleton(Volume* grayvol, float lowthr, float highthr,
     GridQueue2* queue2 = new GridQueue2();
     GridQueue2* queue3 = new GridQueue2();
     GridQueue2* queue4 = new GridQueue2();
-    PriorityQueue < gridPoint > *queue = new PriorityQueue<gridPoint>(
+    PriorityQueue < gridPoint > queue (
             MAX_QUEUELEN);
 
     for(i = 0; i < getSizeX(); i++)
@@ -745,12 +745,12 @@ void Volume::curveSkeleton(Volume* grayvol, float lowthr, float highthr,
             scrvol->setDataAt(ox, oy, oz, score);
 
             // Push to queue
-            gp = new gridPoint;
-            gp->x = ox;
-            gp->y = oy;
-            gp->z = oz;
-            // queue->add( gp, -score ) ;
-            queue->add(gp, score);
+            gridPoint gp(ox, oy, oz);
+
+
+
+            // queue.add( gp, -score ) ;
+            queue.add(gp, score);
 
             ele = queue2->remove();
         }
@@ -763,12 +763,12 @@ void Volume::curveSkeleton(Volume* grayvol, float lowthr, float highthr,
         queue3 = new GridQueue2();
 
         // Next, start priority queue iteration
-        while(!queue->isEmpty()) {
+        while(!queue.isEmpty()) {
             // Retrieve the node with the highest score
-            queue->remove(gp, score);
-            ox = gp->x;
-            oy = gp->y;
-            oz = gp->z;
+            queue.remove(gp, score);
+            ox = gp.x;
+            oy = gp.y;
+            oz = gp.z;
 
 //				score = -score ;
 
@@ -823,12 +823,12 @@ void Volume::curveSkeleton(Volume* grayvol, float lowthr, float highthr,
                                 // printf("Update\n") ;
                                 scrvol->setDataAt(nx, ny, nz, score);
                                 // Push to queue
-                                gp = new gridPoint;
-                                gp->x = nx;
-                                gp->y = ny;
-                                gp->z = nz;
-                                // queue->add( gp, -score ) ;
-                                queue->add(gp, score);
+                                gridPoint gp(ox, oy, oz);
+                                gp.x = nx;
+                                gp.y = ny;
+                                gp.z = nz;
+                                // queue.add( gp, -score ) ;
+                                queue.add(gp, score);
                             }
                         }
                     }
@@ -885,7 +885,6 @@ void Volume::curveSkeleton(Volume* grayvol, float lowthr, float highthr,
 
     // Finally, clean up
     delete scrvol;
-    delete queue;
     delete queue2;
     delete queue3;
     delete queue4;
@@ -914,7 +913,7 @@ void Volume::curveSkeleton(float thr, Volume* svol) {
     GridQueue2* queue2 = new GridQueue2();
     GridQueue2* queue3 = new GridQueue2();
     GridQueue2* queue4 = new GridQueue2();
-    PriorityQueue < gridPoint > *queue = new PriorityQueue<gridPoint>(
+    PriorityQueue < gridPoint > queue(
             MAX_QUEUELEN);
 
     for(i = 0; i < getSizeX(); i++)
@@ -1009,12 +1008,12 @@ void Volume::curveSkeleton(float thr, Volume* svol) {
             scrvol->setDataAt(ox, oy, oz, score);
 
             // Push to queue
-            gp = new gridPoint;
-            gp->x = ox;
-            gp->y = oy;
-            gp->z = oz;
-            // queue->add( gp, -score ) ;
-            queue->add(gp, score);
+            gridPoint gp(ox, oy, oz);
+
+
+
+            // queue.add( gp, -score ) ;
+            queue.add(gp, score);
 
             ele = queue2->remove();
         }
@@ -1027,12 +1026,12 @@ void Volume::curveSkeleton(float thr, Volume* svol) {
         queue3 = new GridQueue2();
 
         // Next, start priority queue iteration
-        while(!queue->isEmpty()) {
+        while(!queue.isEmpty()) {
             // Retrieve the node with the highest score
-            queue->remove(gp, score);
-            ox = gp->x;
-            oy = gp->y;
-            oz = gp->z;
+            queue.remove(gp, score);
+            ox = gp.x;
+            oy = gp.y;
+            oz = gp.z;
 
 //				score = -score ;
 
@@ -1085,12 +1084,12 @@ void Volume::curveSkeleton(float thr, Volume* svol) {
                                 // printf("Update\n") ;
                                 scrvol->setDataAt(nx, ny, nz, score);
                                 // Push to queue
-                                gp = new gridPoint;
-                                gp->x = nx;
-                                gp->y = ny;
-                                gp->z = nz;
-                                // queue->add( gp, -score ) ;
-                                queue->add(gp, score);
+                                gridPoint gp(ox, oy, oz);
+                                gp.x = nx;
+                                gp.y = ny;
+                                gp.z = nz;
+                                // queue.add( gp, -score ) ;
+                                queue.add(gp, score);
                             }
                         }
                     }
@@ -1108,7 +1107,7 @@ void Volume::curveSkeleton(float thr, Volume* svol) {
 
     // Finally, clean up
     delete scrvol;
-    delete queue;
+
     delete queue2;
     delete queue3;
     delete queue4;
@@ -1137,7 +1136,7 @@ void Volume::curveSkeleton2D(float thr, Volume* svol) {
     GridQueue2* queue2 = new GridQueue2();
     GridQueue2* queue3 = new GridQueue2();
     GridQueue2* queue4 = new GridQueue2();
-    PriorityQueue < gridPoint > *queue = new PriorityQueue<gridPoint>(
+    PriorityQueue < gridPoint > queue(
             MAX_QUEUELEN);
 
     for(i = 0; i < getSizeX(); i++)
@@ -1232,12 +1231,12 @@ void Volume::curveSkeleton2D(float thr, Volume* svol) {
             scrvol->setDataAt(ox, oy, oz, score);
 
             // Push to queue
-            gp = new gridPoint;
-            gp->x = ox;
-            gp->y = oy;
-            gp->z = oz;
-            // queue->add( gp, -score ) ;
-            queue->add(gp, score);
+            gridPoint gp(ox, oy, oz);
+
+
+
+            // queue.add( gp, -score ) ;
+            queue.add(gp, score);
 
             ele = queue2->remove();
         }
@@ -1250,12 +1249,12 @@ void Volume::curveSkeleton2D(float thr, Volume* svol) {
         queue3 = new GridQueue2();
 
         // Next, start priority queue iteration
-        while(!queue->isEmpty()) {
+        while(!queue.isEmpty()) {
             // Retrieve the node with the highest score
-            queue->remove(gp, score);
-            ox = gp->x;
-            oy = gp->y;
-            oz = gp->z;
+            queue.remove(gp, score);
+            ox = gp.x;
+            oy = gp.y;
+            oz = gp.z;
 
 //				score = -score ;
 
@@ -1309,12 +1308,12 @@ void Volume::curveSkeleton2D(float thr, Volume* svol) {
                                 // printf("Update\n") ;
                                 scrvol->setDataAt(nx, ny, nz, score);
                                 // Push to queue
-                                gp = new gridPoint;
-                                gp->x = nx;
-                                gp->y = ny;
-                                gp->z = nz;
-                                // queue->add( gp, -score ) ;
-                                queue->add(gp, score);
+                                gridPoint gp(ox, oy, oz);
+                                gp.x = nx;
+                                gp.y = ny;
+                                gp.z = nz;
+                                // queue.add( gp, -score ) ;
+                                queue.add(gp, score);
                             }
                         }
                     }
@@ -1336,7 +1335,7 @@ void Volume::curveSkeleton2D(float thr, Volume* svol) {
 #endif
     threshold(0, 0, 1);
     delete scrvol;
-    delete queue;
+
     delete queue2;
     delete queue3;
     delete queue4;
@@ -1364,7 +1363,7 @@ void Volume::pointSkeleton(Volume* grayvol, float lowthr, float highthr,
 #endif
     GridQueue2* queue2 = new GridQueue2();
     GridQueue2* queue3 = new GridQueue2();
-    PriorityQueue < gridPoint > *queue = new PriorityQueue<gridPoint>(
+    PriorityQueue < gridPoint > queue(
             MAX_QUEUELEN);
 
     for(i = 0; i < getSizeX(); i++)
@@ -1434,12 +1433,12 @@ void Volume::pointSkeleton(Volume* grayvol, float lowthr, float highthr,
             scrvol->setDataAt(ox, oy, oz, score);
 
             // Push to queue
-            gp = new gridPoint;
-            gp->x = ox;
-            gp->y = oy;
-            gp->z = oz;
-            // queue->add( gp, -score ) ;
-            queue->add(gp, score);
+            gridPoint gp(ox, oy, oz);
+
+
+
+            // queue.add( gp, -score ) ;
+            queue.add(gp, score);
 
             ele = queue2->remove();
         }
@@ -1452,12 +1451,12 @@ void Volume::pointSkeleton(Volume* grayvol, float lowthr, float highthr,
         queue3 = new GridQueue2();
 
         // Next, start priority queue iteration
-        while(!queue->isEmpty()) {
+        while(!queue.isEmpty()) {
             // Retrieve the node with the highest score
-            queue->remove(gp, score);
-            ox = gp->x;
-            oy = gp->y;
-            oz = gp->z;
+            queue.remove(gp, score);
+            ox = gp.x;
+            oy = gp.y;
+            oz = gp.z;
 
 //				score = -score ;
 
@@ -1514,12 +1513,12 @@ void Volume::pointSkeleton(Volume* grayvol, float lowthr, float highthr,
                                 // printf("Update\n") ;
                                 scrvol->setDataAt(nx, ny, nz, score);
                                 // Push to queue
-                                gp = new gridPoint;
-                                gp->x = nx;
-                                gp->y = ny;
-                                gp->z = nz;
-                                // queue->add( gp, -score ) ;
-                                queue->add(gp, score);
+                                gridPoint gp(ox, oy, oz);
+                                gp.x = nx;
+                                gp.y = ny;
+                                gp.z = nz;
+                                // queue.add( gp, -score ) ;
+                                queue.add(gp, score);
                             }
                         }
                     }
@@ -1569,7 +1568,7 @@ void Volume::pointSkeleton(Volume* grayvol, float lowthr, float highthr,
 
     // Finally, clean up
     delete scrvol;
-    delete queue;
+
     delete queue2;
     delete queue3;
 #ifdef VERBOSE
@@ -1596,7 +1595,7 @@ void Volume::skeleton(float thr, Volume* svol, Volume* hvol) {
 #endif
     GridQueue2* queue2 = new GridQueue2();
     GridQueue2* queue3 = new GridQueue2();
-    PriorityQueue < gridPoint > *queue = new PriorityQueue<gridPoint>(
+    PriorityQueue < gridPoint > queue(
             MAX_QUEUELEN);
 
     for(i = 0; i < getSizeX(); i++)
@@ -1662,12 +1661,12 @@ void Volume::skeleton(float thr, Volume* svol, Volume* hvol) {
             scrvol->setDataAt(ox, oy, oz, score);
 
             // Push to queue
-            gp = new gridPoint;
-            gp->x = ox;
-            gp->y = oy;
-            gp->z = oz;
-            // queue->add( gp, -score ) ;
-            queue->add(gp, score);
+            gridPoint gp(ox, oy, oz);
+
+
+
+            // queue.add( gp, -score ) ;
+            queue.add(gp, score);
 
             ele = queue2->remove();
         }
@@ -1680,12 +1679,12 @@ void Volume::skeleton(float thr, Volume* svol, Volume* hvol) {
         queue3 = new GridQueue2();
 
         // Next, start priority queue iteration
-        while(!queue->isEmpty()) {
+        while(!queue.isEmpty()) {
             // Retrieve the node with the highest score
-            queue->remove(gp, score);
-            ox = gp->x;
-            oy = gp->y;
-            oz = gp->z;
+            queue.remove(gp, score);
+            ox = gp.x;
+            oy = gp.y;
+            oz = gp.z;
 
 //				score = -score ;
 
@@ -1741,12 +1740,12 @@ void Volume::skeleton(float thr, Volume* svol, Volume* hvol) {
                                 // printf("Update\n") ;
                                 scrvol->setDataAt(nx, ny, nz, score);
                                 // Push to queue
-                                gp = new gridPoint;
-                                gp->x = nx;
-                                gp->y = ny;
-                                gp->z = nz;
-                                // queue->add( gp, -score ) ;
-                                queue->add(gp, score);
+                                gridPoint gp(ox, oy, oz);
+                                gp.x = nx;
+                                gp.y = ny;
+                                gp.z = nz;
+                                // queue.add( gp, -score ) ;
+                                queue.add(gp, score);
                             }
                         }
                     }
@@ -1769,7 +1768,7 @@ void Volume::skeleton(float thr, Volume* svol, Volume* hvol) {
 #endif
     threshold(0, 0, 1);
     delete scrvol;
-    delete queue;
+
     delete queue3;
 }
 
@@ -2238,7 +2237,7 @@ void Volume::surfaceSkeleton(Volume* grayvol, float lowthr, float highthr) {
     GridQueue2* queue3 = new GridQueue2();
     GridQueue2* queue4 = new GridQueue2();
 
-    PriorityQueue < gridPoint > *queue = new PriorityQueue<gridPoint>(
+    PriorityQueue < gridPoint > queue(
             MAX_QUEUELEN);
     int ct = 0;
 
@@ -2322,12 +2321,12 @@ void Volume::surfaceSkeleton(Volume* grayvol, float lowthr, float highthr) {
             scrvol->setDataAt(ox, oy, oz, score);
 
             // Push to queue
-            gp = new gridPoint;
-            gp->x = ox;
-            gp->y = oy;
-            gp->z = oz;
-            // queue->add( gp, -score ) ;
-            queue->add(gp, score);
+            gridPoint gp(ox, oy, oz);
+
+
+
+            // queue.add( gp, -score ) ;
+            queue.add(gp, score);
 
             ele = queue2->remove();
         }
@@ -2339,12 +2338,12 @@ void Volume::surfaceSkeleton(Volume* grayvol, float lowthr, float highthr) {
         int nowComplex = 0;
 
         // Next, start priority queue iteration
-        while(!queue->isEmpty()) {
+        while(!queue.isEmpty()) {
             // Retrieve the node with the highest score
-            queue->remove(gp, score);
-            ox = gp->x;
-            oy = gp->y;
-            oz = gp->z;
+            queue.remove(gp, score);
+            ox = gp.x;
+            oy = gp.y;
+            oz = gp.z;
 
 
             if(getDataAt(ox, oy, oz) != curwid || (int)scrvol->getDataAt(ox, oy,
@@ -2399,12 +2398,12 @@ void Volume::surfaceSkeleton(Volume* grayvol, float lowthr, float highthr) {
                                 // printf("Update\n") ;
                                 scrvol->setDataAt(nx, ny, nz, score);
                                 // Push to queue
-                                gp = new gridPoint;
-                                gp->x = nx;
-                                gp->y = ny;
-                                gp->z = nz;
-                                // queue->add( gp, -score ) ;
-                                queue->add(gp, score);
+                                gridPoint gp(ox, oy, oz);
+                                gp.x = nx;
+                                gp.y = ny;
+                                gp.z = nz;
+                                // queue.add( gp, -score ) ;
+                                queue.add(gp, score);
                             }
                         }
                     }
@@ -2448,7 +2447,7 @@ void Volume::surfaceSkeleton(Volume* grayvol, float lowthr, float highthr) {
 
     // Finally, clean up
     delete scrvol;
-    delete queue;
+
     delete queue2;
     delete queue3;
     delete queue4;
@@ -2475,7 +2474,7 @@ void Volume::surfaceSkeletonPres(float thr, Volume * preserve) {
     GridQueue2* queue3 = new GridQueue2();
     GridQueue2* queue4 = new GridQueue2();
 
-    PriorityQueue < gridPoint > *queue = new PriorityQueue<gridPoint>(
+    PriorityQueue < gridPoint > queue(
             MAX_QUEUELEN);
 
     for(i = 0; i < getSizeX(); i++)
@@ -2569,12 +2568,12 @@ void Volume::surfaceSkeletonPres(float thr, Volume * preserve) {
             scrvol->setDataAt(ox, oy, oz, score);
 
             // Push to queue
-            gp = new gridPoint;
-            gp->x = ox;
-            gp->y = oy;
-            gp->z = oz;
-            // queue->add( gp, -score ) ;
-            queue->add(gp, score);
+            gridPoint gp(ox, oy, oz);
+
+
+
+            // queue.add( gp, -score ) ;
+            queue.add(gp, score);
 
             ele = queue2->remove();
         }
@@ -2587,12 +2586,12 @@ void Volume::surfaceSkeletonPres(float thr, Volume * preserve) {
         queue3 = new GridQueue2();
 
         // Next, start priority queue iteration
-        while(!queue->isEmpty()) {
+        while(!queue.isEmpty()) {
             // Retrieve the node with the highest score
-            queue->remove(gp, score);
-            ox = gp->x;
-            oy = gp->y;
-            oz = gp->z;
+            queue.remove(gp, score);
+            ox = gp.x;
+            oy = gp.y;
+            oz = gp.z;
 
             // printf("%d\n", score);
 //				score = -score ;
@@ -2648,12 +2647,12 @@ void Volume::surfaceSkeletonPres(float thr, Volume * preserve) {
                                 // printf("Update\n") ;
                                 scrvol->setDataAt(nx, ny, nz, score);
                                 // Push to queue
-                                gp = new gridPoint;
-                                gp->x = nx;
-                                gp->y = ny;
-                                gp->z = nz;
-                                // queue->add( gp, -score ) ;
-                                queue->add(gp, score);
+                                gridPoint gp(nx, ny, nz);
+                                gp.x = nx;
+                                gp.y = ny;
+                                gp.z = nz;
+                                // queue.add( gp, -score ) ;
+                                queue.add(gp, score);
                             }
                         }
                     }
@@ -2676,7 +2675,7 @@ void Volume::surfaceSkeletonPres(float thr, Volume * preserve) {
     threshold(0, 0, 1);
 
     delete scrvol;
-    delete queue;
+
     delete queue2;
     delete queue3;
     delete queue4;
