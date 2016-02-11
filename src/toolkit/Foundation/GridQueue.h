@@ -5,7 +5,6 @@ namespace SkeletonMaker {
 
     struct gridQueueEle {
             int x, y, z;
-            int score;
             gridQueueEle* next;
 
             gridQueueEle(int xx, int yy, int zz)
@@ -79,7 +78,6 @@ namespace SkeletonMaker {
         ele->x = xx;
         ele->y = yy;
         ele->z = zz;
-        ele->score = 0;
         ele->next = head;
         head = ele;
         numEles++;
