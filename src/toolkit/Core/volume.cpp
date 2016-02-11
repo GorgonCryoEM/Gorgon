@@ -769,7 +769,7 @@ void Volume::curveSkeleton(Volume* grayvol, float lowthr, float highthr,
             ox = gp->x;
             oy = gp->y;
             oz = gp->z;
-            delete gp;
+
 //				score = -score ;
 
             // Ignore the node
@@ -1033,7 +1033,7 @@ void Volume::curveSkeleton(float thr, Volume* svol) {
             ox = gp->x;
             oy = gp->y;
             oz = gp->z;
-            delete gp;
+
 //				score = -score ;
 
             // Ignore the node
@@ -1256,7 +1256,7 @@ void Volume::curveSkeleton2D(float thr, Volume* svol) {
             ox = gp->x;
             oy = gp->y;
             oz = gp->z;
-            delete gp;
+
 //				score = -score ;
 
             // Ignore the node
@@ -1458,7 +1458,7 @@ void Volume::pointSkeleton(Volume* grayvol, float lowthr, float highthr,
             ox = gp->x;
             oy = gp->y;
             oz = gp->z;
-            delete gp;
+
 //				score = -score ;
 
             // Ignore the node
@@ -1686,7 +1686,7 @@ void Volume::skeleton(float thr, Volume* svol, Volume* hvol) {
             ox = gp->x;
             oy = gp->y;
             oz = gp->z;
-            delete gp;
+
 //				score = -score ;
 
             // Ignore the node
@@ -2345,7 +2345,7 @@ void Volume::surfaceSkeleton(Volume* grayvol, float lowthr, float highthr) {
             ox = gp->x;
             oy = gp->y;
             oz = gp->z;
-            delete gp;
+
 
             if(getDataAt(ox, oy, oz) != curwid || (int)scrvol->getDataAt(ox, oy,
                                                           oz)
@@ -2593,7 +2593,7 @@ void Volume::surfaceSkeletonPres(float thr, Volume * preserve) {
             ox = gp->x;
             oy = gp->y;
             oz = gp->z;
-            delete gp;
+
             // printf("%d\n", score);
 //				score = -score ;
 
