@@ -19,7 +19,6 @@ namespace SkeletonMaker {
         GridQueue();
         gridQueueEle* getHead();
         int getNumElements();
-        void sort(int eles);
         void pushQueue(int xx, int yy, int zz);
         int popQueue(int& xx, int& yy, int& zz);
 
@@ -46,53 +45,6 @@ namespace SkeletonMaker {
     int GridQueue::getNumElements( ) {
         return numEles ;
     }
-
-    /* Naive bubble sort */
-    void GridQueue::sort( int eles ) {
-        //printf("Sorting elements with descending scores...\n") ;
-        gridQueueEle* pre ;
-        gridQueueEle* e1 ;
-        gridQueueEle* e2 ;
-
-        for ( int i = eles - 1 ; i > 0 ; i -- )
-        {
-            pre = NULL ;
-            e1 = head ;
-            e2 = e1->next ;
-
-            for ( int j = 0 ; j < i ; j ++ )
-            {
-                if ( e1->score < e2->score )
-                {
-                    swapEle( pre, e1, e2 ) ;
-                }
-                else if ( e1->score == e2->score && rand() < RAND_MAX / 2)
-                {
-                    swapEle( pre, e1, e2 ) ;
-                }
-
-                if ( pre == NULL )
-                {
-                    pre = head ;
-                }
-                else
-                {
-                    pre = pre->next;
-                }
-                e1 = pre->next ;
-                e2 = e1->next ;
-            }
-        }
-
-        /* Debugging
-        pre = head ;
-        while ( pre != NULL )
-        {
-            printf("%d ", pre->score ) ;
-            pre = pre->next ;
-        }*/
-    }
-
 
     void GridQueue::pushQueue( int xx, int yy, int zz ) {
         gridQueueEle* ele = new gridQueueEle ;
