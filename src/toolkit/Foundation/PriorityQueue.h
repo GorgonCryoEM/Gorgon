@@ -87,7 +87,7 @@ namespace SkeletonMaker {
                 queueLength--;
 
                 if(queueLength == 0) {
-                    valueQueue[0] = NULL;
+                    valueQueue[0] = T();
                     return;
                 }
 
@@ -128,8 +128,8 @@ namespace SkeletonMaker {
 
                 valueQueue[ind] = vv;
                 keyQueue[ind] = kk;
-                valueQueue[queueLength] = NULL;
-                keyQueue[queueLength] = NULL;
+                valueQueue[queueLength] = T();
+                keyQueue[queueLength] = 0;
             }
     };
 }
