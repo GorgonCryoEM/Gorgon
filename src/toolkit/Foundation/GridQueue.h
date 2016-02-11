@@ -18,11 +18,11 @@ namespace SkeletonMaker {
 
     };
 
-    class GridQueue2
+    class GridQueue
     {
     public:
-        GridQueue2();
-        ~GridQueue2();
+        GridQueue();
+        ~GridQueue();
         gridQueueEle* getNext();
         void reset();
         int getNumElements();
@@ -37,7 +37,7 @@ namespace SkeletonMaker {
         int numEles ;
     };
 
-    GridQueue2::GridQueue2( )
+    GridQueue::GridQueue( )
     {
         head = NULL ;
         cur = NULL ;
@@ -46,14 +46,14 @@ namespace SkeletonMaker {
         numEles = 0 ;
     }
 
-    GridQueue2::~GridQueue2()
+    GridQueue::~GridQueue()
     {
         gridQueueEle* ele;
         reset();
         ele=getNext();
         while ( (ele=remove()) != NULL ){};
     }
-    gridQueueEle* GridQueue2::getNext( )
+    gridQueueEle* GridQueue::getNext( )
     {
         if ( cur == NULL )
         {
@@ -71,19 +71,19 @@ namespace SkeletonMaker {
         return cur ;
     }
 
-    void GridQueue2::reset( )
+    void GridQueue::reset( )
     {
         prepre = NULL ;
         pre = NULL ;
         cur = NULL ;
     }
 
-    int GridQueue2::getNumElements( )
+    int GridQueue::getNumElements( )
     {
         return numEles ;
     }
 
-    void GridQueue2::prepend( int xx, int yy, int zz )
+    void GridQueue::prepend( int xx, int yy, int zz )
     {
         gridQueueEle* ele = new gridQueueEle ;
         ele->x = xx ;
@@ -98,7 +98,7 @@ namespace SkeletonMaker {
     }
 
     /* Remove current element pointed by cur */
-    gridQueueEle * GridQueue2::remove( )
+    gridQueueEle * GridQueue::remove( )
     {
         gridQueueEle* temp = cur ;
         if ( cur != NULL )
