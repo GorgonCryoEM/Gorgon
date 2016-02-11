@@ -1,9 +1,22 @@
 #ifndef TOOLKIT_SKELETON_MAKER_GRID_QUEUE2_H
 #define TOOLKIT_SKELETON_MAKER_GRID_QUEUE2_H
 
-#include "GridQueue.h"
-
 namespace SkeletonMaker {
+
+    struct gridQueueEle
+    {
+        int x, y, z;
+        int score ;
+        gridQueueEle* next ;
+
+        gridQueueEle(int xx, int yy, int zz)
+                : x(xx), y(yy), z(zz)
+        {}
+
+        gridQueueEle()
+        {}
+
+    };
 
     class GridQueue2
     {
