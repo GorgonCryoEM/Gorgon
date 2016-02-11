@@ -1775,7 +1775,7 @@ namespace GraySkeletonCPP {
         bool modified;
         double value;
         list<int> cleanupIndices;
-        PriorityQueue<ImmersionBeachElement, int> beach(MAX_QUEUELEN);
+        PriorityQueue<ImmersionBeachElement> beach(MAX_QUEUELEN);
         ImmersionBeachElement * element;
         int index;
 

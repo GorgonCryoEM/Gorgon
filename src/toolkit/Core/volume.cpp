@@ -649,7 +649,7 @@ void Volume::curveSkeleton(Volume* grayvol, float lowthr, float highthr,
     GridQueue2* queue2 = new GridQueue2();
     GridQueue2* queue3 = new GridQueue2();
     GridQueue2* queue4 = new GridQueue2();
-    PriorityQueue<gridPoint, int> * queue = new PriorityQueue<gridPoint, int>(
+    PriorityQueue < gridPoint > *queue = new PriorityQueue<gridPoint>(
             MAX_QUEUELEN);
 
     for(i = 0; i < getSizeX(); i++)
@@ -914,7 +914,7 @@ void Volume::curveSkeleton(float thr, Volume* svol) {
     GridQueue2* queue2 = new GridQueue2();
     GridQueue2* queue3 = new GridQueue2();
     GridQueue2* queue4 = new GridQueue2();
-    PriorityQueue<gridPoint, int> * queue = new PriorityQueue<gridPoint, int>(
+    PriorityQueue < gridPoint > *queue = new PriorityQueue<gridPoint>(
             MAX_QUEUELEN);
 
     for(i = 0; i < getSizeX(); i++)
@@ -1137,7 +1137,7 @@ void Volume::curveSkeleton2D(float thr, Volume* svol) {
     GridQueue2* queue2 = new GridQueue2();
     GridQueue2* queue3 = new GridQueue2();
     GridQueue2* queue4 = new GridQueue2();
-    PriorityQueue<gridPoint, int> * queue = new PriorityQueue<gridPoint, int>(
+    PriorityQueue < gridPoint > *queue = new PriorityQueue<gridPoint>(
             MAX_QUEUELEN);
 
     for(i = 0; i < getSizeX(); i++)
@@ -1364,7 +1364,7 @@ void Volume::pointSkeleton(Volume* grayvol, float lowthr, float highthr,
 #endif
     GridQueue2* queue2 = new GridQueue2();
     GridQueue2* queue3 = new GridQueue2();
-    PriorityQueue<gridPoint, int> * queue = new PriorityQueue<gridPoint, int>(
+    PriorityQueue < gridPoint > *queue = new PriorityQueue<gridPoint>(
             MAX_QUEUELEN);
 
     for(i = 0; i < getSizeX(); i++)
@@ -1596,7 +1596,7 @@ void Volume::skeleton(float thr, Volume* svol, Volume* hvol) {
 #endif
     GridQueue2* queue2 = new GridQueue2();
     GridQueue2* queue3 = new GridQueue2();
-    PriorityQueue<gridPoint, int> * queue = new PriorityQueue<gridPoint, int>(
+    PriorityQueue < gridPoint > *queue = new PriorityQueue<gridPoint>(
             MAX_QUEUELEN);
 
     for(i = 0; i < getSizeX(); i++)
@@ -2238,7 +2238,7 @@ void Volume::surfaceSkeleton(Volume* grayvol, float lowthr, float highthr) {
     GridQueue2* queue3 = new GridQueue2();
     GridQueue2* queue4 = new GridQueue2();
 
-    PriorityQueue<gridPoint, int> * queue = new PriorityQueue<gridPoint, int>(
+    PriorityQueue < gridPoint > *queue = new PriorityQueue<gridPoint>(
             MAX_QUEUELEN);
     int ct = 0;
 
@@ -2475,7 +2475,7 @@ void Volume::surfaceSkeletonPres(float thr, Volume * preserve) {
     GridQueue2* queue3 = new GridQueue2();
     GridQueue2* queue4 = new GridQueue2();
 
-    PriorityQueue<gridPoint, int> * queue = new PriorityQueue<gridPoint, int>(
+    PriorityQueue < gridPoint > *queue = new PriorityQueue<gridPoint>(
             MAX_QUEUELEN);
 
     for(i = 0; i < getSizeX(); i++)

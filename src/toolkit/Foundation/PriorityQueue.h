@@ -4,45 +4,50 @@
 #include <cstdlib>
 #include <cstdio>
 
-
 namespace SkeletonMaker {
 //      Template class for a priority queue.
 //    The smallest element is at the front
-    template < class ValueT, class KeyT >
+    template<class ValueT>
     class PriorityQueue {
         public:
-            int queueLength ;
-            int maxLength ;
+            int queueLength;
+            int maxLength;
 
-            ValueT ** valueQueue ;
-            KeyT * keyQueue ;
+            ValueT ** valueQueue;
+            int * keyQueue;
 
         public:
             PriorityQueue(int max) {
                 this->maxLength = max;
                 this->queueLength = 0;
-                this->valueQueue = new ValueT* [max];
-                this->keyQueue = new KeyT [max];
+                this->valueQueue = new ValueT*[max];
+                this->keyQueue = new int[max];
             }
 
-            ~PriorityQueue(){
-                delete [] keyQueue ;
-                for (int i=0; i<queueLength; i++ ) {
-                    delete valueQueue [i] ;
+            ~PriorityQueue() {
+                delete[] keyQueue;
+                for(int i = 0; i < queueLength; i++) {
+                    delete valueQueue[i];
                 }
-                delete [] valueQueue ;
+                delete[] valueQueue;
             }
 
-            int getLength(){ return this->queueLength; }
+            int getLength() {
+                return this->queueLength;
+            }
 
-            bool isEmpty() { return (this->queueLength == 0); }
+            bool isEmpty() {
+                return (this->queueLength == 0);
+            }
 
-            bool isFull() {return ( this->queueLength == this->maxLength  ); }
+            bool isFull() {
+                return (this->queueLength == this->maxLength);
+            }
 
-            void add(ValueT * v, KeyT k) {
-                if (this->isFull()) {
+            void add(ValueT * v, int k) {
+                if(this->isFull()) {
                     printf("PRIORITY QUEUE FILLED UP !!! \n");
-                    return ;
+                    return;
                 }
 
                 int ind = queueLength;
@@ -50,9 +55,9 @@ namespace SkeletonMaker {
                 queueLength++;
 
                 while(ind > 0) {
-                    tind = (ind + 1)/2 - 1;
+                    tind = (ind + 1) / 2 - 1;
                     if(k < keyQueue[tind]) {
-                        keyQueue[ind]   =   keyQueue[tind];
+                        keyQueue[ind] = keyQueue[tind];
                         valueQueue[ind] = valueQueue[tind];
                         ind = tind;
                     }
@@ -62,14 +67,14 @@ namespace SkeletonMaker {
                 }
 
                 valueQueue[ind] = v;
-                keyQueue  [ind] = k;
+                keyQueue[ind] = k;
             }
 
-            void remove(ValueT *& v, KeyT & k) {
+            void remove(ValueT *& v, int & k) {
                 if(this->isEmpty()) {
                     v = NULL;
                     k = 0;
-                    return ;
+                    return;
                 }
 
                 v = valueQueue[0];
@@ -78,20 +83,20 @@ namespace SkeletonMaker {
 
                 if(queueLength == 0) {
                     valueQueue[0] = NULL;
-                    return ;
+                    return;
                 }
 
                 ValueT * vv = valueQueue[queueLength];
-                KeyT kk = keyQueue [queueLength], lowk;
+                int kk = keyQueue[queueLength], lowk;
                 int ind = 0, tind, ind2, ind3;
-                while (1) {
+                while(1) {
                     ind2 = 2 * (ind + 1) - 1;
                     ind3 = ind2 + 1;
                     tind = ind;
                     lowk = kk;
 
                     if(ind2 >= queueLength) {
-                        break ;
+                        break;
                     }
                     else {
                         if(keyQueue[ind2] < lowk) {
@@ -107,19 +112,19 @@ namespace SkeletonMaker {
 
                         if(ind != tind) {
                             valueQueue[ind] = valueQueue[tind];
-                            keyQueue[ind] = keyQueue [tind];
+                            keyQueue[ind] = keyQueue[tind];
                             ind = tind;
                         }
                         else {
-                            break ;
+                            break;
                         }
                     }
                 }
 
-                valueQueue [ind] = vv;
-                keyQueue [ind] = kk;
-                valueQueue [queueLength] = NULL;
-                keyQueue [queueLength] = NULL;
+                valueQueue[ind] = vv;
+                keyQueue[ind] = kk;
+                valueQueue[queueLength] = NULL;
+                keyQueue[queueLength] = NULL;
             }
     };
 }
