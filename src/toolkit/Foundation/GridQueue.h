@@ -27,7 +27,6 @@ namespace SkeletonMaker {
         private:
             gridQueueEle* head;
             gridQueueEle* pre;
-            gridQueueEle* prepre;
             gridQueueEle* cur;
             int numEles;
     };
@@ -36,7 +35,6 @@ namespace SkeletonMaker {
         head = NULL;
         cur = NULL;
         pre = NULL;
-        prepre = NULL;
         numEles = 0;
     }
 
@@ -50,12 +48,10 @@ namespace SkeletonMaker {
 
     gridQueueEle* GridQueue::getNext() {
         if(cur == NULL) {
-            prepre = NULL;
             pre = NULL;
             cur = head;
         }
         else {
-            prepre = pre;
             pre = cur;
             cur = cur->next;
         }
@@ -64,7 +60,6 @@ namespace SkeletonMaker {
     }
 
     void GridQueue::reset() {
-        prepre = NULL;
         pre = NULL;
         cur = NULL;
     }
