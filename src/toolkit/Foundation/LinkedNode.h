@@ -113,13 +113,8 @@ namespace GraphMatch {
                     minIndex = j;
                 }
             }
-            temp = n1[minIndex];
-            n1[minIndex] = n1[i];
-            n1[i] = temp;
-
-            temp = n2[minIndex];
-            n2[minIndex] = n2[i];
-            n2[i] = temp;
+            swap(n1[minIndex], n1[i]);
+            swap(n2[minIndex], n2[i]);
         }
 
         vector<int> correspondance;
@@ -178,13 +173,8 @@ namespace GraphMatch {
                     minIndex = j;
                 }
             }
-            temp = n1[minIndex];
-            n1[minIndex] = n1[i];
-            n1[i] = temp;
-
-            temp = n2[minIndex];
-            n2[minIndex] = n2[i];
-            n2[i] = temp;
+            swap(n1[minIndex], n1[i]);
+            swap(n2[minIndex], n2[i]);
         }
 
         bool isSolution = true;
