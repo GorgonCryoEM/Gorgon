@@ -22,7 +22,6 @@ namespace GraphMatch {
         double cost;
         double costGStar;
     public:
-        LinkedNode(LinkedNode * olderNode);
         LinkedNode();
         LinkedNode(LinkedNode * olderNode, LinkedNodeStub * olderStub, int n2Node, int dummyHelixCount, int dummySheetCount, bool allowRevisit);
 
@@ -51,22 +50,6 @@ namespace GraphMatch {
         m2Bitmap = 0;
         depth = 0;
     }
-
-    LinkedNode::LinkedNode(LinkedNode * olderNode) {
-        n1Node = olderNode->n1Node;
-        n2Node = olderNode->n2Node;
-        parentNode = olderNode->parentNode;
-        m1Bitmap = olderNode->m1Bitmap;
-        m2Bitmap = olderNode->m2Bitmap;
-        cost = olderNode->cost;
-        costGStar = olderNode->costGStar;
-        missingNodesUsed = olderNode->missingNodesUsed;
-        missingHelixNodesUsed = olderNode->missingHelixNodesUsed;
-        missingSheetNodesUsed = olderNode->missingSheetNodesUsed;
-        depth = olderNode->depth;
-    }
-
-
 
     LinkedNode::LinkedNode(LinkedNode * olderNode, LinkedNodeStub * olderStub, int n2Node, int dummyHelixCount, int dummySheetCount, bool allowRevisit) {
         this->n1Node = olderNode->n1Node + (char)dummyHelixCount + (char)dummySheetCount + 1;
