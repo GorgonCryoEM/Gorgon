@@ -73,8 +73,6 @@ namespace Foundation {
     template <class TKey, class TValue>
     class PQueue {
     public:
-        ~PQueue();
-
         void Add(TKey key, TValue value);
         TValue PopFirst();
         void PopFirst(TKey & key, TValue & value);
@@ -85,11 +83,6 @@ namespace Foundation {
     private:
         Heap< PQueueElem<TKey, TValue> > heap;
     };
-
-    template <class TKey, class TValue>
-    PQueue<TKey, TValue>::~PQueue() {
-
-    }
 
     template <class TKey, class TValue>
     void PQueue<TKey, TValue>::Add(TKey key, TValue value) {
