@@ -63,7 +63,6 @@ namespace GraySkeletonCPP {
         void VoxelBinarySubtract(Volume * sourceAndDestVolume1, Volume * sourceVolume2);
         void VoxelSubtract(Volume * sourceAndDestVolume1, Volume * sourceVolume2);
         void VoxelOr(Volume * sourceAndDestVolume1, Volume * sourceVolume2);
-        Vector3DFloat GetCurveDirection(Volume * skeleton, int x, int y, int z);
         Vector3DFloat GetCurveDirection(Volume * skeleton, int x, int y, int z, int radius);
         Vector3DFloat GetSurfaceNormal(Volume * skeleton, int x, int y, int z);
         Vector3DFloat GetSurfaceNormal(Volume * skeleton, int x, int y, int z, int radius, Vector3DFloat * localDirections);
@@ -246,41 +245,6 @@ namespace GraySkeletonCPP {
         Vector3DFloat inUVW = Vector3DFloat(uContri, vContri, wContri);
         inUVW.Normalize();
         return inUVW;
-    }
-
-    Vector3DFloat VolumeSkeletonizer::GetCurveDirection(Volume * skeleton, int x, int y, int z) {
-        Vector3DFloat v1, currentPos;
-        Vector3DFloat * n6 = new Vector3DFloat[6];
-        int n6Count;
-        Vector3DFloat direction = Vector3DFloat(0,0,0);
-        if(skeleton->getDataAt(x,y,z) <= 0) {
-            return direction;
-        }
-
-        currentPos = Vector3DFloat((float)x, (float)y, (float)z);
-        n6Count = 0;
-        for(int i = 0; i < 6; i++) {
-            if(skeleton->getDataAt(x + VOLUME_NEIGHBORS_6[i][0], y + VOLUME_NEIGHBORS_6[i][1], z + VOLUME_NEIGHBORS_6[i][2]) > 0) {
-                n6[n6Count] = Vector3DFloat(x + VOLUME_NEIGHBORS_6[i][0], y + VOLUME_NEIGHBORS_6[i][1], z + VOLUME_NEIGHBORS_6[i][2]);
-                if(n6Count > 0) {
-                    v1 = n6[n6Count-1] - n6[n6Count];
-                    direction = direction + v1;
-                }
-                n6Count++;
-            }
-        }
-        if(n6Count == 1) {
-            v1 = Vector3DFloat(x, y, z);
-            v1 = v1 - n6[0];
-            direction = direction + v1;
-        }
-        direction.Normalize();
-        if(n6Count > 2) {
-            direction = Vector3DFloat(BAD_NORMAL, BAD_NORMAL, BAD_NORMAL);
-        }
-
-        delete [] n6;
-        return direction;
     }
 
 
