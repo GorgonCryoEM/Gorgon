@@ -17,8 +17,6 @@ namespace Foundation {
         T PopRoot();
         bool IsEmpty();
 
-        void Print();
-
     private:
         unsigned int GetParent(unsigned int index);
         unsigned int GetLeft (unsigned int index);
@@ -120,14 +118,6 @@ namespace Foundation {
         values.erase(values.begin() + lastElem);
         Heapify(0);
         return val;
-    }
-
-    template <class T>
-    void Heap<T>::Print() {
-        for(unsigned int i = 0; i < values.size(); i++) {
-            printf("%d ", (int)values[i]);
-        }
-        printf("\n");
     }
 
 }
