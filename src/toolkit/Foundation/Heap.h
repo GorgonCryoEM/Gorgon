@@ -13,7 +13,6 @@ namespace Foundation {
         Heap();
 
         void AddValue(T value);
-        T Root();
         T PopRoot();
         bool IsEmpty();
 
@@ -98,11 +97,6 @@ namespace Foundation {
         }
     }
 
-
-    template <class T>
-    T Heap<T>::Root() {
-        return values[0];
-    }
 
     template <class T>
     bool Heap<T>::IsEmpty() {
