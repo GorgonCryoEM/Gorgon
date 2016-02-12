@@ -83,7 +83,6 @@ namespace GraySkeletonCPP {
         void AddIterationToVolume(Volume * compositeVolume, Volume * iterationVolume, unsigned char threshold);
         void FindOrthogonalAxes(Vector3DFloat axis, Vector3DFloat & res1, Vector3DFloat & res2);
         void GetSTBasedDistribution(ProbabilityDistribution3D & distributionInfo, EigenResults3D eigen);
-        void HueR(double value, double &r, double &g, double &b);
         void HueRB(double value, double &r, double &g, double &b);
         Vector3DFloat XYZtoUVW(Vector3DFloat vec, Vector3DFloat u, Vector3DFloat v, Vector3DFloat w);
         Volume * FillCurveHoles(Volume * thresholdedSkeleton, Volume * originalSkeleton, int maxHoleSize);
@@ -683,11 +682,6 @@ namespace GraySkeletonCPP {
             }
         }
 
-    }
-    void VolumeSkeletonizer::HueR(double value, double &r, double &g, double &b) {
-        r = value*value*value*value;
-        g = 0;
-        b = 0;
     }
 
     void VolumeSkeletonizer::HueRB(double value, double &r, double &g, double &b) {
