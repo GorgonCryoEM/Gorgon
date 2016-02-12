@@ -751,9 +751,6 @@ namespace GraySkeletonCPP {
     }
 
 
-
-
-
     Volume * VolumeSkeletonizer::GetJuCurveSkeleton(Volume * sourceVolume, Volume * preserve, double threshold, bool is3D){
         char thinningClass = is3D ? THINNING_CLASS_CURVE_PRESERVATION : THINNING_CLASS_CURVE_PRESERVATION_2D;
         return GetJuThinning(sourceVolume, preserve, threshold, thinningClass);
@@ -786,8 +783,6 @@ namespace GraySkeletonCPP {
 
         return thinnedVolume;
     }
-
-
 
     Volume * VolumeSkeletonizer::PerformImmersionSkeletonizationAndPruning(Volume * sourceVol, Volume * preserveVol, double startGray, double endGray, double stepSize, int smoothingIterations, int smoothingRadius, int minCurveSize, int minSurfaceSize, int maxCurveHole, int maxSurfaceHole, string outputPath, bool doPruning, double pointThreshold, double curveThreshold, double surfaceThreshold) {
         appTimeManager.PushCurrentTime();
@@ -898,8 +893,6 @@ namespace GraySkeletonCPP {
             delete curveVol;
             delete prunedCurveVol;
             curveVol = filledCurveVol;
-
-
         }
 
         VoxelOr(curveVol, surfaceVol);
@@ -922,18 +915,6 @@ namespace GraySkeletonCPP {
         #ifdef SAVE_INTERMEDIATE_RESULTS
             curveVol->toMRCFile((char *)(outputPath + "-SC.mrc").c_str());
         #endif
-
-        // Removed as points will never be preserved.
-        // Volume * pointVol = GetImmersionThinning(sourceVol, curveVol, startGray, endGray, stepSize, THINNING_CLASS_POINT_PRESERVATION);
-        //if(doPruning) {
-        //	pointVol->toMRCFile((char *)(outputPath + "-P-Pre-Prune.mrc").c_str());
-        //	volumeEigens = GetEigenResults2(pointVol, volumeGradient, gaussianFilterPointRadius, pointRadius, true);
-        //	PruneUsingStructureTensor(pointVol, sourceVol, volumeEigens, pointThreshold, PRUNING_CLASS_PRUNE_POINTS, outputPath + "-P");
-        //	delete [] volumeEigens;
-        //	pointVol->toMRCFile((char *)(outputPath + "-P-Post-Prune.mrc").c_str());
-        //}
-
-        //VoxelOr(pointVol, curveVol);
 
         delete surfaceVol;
         //delete curveVol;
@@ -1008,11 +989,8 @@ namespace GraySkeletonCPP {
               cout<<"2: topologyVol->getSize(): "<<topologyVol->getSize()<<endl;
         #endif
 
-
         return topologyVol;
     }
-
-
 }
 
 #endif
