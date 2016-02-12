@@ -96,25 +96,25 @@ namespace GraphMatch {
         cout << "Initializing search" << endl;
         cout << "Base graph has " << baseGraph->GetHelixCount() << " helices and " << baseGraph->GetSheetCount() << " sheets." << endl;
         cout << "Pattern graph has " << patternGraph->GetHelixCount() << " helices and " << patternGraph->GetSheetCount() << " sheets." << endl;
-#endif // VERBOSE
+#endif
         usedNodes.clear();
 #ifdef VERBOSE
         cout << "Creating priority queue" << endl;
-#endif // VERBOSE
+#endif
         queue = new PQueue<double, LinkedNode *>();
 #ifdef VERBOSE
         cout << "Loading pattern graph" << endl;
-#endif // VERBOSE
+#endif
         this->patternGraph = patternGraph;
 #ifdef VERBOSE
         cout << "Loading base graph" << endl;
-#endif // VERBOSE
+#endif
         this->baseGraph = baseGraph;
         expandCount = 0;
 
 #ifdef VERBOSE
         cout << "Finding the number of missing helices and sheets" << endl;
-#endif // VERBOSE
+#endif
         missingHelixCount = (patternGraph->GetNodeCount() - baseGraph->GetNodeCount()) / 2;
         if(missingHelixCount < 0)  {
             missingHelixCount = 0;
@@ -145,7 +145,7 @@ namespace GraphMatch {
         }
 #ifdef VERBOSE
         cout << "base graph has " << baseHelixNodes << " helix nodes and " << baseSheetNodes << " sheet nodes." << endl;
-#endif // VERBOSE
+#endif
 
         for (int i = 0; i < patternGraph->GetNodeCount(); i++) {
             //cout << "pattern graph node " << i << " has type " << (int)(patternGraph->adjacencyMatrix[i][i][0]) << endl;
@@ -162,7 +162,7 @@ namespace GraphMatch {
         }
 #ifdef VERBOSE
         cout << "pattern graph has " << patternHelixNodes << " helix nodes and " << patternSheetNodes << " sheet nodes." << endl;
-#endif // VERBOSE
+#endif
 
         missingHelixCount = (patternHelixNodes - baseHelixNodes) / 2;
 
@@ -173,7 +173,7 @@ namespace GraphMatch {
 #ifdef VERBOSE
         cout << "missing helix count is " << missingHelixCount << ", missing sheet count is " << missingSheetCount << endl;
         cout << "missing helix penalty is " << MISSING_HELIX_PENALTY << ", missing sheet penalty is " << MISSING_SHEET_PENALTY << endl;
-#endif // VERBOSE
+#endif
 
         if(!PERFORMANCE_COMPARISON_MODE) {
             NormalizeGraphs();
@@ -206,7 +206,7 @@ namespace GraphMatch {
 #ifdef VERBOSE
         cout << "Starting to search for correspondences." << endl;
         DisplayConstants();
-#endif // VERBOSE
+#endif
         bool continueLoop = true;
         clock_t finishTime;
         // repeat the following loop until all results are found
@@ -261,7 +261,7 @@ namespace GraphMatch {
 
 #ifdef VERBOSE
         cout << "Finished the correspondence search. Found " << foundCount << " results." << endl;
-#endif // VERBOSE
+#endif
 
         return foundCount;
     }
@@ -367,7 +367,7 @@ namespace GraphMatch {
                 skippedSheets++;
 #ifdef VERBOSE
                 if (debugMsg) { cout << "  -- found strand " << d+i << ", adding " << patternGraph->nodeWeights[d+i-1] << " to patternLength" << endl; }
-#endif // VERBOSE
+#endif
             } else {
                 skippedHelices++;
             }
@@ -435,25 +435,25 @@ namespace GraphMatch {
 #ifdef VERBOSE
             if (debugMsg) { cout << "  -- euclidean dist = " << baseGraph->euclideanMatrix[qj-1][qp-1] << ", patternLength = " << patternLength << ", loop fudge factor = " << EUCLIDEAN_VOXEL_TO_PDB_RATIO / LOOP_C_ALPHA_TO_ANGSTROMS << ", helix fudge factor = " << EUCLIDEAN_VOXEL_TO_PDB_RATIO / HELIX_C_ALPHA_TO_ANGSTROMS << endl; }
             if (debugMsg) { cout << "  -- scalar ratio required = " << baseGraph->euclideanMatrix[qj-1][qp-1] / patternLength << ", additive headroom = " << baseGraph->euclideanMatrix[qj-1][qp-1] - patternLength << endl; }
-#endif // VERBOSE
+#endif
 
             if((qj != -1) && ((int)(patternGraph->adjacencyMatrix[d-1][d][0] + 0.01) == GRAPHEDGE_HELIX) && (baseGraph->euclideanMatrix[qj-1][qp-1] > (patternLength * EUCLIDEAN_VOXEL_TO_PDB_RATIO / HELIX_C_ALPHA_TO_ANGSTROMS )) ){
 #ifdef VERBOSE
                 if (debugMsg) { cout << "  -- -- -- NOT ALLOWED (HELIX) -- -- -- " << endl; }
-#endif // VERBOSE
+#endif
                 return -1;
             } else
             if((qj != -1) && ((int)(patternGraph->adjacencyMatrix[d-1][d][0] + 0.01) == GRAPHEDGE_LOOP)) {
                 if (((int)(patternGraph->adjacencyMatrix[d-1][d-1][0] + 0.01) == GRAPHNODE_SHEET || (int)(patternGraph->adjacencyMatrix[d][d][0] + 0.01) == GRAPHNODE_SHEET) && (baseGraph->euclideanMatrix[qj-1][qp-1] > (patternLength * 1.0 * EUCLIDEAN_VOXEL_TO_PDB_RATIO / LOOP_C_ALPHA_TO_ANGSTROMS )) ){
 #ifdef VERBOSE
                     if (debugMsg) { cout << "  -- -- -- NOT ALLOWED (LOOP WITH STRAND) -- -- -- " << endl; }
-#endif // VERBOSE
+#endif
                     return -1;
                 }
                 if (((int)(patternGraph->adjacencyMatrix[d-1][d-1][0] + 0.01) != GRAPHNODE_SHEET && (int)(patternGraph->adjacencyMatrix[d][d][0] + 0.01) != GRAPHNODE_SHEET) && (baseGraph->euclideanMatrix[qj-1][qp-1] > (patternLength * EUCLIDEAN_VOXEL_TO_PDB_RATIO / LOOP_C_ALPHA_TO_ANGSTROMS )) ){
 #ifdef VERBOSE
                     if (debugMsg) { cout << "  -- -- -- NOT ALLOWED (LOOP) -- -- -- " << endl; }
-#endif // VERBOSE
+#endif
                     return -1;
                 }
             }
@@ -522,19 +522,19 @@ namespace GraphMatch {
                 cost += patternGraph->adjacencyMatrix[k][k+1][1] * MISSING_HELIX_PENALTY_SCALED;
 #ifdef VERBOSE
                 if (debugMsg) { cout << "  -- adding missing helix penalties: fixed=" << MISSING_HELIX_PENALTY << ", scaled=" << patternGraph->nodeWeights[k] * MISSING_HELIX_PENALTY_SCALED << endl; }
-#endif // VERBOSE
+#endif
 
                 if (startAtBeginning && !firstHelixFound) {
                     cost += START_END_MISSING_HELIX_PENALTY;
 #ifdef VERBOSE
                     if (debugMsg) { cout << "  -- adding start_end_miss_helix_pen" << endl; }
-#endif // VERBOSE
+#endif
                 }
                 if (finishAtEnd && !firstHelixFound) {
                     cost += START_END_MISSING_HELIX_PENALTY;
 #ifdef VERBOSE
                     if (debugMsg) { cout << "  -- adding start_end_miss_helix_pen" << endl; }
-#endif // VERBOSE
+#endif
                 }
                 firstHelixFound = true;
             }
@@ -544,7 +544,7 @@ namespace GraphMatch {
                 cost += patternGraph->nodeWeights[k] * MISSING_SHEET_PENALTY_SCALED;
 #ifdef VERBOSE
                 if (debugMsg) { cout << "  -- adding missing sheet penalties: fixed=" << MISSING_SHEET_PENALTY << ", scaled=" << patternGraph->nodeWeights[k] * MISSING_SHEET_PENALTY_SCALED << endl; }
-#endif // VERBOSE
+#endif
             }
             //if (startAtBeginning && debugMsg) { cout << "STARTATBEGIN" << endl;}
             pastFirst = true;
@@ -622,7 +622,7 @@ namespace GraphMatch {
                                     skippedHelixNodes = 1;
 #ifdef VERBOSE
                                     cout << "node skipped. adding one to skippedHelixNodes. result is " << skippedHelixNodes << endl;
-#endif // VERBOSE
+#endif
                                 }
                         }
 
@@ -914,12 +914,12 @@ namespace GraphMatch {
     void WongMatch15ConstrainedNoFuture::NormalizeGraphs() {
 #ifdef VERBOSE
         printf("Normalizing Graphs\n");
-#endif // VERBOSE
+#endif
 
 
 #ifdef VERBOSE
         printf("\tNormalizing the base graph from Angstroms to amino acids\nNormalized Graph:\n");
-#endif // VERBOSE
+#endif
         for(int i = 0; i < baseGraph->nodeCount; i++) {
             for(int j = 0; j < baseGraph->nodeCount; j++) {
                 // base graph
@@ -939,13 +939,13 @@ namespace GraphMatch {
 
 #ifdef VERBOSE
         baseGraph->PrintGraph();
-#endif // VERBOSE
+#endif
     }
 
     void WongMatch15ConstrainedNoFuture::NormalizeSheets() {
 #ifdef VERBOSE
         printf("\tNormalizing the sheet nodes in the base graph based on sheet ratio\nNormalized Graph:\n");
-#endif // VERBOSE
+#endif
         // TODO: Also normalize the sheet capacity here?
         double totalSheetSize = 0;
         double totalStrandLength = 0;
@@ -955,7 +955,7 @@ namespace GraphMatch {
                 totalSheetSize += (double)baseGraph->skeletonHelixes[i]->length;
 #ifdef VERBOSE
                 cout << "after sheet " << i << ", total sheet size is now " << totalSheetSize << endl;
-#endif // VERBOSE
+#endif
             }
         }
 
@@ -965,7 +965,7 @@ namespace GraphMatch {
                 totalStrandLength += patternGraph->pdbStructures[i]->GetLengthResidues();
 #ifdef VERBOSE
                 cout << "After adding strand " << i << " with length " << patternGraph->pdbStructures[i]->GetLengthResidues() << ", total strand length is now " << totalStrandLength << endl;
-#endif // VERBOSE
+#endif
             }
         }
 
@@ -973,12 +973,12 @@ namespace GraphMatch {
         double ratio = totalStrandLength / totalSheetSize;
 #ifdef VERBOSE
         cout << "sheet sizes must be scaled by a factor of " << ratio << endl;
-#endif // VERBOSE
+#endif
 
 
 #ifdef VERBOSE
         printf("\tNormalizing the base graph sheets from voxels to scaled voxels\nNormalized Graph:\n");
-#endif // VERBOSE
+#endif
         for(int i = 0; i < baseGraph->nodeCount; i++) {
             if(baseGraph->adjacencyMatrix[i][i][1] != MAXINT && baseGraph->adjacencyMatrix[i][i][0] == GRAPHNODE_SHEET) {
                 // scale the sheet weight to the # of amino acids
@@ -990,7 +990,7 @@ namespace GraphMatch {
 
 #ifdef VERBOSE
         baseGraph->PrintGraph();
-#endif // VERBOSE
+#endif
     }
 }
 #endif
