@@ -2,7 +2,7 @@
 #define TOOLKIT_FOUNDATION_GORGONPRIORITYQUEUE_H
 
 
-#include "GHeap.h"
+#include "Heap.h"
 #include "PQueueElem.h"
 
 namespace Foundation {
@@ -20,12 +20,12 @@ namespace Foundation {
         bool IsEmpty();
 
     private:
-        GHeap< PQueueElem<TKey, TValue> > heap;
+        Heap< PQueueElem<TKey, TValue> > heap;
     };
 
     template <class TKey, class TValue>
     PQueue<TKey, TValue>::PQueue(bool maxIsHighestPriority) {
-        heap = GHeap< PQueueElem<TKey, TValue> >(maxIsHighestPriority);
+        heap = Heap< PQueueElem<TKey, TValue> >(maxIsHighestPriority);
     }
 
     template <class TKey, class TValue>
