@@ -506,23 +506,22 @@ namespace GraphMatch {
                         cout << "  -- -- -- NOT ALLOWED (LOOP WITH STRAND) -- -- -- " << endl;
                     }
 #endif
-                    return -1;
-                }
-                if( ((int) (patternGraph->adjacencyMatrix[d - 1][d - 1][0] + 0.01) != GRAPHNODE_SHEET && (int) (patternGraph->adjacencyMatrix[d][d][0]
-                                        + 0.01)
-                                                                                                         != GRAPHNODE_SHEET)
-                   && (baseGraph->euclideanMatrix[qj - 1][qp - 1] > (patternLength
-                                           * EUCLIDEAN_VOXEL_TO_PDB_RATIO
-                                                                     / LOOP_C_ALPHA_TO_ANGSTROMS))) {
+                            return -1;
+                           }
+                if( (    (int) (patternGraph->adjacencyMatrix[d-1][d-1][0] + 0.01) != GRAPHNODE_SHEET
+                      && (int) (patternGraph->adjacencyMatrix[d]    [d][0] + 0.01) != GRAPHNODE_SHEET
+                    )
+                   &&
+                    (baseGraph->euclideanMatrix[qj-1][qp-1] > patternLength * EUCLIDEAN_VOXEL_TO_PDB_RATIO / LOOP_C_ALPHA_TO_ANGSTROMS)
+                  ) {
 #ifdef VERBOSE
                     if(debugMsg) {
-                        cout << "  -- -- -- NOT ALLOWED (LOOP) -- -- -- "
-                             << endl;
+                        cout << "  -- -- -- NOT ALLOWED (LOOP) -- -- -- " << endl;
                     }
 #endif
-                    return -1;
-                }
-            }
+                        return -1;
+                    }
+                  }
         }
         else { // a skip edge
             // not sure if these checks really help or if they just waste time
