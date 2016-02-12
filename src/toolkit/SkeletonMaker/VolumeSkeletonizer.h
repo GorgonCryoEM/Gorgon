@@ -92,7 +92,6 @@ namespace GraySkeletonCPP {
         void HueRB(double value, double &r, double &g, double &b);
         void HueRGB(double value, double &r, double &g, double &b);
         void MarkDeletableVoxels(Volume * deletedVol, Volume * currentVolume, Volume * preservedVolume);
-        void RemoveCubesFromSurfaceSkeleton(Volume * sourceSkeleton);
         void RemoveIsolatedNonCurves(Volume * skeleton);
         void WriteEigenResultsToFile(Volume * sourceVolume, EigenResults3D * eigenResults, string outputPath);
         void WriteEigenResultsToOFFFile(Volume * sourceVolume, Volume * cost, Volume * skeleton, EigenResults3D * eigenResults, string outputPath);
@@ -796,19 +795,6 @@ namespace GraySkeletonCPP {
         delete costVol;
         delete tempSkel;
         delete [] skeletonDirections;
-    }
-
-    void VolumeSkeletonizer::RemoveCubesFromSurfaceSkeleton(Volume * sourceSkeleton) {
-        Volume * dummySkeleton = new Volume(*sourceSkeleton);
-        for(int x = 1; x < sourceSkeleton->getSizeX()-1; x++) {
-            for(int y = 1; y < sourceSkeleton->getSizeY()-1; y++) {
-                for(int z = 1; z < sourceSkeleton->getSizeZ()-1; z++) {
-                    if(!DiscreteMesh::IsSurfaceBody(dummySkeleton, x, y, z, false)) {
-                        sourceSkeleton->setDataAt(x, y, z, 0);
-                    }
-                }
-            }
-        }
     }
 
     void VolumeSkeletonizer::RemoveIsolatedNonCurves(Volume * skeleton) {
