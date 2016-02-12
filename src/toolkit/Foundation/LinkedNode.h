@@ -33,7 +33,6 @@ namespace GraphMatch {
         static void AddNodeToBitmap(unsigned long long & bitmap, int node);
         static void RemoveNodeFromBitmap(unsigned long long & bitmap, int node);
         static bool IsNodeInBitmap(unsigned long long bitmap, int node);
-        static int RemoveSmallestNode(unsigned long long & bitmap);
     };
 
     LinkedNode::~LinkedNode() {
@@ -225,16 +224,5 @@ namespace GraphMatch {
         return ((bitmap & bitvalue) == bitvalue);
     }
 
-
-    int LinkedNode::RemoveSmallestNode(unsigned long long & bitmap) {
-        for(int i = 1; i <= MAX_NODES; i++) {
-            if (IsNodeInBitmap(bitmap, i)) {
-                RemoveNodeFromBitmap(bitmap, i);
-                return i;
-            }
-        }
-        assert(false);
-        return 0;
-    }
 }
 #endif
