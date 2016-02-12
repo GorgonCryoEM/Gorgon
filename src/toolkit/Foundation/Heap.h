@@ -14,7 +14,6 @@ namespace Foundation {
 
         void AddValue(T value);
         T PopRoot();
-        bool IsEmpty();
 
     private:
         unsigned int GetParent(unsigned int index);
@@ -97,11 +96,6 @@ namespace Foundation {
         }
     }
 
-
-    template <class T>
-    bool Heap<T>::IsEmpty() {
-        return (values.size() == 0);
-    }
 
     template <class T>
     T Heap<T>::PopRoot() {
