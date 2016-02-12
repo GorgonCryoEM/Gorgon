@@ -64,7 +64,6 @@ namespace GraySkeletonCPP {
         void PruneSurfaces(Volume * sourceVolume, int pruneLength);
         void PruneUsingStructureTensor(Volume * skeleton, Volume * sourceVolume, Volume * preserveVol, Vector3DFloat * volumeGradient, EigenResults3D * volumeEigens, ProbabilityDistribution3D & filter, double threshold, char pruningClass, string outputPath);
         void SmoothenVolume(Volume * &sourceVolume, double minGrayscale, double maxGrayscale, int stRadius);
-        void ThresholdGrayValueRange(Volume * sourceVolume, double minGrayValue, double maxGrayValue);
         void VoxelBinarySubtract(Volume * sourceAndDestVolume1, Volume * sourceVolume2);
         void VoxelSubtract(Volume * sourceAndDestVolume1, Volume * sourceVolume2);
         void VoxelOr(Volume * sourceAndDestVolume1, Volume * sourceVolume2);
@@ -856,19 +855,6 @@ namespace GraySkeletonCPP {
         delete maskVolume;
         delete [] volumeGradient;
         delete [] eigens;
-    }
-    void VolumeSkeletonizer::ThresholdGrayValueRange(Volume * sourceVolume, double minGrayValue, double maxGrayValue) {
-        double data;
-        for(int x = 0; x < sourceVolume->getSizeX(); x++) {
-            for(int y = 0; y < sourceVolume->getSizeY(); y++) {
-                for(int z = 0; z < sourceVolume->getSizeZ(); z++) {
-                    data = sourceVolume->getDataAt(x, y, z);
-                    if((data < minGrayValue) || (data > maxGrayValue)) {
-                        sourceVolume->setDataAt(x, y, z, 0.0);
-                    }
-                }
-            }
-        }
     }
     void VolumeSkeletonizer::VoxelBinarySubtract(Volume * sourceAndDestVolume1, Volume * sourceVolume2){
         for(int x = 0; x < sourceAndDestVolume1->getSizeX(); x++) {
