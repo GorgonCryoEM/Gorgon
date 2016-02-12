@@ -12,7 +12,6 @@ namespace Foundation {
     public:
         Heap();
 
-        void BuildHeap(vector<T> & values);
         void AddValue(T value);
         T Root();
         T PopRoot();
@@ -131,16 +130,6 @@ namespace Foundation {
         printf("\n");
     }
 
-    template <class T>
-    void Heap<T>::BuildHeap(vector<T> & values) {
-        this->values.clear();
-        this->values = values;
-        for(int i = (int)values.size() / 2; i >= 0; i--) {
-            Heapify(i);
-        }
-
-
-    }
 }
 
 #endif
