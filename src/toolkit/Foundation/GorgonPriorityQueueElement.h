@@ -4,15 +4,15 @@
 
 namespace Foundation {
     template <class TKey, class TValue>
-    class GorgonPriorityQueueElement {
+    class PQueueElem {
     public:
-        GorgonPriorityQueueElement(TKey key, TValue value);
-        bool operator==(const GorgonPriorityQueueElement<TKey, TValue> &other) const;
-        bool operator!=(const GorgonPriorityQueueElement<TKey, TValue> &other) const;
-        bool operator>(const GorgonPriorityQueueElement<TKey, TValue> &other) const;
-        bool operator<(const GorgonPriorityQueueElement<TKey, TValue> &other) const;
-        bool operator>=(const GorgonPriorityQueueElement<TKey, TValue> &other) const;
-        bool operator<=(const GorgonPriorityQueueElement<TKey, TValue> &other) const;
+        PQueueElem(TKey key, TValue value);
+        bool operator==(const PQueueElem<TKey, TValue> &other) const;
+        bool operator!=(const PQueueElem<TKey, TValue> &other) const;
+        bool operator>(const PQueueElem<TKey, TValue> &other) const;
+        bool operator<(const PQueueElem<TKey, TValue> &other) const;
+        bool operator>=(const PQueueElem<TKey, TValue> &other) const;
+        bool operator<=(const PQueueElem<TKey, TValue> &other) const;
 
         TValue GetValue();
         TKey GetKey();
@@ -22,48 +22,48 @@ namespace Foundation {
     };
 
     template <class TKey, class TValue>
-    GorgonPriorityQueueElement<TKey, TValue>::GorgonPriorityQueueElement(TKey key, TValue value) {
+    PQueueElem<TKey, TValue>::PQueueElem(TKey key, TValue value) {
         this->key = key;
         this->value = value;
     }
 
     template <class TKey, class TValue>
-    inline bool GorgonPriorityQueueElement<TKey, TValue>::operator==(const GorgonPriorityQueueElement<TKey, TValue> &other) const {
+    inline bool PQueueElem<TKey, TValue>::operator==(const PQueueElem<TKey, TValue> &other) const {
         return (this->key == other.key);
     }
 
     template <class TKey, class TValue>
-    inline bool GorgonPriorityQueueElement<TKey, TValue>::operator!=(const GorgonPriorityQueueElement<TKey, TValue> &other) const {
+    inline bool PQueueElem<TKey, TValue>::operator!=(const PQueueElem<TKey, TValue> &other) const {
         return (this->key != other.key);
     }
 
     template <class TKey, class TValue>
-    inline bool GorgonPriorityQueueElement<TKey, TValue>::operator>(const GorgonPriorityQueueElement<TKey, TValue> &other) const {
+    inline bool PQueueElem<TKey, TValue>::operator>(const PQueueElem<TKey, TValue> &other) const {
         return (this->key > other.key);
     }
 
     template <class TKey, class TValue>
-    inline bool GorgonPriorityQueueElement<TKey, TValue>::operator<(const GorgonPriorityQueueElement<TKey, TValue> &other) const {
+    inline bool PQueueElem<TKey, TValue>::operator<(const PQueueElem<TKey, TValue> &other) const {
         return (this->key < other.key);
     }
 
     template <class TKey, class TValue>
-    inline bool GorgonPriorityQueueElement<TKey, TValue>::operator>=(const GorgonPriorityQueueElement<TKey, TValue> &other) const {
+    inline bool PQueueElem<TKey, TValue>::operator>=(const PQueueElem<TKey, TValue> &other) const {
         return (this->key >= other.key);
     }
 
     template <class TKey, class TValue>
-    inline bool GorgonPriorityQueueElement<TKey, TValue>::operator<=(const GorgonPriorityQueueElement<TKey, TValue> &other) const {
+    inline bool PQueueElem<TKey, TValue>::operator<=(const PQueueElem<TKey, TValue> &other) const {
         return (this->key <= other.key);
     }
 
     template <class TKey, class TValue>
-    inline TValue GorgonPriorityQueueElement<TKey, TValue>::GetValue() {
+    inline TValue PQueueElem<TKey, TValue>::GetValue() {
         return value;
     }
 
     template <class TKey, class TValue>
-    inline TKey GorgonPriorityQueueElement<TKey, TValue>::GetKey() {
+    inline TKey PQueueElem<TKey, TValue>::GetKey() {
         return key;
     }
 

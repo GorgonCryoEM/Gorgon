@@ -20,12 +20,12 @@ namespace Foundation {
         bool IsEmpty();
 
     private:
-        GorgonHeap< GorgonPriorityQueueElement<TKey, TValue> > heap;
+        GorgonHeap< PQueueElem<TKey, TValue> > heap;
     };
 
     template <class TKey, class TValue>
     PQueue<TKey, TValue>::PQueue(bool maxIsHighestPriority) {
-        heap = GorgonHeap< GorgonPriorityQueueElement<TKey, TValue> >(maxIsHighestPriority);
+        heap = GorgonHeap< PQueueElem<TKey, TValue> >(maxIsHighestPriority);
     }
 
     template <class TKey, class TValue>
@@ -35,7 +35,7 @@ namespace Foundation {
 
     template <class TKey, class TValue>
     void PQueue<TKey, TValue>::Add(TKey key, TValue value) {
-        heap.AddValue(GorgonPriorityQueueElement<TKey, TValue>(key, value));
+        heap.AddValue(PQueueElem<TKey, TValue>(key, value));
     }
 
     template <class TKey, class TValue>
@@ -45,7 +45,7 @@ namespace Foundation {
 
     template <class TKey, class TValue>
     void PQueue<TKey, TValue>::PopFirst(TKey & key, TValue & value) {
-        GorgonPriorityQueueElement<TKey, TValue> e = heap.PopRoot();
+        PQueueElem<TKey, TValue> e = heap.PopRoot();
         key = e.GetKey();
         value = e.GetValue();
     }
