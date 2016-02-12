@@ -20,12 +20,12 @@ namespace Foundation {
         bool IsEmpty();
 
     private:
-        GorgonHeap< PQueueElem<TKey, TValue> > heap;
+        GHeap< PQueueElem<TKey, TValue> > heap;
     };
 
     template <class TKey, class TValue>
     PQueue<TKey, TValue>::PQueue(bool maxIsHighestPriority) {
-        heap = GorgonHeap< PQueueElem<TKey, TValue> >(maxIsHighestPriority);
+        heap = GHeap< PQueueElem<TKey, TValue> >(maxIsHighestPriority);
     }
 
     template <class TKey, class TValue>

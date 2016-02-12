@@ -8,11 +8,11 @@ using namespace std;
 namespace Foundation {
 
     template <class T>
-    class GorgonHeap {
+    class GHeap {
     public:
-        GorgonHeap();
-        GorgonHeap(bool isMaxHeap);
-        ~GorgonHeap();
+        GHeap();
+        GHeap(bool isMaxHeap);
+        ~GHeap();
 
         void BuildHeap(vector<T> & values);
         void AddValue(T value);
@@ -35,39 +35,39 @@ namespace Foundation {
 
 
     template <class T>
-    GorgonHeap<T>::GorgonHeap() {
+    GHeap<T>::GHeap() {
         this->isMaxHeap = true;
         values.clear();
     }
 
     template <class T>
-    GorgonHeap<T>::GorgonHeap(bool isMaxHeap) {
+    GHeap<T>::GHeap(bool isMaxHeap) {
         this->isMaxHeap = isMaxHeap;
         values.clear();
     }
 
     template <class T>
-    GorgonHeap<T>::~GorgonHeap() {
+    GHeap<T>::~GHeap() {
         values.clear();
     }
 
     template <class T>
-    inline unsigned int GorgonHeap<T>::GetParent(unsigned int index) {
+    inline unsigned int GHeap<T>::GetParent(unsigned int index) {
         return index >> 1;
     }
 
     template <class T>
-    inline unsigned int GorgonHeap<T>::GetLeft(unsigned int index) {
+    inline unsigned int GHeap<T>::GetLeft(unsigned int index) {
         return (index==0)? 1 :(index << 1);
     }
 
     template <class T>
-    inline unsigned int GorgonHeap<T>::GetRight(unsigned int index) {
+    inline unsigned int GHeap<T>::GetRight(unsigned int index) {
         return (index==0)? 2 : ((index << 1) | 1);
     }
 
     template <class T>
-    void GorgonHeap<T>::Heapify(int rootIndex) {
+    void GHeap<T>::Heapify(int rootIndex) {
         unsigned int size = values.size();
 
         if(rootIndex < size) {
@@ -96,7 +96,7 @@ namespace Foundation {
 
 
     template <class T>
-    void GorgonHeap<T>::AddValue(T value) {
+    void GHeap<T>::AddValue(T value) {
         unsigned int childIndex = values.size();
         values.push_back(value);
 
@@ -117,17 +117,17 @@ namespace Foundation {
 
 
     template <class T>
-    T GorgonHeap<T>::Root() {
+    T GHeap<T>::Root() {
         return values[0];
     }
 
     template <class T>
-    bool GorgonHeap<T>::IsEmpty() {
+    bool GHeap<T>::IsEmpty() {
         return (values.size() == 0);
     }
 
     template <class T>
-    T GorgonHeap<T>::PopRoot() {
+    T GHeap<T>::PopRoot() {
         T val = values[0];
 
         unsigned int lastElem = values.size()-1;
@@ -138,7 +138,7 @@ namespace Foundation {
     }
 
     template <class T>
-    void GorgonHeap<T>::Print() {
+    void GHeap<T>::Print() {
         for(unsigned int i = 0; i < values.size(); i++) {
             printf("%d ", (int)values[i]);
         }
@@ -146,7 +146,7 @@ namespace Foundation {
     }
 
     template <class T>
-    void GorgonHeap<T>::BuildHeap(vector<T> & values) {
+    void GHeap<T>::BuildHeap(vector<T> & values) {
         this->values.clear();
         this->values = values;
         for(int i = (int)values.size() / 2; i >= 0; i--) {
