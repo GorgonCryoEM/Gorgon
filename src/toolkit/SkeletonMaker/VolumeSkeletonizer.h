@@ -75,7 +75,6 @@ namespace GraySkeletonCPP {
 
     protected:
 
-        double AngleToParameter(double angle);
         double GetVoxelCost(EigenResults3D imageEigen, Vector3DFloat skeletonDirection, int type);
         void FindOrthogonalAxes(Vector3DFloat axis, Vector3DFloat & res1, Vector3DFloat & res2);
         void GetSTBasedDistribution(ProbabilityDistribution3D & distributionInfo, EigenResults3D eigen);
@@ -150,11 +149,6 @@ namespace GraySkeletonCPP {
         delete surfaceNormalFinder;
     }
 
-
-    double VolumeSkeletonizer::AngleToParameter(double angle) {
-        angle = fmod(angle, PI);
-        return (1-abs(2*angle/PI -1));
-    }
 
     double VolumeSkeletonizer::GetVoxelCost(EigenResults3D imageEigen, Vector3DFloat skeletonDirection, int type) {
         double cost = 1;
