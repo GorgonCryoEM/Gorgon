@@ -525,27 +525,31 @@ namespace GraphMatch {
         }
         else { // a skip edge
             // not sure if these checks really help or if they just waste time
-            if(! (firstIsLoop && lastIsLoop) || // pattern graph edge doesn't start and end with loops OR
-            ( ( ((int) (baseGraph->adjacencyMatrix[qj - 1][qp - 1][0] + 0.01) != GRAPHEDGE_LOOP)) &&// (base graph edge not a loop AND
-            ( ((int) (baseGraph->adjacencyMatrix[qj - 1][qp - 1][0] + 0.01) != GRAPHEDGE_LOOP_EUCLIDEAN))
-             &&	// base graph edge not a Euclidian loop AND
-             ( ((int) (baseGraph->adjacencyMatrix[qj - 1][qp - 1][0] + 0.01) != GRAPHNODE_SHEET)))) {// base graph edge not a sheet)
-                return -1;
-            }
-            // check here to sum up the parts of the skip edge and compare to the euclidian distance, if it's a euclidian edge in the base graph
-            if( (qj != -1) && (baseGraph->euclideanMatrix[qj - 1][qp - 1] > (patternLength
-                                    * EUCLIDEAN_VOXEL_TO_PDB_RATIO))) {
-                return -1;
-            }
-        }
+                if(! (firstIsLoop && lastIsLoop)
+                   || // pattern graph edge doesn't start and end with loops OR
+                     ( ( ((int) (baseGraph->adjacencyMatrix[qj - 1][qp - 1][0] + 0.01) != GRAPHEDGE_LOOP))
+                        &&// (base graph edge not a loop AND
+                       ( ((int) (baseGraph->adjacencyMatrix[qj - 1][qp - 1][0] + 0.01) != GRAPHEDGE_LOOP_EUCLIDEAN))
+                        &&	// base graph edge not a Euclidian loop AND
+                       ( ((int) (baseGraph->adjacencyMatrix[qj - 1][qp - 1][0] + 0.01) != GRAPHNODE_SHEET))
+                     )
+                   ) {// base graph edge not a sheet)
+                      return -1;
+                      }
+                // check here to sum up the parts of the skip edge and compare to the euclidian distance, if it's a euclidian edge in the base graph
+                if( (qj != -1)
+                   && (baseGraph->euclideanMatrix[qj - 1][qp - 1] > (patternLength * EUCLIDEAN_VOXEL_TO_PDB_RATIO))
+                  ) {
+                      return -1;
+                    }
+             }
 
         switch(COST_FUNCTION) {
             case (1):
                 return weight * fabs(patternLength - baseLength);
                 break;
             case (2):
-                return weight * fabs(patternLength - baseLength) / (patternLength
-                                        + baseLength);
+                return weight * fabs(patternLength - baseLength) / (patternLength + baseLength);
                 break;
             case (3):
                 return weight * pow( (patternLength - baseLength), 2);
