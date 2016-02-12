@@ -479,11 +479,11 @@ namespace GraphMatch {
                     //Initialize queue
                     int numNodes = 1 ;
                     svol->setDataAt( i, j, k, totSheets ) ;
-                    queue<gridQueueEle> q;
-                    q.push(gridQueueEle( i, j, k ) );
+                    queue<QueueNode> q;
+                    q.push(QueueNode( i, j, k ) );
                     while ( !q.empty() )
                     {
-                        gridQueueEle res = q.front();
+                        QueueNode res = q.front();
                         q.pop();
                         ox  = res.x;
                         oy  = res.y;
@@ -502,7 +502,7 @@ namespace GraphMatch {
                                 if ( vol->getDataAt(nx,ny,nz) > 0 && svol->getDataAt(nx,ny,nz) == 0 && isSkeletonSheet(*vol,nx,ny,nz) )
                                 {
                                     svol->setDataAt(nx,ny,nz,totSheets);
-                                    q.push(gridQueueEle(nx,ny,nz));
+                                    q.push(QueueNode(nx,ny,nz));
                                     numNodes ++ ;
                                 }
                             }

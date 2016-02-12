@@ -3,31 +3,31 @@
 
 namespace SkeletonMaker {
 
-    struct gridQueueEle {
+    struct QueueNode {
             int x, y, z;
-            gridQueueEle* next;
+            QueueNode* next;
 
-            gridQueueEle(int xx, int yy, int zz)
+            QueueNode(int xx, int yy, int zz)
                     : x(xx), y(yy), z(zz)
             {}
 
-            gridQueueEle() {}
+            QueueNode() {}
     };
 
     class Queue {
         public:
             Queue();
             ~Queue();
-            gridQueueEle* getNext();
+            QueueNode* getNext();
             void reset();
             int getNumElements();
             void prepend(int xx, int yy, int zz);
-            gridQueueEle * remove();
+            QueueNode * remove();
 
         private:
-            gridQueueEle* head;
-            gridQueueEle* pre;
-            gridQueueEle* cur;
+            QueueNode* head;
+            QueueNode* pre;
+            QueueNode* cur;
             int numEles;
     };
 
@@ -39,14 +39,14 @@ namespace SkeletonMaker {
     }
 
     Queue::~Queue() {
-        gridQueueEle* ele;
+        QueueNode* ele;
         reset();
         ele = getNext();
         while( (ele = remove()) != NULL) {
         };
     }
 
-    gridQueueEle* Queue::getNext() {
+    QueueNode* Queue::getNext() {
         if(cur == NULL) {
             pre = NULL;
             cur = head;
@@ -69,7 +69,7 @@ namespace SkeletonMaker {
     }
 
     void Queue::prepend(int xx, int yy, int zz) {
-        gridQueueEle* ele = new gridQueueEle;
+        QueueNode* ele = new QueueNode;
         ele->x = xx;
         ele->y = yy;
         ele->z = zz;
@@ -81,8 +81,8 @@ namespace SkeletonMaker {
     }
 
     /* Remove current element pointed by cur */
-    gridQueueEle * Queue::remove() {
-        gridQueueEle* temp = cur;
+    QueueNode * Queue::remove() {
+        QueueNode* temp = cur;
         if(cur != NULL) {
             cur = cur->next;
             delete temp;

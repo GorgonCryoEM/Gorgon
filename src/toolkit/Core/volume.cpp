@@ -681,7 +681,7 @@ void Volume::curveSkeleton(Volume* grayvol, float lowthr, float highthr,
 #endif
 
     // Perform erosion
-    gridQueueEle* ele;
+    QueueNode* ele;
     gridPoint gp;
     int ox, oy, oz;
     int score;
@@ -939,7 +939,7 @@ void Volume::curveSkeleton(float thr, Volume* svol) {
 #endif
 
     // Perform erosion
-    gridQueueEle* ele;
+    QueueNode* ele;
     gridPoint gp;
     int ox, oy, oz;
     int score;
@@ -1161,7 +1161,7 @@ void Volume::curveSkeleton2D(float thr, Volume* svol) {
 #endif
 
     // Perform erosion
-    gridQueueEle* ele;
+    QueueNode* ele;
     gridPoint gp;
     int ox, oy, oz;
     int score;
@@ -1391,7 +1391,7 @@ void Volume::pointSkeleton(Volume* grayvol, float lowthr, float highthr,
 #ifdef VERBOSE
     printf("Start erosion to %d...\n", wid);
 #endif
-    gridQueueEle* ele;
+    QueueNode* ele;
     gridPoint gp;
     int ox, oy, oz;
     int score;
@@ -1619,7 +1619,7 @@ void Volume::skeleton(float thr, Volume* svol, Volume* hvol) {
     // Perform erosion
     printf("Start erosion to %d...\n", wid);
 #endif
-    gridQueueEle* ele;
+    QueueNode* ele;
     gridPoint gp;
     int ox, oy, oz;
     int score;
@@ -1797,7 +1797,7 @@ void Volume::erodeHelix(int disthr) {
     //printf("Total %d nodes\n", queue2->getNumElements() ) ;
 
     // Start erosion
-    gridQueueEle* ele;
+    QueueNode* ele;
     int dis = -1;
     while(queue2->getNumElements() > 0) {
         // First, set distance
@@ -2014,7 +2014,7 @@ int Volume::erodeSheet(int disthr) {
 #endif
 
     // Start erosion
-    gridQueueEle* ele;
+    QueueNode* ele;
     int dis = -1;
     while(queue2->getNumElements() > 0) {
         // First, set distance
@@ -2259,7 +2259,7 @@ void Volume::surfaceSkeleton(Volume* grayvol, float lowthr, float highthr) {
 
     // Perform erosion
     int wid = MAX_ERODE;
-    gridQueueEle* ele;
+    QueueNode* ele;
     gridPoint gp;
     int ox, oy, oz;
     int score;
@@ -2497,7 +2497,7 @@ void Volume::surfaceSkeletonPres(float thr, Volume * preserve) {
 #endif
 
     // Perform erosion
-    gridQueueEle* ele;
+    QueueNode* ele;
     gridPoint gp;
     int ox, oy, oz;
     int score;
