@@ -52,7 +52,6 @@ namespace GraphMatch {
         void Init(StandardGraph * patternGraph, StandardGraph * baseGraph);
         double GetC(int p, int qp);
         double GetC(int j, int p, int qj, int qp);
-        double GetC(int p, int qp, LinkedNodeStub * currentNode);
         double GetCost(int d, int m, int qj, int qp, bool debugMsg);
         double GetPenaltyCost(int d, int m, bool debugMsg);
         double GetCPrime(int a, int b, int c, int d);
@@ -356,23 +355,6 @@ namespace GraphMatch {
         }
         return cost;
 
-
-    }
-
-    // returns the cost of matching node p in the pattern graph to node qp in the base graph
-    // this method includes the cost of matching strands to sheets.
-    double WongMatch15ConstrainedNoFuture::GetC(int p, int qp, LinkedNodeStub * currentNode) {
-        double cost = GetC(p, p, qp, qp);
-
-        // if sheet-to-strand match, compute the cost of the match based on the unused sheet capacity and the strand length
-        if( (int)(patternGraph->adjacencyMatrix[p-1][p-1][0] + 0.01) == GRAPHNODE_SHEET &&
-            (int)(baseGraph->adjacencyMatrix[qp-1][qp-1][0] + 0.01) == GRAPHNODE_SHEET ) {
-            cost = 0;
-            //cout << " ... original cost = " << cost << endl;
-            cost = abs(patternGraph->nodeWeights[p-1] - baseGraph->nodeWeights[qp-1]);
-            //cout << " ... cost to match strand " << p << " to sheet " << qp << " is " << cost << endl;
-        }
-        return cost;
 
     }
 
