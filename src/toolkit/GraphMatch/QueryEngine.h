@@ -5,7 +5,7 @@
 //#include <cstdio>
 //#include "StandardGraph.h"
 //#include "WongMatch15Constrained.h"
-#include "WongMatch15ConstrainedNoFuture.h"
+#include "WongMatch.h"
 //#include "WongMatch15ConstrainedOnlyA.h"
 #include "PDBReader.h"
 #include "Readers/SEQReader.h"
@@ -32,7 +32,7 @@ using namespace std;
 			StandardGraph * LoadSequenceGraph();
 			StandardGraph * LoadSkeletonGraph();
 		private:
-			WongMatch15ConstrainedNoFuture * matcherConstrainedNoFuture;
+			WongMatch * matcherConstrainedNoFuture;
 		};
 
 
@@ -86,9 +86,9 @@ using namespace std;
 			// Match Graphs
 			// Constrained no future
 			if(MISSING_HELIX_COUNT == -1) {
-				matcherConstrainedNoFuture = new WongMatch15ConstrainedNoFuture(sequenceGraph, skeletonGraph);
+				matcherConstrainedNoFuture = new WongMatch(sequenceGraph, skeletonGraph);
 			} else {
-				matcherConstrainedNoFuture = new WongMatch15ConstrainedNoFuture(sequenceGraph, skeletonGraph, MISSING_HELIX_COUNT, MISSING_SHEET_COUNT);
+				matcherConstrainedNoFuture = new WongMatch(sequenceGraph, skeletonGraph, MISSING_HELIX_COUNT, MISSING_SHEET_COUNT);
 			}
 			start = clock();
 			int matchCount = matcherConstrainedNoFuture->RunMatching(start);
