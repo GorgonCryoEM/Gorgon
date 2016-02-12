@@ -81,7 +81,6 @@ namespace GraySkeletonCPP {
         void GetEigenResult(EigenResults3D & returnVal, Vector3DFloat * imageGradient, ProbabilityDistribution3D & gaussianFilter, int x, int y, int z, int sizeX, int sizeY, int sizeZ, int gaussianFilterRadius, bool clear);
         void GetEigenResult2(EigenResults3D & returnVal, Vector3DFloat * imageGradient, ProbabilityDistribution3D & gaussianFilter, int x, int y, int z, int sizeX, int sizeY, int sizeZ, int gaussianFilterRadius, bool clear);
         EigenResults3D * GetEigenResults(Volume * maskVol, Vector3DFloat * imageGradient, ProbabilityDistribution3D & gaussianFilter, int gaussianFilterRadius, bool useMask);
-        EigenResults3D * GetEigenResults2(Volume * maskVol, Vector3DFloat * imageGradient, ProbabilityDistribution3D & gaussianFilter, int gaussianFilterRadius, bool useMask);
 
         static Volume * PerformAnisotropicSmoothingAxisAligned(Volume * sourceVolume, int xRadius, int yRadius, int zRadius);
     protected:
@@ -256,20 +255,6 @@ namespace GraySkeletonCPP {
                         GetEigenResult(resultTable[maskVol->getIndex(x, y, z)], imageGradient, gaussianFilter, x, y, z,
                                        maskVol->getSizeX(), maskVol->getSizeY(), maskVol->getSizeZ(), gaussianFilterRadius, (useMask && (maskVol->getDataAt(x, y, z) == 0)));
                     }
-                }
-            }
-        }
-        return resultTable;
-    }
-
-    // Use 8 local gradients instead of 1 gradient
-    EigenResults3D * VolumeSkeletonizer::GetEigenResults2(Volume * maskVol, Vector3DFloat * imageGradient, ProbabilityDistribution3D & gaussianFilter, int gaussianFilterRadius, bool useMask) {
-        EigenResults3D * resultTable = new EigenResults3D[maskVol->getSizeX() * maskVol->getSizeY() * maskVol->getSizeZ()];
-        for(int x = MAX_GAUSSIAN_FILTER_RADIUS; x < maskVol->getSizeX() - MAX_GAUSSIAN_FILTER_RADIUS; x++) {
-            for(int y = MAX_GAUSSIAN_FILTER_RADIUS; y < maskVol->getSizeY() - MAX_GAUSSIAN_FILTER_RADIUS; y++) {
-                for(int z = MAX_GAUSSIAN_FILTER_RADIUS; z < maskVol->getSizeZ() - MAX_GAUSSIAN_FILTER_RADIUS; z++) {
-                    GetEigenResult2(resultTable[maskVol->getIndex(x, y, z)], imageGradient, gaussianFilter, x, y, z,
-                                   maskVol->getSizeX(), maskVol->getSizeY(), maskVol->getSizeZ(), gaussianFilterRadius, (useMask && (maskVol->getDataAt(x, y, z) == 0)));
                 }
             }
         }
