@@ -402,19 +402,14 @@ namespace GraphMatch {
         bool firstIsLoop = false;
         bool lastIsLoop = false;
         for(int i = 0; i < m; i++) {
-            lastIsLoop =
-                                    ((int) (patternGraph->adjacencyMatrix[d + i
-                                                            - 1][d + i][0]
-                                            + 0.01)
-                                     == GRAPHEDGE_LOOP);
-            if(i == 0) {
+            lastIsLoop =((int) (patternGraph->adjacencyMatrix[d+i-1][d+i][0] + 0.01) == GRAPHEDGE_LOOP);
+            if(i == 0)
                 firstIsLoop = lastIsLoop;
-            }
-            patternLength += patternGraph->adjacencyMatrix[d + i - 1][d + i][1];
+
+            patternLength += patternGraph->adjacencyMatrix[d+i-1][d+i][1];
         }
         // TODO: Fix, has bug. But getting closer.
         skippedHelices = skippedHelices / 2;
-        //cout << "d=" << d << ", m=" << m << ", skipH=" << skippedHelices << ", skipS=" << skippedSheets << endl;
 
         bool euclideanEstimate = false;
         double weight = 1.0;
@@ -422,7 +417,7 @@ namespace GraphMatch {
         // if edge begins with an unmatched node in the base graph
         if(qj == -1) { // special handling for missing helixes at the ends
             baseLength = 0;
-            switch((int) (patternGraph->adjacencyMatrix[d - 1][d][0] + 0.01)) {
+            switch((int) (patternGraph->adjacencyMatrix[d-1][d][0] + 0.01)) {
                 case (GRAPHEDGE_HELIX):
                     weight = HELIX_WEIGHT_COEFFICIENT;
                     break;
@@ -437,11 +432,8 @@ namespace GraphMatch {
         else {
             assert(baseGraph->EdgeExists(qj - 1, qp - 1));
             baseLength = baseGraph->adjacencyMatrix[qj - 1][qp - 1][1];
-            euclideanEstimate = ((int) (baseGraph->adjacencyMatrix[qj - 1][qp
-                                    - 1][0]
-                                        + 0.01)
-                                 == GRAPHEDGE_LOOP_EUCLIDEAN);
-            switch((int) (baseGraph->adjacencyMatrix[qj - 1][qp - 1][0] + 0.01)) {
+            euclideanEstimate = ((int) (baseGraph->adjacencyMatrix[qj-1][qp-1][0] + 0.01) == GRAPHEDGE_LOOP_EUCLIDEAN);
+            switch((int) (baseGraph->adjacencyMatrix[qj-1][qp-1][0] + 0.01)) {
                 case (GRAPHEDGE_HELIX):
                     weight = HELIX_WEIGHT_COEFFICIENT;
                     break;
@@ -449,29 +441,24 @@ namespace GraphMatch {
                     weight = LOOP_WEIGHT_COEFFICIENT;
                     break;
                 case (GRAPHNODE_SHEET): // two strands in a row match to the same sheet
-                    //cout << "---> sheet to sheet case. parameters: " << d << "," << m << "," << qj << "," << qp << endl;
                     weight = LOOP_WEIGHT_COEFFICIENT;
                     break;
             }
-            weight = euclideanEstimate ? weight * EUCLIDEAN_LOOP_PENALTY :
-                                         weight;
+            weight = euclideanEstimate ? weight * EUCLIDEAN_LOOP_PENALTY : weight;
         }
 
         if(m == 1) { // not a skip edge
             if( (qj != -1) && // first node in pattern graph is matched
-            ! ( ((int) (patternGraph->adjacencyMatrix[d - 1][d][0] + 0.01) == (int) (baseGraph->adjacencyMatrix[qj
-                                    - 1][qp - 1][0]
-                                                                                     + 0.01)))
+                ! ( ((int) (patternGraph->adjacencyMatrix[d-1][d][0] + 0.01) == (int) (baseGraph->adjacencyMatrix[qj-1][qp-1][0] + 0.01)))
                && // types don't match exactly
-               ! ( ((int) (patternGraph->adjacencyMatrix[d - 1][d][0] + 0.01) == GRAPHEDGE_LOOP) && ((int) (baseGraph->adjacencyMatrix[qj
-                                       - 1][qp - 1][0]
-                                                                                                            + 0.01)
-                                                                                                     == GRAPHEDGE_LOOP_EUCLIDEAN))
+                 ! (    ((int) (patternGraph->adjacencyMatrix[ d-1]   [d][0] + 0.01) == GRAPHEDGE_LOOP)
+                     && ((int) (baseGraph->adjacencyMatrix   [qj-1][qp-1][0] + 0.01) == GRAPHEDGE_LOOP_EUCLIDEAN)
+                   )
                && // not a loop-Euclidianloop match
-               ! ( ((int) (patternGraph->adjacencyMatrix[d - 1][d][0] + 0.01) == GRAPHEDGE_LOOP) && ((int) (baseGraph->adjacencyMatrix[qj
-                                       - 1][qp - 1][0]
-                                                                                                            + 0.01)
-                                                                                                     == GRAPHNODE_SHEET))) { // not a loop-sheet match
+               ! (    ((int) (patternGraph->adjacencyMatrix[ d-1]   [d][0] + 0.01) == GRAPHEDGE_LOOP)
+                   && ((int) (baseGraph->adjacencyMatrix   [qj-1][qp-1][0] + 0.01) == GRAPHNODE_SHEET)
+                 )
+              ) { // not a loop-sheet match
                 return -1;
             }
 #ifdef VERBOSE
@@ -495,12 +482,10 @@ namespace GraphMatch {
             }
 #endif
 
-            if( (qj != -1) && ((int) (patternGraph->adjacencyMatrix[d - 1][d][0]
-                                    + 0.01)
-                               == GRAPHEDGE_HELIX)
-               && (baseGraph->euclideanMatrix[qj - 1][qp - 1] > (patternLength
-                                       * EUCLIDEAN_VOXEL_TO_PDB_RATIO
-                                                                 / HELIX_C_ALPHA_TO_ANGSTROMS))) {
+            if(    (qj!=-1)
+                && ((int) (patternGraph->adjacencyMatrix[d - 1][d][0] + 0.01) == GRAPHEDGE_HELIX)
+                && (baseGraph->euclideanMatrix[qj-1][qp-1] > patternLength * EUCLIDEAN_VOXEL_TO_PDB_RATIO / HELIX_C_ALPHA_TO_ANGSTROMS)
+               ) {
 #ifdef VERBOSE
                 if(debugMsg) {
                     cout << "  -- -- -- NOT ALLOWED (HELIX) -- -- -- " << endl;
@@ -508,19 +493,17 @@ namespace GraphMatch {
 #endif
                 return -1;
             }
-            else if( (qj != -1) && ((int) (patternGraph->adjacencyMatrix[d - 1][d][0]
-                                    + 0.01)
-                                    == GRAPHEDGE_LOOP)) {
-                if( ((int) (patternGraph->adjacencyMatrix[d - 1][d - 1][0] + 0.01) == GRAPHNODE_SHEET || (int) (patternGraph->adjacencyMatrix[d][d][0]
-                                        + 0.01)
-                                                                                                         == GRAPHNODE_SHEET)
-                   && (baseGraph->euclideanMatrix[qj - 1][qp - 1] > (patternLength
-                                           * 1.0 * EUCLIDEAN_VOXEL_TO_PDB_RATIO
-                                                                     / LOOP_C_ALPHA_TO_ANGSTROMS))) {
+            else if( (qj!= -1)
+                     && ((int) (patternGraph->adjacencyMatrix[d-1][d][0] + 0.01) == GRAPHEDGE_LOOP)
+                   ) {
+                       if( (   (int) (patternGraph->adjacencyMatrix[d-1][d-1][0] + 0.01) == GRAPHNODE_SHEET
+                            || (int) (patternGraph->adjacencyMatrix[d]    [d][0] + 0.01) == GRAPHNODE_SHEET
+                           )
+                          && (baseGraph->euclideanMatrix[qj-1][qp-1] > patternLength*1.0* EUCLIDEAN_VOXEL_TO_PDB_RATIO / LOOP_C_ALPHA_TO_ANGSTROMS)
+                         ) {
 #ifdef VERBOSE
                     if(debugMsg) {
-                        cout << "  -- -- -- NOT ALLOWED (LOOP WITH STRAND) -- -- -- "
-                             << endl;
+                        cout << "  -- -- -- NOT ALLOWED (LOOP WITH STRAND) -- -- -- " << endl;
                     }
 #endif
                     return -1;
