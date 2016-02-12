@@ -92,7 +92,6 @@ namespace GraySkeletonCPP {
         void HueRB(double value, double &r, double &g, double &b);
         void HueRGB(double value, double &r, double &g, double &b);
         void MarkDeletableVoxels(Volume * deletedVol, Volume * currentVolume, Volume * preservedVolume);
-        void RemoveIsolatedNonCurves(Volume * skeleton);
         void WriteEigenResultsToFile(Volume * sourceVolume, EigenResults3D * eigenResults, string outputPath);
         void WriteEigenResultsToOFFFile(Volume * sourceVolume, Volume * cost, Volume * skeleton, EigenResults3D * eigenResults, string outputPath);
         void WriteEigenResultsToOFFFileWireframe(Volume * sourceVolume, Volume * cost, Volume * skeleton, EigenResults3D * eigenResults, string outputPath);
@@ -795,58 +794,6 @@ namespace GraySkeletonCPP {
         delete costVol;
         delete tempSkel;
         delete [] skeletonDirections;
-    }
-
-    void VolumeSkeletonizer::RemoveIsolatedNonCurves(Volume * skeleton) {
-        Volume * visited = new Volume(*skeleton);
-
-        vector<Vector3DInt> queue;
-        vector<bool> colors;
-        int currentColor;
-        Vector3DInt currPos, futurePos;
-
-        for(int x = 1; x < skeleton->getSizeX()-1; x++) {
-            for(int y = 1; y < skeleton->getSizeY()-1; y++) {
-                for(int z = 1; z < skeleton->getSizeZ(); z++) {
-                    if(visited->getDataAt(x, y, z) > 0) {
-                        colors.push_back(false);
-                        currentColor = colors.size();
-                        queue.push_back(Vector3DInt(x, y, z));
-
-                        while(queue.size() > 0) {
-                            currPos = queue[queue.size()-1];
-                            queue.pop_back();
-                            if(visited->getDataAt(currPos.X(), currPos.Y(), currPos.Z()) > 0) {
-                                visited->setDataAt(currPos.X(), currPos.Y(), currPos.Z(), -currentColor);
-                                colors[currentColor-1] = colors[currentColor-1] || DiscreteMesh::IsCurveBody(skeleton, currPos.X(), currPos.Y(), currPos.Z()) || DiscreteMesh::IsCurveEnd(skeleton, currPos.X(), currPos.Y(), currPos.Z());
-
-                                for(int i = 0; i < 6; i++) {
-                                    futurePos = Vector3DInt(currPos.X() + VOLUME_NEIGHBORS_6[i][0], currPos.Y() + VOLUME_NEIGHBORS_6[i][1], currPos.Z() + VOLUME_NEIGHBORS_6[i][2]);
-                                    if(visited->getDataAt(futurePos.X(), futurePos.Y(), futurePos.Z()) > 0) {
-                                        queue.push_back(futurePos);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        for(int i = 0; i < (int)colors.size(); i++) {
-            if(!colors[i]) {
-                currentColor = -(i+1);
-                for(int x = 1; x < skeleton->getSizeX()-1; x++) {
-                    for(int y = 1; y < skeleton->getSizeY()-1; y++) {
-                        for(int z = 1; z < skeleton->getSizeZ(); z++) {
-                            if(isZero(visited->getDataAt(x, y, z) - (double)currentColor)) {
-                                skeleton->setDataAt(x, y, z, 0);
-                            }
-                        }
-                    }
-                }
-            }
-        }
     }
 
     void VolumeSkeletonizer::SmoothenVolume(Volume * & sourceVolume, double minGrayscale, double maxGrayscale, int stRadius) {
