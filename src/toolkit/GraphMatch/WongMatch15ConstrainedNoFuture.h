@@ -63,7 +63,6 @@ namespace GraphMatch {
         void ComputeSolutionCost(int solution[], bool extraMessages);
         void NormalizeGraphs();
         void NormalizeSheets();
-        void PrintNodeConcise(LinkedNode * node, int rank, bool endOfLine, bool printCostBreakdown);
         int bestMatches[RESULT_COUNT][MAX_NODES];
 
     };
@@ -242,7 +241,6 @@ namespace GraphMatch {
                 foundCount++;
                 //currentNode->PrintNodeConcise(foundCount, false);
                 //printf("\n");
-                PrintNodeConcise(currentNode,foundCount, false, false);
                 //printf(": (%d expanded) (%f seconds) (%fkB Memory) (%d queue size) (%d parent size)\n", expandCount, (double) (finishTime - startTime) / (double) CLOCKS_PER_SEC, (queue->getLength() * sizeof(LinkedNode) + usedNodes.size() * sizeof(LinkedNodeStub)) / 1024.0, queue->getLength(), (int)usedNodes.size());
                 printf(": (%d expanded) (%f seconds) (%d parent size)\n", expandCount, (double) (finishTime - startTime) / (double) CLOCKS_PER_SEC, (int)usedNodes.size());
 #ifdef _WIN32
@@ -1095,87 +1093,6 @@ namespace GraphMatch {
         baseGraph->PrintGraph();
 #endif // VERBOSE
     }
-
-
-
-    // code copied from LinkedNode::PrintNodeConcise
-    // Adding a breakdown of the cost into loops, nodes, and helices
-    void WongMatch15ConstrainedNoFuture::PrintNodeConcise(LinkedNode * node, int rank, bool endOfLine, bool printCostBreakdown) {
-        bool used[MAX_NODES];
-        int n1[MAX_NODES];
-        int n2[MAX_NODES];
-        int top = 0;
-        for(int i = 0; i < MAX_NODES; i++) {
-            used[i] = false;
-        }
-
-        LinkedNodeStub * currentNode = node;
-        bool continueLoop = true;
-        while(continueLoop) {
-            if(currentNode->parentNode == NULL) {
-                 break;
-            }
-            n1[top] = currentNode->n1Node;
-            n2[top] = currentNode->n2Node;
-            used[(int)currentNode->n1Node] = true;
-            top++;
-            currentNode = currentNode->parentNode;
-        }
-
-        for(int i = 1; i <= node->depth; i++) {
-            if(!used[i]) {
-                n1[top] = i;
-                n2[top] = -1;
-                top++;
-            }
-        }
-
-        int minIndex;
-        int temp;
-        for(int i = 0; i < top - 1; i++) {
-            minIndex = i;
-            for(int j = i+1; j < top; j++) {
-                if(n1[minIndex] > n1[j]) {
-                    minIndex = j;
-                }
-            }
-            temp = n1[minIndex];
-            n1[minIndex] = n1[i];
-            n1[i] = temp;
-
-            temp = n2[minIndex];
-            n2[minIndex] = n2[i];
-            n2[i] = temp;
-        }
-
-
-        if(rank != -1) {
-            printf("%d)", rank);
-        }
-        printf("\t");
-        for(int i = 0; i < top; i++) {
-            printf("%2d ", n2[i]);
-        }
-
-        // print the cost of the current solution
-        if(INCLUDE_STRANDS) {
-            ComputeSolutionCost(n2,false);
-        }
-        for (int i = 0; i < MAX_NODES; i++){
-            bestMatches[rank-1][i]=n2[i];
-        }
-
-        if(printCostBreakdown) {
-            printf(" - %f = %f + %f", node->cost, node->costGStar, node->cost - node->costGStar);
-        } else {
-            printf(" - %f", node->cost);
-        }
-        if(endOfLine) {
-            printf("\n");
-        }
-    }
-
-
 
 }
 #endif
