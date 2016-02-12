@@ -73,7 +73,6 @@ namespace Foundation {
     template <class TKey, class TValue>
     class PQueue {
     public:
-        PQueue(bool maxIsHighestPriority);
         ~PQueue();
 
         void Add(TKey key, TValue value);
@@ -86,11 +85,6 @@ namespace Foundation {
     private:
         Heap< PQueueElem<TKey, TValue> > heap;
     };
-
-    template <class TKey, class TValue>
-    PQueue<TKey, TValue>::PQueue(bool maxIsHighestPriority) {
-        heap = Heap< PQueueElem<TKey, TValue> >(maxIsHighestPriority);
-    }
 
     template <class TKey, class TValue>
     PQueue<TKey, TValue>::~PQueue() {

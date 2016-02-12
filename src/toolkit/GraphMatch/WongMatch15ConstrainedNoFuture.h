@@ -115,7 +115,7 @@ namespace GraphMatch {
         cout << "Creating priority queue" << endl;
 #endif // VERBOSE
         //queue = new PriorityQueue<LinkedNode, double> (PRIORITYQUEUESIZE);
-        queue = new PQueue<double, LinkedNode *>(false);
+        queue = new PQueue<double, LinkedNode *>();
 #ifdef VERBOSE
         cout << "Loading pattern graph" << endl;
 #endif // VERBOSE
