@@ -52,7 +52,6 @@ namespace GraySkeletonCPP {
         ~VolumeSkeletonizer();
         Volume * PerformImmersionSkeletonizationAndPruning(Volume * sourceVol, Volume * preserveVol, double startGray, double endGray, double stepSize, int smoothingIterations, int smoothingRadius, int minCurveSize, int minSurfaceSize, int maxCurveHole, int maxSurfaceHole, string outputPath, bool doPruning, double pointThreshold, double curveThreshold, double surfaceThreshold);
         Volume * PerformSkeletonizationAndPruning(Volume * imageVol, string outputPath);
-        Volume * PerformImmersionSkeletonization(Volume * imageVol, string outputPath);
         Volume * PerformPureJuSkeletonization(Volume * imageVol, string outputPath, double threshold, int minCurveWidth, int minSurfaceWidth);
         Volume * GetJuSurfaceSkeleton(Volume * sourceVolume, Volume * preserve, double threshold);
         Volume * GetJuCurveSkeleton(Volume * sourceVolume, Volume * preserve, double threshold, bool is3D);
@@ -1130,82 +1129,6 @@ namespace GraySkeletonCPP {
         curveVol->pad(-MAX_GAUSSIAN_FILTER_RADIUS, 0);
         return curveVol;
     }
-
-    Volume * VolumeSkeletonizer::PerformImmersionSkeletonization(Volume * imageVol, string outputPath) {
-        Volume * skeleton = new Volume(*imageVol);
-        typedef vector<Vector3DInt> BinType;
-        vector<BinType> bins;
-        for(int g = 0; g < 256; g++) {
-            bins.push_back(BinType());
-        }
-
-
-        for(int x = 0; x < skeleton->getSizeX(); x++) {
-            for(int y = 0; y < skeleton->getSizeY(); y++) {
-                for(int z = 0; z < skeleton->getSizeZ(); z++) {
-                    bins[(int)round(skeleton->getDataAt(x, y, z))].push_back(Vector3DInt(x, y, z));
-                }
-            }
-        }
-
-        int n6Count;
-        int key;
-        bool modified;
-        double value;
-        list<int> cleanupIndices;
-        PriorityQueue<ImmersionBeachElement> beach(MAX_QUEUELEN);
-        ImmersionBeachElement element;
-        int index;
-
-        GrayImageList imageList;
-        Volume * thresholdedImage = new Volume(*imageVol);
-        for(int g = 1; g < 256; g++) {
-            thresholdedImage = new Volume(*imageVol);
-            thresholdedImage->threshold(g);
-
-            imageList.AddImage(GrayImage::GrayImageVolumeToImage(thresholdedImage));
-            imageList.AddImage(GrayImage::GrayImageVolumeToImage(skeleton));
-            delete thresholdedImage;
-            printf("Threshold = %i - %i points\n", g, (int)bins[g].size());
-            int iteration = 1;
-            do {
-                printf("\tIteration : %i\n", iteration++);
-
-                for(unsigned int i = 0; i < bins[g].size(); i++) {
-                    n6Count = DiscreteMesh::GetImmersionN6Count(skeleton, bins[g][i]);
-                    if(n6Count < 6) {
-                        element.p = bins[g][i];
-                        element.binIndex = i;
-                        beach.add(element, n6Count);
-                    }
-                }
-
-                modified = false;
-                cleanupIndices.clear();
-                while(!beach.isEmpty()) {
-                    beach.remove(element, key);
-                    value = DiscreteMesh::GetImmersionSkeletalValue(skeleton, element.p);
-                    skeleton->setDataAt(element.p.values[0], element.p.values[1], element.p.values[2], value);
-                    if(value != g) {
-                        cleanupIndices.push_back(element.binIndex);
-                        modified = true;
-                    }
-                }
-
-                cleanupIndices.sort(greater<int>());
-                for(unsigned int i = 0; i < cleanupIndices.size(); i++) {
-                    index = cleanupIndices.front();
-                    cleanupIndices.pop_front();
-                    bins[g].erase(bins[g].begin() + index);
-                }
-
-            } while (modified);
-            imageList.AddImage(GrayImage::GrayImageVolumeToImage(skeleton));
-        }
-
-        return skeleton;
-    }
-
 
 
     Volume * VolumeSkeletonizer::PerformPureJuSkeletonization(Volume * imageVol, string outputPath, double threshold, int minCurveWidth, int minSurfaceWidth) {
