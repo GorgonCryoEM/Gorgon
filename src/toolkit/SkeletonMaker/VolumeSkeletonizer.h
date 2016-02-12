@@ -54,7 +54,6 @@ namespace GraySkeletonCPP {
         Volume * PerformImmersionSkeletonizationAndPruning(Volume * sourceVol, Volume * preserveVol, double startGray, double endGray, double stepSize, int smoothingIterations, int smoothingRadius, int minCurveSize, int minSurfaceSize, int maxCurveHole, int maxSurfaceHole, string outputPath, bool doPruning, double pointThreshold, double curveThreshold, double surfaceThreshold);
         Volume * PerformSkeletonizationAndPruning(Volume * imageVol, string outputPath);
         Volume * PerformImmersionSkeletonization(Volume * imageVol, string outputPath);
-        Volume * PerformJuSkeletonization(Volume * imageVol, string outputPath, int minGray, int maxGray, int stepSize);
         Volume * PerformPureJuSkeletonization(Volume * imageVol, string outputPath, double threshold, int minCurveWidth, int minSurfaceWidth);
         Volume * PerformSkeletonPruning(Volume * sourceVolume, Volume * sourceSkeleton, double curveThreshold, double surfaceThreshold, int minGray, int maxGray, string outputPath);
         Volume * GetJuSurfaceSkeleton(Volume * sourceVolume, Volume * preserve, double threshold);
@@ -1839,80 +1838,6 @@ namespace GraySkeletonCPP {
         }
 
         return skeleton;
-    }
-
-    Volume * VolumeSkeletonizer::PerformJuSkeletonization(Volume * imageVol, string outputPath, int minGray, int maxGray, int stepSize) {
-        imageVol->pad(MAX_GAUSSIAN_FILTER_RADIUS, 0);
-
-        Volume * preservedVol = new Volume(imageVol->getSizeX(), imageVol->getSizeY(), imageVol->getSizeZ());
-        Volume * compositeVol = new Volume(imageVol->getSizeX(), imageVol->getSizeY(), imageVol->getSizeZ());
-        Volume * deletedVol = new Volume(imageVol->getSizeX(), imageVol->getSizeY(), imageVol->getSizeZ());
-        Volume * surfaceVol;
-        Volume * curveVol;
-        Volume * topologyVol;
-
-        for(int threshold = maxGray; threshold >= minGray; threshold-= stepSize) {
-            printf("\t\t\tUSING THRESHOLD : %i\n", threshold);
-            // Skeletonizing while preserving surface features curve features and topology
-            surfaceVol = GetJuSurfaceSkeleton(imageVol, preservedVol, threshold);
-            PruneSurfaces(surfaceVol, PRUNE_AMOUNT);
-            VoxelOr(preservedVol, surfaceVol);
-
-            curveVol = VolumeSkeletonizer::GetJuCurveSkeleton(imageVol, preservedVol, threshold, true);
-            VolumeSkeletonizer::PruneCurves(curveVol, PRUNE_AMOUNT);
-            VoxelOr(preservedVol, curveVol);
-
-            topologyVol = VolumeSkeletonizer::GetJuTopologySkeleton(imageVol, preservedVol, threshold);
-
-            MarkDeletableVoxels(deletedVol, topologyVol, preservedVol);
-
-            //// SIGGRAPH
-            //Volume * tempVolume = new Volume(topologyVol->getSizeX(), topologyVol->getSizeY(), topologyVol->getSizeZ(), 0, 0, 0, topologyVol);
-            //ApplyMask(tempVolume, deletedVol, VOXEL_BINARY_TRUE, false);
-            //tempVolume->pad(-MAX_GAUSSIAN_FILTER_RADIUS, 0);
-
-            //char * fileName = new char[100];
-            //sprintf(fileName, "%s-shapePreserved-%f.off", outputPath.c_str(), threshold/255.0);
-            //tempVolume->toOFFCells2(fileName);
-            //delete [] fileName;
-
-
-
-            // Making the composite image
-            AddIterationToVolume(compositeVol, topologyVol, threshold);
-
-            delete preservedVol;
-            preservedVol = topologyVol;
-
-            delete surfaceVol;
-            delete curveVol;
-
-        }
-
-        compositeVol->pad(-MAX_GAUSSIAN_FILTER_RADIUS, 0);
-        deletedVol->pad(-MAX_GAUSSIAN_FILTER_RADIUS, 0);
-
-        if(WRITE_DEBUG_FILES) {
-            string tempFile;
-            tempFile = outputPath + "-WithoutRemoving.mrc";
-            compositeVol->toMRCFile((char *)tempFile.c_str());
-
-            tempFile = outputPath + "-deletedVoxels.mrc";
-            deletedVol->toMRCFile((char *)tempFile.c_str());
-        }
-
-        ApplyMask(compositeVol, deletedVol, VOXEL_BINARY_TRUE, false);
-
-        delete deletedVol;
-        delete preservedVol;
-
-        if(WRITE_DEBUG_FILES) {
-            // This method seems to have trouble with the vessel2 dataset.
-            // compositeVol->toOFFCells2((char *)(outputPath + ".off").c_str());
-        }
-
-        return compositeVol;
-
     }
 
 
