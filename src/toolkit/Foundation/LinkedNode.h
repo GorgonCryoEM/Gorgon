@@ -28,7 +28,6 @@ namespace GraphMatch {
         ~LinkedNode();
         vector<int> GetNodeCorrespondence();
         double GetCost();
-        bool IsUserSpecifiedSolution();
         static void AddNodeToBitmap(unsigned long long & bitmap, int node);
         static void RemoveNodeFromBitmap(unsigned long long & bitmap, int node);
         static bool IsNodeInBitmap(unsigned long long bitmap, int node);
@@ -132,56 +131,6 @@ namespace GraphMatch {
 
     double LinkedNode::GetCost() {
         return cost;
-    }
-
-    bool LinkedNode::IsUserSpecifiedSolution() {
-        bool used[MAX_NODES];
-        int n1[MAX_NODES];
-        int n2[MAX_NODES];
-        int top = 0;
-        for(int i = 0; i < MAX_NODES; i++) {
-            used[i] = false;
-        }
-
-        LinkedNodeStub * currentNode = this;
-        bool continueLoop = true;
-        while(continueLoop) {
-            if(currentNode->parentNode == NULL) {
-                 break;
-            }
-            n1[top] = currentNode->n1Node;
-            n2[top] = currentNode->n2Node;
-            used[(int)currentNode->n1Node] = true;
-            top++;
-            currentNode = currentNode->parentNode;
-        }
-
-        for(int i = 1; i <= this->depth; i++) {
-            if(!used[i]) {
-                n1[top] = i;
-                n2[top] = -1;
-                top++;
-            }
-        }
-
-        int minIndex;
-        int temp;
-        for(int i = 0; i < top - 1; i++) {
-            minIndex = i;
-            for(int j = i+1; j < top; j++) {
-                if(n1[minIndex] > n1[j]) {
-                    minIndex = j;
-                }
-            }
-            swap(n1[minIndex], n1[i]);
-            swap(n2[minIndex], n2[i]);
-        }
-
-        bool isSolution = true;
-        for(int i = 0; i < top; i++) {
-            isSolution = (isSolution && (n2[i] == SOLUTION[i]));
-        }
-        return isSolution;
     }
 
     void LinkedNode::AddNodeToBitmap(unsigned long long & bitmap, int node) {

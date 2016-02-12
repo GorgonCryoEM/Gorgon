@@ -1148,12 +1148,6 @@ namespace GraphMatch {
             n2[i] = temp;
         }
 
-        if(node->IsUserSpecifiedSolution()) {
-            printf("**");
-        } else {
-            printf("  ");
-        }
-
 
         if(rank != -1) {
             printf("%d)", rank);
