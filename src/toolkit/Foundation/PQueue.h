@@ -3,6 +3,7 @@
 
 
 #include "Heap.h"
+#include <queue>
 
 namespace Foundation {
     template <class TKey, class TValue>
@@ -81,7 +82,10 @@ namespace Foundation {
         bool IsEmpty();
 
     private:
+        typedef PQueueElem<TKey, TValue> Elem;
+
         Heap< PQueueElem<TKey, TValue> > heap;
+        priority_queue<Elem> q;
     };
 
     template <class TKey, class TValue>
