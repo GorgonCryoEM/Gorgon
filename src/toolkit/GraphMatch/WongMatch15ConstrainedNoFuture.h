@@ -664,15 +664,12 @@ namespace GraphMatch {
 #ifdef VERBOSE
         if(longestMatch < currentNode->depth) {
             longestMatch = currentNode->depth;
-            //printf(" %d elements matched! (%f kB Memory Used)\n", longestMatch, (queue->getLength() * sizeof(LinkedNode) + usedNodes.size() * sizeof(LinkedNodeStub)) / 1024.0);
             printf(" %d elements matched!\n", longestMatch);
-            //cout << "WongMatch15ConstrainedNoFuture::ExpandNode: " << longestMatch << " elements expanded (" << ((queue->getLength() * sizeof(LinkedNode) + usedNodes.size() * sizeof(LinkedNodeStub)) / 1024.0) << " kB memory used)" << endl;
         }
-#endif //VERBOSE
+#endif
 
         int currentM1Top = patternGraph->nodeCount - currentNode->depth; // remaining unmatched nodes in sequence
         bool notConstrained;
-        //currentNode->PrintNodeConcise(0, true, true);
 
         // Expanding nodes with a real terminal node
         // for every node i in baseGraph
@@ -681,34 +678,29 @@ namespace GraphMatch {
             //   currentNode is at level 0 of tree
             //   or
             //   i is in the currentNode bitmap, and there is an edge in baseGraph between currentNode and node i
-            if( (currentNode->depth == 0) || (LinkedNode::IsNodeInBitmap(
-                                                                      currentNode->m2Bitmap,
-                                                                      i)
-                                              && (baseGraph->EdgeExists(
-                                                                      currentNode->n2Node - 1,
-                                                                      i - 1)))) {
-                int skippedHelixNodes = 0;
-                int skippedSheetNodes = 0;
+            if(    (currentNode->depth == 0)
+                || (LinkedNode::IsNodeInBitmap(currentNode->m2Bitmap, i)
+                     && baseGraph->EdgeExists(currentNode->n2Node - 1, i - 1)
+                   )
+                ) {
+                    int skippedHelixNodes = 0;
+                    int skippedSheetNodes = 0;
                 for(int j = 0;
-                                        (j <= currentM1Top) && (skippedHelixNodes + currentNode->missingHelixNodesUsed <= missingHelixCount
-                                                                * 2)
-                                        && (skippedSheetNodes + currentNode->missingSheetNodesUsed <= missingSheetCount);
-                                        ) {
-                    // i is the node from baseGraph being matched to currentNode
-                    // j is the number of missing helix or sheet nodes from patternGraph to be skipped for this match
-
+                         j <= currentM1Top
+                      && skippedHelixNodes + currentNode->missingHelixNodesUsed <= missingHelixCount * 2
+                      && skippedSheetNodes + currentNode->missingSheetNodesUsed <= missingSheetCount;
+                    ) {
+                        // i is the node from baseGraph being matched to currentNode
+                        // j is the number of missing helix or sheet nodes from patternGraph to be skipped for this match
                     notConstrained = true;
 
-                    for(int k = currentNode->n1Node + 1;
-                                            k <= currentNode->n1Node + j; k++) {
-                        notConstrained =
-                                                notConstrained && IsNodeAssignmentAllowed(
-                                                                        k, -1);
-                    }
-                    notConstrained =
-                                            notConstrained && IsNodeAssignmentAllowed(
-                                                                    currentNode->n1Node + j
-                                                                    + 1, i);
+                    for(int k  = currentNode->n1Node + 1;
+                            k <= currentNode->n1Node + j;
+                            k++)
+                      {
+                        notConstrained = notConstrained && IsNodeAssignmentAllowed(k, -1);
+                      }
+                    notConstrained = notConstrained && IsNodeAssignmentAllowed(currentNode->n1Node + j+1, i);
 
                     // used later for case where first helix is missing
                     bool firstMissing = false;
@@ -719,24 +711,25 @@ namespace GraphMatch {
                         // create new current node. i is the index of the new node(?), j is the number of skipped nodes.
 
                         // check whether i is a revisitable node (a sheet)
-                        bool revisitable = ((int) (baseGraph->adjacencyMatrix[i
-                                                - 1][i - 1][0]
-                                                   + 0.01)
-                                            == GRAPHNODE_SHEET);
+                        bool revisitable = ((int) (baseGraph->adjacencyMatrix[i-1][i-1][0] + 0.01) == GRAPHNODE_SHEET);
 
-                        if( ( (temp->depth == 0) && (j > 0)) || ( (patternGraph->nodeCount
-                                                - currentNode->depth
-                                                                   == 0)
-                                                                 && (currentNode->n2Node == -1))) {
-                            if(skippedHelixNodes == 0 && patternGraph->adjacencyMatrix[0][0][0]
-                                                    == GRAPHNODE_HELIX) {
-                                skippedHelixNodes = 1;
+                        if(   ( (temp->depth == 0)
+                                && (j > 0)
+                              )
+                           || ( (patternGraph->nodeCount - currentNode->depth == 0)
+                                && (currentNode->n2Node == -1)
+                              )
+                          ) {
+                                if(    skippedHelixNodes == 0
+                                    && patternGraph->adjacencyMatrix[0][0][0] == GRAPHNODE_HELIX
+                                  ) {
+                                        skippedHelixNodes = 1;
 #ifdef VERBOSE
                                 cout << "node skipped. adding one to skippedHelixNodes. result is "
                                      << skippedHelixNodes << endl;
 #endif
+                                        }
                             }
-                        }
 
                         // generate a current node, marking it as revisitable or not depending on result from test
                         // the constructor marches forward along the sequence, skipping j nodes
@@ -747,41 +740,34 @@ namespace GraphMatch {
                         currentNode->costGStar = 0;
 
                         // if previous node was at top of tree and it was skipped
-                        if( ( (temp->depth == 0) && (j > 0)) || ( (patternGraph->nodeCount
-                                                - currentNode->depth
-                                                                   == 0)
-                                                                 && (currentNode->n2Node == -1))) {
-                            if(skippedHelixNodes > 0) {
-                                //cout << "first helix is missing." << endl;
-                                firstMissing = true;
-                            }
+                        if(   (    (temp->depth == 0)
+                                && (j > 0)
+                              )
+                           || (    (patternGraph->nodeCount - currentNode->depth == 0)
+                                && (currentNode->n2Node == -1)
+                              )
+                          ) {
+                                if(skippedHelixNodes > 0)
+                                        firstMissing = true;
                         }
 
                         // if previous node was at top of tree
-                        if(temp->depth == 0) {
+                        if(temp->depth == 0)
                             edgeCost = 0;
-                        }
-                        else {
-                            edgeCost = GetCost(temp->n1Node, j + 1,
-                                                    temp->n2Node,
-                                                    currentNode->n2Node, false);
-                        }
+                        else
+                            edgeCost = GetCost(temp->n1Node, j+1, temp->n2Node, currentNode->n2Node, false);
 
                         // if this is an allowed match:
                         if(edgeCost >= 0) {
                             //worked! currentNode->costGStar += temp->costGStar + edgeCost + GetC(currentNode->n1Node, currentNode->n2Node, currentNode);
-                            currentNode->costGStar +=
-                                                    temp->costGStar + edgeCost
-                                                    + GetC(currentNode->n1Node,
-                                                                            currentNode->n2Node);
+                            currentNode->costGStar +=  temp->costGStar
+                                                     + edgeCost
+                                                     + GetC(currentNode->n1Node, currentNode->n2Node);
 
                             // add costs for skipped helices and sheets
-                            currentNode->costGStar += GetPenaltyCost(
-                                                    temp->n1Node, j + 1, false);
+                            currentNode->costGStar += GetPenaltyCost(temp->n1Node, j+1, false);
 
                             currentNode->cost = GetF();
-                            //currentNode->PrintNodeConcise(-1, true, true);
-                            //queue->add(currentNode, currentNode->cost);
                             queue->Add(currentNode->cost, currentNode);
                             expanded = true;
                         }
@@ -792,9 +778,7 @@ namespace GraphMatch {
                         currentNode = temp;
                     }
                     // if this node is a helix, increment j by one more to prepare for the next iteration
-                    switch((int) (patternGraph->adjacencyMatrix[currentNode->n1Node
-                                            + j][currentNode->n1Node + j][0]
-                                  + 0.01)) {
+                    switch((int) (patternGraph->adjacencyMatrix[currentNode->n1Node+j][currentNode->n1Node + j][0] + 0.01)) {
                         case GRAPHNODE_HELIX:
                             skippedHelixNodes += 2;
                             j += 2;
@@ -815,14 +799,14 @@ namespace GraphMatch {
         // count the number of helix and sheet nodes that are not yet matched
         int remainingSheetNodes = 0;
         int remainingHelixNodes = 0;
-        for(int l = currentNode->n1Node + 1; l <= patternGraph->nodeCount;
-                                l++) {
-            if(patternGraph->adjacencyMatrix[l - 1][l - 1][0] == GRAPHNODE_HELIX) {
+        for(int l  = currentNode->n1Node + 1;
+                l <= patternGraph->nodeCount;
+                l++)
+        {
+            if(patternGraph->adjacencyMatrix[l-1][l-1][0] == GRAPHNODE_HELIX)
                 remainingHelixNodes++;
-            }
-            else if(patternGraph->adjacencyMatrix[l - 1][l - 1][0] == GRAPHNODE_SHEET) {
+            else if(patternGraph->adjacencyMatrix[l-1][l-1][0] == GRAPHNODE_SHEET)
                 remainingSheetNodes++;
-            }
         }
 
         // if possible, create an edge to jump to the end of the sequence
