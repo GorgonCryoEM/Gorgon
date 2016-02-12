@@ -24,12 +24,9 @@ namespace GraphMatch {
             StandardGraph * patternGraph;
             StandardGraph * baseGraph;
         public:
-            WongMatch(StandardGraph * patternGraph,
-                                           StandardGraph * baseGraph);
-            WongMatch(StandardGraph * patternGraph,
-                                           StandardGraph * baseGraph,
-                                           int missingHelixCount,
-                                           int missingSheetCount);
+            WongMatch(StandardGraph * patternGraph, StandardGraph * baseGraph);
+            WongMatch(StandardGraph * patternGraph, StandardGraph * baseGraph,
+                      int missingHelixCount, int missingSheetCount);
             ~WongMatch();
             int RunMatching(clock_t startTime);
             SSECorrespondenceResult GetResult(int rank);
@@ -42,7 +39,6 @@ namespace GraphMatch {
             clock_t timeInQueue;
 #endif
             LinkedNode * currentNode;
-            //PriorityQueue<LinkedNode, double> * queue;
             PQueue<double, LinkedNode *> * queue;
             vector<LinkedNodeStub*> usedNodes;
             vector<SSECorrespondenceResult> solutions;
@@ -72,17 +68,15 @@ namespace GraphMatch {
 
     };
 
-    WongMatch::WongMatch(
-                            StandardGraph * patternGraph,
-                            StandardGraph * baseGraph)
+    WongMatch::WongMatch(StandardGraph * patternGraph,
+                         StandardGraph * baseGraph)
     {
         Init(patternGraph, baseGraph);
     }
 
-    WongMatch::WongMatch(
-                            StandardGraph * patternGraph,
-                            StandardGraph * baseGraph, int missingHelixCount,
-                            int missingSheetCount)
+    WongMatch::WongMatch(StandardGraph * patternGraph,
+                         StandardGraph * baseGraph, int missingHelixCount,
+                         int missingSheetCount)
     {
         Init(patternGraph, baseGraph);
         this->missingHelixCount = missingHelixCount;
@@ -105,7 +99,7 @@ namespace GraphMatch {
     }
 
     void WongMatch::Init(StandardGraph * patternGraph,
-                                              StandardGraph * baseGraph)
+                         StandardGraph * baseGraph)
     {
 #ifdef VERBOSE
         cout << "Initializing search" << endl;
@@ -368,9 +362,7 @@ namespace GraphMatch {
     // m is the number of missing helices or sheets in the pattern graph
     // qj is the start node in the base graph
     // qp is the end node in the base graph
-    double WongMatch::GetCost(int d, int m, int qj, int qp,
-                                                   bool debugMsg)
-    {
+    double WongMatch::GetCost(int d, int m, int qj, int qp, bool debugMsg) {
         // TODO: Fix patthernLength and baseLength for sheet-to-sheet case.
         double patternLength = 0;
         double baseLength;
@@ -577,9 +569,7 @@ namespace GraphMatch {
 
     // add in penalties for skipped helices and sheets
     // m is the number of nodes involved in the match. m=1 is no skipped helices or sheets.
-    double WongMatch::GetPenaltyCost(int d, int m,
-                                                          bool debugMsg)
-    {
+    double WongMatch::GetPenaltyCost(int d, int m, bool debugMsg) {
         double cost = 0.0;
         int lastPatternNode = patternGraph->GetNodeCount() - 1;
         bool startAtBeginning = (d == 0);
@@ -654,9 +644,7 @@ namespace GraphMatch {
     // if an edge is found, match the pattern graph to that edge and add the match to the queue.
     // also match edges that include skip edges in the pattern graph
     // costs of matches are determined by the GetC method
-    bool WongMatch::ExpandNode(
-                            LinkedNodeStub * currentStub)
-    {
+    bool WongMatch::ExpandNode(LinkedNodeStub * currentStub) {
         bool expanded = false;
         expandCount++;
 
@@ -838,9 +826,7 @@ namespace GraphMatch {
     }
 
     // Compute the cost of the ground truth solution which is submitted by the user.
-    void WongMatch::ComputeSolutionCost(int solution[],
-                                                             bool extraMessages)
-    {
+    void WongMatch::ComputeSolutionCost(int solution[], bool extraMessages) {
         if(extraMessages) {
             cout << "starting ComputeSolutionCost" << endl;
         }
