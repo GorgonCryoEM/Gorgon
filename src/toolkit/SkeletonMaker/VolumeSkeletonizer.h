@@ -85,7 +85,6 @@ namespace GraySkeletonCPP {
         void GetSTBasedDistribution(ProbabilityDistribution3D & distributionInfo, EigenResults3D eigen);
         void HueR(double value, double &r, double &g, double &b);
         void HueRB(double value, double &r, double &g, double &b);
-        void HueRGB(double value, double &r, double &g, double &b);
         Vector3DFloat XYZtoUVW(Vector3DFloat vec, Vector3DFloat u, Vector3DFloat v, Vector3DFloat w);
         Volume * FillCurveHoles(Volume * thresholdedSkeleton, Volume * originalSkeleton, int maxHoleSize);
         Volume * FillSurfaceHoles(Volume * thresholdedSkeleton, Volume * originalSkeleton, int maxHoleSize);
@@ -696,21 +695,6 @@ namespace GraySkeletonCPP {
             r = (1 - v2);
             g = 0;
             b = v2;
-    }
-
-    void VolumeSkeletonizer::HueRGB(double value, double &r, double &g, double &b) {
-        double v2;
-        if(value <= 0.5) {
-            v2 = value / 0.5;
-            r = 0;
-            g = 1 * v2;
-            b = 1 * (1 - v2);
-        } else {
-            v2 = (value - 0.5)/0.5;
-            r = 1 * v2;
-            g = 1 * (1- v2);
-            b = 0;
-        }
     }
 
     void VolumeSkeletonizer::PruneCurves(Volume * sourceVolume, int pruneLength) {
