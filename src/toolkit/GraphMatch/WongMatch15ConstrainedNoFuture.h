@@ -6,10 +6,11 @@
 //#include "NodeList.h"
 //#include "Core/GlobalConstants.h"
 #include "PathGenerator.h"
+
+#include "Foundation/PQueue.h"
 //#include "Structures.h"
 //#include <ctime>
 ////#include <SkeletonMaker/PriorityQueue.h>
-#include <Foundation/GorgonPriorityQueue.h>
 #include "ProteinMorph/SSECorrespondenceResult.h"
 
 using namespace Foundation;
