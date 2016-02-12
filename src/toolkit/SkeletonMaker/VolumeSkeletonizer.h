@@ -68,7 +68,6 @@ namespace GraySkeletonCPP {
         Vector3DFloat GetSurfaceNormal(Volume * skeleton, int x, int y, int z);
         Vector3DFloat GetSurfaceNormal(Volume * skeleton, int x, int y, int z, int radius, Vector3DFloat * localDirections);
         Vector3DFloat * GetVolumeGradient(Volume * sourceVolume);
-        Vector3DFloat * GetVolumeGradient2(Volume * sourceVolume);
         Vector3DFloat * GetSkeletonDirection(Volume * skeleton, int type);
 
 
@@ -451,72 +450,6 @@ namespace GraySkeletonCPP {
                             gradient[index].values[i] = grad2.values[i];
                         }
                     }
-                }
-            }
-        }
-        return gradient;
-    }
-    // Gradient = (x,y,z) - (x-1,y,z) ....
-    Vector3DFloat * VolumeSkeletonizer::GetVolumeGradient2(Volume * sourceVolume) {
-        int size = sourceVolume->getSizeX() * sourceVolume->getSizeY() * sourceVolume->getSizeZ();
-        Vector3DFloat * gradient = new Vector3DFloat[sourceVolume->getSizeX() * sourceVolume->getSizeY() * sourceVolume->getSizeZ() * 8];
-        int index, index2;
-
-        for(int x = 0; x < sourceVolume->getSizeX(); x = x + sourceVolume->getSizeX()-1) {
-            for(int y = 0; y < sourceVolume->getSizeY(); y = y + sourceVolume->getSizeY()-1) {
-                for(int z = 0; z < sourceVolume->getSizeZ(); z = z + sourceVolume->getSizeZ()-1) {
-                    index = sourceVolume->getIndex(x, y, z);
-                    for(int a = 0; a < 8; a++) {
-                        index2 = a * size + index;
-                        gradient[index2] = Vector3DFloat(0, 0, 0);
-                    }
-                }
-            }
-        }
-
-        for(int x = 1; x < sourceVolume->getSizeX()-1; x++) {
-            for(int y = 1; y < sourceVolume->getSizeY()-1; y++) {
-                for(int z = 1; z < sourceVolume->getSizeZ()-1; z++) {
-                    index = sourceVolume->getIndex(x, y, z);
-                    index2 = 0 * size + index;
-                    gradient[index2].values[0] = sourceVolume->getDataAt(x+1, y, z) - sourceVolume->getDataAt(x, y, z);
-                    gradient[index2].values[1] = sourceVolume->getDataAt(x, y+1, z) - sourceVolume->getDataAt(x, y, z);
-                    gradient[index2].values[2] = sourceVolume->getDataAt(x, y, z+1) - sourceVolume->getDataAt(x, y, z);
-
-                    index2 = 1 * size + index;
-                    gradient[index2].values[0] = sourceVolume->getDataAt(x, y, z) - sourceVolume->getDataAt(x-1, y, z);
-                    gradient[index2].values[1] = sourceVolume->getDataAt(x, y+1, z) - sourceVolume->getDataAt(x, y, z);
-                    gradient[index2].values[2] = sourceVolume->getDataAt(x, y, z+1) - sourceVolume->getDataAt(x, y, z);
-
-                    index2 = 2 * size + index;
-                    gradient[index2].values[0] = sourceVolume->getDataAt(x+1, y, z) - sourceVolume->getDataAt(x, y, z);
-                    gradient[index2].values[1] = sourceVolume->getDataAt(x, y, z) - sourceVolume->getDataAt(x, y-1, z);
-                    gradient[index2].values[2] = sourceVolume->getDataAt(x, y, z+1) - sourceVolume->getDataAt(x, y, z);
-
-                    index2 = 3 * size + index;
-                    gradient[index2].values[0] = sourceVolume->getDataAt(x+1, y, z) - sourceVolume->getDataAt(x, y, z);
-                    gradient[index2].values[1] = sourceVolume->getDataAt(x, y+1, z) - sourceVolume->getDataAt(x, y, z);
-                    gradient[index2].values[2] = sourceVolume->getDataAt(x, y, z) - sourceVolume->getDataAt(x, y, z-1);
-
-                    index2 = 4 * size + index;
-                    gradient[index2].values[0] = sourceVolume->getDataAt(x, y, z) - sourceVolume->getDataAt(x-1, y, z);
-                    gradient[index2].values[1] = sourceVolume->getDataAt(x, y, z) - sourceVolume->getDataAt(x, y-1, z);
-                    gradient[index2].values[2] = sourceVolume->getDataAt(x, y, z+1) - sourceVolume->getDataAt(x, y, z);
-
-                    index2 = 5 * size + index;
-                    gradient[index2].values[0] = sourceVolume->getDataAt(x, y, z) - sourceVolume->getDataAt(x-1, y, z);
-                    gradient[index2].values[1] = sourceVolume->getDataAt(x, y+1, z) - sourceVolume->getDataAt(x, y, z);
-                    gradient[index2].values[2] = sourceVolume->getDataAt(x, y, z) - sourceVolume->getDataAt(x, y, z-1);
-
-                    index2 = 6 * size + index;
-                    gradient[index2].values[0] = sourceVolume->getDataAt(x+1, y, z) - sourceVolume->getDataAt(x, y, z);
-                    gradient[index2].values[1] = sourceVolume->getDataAt(x, y, z) - sourceVolume->getDataAt(x, y-1, z);
-                    gradient[index2].values[2] = sourceVolume->getDataAt(x, y, z) - sourceVolume->getDataAt(x, y, z-1);
-
-                    index2 = 7 * size + index;
-                    gradient[index2].values[0] = sourceVolume->getDataAt(x, y, z) - sourceVolume->getDataAt(x-1, y, z);
-                    gradient[index2].values[1] = sourceVolume->getDataAt(x, y, z) - sourceVolume->getDataAt(x, y-1, z);
-                    gradient[index2].values[2] = sourceVolume->getDataAt(x, y, z) - sourceVolume->getDataAt(x, y, z-1);
                 }
             }
         }
