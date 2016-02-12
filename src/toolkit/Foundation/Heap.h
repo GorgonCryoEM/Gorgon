@@ -14,6 +14,7 @@ namespace Foundation {
 
         void AddValue(T value);
         T Root();
+        T PopRoot();
         bool IsEmpty();
 
     private:
@@ -106,6 +107,17 @@ namespace Foundation {
     template <class T>
     bool Heap<T>::IsEmpty() {
         return (values.size() == 0);
+    }
+
+    template <class T>
+    T Heap<T>::PopRoot() {
+        T val = values[0];
+
+        unsigned int lastElem = values.size()-1;
+        values[0] = values[lastElem];
+        values.erase(values.begin() + lastElem);
+        Heapify(0);
+        return val;
     }
 
 }
