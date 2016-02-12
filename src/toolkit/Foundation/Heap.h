@@ -11,8 +11,6 @@ namespace Foundation {
     class Heap {
     public:
         Heap();
-        Heap(bool isMaxHeap);
-        ~Heap();
 
         void BuildHeap(vector<T> & values);
         void AddValue(T value);
@@ -37,18 +35,6 @@ namespace Foundation {
     template <class T>
     Heap<T>::Heap() {
         this->isMaxHeap = true;
-        values.clear();
-    }
-
-    template <class T>
-    Heap<T>::Heap(bool isMaxHeap) {
-        this->isMaxHeap = isMaxHeap;
-        values.clear();
-    }
-
-    template <class T>
-    Heap<T>::~Heap() {
-        values.clear();
     }
 
     template <class T>
