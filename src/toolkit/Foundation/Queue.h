@@ -14,10 +14,10 @@ namespace SkeletonMaker {
             gridQueueEle() {}
     };
 
-    class GridQueue {
+    class Queue {
         public:
-            GridQueue();
-            ~GridQueue();
+            Queue();
+            ~Queue();
             gridQueueEle* getNext();
             void reset();
             int getNumElements();
@@ -31,14 +31,14 @@ namespace SkeletonMaker {
             int numEles;
     };
 
-    GridQueue::GridQueue() {
+    Queue::Queue() {
         head = NULL;
         cur = NULL;
         pre = NULL;
         numEles = 0;
     }
 
-    GridQueue::~GridQueue() {
+    Queue::~Queue() {
         gridQueueEle* ele;
         reset();
         ele = getNext();
@@ -46,7 +46,7 @@ namespace SkeletonMaker {
         };
     }
 
-    gridQueueEle* GridQueue::getNext() {
+    gridQueueEle* Queue::getNext() {
         if(cur == NULL) {
             pre = NULL;
             cur = head;
@@ -59,16 +59,16 @@ namespace SkeletonMaker {
         return cur;
     }
 
-    void GridQueue::reset() {
+    void Queue::reset() {
         pre = NULL;
         cur = NULL;
     }
 
-    int GridQueue::getNumElements() {
+    int Queue::getNumElements() {
         return numEles;
     }
 
-    void GridQueue::prepend(int xx, int yy, int zz) {
+    void Queue::prepend(int xx, int yy, int zz) {
         gridQueueEle* ele = new gridQueueEle;
         ele->x = xx;
         ele->y = yy;
@@ -81,7 +81,7 @@ namespace SkeletonMaker {
     }
 
     /* Remove current element pointed by cur */
-    gridQueueEle * GridQueue::remove() {
+    gridQueueEle * Queue::remove() {
         gridQueueEle* temp = cur;
         if(cur != NULL) {
             cur = cur->next;
