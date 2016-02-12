@@ -60,7 +60,6 @@ namespace GraySkeletonCPP {
         Volume * GetJuCurveSkeleton(Volume * sourceVolume, Volume * preserve, double threshold, bool is3D);
         Volume * GetJuTopologySkeleton(Volume * sourceVolume, Volume * preserve, double threshold);
         void CleanupVolume(Volume * sourceVolume, double low, double high);
-        void NormalizeVolume(Volume * sourceVolume);
         void PruneCurves(Volume * sourceVolume, int pruneLength);
         void PruneSurfaces(Volume * sourceVolume, int pruneLength);
         void PruneUsingStructureTensor(Volume * skeleton, Volume * sourceVolume, Volume * preserveVol, Vector3DFloat * volumeGradient, EigenResults3D * volumeEigens, ProbabilityDistribution3D & filter, double threshold, char pruningClass, string outputPath);
@@ -747,43 +746,6 @@ namespace GraySkeletonCPP {
 
         delete newVoxels;
 
-    }
-
-    void VolumeSkeletonizer::NormalizeVolume(Volume * sourceVolume) {
-        double minValue = sourceVolume->getDataAt(0,0,0);
-        double maxValue = sourceVolume->getDataAt(0,0,0);
-        double currValue;
-
-        for(int x = 0; x < sourceVolume->getSizeX(); x++) {
-            for(int y = 0; y < sourceVolume->getSizeY(); y++) {
-                for(int z = 0; z < sourceVolume->getSizeZ(); z++) {
-                    currValue = sourceVolume->getDataAt(x, y, z);
-                    if(currValue < minValue) {
-                        minValue = currValue;
-                    }
-                    if(currValue > maxValue) {
-                        maxValue = currValue;
-                    }
-                }
-            }
-        }
-        if (minValue == maxValue) {
-            for(int x = 0; x < sourceVolume->getSizeX(); x++) {
-                for(int y = 0; y < sourceVolume->getSizeY(); y++) {
-                    for(int z = 0; z < sourceVolume->getSizeZ(); z++) {
-                        sourceVolume->setDataAt(x, y, z, 0);
-                    }
-                }
-            }
-        } else {
-            for(int x = 0; x < sourceVolume->getSizeX(); x++) {
-                for(int y = 0; y < sourceVolume->getSizeY(); y++) {
-                    for(int z = 0; z < sourceVolume->getSizeZ(); z++) {
-                        sourceVolume->setDataAt(x, y, z, (sourceVolume->getDataAt(x, y, z) - minValue) * 255.0 / (maxValue - minValue));
-                    }
-                }
-            }
-        }
     }
 
     void VolumeSkeletonizer::PruneCurves(Volume * sourceVolume, int pruneLength) {
