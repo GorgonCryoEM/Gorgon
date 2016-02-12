@@ -261,7 +261,7 @@ namespace GraphMatch {
 #endif
             // otherwise, expand currentNode and adds its children to usedNodes
             } else {
-                LinkedNodeStub * currentStub = new LinkedNodeStub(currentNode);
+                LinkedNodeStub * currentStub = new LinkedNodeStub(*currentNode);
                 if(ExpandNode(currentStub)) {
                     usedNodes.push_back(currentStub);
                 } else {
@@ -806,7 +806,7 @@ namespace GraphMatch {
 
             if(notConstrained) {
                 temp = currentNode;
-                currentNode = new LinkedNode(temp);
+                currentNode = new LinkedNode(*temp);
                 currentNode->depth = (char)patternGraph->nodeCount;
                 currentNode->costGStar = temp->costGStar;
                 currentNode->costGStar += GetPenaltyCost(temp->n1Node, remainingHelixNodes + remainingSheetNodes, false);
