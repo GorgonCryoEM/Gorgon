@@ -7,10 +7,10 @@
 
 namespace Foundation {
     template <class TKey, class TValue>
-    class GorgonPriorityQueue {
+    class PQueue {
     public:
-        GorgonPriorityQueue(bool maxIsHighestPriority);
-        ~GorgonPriorityQueue();
+        PQueue(bool maxIsHighestPriority);
+        ~PQueue();
 
         void Add(TKey key, TValue value);
         TValue PopFirst();
@@ -24,27 +24,27 @@ namespace Foundation {
     };
 
     template <class TKey, class TValue>
-    GorgonPriorityQueue<TKey, TValue>::GorgonPriorityQueue(bool maxIsHighestPriority) {
+    PQueue<TKey, TValue>::PQueue(bool maxIsHighestPriority) {
         heap = GorgonHeap< GorgonPriorityQueueElement<TKey, TValue> >(maxIsHighestPriority);
     }
 
     template <class TKey, class TValue>
-    GorgonPriorityQueue<TKey, TValue>::~GorgonPriorityQueue() {
+    PQueue<TKey, TValue>::~PQueue() {
 
     }
 
     template <class TKey, class TValue>
-    void GorgonPriorityQueue<TKey, TValue>::Add(TKey key, TValue value) {
+    void PQueue<TKey, TValue>::Add(TKey key, TValue value) {
         heap.AddValue(GorgonPriorityQueueElement<TKey, TValue>(key, value));
     }
 
     template <class TKey, class TValue>
-    TValue GorgonPriorityQueue<TKey, TValue>::PopFirst() {
+    TValue PQueue<TKey, TValue>::PopFirst() {
         return heap.PopRoot().GetValue();
     }
 
     template <class TKey, class TValue>
-    void GorgonPriorityQueue<TKey, TValue>::PopFirst(TKey & key, TValue & value) {
+    void PQueue<TKey, TValue>::PopFirst(TKey & key, TValue & value) {
         GorgonPriorityQueueElement<TKey, TValue> e = heap.PopRoot();
         key = e.GetKey();
         value = e.GetValue();
@@ -52,12 +52,12 @@ namespace Foundation {
 
 
     template <class TKey, class TValue>
-    TValue GorgonPriorityQueue<TKey, TValue>::First() {
+    TValue PQueue<TKey, TValue>::First() {
         return heap.Root().GetValue();
     }
 
     template <class TKey, class TValue>
-    bool GorgonPriorityQueue<TKey, TValue>::IsEmpty() {
+    bool PQueue<TKey, TValue>::IsEmpty() {
         return heap.IsEmpty();
     }
 
