@@ -29,8 +29,6 @@ namespace GraphMatch {
         ~LinkedNode();
         vector<int> GetNodeCorrespondence();
         double GetCost();
-        unsigned long long GetN1Bitmap();
-        unsigned long long GetN2Bitmap();
         bool IsUserSpecifiedSolution();
         static void AddNodeToBitmap(unsigned long long & bitmap, int node);
         static void RemoveNodeFromBitmap(unsigned long long & bitmap, int node);
@@ -212,28 +210,6 @@ namespace GraphMatch {
             isSolution = (isSolution && (n2[i] == SOLUTION[i]));
         }
         return isSolution;
-    }
-
-    unsigned long long LinkedNode::GetN1Bitmap() {
-        unsigned long long n1Bitmap = 0;
-        for(int i = 1; i <= this->n1Node; i++) {
-            AddNodeToBitmap(n1Bitmap, i);
-        }
-        return n1Bitmap;
-    }
-
-    unsigned long long LinkedNode::GetN2Bitmap() {
-        unsigned long long n2Bitmap = 0;
-        LinkedNodeStub * currentNode = this;
-        bool continueLoop = true;
-        while(continueLoop) {
-            if(currentNode->parentNode == NULL) {
-                 break;
-            }
-            LinkedNode::AddNodeToBitmap(n2Bitmap, currentNode->n2Node);
-            currentNode = currentNode->parentNode;
-        }
-        return n2Bitmap;
     }
 
     void LinkedNode::AddNodeToBitmap(unsigned long long & bitmap, int node) {
