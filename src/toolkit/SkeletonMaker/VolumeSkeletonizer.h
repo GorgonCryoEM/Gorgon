@@ -56,7 +56,6 @@ namespace GraySkeletonCPP {
         Volume * GetJuSurfaceSkeleton(Volume * sourceVolume, Volume * preserve, double threshold);
         Volume * GetJuCurveSkeleton(Volume * sourceVolume, Volume * preserve, double threshold, bool is3D);
         Volume * GetJuTopologySkeleton(Volume * sourceVolume, Volume * preserve, double threshold);
-        void CleanupVolume(Volume * sourceVolume, double low, double high);
         void PruneCurves(Volume * sourceVolume, int pruneLength);
         void PruneSurfaces(Volume * sourceVolume, int pruneLength);
         void PruneUsingStructureTensor(Volume * skeleton, Volume * sourceVolume, Volume * preserveVol, Vector3DFloat * volumeGradient, EigenResults3D * volumeEigens, ProbabilityDistribution3D & filter, double threshold, char pruningClass, string outputPath);
@@ -582,20 +581,6 @@ namespace GraySkeletonCPP {
     }
 
 
-    void VolumeSkeletonizer::CleanupVolume(Volume * sourceVolume, double low, double high) {
-        for(int x = 0; x < sourceVolume->getSizeX(); x++) {
-            for(int y = 0; y < sourceVolume->getSizeY(); y++) {
-                for(int z = 0; z < sourceVolume->getSizeZ(); z++) {
-                    if(sourceVolume->getDataAt(x, y, z) < low) {
-                        sourceVolume->setDataAt(x, y, z, 0);
-                    }
-                    if(sourceVolume->getDataAt(x, y, z) > high) {
-                        sourceVolume->setDataAt(x, y, z, high);
-                    }
-                }
-            }
-        }
-    }
     void VolumeSkeletonizer::FindOrthogonalAxes(Vector3DFloat axis, Vector3DFloat & res1, Vector3DFloat & res2) {
         res1 = Vector3DFloat(1.0, 0.0, 0.0);
         if(abs(axis * res1) > 0.95) {
