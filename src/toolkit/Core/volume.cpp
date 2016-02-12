@@ -649,16 +649,16 @@ void Volume::curveSkeleton(Volume* grayvol, float lowthr, float highthr,
     GridQueue* queue2 = new GridQueue();
     GridQueue* queue3 = new GridQueue();
     GridQueue* queue4 = new GridQueue();
-    PriorityQueue < gridPoint > queue (
+    PriorityQueue < gridPoint > queue(
             MAX_QUEUELEN);
 
     for(i = 0; i < getSizeX(); i++)
         for(j = 0; j < getSizeY(); j++)
             for(k = 0; k < getSizeZ(); k++) {
                 if(getDataAt(i, j, k) >= 0) {
-                    float v = (float)grayvol->getDataAt(i, j, k);
-                    if(v <= lowthr || v > highthr
-                       || svol->getDataAt(i, j, k) > 0) {
+                    double v = grayvol->getDataAt(i, j, k);
+                    if(svol->getDataAt(i, j, k) > 0
+                       || v <= lowthr || v > highthr) {
                         setDataAt(i, j, k, MAX_ERODE);
                     }
                     else {
@@ -781,7 +781,6 @@ void Volume::curveSkeleton(Volume* grayvol, float lowthr, float highthr,
                 continue;
             }
 
-            // Check simple
             if(isHelixEnd(ox, oy, oz) || !isSimple(ox, oy, oz)) {
                 // Complex, set to next layer
                 setDataAt(ox, oy, oz, curwid + 1);
@@ -840,10 +839,6 @@ void Volume::curveSkeleton(Volume* grayvol, float lowthr, float highthr,
 #endif
 
         if(numSimple == 0) {
-            if(queue2->getNumElements() > 0) {
-                printf(
-                        "*************************wierd here*************************\n");
-            }
             break;
         }
     }
@@ -885,6 +880,7 @@ void Volume::curveSkeleton(Volume* grayvol, float lowthr, float highthr,
 
     // Finally, clean up
     delete scrvol;
+
     delete queue2;
     delete queue3;
     delete queue4;
@@ -936,7 +932,6 @@ void Volume::curveSkeleton(float thr, Volume* svol) {
                     }
                 }
             }
-
     int wid = MAX_ERODE;
 #ifdef VERBOSE
     printf("Total %d nodes\n", queue2->getNumElements() );
@@ -1227,7 +1222,6 @@ void Volume::curveSkeleton2D(float thr, Volume* svol) {
 
             // Compute score
             score = getNumPotComplex2(ox, oy, oz);
-            //score = getNumNeighbor6( ox, oy, oz ) ;
             scrvol->setDataAt(ox, oy, oz, score);
 
             // Push to queue
@@ -1302,7 +1296,6 @@ void Volume::curveSkeleton2D(float thr, Volume* svol) {
                         if(getDataAt(nx, ny, nz) == curwid) {
                             // Compute score
                             score = getNumPotComplex2(nx, ny, nz);
-                            //score = getNumNeighbor6( nx, ny, nz ) ;
 
                             if(score != (int)scrvol->getDataAt(nx, ny, nz)) {
                                 // printf("Update\n") ;
@@ -1330,15 +1323,15 @@ void Volume::curveSkeleton2D(float thr, Volume* svol) {
     }
 
     // Finally, clean up
-#ifdef VERBOSE
-    printf("Thresholding the volume to 0/1...\n");
-#endif
-    threshold(0, 0, 1);
     delete scrvol;
 
     delete queue2;
     delete queue3;
     delete queue4;
+#ifdef VERBOSE
+    printf("Thresholding the volume to 0/1...\n");
+#endif
+    threshold(0, 0, 1);
 }
 
 /* Thin the current volume while preserving voxels with values > highthr or <= lowthr in grayvol
