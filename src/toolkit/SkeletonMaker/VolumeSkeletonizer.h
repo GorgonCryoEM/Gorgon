@@ -86,7 +86,6 @@ namespace GraySkeletonCPP {
         void HueR(double value, double &r, double &g, double &b);
         void HueRB(double value, double &r, double &g, double &b);
         void HueRGB(double value, double &r, double &g, double &b);
-        void MarkDeletableVoxels(Volume * deletedVol, Volume * currentVolume, Volume * preservedVolume);
         Vector3DFloat XYZtoUVW(Vector3DFloat vec, Vector3DFloat u, Vector3DFloat v, Vector3DFloat w);
         Volume * FillCurveHoles(Volume * thresholdedSkeleton, Volume * originalSkeleton, int maxHoleSize);
         Volume * FillSurfaceHoles(Volume * thresholdedSkeleton, Volume * originalSkeleton, int maxHoleSize);
@@ -712,27 +711,6 @@ namespace GraySkeletonCPP {
             g = 1 * (1- v2);
             b = 0;
         }
-    }
-
-    void VolumeSkeletonizer::MarkDeletableVoxels(Volume * deletedVolume, Volume * currentVolume, Volume * preservedVolume) {
-        Volume * newVoxels = new Volume(*currentVolume);
-        newVoxels->subtract(preservedVolume);
-
-        for(int x = 0; x < currentVolume->getSizeX(); x++) {
-            for(int y = 0; y < currentVolume->getSizeY(); y++) {
-                for(int z = 0; z < currentVolume->getSizeZ(); z++) {
-
-                    if(newVoxels->getDataAt(x, y, z) > 0) {
-                        if(DiscreteMesh::IsVolumeBody(currentVolume, x, y, z) || DiscreteMesh::IsVolumeBorder(currentVolume, x, y, z, false)) {
-                            deletedVolume->setDataAt(x, y, z, VOXEL_BINARY_TRUE);
-                        }
-                    }
-                }
-            }
-        }
-
-        delete newVoxels;
-
     }
 
     void VolumeSkeletonizer::PruneCurves(Volume * sourceVolume, int pruneLength) {
