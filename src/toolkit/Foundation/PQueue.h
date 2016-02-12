@@ -84,13 +84,13 @@ namespace Foundation {
     private:
         typedef PQueueElem<TKey, TValue> Elem;
 
-        Heap< PQueueElem<TKey, TValue> > heap;
+//        Heap< PQueueElem<TKey, TValue> > heap;
         priority_queue<Elem> q;
     };
 
     template <class TKey, class TValue>
     void PQueue<TKey, TValue>::Add(TKey key, TValue value) {
-        heap.AddValue(PQueueElem<TKey, TValue>(key, value));
+//        heap.AddValue(PQueueElem<TKey, TValue>(key, value));
         q.push(Elem(key, value));
     }
 
@@ -98,33 +98,33 @@ namespace Foundation {
     TValue PQueue<TKey, TValue>::PopFirst() {
             Elem res = q.top();
             q.pop();
-//            return res.GetValue();
-        return heap.PopRoot().GetValue();
+            return res.GetValue();
+//        return heap.PopRoot().GetValue();
     }
 
     template <class TKey, class TValue>
     void PQueue<TKey, TValue>::PopFirst(TKey & key, TValue & value) {
-        PQueueElem<TKey, TValue> e = heap.PopRoot();
-        key = e.GetKey();
-        value = e.GetValue();
+//        PQueueElem<TKey, TValue> e = heap.PopRoot();
+//        key = e.GetKey();
+//        value = e.GetValue();
 
         Elem res = q.top();
         q.pop();
-//        key = res.GetValue();
-//        value = res.GetValue();
+        key = res.GetKey();
+        value = res.GetValue();
     }
 
 
     template <class TKey, class TValue>
     TValue PQueue<TKey, TValue>::First() {
-//            return q.top().GetValue();
-        return heap.Root().GetValue();
+            return q.top().GetValue();
+//        return heap.Root().GetValue();
     }
 
     template <class TKey, class TValue>
     bool PQueue<TKey, TValue>::IsEmpty() {
-//            return q.empty();
-        return heap.IsEmpty();
+            return q.empty();
+//        return heap.IsEmpty();
     }
 
 }
