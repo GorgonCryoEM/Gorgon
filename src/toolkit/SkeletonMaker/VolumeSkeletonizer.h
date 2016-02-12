@@ -79,7 +79,6 @@ namespace GraySkeletonCPP {
 
 
         void GetEigenResult(EigenResults3D & returnVal, Vector3DFloat * imageGradient, ProbabilityDistribution3D & gaussianFilter, int x, int y, int z, int sizeX, int sizeY, int sizeZ, int gaussianFilterRadius, bool clear);
-        void GetEigenResult2(EigenResults3D & returnVal, Vector3DFloat * imageGradient, ProbabilityDistribution3D & gaussianFilter, int x, int y, int z, int sizeX, int sizeY, int sizeZ, int gaussianFilterRadius, bool clear);
         EigenResults3D * GetEigenResults(Volume * maskVol, Vector3DFloat * imageGradient, ProbabilityDistribution3D & gaussianFilter, int gaussianFilterRadius, bool useMask);
 
         static Volume * PerformAnisotropicSmoothingAxisAligned(Volume * sourceVolume, int xRadius, int yRadius, int zRadius);
@@ -678,63 +677,6 @@ namespace GraySkeletonCPP {
                 for(int c = 0; c < 3; c++) {
                     returnVal.vectors[r].values[c] = eigenData.eigenVectors[r][c];
                 }
-            }
-
-            assert((returnVal.values[0] >= returnVal.values[1]) && (returnVal.values[1] >= returnVal.values[2]));
-
-
-        }
-    }
-
-
-    // Works on 8 local gradients instead of 1
-    void VolumeSkeletonizer::GetEigenResult2(EigenResults3D & returnVal, Vector3DFloat * imageGradient, ProbabilityDistribution3D & gaussianFilter, int x, int y, int z, int sizeX, int sizeY, int sizeZ, int gaussianFilterRadius, bool clear) {
-        int size = sizeX*sizeY*sizeZ;
-        if(clear) {
-            for(int r = 0; r < 3; r++) {
-                returnVal.values[r] = 0;
-                for(int c = 0; c < 3; c++) {
-                    returnVal.vectors[r].values[c] = 0;
-                }
-            }
-        } else {
-            EigenVectorsAndValues3D eigenData;
-            double probability;
-            int index2, index3;
-
-            for(int r = 0; r < 3; r++) {
-                for(int c = 0; c < 3; c++) {
-                    eigenData.structureTensor[r][c] = 0;
-                }
-            }
-
-            for(int xx = -gaussianFilterRadius; xx <= gaussianFilterRadius; xx++) {
-                for(int yy = -gaussianFilterRadius; yy <= gaussianFilterRadius; yy++) {
-                    for(int zz = -gaussianFilterRadius; zz <= gaussianFilterRadius; zz++) {
-                        index2 = (x+xx) * sizeY * sizeZ + (y+yy) * sizeZ + z + zz;
-                        probability = gaussianFilter.values[xx+gaussianFilterRadius][yy+gaussianFilterRadius][zz+gaussianFilterRadius] / 8;
-                        for (int a = 0; a < 8; a++) {
-                            index3 = a*size + index2;
-                            for(int r = 0; r < 3; r++) {
-                                for(int c = 0; c < 3; c++) {
-                                    eigenData.structureTensor[r][c] += imageGradient[index3].values[r] * imageGradient[index3].values[c] * probability;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            math->EigenAnalysis(eigenData);
-            for(int r = 0; r < 3; r++) {
-                returnVal.values[r] = eigenData.eigenValues[r];
-                for(int c = 0; c < 3; c++) {
-                    returnVal.vectors[r].values[c] = eigenData.eigenVectors[r][c];
-                }
-            }
-
-            for(int r = 0; r < 3; r++) {
-                //returnVal.vectors[r].Normalize();
             }
 
             assert((returnVal.values[0] >= returnVal.values[1]) && (returnVal.values[1] >= returnVal.values[2]));
