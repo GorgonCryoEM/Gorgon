@@ -300,8 +300,7 @@ namespace GraphMatch {
 #ifdef VERBOSE
         printf("Time taken in GetA %f\n", timeInGetA / (double)CLOCKS_PER_SEC);
         printf("Time taken in GetB %f\n", timeInGetB / (double)CLOCKS_PER_SEC);
-        printf("Time taken in Queue %f\n",
-                                timeInQueue / (double)CLOCKS_PER_SEC);
+        printf("Time taken in Queue %f\n", timeInQueue / (double)CLOCKS_PER_SEC);
 #endif
 
     }
@@ -928,8 +927,6 @@ namespace GraphMatch {
                     cout << "  GetCost(" << n1 + 1 << "," << n2 - n1 << ","
                          << solution[n1] << "," << solution[n2] << ")="
                          << singleEdgeCost << endl;
-                }
-                if(extraMessages) {
                     cout << "  GetPenaltyCost(" << n1 + 1 << "," << n2 - n1
                          << ")=" << singleEdgePenaltyCost << endl;
                 }
