@@ -568,7 +568,6 @@ namespace GraphMatch {
         clock_t start = clock();
 #endif
         double cost;
-        //queue->remove(currentNode, cost);
         queue->PopFirst(cost, currentNode);
 #ifdef VERBOSE
         timeInQueue += clock() - start;
@@ -580,7 +579,6 @@ namespace GraphMatch {
     double WongMatch15ConstrainedNoFuture::GetPenaltyCost(int d, int m,
                                                           bool debugMsg)
     {
-        //if (d==0) {cout << "d=" << d << ", m=" << m << endl; debugMsg=true;}
         double cost = 0.0;
         int lastPatternNode = patternGraph->GetNodeCount() - 1;
         bool startAtBeginning = (d == 0);
@@ -589,11 +587,9 @@ namespace GraphMatch {
         bool firstHelixFound = false;
         for(int k = d; k < d + m - 1; k++) {
             // add penalties for all skipped helices
-            if((int) (patternGraph->adjacencyMatrix[k][k + 1][0] + 0.01) == GRAPHEDGE_HELIX) {
-                //cout << "    GetPenaltyCost(" << d << "," << m << "). SKIP HELIX. k=" << k << endl;
+            if((int) (patternGraph->adjacencyMatrix[k][k+1][0] + 0.01) == GRAPHEDGE_HELIX) {
                 cost += MISSING_HELIX_PENALTY;
-                cost +=
-                                        patternGraph->adjacencyMatrix[k][k + 1][1] * MISSING_HELIX_PENALTY_SCALED;
+                cost += patternGraph->adjacencyMatrix[k][k + 1][1] * MISSING_HELIX_PENALTY_SCALED;
 #ifdef VERBOSE
                 if(debugMsg) {
                     cout << "  -- adding missing helix penalties: fixed="
@@ -612,6 +608,7 @@ namespace GraphMatch {
                     }
 #endif
                 }
+
                 if(finishAtEnd && !firstHelixFound) {
                     cost += START_END_MISSING_HELIX_PENALTY;
 #ifdef VERBOSE
@@ -623,12 +620,12 @@ namespace GraphMatch {
                 firstHelixFound = true;
             }
             // add penalties for skipped strands, unless the strand falls at the beginning of the sequence and is not the first node
-            else if( (startAtBeginning || pastFirst) && ((int) (patternGraph->adjacencyMatrix[k][k][0]
-                                    + 0.01)
-                                                         == GRAPHNODE_SHEET)) {
-                cost += MISSING_SHEET_PENALTY;
-                cost +=
-                                        patternGraph->nodeWeights[k] * MISSING_SHEET_PENALTY_SCALED;
+            else if(  (startAtBeginning || pastFirst)
+                     &&
+                      ((int) (patternGraph->adjacencyMatrix[k][k][0] + 0.01) == GRAPHNODE_SHEET)
+                    ) {
+                        cost += MISSING_SHEET_PENALTY;
+                        cost += patternGraph->nodeWeights[k] * MISSING_SHEET_PENALTY_SCALED;
 #ifdef VERBOSE
                 if(debugMsg) {
                     cout << "  -- adding missing sheet penalties: fixed="
@@ -638,22 +635,16 @@ namespace GraphMatch {
                          << endl;
                 }
 #endif
-            }
-            //if (startAtBeginning && debugMsg) { cout << "STARTATBEGIN" << endl;}
+                        }
             pastFirst = true;
         }
 
-        if(finishAtEnd && patternGraph->adjacencyMatrix[lastPatternNode - 1][lastPatternNode
-                                - 1][0]
-                          + 0.01
-                          == GRAPHNODE_SHEET) {
-            cost += MISSING_SHEET_PENALTY;
-            cost +=
-                                    patternGraph->nodeWeights[lastPatternNode
-                                                            - 1]
-                                    * MISSING_SHEET_PENALTY_SCALED;
-        }
-        //if (debugMsg) { cout << "  -- returning cost=" << cost << endl; }
+        if(   finishAtEnd
+           && patternGraph->adjacencyMatrix[lastPatternNode-1][lastPatternNode-1][0] + 0.01 == GRAPHNODE_SHEET
+          ) {
+                cost += MISSING_SHEET_PENALTY;
+                cost += patternGraph->nodeWeights[lastPatternNode-1]*MISSING_SHEET_PENALTY_SCALED;
+            }
         return cost;
     }
 
