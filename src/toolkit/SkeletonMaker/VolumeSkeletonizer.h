@@ -50,7 +50,6 @@ namespace GraySkeletonCPP {
     public:
         VolumeSkeletonizer(int pointRadius, int curveRadius, int surfaceRadius, int skeletonDirectionRadius);
         ~VolumeSkeletonizer();
-        Volume * CleanImmersionSkeleton(Volume * skeleton, string outputPath);
         Volume * PerformImmersionSkeletonizationAndPruning(Volume * sourceVol, Volume * preserveVol, double startGray, double endGray, double stepSize, int smoothingIterations, int smoothingRadius, int minCurveSize, int minSurfaceSize, int maxCurveHole, int maxSurfaceHole, string outputPath, bool doPruning, double pointThreshold, double curveThreshold, double surfaceThreshold);
         Volume * PerformSkeletonizationAndPruning(Volume * imageVol, string outputPath);
         Volume * PerformImmersionSkeletonization(Volume * imageVol, string outputPath);
@@ -884,39 +883,6 @@ namespace GraySkeletonCPP {
         }
     }
 
-
-    Volume * VolumeSkeletonizer::CleanImmersionSkeleton(Volume * skeleton, string outputPath) {
-        Volume * cleanedSkel = new Volume(*skeleton);
-        typedef vector<Vector3DInt> BinType;
-        vector<BinType> bins;
-        for(int g = 0; g < 256; g++) {
-            bins.push_back(BinType());
-        }
-
-        for(int x = 0; x < skeleton->getSizeX(); x++) {
-            for(int y = 0; y < skeleton->getSizeY(); y++) {
-                for(int z = 0; z < skeleton->getSizeZ(); z++) {
-                    bins[(int)round(skeleton->getDataAt(x, y, z))].push_back(Vector3DInt(x, y, z));
-                }
-            }
-        }
-
-        Volume * temp;
-        for(int g = 255; g >= 1; g--) {
-            temp = new Volume(skeleton->getSizeX(), skeleton->getSizeY(), skeleton->getSizeZ());
-            for(unsigned int i = 0; i < bins[g].size(); i++) {
-                temp->setDataAt(bins[g][i].values[0], bins[g][i].values[1], bins[g][i].values[2], 1);
-            }
-            for(unsigned int i = 0; i < bins[g].size(); i++) {
-                if(DiscreteMesh::IsVolumeBody(temp, bins[g][i].values[0], bins[g][i].values[1], bins[g][i].values[2])) {
-                    cleanedSkel->setDataAt(bins[g][i].values[0], bins[g][i].values[1], bins[g][i].values[2], 0);
-                }
-            }
-            delete temp;
-        }
-
-        return cleanedSkel;
-    }
 
     Volume * VolumeSkeletonizer::FillCurveHoles(Volume * thresholdedSkeleton, Volume * originalSkeleton, int maxHoleSize) {
         Volume * holes = new Volume(*originalSkeleton);
