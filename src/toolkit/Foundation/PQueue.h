@@ -91,10 +91,14 @@ namespace Foundation {
     template <class TKey, class TValue>
     void PQueue<TKey, TValue>::Add(TKey key, TValue value) {
         heap.AddValue(PQueueElem<TKey, TValue>(key, value));
+        q.push(Elem(key, value));
     }
 
     template <class TKey, class TValue>
     TValue PQueue<TKey, TValue>::PopFirst() {
+            Elem res = q.top();
+            q.pop();
+//            return res.GetValue();
         return heap.PopRoot().GetValue();
     }
 
@@ -103,16 +107,23 @@ namespace Foundation {
         PQueueElem<TKey, TValue> e = heap.PopRoot();
         key = e.GetKey();
         value = e.GetValue();
+
+        Elem res = q.top();
+        q.pop();
+//        key = res.GetValue();
+//        value = res.GetValue();
     }
 
 
     template <class TKey, class TValue>
     TValue PQueue<TKey, TValue>::First() {
+//            return q.top().GetValue();
         return heap.Root().GetValue();
     }
 
     template <class TKey, class TValue>
     bool PQueue<TKey, TValue>::IsEmpty() {
+//            return q.empty();
         return heap.IsEmpty();
     }
 
