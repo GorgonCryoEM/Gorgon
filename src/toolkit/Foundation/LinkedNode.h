@@ -36,7 +36,6 @@ namespace GraphMatch {
         double GetCost();
         unsigned long long GetN1Bitmap();
         unsigned long long GetN2Bitmap();
-        bool operator==(LinkedNode &other);
         bool IsUserSpecifiedSolution();
         static void AddNodeToBitmap(unsigned long long & bitmap, int node);
         static void RemoveNodeFromBitmap(unsigned long long & bitmap, int node);
@@ -374,10 +373,6 @@ namespace GraphMatch {
             currentNode = currentNode->parentNode;
         }
         return n2Bitmap;
-    }
-
-    bool LinkedNode::operator==(LinkedNode &other) {
-        return (n1Node == other.n1Node) && (n2Node == other.n2Node) && (m1Bitmap == other.m1Bitmap) && (m2Bitmap == other.m2Bitmap) && (parentNode == other.parentNode);
     }
 
     void LinkedNode::AddNodeToBitmap(unsigned long long & bitmap, int node) {
