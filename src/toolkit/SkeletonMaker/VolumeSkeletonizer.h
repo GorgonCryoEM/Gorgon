@@ -77,7 +77,6 @@ namespace GraySkeletonCPP {
         void GetEigenResult(EigenResults3D & returnVal, Vector3DFloat * imageGradient, ProbabilityDistribution3D & gaussianFilter, int x, int y, int z, int sizeX, int sizeY, int sizeZ, int gaussianFilterRadius, bool clear);
         EigenResults3D * GetEigenResults(Volume * maskVol, Vector3DFloat * imageGradient, ProbabilityDistribution3D & gaussianFilter, int gaussianFilterRadius, bool useMask);
 
-        static Volume * PerformAnisotropicSmoothingAxisAligned(Volume * sourceVolume, int xRadius, int yRadius, int zRadius);
     protected:
 
         double AngleToParameter(double angle);
@@ -1272,30 +1271,6 @@ namespace GraySkeletonCPP {
     }
 
 
-    Volume * VolumeSkeletonizer::PerformAnisotropicSmoothingAxisAligned(Volume * sourceVolume, int xRadius, int yRadius, int zRadius) {
-        Volume * smoothedVol = new Volume(sourceVolume->getSizeX(), sourceVolume->getSizeY(), sourceVolume->getSizeZ());
-        ProbabilityDistribution3D dist;
-        Combinatorics::GetAnisotropicDistributionAxisAligned(dist, xRadius, yRadius, zRadius);
-        float val;
-
-        for(int x = dist.radius; x < sourceVolume->getSizeX() - dist.radius; x++) {
-            for(int y = dist.radius; y < sourceVolume->getSizeY() - dist.radius; y++) {
-                for(int z = dist.radius; z < sourceVolume->getSizeZ() - dist.radius; z++) {
-                    val = 0;
-                    for(int xx = -xRadius; xx <= xRadius; xx++) {
-                        for(int yy = -yRadius; yy <= yRadius; yy++) {
-                            for(int zz = -zRadius; zz <= zRadius; zz++) {
-                                val += (sourceVolume->getDataAt(x+xx, y+yy, z+zz) * dist.values[xx+dist.radius][yy+dist.radius][zz+dist.radius]);
-                            }
-                        }
-                    }
-                    smoothedVol->setDataAt(x, y, z, val);
-                }
-            }
-        }
-
-        return smoothedVol;
-    }
 }
 
 #endif
