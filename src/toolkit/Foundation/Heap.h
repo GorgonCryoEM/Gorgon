@@ -12,7 +12,6 @@ namespace Foundation {
     public:
         Heap();
 
-        void AddValue(T value);
         T Root();
         T PopRoot();
         bool IsEmpty();
@@ -75,27 +74,6 @@ namespace Foundation {
                 values[rootIndex] = tempValue;
 
                 Heapify(properRoot);
-            }
-        }
-    }
-
-
-    template <class T>
-    void Heap<T>::AddValue(T value) {
-        unsigned int childIndex = values.size();
-        values.push_back(value);
-
-        bool swapped = true;
-        unsigned int parentIndex;
-        while((childIndex > 0) && swapped) {
-            swapped = false;
-            parentIndex = GetParent(childIndex);
-            if((isMaxHeap && ((values[childIndex] > values[parentIndex]))) || (!isMaxHeap && (values[childIndex] < values[parentIndex]))) {
-                T tempValue = values[childIndex];
-                values[childIndex] = values[parentIndex];
-                values[parentIndex] = tempValue;
-                swapped = true;
-                childIndex = parentIndex;
             }
         }
     }
