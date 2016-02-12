@@ -87,7 +87,6 @@ namespace GraySkeletonCPP {
         double AngleToParameter(double angle);
         double GetVoxelCost(EigenResults3D imageEigen, Vector3DFloat skeletonDirection, int type);
         void AddIterationToVolume(Volume * compositeVolume, Volume * iterationVolume, unsigned char threshold);
-        void ApplyMask(Volume * sourceVolume, Volume * maskVolume, unsigned char maskValue, bool keepMaskValue);
         void FindOrthogonalAxes(Vector3DFloat axis, Vector3DFloat & res1, Vector3DFloat & res2);
         void GetSTBasedDistribution(ProbabilityDistribution3D & distributionInfo, EigenResults3D eigen);
         void HueR(double value, double &r, double &g, double &b);
@@ -593,19 +592,6 @@ namespace GraySkeletonCPP {
                 for(int z = 0; z < iterationVolume ->getSizeZ(); z++) {
                     if((compositeVolume->getDataAt(x,y,z) == 0) && (iterationVolume->getDataAt(x, y, z) > 0)) {
                         compositeVolume->setDataAt(x,y,z,threshold);
-                    }
-                }
-            }
-        }
-    }
-
-    void VolumeSkeletonizer::ApplyMask(Volume * sourceVolume, Volume * maskVolume, unsigned char maskValue, bool keepMaskValue) {
-        for(int x = 0; x < sourceVolume->getSizeX(); x++) {
-            for(int y = 0; y < sourceVolume->getSizeY(); y++) {
-                for(int z = 0; z < sourceVolume->getSizeZ(); z++) {
-                    if(((maskVolume->getDataAt(x, y, z) == maskValue) && !keepMaskValue) ||
-                        ((maskVolume->getDataAt(x, y, z) != maskValue) && keepMaskValue)) {
-                        sourceVolume->setDataAt(x, y, z, 0);
                     }
                 }
             }
