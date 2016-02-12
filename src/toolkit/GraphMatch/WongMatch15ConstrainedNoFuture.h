@@ -63,7 +63,6 @@ namespace GraphMatch {
         void ComputeSolutionCost(int solution[], bool extraMessages);
         void NormalizeGraphs();
         void NormalizeSheets();
-        unsigned long long EncodeNode(unsigned long long bitmap, int node);
         void PrintNodeConcise(LinkedNode * node, int rank, bool endOfLine, bool printCostBreakdown);
         int bestMatches[RESULT_COUNT][MAX_NODES];
 
@@ -1098,14 +1097,6 @@ namespace GraphMatch {
     }
 
 
-
-    unsigned long long WongMatch15ConstrainedNoFuture::EncodeNode(unsigned long long bitmap, int node) {
-        if(node == -1)
-            return bitmap;
-
-        return (bitmap | ((unsigned long long)1 << node));
-
-    }
 
     // code copied from LinkedNode::PrintNodeConcise
     // Adding a breakdown of the cost into loops, nodes, and helices
