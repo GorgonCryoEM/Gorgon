@@ -81,15 +81,7 @@ namespace GraphMatch {
         for(unsigned int i = 0; i < usedNodes.size(); i++) {
             delete usedNodes[i];
         }
-        usedNodes.clear();
-        solutions.clear();
-        //int queueSize = queue->getLength();
-        //double tempKey;
-        //LinkedNode * tempNode;
-        //for(int i = 0; i < queueSize; i++) {
-        //	queue->remove(tempNode, tempKey);
-        //	delete tempNode;
-        //}
+
         LinkedNode * tempNode;
         while(!queue->IsEmpty()) {
             tempNode = queue->PopFirst();
@@ -97,7 +89,6 @@ namespace GraphMatch {
         }
 
         delete queue;
-
         delete pathGenerator;
     }
     void WongMatch15ConstrainedNoFuture::Init(StandardGraph * patternGraph, StandardGraph * baseGraph) {
@@ -110,7 +101,6 @@ namespace GraphMatch {
 #ifdef VERBOSE
         cout << "Creating priority queue" << endl;
 #endif // VERBOSE
-        //queue = new PriorityQueue<LinkedNode, double> (PRIORITYQUEUESIZE);
         queue = new PQueue<double, LinkedNode *>();
 #ifdef VERBOSE
         cout << "Loading pattern graph" << endl;
@@ -132,12 +122,6 @@ namespace GraphMatch {
         if(missingSheetCount < 0)  {
             missingSheetCount = 0;
         }
-
-        // TEMPORARY CODE!
-        //EUCLIDEAN_VOXEL_TO_PDB_RATIO *= 1.5;
-        //EUCLIDEAN_VOXEL_TO_PDB_RATIO = 3.0;
-        //EUCLIDEAN_VOXEL_TO_PDB_RATIO = 1.5 * LOOP_C_ALPHA_TO_ANGSTROMS; // this is what i think it should be.
-        // END TEMPORARY CODE
 
         // new method of counting missing sheets and helices
         // count helix nodes in base graph
@@ -180,7 +164,6 @@ namespace GraphMatch {
         cout << "pattern graph has " << patternHelixNodes << " helix nodes and " << patternSheetNodes << " sheet nodes." << endl;
 #endif // VERBOSE
 
-
         missingHelixCount = (patternHelixNodes - baseHelixNodes) / 2;
 
         // allow all strands to be missing
@@ -218,7 +201,6 @@ namespace GraphMatch {
     }
 
 
-
     // searches for correspondences between the pattern graph and base graph.
     int WongMatch15ConstrainedNoFuture::RunMatching(clock_t startTime) {
 #ifdef VERBOSE
@@ -239,9 +221,6 @@ namespace GraphMatch {
             if(currentNode->depth == patternGraph->nodeCount) {
                 finishTime = clock();
                 foundCount++;
-                //currentNode->PrintNodeConcise(foundCount, false);
-                //printf("\n");
-                //printf(": (%d expanded) (%f seconds) (%fkB Memory) (%d queue size) (%d parent size)\n", expandCount, (double) (finishTime - startTime) / (double) CLOCKS_PER_SEC, (queue->getLength() * sizeof(LinkedNode) + usedNodes.size() * sizeof(LinkedNodeStub)) / 1024.0, queue->getLength(), (int)usedNodes.size());
                 printf(": (%d expanded) (%f seconds) (%d parent size)\n", expandCount, (double) (finishTime - startTime) / (double) CLOCKS_PER_SEC, (int)usedNodes.size());
 #ifdef _WIN32
                 flushall();
@@ -274,13 +253,6 @@ namespace GraphMatch {
         }
         usedNodes.clear();
 
-        //int queueSize = queue->getLength();
-        //double tempKey;
-        //LinkedNode * tempNode;
-        //for(int i = 0; i < queueSize; i++) {
-        //	queue->remove(tempNode, tempKey);
-        //	delete tempNode;
-        //}
         LinkedNode * tempNode;
         while(!queue->IsEmpty()) {
             tempNode = queue->PopFirst();
@@ -290,43 +262,17 @@ namespace GraphMatch {
 #ifdef VERBOSE
         cout << "Finished the correspondence search. Found " << foundCount << " results." << endl;
 #endif // VERBOSE
-        /*vector<int> groundTruth;
-        for (int i = 0; i < patternGraph->GetNodeCount(); i++) {
-            groundTruth[i]=SOLUTION[i];
-        }
-        ComputeSolutionCost(groundTruth);*/
-        /*
-        cout << "The ground truth solution is" << endl;
-        cout << "**      ";
-        for (int i = 0; i < patternGraph->GetNodeCount(); i++) {
-            cout.width(2);
-            cout << SOLUTION[i] << " ";
-        }
-        //ComputeSolutionCost(SOLUTION, false);
-        ComputeSolutionCost(SOLUTION, false);
-        AnalyzeResults(bestMatches, SOLUTION);
-        cout << endl;
-        */
+
         return foundCount;
     }
 
     // returns one of the results of a correspondence search
     SSECorrespondenceResult WongMatch15ConstrainedNoFuture::GetResult(int rank) {
-        //if(rank <= (int)solutions.size() && (rank >= 1)) {
             return solutions[rank-1];
-        //} else {
-        //	return NULL;
-        //}
     }
 
     // prints correspondence search results
     void WongMatch15ConstrainedNoFuture::SaveResults(){
-        //printf("\t");
-        //for(int i = 0; i < currentNode->n1Top; i++) {
-        //	printf("%d ", currentNode->n2[i]);
-        //}
-        //printf(" - %f : (%d expanded)\n", currentNode->cost, expandCount);
-        //printf("%d\t\t", expandCount);
 #ifdef VERBOSE
         printf("Time taken in GetA %f\n", timeInGetA / (double)CLOCKS_PER_SEC);
         printf("Time taken in GetB %f\n", timeInGetB / (double)CLOCKS_PER_SEC);
@@ -437,16 +383,6 @@ namespace GraphMatch {
                 firstIsLoop = lastIsLoop;
             }
             patternLength += patternGraph->adjacencyMatrix[d+i-1][d+i][1];
-
-            /*
-            // rescale helices if they are skipped
-            if ((int)(patternGraph->adjacencyMatrix[d+i-1][d+i][0] + 0.01) == GRAPHEDGE_HELIX) {
-                patternLength += (HELIX_C_ALPHA_TO_ANGSTROMS / LOOP_C_ALPHA_TO_ANGSTROMS)*(patternGraph->adjacencyMatrix[d+i-1][d+i][1]);
-                //patternLength += (LOOP_C_ALPHA_TO_ANGSTROMS / HELIX_C_ALPHA_TO_ANGSTROMS)*(patternGraph->adjacencyMatrix[d+i-1][d+i][1]);
-            } else {
-                patternLength += patternGraph->adjacencyMatrix[d+i-1][d+i][1];
-            }
-            */
         }
         // TODO: Fix, has bug. But getting closer.
         skippedHelices = skippedHelices / 2;
@@ -535,18 +471,8 @@ namespace GraphMatch {
             }
         }
 
-
         switch(COST_FUNCTION)
         {
-
-        //case(1):
-        //	if ( (int)(baseGraph->adjacencyMatrix[qj-1][qp-1][0] +0.01) == GRAPHEDGE_HELIX ) {
-        //		return weight * fabs(patternLength - baseLength);
-        //	} else {
-        //		// TODO: Remove this arbitrary weight!
-        //		return 50.0*weight * fabs(patternLength - baseLength) / (patternLength + baseLength);
-        //	}
-        //	break;
         case(1):
             return weight * fabs(patternLength - baseLength);
             break;
@@ -589,8 +515,6 @@ namespace GraphMatch {
         bool pastFirst = true;
         bool firstHelixFound = false;
         for(int k = d; k < d + m-1; k++) {
-            //if (debugMsg) {cout << "+++++++++++++++++++inside loop k=" << k << endl;}
-            //cout << "  GetPenaltyCost(" << d << "," << m << "). k=" << k << ". " << endl;
             // add penalties for all skipped helices
             if((int)(patternGraph->adjacencyMatrix[k][k+1][0] + 0.01) == GRAPHEDGE_HELIX) {
                 //cout << "    GetPenaltyCost(" << d << "," << m << "). SKIP HELIX. k=" << k << endl;
@@ -633,7 +557,6 @@ namespace GraphMatch {
         //if (debugMsg) { cout << "  -- returning cost=" << cost << endl; }
         return cost;
     }
-
 
     // expand a node.
     // checks the base graph for edges between this node and every other.
@@ -759,7 +682,6 @@ namespace GraphMatch {
             }
         }
 
-
         // Expanding nodes with a dummy terminal node:
         // Count the number of sheets and helices remaining in the helix, and then try to make
         // a long skip edge to pass over all of them.
@@ -856,17 +778,10 @@ namespace GraphMatch {
             // if edge exists in base graph, find the cost of this correspondence.
             if (solution[n1] == -1) {
                 singleEdgeCost = 0;
-                //singleEdgePenaltyCost = GetPenaltyCost(n1+1, n2-n1, extraMessages);
-                //singleEdgePenaltyCost = GetPenaltyCost(n1, n2-n1+1, extraMessages);
                 singleEdgePenaltyCost = GetPenaltyCost(n1, n2-n1+1, extraMessages);
-                //if (extraMessages) {cout << "  GetPenaltyCost("<<n1<<","<<n2-n1<<")="<<singleEdgePenaltyCost<<endl;}
+
                 if (extraMessages) {cout << "  GetPenaltyCost("<<n1<<","<<n2-n1+1<<")="<<singleEdgePenaltyCost<<endl;}
-                //if (extraMessages) {cout << "  No edge cost for initial skip edge" << endl;}
-                /*if (patternGraph->adjacencyMatrix[n1][n1][0] == GRAPHNODE_SHEET) {
-                    sheetPenaltyCost += singleEdgePenaltyCost;
-                    skipPenaltyCost += singleEdgePenaltyCost;
-                    singleEdgePenaltyCost = MISSING_SHEET_PENALTY;
-                }*/
+
                 skipPenaltyCost += singleEdgePenaltyCost;
             } else if (baseGraph->EdgeExists(solution[n1]-1, solution[n2]-1)) {
                 if (solution[n2] == -1 && n2==numNodes-1) {
@@ -876,7 +791,7 @@ namespace GraphMatch {
                     singleEdgeCost = GetCost(n1+1, n2-n1, solution[n1], solution[n2], extraMessages);
                 }
                 singleEdgePenaltyCost = GetPenaltyCost(n1+1, n2-n1, extraMessages);
-                //if (patternGraph->adjacencyMatrix[n1][n2][0] == GRAPHEDGE_LOOP) { // misses skip edges
+
                 if (baseGraph->adjacencyMatrix[solution[n1]-1][solution[n2]-1][0] == GRAPHEDGE_HELIX) {
                     //cout << "[H" << solution[n1] << "-" << solution[n2] << "]";
                     helixCost += singleEdgeCost;
@@ -944,15 +859,6 @@ namespace GraphMatch {
                 } else {
                     helicesCorrectFlipped=false;
                 }
-
-                /*
-                helicesCorrect = helicesCorrect && (solution[i]==SOLUTION[i]);
-                helicesCorrectFlipped = helicesCorrectFlipped &&
-                    (solution[i]==SOLUTION[i] ||
-                    solution[i]==SOLUTION[max(0,i-1)] ||
-                    solution[i]==SOLUTION[min(numNodes-1,i+1)]);
-                */
-
             }
             if (patternGraph->adjacencyMatrix[i][i][0] == GRAPHNODE_SHEET) {
                 ns++;
@@ -961,7 +867,6 @@ namespace GraphMatch {
                 } else {
                     sheetsCorrect=false;
                 }
-                //sheetsCorrect = sheetsCorrect && (solution[i]==SOLUTION[i]);
             }
         }
         int incorrectHelixCount = (nh - (int)(ratioCorrectHelices+0.1))/2;
@@ -1032,14 +937,10 @@ namespace GraphMatch {
             }
         }
 
-
 #ifdef VERBOSE
         baseGraph->PrintGraph();
 #endif // VERBOSE
     }
-
-
-
 
     void WongMatch15ConstrainedNoFuture::NormalizeSheets() {
 #ifdef VERBOSE
@@ -1062,7 +963,6 @@ namespace GraphMatch {
             //cout << "strand " << i << " has type " << patternGraph->pdbStructures[i]->secondaryStructureType << endl;
             if(patternGraph->pdbStructures[i]->secondaryStructureType == GRAPHEDGE_SHEET) {
                 totalStrandLength += patternGraph->pdbStructures[i]->GetLengthResidues();
-                //totalStrandLength += patternGraph->pdbStructures[i]->GetLengthAngstroms();
 #ifdef VERBOSE
                 cout << "After adding strand " << i << " with length " << patternGraph->pdbStructures[i]->GetLengthResidues() << ", total strand length is now " << totalStrandLength << endl;
 #endif // VERBOSE
@@ -1088,11 +988,9 @@ namespace GraphMatch {
             }
         }
 
-
 #ifdef VERBOSE
         baseGraph->PrintGraph();
 #endif // VERBOSE
     }
-
 }
 #endif
