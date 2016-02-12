@@ -1078,33 +1078,25 @@ namespace GraphMatch {
     void WongMatch15ConstrainedNoFuture::NormalizeGraphs() {
 #ifdef VERBOSE
         printf("Normalizing Graphs\n");
-#endif
-
-#ifdef VERBOSE
-        printf(
-                                "\tNormalizing the base graph from Angstroms to amino acids\nNormalized Graph:\n");
+        printf("\tNormalizing the base graph from Angstroms to amino acids\nNormalized Graph:\n");
 #endif
         for(int i = 0; i < baseGraph->nodeCount; i++) {
             for(int j = 0; j < baseGraph->nodeCount; j++) {
                 // base graph
-                if(baseGraph->adjacencyMatrix[i][j][1] != MAXINT && baseGraph->adjacencyMatrix[i][j][0]
-                                        == GRAPHEDGE_HELIX) {
-                    baseGraph->SetCost(i + 1, j + 1,
-                                            baseGraph->adjacencyMatrix[i][j][1] / HELIX_C_ALPHA_TO_ANGSTROMS);
+                if(   baseGraph->adjacencyMatrix[i][j][1] != MAXINT
+                   && baseGraph->adjacencyMatrix[i][j][0] == GRAPHEDGE_HELIX
+                  )
+                {
+                    baseGraph->SetCost(i+1, j+1, baseGraph->adjacencyMatrix[i][j][1] / HELIX_C_ALPHA_TO_ANGSTROMS);
                 }
-                else if(baseGraph->adjacencyMatrix[i][j][1] != MAXINT) {
-                    baseGraph->SetCost(i + 1, j + 1,
-                                            baseGraph->adjacencyMatrix[i][j][1] / LOOP_C_ALPHA_TO_ANGSTROMS);
-                }
+                else if(baseGraph->adjacencyMatrix[i][j][1] != MAXINT)
+                    baseGraph->SetCost(i + 1, j + 1, baseGraph->adjacencyMatrix[i][j][1] / LOOP_C_ALPHA_TO_ANGSTROMS);
+
                 // euclidean distance matrix
-                if(baseGraph->adjacencyMatrix[i][j][0] == GRAPHEDGE_HELIX) {
-                    baseGraph->euclideanMatrix[i][j] =
-                                            baseGraph->euclideanMatrix[i][j] / HELIX_C_ALPHA_TO_ANGSTROMS;
-                }
-                else {
-                    baseGraph->euclideanMatrix[i][j] =
-                                            baseGraph->euclideanMatrix[i][j] / LOOP_C_ALPHA_TO_ANGSTROMS;
-                }
+                if(baseGraph->adjacencyMatrix[i][j][0] == GRAPHEDGE_HELIX)
+                    baseGraph->euclideanMatrix[i][j] = baseGraph->euclideanMatrix[i][j] / HELIX_C_ALPHA_TO_ANGSTROMS;
+                else
+                    baseGraph->euclideanMatrix[i][j] = baseGraph->euclideanMatrix[i][j] / LOOP_C_ALPHA_TO_ANGSTROMS;
             }
         }
 
@@ -1115,8 +1107,7 @@ namespace GraphMatch {
 
     void WongMatch15ConstrainedNoFuture::NormalizeSheets() {
 #ifdef VERBOSE
-        printf(
-                                "\tNormalizing the sheet nodes in the base graph based on sheet ratio\nNormalized Graph:\n");
+        printf("\tNormalizing the sheet nodes in the base graph based on sheet ratio\nNormalized Graph:\n");
 #endif
         // TODO: Also normalize the sheet capacity here?
         double totalSheetSize = 0;
@@ -1126,17 +1117,14 @@ namespace GraphMatch {
             if(baseGraph->skeletonHelixes[i]->geometricShapeType == GRAPHEDGE_SHEET) {
                 totalSheetSize += (double)baseGraph->skeletonHelixes[i]->length;
 #ifdef VERBOSE
-                cout << "after sheet " << i << ", total sheet size is now "
-                     << totalSheetSize << endl;
+                cout << "after sheet " << i << ", total sheet size is now " << totalSheetSize << endl;
 #endif
             }
         }
 
         for(int i = 0; i < (int)patternGraph->pdbStructures.size(); i++) {
-            //cout << "strand " << i << " has type " << patternGraph->pdbStructures[i]->secondaryStructureType << endl;
             if(patternGraph->pdbStructures[i]->secondaryStructureType == GRAPHEDGE_SHEET) {
-                totalStrandLength +=
-                                        patternGraph->pdbStructures[i]->GetLengthResidues();
+                totalStrandLength += patternGraph->pdbStructures[i]->GetLengthResidues();
 #ifdef VERBOSE
                 cout << "After adding strand " << i << " with length "
                      << patternGraph->pdbStructures[i]->GetLengthResidues()
@@ -1150,15 +1138,10 @@ namespace GraphMatch {
         double ratio = totalStrandLength / totalSheetSize;
 #ifdef VERBOSE
         cout << "sheet sizes must be scaled by a factor of " << ratio << endl;
-#endif
-
-#ifdef VERBOSE
-        printf(
-                                "\tNormalizing the base graph sheets from voxels to scaled voxels\nNormalized Graph:\n");
+        printf("\tNormalizing the base graph sheets from voxels to scaled voxels\nNormalized Graph:\n");
 #endif
         for(int i = 0; i < baseGraph->nodeCount; i++) {
-            if(baseGraph->adjacencyMatrix[i][i][1] != MAXINT && baseGraph->adjacencyMatrix[i][i][0]
-                                    == GRAPHNODE_SHEET) {
+            if(baseGraph->adjacencyMatrix[i][i][1] != MAXINT && baseGraph->adjacencyMatrix[i][i][0] == GRAPHNODE_SHEET) {
                 // scale the sheet weight to the # of amino acids
                 baseGraph->SetCost(i + 1, baseGraph->nodeWeights[i] * ratio);
                 // take sqrt for matching algorithm
