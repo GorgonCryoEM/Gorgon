@@ -91,7 +91,7 @@ namespace GraphMatch {
         }
 
         LinkedNode * tempNode;
-        while(!queue->IsEmpty()) {
+        while(!queue->empty()) {
             tempNode = queue->PopFirst();
             delete tempNode;
         }
@@ -265,7 +265,7 @@ namespace GraphMatch {
                 delete currentNode;
             }
             // continue until desired number of results are found
-            continueLoop = (foundCount < RESULT_COUNT) && (!queue->IsEmpty());
+            continueLoop = (foundCount < RESULT_COUNT) && (!queue->empty());
         }
 
         //Cleaning up memory
@@ -275,7 +275,7 @@ namespace GraphMatch {
         usedNodes.clear();
 
         LinkedNode * tempNode;
-        while(!queue->IsEmpty()) {
+        while(!queue->empty()) {
             tempNode = queue->PopFirst();
             delete tempNode;
         }
