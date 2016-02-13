@@ -68,8 +68,8 @@ namespace SkeletonMaker {
         else
             ++it;
 
-//        return &(*it);
-        return cur;
+        return &(*it);
+//        return cur;
     }
 
     void Queue::reset() {
@@ -79,8 +79,8 @@ namespace SkeletonMaker {
     }
 
     int Queue::getNumElements() {
-//        return q.size();
-        return numEles;
+        return q.size();
+//        return numEles;
     }
 
     void Queue::prepend(int xx, int yy, int zz) {
@@ -116,8 +116,8 @@ namespace SkeletonMaker {
         if(it != q.end())
             it = q.erase(it);
 
-//        return &(*it);
-        return cur;
+        return &(*it);
+//        return cur;
     }
 }
 
