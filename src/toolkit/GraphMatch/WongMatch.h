@@ -92,8 +92,10 @@ namespace GraphMatch {
 
         LinkedNode * tempNode;
         while(!queue->empty()) {
-            tempNode = queue->PopFirst();
+            Elem res = queue->top();
+            tempNode = res.GetValue();
             delete tempNode;
+            queue->pop();
         }
 
         delete queue;
@@ -116,7 +118,7 @@ namespace GraphMatch {
 #ifdef VERBOSE
         cout << "Creating priority queue" << endl;
 #endif
-        queue = new PQueue<double, LinkedNode *>();
+        queue = new priority_queue<Elem>();
 #ifdef VERBOSE
         cout << "Loading pattern graph" << endl;
 #endif
@@ -211,7 +213,7 @@ namespace GraphMatch {
         for(int j = 1; j <= baseGraph->nodeCount; j++) {
             LinkedNode::AddNodeToBitmap(currentNode->m2Bitmap, j);
         }
-        queue->Add(currentNode->cost, currentNode);
+        queue->push(Elem(currentNode->cost, currentNode));
         pathGenerator = new PathGenerator(baseGraph);
     }
 
@@ -276,8 +278,10 @@ namespace GraphMatch {
 
         LinkedNode * tempNode;
         while(!queue->empty()) {
-            tempNode = queue->PopFirst();
+            Elem res = queue->top();
+            tempNode = res.GetValue();
             delete tempNode;
+            queue->pop();
         }
 
 #ifdef VERBOSE
@@ -563,7 +567,9 @@ namespace GraphMatch {
         clock_t start = clock();
 #endif
         double cost;
-        queue->PopFirst(cost, currentNode);
+        Elem res = queue->top();
+        currentNode = res.GetValue();
+        queue->pop();
 #ifdef VERBOSE
         timeInQueue += clock() - start;
 #endif
@@ -759,7 +765,7 @@ namespace GraphMatch {
                             currentNode->costGStar += GetPenaltyCost(temp->n1Node, j+1, false);
 
                             currentNode->cost = GetF();
-                            queue->Add(currentNode->cost, currentNode);
+                            queue->push(Elem(currentNode->cost, currentNode));
                             expanded = true;
                         }
                         else { // not an allowed match
@@ -820,7 +826,7 @@ namespace GraphMatch {
                 currentNode->costGStar  = temp->costGStar;
                 currentNode->costGStar += GetPenaltyCost(temp->n1Node, remainingHelixNodes + remainingSheetNodes, false);
                 currentNode->cost = currentNode->costGStar;
-                queue->Add(currentNode->cost, currentNode);
+                queue->push(Elem(currentNode->cost, currentNode));
                 currentNode = temp;
             }
         }
