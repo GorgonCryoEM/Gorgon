@@ -115,7 +115,6 @@ namespace GraphMatch {
         }
 
         vector<int> correspondance;
-        correspondance.clear();
 
         for(int i = 0; i < top; i++) {
             if(n2[i] >= 0) {
