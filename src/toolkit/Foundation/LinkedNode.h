@@ -74,12 +74,9 @@ namespace GraphMatch {
 
 
     vector<int> LinkedNode::GetNodeCorrespondence() {
-        bool used[MAX_NODES];
-        int n1[MAX_NODES];
-        int n2[MAX_NODES];
-        for(int i = 0; i < MAX_NODES; i++) {
-            used[i] = false;
-        }
+        vector<bool> used(MAX_NODES, false);
+        vector<int>    n1(MAX_NODES);
+        vector<int>    n2(MAX_NODES);
 
         LinkedNodeStub * currentNode = this;
         int top = 0;
