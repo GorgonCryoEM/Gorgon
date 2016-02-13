@@ -76,7 +76,6 @@ namespace Foundation {
         void Add(TKey key, TValue value);
         TValue PopFirst();
         void PopFirst(TKey & key, TValue & value);
-        TValue First();
 
         bool IsEmpty();
 
@@ -104,12 +103,6 @@ namespace Foundation {
         q.pop();
         key = res.GetKey();
         value = res.GetValue();
-    }
-
-
-    template <class TKey, class TValue>
-    TValue PQueue<TKey, TValue>::First() {
-            return q.top().GetValue();
     }
 
     template <class TKey, class TValue>
