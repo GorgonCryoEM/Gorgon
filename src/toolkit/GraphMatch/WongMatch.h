@@ -9,7 +9,7 @@
 //#include "Core/GlobalConstants.h"
 #include "PathGenerator.h"
 
-#include "Foundation/PQueueElem.h"
+#include "Foundation/FakePair.h"
 //#include "Structures.h"
 //#include <ctime>
 ////#include <SkeletonMaker/PriorityQueue.h>
@@ -40,7 +40,7 @@ namespace GraphMatch {
 #endif
             LinkedNode * currentNode;
 
-            typedef PQueueElem<double, LinkedNode *> Elem;
+            typedef FakePair<double, LinkedNode *> Elem;
             priority_queue<Elem> * queue;
 
             vector<LinkedNodeStub*> usedNodes;
