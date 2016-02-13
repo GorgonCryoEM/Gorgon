@@ -51,12 +51,12 @@ namespace GraphMatch {
     }
 
     LinkedNode::LinkedNode(LinkedNode * olderNode, LinkedNodeStub * olderStub, int n2Node, int dummyHelixCount, int dummySheetCount, bool allowRevisit) {
-        this->n1Node = olderNode->n1Node + (char)dummyHelixCount + (char)dummySheetCount + 1;
-        this->n2Node = (char)n2Node;
-        this->depth = olderNode->depth + (char)dummyHelixCount + (char)dummySheetCount + 1;
+        this->n1Node     = olderNode->n1Node + (char)dummyHelixCount + (char)dummySheetCount + 1;
+        this->n2Node     = (char)n2Node;
+        this->depth      = olderNode->depth + (char)dummyHelixCount + (char)dummySheetCount + 1;
         this->parentNode = olderStub;
-        this->m1Bitmap = olderNode->m1Bitmap;
-        this->m2Bitmap = olderNode->m2Bitmap;
+        this->m1Bitmap   = olderNode->m1Bitmap;
+        this->m2Bitmap   = olderNode->m2Bitmap;
         // remove all recently matched sequence graph nodes from bitmap
         for(int i = olderNode->n1Node + 1; i <= this->n1Node; i++) {
             LinkedNode::RemoveNodeFromBitmap(this->m1Bitmap, i);
@@ -65,7 +65,7 @@ namespace GraphMatch {
             // remove the recently matched pattern graph node from bitmap
             LinkedNode::RemoveNodeFromBitmap(this->m2Bitmap, this->n2Node);
         }
-        this->missingNodesUsed = olderNode->missingNodesUsed + (char)dummyHelixCount + (char)dummySheetCount;
+        this->missingNodesUsed      = olderNode->missingNodesUsed      + (char)dummyHelixCount + (char)dummySheetCount;
         this->missingHelixNodesUsed = olderNode->missingHelixNodesUsed + (char)dummyHelixCount;
         this->missingSheetNodesUsed = olderNode->missingSheetNodesUsed + (char)dummySheetCount;
         //cout << "missing nodes=" << (int)this->missingNodesUsed << ", missing helices=" << (int)this->missingHelixNodesUsed << ", missing sheets=" << (int)this->missingSheetNodesUsed << endl;
