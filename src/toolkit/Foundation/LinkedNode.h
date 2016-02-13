@@ -80,12 +80,14 @@ namespace GraphMatch {
 
         LinkedNodeStub * currentNode = this;
         int top = 0;
-        while(currentNode->parentNode != NULL) {
+
+        for(;
+                currentNode->parentNode != NULL;
+                currentNode = currentNode->parentNode, top++)
+        {
             n1[top] = currentNode->n1Node;
             n2[top] = currentNode->n2Node;
             used[(int)currentNode->n1Node] = true;
-            top++;
-            currentNode = currentNode->parentNode;
         }
 
         for(int i = 1; i <= this->depth; i++) {
