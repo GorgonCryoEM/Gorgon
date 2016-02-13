@@ -39,7 +39,10 @@ namespace GraphMatch {
             clock_t timeInQueue;
 #endif
             LinkedNode * currentNode;
-            PQueue<double, LinkedNode *> * queue;
+
+            typedef PQueueElem<double, LinkedNode *> Elem;
+            priority_queue<Elem> * queue;
+
             vector<LinkedNodeStub*> usedNodes;
             vector<SSECorrespondenceResult> solutions;
             int missingHelixCount;
