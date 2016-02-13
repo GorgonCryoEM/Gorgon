@@ -68,48 +68,6 @@ namespace Foundation {
     inline TKey PQueueElem<TKey, TValue>::GetKey() {
         return key;
     }
-
-
-    template <class TKey, class TValue>
-    class PQueue {
-    public:
-        void Add(TKey key, TValue value);
-        TValue PopFirst();
-        void PopFirst(TKey & key, TValue & value);
-
-        bool IsEmpty();
-
-    private:
-        typedef PQueueElem<TKey, TValue> Elem;
-
-        priority_queue<Elem> q;
-    };
-
-    template <class TKey, class TValue>
-    void PQueue<TKey, TValue>::Add(TKey key, TValue value) {
-        q.push(Elem(key, value));
-    }
-
-    template <class TKey, class TValue>
-    TValue PQueue<TKey, TValue>::PopFirst() {
-            Elem res = q.top();
-            q.pop();
-            return res.GetValue();
-    }
-
-    template <class TKey, class TValue>
-    void PQueue<TKey, TValue>::PopFirst(TKey & key, TValue & value) {
-        Elem res = q.top();
-        q.pop();
-        key = res.GetKey();
-        value = res.GetValue();
-    }
-
-    template <class TKey, class TValue>
-    bool PQueue<TKey, TValue>::IsEmpty() {
-            return q.empty();
-    }
-
 }
 
 #endif
