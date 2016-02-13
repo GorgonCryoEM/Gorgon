@@ -63,10 +63,16 @@ namespace SkeletonMaker {
             cur = cur->next;
         }
 
-        if(it==q.end())
+        if(it==q.end()){
             it=q.begin();
-        else
+            if(it==q.end())
+                return NULL;
+        }
+        else {
             ++it;
+            if(it==q.end())
+                return NULL;
+        }
 
         return &(*it);
 //        return cur;
@@ -113,10 +119,15 @@ namespace SkeletonMaker {
             numEles--;
         }
 
-        if(it != q.end())
+        if(it != q.end()){
             it = q.erase(it);
+            if(it==q.end())
+                return NULL;
 
-        return &(*it);
+            return &(*it);
+        }
+        else
+            return NULL;
 //        return cur;
     }
 }
