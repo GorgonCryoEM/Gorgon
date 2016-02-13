@@ -32,7 +32,9 @@ namespace SkeletonMaker {
             QueueNode* cur;
             int numEles;
 
-            list<QueueNode> q;
+            typedef list<QueueNode> Cont;
+            Cont q;
+            Cont::iterator it;
     };
 
     Queue::Queue() {
@@ -40,6 +42,7 @@ namespace SkeletonMaker {
         cur = NULL;
         pre = NULL;
         numEles = 0;
+        it=q.end();
     }
 
     Queue::~Queue() {
@@ -60,15 +63,23 @@ namespace SkeletonMaker {
             cur = cur->next;
         }
 
+        if(it==q.end())
+            it=q.begin();
+        else
+            ++it;
+
+//        return &(*it);
         return cur;
     }
 
     void Queue::reset() {
         pre = NULL;
         cur = NULL;
+        it = q.end();
     }
 
     int Queue::getNumElements() {
+//        return q.size();
         return numEles;
     }
 
@@ -82,6 +93,8 @@ namespace SkeletonMaker {
         numEles++;
 
         reset();
+
+        q.push_front(QueueNode(xx, yy, zz));
     }
 
     /* Remove current element pointed by cur */
@@ -99,6 +112,11 @@ namespace SkeletonMaker {
             }
             numEles--;
         }
+
+        if(it != q.end())
+            it = q.erase(it);
+
+//        return &(*it);
         return cur;
     }
 }
