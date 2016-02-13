@@ -1,6 +1,8 @@
 #ifndef TOOLKIT_SKELETON_MAKER_GRID_QUEUE2_H
 #define TOOLKIT_SKELETON_MAKER_GRID_QUEUE2_H
 
+#include <list>
+
 namespace SkeletonMaker {
 
     struct QueueNode {
@@ -29,6 +31,8 @@ namespace SkeletonMaker {
             QueueNode* pre;
             QueueNode* cur;
             int numEles;
+
+            list<QueueNode> q;
     };
 
     Queue::Queue() {
