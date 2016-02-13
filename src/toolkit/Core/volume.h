@@ -6,7 +6,7 @@
 #define MAX_ERODE 1000
 
 #include "VolumeData.h"
-#include "Foundation/Queue.h"
+#include "Foundation/List.h"
 //#include "ThinningTemplate.h"
 ////#include <cstdio>
 ////#include <cstdlib>

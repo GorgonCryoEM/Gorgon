@@ -15,9 +15,9 @@ namespace SkeletonMaker {
             QueueNode() {}
     };
 
-    class Queue {
+    class List {
         public:
-            Queue();
+            List();
             QueueNode* getNext();
             void reset();
             int getNumElements();
@@ -30,11 +30,11 @@ namespace SkeletonMaker {
             Cont::iterator it;
     };
 
-    Queue::Queue() {
+    List::List() {
         it=q.end();
     }
 
-    QueueNode* Queue::getNext() {
+    QueueNode* List::getNext() {
         if(it==q.end()){
             it=q.begin();
             if(it==q.end())
@@ -49,21 +49,21 @@ namespace SkeletonMaker {
         return &(*it);
     }
 
-    void Queue::reset() {
+    void List::reset() {
         it = q.end();
     }
 
-    int Queue::getNumElements() {
+    int List::getNumElements() {
         return q.size();
     }
 
-    void Queue::prepend(int xx, int yy, int zz) {
+    void List::prepend(int xx, int yy, int zz) {
         q.push_front(QueueNode(xx, yy, zz));
         reset();
     }
 
     /* Remove current element pointed by cur */
-    QueueNode * Queue::remove() {
+    QueueNode * List::remove() {
         if(it != q.end()){
             it = q.erase(it);
             if(it==q.end())
