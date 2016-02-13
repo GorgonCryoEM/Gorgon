@@ -92,9 +92,9 @@ namespace SkeletonMaker {
         head = ele;
         numEles++;
 
-        reset();
-
         q.push_front(QueueNode(xx, yy, zz));
+
+        reset();
     }
 
     /* Remove current element pointed by cur */
