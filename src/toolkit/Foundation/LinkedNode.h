@@ -25,16 +25,12 @@ namespace GraphMatch {
         LinkedNode();
         LinkedNode(LinkedNode * olderNode, LinkedNodeStub * olderStub, int n2Node, int dummyHelixCount, int dummySheetCount, bool allowRevisit);
 
-        ~LinkedNode();
         vector<int> GetNodeCorrespondence();
         double GetCost();
         static void AddNodeToBitmap(unsigned long long & bitmap, int node);
         static void RemoveNodeFromBitmap(unsigned long long & bitmap, int node);
         static bool IsNodeInBitmap(unsigned long long bitmap, int node);
     };
-
-    LinkedNode::~LinkedNode() {
-    }
 
     LinkedNode::LinkedNode() {
         cost = 0;
