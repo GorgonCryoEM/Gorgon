@@ -23,7 +23,9 @@ namespace GraphMatch {
         double costGStar;
     public:
         LinkedNode();
-        LinkedNode(LinkedNode * olderNode, LinkedNodeStub * olderStub, int n2Node, int dummyHelixCount, int dummySheetCount, bool allowRevisit);
+        LinkedNode(LinkedNode * olderNode, LinkedNodeStub * olderStub,
+                   int n2Node, int dummyHelixCount, int dummySheetCount,
+                   bool allowRevisit);
 
         vector<int> GetNodeCorrespondence();
         double GetCost();
@@ -46,7 +48,10 @@ namespace GraphMatch {
         depth = 0;
     }
 
-    LinkedNode::LinkedNode(LinkedNode * olderNode, LinkedNodeStub * olderStub, int n2Node, int dummyHelixCount, int dummySheetCount, bool allowRevisit) {
+    LinkedNode::LinkedNode(LinkedNode * olderNode, LinkedNodeStub * olderStub,
+                           int n2Node, int dummyHelixCount, int dummySheetCount,
+                           bool allowRevisit)
+    {
         this->n1Node     = olderNode->n1Node + (char)dummyHelixCount + (char)dummySheetCount + 1;
         this->n2Node     = (char)n2Node;
         this->depth      = olderNode->depth + (char)dummyHelixCount + (char)dummySheetCount + 1;
