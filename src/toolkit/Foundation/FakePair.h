@@ -16,57 +16,45 @@ namespace Foundation {
         bool operator>=(const FakePair<TKey, TValue> &other) const;
         bool operator<=(const FakePair<TKey, TValue> &other) const;
 
-        TValue GetValue();
-        TKey GetKey();
-    private:
-        TKey key;
-        TValue value;
+    public:
+        TKey first;
+        TValue second;
     };
 
     template <class TKey, class TValue>
     FakePair<TKey, TValue>::FakePair(TKey key, TValue value) {
-        this->key = key;
-        this->value = value;
+        first = key;
+        second = value;
     }
 
     template <class TKey, class TValue>
     inline bool FakePair<TKey, TValue>::operator==(const FakePair<TKey, TValue> &other) const {
-        return (this->key == other.key);
+        return (first == other.first);
     }
 
     template <class TKey, class TValue>
     inline bool FakePair<TKey, TValue>::operator!=(const FakePair<TKey, TValue> &other) const {
-        return (this->key != other.key);
+        return (first != other.first);
     }
 
     template <class TKey, class TValue>
     inline bool FakePair<TKey, TValue>::operator>(const FakePair<TKey, TValue> &other) const {
-        return (this->key > other.key);
+        return (first > other.first);
     }
 
     template <class TKey, class TValue>
     inline bool FakePair<TKey, TValue>::operator<(const FakePair<TKey, TValue> &other) const {
-        return (this->key < other.key);
+        return (first < other.first);
     }
 
     template <class TKey, class TValue>
     inline bool FakePair<TKey, TValue>::operator>=(const FakePair<TKey, TValue> &other) const {
-        return (this->key >= other.key);
+        return (first >= other.first);
     }
 
     template <class TKey, class TValue>
     inline bool FakePair<TKey, TValue>::operator<=(const FakePair<TKey, TValue> &other) const {
-        return (this->key <= other.key);
-    }
-
-    template <class TKey, class TValue>
-    inline TValue FakePair<TKey, TValue>::GetValue() {
-        return value;
-    }
-
-    template <class TKey, class TValue>
-    inline TKey FakePair<TKey, TValue>::GetKey() {
-        return key;
+        return (first <= other.first);
     }
 }
 
