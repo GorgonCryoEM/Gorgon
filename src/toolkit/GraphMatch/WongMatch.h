@@ -29,7 +29,7 @@ namespace GraphMatch {
                       int missingHelixCount, int missingSheetCount);
             ~WongMatch();
             int RunMatching(clock_t startTime);
-            SSECorrespondenceResult GetResult(int rank);
+            SSEResult GetResult(int rank);
             void SaveResults();
 
         private:
@@ -44,7 +44,7 @@ namespace GraphMatch {
             priority_queue<Elem> * queue;
 
             vector<LinkedNodeStub*> usedNodes;
-            vector<SSECorrespondenceResult> solutions;
+            vector<SSEResult> solutions;
             int missingHelixCount;
             int missingSheetCount;
             int expandCount;
@@ -244,7 +244,7 @@ namespace GraphMatch {
                 flushall();
 #endif
                 int numHelices = baseGraph->GetHelixCount();
-                solutions.push_back(SSECorrespondenceResult(currentNode,
+                solutions.push_back(SSEResult(currentNode,
                                                             numHelices
                                                             )
                                     );
@@ -293,7 +293,7 @@ namespace GraphMatch {
     }
 
     // returns one of the results of a correspondence search
-    SSECorrespondenceResult WongMatch::GetResult(int rank) {
+    SSEResult WongMatch::GetResult(int rank) {
         return solutions[rank - 1];
     }
 

@@ -27,7 +27,7 @@ using namespace std;
 		class QueryEngine {
 		public:
 			int DoGraphMatching(StandardGraph * sequenceGraph, StandardGraph * skeletonGraph);
-			SSECorrespondenceResult GetSolution(int rank);
+			SSEResult GetSolution(int rank);
 			void FinishGraphMatching();
 			StandardGraph * LoadSequenceGraph();
 			StandardGraph * LoadSkeletonGraph();
@@ -97,7 +97,7 @@ using namespace std;
 			return matchCount;
 		}
 
-		SSECorrespondenceResult QueryEngine::GetSolution(int rank) {
+		SSEResult QueryEngine::GetSolution(int rank) {
 			return matcherConstrainedNoFuture->GetResult(rank);
 		}
 

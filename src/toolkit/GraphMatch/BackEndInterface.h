@@ -43,7 +43,7 @@ namespace GraphMatch {
         //int ExecuteQuery(StandardGraph * sequenceGraph, StandardGraph * skeletonGraph);
         virtual int ExecuteQuery();
         // Result Retrieval
-        virtual SSECorrespondenceResult GetResult(int rank);
+        virtual SSEResult GetResult(int rank);
         // Cleanup
         void CleanupMemory();
     protected:
@@ -272,7 +272,7 @@ namespace GraphMatch {
             return 0;
     }
 
-    SSECorrespondenceResult BackEndInterface::GetResult(int rank) {
+    SSEResult BackEndInterface::GetResult(int rank) {
         return queryEngine->GetSolution(rank);
     }
 

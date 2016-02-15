@@ -9,11 +9,11 @@ using namespace std;
 
 namespace GraphMatch {
 
-    class SSECorrespondenceResult {
+    class SSEResult {
     public:
-        SSECorrespondenceResult();
-        SSECorrespondenceResult(LinkedNode * node, int helixCount);
-        SSECorrespondenceResult(vector<int> correspondence, double cost, int helixCount);
+        SSEResult();
+        SSEResult(LinkedNode * node, int helixCount);
+        SSEResult(vector<int> correspondence, double cost, int helixCount);
 
         double GetCost();
         int GetNodeCount();
@@ -26,39 +26,39 @@ namespace GraphMatch {
         int helixCount;
     };
 
-    SSECorrespondenceResult::SSECorrespondenceResult()
+    SSEResult::SSEResult()
     					: cost(0), helixCount(0)
     {}
 
-    SSECorrespondenceResult::SSECorrespondenceResult(LinkedNode * node, int nHelix)
+    SSEResult::SSEResult(LinkedNode * node, int nHelix)
     					: correspondence(node->GetNodeCorrespondence()),
 						  cost(node->GetCost()),
 						  helixCount(nHelix)
     {}
 
-    SSECorrespondenceResult::SSECorrespondenceResult(vector<int> corr, double cst, int nHelix)
+    SSEResult::SSEResult(vector<int> corr, double cst, int nHelix)
 						: correspondence(corr),
 						  cost(cst),
 						  helixCount(nHelix)
     {}
 
-    double SSECorrespondenceResult::GetCost() {
+    double SSEResult::GetCost() {
         return cost;
     }
 
-    int SSECorrespondenceResult::GetNodeCount() {
+    int SSEResult::GetNodeCount() {
         return correspondence.size();
     }
 
-    int SSECorrespondenceResult::GetHelixCount() {
+    int SSEResult::GetHelixCount() {
         return helixCount;
     }
 
-    int SSECorrespondenceResult::GetSkeletonNode(int sequenceNode) {
+    int SSEResult::GetSkeletonNode(int sequenceNode) {
         return correspondence[sequenceNode];
     }
 
-    int SSECorrespondenceResult::NodeToHelix(int nodeId) {
+    int SSEResult::NodeToHelix(int nodeId) {
         if(nodeId >= 0) {
             if (nodeId < 2 * helixCount) {
                 return (int)(nodeId / 2);
