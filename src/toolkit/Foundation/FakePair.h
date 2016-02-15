@@ -5,55 +5,55 @@
 #include <queue>
 
 namespace Foundation {
-    template <class TKey, class TValue>
+    template <class T, class U>
     class FakePair {
     public:
-        FakePair(TKey key, TValue value);
-        bool operator==(const FakePair<TKey, TValue> &other) const;
-        bool operator!=(const FakePair<TKey, TValue> &other) const;
-        bool operator>(const FakePair<TKey, TValue> &other) const;
-        bool operator<(const FakePair<TKey, TValue> &other) const;
-        bool operator>=(const FakePair<TKey, TValue> &other) const;
-        bool operator<=(const FakePair<TKey, TValue> &other) const;
+        FakePair(T key, U value);
+        bool operator==(const FakePair<T, U> &other) const;
+        bool operator!=(const FakePair<T, U> &other) const;
+        bool operator>(const FakePair<T, U> &other) const;
+        bool operator<(const FakePair<T, U> &other) const;
+        bool operator>=(const FakePair<T, U> &other) const;
+        bool operator<=(const FakePair<T, U> &other) const;
 
     public:
-        TKey first;
-        TValue second;
+        T first;
+        U second;
     };
 
-    template <class TKey, class TValue>
-    FakePair<TKey, TValue>::FakePair(TKey key, TValue value) {
+    template <class T, class U>
+    FakePair<T, U>::FakePair(T key, U value) {
         first = key;
         second = value;
     }
 
-    template <class TKey, class TValue>
-    inline bool FakePair<TKey, TValue>::operator==(const FakePair<TKey, TValue> &other) const {
+    template <class T, class U>
+    inline bool FakePair<T, U>::operator==(const FakePair<T, U> &other) const {
         return (first == other.first);
     }
 
-    template <class TKey, class TValue>
-    inline bool FakePair<TKey, TValue>::operator!=(const FakePair<TKey, TValue> &other) const {
+    template <class T, class U>
+    inline bool FakePair<T, U>::operator!=(const FakePair<T, U> &other) const {
         return (first != other.first);
     }
 
-    template <class TKey, class TValue>
-    inline bool FakePair<TKey, TValue>::operator>(const FakePair<TKey, TValue> &other) const {
+    template <class T, class U>
+    inline bool FakePair<T, U>::operator>(const FakePair<T, U> &other) const {
         return (first > other.first);
     }
 
-    template <class TKey, class TValue>
-    inline bool FakePair<TKey, TValue>::operator<(const FakePair<TKey, TValue> &other) const {
+    template <class T, class U>
+    inline bool FakePair<T, U>::operator<(const FakePair<T, U> &other) const {
         return (first < other.first);
     }
 
-    template <class TKey, class TValue>
-    inline bool FakePair<TKey, TValue>::operator>=(const FakePair<TKey, TValue> &other) const {
+    template <class T, class U>
+    inline bool FakePair<T, U>::operator>=(const FakePair<T, U> &other) const {
         return (first >= other.first);
     }
 
-    template <class TKey, class TValue>
-    inline bool FakePair<TKey, TValue>::operator<=(const FakePair<TKey, TValue> &other) const {
+    template <class T, class U>
+    inline bool FakePair<T, U>::operator<=(const FakePair<T, U> &other) const {
         return (first <= other.first);
     }
 }
