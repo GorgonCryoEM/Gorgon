@@ -9,13 +9,6 @@ namespace Foundation {
     class FakePair {
     public:
         FakePair(T key, U value);
-        bool operator==(const FakePair<T, U> &other) const;
-        bool operator!=(const FakePair<T, U> &other) const;
-        bool operator>(const FakePair<T, U> &other) const;
-        bool operator<(const FakePair<T, U> &other) const;
-        bool operator>=(const FakePair<T, U> &other) const;
-        bool operator<=(const FakePair<T, U> &other) const;
-
     public:
         T first;
         U second;
@@ -27,33 +20,33 @@ namespace Foundation {
     {}
 
     template <class T, class U>
-    inline bool FakePair<T, U>::operator==(const FakePair<T, U> &other) const {
-        return (first == other.first);
+    inline bool operator==(const FakePair<T,U>& lhs, const FakePair<T, U> &rhs) {
+        return (lhs.first == rhs.first);
     }
 
     template <class T, class U>
-    inline bool FakePair<T, U>::operator!=(const FakePair<T, U> &other) const {
-        return (first != other.first);
+    inline bool operator!=(const FakePair<T,U>& lhs, const FakePair<T, U> &rhs) {
+        return (lhs.first != rhs.first);
     }
 
     template <class T, class U>
-    inline bool FakePair<T, U>::operator>(const FakePair<T, U> &other) const {
-        return (first > other.first);
+    inline bool operator>(const FakePair<T,U>& lhs, const FakePair<T, U> &rhs) {
+        return (lhs.first > rhs.first);
     }
 
     template <class T, class U>
-    inline bool FakePair<T, U>::operator<(const FakePair<T, U> &other) const {
-        return (first < other.first);
+    inline bool operator<(const FakePair<T,U>& lhs, const FakePair<T, U> &rhs) {
+        return (lhs.first < rhs.first);
     }
 
     template <class T, class U>
-    inline bool FakePair<T, U>::operator>=(const FakePair<T, U> &other) const {
-        return (first >= other.first);
+    inline bool operator>=(const FakePair<T,U>& lhs, const FakePair<T, U> &rhs) {
+        return (lhs.first >= rhs.first);
     }
 
     template <class T, class U>
-    inline bool FakePair<T, U>::operator<=(const FakePair<T, U> &other) const {
-        return (first <= other.first);
+    inline bool operator<=(const FakePair<T,U>& lhs, const FakePair<T, U> &rhs) {
+        return (lhs.first <= rhs.first);
     }
 }
 
