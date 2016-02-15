@@ -26,7 +26,8 @@ namespace GraphMatch {
         public:
             WongMatch(StandardGraph * patternGraph, StandardGraph * baseGraph);
             WongMatch(StandardGraph * patternGraph, StandardGraph * baseGraph,
-                      int missingHelixCount, int missingSheetCount);
+                      int missingHelixCount, int missingSheetCount
+                      );
             ~WongMatch();
             int RunMatching(clock_t startTime);
             SSEResult GetResult(int rank);
