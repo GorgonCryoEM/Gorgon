@@ -13,7 +13,7 @@
 //#include "Structures.h"
 //#include <ctime>
 ////#include <SkeletonMaker/PriorityQueue.h>
-#include "ProteinMorph/SSECorrespondenceResult.h"
+#include "ProteinMorph/SSEResult.h"
 
 using namespace Foundation;
 

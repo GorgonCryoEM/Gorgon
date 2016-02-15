@@ -14,7 +14,7 @@
 //#include "GraphGenerator.h"
 //#include <ctime>
 //#include <string>
-#include "ProteinMorph/SSECorrespondenceResult.h"
+#include "ProteinMorph/SSEResult.h"
 
 #ifdef DEBUG
 	#include <iostream>
