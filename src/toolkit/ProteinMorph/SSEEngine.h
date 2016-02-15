@@ -209,10 +209,10 @@ namespace Visualization {
             }
         }
         if(helixStartPoints[helixIndex].size() == 0) {
-            printf("Error <SSECorrespondenceEngine, InitializePathHelix>: No helix start points found for helix %d\n", helixIndex);
+            printf("Error <SSEEngine, InitializePathHelix>: No helix start points found for helix %d\n", helixIndex);
         }
         if(helixEndPoints[helixIndex].size() == 0) {
-            printf("Error <SSECorrespondenceEngine, InitializePathHelix>: No helix end points found for helix %d\n", helixIndex);
+            printf("Error <SSEEngine, InitializePathHelix>: No helix end points found for helix %d\n", helixIndex);
         }
 
         delete helix;

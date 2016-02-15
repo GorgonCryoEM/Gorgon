@@ -1,4 +1,4 @@
-from libpytoolkit import SSECorrespondenceEngine, SSECorrespondenceResult, Vector3DFloat
+from libpytoolkit import SSEEngine, SSECorrespondenceResult, Vector3DFloat
 from sse_defaults import SSEDefaults
 from .correspondence.CorrespondenceLibrary import CorrespondenceLibrary
 from .correspondence.Correspondence import Correspondence
@@ -32,7 +32,7 @@ class SSEHelixCorrespondence(object):
         '''
         SSEViewer
         '''
-        self.correspondenceEngine = SSECorrespondenceEngine()
+        self.correspondenceEngine = SSEEngine()
         self.correspondenceLibrary = CorrespondenceLibrary()
         
         self.run()
