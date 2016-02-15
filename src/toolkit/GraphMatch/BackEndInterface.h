@@ -40,7 +40,6 @@ namespace GraphMatch {
         void LoadSequenceGraph();
         void LoadSkeletonGraph();
         // Process Execution
-        //int ExecuteQuery(StandardGraph * sequenceGraph, StandardGraph * skeletonGraph);
         virtual int ExecuteQuery();
         // Result Retrieval
         virtual SSEResult GetResult(int rank);
@@ -260,11 +259,7 @@ namespace GraphMatch {
         #endif
 
     }
-    /*
-    int BackEndInterface::ExecuteQuery(StandardGraph * sequenceGraph, StandardGraph * skeletonGraph) {
-        return queryEngine->DoGraphMatching(sequenceGraph, skeletonGraph);
-    }
-    */
+
     int BackEndInterface::ExecuteQuery() {
         if(skeleton != NULL && sequence != NULL)
             return queryEngine->DoGraphMatching(sequence, skeleton);
