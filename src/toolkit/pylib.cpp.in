@@ -348,14 +348,14 @@ BOOST_PYTHON_MODULE(@current_pylib@)
 
     ;
   
-  class_<SSECorrespondenceResult>("SSECorrespondenceResult", init<>())
-//        .def("getNodeString", &SSECorrespondenceResult::GetNodeString)
-        .def("getCost", &SSECorrespondenceResult::GetCost)
-        .def("getNodeCount", &SSECorrespondenceResult::GetNodeCount)
-        .def("getHelixCount", &SSECorrespondenceResult::GetHelixCount)
-//        .def("getSheetCount", &SSECorrespondenceResult::GetSheetCount)
-        .def("getSkeletonNode", &SSECorrespondenceResult::GetSkeletonNode)
-        .def("nodeToHelix", &SSECorrespondenceResult::NodeToHelix)      
+  class_<SSEResult>("SSEResult", init<>())
+//        .def("getNodeString", &SSEResult::GetNodeString)
+        .def("getCost", &SSEResult::GetCost)
+        .def("getNodeCount", &SSEResult::GetNodeCount)
+        .def("getHelixCount", &SSEResult::GetHelixCount)
+//        .def("getSheetCount", &SSEResult::GetSheetCount)
+        .def("getSkeletonNode", &SSEResult::GetSkeletonNode)
+        .def("nodeToHelix", &SSEResult::NodeToHelix)      
     ;
 
     class_<SecondaryStructure>("SecondaryStructure", init<>())

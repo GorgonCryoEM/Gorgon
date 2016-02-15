@@ -1,4 +1,4 @@
-from libpytoolkit import SSEEngine, SSECorrespondenceResult, Vector3DFloat
+from libpytoolkit import SSEEngine, SSEResult, Vector3DFloat
 from sse_defaults import SSEDefaults
 from .correspondence.CorrespondenceLibrary import CorrespondenceLibrary
 from .correspondence.Correspondence import Correspondence
