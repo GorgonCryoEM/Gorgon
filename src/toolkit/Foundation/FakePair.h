@@ -22,10 +22,9 @@ namespace Foundation {
     };
 
     template <class T, class U>
-    FakePair<T, U>::FakePair(T key, U value) {
-        first = key;
-        second = value;
-    }
+    FakePair<T, U>::FakePair(T key, U value)
+        : first(key), second(value)
+    {}
 
     template <class T, class U>
     inline bool FakePair<T, U>::operator==(const FakePair<T, U> &other) const {
