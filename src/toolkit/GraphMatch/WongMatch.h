@@ -93,7 +93,7 @@ namespace GraphMatch {
         LinkedNode * tempNode;
         while(!queue->empty()) {
             Elem res = queue->top();
-            tempNode = res.GetValue();
+            tempNode = res.second;
             delete tempNode;
             queue->pop();
         }
@@ -279,7 +279,7 @@ namespace GraphMatch {
         LinkedNode * tempNode;
         while(!queue->empty()) {
             Elem res = queue->top();
-            tempNode = res.GetValue();
+            tempNode = res.second;
             delete tempNode;
             queue->pop();
         }
@@ -568,7 +568,7 @@ namespace GraphMatch {
 #endif
         double cost;
         Elem res = queue->top();
-        currentNode = res.GetValue();
+        currentNode = res.second;
         queue->pop();
 #ifdef VERBOSE
         timeInQueue += clock() - start;
