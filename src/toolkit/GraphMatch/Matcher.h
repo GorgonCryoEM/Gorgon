@@ -26,22 +26,22 @@ using namespace std;
 
 		class Matcher {
 		public:
-			int match(StandardGraph * sequenceGraph, StandardGraph * skeletonGraph);
+			int match(Graph * sequenceGraph, Graph * skeletonGraph);
 			SSEResult GetSolution(int rank);
 			void destruct();
-			StandardGraph * loadSequence();
-			StandardGraph * loadSkeleton();
+			Graph * loadSequence();
+			Graph * loadSkeleton();
 		private:
 			WongMatch * matcher;
 		};
 
 
-		StandardGraph * Matcher::loadSequence() {
+		Graph * Matcher::loadSequence() {
 			#ifdef GORGON_DEBUG
 				cout << "In QueryEngine::LoadSequenceGraph" << endl;
 			#endif
 			clock_t start, finish;
-			StandardGraph * graph;
+			Graph * graph;
 			string type = SEQUENCE_FILE_TYPE; //easier than doing comparison with a char array
 			#ifdef VERBOSE
 				printf("Pattern Graph \n");
@@ -61,9 +61,9 @@ using namespace std;
 			return graph;
 		}
 
-		StandardGraph * Matcher::loadSkeleton() {
+		Graph * Matcher::loadSkeleton() {
 			clock_t start, finish;
-			StandardGraph * graph;
+			Graph * graph;
 			#ifdef VERBOSE
 				printf("Base Graph \n");
 			#endif
@@ -78,7 +78,7 @@ using namespace std;
 		}
 
 
-		int Matcher::match(StandardGraph * sequenceGraph, StandardGraph * skeletonGraph) {
+		int Matcher::match(Graph * sequenceGraph, Graph * skeletonGraph) {
 			clock_t start;
 
 			PERFORMANCE_COMPARISON_MODE = false;

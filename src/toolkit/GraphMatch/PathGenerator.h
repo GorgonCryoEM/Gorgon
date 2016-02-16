@@ -15,16 +15,16 @@ using namespace std;
 namespace GraphMatch {
     class PathGenerator {
     public:
-        PathGenerator(StandardGraph * graph);
+        PathGenerator(Graph * graph);
         void GenerateGraph(StandardNode * node, char * outFileName);
         void GenerateGraph(LinkedNodeStub * node, char * outFileName);
         bool MarkPath(int startHelix, int startCorner, int endHelix, int endCorner, Volume * skeletonVol, Volume * newVol);
 
     private:
-        StandardGraph * graph;
+        Graph * graph;
     };
 
-    PathGenerator::PathGenerator(StandardGraph * graph) {
+    PathGenerator::PathGenerator(Graph * graph) {
         this->graph = graph;
     }
 

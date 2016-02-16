@@ -20,13 +20,13 @@ namespace GraphMatch {
     public:
         static int GetGraphIndex(vector<GeometricShape*> & helixes, int helixNum, int cornerNum);
         static int GetGraphIndex(vector<GeometricShape*> & helixes, int helixNum, Point3Int * point);
-        static StandardGraph * ReadFile(string volumeFile, string helixFile, string sseFile, string sheetFile);
+        static Graph * ReadFile(string volumeFile, string helixFile, string sseFile, string sheetFile);
         static Volume* getSheetsNoThreshold( Volume * vol, int minSize );
         static void ReadSheetFile(string sheetFile, vector<GeometricShape*> & helixes);
         static void ReadHelixFile(string helixFile, string sseFile, vector<GeometricShape*> & helixes);
-        static void FindSizes(int startHelix, int startCell, vector<GeometricShape*> & helixList, Volume * vol, Volume * coloredVol, StandardGraph * graph);
-        static void FindPaths(StandardGraph * graph);
-        static void FindPath(int startIx, int endIx, vector<vector<Vector3DInt> > nodes, Volume * maskVol, StandardGraph * graph, bool eraseMask);
+        static void FindSizes(int startHelix, int startCell, vector<GeometricShape*> & helixList, Volume * vol, Volume * coloredVol, Graph * graph);
+        static void FindPaths(Graph * graph);
+        static void FindPath(int startIx, int endIx, vector<vector<Vector3DInt> > nodes, Volume * maskVol, Graph * graph, bool eraseMask);
         static void FindCornerCellsInSheet(Volume * vol, Volume * paintedVol, vector<GeometricShape*> & helixes, int sheetId);
         static int isSkeletonSheet(const Volume &vol, int ox, int oy, int oz );
 
@@ -83,7 +83,7 @@ namespace GraphMatch {
         }
     }
 
-    StandardGraph * SkeletonReader::ReadFile(string volumeFile, string helixFile, string sseFile, string sheetFile) {
+    Graph * SkeletonReader::ReadFile(string volumeFile, string helixFile, string sseFile, string sheetFile) {
 
         // Read the volume file and load volume data structure
         Volume * vol = (MRCReaderPicker::pick(volumeFile.c_str()))->getVolume();
@@ -297,7 +297,7 @@ namespace GraphMatch {
             }
         }
 
-        StandardGraph * graph = new StandardGraph(2 * numH + numS);
+        Graph * graph = new Graph(2 * numH + numS);
 
         // create a graph with one node per helix end point and with edges connecting nodes that
         // are connected along the volume.
@@ -737,7 +737,7 @@ namespace GraphMatch {
     // finds the loops from the helix/sheet corner given by helixList[startHelix]->cornerCells[startCell] to
     // all other helices/sheets by flooding outward along the skeleton volume
     // stores the resulting loops in the graph object using graph->SetCost and graph->SetType
-    void SkeletonReader::FindSizes(int startHelix, int startCell, vector<GeometricShape*> & helixList, Volume * vol, Volume * coloredVol, StandardGraph * graph) {
+    void SkeletonReader::FindSizes(int startHelix, int startCell, vector<GeometricShape*> & helixList, Volume * vol, Volume * coloredVol, Graph * graph) {
         vector<Point3Int *> oldStack;
         vector<Point3Int *> newStack;
         int currentHelix;
@@ -921,7 +921,7 @@ namespace GraphMatch {
 
 
     // Find all paths in a graph
-    void SkeletonReader::FindPaths(StandardGraph * graph) {
+    void SkeletonReader::FindPaths(Graph * graph) {
         vector<Vector3DInt> endPoints;
         vector< vector<Vector3DInt> > nodes;
         Point3Int pt = Point3Int(0,0,0,0);
@@ -995,7 +995,7 @@ namespace GraphMatch {
     // The path grows outward from start point to end point along voxels in the maskVol with values > 0.5.
     // The path is stored in graph->paths[startIx][endIx] and also painted in maskVol.
     // If eraseMask is set, maskVol voxels inside the startIx and endIx helices are not painted.
-    void SkeletonReader::FindPath(int startIx, int endIx, vector<vector<Vector3DInt> > nodes, Volume * maskVol, StandardGraph * graph, bool eraseMask) {
+    void SkeletonReader::FindPath(int startIx, int endIx, vector<vector<Vector3DInt> > nodes, Volume * maskVol, Graph * graph, bool eraseMask) {
         // erase any old path
         graph->paths[startIx][endIx] = vector<Vector3DInt>();
 

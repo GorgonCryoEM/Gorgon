@@ -18,11 +18,11 @@ using namespace std;
 
 
 namespace GraphMatch {
-    typedef StandardGraph GraphType;
+    typedef Graph GraphType;
 
     class PDBReader {
     public:
-        static StandardGraph * ReadFile(string fname);
+        static Graph * ReadFile(string fname);
         static map<unsigned long long, PDBAtom> ReadAtomPositions(string fileName);
         static bool WriteAtomPositions(map<unsigned long long, PDBAtom> &atoms, string fileName);
         static string TrimString(string str);
@@ -83,7 +83,7 @@ namespace GraphMatch {
     }
     #endif
 
-    StandardGraph * PDBReader::ReadFile(string fname) {
+    Graph * PDBReader::ReadFile(string fname) {
         ifstream fin(fname.c_str());
         if (!fin)
         {
@@ -199,7 +199,7 @@ namespace GraphMatch {
         cout << "creating new graph for " << numHelices << " helices and " << numSheets << " strands." << endl;
 #endif // VERBOSE
 
-        StandardGraph * graph = new StandardGraph(2 * numHelices + numSheets);
+        Graph * graph = new Graph(2 * numHelices + numSheets);
 
         // Adding the rest of the structures into the graph
         int node = 0;

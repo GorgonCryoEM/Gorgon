@@ -21,11 +21,11 @@ namespace GraphMatch {
 
     class WongMatch {
         public:
-            StandardGraph * patternGraph;
-            StandardGraph * baseGraph;
+            Graph * patternGraph;
+            Graph * baseGraph;
         public:
-            WongMatch(StandardGraph * patternGraph, StandardGraph * baseGraph);
-            WongMatch(StandardGraph * patternGraph, StandardGraph * baseGraph,
+            WongMatch(Graph * patternGraph, Graph * baseGraph);
+            WongMatch(Graph * patternGraph, Graph * baseGraph,
                       int missingHelixCount, int missingSheetCount
                       );
             ~WongMatch();
@@ -54,7 +54,7 @@ namespace GraphMatch {
             PathGenerator * pathGenerator;
 
         private:
-            void Init(StandardGraph * patternGraph, StandardGraph * baseGraph);
+            void Init(Graph * patternGraph, Graph * baseGraph);
             double GetC(int p, int qp);
             double GetC(int j, int p, int qj, int qp);
             double GetCost(int d, int m, int qj, int qp, bool debugMsg);
@@ -71,14 +71,14 @@ namespace GraphMatch {
 
     };
 
-    WongMatch::WongMatch(StandardGraph * patternGraph,
-                         StandardGraph * baseGraph)
+    WongMatch::WongMatch(Graph * patternGraph,
+                         Graph * baseGraph)
     {
         Init(patternGraph, baseGraph);
     }
 
-    WongMatch::WongMatch(StandardGraph * patternGraph,
-                         StandardGraph * baseGraph, int missingHelixCount,
+    WongMatch::WongMatch(Graph * patternGraph,
+                         Graph * baseGraph, int missingHelixCount,
                          int missingSheetCount)
     {
         Init(patternGraph, baseGraph);
@@ -103,8 +103,8 @@ namespace GraphMatch {
         delete pathGenerator;
     }
 
-    void WongMatch::Init(StandardGraph * patternGraph,
-                         StandardGraph * baseGraph)
+    void WongMatch::Init(Graph * patternGraph,
+                         Graph * baseGraph)
     {
 #ifdef VERBOSE
         cout << "Initializing search" << endl;

@@ -15,7 +15,7 @@
 using namespace std;
 
 namespace GraphMatch {
-    typedef StandardGraph GraphType;
+    typedef Graph GraphType;
 
     class SEQFileData {
 
@@ -58,19 +58,19 @@ namespace GraphMatch {
 
     class SEQReader {
     public:
-        static StandardGraph * ReadFile(string fileName);
+        static Graph * ReadFile(string fileName);
         static SEQFileData ReadSeqFileData(string fileName);
-        static StandardGraph * GetGraphFromSeqFileData(SEQFileData seqFData);
+        static Graph * GetGraphFromSeqFileData(SEQFileData seqFData);
     };
 
 
-    StandardGraph * SEQReader::ReadFile(string fileName)
+    Graph * SEQReader::ReadFile(string fileName)
     {
         #ifdef GORGON_DEBUG
             cout << "In SEQReader::ReadFile" << endl;
         #endif
         SEQFileData seqFData = ReadSeqFileData(fileName);
-        StandardGraph * pGraph = GetGraphFromSeqFileData(seqFData);
+        Graph * pGraph = GetGraphFromSeqFileData(seqFData);
         if (!pGraph) return NULL;
         return pGraph;
     }
@@ -321,7 +321,7 @@ namespace GraphMatch {
     }
 
 
-    StandardGraph * SEQReader::GetGraphFromSeqFileData(SEQFileData seqFData)
+    Graph * SEQReader::GetGraphFromSeqFileData(SEQFileData seqFData)
     {
         vector<SecStruct*> * pStructures = seqFData.GetStructuresVectorPointer();
         if (!pStructures) {
@@ -358,7 +358,7 @@ namespace GraphMatch {
         cout << "creating new graph for " << numHelices << " helices and " << numSheets << " strands." << endl;
 #endif // VERBOSE
 
-        StandardGraph * graph = new StandardGraph(2 * numHelices + numSheets);
+        Graph * graph = new Graph(2 * numHelices + numSheets);
 
         // Adding the rest of the structures into the graph
         int node = 0;
