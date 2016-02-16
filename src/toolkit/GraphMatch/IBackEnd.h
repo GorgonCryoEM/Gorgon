@@ -2,7 +2,7 @@
 #define TOOLKIT_GRAPHMATCH_BACK_END_INTERFACE_H
 
 //#include "Core/GlobalConstants.h"
-#include "QueryEngine.h"
+#include "Matcher.h"
 //#include "LinkedNode.h"
 
 #ifdef DEBUG
@@ -39,13 +39,13 @@ namespace GraphMatch {
         // Cleanup
         void CleanupMemory();
     protected:
-        QueryEngine * queryEngine;
+        Matcher * queryEngine;
         StandardGraph * skeleton;
         StandardGraph * sequence;
     };
 
     IBackEnd::IBackEnd(): skeleton(NULL), sequence(NULL) {
-        queryEngine = new QueryEngine();
+        queryEngine = new Matcher();
     }
 
     IBackEnd::~IBackEnd() {
