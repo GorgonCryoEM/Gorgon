@@ -181,10 +181,10 @@ namespace GraphMatch {
 
         int skelNode = 1;
         for(int i = 0; i < (int)skeletonHelixes.size(); i++) {
-            if(skeletonHelixes[i]->geometricShapeType == GRAPHEDGE_HELIX) {
+            if(skeletonHelixes[i]->shapeType == GRAPHEDGE_HELIX) {
                 printf("\tHelix #%d \t(%2d,%2d)\t Length: %f\n", i+1, skelNode, skelNode+1, skeletonHelixes[i]->length);
                 skelNode += 2;
-            } else if(skeletonHelixes[i]->geometricShapeType == GRAPHEDGE_SHEET) {
+            } else if(skeletonHelixes[i]->shapeType == GRAPHEDGE_SHEET) {
                 printf("\tSheet #%d \t(%2d)   \t Length: %f\n", i+1, skelNode, skeletonHelixes[i]->length);
                 skelNode += 1;
             }
@@ -305,7 +305,7 @@ namespace GraphMatch {
         // count number of helices
         int numH = 0;
         for (unsigned int i = 0; i < (int)skeletonHelixes.size(); i++) {
-            if(skeletonHelixes[i]->geometricShapeType == GRAPHEDGE_HELIX) {
+            if(skeletonHelixes[i]->shapeType == GRAPHEDGE_HELIX) {
                 numH++;
             }
         }

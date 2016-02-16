@@ -36,7 +36,7 @@ namespace GraphMatch {
     int SkeletonReader::GetGraphIndex(vector<Shape*> & helixes, int helixNum, int cornerNum) {
         int numH = 0;
         for (unsigned int i = 0; i < (int)helixes.size(); i++) {
-            if(helixes[i]->geometricShapeType == GRAPHEDGE_HELIX) {
+            if(helixes[i]->shapeType == GRAPHEDGE_HELIX) {
                 numH++;
             }
         }
@@ -66,7 +66,7 @@ namespace GraphMatch {
         // count the helices
         int numH = 0;
         for (unsigned int i = 0; i < (int)helixes.size(); i++) {
-            if(helixes[i]->geometricShapeType == GRAPHEDGE_HELIX) {
+            if(helixes[i]->shapeType == GRAPHEDGE_HELIX) {
                 numH++;
             }
         }
@@ -139,7 +139,7 @@ namespace GraphMatch {
                         bool inHelix = false;
                         for(int i = 0; i < (int)helixes.size(); i++) {
                             // if i is a helix and if point is inside helix i
-                            if(helixes[i]->geometricShapeType == GRAPHEDGE_HELIX && helixes[i]->IsInsideShape(point)) {
+                            if(helixes[i]->shapeType == GRAPHEDGE_HELIX && helixes[i]->IsInsideShape(point)) {
                                 // store helix number for this point in the volume
                                 paintedVol.setDataAt(x, y, z, i+1);
                                 // add this point as as internal cell of the helix
@@ -192,7 +192,7 @@ namespace GraphMatch {
                             // measure distance to every SSE sheet, add to running total
                             for(int j = 0; j < (int)sheets.size(); j++) {
                                 // find plates on skeleton that are associated with sheets
-                                if(sheets[j]->geometricShapeType == GRAPHEDGE_SHEET) {
+                                if(sheets[j]->shapeType == GRAPHEDGE_SHEET) {
                                     sheetDistance[i][j] += sheets[j]->MinimumDistanceToPoint(point);
                                 }
                             }
@@ -222,7 +222,7 @@ namespace GraphMatch {
         for (int i = 1; i <= numSkeletonSheets; i++) {
             double minDist = MAXIMUM_DISTANCE_SHEET_SKELETON;
             for (int j = 0; j < (int)sheets.size(); j++) {
-                if (sheets[j]->geometricShapeType == GRAPHEDGE_SHEET && sheetDistance[i][j] < minDist) {
+                if (sheets[j]->shapeType == GRAPHEDGE_SHEET && sheetDistance[i][j] < minDist) {
                     minDist = sheetDistance[i][j];
                     sseSheetMapping[i] = j;
                 }
@@ -289,10 +289,10 @@ namespace GraphMatch {
         int numH = 0;
         int numS = 0;
         for (unsigned int i = 0; i < (int)helixes.size(); i++) {
-            if(helixes[i]->geometricShapeType == GRAPHEDGE_HELIX) {
+            if(helixes[i]->shapeType == GRAPHEDGE_HELIX) {
                 numH++;
             }
-            if(helixes[i]->geometricShapeType == GRAPHEDGE_SHEET) {
+            if(helixes[i]->shapeType == GRAPHEDGE_SHEET) {
                 numS++;
             }
         }
@@ -303,7 +303,7 @@ namespace GraphMatch {
         // are connected along the volume.
         //cout << "adding " << (int)helixes.size() << " helices and sheets to adjacency matrix" << endl;
         for(unsigned int i = 0; i < (int)helixes.size(); i++) {
-            if(helixes[i]->geometricShapeType == GRAPHEDGE_HELIX) {
+            if(helixes[i]->shapeType == GRAPHEDGE_HELIX) {
                 // assign node numbers for helix ends
                 int node1 = (i*2)+1;
                 int node2 = (i*2)+2;
@@ -327,11 +327,11 @@ namespace GraphMatch {
                 // cost of traversing a helix is the helix length
                 graph->SetCost(node1, node2, length);
                 // mark this edge type as helix or sheet, determined by helixes graph
-                graph->SetType(node1, node2, helixes[i]->geometricShapeType);
+                graph->SetType(node1, node2, helixes[i]->shapeType);
                 // same for reverse direction
                 graph->SetCost(node2, node1, length);
-                graph->SetType(node2, node1, helixes[i]->geometricShapeType);
-            } else if (helixes[i]->geometricShapeType == GRAPHEDGE_SHEET) {
+                graph->SetType(node2, node1, helixes[i]->shapeType);
+            } else if (helixes[i]->shapeType == GRAPHEDGE_SHEET) {
                 // assign node number this sheet
                 int sheetNode = numH + i + 1; // each helix takes two nodes
 
@@ -638,7 +638,7 @@ namespace GraphMatch {
                         helixes.push_back(shape);
                     }
                     shape = new Shape();
-                    shape->geometricShapeType = GRAPHEDGE_SHEET;
+                    shape->shapeType = GRAPHEDGE_SHEET;
                     lastSheet = false;
                 // adds new 3d points to polygonPoints
                 } else if(token == TOKEN_VRML_POINT) {
@@ -675,7 +675,7 @@ namespace GraphMatch {
             cout<<"Error reading helix input file "<<helixFile<<".  Skipping helices.\n" ;
         } else {
             Shape * shape = new Shape();
-            shape->geometricShapeType = GRAPHEDGE_HELIX;
+            shape->shapeType = GRAPHEDGE_HELIX;
 
             string token;
             double x,y,z,a;
@@ -703,7 +703,7 @@ namespace GraphMatch {
 
                     // reinitialize shape variable
                     shape = new Shape();
-                    shape->geometricShapeType = GRAPHEDGE_HELIX;
+                    shape->shapeType = GRAPHEDGE_HELIX;
                 }
             }
             delete shape;

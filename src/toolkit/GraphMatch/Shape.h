@@ -60,7 +60,7 @@ namespace GraphMatch {
         void UpdateWorldToObjectMatrix();
 
     public:
-        int geometricShapeType;
+        int shapeType;
         float length;
         vector<Point3Int> internalCells;
         vector<Point3Int> cornerCells;
@@ -87,16 +87,16 @@ namespace GraphMatch {
     }
 
     bool Shape::IsHelix() {
-        return (geometricShapeType == GRAPHEDGE_HELIX);
+        return (shapeType == GRAPHEDGE_HELIX);
     }
 
     bool Shape::IsSheet() {
-        return (geometricShapeType != GRAPHEDGE_HELIX);
+        return (shapeType != GRAPHEDGE_HELIX);
     }
 
     bool Shape::IsInsideShape(Point3 point) {
         Point3 newPoint = Point3(point[0], point[1], point[2]);
-        if(geometricShapeType == GRAPHEDGE_HELIX) {
+        if(shapeType == GRAPHEDGE_HELIX) {
             return IsInsideCylinder(newPoint);
         } else {
             return IsInsidePolygon(newPoint);
@@ -185,7 +185,7 @@ namespace GraphMatch {
     }
 
     int Shape::getType() {
-        return geometricShapeType;
+        return shapeType;
     }
     Matrix4 Shape::GetRotationMatrix() {
         return rotationMatrix;
@@ -472,7 +472,7 @@ namespace GraphMatch {
     }
     Shape * Shape::CreateHelix(Vector3DFloat p1, Vector3DFloat p2, float radius) {
         Shape * newHelix = new Shape();
-        newHelix->geometricShapeType = GRAPHEDGE_HELIX;
+        newHelix->shapeType = GRAPHEDGE_HELIX;
         Vector3DFloat center = (p1+p2) * 0.5;
         Vector3DFloat dir = p1-p2;
         Vector3DFloat yaxis = Vector3DFloat(0, 1, 0);
