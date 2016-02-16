@@ -68,13 +68,12 @@ namespace GraphMatch {
 
         int startHelix = -1, startCorner = -1, endHelix = -1, endCorner = -1;
         bool marked;
-        bool continueLoop = true;
-        LinkedNodeStub * currentNode = node;
 
-        while(continueLoop) {
-            if(currentNode->parentNode == NULL) {
-                 break;
-            }
+        for(LinkedNodeStub * currentNode = node;
+            currentNode->parentNode != NULL;
+            currentNode = currentNode->parentNode
+           )
+        {
             endHelix = (currentNode->n2Node-1)/2;
             endCorner = ((currentNode->n2Node-1)%2) + 1;
 
@@ -89,8 +88,6 @@ namespace GraphMatch {
             }
             startHelix = endHelix;
             startCorner = endCorner;
-
-            currentNode = currentNode->parentNode;
         }
 
         newVol->toMRCFile(outFileName);
