@@ -19,9 +19,9 @@ namespace GraphMatch {
         int pointIndex4;
     };
 
-    class GeometricShape {
+    class Shape {
     public:
-        GeometricShape();
+        Shape();
         bool IsHelix();
         bool IsSheet();
         bool IsInsideShape(Point3 p);
@@ -45,8 +45,8 @@ namespace GraphMatch {
         void SetHeight(double height);
         void SetRadius(double radius);
         void GetRotationAxisAndAngle(Vector3DFloat &axis, double &angle);
-        static GeometricShape * CreateHelix(Vector3DFloat p1, Vector3DFloat p2, float radius);
-        static void WriteToFile(vector<GeometricShape*> & helices, FILE * fileName);
+        static Shape * CreateHelix(Vector3DFloat p1, Vector3DFloat p2, float radius);
+        static void WriteToFile(vector<Shape*> & helices, FILE * fileName);
 
 
         Point3 GetWorldCoordinates(Point3 point);
@@ -79,22 +79,22 @@ namespace GraphMatch {
         Matrix4 inverseRotationMatrix;
     };
 
-    GeometricShape::GeometricShape() {
+    Shape::Shape() {
         worldToObject = Matrix4::identity();
         objectToWorld = Matrix4::identity();
         rotationMatrix = Matrix4::identity();
         inverseRotationMatrix = Matrix4::identity();
     }
 
-    bool GeometricShape::IsHelix() {
+    bool Shape::IsHelix() {
         return (geometricShapeType == GRAPHEDGE_HELIX);
     }
 
-    bool GeometricShape::IsSheet() {
+    bool Shape::IsSheet() {
         return (geometricShapeType != GRAPHEDGE_HELIX);
     }
 
-    bool GeometricShape::IsInsideShape(Point3 point) {
+    bool Shape::IsInsideShape(Point3 point) {
         Point3 newPoint = Point3(point[0], point[1], point[2]);
         if(geometricShapeType == GRAPHEDGE_HELIX) {
             return IsInsideCylinder(newPoint);
@@ -103,11 +103,11 @@ namespace GraphMatch {
         }
     }
 
-    bool GeometricShape::IsInsideShape(Vector3DFloat p) {
+    bool Shape::IsInsideShape(Vector3DFloat p) {
         return IsInsideShape(Point3(p.X(), p.Y(), p.Z()));
     }
 
-    bool GeometricShape::IsInsidePolygon(Point3 p) {
+    bool Shape::IsInsidePolygon(Point3 p) {
         Polygon poly;
         Point3 a,b,c,q;
         double l1, l2;
@@ -146,8 +146,8 @@ namespace GraphMatch {
         return isInside;
     }
 
-    // returns the minimum distance between a point p and a GeometricShape
-    double GeometricShape::MinimumDistanceToPoint(Point3 P) {
+    // returns the minimum distance between a point p and a Shape
+    double Shape::MinimumDistanceToPoint(Point3 P) {
         Point3 pt;
         double d;
         double dmin = MAXDOUBLE;
@@ -161,20 +161,20 @@ namespace GraphMatch {
         return dmin;
     }
 
-    bool GeometricShape::IsInsideCylinder(Point3 point) {
+    bool Shape::IsInsideCylinder(Point3 point) {
         point = objectToWorld * point;
         return ((point[0]*point[0] + point[2]*point[2] <= 0.25) && (abs(point[1]) <= 0.5));
     }
 
-    double GeometricShape::GetHeight() {
+    double Shape::GetHeight() {
         return height;
     }
 
-    double GeometricShape::GetRadius(){
+    double Shape::GetRadius(){
         return radius;
     }
 
-    int GeometricShape::GetLocationInVector(vector<Point3Int> v, Point3Int point) {
+    int Shape::GetLocationInVector(vector<Point3Int> v, Point3Int point) {
         int loc = -1;
         for(unsigned int i = 0; (i < v.size() && loc < 0); i++) {
             if(v[i] == point) {
@@ -184,40 +184,40 @@ namespace GraphMatch {
         return loc;
     }
 
-    int GeometricShape::GetGeometricShapeType() {
+    int Shape::GetShapeType() {
         return geometricShapeType;
     }
-    Matrix4 GeometricShape::GetRotationMatrix() {
+    Matrix4 Shape::GetRotationMatrix() {
         return rotationMatrix;
     }
 
-    Matrix4 GeometricShape::GetWorldToObjectMatrix() {
+    Matrix4 Shape::GetWorldToObjectMatrix() {
         return worldToObject;
     }
-    Point3 GeometricShape::GetCenter() {
+    Point3 Shape::GetCenter() {
         return centerPoint;
     }
 
-    Point3 GeometricShape::GetWorldCoordinates(Point3 point) {
+    Point3 Shape::GetWorldCoordinates(Point3 point) {
         return worldToObject * point;
     }
 
-    Point3Int GeometricShape::GetCornerCell(int node) {
+    Point3Int Shape::GetCornerCell(int node) {
         for(unsigned int i = 0; i < cornerCells.size(); i++) {
             if(cornerCells[i].node == node) {
                 return cornerCells[i];
             }
         }
-        printf("Error <GeometricShape, GetCornerCell>: Corner cell %d not found\n", node);
+        printf("Error <Shape, GetCornerCell>: Corner cell %d not found\n", node);
         return Point3Int(0,0,0,0);
     }
 
-    Vector3DFloat GeometricShape::GetCornerCell2(int node) {
+    Vector3DFloat Shape::GetCornerCell2(int node) {
         Point3Int cell = GetCornerCell(node);
         return Vector3DFloat((float)cell.x, (float)cell.y, (float)cell.z);
     }
 
-    Vector3DFloat GeometricShape::GetCornerCell3(int node) {
+    Vector3DFloat Shape::GetCornerCell3(int node) {
         Point3 pt;
 
         if(node == 1) {
@@ -230,12 +230,12 @@ namespace GraphMatch {
     }
 
 
-    void GeometricShape::AddInternalCell(Point3Int point) {
+    void Shape::AddInternalCell(Point3Int point) {
         internalCells.push_back(point);
     }
 
     // Search through all voxels inside a helix to find the two corners, which have only one neighbor in the helix.
-    void GeometricShape::FindCornerCellsInHelix() {
+    void Shape::FindCornerCellsInHelix() {
 
         // array to help iterate over 6 neighbor voxels
         int d[6][3];
@@ -325,13 +325,13 @@ namespace GraphMatch {
             }
         }
         if(cornerCells.size() < 2) {
-            printf("Error <GeometricShape, FindCornerCellsInHelix>: 2 corner cells not found\n");
+            printf("Error <Shape, FindCornerCellsInHelix>: 2 corner cells not found\n");
         }
 
         assert(cornerCells.size() >= 2);
     }
 
-    double GeometricShape::GetCornerCellsMaxLength() {
+    double Shape::GetCornerCellsMaxLength() {
         double length = 0;
         for(int i = 0; i < (int)cornerCells.size() - 1; i++) {
             for(int j = i+1; j < (int)cornerCells.size(); j++) {
@@ -341,7 +341,7 @@ namespace GraphMatch {
         return length;
     }
 
-    vector<Point3> GeometricShape::GetMaxLengthCorners() {
+    vector<Point3> Shape::GetMaxLengthCorners() {
         cout << "getting max length corners " <<  (int)polygonPoints.size() << endl;
         double length = 0.0;
         vector<Point3> result;
@@ -360,44 +360,44 @@ namespace GraphMatch {
         }
         return result;
     }
-    void GeometricShape::Rotate(Vector3 axis, double angle){
+    void Shape::Rotate(Vector3 axis, double angle){
         rotationMatrix = Matrix4::rotation(axis, angle) * rotationMatrix;
         inverseRotationMatrix = inverseRotationMatrix * Matrix4::rotation(axis, -angle);
         UpdateWorldToObjectMatrix();
     }
 
-    void GeometricShape::Translate(Vector3 translationVector){
+    void Shape::Translate(Vector3 translationVector){
 
         centerPoint = centerPoint + translationVector;
         UpdateWorldToObjectMatrix();
     }
 
-    void GeometricShape::SetCenter(Point3 center) {
+    void Shape::SetCenter(Point3 center) {
         this->centerPoint = center;
         UpdateWorldToObjectMatrix();
     }
 
-    void GeometricShape::SetCenter(Vector3DFloat center) {
+    void Shape::SetCenter(Vector3DFloat center) {
         SetCenter(Point3(center.X(), center.Y(), center.Z()));
     }
 
-    void GeometricShape::SetHeight(double height) {
+    void Shape::SetHeight(double height) {
         this->height = height;
         this->length = height;
         UpdateWorldToObjectMatrix();
     }
 
-    void GeometricShape::SetRadius(double radius) {
+    void Shape::SetRadius(double radius) {
         this->radius = radius;
         UpdateWorldToObjectMatrix();
     }
 
-    void GeometricShape::UpdateWorldToObjectMatrix() {
+    void Shape::UpdateWorldToObjectMatrix() {
         worldToObject = Matrix4::translation(centerPoint) * rotationMatrix * Matrix4::scaling(radius*2, height, radius*2);
         objectToWorld = Matrix4::scaling(1.0/(radius*2.0), 1.0/height, 1.0/(radius*2.0)) * inverseRotationMatrix * Matrix4::translation(Point3(-centerPoint[0], -centerPoint[1], -centerPoint[2]));
     }
 
-    void GeometricShape::GetRotationAxisAndAngle(Vector3DFloat &axis, double &angle) {
+    void Shape::GetRotationAxisAndAngle(Vector3DFloat &axis, double &angle) {
         double x,y,z;
         double epsilon = 0.01;
         double epsilon2 = 0.1;
@@ -470,8 +470,8 @@ namespace GraphMatch {
         axis = Vector3DFloat((float)x, (float)y, (float)z);
         return;
     }
-    GeometricShape * GeometricShape::CreateHelix(Vector3DFloat p1, Vector3DFloat p2, float radius) {
-        GeometricShape * newHelix = new GeometricShape();
+    Shape * Shape::CreateHelix(Vector3DFloat p1, Vector3DFloat p2, float radius) {
+        Shape * newHelix = new Shape();
         newHelix->geometricShapeType = GRAPHEDGE_HELIX;
         Vector3DFloat center = (p1+p2) * 0.5;
         Vector3DFloat dir = p1-p2;
@@ -488,7 +488,7 @@ namespace GraphMatch {
         return newHelix;
     }
 
-    void GeometricShape::WriteToFile(vector<GeometricShape*> & helices, FILE * fout) {
+    void Shape::WriteToFile(vector<Shape*> & helices, FILE * fout) {
         Point3 center;
         Vector3DFloat start, end, axis;
         double angle;

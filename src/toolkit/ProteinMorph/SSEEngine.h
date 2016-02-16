@@ -3,7 +3,7 @@
 
 //#include <GraphMatch/SSEResult.h>
 #include <GraphMatch/IBackEnd.h>
-//#include <GraphMatch/GeometricShape.h>
+//#include <GraphMatch/Shape.h>
 #include <vector>
 #include <map>
 #include <set>
@@ -25,7 +25,7 @@ namespace Visualization {
         int load(string fileName);
         SSEResult GetResult(int rank);
         void save(string fileName);
-        GeometricShape * GetSkeletonSSE(int sseId);
+        Shape * GetSkeletonSSE(int sseId);
         SecStruct * GetSequenceSSE(int sseId);
         int GetSkeletonSSECount();
         int GetSequenceSSECount();
@@ -137,7 +137,7 @@ namespace Visualization {
         fout.close();
     }
 
-    GeometricShape * SSEEngine::GetSkeletonSSE(int sseId) {
+    Shape * SSEEngine::GetSkeletonSSE(int sseId) {
         if((skeleton != NULL) && (sseId < (int)skeleton->skeletonHelixes.size())) {
             return skeleton->skeletonHelixes[sseId];
         } else {
@@ -173,7 +173,7 @@ namespace Visualization {
     }
 
     void SSEEngine::InitializePathHelix(int helixIndex, Vector3DFloat p1, Vector3DFloat p2, float radius) {
-        GeometricShape * helix = GeometricShape::CreateHelix(p1, p2, radius);
+        Shape * helix = Shape::CreateHelix(p1, p2, radius);
         set<unsigned int> internalVertices;
         internalVertices.clear();
         vector<unsigned int> startPoints;
