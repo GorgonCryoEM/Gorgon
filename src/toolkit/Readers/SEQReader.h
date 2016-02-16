@@ -29,19 +29,19 @@ namespace GraphMatch {
         void SetStructureString(char * str) { structureString = str; }
         void SetStructureString(string str) { structureString = str; }
         unsigned int GetNumberOfStructures() { return pStructures->size(); }
-        SecondaryStructure* GetStructure(unsigned int Ix) {
-            vector<SecondaryStructure*> & structures = *pStructures;
+        SecStruct* GetStructure(unsigned int Ix) {
+            vector<SecStruct*> & structures = *pStructures;
             return structures[Ix];
         }
-        vector<SecondaryStructure*> * GetStructuresVectorPointer() { return pStructures; }
-        void SetStructuresPointer(vector<SecondaryStructure*> * pNewStructures) { pStructures = pNewStructures; }
+        vector<SecStruct*> * GetStructuresVectorPointer() { return pStructures; }
+        void SetStructuresPointer(vector<SecStruct*> * pNewStructures) { pStructures = pNewStructures; }
         SEQFileData() {
             startResNo = 1;
             sequenceString = "";
             structureString = "";
             pStructures = NULL;
         }
-        SEQFileData(unsigned int stRes, string seqStr, string structStr, vector<SecondaryStructure*> * pStructuresVect) {
+        SEQFileData(unsigned int stRes, string seqStr, string structStr, vector<SecStruct*> * pStructuresVect) {
             startResNo = stRes;
             sequenceString = seqStr;
             structureString = structStr;
@@ -52,7 +52,7 @@ namespace GraphMatch {
         unsigned int startResNo;
         string sequenceString;
         string structureString;
-        vector<SecondaryStructure*> * pStructures;
+        vector<SecStruct*> * pStructures;
 
     };
 
@@ -142,9 +142,9 @@ namespace GraphMatch {
         char ch;
         string substring;
         string sseID;
-        vector<SecondaryStructure*> * pStructures = new vector<SecondaryStructure*>;
-        vector<SecondaryStructure*> & structures = *pStructures;
-        SecondaryStructure * currentStructure;
+        vector<SecStruct*> * pStructures = new vector<SecStruct*>;
+        vector<SecStruct*> & structures = *pStructures;
+        SecStruct * currentStructure;
         bool add;
         unsigned int idNum = 1;
         int strLen;
@@ -160,7 +160,7 @@ namespace GraphMatch {
 
                 if (currentChar == helixChar && length >= minHelixLength)
                 {
-                    currentStructure = new SecondaryStructure();
+                    currentStructure = new SecStruct();
                     currentStructure->serialNumber = idNum;
                     stringstream ssOut;
                     ssOut << idNum;
@@ -185,7 +185,7 @@ namespace GraphMatch {
                         cout << "Structure(" << currentStructure->GetStartPosition() << ',';
                         cout << currentStructure->GetEndPosition() << "):";
                         cout << " Serial=" << currentStructure->GetSerialNumber();
-                        cout << " ID=" << currentStructure->GetSecondaryStructureID();
+                        cout << " ID=" << currentStructure->GetSecStructID();
                         cout << " Type=" << currentStructure->sseType << endl;
                     #endif
 
@@ -198,7 +198,7 @@ namespace GraphMatch {
                 }
                 else if (currentChar == strandChar && length >= minStrandLength)
                 {
-                    currentStructure = new SecondaryStructure();
+                    currentStructure = new SecStruct();
                     currentStructure->serialNumber = idNum;
                     stringstream ssOut;
                     ssOut << idNum;
@@ -223,7 +223,7 @@ namespace GraphMatch {
                         cout << "Structure(" << currentStructure->GetStartPosition() << ',';
                         cout << currentStructure->GetEndPosition() << "):";
                         cout << " Serial=" << currentStructure->GetSerialNumber();
-                        cout << " ID=" << currentStructure->GetSecondaryStructureID();
+                        cout << " ID=" << currentStructure->GetSecStructID();
                         cout << " Type=" << currentStructure->sseType << endl;
                     #endif
 
@@ -242,7 +242,7 @@ namespace GraphMatch {
         stopCharNum = predictedSSEs.length() - 1;
         if (currentChar == helixChar)
         {
-            currentStructure = new SecondaryStructure();
+            currentStructure = new SecStruct();
             currentStructure->serialNumber = idNum;
             stringstream ssOut;
             ssOut << idNum;
@@ -267,7 +267,7 @@ namespace GraphMatch {
                 cout << "Structure(" << currentStructure->GetStartPosition() << ',';
                 cout << currentStructure->GetEndPosition() << "):";
                 cout << " Serial=" << currentStructure->GetSerialNumber();
-                cout << " ID=" << currentStructure->GetSecondaryStructureID();
+                cout << " ID=" << currentStructure->GetSecStructID();
                 cout << " Type=" << currentStructure->sseType << endl;
             #endif
 
@@ -280,7 +280,7 @@ namespace GraphMatch {
         }
         else if (currentChar == strandChar)
         {
-            currentStructure = new SecondaryStructure();
+            currentStructure = new SecStruct();
             currentStructure->serialNumber = idNum;
             stringstream ssOut;
             ssOut << idNum;
@@ -305,7 +305,7 @@ namespace GraphMatch {
                 cout << "Structure(" << currentStructure->GetStartPosition() << ',';
                 cout << currentStructure->GetEndPosition() << "):";
                 cout << " Serial=" << currentStructure->GetSerialNumber();
-                cout << " ID=" << currentStructure->GetSecondaryStructureID();
+                cout << " ID=" << currentStructure->GetSecStructID();
                 cout << " Type=" << currentStructure->sseType << endl;
             #endif
 
@@ -323,19 +323,19 @@ namespace GraphMatch {
 
     StandardGraph * SEQReader::GetGraphFromSeqFileData(SEQFileData seqFData)
     {
-        vector<SecondaryStructure*> * pStructures = seqFData.GetStructuresVectorPointer();
+        vector<SecStruct*> * pStructures = seqFData.GetStructuresVectorPointer();
         if (!pStructures) {
-            cout << "Pointer to vector<SecondaryStructure*> object is NULL!" << endl;
+            cout << "Pointer to vector<SecStruct*> object is NULL!" << endl;
             return NULL;
         }
-        vector<SecondaryStructure*> & structures = *pStructures;
+        vector<SecStruct*> & structures = *pStructures;
         int i;
         //**********************************************************************************************
         //Code below is copied and pasted from PDBReader.h
         //**********************************************************************************************
 
 
-        SecondaryStructure * currentStructure;
+        SecStruct * currentStructure;
 
         if(structures.size() == 0){
             printf("No helixes or sheets found... Unable to perform matching");

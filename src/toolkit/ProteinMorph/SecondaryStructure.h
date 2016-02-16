@@ -8,7 +8,7 @@ using namespace std;
 
 namespace GraphMatch {
 
-    class SecondaryStructure {
+    class SecStruct {
     public:
         int sseType;
         int serialNumber;
@@ -28,23 +28,23 @@ namespace GraphMatch {
         string getID();
     };
 
-    bool SecondaryStructure::IsHelix() {
+    bool SecStruct::IsHelix() {
         return (sseType == GRAPHEDGE_HELIX);
     }
 
-    bool SecondaryStructure::IsSheet() {
+    bool SecStruct::IsSheet() {
         return (sseType == GRAPHEDGE_SHEET);
     }
 
-    int SecondaryStructure::GetLengthResidues() {
+    int SecStruct::GetLengthResidues() {
         return (endPosition - startPosition + 1);
     }
 
-    int SecondaryStructure::GetLengthBonds() {
+    int SecStruct::GetLengthBonds() {
         return (endPosition - startPosition);
     }
 
-    float SecondaryStructure::GetLengthAngstroms() {
+    float SecStruct::GetLengthAngstroms() {
         if(IsHelix()) {
             return (float)(endPosition - startPosition + 1) * HELIX_C_ALPHA_TO_ANGSTROMS;
         } else {
@@ -52,19 +52,19 @@ namespace GraphMatch {
         }
     }
 
-    int SecondaryStructure::GetSerialNumber() {
+    int SecStruct::GetSerialNumber() {
         return serialNumber;
     }
 
-    int SecondaryStructure::GetStartPosition() {
+    int SecStruct::GetStartPosition() {
         return startPosition;
     }
 
-    int SecondaryStructure::GetEndPosition() {
+    int SecStruct::GetEndPosition() {
         return endPosition;
     }
 
-    string SecondaryStructure::getID() {
+    string SecStruct::getID() {
         return ID;
     }
 }

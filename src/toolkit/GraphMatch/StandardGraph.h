@@ -44,7 +44,7 @@ namespace GraphMatch {
         double nodeWeights[MAX_NODES];
         double euclideanMatrix[MAX_NODES][MAX_NODES];
         vector<Vector3DInt> paths[MAX_NODES][MAX_NODES];
-        vector<SecondaryStructure*> pdbStructures; // indexed by structure number along the sequence.
+        vector<SecStruct*> pdbStructures; // indexed by structure number along the sequence.
         Volume * skeletonVolume;
         Volume * skeletonSheetVolume;
         vector<GeometricShape*> skeletonHelixes; // helices first, then sheets.

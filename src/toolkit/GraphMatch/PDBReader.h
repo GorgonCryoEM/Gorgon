@@ -94,8 +94,8 @@ namespace GraphMatch {
         string line;
         string sequence = "";
         string token;
-        vector<SecondaryStructure*> structures;
-        SecondaryStructure * currentStructure;
+        vector<SecStruct*> structures;
+        SecStruct * currentStructure;
         bool add;
         int oldIndex = 0;
         int index;
@@ -110,7 +110,7 @@ namespace GraphMatch {
             token = GetString(line, 0, 6);
 
             if(token == TOKEN_PDB_HELIX) {
-                currentStructure = new SecondaryStructure();
+                currentStructure = new SecStruct();
                 currentStructure->serialNumber = GetInt(line, 7, 3);
                 currentStructure->ID = GetString(line, 11, 3);
                 currentStructure->startPosition = GetInt(line, 21, 4);
@@ -140,7 +140,7 @@ namespace GraphMatch {
             #endif
             #ifdef INCLUDE_SHEETS
             } else if (token == TOKEN_PDB_SHEET && INCLUDE_STRANDS == 1) {
-                currentStructure = new SecondaryStructure();
+                currentStructure = new SecStruct();
                 currentStructure->serialNumber = GetInt(line, 7, 3);
                 currentStructure->ID = GetString(line, 11, 3);
                 currentStructure->startPosition = GetInt(line, 22, 4);

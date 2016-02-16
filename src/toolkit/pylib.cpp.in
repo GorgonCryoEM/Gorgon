@@ -358,13 +358,13 @@ BOOST_PYTHON_MODULE(@current_pylib@)
         .def("nodeToHelix", &SSEResult::NodeToHelix)      
     ;
 
-    class_<SecondaryStructure>("SecondaryStructure", init<>())
-        .def("isHelix", &SecondaryStructure::IsHelix)
-        .def("isSheet", &SecondaryStructure::IsSheet)
-        .def("getSerialNumber", &SecondaryStructure::GetSerialNumber)
-        .def("getStartPosition", &SecondaryStructure::GetStartPosition)
-        .def("getEndPosition", &SecondaryStructure::GetEndPosition)
-        .def("getSecondaryStructureID", &SecondaryStructure::getID)
+    class_<SecStruct>("SecStruct", init<>())
+        .def("isHelix", &SecStruct::IsHelix)
+        .def("isSheet", &SecStruct::IsSheet)
+        .def("getSerialNumber", &SecStruct::GetSerialNumber)
+        .def("getStartPosition", &SecStruct::GetStartPosition)
+        .def("getEndPosition", &SecStruct::GetEndPosition)
+        .def("getSecondaryStructureID", &SecStruct::getID)
     ;
 
     class_<GeometricShape>("GeometricShape", init<>())

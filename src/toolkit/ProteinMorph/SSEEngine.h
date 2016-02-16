@@ -26,7 +26,7 @@ namespace Visualization {
         SSEResult GetResult(int rank);
         void SaveCorrespondenceToFile(string fileName);
         GeometricShape * GetSkeletonSSE(int sseId);
-        SecondaryStructure * GetSequenceSSE(int sseId);
+        SecStruct * GetSequenceSSE(int sseId);
         int GetSkeletonSSECount();
         int GetSequenceSSECount();
 
@@ -145,7 +145,7 @@ namespace Visualization {
         }
     }
 
-    SecondaryStructure * SSEEngine::GetSequenceSSE(int sseId) {
+    SecStruct * SSEEngine::GetSequenceSSE(int sseId) {
         if((sequence != NULL) && (sseId < (int)sequence->pdbStructures.size())) {
             return sequence->pdbStructures[sseId];
         } else {
