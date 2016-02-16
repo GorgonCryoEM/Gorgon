@@ -70,19 +70,19 @@ namespace GraphMatch {
     }
 
     bool BackEndInterface::SetConstant(string token, string value) {
-        return SetConstantFromToken(token, value, 0.0, 0, false);
+        return setConstantFree(token, value);
     }
 
     bool BackEndInterface::SetConstant(string token, double value) {
-        return SetConstantFromToken(token, "", value, 0, false);
+        return setConstantFree(token, value);
     }
 
     bool BackEndInterface::SetConstant(string token, int value) {
-        return SetConstantFromToken(token, "", 0.0, value, false);
+        return setConstantFree(token, value);
     }
 
     bool BackEndInterface::SetConstant(string token, bool value) {
-        return SetConstantFromToken(token, "", 0.0, 0, value);
+        return setConstantFree(token, value);
     }
 
     bool BackEndInterface::GetConstant(string token, string value) {

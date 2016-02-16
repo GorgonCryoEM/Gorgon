@@ -219,6 +219,93 @@ namespace GraphMatch {
         }
     }
 
+    bool setConstantFree(string token, string stringValue){
+        if(token == TOKEN_SSE_FILE_NAME) {
+            SSE_FILE_NAME = stringValue;
+        } else if(token == TOKEN_VRML_HELIX_FILE_NAME) {
+            VRML_HELIX_FILE_NAME = stringValue;
+        } else if(token == TOKEN_VRML_SHEET_FILE_NAME) {
+            VRML_SHEET_FILE_NAME = stringValue;
+        } else if(token == TOKEN_SEQUENCE_FILE_NAME) {
+            SEQUENCE_FILE_NAME = stringValue;
+        } else if(token == TOKEN_SEQUENCE_FILE_TYPE) {
+            SEQUENCE_FILE_TYPE = stringValue;
+        } else if(token == TOKEN_MRC_FILE_NAME) {
+            MRC_FILE_NAME = stringValue;
+        } else {
+            return false;
+        }
+        return true;
+    }
+
+    bool setConstantFree(string token, double doubleValue){
+        if(token == TOKEN_MAXIMUM_DISTANCE_SHEET_SKELETON) {
+            MAXIMUM_DISTANCE_SHEET_SKELETON = doubleValue;
+        } else if(token == TOKEN_EUCLIDEAN_DISTANCE_THRESHOLD) {
+            EUCLIDEAN_DISTANCE_THRESHOLD = doubleValue;
+        } else if(token == TOKEN_MISSING_HELIX_PENALTY) {
+            MISSING_HELIX_PENALTY = doubleValue;
+        } else if(token == TOKEN_MISSING_SHEET_PENALTY) {
+            MISSING_SHEET_PENALTY = doubleValue;
+        } else if(token == TOKEN_MISSING_HELIX_PENALTY_SCALED) {
+            MISSING_HELIX_PENALTY_SCALED = doubleValue;
+        } else if(token == TOKEN_MISSING_SHEET_PENALTY_SCALED) {
+            MISSING_SHEET_PENALTY_SCALED = doubleValue;
+        } else if(token == TOKEN_EUCLIDEAN_LOOP_PENALTY) {
+            EUCLIDEAN_LOOP_PENALTY = doubleValue;
+        } else if(token == TOKEN_START_END_MISSING_HELIX_PENALTY) {
+            START_END_MISSING_HELIX_PENALTY = doubleValue;
+        } else if(token == TOKEN_HELIX_WEIGHT_COEFFICIENT) {
+            HELIX_WEIGHT_COEFFICIENT = doubleValue;
+        } else if(token == TOKEN_LOOP_WEIGHT_COEFFICIENT) {
+            LOOP_WEIGHT_COEFFICIENT = doubleValue;
+        } else if(token == TOKEN_SHEET_CAPACITY_COEFFICIENT) {
+            SHEET_CAPACITY_COEFFICIENT = doubleValue;
+        } else if(token == TOKEN_SHEET_MERGE_THRESHOLD) {
+            SHEET_MERGE_THRESHOLD = doubleValue;
+        } else if(token == TOKEN_MISSING_HELIX_LENGTH) {
+            MISSING_HELIX_LENGTH = doubleValue;
+        } else if(token == TOKEN_MISSING_SHEET_LENGTH) {
+            MISSING_SHEET_LENGTH = doubleValue;
+        } else if(token == TOKEN_SHEET_SELF_LOOP_LENGTH) {
+            SHEET_SELF_LOOP_LENGTH = doubleValue;
+        } else if(token == TOKEN_SHEET_WEIGHT_COEFFICIENT) {
+            SHEET_WEIGHT_COEFFICIENT = doubleValue;
+        } else if(token == TOKEN_VOXEL_SIZE) {
+            VOXEL_SIZE = doubleValue;
+        } else if(token == TOKEN_EUCLIDEAN_VOXEL_TO_PDB_RATIO) {
+            EUCLIDEAN_VOXEL_TO_PDB_RATIO = doubleValue;
+        } else {
+            return false;
+        }
+        return true;
+    }
+
+    bool setConstantFree(string token, int intValue){
+        if(token == TOKEN_COST_FUNCTION) {
+            COST_FUNCTION = intValue;
+        } else if(token == TOKEN_INCLUDE_STRANDS) {
+            INCLUDE_STRANDS = intValue;
+        } else if(token == TOKEN_MISSING_HELIX_COUNT) {
+            MISSING_HELIX_COUNT = intValue;
+        } else if(token == TOKEN_MISSING_SHEET_COUNT) {
+            MISSING_SHEET_COUNT = intValue;
+        } else {
+            return false;
+        }
+        return true;
+    }
+
+    bool setConstantFree(string token, bool boolValue){
+        if(token == TOKEN_NORMALIZE_GRAPHS) {
+            NORMALIZE_GRAPHS = boolValue;
+        } else if(token == TOKEN_TRANSLATE_VOLUMETRIC_COORDINATES) {
+            TRANSLATE_VOLUMETRIC_COORDINATES = boolValue;
+        } else {
+            return false;
+        }
+        return true;
+    }
 
     bool SetConstantFromToken(string token, string stringValue, double doubleValue, int intValue, bool boolValue) {
         if(token == TOKEN_SSE_FILE_NAME) {
