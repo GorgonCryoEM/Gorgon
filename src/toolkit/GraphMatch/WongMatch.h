@@ -860,7 +860,7 @@ namespace GraphMatch {
         }
 
 #ifdef VERBOSE
-        baseGraph->PrintGraph();
+        baseGraph->print();
 #endif
     }
 
@@ -909,7 +909,7 @@ namespace GraphMatch {
         }
 
 #ifdef VERBOSE
-        baseGraph->PrintGraph();
+        baseGraph->print();
 #endif
     }
 }

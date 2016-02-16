@@ -34,7 +34,7 @@ namespace GraphMatch {
         void SetCost(int i, int j, double cost); // The cost based on the graph labels (index starting from 1)
         void SetCost(int i, double cost); // The cost of a node
         void SetNodeCount(int nodeCount); // Sets the number of nodes
-        void PrintGraph();
+        void print();
         void GenerateEuclidianMatrix(Volume * vol);
         vector<Matcher2Helix> GetHelixLengths();
         bool EdgeExists(int n, int m);
@@ -166,7 +166,7 @@ namespace GraphMatch {
     }
 
 
-    void Graph::PrintGraph() {
+    void Graph::print() {
         char temp;
         int seqNode = 1;
         for(int i = 0; i < (int)pdbStructures.size(); i++) {
@@ -394,7 +394,7 @@ namespace GraphMatch {
     void Graph::MergeSheets(double maxDist) {
 #ifdef VERBOSE
         cout << "=== graph before merging sheets ===" << endl;
-        PrintGraph();
+        print();
         cout << "=== ===" << endl;
 #endif
         int firstSheet = GetHelixCount();
@@ -553,7 +553,7 @@ namespace GraphMatch {
         }
 #ifdef VERBOSE
         cout << "=== graph after merging sheets ===" << endl;
-        PrintGraph();
+        print();
         cout << "=== ===" << endl;
 #endif
     }
