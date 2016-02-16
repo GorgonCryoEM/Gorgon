@@ -1,7 +1,6 @@
 #ifndef TOOLKIT_GRAYSKELETONCPP_VOLUME_SKELETONIZER_H
 #define TOOLKIT_GRAYSKELETONCPP_VOLUME_SKELETONIZER_H
 
-#include "GrayImageList.h"
 ////#include "ImageReaderMRC.h"
 ////#include "Core/GlobalDefinitions.h"
 ////#include "VolumeDeltaAnalyzer.h"
