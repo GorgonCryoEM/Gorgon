@@ -185,7 +185,7 @@ namespace GraphMatch {
                         cout << "Structure(" << currentStructure->GetStartPosition() << ',';
                         cout << currentStructure->GetEndPosition() << "):";
                         cout << " Serial=" << currentStructure->GetSerialNumber();
-                        cout << " ID=" << currentStructure->GetSecStructID();
+                        cout << " ID=" << currentStructure->getID();
                         cout << " Type=" << currentStructure->sseType << endl;
                     #endif
 
@@ -223,7 +223,7 @@ namespace GraphMatch {
                         cout << "Structure(" << currentStructure->GetStartPosition() << ',';
                         cout << currentStructure->GetEndPosition() << "):";
                         cout << " Serial=" << currentStructure->GetSerialNumber();
-                        cout << " ID=" << currentStructure->GetSecStructID();
+                        cout << " ID=" << currentStructure->getID();
                         cout << " Type=" << currentStructure->sseType << endl;
                     #endif
 
@@ -267,7 +267,7 @@ namespace GraphMatch {
                 cout << "Structure(" << currentStructure->GetStartPosition() << ',';
                 cout << currentStructure->GetEndPosition() << "):";
                 cout << " Serial=" << currentStructure->GetSerialNumber();
-                cout << " ID=" << currentStructure->GetSecStructID();
+                cout << " ID=" << currentStructure->getID();
                 cout << " Type=" << currentStructure->sseType << endl;
             #endif
 
@@ -305,7 +305,7 @@ namespace GraphMatch {
                 cout << "Structure(" << currentStructure->GetStartPosition() << ',';
                 cout << currentStructure->GetEndPosition() << "):";
                 cout << " Serial=" << currentStructure->GetSerialNumber();
-                cout << " ID=" << currentStructure->GetSecStructID();
+                cout << " ID=" << currentStructure->getID();
                 cout << " Type=" << currentStructure->sseType << endl;
             #endif
 
