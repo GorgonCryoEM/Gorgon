@@ -341,9 +341,7 @@ namespace GraphMatch {
                     if (i < 2 * numH) {		// i is a helix node
                         // TODO: looks like the following line just returns a single corner for the helix
                         iLoc = iSse->GetCornerCell(i%2 + 1);
-                        //iLoc = iSse->GetCornerCell(s);
                     } else {				 // i is a sheet node
-                        //iLoc = iSse->GetCornerCell(s);
                         iLoc = iSse->cornerCells[s-1];
                     }
 
@@ -353,7 +351,6 @@ namespace GraphMatch {
                             // TODO: looks like the following line just returns a single corner for the helix
                             jLoc = jSse->GetCornerCell(j%2 + 1);
                         } else {				// j is a sheet node
-                            //jLoc = jSse->GetCornerCell(t);
                             jLoc = jSse->cornerCells[t-1];
                         }
 
@@ -514,7 +511,6 @@ namespace GraphMatch {
                             for (int m = 0; m <= lastRowColumn; m++) {
                                 adjacencyMatrix[k][m][0] = adjacencyMatrix[k+1][m][0];
                                 adjacencyMatrix[k][m][1] = adjacencyMatrix[k+1][m][1];
-//									adjacencyMatrix[k][m][2] = adjacencyMatrix[k+1][m][2];
                                 euclideanMatrix[k][m] = euclideanMatrix[k+1][m];
                                 paths[k][m] = paths[k+1][m];
                             }
@@ -524,7 +520,6 @@ namespace GraphMatch {
                             for (int m = 0; m < firstSheet*2 + numSheets + 1; m++) {
                                 adjacencyMatrix[m][k][0] = adjacencyMatrix[m][k+1][0];
                                 adjacencyMatrix[m][k][1] = adjacencyMatrix[m][k+1][1];
-//									adjacencyMatrix[m][k][2] = adjacencyMatrix[m][k+1][2];
                                 euclideanMatrix[m][k] = euclideanMatrix[m][k+1];
                                 paths[m][k] = paths[m][k+1];
                             }
@@ -533,14 +528,12 @@ namespace GraphMatch {
                         for (int m = 0; m <= lastRowColumn; m++) {
                             adjacencyMatrix[lastRowColumn][m][0] = 3;
                             adjacencyMatrix[lastRowColumn][m][1] = MAXINT;
-//								adjacencyMatrix[lastRowColumn][m][2] = 0;
                             euclideanMatrix[lastRowColumn][m] = 0;
                         }
                         // remove last column
                         for (int m = 0; m <= lastRowColumn; m++) {
                             adjacencyMatrix[m][lastRowColumn][0] = 3;
                             adjacencyMatrix[m][lastRowColumn][1] = MAXINT;
-//								adjacencyMatrix[m][lastRowColumn][2] = 0;
                             euclideanMatrix[m][lastRowColumn] = 0;
                         }
 
