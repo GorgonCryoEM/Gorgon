@@ -22,7 +22,7 @@ namespace Visualization {
 
         int ExecuteQuery();
         int GetResultCount();
-        int LoadCorrespondenceFromFile(string fileName);
+        int load(string fileName);
         SSEResult GetResult(int rank);
         void SaveCorrespondenceToFile(string fileName);
         GeometricShape * GetSkeletonSSE(int sseId);
@@ -75,7 +75,7 @@ namespace Visualization {
         return correspondence.size();
     }
 
-    int SSEEngine::LoadCorrespondenceFromFile(string fileName) {
+    int SSEEngine::load(string fileName) {
 
         ifstream fin(fileName.c_str());
         if (!fin)
