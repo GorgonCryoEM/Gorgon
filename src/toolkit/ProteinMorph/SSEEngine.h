@@ -24,7 +24,7 @@ namespace Visualization {
         int GetResultCount();
         int load(string fileName);
         SSEResult GetResult(int rank);
-        void SaveCorrespondenceToFile(string fileName);
+        void save(string fileName);
         GeometricShape * GetSkeletonSSE(int sseId);
         SecStruct * GetSequenceSSE(int sseId);
         int GetSkeletonSSECount();
@@ -117,7 +117,7 @@ namespace Visualization {
         //}
     }
 
-    void SSEEngine::SaveCorrespondenceToFile(string fileName) {
+    void SSEEngine::save(string fileName) {
         ofstream fout(fileName.c_str());
         if (!fout)
         {
