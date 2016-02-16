@@ -26,17 +26,17 @@ using namespace std;
 
 		class Matcher {
 		public:
-			int DoGraphMatching(StandardGraph * sequenceGraph, StandardGraph * skeletonGraph);
+			int match(StandardGraph * sequenceGraph, StandardGraph * skeletonGraph);
 			SSEResult GetSolution(int rank);
-			void FinishGraphMatching();
-			StandardGraph * LoadSequenceGraph();
-			StandardGraph * LoadSkeletonGraph();
+			void destruct();
+			StandardGraph * loadSequence();
+			StandardGraph * loadSkeleton();
 		private:
 			WongMatch * matcher;
 		};
 
 
-		StandardGraph * Matcher::LoadSequenceGraph() {
+		StandardGraph * Matcher::loadSequence() {
 			#ifdef GORGON_DEBUG
 				cout << "In QueryEngine::LoadSequenceGraph" << endl;
 			#endif
@@ -61,7 +61,7 @@ using namespace std;
 			return graph;
 		}
 
-		StandardGraph * Matcher::LoadSkeletonGraph() {
+		StandardGraph * Matcher::loadSkeleton() {
 			clock_t start, finish;
 			StandardGraph * graph;
 			#ifdef VERBOSE
@@ -78,7 +78,7 @@ using namespace std;
 		}
 
 
-		int Matcher::DoGraphMatching(StandardGraph * sequenceGraph, StandardGraph * skeletonGraph) {
+		int Matcher::match(StandardGraph * sequenceGraph, StandardGraph * skeletonGraph) {
 			clock_t start;
 
 			PERFORMANCE_COMPARISON_MODE = false;
@@ -101,7 +101,7 @@ using namespace std;
 			return matcher->GetResult(rank);
 		}
 
-		void Matcher::FinishGraphMatching() {
+		void Matcher::destruct() {
 			delete matcher;
 		}
 	}

@@ -60,7 +60,7 @@ namespace Visualization {
 
     int SSEEngine::ExecuteQuery() {
         if(skeleton != NULL && sequence != NULL) {
-            int resultCount = queryEngine->DoGraphMatching(sequence, skeleton);
+            int resultCount = matcher->match(sequence, skeleton);
             correspondence.clear();
             for(int i = 1; i <= resultCount; i++) {
                 correspondence.push_back(queryEngine->GetSolution(i));

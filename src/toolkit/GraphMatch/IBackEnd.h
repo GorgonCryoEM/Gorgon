@@ -123,7 +123,7 @@ namespace GraphMatch {
         if(sequence != NULL) {
             delete sequence;
         }
-        sequence = queryEngine->LoadSequenceGraph();
+        sequence = queryEngine->loadSequence();
         //sequence->PrintGraph();
     }
 
@@ -131,7 +131,7 @@ namespace GraphMatch {
         if(skeleton != NULL) {
             delete skeleton;
         }
-        skeleton = queryEngine->LoadSkeletonGraph();
+        skeleton = queryEngine->loadSkeleton();
         #ifdef GORGON_DEBUG
               cout<<"\033[32mDEBUG: File:   BackEndInterface.h"<<endl;
               cout<<"DEBUG: Method: BackEndInterface::LoadSkeletonGraph()\033[0m"<<endl;
@@ -143,7 +143,7 @@ namespace GraphMatch {
 
     int IBackEnd::ExecuteQuery() {
         if(skeleton != NULL && sequence != NULL)
-            return queryEngine->DoGraphMatching(sequence, skeleton);
+            return queryEngine->match(sequence, skeleton);
         else
             return 0;
     }
@@ -153,7 +153,7 @@ namespace GraphMatch {
     }
 
     void IBackEnd::CleanupMemory() {
-        queryEngine->FinishGraphMatching();
+        queryEngine->destruct();
     }
 }
 
