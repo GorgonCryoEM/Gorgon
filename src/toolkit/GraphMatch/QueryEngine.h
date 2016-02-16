@@ -32,7 +32,7 @@ using namespace std;
 			StandardGraph * LoadSequenceGraph();
 			StandardGraph * LoadSkeletonGraph();
 		private:
-			WongMatch * matcherConstrainedNoFuture;
+			WongMatch * matcher;
 		};
 
 
@@ -86,23 +86,23 @@ using namespace std;
 			// Match Graphs
 			// Constrained no future
 			if(MISSING_HELIX_COUNT == -1) {
-				matcherConstrainedNoFuture = new WongMatch(sequenceGraph, skeletonGraph);
+				matcher = new WongMatch(sequenceGraph, skeletonGraph);
 			} else {
-				matcherConstrainedNoFuture = new WongMatch(sequenceGraph, skeletonGraph, MISSING_HELIX_COUNT, MISSING_SHEET_COUNT);
+				matcher = new WongMatch(sequenceGraph, skeletonGraph, MISSING_HELIX_COUNT, MISSING_SHEET_COUNT);
 			}
 			start = clock();
-			int matchCount = matcherConstrainedNoFuture->RunMatching(start);
-			matcherConstrainedNoFuture->SaveResults();
+			int matchCount = matcher->RunMatching(start);
+			matcher->SaveResults();
 
 			return matchCount;
 		}
 
 		SSEResult QueryEngine::GetSolution(int rank) {
-			return matcherConstrainedNoFuture->GetResult(rank);
+			return matcher->GetResult(rank);
 		}
 
 		void QueryEngine::FinishGraphMatching() {
-			delete matcherConstrainedNoFuture;
+			delete matcher;
 		}
 	}
 #endif
