@@ -139,19 +139,8 @@ namespace GraphMatch {
     }
 
     void GraphNode::SortOnPattern() {
-        int temp;
-        int minIndex;
-        for(int i = 0; i < n1Top -1; i++) {
-            minIndex = i;
-            for(int j = i+1; j < n1Top; j++) {
-                if(n1[j] < n1[minIndex]) {
-                    minIndex = j;
-                }
-            }
-
-            swap(n1[i], n1[minIndex]);
-            swap(n2[i], n2[minIndex]);
-        }
+        sort(n1.begin(), n1.end());
+        sort(n2.begin(), n2.end());
     }
 
     bool GraphNode::operator==(GraphNode &other) {
