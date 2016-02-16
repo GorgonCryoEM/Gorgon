@@ -144,15 +144,7 @@ namespace GraphMatch {
     }
 
     bool GraphNode::operator==(GraphNode &other) {
-        if(n1Top != other.n1Top) {
-            return false;
-        }
-
-        bool returnValue = true;
-        for(int i = 0; i < n1Top; i++) {
-            returnValue = returnValue && (n1[i] == other.n1[i]) && (n2[i] == other.n2[i]);
-        }
-        return returnValue;
+        return (n1Top == other.n1Top) && (n1 == other.n1) && (n2 == other.n2);
     }
 
     void GraphNode::AddNodeToBitmap(unsigned long long & bitmap, int node) {
