@@ -3,7 +3,7 @@
 #ifndef TOOLKIT_GRAPHMATCH_WONGMATCH_H
 #define TOOLKIT_GRAPHMATCH_WONGMATCH_H
 
-//#include "StandardGraph.h"
+//#include "Graph.h"
 #include "Foundation/LinkedNode.h"
 //#include "NodeList.h"
 //#include "Core/GlobalConstants.h"

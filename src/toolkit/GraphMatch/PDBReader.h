@@ -10,7 +10,7 @@
 //#include <MathTools/Vector3D.h>
 #include "PDBAtom.h"
 //#include "PDBHelix.h"
-#include "StandardGraph.h"
+#include "Graph.h"
 //#include <MathTools/LinearSolver.h>
 
 using namespace std;

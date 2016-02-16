@@ -4,7 +4,7 @@
 #include <vector>
 //#include "Core/GlobalConstants.h"
 #include "ProteinMorph/SecondaryStructure.h"
-//#include "StandardGraph.h"
+//#include "Graph.h"
 //#include "SheetStrand.h"
 #include <string>
 #include <sstream>
