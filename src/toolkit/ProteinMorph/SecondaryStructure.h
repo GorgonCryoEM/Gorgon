@@ -14,7 +14,7 @@ namespace GraphMatch {
         int serialNumber;
         int startPosition;
         int endPosition;
-        string secondaryStructureID;
+        string ID;
 
     public:
         bool IsHelix();
@@ -25,7 +25,7 @@ namespace GraphMatch {
         int GetSerialNumber();
         int GetStartPosition();
         int GetEndPosition();
-        string GetSecondaryStructureID();
+        string getID();
     };
 
     bool SecondaryStructure::IsHelix() {
@@ -64,8 +64,8 @@ namespace GraphMatch {
         return endPosition;
     }
 
-    string SecondaryStructure::GetSecondaryStructureID() {
-        return secondaryStructureID;
+    string SecondaryStructure::getID() {
+        return ID;
     }
 }
 

@@ -174,7 +174,7 @@ namespace GraphMatch {
                 printf("\tHelix %d \t\t(%2d,%2d)\t Length: %d \t Start Pos: %d \t End Pos: %d\n", pdbStructures[i]->serialNumber, seqNode, seqNode+1, pdbStructures[i]->GetLengthResidues(), pdbStructures[i]->startPosition, pdbStructures[i]->endPosition);
                 seqNode += 2;
             } else {
-                printf("\tSheet Strand %s-%d \t(%2d)   \t Length: %d \t Start Pos: %d \t End Pos: %d\n", pdbStructures[i]->secondaryStructureID.c_str(), pdbStructures[i]->serialNumber, seqNode, pdbStructures[i]->GetLengthResidues(), pdbStructures[i]->startPosition, pdbStructures[i]->endPosition);
+                printf("\tSheet Strand %s-%d \t(%2d)   \t Length: %d \t Start Pos: %d \t End Pos: %d\n", pdbStructures[i]->ID.c_str(), pdbStructures[i]->serialNumber, seqNode, pdbStructures[i]->GetLengthResidues(), pdbStructures[i]->startPosition, pdbStructures[i]->endPosition);
                 seqNode += 1;
             }
         }

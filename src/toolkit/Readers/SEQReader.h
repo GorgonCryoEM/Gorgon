@@ -169,7 +169,7 @@ namespace GraphMatch {
                     char * cSseID = new char [sseIDSize + 1];
                     strLen = sseID.copy(cSseID, sseIDSize);
                     cSseID[strLen] = '\0';
-                    currentStructure->secondaryStructureID = cSseID;
+                    currentStructure->ID = cSseID;
                     idNum++;
                     currentStructure->startPosition = startCharNum + startResNum;
                     currentStructure->endPosition = stopCharNum + startResNum;
@@ -207,7 +207,7 @@ namespace GraphMatch {
                     char * cSseID = new char [sseIDSize + 1];
                     strLen = sseID.copy(cSseID, sseIDSize);
                     cSseID[strLen] = '\0';
-                    currentStructure->secondaryStructureID = cSseID;
+                    currentStructure->ID = cSseID;
                     idNum++;
                     currentStructure->startPosition = startCharNum + startResNum;
                     currentStructure->endPosition = stopCharNum + startResNum;
@@ -251,7 +251,7 @@ namespace GraphMatch {
             char * cSseID = new char [sseIDSize + 1];
             strLen = sseID.copy(cSseID, sseIDSize);
             cSseID[strLen] = '\0';
-            currentStructure->secondaryStructureID = cSseID;
+            currentStructure->ID = cSseID;
             idNum++;
             currentStructure->startPosition = startCharNum + startResNum;
             currentStructure->endPosition = stopCharNum + startResNum;
@@ -289,7 +289,7 @@ namespace GraphMatch {
             char * cSseID = new char [sseIDSize + 1];
             strLen = sseID.copy(cSseID, sseIDSize);
             cSseID[strLen] = '\0';
-            currentStructure->secondaryStructureID = cSseID;
+            currentStructure->ID = cSseID;
             idNum++;
             currentStructure->startPosition = startCharNum + startResNum;
             currentStructure->endPosition = stopCharNum + startResNum;
@@ -390,7 +390,7 @@ namespace GraphMatch {
 
             if (structures[i]->sseType == GRAPHEDGE_SHEET) {
 #ifdef VERBOSE
-                cout << "adding strand " << i << " with ID " << structures[i]->secondaryStructureID << endl;
+                cout << "adding strand " << i << " with ID " << structures[i]->ID << endl;
 #endif // VERBOSE
                 graph->SetCost(node+1, (structures[i]->endPosition - structures[i]->startPosition) );
 #ifdef VERBOSE

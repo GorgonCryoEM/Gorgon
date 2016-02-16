@@ -112,7 +112,7 @@ namespace GraphMatch {
             if(token == TOKEN_PDB_HELIX) {
                 currentStructure = new SecondaryStructure();
                 currentStructure->serialNumber = GetInt(line, 7, 3);
-                currentStructure->secondaryStructureID = GetString(line, 11, 3);
+                currentStructure->ID = GetString(line, 11, 3);
                 currentStructure->startPosition = GetInt(line, 21, 4);
                 currentStructure->endPosition = GetInt(line, 33, 4);
                 currentStructure->sseType = GRAPHEDGE_HELIX;
@@ -142,7 +142,7 @@ namespace GraphMatch {
             } else if (token == TOKEN_PDB_SHEET && INCLUDE_STRANDS == 1) {
                 currentStructure = new SecondaryStructure();
                 currentStructure->serialNumber = GetInt(line, 7, 3);
-                currentStructure->secondaryStructureID = GetString(line, 11, 3);
+                currentStructure->ID = GetString(line, 11, 3);
                 currentStructure->startPosition = GetInt(line, 22, 4);
                 currentStructure->endPosition = GetInt(line, 33, 4);
                 currentStructure->sseType = GRAPHEDGE_SHEET;
@@ -231,7 +231,7 @@ namespace GraphMatch {
 
             if (structures[i]->sseType == GRAPHEDGE_SHEET) {
 #ifdef VERBOSE
-                cout << "adding strand " << i << " with ID " << structures[i]->secondaryStructureID << endl;
+                cout << "adding strand " << i << " with ID " << structures[i]->ID << endl;
 #endif // VERBOSE
                 graph->SetCost(node+1, (structures[i]->endPosition - structures[i]->startPosition) );
 #ifdef VERBOSE

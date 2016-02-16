@@ -364,7 +364,7 @@ BOOST_PYTHON_MODULE(@current_pylib@)
         .def("getSerialNumber", &SecondaryStructure::GetSerialNumber)
         .def("getStartPosition", &SecondaryStructure::GetStartPosition)
         .def("getEndPosition", &SecondaryStructure::GetEndPosition)
-        .def("getSecondaryStructureID", &SecondaryStructure::GetSecondaryStructureID)
+        .def("getSecondaryStructureID", &SecondaryStructure::getID)
     ;
 
     class_<GeometricShape>("GeometricShape", init<>())
