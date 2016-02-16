@@ -18,7 +18,7 @@ namespace GraphMatch {
         IBackEnd();
         virtual ~IBackEnd();
         // Initialization Methods
-        void SetConstantsFromFile(string fileName);
+        void load(string fileName);
         bool SetConstant(string token, string value);
         bool SetConstant(string token, double value);
         bool SetConstant(string token, int value);
@@ -36,8 +36,8 @@ namespace GraphMatch {
         int GetHelixConstraintUnk(int sequenceNode);
 
         // Graph Loading
-        void LoadSequenceGraph();
-        void LoadSkeletonGraph();
+        void loadSequence();
+        void loadSkeleton();
         // Process Execution
         virtual int ExecuteQuery();
         // Result Retrieval
@@ -64,7 +64,7 @@ namespace GraphMatch {
         }
     }
 
-    void IBackEnd::SetConstantsFromFile(string fileName) {
+    void IBackEnd::load(string fileName) {
         LoadConstantsFromFile(fileName);
     }
 
@@ -227,7 +227,7 @@ namespace GraphMatch {
         return 0;
     }
 
-    void IBackEnd::LoadSequenceGraph() {
+    void IBackEnd::loadSequence() {
         #ifdef GORGON_DEBUG
         cout << "In BackEndInterface::LoadSequenceGraph" << endl;
         #endif
@@ -238,7 +238,7 @@ namespace GraphMatch {
         //sequence->PrintGraph();
     }
 
-    void IBackEnd::LoadSkeletonGraph() {
+    void IBackEnd::loadSkeleton() {
         if(skeleton != NULL) {
             delete skeleton;
         }
