@@ -27,6 +27,7 @@ namespace GraphMatch {
         double GetConstantDouble(string token);
         int GetConstantInt(string token);
         bool GetConstantBool(string token);
+        void ClearAllConstraints();
 
         // Graph Loading
         void loadSequence();
@@ -108,6 +109,11 @@ namespace GraphMatch {
         bool bVal;
         GetConstantFromToken(token, "", dVal, iVal, bVal);
         return bVal;
+    }
+
+    void IBackEnd::ClearAllConstraints() {
+        ClearAllowedConstraints();
+        ClearNotAllowedConstraints();
     }
 
     void IBackEnd::loadSequence() {
