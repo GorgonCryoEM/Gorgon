@@ -26,7 +26,7 @@ namespace GraphMatch {
         GraphNode(GraphNode * olderNode, int insertingNode, int dummyHelixCount);
         GraphNode();
         ~GraphNode();
-        void PrintNode();
+        void print();
         void PrintNodeConcise();
         void PrintNodeConcise(int rank);
         void SortOnPattern();
@@ -114,7 +114,7 @@ namespace GraphMatch {
         missingNodesUsed = olderNode->missingNodesUsed + dummyHelixCount;
     }
 
-    void GraphNode::PrintNode() {
+    void GraphNode::print() {
         printf("\t");
         for(int i = 0; i < n1Top; i++) {
             printf("(%d, %d) ", n1[i]+1, n2[i]+1);
