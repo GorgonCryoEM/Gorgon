@@ -16,7 +16,7 @@ namespace GraphMatch {
     class PathGenerator {
     public:
         PathGenerator(Graph * graph);
-        void GenerateGraph(StandardNode * node, char * outFileName);
+        void GenerateGraph(GraphNode * node, char * outFileName);
         void GenerateGraph(LinkedNodeStub * node, char * outFileName);
         bool MarkPath(int startHelix, int startCorner, int endHelix, int endCorner, Volume * skeletonVol, Volume * newVol);
 
@@ -28,7 +28,7 @@ namespace GraphMatch {
         this->graph = graph;
     }
 
-    void PathGenerator::GenerateGraph(StandardNode * node, char * outFileName)  {
+    void PathGenerator::GenerateGraph(GraphNode * node, char * outFileName)  {
         Volume * skeletonVol = graph->skeletonVolume;
         Volume * newVol = new Volume(skeletonVol->getSizeX(), skeletonVol->getSizeY(), skeletonVol->getSizeZ());
         int startNode = 0;

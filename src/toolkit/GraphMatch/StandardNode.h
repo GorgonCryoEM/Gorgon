@@ -10,7 +10,7 @@ namespace GraphMatch {
 
     typedef int MatchingList[MAX_NODES];
 
-    class StandardNode {
+    class GraphNode {
     public:
         MatchingList n1; // Contains the currently matched vertices of the pattern graph
         MatchingList n2; // Contains the currently matched vertices of the base graph
@@ -22,25 +22,25 @@ namespace GraphMatch {
         double cost;
         double costGStar;
     public:
-        StandardNode(StandardNode * olderNode);
-        StandardNode(StandardNode * olderNode, int insertingNode, int dummyHelixCount);
-        StandardNode();
-        ~StandardNode();
+        GraphNode(GraphNode * olderNode);
+        GraphNode(GraphNode * olderNode, int insertingNode, int dummyHelixCount);
+        GraphNode();
+        ~GraphNode();
         void PrintNode();
         void PrintNodeConcise();
         void PrintNodeConcise(int rank);
         void SortOnPattern();
-        bool operator==(StandardNode &other);
+        bool operator==(GraphNode &other);
         static void AddNodeToBitmap(unsigned long long & bitmap, int node);
         static void RemoveNodeFromBitmap(unsigned long long & bitmap, int node);
         static bool IsNodeInBitmap(unsigned long long bitmap, int node);
         static int RemoveSmallestNode(unsigned long long & bitmap);
     };
 
-    StandardNode::~StandardNode() {
+    GraphNode::~GraphNode() {
     }
 
-    StandardNode::StandardNode() {
+    GraphNode::GraphNode() {
         cost = 0;
         n1Top = 0;
         n2Top = 0;
@@ -50,7 +50,7 @@ namespace GraphMatch {
         m2Bitmap = 0;
     }
 
-    StandardNode::StandardNode(StandardNode * olderNode) {
+    GraphNode::GraphNode(GraphNode * olderNode) {
         for(int i = 0; i < olderNode->n1Top; i++) {
             n1[i] = olderNode->n1[i];
             n2[i] = olderNode->n2[i];
@@ -64,7 +64,7 @@ namespace GraphMatch {
         missingNodesUsed = olderNode->missingNodesUsed;
     }
 
-    StandardNode::StandardNode(StandardNode * olderNode, int insertingNode, int dummyHelixCount) {
+    GraphNode::GraphNode(GraphNode * olderNode, int insertingNode, int dummyHelixCount) {
 
         m1Bitmap = olderNode->m1Bitmap;
         m2Bitmap = olderNode->m2Bitmap;
@@ -105,7 +105,7 @@ namespace GraphMatch {
         missingNodesUsed = olderNode->missingNodesUsed + dummyHelixCount;
     }
 
-    void StandardNode::PrintNode() {
+    void GraphNode::PrintNode() {
         printf("\t");
         for(int i = 0; i < n1Top; i++) {
             printf("(%d, %d) ", n1[i]+1, n2[i]+1);
@@ -113,7 +113,7 @@ namespace GraphMatch {
         printf(" - %f\n", cost);
     }
 
-    void StandardNode::PrintNodeConcise() {
+    void GraphNode::PrintNodeConcise() {
         printf("\t");
         for(int i = 0; i < n1Top; i++) {
             printf("%d ", n2[i]+1);
@@ -121,7 +121,7 @@ namespace GraphMatch {
         printf(" - %f\n", cost);
     }
 
-    void StandardNode::PrintNodeConcise(int rank) {
+    void GraphNode::PrintNodeConcise(int rank) {
         printf(" %d)\t", rank);
         for(int i = 0; i < n1Top; i++) {
             printf("%d ", n2[i]+1);
@@ -129,7 +129,7 @@ namespace GraphMatch {
         printf(" - %f\n", cost);
     }
 
-    void StandardNode::SortOnPattern() {
+    void GraphNode::SortOnPattern() {
         int temp;
         int minIndex;
         for(int i = 0; i < n1Top -1; i++) {
@@ -145,7 +145,7 @@ namespace GraphMatch {
         }
     }
 
-    bool StandardNode::operator==(StandardNode &other) {
+    bool GraphNode::operator==(GraphNode &other) {
         if(n1Top != other.n1Top) {
             return false;
         }
@@ -157,21 +157,21 @@ namespace GraphMatch {
         return returnValue;
     }
 
-    void StandardNode::AddNodeToBitmap(unsigned long long & bitmap, int node) {
+    void GraphNode::AddNodeToBitmap(unsigned long long & bitmap, int node) {
         bitmap = bitmap | ((unsigned long long)1 << node);
     }
 
-    void StandardNode::RemoveNodeFromBitmap(unsigned long long & bitmap, int node) {
+    void GraphNode::RemoveNodeFromBitmap(unsigned long long & bitmap, int node) {
         bitmap = bitmap - ((unsigned long long)1 << node);
     }
 
-    bool StandardNode::IsNodeInBitmap(unsigned long long bitmap, int node) {
+    bool GraphNode::IsNodeInBitmap(unsigned long long bitmap, int node) {
         unsigned long long bitvalue = ((unsigned long long)1 << node);
         return ((bitmap & bitvalue) == bitvalue);
     }
 
 
-    int StandardNode::RemoveSmallestNode(unsigned long long & bitmap) {
+    int GraphNode::RemoveSmallestNode(unsigned long long & bitmap) {
         for(int i = 1; i <= MAX_NODES; i++) {
             if (IsNodeInBitmap(bitmap, i)) {
                 RemoveNodeFromBitmap(bitmap, i);
