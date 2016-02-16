@@ -8,12 +8,10 @@ using namespace std;
 
 namespace GraphMatch {
 
-    typedef vector<int> MatchingList;
-
     class GraphNode {
     public:
-        MatchingList n1; // Contains the currently matched vertices of the pattern graph
-        MatchingList n2; // Contains the currently matched vertices of the base graph
+        vector<int> n1; // Contains the currently matched vertices of the pattern graph
+        vector<int> n2; // Contains the currently matched vertices of the base graph
         unsigned long long m1Bitmap;
         unsigned long long m2Bitmap;
         int n1Top, n2Top;
