@@ -23,7 +23,6 @@ namespace GraphMatch {
         bool SetConstant(string token, double value);
         bool SetConstant(string token, int value);
         bool SetConstant(string token, bool value);
-        bool GetConstant(string token, string value);
         string GetConstantString(string token);
         double GetConstantDouble(string token);
         int GetConstantInt(string token);
@@ -83,13 +82,6 @@ namespace GraphMatch {
 
     bool BackEndInterface::SetConstant(string token, bool value) {
         return setConstantFree(token, value);
-    }
-
-    bool BackEndInterface::GetConstant(string token, string value) {
-        int iVal;
-        double dVal;
-        bool bVal;
-        return GetConstantFromToken(token, value, dVal, iVal, bVal);
     }
 
     string BackEndInterface::GetConstantString(string token) {
