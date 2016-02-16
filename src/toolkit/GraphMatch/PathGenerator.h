@@ -98,7 +98,10 @@ namespace GraphMatch {
     }
 
 
-    bool PathGenerator::MarkPath(int startHelix, int startCorner, int endHelix, int endCorner, Volume * skeletonVol, Volume * newVol) {
+    bool PathGenerator::MarkPath(int startHelix, int startCorner, int endHelix,
+                                 int endCorner, Volume * skeletonVol,
+                                 Volume * newVol)
+    {
         vector<Point3Int *> oldStack;
         vector<Point3Int *> newStack;
 
