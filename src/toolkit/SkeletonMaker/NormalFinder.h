@@ -15,7 +15,6 @@ namespace GraySkeletonCPP {
     class NormalFinder {
     public:
         NormalFinder();
-        ~NormalFinder();
 
         void InitializeGraph(Volume * vol, int x, int y, int z);
         Vector3DFloat GetSurfaceNormal();
@@ -54,9 +53,6 @@ namespace GraySkeletonCPP {
         SetCurveIndex(0,-1,0,3);
         SetCurveIndex(0,0,-1,4);
         SetCurveIndex(0,0,1,5);
-    }
-
-    NormalFinder::~NormalFinder() {
     }
 
     void NormalFinder::InitializeGraph(Volume * vol, int x, int y, int z) {
