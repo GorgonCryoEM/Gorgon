@@ -30,9 +30,9 @@ namespace Visualization {
         int GetSkeletonSSECount();
         int GetSequenceSSECount();
 
-        void InitializePathFinder(NonManifoldMesh_Annotated * mesh);
+        void InitializePathFinder(NonManifoldMesh * mesh);
         void InitializePathHelix(int helixIndex, Vector3DFloat p1, Vector3DFloat p2, float radius);
-        void PrunePathMesh(NonManifoldMesh_Annotated * mesh, vector<unsigned int> pathVertices);
+        void PrunePathMesh(NonManifoldMesh * mesh, vector<unsigned int> pathVertices);
         void GetPathSpace(int helix1Ix, bool helix1Start, int helix2Ix, bool helix2Start);
         int GetPathVertexCount();
         Vector3DFloat GetPathVertex(int index);
@@ -45,8 +45,8 @@ namespace Visualization {
         vector<SSEResult> correspondence;
 
         // Attributes for path calculation
-        NonManifoldMesh_Annotated * pathMesh;
-        NonManifoldMesh_Annotated * singlePathMesh;
+        NonManifoldMesh * pathMesh;
+        NonManifoldMesh * singlePathMesh;
         map<unsigned int, vector<unsigned int> > helixStartPoints;
         map<unsigned int, vector<unsigned int> > helixEndPoints;
         int pathCount;
@@ -163,8 +163,8 @@ namespace Visualization {
     }
 
 
-    void SSEEngine::InitializePathFinder(NonManifoldMesh_Annotated * mesh) {
-        pathMesh = new NonManifoldMesh_Annotated(mesh);
+    void SSEEngine::InitializePathFinder(NonManifoldMesh * mesh) {
+        pathMesh = new NonManifoldMesh(mesh);
         for(unsigned int i = 0; i < pathMesh->vertices.size(); i++) {
             pathMesh->vertices[i].tag = true;
         }
@@ -219,7 +219,7 @@ namespace Visualization {
 
     }
 
-    void SSEEngine::PrunePathMesh(NonManifoldMesh_Annotated * mesh, vector<unsigned int> pathVertices) {
+    void SSEEngine::PrunePathMesh(NonManifoldMesh * mesh, vector<unsigned int> pathVertices) {
         for(unsigned int i = 0; i < mesh->vertices.size(); i++) {
             mesh->vertices[i].tag = true;
         }
@@ -229,7 +229,7 @@ namespace Visualization {
     }
 
     void SSEEngine::GetPathSpace(int helix1Ix, bool helix1Start, int helix2Ix, bool helix2Start) {
-        NonManifoldMesh_Annotated * mesh = new NonManifoldMesh_Annotated(pathMesh);
+        NonManifoldMesh * mesh = new NonManifoldMesh(pathMesh);
 
         vector<unsigned int> queue;
         for(unsigned int i = 0; i < helixStartPoints[helix1Ix].size(); i++) {
@@ -257,7 +257,7 @@ namespace Visualization {
 
         PrunePathMesh(mesh, pathVertices);
 
-        singlePathMesh = new NonManifoldMesh_Annotated();
+        singlePathMesh = new NonManifoldMesh();
         map<unsigned int, unsigned int> vertexMap;
         for(unsigned int i=0; i < mesh->vertices.size(); i++) {
             if(!mesh->vertices[i].tag) {
