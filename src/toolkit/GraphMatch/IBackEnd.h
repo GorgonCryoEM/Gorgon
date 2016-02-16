@@ -30,7 +30,6 @@ namespace GraphMatch {
         void ClearAllConstraints();
         void SetHelixConstraint(int sequenceHelix, int skeletonHelix);
         void SetNodeConstraint(int sequenceNode, int skeletonNode);
-        int GetStrandConstraint(int sequenceNode, int constraintNum);
 
         // Graph Loading
         void loadSequence();
@@ -126,14 +125,6 @@ namespace GraphMatch {
     void IBackEnd::SetNodeConstraint(int sequenceNode, int skeletonNode) {
         AddNodeConstraint(sequenceNode, skeletonNode);
     }
-
-    int IBackEnd::GetStrandConstraint(int sequenceNode, int constraintNum=0) {
-        // get # of helices
-        // check that seqNode > numH
-        // return first constraint, or zero if none
-        return GetNodeConstraint(sequenceNode, constraintNum);
-    }
-
 
     void IBackEnd::loadSequence() {
         #ifdef GORGON_DEBUG
