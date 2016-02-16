@@ -20,7 +20,7 @@ namespace SkeletonMaker {
             List();
             QueueNode* getNext();
             void reset();
-            int getNumElements();
+            int size();
             void prepend(int xx, int yy, int zz);
             QueueNode * remove();
 
@@ -53,7 +53,7 @@ namespace SkeletonMaker {
         it = q.end();
     }
 
-    int List::getNumElements() {
+    int List::size() {
         return q.size();
     }
 
