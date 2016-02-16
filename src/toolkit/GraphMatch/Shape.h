@@ -32,7 +32,7 @@ namespace GraphMatch {
         double GetCornerCellsMaxLength();
         vector<Point3> GetMaxLengthCorners();
         int GetLocationInVector(vector<Point3Int> v, Point3Int point);
-        int GetGeometricShapeType();
+        int getType();
         Matrix4 GetRotationMatrix();
         Matrix4 GetWorldToObjectMatrix();
         Point3 GetCenter();
@@ -184,7 +184,7 @@ namespace GraphMatch {
         return loc;
     }
 
-    int Shape::GetShapeType() {
+    int Shape::getType() {
         return geometricShapeType;
     }
     Matrix4 Shape::GetRotationMatrix() {
