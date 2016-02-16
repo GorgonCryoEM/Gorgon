@@ -31,9 +31,6 @@ namespace GraphMatch {
         void SetHelixConstraint(int sequenceHelix, int skeletonHelix);
         void SetNodeConstraint(int sequenceNode, int skeletonNode);
         int GetStrandConstraint(int sequenceNode, int constraintNum);
-        int GetHelixConstraintFwd(int sequenceNode);
-        int GetHelixConstraintRev(int sequenceNode);
-        int GetHelixConstraintUnk(int sequenceNode);
 
         // Graph Loading
         void loadSequence();
@@ -137,95 +134,6 @@ namespace GraphMatch {
         return GetNodeConstraint(sequenceNode, constraintNum);
     }
 
-    int IBackEnd::GetHelixConstraintFwd(int firstHelixNode) {
-        if (GetNodeConstraint(firstHelixNode, 1) != 0 || GetNodeConstraint(firstHelixNode+1, 1) != 0) {
-            return 0; // more than one constraint per node
-        }
-        int c1 = GetNodeConstraint(firstHelixNode, 0);
-        int c2 = GetNodeConstraint(firstHelixNode+1, 0);
-        //cout << "c1=" << c1 << ", c2=" << c2 << endl;
-
-        // constrained as missing
-        if (c1==-1 || c2==-1) {
-            return -1;
-        }
-
-        // three cases for forward match:
-        // c1 odd and c2 == c1+1
-        if (c1>0 && c1%2==1 && c2==c1+1) {
-            return c1;
-        }
-        // c1 odd and c2 zero
-        if (c1>0 && c1%2==1 && c2==0) {
-            return c1;
-        }
-        // c1 zero and c2 even
-        if (c1==0 && c2>0 && c2%2==0) {
-            return c2-1;
-        }
-        // not a forward helix constraint
-        return 0;
-    }
-
-    int IBackEnd::GetHelixConstraintRev(int firstHelixNode) {
-        if (GetNodeConstraint(firstHelixNode, 1) != 0 || GetNodeConstraint(firstHelixNode+1, 1) != 0) {
-            return 0; // more than one constraint per node
-        }
-        int c1 = GetNodeConstraint(firstHelixNode, 0);
-        int c2 = GetNodeConstraint(firstHelixNode+1, 0);
-        //cout << "c1=" << c1 << ", c2=" << c2 << endl;
-
-        // constrained as missing
-        if (c1==-1 || c2==-1) {
-            return -1;
-        }
-
-        // three cases for reverse match:
-        // c1 even and c2 == c1-1
-        if (c1>0 && c1%2==0 && c2==c1-1) {
-            return c1;
-        }
-        // c1 even and c2 zero
-        if (c1>0 && c1%2==0 && c2==0) {
-            return c1;
-        }
-        // c1 zero and c2 odd
-        if (c1==0 && c2>0 && c2%2==1) {
-            return c2+1;
-        }
-        // not a reverse helix constraint
-        return 0;
-    }
-
-    int IBackEnd::GetHelixConstraintUnk(int firstHelixNode) {
-        if (GetNodeConstraint(firstHelixNode, 2) != 0 || GetNodeConstraint(firstHelixNode+1, 2) != 0) {
-            return 0; // more than two constraints per node
-        }
-        int c11 = GetNodeConstraint(firstHelixNode, 0);
-        int c12 = GetNodeConstraint(firstHelixNode, 1);
-        int c21 = GetNodeConstraint(firstHelixNode+1, 0);
-        int c22 = GetNodeConstraint(firstHelixNode+1, 1);
-        //cout << "c1=" << c1 << ", c2=" << c2 << endl;
-
-        // constrained as missing
-        if (c11==-1 || c12==-1 || c21==-1 || c22==-1) {
-            return -1;
-        }
-
-        // for unknown match, both nodes must store both numbers
-        if (c11<=0 || c12<=0 || c21<=0 || c22<=0) {
-            return 0;
-        }
-        if ((c11==c21 && c12==c22) || (c11==c22 && c12==c21)) {
-            if (c11<c12) {
-                return c11;
-            } else {
-                return c12;
-            }
-        }
-        // not a reverse helix constraint
-        return 0;
-    }
 
     void IBackEnd::loadSequence() {
         #ifdef GORGON_DEBUG
