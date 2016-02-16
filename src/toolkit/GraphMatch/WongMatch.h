@@ -9,7 +9,7 @@
 //#include "Core/GlobalConstants.h"
 #include "PathGenerator.h"
 
-#include "Foundation/FakePair.h"
+#include "Foundation/Pair.h"
 //#include "Structures.h"
 //#include <ctime>
 ////#include <SkeletonMaker/PriorityQueue.h>
