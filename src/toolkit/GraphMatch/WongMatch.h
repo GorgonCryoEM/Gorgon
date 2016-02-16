@@ -46,9 +46,9 @@ namespace GraphMatch {
 
             vector<LinkedNodeStub*> usedNodes;
             vector<SSEResult> solutions;
-            int missingHelixCount;
-            int missingSheetCount;
-            int expandCount;
+            int nMissHelix;
+            int nMissSheet;
+            int nExpand;
             int foundCount;
             int longestMatch;
             PathGenerator * pathGenerator;
@@ -82,8 +82,8 @@ namespace GraphMatch {
                          int missingSheetCount)
     {
         Init(patternGraph, baseGraph);
-        this->missingHelixCount = missingHelixCount;
-        this->missingSheetCount = missingSheetCount;
+        this->nMissHelix = missingHelixCount;
+        this->nMissSheet = missingSheetCount;
     }
 
     WongMatch::~WongMatch() {
@@ -128,17 +128,17 @@ namespace GraphMatch {
         cout << "Loading base graph" << endl;
 #endif
         this->baseGraph = baseGraph;
-        expandCount = 0;
+        nExpand = 0;
 
 #ifdef VERBOSE
         cout << "Finding the number of missing helices and sheets" << endl;
 #endif
-        missingHelixCount = (patternGraph->GetNodeCount() - baseGraph->GetNodeCount()) / 2;
-        if(missingHelixCount < 0) {
-            missingHelixCount = 0;
+        nMissHelix = (patternGraph->GetNodeCount() - baseGraph->GetNodeCount()) / 2;
+        if(nMissHelix < 0) {
+            nMissHelix = 0;
         }
-        if(missingSheetCount < 0) {
-            missingSheetCount = 0;
+        if(nMissSheet < 0) {
+            nMissSheet = 0;
         }
 
         // new method of counting missing sheets and helices
@@ -182,14 +182,14 @@ namespace GraphMatch {
              << patternSheetNodes << " sheet nodes." << endl;
 #endif
 
-        missingHelixCount = (patternHelixNodes - baseHelixNodes) / 2;
+        nMissHelix = (patternHelixNodes - baseHelixNodes) / 2;
 
         // allow all strands to be missing
-        missingSheetCount = patternSheetNodes;
+        nMissSheet = patternSheetNodes;
 
 #ifdef VERBOSE
-        cout << "missing helix count is " << missingHelixCount
-             << ", missing sheet count is " << missingSheetCount << endl;
+        cout << "missing helix count is " << nMissHelix
+             << ", missing sheet count is " << nMissSheet << endl;
         cout << "missing helix penalty is " << MISSING_HELIX_PENALTY
              << ", missing sheet penalty is " << MISSING_SHEET_PENALTY << endl;
 #endif
@@ -238,7 +238,7 @@ namespace GraphMatch {
                 finishTime = clock();
                 foundCount++;
                 printf(": (%d expanded) (%f seconds) (%d parent size)\n",
-                                        expandCount,
+                                        nExpand,
                                         (double) (finishTime - startTime) / (double) CLOCKS_PER_SEC,
                                         (int)usedNodes.size());
 #ifdef _WIN32
@@ -655,7 +655,7 @@ namespace GraphMatch {
     // costs of matches are determined by the GetC method
     bool WongMatch::ExpandNode(LinkedNodeStub * currentStub) {
         bool expanded = false;
-        expandCount++;
+        nExpand++;
 
         LinkedNode * temp;
         double edgeCost;
@@ -685,8 +685,8 @@ namespace GraphMatch {
                     int skippedSheetNodes = 0;
                 for(int j = 0;
                          j <= currentM1Top
-                      && skippedHelixNodes + currentNode->missingHelixNodesUsed <= missingHelixCount * 2
-                      && skippedSheetNodes + currentNode->missingSheetNodesUsed <= missingSheetCount;
+                      && skippedHelixNodes + currentNode->missingHelixNodesUsed <= nMissHelix * 2
+                      && skippedSheetNodes + currentNode->missingSheetNodesUsed <= nMissSheet;
                     ) {
                         // i is the node from baseGraph being matched to currentNode
                         // j is the number of missing helix or sheet nodes from patternGraph to be skipped for this match
@@ -808,8 +808,8 @@ namespace GraphMatch {
         }
 
         // if possible, create an edge to jump to the end of the sequence
-        if(    2 * missingHelixCount - currentNode->missingHelixNodesUsed >= remainingHelixNodes
-            && 2 * missingSheetCount - currentNode->missingSheetNodesUsed >= remainingSheetNodes
+        if(    2 * nMissHelix - currentNode->missingHelixNodesUsed >= remainingHelixNodes
+            && 2 * nMissSheet - currentNode->missingSheetNodesUsed >= remainingSheetNodes
            )
         {
             notConstrained = true;
