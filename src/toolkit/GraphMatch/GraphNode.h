@@ -8,7 +8,7 @@ using namespace std;
 
 namespace GraphMatch {
 
-    typedef int MatchingList[MAX_NODES];
+    typedef vector<int> MatchingList;
 
     class GraphNode {
     public:
@@ -40,7 +40,10 @@ namespace GraphMatch {
     GraphNode::~GraphNode() {
     }
 
-    GraphNode::GraphNode() {
+    GraphNode::GraphNode()
+        : n1(MAX_NODES),
+          n2(MAX_NODES)
+    {
         cost = 0;
         n1Top = 0;
         n2Top = 0;
@@ -50,7 +53,10 @@ namespace GraphMatch {
         m2Bitmap = 0;
     }
 
-    GraphNode::GraphNode(GraphNode * olderNode) {
+    GraphNode::GraphNode(GraphNode * olderNode)
+        : n1(MAX_NODES),
+          n2(MAX_NODES)
+    {
         for(int i = 0; i < olderNode->n1Top; i++) {
             n1[i] = olderNode->n1[i];
             n2[i] = olderNode->n2[i];
@@ -64,7 +70,10 @@ namespace GraphMatch {
         missingNodesUsed = olderNode->missingNodesUsed;
     }
 
-    GraphNode::GraphNode(GraphNode * olderNode, int insertingNode, int dummyHelixCount) {
+    GraphNode::GraphNode(GraphNode * olderNode, int insertingNode, int dummyHelixCount)
+        : n1(MAX_NODES),
+          n2(MAX_NODES)
+    {
 
         m1Bitmap = olderNode->m1Bitmap;
         m2Bitmap = olderNode->m2Bitmap;
