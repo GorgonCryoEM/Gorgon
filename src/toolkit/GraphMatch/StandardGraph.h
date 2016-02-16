@@ -170,7 +170,7 @@ namespace GraphMatch {
         char temp;
         int seqNode = 1;
         for(int i = 0; i < (int)pdbStructures.size(); i++) {
-            if(pdbStructures[i]->secondaryStructureType == GRAPHEDGE_HELIX) {
+            if(pdbStructures[i]->sseType == GRAPHEDGE_HELIX) {
                 printf("\tHelix %d \t\t(%2d,%2d)\t Length: %d \t Start Pos: %d \t End Pos: %d\n", pdbStructures[i]->serialNumber, seqNode, seqNode+1, pdbStructures[i]->GetLengthResidues(), pdbStructures[i]->startPosition, pdbStructures[i]->endPosition);
                 seqNode += 2;
             } else {

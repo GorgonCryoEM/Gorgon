@@ -173,7 +173,7 @@ namespace GraphMatch {
                     idNum++;
                     currentStructure->startPosition = startCharNum + startResNum;
                     currentStructure->endPosition = stopCharNum + startResNum;
-                    currentStructure->secondaryStructureType = GRAPHEDGE_HELIX;
+                    currentStructure->sseType = GRAPHEDGE_HELIX;
                     add = true;
                     for(unsigned int i = 0; i < structures.size(); i++) {
                         add = add && !((currentStructure->startPosition == structures[i]->startPosition) &&
@@ -186,7 +186,7 @@ namespace GraphMatch {
                         cout << currentStructure->GetEndPosition() << "):";
                         cout << " Serial=" << currentStructure->GetSerialNumber();
                         cout << " ID=" << currentStructure->GetSecondaryStructureID();
-                        cout << " Type=" << currentStructure->secondaryStructureType << endl;
+                        cout << " Type=" << currentStructure->sseType << endl;
                     #endif
 
                     if(add) {
@@ -211,7 +211,7 @@ namespace GraphMatch {
                     idNum++;
                     currentStructure->startPosition = startCharNum + startResNum;
                     currentStructure->endPosition = stopCharNum + startResNum;
-                    currentStructure->secondaryStructureType = GRAPHEDGE_SHEET;
+                    currentStructure->sseType = GRAPHEDGE_SHEET;
                     add = true;
                     for(unsigned int i = 0; i < structures.size(); i++) {
                         add = add && !((currentStructure->startPosition == structures[i]->startPosition) &&
@@ -224,7 +224,7 @@ namespace GraphMatch {
                         cout << currentStructure->GetEndPosition() << "):";
                         cout << " Serial=" << currentStructure->GetSerialNumber();
                         cout << " ID=" << currentStructure->GetSecondaryStructureID();
-                        cout << " Type=" << currentStructure->secondaryStructureType << endl;
+                        cout << " Type=" << currentStructure->sseType << endl;
                     #endif
 
                     if(add) {
@@ -255,7 +255,7 @@ namespace GraphMatch {
             idNum++;
             currentStructure->startPosition = startCharNum + startResNum;
             currentStructure->endPosition = stopCharNum + startResNum;
-            currentStructure->secondaryStructureType = GRAPHEDGE_HELIX;
+            currentStructure->sseType = GRAPHEDGE_HELIX;
             add = true;
             for(unsigned int i = 0; i < structures.size(); i++) {
                 add = add && !((currentStructure->startPosition == structures[i]->startPosition) &&
@@ -268,7 +268,7 @@ namespace GraphMatch {
                 cout << currentStructure->GetEndPosition() << "):";
                 cout << " Serial=" << currentStructure->GetSerialNumber();
                 cout << " ID=" << currentStructure->GetSecondaryStructureID();
-                cout << " Type=" << currentStructure->secondaryStructureType << endl;
+                cout << " Type=" << currentStructure->sseType << endl;
             #endif
 
             if(add) {
@@ -293,7 +293,7 @@ namespace GraphMatch {
             idNum++;
             currentStructure->startPosition = startCharNum + startResNum;
             currentStructure->endPosition = stopCharNum + startResNum;
-            currentStructure->secondaryStructureType = GRAPHEDGE_SHEET;
+            currentStructure->sseType = GRAPHEDGE_SHEET;
             add = true;
             for(unsigned int i = 0; i < structures.size(); i++) {
                 add = add && !((currentStructure->startPosition == structures[i]->startPosition) &&
@@ -306,7 +306,7 @@ namespace GraphMatch {
                 cout << currentStructure->GetEndPosition() << "):";
                 cout << " Serial=" << currentStructure->GetSerialNumber();
                 cout << " ID=" << currentStructure->GetSecondaryStructureID();
-                cout << " Type=" << currentStructure->secondaryStructureType << endl;
+                cout << " Type=" << currentStructure->sseType << endl;
             #endif
 
             if(add) {
@@ -348,9 +348,9 @@ namespace GraphMatch {
         vector<string> strandLabels;
         for(int i = 0; i < (int)structures.size(); i++) {
             currentStructure = structures[i];
-            if (currentStructure->secondaryStructureType == GRAPHEDGE_HELIX) {
+            if (currentStructure->sseType == GRAPHEDGE_HELIX) {
                 numHelices++;
-            } else	if (currentStructure->secondaryStructureType == GRAPHEDGE_SHEET) {
+            } else	if (currentStructure->sseType == GRAPHEDGE_SHEET) {
                 numSheets++;
             }
         }
@@ -363,7 +363,7 @@ namespace GraphMatch {
         // Adding the rest of the structures into the graph
         int node = 0;
         for(i = 0; i < (int)structures.size(); i++) {
-            if (structures[i]->secondaryStructureType == GRAPHEDGE_HELIX) {
+            if (structures[i]->sseType == GRAPHEDGE_HELIX) {
 #ifdef VERBOSE
                 cout << "adding helix " << i << endl;
 #endif // VERBOSE
@@ -374,9 +374,9 @@ namespace GraphMatch {
 
                 // An edge for the helix
                 graph->SetCost(node+1, node+2, structures[i]->GetLengthResidues());
-                graph->SetType(node+1, node+2, structures[i]->secondaryStructureType);
+                graph->SetType(node+1, node+2, structures[i]->sseType);
                 graph->SetCost(node+2, node+1, structures[i]->GetLengthResidues());
-                graph->SetType(node+2, node+1, structures[i]->secondaryStructureType);
+                graph->SetType(node+2, node+1, structures[i]->sseType);
 
                 if(i != 0) {
                     // An edge for the loop before the helix
@@ -388,7 +388,7 @@ namespace GraphMatch {
                 node += 2;
             }
 
-            if (structures[i]->secondaryStructureType == GRAPHEDGE_SHEET) {
+            if (structures[i]->sseType == GRAPHEDGE_SHEET) {
 #ifdef VERBOSE
                 cout << "adding strand " << i << " with ID " << structures[i]->secondaryStructureID << endl;
 #endif // VERBOSE

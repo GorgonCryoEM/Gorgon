@@ -10,7 +10,7 @@ namespace GraphMatch {
 
     class SecondaryStructure {
     public:
-        int secondaryStructureType;
+        int sseType;
         int serialNumber;
         int startPosition;
         int endPosition;
@@ -29,11 +29,11 @@ namespace GraphMatch {
     };
 
     bool SecondaryStructure::IsHelix() {
-        return (secondaryStructureType == GRAPHEDGE_HELIX);
+        return (sseType == GRAPHEDGE_HELIX);
     }
 
     bool SecondaryStructure::IsSheet() {
-        return (secondaryStructureType == GRAPHEDGE_SHEET);
+        return (sseType == GRAPHEDGE_SHEET);
     }
 
     int SecondaryStructure::GetLengthResidues() {

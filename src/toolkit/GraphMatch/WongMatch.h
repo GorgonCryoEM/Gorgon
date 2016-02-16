@@ -882,7 +882,7 @@ namespace GraphMatch {
         }
 
         for(int i = 0; i < (int)patternGraph->pdbStructures.size(); i++) {
-            if(patternGraph->pdbStructures[i]->secondaryStructureType == GRAPHEDGE_SHEET) {
+            if(patternGraph->pdbStructures[i]->sseType == GRAPHEDGE_SHEET) {
                 totalStrandLength += patternGraph->pdbStructures[i]->GetLengthResidues();
 #ifdef VERBOSE
                 cout << "After adding strand " << i << " with length "
