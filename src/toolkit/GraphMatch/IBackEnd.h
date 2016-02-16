@@ -28,7 +28,6 @@ namespace GraphMatch {
         int GetConstantInt(string token);
         bool GetConstantBool(string token);
         void ClearAllConstraints();
-        void SetHelixConstraint(int sequenceHelix, int skeletonHelix);
         void SetNodeConstraint(int sequenceNode, int skeletonNode);
 
         // Graph Loading
@@ -116,10 +115,6 @@ namespace GraphMatch {
     void IBackEnd::ClearAllConstraints() {
         ClearAllowedConstraints();
         ClearNotAllowedConstraints();
-    }
-
-    void IBackEnd::SetHelixConstraint(int sequenceHelix, int skeletonHelix) {
-        AddHelixConstraint(sequenceHelix, skeletonHelix);
     }
 
     void IBackEnd::SetNodeConstraint(int sequenceNode, int skeletonNode) {
