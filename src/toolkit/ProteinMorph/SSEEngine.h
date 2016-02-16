@@ -63,7 +63,7 @@ namespace Visualization {
             int resultCount = matcher->match(sequence, skeleton);
             correspondence.clear();
             for(int i = 1; i <= resultCount; i++) {
-                correspondence.push_back(queryEngine->GetSolution(i));
+                correspondence.push_back(matcher->GetSolution(i));
             }
             return resultCount;
         } else {
