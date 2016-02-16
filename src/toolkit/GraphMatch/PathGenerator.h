@@ -7,7 +7,7 @@
 //#include <Core/volume.h>
 //#include "VectorMath.h"
 #include <vector>
-#include "StandardNode.h"
+#include "GraphNode.h"
 
 using namespace std;
 //using namespace SkeletonMaker;
