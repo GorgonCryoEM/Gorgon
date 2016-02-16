@@ -6,21 +6,21 @@
 
 namespace Foundation {
     template <class T, class U>
-    class FakePair {
+    class Pair {
     public:
-        FakePair(T key, U value);
+        Pair(T key, U value);
     public:
         T first;
         U second;
     };
 
     template <class T, class U>
-    FakePair<T, U>::FakePair(T key, U value)
+    Pair<T, U>::Pair(T key, U value)
         : first(key), second(value)
     {}
 
     template <class T, class U>
-    inline bool operator<(const FakePair<T,U>& lhs, const FakePair<T, U> &rhs) {
+    inline bool operator<(const Pair<T,U>& lhs, const Pair<T, U> &rhs) {
         return (lhs.first < rhs.first);
     }
 }
