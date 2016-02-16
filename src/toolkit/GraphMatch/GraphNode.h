@@ -140,8 +140,8 @@ namespace GraphMatch {
                 }
             }
 
-            temp = n1[i];	n1[i] = n1[minIndex];	n1[minIndex] = temp;
-            temp = n2[i];	n2[i] = n2[minIndex];	n2[minIndex] = temp;
+            swap(n1[i], n1[minIndex]);
+            swap(n2[i], n2[minIndex]);
         }
     }
 
