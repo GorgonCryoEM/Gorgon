@@ -15,7 +15,6 @@ namespace GraphMatch {
         public:
             Vector3();
             Vector3(T _x, T _y, T _z);
-            Vector3(const Vector3& v);
             Vector3(const vector<T>& vec);
 
 //            T X() const;
@@ -101,11 +100,6 @@ namespace GraphMatch {
     template <class T>
     Vector3<T>::Vector3()
             : x(0), y(0), z(0)
-    {}
-
-    template <class T>
-    Vector3<T>::Vector3(const Vector3& v)
-            : x(v[0]), y(v[1]), z(v[2])
     {}
 
     template <class T>
