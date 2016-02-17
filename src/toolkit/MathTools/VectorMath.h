@@ -179,12 +179,12 @@ namespace GraphMatch {
         const double &operator[](int n) const { return (&x)[n]; }
               double &operator[](int n)       { return (&x)[n]; }
 
-        Point3& operator+=(const Vector3& v) {
+        Point3& operator+=(const Vector3<double>& v) {
             x += v[0]; y += v[1]; z += v[2];
             return *this;
         }
 
-        Point3& operator-=(const Vector3& v) {
+        Point3& operator-=(const Vector3<double>& v) {
             x -= v[0]; y -= v[1]; z -= v[2];
             return *this;
         }
@@ -194,15 +194,15 @@ namespace GraphMatch {
             return *this;
         }
 
-        Vector3 operator-(const Point3 & p) const {
-            return Vector3(x - p.x, y - p.y, z - p.z);
+        Vector3<double> operator-(const Point3 & p) const {
+            return Vector3<double>(x - p.x, y - p.y, z - p.z);
         }
 
-        Point3 operator+(const Vector3 & v) const {
+        Point3 operator+(const Vector3<double> & v) const {
             return Point3(x + v[0], y + v[1], z + v[2]);
         }
 
-        Point3 operator-(const Vector3 & v) const {
+        Point3 operator-(const Vector3<double> & v) const {
             return Point3(x - v[0], y - v[1], z - v[2]);
         }
 
@@ -271,7 +271,7 @@ namespace GraphMatch {
                     mat[ index(i,j) ] = (i == j) ? 1.0 : 0.0;
         }
 
-        Matrix3(const Vector3& row0, const Vector3& row1, const Vector3& row2) {
+        Matrix3(const Vector3<double>& row0, const Vector3<double>& row1, const Vector3<double>& row2) {
             for ( int i = 0; i < 3; i++ ) {
                 mat[ index( 0, i ) ] = row0[i];
                 mat[ index( 1, i ) ] = row1[i];
@@ -294,12 +294,12 @@ namespace GraphMatch {
         const double & operator()( int row, int col ) const { return mat[ index(row,col) ]; }
               double & operator()( int row, int col )       { return mat[ index(row,col) ]; }
 
-        Vector3 row(int r) const {
-            return Vector3( mat[index(r,0)], mat[index(r,1)], mat[index(r,2)] );
+        Vector3<double> row(int r) const {
+            return Vector3<double>( mat[index(r,0)], mat[index(r,1)], mat[index(r,2)] );
         }
 
-        Vector3 column(int c) const {
-            return Vector3( mat[index(0,c)], mat[index(1,c)], mat[index(2,c)] );
+        Vector3<double> column(int c) const {
+            return Vector3<double>( mat[index(0,c)], mat[index(1,c)], mat[index(2,c)] );
         }
 
         Matrix3 transpose() const {
@@ -324,8 +324,8 @@ namespace GraphMatch {
         }
 
         // pre-multiply column vector by a 3x3 matrix
-        Vector3 operator*(const Vector3& v) const {
-            return Vector3((*this)(0,0) * v[0] + (*this)(0,1) * v[1] + (*this)(0,2) * v[2],
+        Vector3<double> operator*(const Vector3<double>& v) const {
+            return Vector3<double>((*this)(0,0) * v[0] + (*this)(0,1) * v[1] + (*this)(0,2) * v[2],
                            (*this)(1,0) * v[0] + (*this)(1,1) * v[1] + (*this)(1,2) * v[2],
                            (*this)(2,0) * v[0] + (*this)(2,1) * v[1] + (*this)(2,2) * v[2]);
         }
@@ -350,15 +350,15 @@ namespace GraphMatch {
         }
 
         static Matrix3 identity() {
-            return Matrix3(Vector3(1, 0, 0),
-                           Vector3(0, 1, 0),
-                           Vector3(0, 0, 1));
+            return Matrix3(Vector3<double>(1, 0, 0),
+                           Vector3<double>(0, 1, 0),
+                           Vector3<double>(0, 0, 1));
         }
 
-        static Matrix3 rotationXYZtoUVW(Vector3 u, Vector3 v, Vector3 w) {
-            return Matrix3(Vector3(u[0], v[0], w[0]),
-                           Vector3(u[1], v[1], w[1]),
-                           Vector3(u[2], v[2], w[2]));
+        static Matrix3 rotationXYZtoUVW(Vector3<double> u, Vector3<double> v, Vector3<double> w) {
+            return Matrix3(Vector3<double>(u[0], v[0], w[0]),
+                           Vector3<double>(u[1], v[1], w[1]),
+                           Vector3<double>(u[2], v[2], w[2]));
         }
 
         static double det2x2(double a, double b, double c, double d) {
@@ -375,13 +375,13 @@ namespace GraphMatch {
         }
 
         Matrix3 inverse() const {
-            Vector3 r1(  det2x2((*this)(1,1), (*this)(1,2), (*this)(2,1), (*this)(2,2)),
+            Vector3<double> r1(  det2x2((*this)(1,1), (*this)(1,2), (*this)(2,1), (*this)(2,2)),
                          det2x2((*this)(0,2), (*this)(0,1), (*this)(2,2), (*this)(2,1)),
                          det2x2((*this)(0,1), (*this)(0,2), (*this)(1,1), (*this)(1,2)) );
-            Vector3 r2(  det2x2((*this)(1,2), (*this)(1,0), (*this)(2,2), (*this)(2,0)),
+            Vector3<double> r2(  det2x2((*this)(1,2), (*this)(1,0), (*this)(2,2), (*this)(2,0)),
                          det2x2((*this)(0,0), (*this)(0,2), (*this)(2,0), (*this)(2,2)),
                          det2x2((*this)(0,2), (*this)(0,0), (*this)(1,2), (*this)(1,0)) );
-            Vector3 r3(  det2x2((*this)(1,0), (*this)(1,1), (*this)(2,0), (*this)(2,1)),
+            Vector3<double> r3(  det2x2((*this)(1,0), (*this)(1,1), (*this)(2,0), (*this)(2,1)),
                          det2x2((*this)(0,1), (*this)(0,0), (*this)(2,1), (*this)(2,0)),
                          det2x2((*this)(0,0), (*this)(0,1), (*this)(1,0), (*this)(1,1)) );
 
@@ -420,8 +420,8 @@ namespace GraphMatch {
     };
 
     // post-multiply row vector by a 3x3 matrix
-    inline Vector3 operator*(const Vector3& v, const Matrix3& m) {
-        return Vector3(m(0,0) * v[0] + m(1,0) * v[1] + m(2,0) * v[2],
+    inline Vector3<double> operator*(const Vector3<double>& v, const Matrix3& m) {
+        return Vector3<double>(m(0,0) * v[0] + m(1,0) * v[1] + m(2,0) * v[2],
                        m(0,1) * v[0] + m(1,1) * v[1] + m(2,1) * v[2],
                        m(0,2) * v[0] + m(1,2) * v[1] + m(2,2) * v[2]);
     }
@@ -561,7 +561,7 @@ namespace GraphMatch {
             }
         }
 
-        Matrix4(const Vector3& row0, const Vector3& row1, const Vector3& row2 ) {
+        Matrix4(const Vector3<double>& row0, const Vector3<double>& row1, const Vector3<double>& row2 ) {
             for ( int i = 0; i < 3; i++ ) {
                 mat[ index( 0, i ) ] = row0[i];
                 mat[ index( 1, i ) ] = row1[i];
@@ -635,8 +635,8 @@ namespace GraphMatch {
             return matRet;
         }
 
-        Vector3 operator*(const Vector3& v) const {
-            return Vector3((*this)(0,0) * v[0] + (*this)(0,1) * v[1] + (*this)(0,2) * v[2],
+        Vector3<double> operator*(const Vector3<double>& v) const {
+            return Vector3<double>((*this)(0,0) * v[0] + (*this)(0,1) * v[1] + (*this)(0,2) * v[2],
                            (*this)(1,0) * v[0] + (*this)(1,1) * v[1] + (*this)(1,2) * v[2],
                            (*this)(2,0) * v[0] + (*this)(2,1) * v[1] + (*this)(2,2) * v[2]);
         }
@@ -706,22 +706,22 @@ namespace GraphMatch {
                            Vector4(0, 0, 0, 1));
         }
 
-        static Matrix4 translation(const Vector3& v) {
+        static Matrix4 translation(const Vector3<double>& v) {
             return Matrix4(Vector4(1, 0, 0, v[0]),
                            Vector4(0, 1, 0, v[1]),
                            Vector4(0, 0, 1, v[2]),
                            Vector4(0, 0, 0, 1));
         }
 
-        static Matrix4 rotation(const Vector3& u, const Vector3& v, const Vector3& w) {
+        static Matrix4 rotation(const Vector3<double>& u, const Vector3<double>& v, const Vector3<double>& w) {
             return Matrix4(Vector4(u[0], u[1], u[2], 0),
                            Vector4(v[0], v[1], v[2], 0),
                            Vector4(w[0], w[1], w[2], 0),
                            Vector4(0  , 0  , 0  , 1));
         }
 
-        static Matrix4 rotation(const Vector3& axis, double angle) {
-            Vector3 a = axis;
+        static Matrix4 rotation(const Vector3<double>& axis, double angle) {
+            Vector3<double> a = axis;
             a.normalize();
             const double c = cos(angle);
             const double s = sin(angle);
@@ -792,7 +792,7 @@ namespace GraphMatch {
                            Vector4(0,  0, 0, 1));
         }
 
-        static Matrix4 scaling(const Vector3& s) {
+        static Matrix4 scaling(const Vector3<double>& s) {
             return Matrix4(Vector4(s[0], 0  , 0  , 0),
                            Vector4(0  , s[1], 0  , 0),
                            Vector4(0  , 0  , s[2], 0),
@@ -807,7 +807,7 @@ namespace GraphMatch {
         }
 
         static Matrix4 scaling(double scale) {
-            return scaling(Vector3(scale, scale, scale));
+            return scaling(Vector3<double>(scale, scale, scale));
         }
 
         double mat[16];
