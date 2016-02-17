@@ -63,7 +63,7 @@ namespace GraphMatch {
             void print() const;
 
             Vector3<T> getOrthogonal() const;
-//            Vector3D<T> Rotate(Vector3D<T> axis, T angle);
+            Vector3<T> rotate(Vector3<T> axis, T angle);
 //            Vector3D<T> Transform(Matrix<T> transformation);
 //            T * begin();
 //            T * end();
@@ -278,6 +278,33 @@ namespace GraphMatch {
             orthVec = Vector3<T>(this->X(), this->Y(), this->Z()) ^ orthVec;
         }
         return orthVec;
+    }
+
+    template <class T>
+    Vector3<T> Vector3<T>::rotate(Vector3<T> axis, T angle) {
+        double r = angle;
+        T a = axis[0];
+        T b = axis[1];
+        T c = axis[2];
+
+        T q0 = (T)cos(r/2.0);
+        T q1 = (T)sin(r/2.0)* a;
+        T q2 = (T)sin(r/2.0)* b;
+        T q3 = (T)sin(r/2.0)* c;
+
+
+        T R[3][3] = {{q0*q0 + q1*q1 - q2*q2 - q3*q3,        2*(q1*q2 - q0*q3),                  2*(q1*q3 + q0*q2)},
+                          {2*(q2*q1 + q0*q3),                   q0*q0 - q1*q1 + q2*q2 - q3*q3,      2*(q2*q3 - q0*q1)},
+                          {2*(q3*q1 - q0*q2),                   2*(q3*q2 + q0*q1),                  q0*q0 - q1*q1 - q2*q2 + q3*q3}};
+
+
+        Vector3<T> v;
+        for(int i = 0; i < 3; i++) {
+            for(int j = 0; j < 3; j++) {
+                v[i] = v[i] + R[j][i] * (*this)[j];
+            }
+        }
+        return v;
     }
 
     template <class T>
