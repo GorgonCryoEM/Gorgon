@@ -8,6 +8,8 @@
 #ifndef SRC_TOOLKIT_MATHTOOLS_VECTOR3_H_
 #define SRC_TOOLKIT_MATHTOOLS_VECTOR3_H_
 
+#include "Matrix.h"
+
 namespace GraphMatch {
 
     template <class T>
@@ -64,7 +66,7 @@ namespace GraphMatch {
 
             Vector3<T> getOrthogonal() const;
             Vector3<T> rotate(Vector3<T> axis, T angle);
-//            Vector3D<T> Transform(Matrix<T> transformation);
+            Vector3<T> transform(Matrix<T> t);
 //            T * begin();
 //            T * end();
 
@@ -305,6 +307,18 @@ namespace GraphMatch {
             }
         }
         return v;
+    }
+
+    template <class T>
+    Vector3<T> Vector3<T>::transform(Matrix<T> t) {
+        Matrix<T> p = Matrix<T>(4, 1);
+        p.SetValue((*this)[0], 0, 0);
+        p.SetValue((*this)[1], 1, 0);
+        p.SetValue((*this)[2], 2, 0);
+        p.SetValue((T)1, 3, 0);
+
+        p = t * p;
+        return Vector3D<T>(p.GetValue(0,0), p.GetValue(1,0), p.GetValue(2,0));
     }
 
     template <class T>
