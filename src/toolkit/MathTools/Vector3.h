@@ -67,10 +67,9 @@ namespace GraphMatch {
 //            Vector3D<T> Transform(Matrix<T> transformation);
 //            T * begin();
 //            T * end();
-//
-//            bool IsBadNormal();
-//            void Print();
-//
+
+            bool IsBadNormal();
+
             static Vector3<T> normalize(Vector3<T> v);
 //            static Vector3D<T> Project3Dto2D(Vector3D<T> point, Vector3D<T> planePt, Vector3D<T> planeVec1, Vector3D<T> planeVec2);
 
@@ -279,6 +278,11 @@ namespace GraphMatch {
             orthVec = Vector3<T>(this->X(), this->Y(), this->Z()) ^ orthVec;
         }
         return orthVec;
+    }
+
+    template <class T>
+    bool Vector3<T>::IsBadNormal() {
+        return !isZero(length() - 1.0, 0.00001);
     }
 
     template <class T>
