@@ -40,7 +40,7 @@ namespace GraphMatch {
             Vector3<T>& operator+=(const Vector3<T>& a);
             Vector3<T>& operator-=(const Vector3<T>& a);
             Vector3<T>& operator*=(T s);
-//            Vector3<T>& operator/=(T s);
+            Vector3<T>& operator/=(T s);
 
             Vector3<T> operator-() const;
             Vector3<T> operator+() const;
@@ -196,6 +196,11 @@ namespace GraphMatch {
         y *= s;
         z *= s;
         return *this;
+    }
+
+    template <class T>
+    Vector3<T>& Vector3<T>::operator/=(T s) {
+        return (*this) *= T(1.0)/s;
     }
 
     template <class T>
