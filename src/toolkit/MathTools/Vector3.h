@@ -31,9 +31,10 @@ namespace GraphMatch {
 
             T operator*(const Vector3<T> &v) const; // Dot
             Vector3<T> operator^(const Vector3<T> &v) const; // Cross product
-//            int XInt();
-//            int YInt();
-//            int ZInt();
+
+            int XInt();
+            int YInt();
+            int ZInt();
 
 //            Vector3D<T> operator+(const Vector3D<T> &d);
 //            Vector3D<T> operator-();
@@ -145,6 +146,21 @@ namespace GraphMatch {
     template <class T>
     T& Vector3<T>::Z() {
         return z;
+    }
+
+    template <class T>
+    int Vector3<T>::XInt() {
+        return (int)round((*this)[0]);
+    }
+
+    template <class T>
+    int Vector3<T>::YInt() {
+        return (int)round((*this)[1]);
+    }
+
+    template <class T>
+    int Vector3<T>::ZInt() {
+        return (int)round((*this)[2]);
     }
 
     template <class T>
