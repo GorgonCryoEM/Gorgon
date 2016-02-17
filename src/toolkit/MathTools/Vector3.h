@@ -36,17 +36,6 @@ namespace GraphMatch {
             int YInt();
             int ZInt();
 
-//            Vector3D<T> operator+(const Vector3D<T> &d);
-//            Vector3D<T> operator-();
-//            Vector3D<T> operator-(const Vector3D<T> &d );
-//            Vector3D<T> operator^(const Vector3D<T> &d );        // Cross Product
-//            Vector3D<T> operator*(T s);
-//            bool operator!=(Vector3D<T> &d);
-//            bool operator==(Vector3D<T> &d);
-//            bool operator>(Vector3D<T> &d);
-//            bool operator<(Vector3D<T> &d);
-//            bool operator>=(Vector3D<T> &d);
-//            bool operator<=(Vector3D<T> &d);
             Vector3<T>& operator=(const Vector3<T>& a);
             Vector3<T>& operator+=(const Vector3<T>& a);
             Vector3<T>& operator-=(const Vector3<T>& a);
@@ -64,6 +53,10 @@ namespace GraphMatch {
             bool operator==(const Vector3<T> &v) const;
             bool operator!=(const Vector3<T> &v) const;
             bool approxEqual(const Vector3<T> &v, T eps = 1e-12) const;
+//            bool operator>(Vector3D<T> &d);
+//            bool operator<(Vector3D<T> &d);
+//            bool operator>=(Vector3D<T> &d);
+//            bool operator<=(Vector3D<T> &d);
 
 
             void normalize();
