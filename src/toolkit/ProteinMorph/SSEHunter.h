@@ -30,26 +30,6 @@ using namespace GraySkeletonCPP;
 
 namespace Protein_Morph {
 
-    class AtomCoordinatesAndSize
-    {
-        public:
-            float x;
-            float y;
-            float z;
-            short size;
-            AtomCoordinatesAndSize() { x = y = z = size = 0; }
-            AtomCoordinatesAndSize(float x, float y, float z, short size) {
-                this->x = x;
-                this->y = y;
-                this->z = z;
-                this->size = size;
-            }
-    };
-
-    bool compare_z(AtomCoordinatesAndSize left, AtomCoordinatesAndSize right) {
-        return (left.z < right.z);
-    }
-
     enum RadialProfileType {GAUSSIAN, GAUSSIAN_DIP, POLYNOMIAL};
 
     class SSEHunter{
