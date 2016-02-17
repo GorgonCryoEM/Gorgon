@@ -79,10 +79,10 @@ namespace GraySkeletonCPP {
         void GetSTBasedDistribution(ProbabilityDistribution3D & distributionInfo, EigenResults3D eigen);
         void HueRB(double value, double &r, double &g, double &b);
         Vector3DFloat XYZtoUVW(Vector3DFloat vec, Vector3DFloat u, Vector3DFloat v, Vector3DFloat w);
-        Volume * FillCurveHoles(Volume * thresholdedSkeleton, Volume * originalSkeleton, int maxHoleSize);
-        Volume * FillSurfaceHoles(Volume * thresholdedSkeleton, Volume * originalSkeleton, int maxHoleSize);
-        Volume * GetJuThinning(Volume * sourceVolume, Volume * preserve, double threshold, char thinningClass);
-        Volume * GetImmersionThinning(Volume * sourceVolume, Volume * preserve, double lowGrayscale, double highGrayscale, double stepSize, char thinningClass);
+        Volume * FillCurveHoles       (Volume * thresholdedSkeleton, Volume * originalSkeleton, int maxHoleSize);
+        Volume * FillSurfaceHoles     (Volume * thresholdedSkeleton, Volume * originalSkeleton, int maxHoleSize);
+        Volume * GetJuThinning        (Volume * sourceVolume, Volume * preserve, double threshold, char thinningClass);
+        Volume * GetImmersionThinning (Volume * sourceVolume, Volume * preserve, double lowGrayscale, double highGrayscale, double stepSize, char thinningClass);
 
 
         static const char THINNING_CLASS_SURFACE_PRESERVATION;
