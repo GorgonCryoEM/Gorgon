@@ -13,33 +13,89 @@ namespace GraphMatch {
     class Vector3 {
         public:
             Vector3();
-            Vector3(const Vector3& v);
             Vector3(double _x, double _y, double _z);
+            Vector3(const Vector3& v);
+//            Vector3D(const vector<T>& vec);
 
-            Vector3& operator=(const Vector3& a);
+//            T X() const;
+//            T Y() const;
+//            T Z() const;
+
             const double &operator[](int n) const;
             double &operator[](int n);
+            double length() const;
+            double lengthSquared() const;
+
+            double operator*(const Vector3 &v) const; // Dot
+            Vector3 operator^(const Vector3 &v) const; // Cross product
+//            int XInt();
+//            int YInt();
+//            int ZInt();
+
+            Vector3& operator=(const Vector3& a);
             Vector3& operator+=(const Vector3& a);
             Vector3& operator-=(const Vector3& a);
             Vector3& operator*=(double s);
+//            Vector3& operator/=(double s);
+
             Vector3 operator-() const;
             Vector3 operator+() const;
             Vector3 operator+(const Vector3 &v) const;
             Vector3 operator-(const Vector3 &v) const;
             Vector3 operator/(const double s) const;
             Vector3 operator*(const double s) const;
-            double operator*(const Vector3 &v) const; // Dot
-            Vector3 operator^(const Vector3 &v) const; // Cross product
-            double length() const;
-            double lengthSquared() const;
-            void normalize();
+//            Vector3D<T> operator+(const Vector3D<T> &d);
+//            Vector3D<T> operator-();
+//            Vector3D<T> operator-(const Vector3D<T> &d );
+//            Vector3D<T> operator^(const Vector3D<T> &d );        // Cross Product
+//            Vector3D<T> operator*(double s);
+
+
             bool operator==(const Vector3 &v) const;
             bool operator!=(const Vector3 &v) const;
             bool approxEqual(const Vector3 &v, double eps = 1e-12) const;
+//            bool operator!=(Vector3D<T> &d);
+//            bool operator==(Vector3D<T> &d);
+//            bool operator>(Vector3D<T> &d);
+//            bool operator<(Vector3D<T> &d);
+//            bool operator>=(Vector3D<T> &d);
+//            bool operator<=(Vector3D<T> &d);
+
+
+            void normalize();
             void print() const;
+
+//            Vector3D<T> GetOrthogonal();
+//            Vector3D<T> Rotate(Vector3D<T> axis, double angle);
+//            Vector3D<T> Transform(Matrix<T> transformation);
+//            T * begin();
+//            T * end();
+//
+//            void Normalize();
+//            bool IsBadNormal();
+//            void Print();
+//
+//            static Vector3D<T> Normalize(Vector3D<T> d);
+//            static Vector3D<T> Project3Dto2D(Vector3D<T> point, Vector3D<T> planePt, Vector3D<T> planeVec1, Vector3D<T> planeVec2);
+
+
         private:
             double x, y, z;
+//            T values[3];
+
+//            friend ostream & operator<<(ostream & out, const Vector3D<T> & obj){
+//                return out
+//                        <<"{"
+//                        <<obj.values[0]<<", "
+//                        <<obj.values[1]<<", "
+//                        <<obj.values[2]
+//                        <<"}";
+//            }
     };
+
+//    typedef Vector3D<int>    Vector3DInt;
+//    typedef Vector3D<float>  Vector3DFloat;
+//    typedef Vector3D<double> Vector3DDouble;
 
     Vector3::Vector3()
             : x(0), y(0), z(0)
