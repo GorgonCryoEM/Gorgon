@@ -80,14 +80,14 @@ namespace GraphMatch {
             T x, y, z;
 //            T values[3];
 
-//            friend ostream & operator<<(ostream & out, const Vector3D<T> & obj){
-//                return out
-//                        <<"{"
-//                        <<obj.values[0]<<", "
-//                        <<obj.values[1]<<", "
-//                        <<obj.values[2]
-//                        <<"}";
-//            }
+            friend ostream & operator<<(ostream & out, const Vector3<T> & obj){
+                return out
+                        <<"{"
+                        <<obj.x<<", "
+                        <<obj.y<<", "
+                        <<obj.z
+                        <<"}";
+            }
     };
 
 //    typedef Vector3D<int>    Vector3DInt;
