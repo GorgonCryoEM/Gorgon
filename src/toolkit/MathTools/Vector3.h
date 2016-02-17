@@ -53,10 +53,10 @@ namespace GraphMatch {
             bool operator==(const Vector3<T> &v) const;
             bool operator!=(const Vector3<T> &v) const;
             bool approxEqual(const Vector3<T> &v, T eps = 1e-12) const;
-//            bool operator>(Vector3D<T> &d);
-//            bool operator<(Vector3D<T> &d);
-//            bool operator>=(Vector3D<T> &d);
-//            bool operator<=(Vector3D<T> &d);
+            bool operator> (const Vector3<T> &v) const;
+            bool operator< (const Vector3<T> &v) const;
+            bool operator>=(const Vector3<T> &v) const;
+            bool operator<=(const Vector3<T> &v) const;
 
 
             void normalize();
@@ -279,6 +279,26 @@ namespace GraphMatch {
     bool Vector3<T>::approxEqual(const Vector3<T> &v, T eps) const {
         return isZero(x - v.x, eps) && isZero(y - v.y, eps)
                && isZero(z - v.z, eps);
+    }
+
+    template <class T>
+    bool Vector3<T>::operator<(const Vector3<T> &v) const {
+        return x < v.x && y < v.y && z < v.z;
+    }
+
+    template <class T>
+    bool Vector3<T>::operator>=(const Vector3<T> &v) const {
+        return !(*this < v);
+    }
+
+    template <class T>
+    bool Vector3<T>::operator>(const Vector3<T> &v) const {
+        return x > v.x && y > v.y && z > v.z;
+    }
+
+    template <class T>
+    bool Vector3<T>::operator<=(const Vector3<T> &v) const {
+            return !(*this > v);
     }
 
     template <class T>
