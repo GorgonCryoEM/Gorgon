@@ -26,11 +26,11 @@ namespace MathTools {
         unsigned long long Permutations(int n, int r);
 
     private:
-        MatlabWrapper * mathWrapper;
+        Matlab * mathWrapper;
     };
 
     MathLib::MathLib() {
-        mathWrapper = new MatlabWrapper();
+        mathWrapper = new Matlab();
     }
 
     MathLib::~MathLib() {
