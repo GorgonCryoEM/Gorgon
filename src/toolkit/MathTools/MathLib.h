@@ -1,7 +1,7 @@
 #ifndef TOOLKIT_MATHTOOLS_MATH_LIB_H
 #define TOOLKIT_MATHTOOLS_MATH_LIB_H
 
-#include "MatlabWrapper.h"
+#include "Matlab.h"
 #include "Combinatorics.h"
 //#include "Vector3D.h"
 //#include "ComplexNumber.h"
