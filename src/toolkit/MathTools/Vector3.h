@@ -9,6 +9,9 @@
 #define SRC_TOOLKIT_MATHTOOLS_VECTOR3_H_
 
 #include "Matrix.h"
+#include "BasicDefines.h"
+
+using namespace MathTools;
 
 namespace GraphMatch {
 
@@ -280,7 +283,7 @@ namespace GraphMatch {
     template <class T>
     Vector3<T> Vector3<T>::getOrthogonal() const {
         Vector3<T> orthVec = Vector3<T>(1, 1, 1);
-        orthVec = Vector3D<T>(this->X(), this->Y(), this->Z()) ^ orthVec;
+        orthVec = Vector3<T>(this->X(), this->Y(), this->Z()) ^ orthVec;
         if(isZero(orthVec.Length())) {
             orthVec = Vector3<T>(1, -1, -1);
             orthVec = Vector3<T>(this->X(), this->Y(), this->Z()) ^ orthVec;
@@ -324,7 +327,7 @@ namespace GraphMatch {
         p.SetValue((T)1, 3, 0);
 
         p = t * p;
-        return Vector3D<T>(p.GetValue(0,0), p.GetValue(1,0), p.GetValue(2,0));
+        return Vector3<T>(p.GetValue(0,0), p.GetValue(1,0), p.GetValue(2,0));
     }
 
     template <class T>
