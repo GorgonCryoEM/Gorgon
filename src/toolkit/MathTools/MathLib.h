@@ -16,12 +16,12 @@ namespace MathTools {
         MathLib();
         ~MathLib();
 
-        void EigenAnalysis(EigenVectorsAndValues2D & eigenInformation);
-        void EigenAnalysis(EigenVectorsAndValues3D & eigenInformation);
-        void GetBinomialDistribution(ProbabilityDistribution1D & distributionInfo);
-        void GetBinomialDistribution(ProbabilityDistribution2D & distributionInfo);
-        void GetBinomialDistribution(ProbabilityDistribution3D & distributionInfo);
-        void GetUniformDistribution(ProbabilityDistribution3D & distributionInfo);
+        void EigenAnalysis           (EigenVectorsAndValues2D   & eigenInformation);
+        void EigenAnalysis           (EigenVectorsAndValues3D   & eigenInformation);
+        void GetBinomialDistribution (ProbabilityDistribution1D & distributionInfo);
+        void GetBinomialDistribution (ProbabilityDistribution2D & distributionInfo);
+        void GetBinomialDistribution (ProbabilityDistribution3D & distributionInfo);
+        void GetUniformDistribution  (ProbabilityDistribution3D & distributionInfo);
         unsigned long long Combinations(int n, int r);
         unsigned long long Permutations(int n, int r);
 
