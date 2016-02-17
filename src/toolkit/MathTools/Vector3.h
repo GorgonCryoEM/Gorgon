@@ -62,7 +62,7 @@ namespace GraphMatch {
             void normalize();
             void print() const;
 
-//            Vector3D<T> GetOrthogonal();
+            Vector3<T> getOrthogonal() const;
 //            Vector3D<T> Rotate(Vector3D<T> axis, T angle);
 //            Vector3D<T> Transform(Matrix<T> transformation);
 //            T * begin();
@@ -263,6 +263,17 @@ namespace GraphMatch {
         x *= s;
         y *= s;
         z *= s;
+    }
+
+    template <class T>
+    Vector3<T> Vector3<T>::getOrthogonal() const {
+        Vector3<T> orthVec = Vector3<T>(1, 1, 1);
+        orthVec = Vector3D<T>(this->X(), this->Y(), this->Z()) ^ orthVec;
+        if(isZero(orthVec.Length())) {
+            orthVec = Vector3<T>(1, -1, -1);
+            orthVec = Vector3<T>(this->X(), this->Y(), this->Z()) ^ orthVec;
+        }
+        return orthVec;
     }
 
     template <class T>
