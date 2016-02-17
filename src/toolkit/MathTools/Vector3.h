@@ -17,9 +17,12 @@ namespace GraphMatch {
             Vector3(T _x, T _y, T _z);
             Vector3(const vector<T>& vec);
 
-//            T X() const;
-//            T Y() const;
-//            T Z() const;
+            const T& X() const;
+            const T& Y() const;
+            const T& Z() const;
+            T& X();
+            T& Y();
+            T& Z();
 
             const T &operator[](int n) const;
             T &operator[](int n);
@@ -113,6 +116,36 @@ namespace GraphMatch {
     Vector3<T>::Vector3(T _x, T _y, T _z)
             : x(_x), y(_y), z(_z)
     {}
+
+    template <class T>
+    const T& Vector3<T>::X() const {
+        return x;
+    }
+
+    template <class T>
+    const T& Vector3<T>::Y() const {
+        return y;
+    }
+
+    template <class T>
+    const T& Vector3<T>::Z() const {
+        return z;
+    }
+
+    template <class T>
+    T& Vector3<T>::X() {
+        return x;
+    }
+
+    template <class T>
+    T& Vector3<T>::Y() {
+        return y;
+    }
+
+    template <class T>
+    T& Vector3<T>::Z() {
+        return z;
+    }
 
     template <class T>
     Vector3<T>& Vector3<T>::operator=(const Vector3<T>& a) {
