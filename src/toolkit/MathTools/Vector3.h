@@ -284,7 +284,7 @@ namespace GraphMatch {
     Vector3<T> Vector3<T>::getOrthogonal() const {
         Vector3<T> orthVec = Vector3<T>(1, 1, 1);
         orthVec = Vector3<T>(this->X(), this->Y(), this->Z()) ^ orthVec;
-        if(isZero(orthVec.Length())) {
+        if(isZero(orthVec.length())) {
             orthVec = Vector3<T>(1, -1, -1);
             orthVec = Vector3<T>(this->X(), this->Y(), this->Z()) ^ orthVec;
         }

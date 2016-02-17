@@ -204,7 +204,7 @@ namespace GraySkeletonCPP {
                     graph2[to][from] = false;
                 }
             }
-            normal.Normalize();
+            normal.normalize();
 
             for(int i = 0; i < 6; i++) {
                 for(int j = 0; j < 6; j++) {

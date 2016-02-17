@@ -65,15 +65,15 @@ namespace MathTools {
             v2 = Vector3DDouble(1.0, (x2-a)/b, 0.0);
         }
 
-        v1.Normalize();
-        v2.Normalize();
+        v1.normalize();
+        v2.normalize();
 
         eigenInformation.eigenValues[0] = (float)x1;
         eigenInformation.eigenValues[1] = (float)x2;
-        eigenInformation.eigenVectors[0][0] = (float)v1.values[0];
-        eigenInformation.eigenVectors[0][1] = (float)v1.values[1];
-        eigenInformation.eigenVectors[1][0] = (float)v2.values[0];
-        eigenInformation.eigenVectors[1][1] = (float)v2.values[1];
+        eigenInformation.eigenVectors[0][0] = (float)v1[0];
+        eigenInformation.eigenVectors[0][1] = (float)v1[1];
+        eigenInformation.eigenVectors[1][0] = (float)v2[0];
+        eigenInformation.eigenVectors[1][1] = (float)v2[1];
     }
 
     void Matlab::EigenAnalysis(EigenVectorsAndValues3D & eigenInformation) {

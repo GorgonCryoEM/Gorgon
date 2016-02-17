@@ -196,8 +196,8 @@ namespace Visualization {
                 isEnd = isEnd || (internalVertices.find(neighbors[j]) == internalVertices.end());
             }
             if(isEnd) {
-                dist1 = (p1 - pathMesh->vertices[*i].position).Length();
-                dist2 = (p2 - pathMesh->vertices[*i].position).Length();
+                dist1 = (p1 - pathMesh->vertices[*i].position).length();
+                dist2 = (p2 - pathMesh->vertices[*i].position).length();
                 isStart = (dist1 <= dist2);
                 if(isStart && (dist1 <= radius)) {
                     helixStartPoints[helixIndex].push_back(*i);

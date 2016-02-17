@@ -632,8 +632,8 @@ namespace Protein_Morph {
         }
         for(unsigned int i = 0; i < vertices.size(); i++) {
             for(unsigned int j = 0; j < 3; j++) {
-                minPos[j] = min(minPos[j], (double)vertices[i].position.values[j]);
-                maxPos[j] = max(maxPos[j], (double)vertices[i].position.values[j]);
+                minPos[j] = min(minPos[j], (double)vertices[i].position[j]);
+                maxPos[j] = max(maxPos[j], (double)vertices[i].position[j]);
             }
         }
 
@@ -655,7 +655,7 @@ namespace Protein_Morph {
             vector<Vector3DInt> positions = Rasterizer::ScanConvertLineC8(v1.position.XInt(), v1.position.YInt(), v1.position.ZInt(), v2.position.XInt(), v2.position.YInt(), v2.position.ZInt());
             for(unsigned int j = 0; j < positions.size(); j++) {
                 for(unsigned int k = 0; k < 3; k++) {
-                    pos[k] = positions[j].values[k] - minPosInt[k];
+                    pos[k] = positions[j][k] - minPosInt[k];
                 }
                 vol->setDataAt(pos[0], pos[1], pos[2], 1.0);
             }
@@ -676,7 +676,7 @@ namespace Protein_Morph {
                 normal += GetFaceNormal(edges[edgeIndex].faceIds[j]);
             }
         }
-        normal.Normalize();
+        normal.normalize();
         return normal;
     }
 
@@ -689,7 +689,7 @@ namespace Protein_Morph {
         if(face.vertexIds.size() >= 3) {
             normal = (vertices[GetVertexIndex(face.vertexIds[1])].position - vertices[GetVertexIndex(face.vertexIds[0])].position) ^
                             (vertices[GetVertexIndex(face.vertexIds[2])].position - vertices[GetVertexIndex(face.vertexIds[0])].position);
-            normal.Normalize();
+            normal.normalize();
         }
         return normal;
     }
@@ -863,10 +863,10 @@ namespace Protein_Morph {
             NonManifoldMeshVertex r = vertices[GetVertexIndex(face.vertexIds[2])];
             Vector3DFloat v1 = q.position - p.position;
             Vector3DFloat v2 = r.position - p.position;
-            double v1Length = v1.Length();
-            double v2Length = v2.Length();
-            v1.Normalize();
-            v2.Normalize();
+            double v1Length = v1.length();
+            double v2Length = v2.length();
+            v1.normalize();
+            v2.normalize();
 
             for(double a1 = 0; a1 <= v1Length; a1 += discretizationStep) {
                 for(double a2 = 0; a2 <= v2Length; a2 += discretizationStep) {
@@ -896,10 +896,10 @@ namespace Protein_Morph {
             return -1;
         }
 
-        double distance, minDistance = (pos - vertices[0].position).Length();
+        double distance, minDistance = (pos - vertices[0].position).length();
         int minIx = 0;
         for(unsigned int i = 0; i < vertices.size(); i++) {
-            distance = (pos - vertices[i].position).Length();
+            distance = (pos - vertices[i].position).length();
             if(distance < minDistance) {
                 minDistance = distance;
                 minIx = i;

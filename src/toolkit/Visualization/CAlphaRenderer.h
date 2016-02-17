@@ -524,16 +524,16 @@ namespace Visualization {
         for(int i = 1, length = ptsSize - 1; i < length; ++i){
             Vector3DFloat newPos = (points[i-1] + points[i+1])*.5;
             normals[i] = points[i] - newPos;
-            normals[i].Normalize();
+            normals[i].normalize();
         }
 
         normals[0] = (points[1] + previous)*.5 - points[0];
-        if ((points[0] - previous).Length() < .0001){
+        if ((points[0] - previous).length() < .0001){
             normals[0] = normals[1];
         }
 
         normals[ptsSize - 1] = (points[ptsSize - 2] + next)*.5 - points[ptsSize - 1];
-        if ((points[ptsSize - 2] - next).Length() < .0001){
+        if ((points[ptsSize - 2] - next).length() < .0001){
             normals[ptsSize - 1] = normals[ptsSize - 2];
         }
 
@@ -549,26 +549,26 @@ namespace Visualization {
 
         for(int k = 1, size = ptsSize - 1; k < size; ++k){
             smoothedNormals[k] = normals[k-1] + normals[k] + normals[k+1];
-            smoothedNormals[k].Normalize();
+            smoothedNormals[k].normalize();
         }
 
         // "normals exactly perpendicular to strand" - molscript/graphics.c
         Vector3DFloat direction = points[1] - points[0];
         Vector3DFloat side = direction^smoothedNormals[0];
         smoothedNormals[0] = side ^ direction;
-        smoothedNormals[0].Normalize();
+        smoothedNormals[0].normalize();
 
         for(int i = 1, size = ptsSize - 1; i < size; ++i){
             direction = points[i+1] - points[i-1];
             side = direction^smoothedNormals[i];
             smoothedNormals[i] = side^direction;
-            smoothedNormals[i].Normalize();
+            smoothedNormals[i].normalize();
         }
 
         direction = points[ptsSize - 1] - points[ptsSize - 2];
         side = direction^smoothedNormals[ptsSize - 1];
         smoothedNormals[ptsSize - 1] = side^direction;
-        smoothedNormals[ptsSize - 1].Normalize();
+        smoothedNormals[ptsSize - 1].normalize();
         return smoothedNormals;
     }
 
@@ -579,10 +579,10 @@ namespace Visualization {
 
                 if(i > 0){
                     Vector3DFloat cvec = points[i+1] - points[i-1];
-                    cvec.Normalize();
+                    cvec.normalize();
 
                     Vector3DFloat rvec = (points[i]-points[i-1])^(points[i+1]-points[i]);
-                    rvec.Normalize();
+                    rvec.normalize();
 
                     axes[i] = rvec*sin(HELIX_ALPHA) + cvec*cos(HELIX_ALPHA);
                     tangents[i] = rvec*sin(HELIX_BETA) + cvec*cos(HELIX_BETA);
@@ -593,10 +593,10 @@ namespace Visualization {
             axes[axes.size()-1] = axes[axes.size()-2];
 
             tangents[0] = previous - points[1];
-            tangents[0].Normalize();
+            tangents[0].normalize();
             tangents[0] = tangents[0]*HELIX_HERMITE_FACTOR;
             tangents[tangents.size()-1] = next - points[points.size()-2];
-            tangents[tangents.size()-1].Normalize();
+            tangents[tangents.size()-1].normalize();
             tangents[tangents.size()-1] = tangents[tangents.size()-1]*HELIX_HERMITE_FACTOR;
         }
     }

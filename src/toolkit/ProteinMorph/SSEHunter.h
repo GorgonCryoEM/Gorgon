@@ -246,7 +246,7 @@ namespace Protein_Morph {
         for(unsigned int i = 0; i < patoms.size(); i++) {
             atomDistances.clear();
             for(unsigned int j = 0; j < patoms.size(); j++) {
-                atomDistances.push_back( (patoms[i].GetPosition() - patoms[j].GetPosition()).Length() );
+                atomDistances.push_back( (patoms[i].GetPosition() - patoms[j].GetPosition()).length() );
             }
             distances.push_back(atomDistances);
         }
