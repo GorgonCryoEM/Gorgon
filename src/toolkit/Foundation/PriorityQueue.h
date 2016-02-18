@@ -57,6 +57,9 @@ namespace SkeletonMaker {
                 }
 
                 int ind = getLength();
+
+                q.push(make_pair(v,k));
+
                 int tind;
                 queueLength++;
 
@@ -75,7 +78,6 @@ namespace SkeletonMaker {
                 valueQueue[ind] = v;
                 keyQueue[ind] = k;
 
-                q.push(make_pair(v,k));
             }
 
             void remove(T & v, int & k) {
