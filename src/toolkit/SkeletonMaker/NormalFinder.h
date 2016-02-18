@@ -1,12 +1,12 @@
 #ifndef TOOLKIT_GRAYSKELETONCPP_NORMAL_FINDER_H
 #define TOOLKIT_GRAYSKELETONCPP_NORMAL_FINDER_H
 
-//#include <MathTools/Vector3D.h>
+//#include <MathTools/Vector3.h>
 #include "Core/GlobalDefinitions.h"
 //#include <Core/volume.h>
 
 //using namespace std;
-using namespace MathTools;
+using namespace GraphMatch;
 using namespace SkeletonMaker;
 
 namespace GraySkeletonCPP {
@@ -17,7 +17,7 @@ namespace GraySkeletonCPP {
         NormalFinder();
 
         void InitializeGraph(Volume * vol, int x, int y, int z);
-        Vector3DFloat GetSurfaceNormal();
+        Vector3Float GetSurfaceNormal();
 
     private:
         void SetCurveIndex(int x, int y, int z, int index);
@@ -174,7 +174,7 @@ namespace GraySkeletonCPP {
         return true;
     }
 
-    Vector3DFloat NormalFinder::GetSurfaceNormal() {
+    Vector3Float NormalFinder::GetSurfaceNormal() {
         bool graph2[6][6];
         for(int i = 0; i < 6; i++) {
             for(int j = 0; j < 6; j++) {
@@ -183,11 +183,11 @@ namespace GraySkeletonCPP {
         }
         solutionCount = 0;
 
-        Vector3DFloat normal;
-        Vector3DFloat v1,v2;
+        Vector3Float normal;
+        Vector3Float v1,v2;
         int from, to;
         if(FindOrdering()){
-            normal = Vector3DFloat(0,0,0);
+            normal = Vector3Float(0,0,0);
             for(int i = 0; i < validNodeCount; i++) {
                 from = correctOrdering[i];
                 if(i == validNodeCount-1) {
@@ -197,8 +197,8 @@ namespace GraySkeletonCPP {
                 }
 
                 if(graph2[from][to]) {
-                    v1 = Vector3DFloat(nodeVectors[from][0], nodeVectors[from][1], nodeVectors[from][2]);
-                    v2 = Vector3DFloat(nodeVectors[to][0], nodeVectors[to][1], nodeVectors[to][2]);
+                    v1 = Vector3Float(nodeVectors[from][0], nodeVectors[from][1], nodeVectors[from][2]);
+                    v2 = Vector3Float(nodeVectors[to][0], nodeVectors[to][1], nodeVectors[to][2]);
                     normal += (v1^v2);
                     graph2[from][to] = false;
                     graph2[to][from] = false;
@@ -209,13 +209,13 @@ namespace GraySkeletonCPP {
             for(int i = 0; i < 6; i++) {
                 for(int j = 0; j < 6; j++) {
                     if(graph2[i][j]) {
-                        normal = Vector3DFloat(BAD_NORMAL, BAD_NORMAL, BAD_NORMAL);
+                        normal = Vector3Float(BAD_NORMAL, BAD_NORMAL, BAD_NORMAL);
                         break;
                     }
                 }
             }
         } else {
-            normal = Vector3DFloat(BAD_NORMAL, BAD_NORMAL, BAD_NORMAL);
+            normal = Vector3Float(BAD_NORMAL, BAD_NORMAL, BAD_NORMAL);
         }
         return normal;
     }

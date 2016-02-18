@@ -5,7 +5,7 @@
 #include <cmath>
 #include <cassert>
 //#include <MathTools/BasicDefines.h>
-//#include <MathTools/Vector3D.h>
+//#include <MathTools/Vector3.h>
 #include "Vector3.h"
 
 //using namespace MathTools;
@@ -212,7 +212,7 @@ namespace GraphMatch {
                                  (p[2] - z) * (p[2] - z));
         }
 
-        double distanceTo(const Vector3DFloat& v) const {
+        double distanceTo(const Vector3Float& v) const {
             return (double) sqrt((v[0] - x) * (v[0] - x) +
                                  (v[1] - y) * (v[1] - y) +
                                  (v[2] - z) * (v[2] - z));
