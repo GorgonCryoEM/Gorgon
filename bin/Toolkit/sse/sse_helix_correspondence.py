@@ -1,5 +1,5 @@
 from libpycore import SSECorrespondenceEngine, SSECorrespondenceResult, Vector3DFloat
-from ui_dialog_sse_helix_correspondence_finder import Ui_DialogSSEHelixCorrespondenceFinder
+from sse_defaults import SSEDefaults
 from .correspondence.CorrespondenceLibrary import CorrespondenceLibrary
 from .correspondence.Correspondence import Correspondence
 from .correspondence.Match import Match
@@ -13,10 +13,10 @@ from .correspondence.StructurePrediction import StructurePrediction
 import math
 
 
-class SSEHelixCorrespondenceFinderForm(object):
+class SSEHelixCorrespondence(object):
 
     def __init__(self, skeleton, sequence, helix, output):
-        self.ui = Ui_DialogSSEHelixCorrespondenceFinder()
+        self.ui = SSEDefaults()
         self.skeleton = skeleton
         self.sequence = sequence
         self.helix    = helix
@@ -50,7 +50,7 @@ class SSEHelixCorrespondenceFinderForm(object):
         """
         print "begin checkOk"
         print "correspondence index at beginning is "
-        print self.ui.comboBoxCorrespondences.currentIndex()
+        print self.ui.correspondences.currentIndex()
         
         if(self.dataLoaded):
             self.executed = False
@@ -66,7 +66,7 @@ class SSEHelixCorrespondenceFinderForm(object):
                 self.ui.tabWidget.setCurrentIndex(1)
         else:
             print "data not loaded"
-        print "correspondence index at end is " + str(self.ui.comboBoxCorrespondences.currentIndex())
+        print "correspondence index at end is " + str(self.ui.correspondences.currentIndex())
         print "end checkOk"
     
     def setConstants(self):
@@ -83,46 +83,46 @@ class SSEHelixCorrespondenceFinderForm(object):
             self.correspondenceEngine.setConstant("SEQUENCE_FILE_TYPE", "SEQ")
         
         #Graph Settings tab
-        self.correspondenceEngine.setConstantInt("BORDER_MARGIN_THRESHOLD", self.ui.spinBoxBorderMarginThreshold)
-        self.correspondenceEngine.setConstant("EUCLIDEAN_DISTANCE_THRESHOLD", self.ui.doubleSpinBoxEuclideanDistance)
-        self.correspondenceEngine.setConstant("MAXIMUM_DISTANCE_SHEET_SKELETON", self.ui.doubleSpinBoxMaxSheetDistance)
-        self.correspondenceEngine.setConstantInt("MINIMUM_SHEET_SIZE", self.ui.spinBoxMinSheetSize)
-        self.correspondenceEngine.setConstant("SHEET_SELF_LOOP_LENGTH", self.ui.doubleSpinBoxSheetSelfLoopLength)
-        self.correspondenceEngine.setConstant("SHEET_MERGE_THRESHOLD", self.ui.doubleSpinBoxSheetMergeThreshold)
-#         if (self.ui.checkBoxIncludeStrands.isChecked()):
+        self.correspondenceEngine.setConstantInt("BORDER_MARGIN_THRESHOLD", self.ui.BorderMarginThreshold)
+        self.correspondenceEngine.setConstant("EUCLIDEAN_DISTANCE_THRESHOLD", self.ui.EuclideanDistance)
+        self.correspondenceEngine.setConstant("MAXIMUM_DISTANCE_SHEET_SKELETON", self.ui.MaxSheetDistance)
+        self.correspondenceEngine.setConstantInt("MINIMUM_SHEET_SIZE", self.ui.MinSheetSize)
+        self.correspondenceEngine.setConstant("SHEET_SELF_LOOP_LENGTH", self.ui.SheetSelfLoopLength)
+        self.correspondenceEngine.setConstant("SHEET_MERGE_THRESHOLD", self.ui.SheetMergeThreshold)
+#         if (self.ui.IncludeStrands.isChecked()):
 #             self.correspondenceEngine.setConstantInt("INCLUDE_STRANDS", 1)
 #         else:
 #             self.correspondenceEngine.setConstantInt("INCLUDE_STRANDS", 0)
         self.correspondenceEngine.setConstantInt("INCLUDE_STRANDS", 0)
 
         #Matching Settings tab
-        self.correspondenceEngine.setConstant("EUCLIDEAN_VOXEL_TO_PDB_RATIO", self.ui.doubleSpinBoxEuclideanToPDBRatio)
-        if(self.ui.radioButtonAbsoluteDifference):
+        self.correspondenceEngine.setConstant("EUCLIDEAN_VOXEL_TO_PDB_RATIO", self.ui.EuclideanToPDBRatio)
+        if(self.ui.AbsoluteDifference):
             self.correspondenceEngine.setConstantInt("COST_FUNCTION", 1)
-        elif (self.ui.radioButtonNormalizedDifference.isChecked()):
+        elif (self.ui.NormalizedDifference.isChecked()):
             self.correspondenceEngine.setConstantInt("COST_FUNCTION", 2)
         else:
             self.correspondenceEngine.setConstantInt("COST_FUNCTION", 3)
 
-        self.correspondenceEngine.setConstant("LOOP_WEIGHT_COEFFICIENT", self.ui.doubleSpinBoxLoopImportance)
-        self.correspondenceEngine.setConstant("EUCLIDEAN_LOOP_PENALTY", self.ui.doubleSpinBoxEuclideanLoopUsedPenalty)
+        self.correspondenceEngine.setConstant("LOOP_WEIGHT_COEFFICIENT", self.ui.LoopImportance)
+        self.correspondenceEngine.setConstant("EUCLIDEAN_LOOP_PENALTY", self.ui.EuclideanLoopUsedPenalty)
 
-        self.correspondenceEngine.setConstant("HELIX_WEIGHT_COEFFICIENT", self.ui.doubleSpinBoxHelixImportance)
-        if(self.ui.checkBoxMissingHelices):
+        self.correspondenceEngine.setConstant("HELIX_WEIGHT_COEFFICIENT", self.ui.HelixImportance)
+        if(self.ui.MissingHelices):
             self.correspondenceEngine.setConstantInt("MISSING_HELIX_COUNT", self.ui.spinBoxMissingHelixCount)
         else:
             self.correspondenceEngine.setConstantInt("MISSING_HELIX_COUNT", -1)
-        self.correspondenceEngine.setConstant("MISSING_HELIX_PENALTY", self.ui.doubleSpinBoxHelixMissingPenalty)
-        self.correspondenceEngine.setConstant("MISSING_HELIX_PENALTY_SCALED", self.ui.doubleSpinBoxHelixMissingPenaltyScaled)
-        self.correspondenceEngine.setConstant("START_END_MISSING_HELIX_PENALTY", self.ui.doubleSpinBoxEndHelixMissingPenalty)
+        self.correspondenceEngine.setConstant("MISSING_HELIX_PENALTY", self.ui.HelixMissingPenalty)
+        self.correspondenceEngine.setConstant("MISSING_HELIX_PENALTY_SCALED", self.ui.HelixMissingPenaltyScaled)
+        self.correspondenceEngine.setConstant("START_END_MISSING_HELIX_PENALTY", self.ui.EndHelixMissingPenalty)
         
-        self.correspondenceEngine.setConstant("SHEET_WEIGHT_COEFFICIENT", self.ui.doubleSpinBoxSheetImportance)
-        if(self.ui.checkBoxMissingSheets):
+        self.correspondenceEngine.setConstant("SHEET_WEIGHT_COEFFICIENT", self.ui.SheetImportance)
+        if(self.ui.MissingSheets):
             self.correspondenceEngine.setConstantInt("MISSING_SHEET_COUNT", self.ui.spinBoxMissingSheetCount)
         else:
             self.correspondenceEngine.setConstantInt("MISSING_SHEET_COUNT", -1)
-        self.correspondenceEngine.setConstant("MISSING_SHEET_PENALTY", self.ui.doubleSpinBoxSheetMissingPenalty)
-        self.correspondenceEngine.setConstant("MISSING_SHEET_PENALTY_SCALED", self.ui.doubleSpinBoxSheetMissingPenaltyScaled)
+        self.correspondenceEngine.setConstant("MISSING_SHEET_PENALTY", self.ui.SheetMissingPenalty)
+        self.correspondenceEngine.setConstant("MISSING_SHEET_PENALTY_SCALED", self.ui.SheetMissingPenaltyScaled)
         
         # no longer needed?
         self.correspondenceEngine.setConstantBool("NORMALIZE_GRAPHS", True)
@@ -130,7 +130,7 @@ class SSEHelixCorrespondenceFinderForm(object):
         #Tab 4 User Constraints
         # comment out the constraint clearing so that constraints can be loaded from settings files
         #self.correspondenceEngine.clearAllConstraints()
-        correspondenceIndex = self.ui.comboBoxCorrespondences.currentIndex()
+        correspondenceIndex = self.ui.correspondences.currentIndex()
         if(correspondenceIndex >= 0):
             corr = self.correspondenceLibrary.correspondenceList[correspondenceIndex]
             predictedGraphNode = 1
@@ -145,7 +145,7 @@ class SSEHelixCorrespondenceFinderForm(object):
                         else:
                             self.correspondenceEngine.setHelixConstraint(predictedGraphNode, -1)
                 if match.predicted.type == 'strand':
-                    if(not self.ui.checkBoxIncludeSheets.isChecked()):
+                    if(not self.ui.IncludeSheets.isChecked()):
                         self.userConstraints[i]=False # clear all strand constraints
                         match.constrained = False     # clear all strand constraints
                         self.correspondenceEngine.setNodeConstraint(predictedGraphNode, -1)
@@ -162,58 +162,58 @@ class SSEHelixCorrespondenceFinderForm(object):
     def getConstants(self):
         
         #Graph Settings tab
-        self.ui.spinBoxBorderMarginThreshold.setValue(self.correspondenceEngine.getConstantInt("BORDER_MARGIN_THRESHOLD"))
-        self.ui.doubleSpinBoxEuclideanDistance.setValue(self.correspondenceEngine.getConstantDouble("EUCLIDEAN_DISTANCE_THRESHOLD"))
-        self.ui.spinBoxMinSheetSize.setValue(self.correspondenceEngine.getConstantInt("MINIMUM_SHEET_SIZE"))
-        self.ui.doubleSpinBoxMaxSheetDistance.setValue(self.correspondenceEngine.getConstantDouble("MAXIMUM_DISTANCE_SHEET_SKELETON"))
-        self.ui.doubleSpinBoxSheetSelfLoopLength.setValue(self.correspondenceEngine.getConstantDouble("SHEET_SELF_LOOP_LENGTH"))
-        self.ui.doubleSpinBoxSheetMergeThreshold.setValue(self.correspondenceEngine.getConstantDouble("SHEET_MERGE_THRESHOLD"))
+        self.ui.BorderMarginThreshold.setValue(self.correspondenceEngine.getConstantInt("BORDER_MARGIN_THRESHOLD"))
+        self.ui.EuclideanDistance.setValue(self.correspondenceEngine.getConstantDouble("EUCLIDEAN_DISTANCE_THRESHOLD"))
+        self.ui.MinSheetSize.setValue(self.correspondenceEngine.getConstantInt("MINIMUM_SHEET_SIZE"))
+        self.ui.MaxSheetDistance.setValue(self.correspondenceEngine.getConstantDouble("MAXIMUM_DISTANCE_SHEET_SKELETON"))
+        self.ui.SheetSelfLoopLength.setValue(self.correspondenceEngine.getConstantDouble("SHEET_SELF_LOOP_LENGTH"))
+        self.ui.SheetMergeThreshold.setValue(self.correspondenceEngine.getConstantDouble("SHEET_MERGE_THRESHOLD"))
         if(self.correspondenceEngine.getConstantInt("INCLUDE_STRANDS") == 1):
-            self.ui.checkBoxIncludeStrands.setChecked(True)
+            self.ui.IncludeStrands.setChecked(True)
         else:
-            self.ui.checkBoxIncludeStrands.setChecked(False)
+            self.ui.IncludeStrands.setChecked(False)
 
         #Matching settings tab
-        self.ui.doubleSpinBoxEuclideanToPDBRatio.setValue(self.correspondenceEngine.getConstantDouble("EUCLIDEAN_VOXEL_TO_PDB_RATIO"))
+        self.ui.EuclideanToPDBRatio.setValue(self.correspondenceEngine.getConstantDouble("EUCLIDEAN_VOXEL_TO_PDB_RATIO"))
         if(self.correspondenceEngine.getConstantInt("COST_FUNCTION") == 1):
-            self.ui.radioButtonAbsoluteDifference.setChecked(True)
-            self.ui.radioButtonNormalizedDifference.setChecked(False)
-            self.ui.radioButtonQuadraticError.setChecked(False)
+            self.ui.AbsoluteDifference.setChecked(True)
+            self.ui.NormalizedDifference.setChecked(False)
+            self.ui.QuadraticError.setChecked(False)
         elif (self.correspondenceEngine.getConstantInt("COST_FUNCTION") == 2):
-            self.ui.radioButtonAbsoluteDifference.setChecked(False)
-            self.ui.radioButtonNormalizedDifference.setChecked(True)
-            self.ui.radioButtonQuadraticError.setChecked(False)
+            self.ui.AbsoluteDifference.setChecked(False)
+            self.ui.NormalizedDifference.setChecked(True)
+            self.ui.QuadraticError.setChecked(False)
         elif (self.correspondenceEngine.getConstantInt("COST_FUNCTION") == 3):
-            self.ui.radioButtonAbsoluteDifference.setChecked(False)
-            self.ui.radioButtonNormalizedDifference.setChecked(False)
-            self.ui.radioButtonQuadraticError.setChecked(True)
+            self.ui.AbsoluteDifference.setChecked(False)
+            self.ui.NormalizedDifference.setChecked(False)
+            self.ui.QuadraticError.setChecked(True)
 
-        self.ui.doubleSpinBoxLoopImportance.setValue(self.correspondenceEngine.getConstantDouble("LOOP_WEIGHT_COEFFICIENT"))
-        self.ui.doubleSpinBoxEuclideanLoopUsedPenalty.setValue(self.correspondenceEngine.getConstantDouble("EUCLIDEAN_LOOP_PENALTY"))
+        self.ui.LoopImportance.setValue(self.correspondenceEngine.getConstantDouble("LOOP_WEIGHT_COEFFICIENT"))
+        self.ui.EuclideanLoopUsedPenalty.setValue(self.correspondenceEngine.getConstantDouble("EUCLIDEAN_LOOP_PENALTY"))
 
-        self.ui.doubleSpinBoxHelixImportance.setValue(self.correspondenceEngine.getConstantDouble("HELIX_WEIGHT_COEFFICIENT"))
+        self.ui.HelixImportance.setValue(self.correspondenceEngine.getConstantDouble("HELIX_WEIGHT_COEFFICIENT"))
         if (self.correspondenceEngine.getConstantInt("MISSING_HELIX_COUNT") == -1):
-            self.ui.checkBoxMissingHelices = False
+            self.ui.MissingHelices = False
         else:
-            self.ui.checkBoxMissingHelices = True
+            self.ui.MissingHelices = True
             self.ui.spinBoxMissingHelixCount.setValue(self.correspondenceEngine.getConstantInt("MISSING_HELIX_COUNT"))
-        self.ui.doubleSpinBoxHelixMissingPenalty.setValue(self.correspondenceEngine.getConstantDouble("MISSING_HELIX_PENALTY"))
-        self.ui.doubleSpinBoxHelixMissingPenaltyScaled.setValue(self.correspondenceEngine.getConstantDouble("MISSING_HELIX_PENALTY_SCALED"))
-        self.ui.doubleSpinBoxEndHelixMissingPenalty.setValue(self.correspondenceEngine.getConstantDouble("START_END_MISSING_HELIX_PENALTY"))
+        self.ui.HelixMissingPenalty.setValue(self.correspondenceEngine.getConstantDouble("MISSING_HELIX_PENALTY"))
+        self.ui.HelixMissingPenaltyScaled.setValue(self.correspondenceEngine.getConstantDouble("MISSING_HELIX_PENALTY_SCALED"))
+        self.ui.EndHelixMissingPenalty.setValue(self.correspondenceEngine.getConstantDouble("START_END_MISSING_HELIX_PENALTY"))
         
-        self.ui.checkBoxIncludeSheets.setChecked(True)
-        self.ui.doubleSpinBoxSheetImportance.setEnabled(True)
-        self.ui.doubleSpinBoxSheetImportance.setValue(self.correspondenceEngine.getConstantDouble("SHEET_WEIGHT_COEFFICIENT"))
-        self.ui.checkBoxMissingSheets.setEnabled(True)
+        self.ui.IncludeSheets.setChecked(True)
+        self.ui.SheetImportance.setEnabled(True)
+        self.ui.SheetImportance.setValue(self.correspondenceEngine.getConstantDouble("SHEET_WEIGHT_COEFFICIENT"))
+        self.ui.MissingSheets.setEnabled(True)
         if (self.correspondenceEngine.getConstantInt("MISSING_SHEET_COUNT") == -1):
-            self.ui.checkBoxMissingSheets.setChecked(False)
+            self.ui.MissingSheets.setChecked(False)
         else:
-            self.ui.checkBoxMissingSheets.setChecked(True)
+            self.ui.MissingSheets.setChecked(True)
             self.ui.spinBoxMissingSheetCount.setValue(self.correspondenceEngine.getConstantInt("MISSING_SHEET_COUNT"))
-        self.ui.doubleSpinBoxSheetMissingPenalty.setEnabled(True)
-        self.ui.doubleSpinBoxSheetMissingPenalty.setValue(self.correspondenceEngine.getConstantDouble("MISSING_SHEET_PENALTY"))
-        self.ui.doubleSpinBoxSheetMissingPenaltyScaled.setEnabled(True)
-        self.ui.doubleSpinBoxSheetMissingPenaltyScaled.setValue(self.correspondenceEngine.getConstantDouble("MISSING_SHEET_PENALTY_SCALED"))
+        self.ui.SheetMissingPenalty.setEnabled(True)
+        self.ui.SheetMissingPenalty.setValue(self.correspondenceEngine.getConstantDouble("MISSING_SHEET_PENALTY"))
+        self.ui.SheetMissingPenaltyScaled.setEnabled(True)
+        self.ui.SheetMissingPenaltyScaled.setValue(self.correspondenceEngine.getConstantDouble("MISSING_SHEET_PENALTY_SCALED"))
 
     def getConstraints(self):
         print "Reading constraints from c++ layer to python layer"
@@ -385,11 +385,11 @@ class SSEHelixCorrespondenceFinderForm(object):
         return corrList
             
     def populateComboBox(self, library):
-        self.ui.comboBoxCorrespondences.clear()
+        self.ui.correspondences.clear()
         # add all correspondence to pulldown menu
         for i in range(len(library.correspondenceList)):
             corr = library.correspondenceList[i]
-            self.ui.comboBoxCorrespondences.addItem("Correspondence " + str(i+1) + " - [Cost: " + str(corr.score) + "]")
+            self.ui.correspondences.addItem("Correspondence " + str(i+1) + " - [Cost: " + str(corr.score) + "]")
                    
     def createBasicCorrespondence(self):
         """Writes search parameters to correspondence object, loads predicted structure and observed structure, and creates correspondence library"""
@@ -472,7 +472,7 @@ class SSEHelixCorrespondenceFinderForm(object):
 
         # save the settings used to generate the last result, in case this search fails
         if self.executed:
-            lastCorrespondenceIndex = self.ui.comboBoxCorrespondences.currentIndex()
+            lastCorrespondenceIndex = self.ui.correspondences.currentIndex()
             self.lastCorrespondence = self.correspondenceLibrary.correspondenceList[lastCorrespondenceIndex]
         
         # read user parameters, read skeleton and sequence files, create correspondence library
@@ -629,20 +629,20 @@ class SSEHelixCorrespondenceFinderForm(object):
         
     def rebuildGraph(self):
         print "correspondence index before rebuilding is "
-        print self.ui.comboBoxCorrespondences.currentIndex()
-        self.ui.comboBoxCorrespondences.setCurrentIndex(-1)
+        print self.ui.correspondences.currentIndex()
+        self.ui.correspondences.setCurrentIndex(-1)
         print "correspondence index after setting to -1 is "
-        print self.ui.comboBoxCorrespondences.currentIndex()
+        print self.ui.correspondences.currentIndex()
         self.setConstants()
         self.checkOk()
         self.viewer.makeSheetSurfaces(self.app.viewers['skeleton'].renderer.getOriginX(), self.app.viewers['skeleton'].renderer.getOriginY(), self.app.viewers['skeleton'].renderer.getOriginZ(), self.app.viewers['skeleton'].renderer.getSpacingX(), self.app.viewers['skeleton'].renderer.getSpacingY(), self.app.viewers['skeleton'].renderer.getSpacingZ())
         self.viewer.emitModelChanged()
         print "correspondence index after rebuilding is "
-        print self.ui.comboBoxCorrespondences.currentIndex()
+        print self.ui.correspondences.currentIndex()
         
     def constraintAdded(self, state):
         if(not self.loadingCorrespondance):
-            correspondenceIndex = self.ui.comboBoxCorrespondences.currentIndex()
+            correspondenceIndex = self.ui.correspondences.currentIndex()
             if(correspondenceIndex >= 0):
                 corr = self.correspondenceLibrary.correspondenceList[correspondenceIndex]
                 for i in range(len(corr.matchList)):
@@ -658,7 +658,7 @@ class SSEHelixCorrespondenceFinderForm(object):
             observedSheets = self.correspondenceLibrary.structureObservation.sheetDict
             constrained = {}
             
-            correspondenceIndex = self.ui.comboBoxCorrespondences.currentIndex()
+            correspondenceIndex = self.ui.correspondences.currentIndex()
             if(correspondenceIndex >= 0):
                 corr = self.correspondenceLibrary.correspondenceList[correspondenceIndex]
                 for i in range(len(corr.matchList)):
@@ -680,7 +680,7 @@ class SSEHelixCorrespondenceFinderForm(object):
                     constrainAction.setEnabled(not constrained.has_key(i))
                     self.connect(constrainAction, QtCore.SIGNAL("triggered()"), self.constrainObservedHelix(i))
                     self.ui.tableWidgetCorrespondenceList.addAction(constrainAction)
-            if match.predicted.type == 'strand' and self.ui.checkBoxIncludeSheets.isChecked():
+            if match.predicted.type == 'strand' and self.ui.IncludeSheets.isChecked():
                 numH = len(observedHelices)
                 for i in range(len(observedSheets)):
                     constrainAction = QtGui.QAction(self.tr("Observed sheet " + str(i+numH+1)), self)
@@ -702,7 +702,7 @@ class SSEHelixCorrespondenceFinderForm(object):
             self.ui.tableWidgetCorrespondenceList.addAction(constrainAction)
 
     def constrainSSE(self, pred, obs, dir):
-        correspondenceIndex = self.ui.comboBoxCorrespondences.currentIndex()
+        correspondenceIndex = self.ui.correspondences.currentIndex()
         if(correspondenceIndex >= 0):
             corr = self.correspondenceLibrary.correspondenceList[correspondenceIndex]
             match = corr.matchList[pred]
@@ -728,7 +728,7 @@ class SSEHelixCorrespondenceFinderForm(object):
 
     def constrainObservedHelix(self, i):
         def constrainObservedHelix_i():
-            correspondenceIndex = self.ui.comboBoxCorrespondences.currentIndex()
+            correspondenceIndex = self.ui.correspondences.currentIndex()
             if(correspondenceIndex >= 0):
                 corr = self.correspondenceLibrary.correspondenceList[correspondenceIndex]
 
@@ -750,7 +750,7 @@ class SSEHelixCorrespondenceFinderForm(object):
     def constrainObservedSheet(self, i):
         def constrainObservedSheet_i():
             numH = len(self.correspondenceLibrary.structureObservation.helixDict)
-            correspondenceIndex = self.ui.comboBoxCorrespondences.currentIndex()
+            correspondenceIndex = self.ui.correspondences.currentIndex()
             if(correspondenceIndex >= 0):
                 corr = self.correspondenceLibrary.correspondenceList[correspondenceIndex]
                 match = corr.matchList[self.selectedRow]
@@ -764,7 +764,7 @@ class SSEHelixCorrespondenceFinderForm(object):
 
     def constrainPredictedHelix(self, predicted, observed, constrain):
         def constrainPredictedHelix_po():
-            correspondenceIndex = self.ui.comboBoxCorrespondences.currentIndex()
+            correspondenceIndex = self.ui.correspondences.currentIndex()
             if(correspondenceIndex >= 0):
                 corr = self.correspondenceLibrary.correspondenceList[correspondenceIndex]
                 for j in range(len(corr.matchList)):
@@ -782,7 +782,7 @@ class SSEHelixCorrespondenceFinderForm(object):
     
     def constrainPredictedStrand(self, predicted, observed, constrain):
         def constrainPredictedStrand_po():
-            correspondenceIndex = self.ui.comboBoxCorrespondences.currentIndex()
+            correspondenceIndex = self.ui.correspondences.currentIndex()
             if(correspondenceIndex >= 0):
                 corr = self.correspondenceLibrary.correspondenceList[correspondenceIndex]
                 match = corr.matchList[predicted]
