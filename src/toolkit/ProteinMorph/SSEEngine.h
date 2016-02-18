@@ -2,7 +2,7 @@
 #define TOOLKIT_SSE_CORRESPONDENCE_ENGINE_H
 
 //#include <GraphMatch/SSEResult.h>
-#include <GraphMatch/BackEndInterface.h>
+#include <GraphMatch/IBackEnd.h>
 //#include <GraphMatch/GeometricShape.h>
 #include <vector>
 #include <map>
@@ -16,7 +16,7 @@
 //using namespace std;
 
 namespace Visualization {
-    class SSEEngine : public BackEndInterface {
+    class SSEEngine : public IBackEnd {
     public:
         SSEEngine();
 

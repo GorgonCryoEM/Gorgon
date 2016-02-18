@@ -13,17 +13,16 @@ using namespace std;
 
 namespace GraphMatch {
 
-    class BackEndInterface {
+    class IBackEnd {
     public:
-        BackEndInterface();
-        virtual ~BackEndInterface();
+        IBackEnd();
+        virtual ~IBackEnd();
         // Initialization Methods
-        void SetConstantsFromFile(string fileName);
+        void load(string fileName);
         bool SetConstant(string token, string value);
         bool SetConstant(string token, double value);
         bool SetConstant(string token, int value);
         bool SetConstant(string token, bool value);
-        bool GetConstant(string token, string value);
         string GetConstantString(string token);
         double GetConstantDouble(string token);
         int GetConstantInt(string token);
@@ -37,8 +36,8 @@ namespace GraphMatch {
         int GetHelixConstraintUnk(int sequenceNode);
 
         // Graph Loading
-        void LoadSequenceGraph();
-        void LoadSkeletonGraph();
+        void loadSequence();
+        void loadSkeleton();
         // Process Execution
         virtual int ExecuteQuery();
         // Result Retrieval
@@ -51,11 +50,11 @@ namespace GraphMatch {
         StandardGraph * sequence;
     };
 
-    BackEndInterface::BackEndInterface(): skeleton(NULL), sequence(NULL) {
+    IBackEnd::IBackEnd(): skeleton(NULL), sequence(NULL) {
         queryEngine = new QueryEngine();
     }
 
-    BackEndInterface::~BackEndInterface() {
+    IBackEnd::~IBackEnd() {
         delete queryEngine;
         if(skeleton != NULL) {
             delete skeleton;
@@ -65,34 +64,27 @@ namespace GraphMatch {
         }
     }
 
-    void BackEndInterface::SetConstantsFromFile(string fileName) {
+    void IBackEnd::load(string fileName) {
         LoadConstantsFromFile(fileName);
     }
 
-    bool BackEndInterface::SetConstant(string token, string value) {
-        return SetConstantFromToken(token, value, 0.0, 0, false);
+    bool IBackEnd::SetConstant(string token, string value) {
+        return setConstantFree(token, value);
     }
 
-    bool BackEndInterface::SetConstant(string token, double value) {
-        return SetConstantFromToken(token, "", value, 0, false);
+    bool IBackEnd::SetConstant(string token, double value) {
+        return setConstantFree(token, value);
     }
 
-    bool BackEndInterface::SetConstant(string token, int value) {
-        return SetConstantFromToken(token, "", 0.0, value, false);
+    bool IBackEnd::SetConstant(string token, int value) {
+        return setConstantFree(token, value);
     }
 
-    bool BackEndInterface::SetConstant(string token, bool value) {
-        return SetConstantFromToken(token, "", 0.0, 0, value);
+    bool IBackEnd::SetConstant(string token, bool value) {
+        return setConstantFree(token, value);
     }
 
-    bool BackEndInterface::GetConstant(string token, string value) {
-        int iVal;
-        double dVal;
-        bool bVal;
-        return GetConstantFromToken(token, value, dVal, iVal, bVal);
-    }
-
-    string BackEndInterface::GetConstantString(string token) {
+    string IBackEnd::GetConstantString(string token) {
         string  sVal;
         int iVal;
         double dVal;
@@ -101,7 +93,7 @@ namespace GraphMatch {
         return sVal;
     }
 
-    double BackEndInterface::GetConstantDouble(string token) {
+    double IBackEnd::GetConstantDouble(string token) {
         int iVal;
         double dVal;
         bool bVal;
@@ -109,7 +101,7 @@ namespace GraphMatch {
         return dVal;
     }
 
-    int BackEndInterface::GetConstantInt(string token) {
+    int IBackEnd::GetConstantInt(string token) {
         int iVal;
         double dVal;
         bool bVal;
@@ -117,7 +109,7 @@ namespace GraphMatch {
         return iVal;
     }
 
-    bool BackEndInterface::GetConstantBool(string token) {
+    bool IBackEnd::GetConstantBool(string token) {
         int iVal;
         double dVal;
         bool bVal;
@@ -125,27 +117,27 @@ namespace GraphMatch {
         return bVal;
     }
 
-    void BackEndInterface::ClearAllConstraints() {
+    void IBackEnd::ClearAllConstraints() {
         ClearAllowedConstraints();
         ClearNotAllowedConstraints();
     }
 
-    void BackEndInterface::SetHelixConstraint(int sequenceHelix, int skeletonHelix) {
+    void IBackEnd::SetHelixConstraint(int sequenceHelix, int skeletonHelix) {
         AddHelixConstraint(sequenceHelix, skeletonHelix);
     }
 
-    void BackEndInterface::SetNodeConstraint(int sequenceNode, int skeletonNode) {
+    void IBackEnd::SetNodeConstraint(int sequenceNode, int skeletonNode) {
         AddNodeConstraint(sequenceNode, skeletonNode);
     }
 
-    int BackEndInterface::GetStrandConstraint(int sequenceNode, int constraintNum=0) {
+    int IBackEnd::GetStrandConstraint(int sequenceNode, int constraintNum=0) {
         // get # of helices
         // check that seqNode > numH
         // return first constraint, or zero if none
         return GetNodeConstraint(sequenceNode, constraintNum);
     }
 
-    int BackEndInterface::GetHelixConstraintFwd(int firstHelixNode) {
+    int IBackEnd::GetHelixConstraintFwd(int firstHelixNode) {
         if (GetNodeConstraint(firstHelixNode, 1) != 0 || GetNodeConstraint(firstHelixNode+1, 1) != 0) {
             return 0; // more than one constraint per node
         }
@@ -175,7 +167,7 @@ namespace GraphMatch {
         return 0;
     }
 
-    int BackEndInterface::GetHelixConstraintRev(int firstHelixNode) {
+    int IBackEnd::GetHelixConstraintRev(int firstHelixNode) {
         if (GetNodeConstraint(firstHelixNode, 1) != 0 || GetNodeConstraint(firstHelixNode+1, 1) != 0) {
             return 0; // more than one constraint per node
         }
@@ -205,7 +197,7 @@ namespace GraphMatch {
         return 0;
     }
 
-    int BackEndInterface::GetHelixConstraintUnk(int firstHelixNode) {
+    int IBackEnd::GetHelixConstraintUnk(int firstHelixNode) {
         if (GetNodeConstraint(firstHelixNode, 2) != 0 || GetNodeConstraint(firstHelixNode+1, 2) != 0) {
             return 0; // more than two constraints per node
         }
@@ -235,7 +227,7 @@ namespace GraphMatch {
         return 0;
     }
 
-    void BackEndInterface::LoadSequenceGraph() {
+    void IBackEnd::loadSequence() {
         #ifdef GORGON_DEBUG
         cout << "In BackEndInterface::LoadSequenceGraph" << endl;
         #endif
@@ -246,7 +238,7 @@ namespace GraphMatch {
         //sequence->PrintGraph();
     }
 
-    void BackEndInterface::LoadSkeletonGraph() {
+    void IBackEnd::loadSkeleton() {
         if(skeleton != NULL) {
             delete skeleton;
         }
@@ -260,18 +252,18 @@ namespace GraphMatch {
 
     }
 
-    int BackEndInterface::ExecuteQuery() {
+    int IBackEnd::ExecuteQuery() {
         if(skeleton != NULL && sequence != NULL)
             return queryEngine->DoGraphMatching(sequence, skeleton);
         else
             return 0;
     }
 
-    SSEResult BackEndInterface::GetResult(int rank) {
+    SSEResult IBackEnd::GetResult(int rank) {
         return queryEngine->GetSolution(rank);
     }
 
-    void BackEndInterface::CleanupMemory() {
+    void IBackEnd::CleanupMemory() {
         queryEngine->FinishGraphMatching();
     }
 }
