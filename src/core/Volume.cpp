@@ -13,23 +13,16 @@
 namespace Core {
 
     Volume::Volume()
-            : VolumeData(),
-              volume(dynamic_cast<VolumeData &>(*this))
-    {
-        // TODO Auto-generated constructor stub
-
-
-    }
+            : VolumeData()//,
+//              volume(dynamic_cast<VolumeData &>(*this))
+    {}
 
     Volume::Volume(int sizeX, int sizeY, int sizeZ, double val)
-            : VolumeData(sizeX, sizeY, sizeZ, val),
-              volume(dynamic_cast<VolumeData &>(*this))
-    {
-    }
+            : VolumeData(sizeX, sizeY, sizeZ, val)//,
+//              volume(dynamic_cast<VolumeData &>(*this))
+    {    }
 
-    Volume::~Volume() {
-        // TODO Auto-generated destructor stub
-    }
+    Volume::~Volume() {}
 
     void Volume::fill(double val)
     {
