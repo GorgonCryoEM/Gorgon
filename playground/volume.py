@@ -11,7 +11,8 @@ v.out()
 print v1.getSize()
 v1.out()
 
-print v.cmp(v1)
+# print v.cmp(v1)
+print v == v1
 
 i, j, k = 0, 1, 0
 
