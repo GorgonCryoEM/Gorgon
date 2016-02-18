@@ -21,36 +21,38 @@ VolumeData::VolumeData(int sizeX, int sizeY, int sizeZ, double val)
     setSize(sizeX, sizeY, sizeZ, val);
 }
 
-VolumeData::iterator VolumeData::begin(){
-    return data.begin();
-}
-
-VolumeData::iterator VolumeData::end(){
-    return data.end();
-}
-
-VolumeData::const_iterator VolumeData::begin() const {
-    return data.begin();
-}
-
-VolumeData::const_iterator VolumeData::end() const {
-    return data.end();
-}
+//VolumeData::iterator VolumeData::begin(){
+//    return data.begin();
+//}
+//
+//VolumeData::iterator VolumeData::end(){
+//    return data.end();
+//}
+//
+//VolumeData::const_iterator VolumeData::begin() const {
+//    return data.begin();
+//}
+//
+//VolumeData::const_iterator VolumeData::end() const {
+//    return data.end();
+//}
 
 void VolumeData::print() const{
-    for(const_iterator it=begin(); it!=end(); ++it){
+    for(const_iterator it=data.begin(); it!=data.end(); ++it){
         cout<<*it<<endl;
     }
 }
 
-bool VolumeData::cmp(const VolumeData& obj) const {
+bool VolumeData::operator==(const VolumeData& obj) const {
   if(data.size() != obj.data.size())
     return false;
   else {
     double tolerance = 0.0001;
-    int N = data.size();
-    for(int i=0; i<N; ++i){
-      double ratio = data[i]/obj.data[i];
+    for(const_iterator it1=data.begin(), it2=obj.data.begin();
+            it1!=data.end() && it2!=obj.data.end();
+            ++it1, ++it2)
+    {
+      double ratio = *it1 / *it2;
       if(abs(ratio - 1.0) > tolerance)
         return false;
     }
