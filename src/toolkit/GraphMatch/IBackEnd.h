@@ -124,7 +124,7 @@ namespace GraphMatch {
             delete sequence;
         }
         sequence = matcher->loadSequence();
-        //sequence->PrintGraph();
+        //sequence->print();
     }
 
     void IBackEnd::loadSkeleton() {
@@ -135,7 +135,7 @@ namespace GraphMatch {
         #ifdef GORGON_DEBUG
               cout<<"\033[32mDEBUG: File:   BackEndInterface.h"<<endl;
               cout<<"DEBUG: Method: BackEndInterface::LoadSkeletonGraph()\033[0m"<<endl;
-              skeleton->PrintGraph();
+              skeleton->print();
               cout<<"\033[32mDEBUG: END: File:   BackEndInterface.h\033[0m"<<endl;
         #endif
 

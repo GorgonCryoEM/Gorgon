@@ -56,7 +56,7 @@ using namespace std;
 			finish = clock();
 			#ifdef VERBOSE
 				printf("\tReading Pattern file Took %f seconds.\n", (double) (finish - start) / (double) CLOCKS_PER_SEC ) ;
-				graph->PrintGraph();
+				graph->print();
 			#endif
 			return graph;
 		}
@@ -72,7 +72,7 @@ using namespace std;
 			finish = clock();
 			#ifdef VERBOSE
 				printf("\033[32m\tReading Base file Took %f seconds.\n\033[0m", (double) (finish - start) / (double) CLOCKS_PER_SEC ) ;
-				graph->PrintGraph();
+				graph->print();
 			#endif
 			return graph;
 		}

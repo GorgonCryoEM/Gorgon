@@ -7,7 +7,7 @@
 //#include <Core/volume.h>
 //#include "VectorMath.h"
 #include <vector>
-#include "StandardNode.h"
+#include "GraphNode.h"
 
 using namespace std;
 //using namespace SkeletonMaker;
@@ -16,7 +16,7 @@ namespace GraphMatch {
     class PathGenerator {
     public:
         PathGenerator(Graph * graph);
-        void GenerateGraph(StandardNode * node, char * outFileName);
+        void GenerateGraph(GraphNode * node, char * outFileName);
         void GenerateGraph(LinkedNodeStub * node, char * outFileName);
         bool MarkPath(int startHelix, int startCorner, int endHelix, int endCorner, Volume * skeletonVol, Volume * newVol);
 
@@ -28,9 +28,9 @@ namespace GraphMatch {
         this->graph = graph;
     }
 
-    void PathGenerator::GenerateGraph(StandardNode * node, char * outFileName)  {
+    void PathGenerator::GenerateGraph(GraphNode * node, char * outFileName)  {
         Volume * skeletonVol = graph->skeletonVolume;
-        Volume * newVol = new Volume(skeletonVol->getSizeX(), skeletonVol->getSizeY(), skeletonVol->getSizeZ());
+        Volume newVol(*skeletonVol);
         int startNode = 0;
         int endNode = 1;
         while (endNode < node->n2Top) {
@@ -46,7 +46,7 @@ namespace GraphMatch {
                 int startCorner = node->n2[startNode]%2 + 1;
                 int endHelix = node->n2[endNode]/2;
                 int endCorner = node->n2[endNode]%2 + 1;
-                bool marked = MarkPath(startHelix, startCorner, endHelix, endCorner, skeletonVol, newVol);
+                bool marked = MarkPath(startHelix, startCorner, endHelix, endCorner, skeletonVol, &newVol);
 
                 if(!marked) {
                     printf("Path between %d and %d was not marked \n", startHelix + 1, endHelix + 1);
@@ -58,23 +58,21 @@ namespace GraphMatch {
             endNode++;
         }
 
-        newVol->toMRCFile(outFileName);
-        delete newVol;
+        newVol.toMRCFile(outFileName);
     }
 
     void PathGenerator::GenerateGraph(LinkedNodeStub * node, char * outFileName)  {
         Volume * skeletonVol = graph->skeletonVolume;
-        Volume * newVol = new Volume(skeletonVol->getSizeX(), skeletonVol->getSizeY(), skeletonVol->getSizeZ());
+        Volume * newVol = new Volume(*skeletonVol);
 
         int startHelix = -1, startCorner = -1, endHelix = -1, endCorner = -1;
         bool marked;
-        bool continueLoop = true;
-        LinkedNodeStub * currentNode = node;
 
-        while(continueLoop) {
-            if(currentNode->parentNode == NULL) {
-                 break;
-            }
+        for(LinkedNodeStub * currentNode = node;
+            currentNode->parentNode != NULL;
+            currentNode = currentNode->parentNode
+           )
+        {
             endHelix = (currentNode->n2Node-1)/2;
             endCorner = ((currentNode->n2Node-1)%2) + 1;
 
@@ -89,8 +87,6 @@ namespace GraphMatch {
             }
             startHelix = endHelix;
             startCorner = endCorner;
-
-            currentNode = currentNode->parentNode;
         }
 
         newVol->toMRCFile(outFileName);
@@ -98,7 +94,10 @@ namespace GraphMatch {
     }
 
 
-    bool PathGenerator::MarkPath(int startHelix, int startCorner, int endHelix, int endCorner, Volume * skeletonVol, Volume * newVol) {
+    bool PathGenerator::MarkPath(int startHelix, int startCorner, int endHelix,
+                                 int endCorner, Volume * skeletonVol,
+                                 Volume * newVol)
+    {
         vector<Point3Int *> oldStack;
         vector<Point3Int *> newStack;
 
@@ -120,7 +119,7 @@ namespace GraphMatch {
         d[3][0] = 0;		d[3][1] = 1;		d[3][2] = 0;
         d[4][0] = -1;		d[4][1] = 0;		d[4][2] = 0;
         d[5][0] = 1;		d[5][1] = 0;		d[5][2] = 0;
-        Volume * visited = new Volume(skeletonVol->getSizeX(), skeletonVol->getSizeY(), skeletonVol->getSizeZ());
+        Volume * visited = new Volume(*skeletonVol);
 
         for(int i = 0; i < (int)graph->skeletonHelixes.size(); i++) {
             if(((i != endHelix) && (i != startHelix))) {

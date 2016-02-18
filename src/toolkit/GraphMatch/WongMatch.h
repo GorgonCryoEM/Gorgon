@@ -9,7 +9,7 @@
 //#include "Core/GlobalConstants.h"
 #include "PathGenerator.h"
 
-#include "Foundation/FakePair.h"
+#include "Foundation/Pair.h"
 //#include "Structures.h"
 //#include <ctime>
 ////#include <SkeletonMaker/PriorityQueue.h>
@@ -41,7 +41,7 @@ namespace GraphMatch {
 #endif
             LinkedNode * currentNode;
 
-            typedef FakePair<double, LinkedNode *> Elem;
+            typedef Pair<double, LinkedNode *> Elem;
             priority_queue<Elem> * queue;
 
             vector<LinkedNodeStub*> usedNodes;
@@ -860,7 +860,7 @@ namespace GraphMatch {
         }
 
 #ifdef VERBOSE
-        baseGraph->PrintGraph();
+        baseGraph->print();
 #endif
     }
 
@@ -909,7 +909,7 @@ namespace GraphMatch {
         }
 
 #ifdef VERBOSE
-        baseGraph->PrintGraph();
+        baseGraph->print();
 #endif
     }
 }
