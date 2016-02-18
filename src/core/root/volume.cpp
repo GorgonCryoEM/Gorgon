@@ -119,21 +119,6 @@ int Volume::getNonZeroVoxelCount() {
     }
     return count;
 }
-void Volume::print() {
-    for(int x = 0; x < getSizeX(); x++) {
-        printf("{ ");
-        for(int y = 0; y < getSizeY(); y++) {
-            printf("{ ");
-            for(int z = 0; z < getSizeZ(); z++) {
-                printf("%f, ", getDataAt(x, y, z));
-            }
-            printf("} ");
-        }
-        printf("} ");
-    }
-    printf("\n");
-}
-
 
 void Volume::subtract( Volume* vol ) {
     int i, j, k ;
@@ -147,43 +132,6 @@ void Volume::subtract( Volume* vol ) {
                 }
             }
 
-}
-
-void Volume::applyMask(Volume * maskVol, double maskValue, bool keepMaskValue) {
-    for(int x = 0; x < maskVol->getSizeX(); x++) {
-        for(int y = 0; y < maskVol->getSizeY(); y++) {
-            for(int z = 0; z < maskVol->getSizeZ(); z++) {
-                if(((maskVol->getDataAt(x, y, z) == maskValue) && !keepMaskValue) ||
-                    ((maskVol->getDataAt(x, y, z) != maskValue) && keepMaskValue)) {
-                    setDataAt(x, y, z, 0);
-                }
-            }
-        }
-    }
-}
-
-double Volume::getMin() const {
-    int size = volData->getMaxIndex();
-    double rvalue = volData->getDataAt(0);
-    for (int i=1; i < size; i++) {
-        float val = volData->getDataAt(i);
-        if ( rvalue > val) {
-            rvalue = val;
-        }
-    }
-    return rvalue;
-}
-
-double Volume::getMax() const {
-    int size = volData->getMaxIndex();
-    double rvalue = volData->getDataAt(0);
-    for (int i=1; i < size; i++) {
-        float val = volData->getDataAt(i);
-        if ( rvalue < val) {
-            rvalue = val;
-        }
-    }
-    return rvalue ;
 }
 
 double Volume::getMaxValuePosition(int& maxX, int& maxY, int& maxZ) {
@@ -227,17 +175,6 @@ double Volume::getLocalMin(int x, int y, int z, int radius) {
         }
     }
     return mn;
-}
-
-void Volume::fill( double val )
-{
-    for(int x = 0; x < getSizeX(); x++) {
-        for(int y = 0; y < getSizeY(); y++) {
-            for(int z = 0; z < getSizeZ(); z++) {
-                setDataAt(x, y, z, val);
-            }
-        }
-    }
 }
 
 int Volume::isBertrandBorder( int ox, int oy, int oz, int dir ) {
@@ -533,19 +470,6 @@ int Volume::isEndPoint( int ox, int oy, int oz ) {
     return 0 ;
 }
 
-int Volume::getNumNeighbor6( int ox, int oy, int oz ) {
-    int rvalue = 0 ;
-    for ( int i = 0 ; i < 6 ; i ++ ) {
-        int nx = ox + neighbor6[i][0] ;
-        int ny = oy + neighbor6[i][1] ;
-        int nz = oz + neighbor6[i][2] ;
-        if ( getDataAt( nx, ny, nz ) >= 0 ) {
-            rvalue ++ ;
-        }
-    }
-
-    return rvalue ;
-}
 int Volume::testIsSheetEnd( int ox, int oy, int oz ) {
     // Returns 1 if it lies on the edge of a non-noise sheet
     int i, j ;
@@ -1277,13 +1201,6 @@ int Volume::hasCompleteSheetSlow( int ox, int oy, int oz ) {
             }
         }
 
-        /*
-        if ( faceflag[ f ] == 0 )
-        {
-            printf("Wrong!********\n") ;
-        }
-        */
-
         if ( faceEdges[ f ][ 0 ] == e )
         {
             e2 = faceEdges[ f ][ 1 ] ;
@@ -1310,21 +1227,12 @@ int Volume::hasCompleteSheetSlow( int ox, int oy, int oz ) {
         }
     }
 
-//		int temp = countIntEuler( ox, oy, oz ) ;
     if ( tot > 0 )
     {
-//			if ( temp <= 0 )
-        {
-//				printf("Counting wrong: %d\n", temp ) ;
-        }
         return 1 ;
     }
     else
     {
-//			if ( temp > 0 )
-        {
-//				printf("Counting wrong: %d\n", temp ) ;
-        }
         return 0 ;
     }
 }
@@ -1355,33 +1263,6 @@ int Volume::hasCompleteHelix( int ox, int oy, int oz )
     }
 
     return 0 ;
-
-    /*
-    ox = ox + neighbor6[j][0] ;
-    oy = oy + neighbor6[j][1] ;
-    oz = oz + neighbor6[j][2] ;
-    c1 = 0 ;
-    for ( i = 0 ; i < 6 ; i ++ )
-    {
-        nx = ox + neighbor6[i][0] ;
-        ny = oy + neighbor6[i][1] ;
-        nz = oz + neighbor6[i][2] ;
-        if ( getDataAt( nx, ny, nz ) >= 0 )
-        {
-            c1 ++ ;
-        }
-
-    }
-
-    if ( c1 > 1 )
-    {
-        return 0 ;
-    }
-    else
-    {
-        return 1 ;
-    }
-    */
 }
 
 int Volume::hasCompleteHelix( int ox, int oy, int oz, Volume* fvol )
@@ -1422,33 +1303,6 @@ int Volume::hasCompleteHelix( int ox, int oy, int oz, Volume* fvol )
     }
 
     return 0 ;
-
-    /*
-    ox = ox + neighbor6[j][0] ;
-    oy = oy + neighbor6[j][1] ;
-    oz = oz + neighbor6[j][2] ;
-    c1 = 0 ;
-    for ( i = 0 ; i < 6 ; i ++ )
-    {
-        nx = ox + neighbor6[i][0] ;
-        ny = oy + neighbor6[i][1] ;
-        nz = oz + neighbor6[i][2] ;
-        if ( getDataAt( nx, ny, nz ) >= 0 )
-        {
-            c1 ++ ;
-        }
-
-    }
-
-    if ( c1 > 1 )
-    {
-        return 0 ;
-    }
-    else
-    {
-        return 1 ;
-    }
-    */
 }
 
 int Volume::isHelixEnd( int ox, int oy, int oz, Volume* nvol ) {
@@ -2113,79 +1967,6 @@ int Volume::hasFeatureFace( int ox, int oy, int oz )
 int Volume::isSheetEnd( int ox, int oy, int oz )
 {
     return ( ( hasCompleteSheet(ox,oy,oz) == 0 ) && isFeatureFace(ox,oy,oz) ) ;
-
-    //// return testIsSheetEnd( ox, oy, oz ) ;
-    //
-    //int i, j, k ;
-    //int nx, ny, nz ;
-
-    //double vox[3][3][3] ;
-    //for ( i = -1 ; i < 2 ; i ++ )
-    //	for ( j = -1 ; j < 2 ; j ++ )
-    //		for ( k = -1 ; k < 2 ; k ++ )
-    //		{
-    //			vox[ i + 1 ][ j + 1 ][ k + 1 ] = getDataAt( ox + i, oy + j, oz + k ) ;
-    //		}
-
-    //int edge[6] = { 4,4,4,4,4,4 } ;
-    //int edge2[6] = { 4,4,4,4,4,4 } ;
-
-    //for ( i = 0 ; i < 12 ; i ++ )
-    //{
-    //	for ( j = 0 ; j < 4 ; j ++ )
-    //	{
-    //		nx = 1 + sheetNeighbor[i][j][0] ;
-    //		ny = 1 + sheetNeighbor[i][j][1] ;
-    //		nz = 1 + sheetNeighbor[i][j][2] ;
-
-    //		if ( vox[nx][ny][nz] < 0 )
-    //		{
-    //			edge[ faceEdges[ i ][ 0 ] ] -- ;
-    //			edge[ faceEdges[ i ][ 1 ] ] -- ;
-    //			break ;
-    //		}
-    //	}
-
-    //	for ( j = 0 ; j < 4 ; j ++ )
-    //	{
-    //		nx = 1 + sheetNeighbor[i][j][0] ;
-    //		ny = 1 + sheetNeighbor[i][j][1] ;
-    //		nz = 1 + sheetNeighbor[i][j][2] ;
-
-    //		if ( vox[nx][ny][nz] <= 0 )
-    //		{
-    //			edge2[ faceEdges[ i ][ 0 ] ] -- ;
-    //			edge2[ faceEdges[ i ][ 1 ] ] -- ;
-    //			break ;
-    //		}
-    //	}
-    //}
-
-    //
-    ///*
-    //for ( i = 0 ; i < 6 ; i ++ )
-    //{
-    //	nx = 1 + neighbor6[i][0] ;
-    //	ny = 1 + neighbor6[i][1] ;
-    //	nz = 1 + neighbor6[i][2] ;
-    //	if ( edge[i] == 0 && vox[nx][ny][nz] >= 0 )
-    //	{
-    //		return 0 ;
-    //	}
-    //}
-    //*/
-    //
-
-
-    //for ( i = 0 ; i < 6 ; i ++ )
-    //{
-    //	if ( edge[ i ] == 1 && edge2[ i ] == 1 )
-    //	{
-    //		return 1 ;
-    //	}
-    //}
-
-    //return 0 ;
 }
 
 int Volume::isSimple( int ox, int oy, int oz )
@@ -2201,46 +1982,10 @@ int Volume::isSimple( int ox, int oy, int oz )
             {
                 double tval = getDataAt( ox + i, oy + j, oz + k ) ;
 
-                /*
-                if ( tval == 0 || tval > (va )
-                {
-                    flag = 1 ;
-                }
-                */
-                /*
-                if ( tval < 0 && tval == - curwid )
-                {
-                printf("Here %d", (int)-tval) ;
-                vox[ i + 1 ][ j + 1 ][ k + 1 ] = - tval ;
-                }
-                else
-                */
                 {
                     vox[ i + 1 ][ j + 1 ][ k + 1 ] = tval ;
                 }
             }
-
-        /* Debugging
-        printf("{") ;
-        for ( i = 0 ; i < 3 ; i ++ )
-        {
-            if ( i ) printf(",") ;
-            printf("{") ;
-            for ( j = 0 ; j < 3 ; j ++ )
-            {
-                if ( j ) printf(",") ;
-                printf("{") ;
-                for ( k = 0 ; k < 3 ; k ++ )
-                {
-                    if ( k ) printf(",") ;
-                    printf("%d", (vox[i][j][k] >=0 ? 1: 0));
-                }
-                printf("}") ;
-            }
-            printf("}") ;
-        }
-        printf("} Int: %d, Ext: %d\n", countInt( vox ), countExt( vox )) ;
-        */
 
     if ( countInt( vox ) == 1 && countExt( vox ) == 1 )
     {
@@ -2265,47 +2010,10 @@ int Volume::isPiercable( int ox, int oy, int oz )
             for ( k = -1 ; k < 2 ; k ++ )
             {
                 double tval = getDataAt( ox + i, oy + j, oz + k ) ;
-
-                /*
-                if ( tval == 0 || tval > (va )
-                {
-                    flag = 1 ;
-                }
-                */
-                /*
-                if ( tval < 0 && tval == - curwid )
-                {
-                printf("Here %d", (int)-tval) ;
-                vox[ i + 1 ][ j + 1 ][ k + 1 ] = - tval ;
-                }
-                else
-                */
                 {
                     vox[ i + 1 ][ j + 1 ][ k + 1 ] = tval ;
                 }
             }
-
-        /* Debugging
-        printf("{") ;
-        for ( i = 0 ; i < 3 ; i ++ )
-        {
-            if ( i ) printf(",") ;
-            printf("{") ;
-            for ( j = 0 ; j < 3 ; j ++ )
-            {
-                if ( j ) printf(",") ;
-                printf("{") ;
-                for ( k = 0 ; k < 3 ; k ++ )
-                {
-                    if ( k ) printf(",") ;
-                    printf("%d", (vox[i][j][k] >=0 ? 1: 0));
-                }
-                printf("}") ;
-            }
-            printf("}") ;
-        }
-        printf("} Int: %d, Ext: %d\n", countInt( vox ), countExt( vox )) ;
-        */
 
     if ( countInt( vox ) == 1 && countExt( vox ) != 1 )
     {
@@ -2431,31 +2139,8 @@ int Volume::getNumPotComplex( int ox, int oy, int oz )
 //		return 70 ;
     }
 
-    // return getNumNeighbor6( ox, oy, oz ) ;
-
-    // int v = ((getNumNeighbor6( ox, oy, oz ) & 255) << 24) ;
-    //int v = 0  ;
-
     int rvalue = 0, nx, ny, nz ;
     setDataAt( ox, oy, oz, -val ) ;
-
-    /*
-    for ( i = -1 ; i < 2 ; i ++ )
-        for ( j = -1 ; j < 2 ; j ++ )
-            for ( k = -1 ; k < 2 ; k ++ )
-            {
-                nx = ox + i ;
-                ny = oy + j ;
-                nz = oz + k ;
-                if ( getDataAt( nx, ny, nz ) == val )
-                {
-                    if ( isSheetEnd( nx, ny, nz) || ! isSimple ( nx, ny, nz ) )
-                    {
-                        rvalue ++ ;
-                    }
-                }
-            }
-    */
 
     for ( i = 0 ; i < 6 ; i ++ )
     {
@@ -2477,49 +2162,11 @@ int Volume::getNumPotComplex( int ox, int oy, int oz )
     setDataAt( ox, oy, oz, val ) ;
 
     return rvalue + getNumNeighbor6( ox, oy, oz ) * 10 ;
-    /*
-    int v = (((rvalue + getNumNeighbor6( ox, oy, oz ) * 10) & 255) << 24) ;
-    v |= ( ( ox & 255 ) << 16 )  ;
-    v |= ( ( oy & 255 ) << 8 ) ;
-    v |= ( ( oz & 255 ) ) ;
-    return v ;
-    */
-
 }
 
 int Volume::getNumPotComplex2( int ox, int oy, int oz )
 {
     return getNumPotComplex( ox, oy, oz ) ;
-
-    //int i, j, k ;
-    //double val = getDataAt( ox, oy, oz ) ;
-    //if ( val <= 0 )
-    //{
-    //	return 0 ;
-    //}
-
-    //int rvalue = 0, nx, ny, nz ;
-    //setDataAt( ox, oy, oz, -val ) ;
-
-    //for ( i = -1 ; i < 2 ; i ++ )
-    //	for ( j = -1 ; j < 2 ; j ++ )
-    //		for ( k = -1 ; k < 2 ; k ++ )
-    //		{
-    //			nx = ox + i ;
-    //			ny = oy + j ;
-    //			nz = oz + k ;
-    //			if ( getDataAt( nx, ny, nz ) == val )
-    //			{
-    //				if ( isHelixEnd( nx, ny, nz) || ! isSimple ( nx, ny, nz ) )
-    //				{
-    //					rvalue ++ ;
-    //				}
-    //			}
-    //		}
-
-    //setDataAt( ox, oy, oz, val ) ;
-
-    //return rvalue + getNumNeighbor6( ox, oy, oz ) * 30 ;
 }
 
 int Volume::getNumNeighbor( int ox, int oy, int oz )
@@ -2537,21 +2184,7 @@ int Volume::getNumNeighbor( int ox, int oy, int oz )
             rvalue ++ ;
         }
     }
-    /*
-    for ( int i = -1 ; i < 2 ; i ++ )
-        for ( int j = -1 ; j < 2 ; j ++ )
-            for ( int k = -1 ; k < 2 ; k ++ )
-            {
-                int nx = ox + i ;
-                int ny = oy + j ;
-                int nz = oz + k ;
 
-                if ( getDataAt( nx, ny, nz ) == val )
-                {
-                    rvalue ++ ;
-                }
-            }
-    */
     return rvalue ;
 }
 
@@ -3061,24 +2694,6 @@ void Volume::erode2( float thr, int wid )
         printf("Processing %d nodes in layer %d\n", queue->getNumElements(), curwid) ;
         #endif
 
-        /* set nodes for next layer
-        while ( ( ele = queue->getNext() ) != NULL )
-        {
-            for ( int m = 0 ; m < 6 ; m ++ )
-            {
-                int nx = ele->x + neighbor6[m][0] ;
-                int ny = ele->y + neighbor6[m][1] ;
-                int nz = ele->z + neighbor6[m][2] ;
-                if ( getDataAt( nx, ny, nz ) == 0 )
-                {
-                    setDataAt( nx, ny, nz, curwid + 1 ) ;
-                    queue2->prepend( nx, ny, nz ) ;
-                }
-            }
-
-        }
-        */
-
         // erosion
         int seed[3] = {-1,-1,-1};
         queue->reset() ;
@@ -3389,38 +3004,6 @@ void Volume::erodeShapeTopo( float thr, int wid )
                             numComplex ++ ;
                         }
                     }
-
-            // Update scores for nodes in its 5x5 neighborhood
-            // insert them back into priority queue
-                    /*
-            for ( i = -2 ; i < 3 ;i ++ )
-                for ( j = -2 ; j < 3 ; j ++ )
-                    for ( k = -2 ; k < 3 ; k ++ )
-                    {
-                        int nx = ox + i ;
-                        int ny = oy + j ;
-                        int nz = oz + k ;
-
-                        if ( getDataAt( nx, ny, nz ) == curwid )
-                        {
-                            // Compute score
-                            score = getNumPotComplex( nx, ny, nz ) ;
-
-                            if ( score != (int) scrvol->getDataAt( nx, ny, nz ) )
-                            {
-                                // printf("Update\n") ;
-                                scrvol->setDataAt( nx, ny, nz, score ) ;
-                                // Push to queue
-                                gp = new gridPoint ;
-                                gp->x = nx ;
-                                gp->y = ny ;
-                                gp->z = nz ;
-                                queue->add( gp, -score ) ;
-                            }
-                        }
-                    }
-                    */
-
         }
 
         #ifdef VERBOSE
@@ -3629,37 +3212,6 @@ void Volume::erodeAtom( float thr, int wid, Volume* avol )
                             numComplex ++ ;
                         }
                     }
-
-            // Update scores for nodes in its 5x5 neighborhood
-            // insert them back into priority queue
-                    /*
-            for ( i = -2 ; i < 3 ;i ++ )
-                for ( j = -2 ; j < 3 ; j ++ )
-                    for ( k = -2 ; k < 3 ; k ++ )
-                    {
-                        int nx = ox + i ;
-                        int ny = oy + j ;
-                        int nz = oz + k ;
-
-                        if ( getDataAt( nx, ny, nz ) == curwid )
-                        {
-                            // Compute score
-                            score = getNumPotComplex( nx, ny, nz ) ;
-
-                            if ( score != (int) scrvol->getDataAt( nx, ny, nz ) )
-                            {
-                                // printf("Update\n") ;
-                                scrvol->setDataAt( nx, ny, nz, score ) ;
-                                // Push to queue
-                                gp = new gridPoint ;
-                                gp->x = nx ;
-                                gp->y = ny ;
-                                gp->z = nz ;
-                                queue->add( gp, -score ) ;
-                            }
-                        }
-                    }
-                    */
 
         }
         #ifdef VERBOSE
@@ -3879,39 +3431,6 @@ void Volume::curveSkeleton( Volume* grayvol, float lowthr, float highthr, Volume
 
 
 #endif
-        /* Commented out for debugging
-
-        // First,
-        // check for complex nodes in queue2
-        // move them from queue2 to queue3
-        queue2->reset() ;
-        ele = queue2->getNext() ;
-        while ( ele != NULL )
-        {
-            ox = ele->x ;
-            oy = ele->y ;
-            oz = ele->z ;
-
-            // Check simple
-#ifndef NOISE_DIS_HELIX
-            if ( isHelixEnd( ox, oy, oz ) || ! isSimple( ox, oy, oz ) )
-#else
-            if ( isHelixEnd( ox, oy, oz, noisevol ) || ! isSimple( ox, oy, oz ) )
-#endif
-            {
-                // Complex, set to next layer
-                setDataAt( ox, oy, oz, curwid + 1 ) ;
-                queue3->prepend( ox, oy, oz ) ;
-                ele = queue2->remove() ;
-
-                numComplex ++ ;
-            }
-            else
-            {
-                ele = queue2->getNext() ;
-            }
-        }
-        */
 
         // Next,
         // Compute score for each node left in queue2
@@ -3965,14 +3484,6 @@ void Volume::curveSkeleton( Volume* grayvol, float lowthr, float highthr, Volume
                 continue ;
             }
 
-            /* Commented out for debugging
-
-            // Remove this simple node
-            setDataAt( ox, oy, oz, -1 ) ;
-            numSimple ++ ;
-            // printf("Highest score: %d\n", score) ;
-            */
-
             /* Added for debugging */
             // Check simple
 #ifndef NOISE_DIS_HELIX
@@ -4008,37 +3519,6 @@ void Volume::curveSkeleton( Volume* grayvol, float lowthr, float highthr, Volume
                 }
 
             }
-
-
-            /* Commented out for debugging
-
-            // Find complex nodes in its 3x3 neighborhood
-            // move them to queue2
-            for ( i = -1 ; i < 2 ; i ++ )
-                for ( j = -1 ; j < 2 ; j ++ )
-                    for ( k = -1 ; k < 2 ; k ++ )
-                    {
-                        int nx = ox + i ;
-                        int ny = oy + j ;
-                        int nz = oz + k ;
-
-                        // Check simple
-                        if ( getDataAt( nx, ny, nz ) == curwid &&
-                            // ( isSheetEnd( ox, oy, oz ) || ! isSimple( nx, ny, nz )) )
-#ifndef NOISE_DIS_HELIX
-                            ( isHelixEnd( nx, ny, nz ) || ! isSimple( nx, ny, nz ) ) )
-#else
-                            ( isHelixEnd( nx, ny, nz, noisevol ) || ! isSimple( nx, ny, nz ) ) )
-#endif
-
-                        {
-                            // Complex, set to next layer
-                            setDataAt( nx, ny, nz, curwid + 1 ) ;
-                            queue2->prepend( nx, ny, nz ) ;
-                            numComplex ++ ;
-                        }
-                    }
-            */
 
             // Update scores for nodes in its 5x5 neighborhood
             // insert them back into priority queue
@@ -4335,39 +3815,6 @@ void Volume::curveSkeleton( float thr, Volume* svol )
 
 
 #endif
-        /* Commented out for debugging
-
-        // First,
-        // check for complex nodes in queue2
-        // move them from queue2 to queue3
-        queue2->reset() ;
-        ele = queue2->getNext() ;
-        while ( ele != NULL )
-        {
-            ox = ele->x ;
-            oy = ele->y ;
-            oz = ele->z ;
-
-            // Check simple
-#ifndef NOISE_DIS_HELIX
-            if ( isHelixEnd( ox, oy, oz ) || ! isSimple( ox, oy, oz ) )
-#else
-            if ( isHelixEnd( ox, oy, oz, noisevol ) || ! isSimple( ox, oy, oz ) )
-#endif
-            {
-                // Complex, set to next layer
-                setDataAt( ox, oy, oz, curwid + 1 ) ;
-                queue3->prepend( ox, oy, oz ) ;
-                ele = queue2->remove() ;
-
-                numComplex ++ ;
-            }
-            else
-            {
-                ele = queue2->getNext() ;
-            }
-        }
-        */
 
         // Next,
         // Compute score for each node left in queue2
@@ -4421,14 +3868,6 @@ void Volume::curveSkeleton( float thr, Volume* svol )
                 continue ;
             }
 
-            /* Commented out for debugging
-
-            // Remove this simple node
-            setDataAt( ox, oy, oz, -1 ) ;
-            numSimple ++ ;
-            // printf("Highest score: %d\n", score) ;
-            */
-
             /* Added for debugging */
             // Check simple
 #ifndef NOISE_DIS_HELIX
@@ -4462,36 +3901,6 @@ void Volume::curveSkeleton( float thr, Volume* svol )
                     queue2->prepend( nx, ny, nz ) ;
                 }
             }
-
-            /* Commented out for debugging
-
-            // Find complex nodes in its 3x3 neighborhood
-            // move them to queue2
-            for ( i = -1 ; i < 2 ; i ++ )
-                for ( j = -1 ; j < 2 ; j ++ )
-                    for ( k = -1 ; k < 2 ; k ++ )
-                    {
-                        int nx = ox + i ;
-                        int ny = oy + j ;
-                        int nz = oz + k ;
-
-                        // Check simple
-                        if ( getDataAt( nx, ny, nz ) == curwid &&
-                            // ( isSheetEnd( ox, oy, oz ) || ! isSimple( nx, ny, nz )) )
-#ifndef NOISE_DIS_HELIX
-                            ( isHelixEnd( nx, ny, nz ) || ! isSimple( nx, ny, nz ) ) )
-#else
-                            ( isHelixEnd( nx, ny, nz, noisevol ) || ! isSimple( nx, ny, nz ) ) )
-#endif
-
-                        {
-                            // Complex, set to next layer
-                            setDataAt( nx, ny, nz, curwid + 1 ) ;
-                            queue2->prepend( nx, ny, nz ) ;
-                            numComplex ++ ;
-                        }
-                    }
-            */
 
             // Update scores for nodes in its 5x5 neighborhood
             // insert them back into priority queue
@@ -4744,39 +4153,6 @@ void Volume::curveSkeleton2D( float thr, Volume* svol )
 
 
         #endif
-        /* Commented out for debugging
-
-        // First,
-        // check for complex nodes in queue2
-        // move them from queue2 to queue3
-        queue2->reset() ;
-        ele = queue2->getNext() ;
-        while ( ele != NULL )
-        {
-            ox = ele->x ;
-            oy = ele->y ;
-            oz = ele->z ;
-
-            // Check simple
-#ifndef NOISE_DIS_HELIX
-            if ( isHelixEnd( ox, oy, oz ) || ! isSimple( ox, oy, oz ) )
-#else
-            if ( isHelixEnd( ox, oy, oz, noisevol ) || ! isSimple( ox, oy, oz ) )
-#endif
-            {
-                // Complex, set to next layer
-                setDataAt( ox, oy, oz, curwid + 1 ) ;
-                queue3->prepend( ox, oy, oz ) ;
-                ele = queue2->remove() ;
-
-                numComplex ++ ;
-            }
-            else
-            {
-                ele = queue2->getNext() ;
-            }
-        }
-        */
 
         // Next,
         // Compute score for each node left in queue2
@@ -4831,14 +4207,6 @@ void Volume::curveSkeleton2D( float thr, Volume* svol )
                 continue ;
             }
 
-            /* Commented out for debugging
-
-            // Remove this simple node
-            setDataAt( ox, oy, oz, -1 ) ;
-            numSimple ++ ;
-            // printf("Highest score: %d\n", score) ;
-            */
-
             /* Added for debugging */
             // Check simple
             #ifndef NOISE_DIS_HELIX
@@ -4872,36 +4240,6 @@ void Volume::curveSkeleton2D( float thr, Volume* svol )
                     queue2->prepend( nx, ny, nz ) ;
                 }
             }
-
-            /* Commented out for debugging
-
-            // Find complex nodes in its 3x3 neighborhood
-            // move them to queue2
-            for ( i = -1 ; i < 2 ; i ++ )
-                for ( j = -1 ; j < 2 ; j ++ )
-                    for ( k = -1 ; k < 2 ; k ++ )
-                    {
-                        int nx = ox + i ;
-                        int ny = oy + j ;
-                        int nz = oz + k ;
-
-                        // Check simple
-                        if ( getDataAt( nx, ny, nz ) == curwid &&
-                            // ( isSheetEnd( ox, oy, oz ) || ! isSimple( nx, ny, nz )) )
-#ifndef NOISE_DIS_HELIX
-                            ( isHelixEnd( nx, ny, nz ) || ! isSimple( nx, ny, nz ) ) )
-#else
-                            ( isHelixEnd( nx, ny, nz, noisevol ) || ! isSimple( nx, ny, nz ) ) )
-#endif
-
-                        {
-                            // Complex, set to next layer
-                            setDataAt( nx, ny, nz, curwid + 1 ) ;
-                            queue2->prepend( nx, ny, nz ) ;
-                            numComplex ++ ;
-                        }
-                    }
-            */
 
             // Update scores for nodes in its 5x5 neighborhood
             // insert them back into priority queue
@@ -5254,38 +4592,6 @@ void Volume::skeleton2( float thr, int off )
                 }
             }
 
-            // Update scores for nodes in its 5x5 neighborhood
-            // insert them back into priority queue
-                /*
-            for ( i = -2 ; i < 3 ;i ++ )
-                for ( j = -2 ; j < 3 ; j ++ )
-                    for ( k = -2 ; k < 3 ; k ++ )
-                    {
-                        int nx = ox + i ;
-                        int ny = oy + j ;
-                        int nz = oz + k ;
-
-                        if ( getDataAt( nx, ny, nz ) == curwid )
-                        {
-                            // Compute score
-                            score = getNumPotComplex2( nx, ny, nz ) ;
-
-                            if ( score != (int) scrvol->getDataAt( nx, ny, nz ) )
-                            {
-                                // printf("Update\n") ;
-                                scrvol->setDataAt( nx, ny, nz, score ) ;
-                                // Push to queue
-                                gp = new gridPoint ;
-                                gp->x = nx ;
-                                gp->y = ny ;
-                                gp->z = nz ;
-                                // queue->add( gp, -score ) ;
-                                queue->add( gp, score ) ;
-                            }
-                        }
-                    }
-
-                */
         }
         #ifdef VERBOSE
         printf("%d complex, %d simple\n", numComplex, numSimple) ;
@@ -5881,66 +5187,13 @@ void Volume::erodeHelix( int disthr )
                 {
                     setDataAt( i, j, k, dis ) ;
                     queues[ -dis ]->prepend( i, j, k ) ;
-/*
-                    int fval = (int) fvol->getDataAt( i, j, k ) ;
-                    if ( fval == 0)
-                    {
-                        // queues[ -dis ]->prepend( i, j, k ) ;
-                    }
-                    else
-                    {
-                        setDataAt( i, j, k, fval - 1 ) ;
-                        // queues[ -fval + 1 ]->prepend( i, j, k ) ;
-                    }
-*/
+
                     ftot ++ ;
                 }
             }
     #ifdef VERBOSE
     printf("%d nodes\n", ftot) ;
     #endif
-
-
-    // return ;
-
-    /* Find local minimum: to help determine erosion level
-    int cts[ 64 ] ;
-    for ( i = 0 ; i <= - dis ; i ++ )
-    {
-        cts[ i ] = 0 ;
-    }
-    for ( i = 0 ; i < getSizeX() ; i ++ )
-        for ( j = 0 ; j < getSizeY() ; j ++ )
-            for ( k = 0 ; k < getSizeZ() ; k ++ )
-            {
-                double val = getDataAt( i, j, k ) ;
-                if ( val < -1 )
-                {
-                    int min = 1 ;
-                    for ( int m = 0 ; m < 6 ; m ++ )
-                    {
-                        int nx = i + neighbor6[m][0] ;
-                        int ny = j + neighbor6[m][1] ;
-                        int nz = k + neighbor6[m][2] ;
-                        if ( getDataAt( nx, ny, nz ) < val )
-                        {
-                            min = 0 ;
-                            break ;
-                        }
-                    }
-
-                    if ( min )
-                    {
-                        cts[ (int) - val ] ++ ;
-                    }
-                }
-            }
-
-    for ( i = 2 ; i <= - dis ; i ++ )
-    {
-        printf("Local minima: %d with %d nodes.\n", -i, cts[ i ] ) ;
-    }
-    */
 
     // Dilate back
     // Starting from nodes with distance - 2 - disthr
@@ -6222,19 +5475,6 @@ int Volume::erodeSheet( int disthr )
             {
                 if ( getDataAt( i, j, k ) == 0 )
                 {
-                    /*
-                    int fval = (int) fvol->getDataAt( i, j, k ) ;
-                    if ( fval == 0)
-                    {
-                        setDataAt( i, j, k, dis - 2 ) ;
-                        // queues[ -dis ]->prepend( i, j, k ) ;
-                    }
-                    else
-                    {
-                        setDataAt( i, j, k, fval - 1 ) ;
-                        queues[ -fval + 1 ]->prepend( i, j, k ) ;
-                    }
-                    */
                     setDataAt( i, j, k, dis ) ;
                     queues[ -dis ]->prepend( i, j, k ) ;
 
@@ -6244,48 +5484,6 @@ int Volume::erodeSheet( int disthr )
     #ifdef VERBOSE
     printf("%d nodes\n", ftot) ;
     #endif
-
-
-    /* Find local minimum: to help determine erosion level
-    int cts[ 64 ] ;
-    for ( i = 0 ; i <= - dis ; i ++ )
-    {
-        cts[ i ] = 0 ;
-    }
-    for ( i = 0 ; i < getSizeX() ; i ++ )
-        for ( j = 0 ; j < getSizeY() ; j ++ )
-            for ( k = 0 ; k < getSizeZ() ; k ++ )
-            {
-                double val = getDataAt( i, j, k ) ;
-                if ( val < -1 )
-                {
-                    int min = 1 ;
-                    for ( int m = 0 ; m < 6 ; m ++ )
-                    {
-                        int nx = i + neighbor6[m][0] ;
-                        int ny = j + neighbor6[m][1] ;
-                        int nz = k + neighbor6[m][2] ;
-                        if ( getDataAt( nx, ny, nz ) < val )
-                        {
-                            min = 0 ;
-                            break ;
-                        }
-                    }
-
-                    if ( min )
-                    {
-                        cts[ (int) - val ] ++ ;
-                    }
-                }
-            }
-
-    for ( i = 2 ; i <= - dis ; i ++ )
-    {
-        printf("Local minima: %d with %d nodes.\n", -i, cts[ i ] ) ;
-    }
-    */
-
-    // return ;
 
     // Dilate back
     // Starting from nodes with distance - 2 - disthr
@@ -6314,25 +5512,6 @@ int Volume::erodeSheet( int disthr )
         while ( ele != NULL )
         {
             int dilatable = 0 ;
-            // for ( int m = 0 ; m < 6 ; m ++ )
-            /*
-            for ( int mx = -1 ; mx < 2 ; mx ++ )
-            for ( int my = -1 ; my < 2 ; my ++ )
-            for ( int mz = -1 ; mz < 2 ; mz ++ )
-            {
-            if ( mx == 0 || my == 0 || mz == 0 )
-            {
-            int nx = ele->x + mx ; // neighbor6[m][0] ;
-            int ny = ele->y + my ; // neighbor6[m][1] ;
-            int nz = ele->z + mz ; // neighbor6[m][2] ;
-            if ( getDataAt( nx, ny, nz ) == - d - 1 )
-            {
-            dilatable = 1 ;
-            break ;
-            }
-            }
-            }
-            */
             for ( i = 0 ; i < 12 ; i ++ )
             {
                 int flag = 1, flag2 = 0 ;
@@ -6622,25 +5801,6 @@ void Volume::erodeSheetOld( int disthr )
         while ( (ele = queues[ d ]->getNext() ) != NULL )
         {
             int dilatable = 0 ;
-            // for ( int m = 0 ; m < 6 ; m ++ )
-            /*
-            for ( int mx = -1 ; mx < 2 ; mx ++ )
-                for ( int my = -1 ; my < 2 ; my ++ )
-                    for ( int mz = -1 ; mz < 2 ; mz ++ )
-                    {
-                        if ( mx == 0 || my == 0 || mz == 0 )
-                        {
-                            int nx = ele->x + mx ; // neighbor6[m][0] ;
-                            int ny = ele->y + my ; // neighbor6[m][1] ;
-                            int nz = ele->z + mz ; // neighbor6[m][2] ;
-                            if ( getDataAt( nx, ny, nz ) == - d - 1 )
-                            {
-                                dilatable = 1 ;
-                                break ;
-                            }
-                        }
-                    }
-            */
             for ( i = 0 ; i < 12 ; i ++ )
             {
                 int flag = 1, flag2 = 0 ;
@@ -6698,39 +5858,6 @@ void Volume::erodeSheetOld( int disthr )
     printf("Thresholding the volume to 0/1...\n") ;
     #endif
     threshold( -1, 1, 0, 0 ) ;
-}
-
-
-
-void Volume::addNoise( float thr, float pos )
-{
-    int i, j, k ;
-    #ifdef VERBOSE
-    printf("Thresholding the volume to -MAX_ERODE/0...\n") ;
-    #endif
-    threshold( thr, -MAX_ERODE, 0 ) ;
-    Volume* tvol = new Volume(*this ) ;
-
-    for ( i = 0 ; i < getSizeX() ; i ++ )
-        for ( j = 0 ; j < getSizeY() ; j ++ )
-            for ( k = 0 ; k < getSizeZ() ; k ++ )
-            {
-                if ( tvol->getDataAt( i, j, k ) >= 0  && isSimple( i, j, k ) )
-                {
-                    for ( int m = 0 ; m < 6 ; m ++ )
-                    {
-                        if ( tvol->getDataAt( i + neighbor6[m][0], j + neighbor6[m][1], k + neighbor6[m][2] ) < 0 )
-                        {
-                            if ( rand() < RAND_MAX * pos )
-                            {
-                                setDataAt( i, j, k, thr - 1 ) ;
-                            }
-                            break ;
-                        }
-                    }
-                }
-            }
-
 }
 
 /************************************************************************/
@@ -7519,41 +6646,6 @@ void Volume::surfaceSkeleton( float thr )
 
 #endif
 
-        /* Commented for debugging
-
-        // First,
-        // check for complex nodes in queue2
-        // move them from queue2 to queue3
-        queue2->reset() ;
-        ele = queue2->getNext() ;
-        while ( ele != NULL )
-        {
-            ox = ele->x ;
-            oy = ele->y ;
-            oz = ele->z ;
-
-            // Check simple
-#ifndef NOISE_DIS_SHEET
-            if ( isSheetEnd( ox, oy, oz ) || ! isSimple( ox, oy, oz ) )
-#else
-            if ( isSheetEnd( ox, oy, oz, noisevol ) || ! isSimple( ox, oy, oz ) )
-#endif
-            {
-                // Complex, set to next layer
-                setDataAt( ox, oy, oz, curwid + 1 ) ;
-                queue3->prepend( ox, oy, oz ) ;
-                ele = queue2->remove() ;
-
-                numComplex ++ ;
-            }
-            else
-            {
-                ele = queue2->getNext() ;
-            }
-        }
-        */
-
-
         // Next,
         // Compute score for each node left in queue2
         // move them into priority queue
@@ -7661,36 +6753,6 @@ void Volume::surfaceSkeleton( float thr )
                     queue2->prepend( nx, ny, nz ) ;
                 }
             }
-
-            /* Commented for debugging
-
-            // Find complex nodes in its 3x3 neighborhood
-            // move them to queue2
-            for ( i = -1 ; i < 2 ; i ++ )
-                for ( j = -1 ; j < 2 ; j ++ )
-                    for ( k = -1 ; k < 2 ; k ++ )
-                    {
-                        int nx = ox + i ;
-                        int ny = oy + j ;
-                        int nz = oz + k ;
-
-                        // Check simple
-                        if ( getDataAt( nx, ny, nz ) == curwid &&
-                            // ( isSheetEnd( ox, oy, oz ) || ! isSimple( nx, ny, nz )) )
-#ifndef NOISE_DIS_SHEET
-                            ( isSheetEnd( nx, ny, nz ) || ! isSimple( nx, ny, nz ) ) )
-#else
-                            ( isSheetEnd( nx, ny, nz, noisevol ) || ! isSimple( nx, ny, nz ) ) )
-#endif
-
-                        {
-                            // Complex, set to next layer
-                            setDataAt( nx, ny, nz, curwid + 1 ) ;
-                            queue2->prepend( nx, ny, nz ) ;
-                            numComplex ++ ;
-                        }
-                    }
-            */
 
             // Update scores for nodes in its 5x5 neighborhood
             // insert them back into priority queue
@@ -7922,41 +6984,6 @@ void Volume::surfaceSkeleton( float thr, Volume* svol )
 
 #endif
 
-        /* Commented for debugging
-
-        // First,
-        // check for complex nodes in queue2
-        // move them from queue2 to queue3
-        queue2->reset() ;
-        ele = queue2->getNext() ;
-        while ( ele != NULL )
-        {
-            ox = ele->x ;
-            oy = ele->y ;
-            oz = ele->z ;
-
-            // Check simple
-#ifndef NOISE_DIS_SHEET
-            if ( isSheetEnd( ox, oy, oz ) || ! isSimple( ox, oy, oz ) )
-#else
-            if ( isSheetEnd( ox, oy, oz, noisevol ) || ! isSimple( ox, oy, oz ) )
-#endif
-            {
-                // Complex, set to next layer
-                setDataAt( ox, oy, oz, curwid + 1 ) ;
-                queue3->prepend( ox, oy, oz ) ;
-                ele = queue2->remove() ;
-
-                numComplex ++ ;
-            }
-            else
-            {
-                ele = queue2->getNext() ;
-            }
-        }
-        */
-
-
         // Next,
         // Compute score for each node left in queue2
         // move them into priority queue
@@ -8012,13 +7039,6 @@ void Volume::surfaceSkeleton( float thr, Volume* svol )
                 continue ;
             }
 
-            /* Commented for debugging
-
-            // Remove this simple node
-            setDataAt( ox, oy, oz, -1 ) ;
-            numSimple ++ ;
-            // printf("Highest score: %d\n", score) ;
-            */
 
             /* Added for debugging */
             // Check simple
@@ -8064,36 +7084,6 @@ void Volume::surfaceSkeleton( float thr, Volume* svol )
                     queue2->prepend( nx, ny, nz ) ;
                 }
             }
-
-            /* Commented for debugging
-
-            // Find complex nodes in its 3x3 neighborhood
-            // move them to queue2
-            for ( i = -1 ; i < 2 ; i ++ )
-                for ( j = -1 ; j < 2 ; j ++ )
-                    for ( k = -1 ; k < 2 ; k ++ )
-                    {
-                        int nx = ox + i ;
-                        int ny = oy + j ;
-                        int nz = oz + k ;
-
-                        // Check simple
-                        if ( getDataAt( nx, ny, nz ) == curwid &&
-                            // ( isSheetEnd( ox, oy, oz ) || ! isSimple( nx, ny, nz )) )
-#ifndef NOISE_DIS_SHEET
-                            ( isSheetEnd( nx, ny, nz ) || ! isSimple( nx, ny, nz ) ) )
-#else
-                            ( isSheetEnd( nx, ny, nz, noisevol ) || ! isSimple( nx, ny, nz ) ) )
-#endif
-
-                        {
-                            // Complex, set to next layer
-                            setDataAt( nx, ny, nz, curwid + 1 ) ;
-                            queue2->prepend( nx, ny, nz ) ;
-                            numComplex ++ ;
-                        }
-                    }
-            */
 
             // Update scores for nodes in its 5x5 neighborhood
             // insert them back into priority queue
@@ -8327,41 +7317,6 @@ void Volume::surfaceSkeletonOld( float thr )
 
 #endif
 
-        /* Commented for debugging
-
-        // First,
-        // check for complex nodes in queue2
-        // move them from queue2 to queue3
-        queue2->reset() ;
-        ele = queue2->getNext() ;
-        while ( ele != NULL )
-        {
-            ox = ele->x ;
-            oy = ele->y ;
-            oz = ele->z ;
-
-            // Check simple
-#ifndef NOISE_DIS_SHEET
-            if ( isSheetEnd( ox, oy, oz ) || ! isSimple( ox, oy, oz ) )
-#else
-            if ( isSheetEnd( ox, oy, oz, noisevol ) || ! isSimple( ox, oy, oz ) )
-#endif
-            {
-                // Complex, set to next layer
-                setDataAt( ox, oy, oz, curwid + 1 ) ;
-                queue3->prepend( ox, oy, oz ) ;
-                ele = queue2->remove() ;
-
-                numComplex ++ ;
-            }
-            else
-            {
-                ele = queue2->getNext() ;
-            }
-        }
-        */
-
-
         // Next,
         // Compute score for each node left in queue2
         // move them into priority queue
@@ -8415,14 +7370,6 @@ void Volume::surfaceSkeletonOld( float thr )
                 continue ;
             }
 
-            /* Commented for debugging
-
-            // Remove this simple node
-            setDataAt( ox, oy, oz, -1 ) ;
-            numSimple ++ ;
-            // printf("Highest score: %d\n", score) ;
-            */
-
             /* Added for debugging */
             // Check simple
 #ifndef NOISE_DIS_SHEET
@@ -8461,36 +7408,6 @@ void Volume::surfaceSkeletonOld( float thr )
                     queue2->prepend( nx, ny, nz ) ;
                 }
             }
-
-            /* Commented for debugging
-
-            // Find complex nodes in its 3x3 neighborhood
-            // move them to queue2
-            for ( i = -1 ; i < 2 ; i ++ )
-                for ( j = -1 ; j < 2 ; j ++ )
-                    for ( k = -1 ; k < 2 ; k ++ )
-                    {
-                        int nx = ox + i ;
-                        int ny = oy + j ;
-                        int nz = oz + k ;
-
-                        // Check simple
-                        if ( getDataAt( nx, ny, nz ) == curwid &&
-                            // ( isSheetEnd( ox, oy, oz ) || ! isSimple( nx, ny, nz )) )
-#ifndef NOISE_DIS_SHEET
-                            ( isSheetEnd( nx, ny, nz ) || ! isSimple( nx, ny, nz ) ) )
-#else
-                            ( isSheetEnd( nx, ny, nz, noisevol ) || ! isSimple( nx, ny, nz ) ) )
-#endif
-
-                        {
-                            // Complex, set to next layer
-                            setDataAt( nx, ny, nz, curwid + 1 ) ;
-                            queue2->prepend( nx, ny, nz ) ;
-                            numComplex ++ ;
-                        }
-                    }
-            */
 
             // Update scores for nodes in its 5x5 neighborhood
             // insert them back into priority queue
@@ -8728,41 +7645,6 @@ void Volume::surfaceSkeletonPres( float thr, Volume * preserve )
 
 #endif
 
-        /* Commented for debugging
-
-        // First,
-        // check for complex nodes in queue2
-        // move them from queue2 to queue3
-        queue2->reset() ;
-        ele = queue2->getNext() ;
-        while ( ele != NULL )
-        {
-            ox = ele->x ;
-            oy = ele->y ;
-            oz = ele->z ;
-
-            // Check simple
-#ifndef NOISE_DIS_SHEET
-            if ( isSheetEnd( ox, oy, oz ) || ! isSimple( ox, oy, oz ) )
-#else
-            if ( isSheetEnd( ox, oy, oz, noisevol ) || ! isSimple( ox, oy, oz ) )
-#endif
-            {
-                // Complex, set to next layer
-                setDataAt( ox, oy, oz, curwid + 1 ) ;
-                queue3->prepend( ox, oy, oz ) ;
-                ele = queue2->remove() ;
-
-                numComplex ++ ;
-            }
-            else
-            {
-                ele = queue2->getNext() ;
-            }
-        }
-        */
-
-
         // Next,
         // Compute score for each node left in queue2
         // move them into priority queue
@@ -8817,14 +7699,6 @@ void Volume::surfaceSkeletonPres( float thr, Volume * preserve )
                 continue ;
             }
 
-            /* Commented for debugging
-
-            // Remove this simple node
-            setDataAt( ox, oy, oz, -1 ) ;
-            numSimple ++ ;
-            // printf("Highest score: %d\n", score) ;
-            */
-
             /* Added for debugging */
             // Check simple
 #ifndef NOISE_DIS_SHEET
@@ -8863,36 +7737,6 @@ void Volume::surfaceSkeletonPres( float thr, Volume * preserve )
                     queue2->prepend( nx, ny, nz ) ;
                 }
             }
-
-            /* Commented for debugging
-
-            // Find complex nodes in its 3x3 neighborhood
-            // move them to queue2
-            for ( i = -1 ; i < 2 ; i ++ )
-                for ( j = -1 ; j < 2 ; j ++ )
-                    for ( k = -1 ; k < 2 ; k ++ )
-                    {
-                        int nx = ox + i ;
-                        int ny = oy + j ;
-                        int nz = oz + k ;
-
-                        // Check simple
-                        if ( getDataAt( nx, ny, nz ) == curwid &&
-                            // ( isSheetEnd( ox, oy, oz ) || ! isSimple( nx, ny, nz )) )
-#ifndef NOISE_DIS_SHEET
-                            ( isSheetEnd( nx, ny, nz ) || ! isSimple( nx, ny, nz ) ) )
-#else
-                            ( isSheetEnd( nx, ny, nz, noisevol ) || ! isSimple( nx, ny, nz ) ) )
-#endif
-
-                        {
-                            // Complex, set to next layer
-                            setDataAt( nx, ny, nz, curwid + 1 ) ;
-                            queue2->prepend( nx, ny, nz ) ;
-                            numComplex ++ ;
-                        }
-                    }
-            */
 
             // Update scores for nodes in its 5x5 neighborhood
             // insert them back into priority queue
@@ -9384,121 +8228,6 @@ void Volume::palagyiSurfaceSkeleton( float thr )
     }
 }
 
-/**
- * Normalize to a given range
- */
-void Volume::threshold( double thr )
-{
-    threshold( thr, 0, 1, 0, true) ;
-}
-
-void Volume::threshold( double thr, int out, int in )
-{
-    threshold( thr, out, in, out, true) ;
-}
-
-void Volume::threshold( double thr, int out, int in, int boundary)
-{
-    threshold(thr, out, in, boundary, true);
-}
-
-void Volume::threshold( double thr, int out, int in, int boundary, bool markBoundary)
-{
-    float val;
-    for ( int i = 0 ; i < getSizeX() ; i ++ )
-        for ( int j = 0 ; j < getSizeY() ; j ++ )
-            for ( int k = 0 ; k < getSizeZ() ; k ++ )
-            {
-                val = (float)getDataAt(i, j, k);
-                if(markBoundary) {
-                    if ( i > 1 && i < getSizeX() - 2 && j > 1 && j < getSizeY() - 2 && k > 1 && k < getSizeZ() - 2 ) {
-                        if(val < thr) {
-                            setDataAt(i, j, k, out);
-                        } else {
-                            setDataAt(i, j, k, in);
-                        }
-                    }
-                    else
-                    {
-                        setDataAt(i, j, k, boundary);
-                    }
-                } else {
-                    if(val < thr) {
-                        setDataAt(i, j, k, out);
-                    } else {
-                        setDataAt(i, j, k, in);
-                    }
-                }
-            }
-}
-
-void Volume::threshold2( double thr, int out, int in )
-{
-    for ( int i = 0 ; i < getSizeX() ; i ++ )
-        for ( int j = 0 ; j < getSizeY() ; j ++ )
-            for ( int k = 0 ; k < getSizeZ() ; k ++ ) {
-                double val = getDataAt(i, j, k);
-                if(val <= thr) {
-                    setDataAt(i, j, k, out);
-                } else {
-                    setDataAt(i, j, k, in);
-                }
-            }
-}
-
-void Volume::smooth( float alpha )
-{
-    VolumeData * smoothedData = new VolumeData(*volData);
-
-    for (int i = 1; i < getSizeX() - 1; i++)
-        for (int j = 1; j < getSizeY() - 1; j++)
-            for (int k = 1; k < getSizeZ() - 1; k++) {
-                float v = (float)getDataAt( i - 1, j, k ) +
-                    (float)getDataAt( i + 1, j, k ) +
-                    (float)getDataAt( i, j - 1, k ) +
-                    (float)getDataAt( i, j + 1, k ) +
-                    (float)getDataAt( i, j, k - 1 ) +
-                    (float)getDataAt( i, j, k + 1 ) ;
-                smoothedData->setDataAt(i, j, k, smoothedData->getDataAt(i, j, k) * alpha + ( 1 - alpha ) * v / 6);
-            }
-    delete volData;
-    volData = smoothedData;
-}
-
-void Volume::normalize( double min, double max )
-{
-    double imin = getMin() ;
-    double imax = getMax() ;
-    double irange = imax - imin ;
-    double range = max - min ;
-
-    int size = volData->getMaxIndex();
-    for(int i = 0 ; i < size ; i ++) {
-        setDataAt(i, ((getDataAt(i) - (float)imin ) / (float)irange) * (float)range + (float)min);
-    }
-}
-
-void Volume::normalize( double min, double max, double thresh, double ithresh )
-{
-    double imin = getMin() ;
-    double imax = getMax() ;
-    double irange1 = ithresh - imin ;
-    double irange2 = imax - ithresh ;
-    double range1 = thresh - min;
-    double range2 = max - thresh ;
-
-    int size = volData->getMaxIndex();
-    for (int i = 0; i < size; i++) {
-        if (getDataAt(i) < ithresh) {
-            setDataAt(i, ((getDataAt(i) - (float)imin ) / (float)irange1) * (float)range1 + (float)min);
-        }
-        else
-        {
-            setDataAt(i, (float)max - (( (float)imax - getDataAt(i)) / (float)irange2) * (float)range2);
-        }
-    }
-}
-
 /* Set data at a pixel */
 
 Volume * Volume::getDataRange(int x, int y, int z, int radius) {
@@ -9821,20 +8550,6 @@ void Volume::writeSegmentation( float threshold, Volume* segvol, string txtfile,
     }
     printf("Done.\n") ;
 
-    /* Debug
-    for ( i = 0 ; i < getSizeX() * getSizeY() * getSizeZ() ; i ++ )
-    {
-        if ( getDataAt(i) >= threshold && segvol->getDataAt(i) == 0 )
-        {
-            segvol->setDataAt(i, 1) ;
-        }
-        else
-        {
-            segvol->setDataAt(i, 0) ;
-        }
-    }
-    */
-
     // Write to MRC
     //printf("Writing to %s...", mrcfile) ;
     //segvol->toMRCFile( mrcfile ) ;
@@ -9931,44 +8646,6 @@ void Volume::writeSegmentation( float threshold, Volume* segvol, string txtfile,
     tvol2->toMRCFile( nname ) ;
     printf("Done.\n") ;
     return ;
-
-    /* Write to text
-    if ( txtfile != NULL )
-    {
-        printf("Writing to %s...", txtfile) ;
-        // Count border points
-        queue->reset() ;
-        for ( i = 0 ; i < getSizeX() ; i ++ )
-            for ( j = 0 ; j < getSizeY() ; j ++ )
-                for ( k = 0 ; k < getSizeZ() ; k ++ )
-                {
-                    if ( getDataAt( i, j, k ) >= threshold )
-                    {
-                        for ( int m = 0 ; m < 6 ; m ++ )
-                        {
-                            if ( getDataAt( i + neighbor6[m][0], j + neighbor6[m][1], k + neighbor6[m][2] ) < threshold )
-                            {
-                                queue->prepend( i, j, k ) ;
-                                break ;
-                            }
-                        }
-                    }
-                }
-
-        FILE* fout = fopen( txtfile, "w" ) ;
-        fprintf( fout, "%d\n", queue->getNumElements() ) ;
-        queue->reset() ;
-        while( (ele=queue->getNext()) != NULL )
-        {
-            ox = ele->x ;
-            oy = ele->y ;
-            oz = ele->z ;
-            fprintf( fout, "%d %d %d %f\n", ox, oy, oz, segvol->getDataAt(ox,oy,oz) ) ;
-        }
-        fclose( fout ) ;
-        printf("Done.\n") ;
-    }
-    */
 }
 
 void Volume::floodFill( float thr )
@@ -10372,31 +9049,13 @@ void Volume::floodFillPQR( int offset )
     // Done
     for ( i = 0 ; i < getSizeX()*getSizeY()*getSizeZ() ; i ++ )
     {
-/*
-        if ( tvol->getDataAt(i) == 2 )
-        {
-            setDataAt( i, 1 ) ;
-        }
-        */
         if ( invol->getDataAt(i) == 2 )
         {
             setDataAt( i, 1 ) ;
         }
-
-/*
-        else if ( tvol->getDataAt(i) == 0 && invol->getDataAt(i) == 0 )
-        {
-            setDataAt( i, 1 ) ;
-        }
-*/
     }
-
             delete invol ;
-
     }
-
-//		delete tvol ;
-
 }
 
 
@@ -10532,127 +9191,6 @@ void Volume::toMRCFile( string fname )
     fclose( fout ) ;
 }
 
-// Returns the mean value of all the voxels
-float Volume::getMean()
-{
-    int N = volData->getMaxIndex();
-    double mass = 0;
-    for (int i = 0; i < N; i++)
-        mass += getDataAt(i);
-    float mean = (float) mass/N;
-    return mean;
-}
-
-// Returns the mean value of all the surface voxels but no interior voxels
-float Volume::getEdgeMean()
-{
-    int nx = getSizeX();
-    int ny = getSizeY();
-    int nz = getSizeZ();
-
-    //Calculate the edge mean -- the average value of all the voxels on the surfaces (1 voxel) of the image
-    double edge_sum = 0; //The sum of the values on the outer surfaces (1 voxel) of the image
-    int num_voxels = 0;
-
-    //sum the values of each voxel on the surfaces of the rectangular prism
-    for (int i = 0; i < nx; i++)
-        for (int j=0; j<ny; j++)
-            for (int k=0; k<nz; k++)
-            {
-                if (i==0 || i==nx-1 || j==0 || j==ny-1 || k==0 || k==nz-1)
-                {
-                    edge_sum += getDataAt(i,j,k);
-                    num_voxels++;
-                }
-            }
-
-    float edge_mean = (float) edge_sum / num_voxels;
-    return edge_mean;
-}
-
-// Returns the population standard deviation of the values at all the voxels
-float Volume::getStdDev()
-{
-    int N = volData->getMaxIndex();
-
-    //Calculate the standard deviation of all the voxels in the image
-    double voxel_sum = 0;
-    double voxel_squared_sum = 0;
-    float val;
-
-    for (int i = 0; i < N; i++)
-    {
-        val = (float)getDataAt(i);
-        voxel_sum += val;
-        voxel_squared_sum += val*val;
-    }
-    float std_dev = (float) sqrt( (voxel_squared_sum - voxel_sum*voxel_sum/N) / N );
-    return std_dev;
-}
-// Returns the center of mass of the image in pixels (not angstroms)
-Vector3DFloat Volume::getCenterOfMass()
-{
-    int nx = getSizeX();
-    int ny = getSizeY();
-    int nz = getSizeZ();
-
-    float mass = 0;
-    float xmoment = 0;
-    float ymoment = 0;
-    float zmoment = 0;
-    float val;
-
-    for (int i=0; i<nx; i++)
-        for (int j=0; j<ny; j++)
-            for (int k=0; k<nz; k++)
-            {
-                val = (float)getDataAt(i,j,k);
-                mass += val;
-                xmoment += i*val;
-                ymoment += j*val;
-                zmoment += k*val;
-            }
-
-    Vector3DFloat centerOfMass( xmoment/mass, ymoment/mass, zmoment/mass );
-    return centerOfMass;
-}
-
-
-void Volume::normalizeVolume(){
-  normalize(0, 1);
-}
-
-
-void Volume::downsampleVolume() {
-  Volume * destVol = new Volume(getSizeX()/2, getSizeY()/2, getSizeZ()/2);
-  double val;
-
-  int radius = 1;
-  MathLib * math = new MathLib();
-
-  ProbabilityDistribution3D gaussianFilter;
-  gaussianFilter.radius = radius;
-  math->GetBinomialDistribution(gaussianFilter);
-
-  for(int x = radius; x < destVol->getSizeX()-radius; x++) {
-    for(int y = radius; y < destVol->getSizeY()-radius; y++) {
-      for(int z = radius; z < destVol->getSizeZ()-radius; z++) {
-        val = 0;
-        for(int xx = -radius; xx <= radius; xx++) {
-          for(int yy = -radius; yy <= radius; yy++) {
-            for(int zz = -radius; zz <= radius; zz++) {
-              val += getDataAt(2*x+xx, 2*y+yy, 2*z+zz) * gaussianFilter.values[xx+radius][yy+radius][zz+radius] ;
-            }
-          }
-        }
-        destVol->setDataAt(x, y, z, val);
-      }
-    }
-  }
-
-  delete math;
-  *this = *destVol;
-}
 
 
 void Volume::loadFile(string inputFile) {
@@ -10719,12 +9257,3 @@ Volume * Volume::PerformGrayscaleSkeletonizationAbeysinghe2008(double startDensi
     return NULL;
   }
 }
-
-float Volume::getMaxDensity() const {
-  return getMax();
-}
-
-float Volume::getMinDensity() const {
-  return getMin();
-}
-

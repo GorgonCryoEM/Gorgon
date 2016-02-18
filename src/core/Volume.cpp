@@ -50,8 +50,30 @@ namespace Core {
         return accumulate(data.begin(), data.end(), 0.0) / data.size();
     }
 
-//    double Volume::getEdgeMean() const {
-//    }
+    // Returns the mean value of all the surface voxels but no interior voxels
+    double Volume::getEdgeMean() const {
+        int nx = getSizeX();
+        int ny = getSizeY();
+        int nz = getSizeZ();
+
+        //Calculate the edge mean -- the average value of all the voxels on the surfaces (1 voxel) of the image
+        double edge_sum = 0.0; //The sum of the values on the outer surfaces (1 voxel) of the image
+        int num_voxels = 0;
+
+        //sum the values of each voxel on the surfaces of the rectangular prism
+        for (int i=0; i<nx; i++)
+            for (int j=0; j<ny; j++)
+                for (int k=0; k<nz; k++)
+                {
+                    if (i==0 || i==nx-1 || j==0 || j==ny-1 || k==0 || k==nz-1)
+                    {
+                        edge_sum += (*this)(i,j,k);
+                        num_voxels++;
+                    }
+                }
+
+        return edge_sum / num_voxels;
+    }
 
     void Volume::print() const {
         for(int i = 0; i < getSizeX(); i++) {
@@ -82,7 +104,26 @@ namespace Core {
         return sqrt( (sum2 - sum*sum/data.size()) / data.size() );
     }
 
+    // Returns the center of mass of the image in pixels (not angstroms)
 //    Vector3DFloat Volume::getCenterOfMass() const {
+//
+//        double mass    = 0.0;
+//        double xmoment = 0.0;
+//        double ymoment = 0.0;
+//        double zmoment = 0.0;
+//
+//        for (int i=0; i<getSizeX(); i++)
+//            for (int j=0; j<getSizeY(); j++)
+//                for (int k=0; k<getSizeZ(); k++) {
+//                    double val = (*this)(i,j,k);
+//                    mass += val;
+//                    xmoment += i*val;
+//                    ymoment += j*val;
+//                    zmoment += k*val;
+//                }
+//
+//        Vector3DFloat centerOfMass( xmoment/mass, ymoment/mass, zmoment/mass );
+//        return centerOfMass;
 //    }
 
     void Volume::threshold( double thr )
@@ -155,6 +196,9 @@ namespace Core {
                 }
     }
 
+    void Volume::normalize() {
+        normalize(0.0, 1.0);
+    }
 
     void Volume::normalize( double y0, double y1 )
     {
@@ -183,6 +227,68 @@ namespace Core {
         }
     }
 
+//    void Volume::addNoise(double thr, double pos) {
+//#ifdef VERBOSE
+//        printf("Thresholding the volume to -MAX_ERODE/0...\n") ;
+//#endif
+//        threshold( thr, -MAX_ERODE, 0 ) ;
+//        Volume tvol(*this);
+//
+//        for (int i = 0 ; i < getSizeX() ; i ++ )
+//            for (int j = 0 ; j < getSizeY() ; j ++ )
+//                for (int k = 0 ; k < getSizeZ() ; k ++ ) {
+//                    if ( tvol(i, j, k) >= 0  && isSimple(i, j, k)) {
+//                        for ( int m = 0 ; m < 6 ; m ++ ) {
+//                            if (tvol(i + neighbor6[m][0], j + neighbor6[m][1], k + neighbor6[m][2]) < 0) {
+//                                if ( rand() < RAND_MAX * pos ) {
+//                                    (*this)(i, j, k) = thr - 1.0;
+//                                }
+//                                break;
+//                            }
+//                        }
+//                    }
+//                }
+//    }
 
+//    void Volume::downsampleVolume() {
+//        Volume destVol(getSizeX()/2, getSizeY()/2, getSizeZ()/2);
+//
+//        MathLib * math = new MathLib();
+//
+//        ProbabilityDistribution3D gaussianFilter;
+//        int radius = 1;
+//        gaussianFilter.radius = radius;
+//        math->GetBinomialDistribution(gaussianFilter);
+//
+//        for(int x = radius; x < destVol->getSizeX()-radius; x++) {
+//            for(int y = radius; y < destVol->getSizeY()-radius; y++) {
+//                for(int z = radius; z < destVol->getSizeZ()-radius; z++) {
+//                    double val= 0.0;
+//                    for(int xx = -radius; xx <= radius; xx++) {
+//                        for(int yy = -radius; yy <= radius; yy++) {
+//                            for(int zz = -radius; zz <= radius; zz++) {
+//                                val += (*this)(2*x+xx, 2*y+yy, 2*z+zz) * gaussianFilter.values[xx+radius][yy+radius][zz+radius] ;
+//                            }
+//                        }
+//                    }
+//                    destVol(x, y, z) = val;
+//                }
+//            }
+//        }
+//
+//        delete math;
+//        *this = *destVol;
+//    }
+
+    int Volume::getNumNeighbor6( int i, int j, int k ) const {
+        VCOORD neighbors = Coordinate(i, j, k).getNeighbors();
+
+        int count = 0;
+        for(VCOORD::const_iterator it=neighbors.begin(); it!=neighbors.end(); ++it) {
+            if((*this)(it->x, it->y, it->z) >= 0.0)
+                count++;
+        }
+        return count ;
+    }
 
 } /* namespace Core */
