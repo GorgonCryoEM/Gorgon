@@ -3,7 +3,7 @@
 
 #include <vector>
 //#include "Core/GlobalConstants.h"
-#include "ProteinMorph/SecondaryStructure.h"
+#include "ProteinMorph/SecStruct.h"
 //#include "Graph.h"
 //#include "SheetStrand.h"
 #include <string>
