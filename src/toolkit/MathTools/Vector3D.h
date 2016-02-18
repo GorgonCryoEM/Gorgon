@@ -56,6 +56,16 @@ namespace MathTools {
         static Vector3D<T> Project3Dto2D(Vector3D<T> point, Vector3D<T> planePt, Vector3D<T> planeVec1, Vector3D<T> planeVec2);
 
         T values[3];
+
+        friend ostream & operator<<(ostream & out, const Vector3D<T> & obj){
+            return out
+                    <<"{"
+                    <<obj.values[0]<<", "
+                    <<obj.values[1]<<", "
+                    <<obj.values[2]
+                    <<"}";
+        }
+
     };
 
     typedef Vector3D<int>    Vector3DInt;

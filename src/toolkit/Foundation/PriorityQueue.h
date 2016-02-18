@@ -3,190 +3,135 @@
 
 #include <cstdlib>
 #include <cstdio>
-
+#include <queue>
 
 namespace SkeletonMaker {
-    /**
-     * Template class for a priority queue. The smallest element is at the front
-     */
-    template < class ValueT, class KeyT >
-    class PriorityQueue
-    {
-    public:
-        /// Number of elements in queue
-        int queueLength ;
 
-        /// Maximum number of elements int he queue
-        int maxLength ;
+    template<class T>
+    bool operator<(const pair<T,int> &l, const pair<T,int> &r){
+        return l.second < r.second;
+    }
 
-        /// Queue of elements
-        ValueT ** valueQueue ;
+//      Template class for a priority queue.
+//    The smallest element is at the front
+    template<class T>
+    class PriorityQueue {
+        public:
+            int maxLength;
 
-        /// Queue of keys
-        KeyT * keyQueue ;
+            T  *valueQueue;
+            int  *keyQueue;
+            typedef pair<T,int> Elem;
+            priority_queue<Elem, vector<Elem>, greater<Elem> > q;
 
-    public:
-
-        /**
-         * Constructor
-         */
-        PriorityQueue ( int max )
-        {
-            this->maxLength = max ;
-            this->queueLength = 0 ;
-            this->valueQueue = new ValueT* [ max ] ;
-            this->keyQueue = new KeyT [ max ] ;
-
-        };
-
-        /**
-         * Destructor
-         */
-        ~PriorityQueue ()
-        {
-            delete [] keyQueue ;
-            for ( int i = 0 ; i < queueLength ; i ++ )
-            {
-                delete valueQueue [ i ] ;
-            }
-            delete [] valueQueue ;
-        };
-
-        /**
-         * Get current length
-         */
-        int getLength ( )
-        {
-            return this->queueLength ;
-        };
-
-        /**
-         * Test whether empty
-         */
-        bool isEmpty ( )
-        {
-            return ( this->queueLength == 0 ) ;
-        };
-
-        /**
-         * Test whether full
-         */
-        bool isFull ( )
-        {
-            return ( this->queueLength == this->maxLength  ) ;
-        };
-
-        /**
-         * Add an element
-         */
-        void add ( ValueT * v, KeyT k )
-        {
-            if ( this->isFull() )
-            {
-                printf("PRIORITY QUEUE FILLED UP !!! \n");
-                return ;
+        public:
+            PriorityQueue(int max) {
+                maxLength = max;
+                valueQueue = new T[max];
+                keyQueue = new int[max];
             }
 
-            int ind = queueLength ;
-            int tind ;
-            queueLength ++ ;
+            ~PriorityQueue() {
+                delete[] keyQueue;
+                delete[] valueQueue;
+            }
 
-            while ( ind > 0 )
-            {
-                tind = ( ind + 1 ) / 2 - 1 ;
-                if ( k < keyQueue[tind] )
-                {
-                    keyQueue[ ind ] = keyQueue [ tind ] ;
-                    valueQueue [ ind ] = valueQueue [ tind ] ;
-                    ind = tind ;
+            bool isEmpty() {
+                return q.empty();
+            }
+
+            bool isFull() {
+                return ((int)q.size() == maxLength);
+            }
+
+            void add(T v, int k) {
+                if(isFull()) {
+                    printf("PRIORITY QUEUE FILLED UP !!! \n");
+                    return;
                 }
-                else
-                {
-                    break;
-                }
-            }
 
-            valueQueue[ ind ] = v ;
-            keyQueue [ ind ] = k ;
-        };
+                int ind = q.size();
 
-        /**
-         * Remove an element
-         */
-        void remove ( ValueT *& v, KeyT & k )
-        {
-            if ( this->isEmpty() )
-            {
-                v = NULL ;
-                k = 0 ;
-                return ;
-            }
+                q.push(make_pair(v,k));
 
-            v = valueQueue[0] ;
-            k = keyQueue[0] ;
-            queueLength -- ;
+                int tind;
 
-            if ( queueLength == 0 )
-            {
-                valueQueue[0] = NULL ;
-                return ;
-            }
-
-            ValueT * vv = valueQueue [ queueLength ] ;
-            KeyT kk = keyQueue [ queueLength ], lowk ;
-            int ind = 0, tind, ind2, ind3 ;
-            while ( 1 )
-            {
-                ind2 = 2 * ( ind + 1 ) - 1 ;
-                ind3 = ind2 + 1 ;
-                tind = ind ;
-                lowk = kk ;
-
-                if ( ind2 >= queueLength )
-                {
-                    break ;
-                }
-                else
-                {
-                    if ( keyQueue [ ind2 ] < lowk )
-                    {
-                        tind = ind2 ;
-                        lowk = keyQueue [ ind2 ] ;
+                while(ind > 0) {
+                    tind = (ind + 1) / 2 - 1;
+                    if(k < keyQueue[tind]) {
+                        keyQueue[ind] = keyQueue[tind];
+                        valueQueue[ind] = valueQueue[tind];
+                        ind = tind;
                     }
+                    else {
+                        break;
+                    }
+                }
 
-                    if ( ind3 < queueLength )
-                    {
-                        if ( keyQueue [ ind3 ] < lowk )
-                        {
-                            tind = ind3 ;
+                valueQueue[ind] = v;
+                keyQueue[ind] = k;
+
+            }
+
+            void remove(T & v, int & k) {
+
+                if(isEmpty()) {
+//                    v = NULL;
+                    valueQueue[0] = T();
+                    k = 0;
+                    return;
+                }
+
+                pair<T,int> res = q.top();
+                q.pop();
+
+                v = valueQueue[0];
+                k = keyQueue[0];
+//                v = res.first;
+//                k = res.second;
+
+
+                T  vv = valueQueue[(int)q.size()];
+                int kk = keyQueue[(int)q.size()], lowk;
+                int ind = 0, tind, ind2, ind3;
+                while(1) {
+                    ind2 = 2 * (ind + 1) - 1;
+                    ind3 = ind2 + 1;
+                    tind = ind;
+                    lowk = kk;
+
+                    if(ind2 >= (int)q.size()) {
+                        break;
+                    }
+                    else {
+                        if(keyQueue[ind2] < lowk) {
+                            tind = ind2;
+                            lowk = keyQueue[ind2];
+                        }
+
+                        if(ind3 < (int)q.size()) {
+                            if(keyQueue[ind3] < lowk) {
+                                tind = ind3;
+                            }
+                        }
+
+                        if(ind != tind) {
+                            valueQueue[ind] = valueQueue[tind];
+                            keyQueue[ind] = keyQueue[tind];
+                            ind = tind;
+                        }
+                        else {
+                            break;
                         }
                     }
-
-                    if ( ind != tind )
-                    {
-                        valueQueue [ ind ] = valueQueue [ tind ] ;
-                        keyQueue [ ind ] = keyQueue [ tind ] ;
-                        ind = tind ;
-                    }
-                    else
-                    {
-                        break ;
-                    }
                 }
+
+                valueQueue[ind] = vv;
+                keyQueue[ind] = kk;
+                valueQueue[(int)q.size()] = T();
+                keyQueue[(int)q.size()] = 0;
             }
-
-            valueQueue [ ind ] = vv ;
-            keyQueue [ ind ] = kk ;
-            valueQueue [ queueLength ] = NULL ;
-            keyQueue [ queueLength ] = NULL ;
-        };
-
     };
-
-
-
-
 }
-
 
 #endif
