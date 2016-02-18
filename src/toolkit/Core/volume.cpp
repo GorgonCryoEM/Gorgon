@@ -646,9 +646,9 @@ void Volume::curveSkeleton(Volume* grayvol, float lowthr, float highthr,
 #ifdef VERBOSE
     printf("Initializing queue...\n");
 #endif
-    GridQueue* queue2 = new GridQueue();
-    GridQueue* queue3 = new GridQueue();
-    GridQueue* queue4 = new GridQueue();
+    Queue* queue2 = new Queue();
+    Queue* queue3 = new Queue();
+    Queue* queue4 = new Queue();
     PriorityQueue < gridPoint > queue(
             MAX_QUEUELEN);
 
@@ -681,7 +681,7 @@ void Volume::curveSkeleton(Volume* grayvol, float lowthr, float highthr,
 #endif
 
     // Perform erosion
-    gridQueueEle* ele;
+    QueueNode* ele;
     gridPoint gp;
     int ox, oy, oz;
     int score;
@@ -760,7 +760,7 @@ void Volume::curveSkeleton(Volume* grayvol, float lowthr, float highthr,
         // From now on, queue2 holds nodes of next level
         delete queue2;
         queue2 = queue3;
-        queue3 = new GridQueue();
+        queue3 = new Queue();
 
         // Next, start priority queue iteration
         while(!queue.isEmpty()) {
@@ -906,9 +906,9 @@ void Volume::curveSkeleton(float thr, Volume* svol) {
 #ifdef VERBOSE
     printf("Initializing queue...\n");
 #endif
-    GridQueue* queue2 = new GridQueue();
-    GridQueue* queue3 = new GridQueue();
-    GridQueue* queue4 = new GridQueue();
+    Queue* queue2 = new Queue();
+    Queue* queue3 = new Queue();
+    Queue* queue4 = new Queue();
     PriorityQueue < gridPoint > queue(
             MAX_QUEUELEN);
 
@@ -939,7 +939,7 @@ void Volume::curveSkeleton(float thr, Volume* svol) {
 #endif
 
     // Perform erosion
-    gridQueueEle* ele;
+    QueueNode* ele;
     gridPoint gp;
     int ox, oy, oz;
     int score;
@@ -1018,7 +1018,7 @@ void Volume::curveSkeleton(float thr, Volume* svol) {
         // From now on, queue2 holds nodes of next level
         delete queue2;
         queue2 = queue3;
-        queue3 = new GridQueue();
+        queue3 = new Queue();
 
         // Next, start priority queue iteration
         while(!queue.isEmpty()) {
@@ -1128,9 +1128,9 @@ void Volume::curveSkeleton2D(float thr, Volume* svol) {
 #ifdef VERBOSE
     printf("Initializing queue...\n");
 #endif
-    GridQueue* queue2 = new GridQueue();
-    GridQueue* queue3 = new GridQueue();
-    GridQueue* queue4 = new GridQueue();
+    Queue* queue2 = new Queue();
+    Queue* queue3 = new Queue();
+    Queue* queue4 = new Queue();
     PriorityQueue < gridPoint > queue(
             MAX_QUEUELEN);
 
@@ -1161,7 +1161,7 @@ void Volume::curveSkeleton2D(float thr, Volume* svol) {
 #endif
 
     // Perform erosion
-    gridQueueEle* ele;
+    QueueNode* ele;
     gridPoint gp;
     int ox, oy, oz;
     int score;
@@ -1240,7 +1240,7 @@ void Volume::curveSkeleton2D(float thr, Volume* svol) {
         // From now on, queue2 holds nodes of next level
         delete queue2;
         queue2 = queue3;
-        queue3 = new GridQueue();
+        queue3 = new Queue();
 
         // Next, start priority queue iteration
         while(!queue.isEmpty()) {
@@ -1354,8 +1354,8 @@ void Volume::pointSkeleton(Volume* grayvol, float lowthr, float highthr,
 #ifdef VERBOSE
     printf("Initializing queue...\n");
 #endif
-    GridQueue* queue2 = new GridQueue();
-    GridQueue* queue3 = new GridQueue();
+    Queue* queue2 = new Queue();
+    Queue* queue3 = new Queue();
     PriorityQueue < gridPoint > queue(
             MAX_QUEUELEN);
 
@@ -1391,7 +1391,7 @@ void Volume::pointSkeleton(Volume* grayvol, float lowthr, float highthr,
 #ifdef VERBOSE
     printf("Start erosion to %d...\n", wid);
 #endif
-    gridQueueEle* ele;
+    QueueNode* ele;
     gridPoint gp;
     int ox, oy, oz;
     int score;
@@ -1441,7 +1441,7 @@ void Volume::pointSkeleton(Volume* grayvol, float lowthr, float highthr,
         // From now on, queue2 holds nodes of next level
         delete queue2;
         queue2 = queue3;
-        queue3 = new GridQueue();
+        queue3 = new Queue();
 
         // Next, start priority queue iteration
         while(!queue.isEmpty()) {
@@ -1586,8 +1586,8 @@ void Volume::skeleton(float thr, Volume* svol, Volume* hvol) {
 #ifdef VERBOSE
     printf("Initializing queue...\n");
 #endif
-    GridQueue* queue2 = new GridQueue();
-    GridQueue* queue3 = new GridQueue();
+    Queue* queue2 = new Queue();
+    Queue* queue3 = new Queue();
     PriorityQueue < gridPoint > queue(
             MAX_QUEUELEN);
 
@@ -1619,7 +1619,7 @@ void Volume::skeleton(float thr, Volume* svol, Volume* hvol) {
     // Perform erosion
     printf("Start erosion to %d...\n", wid);
 #endif
-    gridQueueEle* ele;
+    QueueNode* ele;
     gridPoint gp;
     int ox, oy, oz;
     int score;
@@ -1669,7 +1669,7 @@ void Volume::skeleton(float thr, Volume* svol, Volume* hvol) {
         // From now on, queue2 holds nodes of next level
         delete queue2;
         queue2 = queue3;
-        queue3 = new GridQueue();
+        queue3 = new Queue();
 
         // Next, start priority queue iteration
         while(!queue.isEmpty()) {
@@ -1778,9 +1778,9 @@ void Volume::erodeHelix(int disthr) {
     // Next, initialize the linked queue
     //printf("Initializing queue...\n") ;
     Volume * fvol = new Volume(getSizeX(), getSizeY(), getSizeZ());
-    GridQueue* queue2 = new GridQueue();
-    GridQueue* queue3 = new GridQueue();
-    GridQueue** queues = new GridQueue*[10000];
+    Queue* queue2 = new Queue();
+    Queue* queue3 = new Queue();
+    Queue** queues = new Queue*[10000];
 
     for(i = 0; i < getSizeX(); i++)
         for(j = 0; j < getSizeY(); j++)
@@ -1797,12 +1797,12 @@ void Volume::erodeHelix(int disthr) {
     //printf("Total %d nodes\n", queue2->getNumElements() ) ;
 
     // Start erosion
-    gridQueueEle* ele;
+    QueueNode* ele;
     int dis = -1;
     while(queue2->getNumElements() > 0) {
         // First, set distance
         dis--;
-        queues[-dis] = new GridQueue();
+        queues[-dis] = new Queue();
         //printf("Distance transform to %d...", dis) ;
         queue2->reset();
         while( (ele = queue2->getNext()) != NULL) {
@@ -1835,14 +1835,14 @@ void Volume::erodeHelix(int disthr) {
         }
 
         // Next, swap queues
-        GridQueue* temp = queue2;
+        Queue* temp = queue2;
         queue2 = queue3;
         queue3 = temp;
     }
 
     // Deal with closed rings
     dis--;
-    queues[-dis] = new GridQueue();
+    queues[-dis] = new Queue();
 #ifdef VERBOSE
     printf("Detecting closed rings %d...", dis);
 #endif
@@ -1995,9 +1995,9 @@ int Volume::erodeSheet(int disthr) {
     // Next, initialize the linked queue
     //printf("Initializing queue...\n") ;
     Volume * fvol = new Volume(getSizeX(), getSizeY(), getSizeZ());
-    GridQueue* queue2 = new GridQueue();
-    GridQueue* queue3 = new GridQueue();
-    GridQueue** queues = new GridQueue*[10000];
+    Queue* queue2 = new Queue();
+    Queue* queue3 = new Queue();
+    Queue** queues = new Queue*[10000];
 
     for(i = 0; i < getSizeX(); i++)
         for(j = 0; j < getSizeY(); j++)
@@ -2014,12 +2014,12 @@ int Volume::erodeSheet(int disthr) {
 #endif
 
     // Start erosion
-    gridQueueEle* ele;
+    QueueNode* ele;
     int dis = -1;
     while(queue2->getNumElements() > 0) {
         // First, set distance
         dis--;
-        queues[-dis] = new GridQueue();
+        queues[-dis] = new Queue();
         //printf("Distance transform to %d...", dis) ;
         queue2->reset();
         while( (ele = queue2->getNext()) != NULL) {
@@ -2057,7 +2057,7 @@ int Volume::erodeSheet(int disthr) {
         }
 
         // Next, swap queues
-        GridQueue* temp = queue2;
+        Queue* temp = queue2;
         queue2 = queue3;
         queue3 = temp;
     }
@@ -2065,7 +2065,7 @@ int Volume::erodeSheet(int disthr) {
     /* Deal with closed rings */
 
     dis--;
-    queues[-dis] = new GridQueue();
+    queues[-dis] = new Queue();
 #ifdef VERBOSE
     printf("Detecting closed rings %d...", dis);
 #endif
@@ -2226,9 +2226,9 @@ void Volume::surfaceSkeleton(Volume* grayvol, float lowthr, float highthr) {
     int i, j, k;
     threshold(0.5f, -MAX_ERODE, 0);
 
-    GridQueue* queue2 = new GridQueue();
-    GridQueue* queue3 = new GridQueue();
-    GridQueue* queue4 = new GridQueue();
+    Queue* queue2 = new Queue();
+    Queue* queue3 = new Queue();
+    Queue* queue4 = new Queue();
 
     PriorityQueue < gridPoint > queue(
             MAX_QUEUELEN);
@@ -2259,7 +2259,7 @@ void Volume::surfaceSkeleton(Volume* grayvol, float lowthr, float highthr) {
 
     // Perform erosion
     int wid = MAX_ERODE;
-    gridQueueEle* ele;
+    QueueNode* ele;
     gridPoint gp;
     int ox, oy, oz;
     int score;
@@ -2326,7 +2326,7 @@ void Volume::surfaceSkeleton(Volume* grayvol, float lowthr, float highthr) {
 
         delete queue2;
         queue2 = queue3;
-        queue3 = new GridQueue();
+        queue3 = new Queue();
 
         int nowComplex = 0;
 
@@ -2463,9 +2463,9 @@ void Volume::surfaceSkeletonPres(float thr, Volume * preserve) {
 #ifdef VERBOSE
     printf("Initializing queue...\n");
 #endif
-    GridQueue* queue2 = new GridQueue();
-    GridQueue* queue3 = new GridQueue();
-    GridQueue* queue4 = new GridQueue();
+    Queue* queue2 = new Queue();
+    Queue* queue3 = new Queue();
+    Queue* queue4 = new Queue();
 
     PriorityQueue < gridPoint > queue(
             MAX_QUEUELEN);
@@ -2497,7 +2497,7 @@ void Volume::surfaceSkeletonPres(float thr, Volume * preserve) {
 #endif
 
     // Perform erosion
-    gridQueueEle* ele;
+    QueueNode* ele;
     gridPoint gp;
     int ox, oy, oz;
     int score;
@@ -2576,7 +2576,7 @@ void Volume::surfaceSkeletonPres(float thr, Volume * preserve) {
         // From now on, queue2 holds nodes of next level
         delete queue2;
         queue2 = queue3;
-        queue3 = new GridQueue();
+        queue3 = new Queue();
 
         // Next, start priority queue iteration
         while(!queue.isEmpty()) {

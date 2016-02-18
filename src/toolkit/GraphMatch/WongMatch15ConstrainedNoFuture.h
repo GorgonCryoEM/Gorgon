@@ -6,10 +6,11 @@
 //#include "NodeList.h"
 //#include "Core/GlobalConstants.h"
 #include "PathGenerator.h"
+
+#include "Foundation/PQueue.h"
 //#include "Structures.h"
 //#include <ctime>
 ////#include <SkeletonMaker/PriorityQueue.h>
-#include <Foundation/GorgonPriorityQueue.h>
 #include "ProteinMorph/SSECorrespondenceResult.h"
 
 using namespace Foundation;
@@ -37,7 +38,7 @@ namespace GraphMatch {
     #endif
         LinkedNode * currentNode;
         //PriorityQueue<LinkedNode, double> * queue;
-        GorgonPriorityQueue<double, LinkedNode *> * queue;
+        PQueue<double, LinkedNode *> * queue;
         vector<LinkedNodeStub*> usedNodes;
         vector<SSECorrespondenceResult> solutions;
         int missingHelixCount;
@@ -114,7 +115,7 @@ namespace GraphMatch {
         cout << "Creating priority queue" << endl;
 #endif // VERBOSE
         //queue = new PriorityQueue<LinkedNode, double> (PRIORITYQUEUESIZE);
-        queue = new GorgonPriorityQueue<double, LinkedNode *>(false);
+        queue = new PQueue<double, LinkedNode *>(false);
 #ifdef VERBOSE
         cout << "Loading pattern graph" << endl;
 #endif // VERBOSE
