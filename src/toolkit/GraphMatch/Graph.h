@@ -8,7 +8,7 @@
 #include "ProteinMorph/SecStruct.h"
 #include "Shape.h"
 //#include <Core/volume.h>
-//#include <MathTools/Vector3D.h>
+//#include <MathTools/Vector3.h>
 //#include <Core/volume.h>
 //using namespace std;
 //using namespace SkeletonMaker;

@@ -6,7 +6,7 @@
 //#include <vector>
 //#include <algorithm>
 //#include <map>
-//#include <MathTools/Vector3D.h>
+//#include <MathTools/Vector3.h>
 //#include <MathTools/MathLib.h>
 #include <MathTools/CrossCorrelation.h>
 #include <GraphMatch/PDBAtom.h>

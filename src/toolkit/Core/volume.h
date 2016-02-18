@@ -13,7 +13,7 @@
 ////#include <cmath>
 #include "Foundation/PriorityQueue.h"
 ////#include <vector>
-#include <MathTools/Vector3D.h>
+#include <MathTools/Vector3.h>
 #include <MathTools/MathLib.h>
 //
 ////---- VolumeRenderer.h -----------
@@ -28,7 +28,7 @@
 ////#include "MeshRenderer.h"
 ////#include <ProteinMorph/NonManifoldMesh.h>
 ////#include <ProteinMorph/TriangleMesh.h>
-////#include <MathTools/Vector3D.h>
+////#include <MathTools/Vector3.h>
 //#include <MathTools/MathLib.h>
 ////#include <Foundation/Octree.h>
 ////#include <queue>

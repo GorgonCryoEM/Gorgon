@@ -7,7 +7,7 @@
 //#include "SheetStrand.h"
 //#include "Core/GlobalConstants.h"
 //#include <string>
-//#include <MathTools/Vector3D.h>
+//#include <MathTools/Vector3.h>
 #include "PDBAtom.h"
 //#include "PDBHelix.h"
 #include "Graph.h"

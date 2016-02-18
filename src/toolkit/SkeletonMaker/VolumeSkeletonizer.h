@@ -8,7 +8,7 @@
 ////#include <SkeletonMaker/PriorityQueue.h>
 //#include <MathTools/MathLib.h>
 //#include <MathTools/DataStructures.h>
-////#include <MathTools/Vector3D.h>
+////#include <MathTools/Vector3.h>
 #include "NormalFinder.h"
 ////#include <string>
 ////#include <Foundation/TimeManager.h>

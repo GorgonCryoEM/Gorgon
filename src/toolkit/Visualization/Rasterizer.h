@@ -2,7 +2,7 @@
 #define TOOLKIT_FOUNDATION_RASTERIZER_H
 
 #include <vector>
-#include <MathTools/Vector3D.h>
+#include <MathTools/Vector3.h>
 
 using namespace std;
 using namespace MathTools;

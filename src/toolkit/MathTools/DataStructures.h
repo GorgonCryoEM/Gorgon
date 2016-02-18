@@ -1,7 +1,7 @@
 #ifndef TOOLKIT_MATHTOOLS_DATA_STRUCTURES_H
 #define TOOLKIT_MATHTOOLS_DATA_STRUCTURES_H
 
-#include "Vector3D.h"
+#include "Vector3.h"
 
 namespace MathTools {
     const int MAX_PROBABILITY_DISTRIBUTION_RADIUS = 10;

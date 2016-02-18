@@ -1,7 +1,7 @@
 #ifndef TOOLKIT_GRAPH_MATCH_PDB_ATOM_H
 #define TOOLKIT_GRAPH_MATCH_PDB_ATOM_H
 
-//#include <MathTools/Vector3D.h>
+//#include <MathTools/Vector3.h>
 //#include <Foundation/StringUtils.h>
 //#include <string>
 //#include <MathTools/Matrix.h>
