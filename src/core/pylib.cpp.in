@@ -30,6 +30,9 @@ BOOST_PYTHON_MODULE(@current_pylib@)
       .def("getSize", &Volume::getSize)
       .def("cmp", &Volume::cmp)
       .def("out", &Volume::print)
+      .def("get", get, return_value_policy<copy_const_reference>())
+      .def("set", &Volume::setItem)
+
 
 //      .def("getMin", &Volume::getMin)
 //      .def("getMax", &Volume::getMax)
