@@ -5,7 +5,7 @@
 #                    More info in: seq_model-doc.txt
 
 
-from libpycore import PDBAtom,Vector3DFloat
+from libpytoolkit import PDBAtom,Vector3DFloat
 
 
 class Residue:
