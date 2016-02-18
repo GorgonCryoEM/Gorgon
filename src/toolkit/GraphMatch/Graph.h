@@ -15,15 +15,15 @@
 
 namespace GraphMatch {
 
-    class StandardGraph {
+    class Graph {
     public:
         int nodeCount;
 
     public:
         // Constructors
-        StandardGraph(int nodeCount);
-        StandardGraph(char* fname);
-        ~StandardGraph();
+        Graph(int nodeCount);
+        Graph(char* fname);
+        ~Graph();
 
         int GetType(int i, int j); // The type of the edge (index starting from 1)
         double GetCost(int i, int j); // The cost based on the graph labels (index starting from 1)
@@ -51,7 +51,7 @@ namespace GraphMatch {
     private:
     };
 
-    StandardGraph::~StandardGraph() {
+    Graph::~Graph() {
         int i;
         for(i = 0; i < (int)pdbStructures.size(); i++) {
             delete pdbStructures[i];
@@ -73,7 +73,7 @@ namespace GraphMatch {
         }
     }
 
-    StandardGraph::StandardGraph(int nodeCount){
+    Graph::Graph(int nodeCount){
         skeletonVolume = NULL;
         skeletonSheetVolume = NULL;
         this->nodeCount = nodeCount;
@@ -86,7 +86,7 @@ namespace GraphMatch {
         this->pdbStructures.clear();
     }
 
-    StandardGraph::StandardGraph(char* fname) {
+    Graph::Graph(char* fname) {
         skeletonVolume = NULL;
         skeletonSheetVolume = NULL;
         FILE* fin = fopen(fname, "rt");
@@ -107,26 +107,26 @@ namespace GraphMatch {
         this->pdbStructures.clear();
     }
 
-    bool StandardGraph::EdgeExists(int n, int m) {
+    bool Graph::EdgeExists(int n, int m) {
         return (fabs(adjacencyMatrix[n][m][1] - MAXINT) > 0.01);
     }
 
-    int StandardGraph::GetType(int i, int j) {
+    int Graph::GetType(int i, int j) {
         return (int)adjacencyMatrix[i-1][j-1][0];
     }
 
-    double StandardGraph::GetCost(int i, int j) {
+    double Graph::GetCost(int i, int j) {
         if(adjacencyMatrix[i-1][j-1][1] == MAXINT) {
             return 1000;
         } else {
             return adjacencyMatrix[i-1][j-1][1];
         }
     }
-    int StandardGraph::GetNodeCount() {
+    int Graph::GetNodeCount() {
         return nodeCount;
     }
 
-    int StandardGraph::GetHelixCount() {
+    int Graph::GetHelixCount() {
         int count = 0;
         for (int i = 0; i < nodeCount; i++) {
             if (adjacencyMatrix[i][i][0] == GRAPHNODE_HELIX) {
@@ -136,7 +136,7 @@ namespace GraphMatch {
         return (count/2);
     }
 
-    int StandardGraph::GetSheetCount() {
+    int Graph::GetSheetCount() {
         int count = 0;
         for (int i = 0; i < nodeCount; i++) {
             if (adjacencyMatrix[i][i][0] == GRAPHNODE_SHEET) {
@@ -146,27 +146,27 @@ namespace GraphMatch {
         return count;
     }
 
-    void StandardGraph::SetType(int i, int j, int type) {
+    void Graph::SetType(int i, int j, int type) {
         assert(((i >= 1) && (i <= nodeCount) && (j >= 1) && (j <= nodeCount)));
         adjacencyMatrix[i-1][j-1][0] = type;
     }
 
-    void StandardGraph::SetCost(int i, int j, double cost) {
+    void Graph::SetCost(int i, int j, double cost) {
         assert(((i >= 1) && (i <= nodeCount) && (j >= 1) && (j <= nodeCount)));
         adjacencyMatrix[i-1][j-1][1] = cost;
     }
 
-    void StandardGraph::SetCost(int i, double cost) {
+    void Graph::SetCost(int i, double cost) {
         assert((i >= 1) && (i <= nodeCount));
         nodeWeights[i-1] = cost;
     }
 
-    void StandardGraph::SetNodeCount(int nodeCount) {
+    void Graph::SetNodeCount(int nodeCount) {
         this->nodeCount = nodeCount;
     }
 
 
-    void StandardGraph::PrintGraph() {
+    void Graph::PrintGraph() {
         char temp;
         int seqNode = 1;
         for(int i = 0; i < (int)pdbStructures.size(); i++) {
@@ -274,7 +274,7 @@ namespace GraphMatch {
         printf("Graph Density %f%%,   (With Euclidean edges %f%%)\n", used * 100 / (nodeCount * nodeCount), (used + euclideanUsed) * 100 / (nodeCount * nodeCount));
     }
 
-    vector<Matcher2Helix> StandardGraph::GetHelixLengths() {
+    vector<Matcher2Helix> Graph::GetHelixLengths() {
         vector<Matcher2Helix> helixes;
         helixes.clear();
         for(int i = 0 ; i < (int)pdbStructures.size(); i++) {
@@ -289,7 +289,7 @@ namespace GraphMatch {
 
     // measures Euclidian distance between all pairs of nodes, stores the distances in euclidianMatrix, and adds
     // graph edges (stored in adjacencyMatrix) where the Euclidian distance is below EUCLIDEAN_DISTANCE_THRESHOLD
-    void StandardGraph::GenerateEuclidianMatrix(Volume * vol) {
+    void Graph::GenerateEuclidianMatrix(Volume * vol) {
         double xSpacing = vol->getSpacingX();
         double ySpacing = vol->getSpacingY();
         double zSpacing = vol->getSpacingZ();
@@ -341,9 +341,7 @@ namespace GraphMatch {
                     if (i < 2 * numH) {		// i is a helix node
                         // TODO: looks like the following line just returns a single corner for the helix
                         iLoc = iSse->GetCornerCell(i%2 + 1);
-                        //iLoc = iSse->GetCornerCell(s);
                     } else {				 // i is a sheet node
-                        //iLoc = iSse->GetCornerCell(s);
                         iLoc = iSse->cornerCells[s-1];
                     }
 
@@ -353,7 +351,6 @@ namespace GraphMatch {
                             // TODO: looks like the following line just returns a single corner for the helix
                             jLoc = jSse->GetCornerCell(j%2 + 1);
                         } else {				// j is a sheet node
-                            //jLoc = jSse->GetCornerCell(t);
                             jLoc = jSse->cornerCells[t-1];
                         }
 
@@ -394,7 +391,7 @@ namespace GraphMatch {
     }
 
     // Merge all sheets separated by maxDist or less
-    void StandardGraph::MergeSheets(double maxDist) {
+    void Graph::MergeSheets(double maxDist) {
 #ifdef VERBOSE
         cout << "=== graph before merging sheets ===" << endl;
         PrintGraph();
@@ -514,7 +511,6 @@ namespace GraphMatch {
                             for (int m = 0; m <= lastRowColumn; m++) {
                                 adjacencyMatrix[k][m][0] = adjacencyMatrix[k+1][m][0];
                                 adjacencyMatrix[k][m][1] = adjacencyMatrix[k+1][m][1];
-//									adjacencyMatrix[k][m][2] = adjacencyMatrix[k+1][m][2];
                                 euclideanMatrix[k][m] = euclideanMatrix[k+1][m];
                                 paths[k][m] = paths[k+1][m];
                             }
@@ -524,7 +520,6 @@ namespace GraphMatch {
                             for (int m = 0; m < firstSheet*2 + numSheets + 1; m++) {
                                 adjacencyMatrix[m][k][0] = adjacencyMatrix[m][k+1][0];
                                 adjacencyMatrix[m][k][1] = adjacencyMatrix[m][k+1][1];
-//									adjacencyMatrix[m][k][2] = adjacencyMatrix[m][k+1][2];
                                 euclideanMatrix[m][k] = euclideanMatrix[m][k+1];
                                 paths[m][k] = paths[m][k+1];
                             }
@@ -533,14 +528,12 @@ namespace GraphMatch {
                         for (int m = 0; m <= lastRowColumn; m++) {
                             adjacencyMatrix[lastRowColumn][m][0] = 3;
                             adjacencyMatrix[lastRowColumn][m][1] = MAXINT;
-//								adjacencyMatrix[lastRowColumn][m][2] = 0;
                             euclideanMatrix[lastRowColumn][m] = 0;
                         }
                         // remove last column
                         for (int m = 0; m <= lastRowColumn; m++) {
                             adjacencyMatrix[m][lastRowColumn][0] = 3;
                             adjacencyMatrix[m][lastRowColumn][1] = MAXINT;
-//								adjacencyMatrix[m][lastRowColumn][2] = 0;
                             euclideanMatrix[m][lastRowColumn] = 0;
                         }
 

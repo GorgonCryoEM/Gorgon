@@ -40,8 +40,8 @@ namespace GraphMatch {
         void CleanupMemory();
     protected:
         Matcher * matcher;
-        StandardGraph * skeleton;
-        StandardGraph * sequence;
+        Graph * skeleton;
+        Graph * sequence;
     };
 
     IBackEnd::IBackEnd(): skeleton(NULL), sequence(NULL) {
