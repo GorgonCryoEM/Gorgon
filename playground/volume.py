@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from Core import Volume, Fill
+from Core import Volume
 
 v = Volume(2,2,2,3.0)
 v1 = Volume()
@@ -23,7 +23,8 @@ v[i,j,k] = 555.0
 print v[i,j,k]
 
 print "Filling"
-fill = Fill(v)
-fill(11.0)
+# fill = Fill(v)
+# fill(11.0)
+v.fill(11.0)
 
 v.out()
