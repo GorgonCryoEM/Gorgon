@@ -45,67 +45,115 @@ namespace GraySkeletonCPP {
     }
 
 
-    class VolumeSkeletonizer{
-    public:
-        VolumeSkeletonizer(int pointRadius, int curveRadius, int surfaceRadius, int skeletonDirectionRadius);
-        ~VolumeSkeletonizer();
-        Volume * PerformImmersionSkeletonizationAndPruning(Volume * sourceVol, Volume * preserveVol, double startGray, double endGray, double stepSize, int smoothingIterations, int smoothingRadius, int minCurveSize, int minSurfaceSize, int maxCurveHole, int maxSurfaceHole, string outputPath, bool doPruning, double pointThreshold, double curveThreshold, double surfaceThreshold);
-        Volume * PerformSkeletonizationAndPruning(Volume * imageVol, string outputPath);
-        Volume * PerformPureJuSkeletonization(Volume * imageVol, string outputPath, double threshold, int minCurveWidth, int minSurfaceWidth);
-        Volume * GetJuSurfaceSkeleton(Volume * sourceVolume, Volume * preserve, double threshold);
-        Volume * GetJuCurveSkeleton(Volume * sourceVolume, Volume * preserve, double threshold, bool is3D);
-        Volume * GetJuTopologySkeleton(Volume * sourceVolume, Volume * preserve, double threshold);
-        void PruneCurves(Volume * sourceVolume, int pruneLength);
-        void PruneSurfaces(Volume * sourceVolume, int pruneLength);
-        void PruneUsingStructureTensor(Volume * skeleton, Volume * sourceVolume, Volume * preserveVol, Vector3DFloat * volumeGradient, EigenResults3D * volumeEigens, ProbabilityDistribution3D & filter, double threshold, char pruningClass, string outputPath);
-        void SmoothenVolume(Volume * &sourceVolume, double minGrayscale, double maxGrayscale, int stRadius);
-        void VoxelBinarySubtract(Volume * sourceAndDestVolume1, Volume * sourceVolume2);
-        void VoxelSubtract(Volume * sourceAndDestVolume1, Volume * sourceVolume2);
-        void VoxelOr(Volume * sourceAndDestVolume1, Volume * sourceVolume2);
-        Vector3DFloat GetCurveDirection(Volume * skeleton, int x, int y, int z, int radius);
-        Vector3DFloat GetSurfaceNormal(Volume * skeleton, int x, int y, int z);
-        Vector3DFloat GetSurfaceNormal(Volume * skeleton, int x, int y, int z, int radius, Vector3DFloat * localDirections);
-        Vector3DFloat * GetVolumeGradient(Volume * sourceVolume);
-        Vector3DFloat * GetSkeletonDirection(Volume * skeleton, int type);
+    class VolumeSkeletonizer {
+        public:
+            VolumeSkeletonizer(int pointRadius, int curveRadius,
+                               int surfaceRadius, int skeletonDirectionRadius);
+            ~VolumeSkeletonizer();
+            Volume * PerformImmersionSkeletonizationAndPruning(
+                    Volume * sourceVol, Volume * preserveVol, double startGray,
+                    double endGray, double stepSize, int smoothingIterations,
+                    int smoothingRadius, int minCurveSize, int minSurfaceSize,
+                    int maxCurveHole, int maxSurfaceHole, string outputPath,
+                    bool doPruning, double pointThreshold,
+                    double curveThreshold, double surfaceThreshold);
+            Volume * PerformSkeletonizationAndPruning(Volume * imageVol,
+                                                      string outputPath);
+            Volume * PerformPureJuSkeletonization(Volume * imageVol,
+                                                  string outputPath,
+                                                  double threshold,
+                                                  int minCurveWidth,
+                                                  int minSurfaceWidth);
+            Volume * GetJuSurfaceSkeleton(Volume * sourceVolume,
+                                          Volume * preserve, double threshold);
+            Volume * GetJuCurveSkeleton(Volume * sourceVolume,
+                                        Volume * preserve, double threshold,
+                                        bool is3D);
+            Volume * GetJuTopologySkeleton(Volume * sourceVolume,
+                                           Volume * preserve, double threshold);
+            void PruneCurves(Volume * sourceVolume, int pruneLength);
+            void PruneSurfaces(Volume * sourceVolume, int pruneLength);
+            void PruneUsingStructureTensor(Volume * skeleton,
+                                           Volume * sourceVolume,
+                                           Volume * preserveVol,
+                                           Vector3DFloat * volumeGradient,
+                                           EigenResults3D * volumeEigens,
+                                           ProbabilityDistribution3D & filter,
+                                           double threshold, char pruningClass,
+                                           string outputPath);
+            void SmoothenVolume(Volume * &sourceVolume, double minGrayscale,
+                                double maxGrayscale, int stRadius);
+            void VoxelBinarySubtract(Volume * sourceAndDestVolume1,
+                                     Volume * sourceVolume2);
+            void VoxelSubtract(Volume * sourceAndDestVolume1,
+                               Volume * sourceVolume2);
+            void VoxelOr(Volume * sourceAndDestVolume1, Volume * sourceVolume2);
+            Vector3DFloat GetCurveDirection(Volume * skeleton, int x, int y,
+                                            int z, int radius);
+            Vector3DFloat GetSurfaceNormal(Volume * skeleton, int x, int y,
+                                           int z);
+            Vector3DFloat GetSurfaceNormal(Volume * skeleton, int x, int y,
+                                           int z, int radius,
+                                           Vector3DFloat * localDirections);
+            Vector3DFloat * GetVolumeGradient(Volume * sourceVolume);
+            Vector3DFloat * GetSkeletonDirection(Volume * skeleton, int type);
 
+            void GetEigenResult(EigenResults3D & returnVal,
+                                Vector3DFloat * imageGradient,
+                                ProbabilityDistribution3D & gaussianFilter,
+                                int x, int y, int z, int sizeX, int sizeY,
+                                int sizeZ, int gaussianFilterRadius,
+                                bool clear);
+            EigenResults3D * GetEigenResults(
+                    Volume * maskVol, Vector3DFloat * imageGradient,
+                    ProbabilityDistribution3D & gaussianFilter,
+                    int gaussianFilterRadius, bool useMask);
 
-        void GetEigenResult(EigenResults3D & returnVal, Vector3DFloat * imageGradient, ProbabilityDistribution3D & gaussianFilter, int x, int y, int z, int sizeX, int sizeY, int sizeZ, int gaussianFilterRadius, bool clear);
-        EigenResults3D * GetEigenResults(Volume * maskVol, Vector3DFloat * imageGradient, ProbabilityDistribution3D & gaussianFilter, int gaussianFilterRadius, bool useMask);
+        protected:
 
-    protected:
+            double GetVoxelCost(EigenResults3D imageEigen,
+                                Vector3DFloat skeletonDirection, int type);
+            void FindOrthogonalAxes(Vector3DFloat axis, Vector3DFloat & res1,
+                                    Vector3DFloat & res2);
+            void GetSTBasedDistribution(
+                    ProbabilityDistribution3D & distributionInfo,
+                    EigenResults3D eigen);
+            Vector3DFloat XYZtoUVW(Vector3DFloat vec, Vector3DFloat u,
+                                   Vector3DFloat v, Vector3DFloat w);
+            Volume * FillCurveHoles(Volume * thresholdedSkeleton,
+                                    Volume * originalSkeleton, int maxHoleSize);
+            Volume * FillSurfaceHoles(Volume * thresholdedSkeleton,
+                                      Volume * originalSkeleton,
+                                      int maxHoleSize);
+            Volume * GetJuThinning(Volume * sourceVolume, Volume * preserve,
+                                   double threshold, char thinningClass);
+            Volume * GetImmersionThinning(Volume * sourceVolume,
+                                          Volume * preserve,
+                                          double lowGrayscale,
+                                          double highGrayscale, double stepSize,
+                                          char thinningClass);
 
-        double GetVoxelCost(EigenResults3D imageEigen, Vector3DFloat skeletonDirection, int type);
-        void FindOrthogonalAxes(Vector3DFloat axis, Vector3DFloat & res1, Vector3DFloat & res2);
-        void GetSTBasedDistribution(ProbabilityDistribution3D & distributionInfo, EigenResults3D eigen);
-        void HueRB(double value, double &r, double &g, double &b);
-        Vector3DFloat XYZtoUVW(Vector3DFloat vec, Vector3DFloat u, Vector3DFloat v, Vector3DFloat w);
-        Volume * FillCurveHoles(Volume * thresholdedSkeleton, Volume * originalSkeleton, int maxHoleSize);
-        Volume * FillSurfaceHoles(Volume * thresholdedSkeleton, Volume * originalSkeleton, int maxHoleSize);
-        Volume * GetJuThinning(Volume * sourceVolume, Volume * preserve, double threshold, char thinningClass);
-        Volume * GetImmersionThinning(Volume * sourceVolume, Volume * preserve, double lowGrayscale, double highGrayscale, double stepSize, char thinningClass);
+            static const char THINNING_CLASS_SURFACE_PRESERVATION;
+            static const char THINNING_CLASS_CURVE_PRESERVATION_2D;
+            static const char THINNING_CLASS_CURVE_PRESERVATION;
+            static const char THINNING_CLASS_POINT_PRESERVATION;
+            static const char THINNING_CLASS_TOPOLOGY_PRESERVATION;
+            static const char PRUNING_CLASS_PRUNE_SURFACES;
+            static const char PRUNING_CLASS_PRUNE_CURVES;
+            static const char PRUNING_CLASS_PRUNE_POINTS;
 
-
-        static const char THINNING_CLASS_SURFACE_PRESERVATION;
-        static const char THINNING_CLASS_CURVE_PRESERVATION_2D;
-        static const char THINNING_CLASS_CURVE_PRESERVATION;
-        static const char THINNING_CLASS_POINT_PRESERVATION;
-        static const char THINNING_CLASS_TOPOLOGY_PRESERVATION;
-        static const char PRUNING_CLASS_PRUNE_SURFACES;
-        static const char PRUNING_CLASS_PRUNE_CURVES;
-        static const char PRUNING_CLASS_PRUNE_POINTS;
-
-    public:
-        MathLib * math;
-        NormalFinder * surfaceNormalFinder;
-        ProbabilityDistribution3D gaussianFilterPointRadius;
-        ProbabilityDistribution3D gaussianFilterCurveRadius;
-        ProbabilityDistribution3D gaussianFilterSurfaceRadius;
-        ProbabilityDistribution3D gaussianFilterMaxRadius;
-        ProbabilityDistribution3D uniformFilterSkeletonDirectionRadius;
-        int pointRadius;
-        int curveRadius;
-        int surfaceRadius;
-        int skeletonDirectionRadius;
+        public:
+            MathLib * math;
+            NormalFinder * surfaceNormalFinder;
+            ProbabilityDistribution3D gaussianFilterPointRadius;
+            ProbabilityDistribution3D gaussianFilterCurveRadius;
+            ProbabilityDistribution3D gaussianFilterSurfaceRadius;
+            ProbabilityDistribution3D gaussianFilterMaxRadius;
+            ProbabilityDistribution3D uniformFilterSkeletonDirectionRadius;
+            int pointRadius;
+            int curveRadius;
+            int surfaceRadius;
+            int skeletonDirectionRadius;
 
     };
 
@@ -544,13 +592,6 @@ namespace GraySkeletonCPP {
             }
         }
 
-    }
-
-    void VolumeSkeletonizer::HueRB(double value, double &r, double &g, double &b) {
-            double v2 = pow(value, 1.5);
-            r = (1 - v2);
-            g = 0;
-            b = v2;
     }
 
     void VolumeSkeletonizer::PruneCurves(Volume * sourceVolume, int pruneLength) {

@@ -15,20 +15,33 @@ using namespace SkeletonMaker;
 
 namespace GraphMatch {
 
-
     class SkeletonReader {
-    public:
-        static int GetGraphIndex(vector<Shape*> & helixes, int helixNum, int cornerNum);
-        static int GetGraphIndex(vector<Shape*> & helixes, int helixNum, Point3Int * point);
-        static Graph * ReadFile(string volumeFile, string helixFile, string sseFile, string sheetFile);
-        static Volume* getSheetsNoThreshold( Volume * vol, int minSize );
-        static void ReadSheetFile(string sheetFile, vector<Shape*> & helixes);
-        static void ReadHelixFile(string helixFile, string sseFile, vector<Shape*> & helixes);
-        static void FindSizes(int startHelix, int startCell, vector<Shape*> & helixList, Volume * vol, Volume * coloredVol, Graph * graph);
-        static void FindPaths(Graph * graph);
-        static void FindPath(int startIx, int endIx, vector<vector<Vector3DInt> > nodes, Volume * maskVol, Graph * graph, bool eraseMask);
-        static void FindCornerCellsInSheet(Volume * vol, Volume * paintedVol, vector<Shape*> & helixes, int sheetId);
-        static int isSkeletonSheet(const Volume &vol, int ox, int oy, int oz );
+        public:
+            static int GetGraphIndex(vector<Shape*> & helixes, int helixNum,
+                                     int cornerNum);
+            static int GetGraphIndex(vector<Shape*> & helixes, int helixNum,
+                                     Point3Int * point);
+            static Graph * ReadFile(string volumeFile, string helixFile,
+                                    string sseFile, string sheetFile);
+            static Volume* getSheetsNoThreshold(Volume * vol, int minSize);
+            static void ReadSheetFile(string sheetFile,
+                                      vector<Shape*> & helixes);
+            static void ReadHelixFile(string helixFile, string sseFile,
+                                      vector<Shape*> & helixes);
+            static void FindSizes(int startHelix, int startCell,
+                                  vector<Shape*> & helixList, Volume * vol,
+                                  Volume * coloredVol, Graph * graph);
+            static void FindPaths(Graph * graph);
+            static void FindPath(int startIx, int endIx,
+                                 vector<vector<Vector3DInt> > nodes,
+                                 Volume * maskVol, Graph * graph,
+                                 bool eraseMask);
+            static void FindCornerCellsInSheet(Volume * vol,
+                                               Volume * paintedVol,
+                                               vector<Shape*> & helixes,
+                                               int sheetId);
+            static int isSkeletonSheet(const Volume &vol, int ox, int oy,
+                                       int oz);
 
     };
 
