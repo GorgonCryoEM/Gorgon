@@ -1,15 +1,9 @@
 #include "volume.h"
-#include <Foundation/StringUtils.h>
-#include <GraySkeletonCPP/GlobalDefinitions.h>
-#include <GraySkeletonCPP/VolumeSkeletonizer.h>
-#include <SkeletonMaker/reader.h>
 
 #include <fstream>
 #include <iomanip>
 
-using namespace SkeletonMaker;
-using namespace Foundation;
-using namespace GraySkeletonCPP;
+//using namespace Core;
 
 
 #ifdef GORGON_DEBUG
