@@ -34,6 +34,7 @@ BOOST_PYTHON_MODULE(@current_pylib@)
       .def("get", get, return_value_policy<copy_const_reference>())
       .def("set", &Volume::setItem)
       .def("fill", &Volume::fill)
+      .def("applyMask", &Volume::applyMask)
 
 
 //      .def("getMin", &Volume::getMin)

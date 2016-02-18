@@ -28,3 +28,7 @@ print "Filling"
 v.fill(11.0)
 
 v.out()
+
+v.applyMask(7, False)
+v.out()
+

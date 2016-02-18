@@ -19,6 +19,7 @@ namespace Core {
             Operation(VolumeData &vol);
             virtual ~Operation(){};
             void fill(double val);
+            void applyMask(double maskValue, bool keepMaskValue);
         protected:
             VolumeData &volume;
     };
