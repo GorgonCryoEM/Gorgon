@@ -35,7 +35,7 @@ namespace GraphMatch {
         char			GetChainId();
         unsigned int	GetResSeq();
         char			GetICode();
-        Vector3DFloat	GetPosition();
+        Vector3Float	GetPosition();
         float			GetOccupancy();
         float			GetTempFactor();
         string			GetElement();
@@ -65,7 +65,7 @@ namespace GraphMatch {
         void SetChainId(char chainId);
         void SetResSeq(unsigned int resSeq);
         void SetICode(char iCode);
-        void SetPosition(Vector3DFloat position);
+        void SetPosition(Vector3Float position);
         void SetOccupancy(float occupancy);
         void SetTempFactor(float tempFactor);
         void SetElement(string element);
@@ -81,7 +81,7 @@ namespace GraphMatch {
         void SetGeometryScore(float score);
         void Transform(MatrixFloat transformMatrix);
         void InterpolateTransform(MatrixFloat transformMatrix1, MatrixFloat transformMatrix2, float coefficient);
-        Vector3DFloat GetInterpolateTransformLocation(MatrixFloat transformMatrix1, MatrixFloat transformMatrix2, float coefficient);
+        Vector3Float GetInterpolateTransformLocation(MatrixFloat transformMatrix1, MatrixFloat transformMatrix2, float coefficient);
         void SetPrevCAHash(unsigned long long prevHash);  // previous and next CAs identifiable for rendering purposes
         void SetNextCAHash(unsigned long long nextHash);  // these are implemented naively rather than using a function
                                                           // to generate a hash code
@@ -101,7 +101,7 @@ namespace GraphMatch {
         char			chainId;
         unsigned int	resSeq;
         char			iCode;
-        Vector3DFloat	position;
+        Vector3Float	position;
         float			occupancy;
         float			tempFactor;
         string			element;
@@ -140,7 +140,7 @@ namespace GraphMatch {
         this->chainId = '0';
         this->resSeq = 0;
         iCode = ' ';
-        position = Vector3DFloat(0,0,0);
+        position = Vector3Float(0,0,0);
         occupancy = 0;
         tempFactor = 0;
         element = "  ";
@@ -173,7 +173,7 @@ namespace GraphMatch {
         this->chainId = chainId;
         this->resSeq = resSeq;
         iCode = ' ';
-        position = Vector3DFloat(0,0,0);
+        position = Vector3Float(0,0,0);
         occupancy = 0;
         tempFactor = 0;
         element = "  ";
@@ -205,7 +205,7 @@ namespace GraphMatch {
         chainId = PDBLine[21];
         resSeq = atoi((char *)PDBLine.substr(22, 4).c_str());
         iCode = PDBLine[26];
-        position = Vector3DFloat((float)atof((char *)PDBLine.substr(30, 8).c_str()),
+        position = Vector3Float((float)atof((char *)PDBLine.substr(30, 8).c_str()),
                                 (float)atof((char *)PDBLine.substr(38, 8).c_str()),
                                 (float)atof((char *)PDBLine.substr(46, 8).c_str()));
         occupancy = (float)atof((char *)PDBLine.substr(54, 6).c_str());
@@ -265,7 +265,7 @@ namespace GraphMatch {
         return iCode;
     }
 
-    Vector3DFloat PDBAtom::GetPosition(){
+    Vector3Float PDBAtom::GetPosition(){
         return position;
     }
 
@@ -430,7 +430,7 @@ namespace GraphMatch {
         this->iCode = iCode;
     }
 
-    void PDBAtom::SetPosition(Vector3DFloat position){
+    void PDBAtom::SetPosition(Vector3Float position){
         this->position = position;
     }
 
@@ -528,7 +528,7 @@ namespace GraphMatch {
         posMat.SetValue(1, 3, 0);
         posMat = transformMatrix * posMat;
 
-        position = Vector3DFloat(posMat.GetValue(0, 0), posMat.GetValue(1, 0), posMat.GetValue(2, 0));
+        position = Vector3Float(posMat.GetValue(0, 0), posMat.GetValue(1, 0), posMat.GetValue(2, 0));
     }
 
     void PDBAtom::InterpolateTransform(MatrixFloat transformMatrix1, MatrixFloat transformMatrix2, float coefficient) {
@@ -539,7 +539,7 @@ namespace GraphMatch {
         posMat.SetValue(1, 3, 0);
         posMat = transformMatrix1 * posMat;
 
-        Vector3DFloat position1 = Vector3DFloat(posMat.GetValue(0, 0), posMat.GetValue(1, 0), posMat.GetValue(2, 0));
+        Vector3Float position1 = Vector3Float(posMat.GetValue(0, 0), posMat.GetValue(1, 0), posMat.GetValue(2, 0));
 
         for(unsigned int j = 0; j < 3; j++) {
             posMat.SetValue(position[j], j, 0);
@@ -547,11 +547,11 @@ namespace GraphMatch {
         posMat.SetValue(1, 3, 0);
         posMat = transformMatrix2 * posMat;
 
-        Vector3DFloat position2 = Vector3DFloat(posMat.GetValue(0, 0), posMat.GetValue(1, 0), posMat.GetValue(2, 0));
+        Vector3Float position2 = Vector3Float(posMat.GetValue(0, 0), posMat.GetValue(1, 0), posMat.GetValue(2, 0));
         position = position1 * (1.0-coefficient) + position2 * coefficient;
     }
 
-    Vector3DFloat PDBAtom::GetInterpolateTransformLocation(MatrixFloat transformMatrix1, MatrixFloat transformMatrix2, float coefficient) {
+    Vector3Float PDBAtom::GetInterpolateTransformLocation(MatrixFloat transformMatrix1, MatrixFloat transformMatrix2, float coefficient) {
         MatrixFloat posMat = MatrixFloat(4, 1);
         for(unsigned int j = 0; j < 3; j++) {
             posMat.SetValue(position[j], j, 0);
@@ -559,7 +559,7 @@ namespace GraphMatch {
         posMat.SetValue(1, 3, 0);
         posMat = transformMatrix1 * posMat;
 
-        Vector3DFloat position1 = Vector3DFloat(posMat.GetValue(0, 0), posMat.GetValue(1, 0), posMat.GetValue(2, 0));
+        Vector3Float position1 = Vector3Float(posMat.GetValue(0, 0), posMat.GetValue(1, 0), posMat.GetValue(2, 0));
 
         for(unsigned int j = 0; j < 3; j++) {
             posMat.SetValue(position[j], j, 0);
@@ -567,7 +567,7 @@ namespace GraphMatch {
         posMat.SetValue(1, 3, 0);
         posMat = transformMatrix2 * posMat;
 
-        Vector3DFloat position2 = Vector3DFloat(posMat.GetValue(0, 0), posMat.GetValue(1, 0), posMat.GetValue(2, 0));
+        Vector3Float position2 = Vector3Float(posMat.GetValue(0, 0), posMat.GetValue(1, 0), posMat.GetValue(2, 0));
         return position1 * (1.0-coefficient) + position2 * coefficient;
     }
 

@@ -36,7 +36,7 @@ namespace MathTools {
 
     struct EigenResults3D{
         float values[3];
-        Vector3DFloat vectors[3];
+        Vector3Float vectors[3];
     };
 
 }
