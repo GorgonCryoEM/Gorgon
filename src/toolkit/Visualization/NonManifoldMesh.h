@@ -3,10 +3,10 @@
 
 #include <vector>
 #include <MathTools/BasicDefines.h>
-#include <SkeletonMaker/volume.h>
+#include <Core/volume.h>
 //#include <string>
 //#include <GorgonGL.h>
-#include <Foundation/Rasterizer.h>
+#include <Visualization/Rasterizer.h>
 #include <map>
 #include <queue>
 #include <fstream>

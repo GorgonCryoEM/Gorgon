@@ -4,7 +4,7 @@
 //#include "StandardGraph.h"
 //#include "LinkedNode.h"
 //#include "LinkedNodeStub.h"
-//#include <SkeletonMaker/volume.h>
+//#include <Core/volume.h>
 //#include "VectorMath.h"
 #include <vector>
 #include "StandardNode.h"

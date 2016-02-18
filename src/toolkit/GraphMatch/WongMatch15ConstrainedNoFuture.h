@@ -2,15 +2,15 @@
 #define TOOLKIT_GRAPHMATCH_WONGMATCH15CONSTRAINEDNOFUTURE_H
 
 //#include "StandardGraph.h"
-#include "LinkedNode.h"
+#include "Foundation/LinkedNode.h"
 //#include "NodeList.h"
-//#include "GlobalConstants.h"
+//#include "Core/GlobalConstants.h"
 #include "PathGenerator.h"
 //#include "Structures.h"
 //#include <ctime>
 ////#include <SkeletonMaker/PriorityQueue.h>
 #include <Foundation/GorgonPriorityQueue.h>
-#include "SSECorrespondenceResult.h"
+#include "ProteinMorph/SSECorrespondenceResult.h"
 
 using namespace Foundation;
 

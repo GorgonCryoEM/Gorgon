@@ -5,7 +5,7 @@
 #include <map>
 //#include "SecondaryStructure.h"
 //#include "SheetStrand.h"
-//#include "GlobalConstants.h"
+//#include "Core/GlobalConstants.h"
 //#include <string>
 //#include <MathTools/Vector3D.h>
 #include "PDBAtom.h"

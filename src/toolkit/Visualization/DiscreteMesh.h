@@ -1,8 +1,8 @@
 #ifndef TOOLKIT_GRAYSKELETONCPP_DISCRETE_MESH_H
 #define TOOLKIT_GRAYSKELETONCPP_DISCRETE_MESH_H
 
-//#include "GlobalDefinitions.h"
-//#include <SkeletonMaker/volume.h>
+//#include "Core/GlobalDefinitions.h"
+//#include <Core/volume.h>
 //#include <MathTools/DataStructures.h>
 //#include <MathTools/Vector3D.h>
 //#include <string>

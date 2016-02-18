@@ -5,9 +5,9 @@
 //#include <cstdio>
 //#include <GorgonGL.h>
 //#include <string>
-#include <SkeletonMaker/volume.h>
-#include <SkeletonMaker/reader.h>
-#include <ProteinMorph/NonManifoldMesh.h>
+#include <Core/volume.h>
+#include <Readers/reader.h>
+#include <Visualization/NonManifoldMesh.h>
 //#include "Renderer.h"
 #include <Foundation/StringUtils.h>
 

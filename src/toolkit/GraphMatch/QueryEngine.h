@@ -8,13 +8,13 @@
 #include "WongMatch15ConstrainedNoFuture.h"
 //#include "WongMatch15ConstrainedOnlyA.h"
 #include "PDBReader.h"
-#include "SEQReader.h"
-#include "SkeletonReader.h"
-//#include "GlobalConstants.h"
+#include "Readers/SEQReader.h"
+#include "Readers/SkeletonReader.h"
+//#include "Core/GlobalConstants.h"
 //#include "GraphGenerator.h"
 //#include <ctime>
 //#include <string>
-#include "SSECorrespondenceResult.h"
+#include "ProteinMorph/SSECorrespondenceResult.h"
 
 #ifdef DEBUG
 	#include <iostream>

@@ -6,12 +6,12 @@
 #define MAX_ERODE 1000
 
 #include "VolumeData.h"
-#include "GridQueue2.h"
+#include "Foundation/GridQueue2.h"
 //#include "ThinningTemplate.h"
 ////#include <cstdio>
 ////#include <cstdlib>
 ////#include <cmath>
-#include "PriorityQueue.h"
+#include "Foundation/PriorityQueue.h"
 ////#include <vector>
 #include <MathTools/Vector3D.h>
 #include <MathTools/MathLib.h>
@@ -22,8 +22,8 @@
 ////#include <GorgonGL.h>
 ////#include <GraphMatch/VectorMath.h>
 #include "GlobalConstants.h"
-//#include <GraySkeletonCPP/GlobalDefinitions.h>
-//#include <GraySkeletonCPP/VolumeSkeletonizer.h>
+//#include <Core/GlobalDefinitions.h>
+//#include <SkeletonMaker/VolumeSkeletonizer.h>
 //#include <GraySkeletonCPP/VolumeFormatConverter.h>
 ////#include "MeshRenderer.h"
 ////#include <ProteinMorph/NonManifoldMesh.h>

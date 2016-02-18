@@ -1,8 +1,8 @@
 #ifndef TOOLKIT_PROTEINMORPH_SSE_HUNTER_H
 #define TOOLKIT_PROTEINMORPH_SSE_HUNTER_H
 
-//#include <SkeletonMaker/volume.h>
-#include "NonManifoldMesh.h"
+//#include <Core/volume.h>
+#include "Visualization/NonManifoldMesh.h"
 //#include <vector>
 //#include <algorithm>
 //#include <map>
@@ -10,11 +10,11 @@
 //#include <MathTools/MathLib.h>
 #include <MathTools/CrossCorrelation.h>
 #include <GraphMatch/PDBAtom.h>
-#include <GraySkeletonCPP/VolumeSkeletonizer.h>
+#include <SkeletonMaker/VolumeSkeletonizer.h>
 //#include <Gorgon/MeshRenderer.h>
 //#include <cmath>
 #include <iostream>
-#include <GraySkeletonCPP/GlobalDefinitions.h>
+#include <Core/GlobalDefinitions.h>
 
 //#define USE_TIME_MANAGER
 #ifdef USE_TIME_MANAGER

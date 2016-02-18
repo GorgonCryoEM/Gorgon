@@ -3,7 +3,7 @@
 
 #include "GrayImageList.h"
 ////#include "ImageReaderMRC.h"
-////#include "GlobalDefinitions.h"
+////#include "Core/GlobalDefinitions.h"
 ////#include "VolumeDeltaAnalyzer.h"
 ////#include <MathTools/Combinatorics.h>
 ////#include <SkeletonMaker/PriorityQueue.h>
@@ -15,9 +15,9 @@
 ////#include <Foundation/TimeManager.h>
 ////#include <new>
 ////#include <functional>
-//#include <SkeletonMaker/volume.h>
+//#include <Core/volume.h>
 //#include "MathTools/BasicDefines.h"
-#include "DiscreteMesh.h"
+#include "Visualization/DiscreteMesh.h"
 
 using namespace std;
 

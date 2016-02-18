@@ -3,13 +3,13 @@
 
 #include <cassert>
 #include <vector>
-//#include "GlobalConstants.h"
+//#include "Core/GlobalConstants.h"
 #include "Matcher2Helix.h"
-#include "SecondaryStructure.h"
+#include "ProteinMorph/SecondaryStructure.h"
 #include "GeometricShape.h"
-//#include <SkeletonMaker/volume.h>
+//#include <Core/volume.h>
 //#include <MathTools/Vector3D.h>
-//#include <SkeletonMaker/volume.h>
+//#include <Core/volume.h>
 //using namespace std;
 //using namespace SkeletonMaker;
 

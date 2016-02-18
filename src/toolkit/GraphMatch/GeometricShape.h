@@ -1,11 +1,11 @@
 #ifndef TOOLKIT_GRAPHMATCH_GEOMETRICSHAPE_H
 #define TOOLKIT_GRAPHMATCH_GEOMETRICSHAPE_H
 
-#include "VectorMath.h"
+#include "MathTools/VectorMath.h"
 //#include <vector>
 //#include <MathTools/Vector3D.h>
 //#include <MathTools/MathLib.h>
-#include "GlobalConstants.h"
+#include "Core/GlobalConstants.h"
 
 //using namespace std;
 using namespace MathTools;
