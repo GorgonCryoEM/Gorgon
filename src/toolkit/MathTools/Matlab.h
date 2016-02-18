@@ -53,16 +53,16 @@ namespace MathTools {
         double x1 = (a+d + insidesqrt) / 2.0;
         double x2 = (a+d - insidesqrt) / 2.0;
 
-        Vector3DDouble v1, v2, mv1, mv2;
+        Vector3Double v1, v2, mv1, mv2;
         if((b == 0) && (d == 0)) {
-            v1 = Vector3DDouble(1.0, 0.0, 0.0);
-            v2 = Vector3DDouble(0.0, 1.0, 0.0);
+            v1 = Vector3Double(1.0, 0.0, 0.0);
+            v2 = Vector3Double(0.0, 1.0, 0.0);
         } else if (b == 0) {
-            v1 = Vector3DDouble(0.0, 1.0, 0.0);
-            v2 = Vector3DDouble(1.0, 0.0, 0.0);
+            v1 = Vector3Double(0.0, 1.0, 0.0);
+            v2 = Vector3Double(1.0, 0.0, 0.0);
         } else {
-            v1 = Vector3DDouble(1.0, (x1-a)/b, 0.0);
-            v2 = Vector3DDouble(1.0, (x2-a)/b, 0.0);
+            v1 = Vector3Double(1.0, (x1-a)/b, 0.0);
+            v2 = Vector3Double(1.0, (x2-a)/b, 0.0);
         }
 
         v1.normalize();
