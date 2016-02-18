@@ -7,6 +7,7 @@
 #include <vector>
 #include <map>
 #include <set>
+#include <iomanip>
 //#include <GorgonGL.h>
 //#include <Foundation/StringUtils.h>
 
@@ -31,7 +32,7 @@ namespace Visualization {
 
         void InitializePathFinder(NonManifoldMesh_Annotated * mesh);
         void InitializePathHelix(int helixIndex, Vector3DFloat p1, Vector3DFloat p2, float radius);
-        void PrunePathMesh(NonManifoldMesh_Annotated * mesh, vector<unsigned int> pathVertices, set<unsigned int> preserve);
+        void PrunePathMesh(NonManifoldMesh_Annotated * mesh, vector<unsigned int> pathVertices);
         void GetPathSpace(int helix1Ix, bool helix1Start, int helix2Ix, bool helix2Start);
         int GetPathVertexCount();
         Vector3DFloat GetPathVertex(int index);
@@ -53,10 +54,9 @@ namespace Visualization {
     };
 
 
-    SSECorrespondenceEngine::SSECorrespondenceEngine() {
-        correspondence.clear();
-        pathCount = 0;
-    }
+    SSECorrespondenceEngine::SSECorrespondenceEngine()
+    						: pathCount(0)
+    {}
 
     int SSECorrespondenceEngine::ExecuteQuery() {
         if(skeleton != NULL && sequence != NULL) {
@@ -77,10 +77,10 @@ namespace Visualization {
 
     int SSECorrespondenceEngine::LoadCorrespondenceFromFile(string fileName) {
 
-        FILE* fin = fopen((char*)fileName.c_str(), "rt");
-        if (fin == NULL)
+        ifstream fin(fileName.c_str());
+        if (!fin)
         {
-            printf("Error opening input file %s.\n", fileName.c_str()) ;
+            cout<<"Error opening input file "<<fileName<<".\n";
             exit(0) ;
         }
 
@@ -89,21 +89,21 @@ namespace Visualization {
         int correspondenceCount = 0, nodeCount, skeletonNode;
         vector<int> nodes;
         double cost;
-        fscanf(fin, "%d\n", &correspondenceCount);
+        fin>>correspondenceCount;
 
         for(int i = 0; i < correspondenceCount; i++) {
             nodes.clear();
-            fscanf(fin, "%d ", &nodeCount);
+            fin>>nodeCount;
             for(int j = 0; j < nodeCount; j++) {
-                fscanf(fin, "%d ", &skeletonNode);
+                fin>>skeletonNode;
                 nodes.push_back(skeletonNode);
             }
-            fscanf(fin, "%lf\n", &cost);
+            fin>>cost;
             // TODO: Fix! 0 not acceptable!
             correspondence.push_back(SSECorrespondenceResult(nodes, cost, 0));
         }
 
-        fclose(fin);
+        fin.close();
 
         return correspondenceCount;
     }
@@ -118,23 +118,23 @@ namespace Visualization {
     }
 
     void SSECorrespondenceEngine::SaveCorrespondenceToFile(string fileName) {
-        FILE* fout = fopen((char*)fileName.c_str(), "wt");
-        if (fout == NULL)
+        ofstream fout(fileName.c_str());
+        if (!fout)
         {
-            printf("Error opening output file %s.\n", fileName.c_str()) ;
+            cout<<"Error opening output file "<<fileName<<".\n";
             exit(0) ;
         }
 
-        fprintf(fout, "%ld\n", correspondence.size());
+        fout<<correspondence.size()<<endl;
         for(unsigned int i = 0; i < correspondence.size(); i++) {
-            fprintf(fout, "%d ", correspondence[i].GetNodeCount());
+            fout<<correspondence[i].GetNodeCount()<<" ";
             for(int j = 0; j < correspondence[i].GetNodeCount(); j++) {
-                fprintf(fout, "%d ", correspondence[i].GetSkeletonNode(j));
+                fout<<correspondence[i].GetSkeletonNode(j)<<" ";
             }
-            fprintf(fout, "%lf\n", correspondence[i].GetCost());
+            fout<<fixed<<setprecision(6)<<correspondence[i].GetCost()<<endl;
         }
 
-        fclose(fout);
+        fout.close();
     }
 
     GeometricShape * SSECorrespondenceEngine::GetSkeletonSSE(int sseId) {
@@ -219,7 +219,7 @@ namespace Visualization {
 
     }
 
-    void SSECorrespondenceEngine::PrunePathMesh(NonManifoldMesh_Annotated * mesh, vector<unsigned int> pathVertices, set<unsigned int> preserve) {
+    void SSECorrespondenceEngine::PrunePathMesh(NonManifoldMesh_Annotated * mesh, vector<unsigned int> pathVertices) {
         for(unsigned int i = 0; i < mesh->vertices.size(); i++) {
             mesh->vertices[i].tag = true;
         }
@@ -255,35 +255,7 @@ namespace Visualization {
             }
         }
 
-        // Preserving start and end terminus, while pruning away the single directional branches.
-        set<unsigned int> preserve;
-        if(helix1Start) {
-            for(unsigned int i = 0; i < helixStartPoints[helix1Ix].size(); i++) {
-                preserve.insert(helixStartPoints[helix1Ix][i]);
-            }
-        } else {
-            for(unsigned int i = 0; i < helixEndPoints[helix1Ix].size(); i++) {
-                preserve.insert(helixEndPoints[helix1Ix][i]);
-            }
-        }
-
-        if(helix2Start) {
-            for(unsigned int i = 0; i < helixStartPoints[helix2Ix].size(); i++) {
-                preserve.insert(helixStartPoints[helix2Ix][i]);
-            }
-        } else {
-            for(unsigned int i = 0; i < helixEndPoints[helix2Ix].size(); i++) {
-                preserve.insert(helixEndPoints[helix2Ix][i]);
-            }
-        }
-
-        //printf("Preserving:");
-        //for(set<unsigned int>::iterator i = preserve.begin(); i != preserve.end(); i++) {
-        //	printf("%d ", *i);
-        //}
-        //printf("\n");
-
-        PrunePathMesh(mesh, pathVertices, preserve);
+        PrunePathMesh(mesh, pathVertices);
 
         singlePathMesh = new NonManifoldMesh_Annotated();
         map<unsigned int, unsigned int> vertexMap;
@@ -298,12 +270,6 @@ namespace Visualization {
                 singlePathMesh->AddEdge(vertexMap[mesh->edges[i].vertexIds[0]], vertexMap[mesh->edges[i].vertexIds[1]], mesh->edges[i].tag);
             }
         }
-
-
-        //char filename[100];
-        //sprintf(filename, "C:\\path_%d_%d.off", pathCount, helix1Ix);
-        //printf("vertex count: %d, edgeCount: %d, faceCount: %d\n", singlePathMesh->vertices.size(), singlePathMesh->edges.size(), singlePathMesh->faces.size()); flushall();
-        //singlePathMesh->ToOffCells(filename);
 
         vertexMap.clear();
         pathVertices.clear();

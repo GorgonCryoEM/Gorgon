@@ -117,7 +117,7 @@ namespace SkeletonMaker {
 
     public:
         /* Initializer */
-        SOFReader( char* fname )
+        SOFReader( const char* fname )
         {
             sprintf( soffile, "%s", fname ) ;
             FILE* fin = fopen( fname, "rb" ) ;
@@ -176,7 +176,7 @@ namespace SkeletonMaker {
 
     public:
         /* Initializer */
-        PQRReader( char* fname, float arrspc, int pad )
+        PQRReader( const char* fname, float arrspc, int pad )
         {
             sprintf( pqrfile, "%s", fname ) ;
             FILE* fin = fopen( fname, "r" ) ;
@@ -323,7 +323,7 @@ namespace SkeletonMaker {
 
     public:
         /* Initializer */
-        DXReader( char* fname, int s, int padding )
+        DXReader( const char* fname, int s, int padding )
         {
             sprintf( dxfile, "%s", fname ) ;
             FILE* fin = fopen( fname, "r" ) ;
@@ -469,7 +469,7 @@ namespace SkeletonMaker {
     {
     public:
         /* Initializer */
-        MRCReader( char* fname )
+        MRCReader( const char* fname )
         {
             sprintf( mrcfile, "%s", fname ) ;
 
@@ -627,7 +627,7 @@ namespace SkeletonMaker {
     {
     public:
         /* Initializer */
-        InvMRCReader( char* fname )
+        InvMRCReader( const char* fname )
         {
             sprintf( mrcfile, "%s", fname ) ;
 
@@ -778,7 +778,7 @@ namespace SkeletonMaker {
     public:
         MRCReaderPicker(){} ;
 
-        static VolumeReader* pick( char* fname )
+        static VolumeReader* pick( const char* fname )
         {
             FILE* fin = fopen( fname, "rb" ) ;
             if ( fin == NULL )
@@ -816,7 +816,7 @@ namespace SkeletonMaker {
     {
     public:
         /* Initializer */
-        HackMRCReader( char* fname )
+        HackMRCReader( const char* fname )
         {
             sprintf( mrcfile, "%s", fname ) ;
 
@@ -895,7 +895,7 @@ namespace SkeletonMaker {
 
         /* Initializer */
 
-        MatlabReader( char* fname, int sx, int sy, int sz )
+        MatlabReader( const char* fname, int sx, int sy, int sz )
 
         {
 
@@ -1066,7 +1066,7 @@ namespace SkeletonMaker {
 
         /* Initializer */
 
-        RawReader( char* fname, int sx, int sy, int sz )
+        RawReader( const char* fname, int sx, int sy, int sz )
 
         {
 
@@ -1243,7 +1243,7 @@ namespace SkeletonMaker {
 
         /* Initializer */
 
-        FlatListReader( char* fname )
+        FlatListReader( const char* fname )
 
         {
 
@@ -1381,7 +1381,7 @@ namespace SkeletonMaker {
 
         /* Initializer */
 
-        TimDoseReader( char* fname )
+        TimDoseReader( const char* fname )
 
         {
 
@@ -2030,7 +2030,7 @@ namespace SkeletonMaker {
 
         /* Initializer */
 
-        StructureReader( char* fname )
+        StructureReader( const char* fname )
 
         {
 
@@ -2300,7 +2300,7 @@ namespace SkeletonMaker {
 
         /* Initializer */
 
-        DoseReader( char* fname )
+        DoseReader( const char* fname )
 
         {
 

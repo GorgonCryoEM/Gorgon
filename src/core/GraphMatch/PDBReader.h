@@ -22,59 +22,59 @@ namespace GraphMatch {
 
     class PDBReader {
     public:
-        static StandardGraph * ReadFile(char * fname);
+        static StandardGraph * ReadFile(string fname);
         static map<unsigned long long, PDBAtom> ReadAtomPositions(string fileName);
         static bool WriteAtomPositions(map<unsigned long long, PDBAtom> &atoms, string fileName);
         static vector<PDBHelix> ReadHelixPositions(string fileName);
-        static char * TrimString(char * string);
-        static int ToInt(char * string);
+        static string TrimString(string str);
+        static int ToInt(string str);
     private:
-        static char * GetString(char * string, int start, int length);
-        static int GetInt(char * string, int start, int length);
+        static string GetString(string str, int start, int length);
+        static int GetInt(string str, int start, int length);
     };
 
     #ifdef GET_AMINO_SEQUENCE
-    char GetSingleLetterFromThree(char * aminoAcid) {
-        char result;
-        if(strcmp(aminoAcid, "ALA") == 0) {
+    string GetSingleLetterFromThree(string aminoAcid) {
+        string result;
+        if(aminoAcid == "ALA") {
             result = 'A';
-        } else if(strcmp(aminoAcid, "ARG") == 0) {
+        } else if(aminoAcid == "ARG") {
             result = 'R';
-        } else if(strcmp(aminoAcid, "ASN") == 0) {
+        } else if(aminoAcid == "ASN") {
             result = 'N';
-        } else if(strcmp(aminoAcid, "ASP") == 0) {
+        } else if(aminoAcid == "ASP") {
             result = 'D';
-        } else if(strcmp(aminoAcid, "CYS") == 0) {
+        } else if(aminoAcid == "CYS") {
             result = 'C';
-        } else if(strcmp(aminoAcid, "GLN") == 0) {
+        } else if(aminoAcid == "GLN") {
             result = 'Q';
-        } else if(strcmp(aminoAcid, "GLU") == 0) {
+        } else if(aminoAcid == "GLU") {
             result = 'E';
-        } else if(strcmp(aminoAcid, "GLY") == 0) {
+        } else if(aminoAcid == "GLY") {
             result = 'G';
-        } else if(strcmp(aminoAcid, "HIS") == 0) {
+        } else if(aminoAcid == "HIS") {
             result = 'H';
-        } else if(strcmp(aminoAcid, "ILE") == 0) {
+        } else if(aminoAcid == "ILE") {
             result = 'I';
-        } else if(strcmp(aminoAcid, "LEU") == 0) {
+        } else if(aminoAcid == "LEU") {
             result = 'L';
-        } else if(strcmp(aminoAcid, "LYS") == 0) {
+        } else if(aminoAcid == "LYS") {
             result = 'K';
-        } else if(strcmp(aminoAcid, "MET") == 0) {
+        } else if(aminoAcid == "MET") {
             result = 'M';
-        } else if(strcmp(aminoAcid, "PHE") == 0) {
+        } else if(aminoAcid == "PHE") {
             result = 'F';
-        } else if(strcmp(aminoAcid, "PRO") == 0) {
+        } else if(aminoAcid == "PRO") {
             result = 'P';
-        } else if(strcmp(aminoAcid, "SER") == 0) {
+        } else if(aminoAcid == "SER") {
             result = 'S';
-        } else if(strcmp(aminoAcid, "THR") == 0) {
+        } else if(aminoAcid == "THR") {
             result = 'T';
-        } else if(strcmp(aminoAcid, "TRP") == 0) {
+        } else if(aminoAcid == "TRP") {
             result = 'W';
-        } else if(strcmp(aminoAcid, "TYR") == 0) {
+        } else if(aminoAcid == "TYR") {
             result = 'Y';
-        } else if(strcmp(aminoAcid, "VAL") == 0) {
+        } else if(aminoAcid == "VAL") {
             result = 'V';
         } else {
             printf("/noops!!!/n");
@@ -84,34 +84,33 @@ namespace GraphMatch {
     }
     #endif
 
-    StandardGraph * PDBReader::ReadFile(char* fname) {
-        FILE* fin = fopen(fname, "rt");
-        if (fin == NULL)
+    StandardGraph * PDBReader::ReadFile(string fname) {
+        ifstream fin(fname.c_str());
+        if (!fin)
         {
-            printf("Error reading input file %s.\n", fname) ;
+            cout<<"Error reading input file "<<fname<<".\n";
             exit(0) ;
         }
 
-        char line[100];
+        string line;
         string sequence = "";
-        char * token;
+        string token;
         vector<SecondaryStructure*> structures;
         SecondaryStructure * currentStructure;
         bool add;
         int oldIndex = 0;
         int index;
         #ifdef GET_AMINO_SEQUENCE
-        char * acidString;
-        char acidChar;
+        string acidString;
+        string acidChar;
         int start = 10000;
         #endif
 
-        while(!feof(fin))
+        while(getline(fin, line))
         {
-            fgets(line, 100, fin);
             token = GetString(line, 0, 6);
 
-            if(strcmp(token, TOKEN_PDB_HELIX)== 0) {
+            if(token == TOKEN_PDB_HELIX) {
                 currentStructure = new SecondaryStructure();
                 currentStructure->serialNumber = GetInt(line, 7, 3);
                 currentStructure->secondaryStructureID = GetString(line, 11, 3);
@@ -129,20 +128,19 @@ namespace GraphMatch {
                     delete currentStructure;
                 }
             #ifdef GET_AMINO_SEQUENCE
-            } else if(strcmp(token, "ATOM") == 0) {
+            } else if(token == "ATOM") {
                 index = GetInt(line, 22, 4);
                 start = min(index, start);
                 if(index != oldIndex){
                     acidString = GetString(line, 17,3);
                     acidChar = GetSingleLetterFromThree(acidString);
                     sequence += acidChar;
-                    printf("%c", acidChar);
-                    delete acidString;
+                    cout<<acidChar;
                 }
                 oldIndex = index;
             #endif
             #ifdef INCLUDE_SHEETS
-            } else if (strcmp(token, TOKEN_PDB_SHEET)== 0 && INCLUDE_STRANDS == 1) {
+            } else if (token == TOKEN_PDB_SHEET && INCLUDE_STRANDS == 1) {
                 currentStructure = new SecondaryStructure();
                 currentStructure->serialNumber = GetInt(line, 7, 3);
                 currentStructure->secondaryStructureID = GetString(line, 11, 3);
@@ -161,15 +159,13 @@ namespace GraphMatch {
                 }
             #endif
             }
-            delete [] token;
-            token = NULL;
         }
 
         #ifdef GET_AMINO_SEQUENCE
         printf("\n");
         #endif
 
-        fclose( fin ) ;
+        fin.close() ;
 
         // Sorting the structures by the start position
         int i,j;
@@ -306,19 +302,18 @@ namespace GraphMatch {
     map<unsigned long long, PDBAtom> PDBReader::ReadAtomPositions(string fileName) {
         map<unsigned long long, PDBAtom> atomPositions;
 
-        FILE* fin = fopen((char *)fileName.c_str(), "rt");
-        if (fin == NULL)
+        ifstream fin(fileName.c_str());
+        if (!fin)
         {
-            printf("Error reading input file %s.\n", fileName.c_str()) ;
+            cout<<"Error reading input file "<<fileName<<".\n";
             exit(0) ;
         }
 
-        char line[100];
+        string line;
         string lineStr;
         string token;
-        while(!feof(fin))
+        while(getline(fin, line))
         {
-            fgets(line, 100, fin);
             lineStr = line;
             token = lineStr.substr(0, 6);
 
@@ -327,7 +322,7 @@ namespace GraphMatch {
                 atomPositions[atom.GetHashKey()] = atom;
             }
         }
-        fclose(fin);
+        fin.close();
 
         return atomPositions;
     }
@@ -336,19 +331,18 @@ namespace GraphMatch {
         map<unsigned long long, PDBAtom> atomPositions = ReadAtomPositions(fileName);
         vector<PDBHelix> helices;
 
-        FILE* fin = fopen((char *)fileName.c_str(), "rt");
-        if (fin == NULL)
+        ifstream fin(fileName.c_str());
+        if (!fin)
         {
-            printf("Error reading input file %s.\n", fileName.c_str()) ;
+            cout<<"Error reading input file "<<fileName<<".\n";
             exit(0) ;
         }
 
-        char line[100];
+        string line;
         string lineStr;
         string token;
-        while(!feof(fin))
+        while(getline(fin, line))
         {
-            fgets(line, 100, fin);
             lineStr = line;
             token = lineStr.substr(0, 6);
 
@@ -368,85 +362,81 @@ namespace GraphMatch {
             }
         }
         atomPositions.clear();
-        fclose(fin);
+        fin.close();
         return helices;
     }
 
-    char * PDBReader::TrimString(char * string) {
+    string PDBReader::TrimString(string str) {
         int startPos = 0;
-        int endPos = strlen(string) - 1;
+        int endPos = str.size() - 1;
         for(int i = 0; i < endPos; i++) {
-            if(string[startPos] != ' ') {
+            if(str[startPos] != ' ') {
                 break;
             }
             startPos++;
         }
         for(int i = endPos - 1; i >= startPos; i--) {
-            if(string[endPos] != ' ') {
+            if(str[endPos] != ' ') {
                 break;
             }
             endPos--;
         }
         int j = 0;
-        char * outString = new char[100];
+        string outString;
         for(int i = startPos; i <= endPos; i++) {
-            outString[j] = string[i];
+            outString[j] = str[i];
             j++;
         }
         outString[j] = 0;
         return outString;
     }
 
-    char * PDBReader::GetString(char * string, int start, int length) {
-        char * out = new char[100];
-        char * temp;
+    string PDBReader::GetString(string str, int start, int length) {
+        string out;
+        string temp;
         for(int i = 0; i < length; i++) {
-            out[i] = string[i+start];
+            out[i] = str[i+start];
         }
         out[length] = 0;
         temp = TrimString(out);
 
         // clean
-        delete [] out;
-        out = NULL;
         return temp;
     }
 
-    int PDBReader::ToInt(char * string) {
+    int PDBReader::ToInt(string str) {
         int value = 0;
         int sign = 1;
-        for(int i = 0; i < (int)strlen(string); i++) {
-            if(string[i] == '-') {
+        for(int i = 0; i < (int)str.size(); i++) {
+            if(str[i] == '-') {
                 sign = -1;
             } else {
-                value += sign * (string[i]-48);
+                value += sign * (str[i]-48);
                 value *= 10;
             }
         }
         value /= 10;
         return value;
     }
-    int PDBReader::GetInt(char * string, int start, int length) {
-        char * substring = GetString(string, start, length);
+    int PDBReader::GetInt(string str, int start, int length) {
+        string substring = GetString(str, start, length);
         int value = ToInt(substring);
 
         // clean
-        delete [] substring;
-        substring = NULL;
         return value;
     }
     bool PDBReader::WriteAtomPositions(map<unsigned long long, PDBAtom> &atoms, string fileName) {
-        FILE* fout = fopen((char *)fileName.c_str(), "wt");
-        if (fout == NULL) {
-            printf("Error reading output file %s.\n", fileName.c_str()) ;
+        ofstream fout(fileName.c_str());
+        if (!fout) {
+            cout<<"Error reading output file "<<fileName<<".\n";
             return false;
         } else {
-            fprintf(fout, "%s\n", StringUtils::RightPad("REMARK   5 Gorgon (C) 2005-2010", 70).c_str() );
-            fprintf(fout, "%s\n", StringUtils::RightPad("REMARK   5 Pseudoatom export using SSEHunter", 70).c_str());
+            fout<<StringUtils::RightPad("REMARK   5 Gorgon (C) 2005-2010", 70)<<endl;
+            fout<<StringUtils::RightPad("REMARK   5 Pseudoatom export using SSEHunter", 70)<<endl;
             for(map<unsigned long long, PDBAtom>::iterator i = atoms.begin(); i != atoms.end(); i++) {
-                fprintf(fout, "%s\n", i->second.GetPDBString().c_str() );
+                fout<<i->second.GetPDBString()<<endl;
         }
-            fclose(fout);
+            fout.close();
         }
         return true;
     }

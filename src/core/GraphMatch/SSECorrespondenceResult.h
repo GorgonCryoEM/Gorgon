@@ -14,55 +14,33 @@ namespace GraphMatch {
         SSECorrespondenceResult();
         SSECorrespondenceResult(LinkedNode * node, int helixCount);
         SSECorrespondenceResult(vector<int> correspondence, double cost, int helixCount);
-        ~SSECorrespondenceResult();
 
-        string GetNodeString();
         double GetCost();
         int GetNodeCount();
         int GetHelixCount();
-        int GetSheetCount();
         int GetSkeletonNode(int sequenceNode);
         int NodeToHelix(int nodeId);
     private:
         vector<int> correspondence;
         double cost;
         int helixCount;
-        int sheetCount;
     };
 
-    SSECorrespondenceResult::SSECorrespondenceResult(){
-        correspondence.clear();
-        cost = 0;
-        helixCount = 0;
-        sheetCount = 0;
-    }
+    SSECorrespondenceResult::SSECorrespondenceResult()
+    					: cost(0), helixCount(0)
+    {}
 
-    SSECorrespondenceResult::SSECorrespondenceResult(LinkedNode * node, int helixCount){
-        correspondence = node->GetNodeCorrespondence();
-        cost = node->GetCost();
-        this->helixCount = helixCount;
-    }
+    SSECorrespondenceResult::SSECorrespondenceResult(LinkedNode * node, int nHelix)
+    					: correspondence(node->GetNodeCorrespondence()),
+						  cost(node->GetCost()),
+						  helixCount(nHelix)
+    {}
 
-    SSECorrespondenceResult::SSECorrespondenceResult(vector<int> correspondence, double cost, int helixCount){
-        this->correspondence = correspondence;
-        this->cost = cost;
-        this->helixCount = helixCount;
-    }
-
-    SSECorrespondenceResult::~SSECorrespondenceResult(){
-        correspondence.clear();
-    }
-
-    string SSECorrespondenceResult::GetNodeString(){
-        string nodeString = string("");
-        char text[100];
-        for(unsigned int i = 0; i < correspondence.size(); i++) {
-            sprintf(text, "%d", correspondence[i]);
-            nodeString.append(text);
-            nodeString.append(" ");
-        }
-        return nodeString;
-    }
+    SSECorrespondenceResult::SSECorrespondenceResult(vector<int> corr, double cst, int nHelix)
+						: correspondence(corr),
+						  cost(cst),
+						  helixCount(nHelix)
+    {}
 
     double SSECorrespondenceResult::GetCost() {
         return cost;
@@ -74,11 +52,6 @@ namespace GraphMatch {
 
     int SSECorrespondenceResult::GetHelixCount() {
         return helixCount;
-    }
-
-    int SSECorrespondenceResult::GetSheetCount() {
-        // TODO: fix
-        return -1;
     }
 
     int SSECorrespondenceResult::GetSkeletonNode(int sequenceNode) {
