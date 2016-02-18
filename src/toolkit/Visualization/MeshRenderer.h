@@ -17,10 +17,9 @@ using namespace Foundation;
 using namespace SkeletonMaker;
 
 namespace Visualization {
-    typedef NonManifoldMesh NonManifoldMesh_Annotated;
     class MeshRenderer : public Volume {
     public:
-        NonManifoldMesh_Annotated getMesh();
+        NonManifoldMesh getMesh();
         Vector3DFloat get3DCoordinates(int subsceneIndex, int ix0, int ix1 = -1, int ix2 = -1, int ix3 = -1, int ix4 = -1);
         void loadFile(string fileName);
         void loadVolume(Volume * sourceVolume);
@@ -31,12 +30,12 @@ namespace Visualization {
         int IntersectMeshAndSphere(Vector3DFloat center, float radius);
         Vector3DFloat getIntersectionPoint(int ix);
     private:
-        NonManifoldMesh_Annotated mesh;
+        NonManifoldMesh mesh;
         vector<Vector3DFloat> intersectionPoints;
     };
 
 
-    NonManifoldMesh_Annotated MeshRenderer::getMesh() {
+    NonManifoldMesh MeshRenderer::getMesh() {
         return mesh;
     }
 
@@ -58,7 +57,7 @@ namespace Visualization {
 #endif
 
         if(extension == "OFF") {
-            mesh = *NonManifoldMesh_Annotated::LoadOffFile(fileName);
+            mesh = *NonManifoldMesh::LoadOffFile(fileName);
         } else if(extension == "MRC" || extension == "ATOM") {
             Volume * volume = MRCReaderPicker::pick(fileName.c_str())->getVolume();
             #ifdef GORGON_DEBUG
@@ -67,7 +66,7 @@ namespace Visualization {
                   cout<<volume->getSize()<<"\033[0m"<<endl;
             #endif
 
-            mesh = NonManifoldMesh_Annotated(volume);
+            mesh = NonManifoldMesh(volume);
 #ifdef GORGON_DEBUG
       cout<<"\033[35m"<<mesh.getSize()<<"\033[0m"<<endl;
 #endif
@@ -95,7 +94,7 @@ namespace Visualization {
     }
 
     void MeshRenderer::loadVolume(Volume * sourceVolume) {
-        mesh = new NonManifoldMesh_Annotated(sourceVolume);
+        mesh = new NonManifoldMesh(sourceVolume);
     }
 
     void MeshRenderer::PerformSmoothLaplacian(double convergenceRate, int iterations) {

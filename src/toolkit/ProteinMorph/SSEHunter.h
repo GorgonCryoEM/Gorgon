@@ -27,7 +27,6 @@ using namespace GraphMatch;
 //using namespace MathTools;
 using namespace GraySkeletonCPP;
 //using namespace SkeletonMaker;
-using Visualization::NonManifoldMesh_Annotated;
 
 namespace Protein_Morph {
 
@@ -60,7 +59,7 @@ namespace Protein_Morph {
             PDBAtom& GetPseudoAtom(int i);
 
             void SetCorrelationScores(Volume * vol, RadialProfileType type, float resolution, float deltaAltRadians);
-            void SetSkeletonScores(Volume * vol, NonManifoldMesh_Annotated * skeleton, float resolution);
+            void SetSkeletonScores(Volume * vol, NonManifoldMesh * skeleton, float resolution);
             vector< vector<float> > GetAtomDistances();
             vector<float> GetLocalDirectionalityScores(Volume * vol);
 
@@ -179,7 +178,7 @@ namespace Protein_Morph {
         return patoms[i];
     }
 
-    void SSEHunter::SetSkeletonScores(Volume * vol, NonManifoldMesh_Annotated * skeleton, float resolution) {
+    void SSEHunter::SetSkeletonScores(Volume * vol, NonManifoldMesh * skeleton, float resolution) {
         cout << "SetSkeletonScores()\n";
 //			float maxDistance = 4*sqrt(skeleton->scale[0]+skeleton->scale[1]+skeleton->scale[2]);//resolution;  // TODO: In EMAN1 the maximum distance is sqrt(3*4*4) voxels, we're using Angstroms here
         const unsigned int SCORE_RANGE = 4;
@@ -194,7 +193,7 @@ namespace Protein_Morph {
 #ifdef GORGON_DEBUG
       cout<<"\033[32mDEBUG: File:   SSEHunter.h"<<endl;
       cout<<"DEBUG: Method: SSEHunter::SetSkeletonScores\033[0m"<<endl;
-      cout<<"DEBUG: Args: Volume*, NonManifoldMesh_Annotated*, float\033[0m"<<endl;
+      cout<<"DEBUG: Args: Volume*, NonManifoldMesh*, float\033[0m"<<endl;
       cout<<"Checkpoint 1"<<endl;
       cout<<*skeleton<<endl;
       cout<<"patoms.size(): "<<patoms.size()<<endl;

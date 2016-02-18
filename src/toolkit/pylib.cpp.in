@@ -82,7 +82,7 @@ BOOST_PYTHON_MODULE(@current_pylib@)
 
   ;
 
-  class_<NonManifoldMesh_Annotated, bases<Volume> >("NonManifoldMesh_Annotated", init<>())
+  class_<NonManifoldMesh, bases<Volume> >("NonManifoldMesh", init<>())
   ;
   
   class_< MeshRenderer, bases<Volume> >("MeshRenderer", init<>())
@@ -397,10 +397,10 @@ BOOST_PYTHON_MODULE(@current_pylib@)
 //        .def("setNodeConstraint", &SSEEngine::SetNodeConstraint)          
 //        .def("setSSEColor", &SSEEngine::SetSSEColor)          
 //        .def("setConstantsFromFile", &SSEEngine::SetConstantsFromFile)        
-        .def("saveCorrespondenceToFile", &SSEEngine::SaveCorrespondenceToFile)
+        .def("saveCorrespondenceToFile", &SSEEngine::save)
         .def("loadSkeletonGraph", &SSEEngine::loadSkeleton)
         .def("loadSequenceGraph", &SSEEngine::loadSequence)
-//        .def("loadCorrespondenceFromFile", &SSEEngine::LoadCorrespondenceFromFile)
+//        .def("loadCorrespondenceFromFile", &SSEEngine::load)
         .def("executeQuery", &SSEEngine::ExecuteQuery)
         .def("cleanupMemory", &SSEEngine::CleanupMemory)
         .def("getResult", &SSEEngine::GetResult)
