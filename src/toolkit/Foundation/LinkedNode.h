@@ -23,18 +23,16 @@ namespace GraphMatch {
         double costGStar;
     public:
         LinkedNode();
-        LinkedNode(LinkedNode * olderNode, LinkedNodeStub * olderStub, int n2Node, int dummyHelixCount, int dummySheetCount, bool allowRevisit);
+        LinkedNode(LinkedNode * olderNode, LinkedNodeStub * olderStub,
+                   int n2Node, int dummyHelixCount, int dummySheetCount,
+                   bool allowRevisit);
 
-        ~LinkedNode();
         vector<int> GetNodeCorrespondence();
         double GetCost();
         static void AddNodeToBitmap(unsigned long long & bitmap, int node);
         static void RemoveNodeFromBitmap(unsigned long long & bitmap, int node);
         static bool IsNodeInBitmap(unsigned long long bitmap, int node);
     };
-
-    LinkedNode::~LinkedNode() {
-    }
 
     LinkedNode::LinkedNode() {
         cost = 0;
@@ -50,13 +48,16 @@ namespace GraphMatch {
         depth = 0;
     }
 
-    LinkedNode::LinkedNode(LinkedNode * olderNode, LinkedNodeStub * olderStub, int n2Node, int dummyHelixCount, int dummySheetCount, bool allowRevisit) {
-        this->n1Node = olderNode->n1Node + (char)dummyHelixCount + (char)dummySheetCount + 1;
-        this->n2Node = (char)n2Node;
-        this->depth = olderNode->depth + (char)dummyHelixCount + (char)dummySheetCount + 1;
+    LinkedNode::LinkedNode(LinkedNode * olderNode, LinkedNodeStub * olderStub,
+                           int n2Node, int dummyHelixCount, int dummySheetCount,
+                           bool allowRevisit)
+    {
+        this->n1Node     = olderNode->n1Node + (char)dummyHelixCount + (char)dummySheetCount + 1;
+        this->n2Node     = (char)n2Node;
+        this->depth      = olderNode->depth + (char)dummyHelixCount + (char)dummySheetCount + 1;
         this->parentNode = olderStub;
-        this->m1Bitmap = olderNode->m1Bitmap;
-        this->m2Bitmap = olderNode->m2Bitmap;
+        this->m1Bitmap   = olderNode->m1Bitmap;
+        this->m2Bitmap   = olderNode->m2Bitmap;
         // remove all recently matched sequence graph nodes from bitmap
         for(int i = olderNode->n1Node + 1; i <= this->n1Node; i++) {
             LinkedNode::RemoveNodeFromBitmap(this->m1Bitmap, i);
@@ -65,7 +66,7 @@ namespace GraphMatch {
             // remove the recently matched pattern graph node from bitmap
             LinkedNode::RemoveNodeFromBitmap(this->m2Bitmap, this->n2Node);
         }
-        this->missingNodesUsed = olderNode->missingNodesUsed + (char)dummyHelixCount + (char)dummySheetCount;
+        this->missingNodesUsed      = olderNode->missingNodesUsed      + (char)dummyHelixCount + (char)dummySheetCount;
         this->missingHelixNodesUsed = olderNode->missingHelixNodesUsed + (char)dummyHelixCount;
         this->missingSheetNodesUsed = olderNode->missingSheetNodesUsed + (char)dummySheetCount;
         //cout << "missing nodes=" << (int)this->missingNodesUsed << ", missing helices=" << (int)this->missingHelixNodesUsed << ", missing sheets=" << (int)this->missingSheetNodesUsed << endl;
@@ -74,25 +75,20 @@ namespace GraphMatch {
 
 
     vector<int> LinkedNode::GetNodeCorrespondence() {
-        bool used[MAX_NODES];
-        int n1[MAX_NODES];
-        int n2[MAX_NODES];
-        int top = 0;
-        for(int i = 0; i < MAX_NODES; i++) {
-            used[i] = false;
-        }
+        vector<bool> used(MAX_NODES, false);
+        vector<int>    n1(MAX_NODES);
+        vector<int>    n2(MAX_NODES);
 
         LinkedNodeStub * currentNode = this;
-        bool continueLoop = true;
-        while(continueLoop) {
-            if(currentNode->parentNode == NULL) {
-                 break;
-            }
+        int top = 0;
+
+        for(;
+                currentNode->parentNode != NULL;
+                currentNode = currentNode->parentNode, top++)
+        {
             n1[top] = currentNode->n1Node;
             n2[top] = currentNode->n2Node;
             used[(int)currentNode->n1Node] = true;
-            top++;
-            currentNode = currentNode->parentNode;
         }
 
         for(int i = 1; i <= this->depth; i++) {
