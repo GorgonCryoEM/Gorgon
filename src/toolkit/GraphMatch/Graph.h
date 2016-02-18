@@ -43,7 +43,7 @@ namespace GraphMatch {
         double adjacencyMatrix[MAX_NODES][MAX_NODES][2]; // 0th dimension edge type... 1st dimension distance
         double nodeWeights[MAX_NODES];
         double euclideanMatrix[MAX_NODES][MAX_NODES];
-        vector<Vector3DInt> paths[MAX_NODES][MAX_NODES];
+        vector<Vector3Int> paths[MAX_NODES][MAX_NODES];
         vector<SecStruct*> pdbStructures; // indexed by structure number along the sequence.
         Volume * skeletonVolume;
         Volume * skeletonSheetVolume;
@@ -376,8 +376,8 @@ namespace GraphMatch {
                     adjacencyMatrix[j][i][1] = euclideanMatrix[i][j];
                     adjacencyMatrix[j][i][0] = GRAPHEDGE_LOOP_EUCLIDEAN;
 
-                    Vector3DInt iVec = Vector3DInt(iBestLoc.x, iBestLoc.y, iBestLoc.z);
-                    Vector3DInt jVec = Vector3DInt(jBestLoc.x, jBestLoc.y, jBestLoc.z);
+                    Vector3Int iVec = Vector3Int(iBestLoc.x, iBestLoc.y, iBestLoc.z);
+                    Vector3Int jVec = Vector3Int(jBestLoc.x, jBestLoc.y, jBestLoc.z);
                     paths[i][j].clear();
                     paths[j][i].clear();
                     paths[j][i].push_back(jVec);

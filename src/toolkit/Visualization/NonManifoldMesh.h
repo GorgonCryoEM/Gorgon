@@ -652,7 +652,7 @@ namespace Protein_Morph {
         for(unsigned int i = 0;  i < edges.size(); i++) {
             v1 = vertices[GetVertexIndex(edges[i].vertexIds[0])];
             v2 = vertices[GetVertexIndex(edges[i].vertexIds[1])];
-            vector<Vector3DInt> positions = Rasterizer::ScanConvertLineC8(v1.position.XInt(), v1.position.YInt(), v1.position.ZInt(), v2.position.XInt(), v2.position.YInt(), v2.position.ZInt());
+            vector<Vector3Int> positions = Rasterizer::ScanConvertLineC8(v1.position.XInt(), v1.position.YInt(), v1.position.ZInt(), v2.position.XInt(), v2.position.YInt(), v2.position.ZInt());
             for(unsigned int j = 0; j < positions.size(); j++) {
                 for(unsigned int k = 0; k < 3; k++) {
                     pos[k] = positions[j][k] - minPosInt[k];

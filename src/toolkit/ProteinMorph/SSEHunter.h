@@ -44,7 +44,7 @@ namespace Protein_Morph {
             vector<float> GetLocalDirectionalityScores(Volume * vol);
 
         private:
-            void UpdateMap(Volume * vol, Vector3DInt loc,
+            void UpdateMap(Volume * vol, Vector3Int loc,
                            float rangeminX, float rangeminY, float rangeminZ,
                            float rangemaxX, float rangemaxY, float rangemaxZ);
 
@@ -68,7 +68,7 @@ namespace Protein_Morph {
                                       Volume* az_vol = NULL, Volume* alt_vol = NULL);
 
         private:
-            vector<Vector3DInt> atomVolumePositions; // holds the i, j, k indices that give the voxel position of the pseudoatoms
+            vector<Vector3Int> atomVolumePositions; // holds the i, j, k indices that give the voxel position of the pseudoatoms
             vector<PDBAtom> patoms; // pseudoatoms
             static const float max_radius; //for all r > max_radius, RadialProfile(r, {any type}) ~= 0
     };
@@ -108,8 +108,8 @@ namespace Protein_Morph {
             atom.SetElement("S_00");
             atom.SetCharge("0");
             patoms.push_back(atom);
-            atomVolumePositions.push_back(Vector3DInt(mX, mY, mZ));
-            UpdateMap(tempVol, Vector3DInt(mX, mY, mZ),
+            atomVolumePositions.push_back(Vector3Int(mX, mY, mZ));
+            UpdateMap(tempVol, Vector3Int(mX, mY, mZ),
                       rangeminX, rangeminY, rangeminZ,
                       rangemaxX, rangemaxY, rangemaxZ
                       );
@@ -120,7 +120,7 @@ namespace Protein_Morph {
 
     // SSEHunter::UpdateMap
     // called by SSEHunter::CreatePseudoAtoms after each pseudoatom is chosen
-    void SSEHunter::UpdateMap(Volume * vol, Vector3DInt loc,
+    void SSEHunter::UpdateMap(Volume * vol, Vector3Int loc,
                               float rangeminX, float rangeminY, float rangeminZ,
                               float rangemaxX, float rangemaxY, float rangemaxZ
                               )

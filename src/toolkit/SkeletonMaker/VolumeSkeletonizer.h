@@ -27,7 +27,7 @@ using namespace SkeletonMaker;
 namespace GraySkeletonCPP {
 
     struct ImmersionBeachElement {
-        Vector3DInt p;
+        Vector3Int p;
         int binIndex;
     };
 
@@ -308,10 +308,10 @@ namespace GraySkeletonCPP {
 
             Volume * visited = new Volume(size, size, size);
 
-            vector<Vector3DInt> list;
-            list.push_back(Vector3DInt(margin+radius, margin+radius, margin+radius));
-            Vector3DInt currentPos;
-            Vector3DInt * n6;
+            vector<Vector3Int> list;
+            list.push_back(Vector3Int(margin+radius, margin+radius, margin+radius));
+            Vector3Int currentPos;
+            Vector3Int * n6;
             int n6Count;
 
             while(list.size() > 0) {
@@ -372,9 +372,9 @@ namespace GraySkeletonCPP {
 
             Volume * visited = new Volume(size, size, size);
 
-            vector<Vector3DInt> list;
-            list.push_back(Vector3DInt(margin+radius, margin+radius, margin+radius));
-            Vector3DInt currentPos, newPos;
+            vector<Vector3Int> list;
+            list.push_back(Vector3Int(margin+radius, margin+radius, margin+radius));
+            Vector3Int currentPos, newPos;
             Vector3Float tempDir;
 
             while(list.size() > 0) {
@@ -389,7 +389,7 @@ namespace GraySkeletonCPP {
                            (block->getDataAt(currentPos.X() + VOLUME_NEIGHBOR_FACES[i][1][0], currentPos.Y() + VOLUME_NEIGHBOR_FACES[i][1][1], currentPos.Z() + VOLUME_NEIGHBOR_FACES[i][1][2]) > 0) &&
                            (block->getDataAt(currentPos.X() + VOLUME_NEIGHBOR_FACES[i][2][0], currentPos.Y() + VOLUME_NEIGHBOR_FACES[i][2][1], currentPos.Z() + VOLUME_NEIGHBOR_FACES[i][2][2]) > 0)) {
                             for(int j = 0; j < 3; j++) {
-                                newPos = currentPos + Vector3DInt(VOLUME_NEIGHBOR_FACES[i][j][0], VOLUME_NEIGHBOR_FACES[i][j][1], VOLUME_NEIGHBOR_FACES[i][j][2]);
+                                newPos = currentPos + Vector3Int(VOLUME_NEIGHBOR_FACES[i][j][0], VOLUME_NEIGHBOR_FACES[i][j][1], VOLUME_NEIGHBOR_FACES[i][j][2]);
                                 if(visited->getDataAt(newPos.X(), newPos.Y(), newPos.Z()) < 1) {
                                     list.push_back(newPos);
                                 }
