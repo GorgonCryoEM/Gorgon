@@ -24,19 +24,19 @@ using namespace std;
 
 	namespace GraphMatch {
 
-		class QueryEngine {
+		class Matcher {
 		public:
-			int DoGraphMatching(StandardGraph * sequenceGraph, StandardGraph * skeletonGraph);
+			int match(StandardGraph * sequenceGraph, StandardGraph * skeletonGraph);
 			SSEResult GetSolution(int rank);
-			void FinishGraphMatching();
-			StandardGraph * LoadSequenceGraph();
-			StandardGraph * LoadSkeletonGraph();
+			void destruct();
+			StandardGraph * loadSequence();
+			StandardGraph * loadSkeleton();
 		private:
-			WongMatch * matcherConstrainedNoFuture;
+			WongMatch * matcher;
 		};
 
 
-		StandardGraph * QueryEngine::LoadSequenceGraph() {
+		StandardGraph * Matcher::loadSequence() {
 			#ifdef GORGON_DEBUG
 				cout << "In QueryEngine::LoadSequenceGraph" << endl;
 			#endif
@@ -61,7 +61,7 @@ using namespace std;
 			return graph;
 		}
 
-		StandardGraph * QueryEngine::LoadSkeletonGraph() {
+		StandardGraph * Matcher::loadSkeleton() {
 			clock_t start, finish;
 			StandardGraph * graph;
 			#ifdef VERBOSE
@@ -78,7 +78,7 @@ using namespace std;
 		}
 
 
-		int QueryEngine::DoGraphMatching(StandardGraph * sequenceGraph, StandardGraph * skeletonGraph) {
+		int Matcher::match(StandardGraph * sequenceGraph, StandardGraph * skeletonGraph) {
 			clock_t start;
 
 			PERFORMANCE_COMPARISON_MODE = false;
@@ -86,23 +86,23 @@ using namespace std;
 			// Match Graphs
 			// Constrained no future
 			if(MISSING_HELIX_COUNT == -1) {
-				matcherConstrainedNoFuture = new WongMatch(sequenceGraph, skeletonGraph);
+				matcher = new WongMatch(sequenceGraph, skeletonGraph);
 			} else {
-				matcherConstrainedNoFuture = new WongMatch(sequenceGraph, skeletonGraph, MISSING_HELIX_COUNT, MISSING_SHEET_COUNT);
+				matcher = new WongMatch(sequenceGraph, skeletonGraph, MISSING_HELIX_COUNT, MISSING_SHEET_COUNT);
 			}
 			start = clock();
-			int matchCount = matcherConstrainedNoFuture->RunMatching(start);
-			matcherConstrainedNoFuture->SaveResults();
+			int matchCount = matcher->RunMatching(start);
+			matcher->SaveResults();
 
 			return matchCount;
 		}
 
-		SSEResult QueryEngine::GetSolution(int rank) {
-			return matcherConstrainedNoFuture->GetResult(rank);
+		SSEResult Matcher::GetSolution(int rank) {
+			return matcher->GetResult(rank);
 		}
 
-		void QueryEngine::FinishGraphMatching() {
-			delete matcherConstrainedNoFuture;
+		void Matcher::destruct() {
+			delete matcher;
 		}
 	}
 #endif
