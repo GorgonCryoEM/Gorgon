@@ -27,7 +27,7 @@ add_subdirectory_wrapper(Core)
 # --------------------------------------------------------------------
 # Install Step
 # --------------------------------------------------------------------
-include(cmake/toolkit.cmake)
+include(cmake/programs.cmake)
 include(cmake/demo.cmake)
 include(cmake/tests.cmake)
 # --------------------------------------------------------------------
