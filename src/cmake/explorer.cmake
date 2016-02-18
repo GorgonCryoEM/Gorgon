@@ -3,7 +3,7 @@ add_custom_target_wrapper(TARGET Explorer
         DIRECTORY ${CMAKE_SOURCE_DIR}/bin/Explorer
         DESTINATIONS ${CMAKE_BINARY_DIR}/bin
         COMPONENT "Explorer"
-        DEPENDS Hello Toolkit
+        DEPENDS Hello Toolkit Programs
         )
 
 add_custom_target(Explorer-only
