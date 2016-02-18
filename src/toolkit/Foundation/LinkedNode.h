@@ -103,10 +103,8 @@ namespace GraphMatch {
             }
         }
 
-        int minIndex;
-        int temp;
         for(int i = 0; i < top - 1; i++) {
-            minIndex = i;
+            int minIndex = i;
             for(int j = i+1; j < top; j++) {
                 if(n1[minIndex] > n1[j]) {
                     minIndex = j;
@@ -117,7 +115,6 @@ namespace GraphMatch {
         }
 
         vector<int> correspondance;
-        correspondance.clear();
 
         for(int i = 0; i < top; i++) {
             if(n2[i] >= 0) {
