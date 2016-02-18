@@ -21,21 +21,21 @@ VolumeData::VolumeData(int sizeX, int sizeY, int sizeZ, double val)
     setSize(sizeX, sizeY, sizeZ, val);
 }
 
-VolumeData::iterator VolumeData::begin(){
-    return data.begin();
-}
-
-VolumeData::iterator VolumeData::end(){
-    return data.end();
-}
-
-VolumeData::const_iterator VolumeData::begin() const {
-    return data.begin();
-}
-
-VolumeData::const_iterator VolumeData::end() const {
-    return data.end();
-}
+//VolumeData::iterator VolumeData::begin(){
+//    return data.begin();
+//}
+//
+//VolumeData::iterator VolumeData::end(){
+//    return data.end();
+//}
+//
+//VolumeData::const_iterator VolumeData::begin() const {
+//    return data.begin();
+//}
+//
+//VolumeData::const_iterator VolumeData::end() const {
+//    return data.end();
+//}
 
 void VolumeData::print() const{
     for(const_iterator it=data.begin(); it!=data.end(); ++it){

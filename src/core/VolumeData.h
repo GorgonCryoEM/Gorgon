@@ -29,13 +29,14 @@ namespace Core {
         double & operator()(int i, int j, int k);
         void setItem(int i, int j, int k, double val);
         const double & operator()(int i, int j, int k) const;
-        typedef vector<double>::const_iterator const_iterator;
-        typedef vector<double>::iterator iterator;
 
-        iterator begin();
-        iterator end();
-        const_iterator begin() const;
-        const_iterator end() const;
+//        typedef vector<double>::const_iterator const_iterator;
+//        typedef vector<double>::iterator iterator;
+//
+//        iterator begin();
+//        iterator end();
+//        const_iterator begin() const;
+//        const_iterator end() const;
         void print() const;
 
     private:
