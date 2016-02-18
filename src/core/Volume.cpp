@@ -26,27 +26,27 @@ namespace Core {
 
     void Volume::fill(double val)
     {
-        for(VolumeData::iterator it=volume.begin(); it!=volume.end(); ++it)
+        for(iterator it=data.begin(); it!=data.end(); ++it)
                     *it = val;
     }
 
     void Volume::applyMask(double maskValue, bool keepMaskValue) {
-        for(VolumeData::iterator it=volume.begin(); it!=volume.end(); ++it)
+        for(iterator it=data.begin(); it!=data.end(); ++it)
             if(((*it== maskValue) && !keepMaskValue) ||
                         ((*it != maskValue) && keepMaskValue))
                         *it = 0;
     }
 
     double Volume::getMin() const {
-        return *min_element(volume.begin(), volume.end());
+        return *min_element(data.begin(), data.end());
     }
 
     double Volume::getMax() const {
-        return *max_element(volume.begin(), volume.end());
+        return *max_element(data.begin(), data.end());
     }
 
     double Volume::getMean() const {
-        return accumulate(volume.begin(), volume.end(), 0.0) / data.size();
+        return accumulate(data.begin(), data.end(), 0.0) / data.size();
     }
 
 //    double Volume::getEdgeMean() const {

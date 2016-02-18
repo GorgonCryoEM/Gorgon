@@ -38,7 +38,7 @@ VolumeData::const_iterator VolumeData::end() const {
 }
 
 void VolumeData::print() const{
-    for(const_iterator it=begin(); it!=end(); ++it){
+    for(const_iterator it=data.begin(); it!=data.end(); ++it){
         cout<<*it<<endl;
     }
 }

@@ -161,7 +161,7 @@ namespace Core {
     // Declarations from volume.h END
 
         private:
-            VolumeData & volume;
+//            VolumeData & volume;
     };
 
 } /* namespace Core */
