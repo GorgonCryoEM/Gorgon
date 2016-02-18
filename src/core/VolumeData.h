@@ -8,6 +8,10 @@ using namespace std;
 //using namespace Core;
 
 namespace Core {
+    typedef vector<double> Container;
+    typedef Container::const_iterator const_iterator;
+    typedef Container::iterator iterator;
+
     class VolumeData {
     public:
         VolumeData();
@@ -42,7 +46,7 @@ namespace Core {
 
     protected:
         Dim3D<int> size;
-        vector<double> data;
+        Container data;
 
         friend ostream& operator<<(ostream& out, const VolumeData& obj){
             return out<<"\033[33m"
