@@ -14,7 +14,6 @@ namespace GraphMatch {
         LinkedNodeStub * parentNode;
     public:
         LinkedNodeStub();
-        LinkedNodeStub(LinkedNodeStub * oldNode);
         ~LinkedNodeStub();
     };
 
@@ -22,12 +21,6 @@ namespace GraphMatch {
         n1Node = 0;
         n2Node = 0;
         parentNode = NULL;
-    }
-
-    LinkedNodeStub::LinkedNodeStub(LinkedNodeStub * oldNode) {
-        n1Node = oldNode->n1Node;
-        n2Node = oldNode->n2Node;
-        parentNode = oldNode->parentNode;
     }
 
     LinkedNodeStub::~LinkedNodeStub() {
