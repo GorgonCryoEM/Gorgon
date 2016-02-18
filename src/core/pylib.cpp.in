@@ -28,12 +28,25 @@ BOOST_PYTHON_MODULE(@current_pylib@)
       .def("getSizeY", &Volume::getSizeY)
       .def("getSizeZ", &Volume::getSizeZ)
       .def("getSize", &Volume::getSize)
-      .def("cmp", &Volume::cmp)
       .def("out", &Volume::print)
+      .def("__eq__", &Volume::cmp)
+      .def("get", get, return_value_policy<copy_const_reference>())
+      .def("set", &Volume::setItem)
+      .def("fill", &Volume::fill)
+      .def("applyMask", &Volume::applyMask)
+
 
 //      .def("getMin", &Volume::getMin)
 //      .def("getMax", &Volume::getMax)
 //      .def("getDataAt", getDataAt)
+  ;
+  
+//  class_<OperationWrapper>("Operation", no_init);
+//  class_<OperationWrapper>("Operation", init<Volume>());
+  
+//  class_<Fill, bases<Operation> >("Fill", init< Volume >())
+//  class_<Fill>("Fill", init<Volume&>())
+//       .def("__call__", &Fill::operator())
   ;
 
 }
