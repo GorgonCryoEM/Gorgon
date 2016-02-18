@@ -223,7 +223,7 @@ namespace GraySkeletonCPP {
                         a = u1 * u2 * u3;
                         b = sqrt(u2*u2*u3*u3*n.X()*n.X() + u1*u1*u3*u3*n.Y()*n.Y() + u1*u1*u2*u2*n.Z()*n.Z());
                         temp = n*(a/b);
-                        cost = u3/ temp.Length();
+                        cost = u3/ temp.length();
                     }
 
 
@@ -238,11 +238,11 @@ namespace GraySkeletonCPP {
                             skelDirectionST = XYZtoUVW(skeletonDirection, imageEigen.vectors[0],imageEigen.vectors[1], imageEigen.vectors[2]);
                             FindOrthogonalAxes(skelDirectionST, n1, n2);
 
-                            m1 = Vector3DFloat(n1.values[0]/u1, n1.values[1]/u2, n1.values[2]/u3);
-                            m2 = Vector3DFloat(n2.values[0]/u1, n2.values[1]/u2, n2.values[2]/u3);
+                            m1 = Vector3DFloat(n1[0]/u1, n1[1]/u2, n1[2]/u3);
+                            m2 = Vector3DFloat(n2[0]/u1, n2[1]/u2, n2[2]/u3);
                             theta = atan((2.0 * (m1 * m2)) / ((m1 * m1) - (m2 * m2))) / 2.0;
-                            a = 1.0 / ((m1 * cos(theta)) + (m2 * sin(theta))).Length();
-                            b = 1.0 / ((m1 * sin(theta)) - (m2 * cos(theta))).Length();
+                            a = 1.0 / ((m1 * cos(theta)) + (m2 * sin(theta))).length();
+                            b = 1.0 / ((m1 * sin(theta)) - (m2 * cos(theta))).length();
                             cost = (u2 * u3) / (a*b);
                         }
                     }
@@ -284,7 +284,7 @@ namespace GraySkeletonCPP {
         float vContri = vec * v;
         float wContri = vec * w;
         Vector3DFloat inUVW = Vector3DFloat(uContri, vContri, wContri);
-        inUVW.Normalize();
+        inUVW.normalize();
         return inUVW;
     }
 
@@ -449,10 +449,10 @@ namespace GraySkeletonCPP {
 
 
                     for(int i = 0; i < 3; i++) {
-                        if(abs(grad1.values[i]) > abs(grad2.values[i])) {
-                            gradient[index].values[i] = grad1.values[i];
+                        if(abs(grad1[i]) > abs(grad2[i])) {
+                            gradient[index][i] = grad1[i];
                         } else {
-                            gradient[index].values[i] = grad2.values[i];
+                            gradient[index][i] = grad2[i];
                         }
                     }
                 }
@@ -513,8 +513,8 @@ namespace GraySkeletonCPP {
         }
         res1 = axis ^ res1;
         res2 = axis ^ res1;
-        res1.Normalize();
-        res2.Normalize();
+        res1.normalize();
+        res2.normalize();
     }
 
     void VolumeSkeletonizer::GetEigenResult(EigenResults3D & returnVal, Vector3DFloat * imageGradient, ProbabilityDistribution3D & gaussianFilter, int x, int y, int z, int sizeX, int sizeY, int sizeZ, int gaussianFilterRadius, bool clear) {
@@ -522,7 +522,7 @@ namespace GraySkeletonCPP {
             for(int r = 0; r < 3; r++) {
                 returnVal.values[r] = 0;
                 for(int c = 0; c < 3; c++) {
-                    returnVal.vectors[r].values[c] = 0;
+                    returnVal.vectors[r][c] = 0;
                 }
             }
         } else {
@@ -543,7 +543,7 @@ namespace GraySkeletonCPP {
                         probability = gaussianFilter.values[xx+gaussianFilterRadius][yy+gaussianFilterRadius][zz+gaussianFilterRadius];
                         for(int r = 0; r < 3; r++) {
                             for(int c = 0; c < 3; c++) {
-                                eigenData.structureTensor[r][c] += imageGradient[index2].values[r] * imageGradient[index2].values[c] * probability;
+                                eigenData.structureTensor[r][c] += imageGradient[index2][r] * imageGradient[index2][c] * probability;
                             }
                         }
                     }
@@ -554,7 +554,7 @@ namespace GraySkeletonCPP {
             for(int r = 0; r < 3; r++) {
                 returnVal.values[r] = eigenData.eigenValues[r];
                 for(int c = 0; c < 3; c++) {
-                    returnVal.vectors[r].values[c] = eigenData.eigenVectors[r][c];
+                    returnVal.vectors[r][c] = eigenData.eigenVectors[r][c];
                 }
             }
 
@@ -574,7 +574,7 @@ namespace GraySkeletonCPP {
                 for(int z = -distributionInfo.radius; z <= distributionInfo.radius; z++) {
                     if((x!=0) && (y!=0) && (z!=0)) {
                         skeletonDirection = Vector3DFloat(0,0,0) - Vector3DFloat(x, y, z);
-                        skeletonDirection.Normalize();
+                        skeletonDirection.normalize();
                         cell = GetVoxelCost(eigen, skeletonDirection, PRUNING_CLASS_PRUNE_CURVES);
                         distributionInfo.values[x+distributionInfo.radius][y+distributionInfo.radius][z+distributionInfo.radius] = cell;
                         total += cell;

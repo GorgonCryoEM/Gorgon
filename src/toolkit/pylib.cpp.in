@@ -3,7 +3,7 @@
 #include "Core/volume.h"
 #include "Visualization/MeshRenderer.h"
 #include "ProteinMorph/SSEHunter.h"
-#include <MathTools/Vector3D.h>
+#include <MathTools/Vector3.h>
 #include "Visualization/CAlphaRenderer.h"
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>
 #include "ProteinMorph/SSEEngine.h"
@@ -329,14 +329,22 @@ BOOST_PYTHON_MODULE(@current_pylib@)
 //        .def("setNextCAHash", &PDBAtom::SetNextCAHash)
     ;
 
-  class_<Vector3DFloat>("Vector3DFloat", init<float, float, float>())
-        .def("x", &Vector3DFloat::X)
-        .def("y", &Vector3DFloat::Y)
-        .def("z", &Vector3DFloat::Z)
-        .def("length", &Vector3DFloat::Length)
-        .def("Transform", &Vector3DFloat::Transform)
-        .def("rotate", &Vector3DFloat::Rotate)
-        .def("Print", &Vector3DFloat::Print)
+//  bool (Vector3DFloat::*X)() = &Vector3DFloat::X;
+//  float& (Vector3DFloat::*X)() = &Vector3DFloat::X;
+//  const double & (Volume::*get)(int, int, int) const = &Volume::operator();
+//  const float & (Vector3<float>::*X)() const = &Vector3<float>::X;
+  const float & (Vector3<float>::*X)() const = &Vector3<float>::X;
+  const float & (Vector3<float>::*Y)() const = &Vector3<float>::Y;
+  const float & (Vector3<float>::*Z)() const = &Vector3<float>::Z;
+
+  class_<Vector3<float> >("Vector3DFloat", init<float, float, float>())
+        .def("x", X, return_value_policy<copy_const_reference>())
+        .def("y", Y, return_value_policy<copy_const_reference>())
+        .def("z", Z, return_value_policy<copy_const_reference>())
+        .def("length", &Vector3<float>::length)
+        .def("Transform", &Vector3<float>::transform)
+        .def("rotate", &Vector3<float>::rotate)
+        .def("Print", &Vector3<float>::print)
         .def(self * double())
         .def(self + self)
         .def(self - self)

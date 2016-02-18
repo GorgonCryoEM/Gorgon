@@ -701,7 +701,7 @@ namespace GraphMatch {
                     shape->SetCenter(Point3(x, y, z));
                 } else if(token == TOKEN_VRML_ROTATION) {
                     fin>>x>>y>>z>>a;
-                    shape->Rotate(Vector3(x, y, z), a);
+                    shape->Rotate(Vector3<double>(x, y, z), a);
                 } else if(token == TOKEN_VRML_HEIGHT) {
                     fin>>a;
                     //shape->Scale(1.0, a, 1.0);

@@ -38,8 +38,8 @@ namespace GraphMatch {
         Point3 GetCenter();
         void AddInternalCell(Point3Int point);
         void FindCornerCellsInHelix();
-        void Rotate(Vector3 axis, double angle);
-        void Translate(Vector3 translationVector);
+        void Rotate(Vector3<double> axis, double angle);
+        void Translate(Vector3<double> translationVector);
         void SetCenter(Point3 center);
         void SetCenter(Vector3DFloat center);
         void SetHeight(double height);
@@ -111,7 +111,7 @@ namespace GraphMatch {
         Polygon poly;
         Point3 a,b,c,q;
         double l1, l2;
-        Vector3 n;
+        Vector3<double> n;
         double d;
         bool isInside = false;
         double A,B,C,D,E,F,G,H,I;
@@ -298,7 +298,7 @@ namespace GraphMatch {
             internalToRealOrigin.Y() + (float)cornerCells[corner2].y * internalToRealScale.Y(),
             internalToRealOrigin.Z() + (float)cornerCells[corner2].z * internalToRealScale.Z());
 
-        if((actualCorner1-c1).Length() > (actualCorner1-c2).Length()) {
+        if((actualCorner1-c1).length() > (actualCorner1-c2).length()) {
             int temp = corner1;
             corner1 = corner2;
             corner2 = temp;
@@ -360,13 +360,13 @@ namespace GraphMatch {
         }
         return result;
     }
-    void Shape::Rotate(Vector3 axis, double angle){
+    void Shape::Rotate(Vector3<double> axis, double angle){
         rotationMatrix = Matrix4::rotation(axis, angle) * rotationMatrix;
         inverseRotationMatrix = inverseRotationMatrix * Matrix4::rotation(axis, -angle);
         UpdateWorldToObjectMatrix();
     }
 
-    void Shape::Translate(Vector3 translationVector){
+    void Shape::Translate(Vector3<double> translationVector){
 
         centerPoint = centerPoint + translationVector;
         UpdateWorldToObjectMatrix();
@@ -479,12 +479,12 @@ namespace GraphMatch {
 
         newHelix->SetCenter(Point3(center.X(), center.Y(), center.Z()));
         newHelix->SetRadius(radius);
-        newHelix->SetHeight(dir.Length());
+        newHelix->SetHeight(dir.length());
         Vector3DFloat axis = dir^yaxis;
 
-        dir.Normalize();
+        dir.normalize();
         double angle = acos(dir * yaxis);
-        newHelix->Rotate(Vector3(axis.X(), axis.Y(), axis.Z()), -angle);
+        newHelix->Rotate(Vector3<double>(axis.X(), axis.Y(), axis.Z()), -angle);
         return newHelix;
     }
 
@@ -499,7 +499,7 @@ namespace GraphMatch {
             center = helices[i]->GetCenter();
             start = helices[i]->GetCornerCell3(1);
             end = helices[i]->GetCornerCell3(2);
-            helixLength = (start-end).Length();
+            helixLength = (start-end).length();
             helices[i]->GetRotationAxisAndAngle(axis, angle);
 
             fprintf(fout, "Group {\n children [\n Transform {\n  translation %f %f %f\n", center[0], center[1], center[2]);
