@@ -9,9 +9,9 @@
 //#include <string>
 //#include <MathTools/Vector3D.h>
 #include "PDBAtom.h"
-#include "PDBHelix.h"
+//#include "PDBHelix.h"
 #include "StandardGraph.h"
-#include <MathTools/LinearSolver.h>
+//#include <MathTools/LinearSolver.h>
 
 using namespace std;
 //using namespace MathTools;
@@ -25,7 +25,6 @@ namespace GraphMatch {
         static StandardGraph * ReadFile(string fname);
         static map<unsigned long long, PDBAtom> ReadAtomPositions(string fileName);
         static bool WriteAtomPositions(map<unsigned long long, PDBAtom> &atoms, string fileName);
-        static vector<PDBHelix> ReadHelixPositions(string fileName);
         static string TrimString(string str);
         static int ToInt(string str);
     private:
@@ -325,45 +324,6 @@ namespace GraphMatch {
         fin.close();
 
         return atomPositions;
-    }
-
-    vector<PDBHelix> PDBReader::ReadHelixPositions(string fileName) {
-        map<unsigned long long, PDBAtom> atomPositions = ReadAtomPositions(fileName);
-        vector<PDBHelix> helices;
-
-        ifstream fin(fileName.c_str());
-        if (!fin)
-        {
-            cout<<"Error reading input file "<<fileName<<".\n";
-            exit(0) ;
-        }
-
-        string line;
-        string lineStr;
-        string token;
-        while(getline(fin, line))
-        {
-            lineStr = line;
-            token = lineStr.substr(0, 6);
-
-            vector<Vector3DFloat> helixAtomLocs;
-            if(token.compare("HELIX ") == 0) {
-                PDBHelix helix = PDBHelix(lineStr);
-                helixAtomLocs.clear();
-                for(int i = helix.GetInitialResidueSeqNo(); i <= helix.GetEndResidueSeqNo(); i++) {
-                    helixAtomLocs.push_back(atomPositions[PDBAtom::ConstructHashKey("----", helix.GetInitialResidueChainId(), i, "CA")].GetPosition());
-                }
-
-                Vector3DFloat pt1, pt2;
-                LinearSolver::FindBestFitLine(pt1, pt2, helixAtomLocs);
-
-                helix.SetEndPositions(pt1, pt2);
-                helices.push_back(helix);
-            }
-        }
-        atomPositions.clear();
-        fin.close();
-        return helices;
     }
 
     string PDBReader::TrimString(string str) {
