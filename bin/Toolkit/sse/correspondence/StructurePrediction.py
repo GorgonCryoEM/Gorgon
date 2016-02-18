@@ -5,7 +5,7 @@ from ..seq_model.Coil import Coil
 from ..seq_model.Strand import Strand
 from ..seq_model.Chain import Chain
 from ..seq_model.Residue import Residue
-from libpycore import SeqReader, SeqFileData
+from libpytoolkit import SeqReader, SeqFileData
 
 try:
     from PyQt4 import QtCore, QtGui

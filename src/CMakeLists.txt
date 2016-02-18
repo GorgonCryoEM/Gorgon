@@ -23,11 +23,11 @@ SET(CMAKE_INSTALL_RPATH ${target_installation_locations})
 include(${CMAKE_SOURCE_DIR}/cmake/wrappers.cmake)
 
 add_subdirectory_wrapper(Hello)
-add_subdirectory_wrapper(Core)
+add_subdirectory_wrapper(Toolkit)
 # --------------------------------------------------------------------
 # Install Step
 # --------------------------------------------------------------------
-include(cmake/toolkit.cmake)
+include(cmake/programs.cmake)
 include(cmake/demo.cmake)
 include(cmake/tests.cmake)
 # --------------------------------------------------------------------
