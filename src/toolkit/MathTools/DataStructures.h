@@ -3,6 +3,8 @@
 
 #include "Vector3.h"
 
+using namespace GraphMatch;
+
 namespace MathTools {
     const int MAX_PROBABILITY_DISTRIBUTION_RADIUS = 10;
     const int MAX_PROBABILITY_DISTRIBUTION_WIDTH = MAX_PROBABILITY_DISTRIBUTION_RADIUS*2 + 1;

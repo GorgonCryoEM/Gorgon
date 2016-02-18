@@ -6,7 +6,7 @@
 //#include <Core/volume.h>
 
 //using namespace std;
-using namespace MathTools;
+using namespace GraphMatch;
 using namespace SkeletonMaker;
 
 namespace GraySkeletonCPP {
