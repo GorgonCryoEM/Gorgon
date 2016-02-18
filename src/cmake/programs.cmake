@@ -11,7 +11,7 @@ add_custom_target_wrapper(TARGET Programs
         PROGRAMS ${progs}
         DESTINATIONS ${CMAKE_BINARY_DIR}/bin
         COMPONENT "Programs"
-        DEPENDS Hello Toolkit Core
+        DEPENDS Hello Toolkit #Core
         )
         
 add_custom_target(Programs-only
