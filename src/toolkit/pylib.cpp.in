@@ -367,11 +367,11 @@ BOOST_PYTHON_MODULE(@current_pylib@)
         .def("getSecondaryStructureID", &SecStruct::getID)
     ;
 
-    class_<GeometricShape>("GeometricShape", init<>())
-        .def("isHelix", &GeometricShape::IsHelix)
-        .def("isSheet", &GeometricShape::IsSheet)
-        .def("getCornerCell2", &GeometricShape::GetCornerCell2)
-        .def("getCornerCell3", &GeometricShape::GetCornerCell3)
+    class_<Shape>("Shape", init<>())
+        .def("isHelix", &Shape::IsHelix)
+        .def("isSheet", &Shape::IsSheet)
+        .def("getCornerCell2", &Shape::GetCornerCell2)
+        .def("getCornerCell3", &Shape::GetCornerCell3)
     ;
 
     bool (SSEEngine::*SetConstant1)(string, string)   = &SSEEngine::SetConstant;

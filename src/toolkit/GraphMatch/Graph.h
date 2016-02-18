@@ -6,7 +6,7 @@
 //#include "Core/GlobalConstants.h"
 #include "Matcher2Helix.h"
 #include "ProteinMorph/SecondaryStructure.h"
-#include "GeometricShape.h"
+#include "Shape.h"
 //#include <Core/volume.h>
 //#include <MathTools/Vector3D.h>
 //#include <Core/volume.h>
@@ -47,7 +47,7 @@ namespace GraphMatch {
         vector<SecStruct*> pdbStructures; // indexed by structure number along the sequence.
         Volume * skeletonVolume;
         Volume * skeletonSheetVolume;
-        vector<GeometricShape*> skeletonHelixes; // helices first, then sheets.
+        vector<Shape*> skeletonHelixes; // helices first, then sheets.
     private:
     };
 
@@ -181,10 +181,10 @@ namespace GraphMatch {
 
         int skelNode = 1;
         for(int i = 0; i < (int)skeletonHelixes.size(); i++) {
-            if(skeletonHelixes[i]->geometricShapeType == GRAPHEDGE_HELIX) {
+            if(skeletonHelixes[i]->shapeType == GRAPHEDGE_HELIX) {
                 printf("\tHelix #%d \t(%2d,%2d)\t Length: %f\n", i+1, skelNode, skelNode+1, skeletonHelixes[i]->length);
                 skelNode += 2;
-            } else if(skeletonHelixes[i]->geometricShapeType == GRAPHEDGE_SHEET) {
+            } else if(skeletonHelixes[i]->shapeType == GRAPHEDGE_SHEET) {
                 printf("\tSheet #%d \t(%2d)   \t Length: %f\n", i+1, skelNode, skeletonHelixes[i]->length);
                 skelNode += 1;
             }
@@ -293,8 +293,8 @@ namespace GraphMatch {
         double xSpacing = vol->getSpacingX();
         double ySpacing = vol->getSpacingY();
         double zSpacing = vol->getSpacingZ();
-        GeometricShape * iSse;
-        GeometricShape * jSse;
+        Shape * iSse;
+        Shape * jSse;
         Point3Int iLoc(0,0,0,0);
         Point3Int iBestLoc(0,0,0,0);
         int iCorners;
@@ -305,7 +305,7 @@ namespace GraphMatch {
         // count number of helices
         int numH = 0;
         for (unsigned int i = 0; i < (int)skeletonHelixes.size(); i++) {
-            if(skeletonHelixes[i]->geometricShapeType == GRAPHEDGE_HELIX) {
+            if(skeletonHelixes[i]->shapeType == GRAPHEDGE_HELIX) {
                 numH++;
             }
         }
