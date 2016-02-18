@@ -479,10 +479,16 @@ namespace GraphMatch {
                     //Initialize queue
                     int numNodes = 1 ;
                     svol->setDataAt( i, j, k, totSheets ) ;
-                    GridQueue* queue = new GridQueue() ;
-                    queue->pushQueue( i, j, k ) ;
-                    while ( queue->popQueue(ox, oy, oz) )
+                    queue<gridQueueEle> q;
+                    q.push(gridQueueEle( i, j, k ) );
+                    while ( !q.empty() )
                     {
+                        gridQueueEle res = q.front();
+                        q.pop();
+                        ox  = res.x;
+                        oy  = res.y;
+                        oz  = res.y;
+
                         // Test if neighbors satisfy sheet condition
                         if ( isSkeletonSheet(*vol, ox, oy, oz ) )
                         {
@@ -496,14 +502,13 @@ namespace GraphMatch {
                                 if ( vol->getDataAt(nx,ny,nz) > 0 && svol->getDataAt(nx,ny,nz) == 0 && isSkeletonSheet(*vol,nx,ny,nz) )
                                 {
                                     svol->setDataAt(nx,ny,nz,totSheets);
-                                    queue->pushQueue(nx,ny,nz) ;
+                                    q.push(gridQueueEle(nx,ny,nz));
                                     numNodes ++ ;
                                 }
                             }
                         }
                     }
 
-                    delete queue ;
                     if ( numNodes > 0 )
                     {
                     	printf("Sheet %d contain %d nodes.\n", totSheets, numNodes) ;
