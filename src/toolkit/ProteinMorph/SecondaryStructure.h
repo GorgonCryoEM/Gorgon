@@ -8,13 +8,13 @@ using namespace std;
 
 namespace GraphMatch {
 
-    class SecondaryStructure {
+    class SecStruct {
     public:
-        int secondaryStructureType;
+        int sseType;
         int serialNumber;
         int startPosition;
         int endPosition;
-        string secondaryStructureID;
+        string ID;
 
     public:
         bool IsHelix();
@@ -25,26 +25,26 @@ namespace GraphMatch {
         int GetSerialNumber();
         int GetStartPosition();
         int GetEndPosition();
-        string GetSecondaryStructureID();
+        string getID();
     };
 
-    bool SecondaryStructure::IsHelix() {
-        return (secondaryStructureType == GRAPHEDGE_HELIX);
+    bool SecStruct::IsHelix() {
+        return (sseType == GRAPHEDGE_HELIX);
     }
 
-    bool SecondaryStructure::IsSheet() {
-        return (secondaryStructureType == GRAPHEDGE_SHEET);
+    bool SecStruct::IsSheet() {
+        return (sseType == GRAPHEDGE_SHEET);
     }
 
-    int SecondaryStructure::GetLengthResidues() {
+    int SecStruct::GetLengthResidues() {
         return (endPosition - startPosition + 1);
     }
 
-    int SecondaryStructure::GetLengthBonds() {
+    int SecStruct::GetLengthBonds() {
         return (endPosition - startPosition);
     }
 
-    float SecondaryStructure::GetLengthAngstroms() {
+    float SecStruct::GetLengthAngstroms() {
         if(IsHelix()) {
             return (float)(endPosition - startPosition + 1) * HELIX_C_ALPHA_TO_ANGSTROMS;
         } else {
@@ -52,20 +52,20 @@ namespace GraphMatch {
         }
     }
 
-    int SecondaryStructure::GetSerialNumber() {
+    int SecStruct::GetSerialNumber() {
         return serialNumber;
     }
 
-    int SecondaryStructure::GetStartPosition() {
+    int SecStruct::GetStartPosition() {
         return startPosition;
     }
 
-    int SecondaryStructure::GetEndPosition() {
+    int SecStruct::GetEndPosition() {
         return endPosition;
     }
 
-    string SecondaryStructure::GetSecondaryStructureID() {
-        return secondaryStructureID;
+    string SecStruct::getID() {
+        return ID;
     }
 }
 

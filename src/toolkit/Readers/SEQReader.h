@@ -29,19 +29,19 @@ namespace GraphMatch {
         void SetStructureString(char * str) { structureString = str; }
         void SetStructureString(string str) { structureString = str; }
         unsigned int GetNumberOfStructures() { return pStructures->size(); }
-        SecondaryStructure* GetStructure(unsigned int Ix) {
-            vector<SecondaryStructure*> & structures = *pStructures;
+        SecStruct* GetStructure(unsigned int Ix) {
+            vector<SecStruct*> & structures = *pStructures;
             return structures[Ix];
         }
-        vector<SecondaryStructure*> * GetStructuresVectorPointer() { return pStructures; }
-        void SetStructuresPointer(vector<SecondaryStructure*> * pNewStructures) { pStructures = pNewStructures; }
+        vector<SecStruct*> * GetStructuresVectorPointer() { return pStructures; }
+        void SetStructuresPointer(vector<SecStruct*> * pNewStructures) { pStructures = pNewStructures; }
         SEQFileData() {
             startResNo = 1;
             sequenceString = "";
             structureString = "";
             pStructures = NULL;
         }
-        SEQFileData(unsigned int stRes, string seqStr, string structStr, vector<SecondaryStructure*> * pStructuresVect) {
+        SEQFileData(unsigned int stRes, string seqStr, string structStr, vector<SecStruct*> * pStructuresVect) {
             startResNo = stRes;
             sequenceString = seqStr;
             structureString = structStr;
@@ -52,7 +52,7 @@ namespace GraphMatch {
         unsigned int startResNo;
         string sequenceString;
         string structureString;
-        vector<SecondaryStructure*> * pStructures;
+        vector<SecStruct*> * pStructures;
 
     };
 
@@ -142,9 +142,9 @@ namespace GraphMatch {
         char ch;
         string substring;
         string sseID;
-        vector<SecondaryStructure*> * pStructures = new vector<SecondaryStructure*>;
-        vector<SecondaryStructure*> & structures = *pStructures;
-        SecondaryStructure * currentStructure;
+        vector<SecStruct*> * pStructures = new vector<SecStruct*>;
+        vector<SecStruct*> & structures = *pStructures;
+        SecStruct * currentStructure;
         bool add;
         unsigned int idNum = 1;
         int strLen;
@@ -160,7 +160,7 @@ namespace GraphMatch {
 
                 if (currentChar == helixChar && length >= minHelixLength)
                 {
-                    currentStructure = new SecondaryStructure();
+                    currentStructure = new SecStruct();
                     currentStructure->serialNumber = idNum;
                     stringstream ssOut;
                     ssOut << idNum;
@@ -169,11 +169,11 @@ namespace GraphMatch {
                     char * cSseID = new char [sseIDSize + 1];
                     strLen = sseID.copy(cSseID, sseIDSize);
                     cSseID[strLen] = '\0';
-                    currentStructure->secondaryStructureID = cSseID;
+                    currentStructure->ID = cSseID;
                     idNum++;
                     currentStructure->startPosition = startCharNum + startResNum;
                     currentStructure->endPosition = stopCharNum + startResNum;
-                    currentStructure->secondaryStructureType = GRAPHEDGE_HELIX;
+                    currentStructure->sseType = GRAPHEDGE_HELIX;
                     add = true;
                     for(unsigned int i = 0; i < structures.size(); i++) {
                         add = add && !((currentStructure->startPosition == structures[i]->startPosition) &&
@@ -185,8 +185,8 @@ namespace GraphMatch {
                         cout << "Structure(" << currentStructure->GetStartPosition() << ',';
                         cout << currentStructure->GetEndPosition() << "):";
                         cout << " Serial=" << currentStructure->GetSerialNumber();
-                        cout << " ID=" << currentStructure->GetSecondaryStructureID();
-                        cout << " Type=" << currentStructure->secondaryStructureType << endl;
+                        cout << " ID=" << currentStructure->GetSecStructID();
+                        cout << " Type=" << currentStructure->sseType << endl;
                     #endif
 
                     if(add) {
@@ -198,7 +198,7 @@ namespace GraphMatch {
                 }
                 else if (currentChar == strandChar && length >= minStrandLength)
                 {
-                    currentStructure = new SecondaryStructure();
+                    currentStructure = new SecStruct();
                     currentStructure->serialNumber = idNum;
                     stringstream ssOut;
                     ssOut << idNum;
@@ -207,11 +207,11 @@ namespace GraphMatch {
                     char * cSseID = new char [sseIDSize + 1];
                     strLen = sseID.copy(cSseID, sseIDSize);
                     cSseID[strLen] = '\0';
-                    currentStructure->secondaryStructureID = cSseID;
+                    currentStructure->ID = cSseID;
                     idNum++;
                     currentStructure->startPosition = startCharNum + startResNum;
                     currentStructure->endPosition = stopCharNum + startResNum;
-                    currentStructure->secondaryStructureType = GRAPHEDGE_SHEET;
+                    currentStructure->sseType = GRAPHEDGE_SHEET;
                     add = true;
                     for(unsigned int i = 0; i < structures.size(); i++) {
                         add = add && !((currentStructure->startPosition == structures[i]->startPosition) &&
@@ -223,8 +223,8 @@ namespace GraphMatch {
                         cout << "Structure(" << currentStructure->GetStartPosition() << ',';
                         cout << currentStructure->GetEndPosition() << "):";
                         cout << " Serial=" << currentStructure->GetSerialNumber();
-                        cout << " ID=" << currentStructure->GetSecondaryStructureID();
-                        cout << " Type=" << currentStructure->secondaryStructureType << endl;
+                        cout << " ID=" << currentStructure->GetSecStructID();
+                        cout << " Type=" << currentStructure->sseType << endl;
                     #endif
 
                     if(add) {
@@ -242,7 +242,7 @@ namespace GraphMatch {
         stopCharNum = predictedSSEs.length() - 1;
         if (currentChar == helixChar)
         {
-            currentStructure = new SecondaryStructure();
+            currentStructure = new SecStruct();
             currentStructure->serialNumber = idNum;
             stringstream ssOut;
             ssOut << idNum;
@@ -251,11 +251,11 @@ namespace GraphMatch {
             char * cSseID = new char [sseIDSize + 1];
             strLen = sseID.copy(cSseID, sseIDSize);
             cSseID[strLen] = '\0';
-            currentStructure->secondaryStructureID = cSseID;
+            currentStructure->ID = cSseID;
             idNum++;
             currentStructure->startPosition = startCharNum + startResNum;
             currentStructure->endPosition = stopCharNum + startResNum;
-            currentStructure->secondaryStructureType = GRAPHEDGE_HELIX;
+            currentStructure->sseType = GRAPHEDGE_HELIX;
             add = true;
             for(unsigned int i = 0; i < structures.size(); i++) {
                 add = add && !((currentStructure->startPosition == structures[i]->startPosition) &&
@@ -267,8 +267,8 @@ namespace GraphMatch {
                 cout << "Structure(" << currentStructure->GetStartPosition() << ',';
                 cout << currentStructure->GetEndPosition() << "):";
                 cout << " Serial=" << currentStructure->GetSerialNumber();
-                cout << " ID=" << currentStructure->GetSecondaryStructureID();
-                cout << " Type=" << currentStructure->secondaryStructureType << endl;
+                cout << " ID=" << currentStructure->GetSecStructID();
+                cout << " Type=" << currentStructure->sseType << endl;
             #endif
 
             if(add) {
@@ -280,7 +280,7 @@ namespace GraphMatch {
         }
         else if (currentChar == strandChar)
         {
-            currentStructure = new SecondaryStructure();
+            currentStructure = new SecStruct();
             currentStructure->serialNumber = idNum;
             stringstream ssOut;
             ssOut << idNum;
@@ -289,11 +289,11 @@ namespace GraphMatch {
             char * cSseID = new char [sseIDSize + 1];
             strLen = sseID.copy(cSseID, sseIDSize);
             cSseID[strLen] = '\0';
-            currentStructure->secondaryStructureID = cSseID;
+            currentStructure->ID = cSseID;
             idNum++;
             currentStructure->startPosition = startCharNum + startResNum;
             currentStructure->endPosition = stopCharNum + startResNum;
-            currentStructure->secondaryStructureType = GRAPHEDGE_SHEET;
+            currentStructure->sseType = GRAPHEDGE_SHEET;
             add = true;
             for(unsigned int i = 0; i < structures.size(); i++) {
                 add = add && !((currentStructure->startPosition == structures[i]->startPosition) &&
@@ -305,8 +305,8 @@ namespace GraphMatch {
                 cout << "Structure(" << currentStructure->GetStartPosition() << ',';
                 cout << currentStructure->GetEndPosition() << "):";
                 cout << " Serial=" << currentStructure->GetSerialNumber();
-                cout << " ID=" << currentStructure->GetSecondaryStructureID();
-                cout << " Type=" << currentStructure->secondaryStructureType << endl;
+                cout << " ID=" << currentStructure->GetSecStructID();
+                cout << " Type=" << currentStructure->sseType << endl;
             #endif
 
             if(add) {
@@ -323,19 +323,19 @@ namespace GraphMatch {
 
     StandardGraph * SEQReader::GetGraphFromSeqFileData(SEQFileData seqFData)
     {
-        vector<SecondaryStructure*> * pStructures = seqFData.GetStructuresVectorPointer();
+        vector<SecStruct*> * pStructures = seqFData.GetStructuresVectorPointer();
         if (!pStructures) {
-            cout << "Pointer to vector<SecondaryStructure*> object is NULL!" << endl;
+            cout << "Pointer to vector<SecStruct*> object is NULL!" << endl;
             return NULL;
         }
-        vector<SecondaryStructure*> & structures = *pStructures;
+        vector<SecStruct*> & structures = *pStructures;
         int i;
         //**********************************************************************************************
         //Code below is copied and pasted from PDBReader.h
         //**********************************************************************************************
 
 
-        SecondaryStructure * currentStructure;
+        SecStruct * currentStructure;
 
         if(structures.size() == 0){
             printf("No helixes or sheets found... Unable to perform matching");
@@ -348,9 +348,9 @@ namespace GraphMatch {
         vector<string> strandLabels;
         for(int i = 0; i < (int)structures.size(); i++) {
             currentStructure = structures[i];
-            if (currentStructure->secondaryStructureType == GRAPHEDGE_HELIX) {
+            if (currentStructure->sseType == GRAPHEDGE_HELIX) {
                 numHelices++;
-            } else	if (currentStructure->secondaryStructureType == GRAPHEDGE_SHEET) {
+            } else	if (currentStructure->sseType == GRAPHEDGE_SHEET) {
                 numSheets++;
             }
         }
@@ -363,7 +363,7 @@ namespace GraphMatch {
         // Adding the rest of the structures into the graph
         int node = 0;
         for(i = 0; i < (int)structures.size(); i++) {
-            if (structures[i]->secondaryStructureType == GRAPHEDGE_HELIX) {
+            if (structures[i]->sseType == GRAPHEDGE_HELIX) {
 #ifdef VERBOSE
                 cout << "adding helix " << i << endl;
 #endif // VERBOSE
@@ -374,9 +374,9 @@ namespace GraphMatch {
 
                 // An edge for the helix
                 graph->SetCost(node+1, node+2, structures[i]->GetLengthResidues());
-                graph->SetType(node+1, node+2, structures[i]->secondaryStructureType);
+                graph->SetType(node+1, node+2, structures[i]->sseType);
                 graph->SetCost(node+2, node+1, structures[i]->GetLengthResidues());
-                graph->SetType(node+2, node+1, structures[i]->secondaryStructureType);
+                graph->SetType(node+2, node+1, structures[i]->sseType);
 
                 if(i != 0) {
                     // An edge for the loop before the helix
@@ -388,9 +388,9 @@ namespace GraphMatch {
                 node += 2;
             }
 
-            if (structures[i]->secondaryStructureType == GRAPHEDGE_SHEET) {
+            if (structures[i]->sseType == GRAPHEDGE_SHEET) {
 #ifdef VERBOSE
-                cout << "adding strand " << i << " with ID " << structures[i]->secondaryStructureID << endl;
+                cout << "adding strand " << i << " with ID " << structures[i]->ID << endl;
 #endif // VERBOSE
                 graph->SetCost(node+1, (structures[i]->endPosition - structures[i]->startPosition) );
 #ifdef VERBOSE

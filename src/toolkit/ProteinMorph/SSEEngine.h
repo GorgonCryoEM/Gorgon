@@ -1,7 +1,7 @@
 #ifndef TOOLKIT_SSE_CORRESPONDENCE_ENGINE_H
 #define TOOLKIT_SSE_CORRESPONDENCE_ENGINE_H
 
-//#include <GraphMatch/SSECorrespondenceResult.h>
+//#include <GraphMatch/SSEResult.h>
 #include <GraphMatch/BackEndInterface.h>
 //#include <GraphMatch/GeometricShape.h>
 #include <vector>
@@ -23,10 +23,10 @@ namespace Visualization {
         int ExecuteQuery();
         int GetResultCount();
         int LoadCorrespondenceFromFile(string fileName);
-        SSECorrespondenceResult GetResult(int rank);
+        SSEResult GetResult(int rank);
         void SaveCorrespondenceToFile(string fileName);
         GeometricShape * GetSkeletonSSE(int sseId);
-        SecondaryStructure * GetSequenceSSE(int sseId);
+        SecStruct * GetSequenceSSE(int sseId);
         int GetSkeletonSSECount();
         int GetSequenceSSECount();
 
@@ -42,7 +42,7 @@ namespace Visualization {
         void ClearPathFinder();
 
     private:
-        vector<SSECorrespondenceResult> correspondence;
+        vector<SSEResult> correspondence;
 
         // Attributes for path calculation
         NonManifoldMesh_Annotated * pathMesh;
@@ -100,7 +100,7 @@ namespace Visualization {
             }
             fin>>cost;
             // TODO: Fix! 0 not acceptable!
-            correspondence.push_back(SSECorrespondenceResult(nodes, cost, 0));
+            correspondence.push_back(SSEResult(nodes, cost, 0));
         }
 
         fin.close();
@@ -108,7 +108,7 @@ namespace Visualization {
         return correspondenceCount;
     }
 
-    SSECorrespondenceResult SSEEngine::GetResult(int rank) {
+    SSEResult SSEEngine::GetResult(int rank) {
         // TODO: Fix!
         //if(rank <= (int)correspondence.size() && (rank >= 1)) {
             return correspondence[rank-1];
@@ -145,7 +145,7 @@ namespace Visualization {
         }
     }
 
-    SecondaryStructure * SSEEngine::GetSequenceSSE(int sseId) {
+    SecStruct * SSEEngine::GetSequenceSSE(int sseId) {
         if((sequence != NULL) && (sseId < (int)sequence->pdbStructures.size())) {
             return sequence->pdbStructures[sseId];
         } else {

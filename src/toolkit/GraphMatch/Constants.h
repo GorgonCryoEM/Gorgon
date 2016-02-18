@@ -150,39 +150,39 @@ namespace GraphMatch {
 
 
     // Private fields.. not to be used!!!
-    int allowedConstraintCollection[MAX_NODES][MAX_NODES];
-    unsigned int allowedConstraintCount[MAX_NODES];
-    int notAllowedConstraintCollection[MAX_NODES][MAX_NODES];
-    unsigned int notAllowedConstraintCount[MAX_NODES];
+    int allowedConstraints[MAX_NODES][MAX_NODES];
+    unsigned int nAllowedConstraints[MAX_NODES];
+    int notAllowedConstraints[MAX_NODES][MAX_NODES];
+    unsigned int nNotAllowedConstraints[MAX_NODES];
 
     void ClearAllowedConstraints() {
         for(int i = 0; i < MAX_NODES; i++) {
-            allowedConstraintCount[i] = 0;
+            nAllowedConstraints[i] = 0;
         }
     }
 
     void ClearNotAllowedConstraints() {
         for(int i = 0; i < MAX_NODES; i++) {
-            notAllowedConstraintCount[i] = 0;
+            nNotAllowedConstraints[i] = 0;
         }
     }
 
     void AddNodeConstraint(int patternNode, int baseNode) {
-        allowedConstraintCollection[patternNode-1][allowedConstraintCount[patternNode-1]] = baseNode;
-        allowedConstraintCount[patternNode-1]++;
+        allowedConstraints[patternNode-1][nAllowedConstraints[patternNode-1]] = baseNode;
+        nAllowedConstraints[patternNode-1]++;
     }
 
     int GetNodeConstraint(int patternNode, int constraintNum) {
-        if (constraintNum < 0 || constraintNum >= (int)allowedConstraintCount[patternNode-1]) {
+        if (constraintNum < 0 || constraintNum >= (int)nAllowedConstraints[patternNode-1]) {
             return 0;
         } else {
-            return allowedConstraintCollection[patternNode-1][constraintNum];
+            return allowedConstraints[patternNode-1][constraintNum];
         }
     }
 
     void AddNodeMismatch(int patternNode, int baseNode) {
-        notAllowedConstraintCollection[patternNode-1][notAllowedConstraintCount[patternNode-1]] = baseNode;
-        notAllowedConstraintCount[patternNode-1]++;
+        notAllowedConstraints[patternNode-1][nNotAllowedConstraints[patternNode-1]] = baseNode;
+        nNotAllowedConstraints[patternNode-1]++;
     }
 
     void AddHelixConstraint(int patternHelix, int baseHelix) {
@@ -190,15 +190,15 @@ namespace GraphMatch {
         int patternNode2 = patternHelix+1;
 
         if(baseHelix == -1) {
-            allowedConstraintCollection[patternNode1-1][allowedConstraintCount[patternNode1-1]] = -1;		allowedConstraintCount[patternNode1-1]++;
-            allowedConstraintCollection[patternNode2-1][allowedConstraintCount[patternNode2-1]] = -1;		allowedConstraintCount[patternNode2-1]++;
+            allowedConstraints[patternNode1-1][nAllowedConstraints[patternNode1-1]] = -1;		nAllowedConstraints[patternNode1-1]++;
+            allowedConstraints[patternNode2-1][nAllowedConstraints[patternNode2-1]] = -1;		nAllowedConstraints[patternNode2-1]++;
         } else {
             int baseNode1 = baseHelix;
             int baseNode2 = baseHelix+1;
-            allowedConstraintCollection[patternNode1-1][allowedConstraintCount[patternNode1-1]] = baseNode1;		allowedConstraintCount[patternNode1-1]++;
-            allowedConstraintCollection[patternNode1-1][allowedConstraintCount[patternNode1-1]] = baseNode2;		allowedConstraintCount[patternNode1-1]++;
-            allowedConstraintCollection[patternNode2-1][allowedConstraintCount[patternNode2-1]] = baseNode1;		allowedConstraintCount[patternNode2-1]++;
-            allowedConstraintCollection[patternNode2-1][allowedConstraintCount[patternNode2-1]] = baseNode2;		allowedConstraintCount[patternNode2-1]++;
+            allowedConstraints[patternNode1-1][nAllowedConstraints[patternNode1-1]] = baseNode1;		nAllowedConstraints[patternNode1-1]++;
+            allowedConstraints[patternNode1-1][nAllowedConstraints[patternNode1-1]] = baseNode2;		nAllowedConstraints[patternNode1-1]++;
+            allowedConstraints[patternNode2-1][nAllowedConstraints[patternNode2-1]] = baseNode1;		nAllowedConstraints[patternNode2-1]++;
+            allowedConstraints[patternNode2-1][nAllowedConstraints[patternNode2-1]] = baseNode2;		nAllowedConstraints[patternNode2-1]++;
         }
     }
 
@@ -207,15 +207,15 @@ namespace GraphMatch {
         int patternNode2 = patternHelix*2;
 
         if(baseHelix == -1) {
-            notAllowedConstraintCollection[patternNode1-1][notAllowedConstraintCount[patternNode1-1]] = -1;		notAllowedConstraintCount[patternNode1-1]++;
-            notAllowedConstraintCollection[patternNode2-1][notAllowedConstraintCount[patternNode2-1]] = -1;		notAllowedConstraintCount[patternNode2-1]++;
+            notAllowedConstraints[patternNode1-1][nNotAllowedConstraints[patternNode1-1]] = -1;		nNotAllowedConstraints[patternNode1-1]++;
+            notAllowedConstraints[patternNode2-1][nNotAllowedConstraints[patternNode2-1]] = -1;		nNotAllowedConstraints[patternNode2-1]++;
         } else {
             int baseNode1 = baseHelix*2 - 1;
             int baseNode2 = baseHelix*2;
-            notAllowedConstraintCollection[patternNode1-1][notAllowedConstraintCount[patternNode1-1]] = baseNode1;		notAllowedConstraintCount[patternNode1-1]++;
-            notAllowedConstraintCollection[patternNode1-1][notAllowedConstraintCount[patternNode1-1]] = baseNode2;		notAllowedConstraintCount[patternNode1-1]++;
-            notAllowedConstraintCollection[patternNode2-1][notAllowedConstraintCount[patternNode2-1]] = baseNode1;		notAllowedConstraintCount[patternNode2-1]++;
-            notAllowedConstraintCollection[patternNode2-1][notAllowedConstraintCount[patternNode2-1]] = baseNode2;		notAllowedConstraintCount[patternNode2-1]++;
+            notAllowedConstraints[patternNode1-1][nNotAllowedConstraints[patternNode1-1]] = baseNode1;		nNotAllowedConstraints[patternNode1-1]++;
+            notAllowedConstraints[patternNode1-1][nNotAllowedConstraints[patternNode1-1]] = baseNode2;		nNotAllowedConstraints[patternNode1-1]++;
+            notAllowedConstraints[patternNode2-1][nNotAllowedConstraints[patternNode2-1]] = baseNode1;		nNotAllowedConstraints[patternNode2-1]++;
+            notAllowedConstraints[patternNode2-1][nNotAllowedConstraints[patternNode2-1]] = baseNode2;		nNotAllowedConstraints[patternNode2-1]++;
         }
     }
 
@@ -367,8 +367,8 @@ namespace GraphMatch {
     void LoadConstantsFromFile(string settingsFile) {
         for(int i = 0; i < MAX_NODES; i++) {
             SOLUTION[i] = -2;
-            allowedConstraintCount[i] = 0;
-            notAllowedConstraintCount[i] = 0;
+            nAllowedConstraints[i] = 0;
+            nNotAllowedConstraints[i] = 0;
         }
 
         int tempInt1, tempInt2;
@@ -503,21 +503,21 @@ namespace GraphMatch {
         std::cout << "\tEUCLIDEAN_VOXEL_TO_PDB_RATIO     = " << EUCLIDEAN_VOXEL_TO_PDB_RATIO                                            <<std::endl;
         std::cout << "\tNODE_CONSTRAINTS                 = ";
         for(int i = 0 ; i < MAX_NODES; i++) {
-            if(allowedConstraintCount[i] > 0) {
+            if(nAllowedConstraints[i] > 0) {
                 std::cout<<"("<<i+1<<" -";
-                for(unsigned int j = 0; j < allowedConstraintCount[i]; j++) {
-                    std::cout<<" "<< allowedConstraintCollection[i][j];
+                for(unsigned int j = 0; j < nAllowedConstraints[i]; j++) {
+                    std::cout<<" "<< allowedConstraints[i][j];
                 }
                 std::cout<<") ";
             }
         }
         std::cout<<"\n\tNODE_MISMATCHES                  = ";
         for(int i = 0 ; i < MAX_NODES; i++) {
-            int x = notAllowedConstraintCount[i];
+            int x = nNotAllowedConstraints[i];
             if(x > 0) {
                 std::cout<<"("<<i+1<<" -";
                 for(int j = 0; j < x; j++) {
-                    std::cout<<" "<<notAllowedConstraintCollection[i][j];
+                    std::cout<<" "<<notAllowedConstraints[i][j];
                 }
                 std::cout<<") ";
             }
@@ -539,23 +539,23 @@ namespace GraphMatch {
         bool isAllowed;
 
         // Returning true if no constraints are specified.
-        if(allowedConstraintCount[patternNode-1] == 0) {
+        if(nAllowedConstraints[patternNode-1] == 0) {
             isAllowed = true;
         } else {
             isAllowed = false;
-            for(unsigned int i = 0; i < allowedConstraintCount[patternNode-1]; i++) {
-                isAllowed = isAllowed || (baseNode == allowedConstraintCollection[patternNode-1][i]);
+            for(unsigned int i = 0; i < nAllowedConstraints[patternNode-1]; i++) {
+                isAllowed = isAllowed || (baseNode == allowedConstraints[patternNode-1][i]);
             }
         }
 
-        for(unsigned int i = 0; i < notAllowedConstraintCount[patternNode-1]; i++) {
-            isAllowed = isAllowed && (baseNode != notAllowedConstraintCollection[patternNode-1][i]);
+        for(unsigned int i = 0; i < nNotAllowedConstraints[patternNode-1]; i++) {
+            isAllowed = isAllowed && (baseNode != notAllowedConstraints[patternNode-1][i]);
         }
         return isAllowed;
     }
 
     bool IsNodeConstrained(int patternNode) {
-        return (allowedConstraintCount[patternNode-1] != 0) || (notAllowedConstraintCount[patternNode-1] != 0);
+        return (nAllowedConstraints[patternNode-1] != 0) || (nNotAllowedConstraints[patternNode-1] != 0);
     }
 }
 #endif

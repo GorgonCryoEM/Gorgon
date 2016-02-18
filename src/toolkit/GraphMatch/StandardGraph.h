@@ -44,7 +44,7 @@ namespace GraphMatch {
         double nodeWeights[MAX_NODES];
         double euclideanMatrix[MAX_NODES][MAX_NODES];
         vector<Vector3DInt> paths[MAX_NODES][MAX_NODES];
-        vector<SecondaryStructure*> pdbStructures; // indexed by structure number along the sequence.
+        vector<SecStruct*> pdbStructures; // indexed by structure number along the sequence.
         Volume * skeletonVolume;
         Volume * skeletonSheetVolume;
         vector<GeometricShape*> skeletonHelixes; // helices first, then sheets.
@@ -170,11 +170,11 @@ namespace GraphMatch {
         char temp;
         int seqNode = 1;
         for(int i = 0; i < (int)pdbStructures.size(); i++) {
-            if(pdbStructures[i]->secondaryStructureType == GRAPHEDGE_HELIX) {
+            if(pdbStructures[i]->sseType == GRAPHEDGE_HELIX) {
                 printf("\tHelix %d \t\t(%2d,%2d)\t Length: %d \t Start Pos: %d \t End Pos: %d\n", pdbStructures[i]->serialNumber, seqNode, seqNode+1, pdbStructures[i]->GetLengthResidues(), pdbStructures[i]->startPosition, pdbStructures[i]->endPosition);
                 seqNode += 2;
             } else {
-                printf("\tSheet Strand %s-%d \t(%2d)   \t Length: %d \t Start Pos: %d \t End Pos: %d\n", pdbStructures[i]->secondaryStructureID.c_str(), pdbStructures[i]->serialNumber, seqNode, pdbStructures[i]->GetLengthResidues(), pdbStructures[i]->startPosition, pdbStructures[i]->endPosition);
+                printf("\tSheet Strand %s-%d \t(%2d)   \t Length: %d \t Start Pos: %d \t End Pos: %d\n", pdbStructures[i]->ID.c_str(), pdbStructures[i]->serialNumber, seqNode, pdbStructures[i]->GetLengthResidues(), pdbStructures[i]->startPosition, pdbStructures[i]->endPosition);
                 seqNode += 1;
             }
         }
