@@ -1,4 +1,4 @@
-from libpytoolkit import SSEEngine, SSEResult, Vector3DFloat
+from libpytoolkit import SSEEngine, SSEResult, Vector3Float
 from sse_defaults import SSEDefaults
 from .correspondence.CorrespondenceLibrary import CorrespondenceLibrary
 from .correspondence.Correspondence import Correspondence
@@ -798,10 +798,10 @@ class SSEHelixCorrespondence(object):
         skeletonViewer = self.app.viewers["skeleton"]
         calphaViewer = self.app.viewers["calpha"]
 
-        def tupleToVector3DFloat(pt):
-            return Vector3DFloat(pt[0], pt[1], pt[2])
+        def tupleToVector3Float(pt):
+            return Vector3Float(pt[0], pt[1], pt[2])
 
-        def vector3DFloatToTuple(pt):
+        def vector3FloatToTuple(pt):
             return [pt.x(), pt.y(), pt.z()]
 
         def cAlphaToSkeleton(pt):
@@ -862,9 +862,9 @@ class SSEHelixCorrespondence(object):
                                                                                                     
                         correspondenceElement.appendChild(sseElement)
                         if(match.direction == Match.FORWARD):
-                            engine.initializePathHelix(i, tupleToVector3DFloat(cAlphaToSkeleton(match.observed.endCoord)), tupleToVector3DFloat(cAlphaToSkeleton(match.observed.beginningCoord)), helixRadius)
+                            engine.initializePathHelix(i, tupleToVector3Float(cAlphaToSkeleton(match.observed.endCoord)), tupleToVector3Float(cAlphaToSkeleton(match.observed.beginningCoord)), helixRadius)
                         else:
-                            engine.initializePathHelix(i, tupleToVector3DFloat(cAlphaToSkeleton(match.observed.beginningCoord)), tupleToVector3DFloat(cAlphaToSkeleton(match.observed.endCoord)), helixRadius)
+                            engine.initializePathHelix(i, tupleToVector3Float(cAlphaToSkeleton(match.observed.beginningCoord)), tupleToVector3Float(cAlphaToSkeleton(match.observed.endCoord)), helixRadius)
                                 
                     elif (match.observed.sseType == 'sheet'):
                         pass;
