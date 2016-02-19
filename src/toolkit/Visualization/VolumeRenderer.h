@@ -727,18 +727,6 @@ namespace Visualization {
 
             if(strcmp(extension.c_str(), "MRC") == 0) {
                 dataVolume->toMRCFile((char *)fileName.c_str());
-            } else if(strcmp(extension.c_str(), "CCP4") == 0) {
-                dataVolume->toMRCFile((char *)fileName.c_str());
-            } else if(strcmp(extension.c_str(), "RAW") == 0) {
-                VolumeReaderRAW::SaveVolume16bit(dataVolume, fileName);
-            } else if(strcmp(extension.c_str(), "NB") == 0) {
-                dataVolume->toMathematicaFile((char *)fileName.c_str());
-            } else if(strcmp(extension.c_str(), "TNS") == 0) {
-                VolumeReaderTNS::SaveVolume(dataVolume, fileName);
-            } else if(strcmp(extension.c_str(), "BMP") == 0) {
-                ImageReaderBMP::SaveVolumeAsImageSet(dataVolume, fileName);
-            } else if(strcmp(extension.c_str(), "OFF") == 0) {
-                surfaceMesh->SaveFile(fileName);
             } else {
                 printf("Input format %s not supported!\n", extension.c_str());
             }
