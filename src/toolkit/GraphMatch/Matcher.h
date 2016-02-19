@@ -3,9 +3,9 @@
 
 //#include <cstdlib>
 //#include <cstdio>
-//#include "StandardGraph.h"
+//#include "Graph.h"
 //#include "WongMatch15Constrained.h"
-#include "WongMatch15ConstrainedNoFuture.h"
+#include "WongMatch.h"
 //#include "WongMatch15ConstrainedOnlyA.h"
 #include "PDBReader.h"
 #include "Readers/SEQReader.h"
@@ -14,7 +14,7 @@
 //#include "GraphGenerator.h"
 //#include <ctime>
 //#include <string>
-#include "ProteinMorph/SSECorrespondenceResult.h"
+#include "ProteinMorph/SSEResult.h"
 
 #ifdef DEBUG
 	#include <iostream>
@@ -24,24 +24,24 @@ using namespace std;
 
 	namespace GraphMatch {
 
-		class QueryEngine {
+		class Matcher {
 		public:
-			int DoGraphMatching(StandardGraph * sequenceGraph, StandardGraph * skeletonGraph);
-			SSECorrespondenceResult GetSolution(int rank);
-			void FinishGraphMatching();
-			StandardGraph * LoadSequenceGraph();
-			StandardGraph * LoadSkeletonGraph();
+			int match(Graph * sequenceGraph, Graph * skeletonGraph);
+			SSEResult GetSolution(int rank);
+			void destruct();
+			Graph * loadSequence();
+			Graph * loadSkeleton();
 		private:
-			WongMatch15ConstrainedNoFuture * matcherConstrainedNoFuture;
+			WongMatch * matcher;
 		};
 
 
-		StandardGraph * QueryEngine::LoadSequenceGraph() {
+		Graph * Matcher::loadSequence() {
 			#ifdef GORGON_DEBUG
 				cout << "In QueryEngine::LoadSequenceGraph" << endl;
 			#endif
 			clock_t start, finish;
-			StandardGraph * graph;
+			Graph * graph;
 			string type = SEQUENCE_FILE_TYPE; //easier than doing comparison with a char array
 			#ifdef VERBOSE
 				printf("Pattern Graph \n");
@@ -56,14 +56,14 @@ using namespace std;
 			finish = clock();
 			#ifdef VERBOSE
 				printf("\tReading Pattern file Took %f seconds.\n", (double) (finish - start) / (double) CLOCKS_PER_SEC ) ;
-				graph->PrintGraph();
+				graph->print();
 			#endif
 			return graph;
 		}
 
-		StandardGraph * QueryEngine::LoadSkeletonGraph() {
+		Graph * Matcher::loadSkeleton() {
 			clock_t start, finish;
-			StandardGraph * graph;
+			Graph * graph;
 			#ifdef VERBOSE
 				printf("Base Graph \n");
 			#endif
@@ -72,13 +72,13 @@ using namespace std;
 			finish = clock();
 			#ifdef VERBOSE
 				printf("\033[32m\tReading Base file Took %f seconds.\n\033[0m", (double) (finish - start) / (double) CLOCKS_PER_SEC ) ;
-				graph->PrintGraph();
+				graph->print();
 			#endif
 			return graph;
 		}
 
 
-		int QueryEngine::DoGraphMatching(StandardGraph * sequenceGraph, StandardGraph * skeletonGraph) {
+		int Matcher::match(Graph * sequenceGraph, Graph * skeletonGraph) {
 			clock_t start;
 
 			PERFORMANCE_COMPARISON_MODE = false;
@@ -86,23 +86,23 @@ using namespace std;
 			// Match Graphs
 			// Constrained no future
 			if(MISSING_HELIX_COUNT == -1) {
-				matcherConstrainedNoFuture = new WongMatch15ConstrainedNoFuture(sequenceGraph, skeletonGraph);
+				matcher = new WongMatch(sequenceGraph, skeletonGraph);
 			} else {
-				matcherConstrainedNoFuture = new WongMatch15ConstrainedNoFuture(sequenceGraph, skeletonGraph, MISSING_HELIX_COUNT, MISSING_SHEET_COUNT);
+				matcher = new WongMatch(sequenceGraph, skeletonGraph, MISSING_HELIX_COUNT, MISSING_SHEET_COUNT);
 			}
 			start = clock();
-			int matchCount = matcherConstrainedNoFuture->RunMatching(start);
-			matcherConstrainedNoFuture->SaveResults();
+			int matchCount = matcher->RunMatching(start);
+			matcher->SaveResults();
 
 			return matchCount;
 		}
 
-		SSECorrespondenceResult QueryEngine::GetSolution(int rank) {
-			return matcherConstrainedNoFuture->GetResult(rank);
+		SSEResult Matcher::GetSolution(int rank) {
+			return matcher->GetResult(rank);
 		}
 
-		void QueryEngine::FinishGraphMatching() {
-			delete matcherConstrainedNoFuture;
+		void Matcher::destruct() {
+			delete matcher;
 		}
 	}
 #endif

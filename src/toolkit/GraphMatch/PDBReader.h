@@ -7,10 +7,10 @@
 //#include "SheetStrand.h"
 //#include "Core/GlobalConstants.h"
 //#include <string>
-//#include <MathTools/Vector3D.h>
+//#include <MathTools/Vector3.h>
 #include "PDBAtom.h"
 //#include "PDBHelix.h"
-#include "StandardGraph.h"
+#include "Graph.h"
 //#include <MathTools/LinearSolver.h>
 
 using namespace std;
@@ -18,11 +18,11 @@ using namespace std;
 
 
 namespace GraphMatch {
-    typedef StandardGraph GraphType;
+    typedef Graph GraphType;
 
     class PDBReader {
     public:
-        static StandardGraph * ReadFile(string fname);
+        static Graph * ReadFile(string fname);
         static map<unsigned long long, PDBAtom> ReadAtomPositions(string fileName);
         static bool WriteAtomPositions(map<unsigned long long, PDBAtom> &atoms, string fileName);
         static string TrimString(string str);
@@ -83,7 +83,7 @@ namespace GraphMatch {
     }
     #endif
 
-    StandardGraph * PDBReader::ReadFile(string fname) {
+    Graph * PDBReader::ReadFile(string fname) {
         ifstream fin(fname.c_str());
         if (!fin)
         {
@@ -94,8 +94,8 @@ namespace GraphMatch {
         string line;
         string sequence = "";
         string token;
-        vector<SecondaryStructure*> structures;
-        SecondaryStructure * currentStructure;
+        vector<SecStruct*> structures;
+        SecStruct * currentStructure;
         bool add;
         int oldIndex = 0;
         int index;
@@ -110,12 +110,12 @@ namespace GraphMatch {
             token = GetString(line, 0, 6);
 
             if(token == TOKEN_PDB_HELIX) {
-                currentStructure = new SecondaryStructure();
+                currentStructure = new SecStruct();
                 currentStructure->serialNumber = GetInt(line, 7, 3);
-                currentStructure->secondaryStructureID = GetString(line, 11, 3);
+                currentStructure->ID = GetString(line, 11, 3);
                 currentStructure->startPosition = GetInt(line, 21, 4);
                 currentStructure->endPosition = GetInt(line, 33, 4);
-                currentStructure->secondaryStructureType = GRAPHEDGE_HELIX;
+                currentStructure->sseType = GRAPHEDGE_HELIX;
                 add = true;
                 for(unsigned int i = 0; i < structures.size(); i++)	{
                     add = add && !((currentStructure->startPosition == structures[i]->startPosition) &&
@@ -140,12 +140,12 @@ namespace GraphMatch {
             #endif
             #ifdef INCLUDE_SHEETS
             } else if (token == TOKEN_PDB_SHEET && INCLUDE_STRANDS == 1) {
-                currentStructure = new SecondaryStructure();
+                currentStructure = new SecStruct();
                 currentStructure->serialNumber = GetInt(line, 7, 3);
-                currentStructure->secondaryStructureID = GetString(line, 11, 3);
+                currentStructure->ID = GetString(line, 11, 3);
                 currentStructure->startPosition = GetInt(line, 22, 4);
                 currentStructure->endPosition = GetInt(line, 33, 4);
-                currentStructure->secondaryStructureType = GRAPHEDGE_SHEET;
+                currentStructure->sseType = GRAPHEDGE_SHEET;
                 add = true;
                 for(unsigned int i = 0; i < structures.size(); i++)	{
                     add = add && !((currentStructure->startPosition == structures[i]->startPosition) &&
@@ -189,9 +189,9 @@ namespace GraphMatch {
         vector<string> strandLabels;
         for(int i = 0; i < (int)structures.size(); i++) {
             currentStructure = structures[i];
-            if (currentStructure->secondaryStructureType == GRAPHEDGE_HELIX) {
+            if (currentStructure->sseType == GRAPHEDGE_HELIX) {
                 numHelices++;
-            } else	if (currentStructure->secondaryStructureType == GRAPHEDGE_SHEET) {
+            } else	if (currentStructure->sseType == GRAPHEDGE_SHEET) {
                 numSheets++;
             }
         }
@@ -199,12 +199,12 @@ namespace GraphMatch {
         cout << "creating new graph for " << numHelices << " helices and " << numSheets << " strands." << endl;
 #endif // VERBOSE
 
-        StandardGraph * graph = new StandardGraph(2 * numHelices + numSheets);
+        Graph * graph = new Graph(2 * numHelices + numSheets);
 
         // Adding the rest of the structures into the graph
         int node = 0;
         for(i = 0; i < (int)structures.size(); i++) {
-            if (structures[i]->secondaryStructureType == GRAPHEDGE_HELIX) {
+            if (structures[i]->sseType == GRAPHEDGE_HELIX) {
 #ifdef VERBOSE
                 cout << "adding helix " << i << endl;
 #endif // VERBOSE
@@ -215,9 +215,9 @@ namespace GraphMatch {
 
                 // An edge for the helix
                 graph->SetCost(node+1, node+2, structures[i]->GetLengthResidues());
-                graph->SetType(node+1, node+2, structures[i]->secondaryStructureType);
+                graph->SetType(node+1, node+2, structures[i]->sseType);
                 graph->SetCost(node+2, node+1, structures[i]->GetLengthResidues());
-                graph->SetType(node+2, node+1, structures[i]->secondaryStructureType);
+                graph->SetType(node+2, node+1, structures[i]->sseType);
 
                 if(i != 0) {
                     // An edge for the loop before the helix
@@ -229,9 +229,9 @@ namespace GraphMatch {
                 node += 2;
             }
 
-            if (structures[i]->secondaryStructureType == GRAPHEDGE_SHEET) {
+            if (structures[i]->sseType == GRAPHEDGE_SHEET) {
 #ifdef VERBOSE
-                cout << "adding strand " << i << " with ID " << structures[i]->secondaryStructureID << endl;
+                cout << "adding strand " << i << " with ID " << structures[i]->ID << endl;
 #endif // VERBOSE
                 graph->SetCost(node+1, (structures[i]->endPosition - structures[i]->startPosition) );
 #ifdef VERBOSE
@@ -276,9 +276,9 @@ namespace GraphMatch {
                 dashLine = dashLine + "-";
             }
             for(unsigned int j = 0; j < structures[i]->endPosition - structures[i]->startPosition + 1; j++) {
-                if (structures[i]->secondaryStructureType == GRAPHEDGE_HELIX) {
+                if (structures[i]->sseType == GRAPHEDGE_HELIX) {
                     sseLine =  sseLine + "H";
-                } else if (structures[i]->secondaryStructureType == GRAPHEDGE_SHEET) {
+                } else if (structures[i]->sseType == GRAPHEDGE_SHEET) {
                     sseLine =  sseLine + "E";
                 } else {
                     sseLine = sseLine + "*";

@@ -2,7 +2,7 @@
 #define TOOLKIT_FOUNDATION_RASTERIZER_H
 
 #include <vector>
-#include <MathTools/Vector3D.h>
+#include <MathTools/Vector3.h>
 
 using namespace std;
 using namespace MathTools;
@@ -10,31 +10,31 @@ using namespace MathTools;
 namespace Foundation {
     class Rasterizer {
     public:
-        static vector<Vector3DInt> ScanConvertLineC8(int x1, int y1, int z1, int x2, int y2, int z2);
-        static vector<Vector3DInt> ScanConvertLine(int x1, int y1, int z1, int x2, int y2, int z2);
-        static vector<Vector3DInt> ScanConvertLine(Vector3DInt p1, Vector3DInt p2);
+        static vector<Vector3Int> ScanConvertLineC8(int x1, int y1, int z1, int x2, int y2, int z2);
+        static vector<Vector3Int> ScanConvertLine(int x1, int y1, int z1, int x2, int y2, int z2);
+        static vector<Vector3Int> ScanConvertLine(Vector3Int p1, Vector3Int p2);
     };
 
-    vector<Vector3DInt> Rasterizer::ScanConvertLineC8(int x1, int y1, int z1, int x2, int y2, int z2) {
-        vector<Vector3DInt> points = ScanConvertLine(x1, y1, z1, x2, y2, z2);
-        vector<Vector3DInt> newPoints;
+    vector<Vector3Int> Rasterizer::ScanConvertLineC8(int x1, int y1, int z1, int x2, int y2, int z2) {
+        vector<Vector3Int> points = ScanConvertLine(x1, y1, z1, x2, y2, z2);
+        vector<Vector3Int> newPoints;
         for(unsigned int i = 0; i < points.size()-1; i++) {
             newPoints.push_back(points[i]);
 
             if( (points[i].XInt() != points[i+1].XInt()) &&
                 (points[i].YInt() != points[i+1].YInt()) &&
                 (points[i].ZInt() != points[i+1].ZInt())) {
-                newPoints.push_back(Vector3DInt(points[i+1].XInt(), points[i].YInt(), points[i].ZInt()));
-                newPoints.push_back(Vector3DInt(points[i+1].XInt(), points[i+1].YInt(), points[i].ZInt()));
+                newPoints.push_back(Vector3Int(points[i+1].XInt(), points[i].YInt(), points[i].ZInt()));
+                newPoints.push_back(Vector3Int(points[i+1].XInt(), points[i+1].YInt(), points[i].ZInt()));
             } else if ( (points[i].XInt() != points[i+1].XInt()) &&
                 (points[i].YInt() != points[i+1].YInt())) {
-                newPoints.push_back(Vector3DInt(points[i+1].XInt(), points[i].YInt(), points[i].ZInt()));
+                newPoints.push_back(Vector3Int(points[i+1].XInt(), points[i].YInt(), points[i].ZInt()));
             } else if ( (points[i].XInt() != points[i+1].XInt()) &&
                 (points[i].ZInt() != points[i+1].ZInt())) {
-                newPoints.push_back(Vector3DInt(points[i+1].XInt(), points[i].YInt(), points[i].ZInt()));
+                newPoints.push_back(Vector3Int(points[i+1].XInt(), points[i].YInt(), points[i].ZInt()));
             } else if ( (points[i].YInt() != points[i+1].YInt()) &&
                 (points[i].ZInt() != points[i+1].ZInt())) {
-                newPoints.push_back(Vector3DInt(points[i].XInt(), points[i+1].YInt(), points[i].ZInt()));
+                newPoints.push_back(Vector3Int(points[i].XInt(), points[i+1].YInt(), points[i].ZInt()));
             }
         }
         newPoints.push_back(points[points.size()-1]);
@@ -42,8 +42,8 @@ namespace Foundation {
     }
 
     // Scan converts to 26 connectivity
-    vector<Vector3DInt> Rasterizer::ScanConvertLine(int x1, int y1, int z1, int x2, int y2, int z2) {
-        vector<Vector3DInt> pseudoVertices;
+    vector<Vector3Int> Rasterizer::ScanConvertLine(int x1, int y1, int z1, int x2, int y2, int z2) {
+        vector<Vector3Int> pseudoVertices;
 
         int i, dx, dy, dz, l, m, n, x_inc, y_inc, z_inc, err_1, err_2, dx2, dy2, dz2;
         int pixel[3];
@@ -72,7 +72,7 @@ namespace Foundation {
             err_1 = dy2 - l;
             err_2 = dz2 - l;
             for (i = 0; i < l; i++) {
-                pseudoVertices.push_back(Vector3DInt(pixel[0], pixel[1], pixel[2]));
+                pseudoVertices.push_back(Vector3Int(pixel[0], pixel[1], pixel[2]));
                 if (err_1 > 0) {
                     pixel[1] += y_inc;
                     err_1 -= dx2;
@@ -89,7 +89,7 @@ namespace Foundation {
             err_1 = dx2 - m;
             err_2 = dz2 - m;
             for (i = 0; i < m; i++) {
-                pseudoVertices.push_back(Vector3DInt(pixel[0], pixel[1], pixel[2]));
+                pseudoVertices.push_back(Vector3Int(pixel[0], pixel[1], pixel[2]));
                 if (err_1 > 0) {
                     pixel[0] += x_inc;
                     err_1 -= dy2;
@@ -106,7 +106,7 @@ namespace Foundation {
             err_1 = dy2 - n;
             err_2 = dx2 - n;
             for (i = 0; i < n; i++) {
-                pseudoVertices.push_back(Vector3DInt(pixel[0], pixel[1], pixel[2]));
+                pseudoVertices.push_back(Vector3Int(pixel[0], pixel[1], pixel[2]));
                 if (err_1 > 0) {
                     pixel[1] += y_inc;
                     err_1 -= dz2;
@@ -120,11 +120,11 @@ namespace Foundation {
                 pixel[2] += z_inc;
             }
         }
-        pseudoVertices.push_back(Vector3DInt(pixel[0], pixel[1], pixel[2]));
+        pseudoVertices.push_back(Vector3Int(pixel[0], pixel[1], pixel[2]));
         return pseudoVertices;
     }
 
-    vector<Vector3DInt> Rasterizer::ScanConvertLine(Vector3DInt p1, Vector3DInt p2) {
+    vector<Vector3Int> Rasterizer::ScanConvertLine(Vector3Int p1, Vector3Int p2) {
         return ScanConvertLine(p1.X(), p1.Y(), p1.Z(), p2.X(), p2.Y(), p2.Z());
     }
 }

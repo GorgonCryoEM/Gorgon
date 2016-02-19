@@ -1,9 +1,9 @@
 #ifndef TOOLKIT_SSE_CORRESPONDENCE_ENGINE_H
 #define TOOLKIT_SSE_CORRESPONDENCE_ENGINE_H
 
-//#include <GraphMatch/SSECorrespondenceResult.h>
-#include <GraphMatch/BackEndInterface.h>
-//#include <GraphMatch/GeometricShape.h>
+//#include <GraphMatch/SSEResult.h>
+#include <GraphMatch/IBackEnd.h>
+//#include <GraphMatch/Shape.h>
 #include <vector>
 #include <map>
 #include <set>
@@ -16,37 +16,37 @@
 //using namespace std;
 
 namespace Visualization {
-    class SSECorrespondenceEngine : public BackEndInterface {
+    class SSEEngine : public IBackEnd {
     public:
-        SSECorrespondenceEngine();
+        SSEEngine();
 
         int ExecuteQuery();
         int GetResultCount();
-        int LoadCorrespondenceFromFile(string fileName);
-        SSECorrespondenceResult GetResult(int rank);
-        void SaveCorrespondenceToFile(string fileName);
-        GeometricShape * GetSkeletonSSE(int sseId);
-        SecondaryStructure * GetSequenceSSE(int sseId);
+        int load(string fileName);
+        SSEResult GetResult(int rank);
+        void save(string fileName);
+        Shape * GetSkeletonSSE(int sseId);
+        SecStruct * GetSequenceSSE(int sseId);
         int GetSkeletonSSECount();
         int GetSequenceSSECount();
 
-        void InitializePathFinder(NonManifoldMesh_Annotated * mesh);
-        void InitializePathHelix(int helixIndex, Vector3DFloat p1, Vector3DFloat p2, float radius);
-        void PrunePathMesh(NonManifoldMesh_Annotated * mesh, vector<unsigned int> pathVertices);
+        void InitializePathFinder(NonManifoldMesh * mesh);
+        void InitializePathHelix(int helixIndex, Vector3Float p1, Vector3Float p2, float radius);
+        void PrunePathMesh(NonManifoldMesh * mesh, vector<unsigned int> pathVertices);
         void GetPathSpace(int helix1Ix, bool helix1Start, int helix2Ix, bool helix2Start);
         int GetPathVertexCount();
-        Vector3DFloat GetPathVertex(int index);
+        Vector3Float GetPathVertex(int index);
         int GetPathEdgeCount();
         int GetEdgeVertexIndex(int index, int side);
         void ClearPathSpace();
         void ClearPathFinder();
 
     private:
-        vector<SSECorrespondenceResult> correspondence;
+        vector<SSEResult> correspondence;
 
         // Attributes for path calculation
-        NonManifoldMesh_Annotated * pathMesh;
-        NonManifoldMesh_Annotated * singlePathMesh;
+        NonManifoldMesh * pathMesh;
+        NonManifoldMesh * singlePathMesh;
         map<unsigned int, vector<unsigned int> > helixStartPoints;
         map<unsigned int, vector<unsigned int> > helixEndPoints;
         int pathCount;
@@ -54,16 +54,16 @@ namespace Visualization {
     };
 
 
-    SSECorrespondenceEngine::SSECorrespondenceEngine()
+    SSEEngine::SSEEngine()
     						: pathCount(0)
     {}
 
-    int SSECorrespondenceEngine::ExecuteQuery() {
+    int SSEEngine::ExecuteQuery() {
         if(skeleton != NULL && sequence != NULL) {
-            int resultCount = queryEngine->DoGraphMatching(sequence, skeleton);
+            int resultCount = matcher->match(sequence, skeleton);
             correspondence.clear();
             for(int i = 1; i <= resultCount; i++) {
-                correspondence.push_back(queryEngine->GetSolution(i));
+                correspondence.push_back(matcher->GetSolution(i));
             }
             return resultCount;
         } else {
@@ -71,11 +71,11 @@ namespace Visualization {
         }
     }
 
-    int SSECorrespondenceEngine::GetResultCount() {
+    int SSEEngine::GetResultCount() {
         return correspondence.size();
     }
 
-    int SSECorrespondenceEngine::LoadCorrespondenceFromFile(string fileName) {
+    int SSEEngine::load(string fileName) {
 
         ifstream fin(fileName.c_str());
         if (!fin)
@@ -100,7 +100,7 @@ namespace Visualization {
             }
             fin>>cost;
             // TODO: Fix! 0 not acceptable!
-            correspondence.push_back(SSECorrespondenceResult(nodes, cost, 0));
+            correspondence.push_back(SSEResult(nodes, cost, 0));
         }
 
         fin.close();
@@ -108,7 +108,7 @@ namespace Visualization {
         return correspondenceCount;
     }
 
-    SSECorrespondenceResult SSECorrespondenceEngine::GetResult(int rank) {
+    SSEResult SSEEngine::GetResult(int rank) {
         // TODO: Fix!
         //if(rank <= (int)correspondence.size() && (rank >= 1)) {
             return correspondence[rank-1];
@@ -117,7 +117,7 @@ namespace Visualization {
         //}
     }
 
-    void SSECorrespondenceEngine::SaveCorrespondenceToFile(string fileName) {
+    void SSEEngine::save(string fileName) {
         ofstream fout(fileName.c_str());
         if (!fout)
         {
@@ -137,7 +137,7 @@ namespace Visualization {
         fout.close();
     }
 
-    GeometricShape * SSECorrespondenceEngine::GetSkeletonSSE(int sseId) {
+    Shape * SSEEngine::GetSkeletonSSE(int sseId) {
         if((skeleton != NULL) && (sseId < (int)skeleton->skeletonHelixes.size())) {
             return skeleton->skeletonHelixes[sseId];
         } else {
@@ -145,7 +145,7 @@ namespace Visualization {
         }
     }
 
-    SecondaryStructure * SSECorrespondenceEngine::GetSequenceSSE(int sseId) {
+    SecStruct * SSEEngine::GetSequenceSSE(int sseId) {
         if((sequence != NULL) && (sseId < (int)sequence->pdbStructures.size())) {
             return sequence->pdbStructures[sseId];
         } else {
@@ -154,17 +154,17 @@ namespace Visualization {
     }
 
 
-    int SSECorrespondenceEngine::GetSkeletonSSECount() {
+    int SSEEngine::GetSkeletonSSECount() {
         return skeleton->skeletonHelixes.size();
     }
 
-    int SSECorrespondenceEngine::GetSequenceSSECount() {
+    int SSEEngine::GetSequenceSSECount() {
         return sequence->pdbStructures.size();
     }
 
 
-    void SSECorrespondenceEngine::InitializePathFinder(NonManifoldMesh_Annotated * mesh) {
-        pathMesh = new NonManifoldMesh_Annotated(mesh);
+    void SSEEngine::InitializePathFinder(NonManifoldMesh * mesh) {
+        pathMesh = new NonManifoldMesh(mesh);
         for(unsigned int i = 0; i < pathMesh->vertices.size(); i++) {
             pathMesh->vertices[i].tag = true;
         }
@@ -172,8 +172,8 @@ namespace Visualization {
         pathCount++;
     }
 
-    void SSECorrespondenceEngine::InitializePathHelix(int helixIndex, Vector3DFloat p1, Vector3DFloat p2, float radius) {
-        GeometricShape * helix = GeometricShape::CreateHelix(p1, p2, radius);
+    void SSEEngine::InitializePathHelix(int helixIndex, Vector3Float p1, Vector3Float p2, float radius) {
+        Shape * helix = Shape::CreateHelix(p1, p2, radius);
         set<unsigned int> internalVertices;
         internalVertices.clear();
         vector<unsigned int> startPoints;
@@ -196,8 +196,8 @@ namespace Visualization {
                 isEnd = isEnd || (internalVertices.find(neighbors[j]) == internalVertices.end());
             }
             if(isEnd) {
-                dist1 = (p1 - pathMesh->vertices[*i].position).Length();
-                dist2 = (p2 - pathMesh->vertices[*i].position).Length();
+                dist1 = (p1 - pathMesh->vertices[*i].position).length();
+                dist2 = (p2 - pathMesh->vertices[*i].position).length();
                 isStart = (dist1 <= dist2);
                 if(isStart && (dist1 <= radius)) {
                     helixStartPoints[helixIndex].push_back(*i);
@@ -209,17 +209,17 @@ namespace Visualization {
             }
         }
         if(helixStartPoints[helixIndex].size() == 0) {
-            printf("Error <SSECorrespondenceEngine, InitializePathHelix>: No helix start points found for helix %d\n", helixIndex);
+            printf("Error <SSEEngine, InitializePathHelix>: No helix start points found for helix %d\n", helixIndex);
         }
         if(helixEndPoints[helixIndex].size() == 0) {
-            printf("Error <SSECorrespondenceEngine, InitializePathHelix>: No helix end points found for helix %d\n", helixIndex);
+            printf("Error <SSEEngine, InitializePathHelix>: No helix end points found for helix %d\n", helixIndex);
         }
 
         delete helix;
 
     }
 
-    void SSECorrespondenceEngine::PrunePathMesh(NonManifoldMesh_Annotated * mesh, vector<unsigned int> pathVertices) {
+    void SSEEngine::PrunePathMesh(NonManifoldMesh * mesh, vector<unsigned int> pathVertices) {
         for(unsigned int i = 0; i < mesh->vertices.size(); i++) {
             mesh->vertices[i].tag = true;
         }
@@ -228,8 +228,8 @@ namespace Visualization {
         }
     }
 
-    void SSECorrespondenceEngine::GetPathSpace(int helix1Ix, bool helix1Start, int helix2Ix, bool helix2Start) {
-        NonManifoldMesh_Annotated * mesh = new NonManifoldMesh_Annotated(pathMesh);
+    void SSEEngine::GetPathSpace(int helix1Ix, bool helix1Start, int helix2Ix, bool helix2Start) {
+        NonManifoldMesh * mesh = new NonManifoldMesh(pathMesh);
 
         vector<unsigned int> queue;
         for(unsigned int i = 0; i < helixStartPoints[helix1Ix].size(); i++) {
@@ -257,7 +257,7 @@ namespace Visualization {
 
         PrunePathMesh(mesh, pathVertices);
 
-        singlePathMesh = new NonManifoldMesh_Annotated();
+        singlePathMesh = new NonManifoldMesh();
         map<unsigned int, unsigned int> vertexMap;
         for(unsigned int i=0; i < mesh->vertices.size(); i++) {
             if(!mesh->vertices[i].tag) {
@@ -276,30 +276,30 @@ namespace Visualization {
         delete mesh;
     }
 
-    void SSECorrespondenceEngine::ClearPathSpace() {
+    void SSEEngine::ClearPathSpace() {
         delete singlePathMesh;
         singlePathMesh = NULL;
     }
 
-    void SSECorrespondenceEngine::ClearPathFinder() {
+    void SSEEngine::ClearPathFinder() {
         helixStartPoints.clear();
         helixEndPoints.clear();
         delete pathMesh;
     }
 
-    int SSECorrespondenceEngine::GetPathVertexCount() {
+    int SSEEngine::GetPathVertexCount() {
         return singlePathMesh->vertices.size();
     }
 
-    Vector3DFloat SSECorrespondenceEngine::GetPathVertex(int index) {
+    Vector3Float SSEEngine::GetPathVertex(int index) {
         return singlePathMesh->vertices[index].position;
     }
 
-    int SSECorrespondenceEngine::GetPathEdgeCount() {
+    int SSEEngine::GetPathEdgeCount() {
         return singlePathMesh->edges.size();
     }
 
-    int SSECorrespondenceEngine::GetEdgeVertexIndex(int index, int side) {
+    int SSEEngine::GetEdgeVertexIndex(int index, int side) {
         return singlePathMesh->edges[index].vertexIds[side];
     }
 }

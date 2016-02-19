@@ -6,14 +6,14 @@
 #define MAX_ERODE 1000
 
 #include "VolumeData.h"
-#include "Foundation/GridQueue2.h"
+#include "Foundation/List.h"
 //#include "ThinningTemplate.h"
 ////#include <cstdio>
 ////#include <cstdlib>
 ////#include <cmath>
 #include "Foundation/PriorityQueue.h"
 ////#include <vector>
-#include <MathTools/Vector3D.h>
+#include <MathTools/Vector3.h>
 #include <MathTools/MathLib.h>
 //
 ////---- VolumeRenderer.h -----------
@@ -28,7 +28,7 @@
 ////#include "MeshRenderer.h"
 ////#include <ProteinMorph/NonManifoldMesh.h>
 ////#include <ProteinMorph/TriangleMesh.h>
-////#include <MathTools/Vector3D.h>
+////#include <MathTools/Vector3.h>
 //#include <MathTools/MathLib.h>
 ////#include <Foundation/Octree.h>
 ////#include <queue>
@@ -87,7 +87,22 @@ namespace SkeletonMaker {
     struct gridPoint
     {
         int x, y, z;
+
+        gridPoint(){}
+
+        gridPoint(int xx, int yy, int zz)
+                : x(xx), y(yy), z(zz)
+        {}
     };
+
+    ostream & operator<<(ostream & out, const gridPoint & obj){
+        return out
+                <<"{"
+                <<obj.x<<", "
+                <<obj.y<<", "
+                <<obj.z
+                <<"}";
+    }
 
     class Volume : public VolumeData {
     public:

@@ -17,30 +17,29 @@ using namespace Foundation;
 using namespace SkeletonMaker;
 
 namespace Visualization {
-    typedef NonManifoldMesh NonManifoldMesh_Annotated;
     class MeshRenderer : public Volume {
     public:
-        NonManifoldMesh_Annotated getMesh();
-        Vector3DFloat get3DCoordinates(int subsceneIndex, int ix0, int ix1 = -1, int ix2 = -1, int ix3 = -1, int ix4 = -1);
+        NonManifoldMesh getMesh();
+        Vector3Float get3DCoordinates(int subsceneIndex, int ix0, int ix1 = -1, int ix2 = -1, int ix3 = -1, int ix4 = -1);
         void loadFile(string fileName);
         void loadVolume(Volume * sourceVolume);
         void saveFile(string fileName);
         void PerformSmoothLaplacian(double convergenceRate, int iterations);
         string getSupportedLoadFileFormats();
         string getSupportedSaveFileFormats();
-        int IntersectMeshAndSphere(Vector3DFloat center, float radius);
-        Vector3DFloat getIntersectionPoint(int ix);
+        int IntersectMeshAndSphere(Vector3Float center, float radius);
+        Vector3Float getIntersectionPoint(int ix);
     private:
-        NonManifoldMesh_Annotated mesh;
-        vector<Vector3DFloat> intersectionPoints;
+        NonManifoldMesh mesh;
+        vector<Vector3Float> intersectionPoints;
     };
 
 
-    NonManifoldMesh_Annotated MeshRenderer::getMesh() {
+    NonManifoldMesh MeshRenderer::getMesh() {
         return mesh;
     }
 
-    Vector3DFloat MeshRenderer::getIntersectionPoint(int ix) {
+    Vector3Float MeshRenderer::getIntersectionPoint(int ix) {
         return intersectionPoints[ix];
     }
 
@@ -58,7 +57,7 @@ namespace Visualization {
 #endif
 
         if(extension == "OFF") {
-            mesh = *NonManifoldMesh_Annotated::LoadOffFile(fileName);
+            mesh = *NonManifoldMesh::LoadOffFile(fileName);
         } else if(extension == "MRC" || extension == "ATOM") {
             Volume * volume = MRCReaderPicker::pick(fileName.c_str())->getVolume();
             #ifdef GORGON_DEBUG
@@ -67,7 +66,7 @@ namespace Visualization {
                   cout<<volume->getSize()<<"\033[0m"<<endl;
             #endif
 
-            mesh = NonManifoldMesh_Annotated(volume);
+            mesh = NonManifoldMesh(volume);
 #ifdef GORGON_DEBUG
       cout<<"\033[35m"<<mesh.getSize()<<"\033[0m"<<endl;
 #endif
@@ -95,16 +94,16 @@ namespace Visualization {
     }
 
     void MeshRenderer::loadVolume(Volume * sourceVolume) {
-        mesh = new NonManifoldMesh_Annotated(sourceVolume);
+        mesh = new NonManifoldMesh(sourceVolume);
     }
 
     void MeshRenderer::PerformSmoothLaplacian(double convergenceRate, int iterations) {
         mesh = mesh.SmoothLaplacian(convergenceRate, iterations);
     }
 
-    int MeshRenderer::IntersectMeshAndSphere(Vector3DFloat center, float radius) {
+    int MeshRenderer::IntersectMeshAndSphere(Vector3Float center, float radius) {
         float x1, y1, z1, x2, y2, z2, x3, y3, z3, r, a, b, c, d, u;
-        Vector3DFloat p1, p2;
+        Vector3Float p1, p2;
         x3 = center.X();
         y3 = center.Y();
         z3 = center.Z();
@@ -150,8 +149,8 @@ namespace Visualization {
         return "Meshes (*.off);;Volumes (*.mrc)";
     }
 
-    Vector3DFloat MeshRenderer::get3DCoordinates(int subsceneIndex, int ix0, int ix1, int ix2, int ix3, int ix4) {
-        Vector3DFloat position = Vector3DFloat(0, 0, 0);
+    Vector3Float MeshRenderer::get3DCoordinates(int subsceneIndex, int ix0, int ix1, int ix2, int ix3, int ix4) {
+        Vector3Float position = Vector3Float(0, 0, 0);
         if((subsceneIndex >= 0) && (ix0 >= 0)) {
             switch(subsceneIndex){
                 case 0:

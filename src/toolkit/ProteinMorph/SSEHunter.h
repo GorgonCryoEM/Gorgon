@@ -6,7 +6,7 @@
 //#include <vector>
 //#include <algorithm>
 //#include <map>
-//#include <MathTools/Vector3D.h>
+//#include <MathTools/Vector3.h>
 //#include <MathTools/MathLib.h>
 #include <MathTools/CrossCorrelation.h>
 #include <GraphMatch/PDBAtom.h>
@@ -27,29 +27,8 @@ using namespace GraphMatch;
 //using namespace MathTools;
 using namespace GraySkeletonCPP;
 //using namespace SkeletonMaker;
-using Visualization::NonManifoldMesh_Annotated;
 
 namespace Protein_Morph {
-
-    class AtomCoordinatesAndSize
-    {
-        public:
-            float x;
-            float y;
-            float z;
-            short size;
-            AtomCoordinatesAndSize() { x = y = z = size = 0; }
-            AtomCoordinatesAndSize(float x, float y, float z, short size) {
-                this->x = x;
-                this->y = y;
-                this->z = z;
-                this->size = size;
-            }
-    };
-
-    bool compare_z(AtomCoordinatesAndSize left, AtomCoordinatesAndSize right) {
-        return (left.z < right.z);
-    }
 
     enum RadialProfileType {GAUSSIAN, GAUSSIAN_DIP, POLYNOMIAL};
 
@@ -60,12 +39,12 @@ namespace Protein_Morph {
             PDBAtom& GetPseudoAtom(int i);
 
             void SetCorrelationScores(Volume * vol, RadialProfileType type, float resolution, float deltaAltRadians);
-            void SetSkeletonScores(Volume * vol, NonManifoldMesh_Annotated * skeleton, float resolution);
+            void SetSkeletonScores(Volume * vol, NonManifoldMesh * skeleton, float resolution);
             vector< vector<float> > GetAtomDistances();
             vector<float> GetLocalDirectionalityScores(Volume * vol);
 
         private:
-            void UpdateMap(Volume * vol, Vector3DInt loc,
+            void UpdateMap(Volume * vol, Vector3Int loc,
                            float rangeminX, float rangeminY, float rangeminZ,
                            float rangemaxX, float rangemaxY, float rangemaxZ);
 
@@ -89,7 +68,7 @@ namespace Protein_Morph {
                                       Volume* az_vol = NULL, Volume* alt_vol = NULL);
 
         private:
-            vector<Vector3DInt> atomVolumePositions; // holds the i, j, k indices that give the voxel position of the pseudoatoms
+            vector<Vector3Int> atomVolumePositions; // holds the i, j, k indices that give the voxel position of the pseudoatoms
             vector<PDBAtom> patoms; // pseudoatoms
             static const float max_radius; //for all r > max_radius, RadialProfile(r, {any type}) ~= 0
     };
@@ -119,7 +98,7 @@ namespace Protein_Morph {
             atom.SetResName("GLY");
             atom.SetChainId('A');
             atom.SetResSeq(i);
-            atom.SetPosition(Vector3DFloat(vol->getOriginX() + mX*vol->getSpacingX(),
+            atom.SetPosition(Vector3Float(vol->getOriginX() + mX*vol->getSpacingX(),
                                            vol->getOriginY() + mY*vol->getSpacingY(),
                                            vol->getOriginZ() + mZ*vol->getSpacingZ()
                                            )
@@ -129,8 +108,8 @@ namespace Protein_Morph {
             atom.SetElement("S_00");
             atom.SetCharge("0");
             patoms.push_back(atom);
-            atomVolumePositions.push_back(Vector3DInt(mX, mY, mZ));
-            UpdateMap(tempVol, Vector3DInt(mX, mY, mZ),
+            atomVolumePositions.push_back(Vector3Int(mX, mY, mZ));
+            UpdateMap(tempVol, Vector3Int(mX, mY, mZ),
                       rangeminX, rangeminY, rangeminZ,
                       rangemaxX, rangemaxY, rangemaxZ
                       );
@@ -141,7 +120,7 @@ namespace Protein_Morph {
 
     // SSEHunter::UpdateMap
     // called by SSEHunter::CreatePseudoAtoms after each pseudoatom is chosen
-    void SSEHunter::UpdateMap(Volume * vol, Vector3DInt loc,
+    void SSEHunter::UpdateMap(Volume * vol, Vector3Int loc,
                               float rangeminX, float rangeminY, float rangeminZ,
                               float rangemaxX, float rangemaxY, float rangemaxZ
                               )
@@ -179,14 +158,14 @@ namespace Protein_Morph {
         return patoms[i];
     }
 
-    void SSEHunter::SetSkeletonScores(Volume * vol, NonManifoldMesh_Annotated * skeleton, float resolution) {
+    void SSEHunter::SetSkeletonScores(Volume * vol, NonManifoldMesh * skeleton, float resolution) {
         cout << "SetSkeletonScores()\n";
 //			float maxDistance = 4*sqrt(skeleton->scale[0]+skeleton->scale[1]+skeleton->scale[2]);//resolution;  // TODO: In EMAN1 the maximum distance is sqrt(3*4*4) voxels, we're using Angstroms here
         const unsigned int SCORE_RANGE = 4;
         const unsigned int MAX_DISTANCE_SQUARED = 3*SCORE_RANGE*SCORE_RANGE;
-        Vector3DFloat skeletonOrigin = Vector3DFloat(skeleton->getOriginX(), skeleton->getOriginY(), skeleton->getOriginZ());
-        Vector3DFloat skeletonAtom;
-        Vector3DFloat pAtomPosition;
+        Vector3Float skeletonOrigin = Vector3Float(skeleton->getOriginX(), skeleton->getOriginY(), skeleton->getOriginZ());
+        Vector3Float skeletonAtom;
+        Vector3Float pAtomPosition;
         float score = 0;
         unsigned int count = 0;
         float maxscore = -1;
@@ -194,7 +173,7 @@ namespace Protein_Morph {
 #ifdef GORGON_DEBUG
       cout<<"\033[32mDEBUG: File:   SSEHunter.h"<<endl;
       cout<<"DEBUG: Method: SSEHunter::SetSkeletonScores\033[0m"<<endl;
-      cout<<"DEBUG: Args: Volume*, NonManifoldMesh_Annotated*, float\033[0m"<<endl;
+      cout<<"DEBUG: Args: Volume*, NonManifoldMesh*, float\033[0m"<<endl;
       cout<<"Checkpoint 1"<<endl;
       cout<<*skeleton<<endl;
       cout<<"patoms.size(): "<<patoms.size()<<endl;
@@ -218,7 +197,7 @@ namespace Protein_Morph {
 #endif
             for (unsigned int j = 0; j < skeleton->vertices.size(); j++) {
                 skeletonAtom = skeleton->vertices[j].position;
-                Vector3DFloat d = skeletonAtom - pAtomPosition;
+                Vector3Float d = skeletonAtom - pAtomPosition;
                 float distance_squared = d.X()*d.X() + d.Y()*d.Y() + d.Z()*d.Z();
                 if (abs(d.X()) <= SCORE_RANGE && abs(d.Y()) <= SCORE_RANGE && abs(d.Z()) <= SCORE_RANGE) { // 8x8x8 cubic search area
                     double typeCost; //TODO: If a vertex is part of both the sheet skeleton and the helix skeleton, typeCost = 0;
@@ -267,7 +246,7 @@ namespace Protein_Morph {
         for(unsigned int i = 0; i < patoms.size(); i++) {
             atomDistances.clear();
             for(unsigned int j = 0; j < patoms.size(); j++) {
-                atomDistances.push_back( (patoms[i].GetPosition() - patoms[j].GetPosition()).Length() );
+                atomDistances.push_back( (patoms[i].GetPosition() - patoms[j].GetPosition()).length() );
             }
             distances.push_back(atomDistances);
         }
@@ -288,7 +267,7 @@ namespace Protein_Morph {
         int kernelWidth = min(offset, (int)round(2.0/min(min(vol->getSpacingX(), vol->getSpacingY()), vol->getSpacingZ())));
         VolumeSkeletonizer * skeletonizer = new VolumeSkeletonizer(kernelWidth, kernelWidth, kernelWidth, kernelWidth);
 
-        Vector3DFloat * volumeGradient = skeletonizer->GetVolumeGradient(tempVol);
+        Vector3Float * volumeGradient = skeletonizer->GetVolumeGradient(tempVol);
         EigenResults3D * eigens = skeletonizer->GetEigenResults(maskVol, volumeGradient, skeletonizer->gaussianFilterPointRadius, kernelWidth, true);
 
         float minScore = 10, maxScore = -10;
@@ -734,7 +713,7 @@ namespace Protein_Morph {
         cout << "Min: " << bestCCF->getMin() << ", Max: " << bestCCF->getMax() << ", Mean: " << bestCCF->getMean() << ", Sigma: " << bestCCF->getStdDev() << "\n";
         PDBAtom patom;
         vector<float> helixScores;
-        Vector3DFloat position;
+        Vector3Float position;
         float value;
         float totVal = 0;
         float maxVal = 0;

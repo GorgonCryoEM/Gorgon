@@ -5,7 +5,7 @@
 //#include <cstdlib>
 //#include <string>
 #include "DataStructures.h"
-//#include "Vector3D.h"
+//#include "Vector3.h"
 //#include "ComplexNumber.h"
 #include <schaefer_eigen/Eigen.h>
 //#include <cmath>
@@ -14,10 +14,10 @@
 #endif
 
 namespace MathTools {
-    class MatlabWrapper {
+    class Matlab {
     public:
-        MatlabWrapper();
-        ~MatlabWrapper();
+        Matlab();
+        ~Matlab();
         void EigenAnalysis(EigenVectorsAndValues2D & eigenInformation);
         void EigenAnalysis(EigenVectorsAndValues3D & eigenInformation);
         #ifdef USE_MATLAB
@@ -29,21 +29,21 @@ namespace MathTools {
         #endif
     };
 
-    MatlabWrapper::MatlabWrapper() {
+    Matlab::Matlab() {
         #ifdef USE_MATLAB
         mathEngine = engOpen(NULL);
         engSetVisible(mathEngine, false);
         #endif
     }
 
-    MatlabWrapper::~MatlabWrapper() {
+    Matlab::~Matlab() {
         #ifdef USE_MATLAB
         engClose(mathEngine);
         delete mathEngine;
         #endif
     }
 
-    void MatlabWrapper::EigenAnalysis(EigenVectorsAndValues2D & eigenInformation) {
+    void Matlab::EigenAnalysis(EigenVectorsAndValues2D & eigenInformation) {
         double a = eigenInformation.structureTensor[0][0];
         double b = eigenInformation.structureTensor[0][1];
         double c = eigenInformation.structureTensor[1][0];
@@ -53,33 +53,34 @@ namespace MathTools {
         double x1 = (a+d + insidesqrt) / 2.0;
         double x2 = (a+d - insidesqrt) / 2.0;
 
-        Vector3DDouble v1, v2, mv1, mv2;
+        Vector3Double v1, v2, mv1, mv2;
         if((b == 0) && (d == 0)) {
-            v1 = Vector3DDouble(1.0, 0.0, 0.0);
-            v2 = Vector3DDouble(0.0, 1.0, 0.0);
+            v1 = Vector3Double(1.0, 0.0, 0.0);
+            v2 = Vector3Double(0.0, 1.0, 0.0);
         } else if (b == 0) {
-            v1 = Vector3DDouble(0.0, 1.0, 0.0);
-            v2 = Vector3DDouble(1.0, 0.0, 0.0);
+            v1 = Vector3Double(0.0, 1.0, 0.0);
+            v2 = Vector3Double(1.0, 0.0, 0.0);
         } else {
-            v1 = Vector3DDouble(1.0, (x1-a)/b, 0.0);
-            v2 = Vector3DDouble(1.0, (x2-a)/b, 0.0);
+            v1 = Vector3Double(1.0, (x1-a)/b, 0.0);
+            v2 = Vector3Double(1.0, (x2-a)/b, 0.0);
         }
 
-        v1.Normalize();
-        v2.Normalize();
+        v1.normalize();
+        v2.normalize();
 
         eigenInformation.eigenValues[0] = (float)x1;
         eigenInformation.eigenValues[1] = (float)x2;
-        eigenInformation.eigenVectors[0][0] = (float)v1.values[0];
-        eigenInformation.eigenVectors[0][1] = (float)v1.values[1];
-        eigenInformation.eigenVectors[1][0] = (float)v2.values[0];
-        eigenInformation.eigenVectors[1][1] = (float)v2.values[1];
+        eigenInformation.eigenVectors[0][0] = (float)v1[0];
+        eigenInformation.eigenVectors[0][1] = (float)v1[1];
+        eigenInformation.eigenVectors[1][0] = (float)v2[0];
+        eigenInformation.eigenVectors[1][1] = (float)v2[1];
     }
 
-    void MatlabWrapper::EigenAnalysis(EigenVectorsAndValues3D & eigenInformation) {
+    void Matlab::EigenAnalysis(EigenVectorsAndValues3D & eigenInformation) {
         float st[3][3] = {{eigenInformation.structureTensor[0][0], eigenInformation.structureTensor[0][1], eigenInformation.structureTensor[0][2]},
                           {eigenInformation.structureTensor[1][0], eigenInformation.structureTensor[1][1], eigenInformation.structureTensor[1][2]},
-                          {eigenInformation.structureTensor[2][0], eigenInformation.structureTensor[2][1], eigenInformation.structureTensor[2][2]}};
+                          {eigenInformation.structureTensor[2][0], eigenInformation.structureTensor[2][1], eigenInformation.structureTensor[2][2]}
+                         };
 
         float values[3];
         float vectors[3][3];
@@ -94,7 +95,7 @@ namespace MathTools {
     }
 
     #ifdef USE_MATLAB
-    void MatlabWrapper::EigenAnalysisMatlab(EigenVectorsAndValues3D & eigenInformation) {
+    void Matlab::EigenAnalysisMatlab(EigenVectorsAndValues3D & eigenInformation) {
         mxArray * mxMathData = mxCreateDoubleMatrix(3, 3, mxREAL);
 
         memcpy(mxGetPr(mxMathData), eigenInformation.structureTensor, 9*sizeof(double));

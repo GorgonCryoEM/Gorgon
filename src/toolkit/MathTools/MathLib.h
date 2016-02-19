@@ -1,9 +1,9 @@
 #ifndef TOOLKIT_MATHTOOLS_MATH_LIB_H
 #define TOOLKIT_MATHTOOLS_MATH_LIB_H
 
-#include "MatlabWrapper.h"
+#include "Matlab.h"
 #include "Combinatorics.h"
-//#include "Vector3D.h"
+//#include "Vector3.h"
 //#include "ComplexNumber.h"
 
 
@@ -16,21 +16,21 @@ namespace MathTools {
         MathLib();
         ~MathLib();
 
-        void EigenAnalysis(EigenVectorsAndValues2D & eigenInformation);
-        void EigenAnalysis(EigenVectorsAndValues3D & eigenInformation);
-        void GetBinomialDistribution(ProbabilityDistribution1D & distributionInfo);
-        void GetBinomialDistribution(ProbabilityDistribution2D & distributionInfo);
-        void GetBinomialDistribution(ProbabilityDistribution3D & distributionInfo);
-        void GetUniformDistribution(ProbabilityDistribution3D & distributionInfo);
+        void EigenAnalysis           (EigenVectorsAndValues2D   & eigenInformation);
+        void EigenAnalysis           (EigenVectorsAndValues3D   & eigenInformation);
+        void GetBinomialDistribution (ProbabilityDistribution1D & distributionInfo);
+        void GetBinomialDistribution (ProbabilityDistribution2D & distributionInfo);
+        void GetBinomialDistribution (ProbabilityDistribution3D & distributionInfo);
+        void GetUniformDistribution  (ProbabilityDistribution3D & distributionInfo);
         unsigned long long Combinations(int n, int r);
         unsigned long long Permutations(int n, int r);
 
     private:
-        MatlabWrapper * mathWrapper;
+        Matlab * mathWrapper;
     };
 
     MathLib::MathLib() {
-        mathWrapper = new MatlabWrapper();
+        mathWrapper = new Matlab();
     }
 
     MathLib::~MathLib() {

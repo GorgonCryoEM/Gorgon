@@ -3,10 +3,10 @@
 #include "Core/volume.h"
 #include "Visualization/MeshRenderer.h"
 #include "ProteinMorph/SSEHunter.h"
-#include <MathTools/Vector3D.h>
+#include <MathTools/Vector3.h>
 #include "Visualization/CAlphaRenderer.h"
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>
-#include "ProteinMorph/SSECorrespondenceEngine.h"
+#include "ProteinMorph/SSEEngine.h"
 #include "GraphMatch/PDBBond.h"
 #include "Readers/SEQReader.h"
 
@@ -38,14 +38,14 @@ BOOST_PYTHON_MODULE(@current_pylib@)
 //
 //    vector_from_python<unsigned long long>();
 
-//    vector_from_python<Vector3DFloat>();
-//    vector_from_python< std::vector<Vector3DFloat> >();
+//    vector_from_python<Vector3Float>();
+//    vector_from_python< std::vector<Vector3Float> >();
 //
 //
-////  tuple3_to_python<Vector3DInt>();
-////  tuple3_to_python<Vector3DFloat>();
-//    tuple3_from_python<Vector3DInt, int>();
-//    tuple3_from_python<Vector3DFloat, float>();
+////  tuple3_to_python<Vector3Int>();
+////  tuple3_to_python<Vector3Float>();
+//    tuple3_from_python<Vector3Int, int>();
+//    tuple3_from_python<Vector3Float, float>();
 //
 
   class_<Volume>("Volume", init<>())
@@ -82,7 +82,7 @@ BOOST_PYTHON_MODULE(@current_pylib@)
 
   ;
 
-  class_<NonManifoldMesh_Annotated, bases<Volume> >("NonManifoldMesh_Annotated", init<>())
+  class_<NonManifoldMesh, bases<Volume> >("NonManifoldMesh", init<>())
   ;
   
   class_< MeshRenderer, bases<Volume> >("MeshRenderer", init<>())
@@ -329,14 +329,22 @@ BOOST_PYTHON_MODULE(@current_pylib@)
 //        .def("setNextCAHash", &PDBAtom::SetNextCAHash)
     ;
 
-  class_<Vector3DFloat>("Vector3DFloat", init<float, float, float>())
-        .def("x", &Vector3DFloat::X)
-        .def("y", &Vector3DFloat::Y)
-        .def("z", &Vector3DFloat::Z)
-        .def("length", &Vector3DFloat::Length)
-        .def("Transform", &Vector3DFloat::Transform)
-        .def("rotate", &Vector3DFloat::Rotate)
-        .def("Print", &Vector3DFloat::Print)
+//  bool (Vector3Float::*X)() = &Vector3Float::X;
+//  float& (Vector3Float::*X)() = &Vector3Float::X;
+//  const double & (Volume::*get)(int, int, int) const = &Volume::operator();
+//  const float & (Vector3<float>::*X)() const = &Vector3<float>::X;
+  const float & (Vector3<float>::*X)() const = &Vector3<float>::X;
+  const float & (Vector3<float>::*Y)() const = &Vector3<float>::Y;
+  const float & (Vector3<float>::*Z)() const = &Vector3<float>::Z;
+
+  class_<Vector3<float> >("Vector3Float", init<float, float, float>())
+        .def("x", X, return_value_policy<copy_const_reference>())
+        .def("y", Y, return_value_policy<copy_const_reference>())
+        .def("z", Z, return_value_policy<copy_const_reference>())
+        .def("length", &Vector3<float>::length)
+        .def("Transform", &Vector3<float>::transform)
+        .def("rotate", &Vector3<float>::rotate)
+        .def("Print", &Vector3<float>::print)
         .def(self * double())
         .def(self + self)
         .def(self - self)
@@ -348,82 +356,81 @@ BOOST_PYTHON_MODULE(@current_pylib@)
 
     ;
   
-  class_<SSECorrespondenceResult>("SSECorrespondenceResult", init<>())
-//        .def("getNodeString", &SSECorrespondenceResult::GetNodeString)
-        .def("getCost", &SSECorrespondenceResult::GetCost)
-        .def("getNodeCount", &SSECorrespondenceResult::GetNodeCount)
-        .def("getHelixCount", &SSECorrespondenceResult::GetHelixCount)
-//        .def("getSheetCount", &SSECorrespondenceResult::GetSheetCount)
-        .def("getSkeletonNode", &SSECorrespondenceResult::GetSkeletonNode)
-        .def("nodeToHelix", &SSECorrespondenceResult::NodeToHelix)      
+  class_<SSEResult>("SSEResult", init<>())
+//        .def("getNodeString", &SSEResult::GetNodeString)
+        .def("getCost", &SSEResult::GetCost)
+        .def("getNodeCount", &SSEResult::GetNodeCount)
+        .def("getHelixCount", &SSEResult::GetHelixCount)
+//        .def("getSheetCount", &SSEResult::GetSheetCount)
+        .def("getSkeletonNode", &SSEResult::GetSkeletonNode)
+        .def("nodeToHelix", &SSEResult::NodeToHelix)      
     ;
 
-    class_<SecondaryStructure>("SecondaryStructure", init<>())
-        .def("isHelix", &SecondaryStructure::IsHelix)
-        .def("isSheet", &SecondaryStructure::IsSheet)
-        .def("getSerialNumber", &SecondaryStructure::GetSerialNumber)
-        .def("getStartPosition", &SecondaryStructure::GetStartPosition)
-        .def("getEndPosition", &SecondaryStructure::GetEndPosition)
-        .def("getSecondaryStructureID", &SecondaryStructure::GetSecondaryStructureID)
+    class_<SecStruct>("SecStruct", init<>())
+        .def("isHelix", &SecStruct::IsHelix)
+        .def("isSheet", &SecStruct::IsSheet)
+        .def("getSerialNumber", &SecStruct::GetSerialNumber)
+        .def("getStartPosition", &SecStruct::GetStartPosition)
+        .def("getEndPosition", &SecStruct::GetEndPosition)
+        .def("getSecondaryStructureID", &SecStruct::getID)
     ;
 
-    class_<GeometricShape>("GeometricShape", init<>())
-        .def("isHelix", &GeometricShape::IsHelix)
-        .def("isSheet", &GeometricShape::IsSheet)
-        .def("getCornerCell2", &GeometricShape::GetCornerCell2)
-        .def("getCornerCell3", &GeometricShape::GetCornerCell3)
+    class_<Shape>("Shape", init<>())
+        .def("isHelix", &Shape::IsHelix)
+        .def("isSheet", &Shape::IsSheet)
+        .def("getCornerCell2", &Shape::GetCornerCell2)
+        .def("getCornerCell3", &Shape::GetCornerCell3)
     ;
 
-    bool (SSECorrespondenceEngine::*SetConstant1)(string, string)   = &SSECorrespondenceEngine::SetConstant;
-    bool (SSECorrespondenceEngine::*SetConstant2)(string, double)   = &SSECorrespondenceEngine::SetConstant;
-    bool (SSECorrespondenceEngine::*SetConstant3)(string, int)      = &SSECorrespondenceEngine::SetConstant;
-    bool (SSECorrespondenceEngine::*SetConstant4)(string, bool)     = &SSECorrespondenceEngine::SetConstant;
+    bool (SSEEngine::*SetConstant1)(string, string)   = &SSEEngine::SetConstant;
+    bool (SSEEngine::*SetConstant2)(string, double)   = &SSEEngine::SetConstant;
+    bool (SSEEngine::*SetConstant3)(string, int)      = &SSEEngine::SetConstant;
+    bool (SSEEngine::*SetConstant4)(string, bool)     = &SSEEngine::SetConstant;
 
-    class_<SSECorrespondenceEngine>("SSECorrespondenceEngine", init<>())
+    class_<SSEEngine>("SSEEngine", init<>())
         .def("setConstant", SetConstant1)
         .def("setConstant", SetConstant2)
         .def("setConstantInt", SetConstant3)
         .def("setConstantBool", SetConstant4)
-        .def("getConstant", &SSECorrespondenceEngine::GetConstant)
-        .def("getConstantString", &SSECorrespondenceEngine::GetConstantString)
-        .def("getConstantDouble", &SSECorrespondenceEngine::GetConstantDouble)
-        .def("getConstantInt", &SSECorrespondenceEngine::GetConstantInt)
-        .def("getConstantBool", &SSECorrespondenceEngine::GetConstantBool)
-        .def("clearAllConstraints", &SSECorrespondenceEngine::ClearAllConstraints)          
-//        .def("setHelixConstraint", &SSECorrespondenceEngine::SetHelixConstraint)            
-//        .def("getHelixConstraintFwd", &SSECorrespondenceEngine::GetHelixConstraintFwd)          
-//        .def("getHelixConstraintRev", &SSECorrespondenceEngine::GetHelixConstraintRev)          
-//        .def("getHelixConstraintUnk", &SSECorrespondenceEngine::GetHelixConstraintUnk)
-//        .def("getStrandConstraint", &SSECorrespondenceEngine::GetStrandConstraint)          
-//        .def("setNodeConstraint", &SSECorrespondenceEngine::SetNodeConstraint)          
-//        .def("setSSEColor", &SSECorrespondenceEngine::SetSSEColor)          
-//        .def("setConstantsFromFile", &SSECorrespondenceEngine::SetConstantsFromFile)        
-        .def("saveCorrespondenceToFile", &SSECorrespondenceEngine::SaveCorrespondenceToFile)
-        .def("loadSkeletonGraph", &SSECorrespondenceEngine::LoadSkeletonGraph)
-        .def("loadSequenceGraph", &SSECorrespondenceEngine::LoadSequenceGraph)
-//        .def("loadCorrespondenceFromFile", &SSECorrespondenceEngine::LoadCorrespondenceFromFile)
-        .def("executeQuery", &SSECorrespondenceEngine::ExecuteQuery)
-        .def("cleanupMemory", &SSECorrespondenceEngine::CleanupMemory)
-        .def("getResult", &SSECorrespondenceEngine::GetResult)
-//        .def("getResultCount", &SSECorrespondenceEngine::GetResultCount)
-//        .def("getSupportedLoadFileFormats", &SSECorrespondenceEngine::GetSupportedLoadFileFormats)
-//        .def("getSupportedSaveFileFormats", &SSECorrespondenceEngine::GetSupportedSaveFileFormats)
-        .def("getSkeletonSSE", &SSECorrespondenceEngine::GetSkeletonSSE, return_value_policy<reference_existing_object>())
-//        .def("getSequenceSSE", &SSECorrespondenceEngine::GetSequenceSSE, return_value_policy<reference_existing_object>())
-        .def("getSkeletonSSECount", &SSECorrespondenceEngine::GetSkeletonSSECount)
-//        .def("getSequenceSSECount", &SSECorrespondenceEngine::GetSequenceSSECount)
-//        .def("setVisibleCorrespondence", &SSECorrespondenceEngine::SetVisibleCorrespondence)
-//        .def("draw", &SSECorrespondenceEngine::Draw)
-//        .def("drawAllPaths", &SSECorrespondenceEngine::DrawAllPaths)
-//        .def("initializePathFinder", &SSECorrespondenceEngine::InitializePathFinder)
-//        .def("initializePathHelix", &SSECorrespondenceEngine::InitializePathHelix)
-//        .def("getPathSpace", &SSECorrespondenceEngine::GetPathSpace)
-//        .def("clearPathSpace", &SSECorrespondenceEngine::ClearPathSpace)
-//        .def("getPathVertexCount", &SSECorrespondenceEngine::GetPathVertexCount)
-//        .def("getPathVertex", &SSECorrespondenceEngine::GetPathVertex)
-//        .def("getPathEdgeCount", &SSECorrespondenceEngine::GetPathEdgeCount)
-//        .def("getEdgeVertexIndex", &SSECorrespondenceEngine::GetEdgeVertexIndex)
-//        .def("clearPathFinder", &SSECorrespondenceEngine::ClearPathFinder)
+        .def("getConstantString", &SSEEngine::GetConstantString)
+        .def("getConstantDouble", &SSEEngine::GetConstantDouble)
+        .def("getConstantInt", &SSEEngine::GetConstantInt)
+        .def("getConstantBool", &SSEEngine::GetConstantBool)
+        .def("clearAllConstraints", &SSEEngine::ClearAllConstraints)          
+//        .def("setHelixConstraint", &SSEEngine::SetHelixConstraint)            
+//        .def("getHelixConstraintFwd", &SSEEngine::GetHelixConstraintFwd)          
+//        .def("getHelixConstraintRev", &SSEEngine::GetHelixConstraintRev)          
+//        .def("getHelixConstraintUnk", &SSEEngine::GetHelixConstraintUnk)
+//        .def("getStrandConstraint", &SSEEngine::GetStrandConstraint)          
+//        .def("setNodeConstraint", &SSEEngine::SetNodeConstraint)          
+//        .def("setSSEColor", &SSEEngine::SetSSEColor)          
+//        .def("setConstantsFromFile", &SSEEngine::SetConstantsFromFile)        
+        .def("saveCorrespondenceToFile", &SSEEngine::save)
+        .def("loadSkeletonGraph", &SSEEngine::loadSkeleton)
+        .def("loadSequenceGraph", &SSEEngine::loadSequence)
+//        .def("loadCorrespondenceFromFile", &SSEEngine::load)
+        .def("executeQuery", &SSEEngine::ExecuteQuery)
+        .def("cleanupMemory", &SSEEngine::CleanupMemory)
+        .def("getResult", &SSEEngine::GetResult)
+//        .def("getResultCount", &SSEEngine::GetResultCount)
+//        .def("getSupportedLoadFileFormats", &SSEEngine::GetSupportedLoadFileFormats)
+//        .def("getSupportedSaveFileFormats", &SSEEngine::GetSupportedSaveFileFormats)
+        .def("getSkeletonSSE", &SSEEngine::GetSkeletonSSE, return_value_policy<reference_existing_object>())
+//        .def("getSequenceSSE", &SSEEngine::GetSequenceSSE, return_value_policy<reference_existing_object>())
+        .def("getSkeletonSSECount", &SSEEngine::GetSkeletonSSECount)
+//        .def("getSequenceSSECount", &SSEEngine::GetSequenceSSECount)
+//        .def("setVisibleCorrespondence", &SSEEngine::SetVisibleCorrespondence)
+//        .def("draw", &SSEEngine::Draw)
+//        .def("drawAllPaths", &SSEEngine::DrawAllPaths)
+//        .def("initializePathFinder", &SSEEngine::InitializePathFinder)
+//        .def("initializePathHelix", &SSEEngine::InitializePathHelix)
+//        .def("getPathSpace", &SSEEngine::GetPathSpace)
+//        .def("clearPathSpace", &SSEEngine::ClearPathSpace)
+//        .def("getPathVertexCount", &SSEEngine::GetPathVertexCount)
+//        .def("getPathVertex", &SSEEngine::GetPathVertex)
+//        .def("getPathEdgeCount", &SSEEngine::GetPathEdgeCount)
+//        .def("getEdgeVertexIndex", &SSEEngine::GetEdgeVertexIndex)
+//        .def("clearPathFinder", &SSEEngine::ClearPathFinder)
     ;
 
     class_<SEQFileData>("SeqFileData", init<>())
