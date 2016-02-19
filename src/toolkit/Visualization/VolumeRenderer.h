@@ -587,7 +587,7 @@ namespace Visualization {
         if(dataVolume != NULL) {
             delete dataVolume;
         }
-        dataVolume = VolumeFormatConverter::LoadVolume(fileName);
+        dataVolume = *MRCReaderPicker::pick(fileName.c_str())->getVolume();
         InitializeOctree();
         UpdateBoundingBox();
 
