@@ -177,7 +177,7 @@ namespace Visualization {
 
     bool Renderer::SetCuttingPlane(float position, float vecX, float vecY, float vecZ) {
         Vector3Float center = Vector3Float( (minPts[0] + maxPts[0])/2.0, (minPts[1] + maxPts[1])/2.0, (minPts[2] + maxPts[2])/2.0);
-        float distance = (Vector3Float(minPts[0], minPts[1], minPts[2]) - center).Length();
+        float distance = (Vector3Float(minPts[0], minPts[1], minPts[2]) - center).length();
         cuttingPlaneDirection = Vector3Float(vecX, vecY, vecZ);
         cuttingPlaneDirection.normalize();
         cuttingPlaneCenter = center +  cuttingPlaneDirection * position * distance;
@@ -196,7 +196,7 @@ namespace Visualization {
 
     void Renderer::DrawCylinder(Vector3Float pt1, Vector3Float pt2, float radius, int slices, int stacks) {
         Vector3Float qmp = pt1-pt2;
-        float length = qmp.Length();
+        float length = qmp.length();
         qmp.normalize();
         Vector3Float z = Vector3Float(0,0,1);
         Vector3Float axis = z ^ qmp;

@@ -540,7 +540,7 @@ namespace Visualization {
 
             Vector3Float modelCenter = Vector3Float( (minPts[0] + maxPts[0])/2.0, (minPts[1] + maxPts[1])/2.0, (minPts[2] + maxPts[2])/2.0);
             Vector3Float center;
-            float distance = (Vector3Float(minPts[0], minPts[1], minPts[2]) - modelCenter).Length();
+            float distance = (Vector3Float(minPts[0], minPts[1], minPts[2]) - modelCenter).length();
             int iX, iY, iZ;
 
             for(float position = 1.0; position >= -1.0; position -= 0.01) {

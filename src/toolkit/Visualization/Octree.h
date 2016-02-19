@@ -314,13 +314,13 @@ namespace Foundation {
 
         for(int i = 0; i < 2; i ++) {
             vec = rayPoints2D[octreeCellTestVectors[i][0]] - rayPoints2D[octreeCellTestVectors[i][1]];
-            if(!isZero(vec.Length())) {
+            if(!isZero(vec.length())) {
                 testVectors.push_back(vec);
             }
         }
         for(int i = 0; i < 3; i ++) {
             vec = cubePoints2D[octreeCellTestVectors[i][0]] - cubePoints2D[octreeCellTestVectors[i][1]];
-            if(!isZero(vec.Length())) {
+            if(!isZero(vec.length())) {
                 testVectors.push_back(vec);
             }
         }

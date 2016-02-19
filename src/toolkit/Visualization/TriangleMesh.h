@@ -124,7 +124,7 @@ namespace Protein_Morph {
                 if(fadeExtreme) {
                     for(unsigned int j = 0; j < 3; j++) {
                         k = faces[i].vertexHashes[j];
-                        drawTriangle = drawTriangle && ((vertices[k].position - center).Length() <= radius);
+                        drawTriangle = drawTriangle && ((vertices[k].position - center).length() <= radius);
                     }
                 }
                 if(drawTriangle) {
