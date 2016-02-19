@@ -163,6 +163,9 @@ namespace SkeletonMaker {
         Volume * PerformBinarySkeletonizationJu2007(double threshold, int minCurveSize, int minSurfaceSize);
         Volume * PerformGrayscaleSkeletonizationAbeysinghe2008(double startDensity, int stepCount, int minCurveSize, int minSurfaceSize, int curveRadius, int surfaceRadius, int skeletonSmoothenRadius);
 
+        void buildHistogram(int binCount);
+        int getHistogramBinValue(int binIx);
+
 #ifdef GORGON_DEBUG
         static int id0;
         static int id1;
