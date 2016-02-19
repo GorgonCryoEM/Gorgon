@@ -65,7 +65,6 @@ namespace Visualization {
         void EnableDraw(bool enable);
         void Draw(int subSceneIndex, bool selectEnabled);
         void LoadFile(string fileName);
-        void LoadFileRAW(string fileName, int bitsPerCell, int sizeX, int sizeY, int sizeZ);
         void SaveFile(string fileName);
         void SetDisplayRadius(const int radius);
         void SetDisplayRadiusOrigin(float radiusOriginX, float radiusOriginY, float radiusOriginZ);
@@ -578,22 +577,6 @@ namespace Visualization {
             delete dataVolume;
         }
         dataVolume = *MRCReaderPicker::pick(fileName.c_str())->getVolume();
-        InitializeOctree();
-        UpdateBoundingBox();
-
-        #ifdef _WIN32
-            glTexImage3D = (PFNGLTEXIMAGE3DPROC) wglGetProcAddress("glTexImage3D");
-        #endif
-
-        SetDisplayRadiusOrigin(dataVolume->getSizeX()/2, dataVolume->getSizeY()/2, dataVolume->getSizeZ()/2);
-    }
-
-    void VolumeRenderer::LoadFileRAW(string fileName, int bitsPerCell, int sizeX, int sizeY, int sizeZ) {
-        Renderer::LoadFile(fileName);
-        if(dataVolume != NULL) {
-            delete dataVolume;
-        }
-        dataVolume = VolumeFormatConverter::LoadVolume(fileName, bitsPerCell, sizeX, sizeY, sizeZ);
         InitializeOctree();
         UpdateBoundingBox();
 
