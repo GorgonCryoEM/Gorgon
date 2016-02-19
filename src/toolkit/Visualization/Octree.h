@@ -283,11 +283,11 @@ namespace Foundation {
 
 
     template <class TTag> vector<OctreeNode<TTag> *> Octree<TTag>::IntersectRay(Vector3Float ray, Vector3Float origin, float rayWidth) {
-        ray.Normalize();
+        ray.normalize();
         Vector3Float planeVec1 = ray.GetOrthogonal();
-        planeVec1.Normalize();
+        planeVec1.normalize();
         Vector3Float planeVec2 = ray ^ planeVec1;
-        planeVec2.Normalize();
+        planeVec2.normalize();
         //printf("Ray   : %f %f %f \n", ray.X(), ray.Y(), ray.Z());
         //printf("Origin: %f %f %f \n", origin.X(), origin.Y(), origin.Z());
         //flushall();
@@ -326,7 +326,7 @@ namespace Foundation {
         }
 
         for(unsigned int i = 0; i < testVectors.size(); i++) {
-            testVectors[i].Normalize();
+            testVectors[i].normalize();
             testVectors[i] = Vector3Float(-testVectors[i].Y(), testVectors[i].X(), 0); // Rotate by 90 in 2D
         }
 

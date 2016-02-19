@@ -91,7 +91,7 @@ namespace Protein_Morph {
         for(unsigned int i = 0; i < vertices[vertexHash].faceHashes.size(); i++) {
             normal += GetFaceNormal(vertices[vertexHash].faceHashes[i]);
         }
-        normal.Normalize();
+        normal.normalize();
         return normal;
     }
 
@@ -100,7 +100,7 @@ namespace Protein_Morph {
         Vector3Float normal = (vertices[face.vertexHashes[1]].position - vertices[face.vertexHashes[0]].position) ^
                                (vertices[face.vertexHashes[2]].position - vertices[face.vertexHashes[0]].position);
 
-        normal.Normalize();
+        normal.normalize();
         return normal;
     }
 
