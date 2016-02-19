@@ -284,7 +284,7 @@ namespace Foundation {
 
     template <class TTag> vector<OctreeNode<TTag> *> Octree<TTag>::IntersectRay(Vector3Float ray, Vector3Float origin, float rayWidth) {
         ray.normalize();
-        Vector3Float planeVec1 = ray.GetOrthogonal();
+        Vector3Float planeVec1 = ray.getOrthogonal();
         planeVec1.normalize();
         Vector3Float planeVec2 = ray ^ planeVec1;
         planeVec2.normalize();
