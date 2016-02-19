@@ -297,7 +297,7 @@ namespace Foundation {
         Vector3Float rayPoint3D;
         for(int i = 0; i < 4; i ++) {
             rayPoint3D = origin + planeVec1 * rayWidth * ((float)octreeChildren[i][0] * 2.0f - 1.0f) + planeVec2 * rayWidth * ((float)octreeChildren[i][1] * 2.0f - 1.0f);
-            rayPoints2D.push_back(Vector3Float::Project3Dto2D(rayPoint3D, origin, planeVec1, planeVec2));
+            rayPoints2D.push_back(Vector3Float::project3Dto2D(rayPoint3D, origin, planeVec1, planeVec2));
         }
 
         vector<Vector3Float> cubePoints2D;
@@ -305,7 +305,7 @@ namespace Foundation {
 
         for(int i = 0; i < 8; i ++) {
             cubePoint3D = Vector3Float(rootNode->pos[0] + octreeChildren[i][0] * rootNode->cellSize, rootNode->pos[1] + octreeChildren[i][1] * rootNode->cellSize, rootNode->pos[2] + octreeChildren[i][2] * rootNode->cellSize);
-            cubePoints2D.push_back(Vector3Float::Project3Dto2D(cubePoint3D, origin, planeVec1, planeVec2));
+            cubePoints2D.push_back(Vector3Float::project3Dto2D(cubePoint3D, origin, planeVec1, planeVec2));
         }
 
 
