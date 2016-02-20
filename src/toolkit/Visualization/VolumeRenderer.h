@@ -81,14 +81,14 @@ namespace Visualization {
         Volume * GetVolume();
         Volume * PerformBinarySkeletonizationJu2007(double threshold, int minCurveSize, int minSurfaceSize);
         Volume * PerformGrayscaleSkeletonizationAbeysinghe2008(double startDensity, int stepCount, int minCurveSize, int minSurfaceSize, int curveRadius, int surfaceRadius, int skeletonSmoothenRadius);
-        void SetSpacing(float spX, float spY, float spZ);
-        float GetSpacingX();
-        float GetSpacingY();
-        float GetSpacingZ();
-        void SetOrigin(float orgX, float orgY, float orgZ);
-        float GetOriginX();
-        float GetOriginY();
-        float GetOriginZ();
+        void setSpacing(float spX, float spY, float spZ);
+        float getSpacingX();
+        float getSpacingY();
+        float getSpacingZ();
+        void setOrigin(float orgX, float orgY, float orgZ);
+        float getOriginX();
+        float getOriginY();
+        float getOriginZ();
 
     private:
         int GetHashKey(int x, int y, int z, int edge, int iScale);
@@ -118,7 +118,6 @@ namespace Visualization {
         int sampleInterval;
         int displayRadius;
         int viewingType;
-        Volume * volData;
         Volume * cuttingVolume;
         Vector3Float radiusOrigin;
         bool useDisplayRadius;
@@ -961,62 +960,60 @@ namespace Visualization {
         return volData;
     }
 
-    void VolumeRenderer::SetSpacing(float spX, float spY, float spZ) {
+    void VolumeRenderer::setSpacing(float spX, float spY, float spZ) {
         if(volData != NULL) {
             volData->setSpacing(spX, spY, spZ);
-        } else {
-            Renderer::SetSpacing(spX, spY, spZ);
         }
     }
 
-    float VolumeRenderer::GetSpacingX() {
+    float VolumeRenderer::getSpacingX() {
         if(volData != NULL) {
             return volData->getSpacingX();
         }
-        return Renderer::GetSpacingX();
+        return Renderer::getSpacingX();
     }
 
-    float VolumeRenderer::GetSpacingY() {
+    float VolumeRenderer::getSpacingY() {
         if(volData != NULL) {
             return volData->getSpacingY();
         }
-        return Renderer::GetSpacingY();
+        return Renderer::getSpacingY();
     }
 
-    float VolumeRenderer::GetSpacingZ() {
+    float VolumeRenderer::getSpacingZ() {
         if(volData != NULL) {
             return volData->getSpacingZ();
         }
-        return Renderer::GetSpacingZ();
+        return Renderer::getSpacingZ();
     }
 
-    void VolumeRenderer::SetOrigin(float orgX, float orgY, float orgZ) {
+    void VolumeRenderer::setOrigin(float orgX, float orgY, float orgZ) {
         if(volData != NULL) {
             volData->setOrigin(orgX, orgY, orgZ);
         } else {
-            Renderer::SetOrigin(orgX, orgY, orgZ);
+            Renderer::setOrigin(orgX, orgY, orgZ);
         }
     }
 
-    float VolumeRenderer::GetOriginX() {
+    float VolumeRenderer::getOriginX() {
         if(volData != NULL) {
             return volData->getOriginX();
         }
-        return Renderer::GetOriginX();
+        return Renderer::getOriginX();
     }
 
-    float VolumeRenderer::GetOriginY() {
+    float VolumeRenderer::getOriginY() {
         if(volData != NULL) {
             return volData->getOriginY();
         }
-        return Renderer::GetOriginY();
+        return Renderer::getOriginY();
     }
 
-    float VolumeRenderer::GetOriginZ() {
+    float VolumeRenderer::getOriginZ() {
         if(volData != NULL) {
             return volData->getOriginZ();
         }
-        return Renderer::GetOriginZ();
+        return Renderer::getOriginZ();
     }
 }
 
