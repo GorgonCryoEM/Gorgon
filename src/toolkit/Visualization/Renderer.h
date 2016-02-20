@@ -25,8 +25,6 @@ namespace Visualization {
         Renderer();
         virtual ~Renderer();
         virtual void DrawBoundingBox();
-        virtual void LoadFile(string fileName);
-        virtual void SaveFile(string fileName);
         virtual void Unload();
         virtual bool SelectionRotate(Vector3Float centerOfMass, Vector3Float rotationAxis, float angle);
         virtual int SelectionObjectCount();
@@ -103,12 +101,6 @@ namespace Visualization {
             minPts[i] = -0.5;
             maxPts[i] = 0.5;
         }
-    }
-
-    void Renderer::LoadFile(string fileName) {
-    }
-
-    void Renderer::SaveFile(string fileName) {
     }
 
     bool Renderer::SelectionRotate(Vector3Float centerOfMass, Vector3Float rotationAxis, float angle) {
