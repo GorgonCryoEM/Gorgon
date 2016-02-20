@@ -81,14 +81,6 @@ namespace Visualization {
         Volume * GetVolume();
         Volume * PerformBinarySkeletonizationJu2007(double threshold, int minCurveSize, int minSurfaceSize);
         Volume * PerformGrayscaleSkeletonizationAbeysinghe2008(double startDensity, int stepCount, int minCurveSize, int minSurfaceSize, int curveRadius, int surfaceRadius, int skeletonSmoothenRadius);
-        void setSpacing(float spX, float spY, float spZ);
-        float getSpacingX();
-        float getSpacingY();
-        float getSpacingZ();
-        void setOrigin(float orgX, float orgY, float orgZ);
-        float getOriginX();
-        float getOriginY();
-        float getOriginZ();
 
     private:
         int GetHashKey(int x, int y, int z, int edge, int iScale);
@@ -960,61 +952,6 @@ namespace Visualization {
         return volData;
     }
 
-    void VolumeRenderer::setSpacing(float spX, float spY, float spZ) {
-        if(volData != NULL) {
-            volData->setSpacing(spX, spY, spZ);
-        }
-    }
-
-    float VolumeRenderer::getSpacingX() {
-        if(volData != NULL) {
-            return volData->getSpacingX();
-        }
-        return Renderer::getSpacingX();
-    }
-
-    float VolumeRenderer::getSpacingY() {
-        if(volData != NULL) {
-            return volData->getSpacingY();
-        }
-        return Renderer::getSpacingY();
-    }
-
-    float VolumeRenderer::getSpacingZ() {
-        if(volData != NULL) {
-            return volData->getSpacingZ();
-        }
-        return Renderer::getSpacingZ();
-    }
-
-    void VolumeRenderer::setOrigin(float orgX, float orgY, float orgZ) {
-        if(volData != NULL) {
-            volData->setOrigin(orgX, orgY, orgZ);
-        } else {
-            Renderer::setOrigin(orgX, orgY, orgZ);
-        }
-    }
-
-    float VolumeRenderer::getOriginX() {
-        if(volData != NULL) {
-            return volData->getOriginX();
-        }
-        return Renderer::getOriginX();
-    }
-
-    float VolumeRenderer::getOriginY() {
-        if(volData != NULL) {
-            return volData->getOriginY();
-        }
-        return Renderer::getOriginY();
-    }
-
-    float VolumeRenderer::getOriginZ() {
-        if(volData != NULL) {
-            return volData->getOriginZ();
-        }
-        return Renderer::getOriginZ();
-    }
 }
 
 
