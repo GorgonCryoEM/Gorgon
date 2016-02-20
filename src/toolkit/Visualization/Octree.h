@@ -34,8 +34,8 @@ namespace Foundation {
 
 
     struct OctreeProjectionTestMinMaxStruct {
-        float minVal;
-        float maxVal;
+        float min;
+        float max;
     };
 
     template <class TTag>
@@ -458,12 +458,12 @@ namespace Foundation {
         float val;
 
         for(unsigned int i = 0; i < testVectors.size(); i++)  {
-            minMaxVals.maxVal = MIN_FLOAT;
-            minMaxVals.minVal = MAX_FLOAT;
+            minMaxVals.max = MIN_FLOAT;
+            minMaxVals.min = MAX_FLOAT;
             for(unsigned int j = 0; j < points2D.size(); j++) {
                 val = testVectors[i] * points2D[j];
-                minMaxVals.minVal = min(val, minMaxVals.minVal);
-                minMaxVals.maxVal = max(val, minMaxVals.maxVal);
+                minMaxVals.min = min(val, minMaxVals.min);
+                minMaxVals.max = max(val, minMaxVals.max);
             }
             retVal.push_back(minMaxVals);
         }
@@ -476,11 +476,11 @@ namespace Foundation {
         OctreeProjectionTestMinMaxStruct minMaxVals;
 
         for(unsigned int i = 0; i < testVectors.size(); i++)  {
-            minMaxVals.maxVal = MIN_FLOAT;
-            minMaxVals.minVal = MAX_FLOAT;
+            minMaxVals.max = MIN_FLOAT;
+            minMaxVals.min = MAX_FLOAT;
             for(unsigned int j = 0; j < points1D[i].size(); j++) {
-                minMaxVals.minVal = min(points1D[i][j], minMaxVals.minVal);
-                minMaxVals.maxVal = max(points1D[i][j], minMaxVals.maxVal);
+                minMaxVals.min = min(points1D[i][j], minMaxVals.min);
+                minMaxVals.max = max(points1D[i][j], minMaxVals.max);
             }
             retVal.push_back(minMaxVals);
         }
@@ -509,9 +509,9 @@ namespace Foundation {
 
         for(unsigned int i = 0; i < testVectors.size(); i++) {
             intersecting = intersecting &&
-                (((minMaxCubePoints1D[i].minVal <= minMaxRayPoints1D[i].minVal) && (minMaxCubePoints1D[i].maxVal >= minMaxRayPoints1D[i].minVal)) ||
-                ((minMaxCubePoints1D[i].minVal <= minMaxRayPoints1D[i].maxVal) && (minMaxCubePoints1D[i].maxVal >= minMaxRayPoints1D[i].maxVal)) ||
-                ((minMaxCubePoints1D[i].minVal >= minMaxRayPoints1D[i].minVal) && (minMaxCubePoints1D[i].maxVal <= minMaxRayPoints1D[i].maxVal)));
+                (((minMaxCubePoints1D[i].min <= minMaxRayPoints1D[i].min) && (minMaxCubePoints1D[i].max >= minMaxRayPoints1D[i].min)) ||
+                ((minMaxCubePoints1D[i].min <= minMaxRayPoints1D[i].max) && (minMaxCubePoints1D[i].max >= minMaxRayPoints1D[i].max)) ||
+                ((minMaxCubePoints1D[i].min >= minMaxRayPoints1D[i].min) && (minMaxCubePoints1D[i].max <= minMaxRayPoints1D[i].max)));
         }
 
         if(intersecting) {

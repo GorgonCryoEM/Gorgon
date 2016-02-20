@@ -340,8 +340,8 @@ namespace Visualization {
     void VolumeRenderer::InitializeOctreeTag(VolumeRendererOctreeNodeType * node) {
         if(node != NULL) {
             OctreeProjectionTestMinMaxStruct tag;
-            tag.maxVal = MIN_FLOAT;
-            tag.minVal = MAX_FLOAT;
+            tag.max = MIN_FLOAT;
+            tag.min = MAX_FLOAT;
             node->tag = tag;
             if (!node->isLeaf) {
                 for(int i = 0; i < 8; i++) {
@@ -412,7 +412,7 @@ namespace Visualization {
         while(!q.empty()) {
             node = q.front();
             q.pop();
-            if((node->tag.minVal <= surfaceValue) && (node->tag.maxVal >= surfaceValue)) {
+            if((node->tag.min <= surfaceValue) && (node->tag.max >= surfaceValue)) {
                 if((int)node->cellSize <= sampleInterval + sampleInterval) {
                     for(int i = 0; i < 8; i++) {
                         if(node->children[i] != NULL) {
