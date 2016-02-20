@@ -466,36 +466,29 @@ namespace Foundation {
 
     template <class TTag>
     vector<Range> Octree<TTag>::GetMinMax1DProjectionValues(vector<Vector3Float> & testVectors, vector<Vector3Float> & points2D) {
-        vector<Range> retVal;
-        Range minMaxVals;
-        float val;
+        const size_t N = testVectors.size();
+        vector<Range> retVal(N);
 
-        for(unsigned int i = 0; i < testVectors.size(); i++)  {
-            minMaxVals.max = MIN_FLOAT;
-            minMaxVals.min = MAX_FLOAT;
+        for(unsigned int i = 0; i < N; i++)  {
             for(unsigned int j = 0; j < points2D.size(); j++) {
-                val = testVectors[i] * points2D[j];
-                minMaxVals.min = min(val, minMaxVals.min);
-                minMaxVals.max = max(val, minMaxVals.max);
+                float val = testVectors[i] * points2D[j];
+                retVal[i].setMin(val);
+                retVal[i].setMax(val);
             }
-            retVal.push_back(minMaxVals);
         }
         return retVal;
     }
 
     template <class TTag>
     vector<Range> Octree<TTag>::GetMinMax1DProjectionValues(vector<Vector3Float> & testVectors, vector< vector<float> > & points1D) {
-        vector<Range> retVal;
-        Range minMaxVals;
+        const size_t N = testVectors.size();
+        vector<Range> retVal(N);
 
-        for(unsigned int i = 0; i < testVectors.size(); i++)  {
-            minMaxVals.max = MIN_FLOAT;
-            minMaxVals.min = MAX_FLOAT;
+        for(unsigned int i = 0; i < N; i++)  {
             for(unsigned int j = 0; j < points1D[i].size(); j++) {
-                minMaxVals.min = min(points1D[i][j], minMaxVals.min);
-                minMaxVals.max = max(points1D[i][j], minMaxVals.max);
+                retVal[i].setMin(points1D[i][j]);
+                retVal[i].setMax(points1D[i][j]);
             }
-            retVal.push_back(minMaxVals);
         }
         return retVal;
     }
