@@ -14,6 +14,7 @@
 #include "OpenGLUtils.h"
 //#include <MathTools/Vector3D.h>
 //#include <MathTools/MathLib.h>
+#include "MathTools/Dim3D.h"
 
 //using namespace std;
 //using namespace wustl_mm::MathTools;
@@ -47,8 +48,8 @@ namespace Visualization {
         float GetMax(int dimension);
 
     protected:
-        float minPts[3];
-        float maxPts[3];
+        Dim3D<float> minPts;
+        Dim3D<float> maxPts;
         bool selected;
         Vector3Float cuttingPlaneCenter;
         Vector3Float cuttingPlaneDirection;
