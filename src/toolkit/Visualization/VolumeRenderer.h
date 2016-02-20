@@ -156,11 +156,11 @@ namespace Visualization {
     }
 
     float VolumeRenderer::GetMaxDensity(){
-        return volData->getMax();
+        return getMax();
     }
 
     float VolumeRenderer::GetMinDensity() {
-        return volData->getMin();
+        return getMin();
     }
 
     float VolumeRenderer::GetOffset(float fValue1, float fValue2, float fValueDesired) {
@@ -642,7 +642,7 @@ namespace Visualization {
 
             // Approximations to avoid division by zero
             if(isZero(minVal - maxVal, 0.000000000001)) {
-                maxVal = minVal + (volData->getMax() - volData->getMin()) / 1000.0;
+                maxVal = minVal + (getMax() - getMin()) / 1000.0;
             }
             if(isZero(minVal - maxVal, 0.000000000001)) {
                 maxVal = minVal + 0.0001;
@@ -937,10 +937,10 @@ namespace Visualization {
     }
 
     Volume * VolumeRenderer::PerformGrayscaleSkeletonizationAbeysinghe2008(double startDensity, int stepCount, int minCurveSize, int minSurfaceSize, int curveRadius, int surfaceRadius, int skeletonRadius) {
-        double stepSize = (volData->getMax() - startDensity) / stepCount;
+        double stepSize = (getMax() - startDensity) / stepCount;
         if(!isZero(stepSize)) {
             VolumeSkeletonizer * skeletonizer = new VolumeSkeletonizer(0, curveRadius, surfaceRadius, skeletonRadius);
-            Volume * outputVol = skeletonizer->PerformImmersionSkeletonizationAndPruning(volData, NULL, startDensity, volData->getMax(), stepSize, 0, 0, minCurveSize, minSurfaceSize, 0, 0, "", true, 1.0, DEFAULT_PRUNE_THRESHOLD, DEFAULT_PRUNE_THRESHOLD);
+            Volume * outputVol = skeletonizer->PerformImmersionSkeletonizationAndPruning(volData, NULL, startDensity, getMax(), stepSize, 0, 0, minCurveSize, minSurfaceSize, 0, 0, "", true, 1.0, DEFAULT_PRUNE_THRESHOLD, DEFAULT_PRUNE_THRESHOLD);
             delete skeletonizer;
             return outputVol;
         } else {
