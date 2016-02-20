@@ -39,6 +39,14 @@ namespace Foundation {
                min(MAX_FLOAT)
          {}
 
+         void setMin(float val) {
+             min = ::min(min, val);
+         }
+
+         void setMax(float val) {
+             max = ::max(max, val);
+         }
+
         float min;
         float max;
     };
