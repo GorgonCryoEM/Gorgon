@@ -56,46 +56,53 @@ namespace Visualization {
         VolumeRenderer();
         ~VolumeRenderer();
 
-        float GetMaxDensity();
-        float GetMinDensity();
-        float GetSurfaceValue() const ;
-        int GetSampleInterval() const ;
-        string GetSupportedLoadFileFormats();
-        string GetSupportedSaveFileFormats();
-        void EnableDraw(bool enable);
-        void Draw(int subSceneIndex, bool selectEnabled);
-        void LoadFile(string fileName);
-        void SaveFile(string fileName);
-        void SetDisplayRadius(const int radius);
-        void SetDisplayRadiusOrigin(float radiusOriginX, float radiusOriginY, float radiusOriginZ);
-        void UseDisplayRadius(bool useRadius);
-        void SetViewingType(const int type);
-        void SetSampleInterval(const int size);
-        void SetSurfaceValue(const float value);
-        void SetMaxSurfaceValue(const float value);
-        bool SetCuttingPlane(float position, float vecX, float vecY, float vecZ);
-        void UpdateBoundingBox() ;
-        void Unload();
-        void NormalizeVolume();
-        void DownsampleVolume();
+            float GetMaxDensity();
+            float GetMinDensity();
+            float GetSurfaceValue() const;
+            int GetSampleInterval() const;
+            string GetSupportedLoadFileFormats();
+            string GetSupportedSaveFileFormats();
+            void EnableDraw(bool enable);
+            void Draw(int subSceneIndex, bool selectEnabled);
+            void LoadFile(string fileName);
+            void SaveFile(string fileName);
+            void SetDisplayRadius(const int radius);
+            void SetDisplayRadiusOrigin(float radiusOriginX,
+                                        float radiusOriginY,
+                                        float radiusOriginZ);
+            void UseDisplayRadius(bool useRadius);
+            void SetViewingType(const int type);
+            void SetSampleInterval(const int size);
+            void SetSurfaceValue(const float value);
+            void SetMaxSurfaceValue(const float value);
+            bool SetCuttingPlane(float position, float vecX, float vecY,
+                                 float vecZ);
+            void UpdateBoundingBox();
+            void Unload();
+            void NormalizeVolume();
+            void DownsampleVolume();
 
     private:
-        int GetHashKey(int x, int y, int z, int edge, int iScale);
-        float GetVoxelData(Volume * vol, int x, int y, int z);
-        float GetVoxelData(Volume * vol, float x, float y, float z);
-        float GetOffset(float fValue1, float fValue2, float fValueDesired);
-        bool CalculateSurface();
-        bool CalculateCuttingSurface();
-        bool CalculateSolidRendering();
-        bool CalculateDisplay();
-        void Load3DTextureSolidRendering();
-        void Load3DTextureCrossSection();
-        void InitializeOctree();
-        void InitializeOctreeTag(VolumeRendererOctreeNodeType * node);
-        void CalculateOctreeNode(VolumeRendererOctreeNodeType * node);
-        void MarchingCube(Volume * vol, NonManifoldMesh * mesh, const float iso_level, int iX, int iY, int iZ, int iScale);
-        void MarchingCube(Volume * vol, VolumeSurfaceMeshType * mesh, const float iso_level, int iX, int iY, int iZ, int iScale);
-        int Smallest2ndPower(int value);
+            int GetHashKey(int x, int y, int z, int edge, int iScale);
+            float GetVoxelData(Volume * vol, int x, int y, int z);
+            float GetVoxelData(Volume * vol, float x, float y, float z);
+            float GetOffset(float fValue1, float fValue2, float fValueDesired);
+            bool CalculateSurface();
+            bool CalculateCuttingSurface();
+            bool CalculateSolidRendering();
+            bool CalculateDisplay();
+            void Load3DTextureSolidRendering();
+            void Load3DTextureCrossSection();
+            void InitializeOctree();
+            void InitializeOctreeTag(VolumeRendererOctreeNodeType * node);
+            void CalculateOctreeNode(VolumeRendererOctreeNodeType * node);
+            void MarchingCube(Volume * vol, NonManifoldMesh * mesh,
+                              const float iso_level, int iX, int iY, int iZ,
+                              int iScale);
+            void MarchingCube(Volume * vol, VolumeSurfaceMeshType * mesh,
+                              const float iso_level, int iX, int iY, int iZ,
+                              int iScale);
+            int Smallest2ndPower(int value);
     private:
         int marchingCubeCallCount;
         bool drawEnabled;
@@ -867,9 +874,6 @@ namespace Visualization {
                 break;
         }
     }
-
-
-
 
 
     void VolumeRenderer::SetDisplayRadius(const int radius) {

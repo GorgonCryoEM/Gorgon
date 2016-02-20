@@ -22,39 +22,48 @@ using namespace Foundation;
 
 namespace Visualization {
     class Renderer {
-    public:
-        Renderer();
-        virtual ~Renderer();
-        virtual void DrawBoundingBox();
-        virtual void Unload();
-        virtual bool SelectionRotate(Vector3Float centerOfMass, Vector3Float rotationAxis, float angle);
-        virtual int SelectionObjectCount();
-        virtual Vector3Float SelectionCenterOfMass();
-        virtual bool SelectionMove(Vector3Float moveDirection);
-        virtual bool SelectionClear();
-        virtual void SelectionToggle(int subsceneIndex, bool forceTrue, int ix0, int ix1 = -1, int ix2 = -1, int ix3 = -1, int ix4 = -1);
-        virtual string GetSupportedLoadFileFormats();
-        virtual string GetSupportedSaveFileFormats();
-        virtual Vector3Float Get3DCoordinates(int subsceneIndex, int ix0, int ix1 = -1, int ix2 = -1, int ix3 = -1, int ix4 = -1);
-        bool SetCuttingPlane(float position, float vecX, float vecY, float vecZ);
-        void static DrawSphere(Vector3Float center, float radius);
-        void static DrawCylinder(Vector3Float pt1, Vector3Float pt2, float radius, int slices = 10, int stacks = 10);
-        void static DrawLine(Vector3Float pt1, Vector3Float pt2);
-        virtual void SetDisplayStyle(int style);
-        virtual void SetObjectSpecificColoring(bool objectSpecific);
-        virtual void UpdateBoundingBox();
+        public:
+            Renderer();
+            virtual ~Renderer();
+            virtual void DrawBoundingBox();
+            virtual void Unload();
+            virtual bool SelectionRotate(Vector3Float centerOfMass,
+                                         Vector3Float rotationAxis,
+                                         float angle);
+            virtual int SelectionObjectCount();
+            virtual Vector3Float SelectionCenterOfMass();
+            virtual bool SelectionMove(Vector3Float moveDirection);
+            virtual bool SelectionClear();
+            virtual void SelectionToggle(int subsceneIndex, bool forceTrue,
+                                         int ix0, int ix1 = -1, int ix2 = -1,
+                                         int ix3 = -1, int ix4 = -1);
+            virtual string GetSupportedLoadFileFormats();
+            virtual string GetSupportedSaveFileFormats();
+            virtual Vector3Float Get3DCoordinates(int subsceneIndex, int ix0,
+                                                  int ix1 = -1, int ix2 = -1,
+                                                  int ix3 = -1, int ix4 = -1);
+            bool SetCuttingPlane(float position, float vecX, float vecY,
+                                 float vecZ);
+            void static DrawSphere(Vector3Float center, float radius);
+            void static DrawCylinder(Vector3Float pt1, Vector3Float pt2,
+                                     float radius, int slices = 10, int stacks =
+                                             10);
+            void static DrawLine(Vector3Float pt1, Vector3Float pt2);
+            virtual void SetDisplayStyle(int style);
+            virtual void SetObjectSpecificColoring(bool objectSpecific);
+            virtual void UpdateBoundingBox();
 
-        float getMin(int dimension);
-        float getMax(int dimension);
+            float getMin(int dimension);
+            float getMax(int dimension);
 
-    protected:
-        Dim3D<float> minPts;
-        Dim3D<float> maxPts;
-        bool selected;
-        Vector3Float cuttingPlaneCenter;
-        Vector3Float cuttingPlaneDirection;
-        int displayStyle;
-        bool isObjectSpecificColoring;
+        protected:
+            Dim3D<float> minPts;
+            Dim3D<float> maxPts;
+            bool selected;
+            Vector3Float cuttingPlaneCenter;
+            Vector3Float cuttingPlaneDirection;
+            int displayStyle;
+            bool isObjectSpecificColoring;
     };
 
     Renderer::Renderer() {
@@ -79,10 +88,13 @@ namespace Visualization {
 
     void Renderer::DrawBoundingBox() {
         glPushAttrib(GL_LIGHTING_BIT | GL_ENABLE_BIT);
-        glDisable(GL_LIGHTING);
+        glDisable (GL_LIGHTING);
         glPushMatrix();
-        glTranslatef(minPts[0]+(maxPts[0]-minPts[0])/2.0, minPts[1]+(maxPts[1]-minPts[1])/2.0, minPts[2]+(maxPts[2]-minPts[2])/2.0);
-        glScalef(maxPts[0]-minPts[0], maxPts[1]-minPts[1], maxPts[2]-minPts[2]);
+        glTranslatef(minPts[0] + (maxPts[0] - minPts[0]) / 2.0,
+                minPts[1] + (maxPts[1] - minPts[1]) / 2.0,
+                minPts[2] + (maxPts[2] - minPts[2]) / 2.0);
+        glScalef(maxPts[0] - minPts[0], maxPts[1] - minPts[1],
+                maxPts[2] - minPts[2]);
         glutWireCube(1.0);
         glPopMatrix();
         glPopAttrib();
@@ -95,7 +107,9 @@ namespace Visualization {
         }
     }
 
-    bool Renderer::SelectionRotate(Vector3Float centerOfMass, Vector3Float rotationAxis, float angle) {
+    bool Renderer::SelectionRotate(Vector3Float centerOfMass,
+                                   Vector3Float rotationAxis, float angle)
+    {
         return false;
     }
 
@@ -104,7 +118,8 @@ namespace Visualization {
     }
 
     Vector3Float Renderer::SelectionCenterOfMass() {
-        return Vector3Float((maxPts[0] - minPts[0]) / 2.0, (maxPts[1] - minPts[1]) / 2.0, (maxPts[2] - minPts[2]) / 2.0);
+        return Vector3Float( (maxPts[0] - minPts[0]) / 2.0,
+                (maxPts[1] - minPts[1]) / 2.0, (maxPts[2] - minPts[2]) / 2.0);
     }
 
     bool Renderer::SelectionMove(Vector3Float moveDirection) {
@@ -122,12 +137,16 @@ namespace Visualization {
 
     }
 
-    void Renderer::SelectionToggle(int subsceneIndex, bool forceTrue, int ix0, int ix1, int ix2, int ix3, int ix4) {
+    void Renderer::SelectionToggle(int subsceneIndex, bool forceTrue, int ix0,
+                                   int ix1, int ix2, int ix3, int ix4)
+    {
         selected = true;
     }
 
-    Vector3Float Renderer::Get3DCoordinates(int subsceneIndex, int ix0, int ix1, int ix2, int ix3, int ix4) {
-        return Vector3Float(0,0,0);
+    Vector3Float Renderer::Get3DCoordinates(int subsceneIndex, int ix0, int ix1,
+                                            int ix2, int ix3, int ix4)
+    {
+        return Vector3Float(0, 0, 0);
     }
 
     void Renderer::Unload() {
@@ -142,12 +161,17 @@ namespace Visualization {
         return "All Files (*.*)";
     }
 
-    bool Renderer::SetCuttingPlane(float position, float vecX, float vecY, float vecZ) {
-        Vector3Float center = Vector3Float( (minPts[0] + maxPts[0])/2.0, (minPts[1] + maxPts[1])/2.0, (minPts[2] + maxPts[2])/2.0);
-        float distance = (Vector3Float(minPts[0], minPts[1], minPts[2]) - center).length();
+    bool Renderer::SetCuttingPlane(float position, float vecX, float vecY,
+                                   float vecZ)
+    {
+        Vector3Float center = Vector3Float( (minPts[0] + maxPts[0]) / 2.0,
+                (minPts[1] + maxPts[1]) / 2.0, (minPts[2] + maxPts[2]) / 2.0);
+        float distance =
+                (Vector3Float(minPts[0], minPts[1], minPts[2]) - center).length();
         cuttingPlaneDirection = Vector3Float(vecX, vecY, vecZ);
         cuttingPlaneDirection.normalize();
-        cuttingPlaneCenter = center +  cuttingPlaneDirection * position * distance;
+        cuttingPlaneCenter = center
+                + cuttingPlaneDirection * position * distance;
         //printf("%lf %lf %lf - %lf %lf\n", cuttingPlaneCenter.values[0], cuttingPlaneCenter.values[1], cuttingPlaneCenter.values[2], position, distance); flushall();
         return false;
     }
@@ -161,7 +185,9 @@ namespace Visualization {
         glPopMatrix();
     }
 
-    void Renderer::DrawCylinder(Vector3Float pt1, Vector3Float pt2, float radius, int slices, int stacks) {
+    void Renderer::DrawCylinder(Vector3Float pt1, Vector3Float pt2,
+                                float radius, int slices, int stacks)
+    {
         Vector3Float qmp = pt1-pt2;
         float length = qmp.length();
         qmp.normalize();
