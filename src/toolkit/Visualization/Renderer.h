@@ -54,23 +54,16 @@ namespace Visualization {
         bool selected;
         Vector3Float cuttingPlaneCenter;
         Vector3Float cuttingPlaneDirection;
-        GLUquadric * quadricSphere;
-        GLUquadric * quadricCylinder;
         int displayStyle;
         bool isObjectSpecificColoring;
     };
 
     Renderer::Renderer() {
         selected = false;
-        quadricSphere = gluNewQuadric();
-        quadricCylinder = gluNewQuadric();
         isObjectSpecificColoring = false;
-
     }
 
     Renderer::~Renderer() {
-        gluDeleteQuadric(quadricSphere);
-        gluDeleteQuadric(quadricCylinder);
     }
 
     float Renderer::GetMin(int dimension) {
