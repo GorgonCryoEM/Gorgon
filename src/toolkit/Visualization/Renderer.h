@@ -44,8 +44,8 @@ namespace Visualization {
         virtual void SetObjectSpecificColoring(bool objectSpecific);
         virtual void UpdateBoundingBox();
 
-        float GetMin(int dimension);
-        float GetMax(int dimension);
+        float getMin(int dimension);
+        float getMax(int dimension);
 
     protected:
         Dim3D<float> minPts;
@@ -65,11 +65,11 @@ namespace Visualization {
     Renderer::~Renderer() {
     }
 
-    float Renderer::GetMin(int dimension) {
+    float Renderer::getMin(int dimension) {
         return minPts[dimension];
     }
 
-    float Renderer::GetMax(int dimension) {
+    float Renderer::getMax(int dimension) {
         return maxPts[dimension];
     }
 
