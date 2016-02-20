@@ -24,6 +24,8 @@ namespace Toolkit {
       T X() const;
       T Y() const;
       T Z() const;
+      T& operator[](int i);
+      const T& operator[](int i) const;
 
     private:
       T x;

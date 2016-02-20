@@ -44,3 +44,22 @@ template<class T>
 inline T Dim3D<T>::Z() const{
     return z;
 }
+
+template<class T>
+T& Dim3D<T>::operator[](int i){
+    return const_cast<T&>(static_cast<const Dim3D<T>& >(*this)[i]);
+}
+
+template<class T>
+const T& Dim3D<T>::operator[](int i) const{
+    switch(i) {
+        case 0:
+            return x;
+        case 1:
+            return y;
+        case 2:
+            return z;
+        default:
+            throw "Not valid Dim3D index";
+    }
+}
