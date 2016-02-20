@@ -10,7 +10,10 @@
 
 #include <iostream>
 
+#include "Vector3.h"
+
 using namespace std;
+using namespace GraphMatch;
 
 namespace Toolkit {
 
@@ -26,6 +29,10 @@ namespace Toolkit {
       T Z() const;
       T& operator[](int i);
       const T& operator[](int i) const;
+
+      operator Vector3<T>() {
+          return Vector3<T>(x, y, z);
+      }
 
     private:
       T x;
