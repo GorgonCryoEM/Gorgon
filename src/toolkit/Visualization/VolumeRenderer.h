@@ -208,7 +208,7 @@ namespace Visualization {
         z += a2iEdgeHash[edge][3]*iScale;
 
         edge = a2iEdgeHash[edge][0];
-        return x * volData->getSizeY() * volData->getSizeZ() * 3 + y * volData->getSizeZ() * 3 + z * 3 + edge;
+        return x * getSizeY() * getSizeZ() * 3 + y * getSizeZ() * 3 + z * 3 + edge;
     }
 
     int VolumeRenderer::GetSampleInterval() const  {
@@ -370,7 +370,7 @@ namespace Visualization {
 
                             for(unsigned int j = 0; j < 2; j++) {
                                 vertex = cuttingMesh->vertices[cuttingMesh->GetVertexIndex(cuttingMesh->edges[i].vertexIds[j])].position;
-                                glVertex3f(vertex.X() * (float)volData->getSizeX(), vertex.Y() * (float)volData->getSizeY(), vertex.Z() * (float)volData->getSizeZ());
+                                glVertex3f(vertex.X() * (float)getSizeX(), vertex.Y() * (float)getSizeY(), vertex.Z() * (float)getSizeZ());
                             }
                         }
                     }
@@ -385,16 +385,16 @@ namespace Visualization {
                 //if(resident) {
                     glBindTexture(GL_TEXTURE_3D, textureName);
 
-                    double xRatio = (double)volData->getSizeX() / (double)textureSizeX;
-                    double yRatio = (double)volData->getSizeY() / (double)textureSizeY;
-                    double zRatio = (double)volData->getSizeZ() / (double)textureSizeZ;
+                    double xRatio = (double)getSizeX() / (double)textureSizeX;
+                    double yRatio = (double)getSizeY() / (double)textureSizeY;
+                    double zRatio = (double)getSizeZ() / (double)textureSizeZ;
 
                     for(unsigned int i = 0; i < cuttingMesh->faces.size(); i++) {
                         glBegin(GL_POLYGON);
                         for(unsigned int j = 0; j < cuttingMesh->faces[i].vertexIds.size(); j++) {
                             vertex = cuttingMesh->vertices[cuttingMesh->GetVertexIndex(cuttingMesh->faces[i].vertexIds[j])].position;
                             glTexCoord3d(vertex.X() * xRatio, vertex.Y()* yRatio, vertex.Z() * zRatio);
-                            glVertex3f(vertex.X() * (float)volData->getSizeX(), vertex.Y() * (float)volData->getSizeY(), vertex.Z() * (float)volData->getSizeZ());
+                            glVertex3f(vertex.X() * (float)getSizeX(), vertex.Y() * (float)getSizeY(), vertex.Z() * (float)getSizeZ());
                         }
                         glEnd();
                     }
@@ -443,9 +443,9 @@ namespace Visualization {
             if(drawEnabled && volData != NULL) {
                 redraw = true;
                 int iX, iY, iZ;
-                int maxX = volData->getSizeX();
-                int maxY = volData->getSizeY();
-                int maxZ = volData->getSizeZ();
+                int maxX = getSizeX();
+                int maxY = getSizeY();
+                int maxZ = getSizeZ();
                 for(iX = 0; iX < maxX; iX+=sampleInterval) {
                     for(iY = 0; iY < maxY; iY+=sampleInterval) {
                         for(iZ = 0; iZ < maxZ; iZ+=sampleInterval) {
@@ -499,7 +499,7 @@ namespace Visualization {
                 for(iX = 0; iX < 2; iX++) {
                     for(iY = 0; iY < 2; iY++) {
                         for(iZ = 0; iZ < 2; iZ++) {
-                            cuttingVolume->setDataAt(iX, iY, iZ, (cuttingPlaneCenter - Vector3Float(iX * volData->getSizeX(), iY * volData->getSizeY(), iZ * volData->getSizeZ()))* cuttingPlaneDirection);
+                            cuttingVolume->setDataAt(iX, iY, iZ, (cuttingPlaneCenter - Vector3Float(iX * getSizeX(), iY * getSizeY(), iZ * getSizeZ()))* cuttingPlaneDirection);
                         }
                     }
                 }
@@ -534,7 +534,7 @@ namespace Visualization {
                     for(iX = 0; iX < 2; iX++) {
                         for(iY = 0; iY < 2; iY++) {
                             for(iZ = 0; iZ < 2; iZ++) {
-                                cuttingVolume->setDataAt(iX, iY, iZ, (center - Vector3Float(iX * volData->getSizeX(), iY * volData->getSizeY(), iZ * volData->getSizeZ()))* cuttingPlaneDirection);
+                                cuttingVolume->setDataAt(iX, iY, iZ, (center - Vector3Float(iX * getSizeX(), iY * getSizeY(), iZ * getSizeZ()))* cuttingPlaneDirection);
                             }
                         }
                     }
@@ -575,7 +575,7 @@ namespace Visualization {
             glTexImage3D = (PFNGLTEXIMAGE3DPROC) wglGetProcAddress("glTexImage3D");
         #endif
 
-        SetDisplayRadiusOrigin(volData->getSizeX()/2, volData->getSizeY()/2, volData->getSizeZ()/2);
+        SetDisplayRadiusOrigin(getSizeX()/2, getSizeY()/2, getSizeZ()/2);
     }
 
     void VolumeRenderer::Load3DTextureSolidRendering() {
@@ -585,9 +585,9 @@ namespace Visualization {
         }
 
         if(volData != NULL) {
-            textureSizeX = Smallest2ndPower(volData->getSizeX());
-            textureSizeY = Smallest2ndPower(volData->getSizeY());
-            textureSizeZ = Smallest2ndPower(volData->getSizeZ());
+            textureSizeX = Smallest2ndPower(getSizeX());
+            textureSizeY = Smallest2ndPower(getSizeY());
+            textureSizeZ = Smallest2ndPower(getSizeZ());
             double maxVal = maxSurfaceValue;
             double minVal = surfaceValue;
             unsigned char val;
@@ -597,8 +597,8 @@ namespace Visualization {
             for(int z = 0; z < textureSizeZ; z++) {
                 for(int y = 0; y < textureSizeY; y++) {
                     for(int x = 0; x < textureSizeX; x++) {
-                        if((x < volData->getSizeX()) && (y < volData->getSizeY()) && (z < volData->getSizeZ())) {
-                            val = (unsigned char)round((min(max((double)volData->getDataAt(x, y, z), minVal), maxVal) - minVal) * 255.0 / (maxVal - minVal));
+                        if((x < getSizeX()) && (y < getSizeY()) && (z < getSizeZ())) {
+                            val = (unsigned char)round((min(max((double)getDataAt(x, y, z), minVal), maxVal) - minVal) * 255.0 / (maxVal - minVal));
                         } else {
                             val = 0;
                         }
@@ -633,9 +633,9 @@ namespace Visualization {
         }
 
         if(volData != NULL) {
-            textureSizeX = Smallest2ndPower(volData->getSizeX());
-            textureSizeY = Smallest2ndPower(volData->getSizeY());
-            textureSizeZ = Smallest2ndPower(volData->getSizeZ());
+            textureSizeX = Smallest2ndPower(getSizeX());
+            textureSizeY = Smallest2ndPower(getSizeY());
+            textureSizeZ = Smallest2ndPower(getSizeZ());
             double maxVal = maxSurfaceValue;
             double minVal = surfaceValue;
             unsigned char val;
@@ -653,8 +653,8 @@ namespace Visualization {
             for(int z = 0; z < textureSizeZ; z++) {
                 for(int y = 0; y < textureSizeY; y++) {
                     for(int x = 0; x < textureSizeX; x++) {
-                        if((x < volData->getSizeX()) && (y < volData->getSizeY()) && (z < volData->getSizeZ())) {
-                            val = (unsigned char)round((min(max((double)volData->getDataAt(x, y, z), minVal), maxVal) - minVal) * 255.0 / (maxVal - minVal));
+                        if((x < getSizeX()) && (y < getSizeY()) && (z < getSizeZ())) {
+                            val = (unsigned char)round((min(max((double)getDataAt(x, y, z), minVal), maxVal) - minVal) * 255.0 / (maxVal - minVal));
                         } else {
                             val = 0;
                         }
@@ -690,7 +690,7 @@ namespace Visualization {
             extension = StringUtils::StringToUpper(extension);
 
             if(strcmp(extension.c_str(), "MRC") == 0) {
-                volData->toMRCFile((char *)fileName.c_str());
+                toMRCFile((char *)fileName.c_str());
             } else {
                 printf("Input format %s not supported!\n", extension.c_str());
             }
@@ -840,7 +840,7 @@ namespace Visualization {
 
 
     void VolumeRenderer::NormalizeVolume(){
-        volData->normalize(0, 1);
+        normalize(0, 1);
     }
     void VolumeRenderer::SetSampleInterval(const int size) {
         sampleInterval = size;
@@ -923,9 +923,9 @@ namespace Visualization {
             for(int i = 0; i < 3; i++) {
                 minPts[i] = 0;
             }
-            maxPts[0] = volData->getSizeX()-1;
-            maxPts[1] = volData->getSizeY()-1;
-            maxPts[2] = volData->getSizeZ()-1;
+            maxPts[0] = getSizeX()-1;
+            maxPts[1] = getSizeY()-1;
+            maxPts[2] = getSizeZ()-1;
         }
     }
 
