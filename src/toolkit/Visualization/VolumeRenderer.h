@@ -885,10 +885,6 @@ namespace Visualization {
 
     void VolumeRenderer::Unload() {
         Renderer::Unload();
-        if(volData != NULL) {
-            delete volData;
-        }
-        volData = NULL;
         if(octree != NULL) {
             delete octree;
         }
