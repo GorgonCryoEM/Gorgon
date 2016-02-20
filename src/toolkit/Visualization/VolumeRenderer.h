@@ -47,8 +47,8 @@ namespace Visualization {
         typedef int PFNGLTEXIMAGE3DPROC;
     #endif
 
-    typedef Octree<OctreeProjectionTestMinMaxStruct> VolumeRendererOctreeType;
-    typedef OctreeNode<OctreeProjectionTestMinMaxStruct> VolumeRendererOctreeNodeType;
+    typedef Octree<Range> VolumeRendererOctreeType;
+    typedef OctreeNode<Range> VolumeRendererOctreeNodeType;
     typedef TriangleMesh<bool, bool> VolumeSurfaceMeshType;
 
     class VolumeRenderer : public Volume, public Renderer {
@@ -339,7 +339,7 @@ namespace Visualization {
 
     void VolumeRenderer::InitializeOctreeTag(VolumeRendererOctreeNodeType * node) {
         if(node != NULL) {
-            OctreeProjectionTestMinMaxStruct tag;
+            Range tag;
             tag.max = MIN_FLOAT;
             tag.min = MAX_FLOAT;
             node->tag = tag;
