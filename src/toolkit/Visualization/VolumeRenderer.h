@@ -78,8 +78,6 @@ namespace Visualization {
         void Unload();
         void NormalizeVolume();
         void DownsampleVolume();
-        Volume * PerformBinarySkeletonizationJu2007(double threshold, int minCurveSize, int minSurfaceSize);
-        Volume * PerformGrayscaleSkeletonizationAbeysinghe2008(double startDensity, int stepCount, int minCurveSize, int minSurfaceSize, int curveRadius, int surfaceRadius, int skeletonSmoothenRadius);
 
     private:
         int GetHashKey(int x, int y, int z, int edge, int iScale);
@@ -925,26 +923,6 @@ namespace Visualization {
             maxPts[2] = getSizeZ()-1;
         }
     }
-
-    Volume * VolumeRenderer::PerformBinarySkeletonizationJu2007(double threshold, int minCurveSize, int minSurfaceSize) {
-        VolumeSkeletonizer * skeletonizer = new VolumeSkeletonizer(0,0,0,DEFAULT_SKELETON_DIRECTION_RADIUS);
-        Volume * outputVol = skeletonizer->PerformPureJuSkeletonization(this, "", threshold, minCurveSize, minSurfaceSize);
-        delete skeletonizer;
-        return outputVol;
-    }
-
-    Volume * VolumeRenderer::PerformGrayscaleSkeletonizationAbeysinghe2008(double startDensity, int stepCount, int minCurveSize, int minSurfaceSize, int curveRadius, int surfaceRadius, int skeletonRadius) {
-        double stepSize = (Volume::getMax() - startDensity) / stepCount;
-        if(!isZero(stepSize)) {
-            VolumeSkeletonizer * skeletonizer = new VolumeSkeletonizer(0, curveRadius, surfaceRadius, skeletonRadius);
-            Volume * outputVol = skeletonizer->PerformImmersionSkeletonizationAndPruning(this, NULL, startDensity, Volume::getMax(), stepSize, 0, 0, minCurveSize, minSurfaceSize, 0, 0, "", true, 1.0, DEFAULT_PRUNE_THRESHOLD, DEFAULT_PRUNE_THRESHOLD);
-            delete skeletonizer;
-            return outputVol;
-        } else {
-            return NULL;
-        }
-    }
-
 
 }
 
