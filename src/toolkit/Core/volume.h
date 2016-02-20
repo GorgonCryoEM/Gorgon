@@ -178,7 +178,7 @@ namespace SkeletonMaker {
         VolumeData * getVolumeData();
         vector<int> histogram;
 
-    private:
+    protected:
         VolumeData * volData;
 //----------------------
     public:
