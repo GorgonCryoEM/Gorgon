@@ -34,6 +34,11 @@ namespace Foundation {
 
 
     struct Range {
+         Range()
+             : max(MIN_FLOAT),
+               min(MAX_FLOAT)
+         {}
+
         float min;
         float max;
     };
