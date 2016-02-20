@@ -41,14 +41,6 @@ namespace Visualization {
         void static DrawSphere(Vector3Float center, float radius);
         void static DrawCylinder(Vector3Float pt1, Vector3Float pt2, float radius, int slices = 10, int stacks = 10);
         void static DrawLine(Vector3Float pt1, Vector3Float pt2);
-        virtual void SetSpacing(float spX, float spY, float spZ);
-        virtual float GetSpacingX();
-        virtual float GetSpacingY();
-        virtual float GetSpacingZ();
-        virtual void SetOrigin(float orgX, float orgY, float orgZ);
-        virtual float GetOriginX();
-        virtual float GetOriginY();
-        virtual float GetOriginZ();
         virtual void SetDisplayStyle(int style);
         virtual void SetObjectSpecificColoring(bool objectSpecific);
         virtual void UpdateBoundingBox();
@@ -61,8 +53,6 @@ namespace Visualization {
     protected:
         float minPts[3];
         float maxPts[3];
-        float spacing[3];
-        float origin[3];
         bool selected;
         Vector3Float cuttingPlaneCenter;
         Vector3Float cuttingPlaneDirection;
@@ -73,8 +63,6 @@ namespace Visualization {
     };
 
     Renderer::Renderer() {
-        SetSpacing(1.0f, 1.0f, 1.0f);
-        SetOrigin(0.0f, 0.0f, 0.0f);
         selected = false;
         quadricSphere = gluNewQuadric();
         quadricCylinder = gluNewQuadric();
@@ -118,7 +106,6 @@ namespace Visualization {
     }
 
     void Renderer::LoadFile(string fileName) {
-        SetSpacing(1.0f, 1.0f, 1.0f);
     }
 
     void Renderer::SaveFile(string fileName) {
@@ -214,43 +201,6 @@ namespace Visualization {
         glVertex3f(pt1.X(), pt1.Y(), pt1.Z());
         glVertex3f(pt2.X(), pt2.Y(), pt2.Z());
         glEnd();
-    }
-
-    void Renderer::SetSpacing(float spX, float spY, float spZ) {
-        spacing[0] = spX;
-        spacing[1] = spY;
-        spacing[2] = spZ;
-    }
-
-    float Renderer::GetSpacingX() {
-        return spacing[0];
-    }
-
-    float Renderer::GetSpacingY() {
-        return spacing[1];
-    }
-
-    float Renderer::GetSpacingZ() {
-        return spacing[2];
-    }
-
-    void Renderer::SetOrigin(float orgX, float orgY, float orgZ) {
-        origin[0] = orgX;
-        origin[1] = orgY;
-        origin[2] = orgZ;
-    }
-
-
-    float Renderer::GetOriginX() {
-        return origin[0];
-    }
-
-    float Renderer::GetOriginY() {
-        return origin[1];
-    }
-
-    float Renderer::GetOriginZ() {
-        return origin[2];
     }
 
     void Renderer::SetDisplayStyle(int style) {
