@@ -46,8 +46,6 @@ namespace Visualization {
         float GetMin(int dimension);
         float GetMax(int dimension);
 
-        virtual void ClearOtherHighlights();
-
     protected:
         float minPts[3];
         float maxPts[3];
@@ -191,15 +189,6 @@ namespace Visualization {
     void Renderer::SetDisplayStyle(int style) {
         this->displayStyle = style;
     }
-
-
-
-    void Renderer::ClearOtherHighlights(){}
-
-
 }
-
-
-
 
 #endif /* SRC_TOOLKIT_VISUALIZATION_RENDERER_H_ */

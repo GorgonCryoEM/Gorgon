@@ -157,7 +157,6 @@ BOOST_PYTHON_MODULE(@current_pylib@)
         .def("setDisplayStyle", &VolumeRenderer::SetDisplayStyle)
         .def("setObjectSpecificColoring", &VolumeRenderer::SetObjectSpecificColoring)
         .def("updateBoundingBox", &VolumeRenderer::UpdateBoundingBox)
-        .def("clearOtherHighlights", &VolumeRenderer::ClearOtherHighlights)        
     ;
 
   class_<NonManifoldMesh, bases<Volume> >("NonManifoldMesh", init<>())
