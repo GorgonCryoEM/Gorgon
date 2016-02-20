@@ -24,7 +24,6 @@ namespace Visualization {
     public:
         Renderer();
         virtual ~Renderer();
-        virtual void Draw(int subSceneIndex, bool selectEnabled);
         virtual void DrawBoundingBox();
         virtual void LoadFile(string fileName);
         virtual void SaveFile(string fileName);
@@ -94,9 +93,6 @@ namespace Visualization {
 
     float Renderer::GetMax(int dimension) {
         return maxPts[dimension];
-    }
-
-    void Renderer::Draw(int subSceneIndex, bool selectEnabled) {
     }
 
     void Renderer::SetObjectSpecificColoring(bool objectSpecific) {
