@@ -123,37 +123,26 @@ namespace GraySkeletonCPP {
     };
 
     DiscreteMesh::DiscreteMesh(int sizeX, int sizeY, int sizeZ)
-            : Volume(sizeX, sizeY, sizeZ)
-    {
-        points = new bool[sizeX * sizeY * sizeZ];
-        curves = new unsigned char[sizeX * sizeY * sizeZ];
-        surfaces = new unsigned char[sizeX * sizeY * sizeZ];
-        for(int i = 0; i < sizeX*sizeY*sizeZ; i++) {
-            points[i] = false;
-            curves[i] = 0;
-            surfaces[i] = 0;
-        }
-    }
+            : Volume(sizeX, sizeY, sizeZ),
+              points   (sizeX * sizeY * sizeZ, false),
+              curves   (sizeX * sizeY * sizeZ, 0),
+              surfaces (sizeX * sizeY * sizeZ, 0)
+    {}
 
     DiscreteMesh::DiscreteMesh(Volume * volume)
-        :  Volume(*volume)
+        :  Volume(*volume),
+           points   (size.X() * size.Y() * size.Z(), false),
+           curves   (size.X() * size.Y() * size.Z(), 0),
+           surfaces (size.X() * size.Y() * size.Z(), 0)
     {
         int sizeX = getSizeX();
         int sizeY = getSizeY();
         int sizeZ = getSizeZ();
-        points = new bool[sizeX * sizeY * sizeZ];
-        curves = new unsigned char[sizeX * sizeY * sizeZ];
-        surfaces = new unsigned char[sizeX * sizeY * sizeZ];
-        for(int i = 0; i < sizeX*sizeY*sizeZ; i++) {
-            points[i] = false;
-            curves[i] = 0;
-            surfaces[i] = 0;
-        }
 
         for(int x = 0; x < sizeX; x++) {
             for(int y = 0; y < sizeY; y++) {
                 for(int z = 0; z < sizeZ; z++) {
-                    if(volume->getDataAt(x, y, z) > 0) {
+                    if(getDataAt(x, y, z) > 0) {
                         AddVoxel(x, y, z);
                     }
                 }
