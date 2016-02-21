@@ -31,12 +31,27 @@ namespace Visualization {
         Vector3Float getIntersectionPoint(int ix);
 
         void SetLineThickness(int thickness);
+        void Draw(int subSceneIndex, bool selectEnabled);
     private:
         NonManifoldMesh mesh;
         vector<Vector3Float> intersectionPoints;
         int lineThickness;
     };
 
+
+    void MeshRenderer::Draw(int subSceneIndex, bool selectEnabled) {
+        switch(subSceneIndex) {
+            case 0:
+                    mesh.Draw(false, false, true, false, selectEnabled, selectEnabled, false, false, true, true, lineThickness, false);
+                break;
+            case 1:
+                    mesh.Draw(false, true, false, false, selectEnabled, selectEnabled, false, false, true, true, lineThickness, false);
+                break;
+            case 2:
+                    mesh.Draw(true, false, false, false, selectEnabled, selectEnabled, false, false, true, true, lineThickness, false);
+                break;
+        }
+    }
 
     void MeshRenderer::SetLineThickness(int thickness) {
         lineThickness = thickness;
