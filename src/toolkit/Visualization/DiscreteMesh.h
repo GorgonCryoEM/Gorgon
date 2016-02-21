@@ -48,7 +48,7 @@ namespace GraySkeletonCPP {
             bool IsSurfacePresent(int x, int y, int z, unsigned char direction);
             bool FollowCurve(int & x, int & y, int & z);
             int GetCurveNeighbors(int x, int y, int z,
-                                  Vector3Int * & neighbors);
+                                  vector<Vector3Int> & neighbors);
             int GetCurveNeighborsCount(int x, int y, int z);
             int GetSurfaceNeighbors(int x, int y, int z, int * & neighbors);
             int GetSurfaceNeighbors(int x1, int y1, int z1, int x2, int y2,
@@ -217,20 +217,18 @@ namespace GraySkeletonCPP {
     }
 
     bool DiscreteMesh::FollowCurve(int & x, int & y, int & z) {
-        Vector3Int * neighbors;
+        vector<Vector3Int> neighbors(6);
         int count = GetCurveNeighbors(x, y, z, neighbors);
         if(count==1) {
             x = neighbors[0][0];
             y = neighbors[0][1];
             z = neighbors[0][2];
         }
-        delete [] neighbors;
         return (count==1);
     }
 
-    int DiscreteMesh::GetCurveNeighbors(int x, int y, int z, Vector3Int * & neighbors) {
+    int DiscreteMesh::GetCurveNeighbors(int x, int y, int z, vector<Vector3Int> & neighbors) {
         int count = 0;
-        neighbors = new Vector3Int[6];
 
         for(int i = 0; i < 6; i++) {
             if(IsCurvePresent(x+VOLUME_NEIGHBOR_CURVES_6[i][0], y+VOLUME_NEIGHBOR_CURVES_6[i][1], z+VOLUME_NEIGHBOR_CURVES_6[i][2], VOLUME_NEIGHBOR_CURVES_6[i][3])) {
