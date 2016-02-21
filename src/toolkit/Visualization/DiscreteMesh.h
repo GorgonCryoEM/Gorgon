@@ -8,6 +8,7 @@
 //#include <string>
 //#include <list>
 //#include <functional>
+#include <vector>
 
 using namespace std;
 using namespace MathTools;
@@ -116,9 +117,9 @@ namespace GraySkeletonCPP {
             void RemoveSurface(int x, int y, int z, unsigned char surfaceType);
 
         private:
-            bool * points;
-            unsigned char * curves;
-            unsigned char * surfaces;
+            vector<bool> points;
+            vector<unsigned char> curves;
+            vector<unsigned char> surfaces;
     };
 
     DiscreteMesh::DiscreteMesh(int sizeX, int sizeY, int sizeZ)
