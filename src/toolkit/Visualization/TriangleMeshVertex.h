@@ -13,7 +13,6 @@
 using namespace std;
 
 namespace Protein_Morph {
-    template <class TVertex>
     class TriangleMeshVertex {
         public:
             TriangleMeshVertex();
@@ -21,16 +20,14 @@ namespace Protein_Morph {
         public:
             Vector3Float position;
             vector<unsigned long long> faceHashes;
-            TVertex tag;
+            bool tag;
     };
 
-    template<class TVertex>
-    TriangleMeshVertex<TVertex>::TriangleMeshVertex() {
+    TriangleMeshVertex::TriangleMeshVertex() {
         position = Vector3Float(0, 0, 0);
     }
 
-    template<class TVertex>
-    TriangleMeshVertex<TVertex>::TriangleMeshVertex(Vector3Float position) {
+    TriangleMeshVertex::TriangleMeshVertex(Vector3Float position) {
         this->position = position;
     }
 }

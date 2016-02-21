@@ -50,7 +50,7 @@ namespace Visualization {
 
     typedef Octree<Range> VolumeRendererOctreeType;
     typedef OctreeNode<Range> VolumeRendererOctreeNodeType;
-    typedef TriangleMesh<bool, bool> VolumeSurfaceMeshType;
+    typedef TriangleMesh VolumeSurfaceMeshType;
 
     class VolumeRenderer : public Volume, public Renderer {
     public:
@@ -741,7 +741,7 @@ namespace Visualization {
                         asEdgeVertex[iEdge][1] = (float)iY + ((float)a2iVertexOffset[ a2iEdgeConnection[iEdge][0] ][1] +  fOffset * (float)a2iEdgeDirection[iEdge][1]) * (float)iScale;
                         asEdgeVertex[iEdge][2] = (float)iZ + ((float)a2iVertexOffset[ a2iEdgeConnection[iEdge][0] ][2] +  fOffset * (float)a2iEdgeDirection[iEdge][2]) * (float)iScale;
 
-                        vertexIds[iEdge] = mesh->AddVertex(TriangleMeshVertex<bool>(Vector3Float(asEdgeVertex[iEdge][0], asEdgeVertex[iEdge][1], asEdgeVertex[iEdge][2])), GetHashKey(iX, iY, iZ, iEdge, iScale));
+                        vertexIds[iEdge] = mesh->AddVertex(TriangleMeshVertex(Vector3Float(asEdgeVertex[iEdge][0], asEdgeVertex[iEdge][1], asEdgeVertex[iEdge][2])), GetHashKey(iX, iY, iZ, iEdge, iScale));
                 }
         }
 

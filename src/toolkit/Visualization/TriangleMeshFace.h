@@ -12,11 +12,10 @@
 using namespace std;
 
 namespace Protein_Morph {
-    template<class TFace>
     class TriangleMeshFace {
         public:
             unsigned long long vertexHashes[3];
-            TFace tag;
+            bool tag;
     };
 }
 

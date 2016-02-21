@@ -22,17 +22,16 @@ using namespace std;
 
 namespace Protein_Morph {
 
-    template<class TVertex, class TFace>
     class TriangleMesh {
         public:
             TriangleMesh();
             ~TriangleMesh();
 
             void Clear();
-            unsigned long long AddVertex(TriangleMeshVertex<TVertex> vertex);
-            unsigned long long AddVertex(TriangleMeshVertex<TVertex> vertex,
+            unsigned long long AddVertex(TriangleMeshVertex vertex);
+            unsigned long long AddVertex(TriangleMeshVertex vertex,
                                          unsigned long long hashKey);
-            unsigned long long AddFace(TriangleMeshFace<TFace> face);
+            unsigned long long AddFace(TriangleMeshFace face);
             unsigned long long AddFace(unsigned long long vertexHash0,
                                        unsigned long long vertexHash1,
                                        unsigned long long vertexHash2);
@@ -44,48 +43,42 @@ namespace Protein_Morph {
             void SaveFile(string fileName);
 
         private:
-            typedef map<unsigned long long, TriangleMeshVertex<TVertex> > TriangleMeshVertexType;
+            typedef map<unsigned long long, TriangleMeshVertex > TriangleMeshVertexType;
 
             TriangleMeshVertexType vertices;
-            vector<TriangleMeshFace<TFace> > faces;
+            vector<TriangleMeshFace> faces;
     };
 
-    template <class TVertex, class TFace>
-    TriangleMesh<TVertex, TFace>::TriangleMesh() {
+    TriangleMesh::TriangleMesh() {
         Clear();
     }
 
-    template <class TVertex, class TFace>
-    TriangleMesh<TVertex, TFace>::~TriangleMesh() {
+    TriangleMesh::~TriangleMesh() {
         Clear();
     }
 
-    template <class TVertex, class TFace>
-    void TriangleMesh<TVertex, TFace>::Clear() {
+    void TriangleMesh::Clear() {
         vertices.clear();
         faces.clear();
     }
 
-    template<class TVertex, class TFace>
-    unsigned long long TriangleMesh<TVertex, TFace>::AddVertex(
-            TriangleMeshVertex<TVertex> vertex)
+    unsigned long long TriangleMesh::AddVertex(
+            TriangleMeshVertex vertex)
     {
         unsigned long long key = vertices.count();
         vertices[key] = vertex;
         return key;
     }
 
-    template<class TVertex, class TFace>
-    unsigned long long TriangleMesh<TVertex, TFace>::AddVertex(
-            TriangleMeshVertex<TVertex> vertex, unsigned long long hashKey)
+    unsigned long long TriangleMesh::AddVertex(
+            TriangleMeshVertex vertex, unsigned long long hashKey)
     {
         vertices[hashKey] = vertex;
         return hashKey;
     }
 
-    template<class TVertex, class TFace>
-    unsigned long long TriangleMesh<TVertex, TFace>::AddFace(
-            TriangleMeshFace<TFace> face)
+    unsigned long long TriangleMesh::AddFace(
+            TriangleMeshFace face)
     {
         unsigned long long faceHash = faces.size();
         faces.push_back(face);
@@ -95,20 +88,18 @@ namespace Protein_Morph {
         return faceHash;
     }
 
-    template<class TVertex, class TFace>
-    unsigned long long TriangleMesh<TVertex, TFace>::AddFace(
+    unsigned long long TriangleMesh::AddFace(
             unsigned long long vertexHash0, unsigned long long vertexHash1,
             unsigned long long vertexHash2)
     {
-        TriangleMeshFace<TFace> face;
+        TriangleMeshFace face;
         face.vertexHashes[0] = vertexHash0;
         face.vertexHashes[1] = vertexHash1;
         face.vertexHashes[2] = vertexHash2;
         return AddFace(face);
     }
 
-    template<class TVertex, class TFace>
-    Vector3Float TriangleMesh<TVertex, TFace>::GetVertexNormal(
+    Vector3Float TriangleMesh::GetVertexNormal(
             unsigned long long vertexHash)
     {
         Vector3Float normal = Vector3Float(0, 0, 0);
@@ -120,11 +111,10 @@ namespace Protein_Morph {
         return normal;
     }
 
-    template<class TVertex, class TFace>
-    Vector3Float TriangleMesh<TVertex, TFace>::GetFaceNormal(
+    Vector3Float TriangleMesh::GetFaceNormal(
             unsigned long long faceHash)
     {
-        TriangleMeshFace<TFace> face = faces[faceHash];
+        TriangleMeshFace face = faces[faceHash];
         Vector3Float normal =
                 (vertices[face.vertexHashes[1]].position - vertices[face.vertexHashes[0]].position) ^ (vertices[face.vertexHashes[2]].position
                         - vertices[face.vertexHashes[0]].position);
@@ -133,8 +123,7 @@ namespace Protein_Morph {
         return normal;
     }
 
-    template<class TVertex, class TFace>
-    void TriangleMesh<TVertex, TFace>::Draw(bool drawSurfaces,
+    void TriangleMesh::Draw(bool drawSurfaces,
                                             bool annotateSurfaces,
                                             bool fadeExtreme, int radius,
                                             Vector3Float center)
@@ -180,8 +169,7 @@ namespace Protein_Morph {
         glFlush();
     }
 
-    template <class TVertex, class TFace>
-    void TriangleMesh<TVertex, TFace>::SaveFile(string fileName) {
+    void TriangleMesh::SaveFile(string fileName) {
         FILE * outFile = fopen(fileName.c_str(), "wt");
         fprintf(outFile, "OFF\n");
         fprintf(outFile, "%d %d %d\n", (int)vertices.size(), (int)faces.size(),
@@ -191,7 +179,7 @@ namespace Protein_Morph {
         vector < Vector3Float > vertexList;
 
         int index = 0;
-        for(typename TriangleMeshVertexType::iterator i = vertices.begin();
+        for(TriangleMeshVertexType::iterator i = vertices.begin();
                 i != vertices.end(); i++) {
             vertexList.push_back(i->second.position);
             indexedVertices[i->first] = index;
