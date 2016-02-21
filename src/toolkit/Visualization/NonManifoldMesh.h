@@ -231,7 +231,7 @@ namespace Protein_Morph {
                         glLoadName(i);
                     }
                     glBegin(GL_LINES);
-                    k = GetVertexIndex(edges[i].vertexIds[0]);
+                    int k = GetVertexIndex(edges[i].vertexIds[0]);
                     glVertex3f(vertices[k].position.X(), vertices[k].position.Y(), vertices[k].position.Z());
                     k = GetVertexIndex(edges[i].vertexIds[1]);
                     glVertex3f(vertices[k].position.X(), vertices[k].position.Y(), vertices[k].position.Z());
