@@ -185,7 +185,7 @@ namespace GraySkeletonCPP {
 
     void DiscreteMesh::AddVoxel(int x, int y, int z) {
         setDataAt(x, y, z, 1);
-        Vector3Int p = Vector3Int(x, y, z);
+        Vector3Int p(x, y, z);
         int neighborCount = 0;
 
         if(IsPoint(this, x, y, z)) {
