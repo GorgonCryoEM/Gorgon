@@ -34,7 +34,7 @@ namespace GraySkeletonCPP {
                                                     {0,0,-1,SURFACE_TYPE_YZ}, {0,0,-1,SURFACE_TYPE_XZ}, {0,-1,-1,SURFACE_TYPE_YZ}, {-1,0,-1,SURFACE_TYPE_XZ}};
 
 
-    class DiscreteMesh {
+    class DiscreteMesh : public Volume {
         public:
             DiscreteMesh(int sizeX, int sizeY, int sizeZ);
             DiscreteMesh(Volume * volume);
@@ -116,15 +116,14 @@ namespace GraySkeletonCPP {
             void RemoveSurface(int x, int y, int z, unsigned char surfaceType);
 
         private:
-            Volume * volume;
             bool * points;
             unsigned char * curves;
             unsigned char * surfaces;
-            int sizeX, sizeY, sizeZ;
     };
 
-    DiscreteMesh::DiscreteMesh(int sizeX, int sizeY, int sizeZ) {
-        volume = new Volume(sizeX, sizeY, sizeZ);
+    DiscreteMesh::DiscreteMesh(int sizeX, int sizeY, int sizeZ)
+            : Volume(sizeX, sizeY, sizeZ)
+    {
         points = new bool[sizeX * sizeY * sizeZ];
         curves = new unsigned char[sizeX * sizeY * sizeZ];
         surfaces = new unsigned char[sizeX * sizeY * sizeZ];
@@ -133,16 +132,14 @@ namespace GraySkeletonCPP {
             curves[i] = 0;
             surfaces[i] = 0;
         }
-        this->sizeX = sizeX;
-        this->sizeY = sizeY;
-        this->sizeZ = sizeZ;
     }
 
-    DiscreteMesh::DiscreteMesh(Volume * volume) {
-        sizeX = volume->getSizeX();
-        sizeY = volume->getSizeY();
-        sizeZ = volume->getSizeZ();
-        this->volume = new Volume(sizeX, sizeY, sizeZ);
+    DiscreteMesh::DiscreteMesh(Volume * volume)
+        :  Volume(*volume)
+    {
+        int sizeX = getSizeX();
+        int sizeY = getSizeY();
+        int sizeZ = getSizeZ();
         points = new bool[sizeX * sizeY * sizeZ];
         curves = new unsigned char[sizeX * sizeY * sizeZ];
         surfaces = new unsigned char[sizeX * sizeY * sizeZ];
@@ -163,11 +160,13 @@ namespace GraySkeletonCPP {
         }
     }
 
-    DiscreteMesh::DiscreteMesh(DiscreteMesh * mesh) {
-        this->sizeX = mesh->sizeX;
-        this->sizeY = mesh->sizeY;
-        this->sizeZ = mesh->sizeZ;
-        this->volume = new Volume(*(mesh->volume));
+    DiscreteMesh::DiscreteMesh(DiscreteMesh * mesh)
+        :  Volume(*mesh)
+    {
+        int sizeX = getSizeX();
+        int sizeY = getSizeY();
+        int sizeZ = getSizeZ();
+
         points = new bool[sizeX * sizeY * sizeZ];
         curves = new unsigned char[sizeX * sizeY * sizeZ];
         surfaces = new unsigned char[sizeX * sizeY * sizeZ];
@@ -182,20 +181,19 @@ namespace GraySkeletonCPP {
         delete [] points;
         delete [] curves;
         delete [] surfaces;
-        delete volume;
     }
 
     void DiscreteMesh::AddVoxel(int x, int y, int z) {
-        volume->setDataAt(x, y, z, 1);
+        setDataAt(x, y, z, 1);
         Vector3Int p = Vector3Int(x, y, z);
         int neighborCount = 0;
 
-        if(IsPoint(volume, x, y, z)) {
+        if(IsPoint(this, x, y, z)) {
             AddPoint(p);
-        } else if (IsCurveEnd(volume, x, y, z) || IsCurveBody(volume, x, y, z)) {
+        } else if (IsCurveEnd(this, x, y, z) || IsCurveBody(this, x, y, z)) {
             Vector3Int neighbors[6];
             for(int n = 0; n < 6; n++) {
-                if(volume->getDataAt(x + VOLUME_NEIGHBORS_6[n][0], y + VOLUME_NEIGHBORS_6[n][1], z + VOLUME_NEIGHBORS_6[n][2]) > 0) {
+                if(getDataAt(x + VOLUME_NEIGHBORS_6[n][0], y + VOLUME_NEIGHBORS_6[n][1], z + VOLUME_NEIGHBORS_6[n][2]) > 0) {
                     neighbors[neighborCount][0] = x + VOLUME_NEIGHBORS_6[n][0];
                     neighbors[neighborCount][1] = y + VOLUME_NEIGHBORS_6[n][1];
                     neighbors[neighborCount][2] = z + VOLUME_NEIGHBORS_6[n][2];
@@ -205,7 +203,7 @@ namespace GraySkeletonCPP {
             for(int n = 0; n < neighborCount; n++) {
                 AddCurve(p, neighbors[n]);
             }
-        } else if (IsSurfaceBorder(volume, x, y, z) || IsSurfaceBody(volume, x, y, z, true)) {
+        } else if (IsSurfaceBorder(this, x, y, z) || IsSurfaceBody(this, x, y, z, true)) {
             Vector3Int faces[12][3];
             int faceCount = 0;
             bool allPoints;
@@ -215,7 +213,7 @@ namespace GraySkeletonCPP {
                     faces[faceCount][p][0] = x + VOLUME_NEIGHBOR_FACES[n][p][0];
                     faces[faceCount][p][1] = y + VOLUME_NEIGHBOR_FACES[n][p][1];
                     faces[faceCount][p][2] = z + VOLUME_NEIGHBOR_FACES[n][p][2];
-                    allPoints = allPoints && (volume->getDataAt(faces[faceCount][p][0], faces[faceCount][p][1], faces[faceCount][p][2]) > 0);
+                    allPoints = allPoints && (getDataAt(faces[faceCount][p][0], faces[faceCount][p][1], faces[faceCount][p][2]) > 0);
                 }
                 if(allPoints)
                     faceCount++;
@@ -227,7 +225,7 @@ namespace GraySkeletonCPP {
     }
 
     int DiscreteMesh::GetIndex(int x, int y, int z) {
-        return volume->getIndex(x, y, z);
+        return getIndex(x, y, z);
     }
 
     bool DiscreteMesh::IsPointPresent(int x, int y, int z) {
@@ -393,7 +391,7 @@ namespace GraySkeletonCPP {
 
     void DiscreteMesh::AddPoint(Vector3Int point){
         //printf("Adding Point: {%i %i %i}\n", point[0], point[1], point[2]);
-        points[volume->getIndex(point[0], point[1], point[2])] = true;
+        points[getIndex(point[0], point[1], point[2])] = true;
     }
 
     void DiscreteMesh::AddCurve(Vector3Int p1, Vector3Int p2){
@@ -403,7 +401,7 @@ namespace GraySkeletonCPP {
         FindCurveBase(p11, p22);
 
         unsigned char curveType = CURVE_TYPES[p22[0] - p11[0]][p22[1] - p11[1]][p22[2] - p11[2]];
-        int index = volume->getIndex(p11[0], p11[1], p11[2]);
+        int index = getIndex(p11[0], p11[1], p11[2]);
 
         //printf("Adding Curve: {%i %i %i} - {%i %i %i} %i\n",
         //	p11[0], p11[1], p11[2],
@@ -427,7 +425,7 @@ namespace GraySkeletonCPP {
         RemoveCurve(p44, p33);
         RemoveCurve(p11, p44);
         unsigned char surfaceType = SURFACE_TYPES[p33[0] - p11[0]][p33[1] - p11[1]][p33[2] - p11[2]];
-        int index = volume->getIndex(p11[0], p11[1], p11[2]);
+        int index = getIndex(p11[0], p11[1], p11[2]);
 
         surfaces[index] = surfaces[index] | surfaceType;
         //printf("Adding Surface: {%i %i %i} - {%i %i %i} - {%i %i %i} - {%i %i %i} - %i\n",
@@ -440,7 +438,7 @@ namespace GraySkeletonCPP {
 
     void DiscreteMesh::RemovePoint(Vector3Int point){
         //printf("Removing Point: {%i %i %i}\n", point[0], point[1], point[2]);
-        points[volume->getIndex(point[0], point[1], point[2])] = false;
+        points[getIndex(point[0], point[1], point[2])] = false;
     }
 
     void DiscreteMesh::RemoveCurve(Vector3Int p1, Vector3Int p2) {
@@ -448,7 +446,7 @@ namespace GraySkeletonCPP {
         FindCurveBase(p11, p22);
 
         unsigned char curveType = CURVE_TYPES[p22[0] - p11[0]][p22[1] - p11[1]][p22[2] - p11[2]];
-        int index = volume->getIndex(p11[0], p11[1], p11[2]);
+        int index = getIndex(p11[0], p11[1], p11[2]);
 
         //printf("Removing Curve: {%i %i %i} - {%i %i %i} %i\n",
         //	p11[0], p11[1], p11[2],
@@ -477,7 +475,7 @@ namespace GraySkeletonCPP {
 
 
     void DiscreteMesh::RemoveSurface(int x, int y, int z, unsigned char surfaceType){
-        int index = volume->getIndex(x, y, z);
+        int index = getIndex(x, y, z);
         surfaces[index] = surfaces[index] & ~surfaceType;
     }
 
