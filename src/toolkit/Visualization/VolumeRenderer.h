@@ -828,7 +828,7 @@ namespace Visualization {
                     triangleVertices[iCorner] = vertexIds[iVertex];
                 }
 
-                mesh->AddTriangle(triangleVertices[0], triangleVertices[1], triangleVertices[2], false, false);
+                mesh->AddTriangle(triangleVertices[0], triangleVertices[1], triangleVertices[2]);
         }
     }
 

@@ -154,7 +154,6 @@ namespace Protein_Morph {
                                bool disablePointLighting, int lineThickness,
                                bool smoothSurfaceNormals)
     {
-        int k;
         glPushAttrib(GL_LIGHTING_BIT | GL_LINE_BIT | GL_ENABLE_BIT | GL_HINT_BIT | GL_POINT_BIT);
 
         if(drawSurfaceBorders) {
@@ -168,7 +167,7 @@ namespace Protein_Morph {
             for(unsigned int i = 0; i < faces.size(); i++) {
                 glBegin(GL_LINE_STRIP);
                 for(unsigned int j = 0; j < faces[i].vertexIds.size(); j++) {
-                    k = GetVertexIndex(faces[i].vertexIds[j]);
+                    int k = GetVertexIndex(faces[i].vertexIds[j]);
                     float vals[3];
                     vals[0] = vertices[k].position.X();
                     vals[1] = vertices[k].position.Y();
@@ -199,7 +198,7 @@ namespace Protein_Morph {
                     } else {
                         normal = GetFaceNormal(i);
                     }
-                    k = GetVertexIndex(faces[i].vertexIds[j]);
+                    int k = GetVertexIndex(faces[i].vertexIds[j]);
                     glNormal3f(normal.X(), normal.Y(), normal.Z());
                     float vals[3];
                     vals[0] = vertices[k].position.X();
