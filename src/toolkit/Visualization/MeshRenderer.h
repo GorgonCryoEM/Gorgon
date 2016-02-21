@@ -8,7 +8,7 @@
 #include <Core/volume.h>
 #include <Readers/reader.h>
 #include <Visualization/NonManifoldMesh.h>
-//#include "Renderer.h"
+#include "Renderer.h"
 #include <Foundation/StringUtils.h>
 
 using namespace Protein_Morph;
@@ -17,7 +17,7 @@ using namespace Foundation;
 using namespace SkeletonMaker;
 
 namespace Visualization {
-    class MeshRenderer : public Volume {
+    class MeshRenderer : public Volume, public Renderer {
     public:
         NonManifoldMesh getMesh();
         Vector3Float get3DCoordinates(int subsceneIndex, int ix0, int ix1 = -1, int ix2 = -1, int ix3 = -1, int ix4 = -1);
