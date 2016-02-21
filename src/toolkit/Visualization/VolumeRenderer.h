@@ -26,6 +26,7 @@
 //#include <ProteinMorph/NonManifoldMesh.h>
 #include "TriangleMesh.h"
 #include "MathTools/Vector3.h"
+#include "MathTools/Dim3D.h"
 #include "Octree.h"
 //#include <queue>
 #include <Readers/reader.h>
@@ -107,7 +108,7 @@ namespace Visualization {
         int marchingCubeCallCount;
         bool drawEnabled;
         bool textureLoaded;
-        int textureSizeX, textureSizeY, textureSizeZ;
+        Dim3D<int> textureSize;
         GLuint textureName;
         float surfaceValue;
         float maxSurfaceValue;
@@ -382,9 +383,9 @@ namespace Visualization {
                 //if(resident) {
                     glBindTexture(GL_TEXTURE_3D, textureName);
 
-                    double xRatio = (double)getSizeX() / (double)textureSizeX;
-                    double yRatio = (double)getSizeY() / (double)textureSizeY;
-                    double zRatio = (double)getSizeZ() / (double)textureSizeZ;
+                    double xRatio = (double)getSizeX() / (double)textureSize.X();
+                    double yRatio = (double)getSizeY() / (double)textureSize.Y();
+                    double zRatio = (double)getSizeZ() / (double)textureSize.Z();
 
                     for(unsigned int i = 0; i < cuttingMesh->faces.size(); i++) {
                         glBegin(GL_POLYGON);
@@ -578,18 +579,18 @@ namespace Visualization {
         }
 
         if(volData != NULL) {
-            textureSizeX = Smallest2ndPower(getSizeX());
-            textureSizeY = Smallest2ndPower(getSizeY());
-            textureSizeZ = Smallest2ndPower(getSizeZ());
+            textureSize[0] = Smallest2ndPower(getSizeX());
+            textureSize[1] = Smallest2ndPower(getSizeY());
+            textureSize[2] = Smallest2ndPower(getSizeZ());
             double maxVal = maxSurfaceValue;
             double minVal = surfaceValue;
             unsigned char val;
 
-            unsigned char * texels = new unsigned char[textureSizeX * textureSizeY * textureSizeZ];
+            unsigned char * texels = new unsigned char[textureSize.X() * textureSize.Y() * textureSize.Z()];
             unsigned int pos = 0;
-            for(int z = 0; z < textureSizeZ; z++) {
-                for(int y = 0; y < textureSizeY; y++) {
-                    for(int x = 0; x < textureSizeX; x++) {
+            for(int z = 0; z < textureSize.Z(); z++) {
+                for(int y = 0; y < textureSize.Y(); y++) {
+                    for(int x = 0; x < textureSize.X(); x++) {
                         if((x < getSizeX()) && (y < getSizeY()) && (z < getSizeZ())) {
                             val = (unsigned char)round((min(max((double)getDataAt(x, y, z), minVal), maxVal) - minVal) * 255.0 / (maxVal - minVal));
                         } else {
@@ -608,7 +609,7 @@ namespace Visualization {
             glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_REPEAT);
             glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_REPEAT);
             try {
-                glTexImage3D(GL_TEXTURE_3D, 0, GL_ALPHA, textureSizeX, textureSizeY, textureSizeZ, 0, GL_ALPHA, GL_UNSIGNED_BYTE, texels);
+                glTexImage3D(GL_TEXTURE_3D, 0, GL_ALPHA, textureSize.X(), textureSize.Y(), textureSize.Z(), 0, GL_ALPHA, GL_UNSIGNED_BYTE, texels);
                 textureLoaded = true;
             }   catch (int) {
                 textureLoaded = false;
@@ -626,9 +627,9 @@ namespace Visualization {
         }
 
         if(volData != NULL) {
-            textureSizeX = Smallest2ndPower(getSizeX());
-            textureSizeY = Smallest2ndPower(getSizeY());
-            textureSizeZ = Smallest2ndPower(getSizeZ());
+            textureSize[0] = Smallest2ndPower(getSizeX());
+            textureSize[1] = Smallest2ndPower(getSizeY());
+            textureSize[2] = Smallest2ndPower(getSizeZ());
             double maxVal = maxSurfaceValue;
             double minVal = surfaceValue;
             unsigned char val;
@@ -641,11 +642,11 @@ namespace Visualization {
                 maxVal = minVal + 0.0001;
             }
 
-            unsigned char * texels = new unsigned char[textureSizeX * textureSizeY * textureSizeZ];
+            unsigned char * texels = new unsigned char[textureSize.X() * textureSize.Y() * textureSize.Z()];
             unsigned int pos = 0;
-            for(int z = 0; z < textureSizeZ; z++) {
-                for(int y = 0; y < textureSizeY; y++) {
-                    for(int x = 0; x < textureSizeX; x++) {
+            for(int z = 0; z < textureSize.Z(); z++) {
+                for(int y = 0; y < textureSize.Y(); y++) {
+                    for(int x = 0; x < textureSize.X(); x++) {
                         if((x < getSizeX()) && (y < getSizeY()) && (z < getSizeZ())) {
                             val = (unsigned char)round((min(max((double)getDataAt(x, y, z), minVal), maxVal) - minVal) * 255.0 / (maxVal - minVal));
                         } else {
@@ -664,7 +665,7 @@ namespace Visualization {
             glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_REPEAT);
             glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_REPEAT);
             try {
-                glTexImage3D(GL_TEXTURE_3D, 0, GL_LUMINANCE, textureSizeX, textureSizeY, textureSizeZ, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, texels);
+                glTexImage3D(GL_TEXTURE_3D, 0, GL_LUMINANCE, textureSize.X(), textureSize.Y(), textureSize.Z(), 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, texels);
                 textureLoaded = true;
             }   catch (int) {
                 textureLoaded = false;
