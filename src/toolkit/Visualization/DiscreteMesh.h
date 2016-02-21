@@ -39,8 +39,6 @@ namespace GraySkeletonCPP {
         public:
             DiscreteMesh(int sizeX, int sizeY, int sizeZ);
             DiscreteMesh(Volume * volume);
-            DiscreteMesh(DiscreteMesh * mesh);
-            ~DiscreteMesh();
 
             void AddVoxel(int x, int y, int z);
             int GetIndex(int x, int y, int z);
@@ -148,29 +146,6 @@ namespace GraySkeletonCPP {
                 }
             }
         }
-    }
-
-    DiscreteMesh::DiscreteMesh(DiscreteMesh * mesh)
-        :  Volume(*mesh)
-    {
-        int sizeX = getSizeX();
-        int sizeY = getSizeY();
-        int sizeZ = getSizeZ();
-
-        points = new bool[sizeX * sizeY * sizeZ];
-        curves = new unsigned char[sizeX * sizeY * sizeZ];
-        surfaces = new unsigned char[sizeX * sizeY * sizeZ];
-        for(int i = 0; i < sizeX*sizeY*sizeZ; i++) {
-            this->points[i] = mesh->points[i];
-            this->curves[i] = mesh->curves[i];
-            this->surfaces[i] = mesh->surfaces[i];
-        }
-    }
-
-    DiscreteMesh::~DiscreteMesh() {
-        delete [] points;
-        delete [] curves;
-        delete [] surfaces;
     }
 
     void DiscreteMesh::AddVoxel(int x, int y, int z) {
