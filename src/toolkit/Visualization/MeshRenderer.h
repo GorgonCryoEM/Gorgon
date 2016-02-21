@@ -29,11 +29,18 @@ namespace Visualization {
         string getSupportedSaveFileFormats();
         int IntersectMeshAndSphere(Vector3Float center, float radius);
         Vector3Float getIntersectionPoint(int ix);
+
+        void SetLineThickness(int thickness);
     private:
         NonManifoldMesh mesh;
         vector<Vector3Float> intersectionPoints;
+        int lineThickness;
     };
 
+
+    void MeshRenderer::SetLineThickness(int thickness) {
+        lineThickness = thickness;
+    }
 
     NonManifoldMesh MeshRenderer::getMesh() {
         return mesh;
