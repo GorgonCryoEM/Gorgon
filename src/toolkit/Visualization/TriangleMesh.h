@@ -28,7 +28,6 @@ namespace Protein_Morph {
             ~TriangleMesh();
 
             void Clear();
-            unsigned long long AddVertex(TriangleMeshVertex vertex);
             unsigned long long AddVertex(TriangleMeshVertex vertex,
                                          unsigned long long hashKey);
             unsigned long long AddFace(TriangleMeshFace face);
@@ -60,14 +59,6 @@ namespace Protein_Morph {
     void TriangleMesh::Clear() {
         vertices.clear();
         faces.clear();
-    }
-
-    unsigned long long TriangleMesh::AddVertex(
-            TriangleMeshVertex vertex)
-    {
-        unsigned long long key = vertices.count();
-        vertices[key] = vertex;
-        return key;
     }
 
     unsigned long long TriangleMesh::AddVertex(
