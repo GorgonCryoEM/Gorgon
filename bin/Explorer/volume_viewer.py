@@ -20,7 +20,6 @@ class VolumeViewer(BaseViewer):
         self.renderer = VolumeRenderer()
         self.loaded = False
         self.createUI()
-        self.app.viewers["volume"] = self
         self.initVisualizationOptions(ModelVisualizationForm(self.app, self))
                       
     def createUI(self):

@@ -10,8 +10,6 @@ class MainWindowForm(QtGui.QMainWindow):
     def __init__(self, version):
         super(MainWindowForm, self).__init__()
 
-        self.viewers = {}
-        
         self.dockWidgets = []
         
         self.windowManager = QtGui.QWidget(self)
