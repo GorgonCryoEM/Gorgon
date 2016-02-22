@@ -26,16 +26,6 @@ class VolumeViewer(BaseViewer):
     def createUI(self):
         self.surfaceEditor = VolumeSurfaceEditorForm(self.app, self, self)
     
-    def load(self, fileName):
-            self.renderer.loadFile(str(fileName))
-            self.setScaleNoEmit(self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ())
-            self.loaded = True
-            self.dirty = False
-            self.setCursor(QtCore.Qt.ArrowCursor)
-            self.emitModelLoadedPreDraw()
-            self.emitModelLoaded()
-            self.emitViewerSetCenter()
-    
     def processMouseWheel(self, amount, event):
         if(event.modifiers() & QtCore.Qt.CTRL):
             range = self.surfaceEditor.ui.histogram.maximumValue() - self.surfaceEditor.ui.histogram.minimumValue()
