@@ -334,7 +334,6 @@ class BaseViewer(QtOpenGL.QGLWidget):
         return [self.modelVisible, self.model2Visible, self.model3Visible]
         
     def modelChanged(self):
-        self.updateActionsAndMenus()
         for list in self.glLists:
             glDeleteLists(list,1)
         self.glLists = []
