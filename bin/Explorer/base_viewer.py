@@ -108,12 +108,6 @@ class BaseViewer(QtOpenGL.QGLWidget):
     def getBoundingBoxColor(self):
         return QtGui.QColor(255, 255, 255, 255)
 
-    def repaintCamera2(self, oldColor, newColor):
-        if((oldColor.alpha() == 255 and newColor.alpha() != 255) or (oldColor.alpha() != 255 and newColor.alpha() == 255)):
-            self.emitModelChanged()
-        else:
-            self.repaintCamera()
-                
     def repaintCamera(self):
         if(hasattr(self.app, "mainCamera")):
             self.app.mainCamera.updateGL()
