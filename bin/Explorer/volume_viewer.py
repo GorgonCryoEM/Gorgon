@@ -27,21 +27,19 @@ class VolumeViewer(BaseViewer):
         self.surfaceEditor = VolumeSurfaceEditorForm(self.app, self, self)
     
     def load(self, fileName):
-        self.fileName = fileName
-                
-        if not self.fileName=="":
+        if not fileName=="":
             self.setCursor(QtCore.Qt.WaitCursor)
             
-            tokens = split(str(self.fileName), '.')
+            tokens = split(str(fileName), '.')
             extension = upper(tokens[len(tokens)-1])
             if(extension == "RAW"):
                 if(self.rawLoader.exec_() == QtGui.QDialog.Accepted):
-                    self.renderer.loadFileRAW(str(self.fileName), self.rawLoader.bitsPerCell(), self.rawLoader.sizeX(), self.rawLoader.sizeY(), self.rawLoader.sizeZ())
+                    self.renderer.loadFileRAW(str(fileName), self.rawLoader.bitsPerCell(), self.rawLoader.sizeX(), self.rawLoader.sizeY(), self.rawLoader.sizeZ())
                 else:
                     return;
                     
             else:
-                self.renderer.loadFile(str(self.fileName))
+                self.renderer.loadFile(str(fileName))
             self.setScaleNoEmit(self.renderer.getSpacingX(), self.renderer.getSpacingY(), self.renderer.getSpacingZ())
             self.loaded = True
             self.dirty = False
