@@ -26,7 +26,7 @@ class VolumeViewer(BaseViewer):
     def createUI(self):
         self.surfaceEditor = VolumeSurfaceEditorForm(self.app, self, self)
     
-    def loadDataFromFile(self, fileName):
+    def load(self, fileName):
         self.fileName = fileName
                 
         if not self.fileName=="":

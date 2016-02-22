@@ -46,7 +46,7 @@ def main():
     window.resize(800, 600)
     window.show()
     window.raise_()
-    window.volumeViewer.loadDataFromFile(args.volume)
+    window.volumeViewer.load(args.volume)
     
     sys.exit(app.exec_())
 
