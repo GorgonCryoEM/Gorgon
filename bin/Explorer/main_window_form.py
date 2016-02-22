@@ -12,8 +12,6 @@ class MainWindowForm(QtGui.QMainWindow):
 
         self.dockWidgets = []
         
-        self.windowManager = QtGui.QWidget(self)
-
         self.volumeViewer = VolumeViewer(self)
 
         self.mainCamera = Camera([self.volumeViewer], self)
