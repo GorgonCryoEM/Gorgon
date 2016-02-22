@@ -10,8 +10,6 @@ class MainWindowForm(QtGui.QMainWindow):
     def __init__(self, version):
         super(MainWindowForm, self).__init__()
 
-        self.dockWidgets = []
-        
         self.volumeViewer = VolumeViewer(self)
 
         self.mainCamera = Camera([self.volumeViewer], self)
@@ -25,13 +23,6 @@ class MainWindowForm(QtGui.QMainWindow):
     def addDockWidget (self, area, dockwidget):
         QtGui.QMainWindow.addDockWidget(self, area, dockwidget)
         dockwidget.area = area
-        otherwidget = None
-        for widget in self.dockWidgets:
-            if (widget.area == area) and (widget != dockwidget):
-                otherwidget = widget
-        if(otherwidget):
-            self.tabifyDockWidget(otherwidget, dockwidget)
-        self.dockWidgets.append(dockwidget)
         dockwidget.dockLocationChanged.connect(self.dockLocationChanged(dockwidget))
         
     def removeDockWidget (self, dockwidget):
