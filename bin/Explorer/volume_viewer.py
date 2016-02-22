@@ -24,9 +24,6 @@ class VolumeViewer(BaseViewer):
         self.initVisualizationOptions(ModelVisualizationForm(self.app, self))
                       
     def createUI(self):
-        self.createChildWindows()
-                          
-    def createChildWindows(self):
         self.surfaceEditor = VolumeSurfaceEditorForm(self.app, self, self)
     
     def loadDataFromFile(self, fileName):
