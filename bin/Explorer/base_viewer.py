@@ -287,11 +287,6 @@ class BaseViewer(QtOpenGL.QGLWidget):
         
         self.setCursor(QtCore.Qt.ArrowCursor)
         
-    def loadData(self):
-        self.fileName = QtGui.QFileDialog.getOpenFileName(self, self.tr("Open Data"), "", self.tr(self.renderer.getSupportedLoadFileFormats()))
-        if not self.fileName.isEmpty():
-            self.loadDataFromFile(self.fileName)
-            
     def saveData(self):
         self.fileName = QtGui.QFileDialog.getSaveFileName(self, self.tr("Save Data"), "", self.tr(self.renderer.getSupportedSaveFileFormats()))
         if not self.fileName.isEmpty():
