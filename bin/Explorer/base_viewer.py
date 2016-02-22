@@ -293,7 +293,7 @@ class BaseViewer(QtOpenGL.QGLWidget):
         self.dirty = False
         self.setCursor(QtCore.Qt.ArrowCursor)
     
-    def unloadData(self):
+    def unload(self):
         self.fileName = ""
         self.renderer.unload()
         self.loaded = False

@@ -48,7 +48,7 @@ class ModelVisualizationForm(BaseDockWidget):
         self.connect(self.ui.pushButtonModel2Color, QtCore.SIGNAL("colorChanged ()"), self.setModel2Color)  
         self.connect(self.ui.pushButtonModel3Color, QtCore.SIGNAL("colorChanged ()"), self.setModel3Color)  
         self.connect(self.ui.pushButtonCenter, QtCore.SIGNAL("pressed ()"), self.viewer.emitViewerSetCenterLocal)
-        self.connect(self.ui.pushButtonClose, QtCore.SIGNAL("pressed ()"), self.viewer.unloadData)
+        self.connect(self.ui.pushButtonClose, QtCore.SIGNAL("pressed ()"), self.viewer.unload)
         self.connect(self.ui.doubleSpinBoxSizeX, QtCore.SIGNAL("editingFinished ()"), self.scaleChanged)
         self.connect(self.ui.doubleSpinBoxSizeY, QtCore.SIGNAL("editingFinished ()"), self.scaleChanged)
         self.connect(self.ui.doubleSpinBoxSizeZ, QtCore.SIGNAL("editingFinished ()"), self.scaleChanged)
