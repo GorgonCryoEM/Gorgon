@@ -470,13 +470,13 @@ class Camera(QtOpenGL.QGLWidget):
             if (event.buttons() & QtCore.Qt.RightButton):           # Rolling the scene
                 self.setEyeRotation(0, 0, dx)
             else:
-                if self.getSelectionMovementEnabled() and (event.modifiers() & QtCore.Qt.CTRL):           # Rotating the selection
+                if event.modifiers() & QtCore.Qt.CTRL:           # Rotating the selection
                     self.rotateSelectedScene(dx, dy)
                 else:                                               # Rotating the scene
                     self.setEyeRotation(-dx, dy, 0)
             
         elif (event.buttons() & QtCore.Qt.RightButton):
-            if self.getSelectionMovementEnabled() and (event.modifiers() & QtCore.Qt.CTRL):                 # Translating the selection
+            if event.modifiers() & QtCore.Qt.CTRL:                 # Translating the selection
                 self.moveSelectedScene(dx, dy)
             else:                                                   # Translating the scene
                 newDx = (self.eye - self.center).length() * abs(tan(pi * self.eyeZoom)) * dx / float(self.width())
@@ -522,9 +522,3 @@ class Camera(QtOpenGL.QGLWidget):
 
     def emitMouseClickedRaw(self, mouseHits, event):
         self.emit(QtCore.SIGNAL("mouseClickedRAW(PyQt_PyObject, QMouseEvent)"), mouseHits, event)
-	
-    def getSelectionMovementEnabled(self):
-        return self.sceneEditor.ui.checkBoxEnableSelectionMovement.isChecked()
-        
-    def setSelectionMovementEnabled(self, enable = True):
-        self.sceneEditor.ui.checkBoxEnableSelectionMovement.setChecked(enable)
