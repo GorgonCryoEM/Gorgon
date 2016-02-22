@@ -29,10 +29,6 @@ class VolumeViewer(BaseViewer):
     def createChildWindows(self):
         self.surfaceEditor = VolumeSurfaceEditorForm(self.app, self, self)
     
-    def loadData(self):
-        fileName = str(QtGui.QFileDialog.getOpenFileName(self, self.tr("Open Volume"), "", self.tr(self.renderer.getSupportedLoadFileFormats())))
-        self.loadDataFromFile(fileName)
-
     def loadDataFromFile(self, fileName):
         self.fileName = fileName
                 
