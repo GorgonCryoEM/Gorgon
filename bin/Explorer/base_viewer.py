@@ -270,7 +270,7 @@ class BaseViewer(QtOpenGL.QGLWidget):
         glPopAttrib()
         glPopMatrix()
         
-    def loadDataFromFile(self, fileName):
+    def load(self, fileName):
         self.setCursor(QtCore.Qt.WaitCursor)
         try:
             self.renderer.loadFile(str(fileName))
