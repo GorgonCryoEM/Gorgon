@@ -76,7 +76,7 @@ namespace GraphMatch {
 
             bool IsBadNormal();
 
-            static Vector3<T> normalize(Vector3<T> v);
+            Vector3<T> normalize(Vector3<T> v);
             static Vector3<T> project3Dto2D(Vector3<T> point, Vector3<T> planePt, Vector3<T> planeVec1, Vector3<T> planeVec2);
 
 
