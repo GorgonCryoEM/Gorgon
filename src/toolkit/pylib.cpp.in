@@ -418,7 +418,8 @@ BOOST_PYTHON_MODULE(@current_pylib@)
   const float & (Vector3<float>::*X)() const = &Vector3<float>::X;
   const float & (Vector3<float>::*Y)() const = &Vector3<float>::Y;
   const float & (Vector3<float>::*Z)() const = &Vector3<float>::Z;
-  void (Vector3<float>::*normalize)() = &Vector3<float>::normalize;
+//  void (Vector3<float>::*normalize)() = &Vector3<float>::normalize;
+  Vector3<float> (Vector3<float>::*normalize)(Vector3<float>) = &Vector3<float>::normalize;
   
   const float & (Vector3<float>::*vecgetitem)(int) const = &Vector3<float>::operator[];
 //  double & (Vector3<float>::*set)(int)             = &Vector3<float>::operator[];
@@ -430,7 +431,7 @@ BOOST_PYTHON_MODULE(@current_pylib@)
         .def("length", &Vector3<float>::length)
         .def("Transform", &Vector3<float>::transform)
         .def("rotate", &Vector3<float>::rotate)
-        .def("normalize", normalize)
+        .def("normalize", normalize, return_value_policy<return_by_value>())
         .def("Print", &Vector3<float>::print)
         .def("__getitem__", vecgetitem, return_value_policy<copy_const_reference>())
 //        .def("__getitem__", &Vector3<float>::operator[], boost::python::arg( "index" ),
