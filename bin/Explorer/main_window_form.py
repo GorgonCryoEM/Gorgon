@@ -53,13 +53,13 @@ class MainWindowForm(QtGui.QMainWindow):
     def exitApplication(self):
         QtGui.qApp.closeAllWindows()
             
-    def closeEvent(self, event):
-        exitText = "This will close Gorgon, you will lose all unsaved data.\nAre you sure?"
-        
-        if (QtGui.QMessageBox.warning (self, self.tr("Exit Gorgon?"), self.tr(exitText), QtGui.QMessageBox.Yes | QtGui.QMessageBox.Cancel) == QtGui.QMessageBox.Yes):
-            event.accept()
-        else:
-            event.ignore()
+#     def closeEvent(self, event):
+#         exitText = "This will close Gorgon, you will lose all unsaved data.\nAre you sure?"
+#
+#         if (QtGui.QMessageBox.warning (self, self.tr("Exit Gorgon?"), self.tr(exitText), QtGui.QMessageBox.Yes | QtGui.QMessageBox.Cancel) == QtGui.QMessageBox.Yes):
+#             event.accept()
+#         else:
+#             event.ignore()
 
     def dockLocationChanged(self, widget):
         def dockLocationChanged_widget(area):
