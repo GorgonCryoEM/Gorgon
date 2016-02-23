@@ -64,7 +64,7 @@ namespace GraphMatch {
             bool operator<=(const Vector3<T> &v) const;
 
 
-            void normalize();
+            Vector3<T> normalize();
             void print() const;
 
             Vector3<T> getOrthogonal() const;
@@ -76,7 +76,7 @@ namespace GraphMatch {
 
             bool IsBadNormal();
 
-            Vector3<T> normalize(Vector3<T> v);
+            static Vector3<T> normalize(Vector3<T> v);
             static Vector3<T> project3Dto2D(Vector3<T> point, Vector3<T> planePt, Vector3<T> planeVec1, Vector3<T> planeVec2);
 
 
@@ -272,11 +272,13 @@ namespace GraphMatch {
     }
 
     template <class T>
-    void Vector3<T>::normalize() {
+    Vector3<T> Vector3<T>::normalize() {
         T s = 1.0 / (T)sqrt(x * x + y * y + z * z);
         x *= s;
         y *= s;
         z *= s;
+
+        return *this;
     }
 
     template <class T>
