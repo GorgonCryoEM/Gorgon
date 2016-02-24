@@ -79,7 +79,7 @@ namespace GraySkeletonCPP {
                                            Volume * preserveVol,
                                            Vector3Float * volumeGradient,
                                            EigenResults3D * volumeEigens,
-                                           ProbabilityDistribution3D & filter,
+                                           ProbDistr3D & filter,
                                            double threshold, char pruningClass,
                                            string outputPath);
             void SmoothenVolume(Volume * &sourceVolume, double minGrayscale,
@@ -101,13 +101,13 @@ namespace GraySkeletonCPP {
 
             void GetEigenResult(EigenResults3D & returnVal,
                                 Vector3Float * imageGradient,
-                                ProbabilityDistribution3D & gaussianFilter,
+                                ProbDistr3D & gaussianFilter,
                                 int x, int y, int z, int sizeX, int sizeY,
                                 int sizeZ, int gaussianFilterRadius,
                                 bool clear);
             EigenResults3D * GetEigenResults(
                     Volume * maskVol, Vector3Float * imageGradient,
-                    ProbabilityDistribution3D & gaussianFilter,
+                    ProbDistr3D & gaussianFilter,
                     int gaussianFilterRadius, bool useMask);
 
         protected:
@@ -117,7 +117,7 @@ namespace GraySkeletonCPP {
             void FindOrthogonalAxes(Vector3Float axis, Vector3Float & res1,
                                     Vector3Float & res2);
             void GetSTBasedDistribution(
-                    ProbabilityDistribution3D & distributionInfo,
+                    ProbDistr3D & distributionInfo,
                     EigenResults3D eigen);
             Vector3Float XYZtoUVW(Vector3Float vec, Vector3Float u,
                                    Vector3Float v, Vector3Float w);
@@ -146,11 +146,11 @@ namespace GraySkeletonCPP {
         public:
             MathLib math;
             NormalFinder * surfaceNormalFinder;
-            ProbabilityDistribution3D gaussianFilterPointRadius;
-            ProbabilityDistribution3D gaussianFilterCurveRadius;
-            ProbabilityDistribution3D gaussianFilterSurfaceRadius;
-            ProbabilityDistribution3D gaussianFilterMaxRadius;
-            ProbabilityDistribution3D uniformFilterSkeletonDirectionRadius;
+            ProbDistr3D gaussianFilterPointRadius;
+            ProbDistr3D gaussianFilterCurveRadius;
+            ProbDistr3D gaussianFilterSurfaceRadius;
+            ProbDistr3D gaussianFilterMaxRadius;
+            ProbDistr3D uniformFilterSkeletonDirectionRadius;
             int pointRadius;
             int curveRadius;
             int surfaceRadius;
@@ -262,7 +262,7 @@ namespace GraySkeletonCPP {
 
     }
 
-    EigenResults3D * VolumeSkeletonizer::GetEigenResults(Volume * maskVol, Vector3Float * imageGradient, ProbabilityDistribution3D & gaussianFilter, int gaussianFilterRadius, bool useMask) {
+    EigenResults3D * VolumeSkeletonizer::GetEigenResults(Volume * maskVol, Vector3Float * imageGradient, ProbDistr3D & gaussianFilter, int gaussianFilterRadius, bool useMask) {
         EigenResults3D * resultTable = new(std::nothrow) EigenResults3D[maskVol->getSizeX() * maskVol->getSizeY() * maskVol->getSizeZ()];
 
         if(resultTable == NULL) {
@@ -518,7 +518,7 @@ namespace GraySkeletonCPP {
         res2.normalize();
     }
 
-    void VolumeSkeletonizer::GetEigenResult(EigenResults3D & returnVal, Vector3Float * imageGradient, ProbabilityDistribution3D & gaussianFilter, int x, int y, int z, int sizeX, int sizeY, int sizeZ, int gaussianFilterRadius, bool clear) {
+    void VolumeSkeletonizer::GetEigenResult(EigenResults3D & returnVal, Vector3Float * imageGradient, ProbDistr3D & gaussianFilter, int x, int y, int z, int sizeX, int sizeY, int sizeZ, int gaussianFilterRadius, bool clear) {
         if(clear) {
             for(int r = 0; r < 3; r++) {
                 returnVal.values[r] = 0;
@@ -566,7 +566,7 @@ namespace GraySkeletonCPP {
     }
 
 
-    void VolumeSkeletonizer::GetSTBasedDistribution(ProbabilityDistribution3D & distributionInfo, EigenResults3D eigen) {
+    void VolumeSkeletonizer::GetSTBasedDistribution(ProbDistr3D & distributionInfo, EigenResults3D eigen) {
         Vector3Float skeletonDirection;
         double total = 0;
         double cell;
@@ -601,7 +601,7 @@ namespace GraySkeletonCPP {
     void VolumeSkeletonizer::PruneSurfaces(Volume * sourceVolume, int pruneLength) {
         sourceVolume->erodeSheet(pruneLength);
     }
-    void VolumeSkeletonizer::PruneUsingStructureTensor(Volume * skeleton, Volume * sourceVolume, Volume * preserveVol, Vector3Float * volumeGradient, EigenResults3D * volumeEigens, ProbabilityDistribution3D & filter, double threshold, char pruningClass, string outputPath) {
+    void VolumeSkeletonizer::PruneUsingStructureTensor(Volume * skeleton, Volume * sourceVolume, Volume * preserveVol, Vector3Float * volumeGradient, EigenResults3D * volumeEigens, ProbDistr3D & filter, double threshold, char pruningClass, string outputPath) {
         Volume * tempSkel = new Volume(*skeleton);
         Volume * costVol = new Volume(skeleton->getSizeX(), skeleton->getSizeY(), skeleton->getSizeZ());
         Vector3Float * skeletonDirections = GetSkeletonDirection(skeleton, pruningClass);
@@ -646,10 +646,10 @@ namespace GraySkeletonCPP {
     }
 
     void VolumeSkeletonizer::SmoothenVolume(Volume * & sourceVolume, double minGrayscale, double maxGrayscale, int stRadius) {
-        ProbabilityDistribution3D mask;
+        ProbDistr3D mask;
         mask.radius = 1;
 
-        ProbabilityDistribution3D smoothenMask;
+        ProbDistr3D smoothenMask;
         smoothenMask.radius = stRadius;
         GetBinomialDistribution(smoothenMask);
 

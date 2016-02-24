@@ -21,17 +21,17 @@ namespace MathTools {
         float structureTensor[3][3];
     };
 
-    struct ProbabilityDistribution1D{
+    struct ProbDistr1D{
         int radius;
         float values[MAX_PROBABILITY_DISTRIBUTION_WIDTH];
     };
 
-    struct ProbabilityDistribution2D{
+    struct ProbDistr2D{
         int radius;
         float values[MAX_PROBABILITY_DISTRIBUTION_WIDTH][MAX_PROBABILITY_DISTRIBUTION_WIDTH];
     };
 
-    struct ProbabilityDistribution3D{
+    struct ProbDistr3D{
         int radius;
         float values[MAX_PROBABILITY_DISTRIBUTION_WIDTH][MAX_PROBABILITY_DISTRIBUTION_WIDTH][MAX_PROBABILITY_DISTRIBUTION_WIDTH];
     };

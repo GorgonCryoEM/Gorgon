@@ -10,11 +10,11 @@ namespace MathTools {
     static unsigned long long Combinations(int n, int r);
     static unsigned long long Permutations(int n, int r);
 
-    static void GetBinomialDistribution(ProbabilityDistribution1D & distro);
-    static void GetBinomialDistribution(ProbabilityDistribution2D & distro);
-    static void GetBinomialDistribution(ProbabilityDistribution3D & distro);
-    static void GetUniformDistribution(ProbabilityDistribution3D & distro);
-    static void GetAnisotropicDistributionAxisAligned(ProbabilityDistribution3D & distro, int xR, int yR, int zR);
+    static void GetBinomialDistribution(ProbDistr1D & distro);
+    static void GetBinomialDistribution(ProbDistr2D & distro);
+    static void GetBinomialDistribution(ProbDistr3D & distro);
+    static void GetUniformDistribution(ProbDistr3D & distro);
+    static void GetAnisotropicDistributionAxisAligned(ProbDistr3D & distro, int xR, int yR, int zR);
 
     unsigned long long Combinations(int n, int r) {
         long long c = 1;
@@ -35,7 +35,7 @@ namespace MathTools {
         return p;
     }
 
-    void GetBinomialDistribution(ProbabilityDistribution1D & distro) {
+    void GetBinomialDistribution(ProbDistr1D & distro) {
         double total = 0;
 
         for(int x = -distro.radius, i=0; x <= distro.radius; x++, i++) {
@@ -48,8 +48,8 @@ namespace MathTools {
         }
     }
 
-    void GetBinomialDistribution(ProbabilityDistribution2D & distro) {
-        ProbabilityDistribution1D dist1D;
+    void GetBinomialDistribution(ProbDistr2D & distro) {
+        ProbDistr1D dist1D;
         dist1D.radius = distro.radius;
         GetBinomialDistribution(dist1D);
         for(int x = 0; x < dist1D.radius * 2 +1; x++) {
@@ -59,8 +59,8 @@ namespace MathTools {
         }
     }
 
-    void GetBinomialDistribution(ProbabilityDistribution3D & distro) {
-        ProbabilityDistribution1D dist1D;
+    void GetBinomialDistribution(ProbDistr3D & distro) {
+        ProbDistr1D dist1D;
         dist1D.radius = distro.radius;
         GetBinomialDistribution(dist1D);
         for(int x = 0; x < dist1D.radius * 2 +1; x++) {
@@ -72,7 +72,7 @@ namespace MathTools {
         }
     }
 
-    void GetUniformDistribution(ProbabilityDistribution3D & distro) {
+    void GetUniformDistribution(ProbDistr3D & distro) {
         double probability = 1.0 / (double)(distro.radius * 2 +1) * (distro.radius * 2 +1) * (distro.radius * 2 +1);
         for(int x = 0; x < distro.radius * 2 +1; x++) {
             for(int y = 0; y < distro.radius * 2 +1; y++) {
@@ -83,9 +83,9 @@ namespace MathTools {
         }
     }
 
-    void GetAnisotropicDistributionAxisAligned(ProbabilityDistribution3D & distro, int xR, int yR, int zR) {
+    void GetAnisotropicDistributionAxisAligned(ProbDistr3D & distro, int xR, int yR, int zR) {
         distro.radius = max (xR, max(yR, zR));
-        ProbabilityDistribution1D xBinomialDist, yBinomialDist, zBinomialDist;
+        ProbDistr1D xBinomialDist, yBinomialDist, zBinomialDist;
 
         xBinomialDist.radius = xR;
         GetBinomialDistribution(xBinomialDist);
