@@ -6,7 +6,7 @@
 ////#include "VolumeDeltaAnalyzer.h"
 ////#include <MathTools/Combinatorics.h>
 ////#include <SkeletonMaker/PriorityQueue.h>
-//#include <MathTools/MathLib.h>
+#include <MathTools/MathLib.h>
 //#include <MathTools/DataStructures.h>
 ////#include <MathTools/Vector3.h>
 #include "NormalFinder.h"
