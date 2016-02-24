@@ -11,6 +11,8 @@ namespace MathTools {
     const  float MAX_FLOAT  = std::numeric_limits<float>::max();
     const    int MAX_INT    = std::numeric_limits<int>::max();
 
+    const double PI = 3.1415926535897932385;
+
     inline bool isZero(double value, double varience = 1e-16) {
         return value < varience && value > -varience ? true : false;
     }
