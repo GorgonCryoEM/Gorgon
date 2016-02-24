@@ -178,7 +178,7 @@ namespace Protein_Morph {
       cout<<"DEBUG: Method: SSEHunter::SetSkeletonScores\033[0m"<<endl;
       cout<<"DEBUG: Args: Volume*, NonManifoldMesh*, float\033[0m"<<endl;
       cout<<"Checkpoint 1"<<endl;
-      cout<<*skeleton<<endl;
+      cout<<skeleton<<endl;
       cout<<"patoms.size(): "<<patoms.size()<<endl;
 #endif
 
@@ -194,7 +194,7 @@ namespace Protein_Morph {
                 pAtomPosition[n] = pAtomPosition[n] * (1.0/skel_scale[n]);
 #ifdef GORGON_DEBUG_LOOP
       cout<<"Checkpoint 21: i: "<<i<<endl;
-      cout<<"skeleton:\n"<<*skeleton<<endl;
+      cout<<"skeleton:\n"<<skeleton<<endl;
 #endif
             for (unsigned int j = 0; j < skeleton.vertices.size(); j++) {
                 skeletonAtom = skeleton.vertices[j].position;
