@@ -74,11 +74,10 @@ namespace GraySkeletonCPP {
                                            Volume * preserve, double threshold);
             void PruneCurves(Volume * sourceVolume, int pruneLength);
             void PruneSurfaces(Volume * sourceVolume, int pruneLength);
-            void PruneUsingStructureTensor(
-                    Volume * skeleton, Volume * sourceVolume,
-                    Volume * preserveVol, Vector3Float * volumeGradient,
-                    vector<EigenResults3D> & volumeEigens, ProbDistr3D & filter,
-                    double threshold, char pruningClass, string outputPath);
+            void PruneUsingStructureTensor( Volume * skeleton, Volume * sourceVolume,
+                                            Volume * preserveVol, Vector3Float * volumeGradient,
+                                            vector<EigenResults3D> & volumeEigens, ProbDistr3D & filter,
+                                            double threshold, char pruningClass, string outputPath);
             void SmoothenVolume(Volume * &sourceVolume, double minGrayscale,
                                 double maxGrayscale, int stRadius);
             void VoxelBinarySubtract(Volume * sourceAndDestVolume1,
