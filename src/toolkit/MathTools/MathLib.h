@@ -18,9 +18,8 @@ namespace MathTools {
 
         void EigenAnalysis           (EigenVectorsAndValues2D   & eigenInformation);
         void EigenAnalysis           (EigenVectorsAndValues3D   & eigenInformation);
-        void GetBinomialDistribution (ProbabilityDistribution1D & distributionInfo);
-        void GetBinomialDistribution (ProbabilityDistribution2D & distributionInfo);
-        void GetBinomialDistribution (ProbabilityDistribution3D & distributionInfo);
+        template <class T>
+        void GetBinomialDistribution (T & distributionInfo);
         void GetUniformDistribution  (ProbabilityDistribution3D & distributionInfo);
         unsigned long long Combinations(int n, int r);
         unsigned long long Permutations(int n, int r);
@@ -49,15 +48,8 @@ namespace MathTools {
         #endif
     }
 
-    void MathLib::GetBinomialDistribution(ProbabilityDistribution1D & distributionInfo) {
-        return Combinatorics::GetBinomialDistribution(distributionInfo);
-    }
-
-    void MathLib::GetBinomialDistribution(ProbabilityDistribution2D & distributionInfo) {
-        return Combinatorics::GetBinomialDistribution(distributionInfo);
-    }
-
-    void MathLib::GetBinomialDistribution(ProbabilityDistribution3D & distributionInfo) {
+    template <class T>
+    void MathLib::GetBinomialDistribution(T & distributionInfo) {
         return Combinatorics::GetBinomialDistribution(distributionInfo);
     }
 
