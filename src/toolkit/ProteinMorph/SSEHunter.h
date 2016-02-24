@@ -95,10 +95,11 @@ namespace Protein_Morph {
         int &mX = m[0];
         int &mY = m[1];
         int &mZ = m[2];
+
         double maxVal = tempVol->getMaxValuePosition(mX, mY, mZ);
-        int i = 1;
+
         PDBAtom atom;
-        while (maxVal >= threshold) {
+        for(int i = 1; maxVal >= threshold; i++) {
             atom.SetSerial(i);
             atom.SetName("CA");
             atom.SetResName("GLY");
@@ -119,7 +120,6 @@ namespace Protein_Morph {
             atomVolumePositions.push_back(Vector3Int(mX, mY, mZ));
             UpdateMap(tempVol, Vector3Int(mX, mY, mZ), rangemin, rangemax);
             maxVal = tempVol->getMaxValuePosition(mX, mY, mZ);
-            i++;
         }
     }
 
