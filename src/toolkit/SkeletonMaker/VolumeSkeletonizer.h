@@ -78,7 +78,7 @@ namespace GraySkeletonCPP {
                                            Volume * sourceVolume,
                                            Volume * preserveVol,
                                            Vector3Float * volumeGradient,
-                                           EigenResults3D * volumeEigens,
+                                           vector<EigenResults3D> & volumeEigens,
                                            ProbDistr3D & filter,
                                            double threshold, char pruningClass,
                                            string outputPath);
@@ -602,7 +602,7 @@ namespace GraySkeletonCPP {
 
     void VolumeSkeletonizer::PruneUsingStructureTensor(
             Volume * skeleton, Volume * sourceVolume, Volume * preserveVol,
-            Vector3Float * volumeGradient, EigenResults3D * volumeEigens,
+            Vector3Float * volumeGradient, vector<EigenResults3D> & volumeEigens,
             ProbDistr3D & filter, double threshold, char pruningClass,
             string outputPath)
     {
@@ -618,7 +618,7 @@ namespace GraySkeletonCPP {
                 for(int z = 0; z < skeleton->getSizeZ(); z++) {
                     index = skeleton->getIndex(x, y, z);
                     if(((preserveVol == NULL) || ((preserveVol != NULL) && preserveVol->getDataAt(index) < 0.5)) && (tempSkel->getDataAt(index) > 0)) {
-                        if(volumeEigens == NULL) {
+                        if(volumeEigens.empty()) {
                             GetEigenResult(eigen, volumeGradient, filter, x, y, z, skeleton->getSizeX(), skeleton->getSizeY(), skeleton->getSizeZ(), filter.R, false);
                         } else {
                             eigen = volumeEigens[index];
