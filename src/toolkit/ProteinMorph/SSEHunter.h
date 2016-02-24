@@ -39,7 +39,7 @@ namespace Protein_Morph {
             int GetNumberOfPseudoAtoms();
             PDBAtom& GetPseudoAtom(int i);
 
-            void SetCorrelationScores(Volume * vol, RadialProfileType type,
+            void SetCorrelationScores(const Volume & vol, RadialProfileType type,
                                       float resolution, float deltaAltRadians);
             void SetSkeletonScores(Volume * vol, NonManifoldMesh * skeleton,
                                    float resolution);
@@ -65,7 +65,7 @@ namespace Protein_Morph {
                                        bool reset = true, float apix_y = -1,
                                        float apix_z = -1);
             void NormThresh(Volume& map, float thresh);
-            Volume * HelixCorrelation(Volume* map_vol, RadialProfileType type = POLYNOMIAL,
+            Volume * HelixCorrelation(const Volume & map_vol, RadialProfileType type = POLYNOMIAL,
                                       float length = 16.2,
                                       float deltaAltRadians = 5 * PI / 180,
                                       bool use_mcf = true,
@@ -139,7 +139,7 @@ namespace Protein_Morph {
         for(int x = rMinX; x < rMaxX; x++){
             for(int y = rMinY; y < rMaxY; y++) {
                 for(int z = rMinZ; z < rMaxZ; z++) {
-                    float tempVal = vol->getDataAt(loc.X() + x, loc.Y() + y, loc.Z() + z);
+                    float tempVal = vol.getDataAt(loc.X() + x, loc.Y() + y, loc.Z() + z);
                     float distance = sqrt((float)(x*x + y*y + z*z));
                     float value;
                     if((x==0) && (y==0) && (z==0)) {
@@ -477,8 +477,11 @@ namespace Protein_Morph {
         }
     }
 
-    Volume * SSEHunter::HelixCorrelation(Volume* model, RadialProfileType type, float length,
-                                             float deltaAltRadians, bool use_mcf, Volume* az_vol, Volume* alt_vol) {
+    Volume * SSEHunter::HelixCorrelation(const Volume & model, RadialProfileType type,
+                                         float length, float deltaAltRadians,
+                                         bool use_mcf, Volume* az_vol,
+                                         Volume* alt_vol)
+    {
         cout << "HelixCorrelation()\n";
 
 #ifdef USE_TIME_MANAGER
@@ -499,9 +502,9 @@ namespace Protein_Morph {
 #endif
 
         // TODO: Make it work with helices
-        int nx = model->getSizeX();
-        int ny = model->getSizeY();
-        int nz = model->getSizeZ();
+        int nx = model.getSizeX();
+        int ny = model.getSizeY();
+        int nz = model.getSizeZ();
         int fftPaddingFastIx = nz % 2 ? 1 : 2;
         int array_size = nx*ny*(nz+fftPaddingFastIx);
         int N = nx*ny*nz;
@@ -513,12 +516,12 @@ namespace Protein_Morph {
         }
 
         Volume * bestCCF = new Volume(nx, ny, nz); // This is the returned volume
-        float orig_x = model->getOriginX();
-        float orig_y = model->getOriginY();
-        float orig_z = model->getOriginZ();
-        float apix_x = model->getSpacingX();
-        float apix_y = model->getSpacingY();
-        float apix_z = model->getSpacingZ();
+        float orig_x = model.getOriginX();
+        float orig_y = model.getOriginY();
+        float orig_z = model.getOriginZ();
+        float apix_x = model.getSpacingX();
+        float apix_y = model.getSpacingY();
+        float apix_z = model.getSpacingZ();
 
         bestCCF->setOrigin(orig_x, orig_y, orig_z);
         bestCCF->setSpacing(apix_x, apix_y, apix_z);
@@ -547,7 +550,7 @@ namespace Protein_Morph {
             cyl[i] = 0;
         }
 
-        Volume model_copy(*model); //get a copy before doing NormThresh()
+        Volume model_copy(model); //get a copy before doing NormThresh()
 
         #ifdef GORGON_DEBUG
               cout<<"DEBUG: File:   SSEHunter.h"<<endl;
@@ -708,7 +711,10 @@ namespace Protein_Morph {
         return bestCCF;
     }
 
-    void SSEHunter::SetCorrelationScores(Volume * vol, RadialProfileType type, float resolution, float deltaAltRadians) {
+    void SSEHunter::SetCorrelationScores(const Volume & vol, RadialProfileType type,
+                                         float resolution,
+                                         float deltaAltRadians)
+    {
         cout << "SetCorrelationScores()\n";
         float cylinderLength = 16.2;
         Volume* bestCCF = HelixCorrelation(vol, type, cylinderLength, deltaAltRadians);
