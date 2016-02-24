@@ -44,10 +44,10 @@ namespace MathTools {
     }
 
     void Matlab::EigenAnalysis(EigenVectorsAndValues2D & eigenInformation) {
-        double a = eigenInformation.structureTensor[0][0];
-        double b = eigenInformation.structureTensor[0][1];
-        double c = eigenInformation.structureTensor[1][0];
-        double d = eigenInformation.structureTensor[1][1];
+        double a = eigenInformation.tensor[0][0];
+        double b = eigenInformation.tensor[0][1];
+        double c = eigenInformation.tensor[1][0];
+        double d = eigenInformation.tensor[1][1];
 
         double insidesqrt = sqrt((a+d) * (a+d) - 4.0*(a*d - b*c));
         double x1 = (a+d + insidesqrt) / 2.0;
@@ -68,18 +68,18 @@ namespace MathTools {
         v1.normalize();
         v2.normalize();
 
-        eigenInformation.eigenValues[0] = (float)x1;
-        eigenInformation.eigenValues[1] = (float)x2;
-        eigenInformation.eigenVectors[0][0] = (float)v1[0];
-        eigenInformation.eigenVectors[0][1] = (float)v1[1];
-        eigenInformation.eigenVectors[1][0] = (float)v2[0];
-        eigenInformation.eigenVectors[1][1] = (float)v2[1];
+        eigenInformation.eigenVals[0] = (float)x1;
+        eigenInformation.eigenVals[1] = (float)x2;
+        eigenInformation.eigenVecs[0][0] = (float)v1[0];
+        eigenInformation.eigenVecs[0][1] = (float)v1[1];
+        eigenInformation.eigenVecs[1][0] = (float)v2[0];
+        eigenInformation.eigenVecs[1][1] = (float)v2[1];
     }
 
     void Matlab::EigenAnalysis(EigenVectorsAndValues3D & eigenInformation) {
-        float st[3][3] = {{eigenInformation.structureTensor[0][0], eigenInformation.structureTensor[0][1], eigenInformation.structureTensor[0][2]},
-                          {eigenInformation.structureTensor[1][0], eigenInformation.structureTensor[1][1], eigenInformation.structureTensor[1][2]},
-                          {eigenInformation.structureTensor[2][0], eigenInformation.structureTensor[2][1], eigenInformation.structureTensor[2][2]}
+        float st[3][3] = {{eigenInformation.tensor[0][0], eigenInformation.tensor[0][1], eigenInformation.tensor[0][2]},
+                          {eigenInformation.tensor[1][0], eigenInformation.tensor[1][1], eigenInformation.tensor[1][2]},
+                          {eigenInformation.tensor[2][0], eigenInformation.tensor[2][1], eigenInformation.tensor[2][2]}
                          };
 
         float values[3];
@@ -87,9 +87,9 @@ namespace MathTools {
         jacobi(st, values, vectors);
 
         for(int i = 0; i < 3; i++) {
-            eigenInformation.eigenValues[i] = fabs(values[i]);
+            eigenInformation.eigenVals[i] = fabs(values[i]);
             for(int j = 0; j < 3; j++) {
-                eigenInformation.eigenVectors[i][j] = vectors[i][j];
+                eigenInformation.eigenVecs[i][j] = vectors[i][j];
             }
         }
     }
@@ -98,7 +98,7 @@ namespace MathTools {
     void Matlab::EigenAnalysisMatlab(EigenVectorsAndValues3D & eigenInformation) {
         mxArray * mxMathData = mxCreateDoubleMatrix(3, 3, mxREAL);
 
-        memcpy(mxGetPr(mxMathData), eigenInformation.structureTensor, 9*sizeof(double));
+        memcpy(mxGetPr(mxMathData), eigenInformation.tensor, 9*sizeof(double));
 
         engPutVariable(mathEngine, "X", mxMathData);
         engEvalString(mathEngine, "[V D] = eigs(X); D = abs(D); D1 = D(1,1); D2 = D(2,2); D3 = D(3,3)");
@@ -108,10 +108,10 @@ namespace MathTools {
         mxArray * mxEigenVectors = engGetVariable(mathEngine, "V");
         engEvalString(mathEngine, " clear 'D';clear 'X'; clear 'D1'; clear 'D2'; clear 'D3'; clear 'V';");
 
-        memcpy(eigenInformation.eigenVectors, mxGetPr(mxEigenVectors), 9*sizeof(double));
-        memcpy(&eigenInformation.eigenValues[0], mxGetPr(mxEigenValue1), sizeof(double));
-        memcpy(&eigenInformation.eigenValues[1], mxGetPr(mxEigenValue2), sizeof(double));
-        memcpy(&eigenInformation.eigenValues[2], mxGetPr(mxEigenValue3), sizeof(double));
+        memcpy(eigenInformation.eigenVecs, mxGetPr(mxEigenVectors), 9*sizeof(double));
+        memcpy(&eigenInformation.eigenVals[0], mxGetPr(mxEigenValue1), sizeof(double));
+        memcpy(&eigenInformation.eigenVals[1], mxGetPr(mxEigenValue2), sizeof(double));
+        memcpy(&eigenInformation.eigenVals[2], mxGetPr(mxEigenValue3), sizeof(double));
 
         mxDestroyArray(mxMathData);
         mxDestroyArray(mxEigenValue1);

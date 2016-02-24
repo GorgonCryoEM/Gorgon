@@ -10,15 +10,15 @@ namespace MathTools {
     const int MAX_PROBAB_DISTR_W = MAX_PROBAB_DISTR_R*2 + 1;
 
     struct EigenVectorsAndValues2D{
-        float eigenVectors[2][2];
-        float eigenValues[2];
-        float structureTensor[2][2];
+        float eigenVecs[2][2];
+        float eigenVals[2];
+        float tensor[2][2];
     };
 
     struct EigenVectorsAndValues3D{
-        float eigenVectors[3][3];
-        float eigenValues[3];
-        float structureTensor[3][3];
+        float eigenVecs[3][3];
+        float eigenVals[3];
+        float tensor[3][3];
     };
 
     struct ProbDistr1D{

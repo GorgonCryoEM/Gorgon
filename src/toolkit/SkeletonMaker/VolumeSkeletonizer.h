@@ -533,7 +533,7 @@ namespace GraySkeletonCPP {
 
             for(int r = 0; r < 3; r++) {
                 for(int c = 0; c < 3; c++) {
-                    eigenData.structureTensor[r][c] = 0;
+                    eigenData.tensor[r][c] = 0;
                 }
             }
 
@@ -544,7 +544,7 @@ namespace GraySkeletonCPP {
                         probability = gaussianFilter.vals[xx+gaussianFilterRadius][yy+gaussianFilterRadius][zz+gaussianFilterRadius];
                         for(int r = 0; r < 3; r++) {
                             for(int c = 0; c < 3; c++) {
-                                eigenData.structureTensor[r][c] += imageGradient[index2][r] * imageGradient[index2][c] * probability;
+                                eigenData.tensor[r][c] += imageGradient[index2][r] * imageGradient[index2][c] * probability;
                             }
                         }
                     }
@@ -553,9 +553,9 @@ namespace GraySkeletonCPP {
 
             math.EigenAnalysis(eigenData);
             for(int r = 0; r < 3; r++) {
-                returnVal.vals[r] = eigenData.eigenValues[r];
+                returnVal.vals[r] = eigenData.eigenVals[r];
                 for(int c = 0; c < 3; c++) {
-                    returnVal.vecs[r][c] = eigenData.eigenVectors[r][c];
+                    returnVal.vecs[r][c] = eigenData.eigenVecs[r][c];
                 }
             }
 
