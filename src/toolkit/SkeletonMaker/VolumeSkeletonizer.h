@@ -190,7 +190,7 @@ namespace GraySkeletonCPP {
         BinomDistr(gaussianFilterMaxRadius);
 
         uniformFilterSkeletonDirectionRadius.radius = skeletonDirectionRadius;
-        GetUniformDistribution(uniformFilterSkeletonDirectionRadius);
+        UniformDistr(uniformFilterSkeletonDirectionRadius);
     }
 
     VolumeSkeletonizer::~VolumeSkeletonizer() {

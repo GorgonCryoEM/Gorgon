@@ -13,8 +13,8 @@ namespace MathTools {
     static void BinomDistr(ProbDistr1D & distro);
     static void BinomDistr(ProbDistr2D & distro);
     static void BinomDistr(ProbDistr3D & distro);
-    static void GetUniformDistribution(ProbDistr3D & distro);
-    static void GetAnisotropicDistributionAxisAligned(ProbDistr3D & distro, int xR, int yR, int zR);
+    static void UniformDistr(ProbDistr3D & distro);
+    static void AnisoDistrAxisAligned(ProbDistr3D & distro, int xR, int yR, int zR);
 
     unsigned long long Combinations(int n, int r) {
         long long c = 1;
@@ -72,7 +72,7 @@ namespace MathTools {
         }
     }
 
-    void GetUniformDistribution(ProbDistr3D & distro) {
+    void UniformDistr(ProbDistr3D & distro) {
         double probability = 1.0 / (double)(distro.radius * 2 +1) * (distro.radius * 2 +1) * (distro.radius * 2 +1);
         for(int x = 0; x < distro.radius * 2 +1; x++) {
             for(int y = 0; y < distro.radius * 2 +1; y++) {
@@ -83,7 +83,7 @@ namespace MathTools {
         }
     }
 
-    void GetAnisotropicDistributionAxisAligned(ProbDistr3D & distro, int xR, int yR, int zR) {
+    void AnisoDistrAxisAligned(ProbDistr3D & distro, int xR, int yR, int zR) {
         distro.radius = max (xR, max(yR, zR));
         ProbDistr1D xBinomialDist, yBinomialDist, zBinomialDist;
 
