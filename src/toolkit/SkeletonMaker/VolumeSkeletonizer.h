@@ -144,7 +144,7 @@ namespace GraySkeletonCPP {
             static const char PRUNING_CLASS_PRUNE_POINTS;
 
         public:
-            MathLib * math;
+            MathLib math;
             NormalFinder * surfaceNormalFinder;
             ProbabilityDistribution3D gaussianFilterPointRadius;
             ProbabilityDistribution3D gaussianFilterCurveRadius;
@@ -168,8 +168,9 @@ namespace GraySkeletonCPP {
     const char VolumeSkeletonizer::PRUNING_CLASS_PRUNE_POINTS = 7;
 
 
-    VolumeSkeletonizer::VolumeSkeletonizer(int pointRadius, int curveRadius, int surfaceRadius, int skeletonDirectionRadius) {
-        math = new MathLib();
+    VolumeSkeletonizer::VolumeSkeletonizer(int pointRadius, int curveRadius, int surfaceRadius, int skeletonDirectionRadius)
+        : math(MathLib())
+    {
         surfaceNormalFinder = new NormalFinder();
         this->pointRadius = pointRadius;
         this->curveRadius = curveRadius;
@@ -193,7 +194,6 @@ namespace GraySkeletonCPP {
     }
 
     VolumeSkeletonizer::~VolumeSkeletonizer() {
-        delete math;
         delete surfaceNormalFinder;
     }
 
@@ -551,7 +551,7 @@ namespace GraySkeletonCPP {
                 }
             }
 
-            math->EigenAnalysis(eigenData);
+            math.EigenAnalysis(eigenData);
             for(int r = 0; r < 3; r++) {
                 returnVal.values[r] = eigenData.eigenValues[r];
                 for(int c = 0; c < 3; c++) {
