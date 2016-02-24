@@ -18,8 +18,8 @@ namespace MathTools {
     public:
         Matlab();
         ~Matlab();
-        void EigenAnalysis(Eigen2D & eigenInformation);
-        void EigenAnalysis(Eigen3D & eigenInformation);
+        void EigenAnalysis(Eigen2D & in);
+        void EigenAnalysis(Eigen3D & in);
         #ifdef USE_MATLAB
         void EigenAnalysisMatlab(Eigen3D & eigenInformation);
         #endif
@@ -43,11 +43,11 @@ namespace MathTools {
         #endif
     }
 
-    void Matlab::EigenAnalysis(Eigen2D & eigenInformation) {
-        double a = eigenInformation.tensor[0][0];
-        double b = eigenInformation.tensor[0][1];
-        double c = eigenInformation.tensor[1][0];
-        double d = eigenInformation.tensor[1][1];
+    void Matlab::EigenAnalysis(Eigen2D & in) {
+        double a = in.tensor[0][0];
+        double b = in.tensor[0][1];
+        double c = in.tensor[1][0];
+        double d = in.tensor[1][1];
 
         double insidesqrt = sqrt((a+d) * (a+d) - 4.0*(a*d - b*c));
         double x1 = (a+d + insidesqrt) / 2.0;
@@ -68,18 +68,18 @@ namespace MathTools {
         v1.normalize();
         v2.normalize();
 
-        eigenInformation.eigenVals[0] = (float)x1;
-        eigenInformation.eigenVals[1] = (float)x2;
-        eigenInformation.eigenVecs[0][0] = (float)v1[0];
-        eigenInformation.eigenVecs[0][1] = (float)v1[1];
-        eigenInformation.eigenVecs[1][0] = (float)v2[0];
-        eigenInformation.eigenVecs[1][1] = (float)v2[1];
+        in.eigenVals[0] = (float)x1;
+        in.eigenVals[1] = (float)x2;
+        in.eigenVecs[0][0] = (float)v1[0];
+        in.eigenVecs[0][1] = (float)v1[1];
+        in.eigenVecs[1][0] = (float)v2[0];
+        in.eigenVecs[1][1] = (float)v2[1];
     }
 
-    void Matlab::EigenAnalysis(Eigen3D & eigenInformation) {
-        float st[3][3] = {{eigenInformation.tensor[0][0], eigenInformation.tensor[0][1], eigenInformation.tensor[0][2]},
-                          {eigenInformation.tensor[1][0], eigenInformation.tensor[1][1], eigenInformation.tensor[1][2]},
-                          {eigenInformation.tensor[2][0], eigenInformation.tensor[2][1], eigenInformation.tensor[2][2]}
+    void Matlab::EigenAnalysis(Eigen3D & in) {
+        float st[3][3] = {{in.tensor[0][0], in.tensor[0][1], in.tensor[0][2]},
+                          {in.tensor[1][0], in.tensor[1][1], in.tensor[1][2]},
+                          {in.tensor[2][0], in.tensor[2][1], in.tensor[2][2]}
                          };
 
         float values[3];
@@ -87,9 +87,9 @@ namespace MathTools {
         jacobi(st, values, vectors);
 
         for(int i = 0; i < 3; i++) {
-            eigenInformation.eigenVals[i] = fabs(values[i]);
+            in.eigenVals[i] = fabs(values[i]);
             for(int j = 0; j < 3; j++) {
-                eigenInformation.eigenVecs[i][j] = vectors[i][j];
+                in.eigenVecs[i][j] = vectors[i][j];
             }
         }
     }
