@@ -396,6 +396,11 @@ namespace GraphMatch {
     }
 
     template <class T>
+    inline Vector3<T> operator/(const T s, const Vector3<T> &v) {
+        return Vector3<T>(s / v[0], s / v[1], s / v[2]);
+    }
+
+    template <class T>
     inline T dot(const Vector3<T> &w, const Vector3<T> &v) {
         return w * v;
     }
