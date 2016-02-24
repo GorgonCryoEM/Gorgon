@@ -74,14 +74,11 @@ namespace GraySkeletonCPP {
                                            Volume * preserve, double threshold);
             void PruneCurves(Volume * sourceVolume, int pruneLength);
             void PruneSurfaces(Volume * sourceVolume, int pruneLength);
-            void PruneUsingStructureTensor(Volume * skeleton,
-                                           Volume * sourceVolume,
-                                           Volume * preserveVol,
-                                           Vector3Float * volumeGradient,
-                                           vector<EigenResults3D> & volumeEigens,
-                                           ProbDistr3D & filter,
-                                           double threshold, char pruningClass,
-                                           string outputPath);
+            void PruneUsingStructureTensor(
+                    Volume * skeleton, Volume * sourceVolume,
+                    Volume * preserveVol, Vector3Float * volumeGradient,
+                    vector<EigenResults3D> & volumeEigens, ProbDistr3D & filter,
+                    double threshold, char pruningClass, string outputPath);
             void SmoothenVolume(Volume * &sourceVolume, double minGrayscale,
                                 double maxGrayscale, int stRadius);
             void VoxelBinarySubtract(Volume * sourceAndDestVolume1,
@@ -90,25 +87,25 @@ namespace GraySkeletonCPP {
                                Volume * sourceVolume2);
             void VoxelOr(Volume * sourceAndDestVolume1, Volume * sourceVolume2);
             Vector3Float GetCurveDirection(Volume * skeleton, int x, int y,
-                                            int z, int radius);
+                                           int z, int radius);
             Vector3Float GetSurfaceNormal(Volume * skeleton, int x, int y,
-                                           int z);
+                                          int z);
             Vector3Float GetSurfaceNormal(Volume * skeleton, int x, int y,
-                                           int z, int radius,
-                                           Vector3Float * localDirections);
+                                          int z, int radius,
+                                          Vector3Float * localDirections);
             Vector3Float * GetVolumeGradient(Volume * sourceVolume);
             Vector3Float * GetSkeletonDirection(Volume * skeleton, int type);
 
             void GetEigenResult(EigenResults3D & returnVal,
                                 Vector3Float * imageGradient,
-                                ProbDistr3D & gaussianFilter,
-                                int x, int y, int z, int sizeX, int sizeY,
-                                int sizeZ, int gaussianFilterRadius,
-                                bool clear);
-            vector<EigenResults3D> GetEigenResults(
-                    Volume * maskVol, Vector3Float * imageGradient,
-                    ProbDistr3D & gaussianFilter,
-                    int gaussianFilterRadius, bool useMask);
+                                ProbDistr3D & gaussianFilter, int x, int y,
+                                int z, int sizeX, int sizeY, int sizeZ,
+                                int gaussianFilterRadius, bool clear);
+            vector<EigenResults3D> GetEigenResults(Volume * maskVol,
+                                                   Vector3Float * imageGradient,
+                                                   ProbDistr3D & gaussianFilter,
+                                                   int gaussianFilterRadius,
+                                                   bool useMask);
 
         protected:
 
@@ -116,11 +113,10 @@ namespace GraySkeletonCPP {
                                 Vector3Float skeletonDirection, int type);
             void FindOrthogonalAxes(Vector3Float axis, Vector3Float & res1,
                                     Vector3Float & res2);
-            void GetSTBasedDistribution(
-                    ProbDistr3D & distributionInfo,
-                    EigenResults3D eigen);
+            void GetSTBasedDistribution(ProbDistr3D & distributionInfo,
+                                        EigenResults3D eigen);
             Vector3Float XYZtoUVW(Vector3Float vec, Vector3Float u,
-                                   Vector3Float v, Vector3Float w);
+                                  Vector3Float v, Vector3Float w);
             Volume * FillCurveHoles(Volume * thresholdedSkeleton,
                                     Volume * originalSkeleton, int maxHoleSize);
             Volume * FillSurfaceHoles(Volume * thresholdedSkeleton,
