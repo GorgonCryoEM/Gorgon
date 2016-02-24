@@ -6,8 +6,8 @@
 using namespace GraphMatch;
 
 namespace MathTools {
-    const int MAX_PROBAB_DISTR_R = 10;
-    const int MAX_PROBAB_DISTR_W = MAX_PROBAB_DISTR_R*2 + 1;
+    const int maxR = 10;
+    const int maxWidth = maxR*2 + 1;
 
     struct Eigen2D{
         float vecs[2][2];
@@ -26,17 +26,17 @@ namespace MathTools {
 
     struct ProbDistr1D{
         int R;
-        float vals[MAX_PROBAB_DISTR_W];
+        float vals[maxWidth];
     };
 
     struct ProbDistr2D{
         int R;
-        float vals[MAX_PROBAB_DISTR_W][MAX_PROBAB_DISTR_W];
+        float vals[maxWidth][maxWidth];
     };
 
     struct ProbDistr3D{
         int R;
-        float vals[MAX_PROBAB_DISTR_W][MAX_PROBAB_DISTR_W][MAX_PROBAB_DISTR_W];
+        float vals[maxWidth][maxWidth][maxWidth];
     };
 }
 
