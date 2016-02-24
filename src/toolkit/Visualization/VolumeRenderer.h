@@ -262,7 +262,6 @@ namespace Visualization {
         double val;
 
         int radius = 1;
-        MathLib * math = new MathLib();
 
         ProbabilityDistribution3D gaussianFilter;
         gaussianFilter.radius = radius;
@@ -284,7 +283,6 @@ namespace Visualization {
             }
         }
 
-        delete math;
         delete sourceVol;
         volData = destVol;
         InitializeOctree();
