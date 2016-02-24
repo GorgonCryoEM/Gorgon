@@ -44,7 +44,7 @@ namespace Protein_Morph {
             void SetSkeletonScores(const Volume & vol, const NonManifoldMesh & skeleton,
                                    float resolution);
             vector<vector<float> > GetAtomDistances();
-            vector<float> GetLocalDirectionalityScores(const Volume & vol);
+            vector<float> GetLocalDirectionalityScores(Volume * vol);
 
         private:
             void UpdateMap(Volume & vol, Vector3Int loc,
@@ -254,22 +254,22 @@ namespace Protein_Morph {
         return distances;
     }
 
-    vector<float> SSEHunter::GetLocalDirectionalityScores(const Volume & vol) {
-        Volume tempVol(vol);
-        double minVal = tempVol.getMin();
+    vector<float> SSEHunter::GetLocalDirectionalityScores(Volume * vol) {
+        Volume * tempVol = new Volume(*vol);
+        double minVal = tempVol->getMin();
         int offset = MAX_GAUSSIAN_FILTER_RADIUS;
 
-        tempVol.pad(offset, minVal);
-        Volume maskVol(tempVol);
+        tempVol->pad(offset, minVal);
+        Volume * maskVol = new Volume(tempVol->getSizeX(), tempVol->getSizeY(), tempVol->getSizeZ());
         for(unsigned int i = 0; i < atomVolumePositions.size(); i++) {
-            maskVol.setDataAt(atomVolumePositions[i].X() + offset, atomVolumePositions[i].Y() + offset, atomVolumePositions[i].Z() + offset, 1.0);
+            maskVol->setDataAt(atomVolumePositions[i].X() + offset, atomVolumePositions[i].Y() + offset, atomVolumePositions[i].Z() + offset, 1.0);
         }
 
-        int kernelWidth = min(offset, (int)round(2.0/min(min(vol.getSpacingX(), vol.getSpacingY()), vol.getSpacingZ())));
-        VolumeSkeletonizer skeletonizer(kernelWidth, kernelWidth, kernelWidth, kernelWidth);
+        int kernelWidth = min(offset, (int)round(2.0/min(min(vol->getSpacingX(), vol->getSpacingY()), vol->getSpacingZ())));
+        VolumeSkeletonizer * skeletonizer = new VolumeSkeletonizer(kernelWidth, kernelWidth, kernelWidth, kernelWidth);
 
-        vector<Vector3Float> volumeGradient = skeletonizer.GetVolumeGradient(&tempVol);
-        vector<EigenResults3D> eigens = skeletonizer.GetEigenResults(&maskVol, volumeGradient, skeletonizer.gaussianFilterPointRadius, kernelWidth, true);
+        Vector3Float * volumeGradient = skeletonizer->GetVolumeGradient(tempVol);
+        vector<EigenResults3D> eigens = skeletonizer->GetEigenResults(maskVol, volumeGradient, skeletonizer->gaussianFilterPointRadius, kernelWidth, true);
 
         float minScore = 10, maxScore = -10;
         vector<float> aspectRatios;
@@ -277,7 +277,7 @@ namespace Protein_Morph {
         float dx, dy, dz, x, y, z;
         float score;
         for(unsigned int i = 0; i < atomVolumePositions.size(); i++) {
-            index = maskVol.getIndex(atomVolumePositions[i].X() + offset, atomVolumePositions[i].Y() + offset, atomVolumePositions[i].Z() + offset);
+            index = maskVol->getIndex(atomVolumePositions[i].X() + offset, atomVolumePositions[i].Y() + offset, atomVolumePositions[i].Z() + offset);
 
             x = eigens[index].vals[0];
             y = eigens[index].vals[1];
@@ -303,6 +303,10 @@ namespace Protein_Morph {
 //				printf("%f\n", aspectRatios[i]);
         }
 
+        delete [] volumeGradient;
+        delete skeletonizer;
+        delete maskVol;
+        delete tempVol;
         return aspectRatios;
     }
 
