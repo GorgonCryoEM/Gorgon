@@ -34,7 +34,7 @@ namespace Protein_Morph {
 
     class SSEHunter {
         public:
-            void CreatePseudoAtoms(Volume * vol, float resolution,
+            void CreatePseudoAtoms(const Volume & vol, float resolution,
                                    float threshold);
             int GetNumberOfPseudoAtoms();
             PDBAtom& GetPseudoAtom(int i);
@@ -47,7 +47,7 @@ namespace Protein_Morph {
             vector<float> GetLocalDirectionalityScores(Volume * vol);
 
         private:
-            void UpdateMap(Volume * vol, Vector3Int loc,
+            void UpdateMap(Volume & vol, Vector3Int loc,
                            Vector3Float rangemin, Vector3Float rangemax);
 
             //Ross Coleman: modified from EMAN1 Cylinder.C by Wen Jiang
@@ -81,13 +81,14 @@ namespace Protein_Morph {
 
     // SSEHunter::CreatePseudoAtoms
     // threshold: the minimum density value that will be represented with a pseudoatom
-    void SSEHunter::CreatePseudoAtoms(Volume * vol, float resolution, float threshold) {
+    void SSEHunter::CreatePseudoAtoms(const Volume & vol, float resolution, float threshold) {
         cout << "CreatePseudoAtoms()" << endl;
-        Volume * tempVol = new Volume(*vol);
+
+        Volume tempVol(vol);
         patoms.clear();
         atomVolumePositions.clear();
 
-        Vector3Float spacing = vol->getSpacingObj();
+        Vector3Float spacing = vol.getSpacingObj();
         Vector3Float rangemin = -1.0f*resolution/spacing;
         Vector3Float rangemax = resolution/spacing;
         Vector3Int m;
@@ -96,7 +97,7 @@ namespace Protein_Morph {
         int &mY = m[1];
         int &mZ = m[2];
 
-        double maxVal = tempVol->getMaxValuePosition(mX, mY, mZ);
+        double maxVal = tempVol.getMaxValuePosition(mX, mY, mZ);
 
         PDBAtom atom;
         for(int i = 1; maxVal >= threshold; i++) {
@@ -106,7 +107,7 @@ namespace Protein_Morph {
             atom.SetChainId('A');
             atom.SetResSeq(i);
 
-            Vector3Float origin = vol->getOriginObj();
+            Vector3Float origin = vol.getOriginObj();
             Vector3Float position = origin + Vector3Float(m[0] * spacing[0],
                                                           m[1] * spacing[1],
                                                           m[2] * spacing[2]
@@ -119,13 +120,13 @@ namespace Protein_Morph {
             patoms.push_back(atom);
             atomVolumePositions.push_back(Vector3Int(mX, mY, mZ));
             UpdateMap(tempVol, Vector3Int(mX, mY, mZ), rangemin, rangemax);
-            maxVal = tempVol->getMaxValuePosition(mX, mY, mZ);
+            maxVal = tempVol.getMaxValuePosition(mX, mY, mZ);
         }
     }
 
     // SSEHunter::UpdateMap
     // called by SSEHunter::CreatePseudoAtoms after each pseudoatom is chosen
-    void SSEHunter::UpdateMap(Volume * vol, Vector3Int loc,
+    void SSEHunter::UpdateMap(Volume  & vol, Vector3Int loc,
                               Vector3Float rangemin, Vector3Float rangemax
                               )
     {
@@ -146,7 +147,7 @@ namespace Protein_Morph {
                     } else {
                         value = tempVal*(distance / maxDistance);
                     }
-                    vol->setDataAt(loc.X() + x, loc.Y() + y, loc.Z() + z, value);
+                    vol.setDataAt(loc.X() + x, loc.Y() + y, loc.Z() + z, value);
                 }
             }
         }
