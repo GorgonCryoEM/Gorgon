@@ -20,14 +20,7 @@ namespace GraphMatch {
         public:
             Vector3();
             Vector3(T _x, T _y, T _z);
-            template <class U>
-            Vector3(const Vector3<U> & obj)
-                : x(obj.X()),
-                  y(obj.Y()),
-                  z(obj.Z())
-            {}
-
-
+            Vector3(const vector<T>& vec);
 
             const T& X() const;
             const T& Y() const;
@@ -70,6 +63,7 @@ namespace GraphMatch {
             bool operator>=(const Vector3<T> &v) const;
             bool operator<=(const Vector3<T> &v) const;
 
+
             Vector3<T> normalize();
             void print() const;
 
@@ -109,7 +103,6 @@ namespace GraphMatch {
             : x(0), y(0), z(0)
     {}
 
-
     template <class T>
     T* Vector3<T>::getValues() const {
             T * vals = new T[3];
@@ -120,12 +113,12 @@ namespace GraphMatch {
             return vals;
     }
 
-//    template <class T>
-//    Vector3<T>::Vector3(const vector<T>& vec)
-//        : x(vec[0]),
-//          y(vec[1]),
-//          z(vec[2])
-//    {}
+    template <class T>
+    Vector3<T>::Vector3(const vector<T>& vec)
+        : x(vec[0]),
+          y(vec[1]),
+          z(vec[2])
+    {}
 
     template <class T>
     Vector3<T>::Vector3(T _x, T _y, T _z)
@@ -400,18 +393,6 @@ namespace GraphMatch {
     template <class T>
     inline Vector3<T> operator*(const T s, const Vector3<T> &v) {
         return Vector3<T>(v[0] * s, v[1] * s, v[2] * s);
-    }
-
-    template <class T>
-//    template <class U>
-    inline Vector3<T> operator*(const Vector3<T> &v1, const Vector3<T> &v2) {
-        return v1 * v2;
-    }
-
-    template <class T>
-//    template <class U>
-    inline Vector3<T> operator+(const Vector3<T> &v1, const Vector3<T> &v2) {
-        return v1 + v2;
     }
 
     template <class T>
