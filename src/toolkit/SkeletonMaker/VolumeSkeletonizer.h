@@ -6,7 +6,7 @@
 ////#include "VolumeDeltaAnalyzer.h"
 ////#include <MathTools/Combinatorics.h>
 ////#include <SkeletonMaker/PriorityQueue.h>
-#include <MathTools/MathLib.h>
+#include <MathTools/Matlab.h>
 //#include <MathTools/DataStructures.h>
 ////#include <MathTools/Vector3.h>
 #include "NormalFinder.h"
@@ -144,7 +144,7 @@ namespace GraySkeletonCPP {
             static const char PRUNING_CLASS_PRUNE_POINTS;
 
         public:
-            MathLib math;
+            Matlab math;
             NormalFinder * surfaceNormalFinder;
             ProbDistr3D gaussianFilterPointRadius;
             ProbDistr3D gaussianFilterCurveRadius;
@@ -169,7 +169,7 @@ namespace GraySkeletonCPP {
 
 
     VolumeSkeletonizer::VolumeSkeletonizer(int pointRadius, int curveRadius, int surfaceRadius, int skeletonDirectionRadius)
-        : math(MathLib())
+        : math(Matlab())
     {
         surfaceNormalFinder = new NormalFinder();
         this->pointRadius = pointRadius;
