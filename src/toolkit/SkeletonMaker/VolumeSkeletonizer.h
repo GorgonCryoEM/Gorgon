@@ -178,16 +178,16 @@ namespace GraySkeletonCPP {
         this->skeletonDirectionRadius = skeletonDirectionRadius;
 
         gaussianFilterPointRadius.radius = pointRadius;
-        GetBinomialDistribution(gaussianFilterPointRadius);
+        BinomDistr(gaussianFilterPointRadius);
 
         gaussianFilterCurveRadius.radius = curveRadius;
-        GetBinomialDistribution(gaussianFilterCurveRadius);
+        BinomDistr(gaussianFilterCurveRadius);
 
         gaussianFilterSurfaceRadius.radius = surfaceRadius;
-        GetBinomialDistribution(gaussianFilterSurfaceRadius);
+        BinomDistr(gaussianFilterSurfaceRadius);
 
         gaussianFilterMaxRadius.radius = MAX_GAUSSIAN_FILTER_RADIUS;
-        GetBinomialDistribution(gaussianFilterMaxRadius);
+        BinomDistr(gaussianFilterMaxRadius);
 
         uniformFilterSkeletonDirectionRadius.radius = skeletonDirectionRadius;
         GetUniformDistribution(uniformFilterSkeletonDirectionRadius);
@@ -651,7 +651,7 @@ namespace GraySkeletonCPP {
 
         ProbDistr3D smoothenMask;
         smoothenMask.radius = stRadius;
-        GetBinomialDistribution(smoothenMask);
+        BinomDistr(smoothenMask);
 
         sourceVolume->pad(MAX_GAUSSIAN_FILTER_RADIUS, 0);
 

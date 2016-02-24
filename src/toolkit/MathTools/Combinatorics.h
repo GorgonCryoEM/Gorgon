@@ -10,9 +10,9 @@ namespace MathTools {
     static unsigned long long Combinations(int n, int r);
     static unsigned long long Permutations(int n, int r);
 
-    static void GetBinomialDistribution(ProbDistr1D & distro);
-    static void GetBinomialDistribution(ProbDistr2D & distro);
-    static void GetBinomialDistribution(ProbDistr3D & distro);
+    static void BinomDistr(ProbDistr1D & distro);
+    static void BinomDistr(ProbDistr2D & distro);
+    static void BinomDistr(ProbDistr3D & distro);
     static void GetUniformDistribution(ProbDistr3D & distro);
     static void GetAnisotropicDistributionAxisAligned(ProbDistr3D & distro, int xR, int yR, int zR);
 
@@ -35,7 +35,7 @@ namespace MathTools {
         return p;
     }
 
-    void GetBinomialDistribution(ProbDistr1D & distro) {
+    void BinomDistr(ProbDistr1D & distro) {
         double total = 0;
 
         for(int x = -distro.radius, i=0; x <= distro.radius; x++, i++) {
@@ -48,10 +48,10 @@ namespace MathTools {
         }
     }
 
-    void GetBinomialDistribution(ProbDistr2D & distro) {
+    void BinomDistr(ProbDistr2D & distro) {
         ProbDistr1D dist1D;
         dist1D.radius = distro.radius;
-        GetBinomialDistribution(dist1D);
+        BinomDistr(dist1D);
         for(int x = 0; x < dist1D.radius * 2 +1; x++) {
             for(int y = 0; y < dist1D.radius * 2 +1; y++) {
                 distro.values[x][y] = dist1D.values[x] * dist1D.values[y];
@@ -59,10 +59,10 @@ namespace MathTools {
         }
     }
 
-    void GetBinomialDistribution(ProbDistr3D & distro) {
+    void BinomDistr(ProbDistr3D & distro) {
         ProbDistr1D dist1D;
         dist1D.radius = distro.radius;
-        GetBinomialDistribution(dist1D);
+        BinomDistr(dist1D);
         for(int x = 0; x < dist1D.radius * 2 +1; x++) {
             for(int y = 0; y < dist1D.radius * 2 +1; y++) {
                 for(int z = 0; z < dist1D.radius * 2 +1; z++) {
@@ -88,11 +88,11 @@ namespace MathTools {
         ProbDistr1D xBinomialDist, yBinomialDist, zBinomialDist;
 
         xBinomialDist.radius = xR;
-        GetBinomialDistribution(xBinomialDist);
+        BinomDistr(xBinomialDist);
         yBinomialDist.radius = yR;
-        GetBinomialDistribution(yBinomialDist);
+        BinomDistr(yBinomialDist);
         zBinomialDist.radius = zR;
-        GetBinomialDistribution(zBinomialDist);
+        BinomDistr(zBinomialDist);
 
         for(int x = 0; x < distro.radius * 2 +1; x++) {
             for(int y = 0; y < distro.radius * 2 +1; y++) {
