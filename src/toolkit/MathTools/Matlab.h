@@ -21,7 +21,7 @@ namespace MathTools {
         void EigenAnalysis(Eigen2D & in);
         void EigenAnalysis(Eigen3D & in);
         #ifdef USE_MATLAB
-        void EigenAnalysisMatlab(Eigen3D & eigenInformation);
+        void EigenAnalysisMatlab(Eigen3D & in);
         #endif
     private:
         #ifdef USE_MATLAB
@@ -95,10 +95,10 @@ namespace MathTools {
     }
 
     #ifdef USE_MATLAB
-    void Matlab::EigenAnalysisMatlab(Eigen3D & eigenInformation) {
+    void Matlab::EigenAnalysisMatlab(Eigen3D & in) {
         mxArray * mxMathData = mxCreateDoubleMatrix(3, 3, mxREAL);
 
-        memcpy(mxGetPr(mxMathData), eigenInformation.tensor, 9*sizeof(double));
+        memcpy(mxGetPr(mxMathData), in.tensor, 9*sizeof(double));
 
         engPutVariable(mathEngine, "X", mxMathData);
         engEvalString(mathEngine, "[V D] = eigs(X); D = abs(D); D1 = D(1,1); D2 = D(2,2); D3 = D(3,3)");
@@ -108,10 +108,10 @@ namespace MathTools {
         mxArray * mxEigenVectors = engGetVariable(mathEngine, "V");
         engEvalString(mathEngine, " clear 'D';clear 'X'; clear 'D1'; clear 'D2'; clear 'D3'; clear 'V';");
 
-        memcpy(eigenInformation.eigenVecs, mxGetPr(mxEigenVectors), 9*sizeof(double));
-        memcpy(&eigenInformation.eigenVals[0], mxGetPr(mxEigenValue1), sizeof(double));
-        memcpy(&eigenInformation.eigenVals[1], mxGetPr(mxEigenValue2), sizeof(double));
-        memcpy(&eigenInformation.eigenVals[2], mxGetPr(mxEigenValue3), sizeof(double));
+        memcpy(in.eigenVecs, mxGetPr(mxEigenVectors), 9*sizeof(double));
+        memcpy(&in.eigenVals[0], mxGetPr(mxEigenValue1), sizeof(double));
+        memcpy(&in.eigenVals[1], mxGetPr(mxEigenValue2), sizeof(double));
+        memcpy(&in.eigenVals[2], mxGetPr(mxEigenValue3), sizeof(double));
 
         mxDestroyArray(mxMathData);
         mxDestroyArray(mxEigenValue1);
