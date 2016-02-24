@@ -10,8 +10,8 @@ namespace MathTools {
     const int MAX_PROBAB_DISTR_W = MAX_PROBAB_DISTR_R*2 + 1;
 
     struct Eigen2D{
-        float eigenVecs[2][2];
-        float eigenVals[2];
+        float vecs[2][2];
+        float vals[2];
         float tensor[2][2];
     };
 
@@ -21,8 +21,8 @@ namespace MathTools {
     };
 
     struct Eigen3D{
-        float eigenVecs[3][3];
-        float eigenVals[3];
+        float vecs[3][3];
+        float vals[3];
         float tensor[3][3];
     };
 

@@ -553,9 +553,9 @@ namespace GraySkeletonCPP {
 
             math.EigenAnalysis(eigenData);
             for(int r = 0; r < 3; r++) {
-                returnVal.vals[r] = eigenData.eigenVals[r];
+                returnVal.vals[r] = eigenData.vals[r];
                 for(int c = 0; c < 3; c++) {
-                    returnVal.vecs[r][c] = eigenData.eigenVecs[r][c];
+                    returnVal.vecs[r][c] = eigenData.vecs[r][c];
                 }
             }
 

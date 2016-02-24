@@ -65,12 +65,12 @@ namespace MathTools {
         v1.normalize();
         v2.normalize();
 
-        in.eigenVals[0] = (float)x1;
-        in.eigenVals[1] = (float)x2;
-        in.eigenVecs[0][0] = (float)v1[0];
-        in.eigenVecs[0][1] = (float)v1[1];
-        in.eigenVecs[1][0] = (float)v2[0];
-        in.eigenVecs[1][1] = (float)v2[1];
+        in.vals[0] = (float)x1;
+        in.vals[1] = (float)x2;
+        in.vecs[0][0] = (float)v1[0];
+        in.vecs[0][1] = (float)v1[1];
+        in.vecs[1][0] = (float)v2[0];
+        in.vecs[1][1] = (float)v2[1];
     }
 
     #ifndef USE_MATLAB
@@ -85,9 +85,9 @@ namespace MathTools {
         jacobi(st, vals, vecs);
 
         for(int i = 0; i < 3; i++) {
-            in.eigenVals[i] = fabs(vals[i]);
+            in.vals[i] = fabs(vals[i]);
             for(int j = 0; j < 3; j++) {
-                in.eigenVecs[i][j] = vecs[i][j];
+                in.vecs[i][j] = vecs[i][j];
             }
         }
     }
@@ -105,10 +105,10 @@ namespace MathTools {
         mxArray * mxEigenVectors = engGetVariable(mathEngine, "V");
         engEvalString(mathEngine, " clear 'D';clear 'X'; clear 'D1'; clear 'D2'; clear 'D3'; clear 'V';");
 
-        memcpy(in.eigenVecs, mxGetPr(mxEigenVectors), 9*sizeof(double));
-        memcpy(&in.eigenVals[0], mxGetPr(mxEigenValue1), sizeof(double));
-        memcpy(&in.eigenVals[1], mxGetPr(mxEigenValue2), sizeof(double));
-        memcpy(&in.eigenVals[2], mxGetPr(mxEigenValue3), sizeof(double));
+        memcpy(in.vecs, mxGetPr(mxEigenVectors), 9*sizeof(double));
+        memcpy(&in.vals[0], mxGetPr(mxEigenValue1), sizeof(double));
+        memcpy(&in.vals[1], mxGetPr(mxEigenValue2), sizeof(double));
+        memcpy(&in.vals[2], mxGetPr(mxEigenValue3), sizeof(double));
 
         mxDestroyArray(mxMathData);
         mxDestroyArray(mxEigenValue1);
