@@ -36,19 +36,15 @@ namespace MathTools {
     }
 
     void GetBinomialDistribution(ProbabilityDistribution1D & distributionInfo) {
-        int index = 0;
         double total = 0;
 
-        for(int x = -distributionInfo.radius; x <= distributionInfo.radius; x++) {
-            distributionInfo.values[index] = (float)Combinations(2 * distributionInfo.radius, x+distributionInfo.radius);
-            total += distributionInfo.values[index];
-            index++;
+        for(int x = -distributionInfo.radius, i=0; x <= distributionInfo.radius; x++, i++) {
+            distributionInfo.values[i] = (float)Combinations(2 * distributionInfo.radius, x+distributionInfo.radius);
+            total += distributionInfo.values[i];
         }
 
-        index = 0;
-        for(int x = -distributionInfo.radius; x <= distributionInfo.radius; x++) {
-            distributionInfo.values[index] = (float)(distributionInfo.values[index] / total);
-            index++;
+        for(int x = -distributionInfo.radius, i=0; x <= distributionInfo.radius; x++, i++) {
+            distributionInfo.values[i] = (float)(distributionInfo.values[i] / total);
         }
     }
 
