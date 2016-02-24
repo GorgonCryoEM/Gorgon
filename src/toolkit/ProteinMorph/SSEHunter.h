@@ -278,9 +278,9 @@ namespace Protein_Morph {
         for(unsigned int i = 0; i < atomVolumePositions.size(); i++) {
             index = maskVol->getIndex(atomVolumePositions[i].X() + offset, atomVolumePositions[i].Y() + offset, atomVolumePositions[i].Z() + offset);
 
-            x = eigens[index].values[0];
-            y = eigens[index].values[1];
-            z = eigens[index].values[2];
+            x = eigens[index].vals[0];
+            y = eigens[index].vals[1];
+            z = eigens[index].vals[2];
             if(isZero(x)){
                 dx = 1; dy = 1; dz = 1;
             } else if(isZero(y)) {

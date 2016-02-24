@@ -22,23 +22,23 @@ namespace MathTools {
     };
 
     struct ProbDistr1D{
-        int radius;
-        float values[MAX_PROBABILITY_DISTRIBUTION_WIDTH];
+        int R;
+        float vals[MAX_PROBABILITY_DISTRIBUTION_WIDTH];
     };
 
     struct ProbDistr2D{
-        int radius;
-        float values[MAX_PROBABILITY_DISTRIBUTION_WIDTH][MAX_PROBABILITY_DISTRIBUTION_WIDTH];
+        int R;
+        float vals[MAX_PROBABILITY_DISTRIBUTION_WIDTH][MAX_PROBABILITY_DISTRIBUTION_WIDTH];
     };
 
     struct ProbDistr3D{
-        int radius;
-        float values[MAX_PROBABILITY_DISTRIBUTION_WIDTH][MAX_PROBABILITY_DISTRIBUTION_WIDTH][MAX_PROBABILITY_DISTRIBUTION_WIDTH];
+        int R;
+        float vals[MAX_PROBABILITY_DISTRIBUTION_WIDTH][MAX_PROBABILITY_DISTRIBUTION_WIDTH][MAX_PROBABILITY_DISTRIBUTION_WIDTH];
     };
 
     struct EigenResults3D{
-        float values[3];
-        Vector3Float vectors[3];
+        float vals[3];
+        Vector3Float vecs[3];
     };
 
 }

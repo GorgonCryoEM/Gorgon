@@ -264,7 +264,7 @@ namespace Visualization {
         int radius = 1;
 
         ProbDistr3D gaussianFilter;
-        gaussianFilter.radius = radius;
+        gaussianFilter.R = radius;
         BinomDistr(gaussianFilter);
 
         for(int x = radius; x < destVol->getSizeX()-radius; x++) {
@@ -274,7 +274,7 @@ namespace Visualization {
                     for(int xx = -radius; xx <= radius; xx++) {
                         for(int yy = -radius; yy <= radius; yy++) {
                             for(int zz = -radius; zz <= radius; zz++) {
-                                val += sourceVol->getDataAt(2*x+xx, 2*y+yy, 2*z+zz) * gaussianFilter.values[xx+radius][yy+radius][zz+radius] ;
+                                val += sourceVol->getDataAt(2*x+xx, 2*y+yy, 2*z+zz) * gaussianFilter.vals[xx+radius][yy+radius][zz+radius] ;
                             }
                         }
                     }

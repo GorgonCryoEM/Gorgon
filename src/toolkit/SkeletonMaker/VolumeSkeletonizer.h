@@ -177,19 +177,19 @@ namespace GraySkeletonCPP {
         this->surfaceRadius = surfaceRadius;
         this->skeletonDirectionRadius = skeletonDirectionRadius;
 
-        gaussianFilterPointRadius.radius = pointRadius;
+        gaussianFilterPointRadius.R = pointRadius;
         BinomDistr(gaussianFilterPointRadius);
 
-        gaussianFilterCurveRadius.radius = curveRadius;
+        gaussianFilterCurveRadius.R = curveRadius;
         BinomDistr(gaussianFilterCurveRadius);
 
-        gaussianFilterSurfaceRadius.radius = surfaceRadius;
+        gaussianFilterSurfaceRadius.R = surfaceRadius;
         BinomDistr(gaussianFilterSurfaceRadius);
 
-        gaussianFilterMaxRadius.radius = MAX_GAUSSIAN_FILTER_RADIUS;
+        gaussianFilterMaxRadius.R = MAX_GAUSSIAN_FILTER_RADIUS;
         BinomDistr(gaussianFilterMaxRadius);
 
-        uniformFilterSkeletonDirectionRadius.radius = skeletonDirectionRadius;
+        uniformFilterSkeletonDirectionRadius.R = skeletonDirectionRadius;
         UniformDistr(uniformFilterSkeletonDirectionRadius);
     }
 
@@ -201,15 +201,15 @@ namespace GraySkeletonCPP {
     double VolumeSkeletonizer::GetVoxelCost(EigenResults3D imageEigen, Vector3Float skeletonDirection, int type) {
         double cost = 1;
 
-        if(!isZero(imageEigen.values[0])) {
+        if(!isZero(imageEigen.vals[0])) {
             double theta, a, b;
             Vector3Float temp, skelDirectionST, n;
             float u1 = 1.0;
-            float u2 = abs(imageEigen.values[1]/imageEigen.values[0]);
-            float u3 = abs(imageEigen.values[2]/imageEigen.values[0]);
-            Vector3Float v1 = imageEigen.vectors[0];
-            Vector3Float v2 = imageEigen.vectors[1];
-            Vector3Float v3 = imageEigen.vectors[2];
+            float u2 = abs(imageEigen.vals[1]/imageEigen.vals[0]);
+            float u3 = abs(imageEigen.vals[2]/imageEigen.vals[0]);
+            Vector3Float v1 = imageEigen.vecs[0];
+            Vector3Float v2 = imageEigen.vecs[1];
+            Vector3Float v3 = imageEigen.vecs[2];
             switch(type) {
                 case PRUNING_CLASS_PRUNE_POINTS:
 
@@ -236,7 +236,7 @@ namespace GraySkeletonCPP {
                             cost = 1.0;
                         } else {
                             Vector3Float n1, n2, m1, m2;
-                            skelDirectionST = XYZtoUVW(skeletonDirection, imageEigen.vectors[0],imageEigen.vectors[1], imageEigen.vectors[2]);
+                            skelDirectionST = XYZtoUVW(skeletonDirection, imageEigen.vecs[0],imageEigen.vecs[1], imageEigen.vecs[2]);
                             FindOrthogonalAxes(skelDirectionST, n1, n2);
 
                             m1 = Vector3Float(n1[0]/u1, n1[1]/u2, n1[2]/u3);
@@ -342,7 +342,7 @@ namespace GraySkeletonCPP {
             delete [] gradient;
             delete visited;
 
-            direction = eigen.vectors[2];
+            direction = eigen.vecs[2];
         }
 
         return direction;
@@ -415,7 +415,7 @@ namespace GraySkeletonCPP {
             delete [] gradient;
             delete visited;
 
-            direction = eigen.vectors[0];
+            direction = eigen.vecs[0];
 
         }
 
@@ -521,9 +521,9 @@ namespace GraySkeletonCPP {
     void VolumeSkeletonizer::GetEigenResult(EigenResults3D & returnVal, Vector3Float * imageGradient, ProbDistr3D & gaussianFilter, int x, int y, int z, int sizeX, int sizeY, int sizeZ, int gaussianFilterRadius, bool clear) {
         if(clear) {
             for(int r = 0; r < 3; r++) {
-                returnVal.values[r] = 0;
+                returnVal.vals[r] = 0;
                 for(int c = 0; c < 3; c++) {
-                    returnVal.vectors[r][c] = 0;
+                    returnVal.vecs[r][c] = 0;
                 }
             }
         } else {
@@ -541,7 +541,7 @@ namespace GraySkeletonCPP {
                 for(int yy = -gaussianFilterRadius; yy <= gaussianFilterRadius; yy++) {
                     for(int zz = -gaussianFilterRadius; zz <= gaussianFilterRadius; zz++) {
                         index2 = (x+xx) * sizeY * sizeZ + (y+yy) * sizeZ + z + zz;
-                        probability = gaussianFilter.values[xx+gaussianFilterRadius][yy+gaussianFilterRadius][zz+gaussianFilterRadius];
+                        probability = gaussianFilter.vals[xx+gaussianFilterRadius][yy+gaussianFilterRadius][zz+gaussianFilterRadius];
                         for(int r = 0; r < 3; r++) {
                             for(int c = 0; c < 3; c++) {
                                 eigenData.structureTensor[r][c] += imageGradient[index2][r] * imageGradient[index2][c] * probability;
@@ -553,13 +553,13 @@ namespace GraySkeletonCPP {
 
             math.EigenAnalysis(eigenData);
             for(int r = 0; r < 3; r++) {
-                returnVal.values[r] = eigenData.eigenValues[r];
+                returnVal.vals[r] = eigenData.eigenValues[r];
                 for(int c = 0; c < 3; c++) {
-                    returnVal.vectors[r][c] = eigenData.eigenVectors[r][c];
+                    returnVal.vecs[r][c] = eigenData.eigenVectors[r][c];
                 }
             }
 
-            assert((returnVal.values[0] >= returnVal.values[1]) && (returnVal.values[1] >= returnVal.values[2]));
+            assert((returnVal.vals[0] >= returnVal.vals[1]) && (returnVal.vals[1] >= returnVal.vals[2]));
 
 
         }
@@ -570,25 +570,25 @@ namespace GraySkeletonCPP {
         Vector3Float skeletonDirection;
         double total = 0;
         double cell;
-        for(int x = -distributionInfo.radius; x <= distributionInfo.radius; x++) {
-            for(int y = -distributionInfo.radius; y <= distributionInfo.radius; y++) {
-                for(int z = -distributionInfo.radius; z <= distributionInfo.radius; z++) {
+        for(int x = -distributionInfo.R; x <= distributionInfo.R; x++) {
+            for(int y = -distributionInfo.R; y <= distributionInfo.R; y++) {
+                for(int z = -distributionInfo.R; z <= distributionInfo.R; z++) {
                     if((x!=0) && (y!=0) && (z!=0)) {
                         skeletonDirection = Vector3Float(0,0,0) - Vector3Float(x, y, z);
                         skeletonDirection.normalize();
                         cell = GetVoxelCost(eigen, skeletonDirection, PRUNING_CLASS_PRUNE_CURVES);
-                        distributionInfo.values[x+distributionInfo.radius][y+distributionInfo.radius][z+distributionInfo.radius] = cell;
+                        distributionInfo.vals[x+distributionInfo.R][y+distributionInfo.R][z+distributionInfo.R] = cell;
                         total += cell;
                     }
                 }
             }
         }
 
-        for(int x = -distributionInfo.radius; x <= distributionInfo.radius; x++) {
-            for(int y = -distributionInfo.radius; y <= distributionInfo.radius; y++) {
-                for(int z = -distributionInfo.radius; z <= distributionInfo.radius; z++) {
-                    distributionInfo.values[x+distributionInfo.radius][y+distributionInfo.radius][z+distributionInfo.radius] =
-                        distributionInfo.values[x+distributionInfo.radius][y+distributionInfo.radius][z+distributionInfo.radius] / total;
+        for(int x = -distributionInfo.R; x <= distributionInfo.R; x++) {
+            for(int y = -distributionInfo.R; y <= distributionInfo.R; y++) {
+                for(int z = -distributionInfo.R; z <= distributionInfo.R; z++) {
+                    distributionInfo.vals[x+distributionInfo.R][y+distributionInfo.R][z+distributionInfo.R] =
+                        distributionInfo.vals[x+distributionInfo.R][y+distributionInfo.R][z+distributionInfo.R] / total;
                 }
             }
         }
@@ -615,7 +615,7 @@ namespace GraySkeletonCPP {
                     index = skeleton->getIndex(x, y, z);
                     if(((preserveVol == NULL) || ((preserveVol != NULL) && preserveVol->getDataAt(index) < 0.5)) && (tempSkel->getDataAt(index) > 0)) {
                         if(volumeEigens == NULL) {
-                            GetEigenResult(eigen, volumeGradient, filter, x, y, z, skeleton->getSizeX(), skeleton->getSizeY(), skeleton->getSizeZ(), filter.radius, false);
+                            GetEigenResult(eigen, volumeGradient, filter, x, y, z, skeleton->getSizeX(), skeleton->getSizeY(), skeleton->getSizeZ(), filter.R, false);
                         } else {
                             eigen = volumeEigens[index];
                         }
@@ -647,10 +647,10 @@ namespace GraySkeletonCPP {
 
     void VolumeSkeletonizer::SmoothenVolume(Volume * & sourceVolume, double minGrayscale, double maxGrayscale, int stRadius) {
         ProbDistr3D mask;
-        mask.radius = 1;
+        mask.R = 1;
 
         ProbDistr3D smoothenMask;
-        smoothenMask.radius = stRadius;
+        smoothenMask.R = stRadius;
         BinomDistr(smoothenMask);
 
         sourceVolume->pad(MAX_GAUSSIAN_FILTER_RADIUS, 0);
@@ -675,18 +675,18 @@ namespace GraySkeletonCPP {
         Volume * destVolume = new Volume(sourceVolume->getSizeX(), sourceVolume->getSizeY(), sourceVolume->getSizeZ());
         double sourceData;
 
-        for(int x = mask.radius; x < sourceVolume->getSizeX()-mask.radius; x++) {
-            for(int y = mask.radius; y < sourceVolume->getSizeY()-mask.radius; y++) {
-                for(int z = mask.radius; z < sourceVolume->getSizeZ()-mask.radius; z++) {
+        for(int x = mask.R; x < sourceVolume->getSizeX()-mask.R; x++) {
+            for(int y = mask.R; y < sourceVolume->getSizeY()-mask.R; y++) {
+                for(int z = mask.R; z < sourceVolume->getSizeZ()-mask.R; z++) {
                     sourceData = sourceVolume->getDataAt(x, y, z);
                     if((sourceData >= minGrayscale) && (sourceData <= maxGrayscale)) {
                         GetSTBasedDistribution(mask, eigens[sourceVolume->getIndex(x, y, z)]);
 
-                        for(int xx = -mask.radius; xx <= mask.radius; xx++) {
-                            for(int yy = -mask.radius; yy <= mask.radius; yy++) {
-                                for(int zz = -mask.radius; zz <= mask.radius; zz++) {
+                        for(int xx = -mask.R; xx <= mask.R; xx++) {
+                            for(int yy = -mask.R; yy <= mask.R; yy++) {
+                                for(int zz = -mask.R; zz <= mask.R; zz++) {
                                     destVolume->setDataAt(x, y, z,
-                                        destVolume->getDataAt(x, y, z) + sourceVolume->getDataAt(x+xx, y+yy, z+zz) *  mask.values[xx+mask.radius][yy+mask.radius][zz+mask.radius]);
+                                        destVolume->getDataAt(x, y, z) + sourceVolume->getDataAt(x+xx, y+yy, z+zz) *  mask.vals[xx+mask.R][yy+mask.R][zz+mask.R]);
                                 }
                             }
                         }
