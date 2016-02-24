@@ -48,8 +48,7 @@ namespace Protein_Morph {
 
         private:
             void UpdateMap(Volume * vol, Vector3Int loc,
-                           float rangeminX, float rangeminY, float rangeminZ,
-                           float rangemaxX, float rangemaxY, float rangemaxZ);
+                           Vector3Float rangemin, Vector3Float rangemax);
 
             //Ross Coleman: modified from EMAN1 Cylinder.C by Wen Jiang
             float RadialProfile(float r, RadialProfileType type); //r in angstroms
@@ -93,12 +92,6 @@ namespace Protein_Morph {
         Vector3Float rangemax = resolution/spacing;
         Vector3Int m;
 
-        float rangeminX = -1.0f*resolution/vol->getSpacingX();
-        float rangemaxX = resolution/vol->getSpacingX();
-        float rangeminY = -1.0f*resolution/vol->getSpacingY();
-        float rangemaxY = resolution/vol->getSpacingY();
-        float rangeminZ = -1.0f*resolution/vol->getSpacingZ();
-        float rangemaxZ = resolution/vol->getSpacingZ();
         int &mX = m[0];
         int &mY = m[1];
         int &mZ = m[2];
@@ -111,11 +104,13 @@ namespace Protein_Morph {
             atom.SetResName("GLY");
             atom.SetChainId('A');
             atom.SetResSeq(i);
-            atom.SetPosition(Vector3Float(vol->getOriginX() + mX*vol->getSpacingX(),
-                                          vol->getOriginY() + mY*vol->getSpacingY(),
-                                          vol->getOriginZ() + mZ*vol->getSpacingZ()
-                                          )
-                            );
+
+            Vector3Float origin = vol->getOriginObj();
+            Vector3Float position = origin + Vector3Float(m[0] * spacing[0],
+                                                          m[1] * spacing[1],
+                                                          m[2] * spacing[2]
+                                                          );
+            atom.SetPosition(position);
             atom.SetOccupancy(1.0f);
             atom.SetTempFactor(0.0f);
             atom.SetElement("S_00");
@@ -123,9 +118,7 @@ namespace Protein_Morph {
             patoms.push_back(atom);
             atomVolumePositions.push_back(Vector3Int(mX, mY, mZ));
             UpdateMap(tempVol, Vector3Int(mX, mY, mZ),
-                      rangeminX, rangeminY, rangeminZ,
-                      rangemaxX, rangemaxY, rangemaxZ
-                      );
+                      rangemin, rangemax);
             maxVal = tempVol->getMaxValuePosition(mX, mY, mZ);
             i++;
         }
@@ -134,16 +127,13 @@ namespace Protein_Morph {
     // SSEHunter::UpdateMap
     // called by SSEHunter::CreatePseudoAtoms after each pseudoatom is chosen
     void SSEHunter::UpdateMap(Volume * vol, Vector3Int loc,
-                              float rangeminX, float rangeminY, float rangeminZ,
-                              float rangemaxX, float rangemaxY, float rangemaxZ
+                              Vector3Float rangemin, Vector3Float rangemax
                               )
     {
-        int rMinX = (int)round(rangeminX/2.0);
-        int rMaxX = (int)(round(rangemaxX/2.0) + 1);
-        int rMinY = (int)round(rangeminY/2.0);
-        int rMaxY = (int)(round(rangemaxY/2.0) + 1);
-        int rMinZ = (int)round(rangeminZ/2.0);
-        int rMaxZ = (int)(round(rangemaxZ/2.0) + 1);
+        int rMinX = round(rangemin.X()/2.0);        int rMaxX = round(rangemax.X()/2.0) + 1;
+        int rMinY = round(rangemin.Y()/2.0);        int rMaxY = round(rangemax.Y()/2.0) + 1;
+        int rMinZ = round(rangemin.Z()/2.0);        int rMaxZ = round(rangemax.Z()/2.0) + 1;
+
         float maxDistance = sqrt(3.0f * pow((float)max(max(abs(rMinX), abs(rMinY)), abs(rMinZ)), 2));
 
         for(int x = rMinX; x < rMaxX; x++){
