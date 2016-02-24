@@ -262,7 +262,9 @@ namespace Protein_Morph {
         tempVol.pad(offset, minVal);
         Volume maskVol(tempVol);
         for(unsigned int i = 0; i < atomVolumePositions.size(); i++) {
-            maskVol.setDataAt(atomVolumePositions[i].X() + offset, atomVolumePositions[i].Y() + offset, atomVolumePositions[i].Z() + offset, 1.0);
+            maskVol.setDataAt(atomVolumePositions[i].X() + offset,
+                    atomVolumePositions[i].Y() + offset,
+                    atomVolumePositions[i].Z() + offset, 1.0);
         }
 
         int kernelWidth = min(offset, (int)round(2.0/min(min(vol.getSpacingX(), vol.getSpacingY()), vol.getSpacingZ())));
@@ -277,7 +279,10 @@ namespace Protein_Morph {
         float dx, dy, dz, x, y, z;
         float score;
         for(unsigned int i = 0; i < atomVolumePositions.size(); i++) {
-            index = maskVol.getIndex(atomVolumePositions[i].X() + offset, atomVolumePositions[i].Y() + offset, atomVolumePositions[i].Z() + offset);
+            index = maskVol.getIndex(atomVolumePositions[i].X() + offset,
+                                    atomVolumePositions[i].Y() + offset,
+                                    atomVolumePositions[i].Z() + offset
+                                    );
 
             x = eigens[index].vals[0];
             y = eigens[index].vals[1];
@@ -380,8 +385,12 @@ namespace Protein_Morph {
     //zFFTPadding; FFTW3 requires the fastest changing index to be padded, z (not x) is currently the fast changing index in Gorgon
     //len in Angstroms, default to 3 turns
     //Note: Working with float arrays is MUCH faster than working with Volume objects, so this is used instead of the older GetTemplateCylinder() method
-    void SSEHunter::ApplyTemplateCylinder(float* cylData, int xsize, int ysize, int zsize, int zFFTPadding, float alt, float az,
-                                        RadialProfileType type, float len, float apix_x, bool reset, float apix_y, float apix_z) {
+    void SSEHunter::ApplyTemplateCylinder(float* cylData, int xsize, int ysize,
+                                          int zsize, int zFFTPadding, float alt,
+                                          float az, RadialProfileType type,
+                                          float len, float apix_x, bool reset,
+                                          float apix_y, float apix_z)
+    {
         /*
          *[ x' ]     [1      0       0    ] [ cos(az)  sin(az)  0][ x ]
          *[ y' ]  =  [0   cos(al)  sin(al)] [-sin(az)  cos(az)  0][ y ]
@@ -473,9 +482,8 @@ namespace Protein_Morph {
     }
 
     Volume SSEHunter::HelixCorrelation(const Volume & model, RadialProfileType type,
-                                         float length, float deltaAltRadians,
-                                         bool use_mcf, Volume* az_vol,
-                                         Volume* alt_vol)
+                                         float length, float deltaAltRadians, bool use_mcf,
+                                         Volume* az_vol, Volume* alt_vol)
     {
         cout << "HelixCorrelation()\n";
 
