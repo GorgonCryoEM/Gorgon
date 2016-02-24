@@ -87,13 +87,21 @@ namespace Protein_Morph {
         Volume * tempVol = new Volume(*vol);
         patoms.clear();
         atomVolumePositions.clear();
+
+        Vector3Float spacing = vol->getSpacingObj();
+        Vector3Float rangemin = -1.0f*resolution/spacing;
+        Vector3Float rangemax = resolution/spacing;
+        Vector3Int m;
+
         float rangeminX = -1.0f*resolution/vol->getSpacingX();
         float rangemaxX = resolution/vol->getSpacingX();
         float rangeminY = -1.0f*resolution/vol->getSpacingY();
         float rangemaxY = resolution/vol->getSpacingY();
         float rangeminZ = -1.0f*resolution/vol->getSpacingZ();
         float rangemaxZ = resolution/vol->getSpacingZ();
-        int mX, mY, mZ;
+        int &mX = m[0];
+        int &mY = m[1];
+        int &mZ = m[2];
         double maxVal = tempVol->getMaxValuePosition(mX, mY, mZ);
         int i = 1;
         PDBAtom atom;
