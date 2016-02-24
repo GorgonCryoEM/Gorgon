@@ -595,10 +595,17 @@ namespace GraySkeletonCPP {
     void VolumeSkeletonizer::PruneCurves(Volume * sourceVolume, int pruneLength) {
         sourceVolume->erodeHelix(pruneLength);
     }
+
     void VolumeSkeletonizer::PruneSurfaces(Volume * sourceVolume, int pruneLength) {
         sourceVolume->erodeSheet(pruneLength);
     }
-    void VolumeSkeletonizer::PruneUsingStructureTensor(Volume * skeleton, Volume * sourceVolume, Volume * preserveVol, Vector3Float * volumeGradient, EigenResults3D * volumeEigens, ProbDistr3D & filter, double threshold, char pruningClass, string outputPath) {
+
+    void VolumeSkeletonizer::PruneUsingStructureTensor(
+            Volume * skeleton, Volume * sourceVolume, Volume * preserveVol,
+            Vector3Float * volumeGradient, EigenResults3D * volumeEigens,
+            ProbDistr3D & filter, double threshold, char pruningClass,
+            string outputPath)
+    {
         Volume * tempSkel = new Volume(*skeleton);
         Volume * costVol = new Volume(skeleton->getSizeX(), skeleton->getSizeY(), skeleton->getSizeZ());
         Vector3Float * skeletonDirections = GetSkeletonDirection(skeleton, pruningClass);
