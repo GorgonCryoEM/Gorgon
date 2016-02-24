@@ -82,14 +82,14 @@ namespace MathTools {
                           {in.tensor[2][0], in.tensor[2][1], in.tensor[2][2]}
                          };
 
-        float values[3];
-        float vectors[3][3];
-        jacobi(st, values, vectors);
+        float vals[3];
+        float vecs[3][3];
+        jacobi(st, vals, vecs);
 
         for(int i = 0; i < 3; i++) {
-            in.eigenVals[i] = fabs(values[i]);
+            in.eigenVals[i] = fabs(vals[i]);
             for(int j = 0; j < 3; j++) {
-                in.eigenVecs[i][j] = vectors[i][j];
+                in.eigenVecs[i][j] = vecs[i][j];
             }
         }
     }
