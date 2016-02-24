@@ -20,9 +20,6 @@ namespace MathTools {
         ~Matlab();
         void EigenAnalysis(Eigen2D & in);
         void EigenAnalysis(Eigen3D & in);
-        #ifdef USE_MATLAB
-        void EigenAnalysisMatlab(Eigen3D & in);
-        #endif
     private:
         #ifdef USE_MATLAB
         Engine * mathEngine;
@@ -76,6 +73,7 @@ namespace MathTools {
         in.eigenVecs[1][1] = (float)v2[1];
     }
 
+    #ifndef USE_MATLAB
     void Matlab::EigenAnalysis(Eigen3D & in) {
         float st[3][3] = {{in.tensor[0][0], in.tensor[0][1], in.tensor[0][2]},
                           {in.tensor[1][0], in.tensor[1][1], in.tensor[1][2]},
@@ -93,9 +91,8 @@ namespace MathTools {
             }
         }
     }
-
-    #ifdef USE_MATLAB
-    void Matlab::EigenAnalysisMatlab(Eigen3D & in) {
+    #else
+    void Matlab::EigenAnalysis(Eigen3D & in) {
         mxArray * mxMathData = mxCreateDoubleMatrix(3, 3, mxREAL);
 
         memcpy(mxGetPr(mxMathData), in.tensor, 9*sizeof(double));
@@ -126,6 +123,7 @@ namespace MathTools {
     }
     #endif
 }
+
 
 
 #endif

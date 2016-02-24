@@ -30,11 +30,7 @@ namespace MathTools {
     }
 
     void MathLib::EigenAnalysis(Eigen3D & in) {
-        #ifdef USE_MATLAB
-        return mathWrapper.EigenAnalysisMatlab(in);
-        #else
         return mathWrapper.EigenAnalysis(in);
-        #endif
     }
 }
 
