@@ -104,9 +104,9 @@ namespace Protein_Morph {
             atom.SetChainId('A');
             atom.SetResSeq(i);
             atom.SetPosition(Vector3Float(vol->getOriginX() + mX*vol->getSpacingX(),
-                                           vol->getOriginY() + mY*vol->getSpacingY(),
-                                           vol->getOriginZ() + mZ*vol->getSpacingZ()
-                                           )
+                                          vol->getOriginY() + mY*vol->getSpacingY(),
+                                          vol->getOriginZ() + mZ*vol->getSpacingZ()
+                                          )
                             );
             atom.SetOccupancy(1.0f);
             atom.SetTempFactor(0.0f);
@@ -731,9 +731,10 @@ namespace Protein_Morph {
         for (unsigned int ix = 0; ix < patoms.size(); ix++) {
             patom = patoms[ix];
             position = patom.GetPosition();
-            value = bestCCF->getDataAt( round((position.X()-xorg)/apix_x),
+            value = bestCCF->getDataAt(round((position.X()-xorg)/apix_x),
                                        round((position.Y()-yorg)/apix_y),
-                                       round((position.Z()-zorg)/apix_z) );
+                                       round((position.Z()-zorg)/apix_z)
+                                      );
             helixScores.push_back(value);
             totVal += value;
             if (value > maxVal) {
