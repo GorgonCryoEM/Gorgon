@@ -15,6 +15,11 @@ namespace MathTools {
         float tensor[2][2];
     };
 
+    struct EigenResults3D{
+        float vals[3];
+        Vector3Float vecs[3];
+    };
+
     struct Eigen3D{
         float eigenVecs[3][3];
         float eigenVals[3];
@@ -35,12 +40,6 @@ namespace MathTools {
         int R;
         float vals[MAX_PROBAB_DISTR_W][MAX_PROBAB_DISTR_W][MAX_PROBAB_DISTR_W];
     };
-
-    struct EigenResults3D{
-        float vals[3];
-        Vector3Float vecs[3];
-    };
-
 }
 
 #endif
