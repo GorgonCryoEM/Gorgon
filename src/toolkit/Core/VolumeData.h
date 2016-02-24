@@ -23,9 +23,11 @@ namespace SkeletonMaker {
         float getSpacingX() const;
         float getSpacingY() const;
         float getSpacingZ() const;
+        Dim3D<float> getSpacingObj() const;
         float getOriginX() const;
         float getOriginY() const;
         float getOriginZ() const;
+        Dim3D<float> getOriginObj() const;
 
         float getDataAt(int x, int y, int z) const;
         float getDataAt(int index) const;
@@ -108,6 +110,14 @@ namespace SkeletonMaker {
 
     Dim3D<int> VolumeData::getSizeObj() const {
         return size;
+    }
+
+    Dim3D<float> VolumeData::getSpacingObj() const {
+        return spacing;
+    }
+
+    Dim3D<float> VolumeData::getOriginObj() const {
+        return origin;
     }
 
     float VolumeData::getSpacingX() const {
