@@ -105,7 +105,7 @@ namespace GraySkeletonCPP {
                                 int x, int y, int z, int sizeX, int sizeY,
                                 int sizeZ, int gaussianFilterRadius,
                                 bool clear);
-            EigenResults3D * GetEigenResults(
+            vector<EigenResults3D> GetEigenResults(
                     Volume * maskVol, Vector3Float * imageGradient,
                     ProbDistr3D & gaussianFilter,
                     int gaussianFilterRadius, bool useMask);
@@ -262,21 +262,18 @@ namespace GraySkeletonCPP {
 
     }
 
-    EigenResults3D * VolumeSkeletonizer::GetEigenResults(Volume * maskVol, Vector3Float * imageGradient, ProbDistr3D & gaussianFilter, int gaussianFilterRadius, bool useMask) {
-        EigenResults3D * resultTable = new(std::nothrow) EigenResults3D[maskVol->getSizeX() * maskVol->getSizeY() * maskVol->getSizeZ()];
+    vector<EigenResults3D> VolumeSkeletonizer::GetEigenResults(Volume * maskVol, Vector3Float * imageGradient, ProbDistr3D & gaussianFilter, int gaussianFilterRadius, bool useMask) {
+        vector<EigenResults3D> resultTable(maskVol->getSizeX() * maskVol->getSizeY() * maskVol->getSizeZ());
 
-        if(resultTable == NULL) {
-            printf("Not enough memory to store eigens, going to slower mode!\n");
-        } else {
-            for(int x = MAX_GAUSSIAN_FILTER_RADIUS; x < maskVol->getSizeX() - MAX_GAUSSIAN_FILTER_RADIUS; x++) {
-                for(int y = MAX_GAUSSIAN_FILTER_RADIUS; y < maskVol->getSizeY() - MAX_GAUSSIAN_FILTER_RADIUS; y++) {
-                    for(int z = MAX_GAUSSIAN_FILTER_RADIUS; z < maskVol->getSizeZ() - MAX_GAUSSIAN_FILTER_RADIUS; z++) {
-                        GetEigenResult(resultTable[maskVol->getIndex(x, y, z)], imageGradient, gaussianFilter, x, y, z,
-                                       maskVol->getSizeX(), maskVol->getSizeY(), maskVol->getSizeZ(), gaussianFilterRadius, (useMask && (maskVol->getDataAt(x, y, z) == 0)));
-                    }
+        for(int x = MAX_GAUSSIAN_FILTER_RADIUS; x < maskVol->getSizeX() - MAX_GAUSSIAN_FILTER_RADIUS; x++) {
+            for(int y = MAX_GAUSSIAN_FILTER_RADIUS; y < maskVol->getSizeY() - MAX_GAUSSIAN_FILTER_RADIUS; y++) {
+                for(int z = MAX_GAUSSIAN_FILTER_RADIUS; z < maskVol->getSizeZ() - MAX_GAUSSIAN_FILTER_RADIUS; z++) {
+                    GetEigenResult(resultTable[maskVol->getIndex(x, y, z)], imageGradient, gaussianFilter, x, y, z,
+                            maskVol->getSizeX(), maskVol->getSizeY(), maskVol->getSizeZ(), gaussianFilterRadius, (useMask && (maskVol->getDataAt(x, y, z) == 0)));
                 }
             }
         }
+
         return resultTable;
     }
 
@@ -671,7 +668,7 @@ namespace GraySkeletonCPP {
         }
 
         Vector3Float * volumeGradient = GetVolumeGradient(sourceVolume);
-        EigenResults3D * eigens = GetEigenResults(maskVolume, volumeGradient, smoothenMask, stRadius, true);
+        vector<EigenResults3D> eigens = GetEigenResults(maskVolume, volumeGradient, smoothenMask, stRadius, true);
         Volume * destVolume = new Volume(sourceVolume->getSizeX(), sourceVolume->getSizeY(), sourceVolume->getSizeZ());
         double sourceData;
 
@@ -704,7 +701,6 @@ namespace GraySkeletonCPP {
 
         delete maskVolume;
         delete [] volumeGradient;
-        delete [] eigens;
     }
     void VolumeSkeletonizer::VoxelBinarySubtract(Volume * sourceAndDestVolume1, Volume * sourceVolume2){
         for(int x = 0; x < sourceAndDestVolume1->getSizeX(); x++) {
@@ -832,7 +828,7 @@ namespace GraySkeletonCPP {
         }
         appTimeManager.PopAndDisplayTime("Smoothing : %f seconds!\n");
         Vector3Float * volumeGradient = NULL;
-        EigenResults3D * volumeEigens;
+        vector<EigenResults3D> volumeEigens;
         sourceVol->pad(MAX_GAUSSIAN_FILTER_RADIUS, 0);
         if(preserveVol != NULL) {
             preserveVol->pad(MAX_GAUSSIAN_FILTER_RADIUS, 0);
@@ -873,7 +869,7 @@ namespace GraySkeletonCPP {
             appTimeManager.PopAndDisplayTime("  Pruning: %f seconds!\n");
 
             appTimeManager.PushCurrentTime();
-            delete [] volumeEigens;
+
             #ifdef SAVE_INTERMEDIATE_RESULTS
                 prunedSurfaceVol->toMRCFile((char *)(outputPath + "-S-Post-Prune.mrc").c_str());
             #endif
@@ -922,7 +918,7 @@ namespace GraySkeletonCPP {
             volumeEigens = GetEigenResults(curveVol, volumeGradient, gaussianFilterCurveRadius, curveRadius, true);
             Volume * prunedCurveVol = new Volume(*curveVol);
             PruneUsingStructureTensor(prunedCurveVol, sourceVol, preserveVol, volumeGradient, volumeEigens, gaussianFilterCurveRadius, curveThreshold, PRUNING_CLASS_PRUNE_CURVES, outputPath + "-C");
-            delete [] volumeEigens;
+
             #ifdef SAVE_INTERMEDIATE_RESULTS
                 prunedCurveVol->toMRCFile((char *)(outputPath + "-C-Post-Prune.mrc").c_str());
             #endif
