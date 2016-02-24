@@ -117,8 +117,7 @@ namespace Protein_Morph {
             atom.SetCharge("0");
             patoms.push_back(atom);
             atomVolumePositions.push_back(Vector3Int(mX, mY, mZ));
-            UpdateMap(tempVol, Vector3Int(mX, mY, mZ),
-                      rangemin, rangemax);
+            UpdateMap(tempVol, Vector3Int(mX, mY, mZ), rangemin, rangemax);
             maxVal = tempVol->getMaxValuePosition(mX, mY, mZ);
             i++;
         }
