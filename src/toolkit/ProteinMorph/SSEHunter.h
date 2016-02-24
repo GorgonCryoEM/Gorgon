@@ -737,9 +737,7 @@ namespace Protein_Morph {
                                       );
             helixScores.push_back(value);
             totVal += value;
-            if (value > maxVal) {
-                maxVal = value;
-            }
+            maxVal = max(maxVal, value);
         }
         float avgVal = totVal / helixScores.size();
 
