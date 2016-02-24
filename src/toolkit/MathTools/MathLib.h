@@ -14,7 +14,6 @@ namespace MathTools {
     class MathLib {
     public:
         MathLib();
-        ~MathLib();
 
         void EigenAnalysis           (EigenVectorsAndValues2D   & eigenInformation);
         void EigenAnalysis           (EigenVectorsAndValues3D   & eigenInformation);
@@ -25,26 +24,22 @@ namespace MathTools {
         unsigned long long Permutations(int n, int r);
 
     private:
-        Matlab * mathWrapper;
+        Matlab mathWrapper;
     };
 
-    MathLib::MathLib() {
-        mathWrapper = new Matlab();
-    }
-
-    MathLib::~MathLib() {
-        delete mathWrapper;
-    }
+    MathLib::MathLib()
+        : mathWrapper(Matlab())
+    {}
 
     void MathLib::EigenAnalysis(EigenVectorsAndValues2D & eigenInformation) {
-        return mathWrapper->EigenAnalysis(eigenInformation);
+        return mathWrapper.EigenAnalysis(eigenInformation);
     }
 
     void MathLib::EigenAnalysis(EigenVectorsAndValues3D & eigenInformation) {
         #ifdef USE_MATLAB
-        return mathWrapper->EigenAnalysisMatlab(eigenInformation);
+        return mathWrapper.EigenAnalysisMatlab(eigenInformation);
         #else
-        return mathWrapper->EigenAnalysis(eigenInformation);
+        return mathWrapper.EigenAnalysis(eigenInformation);
         #endif
     }
 
