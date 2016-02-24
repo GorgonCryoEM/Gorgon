@@ -18,10 +18,10 @@ namespace MathTools {
     public:
         Matlab();
         ~Matlab();
-        void EigenAnalysis(EigenVectorsAndValues2D & eigenInformation);
-        void EigenAnalysis(EigenVectorsAndValues3D & eigenInformation);
+        void EigenAnalysis(Eigen2D & eigenInformation);
+        void EigenAnalysis(Eigen3D & eigenInformation);
         #ifdef USE_MATLAB
-        void EigenAnalysisMatlab(EigenVectorsAndValues3D & eigenInformation);
+        void EigenAnalysisMatlab(Eigen3D & eigenInformation);
         #endif
     private:
         #ifdef USE_MATLAB
@@ -43,7 +43,7 @@ namespace MathTools {
         #endif
     }
 
-    void Matlab::EigenAnalysis(EigenVectorsAndValues2D & eigenInformation) {
+    void Matlab::EigenAnalysis(Eigen2D & eigenInformation) {
         double a = eigenInformation.tensor[0][0];
         double b = eigenInformation.tensor[0][1];
         double c = eigenInformation.tensor[1][0];
@@ -76,7 +76,7 @@ namespace MathTools {
         eigenInformation.eigenVecs[1][1] = (float)v2[1];
     }
 
-    void Matlab::EigenAnalysis(EigenVectorsAndValues3D & eigenInformation) {
+    void Matlab::EigenAnalysis(Eigen3D & eigenInformation) {
         float st[3][3] = {{eigenInformation.tensor[0][0], eigenInformation.tensor[0][1], eigenInformation.tensor[0][2]},
                           {eigenInformation.tensor[1][0], eigenInformation.tensor[1][1], eigenInformation.tensor[1][2]},
                           {eigenInformation.tensor[2][0], eigenInformation.tensor[2][1], eigenInformation.tensor[2][2]}
@@ -95,7 +95,7 @@ namespace MathTools {
     }
 
     #ifdef USE_MATLAB
-    void Matlab::EigenAnalysisMatlab(EigenVectorsAndValues3D & eigenInformation) {
+    void Matlab::EigenAnalysisMatlab(Eigen3D & eigenInformation) {
         mxArray * mxMathData = mxCreateDoubleMatrix(3, 3, mxREAL);
 
         memcpy(mxGetPr(mxMathData), eigenInformation.tensor, 9*sizeof(double));

@@ -14,8 +14,8 @@ namespace MathTools {
     public:
         MathLib();
 
-        void EigenAnalysis           (EigenVectorsAndValues2D   & eigenInformation);
-        void EigenAnalysis           (EigenVectorsAndValues3D   & eigenInformation);
+        void EigenAnalysis           (Eigen2D   & eigenInformation);
+        void EigenAnalysis           (Eigen3D   & eigenInformation);
 
     private:
         Matlab mathWrapper;
@@ -25,11 +25,11 @@ namespace MathTools {
         : mathWrapper(Matlab())
     {}
 
-    void MathLib::EigenAnalysis(EigenVectorsAndValues2D & eigenInformation) {
+    void MathLib::EigenAnalysis(Eigen2D & eigenInformation) {
         return mathWrapper.EigenAnalysis(eigenInformation);
     }
 
-    void MathLib::EigenAnalysis(EigenVectorsAndValues3D & eigenInformation) {
+    void MathLib::EigenAnalysis(Eigen3D & eigenInformation) {
         #ifdef USE_MATLAB
         return mathWrapper.EigenAnalysisMatlab(eigenInformation);
         #else

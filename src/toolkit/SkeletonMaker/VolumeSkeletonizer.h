@@ -527,7 +527,7 @@ namespace GraySkeletonCPP {
                 }
             }
         } else {
-            EigenVectorsAndValues3D eigenData;
+            Eigen3D eigenData;
             double probability;
             int index2;
 
