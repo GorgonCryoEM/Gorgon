@@ -266,7 +266,7 @@ namespace Visualization {
 
         ProbabilityDistribution3D gaussianFilter;
         gaussianFilter.radius = radius;
-        math->GetBinomialDistribution(gaussianFilter);
+        GetBinomialDistribution(gaussianFilter);
 
         for(int x = radius; x < destVol->getSizeX()-radius; x++) {
             for(int y = radius; y < destVol->getSizeY()-radius; y++) {

@@ -2,7 +2,6 @@
 #define TOOLKIT_MATHTOOLS_MATH_LIB_H
 
 #include "Matlab.h"
-#include "Combinatorics.h"
 //#include "Vector3.h"
 //#include "ComplexNumber.h"
 
@@ -11,7 +10,7 @@ namespace MathTools {
 
     const double PI = 3.1415926535897932385;
 
-    class MathLib : public Combinatorics {
+    class MathLib {
     public:
         MathLib();
 

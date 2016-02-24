@@ -17,6 +17,7 @@
 //#include <Core/volume.h>
 //#include "MathTools/BasicDefines.h"
 #include "Visualization/DiscreteMesh.h"
+#include <MathTools/Combinatorics.h>
 
 using namespace std;
 
@@ -176,19 +177,19 @@ namespace GraySkeletonCPP {
         this->skeletonDirectionRadius = skeletonDirectionRadius;
 
         gaussianFilterPointRadius.radius = pointRadius;
-        math->GetBinomialDistribution(gaussianFilterPointRadius);
+        GetBinomialDistribution(gaussianFilterPointRadius);
 
         gaussianFilterCurveRadius.radius = curveRadius;
-        math->GetBinomialDistribution(gaussianFilterCurveRadius);
+        GetBinomialDistribution(gaussianFilterCurveRadius);
 
         gaussianFilterSurfaceRadius.radius = surfaceRadius;
-        math->GetBinomialDistribution(gaussianFilterSurfaceRadius);
+        GetBinomialDistribution(gaussianFilterSurfaceRadius);
 
         gaussianFilterMaxRadius.radius = MAX_GAUSSIAN_FILTER_RADIUS;
-        math->GetBinomialDistribution(gaussianFilterMaxRadius);
+        GetBinomialDistribution(gaussianFilterMaxRadius);
 
         uniformFilterSkeletonDirectionRadius.radius = skeletonDirectionRadius;
-        math->GetUniformDistribution(uniformFilterSkeletonDirectionRadius);
+        GetUniformDistribution(uniformFilterSkeletonDirectionRadius);
     }
 
     VolumeSkeletonizer::~VolumeSkeletonizer() {
@@ -650,7 +651,7 @@ namespace GraySkeletonCPP {
 
         ProbabilityDistribution3D smoothenMask;
         smoothenMask.radius = stRadius;
-        math->GetBinomialDistribution(smoothenMask);
+        GetBinomialDistribution(smoothenMask);
 
         sourceVolume->pad(MAX_GAUSSIAN_FILTER_RADIUS, 0);
 
