@@ -41,7 +41,7 @@ namespace Protein_Morph {
 
             void SetCorrelationScores(const Volume & vol, RadialProfileType type,
                                       float resolution, float deltaAltRadians);
-            void SetSkeletonScores(Volume * vol, NonManifoldMesh * skeleton,
+            void SetSkeletonScores(const Volume & vol, const NonManifoldMesh & skeleton,
                                    float resolution);
             vector<vector<float> > GetAtomDistances();
             vector<float> GetLocalDirectionalityScores(Volume * vol);
@@ -161,12 +161,12 @@ namespace Protein_Morph {
         return patoms[i];
     }
 
-    void SSEHunter::SetSkeletonScores(Volume * vol, NonManifoldMesh * skeleton, float resolution) {
+    void SSEHunter::SetSkeletonScores(const Volume & vol, const NonManifoldMesh & skeleton, float resolution) {
         cout << "SetSkeletonScores()\n";
 //			float maxDistance = 4*sqrt(skeleton->scale[0]+skeleton->scale[1]+skeleton->scale[2]);//resolution;  // TODO: In EMAN1 the maximum distance is sqrt(3*4*4) voxels, we're using Angstroms here
         const unsigned int SCORE_RANGE = 4;
         const unsigned int MAX_DISTANCE_SQUARED = 3*SCORE_RANGE*SCORE_RANGE;
-        Vector3Float skeletonOrigin = Vector3Float(skeleton->getOriginX(), skeleton->getOriginY(), skeleton->getOriginZ());
+        Vector3Float skeletonOrigin = Vector3Float(skeleton.getOriginObj());
         Vector3Float skeletonAtom;
         Vector3Float pAtomPosition;
         float score = 0;
@@ -188,23 +188,21 @@ namespace Protein_Morph {
 #endif
             pAtomPosition = patoms[i].GetPosition();
             pAtomPosition -= skeletonOrigin;
-            vector<float> skel_scale(3);
-            skel_scale[0] = skeleton->scale.X();
-            skel_scale[1] = skeleton->scale.Y();
-            skel_scale[2] = skeleton->scale.Z();
+            Vector3Float skel_scale(skeleton.scale[0], skeleton.scale[1], skeleton.scale[2]);
+//            skel_scale = skeleton.scale;
             for (unsigned int n = 0; n < 3; n++)
                 pAtomPosition[n] = pAtomPosition[n] * (1.0/skel_scale[n]);
 #ifdef GORGON_DEBUG_LOOP
       cout<<"Checkpoint 21: i: "<<i<<endl;
       cout<<"skeleton:\n"<<*skeleton<<endl;
 #endif
-            for (unsigned int j = 0; j < skeleton->vertices.size(); j++) {
-                skeletonAtom = skeleton->vertices[j].position;
+            for (unsigned int j = 0; j < skeleton.vertices.size(); j++) {
+                skeletonAtom = skeleton.vertices[j].position;
                 Vector3Float d = skeletonAtom - pAtomPosition;
                 float distance_squared = d.X()*d.X() + d.Y()*d.Y() + d.Z()*d.Z();
                 if (abs(d.X()) <= SCORE_RANGE && abs(d.Y()) <= SCORE_RANGE && abs(d.Z()) <= SCORE_RANGE) { // 8x8x8 cubic search area
                     double typeCost; //TODO: If a vertex is part of both the sheet skeleton and the helix skeleton, typeCost = 0;
-                    if (skeleton->IsSurfaceVertex(i)) { //TODO: Is this the same as testing if it's in the sheet skeleton
+                    if (skeleton.IsSurfaceVertex(i)) { //TODO: Is this the same as testing if it's in the sheet skeleton
                         typeCost = -1.0;
                     } else { //TODO test whether in the helix skeleton
                         typeCost = 1.0;

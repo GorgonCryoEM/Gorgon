@@ -82,7 +82,7 @@ namespace Protein_Morph {
         NonManifoldMesh();
         NonManifoldMesh(Volume * sourceVol);
         bool IsEdgePresent(int vertexId1, int vertexId2);
-        bool IsSurfaceVertex(int ix);
+        bool IsSurfaceVertex(int ix) const;
         int AddVertex(NonManifoldMeshVertex vertex);
         int AddVertex(Vector3Float location);
         int AddHashedVertex(Vector3Float location, int hashKey);
@@ -90,8 +90,8 @@ namespace Protein_Morph {
         int AddFace(NonManifoldMeshFace face);
         int GetVertexIndex(int vertexId);
         int GetFaceIndex(int faceId);
-        int GetEdgeIndex(int edgeId);
-        int GetEdgeIndex(int vertexId1, int vertexId2);
+        int GetEdgeIndex(int edgeId) const;
+        int GetEdgeIndex(int vertexId1, int vertexId2) const;
         int GetClosestVertexIndex(Vector3Float pos);
         void AddEdge(int vertexId1, int vertexId2, string tag = "");
         void AddQuad(int vertexId1, int vertexId2, int vertexId3,
@@ -443,11 +443,11 @@ namespace Protein_Morph {
         return faceId;
     }
 
-    int NonManifoldMesh::GetEdgeIndex(int edgeId) {
+    int NonManifoldMesh::GetEdgeIndex(int edgeId) const {
         return edgeId;
     }
 
-    int NonManifoldMesh::GetEdgeIndex(int vertexId1, int vertexId2) {
+    int NonManifoldMesh::GetEdgeIndex(int vertexId1, int vertexId2) const {
         int edgeId = -1;
         for(int i = 0; i < vertices[vertexId1].edgeIds.size(); i++) {
             if((edges[vertices[vertexId1].edgeIds[i]].vertexIds[0] == vertexId2) ||
@@ -1058,7 +1058,7 @@ namespace Protein_Morph {
         return minIx;
     }
 
-    bool NonManifoldMesh::IsSurfaceVertex(int ix) {
+    bool NonManifoldMesh::IsSurfaceVertex(int ix) const {
         bool isSurface = false;
         NonManifoldMeshEdge edge;
 
