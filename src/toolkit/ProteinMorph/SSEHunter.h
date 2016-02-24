@@ -65,7 +65,7 @@ namespace Protein_Morph {
                                        bool reset = true, float apix_y = -1,
                                        float apix_z = -1);
             void NormThresh(Volume& map, float thresh);
-            Volume * HelixCorrelation(const Volume & map_vol, RadialProfileType type = POLYNOMIAL,
+            Volume HelixCorrelation(const Volume & map_vol, RadialProfileType type = POLYNOMIAL,
                                       float length = 16.2,
                                       float deltaAltRadians = 5 * PI / 180,
                                       bool use_mcf = true,
@@ -477,7 +477,7 @@ namespace Protein_Morph {
         }
     }
 
-    Volume * SSEHunter::HelixCorrelation(const Volume & model, RadialProfileType type,
+    Volume SSEHunter::HelixCorrelation(const Volume & model, RadialProfileType type,
                                          float length, float deltaAltRadians,
                                          bool use_mcf, Volume* az_vol,
                                          Volume* alt_vol)
@@ -515,7 +515,7 @@ namespace Protein_Morph {
             best_ccf[i]=0;
         }
 
-        Volume * bestCCF = new Volume(nx, ny, nz); // This is the returned volume
+        Volume bestCCF(nx, ny, nz); // This is the returned volume
         float orig_x = model.getOriginX();
         float orig_y = model.getOriginY();
         float orig_z = model.getOriginZ();
@@ -523,8 +523,8 @@ namespace Protein_Morph {
         float apix_y = model.getSpacingY();
         float apix_z = model.getSpacingZ();
 
-        bestCCF->setOrigin(orig_x, orig_y, orig_z);
-        bestCCF->setSpacing(apix_x, apix_y, apix_z);
+        bestCCF.setOrigin(orig_x, orig_y, orig_z);
+        bestCCF.setSpacing(apix_x, apix_y, apix_z);
         float* best_alt = NULL;
         float* best_az = NULL;
 
@@ -655,7 +655,7 @@ namespace Protein_Morph {
                     k2 = (k+nz/2) % nz;
 
                     val = best_ccf[ix];
-                    bestCCF->setDataAt(i2,j2,k2, val);
+                    bestCCF.setDataAt(i2,j2,k2, val);
                     if (az_vol && best_az)
                         az_vol->setDataAt(i2,j2,k2, best_az[ix]);
                     if (alt_vol && best_alt)
@@ -671,10 +671,10 @@ namespace Protein_Morph {
             free(best_alt);
 
         //Normalize bestCCF and model_copy
-        double max = bestCCF->getMax();
+        double max = bestCCF.getMax();
         for (int i=0; i < N; i++) {
-            val = bestCCF->getDataAt(i);
-            bestCCF->setDataAt(i, val/max);
+            val = bestCCF.getDataAt(i);
+            bestCCF.setDataAt(i, val/max);
         }
         max = model_copy.getMax();
         for (int i=0; i < N; i++) {
@@ -683,16 +683,16 @@ namespace Protein_Morph {
         }
         //Weight results to favor areas inside high density regions of model_copy.
         for (int i=0; i < N; i++) {
-            val = bestCCF->getDataAt(i);
-            bestCCF->setDataAt(i, val*model_copy.getDataAt(i));
+            val = bestCCF.getDataAt(i);
+            bestCCF.setDataAt(i, val*model_copy.getDataAt(i));
             // Note: all voxels in model_copy should have non-negative values because of earlier thresholding
         }
 
         //Normalize the modified bestCCF map
-        max = bestCCF->getMax();
+        max = bestCCF.getMax();
         for (int i = 0; i < N; i++) {
-            val = bestCCF->getDataAt(i);
-            bestCCF->setDataAt(i, val/max);
+            val = bestCCF.getDataAt(i);
+            bestCCF.setDataAt(i, val/max);
         }
 
 #ifdef USE_TIME_MANAGER
@@ -717,25 +717,25 @@ namespace Protein_Morph {
     {
         cout << "SetCorrelationScores()\n";
         float cylinderLength = 16.2;
-        Volume* bestCCF = HelixCorrelation(vol, type, cylinderLength, deltaAltRadians);
-        cout << "Min: " << bestCCF->getMin() << ", Max: " << bestCCF->getMax() << ", Mean: " << bestCCF->getMean() << ", Sigma: " << bestCCF->getStdDev() << "\n";
+        Volume bestCCF = HelixCorrelation(vol, type, cylinderLength, deltaAltRadians);
+        cout << "Min: " << bestCCF.getMin() << ", Max: " << bestCCF.getMax() << ", Mean: " << bestCCF.getMean() << ", Sigma: " << bestCCF.getStdDev() << "\n";
         PDBAtom patom;
         vector<float> helixScores;
         Vector3Float position;
         float value;
         float totVal = 0;
         float maxVal = 0;
-        float xorg = bestCCF->getOriginX();
-        float yorg = bestCCF->getOriginY();
-        float zorg = bestCCF->getOriginZ();
-        float apix_x = bestCCF->getSpacingX();
-        float apix_y = bestCCF->getSpacingY();
-        float apix_z = bestCCF->getSpacingZ();
+        float xorg = bestCCF.getOriginX();
+        float yorg = bestCCF.getOriginY();
+        float zorg = bestCCF.getOriginZ();
+        float apix_x = bestCCF.getSpacingX();
+        float apix_y = bestCCF.getSpacingY();
+        float apix_z = bestCCF.getSpacingZ();
 
         for (unsigned int ix = 0; ix < patoms.size(); ix++) {
             patom = patoms[ix];
             position = patom.GetPosition();
-            value = bestCCF->getDataAt(round((position.X()-xorg)/apix_x),
+            value = bestCCF.getDataAt(round((position.X()-xorg)/apix_x),
                                        round((position.Y()-yorg)/apix_y),
                                        round((position.Z()-zorg)/apix_z)
                                       );
@@ -755,7 +755,6 @@ namespace Protein_Morph {
             helixScores[i] = value;
             patoms[i].SetCorrelationScore(helixScores[i]);
         }
-        delete bestCCF;
     }
 
 }
