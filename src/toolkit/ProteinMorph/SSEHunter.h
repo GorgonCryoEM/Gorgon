@@ -32,15 +32,18 @@ namespace Protein_Morph {
 
     enum RadialProfileType {GAUSSIAN, GAUSSIAN_DIP, POLYNOMIAL};
 
-    class SSEHunter{
+    class SSEHunter {
         public:
-            void CreatePseudoAtoms(Volume * vol, float resolution, float threshold);
+            void CreatePseudoAtoms(Volume * vol, float resolution,
+                                   float threshold);
             int GetNumberOfPseudoAtoms();
             PDBAtom& GetPseudoAtom(int i);
 
-            void SetCorrelationScores(Volume * vol, RadialProfileType type, float resolution, float deltaAltRadians);
-            void SetSkeletonScores(Volume * vol, NonManifoldMesh * skeleton, float resolution);
-            vector< vector<float> > GetAtomDistances();
+            void SetCorrelationScores(Volume * vol, RadialProfileType type,
+                                      float resolution, float deltaAltRadians);
+            void SetSkeletonScores(Volume * vol, NonManifoldMesh * skeleton,
+                                   float resolution);
+            vector<vector<float> > GetAtomDistances();
             vector<float> GetLocalDirectionalityScores(Volume * vol);
 
         private:
@@ -51,19 +54,21 @@ namespace Protein_Morph {
             //Ross Coleman: modified from EMAN1 Cylinder.C by Wen Jiang
             float RadialProfile(float r, RadialProfileType type); //r in angstroms
             float RadialProfileGaussian(float r); // r in angstroms
-            float RadialProfileGaussianDip(float r);// r in angstroms
-            float RadialProfilePolynomial(float r);// r in angstroms
+            float RadialProfileGaussianDip(float r); // r in angstroms
+            float RadialProfilePolynomial(float r); // r in angstroms
 
         public:
-            void ApplyTemplateCylinder(float cylData[], int xsize, int ysize, int zsize,
-                                       int zFFTPadding, float alt, float az,
-                                       RadialProfileType type = POLYNOMIAL,
-                                       float len=16.2, float apix_x=1,
-                                       bool reset=true, float apix_y=-1, float apix_z=-1);
+            void ApplyTemplateCylinder(float cylData[],
+                                       int xsize, int ysize, int zsize,
+                                       int zFFTPadding, float alt,
+                                       float az, RadialProfileType type = POLYNOMIAL,
+                                       float len = 16.2, float apix_x = 1,
+                                       bool reset = true, float apix_y = -1,
+                                       float apix_z = -1);
             void NormThresh(Volume& map, float thresh);
-            Volume * HelixCorrelation(Volume* map_vol,
-                                      RadialProfileType type = POLYNOMIAL,
-                                      float length = 16.2, float deltaAltRadians = 5*PI/180,
+            Volume * HelixCorrelation(Volume* map_vol, RadialProfileType type = POLYNOMIAL,
+                                      float length = 16.2,
+                                      float deltaAltRadians = 5 * PI / 180,
                                       bool use_mcf = true,
                                       Volume* az_vol = NULL, Volume* alt_vol = NULL);
 
