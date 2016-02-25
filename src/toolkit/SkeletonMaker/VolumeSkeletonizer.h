@@ -69,8 +69,8 @@ namespace GraySkeletonCPP {
             Volume * GetJuCurveSkeleton(Volume & sourceVolume,
                                         Volume & preserve, double threshold,
                                         bool is3D);
-            Volume * GetJuTopologySkeleton(Volume * sourceVolume,
-                                           Volume * preserve, double threshold);
+            Volume * GetJuTopologySkeleton(Volume & sourceVolume,
+                                           Volume & preserve, double threshold);
             void PruneCurves(Volume & sourceVolume, int pruneLength);
             void PruneSurfaces(Volume & sourceVolume, int pruneLength);
             void PruneUsingStructureTensor( Volume & skeleton, const Volume & sourceVolume,
@@ -777,8 +777,8 @@ namespace GraySkeletonCPP {
         return GetJuThinning(&sourceVolume, &preserve, threshold, THINNING_CLASS_SURFACE_PRESERVATION);
     }
 
-    Volume * VolumeSkeletonizer::GetJuTopologySkeleton(Volume * sourceVolume, Volume * preserve, double threshold){
-        return GetJuThinning(sourceVolume, preserve, threshold, THINNING_CLASS_TOPOLOGY_PRESERVATION);
+    Volume * VolumeSkeletonizer::GetJuTopologySkeleton(Volume & sourceVolume, Volume & preserve, double threshold){
+        return GetJuThinning(&sourceVolume, &preserve, threshold, THINNING_CLASS_TOPOLOGY_PRESERVATION);
     }
 
 
@@ -991,7 +991,7 @@ namespace GraySkeletonCPP {
         cout<<"curveVol->getSize(): "<<curveVol->getSize()<<endl;
 #endif
 
-        topologyVol = VolumeSkeletonizer::GetJuTopologySkeleton(imageVol, preservedVol, threshold);
+        topologyVol = VolumeSkeletonizer::GetJuTopologySkeleton(*imageVol, *preservedVol, threshold);
 #ifdef GORGON_DEBUG
         cout<<"1: topologyVol->getSize(): "<<topologyVol->getSize()<<endl;
 #endif
