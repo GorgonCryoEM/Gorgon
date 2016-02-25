@@ -5,7 +5,7 @@
 #                    More info in: seq_model-doc.txt
 
 
-from libpytoolkit import PDBAtom,Vector3Float
+from libpytoolkit import PDBAtom,Vec3F
 
 
 class Residue:
@@ -77,7 +77,7 @@ class Residue:
         '''Adds a new PDBAtom to the residue.'''
         residueIndex=self.chain.findIndexForRes(self)
         rawAtom=PDBAtom(self.chain.getPdbID(), self.chain.getChainID(), residueIndex, atomName)
-        rawAtom.setPosition(Vector3Float(x,y,z))
+        rawAtom.setPosition(Vec3F(x,y,z))
         if not element:
             element = atomName[0]
         rawAtom.setElement(element)

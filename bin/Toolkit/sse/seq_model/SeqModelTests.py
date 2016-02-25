@@ -6,7 +6,7 @@ import urllib
 import os
 
 import random
-from libpyGORGON import PDBAtom,Vector3Float
+from libpyGORGON import PDBAtom,Vec3F
 from seq_model.Chain import Chain
 
 

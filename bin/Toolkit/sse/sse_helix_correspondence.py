@@ -1,4 +1,4 @@
-from libpytoolkit import SSEEngine, SSEResult, Vector3Float
+from libpytoolkit import SSEEngine, SSEResult, Vec3F
 from sse_defaults import SSEDefaults
 from .correspondence.CorrespondenceLibrary import CorrespondenceLibrary
 from .correspondence.Correspondence import Correspondence
@@ -799,7 +799,7 @@ class SSEHelixCorrespondence(object):
         calphaViewer = self.app.viewers["calpha"]
 
         def tupleToVector3Float(pt):
-            return Vector3Float(pt[0], pt[1], pt[2])
+            return Vec3F(pt[0], pt[1], pt[2])
 
         def vector3FloatToTuple(pt):
             return [pt.x(), pt.y(), pt.z()]

@@ -1,4 +1,4 @@
-from libpytoolkit import Vector3Float as Vec3F
+from libpytoolkit import Vec3F
 
 
 class Vec3(Vec3F):
