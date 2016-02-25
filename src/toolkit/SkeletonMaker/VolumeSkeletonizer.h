@@ -291,7 +291,7 @@ namespace GraySkeletonCPP {
             vector<Vector3Int> list;
             list.push_back(Vector3Int(margin+radius, margin+radius, margin+radius));
             Vector3Int currentPos;
-            Vector3Int * n6;
+            vector<Vector3Int> n6;
             int n6Count;
 
             while(list.size() > 0) {
@@ -307,7 +307,6 @@ namespace GraySkeletonCPP {
                         }
                     }
                 }
-                delete [] n6;
             }
 
             delete block;
