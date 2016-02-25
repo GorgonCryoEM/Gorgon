@@ -2907,7 +2907,7 @@ Volume * Volume::PerformBinarySkeletonizationJu2007(double threshold,
     cout<<getSize()<<endl;
 #endif
 
-    Volume * outputVol = skeletonizer->PerformPureJuSkeletonization(*this, "",
+    Volume * outputVol = skeletonizer->PerformPureJuSkeletonization(this, "",
             threshold, minCurveSize, minSurfaceSize);
     delete skeletonizer;
 #ifdef GORGON_DEBUG
