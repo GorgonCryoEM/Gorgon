@@ -284,11 +284,11 @@ namespace GraySkeletonCPP {
 
             int margin = 2;
             int size = (radius+margin)*2 + 1;
-            Volume * block = new Volume(size, size, size);
+            Volume block(size, size, size);
             for(int xx = margin; xx <= size-margin; xx++) {
                 for(int yy = margin; yy <= size-margin; yy++) {
                     for(int zz = margin; zz <= size-margin; zz++) {
-                        block->setDataAt(xx, yy, zz, skeleton.getDataAt(x-radius-margin+xx, y-radius-margin+yy, z-radius-margin+zz));
+                        block.setDataAt(xx, yy, zz, skeleton.getDataAt(x-radius-margin+xx, y-radius-margin+yy, z-radius-margin+zz));
                     }
                 }
             }
@@ -315,8 +315,6 @@ namespace GraySkeletonCPP {
                     }
                 }
             }
-
-            delete block;
 
             vector<Vector3Float> gradient = GetVolumeGradient(visited);
             EigenResults3D eigen;
