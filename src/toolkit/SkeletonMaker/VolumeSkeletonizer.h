@@ -56,11 +56,9 @@ namespace GraySkeletonCPP {
             void SmoothenVolume(Volume & src, double minGrayscale,
                                 double maxGrayscale, int stR);
 
-            void VoxelBinarySubtract(Volume & sourceAndDestVolume1,
-                                     const Volume & src2);
-            void VoxelSubtract(Volume & sourceAndDestVolume1,
-                               const Volume & src2);
-            void VoxelOr(Volume & sourceAndDestVolume1, Volume * src2);
+            void VoxelBinarySubtract(Volume & sourceAndDestVolume1, const Volume & src2);
+            void VoxelSubtract      (Volume & sourceAndDestVolume1, const Volume & src2);
+            void VoxelOr            (Volume & sourceAndDestVolume1, const Volume * src2);
 
             Vector3Float GetCurveDirection(const Volume &  skel, int x, int y, int z, int radius);
             Vector3Float GetSurfaceNormal(const Volume  & skel, int x, int y, int z);
@@ -688,7 +686,7 @@ namespace GraySkeletonCPP {
         }
     }
 
-    void VolumeSkeletonizer::VoxelOr(Volume & sourceAndDestVolume1, Volume * src2){
+    void VolumeSkeletonizer::VoxelOr(Volume & sourceAndDestVolume1, const Volume * src2){
         if(src2 != NULL) {
             for(int x = 0; x < sourceAndDestVolume1.getSizeX(); x++) {
                 for(int y = 0; y < sourceAndDestVolume1.getSizeY(); y++) {
