@@ -61,10 +61,10 @@ namespace GraySkeletonCPP {
             void VoxelOr            (Volume & sourceAndDestVolume1, const Volume * src2);
 
             Vector3Float GetCurveDirection(const Volume &  skel, int x, int y, int z, int radius);
-            Vector3Float GetSurfaceNormal(const Volume  & skel, int x, int y, int z);
-            Vector3Float GetSurfaceNormal(const Volume  & skel, int x, int y, int z, int radius,
-                                          vector<Vector3Float> & localDirections);
-            vector<Vector3Float> GetVolumeGradient(const Volume & src);
+            Vector3Float GetSurfaceNormal (const Volume  & skel, int x, int y, int z);
+            Vector3Float GetSurfaceNormal (const Volume  & skel, int x, int y, int z, int radius,
+                                           vector<Vector3Float> & localDirections);
+            vector<Vector3Float> GetVolumeGradient   (const Volume & src);
             vector<Vector3Float> GetSkeletonDirection(const Volume & skel, int type);
 
             void GetEigenResult(EigenResults3D & returnVal,
