@@ -73,7 +73,7 @@ namespace GraphMatch {
 //            T * begin();
 //            T * end();
 
-            bool IsBadNormal();
+            bool isBadNormal();
 
             static Vector3<T> normalize(Vector3<T> v);
             static Vector3<T> project3Dto2D(Vector3<T> point, Vector3<T> planePt, Vector3<T> planeVec1, Vector3<T> planeVec2);
@@ -335,7 +335,7 @@ namespace GraphMatch {
     }
 
     template <class T>
-    bool Vector3<T>::IsBadNormal() {
+    bool Vector3<T>::isBadNormal() {
         return !isZero(length() - 1.0, 0.00001);
     }
 
