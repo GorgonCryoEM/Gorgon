@@ -35,12 +35,12 @@ namespace GraySkeletonCPP {
                     Volume & sourceVol, Volume * preserved, double startGray,
                     double endGray, double stepSize, int smoothingIterations,
                     int smoothingR, int minCurveSize, int minSurfaceSize,
-                    int maxCurveHole, int maxSurfaceHole, string outputPath,
+                    int maxCurveHole, int maxSurfaceHole, string outPath,
                     bool doPruning, double pointThreshold,
                     double curveThreshold, double surfaceThreshold);
 
             Volume * PerformPureJuSkeletonization(Volume & imageVol,
-                                                  string outputPath,
+                                                  string outPath,
                                                   double threshold,
                                                   int minCurveWidth,
                                                   int minSurfaceWidth);
@@ -52,7 +52,7 @@ namespace GraySkeletonCPP {
             void PruneUsingStructureTensor( Volume & skel, const Volume & src,
                                             Volume * preserved, vector<Vector3Float> & volGrad,
                                             vector<EigenResults3D> & volumeEigens, ProbDistr3D & filter,
-                                            double threshold, char pruningClass, string outputPath);
+                                            double threshold, char pruningClass, string outPath);
             void SmoothenVolume(Volume & src, double minGrayscale,
                                 double maxGrayscale, int stR);
 
@@ -68,15 +68,14 @@ namespace GraySkeletonCPP {
             vector<Vector3Float> GetSkeletonDirection(const Volume & skel, int type);
 
             void GetEigenResult(EigenResults3D & returnVal,
-                                vector<Vector3Float> & imgGrad,
-                                ProbDistr3D & gaussFilt, int x, int y, int z,
+                                vector<Vector3Float> & imgGrad, ProbDistr3D & gaussFilt,
+                                int x, int y, int z,
                                 int sizeX, int sizeY, int sizeZ,
                                 int gaussFiltR, bool clear);
             vector<EigenResults3D> GetEigenResults(const Volume & mask,
                                                    vector<Vector3Float> & imgGrad,
                                                    ProbDistr3D & gaussFilt,
-                                                   int gaussFiltR,
-                                                   bool useMask);
+                                                   int gaussFiltR, bool useMask);
 
         protected:
 
@@ -559,7 +558,7 @@ namespace GraySkeletonCPP {
             Volume &  skel, const Volume & src, Volume * preserved,
             vector<Vector3Float> & volGrad, vector<EigenResults3D> & volumeEigens,
             ProbDistr3D & filter, double threshold, char pruningClass,
-            string outputPath)
+            string outPath)
     {
         Volume tempSkel(skel);
         Volume costVol(skel.getSizeX(), skel.getSizeY(), skel.getSizeZ());
@@ -590,13 +589,13 @@ namespace GraySkeletonCPP {
 
 
         #ifdef SAVE_INTERMEDIATE_RESULTS
-            costVol->toMRCFile((char *)((outputPath + "-Score.mrc").c_str()));
-            WriteEigenResultsToVRMLFile(src, costVol, tempSkel, volumeEigens, outputPath + "-Eigens.wrl", (pruningClass != PRUNING_CLASS_PRUNE_SURFACES));
-            WriteEigenResultsToVRMLFile(src, costVol, tempSkel, volumeEigens, outputPath + "-Eigens-inverted.wrl", true);
-            WriteEigenResultsToVRMLFile(src, costVol, tempSkel, volumeEigens, outputPath + "-Eigens.wrl", false);
-            WriteSkeletonDirectionToVRMLFile(tempSkel, costVol, skelDirs, outputPath + "-SkeletonDirections.wrl", pruningClass == PRUNING_CLASS_PRUNE_SURFACES, 0.1);
+            costVol->toMRCFile((char *)((outPath + "-Score.mrc").c_str()));
+            WriteEigenResultsToVRMLFile(src, costVol, tempSkel, volumeEigens, outPath + "-Eigens.wrl", (pruningClass != PRUNING_CLASS_PRUNE_SURFACES));
+            WriteEigenResultsToVRMLFile(src, costVol, tempSkel, volumeEigens, outPath + "-Eigens-inverted.wrl", true);
+            WriteEigenResultsToVRMLFile(src, costVol, tempSkel, volumeEigens, outPath + "-Eigens.wrl", false);
+            WriteSkeletonDirectionToVRMLFile(tempSkel, costVol, skelDirs, outPath + "-SkeletonDirections.wrl", pruningClass == PRUNING_CLASS_PRUNE_SURFACES, 0.1);
             if(pruningClass == PRUNING_CLASS_PRUNE_CURVES) {
-                WriteSkeletonDirectionToVRMLFile(tempSkel, costVol, skelDirs, outputPath + "-SkeletonDirections-small.wrl", false, 0.06);
+                WriteSkeletonDirectionToVRMLFile(tempSkel, costVol, skelDirs, outPath + "-SkeletonDirections-small.wrl", false, 0.06);
             }
         #endif
     }
@@ -782,7 +781,7 @@ namespace GraySkeletonCPP {
             Volume & sourceVol, Volume * preserved, double startGray,
             double endGray, double stepSize, int smoothingIterations,
             int smoothingR, int minCurveSize, int minSurfaceSize,
-            int maxCurveHole, int maxSurfaceHole, string outputPath,
+            int maxCurveHole, int maxSurfaceHole, string outPath,
             bool doPruning, double pointThreshold, double curveThreshold,
             double surfaceThreshold)
     {
@@ -808,7 +807,7 @@ namespace GraySkeletonCPP {
         appTimeManager.PopAndDisplayTime("Surface Thinning : %f seconds!\n");
 
         #ifdef SAVE_INTERMEDIATE_RESULTS
-            surfaceVol->toMRCFile((char *)(outputPath + "-S-Pre-Prune-Pre-Erode.mrc").c_str());
+            surfaceVol->toMRCFile((char *)(outPath + "-S-Pre-Prune-Pre-Erode.mrc").c_str());
         #endif
 
         PruneSurfaces(surfaceVol, minSurfaceSize);
@@ -816,8 +815,8 @@ namespace GraySkeletonCPP {
         appTimeManager.PushCurrentTime();
         if(doPruning) {
             #ifdef SAVE_INTERMEDIATE_RESULTS
-                surfaceVol->toMRCFile((char *)(outputPath + "-S-Pre-Prune.mrc").c_str());
-                WriteVolumeToVRMLFile(surfaceVol, outputPath + "-S-Pre-Prune.wrl");
+                surfaceVol->toMRCFile((char *)(outPath + "-S-Pre-Prune.mrc").c_str());
+                WriteVolumeToVRMLFile(surfaceVol, outPath + "-S-Pre-Prune.wrl");
             #endif
             appTimeManager.PushCurrentTime();
             volumeEigens = GetEigenResults(surfaceVol, volGrad, gaussFiltSrfcR, surfR, true);
@@ -829,13 +828,13 @@ namespace GraySkeletonCPP {
 
 
             appTimeManager.PushCurrentTime();
-            PruneUsingStructureTensor(prunedSurfaceVol, sourceVol, preserved, volGrad, volumeEigens, gaussFiltSrfcR, surfaceThreshold, PRUNING_CLASS_PRUNE_SURFACES, outputPath + "-S");
+            PruneUsingStructureTensor(prunedSurfaceVol, sourceVol, preserved, volGrad, volumeEigens, gaussFiltSrfcR, surfaceThreshold, PRUNING_CLASS_PRUNE_SURFACES, outPath + "-S");
             appTimeManager.PopAndDisplayTime("  Pruning: %f seconds!\n");
 
             appTimeManager.PushCurrentTime();
 
             #ifdef SAVE_INTERMEDIATE_RESULTS
-                prunedSurfaceVol->toMRCFile((char *)(outputPath + "-S-Post-Prune.mrc").c_str());
+                prunedSurfaceVol->toMRCFile((char *)(outPath + "-S-Post-Prune.mrc").c_str());
             #endif
 
             surfaceVol = prunedSurfaceVol;
@@ -847,13 +846,13 @@ namespace GraySkeletonCPP {
         appTimeManager.PopAndDisplayTime("Surface Pruning  : %f seconds!\n");
 
         #ifdef SAVE_INTERMEDIATE_RESULTS
-            surfaceVol->toMRCFile((char *)(outputPath + "-S-Post-Erosion.mrc").c_str());
+            surfaceVol->toMRCFile((char *)(outPath + "-S-Post-Erosion.mrc").c_str());
         #endif
 
         Volume cleanedSurfaceVol = *GetJuSurfaceSkeleton(surfaceVol, nullVol, 0.5);
         PruneSurfaces(cleanedSurfaceVol, minSurfaceSize);
         #ifdef SAVE_INTERMEDIATE_RESULTS
-            cleanedSurfaceVol->toMRCFile((char *)(outputPath + "-S-Cleaned.mrc").c_str());
+            cleanedSurfaceVol->toMRCFile((char *)(outPath + "-S-Cleaned.mrc").c_str());
         #endif
 
         surfaceVol = cleanedSurfaceVol;
@@ -865,7 +864,7 @@ namespace GraySkeletonCPP {
         appTimeManager.PopAndDisplayTime("Curve Thinning   : %f seconds!\n");
 
         #ifdef SAVE_INTERMEDIATE_RESULTS
-            curveVol->toMRCFile((char *)(outputPath + "-C-Pre-Prune_Pre-Erode.mrc").c_str());
+            curveVol->toMRCFile((char *)(outPath + "-C-Pre-Prune_Pre-Erode.mrc").c_str());
         #endif
 
         PruneCurves(curveVol, minCurveSize);
@@ -874,20 +873,20 @@ namespace GraySkeletonCPP {
         appTimeManager.PushCurrentTime();
         if(doPruning) {
             #ifdef SAVE_INTERMEDIATE_RESULTS
-                curveVol->toMRCFile((char *)(outputPath + "-C-Pre-Prune.mrc").c_str());
+                curveVol->toMRCFile((char *)(outPath + "-C-Pre-Prune.mrc").c_str());
             #endif
 
             volumeEigens = GetEigenResults(curveVol, volGrad, gaussFiltCrvR, curveR, true);
             Volume prunedCurveVol(curveVol);
-            PruneUsingStructureTensor(prunedCurveVol, sourceVol, preserved, volGrad, volumeEigens, gaussFiltCrvR, curveThreshold, PRUNING_CLASS_PRUNE_CURVES, outputPath + "-C");
+            PruneUsingStructureTensor(prunedCurveVol, sourceVol, preserved, volGrad, volumeEigens, gaussFiltCrvR, curveThreshold, PRUNING_CLASS_PRUNE_CURVES, outPath + "-C");
 
             #ifdef SAVE_INTERMEDIATE_RESULTS
-                prunedCurveVol->toMRCFile((char *)(outputPath + "-C-Post-Prune.mrc").c_str());
+                prunedCurveVol->toMRCFile((char *)(outPath + "-C-Post-Prune.mrc").c_str());
             #endif
 
             Volume filledCurveVol = FillCurveHoles(prunedCurveVol, curveVol, maxCurveHole);
             #ifdef SAVE_INTERMEDIATE_RESULTS
-                filledCurveVol->toMRCFile((char *)(outputPath + "-C-Post-Fill.mrc").c_str());
+                filledCurveVol->toMRCFile((char *)(outPath + "-C-Post-Fill.mrc").c_str());
             #endif
 
             curveVol = filledCurveVol;
@@ -897,21 +896,21 @@ namespace GraySkeletonCPP {
         PruneCurves(curveVol, minCurveSize);
         appTimeManager.PopAndDisplayTime("Curve Pruning    : %f seconds!\n");
         #ifdef SAVE_INTERMEDIATE_RESULTS
-            curveVol->toMRCFile((char *)(outputPath + "-C-Post-Erosion.mrc").c_str());
+            curveVol->toMRCFile((char *)(outPath + "-C-Post-Erosion.mrc").c_str());
         #endif
 
         Volume cleanedCurveVol = *GetJuCurveSkeleton(curveVol, surfaceVol, 0.5, true);
         PruneCurves(cleanedCurveVol, minCurveSize);
         #ifdef SAVE_INTERMEDIATE_RESULTS
-            cleanedCurveVol->toMRCFile((char *)(outputPath + "-C-Cleaned.mrc").c_str());
+            cleanedCurveVol->toMRCFile((char *)(outPath + "-C-Cleaned.mrc").c_str());
         #endif
 
         curveVol = cleanedCurveVol;
 
         VoxelOr(curveVol, &surfaceVol);
         #ifdef SAVE_INTERMEDIATE_RESULTS
-            curveVol->toMRCFile((char *)(outputPath + "-SC.mrc").c_str());
-            curveVol->toOFFCells2((char *)(outputPath + "-SC.off").c_str());
+            curveVol->toMRCFile((char *)(outPath + "-SC.mrc").c_str());
+            curveVol->toOFFCells2((char *)(outPath + "-SC.off").c_str());
         #endif
 
         sourceVol.pad(-MAX_GAUSSIAN_FILTER_RADIUS, 0);
@@ -924,7 +923,7 @@ namespace GraySkeletonCPP {
 
 
     Volume * VolumeSkeletonizer::PerformPureJuSkeletonization(
-            Volume & imageVol, string outputPath, double threshold,
+            Volume & imageVol, string outPath, double threshold,
             int minCurveWidth, int minSurfaceWidth)
     {
         #ifdef GORGON_DEBUG
