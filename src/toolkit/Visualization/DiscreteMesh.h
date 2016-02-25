@@ -41,7 +41,6 @@ namespace GraySkeletonCPP {
             DiscreteMesh(const Volume & volume);
 
             void addVoxel(int x, int y, int z);
-            int getIndex(int x, int y, int z);
             bool isPointPresent(int x, int y, int z);
             bool isCurvePresent(int x, int y, int z, unsigned char direction);
             bool isCurvePresent(Vector3Int point1, Vector3Int point2);
@@ -168,10 +167,6 @@ namespace GraySkeletonCPP {
             for(int n = 0; n < faceCount; n++)
                 addSurface(p, faces[n][0], faces[n][1], faces[n][2]);
         }
-    }
-
-    int DiscreteMesh::getIndex(int x, int y, int z) {
-        return getIndex(x, y, z);
     }
 
     bool DiscreteMesh::isPointPresent(int x, int y, int z) {
