@@ -56,9 +56,9 @@ namespace GraySkeletonCPP {
             void SmoothenVolume(Volume & src, double minGrayscale,
                                 double maxGrayscale, int stR);
 
-            void VoxelBinarySubtract(Volume & dest, const Volume & src2);
-            void VoxelSubtract      (Volume & dest, const Volume & src2);
-            void VoxelOr            (Volume & dest, const Volume * src2);
+            void VoxelBinarySubtract(Volume & dest, const Volume & src);
+            void VoxelSubtract      (Volume & dest, const Volume & src);
+            void VoxelOr            (Volume & dest, const Volume * src);
 
             Vector3Float GetCurveDirection(const Volume & skel, int x, int y, int z, int radius);
             Vector3Float GetSurfaceNormal (const Volume & skel, int x, int y, int z);
@@ -658,11 +658,11 @@ namespace GraySkeletonCPP {
 
         src = dest;
     }
-    void VolumeSkeletonizer::VoxelBinarySubtract(Volume & dest, const Volume & src2){
+    void VolumeSkeletonizer::VoxelBinarySubtract(Volume & dest, const Volume & src){
         for(int x = 0; x < dest.getSizeX(); x++) {
             for(int y = 0; y < dest.getSizeY(); y++) {
                 for(int z = 0; z < dest.getSizeZ(); z++) {
-                    if(src2.getDataAt(x, y, z) > 0) {
+                    if(src.getDataAt(x, y, z) > 0) {
                         dest.setDataAt(x, y, z, 0);
                     }
                 }
@@ -670,22 +670,22 @@ namespace GraySkeletonCPP {
         }
     }
 
-    void VolumeSkeletonizer::VoxelSubtract(Volume & dest, const Volume & src2){
+    void VolumeSkeletonizer::VoxelSubtract(Volume & dest, const Volume & src){
         for(int x = 0; x < dest.getSizeX(); x++) {
             for(int y = 0; y < dest.getSizeY(); y++) {
                 for(int z = 0; z < dest.getSizeZ(); z++) {
-                    dest.setDataAt(x, y, z, dest.getDataAt(x, y, z) - src2.getDataAt(x, y, z));
+                    dest.setDataAt(x, y, z, dest.getDataAt(x, y, z) - src.getDataAt(x, y, z));
                 }
             }
         }
     }
 
-    void VolumeSkeletonizer::VoxelOr(Volume & dest, const Volume * src2){
-        if(src2 != NULL) {
+    void VolumeSkeletonizer::VoxelOr(Volume & dest, const Volume * src){
+        if(src != NULL) {
             for(int x = 0; x < dest.getSizeX(); x++) {
                 for(int y = 0; y < dest.getSizeY(); y++) {
                     for(int z = 0; z < dest.getSizeZ(); z++) {
-                        dest.setDataAt(x, y, z, max(dest.getDataAt(x, y, z), src2->getDataAt(x, y, z)));
+                        dest.setDataAt(x, y, z, max(dest.getDataAt(x, y, z), src->getDataAt(x, y, z)));
                     }
                 }
             }
