@@ -2899,7 +2899,7 @@ Volume * Volume::PerformBinarySkeletonizationJu2007(double threshold,
                                                     int minCurveSize,
                                                     int minSurfaceSize)
 {
-    VolumeSkeletonizer * skeletonizer = new VolumeSkeletonizer(0, 0, 0,
+    Skeletonizer * skeletonizer = new Skeletonizer(0, 0, 0,
             DEFAULT_SKELETON_DIRECTION_RADIUS);
 #ifdef GORGON_DEBUG
     cout<<"DEBUG: File:   Volume.h"<<endl;
@@ -2926,7 +2926,7 @@ Volume * Volume::PerformGrayscaleSkeletonizationAbeysinghe2008(
 {
     double stepSize = (getMax() - startDensity) / stepCount;
     if(!isZero(stepSize)) {
-        VolumeSkeletonizer * skeletonizer = new VolumeSkeletonizer(0,
+        Skeletonizer * skeletonizer = new Skeletonizer(0,
                 curveRadius, surfaceRadius, skeletonRadius);
         Volume * outputVol =
                 skeletonizer->PerformImmersionSkeletonizationAndPruning(*this,

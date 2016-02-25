@@ -27,9 +27,9 @@ using namespace SkeletonMaker;
 
 namespace GraySkeletonCPP {
 
-    class VolumeSkeletonizer {
+    class Skeletonizer {
         public:
-            VolumeSkeletonizer(int pointR, int curveR,
+            Skeletonizer(int pointR, int curveR,
                                int surfaceR, int skelDirR);
             Volume * PerformImmersionSkeletonizationAndPruning(
                     Volume & sourceVol, Volume * preserved, double startGray,
@@ -111,17 +111,17 @@ namespace GraySkeletonCPP {
 
     };
 
-    const char VolumeSkeletonizer::THINNING_CLASS_SURFACE_PRESERVATION = 4;
-    const char VolumeSkeletonizer::THINNING_CLASS_CURVE_PRESERVATION_2D = 3;
-    const char VolumeSkeletonizer::THINNING_CLASS_CURVE_PRESERVATION = 2;
-    const char VolumeSkeletonizer::THINNING_CLASS_POINT_PRESERVATION = 1;
-    const char VolumeSkeletonizer::THINNING_CLASS_TOPOLOGY_PRESERVATION = 0;
-    const char VolumeSkeletonizer::PRUNING_CLASS_PRUNE_SURFACES = 5;
-    const char VolumeSkeletonizer::PRUNING_CLASS_PRUNE_CURVES = 6;
-    const char VolumeSkeletonizer::PRUNING_CLASS_PRUNE_POINTS = 7;
+    const char Skeletonizer::THINNING_CLASS_SURFACE_PRESERVATION = 4;
+    const char Skeletonizer::THINNING_CLASS_CURVE_PRESERVATION_2D = 3;
+    const char Skeletonizer::THINNING_CLASS_CURVE_PRESERVATION = 2;
+    const char Skeletonizer::THINNING_CLASS_POINT_PRESERVATION = 1;
+    const char Skeletonizer::THINNING_CLASS_TOPOLOGY_PRESERVATION = 0;
+    const char Skeletonizer::PRUNING_CLASS_PRUNE_SURFACES = 5;
+    const char Skeletonizer::PRUNING_CLASS_PRUNE_CURVES = 6;
+    const char Skeletonizer::PRUNING_CLASS_PRUNE_POINTS = 7;
 
 
-    VolumeSkeletonizer::VolumeSkeletonizer(int pointR, int curveR, int surfaceR, int skelDirR)
+    Skeletonizer::Skeletonizer(int pointR, int curveR, int surfaceR, int skelDirR)
         : math(Matlab()),
           surfNormFinder(NormalFinder())
     {
@@ -146,7 +146,7 @@ namespace GraySkeletonCPP {
         UniformDistr(uniformFiltSkelDirR);
     }
 
-    double VolumeSkeletonizer::GetVoxelCost(EigenResults3D imageEigen, Vector3Float skelDir, int type) {
+    double Skeletonizer::GetVoxelCost(EigenResults3D imageEigen, Vector3Float skelDir, int type) {
         double cost = 1;
 
         if(!isZero(imageEigen.vals[0])) {
@@ -210,7 +210,7 @@ namespace GraySkeletonCPP {
 
     }
 
-    vector<EigenResults3D> VolumeSkeletonizer::GetEigenResults(
+    vector<EigenResults3D> Skeletonizer::GetEigenResults(
             const Volume & mask, vector<Vector3Float> & imgGrad,
             ProbDistr3D & gaussFilt, int gaussFiltR,
             bool useMask)
@@ -229,7 +229,7 @@ namespace GraySkeletonCPP {
         return resultTable;
     }
 
-    Vector3Float VolumeSkeletonizer::XYZtoUVW(Vector3Float vec, Vector3Float u, Vector3Float v, Vector3Float w) {
+    Vector3Float Skeletonizer::XYZtoUVW(Vector3Float vec, Vector3Float u, Vector3Float v, Vector3Float w) {
         float uContri = vec * u;
         float vContri = vec * v;
         float wContri = vec * w;
@@ -239,7 +239,7 @@ namespace GraySkeletonCPP {
     }
 
 
-    Vector3Float VolumeSkeletonizer::GetCurveDirection(const Volume & skel, int x, int y, int z, int R) {
+    Vector3Float Skeletonizer::GetCurveDirection(const Volume & skel, int x, int y, int z, int R) {
         Vector3Float direction = Vector3Float(0,0,0);
         if(DiscreteMesh::getN6Count(skel, x, y, z) > 2) {
             direction = Vector3Float(BAD_NORMAL, BAD_NORMAL, BAD_NORMAL);
@@ -291,13 +291,13 @@ namespace GraySkeletonCPP {
         return direction;
     }
 
-    Vector3Float VolumeSkeletonizer::GetSurfaceNormal(const Volume & skel, int x, int y, int z) {
+    Vector3Float Skeletonizer::GetSurfaceNormal(const Volume & skel, int x, int y, int z) {
         surfNormFinder.InitializeGraph(skel, x, y, z);
         return surfNormFinder.GetSurfaceNormal();
     }
 
 
-    Vector3Float VolumeSkeletonizer::GetSurfaceNormal(const Volume & skel, int x, int y, int z, int R, vector<Vector3Float> & localDirs) {
+    Vector3Float Skeletonizer::GetSurfaceNormal(const Volume & skel, int x, int y, int z, int R, vector<Vector3Float> & localDirs) {
         Vector3Float direction = localDirs[skel.getIndex(x, y, z)];
 
 
@@ -361,7 +361,7 @@ namespace GraySkeletonCPP {
         return direction;
     }
     // Gradient = (x+1,y,z) - (x-1,y,z) ....
-    vector<Vector3Float> VolumeSkeletonizer::GetVolumeGradient(const Volume & src) {
+    vector<Vector3Float> Skeletonizer::GetVolumeGradient(const Volume & src) {
         vector<Vector3Float> gradient(src.getSizeX() * src.getSizeY() * src.getSizeZ());
         int index;
 
@@ -401,7 +401,7 @@ namespace GraySkeletonCPP {
         return gradient;
     }
 
-    vector<Vector3Float> VolumeSkeletonizer::GetSkeletonDirection(const Volume & skel, int type) {
+    vector<Vector3Float> Skeletonizer::GetSkeletonDirection(const Volume & skel, int type) {
         int index;
 
         vector<Vector3Float> localDirs(skel.getSizeX() * skel.getSizeY() * skel.getSizeZ());
@@ -446,7 +446,7 @@ namespace GraySkeletonCPP {
     }
 
 
-    void VolumeSkeletonizer::FindOrthogonalAxes(Vector3Float axis, Vector3Float & res1, Vector3Float & res2) {
+    void Skeletonizer::FindOrthogonalAxes(Vector3Float axis, Vector3Float & res1, Vector3Float & res2) {
         res1 = Vector3Float(1.0, 0.0, 0.0);
         if(abs(axis * res1) > 0.95) {
             res1 = Vector3Float(0.0, 1.0, 0.0);
@@ -457,7 +457,7 @@ namespace GraySkeletonCPP {
         res2.normalize();
     }
 
-    void VolumeSkeletonizer::GetEigenResult(
+    void Skeletonizer::GetEigenResult(
                             EigenResults3D & returnVal,
                             vector<Vector3Float> & imgGrad,
                             ProbDistr3D & gaussFilt,
@@ -512,7 +512,7 @@ namespace GraySkeletonCPP {
     }
 
 
-    void VolumeSkeletonizer::GetSTBasedDistribution(ProbDistr3D & distributionInfo, EigenResults3D eigen) {
+    void Skeletonizer::GetSTBasedDistribution(ProbDistr3D & distributionInfo, EigenResults3D eigen) {
         Vector3Float skelDir;
         double total = 0;
         double cell;
@@ -541,15 +541,15 @@ namespace GraySkeletonCPP {
 
     }
 
-    void VolumeSkeletonizer::PruneCurves(Volume & src, int pruneLength) {
+    void Skeletonizer::PruneCurves(Volume & src, int pruneLength) {
         src.erodeHelix(pruneLength);
     }
 
-    void VolumeSkeletonizer::PruneSurfaces(Volume & src, int pruneLength) {
+    void Skeletonizer::PruneSurfaces(Volume & src, int pruneLength) {
         src.erodeSheet(pruneLength);
     }
 
-    void VolumeSkeletonizer::PruneUsingStructureTensor(
+    void Skeletonizer::PruneUsingStructureTensor(
             Volume &  skel, const Volume & src, Volume * preserved,
             vector<Vector3Float> & volGrad, vector<EigenResults3D> & volumeEigens,
             ProbDistr3D & filter, double threshold, char pruningClass,
@@ -595,7 +595,7 @@ namespace GraySkeletonCPP {
         #endif
     }
 
-    void VolumeSkeletonizer::SmoothenVolume(Volume & src, double minGrayscale, double maxGrayscale, int stR) {
+    void Skeletonizer::SmoothenVolume(Volume & src, double minGrayscale, double maxGrayscale, int stR) {
         ProbDistr3D mask;
         mask.R = 1;
 
@@ -652,7 +652,7 @@ namespace GraySkeletonCPP {
 
         src = dest;
     }
-    void VolumeSkeletonizer::VoxelBinarySubtract(Volume & dest, const Volume & src){
+    void Skeletonizer::VoxelBinarySubtract(Volume & dest, const Volume & src){
         for(int x = 0; x < dest.getSizeX(); x++) {
             for(int y = 0; y < dest.getSizeY(); y++) {
                 for(int z = 0; z < dest.getSizeZ(); z++) {
@@ -664,7 +664,7 @@ namespace GraySkeletonCPP {
         }
     }
 
-    void VolumeSkeletonizer::VoxelSubtract(Volume & dest, const Volume & src){
+    void Skeletonizer::VoxelSubtract(Volume & dest, const Volume & src){
         for(int x = 0; x < dest.getSizeX(); x++) {
             for(int y = 0; y < dest.getSizeY(); y++) {
                 for(int z = 0; z < dest.getSizeZ(); z++) {
@@ -674,7 +674,7 @@ namespace GraySkeletonCPP {
         }
     }
 
-    void VolumeSkeletonizer::VoxelOr(Volume & dest, const Volume * src){
+    void Skeletonizer::VoxelOr(Volume & dest, const Volume * src){
         if(src != NULL) {
             for(int x = 0; x < dest.getSizeX(); x++) {
                 for(int y = 0; y < dest.getSizeY(); y++) {
@@ -687,7 +687,7 @@ namespace GraySkeletonCPP {
     }
 
 
-    Volume VolumeSkeletonizer::FillCurveHoles(Volume & dest, const Volume & src, int maxHoleSize) {
+    Volume Skeletonizer::FillCurveHoles(Volume & dest, const Volume & src, int maxHoleSize) {
         Volume holes(src);
         VoxelSubtract(holes, dest);
         PruneCurves(holes, maxHoleSize);
@@ -698,7 +698,7 @@ namespace GraySkeletonCPP {
         return filledSkeleton;
     }
 
-    Volume VolumeSkeletonizer::FillSurfaceHoles(Volume & dest, const Volume & src, int maxHoleSize) {
+    Volume Skeletonizer::FillSurfaceHoles(Volume & dest, const Volume & src, int maxHoleSize) {
         Volume holes(src);
 
         VoxelSubtract(holes, dest);
@@ -710,7 +710,7 @@ namespace GraySkeletonCPP {
         return filledSkeleton;
     }
 
-    Volume * VolumeSkeletonizer::GetImmersionThinning(const Volume & src, const Volume & preserve, double lowGrayscale, double highGrayscale, double stepSize, char thinningClass) {
+    Volume * Skeletonizer::GetImmersionThinning(const Volume & src, const Volume & preserve, double lowGrayscale, double highGrayscale, double stepSize, char thinningClass) {
         Volume * thinnedVolume = new Volume(src);
         thinnedVolume->threshold2(lowGrayscale, 0, 1) ;
         double t;
@@ -739,21 +739,21 @@ namespace GraySkeletonCPP {
     }
 
 
-    Volume * VolumeSkeletonizer::GetJuCurveSkeleton(Volume & src, Volume & preserve, double threshold, bool is3D){
+    Volume * Skeletonizer::GetJuCurveSkeleton(Volume & src, Volume & preserve, double threshold, bool is3D){
         char thinningClass = is3D ? THINNING_CLASS_CURVE_PRESERVATION : THINNING_CLASS_CURVE_PRESERVATION_2D;
         return GetJuThinning(src, preserve, threshold, thinningClass);
     }
 
-    Volume * VolumeSkeletonizer::GetJuSurfaceSkeleton(Volume & src, Volume & preserve, double threshold){
+    Volume * Skeletonizer::GetJuSurfaceSkeleton(Volume & src, Volume & preserve, double threshold){
         return GetJuThinning(src, preserve, threshold, THINNING_CLASS_SURFACE_PRESERVATION);
     }
 
-    Volume * VolumeSkeletonizer::GetJuTopologySkeleton(Volume & src, Volume & preserve, double threshold){
+    Volume * Skeletonizer::GetJuTopologySkeleton(Volume & src, Volume & preserve, double threshold){
         return GetJuThinning(src, preserve, threshold, THINNING_CLASS_TOPOLOGY_PRESERVATION);
     }
 
 
-    Volume * VolumeSkeletonizer::GetJuThinning(Volume & src, const Volume & preserve, double threshold, char thinningClass) {
+    Volume * Skeletonizer::GetJuThinning(Volume & src, const Volume & preserve, double threshold, char thinningClass) {
         Volume * thinnedVolume = new Volume(src);
         switch(thinningClass) {
             case THINNING_CLASS_SURFACE_PRESERVATION :
@@ -772,7 +772,7 @@ namespace GraySkeletonCPP {
         return thinnedVolume;
     }
 
-    Volume * VolumeSkeletonizer::PerformImmersionSkeletonizationAndPruning(
+    Volume * Skeletonizer::PerformImmersionSkeletonizationAndPruning(
             Volume & sourceVol, Volume * preserved, double startGray,
             double endGray, double stepSize, int smoothingIterations,
             int smoothingR, int minCurveSize, int minSurfaceSize,
@@ -917,7 +917,7 @@ namespace GraySkeletonCPP {
     }
 
 
-    Volume * VolumeSkeletonizer::PerformPureJuSkeletonization(
+    Volume * Skeletonizer::PerformPureJuSkeletonization(
             Volume & imageVol, string outPath, double threshold,
             int minCurveWidth, int minSurfaceWidth)
     {
@@ -945,18 +945,18 @@ namespace GraySkeletonCPP {
         PruneSurfaces(surfaceVol, minSurfaceWidth);
         VoxelOr(preservedVol, &surfaceVol);
 
-        Volume curveVol = *VolumeSkeletonizer::GetJuCurveSkeleton(imageVol, preservedVol, threshold, true);
+        Volume curveVol = *Skeletonizer::GetJuCurveSkeleton(imageVol, preservedVol, threshold, true);
         #ifdef GORGON_DEBUG
               cout<<"curveVol->getSize(): "<<curveVol->getSize()<<endl;
         #endif
-        VolumeSkeletonizer::PruneCurves(curveVol, minCurveWidth);
+        Skeletonizer::PruneCurves(curveVol, minCurveWidth);
         VoxelOr(preservedVol, &curveVol);
 #ifdef GORGON_DEBUG
         cout<<"preservedVol->getSize(): "<<preservedVol->getSize()<<endl;
         cout<<"curveVol->getSize(): "<<curveVol->getSize()<<endl;
 #endif
 
-        Volume * topologyVol = VolumeSkeletonizer::GetJuTopologySkeleton(imageVol, preservedVol, threshold);
+        Volume * topologyVol = Skeletonizer::GetJuTopologySkeleton(imageVol, preservedVol, threshold);
 #ifdef GORGON_DEBUG
         cout<<"1: topologyVol->getSize(): "<<topologyVol->getSize()<<endl;
 #endif

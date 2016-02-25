@@ -264,7 +264,7 @@ namespace Protein_Morph {
         }
 
         int kernelWidth = min(offset, (int)round(2.0/min(min(vol.getSpacingX(), vol.getSpacingY()), vol.getSpacingZ())));
-        VolumeSkeletonizer skeletonizer(kernelWidth, kernelWidth, kernelWidth, kernelWidth);
+        Skeletonizer skeletonizer(kernelWidth, kernelWidth, kernelWidth, kernelWidth);
 
         vector<Vector3Float> volumeGradient = skeletonizer.GetVolumeGradient(tempVol);
         vector<EigenResults3D> eigens = skeletonizer.GetEigenResults(maskVol, volumeGradient, skeletonizer.gaussFiltPtR, kernelWidth, true);
