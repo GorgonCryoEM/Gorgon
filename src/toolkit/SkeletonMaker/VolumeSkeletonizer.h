@@ -72,7 +72,7 @@ namespace GraySkeletonCPP {
                                 ProbDistr3D & gaussFilt, int x, int y, int z,
                                 int sizeX, int sizeY, int sizeZ,
                                 int gaussFiltR, bool clear);
-            vector<EigenResults3D> GetEigenResults(const Volume & maskVol,
+            vector<EigenResults3D> GetEigenResults(const Volume & mask,
                                                    vector<Vector3Float> & imgGrad,
                                                    ProbDistr3D & gaussFilt,
                                                    int gaussFiltR,
@@ -217,17 +217,17 @@ namespace GraySkeletonCPP {
     }
 
     vector<EigenResults3D> VolumeSkeletonizer::GetEigenResults(
-            const Volume & maskVol, vector<Vector3Float> & imgGrad,
+            const Volume & mask, vector<Vector3Float> & imgGrad,
             ProbDistr3D & gaussFilt, int gaussFiltR,
             bool useMask)
     {
-        vector<EigenResults3D> resultTable(maskVol.getSizeX() * maskVol.getSizeY() * maskVol.getSizeZ());
+        vector<EigenResults3D> resultTable(mask.getSizeX() * mask.getSizeY() * mask.getSizeZ());
 
-        for(int x = MAX_GAUSSIAN_FILTER_RADIUS; x < maskVol.getSizeX() - MAX_GAUSSIAN_FILTER_RADIUS; x++) {
-            for(int y = MAX_GAUSSIAN_FILTER_RADIUS; y < maskVol.getSizeY() - MAX_GAUSSIAN_FILTER_RADIUS; y++) {
-                for(int z = MAX_GAUSSIAN_FILTER_RADIUS; z < maskVol.getSizeZ() - MAX_GAUSSIAN_FILTER_RADIUS; z++) {
-                    GetEigenResult(resultTable[maskVol.getIndex(x, y, z)], imgGrad, gaussFilt, x, y, z,
-                            maskVol.getSizeX(), maskVol.getSizeY(), maskVol.getSizeZ(), gaussFiltR, (useMask && (maskVol.getDataAt(x, y, z) == 0)));
+        for(int x = MAX_GAUSSIAN_FILTER_RADIUS; x < mask.getSizeX() - MAX_GAUSSIAN_FILTER_RADIUS; x++) {
+            for(int y = MAX_GAUSSIAN_FILTER_RADIUS; y < mask.getSizeY() - MAX_GAUSSIAN_FILTER_RADIUS; y++) {
+                for(int z = MAX_GAUSSIAN_FILTER_RADIUS; z < mask.getSizeZ() - MAX_GAUSSIAN_FILTER_RADIUS; z++) {
+                    GetEigenResult(resultTable[mask.getIndex(x, y, z)], imgGrad, gaussFilt, x, y, z,
+                            mask.getSizeX(), mask.getSizeY(), mask.getSizeZ(), gaussFiltR, (useMask && (mask.getDataAt(x, y, z) == 0)));
                 }
             }
         }
