@@ -60,9 +60,9 @@ namespace GraySkeletonCPP {
             void VoxelSubtract      (Volume & dest, const Volume & src);
             void VoxelOr            (Volume & dest, const Volume * src);
 
-            Vector3Float GetCurveDirection(const Volume & skel, int x, int y, int z, int radius);
+            Vector3Float GetCurveDirection(const Volume & skel, int x, int y, int z, int R);
             Vector3Float GetSurfaceNormal (const Volume & skel, int x, int y, int z);
-            Vector3Float GetSurfaceNormal (const Volume & skel, int x, int y, int z, int radius,
+            Vector3Float GetSurfaceNormal (const Volume & skel, int x, int y, int z, int R,
                                            vector<Vector3Float> & localDirections);
             vector<Vector3Float> GetVolumeGradient   (const Volume & src);
             vector<Vector3Float> GetSkeletonDirection(const Volume & skel, int type);
@@ -245,19 +245,19 @@ namespace GraySkeletonCPP {
     }
 
 
-    Vector3Float VolumeSkeletonizer::GetCurveDirection(const Volume & skel, int x, int y, int z, int radius) {
+    Vector3Float VolumeSkeletonizer::GetCurveDirection(const Volume & skel, int x, int y, int z, int R) {
         Vector3Float direction = Vector3Float(0,0,0);
         if(DiscreteMesh::getN6Count(skel, x, y, z) > 2) {
             direction = Vector3Float(BAD_NORMAL, BAD_NORMAL, BAD_NORMAL);
         } else {
 
             int margin = 2;
-            int size = (radius+margin)*2 + 1;
+            int size = (R+margin)*2 + 1;
             Volume block(size, size, size);
             for(int xx = margin; xx <= size-margin; xx++) {
                 for(int yy = margin; yy <= size-margin; yy++) {
                     for(int zz = margin; zz <= size-margin; zz++) {
-                        block.setDataAt(xx, yy, zz, skel.getDataAt(x-radius-margin+xx, y-radius-margin+yy, z-radius-margin+zz));
+                        block.setDataAt(xx, yy, zz, skel.getDataAt(x-R-margin+xx, y-R-margin+yy, z-R-margin+zz));
                     }
                 }
             }
@@ -265,7 +265,7 @@ namespace GraySkeletonCPP {
             Volume visited(size, size, size);
 
             vector<Vector3Int> list;
-            list.push_back(Vector3Int(margin+radius, margin+radius, margin+radius));
+            list.push_back(Vector3Int(margin+R, margin+R, margin+R));
             Vector3Int currentPos;
             vector<Vector3Int> n6;
             int n6Count;
@@ -276,7 +276,7 @@ namespace GraySkeletonCPP {
                 visited.setDataAt(currentPos.X(), currentPos.Y(), currentPos.Z(), 1);
                 n6Count = DiscreteMesh::getN6(n6, block, currentPos.X(), currentPos.Y(), currentPos.Z());
 
-                if(DiscreteMesh::getN6Count(skel, x+currentPos.X()-margin-radius, y+currentPos.Y()-margin-radius, z+currentPos.Z()-margin-radius) <= 2) {
+                if(DiscreteMesh::getN6Count(skel, x+currentPos.X()-margin-R, y+currentPos.Y()-margin-R, z+currentPos.Z()-margin-R) <= 2) {
                     for(int i = 0; i < n6Count; i++) {
                         if(visited.getDataAt(n6[i].X(), n6[i].Y(), n6[i].Z()) < 1) {
                             list.push_back(n6[i]);
@@ -288,8 +288,8 @@ namespace GraySkeletonCPP {
             vector<Vector3Float> gradient = GetVolumeGradient(visited);
             EigenResults3D eigen;
             GetEigenResult(eigen, gradient, uniformFiltSkelDirR,
-                margin+radius, margin+radius, margin+radius,
-                size, size, size, radius, false);
+                margin+R, margin+R, margin+R,
+                size, size, size, R, false);
 
             direction = eigen.vecs[2];
         }
@@ -303,19 +303,19 @@ namespace GraySkeletonCPP {
     }
 
 
-    Vector3Float VolumeSkeletonizer::GetSurfaceNormal(const Volume & skel, int x, int y, int z, int radius, vector<Vector3Float> & localDirections) {
+    Vector3Float VolumeSkeletonizer::GetSurfaceNormal(const Volume & skel, int x, int y, int z, int R, vector<Vector3Float> & localDirections) {
         Vector3Float direction = localDirections[skel.getIndex(x, y, z)];
 
 
         if(!direction.IsBadNormal()) {
             int margin = 2;
-            int size = (radius+margin)*2 + 1;
+            int size = (R+margin)*2 + 1;
             Volume * block = new Volume(size, size, size);
 
             for(int xx = margin; xx <= size-margin; xx++) {
                 for(int yy = margin; yy <= size-margin; yy++) {
                     for(int zz = margin; zz <= size-margin; zz++) {
-                        block->setDataAt(xx, yy, zz, skel.getDataAt(x-radius-margin+xx, y-radius-margin+yy, z-radius-margin+zz));
+                        block->setDataAt(xx, yy, zz, skel.getDataAt(x-R-margin+xx, y-R-margin+yy, z-R-margin+zz));
                     }
                 }
             }
@@ -323,7 +323,7 @@ namespace GraySkeletonCPP {
             Volume visited(size, size, size);
 
             vector<Vector3Int> list;
-            list.push_back(Vector3Int(margin+radius, margin+radius, margin+radius));
+            list.push_back(Vector3Int(margin+R, margin+R, margin+R));
             Vector3Int currentPos, newPos;
             Vector3Float tempDir;
 
@@ -331,7 +331,7 @@ namespace GraySkeletonCPP {
                 currentPos = list[list.size()-1];
                 list.pop_back();
                 visited.setDataAt(currentPos.X(), currentPos.Y(), currentPos.Z(), 1);
-                tempDir = localDirections[skel.getIndex(x+currentPos.X()-margin-radius, y+currentPos.Y()-margin-radius, z+currentPos.Z()-margin-radius)];
+                tempDir = localDirections[skel.getIndex(x+currentPos.X()-margin-R, y+currentPos.Y()-margin-R, z+currentPos.Z()-margin-R)];
 
                 if(!tempDir.IsBadNormal()) {
                     for(int i = 0; i < 12; i++) {
@@ -357,8 +357,8 @@ namespace GraySkeletonCPP {
             EigenResults3D eigen;
 
             GetEigenResult(eigen, gradient, uniformFiltSkelDirR,
-                margin+radius, margin+radius, margin+radius,
-                size, size, size, radius, false);
+                margin+R, margin+R, margin+R,
+                size, size, size, R, false);
 
             direction = eigen.vecs[0];
 
