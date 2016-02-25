@@ -44,9 +44,9 @@ BOOST_PYTHON_MODULE(@current_pylib@)
 //    vector_from_python< std::vector<Vec3F> >();
 //
 //
-////  tuple3_to_python<Vector3Int>();
+////  tuple3_to_python<Vec3I>();
 ////  tuple3_to_python<Vec3F>();
-//    tuple3_from_python<Vector3Int, int>();
+//    tuple3_from_python<Vec3I, int>();
 //    tuple3_from_python<Vec3F, float>();
 //
 

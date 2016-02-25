@@ -93,7 +93,7 @@ namespace GraphMatch {
             }
     };
 
-    typedef Vector3<int>    Vector3Int;
+    typedef Vector3<int>    Vec3I;
     typedef Vector3<float>  Vec3F;
     typedef Vector3<double> Vec3D;
 

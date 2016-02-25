@@ -47,7 +47,7 @@ namespace Protein_Morph {
             vector<float> GetLocalDirectionalityScores(const Volume & vol);
 
         private:
-            void UpdateMap(Volume & vol, Vector3Int loc,
+            void UpdateMap(Volume & vol, Vec3I loc,
                            Vec3F rangemin, Vec3F rangemax);
 
             //Ross Coleman: modified from EMAN1 Cylinder.C by Wen Jiang
@@ -72,7 +72,7 @@ namespace Protein_Morph {
                                       Volume* az_vol = NULL, Volume* alt_vol = NULL);
 
         private:
-            vector<Vector3Int> atomVolumePositions; // holds the i, j, k indices that give the voxel position of the pseudoatoms
+            vector<Vec3I> atomVolumePositions; // holds the i, j, k indices that give the voxel position of the pseudoatoms
             vector<PDBAtom> patoms; // pseudoatoms
             static const float max_radius; //for all r > max_radius, RadialProfile(r, {any type}) ~= 0
     };
@@ -91,7 +91,7 @@ namespace Protein_Morph {
         Vec3F spacing = vol.getSpacingObj();
         Vec3F rangemin = -1.0f*resolution/spacing;
         Vec3F rangemax = resolution/spacing;
-        Vector3Int m;
+        Vec3I m;
 
         int &mX = m[0];
         int &mY = m[1];
@@ -118,15 +118,15 @@ namespace Protein_Morph {
             atom.SetElement("S_00");
             atom.SetCharge("0");
             patoms.push_back(atom);
-            atomVolumePositions.push_back(Vector3Int(mX, mY, mZ));
-            UpdateMap(tempVol, Vector3Int(mX, mY, mZ), rangemin, rangemax);
+            atomVolumePositions.push_back(Vec3I(mX, mY, mZ));
+            UpdateMap(tempVol, Vec3I(mX, mY, mZ), rangemin, rangemax);
             maxVal = tempVol.getMaxValuePosition(mX, mY, mZ);
         }
     }
 
     // SSEHunter::UpdateMap
     // called by SSEHunter::CreatePseudoAtoms after each pseudoatom is chosen
-    void SSEHunter::UpdateMap(Volume  & vol, Vector3Int loc,
+    void SSEHunter::UpdateMap(Volume  & vol, Vec3I loc,
                               Vec3F rangemin, Vec3F rangemax
                               )
     {
