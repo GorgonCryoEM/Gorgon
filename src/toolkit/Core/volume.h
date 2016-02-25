@@ -135,17 +135,16 @@ namespace SkeletonMaker {
         int isPiercable      (int ox, int oy, int oz);
         int getNumPotComplex (int ox, int oy, int oz);
         int getNumPotComplex2(int ox, int oy, int oz);
-        int components6( int vox[3][3][3] );
-        int components26( int vox[3][3][3] );
-        int countExt( double vox[3][3][3] );
-        int countInt( double vox[3][3][3] );
+        int components6 (int vox[3][3][3]);
+        int components26(int vox[3][3][3]);
+        int countExt( double vox[3][3][3]);
+        int countInt( double vox[3][3][3]);
         int countIntEuler( int ox, int oy, int oz );
         void curveSkeleton( const Volume & grayvol, float lowthr, float highthr, const Volume & svol );
-        void curveSkeleton( float thr, const Volume & svol );
-        void curveSkeleton2D( float thr, const Volume & svol );
-            void pointSkeleton(const Volume & grayvol, float lowthr,
-                               float highthr, const Volume & svol,
-                               const Volume & hvol);
+        void curveSkeleton  (float thr, const Volume & svol);
+        void curveSkeleton2D(float thr, const Volume & svol);
+            void pointSkeleton(const Volume & grayvol, float lowthr, float highthr,
+                               const Volume & svol, const Volume & hvol);
         void skeleton( float thr, const Volume & svol, const Volume & hvol );
         void erodeHelix( int disthr );
         int erodeSheet( int disthr );
@@ -163,7 +162,10 @@ namespace SkeletonMaker {
         void loadFile(string fileName);
         void saveFile(string fileName);
         Volume * PerformBinarySkeletonizationJu2007(double threshold, int minCurveSize, int minSurfaceSize);
-        Volume * PerformGrayscaleSkeletonizationAbeysinghe2008(double startDensity, int stepCount, int minCurveSize, int minSurfaceSize, int curveRadius, int surfaceRadius, int skeletonSmoothenRadius);
+            Volume * PerformGrayscaleSkeletonizationAbeysinghe2008(
+                    double startDensity, int stepCount, int minCurveSize,
+                    int minSurfaceSize, int curveRadius, int surfaceRadius,
+                    int skeletonSmoothenRadius);
 
         void buildHistogram(int binCount);
         int getHistogramBinValue(int binIx);
