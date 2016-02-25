@@ -65,8 +65,7 @@ namespace GraySkeletonCPP {
 
             void GetEigenResult(EigenResults3D & returnVal,
                                 vector<Vec3F> & imgGrad, ProbDistr3D & gaussFilt,
-                                int x, int y, int z,
-                                int sizeX, int sizeY, int sizeZ,
+                                Vec3I xyz, Vec3I size,
                                 int gaussFiltR, bool clear);
             vector<EigenResults3D> GetEigenResults(const Volume & mask, vector<Vec3F> & imgGrad,
                                                    ProbDistr3D & gaussFilt,
@@ -461,10 +460,16 @@ namespace GraySkeletonCPP {
                             EigenResults3D & returnVal,
                             vector<Vec3F> & imgGrad,
                             ProbDistr3D & gaussFilt,
-                            int x, int y, int z,
-                            int sizeX, int sizeY, int sizeZ,
+                            Vec3I xyz, Vec3I size,
                             int gaussFiltR, bool clear)
     {
+        int x = xyz.X();
+        int y = xyz.Y();
+        int z = xyz.Z();
+        int sizeX = size.X();
+        int sizeY = size.Y();
+        int sizeZ = size.Z();
+
         if(clear) {
             for(int r = 0; r < 3; r++) {
                 returnVal.vals[r] = 0;
