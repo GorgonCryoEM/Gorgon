@@ -68,12 +68,12 @@ namespace GraySkeletonCPP {
             vector<Vector3Float> GetSkeletonDirection(const Volume & skel, int type);
 
             void GetEigenResult(EigenResults3D & returnVal,
-                                vector<Vector3Float> & imageGradient,
+                                vector<Vector3Float> & imgGrad,
                                 ProbDistr3D & gaussFilt, int x, int y, int z,
                                 int sizeX, int sizeY, int sizeZ,
                                 int gaussFiltR, bool clear);
             vector<EigenResults3D> GetEigenResults(const Volume & maskVol,
-                                                   vector<Vector3Float> & imageGradient,
+                                                   vector<Vector3Float> & imgGrad,
                                                    ProbDistr3D & gaussFilt,
                                                    int gaussFiltR,
                                                    bool useMask);
@@ -223,7 +223,7 @@ namespace GraySkeletonCPP {
     }
 
     vector<EigenResults3D> VolumeSkeletonizer::GetEigenResults(
-            const Volume & maskVol, vector<Vector3Float> & imageGradient,
+            const Volume & maskVol, vector<Vector3Float> & imgGrad,
             ProbDistr3D & gaussFilt, int gaussFiltR,
             bool useMask)
     {
@@ -232,7 +232,7 @@ namespace GraySkeletonCPP {
         for(int x = MAX_GAUSSIAN_FILTER_RADIUS; x < maskVol.getSizeX() - MAX_GAUSSIAN_FILTER_RADIUS; x++) {
             for(int y = MAX_GAUSSIAN_FILTER_RADIUS; y < maskVol.getSizeY() - MAX_GAUSSIAN_FILTER_RADIUS; y++) {
                 for(int z = MAX_GAUSSIAN_FILTER_RADIUS; z < maskVol.getSizeZ() - MAX_GAUSSIAN_FILTER_RADIUS; z++) {
-                    GetEigenResult(resultTable[maskVol.getIndex(x, y, z)], imageGradient, gaussFilt, x, y, z,
+                    GetEigenResult(resultTable[maskVol.getIndex(x, y, z)], imgGrad, gaussFilt, x, y, z,
                             maskVol.getSizeX(), maskVol.getSizeY(), maskVol.getSizeZ(), gaussFiltR, (useMask && (maskVol.getDataAt(x, y, z) == 0)));
                 }
             }
@@ -471,7 +471,7 @@ namespace GraySkeletonCPP {
 
     void VolumeSkeletonizer::GetEigenResult(
                             EigenResults3D & returnVal,
-                            vector<Vector3Float> & imageGradient,
+                            vector<Vector3Float> & imgGrad,
                             ProbDistr3D & gaussFilt,
                             int x, int y, int z,
                             int sizeX, int sizeY, int sizeZ,
@@ -502,7 +502,7 @@ namespace GraySkeletonCPP {
                         probability = gaussFilt.vals[xx+gaussFiltR][yy+gaussFiltR][zz+gaussFiltR];
                         for(int r = 0; r < 3; r++) {
                             for(int c = 0; c < 3; c++) {
-                                eigenData.tensor[r][c] += imageGradient[index2][r] * imageGradient[index2][c] * probability;
+                                eigenData.tensor[r][c] += imgGrad[index2][r] * imgGrad[index2][c] * probability;
                             }
                         }
                     }
