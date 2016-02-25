@@ -52,7 +52,7 @@ namespace GraySkeletonCPP {
             int GetSurfaceNeighbors(int x, int y, int z, vector<int> & neighbors);
             int GetSurfaceNeighbors(int x1, int y1, int z1, int x2, int y2, int z2, vector<int> & neighbors);
             int GetSurfaceNeighborCount(int x1, int y1, int z1, int x2, int y2, int z2);
-            void GetSurfacePoints(int x, int y, int z, unsigned char direction, Vector3Int * & points);
+            void GetSurfacePoints(int x, int y, int z, unsigned char direction, vector<Vector3Int> & points);
 
             static int GetC6(Vector3Int * neighbors, int neighborCount,
                              Vector3Int currPoint);
@@ -309,9 +309,9 @@ namespace GraySkeletonCPP {
 
     void DiscreteMesh::GetSurfacePoints(int x, int y, int z,
                                         unsigned char direction,
-                                        Vector3Int * & points)
+                                        vector<Vector3Int> & points)
     {
-        points = new Vector3Int[4];
+        points.resize(4);
         switch(direction) {
             case SURFACE_TYPE_XY:
                 points[0] = Vector3Int(x, y, z);
