@@ -48,12 +48,12 @@ namespace GraySkeletonCPP {
 
     class VolumeSkeletonizer {
         public:
-            VolumeSkeletonizer(int pointRadius, int curveRadius,
-                               int surfaceRadius, int skeletonDirectionRadius);
+            VolumeSkeletonizer(int pointR, int curveR,
+                               int surfaceR, int skeletonDirectionR);
             Volume * PerformImmersionSkeletonizationAndPruning(
                     Volume & sourceVol, Volume * preserveVol, double startGray,
                     double endGray, double stepSize, int smoothingIterations,
-                    int smoothingRadius, int minCurveSize, int minSurfaceSize,
+                    int smoothingR, int minCurveSize, int minSurfaceSize,
                     int maxCurveHole, int maxSurfaceHole, string outputPath,
                     bool doPruning, double pointThreshold,
                     double curveThreshold, double surfaceThreshold);
@@ -77,7 +77,7 @@ namespace GraySkeletonCPP {
                                             vector<EigenResults3D> & volumeEigens, ProbDistr3D & filter,
                                             double threshold, char pruningClass, string outputPath);
             void SmoothenVolume(Volume & sourceVolume, double minGrayscale,
-                                double maxGrayscale, int stRadius);
+                                double maxGrayscale, int stR);
 
             void VoxelBinarySubtract(Volume & sourceAndDestVolume1,
                                      const Volume & sourceVolume2);
@@ -96,11 +96,11 @@ namespace GraySkeletonCPP {
                                 vector<Vector3Float> & imageGradient,
                                 ProbDistr3D & gaussianFilter, int x, int y, int z,
                                 int sizeX, int sizeY, int sizeZ,
-                                int gaussianFilterRadius, bool clear);
+                                int gaussianFilterR, bool clear);
             vector<EigenResults3D> GetEigenResults(const Volume & maskVol,
                                                    vector<Vector3Float> & imageGradient,
                                                    ProbDistr3D & gaussianFilter,
-                                                   int gaussianFilterRadius,
+                                                   int gaussianFilterR,
                                                    bool useMask);
 
         protected:
@@ -140,11 +140,11 @@ namespace GraySkeletonCPP {
             ProbDistr3D gaussFiltCrvR;
             ProbDistr3D gaussFiltSrfcR;
             ProbDistr3D gaussFiltMaxR;
-            ProbDistr3D uniformFilterSkeletonDirectionRadius;
-            int pointRadius;
-            int curveRadius;
-            int surfaceRadius;
-            int skeletonDirectionRadius;
+            ProbDistr3D uniformFiltSkelDirR;
+            int pointR;
+            int curveR;
+            int surfR;
+            int skelDirR;
 
     };
 
@@ -158,29 +158,29 @@ namespace GraySkeletonCPP {
     const char VolumeSkeletonizer::PRUNING_CLASS_PRUNE_POINTS = 7;
 
 
-    VolumeSkeletonizer::VolumeSkeletonizer(int pointRadius, int curveRadius, int surfaceRadius, int skeletonDirectionRadius)
+    VolumeSkeletonizer::VolumeSkeletonizer(int pointR, int curveR, int surfaceR, int skeletonDirectionR)
         : math(Matlab()),
           surfNormFinder(NormalFinder())
     {
-        this->pointRadius = pointRadius;
-        this->curveRadius = curveRadius;
-        this->surfaceRadius = surfaceRadius;
-        this->skeletonDirectionRadius = skeletonDirectionRadius;
+        this->pointR = pointR;
+        this->curveR = curveR;
+        this->surfR = surfaceR;
+        this->skelDirR = skeletonDirectionR;
 
-        gaussFiltPtR.R = pointRadius;
+        gaussFiltPtR.R = pointR;
         BinomDistr(gaussFiltPtR);
 
-        gaussFiltCrvR.R = curveRadius;
+        gaussFiltCrvR.R = curveR;
         BinomDistr(gaussFiltCrvR);
 
-        gaussFiltSrfcR.R = surfaceRadius;
+        gaussFiltSrfcR.R = surfaceR;
         BinomDistr(gaussFiltSrfcR);
 
         gaussFiltMaxR.R = MAX_GAUSSIAN_FILTER_RADIUS;
         BinomDistr(gaussFiltMaxR);
 
-        uniformFilterSkeletonDirectionRadius.R = skeletonDirectionRadius;
-        UniformDistr(uniformFilterSkeletonDirectionRadius);
+        uniformFiltSkelDirR.R = skeletonDirectionR;
+        UniformDistr(uniformFiltSkelDirR);
     }
 
     double VolumeSkeletonizer::GetVoxelCost(EigenResults3D imageEigen, Vector3Float skeletonDirection, int type) {
@@ -249,7 +249,7 @@ namespace GraySkeletonCPP {
 
     vector<EigenResults3D> VolumeSkeletonizer::GetEigenResults(
             const Volume & maskVol, vector<Vector3Float> & imageGradient,
-            ProbDistr3D & gaussianFilter, int gaussianFilterRadius,
+            ProbDistr3D & gaussianFilter, int gaussianFilterR,
             bool useMask)
     {
         vector<EigenResults3D> resultTable(maskVol.getSizeX() * maskVol.getSizeY() * maskVol.getSizeZ());
@@ -258,7 +258,7 @@ namespace GraySkeletonCPP {
             for(int y = MAX_GAUSSIAN_FILTER_RADIUS; y < maskVol.getSizeY() - MAX_GAUSSIAN_FILTER_RADIUS; y++) {
                 for(int z = MAX_GAUSSIAN_FILTER_RADIUS; z < maskVol.getSizeZ() - MAX_GAUSSIAN_FILTER_RADIUS; z++) {
                     GetEigenResult(resultTable[maskVol.getIndex(x, y, z)], imageGradient, gaussianFilter, x, y, z,
-                            maskVol.getSizeX(), maskVol.getSizeY(), maskVol.getSizeZ(), gaussianFilterRadius, (useMask && (maskVol.getDataAt(x, y, z) == 0)));
+                            maskVol.getSizeX(), maskVol.getSizeY(), maskVol.getSizeZ(), gaussianFilterR, (useMask && (maskVol.getDataAt(x, y, z) == 0)));
                 }
             }
         }
@@ -318,7 +318,7 @@ namespace GraySkeletonCPP {
 
             vector<Vector3Float> gradient = GetVolumeGradient(visited);
             EigenResults3D eigen;
-            GetEigenResult(eigen, gradient, uniformFilterSkeletonDirectionRadius,
+            GetEigenResult(eigen, gradient, uniformFiltSkelDirR,
                 margin+radius, margin+radius, margin+radius,
                 size, size, size, radius, false);
 
@@ -387,7 +387,7 @@ namespace GraySkeletonCPP {
 
             EigenResults3D eigen;
 
-            GetEigenResult(eigen, gradient, uniformFilterSkeletonDirectionRadius,
+            GetEigenResult(eigen, gradient, uniformFiltSkelDirR,
                 margin+radius, margin+radius, margin+radius,
                 size, size, size, radius, false);
 
@@ -469,10 +469,10 @@ namespace GraySkeletonCPP {
                     if(skeleton.getDataAt(x,y,z) > 0) {
                         switch(type){
                             case PRUNING_CLASS_PRUNE_CURVES:
-                                directions[index] = GetCurveDirection(skeleton, x, y, z, skeletonDirectionRadius);
+                                directions[index] = GetCurveDirection(skeleton, x, y, z, skelDirR);
                                 break;
                             case PRUNING_CLASS_PRUNE_SURFACES:
-                                directions[index] = GetSurfaceNormal(skeleton, x, y, z, skeletonDirectionRadius, localDirections);
+                                directions[index] = GetSurfaceNormal(skeleton, x, y, z, skelDirR, localDirections);
                                 break;
                         }
                     }
@@ -494,7 +494,14 @@ namespace GraySkeletonCPP {
         res2.normalize();
     }
 
-    void VolumeSkeletonizer::GetEigenResult(EigenResults3D & returnVal, vector<Vector3Float> & imageGradient, ProbDistr3D & gaussianFilter, int x, int y, int z, int sizeX, int sizeY, int sizeZ, int gaussianFilterRadius, bool clear) {
+    void VolumeSkeletonizer::GetEigenResult(
+                            EigenResults3D & returnVal,
+                            vector<Vector3Float> & imageGradient,
+                            ProbDistr3D & gaussianFilter,
+                            int x, int y, int z,
+                            int sizeX, int sizeY, int sizeZ,
+                            int gaussianFilterR, bool clear)
+    {
         if(clear) {
             for(int r = 0; r < 3; r++) {
                 returnVal.vals[r] = 0;
@@ -513,11 +520,11 @@ namespace GraySkeletonCPP {
                 }
             }
 
-            for(int xx = -gaussianFilterRadius; xx <= gaussianFilterRadius; xx++) {
-                for(int yy = -gaussianFilterRadius; yy <= gaussianFilterRadius; yy++) {
-                    for(int zz = -gaussianFilterRadius; zz <= gaussianFilterRadius; zz++) {
+            for(int xx = -gaussianFilterR; xx <= gaussianFilterR; xx++) {
+                for(int yy = -gaussianFilterR; yy <= gaussianFilterR; yy++) {
+                    for(int zz = -gaussianFilterR; zz <= gaussianFilterR; zz++) {
                         index2 = (x+xx) * sizeY * sizeZ + (y+yy) * sizeZ + z + zz;
-                        probability = gaussianFilter.vals[xx+gaussianFilterRadius][yy+gaussianFilterRadius][zz+gaussianFilterRadius];
+                        probability = gaussianFilter.vals[xx+gaussianFilterR][yy+gaussianFilterR][zz+gaussianFilterR];
                         for(int r = 0; r < 3; r++) {
                             for(int c = 0; c < 3; c++) {
                                 eigenData.tensor[r][c] += imageGradient[index2][r] * imageGradient[index2][c] * probability;
@@ -625,12 +632,12 @@ namespace GraySkeletonCPP {
         #endif
     }
 
-    void VolumeSkeletonizer::SmoothenVolume(Volume & sourceVolume, double minGrayscale, double maxGrayscale, int stRadius) {
+    void VolumeSkeletonizer::SmoothenVolume(Volume & sourceVolume, double minGrayscale, double maxGrayscale, int stR) {
         ProbDistr3D mask;
         mask.R = 1;
 
         ProbDistr3D smoothenMask;
-        smoothenMask.R = stRadius;
+        smoothenMask.R = stR;
         BinomDistr(smoothenMask);
 
         sourceVolume.pad(MAX_GAUSSIAN_FILTER_RADIUS, 0);
@@ -651,7 +658,7 @@ namespace GraySkeletonCPP {
         }
 
         vector<Vector3Float> volumeGradient = GetVolumeGradient(sourceVolume);
-        vector<EigenResults3D> eigens = GetEigenResults(maskVolume, volumeGradient, smoothenMask, stRadius, true);
+        vector<EigenResults3D> eigens = GetEigenResults(maskVolume, volumeGradient, smoothenMask, stR, true);
         Volume destVolume (sourceVolume.getSizeX(), sourceVolume.getSizeY(), sourceVolume.getSizeZ());
         double sourceData;
 
@@ -805,14 +812,14 @@ namespace GraySkeletonCPP {
     Volume * VolumeSkeletonizer::PerformImmersionSkeletonizationAndPruning(
             Volume & sourceVol, Volume * preserveVol, double startGray,
             double endGray, double stepSize, int smoothingIterations,
-            int smoothingRadius, int minCurveSize, int minSurfaceSize,
+            int smoothingR, int minCurveSize, int minSurfaceSize,
             int maxCurveHole, int maxSurfaceHole, string outputPath,
             bool doPruning, double pointThreshold, double curveThreshold,
             double surfaceThreshold)
     {
         appTimeManager.PushCurrentTime();
         for(int i = 0; i < smoothingIterations; i++) {
-            SmoothenVolume(sourceVol, startGray, endGray, smoothingRadius);
+            SmoothenVolume(sourceVol, startGray, endGray, smoothingR);
         }
         appTimeManager.PopAndDisplayTime("Smoothing : %f seconds!\n");
         vector<Vector3Float> volumeGradient;
@@ -844,7 +851,7 @@ namespace GraySkeletonCPP {
                 WriteVolumeToVRMLFile(surfaceVol, outputPath + "-S-Pre-Prune.wrl");
             #endif
             appTimeManager.PushCurrentTime();
-            volumeEigens = GetEigenResults(surfaceVol, volumeGradient, gaussFiltSrfcR, surfaceRadius, true);
+            volumeEigens = GetEigenResults(surfaceVol, volumeGradient, gaussFiltSrfcR, surfR, true);
             appTimeManager.PopAndDisplayTime("  Getting Eigens : %f seconds!\n");
 
             appTimeManager.PushCurrentTime();
@@ -901,7 +908,7 @@ namespace GraySkeletonCPP {
                 curveVol->toMRCFile((char *)(outputPath + "-C-Pre-Prune.mrc").c_str());
             #endif
 
-            volumeEigens = GetEigenResults(curveVol, volumeGradient, gaussFiltCrvR, curveRadius, true);
+            volumeEigens = GetEigenResults(curveVol, volumeGradient, gaussFiltCrvR, curveR, true);
             Volume prunedCurveVol(curveVol);
             PruneUsingStructureTensor(prunedCurveVol, sourceVol, preserveVol, volumeGradient, volumeEigens, gaussFiltCrvR, curveThreshold, PRUNING_CLASS_PRUNE_CURVES, outputPath + "-C");
 
