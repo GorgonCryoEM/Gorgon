@@ -66,8 +66,8 @@ namespace GraySkeletonCPP {
                                                   int minSurfaceWidth);
             Volume * GetJuSurfaceSkeleton(Volume & sourceVolume,
                                           Volume & preserve, double threshold);
-            Volume * GetJuCurveSkeleton(Volume * sourceVolume,
-                                        Volume * preserve, double threshold,
+            Volume * GetJuCurveSkeleton(Volume & sourceVolume,
+                                        Volume & preserve, double threshold,
                                         bool is3D);
             Volume * GetJuTopologySkeleton(Volume * sourceVolume,
                                            Volume * preserve, double threshold);
@@ -768,9 +768,9 @@ namespace GraySkeletonCPP {
     }
 
 
-    Volume * VolumeSkeletonizer::GetJuCurveSkeleton(Volume * sourceVolume, Volume * preserve, double threshold, bool is3D){
+    Volume * VolumeSkeletonizer::GetJuCurveSkeleton(Volume & sourceVolume, Volume & preserve, double threshold, bool is3D){
         char thinningClass = is3D ? THINNING_CLASS_CURVE_PRESERVATION : THINNING_CLASS_CURVE_PRESERVATION_2D;
-        return GetJuThinning(sourceVolume, preserve, threshold, thinningClass);
+        return GetJuThinning(&sourceVolume, &preserve, threshold, thinningClass);
     }
 
     Volume * VolumeSkeletonizer::GetJuSurfaceSkeleton(Volume & sourceVolume, Volume & preserve, double threshold){
@@ -923,7 +923,7 @@ namespace GraySkeletonCPP {
             curveVol->toMRCFile((char *)(outputPath + "-C-Post-Erosion.mrc").c_str());
         #endif
 
-        Volume cleanedCurveVol = *GetJuCurveSkeleton(&curveVol, surfaceVol, 0.5, true);
+        Volume cleanedCurveVol = *GetJuCurveSkeleton(curveVol, *surfaceVol, 0.5, true);
         PruneCurves(cleanedCurveVol, minCurveSize);
         #ifdef SAVE_INTERMEDIATE_RESULTS
             cleanedCurveVol->toMRCFile((char *)(outputPath + "-C-Cleaned.mrc").c_str());
@@ -980,7 +980,7 @@ namespace GraySkeletonCPP {
         PruneSurfaces(*surfaceVol, minSurfaceWidth);
         VoxelOr(preservedVol, surfaceVol);
 
-        curveVol = VolumeSkeletonizer::GetJuCurveSkeleton(imageVol, preservedVol, threshold, true);
+        curveVol = VolumeSkeletonizer::GetJuCurveSkeleton(*imageVol, *preservedVol, threshold, true);
         #ifdef GORGON_DEBUG
               cout<<"curveVol->getSize(): "<<curveVol->getSize()<<endl;
         #endif
