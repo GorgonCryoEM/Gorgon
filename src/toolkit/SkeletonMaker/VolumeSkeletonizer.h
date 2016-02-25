@@ -57,8 +57,7 @@ namespace GraySkeletonCPP {
                     int maxCurveHole, int maxSurfaceHole, string outputPath,
                     bool doPruning, double pointThreshold,
                     double curveThreshold, double surfaceThreshold);
-            Volume * PerformSkeletonizationAndPruning(Volume * imageVol,
-                                                      string outputPath);
+
             Volume * PerformPureJuSkeletonization(Volume * imageVol,
                                                   string outputPath,
                                                   double threshold,
