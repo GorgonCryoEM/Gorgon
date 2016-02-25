@@ -133,11 +133,11 @@ namespace GraySkeletonCPP {
 
         public:
             Matlab math;
-            NormalFinder * surfaceNormalFinder;
-            ProbDistr3D gaussianFilterPointRadius;
-            ProbDistr3D gaussianFilterCurveRadius;
-            ProbDistr3D gaussianFilterSurfaceRadius;
-            ProbDistr3D gaussianFilterMaxRadius;
+            NormalFinder * surfNormFinder;
+            ProbDistr3D gaussFiltPtR;
+            ProbDistr3D gaussFiltCrvR;
+            ProbDistr3D gaussFiltSrfcR;
+            ProbDistr3D gaussFiltMaxR;
             ProbDistr3D uniformFilterSkeletonDirectionRadius;
             int pointRadius;
             int curveRadius;
@@ -159,30 +159,30 @@ namespace GraySkeletonCPP {
     VolumeSkeletonizer::VolumeSkeletonizer(int pointRadius, int curveRadius, int surfaceRadius, int skeletonDirectionRadius)
         : math(Matlab())
     {
-        surfaceNormalFinder = new NormalFinder();
+        surfNormFinder = new NormalFinder();
         this->pointRadius = pointRadius;
         this->curveRadius = curveRadius;
         this->surfaceRadius = surfaceRadius;
         this->skeletonDirectionRadius = skeletonDirectionRadius;
 
-        gaussianFilterPointRadius.R = pointRadius;
-        BinomDistr(gaussianFilterPointRadius);
+        gaussFiltPtR.R = pointRadius;
+        BinomDistr(gaussFiltPtR);
 
-        gaussianFilterCurveRadius.R = curveRadius;
-        BinomDistr(gaussianFilterCurveRadius);
+        gaussFiltCrvR.R = curveRadius;
+        BinomDistr(gaussFiltCrvR);
 
-        gaussianFilterSurfaceRadius.R = surfaceRadius;
-        BinomDistr(gaussianFilterSurfaceRadius);
+        gaussFiltSrfcR.R = surfaceRadius;
+        BinomDistr(gaussFiltSrfcR);
 
-        gaussianFilterMaxRadius.R = MAX_GAUSSIAN_FILTER_RADIUS;
-        BinomDistr(gaussianFilterMaxRadius);
+        gaussFiltMaxR.R = MAX_GAUSSIAN_FILTER_RADIUS;
+        BinomDistr(gaussFiltMaxR);
 
         uniformFilterSkeletonDirectionRadius.R = skeletonDirectionRadius;
         UniformDistr(uniformFilterSkeletonDirectionRadius);
     }
 
     VolumeSkeletonizer::~VolumeSkeletonizer() {
-        delete surfaceNormalFinder;
+        delete surfNormFinder;
     }
 
 
@@ -333,8 +333,8 @@ namespace GraySkeletonCPP {
         return direction;
     }
     Vector3Float VolumeSkeletonizer::GetSurfaceNormal(Volume * skeleton, int x, int y, int z) {
-        surfaceNormalFinder->InitializeGraph(skeleton, x, y, z);
-        return surfaceNormalFinder->GetSurfaceNormal();
+        surfNormFinder->InitializeGraph(skeleton, x, y, z);
+        return surfNormFinder->GetSurfaceNormal();
     }
 
 
@@ -851,7 +851,7 @@ namespace GraySkeletonCPP {
                 WriteVolumeToVRMLFile(surfaceVol, outputPath + "-S-Pre-Prune.wrl");
             #endif
             appTimeManager.PushCurrentTime();
-            volumeEigens = GetEigenResults(surfaceVol, volumeGradient, gaussianFilterSurfaceRadius, surfaceRadius, true);
+            volumeEigens = GetEigenResults(surfaceVol, volumeGradient, gaussFiltSrfcR, surfaceRadius, true);
             appTimeManager.PopAndDisplayTime("  Getting Eigens : %f seconds!\n");
 
             appTimeManager.PushCurrentTime();
@@ -860,7 +860,7 @@ namespace GraySkeletonCPP {
 
 
             appTimeManager.PushCurrentTime();
-            PruneUsingStructureTensor(prunedSurfaceVol, sourceVol, preserveVol, volumeGradient, volumeEigens, gaussianFilterSurfaceRadius, surfaceThreshold, PRUNING_CLASS_PRUNE_SURFACES, outputPath + "-S");
+            PruneUsingStructureTensor(prunedSurfaceVol, sourceVol, preserveVol, volumeGradient, volumeEigens, gaussFiltSrfcR, surfaceThreshold, PRUNING_CLASS_PRUNE_SURFACES, outputPath + "-S");
             appTimeManager.PopAndDisplayTime("  Pruning: %f seconds!\n");
 
             appTimeManager.PushCurrentTime();
@@ -910,9 +910,9 @@ namespace GraySkeletonCPP {
                 curveVol->toMRCFile((char *)(outputPath + "-C-Pre-Prune.mrc").c_str());
             #endif
 
-            volumeEigens = GetEigenResults(curveVol, volumeGradient, gaussianFilterCurveRadius, curveRadius, true);
+            volumeEigens = GetEigenResults(curveVol, volumeGradient, gaussFiltCrvR, curveRadius, true);
             Volume * prunedCurveVol = new Volume(*curveVol);
-            PruneUsingStructureTensor(prunedCurveVol, sourceVol, preserveVol, volumeGradient, volumeEigens, gaussianFilterCurveRadius, curveThreshold, PRUNING_CLASS_PRUNE_CURVES, outputPath + "-C");
+            PruneUsingStructureTensor(prunedCurveVol, sourceVol, preserveVol, volumeGradient, volumeEigens, gaussFiltCrvR, curveThreshold, PRUNING_CLASS_PRUNE_CURVES, outputPath + "-C");
 
             #ifdef SAVE_INTERMEDIATE_RESULTS
                 prunedCurveVol->toMRCFile((char *)(outputPath + "-C-Post-Prune.mrc").c_str());

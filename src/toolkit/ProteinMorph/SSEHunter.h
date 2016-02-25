@@ -271,7 +271,7 @@ namespace Protein_Morph {
         VolumeSkeletonizer skeletonizer(kernelWidth, kernelWidth, kernelWidth, kernelWidth);
 
         Vector3Float * volumeGradient = skeletonizer.GetVolumeGradient(&tempVol);
-        vector<EigenResults3D> eigens = skeletonizer.GetEigenResults(&maskVol, volumeGradient, skeletonizer.gaussianFilterPointRadius, kernelWidth, true);
+        vector<EigenResults3D> eigens = skeletonizer.GetEigenResults(&maskVol, volumeGradient, skeletonizer.gaussFiltPtR, kernelWidth, true);
 
         float minScore = 10, maxScore = -10;
         vector<float> aspectRatios;
