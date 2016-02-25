@@ -79,8 +79,8 @@ namespace GraySkeletonCPP {
             void SmoothenVolume(Volume & sourceVolume, double minGrayscale,
                                 double maxGrayscale, int stRadius);
 
-            void VoxelBinarySubtract(Volume * sourceAndDestVolume1,
-                                     Volume * sourceVolume2);
+            void VoxelBinarySubtract(Volume & sourceAndDestVolume1,
+                                     const Volume & sourceVolume2);
             void VoxelSubtract(Volume * sourceAndDestVolume1,
                                Volume * sourceVolume2);
             void VoxelOr(Volume * sourceAndDestVolume1, Volume * sourceVolume2);
@@ -684,12 +684,12 @@ namespace GraySkeletonCPP {
 
         sourceVolume = destVolume;
     }
-    void VolumeSkeletonizer::VoxelBinarySubtract(Volume * sourceAndDestVolume1, Volume * sourceVolume2){
-        for(int x = 0; x < sourceAndDestVolume1->getSizeX(); x++) {
-            for(int y = 0; y < sourceAndDestVolume1->getSizeY(); y++) {
-                for(int z = 0; z < sourceAndDestVolume1->getSizeZ(); z++) {
-                    if(sourceVolume2->getDataAt(x, y, z) > 0) {
-                        sourceAndDestVolume1->setDataAt(x, y, z, 0);
+    void VolumeSkeletonizer::VoxelBinarySubtract(Volume & sourceAndDestVolume1, const Volume & sourceVolume2){
+        for(int x = 0; x < sourceAndDestVolume1.getSizeX(); x++) {
+            for(int y = 0; y < sourceAndDestVolume1.getSizeY(); y++) {
+                for(int z = 0; z < sourceAndDestVolume1.getSizeZ(); z++) {
+                    if(sourceVolume2.getDataAt(x, y, z) > 0) {
+                        sourceAndDestVolume1.setDataAt(x, y, z, 0);
                     }
                 }
             }
@@ -895,7 +895,7 @@ namespace GraySkeletonCPP {
         #endif
 
         PruneCurves(curveVol, minCurveSize);
-        VoxelBinarySubtract(&curveVol, surfaceVol);
+        VoxelBinarySubtract(curveVol, *surfaceVol);
 
         appTimeManager.PushCurrentTime();
         if(doPruning) {
