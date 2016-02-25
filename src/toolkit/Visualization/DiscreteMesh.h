@@ -40,33 +40,33 @@ namespace GraySkeletonCPP {
             DiscreteMesh(int sizeX, int sizeY, int sizeZ);
             DiscreteMesh(const Volume & volume);
 
-            void addVoxel(int x, int y, int z);
+            void addVoxel      (int x, int y, int z);
             bool isPointPresent(int x, int y, int z);
             bool isCurvePresent(int x, int y, int z, unsigned char direction);
             bool isCurvePresent(Vec3I point1, Vec3I point2);
             bool isSurfacePresent(int x, int y, int z, unsigned char direction);
             bool FollowCurve(int & x, int & y, int & z);
-            int getCurveNeighbors(int x, int y, int z, vector<Vec3I> & neighbors);
+            int getCurveNeighbors     (int x, int y, int z, vector<Vec3I> & neighbors);
             int getCurveNeighborsCount(int x, int y, int z);
-            int getSurfaceNeighbors(int x, int y, int z, vector<int> & neighbors);
+            int getSurfaceNeighbors   (int x, int y, int z, vector<int> & neighbors);
             int getSurfaceNeighbors(int x1, int y1, int z1, int x2, int y2, int z2, vector<int> & neighbors);
             int getSurfaceNeighborCount(int x1, int y1, int z1, int x2, int y2, int z2);
-            void getSurfacePoints(int x, int y, int z, unsigned char direction, vector<Vec3I> & points);
+            void getSurfacePoints     (int x, int y, int z, unsigned char direction, vector<Vec3I> & points);
 
             static int getC6 (vector<Vec3I> &neighbors, int neighborCount, Vec3I currPoint);
             static int getC26(vector<Vec3I> &neighbors, int neighborCount, Vec3I currPoint);
             static int getN6  (vector<Vec3I> &   n6, const Volume & src, int x, int y, int z);
             static int getN6_2(vector<Vec3I> & n6_2, const Volume & src, int x, int y, int z);
             static int getN18  (vector<Vec3I> & n18, const Volume & src, int x, int y, int z);
-            static int getN26        (vector<Vec3I> & n26, const Volume & src, int x, int y, int z);
+            static int getN26  (vector<Vec3I> & n26, const Volume & src, int x, int y, int z);
             static int getN6Count  (const Volume & src, int x, int y, int z);
             static int getN6_2Count(const Volume & src, int x, int y, int z);
             static int getN18Count (const Volume & src, int x, int y, int z);
             static int getN26Count (const Volume & src, int x, int y, int z);
             static int getMCount   (const Volume & src, int x1, int y1, int z1,
-                                 int x2, int y2, int z2);
-            static int getImmersionN6Count      (Volume & skel, Vec3I point);
-            static int getImmersionSkeletalValue(Volume & skel, Vec3I point);
+                                                        int x2, int y2, int z2);
+            static int getImmersionN6Count       (Volume & skel, Vec3I point);
+            static int getImmersionSkeletalValue (Volume & skel, Vec3I point);
             static bool isImmersionBoundary(const Volume & skel, Vec3I point);
             static bool isPoint         (const Volume & src, int x, int y, int z);
             static bool isCurveEnd      (const Volume & src, int x, int y, int z);
@@ -75,22 +75,20 @@ namespace GraySkeletonCPP {
             static bool isSurfaceBody   (const Volume & src, int x, int y, int z, bool doDependantChecks);
             static bool isVolumeBorder  (const Volume & src, int x, int y, int z, bool doDependantChecks);
             static bool isVolumeBody    (const Volume & src, int x, int y, int z);
-            static bool isSimple        (Volume & src, int x, int y, int z);
-            static bool isValidSurface(const Volume & src, Vec3D p0,
+            static bool isSimple        (      Volume & src, int x, int y, int z);
+            static bool isValidSurface  (const Volume & src, Vec3D p0,
                                        Vec3D p1, Vec3D p2, Vec3D p3);
 
             static void findCurveBase  (Vec3D &p1, Vec3D &p2);
-            static void findCurveBase  (Vec3I    &p1, Vec3I    &p2);
-            static void findSurfaceBase(Vec3D &p1, Vec3D &p2,
-                                        Vec3D &p3, Vec3D &p4);
-            static void findSurfaceBase(Vec3I &p1, Vec3I &p2,
-                                        Vec3I &p3, Vec3I &p4);
+            static void findCurveBase  (Vec3I &p1, Vec3I &p2);
+            static void findSurfaceBase(Vec3D &p1, Vec3D &p2, Vec3D &p3, Vec3D &p4);
+            static void findSurfaceBase(Vec3I &p1, Vec3I &p2, Vec3I &p3, Vec3I &p4);
 
-            void addPoint  (Vec3I point);
-            void addCurve  (Vec3I p1, Vec3I p2);
-            void addSurface(Vec3I p1, Vec3I p2, Vec3I p3, Vec3I p4);
-            void removePoint   (Vec3I point);
-            void removeCurve   (Vec3I p1, Vec3I p2);
+            void addPoint     (Vec3I point);
+            void addCurve     (Vec3I p1, Vec3I p2);
+            void addSurface   (Vec3I p1, Vec3I p2, Vec3I p3, Vec3I p4);
+            void removePoint  (Vec3I point);
+            void removeCurve  (Vec3I p1, Vec3I p2);
             void removeSurface(Vec3I p1, Vec3I p2, Vec3I p3, Vec3I p4);
             void removeSurface(int x, int y, int z, unsigned char surfaceType);
 
@@ -130,7 +128,7 @@ namespace GraySkeletonCPP {
 
     void DiscreteMesh::addVoxel(int x, int y, int z) {
         setDataAt(x, y, z, 1);
-        Vec3I p(x, y, z);
+        Vec3I   p(x, y, z);
         int neighborCount = 0;
 
         if(isPoint(*this, x, y, z)) {
