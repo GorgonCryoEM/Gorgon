@@ -165,7 +165,7 @@ namespace GraySkeletonCPP {
                     break;
                 case PRUNING_CLASS_PRUNE_CURVES:
 
-                    if(skelDir.IsBadNormal()) {
+                    if(skelDir.isBadNormal()) {
                         cost = 1.0;
                     } else {
                         n = XYZtoUVW(skelDir, v1, v2, v3);
@@ -180,7 +180,7 @@ namespace GraySkeletonCPP {
                 case PRUNING_CLASS_PRUNE_SURFACES:
 
                     {
-                        if(skelDir.IsBadNormal()) {
+                        if(skelDir.isBadNormal()) {
                             cost = 1.0;
                         } else {
                             Vec3F n1, n2, m1, m2;
@@ -301,7 +301,7 @@ namespace GraySkeletonCPP {
         Vec3F direction = localDirs[skel.getIndex(x, y, z)];
 
 
-        if(!direction.IsBadNormal()) {
+        if(!direction.isBadNormal()) {
             int margin = 2;
             int size = (R+margin)*2 + 1;
             Volume * block = new Volume(size, size, size);
@@ -327,7 +327,7 @@ namespace GraySkeletonCPP {
                 visited.setDataAt(currentPos.X(), currentPos.Y(), currentPos.Z(), 1);
                 tempDir = localDirs[skel.getIndex(x+currentPos.X()-margin-R, y+currentPos.Y()-margin-R, z+currentPos.Z()-margin-R)];
 
-                if(!tempDir.IsBadNormal()) {
+                if(!tempDir.isBadNormal()) {
                     for(int i = 0; i < 12; i++) {
                         if((block->getDataAt(currentPos.X() + VOLUME_NEIGHBOR_FACES[i][0][0], currentPos.Y() + VOLUME_NEIGHBOR_FACES[i][0][1], currentPos.Z() + VOLUME_NEIGHBOR_FACES[i][0][2]) > 0) &&
                            (block->getDataAt(currentPos.X() + VOLUME_NEIGHBOR_FACES[i][1][0], currentPos.Y() + VOLUME_NEIGHBOR_FACES[i][1][1], currentPos.Z() + VOLUME_NEIGHBOR_FACES[i][1][2]) > 0) &&
