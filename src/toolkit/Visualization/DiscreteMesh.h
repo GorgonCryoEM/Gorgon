@@ -53,12 +53,12 @@ namespace GraySkeletonCPP {
             int getSurfaceNeighborCount(int x1, int y1, int z1, int x2, int y2, int z2);
             void getSurfacePoints(int x, int y, int z, unsigned char direction, vector<Vector3Int> & points);
 
-            static int getC6 (Vector3Int * neighbors, int neighborCount, Vector3Int currPoint);
-            static int getC26(Vector3Int * neighbors, int neighborCount, Vector3Int currPoint);
+            static int getC6 (vector<Vector3Int> &neighbors, int neighborCount, Vector3Int currPoint);
+            static int getC26(vector<Vector3Int> &neighbors, int neighborCount, Vector3Int currPoint);
             static int getN6  (vector<Vector3Int> &   n6, const Volume & src, int x, int y, int z);
             static int getN6_2(vector<Vector3Int> & n6_2, const Volume & src, int x, int y, int z);
             static int getN18  (vector<Vector3Int> & n18, const Volume & src, int x, int y, int z);
-            static int getN26        (Vector3Int * & n26, const Volume & src, int x, int y, int z);
+            static int getN26        (vector<Vector3Int> & n26, const Volume & src, int x, int y, int z);
             static int getN6Count  (const Volume & src, int x, int y, int z);
             static int getN6_2Count(const Volume & src, int x, int y, int z);
             static int getN18Count (const Volume & src, int x, int y, int z);
@@ -494,7 +494,7 @@ namespace GraySkeletonCPP {
         p4 = points[2];
     }
 
-    int DiscreteMesh::getC6(Vector3Int * neighbors, int neighborCount,
+    int DiscreteMesh::getC6(vector<Vector3Int> &neighbors, int neighborCount,
                             Vector3Int currPoint)
     {
         Volume vol(5, 5, 5);
@@ -507,7 +507,7 @@ namespace GraySkeletonCPP {
         int c6Count = 0;
         vector<Vector3Int> n6;
         int n6Count;
-        Vector3Int * queue = new Vector3Int[26];
+        vector<Vector3Int> queue(26);
         Vector3Int temp;
         int queueSize = 0;
 
@@ -533,11 +533,10 @@ namespace GraySkeletonCPP {
             }
         }
 
-        delete [] queue;
         return c6Count;
     }
 
-    int DiscreteMesh::getC26(Vector3Int * neighbors, int neighborCount,
+    int DiscreteMesh::getC26(vector<Vector3Int> &neighbors, int neighborCount,
                              Vector3Int currPoint)
     {
         Volume vol(5, 5, 5);
@@ -548,9 +547,9 @@ namespace GraySkeletonCPP {
         }
 
         int c26Count = 0;
-        Vector3Int * n26;
+        vector<Vector3Int> n26;
         int n26Count;
-        Vector3Int * queue = new Vector3Int[26];
+        vector<Vector3Int> queue(26);
         Vector3Int temp;
         int queueSize = 0;
 
@@ -570,14 +569,12 @@ namespace GraySkeletonCPP {
                                 queue[queueSize] = n26[i];
                                 queueSize++;
                             }
-                            delete [] n26;
                         }
                     }
                 }
             }
         }
 
-        delete [] queue;
         return c26Count;
     }
 
@@ -648,11 +645,11 @@ namespace GraySkeletonCPP {
         return n18Count;
     }
 
-    int DiscreteMesh::getN26(Vector3Int * & n26, const Volume & src, int x,
+    int DiscreteMesh::getN26(vector<Vector3Int> & n26, const Volume & src, int x,
                              int y, int z)
     {
         int n26Count = 0;
-        n26 = new Vector3Int[26];
+        n26.resize(26);
         for(int i = 0; i < 26; i++) {
             n26[n26Count][0] = x + VOLUME_NEIGHBORS_26[i][0];
             n26[n26Count][1] = y + VOLUME_NEIGHBORS_26[i][1];
