@@ -50,7 +50,6 @@ namespace GraySkeletonCPP {
         public:
             VolumeSkeletonizer(int pointRadius, int curveRadius,
                                int surfaceRadius, int skeletonDirectionRadius);
-            ~VolumeSkeletonizer();
             Volume * PerformImmersionSkeletonizationAndPruning(
                     Volume * sourceVol, Volume * preserveVol, double startGray,
                     double endGray, double stepSize, int smoothingIterations,
@@ -133,7 +132,7 @@ namespace GraySkeletonCPP {
 
         public:
             Matlab math;
-            NormalFinder * surfNormFinder;
+            NormalFinder surfNormFinder;
             ProbDistr3D gaussFiltPtR;
             ProbDistr3D gaussFiltCrvR;
             ProbDistr3D gaussFiltSrfcR;
@@ -157,9 +156,9 @@ namespace GraySkeletonCPP {
 
 
     VolumeSkeletonizer::VolumeSkeletonizer(int pointRadius, int curveRadius, int surfaceRadius, int skeletonDirectionRadius)
-        : math(Matlab())
+        : math(Matlab()),
+          surfNormFinder(NormalFinder())
     {
-        surfNormFinder = new NormalFinder();
         this->pointRadius = pointRadius;
         this->curveRadius = curveRadius;
         this->surfaceRadius = surfaceRadius;
@@ -180,11 +179,6 @@ namespace GraySkeletonCPP {
         uniformFilterSkeletonDirectionRadius.R = skeletonDirectionRadius;
         UniformDistr(uniformFilterSkeletonDirectionRadius);
     }
-
-    VolumeSkeletonizer::~VolumeSkeletonizer() {
-        delete surfNormFinder;
-    }
-
 
     double VolumeSkeletonizer::GetVoxelCost(EigenResults3D imageEigen, Vector3Float skeletonDirection, int type) {
         double cost = 1;
@@ -332,11 +326,11 @@ namespace GraySkeletonCPP {
 
         return direction;
     }
-    Vector3Float VolumeSkeletonizer::GetSurfaceNormal(Volume * skeleton, int x, int y, int z) {
-        surfNormFinder->InitializeGraph(skeleton, x, y, z);
-        return surfNormFinder->GetSurfaceNormal();
-    }
 
+    Vector3Float VolumeSkeletonizer::GetSurfaceNormal(Volume * skeleton, int x, int y, int z) {
+        surfNormFinder.InitializeGraph(skeleton, x, y, z);
+        return surfNormFinder.GetSurfaceNormal();
+    }
 
 
     Vector3Float VolumeSkeletonizer::GetSurfaceNormal(Volume * skeleton, int x, int y, int z, int radius, Vector3Float * localDirections) {
