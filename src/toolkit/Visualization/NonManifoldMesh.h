@@ -55,7 +55,7 @@ namespace Protein_Morph {
     }
 
     struct NonManifoldMeshVertex : public NonManifoldMeshBase {
-        Vector3Float position;
+        Vec3F position;
         vector<unsigned int> edgeIds;
         bool tag;
     };
@@ -84,15 +84,15 @@ namespace Protein_Morph {
         bool IsEdgePresent(int vertexId1, int vertexId2);
         bool IsSurfaceVertex(int ix) const;
         int AddVertex(NonManifoldMeshVertex vertex);
-        int AddVertex(Vector3Float location);
-        int AddHashedVertex(Vector3Float location, int hashKey);
+        int AddVertex(Vec3F location);
+        int AddHashedVertex(Vec3F location, int hashKey);
         int AddEdge(NonManifoldMeshEdge edge);
         int AddFace(NonManifoldMeshFace face);
         int GetVertexIndex(int vertexId);
         int GetFaceIndex(int faceId);
         int GetEdgeIndex(int edgeId) const;
         int GetEdgeIndex(int vertexId1, int vertexId2) const;
-        int GetClosestVertexIndex(Vector3Float pos);
+        int GetClosestVertexIndex(Vec3F pos);
         void AddEdge(int vertexId1, int vertexId2, string tag = "");
         void AddQuad(int vertexId1, int vertexId2, int vertexId3,
                      int vertexId4, string newEdgeTag = "", string faceTag ="");
@@ -109,16 +109,16 @@ namespace Protein_Morph {
         void ToMathematicaFile(string fileName);
         void setScale(float x, float y, float z);
         void setScale(Dim3D<float> val);
-        void TranslateVertex(int vertexIx, Vector3Float translateVector);
+        void TranslateVertex(int vertexIx, Vec3F translateVector);
         vector<unsigned int> GetPath(unsigned int edge0Ix,
                 unsigned int edge1Ix);
         vector<unsigned int> GetNeighboringVertexIndices(
                 unsigned int vertexIx);
-        vector<Vector3Float> SampleTriangle(int faceId,
+        vector<Vec3F> SampleTriangle(int faceId,
                 double discretizationStep);
         Volume * ToVolume();
-        Vector3Float GetVertexNormal(int vertexId);
-        Vector3Float GetFaceNormal(int faceId);
+        Vec3F GetVertexNormal(int vertexId);
+        Vec3F GetFaceNormal(int faceId);
         NonManifoldMesh SmoothLaplacian(double converganceRate);
         NonManifoldMesh SmoothLaplacian(double converganceRate,
                                         int iterations);
@@ -191,7 +191,7 @@ namespace Protein_Morph {
                     glLoadName(i);
                 }
                 glBegin(GL_POLYGON);
-                Vector3Float normal;
+                Vec3F normal;
                 for(unsigned int j = 0; j < faces[i].vertexIds.size(); j++) {
                     if(smoothSurfaceNormals) {
                         normal = GetVertexNormal(faces[i].vertexIds[j]);
@@ -322,7 +322,7 @@ namespace Protein_Morph {
                     vertexLocations[index] = -1;
                     value = (int)round(sourceVol->getDataAt(index));
                     if(value > 0) {
-                        tempVertex.position = Vector3Float(x, y, z);
+                        tempVertex.position = Vec3F(x, y, z);
                         vertexLocations[index] = AddVertex(tempVertex);
                     }
                 }
@@ -400,14 +400,14 @@ namespace Protein_Morph {
         return vertex.id;
     }
 
-    int NonManifoldMesh::AddVertex(Vector3Float location) {
+    int NonManifoldMesh::AddVertex(Vec3F location) {
         NonManifoldMeshVertex v;
         v.position = location;
 //        v.tag = tag;
         return AddVertex(v);
     }
 
-    int NonManifoldMesh::AddHashedVertex(Vector3Float location, int hashKey) {
+    int NonManifoldMesh::AddHashedVertex(Vec3F location, int hashKey) {
         HashMapType::const_iterator pos = vertexHashMap.find(hashKey);
         int vertexId;
         if(pos == vertexHashMap.end()) {
@@ -820,10 +820,10 @@ namespace Protein_Morph {
         return vol;
     }
 
-    Vector3Float NonManifoldMesh::GetVertexNormal(int vertexId) {
+    Vec3F NonManifoldMesh::GetVertexNormal(int vertexId) {
         int index = GetVertexIndex(vertexId);
         int edgeIndex;
-        Vector3Float normal = Vector3Float(0,0,0);
+        Vec3F normal = Vec3F(0,0,0);
         for(unsigned int i = 0; i < vertices[index].edgeIds.size(); i++) {
             edgeIndex = GetEdgeIndex(vertices[index].edgeIds[i]);
             for(unsigned int j = 0; j < edges[edgeIndex].faceIds.size(); j++) {
@@ -834,9 +834,9 @@ namespace Protein_Morph {
         return normal;
     }
 
-    Vector3Float NonManifoldMesh::GetFaceNormal(int faceId) {
+    Vec3F NonManifoldMesh::GetFaceNormal(int faceId) {
 
-        Vector3Float normal = Vector3Float(1,0,0);
+        Vec3F normal = Vec3F(1,0,0);
 
         NonManifoldMeshFace face = faces[GetFaceIndex(faceId)];
 
@@ -851,13 +851,13 @@ namespace Protein_Morph {
     NonManifoldMesh NonManifoldMesh::SmoothLaplacian(double converganceRate) {
         NonManifoldMesh smoothedMesh = NonManifoldMesh(this);
         int i, j, vertexIndex;
-        Vector3Float newPosition;
+        Vec3F newPosition;
         NonManifoldMeshVertex vertex;
         for(i = 0; i < (int)vertices.size(); i++) {
             vertex = vertices[i];
             if(vertex.valid) {
                 if(vertex.edgeIds.size() > 0) {
-                    newPosition = Vector3Float(0,0,0);
+                    newPosition = Vec3F(0,0,0);
                     for(j = 0; j < (int)vertex.edgeIds.size(); j++) {
                         if((int)edges[GetEdgeIndex(vertex.edgeIds[j])].vertexIds[0] == i) {
                             vertexIndex = 1;
@@ -908,7 +908,7 @@ namespace Protein_Morph {
             lVertices++;
             inFile>>xPos>>yPos>>zPos;
             //printf("[%f] [%f] [%f]\n", xPos, yPos, zPos);
-            mesh->AddVertex(Vector3Float(xPos, yPos, zPos));
+            mesh->AddVertex(Vec3F(xPos, yPos, zPos));
             inFile>>strTemp;
         }
 
@@ -998,11 +998,11 @@ namespace Protein_Morph {
         return path;
     }
 
-    vector<Vector3Float> NonManifoldMesh::SampleTriangle(int faceId, double discretizationStep) {
+    vector<Vec3F> NonManifoldMesh::SampleTriangle(int faceId, double discretizationStep) {
         int faceIndex = GetFaceIndex(faceId);
         NonManifoldMeshFace face = faces[faceIndex];
 
-        vector<Vector3Float> points;
+        vector<Vec3F> points;
         if(face.vertexIds.size() != 3) {
             printf("ERROR: Sampling a polygon NOT a triangle!\n");
             return points;
@@ -1010,8 +1010,8 @@ namespace Protein_Morph {
             NonManifoldMeshVertex p = vertices[GetVertexIndex(face.vertexIds[0])];
             NonManifoldMeshVertex q = vertices[GetVertexIndex(face.vertexIds[1])];
             NonManifoldMeshVertex r = vertices[GetVertexIndex(face.vertexIds[2])];
-            Vector3Float v1 = q.position - p.position;
-            Vector3Float v2 = r.position - p.position;
+            Vec3F v1 = q.position - p.position;
+            Vec3F v2 = r.position - p.position;
             double v1Length = v1.length();
             double v2Length = v2.length();
             v1.normalize();
@@ -1036,11 +1036,11 @@ namespace Protein_Morph {
         scale = val;
     }
 
-    void NonManifoldMesh::TranslateVertex(int vertexIx, Vector3Float translateVector) {
+    void NonManifoldMesh::TranslateVertex(int vertexIx, Vec3F translateVector) {
         vertices[vertexIx].position = vertices[vertexIx].position + translateVector;
     }
 
-    int NonManifoldMesh::GetClosestVertexIndex(Vector3Float pos) {
+    int NonManifoldMesh::GetClosestVertexIndex(Vec3F pos) {
         if(vertices.size() == 0) {
             return -1;
         }

@@ -48,7 +48,7 @@ namespace Protein_Morph {
 
         private:
             void UpdateMap(Volume & vol, Vector3Int loc,
-                           Vector3Float rangemin, Vector3Float rangemax);
+                           Vec3F rangemin, Vec3F rangemax);
 
             //Ross Coleman: modified from EMAN1 Cylinder.C by Wen Jiang
             float RadialProfile(float r, RadialProfileType type); //r in angstroms
@@ -88,9 +88,9 @@ namespace Protein_Morph {
         patoms.clear();
         atomVolumePositions.clear();
 
-        Vector3Float spacing = vol.getSpacingObj();
-        Vector3Float rangemin = -1.0f*resolution/spacing;
-        Vector3Float rangemax = resolution/spacing;
+        Vec3F spacing = vol.getSpacingObj();
+        Vec3F rangemin = -1.0f*resolution/spacing;
+        Vec3F rangemax = resolution/spacing;
         Vector3Int m;
 
         int &mX = m[0];
@@ -107,8 +107,8 @@ namespace Protein_Morph {
             atom.SetChainId('A');
             atom.SetResSeq(i);
 
-            Vector3Float origin = vol.getOriginObj();
-            Vector3Float position = origin + Vector3Float(m[0] * spacing[0],
+            Vec3F origin = vol.getOriginObj();
+            Vec3F position = origin + Vec3F(m[0] * spacing[0],
                                                           m[1] * spacing[1],
                                                           m[2] * spacing[2]
                                                           );
@@ -127,7 +127,7 @@ namespace Protein_Morph {
     // SSEHunter::UpdateMap
     // called by SSEHunter::CreatePseudoAtoms after each pseudoatom is chosen
     void SSEHunter::UpdateMap(Volume  & vol, Vector3Int loc,
-                              Vector3Float rangemin, Vector3Float rangemax
+                              Vec3F rangemin, Vec3F rangemax
                               )
     {
         int rMinX = round(rangemin.X()/2.0);        int rMaxX = round(rangemax.X()/2.0) + 1;
@@ -166,9 +166,9 @@ namespace Protein_Morph {
 //			float maxDistance = 4*sqrt(skeleton->scale[0]+skeleton->scale[1]+skeleton->scale[2]);//resolution;  // TODO: In EMAN1 the maximum distance is sqrt(3*4*4) voxels, we're using Angstroms here
         const unsigned int SCORE_RANGE = 4;
         const unsigned int MAX_DISTANCE_SQUARED = 3*SCORE_RANGE*SCORE_RANGE;
-        Vector3Float skeletonOrigin = Vector3Float(skeleton.getOriginObj());
-        Vector3Float skeletonAtom;
-        Vector3Float pAtomPosition;
+        Vec3F skeletonOrigin = Vec3F(skeleton.getOriginObj());
+        Vec3F skeletonAtom;
+        Vec3F pAtomPosition;
         float score = 0;
         unsigned int count = 0;
         float maxscore = -1;
@@ -188,7 +188,7 @@ namespace Protein_Morph {
 #endif
             pAtomPosition = patoms[i].GetPosition();
             pAtomPosition -= skeletonOrigin;
-            Vector3Float skel_scale(skeleton.scale[0], skeleton.scale[1], skeleton.scale[2]);
+            Vec3F skel_scale(skeleton.scale[0], skeleton.scale[1], skeleton.scale[2]);
 //            skel_scale = skeleton.scale;
             for (unsigned int n = 0; n < 3; n++)
                 pAtomPosition[n] = pAtomPosition[n] * (1.0/skel_scale[n]);
@@ -198,7 +198,7 @@ namespace Protein_Morph {
 #endif
             for (unsigned int j = 0; j < skeleton.vertices.size(); j++) {
                 skeletonAtom = skeleton.vertices[j].position;
-                Vector3Float d = skeletonAtom - pAtomPosition;
+                Vec3F d = skeletonAtom - pAtomPosition;
                 float distance_squared = d.X()*d.X() + d.Y()*d.Y() + d.Z()*d.Z();
                 if (abs(d.X()) <= SCORE_RANGE && abs(d.Y()) <= SCORE_RANGE && abs(d.Z()) <= SCORE_RANGE) { // 8x8x8 cubic search area
                     double typeCost; //TODO: If a vertex is part of both the sheet skeleton and the helix skeleton, typeCost = 0;
@@ -266,7 +266,7 @@ namespace Protein_Morph {
         int kernelWidth = min(offset, (int)round(2.0/min(min(vol.getSpacingX(), vol.getSpacingY()), vol.getSpacingZ())));
         Skeletonizer skeletonizer(kernelWidth, kernelWidth, kernelWidth, kernelWidth);
 
-        vector<Vector3Float> volumeGradient = skeletonizer.GetVolumeGradient(tempVol);
+        vector<Vec3F> volumeGradient = skeletonizer.GetVolumeGradient(tempVol);
         vector<EigenResults3D> eigens = skeletonizer.GetEigenResults(maskVol, volumeGradient, skeletonizer.gaussFiltPtR, kernelWidth, true);
 
         float minScore = 10, maxScore = -10;
@@ -719,7 +719,7 @@ namespace Protein_Morph {
         cout << "Min: " << bestCCF.getMin() << ", Max: " << bestCCF.getMax() << ", Mean: " << bestCCF.getMean() << ", Sigma: " << bestCCF.getStdDev() << "\n";
         PDBAtom patom;
         vector<float> helixScores;
-        Vector3Float position;
+        Vec3F position;
         float value;
         float totVal = 0;
         float maxVal = 0;

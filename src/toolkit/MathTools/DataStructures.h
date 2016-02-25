@@ -17,7 +17,7 @@ namespace MathTools {
 
     struct EigenResults3D{
         float vals[3];
-        Vector3Float vecs[3];
+        Vec3F vecs[3];
     };
 
     struct Eigen3D : public EigenResults3D {

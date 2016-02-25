@@ -27,28 +27,28 @@ namespace Visualization {
             virtual ~Renderer();
             virtual void DrawBoundingBox();
             virtual void Unload();
-            virtual bool SelectionRotate(Vector3Float centerOfMass,
-                                         Vector3Float rotationAxis,
+            virtual bool SelectionRotate(Vec3F centerOfMass,
+                                         Vec3F rotationAxis,
                                          float angle);
             virtual int SelectionObjectCount();
-            virtual Vector3Float SelectionCenterOfMass();
-            virtual bool SelectionMove(Vector3Float moveDirection);
+            virtual Vec3F SelectionCenterOfMass();
+            virtual bool SelectionMove(Vec3F moveDirection);
             virtual bool SelectionClear();
             virtual void SelectionToggle(int subsceneIndex, bool forceTrue,
                                          int ix0, int ix1 = -1, int ix2 = -1,
                                          int ix3 = -1, int ix4 = -1);
             virtual string GetSupportedLoadFileFormats();
             virtual string GetSupportedSaveFileFormats();
-            virtual Vector3Float Get3DCoordinates(int subsceneIndex, int ix0,
+            virtual Vec3F Get3DCoordinates(int subsceneIndex, int ix0,
                                                   int ix1 = -1, int ix2 = -1,
                                                   int ix3 = -1, int ix4 = -1);
             bool SetCuttingPlane(float position, float vecX, float vecY,
                                  float vecZ);
-            void static DrawSphere(Vector3Float center, float radius);
-            void static DrawCylinder(Vector3Float pt1, Vector3Float pt2,
+            void static DrawSphere(Vec3F center, float radius);
+            void static DrawCylinder(Vec3F pt1, Vec3F pt2,
                                      float radius, int slices = 10, int stacks =
                                              10);
-            void static DrawLine(Vector3Float pt1, Vector3Float pt2);
+            void static DrawLine(Vec3F pt1, Vec3F pt2);
             virtual void SetDisplayStyle(int style);
             virtual void SetObjectSpecificColoring(bool objectSpecific);
             virtual void UpdateBoundingBox();
@@ -60,8 +60,8 @@ namespace Visualization {
             Dim3D<float> minPts;
             Dim3D<float> maxPts;
             bool selected;
-            Vector3Float cuttingPlaneCenter;
-            Vector3Float cuttingPlaneDirection;
+            Vec3F cuttingPlaneCenter;
+            Vec3F cuttingPlaneDirection;
             int displayStyle;
             bool isObjectSpecificColoring;
     };
@@ -107,8 +107,8 @@ namespace Visualization {
         }
     }
 
-    bool Renderer::SelectionRotate(Vector3Float centerOfMass,
-                                   Vector3Float rotationAxis, float angle)
+    bool Renderer::SelectionRotate(Vec3F centerOfMass,
+                                   Vec3F rotationAxis, float angle)
     {
         return false;
     }
@@ -117,12 +117,12 @@ namespace Visualization {
         return 0;
     }
 
-    Vector3Float Renderer::SelectionCenterOfMass() {
-        return Vector3Float( (maxPts[0] - minPts[0]) / 2.0,
+    Vec3F Renderer::SelectionCenterOfMass() {
+        return Vec3F( (maxPts[0] - minPts[0]) / 2.0,
                 (maxPts[1] - minPts[1]) / 2.0, (maxPts[2] - minPts[2]) / 2.0);
     }
 
-    bool Renderer::SelectionMove(Vector3Float moveDirection) {
+    bool Renderer::SelectionMove(Vec3F moveDirection) {
         //printf("Moving by %f %f %f\n", moveDirection.X(), moveDirection.Y(), moveDirection.Z());
         return false;
     }
@@ -143,10 +143,10 @@ namespace Visualization {
         selected = true;
     }
 
-    Vector3Float Renderer::Get3DCoordinates(int subsceneIndex, int ix0, int ix1,
+    Vec3F Renderer::Get3DCoordinates(int subsceneIndex, int ix0, int ix1,
                                             int ix2, int ix3, int ix4)
     {
-        return Vector3Float(0, 0, 0);
+        return Vec3F(0, 0, 0);
     }
 
     void Renderer::Unload() {
@@ -164,11 +164,11 @@ namespace Visualization {
     bool Renderer::SetCuttingPlane(float position, float vecX, float vecY,
                                    float vecZ)
     {
-        Vector3Float center = Vector3Float( (minPts[0] + maxPts[0]) / 2.0,
+        Vec3F center = Vec3F( (minPts[0] + maxPts[0]) / 2.0,
                 (minPts[1] + maxPts[1]) / 2.0, (minPts[2] + maxPts[2]) / 2.0);
         float distance =
-                (Vector3Float(minPts[0], minPts[1], minPts[2]) - center).length();
-        cuttingPlaneDirection = Vector3Float(vecX, vecY, vecZ);
+                (Vec3F(minPts[0], minPts[1], minPts[2]) - center).length();
+        cuttingPlaneDirection = Vec3F(vecX, vecY, vecZ);
         cuttingPlaneDirection.normalize();
         cuttingPlaneCenter = center
                 + cuttingPlaneDirection * position * distance;
@@ -176,7 +176,7 @@ namespace Visualization {
         return false;
     }
 
-    void Renderer::DrawSphere(Vector3Float center, float radius) {
+    void Renderer::DrawSphere(Vec3F center, float radius) {
         glPushMatrix();
         glTranslatef(center.X(), center.Y(), center.Z());
         GLUquadric * quadricSphere = gluNewQuadric();
@@ -185,14 +185,14 @@ namespace Visualization {
         glPopMatrix();
     }
 
-    void Renderer::DrawCylinder(Vector3Float pt1, Vector3Float pt2,
+    void Renderer::DrawCylinder(Vec3F pt1, Vec3F pt2,
                                 float radius, int slices, int stacks)
     {
-        Vector3Float qmp = pt1-pt2;
+        Vec3F qmp = pt1-pt2;
         float length = qmp.length();
         qmp.normalize();
-        Vector3Float z = Vector3Float(0,0,1);
-        Vector3Float axis = z ^ qmp;
+        Vec3F z = Vec3F(0,0,1);
+        Vec3F axis = z ^ qmp;
         float angle = acos(qmp * z)* 180.0 / PI;
 
         glPushMatrix();
@@ -206,7 +206,7 @@ namespace Visualization {
         glPopMatrix();
     }
 
-    void Renderer::DrawLine(Vector3Float pt1, Vector3Float pt2) {
+    void Renderer::DrawLine(Vec3F pt1, Vec3F pt2) {
         glBegin(GL_LINES);
         glVertex3f(pt1.X(), pt1.Y(), pt1.Z());
         glVertex3f(pt2.X(), pt2.Y(), pt2.Z());

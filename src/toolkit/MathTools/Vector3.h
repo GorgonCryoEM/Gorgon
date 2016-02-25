@@ -94,7 +94,7 @@ namespace GraphMatch {
     };
 
     typedef Vector3<int>    Vector3Int;
-    typedef Vector3<float>  Vector3Float;
+    typedef Vector3<float>  Vec3F;
     typedef Vector3<double> Vector3Double;
 
     template <class T>

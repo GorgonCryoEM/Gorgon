@@ -20,21 +20,21 @@ namespace Visualization {
     class MeshRenderer : public Volume, public Renderer {
     public:
         NonManifoldMesh getMesh();
-        Vector3Float get3DCoordinates(int subsceneIndex, int ix0, int ix1 = -1, int ix2 = -1, int ix3 = -1, int ix4 = -1);
+        Vec3F get3DCoordinates(int subsceneIndex, int ix0, int ix1 = -1, int ix2 = -1, int ix3 = -1, int ix4 = -1);
         void loadFile(string fileName);
         void loadVolume(Volume * sourceVolume);
         void saveFile(string fileName);
         void PerformSmoothLaplacian(double convergenceRate, int iterations);
         string getSupportedLoadFileFormats();
         string getSupportedSaveFileFormats();
-        int IntersectMeshAndSphere(Vector3Float center, float radius);
-        Vector3Float getIntersectionPoint(int ix);
+        int IntersectMeshAndSphere(Vec3F center, float radius);
+        Vec3F getIntersectionPoint(int ix);
 
         void SetLineThickness(int thickness);
         void Draw(int subSceneIndex, bool selectEnabled);
     private:
         NonManifoldMesh mesh;
-        vector<Vector3Float> intersectionPoints;
+        vector<Vec3F> intersectionPoints;
         int lineThickness;
     };
 
@@ -61,7 +61,7 @@ namespace Visualization {
         return mesh;
     }
 
-    Vector3Float MeshRenderer::getIntersectionPoint(int ix) {
+    Vec3F MeshRenderer::getIntersectionPoint(int ix) {
         return intersectionPoints[ix];
     }
 
@@ -123,9 +123,9 @@ namespace Visualization {
         mesh = mesh.SmoothLaplacian(convergenceRate, iterations);
     }
 
-    int MeshRenderer::IntersectMeshAndSphere(Vector3Float center, float radius) {
+    int MeshRenderer::IntersectMeshAndSphere(Vec3F center, float radius) {
         float x1, y1, z1, x2, y2, z2, x3, y3, z3, r, a, b, c, d, u;
-        Vector3Float p1, p2;
+        Vec3F p1, p2;
         x3 = center.X();
         y3 = center.Y();
         z3 = center.Z();
@@ -171,8 +171,8 @@ namespace Visualization {
         return "Meshes (*.off);;Volumes (*.mrc)";
     }
 
-    Vector3Float MeshRenderer::get3DCoordinates(int subsceneIndex, int ix0, int ix1, int ix2, int ix3, int ix4) {
-        Vector3Float position = Vector3Float(0, 0, 0);
+    Vec3F MeshRenderer::get3DCoordinates(int subsceneIndex, int ix0, int ix1, int ix2, int ix3, int ix4) {
+        Vec3F position = Vec3F(0, 0, 0);
         if((subsceneIndex >= 0) && (ix0 >= 0)) {
             switch(subsceneIndex){
                 case 0:
