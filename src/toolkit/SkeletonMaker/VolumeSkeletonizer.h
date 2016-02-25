@@ -110,11 +110,12 @@ namespace GraySkeletonCPP {
             void GetSTBasedDistribution(ProbDistr3D & distributionInfo, EigenResults3D eigen);
             Vector3Float XYZtoUVW(Vector3Float vec, Vector3Float u, Vector3Float v, Vector3Float w);
 
-            Volume * FillCurveHoles(Volume * thresholdedSkeleton,
-                                    Volume * originalSkeleton, int maxHoleSize);
+            Volume * FillCurveHoles(Volume & thresholdedSkeleton,
+                                    const Volume & originalSkeleton, int maxHoleSize);
             Volume FillSurfaceHoles(Volume * thresholdedSkeleton,
                                       Volume * originalSkeleton,
                                       int maxHoleSize);
+
             Volume * GetJuThinning(Volume & sourceVolume, const Volume & preserve,
                                    double threshold, char thinningClass);
             Volume * GetImmersionThinning(const Volume & sourceVolume,
@@ -718,14 +719,14 @@ namespace GraySkeletonCPP {
     }
 
 
-    Volume * VolumeSkeletonizer::FillCurveHoles(Volume * thresholdedSkeleton, Volume * originalSkeleton, int maxHoleSize) {
-        Volume * holes = new Volume(*originalSkeleton);
-        VoxelSubtract(holes, thresholdedSkeleton);
-        PruneCurves(*holes, maxHoleSize);
+    Volume * VolumeSkeletonizer::FillCurveHoles(Volume & thresholdedSkeleton, const Volume & originalSkeleton, int maxHoleSize) {
+        Volume holes(originalSkeleton);
+        VoxelSubtract(&holes, &thresholdedSkeleton);
+        PruneCurves(holes, maxHoleSize);
 
-        Volume * filledSkeleton = new Volume(*originalSkeleton);
-        VoxelSubtract(filledSkeleton, holes);
-        delete holes;
+        Volume * filledSkeleton = new Volume(originalSkeleton);
+        VoxelSubtract(filledSkeleton, &holes);
+
         return filledSkeleton;
     }
 
@@ -910,7 +911,7 @@ namespace GraySkeletonCPP {
                 prunedCurveVol->toMRCFile((char *)(outputPath + "-C-Post-Prune.mrc").c_str());
             #endif
 
-            Volume * filledCurveVol = FillCurveHoles(&prunedCurveVol, &curveVol, maxCurveHole);
+            Volume * filledCurveVol = FillCurveHoles(prunedCurveVol, curveVol, maxCurveHole);
             #ifdef SAVE_INTERMEDIATE_RESULTS
                 filledCurveVol->toMRCFile((char *)(outputPath + "-C-Post-Fill.mrc").c_str());
             #endif
