@@ -659,7 +659,7 @@ namespace GraySkeletonCPP {
 
         vector<Vector3Float> volumeGradient = GetVolumeGradient(src);
         vector<EigenResults3D> eigens = GetEigenResults(maskVolume, volumeGradient, smoothenMask, stR, true);
-        Volume destVolume (src.getSizeX(), src.getSizeY(), src.getSizeZ());
+        Volume dest (src.getSizeX(), src.getSizeY(), src.getSizeZ());
         double sourceData;
 
         for(int x = mask.R; x < src.getSizeX()-mask.R; x++) {
@@ -672,22 +672,22 @@ namespace GraySkeletonCPP {
                         for(int xx = -mask.R; xx <= mask.R; xx++) {
                             for(int yy = -mask.R; yy <= mask.R; yy++) {
                                 for(int zz = -mask.R; zz <= mask.R; zz++) {
-                                    destVolume.setDataAt(x, y, z,
-                                        destVolume.getDataAt(x, y, z) + src.getDataAt(x+xx, y+yy, z+zz) *  mask.vals[xx+mask.R][yy+mask.R][zz+mask.R]);
+                                    dest.setDataAt(x, y, z,
+                                        dest.getDataAt(x, y, z) + src.getDataAt(x+xx, y+yy, z+zz) *  mask.vals[xx+mask.R][yy+mask.R][zz+mask.R]);
                                 }
                             }
                         }
-                        destVolume.setDataAt(x, y, z, src.getDataAt(x, y, z) * 0.5 + destVolume.getDataAt(x, y, z) * 0.5);
+                        dest.setDataAt(x, y, z, src.getDataAt(x, y, z) * 0.5 + dest.getDataAt(x, y, z) * 0.5);
                     } else {
-                        destVolume.setDataAt(x, y, z, src.getDataAt(x, y, z));
+                        dest.setDataAt(x, y, z, src.getDataAt(x, y, z));
                     }
                 }
             }
         }
 
-        destVolume.pad(-MAX_GAUSSIAN_FILTER_RADIUS, 0);
+        dest.pad(-MAX_GAUSSIAN_FILTER_RADIUS, 0);
 
-        src = destVolume;
+        src = dest;
     }
     void VolumeSkeletonizer::VoxelBinarySubtract(Volume & sourceAndDestVolume1, const Volume & src2){
         for(int x = 0; x < sourceAndDestVolume1.getSizeX(); x++) {
