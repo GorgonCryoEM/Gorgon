@@ -49,7 +49,7 @@ namespace GraySkeletonCPP {
     class VolumeSkeletonizer {
         public:
             VolumeSkeletonizer(int pointR, int curveR,
-                               int surfaceR, int skeletonDirectionR);
+                               int surfaceR, int skelDirR);
             Volume * PerformImmersionSkeletonizationAndPruning(
                     Volume & sourceVol, Volume * preserveVol, double startGray,
                     double endGray, double stepSize, int smoothingIterations,
@@ -105,7 +105,7 @@ namespace GraySkeletonCPP {
 
         protected:
 
-            double GetVoxelCost(EigenResults3D imageEigen, Vector3Float skeletonDirection, int type);
+            double GetVoxelCost(EigenResults3D imageEigen, Vector3Float skelDir, int type);
             void FindOrthogonalAxes(Vector3Float axis, Vector3Float & res1, Vector3Float & res2);
             void GetSTBasedDistribution(ProbDistr3D & distributionInfo, EigenResults3D eigen);
             Vector3Float XYZtoUVW(Vector3Float vec, Vector3Float u, Vector3Float v, Vector3Float w);
@@ -158,14 +158,14 @@ namespace GraySkeletonCPP {
     const char VolumeSkeletonizer::PRUNING_CLASS_PRUNE_POINTS = 7;
 
 
-    VolumeSkeletonizer::VolumeSkeletonizer(int pointR, int curveR, int surfaceR, int skeletonDirectionR)
+    VolumeSkeletonizer::VolumeSkeletonizer(int pointR, int curveR, int surfaceR, int skelDirR)
         : math(Matlab()),
           surfNormFinder(NormalFinder())
     {
         this->pointR = pointR;
         this->curveR = curveR;
         this->surfR = surfaceR;
-        this->skelDirR = skeletonDirectionR;
+        this->skelDirR = skelDirR;
 
         gaussFiltPtR.R = pointR;
         BinomDistr(gaussFiltPtR);
@@ -179,11 +179,11 @@ namespace GraySkeletonCPP {
         gaussFiltMaxR.R = MAX_GAUSSIAN_FILTER_RADIUS;
         BinomDistr(gaussFiltMaxR);
 
-        uniformFiltSkelDirR.R = skeletonDirectionR;
+        uniformFiltSkelDirR.R = skelDirR;
         UniformDistr(uniformFiltSkelDirR);
     }
 
-    double VolumeSkeletonizer::GetVoxelCost(EigenResults3D imageEigen, Vector3Float skeletonDirection, int type) {
+    double VolumeSkeletonizer::GetVoxelCost(EigenResults3D imageEigen, Vector3Float skelDir, int type) {
         double cost = 1;
 
         if(!isZero(imageEigen.vals[0])) {
@@ -202,10 +202,10 @@ namespace GraySkeletonCPP {
                     break;
                 case PRUNING_CLASS_PRUNE_CURVES:
 
-                    if(skeletonDirection.IsBadNormal()) {
+                    if(skelDir.IsBadNormal()) {
                         cost = 1.0;
                     } else {
-                        n = XYZtoUVW(skeletonDirection, v1, v2, v3);
+                        n = XYZtoUVW(skelDir, v1, v2, v3);
                         a = u1 * u2 * u3;
                         b = sqrt(u2*u2*u3*u3*n.X()*n.X() + u1*u1*u3*u3*n.Y()*n.Y() + u1*u1*u2*u2*n.Z()*n.Z());
                         temp = n*(a/b);
@@ -217,11 +217,11 @@ namespace GraySkeletonCPP {
                 case PRUNING_CLASS_PRUNE_SURFACES:
 
                     {
-                        if(skeletonDirection.IsBadNormal()) {
+                        if(skelDir.IsBadNormal()) {
                             cost = 1.0;
                         } else {
                             Vector3Float n1, n2, m1, m2;
-                            skelDirectionST = XYZtoUVW(skeletonDirection, imageEigen.vecs[0],imageEigen.vecs[1], imageEigen.vecs[2]);
+                            skelDirectionST = XYZtoUVW(skelDir, imageEigen.vecs[0],imageEigen.vecs[1], imageEigen.vecs[2]);
                             FindOrthogonalAxes(skelDirectionST, n1, n2);
 
                             m1 = Vector3Float(n1[0]/u1, n1[1]/u2, n1[2]/u3);
@@ -550,16 +550,16 @@ namespace GraySkeletonCPP {
 
 
     void VolumeSkeletonizer::GetSTBasedDistribution(ProbDistr3D & distributionInfo, EigenResults3D eigen) {
-        Vector3Float skeletonDirection;
+        Vector3Float skelDir;
         double total = 0;
         double cell;
         for(int x = -distributionInfo.R; x <= distributionInfo.R; x++) {
             for(int y = -distributionInfo.R; y <= distributionInfo.R; y++) {
                 for(int z = -distributionInfo.R; z <= distributionInfo.R; z++) {
                     if((x!=0) && (y!=0) && (z!=0)) {
-                        skeletonDirection = Vector3Float(0,0,0) - Vector3Float(x, y, z);
-                        skeletonDirection.normalize();
-                        cell = GetVoxelCost(eigen, skeletonDirection, PRUNING_CLASS_PRUNE_CURVES);
+                        skelDir = Vector3Float(0,0,0) - Vector3Float(x, y, z);
+                        skelDir.normalize();
+                        cell = GetVoxelCost(eigen, skelDir, PRUNING_CLASS_PRUNE_CURVES);
                         distributionInfo.vals[x+distributionInfo.R][y+distributionInfo.R][z+distributionInfo.R] = cell;
                         total += cell;
                     }
@@ -594,7 +594,7 @@ namespace GraySkeletonCPP {
     {
         Volume tempSkel(skeleton);
         Volume costVol(skeleton.getSizeX(), skeleton.getSizeY(), skeleton.getSizeZ());
-        vector<Vector3Float> skeletonDirections = GetSkeletonDirection(skeleton, pruningClass);
+        vector<Vector3Float> skelDirs = GetSkeletonDirection(skeleton, pruningClass);
         int index;
         double cost;
         EigenResults3D eigen;
@@ -609,7 +609,7 @@ namespace GraySkeletonCPP {
                         } else {
                             eigen = volumeEigens[index];
                         }
-                        cost = GetVoxelCost(eigen, skeletonDirections[index], pruningClass);
+                        cost = GetVoxelCost(eigen, skelDirs[index], pruningClass);
                         if(cost < threshold) {
                             skeleton.setDataAt(index, 0.0);
                         }
@@ -625,9 +625,9 @@ namespace GraySkeletonCPP {
             WriteEigenResultsToVRMLFile(sourceVolume, costVol, tempSkel, volumeEigens, outputPath + "-Eigens.wrl", (pruningClass != PRUNING_CLASS_PRUNE_SURFACES));
             WriteEigenResultsToVRMLFile(sourceVolume, costVol, tempSkel, volumeEigens, outputPath + "-Eigens-inverted.wrl", true);
             WriteEigenResultsToVRMLFile(sourceVolume, costVol, tempSkel, volumeEigens, outputPath + "-Eigens.wrl", false);
-            WriteSkeletonDirectionToVRMLFile(tempSkel, costVol, skeletonDirections, outputPath + "-SkeletonDirections.wrl", pruningClass == PRUNING_CLASS_PRUNE_SURFACES, 0.1);
+            WriteSkeletonDirectionToVRMLFile(tempSkel, costVol, skelDirs, outputPath + "-SkeletonDirections.wrl", pruningClass == PRUNING_CLASS_PRUNE_SURFACES, 0.1);
             if(pruningClass == PRUNING_CLASS_PRUNE_CURVES) {
-                WriteSkeletonDirectionToVRMLFile(tempSkel, costVol, skeletonDirections, outputPath + "-SkeletonDirections-small.wrl", false, 0.06);
+                WriteSkeletonDirectionToVRMLFile(tempSkel, costVol, skelDirs, outputPath + "-SkeletonDirections-small.wrl", false, 0.06);
             }
         #endif
     }
