@@ -70,7 +70,7 @@ namespace GraySkeletonCPP {
                               int y, int z);
             static int GetN26(Vector3Int * & n26, Volume * sourceVolume, int x,
                               int y, int z);
-            static int GetN6Count(Volume * sourceVolume, int x, int y, int z);
+            static int GetN6Count(const Volume & sourceVolume, int x, int y, int z);
             static int GetN6_2Count(Volume * sourceVolume, int x, int y, int z);
             static int GetN18Count(Volume * sourceVolume, int x, int y, int z);
             static int GetN26Count(Volume * sourceVolume, int x, int y, int z);
@@ -701,10 +701,10 @@ namespace GraySkeletonCPP {
         return n26Count;
     }
 
-    int DiscreteMesh::GetN6Count(Volume * sourceVolume, int x, int y, int z) {
+    int DiscreteMesh::GetN6Count(const Volume & sourceVolume, int x, int y, int z) {
         int n6Count = 0;
         for(int i = 0; i < 6; i++) {
-            if(sourceVolume->getDataAt(x + VOLUME_NEIGHBORS_6[i][0], y + VOLUME_NEIGHBORS_6[i][1], z + VOLUME_NEIGHBORS_6[i][2]) > 0)  {
+            if(sourceVolume.getDataAt(x + VOLUME_NEIGHBORS_6[i][0], y + VOLUME_NEIGHBORS_6[i][1], z + VOLUME_NEIGHBORS_6[i][2]) > 0)  {
                 n6Count++;
             }
         }
@@ -769,7 +769,7 @@ namespace GraySkeletonCPP {
     int DiscreteMesh::GetImmersionN6Count(Volume * skeleton, Vector3Int point) {
         Volume * range = skeleton->getDataRange(point[0], point[1], point[2], 1);
         range->threshold(range->getDataAt(1,1,1), 0, 1, 0, false);
-        int n6Count = GetN6Count(range,1,1,1);
+        int n6Count = GetN6Count(*range,1,1,1);
         delete range;
         return n6Count;
     }
@@ -812,11 +812,11 @@ namespace GraySkeletonCPP {
     }
 
     bool DiscreteMesh::IsPoint(Volume * sourceVolume, int x, int y, int z) {
-        return (GetN6Count(sourceVolume, x, y, z) == 0);
+        return (GetN6Count(*sourceVolume, x, y, z) == 0);
     }
 
     bool DiscreteMesh::IsCurveEnd(Volume * sourceVolume, int x, int y, int z) {
-        return (GetN6Count(sourceVolume, x, y, z) == 1);
+        return (GetN6Count(*sourceVolume, x, y, z) == 1);
     }
 
     bool DiscreteMesh::IsCurveBody(Volume * sourceVolume, int x, int y, int z) {
@@ -835,7 +835,7 @@ namespace GraySkeletonCPP {
             foundFace = foundFace || allPoints;
         }
 
-        return (!foundFace && GetN6Count(sourceVolume, x, y, z) >= 2);
+        return (!foundFace && GetN6Count(*sourceVolume, x, y, z) >= 2);
 
     }
 

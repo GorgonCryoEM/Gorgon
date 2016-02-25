@@ -84,12 +84,12 @@ namespace GraySkeletonCPP {
             void VoxelSubtract(Volume * sourceAndDestVolume1,
                                Volume * sourceVolume2);
             void VoxelOr(Volume * sourceAndDestVolume1, Volume * sourceVolume2);
-            Vector3Float GetCurveDirection(Volume * skeleton, int x, int y, int z, int radius);
-            Vector3Float GetSurfaceNormal(Volume * skeleton, int x, int y, int z);
-            Vector3Float GetSurfaceNormal(Volume * skeleton, int x, int y, int z, int radius,
+            Vector3Float GetCurveDirection(const Volume &  skeleton, int x, int y, int z, int radius);
+            Vector3Float GetSurfaceNormal(const Volume  & skeleton, int x, int y, int z);
+            Vector3Float GetSurfaceNormal(const Volume  & skeleton, int x, int y, int z, int radius,
                                           Vector3Float * localDirections);
             Vector3Float * GetVolumeGradient(Volume * sourceVolume);
-            Vector3Float * GetSkeletonDirection(Volume * skeleton, int type);
+            Vector3Float * GetSkeletonDirection(const Volume & skeleton, int type);
 
             void GetEigenResult(EigenResults3D & returnVal,
                                 Vector3Float * imageGradient,
@@ -269,7 +269,7 @@ namespace GraySkeletonCPP {
     }
 
 
-    Vector3Float VolumeSkeletonizer::GetCurveDirection(Volume * skeleton, int x, int y, int z, int radius) {
+    Vector3Float VolumeSkeletonizer::GetCurveDirection(const Volume & skeleton, int x, int y, int z, int radius) {
         Vector3Float direction = Vector3Float(0,0,0);
         if(DiscreteMesh::GetN6Count(skeleton, x, y, z) > 2) {
             direction = Vector3Float(BAD_NORMAL, BAD_NORMAL, BAD_NORMAL);
@@ -281,7 +281,7 @@ namespace GraySkeletonCPP {
             for(int xx = margin; xx <= size-margin; xx++) {
                 for(int yy = margin; yy <= size-margin; yy++) {
                     for(int zz = margin; zz <= size-margin; zz++) {
-                        block->setDataAt(xx, yy, zz, skeleton->getDataAt(x-radius-margin+xx, y-radius-margin+yy, z-radius-margin+zz));
+                        block->setDataAt(xx, yy, zz, skeleton.getDataAt(x-radius-margin+xx, y-radius-margin+yy, z-radius-margin+zz));
                     }
                 }
             }
@@ -327,14 +327,14 @@ namespace GraySkeletonCPP {
         return direction;
     }
 
-    Vector3Float VolumeSkeletonizer::GetSurfaceNormal(Volume * skeleton, int x, int y, int z) {
+    Vector3Float VolumeSkeletonizer::GetSurfaceNormal(const Volume & skeleton, int x, int y, int z) {
         surfNormFinder.InitializeGraph(skeleton, x, y, z);
         return surfNormFinder.GetSurfaceNormal();
     }
 
 
-    Vector3Float VolumeSkeletonizer::GetSurfaceNormal(Volume * skeleton, int x, int y, int z, int radius, Vector3Float * localDirections) {
-        Vector3Float direction = localDirections[skeleton->getIndex(x, y, z)];
+    Vector3Float VolumeSkeletonizer::GetSurfaceNormal(const Volume & skeleton, int x, int y, int z, int radius, Vector3Float * localDirections) {
+        Vector3Float direction = localDirections[skeleton.getIndex(x, y, z)];
 
 
         if(!direction.IsBadNormal()) {
@@ -345,7 +345,7 @@ namespace GraySkeletonCPP {
             for(int xx = margin; xx <= size-margin; xx++) {
                 for(int yy = margin; yy <= size-margin; yy++) {
                     for(int zz = margin; zz <= size-margin; zz++) {
-                        block->setDataAt(xx, yy, zz, skeleton->getDataAt(x-radius-margin+xx, y-radius-margin+yy, z-radius-margin+zz));
+                        block->setDataAt(xx, yy, zz, skeleton.getDataAt(x-radius-margin+xx, y-radius-margin+yy, z-radius-margin+zz));
                     }
                 }
             }
@@ -361,7 +361,7 @@ namespace GraySkeletonCPP {
                 currentPos = list[list.size()-1];
                 list.pop_back();
                 visited->setDataAt(currentPos.X(), currentPos.Y(), currentPos.Z(), 1);
-                tempDir = localDirections[skeleton->getIndex(x+currentPos.X()-margin-radius, y+currentPos.Y()-margin-radius, z+currentPos.Z()-margin-radius)];
+                tempDir = localDirections[skeleton.getIndex(x+currentPos.X()-margin-radius, y+currentPos.Y()-margin-radius, z+currentPos.Z()-margin-radius)];
 
                 if(!tempDir.IsBadNormal()) {
                     for(int i = 0; i < 12; i++) {
@@ -441,17 +441,17 @@ namespace GraySkeletonCPP {
         return gradient;
     }
 
-    Vector3Float * VolumeSkeletonizer::GetSkeletonDirection(Volume * skeleton, int type) {
+    Vector3Float * VolumeSkeletonizer::GetSkeletonDirection(const Volume & skeleton, int type) {
         int index;
 
-        Vector3Float * localDirections = new Vector3Float[skeleton->getSizeX() * skeleton->getSizeY() * skeleton->getSizeZ()];
+        Vector3Float * localDirections = new Vector3Float[skeleton.getSizeX() * skeleton.getSizeY() * skeleton.getSizeZ()];
 
-        for(int x = 1; x < skeleton->getSizeX()-1; x++) {
-            for(int y = 1; y < skeleton->getSizeY()-1; y++) {
-                for(int z = 1; z < skeleton->getSizeZ()-1; z++) {
-                    index = skeleton->getIndex(x, y, z);
+        for(int x = 1; x < skeleton.getSizeX()-1; x++) {
+            for(int y = 1; y < skeleton.getSizeY()-1; y++) {
+                for(int z = 1; z < skeleton.getSizeZ()-1; z++) {
+                    index = skeleton.getIndex(x, y, z);
                     localDirections[index] = Vector3Float(0,0,0);
-                    if(skeleton->getDataAt(x,y,z) > 0) {
+                    if(skeleton.getDataAt(x,y,z) > 0) {
                         switch(type){
                             case PRUNING_CLASS_PRUNE_SURFACES:
                                 localDirections[index] = GetSurfaceNormal(skeleton, x, y, z);
@@ -462,14 +462,14 @@ namespace GraySkeletonCPP {
             }
         }
 
-        Vector3Float * directions = new Vector3Float[skeleton->getSizeX() * skeleton->getSizeY() * skeleton->getSizeZ()];
+        Vector3Float * directions = new Vector3Float[skeleton.getSizeX() * skeleton.getSizeY() * skeleton.getSizeZ()];
 
-        for(int x = 1; x < skeleton->getSizeX()-1; x++) {
-            for(int y = 1; y < skeleton->getSizeY()-1; y++) {
-                for(int z = 1; z < skeleton->getSizeZ()-1; z++) {
-                    index = skeleton->getIndex(x, y, z);
+        for(int x = 1; x < skeleton.getSizeX()-1; x++) {
+            for(int y = 1; y < skeleton.getSizeY()-1; y++) {
+                for(int z = 1; z < skeleton.getSizeZ()-1; z++) {
+                    index = skeleton.getIndex(x, y, z);
                     directions[index] = Vector3Float(0,0,0);
-                    if(skeleton->getDataAt(x,y,z) > 0) {
+                    if(skeleton.getDataAt(x,y,z) > 0) {
                         switch(type){
                             case PRUNING_CLASS_PRUNE_CURVES:
                                 directions[index] = GetCurveDirection(skeleton, x, y, z, skeletonDirectionRadius);
@@ -590,7 +590,7 @@ namespace GraySkeletonCPP {
     {
         Volume * tempSkel = new Volume(*skeleton);
         Volume * costVol = new Volume(skeleton->getSizeX(), skeleton->getSizeY(), skeleton->getSizeZ());
-        Vector3Float * skeletonDirections = GetSkeletonDirection(skeleton, pruningClass);
+        Vector3Float * skeletonDirections = GetSkeletonDirection(*skeleton, pruningClass);
         int index;
         double cost;
         EigenResults3D eigen;

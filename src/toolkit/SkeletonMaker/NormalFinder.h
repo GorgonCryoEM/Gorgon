@@ -16,7 +16,7 @@ namespace GraySkeletonCPP {
     public:
         NormalFinder();
 
-        void InitializeGraph(Volume * vol, int x, int y, int z);
+        void InitializeGraph(const Volume & vol, int x, int y, int z);
         Vector3Float GetSurfaceNormal();
 
     private:
@@ -55,7 +55,7 @@ namespace GraySkeletonCPP {
         SetCurveIndex(0,0,1,5);
     }
 
-    void NormalFinder::InitializeGraph(Volume * vol, int x, int y, int z) {
+    void NormalFinder::InitializeGraph(const Volume & vol, int x, int y, int z) {
         bool found[6] = {false, false, false, false, false, false};
         for (int i = 0; i < 6; i++) {
             for (int j = 0; j < 6; j++) {
@@ -63,13 +63,13 @@ namespace GraySkeletonCPP {
             }
         }
 
-        if(vol->getDataAt(x, y, z) <= 0) {
+        if(vol.getDataAt(x, y, z) <= 0) {
             return;
         }
         for (int i = 0; i < 12; i++) {
-            if((vol->getDataAt(x + VOLUME_NEIGHBOR_FACES[i][0][0], y + VOLUME_NEIGHBOR_FACES[i][0][1], z + VOLUME_NEIGHBOR_FACES[i][0][2]) > 0) &&
-               (vol->getDataAt(x + VOLUME_NEIGHBOR_FACES[i][1][0], y + VOLUME_NEIGHBOR_FACES[i][1][1], z + VOLUME_NEIGHBOR_FACES[i][1][2]) > 0) &&
-               (vol->getDataAt(x + VOLUME_NEIGHBOR_FACES[i][2][0], y + VOLUME_NEIGHBOR_FACES[i][2][1], z + VOLUME_NEIGHBOR_FACES[i][2][2]) > 0)) {
+            if((vol.getDataAt(x + VOLUME_NEIGHBOR_FACES[i][0][0], y + VOLUME_NEIGHBOR_FACES[i][0][1], z + VOLUME_NEIGHBOR_FACES[i][0][2]) > 0) &&
+               (vol.getDataAt(x + VOLUME_NEIGHBOR_FACES[i][1][0], y + VOLUME_NEIGHBOR_FACES[i][1][1], z + VOLUME_NEIGHBOR_FACES[i][1][2]) > 0) &&
+               (vol.getDataAt(x + VOLUME_NEIGHBOR_FACES[i][2][0], y + VOLUME_NEIGHBOR_FACES[i][2][1], z + VOLUME_NEIGHBOR_FACES[i][2][2]) > 0)) {
                     graph[GetCurveIndex(VOLUME_NEIGHBOR_FACES[i][0][0], VOLUME_NEIGHBOR_FACES[i][0][1], VOLUME_NEIGHBOR_FACES[i][0][2])]
                          [GetCurveIndex(VOLUME_NEIGHBOR_FACES[i][2][0], VOLUME_NEIGHBOR_FACES[i][2][1], VOLUME_NEIGHBOR_FACES[i][2][2])] = true;
                     graph[GetCurveIndex(VOLUME_NEIGHBOR_FACES[i][2][0], VOLUME_NEIGHBOR_FACES[i][2][1], VOLUME_NEIGHBOR_FACES[i][2][2])]
