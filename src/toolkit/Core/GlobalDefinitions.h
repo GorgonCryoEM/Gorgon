@@ -16,7 +16,7 @@ namespace GraySkeletonCPP {
     TimeManager appTimeManager = TimeManager();
 
     const int PRUNE_AMOUNT = 3;
-    const int MAX_GAUSSIAN_FILTER_RADIUS = 10;
+    const int MAX_GAUSS_FILT_R = 10;
     const unsigned char PIXEL_CLASS_BACKGROUND = 0;
     const unsigned char PIXEL_CLASS_POINT = 254;
     const unsigned char PIXEL_CLASS_CURVE_END = 223;

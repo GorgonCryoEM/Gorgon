@@ -253,7 +253,7 @@ namespace Protein_Morph {
     vector<float> SSEHunter::GetLocalDirectionalityScores(const Volume & vol) {
         Volume tempVol(vol);
         double minVal = tempVol.getMin();
-        int offset = MAX_GAUSSIAN_FILTER_RADIUS;
+        int offset = MAX_GAUSS_FILT_R;
 
         tempVol.pad(offset, minVal);
         Volume maskVol(tempVol);

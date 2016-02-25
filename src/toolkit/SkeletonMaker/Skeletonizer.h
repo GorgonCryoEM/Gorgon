@@ -139,7 +139,7 @@ namespace GraySkeletonCPP {
         gaussFiltSrfcR.R = surfaceR;
         BinomDistr(gaussFiltSrfcR);
 
-        gaussFiltMaxR.R = MAX_GAUSSIAN_FILTER_RADIUS;
+        gaussFiltMaxR.R = MAX_GAUSS_FILT_R;
         BinomDistr(gaussFiltMaxR);
 
         uniformFiltSkelDirR.R = skelDirR;
@@ -217,9 +217,9 @@ namespace GraySkeletonCPP {
     {
         vector<EigenResults3D> resultTable(mask.getSizeX() * mask.getSizeY() * mask.getSizeZ());
 
-        for(int x = MAX_GAUSSIAN_FILTER_RADIUS; x < mask.getSizeX() - MAX_GAUSSIAN_FILTER_RADIUS; x++) {
-            for(int y = MAX_GAUSSIAN_FILTER_RADIUS; y < mask.getSizeY() - MAX_GAUSSIAN_FILTER_RADIUS; y++) {
-                for(int z = MAX_GAUSSIAN_FILTER_RADIUS; z < mask.getSizeZ() - MAX_GAUSSIAN_FILTER_RADIUS; z++) {
+        for(int x = MAX_GAUSS_FILT_R; x < mask.getSizeX() - MAX_GAUSS_FILT_R; x++) {
+            for(int y = MAX_GAUSS_FILT_R; y < mask.getSizeY() - MAX_GAUSS_FILT_R; y++) {
+                for(int z = MAX_GAUSS_FILT_R; z < mask.getSizeZ() - MAX_GAUSS_FILT_R; z++) {
                     GetEigenResult(resultTable[mask.getIndex(x, y, z)], imgGrad, gaussFilt, x, y, z,
                             mask.getSizeX(), mask.getSizeY(), mask.getSizeZ(), gaussFiltR, (useMask && (mask.getDataAt(x, y, z) == 0)));
                 }
@@ -603,7 +603,7 @@ namespace GraySkeletonCPP {
         smoothenMask.R = stR;
         BinomDistr(smoothenMask);
 
-        src.pad(MAX_GAUSSIAN_FILTER_RADIUS, 0);
+        src.pad(MAX_GAUSS_FILT_R, 0);
 
         Volume maskVolume(src.getSizeX(), src.getSizeY(), src.getSizeZ());
         double data;
@@ -648,7 +648,7 @@ namespace GraySkeletonCPP {
             }
         }
 
-        dest.pad(-MAX_GAUSSIAN_FILTER_RADIUS, 0);
+        dest.pad(-MAX_GAUSS_FILT_R, 0);
 
         src = dest;
     }
@@ -787,10 +787,10 @@ namespace GraySkeletonCPP {
         appTimeManager.PopAndDisplayTime("Smoothing : %f seconds!\n");
         vector<Vec3F> volGrad;
         vector<EigenResults3D> volumeEigens;
-        sourceVol.pad(MAX_GAUSSIAN_FILTER_RADIUS, 0);
+        sourceVol.pad(MAX_GAUSS_FILT_R, 0);
 
         if(preserved != NULL)
-            preserved->pad(MAX_GAUSSIAN_FILTER_RADIUS, 0);
+            preserved->pad(MAX_GAUSS_FILT_R, 0);
 
         if(doPruning) {
             volGrad = GetVolumeGradient(sourceVol);
@@ -908,8 +908,8 @@ namespace GraySkeletonCPP {
             curveVol->toOFFCells2((char *)(outPath + "-SC.off").c_str());
         #endif
 
-        sourceVol.pad(-MAX_GAUSSIAN_FILTER_RADIUS, 0);
-        curveVol.pad(-MAX_GAUSSIAN_FILTER_RADIUS, 0);
+        sourceVol.pad(-MAX_GAUSS_FILT_R, 0);
+        curveVol.pad(-MAX_GAUSS_FILT_R, 0);
 
         Volume * res = new Volume(curveVol);
 
@@ -927,7 +927,7 @@ namespace GraySkeletonCPP {
               cout<<"DEBUG: Args: Volume*, string, double, int, int\033[0m"<<endl;
               cout<<imageVol->getSize()<<endl;
         #endif
-        imageVol.pad(MAX_GAUSSIAN_FILTER_RADIUS, 0);
+        imageVol.pad(MAX_GAUSS_FILT_R, 0);
         #ifdef GORGON_DEBUG
               cout<<"imageVol->getSize(): "<<imageVol->getSize()<<endl;
         #endif
@@ -961,8 +961,8 @@ namespace GraySkeletonCPP {
         cout<<"1: topologyVol->getSize(): "<<topologyVol->getSize()<<endl;
 #endif
 
-        imageVol.pad(-MAX_GAUSSIAN_FILTER_RADIUS, 0);
-        topologyVol->pad(-MAX_GAUSSIAN_FILTER_RADIUS, 0);
+        imageVol.pad(-MAX_GAUSS_FILT_R, 0);
+        topologyVol->pad(-MAX_GAUSS_FILT_R, 0);
 
         #ifdef GORGON_DEBUG
               cout<<"\033[34mDEBUG: File:   VolumeSkeletonizer.h"<<endl;
