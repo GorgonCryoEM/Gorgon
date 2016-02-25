@@ -85,8 +85,8 @@ namespace GraySkeletonCPP {
             void GetSTBasedDistribution(ProbDistr3D & distributionInfo, EigenResults3D eigen);
             Vector3Float XYZtoUVW(Vector3Float vec, Vector3Float u, Vector3Float v, Vector3Float w);
 
-            Volume FillCurveHoles  (Volume & thresholdedSkeleton, const Volume & src, int maxHoleSize);
-            Volume FillSurfaceHoles(Volume & thresholdedSkeleton, const Volume & src, int maxHoleSize);
+            Volume FillCurveHoles  (Volume & dest, const Volume & src, int maxHoleSize);
+            Volume FillSurfaceHoles(Volume & dest, const Volume & src, int maxHoleSize);
 
             Volume * GetJuThinning(Volume & src, const Volume & preserve, double threshold, char thinningClass);
             Volume * GetImmersionThinning(const Volume & src, const Volume & preserve,
@@ -693,9 +693,9 @@ namespace GraySkeletonCPP {
     }
 
 
-    Volume VolumeSkeletonizer::FillCurveHoles(Volume & thresholdedSkeleton, const Volume & src, int maxHoleSize) {
+    Volume VolumeSkeletonizer::FillCurveHoles(Volume & dest, const Volume & src, int maxHoleSize) {
         Volume holes(src);
-        VoxelSubtract(holes, thresholdedSkeleton);
+        VoxelSubtract(holes, dest);
         PruneCurves(holes, maxHoleSize);
 
         Volume filledSkeleton(src);
@@ -704,10 +704,10 @@ namespace GraySkeletonCPP {
         return filledSkeleton;
     }
 
-    Volume VolumeSkeletonizer::FillSurfaceHoles(Volume & thresholdedSkeleton, const Volume & src, int maxHoleSize) {
+    Volume VolumeSkeletonizer::FillSurfaceHoles(Volume & dest, const Volume & src, int maxHoleSize) {
         Volume holes(src);
 
-        VoxelSubtract(holes, thresholdedSkeleton);
+        VoxelSubtract(holes, dest);
         PruneSurfaces(holes, maxHoleSize);
 
         Volume filledSkeleton(src);
