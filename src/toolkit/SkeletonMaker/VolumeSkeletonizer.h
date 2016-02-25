@@ -81,8 +81,8 @@ namespace GraySkeletonCPP {
 
             void VoxelBinarySubtract(Volume & sourceAndDestVolume1,
                                      const Volume & sourceVolume2);
-            void VoxelSubtract(Volume * sourceAndDestVolume1,
-                               Volume * sourceVolume2);
+            void VoxelSubtract(Volume & sourceAndDestVolume1,
+                               const Volume & sourceVolume2);
             void VoxelOr(Volume * sourceAndDestVolume1, Volume * sourceVolume2);
 
             Vector3Float GetCurveDirection(const Volume &  skeleton, int x, int y, int z, int radius);
@@ -696,11 +696,11 @@ namespace GraySkeletonCPP {
         }
     }
 
-    void VolumeSkeletonizer::VoxelSubtract(Volume * sourceAndDestVolume1, Volume * sourceVolume2){
-        for(int x = 0; x < sourceAndDestVolume1->getSizeX(); x++) {
-            for(int y = 0; y < sourceAndDestVolume1->getSizeY(); y++) {
-                for(int z = 0; z < sourceAndDestVolume1->getSizeZ(); z++) {
-                    sourceAndDestVolume1->setDataAt(x, y, z, sourceAndDestVolume1->getDataAt(x, y, z) - sourceVolume2->getDataAt(x, y, z));
+    void VolumeSkeletonizer::VoxelSubtract(Volume & sourceAndDestVolume1, const Volume & sourceVolume2){
+        for(int x = 0; x < sourceAndDestVolume1.getSizeX(); x++) {
+            for(int y = 0; y < sourceAndDestVolume1.getSizeY(); y++) {
+                for(int z = 0; z < sourceAndDestVolume1.getSizeZ(); z++) {
+                    sourceAndDestVolume1.setDataAt(x, y, z, sourceAndDestVolume1.getDataAt(x, y, z) - sourceVolume2.getDataAt(x, y, z));
                 }
             }
         }
@@ -721,11 +721,11 @@ namespace GraySkeletonCPP {
 
     Volume VolumeSkeletonizer::FillCurveHoles(Volume & thresholdedSkeleton, const Volume & originalSkeleton, int maxHoleSize) {
         Volume holes(originalSkeleton);
-        VoxelSubtract(&holes, &thresholdedSkeleton);
+        VoxelSubtract(holes, thresholdedSkeleton);
         PruneCurves(holes, maxHoleSize);
 
         Volume filledSkeleton(originalSkeleton);
-        VoxelSubtract(&filledSkeleton, &holes);
+        VoxelSubtract(filledSkeleton, holes);
 
         return filledSkeleton;
     }
@@ -733,11 +733,11 @@ namespace GraySkeletonCPP {
     Volume VolumeSkeletonizer::FillSurfaceHoles(Volume & thresholdedSkeleton, const Volume & originalSkeleton, int maxHoleSize) {
         Volume holes(originalSkeleton);
 
-        VoxelSubtract(&holes, &thresholdedSkeleton);
+        VoxelSubtract(holes, thresholdedSkeleton);
         PruneSurfaces(holes, maxHoleSize);
 
         Volume filledSkeleton(originalSkeleton);
-        VoxelSubtract(&filledSkeleton, &holes);
+        VoxelSubtract(filledSkeleton, holes);
 
         return filledSkeleton;
     }
