@@ -54,50 +54,45 @@ namespace GraySkeletonCPP {
             int GetSurfaceNeighborCount(int x1, int y1, int z1, int x2, int y2, int z2);
             void GetSurfacePoints(int x, int y, int z, unsigned char direction, vector<Vector3Int> & points);
 
-            static int GetC6(Vector3Int * neighbors, int neighborCount,
-                             Vector3Int currPoint);
-            static int GetC26(Vector3Int * neighbors, int neighborCount,
-                              Vector3Int currPoint);
-            static int GetN6(vector<Vector3Int> & n6, Volume * sourceVolume, int x, int y, int z);
-            static int GetN6_2(vector<Vector3Int> & n6_2, Volume * sourceVolume,
-                               int x, int y, int z);
-            static int GetN18(vector<Vector3Int> & n18, Volume * sourceVolume, int x, int y, int z);
-            static int GetN26(Vector3Int * & n26, Volume * sourceVolume, int x, int y, int z);
-            static int GetN6Count(const Volume & sourceVolume, int x, int y, int z);
+            static int GetC6 (Vector3Int * neighbors, int neighborCount, Vector3Int currPoint);
+            static int GetC26(Vector3Int * neighbors, int neighborCount, Vector3Int currPoint);
+            static int GetN6  (vector<Vector3Int> &   n6, Volume * sourceVolume, int x, int y, int z);
+            static int GetN6_2(vector<Vector3Int> & n6_2, Volume * sourceVolume, int x, int y, int z);
+            static int GetN18  (vector<Vector3Int> & n18, Volume * sourceVolume, int x, int y, int z);
+            static int GetN26        (Vector3Int * & n26, Volume * sourceVolume, int x, int y, int z);
+            static int GetN6Count  (const Volume & sourceVolume, int x, int y, int z);
             static int GetN6_2Count(Volume * sourceVolume, int x, int y, int z);
-            static int GetN18Count(Volume * sourceVolume, int x, int y, int z);
-            static int GetN26Count(Volume * sourceVolume, int x, int y, int z);
-            static int GetMCount(Volume * sourceVolume, int x1, int y1, int z1,
+            static int GetN18Count (Volume * sourceVolume, int x, int y, int z);
+            static int GetN26Count (Volume * sourceVolume, int x, int y, int z);
+            static int GetMCount   (Volume * sourceVolume, int x1, int y1, int z1,
                                  int x2, int y2, int z2);
-            static int GetImmersionN6Count(Volume * skeleton, Vector3Int point);
+            static int GetImmersionN6Count      (Volume * skeleton, Vector3Int point);
             static int GetImmersionSkeletalValue(Volume * skeleton, Vector3Int point);
             static bool IsImmersionBoundary(Volume * skeleton, Vector3Int point);
-            static bool IsPoint(Volume * sourceVolume, int x, int y, int z);
-            static bool IsCurveEnd(Volume * sourceVolume, int x, int y, int z);
-            static bool IsCurveBody(Volume * sourceVolume, int x, int y, int z);
-            static bool IsSurfaceBorder(Volume * sourceVolume, int x, int y, int z);
-            static bool IsSurfaceBody(Volume * sourceVolume, int x, int y, int z, bool doDependantChecks);
-            static bool IsVolumeBorder(Volume * sourceVolume, int x, int y, int z, bool doDependantChecks);
-            static bool IsVolumeBody(Volume * sourceVolume, int x, int y, int z);
-            static bool IsSimple(Volume * sourceVolume, int x, int y, int z);
+            static bool IsPoint         (Volume * sourceVolume, int x, int y, int z);
+            static bool IsCurveEnd      (Volume * sourceVolume, int x, int y, int z);
+            static bool IsCurveBody     (Volume * sourceVolume, int x, int y, int z);
+            static bool IsSurfaceBorder (Volume * sourceVolume, int x, int y, int z);
+            static bool IsSurfaceBody   (Volume * sourceVolume, int x, int y, int z, bool doDependantChecks);
+            static bool IsVolumeBorder  (Volume * sourceVolume, int x, int y, int z, bool doDependantChecks);
+            static bool IsVolumeBody    (Volume * sourceVolume, int x, int y, int z);
+            static bool IsSimple        (Volume * sourceVolume, int x, int y, int z);
             static bool IsValidSurface(const Volume & sourceVolume, Vector3Double p0,
                                        Vector3Double p1, Vector3Double p2, Vector3Double p3);
 
-            static void FindCurveBase(Vector3Double &p1, Vector3Double &p2);
-            static void FindCurveBase(Vector3Int &p1, Vector3Int &p2);
+            static void FindCurveBase  (Vector3Double &p1, Vector3Double &p2);
+            static void FindCurveBase  (Vector3Int    &p1, Vector3Int    &p2);
             static void FindSurfaceBase(Vector3Double &p1, Vector3Double &p2,
                                         Vector3Double &p3, Vector3Double &p4);
             static void FindSurfaceBase(Vector3Int &p1, Vector3Int &p2,
                                         Vector3Int &p3, Vector3Int &p4);
 
-            void AddPoint(Vector3Int point);
-            void AddCurve(Vector3Int p1, Vector3Int p2);
-            void AddSurface(Vector3Int p1, Vector3Int p2, Vector3Int p3,
-                            Vector3Int p4);
-            void RemovePoint(Vector3Int point);
-            void RemoveCurve(Vector3Int p1, Vector3Int p2);
-            void RemoveSurface(Vector3Int p1, Vector3Int p2, Vector3Int p3,
-                               Vector3Int p4);
+            void AddPoint  (Vector3Int point);
+            void AddCurve  (Vector3Int p1, Vector3Int p2);
+            void AddSurface(Vector3Int p1, Vector3Int p2, Vector3Int p3, Vector3Int p4);
+            void RemovePoint   (Vector3Int point);
+            void RemoveCurve   (Vector3Int p1, Vector3Int p2);
+            void RemoveSurface(Vector3Int p1, Vector3Int p2, Vector3Int p3, Vector3Int p4);
             void RemoveSurface(int x, int y, int z, unsigned char surfaceType);
 
         private:
