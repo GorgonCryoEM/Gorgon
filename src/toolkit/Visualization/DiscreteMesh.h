@@ -76,13 +76,13 @@ namespace GraySkeletonCPP {
             static bool isVolumeBorder  (const Volume & src, int x, int y, int z, bool doDependantChecks);
             static bool isVolumeBody    (const Volume & src, int x, int y, int z);
             static bool isSimple        (Volume & src, int x, int y, int z);
-            static bool isValidSurface(const Volume & src, Vector3Double p0,
-                                       Vector3Double p1, Vector3Double p2, Vector3Double p3);
+            static bool isValidSurface(const Volume & src, Vec3D p0,
+                                       Vec3D p1, Vec3D p2, Vec3D p3);
 
-            static void findCurveBase  (Vector3Double &p1, Vector3Double &p2);
+            static void findCurveBase  (Vec3D &p1, Vec3D &p2);
             static void findCurveBase  (Vector3Int    &p1, Vector3Int    &p2);
-            static void findSurfaceBase(Vector3Double &p1, Vector3Double &p2,
-                                        Vector3Double &p3, Vector3Double &p4);
+            static void findSurfaceBase(Vec3D &p1, Vec3D &p2,
+                                        Vec3D &p3, Vec3D &p4);
             static void findSurfaceBase(Vector3Int &p1, Vector3Int &p2,
                                         Vector3Int &p3, Vector3Int &p4);
 
@@ -414,8 +414,8 @@ namespace GraySkeletonCPP {
     }
 
 
-    void DiscreteMesh::findCurveBase(Vector3Double &p1, Vector3Double &p2) {
-        Vector3Double temp;
+    void DiscreteMesh::findCurveBase(Vec3D &p1, Vec3D &p2) {
+        Vec3D temp;
         if ((p1[0] > p2[0]) ||
             (p1[1] > p2[1]) ||
             (p1[2] > p2[2])) {
@@ -436,11 +436,11 @@ namespace GraySkeletonCPP {
         }
     }
 
-    void DiscreteMesh::findSurfaceBase(Vector3Double &p1, Vector3Double &p2,
-                                       Vector3Double &p3, Vector3Double &p4)
+    void DiscreteMesh::findSurfaceBase(Vec3D &p1, Vec3D &p2,
+                                       Vec3D &p3, Vec3D &p4)
     {
-        Vector3Double points[4] = {p1, p2, p3, p4};
-        Vector3Double temp;
+        Vec3D points[4] = {p1, p2, p3, p4};
+        Vec3D temp;
         int jVal, minVal, minIndex;
 
         for(int i = 0; i < 3; i++) {
@@ -880,26 +880,26 @@ namespace GraySkeletonCPP {
         return src.isSimple(x, y, z) != 0;
     }
 
-    bool DiscreteMesh::isValidSurface(const Volume & src, Vector3Double p0,
-                                      Vector3Double p1, Vector3Double p2,
-                                      Vector3Double p3)
+    bool DiscreteMesh::isValidSurface(const Volume & src, Vec3D p0,
+                                      Vec3D p1, Vec3D p2,
+                                      Vec3D p3)
     {
-        Vector3Double surface[4] = {p0, p1, p2, p3};
-        Vector3Double pDelta = p2 - p0;
-        Vector3Double upperVector, lowerVector;
+        Vec3D surface[4] = {p0, p1, p2, p3};
+        Vec3D pDelta = p2 - p0;
+        Vec3D upperVector, lowerVector;
         if((int)round(pDelta[0]) == 0) {
-            upperVector = Vector3Double(1, 0, 0);
-            lowerVector = Vector3Double(-1, 0, 0);
+            upperVector = Vec3D(1, 0, 0);
+            lowerVector = Vec3D(-1, 0, 0);
         } else if ((int)round(pDelta[1]) == 0) {
-            upperVector = Vector3Double(0, 1, 0);
-            lowerVector = Vector3Double(0, -1, 0);
+            upperVector = Vec3D(0, 1, 0);
+            lowerVector = Vec3D(0, -1, 0);
         } else {
-            upperVector = Vector3Double(0, 0, 1);
-            lowerVector = Vector3Double(0, 0, -1);
+            upperVector = Vec3D(0, 0, 1);
+            lowerVector = Vec3D(0, 0, -1);
         }
 
         bool allFound = true;
-        Vector3Double currentPos;
+        Vec3D currentPos;
         for(int i = 0; i < 4; i++) {
             currentPos = surface[i] + upperVector;
             allFound = allFound
