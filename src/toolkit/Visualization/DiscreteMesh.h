@@ -629,8 +629,8 @@ namespace GraySkeletonCPP {
         return retVal;
     }
 
-    int DiscreteMesh::getN18(vector<Vector3Int> & n18, const Volume & src, int x,
-                             int y, int z)
+    int DiscreteMesh::getN18(vector<Vector3Int> & n18, const Volume & src,
+                             int x, int y, int z)
     {
         n18.resize(18);
         int n18Count = 0;
@@ -645,8 +645,8 @@ namespace GraySkeletonCPP {
         return n18Count;
     }
 
-    int DiscreteMesh::getN26(vector<Vector3Int> & n26, const Volume & src, int x,
-                             int y, int z)
+    int DiscreteMesh::getN26(vector<Vector3Int> & n26, const Volume & src,
+                             int x, int y, int z)
     {
         int n26Count = 0;
         n26.resize(26);
