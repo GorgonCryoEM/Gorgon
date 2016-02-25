@@ -85,8 +85,8 @@ namespace GraySkeletonCPP {
             void GetSTBasedDistribution(ProbDistr3D & distributionInfo, EigenResults3D eigen);
             Vector3Float XYZtoUVW(Vector3Float vec, Vector3Float u, Vector3Float v, Vector3Float w);
 
-            Volume FillCurveHoles  (Volume & thresholdedSkeleton, const Volume & originalSkeleton, int maxHoleSize);
-            Volume FillSurfaceHoles(Volume & thresholdedSkeleton, const Volume & originalSkeleton, int maxHoleSize);
+            Volume FillCurveHoles  (Volume & thresholdedSkeleton, const Volume & src, int maxHoleSize);
+            Volume FillSurfaceHoles(Volume & thresholdedSkeleton, const Volume & src, int maxHoleSize);
 
             Volume * GetJuThinning(Volume & src, const Volume & preserve, double threshold, char thinningClass);
             Volume * GetImmersionThinning(const Volume & src, const Volume & preserve,
@@ -693,24 +693,24 @@ namespace GraySkeletonCPP {
     }
 
 
-    Volume VolumeSkeletonizer::FillCurveHoles(Volume & thresholdedSkeleton, const Volume & originalSkeleton, int maxHoleSize) {
-        Volume holes(originalSkeleton);
+    Volume VolumeSkeletonizer::FillCurveHoles(Volume & thresholdedSkeleton, const Volume & src, int maxHoleSize) {
+        Volume holes(src);
         VoxelSubtract(holes, thresholdedSkeleton);
         PruneCurves(holes, maxHoleSize);
 
-        Volume filledSkeleton(originalSkeleton);
+        Volume filledSkeleton(src);
         VoxelSubtract(filledSkeleton, holes);
 
         return filledSkeleton;
     }
 
-    Volume VolumeSkeletonizer::FillSurfaceHoles(Volume & thresholdedSkeleton, const Volume & originalSkeleton, int maxHoleSize) {
-        Volume holes(originalSkeleton);
+    Volume VolumeSkeletonizer::FillSurfaceHoles(Volume & thresholdedSkeleton, const Volume & src, int maxHoleSize) {
+        Volume holes(src);
 
         VoxelSubtract(holes, thresholdedSkeleton);
         PruneSurfaces(holes, maxHoleSize);
 
-        Volume filledSkeleton(originalSkeleton);
+        Volume filledSkeleton(src);
         VoxelSubtract(filledSkeleton, holes);
 
         return filledSkeleton;
