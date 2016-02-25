@@ -43,7 +43,7 @@ namespace GraySkeletonCPP {
             void addVoxel      (int x, int y, int z);
             bool isPointPresent(int x, int y, int z);
             bool isCurvePresent(int x, int y, int z, unsigned char direction);
-            bool isCurvePresent(Vec3I point1, Vec3I point2);
+            bool isCurvePresent(Vec3I p1, Vec3I p2);
             bool isSurfacePresent(int x, int y, int z, unsigned char direction);
             bool FollowCurve(int & x, int & y, int & z);
             int getCurveNeighbors     (int x, int y, int z, vector<Vec3I> & neighbors);
@@ -175,10 +175,7 @@ namespace GraySkeletonCPP {
         return ((curves[getIndex(x, y, z)] & direction) == direction);
     }
 
-    bool DiscreteMesh::isCurvePresent(Vec3I point1, Vec3I point2) {
-        Vec3I p1, p2;
-        p1 = point1;
-        p2 = point2;
+    bool DiscreteMesh::isCurvePresent(Vec3I p1, Vec3I p2) {
         findCurveBase(p1, p2);
 
         unsigned char curveType = CURVE_TYPES[p2[0] - p1[0]][p2[1] - p1[1]][p2[2] - p1[2]];
