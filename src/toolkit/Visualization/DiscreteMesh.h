@@ -93,7 +93,7 @@ namespace GraySkeletonCPP {
             static bool IsVolumeBody(Volume * sourceVolume, int x, int y,
                                      int z);
             static bool IsSimple(Volume * sourceVolume, int x, int y, int z);
-            static bool IsValidSurface(Volume * sourceVolume, Vector3Double p0,
+            static bool IsValidSurface(const Volume & sourceVolume, Vector3Double p0,
                                        Vector3Double p1, Vector3Double p2,
                                        Vector3Double p3);
 
@@ -924,7 +924,7 @@ namespace GraySkeletonCPP {
         return sourceVolume->isSimple(x, y, z) != 0;
     }
 
-    bool DiscreteMesh::IsValidSurface(Volume * sourceVolume, Vector3Double p0,
+    bool DiscreteMesh::IsValidSurface(const Volume & sourceVolume, Vector3Double p0,
                                       Vector3Double p1, Vector3Double p2,
                                       Vector3Double p3)
     {
@@ -947,12 +947,12 @@ namespace GraySkeletonCPP {
         for(int i = 0; i < 4; i++) {
             currentPos = surface[i] + upperVector;
             allFound = allFound
-                    && (sourceVolume->getDataAt(currentPos.XInt(),
+                    && (sourceVolume.getDataAt(currentPos.XInt(),
                                 currentPos.YInt(), currentPos.ZInt())
                         > 0);
             currentPos = surface[i] + lowerVector;
             allFound = allFound
-                    && (sourceVolume->getDataAt(currentPos.XInt(),
+                    && (sourceVolume.getDataAt(currentPos.XInt(),
                                 currentPos.YInt(), currentPos.ZInt())
                         > 0);
         }
