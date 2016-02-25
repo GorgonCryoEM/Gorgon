@@ -820,9 +820,7 @@ namespace GraySkeletonCPP {
         return (mZigma - n6_2Count - n6Count) == 0;
     }
 
-    bool DiscreteMesh::IsSurfaceBody(Volume * sourceVolume, int x, int y, int z,
-                                     bool doDependantChecks)
-    {
+    bool DiscreteMesh::IsSurfaceBody(Volume * sourceVolume, int x, int y, int z, bool doDependantChecks) {
         if(sourceVolume->getDataAt(x, y, z) <= 0)
             return false;
 
@@ -830,8 +828,7 @@ namespace GraySkeletonCPP {
         for(int xx = 0; xx < 3; xx++){
             for(int yy = 0; yy < 3; yy++){
                 for(int zz = 0; zz < 3; zz++) {
-                    points[xx][yy][zz] = sourceVolume->getDataAt(x + xx - 1,
-                            y + yy - 1, z + zz - 1);
+                    points[xx][yy][zz] = sourceVolume->getDataAt(x + xx - 1, y + yy - 1, z + zz - 1);
                 }
             }
         }
@@ -840,15 +837,12 @@ namespace GraySkeletonCPP {
         for(int i = 0; i < 8; i++) {
             cubeFound = true;
             for(int e = 0; e < 7; e++) {
-                cubeFound =
-                        cubeFound && (points[VOLUME_NEIGHBOR_CUBES[i][e][0] + 1][VOLUME_NEIGHBOR_CUBES[i][e][1]
-                                + 1][VOLUME_NEIGHBOR_CUBES[i][e][2] + 1]
-                                      > 0);
+                cubeFound = cubeFound
+                        && (points[VOLUME_NEIGHBOR_CUBES[i][e][0] + 1][VOLUME_NEIGHBOR_CUBES[i][e][1] + 1][VOLUME_NEIGHBOR_CUBES[i][e][2] + 1] > 0);
             }
             if(cubeFound) {
                 for(int e = 0; e < 7; e++) {
-                    points[VOLUME_NEIGHBOR_CUBES[i][e][0] + 1][VOLUME_NEIGHBOR_CUBES[i][e][1]
-                            + 1][VOLUME_NEIGHBOR_CUBES[i][e][2] + 1] = 0;
+                    points[VOLUME_NEIGHBOR_CUBES[i][e][0] + 1][VOLUME_NEIGHBOR_CUBES[i][e][1] + 1][VOLUME_NEIGHBOR_CUBES[i][e][2] + 1] = 0;
                 }
             }
         }
@@ -857,11 +851,8 @@ namespace GraySkeletonCPP {
         for(int i = 0; i < 12; i++) {
             surfaceFound = true;
             for(int e = 0; e < 3; e++) {
-                surfaceFound =
-                        surfaceFound && (points[VOLUME_NEIGHBOR_FACES[i][e][0]
-                                + 1][VOLUME_NEIGHBOR_FACES[i][e][1] + 1][VOLUME_NEIGHBOR_FACES[i][e][2]
-                                + 1]
-                                         > 0);
+                surfaceFound = surfaceFound
+                        && (points[VOLUME_NEIGHBOR_FACES[i][e][0] + 1][VOLUME_NEIGHBOR_FACES[i][e][1] + 1][VOLUME_NEIGHBOR_FACES[i][e][2] + 1] > 0);
             }
             if(surfaceFound) {
                 break;
@@ -925,14 +916,10 @@ namespace GraySkeletonCPP {
         for(int i = 0; i < 4; i++) {
             currentPos = surface[i] + upperVector;
             allFound = allFound
-                    && (sourceVolume.getDataAt(currentPos.XInt(),
-                                currentPos.YInt(), currentPos.ZInt())
-                        > 0);
+                    && (sourceVolume.getDataAt(currentPos.XInt(), currentPos.YInt(), currentPos.ZInt()) > 0);
             currentPos = surface[i] + lowerVector;
             allFound = allFound
-                    && (sourceVolume.getDataAt(currentPos.XInt(),
-                                currentPos.YInt(), currentPos.ZInt())
-                        > 0);
+                    && (sourceVolume.getDataAt(currentPos.XInt(), currentPos.YInt(), currentPos.ZInt()) > 0);
         }
         return !allFound;
     }
