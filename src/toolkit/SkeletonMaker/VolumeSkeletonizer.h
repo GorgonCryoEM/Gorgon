@@ -278,7 +278,7 @@ namespace GraySkeletonCPP {
 
     Vector3Float VolumeSkeletonizer::GetCurveDirection(const Volume & skeleton, int x, int y, int z, int radius) {
         Vector3Float direction = Vector3Float(0,0,0);
-        if(DiscreteMesh::GetN6Count(skeleton, x, y, z) > 2) {
+        if(DiscreteMesh::getN6Count(skeleton, x, y, z) > 2) {
             direction = Vector3Float(BAD_NORMAL, BAD_NORMAL, BAD_NORMAL);
         } else {
 
@@ -305,9 +305,9 @@ namespace GraySkeletonCPP {
                 currentPos = list[list.size()-1];
                 list.pop_back();
                 visited.setDataAt(currentPos.X(), currentPos.Y(), currentPos.Z(), 1);
-                n6Count = DiscreteMesh::GetN6(n6, block, currentPos.X(), currentPos.Y(), currentPos.Z());
+                n6Count = DiscreteMesh::getN6(n6, block, currentPos.X(), currentPos.Y(), currentPos.Z());
 
-                if(DiscreteMesh::GetN6Count(skeleton, x+currentPos.X()-margin-radius, y+currentPos.Y()-margin-radius, z+currentPos.Z()-margin-radius) <= 2) {
+                if(DiscreteMesh::getN6Count(skeleton, x+currentPos.X()-margin-radius, y+currentPos.Y()-margin-radius, z+currentPos.Z()-margin-radius) <= 2) {
                     for(int i = 0; i < n6Count; i++) {
                         if(visited.getDataAt(n6[i].X(), n6[i].Y(), n6[i].Z()) < 1) {
                             list.push_back(n6[i]);
