@@ -214,10 +214,8 @@ namespace Protein_Morph {
             if (count > 0)
                 score /= count;
 
-            if (score < minscore)
-                minscore = score;
-            if (score > maxscore)
-                maxscore = score;
+            minscore = min(score, minscore);
+            maxscore = max(score, maxscore);
 
             patoms[i].SetSkeletonScore(score);
             score = 0;
@@ -230,10 +228,8 @@ namespace Protein_Morph {
         //Normalization (see main method of skeleton.C (with flag == 6) in EMAN1)
         for (unsigned int i = 0; i < patoms.size(); i++) {
             score = patoms[i].GetSkeletonScore();
-            if (score > 0)
-                score /= maxscore;
-            else
-                score /= -minscore;
+
+            score /= (score > 0 ? maxscore : -minscore);
             patoms[i].SetSkeletonScore(score);
         }
     }
