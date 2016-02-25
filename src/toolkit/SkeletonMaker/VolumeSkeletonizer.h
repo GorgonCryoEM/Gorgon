@@ -64,8 +64,8 @@ namespace GraySkeletonCPP {
                                                   double threshold,
                                                   int minCurveWidth,
                                                   int minSurfaceWidth);
-            Volume * GetJuSurfaceSkeleton(Volume * sourceVolume,
-                                          Volume * preserve, double threshold);
+            Volume * GetJuSurfaceSkeleton(Volume & sourceVolume,
+                                          Volume & preserve, double threshold);
             Volume * GetJuCurveSkeleton(Volume * sourceVolume,
                                         Volume * preserve, double threshold,
                                         bool is3D);
@@ -773,8 +773,8 @@ namespace GraySkeletonCPP {
         return GetJuThinning(sourceVolume, preserve, threshold, thinningClass);
     }
 
-    Volume * VolumeSkeletonizer::GetJuSurfaceSkeleton(Volume * sourceVolume, Volume * preserve, double threshold){
-        return GetJuThinning(sourceVolume, preserve, threshold, THINNING_CLASS_SURFACE_PRESERVATION);
+    Volume * VolumeSkeletonizer::GetJuSurfaceSkeleton(Volume & sourceVolume, Volume & preserve, double threshold){
+        return GetJuThinning(&sourceVolume, &preserve, threshold, THINNING_CLASS_SURFACE_PRESERVATION);
     }
 
     Volume * VolumeSkeletonizer::GetJuTopologySkeleton(Volume * sourceVolume, Volume * preserve, double threshold){
@@ -873,7 +873,7 @@ namespace GraySkeletonCPP {
             surfaceVol->toMRCFile((char *)(outputPath + "-S-Post-Erosion.mrc").c_str());
         #endif
 
-        Volume cleanedSurfaceVol = *GetJuSurfaceSkeleton(surfaceVol, &nullVol, 0.5);
+        Volume cleanedSurfaceVol = *GetJuSurfaceSkeleton(*surfaceVol, nullVol, 0.5);
         PruneSurfaces(cleanedSurfaceVol, minSurfaceSize);
         #ifdef SAVE_INTERMEDIATE_RESULTS
             cleanedSurfaceVol->toMRCFile((char *)(outputPath + "-S-Cleaned.mrc").c_str());
@@ -972,7 +972,7 @@ namespace GraySkeletonCPP {
 
         //printf("\t\t\tUSING THRESHOLD : %f\n", threshold);
         // Skeletonizing while preserving surface features curve features and topology
-        surfaceVol = GetJuSurfaceSkeleton(imageVol, preservedVol, threshold);
+        surfaceVol = GetJuSurfaceSkeleton(*imageVol, *preservedVol, threshold);
         #ifdef GORGON_DEBUG
               cout<<"surfaceVol->getSize(): "<<surfaceVol->getSize()<<endl;
         #endif
