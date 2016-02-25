@@ -63,33 +63,33 @@ namespace GraySkeletonCPP {
                                                   double threshold,
                                                   int minCurveWidth,
                                                   int minSurfaceWidth);
-            Volume * GetJuSurfaceSkeleton(Volume & sourceVolume,
+            Volume * GetJuSurfaceSkeleton(Volume & src,
                                           Volume & preserve, double threshold);
-            Volume * GetJuCurveSkeleton(Volume & sourceVolume,
+            Volume * GetJuCurveSkeleton(Volume & src,
                                         Volume & preserve, double threshold,
                                         bool is3D);
-            Volume * GetJuTopologySkeleton(Volume & sourceVolume,
+            Volume * GetJuTopologySkeleton(Volume & src,
                                            Volume & preserve, double threshold);
-            void PruneCurves(Volume & sourceVolume, int pruneLength);
-            void PruneSurfaces(Volume & sourceVolume, int pruneLength);
-            void PruneUsingStructureTensor( Volume & skeleton, const Volume & sourceVolume,
+            void PruneCurves(Volume & src, int pruneLength);
+            void PruneSurfaces(Volume & src, int pruneLength);
+            void PruneUsingStructureTensor( Volume & skeleton, const Volume & src,
                                             Volume * preserveVol, vector<Vector3Float> & volumeGradient,
                                             vector<EigenResults3D> & volumeEigens, ProbDistr3D & filter,
                                             double threshold, char pruningClass, string outputPath);
-            void SmoothenVolume(Volume & sourceVolume, double minGrayscale,
+            void SmoothenVolume(Volume & src, double minGrayscale,
                                 double maxGrayscale, int stR);
 
             void VoxelBinarySubtract(Volume & sourceAndDestVolume1,
-                                     const Volume & sourceVolume2);
+                                     const Volume & src2);
             void VoxelSubtract(Volume & sourceAndDestVolume1,
-                               const Volume & sourceVolume2);
-            void VoxelOr(Volume & sourceAndDestVolume1, Volume * sourceVolume2);
+                               const Volume & src2);
+            void VoxelOr(Volume & sourceAndDestVolume1, Volume * src2);
 
             Vector3Float GetCurveDirection(const Volume &  skeleton, int x, int y, int z, int radius);
             Vector3Float GetSurfaceNormal(const Volume  & skeleton, int x, int y, int z);
             Vector3Float GetSurfaceNormal(const Volume  & skeleton, int x, int y, int z, int radius,
                                           vector<Vector3Float> & localDirections);
-            vector<Vector3Float> GetVolumeGradient(const Volume & sourceVolume);
+            vector<Vector3Float> GetVolumeGradient(const Volume & src);
             vector<Vector3Float> GetSkeletonDirection(const Volume & skeleton, int type);
 
             void GetEigenResult(EigenResults3D & returnVal,
@@ -116,9 +116,9 @@ namespace GraySkeletonCPP {
                                     const Volume & originalSkeleton,
                                     int maxHoleSize);
 
-            Volume * GetJuThinning(Volume & sourceVolume, const Volume & preserve,
+            Volume * GetJuThinning(Volume & src, const Volume & preserve,
                                    double threshold, char thinningClass);
-            Volume * GetImmersionThinning(const Volume & sourceVolume,
+            Volume * GetImmersionThinning(const Volume & src,
                                           const Volume & preserve,
                                           double lowGrayscale,
                                           double highGrayscale, double stepSize,
@@ -398,31 +398,31 @@ namespace GraySkeletonCPP {
         return direction;
     }
     // Gradient = (x+1,y,z) - (x-1,y,z) ....
-    vector<Vector3Float> VolumeSkeletonizer::GetVolumeGradient(const Volume & sourceVolume) {
-        vector<Vector3Float> gradient(sourceVolume.getSizeX() * sourceVolume.getSizeY() * sourceVolume.getSizeZ());
+    vector<Vector3Float> VolumeSkeletonizer::GetVolumeGradient(const Volume & src) {
+        vector<Vector3Float> gradient(src.getSizeX() * src.getSizeY() * src.getSizeZ());
         int index;
 
-        for(int x = 0; x < sourceVolume.getSizeX(); x = x + sourceVolume.getSizeX()-1) {
-            for(int y = 0; y < sourceVolume.getSizeY(); y = y + sourceVolume.getSizeY()-1) {
-                for(int z = 0; z < sourceVolume.getSizeZ(); z = z + sourceVolume.getSizeZ()-1) {
-                    index = sourceVolume.getIndex(x, y, z);
+        for(int x = 0; x < src.getSizeX(); x = x + src.getSizeX()-1) {
+            for(int y = 0; y < src.getSizeY(); y = y + src.getSizeY()-1) {
+                for(int z = 0; z < src.getSizeZ(); z = z + src.getSizeZ()-1) {
+                    index = src.getIndex(x, y, z);
                     gradient[index] = Vector3Float(0, 0, 0);
                 }
             }
         }
         Vector3Float grad1, grad2;
 
-        for(int x = 1; x < sourceVolume.getSizeX()-1; x++) {
-            for(int y = 1; y < sourceVolume.getSizeY()-1; y++) {
-                for(int z = 1; z < sourceVolume.getSizeZ()-1; z++) {
-                    index = sourceVolume.getIndex(x, y, z);
-                    grad1 = Vector3Float(sourceVolume.getDataAt(x, y, z) - sourceVolume.getDataAt(x-1, y, z),
-                                               sourceVolume.getDataAt(x, y, z) - sourceVolume.getDataAt(x, y-1, z),
-                                               sourceVolume.getDataAt(x, y, z) - sourceVolume.getDataAt(x, y, z-1));
+        for(int x = 1; x < src.getSizeX()-1; x++) {
+            for(int y = 1; y < src.getSizeY()-1; y++) {
+                for(int z = 1; z < src.getSizeZ()-1; z++) {
+                    index = src.getIndex(x, y, z);
+                    grad1 = Vector3Float(src.getDataAt(x, y, z) - src.getDataAt(x-1, y, z),
+                                               src.getDataAt(x, y, z) - src.getDataAt(x, y-1, z),
+                                               src.getDataAt(x, y, z) - src.getDataAt(x, y, z-1));
 
-                    grad2 = Vector3Float(sourceVolume.getDataAt(x+1, y, z) - sourceVolume.getDataAt(x, y, z),
-                                               sourceVolume.getDataAt(x, y+1, z) - sourceVolume.getDataAt(x, y, z),
-                                               sourceVolume.getDataAt(x, y, z+1) - sourceVolume.getDataAt(x, y, z));
+                    grad2 = Vector3Float(src.getDataAt(x+1, y, z) - src.getDataAt(x, y, z),
+                                               src.getDataAt(x, y+1, z) - src.getDataAt(x, y, z),
+                                               src.getDataAt(x, y, z+1) - src.getDataAt(x, y, z));
 
 
                     for(int i = 0; i < 3; i++) {
@@ -578,16 +578,16 @@ namespace GraySkeletonCPP {
 
     }
 
-    void VolumeSkeletonizer::PruneCurves(Volume & sourceVolume, int pruneLength) {
-        sourceVolume.erodeHelix(pruneLength);
+    void VolumeSkeletonizer::PruneCurves(Volume & src, int pruneLength) {
+        src.erodeHelix(pruneLength);
     }
 
-    void VolumeSkeletonizer::PruneSurfaces(Volume & sourceVolume, int pruneLength) {
-        sourceVolume.erodeSheet(pruneLength);
+    void VolumeSkeletonizer::PruneSurfaces(Volume & src, int pruneLength) {
+        src.erodeSheet(pruneLength);
     }
 
     void VolumeSkeletonizer::PruneUsingStructureTensor(
-            Volume &  skeleton, const Volume & sourceVolume, Volume * preserveVol,
+            Volume &  skeleton, const Volume & src, Volume * preserveVol,
             vector<Vector3Float> & volumeGradient, vector<EigenResults3D> & volumeEigens,
             ProbDistr3D & filter, double threshold, char pruningClass,
             string outputPath)
@@ -622,9 +622,9 @@ namespace GraySkeletonCPP {
 
         #ifdef SAVE_INTERMEDIATE_RESULTS
             costVol->toMRCFile((char *)((outputPath + "-Score.mrc").c_str()));
-            WriteEigenResultsToVRMLFile(sourceVolume, costVol, tempSkel, volumeEigens, outputPath + "-Eigens.wrl", (pruningClass != PRUNING_CLASS_PRUNE_SURFACES));
-            WriteEigenResultsToVRMLFile(sourceVolume, costVol, tempSkel, volumeEigens, outputPath + "-Eigens-inverted.wrl", true);
-            WriteEigenResultsToVRMLFile(sourceVolume, costVol, tempSkel, volumeEigens, outputPath + "-Eigens.wrl", false);
+            WriteEigenResultsToVRMLFile(src, costVol, tempSkel, volumeEigens, outputPath + "-Eigens.wrl", (pruningClass != PRUNING_CLASS_PRUNE_SURFACES));
+            WriteEigenResultsToVRMLFile(src, costVol, tempSkel, volumeEigens, outputPath + "-Eigens-inverted.wrl", true);
+            WriteEigenResultsToVRMLFile(src, costVol, tempSkel, volumeEigens, outputPath + "-Eigens.wrl", false);
             WriteSkeletonDirectionToVRMLFile(tempSkel, costVol, skelDirs, outputPath + "-SkeletonDirections.wrl", pruningClass == PRUNING_CLASS_PRUNE_SURFACES, 0.1);
             if(pruningClass == PRUNING_CLASS_PRUNE_CURVES) {
                 WriteSkeletonDirectionToVRMLFile(tempSkel, costVol, skelDirs, outputPath + "-SkeletonDirections-small.wrl", false, 0.06);
@@ -632,7 +632,7 @@ namespace GraySkeletonCPP {
         #endif
     }
 
-    void VolumeSkeletonizer::SmoothenVolume(Volume & sourceVolume, double minGrayscale, double maxGrayscale, int stR) {
+    void VolumeSkeletonizer::SmoothenVolume(Volume & src, double minGrayscale, double maxGrayscale, int stR) {
         ProbDistr3D mask;
         mask.R = 1;
 
@@ -640,14 +640,14 @@ namespace GraySkeletonCPP {
         smoothenMask.R = stR;
         BinomDistr(smoothenMask);
 
-        sourceVolume.pad(MAX_GAUSSIAN_FILTER_RADIUS, 0);
+        src.pad(MAX_GAUSSIAN_FILTER_RADIUS, 0);
 
-        Volume maskVolume(sourceVolume.getSizeX(), sourceVolume.getSizeY(), sourceVolume.getSizeZ());
+        Volume maskVolume(src.getSizeX(), src.getSizeY(), src.getSizeZ());
         double data;
-        for(int x = 0; x < sourceVolume.getSizeX(); x++) {
-            for(int y = 0; y < sourceVolume.getSizeY(); y++) {
-                for(int z = 0; z < sourceVolume.getSizeZ(); z++) {
-                    data = sourceVolume.getDataAt(x, y, z);
+        for(int x = 0; x < src.getSizeX(); x++) {
+            for(int y = 0; y < src.getSizeY(); y++) {
+                for(int z = 0; z < src.getSizeZ(); z++) {
+                    data = src.getDataAt(x, y, z);
                     if((data >= minGrayscale) && (data <= maxGrayscale)) {
                         maskVolume.setDataAt(x, y, z, 1.0);
                     } else {
@@ -657,29 +657,29 @@ namespace GraySkeletonCPP {
             }
         }
 
-        vector<Vector3Float> volumeGradient = GetVolumeGradient(sourceVolume);
+        vector<Vector3Float> volumeGradient = GetVolumeGradient(src);
         vector<EigenResults3D> eigens = GetEigenResults(maskVolume, volumeGradient, smoothenMask, stR, true);
-        Volume destVolume (sourceVolume.getSizeX(), sourceVolume.getSizeY(), sourceVolume.getSizeZ());
+        Volume destVolume (src.getSizeX(), src.getSizeY(), src.getSizeZ());
         double sourceData;
 
-        for(int x = mask.R; x < sourceVolume.getSizeX()-mask.R; x++) {
-            for(int y = mask.R; y < sourceVolume.getSizeY()-mask.R; y++) {
-                for(int z = mask.R; z < sourceVolume.getSizeZ()-mask.R; z++) {
-                    sourceData = sourceVolume.getDataAt(x, y, z);
+        for(int x = mask.R; x < src.getSizeX()-mask.R; x++) {
+            for(int y = mask.R; y < src.getSizeY()-mask.R; y++) {
+                for(int z = mask.R; z < src.getSizeZ()-mask.R; z++) {
+                    sourceData = src.getDataAt(x, y, z);
                     if((sourceData >= minGrayscale) && (sourceData <= maxGrayscale)) {
-                        GetSTBasedDistribution(mask, eigens[sourceVolume.getIndex(x, y, z)]);
+                        GetSTBasedDistribution(mask, eigens[src.getIndex(x, y, z)]);
 
                         for(int xx = -mask.R; xx <= mask.R; xx++) {
                             for(int yy = -mask.R; yy <= mask.R; yy++) {
                                 for(int zz = -mask.R; zz <= mask.R; zz++) {
                                     destVolume.setDataAt(x, y, z,
-                                        destVolume.getDataAt(x, y, z) + sourceVolume.getDataAt(x+xx, y+yy, z+zz) *  mask.vals[xx+mask.R][yy+mask.R][zz+mask.R]);
+                                        destVolume.getDataAt(x, y, z) + src.getDataAt(x+xx, y+yy, z+zz) *  mask.vals[xx+mask.R][yy+mask.R][zz+mask.R]);
                                 }
                             }
                         }
-                        destVolume.setDataAt(x, y, z, sourceVolume.getDataAt(x, y, z) * 0.5 + destVolume.getDataAt(x, y, z) * 0.5);
+                        destVolume.setDataAt(x, y, z, src.getDataAt(x, y, z) * 0.5 + destVolume.getDataAt(x, y, z) * 0.5);
                     } else {
-                        destVolume.setDataAt(x, y, z, sourceVolume.getDataAt(x, y, z));
+                        destVolume.setDataAt(x, y, z, src.getDataAt(x, y, z));
                     }
                 }
             }
@@ -687,13 +687,13 @@ namespace GraySkeletonCPP {
 
         destVolume.pad(-MAX_GAUSSIAN_FILTER_RADIUS, 0);
 
-        sourceVolume = destVolume;
+        src = destVolume;
     }
-    void VolumeSkeletonizer::VoxelBinarySubtract(Volume & sourceAndDestVolume1, const Volume & sourceVolume2){
+    void VolumeSkeletonizer::VoxelBinarySubtract(Volume & sourceAndDestVolume1, const Volume & src2){
         for(int x = 0; x < sourceAndDestVolume1.getSizeX(); x++) {
             for(int y = 0; y < sourceAndDestVolume1.getSizeY(); y++) {
                 for(int z = 0; z < sourceAndDestVolume1.getSizeZ(); z++) {
-                    if(sourceVolume2.getDataAt(x, y, z) > 0) {
+                    if(src2.getDataAt(x, y, z) > 0) {
                         sourceAndDestVolume1.setDataAt(x, y, z, 0);
                     }
                 }
@@ -701,22 +701,22 @@ namespace GraySkeletonCPP {
         }
     }
 
-    void VolumeSkeletonizer::VoxelSubtract(Volume & sourceAndDestVolume1, const Volume & sourceVolume2){
+    void VolumeSkeletonizer::VoxelSubtract(Volume & sourceAndDestVolume1, const Volume & src2){
         for(int x = 0; x < sourceAndDestVolume1.getSizeX(); x++) {
             for(int y = 0; y < sourceAndDestVolume1.getSizeY(); y++) {
                 for(int z = 0; z < sourceAndDestVolume1.getSizeZ(); z++) {
-                    sourceAndDestVolume1.setDataAt(x, y, z, sourceAndDestVolume1.getDataAt(x, y, z) - sourceVolume2.getDataAt(x, y, z));
+                    sourceAndDestVolume1.setDataAt(x, y, z, sourceAndDestVolume1.getDataAt(x, y, z) - src2.getDataAt(x, y, z));
                 }
             }
         }
     }
 
-    void VolumeSkeletonizer::VoxelOr(Volume & sourceAndDestVolume1, Volume * sourceVolume2){
-        if(sourceVolume2 != NULL) {
+    void VolumeSkeletonizer::VoxelOr(Volume & sourceAndDestVolume1, Volume * src2){
+        if(src2 != NULL) {
             for(int x = 0; x < sourceAndDestVolume1.getSizeX(); x++) {
                 for(int y = 0; y < sourceAndDestVolume1.getSizeY(); y++) {
                     for(int z = 0; z < sourceAndDestVolume1.getSizeZ(); z++) {
-                        sourceAndDestVolume1.setDataAt(x, y, z, max(sourceAndDestVolume1.getDataAt(x, y, z), sourceVolume2->getDataAt(x, y, z)));
+                        sourceAndDestVolume1.setDataAt(x, y, z, max(sourceAndDestVolume1.getDataAt(x, y, z), src2->getDataAt(x, y, z)));
                     }
                 }
             }
@@ -747,51 +747,51 @@ namespace GraySkeletonCPP {
         return filledSkeleton;
     }
 
-    Volume * VolumeSkeletonizer::GetImmersionThinning(const Volume & sourceVolume, const Volume & preserve, double lowGrayscale, double highGrayscale, double stepSize, char thinningClass) {
-        Volume * thinnedVolume = new Volume(sourceVolume);
+    Volume * VolumeSkeletonizer::GetImmersionThinning(const Volume & src, const Volume & preserve, double lowGrayscale, double highGrayscale, double stepSize, char thinningClass) {
+        Volume * thinnedVolume = new Volume(src);
         thinnedVolume->threshold2(lowGrayscale, 0, 1) ;
         double t;
         switch(thinningClass) {
             case THINNING_CLASS_SURFACE_PRESERVATION :
                 for (t = lowGrayscale ; t <= highGrayscale; t+= stepSize) {
-                    thinnedVolume->surfaceSkeleton(sourceVolume, t, t + stepSize) ;
+                    thinnedVolume->surfaceSkeleton(src, t, t + stepSize) ;
                 }
                 break;
             case THINNING_CLASS_CURVE_PRESERVATION :
                 for (t = lowGrayscale ; t <= highGrayscale; t+= stepSize) {
-                    thinnedVolume->curveSkeleton(sourceVolume, t, t + stepSize, preserve);
+                    thinnedVolume->curveSkeleton(src, t, t + stepSize, preserve);
                 }
                 break;
             case THINNING_CLASS_CURVE_PRESERVATION_2D :
                 for (t = lowGrayscale ; t <= highGrayscale; t+= stepSize) {
-                    thinnedVolume->curveSkeleton(sourceVolume, t, t + stepSize, preserve);
+                    thinnedVolume->curveSkeleton(src, t, t + stepSize, preserve);
                 }
                 break;
             case THINNING_CLASS_POINT_PRESERVATION :
                 for (t = lowGrayscale ; t <= highGrayscale; t+= stepSize) {
-                    thinnedVolume->pointSkeleton(sourceVolume, t, t + stepSize, preserve, preserve);
+                    thinnedVolume->pointSkeleton(src, t, t + stepSize, preserve, preserve);
                 }
         }
         return thinnedVolume;
     }
 
 
-    Volume * VolumeSkeletonizer::GetJuCurveSkeleton(Volume & sourceVolume, Volume & preserve, double threshold, bool is3D){
+    Volume * VolumeSkeletonizer::GetJuCurveSkeleton(Volume & src, Volume & preserve, double threshold, bool is3D){
         char thinningClass = is3D ? THINNING_CLASS_CURVE_PRESERVATION : THINNING_CLASS_CURVE_PRESERVATION_2D;
-        return GetJuThinning(sourceVolume, preserve, threshold, thinningClass);
+        return GetJuThinning(src, preserve, threshold, thinningClass);
     }
 
-    Volume * VolumeSkeletonizer::GetJuSurfaceSkeleton(Volume & sourceVolume, Volume & preserve, double threshold){
-        return GetJuThinning(sourceVolume, preserve, threshold, THINNING_CLASS_SURFACE_PRESERVATION);
+    Volume * VolumeSkeletonizer::GetJuSurfaceSkeleton(Volume & src, Volume & preserve, double threshold){
+        return GetJuThinning(src, preserve, threshold, THINNING_CLASS_SURFACE_PRESERVATION);
     }
 
-    Volume * VolumeSkeletonizer::GetJuTopologySkeleton(Volume & sourceVolume, Volume & preserve, double threshold){
-        return GetJuThinning(sourceVolume, preserve, threshold, THINNING_CLASS_TOPOLOGY_PRESERVATION);
+    Volume * VolumeSkeletonizer::GetJuTopologySkeleton(Volume & src, Volume & preserve, double threshold){
+        return GetJuThinning(src, preserve, threshold, THINNING_CLASS_TOPOLOGY_PRESERVATION);
     }
 
 
-    Volume * VolumeSkeletonizer::GetJuThinning(Volume & sourceVolume, const Volume & preserve, double threshold, char thinningClass) {
-        Volume * thinnedVolume = new Volume(sourceVolume);
+    Volume * VolumeSkeletonizer::GetJuThinning(Volume & src, const Volume & preserve, double threshold, char thinningClass) {
+        Volume * thinnedVolume = new Volume(src);
         switch(thinningClass) {
             case THINNING_CLASS_SURFACE_PRESERVATION :
                 thinnedVolume->surfaceSkeletonPres(threshold, preserve);
