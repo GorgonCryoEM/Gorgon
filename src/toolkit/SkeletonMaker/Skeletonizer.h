@@ -74,7 +74,7 @@ namespace GraySkeletonCPP {
 
         protected:
 
-            double GetVoxelCost(EigenResults3D imageEigen, Vec3F skelDir, int type);
+            double GetVoxelCost(EigenResults3D imgEigen, Vec3F skelDir, int type);
             void FindOrthogonalAxes(Vec3F axis, Vec3F & res1, Vec3F & res2);
             void GetSTBasedDistribution(ProbDistr3D & distr, EigenResults3D eigen);
             Vec3F XYZtoUVW(Vec3F vec, Vec3F u, Vec3F v, Vec3F w);
@@ -146,18 +146,18 @@ namespace GraySkeletonCPP {
         UniformDistr(uniformFiltSkelDirR);
     }
 
-    double Skeletonizer::GetVoxelCost(EigenResults3D imageEigen, Vec3F skelDir, int type) {
+    double Skeletonizer::GetVoxelCost(EigenResults3D imgEigen, Vec3F skelDir, int type) {
         double cost = 1;
 
-        if(!isZero(imageEigen.vals[0])) {
+        if(!isZero(imgEigen.vals[0])) {
             double theta, a, b;
             Vec3F temp, skelDirectionST, n;
             float u1 = 1.0;
-            float u2 = abs(imageEigen.vals[1]/imageEigen.vals[0]);
-            float u3 = abs(imageEigen.vals[2]/imageEigen.vals[0]);
-            Vec3F v1 = imageEigen.vecs[0];
-            Vec3F v2 = imageEigen.vecs[1];
-            Vec3F v3 = imageEigen.vecs[2];
+            float u2 = abs(imgEigen.vals[1]/imgEigen.vals[0]);
+            float u3 = abs(imgEigen.vals[2]/imgEigen.vals[0]);
+            Vec3F v1 = imgEigen.vecs[0];
+            Vec3F v2 = imgEigen.vecs[1];
+            Vec3F v3 = imgEigen.vecs[2];
             switch(type) {
                 case PRUNING_CLASS_PRUNE_POINTS:
 
@@ -184,7 +184,7 @@ namespace GraySkeletonCPP {
                             cost = 1.0;
                         } else {
                             Vec3F n1, n2, m1, m2;
-                            skelDirectionST = XYZtoUVW(skelDir, imageEigen.vecs[0],imageEigen.vecs[1], imageEigen.vecs[2]);
+                            skelDirectionST = XYZtoUVW(skelDir, imgEigen.vecs[0],imgEigen.vecs[1], imgEigen.vecs[2]);
                             FindOrthogonalAxes(skelDirectionST, n1, n2);
 
                             m1 = Vec3F(n1[0]/u1, n1[1]/u2, n1[2]/u3);
