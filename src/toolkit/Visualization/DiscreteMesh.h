@@ -283,8 +283,8 @@ namespace GraySkeletonCPP {
         return nCount;
     }
 
-    int DiscreteMesh::GetSurfaceNeighborCount(int x1, int y1, int z1, int x2,
-                                              int y2, int z2)
+    int DiscreteMesh::GetSurfaceNeighborCount(int x1, int y1, int z1,
+                                              int x2, int y2, int z2)
     {
         int * p1Neighbors, *p2Neighbors;
         int p1Count, p2Count;
@@ -359,8 +359,7 @@ namespace GraySkeletonCPP {
         curves[index] = curves[index] | curveType;
     }
 
-    void DiscreteMesh::AddSurface(Vector3Int p1, Vector3Int p2, Vector3Int p3,
-                                  Vector3Int p4)
+    void DiscreteMesh::AddSurface(Vector3Int p1, Vector3Int p2, Vector3Int p3, Vector3Int p4)
     {
         RemovePoint(p1);
         RemovePoint(p2);
