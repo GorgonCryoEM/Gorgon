@@ -63,7 +63,7 @@ namespace GraySkeletonCPP {
             Vector3Float GetCurveDirection(const Volume & skel, int x, int y, int z, int R);
             Vector3Float GetSurfaceNormal (const Volume & skel, int x, int y, int z);
             Vector3Float GetSurfaceNormal (const Volume & skel, int x, int y, int z, int R,
-                                           vector<Vector3Float> & localDirections);
+                                           vector<Vector3Float> & localDirs);
             vector<Vector3Float> GetVolumeGradient   (const Volume & src);
             vector<Vector3Float> GetSkeletonDirection(const Volume & skel, int type);
 
@@ -303,8 +303,8 @@ namespace GraySkeletonCPP {
     }
 
 
-    Vector3Float VolumeSkeletonizer::GetSurfaceNormal(const Volume & skel, int x, int y, int z, int R, vector<Vector3Float> & localDirections) {
-        Vector3Float direction = localDirections[skel.getIndex(x, y, z)];
+    Vector3Float VolumeSkeletonizer::GetSurfaceNormal(const Volume & skel, int x, int y, int z, int R, vector<Vector3Float> & localDirs) {
+        Vector3Float direction = localDirs[skel.getIndex(x, y, z)];
 
 
         if(!direction.IsBadNormal()) {
@@ -331,7 +331,7 @@ namespace GraySkeletonCPP {
                 currentPos = list[list.size()-1];
                 list.pop_back();
                 visited.setDataAt(currentPos.X(), currentPos.Y(), currentPos.Z(), 1);
-                tempDir = localDirections[skel.getIndex(x+currentPos.X()-margin-R, y+currentPos.Y()-margin-R, z+currentPos.Z()-margin-R)];
+                tempDir = localDirs[skel.getIndex(x+currentPos.X()-margin-R, y+currentPos.Y()-margin-R, z+currentPos.Z()-margin-R)];
 
                 if(!tempDir.IsBadNormal()) {
                     for(int i = 0; i < 12; i++) {
@@ -410,17 +410,17 @@ namespace GraySkeletonCPP {
     vector<Vector3Float> VolumeSkeletonizer::GetSkeletonDirection(const Volume & skel, int type) {
         int index;
 
-        vector<Vector3Float> localDirections(skel.getSizeX() * skel.getSizeY() * skel.getSizeZ());
+        vector<Vector3Float> localDirs(skel.getSizeX() * skel.getSizeY() * skel.getSizeZ());
 
         for(int x = 1; x < skel.getSizeX()-1; x++) {
             for(int y = 1; y < skel.getSizeY()-1; y++) {
                 for(int z = 1; z < skel.getSizeZ()-1; z++) {
                     index = skel.getIndex(x, y, z);
-                    localDirections[index] = Vector3Float(0,0,0);
+                    localDirs[index] = Vector3Float(0,0,0);
                     if(skel.getDataAt(x,y,z) > 0) {
                         switch(type){
                             case PRUNING_CLASS_PRUNE_SURFACES:
-                                localDirections[index] = GetSurfaceNormal(skel, x, y, z);
+                                localDirs[index] = GetSurfaceNormal(skel, x, y, z);
                                 break;
                         }
                     }
@@ -441,7 +441,7 @@ namespace GraySkeletonCPP {
                                 directions[index] = GetCurveDirection(skel, x, y, z, skelDirR);
                                 break;
                             case PRUNING_CLASS_PRUNE_SURFACES:
-                                directions[index] = GetSurfaceNormal(skel, x, y, z, skelDirR, localDirections);
+                                directions[index] = GetSurfaceNormal(skel, x, y, z, skelDirR, localDirs);
                                 break;
                         }
                     }
