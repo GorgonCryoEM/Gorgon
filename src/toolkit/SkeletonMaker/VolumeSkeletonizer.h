@@ -39,18 +39,15 @@ namespace GraySkeletonCPP {
                     bool doPruning, double pointThreshold,
                     double curveThreshold, double surfaceThreshold);
 
-            Volume * PerformPureJuSkeletonization(Volume & imageVol,
-                                                  string outPath,
-                                                  double threshold,
-                                                  int minCurveWidth,
-                                                  int minSurfaceWidth);
+            Volume * PerformPureJuSkeletonization(Volume & imageVol, string outPath,
+                                                  double threshold, int minCurveWidth, int minSurfaceWidth);
             Volume * GetJuSurfaceSkeleton (Volume & src, Volume & preserve, double threshold);
             Volume * GetJuCurveSkeleton   (Volume & src, Volume & preserve, double threshold, bool is3D);
             Volume * GetJuTopologySkeleton(Volume & src, Volume & preserve, double threshold);
             void PruneCurves  (Volume & src, int pruneLength);
             void PruneSurfaces(Volume & src, int pruneLength);
-            void PruneUsingStructureTensor( Volume & skel, const Volume & src,
-                                            Volume * preserved, vector<Vector3Float> & volGrad,
+            void PruneUsingStructureTensor( Volume & skel, const Volume & src, Volume * preserved,
+                                            vector<Vector3Float> & volGrad,
                                             vector<EigenResults3D> & volumeEigens, ProbDistr3D & filter,
                                             double threshold, char pruningClass, string outPath);
             void SmoothenVolume(Volume & src, double minGrayscale,
@@ -62,8 +59,7 @@ namespace GraySkeletonCPP {
 
             Vector3Float GetCurveDirection(const Volume & skel, int x, int y, int z, int R);
             Vector3Float GetSurfaceNormal (const Volume & skel, int x, int y, int z);
-            Vector3Float GetSurfaceNormal (const Volume & skel, int x, int y, int z, int R,
-                                           vector<Vector3Float> & localDirs);
+            Vector3Float GetSurfaceNormal (const Volume & skel, int x, int y, int z, int R, vector<Vector3Float> & localDirs);
             vector<Vector3Float> GetVolumeGradient   (const Volume & src);
             vector<Vector3Float> GetSkeletonDirection(const Volume & skel, int type);
 
@@ -72,8 +68,7 @@ namespace GraySkeletonCPP {
                                 int x, int y, int z,
                                 int sizeX, int sizeY, int sizeZ,
                                 int gaussFiltR, bool clear);
-            vector<EigenResults3D> GetEigenResults(const Volume & mask,
-                                                   vector<Vector3Float> & imgGrad,
+            vector<EigenResults3D> GetEigenResults(const Volume & mask, vector<Vector3Float> & imgGrad,
                                                    ProbDistr3D & gaussFilt,
                                                    int gaussFiltR, bool useMask);
 
@@ -87,7 +82,7 @@ namespace GraySkeletonCPP {
             Volume FillCurveHoles  (Volume & dest, const Volume & src, int maxHoleSize);
             Volume FillSurfaceHoles(Volume & dest, const Volume & src, int maxHoleSize);
 
-            Volume * GetJuThinning(Volume & src, const Volume & preserve, double threshold, char thinningClass);
+            Volume * GetJuThinning       (      Volume & src, const Volume & preserve, double threshold, char thinningClass);
             Volume * GetImmersionThinning(const Volume & src, const Volume & preserve,
                                           double lowGrayscale, double highGrayscale,
                                           double stepSize, char thinningClass);
