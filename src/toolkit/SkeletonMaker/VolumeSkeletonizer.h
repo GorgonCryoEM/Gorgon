@@ -78,11 +78,13 @@ namespace GraySkeletonCPP {
                                             double threshold, char pruningClass, string outputPath);
             void SmoothenVolume(Volume & sourceVolume, double minGrayscale,
                                 double maxGrayscale, int stRadius);
+
             void VoxelBinarySubtract(Volume * sourceAndDestVolume1,
                                      Volume * sourceVolume2);
             void VoxelSubtract(Volume * sourceAndDestVolume1,
                                Volume * sourceVolume2);
             void VoxelOr(Volume * sourceAndDestVolume1, Volume * sourceVolume2);
+
             Vector3Float GetCurveDirection(const Volume &  skeleton, int x, int y, int z, int radius);
             Vector3Float GetSurfaceNormal(const Volume  & skeleton, int x, int y, int z);
             Vector3Float GetSurfaceNormal(const Volume  & skeleton, int x, int y, int z, int radius,
@@ -107,12 +109,13 @@ namespace GraySkeletonCPP {
             void FindOrthogonalAxes(Vector3Float axis, Vector3Float & res1, Vector3Float & res2);
             void GetSTBasedDistribution(ProbDistr3D & distributionInfo, EigenResults3D eigen);
             Vector3Float XYZtoUVW(Vector3Float vec, Vector3Float u, Vector3Float v, Vector3Float w);
+
             Volume * FillCurveHoles(Volume * thresholdedSkeleton,
                                     Volume * originalSkeleton, int maxHoleSize);
             Volume FillSurfaceHoles(Volume * thresholdedSkeleton,
                                       Volume * originalSkeleton,
                                       int maxHoleSize);
-            Volume * GetJuThinning(Volume * sourceVolume, Volume * preserve,
+            Volume * GetJuThinning(Volume & sourceVolume, const Volume & preserve,
                                    double threshold, char thinningClass);
             Volume * GetImmersionThinning(Volume * sourceVolume,
                                           Volume * preserve,
@@ -750,12 +753,12 @@ namespace GraySkeletonCPP {
                 break;
             case THINNING_CLASS_CURVE_PRESERVATION :
                 for (t = lowGrayscale ; t <= highGrayscale; t+= stepSize) {
-                    thinnedVolume->curveSkeleton(sourceVolume, t, t + stepSize, preserve);
+                    thinnedVolume->curveSkeleton(*sourceVolume, t, t + stepSize, *preserve);
                 }
                 break;
             case THINNING_CLASS_CURVE_PRESERVATION_2D :
                 for (t = lowGrayscale ; t <= highGrayscale; t+= stepSize) {
-                    thinnedVolume->curveSkeleton(sourceVolume, t, t + stepSize, preserve);
+                    thinnedVolume->curveSkeleton(*sourceVolume, t, t + stepSize, *preserve);
                 }
                 break;
             case THINNING_CLASS_POINT_PRESERVATION :
@@ -769,20 +772,20 @@ namespace GraySkeletonCPP {
 
     Volume * VolumeSkeletonizer::GetJuCurveSkeleton(Volume & sourceVolume, Volume & preserve, double threshold, bool is3D){
         char thinningClass = is3D ? THINNING_CLASS_CURVE_PRESERVATION : THINNING_CLASS_CURVE_PRESERVATION_2D;
-        return GetJuThinning(&sourceVolume, &preserve, threshold, thinningClass);
+        return GetJuThinning(sourceVolume, preserve, threshold, thinningClass);
     }
 
     Volume * VolumeSkeletonizer::GetJuSurfaceSkeleton(Volume & sourceVolume, Volume & preserve, double threshold){
-        return GetJuThinning(&sourceVolume, &preserve, threshold, THINNING_CLASS_SURFACE_PRESERVATION);
+        return GetJuThinning(sourceVolume, preserve, threshold, THINNING_CLASS_SURFACE_PRESERVATION);
     }
 
     Volume * VolumeSkeletonizer::GetJuTopologySkeleton(Volume & sourceVolume, Volume & preserve, double threshold){
-        return GetJuThinning(&sourceVolume, &preserve, threshold, THINNING_CLASS_TOPOLOGY_PRESERVATION);
+        return GetJuThinning(sourceVolume, preserve, threshold, THINNING_CLASS_TOPOLOGY_PRESERVATION);
     }
 
 
-    Volume * VolumeSkeletonizer::GetJuThinning(Volume * sourceVolume, Volume * preserve, double threshold, char thinningClass) {
-        Volume * thinnedVolume = new Volume(*sourceVolume);
+    Volume * VolumeSkeletonizer::GetJuThinning(Volume & sourceVolume, const Volume & preserve, double threshold, char thinningClass) {
+        Volume * thinnedVolume = new Volume(sourceVolume);
         switch(thinningClass) {
             case THINNING_CLASS_SURFACE_PRESERVATION :
                 thinnedVolume->surfaceSkeletonPres(threshold, preserve);

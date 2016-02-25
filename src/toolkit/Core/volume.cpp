@@ -629,8 +629,8 @@ int Volume::countIntEuler(int ox, int oy, int oz) {
 /* Thin the current volume while preserving voxels with values > highthr or <= lowthr in grayvol
  *  Assuming the current volume has already been thresholded to 0/1
  */
-void Volume::curveSkeleton(Volume* grayvol, float lowthr, float highthr,
-                           Volume* svol)
+void Volume::curveSkeleton(const Volume & grayvol, float lowthr, float highthr,
+                           const Volume & svol)
 {
     int i, j, k;
     // First, threshold the volume
@@ -656,8 +656,8 @@ void Volume::curveSkeleton(Volume* grayvol, float lowthr, float highthr,
         for(j = 0; j < getSizeY(); j++)
             for(k = 0; k < getSizeZ(); k++) {
                 if(getDataAt(i, j, k) >= 0) {
-                    double v = grayvol->getDataAt(i, j, k);
-                    if(svol->getDataAt(i, j, k) > 0
+                    double v = grayvol.getDataAt(i, j, k);
+                    if(svol.getDataAt(i, j, k) > 0
                        || v <= lowthr || v > highthr) {
                         setDataAt(i, j, k, MAX_ERODE);
                     }
@@ -891,7 +891,7 @@ void Volume::curveSkeleton(Volume* grayvol, float lowthr, float highthr,
 }
 
 // Compute curve skeleton
-void Volume::curveSkeleton(float thr, Volume* svol) {
+void Volume::curveSkeleton(float thr, const Volume & svol) {
     int i, j, k;
     // First, threshold the volume
 #ifdef VERBOSE
@@ -916,7 +916,7 @@ void Volume::curveSkeleton(float thr, Volume* svol) {
         for(j = 0; j < getSizeY(); j++)
             for(k = 0; k < getSizeZ(); k++) {
                 if(getDataAt(i, j, k) >= 0) {
-                    if(svol->getDataAt(i, j, k) > 0) {
+                    if(svol.getDataAt(i, j, k) > 0) {
                         setDataAt(i, j, k, MAX_ERODE);
                     }
                     else {
@@ -1113,7 +1113,7 @@ void Volume::curveSkeleton(float thr, Volume* svol) {
 }
 
 // Compute curve skeleton in 2D
-void Volume::curveSkeleton2D(float thr, Volume* svol) {
+void Volume::curveSkeleton2D(float thr, const Volume & svol) {
     int i, j, k;
     // First, threshold the volume
 #ifdef VERBOSE
@@ -1138,7 +1138,7 @@ void Volume::curveSkeleton2D(float thr, Volume* svol) {
         for(j = 0; j < getSizeY(); j++)
             for(k = 0; k < getSizeZ(); k++) {
                 if(getDataAt(i, j, k) >= 0) {
-                    if(svol->getDataAt(i, j, k) > 0) {
+                    if(svol.getDataAt(i, j, k) > 0) {
                         setDataAt(i, j, k, MAX_ERODE);
                     }
                     else {
@@ -1571,7 +1571,7 @@ void Volume::pointSkeleton(Volume* grayvol, float lowthr, float highthr,
 }
 
 // Compute minimal skeleton
-void Volume::skeleton(float thr, Volume* svol, Volume* hvol) {
+void Volume::skeleton(float thr, const Volume & svol, const Volume & hvol) {
     int i, j, k;
     // First, threshold the volume
 #ifdef VERBOSE
@@ -1595,7 +1595,7 @@ void Volume::skeleton(float thr, Volume* svol, Volume* hvol) {
         for(j = 0; j < getSizeY(); j++)
             for(k = 0; k < getSizeZ(); k++) {
                 if(getDataAt(i, j, k) >= 0) {
-                    if(svol->getDataAt(i, j, k) > 0 || hvol->getDataAt(i, j, k)
+                    if(svol.getDataAt(i, j, k) > 0 || hvol.getDataAt(i, j, k)
                             > 0) {
                         setDataAt(i, j, k, MAX_ERODE);
                     }
@@ -2451,7 +2451,7 @@ void Volume::surfaceSkeleton(Volume* grayvol, float lowthr, float highthr) {
 
 }
 
-void Volume::surfaceSkeletonPres(float thr, Volume * preserve) {
+void Volume::surfaceSkeletonPres(float thr, const Volume & preserve) {
     int i, j, k;
     // First, threshold the volume
 #ifdef VERBOSE
@@ -2474,7 +2474,7 @@ void Volume::surfaceSkeletonPres(float thr, Volume * preserve) {
         for(j = 0; j < getSizeY(); j++)
             for(k = 0; k < getSizeZ(); k++) {
                 if(getDataAt(i, j, k) >= 0) {
-                    if(preserve->getDataAt(i, j, k) > 0) {
+                    if(preserve.getDataAt(i, j, k) > 0) {
                         setDataAt(i, j, k, MAX_ERODE);
                     }
                     else {
