@@ -122,19 +122,19 @@ namespace SkeletonMaker {
         float getMean(); // Returns the mean value of all the voxels
         float getStdDev(); // Returns the population standard deviation of the values at all the voxels
 
-        int getNumNeighbor6(int ox, int oy, int oz);
-        int isInternal2(int ox, int oy, int oz);
-        int hasCell(int ox, int oy, int oz);
         Volume * markCellFace();
-        int hasCompleteSheet(int ox, int oy, int oz);
-        int hasCompleteHelix(int ox, int oy, int oz);
-        int isHelixEnd(int ox, int oy, int oz);
-        int isFeatureFace( int ox, int oy, int oz );
-        int isSheetEnd( int ox, int oy, int oz );
-        int isSimple( int ox, int oy, int oz );
-        int isPiercable( int ox, int oy, int oz );
-        int getNumPotComplex( int ox, int oy, int oz );
-        int getNumPotComplex2( int ox, int oy, int oz );
+        int getNumNeighbor6  (int ox, int oy, int oz);
+        int isInternal2      (int ox, int oy, int oz);
+        int hasCell          (int ox, int oy, int oz);
+        int hasCompleteSheet (int ox, int oy, int oz);
+        int hasCompleteHelix (int ox, int oy, int oz);
+        int isHelixEnd       (int ox, int oy, int oz);
+        int isFeatureFace    (int ox, int oy, int oz);
+        int isSheetEnd       (int ox, int oy, int oz);
+        int isSimple         (int ox, int oy, int oz);
+        int isPiercable      (int ox, int oy, int oz);
+        int getNumPotComplex (int ox, int oy, int oz);
+        int getNumPotComplex2(int ox, int oy, int oz);
         int components6( int vox[3][3][3] );
         int components26( int vox[3][3][3] );
         int countExt( double vox[3][3][3] );
