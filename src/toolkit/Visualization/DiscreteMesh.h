@@ -646,6 +646,7 @@ namespace GraySkeletonCPP {
                 retVal++;
             }
         }
+        return retVal;
     }
 
     int DiscreteMesh::GetN18(vector<Vector3Int> & n18, Volume * sourceVolume, int x,
@@ -740,6 +741,7 @@ namespace GraySkeletonCPP {
                 }
             }
         }
+        return mCount;
     }
 
     int DiscreteMesh::GetImmersionN6Count(Volume * skeleton, Vector3Int point) {
