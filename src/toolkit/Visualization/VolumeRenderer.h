@@ -116,7 +116,7 @@ namespace Visualization {
         int displayRadius;
         int viewingType;
         Volume cuttingVolume;
-        Vector3Float radiusOrigin;
+        Vec3F radiusOrigin;
         bool useDisplayRadius;
 
         VolumeSurfaceMeshType * surfaceMesh;
@@ -356,7 +356,7 @@ namespace Visualization {
                 glPushAttrib(GL_LIGHTING_BIT | GL_ENABLE_BIT);
                 glDisable(GL_LIGHTING);
                 glDisable(GL_CULL_FACE);
-                Vector3Float vertex;
+                Vec3F vertex;
                 // The outside box
 
                 if(viewingType == VIEWING_TYPE_CROSS_SECTION) {
@@ -495,7 +495,7 @@ namespace Visualization {
                 for(iX = 0; iX < 2; iX++) {
                     for(iY = 0; iY < 2; iY++) {
                         for(iZ = 0; iZ < 2; iZ++) {
-                            cuttingVolume.setDataAt(iX, iY, iZ, (cuttingPlaneCenter - Vector3Float(iX * getSizeX(), iY * getSizeY(), iZ * getSizeZ()))* cuttingPlaneDirection);
+                            cuttingVolume.setDataAt(iX, iY, iZ, (cuttingPlaneCenter - Vec3F(iX * getSizeX(), iY * getSizeY(), iZ * getSizeZ()))* cuttingPlaneDirection);
                         }
                     }
                 }
@@ -514,9 +514,9 @@ namespace Visualization {
             NonManifoldMesh tempMesh;
 
 
-            Vector3Float modelCenter = Vector3Float( (minPts[0] + maxPts[0])/2.0, (minPts[1] + maxPts[1])/2.0, (minPts[2] + maxPts[2])/2.0);
-            Vector3Float center;
-            float distance = (Vector3Float(minPts[0], minPts[1], minPts[2]) - modelCenter).length();
+            Vec3F modelCenter = Vec3F( (minPts[0] + maxPts[0])/2.0, (minPts[1] + maxPts[1])/2.0, (minPts[2] + maxPts[2])/2.0);
+            Vec3F center;
+            float distance = (Vec3F(minPts[0], minPts[1], minPts[2]) - modelCenter).length();
             int iX, iY, iZ;
 
             for(float position = 1.0; position >= -1.0; position -= 0.01) {
@@ -530,7 +530,7 @@ namespace Visualization {
                     for(iX = 0; iX < 2; iX++) {
                         for(iY = 0; iY < 2; iY++) {
                             for(iZ = 0; iZ < 2; iZ++) {
-                                cuttingVolume.setDataAt(iX, iY, iZ, (center - Vector3Float(iX * getSizeX(), iY * getSizeY(), iZ * getSizeZ()))* cuttingPlaneDirection);
+                                cuttingVolume.setDataAt(iX, iY, iZ, (center - Vec3F(iX * getSizeX(), iY * getSizeY(), iZ * getSizeZ()))* cuttingPlaneDirection);
                             }
                         }
                     }
@@ -739,7 +739,7 @@ namespace Visualization {
                         asEdgeVertex[iEdge][1] = (float)iY + ((float)a2iVertexOffset[ a2iEdgeConnection[iEdge][0] ][1] +  fOffset * (float)a2iEdgeDirection[iEdge][1]) * (float)iScale;
                         asEdgeVertex[iEdge][2] = (float)iZ + ((float)a2iVertexOffset[ a2iEdgeConnection[iEdge][0] ][2] +  fOffset * (float)a2iEdgeDirection[iEdge][2]) * (float)iScale;
 
-                        vertexIds[iEdge] = mesh->AddVertex(TriangleMeshVertex(Vector3Float(asEdgeVertex[iEdge][0], asEdgeVertex[iEdge][1], asEdgeVertex[iEdge][2])), GetHashKey(iX, iY, iZ, iEdge, iScale));
+                        vertexIds[iEdge] = mesh->AddVertex(TriangleMeshVertex(Vec3F(asEdgeVertex[iEdge][0], asEdgeVertex[iEdge][1], asEdgeVertex[iEdge][2])), GetHashKey(iX, iY, iZ, iEdge, iScale));
                 }
         }
 
@@ -809,7 +809,7 @@ namespace Visualization {
                         asEdgeVertex[iEdge][1] = (float)iY + ((float)a2iVertexOffset[ a2iEdgeConnection[iEdge][0] ][1] +  fOffset * (float)a2iEdgeDirection[iEdge][1]) * (float)iScale;
                         asEdgeVertex[iEdge][2] = (float)iZ + ((float)a2iVertexOffset[ a2iEdgeConnection[iEdge][0] ][2] +  fOffset * (float)a2iEdgeDirection[iEdge][2]) * (float)iScale;
 
-                        vertexIds[iEdge] = mesh->AddHashedVertex(Vector3Float(asEdgeVertex[iEdge][0], asEdgeVertex[iEdge][1], asEdgeVertex[iEdge][2]), GetHashKey(iX, iY, iZ, iEdge, iScale));
+                        vertexIds[iEdge] = mesh->AddHashedVertex(Vec3F(asEdgeVertex[iEdge][0], asEdgeVertex[iEdge][1], asEdgeVertex[iEdge][2]), GetHashKey(iX, iY, iZ, iEdge, iScale));
                 }
         }
 
@@ -877,7 +877,7 @@ namespace Visualization {
         displayRadius = radius;
     }
     void VolumeRenderer::SetDisplayRadiusOrigin(float radiusOriginX, float radiusOriginY, float radiusOriginZ) {
-        radiusOrigin = Vector3Float(radiusOriginX, radiusOriginY, radiusOriginZ);
+        radiusOrigin = Vec3F(radiusOriginX, radiusOriginY, radiusOriginZ);
     }
 
     void VolumeRenderer::UseDisplayRadius(bool useRadius) {

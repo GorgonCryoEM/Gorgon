@@ -25,7 +25,7 @@ namespace GraphMatch {
         bool IsHelix();
         bool IsSheet();
         bool IsInsideShape(Point3 p);
-        bool IsInsideShape(Vector3Float p);
+        bool IsInsideShape(Vec3F p);
         double MinimumDistanceToPoint(Point3 P);
         double GetHeight();
         double GetRadius();
@@ -41,18 +41,18 @@ namespace GraphMatch {
         void Rotate(Vector3<double> axis, double angle);
         void Translate(Vector3<double> translationVector);
         void SetCenter(Point3 center);
-        void SetCenter(Vector3Float center);
+        void SetCenter(Vec3F center);
         void SetHeight(double height);
         void SetRadius(double radius);
-        void GetRotationAxisAndAngle(Vector3Float &axis, double &angle);
-        static Shape * CreateHelix(Vector3Float p1, Vector3Float p2, float radius);
+        void GetRotationAxisAndAngle(Vec3F &axis, double &angle);
+        static Shape * CreateHelix(Vec3F p1, Vec3F p2, float radius);
         static void WriteToFile(vector<Shape*> & helices, FILE * fileName);
 
 
         Point3 GetWorldCoordinates(Point3 point);
         Point3Int GetCornerCell(int node);
-        Vector3Float GetCornerCell2(int node);
-        Vector3Float GetCornerCell3(int node);
+        Vec3F GetCornerCell2(int node);
+        Vec3F GetCornerCell3(int node);
     private:
         bool IsInsideCylinder(Point3 point);
         bool IsInsidePolygon(Point3 point);
@@ -66,8 +66,8 @@ namespace GraphMatch {
         vector<Point3Int> cornerCells;
         vector<Point3> polygonPoints;
         vector<Polygon> polygons;
-        Vector3Float internalToRealScale;
-        Vector3Float internalToRealOrigin;
+        Vec3F internalToRealScale;
+        Vec3F internalToRealOrigin;
 
     private:
         Matrix4 worldToObject;
@@ -103,7 +103,7 @@ namespace GraphMatch {
         }
     }
 
-    bool Shape::IsInsideShape(Vector3Float p) {
+    bool Shape::IsInsideShape(Vec3F p) {
         return IsInsideShape(Point3(p.X(), p.Y(), p.Z()));
     }
 
@@ -212,12 +212,12 @@ namespace GraphMatch {
         return Point3Int(0,0,0,0);
     }
 
-    Vector3Float Shape::GetCornerCell2(int node) {
+    Vec3F Shape::GetCornerCell2(int node) {
         Point3Int cell = GetCornerCell(node);
-        return Vector3Float((float)cell.x, (float)cell.y, (float)cell.z);
+        return Vec3F((float)cell.x, (float)cell.y, (float)cell.z);
     }
 
-    Vector3Float Shape::GetCornerCell3(int node) {
+    Vec3F Shape::GetCornerCell3(int node) {
         Point3 pt;
 
         if(node == 1) {
@@ -225,7 +225,7 @@ namespace GraphMatch {
         } else {
             pt = GetWorldCoordinates(Point3(0, 0.5, 0));
         }
-        return Vector3Float((float)pt[0], (float)pt[1], (float)pt[2]);
+        return Vec3F((float)pt[0], (float)pt[1], (float)pt[2]);
 
     }
 
@@ -283,17 +283,17 @@ namespace GraphMatch {
             }
         }
 
-        Vector3Float actualCorner1 = GetCornerCell3(1);
-        Vector3Float actualCorner2 = GetCornerCell3(2);
+        Vec3F actualCorner1 = GetCornerCell3(1);
+        Vec3F actualCorner2 = GetCornerCell3(2);
 
-        Vector3Float c1, c2;
+        Vec3F c1, c2;
 
 
-        c1 = Vector3Float(
+        c1 = Vec3F(
             internalToRealOrigin.X() + (float)cornerCells[corner1].x * internalToRealScale.X(),
             internalToRealOrigin.Y() + (float)cornerCells[corner1].y * internalToRealScale.Y(),
             internalToRealOrigin.Z() + (float)cornerCells[corner1].z * internalToRealScale.Z());
-        c2 = Vector3Float(
+        c2 = Vec3F(
             internalToRealOrigin.X() + (float)cornerCells[corner2].x * internalToRealScale.X(),
             internalToRealOrigin.Y() + (float)cornerCells[corner2].y * internalToRealScale.Y(),
             internalToRealOrigin.Z() + (float)cornerCells[corner2].z * internalToRealScale.Z());
@@ -377,7 +377,7 @@ namespace GraphMatch {
         UpdateWorldToObjectMatrix();
     }
 
-    void Shape::SetCenter(Vector3Float center) {
+    void Shape::SetCenter(Vec3F center) {
         SetCenter(Point3(center.X(), center.Y(), center.Z()));
     }
 
@@ -397,7 +397,7 @@ namespace GraphMatch {
         objectToWorld = Matrix4::scaling(1.0/(radius*2.0), 1.0/height, 1.0/(radius*2.0)) * inverseRotationMatrix * Matrix4::translation(Point3(-centerPoint[0], -centerPoint[1], -centerPoint[2]));
     }
 
-    void Shape::GetRotationAxisAndAngle(Vector3Float &axis, double &angle) {
+    void Shape::GetRotationAxisAndAngle(Vec3F &axis, double &angle) {
         double x,y,z;
         double epsilon = 0.01;
         double epsilon2 = 0.1;
@@ -410,7 +410,7 @@ namespace GraphMatch {
             if ((abs(m(0,1)+m(1,0)) < epsilon2) && (abs(m(0,2)+m(2,0)) < epsilon2)
                 && (abs(m(1,2)+m(2,1)) < epsilon2) && (abs(m(0,0)+m(1,1)+m(2,2)-3) < epsilon2)) {
                 // this singularity is identity matrix so angle = 0
-                axis = Vector3Float(1,0,0);
+                axis = Vec3F(1,0,0);
                 angle = 0;
                 return;
             }
@@ -453,7 +453,7 @@ namespace GraphMatch {
                     y = yz/z;
                 }
             }
-            axis = Vector3Float((float)x, (float)y, (float)z);
+            axis = Vec3F((float)x, (float)y, (float)z);
             return;
         }
         // as we have reached here there are no singularities so we can handle normally
@@ -467,20 +467,20 @@ namespace GraphMatch {
         x = (m(2,1) - m(1,2))/s;
         y = (m(0,2) - m(2,0))/s;
         z = (m(1,0) - m(0,1))/s;
-        axis = Vector3Float((float)x, (float)y, (float)z);
+        axis = Vec3F((float)x, (float)y, (float)z);
         return;
     }
-    Shape * Shape::CreateHelix(Vector3Float p1, Vector3Float p2, float radius) {
+    Shape * Shape::CreateHelix(Vec3F p1, Vec3F p2, float radius) {
         Shape * newHelix = new Shape();
         newHelix->shapeType = GRAPHEDGE_HELIX;
-        Vector3Float center = (p1+p2) * 0.5;
-        Vector3Float dir = p1-p2;
-        Vector3Float yaxis = Vector3Float(0, 1, 0);
+        Vec3F center = (p1+p2) * 0.5;
+        Vec3F dir = p1-p2;
+        Vec3F yaxis = Vec3F(0, 1, 0);
 
         newHelix->SetCenter(Point3(center.X(), center.Y(), center.Z()));
         newHelix->SetRadius(radius);
         newHelix->SetHeight(dir.length());
-        Vector3Float axis = dir^yaxis;
+        Vec3F axis = dir^yaxis;
 
         dir.normalize();
         double angle = acos(dir * yaxis);
@@ -490,7 +490,7 @@ namespace GraphMatch {
 
     void Shape::WriteToFile(vector<Shape*> & helices, FILE * fout) {
         Point3 center;
-        Vector3Float start, end, axis;
+        Vec3F start, end, axis;
         double angle;
         float helixLength;
         fprintf(fout, "#VRML V2.0 utf8\n");

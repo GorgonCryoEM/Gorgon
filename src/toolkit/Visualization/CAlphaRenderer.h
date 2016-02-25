@@ -43,21 +43,21 @@ namespace Visualization {
     */
     class HermiteCurve{
     public:
-        Vector3Float p0, p1, m0, m1;
+        Vec3F p0, p1, m0, m1;
 
-        void setCurve(Vector3Float pstart, Vector3Float pend, Vector3Float tstart, Vector3Float tend);
-        Vector3Float getPos(double t);
-        Vector3Float getTangent(double t);
+        void setCurve(Vec3F pstart, Vec3F pend, Vec3F tstart, Vec3F tend);
+        Vec3F getPos(double t);
+        Vec3F getTangent(double t);
     };
 
-    void HermiteCurve::setCurve(Vector3Float pstart, Vector3Float pend, Vector3Float tstart, Vector3Float tend){
+    void HermiteCurve::setCurve(Vec3F pstart, Vec3F pend, Vec3F tstart, Vec3F tend){
         p0 = pstart;
         p1 = pend;
         m0 = tstart;
         m1 = tend;
     }
 
-    Vector3Float HermiteCurve::getPos(double t){
+    Vec3F HermiteCurve::getPos(double t){
         double tsquared = t*t;
         double tcubed = tsquared * t;
 
@@ -70,12 +70,12 @@ namespace Visualization {
         double yt = cp0*p0.Y() + cm0*m0.Y() + cp1*p1.Y() + cm1*m1.Y();
         double zt = cp0*p0.Z() + cm0*m0.Z() + cp1*p1.Z() + cm1*m1.Z();
 
-        return Vector3Float(xt, yt, zt);
+        return Vec3F(xt, yt, zt);
     }
 
     // I don't know how this method works, but it is a part of the entirely functional
     // molscript code - BC
-    Vector3Float HermiteCurve::getTangent(double t){
+    Vec3F HermiteCurve::getTangent(double t){
         double t2 = t * t;
         double cp0 = 6.0 * (t2 - t);
         double cp1 = 6.0 * (-t2 + t);
@@ -85,7 +85,7 @@ namespace Visualization {
         double vyt = p0.Y()*cp0 + p1.Y() * cp1 + m0.Y() * cm0 + m1.Y() * cm1;
         double vzt = p0.Z()*cp0 + p1.Z() * cp1 + m0.Z() * cm0 + m1.Z() * cm1;
 
-        return Vector3Float(vxt, vyt, vzt);
+        return Vec3F(vxt, vyt, vzt);
     }
     /**
     End Hermite Curve code
@@ -108,7 +108,7 @@ namespace Visualization {
         void Unload();
         string GetSupportedLoadFileFormats();
         string GetSupportedSaveFileFormats();
-        Vector3Float Get3DCoordinates(int subsceneIndex, int ix0, int ix1 = -1, int ix2 = -1, int ix3 = -1, int ix4 = -1);
+        Vec3F Get3DCoordinates(int subsceneIndex, int ix0, int ix1 = -1, int ix2 = -1, int ix3 = -1, int ix4 = -1);
         void TransformAllAtomLocations(MatrixFloat transform);
 
         // Controlling the atom vector
@@ -147,20 +147,20 @@ namespace Visualization {
         bool CleanSecondaryStructures(); //empties the aHelices, bStrands and loops variables
         //what should really happen is that the code should check if it is
         //trying to reload the same one, and then if it did return false
-        vector<Vector3Float> CreatePointVector(PDBAtom first, PDBAtom last); // functionality mirrored in previously implemented method,
+        vector<Vec3F> CreatePointVector(PDBAtom first, PDBAtom last); // functionality mirrored in previously implemented method,
         // will try to refactor
-        vector<Vector3Float> LaplacianSmoothing(vector<Vector3Float> points, int steps); // applies Laplacian smoothing to a vector of
+        vector<Vec3F> LaplacianSmoothing(vector<Vec3F> points, int steps); // applies Laplacian smoothing to a vector of
         // Vector3Floats
-        vector<Vector3Float> CreateStrandNormals(vector<Vector3Float> points, Vector3Float previous, Vector3Float next); // create line segment normals to be used in drawing Beta
+        vector<Vec3F> CreateStrandNormals(vector<Vec3F> points, Vec3F previous, Vec3F next); // create line segment normals to be used in drawing Beta
         // strands
-        void CreateHelixAxesTangentsAndPoints(vector<Vector3Float>& axes, vector<Vector3Float>& tangents, vector<Vector3Float>& interpPoints, vector<Vector3Float> points,
-            Vector3Float previous, Vector3Float next, double HELIX_ALPHA, double HELIX_BETA, double HELIX_HERMITE_FACTOR);
-        vector<Vector3Float> InterpolateLoopPoints(vector<Vector3Float> points, Vector3Float previous, Vector3Float next, int NUM_SECTIONS); // creates interpolated points for loops
-        //vector<Vector3Float> InterpolateStrandPoints(vector<Vector3Float> points, Vector3Float previous, Vector3Float next, int NUM_SECTIONS);
-        //vector<Vector3Float> InterpolateHelixPoints(vector<Vector3Float> points, Vector3Float previous, Vector3Float next, int NUM_SECTIONS);
+        void CreateHelixAxesTangentsAndPoints(vector<Vec3F>& axes, vector<Vec3F>& tangents, vector<Vec3F>& interpPoints, vector<Vec3F> points,
+            Vec3F previous, Vec3F next, double HELIX_ALPHA, double HELIX_BETA, double HELIX_HERMITE_FACTOR);
+        vector<Vec3F> InterpolateLoopPoints(vector<Vec3F> points, Vec3F previous, Vec3F next, int NUM_SECTIONS); // creates interpolated points for loops
+        //vector<Vec3F> InterpolateStrandPoints(vector<Vec3F> points, Vec3F previous, Vec3F next, int NUM_SECTIONS);
+        //vector<Vec3F> InterpolateHelixPoints(vector<Vec3F> points, Vec3F previous, Vec3F next, int NUM_SECTIONS);
 
         void SetHelixCorrs( vector < int > flatCorrespondences);
-        void SetFeatureVecs(vector<Vector3Float> flatFeatureVecs);
+        void SetFeatureVecs(vector<Vec3F> flatFeatureVecs);
     private:
         AtomMapType atoms;
 
@@ -180,7 +180,7 @@ namespace Visualization {
         vector<int> selectedLoopIndices;
         vector < boost::tuple<int, int> > corrs;
         vector<int> selectedSSEHelices;
-        vector< boost::tuple<Vector3Float, Vector3Float> > featureVecs;
+        vector< boost::tuple<Vec3F, Vec3F> > featureVecs;
 
         float thinRibbThickness;
 
@@ -397,8 +397,8 @@ namespace Visualization {
         sidechainBonds.erase(sidechainBonds.begin() + index);
     }
 
-    Vector3Float CAlphaRenderer::Get3DCoordinates(int subsceneIndex, int ix0, int ix1, int ix2, int ix3, int ix4) {
-        Vector3Float position;
+    Vec3F CAlphaRenderer::Get3DCoordinates(int subsceneIndex, int ix0, int ix1, int ix2, int ix3, int ix4) {
+        Vec3F position;
         switch(subsceneIndex) {
             case(0):
                 if((ix0 >= 0) && (ix0 <= (int)atoms.size())) {
@@ -412,7 +412,7 @@ namespace Visualization {
                 }
                 break;
             default:
-                position = Vector3Float(0,0,0);
+                position = Vec3F(0,0,0);
                 break;
         }
         return position;
@@ -468,13 +468,13 @@ namespace Visualization {
         }
     }
 
-    void CAlphaRenderer::SetFeatureVecs(vector<Vector3Float> flatFeatureVecs){
+    void CAlphaRenderer::SetFeatureVecs(vector<Vec3F> flatFeatureVecs){
         if(flatFeatureVecs.size() %2 != 0)
             return;
         else
             featureVecs.clear();
         for(int i=0; i < flatFeatureVecs.size(); i = i+2){
-            featureVecs.push_back(boost::tuple<Vector3Float, Vector3Float>(flatFeatureVecs[i], flatFeatureVecs[i+1]));
+            featureVecs.push_back(boost::tuple<Vec3F, Vec3F>(flatFeatureVecs[i], flatFeatureVecs[i+1]));
         }
 
     }
@@ -483,8 +483,8 @@ namespace Visualization {
     // starting with start and ending with end; it does not error check, so incorrectly
     // ordered points will break this method.  there are more efficient ways to handle this
     // functionality, but this seems simple and flexible enough
-    vector<Vector3Float> CAlphaRenderer::CreatePointVector(PDBAtom start, PDBAtom end){
-        vector<Vector3Float> points;
+    vector<Vec3F> CAlphaRenderer::CreatePointVector(PDBAtom start, PDBAtom end){
+        vector<Vec3F> points;
 
         PDBAtom current = start;
         while(current.GetHashKey() != end.GetHashKey()){
@@ -502,9 +502,9 @@ namespace Visualization {
     // implementation of Laplacian smoothing for a vector of Vector3Floats (treats them like points)
     // creating copies of "points" twice seems unnecessary, but I am unsure about the performance cost,
     // so I am leaving it for simplicity of implementation
-    vector<Vector3Float> CAlphaRenderer::LaplacianSmoothing(vector<Vector3Float> points, int steps){
-        vector<Vector3Float> pointsTemp(points);
-        vector<Vector3Float> smoothedPoints(points);
+    vector<Vec3F> CAlphaRenderer::LaplacianSmoothing(vector<Vec3F> points, int steps){
+        vector<Vec3F> pointsTemp(points);
+        vector<Vec3F> smoothedPoints(points);
 
         for(int i = 0; i < steps; ++i){
             for(int j = 1; j < points.size()-1; ++j){
@@ -517,12 +517,12 @@ namespace Visualization {
     }
 
     // unsure of what behavior should be if points.size() < 3; in molscript the strand is skipped in this case
-    vector<Vector3Float> CAlphaRenderer::CreateStrandNormals(vector<Vector3Float> points, Vector3Float previous, Vector3Float next){
-        vector<Vector3Float> normals(points);
+    vector<Vec3F> CAlphaRenderer::CreateStrandNormals(vector<Vec3F> points, Vec3F previous, Vec3F next){
+        vector<Vec3F> normals(points);
         int ptsSize = points.size();
 
         for(int i = 1, length = ptsSize - 1; i < length; ++i){
-            Vector3Float newPos = (points[i-1] + points[i+1])*.5;
+            Vec3F newPos = (points[i-1] + points[i+1])*.5;
             normals[i] = points[i] - newPos;
             normals[i].normalize();
         }
@@ -545,7 +545,7 @@ namespace Visualization {
         }
 
         // "smooth normals, one iteration" - molscript/graphics.c
-        vector<Vector3Float> smoothedNormals(normals);
+        vector<Vec3F> smoothedNormals(normals);
 
         for(int k = 1, size = ptsSize - 1; k < size; ++k){
             smoothedNormals[k] = normals[k-1] + normals[k] + normals[k+1];
@@ -553,8 +553,8 @@ namespace Visualization {
         }
 
         // "normals exactly perpendicular to strand" - molscript/graphics.c
-        Vector3Float direction = points[1] - points[0];
-        Vector3Float side = direction^smoothedNormals[0];
+        Vec3F direction = points[1] - points[0];
+        Vec3F side = direction^smoothedNormals[0];
         smoothedNormals[0] = side ^ direction;
         smoothedNormals[0].normalize();
 
@@ -572,16 +572,16 @@ namespace Visualization {
         return smoothedNormals;
     }
 
-    void CAlphaRenderer::CreateHelixAxesTangentsAndPoints(vector<Vector3Float>& axes, vector<Vector3Float>& tangents, vector<Vector3Float>& interpPoints, std::vector<Vector3Float> points, Vector3Float previous, Vector3Float next, double HELIX_ALPHA, double HELIX_BETA, double HELIX_HERMITE_FACTOR){
+    void CAlphaRenderer::CreateHelixAxesTangentsAndPoints(vector<Vec3F>& axes, vector<Vec3F>& tangents, vector<Vec3F>& interpPoints, std::vector<Vec3F> points, Vec3F previous, Vec3F next, double HELIX_ALPHA, double HELIX_BETA, double HELIX_HERMITE_FACTOR){
         if(points.size() > 2){
 
             for(int i = 0; i < points.size() - 1; ++i){
 
                 if(i > 0){
-                    Vector3Float cvec = points[i+1] - points[i-1];
+                    Vec3F cvec = points[i+1] - points[i-1];
                     cvec.normalize();
 
-                    Vector3Float rvec = (points[i]-points[i-1])^(points[i+1]-points[i]);
+                    Vec3F rvec = (points[i]-points[i-1])^(points[i+1]-points[i]);
                     rvec.normalize();
 
                     axes[i] = rvec*sin(HELIX_ALPHA) + cvec*cos(HELIX_ALPHA);
@@ -601,10 +601,10 @@ namespace Visualization {
         }
     }
 
-    vector<Vector3Float> CAlphaRenderer::InterpolateLoopPoints(std::vector<Vector3Float> points, Vector3Float previous, Vector3Float next, int NUM_SECTIONS){
+    vector<Vec3F> CAlphaRenderer::InterpolateLoopPoints(std::vector<Vec3F> points, Vec3F previous, Vec3F next, int NUM_SECTIONS){
         HermiteCurve curve;
-        Vector3Float m0, m1;
-        vector<Vector3Float> pointstemp(points);
+        Vec3F m0, m1;
+        vector<Vec3F> pointstemp(points);
         bool LAPLACIAN_SMOOTHING = true;
         int SMOOTHING_STEPS = 1;
         double HERMITE_FACTOR = 0.5;
@@ -613,7 +613,7 @@ namespace Visualization {
             pointstemp = LaplacianSmoothing(points, SMOOTHING_STEPS);
         }
 
-        vector<Vector3Float> interpolatedPoints((pointstemp.size()-1)*(NUM_SEGMENTS));
+        vector<Vec3F> interpolatedPoints((pointstemp.size()-1)*(NUM_SEGMENTS));
 
         for(unsigned int i = 0; i < points.size()-1; ++i){
             if(i == 0){

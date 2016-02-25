@@ -35,10 +35,10 @@ namespace Protein_Morph {
                                        unsigned long long vertexHash1,
                                        unsigned long long vertexHash2);
 
-            Vector3Float GetVertexNormal(unsigned long long vertexHash);
-            Vector3Float GetFaceNormal(unsigned long long faceHash);
+            Vec3F GetVertexNormal(unsigned long long vertexHash);
+            Vec3F GetFaceNormal(unsigned long long faceHash);
             void Draw(bool drawSurfaces, bool annotateSurfaces,
-                      bool fadeExtreme, int radius, Vector3Float center);
+                      bool fadeExtreme, int radius, Vec3F center);
             void SaveFile(string fileName);
 
         private:
@@ -90,10 +90,10 @@ namespace Protein_Morph {
         return AddFace(face);
     }
 
-    Vector3Float TriangleMesh::GetVertexNormal(
+    Vec3F TriangleMesh::GetVertexNormal(
             unsigned long long vertexHash)
     {
-        Vector3Float normal = Vector3Float(0, 0, 0);
+        Vec3F normal = Vec3F(0, 0, 0);
         for(unsigned int i = 0; i < vertices[vertexHash].faceHashes.size();
                 i++) {
             normal += GetFaceNormal(vertices[vertexHash].faceHashes[i]);
@@ -102,11 +102,11 @@ namespace Protein_Morph {
         return normal;
     }
 
-    Vector3Float TriangleMesh::GetFaceNormal(
+    Vec3F TriangleMesh::GetFaceNormal(
             unsigned long long faceHash)
     {
         TriangleMeshFace face = faces[faceHash];
-        Vector3Float normal =
+        Vec3F normal =
                 (vertices[face.vertexHashes[1]].position - vertices[face.vertexHashes[0]].position) ^ (vertices[face.vertexHashes[2]].position
                         - vertices[face.vertexHashes[0]].position);
 
@@ -117,7 +117,7 @@ namespace Protein_Morph {
     void TriangleMesh::Draw(bool drawSurfaces,
                                             bool annotateSurfaces,
                                             bool fadeExtreme, int radius,
-                                            Vector3Float center)
+                                            Vec3F center)
     {
         int k;
         if(drawSurfaces) {
@@ -132,7 +132,7 @@ namespace Protein_Morph {
                     glLoadName(i);
                 }
                 glBegin (GL_POLYGON);
-                Vector3Float normal;
+                Vec3F normal;
                 bool drawTriangle = true;
                 if(fadeExtreme) {
                     for(unsigned int j = 0; j < 3; j++) {
@@ -167,7 +167,7 @@ namespace Protein_Morph {
                 0);
 
         map<unsigned long long, int> indexedVertices;
-        vector < Vector3Float > vertexList;
+        vector < Vec3F > vertexList;
 
         int index = 0;
         for(TriangleMeshVertexType::iterator i = vertices.begin();

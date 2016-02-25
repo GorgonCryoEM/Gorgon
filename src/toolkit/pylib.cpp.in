@@ -40,14 +40,14 @@ BOOST_PYTHON_MODULE(@current_pylib@)
 //
 //    vector_from_python<unsigned long long>();
 
-//    vector_from_python<Vector3Float>();
-//    vector_from_python< std::vector<Vector3Float> >();
+//    vector_from_python<Vec3F>();
+//    vector_from_python< std::vector<Vec3F> >();
 //
 //
 ////  tuple3_to_python<Vector3Int>();
-////  tuple3_to_python<Vector3Float>();
+////  tuple3_to_python<Vec3F>();
 //    tuple3_from_python<Vector3Int, int>();
-//    tuple3_from_python<Vector3Float, float>();
+//    tuple3_from_python<Vec3F, float>();
 //
 
     void (Volume::*setSpacing)(float, float, float) = &Volume::setSpacing;
@@ -411,8 +411,8 @@ BOOST_PYTHON_MODULE(@current_pylib@)
 //        .def("setNextCAHash", &PDBAtom::SetNextCAHash)
     ;
 
-//  bool (Vector3Float::*X)() = &Vector3Float::X;
-//  float& (Vector3Float::*X)() = &Vector3Float::X;
+//  bool (Vec3F::*X)() = &Vec3F::X;
+//  float& (Vec3F::*X)() = &Vec3F::X;
 //  const double & (Volume::*get)(int, int, int) const = &Volume::operator();
 //  const float & (Vector3<float>::*X)() const = &Vector3<float>::X;
   const float & (Vector3<float>::*X)() const = &Vector3<float>::X;
@@ -424,7 +424,7 @@ BOOST_PYTHON_MODULE(@current_pylib@)
   const float & (Vector3<float>::*vecgetitem)(int) const = &Vector3<float>::operator[];
 //  double & (Vector3<float>::*set)(int)             = &Vector3<float>::operator[];
 
-  class_<Vector3<float> >("Vector3Float", init<float, float, float>())
+  class_<Vector3<float> >("Vec3F", init<float, float, float>())
         .def("x", X, return_value_policy<copy_const_reference>())
         .def("y", Y, return_value_policy<copy_const_reference>())
         .def("z", Z, return_value_policy<copy_const_reference>())

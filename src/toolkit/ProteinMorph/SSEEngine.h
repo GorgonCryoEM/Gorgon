@@ -31,11 +31,11 @@ namespace Visualization {
         int GetSequenceSSECount();
 
         void InitializePathFinder(NonManifoldMesh * mesh);
-        void InitializePathHelix(int helixIndex, Vector3Float p1, Vector3Float p2, float radius);
+        void InitializePathHelix(int helixIndex, Vec3F p1, Vec3F p2, float radius);
         void PrunePathMesh(NonManifoldMesh * mesh, vector<unsigned int> pathVertices);
         void GetPathSpace(int helix1Ix, bool helix1Start, int helix2Ix, bool helix2Start);
         int GetPathVertexCount();
-        Vector3Float GetPathVertex(int index);
+        Vec3F GetPathVertex(int index);
         int GetPathEdgeCount();
         int GetEdgeVertexIndex(int index, int side);
         void ClearPathSpace();
@@ -172,7 +172,7 @@ namespace Visualization {
         pathCount++;
     }
 
-    void SSEEngine::InitializePathHelix(int helixIndex, Vector3Float p1, Vector3Float p2, float radius) {
+    void SSEEngine::InitializePathHelix(int helixIndex, Vec3F p1, Vec3F p2, float radius) {
         Shape * helix = Shape::CreateHelix(p1, p2, radius);
         set<unsigned int> internalVertices;
         internalVertices.clear();
@@ -291,7 +291,7 @@ namespace Visualization {
         return singlePathMesh->vertices.size();
     }
 
-    Vector3Float SSEEngine::GetPathVertex(int index) {
+    Vec3F SSEEngine::GetPathVertex(int index) {
         return singlePathMesh->vertices[index].position;
     }
 

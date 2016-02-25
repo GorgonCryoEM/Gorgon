@@ -16,18 +16,18 @@ namespace Protein_Morph {
     class TriangleMeshVertex {
         public:
             TriangleMeshVertex();
-            TriangleMeshVertex(Vector3Float position);
+            TriangleMeshVertex(Vec3F position);
         public:
-            Vector3Float position;
+            Vec3F position;
             vector<unsigned long long> faceHashes;
             bool tag;
     };
 
     TriangleMeshVertex::TriangleMeshVertex() {
-        position = Vector3Float(0, 0, 0);
+        position = Vec3F(0, 0, 0);
     }
 
-    TriangleMeshVertex::TriangleMeshVertex(Vector3Float position) {
+    TriangleMeshVertex::TriangleMeshVertex(Vec3F position) {
         this->position = position;
     }
 }
